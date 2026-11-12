@@ -24,7 +24,7 @@ This is the producer interface for the Atlas EC06 targets.
 
 ## Main definitions
 
-* `Economics.Producer.IsProfitMax`
+* `MathlibExt.Economics.Producer.IsProfitMax`
 
 ## References
 
@@ -34,7 +34,7 @@ This is the producer interface for the Atlas EC06 targets.
 
 @[expose] public section
 
-namespace Economics.Producer
+namespace MathlibExt.Economics.Producer
 
 /-- `y` maximizes profit at prices `p` over the production set `Y`: `y` is feasible and no
 feasible net-output vector earns more profit `p ⬝ᵥ y'`. Price-taking is built in: profit is
@@ -42,4 +42,4 @@ linear in `y` at the given prices. -/
 def IsProfitMax {ι : Type*} [Fintype ι] (Y : Set (ι → ℝ)) (p y : ι → ℝ) : Prop :=
   y ∈ Y ∧ ∀ y' ∈ Y, p ⬝ᵥ y' ≤ p ⬝ᵥ y
 
-end Economics.Producer
+end MathlibExt.Economics.Producer
