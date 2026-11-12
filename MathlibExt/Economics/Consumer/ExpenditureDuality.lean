@@ -12,7 +12,7 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.Topology.MetricSpace.Pseudo.Pi
 public import MathlibExt.Economics.Consumer.LocalNonsatiation
-public import MathlibExt.Economics.Consumer.TwoGood
+public import MathlibExt.Economics.Consumer.BudgetSet
 import Mathlib.Topology.Algebra.Monoid
 import Mathlib.Topology.Algebra.Ring.Real
 
@@ -33,7 +33,6 @@ condition on prices, no continuity of utility and no convexity is needed for thi
 
 ## Main definitions
 
-* `Economics.Consumer.consumerBudgetSet`: the budget set `B(p, w)`.
 * `Economics.Consumer.budgetSet`: the budget set `B(p, w)`, an alias of
   `MathlibExt.Economics.Consumer.budgetSet`.
 * `Economics.Consumer.IsMarshallianDemand`: an affordable utility maximizer.
@@ -59,25 +58,21 @@ condition on prices, no continuity of utility and no convexity is needed for thi
 
 namespace Economics.Consumer
 
-/-- The budget set `B(p, w) = {x ∈ X | p ⬝ᵥ x ≤ w}`: affordable consumption
-bundles at prices `p` and wealth `w`. -/
-def consumerBudgetSet {ι : Type*} [Fintype ι] (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) :
-    Set (ι → ℝ) :=
-  {x | x ∈ X ∧ p ⬝ᵥ x ≤ w}
+export MathlibExt.Economics.Consumer (budgetSet)
 
 /-- `x` is a Marshallian (utility-maximizing) demand at `(p, w)`: it is
 affordable and no affordable bundle gives strictly higher utility. This is the
 attainment hypothesis of the utility-maximization problem. -/
 def IsMarshallianDemand {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
     (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) (x : ι → ℝ) : Prop :=
-  x ∈ consumerBudgetSet X p w ∧ ∀ y ∈ consumerBudgetSet X p w, u y ≤ u x
+  x ∈ budgetSet X p w ∧ ∀ y ∈ budgetSet X p w, u y ≤ u x
 
 /-- The indirect utility `v(p, w) = sup {u x | x ∈ B(p, w)}`. As a real
 supremum it is meaningful only when the supremum exists; theorems about it
 assume attainment (`IsMarshallianDemand`). -/
 noncomputable def indirectUtility {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
     (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) : ℝ :=
-  sSup (u '' consumerBudgetSet X p w)
+  sSup (u '' budgetSet X p w)
 
 /-- The expenditure function `e(p, ū) = inf {p ⬝ᵥ x | x ∈ X, ū ≤ u x}`: the
 least cost of reaching utility at least `ū`. As a real infimum it is meaningful
@@ -85,11 +80,6 @@ only when the target is feasible and costs are bounded below. -/
 noncomputable def expenditure {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
     (X : Set (ι → ℝ)) (p : ι → ℝ) (ubar : ℝ) : ℝ :=
   sInf ((fun x => p ⬝ᵥ x) '' {x | x ∈ X ∧ ubar ≤ u x})
-
-/- The budget set is defined once, in `MathlibExt.Economics.Consumer`; this alias keeps the
-name `Economics.Consumer.budgetSet` resolving to that same constant, so opening both
-consumer namespaces leaves unqualified `budgetSet` unambiguous. -/
-export MathlibExt.Economics.Consumer (budgetSet)
 
 /- Local nonsatiation is defined once, in `MathlibExt.Economics.Consumer`; this alias keeps the
 name `Economics.Consumer.LocallyNonsatiated` resolving to that same constant. -/
@@ -137,7 +127,7 @@ theorem expenditure_indirectUtility_eq {ι : Type*} [Fintype ι]
     have hzcost : p ⬝ᵥ z < w := by
       have hmem := abs_lt.mp hdist'
       linarith
-    have hzbudget : z ∈ consumerBudgetSet X p w := ⟨hzX, le_of_lt hzcost⟩
+    have hzbudget : z ∈ budgetSet X p w := ⟨hzX, le_of_lt hzcost⟩
     have hle2 := hx.2 z hzbudget
     linarith
   have hxmem : (fun z => p ⬝ᵥ z) x ∈ (fun z => p ⬝ᵥ z) '' {z | z ∈ X ∧ u x ≤ u z} :=

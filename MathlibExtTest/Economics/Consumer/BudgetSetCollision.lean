@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Economics.Consumer.TwoGood
 public import MathlibExt.Economics.Consumer.ExpenditureDuality
 
 @[expose] public section
@@ -29,13 +28,8 @@ previously public name keeps compiling. -/
 example : @Economics.Consumer.budgetSet =
     @MathlibExt.Economics.Consumer.budgetSet := rfl
 
-/-- With both consumer namespaces open, `consumerBudgetSet` is the duality-API
-copy in `Economics.Consumer`. -/
-example : @consumerBudgetSet = @_root_.Economics.Consumer.consumerBudgetSet := rfl
-
-/-- The two budget sets are definitionally the same set-builder. -/
-example : @MathlibExt.Economics.Consumer.budgetSet =
-    @_root_.Economics.Consumer.consumerBudgetSet := rfl
+/-- Importing only duality does not expose the separate two-good demand API. -/
+example : @IsMarshallianDemand = @_root_.Economics.Consumer.IsMarshallianDemand := rfl
 
 end BothOpen
 
