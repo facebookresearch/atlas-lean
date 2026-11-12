@@ -80,11 +80,10 @@ example {Θ X : Type*} {m0 : MeasurableSpace X} {μ : Θ → Measure X}
     simp
   exact anytime_coverage_of_eProcess hα hsup hnonneg hE0 t
 
--- Positive/use: the Bernoulli likelihood computes at both atoms.
-example (p : ℝ) : bernoulliLik p 1 = p ∧ bernoulliLik p 0 = 1 - p := by
-  constructor
-  · simp [bernoulliLik]
-  · simp [bernoulliLik]
+-- Positive/use: the Bernoulli likelihood computes at both atoms, and is zero off the support.
+example (p : ℝ) : bernoulliLik p 1 = p ∧ bernoulliLik p 0 = 1 - p ∧
+    bernoulliLik p 2 = 0 := by
+  refine ⟨by simp [bernoulliLik], by simp [bernoulliLik], by simp [bernoulliLik]⟩
 
 -- Boundary: the LR process is nonnegative for every observation path (degenerate
 -- all-zero data stay valid), using only p0, q ∈ (0,1), no distributional assumption.
@@ -98,13 +97,17 @@ example {Ω : Type*} (X : ℕ → Ω → ℕ) {p0 q : ℝ}
   · unfold bernoulliLik
     by_cases h : X i ω = 1
     · simp [h, hp0.1.le]
-    · simp [h]
-      linarith [hp0.2]
+    · by_cases h0 : X i ω = 0
+      · simp [h0]
+        linarith [hp0.2]
+      · simp [h, h0]
   · unfold bernoulliLik
     by_cases h : X i ω = 1
     · simp [h, hq.1.le]
-    · simp [h]
-      linarith [hq.2]
+    · by_cases h0 : X i ω = 0
+      · simp [h0]
+        linarith [hq.2]
+      · simp [h, h0]
 
 /-- Fair-coin anytime coverage use case: for the fair null `q = 1/2` against the fixed
 reference alternative `p0 = 1/4`, the inverted confidence sequence traps `1/2` at every
@@ -114,15 +117,14 @@ example {Ω : Type u} {m0 : MeasurableSpace Ω} {X : ℕ → Ω → ℕ}
     {μ : {q : ℝ // q ∈ Set.Ioo (0 : ℝ) 1} → Measure Ω} [∀ θ, IsProbabilityMeasure (μ θ)]
     (hXstrong : ∀ i, StronglyMeasurable (X i))
     (hX_indep : ∀ θ, ProbabilityTheory.iIndepFun X (μ θ))
-    (hX01 : ∀ θ, ∀ i, μ θ {ω | X i ω = 0 ∨ X i ω = 1} = 1)
-    (hX1 : ∀ θ, ∀ i, ((μ θ {ω | X i ω = 1}).toReal) = θ.val)
+    (hXbern : ∀ θ, ∀ i, ProbabilityTheory.IsBernoulliRV (X i) (μ θ) θ.val)
     {α : ℝ} (hα : α ∈ Set.Ioo (0 : ℝ) 1) :
     (μ ⟨(1/2 : ℝ), by norm_num⟩).real {ω | ∀ n,
       (⟨(1/2 : ℝ), by norm_num⟩ : {q : ℝ // q ∈ Set.Ioo (0 : ℝ) 1}) ∈
       confSeqOfEProcess (fun t m w => bernoulliNullLR X (1/4 : ℝ) t.val m w) α n ω} ≥ 1 - α := by
   have hp0 : (1/4 : ℝ) ∈ Set.Ioo (0 : ℝ) 1 := by norm_num
   have hq : (1/2 : ℝ) ∈ Set.Ioo (0 : ℝ) 1 := by norm_num
-  exact bernoulli_anytime_coverage (p0 := (1/4 : ℝ)) hp0 hXstrong hX_indep hX01 hX1 hα ⟨1/2, hq⟩
+  exact bernoulli_anytime_coverage (p0 := (1/4 : ℝ)) hp0 hXstrong hX_indep hXbern hα ⟨1/2, hq⟩
 
 /-- All-zero degenerate data: the inverted confidence sets stay wide and nonempty.
 For the constant-zero path, every null `q` below the reference `p0` stays in the set

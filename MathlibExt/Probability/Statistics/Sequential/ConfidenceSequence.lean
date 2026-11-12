@@ -17,6 +17,7 @@ public import Mathlib.MeasureTheory.Measure.Real
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 public import Mathlib.Tactic
 public import MathlibExt.Probability.Statistics.Sequential.Ville
+public import MathlibExt.Probability.BernoulliSumPmf
 public import MathlibExt.Probability.Statistics.ConfidenceSet
 
 open MeasureTheory Filter
@@ -232,9 +233,21 @@ theorem stopped_confSeq_coverage
     _ = (μ t).real {x | ∀ n, t ∈ confSeqOfEProcess E α n x} := hAeqR
     _ ≥ 1 - α := hcover t
 
-/-- Bernoulli likelihood: success probability `p` at `x = 1`, else `1 - p`. -/
+/-- Bernoulli likelihood: `p` at `x = 1`, `1 - p` at `x = 0`, and `0` otherwise. This is
+the likelihood of Mathlib's Nat-valued Bernoulli law, which assigns no mass outside
+`{0, 1}`; treating every non-`1` observation as a failure would be wrong off the support. -/
 noncomputable def bernoulliLik (p : ℝ) (x : ℕ) : ℝ :=
-  if x = 1 then p else 1 - p
+  if x = 1 then p else if x = 0 then 1 - p else 0
+
+/-- A Bernoulli likelihood value is nonnegative. -/
+private theorem bernoulliLik_nonneg {p : ℝ} (hp : 0 ≤ p) (hp1 : p ≤ 1) (x : ℕ) :
+    0 ≤ bernoulliLik p x := by
+  unfold bernoulliLik
+  by_cases h1 : x = 1
+  · simp [h1, hp]
+  · by_cases h0 : x = 0
+    · simp [h0, sub_nonneg.mpr hp1]
+    · simp [h1, h0]
 
 /-- Null likelihood-ratio process for testing success probability `q` against the fixed
 reference alternative `p0`: product of per-observation alternative-over-null ratios over
@@ -267,9 +280,15 @@ private theorem integrable_bernoulliNullLR_prod
     · simp only [h, bernoulliLik]
       rw [hB]
       exact le_trans (le_add_of_nonneg_right (norm_nonneg _)) (le_add_of_nonneg_right zero_le_one)
-    · simp only [h, bernoulliLik]
-      rw [hB]
-      exact le_trans (le_add_of_nonneg_left (norm_nonneg _)) (le_add_of_nonneg_right zero_le_one)
+    · by_cases h0 : X i ω = 0
+      · simp only [h, h0, bernoulliLik]
+        rw [hB]
+        exact le_trans (le_add_of_nonneg_left (norm_nonneg _))
+          (le_add_of_nonneg_right zero_le_one)
+      · have hzero : bernoulliLik p0 (X i ω) / bernoulliLik θ.val (X i ω) = 0 := by
+          simp [bernoulliLik, h, h0]
+        rw [hzero, norm_zero, hB]
+        positivity
   have hsm : StronglyMeasurable (fun ω => bernoulliNullLR X p0 θ.val n ω) := by
     unfold bernoulliNullLR
     apply Finset.stronglyMeasurable_fun_prod
@@ -316,31 +335,59 @@ theorem bernoulli_null_lr_eProcess
     {μ : {q : ℝ // q ∈ Set.Ioo (0 : ℝ) 1} → Measure Ω} [∀ θ, IsProbabilityMeasure (μ θ)]
     (hXstrong : ∀ i, StronglyMeasurable (X i))
     (hX_indep : ∀ θ, ProbabilityTheory.iIndepFun X (μ θ))
-    (hX01 : ∀ θ, ∀ i, μ θ {ω | X i ω = 0 ∨ X i ω = 1} = 1)
-    (hX1 : ∀ θ, ∀ i, ((μ θ {ω | X i ω = 1}).toReal) = θ.val) :
+    (hXbern : ∀ θ, ∀ i, ProbabilityTheory.IsBernoulliRV (X i) (μ θ) θ.val) :
     ∀ θ : {q : ℝ // q ∈ Set.Ioo (0 : ℝ) 1},
       Supermartingale (bernoulliNullLR X p0 θ.val) (Filtration.natural X hXstrong) (μ θ) ∧
         0 ≤ bernoulliNullLR X p0 θ.val ∧
         ∫ ω, bernoulliNullLR X p0 θ.val 0 ω ∂(μ θ) = 1 := by
   intro θ
   have hq : θ.val ∈ Set.Ioo (0 : ℝ) 1 := θ.property
-  have _hX01q : ∀ i, μ θ {ω | X i ω = 0 ∨ X i ω = 1} = 1 := hX01 θ
+  have hX01 : ∀ i, μ θ {ω | X i ω = 0 ∨ X i ω = 1} = 1 := by
+    intro i
+    have hset : {ω | X i ω = 0 ∨ X i ω = 1} =
+        (X i ⁻¹' {0}) ∪ (X i ⁻¹' {1}) := by
+      ext ω
+      simp [Set.mem_preimage]
+    have hdisj : Disjoint (X i ⁻¹' {0}) (X i ⁻¹' {1}) :=
+      Set.disjoint_left.mpr (fun ω h0 h1 => by simp [Set.mem_preimage] at h0 h1; omega)
+    have hmeas1 : MeasurableSet (X i ⁻¹' {1}) :=
+      (hXstrong i).measurable (measurableSet_singleton 1)
+    rw [hset, measure_union hdisj hmeas1, (hXbern θ i).measure_zero,
+      (hXbern θ i).measure_one,
+      ← ENNReal.ofReal_add (sub_nonneg.mpr hq.2.le) hq.1.le, sub_add_cancel]
+    exact ENNReal.ofReal_one
+  have hX1 : ∀ i, ((μ θ {ω | X i ω = 1}).toReal) = θ.val := by
+    intro i
+    have h := (hXbern θ i).measure_one
+    have hset : {ω | X i ω = 1} = X i ⁻¹' {1} := by
+      ext ω
+      simp
+    rw [hset, h, ENNReal.toReal_ofReal hq.1.le]
+  have hae : ∀ i, ∀ᵐ ω ∂(μ θ), X i ω = 0 ∨ X i ω = 1 := by
+    intro i
+    rw [ae_iff]
+    have hmeas : MeasurableSet {ω | X i ω = 0 ∨ X i ω = 1} := by
+      have h0 : MeasurableSet {ω | X i ω = 0} :=
+        (hXstrong i).measurable (measurableSet_singleton 0)
+      have h1 : MeasurableSet {ω | X i ω = 1} :=
+        (hXstrong i).measurable (measurableSet_singleton 1)
+      exact h0.union h1
+    have hcompl : μ θ {ω | X i ω = 0 ∨ X i ω = 1}ᶜ = 0 := by
+      rw [measure_compl hmeas (measure_ne_top _ _), hX01 i, measure_univ]
+      simp
+    have hset : {ω | ¬ (X i ω = 0 ∨ X i ω = 1)} =
+        {ω | X i ω = 0 ∨ X i ω = 1}ᶜ := by
+      ext ω
+      simp
+    rw [hset]
+    exact hcompl
   have hnonneg : 0 ≤ bernoulliNullLR X p0 θ.val := by
     intro n ω
     unfold bernoulliNullLR
     apply Finset.prod_nonneg
     intro i hi
-    apply div_nonneg
-    · unfold bernoulliLik
-      by_cases h : X i ω = 1
-      · simp [h, hp0.1.le]
-      · simp [h]
-        linarith [hp0.2]
-    · unfold bernoulliLik
-      by_cases h : X i ω = 1
-      · simp [h, hq.1.le]
-      · simp [h]
-        linarith [hq.2]
+    exact div_nonneg (bernoulliLik_nonneg hp0.1.le hp0.2.le _)
+      (bernoulliLik_nonneg hq.1.le hq.2.le _)
   have hadp : StronglyAdapted (Filtration.natural X hXstrong) (bernoulliNullLR X p0 θ.val) := by
     intro n
     unfold bernoulliNullLR
@@ -376,26 +423,24 @@ theorem bernoulli_null_lr_eProcess
     have hs_meas : MeasurableSet {ω : Ω | X (n+1) ω = 1} := hmeasX (measurableSet_singleton 1)
     set a : ℝ := p0 / θ.val with ha
     set b : ℝ := (1 - p0) / (1 - θ.val) with hb
-    have hZ_eq : Z = fun ω => {ω | X (n+1) ω = 1}.indicator (fun _ => a) ω
+    have hZ_eq : Z =ᵐ[μ θ] fun ω => {ω | X (n+1) ω = 1}.indicator (fun _ => a) ω
         + {ω | X (n+1) ω = 1}ᶜ.indicator (fun _ => b) ω := by
-      funext ω
+      filter_upwards [hae (n + 1)] with ω hω
       simp only [hZ, Set.indicator]
-      by_cases h : X (n+1) ω = 1
-      · simp [h, bernoulliLik, ha]
+      rcases hω with h | h
       · simp [h, bernoulliLik, hb]
+      · simp [h, bernoulliLik, ha]
     have h1 : Integrable ({ω | X (n+1) ω = 1}.indicator (fun _ : Ω => a)) (μ θ) :=
       (integrableOn_const (C := a)).integrable_indicator hs_meas
     have h2 : Integrable ({ω | X (n+1) ω = 1}ᶜ.indicator (fun _ : Ω => b)) (μ θ) :=
       (integrableOn_const (C := b)).integrable_indicator hs_meas.compl
-    have hZint : Integrable Z (μ θ) := by
-      rw [hZ_eq]
-      exact h1.add h2
+    have hZint : Integrable Z (μ θ) := (h1.add h2).congr hZ_eq.symm
     have hZmean : ∫ ω, Z ω ∂(μ θ) = 1 := by
-      rw [hZ_eq, integral_add h1 h2, integral_indicator_const a hs_meas,
+      rw [integral_congr_ae hZ_eq, integral_add h1 h2, integral_indicator_const a hs_meas,
         integral_indicator_const b hs_meas.compl]
       simp only [smul_eq_mul]
       have hq_real : (μ θ).real {ω | X (n+1) ω = 1} = θ.val := by
-        have := hX1 θ (n+1)
+        have := hX1 (n+1)
         simp [Measure.real, this]
       have hcompl : (μ θ).real {ω | X (n+1) ω = 1}ᶜ = 1 - θ.val := by
         rw [probReal_compl_eq_one_sub hs_meas, hq_real]
@@ -489,23 +534,23 @@ theorem bernoulli_null_lr_eProcess
     set a0 : ℝ := p0 / θ.val with ha0
     set b0 : ℝ := (1 - p0) / (1 - θ.val) with hb0
     have hZ0_eq : (fun ω => bernoulliLik p0 (X 0 ω) / bernoulliLik θ.val (X 0 ω))
-        = fun ω => {ω | X 0 ω = 1}.indicator (fun _ => a0) ω
+        =ᵐ[μ θ] fun ω => {ω | X 0 ω = 1}.indicator (fun _ => a0) ω
           + {ω | X 0 ω = 1}ᶜ.indicator (fun _ => b0) ω := by
-      funext ω
+      filter_upwards [hae 0] with ω hω
       simp only [Set.indicator]
-      by_cases h : X 0 ω = 1
-      · simp [h, bernoulliLik, ha0]
+      rcases hω with h | h
       · simp [h, bernoulliLik, hb0]
+      · simp [h, bernoulliLik, ha0]
     have h10 : Integrable ({ω | X 0 ω = 1}.indicator (fun _ : Ω => a0)) (μ θ) :=
       (integrableOn_const (C := a0)).integrable_indicator hs_meas0
     have h20 : Integrable ({ω | X 0 ω = 1}ᶜ.indicator (fun _ : Ω => b0)) (μ θ) :=
       (integrableOn_const (C := b0)).integrable_indicator hs_meas0.compl
     have hZ0mean : ∫ ω, (bernoulliLik p0 (X 0 ω) / bernoulliLik θ.val (X 0 ω)) ∂(μ θ) = 1 := by
-      rw [hZ0_eq, integral_add h10 h20, integral_indicator_const a0 hs_meas0,
+      rw [integral_congr_ae hZ0_eq, integral_add h10 h20, integral_indicator_const a0 hs_meas0,
         integral_indicator_const b0 hs_meas0.compl]
       simp only [smul_eq_mul]
       have hq_real : (μ θ).real {ω | X 0 ω = 1} = θ.val := by
-        have := hX1 θ 0
+        have := hX1 0
         simp [Measure.real, this]
       have hcompl : (μ θ).real {ω | X 0 ω = 1}ᶜ = 1 - θ.val := by
         rw [probReal_compl_eq_one_sub hs_meas0, hq_real]
@@ -535,13 +580,12 @@ theorem bernoulli_anytime_coverage
     {μ : {q : ℝ // q ∈ Set.Ioo (0 : ℝ) 1} → Measure Ω} [∀ θ, IsProbabilityMeasure (μ θ)]
     (hXstrong : ∀ i, StronglyMeasurable (X i))
     (hX_indep : ∀ θ, ProbabilityTheory.iIndepFun X (μ θ))
-    (hX01 : ∀ θ, ∀ i, μ θ {ω | X i ω = 0 ∨ X i ω = 1} = 1)
-    (hX1 : ∀ θ, ∀ i, ((μ θ {ω | X i ω = 1}).toReal) = θ.val)
+    (hXbern : ∀ θ, ∀ i, ProbabilityTheory.IsBernoulliRV (X i) (μ θ) θ.val)
     {α : ℝ} (hα : α ∈ Set.Ioo (0 : ℝ) 1) :
     ∀ θ : {q : ℝ // q ∈ Set.Ioo (0 : ℝ) 1},
       (μ θ).real {ω | ∀ n, θ ∈ confSeqOfEProcess
         (fun s m w => bernoulliNullLR X p0 s.val m w) α n ω} ≥ 1 - α := by
-  have hE := fun θ => bernoulli_null_lr_eProcess hp0 hXstrong hX_indep hX01 hX1 θ
+  have hE := fun θ => bernoulli_null_lr_eProcess hp0 hXstrong hX_indep hXbern θ
   exact anytime_coverage_of_eProcess hα (fun θ => (hE θ).1) (fun θ => (hE θ).2.1)
     (fun θ => le_of_eq (hE θ).2.2)
 end MathlibExt.Probability.Statistics
