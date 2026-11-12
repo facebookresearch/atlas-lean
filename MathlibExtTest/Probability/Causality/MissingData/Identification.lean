@@ -195,7 +195,8 @@ example (g : Bool → ℝ) :
     ((measurableSet_singleton true).preimage measurable_fst |>.union
       ((measurableSet_singleton true).preimage measurable_snd))
     measurable_fst (measurable_of_finite _) Integrable.of_finite
-    (mar_comp coins resp₂ Prod.fst g) fun x _ => propensity_resp₂_pos x
+    (mar_comp coins resp₂ Prod.fst g)
+    (MissingOutcomes.responsePositivity_iff.mpr fun x _ => propensity_resp₂_pos x)
 
 lemma measurableSet_resp₂ : MeasurableSet resp₂ :=
   (measurableSet_singleton true).preimage measurable_fst |>.union
@@ -230,9 +231,25 @@ example :
   · rw [completeCaseMean, hnum, hPR₂]; norm_num
   · rw [ipwMean_eq_integral_of_mar measurableSet_resp₂ measurable_fst (measurable_of_finite _)
       Integrable.of_finite (mar_comp coins resp₂ Prod.fst fun b => if b then 1 else 0)
-      fun x _ => propensity_resp₂_pos x, hEY]
+      (MissingOutcomes.responsePositivity_iff.mpr fun x _ => propensity_resp₂_pos x), hEY]
 
 /-! ### Boundaries -/
+
+section FiniteResponseMeasure
+
+variable {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (R : Set Ω) (Y : Ω → ℝ)
+
+/-- A zero real-valued measure alone must not be interpreted as no respondents. -/
+example (_h : μ.real R = 0) : True := by
+  fail_if_success
+    have _ : completeCaseMean μ R Y = 0 := completeCaseMean_of_measureReal_eq_zero Y _h
+  trivial
+
+/-- For finite measures, the boundary hypothesis really does say that response is null. -/
+example [IsFiniteMeasure μ] (h : μ.real R = 0) : μ R = 0 :=
+  (measureReal_eq_zero_iff).1 h
+
+end FiniteResponseMeasure
 
 /-- **No respondents**: with `R = ∅`, MCAR holds vacuously but `P(R) = 0`, and the complete-case
 mean is the junk value `0`, not `E[Y] = 1`. -/
