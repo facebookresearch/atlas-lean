@@ -11,7 +11,7 @@ module
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import MathlibExt.Economics.SecondWelfareTheorem
+public import MathlibExt.Economics.Consumer.ExpenditureDuality
 import Mathlib.Tactic.Linarith
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 
@@ -31,9 +31,8 @@ and a feasible allocation `x` such that each `x i` is affordable at `p` and
 maximizes `utility i` over the nonnegative bundles that are affordable at `p`.
 Every good with positive price clears: aggregate consumption equals aggregate endowment.
 The first welfare theorem: if every utility is locally nonsatiated on the
-nonnegative orthant (`SecondWelfareTheorem.LocallyNonsatiated`, shared with the
-second welfare theorem), every Walrasian equilibrium allocation is Pareto
-efficient. Existence of an equilibrium is not
+nonnegative orthant (`Consumer.LocallyNonsatiated` on the consumption set), every
+Walrasian equilibrium allocation is Pareto efficient. Existence of an equilibrium is not
 assumed or claimed, and no convexity or continuity of utilities is used.
 
 ## References
@@ -73,9 +72,8 @@ def IsWalrasianEquilibrium {I L : Type*} [Fintype I] [Fintype L]
     (E : ExchangeEconomy I L) (p : L → ℝ) (x : I → L → ℝ) : Prop :=
   0 ≤ p ∧ p ≠ 0 ∧ E.IsFeasible x ∧
     (∀ l, 0 < p l → (∑ i, x i) l = (∑ i, E.endowment i) l) ∧
-    ∀ i, p ⬝ᵥ x i ≤ p ⬝ᵥ E.endowment i ∧
-      ∀ y : L → ℝ, 0 ≤ y → p ⬝ᵥ y ≤ p ⬝ᵥ E.endowment i →
-        E.utility i y ≤ E.utility i (x i)
+    ∀ i, _root_.Economics.Consumer.IsMarshallianDemand (E.utility i) {z | 0 ≤ z}
+      p (p ⬝ᵥ E.endowment i) (x i)
 
 /-- `x` is Pareto efficient: it is feasible and no feasible allocation makes
 every agent at least as well off and some agent strictly better off. -/
@@ -88,7 +86,8 @@ def IsParetoEfficient {I L : Type*} [Fintype I] (E : ExchangeEconomy I L)
 /-- **First welfare theorem.** With locally nonsatiated utilities, every
 Walrasian equilibrium allocation of an exchange economy is Pareto efficient. -/
 theorem isParetoEfficient_of_isWalrasianEquilibrium {I L : Type*} [Fintype I] [Fintype L]
-    (E : ExchangeEconomy I L) (hLNS : ∀ i, SecondWelfareTheorem.LocallyNonsatiated (E.utility i))
+    (E : ExchangeEconomy I L)
+    (hLNS : ∀ i, Consumer.LocallyNonsatiated (E.utility i) {z | 0 ≤ z})
     {p : L → ℝ} {x : I → L → ℝ} (hx : E.IsWalrasianEquilibrium p x) :
     E.IsParetoEfficient x := by
   obtain ⟨hp, -, hxfeas, -, hopt⟩ := hx
@@ -97,7 +96,7 @@ theorem isParetoEfficient_of_isWalrasianEquilibrium {I L : Type*} [Fintype I] [F
   have hstrict : p ⬝ᵥ E.endowment j < p ⬝ᵥ y j := by
     by_contra hle
     have hle' : p ⬝ᵥ y j ≤ p ⬝ᵥ E.endowment j := le_of_not_gt hle
-    have h := (hopt j).2 (y j) (hyfeas.1 j) hle'
+    have h := (hopt j).2 (y j) ⟨hyfeas.1 j, hle'⟩
     exact absurd h (not_le_of_gt hlt)
   have hspend : ∀ i, p ⬝ᵥ E.endowment i ≤ p ⬝ᵥ y i := by
     intro i
@@ -140,7 +139,7 @@ theorem isParetoEfficient_of_isWalrasianEquilibrium {I L : Type*} [Fintype I] [F
     have hzaff : p ⬝ᵥ z ≤ p ⬝ᵥ E.endowment i := by
       have hle_abs : p ⬝ᵥ (z - y i) ≤ |p ⬝ᵥ (z - y i)| := le_abs_self _
       linarith [hdecomp, hbound, hsmall, hle_abs]
-    have h := (hopt i).2 z (fun l => hz_nonneg l) hzaff
+    have h := (hopt i).2 z ⟨hz_nonneg, hzaff⟩
     exact lt_irrefl _ ((hbetter.trans_le h).trans_le (hge i))
   have hsum : ∑ i, p ⬝ᵥ E.endowment i < ∑ i, p ⬝ᵥ y i :=
     Finset.sum_lt_sum (fun i _ => hspend i) ⟨j, Finset.mem_univ j, hstrict⟩

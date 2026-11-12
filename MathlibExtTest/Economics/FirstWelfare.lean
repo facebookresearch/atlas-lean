@@ -64,7 +64,7 @@ def exLinEcon : ExchangeEconomy (Fin 2) (Fin 2) where
   utility := fun _ y => y 0 + y 1
 
 theorem exLin_locallyNonsatiated :
-    ∀ i, SecondWelfareTheorem.LocallyNonsatiated (exLinEcon.utility i) := by
+    ∀ i, Consumer.LocallyNonsatiated (exLinEcon.utility i) {z | 0 ≤ z} := by
   intro i x hx ε hε
   refine ⟨fun l => x l + ε / 2, ?_, ?_, ?_⟩
   · intro l
@@ -92,15 +92,15 @@ theorem exLin_isWalrasian : exLinEcon.IsWalrasianEquilibrium exPrice exAlloc := 
   refine ⟨exPrice_nonneg, exPrice_ne_zero, exAlloc_feasible, fun _ _ => rfl, ?_⟩
   rw [Fin.forall_fin_two]
   constructor
-  · refine ⟨le_rfl, ?_⟩
-    intro y _ hy_afford
+  · refine ⟨⟨exAlloc_feasible.1 _, le_rfl⟩, ?_⟩
+    intro y ⟨_, hy_afford⟩
     have hend : exPrice ⬝ᵥ exLinEcon.endowment 0 = 1 := exEndow_dot0
     rw [exPrice_dot, hend] at hy_afford
     show y 0 + y 1 ≤ exAlloc 0 0 + exAlloc 0 1
     rw [exAlloc_val0]
     exact hy_afford
-  · refine ⟨le_rfl, ?_⟩
-    intro y _ hy_afford
+  · refine ⟨⟨exAlloc_feasible.1 _, le_rfl⟩, ?_⟩
+    intro y ⟨_, hy_afford⟩
     have hend : exPrice ⬝ᵥ exLinEcon.endowment 1 = 1 := exEndow_dot1
     rw [exPrice_dot, hend] at hy_afford
     show y 0 + y 1 ≤ exAlloc 1 0 + exAlloc 1 1
@@ -125,12 +125,12 @@ theorem exSat_isWalrasian : exSatEcon.IsWalrasianEquilibrium exPrice exAlloc := 
   refine ⟨exPrice_nonneg, exPrice_ne_zero, hfeas, fun _ _ => rfl, ?_⟩
   rw [Fin.forall_fin_two]
   constructor
-  · refine ⟨le_rfl, ?_⟩
-    intro y _ _
+  · refine ⟨⟨exAlloc_feasible.1 _, le_rfl⟩, ?_⟩
+    intro y _
     simp only [exSat_util0]
     exact le_rfl
-  · refine ⟨le_rfl, ?_⟩
-    intro y _ hy_afford
+  · refine ⟨⟨exAlloc_feasible.1 _, le_rfl⟩, ?_⟩
+    intro y ⟨_, hy_afford⟩
     have hend : exPrice ⬝ᵥ exSatEcon.endowment 1 = 1 := exEndow_dot1
     rw [exPrice_dot, hend] at hy_afford
     simp only [exSat_util1, exAlloc_val1]
@@ -207,6 +207,28 @@ theorem exSlack_not_isWalrasian : ¬ exSlackEcon.IsWalrasianEquilibrium 1 0 := b
   intro h
   have hclear := h.2.2.2.1 () (by norm_num)
   norm_num [exSlackEcon] at hclear
+
+/-- The canonical demand predicate preserves every original equilibrium clause. -/
+example {I L : Type*} [Fintype I] [Fintype L] (E : ExchangeEconomy I L)
+    (p : L → ℝ) (x : I → L → ℝ) :
+    E.IsWalrasianEquilibrium p x ↔
+      0 ≤ p ∧ p ≠ 0 ∧ E.IsFeasible x ∧
+        (∀ l, 0 < p l → (∑ i, x i) l = (∑ i, E.endowment i) l) ∧
+        ∀ i, p ⬝ᵥ x i ≤ p ⬝ᵥ E.endowment i ∧
+          ∀ y : L → ℝ, 0 ≤ y → p ⬝ᵥ y ≤ p ⬝ᵥ E.endowment i →
+            E.utility i y ≤ E.utility i (x i) := by
+  constructor
+  · rintro ⟨hp, hp0, hfeas, hclear, hopt⟩
+    exact ⟨hp, hp0, hfeas, hclear,
+      fun i => ⟨(hopt i).1.2, fun y hy hcost => (hopt i).2 y ⟨hy, hcost⟩⟩⟩
+  · rintro ⟨hp, hp0, hfeas, hclear, hopt⟩
+    exact ⟨hp, hp0, hfeas, hclear,
+      fun i => ⟨⟨hfeas.1 i, (hopt i).1⟩, fun y hy => (hopt i).2 y hy.1 hy.2⟩⟩
+
+/-- Equilibrium demand is directly usable by the consumer API. -/
+example : _root_.Economics.Consumer.IsMarshallianDemand (exLinEcon.utility 0)
+    {z | 0 ≤ z} exPrice (exPrice ⬝ᵥ exLinEcon.endowment 0) (exAlloc 0) :=
+  exLin_isWalrasian.2.2.2.2 0
 
 end Examples
 
