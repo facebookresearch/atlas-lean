@@ -29,6 +29,8 @@ TCS canon roadmap.
 Source: D. S. Johnson, Near-Optimal Bin Packing Algorithms (1973).
 -/
 
+namespace Cslib.Algorithms.Lean.Online.BinPacking
+
 open Finset
 
 /-- Next Fit bin packing with unit bins: scan the items keeping the
@@ -131,10 +133,9 @@ private theorem list_sum_le_of_feasible (sizes : List ℝ) (B : ℕ) (a : ℕ �
 
 /-- Next Fit uses at most twice as many bins as any feasible packing: `B` is the bin count of
 an arbitrary feasible assignment, not the optimal (least) such count, which is not defined
-here. Under the stated size assumptions, one bin per item is always feasible, so the item
-count is an upper bound on the least feasible bin count, not a lower bound. -/
+here. Positivity and feasibility give the total-size bound used in the proof. -/
 theorem nextFit_le_two_mul_opt {sizes : List ℝ}
-    (hpos : ∀ x ∈ sizes, 0 < x) (hle : ∀ x ∈ sizes, x ≤ 1)
+    (hpos : ∀ x ∈ sizes, 0 < x)
     {B : ℕ} {a : ℕ → ℕ} (hfeas : FeasibleAssignment sizes B a) :
     nextFitBins sizes ≤ 2 * B := by
   cases sizes with
@@ -163,3 +164,5 @@ theorem nextFit_le_two_mul_opt {sizes : List ℝ}
         linarith
       exact Nat.cast_lt.mp hcast
     omega
+
+end Cslib.Algorithms.Lean.Online.BinPacking

@@ -8,17 +8,19 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Combinatorics.BinPacking
+public import CSLibExt.Algorithms.Lean.Online.BinPacking
 
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
+open Cslib.Algorithms.Lean.Online.BinPacking
+
 /-- Boundary check: the bound instantiates for three items packed
 feasibly into one bin, giving `nextFit ≤ 2`. -/
-example {sizes : List ℝ} (hpos : ∀ x ∈ sizes, 0 < x) (hle : ∀ x ∈ sizes, x ≤ 1)
+example {sizes : List ℝ} (hpos : ∀ x ∈ sizes, 0 < x)
     {a : ℕ → ℕ} (hfeas : FeasibleAssignment sizes 1 a) :
     nextFitBins sizes ≤ 2 * 1 :=
-  nextFit_le_two_mul_opt hpos hle hfeas
+  nextFit_le_two_mul_opt hpos hfeas
 
 /-- The empty list needs no bins: its Next Fit count is `0` by the
 defining equation. -/
@@ -75,7 +77,6 @@ theorem half_half_half_feasible :
 
 /-- Concrete instance of the bound: the three-half list packs feasibly into two
 bins, so Next Fit uses at most four bins. -/
-example (hpos : ∀ x ∈ ([1 / 2, 1 / 2, 1 / 2] : List ℝ), 0 < x)
-    (hle : ∀ x ∈ ([1 / 2, 1 / 2, 1 / 2] : List ℝ), x ≤ 1) :
+example (hpos : ∀ x ∈ ([1 / 2, 1 / 2, 1 / 2] : List ℝ), 0 < x) :
     nextFitBins [1 / 2, 1 / 2, 1 / 2] ≤ 2 * 2 :=
-  nextFit_le_two_mul_opt hpos hle half_half_half_feasible
+  nextFit_le_two_mul_opt hpos half_half_half_feasible
