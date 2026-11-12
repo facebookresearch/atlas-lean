@@ -12,6 +12,7 @@ public import CSLibExt.Bioinformatics.Alignment.ScoreSignificance.GumbelTail
 public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Probability.StrongLaw
 public import Mathlib.Probability.Moments.IntegrableExpMul
+public import Mathlib.Probability.Process.HittingTime
 
 /-!
 # Ladder input from the Cramér conditions
@@ -29,8 +30,9 @@ the hypothesis `LadderInput`, and so turns that hypothesis into a theorem.
   (`IsLadderGood`), `excursionHeight_le_maxSegmentScore` and `maxSegmentScore_le_of_forall` give
   the sandwich `max_{i < Nₙ} Yᵢ ≤ Mₙ ≤ max_{i ≤ Nₙ} Yᵢ` for the maximal segment score.
 * Stopping time. `measurableSet_descLadderEpoch_eq`: `{τ₋ = t}` is determined by the first `t`
-  scores; `isStoppingTime_descLadderEpoch`: `τ₋` (with value `⊤` if it is infinite) is a
-  stopping time for the natural filtration of the score process.
+  scores; `descLadderEpoch_eq_hittingAfter`: `τ₋` (with value `⊤` if it is infinite) is
+  Mathlib's `hittingAfter` of `(-∞, 0)` after time `1`; `isStoppingTime_descLadderEpoch`: it is
+  a stopping time for the natural filtration of the score process.
 * Strong Markov property. `infinitePi_strongMarkov` (canonical i.i.d. space) and
   `CramerScores.strongMarkov`: the path restarted at `τ₋` is independent of every event
   determined before `τ₋` and has the law of the original path
@@ -70,11 +72,14 @@ null event `¬ HasDescLadder`.
 
 Reuse search (base `547b71899`): Mathlib v4.35.0, CSLib and the Atlas libraries were searched
 for ladder epochs, strong Markov property of random walks, renewal counting processes and
-stopping times of i.i.d. sequences. Mathlib has `IsStoppingTime`, `Filtration.natural`,
-`Measure.infinitePi`, `strong_law_ae`, Chernoff (`measure_ge_le_exp_mul_mgf`) and
-`indep_iSup_of_disjoint`, all reused; it has no strong Markov property for random walks and no
-renewal theorem. `segmentScore`, `maxSegmentScore`, `CramerScores` and `LadderInput` come from
-`GumbelTail`.
+stopping times of i.i.d. sequences. Mathlib has `IsStoppingTime`, `Filtration.natural`, the
+hitting time `hittingAfter` with `Adapted.isStoppingTime_hittingAfter`, `Measure.infinitePi`,
+`strong_law_ae`, Chernoff (`measure_ge_le_exp_mul_mgf`) and `indep_iSup_of_disjoint`, all
+reused. `descLadderEpoch` is the `ℕ`-valued form of the hitting time of `(-∞, 0)` after time
+`1` by the walk (`descLadderEpoch_eq_hittingAfter`); the `ℕ`-valued form is kept because the
+shift recursion `iterLadder` and the sums `T_k` need finite values. Mathlib has no strong
+Markov property for random walks and no renewal theorem. `segmentScore`, `maxSegmentScore`,
+`CramerScores` and `LadderInput` come from `GumbelTail`.
 
 Not covered: the renewal theorem for the excursion-height tail `P(Y > t) ~ C e^{-θ t}` (the
 remaining hypothesis of `NonlatticeRenewalInput` / `LatticeRenewalInput`), and the
@@ -406,24 +411,29 @@ theorem pastMeasurableSpace_mono : Monotone pastMeasurableSpace := fun _ t hst =
       (lt_of_lt_of_le (Set.mem_Iio.1 hj) hst)
 
 open Classical in
+/-- `τ₋` is Mathlib's hitting time of `(-∞, 0)` after time `1` by the walk
+`S_k = x 0 + ⋯ + x (k - 1)`, with value `⊤` when the walk never drops below `0`. -/
+theorem descLadderEpoch_eq_hittingAfter (x : ℕ → ℝ) :
+    (if HasDescLadder x then (descLadderEpoch x : WithTop ℕ) else ⊤) =
+      hittingAfter (fun k (x : ℕ → ℝ) => ∑ i ∈ range k, x i) (Set.Iio 0) 1 x := by
+  simp only [hittingAfter, HasDescLadder, descLadderEpoch, Set.mem_Iio, Nat.one_le_iff_ne_zero,
+    Nat.pos_iff_ne_zero]
+  split_ifs <;> rfl
+
+open Classical in
 /-- **The first descending ladder epoch is a stopping time** in Mathlib's sense, for the
 natural filtration `σ(x 0, …, x t)` of the score process, with value `⊤` when the walk never
-drops below `0`. -/
+drops below `0`; derived from `Adapted.isStoppingTime_hittingAfter`. -/
 theorem isStoppingTime_descLadderEpoch :
     IsStoppingTime (Filtration.natural (fun i (x : ℕ → ℝ) => x i)
       fun i => (measurable_pi_apply i).stronglyMeasurable)
       fun x => if HasDescLadder x then (descLadderEpoch x : WithTop ℕ) else ⊤ := by
-  intro t
-  have hle : pastMeasurableSpace (t + 1) ≤ Filtration.natural (fun i (x : ℕ → ℝ) => x i)
-      (fun i => (measurable_pi_apply i).stronglyMeasurable) t :=
-    iSup₂_le fun j hj => le_iSup₂ (f := fun j (_ : j ≤ t) =>
-      MeasurableSpace.comap (fun x : ℕ → ℝ => x j) inferInstance) j
-        (Nat.lt_succ_iff.1 (Set.mem_Iio.1 hj))
-  convert hle _ (Finset.measurableSet_biUnion (range (t + 1)) fun j hj =>
-    pastMeasurableSpace_mono (Finset.mem_range.1 hj).le _ (measurableSet_descLadderEpoch_eq j))
-    using 1
-  ext x
-  by_cases hx : HasDescLadder x <;> simp [hx]
+  simp_rw [descLadderEpoch_eq_hittingAfter]
+  refine Adapted.isStoppingTime_hittingAfter (fun k => ?_) measurableSet_Iio
+  refine (measurable_past_sum (Nat.le_succ k)).mono ?_ le_rfl
+  exact iSup₂_le fun j hj => le_iSup₂ (f := fun j (_ : j ≤ k) =>
+    MeasurableSpace.comap (fun x : ℕ → ℝ => x j) inferInstance) j
+      (Nat.lt_succ_iff.1 (Set.mem_Iio.1 hj))
 
 theorem measurableSet_hasDescLadder : MeasurableSet {x : ℕ → ℝ | HasDescLadder x} := by
   have : {x : ℕ → ℝ | HasDescLadder x} =

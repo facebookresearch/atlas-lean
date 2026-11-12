@@ -134,6 +134,13 @@ example : IsStoppingTime (Filtration.natural (fun i (x : ℕ → ℝ) => x i)
       fun x => if HasDescLadder x then (descLadderEpoch x : WithTop ℕ) else ⊤ :=
   isStoppingTime_descLadderEpoch
 
+/-- On the scores `1, -2, 0, …`, Mathlib's hitting time of `(-∞, 0)` after time `1` is `2`. -/
+example : hittingAfter (fun k (x : ℕ → ℝ) => ∑ i ∈ range k, x i) (Set.Iio 0) 1 x₁ = 2 := by
+  classical
+  have h : HasDescLadder x₁ := ⟨2, by norm_num, by norm_num [x₁, sum_range_succ]⟩
+  rw [← descLadderEpoch_eq_hittingAfter]
+  simp [h, descLadderEpoch_x₁]
+
 /-! ### A concrete Cramér score sequence: `±1` steps with `P(X = 1) = 1/4` -/
 
 /-- The law of a `±1` score with `P(X = 1) = 1/4`, `P(X = -1) = 3/4`. -/
