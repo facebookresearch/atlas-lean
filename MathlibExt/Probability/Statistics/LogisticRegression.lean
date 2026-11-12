@@ -15,8 +15,6 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Positivity
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Linarith
 
 /-!
 # Logistic negative log-likelihood is convex in coefficients
@@ -89,53 +87,56 @@ summand is the scalar softplus composed with the linear map
 `β ↦ x_i ⬝ β`, minus a linear term; a sum of convex functions is convex. -/
 theorem convexOn_logisticNLL {n m : ℕ} (X : Fin n → Fin m → ℝ) (y : Fin n → ℝ) :
     ConvexOn ℝ Set.univ (logisticNLL X y) := by
-  refine ⟨convex_univ, ?_⟩
-  intro β₁ _ β₂ _ a b ha hb hab
-  simp only [logisticNLL, smul_eq_mul]
-  have hlin : ∀ i : Fin n, (∑ j, X i j * (a • β₁ + b • β₂) j)
-      = a * (∑ j, X i j * β₁ j) + b * (∑ j, X i j * β₂ j) := by
+  set L : Fin n → ((Fin m → ℝ) →ₗ[ℝ] ℝ) :=
+    fun i => ∑ j : Fin m, X i j • LinearMap.proj j with hLdef
+  have hL : ∀ (i : Fin n) (β : Fin m → ℝ), (L i) β = ∑ j, X i j * β j := by
+    intro i β
+    simp [hLdef]
+  have hsoft : ∀ i : Fin n, ConvexOn ℝ Set.univ
+      (fun β : Fin m → ℝ => Real.log (1 + Real.exp ((L i) β))) := by
     intro i
-    have h1 : ∀ j : Fin m, X i j * (a • β₁ + b • β₂) j
-        = a * (X i j * β₁ j) + b * (X i j * β₂ j) := by
-      intro j
-      simp [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-      ring
-    calc ∑ j, X i j * (a • β₁ + b • β₂) j
-        = ∑ j, (a * (X i j * β₁ j) + b * (X i j * β₂ j)) :=
-          Finset.sum_congr rfl (fun j _ => h1 j)
-      _ = a * (∑ j, X i j * β₁ j) + b * (∑ j, X i j * β₂ j) := by
-          rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
-  have hpt : ∀ i : Fin n,
-      (Real.log (1 + Real.exp (∑ j, X i j * (a • β₁ + b • β₂) j))
-        - y i * ∑ j, X i j * (a • β₁ + b • β₂) j)
-      ≤ a * (Real.log (1 + Real.exp (∑ j, X i j * β₁ j)) - y i * ∑ j, X i j * β₁ j)
-        + b * (Real.log (1 + Real.exp (∑ j, X i j * β₂ j)) - y i * ∑ j, X i j * β₂ j) := by
+    have h := convexOn_log_one_add_exp.comp_linearMap (L i)
+    rw [Set.preimage_univ] at h
+    exact h.congr (fun β _ => rfl)
+  have hlinmap : ∀ i : Fin n, ConcaveOn ℝ Set.univ
+      (fun β : Fin m → ℝ => y i * ((L i) β)) := by
     intro i
-    have hS := convexOn_log_one_add_exp.2 (Set.mem_univ (∑ j, X i j * β₁ j))
-      (Set.mem_univ (∑ j, X i j * β₂ j)) ha hb hab
-    simp only [smul_eq_mul] at hS
-    rw [hlin i]
-    have hL : y i * (a * (∑ j, X i j * β₁ j) + b * (∑ j, X i j * β₂ j))
-        = a * (y i * (∑ j, X i j * β₁ j)) + b * (y i * (∑ j, X i j * β₂ j)) := by ring
-    have hgoal : a * (Real.log (1 + Real.exp (∑ j, X i j * β₁ j))
-          - y i * ∑ j, X i j * β₁ j)
-        + b * (Real.log (1 + Real.exp (∑ j, X i j * β₂ j)) - y i * ∑ j, X i j * β₂ j)
-        = (a * Real.log (1 + Real.exp (∑ j, X i j * β₁ j))
-          + b * Real.log (1 + Real.exp (∑ j, X i j * β₂ j)))
-          - (a * (y i * (∑ j, X i j * β₁ j)) + b * (y i * (∑ j, X i j * β₂ j))) := by ring
-    rw [hgoal, ← hL]
-    exact sub_le_sub_right hS _
-  calc (∑ i, (Real.log (1 + Real.exp (∑ j, X i j * (a • β₁ + b • β₂) j))
-        - y i * ∑ j, X i j * (a • β₁ + b • β₂) j))
-        ≤ ∑ i, (a * (Real.log (1 + Real.exp (∑ j, X i j * β₁ j))
-          - y i * ∑ j, X i j * β₁ j)
-          + b * (Real.log (1 + Real.exp (∑ j, X i j * β₂ j))
-            - y i * ∑ j, X i j * β₂ j)) :=
-          Finset.sum_le_sum (fun i _ => hpt i)
-      _ = a * (∑ i, (Real.log (1 + Real.exp (∑ j, X i j * β₁ j))
-          - y i * ∑ j, X i j * β₁ j))
-        + b * (∑ i, (Real.log (1 + Real.exp (∑ j, X i j * β₂ j))
-          - y i * ∑ j, X i j * β₂ j)) := by
-          rw [Finset.sum_add_distrib, ← Finset.mul_sum, ← Finset.mul_sum]
+    have h := ((y i) • (L i)).concaveOn convex_univ
+    refine h.congr (fun β _ => ?_)
+    simp [smul_eq_mul]
+  have hsummand : ∀ i : Fin n, ConvexOn ℝ Set.univ
+      (fun β : Fin m → ℝ => Real.log (1 + Real.exp ((L i) β)) - y i * ((L i) β)) := by
+    intro i
+    exact ((hsoft i).sub (hlinmap i)).congr (fun β _ => rfl)
+  have hsum : ∀ s : Finset (Fin n), ConvexOn ℝ Set.univ
+      (fun β : Fin m → ℝ => ∑ i ∈ s,
+        (Real.log (1 + Real.exp ((L i) β)) - y i * ((L i) β))) := by
+    intro s
+    refine Finset.induction ?_ ?_ s
+    · have hfun : (fun β : Fin m → ℝ => ∑ i ∈ (∅ : Finset (Fin n)),
+          (Real.log (1 + Real.exp ((L i) β)) - y i * ((L i) β))) = fun _ => 0 := by
+        funext β
+        simp
+      rw [hfun]
+      exact convexOn_const 0 convex_univ
+    · intro a s has ih
+      have hfun : (fun β : Fin m → ℝ => ∑ i ∈ insert a s,
+            (Real.log (1 + Real.exp ((L i) β)) - y i * ((L i) β)))
+          = (fun β : Fin m → ℝ => Real.log (1 + Real.exp ((L a) β)) - y a * ((L a) β))
+            + (fun β : Fin m → ℝ => ∑ i ∈ s,
+              (Real.log (1 + Real.exp ((L i) β)) - y i * ((L i) β))) := by
+        funext β
+        simp only [Finset.sum_insert has, Pi.add_apply]
+      rw [hfun]
+      exact (hsummand a).add ih
+  have h := hsum Finset.univ
+  have hfun : logisticNLL X y = (fun β : Fin m → ℝ => ∑ i ∈ Finset.univ,
+      (Real.log (1 + Real.exp ((L i) β)) - y i * ((L i) β))) := by
+    funext β
+    simp only [logisticNLL]
+    refine Finset.sum_congr rfl (fun i _ => ?_)
+    rw [hL i β]
+  rw [hfun]
+  exact h
 
 end MathlibExt.Probability.Statistics.LogisticRegression
