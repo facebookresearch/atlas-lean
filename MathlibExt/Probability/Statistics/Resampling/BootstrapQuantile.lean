@@ -9,12 +9,12 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
-public import Mathlib.Probability.CDF
-public import Mathlib.MeasureTheory.Measure.Real
-public import Mathlib.MeasureTheory.Measure.Stieltjes
-public import Mathlib.Topology.Order.LeftRightLim
-public import Mathlib.Topology.Instances.ENNReal.Lemmas
-public import Mathlib.Tactic
+import Mathlib.Probability.CDF
+import Mathlib.MeasureTheory.Measure.Real
+import Mathlib.MeasureTheory.Measure.Stieltjes
+import Mathlib.Topology.Order.LeftRightLim
+import Mathlib.Topology.Instances.ENNReal.Lemmas
+import Mathlib.Tactic.Linarith
 public import MathlibExt.Probability.Quantile
 
 /-!
