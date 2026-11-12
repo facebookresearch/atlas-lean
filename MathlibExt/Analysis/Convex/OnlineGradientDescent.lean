@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.InnerProductSpace.Basic
 public import Mathlib.Analysis.Normed.Group.Basic
+public import Mathlib.Topology.MetricSpace.Lipschitz
 
 @[expose] public section
 
@@ -42,7 +43,7 @@ subgradients satisfying the convexity inequality, the regret against
 `‖x0 - xstar‖² / (2η) + (η / 2) ∑ ‖g t (x t)‖²`. -/
 theorem ogd_regret {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     {proj : E → E} {f : ℕ → E → ℝ} {g : ℕ → E → E} {η : ℝ} (hη : 0 < η)
-    (hproj : ∀ u v, ‖proj u - proj v‖ ≤ ‖u - v‖)
+    (hproj : LipschitzWith 1 proj)
     (xstar : E) (hprojstar : proj xstar = xstar)
     (hsub : ∀ (t : ℕ) (x : E), f t x + @inner ℝ E _ (g t x) (xstar - x) ≤ f t xstar)
     (x0 : E) (T : ℕ) :
@@ -58,11 +59,14 @@ theorem ogd_regret {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
         = proj (ogdIter proj g η x0 t - η • g t (ogdIter proj g η x0 t)) := rfl
     have hnonexp : ‖ogdIter proj g η x0 (t + 1) - xstar‖
         ≤ ‖(ogdIter proj g η x0 t - η • g t (ogdIter proj g η x0 t)) - xstar‖ := by
+      have hdist := hproj.dist_le_mul
+        (ogdIter proj g η x0 t - η • g t (ogdIter proj g η x0 t)) xstar
+      rw [NNReal.coe_one, one_mul, dist_eq_norm, dist_eq_norm] at hdist
       calc ‖ogdIter proj g η x0 (t + 1) - xstar‖
           = ‖proj (ogdIter proj g η x0 t - η • g t (ogdIter proj g η x0 t))
             - proj xstar‖ := by rw [hrec, hprojstar]
         _ ≤ ‖(ogdIter proj g η x0 t - η • g t (ogdIter proj g η x0 t)) - xstar‖ :=
-            hproj _ _
+            hdist
     have hsq : ‖ogdIter proj g η x0 (t + 1) - xstar‖ ^ 2
         ≤ ‖(ogdIter proj g η x0 t - η • g t (ogdIter proj g η x0 t)) - xstar‖ ^ 2 :=
       pow_le_pow_left₀ (norm_nonneg _) hnonexp 2
