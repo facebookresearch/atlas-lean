@@ -28,6 +28,8 @@ is why discrete exact tests are conservative.
 
 * `upperTail_antitone`: the upper tail is antitone in the cutoff.
 * `isValidPValue_upperTailPValue`: if `X` has law `ν`, the upper-tail p-value is valid.
+* `measure_upperTailPValue_le_upperTail`: it is exactly calibrated at every attainable level
+  `upperTail ν k`.
 
 ## References
 
@@ -80,5 +82,21 @@ theorem isValidPValue_upperTailPValue {μ : Measure Ω} {ν : Measure ℕ} [IsPr
   · have hset : {ω | upperTailPValue ν X ω ≤ s} = ∅ :=
       Set.eq_empty_of_forall_notMem fun ω h => hS ⟨X ω, h⟩
     simp [hset]
+
+/-- **Exact calibration at attainable levels.** If the count `X` has law `ν` under `μ`, the
+upper-tail p-value is exactly calibrated at every attainable level `s = upperTail ν k`:
+`μ {upperTailPValue ν X ≤ s} = s`. Between attainable levels it is conservative
+(`isValidPValue_upperTailPValue`).
+
+Source: Lehmann–Romano (2005), Lemma 3.3.1. -/
+theorem measure_upperTailPValue_le_upperTail {μ : Measure Ω} {ν : Measure ℕ}
+    [IsProbabilityMeasure ν] {X : Ω → ℕ} (hX : HasLaw X ν μ) (k : ℕ) :
+    μ {ω | upperTailPValue ν X ω ≤ upperTail ν k} = ENNReal.ofReal (upperTail ν k) := by
+  refine le_antisymm
+    (isValidPValue_upperTailPValue hX _ ⟨measureReal_nonneg, measureReal_le_one⟩) ?_
+  calc ENNReal.ofReal (upperTail ν k) = μ {ω | k ≤ X ω} := by
+        rw [hX.measure_eq (p := (k ≤ ·)) (measurableSet_Ici (a := k)), ← ofReal_measureReal]
+        rfl
+    _ ≤ _ := measure_mono fun ω h => upperTail_antitone ν h
 
 end MathlibExt.Probability.Statistics.ExactTests
