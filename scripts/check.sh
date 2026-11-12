@@ -36,7 +36,7 @@ run_check() {
 
 check_structure() {
   local path
-  for path in CSLibExt CSLibExtTest MathlibExt MathlibExtTest WantedExt scripts; do
+  for path in CSLibExt CSLibExtTest MathlibExt MathlibExtTest PhyslibExt PhyslibExtTest WantedExt scripts; do
     if [[ ! -d "$path" ]]; then
       echo "missing required directory: $path" >&2
       return 1
