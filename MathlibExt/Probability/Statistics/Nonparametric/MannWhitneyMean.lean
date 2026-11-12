@@ -20,6 +20,8 @@ public import Mathlib.MeasureTheory.Measure.Prod
 open Filter Topology MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
+namespace ProbabilityTheory
+
 /-- Measurability of the Mann-Whitney kernel on the product space. -/
 theorem mannWhitneyKernel_measurable :
     Measurable fun p : ℝ × ℝ =>
@@ -35,7 +37,7 @@ theorem mannWhitneyKernel_norm_le_one (p : ℝ × ℝ) :
   split_ifs <;> norm_num
 
 /-- Expected Mann-Whitney count for two independent i.i.d. samples. -/
-theorem mannWhitneyU_mean {m n : ℕ} (hm : 0 < m) (hn : 0 < n)
+theorem mannWhitneyU_mean {m n : ℕ}
     (μx μy : Measure ℝ) [IsProbabilityMeasure μx] [IsProbabilityMeasure μy]
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {Z : Fin m ⊕ Fin n → Ω → ℝ}
@@ -45,10 +47,6 @@ theorem mannWhitneyU_mean {m n : ℕ} (hm : 0 < m) (hn : 0 < n)
     ∫ ω, mannWhitneyU (fun i => Z (Sum.inl i) ω) (fun j => Z (Sum.inr j) ω) ∂μ
       = (m * n : ℝ) * (∫ a, ∫ b,
         (if b < a then (1 : ℝ) else if b = a then 1 / 2 else 0) ∂μy ∂μx) := by
-  -- `hm` and `hn` are part of the pinned statement but play no role in the proof
-  -- (the identity also holds for empty samples); mention them for the linter.
-  have _ := hm
-  have _ := hn
   have hpair_ae : ∀ i j, AEMeasurable (fun ω => (Z (Sum.inl i) ω, Z (Sum.inr j) ω)) μ :=
     fun i j => (hX i).aemeasurable.prodMk (hY j).aemeasurable
   have hinterm : ∀ i j, Integrable (fun ω =>
@@ -94,3 +92,5 @@ theorem mannWhitneyU_mean {m n : ℕ} (hm : 0 < m) (hn : 0 < n)
   simp only [hterm]
   simp only [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   ring
+
+end ProbabilityTheory
