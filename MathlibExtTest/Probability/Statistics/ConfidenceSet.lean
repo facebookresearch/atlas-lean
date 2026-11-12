@@ -145,5 +145,138 @@ example : ∃ (P : Bool → Measure ℕ) (_ : ∀ θ, IsProbabilityMeasure (P θ
     have hset : {x : ℕ | (0 : ℕ) ∈ (∅ : Set ℕ)} = ∅ := by ext x; simp
     rw [hset, measureReal_empty]
     norm_num
+/-- A fair coin on `Bool`. -/
+noncomputable def fairCoin : Measure Bool :=
+  (2 : ENNReal)⁻¹ • (Measure.dirac true + Measure.dirac false)
+
+instance : IsProbabilityMeasure fairCoin := by
+  constructor
+  simp [fairCoin, ← two_mul, ENNReal.mul_inv_cancel two_ne_zero ENNReal.ofNat_ne_top]
+
+/-- Positive: exact non-rejected-image inversion is the reflexive case, over a countable
+parameter space so the estimand-fiber union is measurable. -/
+example {Θ X T : Type*} [MeasurableSpace X] [Countable Θ]
+    (P : Θ → Measure X) [∀ θ, IsProbabilityMeasure (P θ)]
+    (τ : Θ → T)
+    (R : Θ → Set X) (hR : ∀ θ, MeasurableSet (R θ))
+    {α : ℝ} (hα : α ∈ Set.Icc 0 1) (hlev : ∀ θ, (P θ).real (R θ) ≤ α) :
+    ∀ θ, 1 - α ≤ (P θ).real {x | τ θ ∈ {t | ∃ θ', τ θ' = t ∧ x ∉ R θ'}} := by
+  exact MathlibExt.Probability.Statistics.coverage_of_projected_pointTests P τ R hR hα hlev
+    (fun x => {t | ∃ θ', τ θ' = t ∧ x ∉ R θ'}) (fun _ => Set.Subset.rfl) (fun θ => by
+      have heq : {x | τ θ ∈ {t | ∃ θ', τ θ' = t ∧ x ∉ R θ'}}
+          = ⋃ (θ' : Θ), {x | τ θ' = τ θ ∧ x ∉ R θ'} := by
+        ext x
+        simp only [Set.mem_ofPred_eq, Set.mem_iUnion]
+      rw [heq]
+      exact MeasurableSet.iUnion fun θ' => by
+        by_cases h : τ θ' = τ θ
+        · have hset : {x | τ θ' = τ θ ∧ x ∉ R θ'} = (R θ')ᶜ := by
+            ext x
+            simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, h, true_and]
+          rw [hset]
+          exact (hR θ').compl
+        · have hset : {x | τ θ' = τ θ ∧ x ∉ R θ'} = ∅ := by
+            ext x
+            simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_and]
+            exact fun hτ => absurd hτ h
+          rw [hset]
+          exact MeasurableSet.empty)
+
+/-- Boundary: enlarging to everything keeps coverage. -/
+example {Θ X T : Type*} [MeasurableSpace X]
+    (P : Θ → Measure X) [∀ θ, IsProbabilityMeasure (P θ)]
+    (τ : Θ → T)
+    (R : Θ → Set X) (hR : ∀ θ, MeasurableSet (R θ))
+    {α : ℝ} (hα : α ∈ Set.Icc 0 1) (hlev : ∀ θ, (P θ).real (R θ) ≤ α) :
+    ∀ θ, 1 - α ≤ (P θ).real {x | τ θ ∈ (Set.univ : Set T)} := by
+  exact MathlibExt.Probability.Statistics.coverage_of_projected_pointTests P τ R hR hα hlev
+    (fun _ => Set.univ) (fun _ => Set.subset_univ _) (fun _ => MeasurableSet.univ)
+
+/-- Negative: dropping the image inclusion falsifies coverage. Here level holds and
+`α = 1 / 2`, but `false` is not rejected while `C false` is empty, so the projected event
+is empty and `1 - α` is positive. -/
+example :
+    let P : Bool → Measure Bool := fun _ => fairCoin;
+    let τ : Bool → Unit := fun _ => ();
+    let R : Bool → Set Bool := fun _ => {true};
+    let α : ℝ := 1 / 2;
+    let C : Bool → Set Unit := fun _ => ∅;
+    (α ∈ Set.Icc (0 : ℝ) 1) ∧
+    (∀ θ, MeasurableSet (R θ)) ∧
+    (∀ θ, (P θ).real (R θ) ≤ α) ∧
+    ¬ (∀ x, {t | ∃ θ, τ θ = t ∧ x ∉ R θ} ⊆ C x) ∧
+    ¬ (∀ θ, 1 - α ≤ (P θ).real {x | τ θ ∈ C x}) := by
+  have hFairTrue : fairCoin.real {true} = 1 / 2 := by
+    have hmeas : MeasurableSet ({true} : Set Bool) := MeasurableSet.singleton true
+    have h1 : (Measure.dirac true) {true} = 1 := Measure.dirac_apply_of_mem (by simp)
+    have h0 : (Measure.dirac false) {true} = 0 :=
+      (dirac_eq_zero_iff_not_mem hmeas).mpr (by simp)
+    unfold fairCoin
+    rw [measureReal_def, Measure.smul_apply, Measure.add_apply, h1, h0, add_zero,
+      smul_eq_mul, mul_one]
+    simp
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · show (1 / 2 : ℝ) ∈ Set.Icc 0 1
+    constructor <;> norm_num
+  · intro θ
+    exact MeasurableSet.singleton true
+  · intro θ
+    show fairCoin.real {true} ≤ 1 / 2
+    exact hFairTrue.le
+  · intro h
+    have hfalse := h false
+    have hcon := hfalse ⟨false, rfl, by simp⟩
+    simp at hcon
+  · intro hcov
+    have h0 := hcov false
+    have h0' : (1 : ℝ) - 1 / 2 ≤ fairCoin.real ∅ := h0
+    rw [measureReal_empty] at h0'
+    norm_num at h0'
+
+/-- Strict conservativeness: two same-estimand parameters with different rejection regions.
+`R false = ∅` never rejects while `R true = {true}` rejects half the time, so the projected
+set is everything and coverage is `1`, strictly above `1 - 1 / 2`. -/
+example :
+    let P : Bool → Measure Bool := fun _ => fairCoin;
+    let R : Bool → Set Bool := fun b => if b then {true} else ∅;
+    let C : Bool → Set Unit := fun _ => {()};
+    (∀ θ, (P θ).real (R θ) ≤ 1 / 2) ∧
+    (∀ θ, 1 - (1 / 2 : ℝ) ≤ (P θ).real {x | (fun _ : Bool => ()) θ ∈ C x}) ∧
+    (∃ θ, (1 / 2 : ℝ) < (P θ).real {x | (fun _ : Bool => ()) θ ∈ C x}) := by
+  have hFairTrue : fairCoin.real {true} = 1 / 2 := by
+    have hmeas : MeasurableSet ({true} : Set Bool) := MeasurableSet.singleton true
+    have h1 : (Measure.dirac true) {true} = 1 := Measure.dirac_apply_of_mem (by simp)
+    have h0 : (Measure.dirac false) {true} = 0 :=
+      (dirac_eq_zero_iff_not_mem hmeas).mpr (by simp)
+    unfold fairCoin
+    rw [measureReal_def, Measure.smul_apply, Measure.add_apply, h1, h0, add_zero,
+      smul_eq_mul, mul_one]
+    simp
+  refine ⟨?_, ?_, ?_⟩
+  · intro θ
+    cases θ
+    · show fairCoin.real ∅ ≤ 1 / 2
+      rw [measureReal_empty]
+      norm_num
+    · show fairCoin.real {true} ≤ 1 / 2
+      exact hFairTrue.le
+  · intro θ
+    have hev : {x : Bool | (fun _ : Bool => ()) θ ∈ (fun _ : Bool => ({()} : Set Unit)) x} =
+        Set.univ := by
+      ext x
+      simp
+    rw [hev]
+    show (1 : ℝ) - 1 / 2 ≤ fairCoin.real Set.univ
+    rw [probReal_univ]
+    norm_num
+  · refine ⟨false, ?_⟩
+    have hev : {x : Bool | (fun _ : Bool => ()) false ∈ (fun _ : Bool => ({()} : Set Unit)) x} =
+        Set.univ := by
+      ext x
+      simp
+    rw [hev]
+    show (1 / 2 : ℝ) < fairCoin.real Set.univ
+    rw [probReal_univ]
+    norm_num
 
 end MathlibExtTest.Probability.Statistics.ConfidenceSet
