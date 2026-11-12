@@ -19,12 +19,15 @@ public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import MathlibExt.Probability.Distributions.CochranIndependence
+public import MathlibExt.Probability.Distributions.GaussianCdf
 
 /-!
 # Law of the known-variance z statistic
 
 For `n > 0` and known nonzero variance, the z statistic over an iid Gaussian
 sample has a standard-unit-variance Gaussian law with the standardized mean.
+Consequently the one-sided rejection set `zTestReject` has probability
+`1 - Φ(c - √n δ / √v)` under a true mean shifted by `δ`.
 -/
 
 @[expose] public section
@@ -77,5 +80,30 @@ theorem hasLaw_zStat {n : ℕ} (hn : 0 < n) (μ μ0 : ℝ) {v : NNReal} (hv : v 
     simp only [zStat, Function.comp_apply]
   rw [hz, hg]
   exact hmul.comp (hsub.comp hmean)
+
+/-- The one-sided z-test rejection set. -/
+noncomputable def zTestReject (n : ℕ) (μ0 : ℝ) (v : NNReal) (c : ℝ) : Set (Fin n → ℝ) :=
+  {x | c < zStat n μ0 v x}
+
+/-- Rejection probability of the one-sided z-test (tail form). -/
+theorem measureReal_zTestReject {n : ℕ} (hn : 0 < n) (μ0 δ c : ℝ) {v : NNReal} (hv : v ≠ 0) :
+    (Measure.pi fun _ : Fin n => gaussianReal (μ0 + δ) v).real (zTestReject n μ0 v c)
+      = 1 - cdf (gaussianReal 0 1) (c - Real.sqrt (n : ℝ) * δ / Real.sqrt (v : ℝ)) := by
+  have h := hasLaw_zStat hn (μ0 + δ) μ0 hv
+  rw [show (μ0 + δ) - μ0 = δ by ring] at h
+  have h2 : (Measure.pi fun _ : Fin n => gaussianReal (μ0 + δ) v).real
+        {x | c < zStat n μ0 v x}
+      = (gaussianReal (Real.sqrt (n : ℝ) * δ / Real.sqrt (v : ℝ)) 1).real {y | c < y} :=
+    h.measureReal_eq (p := fun y => c < y) measurableSet_Ioi
+  have hcompl : {y : ℝ | c < y} = (Set.Iic c)ᶜ := by
+    ext y
+    simp only [Set.mem_ofPred_eq, Set.mem_compl_iff, Set.mem_Iic, not_le]
+  have hstd := cdf_gaussianReal_eq_std (Real.sqrt (n : ℝ) * δ / Real.sqrt (v : ℝ)) c
+    (v := 1) one_ne_zero
+  rw [NNReal.coe_one, Real.sqrt_one, div_one] at hstd
+  change (Measure.pi fun _ : Fin n => gaussianReal (μ0 + δ) v).real
+    {x | c < zStat n μ0 v x}
+      = 1 - cdf (gaussianReal 0 1) (c - Real.sqrt (n : ℝ) * δ / Real.sqrt (v : ℝ))
+  rw [h2, hcompl, probReal_compl_eq_one_sub measurableSet_Iic, ← cdf_eq_real, hstd]
 
 end MathlibExt.Probability.Statistics.Experiment
