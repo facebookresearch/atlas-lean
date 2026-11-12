@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.O01SeawaterStratification
+import PhyslibExt.EarthScience.SeawaterStratification
 
 /-!
 # Seawater-stratification checks
 
-Concrete consumers of `PhyslibExt.EarthScience.O01SeawaterStratification`:
+Concrete consumers of `PhyslibExt.EarthScience.SeawaterStratification`:
 the gradient of the linear profile at `rho0 = 1025, beta = 0.02`, the
 `N^2` identity at `g = 9.81`, and the stable/neutral/unstable sign
 classification.
@@ -34,7 +34,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.O01SeawaterStratification`
+- `PhyslibExt.EarthScience.SeawaterStratification`
 -/
 
 /-- Public shape of the density-gradient theorem. -/
