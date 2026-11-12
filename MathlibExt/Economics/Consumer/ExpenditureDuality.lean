@@ -32,7 +32,7 @@ condition on prices, no continuity of utility and no convexity is needed for thi
 
 ## Main definitions
 
-* `Economics.Consumer.budgetSet`: the budget set `B(p, w)`.
+* `Economics.Consumer.consumerBudgetSet`: the budget set `B(p, w)`.
 * `Economics.Consumer.IsMarshallianDemand`: an affordable utility maximizer.
 * `Economics.Consumer.indirectUtility`: `v(p, w) = sup {u x | x ∈ B(p, w)}`.
 * `Economics.Consumer.expenditure`: `e(p, ū) = inf {p ⬝ᵥ x | x ∈ X, ū ≤ u x}`.
@@ -58,7 +58,7 @@ namespace Economics.Consumer
 
 /-- The budget set `B(p, w) = {x ∈ X | p ⬝ᵥ x ≤ w}`: affordable consumption
 bundles at prices `p` and wealth `w`. -/
-def budgetSet {ι : Type*} [Fintype ι] (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) :
+def consumerBudgetSet {ι : Type*} [Fintype ι] (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) :
     Set (ι → ℝ) :=
   {x | x ∈ X ∧ p ⬝ᵥ x ≤ w}
 
@@ -67,14 +67,14 @@ affordable and no affordable bundle gives strictly higher utility. This is the
 attainment hypothesis of the utility-maximization problem. -/
 def IsMarshallianDemand {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
     (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) (x : ι → ℝ) : Prop :=
-  x ∈ budgetSet X p w ∧ ∀ y ∈ budgetSet X p w, u y ≤ u x
+  x ∈ consumerBudgetSet X p w ∧ ∀ y ∈ consumerBudgetSet X p w, u y ≤ u x
 
 /-- The indirect utility `v(p, w) = sup {u x | x ∈ B(p, w)}`. As a real
 supremum it is meaningful only when the supremum exists; theorems about it
 assume attainment (`IsMarshallianDemand`). -/
 noncomputable def indirectUtility {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
     (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) : ℝ :=
-  sSup (u '' budgetSet X p w)
+  sSup (u '' consumerBudgetSet X p w)
 
 /-- The expenditure function `e(p, ū) = inf {p ⬝ᵥ x | x ∈ X, ū ≤ u x}`: the
 least cost of reaching utility at least `ū`. As a real infimum it is meaningful
@@ -129,7 +129,7 @@ theorem expenditure_indirectUtility_eq {ι : Type*} [Fintype ι]
     have hzcost : p ⬝ᵥ z < w := by
       have hmem := abs_lt.mp hdist'
       linarith
-    have hzbudget : z ∈ budgetSet X p w := ⟨hzX, le_of_lt hzcost⟩
+    have hzbudget : z ∈ consumerBudgetSet X p w := ⟨hzX, le_of_lt hzcost⟩
     have hle2 := hx.2 z hzbudget
     linarith
   have hxmem : (fun z => p ⬝ᵥ z) x ∈ (fun z => p ⬝ᵥ z) '' {z | z ∈ X ∧ u x ≤ u z} :=
