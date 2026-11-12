@@ -41,7 +41,8 @@ theorem matched_discount_const3 : cashFlowSurplus (fun _ => (3 : ℝ)) {0, 1, 2}
   rfl
 
 theorem unmatched_control : cashFlowSurplus (fun _ => (1 : ℝ)) {0} (fun _ => 5) (fun _ => 3) = 2 := by
-  simp only [cashFlowSurplus, Finset.sum_singleton, one_mul]
+  simp only [cashFlowSurplus, _root_.MathlibExt.Economics.Finance.presentValue,
+    Finset.sum_singleton, one_mul]
   norm_num
 
 end MathlibExtTest.Economics.Finance.CashFlowMatching

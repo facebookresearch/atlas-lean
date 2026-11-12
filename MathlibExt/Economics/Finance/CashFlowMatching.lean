@@ -10,17 +10,18 @@ module
 
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Basic.Real.Basic
-import Mathlib.Tactic.NormNum
+public import MathlibExt.Economics.Finance.DatedCashFlow
 
 /-!
 # Exact cash-flow matching
 
 The surplus of two cash-flow streams under a common discount curve `D` is
-`cashFlowSurplus D s a l = ∑ t ∈ s, D t * (a t - l t)`. When the asset and
-liability flows agree at every payment date, the surplus is zero for every
-discount curve (`cashFlowSurplus_eq_zero_of_matched`); no sign or positivity
-condition on `D` is needed. Future unification: with the FI01 `presentValue`,
-this surplus equals `presentValue D s a - presentValue D s l`.
+the asset present value minus the liability present value,
+`cashFlowSurplus D s a l = presentValue D s a - presentValue D s l`, using
+the shared FI01 `presentValue` interface. When the asset and liability flows
+agree at every payment date, the surplus is zero for every discount curve
+(`cashFlowSurplus_eq_zero_of_matched`); no sign or positivity condition on `D`
+is needed.
 
 ## Main results
 
@@ -37,10 +38,10 @@ target FI04.T04.
 namespace MathlibExt.Economics.Finance.CashFlowMatching
 
 /-- Surplus of exactly matched cash-flow streams under a common discount curve `D`:
-the discounted asset flows minus the discounted liability flows, as one sum of
-per-date differences. -/
+the asset present value minus the liability present value, via the shared
+`presentValue` interface. -/
 noncomputable def cashFlowSurplus (D : ℕ → ℝ) (s : Finset ℕ) (a l : ℕ → ℝ) : ℝ :=
-  ∑ t ∈ s, D t * (a t - l t)
+  presentValue D s a - presentValue D s l
 
 /-- **Exact cash-flow matching immunizes against any common discount curve.** If
 asset and liability flows agree at every payment date, the surplus is zero for
@@ -48,9 +49,8 @@ every discount curve `D` (no sign or positivity condition on `D` needed). -/
 theorem cashFlowSurplus_eq_zero_of_matched {D : ℕ → ℝ} {s : Finset ℕ} {a l : ℕ → ℝ}
     (h : ∀ t ∈ s, a t = l t) : cashFlowSurplus D s a l = 0 := by
   unfold cashFlowSurplus
-  have hmul : ∀ t ∈ s, D t * (a t - l t) = D t * a t - D t * l t := fun t _ => mul_sub _ _ _
-  rw [Finset.sum_congr rfl hmul, Finset.sum_sub_distrib]
-  have hsum : (∑ t ∈ s, D t * a t) = ∑ t ∈ s, D t * l t := by
+  have hsum : presentValue D s a = presentValue D s l := by
+    unfold presentValue
     apply Finset.sum_congr rfl
     intro t ht
     rw [h t ht]
