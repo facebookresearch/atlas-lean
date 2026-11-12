@@ -68,7 +68,7 @@ at-risk process `Y` and a deterministic cumulative hazard `α`
   restricted hazard `Λ* = ∫ J dα` (`restrictedHazard`), not `α`, and the Kaplan–Meier
   representation carries an explicit remainder `∫ Ŝ₋ / S · 1{Y = 0} dα`.
 * **Non-predictable integrands.** For an adapted `N`, the integrand `H = ΔN` is adapted but
-  anticipating (adaptation of `N` is a separate hypothesis, not implied by
+  need not be predictable (adaptation of `N` is a separate hypothesis, not implied by
   `IsCountingProcess`); `H • M` is a
   martingale only if `N` jumps solely where `ΔA = 1`
   (`HasUnitJumps.ae_jump_mul_eq_zero_of_martingale`); any unpredicted jump of positive
@@ -688,13 +688,13 @@ theorem martingale_kaplanMeierProcess_div [IsFiniteMeasure μ] {N Y : ℕ → Ω
 
 /-! ### What fails without predictability -/
 
-/-- **An adapted but anticipating integrand breaks the martingale property.** Let `N` have unit
-jumps and `M = martingalePart N` be its compensated martingale. If `N` is adapted, the
-integrand `H_k = ΔN_k` is adapted but not predictable (adaptation is not implied by
+/-- **A necessary condition for integration against the compensated process.** Let `N` have unit
+jumps and `M = martingalePart N` be its compensated process. If `N` is adapted, the
+integrand `H_k = ΔN_k` is adapted but need not be predictable (adaptation is not implied by
 `IsCountingProcess` or `HasUnitJumps`). If `H • M` is nevertheless a martingale, then a.e. `N`
 can only jump
 at steps where its compensator jumps by exactly `1` (`ΔN_{k+1} (1 - ΔA_{k+1}) = 0`): the
-anticipating integral picks up `∑ ΔN (1 - ΔA) ≥ 0`, which has positive mean as soon as `N` has a
+integral picks up `∑ ΔN (1 - ΔA) ≥ 0`, which has positive mean as soon as `N` has a
 jump that is not fully predicted. -/
 theorem HasUnitJumps.ae_jump_mul_eq_zero_of_martingale [IsFiniteMeasure μ] {N : ℕ → Ω → ℝ}
     (hN : HasUnitJumps N) (hint : ∀ n, Integrable (N n) μ)
@@ -722,9 +722,8 @@ theorem HasUnitJumps.ae_jump_mul_eq_zero_of_martingale [IsFiniteMeasure μ] {N :
   rw [← heq]; exact hω
 
 /-- **Counterexample form**: if with positive probability `N` jumps at step `k + 1` while its
-compensator jump is `< 1`, then integrating the anticipating integrand `ΔN` against the
-compensated martingale does **not** give a martingale. Predictability of the integrand is
-therefore necessary for `martingale_stochasticIntegral`. -/
+compensator jump is `< 1`, then integrating `ΔN` against the compensated process does **not**
+give a martingale. -/
 theorem HasUnitJumps.not_martingale_of_unpredicted_jump [IsFiniteMeasure μ] {N : ℕ → Ω → ℝ}
     (hN : HasUnitJumps N) (hint : ∀ n, Integrable (N n) μ) {k : ℕ}
     (hk : μ {ω | N (k + 1) ω - N k ω = 1 ∧ μ[N (k + 1) - N k | ℱ k] ω < 1} ≠ 0) :
