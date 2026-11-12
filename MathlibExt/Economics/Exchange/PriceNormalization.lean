@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Economics.Consumer.DemandHomogeneity
-public import MathlibExt.Economics.Consumer.TwoGood
+public import MathlibExt.Economics.Consumer.MarshallianDemand
 public import MathlibExt.Economics.SecondWelfareTheorem
 
 @[expose] public section
@@ -31,13 +31,15 @@ namespace MathlibExt.Economics.Exchange
 
 /-- `(p, x)` is a Walrasian equilibrium of the exchange economy with utilities `u` and
 endowments `e` (Levin, *General Equilibrium*, §2.1 and Definition 1): endowments lie in `ℝ^L_+`,
-prices are nonnegative, each `x i` is a Marshallian demand of consumer `i` on `ℝ^L_+` at prices
-`p` and wealth `p · e i`, and markets clear, `∑ i, x i = ∑ i, e i`. -/
+prices are nonnegative and nonzero, each `x i` is a Marshallian demand of consumer `i` at
+prices `p` and wealth `p · e i` (against the canonical EC02.T01 `marshallianDemand`), and
+markets clear, `∑ i, x i = ∑ i, e i`. The `p ≠ 0` requirement excludes the degenerate
+zero-price case: with constant utility and zero endowments every other conjunct holds at
+`p = 0`, but such a price cannot be normalized. -/
 def IsWalrasianEquilibrium {I L : Type*} [Fintype I] [Fintype L] (u : I → (L → ℝ) → ℝ)
     (e : I → L → ℝ) (p : L → ℝ) (x : I → L → ℝ) : Prop :=
-  (∀ i, e i ∈ SecondWelfareTheorem.consumptionSet L) ∧ 0 ≤ p ∧
-    (∀ i, Consumer.IsMarshallianDemand (u i) (SecondWelfareTheorem.consumptionSet L) p
-      (p ⬝ᵥ e i) (x i)) ∧
+  (∀ i, e i ∈ SecondWelfareTheorem.consumptionSet L) ∧ 0 ≤ p ∧ p ≠ 0 ∧
+    (∀ i, x i ∈ Consumer.marshallianDemand (u i) p (p ⬝ᵥ e i)) ∧
     ∑ i, x i = ∑ i, e i
 
 /-- Rescaling prices by a positive factor preserves Walrasian equilibrium with the same
@@ -48,16 +50,17 @@ theorem isWalrasianEquilibrium_smul_iff {I L : Type*} [Fintype I] [Fintype L]
   have hnonneg : (0 : L → ℝ) ≤ t • p ↔ (0 : L → ℝ) ≤ p := by
     simp only [Pi.le_def, Pi.zero_apply, Pi.smul_apply, smul_eq_mul]
     exact forall_congr' fun l => mul_nonneg_iff_of_pos_left ht
+  have hne : t • p ≠ 0 ↔ p ≠ 0 := by
+    rw [ne_eq, ne_eq, smul_eq_zero]
+    simp [ht.ne']
   have hdot : ∀ i, (t • p) ⬝ᵥ e i = t * (p ⬝ᵥ e i) := by
     intro i
     rw [smul_dotProduct, smul_eq_mul]
-  have hdem : ∀ i, Consumer.IsMarshallianDemand (u i)
-      (SecondWelfareTheorem.consumptionSet L) (t • p) ((t • p) ⬝ᵥ e i) (x i) ↔
-      Consumer.IsMarshallianDemand (u i)
-        (SecondWelfareTheorem.consumptionSet L) p (p ⬝ᵥ e i) (x i) := by
+  have hdem : ∀ i, x i ∈ Consumer.marshallianDemand (u i) (t • p) ((t • p) ⬝ᵥ e i) ↔
+      x i ∈ Consumer.marshallianDemand (u i) p (p ⬝ᵥ e i) := by
     intro i
     rw [hdot i]
-    exact Consumer.isMarshallianDemand_smul_iff _ _ ht _ _ _
-  simp only [IsWalrasianEquilibrium, hnonneg, hdem]
+    exact Consumer.isMarshallianDemand_smul_iff _ ht _ _ _
+  simp only [IsWalrasianEquilibrium, hnonneg, hne, hdem]
 
 end MathlibExt.Economics.Exchange
