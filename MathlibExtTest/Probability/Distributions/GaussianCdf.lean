@@ -184,4 +184,18 @@ to the main theorem at `μ = 0`, `v = 1`). -/
 example : Monotone (cdf (gaussianReal 0 1)) := by
   exact (strictMono_cdf_gaussianReal 0 one_ne_zero).monotone
 
+/-- Use: the 95th percentile of the standard normal is positive. -/
+example : 0 < cdfQuantile (gaussianReal 0 1) 0.95 := by
+  exact cdfQuantile_gaussianReal_pos ⟨by norm_num, by norm_num⟩
+
+/-- Use: every upper-tail critical value for levels below one half is positive. -/
+example {α : ℝ} (hα : α ∈ Set.Ioo 0 (1 / 2)) :
+    0 < cdfQuantile (gaussianReal 0 1) (1 - α) := by
+  exact cdfQuantile_gaussianReal_pos ⟨by linarith [hα.1, hα.2], by linarith [hα.1]⟩
+
+/-- Boundary: at `u = 1 / 2` the quantile is not positive, so the open bound is necessary. -/
+example : cdfQuantile (gaussianReal 0 1) (1 / 2) ≤ 0 := by
+  have hmem : (1 / 2 : ℝ) ∈ Set.Ioo (0 : ℝ) 1 := ⟨by norm_num, by norm_num⟩
+  exact (cdfQuantile_le_iff (gaussianReal 0 1) hmem).mpr cdf_gaussianReal_zero.ge
+
 end MathlibExt.Probability.GaussianCdf
