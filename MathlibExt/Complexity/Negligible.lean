@@ -31,10 +31,7 @@ natural exponentiation). -/
 def Negligible (f : ℕ → ℝ) : Prop :=
   ∀ c : ℕ, ∃ N : ℕ, ∀ n : ℕ, N ≤ n → |f n| ≤ 1 / (n : ℝ) ^ c
 
-/-- The constant zero function is negligible, and negligible
-functions are closed under addition and under multiplication by
-a polynomially bounded function: if `|g n| ≤ n ^ d` eventually
-and `f` is negligible, then `fun n => g n * f n` is negligible. -/
+/-- Negligible functions are closed under addition. -/
 theorem negligible_add {f g : ℕ → ℝ} (hf : Negligible f) (hg : Negligible g) :
     Negligible (fun n => f n + g n) := by
   intro c
@@ -67,6 +64,7 @@ theorem negligible_add {f g : ℕ → ℝ} (hf : Negligible f) (hg : Negligible 
     _ = 2 / (n : ℝ) ^ (c + 1) := by ring
     _ ≤ 1 / (n : ℝ) ^ c := hkey
 
+/-- A constant multiple of a negligible function is negligible. -/
 theorem negligible_const_mul {f : ℕ → ℝ} (hf : Negligible f) (c : ℝ) :
     Negligible (fun n => c * f n) := by
   intro e
@@ -99,6 +97,8 @@ theorem negligible_const_mul {f : ℕ → ℝ} (hf : Negligible f) (c : ℝ) :
     _ = |c| / (n : ℝ) ^ (e + 1) := by ring
     _ ≤ 1 / (n : ℝ) ^ e := hkey
 
+/-- Multiplication by an eventually polynomially bounded function
+preserves negligibility. -/
 theorem negligible_mul_of_poly_bound {f g : ℕ → ℝ} (hf : Negligible f)
     {d : ℕ} (hg : ∃ N : ℕ, ∀ n : ℕ, N ≤ n → |g n| ≤ (n : ℝ) ^ d) :
     Negligible (fun n => g n * f n) := by
