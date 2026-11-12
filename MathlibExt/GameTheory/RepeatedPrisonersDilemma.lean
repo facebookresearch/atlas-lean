@@ -16,13 +16,15 @@ import Mathlib.Tactic.Ring
 # Grim trigger in the repeated prisoner's dilemma: one-shot incentive inequalities
 
 The stage game is the symmetric prisoner's dilemma with payoffs `temptation` (defect against a
-cooperator), `reward` (mutual cooperation), `punishment` (mutual defection) and `sucker`
-(cooperate against a defector). Grim trigger is the two-state automaton that cooperates in the
-cooperative state, defects in the punishment state, and moves to the punishment state forever
-after any defection. Values are normalized discounted sums `(1 - δ) ∑ₜ δᵗ uₜ`. The stated
-continuation values are `reward` in the cooperative state and `punishment` in the punishment
-state. A one-shot deviation is a single-period change of action followed by a return to the
-strategy.
+cooperator), `reward` (mutual cooperation), `punishment` (mutual defection) and `sucker` (cooperate
+against a defector). Grim trigger is the two-state automaton that cooperates in the cooperative
+state, defects in the punishment state, and moves to the punishment state forever after any
+defection. The stated continuation values are stipulated: `reward` in the cooperative state and
+`punishment` in the punishment state, and `value_bellman` shows that they satisfy the Bellman
+identity of the strategy for every `δ`. No infinite series is defined here; for a discount factor
+`0 ≤ δ < 1` these are the normalized discounted sums `(1 - δ) ∑ₜ δᵗ uₜ` of the constant payoff
+streams that grim trigger generates from each state. A one-shot deviation is a single-period
+change of action followed by a return to the strategy.
 
 ## Main results
 
@@ -85,8 +87,9 @@ def next : GrimState → Bool → Bool → GrimState
   | coop, true, true => coop
   | _, _, _ => punish
 
-/-- The stated continuation values (normalized discounted payoffs) of grim trigger played by
-both players: `reward` in the cooperative state, `punishment` in the punishment state. -/
+/-- The stated continuation values of grim trigger played by both players (stipulated; for
+`0 ≤ δ < 1` the normalized discounted payoffs): `reward` in the cooperative state,
+`punishment` in the punishment state. -/
 def value (g : Payoffs) : GrimState → ℝ
   | coop => g.reward
   | punish => g.punishment
