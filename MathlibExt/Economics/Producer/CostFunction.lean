@@ -29,10 +29,10 @@ function is the attained minimum.
 
 ## Main results
 
-* `Economics.Producer.concaveOn_costFn`
-* `Economics.Producer.costFn_smul`
-* `Economics.Producer.concaveOn_costFn_nonneg`
-* `Economics.Producer.costFn_eq_of_isLeast`
+* `MathlibExt.Economics.Producer.concaveOn_costFn`
+* `MathlibExt.Economics.Producer.costFn_smul`
+* `MathlibExt.Economics.Producer.concaveOn_costFn_nonneg`
+* `MathlibExt.Economics.Producer.costFn_eq_of_isLeast`
 
 ## References
 
@@ -44,7 +44,7 @@ Atlas roadmap target EC06.T03.
 
 @[expose] public section
 
-namespace Economics.Producer
+namespace MathlibExt.Economics.Producer
 
 /-- The cost function `c(w) = inf_{x ∈ V} w ⬝ᵥ x` for the input requirement set `V`, as a real
 `sInf`. It is the economically meaningful value on `costDomain V`. -/
@@ -136,4 +136,4 @@ theorem costFn_eq_of_isLeast {ι : Type*} [Fintype ι] {V : Set (ι → ℝ)} {w
   unfold costFn
   exact h.csInf_eq
 
-end Economics.Producer
+end MathlibExt.Economics.Producer

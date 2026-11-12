@@ -16,7 +16,7 @@ public import MathlibExt.Economics.Producer.CostFunction
 
 namespace MathlibExtTest.Economics.Producer.CostFunction
 
-open _root_.Economics.Producer
+open _root_.MathlibExt.Economics.Producer
 
 /-! ## Test examples -/
 
