@@ -92,7 +92,9 @@ example {Ω 𝒳 : Type*} [MeasurableSpace Ω] [MeasurableSpace 𝒳]
 
 /-- Positive and degenerate training fold in one: constant estimators over a
 one-point (`Unit`, Dirac) training fold collapse the joint law to the
-evaluation law and the tower identity to the merged exact identity. -/
+evaluation law and the tower identity to the merged exact identity.
+This applies `integral_aipwScore_splitfold_tower` itself, then checks
+its conclusion against the merged exact identity. -/
 example {Ω 𝒳 : Type*} [MeasurableSpace Ω] [MeasurableSpace 𝒳]
     [MeasurableSingletonClass 𝒳] {μ : Measure Ω} [Fintype 𝒳]
     [IsProbabilityMeasure μ] {R : Set Ω} (hR : MeasurableSet R)
@@ -106,7 +108,12 @@ example {Ω 𝒳 : Type*} [MeasurableSpace Ω] [MeasurableSpace 𝒳]
   have hprod : Integrable (fun z : Unit × Ω => aipwScore R X π m Y z.2)
       ((Measure.dirac ()) |>.prod μ) :=
     hgi.comp_snd _
-  rw [integral_prod _ hprod, integral_dirac _ ()]
+  have htower := integral_aipwScore_splitfold_tower hR hX hY hYi hmar
+    (fun _ : Unit => m) (fun _ : Unit => π) hprod
+  rw [integral_dirac] at htower
+  have hmerged := (integral_aipwScore_eq hR hX hY hYi hmar π m).2
+  rw [hmerged]
+  exact htower
 
 /-- Positivity is necessary for the zero-bias conclusion, not for the exact
 identity: with an empty response event the true and candidate propensities are
@@ -123,19 +130,5 @@ example :
   rw [integral_dirac _ _, integral_dirac _]
   simp only [aipwScore, Set.indicator_of_notMem hmem, hY1]
   norm_num
-
-/-- Fiber instance: fixed (non-random) nuisances satisfy the fiber identity
-directly, pinning the reduction of the fiber target to the merged theorem. -/
-example {Ω 𝒳 : Type*} [MeasurableSpace Ω] [MeasurableSpace 𝒳]
-    [MeasurableSingletonClass 𝒳] {μ : Measure Ω} [Fintype 𝒳]
-    [IsProbabilityMeasure μ] {R : Set Ω} (hR : MeasurableSet R)
-    {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y)
-    (hYi : Integrable Y μ) (hmar : MissingAtRandom μ R Y X)
-    (π m : 𝒳 → ℝ) (ωₜ : Unit) :
-    ∫ ω, aipwScore R X ((fun _ : Unit => π) ωₜ) ((fun _ : Unit => m) ωₜ) Y ω ∂μ =
-      ∫ ω, Y ω ∂μ +
-      ∑ x, (propensity μ R X x / π x - 1) *
-        (∫ ω in X ⁻¹' {x}, Y ω ∂μ - m x * μ.real (X ⁻¹' {x})) := by
-  exact (integral_aipwScore_eq hR hX hY hYi hmar π m).2
 
 end MathlibExtTest.Probability.Causality.AugmentedIPW.Orthogonality

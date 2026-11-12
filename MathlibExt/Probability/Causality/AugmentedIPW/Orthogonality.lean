@@ -21,9 +21,9 @@ public import Mathlib.MeasureTheory.Integral.Prod
 # Finite-covariate Neyman orthogonality and sample-split AIPW identities
 
 The exact AIPW bias has zero Gateaux derivative at the true nuisances along
-any fixed direction. A sample-split fiber identity (training-fold-fitted
-nuisances held fixed on the evaluation fold) and its tower form give the exact
-finite core of cross-fitting.
+any fixed direction. A sample-split tower identity (training-fold-fitted
+nuisances held fixed on the evaluation fold, with the exact AIPW identity
+applied fiberwise) gives the exact finite core of cross-fitting.
 -/
 
 @[expose] public section
@@ -140,21 +140,6 @@ theorem aipwScore_bias_gateaux_zero {Ω 𝒳 : Type*} [MeasurableSpace Ω]
   have hsum := HasDerivAt.fun_sum (u := Finset.univ) (fun x _ => hterm x)
   simpa using hsum
 
-/-- Fiber identity: with the training outcome fixed, the evaluation-fold exact
-bias identity applies to the fitted nuisances as fixed functions. -/
-theorem integral_aipwScore_splitfold_fiber {Ω 𝒳 Ωₜ : Type*}
-    [MeasurableSpace Ω] [MeasurableSpace Ωₜ]
-    [MeasurableSpace 𝒳] [MeasurableSingletonClass 𝒳]
-    {μ : Measure Ω} [Fintype 𝒳] [IsProbabilityMeasure μ] {R : Set Ω}
-    (hR : MeasurableSet R) {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ}
-    (hY : Measurable Y) (hYi : Integrable Y μ)
-    (hmar : MissingAtRandom μ R Y X)
-    (mhat ehat : Ωₜ → 𝒳 → ℝ) (ωₜ : Ωₜ) :
-    ∫ ω, aipwScore R X (ehat ωₜ) (mhat ωₜ) Y ω ∂μ = ∫ ω, Y ω ∂μ +
-      ∑ x, (propensity μ R X x / ehat ωₜ x - 1) *
-        (∫ ω in X ⁻¹' {x}, Y ω ∂μ - mhat ωₜ x * μ.real (X ⁻¹' {x})) := by
-  exact (integral_aipwScore_eq hR hX hY hYi hmar _ _).2
-
 /-- Tower form: the joint bias over training and evaluation is the training
 mean of the fiber product-bias sums.
 
@@ -162,7 +147,7 @@ Clause map: "two independent folds" is the product law `μₜ.prod μ` (independ
 is the product structure); "fitted nuisances fixed given training" is that
 `mhat`/`ehat` enter the evaluation score only through the training coordinate
 `z.1`; "fiber identity" is the pointwise application of
-`integral_aipwScore_splitfold_fiber` at each training outcome;
+`integral_aipwScore_eq` at each training outcome;
 "tower form" is the conclusion, through Bochner Fubini
 (`MeasureTheory.integral_prod`). "Trained only on training data" is the
 restriction that the score reads the training coordinate solely through
@@ -190,7 +175,7 @@ theorem integral_aipwScore_splitfold_tower {Ω 𝒳 Ωₜ : Type*}
   have hfib : ∀ ωₜ : Ωₜ, (∫ ω, aipwScore R X (ehat ωₜ) (mhat ωₜ) Y ω ∂μ) =
       ∫ ω, Y ω ∂μ + (∑ x, (propensity μ R X x / ehat ωₜ x - 1) *
         (∫ ω in X ⁻¹' {x}, Y ω ∂μ - mhat ωₜ x * μ.real (X ⁻¹' {x}))) :=
-    fun ωₜ => integral_aipwScore_splitfold_fiber hR hX hY hYi hmar mhat ehat ωₜ
+    fun ωₜ => (integral_aipwScore_eq hR hX hY hYi hmar _ _).2
   have hInner : Integrable (fun ωₜ : Ωₜ => ∫ ω, aipwScore R X (ehat ωₜ) (mhat ωₜ) Y ω ∂μ) μₜ :=
     hint.integral_prod_left
   have hSub : Integrable ((fun ωₜ : Ωₜ => ∫ ω, aipwScore R X (ehat ωₜ) (mhat ωₜ) Y ω ∂μ) -
