@@ -18,9 +18,9 @@ public import Mathlib.Data.Finset.Sort
 # Ordinal utility representation of a finite preference (Atlas EC01.T02)
 
 Source: J. Levin and P. Milgrom, *Introduction to Choice Theory*, Stanford Econ 202 notes (2004),
-§3: Definition 5 (`u` represents `≿` iff `x ≿ y ↔ u(x) ≥ u(y)`) and Proposition 3 (if `X` is
-finite, every complete and transitive preference relation on `X` is represented by some
-`u : X → ℝ`).
+§4 (Utility): Definition 5 (`u` represents `≿` iff `x ≿ y ↔ u(x) ≥ u(y)`) and Proposition 3
+(if `X` is finite, every complete and transitive preference relation on `X` is represented by
+some `u : X → ℝ`).
 -/
 
 namespace MathlibExt.Economics
