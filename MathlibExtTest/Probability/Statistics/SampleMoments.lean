@@ -352,4 +352,65 @@ example :
   simp only [h0]
   simp
 
+/-- Positive: `n = 1` recovers the single observation. Invokes the independence-free
+unbiasedness theorem through `IsUnbiased.expect_eq` (beta-reduce the `Unit` application). -/
+example (X : ℕ → Bool → ℝ)
+    (hIdent : ∀ i, IdentDistrib (X i) (X 0) fairCoin fairCoin)
+    (hMemLp : MemLp (X 0) 2 fairCoin) :
+    ∫ ω, FiniteProbability.sampleMean (fun i : Fin 1 => X i ω) ∂fairCoin
+      = ∫ ω, X 0 ω ∂fairCoin := by
+  have h := isUnbiased_sampleMean_family X hIdent hMemLp 1 one_pos
+  exact MathlibExt.Probability.Statistics.EstimationRisk.IsUnbiased.expect_eq h ()
+
+/-- Boundary: constant observations have zero mean shift. -/
+example (c : ℝ) :
+    ∫ _ : Bool, (∑ _i ∈ Finset.range 2, c) / ((2 : ℕ) : ℝ) ∂fairCoin = c := by
+  have hconst : (∑ _i ∈ Finset.range 2, c) / ((2 : ℕ) : ℝ) = c := by
+    rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+    norm_num
+  simp only [hconst, integral_const, measureReal_def,
+    IsProbabilityMeasure.measure_univ, ENNReal.toReal_one, one_smul]
+
+/-- Family-MSE use: the fair-sign `n = 2` mean has MSE `1 / 2 = variance / n`, nonzero.
+Obtains the fixture from `fairSigns_setup`, then invokes the iid family-MSE theorem (the
+`∃ h2` witness is the internally constructed evidence); the only supplied extra is the
+statement shape itself. -/
+example :
+    let μ := Measure.infinitePi fun _ : ℕ => fairCoin;
+    ∃ h2, MathlibExt.Probability.Statistics.EstimationRisk.familyMeanSquaredError
+      (fun ω => FiniteProbability.sampleMean (fun i : Fin 2 => fairSigns i ω))
+      (fun _ : Unit => (⟨μ, inferInstance⟩ : ProbabilityMeasure (ℕ → Bool)))
+      (fun _ => ∫ ω, fairSigns 0 ω ∂μ) h2
+      = fun _ => 1 / 2 := by
+  obtain ⟨hIndep, hIdent, hMemLp, hvar⟩ := fairSigns_setup
+  obtain ⟨h2, hMSE⟩ :=
+    familyMeanSquaredError_sampleMean_of_iid fairSigns hIndep hIdent hMemLp 2 (by norm_num)
+  exact ⟨h2, hMSE.trans (by rw [hvar]; funext u; norm_num)⟩
+
+/-- Heavy-tail boundary: the mean identity needs only L¹, while the MSE half needs L².
+With mere integrability and a common mean (no `MemLp`, no identical distribution, so a
+heavy tail with a common mean, or square-integrable observations with different
+distributions, are covered), the `n`-sample canonical mean is still unbiased, hence its
+expectation is `mu`. Invokes the generalized unbiasedness theorem. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    (X : ℕ → Ω → ℝ)
+    (hInt : ∀ i, Integrable (X i) μ) {mu : ℝ} (hMean : ∀ i, ∫ ω, X i ω ∂μ = mu)
+    (n : ℕ) (hn : 0 < n) :
+    ∫ ω, FiniteProbability.sampleMean (fun i : Fin n => X i ω) ∂μ = mu := by
+  have h := isUnbiased_sampleMean_of_common_mean X hInt hMean n hn
+  exact MathlibExt.Probability.Statistics.EstimationRisk.IsUnbiased.expect_eq h ()
+
+/-- Negative: a dependent duplicate keeps variance `σ²`, not `σ² / n` — and the target's
+iid-based proof does not apply (no `iIndepFun` is available or assumed). With `X i = coinSign`
+for all `i`, the `n = 2` mean is `coinSign` itself with variance `1 ≠ 1 / 2`. -/
+example (hvar : variance coinSign fairCoin = 1) :
+    variance (fun ω => (∑ _i ∈ Finset.range 2, coinSign ω) / ((2 : ℕ) : ℝ)) fairCoin
+      = 1 := by
+  have hfun : (fun ω => (∑ _i ∈ Finset.range 2, coinSign ω) / ((2 : ℕ) : ℝ))
+      = coinSign := by
+    funext ω
+    rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+    norm_num
+  rw [hfun, hvar]
+
 end MathlibExtTest.Probability.Statistics.SampleMoments
