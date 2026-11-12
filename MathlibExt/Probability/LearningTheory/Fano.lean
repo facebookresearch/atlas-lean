@@ -13,7 +13,9 @@ public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 public import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.InformationTheory.KullbackLeibler.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
+public import MathlibExt.InformationTheory.FiniteEntropy
 
 @[expose] public section
 
@@ -30,11 +32,13 @@ Source: Tsybakov, Introduction to Nonparametric Estimation
 
 open Finset
 
-/-- Kullback-Leibler divergence between two PMFs on a finite type
-(in nats, with `0 log 0 = 0`). Only meaningful when `q` dominates
-`p`; the theorem assumes this. -/
-noncomputable def klSum {α : Type*} [Fintype α] (p q : PMF α) : ℝ :=
-  ∑ a, (p a).toReal * Real.log ((p a).toReal / (q a).toReal)
+/-! The pairwise-divergence hypothesis below is stated with Mathlib's
+`InformationTheory.klDiv` on the PMFs' measures, not with a parallel
+finite sum: a bare finite sum totalizes division and `log` at `0`, so
+for disjoint point masses it gives `0` where `klDiv` is `∞`. Under
+the domination hypothesis `hsupp`, `InformationTheory.toReal_klDiv_toMeasure`
+identifies `(klDiv p.toMeasure q.toMeasure).toReal` with that finite
+sum, and the proof below rewrites through it where the sum is needed. -/
 
 private lemma pmf_ne_top {α : Type*} [Fintype α] (p : PMF α) (a : α) :
     p a ≠ ⊤ := by
@@ -454,10 +458,18 @@ private lemma MI_eq {ι α : Type*} [Fintype ι] [Fintype α]
   linarith [hAC, hBD]
 
 private lemma kl_mix {ι α : Type*} [Fintype ι] [Fintype α]
+    [MeasurableSpace α] [MeasurableSingletonClass α]
     (P : ι → PMF α) (hsupp : ∀ i j a, (P j a) = 0 → (P i a) = 0)
-    (β : ℝ) (hkl : ∀ i j, klSum (P i) (P j) ≤ β)
+    (β : ℝ)
+    (hkl : ∀ i j,
+      (InformationTheory.klDiv (P i).toMeasure (P j).toMeasure).toReal ≤ β)
     (hM : 2 ≤ Fintype.card ι) (i : ι) :
     ∑ a, ((P i a).toReal * Real.log ((P i a).toReal / fanQ P a)) ≤ β := by
+  have hkl' : ∀ i j,
+      ∑ a, (P i a).toReal * Real.log ((P i a).toReal / (P j a).toReal) ≤ β := by
+    intro i j
+    rw [← InformationTheory.toReal_klDiv_toMeasure (fun a => hsupp i j a)]
+    exact hkl i j
   have hM0 : (Fintype.card ι : ℝ) ≠ 0 := by
     exact_mod_cast (by omega : Fintype.card ι ≠ 0)
   have hMpos : 0 < (Fintype.card ι : ℝ) := by
@@ -541,13 +553,15 @@ private lemma kl_mix {ι α : Type*} [Fintype ι] [Fintype α]
     Finset.sum_le_sum (fun a _ => hterm a)
   have hRHS : (∑ a, ((1 / (Fintype.card ι : ℝ)) *
         ∑ j, ((P i a).toReal * Real.log ((P i a).toReal / (P j a).toReal)))) =
-      (1 / (Fintype.card ι : ℝ)) * ∑ j, klSum (P i) (P j) := by
-    simp only [klSum]
+      (1 / (Fintype.card ι : ℝ)) *
+        ∑ j, ∑ a, (P i a).toReal * Real.log ((P i a).toReal / (P j a).toReal) := by
     simp_rw [Finset.mul_sum]
     rw [Finset.sum_comm]
-  have hβ : (1 / (Fintype.card ι : ℝ)) * ∑ j, klSum (P i) (P j) ≤ β := by
-    have hle : (∑ j, klSum (P i) (P j)) ≤ ∑ _ : ι, β :=
-      Finset.sum_le_sum (fun j _ => hkl i j)
+  have hβ : (1 / (Fintype.card ι : ℝ)) *
+      ∑ j, ∑ a, (P i a).toReal * Real.log ((P i a).toReal / (P j a).toReal) ≤ β := by
+    have hle : (∑ j, ∑ a, (P i a).toReal * Real.log ((P i a).toReal / (P j a).toReal))
+        ≤ ∑ _ : ι, β :=
+      Finset.sum_le_sum (fun j _ => hkl' i j)
     have hcard : (∑ _ : ι, β) = (Fintype.card ι : ℝ) * β := by
       rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
     rw [hcard] at hle
@@ -561,8 +575,11 @@ private lemma kl_mix {ι α : Type*} [Fintype ι] [Fintype α]
   exact le_trans hsum hβ
 
 private lemma MI_le {ι α : Type*} [Fintype ι] [Fintype α]
+    [MeasurableSpace α] [MeasurableSingletonClass α]
     (P : ι → PMF α) (hsupp : ∀ i j a, (P j a) = 0 → (P i a) = 0)
-    (β : ℝ) (hkl : ∀ i j, klSum (P i) (P j) ≤ β)
+    (β : ℝ)
+    (hkl : ∀ i j,
+      (InformationTheory.klDiv (P i).toMeasure (P j).toMeasure).toReal ≤ β)
     (hM : 2 ≤ Fintype.card ι) :
     (∑ i, ∑ a, fanJ P i a * Real.log (fanJ P i a / (fanQ P a / (Fintype.card ι : ℝ)))) ≤ β := by
   have hM0 : (Fintype.card ι : ℝ) ≠ 0 := by
@@ -606,13 +623,17 @@ private lemma MI_le {ι α : Type*} [Fintype ι] [Fintype α]
 
 /-- Fano's inequality (finite form): for distributions `P i` on a
 finite type, an estimator `est`, at least two hypotheses, and
-pairwise KL divergences at most `β`, the average error probability
+pairwise KL divergences (Mathlib's `klDiv` on the PMFs' measures,
+in nats via `toReal`) at most `β`, the average error probability
 of `est` is at least `1 - (β + log 2) / log M`. -/
 theorem fano_finite {ι α : Type*} [Fintype ι] [Fintype α] [DecidableEq ι]
+    [MeasurableSpace α] [MeasurableSingletonClass α]
     (P : ι → PMF α) (est : α → ι)
     (hM : 2 ≤ Fintype.card ι)
     (hsupp : ∀ i j a, (P j a) = 0 → (P i a) = 0)
-    (β : ℝ) (hkl : ∀ i j, klSum (P i) (P j) ≤ β) :
+    (β : ℝ)
+    (hkl : ∀ i j,
+      (InformationTheory.klDiv (P i).toMeasure (P j).toMeasure).toReal ≤ β) :
     1 - (β + Real.log 2) / Real.log (Fintype.card ι) ≤
       (∑ i, (∑ a ∈ Finset.univ.filter (fun a => est a ≠ i), (P i a).toReal)) / Fintype.card ι := by
   have h2 : (2 : ℝ) ≤ (Fintype.card ι : ℝ) := by exact_mod_cast hM
