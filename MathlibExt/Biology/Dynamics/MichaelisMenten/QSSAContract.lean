@@ -31,12 +31,16 @@ analytic claim as a hypothesis: `QSSAContract` is a `Prop`, and nothing here pro
   full system stay within `O(ε)` of the reduced solution on a fixed compact slow-time interval.
   This is Tikhonov's theorem with Vasil'eva's first-order estimate, applied to
   Michaelis–Menten kinetics by Heineken, Tsuchiya and Aris. A consumer must take
-  `QSSAContract k₁ kb k₂ s₀ T` as a hypothesis. The wanted theorem `abs_sub_reduced_le` in
-  `WantedExt.Biology.Dynamics.MichaelisMentenQSSAWanted` (not imported here) states only the
-  substrate half, in time `τ = e₀ t`, for global solutions and a reduced solution defined for
-  all `τ ≥ 0`, with cutoff `e₀ ≤ 1`. `QSSAContract` adds the complex bound on `[δ, T]`, drops
-  the cutoff (see below) and requires solutions only on the window. Neither statement is
-  proved here, and no implication between them is proved.
+  `QSSAContract k₁ kb k₂ s₀ T` as a hypothesis. The proved theorem `abs_sub_reduced_le` in
+  `MathlibExt.Biology.Dynamics.MichaelisMenten.UniformBound` gives the substrate bound in
+  time `τ = e₀ t` for global full and reduced solutions. Its stronger form
+  `exists_abs_substrate_sub_reduced_le` already removes the cutoff `e₀ ≤ 1`.
+  That module also proves global-solution complex and rate estimates with an exponential
+  initial-layer term (`IsSolution.abs_complex_sub_qss_le`, `abs_rate_sub_mmRate_le`).
+  `QSSAContract` instead uses the normalized variables and time below and assumes solutions
+  only on the window. The remaining interface gap is to prove its substrate clause on
+  `[0, T]` and normalized `C ε` complex clause on `[δ, T]` for those window-local solutions;
+  neither a bridge from the global estimates nor `QSSAContract` itself is proved here.
 
 ## The frozen contract
 
@@ -71,13 +75,18 @@ only when `C ε` is small.
 
 ## API-00 source receipt
 
-* Reuse search (2026-11-11, base `53666a3c1`): the pinned Mathlib (`v4.35.0`) has no singular
-  perturbation, Tikhonov, slow-manifold or boundary-layer development. `Mathlib/Analysis/ODE`
-  provides only local Picard–Lindelöf existence, Gronwall and uniqueness. The repository has
-  `MathlibExt.Biology.Dynamics.MichaelisMenten`, reused here (`michaelisConstant`,
-  `substrateRate`, `complexRate`, `qssComplex`, `mmRate`, `IsSolution`,
-  `IsSolution.enzyme_conservation`, `substrateRate_qss`), and the wanted theorem
-  `abs_sub_reduced_le`, which is cited above and not used as a proof.
+* Mathlib reuse search (2026-11-11, `v4.35.0`): no singular perturbation, Tikhonov,
+  slow-manifold or boundary-layer development was found. `Mathlib/Analysis/ODE` supplies
+  local Picard–Lindelöf existence, Gronwall and uniqueness.
+* Repository API check (2026-11-11, base `15dc3c48c`): this file reuses
+  `MathlibExt.Biology.Dynamics.MichaelisMenten` (`michaelisConstant`, `substrateRate`,
+  `complexRate`, `qssComplex`, `mmRate`, `IsSolution`, `IsSolution.enzyme_conservation`,
+  `substrateRate_qss`). The base also contains the proved `UniformBound` API:
+  `abs_sub_reduced_le`, the no-cutoff `exists_abs_substrate_sub_reduced_le`,
+  `IsSolution.abs_complex_sub_qss_le` and `abs_rate_sub_mmRate_le`. These are global-solution
+  estimates, not imported or used as proofs here. The outstanding window-local and
+  normalized complex clauses are distinguished above; removing the enzyme cutoff alone
+  is not new work.
 
 ## References
 
