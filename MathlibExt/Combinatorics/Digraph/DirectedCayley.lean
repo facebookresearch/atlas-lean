@@ -11,10 +11,7 @@ Author: Stefan Trandafir
 -/
 module
 
-public import Mathlib.Algebra.GroupWithZero.Units.Fintype
 public import Mathlib.Combinatorics.Digraph.Basic
-public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Data.ZMod.Basic
 
 @[expose] public section
 

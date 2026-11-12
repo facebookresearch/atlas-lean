@@ -18,6 +18,8 @@ public import Mathlib.SetTheory.Cardinal.Cofinality.Club
 
 -- Source: Lean Definition Library (Airtable) records: Logic 25, Logic 21, Logic 54
 
+open Cardinal Ordinal
+
 /-!
 # Almost disjoint family; Almost disjoint modulo the nonstationary ideal; Almost disjoint family
   of functions
@@ -26,8 +28,6 @@ public import Mathlib.SetTheory.Cardinal.Cofinality.Club
 
 * Jech (for `IsAlmostDisjointFamilyKappa`, `AlmostDisjointModNS`, `IsAlmostDisjointFunFamily`)
 -/
-
-open Cardinal Ordinal
 
 namespace MetaMathlibExt
 

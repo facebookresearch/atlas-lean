@@ -11,11 +11,9 @@ Author: Mark Sepanski
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.BigOperators.Finprod
 public import Mathlib.Data.List.Cycle
-public import Mathlib.Data.Nat.SuccPred
-public import Mathlib.Tactic.FinCases
+public import Mathlib.Order.SuccPred.Nat
 
 @[expose] public section
 
@@ -33,6 +31,147 @@ public import Mathlib.Tactic.FinCases
 * ec1 1.9 p 116 (for `Nat.delannoy`)
 * ec1 2.7.1 (for `SoutheastPath`, `SoutheastPath.weight`, `IsNonintersectingPathFamily`,
   `nonintersectingPathWeightSum`)
+-/
+
+/-! ### Informal statement of `SoutheastPath`
+
+A point of the quarter plane is a pair
+(a,b) with a,b∈ℤ_{≥ 0},
+where a is the horizontal coordinate and
+b is the height. Let
+m∈ℤ_{≥ 0} and let p and q
+be points of the quarter plane. A southeast
+path from p to q is a list
+v=[v₀,v₁,…,vₘ] of points of the
+quarter plane with v₀=p, vₘ=q, and
+each successive pair joined by an east step
+or a south step, that is, with
+
+  vₜ=vₜ₋₁+(1,0)
+   or
+  vₜ₋₁=vₜ+(0,1)
+
+for 1≤ t≤ m. An east step increases
+the horizontal coordinate by 1 and leaves
+the height unchanged; a south step decreases
+the height by 1 and leaves the horizontal
+coordinate unchanged. Both coordinates stay
+nonnegative because the points are taken in
+the quarter plane.
+
+For m=0 the list is the single point
+[p], which is a southeast path from p to
+p with no steps to check. The empty list
+is not a southeast path, since a path has a
+first point and a last point. Writing
+p=(a,b) and q=(c,d), a southeast path
+from p to q exists exactly when
+a≤ c and d≤ b, and in that case
+m=(c-a)+(b-d), so the number of steps is
+determined by the endpoints. In particular
+the height never increases along a path.
+-/
+
+/-! ### Informal statement of `IsNonintersectingPathFamily`
+
+Let n∈ℤ_{≥ 0} and write
+[n]={1,…,n}, so that
+[0]=∅. A point of the quarter
+plane is a pair (a,b) of nonnegative
+integers, with a the horizontal coordinate
+and b the height. If n≥ 1, let
+p=[p₁,…,pₙ] and
+q=[q₁,…,qₙ] be tuples of points. If
+n=0, each is the empty tuple.
+
+An n-path of type (p,q) is an ordered
+tuple L=[L₁,…,Lₙ] in which Lᵢ is
+a southeast path from pᵢ to qᵢ for
+each i∈[n]. For n=0 it is the empty
+tuple. It is nonintersecting when no two of
+its paths at distinct indices share a
+vertex, that is, when for all i,j∈[n]
+with i≠ j no point occurs both in Lᵢ
+and in Lⱼ.
+
+Endpoints count as vertices, so two paths
+meeting only at a common endpoint are not
+nonintersecting. Distinctness is of indices
+and not of paths, so if i≠ j and
+Lᵢ=Lⱼ the family is not
+nonintersecting. For n=0 and for
+n=1 there is no pair of distinct indices,
+so the condition holds for every family.
+
+The source writes the type as four tuples
+α, β, γ, δ of
+nonnegative integers, with Lᵢ running
+from (βᵢ,γᵢ) to
+(αᵢ,δᵢ). That is the same data
+as the two tuples of points above, with
+pᵢ=(βᵢ,γᵢ) and
+qᵢ=(αᵢ,δᵢ).
+-/
+
+/-! ### Informal statement of `nonintersectingPathWeightSum`
+
+For k∈ℤ_{≥ 0} write [k]={1,…,k}, so that
+[0]=∅. Let n∈ℤ_{≥ 0}. If n≥ 1,
+let p=[p₁,…,pₙ] and q=[q₁,…,qₙ] be tuples of
+points of ℤ_{≥ 0}². If n=0, each is the empty
+tuple.
+
+For i∈[n] and m∈ℤ_{≥ 0}, a southeast path from
+pᵢ to qᵢ is a list v=[v₀,v₁,…,vₘ] of points of
+ℤ_{≥ 0}² with v₀=pᵢ, vₘ=qᵢ, and for each
+t∈[m] either
+
+  vₜ=vₜ₋₁+(1,0),
+
+in which case the step from vₜ₋₁ to vₜ is an east step,
+or
+
+  vₜ₋₁=vₜ+(0,1),
+
+in which case it is a south step. For m=0 the list is the
+single point [pᵢ], which is a southeast path from pᵢ to
+qᵢ only when pᵢ=qᵢ.
+
+An n-path of type (p,q) is an ordered tuple
+L=[L₁,…,Lₙ] in which Lᵢ is a southeast path from
+pᵢ to qᵢ for each i∈[n]. For n=0 it is the empty
+tuple. A vertex of Lᵢ is a point occurring in the list Lᵢ;
+endpoints count as vertices. The n-path L is nonintersecting
+when for all i,j∈[n] with i≠ j no point is a vertex of
+both Lᵢ and Lⱼ. For n=0 and for n=1 there is no pair of
+distinct indices, so every n-path is nonintersecting.
+
+Let R be a commutative semiring and let x=(xⱼ) be a family
+of elements of R indexed by j∈ℤ_{≥ 0}. Let
+v=[v₀,…,vₘ] be a southeast path from pᵢ to qᵢ for
+some i∈[n], and let t∈[m]. An east step from
+vₜ₋₁=(a,j) to vₜ=(a+1,j), where
+a,j∈ℤ_{≥ 0}, has weight wₜ=xⱼ, and a south
+step from vₜ₋₁ to vₜ has weight wₜ=1. The weight of
+v is
+
+  wt(v)=∏ₜ₌₁ᵐwₜ,
+
+which is 1 for m=0. The weight of an n-path L is
+
+  wt(L)=∏ᵢ₌₁ⁿwt(Lᵢ),
+
+which is 1 for n=0.
+
+The nonintersecting path weight sum of type (p,q) is
+
+  W(p,q)=∑_Lwt(L),
+
+the sum taken over all nonintersecting n-paths L of type
+(p,q). If for some i∈[n] there is no southeast path from
+pᵢ to qᵢ, there are no n-paths of type (p,q) and
+W(p,q)=0. For n=0 the empty tuple is the only n-path and
+W(p,q)=1.
 -/
 
 namespace MetaMathlibExt
@@ -165,7 +304,6 @@ def Nat.delannoy : ℕ → ℕ → ℕ
 
 -- Combinatorics 462: Southeast Path
 
-
 /-! ### Informal statement of `SoutheastPath`
 
 A point of the quarter plane is a pair
@@ -218,7 +356,6 @@ def SoutheastPath (p q : ℕ × ℕ) :=
 
 -- Combinatorics 463: Southeast Path Weight
 
-
 /-- Let R be a commutative monoid, written
 multiplicatively, and let x=(xⱼ) be a
 family of elements of R indexed by
@@ -255,7 +392,6 @@ def SoutheastPath.weight {p q : ℕ × ℕ} {R : Type*}
     if c.2 = (c.1.1 + 1, c.1.2) then x c.1.2 else 1).prod
 
 -- Combinatorics 465: Nonintersecting Path Family
-
 
 /-! ### Informal statement of `IsNonintersectingPathFamily`
 
@@ -311,7 +447,6 @@ def IsNonintersectingPathFamily {n : ℕ}
   Pairwise fun i j => ∀ v ∈ (L i).1, v ∉ (L j).1
 
 -- Combinatorics 464: Nonintersecting Path Weight Sum
-
 
 /-! ### Informal statement of `nonintersectingPathWeightSum`
 

@@ -19,6 +19,8 @@ public import MathlibExt.SetTheory.Tree.Basic
 
 -- Source: Lean Definition Library (Airtable) records: Logic 24, Logic 19
 
+open Cardinal
+
 /-!
 # $\kappa$-Suslin tree; Suslin tree
 
@@ -27,8 +29,6 @@ public import MathlibExt.SetTheory.Tree.Basic
 * Kunen (for `IsSuslinTreeAt`)
 * Jech (for `IsSuslinTree`)
 -/
-
-open Cardinal
 
 namespace MetaMathlibExt
 

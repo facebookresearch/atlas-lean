@@ -12,10 +12,6 @@ Author: Steven Warner
 module
 
 public import MathlibExt.SetTheory.Cardinal.Cofinality.Stationary
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.SetTheory.Cardinal.Aleph
-public import Mathlib.SetTheory.Cardinal.Cofinality.Club
-public import Mathlib.SetTheory.Ordinal.Basic
 
 @[expose] public section
 

@@ -18,6 +18,8 @@ public import Mathlib.Order.CompletePartialOrder
 
 -- Source: Lean Definition Library (Airtable) records: Logic 37, Logic 39, Logic 40, Logic 41, Logic 51, Logic 579
 
+open Set Order
+
 /-!
 # `MathlibExt.SetTheory.Cardinal.Cofinality.CountableSubsets`
 
@@ -58,7 +60,24 @@ public import Mathlib.Order.CompletePartialOrder
   (item 3's source). (for `closurePointsSeq_const`)
 -/
 
-open Set Order
+/-! ### Informal statement of `closurePointsSeq_const`
+
+1. Let F : Finset(α) → α. Then ClosurePointsSeq(λ n : ℕ,, F) =
+     ClosurePoints(F).
+  2. For every finitary operation F, ∅ ∉ ClosurePoints(F).
+  3. Let f : ℕ → 𝒫(α) with each f(n) countable. Then ⋃_{n ∈ ℕ} f(n)
+     is countable.
+  4. [α]^ω is club in [α]^ω.
+  5. ∅ is not stationary in [α]^ω.
+  6. If S is stationary in [α]^ω then S ≠ ∅.
+  7. If S is stationary and S ⊆ T then T is stationary.
+  8. [α]^ω is stationary in [α]^ω.
+  9. For each a ∈ α, x ∈ [α]^ω : a ∈ x is club.
+  10. If s ⊆ α is countable then ∃, e : ℕ → Option(s),; ∀ a ∈ s,;
+      ∃ n,; e(n) = some(a).
+  11. For F : ℕ → (Finset(α) → α), ClosurePointsSeq(F) is club in
+      [α]^ω.
+-/
 
 namespace MetaMathlibExt
 
