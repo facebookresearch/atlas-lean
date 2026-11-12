@@ -66,8 +66,26 @@ example : (2 : ℝ) * 1 * 300 / 10 = partialPressure (2 / 5) (5 * 1 * 300 / 10) 
     norm_num
   have hsum : ∑ j, ![(2 : ℝ), 3] j = (5 : ℝ) := by norm_num [Fin.sum_univ_two]
   have h := idealGas_pressure_alone_eq_partialPressure ![(2 : ℝ), 3] 10 300 1
+    (by intro i; fin_cases i <;> norm_num)
     (by norm_num [Fin.sum_univ_two]) (by norm_num) (by norm_num) (by norm_num)
   exact ⟨by simpa [hmf0, hsum] using h 0, by simpa [hmf1, hsum] using h 1⟩
+
+/-- An absent component is allowed by the nonnegative-amount domain. -/
+example (i : Fin 2) : ![(0 : ℝ), 2] i * 1 * 300 / 10 =
+    partialPressure (Chemistry.Amounts.moleFraction ![(0 : ℝ), 2] i) (2 * 1 * 300 / 10) := by
+  simpa [Fin.sum_univ_two] using
+    idealGas_pressure_alone_eq_partialPressure ![(0 : ℝ), 2] 10 300 1
+      (by intro j; fin_cases j <;> norm_num)
+      (by norm_num [Fin.sum_univ_two]) (by norm_num) (by norm_num) (by norm_num) i
+
+/-- Positive total amount does not make a negative component a physical mixture. -/
+example : 0 < ∑ i : Fin 2, ![-(1 : ℝ), 2] i ∧
+    ¬ (∀ i : Fin 2, 0 ≤ ![-(1 : ℝ), 2] i) := by
+  constructor
+  · norm_num [Fin.sum_univ_two]
+  · intro h
+    have h0 := h 0
+    norm_num at h0
 
 /-- The mole fractions in that mixture are the existing `Chemistry.Amounts.moleFraction`
 values `2 / 5` and `3 / 5`. -/
@@ -229,6 +247,7 @@ example (T Vm : ℝ) (hT : 0 < T) (hVm : 1 < Vm)
 ideal mixture above add up to the total pressure `150`. -/
 example : ∑ i, ![(2 : ℝ), 3] i * 1 * 300 / 10 = 5 * 1 * 300 / 10 := by
   have h := idealGas_pressure_alone_eq_partialPressure ![(2 : ℝ), 3] 10 300 1
+    (by intro i; fin_cases i <;> norm_num)
     (by norm_num [Fin.sum_univ_two]) (by norm_num) (by norm_num) (by norm_num)
   simp_rw [h]
   rw [show (∑ j, ![(2 : ℝ), 3] j) = (5 : ℝ) by norm_num [Fin.sum_univ_two]]

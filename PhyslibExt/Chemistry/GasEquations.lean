@@ -103,14 +103,15 @@ lemma sum_partialPressure {ι : Type*} [Fintype ι] (x : ι → ℝ) (p : ℝ) (
     ∑ i, partialPressure (x i) p = p := by
   simp only [partialPressure, ← Finset.sum_mul, hx, one_mul]
 
-/-- Ideal-gas model: in a mixture with amounts `n i` and total amount `∑ i, n i` at volume `V`
-and temperature `T`, the pressure `n i * R * T / V` that component `i` would exert alone at the
-same `T, V` (this is the definition of the alone-pressure) equals its partial pressure
+/-- Ideal-gas model: in a mixture with nonnegative amounts `n i` and total amount `∑ i, n i` at
+volume `V` and temperature `T`, the pressure `n i * R * T / V` that component `i` would exert
+alone at the same `T, V` (this is the definition of the alone-pressure) equals its partial pressure
 `x_i p` with mole fraction `x_i = Chemistry.Amounts.moleFraction n i` and total pressure
 `p = (∑ i, n i) * R * T / V`. The hypotheses prefixed with `_` record the domain of the model
 and are not used by the proof. -/
 lemma idealGas_pressure_alone_eq_partialPressure {ι : Type*} [Fintype ι] (n : ι → ℝ)
-    (V T R : ℝ) (hsum : 0 < ∑ i, n i) (hV : 0 < V) (_hT : 0 < T) (_hR : 0 < R) (i : ι) :
+    (V T R : ℝ) (_hn : ∀ i, 0 ≤ n i) (hsum : 0 < ∑ i, n i) (hV : 0 < V)
+    (_hT : 0 < T) (_hR : 0 < R) (i : ι) :
     n i * R * T / V = partialPressure (Chemistry.Amounts.moleFraction n i)
       ((∑ j, n j) * R * T / V) := by
   rw [partialPressure, Chemistry.Amounts.moleFraction]
