@@ -21,7 +21,7 @@ is `2*a*x + b` and the second derivative is the constant `2*a`.
 ## i. Overview
 
 This file proves the two derivative facts for the quadratic profile named
-in the Atlas roadmap item M15. The second-derivative statement is phrased
+in the Atlas roadmap item. The second-derivative statement is phrased
 as a `HasDerivAt` statement about the first-derivative function
 `x ↦ 2*a*x + b`, whose derivative is the constant `2*a`; no claim is made
 about harmonicity of the singular potential `1/r` on `ℝ^3 ∖ {0}`, which is
