@@ -54,7 +54,7 @@ example : StrictMonoOn
     (fun T => (6.11 : ℝ) * Real.exp (((5423 : ℝ) / 1) * (1 / 273.15 - 1 / T)))
     (Set.Ioi 0) :=
   EarthScience.saturation_pressure_strictMono (es0 := 6.11) (L := 5423) (Rv := 1)
-    (T0 := 273.15) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (T0 := 273.15) (by norm_num) (by norm_num) (by norm_num)
 
 /-- Saturation pressure at the reference temperature equals `es0`. -/
 example : (6.11 : ℝ) * Real.exp ((5423 : ℝ) * (1 / 273.15 - 1 / 273.15)) = 6.11 := by

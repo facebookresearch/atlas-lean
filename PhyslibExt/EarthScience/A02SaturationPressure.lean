@@ -83,10 +83,9 @@ theorem saturation_pressure_deriv_pos {es0 L Rv T0 : ℝ} (hes0 : 0 < es0)
   have hT2 : 0 < T ^ 2 := pow_pos hT 2
   exact div_pos (mul_pos (mul_pos hes0 hexp) hL) (mul_pos hRv hT2)
 
-set_option linter.unusedVariables false in
 /-- Saturation pressure is strictly increasing on positive temperatures. -/
 theorem saturation_pressure_strictMono {es0 L Rv T0 : ℝ} (hes0 : 0 < es0)
-    (hL : 0 < L) (hRv : 0 < Rv) (hT0 : 0 < T0) :
+    (hL : 0 < L) (hRv : 0 < Rv) :
     StrictMonoOn (fun T => es0 * Real.exp ((L / Rv) * (1 / T0 - 1 / T)))
       (Set.Ioi 0) := by
   have hc : 0 < L / Rv := div_pos hL hRv
