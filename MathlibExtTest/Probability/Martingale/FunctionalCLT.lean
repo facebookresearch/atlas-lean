@@ -148,7 +148,8 @@ example {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) (ξ : ℕ → Ω → 
   lindebergConditionTriangular_compensatedBernoulli P ξ hBern (1 / 2) (by norm_num)
     (by norm_num)
 
--- Predictable quadratic variations at `t = 1` converge to `p (1 - p)`.
+-- The deterministic sequence `p (1 - p) ⌊n⌋ / n` (informally the predictable QV at `t = 1`)
+-- converges to `p (1 - p)`.
 example (p : ℝ) :
     Tendsto (fun n : ℕ => p * (1 - p) * (Nat.floor ((n : ℝ) * 1) / n)) atTop
       (𝓝 (p * (1 - p))) := by

@@ -796,16 +796,17 @@ private lemma integral_bernoulli_sub_sq {Ω : Type*} [MeasurableSpace Ω] {P : M
 increments `ξ i` are i.i.d., `{0,1}`-valued with success probability `p ∈ (0,1)`, then the
 compensated counting process `compensatedBernoulliStep n p ξ` converges in distribution in
 the Skorokhod J1 topology on `D([0,1])` to `√(p(1-p)) • W`, where `W` is a continuous version
-of Brownian motion. In law this is Brownian motion time-changed by `A t = p (1 - p) t`, the
-limit of the predictable quadratic variations (`tendsto_compensatedBernoulli_predictableQV`),
-by Brownian scaling. That scaling identity is not formalized here.
+of Brownian motion. In law this is Brownian motion time-changed by `A t = p (1 - p) t`
+(informally the limit of the predictable quadratic variations,
+`tendsto_compensatedBernoulli_predictableQV`), by Brownian scaling. That scaling identity is
+not formalized here.
 
-The Rebolledo hypotheses for this example are proved separately:
-`condExp_sq_increment_compensatedBernoulli` (predictable quadratic variation is the
-deterministic `p (1-p) ⌊n t⌋ / n`) and `lindebergConditionTriangular_compensatedBernoulli`
-(jump control). Source: Billingsley (1999), Theorem 16.1 (Donsker in `D`), specialized to
-Bernoulli increments; Andersen–Borgan–Gill–Keiding (1993), §II.5 for the counting-process
-reading. -/
+The hypotheses Rebolledo's theorem would need for this example are checked separately
+and are not used by this proof: `condExp_sq_increment_compensatedBernoulli` (conditional
+variances; informally the predictable quadratic variation is the deterministic
+`p (1-p) ⌊n t⌋ / n`) and `lindebergConditionTriangular_compensatedBernoulli` (jump control).
+Source: Billingsley (1999), Theorem 16.1 (Donsker in `D`), specialized to Bernoulli
+increments; Andersen–Borgan–Gill–Keiding (1993), §II.5 for the counting-process reading. -/
 theorem tendstoInDistribution_compensatedBernoulliStep
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
@@ -889,7 +890,7 @@ theorem lindebergConditionTriangular_compensatedBernoulli
     linarith
   simp [hzero]
 
-/-- **Predictable quadratic variation of the compensated Bernoulli counting process.** With
+/-- **Conditional variances of the compensated Bernoulli increments.** With
 respect to the natural filtration of the counting increments, the conditional variance of
 every future increment is the constant `p (1 - p)`. Informally, the predictable quadratic
 variation of `compensatedBernoulliStep n p ξ` at time `t` is therefore the deterministic
