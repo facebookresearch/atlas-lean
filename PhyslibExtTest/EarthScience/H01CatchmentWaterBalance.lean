@@ -36,34 +36,36 @@ No new definitions or results are introduced here.
 - `PhyslibExt.EarthScience.H01CatchmentWaterBalance`
 -/
 
+open EarthScience
+
+/-! ## A. Numeric reservoir -/
+
 /-- Numeric reservoir at `t = 0`: storage is the initial storage. -/
-example : (fun t => 3 / (1 / 2 : ℝ) + (10 - 3 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * t)) 0 = 10 :=
-  EarthScience.storage_initial 3 (1 / 2) 10
+example : linearReservoirStorage 3 (1 / 2) 10 0 = 10 :=
+  storage_initial 3 (1 / 2) 10
 
 /-- Numeric reservoir at `t = 2`: storage is `6 + 4 * exp (-1)`. -/
-example : (fun t => 3 / (1 / 2 : ℝ) + (10 - 3 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * t)) 2
-    = 6 + 4 * Real.exp (-1) := by
-  norm_num
+example : linearReservoirStorage 3 (1 / 2) 10 2 = 6 + 4 * Real.exp (-1) := by
+  norm_num [linearReservoirStorage]
 
 /-- Numeric reservoir: the profile satisfies the ODE at `t = 2`. -/
-example : HasDerivAt
-    (fun t => 3 / (1 / 2 : ℝ) + (10 - 3 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * t))
-    (3 - (1 / 2 : ℝ) * (3 / (1 / 2 : ℝ) + (10 - 3 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * 2))) 2 :=
-  EarthScience.hasDerivAt_storage_solution (by norm_num) 2
+example : HasDerivAt (linearReservoirStorage 3 (1 / 2) 10)
+    (3 - (1 / 2) * linearReservoirStorage 3 (1 / 2) 10 2) 2 :=
+  hasDerivAt_storage_solution (by norm_num) 2
+
+/-! ## B. Equilibrium and dry-interval boundaries -/
 
 /-- Equilibrium boundary: `S0 = I / k` gives constant storage, so the
 integrated budget closes with zero change at `t = 1`. -/
-example : (∫ u in (0 : ℝ)..1, (3 / (1 / 2 : ℝ) + (6 - 3 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * u)))
+example : (∫ u in (0 : ℝ)..1, linearReservoirStorage 3 (1 / 2) 6 u)
       = 3 * 1 / (1 / 2 : ℝ) + (6 - 3 / (1 / 2 : ℝ)) * (1 - Real.exp (-(1 / 2 : ℝ) * 1)) / (1 / 2 : ℝ) ∧
-    (3 / (1 / 2 : ℝ) + (6 - 3 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * 1)) - 6
-      = 3 * 1 - (1 / 2 : ℝ) * (∫ u in (0 : ℝ)..1,
-          (3 / (1 / 2 : ℝ) + (6 - 3 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * u))) :=
-  EarthScience.integrated_water_budget (by norm_num) 1
+    linearReservoirStorage 3 (1 / 2) 6 1 - 6
+      = 3 * 1 - (1 / 2) * (∫ u in (0 : ℝ)..1, linearReservoirStorage 3 (1 / 2) 6 u) :=
+  integrated_water_budget (by norm_num) 1
 
 /-- Dry interval boundary: `I = 0` gives pure decay, and the budget still closes. -/
-example : (∫ u in (0 : ℝ)..1, (0 / (1 / 2 : ℝ) + (10 - 0 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * u)))
+example : (∫ u in (0 : ℝ)..1, linearReservoirStorage 0 (1 / 2) 10 u)
       = 0 * 1 / (1 / 2 : ℝ) + (10 - 0 / (1 / 2 : ℝ)) * (1 - Real.exp (-(1 / 2 : ℝ) * 1)) / (1 / 2 : ℝ) ∧
-    (0 / (1 / 2 : ℝ) + (10 - 0 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * 1)) - 10
-      = 0 * 1 - (1 / 2 : ℝ) * (∫ u in (0 : ℝ)..1,
-          (0 / (1 / 2 : ℝ) + (10 - 0 / (1 / 2 : ℝ)) * Real.exp (-(1 / 2 : ℝ) * u))) :=
-  EarthScience.integrated_water_budget (by norm_num) 1
+    linearReservoirStorage 0 (1 / 2) 10 1 - 10
+      = 0 * 1 - (1 / 2) * (∫ u in (0 : ℝ)..1, linearReservoirStorage 0 (1 / 2) 10 u) :=
+  integrated_water_budget (by norm_num) 1
