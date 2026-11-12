@@ -130,6 +130,41 @@ example : ∃ i k : Fin 2, i ≠ k ∧ cov[gcStatRV G2.score i, gcStatRV G2.scor
   exists_covariance_gcStatRV_neg G2_measurable (ae_sum_sq_ne_zero G2 G2_measurable)
     (variance_gcStatRV_two_pos G2 G2_measurable G2_indep)
 
+/-- Global null: the calibration assumption fails on the set of all genes. -/
+example : ¬ MultipleTesting.IsTailCalibratedFamily P2 (gcStatRV G2.score)
+    (fun _ => chiSqOneTailReal) Finset.univ :=
+  not_isTailCalibratedFamily_gcStatRV_univ G2_measurable (ae_sum_sq_ne_zero G2 G2_measurable)
+    two_pos
+
+example : ∫⁻ t in Set.Ioi 0, chiSqOneTail t = 1 := lintegral_chiSqOneTail
+
+example : ∑ j, ∫⁻ ω, ENNReal.ofReal (gcStatRV G2.score j ω) ∂P2 = 2 := by
+  simpa using sum_lintegral_gcStatRV G2_measurable (ae_sum_sq_ne_zero G2 G2_measurable)
+
+/-- With two genes, the equal-moments formula `γ = -v / (m - 1)` gives `Cov(T₀, T₁) = -Var(T₀)`. -/
+example : cov[gcStatRV G2.score 0, gcStatRV G2.score 1; P2] = -Var[gcStatRV G2.score 0; P2] := by
+  have hT1 : Var[gcStatRV G2.score 1; P2] = Var[gcStatRV G2.score 0; P2] := by
+    rw [variance_congr (Y := fun ω => 2 - gcStatRV G2.score 0 ω) ?_,
+      variance_const_sub (measurable_gcStatRV G2_measurable 0).aestronglyMeasurable]
+    filter_upwards [ae_sum_sq_ne_zero G2 G2_measurable] with ω hω
+    have := gcStat_two_add (fun k => G2.score k ω) hω
+    change gcStat (fun k => G2.score k ω) 1 = 2 - gcStat (fun k => G2.score k ω) 0
+    linarith
+  have h := covariance_gcStatRV_eq_of_forall_eq G2_measurable (ae_sum_sq_ne_zero G2 G2_measurable)
+    le_rfl (v := Var[gcStatRV G2.score 0; P2])
+    (γ := cov[gcStatRV G2.score 0, gcStatRV G2.score 1; P2])
+    (fun i => by fin_cases i
+                 · rfl
+                 · exact hT1)
+    (fun i k hik => by
+      fin_cases i <;> fin_cases k
+      · exact absurd rfl hik
+      · rfl
+      · exact covariance_comm _ _
+      · exact absurd rfl hik)
+  rw [h]
+  norm_num
+
 /-! ### The calibration assumption and Bonferroni -/
 
 example (hcal : ∀ i ∈ ({0, 1} : Finset (Fin 2)), ∀ s, P2 {ω | s ≤ gcStatRV G2.score i ω} ≤
@@ -162,7 +197,7 @@ example (c : ℝ) (hc : 0 ≤ c) : chiSqOneTail c ≤ gaussianReal 0 2 {x | c < 
 /-- Under-estimated `λ̂ ≡ 1 = λ / 2`: anti-conservative. -/
 example : chiSqOneTail 1 < gaussianReal 0 2 {x | 1 < x ^ 2 / 1} :=
   chiSqOneTail_lt_measure_lt_div_of_le_mul two_ne_zero HasLaw.id (L := fun _ => 1)
-    (κ := 1 / 2) (by norm_num) (by norm_num) (fun _ => by norm_num) one_pos
+    (κ := 1 / 2) (by norm_num) (fun _ => by norm_num) one_pos
 
 /-- Over-estimated `λ̂ ≡ 4 = 2 λ`: conservative. -/
 example : gaussianReal 0 2 {x | 1 < x ^ 2 / 4} < chiSqOneTail 1 :=

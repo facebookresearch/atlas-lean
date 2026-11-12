@@ -12,6 +12,7 @@ public import MathlibExt.Biology.StatisticalGenetics.RareVariantInference.Genomi
 public import MathlibExt.Biology.StatisticalGenetics.RareVariantInference.MultipleTesting
 public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Analysis.Real.Pi.Bounds
+public import Mathlib.MeasureTheory.Integral.Layercake
 
 /-!
 # Genomic control with an estimated inflation factor `λ̂`
@@ -42,6 +43,12 @@ other and to `λ̂`.
   `RareVariantInference.MultipleTesting.IsTailCalibratedFamily` with reference tail `χ²₁`
   (`chiSqOneTailReal`). Under it, `measure_exists_le_gcStatRV_le` gives Bonferroni control
   `P(∃ i ∈ H0, T_i ≥ s) ≤ |H0| P(χ²₁ > s)` with no assumption on the dependence.
+* `not_isTailCalibratedFamily_gcStatRV_univ`: the assumption **never holds when every gene is
+  null**, for any `m ≥ 1` and any law of scores that are almost surely not all zero. It would
+  give `E[T_j] < E[χ²₁] = 1` for every `j` (`lintegral_gcStatRV_lt_one`, using `T_j ≤ m` and
+  `lintegral_chiSqOneTail`), hence `E[∑ⱼ T_j] < m`, contradicting `∑ⱼ T_j = m`
+  (`sum_lintegral_gcStatRV`). So the assumption is consistent only when some genes are
+  non-null and inflate `λ̂`, and it constrains the null genes jointly with the non-null ones.
 * `not_isTailCalibratedFamily_gcStatRV_two`: the assumption can fail in T38's model. With two
   genes whose null scores are independent `𝒩(0, λ)`, `P(T₀ ≥ 1) ≥ 1/2`
   (`half_le_measure_one_le_gcStatRV_two`, by exchangeability) while
@@ -70,25 +77,33 @@ For any random estimate `L` (mean, median, leave-one-out, ...) and one null scor
 * `not_isPRDSOn_of_separated`: a general criterion refuting `IsPRDSOn` from a separation of
   the p-values of two genes, via `IsPRDSOn.measure_inter_mul_le`.
 * `not_isPRDSOn_tailPValue_gcStatRV_two`: for two genes the `χ²₁` p-values of the `T_j` are
-  never PRDS when `{T₀ ≥ 1}` and `{T₀ < 1}` both have positive probability;
+  not PRDS when `{T₀ ≥ 1}` and `{T₀ < 1}` both have positive probability and the scores are
+  almost surely not all zero (these hypotheses are needed; the result is not for every law);
   `not_isPRDSOn_tailPValue_gcStatRV_two_of_indep` discharges this in T38's model with
   independent scores, and `covariance_gcStatRV_two_neg` gives `Cov(T₀, T₁) < 0` there.
 
-So the Benjamini–Yekutieli PRDS route used by `RareVariantInference.MultipleTesting` for BH
-does not apply to the estimated-`λ̂` statistics as such.
+So for `m = 2` the Benjamini–Yekutieli PRDS route used by `RareVariantInference.MultipleTesting`
+for BH does not apply to the estimated-`λ̂` statistics. For `m ≥ 3` (global null,
+`Var T_j > 0`), failure of PRDS would follow from `exists_covariance_gcStatRV_neg` together with
+the step "PRDS implies nonnegative covariance of monotone functions of the statistics", which is
+not formalized here.
 
 ## Gap (not proved here)
 
-* **BH under the `λ̂` coupling for `m ≥ 3`.** Whether the `T_j` p-values are PRDS for `m ≥ 3`
-  independent null scores is not settled here. The negative-covariance theorem rules out
-  pairwise nonnegative covariance, but that implication from PRDS is not formalized, and FDR
-  control of BH under this specific negative coupling (which shrinks like `1 / m`) is not
-  proved. Without PRDS, only dependence-free procedures (Bonferroni above; the
-  Benjamini–Yekutieli `∑ 1/i` correction) are justified by the assumption.
-* **Anti-conservativeness for general `m`.** The failure of the calibration assumption is proved
-  for `m = 2` only. For independent `𝒩(0, λ)` scores, `T_j / m` has a
-  `Beta(1/2, (m - 1)/2)` law and `T_j` converges in law to `χ²₁` as `m → ∞`; neither the
-  Beta law nor this limit is formalized.
+* **PRDS and BH under the `λ̂` coupling for `m ≥ 3`.** Failure of PRDS is proved for `m = 2`
+  only. For `m ≥ 3` (global null, `Var T_j > 0`) it would follow from
+  `exists_covariance_gcStatRV_neg` plus "PRDS implies nonnegative covariance of monotone
+  functions", which is not formalized. FDR control of BH under this specific negative coupling
+  (which shrinks like `1 / m`) is not proved either. Without PRDS, only dependence-free
+  procedures (Bonferroni above; the Benjamini–Yekutieli `∑ 1/i` correction) are justified by
+  the assumption.
+* **Which configurations make the assumption hold.** Under the global null the assumption is
+  impossible for every `m` (`not_isTailCalibratedFamily_gcStatRV_univ`), and for `m = 2` it
+  fails for a single null gene in T38's model (`not_isTailCalibratedFamily_gcStatRV_two`).
+  Conditions on the non-null genes under which the null genes become tail-calibrated are not
+  characterized. For independent `𝒩(0, λ)` scores, `T_j / m` has a `Beta(1/2, (m - 1)/2)` law
+  and `T_j` converges in law to `χ²₁` as `m → ∞`; neither the Beta law nor this limit is
+  formalized.
 * **Concentration of `λ̂`.** The sandwich bounds take `P(Eᶜ)` as given; a law of large numbers
   or variance bound for `λ̂` with independent or weakly dependent scores is not proved, and the
   median-based estimator `median(S) / 0.456` is not treated.
@@ -281,8 +296,10 @@ theorem not_forall_measure_lt_gcStatRV_eq (Z : Fin m → Ω → ℝ) (j : Fin m)
 /-- **Calibration of `S / λ̂` is an assumption on `S / λ̂` itself.** The estimated-`λ̂` family is a
 tail-calibrated family in the sense of `RareVariantInference.MultipleTesting` (reference tail
 `χ²₁`) exactly when every null corrected statistic is conservative against `χ²₁`:
-`P(S_i / λ̂ ≥ s) ≤ P(χ²₁ > s)` for all `s`. By
-`calibrated_true_and_not_calibrated_estimated` this is not implied by T38's true-`λ` model. -/
+`P(S_i / λ̂ ≥ s) ≤ P(χ²₁ > s)` for all `s`. This is not implied by T38's true-`λ` model
+(`not_isTailCalibratedFamily_gcStatRV_two`), and it is impossible when every gene is null
+(`not_isTailCalibratedFamily_gcStatRV_univ`): it can hold only if some non-null genes inflate
+`λ̂`. -/
 theorem isTailCalibratedFamily_gcStatRV_iff {Z : Fin m → Ω → ℝ} (hZ : ∀ k, Measurable (Z k))
     (H0 : Finset (Fin m)) :
     MultipleTesting.IsTailCalibratedFamily P (gcStatRV Z) (fun _ => chiSqOneTailReal) H0 ↔
@@ -308,6 +325,95 @@ theorem measure_exists_le_gcStatRV_le (Z : Fin m → Ω → ℝ) {H0 : Finset (F
       ≤ ∑ i ∈ H0, P {ω | s ≤ gcStatRV Z i ω} := measure_biUnion_finset_le _ _
     _ ≤ ∑ _i ∈ H0, chiSqOneTail s := Finset.sum_le_sum hcal
     _ = H0.card * chiSqOneTail s := by rw [Finset.sum_const, nsmul_eq_mul]
+
+/-! ### The assumption never holds when every gene is null -/
+
+/-- `∫₀^∞ P(χ²₁ > t) dt = E[χ²₁] = 1` (layer-cake formula for the square of a standard
+Gaussian). -/
+theorem lintegral_chiSqOneTail : ∫⁻ t in Set.Ioi 0, chiSqOneTail t = 1 := by
+  simp_rw [chiSqOneTail_eq_gaussianReal]
+  have hlc := lintegral_eq_lintegral_meas_lt (gaussianReal 0 1) (f := fun x : ℝ => x ^ 2)
+    (ae_of_all _ fun x => sq_nonneg x) (by fun_prop)
+  rw [← hlc]
+  have hint : Integrable (fun x : ℝ => x ^ 2) (gaussianReal 0 1) :=
+    (memLp_id_gaussianReal (μ := 0) (v := 1) 2).integrable_sq
+  rw [← ofReal_integral_eq_lintegral_ofReal hint (ae_of_all _ fun x => sq_nonneg x)]
+  have hv := variance_fun_id_gaussianReal (μ := 0) (v := 1)
+  rw [variance_eq_integral (by fun_prop), integral_id_gaussianReal] at hv
+  simp only [sub_zero, NNReal.coe_one] at hv
+  rw [hv, ENNReal.ofReal_one]
+
+/-- Under the calibration assumption for gene `j`, `E[S_j / λ̂] < 1 = E[χ²₁]`: the layer-cake
+integral of `P(T_j ≥ s)` stops at `s = m` (`gcStat_le_card`), while the `χ²₁` tail keeps
+positive mass beyond `m`. -/
+theorem lintegral_gcStatRV_lt_one {Z : Fin m → Ω → ℝ} (hZ : ∀ k, Measurable (Z k)) (j : Fin m)
+    (hcal : ∀ s, P {ω | s ≤ gcStatRV Z j ω} ≤ chiSqOneTail s) :
+    ∫⁻ ω, ENNReal.ofReal (gcStatRV Z j ω) ∂P < 1 := by
+  rw [lintegral_eq_lintegral_meas_le P (f := gcStatRV Z j)
+    (ae_of_all _ fun ω => gcStat_nonneg _ _) (measurable_gcStatRV hZ j).aemeasurable]
+  have hsplit : Set.Ioi (0 : ℝ) = Set.Ioc 0 (m : ℝ) ∪ Set.Ioi (m : ℝ) :=
+    (Set.Ioc_union_Ioi_eq_Ioi (Nat.cast_nonneg m)).symm
+  have hdisj : Disjoint (Set.Ioc (0 : ℝ) m) (Set.Ioi m) := Set.Ioc_disjoint_Ioi le_rfl
+  have htail : (∫⁻ t in Set.Ioc 0 (m : ℝ), chiSqOneTail t) +
+      ∫⁻ t in Set.Ioi (m : ℝ), chiSqOneTail t = 1 := by
+    rw [← lintegral_union (μ := volume) (f := chiSqOneTail) measurableSet_Ioi hdisj, ← hsplit,
+      lintegral_chiSqOneTail]
+  have hzero : ∫⁻ t in Set.Ioi (m : ℝ), P {ω | t ≤ gcStatRV Z j ω} = 0 := by
+    rw [setLIntegral_congr_fun measurableSet_Ioi (g := fun _ => 0) fun t ht => ?_,
+      lintegral_zero]
+    have : {ω | t ≤ gcStatRV Z j ω} = ∅ := by
+      ext ω
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false, not_le]
+      exact lt_of_le_of_lt (gcStat_le_card _ _) ht
+    simp [this]
+  have hb : ∫⁻ t in Set.Ioi (m : ℝ), chiSqOneTail t ≠ 0 := by
+    refine (lt_of_lt_of_le ?_ (lintegral_mono_set
+      (Set.Ioc_subset_Ioi_self : Set.Ioc (m : ℝ) (m + 1) ⊆ Set.Ioi (m : ℝ)))).ne'
+    calc (0 : ℝ≥0∞) < chiSqOneTail ((m : ℝ) + 1) * volume (Set.Ioc (m : ℝ) (m + 1)) := by
+          rw [Real.volume_Ioc]
+          exact ENNReal.mul_pos (chiSqOneTail_pos (by positivity)).ne' (by simp)
+      _ = ∫⁻ _ in Set.Ioc (m : ℝ) (m + 1), chiSqOneTail ((m : ℝ) + 1) :=
+          (setLIntegral_const _ _).symm
+      _ ≤ ∫⁻ t in Set.Ioc (m : ℝ) (m + 1), chiSqOneTail t :=
+          setLIntegral_mono' measurableSet_Ioc fun t ht => antitone_chiSqOneTail ht.2
+  have ha : ∫⁻ t in Set.Ioc 0 (m : ℝ), chiSqOneTail t ≠ ⊤ :=
+    ne_top_of_le_ne_top ENNReal.one_ne_top (by rw [← htail]; exact le_self_add)
+  rw [hsplit, lintegral_union measurableSet_Ioi hdisj, hzero, add_zero]
+  calc ∫⁻ t in Set.Ioc 0 (m : ℝ), P {ω | t ≤ gcStatRV Z j ω}
+      ≤ ∫⁻ t in Set.Ioc 0 (m : ℝ), chiSqOneTail t :=
+        setLIntegral_mono' measurableSet_Ioc fun t _ => hcal t
+    _ < (∫⁻ t in Set.Ioc 0 (m : ℝ), chiSqOneTail t) + ∫⁻ t in Set.Ioi (m : ℝ), chiSqOneTail t :=
+        ENNReal.lt_add_right ha hb
+    _ = 1 := htail
+
+/-- `E[∑ⱼ S_j / λ̂] = m` when the scores are almost surely not all zero. -/
+theorem sum_lintegral_gcStatRV {Z : Fin m → Ω → ℝ} [IsProbabilityMeasure P]
+    (hZ : ∀ k, Measurable (Z k)) (hne : ∀ᵐ ω ∂P, ∑ k, Z k ω ^ 2 ≠ 0) :
+    ∑ j, ∫⁻ ω, ENNReal.ofReal (gcStatRV Z j ω) ∂P = m := by
+  rw [← lintegral_finsetSum _ fun j _ => (measurable_gcStatRV hZ j).ennreal_ofReal]
+  rw [lintegral_congr_ae (g := fun _ => (m : ℝ≥0∞)) (hne.mono fun ω h => ?_)]
+  · simp
+  · rw [← ENNReal.ofReal_sum_of_nonneg (f := fun b => gcStatRV Z b ω)
+      fun j _ => gcStat_nonneg _ _]
+    simpa [gcStatRV] using congrArg ENNReal.ofReal (sum_gcStat (fun k => Z k ω) h)
+
+/-- **The calibration assumption is impossible under the global null, for every `m`.** If the
+scores are almost surely not all zero, the estimated-`λ̂` family is never tail-calibrated against
+`χ²₁` on the set of all genes: calibration would give `E[T_j] < 1` for every `j`
+(`lintegral_gcStatRV_lt_one`), hence `E[∑ⱼ T_j] < m`, while `∑ⱼ T_j = m` almost surely.
+No Gaussianity, independence or other assumption on the law of the scores is used. So the
+assumption can hold only when some genes are non-null and inflate `λ̂`. -/
+theorem not_isTailCalibratedFamily_gcStatRV_univ [IsProbabilityMeasure P] {Z : Fin m → Ω → ℝ}
+    (hZ : ∀ k, Measurable (Z k)) (hne : ∀ᵐ ω ∂P, ∑ k, Z k ω ^ 2 ≠ 0) (hm : 0 < m) :
+    ¬ MultipleTesting.IsTailCalibratedFamily P (gcStatRV Z) (fun _ => chiSqOneTailReal)
+      Finset.univ := by
+  intro h
+  have hcal := (isTailCalibratedFamily_gcStatRV_iff hZ _).1 h
+  have hlt : ∑ j, ∫⁻ ω, ENNReal.ofReal (gcStatRV Z j ω) ∂P < ∑ _j : Fin m, (1 : ℝ≥0∞) :=
+    ENNReal.sum_lt_sum_of_nonempty ⟨⟨0, hm⟩, Finset.mem_univ _⟩
+      fun j _ => lintegral_gcStatRV_lt_one hZ j (hcal j (Finset.mem_univ j))
+  rw [sum_lintegral_gcStatRV hZ hne] at hlt
+  simp at hlt
 
 /-! ### When calibration holds approximately: `λ̂` concentrating around `λ`
 
@@ -368,9 +474,16 @@ theorem chiSqOneTail_le_measure_lt_div_add {Z : Ω → ℝ} {lam : ℝ≥0} (hla
 /-- **Under-estimated `λ̂` is anti-conservative.** If `0 < L ≤ κ λ` everywhere with `κ < 1`,
 then `P(Z² / L > c) > P(χ²₁ > c)` at every `c > 0`. -/
 theorem chiSqOneTail_lt_measure_lt_div_of_le_mul {Z : Ω → ℝ} {lam : ℝ≥0} (hlam : lam ≠ 0)
-    (hZ : HasLaw Z (gaussianReal 0 lam) P) {L : Ω → ℝ} {κ : ℝ} (hκ0 : 0 ≤ κ) (hκ1 : κ < 1)
+    (hZ : HasLaw Z (gaussianReal 0 lam) P) {L : Ω → ℝ} {κ : ℝ} (hκ1 : κ < 1)
     (hL : ∀ ω, 0 < L ω ∧ L ω ≤ κ * lam) {c : ℝ} (hc : 0 < c) :
     chiSqOneTail c < P {ω | c < Z ω ^ 2 / L ω} := by
+  have hκ0 : 0 ≤ κ := by
+    by_contra hneg
+    have hlam0 : (0 : ℝ) < lam := lt_of_le_of_ne lam.2 (by exact_mod_cast hlam.symm)
+    have : IsEmpty Ω := ⟨fun ω => by nlinarith [(hL ω).1, (hL ω).2]⟩
+    have hmap := hZ.map_eq
+    rw [Measure.eq_zero_of_isEmpty P, Measure.map_zero] at hmap
+    exact IsProbabilityMeasure.ne_zero (gaussianReal 0 lam) hmap.symm
   have h := chiSqOneTail_le_measure_lt_div_add hlam hZ (E := Set.univ) (fun ω _ => hL ω) hc.le
   rw [Set.compl_univ, measure_empty, add_zero] at h
   refine lt_of_lt_of_le (chiSqOneTail_lt_of_lt (by positivity) ?_) h
@@ -409,9 +522,9 @@ theorem sum_sum_covariance_gcStatRV [IsProbabilityMeasure P] {Z : Fin m → Ω �
   simp [variance_eq_integral]
 
 /-- **Negative coupling.** If some corrected statistic is nondegenerate (`Var(T_j) > 0`), then
-some pair of distinct genes has strictly negative covariance. Pairwise nonnegative covariance,
-which positive dependence (PRDS, association) would give for these increasing statistics, is
-therefore impossible for the mean-`λ̂` family. -/
+some pair of distinct genes has strictly negative covariance, so pairwise nonnegative covariance
+is impossible for the mean-`λ̂` family. That positive dependence (PRDS, association) would give
+pairwise nonnegative covariance of these statistics is standard but not formalized here. -/
 theorem exists_covariance_gcStatRV_neg [IsProbabilityMeasure P] {Z : Fin m → Ω → ℝ}
     (hZ : ∀ k, Measurable (Z k)) (hne : ∀ᵐ ω ∂P, ∑ k, Z k ω ^ 2 ≠ 0) {j : Fin m}
     (hvar : 0 < Var[gcStatRV Z j; P]) :
@@ -463,7 +576,11 @@ theorem covariance_gcStatRV_eq_of_forall_eq [IsProbabilityMeasure P] {Z : Fin m 
 /-- **A separation criterion that refutes PRDS.** Suppose gene `k`'s p-value is at least `u`
 (almost surely) whenever `p i ≤ s`, and below `u` whenever `s < p i ≤ t`, with both events of
 positive probability. Then the increasing set `D = {x | u ≤ x k}` has
-`P(P ∈ D | p i ≤ t) < P(P ∈ D | p i ≤ s)`, contradicting `IsPRDSOn.measure_inter_mul_le`. -/
+`P(P ∈ D | p i ≤ t) < P(P ∈ D | p i ≤ s)`, contradicting `IsPRDSOn.measure_inter_mul_le`.
+
+This lemma is generic and belongs in
+`MathlibExt/Probability/Statistics/MultipleTesting/BenjaminiHochberg.lean`; it lives here only
+because that file is outside this task's ownership, and a follow-up task will move it. -/
 theorem not_isPRDSOn_of_separated {μ : Measure Ω} [IsFiniteMeasure μ] {p : Fin m → Ω → ℝ}
     (hp : ∀ i, Measurable (p i)) {H0 : Finset (Fin m)} {i k : Fin m} (hi : i ∈ H0)
     {s t u : ℝ} (hst : s ≤ t) (hA : μ {ω | p i ω ≤ s} ≠ 0)
