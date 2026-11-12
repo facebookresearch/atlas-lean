@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Economics.Consumer.BudgetExhaustion
 public import Mathlib.Algebra.Order.Star.Real
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
@@ -18,7 +19,6 @@ import Mathlib.Tactic.FinCases
 @[expose] public section
 
 open MathlibExt.Economics MathlibExt.Economics.Consumer
-open MathlibExt.Economics.SecondWelfareTheorem (consumptionSet)
 
 namespace MathlibExtTest.Economics.Consumer.BudgetExhaustion
 
@@ -27,7 +27,7 @@ namespace BudgetExhaustionExamples
 /-- Linear utility `x₀ + x₁` on two goods. -/
 def linU (x : Fin 2 → ℝ) : ℝ := x 0 + x 1
 
-theorem linU_locallyNonsatiated : SecondWelfareTheorem.LocallyNonsatiated linU := by
+theorem linU_locallyNonsatiated : LocallyNonsatiated linU {z | ∀ l, 0 ≤ z l} := by
   intro z hz ε hε
   refine ⟨fun l => z l + ε / 2, fun l => by have h := hz l; linarith, ?_, ?_⟩
   · rw [dist_pi_lt_iff hε]
@@ -42,7 +42,7 @@ theorem linU_locallyNonsatiated : SecondWelfareTheorem.LocallyNonsatiated linU :
 theorem linU_demand_exhausts (x : Fin 2 → ℝ)
     (hx : x ∈ marshallianDemand linU ![1, 2] 2) :
     (![1, 2] : Fin 2 → ℝ) ⬝ᵥ x = 2 := by
-  exact dotProduct_eq_of_isMarshallianDemand linU_locallyNonsatiated hx
+  exact dotProduct_eq_of_mem_marshallianDemand linU_locallyNonsatiated hx
 
 /-- A satiated utility with bliss point `(1, 1)`. -/
 def blissU (x : Fin 2 → ℝ) : ℝ := -((x 0 - 1) ^ 2 + (x 1 - 1) ^ 2)
@@ -69,9 +69,10 @@ theorem blissU_not_exhausted : (![1, 1] : Fin 2 → ℝ) ⬝ᵥ ![1, 1] ≠ 4 :=
     mul_one]
   norm_num
 
-theorem blissU_not_locallyNonsatiated : ¬ SecondWelfareTheorem.LocallyNonsatiated blissU := by
+theorem blissU_not_locallyNonsatiated :
+    ¬ LocallyNonsatiated blissU {z | ∀ l, 0 ≤ z l} := by
   intro h
-  have hmem : (![1, 1] : Fin 2 → ℝ) ∈ SecondWelfareTheorem.consumptionSet (Fin 2) := by
+  have hmem : (![1, 1] : Fin 2 → ℝ) ∈ {z | ∀ l, 0 ≤ z l} := by
     intro l
     fin_cases l <;> norm_num
   obtain ⟨z, hzmem, hdist, hgt⟩ := h _ hmem 1 one_pos

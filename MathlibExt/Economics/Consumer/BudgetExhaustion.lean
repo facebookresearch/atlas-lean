@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Economics.Consumer.MarshallianDemand
-public import MathlibExt.Economics.SecondWelfareTheorem
+public import MathlibExt.Economics.Consumer.LocalNonsatiation
 import Mathlib.Tactic.Linarith
 
 @[expose] public section
@@ -21,7 +21,7 @@ Source: J. Levin, *Consumer Theory*, Stanford Econ 202 lecture notes (2004), §2
 Proposition 4 ("Walras' Law" for one consumer): if preferences are locally non-satiated, then for
 any `(p, w)` and `x ∈ x(p, w)`, `p · x = w`. Local nonsatiation (Levin–Milgrom, *Introduction to
 Choice Theory*, Definition 8) on the consumption set `ℝ^L_+` is Atlas's
-`SecondWelfareTheorem.LocallyNonsatiated`. No sign condition on prices is needed.
+`Consumer.LocallyNonsatiated` on `{z | ∀ l, 0 ≤ z l}`. No sign condition on prices is needed.
 
 The demand hypothesis is stated against the canonical EC02.T01 correspondence
 `marshallianDemand` in `MathlibExt.Economics.Consumer.MarshallianDemand`, so clients can
@@ -34,8 +34,8 @@ open Matrix
 
 /-- Levin, Proposition 4: with a locally nonsatiated utility, every Marshallian demand on `ℝ^L_+`
 exhausts the budget. -/
-theorem dotProduct_eq_of_isMarshallianDemand {L : Type*} [Fintype L] {u : (L → ℝ) → ℝ}
-    {p : L → ℝ} {w : ℝ} {x : L → ℝ} (hu : SecondWelfareTheorem.LocallyNonsatiated u)
+theorem dotProduct_eq_of_mem_marshallianDemand {L : Type*} [Fintype L] {u : (L → ℝ) → ℝ}
+    {p : L → ℝ} {w : ℝ} {x : L → ℝ} (hu : LocallyNonsatiated u {z | ∀ l, 0 ≤ z l})
     (hx : x ∈ marshallianDemand u p w) : p ⬝ᵥ x = w := by
   obtain ⟨⟨hxmem, hxle⟩, hxopt⟩ := hx
   by_contra hne
