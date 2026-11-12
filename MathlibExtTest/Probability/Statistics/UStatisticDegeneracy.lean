@@ -15,6 +15,47 @@ public import MathlibExt.Probability.Statistics.UStatisticDegeneracy
 open Filter Topology MeasureTheory ProbabilityTheory
 open scoped ENNReal
 
+/-- The first Hoeffding projection of a constant kernel is integrable, via the
+moved `memLp_hoeffdingProj_one`. -/
+example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasure μ]
+    (c : ℝ) :
+    MemLp (ProbabilityTheory.hoeffdingProj μ (fun _ : Fin 1 → α => c) 1)
+      2 (Measure.pi fun _ : Fin 1 => μ) :=
+  ProbabilityTheory.memLp_hoeffdingProj_one μ (by norm_num) (memLp_const c)
+
+/-- A constant kernel is degenerate: `ζ₁ = 0` iff the projection is a.s. constant. -/
+example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasure μ]
+    (c : ℝ) :
+    ∀ᵐ y ∂(Measure.pi fun _ : Fin 1 => μ),
+      ProbabilityTheory.hoeffdingProj μ (fun _ : Fin 1 → α => c) 1 y
+        = ∫ z, ProbabilityTheory.hoeffdingProj μ (fun _ : Fin 1 → α => c) 1 z
+          ∂(Measure.pi fun _ : Fin 1 => μ) := by
+  have hproj : ProbabilityTheory.hoeffdingProj μ (fun _ : Fin 1 → α => c) 1 = fun _ => c := by
+    funext y
+    simp [ProbabilityTheory.hoeffdingProj]
+  have hz : Var[ProbabilityTheory.hoeffdingProj μ (fun _ : Fin 1 → α => c) 1;
+      Measure.pi fun _ : Fin 1 => μ] = 0 := by
+    rw [hproj, variance_eq_integral aemeasurable_const]
+    simp
+  exact (ProbabilityTheory.zeta1_eq_zero_iff μ (by norm_num) (fun _ _ => rfl)
+    (memLp_const c)).mp hz
+
+/-- Concrete degenerate rate: for a constant kernel, `n Var(U_n) → 0`. -/
+example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasure μ]
+    (c : ℝ) :
+    Tendsto (fun n : ℕ => (n : ℝ)
+      * Var[ProbabilityTheory.uStatistic (fun _ : Fin 1 → α => c);
+        Measure.pi fun _ : Fin n => μ]) atTop (𝓝 0) := by
+  have hproj : ProbabilityTheory.hoeffdingProj μ (fun _ : Fin 1 → α => c) 1 = fun _ => c := by
+    funext y
+    simp [ProbabilityTheory.hoeffdingProj]
+  have hz : Var[ProbabilityTheory.hoeffdingProj μ (fun _ : Fin 1 → α => c) 1;
+      Measure.pi fun _ : Fin 1 => μ] = 0 := by
+    rw [hproj, variance_eq_integral aemeasurable_const]
+    simp
+  exact ProbabilityTheory.variance_degenerate_rate μ (by norm_num) (fun _ _ => rfl)
+    (memLp_const c) hz
+
 /-- Positive case: coordinate evaluation under the product law keeps nonzero
 variance (the shape of a nondegenerate linear first projection). -/
 example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasure μ]
@@ -44,9 +85,9 @@ example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasur
 /-- Boundary case: a constant kernel is degenerate with zero variance. -/
 example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasure μ]
     (c : ℝ) :
-    Var[hoeffdingProj μ (fun _ : Fin 1 → α => c) 1;
+    Var[ProbabilityTheory.hoeffdingProj μ (fun _ : Fin 1 → α => c) 1;
       Measure.pi fun _ : Fin 1 => μ] = 0 := by
-  have hproj : hoeffdingProj μ (fun _ : Fin 1 → α => c) 1 = fun _ => c := by
+  have hproj : ProbabilityTheory.hoeffdingProj μ (fun _ : Fin 1 → α => c) 1 = fun _ => c := by
     funext y
     simp [hoeffdingProj]
   rw [hproj, variance_eq_integral aemeasurable_const]
@@ -56,6 +97,6 @@ example {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasur
 by the empty-sum convention. -/
 example {α : Type*} [MeasurableSpace α] {m n : ℕ} (hmn : n < m)
     (h : (Fin m → α) → ℝ) (x : Fin n → α) :
-    uStatistic h x = 0 := by
+    ProbabilityTheory.uStatistic h x = 0 := by
   have hz : n.descFactorial m = 0 := Nat.descFactorial_of_lt hmn
   simp [uStatistic, hz]
