@@ -175,14 +175,6 @@ private lemma studentT_kernel_eq {k : ℕ} (hk : 0 < k) (t : ℝ) {v : ℝ} (hv 
       rw [hexp, hpow, h2, hneg, hhalf, hs2, hskp]
       field_simp
 
-/-- Linear substitution `z = σ t` for a lower Lebesgue integral on `ℝ`, `σ > 0`. -/
-private lemma lintegral_comp_mul_left_of_pos {σ : ℝ} (hσ : 0 < σ) (F : ℝ → ℝ≥0∞) :
-    ∫⁻ z, F z = ENNReal.ofReal σ * ∫⁻ t, F (σ * t) := by
-  conv_lhs => rw [← Real.smul_map_volume_mul_left hσ.ne']
-  rw [lintegral_smul_measure, abs_of_pos hσ, smul_eq_mul]
-  congr 1
-  exact lintegral_map_equiv F (Homeomorph.mulLeft₀ σ hσ.ne').toMeasurableEquiv
-
 /-- **Student's `t` law as a ratio** (Casella–Berger, Definition 5.3.4): for independent
 `Z ~ N(0, 1)` and `V ~ χ²_k` with `k ≥ 1`, `Z / √(V / k)` has law `studentTMeasure k`, i.e.
 Lebesgue density `Γ((k + 1)/2) / (√(k π) Γ(k/2)) · (1 + t²/k)^{-(k+1)/2}`. -/
