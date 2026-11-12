@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Economics.Consumer.MarshallianDemand
+public import MathlibExt.Economics.Consumer.ExpenditureDuality
 
 @[expose] public section
 
@@ -18,27 +18,26 @@ public import MathlibExt.Economics.Consumer.MarshallianDemand
 Source: J. Levin, *Consumer Theory*, Stanford Econ 202 lecture notes (2004), §2,
 Proposition 1 (first part: for all `λ > 0`, `B(λp, λw) = B(p, w)`) and Proposition 3
 (Homogeneity: for all `p, w` and `λ > 0`, `x(λp, λw) = x(p, w)`). Levin states these on
-`ℝⁿ₊`; the canonical EC02.T01 `budgetSet` already builds nonnegativity in, so the statements
-below are Levin's directly, with no separate consumption-set parameter.
+`ℝⁿ₊`. The statements use the shared `Economics.Consumer` API with an arbitrary
+consumption set; choosing `X = {x | 0 ≤ x}` gives Levin's nonnegative-orthant case.
 -/
-
-namespace MathlibExt.Economics.Consumer
 
 open Matrix
 
-/-- Levin, Proposition 1: scaling prices and wealth by the same positive factor leaves the budget
-set unchanged. -/
-theorem budgetSet_smul {L : Type*} [Fintype L] {t : ℝ} (ht : 0 < t)
-    (p : L → ℝ) (w : ℝ) : budgetSet (t • p) (t * w) = budgetSet p w := by
+namespace Economics.Consumer
+
+/-- Positive scaling preserves the budget set for any consumption set. -/
+theorem budgetSet_smul {L : Type*} [Fintype L] (X : Set (L → ℝ)) {t : ℝ}
+    (ht : 0 < t) (p : L → ℝ) (w : ℝ) : budgetSet X (t • p) (t * w) = budgetSet X p w := by
   ext x
-  change (0 ≤ x ∧ (t • p) ⬝ᵥ x ≤ t * w) ↔ (0 ≤ x ∧ p ⬝ᵥ x ≤ w)
+  change (x ∈ X ∧ (t • p) ⬝ᵥ x ≤ t * w) ↔ (x ∈ X ∧ p ⬝ᵥ x ≤ w)
   simp only [smul_dotProduct, smul_eq_mul, mul_le_mul_iff_of_pos_left ht]
 
-/-- Levin, Proposition 3: Marshallian demand is homogeneous of degree zero in prices and wealth. -/
+/-- Marshallian demand is unchanged by positive scaling of prices and wealth. -/
 theorem isMarshallianDemand_smul_iff {L : Type*} [Fintype L] (u : (L → ℝ) → ℝ)
-    {t : ℝ} (ht : 0 < t) (p : L → ℝ) (w : ℝ) (x : L → ℝ) :
-    x ∈ marshallianDemand u (t • p) (t * w) ↔ x ∈ marshallianDemand u p w := by
-  unfold marshallianDemand
-  rw [budgetSet_smul ht]
+    (X : Set (L → ℝ)) {t : ℝ} (ht : 0 < t) (p : L → ℝ) (w : ℝ) (x : L → ℝ) :
+    IsMarshallianDemand u X (t • p) (t * w) x ↔ IsMarshallianDemand u X p w x := by
+  unfold IsMarshallianDemand
+  rw [budgetSet_smul X ht]
 
-end MathlibExt.Economics.Consumer
+end Economics.Consumer

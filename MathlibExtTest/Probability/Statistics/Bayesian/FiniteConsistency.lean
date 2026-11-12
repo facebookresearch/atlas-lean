@@ -86,3 +86,49 @@ end MathlibExtTest.Probability.Statistics.Bayesian.FiniteConsistency
 
 #print axioms MathlibExt.Probability.Statistics.Bayesian.ae_tendsto_postWeight_one
 #print axioms MathlibExt.Probability.Statistics.Bayesian.isProbabilityMeasure_weightLaw
+
+namespace MathlibExtTest.Probability.Statistics.Bayesian.FiniteConsistency
+
+open MeasureTheory ProbabilityTheory Filter Topology
+open MathlibExt.Probability.Statistics.Bayesian
+
+/-- Use case: truth `1 / 2` against alternative `3 / 4` with unit prior weights. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    (X : ℕ → Ω → Fin 2) (hX : ∀ i, Measurable (X i))
+    (hlaw : ∀ i, μ.map (X i) = weightLaw (bernPMF (1 / 2)))
+    (hindep : Pairwise fun i j => IndepFun (X i) (X j) μ) :
+    ∀ᵐ ω ∂μ, Tendsto
+      (fun n => postWeight (fun _ : Fin 2 => (1 : ℝ))
+        (fun θ : Fin 2 => bernPMF (if θ = 0 then (1 / 2 : ℝ) else 3 / 4)) X n ω (0 : Fin 2))
+      atTop (𝓝 1) := by
+  exact twoPoint_postWeight_tendsto_one (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) X hX hlaw hindep
+
+/-- Boundary: identical laws have zero self-KL, so the separation hypothesis excludes them. -/
+example : ¬ 0 < ∑ x : Fin 2,
+    bernPMF (1 / 2) x * Real.log (bernPMF (1 / 2) x / bernPMF (1 / 2) x) := by
+  have hpos : ∀ x : Fin 2, 0 < bernPMF (1 / 2 : ℝ) x := fun x => by
+    unfold bernPMF
+    split <;> norm_num
+  have h : ∑ x : Fin 2, bernPMF (1 / 2) x * Real.log (bernPMF (1 / 2) x / bernPMF (1 / 2) x)
+      = 0 := by
+    rw [Fin.sum_univ_two]
+    have h0 : bernPMF (1 / 2 : ℝ) 0
+        * Real.log (bernPMF (1 / 2 : ℝ) 0 / bernPMF (1 / 2 : ℝ) 0) = 0 := by
+      rw [div_self (ne_of_gt (hpos 0)), Real.log_one, mul_zero]
+    have h1 : bernPMF (1 / 2 : ℝ) 1
+        * Real.log (bernPMF (1 / 2 : ℝ) 1 / bernPMF (1 / 2 : ℝ) 1) = 0 := by
+      rw [div_self (ne_of_gt (hpos 1)), Real.log_one, mul_zero]
+    rw [h0, h1, add_zero]
+  rw [h]
+  exact lt_irrefl 0
+
+/-- Degenerate case: with no observations the posterior weight is the prior ratio. -/
+example {Ω : Type*} [MeasurableSpace Ω] (X : ℕ → Ω → Fin 2) (ω : Ω)
+    (f : Fin 2 → Fin 2 → ℝ) :
+    postWeight (fun _ : Fin 2 => (1 : ℝ)) f X 0 ω (0 : Fin 2) = 1 / 2 := by
+  simp only [postWeight, Finset.range_zero, Finset.prod_empty, mul_one]
+  rw [Fin.sum_univ_two]
+  norm_num
+
+end MathlibExtTest.Probability.Statistics.Bayesian.FiniteConsistency

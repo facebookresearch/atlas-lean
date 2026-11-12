@@ -682,6 +682,23 @@ private theorem memLp_integral_hoeffdingProj_one {α : Type*} [MeasurableSpace �
     exact ⟨memLp_integral_right _ _ hH, (integral_prod _ (hH.integrable (by norm_num))).symm.trans
       (integral_comp_of_measurePreserving_aesm hp hh.aestronglyMeasurable)⟩
 
+/-- The first Hoeffding projection of a square-integrable kernel is square-integrable. -/
+theorem memLp_hoeffdingProj_one {α : Type*} [MeasurableSpace α]
+    (μ : Measure α) [IsProbabilityMeasure μ] {m : ℕ} (hm : 1 ≤ m)
+    {h : (Fin m → α) → ℝ} (hh : MemLp h 2 (Measure.pi fun _ => μ)) :
+    MemLp (hoeffdingProj μ h 1) 2 (Measure.pi fun _ : Fin 1 => μ) := by
+  let H : (Fin 1 → α) × (Fin (m - 1) → α) → ℝ := fun p =>
+    h (fun j => if hj : (j : ℕ) < 1 then p.1 ⟨j, hj⟩
+      else p.2 ⟨j - 1, by have := j.isLt; omega⟩)
+  have hH : MemLp H 2 ((Measure.pi fun _ => μ).prod (Measure.pi fun _ => μ)) :=
+    hh.comp_measurePreserving (ProbabilityTheory.measurePreserving_prefix_join hm μ)
+  have hproj : hoeffdingProj μ h 1
+      = fun y => ∫ z, H (y, z) ∂(Measure.pi fun _ => μ) := by
+    funext y
+    simp [hoeffdingProj, H]
+  rw [hproj]
+  exact ProbabilityTheory.memLp_integral_right _ _ hH
+
 private theorem integral_kernel_sub_mul_hoeffdingProj_one_sub {α : Type*}
     [MeasurableSpace α] {m n : ℕ} (μ : Measure α) [IsProbabilityMeasure μ]
     {h : (Fin m → α) → ℝ} (hsymm : ∀ (σ : Equiv.Perm (Fin m)) y, h (y ∘ σ) = h y)
