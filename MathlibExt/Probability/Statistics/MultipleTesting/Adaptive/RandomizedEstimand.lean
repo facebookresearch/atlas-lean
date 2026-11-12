@@ -56,7 +56,7 @@ p-values, the merged Benjamini–Hochberg and Bonferroni theorems are applied un
   outcomes, with `0 < P(T) < 1`, is strongly ignorable given the trivial covariate),
   `ipwContrast_const` (the IPW contrast is then the Horvitz–Thompson contrast with the design
   probability `π = P(T)`), and `integral_falseDiscoveryProportion_bhRejections_ateNulls_le_of_indep`
-  (BH FDR control for a completely randomized trial).
+  (BH FDR control for a randomized trial, treatment independent of the potential outcomes).
 * Positivity failure: `not_stronglyIgnorable_untreated` and
   `ipwContrast_untreated_eq_neg_one` (nobody treated: exchangeability holds, positivity fails,
   and the IPW contrast is `-1` while the ATE is `0`), `isIPWNullCalibrated_untreated` (the
@@ -72,6 +72,12 @@ separate from validity, and nothing here depends on the false-null p-values beyo
 measurability (and independence for BH). The construction of a p-value calibrated for the
 observed-data null (for example by an asymptotic Wald test of the IPW estimator) is an explicit
 hypothesis, not proved here.
+
+The covariate `X` takes finitely many values, as `integral_ipw_ate` requires; the
+general-covariate IPW identity `integral_ipw_treated_condExp` on main covers only the treated arm
+and is not used. Only BH under independence and Bonferroni are connected to the causal nulls;
+Holm, BH under PRDS and Benjamini–Yekutieli follow by the same one-line application of
+`isValidPValue_of_mem_ateNulls` but are not stated here.
 
 ## References
 
@@ -135,32 +141,39 @@ theorem ipwContrast_observed_eq_integral [IsProbabilityMeasure μ] {T : Set Ω}
     ipwContrast μ T X (observed T Y₀ Y₁) = ∫ ω, (Y₁ ω - Y₀ ω) ∂μ :=
   integral_ipw_ate hT hX hY₀ hY₁ hY₀i hY₁i h
 
-/-- **The causal nulls carry valid p-values.** If every endpoint is strongly ignorable given `X`
+/-- **The causal nulls carry valid p-values.** If every endpoint with zero average treatment
+effect is strongly ignorable given `X`
 and the p-values are calibrated for the observed-data IPW null of the observed outcomes, then
 `p j` is valid for every endpoint `j` with zero average treatment effect. Identification is the
 step `ATE_j = 0 → ipwContrast_j = 0`. -/
 theorem isValidPValue_of_mem_ateNulls [IsProbabilityMeasure μ] {T : Set Ω}
     (hT : MeasurableSet T) {X : Ω → 𝒳} (hX : Measurable X) {Y₀ Y₁ : Fin m → Ω → ℝ}
-    (hY₀ : ∀ j, Measurable (Y₀ j)) (hY₁ : ∀ j, Measurable (Y₁ j))
-    (hY₀i : ∀ j, Integrable (Y₀ j) μ) (hY₁i : ∀ j, Integrable (Y₁ j) μ)
-    (hign : ∀ j, StronglyIgnorable μ T (fun ω => (Y₀ j ω, Y₁ j ω)) X) {p : Fin m → Ω → ℝ}
+    (hY₀ : ∀ j ∈ ateNulls μ Y₀ Y₁, Measurable (Y₀ j))
+    (hY₁ : ∀ j ∈ ateNulls μ Y₀ Y₁, Measurable (Y₁ j))
+    (hY₀i : ∀ j ∈ ateNulls μ Y₀ Y₁, Integrable (Y₀ j) μ)
+    (hY₁i : ∀ j ∈ ateNulls μ Y₀ Y₁, Integrable (Y₁ j) μ)
+    (hign : ∀ j ∈ ateNulls μ Y₀ Y₁, StronglyIgnorable μ T (fun ω => (Y₀ j ω, Y₁ j ω)) X)
+    {p : Fin m → Ω → ℝ}
     (hcal : IsIPWNullCalibrated μ T X (fun j => observed T (Y₀ j) (Y₁ j)) p) :
     ∀ j ∈ ateNulls μ Y₀ Y₁, IsValidPValue μ (p j) := fun j hj =>
-  hcal j <| (ipwContrast_observed_eq_integral hT hX (hY₀ j) (hY₁ j) (hY₀i j) (hY₁i j)
-    (hign j)).trans (mem_ateNulls_iff.1 hj)
+  hcal j <| (ipwContrast_observed_eq_integral hT hX (hY₀ j hj) (hY₁ j hj) (hY₀i j hj)
+    (hY₁i j hj) (hign j hj)).trans (mem_ateNulls_iff.1 hj)
 
-/-- **BH controls the FDR over the causal nulls.** Under strong ignorability of every endpoint
-given `X`, with independent p-values calibrated for the observed-data IPW null, the
-Benjamini–Hochberg procedure at level `q ∈ [0, 1]` has false discovery rate at most
-`q |ateNulls| / m`, the false discoveries being the rejected endpoints with zero average
-treatment effect. The merged BH theorem
-`integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue` is applied to the causal
-nulls via `isValidPValue_of_mem_ateNulls`. No power claim is made. -/
+/-- **BH controls the FDR over the causal nulls.** Under strong ignorability given `X` of every
+endpoint with zero average treatment effect (nothing is assumed about the other endpoints), with
+independent p-values calibrated for the observed-data IPW null, the Benjamini–Hochberg procedure at
+level `q ∈ [0, 1]` has false discovery rate at most `q |ateNulls| / m`, the false discoveries being
+the rejected endpoints with zero average treatment effect. The merged BH theorem
+`integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue` is applied to the causal nulls
+via `isValidPValue_of_mem_ateNulls`. No power claim is made. -/
 theorem integral_falseDiscoveryProportion_bhRejections_ateNulls_le [IsProbabilityMeasure μ]
     {T : Set Ω} (hT : MeasurableSet T) {X : Ω → 𝒳} (hX : Measurable X)
-    {Y₀ Y₁ : Fin m → Ω → ℝ} (hY₀ : ∀ j, Measurable (Y₀ j)) (hY₁ : ∀ j, Measurable (Y₁ j))
-    (hY₀i : ∀ j, Integrable (Y₀ j) μ) (hY₁i : ∀ j, Integrable (Y₁ j) μ)
-    (hign : ∀ j, StronglyIgnorable μ T (fun ω => (Y₀ j ω, Y₁ j ω)) X) {p : Fin m → Ω → ℝ}
+    {Y₀ Y₁ : Fin m → Ω → ℝ} (hY₀ : ∀ j ∈ ateNulls μ Y₀ Y₁, Measurable (Y₀ j))
+    (hY₁ : ∀ j ∈ ateNulls μ Y₀ Y₁, Measurable (Y₁ j))
+    (hY₀i : ∀ j ∈ ateNulls μ Y₀ Y₁, Integrable (Y₀ j) μ)
+    (hY₁i : ∀ j ∈ ateNulls μ Y₀ Y₁, Integrable (Y₁ j) μ)
+    (hign : ∀ j ∈ ateNulls μ Y₀ Y₁, StronglyIgnorable μ T (fun ω => (Y₀ j ω, Y₁ j ω)) X)
+    {p : Fin m → Ω → ℝ}
     (hp : ∀ i, Measurable (p i)) (hpind : iIndepFun p μ)
     (hcal : IsIPWNullCalibrated μ T X (fun j => observed T (Y₀ j) (Y₁ j)) p)
     (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
@@ -169,15 +182,19 @@ theorem integral_falseDiscoveryProportion_bhRejections_ateNulls_le [IsProbabilit
   integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue μ p hp hpind _
     (isValidPValue_of_mem_ateNulls hT hX hY₀ hY₁ hY₀i hY₁i hign hcal) q hq₀ hq₁
 
-/-- **Bonferroni controls the FWER over the causal nulls.** Under strong ignorability of every
-endpoint given `X`, with p-values calibrated for the observed-data IPW null (no assumption on
-their dependence), the probability that the Bonferroni procedure at level `α ∈ [0, 1]` rejects
-some endpoint with zero average treatment effect is at most `α`. No power claim is made. -/
+/-- **Bonferroni controls the FWER over the causal nulls.** Under strong ignorability given `X` of
+every endpoint with zero average treatment effect, with p-values calibrated for the observed-data
+IPW null (no assumption on their dependence), the probability that the Bonferroni procedure at level
+`α ∈ [0, 1]` rejects some endpoint with zero average treatment effect is at most `α`. No power claim
+is made. -/
 theorem measure_bonferroni_ateNulls_familywiseError_le [IsProbabilityMeasure μ]
     {T : Set Ω} (hT : MeasurableSet T) {X : Ω → 𝒳} (hX : Measurable X)
-    {Y₀ Y₁ : Fin m → Ω → ℝ} (hY₀ : ∀ j, Measurable (Y₀ j)) (hY₁ : ∀ j, Measurable (Y₁ j))
-    (hY₀i : ∀ j, Integrable (Y₀ j) μ) (hY₁i : ∀ j, Integrable (Y₁ j) μ)
-    (hign : ∀ j, StronglyIgnorable μ T (fun ω => (Y₀ j ω, Y₁ j ω)) X) {p : Fin m → Ω → ℝ}
+    {Y₀ Y₁ : Fin m → Ω → ℝ} (hY₀ : ∀ j ∈ ateNulls μ Y₀ Y₁, Measurable (Y₀ j))
+    (hY₁ : ∀ j ∈ ateNulls μ Y₀ Y₁, Measurable (Y₁ j))
+    (hY₀i : ∀ j ∈ ateNulls μ Y₀ Y₁, Integrable (Y₀ j) μ)
+    (hY₁i : ∀ j ∈ ateNulls μ Y₀ Y₁, Integrable (Y₁ j) μ)
+    (hign : ∀ j ∈ ateNulls μ Y₀ Y₁, StronglyIgnorable μ T (fun ω => (Y₀ j ω, Y₁ j ω)) X)
+    {p : Fin m → Ω → ℝ}
     (hcal : IsIPWNullCalibrated μ T X (fun j => observed T (Y₀ j) (Y₁ j)) p)
     {α : ℝ} (hα₀ : 0 ≤ α) (hα₁ : α ≤ 1) :
     μ {ω | (bonferroniRejections α (fun i => p i ω) ∩ ateNulls μ Y₀ Y₁).Nonempty} ≤
@@ -187,7 +204,12 @@ theorem measure_bonferroni_ateNulls_familywiseError_le [IsProbabilityMeasure μ]
 
 end Identification
 
-/-! ### Completely randomized trials -/
+/-! ### Randomized trials (treatment independent of the potential outcomes)
+
+This is Bernoulli-type assignment in a superpopulation: the treatment indicator is a random
+variable independent of the potential outcomes. It is not the *complete randomization* of
+`randExp` (the uniform law on treated sets of a fixed size `n₁` in a finite population), and the
+finite-population estimand `ate` / `diffInMeans` of `CausalIdentification` is not used here. -/
 
 section Randomized
 
@@ -223,24 +245,28 @@ theorem stronglyIgnorable_of_indepFun [IsProbabilityMeasure μ] {β : Type*} [Me
     simp [measureReal_def, h, ENNReal.toReal_mul]
   · exact propensity_const (μ := μ) T ▸ ⟨hT₀, hT₁⟩
 
-/-- **BH FDR control in a completely randomized trial.** If the treatment indicator is
-independent of every endpoint's potential outcomes, `0 < P(T) < 1`, and the independent p-values
+/-- **BH FDR control in a randomized trial (treatment independent of the potential outcomes).**
+If the treatment indicator is independent of the potential outcomes of every endpoint with zero
+average treatment effect, `0 < P(T) < 1`, and the independent p-values
 are calibrated for the observed-data Horvitz–Thompson null (`ipwContrast_const`), BH at level
 `q ∈ [0, 1]` has FDR at most `q |ateNulls| / m` over the endpoints with zero average treatment
 effect. Randomization enters through `stronglyIgnorable_of_indepFun`. No power claim is made. -/
 theorem integral_falseDiscoveryProportion_bhRejections_ateNulls_le_of_indep
     [IsProbabilityMeasure μ] {T : Set Ω} (hT : MeasurableSet T) (hT₀ : 0 < μ.real T)
-    (hT₁ : μ.real T < 1) {Y₀ Y₁ : Fin m → Ω → ℝ} (hY₀ : ∀ j, Measurable (Y₀ j))
-    (hY₁ : ∀ j, Measurable (Y₁ j)) (hY₀i : ∀ j, Integrable (Y₀ j) μ)
-    (hY₁i : ∀ j, Integrable (Y₁ j) μ)
-    (hind : ∀ j, IndepFun (T.indicator (1 : Ω → ℝ)) (fun ω => (Y₀ j ω, Y₁ j ω)) μ)
+    (hT₁ : μ.real T < 1) {Y₀ Y₁ : Fin m → Ω → ℝ}
+    (hY₀ : ∀ j ∈ ateNulls μ Y₀ Y₁, Measurable (Y₀ j))
+    (hY₁ : ∀ j ∈ ateNulls μ Y₀ Y₁, Measurable (Y₁ j))
+    (hY₀i : ∀ j ∈ ateNulls μ Y₀ Y₁, Integrable (Y₀ j) μ)
+    (hY₁i : ∀ j ∈ ateNulls μ Y₀ Y₁, Integrable (Y₁ j) μ)
+    (hind : ∀ j ∈ ateNulls μ Y₀ Y₁,
+      IndepFun (T.indicator (1 : Ω → ℝ)) (fun ω => (Y₀ j ω, Y₁ j ω)) μ)
     {p : Fin m → Ω → ℝ} (hp : ∀ i, Measurable (p i)) (hpind : iIndepFun p μ)
     (hcal : IsIPWNullCalibrated μ T (fun _ : Ω => ()) (fun j => observed T (Y₀ j) (Y₁ j)) p)
     (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     ∫ ω, falseDiscoveryProportion (ateNulls μ Y₀ Y₁) (bhRejections q fun i => p i ω) ∂μ ≤
       q * (ateNulls μ Y₀ Y₁).card / m :=
   integral_falseDiscoveryProportion_bhRejections_ateNulls_le hT measurable_const hY₀ hY₁ hY₀i
-    hY₁i (fun j => stronglyIgnorable_of_indepFun (hind j) hT₀ hT₁) hp hpind hcal q hq₀ hq₁
+    hY₁i (fun j hj => stronglyIgnorable_of_indepFun (hind j hj) hT₀ hT₁) hp hpind hcal q hq₀ hq₁
 
 end Randomized
 

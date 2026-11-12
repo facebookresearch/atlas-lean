@@ -9,14 +9,18 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.MultipleTesting.Adaptive.RandomizedEstimand
+public import Mathlib.MeasureTheory.Integral.Pi
 
 /-!
 # Tests for multiple testing of average treatment effects
 
-* A completely randomized trial on two independent fair coins: the first coin assigns treatment,
-  the second drives a heterogeneous individual effect `±1` with average zero (Neyman's weak null,
-  not Fisher's sharp null). Every identification hypothesis of the randomized BH theorem is
-  discharged, so that theorem is not vacuous.
+* A randomized trial (treatment independent of the potential outcomes) on four independent fair
+  coins, with two endpoints. Coin `0` assigns treatment and coin `1` is a baseline trait.
+  Endpoint `0` has a heterogeneous individual effect `±1` with average zero (the superpopulation
+  analogue of Neyman's weak null, not Fisher's sharp null); endpoint `1` has ATE `2`. Coins `2`
+  and `3` drive two independent, non-constant p-values: the null one is valid, the non-null one
+  is not, so calibration has to use the IPW contrast. `ateNulls` is the proper subset `{0}`, and
+  every hypothesis of the randomized BH theorem is discharged.
 * Computations of `ipwContrast`, `ateNulls`, `IsIPWNullCalibrated` on small examples.
 * The positivity-failure boundary: the computed IPW contrast `-1` against the ATE `0`, and FDR /
   FWER equal to `1`, contradicting the bound at level `1/20`.
@@ -29,7 +33,7 @@ open MeasureTheory ProbabilityTheory MathlibExt.Probability.Causality
 
 namespace MathlibExtTest.Probability.Statistics.MultipleTesting.Adaptive.RandomizedEstimand
 
-/-! ### Two independent fair coins -/
+/-! ### Four independent fair coins -/
 
 /-- A fair coin. -/
 noncomputable def coin : Measure Bool :=
@@ -44,98 +48,175 @@ instance : IsProbabilityMeasure coin := by
     measure_union (by simp) (measurableSet_singleton _), coin_apply_singleton,
     coin_apply_singleton, ENNReal.inv_two_add_inv_two]
 
-/-- Two independent fair coins: `ω.1` assigns treatment, `ω.2` is a baseline trait. -/
-noncomputable def trial : Measure (Bool × Bool) := coin.prod coin
+lemma integral_coin (f : Bool → ℝ) : ∫ b, f b ∂coin = (f true + f false) / 2 := by
+  rw [coin, integral_smul_measure, integral_add_measure Integrable.of_finite Integrable.of_finite,
+    integral_dirac, integral_dirac]
+  simp only [ENNReal.toReal_inv, ENNReal.toReal_ofNat, smul_eq_mul]
+  ring
+
+/-- Four independent fair coins: `ω 0` assigns treatment, `ω 1` is a baseline trait, `ω 2` and
+`ω 3` drive the two p-values. -/
+noncomputable def trial : Measure (Fin 4 → Bool) := Measure.pi fun _ => coin
 
 instance : IsProbabilityMeasure trial := by
   unfold trial; infer_instance
 
-/-- Treated units: the first coin shows `true`. -/
-def treated : Set (Bool × Bool) := {ω | ω.1 = true}
+/-- The four coordinates are independent under `trial`. -/
+lemma iIndepFun_coords : iIndepFun (fun (i : Fin 4) (ω : Fin 4 → Bool) => ω i) trial :=
+  iIndepFun_pi (μ := fun _ => coin) (X := fun _ b => b) fun _ => Measurable.of_discrete.aemeasurable
 
-/-- Untreated potential outcome: `1` for every unit. -/
-def y0 : Fin 1 → Bool × Bool → ℝ := fun _ _ => 1
+lemma trial_preimage_coord (k : Fin 4) (s : Set Bool) :
+    trial {ω | ω k ∈ s} = coin s :=
+  (measurePreserving_eval (fun _ : Fin 4 => coin) k).measure_preimage
+    MeasurableSet.of_discrete.nullMeasurableSet
 
-/-- Treated potential outcome: `2` if the trait is `true`, `0` otherwise, so the individual effect
-is `+1` or `-1` and the ATE is `0`. -/
-def y1 : Fin 1 → Bool × Bool → ℝ := fun _ ω => if ω.2 then 2 else 0
+lemma integral_trial_coord (k : Fin 4) (f : Bool → ℝ) :
+    ∫ ω, f (ω k) ∂trial = (f true + f false) / 2 := by
+  rw [trial, integral_comp_eval (μ := fun _ => coin) Measurable.of_discrete.aestronglyMeasurable,
+    integral_coin]
 
-lemma measurableSet_treated : MeasurableSet treated :=
-  show MeasurableSet (Prod.fst ⁻¹' {true}) from
-    (measurableSet_singleton true).preimage measurable_fst
+/-- Treated units: coin `0` shows `true`. -/
+def treated : Set (Fin 4 → Bool) := {ω | ω 0 = true}
+
+lemma measurableSet_treated : MeasurableSet treated := MeasurableSet.of_discrete
 
 lemma trial_real_treated : trial.real treated = 1 / 2 := by
-  have : treated = {true} ×ˢ Set.univ := by ext ω; simp [treated]
-  rw [measureReal_def, this, trial, Measure.prod_prod, coin_apply_singleton, measure_univ]
-  norm_num
+  rw [measureReal_def, treated,
+    show {ω : Fin 4 → Bool | ω 0 = true} = {ω | ω 0 ∈ ({true} : Set Bool)} by rfl,
+    trial_preimage_coord, coin_apply_singleton]
+  simp
 
-/-- Randomization: the treatment indicator is independent of the potential outcomes. -/
-lemma indep_treated (j : Fin 1) :
-    IndepFun (treated.indicator (1 : Bool × Bool → ℝ)) (fun ω => (y0 j ω, y1 j ω)) trial := by
-  have h := indepFun_prod (μ := coin) (ν := coin)
-    (X := fun b : Bool => if b then (1 : ℝ) else 0)
-    (Y := fun b : Bool => ((1 : ℝ), if b then (2 : ℝ) else 0))
-    (Measurable.of_discrete) (Measurable.of_discrete)
-  have hT : treated.indicator (1 : Bool × Bool → ℝ) = fun ω => if ω.1 = true then 1 else 0 := by
+/-- Treated-arm effects driven by the trait: endpoint `0` gets `2` or `0`, endpoint `1` gets `3`. -/
+def eff : Fin 2 → Bool → ℝ := ![fun b => if b then 2 else 0, fun _ => 3]
+
+/-- Untreated potential outcome: `1` for every unit and endpoint. -/
+def y0 : Fin 2 → (Fin 4 → Bool) → ℝ := fun _ _ => 1
+
+/-- Treated potential outcome: endpoint `0` has individual effect `±1` (ATE `0`), endpoint `1`
+has effect `2`. -/
+def y1 : Fin 2 → (Fin 4 → Bool) → ℝ := fun j ω => eff j (ω 1)
+
+lemma integral_y1_sub_y0 (j : Fin 2) :
+    ∫ ω, (y1 j ω - y0 j ω) ∂trial = (eff j true + eff j false) / 2 - 1 := by
+  have := integral_trial_coord 1 (fun b => eff j b - 1)
+  simp only [y0, y1] at this ⊢
+  rw [this]
+  ring
+
+/-- `ateNulls` picks out the proper subset `{0}`: endpoint `0` is a true causal null, endpoint `1`
+is not. -/
+lemma ateNulls_trial : ateNulls trial y0 y1 = {0} := by
+  ext j
+  rw [mem_ateNulls_iff, integral_y1_sub_y0, Finset.mem_singleton]
+  fin_cases j <;> norm_num [eff]
+
+/-- Randomization: the treatment indicator is independent of each endpoint's potential
+outcomes, because they are functions of different coins. -/
+lemma indep_treated (j : Fin 2) :
+    IndepFun (treated.indicator (1 : (Fin 4 → Bool) → ℝ)) (fun ω => (y0 j ω, y1 j ω)) trial := by
+  have h := (iIndepFun_coords.indepFun (show (0 : Fin 4) ≠ 1 by decide)).comp
+    (φ := fun b : Bool => if b then (1 : ℝ) else 0) (ψ := fun b : Bool => ((1 : ℝ), eff j b))
+    Measurable.of_discrete Measurable.of_discrete
+  have hT : treated.indicator (1 : (Fin 4 → Bool) → ℝ) =
+      (fun b : Bool => if b then (1 : ℝ) else 0) ∘ fun ω => ω 0 := by
     funext ω
-    rcases ω with ⟨a, b⟩
-    cases a <;> simp [treated]
-  have hV : (fun ω => (y0 j ω, y1 j ω)) =
-      fun ω : Bool × Bool => ((1 : ℝ), if ω.2 = true then (2 : ℝ) else 0) := by
-    funext ω
-    simp [y0, y1]
-  rw [hT, hV]
+    by_cases hω : ω 0 = true <;> simp [treated, hω]
+  rw [hT]
   exact h
 
-/-- The ATE of the single endpoint is `0`: it is a true causal null. -/
-lemma ateNulls_trial : ateNulls trial y0 y1 = Finset.univ := by
-  ext j
-  simp only [mem_ateNulls_iff, Finset.mem_univ, iff_true]
-  rw [integral_fintype Integrable.of_finite]
-  simp [Fintype.sum_prod_type, y0, y1, measureReal_def, trial, ← Set.singleton_prod_singleton,
-    Measure.prod_prod, coin_apply_singleton]
-  norm_num
-
-/-- The identification hypothesis of the main theorem holds in the randomized trial. -/
-example (j : Fin 1) :
+lemma stronglyIgnorable_trial (j : Fin 2) :
     StronglyIgnorable trial treated (fun ω => (y0 j ω, y1 j ω)) (fun _ => ()) :=
   stronglyIgnorable_of_indepFun (indep_treated j) (by rw [trial_real_treated]; norm_num)
     (by rw [trial_real_treated]; norm_num)
 
-/-- `ipwContrast` on the trial: identification gives the ATE `0` for the observed outcome. -/
-example : ipwContrast trial treated (fun _ => ()) (observed treated (y0 0) (y1 0)) = 0 := by
+/-- `ipwContrast` on the trial: identification gives the ATE, `0` and `2`. -/
+lemma ipwContrast_trial (j : Fin 2) :
+    ipwContrast trial treated (fun _ => ()) (observed treated (y0 j) (y1 j)) =
+      (eff j true + eff j false) / 2 - 1 := by
   rw [ipwContrast_observed_eq_integral measurableSet_treated measurable_const
     Measurable.of_discrete Measurable.of_discrete Integrable.of_finite Integrable.of_finite
-    (stronglyIgnorable_of_indepFun (indep_treated 0) (by rw [trial_real_treated]; norm_num)
-      (by rw [trial_real_treated]; norm_num))]
-  exact mem_ateNulls_iff.1 (ateNulls_trial ▸ Finset.mem_univ 0)
+    (stronglyIgnorable_trial j), integral_y1_sub_y0]
 
-/-- The p-value that never rejects, `p ≡ 1`, is valid. -/
-lemma isValidPValue_one {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] :
-    IsValidPValue μ (fun _ : Ω => (1 : ℝ)) := by
+/-- The null endpoint's p-value distribution: `1/2` or `1`. -/
+noncomputable def pv0 : Bool → ℝ := fun b => if b then 1 / 2 else 1
+
+/-- The non-null endpoint's p-value distribution: `1/100` or `1`. -/
+noncomputable def pv1 : Bool → ℝ := fun b => if b then 1 / 100 else 1
+
+/-- The two p-values, driven by coins `2` and `3`. -/
+noncomputable def pval : Fin 2 → (Fin 4 → Bool) → ℝ := ![fun ω => pv0 (ω 2), fun ω => pv1 (ω 3)]
+
+/-- The p-values are independent. -/
+lemma iIndepFun_pval : iIndepFun pval trial := by
+  have hinj : Function.Injective (![2, 3] : Fin 2 → Fin 4) := by
+    intro a b h
+    fin_cases a <;> fin_cases b <;> simp_all
+  have h := (iIndepFun_coords.precomp hinj).comp (fun i => ![pv0, pv1] i)
+    fun _ => Measurable.of_discrete
+  refine h.congr fun i => Filter.Eventually.of_forall fun ω => ?_
+  fin_cases i <;> rfl
+
+/-- The null p-value is valid (super-uniform) and not constant. -/
+lemma isValidPValue_pval_zero : IsValidPValue trial (pval 0) := by
   intro t ht
-  rcases eq_or_lt_of_le ht.2 with rfl | hlt
-  · simp
-  · simp [not_le.2 hlt]
+  have hset : {ω : Fin 4 → Bool | pval 0 ω ≤ t} = {ω | ω 2 ∈ {b | pv0 b ≤ t}} := rfl
+  rw [hset, trial_preimage_coord]
+  rcases eq_or_lt_of_le ht.2 with rfl | h1
+  · rw [ENNReal.ofReal_one]; exact prob_le_one
+  rcases lt_or_ge t 2⁻¹ with h2 | h2
+  · have : {b : Bool | pv0 b ≤ t} = ∅ := by
+      ext b; cases b <;> simp [pv0, not_le.2 h1, h2]
+    simp [this]
+  · have : {b : Bool | pv0 b ≤ t} = {true} := by
+      ext b; cases b <;> simp [pv0, not_le.2 h1, h2]
+    rw [this, coin_apply_singleton]
+    calc (2⁻¹ : ENNReal) = ENNReal.ofReal (1 / 2) := by
+          rw [ENNReal.ofReal_div_of_pos two_pos]; simp
+      _ ≤ ENNReal.ofReal t := ENNReal.ofReal_le_ofReal (by rwa [one_div])
 
-/-- `IsIPWNullCalibrated` holds for the never-reject p-value. -/
-example : IsIPWNullCalibrated trial treated (fun _ => ())
-    (fun j => observed treated (y0 j) (y1 j)) (fun _ _ => 1) :=
-  fun _ _ => isValidPValue_one trial
+/-- The non-null p-value is **not** valid: `P(p₁ ≤ 1/100) = 1/2`. So calibration for the
+observed-data null must use that the IPW contrast of endpoint `1` is nonzero. -/
+lemma not_isValidPValue_pval_one : ¬ IsValidPValue trial (pval 1) := by
+  intro h
+  have := h (1 / 100) ⟨by norm_num, by norm_num⟩
+  have hset : {ω : Fin 4 → Bool | pval 1 ω ≤ 1 / 100} = {ω | ω 3 ∈ ({true} : Set Bool)} := by
+    ext ω
+    by_cases hω : ω 3 = true
+    · simp [pval, pv1, hω]
+    · simp [pval, pv1, hω]
+      norm_num
+  rw [hset, trial_preimage_coord, coin_apply_singleton,
+    ← ENNReal.ofReal_toReal (a := 2⁻¹) (by simp)] at this
+  have := (ENNReal.ofReal_le_ofReal_iff (by norm_num)).1 this
+  norm_num at this
 
-/-- **Non-vacuity of the randomized BH theorem**: all of its hypotheses are discharged on the
-two-coin trial with heterogeneous effects. -/
+/-- The p-values are calibrated for the observed-data IPW null. Endpoint `1` needs the contrast:
+its p-value is invalid, but its IPW contrast is `2 ≠ 0`. -/
+lemma isIPWNullCalibrated_trial :
+    IsIPWNullCalibrated trial treated (fun _ => ()) (fun j => observed treated (y0 j) (y1 j))
+      pval := by
+  intro j hj
+  fin_cases j
+  · exact isValidPValue_pval_zero
+  · have := ipwContrast_trial 1
+    simp only [Fin.mk_one] at hj
+    rw [hj] at this
+    norm_num [eff] at this
+
+/-- **Non-vacuity of the randomized BH theorem**: two endpoints, one causal null and one with ATE
+`2`, independent non-constant p-values, every hypothesis discharged. The bound is `q / 2`. -/
 example (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
-    ∫ _, falseDiscoveryProportion (ateNulls trial y0 y1)
-      (bhRejections q fun _ => (1 : ℝ)) ∂trial ≤
-      q * (ateNulls trial y0 y1).card / ((1 : ℕ) : ℝ) :=
-  integral_falseDiscoveryProportion_bhRejections_ateNulls_le_of_indep
-    measurableSet_treated
-    (by rw [trial_real_treated]; norm_num) (by rw [trial_real_treated]; norm_num)
-    (fun _ => Measurable.of_discrete) (fun _ => Measurable.of_discrete)
-    (fun _ => Integrable.of_finite) (fun _ => Integrable.of_finite) indep_treated
-    (fun _ => measurable_const) (iIndepFun.of_subsingleton)
-    (fun _ _ => isValidPValue_one trial) q hq₀ hq₁
+    ∫ ω, falseDiscoveryProportion (ateNulls trial y0 y1)
+      (bhRejections q fun i => pval i ω) ∂trial ≤ q / 2 := by
+  have h := integral_falseDiscoveryProportion_bhRejections_ateNulls_le_of_indep
+    measurableSet_treated (by rw [trial_real_treated]; norm_num)
+    (by rw [trial_real_treated]; norm_num)
+    (fun _ _ => Measurable.of_discrete) (fun _ _ => Measurable.of_discrete)
+    (fun _ _ => Integrable.of_finite) (fun _ _ => Integrable.of_finite)
+    (fun j _ => indep_treated j) (fun _ => Measurable.of_discrete) iIndepFun_pval
+    isIPWNullCalibrated_trial q hq₀ hq₁
+  rw [ateNulls_trial] at h ⊢
+  simpa using h
 
 /-! ### Small computations -/
 
@@ -145,7 +226,7 @@ example : ateNulls (Measure.dirac ()) (fun (_ : Fin 1) _ => (0 : ℝ)) (fun _ _ 
   simp [mem_ateNulls_iff]
 
 /-- `ipwContrast` with the trivial covariate is the Horvitz–Thompson contrast. -/
-example (Y : Bool × Bool → ℝ) :
+example (Y : (Fin 4 → Bool) → ℝ) :
     ipwContrast trial treated (fun _ => ()) Y =
       ∫ ω, (treated.indicator (fun ω => Y ω / (1 / 2)) ω -
         treatedᶜ.indicator (fun ω => Y ω / (1 - 1 / 2)) ω) ∂trial := by
