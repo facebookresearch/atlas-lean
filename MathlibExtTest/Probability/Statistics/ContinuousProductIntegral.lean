@@ -106,6 +106,11 @@ example : HasHadamardDerivWithinAt (fun _ ↦ one₀) (fun _ ↦ 0) Set.univ
   have := isStieltjesProductIntegral_zero.hasHadamardDerivWithinAt (Set.mem_univ 0)
   exact this
 
+/-- The `C[0, τ]` corollary for the survival map, on the degenerate instance. -/
+example : HasHadamardDerivWithinAt (fun _ ↦ one₀) (fun h ↦ -(0 : _ →L[ℝ] _) h) Set.univ
+    {h : lp (fun _ : Set.Icc (0 : ℝ) 0 ↦ ℝ) ∞ | Continuous fun t ↦ h t} 0 :=
+  isStieltjesProductIntegral_zero.hasHadamardDerivWithinAt_neg_continuous (Set.mem_univ _)
+
 /-- One subject, one death at time `1`. -/
 def D₁ : CensoredData 1 where
   time := fun _ ↦ 1

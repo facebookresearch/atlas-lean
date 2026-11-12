@@ -83,9 +83,11 @@ The limit `G` is only required to satisfy `-G ∈ closure S` (for `S` = step fun
 regulated functions, which contain the càdlàg paths of `D[0, τ]`), not continuity. This matters:
 for a purely atomic observation-time law the Nelson–Aalen limit jumps at every atom with
 `0 < ΔΛ < 1`, so a continuity hypothesis on `G` would exclude every non-degenerate i.i.d. model.
-With `closure S`, the theorem can apply to observation-time laws with finitely many atoms in
-`[0, τ]`: there `Λ̂ₙ` takes finitely many values (so it is Borel measurable), its total
-variation on `[0, τ]` is at most the number of atoms, and its limit is a step process.
+With `closure S`, the theorem can apply when the uncensored observation (death) times in
+`[0, τ]` are concentrated on finitely many points (censoring times may be continuous; they enter
+only through the integer at-risk counts): there `Λ̂ₙ` takes finitely many values on `[0, τ]` (so
+it is Borel measurable), its total variation on `[0, τ]` is at most the number of those points,
+and its limit is a step process.
 
 **The domain hypothesis `hdom` is restrictive.** It asks for the negated Nelson–Aalen paths to lie
 in `D` almost surely for every `n`, not merely with probability tending to one. If `D` is a
@@ -467,7 +469,8 @@ whenever the law of the uncensored observation times in `[0, τ]` has a non-atom
 failure-time distribution with `P(death ≤ τ, uncensored) > 0`, the hypotheses cannot hold and this
 theorem says nothing; the classical continuous-time Kaplan–Meier limit there needs the
 outer-probability (Hoffmann-Jørgensen) framework, which is not formalized. The theorem can apply
-when the observation-time law has finitely many atoms in `[0, τ]` (see the module docstring).
+when the uncensored observation (death) times in `[0, τ]` are concentrated on finitely many points
+(see the module docstring).
 
 **Caveat (domain).** `hdom` asks for `-Λ̂ₙ ∈ D` almost surely for every `n`. For `D` a
 total-variation ball this fails for large `n` unless the death times in `[0, τ]` have finite
