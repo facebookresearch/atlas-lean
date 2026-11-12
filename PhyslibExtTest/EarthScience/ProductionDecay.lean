@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.C10ProductionDecay
+import PhyslibExt.EarthScience.ProductionDecay
 
 /-!
 # Production-decay checks
 
-Concrete consumers of `PhyslibExt.EarthScience.C10ProductionDecay`: a
+Concrete consumers of `PhyslibExt.EarthScience.ProductionDecay`: a
 numeric production-decay ODE, the initial value, the no-production
 reduction to pure decay, and the saturation value `P/λ`.
 
@@ -27,7 +27,7 @@ No new definitions or results are introduced here.
 
 ## iii. References
 
-- `PhyslibExt.EarthScience.C10ProductionDecay`
+- `PhyslibExt.EarthScience.ProductionDecay`
 -/
 
 /-- Numeric production-decay ODE with `P = 4`, `λ = 2`, `N0 = 1`. -/
