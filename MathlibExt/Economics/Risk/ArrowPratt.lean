@@ -24,13 +24,13 @@ import Mathlib.Tactic
 The Arrow–Pratt coefficient of absolute risk aversion of a Bernoulli utility `u` is
 `A(x) = -u''(x) / u'(x)` and the coefficient of relative risk aversion is `R(x) = x A(x)`
 (computed with `deriv`). Exponential (CARA) utility `-exp(-a x)` has constant absolute risk
-aversion `a` at every wealth level, and isoelastic (CRRA) utility `x^(1-γ) / (1-γ)` (`log x` when
-`γ = 1`) has constant relative risk aversion `γ` at every positive wealth level. For `a = 0` the
-CARA utility is constant and both sides of its identity are `0` (Lean's division by zero).
+aversion `a` at every wealth level for `a > 0` (the increasing, strictly concave case), and
+isoelastic (CRRA) utility `x^(1-γ) / (1-γ)` (`log x` when `γ = 1`) has constant relative risk
+aversion `γ` at every positive wealth level.
 
 ## Main results
 
-* `absoluteRiskAversion_caraUtility`: CARA utility has absolute risk aversion `a`.
+* `absoluteRiskAversion_caraUtility`: CARA utility with `a > 0` has absolute risk aversion `a`.
 * `relativeRiskAversion_crraUtility`: CRRA utility has relative risk aversion `γ` on `x > 0`.
 
 ## References
@@ -61,8 +61,9 @@ noncomputable def caraUtility (a : ℝ) (x : ℝ) : ℝ :=
 noncomputable def crraUtility (γ : ℝ) (x : ℝ) : ℝ :=
   if γ = 1 then log x else x ^ (1 - γ) / (1 - γ)
 
-/-- CARA utility has constant absolute risk aversion `a` at every wealth level. -/
-theorem absoluteRiskAversion_caraUtility (a x : ℝ) :
+/-- CARA utility with `a > 0` (increasing and strictly concave) has constant absolute risk
+aversion `a` at every wealth level. -/
+theorem absoluteRiskAversion_caraUtility {a : ℝ} (ha : 0 < a) (x : ℝ) :
     absoluteRiskAversion (caraUtility a) x = a := by
   have hlin : ∀ y : ℝ, HasDerivAt (fun y : ℝ => a * y) a y := by
     intro y

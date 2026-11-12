@@ -31,7 +31,7 @@ example : absoluteRiskAversion (crraUtility 2) 4 = 1 / 2 := by
   linarith
 
 example : absoluteRiskAversion (caraUtility 3) 5 = 3 :=
-  absoluteRiskAversion_caraUtility 3 5
+  absoluteRiskAversion_caraUtility (by norm_num) 5
 
 example : relativeRiskAversion (crraUtility 1) 7 = 1 :=
   relativeRiskAversion_crraUtility 1 (show (0:ℝ) < 7 by norm_num)
