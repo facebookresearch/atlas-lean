@@ -24,10 +24,17 @@ import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 The steady states of the two-species Turing system `0 = d_u u_xx + f(u, v)`,
 `0 = d v_xx + g(u, v)` on `[0, ℓ]` with Neumann boundary conditions near a homogeneous state are the
 zeros of a map `F(w, d)` (perturbation `w`, inhibitor diffusion `d`) with trivial branch
-`F(0, d) = 0` and state linearization `w ↦ D w_xx + J w`. This file carries out the reduction of
-`F(w, d) = 0` near an onset `(0, d₀)` to a scalar equation `G̃(a, d) = 0` in the critical-mode
-amplitude `a`, and feeds it to the reduced Crandall–Rabinowitz branch theorem of
-`MathlibExt.Biology.Dynamics.TuringBranches` (T55).
+`F(0, d) = 0` and state linearization `w ↦ D w_xx + J w`. This file does three things, none of
+which constructs such a Turing map `F`:
+
+* it proves the Lyapunov–Schmidt reduction to a scalar equation `G̃(a, d) = 0` for an **abstract**
+  `F : E × Λ → Y` between Banach spaces whose linearization comes with a Fredholm package;
+* it proves the Turing-specific Fredholm data (simple kernel, codimension-one range) for the
+  linearization `D ∂ₓₓ + J` restricted to a **finite** cosine-mode space, which the linearization
+  leaves invariant;
+* it combines the reduction with the reduced Crandall–Rabinowitz branch theorem of
+  `MathlibExt.Biology.Dynamics.TuringBranches` (T55), which enters **only** as the explicit
+  hypothesis `hCR` (the file does not import T55).
 
 ## Source receipt
 
@@ -68,11 +75,13 @@ amplitude `a`, and feeds it to the reduced Crandall–Rabinowitz branch theorem 
 
 ## Scope (what is not proved here)
 
-* The Fredholm property of the full PDE operator `D Δ_N + J` (e.g. `C^{2,α} → C^α` or `H²_N → L²`)
-  needs elliptic regularity of the Neumann Laplacian, which is in neither Mathlib nor Atlas. The
-  Fredholm setup is proved for the linearization on finitely many Neumann modes (a Galerkin
-  truncation, `ι` finite); the reduction theorems are stated for an arbitrary Banach-space
-  formulation and apply verbatim once such a Fredholm package is available.
+* No nonlinear Turing map `F` is constructed, so no theorem here is about steady states of the
+  Turing PDE itself; the reduction theorems apply verbatim to any Banach-space formulation once
+  it and a Fredholm package of its linearization are supplied.
+* The Fredholm property of the full operator `D Δ_N + J` in an `H²_N → L²` formulation needs
+  Neumann elliptic regularity, which is absent from Mathlib and Atlas. A formulation on weighted
+  `ℓ²` cosine coefficients (Mathlib's `lp`) avoids elliptic theory and is a feasible follow-up.
+  Here the Fredholm data is proved on finitely many Neumann modes (`ι` finite).
 * Dividing the scalar map by the amplitude, `G̃(a, d) = a G(a, d)` with `G` strictly
   differentiable, uses `C²` regularity of `F`; it is the hypothesis `hfac`.
 * The final branch-existence statement for the Turing system with T55's theorem plugged in
@@ -364,8 +373,8 @@ theorem proj_smul_add (a : ℝ) (w : pkg.decDom.X₁) :
 
 include hspan in
 /-- **Lyapunov–Schmidt reduction to a scalar equation.** For a simple kernel `ker L = ℝ φ` and a
-functional `ψ` cutting out `range L` (index zero), near `(0, p₀)` the solutions of `F(x, p) = 0`
-are exactly `x = a φ + W(a φ, p)` with `G̃(a, p) = 0`. -/
+functional `ψ` cutting out `range L` (so `range L` has codimension `≤ 1`), near `(0, p₀)` the
+solutions of `F(x, p) = 0` are exactly `x = a φ + W(a φ, p)` with `G̃(a, p) = 0`. -/
 theorem lyapunovSchmidt_scalar (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     (hFL : F' ∘L .inl ℝ E Λ = L) (hF0 : F ((0 : E), p₀) = 0)
     (hψ1 : ∀ y ∈ pkg.decCodom.X₁, ψ y = 0) (hψ0 : ∀ y ∈ pkg.decCodom.X₀, ψ y = 0 → y = 0) :
@@ -676,6 +685,13 @@ def criticalMode (J : Matrix (Fin 2) (Fin 2) ℝ) (du d : ℝ) (κ : ι → ℝ)
 
 variable {J : Matrix (Fin 2) (Fin 2) ℝ} {du d : ℝ} {κ : ι → ℝ} {i₀ : ι}
 
+omit [Fintype ι] in
+/-- The critical mode is nonzero when `f_v ≠ 0`. -/
+theorem criticalMode_ne_zero (hfv : J 0 1 ≠ 0) : criticalMode J du d κ i₀ ≠ 0 := by
+  intro h
+  have := congrFun (congrFun h i₀) 0
+  simp [criticalMode, kerVec, hfv] at this
+
 /-- **Kernel of the linearization.** If mode `i₀` is critical (`det (J - k_{i₀}² D) = 0`),
 `f_v ≠ 0`, and no other mode is (non-resonance: `det (J - kᵢ² D) ≠ 0` for `i ≠ i₀`), the kernel is
 spanned by the critical mode. -/
@@ -724,8 +740,10 @@ theorem exists_modeOperator_eq_iff (hcrit : (modeMatrix J du d (κ i₀)).det = 
       simp [hi, mulVec_mulVec, mul_nonsing_inv _ hu]
 
 omit [DecidableEq ι] in
-/-- **Fredholm setup.** The coefficient linearization is a Fredholm operator (finitely many
-modes). -/
+/-- **Fredholm setup.** The coefficient linearization is a Fredholm operator. This is automatic
+in finite dimensions (every linear map between finite-dimensional spaces is Fredholm) and uses no
+criticality hypothesis; the Turing-specific content is the kernel and range computation in
+`modeOperator_eq_zero_iff` and `exists_modeOperator_eq_iff`. -/
 theorem isFredholm_modeOperator :
     (modeOperator J du d κ).IsFredholm :=
   ⟨(modeOperator J du d κ).isStrictMap_of_finiteDimensional,
@@ -735,7 +753,8 @@ theorem isFredholm_modeOperator :
 /-- **Simple kernel, index zero.** For every Fredholm package of the coefficient linearization at a
 critical, non-resonant mode `i₀` with `f_v ≠ 0`, the critical mode spans the kernel part and the
 critical functional cuts out the range and is injective on the cokernel part: exactly the
-hypotheses of `lyapunovSchmidt_scalar` and `lyapunovSchmidt_patternBranch`. -/
+hypotheses of `lyapunovSchmidt_scalar`. With `criticalMode_ne_zero` these also give the
+kernel-side hypotheses (`hφ`, `hφ0`, `hspan`, `hψ1`, `hψ0`) of `lyapunovSchmidt_patternBranch`. -/
 theorem modeOperator_simpleKernel (hcrit : (modeMatrix J du d (κ i₀)).det = 0)
     (hfv : J 0 1 ≠ 0) (hnr : ∀ i, i ≠ i₀ → (modeMatrix J du d (κ i)).det ≠ 0)
     (pkg : FredholmPackage (modeOperator J du d κ)) :

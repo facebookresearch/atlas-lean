@@ -98,6 +98,9 @@ example : modeOperator J₀ (1 / 4) 4 κ₀ (Pi.single 1 ![-2, -(3 / 4)]) = 0 :=
   fin_cases i <;> fin_cases j <;>
     simp [mulVec, dotProduct, modeMatrix, diffusionMatrix, J₀, κ₀] <;> norm_num
 
+/-- The critical mode is nonzero (`f_v = -2 ≠ 0`). -/
+example : criticalMode J₀ (1 / 4) 4 κ₀ 1 ≠ 0 := criticalMode_ne_zero hfv₀
+
 /-- The kernel theorem: every kernel element is a multiple of the critical mode. -/
 example (w : Fin 3 → Fin 2 → ℝ) (hw : modeOperator J₀ (1 / 4) 4 κ₀ w = 0) :
     ∃ a : ℝ, w = a • criticalMode J₀ (1 / 4) 4 κ₀ 1 :=
@@ -290,8 +293,16 @@ example (y : ℝ) : (cokerProj pkg y : ℝ) = y := by
     (Submodule.eq_bot_iff _).1 hY _ (pkg.decCodom.proj y).2
   rwa [h0, zero_add] at h
 
-/-- `lsSplit` and `lsEmbed` are mutually inverse on states: `(x, d) ↦ ((π₀ x, d), π₁ x) ↦ (x, d)`. -/
+/-- `lsSplit` and `lsEmbed` are mutually inverse on states:
+`(x, d) ↦ ((π₀ x, d), π₁ x) ↦ (x, d)`. -/
 example (q : ℝ × ℝ) : lsEmbed pkg (lsSplit pkg q) = q := lsEmbed_lsSplit pkg q
+
+/-- The range equation of the pitchfork is trivial: `range L = 0`, so `lsRangeMap` is `0`. -/
+example (v : (pkg.decDom.X₀ × ℝ) × pkg.decDom.X₁) : lsRangeMap pkg (pitchfork d₀) v = 0 := by
+  have hY : pkg.decCodom.X₁ = ⊥ := by
+    rw [← pkg.range_eq]
+    ext; simp
+  exact Subtype.ext ((Submodule.eq_bot_iff _).1 hY _ (lsRangeMap pkg (pitchfork d₀) v).2)
 
 /-- The reduced map of the pitchfork vanishes exactly at its zeros: `lsReduced = 0` at `(a, d)`
 iff `(d - d₀) a - a³ = 0` (through `lsScalar_eq_zero_iff`, with `lsScalar` computed from the
@@ -303,5 +314,107 @@ example (a d : ℝ) :
     (hasStrictFDerivAt_pitchfork d₀) hFL (hψ1 pkg) (hψ0 pkg) (a, d), lsScalar_pitchfork]
 
 end Pitchfork
+
+/-! ### A two-dimensional reduction with a nonzero solution operator
+
+`F((u, v), d) = (u - v², (d - d₀) v - v³)` on `ℝ²`, with `L = ∂ₓF(0, d₀) = diag(1, 0)`. The
+Fredholm package is built from the explicit complements `X₁ = ℝ × 0` and `Y₀ = 0 × ℝ`, so the
+solution operator is forced by implicit-function uniqueness to be `W(a (0, 1), d) = (a², 0)`, and
+the scalar bifurcation function is again the pitchfork `(d - d₀) a - a³`. -/
+
+section TwoDim
+
+variable (d₀ : ℝ)
+
+/-- The two-dimensional map. -/
+def F₂ (q : (ℝ × ℝ) × ℝ) : ℝ × ℝ := (q.1.1 - q.1.2 ^ 2, (q.2 - d₀) * q.1.2 - q.1.2 ^ 3)
+
+/-- `L = diag(1, 0)`: `(u, v) ↦ (u, 0)`. -/
+noncomputable def L₂ : ℝ × ℝ →L[ℝ] ℝ × ℝ :=
+  ContinuousLinearMap.inl ℝ ℝ ℝ ∘L ContinuousLinearMap.fst ℝ ℝ ℝ
+
+/-- The full derivative `(x, d) ↦ L x`. -/
+noncomputable def F₂' : (ℝ × ℝ) × ℝ →L[ℝ] ℝ × ℝ := L₂ ∘L ContinuousLinearMap.fst ℝ (ℝ × ℝ) ℝ
+
+theorem hasStrictFDerivAt_F₂ : HasStrictFDerivAt (F₂ d₀) F₂' (((0 : ℝ), (0 : ℝ)), d₀) := by
+  have hu := (hasStrictFDerivAt_fst (𝕜 := ℝ) (p := (((0 : ℝ), (0 : ℝ)), d₀))).fst
+  have hv := (hasStrictFDerivAt_fst (𝕜 := ℝ) (p := (((0 : ℝ), (0 : ℝ)), d₀))).snd
+  have hd := hasStrictFDerivAt_snd (𝕜 := ℝ) (p := (((0 : ℝ), (0 : ℝ)), d₀))
+  exact ((hu.sub (hv.pow 2)).prodMk (((hd.sub_const d₀).mul hv).sub (hv.pow 3))).congr_fderiv
+    (by ext <;> simp [F₂', L₂])
+
+theorem hFL₂ : F₂' ∘L .inl ℝ (ℝ × ℝ) ℝ = L₂ := by ext <;> simp [F₂', L₂]
+
+theorem ker_L₂ : (L₂ : ℝ × ℝ →L[ℝ] ℝ × ℝ).ker = LinearMap.range (LinearMap.inr ℝ ℝ ℝ) := by
+  ext ⟨u, v⟩
+  simp [L₂, Prod.ext_iff, eq_comm]
+
+theorem range_L₂ : (L₂ : ℝ × ℝ →L[ℝ] ℝ × ℝ).range = LinearMap.range (LinearMap.inl ℝ ℝ ℝ) := by
+  ext ⟨u, v⟩
+  simp [L₂, Prod.ext_iff, eq_comm]
+
+theorem isTopCompl_of_isCompl {p q : Submodule ℝ (ℝ × ℝ)} (h : IsCompl p q) :
+    Submodule.IsTopCompl p q :=
+  (Submodule.IsCompl.isTopCompl_iff h).2 (LinearMap.continuous_of_finiteDimensional _)
+
+/-- The Fredholm package with `X₁ = ℝ × 0` and `Y₀ = 0 × ℝ`. -/
+noncomputable def pkg₂ : FredholmPackage L₂ :=
+  ContinuousLinearMap.IsFredholm.fredholmPackage
+    ⟨L₂.isStrictMap_of_finiteDimensional, Submodule.closed_of_finiteDimensional _, inferInstance,
+      Submodule.CoFG.of_finite, Submodule.ClosedComplemented.of_finiteDimensional _⟩
+    (dom₁ := LinearMap.range (LinearMap.inl ℝ ℝ ℝ))
+    (codom₀ := LinearMap.range (LinearMap.inr ℝ ℝ ℝ))
+    (isTopCompl_of_isCompl (ker_L₂ ▸ LinearMap.isCompl_range_inl_inr.symm))
+    (isTopCompl_of_isCompl (range_L₂ ▸ LinearMap.isCompl_range_inl_inr))
+
+theorem φ₂_mem : ((0 : ℝ), (1 : ℝ)) ∈ pkg₂.decDom.X₀ := by
+  change ((0 : ℝ), (1 : ℝ)) ∈ (L₂ : ℝ × ℝ →L[ℝ] ℝ × ℝ).ker
+  rw [ker_L₂]
+  exact ⟨1, rfl⟩
+
+theorem hF₂0 : F₂ d₀ (((0 : ℝ), (0 : ℝ)), d₀) = 0 := by simp [F₂]
+
+/-- **The solution operator is `W(a (0, 1), d) = (a², 0)`** near `(0, d₀)`: a nonzero `W`, pinned
+down by the uniqueness clause of the implicit function theorem (`eventually_lsRangeMap_eq_zero_iff`)
+and the explicit range equation `lsRangeMap` (its first component `u - v²`). -/
+theorem eventually_lsSolution_F₂ : ∀ᶠ p in 𝓝 ((0 : ℝ), d₀),
+    (lsSolution pkg₂ (hasStrictFDerivAt_F₂ d₀) hFL₂ (p.1 • ⟨((0 : ℝ), (1 : ℝ)), φ₂_mem⟩, p.2) :
+      ℝ × ℝ) = (p.1 ^ 2, 0) := by
+  have hmem : ∀ a : ℝ, ((a ^ 2, (0 : ℝ)) : ℝ × ℝ) ∈ pkg₂.decDom.X₁ := fun a => ⟨a ^ 2, rfl⟩
+  set v : ℝ × ℝ → (pkg₂.decDom.X₀ × ℝ) × pkg₂.decDom.X₁ := fun p =>
+    ((p.1 • ⟨((0 : ℝ), (1 : ℝ)), φ₂_mem⟩, p.2), ⟨(p.1 ^ 2, 0), hmem p.1⟩) with hv
+  have hcont : Continuous v :=
+    ((continuous_fst.smul continuous_const).prodMk continuous_snd).prodMk
+      (((continuous_fst.pow 2).prodMk continuous_const).subtype_mk _)
+  have ht : Tendsto v (𝓝 ((0 : ℝ), d₀))
+      (𝓝 (((0 : pkg₂.decDom.X₀), d₀), (0 : pkg₂.decDom.X₁))) := by
+    have := hcont.tendsto ((0 : ℝ), d₀)
+    have h0 : v ((0 : ℝ), d₀) = (((0 : pkg₂.decDom.X₀), d₀), (0 : pkg₂.decDom.X₁)) := by
+      simp only [hv, zero_smul]
+      congr 2
+      ext <;> simp
+    rwa [h0] at this
+  filter_upwards [ht.eventually (eventually_lsRangeMap_eq_zero_iff pkg₂ (hasStrictFDerivAt_F₂ d₀)
+    hFL₂ (hF₂0 d₀))] with p hp
+  have hR : lsRangeMap pkg₂ (F₂ d₀) (v p) = 0 := by
+    simp only [lsRangeMap, FredholmDecomposition.proj]
+    rw [Submodule.projectionOntoL_apply_eq_zero_iff]
+    refine ⟨(p.2 - d₀) * p.1 - p.1 ^ 3, ?_⟩
+    simp [hv, F₂]
+  exact congrArg Subtype.val (hp.1 hR)
+
+/-- The scalar bifurcation function (`ψ = snd`) is the pitchfork `(d - d₀) a - a³` near `(0, d₀)`,
+computed from `lsScalar` and the explicit `W`. -/
+example : ∀ᶠ p in 𝓝 ((0 : ℝ), d₀),
+    lsScalar pkg₂ φ₂_mem (ContinuousLinearMap.snd ℝ ℝ ℝ) (hasStrictFDerivAt_F₂ d₀) hFL₂ p =
+      (p.2 - d₀) * p.1 - p.1 ^ 3 := by
+  filter_upwards [eventually_lsSolution_F₂ d₀] with p hp
+  simp only [lsScalar, ContinuousLinearMap.coe_snd']
+  rw [show (p.1 • ((0 : ℝ), (1 : ℝ)) : ℝ × ℝ) +
+      (lsSolution pkg₂ (hasStrictFDerivAt_F₂ d₀) hFL₂ (p.1 • ⟨((0 : ℝ), (1 : ℝ)), φ₂_mem⟩, p.2) :
+        ℝ × ℝ) = (p.1 ^ 2, p.1) by rw [hp]; simp]
+  simp [F₂]
+
+end TwoDim
 
 end MathlibExtTest.Biology.Dynamics.TuringBranchesPDE
