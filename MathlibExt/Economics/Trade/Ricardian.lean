@@ -27,12 +27,25 @@ consumption set is its production possibility set. At a world relative price
 in good 1 earns `p * (L / a₁)` in units of good 2; one that specializes in good 2
 earns `L / a₂`.
 
-Home gains strictly from specializing in good 1 exactly when `p` exceeds its
-autarky opportunity cost `a₁ / a₂`; Foreign gains strictly from specializing in
-good 2 exactly when `p` is below its own `a₁ / a₂`. Hence any `p` strictly between
-the two autarky prices makes trade mutually beneficial.
--/
+"Gains from trade" here means the textbook statement about consumption
+possibilities: trade strictly enlarges the set of bundles a country can consume.
+Specializing in good 1 does so exactly when `p` exceeds the autarky opportunity
+cost `a₁ / a₂`; specializing in good 2 exactly when `p` is below it. Hence any `p`
+strictly between the two autarky prices enlarges both countries' consumption sets
+(potential mutual gains). No preferences are modelled, so no claim is made that a
+particular consumer's chosen bundle, or utility, strictly improves (a consumer
+whose optimum is the specialization corner can be indifferent), and no
+market-clearing allocation is constructed.
 
+## References
+
+* D. Ricardo, *On the Principles of Political Economy and Taxation* (1817),
+  chapter 7 (comparative advantage).
+* P. R. Krugman, M. Obstfeld and M. J. Melitz, *International Economics: Theory
+  and Policy*, Pearson, chapter 3 (the one-factor Ricardian model: the world
+  relative price lies between the autarky relative prices, and trade enlarges
+  each country's consumption possibilities).
+-/
 @[expose] public section
 
 namespace MathlibExt.Economics.Ricardian
@@ -194,9 +207,10 @@ theorem autarkySet_ssubset_specializeGood2Set_iff (c : Country) {p : ℝ} (hp : 
       have h5 := mul_lt_mul_of_pos_right hpa hL
       linarith [h3, h5]
 
-/-- **Mutual gains from Ricardian trade.** If the world price lies strictly
-between Home's and Foreign's autarky prices, Home (specializing in good 1) and
-Foreign (specializing in good 2) both strictly enlarge their consumption sets. -/
+/-- **Potential mutual gains from Ricardian trade.** If the world price lies
+strictly between Home's and Foreign's autarky prices, Home (specializing in good 1)
+and Foreign (specializing in good 2) both strictly enlarge their consumption sets.
+This is an opportunity-set statement, not a utility comparison. -/
 theorem mutual_gains_of_mem_Ioo (H F : Country) {p : ℝ}
     (hp : p ∈ Set.Ioo (autarkyPrice H) (autarkyPrice F)) :
     autarkySet H ⊂ specializeGood1Set H p ∧ autarkySet F ⊂ specializeGood2Set F p := by
@@ -206,7 +220,8 @@ theorem mutual_gains_of_mem_Ioo (H F : Country) {p : ℝ}
   exact ⟨(autarkySet_ssubset_specializeGood1Set_iff H hp0).mpr hp.1,
     (autarkySet_ssubset_specializeGood2Set_iff F hp0).mpr hp.2⟩
 
-/-- A price interval permitting mutual gains exists iff Home has a comparative
+/-- A world price at which both countries' consumption sets strictly enlarge (Home
+specializing in good 1, Foreign in good 2) exists iff Home has a comparative
 advantage in good 1. -/
 theorem exists_mutual_gains_iff (H F : Country) :
     (∃ p, autarkySet H ⊂ specializeGood1Set H p ∧ autarkySet F ⊂ specializeGood2Set F p) ↔
