@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.O09Overturning
+import PhyslibExt.EarthScience.Overturning
 
 /-!
 # Overturning checks
 
-Concrete consumers of `PhyslibExt.EarthScience.O09Overturning`:
+Concrete consumers of `PhyslibExt.EarthScience.Overturning`:
 the Stommel sign classification at `k = 1, alpha = 2e-4, beta = 8e-4`,
 the public shapes of the two conservation theorems, and the
 flow-reversal boundary.
@@ -35,7 +35,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.O09Overturning`
+- `PhyslibExt.EarthScience.Overturning`
 -/
 
 /-- Stommel sign: positive and negative cases. -/
