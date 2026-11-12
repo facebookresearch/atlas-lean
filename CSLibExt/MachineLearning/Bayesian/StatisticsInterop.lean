@@ -11,6 +11,8 @@ module
 public import CSLibExt.MachineLearning.Bayesian.NormalNormal
 public import CSLibExt.MachineLearning.Bayesian.DirichletMultinomial
 import Mathlib.Probability.ProductMeasure
+public import CSLibExt.MachineLearning.Bayesian.Basic
+public import MathlibExt.Probability.Statistics.Bayesian.FiniteConsistency
 
 @[expose] public section
 
@@ -25,9 +27,14 @@ are the likelihood's own (no separate posterior object is constructed). -/
 The `N`-sample categorical kernel coincides with the iid tuple law on probability
 vectors, and the Dirichlet posterior of that shared object is the displayed update. -/
 
+/-! # Finite-model posterior weights as a kernel posterior
+
+The explicit finite-model posterior weights equal the `toReal` of the Bayes posterior of
+a product likelihood kernel against a counting-weighted prior. -/
+
 namespace Cslib.MachineLearning.Bayesian
 
-open MeasureTheory ProbabilityTheory Real
+open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal
 
 /-- **One-draw marginal law.** The pushforward of the one-observation iid Gaussian tuple law
@@ -91,5 +98,37 @@ theorem posterior_sharedSeqLaw_bayesPosterior (n N : ℕ) (α : Fin (n + 1) → 
     exact (ENNReal.ofReal_pos.mpr hc).ne'
   rw [← posterior_eq_bayesPosterior _ _ hev0]
   exact posterior_categoricalSeqKernel_dirichletMeasure hα s
+
+set_option linter.unusedDecidableInType false in
+set_option linter.unusedFintypeInType false in
+/-- **Finite-model weights are the kernel posterior.** The explicit posterior weights
+`postWeight` of the merged finite-model consistency theorem equal the `toReal` of the kernel
+posterior `bayesPosterior` of any product likelihood kernel against any counting-weighted prior. -/
+theorem postWeight_eq_bayesPosterior {Θ 𝓧 : Type*} [Fintype Θ] [DecidableEq Θ]
+    [Fintype 𝓧] [MeasurableSpace Θ] [Countable Θ] [MeasurableSingletonClass Θ]
+    [MeasurableSpace 𝓧] [MeasurableSingletonClass 𝓧]
+    (π : Θ → ℝ) (hπ : ∀ θ, 0 ≤ π θ) (f : Θ → 𝓧 → ℝ) (hf : ∀ θ x, 0 ≤ f θ x)
+    {Ω : Type*} [MeasurableSpace Ω] (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) (θ : Θ)
+    (μ : Measure Θ) (hμ : ∀ θ, μ {θ} = ENNReal.ofReal (π θ))
+    (K : Kernel Θ (Fin n → 𝓧))
+    (hK : ∀ θ (s : Fin n → 𝓧), K θ {s} = ∏ i, ENNReal.ofReal (f θ (s i))) :
+    MathlibExt.Probability.Statistics.Bayesian.postWeight π f X n ω θ =
+      (bayesPosterior K μ (fun i => X i ω) {θ}).toReal := by
+  have hprod_nonneg : ∀ θ' : Θ, 0 ≤ ∏ i ∈ Finset.range n, f θ' (X i ω) :=
+    fun θ' => Finset.prod_nonneg (fun i _ => hf θ' (X i ω))
+  have hterm_nonneg : ∀ θ' : Θ, 0 ≤ π θ' * ∏ i ∈ Finset.range n, f θ' (X i ω) :=
+    fun θ' => mul_nonneg (hπ θ') (hprod_nonneg θ')
+  have hterm : ∀ θ' : Θ, ENNReal.ofReal (π θ') * ∏ i : Fin n, ENNReal.ofReal (f θ' (X ↑i ω)) =
+      ENNReal.ofReal (π θ' * ∏ i ∈ Finset.range n, f θ' (X i ω)) := by
+    intro θ'
+    rw [← ENNReal.ofReal_prod_of_nonneg (fun (i : Fin n) _ => hf θ' (X ↑i ω))]
+    rw [Fin.prod_univ_eq_prod_range (fun j => f θ' (X j ω)) n]
+    rw [← ENNReal.ofReal_mul (hπ θ')]
+  rw [bayesPosterior_apply_singleton]
+  simp only [hμ, hK, hterm, tsum_fintype]
+  rw [← ENNReal.ofReal_sum_of_nonneg (fun θ' _ => hterm_nonneg θ')]
+  rw [ENNReal.toReal_div, ENNReal.toReal_ofReal (hterm_nonneg θ),
+    ENNReal.toReal_ofReal (Finset.sum_nonneg (fun θ' _ => hterm_nonneg θ'))]
+  rfl
 
 end Cslib.MachineLearning.Bayesian

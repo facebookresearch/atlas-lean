@@ -80,3 +80,41 @@ example (α : Fin 2 → ℝ) (hα : ∀ i, 0 < α i) (s : Fin 0 → Fin 2) :
   exact posterior_sharedSeqLaw_bayesPosterior 1 0 α hα s
 
 end CSLibExtTest.MachineLearning.Bayesian.StatisticsInteropDirichlet
+
+namespace CSLibExtTest.MachineLearning.Bayesian.StatisticsInterop
+
+open MeasureTheory ProbabilityTheory Finset
+open Cslib.MachineLearning.Bayesian MathlibExt.Probability.Statistics.Bayesian
+open scoped ENNReal
+
+/-- Use case: one Bernoulli trial, unit prior weights. The explicit weight equals the `toReal`
+of the kernel posterior of the tuned product kernel against the counting prior. -/
+example {Ω : Type*} [MeasurableSpace Ω] {X : ℕ → Ω → Bool} (ω : Ω) (b : Bool)
+    (hX : X 0 ω = b)
+    (μ : Measure Bool) (hμ : ∀ θ, μ {θ} = ENNReal.ofReal 1)
+    (K : Kernel Bool (Fin 1 → Bool))
+    (hK : ∀ θ (s : Fin 1 → Bool),
+      K θ {s} = ∏ i, ENNReal.ofReal (if s i = (θ == b) then (3 / 4 : ℝ) else 1 / 4)) :
+    postWeight (fun _ => (1 : ℝ))
+      (fun θ x => if x = (θ == b) then (3 / 4 : ℝ) else 1 / 4) X 1 ω true =
+      (bayesPosterior K μ (fun i => X i ω) {true}).toReal := by
+  have _hX := hX
+  exact postWeight_eq_bayesPosterior (fun _ => (1 : ℝ)) (fun _ => zero_le_one)
+    (fun θ x => if x = (θ == b) then (3 / 4 : ℝ) else 1 / 4)
+    (fun θ x => by split_ifs <;> norm_num) X 1 ω true μ hμ K hK
+
+/-- Degenerate case: with no observations the weight is the prior ratio. -/
+example {Θ 𝓧 Ω : Type*} [Fintype Θ] [DecidableEq Θ] [Fintype 𝓧]
+    [MeasurableSpace Ω]
+    (π : Θ → ℝ) (f : Θ → 𝓧 → ℝ) (X : ℕ → Ω → 𝓧) (ω : Ω) (θ : Θ) :
+    postWeight π f X 0 ω θ = π θ / ∑ θ', π θ' := by
+  simp [postWeight]
+
+/-- Boundary: zero weights stay zero. -/
+example {Θ 𝓧 Ω : Type*} [Fintype Θ] [DecidableEq Θ] [Fintype 𝓧]
+    [MeasurableSpace Ω]
+    (f : Θ → 𝓧 → ℝ) (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) (θ : Θ) :
+    postWeight (fun _ => (0 : ℝ)) f X n ω θ = 0 := by
+  simp [postWeight]
+
+end CSLibExtTest.MachineLearning.Bayesian.StatisticsInterop
