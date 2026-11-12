@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.Algorithms.Lean.Graph.DirectedAdjacency
 public import Cslib.Algorithms.Lean.TimeM
+import Batteries.Data.Vector.Lemmas
 
 /-!
 # Dense Dijkstra shortest paths
@@ -338,12 +339,6 @@ private lemma get_updateVector_same {α : Type*} {n : Nat} (values : Vector α n
     (updateVector values index value).get index = value := by
   change (values.set index.val value index.isLt)[index.val] = value
   exact Vector.getElem_set_self index.isLt
-
-@[simp]
-private lemma get_vectorOfFn {α : Type*} {n : Nat} (function : Fin n → α)
-    (index : Fin n) : (Vector.ofFn function).get index = function index := by
-  change (Vector.ofFn function)[index.val] = function index
-  simp
 
 @[simp]
 private lemma get_updateVector_of_ne {α : Type*} {n : Nat} (values : Vector α n)

@@ -53,10 +53,6 @@ private theorem length_filter_eq_sum_map {β : Type*} (q : β → Bool)
         apply_ite List.length, List.length_cons]
       split_ifs <;> omega
 
-private theorem sum_ofFn_nat {n : ℕ} (f : Fin n → ℕ) :
-    (List.ofFn f).sum = ∑ i, f i := by
-  simp [List.ofFn_eq_map, Finset.sum_eq_multiset_sum]
-
 private theorem map_ofFn_eq {n : ℕ} {β γ : Type*} (g : Fin n → γ)
     (h : γ → β) :
     (List.ofFn g).map h = List.ofFn (fun i => h (g i)) := by
@@ -106,7 +102,7 @@ private theorem hires_eq_sum (xs : List α)
       (hireAssistant (List.ofFn (fun p => xs.get (σ p)))).ret.2.length := by
     rw [hireAssistant_time]
   rw [htime, hireAssistant_hires, List.length_map,
-    length_filter_eq_sum_map, zipIdx_ofFn, map_ofFn_eq, sum_ofFn_nat]
+    length_filter_eq_sum_map, zipIdx_ofFn, map_ofFn_eq, List.sum_ofFn]
   refine Finset.sum_congr rfl fun i _ => ?_
   by_cases h : isRecord xs σ i
   · rw [ite_eq_left ((all_take_iff_isRecord xs σ i).mpr h), ite_eq_left h]

@@ -1955,12 +1955,6 @@ private theorem commonPrefix_eq_or_of_isPrefix_append {γ : Type u} [DecidableEq
     simp only [List.append_assoc, List.cons_append] at ht2
     exact hxy (List.cons.inj (List.append_cancel_left ht2)).1
 
-private theorem head?_append_of_ne_nil {γ : Type u} {label : List γ} (h : label ≠ [])
-    (k : List γ) : (label ++ k).head? = label.head? := by
-  cases label with
-  | nil => simp at h
-  | cons a as => rfl
-
 private theorem head?_eq_some_of_isPrefix_append {γ : Type u} {label k : List γ}
     (hne : label ≠ []) {c : γ} {cs : List γ} (h : c :: cs <+: label ++ k) :
     label.head? = some c := by
@@ -2111,10 +2105,10 @@ private theorem nodup_childKeys {γ : Type u} {β : Type v}
       obtain ⟨⟨p, val⟩, hp, hpEq⟩ := List.mem_map.mp hxrest
       have hpeq : p = label ++ ks := hpEq
       obtain ⟨label', child', ks', hmem', -, hp'⟩ := mem_childEntries_iff.mp hp
-      have h1 : (label ++ ks).head? = label.head? := head?_append_of_ne_nil hne_head ks
+      have h1 : (label ++ ks).head? = label.head? := List.head?_append_of_ne_nil _ hne_head
       have h2 : (label ++ ks).head? = label'.head? := by
         rw [← hpeq, hp']
-        exact head?_append_of_ne_nil (hne_rest _ hmem') ks'
+        exact List.head?_append_of_ne_nil _ (hne_rest _ hmem')
       exact hnot (by
         rw [← h1, h2]
         exact List.mem_map.mpr ⟨(label', child'), hmem', rfl⟩)

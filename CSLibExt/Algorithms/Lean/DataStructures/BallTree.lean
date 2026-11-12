@@ -313,18 +313,6 @@ decreasing_by
     simp_all only [List.length_take, List.length_drop, List.length_cons]
     omega
 
-private theorem mem_of_mem_take_or_drop {pts : List (Fin d → Int)}
-    {p : Fin d → Int} (hp : p ∈ pts.take (pts.length / 2)) : p ∈ pts := by
-  have hMem : p ∈ pts.take (pts.length / 2) ++ pts.drop (pts.length / 2) :=
-    List.mem_append_left _ hp
-  rwa [List.take_append_drop] at hMem
-
-private theorem mem_of_mem_drop_half {pts : List (Fin d → Int)}
-    {p : Fin d → Int} (hp : p ∈ pts.drop (pts.length / 2)) : p ∈ pts := by
-  have hMem : p ∈ pts.take (pts.length / 2) ++ pts.drop (pts.length / 2) :=
-    List.mem_append_right _ hp
-  rwa [List.take_append_drop] at hMem
-
 private theorem build_spec :
     ∀ pts : List (Fin d → Int),
       (build pts).Valid ∧ (build pts).toList.Perm pts := by
@@ -359,14 +347,14 @@ private theorem build_spec :
                     distSq x p ≤ radiusSq x (x :: y :: ys) := by
                 intro p hp
                 apply distSq_le_radiusSq
-                exact mem_of_mem_take_or_drop (hLeft.2.mem_iff.mp hp)
+                exact List.mem_of_mem_take (hLeft.2.mem_iff.mp hp)
               have hSphereRight :
                   ∀ p ∈ (build ((x :: y :: ys).drop
                       ((x :: y :: ys).length / 2))).toList,
                     distSq x p ≤ radiusSq x (x :: y :: ys) := by
                 intro p hp
                 apply distSq_le_radiusSq
-                exact mem_of_mem_drop_half (hRight.2.mem_iff.mp hp)
+                exact List.mem_of_mem_drop (hRight.2.mem_iff.mp hp)
               rw [build]
               refine ⟨Valid.node hLeft.1 hRight.1 hSphereLeft hSphereRight, ?_⟩
               rw [toList_node]
