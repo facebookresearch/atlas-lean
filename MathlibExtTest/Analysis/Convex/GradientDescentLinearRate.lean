@@ -23,3 +23,23 @@ example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     (xstar : E) (hmin : ∀ y, f xstar ≤ f y) (x0 : E) :
     f (gdIter g L x0 0) - f xstar ≤ (1 - μ / L) ^ 0 * (f x0 - f xstar) :=
   gd_linear_rate hμ hμL hsmooth hstrong xstar hmin x0 0
+
+/-- The quadratic `x²`, with gradient `2x`, has a nonzero contraction factor
+when `μ = 2` and `L = 4`. The rate theorem bounds its second iterate. -/
+example : (gdIter (fun x : ℝ => 2 * x) 4 2 2) ^ 2 ≤ 1 := by
+  have hsmooth : ∀ x y : ℝ,
+      y ^ 2 ≤ x ^ 2 + inner ℝ (2 * x) (y - x) + (4 / 2 : ℝ) * ‖y - x‖ ^ 2 := by
+    intro x y
+    simp only [Real.inner_apply, Real.norm_eq_abs, sq_abs]
+    nlinarith [sq_nonneg (y - x)]
+  have hstrong : ∀ x y : ℝ,
+      x ^ 2 + inner ℝ (2 * x) (y - x) + (2 / 2 : ℝ) * ‖y - x‖ ^ 2 ≤ y ^ 2 := by
+    intro x y
+    simp only [Real.inner_apply, Real.norm_eq_abs, sq_abs]
+    nlinarith
+  have hmin : ∀ y : ℝ, (0 : ℝ) ^ 2 ≤ y ^ 2 := by
+    intro y
+    simpa using sq_nonneg y
+  convert gd_linear_rate (f := fun x : ℝ => x ^ 2)
+    (g := fun x : ℝ => 2 * x) (L := 4) (μ := 2) (by norm_num) (by norm_num)
+    hsmooth hstrong 0 hmin 2 2 using 1 <;> norm_num
