@@ -21,7 +21,9 @@ changes are bounded by `c i`, the upper tail around the
 product-weight mean is at most `exp (-2 t^2 / ∑ c i ^ 2)`, and the
 two-sided bound is twice that. This generalizes the finite iid form
 in `MathlibExt/Probability/McDiarmid.lean` and covers roadmap
-package ML-09 of the Atlas TCS canon roadmap.
+package ML-09 of the Atlas TCS canon roadmap. The `..._general`
+wrappers drop the `0 < ∑ i, c i ^ 2` hypothesis and cover the
+zero-sensitivity endpoint, where the one-sided tail is actually `0`.
 
 Source: C. McDiarmid, "On the method of bounded differences"
 (1989); Dubhashi and Panconesi, Concentration of Measure for the
@@ -281,12 +283,65 @@ private theorem mgf_bound : ∀ (n : ℕ) (α : Fin n → Type*) [∀ i, Fintype
           congr 1
           ring
 
+/-- Chernoff bound for the upper tail: for every `s ≥ 0`, the tail is at
+most `exp (-s * t)` times the moment generating function of `f - μ`. -/
+private theorem tail_le_exp_mul_mgf {n : ℕ} {α : Fin n → Type*} [∀ i, Fintype (α i)]
+    [∀ i, Nonempty (α i)]
+    (p : ∀ i, α i → ℝ) (hp_nonneg : ∀ i a, 0 ≤ p i a)
+    (f : (∀ i, α i) → ℝ) (s : ℝ) (hs : 0 ≤ s) (t : ℝ) :
+    (∑ x ∈ Finset.univ.filter
+        (fun x => t ≤ f x - ∑ y, (∏ i, p i (y i)) * f y),
+        ∏ i, p i (x i))
+      ≤ Real.exp (-s * t)
+        * (∑ x, (∏ i, p i (x i))
+          * Real.exp (s * (f x - ∑ y, (∏ i, p i (y i)) * f y))) := by
+  classical
+  set μ : ℝ := ∑ y, (∏ i, p i (y i)) * f y
+  have hw_nonneg : ∀ x : (∀ i, α i), 0 ≤ ∏ i, p i (x i) := by
+    intro x
+    apply Finset.prod_nonneg
+    intro i _
+    exact hp_nonneg i (x i)
+  calc ∑ x ∈ Finset.univ.filter (fun x => t ≤ f x - μ), ∏ i, p i (x i)
+      = ∑ x ∈ Finset.univ.filter (fun x => t ≤ f x - μ), (∏ i, p i (x i)) * 1 := by
+        simp only [mul_one]
+    _ ≤ ∑ x ∈ Finset.univ.filter (fun x => t ≤ f x - μ),
+          (∏ i, p i (x i)) * Real.exp (s * (f x - μ - t)) := by
+        apply Finset.sum_le_sum
+        intro x hx
+        simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
+        have h1 : (1 : ℝ) ≤ Real.exp (s * (f x - μ - t)) := by
+          rw [← Real.exp_zero]
+          apply Real.exp_le_exp.mpr
+          apply mul_nonneg hs
+          linarith [hx]
+        exact mul_le_mul_of_nonneg_left h1 (hw_nonneg x)
+    _ = Real.exp (-s * t) * ∑ x ∈ Finset.univ.filter (fun x => t ≤ f x - μ),
+          (∏ i, p i (x i)) * Real.exp (s * (f x - μ)) := by
+        rw [Finset.mul_sum]
+        apply Finset.sum_congr rfl
+        intro x _
+        have hexp : s * (f x - μ - t)
+            = s * (f x - μ) + (-s * t) := by ring
+        rw [hexp, Real.exp_add]
+        ring
+    _ ≤ Real.exp (-s * t)
+          * ∑ x, (∏ i, p i (x i)) * Real.exp (s * (f x - μ)) := by
+        apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
+        apply Finset.sum_le_sum_of_subset_of_nonneg
+        · exact Finset.filter_subset _ _
+        · intro x _ _
+          apply mul_nonneg (hw_nonneg x) (Real.exp_nonneg _)
+
 /-- McDiarmid's bounded-differences inequality on a finite product
 space with non-identical marginals (one-sided form): if changing one
 coordinate of `f` changes its value by at most `c i`, then the upper
 tail of `f` around its mean is sub-Gaussian with variance proxy
-`∑ i, c i ^ 2`. The mean and the tail probability are written with
-the product weights `∏ i, p i (x i)`. -/
+`(∑ i, c i ^ 2) / 4`: the MGF bound is `exp (s ^ 2 * V / 8)` with
+`V = ∑ i, c i ^ 2`, which under Mathlib's sub-Gaussian convention
+`exp (σ ^ 2 * s ^ 2 / 2)` is the variance proxy `V / 4`. The mean and
+the tail probability are written with the product weights
+`∏ i, p i (x i)`. -/
 theorem mcdiarmid_product {n : ℕ} {α : Fin n → Type*} [∀ i, Fintype (α i)]
     [∀ i, Nonempty (α i)]
     (p : ∀ i, α i → ℝ) (hp_nonneg : ∀ i a, 0 ≤ p i a)
@@ -308,44 +363,7 @@ theorem mcdiarmid_product {n : ℕ} {α : Fin n → Type*} [∀ i, Fintype (α i
     norm_num
   have hM := mgf_bound n α p hp_nonneg hp_sum f c (4 * t / V) hbd
   simp only [← hμ_def, ← hV_def] at hM
-  have hw_nonneg : ∀ x : (∀ i, α i), 0 ≤ ∏ i, p i (x i) := by
-    intro x
-    apply Finset.prod_nonneg
-    intro i _
-    exact hp_nonneg i (x i)
-  have htail : (∑ x ∈ Finset.univ.filter (fun x => t ≤ f x - μ), ∏ i, p i (x i))
-      ≤ Real.exp (-(4 * t / V) * t)
-        * (∑ x, (∏ i, p i (x i)) * Real.exp ((4 * t / V) * (f x - μ))) := by
-    calc ∑ x ∈ Finset.univ.filter (fun x => t ≤ f x - μ), ∏ i, p i (x i)
-        = ∑ x ∈ Finset.univ.filter (fun x => t ≤ f x - μ), (∏ i, p i (x i)) * 1 := by
-          simp only [mul_one]
-      _ ≤ ∑ x ∈ Finset.univ.filter (fun x => t ≤ f x - μ),
-            (∏ i, p i (x i)) * Real.exp ((4 * t / V) * (f x - μ - t)) := by
-          apply Finset.sum_le_sum
-          intro x hx
-          simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
-          have h1 : (1 : ℝ) ≤ Real.exp ((4 * t / V) * (f x - μ - t)) := by
-            rw [← Real.exp_zero]
-            apply Real.exp_le_exp.mpr
-            apply mul_nonneg (le_of_lt hspos)
-            linarith [hx]
-          exact mul_le_mul_of_nonneg_left h1 (hw_nonneg x)
-      _ = Real.exp (-(4 * t / V) * t) * ∑ x ∈ Finset.univ.filter (fun x => t ≤ f x - μ),
-            (∏ i, p i (x i)) * Real.exp ((4 * t / V) * (f x - μ)) := by
-          rw [Finset.mul_sum]
-          apply Finset.sum_congr rfl
-          intro x _
-          have hexp : (4 * t / V) * (f x - μ - t)
-              = (4 * t / V) * (f x - μ) + (-(4 * t / V) * t) := by ring
-          rw [hexp, Real.exp_add]
-          ring
-      _ ≤ Real.exp (-(4 * t / V) * t)
-            * ∑ x, (∏ i, p i (x i)) * Real.exp ((4 * t / V) * (f x - μ)) := by
-          apply mul_le_mul_of_nonneg_left _ (Real.exp_nonneg _)
-          apply Finset.sum_le_sum_of_subset_of_nonneg
-          · exact Finset.filter_subset _ _
-          · intro x _ _
-            apply mul_nonneg (hw_nonneg x) (Real.exp_nonneg _)
+  have htail := tail_le_exp_mul_mgf p hp_nonneg f (4 * t / V) hspos.le t
   refine htail.trans ?_
   calc Real.exp (-(4 * t / V) * t)
           * (∑ x, (∏ i, p i (x i)) * Real.exp ((4 * t / V) * (f x - μ)))
@@ -358,6 +376,64 @@ theorem mcdiarmid_product {n : ℕ} {α : Fin n → Type*} [∀ i, Fintype (α i
         field_simp
         ring
 
+
+/-- When `∑ i, c i ^ 2 = 0`, every coordinate change leaves `f` unchanged
+in the MGF bound, so the upper tail `t ≤ f x - μ` has probability `0`
+for every `t > 0`. This covers the zero-sensitivity endpoint, including
+`n = 0` and `c i = 0` for every coordinate. -/
+theorem mcdiarmid_product_of_sum_sq_eq_zero {n : ℕ} {α : Fin n → Type*}
+    [∀ i, Fintype (α i)] [∀ i, Nonempty (α i)]
+    (p : ∀ i, α i → ℝ) (hp_nonneg : ∀ i a, 0 ≤ p i a)
+    (hp_sum : ∀ i, ∑ a, p i a = 1)
+    (f : (∀ i, α i) → ℝ) (c : Fin n → ℝ) (hc_zero : ∑ i, c i ^ 2 = 0) (t : ℝ) (ht : 0 < t)
+    (hbd : ∀ (i : Fin n) (x y : ∀ i, α i),
+      (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ c i) :
+    (∑ x ∈ Finset.univ.filter
+        (fun x => t ≤ f x - ∑ y, (∏ i, p i (y i)) * f y),
+        ∏ i, p i (x i)) = 0 := by
+  classical
+  have hw_nonneg : ∀ x : (∀ i, α i), 0 ≤ ∏ i, p i (x i) := by
+    intro x
+    apply Finset.prod_nonneg
+    intro i _
+    exact hp_nonneg i (x i)
+  have hle : ∀ s : ℝ, 0 ≤ s →
+      (∑ x ∈ Finset.univ.filter
+          (fun x => t ≤ f x - ∑ y, (∏ i, p i (y i)) * f y),
+          ∏ i, p i (x i)) ≤ Real.exp (-s * t) := by
+    intro s hs
+    have h := (tail_le_exp_mul_mgf p hp_nonneg f s hs t).trans
+      (mul_le_mul_of_nonneg_left (mgf_bound n α p hp_nonneg hp_sum f c s hbd)
+        (Real.exp_pos _).le)
+    rwa [hc_zero, mul_zero, zero_div, Real.exp_zero, mul_one] at h
+  have htend : Filter.Tendsto (fun s : ℝ => Real.exp (-s * t)) Filter.atTop (nhds 0) := by
+    simpa only [neg_mul, Function.comp_def, id] using
+      Real.tendsto_exp_neg_atTop_nhds_zero.comp (Filter.tendsto_id.atTop_mul_const ht)
+  exact le_antisymm (ge_of_tendsto htend ((Filter.eventually_ge_atTop 0).mono hle))
+    (Finset.sum_nonneg fun x _ => hw_nonneg x)
+
+/-- McDiarmid on a finite product space, without the positivity
+hypothesis: the same one-sided bound as `mcdiarmid_product`, covering
+the zero-sensitivity endpoint. When `∑ i, c i ^ 2 = 0` the tail is
+actually `0` by `mcdiarmid_product_of_sum_sq_eq_zero`, while the
+right-hand side is `Real.exp 0 = 1` by Lean's convention `x / 0 = 0`. -/
+theorem mcdiarmid_product_general {n : ℕ} {α : Fin n → Type*} [∀ i, Fintype (α i)]
+    [∀ i, Nonempty (α i)]
+    (p : ∀ i, α i → ℝ) (hp_nonneg : ∀ i a, 0 ≤ p i a)
+    (hp_sum : ∀ i, ∑ a, p i a = 1)
+    (f : (∀ i, α i) → ℝ) (c : Fin n → ℝ) (hc_nonneg : ∀ i, 0 ≤ c i)
+    (t : ℝ) (ht : 0 < t)
+    (hbd : ∀ (i : Fin n) (x y : ∀ i, α i),
+      (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ c i) :
+    (∑ x ∈ Finset.univ.filter
+        (fun x => t ≤ f x - ∑ y, (∏ i, p i (y i)) * f y),
+        ∏ i, p i (x i)) ≤ Real.exp (-2 * t ^ 2 / ∑ i, c i ^ 2) := by
+  rcases (Finset.sum_nonneg fun i _ => sq_nonneg (c i)).eq_or_lt with h0 | hpos
+  · have hz := mcdiarmid_product_of_sum_sq_eq_zero p hp_nonneg hp_sum f c
+      h0.symm t ht hbd
+    rw [hz]
+    exact (Real.exp_pos _).le
+  · exact mcdiarmid_product p hp_nonneg hp_sum f c hc_nonneg hpos t ht hbd
 
 /-- Two-sided McDiarmid on a finite product space. -/
 theorem mcdiarmid_product_two_sided {n : ℕ} {α : Fin n → Type*} [∀ i, Fintype (α i)]
@@ -439,3 +515,38 @@ theorem mcdiarmid_product_two_sided {n : ℕ} {α : Fin n → Type*} [∀ i, Fin
     _ ≤ Real.exp (-2 * t ^ 2 / V) + Real.exp (-2 * t ^ 2 / V) := by
         apply add_le_add h1 h2
     _ = 2 * Real.exp (-2 * t ^ 2 / V) := by ring
+
+/-- Two-sided McDiarmid on a finite product space, without the positivity
+hypothesis: the same two-sided bound as `mcdiarmid_product_two_sided`,
+covering the zero-sensitivity endpoint. When `∑ i, c i ^ 2 = 0` the
+two-sided tail is at most the total product weight `1`, while the
+right-hand side is `2 * Real.exp 0 = 2`. -/
+theorem mcdiarmid_product_two_sided_general {n : ℕ} {α : Fin n → Type*}
+    [∀ i, Fintype (α i)] [∀ i, Nonempty (α i)]
+    (p : ∀ i, α i → ℝ) (hp_nonneg : ∀ i a, 0 ≤ p i a)
+    (hp_sum : ∀ i, ∑ a, p i a = 1)
+    (f : (∀ i, α i) → ℝ) (c : Fin n → ℝ) (hc_nonneg : ∀ i, 0 ≤ c i)
+    (t : ℝ) (ht : 0 < t)
+    (hbd : ∀ (i : Fin n) (x y : ∀ i, α i),
+      (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ c i) :
+    (∑ x ∈ Finset.univ.filter
+        (fun x => t ≤ |f x - ∑ y, (∏ i, p i (y i)) * f y|),
+        ∏ i, p i (x i)) ≤ 2 * Real.exp (-2 * t ^ 2 / ∑ i, c i ^ 2) := by
+  rcases (Finset.sum_nonneg fun i _ => sq_nonneg (c i)).eq_or_lt with h0 | hpos
+  · have hw_nonneg : ∀ x : (∀ i, α i), 0 ≤ ∏ i, p i (x i) := by
+      intro x
+      apply Finset.prod_nonneg
+      intro i _
+      exact hp_nonneg i (x i)
+    have htotal : (∑ x : (∀ i, α i), ∏ i, p i (x i)) = 1 := by
+      have h := (Fintype.prod_sum (fun i a => p i a)).symm
+      rw [h]
+      simp [hp_sum]
+    have hle : (∑ x ∈ Finset.univ.filter
+          (fun x => t ≤ |f x - ∑ y, (∏ i, p i (y i)) * f y|),
+          ∏ i, p i (x i)) ≤ 1 :=
+      (Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+        fun x _ _ => hw_nonneg x).trans htotal.le
+    rw [h0.symm, div_zero, Real.exp_zero, mul_one]
+    linarith [hle]
+  · exact mcdiarmid_product_two_sided p hp_nonneg hp_sum f c hc_nonneg hpos t ht hbd
