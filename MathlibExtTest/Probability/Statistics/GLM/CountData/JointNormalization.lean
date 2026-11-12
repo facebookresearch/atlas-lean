@@ -136,6 +136,21 @@ example : (noSample CountLaw.poisson).likelihood = (noSample (CountLaw.negBinomi
     (noSample CountLaw.poisson).law () ≠ (noSample (CountLaw.negBinomial 1)).law () :=
   ⟨funext fun _ => by simp [CountModel.likelihood], by simp [noSample]⟩
 
+/-- **Every condition needs a replicate.** Condition `false` has no samples, so its rate (`1`
+versus `2`) does not affect the joint law, yet the models differ. -/
+noncomputable def unobserved (r : ℝ) : CountModel Unit Unit Bool where
+  law := fun _ => CountLaw.poisson
+  condition := fun _ => true
+  librarySize := fun _ => 1
+  rate := fun _ c => if c then 1 else r
+
+example : (unobserved 1).likelihood = (unobserved 2).likelihood ∧
+    unobserved 1 ≠ unobserved 2 := by
+  refine ⟨funext fun Y => by simp [CountModel.likelihood, CountModel.countPMF,
+    CountModel.mean, unobserved], fun h => ?_⟩
+  have := congrFun (congrFun (congrArg CountModel.rate h) ()) false
+  norm_num [unobserved] at this
+
 /-! ### Laws from dispersions -/
 
 /-- Distinct valid laws have distinct dispersions: Poisson `0` versus shape `2`, i.e. `1 / 2`. -/
