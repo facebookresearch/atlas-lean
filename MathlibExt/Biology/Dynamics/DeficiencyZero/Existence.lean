@@ -50,14 +50,15 @@ The proof has two steps.
 
 ## Form of the hypotheses
 
-The complexes, linkage classes, `deficiency` and `IsWeaklyReversible` of a network are not
-part of the production API that this file imports, so both network hypotheses are stated in
-elementary form. Weak reversibility is written out as a `Relation.ReflTransGen` hypothesis (it
-unfolds to `IsWeaklyReversible` from `WantedExt.Biology.Dynamics.DeficiencyZeroWanted`).
+Both network hypotheses are stated in elementary form. Weak reversibility is written out as a
+`Relation.ReflTransGen` hypothesis (it unfolds to `IsWeaklyReversible` from
+`MathlibExt.Biology.Dynamics.DeficiencyZero.API`).
 Deficiency zero is stated as `ker Y ∩ im ∂ = 0`: every weighting `α` of the reactions with
 `∑ α r (prod r - src r) = 0` satisfies `∑ α r (η (prod r) - η (src r)) = 0` for every function
 `η` on complexes. It is equivalent to `δ = n - ℓ - s = 0` via the rank identity
-`dim im ∂ = n - ℓ`, which is not proved here. The non-weakly-reversible half of the theorem,
+`dim im ∂ = n - ℓ` (`deficiency_eq_zero_iff` in
+`MathlibExt.Biology.Dynamics.DeficiencyZero.Integration`, which also restates both theorems with
+`N.deficiency = 0` and `N.IsWeaklyReversible`). The non-weakly-reversible half of the theorem,
 stability and non-mass-action kinetics are not covered.
 
 ## References
@@ -357,8 +358,9 @@ The two network hypotheses are stated in elementary form. `hwr` is weak reversib
 every reaction `y → y'` there is a directed path of reactions from `y'` back to `y`. `hδ` is
 deficiency zero in its linear-algebra form `ker Y ∩ im ∂ = 0` (Feinberg 2019, §6.4): a
 weighting `α` of the reactions with zero net stoichiometric change `∑ α r (prod r - src r)`
-has zero net change on the complexes. That `δ = n - ℓ - s = 0` is equivalent to `hδ` is the
-rank identity `dim im ∂ = n - ℓ`, which is not proved here. Rate constants must be strictly
+has zero net change on the complexes. That `δ = n - ℓ - s = 0` is equivalent to `hδ` is
+`deficiency_eq_zero_iff` (in `MathlibExt.Biology.Dynamics.DeficiencyZero.Integration`), via the
+rank identity `dim im ∂ = n - ℓ`. Rate constants must be strictly
 positive; zero rates are excluded.
 
 Source: Horn (1972); Feinberg (1972); Feinberg (1987); Feinberg (2019), ch. 16. -/
