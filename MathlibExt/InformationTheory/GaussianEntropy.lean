@@ -14,21 +14,23 @@ public import Mathlib.Probability.Distributions.Gaussian.Real
 
 /-! # Differential entropy of a Gaussian
 
-The differential entropy of `N (0, v)` is `(1/2) log (2 π e v)`,
-computed from the density integral. This is the Gaussian case of
-roadmap package QCI-35 of the Atlas TCS canon roadmap.
+The differential entropy of `N (0, v)` in nats is `(1/2) log (2 π e v)`,
+computed from the density integral using the natural logarithm. This is the
+Gaussian case of roadmap package QCI-35 of the Atlas TCS canon roadmap.
 
 Source: Cover and Thomas, Elements of Information Theory (2006),
-Section 8.5.
+Section 8.1 (with natural logarithms here rather than base-two logarithms).
 -/
+
+namespace InformationTheory
 
 open MeasureTheory ProbabilityTheory
 open scoped NNReal
 open scoped Real
 
-/-- Differential entropy of the centered Gaussian with variance
+/-- Differential entropy in nats of the centered Gaussian with variance
 `v` (as an integral against Lebesgue measure of its density
-times its log). The `v ≠ 0` proof parameter is part of the
+times its natural logarithm). The `v ≠ 0` proof parameter is part of the
 definition, so the `v = 0` Dirac case, whose differential entropy
 is not this finite integral, cannot be formed. -/
 noncomputable def gaussEntropy (v : ℝ≥0) (_hv : v ≠ 0) : ℝ :=
@@ -101,8 +103,8 @@ private lemma integral_sq_mul_pdf {v : ℝ≥0} (hv : v ≠ 0) :
   rw [hsmul] at htrans
   exact htrans.symm
 
-/-- The differential entropy of `N (0, v)` is
-`(1 / 2) log (2 π e v)`. -/
+/-- The differential entropy in nats of `N (0, v)` is
+`(1 / 2) log (2 π e v)`, with the natural logarithm. -/
 theorem gaussEntropy_eq {v : ℝ≥0} (hv : v ≠ 0) :
     gaussEntropy v hv = (1 / 2) * Real.log (2 * π * Real.exp 1 * (v : ℝ)) := by
   unfold gaussEntropy
@@ -153,3 +155,5 @@ theorem gaussEntropy_eq {v : ℝ≥0} (hv : v ≠ 0) :
     = (1 / 2) * Real.log (2 * Real.pi * Real.exp 1 * (v : ℝ))
   rw [hlog]
   ring
+
+end InformationTheory
