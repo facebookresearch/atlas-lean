@@ -42,8 +42,8 @@ sandwich `A⁻¹ B A⁻ᵀ`.
   to one). Root existence is an explicit hypothesis; consistency is proved.
 * (b) `ProbabilityTheory.GEE.tendstoInDistribution_inv_sqrt_smul_sum_of_lindeberg`: the central
   limit theorem for independent, non-identically distributed clusters, under the projected
-  cluster Lindeberg condition (`LindebergConditionTriangular` for `(√n)⁻¹ ⟪U k, t⟫`) and a
-  positive definite limiting meat. `lindebergConditionTriangular_inner_of_norm` derives the
+  cluster Lindeberg condition (`LindebergConditionTriangular` for `(√n)⁻¹ ⟪U k, t⟫`); the
+  limiting meat may be singular. `lindebergConditionTriangular_inner_of_norm` derives the
   projected condition from the classical norm form
   `n⁻¹ ∑ E[‖U k‖² 𝟙{ε √n < ‖U k‖}] → 0`, and
   `lindebergConditionTriangular_inner_of_identDistrib` proves it for identically distributed
@@ -60,7 +60,15 @@ sandwich `A⁻¹ B A⁻ᵀ`.
   estimators give a consistent sandwich, for invertible `A`.
   `tendstoInMeasure_empirical_sandwichCovariance` applies it to the plug-in bread
   `n⁻¹ ∑ ∂U i/∂β (βhat n)` and meat `n⁻¹ ∑ U i (βhat n) U i (βhat n)ᵀ`, via the plug-in lemma
-  `tendstoInMeasure_comp_of_tendstoUniformlyOn`.
+  `tendstoInMeasure_comp_of_tendstoUniformlyOn`. Its limit `sandwichCovariance (Abar β₀) (Bbar β₀)`
+  is the covariance of the CLT only when the in-probability meat limit `Bbar β₀` equals the CLT
+  meat `B`; `tendstoInMeasure_empirical_sandwichCovariance_of_eq` takes that identification as a
+  hypothesis and concludes convergence to `sandwichCovariance (Abar β₀) B`.
+
+The CLT hypotheses pin down the meat `B` only through its quadratic form `⟪B t, t⟫`, and the
+limit law depends on `sandwichCovariance A B` only through its quadratic form, so `B` is not
+required to be self-adjoint there. The plug-in meat is a limit of self-adjoint outer products,
+so matching it with `B` as operators presupposes a self-adjoint `B`.
 
 ## Proof
 
@@ -78,8 +86,9 @@ difference tends to `0` in probability and Slutsky's lemma
 Sandwich consistency is continuity of `(A, B) ↦ A⁻¹ B A⁻ᵀ` at an invertible `A`
 (`NormedRing.inverse_continuousAt`).
 
-The limiting meat is required to be positive definite because
-`lindeberg_feller_clt_triangular` is stated for a positive limiting variance.
+`lindeberg_feller_clt_triangular` is stated for a positive limiting variance. A direction with
+limiting variance `0` is handled separately: Chebyshev's inequality shows that the projected sum
+tends to `0` in probability, which is convergence in distribution to `gaussianReal 0 0`.
 
 ## Source receipt
 
@@ -141,14 +150,15 @@ private lemma inner_inv_sqrt_smul_sum (U : ℕ → Ω → E) (t : E) (n : ℕ) (
 independent, mean-zero, square-integrable cluster scores in a finite-dimensional real inner
 product space. Suppose that for every direction `t`
 
-* the averaged projected variances `n⁻¹ ∑_{k<n} E[⟪U k, t⟫²]` converge to `q t`, with `q t > 0`
-  for `t ≠ 0` (a positive definite limiting meat), and
+* the averaged projected variances `n⁻¹ ∑_{k<n} E[⟪U k, t⟫²]` converge to `q t` (necessarily
+  `q t ≥ 0`; `q t = 0` is allowed), and
 * the projected triangular array `(√n)⁻¹ ⟪U k, t⟫`, `k < n`, satisfies the repository's
   Lindeberg condition `LindebergConditionTriangular`.
 
 Then `(√n)⁻¹ • ∑_{k<n} U k` converges in distribution to any `Y` whose projections `⟪Y, t⟫` are
 centered Gaussians of variance `q t`. The proof is Cramér–Wold plus the Lindeberg–Feller theorem
-`lindeberg_feller_clt_triangular` applied to the cluster sums of each projection. -/
+`lindeberg_feller_clt_triangular` applied to the cluster sums of each projection with `q t > 0`,
+and Chebyshev's inequality for the projections with `q t = 0`. -/
 theorem tendstoInDistribution_inv_sqrt_smul_sum_of_lindeberg {U : ℕ → Ω → E} {Y : Ω' → E}
     {q : E → ℝ} (hY : AEMeasurable Y P')
     (hYlaw : ∀ t, HasLaw (fun ω ↦ ⟪Y ω, t⟫) (gaussianReal 0 (q t).toNNReal) P')
@@ -156,7 +166,6 @@ theorem tendstoInDistribution_inv_sqrt_smul_sum_of_lindeberg {U : ℕ → Ω →
     (hmean : ∀ k, ∫ ω, U k ω ∂P = 0) (hL2 : ∀ k, MemLp (U k) 2 P)
     (hvar : ∀ t, Tendsto (fun n : ℕ ↦ (n : ℝ)⁻¹ * ∑ k ∈ range n, ∫ ω, ⟪U k ω, t⟫ ^ 2 ∂P)
       atTop (𝓝 (q t)))
-    (hpos : ∀ t, t ≠ 0 → 0 < q t)
     (hL : ∀ t, LindebergConditionTriangular (fun n k ω ↦ (√n)⁻¹ * ⟪U k ω, t⟫) P) :
     TendstoInDistribution (fun (n : ℕ) ω ↦ (√n)⁻¹ • ∑ k ∈ range n, U k ω) atTop Y
       (fun _ ↦ P) P' := by
@@ -165,16 +174,6 @@ theorem tendstoInDistribution_inv_sqrt_smul_sum_of_lindeberg {U : ℕ → Ω →
   refine TendstoInDistribution.of_inner hY hSmeas fun t ↦ ?_
   have hinner_meas : Measurable fun x : E ↦ ⟪x, t⟫ :=
     (continuous_id.inner continuous_const).measurable
-  by_cases ht : t = 0
-  · subst ht
-    simp only [inner_zero_right]
-    exact tendstoInDistribution_of_identDistrib 0
-      (fun _ ↦ IdentDistrib.refl aemeasurable_const)
-      ⟨aemeasurable_const, aemeasurable_const, by simp [Measure.map_const]⟩
-  have hq := hpos t ht
-  set σ := √(q t) with hσ_def
-  have hσ : 0 < σ := Real.sqrt_pos.2 hq
-  have hσ2 : σ ^ 2 = q t := Real.sq_sqrt hq.le
   set X : ℕ → ℕ → Ω → ℝ := fun n k ω ↦ (√n)⁻¹ * ⟪U k ω, t⟫ with hX_def
   have hXmeas : ∀ n k, Measurable (X n k) := fun n k ↦
     (hinner_meas.comp (hmeas k)).const_mul _
@@ -190,14 +189,61 @@ theorem tendstoInDistribution_inv_sqrt_smul_sum_of_lindeberg {U : ℕ → Ω →
       rw [← h']
       exact integral_congr_ae (ae_of_all _ fun ω ↦ real_inner_comm _ _)
     rw [h, mul_zero]
+  have hXL2 : ∀ n k, MemLp (X n k) 2 P := fun n k ↦ ((hL2 k).inner_const t).const_mul _
   have hXint2 : ∀ n, ∀ k ∈ Finset.range n, Integrable (fun ω ↦ (X n k ω) ^ 2) P :=
-    fun n k _ ↦ (((hL2 k).inner_const t).const_mul _).integrable_sq
-  have hXvar : Tendsto (fun n ↦ ∑ k ∈ Finset.range n, ∫ ω, (X n k ω) ^ 2 ∂P) atTop
-      (𝓝 (σ ^ 2)) := by
-    rw [hσ2]
+    fun n k _ ↦ (hXL2 n k).integrable_sq
+  have hXvar' : Tendsto (fun n ↦ ∑ k ∈ Finset.range n, ∫ ω, (X n k ω) ^ 2 ∂P) atTop
+      (𝓝 (q t)) := by
     refine (hvar t).congr fun n ↦ ?_
     simp only [hX_def, mul_pow, inv_pow, Real.sq_sqrt (Nat.cast_nonneg n), integral_const_mul,
       Finset.mul_sum]
+  have hq0 : 0 ≤ q t := ge_of_tendsto' (hvar t) fun n ↦ mul_nonneg (inv_nonneg.2 n.cast_nonneg)
+    (Finset.sum_nonneg fun k _ ↦ integral_nonneg fun ω ↦ sq_nonneg _)
+  have hS : ∀ n : ℕ, (fun ω ↦ ⟪(√n)⁻¹ • ∑ k ∈ range n, U k ω, t⟫) =
+      ∑ k ∈ Finset.range n, X n k := fun n ↦ by
+    ext ω
+    rw [Finset.sum_apply, inner_inv_sqrt_smul_sum]
+  rcases hq0.lt_or_eq with hq | hq
+  swap
+  · -- degenerate direction, `q t = 0`: Chebyshev gives convergence in probability to `0`
+    have hSmean : ∀ n, P[∑ k ∈ Finset.range n, X n k] = 0 := fun n ↦ by
+      simp only [Finset.sum_apply]
+      rw [integral_finsetSum _ fun k _ ↦ (hXL2 n k).integrable one_le_two]
+      exact Finset.sum_eq_zero fun k hk ↦ hXmean n k hk
+    have hSvar : ∀ n, Var[∑ k ∈ Finset.range n, X n k; P] =
+        ∑ k ∈ Finset.range n, ∫ ω, (X n k ω) ^ 2 ∂P := fun n ↦ by
+      rw [IndepFun.variance_sum (fun k _ ↦ hXL2 n k) fun i _ j _ hij ↦
+        (hindep.indepFun hij).comp (hinner_meas.const_mul _) (hinner_meas.const_mul _)]
+      exact Finset.sum_congr rfl fun k hk ↦
+        variance_of_integral_eq_zero (hXmeas n k).aemeasurable (hXmean n k hk)
+    have hconv : TendstoInMeasure P (fun n ↦ ∑ k ∈ Finset.range n, X n k) atTop
+        (fun _ ↦ 0) := by
+      rw [tendstoInMeasure_iff_dist]
+      intro ε hε
+      have hlim : Tendsto (fun n ↦ ENNReal.ofReal
+          (Var[∑ k ∈ Finset.range n, X n k; P] / ε ^ 2)) atTop (𝓝 0) := by
+        have h := (ENNReal.continuous_ofReal.tendsto _).comp (hXvar'.div_const (ε ^ 2))
+        rw [← hq, zero_div, ENNReal.ofReal_zero] at h
+        simp only [hSvar]
+        exact h
+      refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim
+        (fun _ ↦ zero_le) fun n ↦ ?_
+      have h := meas_ge_le_variance_div_sq
+        (memLp_finsetSum' (Finset.range n) fun k _ ↦ hXL2 n k) hε
+      simpa only [hSmean, sub_zero, Real.dist_eq] using h
+    have hD := hconv.tendstoInDistribution_of_aemeasurable
+      (fun n ↦ Finset.aemeasurable_sum _ fun k _ ↦ (hXmeas n k).aemeasurable) aemeasurable_const
+    refine ⟨fun n ↦ hinner_meas.comp_aemeasurable (hSmeas n), (hYlaw t).aemeasurable, ?_⟩
+    have hlaw : (P'.map fun ω ↦ ⟪Y ω, t⟫) = P.map fun _ ↦ (0 : ℝ) := by
+      rw [(hYlaw t).map_eq, Measure.map_const, measure_univ, one_smul, ← hq,
+        Real.toNNReal_zero, gaussianReal_zero_var]
+    simp only [hS, hlaw]
+    exact hD.tendsto
+  set σ := √(q t) with hσ_def
+  have hσ : 0 < σ := Real.sqrt_pos.2 hq
+  have hσ2 : σ ^ 2 = q t := Real.sq_sqrt hq.le
+  have hXvar : Tendsto (fun n ↦ ∑ k ∈ Finset.range n, ∫ ω, (X n k ω) ^ 2 ∂P) atTop
+      (𝓝 (σ ^ 2)) := hσ2 ▸ hXvar'
   have hLF := lindeberg_feller_clt_triangular X hind (fun n k _ ↦ hXmeas n k) hXmean hXint2 σ hσ
     hXvar (hL t)
   refine ⟨fun n ↦ hinner_meas.comp_aemeasurable (hSmeas n), (hYlaw t).aemeasurable, ?_⟩
@@ -392,20 +438,6 @@ theorem inner_sandwichCovariance_apply (A B : E →L[ℝ] E) (t : E) :
   simp only [sandwichCovariance, mul_apply_eq_comp]
   exact (ContinuousLinearMap.adjoint_inner_right _ _ _).symm
 
-omit [MeasurableSpace E] [BorelSpace E] in
-/-- For an invertible `A`, the adjoint of `A⁻¹` is injective. -/
-theorem adjoint_inverse_injective {A : E →L[ℝ] E} (hA : IsUnit A) :
-    Function.Injective (ContinuousLinearMap.adjoint (Ring.inverse A)) := by
-  have h : ContinuousLinearMap.adjoint A * ContinuousLinearMap.adjoint (Ring.inverse A) = 1 := by
-    have h1 : Ring.inverse A * A = 1 := Ring.inverse_mul_cancel A hA
-    have h2 := congrArg ContinuousLinearMap.adjoint h1
-    rwa [ContinuousLinearMap.mul_def, ContinuousLinearMap.adjoint_comp,
-      ContinuousLinearMap.one_def, ContinuousLinearMap.adjoint_id] at h2
-  intro x y hxy
-  have := congrArg (ContinuousLinearMap.adjoint A) hxy
-  rwa [← mul_apply_eq_comp, ← mul_apply_eq_comp, h, one_apply_eq_self, one_apply_eq_self]
-    at this
-
 /-- **Asymptotic normality of a GEE estimator with sandwich covariance.**
 
 Let `U k β ω` be independent cluster scores. At the true parameter `β₀` assume the cluster
@@ -425,7 +457,6 @@ theorem tendstoInDistribution_sqrt_smul_sub_sandwich {U : ℕ → E → Ω → E
     (hmean : ∀ k, ∫ ω, U k β₀ ω ∂P = 0) (hL2 : ∀ k, MemLp (U k β₀) 2 P)
     (hvar : ∀ t, Tendsto (fun n : ℕ ↦ (n : ℝ)⁻¹ * ∑ k ∈ range n, ∫ ω, ⟪U k β₀ ω, t⟫ ^ 2 ∂P)
       atTop (𝓝 ⟪B t, t⟫))
-    (hBpos : ∀ t, t ≠ 0 → 0 < ⟪B t, t⟫)
     (hL : ∀ t, LindebergConditionTriangular (fun n k ω ↦ (√n)⁻¹ * ⟪U k β₀ ω, t⟫) P)
     {βhat : ℕ → Ω → E} (hβ : ∀ n, AEMeasurable (βhat n) P)
     (hroot : Tendsto (fun n ↦ P {ω | ∑ i ∈ range n, U i (βhat n ω) ω ≠ 0}) atTop (𝓝 0))
@@ -452,17 +483,11 @@ theorem tendstoInDistribution_sqrt_smul_sub_sandwich {U : ℕ → E → Ω → E
       (fun k ↦ (Ai.continuous.measurable.comp (hmeas k)).neg)
       (hindep.comp (fun _ x ↦ -Ai x) fun _ ↦ Ai.continuous.measurable.neg)
       (fun k ↦ ?_) (fun k ↦ ((hL2 k).continuousLinearMap_comp Ai).neg) (fun t ↦ ?_)
-      (fun t ht ↦ ?_) (fun t ↦ ?_)
+      (fun t ↦ ?_)
     · simp only [hV_def, integral_neg, Ai.integral_comp_comm ((hL2 k).integrable one_le_two),
         hmean k, map_zero, neg_zero]
     · simp_rw [hVinner, ← hq]
       exact hvar (s t)
-    · rw [← hq]
-      refine hBpos _ fun h0 ↦ ht ?_
-      have h0' : ContinuousLinearMap.adjoint Ai t = ContinuousLinearMap.adjoint Ai 0 := by
-        rw [map_zero]
-        simpa [hs_def] using h0
-      exact adjoint_inverse_injective hA h0'
     · simp_rw [hVinner]
       exact hL (s t)
   refine tendstoInDistribution_sqrt_smul_sub_of_linearization hA ?_ hβ hroot hlin
@@ -601,6 +626,7 @@ noncomputable def outerProduct (u : E) : E →L[ℝ] E :=
   (innerSL ℝ u).smulRight u
 
 omit [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E] in
+/-- The quadratic form of the outer product `u uᵀ` is `⟪u, t⟫²`. -/
 theorem inner_outerProduct_apply (u t : E) : ⟪outerProduct u t, t⟫ = ⟪u, t⟫ ^ 2 := by
   simp only [outerProduct, ContinuousLinearMap.smulRight_apply, innerSL_apply_apply]
   rw [real_inner_smul_left, sq]
@@ -612,7 +638,11 @@ omit [MeasurableSpace E] [BorelSpace E] [IsProbabilityMeasure P] in
 averaged outer products of the cluster scores converge uniformly on a ball around `β₀` in
 probability to `Abar` and `Bbar`, both continuous at `β₀`, that `Abar β₀` is invertible, and
 that `βhat` is consistent. Then the empirical sandwich converges in probability to
-`sandwichCovariance (Abar β₀) (Bbar β₀)`. -/
+`sandwichCovariance (Abar β₀) (Bbar β₀)`.
+
+This is the asymptotic covariance of `tendstoInDistribution_sqrt_smul_sub_sandwich_of_hasFDerivAt`
+(same `Abar` and Jacobian hypothesis) only when `Bbar β₀` equals the CLT meat `B`, which this
+theorem does not assume; see `tendstoInMeasure_empirical_sandwichCovariance_of_eq`. -/
 theorem tendstoInMeasure_empirical_sandwichCovariance {U : ℕ → E → Ω → E}
     {DU : ℕ → E → Ω → E →L[ℝ] E} {β₀ : E} {δ : ℝ} (hδ : 0 < δ)
     {Abar Bbar : E → E →L[ℝ] E} (hAbar : ContinuousAt Abar β₀) (hBbar : ContinuousAt Bbar β₀)
@@ -634,6 +664,28 @@ theorem tendstoInMeasure_empirical_sandwichCovariance {U : ℕ → E → Ω → 
       (n : ℝ)⁻¹ • ∑ i ∈ range n, outerProduct (U i β ω)) hδ hBbar
       (by simpa only [dist_eq_norm] using hBunif) hcons)
 
+omit [MeasurableSpace E] [BorelSpace E] [IsProbabilityMeasure P] in
+/-- **The empirical sandwich is consistent for the CLT covariance.** Under the hypotheses of
+`tendstoInMeasure_empirical_sandwichCovariance`, if the in-probability limit `Bbar β₀` of the
+averaged outer products is the meat `B` of the CLT `tendstoInDistribution_sqrt_smul_sub_sandwich`
+(as an operator; in particular `B` is then self-adjoint), the empirical sandwich converges in
+probability to `sandwichCovariance (Abar β₀) B`, the asymptotic covariance of
+`tendstoInDistribution_sqrt_smul_sub_sandwich_of_hasFDerivAt`. -/
+theorem tendstoInMeasure_empirical_sandwichCovariance_of_eq {U : ℕ → E → Ω → E}
+    {DU : ℕ → E → Ω → E →L[ℝ] E} {β₀ : E} {δ : ℝ} (hδ : 0 < δ)
+    {Abar Bbar : E → E →L[ℝ] E} {B : E →L[ℝ] E} (hAbar : ContinuousAt Abar β₀)
+    (hBbar : ContinuousAt Bbar β₀) (hBB : Bbar β₀ = B) (hA : IsUnit (Abar β₀))
+    (hAunif : ∀ ε > 0, Tendsto (fun n : ℕ ↦ P {ω | ∃ β ∈ Metric.ball β₀ δ,
+      ε ≤ ‖(n : ℝ)⁻¹ • ∑ i ∈ range n, DU i β ω - Abar β‖}) atTop (𝓝 0))
+    (hBunif : ∀ ε > 0, Tendsto (fun n : ℕ ↦ P {ω | ∃ β ∈ Metric.ball β₀ δ,
+      ε ≤ ‖(n : ℝ)⁻¹ • ∑ i ∈ range n, outerProduct (U i β ω) - Bbar β‖}) atTop (𝓝 0))
+    {βhat : ℕ → Ω → E} (hcons : TendstoInMeasure P βhat atTop (fun _ ↦ β₀)) :
+    TendstoInMeasure P (fun (n : ℕ) ω ↦ sandwichCovariance
+        ((n : ℝ)⁻¹ • ∑ i ∈ range n, DU i (βhat n ω) ω)
+        ((n : ℝ)⁻¹ • ∑ i ∈ range n, outerProduct (U i (βhat n ω) ω))) atTop
+      (fun _ ↦ sandwichCovariance (Abar β₀) B) :=
+  hBB ▸ tendstoInMeasure_empirical_sandwichCovariance hδ hAbar hBbar hA hAunif hBunif hcons
+
 /-- **GEE asymptotic normality from differentiable cluster scores.** The combination of
 `linearization_of_hasFDerivAt` and `tendstoInDistribution_sqrt_smul_sub_sandwich`: if the cluster
 scores are differentiable near `β₀`, their averaged Jacobian converges uniformly near `β₀` in
@@ -652,7 +704,6 @@ theorem tendstoInDistribution_sqrt_smul_sub_sandwich_of_hasFDerivAt {U : ℕ →
     (hmean : ∀ k, ∫ ω, U k β₀ ω ∂P = 0) (hL2 : ∀ k, MemLp (U k β₀) 2 P)
     (hvar : ∀ t, Tendsto (fun n : ℕ ↦ (n : ℝ)⁻¹ * ∑ k ∈ range n, ∫ ω, ⟪U k β₀ ω, t⟫ ^ 2 ∂P)
       atTop (𝓝 ⟪B t, t⟫))
-    (hBpos : ∀ t, t ≠ 0 → 0 < ⟪B t, t⟫)
     (hL : ∀ t, LindebergConditionTriangular (fun n k ω ↦ (√n)⁻¹ * ⟪U k β₀ ω, t⟫) P)
     {βhat : ℕ → Ω → E} (hβ : ∀ n, AEMeasurable (βhat n) P)
     (hcons : TendstoInMeasure P βhat atTop (fun _ ↦ β₀))
@@ -661,7 +712,7 @@ theorem tendstoInDistribution_sqrt_smul_sub_sandwich_of_hasFDerivAt {U : ℕ →
     (hWlaw : ∀ t, HasLaw (fun ω ↦ ⟪W ω, t⟫)
       (gaussianReal 0 (⟪sandwichCovariance (Abar β₀) B t, t⟫).toNNReal) P') :
     TendstoInDistribution (fun (n : ℕ) ω ↦ √n • (βhat n ω - β₀)) atTop W (fun _ ↦ P) P' :=
-  tendstoInDistribution_sqrt_smul_sub_sandwich hA hmeas hindep hmean hL2 hvar hBpos hL hβ hroot
+  tendstoInDistribution_sqrt_smul_sub_sandwich hA hmeas hindep hmean hL2 hvar hL hβ hroot
     (linearization_of_hasFDerivAt hδ hdiff hAbar hunif hcons) hW hWlaw
 
 /-! ### Lindeberg condition for identically distributed clusters -/
