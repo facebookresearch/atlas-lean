@@ -89,13 +89,11 @@ example {t : ℝ} (ht : t ∈ Set.Icc 0 1) : ∀ᶠ n : ℕ in atTop, ∀ i < gr
   eventually_gridHazard_increment_le StieltjesFunction.id continuous_id one_pos ht tendsto_id _
     (by norm_num)
 
-/-! ### Joint satisfiability of the headline hypotheses -/
+/-! ### The headline theorem on explicit models -/
 
-/-- All hypotheses of the headline theorem hold together in a degenerate model: zero hazard
-(`Λ ≡ 0`), no events, `n` subjects always at risk, `y ≡ 1`. Its conclusion is that the predictable
-variation tends to `∫ dΛ / y = 0`. (The non-degenerate pieces are exercised above: the grid limit
-for `Λ(s) = s`, and the binomial conditional variance is derived for a genuine single-subject model
-in `condExp_sq_increment_of_hasUnitJumps`.) -/
+/-- **Zero-hazard boundary.** With `Λ ≡ 0`, no events and `n` subjects always at risk, the
+predictable variation is identically `0` and the headline limit `∫ dΛ / y` is `0`. This is a
+boundary case only; the non-degenerate instance is below. -/
 example [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m0) {t : ℝ} (ht : t ∈ Set.Icc 0 1) :
     TendstoInMeasure μ (fun n => predictableQuadraticVariation μ ℱ
       (naScaledMartingale n (fun _ _ => 0) (fun _ _ => (n : ℝ))
@@ -121,4 +119,86 @@ example [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m0) {t : ℝ} (ht : t �
       ext ω
       simp [hn', hδ.not_gt])
   simpa [StieltjesFunction.measure_const] using h
+/-- The grid hazard increments of `Λ(s) = s` on mesh `1 / n`. -/
+private noncomputable def dd (n j : ℕ) : ℝ :=
+  gridHazard StieltjesFunction.id (1 / (n : ℕ)) (j + 1) -
+    gridHazard StieltjesFunction.id (1 / (n : ℕ)) j
+
+private lemma dd_eq (n j : ℕ) : dd n j = 1 / (n : ℝ) := by
+  simp only [dd, gridHazard, StieltjesFunction.id_apply, id]; push_cast; ring
+
+private lemma dd_mem (n j : ℕ) : 0 ≤ (n : ℝ) * dd n j * (1 - dd n j) := by
+  rw [dd_eq]
+  rcases Nat.eq_zero_or_pos n with h | h
+  · simp [h]
+  · have : (1 : ℝ) ≤ n := by exact_mod_cast h
+    have h1 : 1 / (n : ℝ) ≤ 1 := by rw [div_le_one (by positivity)]; exact this
+    have h0 : 0 ≤ 1 / (n : ℝ) := by positivity
+    have := mul_nonneg (mul_nonneg (Nat.cast_nonneg n) h0) (sub_nonneg.2 h1)
+    simpa using this
+
+/-- A deterministic compensated process whose squared increments are the binomial second moment
+`n ΔΛ (1 - ΔΛ)`. -/
+private noncomputable def MM (n j : ℕ) : ℝ :=
+  ∑ i ∈ range j, Real.sqrt ((n : ℝ) * dd n i * (1 - dd n i))
+
+/-- The counting-process slot: `MM` plus the Aalen compensator of `Y ≡ n` under `Λ(s) = s`. -/
+private noncomputable def NN (n j : ℕ) (ω : Ω) : ℝ :=
+  MM n j + aalenCompensator (fun _ _ => (n : ℝ)) (gridHazard StieltjesFunction.id (1 / (n : ℕ))) j ω
+
+/-- At `t = 1` the grid of mesh `1 / n` has `n` steps, and the variance sum there is `1 - 1/n`,
+computed from the definition: the discrete factor `1 - ΔΛ = 1 - 1/n` is visible at every `n` and
+disappears in the limit. -/
+example (n : ℕ) (hn : 0 < n) (ω : Ω) :
+    gridIndex 1 (1 / (n : ℕ)) = n ∧
+      naVarianceSum n (fun _ _ => (n : ℝ)) (gridHazard StieltjesFunction.id (1 / (n : ℕ))) n ω =
+        1 - 1 / n := by
+  have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+  refine ⟨by simp [gridIndex], ?_⟩
+  have h := fun j => dd_eq n j
+  simp only [dd] at h
+  simp only [naVarianceSum, h, sum_const, card_range, nsmul_eq_mul]
+  field_simp
+
+/-- **Non-degenerate instance of the headline theorem**: unit hazard rate `Λ(s) = s`, `y ≡ 1`,
+`t = 1`, `Y ≡ n`, increments with the binomial second moment; the limit is `∫_{(0,1]} ds = 1`.
+(The increments are deterministic, not a martingale; the headline theorem does not assume one.) -/
+example [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m0) :
+    TendstoInMeasure μ (fun n => predictableQuadraticVariation μ ℱ
+      (naScaledMartingale n (NN n) (fun _ _ => (n : ℝ))
+        (gridHazard StieltjesFunction.id (1 / (n : ℕ)))) (gridIndex 1 (1 / (n : ℕ))))
+      atTop (fun _ => 1) := by
+  have hinc : ∀ n j, (fun ω : Ω => ((NN n (j + 1) ω - aalenCompensator (fun _ _ => (n : ℝ))
+      (gridHazard StieltjesFunction.id (1 / (n : ℕ))) (j + 1) ω) -
+      (NN n j ω - aalenCompensator (fun _ _ => (n : ℝ))
+      (gridHazard StieltjesFunction.id (1 / (n : ℕ))) j ω)) ^ 2) =
+      fun _ => (n : ℝ) * dd n j * (1 - dd n j) := by
+    intro n j; funext ω
+    simp only [NN, add_sub_cancel_right, MM, sum_range_succ, add_sub_cancel_left]
+    exact Real.sq_sqrt (dd_mem n j)
+  have h := tendstoInMeasure_predictableQuadraticVariation_naScaledMartingale_integral
+    (μ := μ) (ℱ := fun _ => ℱ) (N := fun n => NN n) (Y := fun n _ _ => (n : ℝ))
+    StieltjesFunction.id continuous_id (y := fun _ => 1) one_pos
+    (t := 1) ⟨zero_le_one, le_rfl⟩ one_pos
+    continuousOn_const (fun _ _ => le_rfl) (K := fun n => n) tendsto_id
+    (fun _ => .of_measurable_add_one stronglyMeasurable_const fun _ => stronglyMeasurable_const)
+    (fun n _ _ => by
+      rcases Nat.eq_zero_or_pos n with h | h
+      · left; simp [h]
+      · right; exact_mod_cast h)
+    (fun n j => by rw [show _ = _ from hinc n j]; exact integrable_const _)
+    (fun n j => by
+      rw [show _ = _ from hinc n j, condExp_const (ℱ.le j)]
+      exact Filter.EventuallyEq.rfl)
+    (fun δ hδ => by
+      refine tendsto_const_nhds.congr' ?_
+      filter_upwards [eventually_gt_atTop 0] with n hn
+      have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+      symm
+      convert measure_empty (μ := μ)
+      ext ω
+      simp [hn', hδ.not_gt])
+  rw [integral_id_one zero_le_one] at h
+  exact h
+
 end MathlibExtTest.Probability.Statistics.ProcessVariance

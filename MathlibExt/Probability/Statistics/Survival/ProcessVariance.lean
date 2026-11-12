@@ -67,15 +67,18 @@ where `y` is the limiting at-risk fraction, from the T45 stochastic-integral rep
   independence, not formalized.
 * **The law of large numbers for `Y / n` is a hypothesis** (`hLLN`, uniform over the grid points up
   to `t`); its Glivenko–Cantelli proof from i.i.d. censored data is not given here.
-* **The martingale CLT itself is not proved.** This file supplies its variance condition, in the
-  form consumed by `MathlibExt.Probability.Martingale.MartingaleTightness` (`hQV`) and assumed as
-  part of `hfdd` by the T57 Nelson–Aalen process limit (PR #1536, not imported).
+* **The martingale CLT itself is not proved.** This file supplies the kind of variance condition
+  that `hQV` of `MathlibExt.Probability.Martingale.MartingaleTightness` assumes, but not in that
+  form: `hQV` uses the grid `⌊n t⌋` on `[0, 1]` with limit `t`, so a time change normalizing `σ²`
+  to `t` would be needed. The T57 Nelson–Aalen process limit (PR #1536, not imported) assumes the
+  identification as part of `hfdd`.
 
 ## Source receipt (reuse search, 2026-11-12)
 
 Named theorem: the variance condition `⟨M^{(n)}⟩(t) →ᴾ σ²(t) = ∫_0^t dΛ / y` in the proof of the
-Nelson–Aalen central limit theorem, Andersen–Borgan–Gill–Keiding (1993), Theorem IV.1.2 (via
-Rebolledo's martingale CLT, Theorem II.5.1); Fleming–Harrington (1991), Chapter 6.
+Nelson–Aalen central limit theorem, Andersen–Borgan–Gill–Keiding (1993), §IV.1 "The
+Nelson–Aalen estimator" (via Rebolledo's martingale CLT, §II.5 "Limit Theory"); the same argument
+in Fleming–Harrington (1991) (chapter and theorem numbers not checked).
 
 Reused, not redefined: `stochasticIntegral`, `nelsonAalenProcess`, `restrictedHazard`,
 `aalenCompensator`, `nelsonAalenProcess_sub_restrictedHazard`,
@@ -91,9 +94,8 @@ hypothesis. New here: `naScaledMartingale`, `naVarianceSum`, `gridHazard`, `grid
 ## References
 
 * P. K. Andersen, Ø. Borgan, R. D. Gill and N. Keiding, *Statistical Models Based on Counting
-  Processes*, Springer (1993), §II.5 (Rebolledo's theorem), §IV.1 (Theorem IV.1.2).
-* T. R. Fleming and D. P. Harrington, *Counting Processes and Survival Analysis*, Wiley (1991),
-  Chapters 5–6.
+  Processes*, Springer (1993), §II.5 (Rebolledo's theorem), §IV.1 (the Nelson–Aalen estimator).
+* T. R. Fleming and D. P. Harrington, *Counting Processes and Survival Analysis*, Wiley (1991).
 * R. Rebolledo, *Central limit theorems for local martingales*, Z. Wahrsch. Verw. Gebiete 51
   (1980), 269–286.
 -/
@@ -575,7 +577,7 @@ bounded below by `ε > 0` (the horizon is supported), and the **law of large num
 `sup_{grid points ≤ t} |Y n / n - y| → 0` holds in probability. Then the predictable variation of
 the scaled Nelson–Aalen martingale at the grid point `⌊t / h_n⌋ h_n` converges in probability to
 `∫_{(0, t]} (y s)⁻¹ dΛ(s)`, the variance function of the Gaussian-martingale limit
-(Andersen–Borgan–Gill–Keiding, Theorem IV.1.2). -/
+(Andersen–Borgan–Gill–Keiding, §IV.1). -/
 theorem tendstoInMeasure_predictableQuadraticVariation_naScaledMartingale_integral
     {ℱ : ℕ → Filtration ℕ m0} {N Y : ℕ → ℕ → Ω → ℝ} (Λ : StieltjesFunction ℝ)
     (hΛ : Continuous Λ) {y : ℝ → ℝ} {τ t ε : ℝ} (hτ : 0 < τ) (ht : t ∈ Set.Icc 0 τ)
