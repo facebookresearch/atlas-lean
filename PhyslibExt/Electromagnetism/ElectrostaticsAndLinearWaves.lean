@@ -72,7 +72,6 @@ charge, and nonplanar geometry are out of scope.
 - `snell_normal`: Snell's law at normal incidence.
 - `meanSquareAmplitude_nonneg`, `meanSquareAmplitude_smul`: the mean-square
   field amplitude is nonnegative and quadratic in the amplitude.
-- `chargeSign_mul_abs`: `Real.sign q * |q| = q`, including `q = 0`.
 - `einstein_ratio`: the Einstein relation `D / mu = kB * T / |q|`.
 - `conductivityTwoCarrier_eq_sum`, `conductivity_nonneg`: two-carrier
   additivity and nonnegativity of the conductivity.
@@ -83,8 +82,25 @@ charge, and nonplanar geometry are out of scope.
 
 ## iv. References
 
-- Roadmap R12, module MF16, targets MF16.1–MF16.5; the transport bridge
-  MF16.5 is shared with CH55, MS19, and MS38.
+- D. J. Griffiths, *Introduction to Electrodynamics*, 4th ed. (2013),
+  [text](https://nucleares.unam.mx/~martinel/griffiths_4ed.pdf):
+  §2.3.3, Eq. (2.24), for Poisson's equation; the uniform interval potential
+  here is its one-dimensional, constant-permittivity specialization with
+  zero endpoint potentials. The second-difference identities are algebraic
+  consequences of this chosen profile, not claims of derivative formalization.
+- Griffiths, §4.4.3, Eq. (4.58), for linear-dielectric energy density
+  `eps * E ^ 2 / 2`; §9.2.2, Eq. (9.43), for monochromatic plane waves.
+- Griffiths, §9.3.2, Eqs. (9.85)–(9.88), for the normal-incidence amplitude
+  coefficients and energy conservation with equal magnetic permeabilities;
+  §9.3.3, Eq. (9.100), for Snell's law. `fresnelR` and `fresnelT` are
+  amplitude ratios, whereas Griffiths's `R` and `T` are intensity ratios.
+- MIT OpenCourseWare, *6.012 Microelectronic Devices and Circuits*,
+  Spring 2009, Lecture 3, "Carrier Transport",
+  [notes](https://old.ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-012-microelectronic-devices-and-circuits-spring-2009/lecture-notes/MIT6_012S09_lec03.pdf),
+  pp. 7–8 (drift current and additive conductivity), p. 14 (Einstein relation).
+  Those notes use positive elementary-charge magnitude `q`; here the carrier
+  charge is signed, so that magnitude is `|q|`. The formulas are declared
+  low-field, dilute-carrier models, not a derivation of transport laws.
 - Mathlib's `Real.cos_add` and `Real.cos_sub`, for the plane-wave second
   differences.
 - Physlib's `Physlib.Electromagnetism.ThreeDimension.MaxwellEquations`,
@@ -140,18 +156,18 @@ noncomputable def conductivityTwoCarrier (n1 q1 mu1 n2 q2 mu2 : ℝ) : ℝ :=
   conductivity n1 q1 mu1 + conductivity n2 q2 mu2
 
 /-- Potential vanishes at both ends of `[0, L]`. -/
-theorem uniformChargePotential_zero (rho eps L : ℝ) :
+lemma uniformChargePotential_zero (rho eps L : ℝ) :
     uniformChargePotential rho eps L 0 = 0 := by
   simp [uniformChargePotential]
 
 /-- Potential vanishes at both ends of `[0, L]`. -/
-theorem uniformChargePotential_L (rho eps L : ℝ) :
+lemma uniformChargePotential_L (rho eps L : ℝ) :
     uniformChargePotential rho eps L L = 0 := by
   simp [uniformChargePotential]
 
 /-- Discrete Poisson equation: the second difference of the potential is
 `-(rho / eps) * h ^ 2`. -/
-theorem poisson_secondDifference {rho eps L x h : ℝ} (heps : eps ≠ 0) :
+lemma poisson_secondDifference {rho eps L x h : ℝ} (heps : eps ≠ 0) :
     uniformChargePotential rho eps L (x + h) - 2 * uniformChargePotential rho eps L x +
       uniformChargePotential rho eps L (x - h) = -(rho / eps) * h ^ 2 := by
   unfold uniformChargePotential
@@ -159,20 +175,20 @@ theorem poisson_secondDifference {rho eps L x h : ℝ} (heps : eps ≠ 0) :
   ring
 
 /-- Discrete Gauss law in 1D: `E L - E 0 = rho * L / eps`. -/
-theorem gauss_1d {rho eps L : ℝ} (heps : eps ≠ 0) :
+lemma gauss_1d {rho eps L : ℝ} (heps : eps ≠ 0) :
     uniformChargeField rho eps L L - uniformChargeField rho eps L 0 = rho * L / eps := by
   unfold uniformChargeField
   field_simp
   ring
 
 /-- Field-energy density is nonnegative for `eps ≥ 0`. -/
-theorem fieldEnergyDensity_nonneg {eps E : ℝ} (heps : 0 ≤ eps) :
+lemma fieldEnergyDensity_nonneg {eps E : ℝ} (heps : 0 ≤ eps) :
     0 ≤ fieldEnergyDensity eps E := by
   unfold fieldEnergyDensity
   positivity
 
 /-- Second difference of the plane wave in space. -/
-theorem planeWave_secondDifference_space (E0 k omega x t h : ℝ) :
+lemma planeWave_secondDifference_space (E0 k omega x t h : ℝ) :
     planeWave E0 k omega (x + h) t - 2 * planeWave E0 k omega x t +
       planeWave E0 k omega (x - h) t =
       2 * (Real.cos (k * h) - 1) * planeWave E0 k omega x t := by
@@ -184,7 +200,7 @@ theorem planeWave_secondDifference_space (E0 k omega x t h : ℝ) :
   ring
 
 /-- Second difference of the plane wave in time. -/
-theorem planeWave_secondDifference_time (E0 k omega x t tau : ℝ) :
+lemma planeWave_secondDifference_time (E0 k omega x t tau : ℝ) :
     planeWave E0 k omega x (t + tau) - 2 * planeWave E0 k omega x t +
       planeWave E0 k omega x (t - tau) =
       2 * (Real.cos (omega * tau) - 1) * planeWave E0 k omega x t := by
@@ -199,7 +215,7 @@ theorem planeWave_secondDifference_time (E0 k omega x t tau : ℝ) :
 
 /-- Discrete wave equation: with `omega = c * k`, the time second difference
 with step `h / c` equals the space second difference with step `h`. -/
-theorem planeWave_discreteWaveEquation {E0 k omega c x t h : ℝ} (hc : c ≠ 0)
+lemma planeWave_discreteWaveEquation {E0 k omega c x t h : ℝ} (hc : c ≠ 0)
     (homega : omega = c * k) :
     planeWave E0 k omega x (t + h / c) - 2 * planeWave E0 k omega x t +
       planeWave E0 k omega x (t - h / c) =
@@ -220,26 +236,19 @@ theorem fresnel_energy {n1 n2 : ℝ} (hn1 : 0 < n1) (hn2 : 0 < n2) :
   ring
 
 /-- Snell's law holds at normal incidence. -/
-theorem snell_normal (n1 n2 : ℝ) : snell n1 n2 0 0 := by
+lemma snell_normal (n1 n2 : ℝ) : snell n1 n2 0 0 := by
   simp [snell]
 
 /-- Mean-square field amplitude is nonnegative. -/
-theorem meanSquareAmplitude_nonneg (E0 : ℝ) : 0 ≤ meanSquareAmplitude E0 := by
+lemma meanSquareAmplitude_nonneg (E0 : ℝ) : 0 ≤ meanSquareAmplitude E0 := by
   unfold meanSquareAmplitude
   positivity
 
 /-- Scaling the amplitude by `c` scales its mean square by `c ^ 2`. -/
-theorem meanSquareAmplitude_smul (c E0 : ℝ) :
+lemma meanSquareAmplitude_smul (c E0 : ℝ) :
     meanSquareAmplitude (c * E0) = c ^ 2 * meanSquareAmplitude E0 := by
   unfold meanSquareAmplitude
   ring
-
-/-- The canonical sign recovers the charge, including neutral charge. -/
-theorem chargeSign_mul_abs (q : ℝ) : Real.sign q * |q| = q := by
-  rcases lt_trichotomy q 0 with hneg | rfl | hpos
-  · rw [Real.sign_of_neg hneg, abs_of_neg hneg, neg_one_mul, neg_neg]
-  · simp
-  · rw [Real.sign_of_pos hpos, abs_of_pos hpos, one_mul]
 
 /-- Einstein relation in ratio form: `D / mu = kB * T / |q|`. -/
 theorem einstein_ratio {mu kB T q : ℝ} (hmu : mu ≠ 0) (hq : q ≠ 0) :
@@ -249,13 +258,13 @@ theorem einstein_ratio {mu kB T q : ℝ} (hmu : mu ≠ 0) (hq : q ≠ 0) :
   ring
 
 /-- Two-carrier conductivity is the sum of the single-carrier conductivities. -/
-theorem conductivityTwoCarrier_eq_sum (n1 q1 mu1 n2 q2 mu2 : ℝ) :
+lemma conductivityTwoCarrier_eq_sum (n1 q1 mu1 n2 q2 mu2 : ℝ) :
     conductivityTwoCarrier n1 q1 mu1 n2 q2 mu2 =
       conductivity n1 q1 mu1 + conductivity n2 q2 mu2 := by
   rfl
 
 /-- Conductivity is nonnegative for `n ≥ 0` and `mu ≥ 0`. -/
-theorem conductivity_nonneg {n q mu : ℝ} (hn : 0 ≤ n) (hmu : 0 ≤ mu) :
+lemma conductivity_nonneg {n q mu : ℝ} (hn : 0 ≤ n) (hmu : 0 ≤ mu) :
     0 ≤ conductivity n q mu := by
   unfold conductivity
   positivity

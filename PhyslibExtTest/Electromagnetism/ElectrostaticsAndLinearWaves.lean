@@ -143,16 +143,16 @@ example : Real.sign 0 = 0 :=
   Real.sign_zero
 
 /-- The sign convention recovers `q = 2`. -/
-example : Real.sign 2 * |(2 : ℝ)| = 2 :=
-  chargeSign_mul_abs 2
+example : Real.sign 2 * |(2 : ℝ)| = 2 := by
+  norm_num [Real.sign]
 
 /-- The sign convention recovers `q = -2`. -/
-example : Real.sign (-2) * |(-2 : ℝ)| = -2 :=
-  chargeSign_mul_abs (-2)
+example : Real.sign (-2) * |(-2 : ℝ)| = -2 := by
+  norm_num [Real.sign]
 
 /-- Charge reconstruction also holds at neutral charge. -/
-example : Real.sign 0 * |(0 : ℝ)| = 0 :=
-  chargeSign_mul_abs 0
+example : Real.sign 0 * |(0 : ℝ)| = 0 := by
+  norm_num
 
 /-! ## G. Transport with `mu = 2`, `kB * T = 3`, `q = -1` -/
 
@@ -188,7 +188,6 @@ end PhyslibExtTest.Electromagnetism.ElectrostaticsAndLinearWaves
 #print axioms snell_normal
 #print axioms meanSquareAmplitude_nonneg
 #print axioms meanSquareAmplitude_smul
-#print axioms chargeSign_mul_abs
 #print axioms einstein_ratio
 #print axioms conductivityTwoCarrier_eq_sum
 #print axioms conductivity_nonneg
