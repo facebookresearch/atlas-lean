@@ -69,3 +69,26 @@ example {f : ℝ} {k : ℤ} {dt : ℝ} (hdt : dt ≠ 0) :
 example {f : ℝ} {k : ℤ} {dt : ℝ} :
     Real.sin (2 * Real.pi * (f + (k : ℝ) / dt) * ((0 : ℤ) : ℝ) * dt) = 0 := by
   simp
+
+/-- `n = 0`: both sampled cosines are `1` (no `dt ≠ 0` needed). -/
+example {f : ℝ} {k : ℤ} {dt : ℝ} :
+    Real.cos (2 * Real.pi * (f + (k : ℝ) / dt) * ((0 : ℤ) : ℝ) * dt) = 1 := by
+  simp
+
+/-- `dt < 0`: only `dt ≠ 0` is needed, complex samples. -/
+example {f : ℝ} {k n : ℤ} {dt : ℝ} (hdt : dt < 0) :
+    Complex.exp (2 * Real.pi * Complex.I * (f + (k : ℝ) / dt) * (n : ℝ) * dt)
+      = Complex.exp (2 * Real.pi * Complex.I * f * (n : ℝ) * dt) :=
+  EarthScience.uniform_samples_aliasing (ne_of_lt hdt)
+
+/-- `dt < 0`: only `dt ≠ 0` is needed, sines. -/
+example {f : ℝ} {k n : ℤ} {dt : ℝ} (hdt : dt < 0) :
+    Real.sin (2 * Real.pi * (f + (k : ℝ) / dt) * (n : ℝ) * dt)
+      = Real.sin (2 * Real.pi * f * (n : ℝ) * dt) :=
+  EarthScience.uniform_samples_aliasing_sin (ne_of_lt hdt)
+
+/-- `dt < 0`: only `dt ≠ 0` is needed, cosines. -/
+example {f : ℝ} {k n : ℤ} {dt : ℝ} (hdt : dt < 0) :
+    Real.cos (2 * Real.pi * (f + (k : ℝ) / dt) * (n : ℝ) * dt)
+      = Real.cos (2 * Real.pi * f * (n : ℝ) * dt) :=
+  EarthScience.uniform_samples_aliasing_cos (ne_of_lt hdt)
