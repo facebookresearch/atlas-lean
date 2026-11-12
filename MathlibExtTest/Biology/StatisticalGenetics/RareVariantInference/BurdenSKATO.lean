@@ -30,6 +30,7 @@ open MeasureTheory ProbabilityTheory Matrix WithLp Filter Topology Set
 open MathlibExt.Biology.StatisticalGenetics.BurdenSKAT
 open MathlibExt.Biology.StatisticalGenetics.BurdenSKATO
 open MathlibExt.Probability.Statistics.GeneralizedLeastSquares
+open scoped MatrixOrder
 
 namespace MathlibExtTest.BurdenSKATO
 
@@ -158,6 +159,55 @@ example (y : Fin 2 → ℝ) :
 example : kernelQ X0 1 (skatOKernel G2 a1 (1 / 2)) ![3, 1] = 3 := by
   rw [← skatOQ_eq_kernelQ, skatOQ_G2]
   norm_num
+
+/-- The burden kernel `C Cᵀ` with `C = (2, 0)`. -/
+theorem burdenKernel_G2 : burdenKernel G2 a1 = !![4, 0; 0, 0] := by
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [burdenKernel, G2, a1, vecMulVec_apply]; norm_num
+
+/-- The null mixture matrix of the burden kernel: `P K_B P = [[1, -1], [-1, 1]]`. -/
+theorem kernelMixtureMatrix_burden_G2 :
+    kernelMixtureMatrix X0 1 (burdenKernel G2 a1) 1 = !![1, -1; -1, 1] := by
+  rw [kernelMixtureMatrix, CFC.sqrt_one, Matrix.mul_one, projP_X0, burdenKernel_G2]
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [P0, mul_apply, Fin.sum_univ_two] <;> norm_num
+
+/-- At `ρ = 1` the SKAT-O kernel is the burden kernel. -/
+theorem skatOKernel_one_G2 : skatOKernel G2 a1 1 = burdenKernel G2 a1 := by
+  rw [skatOKernel_eq]; simp
+
+/-- The SKAT-O null law on `G₂`. -/
+example (α : Fin 1 → ℝ) (ρ : ℝ) :
+    (multivariateGaussian (toLp 2 (X0 *ᵥ α)) 1).map (fun y => skatOQ X0 1 G2 a1 ρ (ofLp y)) =
+      weightedChiSq (isHermitian_kernelMixtureMatrix (X := X0) (V := 1)
+        (isHermitian_skatOKernel (G := G2) (a := a1) ρ) 1).eigenvalues :=
+  map_skatOQ_multivariateGaussian isUnit_X0 ρ α 1
+
+/-- Each SKAT-O p-value on `G₂` is valid. -/
+example (α : Fin 1 → ℝ) (ρ : ℝ) :
+    MathlibExt.Probability.Statistics.MultipleTesting.IsValidPValue
+      (multivariateGaussian (toLp 2 (X0 *ᵥ α)) 1) fun y => skatOPValue X0 1 G2 a1 ρ (ofLp y) :=
+  isValidPValue_skatOPValue isUnit_X0 α ρ
+
+/-- At `ρ = 1` the null mixture has a nonzero weight (its matrix is nonzero), so Davies' integral
+converges to the SKAT-O p-value at every phenotype. -/
+example (y : Fin 2 → ℝ) : ∃ j, Tendsto (fun T => 1 / 2 + Real.pi⁻¹ * ∫ t in (0 : ℝ)..T,
+    (Complex.exp (-(t * skatOQ X0 1 G2 a1 1 y) * Complex.I) *
+      daviesCharFun (isHermitian_kernelMixtureMatrix (X := X0) (V := 1)
+        (isHermitian_skatOKernel (G := G2) (a := a1) 1) 1).eigenvalues t).im / t) atTop
+      (𝓝 (skatOPValue X0 1 G2 a1 1 y)) ∧
+    (isHermitian_kernelMixtureMatrix (X := X0) (V := 1)
+        (isHermitian_skatOKernel (G := G2) (a := a1) 1) 1).eigenvalues j ≠ 0 := by
+  set hA := isHermitian_kernelMixtureMatrix (X := X0) (V := 1)
+    (isHermitian_skatOKernel (G := G2) (a := a1) 1) 1
+  have hne : hA.eigenvalues ≠ 0 := by
+    rw [Ne, hA.eigenvalues_eq_zero_iff, skatOKernel_one_G2, kernelMixtureMatrix_burden_G2]
+    intro h
+    have := congrFun (congrFun h 0) 0
+    simp at this
+  obtain ⟨j, hj⟩ := Function.ne_iff.1 hne
+  exact ⟨j, tendsto_davies_skatOPValue 1 hj y, hj⟩
 
 /-! ### Boundary: burden collinear with the covariates (`G₁ = I`) -/
 

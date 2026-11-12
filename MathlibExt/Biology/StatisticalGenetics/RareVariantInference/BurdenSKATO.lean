@@ -57,7 +57,8 @@ write `wⱼ`); SKAT then uses T37's `skatQ` with weights `aⱼ²`.
   inversion theorem (`tendsto_gilPelaez`), this gives
   `½ + π⁻¹ ∫₀^T Im(e^{-i t q} φ(t)) / t dt → ½ (P(Q > q) + P(Q ≥ q))` (`tendsto_davies`), and
   `→ P(Q > q)` whenever some `λⱼ ≠ 0` (`weightedChiSq_singleton`, `tendsto_davies_of_ne_zero`).
-  `tendsto_davies_kernelQ` applies it to SKAT, burden and every `Q_ρ`.
+  `tendsto_davies_kernelQ` applies it to SKAT, burden and every `Q_ρ`, and
+  `tendsto_davies_skatOPValue` shows the limit is the validated p-value `skatOPValue`.
 * **Dirichlet integral** (needed for Gil-Pelaez, absent from Mathlib):
   `Si T = ∫₀^T sin u / u du → π / 2` (`tendsto_sineIntegral_atTop`), with rate
   `|Si T - π / 2| ≤ 2 / T` (`abs_sineIntegral_sub_le`) and bound `|Si| ≤ 4`
@@ -998,6 +999,20 @@ theorem isValidPValue_skatOPValue (hX : IsUnit (Xᵀ * V⁻¹ * X)) (α : q → 
       (fun y => skatOQ X V G a ρ (ofLp y)) := (map_skatOQ_multivariateGaussian hX ρ α V).symm
   rw [ofReal_measureReal, hν, Measure.map_apply hm measurableSet_Ici]
   rfl
+
+/-- **Davies' formula computes the SKAT-O p-value.** If some weight `λⱼ(ρ)` of the null mixture is
+nonzero, the Davies integral at `c = Q_ρ(y)` converges to `skatOPValue ρ y = P₀(Q_ρ ≥ Q_ρ(y))`,
+the p-value proved valid in `isValidPValue_skatOPValue`. -/
+theorem tendsto_davies_skatOPValue (ρ : ℝ) {j : n}
+    (hj : (isHermitian_kernelMixtureMatrix (X := X) (V := V)
+      (isHermitian_skatOKernel (G := G) (a := a) ρ) V).eigenvalues j ≠ 0) (y : n → ℝ) :
+    Tendsto (fun T => 1 / 2 + π⁻¹ * ∫ t in (0 : ℝ)..T,
+        (Complex.exp (-(t * skatOQ X V G a ρ y) * Complex.I) *
+          daviesCharFun (isHermitian_kernelMixtureMatrix (X := X) (V := V)
+            (isHermitian_skatOKernel (G := G) (a := a) ρ) V).eigenvalues t).im / t) atTop
+      (𝓝 (skatOPValue X V G a ρ y)) := by
+  have h := tendsto_davies_of_ne_zero hj (skatOQ X V G a ρ y)
+  rwa [measureReal_congr (Ioi_ae_eq_Ici' (weightedChiSq_singleton hj _))] at h
 
 /-- **Bonferroni validity of SKAT-O**: under the null,
 `P₀(min_{ρ ∈ grid} p_ρ ≤ t) ≤ |grid| t`. -/
