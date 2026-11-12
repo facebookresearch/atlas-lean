@@ -14,7 +14,7 @@ import PhyslibExt.EarthScience.H10FloodFrequency
 
 Concrete consumers of `PhyslibExt.EarthScience.H10FloodFrequency`:
 the `n = 1` case, the `100`-year flood (`p = 0.01`) over 100 years,
-and the `p = 0` / `p = 1` boundaries.
+and the `p = 0` / `p = 1` and `n = 0` boundaries.
 
 ## i. Overview
 
@@ -53,16 +53,48 @@ example {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     (μ (⋂ i, F i)).toReal = (1 - (0.01 : ℝ)) ^ 100 :=
   EarthScience.no_exceedance_prob (by norm_num) hMeas hIndep hProb
 
-/-- Boundaries: `p = 0` gives `1`, `p = 1` with `n = 3` gives `0`. -/
-example : (1 - 0 : ℝ) ^ 5 = 1 := by
-  simp
+/-- `p = 0`: five certain no-exceedance events have probability `1`. -/
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} (μ : Measure Ω)
+    [IsProbabilityMeasure μ] :
+    (μ (⋂ _ : Fin 5, (Set.univ : Set Ω))).toReal = 1 := by
+  have hIndep : iIndepSet (fun _ : Fin 5 => (Set.univ : Set Ω)) μ := by
+    apply (iIndepSet_iff_meas_biInter (fun _ => MeasurableSet.univ)).2
+    intro s
+    simp
+  simpa only [sub_zero, one_pow] using
+    (EarthScience.no_exceedance_prob (μ := μ) (p := 0)
+      (F := fun _ : Fin 5 => (Set.univ : Set Ω))
+      (by norm_num) (fun _ => MeasurableSet.univ) hIndep (by intro i; simp))
 
-/-- `p = 1` with `n = 3` gives no-exceedance probability `0`. -/
-example : 0 < 3 → (1 - 1 : ℝ) ^ 3 = 0 := by
-  intro hn
-  simpa only [sub_self] using (zero_pow (ne_of_gt hn) : (0 : ℝ) ^ 3 = 0)
+/-- `p = 1`: three impossible no-exceedance events have probability `0`. -/
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} (μ : Measure Ω)
+    [IsProbabilityMeasure μ] :
+    (μ (⋂ _ : Fin 3, (∅ : Set Ω))).toReal = 0 := by
+  have hIndep : iIndepSet (fun _ : Fin 3 => (∅ : Set Ω)) μ := by
+    apply (iIndepSet_iff_meas_biInter (fun _ => MeasurableSet.empty)).2
+    intro s
+    rcases s.eq_empty_or_nonempty with rfl | hs
+    · simp
+    · have hInter : (⋂ i ∈ s, (∅ : Set Ω)) = ∅ := by
+        obtain ⟨i, hi⟩ := hs
+        exact Set.eq_empty_of_subset_empty
+          (Set.iInter_subset_of_subset i (Set.iInter_subset _ hi))
+      simp [hInter, Finset.card_ne_zero.mpr hs]
+  simpa only [sub_self, zero_pow (by decide : 3 ≠ 0)] using
+    (EarthScience.no_exceedance_prob (μ := μ) (p := 1)
+      (F := fun _ : Fin 3 => (∅ : Set Ω))
+      (by norm_num) (fun _ => MeasurableSet.empty) hIndep (by intro i; simp))
 
-/-- Return period: `p = 0.01` gives `(1 / 0.01) * 0.01 = 1`. -/
-example : (0 : ℝ) < 0.01 → ((1 : ℝ) / 0.01) * 0.01 = 1 := by
-  intro hp
-  exact div_mul_cancel₀ 1 (ne_of_gt hp)
+/-- `n = 0`: an empty observation window has probability `1`, even at `p = 1`. -/
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} (μ : Measure Ω)
+    [IsProbabilityMeasure μ] {p : ℝ} (hp : 0 ≤ p ∧ p ≤ 1) :
+    (μ (⋂ _ : Fin 0, (∅ : Set Ω))).toReal = 1 := by
+  have hIndep : iIndepSet (fun _ : Fin 0 => (∅ : Set Ω)) μ := by
+    apply (iIndepSet_iff_meas_biInter (fun _ => MeasurableSet.empty)).2
+    intro s
+    have hs : s = ∅ := Subsingleton.elim _ _
+    simp [hs]
+  simpa only [pow_zero] using
+    (EarthScience.no_exceedance_prob (μ := μ) (p := p)
+      (F := fun _ : Fin 0 => (∅ : Set Ω))
+      hp (fun _ => MeasurableSet.empty) hIndep (fun i => Fin.elim0 i))
