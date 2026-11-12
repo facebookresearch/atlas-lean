@@ -10,7 +10,7 @@ module
 
 public import Mathlib.InformationTheory.KullbackLeibler.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
-public import Mathlib.Probability.ProbabilityMassFunction.Integrals
+public import MathlibExt.InformationTheory.FiniteEntropy
 public import MathlibExt.InformationTheory.LogSum
 
 @[expose] public section
@@ -355,37 +355,9 @@ theorem pinsker_pmf {α : Type*} [Fintype α] [MeasurableSpace α] [DiscreteMeas
       have h2 : p.toMeasure {a} = 0 := hac h1
       rw [PMF.toMeasure_apply_singleton _ _ MeasurableSet.of_discrete] at h2
       exact h2
-    have huniv : p.toMeasure Set.univ = q.toMeasure Set.univ := by
-      rw [MeasureTheory.measure_univ, MeasureTheory.measure_univ]
-    have hrn : (fun a => p a / q a)
-        =ᵐ[q.toMeasure] p.toMeasure.rnDeriv q.toMeasure := by
-      refine MeasureTheory.Measure.eq_rnDeriv (Measurable.of_discrete)
-        (MeasureTheory.Measure.MutuallySingular.zero_left) ?_
-      rw [zero_add]
-      rw [MeasureTheory.Measure.ext_iff_singleton]
-      intro a
-      rw [PMF.toMeasure_apply_singleton _ _ MeasurableSet.of_discrete,
-        MeasureTheory.withDensity_apply _ MeasurableSet.of_discrete,
-        MeasureTheory.lintegral_singleton,
-        PMF.toMeasure_apply_singleton _ _ MeasurableSet.of_discrete]
-      show p a = p a / q a * q a
-      by_cases hqa : q a = 0
-      · rw [hqa, hpq a hqa, ENNReal.zero_div, zero_mul]
-      · exact (ENNReal.div_mul_cancel hqa (PMF.apply_ne_top q a)).symm
-    have hllr : MeasureTheory.llr p.toMeasure q.toMeasure
-        =ᵐ[p.toMeasure] (fun a => Real.log ((p a / q a).toReal)) := by
-      filter_upwards [hac.ae_le hrn] with a ha
-      have ha' : p a / q a = p.toMeasure.rnDeriv q.toMeasure a := ha
-      show Real.log (p.toMeasure.rnDeriv q.toMeasure a).toReal
-        = Real.log (p a / q a).toReal
-      rw [ha']
     have hKLreal : (InformationTheory.klDiv p.toMeasure q.toMeasure).toReal
-        = ∑ a, (p a).toReal * Real.log ((p a).toReal / (q a).toReal) := by
-      rw [InformationTheory.toReal_klDiv_of_measure_eq hac huniv,
-        MeasureTheory.integral_congr_ae hllr, PMF.integral_eq_sum]
-      apply Finset.sum_congr rfl
-      intro a _
-      rw [smul_eq_mul, ENNReal.toReal_div]
+        = ∑ a, (p a).toReal * Real.log ((p a).toReal / (q a).toReal) :=
+      InformationTheory.toReal_klDiv_toMeasure hpq
     have hx_nn : ∀ a, 0 ≤ (p a).toReal := fun a => ENNReal.toReal_nonneg
     have hy_nn : ∀ a, 0 ≤ (q a).toReal := fun a => ENNReal.toReal_nonneg
     have hsumx : (∑ a, (p a).toReal) = 1 := by
@@ -433,4 +405,3 @@ theorem pinsker_pmf {α : Type*} [Fintype α] [MeasurableSpace α] [DiscreteMeas
   · rw [InformationTheory.klDiv_of_not_ac hac,
       ENNReal.mul_top (by simp : (2:ENNReal) ≠ 0)]
     exact le_top
-
