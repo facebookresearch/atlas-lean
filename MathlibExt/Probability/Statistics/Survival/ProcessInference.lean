@@ -16,11 +16,14 @@ import Mathlib.MeasureTheory.Measure.Portmanteau
 /-!
 # Survival inference from process-level limits
 
-Inferential corollaries of the process-level survival limits (Nelson–Aalen, Kaplan–Meier,
-Cox score). The limits themselves are **hypotheses** of every theorem here: each takes a
-`TendstoInDistribution` statement to a centered Gaussian limit plus consistency
+Inferential corollaries of process-level survival limits. The limits themselves are
+**hypotheses** of every theorem here: each takes a scalar or finite-dimensional marginal of a
+process-level limit, as a `TendstoInDistribution` statement to a centered Gaussian limit, plus
+consistency
 (`TendstoInMeasure`) of a variance estimator, and derives coverage or size by Slutsky's
-theorem and the portmanteau theorem.
+theorem and the portmanteau theorem. The Nelson–Aalen, Kaplan–Meier and Aalen–Johansen
+process limits do not by themselves give the Cox and log-rank limits used here; those are
+separate hypotheses.
 
 ## Pointwise intervals versus simultaneous bands
 
@@ -33,9 +36,11 @@ theorem and the portmanteau theorem.
 * A **simultaneous** band must contain the whole target curve at once.
   `tendsto_coverage_gridBand` proves asymptotic simultaneous coverage on any finite grid of
   time points, with limit `P (∀ j, |Z j| ≤ z √(v j))` determined by the joint limit law.
-  `gridBand_limit_le_pointwise` shows this never exceeds the pointwise coverage, so
-  pointwise critical values do not give simultaneous coverage, and
-  `one_sub_card_mul_le_gridBand_limit` gives the Bonferroni lower bound.
+  `gridBand_limit_le_pointwise` shows the simultaneous limit coverage never exceeds the
+  pointwise coverage at any grid point, so a pointwise critical value cannot raise
+  simultaneous coverage above the pointwise level; equality is possible (e.g. perfectly
+  correlated coordinates). `one_sub_card_mul_le_gridBand_limit` gives the Bonferroni lower
+  bound.
 
 ## Scope
 
@@ -169,12 +174,12 @@ theorem tendsto_measureReal_abs_le_mul {X S : ℕ → Ω → ℝ} {Z : Ω' → �
   exact hport
 
 /-- **Pointwise asymptotic coverage of a studentized Wald interval.** Suppose the centered and
-`√n`-scaled estimator `√n (est n - β)` converges in distribution to a centered Gaussian of
-variance `v ≠ 0` (the process-level limit, taken as a hypothesis), and `se n` is a consistent
-estimator of the asymptotic standard deviation `√v`. Then the coverage probability of the
-Wald interval `waldInterval (est n) (se n / √n) z` tends to the standard-normal mass of
-`[-z, z]`. This is a statement about one fixed estimand `β`; it says nothing about joint
-coverage of several estimands (see `tendsto_coverage_gridBand`). -/
+`√n`-scaled estimator `√n (est n - β)` converges in distribution to a centered Gaussian of variance
+`v ≠ 0` (a marginal of the process-level limit, taken as a hypothesis), and `se n` is a consistent
+estimator of the asymptotic standard deviation `√v`. Then the coverage probability of the Wald
+interval `waldInterval (est n) (se n / √n) z` tends to the standard-normal mass of `[-z, z]`. This
+is a statement about one fixed estimand `β`; it says nothing about joint coverage of several
+estimands (see `tendsto_coverage_gridBand`). -/
 theorem tendsto_coverage_waldInterval {est se : ℕ → Ω → ℝ} {β : ℝ} {Z : Ω' → ℝ}
     {v : NNReal} (hv : v ≠ 0) (z : ℝ)
     (hlim : TendstoInDistribution (fun (n : ℕ) ω ↦ √(n : ℝ) * (est n ω - β)) atTop Z
@@ -204,10 +209,11 @@ def logRankRejects {n : ℕ} (T : Fin n → ℝ) (δ : Fin n → Bool) (g : Fin 
     Prop :=
   z * √(breslowInformation T δ g) < |observedMinusExpected T δ g|
 
-/-- **Asymptotic size of the log-rank test.** Take as hypotheses the null process-level limit
-of the log-rank numerator, `(O - E) / √n ⟶ N(0, v)` with `v ≠ 0`, and consistency of the
-normalized Breslow variance, `√(I / n) ⟶ √v` in probability. Then the rejection probability
-of the two-sided level-`z` log-rank test tends to the standard-normal mass outside `[-z, z]`. -/
+/-- **Asymptotic size of the log-rank test.** Take as hypotheses the null limit of the log-rank
+numerator (a marginal of the process-level limit), `(O - E) / √n ⟶ N(0, v)` with `v ≠ 0`, and
+consistency of the normalized Breslow variance, `√(I / n) ⟶ √v` in probability. Then the rejection
+probability of the two-sided level-`z` log-rank test tends to the standard-normal mass outside
+`[-z, z]`. -/
 theorem tendsto_logRank_rejection {T : (n : ℕ) → Ω → Fin n → ℝ}
     {δ g : (n : ℕ) → Ω → Fin n → Bool} {Z : Ω' → ℝ} {v : NNReal} (hv : v ≠ 0) (z : ℝ)
     (hlim : TendstoInDistribution
@@ -241,7 +247,7 @@ theorem tendsto_logRank_rejection {T : (n : ℕ) → Ω → Fin n → ℝ}
 
 /-- **Pointwise asymptotic coverage of the Cox Wald interval.** For a scalar-covariate Cox
 model with true coefficient `β` and estimator `βhat n` (for instance the partial-likelihood
-maximizer), take as hypotheses the process-level limit `√n (βhat n - β) ⟶ N(0, v)` with
+maximizer), take as hypotheses the limit `√n (βhat n - β) ⟶ N(0, v)` with
 `v ≠ 0` and consistency of the model-based standard deviation `√(n / I_n(βhat n)) ⟶ √v`,
 where `I_n = coxInformation`. Then the Wald interval
 `βhat n ± z / √(I_n(βhat n))` covers `β` with probability tending to the standard-normal
@@ -312,13 +318,13 @@ private theorem hasLaw_abs_eq_null {Y : Ω' → ℝ} {v : NNReal} (hY : HasLaw Y
     (measurableSet_eq_fun (by fun_prop) (by fun_prop))] at h
   exact h
 
-/-- **Simultaneous asymptotic coverage of a grid band.** Take as hypothesis the finite-grid
-process-level limit `(√n (est n j - A j))_j ⟶ Z` in distribution, where each coordinate
+/-- **Simultaneous asymptotic coverage of a grid band.** Take as hypothesis the finite-grid marginal
+of the process-level limit, `(√n (est n j - A j))_j ⟶ Z` in distribution, where each coordinate
 `Z j` is a nondegenerate centered Gaussian with variance `v j`, together with consistent
-coordinatewise standard deviations `se n ⟶ (√(v j))_j` in probability. Then the probability
-that the band `gridBand (est n) (se n / √n) z` contains the whole target `A` tends to the
-joint limit probability `P' (∀ j, |Z j| ≤ z √(v j))`. No dependence structure of `Z` beyond
-its marginals is used; the limit value depends on the joint law of `Z`. -/
+coordinatewise standard deviations `se n ⟶ (√(v j))_j` in probability. Then the probability that
+the band `gridBand (est n) (se n / √n) z` contains the whole target `A` tends to the joint limit
+probability `P' (∀ j, |Z j| ≤ z √(v j))`. No dependence structure of `Z` beyond its marginals is
+used; the limit value depends on the joint law of `Z`. -/
 theorem tendsto_coverage_gridBand {ι : Type*} [Fintype ι] {est se : ℕ → Ω → ι → ℝ}
     {A : ι → ℝ} {Z : Ω' → ι → ℝ} {v : ι → NNReal} (hv : ∀ j, v j ≠ 0) (z : ℝ)
     (hlim : TendstoInDistribution (fun (n : ℕ) ω j ↦ √(n : ℝ) * (est n ω j - A j)) atTop Z
@@ -342,8 +348,10 @@ theorem tendsto_coverage_gridBand {ι : Type*} [Fintype ι] {est se : ℕ → Ω
   ext ω
   exact forall_congr' fun j ↦ (mem_waldInterval_div_sqrt_iff hn).symm
 
-/-- **Pointwise critical values do not give simultaneous coverage.** The simultaneous limit
-coverage of the grid band is at most the pointwise limit coverage at any single grid point. -/
+/-- **Simultaneous coverage is bounded by pointwise coverage.** The simultaneous limit
+coverage of the grid band never exceeds the pointwise limit coverage at any grid point, so a
+pointwise critical value cannot raise simultaneous coverage above the pointwise level.
+Equality is possible (e.g. perfectly correlated coordinates). -/
 theorem gridBand_limit_le_pointwise {ι : Type*} {Z : Ω' → ι → ℝ} {v : ι → NNReal}
     (hv : ∀ j, v j ≠ 0) (hZ : ∀ j, HasLaw (fun ω ↦ Z ω j) (gaussianReal 0 (v j)) P')
     (z : ℝ) (j : ι) :
