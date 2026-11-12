@@ -22,10 +22,10 @@ namespace MathlibExtTest.Analysis.ODE.ContinuumBalances
 /-!
 # Tests for continuum balances and the diffusion equation
 
-Concrete checks: a three-cell no-flux slab, telescoping with boundary fluxes, an explicit
-integral balance, the variable-diffusivity counterexample `D x = x`, `u x = x²`, a steady
-linear profile with explicit data, the first heat mode, energy decay of the first mode, and
-uniqueness for data equal to the first mode or to zero.
+Concrete checks: positive cell widths, a three-cell no-flux slab, boundary-flux telescoping,
+integral balances with increasing, reversed and equal endpoints, the variable-diffusivity
+counterexample `D x = x`, `u x = x²`, a steady linear profile, the first heat mode, its energy
+decay, and uniqueness for data equal to the first mode or to zero.
 -/
 
 /-! ## Finite volumes -/
@@ -33,23 +33,38 @@ uniqueness for data equal to the first mode or to zero.
 /-- A no-flux slab of three cells of width `1/2` with concentrations `1, 2, 3` and interior
 fluxes `1, -2`: one step with `τ = 1/10` gives `4/5, 13/5, 13/5`. -/
 example : (fun i : Fin 3 =>
-    ![1, 2, 3] i + (1 / 10 : ℝ) * discreteBalance (1 / 2) ![0, 1, -2, 0] i) =
+    ![1, 2, 3] i + (1 / 10 : ℝ) * discreteBalance ⟨1 / 2, by norm_num⟩ ![0, 1, -2, 0] i) =
       ![4 / 5, 13 / 5, 13 / 5] := by
   funext i
   fin_cases i <;> simp [discreteBalance] <;> norm_num
 
 /-- The same step preserves the total concentration `6` exactly. -/
 example : ∑ i : Fin 3,
-    (![1, 2, 3] i + (1 / 10 : ℝ) * discreteBalance (1 / 2) ![0, 1, -2, 0] i) = 6 := by
+    (![1, 2, 3] i + (1 / 10 : ℝ) * discreteBalance ⟨1 / 2, by norm_num⟩ ![0, 1, -2, 0] i) = 6 := by
   rw [sum_add_mul_discreteBalance_of_noFlux _ _ _ rfl rfl, Fin.sum_univ_three]
   norm_num
 
 /-- With boundary fluxes `F 0 = 1` and `F 3 = 3` the interior fluxes cancel and the total
 change is `-(3 - 1) / (1/2) = -4`. -/
-example : totalDiscreteChange (1 / 2) ![1, 4, -2, 3] = -4 := by
+example : totalDiscreteChange ⟨1 / 2, by norm_num⟩ ![1, 4, -2, 3] = -4 := by
   rw [totalDiscreteChange_eq]
   simp [Fin.last]
   norm_num
+
+/-- A finite-volume width must carry a positivity proof; zero and negative reals are rejected. -/
+example : True := by
+  fail_if_success
+    have _ := discreteBalance (0 : ℝ) ![1, 3] (0 : Fin 1)
+  fail_if_success
+    have _ := discreteBalance (-1 : ℝ) ![1, 3] (0 : Fin 1)
+  trivial
+
+/-- Multiplying by the positive width recovers the boundary-flux difference. -/
+example {n : ℕ} (Δx : {x : ℝ // 0 < x}) (F : Fin (n + 1) → ℝ) :
+    (Δx : ℝ) * totalDiscreteChange Δx F = F 0 - F (Fin.last n) := by
+  rw [totalDiscreteChange_eq]
+  field_simp [ne_of_gt Δx.property]
+  ring
 
 /-! ## Integral balance and divergence-form diffusion -/
 
@@ -58,6 +73,20 @@ example : totalDiscreteChange (1 / 2) ![1, 4, -2, 3] = -4 := by
 example (t : ℝ) : HasDerivAt (fun τ => ∫ _ in (0 : ℝ)..1, τ) 1 t := by
   have h := hasDerivAt_integral_of_localConservation (u := fun τ _ => τ) (q := fun _ x => -x)
     (s := fun _ _ => 0) (a := 0) (b := 1) (t := t) contDiff_fst contDiff_snd.neg
+    fun x _ => by simp [localConservation]
+  simpa [integralBalance] using h
+
+/-- Reversed endpoints give the signed derivative `-1`, not the geometric amount's `1`. -/
+example (t : ℝ) : HasDerivAt (fun τ => ∫ _ in (1 : ℝ)..0, τ) (-1) t := by
+  have h := hasDerivAt_integral_of_localConservation (u := fun τ _ => τ) (q := fun _ x => -x)
+    (s := fun _ _ => 0) (a := 1) (b := 0) (t := t) contDiff_fst contDiff_snd.neg
+    fun x _ => by simp [localConservation]
+  simpa [integralBalance] using h
+
+/-- Coincident endpoints give zero signed amount and zero balance. -/
+example (t : ℝ) : HasDerivAt (fun τ => ∫ _ in (1 : ℝ)..1, τ) 0 t := by
+  have h := hasDerivAt_integral_of_localConservation (u := fun τ _ => τ) (q := fun _ x => -x)
+    (s := fun _ _ => 0) (a := 1) (b := 1) (t := t) contDiff_fst contDiff_snd.neg
     fun x _ => by simp [localConservation]
   simpa [integralBalance] using h
 

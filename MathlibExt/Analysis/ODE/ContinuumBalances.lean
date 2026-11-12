@@ -40,16 +40,18 @@ All quantities are real coordinates (a concentration or a temperature after a co
 choice of units); no dimensional-quantity API is used. The balance law and the constitutive
 law `q = -D ∂ₓu` are separate hypotheses, and every PDE statement holds only in the function
 class written in its hypotheses. Fluxes are positive in the direction of increasing index or
-coordinate, so the net gain of a cell or an interval is the inflow through its left end
-minus the outflow through its right end; this convention is fixed once, by
-`discreteBalance` and `integralBalance`, and used throughout.
+coordinate. In `discreteBalance`, the net gain of a cell is inflow through its left end minus
+outflow through its right end. `integralBalance` uses the signed orientation from `a` to `b`;
+it describes the amount on the geometric interval `[a, b]` only when `a ≤ b`.
 
-* Finite volumes (A). On a chain of `n` cells of width `Δx` with face fluxes
-  `F : Fin (n + 1) → ℝ`, the cell rate is `-(F (i + 1) - F i) / Δx`. The internal fluxes
-  cancel in the sum, and with no-flux boundary faces one explicit step
-  `c i + τ * discreteBalance Δx F i` conserves `∑ i, c i` exactly.
+* Finite volumes (A). On a chain of `n` cells of positive width `Δx` with face fluxes
+  `F : Fin (n + 1) → ℝ`, the cell rate is `-(F (i + 1) - F i) / Δx`. The width is bundled with
+  a proof of strict positivity. The internal fluxes cancel in the sum, and with no-flux
+  boundary faces one explicit step `c i + τ * discreteBalance Δx F i` conserves `∑ i, c i`.
 * Continuum balance (B). For a jointly `C¹` density `u` and flux `q`, the local law
-  `∂ₜu + ∂ₓq = s` on `[a, b]` gives `d/dt ∫ₐᵇ u = q(a) - q(b) + ∫ₐᵇ s`. With a variable
+  `∂ₜu + ∂ₓq = s` between the endpoints gives the oriented identity
+  `d/dt ∫ₐᵇ u = q(a) - q(b) + ∫ₐᵇ s`. Reversing the endpoints reverses both signs; it does
+  not preserve the unsigned geometric amount. With a variable
   diffusivity `D` and `q = -D ∂ₓu` it reads `∂ₜu = ∂ₓ(D ∂ₓu) + s`, where
   `∂ₓ(D ∂ₓu) = D' ∂ₓu + D ∂ₓₓu` and not `D ∂ₓₓu`: `D x = x`, `u x = x²` give `4x` and `2x`.
   In several dimensions the balance is proved only conditionally: the divergence theorem
@@ -129,14 +131,16 @@ namespace MathlibExt.Analysis.ODE.ContinuumBalances
 `Δx` lies between the faces `i.castSucc` (left) and `i.succ` (right), and `F j` is the flux
 through face `j`, positive towards increasing index; `F 0` and `F (Fin.last n)` are the left
 and right boundary fluxes. The concentration in cell `i` changes at the rate
-`-(F (i + 1) - F i) / Δx`, inflow minus outflow per unit width. The factor `1 / Δx` is the
-cell-width convention of this section. -/
-noncomputable def discreteBalance {n : ℕ} (Δx : ℝ) (F : Fin (n + 1) → ℝ) (i : Fin n) : ℝ :=
+`-(F (i + 1) - F i) / Δx`, inflow minus outflow per unit width. The width is a positive real,
+so zero and negative cell widths cannot be supplied to this API. -/
+noncomputable def discreteBalance {n : ℕ} (Δx : {x : ℝ // 0 < x})
+    (F : Fin (n + 1) → ℝ) (i : Fin n) : ℝ :=
   -(F i.succ - F i.castSucc) / Δx
 
 /-- **Total discrete change** (MF08.1): the sum over all cells of `discreteBalance Δx F`, the
 rate of change of the total `∑ i, c i` of the cell concentrations. -/
-noncomputable def totalDiscreteChange {n : ℕ} (Δx : ℝ) (F : Fin (n + 1) → ℝ) : ℝ :=
+noncomputable def totalDiscreteChange {n : ℕ} (Δx : {x : ℝ // 0 < x})
+    (F : Fin (n + 1) → ℝ) : ℝ :=
   ∑ i, discreteBalance Δx F i
 
 private lemma sum_succ_sub_castSucc {n : ℕ} (F : Fin (n + 1) → ℝ) :
@@ -147,20 +151,22 @@ private lemma sum_succ_sub_castSucc {n : ℕ} (F : Fin (n + 1) → ℝ) :
 
 /-- **Telescoping** (MF08.1): the internal fluxes cancel exactly, so the total discrete change
 is the boundary inflow `F 0` minus the boundary outflow `F (Fin.last n)`, per unit width. -/
-lemma totalDiscreteChange_eq {n : ℕ} (Δx : ℝ) (F : Fin (n + 1) → ℝ) :
+lemma totalDiscreteChange_eq {n : ℕ} (Δx : {x : ℝ // 0 < x}) (F : Fin (n + 1) → ℝ) :
     totalDiscreteChange Δx F = -(F (Fin.last n) - F 0) / Δx := by
   simp only [totalDiscreteChange, discreteBalance]
   rw [← Finset.sum_div, Finset.sum_neg_distrib, sum_succ_sub_castSucc]
 
 /-- One explicit discrete-balance step `c i ↦ c i + τ * discreteBalance Δx F i` with time step
 `τ` changes the total `∑ i, c i` by `τ * totalDiscreteChange Δx F`. -/
-lemma sum_add_mul_discreteBalance {n : ℕ} (Δx τ : ℝ) (c : Fin n → ℝ) (F : Fin (n + 1) → ℝ) :
+lemma sum_add_mul_discreteBalance {n : ℕ} (Δx : {x : ℝ // 0 < x}) (τ : ℝ)
+    (c : Fin n → ℝ) (F : Fin (n + 1) → ℝ) :
     ∑ i, (c i + τ * discreteBalance Δx F i) = ∑ i, c i + τ * totalDiscreteChange Δx F := by
   rw [Finset.sum_add_distrib, ← Finset.mul_sum, totalDiscreteChange]
 
 /-- **No-flux conservation** (MF08.1): if both boundary fluxes vanish, one explicit step
 `c i ↦ c i + τ * discreteBalance Δx F i` leaves the total `∑ i, c i` unchanged. -/
-lemma sum_add_mul_discreteBalance_of_noFlux {n : ℕ} (Δx τ : ℝ) (c : Fin n → ℝ)
+lemma sum_add_mul_discreteBalance_of_noFlux {n : ℕ} (Δx : {x : ℝ // 0 < x}) (τ : ℝ)
+    (c : Fin n → ℝ)
     {F : Fin (n + 1) → ℝ} (hleft : F 0 = 0) (hright : F (Fin.last n) = 0) :
     ∑ i, (c i + τ * discreteBalance Δx F i) = ∑ i, c i := by
   rw [sum_add_mul_discreteBalance, totalDiscreteChange_eq, hleft, hright]
@@ -181,9 +187,10 @@ together with the differentiability hypotheses, which the lemmas state separatel
 def localConservation (u q s : ℝ → ℝ → ℝ) (t x : ℝ) : Prop :=
   deriv (fun τ => u τ x) t + deriv (q t) x = s t x
 
-/-- **Integral balance** (MF08.2) of the interval `[a, b]` at time `t`: the inflow `q t a`
-through the left end minus the outflow `q t b` through the right end, plus the total source
-`∫ₐᵇ s`. -/
+/-- **Oriented integral balance** (MF08.2) from `a` to `b` at time `t`:
+`q t a - q t b + ∫ₐᵇ s`. When `a ≤ b`, this is left-boundary inflow minus right-boundary
+outflow plus the source on `[a, b]`. When `a > b`, it is the negative of the balance from
+`b` to `a`, not the balance of the unsigned geometric interval. -/
 noncomputable def integralBalance (q s : ℝ → ℝ → ℝ) (a b t : ℝ) : ℝ :=
   q t a - q t b + ∫ x in a..b, s t x
 
@@ -206,10 +213,11 @@ private lemma continuous_fderiv_apply {E : Type*} [NormedAddCommGroup E] [Normed
     Continuous (fun p : ℝ × E => fderiv ℝ (Function.uncurry u) p v) :=
   (hu.continuous_fderiv (by norm_num)).clm_apply continuous_const
 
-/-- **Integral balance law** (MF08.2). Let the density `u` and the flux `q` be jointly `C¹` on
-`ℝ × ℝ` (time, then space). If the local law `∂ₜu + ∂ₓq = s` holds at time `t` at every point
-of `[a, b]`, then the amount `∫ₐᵇ u` has time derivative `q t a - q t b + ∫ₐᵇ s` at `t`
-(`s = 0` is the source-free case). -/
+/-- **Oriented integral balance law** (MF08.2). Let the density `u` and the flux `q` be jointly
+`C¹` on `ℝ × ℝ` (time, then space). If `∂ₜu + ∂ₓq = s` holds at time `t` throughout
+`uIcc a b = [min a b, max a b]`, the signed integral `∫ₐᵇ u` has time derivative
+`q t a - q t b + ∫ₐᵇ s` at `t`. For `a ≤ b`, the integral is the amount on `[a, b]`;
+for `a > b`, it is the negative of the amount on `[b, a]`. -/
 lemma hasDerivAt_integral_of_localConservation {u q s : ℝ → ℝ → ℝ} {a b t : ℝ}
     (hu : ContDiff ℝ 1 (Function.uncurry u)) (hq : ContDiff ℝ 1 (Function.uncurry q))
     (hlaw : ∀ x ∈ uIcc a b, localConservation u q s t x) :
@@ -290,8 +298,9 @@ jointly `C¹`, let `q t` be the flux field at time `t` with divergence
 `FokkerPlanck.divergence (q t) = ∑ᵢ ∂ᵢ (q t)ᵢ`, and let `s t` be integrable on `Ω`. If the
 local law `∂ₜu + div q = s` holds at time `t` on `Ω`, and `integral_div_eq_boundary` states the
 divergence theorem `∫_Ω div q = Φ t` with `Φ t` the outward flux through the boundary, then
-`d/dt ∫_Ω u = -Φ t + ∫_Ω s`. The divergence theorem is a hypothesis, not a result. For
-`Ω = [a, b]` the outward flux is `q t b - q t a`, the orientation of `integralBalance`. -/
+`d/dt ∫_Ω u = -Φ t + ∫_Ω s`. The divergence theorem is a hypothesis, not a result.
+For `Ω = [a, b]` with `a ≤ b`, the outward flux is `q t b - q t a`, matching
+`integralBalance` with increasing endpoint orientation. -/
 lemma hasDerivAt_setIntegral_of_divergence {n : ℕ} {Ω : Set (Fin n → ℝ)}
     {u s : ℝ → (Fin n → ℝ) → ℝ} {q : ℝ → (Fin n → ℝ) → Fin n → ℝ} {Φ : ℝ → ℝ} {t : ℝ}
     (hΩ : IsCompact Ω) (hu : ContDiff ℝ 1 (Function.uncurry u)) (hs : IntegrableOn (s t) Ω)
@@ -466,7 +475,9 @@ in `x` with continuous derivatives. The heat equation `∂ₜu = D ∂ₓₓu` a
 
 -/
 
-/-- **Heat energy** (MF08.4): `E(t) = ∫₀ᴸ u(t, x)² dx` for a field `u` on `[0, L]`. -/
+/-- **Oriented heat-energy integral** (MF08.4): `E(t) = ∫₀ᴸ u(t, x)² dx`.
+For `0 ≤ L` this is the energy on `[0, L]`; for `L < 0` it is a signed integral,
+not a nonnegative energy. -/
 noncomputable def heatEnergy (L : ℝ) (u : ℝ → ℝ → ℝ) (t : ℝ) : ℝ :=
   ∫ x in (0 : ℝ)..L, u t x ^ 2
 
