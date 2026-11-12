@@ -211,7 +211,7 @@ theorem autarkySet_ssubset_specializeGood2Set_iff (c : Country) {p : ℝ} (hp : 
 strictly between Home's and Foreign's autarky prices, Home (specializing in good 1)
 and Foreign (specializing in good 2) both strictly enlarge their consumption sets.
 This is an opportunity-set statement, not a utility comparison. -/
-theorem mutual_gains_of_mem_Ioo (H F : Country) {p : ℝ}
+theorem ssubset_specializeSets_of_mem_Ioo (H F : Country) {p : ℝ}
     (hp : p ∈ Set.Ioo (autarkyPrice H) (autarkyPrice F)) :
     autarkySet H ⊂ specializeGood1Set H p ∧ autarkySet F ⊂ specializeGood2Set F p := by
   rw [Set.mem_Ioo] at hp
@@ -223,7 +223,7 @@ theorem mutual_gains_of_mem_Ioo (H F : Country) {p : ℝ}
 /-- A world price at which both countries' consumption sets strictly enlarge (Home
 specializing in good 1, Foreign in good 2) exists iff Home has a comparative
 advantage in good 1. -/
-theorem exists_mutual_gains_iff (H F : Country) :
+theorem exists_ssubset_specializeSets_iff (H F : Country) :
     (∃ p, autarkySet H ⊂ specializeGood1Set H p ∧ autarkySet F ⊂ specializeGood2Set F p) ↔
       autarkyPrice H < autarkyPrice F := by
   constructor
@@ -255,6 +255,6 @@ theorem exists_mutual_gains_iff (H F : Country) :
     exact lt_trans h1 h2
   · intro hlt
     obtain ⟨p, hp⟩ := exists_between hlt
-    exact ⟨p, mutual_gains_of_mem_Ioo H F (Set.mem_Ioo.mpr hp)⟩
+    exact ⟨p, ssubset_specializeSets_of_mem_Ioo H F (Set.mem_Ioo.mpr hp)⟩
 
 end MathlibExt.Economics.Ricardian

@@ -41,7 +41,7 @@ theorem test_mem : (1:ℝ) ∈ Set.Ioo (autarkyPrice H) (autarkyPrice F) := by
 
 theorem test_gains :
     autarkySet H ⊂ specializeGood1Set H 1 ∧ autarkySet F ⊂ specializeGood2Set F 1 :=
-  mutual_gains_of_mem_Ioo H F test_mem
+  ssubset_specializeSets_of_mem_Ioo H F test_mem
 
 theorem test_boundary : ¬ autarkySet H ⊂ specializeGood1Set H (1/2) := by
   have hH : autarkyPrice H = (1:ℝ) / 2 := rfl
