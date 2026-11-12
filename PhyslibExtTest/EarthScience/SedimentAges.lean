@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.C08SedimentAges
+import PhyslibExt.EarthScience.SedimentAges
 
 /-!
 # Sediment-age checks
 
-Concrete consumers of `PhyslibExt.EarthScience.C08SedimentAges`: a
+Concrete consumers of `PhyslibExt.EarthScience.SedimentAges`: a
 numeric monotonicity instance, the depth-age inverse, and the surface
 boundary `d = 0`.
 
@@ -27,7 +27,7 @@ No new definitions or results are introduced here.
 
 ## iii. References
 
-- `PhyslibExt.EarthScience.C08SedimentAges`
+- `PhyslibExt.EarthScience.SedimentAges`
 -/
 
 /-- Monotonicity: with `v = 2`, a deeper depth has a larger age. -/
