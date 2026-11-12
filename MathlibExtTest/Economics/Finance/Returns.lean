@@ -47,9 +47,25 @@ theorem test_grossReturn_prod_range :
         ((fun n : ℕ => 100 * (11 / 10 : ℝ) ^ n) (i + 1)) =
       grossReturn ((fun n : ℕ => 100 * (11 / 10 : ℝ) ^ n) 0)
         ((fun n : ℕ => 100 * (11 / 10 : ℝ) ^ n) 2) := by
-  have hP : ∀ i, (fun n : ℕ => 100 * (11 / 10 : ℝ) ^ n) i ≠ 0 := by
-    intro i
+  have hP : ∀ i ≤ 2, (fun n : ℕ => 100 * (11 / 10 : ℝ) ^ n) i ≠ 0 := by
+    intro i _
     simp only
+    exact mul_ne_zero (by norm_num) (pow_ne_zero _ (by norm_num))
+  exact grossReturn_prod_range hP
+
+/-- Telescoping only needs the prices on the path: this path is zero past
+index `2`, yet the product over `range 2` still telescopes. -/
+theorem test_grossReturn_prod_range_zero_continuation :
+    ∏ i ∈ Finset.range 2,
+        grossReturn ((fun n : ℕ => if n ≤ 2 then 100 * (11 / 10 : ℝ) ^ n else 0) i)
+          ((fun n : ℕ => if n ≤ 2 then 100 * (11 / 10 : ℝ) ^ n else 0) (i + 1)) =
+      grossReturn ((fun n : ℕ => if n ≤ 2 then 100 * (11 / 10 : ℝ) ^ n else 0) 0)
+        ((fun n : ℕ => if n ≤ 2 then 100 * (11 / 10 : ℝ) ^ n else 0) 2) := by
+  have hP : ∀ i ≤ 2,
+      (fun n : ℕ => if n ≤ 2 then 100 * (11 / 10 : ℝ) ^ n else 0) i ≠ 0 := by
+    intro i hi
+    show (if i ≤ 2 then 100 * (11 / 10 : ℝ) ^ i else (0 : ℝ)) ≠ 0
+    split_ifs
     exact mul_ne_zero (by norm_num) (pow_ne_zero _ (by norm_num))
   exact grossReturn_prod_range hP
 

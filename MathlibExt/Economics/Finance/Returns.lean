@@ -21,6 +21,14 @@ two periods (`grossReturn_mul`) and telescope over a price path
 prices (`logReturn_add`), and the total log return over many periods is the sum
 of the per-period log returns (`totalLogReturn_eq_sum`, from `Real.log_prod`).
 
+Domain notes: `grossReturn` and `logReturn` are total definitions in Mathlib
+style. At nonpositive prices they return junk values, not financial returns:
+`logReturn 100 0 = Real.log 0 = 0`, the same as the unchanged-price value
+`logReturn 100 100`, although a price of `0` is a total loss for which the
+real-valued log return is undefined. A genuine log return requires
+`0 < P₀` and `0 < P₁`; every theorem that interprets a logarithm as a return
+assumes the corresponding positivity.
+
 ## Main results
 
 * `MathlibExt.Economics.Finance.Returns.grossReturn_mul`
@@ -38,10 +46,16 @@ FI05.T01.
 
 namespace MathlibExt.Economics.Finance.Returns
 
-/-- Simple gross return over one period: terminal price divided by initial price. -/
+/-- Simple gross return over one period: terminal price divided by initial price.
+Total: at `P₀ = 0` this is the junk value `0` (Mathlib division by zero), not
+a return. -/
 noncomputable def grossReturn (P₀ P₁ : ℝ) : ℝ := P₁ / P₀
 
-/-- Log return over one period: the log of the gross return. -/
+/-- Log return over one period: the log of the gross return. The definition is
+total: at nonpositive prices it returns a junk value, e.g.
+`logReturn 100 0 = Real.log 0 = 0`, equal to the unchanged-price value
+`logReturn 100 100`. A genuine log return requires `0 < P₀` and `0 < P₁`,
+as assumed by `logReturn_add`. -/
 noncomputable def logReturn (P₀ P₁ : ℝ) : ℝ := Real.log (grossReturn P₀ P₁)
 
 /-- Compounded gross return over a finite set of periods with per-period gross
@@ -61,15 +75,17 @@ theorem grossReturn_mul {P₀ P₁ P₂ : ℝ} (h₀ : P₀ ≠ 0) (h₁ : P₁ 
   field_simp
 
 /-- **Gross returns telescope over a price path.** The product of the one-period
-gross returns along `P 0, …, P n` is the gross return from `P 0` to `P n`. -/
-theorem grossReturn_prod_range {P : ℕ → ℝ} {n : ℕ} (hP : ∀ i, P i ≠ 0) :
+gross returns along `P 0, …, P n` is the gross return from `P 0` to `P n`.
+Only the prices on the path, `P 0, …, P n`, need to be nonzero; the arbitrary
+continuation of `P` past `n` is unconstrained. -/
+theorem grossReturn_prod_range {P : ℕ → ℝ} {n : ℕ} (hP : ∀ i ≤ n, P i ≠ 0) :
     ∏ i ∈ Finset.range n, grossReturn (P i) (P (i + 1)) = grossReturn (P 0) (P n) := by
   induction n with
   | zero =>
-    simp [grossReturn, div_self (hP 0)]
+    simp [grossReturn, div_self (hP 0 le_rfl)]
   | succ n ih =>
-    rw [Finset.prod_range_succ _ n, ih]
-    exact (grossReturn_mul (hP 0) (hP n)).symm
+    rw [Finset.prod_range_succ _ n, ih (fun i hi => hP i (Nat.le_succ_of_le hi))]
+    exact (grossReturn_mul (hP 0 (Nat.zero_le _)) (hP n (Nat.le_succ n))).symm
 
 /-- **Log returns add over two periods** on strictly positive prices. -/
 theorem logReturn_add {P₀ P₁ P₂ : ℝ} (h₀ : 0 < P₀) (h₁ : 0 < P₁) (h₂ : 0 < P₂) :
