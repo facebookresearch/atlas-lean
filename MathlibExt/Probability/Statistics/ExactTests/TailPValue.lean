@@ -28,6 +28,8 @@ is why discrete exact tests are conservative.
 
 * `upperTail_antitone`: the upper tail is antitone in the cutoff.
 * `isValidPValue_upperTailPValue`: if `X` has law `ν`, the upper-tail p-value is valid.
+* `isValidPValue_survival`: for any law `ν` on `ℝ`, `y ↦ ν [y, ∞)` evaluated at a
+  variable with law `ν` is a valid p-value.
 
 ## References
 
@@ -80,6 +82,61 @@ theorem isValidPValue_upperTailPValue {μ : Measure Ω} {ν : Measure ℕ} [IsPr
   · have hset : {ω | upperTailPValue ν X ω ≤ s} = ∅ :=
       Set.eq_empty_of_forall_notMem fun ω h => hS ⟨X ω, h⟩
     simp [hset]
+
+/-- **Survival-function p-values are valid.** If `Y` has law `ν` on `ℝ`, then
+`ω ↦ ν [Y ω, ∞)` is a valid p-value, whatever `ν` (atoms allowed).
+
+The event `{ν [Y, ∞) ≤ t}` is `{Y ∈ A}` for an upper set `A`; `A` is covered by an increasing
+sequence of half-lines `[c n, ∞)` with each `c n ∈ A`, so `ν A ≤ t` by continuity from below.
+
+Source: Lehmann–Romano (2005), Lemma 3.3.1. -/
+theorem isValidPValue_survival {μ : Measure Ω} {ν : Measure ℝ} [IsProbabilityMeasure ν]
+    {Y : Ω → ℝ} (hY : HasLaw Y ν μ) : IsValidPValue μ (fun ω => ν.real (Set.Ici (Y ω))) := by
+  intro t _
+  set S : ℝ → ℝ := fun y => ν.real (Set.Ici y)
+  have hS : Antitone S := fun _ _ hxy => measureReal_mono (Set.Ici_subset_Ici.mpr hxy)
+  set A := {y | S y ≤ t}
+  have hup : ∀ {y z}, y ∈ A → y ≤ z → z ∈ A := fun hy hyz => (hS hyz).trans hy
+  have hA : MeasurableSet A := measurableSet_le hS.measurable measurable_const
+  rw [hY.measure_eq (p := fun y => S y ≤ t) hA]
+  -- `A` covered by `⋃ n, [c n, ∞)` with `c` antitone and `c n ∈ A` gives `ν A ≤ t`.
+  have key : ∀ c : ℕ → ℝ, Antitone c → (∀ n, c n ∈ A) → A ⊆ ⋃ n, Set.Ici (c n) →
+      ν A ≤ ENNReal.ofReal t := by
+    intro c hc hcA hcov
+    have hmono : Monotone fun n => Set.Ici (c n) := fun _ _ hmn =>
+      Set.Ici_subset_Ici.mpr (hc hmn)
+    refine (measure_mono hcov).trans
+      (le_of_tendsto' (tendsto_measure_iUnion_atTop hmono) fun n => ?_)
+    change ν (Set.Ici (c n)) ≤ _
+    rw [← ofReal_measureReal (measure_ne_top _ _)]
+    exact ENNReal.ofReal_le_ofReal (hcA n)
+  rcases Set.eq_empty_or_nonempty A with hE | ⟨y₀, hy₀⟩
+  · change ν A ≤ _
+    rw [hE]
+    simp
+  by_cases hb : BddBelow A
+  · by_cases hm : sInf A ∈ A
+    · exact key (fun _ => sInf A) antitone_const (fun _ => hm) fun y hy =>
+        Set.mem_iUnion.mpr ⟨0, csInf_le hb hy⟩
+    · refine key (fun n => sInf A + 1 / ((n : ℝ) + 1)) (fun m n hmn => ?_) (fun n => ?_)
+        fun y hy => ?_
+      · have : (m : ℝ) ≤ n := by exact_mod_cast hmn
+        simp only [add_le_add_iff_left]
+        exact one_div_le_one_div_of_le (by positivity) (by linarith)
+      · obtain ⟨z, hz, hzlt⟩ := exists_lt_of_csInf_lt ⟨y₀, hy₀⟩
+          (lt_add_of_pos_right (sInf A) (Nat.one_div_pos_of_nat (n := n)))
+        exact hup hz hzlt.le
+      · have hlt : sInf A < y := lt_of_le_of_ne (csInf_le hb hy) fun h => hm (h ▸ hy)
+        obtain ⟨n, hn⟩ := exists_nat_one_div_lt (sub_pos.mpr hlt)
+        exact Set.mem_iUnion.mpr ⟨n, by simp only [Set.mem_Ici]; linarith⟩
+  · rw [not_bddBelow_iff] at hb
+    refine key (fun n => -(n : ℝ)) (fun m n hmn => ?_) (fun n => ?_) fun y _ => ?_
+    · simp only [neg_le_neg_iff, Nat.cast_le]
+      exact hmn
+    · obtain ⟨z, hz, hzlt⟩ := hb (-(n : ℝ))
+      exact hup hz hzlt.le
+    · obtain ⟨n, hn⟩ := exists_nat_ge (-y)
+      exact Set.mem_iUnion.mpr ⟨n, by simp only [Set.mem_Ici]; linarith⟩
 
 open Finset in
 /-- **Validity of a discrete upper-tail p-value.** For nonnegative masses `q` on a finite set

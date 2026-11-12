@@ -35,11 +35,13 @@ example : IsProbabilityMeasure (uniformArrangements 10 2) := by
   have : Fact (2 ≤ 2 * 10) := ⟨by norm_num⟩
   infer_instance
 
-/-- Any extremeness key works, e.g. ranking by excess heterozygosity (`g j = -j`). -/
-example (N nA : ℕ) :
+/-- Any extremeness key works, e.g. ranking by excess heterozygosity (`g j = -j`). The
+feasible allele count is required: without it the arrangement measure can be the zero
+measure and validity would hold vacuously. -/
+example (N nA : ℕ) (hnA : nA ≤ 2 * N) :
     IsValidPValue (uniformArrangements N nA)
       fun s => orderedPValue (leveneProb N nA) (fun j => -(j : ℝ)) (nA + 1) (hetCount s) :=
-  isValidPValue_orderedPValue (hasLaw_hetCount N nA) _
+  isValidPValue_orderedPValue hnA (hasLaw_hetCount N nA) _
 
 /-! ### The sparse case: exact values -/
 
