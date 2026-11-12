@@ -23,6 +23,26 @@ example (f : (Fin 1 → Fin 2) → ℝ) (t : ℝ) (ht : 0 < t)
     (fun _ => by norm_num [Finset.sum_const, Finset.card_univ]) f (fun _ => 1)
     (fun _ => by norm_num) (by norm_num) t ht hbd
 
+/-- Two independent binary coordinates with different marginals:
+the first is uniform and the second has weights `1/3, 2/3`.
+The positive-sensitivity two-sided API handles this non-iid product. -/
+example (f : (Fin 2 → Fin 2) → ℝ) (t : ℝ) (ht : 0 < t)
+    (hbd : ∀ (i : Fin 2) (x y : Fin 2 → Fin 2),
+      (∀ j, j ≠ i → x j = y j) → |f x - f y| ≤ 1) :
+    let p : Fin 2 → Fin 2 → ℝ :=
+      fun i a => if i = 0 then 1 / 2 else if a = 0 then 1 / 3 else 2 / 3
+    (∑ x ∈ Finset.univ.filter
+        (fun x => t ≤ |f x - ∑ y, (∏ i, p i (y i)) * f y|),
+        ∏ i, p i (x i)) ≤
+      2 * Real.exp (-2 * t ^ 2 / ∑ _i : Fin 2, (1 : ℝ) ^ 2) := by
+  dsimp only
+  exact mcdiarmid_product_two_sided
+    (fun i a => if i = 0 then 1 / 2 else if a = 0 then 1 / 3 else 2 / 3)
+    (fun i a => by fin_cases i <;> fin_cases a <;> norm_num)
+    (fun i => by fin_cases i <;> norm_num [Fin.sum_univ_two])
+    f (fun _ => 1) (fun _ => by norm_num)
+    (by norm_num [Fin.sum_univ_two]) t ht hbd
+
 /-- Endpoint check: with zero sensitivities (`c = 0`) the upper tail of a
 constant function is exactly `0`. -/
 example (t : ℝ) (ht : 0 < t) :
