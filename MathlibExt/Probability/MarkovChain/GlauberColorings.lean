@@ -8,45 +8,28 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Probability.Distributions.Uniform
+public import MathlibExt.Probability.ProbabilityMassFunction.Uniform
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
+public import Mathlib.InformationTheory.Hamming
 
 open scoped ENNReal
 
 @[expose] public section
 
-/-- Compatibility definition: the uniform PMF on a finite nonempty
-type. In the Mathlib version used by the proving sandbox this was
-`PMF.uniformOfFintype`; in Atlas's Mathlib that name now denotes a
-measure, so the PMF is built from `PMF.ofFintype` here. The pinned
-theorem statement below is unchanged; only the bodies of
-`glauberStep` and `glauberCouple` use this definition, which is the
-same uniform law. -/
-noncomputable def uniformPMF (α : Type*) [Fintype α] [Nonempty α] :
-    PMF α :=
-  PMF.ofFintype (fun _ => (Fintype.card α : ℝ≥0∞)⁻¹) (by
-    have hpos : 0 < Fintype.card α := Fintype.card_pos
-    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul,
-      ENNReal.mul_inv_cancel (by exact_mod_cast hpos.ne')
-        (ENNReal.natCast_ne_top _)])
-
-private theorem uniformPMF_apply {α : Type*} [Fintype α] [Nonempty α]
-    (a : α) : (uniformPMF α a).toReal = 1 / (Fintype.card α : ℝ) := by
-  simp [uniformPMF, PMF.ofFintype_apply]
 
 
 /-! # Glauber dynamics for proper colorings
 
 One coupled Glauber (heat-bath with rejection) step contracts the
 expected Hamming distance between two proper colorings by the
-factor `1 - 1/n + 4Δ/(n q)`. The constant is `4Δ`, not the `2Δ`
+factor `1 - 1/n + 3Δ/(n q)`. The constant is `3Δ`, not the `2Δ`
 of Jerrum's available-color coupling: for the rejection coupling
 a disagreeing vertex can also spread disagreement to its
 neighbors, and the bound above is what the counting gives (it is
 tight on two-vertex examples; an earlier draft of this statement
 with `2Δ` was refuted by a machine-checked counterexample during
 this work). Combined with path coupling, this gives mixing in
-`O(n log n)` for `q > 4Δ`. This is roadmap package ML-28 of the
+`O(n log n)` for `q > 3Δ`. This is roadmap package ML-28 of the
 Atlas TCS canon roadmap.
 
 Source: Jerrum (1995); Dyer and Greenhill (1999).
@@ -59,10 +42,6 @@ adjacent vertices get different colors. -/
 def IsProper {n q : ℕ} (adj : Fin n → Fin n → Bool) (c : Fin n → Fin q) : Prop :=
   ∀ i j, adj i j = true → c i ≠ c j
 
-/-- Hamming distance between two colorings (number of disagreeing
-vertices), as a real number. -/
-noncomputable def hamming {n q : ℕ} (c d : Fin n → Fin q) : ℝ :=
-  ((Finset.univ.filter (fun i => c i ≠ d i)).card : ℝ)
 
 open Classical in
 /-- One Glauber (heat-bath with rejection) proposal: pick a uniform
@@ -70,8 +49,8 @@ site `i` and a uniform color `col`; move to the updated coloring if
 it is still proper, else stay. -/
 noncomputable def glauberStep {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)] (adj : Fin n → Fin n → Bool)
     (c : Fin n → Fin q) : PMF (Fin n → Fin q) :=
-  (uniformPMF (Fin n)).bind fun i =>
-    (uniformPMF (Fin q)).bind fun col =>
+  (PMF.uniformFintype (Fin n)).bind fun i =>
+    (PMF.uniformFintype (Fin q)).bind fun col =>
       PMF.pure (if IsProper adj (Function.update c i col) then
         Function.update c i col else c)
 
@@ -81,21 +60,33 @@ proposed color, applied to both colorings with their own rejection
 tests. -/
 noncomputable def glauberCouple {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)] (adj : Fin n → Fin n → Bool)
     (c d : Fin n → Fin q) : PMF ((Fin n → Fin q) × (Fin n → Fin q)) :=
-  (uniformPMF (Fin n)).bind fun i =>
-    (uniformPMF (Fin q)).bind fun col =>
+  (PMF.uniformFintype (Fin n)).bind fun i =>
+    (PMF.uniformFintype (Fin q)).bind fun col =>
       PMF.pure ((if IsProper adj (Function.update c i col) then
           Function.update c i col else c),
         (if IsProper adj (Function.update d i col) then
           Function.update d i col else d))
 
+/-- The first marginal of the synchronous coupling is the Glauber step. -/
+theorem glauberCouple_map_fst {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
+    (adj : Fin n → Fin n → Bool) (c d : Fin n → Fin q) :
+    (glauberCouple adj c d).map Prod.fst = glauberStep adj c := by
+  simp [glauberCouple, glauberStep, PMF.map_bind, PMF.pure_map]
+
+/-- The second marginal of the synchronous coupling is the Glauber step. -/
+theorem glauberCouple_map_snd {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
+    (adj : Fin n → Fin n → Bool) (c d : Fin n → Fin q) :
+    (glauberCouple adj c d).map Prod.snd = glauberStep adj d := by
+  simp [glauberCouple, glauberStep, PMF.map_bind, PMF.pure_map]
+
 
 private lemma uniform_toReal {α : Type*} [Fintype α] [Nonempty α] (a : α) :
-    ((uniformPMF α) a).toReal = 1 / (Fintype.card α : ℝ) := uniformPMF_apply a
+    ((PMF.uniformFintype α) a).toReal = 1 / (Fintype.card α : ℝ) := by
+  simp [PMF.uniformFintype_apply]
 
 private lemma uniform_ne_top {α : Type*} [Fintype α] [Nonempty α] (a : α) :
-    (uniformPMF α) a ≠ ⊤ := by
-  rw [uniformPMF, PMF.ofFintype_apply, ENNReal.inv_ne_top]
-  simp [Fintype.card_pos.ne']
+    (PMF.uniformFintype α) a ≠ ⊤ := by
+  simp [PMF.uniformFintype_apply, Fintype.card_pos.ne']
 
 private lemma pure_toReal_dec {β : Type*} [DecidableEq β] (x z : β) :
     ((PMF.pure x) z).toReal = (if z = x then (1 : ℝ) else 0) := by
@@ -106,10 +97,10 @@ private lemma pure_toReal_dec {β : Type*} [DecidableEq β] (x z : β) :
 
 private lemma expect_single {α β : Type*} [Fintype α] [Nonempty α] [Fintype β] [DecidableEq β]
     (g : α → β) (F : β → ℝ) :
-    (∑ z, (((uniformPMF α).bind (fun a => PMF.pure (g a))) z).toReal * F z)
+    (∑ z, (((PMF.uniformFintype α).bind (fun a => PMF.pure (g a))) z).toReal * F z)
       = (1 / (Fintype.card α : ℝ)) * ∑ a, F (g a) := by
-  have hbind : ∀ z : β, (((uniformPMF α).bind (fun a => PMF.pure (g a))) z).toReal
-      = ∑ a, (((uniformPMF α) a).toReal * ((PMF.pure (g a)) z).toReal) := by
+  have hbind : ∀ z : β, (((PMF.uniformFintype α).bind (fun a => PMF.pure (g a))) z).toReal
+      = ∑ a, (((PMF.uniformFintype α) a).toReal * ((PMF.pure (g a)) z).toReal) := by
     intro z
     rw [PMF.bind_apply]
     rw [tsum_fintype]
@@ -121,29 +112,29 @@ private lemma expect_single {α β : Type*} [Fintype α] [Nonempty α] [Fintype 
       apply ENNReal.mul_ne_top
       · exact uniform_ne_top a
       · exact PMF.apply_ne_top _ _
-  calc (∑ z, (((uniformPMF α).bind (fun a => PMF.pure (g a))) z).toReal * F z)
-      = ∑ z, ((∑ a, (((uniformPMF α) a).toReal * ((PMF.pure (g a)) z).toReal)) * F z) := by
+  calc (∑ z, (((PMF.uniformFintype α).bind (fun a => PMF.pure (g a))) z).toReal * F z)
+      = ∑ z, ((∑ a, (((PMF.uniformFintype α) a).toReal * ((PMF.pure (g a)) z).toReal)) * F z) := by
         apply Finset.sum_congr rfl
         intro z _
         rw [hbind z]
-    _ = ∑ z, ∑ a, ((((uniformPMF α) a).toReal * ((PMF.pure (g a)) z).toReal) * F z) := by
+    _ = ∑ z, ∑ a, ((((PMF.uniformFintype α) a).toReal * ((PMF.pure (g a)) z).toReal) * F z) := by
         apply Finset.sum_congr rfl
         intro z _
         rw [Finset.sum_mul]
-    _ = ∑ a, ∑ z, ((((uniformPMF α) a).toReal * ((PMF.pure (g a)) z).toReal) * F z) := by
+    _ = ∑ a, ∑ z, ((((PMF.uniformFintype α) a).toReal * ((PMF.pure (g a)) z).toReal) * F z) := by
         rw [Finset.sum_comm]
-    _ = ∑ a, (((uniformPMF α) a).toReal * F (g a)) := by
+    _ = ∑ a, (((PMF.uniformFintype α) a).toReal * F (g a)) := by
         apply Finset.sum_congr rfl
         intro a _
-        have hinner : ∀ z ∈ (Finset.univ : Finset β), ((((uniformPMF α) a).toReal * ((PMF.pure (g a)) z).toReal) * F z)
-            = (if z = g a then (((uniformPMF α) a).toReal * F (g a)) else 0) := by
+        have hinner : ∀ z ∈ (Finset.univ : Finset β), ((((PMF.uniformFintype α) a).toReal * ((PMF.pure (g a)) z).toReal) * F z)
+            = (if z = g a then (((PMF.uniformFintype α) a).toReal * F (g a)) else 0) := by
           intro z _
           rw [pure_toReal_dec]
           by_cases hz : z = g a
           · simp [hz]
           · simp [hz]
         rw [Finset.sum_congr rfl hinner]
-        rw [Finset.sum_ite_eq' Finset.univ (g a) (fun _ => ((uniformPMF α) a).toReal * F (g a))]
+        rw [Finset.sum_ite_eq' Finset.univ (g a) (fun _ => ((PMF.uniformFintype α) a).toReal * F (g a))]
         simp
     _ = (1 / (Fintype.card α : ℝ)) * ∑ a, F (g a) := by
         rw [Finset.mul_sum]
@@ -188,7 +179,7 @@ private lemma expect_bind {α β : Type*} [Fintype α] [Fintype β] [DecidableEq
         ring
 
 open Classical in
-private lemma expect_couple {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
+theorem expected_glauberCouple {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
     (adj : Fin n → Fin n → Bool) (c d : Fin n → Fin q)
     (F : ((Fin n → Fin q) × (Fin n → Fin q)) → ℝ) :
     (∑ z, ((glauberCouple adj c d z).toReal * F z))
@@ -199,7 +190,7 @@ private lemma expect_couple {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
             Function.update d i col else d)) := by
   unfold glauberCouple
   rw [expect_bind]
-  have hinner : ∀ i : Fin n, (∑ z, ((((uniformPMF (Fin q)).bind fun col =>
+  have hinner : ∀ i : Fin n, (∑ z, ((((PMF.uniformFintype (Fin q)).bind fun col =>
       PMF.pure ((if IsProper adj (Function.update c i col) then
           Function.update c i col else c),
         (if IsProper adj (Function.update d i col) then
@@ -213,13 +204,13 @@ private lemma expect_couple {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
             Function.update c i col else c),
           (if IsProper adj (Function.update d i col) then
             Function.update d i col else d))) F
-  calc (∑ a, (((uniformPMF (Fin n)) a).toReal *
-        (∑ z, ((((uniformPMF (Fin q)).bind fun col =>
+  calc (∑ a, (((PMF.uniformFintype (Fin n)) a).toReal *
+        (∑ z, ((((PMF.uniformFintype (Fin q)).bind fun col =>
           PMF.pure ((if IsProper adj (Function.update c a col) then
               Function.update c a col else c),
             (if IsProper adj (Function.update d a col) then
               Function.update d a col else d))) z).toReal * F z))))
-      = ∑ i, (((uniformPMF (Fin n)) i).toReal *
+      = ∑ i, (((PMF.uniformFintype (Fin n)) i).toReal *
         ((1 / (Fintype.card (Fin q) : ℝ)) * ∑ col, F ((if IsProper adj (Function.update c i col) then
             Function.update c i col else c),
           (if IsProper adj (Function.update d i col) then
@@ -613,12 +604,12 @@ private lemma hamming_update_eq {n q : ℕ} (adj : Fin n → Fin n → Bool)
     (c d : Fin n → Fin q) (i : Fin n) (col : Fin q) :
     let c' := (if IsProper adj (Function.update c i col) then Function.update c i col else c)
     let d' := (if IsProper adj (Function.update d i col) then Function.update d i col else d)
-    hamming c' d' = hamming c d - (if c i ≠ d i then (1 : ℝ) else 0) + (if c' i ≠ d' i then (1 : ℝ) else 0) := by
+    ((hammingDist c' d' : ℕ) : ℝ) = ((hammingDist c d : ℕ) : ℝ) - (if c i ≠ d i then (1 : ℝ) else 0) + (if c' i ≠ d' i then (1 : ℝ) else 0) := by
   intro c' d'
-  -- rewrite hamming as sums
-  have hcard : ∀ (a b : Fin n → Fin q), hamming a b = ∑ j, (if a j ≠ b j then (1 : ℝ) else 0) := by
+  -- rewrite ((hammingDist as sums : ℕ) : ℝ)
+  have hcard : ∀ (a b : Fin n → Fin q), ((hammingDist a b : ℕ) : ℝ) = ∑ j, (if a j ≠ b j then (1 : ℝ) else 0) := by
     intro a b
-    unfold hamming
+    unfold hammingDist
     rw [Finset.card_filter]
     rw [Nat.cast_sum]
     apply Finset.sum_congr rfl
@@ -742,25 +733,19 @@ private lemma per_site_dis {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
     (Δ : ℕ) (hdeg : ∀ i, (Finset.univ.filter (fun j => adj i j = true)).card ≤ Δ)
     (c d : Fin n → Fin q) (hc : IsProper adj c) (hd : IsProper adj d)
     (i : Fin n) (hdis : c i ≠ d i) :
-    (∑ col, hamming
-      (if IsProper adj (Function.update c i col) then Function.update c i col else c)
-      (if IsProper adj (Function.update d i col) then Function.update d i col else d))
-      ≤ (q : ℝ) * hamming c d - (q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ) := by
+    (∑ col, ((hammingDist (if IsProper adj (Function.update c i col) then Function.update c i col else c) (if IsProper adj (Function.update d i col) then Function.update d i col else d) : ℕ) : ℝ))
+      ≤ (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) - (q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ) := by
   have hpt : ∀ col : Fin q,
-      hamming
-        (if IsProper adj (Function.update c i col) then Function.update c i col else c)
-        (if IsProper adj (Function.update d i col) then Function.update d i col else d)
-      = hamming c d - 1 + (if (if IsProper adj (Function.update c i col) then Function.update c i col else c) i ≠
+      ((hammingDist (if IsProper adj (Function.update c i col) then Function.update c i col else c) (if IsProper adj (Function.update d i col) then Function.update d i col else d) : ℕ) : ℝ)
+      = ((hammingDist c d : ℕ) : ℝ) - 1 + (if (if IsProper adj (Function.update c i col) then Function.update c i col else c) i ≠
           (if IsProper adj (Function.update d i col) then Function.update d i col else d) i then (1 : ℝ) else 0) := by
     intro col
     have hcol := hamming_update_eq adj c d i col
     simp only at hcol
     rw [ite_eq_left hdis] at hcol
     exact hcol
-  have hsum_eq : (∑ col, hamming
-      (if IsProper adj (Function.update c i col) then Function.update c i col else c)
-      (if IsProper adj (Function.update d i col) then Function.update d i col else d))
-      = (q : ℝ) * (hamming c d - 1) + ∑ col, (if (if IsProper adj (Function.update c i col) then Function.update c i col else c) i ≠
+  have hsum_eq : (∑ col, ((hammingDist (if IsProper adj (Function.update c i col) then Function.update c i col else c) (if IsProper adj (Function.update d i col) then Function.update d i col else d) : ℕ) : ℝ))
+      = (q : ℝ) * (((hammingDist c d : ℕ) : ℝ) - 1) + ∑ col, (if (if IsProper adj (Function.update c i col) then Function.update c i col else c) i ≠
           (if IsProper adj (Function.update d i col) then Function.update d i col else d) i then (1 : ℝ) else 0) := by
     rw [Finset.sum_congr rfl (fun col _ => hpt col)]
     rw [Finset.sum_add_distrib]
@@ -806,11 +791,11 @@ private lemma per_site_dis {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
       _ = (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ) := by
           push_cast
           ring
-  calc (q : ℝ) * (hamming c d - 1) + (((blockedA adj c i ∪ blockedB adj d i).card : ℕ) : ℝ)
-      ≤ (q : ℝ) * (hamming c d - 1) + ((Δ : ℝ) + ((disNeigh adj c d i).card : ℝ)) := by
+  calc (q : ℝ) * (((hammingDist c d : ℕ) : ℝ) - 1) + (((blockedA adj c i ∪ blockedB adj d i).card : ℕ) : ℝ)
+      ≤ (q : ℝ) * (((hammingDist c d : ℕ) : ℝ) - 1) + ((Δ : ℝ) + ((disNeigh adj c d i).card : ℝ)) := by
         apply add_le_add_right
         exact hcard_le
-    _ = (q : ℝ) * hamming c d - (q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ) := by ring
+    _ = (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) - (q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ) := by ring
 
 open Classical in
 private lemma per_site_agr {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
@@ -819,29 +804,23 @@ private lemma per_site_agr {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
     (Δ : ℕ) (_hdeg : ∀ i, (Finset.univ.filter (fun j => adj i j = true)).card ≤ Δ)
     (c d : Fin n → Fin q) (hc : IsProper adj c) (hd : IsProper adj d)
     (i : Fin n) (hagr : c i = d i) :
-    (∑ col, hamming
-      (if IsProper adj (Function.update c i col) then Function.update c i col else c)
-      (if IsProper adj (Function.update d i col) then Function.update d i col else d))
-      ≤ (q : ℝ) * hamming c d + 2 * ((disNeigh adj c d i).card : ℝ) := by
+    (∑ col, ((hammingDist (if IsProper adj (Function.update c i col) then Function.update c i col else c) (if IsProper adj (Function.update d i col) then Function.update d i col else d) : ℕ) : ℝ))
+      ≤ (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + 2 * ((disNeigh adj c d i).card : ℝ) := by
   have hnot : ¬ (c i ≠ d i) := fun h => h hagr
   have hpt : ∀ col : Fin q,
-      hamming
-        (if IsProper adj (Function.update c i col) then Function.update c i col else c)
-        (if IsProper adj (Function.update d i col) then Function.update d i col else d)
-      = hamming c d + (if (if IsProper adj (Function.update c i col) then Function.update c i col else c) i ≠
+      ((hammingDist (if IsProper adj (Function.update c i col) then Function.update c i col else c) (if IsProper adj (Function.update d i col) then Function.update d i col else d) : ℕ) : ℝ)
+      = ((hammingDist c d : ℕ) : ℝ) + (if (if IsProper adj (Function.update c i col) then Function.update c i col else c) i ≠
           (if IsProper adj (Function.update d i col) then Function.update d i col else d) i then (1 : ℝ) else 0) := by
     intro col
     have hcol := hamming_update_eq adj c d i col
     simp only at hcol
     rw [ite_eq_right hnot] at hcol
-    -- hcol : hamming ... = hamming - 0 + after; need = hamming + after
-    have hsub : hamming c d - (0 : ℝ) = hamming c d := by ring
+    -- hcol : ((hammingDist ...  : ℕ) : ℝ)= ((hammingDist   : ℕ) : ℝ)- 0 + after; need = ((hammingDist   : ℕ) : ℝ)+ after
+    have hsub : ((hammingDist c d : ℕ) : ℝ) - (0 : ℝ) = ((hammingDist c d : ℕ) : ℝ) := by ring
     rw [hsub] at hcol
     exact hcol
-  have hsum_eq : (∑ col, hamming
-      (if IsProper adj (Function.update c i col) then Function.update c i col else c)
-      (if IsProper adj (Function.update d i col) then Function.update d i col else d))
-      = (q : ℝ) * hamming c d + ∑ col, (if (if IsProper adj (Function.update c i col) then Function.update c i col else c) i ≠
+  have hsum_eq : (∑ col, ((hammingDist (if IsProper adj (Function.update c i col) then Function.update c i col else c) (if IsProper adj (Function.update d i col) then Function.update d i col else d) : ℕ) : ℝ))
+      = (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + ∑ col, (if (if IsProper adj (Function.update c i col) then Function.update c i col else c) i ≠
           (if IsProper adj (Function.update d i col) then Function.update d i col else d) i then (1 : ℝ) else 0) := by
     rw [Finset.sum_congr rfl (fun col _ => hpt col)]
     rw [Finset.sum_add_distrib]
@@ -908,8 +887,8 @@ private lemma per_site_agr {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
       _ = 2 * ((disNeigh adj c d i).card : ℝ) := by
           push_cast
           ring
-  calc (q : ℝ) * hamming c d + (((((blockedA adj c i \ blockedB adj d i) ∪ (blockedB adj d i \ blockedA adj c i)).card : ℕ)) : ℝ)
-      ≤ (q : ℝ) * hamming c d + (2 * ((disNeigh adj c d i).card : ℝ)) := by
+  calc (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + (((((blockedA adj c i \ blockedB adj d i) ∪ (blockedB adj d i \ blockedA adj c i)).card : ℕ)) : ℝ)
+      ≤ (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + (2 * ((disNeigh adj c d i).card : ℝ)) := by
         apply add_le_add_right
         exact hcard_le
 
@@ -999,17 +978,13 @@ private lemma total_bound {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
     (hadj : ∀ i j, adj i j = true → adj j i = true)
     (Δ : ℕ) (hdeg : ∀ i, (Finset.univ.filter (fun j => adj i j = true)).card ≤ Δ)
     (c d : Fin n → Fin q) (hc : IsProper adj c) (hd : IsProper adj d) :
-    (∑ i, ∑ col, hamming
-      (if IsProper adj (Function.update c i col) then Function.update c i col else c)
-      (if IsProper adj (Function.update d i col) then Function.update d i col else d))
-      ≤ (n : ℝ) * (q : ℝ) * hamming c d - (q : ℝ) * hamming c d + 4 * (Δ : ℝ) * hamming c d := by
+    (∑ i, ∑ col, ((hammingDist (if IsProper adj (Function.update c i col) then Function.update c i col else c) (if IsProper adj (Function.update d i col) then Function.update d i col else d) : ℕ) : ℝ))
+      ≤ (n : ℝ) * (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) - (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + 3 * (Δ : ℝ) * ((hammingDist c d : ℕ) : ℝ) := by
   -- Step A: per-site bounds combined
   have hper : ∀ i : Fin n,
-      (∑ col, hamming
-        (if IsProper adj (Function.update c i col) then Function.update c i col else c)
-        (if IsProper adj (Function.update d i col) then Function.update d i col else d))
-      ≤ (if c i ≠ d i then ((q : ℝ) * hamming c d - (q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
-          else ((q : ℝ) * hamming c d + 2 * ((disNeigh adj c d i).card : ℝ))) := by
+      (∑ col, ((hammingDist (if IsProper adj (Function.update c i col) then Function.update c i col else c) (if IsProper adj (Function.update d i col) then Function.update d i col else d) : ℕ) : ℝ))
+      ≤ (if c i ≠ d i then ((q : ℝ) * ((hammingDist c d : ℕ) : ℝ) - (q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
+          else ((q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + 2 * ((disNeigh adj c d i).card : ℝ))) := by
     intro i
     by_cases hdis : c i ≠ d i
     · simp [hdis]
@@ -1017,23 +992,21 @@ private lemma total_bound {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
     · simp [hdis]
       have hagr : c i = d i := Classical.byContradiction hdis
       exact per_site_agr adj hadj Δ hdeg c d hc hd i hagr
-  have hle1 : (∑ i, ∑ col, hamming
-      (if IsProper adj (Function.update c i col) then Function.update c i col else c)
-      (if IsProper adj (Function.update d i col) then Function.update d i col else d))
-      ≤ ∑ i, (if c i ≠ d i then ((q : ℝ) * hamming c d - (q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
-          else ((q : ℝ) * hamming c d + 2 * ((disNeigh adj c d i).card : ℝ))) := by
+  have hle1 : (∑ i, ∑ col, ((hammingDist (if IsProper adj (Function.update c i col) then Function.update c i col else c) (if IsProper adj (Function.update d i col) then Function.update d i col else d) : ℕ) : ℝ))
+      ≤ ∑ i, (if c i ≠ d i then ((q : ℝ) * ((hammingDist c d : ℕ) : ℝ) - (q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
+          else ((q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + 2 * ((disNeigh adj c d i).card : ℝ))) := by
     apply Finset.sum_le_sum
     intro i _
     exact hper i
   -- Step B: rewrite bound sum as n*q*H + extras
-  have hbound_eq : (∑ i, (if c i ≠ d i then ((q : ℝ) * hamming c d - (q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
-      else ((q : ℝ) * hamming c d + 2 * ((disNeigh adj c d i).card : ℝ))))
-      = (n : ℝ) * (q : ℝ) * hamming c d + ∑ i, (if c i ≠ d i then (-(q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
+  have hbound_eq : (∑ i, (if c i ≠ d i then ((q : ℝ) * ((hammingDist c d : ℕ) : ℝ) - (q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
+      else ((q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + 2 * ((disNeigh adj c d i).card : ℝ))))
+      = (n : ℝ) * (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + ∑ i, (if c i ≠ d i then (-(q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
           else (2 * ((disNeigh adj c d i).card : ℝ))) := by
     have hrewrite : ∀ i : Fin n,
-        (if c i ≠ d i then ((q : ℝ) * hamming c d - (q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
-          else ((q : ℝ) * hamming c d + 2 * ((disNeigh adj c d i).card : ℝ)))
-        = (q : ℝ) * hamming c d + (if c i ≠ d i then (-(q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
+        (if c i ≠ d i then ((q : ℝ) * ((hammingDist c d : ℕ) : ℝ) - (q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
+          else ((q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + 2 * ((disNeigh adj c d i).card : ℝ)))
+        = (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + (if c i ≠ d i then (-(q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
             else (2 * ((disNeigh adj c d i).card : ℝ))) := by
       intro i
       by_cases hdis : c i ≠ d i
@@ -1048,13 +1021,13 @@ private lemma total_bound {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
     ring
   rw [hbound_eq] at hle1
   -- Step C: bound extras
-  have hH : hamming c d = (((Finset.univ.filter (fun j => c j ≠ d j)).card : ℕ) : ℝ) := rfl
-  have hsum_one : (∑ i, (if c i ≠ d i then (1 : ℝ) else 0)) = hamming c d := by
+  have hH : ((hammingDist c d : ℕ) : ℝ) = (((Finset.univ.filter (fun j => c j ≠ d j)).card : ℕ) : ℝ) := rfl
+  have hsum_one : (∑ i, (if c i ≠ d i then (1 : ℝ) else 0)) = ((hammingDist c d : ℕ) : ℝ) := by
     have hboole : (∑ x ∈ (Finset.univ : Finset (Fin n)), (if c x ≠ d x then (1 : ℝ) else 0))
         = ((((Finset.univ.filter (fun j => c j ≠ d j)).card : ℕ)) : ℝ) :=
       Finset.sum_boole _ _
     simpa [hH] using hboole
-  have hsum_neg_q : (∑ i, (if c i ≠ d i then (-(q : ℝ)) else 0)) = -(q : ℝ) * hamming c d := by
+  have hsum_neg_q : (∑ i, (if c i ≠ d i then (-(q : ℝ)) else 0)) = -(q : ℝ) * ((hammingDist c d : ℕ) : ℝ) := by
     have heq : ∀ i : Fin n, (if c i ≠ d i then (-(q : ℝ)) else 0)
         = (-(q : ℝ)) * (if c i ≠ d i then (1 : ℝ) else 0) := by
       intro i
@@ -1064,7 +1037,7 @@ private lemma total_bound {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
     rw [Finset.sum_congr rfl (fun i _ => heq i)]
     rw [← Finset.mul_sum]
     rw [hsum_one]
-  have hsum_Delta : (∑ i, (if c i ≠ d i then (Δ : ℝ) else 0)) = (Δ : ℝ) * hamming c d := by
+  have hsum_Delta : (∑ i, (if c i ≠ d i then (Δ : ℝ) else 0)) = (Δ : ℝ) * ((hammingDist c d : ℕ) : ℝ) := by
     have heq : ∀ i : Fin n, (if c i ≠ d i then (Δ : ℝ) else 0)
         = (Δ : ℝ) * (if c i ≠ d i then (1 : ℝ) else 0) := by
       intro i
@@ -1079,7 +1052,7 @@ private lemma total_bound {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
       ≤ Δ * (Finset.univ.filter (fun j => c j ≠ d j)).card :=
     double_count adj hadj Δ hdeg c d
   have hdouble_real : (∑ i, (((disNeigh adj c d i).card : ℕ) : ℝ))
-      ≤ (Δ : ℝ) * hamming c d := by
+      ≤ (Δ : ℝ) * ((hammingDist c d : ℕ) : ℝ) := by
     have hcast : (∑ i, (((disNeigh adj c d i).card : ℕ) : ℝ))
         = ((((∑ i, (disNeigh adj c d i).card) : ℕ)) : ℝ) := by
       rw [Nat.cast_sum]
@@ -1095,31 +1068,26 @@ private lemma total_bound {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
         push_cast
         ring
   -- Filtered DisN sums
-  have hsum_disN_dis : (∑ i, (if c i ≠ d i then (((disNeigh adj c d i).card : ℕ) : ℝ) else 0))
-      ≤ (Δ : ℝ) * hamming c d := by
-    calc (∑ i, (if c i ≠ d i then (((disNeigh adj c d i).card : ℕ) : ℝ) else 0))
-        ≤ ∑ i, (((disNeigh adj c d i).card : ℕ) : ℝ) := by
-          apply Finset.sum_le_sum
-          intro i _
-          by_cases hdis : c i ≠ d i
-          · simp [hdis]
-          · simp [hdis]
-      _ ≤ (Δ : ℝ) * hamming c d := hdouble_real
-  have hsum_disN_agr : (∑ i, (if c i ≠ d i then (0 : ℝ) else 2 * (((disNeigh adj c d i).card : ℕ) : ℝ)))
-      ≤ 2 * ((Δ : ℝ) * hamming c d) := by
-    calc (∑ i, (if c i ≠ d i then (0 : ℝ) else 2 * (((disNeigh adj c d i).card : ℕ) : ℝ)))
-        ≤ ∑ i, (2 * (((disNeigh adj c d i).card : ℕ) : ℝ)) := by
-          apply Finset.sum_le_sum
-          intro i _
-          by_cases hdis : c i ≠ d i
-          · simp [hdis]
-          · simp [hdis]
-      _ = 2 * ∑ i, (((disNeigh adj c d i).card : ℕ) : ℝ) := by
-          rw [Finset.mul_sum]
-      _ ≤ 2 * ((Δ : ℝ) * hamming c d) := by
-          apply mul_le_mul_of_nonneg_left
-          · exact hdouble_real
-          · norm_num
+  have hsum_dis_combined :
+      (∑ i, (if c i ≠ d i then (((disNeigh adj c d i).card : ℕ) : ℝ) else 0)) +
+        (∑ i, (if c i ≠ d i then (0 : ℝ) else 2 * (((disNeigh adj c d i).card : ℕ) : ℝ))) ≤
+        2 * ((Δ : ℝ) * ((hammingDist c d : ℕ) : ℝ)) := by
+    have hper : (∑ i, (if c i ≠ d i then (((disNeigh adj c d i).card : ℕ) : ℝ) else 0)) +
+        (∑ i, (if c i ≠ d i then (0 : ℝ) else 2 * (((disNeigh adj c d i).card : ℕ) : ℝ))) ≤
+        2 * (∑ i, (((disNeigh adj c d i).card : ℕ) : ℝ)) := by
+      rw [← Finset.sum_add_distrib]
+      calc (∑ i, ((if c i ≠ d i then (((disNeigh adj c d i).card : ℕ) : ℝ) else 0) +
+          (if c i ≠ d i then (0 : ℝ) else 2 * (((disNeigh adj c d i).card : ℕ) : ℝ))))
+          ≤ ∑ i, (2 * (((disNeigh adj c d i).card : ℕ) : ℝ)) := by
+            apply Finset.sum_le_sum
+            intro i _
+            split_ifs with hdis
+            · have h0 : (0 : ℝ) ≤ (((disNeigh adj c d i).card : ℕ) : ℝ) := Nat.cast_nonneg _
+              linarith
+            · linarith
+        _ = 2 * (∑ i, (((disNeigh adj c d i).card : ℕ) : ℝ)) := by
+            rw [Finset.mul_sum]
+    linarith [hper, hdouble_real]
   -- Combine extras
   have hextra_eq : (∑ i, (if c i ≠ d i then (-(q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
       else (2 * ((disNeigh adj c d i).card : ℝ))))
@@ -1142,38 +1110,31 @@ private lemma total_bound {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)]
     simp [Finset.sum_add_distrib]
   have hextra_le : (∑ i, (if c i ≠ d i then (-(q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
       else (2 * ((disNeigh adj c d i).card : ℝ))))
-      ≤ (-(q : ℝ) * hamming c d) + ((Δ : ℝ) * hamming c d) + ((Δ : ℝ) * hamming c d) + (2 * ((Δ : ℝ) * hamming c d)) := by
+      ≤ (-(q : ℝ) * ((hammingDist c d : ℕ) : ℝ)) + ((Δ : ℝ) * ((hammingDist c d : ℕ) : ℝ)) +
+        (2 * ((Δ : ℝ) * ((hammingDist c d : ℕ) : ℝ))) := by
     rw [hextra_eq, hsum_neg_q, hsum_Delta]
-    apply add_le_add
-    · apply add_le_add
-      · apply add_le_add
-        · exact le_refl _
-        · exact le_refl _
-      · exact hsum_disN_dis
-    · exact hsum_disN_agr
-  calc (∑ i, ∑ col, hamming
-        (if IsProper adj (Function.update c i col) then Function.update c i col else c)
-        (if IsProper adj (Function.update d i col) then Function.update d i col else d))
-      ≤ (n : ℝ) * (q : ℝ) * hamming c d + ∑ i, (if c i ≠ d i then (-(q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
+    linarith [hsum_dis_combined]
+  calc (∑ i, ∑ col, ((hammingDist (if IsProper adj (Function.update c i col) then Function.update c i col else c) (if IsProper adj (Function.update d i col) then Function.update d i col else d) : ℕ) : ℝ))
+      ≤ (n : ℝ) * (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + ∑ i, (if c i ≠ d i then (-(q : ℝ) + (Δ : ℝ) + ((disNeigh adj c d i).card : ℝ))
           else (2 * ((disNeigh adj c d i).card : ℝ))) := hle1
-    _ ≤ (n : ℝ) * (q : ℝ) * hamming c d + ((-(q : ℝ) * hamming c d) + ((Δ : ℝ) * hamming c d) + ((Δ : ℝ) * hamming c d) + (2 * ((Δ : ℝ) * hamming c d))) := by
+    _ ≤ (n : ℝ) * (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + ((-(q : ℝ) * ((hammingDist c d : ℕ) : ℝ)) + ((Δ : ℝ) * ((hammingDist c d : ℕ) : ℝ)) + (2 * ((Δ : ℝ) * ((hammingDist c d : ℕ) : ℝ)))) := by
         apply add_le_add_right
         exact hextra_le
-    _ = (n : ℝ) * (q : ℝ) * hamming c d - (q : ℝ) * hamming c d + 4 * (Δ : ℝ) * hamming c d := by ring
+    _ = (n : ℝ) * (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) - (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + 3 * (Δ : ℝ) * ((hammingDist c d : ℕ) : ℝ) := by ring
 
 /-- Path-coupling contraction for Glauber dynamics on proper
 colorings (Jerrum's bound): if every vertex has at most `Δ`
 neighbors, the expected Hamming distance after one coupled step is
-at most `(1 - 1/n + 4Δ/(n q))` times the current Hamming distance. -/
+at most `(1 - 1/n + 3Δ/(n q))` times the current Hamming distance. -/
 theorem glauber_hamming_contract {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q)] (hn : 0 < n) (hq : 0 < q)
     (adj : Fin n → Fin n → Bool)
     (hadj : ∀ i j, adj i j = true → adj j i = true)
     (Δ : ℕ) (hdeg : ∀ i, (Finset.univ.filter (fun j => adj i j = true)).card ≤ Δ)
     {c d : Fin n → Fin q} (hc : IsProper adj c) (hd : IsProper adj d) :
-    (∑ z, (glauberCouple adj c d z).toReal * hamming z.1 z.2) ≤
-      (1 - 1 / n + 4 * Δ / (n * q)) * hamming c d := by
+    (∑ z, (glauberCouple adj c d z).toReal * ((hammingDist z.1 z.2 : ℕ) : ℝ)) ≤
+      (1 - 1 / n + 3 * Δ / (n * q)) * ((hammingDist c d : ℕ) : ℝ) := by
   classical
-  have hexp := expect_couple adj c d (fun z => hamming z.1 z.2)
+  have hexp := expected_glauberCouple adj c d (fun z => ((hammingDist z.1 z.2 : ℕ) : ℝ))
   rw [Fintype.card_fin, Fintype.card_fin] at hexp
   rw [hexp]
   have htotal := total_bound adj hadj Δ hdeg c d hc hd
@@ -1184,12 +1145,10 @@ theorem glauber_hamming_contract {n q : ℕ} [Nonempty (Fin n)] [Nonempty (Fin q
   have hnq_pos : (0 : ℝ) < (n : ℝ) * (q : ℝ) := mul_pos hn_pos hq_pos
   have hw_nonneg : (0 : ℝ) ≤ 1 / ((n : ℝ) * (q : ℝ)) := by
     positivity
-  calc (1 / ((n : ℝ) * (q : ℝ))) * ∑ i, ∑ col, hamming
-        (if IsProper adj (Function.update c i col) then Function.update c i col else c)
-        (if IsProper adj (Function.update d i col) then Function.update d i col else d)
-      ≤ (1 / ((n : ℝ) * (q : ℝ))) * ((n : ℝ) * (q : ℝ) * hamming c d - (q : ℝ) * hamming c d + 4 * (Δ : ℝ) * hamming c d) := by
+  calc (1 / ((n : ℝ) * (q : ℝ))) * ∑ i, ∑ col, ((hammingDist (if IsProper adj (Function.update c i col) then Function.update c i col else c) (if IsProper adj (Function.update d i col) then Function.update d i col else d) : ℕ) : ℝ)
+      ≤ (1 / ((n : ℝ) * (q : ℝ))) * ((n : ℝ) * (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) - (q : ℝ) * ((hammingDist c d : ℕ) : ℝ) + 3 * (Δ : ℝ) * ((hammingDist c d : ℕ) : ℝ)) := by
         apply mul_le_mul_of_nonneg_left
         · exact htotal
         · exact hw_nonneg
-    _ = (1 - 1 / n + 4 * Δ / (n * q)) * hamming c d := by
+    _ = (1 - 1 / n + 3 * Δ / (n * q)) * ((hammingDist c d : ℕ) : ℝ) := by
         field_simp
