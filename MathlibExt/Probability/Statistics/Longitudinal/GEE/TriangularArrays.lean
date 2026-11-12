@@ -20,10 +20,11 @@ with different hypotheses and different normalizations.
 
 ## (a) iid clusters
 
-Cluster `i` contributes a score `S i` and all clusters share one law. Then the cluster size
-law is fixed too (identically distributed clusters cannot grow), and the classical
-`√n`-theory applies with the fixed variance `Var[S 0]`. For the linear cluster estimating
-equation `Ψₙ(β) = ∑_{i<n} (S i - m β)` with common cluster size `m ≠ 0`:
+Cluster `i` contributes a score `S i` and all clusters share one law. Their cluster-size
+distribution is therefore fixed, but realized sizes may vary and may be unbounded. Under
+the integrability and independence hypotheses below, the classical `√n`-theory applies with
+the fixed variance `Var[S 0]`. The results here cover the deterministic common-size special
+case: the linear cluster estimating equation `Ψₙ(β) = ∑_{i<n} (S i - m β)` with size `m ≠ 0`:
 
 * `linearEE_eq_zero_iff`: its unique root is `β̂ₙ = (∑_{i<n} S i) / (n m)`;
 * `linearEERoot_tendsto_ae` (consistency, strong law): `β̂ₙ → 𝔼[S 0] / m` almost surely;
@@ -65,10 +66,10 @@ Write `Mₙ = maxᵢ m n i` (`maxClusterSize`) and `Nₙ = ∑ᵢ m n i` (`total
   `dominantSizes` (cluster `0` has size `n`, the others size `1`) and variance proportional to
   size, cluster `0` keeps at least half the variance (`not_lindeberg_dominantSizes`) and the
   growth condition fails (`not_clusterGrowth_dominantSizes`). This shows the Lindeberg
-  condition failing, not asymptotic normality failing: with independent bounded residuals the
-  `dominantSizes` row total is a sum of `2n - 1` independent bounded terms and is still
-  asymptotically normal. Whether normality holds when `Mₙ` grows between `o(√Nₙ)` and `Θ(Nₙ)`
-  is not addressed here.
+  condition failing, not asymptotic normality failing: the `dominantSizes` row total can
+  still be asymptotically normal, for example when its `2n - 1` residuals are iid, bounded,
+  and have positive variance. Independence and boundedness alone do not suffice. Whether
+  normality holds when `Mₙ` grows between `o(√Nₙ)` and `Θ(Nₙ)` is not addressed here.
 * **No estimating-equation root.** For the binary-response (logistic-mean) cluster estimating
   function `binaryEE`, if every observation is a success the function is strictly positive,
   so it has no zero (`binaryEE_no_root`) and no root-defined estimator exists.
@@ -132,7 +133,8 @@ theorem clusterGrowth_balanced (s : ℕ → ℕ) (hs : ∀ n, 0 < s n)
   push_cast
   field_simp
 
-/-- Fixed cluster size (the only option for iid clusters) satisfies the growth condition. -/
+/-- A deterministic common cluster size, one iid-compatible special case, satisfies the
+growth condition. -/
 theorem clusterGrowth_const (s : ℕ) (hs : 0 < s) : ClusterGrowth (fun _ _ => s) := by
   refine clusterGrowth_balanced (fun _ => s) (fun _ => hs) ?_
   simpa [div_eq_mul_inv] using
