@@ -22,6 +22,8 @@ public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 * The limit of the residuals is singular: zero variance in the direction `√p`.
 * Non-vacuity: fair coin flips on `ℕ → Bool` satisfy every hypothesis of Pearson's theorem,
   giving the `χ²₁` limit; the fitted theorem with a zero-dimensional parameter space recovers it.
+* The public helpers `integral_comp_eq_sum_of_measureReal_preimage` and `memLp_comp_of_discrete`
+  on the coin and die fixtures, and on a law with a zero-probability cell.
 * One fitted parameter: the model `(1/3 + sin θ / 6, 1/3 - sin θ / 6, 1/3)` with uniform
   observations and the oracle efficient estimator `θ̂ = n^{-1/2} L(Rₙ)` gives `χ²_{3-1-1} = χ²₁`
   (nonzero tangent space, degree-of-freedom drop).
@@ -224,6 +226,34 @@ theorem identDistrib_rolls (k : ℕ) :
 theorem iIndepFun_rolls : iIndepFun (fun k (ω : ℕ → Fin 3) => ω k) rolls :=
   iIndepFun_infinitePi (X := fun _ i => i) fun _ => measurable_id
 
+/-! ### The public discrete-expectation helpers -/
+
+/-- `𝔼[X₀] = (0 + 1 + 2) / 3 = 1` for a uniform observation on three cells, computed with
+`integral_comp_eq_sum_of_measureReal_preimage` from the cell probabilities alone. -/
+example : ∫ ω : ℕ → Fin 3, (((ω 0 : Fin 3) : ℕ) : ℝ) ∂rolls = 1 := by
+  rw [integral_comp_eq_sum_of_measureReal_preimage (Y := fun ω : ℕ → Fin 3 => ω 0)
+    (g := fun i : Fin 3 => ((i : ℕ) : ℝ)) (measurable_pi_apply 0).aemeasurable
+    rolls_real_eval_zero]
+  simp only [Fin.sum_univ_three, model3_zero]
+  norm_num
+
+/-- The fair coin: `P(X₀ = true) = 𝔼[1{X₀ = true}] = 1/2`. -/
+example : ∫ ω : ℕ → Bool, (if ω 0 then (1 : ℝ) else 0) ∂flips = 1 / 2 := by
+  rw [integral_comp_eq_sum_of_measureReal_preimage (Y := fun ω : ℕ → Bool => ω 0)
+    (g := fun b : Bool => if b then (1 : ℝ) else 0) (measurable_pi_apply 0).aemeasurable
+    flips_real_eval_zero]
+  simp
+
+/-- Any function of a finite-valued observation is square integrable, including
+vector-valued ones. -/
+example : MemLp (fun ω : ℕ → Fin 3 => (((ω 0 : Fin 3) : ℕ) : ℝ)) 2 rolls :=
+  memLp_comp_of_discrete (Y := fun ω : ℕ → Fin 3 => ω 0) (measurable_pi_apply 0).aemeasurable
+    fun i => ((i : ℕ) : ℝ)
+
+example : MemLp (fun ω : ℕ → Bool => (if ω 0 then (1 : ℝ) else 0, (2 : ℝ))) 2 flips :=
+  memLp_comp_of_discrete (Y := fun ω : ℕ → Bool => ω 0) (measurable_pi_apply 0).aemeasurable
+    fun b => (if b then (1 : ℝ) else 0, (2 : ℝ))
+
 /-- The Pearson residuals at `θ₀ = 0` for the uniform observations. -/
 noncomputable abbrev res3 (n : ℕ) (ω : ℕ → Fin 3) : EuclideanSpace ℝ (Fin 3) :=
   pearsonResidual n (model3 0) (cellCount (fun k (ω : ℕ → Fin 3) => ω k) n ω)
@@ -298,6 +328,13 @@ theorem degenerate_hypotheses :
     fun h => by simpa using h false⟩
   cases b <;> simp
 
+/-- Unlike Pearson's theorem, the discrete-expectation helper allows zero-probability cells:
+with `p = (1, 0)` it gives `𝔼[g(X₀)] = 1 * g true + 0 * g false = g true`. -/
+example (g : Bool → ℝ) : ∫ _ : ℕ → Unit, g true ∂point = g true := by
+  rw [integral_comp_eq_sum_of_measureReal_preimage (Y := fun _ : ℕ → Unit => true) (g := g)
+    aemeasurable_const degenerate_hypotheses.1]
+  simp
+
 /-- **The positivity hypothesis cannot be dropped.** For `p = (1, 0)` all other hypotheses of
 `tendstoInDistribution_pearsonStatistic` hold (`degenerate_hypotheses`), and the statistic does
 not converge to `χ²_{k-1} = χ²₁`: it is identically `0`, and `χ²₁` has no atom at `0`. -/
@@ -318,8 +355,7 @@ example :
     rw [hfun]
     exact tendstoInDistribution_const aemeasurable_const
   have heq := tendstoInDistribution_unique _ h h0
-  have h1 : chiSquareMeasure 1 {0} = 0 :=
-    withDensity_absolutelyContinuous _ _ (Real.volume_singleton)
+  have h1 : chiSquareMeasure 1 {0} = 0 := chiSquareMeasure_singleton 1 0
   rw [Measure.map_id] at heq
   rw [heq] at h1
   simp at h1
