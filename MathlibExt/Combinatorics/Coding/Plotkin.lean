@@ -12,12 +12,15 @@ public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Real.Basic
+public import Mathlib.InformationTheory.Hamming
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Positivity
 
 import Mathlib.Tactic.Ring
 
 @[expose] public section
+
+namespace MathlibExt.Combinatorics.Coding.Plotkin
 
 /-! # The Plotkin bound
 
@@ -43,9 +46,14 @@ Hamming distance at least `d`, with `n < 2d`, has at most
 `2d / (2d - n)` codewords. -/
 theorem plotkin_bound {n d : ℕ} (hd : n < 2 * d)
     (C : Finset (Fin n → Fin 2))
-    (hC : ∀ x ∈ C, ∀ y ∈ C, x ≠ y →
-      d ≤ (Finset.univ.filter fun i => x i ≠ y i).card) :
+    (hC : ∀ x ∈ C, ∀ y ∈ C, x ≠ y → d ≤ hammingDist x y) :
     (C.card : ℝ) ≤ 2 * d / (2 * d - n) := by
+  -- Unfold the canonical Hamming distance to the filtered-coordinate count
+  -- used by the double-counting proof below.
+  have hC' : ∀ x ∈ C, ∀ y ∈ C, x ≠ y →
+      d ≤ (Finset.univ.filter fun i => x i ≠ y i).card := by
+    intro x hx y hy hne
+    exact hC x hx y hy hne
   have hdenom_pos : (0:ℝ) < 2 * (d:ℝ) - (n:ℝ) := by
     have h : (n:ℝ) < 2 * (d:ℝ) := by exact_mod_cast hd
     linarith
@@ -71,7 +79,7 @@ theorem plotkin_bound {n d : ℕ} (hd : n < 2 * d)
           apply Finset.sum_le_sum
           intro y hy
           rw [Finset.mem_erase] at hy
-          exact hC x hx y hy.2 (Ne.symm hy.1)
+          exact hC' x hx y hy.2 (Ne.symm hy.1)
         have h3 : ∑ y ∈ C.erase x, (Finset.univ.filter fun i => x i ≠ y i).card
             ≤ ∑ y ∈ C, (Finset.univ.filter fun i => x i ≠ y i).card := by
           apply Finset.sum_le_sum_of_subset
@@ -235,3 +243,5 @@ theorem plotkin_bound {n d : ℕ} (hd : n < 2 * d)
       linarith
     rw [le_div_iff₀ hdenom_pos]
     convert hfinal using 2
+
+end MathlibExt.Combinatorics.Coding.Plotkin
