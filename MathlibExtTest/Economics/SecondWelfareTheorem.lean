@@ -12,7 +12,8 @@ public import MathlibExt.Economics.SecondWelfareTheorem
 
 /-! One consumer, two goods, `u z = z 0 + z 1`: the hypotheses of the second welfare theorem
 hold at `x = (1, 1)`, which is supported by `p = (1, 1)`. At `p = (1, 0)`, `x = (0, 1)` (zero
-wealth, no cheaper bundle) is a quasi-equilibrium with transfers but not an equilibrium. -/
+wealth, no cheaper bundle) satisfies the quasi-equilibrium consumer condition but is not budget
+optimal. -/
 
 @[expose] public section
 
@@ -126,12 +127,12 @@ theorem test_pareto :
     exact lt_irrefl _ hlt
 
 -- Existence via the second welfare theorem (not by exhibiting p)
-example : ∃ p : Fin 2 → ℝ, p ≠ 0 ∧ IsQuasiEquilibriumWithTransfers
+example : ∃ p : Fin 2 → ℝ, p ≠ 0 ∧ IsQuasiSupportingPrice
     (fun _ : Fin 1 => fun z : Fin 2 → ℝ => z 0 + z 1) p (fun _ : Fin 1 => ![1, 1]) :=
-  exists_isQuasiEquilibriumWithTransfers test_hcont test_hqc test_hlns test_pareto
+  exists_isQuasiSupportingPrice test_hcont test_hqc test_hlns test_pareto
 
 -- 2. Directly: quasi-equilibrium with p = [1,1]
-example : IsQuasiEquilibriumWithTransfers
+example : IsQuasiSupportingPrice
     (fun _ : Fin 1 => fun z : Fin 2 → ℝ => z 0 + z 1)
     (![1, 1] : Fin 2 → ℝ) (fun _ : Fin 1 => ![1, 1]) := by
   intro i z hzX hutil
@@ -155,7 +156,7 @@ example : IsQuasiEquilibriumWithTransfers
   linarith
 
 -- 2. Directly: equilibrium with p = [1,1]
-example : IsEquilibriumWithTransfers
+example : IsBudgetOptimal
     (fun _ : Fin 1 => fun z : Fin 2 → ℝ => z 0 + z 1)
     (![1, 1] : Fin 2 → ℝ) (fun _ : Fin 1 => ![1, 1]) := by
   intro i z hzX hle
@@ -179,10 +180,10 @@ example : IsEquilibriumWithTransfers
   linarith
 
 -- 3. Quasi is weaker: p = [1,0], x = [0,1]
-example : IsQuasiEquilibriumWithTransfers
+example : IsQuasiSupportingPrice
     (fun _ : Fin 1 => fun z : Fin 2 → ℝ => z 0 + z 1)
     (![1, 0] : Fin 2 → ℝ) (fun _ : Fin 1 => ![0, 1])
-    ∧ ¬ IsEquilibriumWithTransfers
+    ∧ ¬ IsBudgetOptimal
     (fun _ : Fin 1 => fun z : Fin 2 → ℝ => z 0 + z 1)
     (![1, 0] : Fin 2 → ℝ) (fun _ : Fin 1 => ![0, 1]) := by
   constructor
@@ -228,5 +229,80 @@ example : IsQuasiEquilibriumWithTransfers
       · simp
     rw [hutil_vals.1, hutil_vals.2] at hle
     norm_num at hle
+
+/-! Full predicates: `p = (1, 1)` makes `x = (1, 1)` a price quasi-equilibrium with transfers,
+which `isEquilibriumWithTransfers_of_cheaper` upgrades to an equilibrium. Zero prices are
+excluded. -/
+
+theorem test_coord_zero : (![1, 1] : Fin 2 → ℝ) 0 = 1 := by simp
+
+theorem test_coord_one : (![1, 1] : Fin 2 → ℝ) 1 = 1 := by simp
+
+theorem test_value_eq (z : Fin 2 → ℝ) :
+    value ![1, 1] z = z 0 + z 1 := by
+  simp [value, Fin.sum_univ_two]
+
+theorem test_value_zero : value (![1, 1] : Fin 2 → ℝ) 0 = 0 := by
+  simp [test_value_eq]
+
+theorem test_value_alloc (i : Fin 1) :
+    value (![1, 1] : Fin 2 → ℝ) ((fun _ : Fin 1 => ![1, 1]) i) = 2 := by
+  rw [test_value_eq]
+  show (![1, 1] : Fin 2 → ℝ) 0 + (![1, 1] : Fin 2 → ℝ) 1 = 2
+  rw [test_coord_zero, test_coord_one]
+  norm_num
+
+theorem test_isQuasiEquilibriumWithTransfers :
+    IsQuasiEquilibriumWithTransfers
+      (fun _ : Fin 1 => fun z : Fin 2 → ℝ => z 0 + z 1)
+      ![1, 1] ![1, 1] (fun _ : Fin 1 => ![1, 1]) := by
+  refine ⟨?_, ?_, ?_⟩
+  · intro h
+    have h0 := congrFun h (0 : Fin 2)
+    simp at h0
+  · refine ⟨?_, ?_⟩
+    · intro i l
+      fin_cases l
+      · show (0:ℝ) ≤ ![1, 1] 0
+        rw [test_coord_zero]
+        norm_num
+      · show (0:ℝ) ≤ ![1, 1] 1
+        rw [test_coord_one]
+        norm_num
+    · rw [Fin.sum_univ_one]
+  · intro i z hzX hlt
+    rw [test_value_alloc i, test_value_eq z]
+    have hlt' : ((fun _ : Fin 1 => (![1, 1] : Fin 2 → ℝ)) i) 0
+        + ((fun _ : Fin 1 => (![1, 1] : Fin 2 → ℝ)) i) 1 < z 0 + z 1 := hlt
+    have h2 : ((fun _ : Fin 1 => (![1, 1] : Fin 2 → ℝ)) i) 0
+        + ((fun _ : Fin 1 => (![1, 1] : Fin 2 → ℝ)) i) 1 = 2 := by
+      show (![1, 1] : Fin 2 → ℝ) 0 + (![1, 1] : Fin 2 → ℝ) 1 = 2
+      rw [test_coord_zero, test_coord_one]
+      norm_num
+    rw [h2] at hlt'
+    linarith
+
+theorem test_isEquilibriumWithTransfers :
+    IsEquilibriumWithTransfers
+      (fun _ : Fin 1 => fun z : Fin 2 → ℝ => z 0 + z 1)
+      ![1, 1] ![1, 1] (fun _ : Fin 1 => ![1, 1]) := by
+  refine isEquilibriumWithTransfers_of_cheaper ?_ test_isQuasiEquilibriumWithTransfers ?_
+  · intro i
+    show ContinuousOn (fun z : Fin 2 → ℝ => z 0 + z 1) (consumptionSet (Fin 2))
+    exact ((continuous_apply (0 : Fin 2)).add (continuous_apply (1 : Fin 2))).continuousOn
+  · intro i
+    refine ⟨0, ?_, ?_⟩
+    · intro l
+      simp
+    · rw [test_value_zero, test_value_alloc i]
+      norm_num
+
+theorem test_zero_price_excluded :
+    ¬ IsQuasiEquilibriumWithTransfers
+      (fun _ : Fin 1 => fun z : Fin 2 → ℝ => z 0 + z 1)
+      ![1, 1] 0 (fun _ : Fin 1 => ![1, 1]) := by
+  intro h
+  obtain ⟨hpne, _, _⟩ := h
+  exact hpne rfl
 
 end MathlibExtTest.Economics.SecondWelfareTheorem

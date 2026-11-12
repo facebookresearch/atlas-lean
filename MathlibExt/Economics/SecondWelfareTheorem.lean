@@ -32,9 +32,13 @@ aggregate strictly-preferred set has nonempty interior and Mathlib's
 
 ## Main results
 
-* `exists_isQuasiEquilibriumWithTransfers`: second welfare theorem, supporting-price form.
-* `isEquilibriumWithTransfers_of_cheaper`: quasi-equilibrium plus cheaper bundles gives
-  equilibrium with transfers.
+* `exists_isQuasiEquilibriumWithTransfers`: second welfare theorem; a Pareto optimum is a price
+  quasi-equilibrium with transfers (`p ≠ 0`, feasible, strictly preferred bundles cost at least
+  as much).
+* `isEquilibriumWithTransfers_of_cheaper`: a quasi-equilibrium in which every consumer has a
+  strictly cheaper bundle is a price equilibrium with transfers.
+* `exists_isQuasiSupportingPrice`, `isBudgetOptimal_of_cheaper`: the same results stated with the
+  consumer conditions `IsQuasiSupportingPrice` and `IsBudgetOptimal` alone.
 
 ## References
 
@@ -74,16 +78,18 @@ nonnegative bundle there is a nonnegative bundle with strictly higher utility. -
 def LocallyNonsatiated {L : Type*} [Fintype L] (v : (L → ℝ) → ℝ) : Prop :=
   ∀ z ∈ consumptionSet L, ∀ ε > 0, ∃ z' ∈ consumptionSet L, dist z' z < ε ∧ v z < v z'
 
-/-- `(x, p)` is a price quasi-equilibrium with transfers (MWG Def. 16.D.1), the wealth of
-consumer `i` being `value p (x i)`: every nonnegative bundle strictly preferred to `x i` costs at
-least `value p (x i)`. -/
-def IsQuasiEquilibriumWithTransfers {I L : Type*} [Fintype L] (u : I → (L → ℝ) → ℝ)
+/-- Consumer condition of a price quasi-equilibrium with transfers (MWG Def. 16.D.1 (ii)), the
+wealth of consumer `i` being `value p (x i)`: every nonnegative bundle strictly preferred to `x i`
+costs at least `value p (x i)`. It says nothing about `p ≠ 0` or feasibility; see
+`IsQuasiEquilibriumWithTransfers`. -/
+def IsQuasiSupportingPrice {I L : Type*} [Fintype L] (u : I → (L → ℝ) → ℝ)
     (p : L → ℝ) (x : I → L → ℝ) : Prop :=
   ∀ i, ∀ z ∈ consumptionSet L, u i (x i) < u i z → value p (x i) ≤ value p z
 
-/-- `(x, p)` is a price equilibrium with transfers (MWG Def. 16.B.4, consumer part), the wealth
-of consumer `i` being `value p (x i)`: `x i` maximizes `u i` on its budget set. -/
-def IsEquilibriumWithTransfers {I L : Type*} [Fintype L] (u : I → (L → ℝ) → ℝ)
+/-- Consumer condition of a price equilibrium with transfers (MWG Def. 16.B.4 (ii)), the wealth
+of consumer `i` being `value p (x i)`: `x i` maximizes `u i` on its budget set. It says nothing
+about feasibility; see `IsEquilibriumWithTransfers`. -/
+def IsBudgetOptimal {I L : Type*} [Fintype L] (u : I → (L → ℝ) → ℝ)
     (p : L → ℝ) (x : I → L → ℝ) : Prop :=
   ∀ i, ∀ z ∈ consumptionSet L, value p z ≤ value p (x i) → u i z ≤ u i (x i)
 
@@ -158,17 +164,17 @@ private theorem mem_interior_consumptionSet_of_pos {L : Type*} [Finite L] {z : L
   have hsub2 := interior_maximal hsub hopen
   exact hsub2 hmem
 
-/-- Second fundamental welfare theorem, supporting-price form (MWG Prop. 16.D.1, exchange
-economy, with continuous utilities): a Pareto optimal allocation of an exchange economy with
-continuous, quasiconcave, locally nonsatiated utilities on `ℝ^L_+` is supported by a nonzero
-price vector as a price quasi-equilibrium with transfers. -/
-theorem exists_isQuasiEquilibriumWithTransfers {I L : Type*} [Fintype I] [Fintype L]
+/-- Supporting prices for a Pareto optimum (MWG Prop. 16.D.1, exchange economy, with continuous
+utilities): a Pareto optimal allocation of an exchange economy with continuous, quasiconcave,
+locally nonsatiated utilities on `ℝ^L_+` has a nonzero price vector satisfying the
+quasi-equilibrium consumer condition. -/
+theorem exists_isQuasiSupportingPrice {I L : Type*} [Fintype I] [Fintype L]
     [Nonempty L] {u : I → (L → ℝ) → ℝ} {ω : L → ℝ} {x : I → L → ℝ}
     (hcont : ∀ i, ContinuousOn (u i) (consumptionSet L))
     (hqc : ∀ i, QuasiconcaveOn ℝ (consumptionSet L) (u i))
     (hlns : ∀ i, LocallyNonsatiated (u i))
     (hx : IsParetoOptimal u ω x) :
-    ∃ p : L → ℝ, p ≠ 0 ∧ IsQuasiEquilibriumWithTransfers u p x := by
+    ∃ p : L → ℝ, p ≠ 0 ∧ IsQuasiSupportingPrice u p x := by
   -- Unpack Pareto
   obtain ⟨hfeas, hpareto⟩ := hx
   obtain ⟨hxX, hsum⟩ := hfeas
@@ -503,16 +509,16 @@ theorem exists_isQuasiEquilibriumWithTransfers {I L : Type*} [Fintype I] [Fintyp
     · intro i
       exact (hI ⟨i⟩).elim
 
-/-- From quasi-equilibrium to equilibrium (MWG Prop. 16.D.2): with continuous utilities, if every
-consumer has a strictly cheaper nonnegative bundle, then a price quasi-equilibrium with transfers
-is a price equilibrium with transfers. -/
-theorem isEquilibriumWithTransfers_of_cheaper {I L : Type*} [Fintype L]
+/-- From the quasi-equilibrium consumer condition to budget optimality (MWG Prop. 16.D.2): with
+continuous utilities and nonnegative bundles `x i`, if every consumer has a strictly cheaper
+nonnegative bundle, the quasi-equilibrium consumer condition implies budget optimality. -/
+theorem isBudgetOptimal_of_cheaper {I L : Type*} [Fintype L]
     {u : I → (L → ℝ) → ℝ} {p : L → ℝ} {x : I → L → ℝ}
     (hcont : ∀ i, ContinuousOn (u i) (consumptionSet L))
     (hxX : ∀ i, x i ∈ consumptionSet L)
-    (hq : IsQuasiEquilibriumWithTransfers u p x)
+    (hq : IsQuasiSupportingPrice u p x)
     (hcheap : ∀ i, ∃ z ∈ consumptionSet L, value p z < value p (x i)) :
-    IsEquilibriumWithTransfers u p x := by
+    IsBudgetOptimal u p x := by
   intro i z hzX hle
   have _ := hxX i
   by_contra hnge
@@ -577,5 +583,46 @@ theorem isEquilibriumWithTransfers_of_cheaper {I L : Type*} [Fintype L]
   have hval_lt : value p (h t₀) < value p (x i) := hcheap_path t₀ ht0_ioc
   have hval_le : value p (x i) ≤ value p (h t₀) := hq i (h t₀) ht0_mem hutil
   linarith
+
+/-- `(x, p)` is a price quasi-equilibrium with transfers for the aggregate endowment `ω`
+(MWG Def. 16.D.1, exchange economy): `p ≠ 0`, the allocation is feasible, and every nonnegative
+bundle strictly preferred to `x i` costs at least the wealth `value p (x i)`; these wealth levels
+add up to `value p ω`. -/
+def IsQuasiEquilibriumWithTransfers {I L : Type*} [Fintype I] [Fintype L]
+    (u : I → (L → ℝ) → ℝ) (ω p : L → ℝ) (x : I → L → ℝ) : Prop :=
+  p ≠ 0 ∧ IsFeasible ω x ∧ IsQuasiSupportingPrice u p x
+
+/-- `(x, p)` is a price equilibrium with transfers for the aggregate endowment `ω` (MWG Def. 16.B.4,
+exchange economy): the allocation is feasible and each `x i` maximizes `u i` on its budget set at
+wealth `value p (x i)`. -/
+def IsEquilibriumWithTransfers {I L : Type*} [Fintype I] [Fintype L]
+    (u : I → (L → ℝ) → ℝ) (ω p : L → ℝ) (x : I → L → ℝ) : Prop :=
+  IsFeasible ω x ∧ IsBudgetOptimal u p x
+
+/-- Second fundamental welfare theorem (MWG Prop. 16.D.1, exchange economy, with continuous
+utilities): a Pareto optimal allocation of an exchange economy with continuous, quasiconcave,
+locally nonsatiated utilities on `ℝ^L_+` is a price quasi-equilibrium with transfers for some
+price vector. -/
+theorem exists_isQuasiEquilibriumWithTransfers {I L : Type*} [Fintype I] [Fintype L]
+    [Nonempty L] {u : I → (L → ℝ) → ℝ} {ω : L → ℝ} {x : I → L → ℝ}
+    (hcont : ∀ i, ContinuousOn (u i) (consumptionSet L))
+    (hqc : ∀ i, QuasiconcaveOn ℝ (consumptionSet L) (u i))
+    (hlns : ∀ i, LocallyNonsatiated (u i))
+    (hx : IsParetoOptimal u ω x) :
+    ∃ p : L → ℝ, IsQuasiEquilibriumWithTransfers u ω p x := by
+  obtain ⟨p, hpne, hsupp⟩ := exists_isQuasiSupportingPrice hcont hqc hlns hx
+  exact ⟨p, hpne, hx.1, hsupp⟩
+
+/-- From quasi-equilibrium to equilibrium (MWG Prop. 16.D.2): with continuous utilities, a price
+quasi-equilibrium with transfers in which every consumer has a strictly cheaper nonnegative
+bundle is a price equilibrium with transfers. -/
+theorem isEquilibriumWithTransfers_of_cheaper {I L : Type*} [Fintype I] [Fintype L]
+    {u : I → (L → ℝ) → ℝ} {ω p : L → ℝ} {x : I → L → ℝ}
+    (hcont : ∀ i, ContinuousOn (u i) (consumptionSet L))
+    (hq : IsQuasiEquilibriumWithTransfers u ω p x)
+    (hcheap : ∀ i, ∃ z ∈ consumptionSet L, value p z < value p (x i)) :
+    IsEquilibriumWithTransfers u ω p x := by
+  obtain ⟨_, hfeas, hsupp⟩ := hq
+  exact ⟨hfeas, isBudgetOptimal_of_cheaper hcont hfeas.1 hsupp hcheap⟩
 
 end MathlibExt.Economics.SecondWelfareTheorem
