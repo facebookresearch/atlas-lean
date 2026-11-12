@@ -17,15 +17,19 @@ public import MathlibExt.Probability.Statistics.MultipleTesting.Bonferroni
 
 `m` endpoints (or subgroup outcomes) `j` share one binary treatment `T` and one finitely-valued
 covariate `X`; endpoint `j` has potential outcomes `Y₀ j, Y₁ j`. The causal null hypothesis for
-`j` is that its average treatment effect vanishes, `E[Y₁ j - Y₀ j] = 0`; `ateNulls μ Y₀ Y₁` is the
-set of endpoints for which it holds.
+`j` is that its average treatment effect vanishes and the contrast is integrable,
+`E[Y₁ j - Y₀ j] = 0` with `Integrable (Y₁ j - Y₀ j)`; `ateNulls μ Y₀ Y₁` is the
+set of endpoints for which it holds. The integrability part matters: a Bochner integral is `0`
+when the integrand is not integrable, so the integral alone cannot certify a zero ATE.
 
 A test can only see the law of the observed data `(T, X, Y)`, `Y = observed T Y₀ Y₁`. What a test
 can be calibrated for is therefore a null hypothesis about that law. We use the inverse
 probability weighting (IPW) contrast of the observed outcome,
 `ipwContrast μ T X Y = E[1_T Y / e(X) - 1_{Tᶜ} Y / (1 - e(X))]` with `e` the propensity score,
 and call the p-values *calibrated for the observed-data null* (`IsIPWNullCalibrated`) when `p j`
-is valid whenever the IPW contrast of endpoint `j`'s observed outcome vanishes.
+is valid whenever `j` is a true causal null and the IPW contrast of endpoint `j`'s observed
+outcome vanishes. Calibration is scoped to the causal nulls: false-null p-values need only
+measurability (and independence for BH), never validity.
 
 The bridge from the causal null to the observed-data null is the identification theorem
 `integral_ipw_ate` of `MathlibExt.Probability.Causality.CausalIdentification`: under consistency
@@ -38,9 +42,10 @@ p-values, the merged Benjamini–Hochberg and Bonferroni theorems are applied un
 
 * `ipwContrast μ T X Y`: the IPW contrast of an observed outcome `Y`, a functional of the
   observed-data law only.
-* `ateNulls μ Y₀ Y₁`: the endpoints whose average treatment effect is zero.
-* `IsIPWNullCalibrated μ T X Y p`: each `p j` is a valid p-value whenever the IPW contrast of the
-  observed outcome `Y j` vanishes.
+* `ateNulls μ Y₀ Y₁`: the endpoints whose average treatment effect is zero with integrable
+  contrast.
+* `IsIPWNullCalibrated μ T X Y₀ Y₁ p`: for each causal-null endpoint `j`, `p j` is a valid
+  p-value whenever the IPW contrast of the observed outcome `observed T (Y₀ j) (Y₁ j)` vanishes.
 
 ## Main results
 
@@ -111,20 +116,28 @@ noncomputable def ipwContrast (μ : Measure Ω) (T : Set Ω) (X : Ω → 𝒳) (
 
 open Classical in
 /-- The **true causal nulls**: the endpoints `j` whose average treatment effect
-`E[Y₁ j - Y₀ j]` is zero. -/
+`E[Y₁ j - Y₀ j]` is zero and whose contrast `Y₁ j - Y₀ j` is integrable. The integrability
+part is essential: a Bochner integral is `0` when the integrand is not integrable, so an
+endpoint with an undefined ATE must not be classified as a true causal null. -/
 noncomputable def ateNulls (μ : Measure Ω) (Y₀ Y₁ : Fin m → Ω → ℝ) : Finset (Fin m) :=
-  Finset.univ.filter fun j => ∫ ω, (Y₁ j ω - Y₀ j ω) ∂μ = 0
+  Finset.univ.filter fun j => ∫ ω, (Y₁ j ω - Y₀ j ω) ∂μ = 0 ∧
+    Integrable (fun ω => Y₁ j ω - Y₀ j ω) μ
 
-/-- The p-values `p` are **calibrated for the observed-data IPW null** of the observed outcomes
-`Y`: `p j` is a valid p-value whenever the IPW contrast of `Y j` vanishes. This is a property of
-the test and of the observed-data law; it says nothing about potential outcomes. -/
-def IsIPWNullCalibrated (μ : Measure Ω) (T : Set Ω) (X : Ω → 𝒳) (Y : Fin m → Ω → ℝ)
+/-- The p-values `p` are **calibrated for the observed-data IPW null** of the potential outcomes
+`Y₀, Y₁`: for every causal-null endpoint `j`, `p j` is a valid p-value whenever the IPW contrast
+of the observed outcome `observed T (Y₀ j) (Y₁ j)` vanishes. Calibration is scoped to the
+causal nulls: nothing is required of false-null p-values. This is a property of the test and
+of the observed-data law; it says nothing about potential outcomes beyond `ateNulls`. -/
+def IsIPWNullCalibrated (μ : Measure Ω) (T : Set Ω) (X : Ω → 𝒳) (Y₀ Y₁ : Fin m → Ω → ℝ)
     (p : Fin m → Ω → ℝ) : Prop :=
-  ∀ j, ipwContrast μ T X (Y j) = 0 → IsValidPValue μ (p j)
+  ∀ j ∈ ateNulls μ Y₀ Y₁, ipwContrast μ T X (observed T (Y₀ j) (Y₁ j)) = 0 →
+    IsValidPValue μ (p j)
 
-/-- Membership in the causal nulls: `j ∈ ateNulls μ Y₀ Y₁ ↔ E[Y₁ j - Y₀ j] = 0`. -/
+/-- Membership in the causal nulls: `j ∈ ateNulls μ Y₀ Y₁ ↔ E[Y₁ j - Y₀ j] = 0` with
+integrable contrast. -/
 theorem mem_ateNulls_iff {μ : Measure Ω} {Y₀ Y₁ : Fin m → Ω → ℝ} {j : Fin m} :
-    j ∈ ateNulls μ Y₀ Y₁ ↔ ∫ ω, (Y₁ j ω - Y₀ j ω) ∂μ = 0 := by
+    j ∈ ateNulls μ Y₀ Y₁ ↔ ∫ ω, (Y₁ j ω - Y₀ j ω) ∂μ = 0 ∧
+      Integrable (fun ω => Y₁ j ω - Y₀ j ω) μ := by
   simp [ateNulls]
 
 section Identification
@@ -142,8 +155,8 @@ theorem ipwContrast_observed_eq_integral [IsProbabilityMeasure μ] {T : Set Ω}
   integral_ipw_ate hT hX hY₀ hY₁ hY₀i hY₁i h
 
 /-- **The causal nulls carry valid p-values.** If every endpoint with zero average treatment
-effect is strongly ignorable given `X`
-and the p-values are calibrated for the observed-data IPW null of the observed outcomes, then
+effect (with integrable contrast) is strongly ignorable given `X`
+and the p-values are calibrated for the observed-data IPW null on the causal nulls, then
 `p j` is valid for every endpoint `j` with zero average treatment effect. Identification is the
 step `ATE_j = 0 → ipwContrast_j = 0`. -/
 theorem isValidPValue_of_mem_ateNulls [IsProbabilityMeasure μ] {T : Set Ω}
@@ -154,10 +167,10 @@ theorem isValidPValue_of_mem_ateNulls [IsProbabilityMeasure μ] {T : Set Ω}
     (hY₁i : ∀ j ∈ ateNulls μ Y₀ Y₁, Integrable (Y₁ j) μ)
     (hign : ∀ j ∈ ateNulls μ Y₀ Y₁, StronglyIgnorable μ T (fun ω => (Y₀ j ω, Y₁ j ω)) X)
     {p : Fin m → Ω → ℝ}
-    (hcal : IsIPWNullCalibrated μ T X (fun j => observed T (Y₀ j) (Y₁ j)) p) :
+    (hcal : IsIPWNullCalibrated μ T X Y₀ Y₁ p) :
     ∀ j ∈ ateNulls μ Y₀ Y₁, IsValidPValue μ (p j) := fun j hj =>
-  hcal j <| (ipwContrast_observed_eq_integral hT hX (hY₀ j hj) (hY₁ j hj) (hY₀i j hj)
-    (hY₁i j hj) (hign j hj)).trans (mem_ateNulls_iff.1 hj)
+  hcal j hj <| (ipwContrast_observed_eq_integral hT hX (hY₀ j hj) (hY₁ j hj) (hY₀i j hj)
+    (hY₁i j hj) (hign j hj)).trans (mem_ateNulls_iff.1 hj).1
 
 /-- **BH controls the FDR over the causal nulls.** Under strong ignorability given `X` of every
 endpoint with zero average treatment effect (nothing is assumed about the other endpoints), with
@@ -175,7 +188,7 @@ theorem integral_falseDiscoveryProportion_bhRejections_ateNulls_le [IsProbabilit
     (hign : ∀ j ∈ ateNulls μ Y₀ Y₁, StronglyIgnorable μ T (fun ω => (Y₀ j ω, Y₁ j ω)) X)
     {p : Fin m → Ω → ℝ}
     (hp : ∀ i, Measurable (p i)) (hpind : iIndepFun p μ)
-    (hcal : IsIPWNullCalibrated μ T X (fun j => observed T (Y₀ j) (Y₁ j)) p)
+    (hcal : IsIPWNullCalibrated μ T X Y₀ Y₁ p)
     (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     ∫ ω, falseDiscoveryProportion (ateNulls μ Y₀ Y₁) (bhRejections q fun i => p i ω) ∂μ ≤
       q * (ateNulls μ Y₀ Y₁).card / m :=
@@ -195,7 +208,7 @@ theorem measure_bonferroni_ateNulls_familywiseError_le [IsProbabilityMeasure μ]
     (hY₁i : ∀ j ∈ ateNulls μ Y₀ Y₁, Integrable (Y₁ j) μ)
     (hign : ∀ j ∈ ateNulls μ Y₀ Y₁, StronglyIgnorable μ T (fun ω => (Y₀ j ω, Y₁ j ω)) X)
     {p : Fin m → Ω → ℝ}
-    (hcal : IsIPWNullCalibrated μ T X (fun j => observed T (Y₀ j) (Y₁ j)) p)
+    (hcal : IsIPWNullCalibrated μ T X Y₀ Y₁ p)
     {α : ℝ} (hα₀ : 0 ≤ α) (hα₁ : α ≤ 1) :
     μ {ω | (bonferroniRejections α (fun i => p i ω) ∩ ateNulls μ Y₀ Y₁).Nonempty} ≤
       ENNReal.ofReal α :=
@@ -261,7 +274,7 @@ theorem integral_falseDiscoveryProportion_bhRejections_ateNulls_le_of_indep
     (hind : ∀ j ∈ ateNulls μ Y₀ Y₁,
       IndepFun (T.indicator (1 : Ω → ℝ)) (fun ω => (Y₀ j ω, Y₁ j ω)) μ)
     {p : Fin m → Ω → ℝ} (hp : ∀ i, Measurable (p i)) (hpind : iIndepFun p μ)
-    (hcal : IsIPWNullCalibrated μ T (fun _ : Ω => ()) (fun j => observed T (Y₀ j) (Y₁ j)) p)
+    (hcal : IsIPWNullCalibrated μ T (fun _ : Ω => ()) Y₀ Y₁ p)
     (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     ∫ ω, falseDiscoveryProportion (ateNulls μ Y₀ Y₁) (bhRejections q fun i => p i ω) ∂μ ≤
       q * (ateNulls μ Y₀ Y₁).card / m :=
@@ -296,11 +309,13 @@ theorem not_stronglyIgnorable_untreated {β : Type*} [MeasurableSpace β] (V : U
   have := (hpos () (by simp)).1
   simp [propensity] at this
 
-/-- The endpoint of the example is a true causal null: its ATE is `0`. -/
+/-- The endpoint of the example is a true causal null: its ATE is `0` with integrable
+contrast. -/
 theorem ateNulls_untreated :
     ateNulls (Measure.dirac ()) untreatedOutcome untreatedOutcome = Finset.univ := by
-  ext j
-  simp only [mem_ateNulls_iff, untreatedOutcome, sub_self, integral_zero, Finset.mem_univ]
+  refine Finset.eq_univ_of_forall fun j => ?_
+  rw [mem_ateNulls_iff]
+  exact ⟨by simp [untreatedOutcome], by simp [untreatedOutcome]⟩
 
 /-- **The failure, computed**: the IPW contrast of the observed outcome is `-1`, while the ATE is
 `0`. Identification fails, so the observed-data null is not the causal null. -/
@@ -313,8 +328,8 @@ theorem ipwContrast_untreated_eq_neg_one :
 example, vacuously: that null is false (`ipwContrast_untreated_eq_neg_one`). -/
 theorem isIPWNullCalibrated_untreated :
     IsIPWNullCalibrated (Measure.dirac ()) (∅ : Set Unit) (fun _ => ())
-      (fun j => observed ∅ (untreatedOutcome j) (untreatedOutcome j)) (fun _ _ => 0) := by
-  intro j hj
+      untreatedOutcome untreatedOutcome (fun _ _ => 0) := by
+  intro j _ hj
   rw [Subsingleton.elim j 0, ipwContrast_untreated_eq_neg_one] at hj
   norm_num at hj
 

@@ -19,7 +19,7 @@ public import Mathlib.MeasureTheory.Integral.Pi
   Endpoint `0` has a heterogeneous individual effect `±1` with average zero (the superpopulation
   analogue of Neyman's weak null, not Fisher's sharp null); endpoint `1` has ATE `2`. Coins `2`
   and `3` drive two independent, non-constant p-values: the null one is valid, the non-null one
-  is not, so calibration has to use the IPW contrast. `ateNulls` is the proper subset `{0}`, and
+  is not, so scoped calibration needs only the null endpoint. `ateNulls` is the proper subset `{0}`, and
   every hypothesis of the randomized BH theorem is discharged.
 * Computations of `ipwContrast`, `ateNulls`, `IsIPWNullCalibrated` on small examples.
 * The positivity-failure boundary: the computed IPW contrast `-1` against the ATE `0`, and FDR /
@@ -107,8 +107,11 @@ lemma integral_y1_sub_y0 (j : Fin 2) :
 is not. -/
 lemma ateNulls_trial : ateNulls trial y0 y1 = {0} := by
   ext j
-  rw [mem_ateNulls_iff, integral_y1_sub_y0, Finset.mem_singleton]
-  fin_cases j <;> norm_num [eff]
+  fin_cases j
+  · rw [mem_ateNulls_iff, integral_y1_sub_y0]
+    exact ⟨fun _ => by simp, fun _ => ⟨by norm_num [eff], Integrable.of_finite⟩⟩
+  · rw [mem_ateNulls_iff, integral_y1_sub_y0]
+    exact ⟨fun h => by norm_num [eff] at h, fun h => by norm_num at h⟩
 
 /-- Randomization: the treatment indicator is independent of each endpoint's potential
 outcomes, because they are functions of different coins. -/
@@ -190,18 +193,16 @@ lemma not_isValidPValue_pval_one : ¬ IsValidPValue trial (pval 1) := by
   have := (ENNReal.ofReal_le_ofReal_iff (by norm_num)).1 this
   norm_num at this
 
-/-- The p-values are calibrated for the observed-data IPW null. Endpoint `1` needs the contrast:
-its p-value is invalid, but its IPW contrast is `2 ≠ 0`. -/
+/-- The p-values are calibrated for the observed-data IPW null, scoped to the causal nulls.
+Endpoint `1` is not a causal null, so nothing is required of its (invalid) p-value, whatever
+its IPW contrast; endpoint `0` is the only causal null and its p-value is valid. -/
 lemma isIPWNullCalibrated_trial :
-    IsIPWNullCalibrated trial treated (fun _ => ()) (fun j => observed treated (y0 j) (y1 j))
-      pval := by
-  intro j hj
-  fin_cases j
-  · exact isValidPValue_pval_zero
-  · have := ipwContrast_trial 1
-    simp only [Fin.mk_one] at hj
-    rw [hj] at this
-    norm_num [eff] at this
+    IsIPWNullCalibrated trial treated (fun _ => ()) y0 y1 pval := by
+  intro j hj _
+  rw [ateNulls_trial] at hj
+  have hj0 : j = 0 := Finset.mem_singleton.1 hj
+  subst hj0
+  exact isValidPValue_pval_zero
 
 /-- **Non-vacuity of the randomized BH theorem**: two endpoints, one causal null and one with ATE
 `2`, independent non-constant p-values, every hypothesis discharged. The bound is `q / 2`. -/
