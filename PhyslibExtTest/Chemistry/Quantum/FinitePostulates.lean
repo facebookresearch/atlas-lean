@@ -8,9 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.Chemistry.Quantum.FinitePostulates
-import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Analysis.Normed.Algebra.MatrixExponential
-import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Analysis.SpecialFunctions.Exponential
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Data.Fin.VecNotation
@@ -23,28 +21,16 @@ import Mathlib.Tactic.Ring
 /-!
 # Finite-dimensional quantum postulate checks
 
-Concrete consumers of `PhyslibExt.Chemistry.Quantum.FinitePostulates`: a two-state Born rule,
-the Pauli matrices, a Robertson-inequality instance, Pauli time evolution, Pauli-`X`
-eigenvectors, the trace argument, and a simultaneous diagonalization.
+Concrete consumers of `PhyslibExt.Chemistry.Quantum.FinitePostulates`: the Pauli matrices,
+Pauli time evolution, Pauli-`X` eigenvectors, the trace argument, and a simultaneous
+diagonalization. The spectral decomposition check uses Mathlib's canonical spectral theorem.
 
 ## i. Overview
 
 These are elaboration and exact-computation checks, not new results. The Pauli matrices are
 `σx = !![0, 1; 1, 0]`, `σy = !![0, -I; I, 0]`, and `σz = !![1, 0; 0, -1]` over `ℂ`.
-
-The Robertson check in section C uses this variance convention. For a unit state `ψ` and an
-observable `A`, the expectation is `⟪A ψ, ψ⟫ = star (A *ᵥ ψ) ⬝ᵥ ψ`, and the variance is the
-centred squared Euclidean norm `∑ i, ‖(A *ᵥ ψ - ⟪A ψ, ψ⟫ • ψ) i‖ ^ 2`. For Hermitian `A`
-the expectation is real, and the agreement of this variance with MathlibExt's
-`RobertsonUncertainty.variance` on unit states is a mathematical identification under the
-Euclidean-space representation (coordinate vectors as elements of `EuclideanSpace ℂ (Fin 2)`,
-the coordinate sum as the squared norm, and the dot product as the inner product); this file
-and `PhyslibExt.Chemistry.Quantum.FinitePostulates` do not prove that conversion. The check is
-an instance test for `σx`, `σz` in `ψ = ![1, 0]`, and it is degenerate: the variances of `σx`
-and `σz` are `1` and `0` and the commutator expectation is `0`, so the checked inequality reads
-`1 * 0 ≥ 0`; it exercises neither a nonzero uncertainty bound nor the general Robertson theorem.
-The state is retained because the contract pinned it. The general Robertson inequality is
-`MathlibExt.Analysis.InnerProductSpace.RobertsonUncertainty.robertson`; it is not re-proved.
+Born-probability checks are in `PhyslibExtTest.Quantum.FiniteState`, using the canonical
+`Quantum.FiniteState` API. This file makes no uncertainty-inequality claim.
 
 ## ii. Key results
 
@@ -52,20 +38,18 @@ No new definitions or results are introduced here.
 
 ## iii. Table of contents
 
-- A. Born rule for a two-state superposition
-- B. Pauli matrices
-- C. Robertson inequality for `σx`, `σz`
-- D. Pauli time evolution
-- E. Pauli-`X` eigenvectors
-- F. Trace argument
-- G. Simultaneous diagonalization
+- A. Pauli matrices
+- B. Pauli time evolution
+- C. Pauli-`X` eigenvectors
+- D. Trace argument
+- E. Simultaneous diagonalization
 
 ## iv. References
 
 - `PhyslibExt.Chemistry.Quantum.FinitePostulates`
-- `MathlibExt.Analysis.InnerProductSpace.RobertsonUncertainty`
+- `Matrix.IsHermitian.spectral_theorem`
 
-## A. Born rule for a two-state superposition
+## A. Pauli matrices
 -/
 
 open scoped Matrix
@@ -73,31 +57,6 @@ open scoped Matrix
 local notation "σx" => (!![0, 1; 1, 0] : Matrix (Fin 2) (Fin 2) ℂ)
 local notation "σy" => (!![0, -Complex.I; Complex.I, 0] : Matrix (Fin 2) (Fin 2) ℂ)
 local notation "σz" => (!![1, 0; 0, -1] : Matrix (Fin 2) (Fin 2) ℂ)
-local notation "ψ₊" => (![1 / Real.sqrt 2, 1 / Real.sqrt 2] : Fin 2 → ℂ)
-local notation "ψ₀" => (![1, 0] : Fin 2 → ℂ)
-
-/-- `ψ₊ = ![1 / √2, 1 / √2]` is a unit vector. -/
-example : star ψ₊ ⬝ᵥ ψ₊ = 1 := by
-  have h : ((Real.sqrt 2 : ℝ) : ℂ)⁻¹ * ((Real.sqrt 2 : ℝ) : ℂ)⁻¹ = 1 / 2 := by
-    rw [← mul_inv, ← Complex.ofReal_mul, Real.mul_self_sqrt zero_le_two]
-    norm_num
-  norm_num [dotProduct, Fin.sum_univ_two, h]
-
-/-- In the computational basis (`U = 1`), both Born probabilities of `ψ₊` are `1 / 2`. -/
-example :
-    ‖((1 : Matrix (Fin 2) (Fin 2) ℂ)ᴴ *ᵥ ψ₊) 0‖ ^ 2 = 1 / 2 ∧
-      ‖((1 : Matrix (Fin 2) (Fin 2) ℂ)ᴴ *ᵥ ψ₊) 1‖ ^ 2 = 1 / 2 := by
-  simp
-
-/-- The two Born probabilities of `ψ₊` sum to `1`, by `born_probabilities_sum_eq_one`. -/
-example : ∑ i, ‖((1 : Matrix (Fin 2) (Fin 2) ℂ)ᴴ *ᵥ ψ₊) i‖ ^ 2 = 1 :=
-  Chemistry.Quantum.born_probabilities_sum_eq_one 1 (one_mem _) _ (by
-    have h : ((Real.sqrt 2 : ℝ) : ℂ)⁻¹ * ((Real.sqrt 2 : ℝ) : ℂ)⁻¹ = 1 / 2 := by
-      rw [← mul_inv, ← Complex.ofReal_mul, Real.mul_self_sqrt zero_le_two]
-      norm_num
-    norm_num [dotProduct, Fin.sum_univ_two, h])
-
-/-! ## B. Pauli matrices -/
 
 /-- `σx` is Hermitian. -/
 example : Matrix.IsHermitian σx :=
@@ -123,39 +82,7 @@ example : σx * σz - σz * σx = -2 * Complex.I • σy := by
   ext i j
   fin_cases i <;> fin_cases j <;> norm_num
 
-/-! ## C. Robertson inequality for `σx`, `σz` -/
-
-/-- `ψ₀ = ![1, 0]` is a unit vector. -/
-example : star ψ₀ ⬝ᵥ ψ₀ = 1 := by
-  simp [dotProduct]
-
-/-- Variance of `σx` in `ψ₀`: the expectation `⟪σx ψ₀, ψ₀⟫` is `0`, and the centred
-squared norm is `1`. -/
-example :
-    star (σx *ᵥ ψ₀) ⬝ᵥ ψ₀ = 0 ∧
-      ∑ i, ‖(σx *ᵥ ψ₀ - (star (σx *ᵥ ψ₀) ⬝ᵥ ψ₀) • ψ₀) i‖ ^ 2 = 1 := by
-  simp [dotProduct, Fin.sum_univ_two]
-
-/-- Variance of `σz` in `ψ₀`: the expectation `⟪σz ψ₀, ψ₀⟫` is `1`, and the centred
-squared norm is `0`, since `ψ₀` is an eigenvector of `σz`. -/
-example :
-    star (σz *ᵥ ψ₀) ⬝ᵥ ψ₀ = 1 ∧
-      ∑ i, ‖(σz *ᵥ ψ₀ - (star (σz *ᵥ ψ₀) ⬝ᵥ ψ₀) • ψ₀) i‖ ^ 2 = 0 := by
-  simp [dotProduct, Fin.sum_univ_two]
-
-/-- The commutator expectation `⟪[σx, σz] ψ₀, ψ₀⟫` is `0`. -/
-example : star ((σx * σz - σz * σx) *ᵥ ψ₀) ⬝ᵥ ψ₀ = 0 := by
-  simp [dotProduct, Fin.sum_univ_two]
-
-/-- Robertson inequality instance:
-`Var(σx) * Var(σz) ≥ (1 / 4) * ‖⟪[σx, σz] ψ₀, ψ₀⟫‖ ^ 2`, here `1 * 0 ≥ 0`. -/
-example :
-    (1 / 4 : ℝ) * ‖star ((σx * σz - σz * σx) *ᵥ ψ₀) ⬝ᵥ ψ₀‖ ^ 2 ≤
-      (∑ i, ‖(σx *ᵥ ψ₀ - (star (σx *ᵥ ψ₀) ⬝ᵥ ψ₀) • ψ₀) i‖ ^ 2) *
-        ∑ i, ‖(σz *ᵥ ψ₀ - (star (σz *ᵥ ψ₀) ⬝ᵥ ψ₀) • ψ₀) i‖ ^ 2 := by
-  simp [dotProduct, Fin.sum_univ_two]
-
-/-! ## D. Pauli time evolution -/
+/-! ## B. Pauli time evolution -/
 
 /-- `exp (-(t / ħ) • (I • σz))` is unitary for every real `t` and `ħ ≠ 0`, by
 `unitary_time_evolution`. -/
@@ -198,7 +125,7 @@ example (ħ : ℝ) (hħ : ħ ≠ 0) :
   rw [hdiag, hneg, hpos, Matrix.diagonal_fin_two]
   rfl
 
-/-! ## E. Pauli-`X` eigenvectors -/
+/-! ## C. Pauli-`X` eigenvectors -/
 
 /-- `![1, 1]` is an eigenvector of `σx` with eigenvalue `1`. -/
 example : σx *ᵥ ![1, 1] = (1 : ℂ) • ![1, 1] := by
@@ -214,14 +141,18 @@ example : σx *ᵥ ![1, -1] = (-1 : ℂ) • ![1, -1] := by
 example : star (![1, 1] : Fin 2 → ℂ) ⬝ᵥ ![1, -1] = 0 := by
   simp [dotProduct]
 
-/-- `spectral_orthonormal_eigenbasis` applies to `σx`. -/
+/-- Mathlib's spectral theorem decomposes `σx` using a unitary eigenbasis and real eigenvalues. -/
 example :
     ∃ U ∈ Matrix.unitaryGroup (Fin 2) ℂ, ∃ d : Fin 2 → ℝ,
-      Uᴴ * σx * U = Matrix.diagonal (fun i => (d i : ℂ)) :=
-  Chemistry.Quantum.spectral_orthonormal_eigenbasis _
-    (Matrix.IsHermitian.ext fun i j => by fin_cases i <;> fin_cases j <;> simp)
+      σx = U * Matrix.diagonal (fun i => (d i : ℂ)) * Uᴴ := by
+  have hX : Matrix.IsHermitian σx :=
+    Matrix.IsHermitian.ext fun i j => by fin_cases i <;> fin_cases j <;> simp
+  refine ⟨hX.eigenvectorUnitary, hX.eigenvectorUnitary.2, hX.eigenvalues, ?_⟩
+  refine hX.spectral_theorem.trans ?_
+  rw [Unitary.conjStarAlgAut_apply, Matrix.star_eq_conjTranspose]
+  rfl
 
-/-! ## F. Trace argument -/
+/-! ## D. Trace argument -/
 
 /-- The trace of the commutator `[σx, σz]` vanishes. -/
 example : Matrix.trace (σx * σz - σz * σx) = 0 := by
@@ -242,7 +173,7 @@ example (ħ : ℝ) (hħ : ħ ≠ 0) :
     ¬ ∃ X P : Matrix (Fin 2) (Fin 2) ℂ, X * P - P * X = Complex.I • (ħ : ℂ) • 1 :=
   fun ⟨X, P, h⟩ => Chemistry.Quantum.no_finite_dim_canonical_commutator two_pos ħ hħ X P h
 
-/-! ## G. Simultaneous diagonalization -/
+/-! ## E. Simultaneous diagonalization -/
 
 /-- `simultaneous_orthonormal_eigenbasis` applies to the commuting, non-diagonal Hermitian pair
 `σx` and `!![2, 1; 1, 2]`. -/
