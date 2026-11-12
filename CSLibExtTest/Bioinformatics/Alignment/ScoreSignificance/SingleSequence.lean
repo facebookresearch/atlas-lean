@@ -39,8 +39,17 @@ example : maxSegScore [] = 0 := rfl
 -- boundary: no positive score
 example : maxSegScore [-1, -2, 0] = 0 :=
   maxSegScore_eq_zero_of_nonpos (by norm_num)
--- agreement with Kadane on a nonempty input whose best run is negative
-example : maxSegScore [-3, -1] = max 0 (-1) := by norm_num [maxSegScore, walkMax]
+-- a nonempty input whose best run is negative: the empty run wins
+example : maxSegScore [-3, -1] = 0 := by norm_num [maxSegScore, walkMax]
+-- agreement with Kadane: a real `IsMaxSubarraySum` witness from the Kadane scan
+example : maxSegScore [-3, -1] = max 0 (-1) := by
+  have hk : (Cslib.Algorithms.Lean.TimeM.maxSubarraySum [(-3 : ℝ), -1]).ret = some (-1) := by
+    norm_num [Cslib.Algorithms.Lean.TimeM.maxSubarraySum, Cslib.Algorithms.Lean.TimeM.kadaneScan]
+  exact maxSegScore_eq_max_zero
+    ((Cslib.Algorithms.Lean.TimeM.maxSubarraySum_ret_eq_some_iff _ _).1 hk)
+-- `Mₙ` is the maximum of the reflected walk over prefixes
+example : ∃ p, p <+: [1, -2, 3] ∧ lindley p = maxSegScore [1, -2, 3] :=
+  (maxSegScore_eq_max_lindley _).2
 
 -- first ladder epoch `τ₊ = 2`, height `1`
 example : IsFirstLadder [-1, 2] := by
@@ -91,6 +100,19 @@ example : ∃! θ, 0 < θ ∧ scoreMGF q₀ f₀ θ = 1 :=
 
 theorem log_goldenRatio_nonneg : 0 ≤ log goldenRatio := log_nonneg one_lt_goldenRatio.le
 
+theorem log_goldenRatio_pos : 0 < log goldenRatio := log_pos one_lt_goldenRatio
+
+-- the unique positive Cramér root of `+1` / `-2` is `log φ`
+example : ∃! θ, 0 < θ ∧ scoreMGF q₀ f₀ θ = 1 := by
+  have hu := existsUnique_scoreMGF_eq_one f₀ hq₀ (fun _ => by norm_num [q₀])
+    (by rw [mean_f₀]; norm_num) ⟨true, by norm_num [f₀]⟩
+  exact ⟨log goldenRatio, ⟨log_goldenRatio_pos, scoreMGF_log_goldenRatio⟩,
+    fun θ hθ => hu.unique hθ ⟨log_goldenRatio_pos, scoreMGF_log_goldenRatio⟩⟩
+
+example (θ : ℝ) (h0 : 0 < θ) (h : scoreMGF q₀ f₀ θ = 1) : θ = log goldenRatio :=
+  (existsUnique_scoreMGF_eq_one f₀ hq₀ (fun _ => by norm_num [q₀]) (by rw [mean_f₀]; norm_num)
+    ⟨true, by norm_num [f₀]⟩).unique ⟨h0, h⟩ ⟨log_goldenRatio_pos, scoreMGF_log_goldenRatio⟩
+
 -- the exponential tail of the walk maximum, uniformly in the horizon
 example (n : ℕ) (t : ℝ) :
     scoreProb q₀ f₀ n (fun l => t ≤ walkMax l) ≤ exp (-log goldenRatio * t) :=
@@ -126,6 +148,19 @@ example : scoreProb q₀ f₀ 2 (fun l => 1 ≤ walkMax l) = ∑ k ∈ Finset.ra
     scoreExpect q₀ f₀ k (fun u =>
       if IsFirstLadder u then scoreProb q₀ f₀ (2 - k) (fun v => 1 - u.sum ≤ walkMax v) else 0) :=
   scoreProb_le_walkMax_eq_sum f₀ one_pos 2
+
+-- regeneration at the first ladder epoch: (height on `{τ₊ = 1}`) × (walk maximum afterwards)
+open Classical in
+example : scoreExpect q₀ f₀ 3 (fun l =>
+      (if IsFirstLadder (l.take 1) then (l.take 1).sum else 0) * walkMax (l.drop 1)) =
+    scoreExpect q₀ f₀ 1 (fun u => if IsFirstLadder u then u.sum else 0) *
+      scoreExpect q₀ f₀ (3 - 1) walkMax :=
+  scoreExpect_firstLadder_regeneration f₀ (by norm_num) (fun u => u.sum) walkMax
+
+-- independent blocks: first score positive, and the remaining walk reaches `1`
+example : scoreProb q₀ f₀ 3 (fun l => (0 < (l.take 1).sum) ∧ 1 ≤ walkMax (l.drop 1)) =
+    scoreProb q₀ f₀ 1 (fun u => 0 < u.sum) * scoreProb q₀ f₀ (3 - 1) (fun v => 1 ≤ walkMax v) :=
+  scoreProb_take_and_drop f₀ (by norm_num) (fun u => 0 < u.sum) (fun v => 1 ≤ walkMax v)
 
 -- the first two ladder segments are iid: `P(τ₁ = 1, H₁ = 1, τ₂ - τ₁ = 3, H₂ = 1)` factorizes
 example : scoreProb q₀ f₀ 4 (fun l => (IsFirstLadder (l.take 1) ∧ (l.take 1).sum = 1) ∧

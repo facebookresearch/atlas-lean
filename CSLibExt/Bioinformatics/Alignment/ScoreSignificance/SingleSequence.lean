@@ -39,8 +39,9 @@ value law `P(M ≥ log n / θ + x) ≈ 1 - exp(-K e^{-θ x})`, are separate resu
   equation `P(max_{j ≤ n} S_j ≥ t) = ∑_{k ≤ n} E[P_{n-k}(max ≥ t - H); τ₊ = k]`, so the tail of
   the maximum is governed by the ladder-height law. `scoreProb_le_lindley`: `Wₙ` has the law of
   `max_{k ≤ n} S_k`.
-* Exponential tail at the Cramér root. `existsUnique_scoreMGF_eq_one`: for `E[X] < 0` and a
-  positive score there is a unique `θ > 0` with `E[e^{θX}] = 1`.
+* Exponential tail at the Cramér root. `existsUnique_scoreMGF_eq_one`: for `E[X] < 0`, a
+  positive score, and every letter of positive probability (inherited from
+  `existsUnique_pairMGF_eq_one`) there is a unique `θ > 0` with `E[e^{θX}] = 1`.
   `scoreProb_le_walkMax_le`: `P(max_{k ≤ n} S_k ≥ t) ≤ e^{-θ t}` uniformly in `n` (finite-horizon
   Cramér–Lundberg); `scoreProb_le_maxSegScore_le`: `P(Mₙ ≥ t) ≤ n e^{-θ t}`;
   `sum_scoreExpect_firstLadder_exp_le_one`: `∑_{k ≤ n} E[e^{θ H}; τ₊ = k] ≤ 1`.
@@ -58,6 +59,13 @@ The probability space is the finite product: `scoreExpect q f n F` is
 root is `Cslib.Bioinformatics.Motifs.PWM.existsUnique_pairMGF_eq_one` applied to the score
 `s a b = f a` (`scoreMGF_eq_pairMGF`). Run-sum specifications reuse `List.IsInfix` and Kadane's
 `Cslib.Algorithms.Lean.TimeM.IsMaxSubarraySum`, which allows only nonempty runs.
+
+Reuse search (base `53666a3c1`): `CSLibExt`, `CSLibExtTest`, the `cslib` package and Mathlib were
+searched for Kadane, maximum subarray / prefix / suffix sums, Lindley, ladder epochs and heights,
+reflected walks and moment-generating-function roots. Found and reused: `IsMaxSubarraySum`,
+`bgLik`, `pairMGF` and `existsUnique_pairMGF_eq_one`. Nothing was found for the Lindley walk,
+ladder epochs or the walk maximum (`walkMax`, with `S₀ = 0`, differs from the nonempty
+`IsMaxPrefixSum` of the divide-and-conquer maximum subarray).
 
 Not covered: the case `E[X] = 0` of `tendsto_scoreProb_le_walkMax_of_mean_pos` (oscillation of a
 mean-zero walk); the infinite-horizon limits `P(sup_n S_n ≥ t) ~ C e^{-θ t}`, which need the key
@@ -487,7 +495,8 @@ theorem scoreMGF_eq_pairMGF (hq : IsDist q) (θ : ℝ) :
   rw [← sum_mul, ← mul_sum, hq.2, mul_one]
 
 /-- **The Cramér (Karlin–Altschul) root** (Karlin and Altschul 1990): if the expected score is
-negative and some score is positive, there is a unique `θ > 0` with `E[e^{θX}] = 1`. This is
+negative, some score is positive, and every letter has positive probability (inherited from
+`existsUnique_pairMGF_eq_one`), there is a unique `θ > 0` with `E[e^{θX}] = 1`. This is
 `Cslib.Bioinformatics.Motifs.PWM.existsUnique_pairMGF_eq_one` applied to `s a b = f a`. -/
 theorem existsUnique_scoreMGF_eq_one (hq : IsDist q) (hq0 : ∀ b, 0 < q b)
     (hneg : ∑ b, q b * f b < 0) (hpos : ∃ b, 0 < f b) :
@@ -824,8 +833,9 @@ theorem scoreProb_maxSegScore_lt_antitone (hq : IsDist q) (t : ℝ) :
     _ = _ := by rw [← sum_mul, hq.2, one_mul]
 
 /-- **The maximal segment score grows without bound** as soon as positive scores have positive
-probability: `P(Mₙ ≥ t) → 1` for every `t`. (Under negative drift it grows like `log n / θ`; the
-walk maximum itself stays tight, `scoreProb_le_walkMax_le`.) -/
+probability: `P(Mₙ ≥ t) → 1` for every `t`. Under negative drift the walk maximum itself stays
+tight (`scoreProb_le_walkMax_le`); the growth rate `Mₙ / log n → 1 / θ` is not proved here (see
+Karlin and Dembo 1992). -/
 theorem tendsto_scoreProb_le_maxSegScore (hq : IsDist q) {b₀ : β} (hb₀ : 0 < q b₀)
     (hf₀ : 0 < f b₀) (t : ℝ) :
     Filter.Tendsto (fun n => scoreProb q f n (fun l => t ≤ maxSegScore l)) Filter.atTop
@@ -920,11 +930,6 @@ theorem scoreExpect_sq_sub_eq (hq : IsDist q) (n : ℕ) :
     scoreExpect q f n (fun l => (l.sum - n * ∑ b, q b * f b) ^ 2) =
       n * ∑ b, q b * (f b - ∑ b, q b * f b) ^ 2 := by
   set μ := ∑ b, q b * f b with hμ
-  have hc : scoreExpect q f n (fun l => l.sum - n * μ) = 0 := by
-    have := scoreExpect_add q f n (fun l => l.sum) (fun _ => -(n * μ))
-    rw [scoreExpect_const f hq, scoreExpect_sum_eq f hq] at this
-    rw [← sub_self ((n : ℝ) * μ)]
-    convert this using 1
   induction n with
   | zero => simp [scoreExpect_zero]
   | succ n ih =>
@@ -940,7 +945,7 @@ theorem scoreExpect_sq_sub_eq (hq : IsDist q) (n : ℕ) :
             ((2 * (f a - μ)) * (l.sum - n * μ) + (l.sum - n * μ) ^ 2)) fun l _ => by
               simp only [List.sum_cons]; push_cast; ring,
           scoreExpect_add, scoreExpect_const f hq, scoreExpect_add, scoreExpect_const_mul, hc',
-          ih hc']
+          ih]
         ring
       simp only [this, mul_add, sum_add_distrib, ← sum_mul, hq.2, one_mul]
       push_cast; ring
