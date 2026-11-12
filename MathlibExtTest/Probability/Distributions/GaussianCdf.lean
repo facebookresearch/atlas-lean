@@ -12,6 +12,7 @@ public import MathlibExt.Probability.Distributions.GaussianCdf
 public import Mathlib.MeasureTheory.Measure.Dirac.Basic
 public import Mathlib.MeasureTheory.Measure.Dirac.Def
 public import Mathlib.MeasureTheory.Measure.Real
+public import MathlibExt.Probability.CdfContinuityPoints
 
 /-!
 # Tests for continuity of the Gaussian cdf
@@ -139,6 +140,26 @@ example :
   have h1 : (gaussianReal 0 1).real Set.univ = 1 := by simp
   rw [h1, hIoi] at htot
   rw [cdf_eq_real]
+  linarith
+
+/-- Use: symmetry at `x = 1` in both directions. -/
+example : cdf (gaussianReal 0 1) (-1) + cdf (gaussianReal 0 1) 1 = 1 := by
+  rw [cdf_gaussianReal_neg]
+  ring
+
+/-- Boundary: at `x = 1` the cdf is strictly above `1 / 2`, so the identity is not vacuous. -/
+example : cdf (gaussianReal 0 1) 0 < cdf (gaussianReal 0 1) 1 := by
+  have hIoc := MathlibExt.Probability.CdfContinuityPoints.measure_Ioc_eq_ofReal_cdf
+    (gaussianReal 0 1) 0 1
+  have hvol : volume (Set.Ioc (0 : ℝ) 1) ≠ 0 := by
+    rw [Real.volume_Ioc]
+    simp
+  have hac : volume ≪ gaussianReal (0 : ℝ) 1 :=
+    gaussianReal_absolutelyContinuous' 0 one_ne_zero
+  have hne : (gaussianReal 0 1) (Set.Ioc 0 1) ≠ 0 := fun h => hvol (hac h)
+  have hpos : 0 < (gaussianReal 0 1) (Set.Ioc 0 1) := pos_iff_ne_zero.mpr hne
+  rw [hIoc] at hpos
+  rw [ENNReal.ofReal_pos] at hpos
   linarith
 
 end MathlibExt.Probability.GaussianCdf

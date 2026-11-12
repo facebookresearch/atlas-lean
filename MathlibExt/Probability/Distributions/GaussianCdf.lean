@@ -11,6 +11,8 @@ module
 public import MathlibExt.Probability.CdfContinuityPoints
 public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 
 /-!
 # Continuity of the Gaussian cdf
@@ -19,12 +21,56 @@ For every real mean and every nonzero variance, the cumulative distribution
 function of the Gaussian law is continuous. The degenerate zero-variance case
 is a Dirac mass whose cdf jumps, so the nonzero hypothesis cannot be dropped.
 The cdf also standardizes: `cdf (gaussianReal μ v) x` is the standard normal cdf
-at `(x - μ) / √v`.
+at `(x - μ) / √v`. The standard normal cdf is symmetric: `Φ(-x) = 1 - Φ(x)`,
+hence `Φ 0 = 1 / 2`.
 -/
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory
+open MeasureTheory ProbabilityTheory Finset Set
+open scoped ProbabilityTheory ENNReal NNReal
+
+namespace MathlibExt.Probability.BerryEsseenWanted
+
+private lemma map_neg_gaussianReal_std :
+    Measure.map (fun x : ℝ => -x) (gaussianReal 0 (1 : ℝ≥0)) = gaussianReal 0 1 := by
+  rw [gaussianReal_map_neg]
+  simp
+
+private lemma neg_preimage_Iic_neg (w : ℝ) :
+    (fun x : ℝ => -x) ⁻¹' (Set.Iic (-w)) = Set.Ici w := by
+  ext x
+  simp only [Set.mem_preimage, Set.mem_Iic, Set.mem_Ici, neg_le_neg_iff]
+
+private lemma gaussianReal_Iio_eq_Iic (w : ℝ) :
+    (gaussianReal 0 (1 : ℝ≥0)).real (Set.Iio w)
+      = (gaussianReal 0 1).real (Set.Iic w) := by
+  have h1 : Set.Iic w = Set.Iio w ∪ {w} := by
+    ext x
+    simp only [Set.mem_Iic, Set.mem_Iio, Set.mem_union, Set.mem_singleton_iff,
+      le_iff_lt_or_eq]
+  have hnull : (gaussianReal 0 (1 : ℝ≥0)).real {w} = 0 := by
+    have h0 : (gaussianReal 0 (1 : ℝ≥0)) {w} = 0 :=
+      @NullSingletonClass.measure_singleton _ _ _
+        (nullSingletonClass_gaussianReal (μ := (0 : ℝ)) (v := (1 : ℝ≥0)) one_ne_zero) w
+    unfold Measure.real
+    rw [h0]
+    exact ENNReal.toReal_zero
+  have hdisj : Disjoint (Set.Iio w) ({w} : Set ℝ) := by
+    rw [Set.disjoint_left]
+    intro x hx1 hx2
+    rw [Set.mem_Iio] at hx1
+    rw [Set.mem_singleton_iff] at hx2
+    rw [hx2] at hx1
+    exact absurd hx1 (lt_irrefl _)
+  have h2 : (gaussianReal 0 (1 : ℝ≥0)).real (Set.Iio w ∪ {w})
+      = (gaussianReal 0 1).real (Set.Iio w) := by
+    rw [measureReal_union hdisj (measurableSet_singleton w)
+      (measure_ne_top _ _) (measure_ne_top _ _), hnull, add_zero]
+  rw [← h1] at h2
+  exact h2.symm
+
+end MathlibExt.Probability.BerryEsseenWanted
 
 namespace ProbabilityTheory
 
@@ -66,5 +112,34 @@ theorem cdf_gaussianReal_eq_std (μ x : ℝ) {v : NNReal} (hv : v ≠ 0) :
     exact sub_le_sub_iff_right μ
   simp only [cdf_eq_real]
   rw [← hmap, map_measureReal_apply hmeas measurableSet_Iic, hpre]
+
+/-- Symmetry of the standard normal cdf. -/
+theorem cdf_gaussianReal_neg (x : ℝ) :
+    cdf (gaussianReal 0 1) (-x) = 1 - cdf (gaussianReal 0 1) x := by
+  rw [cdf_eq_real, cdf_eq_real]
+  have hmap := MathlibExt.Probability.BerryEsseenWanted.map_neg_gaussianReal_std
+  have hpre := MathlibExt.Probability.BerryEsseenWanted.neg_preimage_Iic_neg x
+  have hIio := MathlibExt.Probability.BerryEsseenWanted.gaussianReal_Iio_eq_Iic x
+  have hmeas : Measurable (fun x : ℝ => -x) := by fun_prop
+  have hIic : MeasurableSet (Set.Iic (-x)) := measurableSet_Iic
+  have hIio_meas : MeasurableSet (Set.Iio x) := measurableSet_Iio
+  calc (gaussianReal 0 1).real (Set.Iic (-x))
+      = (Measure.map (fun x : ℝ => -x) (gaussianReal 0 1)).real (Set.Iic (-x)) := by
+          rw [hmap]
+    _ = (gaussianReal 0 1).real ((fun x : ℝ => -x) ⁻¹' (Set.Iic (-x))) := by
+          rw [map_measureReal_apply hmeas hIic]
+    _ = (gaussianReal 0 1).real (Set.Ici x) := by rw [hpre]
+    _ = (gaussianReal 0 1).real (Set.Iio x)ᶜ := by rw [Set.compl_Iio]
+    _ = (gaussianReal 0 1).real Set.univ - (gaussianReal 0 1).real (Set.Iio x) := by
+          rw [measureReal_compl hIio_meas]
+    _ = 1 - (gaussianReal 0 1).real (Set.Iio x) := by rw [probReal_univ]
+    _ = 1 - (gaussianReal 0 1).real (Set.Iic x) := by rw [hIio]
+
+/-- Corollary: the standard normal cdf at `0` is `1 / 2`. -/
+theorem cdf_gaussianReal_zero :
+    cdf (gaussianReal 0 1) 0 = 1 / 2 := by
+  have h := cdf_gaussianReal_neg 0
+  simp at h
+  linarith
 
 end ProbabilityTheory
