@@ -291,7 +291,7 @@ omit [IsProbabilityMeasure P] in
 /-- CDIS P.V, id 100: for an i.i.d. sample of density `g`, the estimator of id 99 has variance
 `Var_g[(f / g) h] / n`. -/
 theorem variance_importanceSampling_estimator (hfm : Measurable f) (hgm : Measurable g)
-    (hhm : Measurable h) [IsProbabilityMeasure P]
+    (hhm : Measurable h)
     (hL2 : MemLp (fun x ↦ f x / g x * h x) 2 (volume.withDensity fun x ↦ ENNReal.ofReal (g x)))
     {X : ℕ → Ω → ℝ} (hlaw : ∀ i, HasLaw (X i) (volume.withDensity fun x ↦ ENNReal.ofReal (g x)) P)
     (hindep : iIndepFun X P) (n : ℕ) :
@@ -375,7 +375,7 @@ theorem isMinOn_variance_optimalDensity (hfm : Measurable f) (hhm : Measurable h
 sampling estimator built on an i.i.d. sample of density `g*` has a variance no larger than the
 one built on an i.i.d. sample of any admissible density `g`. -/
 theorem variance_estimator_optimal_le {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω']
-    {P : Measure Ω} {P' : Measure Ω'} [IsProbabilityMeasure P] [IsProbabilityMeasure P']
+    {P : Measure Ω} {P' : Measure Ω'}
     (hfm : Measurable f) (hhm : Measurable h) (hint : Integrable fun x ↦ h x * f x)
     (hpos : 0 < ∫ x, |h x * f x|) {g : ℝ → ℝ} (hgD : g ∈ admissibleDensities f h)
     {X : ℕ → Ω → ℝ} (hX : ∀ i, HasLaw (X i) (volume.withDensity fun x ↦ ENNReal.ofReal (g x)) P)
