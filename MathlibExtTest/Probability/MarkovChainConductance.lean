@@ -104,10 +104,6 @@ example : (1 : ℝ) ≤ 2 * conductance lazyKernel uniformDist {1} := by
   have hπ_sum : ∑ x, uniformDist x = 1 := by
     simp only [uniformDist_const, Fin.sum_univ_two]
     norm_num
-  have hstat : ∀ y, ∑ x, uniformDist x * lazyKernel x y = uniformDist y := by
-    intro y
-    simp only [uniformDist_const, lazyKernel, Fin.sum_univ_two]
-    norm_num
   have hrev : ∀ x y, uniformDist x * lazyKernel x y
       = uniformDist y * lazyKernel y x := fun _ _ => by
     simp only [uniformDist_const, lazyKernel]
@@ -115,7 +111,7 @@ example : (1 : ℝ) ≤ 2 * conductance lazyKernel uniformDist {1} := by
     simp [uniformDist_const]
   have hSpos : 0 < ∑ x ∈ ({1} : Finset (Fin 2)), uniformDist x := by
     norm_num [uniformDist_const]
-  exact gap_le_two_mul_conductance hK_nonneg hK_sum hπ_nonneg hπ_sum hstat hrev
+  exact gap_le_two_mul_conductance hK_nonneg hK_sum hπ_nonneg hπ_sum hrev
     poincare_lazy_uniform {1} hS hSpos
 
 end MathlibExtTest.Probability.MarkovChainConductance

@@ -28,8 +28,7 @@ then every set of stationary mass in `(0, 1/2]` has
 a zero-mass set has conductance `0` by convention while the
 Poincare hypothesis is vacuous on it (an earlier draft of this
 statement without positivity was refuted by the `Fin 2` point-mass
-example). This extends `MathlibExt/Probability/MarkovChainPoincare.lean`
-(roadmap package ML-26).
+example). This is roadmap package ML-26.
 
 The mean and variance are `FiniteProbability.expectation` /
 `FiniteProbability.variance`; the one-step function evolution
@@ -68,7 +67,6 @@ theorem gap_le_two_mul_conductance {α : Type*} [Fintype α] [DecidableEq α]
     (hK_sum : ∀ x, ∑ y, K x y = 1)
     (hπ_nonneg : ∀ x, 0 ≤ π x)
     (hπ_sum : ∑ x, π x = 1)
-    (hstat : ∀ y, ∑ x, π x * K x y = π y)
     (hrev : ∀ x y, π x * K x y = π y * K y x)
     (hpoincare : ∀ f : α → ℝ, gap * variance π f ≤ dirichletForm K π f)
     (S : Finset α) (hS : ∑ x ∈ S, π x ≤ 1 / 2)
@@ -220,4 +218,3 @@ theorem gap_le_two_mul_conductance {α : Type*} [Fintype α] [DecidableEq α]
   exact le_trans hmain hle
 
 end MathlibExt.Probability.MarkovChainConductance
-
