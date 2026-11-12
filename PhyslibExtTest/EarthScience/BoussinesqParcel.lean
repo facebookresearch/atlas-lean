@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.P16BoussinesqParcel
+import PhyslibExt.EarthScience.BoussinesqParcel
 
 /-!
 # Boussinesq parcel checks
 
-Concrete consumers of `PhyslibExt.EarthScience.P16BoussinesqParcel`:
+Concrete consumers of `PhyslibExt.EarthScience.BoussinesqParcel`:
 the buoyancy formula at `g = 9.81, beta = 0.02, rho0 = 1025, zeta = 10`,
 the stable/unstable sign boundary, and the oscillator form for a
 linear-displacement parcel.
@@ -34,7 +34,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.P16BoussinesqParcel`
+- `PhyslibExt.EarthScience.BoussinesqParcel`
 -/
 
 /-- Public shape of the buoyancy-acceleration theorem. -/
