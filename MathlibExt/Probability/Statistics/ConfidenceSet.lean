@@ -102,4 +102,29 @@ theorem coverage_of_subset_ae_budget {Θ X T : Type*} [MeasurableSpace X]
   have hbadθ := hbad θ
   linarith
 
+/-- **Projected point-test coverage (probability coverage).** A set-valued map containing
+the non-rejected estimand image inherits the `1 - α` probability lower bound through the
+measurable complement and larger-set probability finiteness. -/
+theorem coverage_of_projected_pointTests
+    {Θ X T : Type*} [MeasurableSpace X]
+    (P : Θ → Measure X) [∀ θ, IsProbabilityMeasure (P θ)]
+    (τ : Θ → T)
+    (R : Θ → Set X) (hR : ∀ θ, MeasurableSet (R θ))
+    {α : ℝ} (hα : α ∈ Set.Icc 0 1) (hlev : ∀ θ, (P θ).real (R θ) ≤ α)
+    (C : X → Set T) (hC : ∀ x, {t | ∃ θ, τ θ = t ∧ x ∉ R θ} ⊆ C x)
+    (hCmeas : ∀ θ, MeasurableSet {x | τ θ ∈ C x}) :
+    ∀ θ, 1 - α ≤ (P θ).real {x | τ θ ∈ C x} := by
+  intro θ
+  -- The coverage event is measurable, so the bound below is a probability statement.
+  have _hCθ : MeasurableSet {x | τ θ ∈ C x} := hCmeas θ
+  have hsub : {x | x ∉ R θ} ⊆ {x | τ θ ∈ C x} := fun x hx => hC x ⟨θ, rfl, hx⟩
+  have hcompl : {x | x ∉ R θ} = (R θ)ᶜ := rfl
+  have hprob : (P θ).real ((R θ)ᶜ) = 1 - (P θ).real (R θ) :=
+    probReal_compl_eq_one_sub (hR θ)
+  have hmono : (P θ).real {x | x ∉ R θ} ≤ (P θ).real {x | τ θ ∈ C x} :=
+    measureReal_mono hsub (measure_ne_top _ _)
+  rw [hcompl] at hmono
+  have hle := hlev θ
+  linarith
+
 end MathlibExt.Probability.Statistics
