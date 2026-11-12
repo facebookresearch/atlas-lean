@@ -345,3 +345,95 @@ theorem shephard_conclusion : ∀ v : Fin 2 → ℝ,
   simp
 
 end MathlibExtTest.Economics.Consumer.Shephard.Expenditure
+
+/-! The same Leontief example through the canonical gradient form: the derivative of the
+expenditure function at `(1, 2)` is `Real.dotL (1, 1)`. -/
+
+namespace MathlibExtTest.Economics.Consumer.Shephard.DotL
+
+open _root_.Economics.Consumer
+
+example : fderiv ℝ (fun p : Fin 2 → ℝ => expenditure (fun x => min (x 0) (x 1)) {x | 0 ≤ x} p 1) ![1, 2] = Real.dotL ![1, 1] := by
+  have hpos0 : ∀ᶠ p : Fin 2 → ℝ in 𝓝 ![1, 2], 0 < p 0 := by
+    have h1 : ∀ᶠ y : ℝ in 𝓝 ((![1, 2] : Fin 2 → ℝ) 0), 0 < y := by
+      have heq : ((![1, 2] : Fin 2 → ℝ) 0) = 1 := by simp
+      rw [heq]
+      exact eventually_gt_nhds (by norm_num)
+    have hcont : Filter.Tendsto (fun p : Fin 2 → ℝ => p 0) (𝓝 ![1, 2]) (𝓝 ((![1, 2] : Fin 2 → ℝ) 0)) :=
+      (continuous_apply 0).continuousAt
+    exact hcont.eventually h1
+  have hpos1 : ∀ᶠ p : Fin 2 → ℝ in 𝓝 ![1, 2], 0 < p 1 := by
+    have h1 : ∀ᶠ y : ℝ in 𝓝 ((![1, 2] : Fin 2 → ℝ) 1), 0 < y := by
+      have heq : ((![1, 2] : Fin 2 → ℝ) 1) = 2 := by simp
+      rw [heq]
+      exact eventually_gt_nhds (by norm_num)
+    have hcont : Filter.Tendsto (fun p : Fin 2 → ℝ => p 1) (𝓝 ![1, 2]) (𝓝 ((![1, 2] : Fin 2 → ℝ) 1)) :=
+      (continuous_apply 1).continuousAt
+    exact hcont.eventually h1
+  have hbdd : ∀ᶠ p : Fin 2 → ℝ in 𝓝 ![1, 2],
+      BddBelow ((fun x => p ⬝ᵥ x) '' {x | x ∈ ({x | 0 ≤ x} : Set (Fin 2 → ℝ)) ∧ 1 ≤ min (x 0) (x 1)}) := by
+    filter_upwards [hpos0, hpos1] with p hp0 hp1
+    use 0
+    intro c hc
+    obtain ⟨x, ⟨hxX, hux⟩, rfl⟩ := hc
+    simp only [dotProduct, Fin.sum_univ_two]
+    have hx0 : 0 ≤ x 0 := hxX 0
+    have hx1 : 0 ≤ x 1 := hxX 1
+    have h0 : 0 ≤ p 0 * x 0 := mul_nonneg hp0.le hx0
+    have h1 : 0 ≤ p 1 * x 1 := mul_nonneg hp1.le hx1
+    linarith
+  have hh : IsHicksianDemand (fun x : Fin 2 → ℝ => min (x 0) (x 1)) {x | 0 ≤ x} ![1, 2] 1 ![1, 1] := by
+    constructor
+    · show (0 : Fin 2 → ℝ) ≤ ![1, 1]
+      intro i
+      fin_cases i <;> simp
+    · constructor
+      · show (1 : ℝ) ≤ min ((![1, 1] : Fin 2 → ℝ) 0) ((![1, 1] : Fin 2 → ℝ) 1)
+        simp
+      · intro y hyX huy
+        have ⟨hy0, hy1⟩ := le_min_iff.mp huy
+        have hlhs : ((![1, 2] : Fin 2 → ℝ) ⬝ᵥ ![1, 1]) = 3 := by
+          simp [dotProduct, Fin.sum_univ_two]
+          norm_num
+        have hrhs : ((![1, 2] : Fin 2 → ℝ) ⬝ᵥ y) = y 0 + 2 * y 1 := by
+          simp [dotProduct, Fin.sum_univ_two]
+        rw [hlhs, hrhs]
+        linarith
+  have hexp : ∀ᶠ p : Fin 2 → ℝ in 𝓝 ![1, 2],
+      expenditure (fun x => min (x 0) (x 1)) {x | 0 ≤ x} p 1 = p 0 + p 1 := by
+    filter_upwards [hpos0, hpos1, hbdd] with p hp0 hp1 hbb
+    unfold expenditure
+    have hleast : IsLeast ((fun x => p ⬝ᵥ x) '' {x | x ∈ ({x | 0 ≤ x} : Set (Fin 2 → ℝ)) ∧ 1 ≤ min (x 0) (x 1)}) (p 0 + p 1) := by
+      constructor
+      · have hmemX : (![1, 1] : Fin 2 → ℝ) ∈ ({x | 0 ≤ x} : Set (Fin 2 → ℝ)) := by
+          show (0 : Fin 2 → ℝ) ≤ ![1, 1]
+          intro i
+          fin_cases i <;> simp
+        have hmemU : (1 : ℝ) ≤ min ((![1, 1] : Fin 2 → ℝ) 0) ((![1, 1] : Fin 2 → ℝ) 1) := by simp
+        have hcost : p ⬝ᵥ ![1, 1] = p 0 + p 1 := by
+          simp [dotProduct, Fin.sum_univ_two]
+        exact ⟨![1, 1], ⟨hmemX, hmemU⟩, hcost⟩
+      · intro b hb
+        obtain ⟨y, ⟨hyX, huy⟩, rfl⟩ := hb
+        have ⟨hy0, hy1⟩ := le_min_iff.mp huy
+        simp only [dotProduct, Fin.sum_univ_two]
+        have h0 : p 0 * 1 ≤ p 0 * y 0 := mul_le_mul_of_nonneg_left hy0 hp0.le
+        have h1 : p 1 * 1 ≤ p 1 * y 1 := mul_le_mul_of_nonneg_left hy1 hp1.le
+        simp only [mul_one] at h0 h1
+        linarith
+    exact hleast.csInf_eq
+  have hlin : HasFDerivAt (fun p : Fin 2 → ℝ => p ⬝ᵥ (![1, 1] : Fin 2 → ℝ)) (Real.dotL ![1, 1]) ![1, 2] :=
+    Real.hasFDerivAt_dotProduct _ _
+  have heq : (fun p : Fin 2 → ℝ => expenditure (fun x => min (x 0) (x 1)) {x | 0 ≤ x} p 1) =ᶠ[𝓝 ![1, 2]]
+      (fun p : Fin 2 → ℝ => p ⬝ᵥ (![1, 1] : Fin 2 → ℝ)) := by
+    filter_upwards [hexp] with p hp
+    rw [hp]
+    simp [dotProduct, Fin.sum_univ_two]
+  have hdiff_explicit : HasFDerivAt (fun p : Fin 2 → ℝ => expenditure (fun x => min (x 0) (x 1)) {x | 0 ≤ x} p 1) (Real.dotL ![1, 1]) ![1, 2] :=
+    hlin.congr_of_eventuallyEq heq
+  have hdiff : HasFDerivAt (fun p : Fin 2 → ℝ => expenditure (fun x => min (x 0) (x 1)) {x | 0 ≤ x} p 1)
+      (fderiv ℝ (fun p : Fin 2 → ℝ => expenditure (fun x => min (x 0) (x 1)) {x | 0 ≤ x} p 1) ![1, 2]) ![1, 2] :=
+    hdiff_explicit.differentiableAt.hasFDerivAt
+  exact hasFDerivAt_expenditure_eq_dotL_of_isHicksianDemand hbdd hh hdiff
+
+end MathlibExtTest.Economics.Consumer.Shephard.DotL
