@@ -15,9 +15,14 @@ public import MathlibExt.Probability.Statistics.Survival.NelsonAalen
 /-!
 # Predictable integrands, stochastic integrals and counting-process martingales
 
-The martingale calculus behind the Nelson–Aalen and Kaplan–Meier estimators, on the time grid
-`0, 1, 2, …` (the ordered event times of a survival study, or a discretization of continuous
-time). A filtration `ℱ : Filtration ℕ m0` carries the history; an integrand `H` is **predictable**
+The martingale calculus behind the Nelson–Aalen and Kaplan–Meier estimators, on a fixed
+deterministic time grid `0, 1, 2, …` (grouped or discrete-hazard data, or a fixed discretization
+of continuous time). The pathwise identities below (the Nelson–Aalen and Kaplan–Meier
+representations, Duhamel's equation, the bridges to grouped data) hold on any grid, including the
+observed event times; the martingale statements need a deterministic grid and a deterministic
+cumulative hazard `α`, and do not give the continuous-time results. (On the observed event-time
+grid without ties `Nₙ = n` surely, so `ΔA ≡ 1` and the compensated martingale vanishes.) A
+filtration `ℱ : Filtration ℕ m0` carries the history; an integrand `H` is **predictable**
 in Mathlib's sense `IsStronglyPredictable ℱ H`, which on `ℕ` means `H (n + 1)` is
 `ℱ n`-measurable (`IsStronglyPredictable.iff_measurable_add_one`). The **stochastic integral**
 against a process `M` is `(H • M)ₙ = ∑_{k < n} H_{k+1} (M_{k+1} - M_k)`.
@@ -56,7 +61,8 @@ at-risk process `Y` and a deterministic cumulative hazard `α`
   Kaplan–Meier representation assumes `Δα ≠ 1`.
 * **Vanishing risk.** Convention: the integrand is the totalized inverse `Y⁻¹` (`0⁻¹ = 0`), i.e.
   `J / Y` with `J = 1{Y ≠ 0}`. A step with `Y = 0` contributes nothing to `Â` or `Ŝ` whatever `N`
-  does (`nelsonAalenProcess_succ_of_atRisk_eq_zero`); the cost is that `Â` estimates the
+  does (`nelsonAalenProcess_succ_of_atRisk_eq_zero`, and `kaplanMeierProcess_succ`, whose factor
+  is `1 - 0⁻¹ ΔN = 1`); the cost is that `Â` estimates the
   restricted hazard `Λ* = ∫ J dα` (`restrictedHazard`), not `α`, and the Kaplan–Meier
   representation carries an explicit remainder `∫ Ŝ₋ / S · 1{Y = 0} dα`.
 * **Non-predictable integrands.** For the adapted but anticipating integrand `H = ΔN`, `H • M` is a
@@ -354,7 +360,7 @@ def aalenCompensator (Y : ℕ → Ω → ℝ) (α : ℕ → ℝ) : ℕ → Ω �
 **Vanishing-risk convention**: the integrand is the totalized inverse `Y⁻¹`, so a step with
 nobody at risk (`Y_{k+1} = 0`) contributes `ΔN_{k+1} · 0⁻¹ = 0`, whatever `ΔN_{k+1}` is
 (`nelsonAalenProcess_succ_of_atRisk_eq_zero`). This is the indicator convention `J / Y` with
-`J = 1{Y > 0}` of Andersen–Borgan–Gill–Keiding. -/
+`J = 1{Y ≠ 0}` of Andersen–Borgan–Gill–Keiding (`1{Y > 0}` there, the same for `Y ≥ 0`). -/
 noncomputable def nelsonAalenProcess (N Y : ℕ → Ω → ℝ) : ℕ → Ω → ℝ :=
   stochasticIntegral (fun k ω => (Y k ω)⁻¹) N
 
@@ -414,8 +420,8 @@ theorem martingale_nelsonAalenProcess_sub [IsFiniteMeasure μ] {N Y : ℕ → Ω
     ⟨1, fun ω => abs_inv_le_one (hY1 _ ω)⟩
 
 /-- **Mean of the Nelson–Aalen estimator under vanishing risk**: `E[Âₙ] = ∑_{k < n} Δα_{k+1}
-P(Y_{k+1} ≠ 0)`. So `Â` is unbiased for `Λ*`, and for the cumulative hazard `αₙ - α₀` exactly when
-the risk set is a.s. non-empty; otherwise the bias is `-∑ Δα_{k+1} P(Y_{k+1} = 0)`. -/
+P(Y_{k+1} ≠ 0)`. So `Â` is unbiased for `Λ*`; its bias for the cumulative hazard `αₙ - α₀` is
+`-∑ Δα_{k+1} P(Y_{k+1} = 0)`, which vanishes in particular when the risk set is a.s. non-empty. -/
 theorem integral_nelsonAalenProcess [IsProbabilityMeasure μ] {N Y : ℕ → Ω → ℝ} {α : ℕ → ℝ}
     (hM : Martingale (fun n ω => N n ω - aalenCompensator Y α n ω) ℱ μ)
     (hY : IsStronglyPredictable ℱ Y) (hY1 : ∀ n ω, Y n ω = 0 ∨ 1 ≤ Y n ω) (n : ℕ) :

@@ -229,4 +229,80 @@ example : ¬ Martingale (stochasticIntegral (fun k ω => boolN k ω - boolN (k -
   rw [this]
   simp
 
+/-! ### Aalen's model with genuine randomness: a fair coin -/
+
+open scoped ENNReal in
+/-- The fair coin on `Bool`. -/
+noncomputable def boolP : Measure Bool := (2⁻¹ : ℝ≥0∞) • Measure.count
+
+instance : IsProbabilityMeasure boolP :=
+  ⟨by
+    simp only [boolP, Measure.smul_apply, smul_eq_mul, Measure.count_univ]
+    simp [ENNReal.inv_mul_cancel]⟩
+
+/-- The cumulative hazard `α = (0, 1/2, 1/2, …)`: hazard `1/2` at step `1`, none afterwards. -/
+noncomputable def boolα : ℕ → ℝ := fun n => if n = 0 then 0 else 1 / 2
+
+lemma boolP_real_pair : boolP.real {false, true} = 1 := by
+  have : ({false, true} : Set Bool) = Set.univ := by ext b; cases b <;> simp
+  rw [this, probReal_univ]
+
+lemma boolP_real_singleton (b : Bool) : boolP.real {b} = 1 / 2 := by
+  simp [boolP, Measure.real]
+
+/-- The compensator increments of `boolN` under the fair coin are the hazard increments. -/
+lemma condExp_boolN (k : ℕ) :
+    boolP[boolN (k + 1) - boolN k | boolFiltration k] = fun _ => boolα (k + 1) - boolα k := by
+  cases k with
+  | zero =>
+    have hF : (boolFiltration 0 : MeasurableSpace Bool) = ⊥ := rfl
+    rw [hF, condExp_bot']
+    funext ω
+    rw [integral_fintype Integrable.of_finite]
+    simp [boolN, boolα, boolP_real_singleton, boolP_real_pair]
+  | succ k =>
+    have h0 : boolN (k + 1 + 1) - boolN (k + 1) = 0 := by funext ω; simp [boolN]
+    rw [h0, condExp_zero]
+    funext ω; simp [boolα]
+
+/-- `N - ∫ Y dα` with `Y ≡ 1` is exactly the compensated martingale `martingalePart boolN`. -/
+lemma boolAalen : (fun n ω => boolN n ω - aalenCompensator (fun _ _ => (1 : ℝ)) boolα n ω) =
+    martingalePart boolN boolFiltration boolP := by
+  funext n ω
+  simp [martingalePart, predictablePart, aalenCompensator, stochasticIntegral, Finset.sum_apply,
+    condExp_boolN]
+
+lemma boolN_adapted : StronglyAdapted boolFiltration boolN := fun n => by
+  cases n with
+  | zero =>
+    have : boolN 0 = fun _ => 0 := by funext; simp [boolN]
+    rw [this]; exact stronglyMeasurable_const
+  | succ n =>
+    change StronglyMeasurable[⊤] _
+    exact measurable_from_top.stronglyMeasurable
+
+/-- **Aalen's model holds non-trivially**: on the fair coin, with one subject at risk and hazard
+`1/2` at step `1`, `N - ∫ Y dα` is a martingale. -/
+lemma boolMart :
+    Martingale (fun n ω => boolN n ω - aalenCompensator (fun _ _ => (1 : ℝ)) boolα n ω)
+      boolFiltration boolP := by
+  rw [boolAalen]
+  exact martingale_martingalePart boolN_adapted fun _ => Integrable.of_finite
+
+/-- Gill's Kaplan–Meier martingale `Ŝ / S` on the fair coin. -/
+example : Martingale (fun n ω => kaplanMeierProcess boolN (fun _ _ => 1) n ω /
+    prodIntegral boolα n) boolFiltration boolP :=
+  martingale_kaplanMeierProcess_div boolMart boolN_adapted
+    (.of_measurable_add_one stronglyMeasurable_const fun _ => stronglyMeasurable_const)
+    (fun _ _ => le_rfl) (fun _ => Or.inr le_rfl)
+    (fun n ω => by cases n <;> cases ω <;> simp [boolN])
+    (fun k => by cases k <;> simp [boolα])
+
+/-- The Nelson–Aalen mean formula on the fair coin: `E[Â₁] = 1/2 = α₁ - α₀`. -/
+example : ∫ ω, nelsonAalenProcess boolN (fun _ _ => 1) 1 ω ∂boolP = 1 / 2 := by
+  rw [integral_nelsonAalenProcess boolMart
+    (.of_measurable_add_one stronglyMeasurable_const fun _ => stronglyMeasurable_const)
+    (fun _ _ => Or.inr le_rfl)]
+  simp [boolα, boolP_real_pair]
+
 end MathlibExtTest.Probability.Statistics.StochasticIntegral
