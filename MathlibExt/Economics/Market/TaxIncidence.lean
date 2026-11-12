@@ -23,9 +23,9 @@ upward-sloping supply the buyers' share of a small tax lies in `[0, 1]`.
 
 ## Main results
 
-* `Economics.Market.hasDerivAt_sellerPrice`
-* `Economics.Market.hasDerivAt_buyerPrice`
-* `Economics.Market.buyerShare_mem_Icc`
+* `MathlibExt.Economics.Market.hasDerivAt_sellerPrice`
+* `MathlibExt.Economics.Market.hasDerivAt_buyerPrice`
+* `MathlibExt.Economics.Market.buyerShare_mem_Icc`
 
 ## References
 
@@ -38,7 +38,7 @@ Atlas roadmap target EC08.T03.
 
 open Filter Topology
 
-namespace Economics.Market
+namespace MathlibExt.Economics.Market
 
 /-- **Seller-price incidence.** Along a differentiable equilibrium path, the seller price moves
 at rate `D' / (S' - D')` in the tax. -/
@@ -87,4 +87,4 @@ theorem buyerShare_mem_Icc {D' S' : ℝ} (hD' : D' ≤ 0) (hS' : 0 ≤ S') (hslo
   rw [div_le_one hpos]
   linarith
 
-end Economics.Market
+end MathlibExt.Economics.Market

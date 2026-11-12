@@ -19,7 +19,7 @@ open Filter Topology
 
 namespace MathlibExtTest.Economics.Market.TaxIncidence
 
-open _root_.Economics.Market
+open _root_.MathlibExt.Economics.Market
 
 -- Tests: concrete linear example `D p = 10 - p`, `S p = p`, path `p τ = 5 - τ / 2`.
 
