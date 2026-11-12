@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.MonteCarloRate
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Probability.Independence.Basic
@@ -23,8 +24,8 @@ common variance `σ ^ 2`, the interval `mean ± k * σ / √n` fails to cover
 
 The non-coverage set is contained in the deviation set
 `{ω | k * σ / √n ≤ |mean ω - mu|}`. The sample mean has expectation `mu`
-(linearity of the integral over a finite sum) and variance `σ ^ 2 / n`
-(`IndepFun.variance_sum` plus `variance_const_mul`). Chebyshev's inequality
+(`integral_sample_mean`) and variance `σ ^ 2 / n`
+(`variance_sample_mean`). Chebyshev's inequality
 (`meas_ge_le_variance_div_sq`) then bounds the deviation probability by
 `(σ ^ 2 / n) / (k * σ / √n) ^ 2 = 1 / k ^ 2`.
 
@@ -77,27 +78,15 @@ theorem chebyshev_sample_mean_interval_failure_bound {Ω : Type*} [MeasurableSpa
     rw [hM_eq]
     exact hS_mem.const_mul _
   have hM_int : ∫ ω, (∑ i, X i ω) / (n : ℝ) ∂μ = mu := by
-    rw [hM_eq, integral_const_mul,
-      integral_finsetSum Finset.univ (fun i _ => hInt i)]
-    simp only [hMean, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-      nsmul_eq_mul]
-    rw [← mul_assoc, inv_mul_cancel₀ hn', one_mul]
-  have hS_eq : (fun ω => ∑ i, X i ω) = (∑ i ∈ Finset.univ, X i) := by
-    funext ω
-    exact (Finset.sum_apply ω Finset.univ (fun i => X i)).symm
-  have hpair : Set.Pairwise (↑(Finset.univ : Finset (Fin n)))
-      (fun i j => IndepFun (X i) (X j) μ) := by
-    rw [Finset.coe_univ, Set.pairwise_univ]
-    intro i j hij
-    exact hIndep.indepFun hij
-  have hS_var : variance (fun ω => ∑ i, X i ω) μ = (n : ℝ) * sigma ^ 2 := by
-    rw [hS_eq, IndepFun.variance_sum (fun i _ => hLp i) hpair]
-    simp only [hVar, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-      nsmul_eq_mul]
+    have : Nonempty (Fin n) := ⟨⟨0, Nat.pos_of_ne_zero hn⟩⟩
+    have h := integral_sample_mean (ι := Fin n) (X := X) (mu := mu) hInt hMean
+    rwa [Fintype.card_fin] at h
   have hM_var : variance (fun ω => (∑ i, X i ω) / (n : ℝ)) μ
       = sigma ^ 2 / (n : ℝ) := by
-    rw [hM_eq, variance_const_mul, hS_var]
-    field_simp [hn']
+    have : Nonempty (Fin n) := ⟨⟨0, Nat.pos_of_ne_zero hn⟩⟩
+    have h := variance_sample_mean (ι := Fin n) (X := X) (sigma2 := sigma ^ 2)
+      hLp hIndep hVar
+    rwa [Fintype.card_fin] at h
   have hsub : {ω | mu ∉ Set.Icc ((∑ i, X i ω) / (n : ℝ) - k * sigma / Real.sqrt (n : ℝ))
         ((∑ i, X i ω) / (n : ℝ) + k * sigma / Real.sqrt (n : ℝ))}
       ⊆ {ω | k * sigma / Real.sqrt (n : ℝ) ≤ |(∑ i, X i ω) / (n : ℝ) - mu|} := by
