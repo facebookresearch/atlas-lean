@@ -15,7 +15,7 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
 
 /-!
-# Planetary energy balance (K01)
+# Planetary energy balance
 
 ## i. Overview
 
@@ -27,10 +27,10 @@ surface temperature.
 
 ## ii. Key results
 
-- `EarthScience.k01_equilibrium_exists`: a nonnegative equilibrium exists.
-- `EarthScience.k01_equilibrium_unique`: the nonnegative equilibrium is unique.
-- `EarthScience.k01_full_albedo`: `alpha = 1` gives `T = 0`.
-- `EarthScience.k01_witness`: `sigma = 1, S = 4, alpha = 0` gives `T = 1`.
+- `EarthScience.equilibrium_exists`: a nonnegative equilibrium exists.
+- `EarthScience.equilibrium_unique`: the nonnegative equilibrium is unique.
+- `EarthScience.full_albedo`: `alpha = 1` gives `T = 0`.
+- `EarthScience.witness`: `sigma = 1, S = 4, alpha = 0` gives `T = 1`.
 
 ## iii. Table of contents
 
@@ -49,7 +49,7 @@ namespace EarthScience
 set_option linter.unusedVariables false in
 /-- Planetary energy balance: an equilibrium `T >= 0` with
 `sigma * T^4 = (1 - alpha) * S / 4` exists. -/
-theorem k01_equilibrium_exists {σ S α : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S)
+theorem equilibrium_exists {σ S α : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S)
     (hα0 : 0 ≤ α) (hα1 : α ≤ 1) :
     ∃ T : ℝ, 0 ≤ T ∧ σ * T ^ 4 = (1 - α) * S / 4 := by
   have hσne : σ ≠ 0 := ne_of_gt hσ
@@ -72,7 +72,7 @@ theorem k01_equilibrium_exists {σ S α : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S)
   field_simp
 
 /-- Planetary energy balance: the nonnegative equilibrium is unique. -/
-theorem k01_equilibrium_unique {σ S α T₁ T₂ : ℝ} (hσ : 0 < σ)
+theorem equilibrium_unique {σ S α T₁ T₂ : ℝ} (hσ : 0 < σ)
     (hT₁ : 0 ≤ T₁) (hT₂ : 0 ≤ T₂)
     (h₁ : σ * T₁ ^ 4 = (1 - α) * S / 4) (h₂ : σ * T₂ ^ 4 = (1 - α) * S / 4) :
     T₁ = T₂ := by
@@ -97,7 +97,7 @@ theorem k01_equilibrium_unique {σ S α T₁ T₂ : ℝ} (hσ : 0 < σ)
 
 set_option linter.unusedVariables false in
 /-- Boundary case `alpha = 1` (zero absorption): the equilibrium is `T = 0`. -/
-theorem k01_full_albedo {σ S : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S) {T : ℝ} (hT : 0 ≤ T)
+theorem full_albedo {σ S : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S) {T : ℝ} (hT : 0 ≤ T)
     (h : σ * T ^ 4 = (1 - (1 : ℝ)) * S / 4) :
     T = 0 := by
   have hσne : σ ≠ 0 := ne_of_gt hσ
@@ -112,7 +112,7 @@ theorem k01_full_albedo {σ S : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S) {T : ℝ} (hT
   exact (pow_eq_zero_iff (show 4 ≠ 0 by norm_num)).mp h4
 
 /-- Non-vacuous witness: `sigma = 1, S = 4, alpha = 0` gives `T = 1`. -/
-theorem k01_witness :
+theorem witness :
     ∃ T : ℝ, 0 ≤ T ∧ (1 : ℝ) * T ^ 4 = (1 - (0 : ℝ)) * 4 / 4 ∧ T = 1 := by
   exact ⟨1, by norm_num, by norm_num, rfl⟩
 
