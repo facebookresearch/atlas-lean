@@ -11,12 +11,12 @@ import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.FinCases
-import PhyslibExt.EarthScience.D05Interpolation
+import PhyslibExt.EarthScience.Interpolation
 
 /-!
 # Spatial interpolation and gridded data
 
-Concrete consumers of `PhyslibExt.EarthScience.D05Interpolation`.
+Concrete consumers of `PhyslibExt.EarthScience.Interpolation`.
 
 ## i. Overview
 
@@ -33,7 +33,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.D05Interpolation`
+- `PhyslibExt.EarthScience.Interpolation`
 -/
 
 /-- Three-point constant field: weights `0.2, 0.3, 0.5`, value `7`. -/
