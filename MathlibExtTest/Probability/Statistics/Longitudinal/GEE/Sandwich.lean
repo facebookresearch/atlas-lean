@@ -24,8 +24,9 @@ public import Mathlib.Probability.StrongLaw
   fitted by GEE with identity link and working independence (`D i = (1, 1)ᵀ`, `V i = I`). The
   estimator is the grand mean, the bread is `A = -2`, the meat is `B = Var(U i β₀) = 6`, and the
   sandwich is `3 / 2 = Var((Y i 1 + Y i 2) / 2)` (`sandwichCovariance_A_B`). The
-  working-independence model-based variance `Var(Y i j) / 2 = 1` is mentioned for comparison
-  only; it is not formalized. In this model every hypothesis is discharged for:
+  working-independence model-based variance `(Dᵀ V⁻¹ D)⁻¹ = 1/2` for `V i = I` is
+  mentioned for comparison only; it is not formalized. In this model every hypothesis is
+  discharged for:
   - (a) `tendstoInMeasure_of_tendstoUniformlyOn_of_root` (`tendstoInMeasure_βhat`), with
     `g β = 2 (β₀ - β)` on `closedBall β₀ 1` and uniform convergence from the strong law;
   - (b) `tendstoInDistribution_sqrt_smul_sub_sandwich` with the exact linearization
@@ -171,7 +172,7 @@ theorem isUnit_A : IsUnit A :=
 
 /-- **The sandwich of the random-intercept model is `3 / 2`**, the variance of a cluster mean
 `(Y i 1 + Y i 2) / 2 = β₀ + b i + (e i 1 + e i 2) / 2`; the working-independence model-based
-variance `Var(Y i j) / 2 = 1` understates it. -/
+variance `(Dᵀ V⁻¹ D)⁻¹ = 1/2` for `V i = I` understates it. -/
 theorem sandwichCovariance_A_B : sandwichCovariance A B = (3 / 2 : ℝ) • 1 := by
   rw [A, B, sandwichCovariance_smul_one _ _ (by norm_num)]
   norm_num
