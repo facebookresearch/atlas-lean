@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.S14OpticalMineralogy
+import PhyslibExt.EarthScience.OpticalMineralogy
 
 /-!
 # Phase-retardation checks
 
-Concrete consumers of `PhyslibExt.EarthScience.S14OpticalMineralogy`:
+Concrete consumers of `PhyslibExt.EarthScience.OpticalMineralogy`:
 zero thickness, equal indices, and the `δ = π` example.
 
 ## i. Overview
@@ -30,7 +30,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.S14OpticalMineralogy`
+- `PhyslibExt.EarthScience.OpticalMineralogy`
 -/
 
 /-- Zero thickness: `h = 0` gives `δ = 0`. -/
