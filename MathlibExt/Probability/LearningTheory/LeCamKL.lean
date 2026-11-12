@@ -15,6 +15,8 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
 public import MathlibExt.InformationTheory.FiniteEntropy
 
+import MathlibExt.InformationTheory.Pinsker
+
 @[expose] public section
 
 /-! # Le Cam's bound in KL form
@@ -278,162 +280,23 @@ private theorem binary_pinsker_r1 (s : ℝ) (hs0 : 0 < s) (hs1 : s < 1) :
   rw [hH1, hHs] at hle
   linarith [hle]
 
+/-- Binary Pinsker in the strictly interior case, from the Csiszar-Kullback-Pinsker
+inequality applied to the two-point vectors `(r, 1 - r)` and `(s, 1 - s)`. -/
 private theorem binary_pinsker_main (r : ℝ) (hr0 : 0 < r) (hr1 : r < 1)
     (s : ℝ) (hs0 : 0 < s) (hs1 : s < 1) :
     2 * (r - s) ^ 2 ≤
       r * Real.log (r / s) + (1 - r) * Real.log ((1 - r) / (1 - s)) := by
-  have hr0' : r ≠ 0 := hr0.ne'
-  have hr1' : (1:ℝ) - r ≠ 0 := ne_of_gt (sub_pos.mpr hr1)
-  have hHD : ∀ q : ℝ, 0 < q → q < 1 →
-      HasDerivAt (fun q : ℝ => r * Real.log (r / q) +
-        (1 - r) * Real.log ((1 - r) / (1 - q)) - 2 * (r - q) ^ 2)
-        (-r / q + (1 - r) / (1 - q) + 4 * (r - q)) q := by
-    intro q hq0 hq1
-    have hne_q : q ≠ 0 := hq0.ne'
-    have hne_1q : (1:ℝ) - q ≠ 0 := ne_of_gt (sub_pos.mpr hq1)
-    have hne_rq : r / q ≠ 0 := div_ne_zero hr0' hne_q
-    have hne_1r1q : (1 - r) / (1 - q) ≠ 0 := div_ne_zero hr1' hne_1q
-    have hdiv1 : HasDerivAt (fun q : ℝ => r / q) ((0 * q - r * 1) / q ^ 2) q :=
-      (hasDerivAt_const q r).div (hasDerivAt_id q) hne_q
-    have hlog1 : HasDerivAt (fun y : ℝ => Real.log (r / y))
-        (((0 * q - r * 1) / q ^ 2) / (r / q)) q :=
-      hdiv1.log hne_rq
-    have hm1 : HasDerivAt (fun y : ℝ => r * Real.log (r / y))
-        (r * (((0 * q - r * 1) / q ^ 2) / (r / q))) q :=
-      HasDerivAt.const_mul r hlog1
-    have hsub1 : HasDerivAt (fun q : ℝ => 1 - q) (0 - 1) q :=
-      (hasDerivAt_const q 1).sub (hasDerivAt_id q)
-    have hdiv2 : HasDerivAt (fun q : ℝ => (1 - r) / (1 - q))
-        ((0 * (1 - q) - (1 - r) * (0 - 1)) / (1 - q) ^ 2) q :=
-      (hasDerivAt_const q (1 - r)).div hsub1 hne_1q
-    have hlog2 : HasDerivAt (fun y : ℝ => Real.log ((1 - r) / (1 - y)))
-        (((0 * (1 - q) - (1 - r) * (0 - 1)) / (1 - q) ^ 2) /
-          ((1 - r) / (1 - q))) q :=
-      hdiv2.log hne_1r1q
-    have hm2 : HasDerivAt (fun y : ℝ => (1 - r) * Real.log ((1 - r) / (1 - y)))
-        ((1 - r) * (((0 * (1 - q) - (1 - r) * (0 - 1)) / (1 - q) ^ 2) /
-          ((1 - r) / (1 - q)))) q :=
-      HasDerivAt.const_mul (1 - r) hlog2
-    have hadd : HasDerivAt (fun y : ℝ => r * Real.log (r / y) +
-        (1 - r) * Real.log ((1 - r) / (1 - y)))
-        (r * (((0 * q - r * 1) / q ^ 2) / (r / q)) +
-          (1 - r) * (((0 * (1 - q) - (1 - r) * (0 - 1)) / (1 - q) ^ 2) /
-            ((1 - r) / (1 - q)))) q :=
-      hm1.add hm2
-    have hsub2 : HasDerivAt (fun q : ℝ => r - q) (0 - 1) q :=
-      (hasDerivAt_const q r).sub (hasDerivAt_id q)
-    have hpow : HasDerivAt (fun q : ℝ => (r - q) ^ 2)
-        (2 * (r - q) ^ (2 - 1) * (0 - 1)) q :=
-      hsub2.pow 2
-    have hm3 : HasDerivAt (fun y : ℝ => 2 * (r - y) ^ 2)
-        (2 * (2 * (r - q) ^ (2 - 1) * (0 - 1))) q :=
-      HasDerivAt.const_mul 2 hpow
-    have hF : HasDerivAt (fun q : ℝ => r * Real.log (r / q) +
-        (1 - r) * Real.log ((1 - r) / (1 - q)) - 2 * (r - q) ^ 2)
-        ((r * (((0 * q - r * 1) / q ^ 2) / (r / q)) +
-          (1 - r) * (((0 * (1 - q) - (1 - r) * (0 - 1)) / (1 - q) ^ 2) /
-            ((1 - r) / (1 - q)))) - 2 * (2 * (r - q) ^ (2 - 1) * (0 - 1))) q :=
-      hadd.sub hm3
-    have hval : ((r * (((0 * q - r * 1) / q ^ 2) / (r / q)) +
-        (1 - r) * (((0 * (1 - q) - (1 - r) * (0 - 1)) / (1 - q) ^ 2) /
-          ((1 - r) / (1 - q)))) - 2 * (2 * (r - q) ^ (2 - 1) * (0 - 1))) =
-        -r / q + (1 - r) / (1 - q) + 4 * (r - q) := by
-      field_simp
-      ring
-    rwa [hval] at hF
-  have hfactor : ∀ q : ℝ, 0 < q → q < 1 →
-      -r / q + (1 - r) / (1 - q) + 4 * (r - q) =
-        (q - r) * (1 / (q * (1 - q)) - 4) := by
-    intro q hq0 hq1
-    have hne_q : q ≠ 0 := hq0.ne'
-    have hne_1q : (1:ℝ) - q ≠ 0 := ne_of_gt (sub_pos.mpr hq1)
-    have hne_q1q : q * (1 - q) ≠ 0 := mul_ne_zero hne_q hne_1q
-    field_simp
-    ring
-  have hbig : ∀ q : ℝ, 0 < q → q < 1 → (4:ℝ) ≤ 1 / (q * (1 - q)) := by
-    intro q hq0 hq1
-    have hq1q : (0:ℝ) < q * (1 - q) := mul_pos hq0 (sub_pos.mpr hq1)
-    have hsq : (0:ℝ) ≤ (1 - 2 * q) ^ 2 := sq_nonneg _
-    rw [le_div_iff₀ hq1q]
-    linarith [hsq]
-  have hFr : (fun q : ℝ => r * Real.log (r / q) +
-      (1 - r) * Real.log ((1 - r) / (1 - q)) - 2 * (r - q) ^ 2) r = 0 := by
-    have e1 : r / r = (1:ℝ) := div_self hr0'
-    have e2 : (1 - r) / (1 - r) = (1:ℝ) := div_self hr1'
-    simp [e1, e2, Real.log_one]
-  have hFs : (fun q : ℝ => r * Real.log (r / q) +
-      (1 - r) * Real.log ((1 - r) / (1 - q)) - 2 * (r - q) ^ 2) s =
-      r * Real.log (r / s) + (1 - r) * Real.log ((1 - r) / (1 - s)) -
-        2 * (r - s) ^ 2 := rfl
-  rcases lt_trichotomy s r with hsr | hsr | hsr
-  · have hdiff : DifferentiableOn ℝ (fun q : ℝ => r * Real.log (r / q) +
-        (1 - r) * Real.log ((1 - r) / (1 - q)) - 2 * (r - q) ^ 2)
-        (Set.Icc s r) :=
-      fun x hx => (hHD x (lt_of_lt_of_le hs0 hx.1)
-        (lt_of_le_of_lt hx.2 hr1)).differentiableAt.differentiableWithinAt
-    have hcont := hdiff.continuousOn
-    have hdiff_int : DifferentiableOn ℝ (fun q : ℝ => r * Real.log (r / q) +
-        (1 - r) * Real.log ((1 - r) / (1 - q)) - 2 * (r - q) ^ 2)
-        (interior (Set.Icc s r)) := by
-      rw [interior_Icc]
-      intro x hx
-      exact (hHD x (lt_trans hs0 hx.1)
-        (lt_trans hx.2 hr1)).differentiableAt.differentiableWithinAt
-    have hsign : ∀ x ∈ interior (Set.Icc s r), deriv (fun q : ℝ =>
-        r * Real.log (r / q) + (1 - r) * Real.log ((1 - r) / (1 - q)) -
-        2 * (r - q) ^ 2) x ≤ 0 := by
-      intro x hx
-      rw [interior_Icc] at hx
-      have hx0 : 0 < x := lt_trans hs0 hx.1
-      have hx1 : x < 1 := lt_trans hx.2 hr1
-      rw [(hHD x hx0 hx1).deriv, hfactor x hx0 hx1]
-      have h4 := hbig x hx0 hx1
-      have hqr : x - r ≤ 0 := sub_nonpos.mpr (le_of_lt hx.2)
-      have hnn : (0:ℝ) ≤ 1 / (x * (1 - x)) - 4 := sub_nonneg.mpr h4
-      exact mul_nonpos_of_nonpos_of_nonneg hqr hnn
-    have hanti := antitoneOn_of_deriv_nonpos (convex_Icc s r) hcont
-      hdiff_int hsign
-    have hmems : s ∈ Set.Icc s r := ⟨le_rfl, le_of_lt hsr⟩
-    have hmemr : r ∈ Set.Icc s r := ⟨le_of_lt hsr, le_rfl⟩
-    have hle := hanti hmems hmemr (le_of_lt hsr)
-    rw [hFr, hFs] at hle
-    linarith [hle]
-  · rw [hsr]
-    have e1 : r / r = (1:ℝ) := div_self hr0'
-    have e2 : (1 - r) / (1 - r) = (1:ℝ) := div_self hr1'
-    simp [e1, e2, Real.log_one]
-  · have hdiff : DifferentiableOn ℝ (fun q : ℝ => r * Real.log (r / q) +
-        (1 - r) * Real.log ((1 - r) / (1 - q)) - 2 * (r - q) ^ 2)
-        (Set.Icc r s) :=
-      fun x hx => (hHD x (lt_of_lt_of_le hr0 hx.1)
-        (lt_of_le_of_lt hx.2 hs1)).differentiableAt.differentiableWithinAt
-    have hcont := hdiff.continuousOn
-    have hdiff_int : DifferentiableOn ℝ (fun q : ℝ => r * Real.log (r / q) +
-        (1 - r) * Real.log ((1 - r) / (1 - q)) - 2 * (r - q) ^ 2)
-        (interior (Set.Icc r s)) := by
-      rw [interior_Icc]
-      intro x hx
-      exact (hHD x (lt_trans hr0 hx.1)
-        (lt_trans hx.2 hs1)).differentiableAt.differentiableWithinAt
-    have hsign : ∀ x ∈ interior (Set.Icc r s), 0 ≤ deriv (fun q : ℝ =>
-        r * Real.log (r / q) + (1 - r) * Real.log ((1 - r) / (1 - q)) -
-        2 * (r - q) ^ 2) x := by
-      intro x hx
-      rw [interior_Icc] at hx
-      have hx0 : 0 < x := lt_trans hr0 hx.1
-      have hx1 : x < 1 := lt_trans hx.2 hs1
-      rw [(hHD x hx0 hx1).deriv, hfactor x hx0 hx1]
-      have h4 := hbig x hx0 hx1
-      have hqr : (0:ℝ) ≤ x - r := sub_nonneg.mpr (le_of_lt hx.1)
-      have hnn : (0:ℝ) ≤ 1 / (x * (1 - x)) - 4 := sub_nonneg.mpr h4
-      exact mul_nonneg hqr hnn
-    have hmono := monotoneOn_of_deriv_nonneg (convex_Icc r s) hcont
-      hdiff_int hsign
-    have hmemr : r ∈ Set.Icc r s := ⟨le_rfl, le_of_lt hsr⟩
-    have hmems : s ∈ Set.Icc r s := ⟨le_of_lt hsr, le_rfl⟩
-    have hle := hmono hmemr hmems (le_of_lt hsr)
-    rw [hFr, hFs] at hle
-    linarith [hle]
+  have h := MathlibExt.InformationTheory.Pinsker.csiszar_kullback_pinsker
+    ![r, 1 - r] ![s, 1 - s]
+    (fun i => by fin_cases i <;> simp <;> linarith)
+    (fun i => by fin_cases i <;> simp <;> linarith)
+    (by simp [Fin.sum_univ_two])
+    (by simp [Fin.sum_univ_two])
+  simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one] at h
+  have habs : |1 - r - (1 - s)| = |r - s| := by
+    rw [show 1 - r - (1 - s) = -(r - s) by ring, abs_neg]
+  rw [habs, ← two_mul, mul_pow, sq_abs] at h
+  linarith [h]
 
 private theorem binary_pinsker (r s : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1)
     (hs0 : 0 ≤ s) (hs1 : s ≤ 1) (h0 : s = 0 → r = 0) (h1 : s = 1 → r = 1) :

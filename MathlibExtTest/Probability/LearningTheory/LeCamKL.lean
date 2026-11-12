@@ -61,3 +61,33 @@ example :
     simp [Fin.sum_univ_two, PMF.pure_apply]
   rw [hsums] at h
   exact h
+
+/-- Nonconstant test: point mass at `0` against uniform input, with
+the test choosing `p` only at the other atom `1`. Its error sum is
+`p 1 + q 0 = 0 + 1 / 2 = 1 / 2`, so Le Cam's bound reads
+`1 - √(log 2 / 2) ≤ 1 / 2`. -/
+example :
+    (∑ a ∈ Finset.univ.filter (fun a : Fin 2 => decide (a = 1) = true),
+        ((PMF.pure (0 : Fin 2)) a).toReal) +
+      (∑ a ∈ Finset.univ.filter (fun a : Fin 2 => decide (a = 1) = false),
+        ((PMF.uniformFintype (Fin 2)) a).toReal) = 1 / 2 ∧
+    1 - Real.sqrt (Real.log 2 / 2) ≤ 1 / 2 := by
+  have hsupp : ∀ a, (PMF.uniformFintype (Fin 2)) a = 0 →
+      (PMF.pure (0 : Fin 2)) a = 0 := by
+    intro a h
+    simp [PMF.uniformFintype_apply] at h
+  have hkl : (InformationTheory.klDiv (PMF.pure (0 : Fin 2)).toMeasure
+      (PMF.uniformFintype (Fin 2)).toMeasure).toReal = Real.log 2 := by
+    rw [InformationTheory.toReal_klDiv_toMeasure hsupp]
+    simp [Fin.sum_univ_two, PMF.pure_apply, PMF.uniformFintype_apply]
+  have hsums : (∑ a ∈ Finset.univ.filter (fun a : Fin 2 => decide (a = 1) = true),
+        ((PMF.pure (0 : Fin 2)) a).toReal) +
+      (∑ a ∈ Finset.univ.filter (fun a : Fin 2 => decide (a = 1) = false),
+        ((PMF.uniformFintype (Fin 2)) a).toReal) = 1 / 2 := by
+    rw [Finset.sum_filter, Finset.sum_filter, Fin.sum_univ_two, Fin.sum_univ_two]
+    simp [PMF.pure_apply, PMF.uniformFintype_apply]
+  refine ⟨hsums, ?_⟩
+  have h := lecam_kl (PMF.pure (0 : Fin 2)) (PMF.uniformFintype (Fin 2))
+    (fun a => decide (a = 1)) hsupp
+  rw [hkl, hsums] at h
+  exact h
