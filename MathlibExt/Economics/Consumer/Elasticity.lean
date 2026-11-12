@@ -13,16 +13,17 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 /-!
 # Point price elasticity of demand
 
-The point elasticity of a demand curve `q` at price `p` is `ε(p) = p q'(p) / q(p)`. On positive
-prices and quantities it is the log-log derivative `d log q / d log p`: the derivative of
-`s ↦ log q(exp s)` at `s = log p`.
+The point elasticity of a demand curve `q` at price `p` is `ε(p) = p q'(p) / q(p)`. When
+`p > 0`, `q p > 0` and `q` is differentiable at `p`, it is the log-log derivative
+`d log q / d log p`: the derivative of `s ↦ log q(exp s)` at `s = log p`.
 
 ## Main definitions
 
-* `pointElasticity q p`: the point elasticity `p * deriv q p / q p`. It is meaningful only when
-  `q` is differentiable at `p` and `q p ≠ 0`; elsewhere Lean's total `deriv` and division return
-  junk values (for example `pointElasticity (fun _ => 0) p = 0`). The log-derivative theorem
-  below carries both conditions (with `p > 0`, `q p > 0`) as hypotheses.
+* `pointElasticity q p`: the algebraic formula `p * deriv q p / q p`, a total function. It is the
+  economic (percentage) elasticity on the positive domain `p > 0`, `q p > 0` with `q`
+  differentiable at `p`, the hypotheses of the log-derivative theorem below. If `q` is not
+  differentiable at `p` or `q p = 0`, Lean's total `deriv` and division may yield junk values
+  (for example `pointElasticity (fun _ => 0) p = 0`).
 
 ## Main results
 
@@ -45,9 +46,10 @@ Atlas roadmap target EC03.T03.
 
 namespace MathlibExt.Economics.Consumer
 
-/-- The point price elasticity of a demand curve `q` at price `p`:
-`ε(p) = p q'(p) / q(p)`. It is the economic elasticity only when `q` is differentiable at `p`
-and `q p ≠ 0`; otherwise `deriv` and division by zero return Mathlib's junk values. -/
+/-- The point price elasticity formula `ε(p) = p q'(p) / q(p)` for a demand curve `q` at price
+`p`, as a total function. It is the economic (percentage) elasticity when `p > 0`, `q p > 0` and
+`q` is differentiable at `p`. If `q` is not differentiable at `p` or `q p = 0`, the total
+`deriv` and division may yield Mathlib's junk values. -/
 noncomputable def pointElasticity (q : ℝ → ℝ) (p : ℝ) : ℝ :=
   p * deriv q p / q p
 
