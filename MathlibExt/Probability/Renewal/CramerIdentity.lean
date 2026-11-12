@@ -38,7 +38,7 @@ This is optional stopping of the martingale `e^{θ S_n}` at `τ₊ ∧ n`, carri
   `𝔼 e^{θ X n} = 1`, so `𝔼[e^{θ S_{n+1}}; B n] = 𝔼[e^{θ S_n}; B n]`; then `B n` splits into
   `B (n + 1)` and the events `{τ₊ = n + 1, S_{n+1} = j}`, on which `e^{θ S_{n+1}} = e^{θ j}`.
 * (The remainder vanishes.) On `B n`, `S_n ≤ 0`, so `e^{θ S_n} ≤ e^{(θ/2) S_n}` and
-  `𝔼[e^{θ S_n}; B n] ≤ (𝔼 e^{(θ/2) X})^n`. By Cauchy–Schwarz in the form
+  `𝔼[e^{θ S_n}; B n] ≤ (𝔼 e^{(θ/2) X})^n`. By the second-moment identity
   `𝔼 (e^{θ X / 2} - 1)^2 = 2 - 2 𝔼 e^{θ X / 2}`, nondegeneracy gives `𝔼 e^{θ X / 2} < 1`.
   No law of large numbers is needed.
 * Letting `n → ∞` in the stopped identity gives `∑_j g j e^{θ j} = 1`.
@@ -53,9 +53,11 @@ as `τ₊ ∧ n`, but using it needs the natural filtration of the scores, the m
 of `e^{θ S_n}` and `τ₊ ∧ n` as a stopping time; the stopped identity is proved directly instead,
 from fixed-time independence (`ProbabilityTheory.indep_iSup_of_disjoint` and
 `lintegral_mul_eq_lintegral_mul_lintegral_of_independent_measurableSpace`). The passage
-`n → ∞` (an unbounded stopping time) is not covered by Mathlib. The private σ-algebra
-`walkPast` and the disjointness of ladder events are adapted from the private helpers `past`
-and `ladderEvent_disjoint` of `ScoreLadder`.
+`n → ∞` (an unbounded stopping time) is not covered by Mathlib. The private helpers
+`walkPast`, `walkPast_le`, `measurable_scoreWalk_walkPast`, `measurableSet_ladderEvent` and
+`ladderEvent_disjoint_of_ne` are adapted from the private `ScoreLadder` helpers `past`,
+`past_le`, `measurable_scoreWalk_past`, `measurableSet_ladderEvent_past` and
+`ladderEvent_disjoint`.
 
 ## References
 
@@ -272,7 +274,7 @@ private lemma stopped_identity {P : Measure Ω} [IsProbabilityMeasure P] {X : �
           ring
       _ = 1 := by rw [hstep, ih]
 
-/-- Cauchy–Schwarz step: if `𝔼 e^{θ Y} = 1` and `Y` is not almost surely `0`, then
+/-- Second-moment step: if `𝔼 e^{θ Y} = 1` and `Y` is not almost surely `0`, then
 `𝔼 e^{(θ/2) Y} < 1`, from `𝔼 (e^{θ Y / 2} - 1)^2 = 2 - 2 𝔼 e^{θ Y / 2} > 0`. -/
 private lemma lintegral_exp_half_lt_one {P : Measure Ω} [IsProbabilityMeasure P] {Y : Ω → ℝ}
     (hY : Measurable Y) {θ : ℝ} (hθ : 0 < θ)
