@@ -12,6 +12,7 @@ public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Probability.IdentDistrib
 public import Mathlib.Probability.Independence.Basic
 public import MathlibExt.Probability.FiniteProbability
+public import MathlibExt.Probability.Statistics.EstimationRisk
 
 /-!
 # The unbiased sample variance
@@ -33,6 +34,7 @@ their restriction to `Fin n`.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
+open MathlibExt.Probability.Statistics.EstimationRisk
 open scoped BigOperators ENNReal
 
 namespace MathlibExt.Probability
@@ -121,5 +123,45 @@ theorem integral_sampleVariance_of_iid
     ∫ ω, FiniteProbability.sampleVarUnbiased (fun i : Fin n => X i ω) ∂μ = variance (X 0) μ :=
   integral_sampleVariance_of_iid_fin hn (fun i : Fin n => X i) ⟨0, by omega⟩
     (hIndep.precomp Fin.val_injective) (fun i => hIdent i) hMemLp
+
+/-- **Sample variance is unbiased for the variance family.** For an i.i.d. square-integrable
+sequence and `n ≥ 2`, `s²` of the first `n` observations is unbiased for `Var (X 0)` in the
+constant family over `Unit`. Proved by rewriting with `integral_sampleVariance_of_iid`. -/
+theorem isUnbiased_sampleVariance_of_iid
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    (X : ℕ → Ω → ℝ)
+    (hIndep : iIndepFun X μ)
+    (hIdent : ∀ i, IdentDistrib (X i) (X 0) μ μ)
+    (hMemLp : MemLp (X 0) 2 μ)
+    {n : ℕ} (hn : 2 ≤ n) :
+    MathlibExt.Probability.Statistics.EstimationRisk.IsUnbiased
+      (fun ω => FiniteProbability.sampleVarUnbiased (fun i : Fin n => X i ω))
+      (fun _ : Unit => ⟨μ, inferInstance⟩) (fun _ => variance (X 0) μ) := by
+  intro θ
+  exact integral_sampleVariance_of_iid X hIndep hIdent hMemLp n hn
+
+/-- **Family MSE of the sample variance is its variance.** At every parameter of the constant
+family, via `IsUnbiased.familyMeanSquaredError_eq_variance`. -/
+theorem familyMeanSquaredError_sampleVariance_of_iid
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    (X : ℕ → Ω → ℝ)
+    (hIndep : iIndepFun X μ)
+    (hIdent : ∀ i, IdentDistrib (X i) (X 0) μ μ)
+    (hMemLp : MemLp (X 0) 2 μ)
+    {n : ℕ} (hn : 2 ≤ n)
+    (hMem : ∀ _ : Unit, MemLp
+      (fun ω => FiniteProbability.sampleVarUnbiased (fun i : Fin n => X i ω)) 2 μ)
+    (h2 : ∀ _ : Unit, Integrable
+      (fun x => (FiniteProbability.sampleVarUnbiased (fun i : Fin n => X i x)
+        - variance (X 0) μ) ^ 2) μ) :
+    MathlibExt.Probability.Statistics.EstimationRisk.familyMeanSquaredError
+      (fun ω => FiniteProbability.sampleVarUnbiased (fun i : Fin n => X i ω))
+      (fun _ : Unit => (⟨μ, inferInstance⟩ : ProbabilityMeasure Ω))
+      (fun _ => variance (X 0) μ) h2
+      = fun _ => variance
+        (fun ω => FiniteProbability.sampleVarUnbiased (fun i : Fin n => X i ω)) μ := by
+  funext θ
+  exact IsUnbiased.familyMeanSquaredError_eq_variance
+    (isUnbiased_sampleVariance_of_iid X hIndep hIdent hMemLp hn) hMem h2 θ
 
 end MathlibExt.Probability
