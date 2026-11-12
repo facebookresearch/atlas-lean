@@ -32,6 +32,7 @@ This file compares three ways of turning an observed `n_AB` into a p-value.
    (`orderedPValue`). With `g` the Levene probability itself this is the exact test of
    Wigginton, Cutler and Abecasis (`hweExactPValue`); with `g = id` it is the one-sided test for
    a heterozygote deficit (`hweDeficitPValue`). Both are valid p-values in every finite sample
+   with a feasible allele count (`nA ≤ 2 * N`)
    (`isValidPValue_hweExactPValue`, `isValidPValue_hweDeficitPValue`).
 2. **Asymptotic test.** Pearson's statistic `X²` (`hweChiSq`) compared with the `χ²₁` law
    (`asymptoticHWEPValue`). Pearson's theorem says `X²` converges in law to `χ²₁` as `N → ∞`
@@ -50,11 +51,14 @@ This file compares three ways of turning an observed `n_AB` into a p-value.
    (`not_isValidPValue_gcPValue_sparse`). That failure occurs at the level
    `t = gcPValue λ (10/81)` (about `0.72` at `λ = 1`, tending to `1` as `λ` grows) and comes from
    the discreteness of the null law, as for any non-randomized p-value below `1` on a finite
-   support. At the usual level `0.05` the failure is proved only for `λ ∈ (0, 1]` (genomic
-   control clips its estimate at `1`): there the test still rejects with null probability at
-   least `1/19` (`gcPValue_sparse_rejection_ge`); for large `λ` the level-`0.05` test never
-   rejects. Genomic control rescales a continuous null law; it cannot turn a two-point discrete
-   null law into `χ²₁`.
+   support. At the usual level `0.05` the failure is proved only for `λ ∈ (0, 1]`
+   (`gcPValue_sparse_rejection_ge`); for large `λ` the level-`0.05` test never
+   rejects. Note this range is not the clipped-genomic-control regime: clipping floors the
+   factor actually used at `1`, so a clipped factor satisfies `λ ≥ 1`, and `λ < 1` never
+   occurs after clipping (dividing by a smaller number inflates the statistic and makes
+   rejection easier). The `λ = 1` endpoint is the clipped boundary, and it still rejects with
+   null probability at least `1/19`. Genomic control rescales a continuous null law; it
+   cannot turn a two-point discrete null law into `χ²₁`.
 
 ## Main definitions
 
@@ -244,6 +248,21 @@ theorem hasLaw_hetCount (N nA : ℕ) :
       leveneMeasure_singleton]
     exact uniformArrangements_hetCount N nA h
 
+/-- **The uniform-placement model is a probability measure for feasible allele counts.**
+For `nA ≤ 2 * N` the arrangement set is nonempty, so `uniformArrangements N nA` is a
+genuine HWE probability law, not the zero measure. This is proved via `hasLaw_hetCount`:
+the pushforward of `uniformArrangements` is Levene's law, which is a probability measure
+under the same feasibility hypothesis. -/
+instance (N nA : ℕ) [Fact (nA ≤ 2 * N)] :
+    IsProbabilityMeasure (uniformArrangements N nA) := by
+  constructor
+  have hmap := (hasLaw_hetCount N nA).map_eq
+  have hlevene : (leveneMeasure N nA) Set.univ = 1 := measure_univ
+  have h := congrArg (· Set.univ) hmap
+  rw [Measure.map_apply Measurable.of_discrete MeasurableSet.univ, Set.preimage_univ,
+    hlevene] at h
+  exact h
+
 /-- **Validity of ordered exact HWE p-values.** If the heterozygote count `H` has Levene's law,
 then for every extremeness key `g` the ordered p-value `orderedPValue (leveneProb N nA) g` at
 `H` is a valid p-value. No large-sample approximation is involved.
@@ -269,17 +288,21 @@ noncomputable def hweDeficitPValue (N nA h : ℕ) : ℝ :=
 
 /-- **The exact HWE test is valid in finite samples.** Under the uniform-placement null model
 the Wigginton–Cutler–Abecasis p-value of the observed heterozygote count is a valid p-value, for
-every `N` and `nA`.
+every `N` and every feasible `nA ≤ 2 * N`. Feasibility is essential: for `nA > 2 * N` the
+arrangement set is empty, `uniformArrangements N nA` is the zero measure, and validity
+would hold only vacuously, not under an HWE probability law.
 
 Source: Wigginton, Cutler and Abecasis (2005). -/
-theorem isValidPValue_hweExactPValue (N nA : ℕ) :
+theorem isValidPValue_hweExactPValue (N nA : ℕ) (_hnA : nA ≤ 2 * N) :
     IsValidPValue (uniformArrangements N nA) (fun s => hweExactPValue N nA (hetCount s)) :=
   isValidPValue_orderedPValue (hasLaw_hetCount N nA) _
 
-/-- **The exact heterozygote-deficit test is valid in finite samples.**
+/-- **The exact heterozygote-deficit test is valid in finite samples.** As above, this
+requires the feasible range `nA ≤ 2 * N`; for `nA > 2 * N` the arrangement set is empty
+and the statement would hold only vacuously.
 
 Source: Wigginton, Cutler and Abecasis (2005). -/
-theorem isValidPValue_hweDeficitPValue (N nA : ℕ) :
+theorem isValidPValue_hweDeficitPValue (N nA : ℕ) (_hnA : nA ≤ 2 * N) :
     IsValidPValue (uniformArrangements N nA) (fun s => hweDeficitPValue N nA (hetCount s)) :=
   isValidPValue_orderedPValue (hasLaw_hetCount N nA) _
 
@@ -582,7 +605,8 @@ inflation factor `lam > 0` the genomic-control p-value is still not valid: at th
 `t = gcPValue lam (10/81)`, its own larger value (about `0.72` at `lam = 1`, tending to `1` as
 `lam` grows), it rejects with probability one. This failure comes from the discreteness of the
 null law, not from genomic control specifically. At the usual level `0.05` the failure is proved
-only for `lam ∈ (0, 1]` (`gcPValue_sparse_rejection_ge`). -/
+only for `lam ∈ (0, 1]` (`gcPValue_sparse_rejection_ge`); that range includes values below the
+clipping floor, so see that theorem for the correct interpretation. -/
 theorem not_isValidPValue_gcPValue_sparse {lam : ℝ} (hlam : 0 < lam) :
     ¬ IsValidPValue (uniformArrangements 10 2)
       (fun s => gcPValue lam (hweChiSqOfHet 10 2 (hetCount s))) := by
@@ -618,10 +642,14 @@ theorem not_isValidPValue_gcPValue_sparse {lam : ℝ} (hlam : 0 < lam) :
   norm_num at h
   exact absurd hp₂ (not_lt.mpr h)
 
-/-- **Genomic control with `lam ≤ 1` leaves the sparse test anti-conservative.** Genomic
-control clips its inflation estimate at `1`; for every `lam ∈ (0, 1]` the level-`0.05`
-genomic-control test still rejects with null probability at least `1/19 > 0.05` in the sparse
-HWE model. -/
+/-- **Genomic control with `lam ≤ 1` leaves the sparse test anti-conservative.** For every
+`lam ∈ (0, 1]` the level-`0.05` genomic-control test still rejects with null probability at
+least `1/19 > 0.05` in the sparse HWE model. This range is **not** the clipped-genomic-control
+regime: clipping floors the factor actually used at `1`, so a clipped factor satisfies
+`lam ≥ 1` and `lam < 1` never occurs after clipping (dividing by a smaller number inflates
+the statistic and makes rejection easier). The `lam = 1` endpoint is the clipped boundary:
+when the estimated inflation is at most `1`, clipping uses `lam = 1`, and the test still
+rejects with null probability at least `1/19`. -/
 theorem gcPValue_sparse_rejection_ge {lam : ℝ} (hlam : 0 < lam) (hlam1 : lam ≤ 1) :
     ENNReal.ofReal (1 / 19) ≤ uniformArrangements 10 2
       {s | gcPValue lam (hweChiSqOfHet 10 2 (hetCount s)) ≤ 1 / 20} := by

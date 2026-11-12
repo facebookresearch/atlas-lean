@@ -24,11 +24,16 @@ namespace MathlibExtTest.Biology.StatisticalGenetics.AssociationTests.ExactVsAsy
 
 /-- The exact HWE test is valid for the sparse model `N = 10`, `n_A = 2`. -/
 example : IsValidPValue (uniformArrangements 10 2) fun s => hweExactPValue 10 2 (hetCount s) :=
-  isValidPValue_hweExactPValue 10 2
+  isValidPValue_hweExactPValue 10 2 (by norm_num)
 
 /-- The heterozygote-deficit test is valid too, including in the degenerate model `N = 0`. -/
 example : IsValidPValue (uniformArrangements 0 0) fun s => hweDeficitPValue 0 0 (hetCount s) :=
-  isValidPValue_hweDeficitPValue 0 0
+  isValidPValue_hweDeficitPValue 0 0 (by norm_num)
+
+/-- The uniform-placement model is a probability measure for feasible allele counts. -/
+example : IsProbabilityMeasure (uniformArrangements 10 2) := by
+  have : Fact (2 ≤ 2 * 10) := ⟨by norm_num⟩
+  infer_instance
 
 /-- Any extremeness key works, e.g. ranking by excess heterozygosity (`g j = -j`). -/
 example (N nA : ℕ) :
@@ -104,8 +109,8 @@ example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {Z : Ω → ℝ}
     IsValidPValue μ fun ω => gcPValue 2 (2 * Z ω ^ 2) :=
   isValidPValue_gcPValue (by norm_num) ⟨Z, hZ, fun _ => rfl⟩
 
-/-- No inflation factor repairs the sparse case: `λ = 1` (clipped genomic control), `λ = 1/2`
-(inflating), and `λ = 100` (heavy deflation) all fail. -/
+/-- No inflation factor repairs the sparse case: `λ = 1` (the clipping floor), `λ = 1/2`
+(below the clipping floor, inflating the statistic), and `λ = 100` (heavy deflation) all fail. -/
 example : ¬ IsValidPValue (uniformArrangements 10 2)
     fun s => gcPValue 1 (hweChiSqOfHet 10 2 (hetCount s)) :=
   not_isValidPValue_gcPValue_sparse one_pos
