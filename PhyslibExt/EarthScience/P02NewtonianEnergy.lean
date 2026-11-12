@@ -45,6 +45,8 @@ force is not acceleration.
 
 namespace EarthScience
 
+/-! ## A. Derivative of kinetic energy -/
+
 /-- Kinetic energy `K(t) = m * ‖v t‖ ^ 2 / 2` of a particle whose velocity
 `v` has derivative (acceleration) `a t` at time `t` has derivative
 `inner (m • a t) (v t)`. Here `v` plays the role of `r'`. -/
@@ -60,6 +62,8 @@ theorem hasDerivAt_kinetic_energy {E : Type*} [NormedAddCommGroup E]
     ring
   rw [hder] at h3
   exact h3
+
+/-! ## B. Nonnegativity -/
 
 /-- Kinetic energy is nonnegative for nonnegative mass. -/
 theorem kinetic_energy_nonneg {E : Type*} [NormedAddCommGroup E]
