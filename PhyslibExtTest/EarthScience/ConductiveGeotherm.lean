@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.S07Geotherm
+import PhyslibExt.EarthScience.ConductiveGeotherm
 
 /-!
 # Geotherm checks
 
-Concrete consumers of `PhyslibExt.EarthScience.S07Geotherm`:
+Concrete consumers of `PhyslibExt.EarthScience.ConductiveGeotherm`:
 `Ts = 0`, `Tb = 1300`, `L = 100`, `k = 3`, `H = 0.02` (so `T(50) = 658.33…`,
 `T'(50) = 13 - 1/3`, `T'' = -0.02/3`), plus the zero-production boundary.
 
@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.S07Geotherm`
+- `PhyslibExt.EarthScience.ConductiveGeotherm`
 -/
 
 /-- Numeric geotherm: boundary values at `d = 0` and `d = 100`. -/
