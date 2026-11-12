@@ -9,8 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.ExactTests.HardyWeinbergExact
+public import MathlibExt.Probability.Statistics.ExactTests.TailPValue
 public import MathlibExt.Probability.Statistics.MultipleTesting.Basic
-public import Mathlib.Probability.Distributions.Gaussian.Real
+public import MathlibExt.Probability.Distributions.ChiSquare
 public import Mathlib.Probability.UniformOn
 
 import Mathlib.Analysis.Complex.ExponentialBounds
@@ -93,12 +94,13 @@ Searched `MathlibExt`, `MathlibExtTest`, `WantedExt` and Mathlib for `IsValidPVa
 `HardyWeinberg`, `leveneProb`, `hetCount`, `FisherExact`, `upperTail`, `genomic control`,
 `inflation factor`, `chiSquared`, `survival`, `mgf_gaussianReal`, `measure_ge_le_exp_mul_mgf`.
 Reused: `leveneProb`, `hetCount`, `card_hetCount_div_choose`, `sum_leveneProb`
-(`ExactTests/HardyWeinbergExact`), `IsValidPValue` (`MultipleTesting/Basic`), and Mathlib's
+(`ExactTests/HardyWeinbergExact`), `IsValidPValue` (`MultipleTesting/Basic`),
+`sum_upperTail_le` (`ExactTests/TailPValue`, specialized to the key `-g`),
+`chiSquareMeasure` and `gaussianReal_map_sq` (`Distributions/ChiSquare`), and Mathlib's
 `gaussianReal`, `mgf_id_gaussianReal`, `measure_ge_le_exp_mul_mgf`, `uniformOn`. Not found, so
 defined here: a measure form of Levene's law, a validity theorem for exact HWE p-values, a
 chi-square HWE statistic, a validity theorem for survival-function p-values on `ℝ`, and any
-genomic-control statement. The `ℕ`-valued `upperTailPValue` of `ExactTests/TailPValue` covers
-one-sided orderings only, so the two-sided ordered p-value is proved directly.
+genomic-control statement.
 
 ## References
 
@@ -144,15 +146,16 @@ Source: Lehmann–Romano (2005), Lemma 3.3.1. -/
 theorem sum_filter_orderedPValue_le {f g : ℕ → ℝ} {M : ℕ} (hf : ∀ j, 0 ≤ f j) {t : ℝ}
     (ht : 0 ≤ t) :
     ∑ h ∈ (range M).filter (fun h => orderedPValue f g M h ≤ t), f h ≤ t := by
-  set S := (range M).filter (fun h => orderedPValue f g M h ≤ t)
-  rcases S.eq_empty_or_nonempty with hS | hS
-  · simp [hS, ht]
-  obtain ⟨h₀, hh₀, hmax⟩ := S.exists_max_image g hS
-  have hsub : S ⊆ (range M).filter (fun j => g j ≤ g h₀) := fun h hh =>
-    mem_filter.mpr ⟨(mem_filter.mp hh).1, hmax h hh⟩
-  calc ∑ h ∈ S, f h ≤ orderedPValue f g M h₀ :=
-        sum_le_sum_of_subset_of_nonneg hsub fun j _ _ => hf j
-    _ ≤ t := (mem_filter.mp hh₀).2
+  classical
+  have hp (h : ℕ) :
+      (∑ j ∈ range M with -g h ≤ -g j, f j) = orderedPValue f g M h := by
+    apply sum_congr
+    · ext j
+      simp only [mem_filter, neg_le_neg_iff]
+    · intro j _
+      rfl
+  simpa only [hp] using
+    sum_upperTail_le (range M) f (fun j => -g j) (fun j _ => hf j) ht
 
 /-- Levene's probabilities are nonnegative. -/
 theorem leveneProb_nonneg (N nA h : ℕ) : 0 ≤ leveneProb N nA h := by
@@ -339,7 +342,13 @@ noncomputable def hweChiSqOfHet (N nA h : ℕ) : ℝ :=
 
 /-- The `χ²₁` survival function `x ↦ P(Z² ≥ x)` for `Z ~ N(0, 1)`. -/
 noncomputable def chiSqOneSurvival (x : ℝ) : ℝ :=
-  (gaussianReal 0 1).real {z | x ≤ z ^ 2}
+  (chiSquareMeasure 1).real (Set.Ici x)
+
+private theorem chiSqOneSurvival_eq_gaussian (x : ℝ) :
+    chiSqOneSurvival x = (gaussianReal 0 1).real {z | x ≤ z ^ 2} := by
+  rw [chiSqOneSurvival, ← gaussianReal_map_sq, measureReal_def,
+    Measure.map_apply (by fun_prop) measurableSet_Ici]
+  rfl
 
 /-- The asymptotic HWE p-value: the `χ²₁` tail at Pearson's statistic. -/
 noncomputable def asymptoticHWEPValue (N nA h : ℕ) : ℝ :=
@@ -353,10 +362,13 @@ def InChiSqRegime (c : ℝ) (nAA nAB nBB : ℕ) : Prop :=
 
 theorem chiSqOneSurvival_nonneg (x : ℝ) : 0 ≤ chiSqOneSurvival x := measureReal_nonneg
 
-theorem chiSqOneSurvival_le_one (x : ℝ) : chiSqOneSurvival x ≤ 1 := measureReal_le_one
+theorem chiSqOneSurvival_le_one (x : ℝ) : chiSqOneSurvival x ≤ 1 := by
+  let := isProbabilityMeasure_chiSquareMeasure (p := 1) one_pos
+  exact measureReal_le_one
 
-theorem chiSqOneSurvival_antitone : Antitone chiSqOneSurvival := fun _ _ hxy =>
-  measureReal_mono fun _ hz => le_trans hxy hz
+theorem chiSqOneSurvival_antitone : Antitone chiSqOneSurvival := by
+  let := isProbabilityMeasure_chiSquareMeasure (p := 1) one_pos
+  exact fun _ _ hxy => measureReal_mono (Set.Ici_subset_Ici.mpr hxy)
 
 /-- **Chernoff bound for `χ²₁`.** `P(Z² ≥ x) ≤ 2 e^{-x/2}` for `x ≥ 0`. -/
 theorem chiSqOneSurvival_le {x : ℝ} (hx : 0 ≤ x) : chiSqOneSurvival x ≤ 2 * Real.exp (-x / 2) := by
@@ -384,7 +396,9 @@ theorem chiSqOneSurvival_le {x : ℝ} (hx : 0 ≤ x) : chiSqOneSurvival x ≤ 2 
     refine this.trans_eq (congrArg Real.exp ?_)
     push_cast
     nlinarith
-  calc chiSqOneSurvival x ≤ (gaussianReal 0 1).real ({z | a ≤ id z} ∪ {z | id z ≤ -a}) :=
+  calc chiSqOneSurvival x = (gaussianReal 0 1).real {z | x ≤ z ^ 2} :=
+        chiSqOneSurvival_eq_gaussian x
+    _ ≤ (gaussianReal 0 1).real ({z | a ≤ id z} ∪ {z | id z ≤ -a}) :=
         measureReal_mono hsub
     _ ≤ (gaussianReal 0 1).real {z | a ≤ id z} + (gaussianReal 0 1).real {z | id z ≤ -a} :=
         measureReal_union_le _ _
@@ -562,20 +576,15 @@ Source: Devlin and Roeder (1999). -/
 theorem isValidPValue_gcPValue {T : Ω → ℝ} {lam : ℝ} (hlam : 0 < lam)
     (hT : MultiplicativeInflation μ T lam) : IsValidPValue μ (fun ω => gcPValue lam (T ω)) := by
   obtain ⟨Z, hZ, hTZ⟩ := hT
-  set ν : Measure ℝ := (gaussianReal 0 1).map fun z => z ^ 2
-  have hmeas : Measurable fun z : ℝ => z ^ 2 := by fun_prop
-  have hsq : HasLaw (fun z : ℝ => z ^ 2) ν (gaussianReal 0 1) := ⟨hmeas.aemeasurable, rfl⟩
-  have hY : HasLaw (fun ω => Z ω ^ 2) ν μ := hsq.comp hZ
-  have hν : IsProbabilityMeasure ν := hsq.isProbabilityMeasure_iff.mp inferInstance
-  have heq : (fun ω => gcPValue lam (T ω)) = fun ω => ν.real (Set.Ici (Z ω ^ 2)) := by
+  let := isProbabilityMeasure_chiSquareMeasure (p := 1) one_pos
+  have hsq : HasLaw (fun z : ℝ => z ^ 2) (chiSquareMeasure 1) (gaussianReal 0 1) :=
+    ⟨by fun_prop, gaussianReal_map_sq⟩
+  have heq : (fun ω => gcPValue lam (T ω)) =
+      fun ω => (chiSquareMeasure 1).real (Set.Ici (Z ω ^ 2)) := by
     funext ω
-    have hm : ν (Set.Ici (Z ω ^ 2)) = gaussianReal 0 1 {z | Z ω ^ 2 ≤ z ^ 2} := by
-      rw [Measure.map_apply hmeas measurableSet_Ici]
-      rfl
-    rw [gcPValue, hTZ ω, mul_div_cancel_left₀ _ hlam.ne', chiSqOneSurvival, measureReal_def,
-      measureReal_def, hm]
+    rw [gcPValue, hTZ ω, mul_div_cancel_left₀ _ hlam.ne', chiSqOneSurvival]
   rw [heq]
-  exact isValidPValue_survival hY
+  exact isValidPValue_survival (hsq.comp hZ)
 
 /-- `P(Z² ≥ x) < 1` for `x > 0`: a standard normal lands in `(-√x, √x)` with positive
 probability. -/
@@ -596,7 +605,7 @@ theorem chiSqOneSurvival_lt_one {x : ℝ} (hx : 0 < x) : chiSqOneSurvival x < 1 
     ENNReal.toReal_pos hpos (measure_ne_top _ _)
   have := measureReal_add_measureReal_compl (μ := gaussianReal 0 1) hs
   have hu : (gaussianReal 0 1).real Set.univ = 1 := by simp
-  rw [chiSqOneSurvival]
+  rw [chiSqOneSurvival_eq_gaussian]
   linarith
 
 /-- **Genomic control is not a universal repair.** In the sparse HWE null model (`N = 10`,

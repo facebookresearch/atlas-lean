@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.PopulationGenetics.Ewens
+public import MathlibExt.Probability.Statistics.ExactTests.TailPValue
 public import Mathlib.Combinatorics.Enumerative.Stirling
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.Order.BigOperators.Ring.Finset
@@ -235,18 +236,8 @@ theorem ewensCondProb_eq_stirlingFirst {θ : ℝ} (hθ : 0 < θ) (π : n.Partiti
 `∑_{x ∈ s, p x ≤ t} q x ≤ t` for every `t ≥ 0`. -/
 theorem sum_upperTail_le {ι : Type*} (s : Finset ι) (q T : ι → ℝ) (hq : ∀ i ∈ s, 0 ≤ q i)
     {t : ℝ} (ht : 0 ≤ t) :
-    ∑ x ∈ s with ∑ y ∈ s with T x ≤ T y, q y ≤ t, q x ≤ t := by
-  classical
-  set A := s.filter fun x => ∑ y ∈ s with T x ≤ T y, q y ≤ t with hA
-  rcases A.eq_empty_or_nonempty with h | h
-  · rw [h, sum_empty]
-    exact ht
-  obtain ⟨x₀, hx₀, hmin⟩ := A.exists_min_image T h
-  calc ∑ x ∈ A, q x ≤ ∑ y ∈ s with T x₀ ≤ T y, q y := by
-        refine sum_le_sum_of_subset_of_nonneg (fun x hx => ?_) fun y hy _ => ?_
-        · exact mem_filter.mpr ⟨(mem_filter.mp hx).1, hmin x hx⟩
-        · exact hq y (mem_filter.mp hy).1
-    _ ≤ t := (mem_filter.mp hx₀).2
+    ∑ x ∈ s with ∑ y ∈ s with T x ≤ T y, q y ≤ t, q x ≤ t :=
+  MathlibExt.Probability.Statistics.ExactTests.sum_upperTail_le s q T hq ht
 
 /-- **Conditional validity of the Ewens–Watterson test**: for `θ > 0`, every number of alleles
 `k` and every level `t ≥ 0`, the conditional probability given `K = k` that the conditional

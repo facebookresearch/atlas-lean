@@ -81,4 +81,23 @@ theorem isValidPValue_upperTailPValue {μ : Measure Ω} {ν : Measure ℕ} [IsPr
       Set.eq_empty_of_forall_notMem fun ω h => hS ⟨X ω, h⟩
     simp [hset]
 
+open Finset in
+/-- **Validity of a discrete upper-tail p-value.** For nonnegative masses `q` on a finite set
+`s` and a statistic `T`, the upper-tail p-value `p x = ∑_{y ∈ s, T x ≤ T y} q y` satisfies
+`∑_{x ∈ s, p x ≤ t} q x ≤ t` for every `t ≥ 0`. -/
+theorem sum_upperTail_le {ι : Type*} (s : Finset ι) (q T : ι → ℝ) (hq : ∀ i ∈ s, 0 ≤ q i)
+    {t : ℝ} (ht : 0 ≤ t) :
+    ∑ x ∈ s with ∑ y ∈ s with T x ≤ T y, q y ≤ t, q x ≤ t := by
+  classical
+  set A := s.filter fun x => ∑ y ∈ s with T x ≤ T y, q y ≤ t with hA
+  rcases A.eq_empty_or_nonempty with h | h
+  · rw [h, sum_empty]
+    exact ht
+  obtain ⟨x₀, hx₀, hmin⟩ := A.exists_min_image T h
+  calc ∑ x ∈ A, q x ≤ ∑ y ∈ s with T x₀ ≤ T y, q y := by
+        refine sum_le_sum_of_subset_of_nonneg (fun x hx => ?_) fun y hy _ => ?_
+        · exact mem_filter.mpr ⟨(mem_filter.mp hx).1, hmin x hx⟩
+        · exact hq y (mem_filter.mp hy).1
+    _ ≤ t := (mem_filter.mp hx₀).2
+
 end MathlibExt.Probability.Statistics.ExactTests
