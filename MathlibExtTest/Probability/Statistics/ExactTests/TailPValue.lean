@@ -54,4 +54,10 @@ example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {X Y : Ω → ℕ} {
         div_le_one_of_le₀ (le_add_of_nonneg_right b.2) (by positivity)⟩) X) :=
   isValidPValue_upperTailPValue (hasLaw_cond_binomial hab hXm hYm hX hY hXY N)
 
+/-- Non-vacuity of `measure_upperTailPValue_le_upperTail`: the identity on `ℕ` under any
+probability measure `ν` is exactly calibrated at every attainable level. -/
+example (ν : Measure ℕ) [IsProbabilityMeasure ν] (k : ℕ) :
+    ν {j | upperTailPValue ν id j ≤ upperTail ν k} = ENNReal.ofReal (upperTail ν k) :=
+  measure_upperTailPValue_le_upperTail HasLaw.id k
+
 end MathlibExtTest.Probability.Statistics.ExactTests.TailPValue
