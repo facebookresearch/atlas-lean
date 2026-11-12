@@ -11,7 +11,9 @@ module
 import MathlibExt.Biology.Dynamics.TuringBranches
 import Mathlib.Analysis.Calculus.FDeriv.Mul
 import Mathlib.Analysis.Calculus.FDeriv.Prod
+import Mathlib.Analysis.Calculus.ContDiff.RCLike
 import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 
 /-! Tests for Turing pattern branches: eigenvalues of singular matrices, the Schnakenberg-type
 Jacobian `J₀ = [[4/5, 1], [-9/5, -1]]` with `d_u = 1`, `d_v = 9` (unstable on `[0, 11/2]` but
@@ -250,6 +252,58 @@ example : ∃ φ : ℝ → ℝ, φ 0 = 1 ∧ ∀ᶠ a in 𝓝[≠] (0 : ℝ), 1 
     (Eventually.of_forall fun p => hasDerivAt_const _ _) continuousAt_const
   refine ⟨φ, hφ0, ?_⟩
   filter_upwards [h] with a ⟨hdir, lam, hlam, hneg⟩
+  exact ⟨by linarith, lam, hlam, by linarith⟩
+
+/-! ### The Turing branch theorem on a concrete instance
+
+`G(a, d) = leadingEigenvalue (J₀ - (1/2)² D(d)) - a²` with `d_u = 1`, `k = 1/2`, `d₀ = 100/11`:
+equal to the critical eigenvalue on the trivial branch and strictly differentiable at `(0, d₀)`
+(the discriminant there is `tr² > 0`), so the hypotheses of `turing_patternBranch_stability` hold
+together. -/
+
+/-- `G` is `C¹` at `(0, 100/11)`. -/
+lemma J₀_G_contDiffAt : ContDiffAt ℝ 1
+    (fun p : ℝ × ℝ => leadingEigenvalue (modeMatrix J₀ 1 p.2 (1 / 2)) - p.1 ^ 2)
+    ((0 : ℝ), (100 / 11 : ℝ)) := by
+  have hfun : (fun p : ℝ × ℝ => leadingEigenvalue (modeMatrix J₀ 1 p.2 (1 / 2)) - p.1 ^ 2) =
+      fun p : ℝ × ℝ => ((J₀).trace - (1 / 2) ^ 2 * (1 + p.2) +
+        Real.sqrt (((J₀).trace - (1 / 2) ^ 2 * (1 + p.2)) ^ 2 -
+          4 * (1 * p.2 * ((1 / 2) ^ 2) ^ 2 - (p.2 * (J₀) 0 0 + 1 * (J₀) 1 1) * (1 / 2) ^ 2 +
+            (J₀).det))) / 2 - p.1 ^ 2 := by
+    funext p
+    rw [leadingEigenvalue, trace_modeMatrix, det_modeMatrix, dispersionDet]
+  rw [hfun]
+  have hD : ContDiffAt ℝ 1 (fun p : ℝ × ℝ => ((J₀).trace - (1 / 2) ^ 2 * (1 + p.2)) ^ 2 -
+      4 * (1 * p.2 * ((1 / 2) ^ 2) ^ 2 - (p.2 * (J₀) 0 0 + 1 * (J₀) 1 1) * (1 / 2) ^ 2 +
+        (J₀).det)) ((0 : ℝ), (100 / 11 : ℝ)) := by
+    fun_prop
+  have hne : ((J₀).trace - (1 / 2) ^ 2 * (1 + (100 / 11 : ℝ))) ^ 2 -
+      4 * (1 * (100 / 11 : ℝ) * ((1 / 2) ^ 2) ^ 2 -
+        ((100 / 11 : ℝ) * (J₀) 0 0 + 1 * (J₀) 1 1) * (1 / 2) ^ 2 + (J₀).det) ≠ 0 := by
+    rw [J₀_trace, J₀_00, J₀_11, J₀_det]
+    norm_num
+  have hT : ContDiffAt ℝ 1 (fun p : ℝ × ℝ => (J₀).trace - (1 / 2) ^ 2 * (1 + p.2))
+      ((0 : ℝ), (100 / 11 : ℝ)) := by
+    fun_prop
+  exact ((hT.add (hD.sqrt hne)).div_const 2).sub (by fun_prop)
+
+/-- **Non-vacuity of `turing_patternBranch_stability`.** For `J₀` at the neutral diffusion
+`100/11` of `k = 1/2`, with `G(a, d) = leadingEigenvalue (J₀ - (1/2)² D(d)) - a²` and `H = -1`,
+the pattern branch is supercritical (`φ(a) > 100/11`) and linearly stable. -/
+example : ∃ φ : ℝ → ℝ, φ 0 = 100 / 11 ∧ ∀ᶠ a in 𝓝[≠] (0 : ℝ), 100 / 11 < φ a ∧
+    ∃ lam : ℝ, HasDerivAt
+      (fun x => x * (leadingEigenvalue (modeMatrix J₀ 1 (φ a) (1 / 2)) - x ^ 2)) lam a ∧
+      lam < 0 := by
+  obtain ⟨φ, hφ0, -, -, -, hbr⟩ := turing_patternBranch_stability (J := J₀) (du := 1)
+    (k := 1 / 2) (d₀ := 100 / 11) (H := fun _ => -1) (Ha := fun _ => 0)
+    (by rw [J₀_trace]; norm_num) J₀_admissible J₀_neutral.symm
+    (J₀_G_contDiffAt.hasStrictFDerivAt one_ne_zero)
+    (Eventually.of_forall fun d => by simp)
+    (Eventually.of_forall fun p => by simp [sub_eq_add_neg])
+    continuousAt_const (by norm_num)
+    (Eventually.of_forall fun p => hasDerivAt_const _ _) continuousAt_const
+  refine ⟨φ, hφ0, ?_⟩
+  filter_upwards [hbr] with a ⟨hdir, lam, hlam, hneg⟩
   exact ⟨by linarith, lam, hlam, by linarith⟩
 
 end MathlibExtTest.Biology.Dynamics.TuringBranches

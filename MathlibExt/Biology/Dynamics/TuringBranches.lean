@@ -38,9 +38,10 @@ between two consecutive `k_n²`, so instability is not monotone in `L`.
 **Onset of a Neumann mode.** Since `h` is affine in the inhibitor diffusion `d = d_v`, an
 admissible mode (`0 < f_u k² - d_u k⁴`) is unstable iff `d` exceeds its *neutral diffusion*
 `d_n(k²)` (`neutralDiffusion`); the onset on `[0, L]` is governed by the discrete Neumann values.
-At `d_n(k²)` the mode matrix has the simple eigenvalue `0` (the other eigenvalue is its negative
-trace), `0` is a simple Neumann eigenvalue under non-resonance, and the leading real eigenvalue
-crosses zero with positive speed `(d_u k⁴ - f_u k²) / tr (J - k² D)` (transversality).
+At `d_n(k²)` the mode matrix has exactly the eigenvalues `0` and `tr (J - k² D)` (so `0` is a
+simple root of its characteristic polynomial whenever this trace is nonzero, e.g. negative), under
+non-resonance mode `n` is the only Neumann mode with eigenvalue `0`, and the leading real
+eigenvalue crosses zero with positive speed `(d_u k⁴ - f_u k²) / tr (J - k² D)` (transversality).
 
 **Local pattern branch.** The steady-state bifurcation from the homogeneous state at a simple
 critical mode is formalized for the *reduced bifurcation equation* `Φ(a, d) = a G(a, d)` in the
@@ -354,10 +355,11 @@ theorem exists_eigenvector_zero_iff {J : Matrix (Fin 2) (Fin 2) ℝ} {du d k : �
   rw [exists_eigenvector_iff, det_modeMatrix]
   simp
 
-/-- **Non-resonance gives a simple critical Neumann mode.** If mode `n` is neutral at `d` and no
+/-- **Non-resonance isolates the critical Neumann mode.** If mode `n` is neutral at `d` and no
 other Neumann mode is (`h(k_m²) ≠ 0` for `m ≠ n`), then `n` is the only Neumann mode whose
-mode matrix has the eigenvalue `0`. This is the spectral hypothesis of a simple-eigenvalue
-(Crandall–Rabinowitz) bifurcation on `[0, L]`. -/
+mode matrix has the eigenvalue `0`. Simplicity of `0` *within* mode `n` additionally needs
+`tr (J - k_n² D) ≠ 0` (`exists_eigenvector_modeMatrix_iff_of_neutral`); together these give the
+spectral hypothesis of a simple-eigenvalue (Crandall–Rabinowitz) bifurcation on `[0, L]`. -/
 theorem setOf_neumann_zero_eigen_eq_singleton {J : Matrix (Fin 2) (Fin 2) ℝ} {du d L : ℝ}
     {n : ℕ} (hn : dispersionDet J du d (neumannWavenumber L n ^ 2) = 0)
     (hnr : ∀ m, m ≠ n → dispersionDet J du d (neumannWavenumber L m ^ 2) ≠ 0) :
@@ -453,12 +455,15 @@ theorem leadingEigenvalue_crossing {J : Matrix (Fin 2) (Fin 2) ℝ} {du d₀ k :
 /-! ### Local pattern branch of the reduced bifurcation equation
 
 The steady states of the Turing system near the homogeneous state and the neutral diffusion
-`d₀` of a simple critical Neumann mode `n` are, by a Lyapunov–Schmidt reduction onto the
-critical mode `cos(k_n x)`, the zeros of a scalar *reduced bifurcation equation*
-`Φ(a, d) = a · G(a, d)` in the amplitude `a` of that mode (the factor `a` expresses that the
-homogeneous state `a = 0` is a steady state for every `d`), with `G(0, d)` the critical
-eigenvalue. The reduction itself needs the function-space framework of the PDE and is **not**
-formalized here: the reduced map `G` enters as an explicit hypothesis. -/
+`d₀` of a simple critical Neumann mode `n` are, by a center-manifold reduction (or a
+Lyapunov–Schmidt reduction along the `d`-dependent critical eigenvector `cos(k_n x) v(d)`), the
+zeros of a scalar *reduced bifurcation equation* `Φ(a, d) = a · G(a, d)` in the amplitude `a` of
+that mode (the factor `a` expresses that the homogeneous state `a = 0` is a steady state for
+every `d`), with `G(0, d)` equal to the critical eigenvalue. (A Lyapunov–Schmidt reduction along a
+fixed kernel vector only reproduces the sign and crossing slope of the critical eigenvalue, not
+the exact equality used in `turing_patternBranch`.) The reduction itself needs the function-space
+framework of the PDE and is **not** formalized here: the reduced map `G` enters as an explicit
+hypothesis. -/
 
 /-- A continuous linear map `ℝ → ℝ` with `f 1 ≠ 0` is invertible. -/
 private theorem isInvertible_of_apply_one_ne_zero {f : ℝ →L[ℝ] ℝ} (hf : f 1 ≠ 0) :
@@ -551,12 +556,13 @@ theorem turing_patternBranch {J : Matrix (Fin 2) (Fin 2) ℝ} {du k d₀ : ℝ}
     eventually_sign_of_hasDerivAt hline hG0 hσpos⟩
 
 /-- **Direction and stability of the pattern branch (pitchfork).** Suppose the reduced map is
-reflection-symmetric to second order, `G(a, d) = G(0, d) + a² H(a, d)` near `(0, d₀)` (for an odd
-critical mode `n` the reflection `x ↦ L - x` of `[0, L]` maps `cos(k_n x)` to `-cos(k_n x)`, which
-makes `G` even in `a`), with `H`
-continuous at `(0, d₀)`, `c = H(0, d₀) ≠ 0`, and `H` differentiable in `a` with partial derivative
-`H_a` continuous at `(0, d₀)`. Let the trivial branch cross transversally, `∂_d G(0, d₀) = σ > 0`,
-and let `φ` be the pattern branch of `exists_patternBranch`. Then for small `a ≠ 0`:
+symmetric to second order, `G(a, d) = G(0, d) + a² H(a, d)` near `(0, d₀)` (for every critical
+mode `n ≥ 1` the quadratic term of the reaction projects to zero on `cos(k_n x)` because
+`∫₀ᴸ cos³(k_n x) dx = 0`, so `G` has no term linear in `a`; for odd `n` the reflection
+`x ↦ L - x` even makes `G` even in `a`), with `H` continuous at `(0, d₀)`, `c = H(0, d₀) ≠ 0`,
+and `H` differentiable in `a` with partial derivative `H_a` continuous at `(0, d₀)`. Let the
+trivial branch cross transversally, `∂_d G(0, d₀) = σ > 0`, and let `φ` be the pattern branch of
+`exists_patternBranch`. Then for small `a ≠ 0`:
 
 * `c (φ(a) - d₀) < 0`: the branch bifurcates *supercritically* (into `d > d₀`, where the
   homogeneous state is unstable) iff `c < 0`, and subcritically iff `c > 0`;
