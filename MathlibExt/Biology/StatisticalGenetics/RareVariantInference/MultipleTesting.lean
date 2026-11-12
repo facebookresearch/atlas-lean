@@ -65,7 +65,8 @@ satisfies PRDS is a modeling question; nothing here asserts it for LD-correlated
   BH-selected gene set is below the fixed number `q / δ` has probability at least `1 - δ`. It
   follows from the FDR bound by Markov's inequality
   (`measure_le_fdp_bhRejections_tailPValue_le`, which gives the sharper level `q |H0| / (m δ)`);
-  it is informative only when `δ > q`, since the FDP never exceeds `1`.
+  it is informative only for `q ≤ δ < 1`: for `δ < q` the level exceeds `1`, which the FDP
+  never does, and for `δ ≥ 1` the probability bound `1 - δ` is not positive.
 
 Both guarantees are conditional: they say nothing when a null test is anti-conservative or the
 dependence is outside PRDS. The test file exhibits a single anti-conservative null test (an
@@ -280,7 +281,8 @@ theorem measure_le_fdp_bhRejections_tailPValue_le (h : IsTailCalibratedFamily μ
 hypotheses of `integral_fdp_bhRejections_tailPValue_le` (tail-calibrated tests with PRDS
 p-values), for `q ∈ (0, 1]` and `δ > 0`, the event that the gene set selected by BH at level `q`
 has false discovery proportion below the fixed number `q / δ` has probability at least `1 - δ`.
-The statement is informative only for `δ > q`, since the FDP is at most `1`;
+The statement is informative only for `q ≤ δ < 1`: for `δ < q` the level exceeds `1`, which the
+FDP never does, and for `δ ≥ 1` the bound `1 - δ` is not positive.
 `measure_le_fdp_bhRejections_tailPValue_le` gives the sharper level `q |H0| / (m δ)`. -/
 theorem measure_fdp_bhRejections_tailPValue_lt_ge (h : IsTailCalibratedFamily μ T G H0)
     (hprds : IsPRDSOn μ (tailPValue T G) H0) {q : ℝ} (hq₀ : 0 < q) (hq₁ : q ≤ 1) {δ : ℝ}
