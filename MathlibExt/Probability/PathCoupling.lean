@@ -38,7 +38,7 @@ Total variation is the `MarkovMixing.tvDist` of the two mass
 functions, via the namespaced PMF bridge `tvDist` below.
 
 Source: Levin and Peres, Markov Chains and Mixing Times (2017),
-Chapter 13.
+Chapter 14.
 -/
 
 open Finset
