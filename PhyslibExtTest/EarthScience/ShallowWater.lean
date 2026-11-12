@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.O04ShallowWater
+import PhyslibExt.EarthScience.ShallowWater
 
 /-!
 # Shallow-water waves, tides, and sea level
 
-Concrete consumers of `PhyslibExt.EarthScience.O04ShallowWater`.
+Concrete consumers of `PhyslibExt.EarthScience.ShallowWater`.
 
 ## i. Overview
 
@@ -28,7 +28,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.O04ShallowWater`
+- `PhyslibExt.EarthScience.ShallowWater`
 -/
 
 /-- Wave speed for `g = 9.8`, `H = 10`: `√98 > 0` and `(√98)² = 98`. -/
