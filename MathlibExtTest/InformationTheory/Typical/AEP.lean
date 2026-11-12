@@ -53,27 +53,37 @@ example : shannonEntropyNats (PMF.pure (0 : Fin 2)) = 0 := by
   rw [shannonEntropyNats, Fin.sum_univ_two]
   simp [PMF.pure_apply]
 
-/-- Boundary check: the self-information of the point mass is `0` at both
-outcomes: `-Real.log 1 = 0` at `0`, and the zero convention at the
-zero-probability atom `1`. -/
-example (a : Fin 2) : selfInformationNats (PMF.pure (0 : Fin 2)) a = 0 := by
-  fin_cases a <;> simp [selfInformationNats, PMF.pure_apply]
+/-- Boundary check: the real-valued zero extension is `0` at both outcomes:
+`-Real.log 1 = 0` at the supported atom `0`, and the chosen extension value
+at the impossible atom `1`. The latter is not genuine self-information. -/
+example (a : Fin 2) : selfInformationNatsZeroExtension (PMF.pure (0 : Fin 2)) a = 0 := by
+  fin_cases a <;> simp [selfInformationNatsZeroExtension, PMF.pure_apply]
+
+/-- The support hypothesis cannot be dropped: genuine surprisal is infinite
+at the impossible atom, unlike the real-valued zero extension. -/
+theorem zeroExtension_ne_surprisal_off_support :
+    surprisal ((PMF.pure (0 : Fin 2)) 1) ≠
+      ENNReal.ofReal (selfInformationNatsZeroExtension (PMF.pure (0 : Fin 2)) 1 /
+        Real.log 2) := by
+  simp [PMF.pure_apply, selfInformationNatsZeroExtension, surprisal_zero]
+
+#print axioms zeroExtension_ne_surprisal_off_support
 
 /-- Boundary check: for the point mass, the AEP deviation event is empty for
 every `ε > 0`, so its probability is `0`: the bound is `0 ≤ 0`. -/
 example (ε : ℝ) (hε : 0 < ε) :
     (∑ a ∈ Finset.univ.filter
-        (fun a => ε < |selfInformationNats (PMF.pure (0 : Fin 2)) a -
+        (fun a => ε < |selfInformationNatsZeroExtension (PMF.pure (0 : Fin 2)) a -
           shannonEntropyNats (PMF.pure (0 : Fin 2))|),
         ((PMF.pure (0 : Fin 2)) a).toReal) = 0 := by
   have hent : shannonEntropyNats (PMF.pure (0 : Fin 2)) = 0 := by
     rw [shannonEntropyNats, Fin.sum_univ_two]
     simp [PMF.pure_apply]
-  have hself : ∀ a : Fin 2, selfInformationNats (PMF.pure (0 : Fin 2)) a = 0 := by
+  have hself : ∀ a : Fin 2, selfInformationNatsZeroExtension (PMF.pure (0 : Fin 2)) a = 0 := by
     intro a
-    fin_cases a <;> simp [selfInformationNats, PMF.pure_apply]
+    fin_cases a <;> simp [selfInformationNatsZeroExtension, PMF.pure_apply]
   have hfilter : Finset.univ.filter
-      (fun a => ε < |selfInformationNats (PMF.pure (0 : Fin 2)) a -
+      (fun a => ε < |selfInformationNatsZeroExtension (PMF.pure (0 : Fin 2)) a -
         shannonEntropyNats (PMF.pure (0 : Fin 2))|) = ∅ := by
     apply Finset.filter_false_of_mem
     intro a _
@@ -82,6 +92,15 @@ example (ε : ℝ) (hε : 0 < ε) :
     exact not_lt.mpr hε.le
   rw [hfilter]
   simp
+
+/-- On positive support, the bridge recovers one bit of genuine surprisal. -/
+theorem surprisal_fairBit (a : Fin 2) : surprisal (fairBit a) = 1 := by
+  have ha : a ∈ fairBit.support := by
+    simp [fairBit]
+  rw [surprisal_eq_selfInformationNatsZeroExtension fairBit a ha]
+  simp [selfInformationNatsZeroExtension, fairBit_apply, (Real.log_pos one_lt_two).ne']
+
+#print axioms surprisal_fairBit
 
 /-- The fair bit has entropy `Real.log 2` in nats. -/
 example : shannonEntropyNats fairBit = Real.log 2 := by
@@ -94,17 +113,18 @@ deviation from the entropy is `0` and the AEP bound is `0 ≤ 0` for every
 `ε > 0`. -/
 example (ε : ℝ) (hε : 0 < ε) :
     (∑ a ∈ Finset.univ.filter
-        (fun a => ε < |selfInformationNats fairBit a - shannonEntropyNats fairBit|),
+        (fun a => ε < |selfInformationNatsZeroExtension fairBit a - shannonEntropyNats fairBit|),
         (fairBit a).toReal) = 0 := by
   have hent : shannonEntropyNats fairBit = Real.log 2 := by
     rw [shannonEntropyNats, Fin.sum_univ_two, fairBit_apply, fairBit_apply]
     simp [Real.negMulLog]
     ring
-  have hself : ∀ a : Fin 2, selfInformationNats fairBit a = Real.log 2 := by
+  have hself : ∀ a : Fin 2, selfInformationNatsZeroExtension fairBit a = Real.log 2 := by
     intro a
-    simp [selfInformationNats, fairBit_apply]
+    simp [selfInformationNatsZeroExtension, fairBit_apply]
   have hfilter : Finset.univ.filter
-      (fun a => ε < |selfInformationNats fairBit a - shannonEntropyNats fairBit|) = ∅ := by
+      (fun a => ε < |selfInformationNatsZeroExtension fairBit a - shannonEntropyNats fairBit|)
+        = ∅ := by
     apply Finset.filter_false_of_mem
     intro a _
     rw [hself a, hent]
@@ -123,22 +143,23 @@ example : shannonEntropyNats threeQuarterBit =
 
 /-- The nonuniform law has self-informations `-Real.log (3/4)` and
 `-Real.log (1/4)`. -/
-example : selfInformationNats threeQuarterBit 0 = -Real.log (3 / 4) := by
-  simp [selfInformationNats, threeQuarterBit_apply_zero]
+example : selfInformationNatsZeroExtension threeQuarterBit 0 = -Real.log (3 / 4) := by
+  simp [selfInformationNatsZeroExtension, threeQuarterBit_apply_zero]
 
-example : selfInformationNats threeQuarterBit 1 = -Real.log (1 / 4) := by
-  simp [selfInformationNats, threeQuarterBit_apply_one]
+example : selfInformationNatsZeroExtension threeQuarterBit 1 = -Real.log (1 / 4) := by
+  simp [selfInformationNatsZeroExtension, threeQuarterBit_apply_one]
 
 /-- The AEP estimate instantiates for the concrete nonuniform law at `ε = 1/2`:
 the deviation probability is at most the self-information variance over
 `(1/2)^2`. -/
 example :
     (∑ a ∈ Finset.univ.filter
-        (fun a => (1 / 2 : ℝ) < |selfInformationNats threeQuarterBit a -
+        (fun a => (1 / 2 : ℝ) < |selfInformationNatsZeroExtension threeQuarterBit a -
           shannonEntropyNats threeQuarterBit|),
         (threeQuarterBit a).toReal) ≤
       (∑ a, (threeQuarterBit a).toReal *
-          (selfInformationNats threeQuarterBit a - shannonEntropyNats threeQuarterBit) ^ 2)
+          (selfInformationNatsZeroExtension threeQuarterBit a -
+            shannonEntropyNats threeQuarterBit) ^ 2)
         / (1 / 2 : ℝ) ^ 2 :=
   aep_chebyshev threeQuarterBit (1 / 2) (by norm_num)
 
@@ -147,3 +168,10 @@ times `Real.log 2`. -/
 example : shannonEntropyNats threeQuarterBit =
     shannonEntropy threeQuarterBit * Real.log 2 :=
   shannonEntropyNats_eq_mul_log_two threeQuarterBit
+
+#print axioms selfInformationNatsZeroExtension
+#print axioms surprisal_eq_selfInformationNatsZeroExtension
+#print axioms shannonEntropyNats
+#print axioms shannonEntropyNats_eq_mul_log_two
+#print axioms shannonEntropyNats_eq_sum_mul_selfInformation
+#print axioms aep_chebyshev

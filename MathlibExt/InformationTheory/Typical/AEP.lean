@@ -42,11 +42,24 @@ open Finset
 
 namespace InformationTheory
 
-/-- Self-information (nats) of an outcome `a` under the law `p`, with the
-`0 log 0 = 0` convention: an outcome of probability `0` has self-information
-`0`, since `-Real.log 0` is not a meaningful information content. -/
-noncomputable def selfInformationNats {α : Type*} (p : PMF α) (a : α) : ℝ :=
+/-- Real-valued zero extension of self-information in nats: `-log (p a)` on
+`p.support` and `0` off support. The latter is only a representative for weighted
+expectations, not the genuine information of an impossible outcome, which is
+infinite; see `surprisal_zero`. -/
+noncomputable def selfInformationNatsZeroExtension {α : Type*} (p : PMF α) (a : α) : ℝ :=
   if (p a).toReal = 0 then 0 else -Real.log (p a).toReal
+
+/-- On the support, the existing bits-valued `surprisal` is the real-valued
+zero extension in nats divided by `log 2`. The support restriction is essential:
+`surprisal` is infinite at an impossible outcome, whereas this extension is zero. -/
+theorem surprisal_eq_selfInformationNatsZeroExtension {α : Type*} (p : PMF α)
+    (a : α) (ha : a ∈ p.support) :
+    surprisal (p a) = ENNReal.ofReal (selfInformationNatsZeroExtension p a / Real.log 2) := by
+  have hp : p a ≠ 0 := (PMF.mem_support_iff p a).mp ha
+  have hpReal : (p a).toReal ≠ 0 :=
+    ENNReal.toReal_ne_zero.mpr ⟨hp, PMF.apply_ne_top p a⟩
+  rw [surprisal_of_ne_zero hp, selfInformationNatsZeroExtension, ite_eq_right hpReal,
+    Real.logb, neg_div]
 
 /-- Shannon entropy (nats) of a probability mass function on a finite type,
 `∑ a, -(p a) * log (p a)`, with the `0 log 0 = 0` convention read off from
@@ -60,17 +73,18 @@ theorem shannonEntropyNats_eq_mul_log_two {α : Type*} [Fintype α] (p : PMF α)
     shannonEntropyNats p = shannonEntropy p * Real.log 2 := by
   rw [shannonEntropyNats, shannonEntropy, div_mul_cancel₀ _ (Real.log_pos one_lt_two).ne']
 
-/-- The nats entropy is the expected self-information. -/
+/-- The nats entropy is the expectation of the real-valued zero extension;
+its values at zero-mass outcomes do not affect the sum. -/
 theorem shannonEntropyNats_eq_sum_mul_selfInformation {α : Type*} [Fintype α]
     (p : PMF α) :
-    shannonEntropyNats p = ∑ a, (p a).toReal * selfInformationNats p a := by
+    shannonEntropyNats p = ∑ a, (p a).toReal * selfInformationNatsZeroExtension p a := by
   rw [shannonEntropyNats]
   apply Finset.sum_congr rfl
   intro a _
   by_cases h : (p a).toReal = 0
-  · simp [selfInformationNats, h]
-  · have hself : selfInformationNats p a = -Real.log (p a).toReal := by
-      simp [selfInformationNats, h]
+  · simp [selfInformationNatsZeroExtension, h]
+  · have hself : selfInformationNatsZeroExtension p a = -Real.log (p a).toReal := by
+      simp [selfInformationNatsZeroExtension, h]
     rw [hself]
     unfold Real.negMulLog
     ring
@@ -79,43 +93,46 @@ theorem shannonEntropyNats_eq_sum_mul_selfInformation {α : Type*} [Fintype α]
 self-information of a single sample from a finite law `p`, the probability
 that its deviation from the entropy exceeds `ε` is at most the
 self-information variance divided by `ε²`. This is the one-shot estimate
-behind typical-set coding. -/
+behind typical-set coding, using `selfInformationNatsZeroExtension`: values
+off support are ignored by the probability weights. -/
 theorem aep_chebyshev {α : Type*} [Fintype α] (p : PMF α)
     (ε : ℝ) (hε : 0 < ε) :
     (∑ a ∈ Finset.univ.filter
-        (fun a => ε < |selfInformationNats p a - shannonEntropyNats p|),
+        (fun a => ε < |selfInformationNatsZeroExtension p a - shannonEntropyNats p|),
         (p a).toReal) ≤
-      (∑ a, (p a).toReal * (selfInformationNats p a - shannonEntropyNats p) ^ 2)
+      (∑ a, (p a).toReal * (selfInformationNatsZeroExtension p a - shannonEntropyNats p) ^ 2)
         / ε ^ 2 := by
   have hε2pos : 0 < ε ^ 2 := pow_pos hε 2
   have hpoint : ∀ a ∈ Finset.univ.filter
-      (fun a => ε < |selfInformationNats p a - shannonEntropyNats p|),
-      (p a).toReal ≤ (p a).toReal * (selfInformationNats p a - shannonEntropyNats p) ^ 2
-        / ε ^ 2 := by
+      (fun a => ε < |selfInformationNatsZeroExtension p a - shannonEntropyNats p|),
+      (p a).toReal ≤ (p a).toReal *
+        (selfInformationNatsZeroExtension p a - shannonEntropyNats p) ^ 2 / ε ^ 2 := by
     intro a ha
     rw [Finset.mem_filter] at ha
     obtain ⟨_, hbad⟩ := ha
-    have hε2lt : ε ^ 2 < (selfInformationNats p a - shannonEntropyNats p) ^ 2 := by
-      have h1 : ε ^ 2 < (|selfInformationNats p a - shannonEntropyNats p|) ^ 2 :=
+    have hε2lt : ε ^ 2 < (selfInformationNatsZeroExtension p a - shannonEntropyNats p) ^ 2 := by
+      have h1 : ε ^ 2 < (|selfInformationNatsZeroExtension p a - shannonEntropyNats p|) ^ 2 :=
         pow_lt_pow_left₀ hbad hε.le (by norm_num)
       rwa [sq_abs] at h1
     have hmul : (p a).toReal * ε ^ 2 ≤ (p a).toReal *
-        ((selfInformationNats p a - shannonEntropyNats p) ^ 2) :=
+        ((selfInformationNatsZeroExtension p a - shannonEntropyNats p) ^ 2) :=
       mul_le_mul_of_nonneg_left hε2lt.le (ENNReal.toReal_nonneg)
     exact (le_div_iff₀ hε2pos).mpr hmul
   calc (∑ a ∈ Finset.univ.filter
-        (fun a => ε < |selfInformationNats p a - shannonEntropyNats p|),
+        (fun a => ε < |selfInformationNatsZeroExtension p a - shannonEntropyNats p|),
         (p a).toReal)
       ≤ ∑ a ∈ Finset.univ.filter
-        (fun a => ε < |selfInformationNats p a - shannonEntropyNats p|),
-          (p a).toReal * (selfInformationNats p a - shannonEntropyNats p) ^ 2 / ε ^ 2 :=
+        (fun a => ε < |selfInformationNatsZeroExtension p a - shannonEntropyNats p|),
+          (p a).toReal * (selfInformationNatsZeroExtension p a - shannonEntropyNats p) ^ 2
+            / ε ^ 2 :=
         Finset.sum_le_sum hpoint
     _ ≤ ∑ a ∈ Finset.univ,
-          (p a).toReal * (selfInformationNats p a - shannonEntropyNats p) ^ 2 / ε ^ 2 := by
+          (p a).toReal * (selfInformationNatsZeroExtension p a - shannonEntropyNats p) ^ 2
+            / ε ^ 2 := by
         apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
         intro a _ _
         exact div_nonneg (mul_nonneg ENNReal.toReal_nonneg (sq_nonneg _)) hε2pos.le
-    _ = (∑ a, (p a).toReal * (selfInformationNats p a - shannonEntropyNats p) ^ 2)
+    _ = (∑ a, (p a).toReal * (selfInformationNatsZeroExtension p a - shannonEntropyNats p) ^ 2)
         / ε ^ 2 := by
         rw [Finset.sum_div]
 
