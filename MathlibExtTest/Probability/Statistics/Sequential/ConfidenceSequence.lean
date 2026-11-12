@@ -55,4 +55,22 @@ example {Θ X : Type*} {m0 : MeasurableSpace X} {μ : Θ → Measure X}
     fun t => ae_of_all _ fun _ => WithTop.coe_lt_top n
   exact stopped_confSeq_coverage hEmeas hcover hstop hfin
 
+-- Positive/use: the constant-one e-process derives simultaneous coverage through the
+-- main theorem. The constant process is a martingale for the constant filtration, hence
+-- a supermartingale, and its initial mean is 1.
+example {Θ X : Type*} {m0 : MeasurableSpace X} {μ : Θ → Measure X}
+    [∀ θ, IsProbabilityMeasure (μ θ)]
+    {α : ℝ} (hα : α ∈ Set.Ioo (0 : ℝ) 1) (t : Θ) :
+    (μ t).real {x | ∀ n, t ∈ confSeqOfEProcess (fun _ _ _ => 1) α n x} ≥ 1 - α := by
+  have hsup : ∀ s, Supermartingale (fun (_ : ℕ) (_ : X) => (1 : ℝ))
+      (Filtration.const ℕ m0 le_rfl) (μ s) :=
+    fun s => (martingale_const _ _ 1).supermartingale
+  have hnonneg : ∀ s : Θ, (0 : ℕ → X → ℝ) ≤ fun _ _ => (1 : ℝ) := by
+    intro s i x
+    exact zero_le_one
+  have hE0 : ∀ s, ∫ x, (fun (_ : ℕ) (_ : X) => (1 : ℝ)) 0 x ∂(μ s) ≤ 1 := by
+    intro s
+    simp
+  exact anytime_coverage_of_eProcess hα hsup hnonneg hE0 t
+
 end MathlibExt.Probability.Statistics
