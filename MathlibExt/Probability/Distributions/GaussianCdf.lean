@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.CdfContinuityPoints
+public import MathlibExt.Probability.Quantile
 public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.MeasureTheory.Measure.Real
@@ -160,5 +161,16 @@ theorem strictMono_cdf_gaussianReal (μ : ℝ) {v : NNReal} (hv : v ≠ 0) :
     rw [not_lt] at hcon
     exact hgauss (ENNReal.ofReal_eq_zero.mpr hcon)
   linarith
+
+/-- Upper standard-normal quantiles are positive. -/
+theorem cdfQuantile_gaussianReal_pos {u : ℝ} (hu : u ∈ Set.Ioo (1 / 2) 1) :
+    0 < cdfQuantile (gaussianReal 0 1) u := by
+  by_contra h
+  push Not at h
+  have hu01 : u ∈ Set.Ioo (0 : ℝ) 1 := ⟨by linarith [hu.1], hu.2⟩
+  have hle : u ≤ cdf (gaussianReal 0 1) 0 :=
+    (cdfQuantile_le_iff (gaussianReal 0 1) hu01).mp h
+  rw [cdf_gaussianReal_zero] at hle
+  linarith [hu.1, hle]
 
 end ProbabilityTheory
