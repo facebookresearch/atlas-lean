@@ -20,7 +20,7 @@ import Mathlib.Tactic
 
 For singleton atomic congestion games with affine delays with
 nonnegative coefficients, every pure Nash equilibrium has social
-cost at most `5 / 2` times the optimum, by the `(5/3, 2/3)`
+cost at most `5 / 2` times the optimum, by the `(5/3, 1/3)`
 smoothness argument. This file covers roadmap package DPA-38 of the
 Atlas TCS canon roadmap.
 
@@ -29,6 +29,8 @@ Journal of the ACM 62 (2015); Christodoulou and Koutsoupias (2005).
 -/
 
 open Finset
+
+namespace MathlibExt.GameTheory.CongestionGame
 
 /-- The load of resource `r` under a strategy profile `s` of a
 singleton atomic congestion game: how many players chose `r`. -/
@@ -142,13 +144,20 @@ private lemma loadOf_update_le {n : ℕ} {R : Type*} [Fintype R] [DecidableEq R]
 with affine delays and nonnegative coefficients: every pure Nash
 equilibrium (no player can lower their own cost by unilaterally
 switching resources) has social cost at most `5 / 2` times the
-optimal social cost. -/
+optimal social cost.
+
+The hypothesis is stated only for deviations to the comparison
+profile `opt`: for each player, deviating to `opt i` does not lower
+their cost. This is weaker than full Nash equilibrium (which quantifies
+over every deviation), and the proof only uses these deviations, so
+no player-specific feasible-set restriction is needed. -/
 theorem congestion_poa {n : ℕ} {R : Type*} [Fintype R] [DecidableEq R]
     (a b : R → ℝ) (ha : ∀ r, 0 ≤ a r) (hb : ∀ r, 0 ≤ b r)
     (s opt : Fin n → R)
-    (hNash : ∀ (i : Fin n) (r : R),
+    (hNash : ∀ (i : Fin n),
       a (s i) * (loadOf s (s i) : ℝ) + b (s i) ≤
-        a r * ((loadOf (Function.update s i r) r : ℝ)) + b r) :
+        a (opt i) * ((loadOf (Function.update s i (opt i)) (opt i) : ℝ))
+          + b (opt i)) :
     socialCost a b s ≤ (5 / 2) * socialCost a b opt := by
   have hSCs : socialCost a b s
       = ∑ r, (loadOf s r : ℝ) * (a r * (loadOf s r : ℝ) + b r) :=
@@ -161,7 +170,7 @@ theorem congestion_poa {n : ℕ} {R : Type*} [Fintype R] [DecidableEq R]
     have hper : ∀ i : Fin n, a (s i) * (loadOf s (s i) : ℝ) + b (s i)
         ≤ a (opt i) * ((loadOf s (opt i) : ℝ) + 1) + b (opt i) := by
       intro i
-      have hn := hNash i (opt i)
+      have hn := hNash i
       have hdev : (loadOf (Function.update s i (opt i)) (opt i) : ℝ)
           ≤ (loadOf s (opt i) : ℝ) + 1 := by
         have h := loadOf_update_le s i (opt i)
@@ -192,3 +201,5 @@ theorem congestion_poa {n : ℕ} {R : Type*} [Fintype R] [DecidableEq R]
       ≤ (5 / 3) * socialCost a b opt + (1 / 3) * socialCost a b s :=
     le_trans hNashSum hsum
   linarith [hfin]
+
+end MathlibExt.GameTheory.CongestionGame
