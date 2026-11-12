@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.S05SeismicRays
+import PhyslibExt.EarthScience.SeismicRays
 
 /-!
 # Seismic ray checks
 
-Concrete consumers of `PhyslibExt.EarthScience.S05SeismicRays`:
+Concrete consumers of `PhyslibExt.EarthScience.SeismicRays`:
 a straight segment `L = 100`, `v = 5` (travel time `20`), the symmetric
 two-layer case `a = b = 3`, `D = 10`, `x = 5`, `v = 2`, and the
 zero-length boundary.
@@ -33,7 +33,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.S05SeismicRays`
+- `PhyslibExt.EarthScience.SeismicRays`
 -/
 
 /-- Straight segment: `100 / 5 = 20`, and `20 * 5 = 100`. -/
