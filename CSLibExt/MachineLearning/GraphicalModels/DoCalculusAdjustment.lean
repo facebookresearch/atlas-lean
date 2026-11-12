@@ -52,8 +52,11 @@ with an arrow into `X` (`hblock`). Then
    `G_{\underline X}`, since the paths from `X` to `Y` that survive deleting the arrows out of `X`
    are exactly the back-door paths, all blocked by `Z` (`hblock`);
 
-so `P(y | do(x)) = ∑_z P(z) P(y | x, z)`, the conclusion of `BayesNet.backdoor_adjustment`
-(whose positivity hypothesis `hpos` makes the conditional probabilities in step 3 well defined).
+so `P(y | do(x)) = ∑_z P(z) P(y | x, z)`, the conclusion of `BayesNet.backdoor_adjustment`.
+Steps 1 and 3 are statements about strata `z` with `P(Z = z) > 0`, where the positivity
+hypothesis `hpos` gives `P(X = x, Z = z) > 0` and the conditional probabilities are defined;
+strata with `P(Z = z) = 0` contribute `0` to both sums (in Lean, division by zero is `0`, and
+the weight `P(Z = z)` vanishes).
 A step-by-step numerical instance of the three steps on one network is in
 `CSLibExtTest/MachineLearning/GraphicalModels/DoCalculusAdjustmentTests.lean`.
 
@@ -73,8 +76,14 @@ from `X` to `M` beginning with an arrow into `X` is blocked by `∅` (`hkm`), an
    `G_{\bar X \underline M}` (the back-door paths from `M` to `Y` are blocked by `{X}`, `hmy`);
 4. `P(y | do(x), do(m)) = P(y | do(m))` by rule 3: `(Y ⫫ X | M)` holds in `G_{\bar X \bar M}`,
    because every directed path from `X` to `Y` passes through `M` (`hdir`);
-5. `P(y | do(m)) = ∑_{x'} P(y | x', m) P(x')` by the back-door formula with adjustment set
-   `{X}`, which blocks the back-door paths from `M` to `Y` (`hmy`);
+5. `P(y | do(m)) = ∑_{x'} P(y | x', m) P(x')` by the back-door formula for the set-valued
+   treatment `M` with adjustment set `{X}`: `{X}` blocks the back-door paths from `M` to `Y`
+   (`hmy`), and `X` is not a descendant of any node `m` of `M`. Indeed `m ≠ X` (`hkM`), and a
+   directed path from `m` to `X`, read backwards, is a path from `X` to `m` that begins with an
+   arrow into `X` and has no collider, so it is not blocked by `∅`, contradicting `hkm`; the
+   Atlas proof derives this in the private lemma `not_isDescendant_of_blocked`.
+   (`BayesNet.backdoor_adjustment` itself has a single treatment node; this step uses the
+   generalization to a set of treatment nodes.)
 
 and combining, `P(y | do(x)) = ∑_m P(m | x) ∑_{x'} P(y | x', m) P(x')`, the conclusion of
 `BayesNet.frontdoor_adjustment` (with positivity `hpos`). A non-vacuous instance of the
