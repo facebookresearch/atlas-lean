@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
+public import Mathlib.Analysis.Convex.Function
 import Mathlib.Analysis.LocallyConvex.Separation
 import Mathlib.Analysis.Calculus.FDeriv.Comp
 import Mathlib.Analysis.Calculus.Deriv.Basic
@@ -27,6 +28,8 @@ import Mathlib.Topology.Basic
 import Mathlib.Order.Filter.Basic
 import Mathlib.Analysis.Normed.Module.Basic
 import Mathlib.Data.Real.Basic
+import Mathlib.Analysis.Convex.Deriv
+import Mathlib.Analysis.Calculus.Deriv.AffineMap
 
 @[expose] public section
 
@@ -35,7 +38,7 @@ open scoped Topology Pointwise
 namespace MathlibExt.Analysis.Convex.KarushKuhnTucker
 
 /-!
-# Inequality-only Karush–Kuhn–Tucker necessary conditions
+# Karush–Kuhn–Tucker conditions
 
 A finite-dimensional Gordan alternative (strict linear solvability versus a
 nontrivial nonnegative dependence), proved by strictly separating the negative
@@ -44,6 +47,13 @@ inequality-only KKT theorem: at a feasible local minimum satisfying LICQ on
 the active constraints, a strict descent direction would contradict local
 minimality along `t ↦ x + t • d`, so the alternative supplies nonnegative
 multipliers with complementarity and stationarity.
+
+Conversely, for convex problems the KKT conditions are sufficient:
+`isMinOn_of_karush_kuhn_tucker_convex` shows that nonnegative multipliers with complementary
+slackness and stationarity at `x` give `f x ≤ f y` for every feasible `y`, so a feasible `x` is a
+global minimizer on the feasible set, with no constraint qualification (Boyd and Vandenberghe,
+*Convex Optimization*, §5.5.3). Its ingredient is the first-order convexity inequality
+`ConvexOn.add_fderiv_sub_le`.
 -/
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
@@ -451,5 +461,94 @@ theorem karush_kuhn_tucker_inequality
           · rw [e_reidx, e_filter]
         rw [e_none, e_bridge] at hdiv
         exact hdiv
+
+end MathlibExt.Analysis.Convex.KarushKuhnTucker
+
+/-- First-order condition for convexity: a convex function lies above its tangent line.
+If `f` is convex on a convex set `s`, `x ∈ s`, `y ∈ s`, and `f` is differentiable at `x`,
+then `f x + fderiv ℝ f x (y - x) ≤ f y`.
+Source: S. Boyd and L. Vandenberghe, *Convex Optimization* (2004), §3.1.3, Eq. (3.2). -/
+theorem ConvexOn.add_fderiv_sub_le {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {s : Set E} {f : E → ℝ} {x y : E}
+    (hf : ConvexOn ℝ s f) (hx : x ∈ s) (hy : y ∈ s) (hf_diff : DifferentiableAt ℝ f x) :
+    f x + fderiv ℝ f x (y - x) ≤ f y := by
+  let g : ℝ →ᵃ[ℝ] E := AffineMap.lineMap x y
+  have hconv : ConvexOn ℝ (⇑g ⁻¹' s) (f ∘ ⇑g) := hf.comp_affineMap g
+  have hg0 : ⇑g (0 : ℝ) = x := AffineMap.lineMap_apply_zero x y
+  have hg1 : ⇑g (1 : ℝ) = y := AffineMap.lineMap_apply_one x y
+  have h0mem : (0 : ℝ) ∈ ⇑g ⁻¹' s := by
+    change ⇑g (0 : ℝ) ∈ s
+    rw [hg0]
+    exact hx
+  have h1mem : (1 : ℝ) ∈ ⇑g ⁻¹' s := by
+    change ⇑g (1 : ℝ) ∈ s
+    rw [hg1]
+    exact hy
+  have hF : HasFDerivAt f (fderiv ℝ f x) (⇑g (0 : ℝ)) := by
+    rw [hg0]
+    exact hf_diff.hasFDerivAt
+  have hc : HasDerivAt (⇑g) (y - x) (0 : ℝ) := AffineMap.hasDerivAt_lineMap
+  have hderiv : HasDerivAt (f ∘ ⇑g) (fderiv ℝ f x (y - x)) (0 : ℝ) :=
+    HasFDerivAt.comp_hasDerivAt 0 hF hc
+  have hslope := hconv.le_slope_of_hasDerivAt h0mem h1mem (by norm_num) hderiv
+  rw [slope_def_field] at hslope
+  simp only [Function.comp_apply, hg0, hg1] at hslope
+  norm_num at hslope
+  rw [map_sub]
+  linarith
+
+namespace MathlibExt.Analysis.Convex.KarushKuhnTucker
+
+/--
+Convex KKT sufficiency, with the sign conventions of `karush_kuhn_tucker_inequality`
+(minimize `f` subject to `g i y ≤ 0`). If `f` and every `g i` are convex on the whole space and
+differentiable at `x`, and multipliers `lam` satisfy `lam i ≥ 0`, complementary slackness
+`lam i * g i x = 0`, and stationarity `fderiv ℝ f x + ∑ i, lam i • fderiv ℝ (g i) x = 0`, then
+`f x ≤ f y` for every feasible `y`. Feasibility of `x` itself is not needed for this bound;
+when `x` is feasible, it is a global minimizer on the feasible set. No constraint qualification
+is needed. An affine equality constraint `a y = 0`
+can be encoded as the two convex constraints `a y ≤ 0` and `-a y ≤ 0`.
+Source: S. Boyd and L. Vandenberghe, *Convex Optimization* (2004), §5.5.3.
+-/
+theorem isMinOn_of_karush_kuhn_tucker_convex {E : Type*} [NormedAddCommGroup E]
+    [NormedSpace ℝ E] {m : ℕ} {f : E → ℝ} {g : Fin m → E → ℝ} {x : E} {lam : Fin m → ℝ}
+    (hf_conv : ConvexOn ℝ Set.univ f) (hg_conv : ∀ i, ConvexOn ℝ Set.univ (g i))
+    (hf_diff : DifferentiableAt ℝ f x) (hg_diff : ∀ i, DifferentiableAt ℝ (g i) x)
+    (hlam : ∀ i, 0 ≤ lam i) (hcs : ∀ i, lam i * g i x = 0)
+    (hstat : fderiv ℝ f x + ∑ i : Fin m, lam i • fderiv ℝ (g i) x = 0) :
+    IsMinOn f {y | ∀ i, g i y ≤ 0} x := by
+  intro y hy
+  have hf_le : f x + fderiv ℝ f x (y - x) ≤ f y :=
+    ConvexOn.add_fderiv_sub_le hf_conv (Set.mem_univ x) (Set.mem_univ y) hf_diff
+  have hg_le : ∀ i, g i x + fderiv ℝ (g i) x (y - x) ≤ g i y := fun i =>
+    ConvexOn.add_fderiv_sub_le (hg_conv i) (Set.mem_univ x) (Set.mem_univ y) (hg_diff i)
+  have hstat_v :
+      fderiv ℝ f x (y - x) + ∑ i : Fin m, lam i * fderiv ℝ (g i) x (y - x) = 0 := by
+    have h := congrArg (fun L : E →L[ℝ] ℝ => L (y - x)) hstat
+    simp only [add_apply, sum_apply, smul_apply, smul_eq_mul, zero_apply] at h
+    exact h
+  have hsum_le : ∑ i : Fin m, lam i * fderiv ℝ (g i) x (y - x) ≤ 0 := by
+    calc ∑ i : Fin m, lam i * fderiv ℝ (g i) x (y - x)
+        ≤ ∑ i : Fin m, lam i * g i y := by
+          apply Finset.sum_le_sum
+          intro i _
+          have h1 : fderiv ℝ (g i) x (y - x) ≤ g i y - g i x := by linarith [hg_le i]
+          have h2 : lam i * fderiv ℝ (g i) x (y - x) ≤ lam i * (g i y - g i x) :=
+            mul_le_mul_of_nonneg_left h1 (hlam i)
+          have h3 : lam i * (g i y - g i x) = lam i * g i y := by
+            rw [mul_sub, hcs i, sub_zero]
+          rw [h3] at h2
+          exact h2
+      _ ≤ 0 := by
+          apply Finset.sum_nonpos
+          intro i _
+          have h := mul_le_mul_of_nonneg_left (hy i) (hlam i)
+          simpa using h
+  have hD : (0:ℝ) ≤ (fderiv ℝ f x) (y - x) := by linarith [hstat_v, hsum_le]
+  change f x ≤ f y
+  have h2 : f x ≤ f x + (fderiv ℝ f x) (y - x) := by
+    have h := add_le_add_left hD (f x)
+    simpa using h
+  exact le_trans h2 hf_le
 
 end MathlibExt.Analysis.Convex.KarushKuhnTucker
