@@ -214,10 +214,6 @@ private lemma prod_fact_cons {m : ℕ} (x : ℕ) (t : Fin m → ℕ) :
   rw [Fin.prod_univ_succ]
   simp [Fin.cons_zero, Fin.cons_succ]
 
-private lemma sum_cons_eq {m : ℕ} (x : ℕ) (t : Fin m → ℕ) :
-    ∑ i : Fin (m + 1), (Fin.cons x t : Fin (m + 1) → ℕ) i = x + ∑ i : Fin m, t i :=
-  Fin.sum_cons x t
-
 private lemma nest_eq_multinomial : ∀ (m : ℕ) (s : Fin m → ℕ) (n : ℕ),
     ∑ i : Fin m, s i ≤ n →
     nestProd n s =
@@ -261,7 +257,7 @@ private lemma nest_eq_multinomial : ∀ (m : ℕ) (s : Fin m → ℕ) (n : ℕ),
     have sumU : ∑ i ∈ (Finset.univ : Finset (Fin (m + 1))),
         ((Fin.cons (n - ∑ i : Fin m, Fin.tail s i) (Fin.tail s) :
           Fin (m + 1) → ℕ)) i = n := by
-      have hh := sum_cons_eq (n - ∑ i : Fin m, Fin.tail s i) (Fin.tail s)
+      have hh := Fin.sum_cons (n - ∑ i : Fin m, Fin.tail s i) (Fin.tail s)
       have hh2 : (∑ i : Fin (m + 1),
           ((Fin.cons (n - ∑ i : Fin m, Fin.tail s i) (Fin.tail s) :
             Fin (m + 1) → ℕ)) i) = n := by
@@ -285,7 +281,7 @@ private lemma nest_eq_multinomial : ∀ (m : ℕ) (s : Fin m → ℕ) (n : ℕ),
       simpa using hh
     have sumV : ∑ i ∈ (Finset.univ : Finset (Fin (m + 2))),
         ((Fin.cons (n - ∑ i : Fin (m + 1), s i) s : Fin (m + 2) → ℕ)) i = n := by
-      have hh := sum_cons_eq (n - ∑ i : Fin (m + 1), s i) s
+      have hh := Fin.sum_cons (n - ∑ i : Fin (m + 1), s i) s
       have hh2 : (∑ i : Fin (m + 2),
           ((Fin.cons (n - ∑ i : Fin (m + 1), s i) s : Fin (m + 2) → ℕ)) i) = n := by
         rw [hh]; omega
@@ -378,12 +374,6 @@ private lemma wgt_eq_succ_sum {m : ℕ} (k : Fin (m + 1) → ℕ) :
   intro j _
   rw [Fin.val_succ]
 
-private lemma ksum_eq {m : ℕ} (k : Fin (m + 1) → ℕ) :
-    ∑ i : Fin (m + 1), k i = k 0 + ∑ j : Fin m, k j.succ := by
-  have h := Fin.sum_univ_succ k
-  have htail : (∑ i : Fin m, k i.succ) = (∑ j : Fin m, k j.succ) := rfl
-  omega
-
 private lemma fwd_pred {m l : ℕ} (k : Fin (m + 1) → ℕ) (hw : wgt m k = l) :
     tgtPred m l (fwd m l k) := by
   unfold tgtPred
@@ -417,8 +407,6 @@ private lemma bwd_sum {n m l : ℕ} (s : tgt m l)
       (n - ∑ j : Fin m, (((s j : Fin (l + 1))) : ℕ)) +
         ∑ j : Fin m, (((s j : Fin (l + 1))) : ℕ) := by
     unfold bwd
-    have hh := sum_cons_eq (n - ∑ j : Fin m, (((s j : Fin (l + 1))) : ℕ))
-      (fun j : Fin m => (((s j : Fin (l + 1))) : ℕ))
     simp
   omega
 
@@ -458,7 +446,7 @@ private lemma roundtrip_bwd_fwd {n m l : ℕ} (k : Fin (m + 1) → ℕ)
       · exact Finset.mem_univ _
     omega
   have htail_sum : ∑ j : Fin m, k j.succ = n - k 0 := by
-    have hks := ksum_eq k
+    have hks := Fin.sum_univ_succ k
     omega
   have hvals_sum : ∑ j : Fin m, (((fwd m l k j : Fin (l + 1))) : ℕ) = n - k 0 := by
     have hcongr : (∑ j : Fin m, (((fwd m l k j : Fin (l + 1))) : ℕ)) =
@@ -523,7 +511,7 @@ private lemma fwd_sum_le {n m l : ℕ} (k : Fin (m + 1) → ℕ)
         exact Nat.zero_le _
       · exact Finset.mem_univ _
     omega
-  have hks := ksum_eq k
+  have hks := Fin.sum_univ_succ k
   have hcongr : tgtValSum m l (fwd m l k) = ∑ j : Fin m, k j.succ := by
     exact fwd_sum_eq k hw
   omega

@@ -53,10 +53,6 @@ private theorem Gtop_aux (u v k : ℕ) :
   rw [Nat.stirlingFirst_eq_zero_of_lt hlt]
   simp
 
-private theorem asc_succ_aux (u v : ℕ) : u.ascFactorial (v + 1) = (u + v) * u.ascFactorial v := by
-  have := Nat.ascFactorial_succ (n := u) (k := v)
-  simpa [Nat.add_comm] using this
-
 private theorem VQ_aux (u v j1 : ℕ) :
     (∑ i ∈ Finset.range (v + 1), v.choose i * (v - i) * u.ascFactorial i *
         Nat.stirlingFirst (v - i) j1)
@@ -329,7 +325,7 @@ private theorem step_aux (u v k : ℕ) :
   have hF0 : F 0 = (u + v) * G 0 := by
     have hF0' := inner_zero_all u (v + 1) (k + 1)
     have hG0' := inner_zero_all u v (k + 1)
-    have hasc := asc_succ_aux u v
+    have hasc := Nat.ascFactorial_succ (n := u) (k := v)
     simp only [Nat.zero_le, ↓reduceIte, Nat.sub_zero] at hF0' hG0'
     simp only [hF, hG, Nat.zero_le, ↓reduceIte, Nat.sub_zero]
     rw [hF0', hG0', hasc]

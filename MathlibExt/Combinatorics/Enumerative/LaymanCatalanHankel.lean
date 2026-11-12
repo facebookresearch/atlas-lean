@@ -574,14 +574,6 @@ private theorem H_eq (n : ℕ) :
   push_cast
   ring
 
-private theorem succ_zero_eq_one (n : ℕ) : Fin.succ (0 : Fin (n+1)) = (1 : Fin (n+2)) := by
-  ext
-  simp
-
-private theorem succAbove_one_zero (n : ℕ) : Fin.succAbove (1 : Fin (n+2)) (0 : Fin (n+1)) = 0 := by
-  unfold Fin.succAbove
-  simp
-
 private theorem Tmat_row_zero_zero (n : ℕ) : Tmat (n+2) (0 : Fin (n+2)) 0 = 3 := by
   simp [Tmat]
 
@@ -610,12 +602,12 @@ private theorem minor00_eq (n : ℕ) :
 
 private theorem N_zero_zero_aux (n : ℕ) :
     (Tmat (n+2)).submatrix Fin.succ (Fin.succAbove (1 : Fin (n+2))) (0 : Fin (n+1)) 0 = 1 := by
-  simp only [Matrix.submatrix_apply, succAbove_one_zero]
+  simp only [Matrix.submatrix_apply, Fin.one_succAbove_zero]
   simp [Tmat]
 
 private theorem N_succ_zero_aux (n : ℕ) (i : Fin n) :
     (Tmat (n+2)).submatrix Fin.succ (Fin.succAbove (1 : Fin (n+2))) i.succ 0 = 0 := by
-  simp only [Matrix.submatrix_apply, succAbove_one_zero]
+  simp only [Matrix.submatrix_apply, Fin.one_succAbove_zero]
   have hval : (i.succ.succ : Fin (n+2)).val = i.val + 2 := by simp [Fin.val_succ]
   have h1 : ¬ ((i.succ.succ : Fin (n+2)).val = (0 : Fin (n+2)).val) := by simp
   have h2 : ¬ ((i.succ.succ : Fin (n+2)).val + 1 = (0 : Fin (n+2)).val) := by simp
@@ -674,7 +666,7 @@ private theorem det_Tmat_succ_succ (n : ℕ) : (Tmat (n+2)).det = 3 * (Tmat (n+1
         (Fin.succ (Fin.succ j)) := by
       rw [Fin.sum_univ_succ]
     rw [h1]
-    have h01 : Fin.succ (0 : Fin (n+1)) = (1 : Fin (n+2)) := succ_zero_eq_one n
+    have h01 : Fin.succ (0 : Fin (n+1)) = (1 : Fin (n+2)) := Fin.succ_zero_eq_one
     rw [h01]
   rw [hpeel]
   have e0 : (-1 : ℤ) ^ (0 : Fin (n+2)).val * Tmat (n+2) 0 0 *

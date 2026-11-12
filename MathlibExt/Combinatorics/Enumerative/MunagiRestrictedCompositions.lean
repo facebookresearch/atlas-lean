@@ -96,11 +96,6 @@ private theorem bwd_of_ne (k : ℕ) (L : List ℕ) :
   obtain ⟨b, bs, rfl⟩ := List.exists_cons_of_ne_nil hL
   rfl
 
-private theorem sum_rep_nat (n a : ℕ) : (List.replicate n a).sum = n * a := by
-  induction n with
-  | zero => simp
-  | succ t ih => rw [List.replicate_succ, List.sum_cons, ih]; ring
-
 private theorem mem_expandA (k y : ℕ) (l : List ℕ) :
     y ∈ expandA k l → y = 1 ∨ y = k := by
   induction l with
@@ -146,7 +141,7 @@ private theorem sum_expandA (k : ℕ) (l : List ℕ) :
     have hdvd : k ∣ a - 1 :=
       Nat.dvd_of_mod_eq_zero (Nat.sub_mod_eq_zero_of_mod_eq ha)
     have e : (a - 1) / k * k = a - 1 := Nat.div_mul_cancel hdvd
-    rw [expandA_cons, List.sum_cons, List.sum_append, sum_rep_nat, ih hmem' hpos',
+    rw [expandA_cons, List.sum_cons, List.sum_append, List.sum_replicate_nat, ih hmem' hpos',
       List.sum_cons]
     omega
 
@@ -161,7 +156,7 @@ private theorem sum_expandB (k : ℕ) (l : List ℕ) :
       fun x hx => hmem x (List.mem_cons_of_mem b hx)
     have e : k + (b - k) = b := by omega
     have e2 : (b - k) * 1 = b - k := by ring
-    rw [expandB_cons, List.sum_cons, List.sum_append, sum_rep_nat, ih hmem',
+    rw [expandB_cons, List.sum_cons, List.sum_append, List.sum_replicate_nat, ih hmem',
       List.sum_cons]
     omega
 

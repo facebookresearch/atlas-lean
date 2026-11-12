@@ -13,7 +13,7 @@ public import Mathlib.Basic.Real.Basic
 import Mathlib.Algebra.CharP.Defs
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Field.Basic
-import Mathlib.Data.Nat.Cast.Field
+import Mathlib.Data.Nat.Choose.Cast
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
@@ -23,13 +23,6 @@ import Mathlib.Tactic.Ring
 @[expose] public section
 
 namespace MetaMathlibExt
-
-private theorem choose_eq_factorial_div_real (n k : ℕ) (h : k ≤ n) :
-    (Nat.choose n k : ℝ) = (n.factorial : ℝ) / ((k.factorial : ℝ) * ((n - k).factorial : ℝ)) := by
-  have hdvd := Nat.factorial_mul_factorial_dvd_factorial h
-  have hne : ((k.factorial * (n - k).factorial : ℕ) : ℝ) ≠ 0 := by
-    exact_mod_cast mul_ne_zero (Nat.factorial_ne_zero k) (Nat.factorial_ne_zero (n - k))
-  rw [Nat.choose_eq_factorial_div_factorial h, Nat.cast_div hdvd hne, Nat.cast_mul]
 
 private theorem catalan_succ_mul_ratio (j : ℕ) :
     ((j : ℝ) + 1 + 1) * (catalan (j + 1) : ℝ)
@@ -83,7 +76,7 @@ private theorem Fterm_rec (n k : ℕ) (hn : 2 ≤ n) (hk : 1 ≤ k) (hkn : k ≤
     rw [hme]
     have hB2 : (Nat.choose m (2 * j) : ℝ) = 2 * (j : ℝ) + 1 := by
       have hBle : 2 * j ≤ m := by omega
-      have hB := choose_eq_factorial_div_real m (2 * j) hBle
+      have hB := Nat.cast_choose ℝ hBle
       have hmj : m - 2 * j = 1 := by omega
       have hmf : (m.factorial : ℝ) = (2 * (j : ℝ) + 1) * ((2 * j).factorial : ℝ) := by
         have hme : m = 2 * j + 1 := by omega
@@ -110,9 +103,9 @@ private theorem Fterm_rec (n k : ℕ) (hn : 2 ≤ n) (hk : 1 ≤ k) (hkn : k ≤
   · -- interior case: all factorial forms valid
     have hint : 2 * (j + 1) ≤ m := by omega
     obtain ⟨r, rfl⟩ := Nat.exists_eq_add_of_le (show 2 * j + 2 ≤ m by omega)
-    have hC := choose_eq_factorial_div_real (((2 * j + 2) + r) + 1) (2 * j + 2) (by omega)
-    have hA := choose_eq_factorial_div_real ((2 * j + 2) + r) (2 * j + 2) (by omega)
-    have hB := choose_eq_factorial_div_real ((2 * j + 2) + r) (2 * j) (by omega)
+    have hC := Nat.cast_choose ℝ (a := 2 * j + 2) (b := ((2 * j + 2) + r) + 1) (by omega)
+    have hA := Nat.cast_choose ℝ (a := 2 * j + 2) (b := (2 * j + 2) + r) (by omega)
+    have hB := Nat.cast_choose ℝ (a := 2 * j) (b := (2 * j + 2) + r) (by omega)
     have e1 := succ_mul_catalan_eq_centralBinom (j + 1)
     have e2 := succ_mul_catalan_eq_centralBinom j
     have e1r : ((j : ℝ) + 1 + 1) * (catalan (j + 1) : ℝ)
@@ -133,13 +126,13 @@ private theorem Fterm_rec (n k : ℕ) (hn : 2 ≤ n) (hk : 1 ≤ k) (hkn : k ≤
         = ((2 * j + 2).factorial : ℝ)
           / (((j + 1).factorial : ℝ) * (((2 * j + 2) - (j + 1)).factorial : ℝ)) := by
       rw [hcb1]
-      exact choose_eq_factorial_div_real (2 * j + 2) (j + 1) (by omega)
+      exact Nat.cast_choose ℝ (by omega)
     have hcb0 := Nat.centralBinom_eq_two_mul_choose j
     have hCb0 : (Nat.centralBinom j : ℝ)
         = ((2 * j).factorial : ℝ)
           / (((j).factorial : ℝ) * (((2 * j) - j).factorial : ℝ)) := by
       rw [hcb0]
-      exact choose_eq_factorial_div_real (2 * j) j (by omega)
+      exact Nat.cast_choose ℝ (by omega)
     have gC : (((2 * j + 2) + r) + 1) - (2 * j + 2) = r + 1 := by omega
     have gB : ((2 * j + 2) + r) - 2 * j = (r + 1) + 1 := by omega
     have gD : (2 * j + 2) - (j + 1) = j + 1 := by omega
