@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.O02Geostrophy
+import PhyslibExt.EarthScience.Geostrophy
 
 /-!
 # Geostrophy and ocean thermal wind
 
-Concrete consumers of `PhyslibExt.EarthScience.O02Geostrophy`.
+Concrete consumers of `PhyslibExt.EarthScience.Geostrophy`.
 
 ## i. Overview
 
@@ -29,7 +29,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.O02Geostrophy`
+- `PhyslibExt.EarthScience.Geostrophy`
 -/
 
 /-- Numeric geostrophy: `f = 2`, `g = 10`, `ηx = -1`, `ηy = 3`. -/
