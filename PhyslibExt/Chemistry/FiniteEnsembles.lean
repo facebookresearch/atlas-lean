@@ -16,6 +16,7 @@ public import Mathlib.Data.Fin.Tuple.NatAntidiagonal
 public import Mathlib.Data.Finsupp.Multiset
 public import Mathlib.Data.Sym.Card
 public import MathlibExt.InformationTheory.LogSum
+public import Physlib.StatisticalMechanics.CanonicalEnsemble.Finite
 /-!
 
 # Finite-state ensembles and partition functions
@@ -89,7 +90,15 @@ and `StatMech.Ising.isingProb` unfold to `partitionFunction` and `boltzmannProb`
 Hamiltonian. The source fixes `partitionFunction E β`, and that Ising module is not imported here.
 
 The definitions are the elementary finite-sum forms of the canonical-ensemble API
-`Physlib.StatisticalMechanics.CanonicalEnsemble`, not a competing API:
+`Physlib.StatisticalMechanics.CanonicalEnsemble`, not a competing API. Section H
+proves the three that Physlib states in β-real form (`Z`, `p`, `U`) equal to
+Physlib's `mathematicalPartitionFunctionBetaReal`, `probabilityBetaReal` and
+`meanEnergyBetaReal` for the counting-measure ensemble `canonicalEnsemble E`.
+The Atlas definitions stay finite-sum and universe-polymorphic (`ι : Type*`):
+Physlib's `CanonicalEnsemble` is over `ι : Type` with `MeasurableSpace` and
+`MeasurableSingletonClass` instances, and Physlib provides no β-real
+energy-variance, entropy, Helmholtz or heat-capacity definitions, so those
+results stay in finite-sum form:
 
 - `partitionFunction` is `CanonicalEnsemble.mathematicalPartitionFunction` on a finite type
   (`CanonicalEnsemble.mathematicalPartitionFunction_of_fintype`,
@@ -131,8 +140,9 @@ Physlib's `kB` is the constant `Constants.kB` and its temperatures have type `Te
 `kB` and `β` are real parameters. New relative to Physlib are the maximum-entropy theorem, the
 finite-sum product identities and the two-level worked example; the Einstein-solid count
 transports Mathlib's `Sym.card_sym_eq_choose` along `Sym.equivNatSumOfFintype`. Besides Mathlib,
-this module imports only the landed ATLAS module `MathlibExt.InformationTheory.LogSum`: neither
-Physlib nor any unlanded ATLAS module (CH01, MF02, MF04, MF06).
+this module imports Physlib's `CanonicalEnsemble.Finite` (for the §H bridge) and the landed
+ATLAS module `MathlibExt.InformationTheory.LogSum`: no unlanded ATLAS module
+(CH01, MF02, MF04, MF06).
 
 ## ii. Key results
 
@@ -161,6 +171,9 @@ Physlib nor any unlanded ATLAS module (CH01, MF02, MF04, MF06).
 - `stirling_two_lt_factorial`, `factorial_two_ne_stirling` : Stirling's formula is not exact at
   `n = 2`.
 - `IsCanonical` : the canonical postulate as a predicate.
+- `canonicalEnsemble`, `partitionFunction_eq_mathematicalPartitionFunctionBetaReal`,
+  `boltzmannProb_eq_probabilityBetaReal`, `meanEnergy_eq_meanEnergyBetaReal` : the bridge
+  to Physlib's β-real canonical-ensemble API.
 
 ## iii. Table of contents
 
@@ -171,6 +184,7 @@ Physlib nor any unlanded ATLAS module (CH01, MF02, MF04, MF06).
 - E. Two-level system
 - F. Einstein-solid counting and Stirling's formula
 - G. The canonical postulate
+- H. Bridge to Physlib's canonical-ensemble API
 
 ## iv. References
 
@@ -397,10 +411,8 @@ noncomputable def temperature (kB β : ℝ) : ℝ :=
 
 /-- The Helmholtz free energy `A = -(log Z) / β`, which is `-kB T log Z` because `kB T = 1 / β`
 (`helmholtzFreeEnergy_eq_neg_mul_temperature_mul_log`). It does not depend on the Boltzmann
-constant; the unused argument keeps the signature `helmholtzFreeEnergy kB E β` in line with
-`entropy kB E β` and `heatCapacity kB E β`. -/
-noncomputable def helmholtzFreeEnergy {ι : Type*} [Fintype ι] (_kB : ℝ) (E : ι → ℝ) (β : ℝ) :
-    ℝ :=
+constant, so it takes no `kB` argument. -/
+noncomputable def helmholtzFreeEnergy {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) : ℝ :=
   -(Real.log (partitionFunction E β)) / β
 
 /-- The entropy `S = kB * (log Z + β * U)`. -/
@@ -444,7 +456,7 @@ lemma entropy_eq_mul_shannonEntropy {ι : Type*} [Fintype ι] [Nonempty ι] (kB 
 /-- `A = U - S / (kB * β)`. -/
 lemma helmholtzFreeEnergy_eq_meanEnergy_sub_entropy_div {ι : Type*} [Fintype ι] {kB β : ℝ}
     (hkB : 0 < kB) (hβ : 0 < β) (E : ι → ℝ) :
-    helmholtzFreeEnergy kB E β = meanEnergy E β - entropy kB E β / (kB * β) := by
+    helmholtzFreeEnergy E β = meanEnergy E β - entropy kB E β / (kB * β) := by
   have hkB' := hkB.ne'
   have hβ' := hβ.ne'
   rw [helmholtzFreeEnergy, entropy]
@@ -458,14 +470,14 @@ lemma temperature_pos {kB β : ℝ} (hkB : 0 < kB) (hβ : 0 < β) : 0 < temperat
 /-- `A = U - T S` with `T = 1 / (kB * β)`. -/
 lemma helmholtzFreeEnergy_eq_meanEnergy_sub_temperature_mul_entropy {ι : Type*} [Fintype ι]
     {kB β : ℝ} (hkB : 0 < kB) (hβ : 0 < β) (E : ι → ℝ) :
-    helmholtzFreeEnergy kB E β = meanEnergy E β - temperature kB β * entropy kB E β := by
+    helmholtzFreeEnergy E β = meanEnergy E β - temperature kB β * entropy kB E β := by
   rw [helmholtzFreeEnergy_eq_meanEnergy_sub_entropy_div hkB hβ, temperature]
   ring
 
 /-- `A = -kB T log Z`, the form of Physlib's `CanonicalEnsemble.helmholtzFreeEnergy`. -/
 lemma helmholtzFreeEnergy_eq_neg_mul_temperature_mul_log {ι : Type*} [Fintype ι] {kB β : ℝ}
     (hkB : 0 < kB) (hβ : 0 < β) (E : ι → ℝ) :
-    helmholtzFreeEnergy kB E β =
+    helmholtzFreeEnergy E β =
       -(kB * temperature kB β) * Real.log (partitionFunction E β) := by
   have hkB' := hkB.ne'
   have hβ' := hβ.ne'
@@ -758,5 +770,64 @@ def IsCanonical {ι : Type*} [Fintype ι] (p : ι → ℝ) (E : ι → ℝ) (β 
 lemma isCanonical_boltzmannProb {ι : Type*} [Fintype ι] (E : ι → ℝ) (β : ℝ) :
     IsCanonical (boltzmannProb E β) E β :=
   rfl
+
+/-!
+
+## H. Bridge to Physlib's canonical-ensemble API
+
+For a finite type of microstates with the discrete measure structure, the
+energies `E` form a finite Physlib canonical ensemble with the counting
+measure, no degrees of freedom and phase-space unit `1`. Its β-real
+partition function, Boltzmann probabilities and mean energy are the
+`partitionFunction`, `boltzmannProb` and `meanEnergy` of this module.
+Physlib's remaining thermodynamic quantities are stated for a
+`Temperature`, not for a real `β`, and it provides no β-real
+energy-variance, entropy, Helmholtz or heat-capacity definitions, so those
+stay in the finite-sum form proved above.
+
+-/
+
+/-- The finite canonical ensemble of a system with energies `E`: microstates
+`ι`, counting measure, no degrees of freedom, phase-space unit `1`. -/
+noncomputable def canonicalEnsemble {ι : Type} [Fintype ι] [MeasurableSpace ι]
+    [MeasurableSingletonClass ι] (E : ι → ℝ) : CanonicalEnsemble ι where
+  energy := E
+  dof := 0
+  μ := MeasureTheory.Measure.count
+  energy_measurable := measurable_of_finite _
+
+/-- The counting-measure ensemble of a finite system is finite in Physlib's
+sense. -/
+instance {ι : Type} [Fintype ι] [MeasurableSpace ι] [MeasurableSingletonClass ι]
+    (E : ι → ℝ) : (canonicalEnsemble E).IsFinite where
+  μ_eq_count := rfl
+  dof_eq_zero := rfl
+  phase_space_unit_eq_one := rfl
+
+/-- `partitionFunction` is Physlib's β-real mathematical partition function. -/
+lemma partitionFunction_eq_mathematicalPartitionFunctionBetaReal {ι : Type} [Fintype ι]
+    [MeasurableSpace ι] [MeasurableSingletonClass ι] (E : ι → ℝ) (β : ℝ) :
+    partitionFunction E β =
+      (canonicalEnsemble E).mathematicalPartitionFunctionBetaReal β :=
+  rfl
+
+/-- `boltzmannProb` is Physlib's β-real Boltzmann probability. -/
+lemma boltzmannProb_eq_probabilityBetaReal {ι : Type} [Fintype ι] [MeasurableSpace ι]
+    [MeasurableSingletonClass ι] (E : ι → ℝ) (β : ℝ) (i : ι) :
+    boltzmannProb E β i = (canonicalEnsemble E).probabilityBetaReal β i :=
+  rfl
+
+/-- `meanEnergy` is Physlib's β-real mean energy (up to the order of the
+factors in each summand). -/
+lemma meanEnergy_eq_meanEnergyBetaReal {ι : Type} [Fintype ι] [MeasurableSpace ι]
+    [MeasurableSingletonClass ι] (E : ι → ℝ) (β : ℝ) :
+    meanEnergy E β = (canonicalEnsemble E).meanEnergyBetaReal β := by
+  have h : ∀ i, boltzmannProb E β i = (canonicalEnsemble E).probabilityBetaReal β i :=
+    fun _ => rfl
+  calc meanEnergy E β = ∑ i, E i * boltzmannProb E β i :=
+        Finset.sum_congr rfl fun i _ => mul_comm _ _
+    _ = ∑ i, E i * (canonicalEnsemble E).probabilityBetaReal β i :=
+        Finset.sum_congr rfl fun i _ => by rw [h i]
+    _ = (canonicalEnsemble E).meanEnergyBetaReal β := rfl
 
 end Chemistry.FiniteEnsembles

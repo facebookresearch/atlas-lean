@@ -157,15 +157,15 @@ example (kB : ℝ) (E : Fin 3 → ℝ) (β : ℝ) :
   entropy_eq_mul_shannonEntropy kB E β
 
 example {kB β : ℝ} (hkB : 0 < kB) (hβ : 0 < β) (E : Fin 3 → ℝ) :
-    helmholtzFreeEnergy kB E β = meanEnergy E β - entropy kB E β / (kB * β) :=
+    helmholtzFreeEnergy E β = meanEnergy E β - entropy kB E β / (kB * β) :=
   helmholtzFreeEnergy_eq_meanEnergy_sub_entropy_div hkB hβ E
 
 example {kB β : ℝ} (hkB : 0 < kB) (hβ : 0 < β) (E : Fin 3 → ℝ) :
-    helmholtzFreeEnergy kB E β = meanEnergy E β - temperature kB β * entropy kB E β :=
+    helmholtzFreeEnergy E β = meanEnergy E β - temperature kB β * entropy kB E β :=
   helmholtzFreeEnergy_eq_meanEnergy_sub_temperature_mul_entropy hkB hβ E
 
 example {kB β : ℝ} (hkB : 0 < kB) (hβ : 0 < β) (E : Fin 3 → ℝ) :
-    helmholtzFreeEnergy kB E β =
+    helmholtzFreeEnergy E β =
       -(kB * temperature kB β) * Real.log (partitionFunction E β) :=
   helmholtzFreeEnergy_eq_neg_mul_temperature_mul_log hkB hβ E
 
@@ -401,6 +401,29 @@ example {β Δ : ℝ} (hβΔ : β * Δ = Real.log 3) : ¬ IsCanonical uniformTwo
   rw [boltzmannProb_twoLevelEnergy_one hβΔ, uniformTwo] at h1
   norm_num at h1
 
+/-!
+
+## H. Bridge to Physlib's canonical-ensemble API
+
+-/
+
+/-- The counting-measure ensemble is finite in Physlib's sense. -/
+example (E : Fin 3 → ℝ) : (canonicalEnsemble E).IsFinite :=
+  inferInstance
+
+example (E : Fin 3 → ℝ) (β : ℝ) :
+    partitionFunction E β =
+      (canonicalEnsemble E).mathematicalPartitionFunctionBetaReal β :=
+  partitionFunction_eq_mathematicalPartitionFunctionBetaReal E β
+
+example (E : Fin 3 → ℝ) (β : ℝ) (i : Fin 3) :
+    boltzmannProb E β i = (canonicalEnsemble E).probabilityBetaReal β i :=
+  boltzmannProb_eq_probabilityBetaReal E β i
+
+example (E : Fin 3 → ℝ) (β : ℝ) :
+    meanEnergy E β = (canonicalEnsemble E).meanEnergyBetaReal β :=
+  meanEnergy_eq_meanEnergyBetaReal E β
+
 end PhyslibExtTest.Chemistry.FiniteEnsembles
 
 #print axioms Chemistry.FiniteEnsembles.partitionFunction
@@ -469,6 +492,10 @@ end PhyslibExtTest.Chemistry.FiniteEnsembles
 #print axioms Chemistry.FiniteEnsembles.factorial_two_ne_stirling
 #print axioms Chemistry.FiniteEnsembles.IsCanonical
 #print axioms Chemistry.FiniteEnsembles.isCanonical_boltzmannProb
+#print axioms Chemistry.FiniteEnsembles.canonicalEnsemble
+#print axioms Chemistry.FiniteEnsembles.partitionFunction_eq_mathematicalPartitionFunctionBetaReal
+#print axioms Chemistry.FiniteEnsembles.boltzmannProb_eq_probabilityBetaReal
+#print axioms Chemistry.FiniteEnsembles.meanEnergy_eq_meanEnergyBetaReal
 #print axioms PhyslibExtTest.Chemistry.FiniteEnsembles.uniformTwo
 #print axioms PhyslibExtTest.Chemistry.FiniteEnsembles.uniformTwo_nonneg
 #print axioms PhyslibExtTest.Chemistry.FiniteEnsembles.sum_uniformTwo
