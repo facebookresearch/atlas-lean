@@ -28,6 +28,7 @@ public import Mathlib.Probability.UniformOn
 
 open MeasureTheory ProbabilityTheory Filter
 open MathlibExt.Biology.StatisticalGenetics.CochranArmitage
+open MathlibExt.Probability.Statistics.SampleCorrelation
 open MathlibExt.Biology.StatisticalGenetics.GenomicPrediction.ArmitageTrend
 
 namespace MathlibExtTest.Biology.StatisticalGenetics.CochranArmitage
