@@ -57,16 +57,17 @@ theorem isochoric_temperature_change {C Q U0 U1 T0 T1 : ℝ} (hC : 0 < C)
   field_simp
   linarith
 
-/-- With internal energy `U(T) = U0 + C * (T - T0)`, heating by `Q`
-moves the temperature to `T0 + Q / C` and the energy rises by `Q`. -/
-theorem isochoric_heating {C Q U0 T0 : ℝ} (hC : 0 < C) :
-    (U0 + C * ((T0 + Q / C) - T0)) - U0 = Q ∧
-      (T0 + Q / C) - T0 = Q / C := by
-  have hC' : C ≠ 0 := ne_of_gt hC
+/-- Heating: with the energy balance `U1 - U0 = Q`, the constitutive
+relation `U1 - U0 = C * (T1 - T0)`, and heat input `0 ≤ Q`, the final
+state satisfies `U1 = U0 + Q` and `T1 = T0 + Q / C`, so the energy
+rises by `Q`. -/
+theorem isochoric_heating {C Q U0 U1 T0 T1 : ℝ} (hC : 0 < C) (_hQ : 0 ≤ Q)
+    (hbalance : U1 - U0 = Q) (hconst : U1 - U0 = C * (T1 - T0)) :
+    U1 = U0 + Q ∧ T1 = T0 + Q / C := by
   constructor
-  · field_simp
-    ring
-  · ring
+  · linarith
+  · have h := isochoric_temperature_change hC hbalance hconst
+    linarith
 
 /-- Zero heat input gives zero temperature change in the same model. -/
 theorem isochoric_zero_heating {C U0 U1 T0 T1 : ℝ} (hC : 0 < C)
