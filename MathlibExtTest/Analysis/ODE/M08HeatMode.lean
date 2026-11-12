@@ -14,8 +14,7 @@ import MathlibExt.Analysis.ODE.M08HeatMode
 
 Concrete consumers of `MathlibExt.Analysis.ODE.M08HeatMode`: the heat
 equation at a numeric point, boundary/initial values at a numeric
-point, decay at `t ≥ 0` for `κ > 0`, and the degenerate `κ = 0` case
-(constant-in-time mode).
+point, and the degenerate `κ = 0` case (constant-in-time mode).
 
 ## i. Overview
 
