@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.A04ThermalWind
+import PhyslibExt.EarthScience.ThermalWind
 
 /-!
 # Thermal-wind checks
 
-Concrete consumers of `PhyslibExt.EarthScience.A04ThermalWind`:
+Concrete consumers of `PhyslibExt.EarthScience.ThermalWind`:
 the public shapes of the three theorems, the thermal-wind relations
 for linear profiles with `f = 1, rho0 = 1, g = 10, rho_y = 2, rho_x = 3`,
 and the no-gradient boundary.
@@ -35,7 +35,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.A04ThermalWind`
+- `PhyslibExt.EarthScience.ThermalWind`
 -/
 
 /-- Public shape of the thermal-wind theorem. -/
