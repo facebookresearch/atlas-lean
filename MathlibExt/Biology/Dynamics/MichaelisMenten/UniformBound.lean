@@ -50,8 +50,9 @@ window.
   data `s(0) = s₀ = S̄(0)`, `c(0) = 0`, `e(0) = ε`, on the slow window `τ ∈ [0, T]`
   (**including** `τ = 0`; the substrate has no initial layer),
   `|s(τ/ε) - S̄(τ)| ≤ substrateErrorConst k₁ kb k₂ s₀ T · ε`. This is the first-order Tikhonov
-  estimate recorded as `abs_sub_reduced_le` in
-  `WantedExt.Biology.Dynamics.MichaelisMentenQSSAWanted`, with an explicit constant.
+  estimate, with an explicit constant; `abs_sub_reduced_le` keeps the exact statement and
+  name of the former `theorem_wanted` in `WantedExt.Biology.Dynamics.MichaelisMentenQSSAWanted`,
+  which this file discharges (that wanted module has been removed).
 * `abs_rate_sub_mmRate_le`: for the same data, on the slow window `τ ∈ [τ₀, T]`, the
   slow-time product rate `dP/dτ = k₂ c(τ/ε)/ε` obeys
   `|k₂ c(τ/ε)/ε - mmRate k₂ K (S̄ τ)| ≤ rateErrorBound k₁ kb k₂ s₀ T τ₀ ε
@@ -91,9 +92,10 @@ Reuse search (2026-11-11, base `origin/main` 53666a3c1): `grep` for `QSSA`, `qss
 `MathlibExt.Biology.Dynamics.MichaelisMenten` (`IsSolution`, conservation, `qssComplex`,
 `mmRate`, `mmRate_strictMono`, `michaelisConstant`); Mathlib
 `image_le_of_deriv_right_lt_deriv_boundary'`, `antitoneOn_of_hasDerivWithinAt_nonpos`. The only
-existing QSSA approximation statement is the `theorem_wanted`
-`WantedExt.Biology.Dynamics.MichaelisMentenQSSAWanted.abs_sub_reduced_le` (unproved, not
-imported here). `MathlibExt.Analysis.FunctionalAnalysis.TikhonovRegularization` is unrelated
+existing QSSA approximation statement was the `theorem_wanted` `abs_sub_reduced_le` in
+`WantedExt.Biology.Dynamics.MichaelisMentenQSSAWanted` (unproved, not imported here); it
+is proved below under the same name and the wanted module is removed.
+`MathlibExt.Analysis.FunctionalAnalysis.TikhonovRegularization` is unrelated
 (ridge regression). No sibling CRN-02 file is imported.
 
 Statements follow the slow-time scaling `τ = e₀ t` and the `O(e₀)` uniform estimate of
@@ -675,8 +677,7 @@ theorem abs_substrate_sub_reduced_le_mul (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk
         rw [← hKdef]
         field_simp
 
-/-- The first-order Tikhonov estimate in the form of
-`WantedExt.Biology.Dynamics.MichaelisMentenQSSAWanted.abs_sub_reduced_le`: one constant
+/-- The first-order Tikhonov estimate as an existence statement: one constant
 (`substrateErrorConst k₁ kb k₂ s₀ T`) works for every `e₀ > 0`, every solution with data
 `(s₀, 0, e₀)`, and every slow time `τ ∈ [0, T]`. -/
 theorem exists_abs_substrate_sub_reduced_le (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) (hk₂ : 0 < k₂)
@@ -687,6 +688,24 @@ theorem exists_abs_substrate_sub_reduced_le (hk₁ : 0 < k₁) (hkb : 0 ≤ kb) 
       s 0 = s₀ → c 0 = 0 → e 0 = e₀ → ∀ τ ∈ Icc 0 T, |s (τ / e₀) - S τ| ≤ C * e₀ :=
   ⟨substrateErrorConst k₁ kb k₂ s₀ T, fun _ he₀ _ _ _ _ h hs hc he _ hτ ↦
     abs_substrate_sub_reduced_le_mul hk₁ hkb hk₂ hs₀ he₀ hS hS₀ h hs hc he hτ⟩
+
+/-- **Rigorous QSSA** (Tikhonov 1952; Heineken–Tsuchiya–Aris 1967). On the slow time scale
+`τ = e₀ t`, the substrate of the full Michaelis–Menten system with `s(0) = s₀`, `c(0) = 0`,
+`e(0) = e₀` stays within `C e₀` of the solution `S̄` of the reduced equation
+`dS̄/dτ = -k₂ S̄ / (K_M + S̄)`, `S̄(0) = s₀`, uniformly on `[0, T]`.
+
+This is the statement formerly recorded as a `theorem_wanted` in
+`WantedExt.Biology.Dynamics.MichaelisMentenQSSAWanted`, kept verbatim (including the unused
+hypotheses `0 < T` and `e₀ ≤ 1`); `exists_abs_substrate_sub_reduced_le` is the stronger form,
+and `C = substrateErrorConst k₁ kb k₂ s₀ T`. -/
+theorem abs_sub_reduced_le {k₁ kb k₂ s₀ T : ℝ} (hk₁ : 0 < k₁) (hkb : 0 ≤ kb)
+    (hk₂ : 0 < k₂) (hs₀ : 0 < s₀) (_hT : 0 < T) {S : ℝ → ℝ}
+    (hS : ∀ τ, 0 ≤ τ → HasDerivAt S (-mmRate k₂ (michaelisConstant k₁ kb k₂) (S τ)) τ)
+    (hS₀ : S 0 = s₀) :
+    ∃ C : ℝ, ∀ e₀ : ℝ, 0 < e₀ → e₀ ≤ 1 → ∀ s c e p : ℝ → ℝ, IsSolution k₁ kb k₂ s c e p →
+      s 0 = s₀ → c 0 = 0 → e 0 = e₀ → ∀ τ ∈ Icc 0 T, |s (τ / e₀) - S τ| ≤ C * e₀ := by
+  obtain ⟨C, hC⟩ := exists_abs_substrate_sub_reduced_le (T := T) hk₁ hkb hk₂ hs₀ hS hS₀
+  exact ⟨C, fun e₀ he₀ _ ↦ hC e₀ he₀⟩
 
 /-! ### The Michaelis–Menten rate law -/
 
