@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.S12ConvectionScaling
+import PhyslibExt.EarthScience.ConvectionScaling
 
 /-!
 # Convection-scaling checks
 
-Concrete consumers of `PhyslibExt.EarthScience.S12ConvectionScaling`:
+Concrete consumers of `PhyslibExt.EarthScience.ConvectionScaling`:
 unit parameters give `Ra = 10`, and the zero-buoyancy boundary gives
 `Ra = 0`.
 
@@ -31,7 +31,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.S12ConvectionScaling`
+- `PhyslibExt.EarthScience.ConvectionScaling`
 -/
 
 /-- Numeric Rayleigh number: `g = 10`, all other parameters `1`, gives `Ra = 10`. -/
