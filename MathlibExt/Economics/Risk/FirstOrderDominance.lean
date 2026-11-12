@@ -97,7 +97,7 @@ theorem FirstOrderDominates.sum_le_of_isUpperSet {α : Type*} [Fintype α] [Line
 
 /-- A monotone coupling transfers expected utility: if `π ≥ 0` has marginals `p` and `q` and
 is supported on pairs `x ≤ y`, then `E_p[u] ≤ E_q[u]` for every monotone `u`. -/
-theorem expectedUtility_le_of_monotoneCoupling {α : Type*} [Fintype α] [LinearOrder α]
+theorem expectedUtility_le_of_monotoneCoupling {α : Type*} [Fintype α] [Preorder α]
     {p q : StdSimplex ℝ α} {u : α → ℝ} (hu : Monotone u) (π : α → α → ℝ)
     (hπ : ∀ x y, 0 ≤ π x y) (hrow : ∀ x, ∑ y, π x y = p.weights x)
     (hcol : ∀ y, ∑ x, π x y = q.weights y) (hsupp : ∀ x y, ¬ x ≤ y → π x y = 0) :
