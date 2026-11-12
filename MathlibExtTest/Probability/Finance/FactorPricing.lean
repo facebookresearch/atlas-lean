@@ -38,12 +38,13 @@ example {Ω : Type*} [Fintype Ω]
     (hprice : ∀ a : Unit, p a = ∑ ω : Ω, ψ ω * X a ω)
     (F : Fin 2 → Ω → ℝ)
     (hspan : ∀ ω : Ω, X () ω = ∑ k : Fin 2, ![2, -1] k * F k ω) :
-    ∃ π : Fin 2 → ℝ, p () = 2 * π 0 + (-1) * π 1 := by
-  obtain ⟨π, hπ⟩ := factor_price_relation X p ψ hprice F (fun _ => ![2, -1]) (by
+    ∃ π : Fin 2 → ℝ, (∀ k : Fin 2, π k = ∑ ω : Ω, ψ ω * F k ω) ∧
+      p () = 2 * π 0 + (-1) * π 1 := by
+  obtain ⟨π, hπval, hπ⟩ := factor_price_relation X p ψ hprice F (fun _ => ![2, -1]) (by
     intro a ω
     cases a
     simpa using hspan ω)
-  refine ⟨π, ?_⟩
+  refine ⟨π, hπval, ?_⟩
   have h := hπ ()
   rw [Fin.sum_univ_two] at h
   simpa using h
@@ -52,7 +53,10 @@ example {Ω : Type*} [Fintype Ω]
 Two-factor market with one asset: loadings `![2, -1]`, `R = 2`,
 payoffs `X 0 = ![5, 1]`, price `p 0 = 1`. Funded gains are `3 * h 0`
 and `-h 0`, so no-arbitrage holds by forcing `h 0 = 0`. -/
-example : ∃ π : Fin 2 → ℝ, (1 : ℝ) = 2 * π 0 + (-1) * π 1 := by
+example : ∃ ψ : Fin 2 → ℝ, ∃ π : Fin 2 → ℝ, (∀ ω : Fin 2, 0 < ψ ω) ∧
+    (∑ ω : Fin 2, ψ ω = 1 / 2) ∧
+    (∀ k : Fin 2, π k = ∑ ω : Fin 2, ψ ω * (![![3, 1], ![1, 1]] : Fin 2 → Fin 2 → ℝ) k ω) ∧
+    (1 : ℝ) = 2 * π 0 + (-1) * π 1 := by
   have hR : (0 : ℝ) < 2 := by norm_num
   have hspan : ∀ a : Fin 1, ∀ ω : Fin 2,
       (fun _ => ![5, 1] : Fin 1 → Fin 2 → ℝ) a ω
@@ -68,11 +72,11 @@ example : ∃ π : Fin 2 → ℝ, (1 : ℝ) = 2 * π 0 + (-1) * π 1 := by
     have h1 := hnonneg 1
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at h0 h1 hpos
     fin_cases ω <;> norm_num at h0 h1 hpos ⊢ <;> linarith
-  obtain ⟨π, hπ⟩ := factor_price_relation_of_no_arbitrage
+  obtain ⟨ψ, π, hpos, hsum, hπval, hπ⟩ := factor_price_relation_of_no_arbitrage
     (fun _ => ![5, 1] : Fin 1 → Fin 2 → ℝ) (fun _ => (1 : ℝ) : Fin 1 → ℝ)
     2 hR hNA (![![3, 1], ![1, 1]] : Fin 2 → Fin 2 → ℝ)
     (fun _ => ![2, -1] : Fin 1 → Fin 2 → ℝ) hspan
-  refine ⟨π, ?_⟩
+  refine ⟨ψ, π, hpos, hsum, hπval, ?_⟩
   have h0 := hπ 0
   simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one] at h0
   exact h0

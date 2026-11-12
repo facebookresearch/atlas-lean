@@ -33,23 +33,25 @@ is the `ψ`-value of the factor payoff.
 
 namespace MathlibExt.Probability.Finance.FactorPricing
 
-set_option linter.unusedFintypeInType false in
-/-- **Linear factor-price relation (FI07.T04).** In a finite exact
-factor-spanning model, given a pricing vector `ψ` that prices every asset
+/-- **Linear factor-price relation (FI07.T04).** In an exact
+factor-spanning model with finite states and factors, given a pricing
+vector `ψ` that prices every asset
 (`p a = ∑ ω, ψ ω * X a ω`), every asset price is the loading-weighted sum of
 factor prices: there are `π k` with `p a = ∑ k, b a k * π k` for every asset
-`a`, where `π k = ∑ ω, ψ ω * F k ω`. FI08.T02 supplies such a `ψ` (strictly
-positive) under no arbitrage on funded gains. -/
+`a`, where `π k = ∑ ω, ψ ω * F k ω` is the `ψ`-value of the factor payoff.
+FI08.T02 supplies such a `ψ` (strictly positive) under no arbitrage on funded
+gains. -/
 theorem factor_price_relation
     {Ω : Type*} [Fintype Ω]
-    {A : Type*} [Fintype A]
+    {A : Type*}
     {K : Type*} [Fintype K]
     (X : A → Ω → ℝ) (p : A → ℝ) (ψ : Ω → ℝ)
     (hprice : ∀ a : A, p a = ∑ ω : Ω, ψ ω * X a ω)
     (F : K → Ω → ℝ) (b : A → K → ℝ)
     (hspan : ∀ a : A, ∀ ω : Ω, X a ω = ∑ k : K, b a k * F k ω) :
-    ∃ π : K → ℝ, ∀ a : A, p a = ∑ k : K, b a k * π k := by
-  refine ⟨fun k => ∑ ω : Ω, ψ ω * F k ω, fun a => ?_⟩
+    ∃ π : K → ℝ, (∀ k : K, π k = ∑ ω : Ω, ψ ω * F k ω) ∧
+      ∀ a : A, p a = ∑ k : K, b a k * π k := by
+  refine ⟨fun k => ∑ ω : Ω, ψ ω * F k ω, fun _ => rfl, fun a => ?_⟩
   calc p a = ∑ ω : Ω, ψ ω * X a ω := hprice a
     _ = ∑ ω : Ω, ψ ω * (∑ k : K, b a k * F k ω) := by
         apply Finset.sum_congr rfl
@@ -68,12 +70,12 @@ theorem factor_price_relation
         intro ω _
         ring
 
-set_option linter.unusedFintypeInType false in
 /-- **Linear factor-price relation under no arbitrage (FI07.T04, unconditional
 claim).** In a finite exact factor-spanning model with no arbitrage on funded
-gains, every asset price is the loading-weighted sum of factor prices, with
-factor prices `π k = ∑ ω, ψ ω * F k ω` for the state-price vector `ψ`
-supplied by FI08.T02. -/
+gains, the state-price vector `ψ` supplied by FI08.T02 is returned with its
+positivity and normalization (`ψ ω > 0`, `∑ ω, ψ ω = 1 / R`), and every asset
+price is the loading-weighted sum of factor prices, with factor prices
+`π k = ∑ ω, ψ ω * F k ω` the `ψ`-value of the factor payoff. -/
 theorem factor_price_relation_of_no_arbitrage
     {Ω : Type*} [Fintype Ω] [Nonempty Ω]
     {A : Type*} [Fintype A]
@@ -82,9 +84,11 @@ theorem factor_price_relation_of_no_arbitrage
     (hNA : MathlibExt.Probability.Finance.StatePriceVector.NoFundedArbitrage X p R)
     (F : K → Ω → ℝ) (b : A → K → ℝ)
     (hspan : ∀ a : A, ∀ ω : Ω, X a ω = ∑ k : K, b a k * F k ω) :
-    ∃ π : K → ℝ, ∀ a : A, p a = ∑ k : K, b a k * π k := by
+    ∃ ψ : Ω → ℝ, ∃ π : K → ℝ, (∀ ω : Ω, 0 < ψ ω) ∧ (∑ ω : Ω, ψ ω = 1 / R) ∧
+      (∀ k : K, π k = ∑ ω : Ω, ψ ω * F k ω) ∧
+      ∀ a : A, p a = ∑ k : K, b a k * π k := by
   classical
-  obtain ⟨ψ, -, -, hpricing⟩ :=
+  obtain ⟨ψ, hpos, hsum, hpricing⟩ :=
     MathlibExt.Probability.Finance.StatePriceVector.exists_statePriceVector_prices_replicated
       X p R hR hNA
   have hsingle : ∀ g : A → ℝ, ∀ a : A,
@@ -101,6 +105,7 @@ theorem factor_price_relation_of_no_arbitrage
     have h := hpricing (Pi.single a 1 : A → ℝ)
     simp only [hsingle] at h
     exact h.symm
-  exact factor_price_relation X p ψ hprice F b hspan
+  obtain ⟨π, hπval, hπ⟩ := factor_price_relation X p ψ hprice F b hspan
+  exact ⟨ψ, π, hpos, hsum, hπval, hπ⟩
 
 end MathlibExt.Probability.Finance.FactorPricing
