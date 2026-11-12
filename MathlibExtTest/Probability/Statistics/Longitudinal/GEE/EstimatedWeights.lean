@@ -214,12 +214,34 @@ theorem Ualt_plugin_one {Ω : Type*} (ω : Ω) :
       (√(1 : ℕ))⁻¹ • ∑ i ∈ range 1, Ualt i (0 : ℝ) 0 ω = 1 := by
   simp [Ualt, θalt]
 
+/-- The scores `U i β θ = θ` (written `θ * 1`) with the plug-in `θhat n = (√n)⁻¹` satisfy the
+hypotheses `hdiff` (with nuisance derivative `1 • 1`) and `htight` (with `K = 1`) of
+`tendstoInMeasure_inv_sqrt_smul_sum_sub_of_hasFDerivAt`, while `hunif` fails: the averaged
+nuisance derivative has norm `1` for every `n ≥ 1`. Used by
+`not_tendstoInMeasure_of_nuisanceDeriv_ne_zero`. -/
+theorem hypotheses_of_nuisanceDeriv_ne_zero :
+    (∀ (i : ℕ) (ω : Unit), ∀ θ ∈ Metric.ball (0 : ℝ) 1,
+      HasFDerivAt (fun a : ℝ ↦ (fun (_ : ℕ) (_ : ℝ) (θ : ℝ) (_ : Unit) ↦ θ * 1) i 0 a ω)
+        ((1 : ℝ) • (1 : ℝ →L[ℝ] ℝ)) θ) ∧
+    (∀ ε : ℝ≥0∞, 0 < ε → ∃ K : ℝ, ∀ n : ℕ,
+      Measure.dirac () {_ω : Unit | K < ‖√(n : ℝ) • ((√(n : ℝ))⁻¹ - (0 : ℝ))‖} ≤ ε) ∧
+    (∀ n : ℕ, 1 ≤ n →
+      ‖(n : ℝ)⁻¹ • ∑ _i ∈ range n, (1 : ℝ) • (1 : ℝ →L[ℝ] ℝ)‖ = 1) := by
+  refine ⟨fun i ω θ _ ↦ hasFDerivAt_mul_const 1 θ, fun ε _ ↦ ⟨1, fun n ↦ ?_⟩,
+    fun n hn ↦ ?_⟩
+  · refine (measure_mono_null (t := ∅) (fun ω hω ↦ ?_) measure_empty).le.trans zero_le
+    exact absurd hω (not_lt.2 (sqrt_smul_inv_sqrt_le n))
+  · have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast (Nat.one_le_iff_ne_zero.1 hn)
+    rw [Finset.sum_const, Finset.card_range, ← Nat.cast_smul_eq_nsmul ℝ, smul_smul,
+      inv_mul_cancel₀ hn', one_smul, one_smul, norm_one]
+
 /-- **Boundary: a non-vanishing nuisance derivative breaks plug-in negligibility.** With cluster
 scores `U i β θ = θ`, the nuisance derivative is `1` for every cluster, so its average does not
 tend to `0` (the hypothesis that `integral_nuisanceDeriv_eq_zero` supplies for residual-linear
-scores fails); all other hypotheses of `tendstoInMeasure_inv_sqrt_smul_sum_sub_of_hasFDerivAt`
-hold with `θhat n = (√n)⁻¹`. The plug-in shifts the normalized score by exactly `1` for every
-`n ≥ 1`, so the conclusion fails. -/
+scores fails); the other hypotheses `hdiff` and `htight` of
+`tendstoInMeasure_inv_sqrt_smul_sum_sub_of_hasFDerivAt` hold with `θhat n = (√n)⁻¹`
+(`hypotheses_of_nuisanceDeriv_ne_zero`). The plug-in shifts the normalized score by exactly `1`
+for every `n ≥ 1`, so the conclusion fails. -/
 theorem not_tendstoInMeasure_of_nuisanceDeriv_ne_zero :
     ¬ TendstoInMeasure (Measure.dirac ()) (fun (n : ℕ) (_ : Unit) ↦
       (√n)⁻¹ • ∑ _i ∈ range n, (√(n : ℝ))⁻¹ - (√n)⁻¹ • ∑ _i ∈ range n, (0 : ℝ)) atTop 0 := by

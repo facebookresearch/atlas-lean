@@ -14,8 +14,6 @@ public import MathlibExt.Probability.Statistics.Slutsky
 /-!
 # GEE with estimated working-correlation weights
 
-# GEE with estimated working-correlation weights
-
 In practice the GEE working covariance `Vᵢ(β, α, φ) = φ Aᵢ^{1/2} R(α) Aᵢ^{1/2}` is not fixed: the
 working-correlation parameter `α` and the scale `φ` are replaced by estimates `α̂(Y)`, `φ̂(Y)`
 computed from the responses of all clusters. The weights then depend on `Y`, so the
@@ -411,7 +409,9 @@ asymptotically negligible and `θhat` is `√n`-consistent for `θ₀`) and the 
 at `(β₀, θ₀)` with meat quadratic form `⟪B t, t⟫`. Then
 `√n • (βhat n - β₀) → N(0, sandwichCovariance A B)` in distribution: the same sandwich as with
 the nuisance fixed at its limit `θ₀`. The working correlation at `θ₀` need not be the true
-correlation. -/
+correlation. If `θhat` is evaluated at `βhat` itself, its `√n`-consistency presupposes that of
+`βhat`; this theorem does not resolve that circularity, so plug a preliminary `√n`-consistent
+estimate of `β` into the nuisance estimator instead. -/
 theorem tendstoInDistribution_sqrt_smul_sub_sandwich_estimatedWeights {U : ℕ → E → F → Ω → E}
     {DθU : ℕ → F → Ω → F →L[ℝ] E} {β₀ : E} {θ₀ : F} {δ : ℝ} (hδ : 0 < δ)
     {A B : E →L[ℝ] E} (hA : IsUnit A)
