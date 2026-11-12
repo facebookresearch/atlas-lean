@@ -40,10 +40,11 @@ namespace MathlibExt.Analysis
 /-- A derivative bound yields a deterministic output-error bound: if
 `|f'| ≤ L` everywhere and the input error satisfies `|x - x₀| ≤ δ`, then
 the output error satisfies `|f x - f x₀| ≤ L * δ`. -/
-theorem output_error_bound_of_deriv_bound {f : ℝ → ℝ} {L : ℝ} (hL : 0 ≤ L)
+theorem output_error_bound_of_deriv_bound {f : ℝ → ℝ} {L : ℝ}
     (hf : Differentiable ℝ f) (hderiv : ∀ x, |deriv f x| ≤ L)
     {x x₀ δ : ℝ} (hδ : |x - x₀| ≤ δ) :
     |f x - f x₀| ≤ L * δ := by
+  have hL : 0 ≤ L := le_trans (abs_nonneg (deriv f 0)) (hderiv 0)
   have hLip : LipschitzWith (⟨L, hL⟩ : NNReal) f :=
     lipschitzWith_of_nnnorm_deriv_le hf (fun x => hderiv x)
   have h := hLip.dist_le_mul x x₀
