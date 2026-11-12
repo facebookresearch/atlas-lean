@@ -32,8 +32,8 @@ recorded in the data, not in the formula.
 
 ## ii. Main definitions
 
-* `Economics.Accounting.WorkingCapitalData`: balances, flows and period length.
-* `Economics.Accounting.WorkingCapitalData.cashConversionCycle`: the cash conversion cycle, with
+* `MathlibExt.Economics.Accounting.WorkingCapitalData`: balances, flows and period length.
+* `MathlibExt.Economics.Accounting.WorkingCapitalData.cashConversionCycle`: the cash conversion cycle, with
   its components `inventoryConversionPeriod`, `receivablesCollectionPeriod` and
   `payablesDeferralPeriod`.
 
@@ -45,7 +45,7 @@ recorded in the data, not in the formula.
 
 @[expose] public section
 
-namespace Economics.Accounting
+namespace MathlibExt.Economics.Accounting
 
 /-- Working-capital data for one period. Balances are currency amounts; `creditSales` and
 `costOfGoodsSold` are currency amounts over the period; `periodDays` is the length of the period
@@ -103,4 +103,4 @@ noncomputable def cashConversionCycle (d : WorkingCapitalData) : ℝ :=
 
 end WorkingCapitalData
 
-end Economics.Accounting
+end MathlibExt.Economics.Accounting

@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Economics.Accounting.CashConversionCycle
-
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -24,7 +23,7 @@ cycle, and the zero-balance edge case of Lean's division convention.
 
 namespace MathlibExtTest.Economics.Accounting.CashConversionCycle
 
-open _root_.Economics.Accounting
+open _root_.MathlibExt.Economics.Accounting
 
 /-- The source's worked example (King Sized Products, OpenStax §19.1, Think It Through):
 credit sales 40,000,000, average inventory 3,000,000, average receivables 6,000,000, average
