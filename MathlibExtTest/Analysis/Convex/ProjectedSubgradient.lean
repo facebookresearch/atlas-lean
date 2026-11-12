@@ -10,10 +10,10 @@ module
 
 public import MathlibExt.Analysis.Convex.ProjectedSubgradient
 
-/-- The first iterate is the projected subgradient step. -/
+/-- The first iterate is the projected subgradient step (via `ogdIter`). -/
 example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     (proj : E → E) (g : ℕ → E → E) (η : ℝ) (x0 : E) :
-    sgdIter proj g η x0 1 = proj (x0 - η • g 0 x0) := rfl
+    ogdIter proj g η x0 1 = proj (x0 - η • g 0 x0) := rfl
 
 /-- Boundary check `T = 1`: the average is the first iterate and the
 bound has the stated shape. -/
@@ -22,12 +22,12 @@ example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     (hD : 0 < D) (hG : 0 < G)
     (hproj : ∀ u v, ‖proj u - proj v‖ ≤ ‖u - v‖)
     (xstar : E) (hprojstar : proj xstar = xstar)
-    (hsub : ∀ (t : ℕ) (x : E), f x + @inner ℝ E _ (g t x) (xstar - x) ≤ f xstar)
+    (hsub : ∀ (t : ℕ) (x y : E), f x + @inner ℝ E _ (g t x) (y - x) ≤ f y)
     (hg : ∀ (t : ℕ) (x : E), ‖g t x‖ ≤ G)
     (hconv : ∀ x y : E, ∀ a b : ℝ, 0 ≤ a → 0 ≤ b → a + b = 1 →
       f (a • x + b • y) ≤ a * f x + b * f y)
     (x0 : E) (hdist : ‖x0 - xstar‖ ≤ D) :
     f ((1 : ℝ)⁻¹ • ∑ t ∈ Finset.range 1,
-        sgdIter proj g (D / (G * Real.sqrt 1)) x0 t)
+        ogdIter proj g (D / (G * Real.sqrt 1)) x0 t)
       - f xstar ≤ D * G / Real.sqrt 1 := by
   simpa using sgd_rate hD hG hproj xstar hprojstar hsub hg hconv x0 hdist (T := 1) (by norm_num)
