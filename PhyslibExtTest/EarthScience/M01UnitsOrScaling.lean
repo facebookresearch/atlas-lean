@@ -42,10 +42,19 @@ private noncomputable def scale2 : NNRealˣ := ⟨2, 1 / 2, by norm_num, by norm
 /-- Strictly positive scale `3` (no `OfNat` instance for `NNRealˣ`). -/
 private noncomputable def scale3 : NNRealˣ := ⟨3, 1 / 3, by norm_num, by norm_num⟩
 
-/-- Converting `5` by `2` then by `3` is converting by `6`. -/
-example : EarthScience.unitConversion scale3 (EarthScience.unitConversion scale2 5)
-    = EarthScience.unitConversion (scale3 * scale2) 5 :=
-  EarthScience.unitConversion_comp scale2 scale3 5
+/-- Converting `5` by `2` then by `3` gives `30`. -/
+example : EarthScience.unitConversion scale3 (EarthScience.unitConversion scale2 5) = 30 := by
+  norm_num [EarthScience.unitConversion, scale2, scale3]
+
+/-- The bundled inverse reverses a positive-scale conversion. -/
+example (a : NNRealˣ) (x : ℝ) :
+    (EarthScience.unitConversionLinearEquiv a).symm (EarthScience.unitConversion a x) = x :=
+  (EarthScience.unitConversionLinearEquiv a).symm_apply_apply x
+
+/-- The bundled affine inverse recovers the Celsius coordinate. -/
+example (C : ℝ) :
+    EarthScience.celsiusToKelvinAffineEquiv.symm (EarthScience.celsiusToKelvin C) = C :=
+  EarthScience.celsiusToKelvinAffineEquiv.symm_apply_apply C
 
 /-- A `5 °C` difference is a `5 K` difference, at `20 °C`. -/
 example : EarthScience.celsiusToKelvin (20 + 5) - EarthScience.celsiusToKelvin 20 = 5 :=
@@ -56,7 +65,7 @@ example : EarthScience.celsiusToKelvin (0.3 * 10 + (1 - 0.3) * 20)
     = 0.3 * EarthScience.celsiusToKelvin 10 + (1 - 0.3) * EarthScience.celsiusToKelvin 20 :=
   EarthScience.kelvin_celsius_affine
 
-/-- Freezing point: `0 °C` maps to `273.15 K`. -/
+/-- Zero point: `0 °C` maps to `273.15 K`. -/
 example : EarthScience.celsiusToKelvin 0 = 273.15 :=
   EarthScience.kelvin_celsius_zero
 

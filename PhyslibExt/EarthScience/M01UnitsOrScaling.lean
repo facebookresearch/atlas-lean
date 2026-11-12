@@ -11,12 +11,14 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.Group.Units.Defs
 public import Mathlib.Basic.NNReal.Basic
 public import Mathlib.Tactic.Ring
+public import Mathlib.Algebra.Module.Equiv.Basic
+public import Mathlib.LinearAlgebra.AffineSpace.AffineEquiv
 
 /-!
 # Unit-scale conversions and affine temperature scales
 
 Unit conversions for magnitudes of one dimension are multiplications
-by nonnegative scales, and temperature differences transform linearly
+by strictly positive scales, and temperature differences transform linearly
 while absolute Celsius-to-Kelvin conversion is affine.
 
 ## i. Overview
@@ -44,8 +46,10 @@ the statements are real algebra on the existing carriers.
   Celsius differences.
 - `EarthScience.kelvin_celsius_affine`: the Celsius-to-Kelvin map
   preserves affine combinations.
-- `EarthScience.kelvin_celsius_zero`: `0 °C` (the freezing point of
-  water) maps to `273.15 K`.
+- `EarthScience.kelvin_celsius_zero`: `0 °C` maps to `273.15 K`.
+- `EarthScience.unitConversionLinearEquiv` and
+  `EarthScience.celsiusToKelvinAffineEquiv`: bundled conversions for the
+  standard linear and affine inverse and composition APIs.
 
 ## iii. Table of contents
 
@@ -54,9 +58,11 @@ the statements are real algebra on the existing carriers.
 
 ## iv. References
 
-- `NNReal.coe_mul`, `ring` (Mathlib), which close all four proofs.
-  No Physlib dimension API is used: the milestone is the real
-  algebra of scales and offsets, not a new quantity base.
+- BIPM, *A concise summary of the International System of Units, SI*,
+  paragraph following Table 2: `t/°C = T/K - 273.15`.
+  <https://www.bipm.org/documents/d/guest/si-brochure-9-concise-en?download=true>
+- Mathlib's `LinearEquiv.smulOfUnit` and `AffineEquiv.vaddConst`.
+  No Physlib dimension API is used: these are real coordinate conversions.
 
 ## A. Unit-scale conversions
 -/
@@ -70,6 +76,15 @@ Scales are units of `NNReal`, so strict positivity is carried by the
 type and the scale `0` is excluded. -/
 def unitConversion (a : NNRealˣ) (x : ℝ) : ℝ := (a : ℝ) * x
 
+/-- A positive unit-scale conversion as an invertible real linear map. -/
+noncomputable def unitConversionLinearEquiv (a : NNRealˣ) : ℝ ≃ₗ[ℝ] ℝ :=
+  LinearEquiv.smulOfUnit (Units.map NNReal.toRealHom.toMonoidHom a)
+
+/-- The bundled linear map agrees with unit-scale conversion. -/
+@[simp]
+lemma unitConversionLinearEquiv_apply (a : NNRealˣ) (x : ℝ) :
+    unitConversionLinearEquiv a x = unitConversion a x := rfl
+
 /-- Unit-scale conversions compose: converting by `a` then by `b` is
 converting by the composite scale `b * a` in `NNRealˣ`. Strictly
 positive scales stay strictly positive under multiplication. -/
@@ -82,6 +97,15 @@ theorem unitConversion_comp (a b : NNRealˣ) (x : ℝ) :
 
 /-- Celsius-to-Kelvin conversion: `T_K = T_C + 273.15`. -/
 def celsiusToKelvin (C : ℝ) : ℝ := C + 273.15
+
+/-- Celsius-to-Kelvin conversion as an affine equivalence of real coordinates. -/
+noncomputable def celsiusToKelvinAffineEquiv : ℝ ≃ᵃ[ℝ] ℝ :=
+  AffineEquiv.vaddConst ℝ (273.15 : ℝ)
+
+/-- The bundled affine map agrees with Celsius-to-Kelvin conversion. -/
+@[simp]
+lemma celsiusToKelvinAffineEquiv_apply (C : ℝ) :
+    celsiusToKelvinAffineEquiv C = celsiusToKelvin C := rfl
 
 /-- Temperature differences transform linearly: the Kelvin value of
 `C + Δ` minus the Kelvin value of `C` is exactly `Δ`. -/
@@ -97,7 +121,7 @@ theorem kelvin_celsius_affine {C₁ C₂ α : ℝ} :
   simp only [celsiusToKelvin]
   ring
 
-/-- Zero point: `0 °C` (the freezing point of water) maps to `273.15 K`. -/
+/-- Zero point: `0 °C` maps to `273.15 K`. -/
 theorem kelvin_celsius_zero : celsiusToKelvin 0 = 273.15 := by
   simp only [celsiusToKelvin, zero_add]
 
