@@ -120,4 +120,20 @@ example : ¬ ∃ c : ℝ,
   exact not_tendsto_nhds_of_tendsto_atTop (tendsto_atTop_mono hlow h2) c
     (hc.comp (tendsto_add_atTop_nat 1))
 
+/-- The extended canonical CLT accepts zero variance and returns the point mass at zero. -/
+example : TendstoInDistribution
+    (fun n ω => ∑ k ∈ range n, bootstrapRow (fun _ => (0 : ℝ)) n k ω) atTop id
+    (fun _ => bootstrapMeasure (fun _ => (0 : ℝ))) (gaussianReal 0 0) := by
+  refine tendstoInDistribution_sum_bootstrapRow _ ?_ ?_
+  · refine tendsto_const_nhds.congr fun n => ?_
+    simp [sum_integral_bootstrapRow_sq, empiricalMean_eq]
+  · apply lindebergConditionTriangular_bootstrapRow_of_data
+    intro ε hε
+    refine tendsto_const_nhds.congr fun n => ?_
+    simp [empiricalMean_eq]
+
+/-- The empirical-law foundation also accepts vector-valued data. -/
+example (x : ℕ → ℝ × ℝ) : empiricalLaw x 1 = Measure.dirac (x 0) := by
+  simp [empiricalLaw_eq]
+
 end BootstrapMeanCLTTest
