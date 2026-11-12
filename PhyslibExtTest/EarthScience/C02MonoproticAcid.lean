@@ -15,9 +15,8 @@ import PhyslibExt.EarthScience.C02MonoproticAcid
 # Monoprotic-acid checks
 
 Concrete consumers of `PhyslibExt.EarthScience.C02MonoproticAcid`:
-the public shape of the uniqueness theorem, the positive root at
-`K = 1`, `C = 1` (so `h = (-1 + sqrt 5) / 2`), and the dilute
-boundary `C → 0` via the existence theorem at small `C`.
+the public shape of the uniqueness theorem and the positive root at
+`K = 1`, `C = 1` (so `h = (-1 + sqrt 5) / 2`).
 
 ## i. Overview
 
