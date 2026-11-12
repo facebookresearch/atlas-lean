@@ -105,9 +105,10 @@ theorem uniform_deviation_eq_iSup_rat {n : ℕ}
   exact iSup_abs_sub_eq_iSup_rat (fun t => empCDF (fun i => X i ω) t) F
     (empCDF_rightContinuous X ω) hF hbdd
 
-set_option linter.unusedVariables false in
-/-- The rationally-witnessed uniform-deviation event is measurable. -/
-theorem measurableSet_uniform_deviation {n : ℕ} (hn : 0 < n)
+/-- The rationally-witnessed uniform-deviation event is measurable,
+at every sample size including `n = 0` (where the empirical CDF is
+identically zero and division is by the constant zero). -/
+theorem measurableSet_uniform_deviation {n : ℕ}
     {Ω : Type*} [MeasurableSpace Ω] (X : Fin n → Ω → ℝ)
     (F : ℝ → ℝ) (eps : ℝ)
     (hX : ∀ i, Measurable (X i)) :
