@@ -12,14 +12,17 @@ public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Probability.Moments.Covariance
 
 /-!
-# Unconstrained two-asset minimum-variance weight
+# Two-asset minimum-variance weight (budget built in)
 
 For two assets with returns `R₁, R₂`, the portfolio with weight `w` on `R₁`
 and `1 - w` on `R₂` has variance `w²σ₁² + 2w(1-w)σ₁₂ + (1-w)²σ₂²`. When
-`Var(R₁ - R₂) > 0`, the unconstrained minimizer is the explicit weight
-`w* = (σ₂² - σ₁₂) / Var(R₁ - R₂)`. No budget or target-return constraint is
-imposed and `w*` need not lie in `[0, 1]`; short sales are allowed. This is
-distinct from the constrained `n`-asset minimizer in
+`Var(R₁ - R₂) > 0`, the minimizer is the explicit weight
+`w* = (σ₂² - σ₁₂) / Var(R₁ - R₂)`. The budget constraint is built into the
+parametrization: the two weights `(w, 1 - w)` always sum to `1`, so every
+portfolio considered is fully invested. "Unconstrained" here refers only to
+`w ∈ ℝ`: no `[0, 1]` (no-short-sale) restriction and no target-return
+constraint are imposed, and `w*` need not lie in `[0, 1]`; short sales are
+allowed. This is distinct from the constrained `n`-asset minimizer in
 `MathlibExt.Probability.Finance.MeanVariancePortfolio`.
 
 ## Main results
@@ -36,13 +39,15 @@ Atlas roadmap target FI06.T01.
 namespace MathlibExt.Probability.Finance.TwoAssetMinVariance
 
 /-- Variance of the two-asset portfolio with weight `w` on `R₁` and `1 - w`
-on `R₂` (source clause: "portfolio return `w R₁ + (1 - w) R₂`"). Short sales
-are allowed: `w` is unconstrained. -/
+on `R₂` (source clause: "portfolio return `w R₁ + (1 - w) R₂`"). The budget
+constraint is built in (`w + (1 - w) = 1`); short sales are allowed: `w`
+ranges over all of `ℝ`. -/
 noncomputable def twoAssetVariance {Ω : Type*} [MeasurableSpace Ω]
     (μ : MeasureTheory.Measure Ω) (R₁ R₂ : Ω → ℝ) (w : ℝ) : ℝ :=
   ProbabilityTheory.variance (fun ω => w * R₁ ω + (1 - w) * R₂ ω) μ
 
-/-- The unconstrained two-asset minimum-variance weight
+/-- The unconstrained (in `w ∈ ℝ`, with the budget constraint built into the
+`(w, 1 - w)` parametrization) two-asset minimum-variance weight
 `(σ₂² - σ₁₂) / Var(R₁ - R₂)` (source clause: "w* = (σ₂² - σ₁₂) / Var(R₁-R₂)").
 The denominator is `Var(R₁ - R₂) = σ₁² - 2σ₁₂ + σ₂²`. -/
 noncomputable def minVarianceWeight {Ω : Type*} [MeasurableSpace Ω]
@@ -74,8 +79,9 @@ private theorem twoAssetVariance_quad {Ω : Type*} [MeasurableSpace Ω]
 
 /-- **The unconstrained two-asset minimum-variance weight.** When
 `Var(R₁ - R₂) > 0`, the weight `w* = (σ₂² - σ₁₂) / Var(R₁ - R₂)` globally
-minimizes the two-asset portfolio variance (Atlas roadmap FI06.T01). No
-budget/target-return constraint is imposed; `w*` need not lie in `[0, 1]`. -/
+minimizes the two-asset portfolio variance (Atlas roadmap FI06.T01). The
+budget constraint is built into the `(w, 1 - w)` parametrization; no
+target-return constraint is imposed; `w*` need not lie in `[0, 1]`. -/
 theorem minVarianceWeight_isMinimizer {Ω : Type*} [MeasurableSpace Ω]
     {μ : MeasureTheory.Measure Ω} [MeasureTheory.IsFiniteMeasure μ]
     {R₁ R₂ : Ω → ℝ} (hR₁ : MeasureTheory.MemLp R₁ 2 μ)
