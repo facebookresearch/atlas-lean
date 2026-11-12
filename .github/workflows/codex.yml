@@ -44,22 +44,46 @@ jobs:
     # reflects this output: 'approved' iff the formal verdict is
     # approval, empty when no review was posted. `review_id` carries the
     # created review's ID so the verdict job can attest the exact review
-    # (empty when no review was posted). Only same-repo runs are formal
-    # (`formal == 'true'`) and mint a verdict: same-repo automatic runs,
-    # and same-repo `@codex` comment runs by a writer/maintainer/admin.
-    # Fork-PR automatic runs run the same structured review, but Submit
-    # posts them as an advisory comment with the verdict discarded;
-    # `@codex` comment runs on fork PRs stay freeform and advisory.
-    # Fork content can never mint an approval for the gate, even when
-    # a maintainer asks for the review with `@codex`: the fork diff is
-    # untrusted input and could steer the verdict.
+    # (empty when no review was posted). Formal (`formal == 'true'`)
+    # runs mint a verdict: same-repo automatic runs, same-repo
+    # `@codex` comment runs by a writer/maintainer/admin, and
+    # trusted-head-owner fork runs — PRs whose HEAD repository is
+    # owned by the immutable numeric account id in
+    # TRUSTED_HEAD_OWNER_IDS below (currently just akiezun's id,
+    # i.e. the owner's own fork akiezun/atlas-lean). The check is on
+    # the head repo owner's id, not on a login (logins are mutable
+    # and reclaimable) and not on `author_association` (which
+    # describes the author's relationship to the base repo — akiezun
+    # is MEMBER, not OWNER — and does not authenticate the head
+    # fork). A trusted-head diff is the owner's own code, so the fork
+    # prompt-injection risk does not apply to it. Fork runs with any
+    # other head owner stay advisory: a third-party fork diff is
+    # untrusted input that could steer Codex's verdict toward
+    # approval, and prompt instructions are not a security boundary,
+    # so third-party fork content must never mint a gate approval.
+    # Formal trust is also bound to the exact reviewed head:
+    # check_auth outputs the trusted repo + SHA it authorized, and
+    # Resolve target fails closed if the live PR resolves to anything
+    # else (fork transferred or head moved between the two reads).
+    # A `@codex` question on a formal PR does produce a verdict, which
+    # can REQUEST_CHANGES and cancel the CI build. Formal reviews say
+    # so in their header ("This is a formal review."). Anything that
+    # is not formal says "informal" / "advisory" in its header, so a
+    # reader can always tell which kind it is.
     outputs:
       authorized: ${{ steps.check_auth.outputs.authorized }}
       formal: ${{ steps.check_auth.outputs.formal }}
       verdict: ${{ steps.submit.outputs.verdict }}
       review_id: ${{ steps.submit.outputs.review_id }}
       reviewed_sha: ${{ steps.target.outputs.ref }}
-      pr_number: ${{ github.event.pull_request.number }}
+      trusted_repo: ${{ steps.check_auth.outputs.trusted_repo }}
+      trusted_sha: ${{ steps.check_auth.outputs.trusted_sha }}
+      # issue_comment payloads carry the PR number under
+      # github.event.issue.number, not pull_request.number, which is
+      # empty for them. The issue number is the PR number when the
+      # issue is a PR, so fall back to it; cancel-rejected-build
+      # needs this output for @codex comment verdicts.
+      pr_number: ${{ github.event.issue.number || github.event.pull_request.number }}
     steps:
       - name: Check authorization
         id: check_auth
@@ -79,27 +103,51 @@ jobs:
             // traffic) have read-only repo permission, and the job `if`
             // already restricted this event to OWNER/MEMBER/COLLABORATOR
             // authors. Re-check here so a job-`if` edit alone cannot open
-            // automatic fork reviews to untrusted authors. Those runs are
-            // advisory only (formal == 'false'): they never mint a verdict.
-            // Same-repo automatic runs stay formal, and comment runs on
-            // same-repo PRs are formal too (below), both authorized by
-            // write/maintain/admin. Comment runs on fork PRs stay
-            // advisory: fork content must never mint an approval, even
-            // when a maintainer asks for the review with `@codex`.
+            // automatic fork reviews to untrusted authors. Fork runs
+            // with an untrusted head owner are advisory only
+            // (formal == 'false'): they never mint a verdict.
+            // Same-repo automatic runs stay formal, and `@codex`
+            // comment runs on same-repo PRs are formal too, both
+            // authorized by write/maintain/admin. Trusted-head-owner
+            // fork runs are formal: the check is on the HEAD
+            // repository owner's immutable numeric id (logins are
+            // mutable and reclaimable), not on `author_association`,
+            // which describes the author's relationship to the base
+            // repo (akiezun is MEMBER, not OWNER) and does not
+            // authenticate the head fork. An owner could otherwise
+            // have a PR from someone else's fork treated as formal.
+            // To trust another head owner, add their numeric id to
+            // TRUSTED_HEAD_OWNER_IDS in a reviewed PR; never use a
+            // login or `author_association` for this. TRUSTED_HEAD_OWNER_IDS
+            // currently holds only akiezun's id (1993519).
+            const TRUSTED_HEAD_OWNER_IDS = [1993519];
             const isForkTarget =
               context.eventName === "pull_request_target";
             const isComment =
               context.eventName === "issue_comment" ||
               context.eventName === "pull_request_review_comment";
-            // For comment runs, formality needs the PR's head repo, which
-            // the payload does not carry: fetch the PR. Non-PR issue
-            // comments and a missing head repo are not formal.
+            // For comment runs, formality needs the PR's head repo,
+            // which the payload does not carry: fetch the PR. Non-PR
+            // issue comments and a missing head repo are not formal.
+            // trustedRepo/trustedSha record exactly which head this
+            // authorization covers; Resolve target fails closed if the
+            // live PR resolves to anything else.
             let commentSameRepo = false;
+            let commentTrustedHead = false;
+            let trustedRepo = "";
+            let trustedSha = "";
+            const observedPr =
+              context.payload.pull_request ?? null;
+            if (observedPr) {
+              trustedRepo =
+                observedPr.head?.repo?.full_name ?? "";
+              trustedSha = observedPr.head?.sha ?? "";
+            }
             if (isComment) {
               const number =
                 context.payload.issue?.number ??
                 context.payload.pull_request?.number;
-              if (number && context.payload.issue?.pull_request !== null) {
+              if (number) {
                 try {
                   const { data: pr } = await github.rest.pulls.get({
                     owner: context.repo.owner,
@@ -109,6 +157,11 @@ jobs:
                   commentSameRepo =
                     pr.head.repo?.full_name ===
                     context.payload.repository.full_name;
+                  commentTrustedHead = TRUSTED_HEAD_OWNER_IDS.includes(
+                    pr.head.repo?.owner?.id
+                  );
+                  trustedRepo = pr.head.repo?.full_name ?? "";
+                  trustedSha = pr.head.sha ?? "";
                 } catch (error) {
                   if (error.status !== 404) {
                     throw error;
@@ -116,11 +169,17 @@ jobs:
                 }
               }
             }
+            const trustedHeadTarget =
+              isForkTarget &&
+              TRUSTED_HEAD_OWNER_IDS.includes(
+                context.payload.pull_request?.head?.repo?.owner?.id
+              );
             const isFormal =
               (context.eventName === "pull_request" &&
                 context.payload.pull_request?.head?.repo?.full_name ===
                   context.payload.repository.full_name) ||
-              (isComment && commentSameRepo);
+              (isComment && (commentSameRepo || commentTrustedHead)) ||
+              trustedHeadTarget;
             let authorized;
             let permission = "none";
             if (isForkTarget) {
@@ -154,6 +213,10 @@ jobs:
             }
             core.setOutput("authorized", String(authorized));
             core.setOutput("formal", String(isFormal && authorized));
+            // Bind formal trust to the exact head authorized here;
+            // Resolve target fails closed if the live PR differs.
+            core.setOutput("trusted_repo", trustedRepo);
+            core.setOutput("trusted_sha", trustedSha);
 
       - name: Acknowledge Codex request
         if: |
@@ -193,6 +256,7 @@ jobs:
               issue_number: issueNumber,
               body:
                 "## Codex response\n\n" +
+                "This is not a formal review. No review was posted.\n\n" +
                 "Codex requests require write, maintain, or admin repository permission.",
             });
 
@@ -200,6 +264,10 @@ jobs:
         if: steps.check_auth.outputs.authorized == 'true'
         id: target
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          FORMAL: ${{ steps.check_auth.outputs.formal }}
+          TRUSTED_REPO: ${{ steps.check_auth.outputs.trusted_repo }}
+          TRUSTED_SHA: ${{ steps.check_auth.outputs.trusted_sha }}
         with:
           script: |
             const fs = require("fs");
@@ -267,8 +335,11 @@ jobs:
               // is different again: check_auth verified the commenter
               // has write/maintain/admin, so the maintainer's explicit
               // @codex comment is the approval to review that fork.
-              // Fork runs are advisory only (see Submit): they never mint
-              // a verdict, so fork content can never mint an approval.
+              // Fork runs with an untrusted head owner are advisory
+              // only (see the job header): they carry no verdict and
+              // never mint an approval, because a third-party fork
+              // diff could steer the verdict. Trusted-head-owner
+              // fork runs are formal.
               if (!actualRepo) {
                 throw new Error(
                   "Cannot review a pull request whose head repository is unavailable."
@@ -284,6 +355,25 @@ jobs:
               }
               ref = pr.head.sha;
               base = pr.base.sha;
+              // Formal runs review exactly the head check_auth
+              // authorized. The live PR is fetched again here, so a
+              // fork transfer or a new push between the two reads
+              // would otherwise let other content mint a formal
+              // verdict. Fail closed on any mismatch.
+              if (process.env.FORMAL === "true") {
+                const trustedRepo = process.env.TRUSTED_REPO || "";
+                const trustedSha = process.env.TRUSTED_SHA || "";
+                if (
+                  !trustedRepo ||
+                  !trustedSha ||
+                  repo !== trustedRepo ||
+                  ref !== trustedSha
+                ) {
+                  throw new Error(
+                    "Formal trust binding failed: resolved target does not match the head authorized by check_auth; refusing to review."
+                  );
+                }
+              }
               eventContext.pull_request = {
                 number: pr.number,
                 title: pr.title,
@@ -788,15 +878,13 @@ jobs:
         timeout-minutes: 25
         env:
           CODEX_IMAGE: node:24-bookworm@sha256:64af3819f9275802414d7cdc38c27e9d82bd564dec4d4da87d008255d36c63b4
-          # Structured review (schema + prompt) for every automatic run
-          # (same-repo via pull_request, fork via pull_request_target)
-          # and for every formal `@codex` comment run, so Submit can
-          # parse the verdict and post a formal review. Formality is
-          # separate and decided in Submit: only same-repo runs mint a
-          # verdict. A freeform prompt here would leave an advisory
-          # fork run with no explicit review request
-          # (pull_request_target carries no comment body) and its
-          # REVIEWING.md verdict could leak into the posted comment.
+          # Structured review (schema + prompt) for every automatic
+          # run, and for formal `@codex` runs, so Submit can parse
+          # the verdict and post a review. A freeform prompt would
+          # leave a run with no verdict to post. Automatic and
+          # formal are separate: fork automatic runs are structured
+          # but advisory (no verdict), while `@codex` on a plain
+          # issue is freeform and non-formal.
           AUTOMATIC_REVIEW: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || steps.check_auth.outputs.formal == 'true' }}
           BASE_SHA: ${{ steps.target.outputs.base }}
           CONTEXT_FILE: ${{ steps.target.outputs.context }}
@@ -1034,14 +1122,13 @@ jobs:
             if (!output) {
               throw new Error("Codex produced no response");
             }
-            // Automatic mode and formality are separate. Every automatic
-            // run (same-repo and fork) and every formal `@codex` comment
-            // run produced structured JSON, so all of them are parsed
-            // the same way. Only formal runs (same-repo automatic plus
-            // same-repo `@codex` comment runs) post a review carrying
-            // the verdict; advisory fork runs post the same findings as
-            // an issue comment with the verdict discarded, so no
-            // verdict leaks into the posted text.
+            // Automatic mode and formality are separate: automatic
+            // runs (and formal `@codex` runs) produced structured
+            // JSON and are parsed the same way. Formal runs post a
+            // review carrying the verdict. A non-formal run (fork
+            // automatic, or `@codex` on a plain issue / fork PR)
+            // posts its findings as an advisory comment with no
+            // verdict.
             const formal = process.env.FORMAL_REVIEW === "true";
             const automatic = process.env.AUTOMATIC_REVIEW === "true";
             const triggerEvent = process.env.TRIGGER_EVENT || "";
@@ -1085,6 +1172,7 @@ jobs:
                 body = [
                   marker,
                   "## Codex review",
+                  "This is a formal review. It carries a verdict and counts toward the PR review status.",
                   "### Findings",
                   findings,
                   "### Summary",
@@ -1097,7 +1185,7 @@ jobs:
                 body = [
                   "<!-- codex-advisory-review -->",
                   "## Codex review (advisory)",
-                  "This is an advisory review of a fork pull request. " +
+                  "This is an informal review. " +
                     "It is not a formal approval, and it carries no verdict.",
                   "### Findings",
                   findings,
@@ -1108,7 +1196,10 @@ jobs:
                 ].join("\n\n");
               }
             } else {
-              body = `<!-- codex-response -->\n\n## Codex response\n\n${output}`;
+              // Plain-issue `@codex` runs take this freeform path: they
+              // are not a PR review, so label them informal like every
+              // other non-formal output.
+              body = `<!-- codex-response -->\n\n## Codex response\n\nThis is an informal review. It carries no verdict and does not count toward any PR review status.\n\n${output}`;
             }
             if (Buffer.byteLength(body + suffix, "utf8") > 60000) {
               const truncation = "\n\n_Response truncated._";
@@ -1163,7 +1254,11 @@ jobs:
   report-failure:
     name: report-failure
     needs: [codex]
-    if: always() && needs.codex.result == 'failure' && needs.codex.outputs.authorized != 'false'
+    # Submit precedes artifact upload, so a post-submit failure
+    # (e.g. artifact upload) would otherwise post "no review was
+    # posted" after a formal review already exists. Suppress the
+    # message whenever a review was posted.
+    if: always() && needs.codex.result == 'failure' && needs.codex.outputs.authorized != 'false' && needs.codex.outputs.review_id == ''
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -1190,6 +1285,7 @@ jobs:
               issue_number: issueNumber,
               body:
                 `## ${heading}\n\n` +
+                `No review was posted; this is not a formal review.\n\n` +
                 `Codex failed before posting a response. [View logs](${runUrl}).`,
             });
 
@@ -1199,8 +1295,8 @@ jobs:
   # mint suites no genuine run carries) and requires the log line below
   # to name the exact review ID, which binds the approval to real review
   # provenance instead of the shared bot identity. Skipped (no check)
-  # when no review was posted: advisory comment runs (fork PRs),
-  # advisory fork-PR runs, failures, and cancellations.
+  # when no review was posted: non-formal runs (e.g. `@codex` on a
+  # plain issue), failures, and cancellations.
   codex-verdict:
     name: codex-verdict
     needs: [codex]

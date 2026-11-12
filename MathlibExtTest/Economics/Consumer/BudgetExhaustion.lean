@@ -40,16 +40,16 @@ theorem linU_locallyNonsatiated : LocallyNonsatiated linU {z | ∀ l, 0 ≤ z l}
     linarith
 
 theorem linU_demand_exhausts (x : Fin 2 → ℝ)
-    (hx : x ∈ marshallianDemand linU ![1, 2] 2) :
+    (hx : IsMarshallianDemand linU {z | ∀ l, 0 ≤ z l} ![1, 2] 2 x) :
     (![1, 2] : Fin 2 → ℝ) ⬝ᵥ x = 2 := by
-  exact dotProduct_eq_of_mem_marshallianDemand linU_locallyNonsatiated hx
+  exact dotProduct_eq_of_isMarshallianDemand linU_locallyNonsatiated hx
 
 /-- A satiated utility with bliss point `(1, 1)`. -/
 def blissU (x : Fin 2 → ℝ) : ℝ := -((x 0 - 1) ^ 2 + (x 1 - 1) ^ 2)
 
 /-- The bliss point is demanded at prices `(1, 1)` and wealth `4`. -/
 theorem blissU_isMarshallianDemand :
-    ![1, 1] ∈ marshallianDemand blissU ![1, 1] 4 := by
+    IsMarshallianDemand blissU {z | ∀ l, 0 ≤ z l} ![1, 1] 4 ![1, 1] := by
   refine ⟨⟨?_, ?_⟩, ?_⟩
   · intro l
     fin_cases l <;> norm_num

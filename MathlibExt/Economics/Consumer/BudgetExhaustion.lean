@@ -23,9 +23,9 @@ any `(p, w)` and `x ∈ x(p, w)`, `p · x = w`. Local nonsatiation (Levin–Milg
 Choice Theory*, Definition 8) on the consumption set `ℝ^L_+` is Atlas's
 `Consumer.LocallyNonsatiated` on `{z | ∀ l, 0 ≤ z l}`. No sign condition on prices is needed.
 
-The demand hypothesis is stated against the canonical EC02.T01 correspondence
-`marshallianDemand` in `MathlibExt.Economics.Consumer.MarshallianDemand`, so clients can
-compose this result with the EC02.T01 existence theorem.
+The demand hypothesis uses the canonical EC02.T01 predicate `IsMarshallianDemand` from
+`MathlibExt.Economics.Consumer.MarshallianDemand`, with the nonnegative orthant as its
+explicit consumption set, so clients can compose this result with the existence theorem.
 -/
 
 namespace MathlibExt.Economics.Consumer
@@ -34,9 +34,9 @@ open Matrix
 
 /-- Levin, Proposition 4: with a locally nonsatiated utility, every Marshallian demand on `ℝ^L_+`
 exhausts the budget. -/
-theorem dotProduct_eq_of_mem_marshallianDemand {L : Type*} [Fintype L] {u : (L → ℝ) → ℝ}
+theorem dotProduct_eq_of_isMarshallianDemand {L : Type*} [Fintype L] {u : (L → ℝ) → ℝ}
     {p : L → ℝ} {w : ℝ} {x : L → ℝ} (hu : LocallyNonsatiated u {z | ∀ l, 0 ≤ z l})
-    (hx : x ∈ marshallianDemand u p w) : p ⬝ᵥ x = w := by
+    (hx : IsMarshallianDemand u {z | ∀ l, 0 ≤ z l} p w x) : p ⬝ᵥ x = w := by
   obtain ⟨⟨hxmem, hxle⟩, hxopt⟩ := hx
   by_contra hne
   have hlt : p ⬝ᵥ x < w := lt_of_le_of_ne hxle hne
@@ -50,7 +50,7 @@ theorem dotProduct_eq_of_mem_marshallianDemand {L : Type*} [Fintype L] {u : (L �
   have hzaff : p ⬝ᵥ z ≤ w := by
     have h1 : p ⬝ᵥ z - p ⬝ᵥ x ≤ |p ⬝ᵥ z - p ⬝ᵥ x| := le_abs_self _
     linarith
-  have hzbs : z ∈ budgetSet p w := ⟨hzmem, hzaff⟩
+  have hzbs : z ∈ budgetSet {z | ∀ l, 0 ≤ z l} p w := ⟨hzmem, hzaff⟩
   have hle := hxopt z hzbs
   linarith
 

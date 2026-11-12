@@ -89,4 +89,25 @@ theorem Supermartingale.ville_maximal_ineq
     exact (ENNReal.tendsto_toReal (measure_ne_top _ _)).comp (tendsto_measure_iUnion_atTop hmono)
   exact le_of_tendsto' (htend.const_mul a) hfin
 
+
+/-! ### Finite-horizon corollary -/
+
+/-- **Finite-horizon Ville corollary.** For the same hypotheses as
+`Supermartingale.ville_maximal_ineq`, and any horizon `N`, the finite-horizon crossing
+event satisfies the same bound. -/
+theorem Supermartingale.ville_maximal_ineq_finite
+    {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} [IsFiniteMeasure μ]
+    {𝒢 : Filtration ℕ m0} {M : ℕ → Ω → ℝ} {N : ℕ}
+    (hsup : Supermartingale M 𝒢 μ) (hnonneg : 0 ≤ M) {a : ℝ} (ha : 0 < a) :
+    a * μ.real {ω | ∃ n ≤ N, a ≤ M n ω} ≤ ∫ ω, M 0 ω ∂μ := by
+  have hsub : {ω | ∃ n ≤ N, a ≤ M n ω} ⊆ {ω | ∃ n, a ≤ M n ω} := by
+    intro ω h
+    obtain ⟨n, _hN, hn⟩ := h
+    exact ⟨n, hn⟩
+  have hmono : μ.real {ω | ∃ n ≤ N, a ≤ M n ω} ≤ μ.real {ω | ∃ n, a ≤ M n ω} :=
+    measureReal_mono hsub
+  have hv : a * μ.real {ω | ∃ n, a ≤ M n ω} ≤ ∫ ω, M 0 ω ∂μ :=
+    Supermartingale.ville_maximal_ineq hsup hnonneg ha
+  exact (mul_le_mul_of_nonneg_left hmono (le_of_lt ha)).trans hv
+
 end MeasureTheory
