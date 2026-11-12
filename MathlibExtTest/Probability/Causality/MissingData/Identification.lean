@@ -76,7 +76,7 @@ example (_hind : CondIndepDiscrete μ R Y (fun _ : Ω => ())) : True := by
   trivial
 
 variable {β : Type*} [MeasurableSpace β] {X : Ω → β}
-  (hMCAR : CondIndepDiscrete μ R (fun ω => (X ω, Y ω)) (fun _ : Ω => ()))
+  (hMCAR : MissingCompletelyAtRandom μ R X Y)
 
 example : True := by
   fail_if_success
@@ -133,14 +133,18 @@ theorem mcar_resp {β : Type*} [MeasurableSpace β] (h : Bool → β) :
 example (g : Bool → ℝ) :
     completeCaseMean coins resp (fun ω => g ω.2) = ∫ ω, g ω.2 ∂coins :=
   completeCaseMean_eq_integral_of_mcar measurableSet_resp (X := fun ω => ω.2)
-    (measurable_of_finite _) Integrable.of_finite (mcar_resp fun b => (b, g b))
+    (measurable_of_finite _) Integrable.of_finite
+    ((missingCompletelyAtRandom_iff_condIndepDiscrete measurableSet_resp).mpr
+      (mcar_resp fun b => (b, g b)))
     (by rw [coins_real_resp]; norm_num)
 
 /-- The same identity as the mean under the conditional law given response. -/
 example (g : Bool → ℝ) :
     ∫ ω, g ω.2 ∂(coins[|resp]) = ∫ ω, g ω.2 ∂coins :=
   integral_cond_eq_integral_of_mcar measurableSet_resp (X := fun ω => ω.2)
-    (measurable_of_finite _) Integrable.of_finite (mcar_resp fun b => (b, g b))
+    (measurable_of_finite _) Integrable.of_finite
+    ((missingCompletelyAtRandom_iff_condIndepDiscrete measurableSet_resp).mpr
+      (mcar_resp fun b => (b, g b)))
     (by rw [coins_real_resp]; norm_num)
 
 /-- The complete-case mean is an observed-data estimand: changing the outcome off the response

@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Causality.AugmentedIPW.MissingOutcomes
+public import MathlibExt.Probability.Causality.MissingData.Basic
 public import MathlibExt.Probability.Causality.CausalIdentification
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Independence.Conditional
