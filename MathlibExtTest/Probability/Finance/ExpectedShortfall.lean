@@ -73,8 +73,24 @@ theorem ex_es_atom : expectedShortfall ![1/2, 1/2] (1/2) ![0, 1] = 1 := by
     ex_VaR, Fin.sum_univ_two]
   norm_num
 
-/-- The naive conditional tail mean is `1/2`, unlike the expected shortfall. -/
-theorem ex_naive : (∑ ω, ![1/2, 1/2] ω * ![0, 1] ω) / (∑ ω, ![1/2, 1/2] ω) = 1/2 := by
+/-- The naive conditional tail mean, filtered by `X ≥ VaR`, is `1/2`, unlike the
+expected shortfall. The tail event is all of `Fin 2` here, since `VaR = 0` and both
+losses are nonnegative, which is proved rather than assumed. -/
+theorem ex_naive :
+    (∑ ω ∈ Finset.univ.filter
+        (fun ω : Fin 2 => cdfQuantile (lossLaw ![1/2, 1/2] ![0, 1]) (1/2) ≤ ![0, 1] ω),
+        ![1/2, 1/2] ω * ![0, 1] ω) /
+      (∑ ω ∈ Finset.univ.filter
+        (fun ω : Fin 2 => cdfQuantile (lossLaw ![1/2, 1/2] ![0, 1]) (1/2) ≤ ![0, 1] ω),
+        ![1/2, 1/2] ω) = 1/2 := by
+  have hfilter : Finset.univ.filter
+      (fun ω : Fin 2 => cdfQuantile (lossLaw ![1/2, 1/2] ![0, 1]) (1/2) ≤ ![0, 1] ω)
+      = Finset.univ := by
+    apply Finset.filter_true_of_mem
+    intro ω _
+    rw [ex_VaR]
+    fin_cases ω <;> norm_num
+  rw [hfilter]
   simp only [Fin.sum_univ_two]
   norm_num
 

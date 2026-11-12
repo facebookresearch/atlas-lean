@@ -21,8 +21,8 @@ For a loss `X` on a finite sample space with probability weights `p` and a level
 `quantileExpectedShortfall p α X = (1 - α)⁻¹ ∫_α^1 q_X(u) du`, where `q_X` is the lower
 quantile (`ProbabilityTheory.cdfQuantile`) of the loss law. The infimum is attained at the
 value-at-risk `q_X(α)`, the two definitions agree, and expected shortfall is subadditive. It is
-not the naive conditional mean `E[X | X ≥ VaR]`, which differs when the loss has an atom at the
-quantile.
+not in general the naive conditional mean `E[X | X ≥ VaR]`: the two can differ when the loss
+has an atom at the quantile, though an atom alone does not guarantee a difference.
 
 ## Main results
 
