@@ -16,7 +16,7 @@ import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
 
 /-!
-# Remote-sensing observation operators (G14)
+# Remote-sensing observation operators
 
 ## i. Overview
 
@@ -31,10 +31,10 @@ fixed-absorption operator.
 
 ## ii. Key results
 
-- `EarthScience.g14_integrating_factor`: `mu(L)*I(L) = I0 + ∫ mu*j`, `mu(s) = exp(∫_0^s kappa)`.
-- `EarthScience.g14_explicit_form`: the Duhamel form for `I(L)`.
-- `EarthScience.g14_finite_basis`: affine observation operator in the basis coefficients.
-- `EarthScience.g14_witness`: `kappa = 1, j = 0, I0 = 1` gives `I(L) = exp(-L)`.
+- `EarthScience.integrating_factor`: `mu(L)*I(L) = I0 + ∫ mu*j`, `mu(s) = exp(∫_0^s kappa)`.
+- `EarthScience.explicit_form`: the Duhamel form for `I(L)`.
+- `EarthScience.finite_basis`: affine observation operator in the basis coefficients.
+- `EarthScience.witness`: `kappa = 1, j = 0, I0 = 1` gives `I(L) = exp(-L)`.
 
 ## iii. Table of contents
 
@@ -54,23 +54,23 @@ open MeasureTheory Set intervalIntegral
 
 /-- FTC-1 for the integrating factor: the primitive of a continuous `κ`
 has derivative `κ s` at every `s`. -/
-private theorem g14_primitive_hasDerivAt (κ : ℝ → ℝ) (hκ : Continuous κ) (s : ℝ) :
+private theorem primitive_hasDerivAt (κ : ℝ → ℝ) (hκ : Continuous κ) (s : ℝ) :
     HasDerivAt (fun u => ∫ x in (0:ℝ)..u, κ x) (κ s) s :=
   intervalIntegral.integral_hasDerivAt_right (hκ.intervalIntegrable 0 s)
     (hκ.stronglyMeasurableAtFilter volume (nhds s)) hκ.continuousAt
 
 /-- The integrating factor `μ` has derivative `μ s * κ s` at every `s`. -/
-private theorem g14_mu_hasDerivAt (κ : ℝ → ℝ) (hκ : Continuous κ) (s : ℝ) :
+private theorem mu_hasDerivAt (κ : ℝ → ℝ) (hκ : Continuous κ) (s : ℝ) :
     HasDerivAt (fun s => Real.exp (∫ x in (0:ℝ)..s, κ x))
       (Real.exp (∫ x in (0:ℝ)..s, κ x) * κ s) s :=
-  (g14_primitive_hasDerivAt κ hκ s).exp
+  (primitive_hasDerivAt κ hκ s).exp
 
 /-- Product rule: `(μ * I)' = μ * j` along a solution of the ODE. -/
-private theorem g14_weighted_hasDerivAt (κ j I : ℝ → ℝ) (hκ : Continuous κ)
+private theorem weighted_hasDerivAt (κ j I : ℝ → ℝ) (hκ : Continuous κ)
     (hODE : ∀ t : ℝ, HasDerivAt I (-κ t * I t + j t) t) (s : ℝ) :
     HasDerivAt (fun s => Real.exp (∫ x in (0:ℝ)..s, κ x) * I s)
       (Real.exp (∫ x in (0:ℝ)..s, κ x) * j s) s := by
-  have h := (g14_mu_hasDerivAt κ hκ s).mul (hODE s)
+  have h := (mu_hasDerivAt κ hκ s).mul (hODE s)
   have heq : (Real.exp (∫ x in (0:ℝ)..s, κ x) * κ s) * I s
       + Real.exp (∫ x in (0:ℝ)..s, κ x) * (-κ s * I s + j s)
       = Real.exp (∫ x in (0:ℝ)..s, κ x) * j s := by ring
@@ -81,14 +81,14 @@ set_option linter.unusedVariables false in
 /-- Integrating-factor identity for `I' = -kappa*I + j`: with
 `mu(s) = exp(∫ x in 0..s, kappa x)`, the weighted endpoint satisfies
 `mu(L) * I(L) = I0 + ∫ s in 0..L, mu(s) * j(s)`. -/
-theorem g14_integrating_factor {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L)
+theorem integrating_factor {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L)
     (hκ : Continuous κ) (hj : Continuous j)
     (hODE : ∀ t : ℝ, HasDerivAt I (-κ t * I t + j t) t)
     (hI0 : I 0 = I0) :
     Real.exp (∫ x in (0:ℝ)..L, κ x) * I L
       = I0 + ∫ s in (0:ℝ)..L, Real.exp (∫ x in (0:ℝ)..s, κ x) * j s := by
   have hμcont : Continuous fun s => Real.exp (∫ x in (0:ℝ)..s, κ x) :=
-    continuous_iff_continuousAt.mpr fun s => (g14_mu_hasDerivAt κ hκ s).continuousAt
+    continuous_iff_continuousAt.mpr fun s => (mu_hasDerivAt κ hκ s).continuousAt
   have hint : IntervalIntegrable
       (fun s => Real.exp (∫ x in (0:ℝ)..s, κ x) * j s) volume 0 L :=
     (hμcont.mul hj).intervalIntegrable 0 L
@@ -96,7 +96,7 @@ theorem g14_integrating_factor {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L
     (a := (0:ℝ)) (b := L)
     (f := fun s => Real.exp (∫ x in (0:ℝ)..s, κ x) * I s)
     (f' := fun s => Real.exp (∫ x in (0:ℝ)..s, κ x) * j s)
-    (fun x _ => g14_weighted_hasDerivAt κ j I hκ hODE x)
+    (fun x _ => weighted_hasDerivAt κ j I hκ hODE x)
     hint
   have hFTC2 : (∫ s in (0:ℝ)..L, Real.exp (∫ x in (0:ℝ)..s, κ x) * j s)
       = Real.exp (∫ x in (0:ℝ)..L, κ x) * I L
@@ -110,13 +110,13 @@ theorem g14_integrating_factor {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L
 /-- Explicit Duhamel form: dividing the integrating-factor identity by
 `mu(L)` and using `∫ x in 0..L, kappa = ∫ x in 0..s + ∫ x in s..L`,
 `I(L) = I0*exp(-∫_0^L kappa) + ∫_0^L j(s)*exp(-∫_s^L kappa) ds`. -/
-theorem g14_explicit_form {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L)
+theorem explicit_form {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L)
     (hκ : Continuous κ) (hj : Continuous j)
     (hODE : ∀ t : ℝ, HasDerivAt I (-κ t * I t + j t) t)
     (hI0 : I 0 = I0) :
     I L = I0 * Real.exp (-∫ x in (0:ℝ)..L, κ x)
       + ∫ s in (0:ℝ)..L, j s * Real.exp (-∫ x in s..L, κ x) := by
-  have hIF := g14_integrating_factor hL hκ hj hODE hI0
+  have hIF := integrating_factor hL hκ hj hODE hI0
   have hsplit : ∀ s : ℝ, (∫ x in (0:ℝ)..L, κ x)
       = (∫ x in (0:ℝ)..s, κ x) + ∫ x in s..L, κ x := by
     intro s
@@ -154,7 +154,7 @@ theorem g14_explicit_form {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L)
 /-- Finite-basis affine observation operator: if `j = ∑ i in s, a i * b i`,
 then `I(L) = I0*exp(-∫_0^L kappa) + ∑ i in s, a i * w i` where
 `w i = ∫_0^L b i(s)*exp(-∫_s^L kappa) ds`. -/
-theorem g14_finite_basis {κ : ℝ → ℝ} {ι : Type*} (s : Finset ι)
+theorem finite_basis {κ : ℝ → ℝ} {ι : Type*} (s : Finset ι)
     (a : ι → ℝ) (b : ι → ℝ → ℝ) {L I0 : ℝ} (hL : 0 ≤ L)
     (hκ : Continuous κ) (hb : ∀ i ∈ s, Continuous (b i))
     {I : ℝ → ℝ}
@@ -164,7 +164,7 @@ theorem g14_finite_basis {κ : ℝ → ℝ} {ι : Type*} (s : Finset ι)
       + ∑ i ∈ s, a i * (∫ t in (0:ℝ)..L, b i t * Real.exp (-∫ x in t..L, κ x)) := by
   have hj : Continuous fun t => ∑ i ∈ s, a i * b i t :=
     continuous_finsetSum s fun i hi => continuous_const.mul (hb i hi)
-  have hex := g14_explicit_form (j := fun t => ∑ i ∈ s, a i * b i t)
+  have hex := explicit_form (j := fun t => ∑ i ∈ s, a i * b i t)
     hL hκ hj hODE hI0
   have h1 : ∀ t : ℝ, (∑ i ∈ s, a i * b i t) * Real.exp (-∫ x in t..L, κ x)
       = ∑ i ∈ s, a i * (b i t * Real.exp (-∫ x in t..L, κ x)) := by
@@ -175,7 +175,7 @@ theorem g14_finite_basis {κ : ℝ → ℝ} {ι : Type*} (s : Finset ι)
     ring
   have hKcont : Continuous fun t => ∫ x in (0:ℝ)..t, κ x :=
     continuous_iff_continuousAt.mpr
-      fun t => (g14_primitive_hasDerivAt κ hκ t).continuousAt
+      fun t => (primitive_hasDerivAt κ hκ t).continuousAt
   have hK2 : Continuous fun t => ∫ x in t..L, κ x := by
     have hfun : (fun t => ∫ x in t..L, κ x)
         = fun t => (∫ x in (0:ℝ)..L, κ x) - ∫ x in (0:ℝ)..t, κ x := by
@@ -213,11 +213,11 @@ theorem g14_finite_basis {κ : ℝ → ℝ} {ι : Type*} (s : Finset ι)
 /-- Witness `kappa = 1, j = 0, I0 = 1`: the explicit form gives
 `I(L) = exp(-L)`. Stated as an integral evaluation plus the
 explicit-form conclusion for a solution with zero source. -/
-theorem g14_witness {I : ℝ → ℝ} {L : ℝ} (hL : 0 ≤ L)
+theorem witness {I : ℝ → ℝ} {L : ℝ} (hL : 0 ≤ L)
     (hODE : ∀ t : ℝ, HasDerivAt I (-(1:ℝ) * I t + (0:ℝ)) t)
     (hI0 : I 0 = 1) :
     I L = Real.exp (-L) := by
-  have hex := g14_explicit_form (κ := fun _ => (1:ℝ)) (j := fun _ => (0:ℝ))
+  have hex := explicit_form (κ := fun _ => (1:ℝ)) (j := fun _ => (0:ℝ))
     hL continuous_const continuous_const hODE hI0
   have hex2 : I L = 1 * Real.exp (-∫ x in (0:ℝ)..L, (1:ℝ))
       + ∫ s in (0:ℝ)..L, (0:ℝ) * Real.exp (-∫ x in s..L, (1:ℝ)) := hex
