@@ -28,6 +28,13 @@ of `MathlibExt.Biology.Dynamics.TuringPatterns`,
 
 ## Frozen setting
 
+The statements below are proved for an **arbitrary** compact space `K` and an **arbitrary** C₀
+semigroup `H` on `C(K, ℝ)`; no statement uses the geometry of the domain or the boundary
+condition. The closure `Ω̄` and the Neumann heat semigroup `e^{τ Δ_N}` are the intended
+instances, and only for them is the result the Neumann problem below. The diffusion
+coefficients are only required to satisfy `d_u, d_v ≥ 0`, which relaxes the `dᵢ > 0` of the
+PDE-01 frozen setting (the degenerate case `dᵢ = 0` is a species that does not diffuse).
+
 * **domain**: `Ω ⊆ ℝⁿ` a bounded open set with smooth boundary; the variable `K` below is the
   compact closure `Ω̄` (in the one-dimensional setting of `TuringPatterns`, `Ω̄ = [0, L]`).
 * **boundary condition**: homogeneous Neumann (zero flux) for both species.
@@ -56,6 +63,9 @@ Lunardi, *Analytic Semigroups*, Ch. 3). It therefore enters as the hypothesis
 * `localFlow`: local well-posedness of the Turing system in `C(K, ℝ²)`: mild solutions exist on a
   time interval uniform over a ball of initial data and depend Lipschitz-continuously on them.
   `isMildSolution_unique` and `isMildSolution_restart` give uniqueness and the semiflow identity.
+* `diffusionSemigroup_apply_const`, `isMildSolution_const`: if `H` fixes constants (as the
+  Neumann heat semigroup does, and the Dirichlet one does not), every homogeneous steady state of
+  the kinetics is a mild solution.
 * `contDiff_schnakenberg`, `schnakenberg_localFlow`: the Schnakenberg kinetics qualify.
 * `not_lipschitzOnWith_giererMeinhardt` (boundary case): the Gierer–Meinhardt kinetics
   `u² / v` are not Lipschitz on the unit ball, so they do not satisfy the hypotheses on the whole
@@ -192,11 +202,12 @@ theorem exists_lipschitzOnWith_closedBall_of_contDiff {f : E → E} (hf : ContDi
     (isCompact_closedBall 0 R)
 
 /-- **Local well-posedness of the Turing system** in `C(K, ℝ²)`. Let `H` be a C₀ semigroup on
-`C(K, ℝ)` (the Neumann heat semigroup in the frozen setting), `d_u, d_v ≥ 0`, and let the
-kinetics `f : ℝ² → ℝ²` be `C¹`. For every radius `r` there are a time `T > 0`, a bound `R`, a
-constant `C ≥ 0` and a solution map `sol` such that for `‖x₀‖ ≤ r`, `sol x₀` is a continuous mild
-solution on `[0, T]` of `w_t = D Δ_N w + f(w)`, `w 0 = x₀`, bounded by `R`, and
-`‖sol x₀ t - sol y₀ t‖ ≤ C ‖x₀ - y₀‖` on `[0, T]` for `‖x₀‖, ‖y₀‖ ≤ r`. -/
+`C(K, ℝ)` with generator `A`, let `d_u, d_v ≥ 0`, and let the kinetics `f : ℝ² → ℝ²` be `C¹`.
+For every radius `r` there are a time `T > 0`, a bound `R`, a constant `C ≥ 0` and a solution map
+`sol` such that for `‖x₀‖ ≤ r`, `sol x₀` is a continuous mild solution on `[0, T]` of
+`w_t = D A w + f(w)`, `w 0 = x₀`, bounded by `R`, and `‖sol x₀ t - sol y₀ t‖ ≤ C ‖x₀ - y₀‖` on
+`[0, T]` for `‖x₀‖, ‖y₀‖ ≤ r`. This is the Neumann problem `w_t = D Δ_N w + f(w)` exactly when
+`H` is the Neumann heat semigroup `e^{τ Δ_N}`. -/
 theorem localFlow {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)} (hH : IsC0Semigroup H) (du dv : ℝ≥0)
     {f : (Fin 2 → ℝ) → Fin 2 → ℝ} (hf : ContDiff ℝ 1 f) (r : ℝ) :
     ∃ T > 0, ∃ R C : ℝ, 0 ≤ C ∧ ∃ sol : C(K, Fin 2 → ℝ) → ℝ → C(K, Fin 2 → ℝ),
@@ -246,6 +257,39 @@ theorem isMildSolution_restart {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)} (
 
 end LocalFlow
 
+/-- If the scalar semigroup fixes constants (`H τ 1 = 1`, as the Neumann heat semigroup does),
+then so does the Turing diffusion semigroup: `S t c = c` for every constant field `c ∈ ℝ²`,
+for all diffusion coefficients. -/
+theorem diffusionSemigroup_apply_const {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)}
+    (hH1 : ∀ τ, H τ (ContinuousMap.const K 1) = ContinuousMap.const K 1) (du dv t : ℝ≥0)
+    (c : Fin 2 → ℝ) :
+    diffusionSemigroup H du dv t (ContinuousMap.const K c) = ContinuousMap.const K c := by
+  ext x k
+  have h : speciesProj K k (ContinuousMap.const K c) = c k • ContinuousMap.const K 1 := by
+    ext y
+    simp
+  rw [diffusionSemigroup_apply_apply, h, map_smul, hH1]
+  simp
+
+/-- **Homogeneous steady states are mild solutions** when the scalar semigroup fixes constants:
+if `f c = 0`, the constant field `c` is a mild solution on `[0, T]` from `c` of the Turing
+system, for all diffusion coefficients. This is the base state of the Turing instability
+analysis; it fails for semigroups that do not fix constants, such as the Dirichlet one. -/
+theorem isMildSolution_const {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)}
+    (hH1 : ∀ τ, H τ (ContinuousMap.const K 1) = ContinuousMap.const K 1) (du dv : ℝ≥0)
+    {f : (Fin 2 → ℝ) → Fin 2 → ℝ} (hf : Continuous f) {c : Fin 2 → ℝ} (hc : f c = 0)
+    (T : ℝ) :
+    IsMildSolution (diffusionSemigroup H du dv) (nemytskii f hf) (ContinuousMap.const K c) T
+      fun _ => ContinuousMap.const K c := by
+  have hF : nemytskii f hf (ContinuousMap.const K c) = 0 := by
+    ext x : 1
+    exact hc
+  refine ⟨continuousOn_const, fun t _ => ?_, fun t _ => ?_⟩
+  · simp only [hF, map_zero]
+    exact intervalIntegrable_const
+  · simp only [hF, map_zero, duhamel, intervalIntegral.integral_zero, add_zero,
+      diffusionSemigroup_apply_const hH1]
+
 /-! ### The Schnakenberg and Gierer–Meinhardt kinetics -/
 
 /-- The Schnakenberg kinetics are smooth (polynomial). -/
@@ -272,9 +316,11 @@ theorem schnakenberg_localFlow {H : ℝ≥0 → C(K, ℝ) →L[ℝ] C(K, ℝ)} (
 
 omit [CompactSpace K] in
 /-- **Boundary case: Gierer–Meinhardt.** The kinetics `(a - b u + u² / v, u² - v)` are not
-Lipschitz on the closed unit ball of `ℝ²`, because of the `u² / v` term near `v = 0`. So their
-Nemytskii operator does not satisfy the hypothesis `hF` of the flow interface on `C(K, ℝ²)`;
-`localFlow` does not apply to them without an invariant region bounding `v` away from `0`. -/
+Lipschitz on the closed unit ball of `ℝ²`, because of the `u² / v` term near `v = 0`. So the
+route `exists_lipschitzOnWith_closedBall_of_contDiff` / `lipschitzOnWith_nemytskii` to the
+hypothesis `hF` of the flow interface is closed, and `localFlow` does not apply to them without
+an invariant region bounding `v` away from `0`. (For nonempty `K`, restricting to constant fields
+shows that the Nemytskii operator itself fails `hF`; that corollary is not formalized here.) -/
 theorem not_lipschitzOnWith_giererMeinhardt (a b : ℝ) (L : ℝ≥0) :
     ¬ LipschitzOnWith L (giererMeinhardt a b) (Metric.closedBall 0 1) := by
   intro hL
