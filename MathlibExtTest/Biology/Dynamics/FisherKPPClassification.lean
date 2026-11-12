@@ -35,6 +35,10 @@ example (U U' : ℝ → ℝ) (hU : IsWaveProfile 1 1 (-3) U U') (hbot : Tendsto 
 example (U U' : ℝ → ℝ) : ¬ IsFront 1 1 (19 / 10) U U' :=
   not_isFront_of_lt one_pos one_pos (by norm_num)
 
+/-- The combined bound also covers negative speeds (its `c ≤ 0` branch). -/
+example (U U' : ℝ → ℝ) : ¬ IsFront 1 1 (-10) U U' :=
+  not_isFront_of_lt one_pos one_pos (by norm_num)
+
 /-- The Ablowitz–Zeppetella front at `D = r = C = 1` is strictly decreasing. -/
 example : StrictAnti (azWave 1 1 1) := strictAnti_azWave one_pos one_pos one_pos
 
