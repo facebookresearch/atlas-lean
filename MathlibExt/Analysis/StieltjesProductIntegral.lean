@@ -64,14 +64,19 @@ net by `Finset ℝ` with `atTop` makes "limit along refinement" literal: `s ≤ 
 refines `s`. Convergence is proved without any regularity of `A` beyond domination by a
 monotone `V`: the `V`-products increase under refinement and are bounded by
 `exp (V b - V a)`, and the majorant inequality transfers their Cauchy property to the
-`A`-products. In particular no right-continuity is assumed; for a right-continuous
-integrator the limit is the classical product integral over `(a, b]`.
+`A`-products. In particular no right-continuity is assumed. This file does not relate the
+refinement limit to the mesh → 0 limit; that for a right-continuous integrator the two agree
+and give the classical product integral over `(a, b]` is a standard fact (Gill–Johansen 1990,
+§2) that is not proved here.
 
 The fixed-grid product `MathlibExt.Probability.Statistics.FunctionalDelta.prodIntegral`
 (products of `1 + xᵢ` over given increments) is the discrete analogue; this file supplies the
 continuous-time limit over refining partitions. The development is scalar (real-valued
 integrators). Hadamard differentiability of
-`A ↦ ∏(1 + dA)` is deliberately not treated here.
+`A ↦ ∏(1 + dA)` is deliberately not treated here, and neither is what it needs beyond this
+file: the Duhamel operator as a continuous linear map on bounded functions (a
+Riemann–Stieltjes integral `∫ f dh` against a general integrator `h`, with a sup-norm bound and
+continuity in `B`), and step integrators with several jumps.
 
 ## References
 
@@ -652,6 +657,18 @@ end Existence
 section Elementary
 
 variable {a b : ℝ}
+
+/-- **Congruence**: the product integral over `[a, b]` only depends on the values of the
+integrator on `[a, b]`. -/
+theorem productIntegral_congr {A B : ℝ → ℝ} (hab : a ≤ b)
+    (h : ∀ x ∈ Set.Icc a b, A x = B x) : productIntegral A a b = productIntegral B a b := by
+  have hpp : partitionProd A a b = partitionProd B a b := by
+    funext s
+    refine prod_congr rfl fun x hx => ?_
+    have hxI := mem_Icc_of_mem_partitionPts hab hx
+    have huI := mem_Icc_of_mem_partitionPts hab (prev_mem hx)
+    rw [h x hxI, h _ huI]
+  rw [productIntegral, productIntegral, hpp]
 
 /-- If the partition products are eventually equal to `c`, the product integral is `c`. -/
 theorem productIntegral_eq_of_eventually {A : ℝ → ℝ} {c : ℝ}

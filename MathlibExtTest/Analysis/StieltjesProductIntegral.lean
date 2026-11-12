@@ -81,6 +81,14 @@ example (A B V W : ℝ → ℝ) (hA : IsControl A V 0 1) (hB : IsControl B W 0 1
     Tendsto (duhamelSum A B 0 1) atTop (𝓝 (productIntegral B 0 1 - productIntegral A 0 1)) :=
   tendsto_duhamelSum zero_le_one hA hB
 
+/-- The Duhamel sum of an integrator against itself vanishes on every partition. -/
+example (A : ℝ → ℝ) (s : Finset ℝ) : duhamelSum A A 0 1 s = 0 := by
+  simp [duhamelSum]
+
+/-- The product integral only sees the integrator on `[a, b]`. -/
+example : productIntegral (fun t => max t 0) 0 1 = productIntegral id 0 1 :=
+  productIntegral_congr zero_le_one fun _ hx => max_eq_left hx.1
+
 /-- The exact Duhamel identity on the trivial partition `{0, 1}`. -/
 example (A B V W : ℝ → ℝ) (hA : IsControl A V 0 1) (hB : IsControl B W 0 1) :
     productIntegral B 0 1 - productIntegral A 0 1 =
