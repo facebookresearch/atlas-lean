@@ -22,7 +22,7 @@ function of the Gaussian law is continuous. The degenerate zero-variance case
 is a Dirac mass whose cdf jumps, so the nonzero hypothesis cannot be dropped.
 The cdf also standardizes: `cdf (gaussianReal μ v) x` is the standard normal cdf
 at `(x - μ) / √v`. The standard normal cdf is symmetric: `Φ(-x) = 1 - Φ(x)`,
-hence `Φ 0 = 1 / 2`.
+hence `Φ 0 = 1 / 2`. The cdf is strictly monotone at every nonzero variance.
 -/
 
 @[expose] public section
@@ -140,6 +140,25 @@ theorem cdf_gaussianReal_zero :
     cdf (gaussianReal 0 1) 0 = 1 / 2 := by
   have h := cdf_gaussianReal_neg 0
   simp at h
+  linarith
+
+/-- The cdf of a Gaussian law with nonzero variance is strictly monotone. -/
+theorem strictMono_cdf_gaussianReal (μ : ℝ) {v : NNReal} (hv : v ≠ 0) :
+    StrictMono (cdf (gaussianReal μ v)) := by
+  intro x y hxy
+  have hIoc := _root_.MathlibExt.Probability.CdfContinuityPoints.measure_Ioc_eq_ofReal_cdf
+    (gaussianReal μ v) x y
+  have hvol : volume (Ioc x y) ≠ 0 := by
+    rw [Real.volume_Ioc]
+    exact ne_of_gt (ENNReal.ofReal_pos.mpr (sub_pos.mpr hxy))
+  have hgauss : gaussianReal μ v (Ioc x y) ≠ 0 := by
+    intro h0
+    exact hvol (gaussianReal_absolutelyContinuous' μ hv h0)
+  rw [hIoc] at hgauss
+  have hpos : 0 < cdf (gaussianReal μ v) y - cdf (gaussianReal μ v) x := by
+    by_contra hcon
+    rw [not_lt] at hcon
+    exact hgauss (ENNReal.ofReal_eq_zero.mpr hcon)
   linarith
 
 end ProbabilityTheory
