@@ -41,12 +41,11 @@ kept for the statement's shape; it is not needed by the proof, since
 
 namespace MathlibExt.Analysis
 
-set_option linter.unusedVariables false in
 /-- Nonlinear first-order propagation has an explicit remainder under
 smoothness: if `f` is twice continuously differentiable and
 `|f''| ≤ M` everywhere, then the first-order Taylor remainder satisfies
 `|f (x₀ + h) - f x₀ - f' x₀ * h| ≤ (M / 2) * h ^ 2`. -/
-theorem first_order_propagation_remainder_bound {f : ℝ → ℝ} {M : ℝ} (hM : 0 ≤ M)
+theorem first_order_propagation_remainder_bound {f : ℝ → ℝ} {M : ℝ}
     (hf : ContDiff ℝ 2 f) (hderiv2 : ∀ x, |deriv (deriv f) x| ≤ M)
     (x₀ h : ℝ) :
     |f (x₀ + h) - f x₀ - deriv f x₀ * h| ≤ (M / 2) * h ^ 2 := by

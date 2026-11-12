@@ -22,7 +22,7 @@ private theorem deriv_deriv_sin (x : ℝ) : deriv (deriv Real.sin) x = -Real.sin
 example : |Real.sin (0 + 1 / 2 : ℝ) - Real.sin 0 - deriv Real.sin 0 * (1 / 2 : ℝ)|
     ≤ (1 / 2 : ℝ) * (1 / 2 : ℝ) ^ 2 := by
   have h := MathlibExt.Analysis.first_order_propagation_remainder_bound
-    (f := Real.sin) (M := 1) zero_le_one Real.contDiff_sin
+    (f := Real.sin) (M := 1) Real.contDiff_sin
     (fun x => by rw [deriv_deriv_sin, abs_neg]; exact Real.abs_sin_le_one x)
     (x₀ := 0) (h := 1 / 2)
   simpa using h
@@ -31,7 +31,7 @@ example : |Real.sin (0 + 1 / 2 : ℝ) - Real.sin 0 - deriv Real.sin 0 * (1 / 2 :
 example : |Real.sin (0 + 0 : ℝ) - Real.sin 0 - deriv Real.sin 0 * (0 : ℝ)|
     ≤ (1 / 2 : ℝ) * (0 : ℝ) ^ 2 := by
   have h := MathlibExt.Analysis.first_order_propagation_remainder_bound
-    (f := Real.sin) (M := 1) zero_le_one Real.contDiff_sin
+    (f := Real.sin) (M := 1) Real.contDiff_sin
     (fun x => by rw [deriv_deriv_sin, abs_neg]; exact Real.abs_sin_le_one x)
     (x₀ := 0) (h := 0)
   exact h
@@ -46,7 +46,7 @@ example : |(fun x : ℝ => 3 * x + 1) (2 + 5) - (fun x : ℝ => 3 * x + 1) 2
     rw [mul_one] at h
     exact h
   have h := MathlibExt.Analysis.first_order_propagation_remainder_bound
-    (f := fun x : ℝ => 3 * x + 1) (M := 0) le_rfl (by fun_prop)
+    (f := fun x : ℝ => 3 * x + 1) (M := 0) (by fun_prop)
     (fun x => by
       have hfun : deriv (fun x : ℝ => 3 * x + 1) = fun _ => (3 : ℝ) :=
         funext hderiv1
