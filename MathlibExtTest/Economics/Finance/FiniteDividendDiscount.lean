@@ -25,81 +25,74 @@ namespace MathlibExtTest.Economics.Finance.FiniteDividendDiscount
 open MathlibExt.Economics.Finance
 open MathlibExt.Economics.Finance.FiniteDividendDiscount
 
-/-- Helper: the two-point interval as an explicit pair. -/
-theorem Icc_1_2_eq : Finset.Icc (1 : ℕ) 2 = {1, 2} := by
-  ext x
-  simp only [Finset.mem_Icc, Finset.mem_insert, Finset.mem_singleton]
-  omega
+def testD : ℕ → ℝ := fun t => if t = 1 then (11:ℝ) else if t = 2 then 12 else 0
 
-/-- Test 1: concrete `n = 2` with `r = 1/10`. -/
-theorem finiteDividendDiscount_n2_concrete (D P : ℕ → ℝ)
-    (hD : D = fun t => if t = 1 then (11 : ℝ) else if t = 2 then 12 else 0)
-    (hP : P = fun t => if t = 0 then (2410 / 121 : ℝ) else if t = 1 then 120 / 11 else 0) :
-    P 0 = 2410 / 121 := by
-  have hr : (1 : ℝ) + 1 / 10 ≠ 0 := by norm_num
-  have hrec : ∀ t, P t = (D (t + 1) + P (t + 1)) / (1 + (1 / 10 : ℝ)) := by
-    intro t
-    by_cases ht0 : t = 0
-    · subst ht0
-      norm_num [hD, hP]
-    · by_cases ht1 : t = 1
-      · subst ht1
-        norm_num [hD, hP]
-      · have h2 : 2 ≤ t := by omega
-        have hne0 : t + 1 ≠ 0 := by omega
-        have hne1 : t + 1 ≠ 1 := by omega
-        have hne2 : t + 1 ≠ 2 := by omega
-        have hPt : P t = 0 := by simp only [hP, ite_eq_right ht0, ite_eq_right ht1]
-        have hDt1 : D (t + 1) = 0 := by simp only [hD, ite_eq_right hne1, ite_eq_right hne2]
-        have hPt1 : P (t + 1) = 0 := by simp only [hP, ite_eq_right hne0, ite_eq_right hne1]
-        rw [hPt, hDt1, hPt1]
-        norm_num
-  have hD1 : D 1 = (11 : ℝ) := by simp [hD]
-  have hD2 : D 2 = (12 : ℝ) := by simp [hD]
-  have hP2 : P 2 = (0 : ℝ) := by simp [hP]
-  have h := finiteDividendDiscount (r := 1 / 10) hr (D := D) (P := P) hrec 2
-  rw [h, Icc_1_2_eq]
-  simp only [presentValue, Finset.sum_pair (show (1 : ℕ) ≠ 2 by decide),
-    hD1, hD2, hP2, discountFactor]
-  norm_num
+noncomputable def testP : ℕ → ℝ :=
+  fun t => if t = 0 then (2410/121:ℝ) else if t = 1 then 120/11 else 0
 
-/-- Test 2: zero rate `r = 0` with `n = 2`. -/
-theorem finiteDividendDiscount_zeroRate (D P : ℕ → ℝ)
-    (hD : D = fun t => if t = 1 then (5 : ℝ) else if t = 2 then 7 else 0)
-    (hP : P = fun t => if t = 0 then (15 : ℝ) else if t = 1 then 10 else 3) :
-    P 0 = 15 := by
-  have hr : (1 : ℝ) + 0 ≠ 0 := by norm_num
-  have hrec : ∀ t, P t = (D (t + 1) + P (t + 1)) / (1 + (0 : ℝ)) := by
-    intro t
-    by_cases ht0 : t = 0
-    · subst ht0
-      norm_num [hD, hP]
-    · by_cases ht1 : t = 1
-      · subst ht1
-        norm_num [hD, hP]
-      · have h2 : 2 ≤ t := by omega
-        have hne0 : t + 1 ≠ 0 := by omega
-        have hne1 : t + 1 ≠ 1 := by omega
-        have hne2 : t + 1 ≠ 2 := by omega
-        have hPt : P t = 3 := by simp only [hP, ite_eq_right ht0, ite_eq_right ht1]
-        have hDt1 : D (t + 1) = 0 := by simp only [hD, ite_eq_right hne1, ite_eq_right hne2]
-        have hPt1 : P (t + 1) = 3 := by simp only [hP, ite_eq_right hne0, ite_eq_right hne1]
-        rw [hPt, hDt1, hPt1]
-        norm_num
-  have hD1 : D 1 = (5 : ℝ) := by simp [hD]
-  have hD2 : D 2 = (7 : ℝ) := by simp [hD]
-  have hP2 : P 2 = (3 : ℝ) := by simp [hP]
-  have h := finiteDividendDiscount (r := 0) hr (D := D) (P := P) hrec 2
-  rw [h, Icc_1_2_eq]
-  simp only [presentValue, Finset.sum_pair (show (1 : ℕ) ≠ 2 by decide),
-    hD1, hD2, hP2, discountFactor]
-  norm_num
+theorem testP_recursion :
+    ∀ t, testP t = (testD (t + 1) + testP (t + 1)) / (1 + (1/10:ℝ)) := by
+  intro t
+  by_cases h0 : t = 0
+  · subst h0
+    norm_num [testD, testP]
+  · by_cases h1 : t = 1
+    · subst h1
+      norm_num [testD, testP]
+    · have ht1_ne2 : t + 1 ≠ 2 := by omega
+      simp [testD, testP, h0, h1, ht1_ne2]
 
-/-- Test 3: generic `n = 1` corollary from the recursion at `t = 0` alone. -/
-theorem finiteDividendDiscount_n1 {r : ℝ} {D P : ℕ → ℝ}
-    (h0 : P 0 = (D 1 + P 1) / (1 + r)) :
+theorem testP_finite_identity :
+    testP 0 = presentValue (discountFactor (1/10)) (Finset.Icc 1 2) testD +
+      discountFactor (1/10) 2 * testP 2 :=
+  finiteDividendDiscount (by norm_num) testP_recursion 2
+
+theorem testP_two : testP 2 = 0 := by norm_num [testP]
+
+theorem testP_value : testP 0 = 2410/121 := by
+  rw [testP_finite_identity, testP_two]
+  have hIcc : Finset.Icc 1 2 = ({1, 2} : Finset ℕ) := rfl
+  rw [hIcc]
+  simp only [presentValue, Finset.sum_pair (show (1:ℕ) ≠ 2 by norm_num)]
+  norm_num [discountFactor, testD]
+
+def testD0 : ℕ → ℝ := fun t => if t = 1 then (5:ℝ) else if t = 2 then 7 else 0
+
+def testP0 : ℕ → ℝ := fun t => if t = 0 then (15:ℝ) else if t = 1 then 10 else 3
+
+theorem testP0_recursion :
+    ∀ t, testP0 t = (testD0 (t + 1) + testP0 (t + 1)) / (1 + (0:ℝ)) := by
+  intro t
+  by_cases h0 : t = 0
+  · subst h0
+    norm_num [testD0, testP0]
+  · by_cases h1 : t = 1
+    · subst h1
+      norm_num [testD0, testP0]
+    · have ht1_ne2 : t + 1 ≠ 2 := by omega
+      simp [testD0, testP0, h0, h1, ht1_ne2]
+
+theorem testP0_finite_identity :
+    testP0 0 = presentValue (discountFactor 0) (Finset.Icc 1 2) testD0 +
+      discountFactor 0 2 * testP0 2 :=
+  finiteDividendDiscount (by norm_num) testP0_recursion 2
+
+theorem testP0_two : testP0 2 = 3 := by norm_num [testP0]
+
+theorem testP0_value : testP0 0 = 15 := by
+  rw [testP0_finite_identity, testP0_two]
+  have hIcc : Finset.Icc 1 2 = ({1, 2} : Finset ℕ) := rfl
+  rw [hIcc]
+  simp only [presentValue, Finset.sum_pair (show (1:ℕ) ≠ 2 by norm_num)]
+  norm_num [discountFactor, testD0]
+
+theorem n1_corollary {r : ℝ} {D P : ℕ → ℝ} (hr : 1 + r ≠ 0)
+    (hrec : ∀ t, P t = (D (t + 1) + P (t + 1)) / (1 + r)) :
     P 0 = discountFactor r 1 * D 1 + discountFactor r 1 * P 1 := by
-  simp only [discountFactor, pow_one, h0, div_eq_inv_mul, mul_add]
+  have h := finiteDividendDiscount hr hrec 1
+  rw [Finset.Icc_self] at h
+  simp only [presentValue, Finset.sum_singleton] at h
+  exact h
 
 
 end MathlibExtTest.Economics.Finance.FiniteDividendDiscount
