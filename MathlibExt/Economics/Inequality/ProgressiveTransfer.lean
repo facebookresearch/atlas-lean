@@ -22,17 +22,26 @@ import Mathlib.Tactic
 The chosen inequality index is additively separable, `(∑ i, φ (x i)) / n` with `φ` convex on
 a domain `s` (at a fixed mean, `φ y = y ^ 2` gives the variance and `φ y = y log y` the Theil
 index, up to constants). A transfer of `δ` from individual `j` to individual `i` preserves
-total income (`sum_transfer`); it is progressive (Pigou–Dalton) when `0 ≤ δ ≤ x j - x i`.
+total income (`sum_transfer`). It is a progressive (Pigou–Dalton) transfer when it does not
+reverse ranks, `0 ≤ 2 * δ ≤ x j - x i`.
 
-A progressive transfer moves the pair `(x i, x j)` to a pair of convex combinations of the two
-incomes with complementary weights, so convexity of `φ` gives the Pigou–Dalton principle: the
-index weakly decreases (`separableIndex_transfer_le`). The bound `δ ≤ x j - x i` is needed; a
-larger transfer can increase the index.
+Any transfer with `0 ≤ δ ≤ x j - x i` (rank-preserving or not) moves the pair `(x i, x j)` to a
+pair of convex combinations of the two incomes with complementary weights, so convexity of `φ`
+makes the index weakly decrease (`separableIndex_transfer_le`). This symmetric-convexity result
+contains the Pigou–Dalton principle for separable convex indices as the rank-preserving special
+case. The bound `δ ≤ x j - x i` is needed; a larger transfer can increase the index.
 
 ## Main results
 
 * `MathlibExt.Economics.Inequality.sum_transfer`
 * `MathlibExt.Economics.Inequality.separableIndex_transfer_le`
+
+## References
+
+* H. Dalton, "The Measurement of the Inequality of Incomes", Economic Journal 30 (1920),
+  348–361 (the principle of transfers).
+* A. B. Atkinson, "On the Measurement of Inequality", Journal of Economic Theory 2 (1970),
+  244–263 (additively separable concave/convex evaluation of distributions).
 
 Atlas roadmap target AP05.T02.
 -/
@@ -49,7 +58,10 @@ noncomputable def separableIndex {ι : Type*} [Fintype ι] (φ : ℝ → ℝ) (x
   (∑ i, φ (x i)) / Fintype.card ι
 
 /-- Transfer of the amount `δ` from individual `j` to individual `i`; all other incomes are
-unchanged. It is a progressive (Pigou–Dalton) transfer when `0 ≤ δ ≤ x j - x i`. -/
+unchanged. Meant for distinct `i ≠ j` (every result below assumes it): for `i = j` the second
+update overwrites the first. With `0 ≤ δ ≤ x j - x i` both new incomes stay in `[x i, x j]`;
+this includes the rank-preserving Pigou–Dalton transfers `0 ≤ 2 * δ ≤ x j - x i` and also the
+transfers that swap the two incomes' ranks. -/
 def transfer {ι : Type*} [DecidableEq ι] (x : ι → ℝ) (i j : ι) (δ : ℝ) : ι → ℝ :=
   Function.update (Function.update x i (x i + δ)) j (x j - δ)
 
@@ -86,9 +98,11 @@ theorem sum_transfer {ι : Type*} [Fintype ι] [DecidableEq ι] (x : ι → ℝ)
   rw [hti] at e2
   linarith
 
-/-- **Pigou–Dalton principle for separable convex indices.** A progressive transfer
-(`0 ≤ δ ≤ x j - x i`, from the richer `j` to the poorer `i`) weakly reduces the separable
-inequality index of any `φ` convex on a set `s` containing both incomes. -/
+/-- **Transfers within the income gap reduce separable convex indices.** A transfer of
+`0 ≤ δ ≤ x j - x i` from the richer `j` to the poorer `i` weakly reduces the separable
+inequality index of any `φ` convex on a set `s` containing both incomes. Progressive
+(rank-preserving Pigou–Dalton) transfers, `0 ≤ 2 * δ ≤ x j - x i`, are the special case of the
+Pigou–Dalton principle; the theorem also covers transfers that swap ranks. -/
 theorem separableIndex_transfer_le {ι : Type*} [Fintype ι] [DecidableEq ι] {φ : ℝ → ℝ}
     {s : Set ℝ} (hφ : ConvexOn ℝ s φ) (x : ι → ℝ) {i j : ι} (hij : i ≠ j) {δ : ℝ}
     (hxi : x i ∈ s) (hxj : x j ∈ s) (hδ0 : 0 ≤ δ) (hδ : δ ≤ x j - x i) :
