@@ -37,7 +37,9 @@ A family `(T, G)` with set of true nulls `H0 : Finset (Fin m)` (genes with no as
 3. **per-test validity**: for every null gene `i ∈ H0` and every cutoff `s`, the reference tail
    dominates the true null tail, `μ {s ≤ T i} ≤ G i s`. For a GC test this is the statement that
    the inflation factor `λ` removes all of the inflation; when it is too small (or not applied)
-   the condition fails.
+   the condition fails. In practice `λ̂` is estimated from all genes' statistics, so
+   `T i = S i / λ̂`; the structure still applies, but calibration of `S i / λ̂` does not follow
+   from calibration with the true `λ` and must be assumed for `S i / λ̂` itself.
 
 Condition 3 makes each null p-value valid (super-uniform), `isValidPValue_of_tail_le`; it is
 the continuous-statistic analogue of the exact discrete tail p-value of
@@ -48,8 +50,9 @@ The **dependence hypothesis** is PRDS of the p-value vector on `H0`
 (`MathlibExt.Probability.Statistics.MultipleTesting.IsPRDSOn`). It holds when the gene-level
 statistics are independent (`isPRDSOn_tailPValue_of_iIndepFun`), e.g. genes in distinct
 linkage-disequilibrium blocks with disjoint variant sets, and for perfectly comonotone
-statistics. Whether a given scan satisfies PRDS is a modeling question; nothing here asserts it
-for LD-correlated genes.
+statistics. A shared estimated GC factor `λ̂` couples all genes, so the independence route does
+not apply to GC-rescaled statistics and PRDS has to be argued separately. Whether a given scan
+satisfies PRDS is a modeling question; nothing here asserts it for LD-correlated genes.
 
 ## Guarantees
 
@@ -58,9 +61,11 @@ for LD-correlated genes.
   `q ∈ [0, 1]` controls the false discovery rate: `E[FDP] ≤ q |H0| / m ≤ q`. This composes the
   Benjamini–Yekutieli PRDS theorem of the repository; BH is not reproved.
 * **Uncertainty guarantee** (`measure_fdp_bhRejections_tailPValue_lt_ge`): under the same
-  hypotheses, for `q ∈ (0, 1]` and `δ ∈ (0, 1]`, with probability at least `1 - δ` the false
-  discovery proportion of the BH-selected gene set is below `q / δ`. It follows from the FDR bound
-  by Markov's inequality (`measure_le_fdp_bhRejections_tailPValue_le`).
+  hypotheses, for `q ∈ (0, 1]` and `δ > 0`, the event that the false discovery proportion of the
+  BH-selected gene set is below the fixed number `q / δ` has probability at least `1 - δ`. It
+  follows from the FDR bound by Markov's inequality
+  (`measure_le_fdp_bhRejections_tailPValue_le`, which gives the sharper level `q |H0| / (m δ)`);
+  it is informative only when `δ > q`, since the FDP never exceeds `1`.
 
 Both guarantees are conditional: they say nothing when a null test is anti-conservative or the
 dependence is outside PRDS. The test file exhibits a single anti-conservative null test (an
@@ -77,12 +82,11 @@ no validity lemma for a real statistic read through a dominating reference tail.
 * `MathlibExt.Probability.Statistics.MultipleTesting.BenjaminiHochberg`: `bhRejections`,
   `bhIndex`, `IsPRDSOn`, `isPRDSOn_of_iIndepFun`,
   `integral_falseDiscoveryProportion_bhRejections_le_of_isPRDSOn` (Benjamini–Yekutieli 2001,
-  Theorem 1.2).
+  Theorem 1.2), and `measurable_falseDiscoveryProportion_bhRejections`, used for Markov's
+  inequality.
 
-The private measurability helpers below restate private lemmas of `BenjaminiHochberg.lean`
-(`measurable_numBelow`, `bhIndex_eq_sup`, `measurable_bhIndex`), which are not exported. The
-sibling burden/SKAT and genomic-control developments are not imported; their procedures enter
-only through the hypotheses of `IsTailCalibratedFamily`.
+The sibling burden/SKAT and genomic-control developments are not imported; their procedures
+enter only through the hypotheses of `IsTailCalibratedFamily`.
 
 ## References
 
@@ -201,80 +205,15 @@ theorem isValidPValue (h : IsTailCalibratedFamily μ T G H0) {i : Fin m} (hi : i
 
 end IsTailCalibratedFamily
 
-/-- **Independent statistics give PRDS p-values.** If the gene-level statistics are mutually
-independent, the p-values of a tail-calibrated family are PRDS on every `H0`. -/
+/-- **Independent statistics give PRDS p-values.** If the gene-level statistics of a
+tail-calibrated family are mutually independent, its p-values are PRDS on every set `H0'` (only
+the measurability part of the calibration hypothesis is used). -/
 theorem isPRDSOn_tailPValue_of_iIndepFun {μ : Measure Ω} [IsProbabilityMeasure μ]
     {T : Fin m → Ω → ℝ} {G : Fin m → ℝ → ℝ} {H0 : Finset (Fin m)}
-    (h : IsTailCalibratedFamily μ T G H0) (hindep : iIndepFun T μ) :
-    IsPRDSOn μ (tailPValue T G) H0 :=
+    (h : IsTailCalibratedFamily μ T G H0) (hindep : iIndepFun T μ) (H0' : Finset (Fin m)) :
+    IsPRDSOn μ (tailPValue T G) H0' :=
   isPRDSOn_of_iIndepFun μ _ h.measurable_tailPValue
-    (hindep.comp G fun i => (h.antitone_refTail i).measurable) H0
-
-/-! ### Measurability of the BH false discovery proportion -/
-
-private theorem measurable_numBelow' (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (t : ℝ) :
-    Measurable fun ω => numBelow (fun i => p i ω) t := by
-  classical
-  simp only [numBelow, Finset.card_filter]
-  exact Finset.measurable_sum _ fun i _ => Measurable.ite
-    (measurableSet_le (hp i) measurable_const) measurable_const measurable_const
-
-private theorem bhIndex_eq_sup' (q : ℝ) (p : Fin m → ℝ) :
-    bhIndex q p = (Finset.range (m + 1)).sup
-      (fun k => if k ≤ numBelow p (q * (k : ℝ) / m) then k else 0) := by
-  classical
-  apply Nat.le_antisymm
-  · have h := Finset.le_sup (f := fun (k : ℕ) =>
-      if k ≤ numBelow p (q * (k : ℝ) / m) then k else 0)
-      (Finset.mem_range.mpr (Nat.lt_succ_of_le (bhIndex_le q p)))
-    simpa [bhIndex_le_numBelow q p] using h
-  · apply Finset.sup_le
-    intro k hk
-    split_ifs with h
-    · exact le_bhIndex (Nat.le_of_lt_succ (Finset.mem_range.mp hk)) h
-    · exact Nat.zero_le _
-
-private theorem measurable_bhIndex' (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (q : ℝ) :
-    Measurable fun ω => bhIndex q (fun i => p i ω) := by
-  classical
-  simp_rw [bhIndex_eq_sup']
-  have h : ∀ s : Finset ℕ, Measurable (fun ω => s.sup
-      (fun k => if k ≤ numBelow (fun i => p i ω) (q * (k : ℝ) / m) then k else 0)) := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty => simp
-    | @insert k s hk ih =>
-      simp only [Finset.sup_insert]
-      exact (Measurable.ite (measurableSet_le measurable_const
-        (measurable_numBelow' p hp _)) measurable_const measurable_const).max ih
-  exact h _
-
-/-- The false discovery proportion of the BH rejection set is a measurable function of
-measurable p-values. -/
-theorem measurable_falseDiscoveryProportion_bhRejections (p : Fin m → Ω → ℝ)
-    (hp : ∀ i, Measurable (p i)) (H0 : Finset (Fin m)) (q : ℝ) :
-    Measurable fun ω => falseDiscoveryProportion H0 (bhRejections q fun i => p i ω) := by
-  classical
-  have hK : Measurable fun ω => q * (bhIndex q (fun i => p i ω) : ℝ) / m :=
-    (measurable_const.mul (measurable_from_nat.comp (measurable_bhIndex' p hp q))).div_const _
-  have hE (i : Fin m) : MeasurableSet {ω | p i ω ≤ q * (bhIndex q (fun i => p i ω) : ℝ) / m} :=
-    measurableSet_le (hp i) hK
-  have hcount (s : Finset (Fin m)) : Measurable fun ω =>
-      ((s.filter fun i => p i ω ≤ q * (bhIndex q (fun i => p i ω) : ℝ) / m).card : ℝ) := by
-    simp_rw [Finset.natCast_card_filter]
-    exact Finset.measurable_sum _ fun i _ =>
-      Measurable.ite (hE i) measurable_const measurable_const
-  have heq : (fun ω => falseDiscoveryProportion H0 (bhRejections q fun i => p i ω)) =
-      fun ω => ((H0.filter fun i => p i ω ≤ q * (bhIndex q (fun i => p i ω) : ℝ) / m).card : ℝ) /
-        max ((Finset.univ.filter fun i => p i ω ≤
-          q * (bhIndex q (fun i => p i ω) : ℝ) / m).card : ℝ) 1 := by
-    funext ω
-    unfold falseDiscoveryProportion bhRejections
-    congr 3
-    ext i
-    simp [and_comm]
-  rw [heq]
-  exact (hcount H0).div ((hcount Finset.univ).max measurable_const)
+    (hindep.comp G fun i => (h.antitone_refTail i).measurable) H0'
 
 /-! ### The guarantees -/
 
@@ -303,7 +242,7 @@ theorem integral_fdp_bhRejections_tailPValue_le_of_iIndepFun (h : IsTailCalibrat
     (hindep : iIndepFun T μ) {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     ∫ ω, falseDiscoveryProportion H0 (bhRejections q fun i => tailPValue T G i ω) ∂μ ≤
       q * H0.card / m :=
-  integral_fdp_bhRejections_tailPValue_le h (isPRDSOn_tailPValue_of_iIndepFun h hindep) hq₀ hq₁
+  integral_fdp_bhRejections_tailPValue_le h (isPRDSOn_tailPValue_of_iIndepFun h hindep H0) hq₀ hq₁
 
 /-- The bound `q |H0| / m` is at most `q`. -/
 theorem mul_card_div_le {q : ℝ} (hq₀ : 0 ≤ q) (H0 : Finset (Fin m)) :
@@ -337,11 +276,12 @@ theorem measure_le_fdp_bhRejections_tailPValue_le (h : IsTailCalibratedFamily μ
   rw [le_div_iff₀ hc, mul_comm]
   exact hmarkov.trans hFDR
 
-/-- **Confidence bound on the false discovery proportion of the BH-selected set.** Under the
+/-- **Probability bound on the false discovery proportion of the BH-selected set.** Under the
 hypotheses of `integral_fdp_bhRejections_tailPValue_le` (tail-calibrated tests with PRDS
-p-values), for `q ∈ (0, 1]` and `δ ∈ (0, 1]`, with probability at least `1 - δ` the gene set
-selected by BH at level `q` has false discovery proportion below `q / δ`. That is, `q / δ` is a
-`(1 - δ)`-upper confidence bound for the realized FDP. -/
+p-values), for `q ∈ (0, 1]` and `δ > 0`, the event that the gene set selected by BH at level `q`
+has false discovery proportion below the fixed number `q / δ` has probability at least `1 - δ`.
+The statement is informative only for `δ > q`, since the FDP is at most `1`;
+`measure_le_fdp_bhRejections_tailPValue_le` gives the sharper level `q |H0| / (m δ)`. -/
 theorem measure_fdp_bhRejections_tailPValue_lt_ge (h : IsTailCalibratedFamily μ T G H0)
     (hprds : IsPRDSOn μ (tailPValue T G) H0) {q : ℝ} (hq₀ : 0 < q) (hq₁ : q ≤ 1) {δ : ℝ}
     (hδ₀ : 0 < δ) :

@@ -93,6 +93,28 @@ theorem isPRDSOn_three : IsPRDSOn unif (tailPValue stat3 tail3) nulls3 := by
     funext j
     rcases hi with rfl | rfl <;> fin_cases j <;> simp [tailPValue, stat3, tail3] <;> ring
 
+/-- The two null p-values are not independent: both equal `1 - ω`, so
+`P(p₀ ≤ 1/2, p₁ ≤ 1/2) = 1/2 ≠ 1/4 = P(p₀ ≤ 1/2) P(p₁ ≤ 1/2)`. This is why the scan needs the
+PRDS theorem rather than independence. -/
+example : ¬ IndepFun (tailPValue stat3 tail3 0) (tailPValue stat3 tail3 1) unif := by
+  intro h
+  have h1 := h.measure_inter_preimage_eq_mul (Set.Iic (1 / 2 : ℝ)) (Set.Iic (1 / 2))
+    measurableSet_Iic measurableSet_Iic
+  have hpre (i : Fin 3) (hi : i = 0 ∨ i = 1) :
+      tailPValue stat3 tail3 i ⁻¹' Set.Iic (1 / 2) = Set.Ici (1 / 2) := by
+    rcases hi with rfl | rfl <;> ext ω <;>
+      simp only [Set.mem_preimage, Set.mem_Iic, Set.mem_Ici, tailPValue, stat3, tail3] <;>
+      norm_num <;> constructor <;> intro <;> linarith
+  rw [hpre 0 (Or.inl rfl), hpre 1 (Or.inr rfl), Set.inter_self] at h1
+  have hhalf : unif (Set.Ici (1 / 2)) = ENNReal.ofReal (1 / 2) := by
+    have hI : Set.Ici (1 / 2 : ℝ) ∩ Set.Icc 0 1 = Set.Icc (1 / 2) 1 :=
+      Set.ext fun x => ⟨fun h => ⟨h.1, h.2.2⟩, fun h => ⟨h.1, by linarith [h.1], h.2⟩⟩
+    rw [Measure.restrict_apply measurableSet_Ici, hI, Real.volume_Icc]
+    norm_num
+  rw [hhalf, ← ENNReal.ofReal_mul (by norm_num),
+    ENNReal.ofReal_eq_ofReal_iff (by norm_num) (by norm_num)] at h1
+  norm_num at h1
+
 /-- **FDR guarantee, computed.** BH at `q = 1/20` on the three-gene scan has FDR at most
 `(1/20) · 2 / 3 = 1/30`. -/
 example : ∫ ω, falseDiscoveryProportion nulls3
