@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Complex.Trigonometric
+public import Mathlib.Basic.Real.Sign
 
 /-!
 # Electrostatics, electromagnetic fields, and linear-wave interfaces
@@ -20,10 +21,11 @@ consequences.
 
 Electrostatic and Maxwell dynamics and material constitutive laws are physical
 hypotheses; the results here are mathematical consequences of explicit,
-declared formulas. All formulas are SI. `eps` is the absolute permittivity,
-`n1` and `n2` are dimensionless refractive indices, and all three are declared
-medium parameters. Charge sign, relative versus absolute permittivity, and
-field amplitude versus intensity remain distinct.
+declared formulas. The physical quantities use SI units; `meanSquareAmplitude`
+is a squared electric-field quantity, not an energy flux. `eps` is the absolute
+permittivity, `n1` and `n2` are dimensionless refractive indices, and all three
+are declared medium parameters. Charge sign, relative versus absolute
+permittivity, and field amplitude versus intensity remain distinct.
 
 - Electrostatics: on `[0, L]` with uniform charge density `rho`, the potential
   `rho / (2 * eps) * x * (L - x)` vanishes at both ends; for `eps ≠ 0`, its
@@ -38,9 +40,12 @@ field amplitude versus intensity remain distinct.
   formulas (boundary-condition consequences in the textbook model), not
   derived from Maxwell's equations. At normal incidence the s and p
   polarizations coincide; no oblique-incidence s/p formulas are claimed.
-  `intensity` omits the medium-dependent SI prefactor, whose ratio across the
-  interface is the factor `n2 / n1` in `fresnel_energy`.
-- Transport: the carrier sign is carried by `q` alone (`chargeSign q`), and
+  `meanSquareAmplitude E0 = E0 ^ 2 / 2` is the mean-square field amplitude for
+  a sinusoidal cycle. Physical SI intensity additionally divides by the medium
+  impedance; for the nonmagnetic interface model, its prefactor ratio is the
+  factor `n2 / n1` in `fresnel_energy`.
+- Transport: the carrier sign is carried by `q` alone (`Real.sign q`, zero for
+  neutral charge), and
   `|q|` enters the Einstein relation `D = mu * kB * T / |q|` (for `q ≠ 0`) and
   the dilute independent-carrier conductivity `n * |q| * mu`. With this fixed
   sign convention the mobility `mu` has the same sign for either carrier, and
@@ -65,9 +70,9 @@ charge, and nonplanar geometry are out of scope.
 - `fresnel_energy`: lossless energy conservation
   `R ^ 2 + (n2 / n1) * T ^ 2 = 1`.
 - `snell_normal`: Snell's law at normal incidence.
-- `intensity_nonneg`, `intensity_smul`: intensity is nonnegative and
-  quadratic in the amplitude.
-- `chargeSign_mul_abs`: `chargeSign q * |q| = q` for `q ≠ 0`.
+- `meanSquareAmplitude_nonneg`, `meanSquareAmplitude_smul`: the mean-square
+  field amplitude is nonnegative and quadratic in the amplitude.
+- `chargeSign_mul_abs`: `Real.sign q * |q| = q`, including `q = 0`.
 - `einstein_ratio`: the Einstein relation `D / mu = kB * T / |q|`.
 - `conductivityTwoCarrier_eq_sum`, `conductivity_nonneg`: two-carrier
   additivity and nonnegativity of the conductivity.
@@ -119,11 +124,10 @@ noncomputable def fresnelT (n1 n2 : ℝ) : ℝ := 2 * n1 / (n1 + n2)
 /-- Snell's law as a relation (phase-matching form). -/
 def snell (n1 n2 theta1 theta2 : ℝ) : Prop := n1 * Real.sin theta1 = n2 * Real.sin theta2
 
-/-- Time-averaged intensity, proportional to amplitude squared. -/
-noncomputable def intensity (E0 : ℝ) : ℝ := E0 ^ 2 / 2
-
-/-- Carrier-charge sign convention: `+1` for positive, `-1` for negative charge. -/
-noncomputable def chargeSign (q : ℝ) : ℝ := if 0 < q then 1 else -1
+/-- Mean-square electric-field amplitude over a sinusoidal cycle, in `(V/m)²`.
+This is not SI intensity: physical intensity additionally divides by the
+medium impedance. -/
+noncomputable def meanSquareAmplitude (E0 : ℝ) : ℝ := E0 ^ 2 / 2
 
 /-- Diffusion coefficient `D = mu * kB * T / |q|` (Einstein relation, solved for `D`). -/
 noncomputable def diffusionCoeff (mu kB T q : ℝ) : ℝ := mu * kB * T / |q|
@@ -219,22 +223,23 @@ theorem fresnel_energy {n1 n2 : ℝ} (hn1 : 0 < n1) (hn2 : 0 < n2) :
 theorem snell_normal (n1 n2 : ℝ) : snell n1 n2 0 0 := by
   simp [snell]
 
-/-- Intensity is nonnegative. -/
-theorem intensity_nonneg (E0 : ℝ) : 0 ≤ intensity E0 := by
-  unfold intensity
+/-- Mean-square field amplitude is nonnegative. -/
+theorem meanSquareAmplitude_nonneg (E0 : ℝ) : 0 ≤ meanSquareAmplitude E0 := by
+  unfold meanSquareAmplitude
   positivity
 
-/-- Scaling the amplitude by `c` scales the intensity by `c ^ 2`. -/
-theorem intensity_smul (c E0 : ℝ) : intensity (c * E0) = c ^ 2 * intensity E0 := by
-  unfold intensity
+/-- Scaling the amplitude by `c` scales its mean square by `c ^ 2`. -/
+theorem meanSquareAmplitude_smul (c E0 : ℝ) :
+    meanSquareAmplitude (c * E0) = c ^ 2 * meanSquareAmplitude E0 := by
+  unfold meanSquareAmplitude
   ring
 
-/-- The sign convention recovers the charge: `chargeSign q * |q| = q`. -/
-theorem chargeSign_mul_abs {q : ℝ} (hq : q ≠ 0) : chargeSign q * |q| = q := by
-  unfold chargeSign
-  rcases hq.lt_or_gt with hneg | hpos
-  · rw [ite_eq_right (lt_asymm hneg), abs_of_neg hneg, neg_one_mul, neg_neg]
-  · rw [ite_eq_left hpos, abs_of_pos hpos, one_mul]
+/-- The canonical sign recovers the charge, including neutral charge. -/
+theorem chargeSign_mul_abs (q : ℝ) : Real.sign q * |q| = q := by
+  rcases lt_trichotomy q 0 with hneg | rfl | hpos
+  · rw [Real.sign_of_neg hneg, abs_of_neg hneg, neg_one_mul, neg_neg]
+  · simp
+  · rw [Real.sign_of_pos hpos, abs_of_pos hpos, one_mul]
 
 /-- Einstein relation in ratio form: `D / mu = kB * T / |q|`. -/
 theorem einstein_ratio {mu kB T q : ℝ} (hmu : mu ≠ 0) (hq : q ≠ 0) :

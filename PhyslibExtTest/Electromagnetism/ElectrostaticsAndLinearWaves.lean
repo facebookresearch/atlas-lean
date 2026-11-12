@@ -30,7 +30,7 @@ No new definitions or results are introduced here.
 - B. Field energy
 - C. Plane waves
 - D. Fresnel coefficients with `n1 = 1`, `n2 = 3 / 2`
-- E. Snell's law and intensity
+- E. Snell's law and mean-square field amplitude
 - F. Carrier-charge sign
 - G. Transport with `mu = 2`, `kB * T = 3`, `q = -1`
 - H. Axiom audit
@@ -102,37 +102,57 @@ example : fresnelT 1 (3 / 2) = 4 / 5 := by
 example : fresnelR 1 (3 / 2) ^ 2 + (3 / 2 / 1) * fresnelT 1 (3 / 2) ^ 2 = 1 :=
   fresnel_energy (by norm_num) (by norm_num)
 
-/-! ## E. Snell's law and intensity -/
+/-! ## E. Snell's law and mean-square field amplitude -/
 
 /-- Snell's law at normal incidence for `n1 = 1`, `n2 = 3 / 2`. -/
 example : snell 1 (3 / 2) 0 0 :=
   snell_normal 1 (3 / 2)
 
-/-- `intensity 3 = 9 / 2`. -/
-example : intensity 3 = 9 / 2 := by
-  norm_num [intensity]
+/-- `meanSquareAmplitude 3 = 9 / 2`, a squared field, not an SI energy flux. -/
+example : meanSquareAmplitude 3 = 9 / 2 := by
+  norm_num [meanSquareAmplitude]
 
-/-- Intensity ignores the amplitude sign: `intensity (-3) = 9 / 2`. -/
-example : intensity (-3) = 9 / 2 := by
-  norm_num [intensity]
+/-- The mean-square field amplitude ignores the amplitude sign. -/
+example : meanSquareAmplitude (-3) = 9 / 2 := by
+  norm_num [meanSquareAmplitude]
+
+/-- Zero field amplitude has zero mean square. -/
+example : meanSquareAmplitude 0 = 0 := by
+  norm_num [meanSquareAmplitude]
+
+/-- Mean-square field amplitude is nonnegative, including at zero. -/
+example : 0 ≤ meanSquareAmplitude 0 :=
+  meanSquareAmplitude_nonneg 0
+
+/-- A negative scale factor also scales the mean square quadratically. -/
+example : meanSquareAmplitude ((-2) * 3) = (-2 : ℝ) ^ 2 * meanSquareAmplitude 3 :=
+  meanSquareAmplitude_smul (-2) 3
 
 /-! ## F. Carrier-charge sign -/
 
 /-- A positive charge has sign `+1`. -/
-example : chargeSign 1 = 1 := by
-  norm_num [chargeSign]
+example : Real.sign 1 = 1 :=
+  Real.sign_of_pos (by norm_num)
 
 /-- A negative charge has sign `-1`. -/
-example : chargeSign (-1) = -1 := by
-  norm_num [chargeSign]
+example : Real.sign (-1) = -1 :=
+  Real.sign_of_neg (by norm_num)
+
+/-- Neutral charge has sign zero, not `-1`. -/
+example : Real.sign 0 = 0 :=
+  Real.sign_zero
 
 /-- The sign convention recovers `q = 2`. -/
-example : chargeSign 2 * |(2 : ℝ)| = 2 :=
-  chargeSign_mul_abs two_ne_zero
+example : Real.sign 2 * |(2 : ℝ)| = 2 :=
+  chargeSign_mul_abs 2
 
 /-- The sign convention recovers `q = -2`. -/
-example : chargeSign (-2) * |(-2 : ℝ)| = -2 :=
-  chargeSign_mul_abs (by norm_num)
+example : Real.sign (-2) * |(-2 : ℝ)| = -2 :=
+  chargeSign_mul_abs (-2)
+
+/-- Charge reconstruction also holds at neutral charge. -/
+example : Real.sign 0 * |(0 : ℝ)| = 0 :=
+  chargeSign_mul_abs 0
 
 /-! ## G. Transport with `mu = 2`, `kB * T = 3`, `q = -1` -/
 
@@ -166,8 +186,8 @@ end PhyslibExtTest.Electromagnetism.ElectrostaticsAndLinearWaves
 #print axioms planeWave_discreteWaveEquation
 #print axioms fresnel_energy
 #print axioms snell_normal
-#print axioms intensity_nonneg
-#print axioms intensity_smul
+#print axioms meanSquareAmplitude_nonneg
+#print axioms meanSquareAmplitude_smul
 #print axioms chargeSign_mul_abs
 #print axioms einstein_ratio
 #print axioms conductivityTwoCarrier_eq_sum
