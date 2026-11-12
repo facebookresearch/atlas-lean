@@ -18,12 +18,14 @@ public import Mathlib.Basic.Real.Basic
 
 Straight-line depreciation charges `(cost - salvage) / life` per period. Over a
 positive useful life the charges sum to `cost - salvage` (`Finset.sum_const` and
-`mul_div_cancel₀`), so book value at the end of the life equals salvage.
+`mul_div_cancel₀`), so book value at the end of the life equals salvage. Charges stop after
+the useful life, so book value stays at salvage afterwards.
 
 ## Main results
 
 * `MathlibExt.Economics.Accounting.sum_straightLineCharge`
 * `MathlibExt.Economics.Accounting.straightLineBookValue_life`
+* `MathlibExt.Economics.Accounting.straightLineBookValue_of_life_le`
 
 ## References
 
@@ -37,9 +39,10 @@ namespace MathlibExt.Economics.Accounting
 noncomputable def straightLineCharge (cost salvage : ℝ) (life : ℕ) : ℝ :=
   (cost - salvage) / life
 
-/-- Book value after `t` periods of straight-line depreciation. -/
+/-- Book value after `t` periods of straight-line depreciation over a useful life of `life`
+periods: charges stop once the useful life is over, so periods after `life` charge nothing. -/
 noncomputable def straightLineBookValue (cost salvage : ℝ) (life t : ℕ) : ℝ :=
-  cost - ∑ _s ∈ Finset.range t, straightLineCharge cost salvage life
+  cost - ∑ _s ∈ Finset.range (min t life), straightLineCharge cost salvage life
 
 /-- Over a positive useful life, straight-line charges sum to cost minus salvage. -/
 theorem sum_straightLineCharge (cost salvage : ℝ) {life : ℕ} (hlife : 0 < life) :
@@ -53,6 +56,17 @@ theorem sum_straightLineCharge (cost salvage : ℝ) {life : ℕ} (hlife : 0 < li
 theorem straightLineBookValue_life (cost salvage : ℝ) {life : ℕ} (hlife : 0 < life) :
     straightLineBookValue cost salvage life life = salvage := by
   unfold straightLineBookValue
-  rw [sum_straightLineCharge cost salvage hlife, sub_sub_cancel]
+  rw [min_self]
+  rw [sum_straightLineCharge cost salvage hlife]
+  exact sub_sub_cancel _ _
+
+/-- After the end of a positive useful life, straight-line book value stays at salvage. -/
+theorem straightLineBookValue_of_life_le (cost salvage : ℝ) {life t : ℕ} (hlife : 0 < life)
+    (ht : life ≤ t) :
+    straightLineBookValue cost salvage life t = salvage := by
+  unfold straightLineBookValue
+  rw [min_eq_right ht]
+  rw [sum_straightLineCharge cost salvage hlife]
+  exact sub_sub_cancel _ _
 
 end MathlibExt.Economics.Accounting

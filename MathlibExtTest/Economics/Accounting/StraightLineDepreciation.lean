@@ -56,4 +56,16 @@ theorem test_bookValue_any_life :
   intro n hn
   exact straightLineBookValue_life 1000 100 hn
 
+/-- Charges stop after the useful life: four periods into a three-period life, book value is
+still the salvage value 100 (not 1000 - 4 * 300 = -200). -/
+theorem test_bookValue_after_life : straightLineBookValue 1000 100 3 4 = 100 := by
+  exact straightLineBookValue_of_life_le 1000 100 (by norm_num) (by norm_num)
+
+/-- After the life, book value stays at salvage for every later period, by
+`straightLineBookValue_of_life_le`. -/
+theorem test_bookValue_after_life_any :
+    ∀ t : ℕ, 3 ≤ t → straightLineBookValue 1000 100 3 t = 100 := by
+  intro t ht
+  exact straightLineBookValue_of_life_le 1000 100 (by norm_num) ht
+
 end MathlibExtTest.Economics.Accounting.StraightLineDepreciation
