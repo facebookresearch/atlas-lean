@@ -196,7 +196,7 @@ unit length) and axial resistance `ri` (per unit length). -/
 noncomputable def lengthConstant (rm ri : ℝ) : ℝ := sqrt (rm / ri)
 
 /-- Characteristic resistance `r∞ = sqrt (rm ri)` of a passive cable: the input resistance of the
-semi-infinite cable (`voltage_zero_eq_of_bounded`). -/
+semi-infinite cable (`IsSteadyState.eq_exp_of_bounded`). -/
 noncomputable def charResistance (rm ri : ℝ) : ℝ := sqrt (rm * ri)
 
 /-- Steady-state core-conductor equations of a passive cable on a set `s` of positions: the
