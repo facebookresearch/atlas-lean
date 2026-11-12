@@ -29,7 +29,8 @@ open MeasureTheory ProbabilityTheory Filter Topology Finset
 open MathlibExt.Probability.Statistics.ProcessAsymptotics MathlibExt.Probability.Martingale
 open MathlibExt.Probability.Statistics.CountingProcess (nelsonAalenProcess stochasticIntegral
   aalenCompensator)
-open MathlibExt.Probability.Statistics.FunctionalDelta (prodIntegral duhamelDeriv gridIncrements)
+open MathlibExt.Probability.Statistics.FunctionalDelta (prodIntegral duhamelDeriv gridIncrements
+  gridIncrements_apply)
 open scoped ENNReal NNReal
 
 namespace MathlibExtTest.Probability.Statistics.Survival.ProcessAsymptotics
@@ -232,11 +233,75 @@ example (v : Fin 2 → ℝ) (x : Fin 2 → Fin 3 → ℝ) :
     ((tendstoInDistribution_const (l := atTop) aemeasurable_const).congr
       (fun n => ae_of_all _ fun ω => by simp) (ae_of_all _ fun _ => rfl))
 
-/-- Boundary case of the Aalen–Johansen covariance: zero variances give zero covariance. -/
+/-- Boundary case of the Aalen–Johansen covariance: zero covariance matrix gives zero. -/
 example (x : Fin 2 → Fin 2 → ℝ) (j j' : Fin 2) (c c' : Fin 2) :
     cov[fun _ : Unit => ajDeriv x 0 j c, fun _ => ajDeriv x 0 j' c'; Measure.dirac ()] = 0 := by
   rw [covariance_ajLimit (P' := Measure.dirac ()) x (fun _ => 0) 0 (fun _ => memLp_const 0)
     (fun _ _ => by simp)]
   simp
+
+/-! ### Covariance theorems with non-zero variance -/
+
+/-- The uniform law on `Bool`. -/
+noncomputable def μB : Measure Bool := (2 : ℝ≥0∞)⁻¹ • (Measure.dirac true + Measure.dirac false)
+
+instance : IsProbabilityMeasure μB :=
+  ⟨by simpa [μB, ← two_mul] using ENNReal.mul_inv_cancel two_ne_zero ENNReal.ofNat_ne_top⟩
+
+/-- A Rademacher variable: `±1` with probability `1/2` each. -/
+def sgn (b : Bool) : ℝ := if b then 1 else -1
+
+lemma μB_real_singleton (b : Bool) : μB.real {b} = 1 / 2 := by
+  cases b <;> simp [μB, Measure.real]
+
+lemma memLp_sgn_mul (a : ℝ) : MemLp (fun b => a * sgn b) 2 μB :=
+  MemLp.of_bound (Measurable.of_discrete).aestronglyMeasurable |a|
+    (ae_of_all _ fun b => by cases b <;> simp [sgn])
+
+/-- The Rademacher variable has variance `1`. -/
+lemma covariance_sgn : cov[sgn, sgn; μB] = 1 := by
+  have hint : ∀ f : Bool → ℝ, Integrable f μB := fun f => Integrable.of_finite
+  have hmean : μB[sgn] = 0 := by
+    rw [integral_fintype (hint _)]
+    simp [μB_real_singleton, sgn]
+  unfold covariance
+  rw [hmean, integral_fintype (hint _)]
+  simp [μB_real_singleton, sgn]
+  norm_num
+
+/-- **Greenwood covariance, non-degenerate instance.** One grid point with hazard jump `1/2`
+and a Rademacher Nelson–Aalen increment (variance `1`): the Kaplan–Meier limit is
+`-S₀ W / (1 - 1/2) = -W`, with variance `S₀² · 1 / (1 - 1/2)² = 1`. -/
+example :
+    cov[fun b => (-duhamelDeriv (-gridIncrements (![1 / 2] : Fin 1 → ℝ))
+        (fun _ => sgn b)) 0,
+      fun b => (-duhamelDeriv (-gridIncrements (![1 / 2] : Fin 1 → ℝ)) (fun _ => sgn b)) 0;
+      μB] = 1 := by
+  have hΔ : ∀ i : Fin 1, gridIncrements (![1 / 2] : Fin 1 → ℝ) i = 1 / 2 := fun i => by
+    fin_cases i
+    simp [gridIncrements_apply]
+  rw [covariance_kmGridLimit (P' := μB) ![1 / 2] (fun b _ => sgn b) 1
+    (fun _ => by simp)
+    (fun i i' => by fin_cases i; fin_cases i'; simp [covariance_sgn])
+    (fun i => by rw [hΔ]; norm_num)]
+  have h1 : Iic (0 : Fin 1) = {0} := by decide
+  simp only [prodIntegral, h1, Finset.prod_singleton, Pi.neg_apply, hΔ]
+  norm_num
+
+/-- **Aalen–Johansen covariance with tied causes, non-degenerate instance.** One grid time,
+two causes whose limits are perfectly negatively correlated (`G₀ = W`, `G₁ = -W`, `W`
+Rademacher), the multinomial-type covariance `Γ p q = s p s q`. At one grid time `ajDeriv x h 0 c
+= h 0 c`, so the cross-cause covariance of the Aalen–Johansen limit is `-1`. -/
+example (x : Fin 1 → Fin 2 → ℝ) :
+    cov[fun b => ajDeriv x (fun _ c => ![1, -1] c * sgn b) 0 0,
+      fun b => ajDeriv x (fun _ c => ![1, -1] c * sgn b) 0 1; μB] = -1 := by
+  rw [covariance_ajLimit (P' := μB) x (fun b _ c => ![1, -1] c * sgn b)
+    (fun p q => ![1, -1] p.2 * ![1, -1] q.2) (fun p => memLp_sgn_mul _)
+    (fun p q => by
+      change cov[fun b => ![1, -1] p.2 * sgn b, fun b => ![1, -1] q.2 * sgn b; μB] = _
+      rw [covariance_const_mul_left, covariance_const_mul_right, covariance_sgn, mul_one])]
+  have h1 : Iic (0 : Fin 1) = {0} := by decide
+  have h2 : Iio (0 : Fin 1) = ∅ := by decide
+  simp [ajDeriv_apply, h1, h2, Fintype.sum_prod_type, Fin.sum_univ_two, Pi.single_apply]
 
 end MathlibExtTest.Probability.Statistics.Survival.ProcessAsymptotics

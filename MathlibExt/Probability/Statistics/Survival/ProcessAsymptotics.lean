@@ -39,10 +39,14 @@ limiting at-risk fractions is part of the Nelson–Aalen CLT hypothesis).
   (`tendstoInDistribution_naErrorPath`, `tendstoInDistribution_naErrorPath_timeChangedBrownian`).
   A counting process `N n` with at-risk process `Y n` in Aalen's multiplicative model is observed on
   the grid of mesh `τ / K n`; `naErrorPath` is the càdlàg step path of `√n (Â_n - α_n)`
-  (`gridPath`, `naErrorPath_apply_gridTime`). The limit is `Z = B ∘ σ²` for a Brownian motion `B`
-  and a non-decreasing variance function `σ²` (for Nelson–Aalen `σ²(t) = ∫_0^t dΛ / y`), with
-  `Cov(Z s, Z t) = σ²(min s t)` and `Z t ~ N(0, σ²(t))` (`covariance_timeChangedBrownian`,
-  `hasLaw_timeChangedBrownian`, from Mathlib's `IsPreBrownianReal.covariance_eval`).
+  (`gridPath`, `naErrorPath_apply_gridTime`). The limit `Z` is whatever the hypotheses `hfdd`
+  and `htight` name. **If** `Z = B ∘ σ²` a.s. (hypothesis `hZB` of the corollary) for a Brownian
+  motion `B` and a non-decreasing variance function `σ²`, then `Cov(Z s, Z t) = σ²(min s t)` and
+  `Z t ~ N(0, σ²(t))` (`covariance_timeChangedBrownian`, `hasLaw_timeChangedBrownian`, from
+  Mathlib's `IsPreBrownianReal.covariance_eval`). For Nelson–Aalen the classical
+  identification `σ²(t) = ∫_0^t dΛ / y` is **not proved** here; it is part of the hypotheses.
+  This is a conditional derivation (T43 transfer + T45 representation), not a Nelson–Aalen
+  functional CLT: none of the martingale-CLT inputs are supplied by T43.
   What is derived: off the event of an empty risk set the error path *equals* the martingale path
   `√n (Y⁻¹ • M)` (`naErrorPath_eq_naMartingalePath`, from
   `nelsonAalenProcess_sub_restrictedHazard`), so the J1 limit of the martingale path (transfer
@@ -61,9 +65,11 @@ limiting at-risk fractions is part of the Nelson–Aalen CLT hypothesis).
   grid map `ajIncidence` from cause-specific hazard increments to cumulative incidences is the
   Aalen–Johansen estimator on grouped data (`cumulativeIncidence_time_eq_ajIncidence`); it is
   Fréchet differentiable with explicit derivative `ajDeriv` (`hasFDerivAt_ajIncidence`,
-  `ajDeriv_apply`). Covariance (`covariance_ajLimit`): for uncorrelated cause-specific
-  coordinates of variances `v`, `Cov = ∑_{(i, e)} a(j, c; i, e) a(j', c'; i, e) v i e` with the
-  explicit coefficients `a = ajDeriv x δ_{(i, e)}`.
+  `ajDeriv_apply`). Covariance (`covariance_ajLimit`): for an arbitrary covariance matrix `Γ`
+  of the cause-specific limit `G`, `Cov = ∑_p ∑_q a(j, c; p) a(j', c'; q) Γ p q` with the explicit
+  coefficients `a = ajDeriv x δ_p`. For grouped data with ties the cause-specific counts at one
+  grid time are multinomial, so `Γ (i, c) (i', e) = δ_{i i'} (x i c δ_{c e} - x i c x i e) / y i`
+  is not diagonal across causes.
 
 ## What is assumed, and what is not claimed
 
@@ -85,8 +91,10 @@ limiting at-risk fractions is part of the Nelson–Aalen CLT hypothesis).
   limits are proved on a fixed grid only.
 * The Nelson–Aalen `D([0, τ])` result uses a deterministic grid of mesh `τ / K n` (Aalen's model
   on a discretized time axis), not the observed event times.
-* Gaussianity of the grid limits is not stated separately; the covariance theorems need only the
-  uncorrelated-increment structure, which a Gaussian martingale limit has.
+* Gaussianity of the grid limits is not stated separately. The Kaplan–Meier covariance
+  theorems assume uncorrelated Nelson–Aalen increments (true for the all-cause grid limit); the
+  Aalen–Johansen covariance theorem takes a general covariance matrix of the cause-specific
+  limit.
 
 ## Source receipt (reuse search, 2026-11-12)
 
@@ -335,8 +343,9 @@ private lemma covariance_congr_ae {X X' Y Y' : Ω' → ℝ} (hX : X =ᵐ[P'] X')
 omit [IsProbabilityMeasure P] [IsProbabilityMeasure P'] in
 /-- **Covariance of the Gaussian-martingale limit.** If the paths of `Z` are a.s. those of the
 time-changed Brownian motion `t ↦ B (σ² t)` with a non-decreasing variance function `σ²`, then
-`Cov(Z s, Z t) = σ²(min s t)`. For the Nelson–Aalen estimator `σ²(t) = ∫_0^t dΛ / y` (continuous
-`Λ`, limiting at-risk fraction `y`; Andersen–Borgan–Gill–Keiding (1993), Theorem IV.1.2). -/
+`Cov(Z s, Z t) = σ²(min s t)`. For the Nelson–Aalen estimator the classical variance function is
+`σ²(t) = ∫_0^t dΛ / y` (continuous `Λ`, limiting at-risk fraction `y`;
+Andersen–Borgan–Gill–Keiding (1993), Theorem IV.1.2); that identification is not proved here. -/
 theorem covariance_timeChangedBrownian {τ : ℝ} {B : ℝ≥0 → Ω' → ℝ} (hB : IsPreBrownianReal B P')
     {σsq : Set.Icc (0 : ℝ) τ → ℝ≥0} (hσ : Monotone σsq) {Z : Ω' → C(Set.Icc (0 : ℝ) τ, ℝ)}
     (hZB : ∀ᵐ ω' ∂P', ∀ t, Z ω' t = B (σsq t) ω') (s t : Set.Icc (0 : ℝ) τ) :
@@ -353,7 +362,8 @@ theorem hasLaw_timeChangedBrownian {τ : ℝ} {B : ℝ≥0 → Ω' → ℝ} (hB 
     HasLaw (fun ω' => Z ω' t) (gaussianReal 0 (σsq t)) P' :=
   (hB.hasLaw_eval (σsq t)).congr (by filter_upwards [hZB] with ω h using h t)
 
-/-- **Nelson–Aalen functional CLT in `D([0, τ])`, Skorokhod J1 topology.**
+/-- **Nelson–Aalen limit in `D([0, τ])`, Skorokhod J1 topology, conditional on the martingale
+CLT.** This is not a Nelson–Aalen functional CLT: the martingale-CLT conclusions are hypotheses.
 
 Setting: for each sample size `n`, a counting process `N n` and an at-risk process `Y n` are
 observed on the grid `0, τ / K n, 2 τ / K n, …, τ` of the supported horizon `[0, τ]`, with
@@ -408,10 +418,11 @@ theorem tendstoInDistribution_naErrorPath {τ : ℝ} (hτ : 0 < τ) (K : ℕ →
     rw [naErrorPath_eq_naMartingalePath hω, edist_self]
     exact bot_le
 
-/-- **Nelson–Aalen functional CLT with an explicit Gaussian-martingale limit.** Under the
-hypotheses of `tendstoInDistribution_naErrorPath`, if the limit `Z` is a continuous version of
-the time-changed Brownian motion `t ↦ B (σ² t)` (`σ²` non-decreasing; for Nelson–Aalen
-`σ²(t) = ∫_0^t dΛ / y`), then
+/-- **Nelson–Aalen J1 limit with an explicit Gaussian-martingale limit (conditional).** Under the
+hypotheses of `tendstoInDistribution_naErrorPath` (which include the martingale-CLT inputs), if
+the limit `Z` is a continuous version of the time-changed Brownian motion `t ↦ B (σ² t)` (`hZB`,
+`σ²` non-decreasing; the Nelson–Aalen identification `σ²(t) = ∫_0^t dΛ / y` is not proved here
+and enters only through `hfdd` and `hZB`), then
 * `√n (Â_n - α_n) → Z` in distribution in `D([0, τ])` with the J1 topology;
 * `Cov(Z s, Z t) = σ²(min s t)` (independent increments, variance function `σ²`);
 * `Z t ~ N(0, σ²(t))`. -/
@@ -810,30 +821,38 @@ private lemma eq_sum_single (y : Fin K → Fin r → ℝ) :
     exact Finset.sum_eq_zero fun e' _ => by simp [hb]
   · simp
 
-/-- **Covariance of the Aalen–Johansen grid limit.** If the cause-specific Nelson–Aalen limit
-`G` has uncorrelated coordinates with variances `v` (independent cause-specific Gaussian
-martingale increments), then
-`Cov((ajDeriv x G) j c, (ajDeriv x G) j' c') = ∑_{(i, e)} a(j, c; i, e) a(j', c'; i, e) v i e`
-with the explicit coefficients `a(j, c; i, e) = ajDeriv x (δ_{(i, e)}) j c` (`ajDeriv_apply`). -/
+/-- **Covariance of the Aalen–Johansen grid limit.** For any square-integrable cause-specific
+Nelson–Aalen limit `G` with covariance matrix `Γ p q = Cov(G p, G q)`,
+`Cov((ajDeriv x G) j c, (ajDeriv x G) j' c') = ∑_p ∑_q a(j, c; p) a(j', c'; q) Γ p q`
+with the explicit coefficients `a(j, c; p) = ajDeriv x δ_p j c` (`ajDeriv_apply`). For grouped
+competing-risks data the cause-specific counts at one grid time are multinomial, giving
+`Γ (i, c) (i', e) = δ_{i i'} (x i c δ_{c e} - x i c x i e) / y i` (`y i` the limiting at-risk
+fraction): coordinates at different grid times are uncorrelated, but two causes with positive
+hazard at the same time are negatively correlated, so `Γ` is not diagonal. -/
 theorem covariance_ajLimit (x : Fin K → Fin r → ℝ) (G : Ω' → Fin K → Fin r → ℝ)
-    (v : Fin K → Fin r → ℝ) (hG : ∀ p : Fin K × Fin r, MemLp (fun ω => G ω p.1 p.2) 2 P')
-    (hcov : ∀ p q : Fin K × Fin r,
-      cov[fun ω => G ω p.1 p.2, fun ω => G ω q.1 q.2; P'] = if p = q then v p.1 p.2 else 0)
+    (Γ : Fin K × Fin r → Fin K × Fin r → ℝ)
+    (hG : ∀ p : Fin K × Fin r, MemLp (fun ω => G ω p.1 p.2) 2 P')
+    (hcov : ∀ p q : Fin K × Fin r, cov[fun ω => G ω p.1 p.2, fun ω => G ω q.1 q.2; P'] = Γ p q)
     (j j' : Fin K) (c c' : Fin r) :
     cov[fun ω => ajDeriv x (G ω) j c, fun ω => ajDeriv x (G ω) j' c'; P'] =
-      ∑ p : Fin K × Fin r, ajDeriv x (Pi.single p.1 (Pi.single p.2 1)) j c *
-        ajDeriv x (Pi.single p.1 (Pi.single p.2 1)) j' c' * v p.1 p.2 := by
+      ∑ p : Fin K × Fin r, ∑ q : Fin K × Fin r,
+        ajDeriv x (Pi.single p.1 (Pi.single p.2 1)) j c *
+          ajDeriv x (Pi.single q.1 (Pi.single q.2 1)) j' c' * Γ p q := by
   have hexp : ∀ ω (a : Fin K) (b : Fin r), ajDeriv x (G ω) a b =
       ∑ p : Fin K × Fin r, ajDeriv x (Pi.single p.1 (Pi.single p.2 1)) a b * G ω p.1 p.2 := by
     intro ω a b
     conv_lhs => rw [eq_sum_single (G ω)]
     simp [map_sum, map_smul, Finset.sum_apply, mul_comm]
   simp_rw [hexp]
-  have h := covariance_sum_uncorrelated (fun ω (p : Fin K × Fin r) => G ω p.1 p.2)
-    (fun p => v p.1 p.2) hG hcov Finset.univ Finset.univ
-    (fun p : Fin K × Fin r => ajDeriv x (Pi.single p.1 (Pi.single p.2 1)) j c)
-    (fun p : Fin K × Fin r => ajDeriv x (Pi.single p.1 (Pi.single p.2 1)) j' c')
-  simpa only [Finset.inter_self] using h
+  rw [covariance_fun_sum_fun_sum'
+    (X := fun (p : Fin K × Fin r) ω => ajDeriv x (Pi.single p.1 (Pi.single p.2 1)) j c *
+      G ω p.1 p.2)
+    (Y := fun (q : Fin K × Fin r) ω => ajDeriv x (Pi.single q.1 (Pi.single q.2 1)) j' c' *
+      G ω q.1 q.2)
+    (fun p _ => (hG p).const_mul _) (fun q _ => (hG q).const_mul _)]
+  simp_rw [covariance_const_mul_left, covariance_const_mul_right, hcov]
+  refine Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun q _ => ?_
+  ring
 
 end AalenJohansenGrid
 
