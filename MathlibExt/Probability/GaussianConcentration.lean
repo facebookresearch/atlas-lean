@@ -16,7 +16,7 @@ public import Mathlib.Probability.Moments.SubGaussian
 /-! # Gaussian concentration for linear functions
 
 For a standard Gaussian vector and a coefficient vector `a`, the
-linear form satisfies the exact Gaussian tail bound
+linear form satisfies the standard two-sided Gaussian tail bound
 `P (|⟨a, X⟩| ≥ t) ≤ 2 exp (-t² / (2 ‖a‖²))`. This is the
 linear-function case of roadmap package ML-11 of the Atlas TCS
 canon roadmap; the general Lipschitz (Maurey-Pisier) statement
@@ -28,6 +28,8 @@ Inequalities (2013), Section 5.
 -/
 
 open Finset MeasureTheory ProbabilityTheory
+
+namespace ProbabilityTheory
 
 /-- The identity function is sub-Gaussian with parameter 1 under the standard
 Gaussian, by the closed-form Gaussian mgf. -/
@@ -150,4 +152,6 @@ theorem gaussian_linear_tail_zero {n : ℕ} (a : Fin n → ℝ) {t : ℝ} (ht : 
     rw [hsum x, abs_zero]
     exact not_le_of_gt ht
   rw [hev, measure_empty]
+
+end ProbabilityTheory
 
