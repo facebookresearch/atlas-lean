@@ -31,19 +31,19 @@ Atlas roadmap target FI05.T05.
 
 namespace MathlibExt.Probability.Finance.VarianceAnnualization
 
-set_option linter.unusedDecidableInType false in
 /-- **Variance of a sum of uncorrelated equal-variance period returns.**
 If every period return has variance `σ²` and distinct periods are uncorrelated
 (`cov = 0`; independence is NOT assumed), then the variance of the sum over all
 periods is `(number of periods) * σ²` (Atlas roadmap FI05.T05). In particular,
 annualized variance is `n * σ²` for `n` periods per year. -/
 theorem variance_sum_eq_card_mul_of_uncorrelated {ι : Type*} {Ω : Type*}
-    [MeasurableSpace Ω] [Fintype ι] [DecidableEq ι] {μ : MeasureTheory.Measure Ω}
+    [MeasurableSpace Ω] [Fintype ι] {μ : MeasureTheory.Measure Ω}
     [MeasureTheory.IsFiniteMeasure μ] {R : ι → Ω → ℝ}
     (hR : ∀ i, MeasureTheory.MemLp (R i) 2 μ) {σ2 : ℝ}
     (hvar : ∀ i, ProbabilityTheory.variance (R i) μ = σ2)
     (huncorr : ∀ i j, i ≠ j → ProbabilityTheory.covariance (R i) (R j) μ = 0) :
     ProbabilityTheory.variance (fun ω => ∑ i, R i ω) μ = (Fintype.card ι : ℝ) * σ2 := by
+  classical
   have hfun : (∑ i, R i) = fun ω => ∑ i, R i ω := by
     ext ω
     simp [Finset.sum_apply]
