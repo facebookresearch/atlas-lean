@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Causality.CausalIdentification
+public import MathlibExt.Probability.Causality.AugmentedIPW.MissingOutcomes
 
 /-!
 # Double robustness of the augmented inverse probability weighted (AIPW) score
@@ -22,11 +22,10 @@ covariate `X`). Write `e* = P(T | m)` for the true propensity score and `μ₀* 
 
 ## Main definitions
 
-* `aipwScoreOfSigma T Y e g₀ g₁`: the AIPW score above, for an arbitrary observed outcome `Y`,
-  with nuisances given as `m`-measurable functions on `Ω`. It is a separate name from the
-  covariate-indexed AIPW score of task CAUS-02.1 (`aipwScore T X Y e m₀ m₁`, nuisances functions
-  of the covariate value): that score is, by unfolding the definitions (`rfl`),
-  `aipwScoreOfSigma T Y (e ∘ X) (m₀ ∘ X) (m₁ ∘ X)`, to be used with `m := MeasurableSpace.comap X`.
+* `aipwScoreOfSigma T Y e g₀ g₁`: the canonical `MissingOutcomes.aipwATEScore` with identity
+  covariate, for an arbitrary observed outcome `Y` and nuisances on `Ω`. Composing nuisances
+  with a covariate `X` gives `MissingOutcomes.aipwATEScore T X e g₀ g₁ Y` definitionally;
+  no finiteness assumption on the covariate is needed for the score.
 
 ## Main results
 
@@ -60,10 +59,11 @@ data and the identities below do not apply. Sample splitting, cross-fitting and 
 
 ## Source receipt (API-00)
 
-* Reuse search (2026-11-11, base `53666a3c1`): no AIPW, augmented IPW or doubly robust
-  development in Mathlib (`v4.35.0`) or in this repository. Reused: `observed` (consistency) from
+* Reuses `MissingOutcomes.aipwATEScore` from `AugmentedIPW/MissingOutcomes.lean` as the
+  canonical score; this module extends its results to arbitrary covariate information via
+  conditional expectations. Reuses `observed` (consistency) from
   `MathlibExt.Probability.Causality.CausalIdentification`, whose
-  `integral_ipw_treated_condExp` is the pure-IPW special case; Mathlib's pull-out property
+  `integral_ipw_treated_condExp` is the pure-IPW special case, and Mathlib's pull-out property
   `condExp_mul_of_stronglyMeasurable_left`.
 * Checked against: E. H. Kennedy, *Semiparametric doubly robust targeted double machine
   learning: a review*, arXiv:2203.06469v2 (2023), §3.2, Example 2 (continued), and §4.3. The
@@ -94,9 +94,16 @@ variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
 /-- The augmented inverse probability weighted (AIPW) score with candidate propensity `e` and
 candidate outcome regressions `g₀, g₁`, at the observed outcome `Y`:
 `g₁ - g₀ + 1_T (Y - g₁) / e - 1_{Tᶜ} (Y - g₀) / (1 - e)`. -/
-noncomputable def aipwScoreOfSigma (T : Set Ω) (Y e g₀ g₁ : Ω → ℝ) : Ω → ℝ := fun ω =>
-  g₁ ω - g₀ ω + T.indicator (fun ω => (Y ω - g₁ ω) / e ω) ω -
-    Tᶜ.indicator (fun ω => (Y ω - g₀ ω) / (1 - e ω)) ω
+noncomputable abbrev aipwScoreOfSigma (T : Set Ω) (Y e g₀ g₁ : Ω → ℝ) : Ω → ℝ :=
+  MissingOutcomes.aipwATEScore T id e g₀ g₁ Y
+
+/-- The canonical ATE score with identity covariate, written as a single contrast. -/
+lemma aipwScoreOfSigma_apply (T : Set Ω) (Y e g₀ g₁ : Ω → ℝ) (ω : Ω) :
+    aipwScoreOfSigma T Y e g₀ g₁ ω =
+      g₁ ω - g₀ ω + T.indicator (fun ω => (Y ω - g₁ ω) / e ω) ω -
+        Tᶜ.indicator (fun ω => (Y ω - g₀ ω) / (1 - e ω)) ω := by
+  simp only [aipwScoreOfSigma, MissingOutcomes.aipwATEScore, MissingOutcomes.aipwScore, id_eq]
+  ring
 
 /-- One arm of the AIPW score, `f + 1_S (Z - f) / p`, is integrable when `Z, f` are and
 `p ≥ ε > 0`. -/
@@ -181,7 +188,7 @@ private lemma aipwScoreOfSigma_ae_eq {T : Set Ω} {Y Y₀ Y₁ : Ω → ℝ}
       (g₁ ω + T.indicator (fun ω => (Y₁ ω - g₁ ω) / e ω) ω) -
         (g₀ ω + Tᶜ.indicator (fun ω => (Y₀ ω - g₀ ω) / (1 - e ω)) ω) := by
   filter_upwards [hcons] with ω h
-  by_cases hω : ω ∈ T <;> simp [aipwScoreOfSigma, observed, h, hω] <;> ring
+  by_cases hω : ω ∈ T <;> simp [aipwScoreOfSigma_apply, observed, h, hω] <;> ring
 
 variable {m : MeasurableSpace Ω} [IsFiniteMeasure μ] {T : Set Ω} {Y Y₀ Y₁ e g₀ g₁ : Ω → ℝ}
   {ε : ℝ}

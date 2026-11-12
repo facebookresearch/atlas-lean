@@ -34,6 +34,12 @@ open MeasureTheory MathlibExt.Probability.Causality
 
 namespace MathlibExtTest.Probability.Causality.AugmentedIPW
 
+/-- The sigma-algebra API uses the canonical score, including arbitrary covariate types and
+propensities at zero or one. -/
+example {Ω 𝒳 : Type*} (T : Set Ω) (X : Ω → 𝒳) (Y : Ω → ℝ) (e g₀ g₁ : 𝒳 → ℝ) :
+    aipwScoreOfSigma T Y (e ∘ X) (g₀ ∘ X) (g₁ ∘ X) =
+      MissingOutcomes.aipwATEScore T X e g₀ g₁ Y := rfl
+
 /-- The uniform law on four units. -/
 noncomputable def unif4 : Measure (Fin 4) :=
   (4⁻¹ : ENNReal) • Measure.count
@@ -71,7 +77,7 @@ lemma integral_score (e g₀ g₁ : ℝ) :
     ∫ i, score e g₀ g₁ i ∂unif4 =
       g₁ - g₀ + (1 - g₁) / e / 2 - (1 - 2 * g₀) / (1 - e) / 4 := by
   rw [integral_unif4]
-  simp [aipwScoreOfSigma, observed, T, Y₀, Y₁, Set.indicator]
+  simp [aipwScoreOfSigma_apply, observed, T, Y₀, Y₁, Set.indicator]
   ring
 
 /-- The average treatment effect of the model is `1/2`. -/
@@ -298,7 +304,7 @@ example :
     ∫ i, aipwScoreOfSigma T (observed T Y₀ Y₁) (cell (1 / 2) (1 / 4)) (cell (-1) 2) (cell 0 5) i
       ∂unif6 = 2 ∧ ∫ i, (Y₁ i - Y₀ i) ∂unif6 = 2 := by
   rw [integral_unif6, integral_unif6]
-  simp [aipwScoreOfSigma, observed, cell, X, T, Y₀, Y₁, Set.indicator]
+  simp [aipwScoreOfSigma_apply, observed, cell, X, T, Y₀, Y₁, Set.indicator]
   norm_num
 
 /-- **Both nuisances wrong, non-constant nuisances**: `e = (1/4 | 3/4) ≠ e*` and
@@ -308,7 +314,7 @@ theorem covariate_bias_both_wrong :
     ∫ i, aipwScoreOfSigma T (observed T Y₀ Y₁) (cell (1 / 4) (3 / 4)) (cell 0 0) (cell 0 0) i
       ∂unif6 - ∫ i, (Y₁ i - Y₀ i) ∂unif6 = 2 / 9 := by
   rw [integral_unif6, integral_unif6]
-  simp [aipwScoreOfSigma, observed, cell, X, T, Y₀, Y₁, Set.indicator]
+  simp [aipwScoreOfSigma_apply, observed, cell, X, T, Y₀, Y₁, Set.indicator]
   norm_num
 
 theorem covariate_bias_both_wrong_ne_zero :
@@ -335,7 +341,7 @@ example :
     ∫ i, aipwScoreOfSigma T (observed T Y₀ Y₁) (cell (1 / 4) (3 / 4)) (cell 1 0) (cell 3 2) i
       ∂unif6 = 2 ∧ ∫ i, (Y₁ i - Y₀ i) ∂unif6 = 2 := by
   rw [integral_unif6, integral_unif6]
-  simp [aipwScoreOfSigma, observed, cell, X, T, Y₀, Y₁, Set.indicator]
+  simp [aipwScoreOfSigma_apply, observed, cell, X, T, Y₀, Y₁, Set.indicator]
   norm_num
 
 end Covariate
