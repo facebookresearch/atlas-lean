@@ -48,7 +48,7 @@ public import Mathlib.Probability.StrongLaw
   invertibility hypothesis of `tendstoInMeasure_sandwichCovariance` cannot be dropped.
 * Boundary: a singular bread in the cluster CLT. `tendstoInDistribution_inv_sqrt_smul_sum_sandwich`
   has no `IsUnit A` hypothesis and applies at `A = 0`, where `Ring.inverse 0 = 0`, the transformed
-  sums vanish and `sandwichCovariance 0 B = 0` (`sandwichCovariance_zero_left`).
+  sums vanish and `sandwichCovariance 0 B = 0` (the library lemma `sandwichCovariance_zero_left`).
 * Boundary: Lindeberg failure. Exploding cluster scores `U k = 2 ^ k` violate the cluster
   Lindeberg condition, so the hypothesis is not vacuous.
 -/
@@ -329,11 +329,6 @@ theorem tendstoInDistribution_transformed_randomIntercept (hξ : ∀ i, Measurab
   simp only [inverse_A, U_self, smul_apply, one_apply_eq_self, smul_eq_mul]
   congr 1
   exact Finset.sum_congr rfl fun k _ ↦ by ring
-
-omit [IsProbabilityMeasure P] in
-/-- The sandwich of a singular bread vanishes: `Ring.inverse 0 = 0`. -/
-theorem sandwichCovariance_zero_left (B' : ℝ →L[ℝ] ℝ) : sandwichCovariance 0 B' = 0 := by
-  rw [sandwichCovariance, Ring.inverse_zero, zero_mul, zero_mul]
 
 /-- **Boundary: a singular bread.** `tendstoInDistribution_inv_sqrt_smul_sum_sandwich` carries no
 `IsUnit A` hypothesis and still applies at `A = 0`: there `Ring.inverse A = 0`, the transformed

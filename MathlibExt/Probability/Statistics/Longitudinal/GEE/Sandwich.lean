@@ -507,6 +507,11 @@ theorem inner_sandwichCovariance_apply (A B : E →L[ℝ] E) (t : E) :
     ContinuousLinearMap.comp_apply]
   rw [← ContinuousLinearMap.adjoint_inner_right, inner_symmetrizedMeat_apply]
 
+omit [MeasurableSpace E] [BorelSpace E] in
+/-- The sandwich of a singular bread vanishes: `Ring.inverse 0 = 0`. -/
+theorem sandwichCovariance_zero_left (B : E →L[ℝ] E) : sandwichCovariance 0 B = 0 := by
+  rw [sandwichCovariance, Ring.inverse_zero, zero_mul, zero_mul]
+
 /-- **Cluster CLT for the transformed scores with sandwich covariance.**
 
 Under the cluster hypotheses of `tendstoInDistribution_sqrt_smul_sub_sandwich` at `β₀`
