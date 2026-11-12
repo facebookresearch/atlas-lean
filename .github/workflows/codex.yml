@@ -44,18 +44,22 @@ jobs:
     # reflects this output: 'approved' iff the formal verdict is
     # approval, empty when no review was posted. `review_id` carries the
     # created review's ID so the verdict job can attest the exact review
-    # (empty when no review was posted). Only same-repo runs are formal
-    # (`formal == 'true'`) and mint a verdict: same-repo automatic runs,
-    # and same-repo `@codex` comment runs by a writer/maintainer/admin.
-    # Fork runs stay advisory: a fork diff is untrusted input that
+    # (empty when no review was posted). Formal (`formal == 'true'`)
+    # runs mint a verdict: same-repo automatic runs, same-repo
+    # `@codex` comment runs by a writer/maintainer/admin, and
+    # owner-fork runs — PRs whose author_association is OWNER, i.e.
+    # the repo owner's own fork (e.g. akiezun/atlas-lean). An
+    # owner-fork diff is the owner's own code, so the fork prompt-
+    # injection risk does not apply to it. Fork runs by non-owners
+    # stay advisory: a third-party fork diff is untrusted input that
     # could steer Codex's verdict toward approval, and prompt
-    # instructions are not a security boundary, so fork content must
-    # never mint a gate approval. A `@codex` question on a same-repo
-    # PR does produce a verdict, which can REQUEST_CHANGES and cancel
-    # the CI build. Formal reviews say so in their header ("This is a
-    # formal review."). Anything that is not formal says "informal" /
-    # "advisory" in its header, so a reader can always tell which
-    # kind it is.
+    # instructions are not a security boundary, so third-party fork
+    # content must never mint a gate approval. A `@codex` question
+    # on a formal PR does produce a verdict, which can REQUEST_CHANGES
+    # and cancel the CI build. Formal reviews say so in their header
+    # ("This is a formal review."). Anything that is not formal says
+    # "informal" / "advisory" in its header, so a reader can always
+    # tell which kind it is.
     outputs:
       authorized: ${{ steps.check_auth.outputs.authorized }}
       formal: ${{ steps.check_auth.outputs.formal }}
@@ -87,20 +91,26 @@ jobs:
             // traffic) have read-only repo permission, and the job `if`
             // already restricted this event to OWNER/MEMBER/COLLABORATOR
             // authors. Re-check here so a job-`if` edit alone cannot open
-            // automatic fork reviews to untrusted authors. Fork runs are
-            // advisory only (formal == 'false'): they never mint a
-            // verdict. Same-repo automatic runs stay formal, and
-            // `@codex` comment runs on same-repo PRs are formal too,
-            // both authorized by write/maintain/admin.
+            // automatic fork reviews to untrusted authors. Fork runs by
+            // non-owners are advisory only (formal == 'false'): they
+            // never mint a verdict. Same-repo automatic runs stay
+            // formal, and `@codex` comment runs on same-repo PRs are
+            // formal too, both authorized by write/maintain/admin.
+            // Owner-fork runs are formal: the PR author's association
+            // is OWNER (the repo owner's own fork), so the diff is the
+            // owner's own code and the fork prompt-injection risk does
+            // not apply. Third-party fork diffs stay advisory.
             const isForkTarget =
               context.eventName === "pull_request_target";
             const isComment =
               context.eventName === "issue_comment" ||
               context.eventName === "pull_request_review_comment";
-            // For comment runs, formality needs the PR's head repo, which
-            // the payload does not carry: fetch the PR. Non-PR issue
-            // comments and a missing head repo are not formal.
+            // For comment runs, formality needs the PR's head repo and
+            // author association, which the payload does not carry:
+            // fetch the PR. Non-PR issue comments and a missing head
+            // repo are not formal.
             let commentSameRepo = false;
+            let commentOwnerFork = false;
             if (isComment) {
               const number =
                 context.payload.issue?.number ??
@@ -115,6 +125,8 @@ jobs:
                   commentSameRepo =
                     pr.head.repo?.full_name ===
                     context.payload.repository.full_name;
+                  commentOwnerFork =
+                    pr.author_association === "OWNER";
                 } catch (error) {
                   if (error.status !== 404) {
                     throw error;
@@ -122,11 +134,16 @@ jobs:
                 }
               }
             }
+            const ownerForkTarget =
+              isForkTarget &&
+              context.payload.pull_request?.author_association ===
+                "OWNER";
             const isFormal =
               (context.eventName === "pull_request" &&
                 context.payload.pull_request?.head?.repo?.full_name ===
                   context.payload.repository.full_name) ||
-              (isComment && commentSameRepo);
+              (isComment && (commentSameRepo || commentOwnerFork)) ||
+              ownerForkTarget;
             let authorized;
             let permission = "none";
             if (isForkTarget) {
@@ -274,9 +291,10 @@ jobs:
               // is different again: check_auth verified the commenter
               // has write/maintain/admin, so the maintainer's explicit
               // @codex comment is the approval to review that fork.
-              // Fork runs are advisory only (see the job header):
-              // they carry no verdict and never mint an approval,
-              // because a fork diff could steer the verdict.
+              // Fork runs by non-owners are advisory only (see the job
+              // header): they carry no verdict and never mint an
+              // approval, because a third-party fork diff could steer
+              // the verdict. Owner-fork runs are formal.
               if (!actualRepo) {
                 throw new Error(
                   "Cannot review a pull request whose head repository is unavailable."
