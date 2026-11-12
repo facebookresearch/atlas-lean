@@ -23,8 +23,9 @@ shortage occurs" (rent-control example around Figure 3.21: at the controlled ren
 demanded but 15,000 supplied, against 17,000 at the market rent of $600).
 
 The market is given by primitive demand and supply schedules (no optimization model). The ceiling
-`c` binds when it lies below an equilibrium price `pstar`. Weak monotonicity gives nonnegative
-excess demand at `c`; strict monotonicity of either schedule makes it positive.
+`c` binds when it lies below every equilibrium price, so there is no equilibrium at or below `c`.
+Weak monotonicity gives nonnegative excess demand at `c`; strict monotonicity of either schedule
+makes it positive.
 -/
 
 namespace MathlibExt.Economics.PriceCeiling
@@ -47,10 +48,11 @@ def excessDemand (M : Market) (p : ℝ) : ℝ :=
 def IsEquilibriumPrice (M : Market) (pstar : ℝ) : Prop :=
   M.demand pstar = M.supply pstar
 
-/-- The ceiling `c` binds at the equilibrium price `pstar`: it is strictly below `pstar`, so the
-price cannot rise to the equilibrium level. -/
+/-- The ceiling `c` binds at the equilibrium price `pstar`: `pstar` is an equilibrium price, and
+`c` lies strictly below every equilibrium price, so there is no equilibrium at or below `c` and
+the price cannot rise to any equilibrium level. -/
 def IsBindingCeiling (M : Market) (c pstar : ℝ) : Prop :=
-  M.IsEquilibriumPrice pstar ∧ c < pstar
+  M.IsEquilibriumPrice pstar ∧ ∀ p, M.IsEquilibriumPrice p → c < p
 
 /-- A ceiling at or below an equilibrium price leaves no excess supply when demand is weakly
 decreasing and supply weakly increasing between the ceiling and the equilibrium price. -/
@@ -69,8 +71,8 @@ theorem excessDemand_nonneg_of_le (M : Market) {c pstar : ℝ} (heq : M.IsEquili
 theorem excessDemand_pos_of_strictAntiOn (M : Market) {c pstar : ℝ}
     (hb : M.IsBindingCeiling c pstar) (hD : StrictAntiOn M.demand (Set.Icc c pstar))
     (hS : MonotoneOn M.supply (Set.Icc c pstar)) : 0 < M.excessDemand c := by
-  have hb' : M.IsEquilibriumPrice pstar ∧ c < pstar := hb
-  obtain ⟨heq, hlt⟩ := hb'
+  obtain ⟨heq, hbind⟩ := hb
+  have hlt : c < pstar := hbind pstar heq
   have hc : c ≤ pstar := le_of_lt hlt
   have hcmem : c ∈ Set.Icc c pstar := Set.left_mem_Icc.mpr hc
   have hsmem : pstar ∈ Set.Icc c pstar := Set.right_mem_Icc.mpr hc
@@ -84,8 +86,8 @@ theorem excessDemand_pos_of_strictAntiOn (M : Market) {c pstar : ℝ}
 theorem excessDemand_pos_of_strictMonoOn (M : Market) {c pstar : ℝ}
     (hb : M.IsBindingCeiling c pstar) (hD : AntitoneOn M.demand (Set.Icc c pstar))
     (hS : StrictMonoOn M.supply (Set.Icc c pstar)) : 0 < M.excessDemand c := by
-  have hb' : M.IsEquilibriumPrice pstar ∧ c < pstar := hb
-  obtain ⟨heq, hlt⟩ := hb'
+  obtain ⟨heq, hbind⟩ := hb
+  have hlt : c < pstar := hbind pstar heq
   have hc : c ≤ pstar := le_of_lt hlt
   have hcmem : c ∈ Set.Icc c pstar := Set.left_mem_Icc.mpr hc
   have hsmem : pstar ∈ Set.Icc c pstar := Set.right_mem_Icc.mpr hc
