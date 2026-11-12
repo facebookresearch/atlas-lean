@@ -104,4 +104,46 @@ example : ∃ (P : Bool → Measure ℕ) (_ : ∀ θ, IsProbabilityMeasure (P θ
     simp [probReal_univ]
   · exact ⟨false, by simp [measureReal_empty]⟩
 
+/-- Use: `ε = 0` with pointwise inclusion recovers `coverage_mono_of_subset`. -/
+example {Θ X T : Type*} [MeasurableSpace X]
+    (P : Θ → Measure X) [∀ θ, IsProbabilityMeasure (P θ)]
+    (τ : Θ → T) {C C' : X → Set T} {α : ℝ}
+    (hsub : ∀ x, C x ⊆ C' x)
+    (hcov : ∀ θ, 1 - α ≤ (P θ).real {x | τ θ ∈ C x}) (θ : Θ) :
+    1 - α - 0 ≤ (P θ).real {x | τ θ ∈ C' x} := by
+  have h := coverage_of_subset_ae_budget (C' := C') (ε := fun _ => (0 : ℝ)) P τ hcov ?hbad θ
+  · exact h
+  · intro θ'
+    have hempty : {x | τ θ' ∈ C x ∧ τ θ' ∉ C' x} = ∅ := by
+      ext x
+      simp only [Set.mem_ofPred_eq, Set.mem_empty_iff_false, iff_false]
+      intro h
+      exact h.2 (hsub x h.1)
+    rw [hempty, measureReal_empty]
+
+/-- Negative: a budget on the wrong event (misses where `C'` adds points) proves nothing. -/
+example : ∃ (P : Bool → Measure ℕ) (_ : ∀ θ, IsProbabilityMeasure (P θ))
+    (τ : Bool → ℕ) (C C' : ℕ → Set ℕ) (α ε : ℝ),
+    (∀ θ, 1 - α ≤ (P θ).real {x | τ θ ∈ C x})
+      ∧ (∀ θ, (P θ).real {x | τ θ ∉ C x ∧ τ θ ∈ C' x} ≤ ε)
+      ∧ ∃ θ, (P θ).real {x | τ θ ∈ C' x} < 1 - α - ε := by
+  refine ⟨fun _ => Measure.dirac 0, fun _ => inferInstance, fun _ => 0,
+    fun _ => ({0} : Set ℕ), fun _ => (∅ : Set ℕ), 0, 0, ?_, ?_, ?_⟩
+  · intro θ
+    show (1 : ℝ) - 0 ≤ (Measure.dirac 0).real {x : ℕ | (0 : ℕ) ∈ ({0} : Set ℕ)}
+    have hset : {x : ℕ | (0 : ℕ) ∈ ({0} : Set ℕ)} = Set.univ := by ext x; simp
+    rw [hset, probReal_univ]
+    norm_num
+  · intro θ
+    show (Measure.dirac 0).real
+      {x : ℕ | (0 : ℕ) ∉ ({0} : Set ℕ) ∧ (0 : ℕ) ∈ (∅ : Set ℕ)} ≤ (0 : ℝ)
+    have hset : {x : ℕ | (0 : ℕ) ∉ ({0} : Set ℕ) ∧ (0 : ℕ) ∈ (∅ : Set ℕ)} = ∅ := by
+      ext x; simp
+    rw [hset, measureReal_empty]
+  · refine ⟨true, ?_⟩
+    show (Measure.dirac 0).real {x : ℕ | (0 : ℕ) ∈ (∅ : Set ℕ)} < 1 - 0 - 0
+    have hset : {x : ℕ | (0 : ℕ) ∈ (∅ : Set ℕ)} = ∅ := by ext x; simp
+    rw [hset, measureReal_empty]
+    norm_num
+
 end MathlibExtTest.Probability.Statistics.ConfidenceSet
