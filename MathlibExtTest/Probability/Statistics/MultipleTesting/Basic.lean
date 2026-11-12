@@ -113,4 +113,46 @@ example (H0 R : Finset (Fin 3)) :
     0 ≤ falseDiscoveryProportion H0 R ∧ falseDiscoveryProportion H0 R ≤ 1 :=
   ⟨falseDiscoveryProportion_nonneg H0 R, falseDiscoveryProportion_le_one H0 R⟩
 
+/-- Use: outward translation by `ε ≥ 0` stays valid. -/
+example {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} {p : Ω → ℝ} (hp : IsValidPValue μ p) {ε : ℝ} (hε : 0 ≤ ε) :
+    IsValidPValue μ (fun ω => p ω + ε) := by
+  exact hp.mono_ae (Filter.Eventually.of_forall fun ω => le_add_of_nonneg_right hε)
+
+/-- Use: capping a p-value bounded above by `1` (at most `1` a.e.) at `1` stays valid. -/
+example {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} {p : Ω → ℝ} (hp : IsValidPValue μ p) {ε : ℝ} (hε : 0 ≤ ε)
+    (hle : ∀ᵐ ω ∂μ, p ω ≤ 1) :
+    IsValidPValue μ (fun ω => min 1 (p ω + ε)) := by
+  apply hp.mono_ae
+  filter_upwards [hle] with ω hω
+  exact le_min hω (le_add_of_nonneg_right hε)
+
+/-- Use: the constant `1` function is a valid p-value under any probability law. -/
+example (μ : Measure ℝ) [IsProbabilityMeasure μ] :
+    IsValidPValue μ (fun _ => (1 : ℝ)) := by
+  intro t ht
+  by_cases h : (1 : ℝ) ≤ t
+  · have ht1 : t = 1 := le_antisymm ht.2 h
+    subst ht1
+    have hset : {ω : ℝ | (fun _ => (1 : ℝ)) ω ≤ 1} = Set.univ :=
+      Set.eq_univ_of_forall fun _ => show (1 : ℝ) ≤ 1 from le_refl 1
+    rw [hset, IsProbabilityMeasure.measure_univ, ENNReal.ofReal_one]
+  · have hset : {ω : ℝ | (fun _ => (1 : ℝ)) ω ≤ t} = ∅ :=
+      Set.eq_empty_of_forall_notMem fun _ => h
+    rw [hset, measure_empty]
+    exact zero_le
+
+/-- Negative: rounding down breaks validity (constant `1` rounded to `1 / 2` fails at `t = 3 / 4`). -/
+example (μ : Measure ℝ) [IsProbabilityMeasure μ] :
+    ¬ IsValidPValue μ (fun _ : ℝ => (1 - 1 / 2 : ℝ)) := by
+  intro hcon
+  have h34 := hcon (3 / 4 : ℝ) ⟨by norm_num, by norm_num⟩
+  have hset : {ω : ℝ | (fun _ : ℝ => (1 - 1 / 2 : ℝ)) ω ≤ 3 / 4} = Set.univ :=
+    Set.eq_univ_of_forall fun _ => show (1 - 1 / 2 : ℝ) ≤ 3 / 4 by norm_num
+  rw [hset, IsProbabilityMeasure.measure_univ] at h34
+  have hlt : ENNReal.ofReal (3 / 4 : ℝ) < 1 :=
+    ENNReal.ofReal_lt_one.mpr (by norm_num)
+  exact (not_le_of_gt hlt) h34
+
 end MathlibExtTest.Probability.Statistics.MultipleTesting.Basic

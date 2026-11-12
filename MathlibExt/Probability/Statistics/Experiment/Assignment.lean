@@ -43,8 +43,9 @@ as integrals and variances under the law.
 
 ## Not covered
 
-Fisher randomization tests under the sharp null, identification assumptions, blocked and
-factorial designs, and superpopulation (asymptotic) versions.
+Identification assumptions, blocked and factorial designs, and superpopulation
+(asymptotic) versions. (Fisher randomization tests under the sharp null are covered in
+`MathlibExt.Probability.Statistics.Experiment.FisherRandomization`.)
 
 ## References
 
