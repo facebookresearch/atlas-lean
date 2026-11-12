@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.E06CarbonateSpeciation
+import PhyslibExt.EarthScience.CarbonateSpeciation
 
 /-!
 # Carbonate speciation and alkalinity checks
 
-Concrete consumers of `PhyslibExt.EarthScience.E06CarbonateSpeciation`:
+Concrete consumers of `PhyslibExt.EarthScience.CarbonateSpeciation`:
 mass closure at `C0 = K1 = K2 = Kw = 1, h = 1`, the boundary `C0 = 0`,
 strict decrease of alkalinity, and the unique root at `A0 = 1`.
 
