@@ -9,27 +9,39 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Probability.Martingale.Basic
+public import Mathlib.Probability.Martingale.OptionalStopping
 public import Mathlib.Probability.Process.Stopping
 public import Mathlib.MeasureTheory.Measure.Real
+public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 public import Mathlib.Tactic
+public import MathlibExt.Probability.Statistics.Sequential.Ville
+public import MathlibExt.Probability.Statistics.ConfidenceSet
+
+open MeasureTheory Filter
+open scoped ProbabilityTheory
+open scoped Topology
 
 /-!
-# Stopped coverage for confidence sequences
+# Anytime-valid confidence sequences by e-process inversion
 
-The simultaneous confidence sequence traps the parameter at any almost-surely finite
-data-chosen stopping time: on the finite-time event the stopped index is defined, and
-the stopped event contains the simultaneous section.
+For each null value `t` with null law `P t`, let `E t n` be a nonnegative test
+supermartingale with expected initial value at most 1. Ville's maximal inequality bounds
+the chance each process ever reaches `1 / α` by `α`; inverting the family of null tests
+gives confidence sets trapping the true parameter at all times simultaneously with
+probability at least `1 - α`.
+
+A simultaneous-in-time confidence sequence traps the parameter at any almost-surely
+finite data-chosen stopping time: on the finite-time event the stopped index is defined,
+and the stopped event contains the simultaneous section.
 
 ## Main statements
 
 * `MathlibExt.Probability.Statistics.confSeqOfEProcess`
+* `MathlibExt.Probability.Statistics.anytime_coverage_of_eProcess`
 * `MathlibExt.Probability.Statistics.stopped_confSeq_coverage`
 -/
 
 @[expose] public section
-
-open MeasureTheory Filter
-open scoped Topology
 
 namespace MathlibExt.Probability.Statistics
 
@@ -38,6 +50,43 @@ test supermartingale stays below `1 / α` at time `n`. -/
 noncomputable def confSeqOfEProcess {Θ X : Type*} (E : Θ → ℕ → X → ℝ) (α : ℝ) (n : ℕ)
     (x : X) : Set Θ :=
   {t : Θ | E t n x < 1 / α}
+
+/-- **Anytime-valid coverage by e-process inversion.** Each null `t` carries a probability
+law, a nonnegative test supermartingale with initial mean at most 1 (hypotheses `hsup`,
+`hnonneg`, `hE0`). By Ville's maximal
+inequality applied to each null process, the inverted sets trap `t` at all times
+simultaneously with probability at least `1 - α`. -/
+theorem anytime_coverage_of_eProcess
+    {Θ X : Type*} {m0 : MeasurableSpace X} {μ : Θ → Measure X}
+    [∀ θ, IsProbabilityMeasure (μ θ)]
+    {𝒢 : Θ → Filtration ℕ m0} {E : Θ → ℕ → X → ℝ} {α : ℝ}
+    (hα : α ∈ Set.Ioo (0 : ℝ) 1)
+    (hsup : ∀ t, Supermartingale (E t) (𝒢 t) (μ t))
+    (hnonneg : ∀ t, 0 ≤ E t)
+    (hE0 : ∀ t, ∫ x, E t 0 x ∂(μ t) ≤ 1) :
+    ∀ t, (μ t).real {x | ∀ n, t ∈ confSeqOfEProcess E α n x} ≥ 1 - α := by
+  intro t
+  have ha : (0 : ℝ) < 1 / α := one_div_pos.mpr hα.1
+  have hV := Supermartingale.ville_maximal_ineq (hsup t) (hnonneg t) ha
+  have hEmeas : ∀ n, Measurable (E t n) := fun n =>
+    Measurable.mono (((hsup t).1 n).measurable) ((𝒢 t).le n) le_rfl
+  have hmeas : MeasurableSet {x | ∃ n, (1 : ℝ) / α ≤ E t n x} := by
+    rw [show {x | ∃ n, (1 : ℝ) / α ≤ E t n x}
+        = ⋃ n, {x | (1 : ℝ) / α ≤ E t n x} from by ext x; simp]
+    exact MeasurableSet.iUnion fun n => measurableSet_le measurable_const (hEmeas n)
+  have hcross : (μ t).real {x | ∃ n, (1 : ℝ) / α ≤ E t n x} ≤ α := by
+    have h1 : (1 / α) * (μ t).real {x | ∃ n, (1 : ℝ) / α ≤ E t n x} ≤ 1 :=
+      le_trans hV (hE0 t)
+    have h2 : (1 / α) * (μ t).real {x | ∃ n, (1 : ℝ) / α ≤ E t n x} ≤ (1 / α) * α := by
+      rw [one_div_mul_cancel (ne_of_gt hα.1)]
+      exact h1
+    exact le_of_mul_le_mul_left h2 ha
+  have hcompl : {x | ∀ n, t ∈ confSeqOfEProcess E α n x}
+      = {x | ∃ n, (1 : ℝ) / α ≤ E t n x}ᶜ := by
+    ext x
+    simp [confSeqOfEProcess, not_le]
+  rw [hcompl, probReal_compl_eq_one_sub hmeas]
+  linarith
 
 /-- **Stopped coverage at a finite-a.s. time.** The simultaneous guarantee `hcover`
 implies coverage at any almost-surely finite stopping time: the stopped event contains

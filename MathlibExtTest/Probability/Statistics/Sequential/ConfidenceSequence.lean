@@ -11,10 +11,12 @@ module
 public import MathlibExt.Probability.Statistics.Sequential.ConfidenceSequence
 
 /-!
-# Tests for stopped coverage of confidence sequences
+# Tests for anytime-valid confidence sequences
 
-A finite deterministic time recovers fixed-time coverage through the main theorem, and
-the infinite time is outside the almost-sure-finiteness hypothesis.
+The constant process `E = 1` gives the whole space at every time, and a process taking a
+negative value is rejected by the nonnegativity hypothesis. A finite deterministic time
+recovers fixed-time coverage through the stopped-coverage theorem, and the infinite time
+is outside the almost-sure-finiteness hypothesis.
 -/
 
 @[expose] public section
@@ -23,6 +25,18 @@ open MeasureTheory Filter
 open scoped Topology
 
 namespace MathlibExt.Probability.Statistics
+
+-- Positive: the constant process E = 1 gives the whole space at every time.
+example {Θ X : Type*} (E : Θ → ℕ → X → ℝ) (α : ℝ) (n : ℕ) (x : X)
+    (hE : ∀ t m, E t m x = 1) (t : Θ) :
+    t ∈ confSeqOfEProcess E α n x ↔ (1 : ℝ) < 1 / α := by
+  simp [confSeqOfEProcess, hE]
+
+-- Boundary: a process taking a negative value is rejected by the nonnegativity hypothesis.
+example : ¬ (0 : ℝ → ℕ → ℝ) ≤ (fun _ _ => (-1 : ℝ)) := by
+  intro h
+  have h0 : (0 : ℝ) ≤ (-1 : ℝ) := h 0 0
+  norm_num at h0
 
 -- Positive: a finite deterministic time recovers fixed-time coverage through the main
 -- theorem. The two-argument constant family is a stopping time (via
@@ -40,3 +54,5 @@ example {Θ X : Type*} {m0 : MeasurableSpace X} {μ : Θ → Measure X}
   have hfin : ∀ t, ∀ᵐ x ∂(μ t), ((fun (_ : Θ) (_ : X) => (↑n : WithTop ℕ)) t x) < ⊤ :=
     fun t => ae_of_all _ fun _ => WithTop.coe_lt_top n
   exact stopped_confSeq_coverage hEmeas hcover hstop hfin
+
+end MathlibExt.Probability.Statistics
