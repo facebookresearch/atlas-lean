@@ -295,4 +295,83 @@ example : (Measure.dirac (5 : ℝ)).real {ω | (0 : ℝ) < ω} > (0.05 : ℝ) :=
   rw [measureReal_def, Measure.dirac_apply_of_mem hmem, ENNReal.toReal_one]
   norm_num
 
+/-- Use: splitting `α / m` per set gives familywise coverage `1 - α` (for `m ≠ 0`). -/
+example {Θ X : Type*} [MeasurableSpace X]
+    (P : Θ → Measure X) [∀ θ, IsProbabilityMeasure (P θ)]
+    {m : ℕ} (hm : m ≠ 0) {T : Fin m → Type*}
+    (τ : ∀ j, Θ → T j) (C : ∀ j, X → Set (T j))
+    (hmeas : ∀ θ j, MeasurableSet {x | τ j θ ∈ C j x})
+    (α₀ : ℝ)
+    (hcov : ∀ θ j, 1 - α₀ / (m : ℝ) ≤ (P θ).real {x | τ j θ ∈ C j x})
+    (θ : Θ) :
+    1 - α₀ ≤ (P θ).real {x | ∀ j, τ j θ ∈ C j x} := by
+  have h := simultaneous_coverage_bonferroni P τ C hmeas (fun _ => α₀ / (m : ℝ)) hcov θ
+  have hmR : (m : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hm
+  have hsum : (∑ j, (fun _ : Fin m => α₀ / (m : ℝ)) j) = α₀ := by
+    show (∑ _j : Fin m, α₀ / (m : ℝ)) = α₀
+    rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul,
+      mul_comm, div_mul_cancel₀ _ hmR]
+  rw [hsum] at h
+  exact h
+
+/-- Boundary: with `m = 0` the joint event is `univ` and the bound reads `1 ≤ 1`. -/
+example {Θ X : Type*} [MeasurableSpace X]
+    (P : Θ → Measure X) [∀ θ, IsProbabilityMeasure (P θ)]
+    {T : Fin 0 → Type*}
+    (τ : ∀ j, Θ → T j) (C : ∀ j, X → Set (T j))
+    (hmeas : ∀ θ j, MeasurableSet {x | τ j θ ∈ C j x})
+    (α : Fin 0 → ℝ)
+    (hcov : ∀ θ j, 1 - α j ≤ (P θ).real {x | τ j θ ∈ C j x})
+    (θ : Θ) :
+    1 - ∑ j, α j ≤ (P θ).real {x | ∀ j, τ j θ ∈ C j x} := by
+  exact simultaneous_coverage_bonferroni P τ C hmeas α hcov θ
+
+/-- Negative (tightness): two disjoint failure events of mass `α` each give joint coverage
+exactly `1 - 2 * α`, so the sum bound cannot be improved in general. -/
+example : ∃ (α : ℝ), (0 : ℝ) < α ∧ α ≤ 1 / 2 ∧
+    ∃ (P : Measure (Fin 4)) (_ : IsProbabilityMeasure P)
+      (E₁ E₂ : Set (Fin 4)),
+      MeasurableSet E₁ ∧ MeasurableSet E₂ ∧ Disjoint E₁ E₂
+        ∧ P.real E₁ = α ∧ P.real E₂ = α
+        ∧ P.real (E₁ ∪ E₂) = 2 * α := by
+  set P : Measure (Fin 4) :=
+    ENNReal.ofReal (1 / 2) • Measure.dirac 0 + ENNReal.ofReal (1 / 2) • Measure.dirac 1 with hP
+  have hc0 : (0 : ℝ) ≤ 1 / 2 := by norm_num
+  have hPuniv : P Set.univ = 1 := by
+    rw [hP, Measure.add_apply, Measure.smul_apply, Measure.smul_apply, smul_eq_mul, smul_eq_mul,
+      Measure.dirac_apply_of_mem (Set.mem_univ (0 : Fin 4)),
+      Measure.dirac_apply_of_mem (Set.mem_univ (1 : Fin 4)), mul_one,
+      ← ENNReal.ofReal_add hc0 hc0]
+    have h12 : (1 / 2 : ℝ) + 1 / 2 = 1 := by norm_num
+    rw [h12, ENNReal.ofReal_one]
+  have hPinst : IsProbabilityMeasure P := ⟨hPuniv⟩
+  have h10 : (1 : Fin 4) ≠ 0 := by decide
+  have h01 : (0 : Fin 4) ≠ 1 := by decide
+  have hm0 : P.real ({0} : Set (Fin 4)) = 1 / 2 := by
+    have h0 : P {0} = ENNReal.ofReal (1 / 2) := by
+      rw [hP, Measure.add_apply, Measure.smul_apply, Measure.smul_apply, smul_eq_mul, smul_eq_mul,
+        Measure.dirac_apply_of_mem (Set.mem_singleton (0 : Fin 4)),
+        Measure.dirac_apply (1 : Fin 4) ({0} : Set (Fin 4)),
+        Set.indicator_of_notMem (by simp) _]
+      simp
+    show (P {0}).toReal = 1 / 2
+    rw [h0, ENNReal.toReal_ofReal hc0]
+  have hm1 : P.real ({1} : Set (Fin 4)) = 1 / 2 := by
+    have h1 : P {1} = ENNReal.ofReal (1 / 2) := by
+      rw [hP, Measure.add_apply, Measure.smul_apply, Measure.smul_apply, smul_eq_mul, smul_eq_mul,
+        Measure.dirac_apply (0 : Fin 4) ({1} : Set (Fin 4)),
+        Set.indicator_of_notMem (by simp) _,
+        Measure.dirac_apply_of_mem (Set.mem_singleton (1 : Fin 4))]
+      simp
+    show (P {1}).toReal = 1 / 2
+    rw [h1, ENNReal.toReal_ofReal hc0]
+  have hdisj : Disjoint ({0} : Set (Fin 4)) {1} := Set.disjoint_singleton.mpr h01
+  have hme0 : MeasurableSet ({0} : Set (Fin 4)) := measurableSet_singleton 0
+  have hme1 : MeasurableSet ({1} : Set (Fin 4)) := measurableSet_singleton 1
+  have hunion : P.real (({0} : Set (Fin 4)) ∪ {1}) = 2 * (1 / 2 : ℝ) := by
+    rw [measureReal_union hdisj hme1 (ne_of_lt (measure_lt_top P _))
+      (ne_of_lt (measure_lt_top P _)), hm0, hm1]
+    norm_num
+  exact ⟨1 / 2, by norm_num, le_refl _, P, hPinst, {0}, {1}, hme0, hme1, hdisj, hm0, hm1, hunion⟩
+
 end MathlibExtTest.Probability.Statistics.ConfidenceSet

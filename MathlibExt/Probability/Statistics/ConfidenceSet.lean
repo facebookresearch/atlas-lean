@@ -150,4 +150,39 @@ theorem measureReal_lt_le_of_le_cdf_mono {Ω : Type*} [MeasurableSpace Ω]
     (hle : c ≤ c') (hc : 1 - α ≤ cdf ν c) : P.real {ω | c' < T ω} ≤ α := by
   exact measureReal_lt_le_of_le_cdf hT (le_trans hc (monotone_cdf ν hle))
 
+/-- Bonferroni simultaneous coverage for finitely many confidence sets. -/
+theorem simultaneous_coverage_bonferroni {Θ X : Type*} [MeasurableSpace X]
+    (P : Θ → Measure X) [∀ θ, IsProbabilityMeasure (P θ)]
+    {m : ℕ} {T : Fin m → Type*}
+    (τ : ∀ j, Θ → T j) (C : ∀ j, X → Set (T j))
+    (hmeas : ∀ θ j, MeasurableSet {x | τ j θ ∈ C j x})
+    (α : Fin m → ℝ)
+    (hcov : ∀ θ j, 1 - α j ≤ (P θ).real {x | τ j θ ∈ C j x})
+    (θ : Θ) :
+    1 - ∑ j, α j ≤ (P θ).real {x | ∀ j, τ j θ ∈ C j x} := by
+  have hjoint : {x | ∀ j, τ j θ ∈ C j x} = ⋂ j, {x | τ j θ ∈ C j x} := by
+    ext x
+    simp
+  have hcompl : {x | ∀ j, τ j θ ∈ C j x}ᶜ
+      = ⋃ j ∈ (Finset.univ : Finset (Fin m)), {x | τ j θ ∈ C j x}ᶜ := by
+    rw [hjoint, Set.compl_iInter]
+    ext x
+    simp
+  have hfail : ∀ j, (P θ).real {x | τ j θ ∈ C j x}ᶜ ≤ α j := by
+    intro j
+    have h2 := probReal_compl_eq_one_sub (μ := P θ) (hmeas θ j)
+    have h1 := hcov θ j
+    linarith
+  have hub := measureReal_biUnion_finset_le (μ := P θ) (Finset.univ : Finset (Fin m))
+    (fun j => {x | τ j θ ∈ C j x}ᶜ)
+  have hsum : (P θ).real (⋃ j ∈ (Finset.univ : Finset (Fin m)), {x | τ j θ ∈ C j x}ᶜ)
+      ≤ ∑ j, α j :=
+    le_trans hub (Finset.sum_le_sum fun j _ => hfail j)
+  have hmeas_joint : MeasurableSet {x | ∀ j, τ j θ ∈ C j x} := by
+    rw [hjoint]
+    exact MeasurableSet.iInter fun j => hmeas θ j
+  have hback := probReal_compl_eq_one_sub (μ := P θ) hmeas_joint
+  rw [hcompl] at hback
+  linarith
+
 end MathlibExt.Probability.Statistics
