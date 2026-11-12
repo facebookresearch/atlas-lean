@@ -26,4 +26,4 @@ example : (0 : ℝ) ≤ 0 := by
     simp [Finset.sum_filter, Fin.sum_univ_two, PMF.pure_apply]
   have h := lecam_two_point (PMF.pure (0 : Fin 2)) (PMF.pure (1 : Fin 2))
     (fun a => decide (a = 1))
-  rw [hTV, hErr] at h
+  convert h using 1 <;> norm_num only [hTV, hErr]
