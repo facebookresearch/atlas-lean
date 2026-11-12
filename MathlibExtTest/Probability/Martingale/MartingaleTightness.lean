@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.ContinuousTightness
 public import MathlibExt.Probability.Martingale.MartingaleTightness
 public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Probability.ConditionalExpectation
@@ -16,6 +17,7 @@ public import Mathlib.Probability.ConditionalExpectation
 
 open Filter MeasureTheory ProbabilityTheory Topology
 open scoped ENNReal NNReal
+open MathlibExt.Probability.ContinuousTightness
 open MathlibExt.Probability.Martingale
 
 namespace MathlibExtTest.Probability.Martingale.MartingaleTightness

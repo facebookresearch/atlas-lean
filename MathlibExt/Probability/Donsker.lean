@@ -21,9 +21,9 @@ import Mathlib.MeasureTheory.Measure.Prokhorov
 import Mathlib.Probability.CentralLimitTheorem
 import Mathlib.Probability.IdentDistribIndep
 import Mathlib.Probability.Independence.CharacteristicFunction
-import Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli
 import Mathlib.Topology.ContinuousMap.SecondCountableSpace
 import MathlibExt.Probability.ContinuousPathConvergence
+import MathlibExt.Probability.ContinuousTightness
 public import Mathlib.Probability.BrownianMotion.Basic
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 
@@ -31,6 +31,7 @@ public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open MathlibExt.Probability.ContinuousPathConvergence
+open MathlibExt.Probability.ContinuousTightness
 open scoped ENNReal NNReal ProbabilityTheory Real
 
 namespace MathlibExt.Probability.DonskerWanted
@@ -1770,23 +1771,6 @@ private lemma donsker_etemadi_scaled_of_tail_bound
     _ ≤ c ^ 2 * (3 * ((η / 3) / c ^ 2)) := by gcongr
     _ = η := by field_simp
 
-private lemma donsker_maximal_partial_sum_tail_uniform
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
-    (X : ℕ → Ω → ℝ) (hMeas : ∀ i, Measurable (X i)) (hIndep : iIndepFun X P)
-    (hIdent : ∀ i, IdentDistrib (X i) (X 0) P P)
-    (hMemLp : MemLp (X 0) 2 P) (hMean : P[X 0] = 0)
-    (hVar : Var[X 0; P] = 1) {η : ℝ} (hη : 0 < η) :
-    ∃ L > 0, ∀ c, L ≤ c → ∀ᶠ m : ℕ in atTop,
-      c ^ 2 * P.real {ω | ∃ k ∈ Finset.range (m + 1),
-        3 * (c * Real.sqrt (m : ℝ)) ≤ |psum X k ω|} ≤ η := by
-  obtain ⟨L, hL, htail⟩ :=
-    donsker_partial_sum_tail_uniform X hIndep hIdent hMemLp hMean hVar
-      (div_pos hη (by norm_num : (0 : ℝ) < 3))
-  refine ⟨L, hL, fun c hLc => ?_⟩
-  have hc : 0 < c := hL.trans_le hLc
-  filter_upwards [htail c hLc] with m hm
-  exact donsker_etemadi_scaled_of_tail_bound X hMeas hIndep hc hη hm
-
 private lemma donsker_shifted_psum_tail_real_eq
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     (X : ℕ → Ω → ℝ) (hIndep : iIndepFun X P)
@@ -2163,238 +2147,16 @@ private lemma donsker_oscillation_eventually
       all_goals ring
     _ ≤ η := by linarith
 
-private lemma donsker_norm_tail_subset_max
-    {Ω : Type*} (X : ℕ → Ω → ℝ) {n : ℕ} (hn : 0 < n) {c : ℝ} (hc : 0 < c) :
-    {ω | 3 * c < ‖donskerProcess n X ω‖} ⊆
-      {ω | ∃ k ∈ Finset.range (n + 1),
-        3 * (c * Real.sqrt (n : ℝ)) ≤ |psum X k ω|} := by
-  intro ω hω
-  by_contra hlarge
-  have hblock (k : ℕ) (hk : k ≤ n) :
-      |psum (fun i => X (0 + i)) k ω| ≤ 3 * (c * Real.sqrt (n : ℝ)) := by
-    have hkmem : k ∈ Finset.range (n + 1) := Finset.mem_range.mpr (by omega)
-    have hnot : ¬3 * (c * Real.sqrt (n : ℝ)) ≤ |psum X k ω| := by
-      intro hklarge
-      exact hlarge ⟨k, hkmem, hklarge⟩
-    simpa only [zero_add] using (lt_of_not_ge hnot).le
-  have hfloor (t : Set.Icc (0 : ℝ) 1) :
-      Nat.floor ((n : ℝ) * t.1) ≤ n :=
-    Nat.floor_le_of_le (by
-      simpa only [mul_one] using
-        mul_le_mul_of_nonneg_left t.2.2 (Nat.cast_nonneg n))
-  have hpoint (t : Set.Icc (0 : ℝ) 1) :
-      |donskerProcess n X ω t| ≤ 3 * c := by
-    have h := donskerProcess_sub_psum_le n X ω t hn.ne' 0 n
-      (3 * (c * Real.sqrt (n : ℝ))) (Nat.zero_le _)
-      (by simpa only [zero_add] using hfloor t) (by intro; omega) hblock
-    have hnR : 0 < (n : ℝ) := by exact_mod_cast hn
-    have hsqrt : 0 < Real.sqrt (n : ℝ) := Real.sqrt_pos.2 hnR
-    simpa only [psum, Finset.sum_range_zero, zero_div, sub_zero, mul_div_assoc,
-      div_self hsqrt.ne', mul_one] using h
-  have hnorm : ‖donskerProcess n X ω‖ ≤ 3 * c := by
-    apply (ContinuousMap.norm_le (donskerProcess n X ω)
-      (mul_nonneg (by norm_num) hc.le)).2
-    intro t
-    simpa only [Real.norm_eq_abs] using hpoint t
-  exact (not_lt_of_ge hnorm) hω
+private lemma donskerProcess_apply_zero {Ω : Type*} (n : ℕ) (X : ℕ → Ω → ℝ) (ω : Ω) :
+    donskerProcess n X ω ⟨0, le_rfl, zero_le_one⟩ = 0 := by
+  rcases eq_or_ne n 0 with rfl | hn
+  · simp [donskerProcess]
+  · rw [donskerProcess_apply_eq n X ω _ hn]
+    simp
 
-private lemma donsker_norm_tail_eventually
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
-    (X : ℕ → Ω → ℝ) (hMeas : ∀ i, Measurable (X i)) (hIndep : iIndepFun X P)
-    (hIdent : ∀ i, IdentDistrib (X i) (X 0) P P)
-    (hMemLp : MemLp (X 0) 2 P) (hMean : P[X 0] = 0)
-    (hVar : Var[X 0; P] = 1) {η : ℝ} (hη : 0 < η) :
-    ∃ R > 0, ∀ᶠ n : ℕ in atTop,
-      P.real {ω | R < ‖donskerProcess n X ω‖} ≤ η := by
-  obtain ⟨L, hL, hmax⟩ :=
-    donsker_maximal_partial_sum_tail_uniform
-      X hMeas hIndep hIdent hMemLp hMean hVar hη
-  let c := max L 1
-  have hc : 0 < c := lt_of_lt_of_le zero_lt_one (le_max_right _ _)
-  have hLc : L ≤ c := le_max_left _ _
-  refine ⟨3 * c, mul_pos (by norm_num) hc, ?_⟩
-  filter_upwards [hmax c hLc, eventually_gt_atTop (0 : ℕ)] with n hnmax hn
-  have hmono := measureReal_mono (μ := P)
-    (donsker_norm_tail_subset_max X hn hc) (measure_ne_top P _)
-  have hc1 : 1 ≤ c ^ 2 := by nlinarith [le_max_right L 1]
-  calc
-    P.real {ω | 3 * c < ‖donskerProcess n X ω‖}
-        ≤ P.real {ω | ∃ k ∈ Finset.range (n + 1),
-          3 * (c * Real.sqrt (n : ℝ)) ≤ |psum X k ω|} := hmono
-    _ ≤ c ^ 2 * P.real {ω | ∃ k ∈ Finset.range (n + 1),
-          3 * (c * Real.sqrt (n : ℝ)) ≤ |psum X k ω|} := by
-      exact le_mul_of_one_le_left measureReal_nonneg hc1
-    _ ≤ η := hnmax
-
-private lemma donsker_isCompact_equicontinuous
-    {C : Set C(Set.Icc (0 : ℝ) 1, ℝ)} (hC : IsCompact C) :
-    Equicontinuous ((↑) : C → Set.Icc (0 : ℝ) 1 → ℝ) := by
-  have hcompact : IsCompact (C ×ˢ (Set.univ : Set (Set.Icc (0 : ℝ) 1))) :=
-    hC.prod isCompact_univ
-  have heval : Continuous (fun p : C(Set.Icc (0 : ℝ) 1, ℝ) × Set.Icc (0 : ℝ) 1 =>
-      p.1 p.2) := continuous_eval
-  have huc := hcompact.uniformContinuousOn_of_continuous heval.continuousOn
-  intro x
-  rw [Metric.equicontinuousAt_iff]
-  intro ε hε
-  obtain ⟨δ, hδ, hcontrol⟩ := (Metric.uniformContinuousOn_iff.mp huc) ε hε
-  refine ⟨δ, hδ, fun y hy f => ?_⟩
-  have hp : ((f.1, x) : C(Set.Icc (0 : ℝ) 1, ℝ) × Set.Icc (0 : ℝ) 1) ∈
-      C ×ˢ (Set.univ : Set (Set.Icc (0 : ℝ) 1)) := ⟨f.2, Set.mem_univ _⟩
-  have hq : ((f.1, y) : C(Set.Icc (0 : ℝ) 1, ℝ) × Set.Icc (0 : ℝ) 1) ∈
-      C ×ˢ (Set.univ : Set (Set.Icc (0 : ℝ) 1)) := ⟨f.2, Set.mem_univ _⟩
-  apply hcontrol (f.1, x) hp (f.1, y) hq
-  rw [Prod.dist_eq, dist_self, max_eq_right dist_nonneg]
-  simpa only [dist_comm] using hy
-
-private lemma donsker_isCompact_closure_of_bounded_equicontinuous
-    {A : Set C(Set.Icc (0 : ℝ) 1, ℝ)} {R : ℝ}
-    (hbound : ∀ f ∈ A, ‖f‖ ≤ R)
-    (hequi : Equicontinuous ((↑) : A → Set.Icc (0 : ℝ) 1 → ℝ)) :
-    IsCompact (closure A) := by
-  let e := ContinuousMap.isometryEquivBoundedOfCompact (Set.Icc (0 : ℝ) 1) ℝ
-  let D : Set (BoundedContinuousFunction (Set.Icc (0 : ℝ) 1) ℝ) := e '' A
-  have hin (g : BoundedContinuousFunction (Set.Icc (0 : ℝ) 1) ℝ)
-      (x : Set.Icc (0 : ℝ) 1) (hg : g ∈ D) : g x ∈ Metric.closedBall 0 R := by
-    obtain ⟨f, hf, rfl⟩ := hg
-    have hfx := (ContinuousMap.norm_coe_le_norm f x).trans (hbound f hf)
-    change f x ∈ Metric.closedBall 0 R
-    simpa only [Metric.mem_closedBall, Real.dist_eq, sub_zero, Real.norm_eq_abs] using hfx
-  let u : D → A := fun g => ⟨e.symm g.1, by
-    obtain ⟨f, hf, hfg⟩ := g.2
-    have : e.symm g.1 = f := by
-      calc
-        e.symm g.1 = e.symm (e f) := congrArg e.symm hfg.symm
-        _ = f := e.symm_apply_apply f
-    rwa [this]⟩
-  have hequiD : Equicontinuous ((↑) : D → Set.Icc (0 : ℝ) 1 → ℝ) := by
-    have h := hequi.comp u
-    have hfun :
-        (fun g : D => fun x => (u g).1 x) = (fun g : D => fun x => g.1 x) := by
-      funext g x
-      rfl
-    rw [← hfun]
-    exact h
-  have hD : IsCompact (closure D) :=
-    BoundedContinuousFunction.arzela_ascoli (Metric.closedBall (0 : ℝ) R)
-      (isCompact_closedBall (0 : ℝ) R) D hin hequiD
-  have himage : e '' closure A = closure D := by
-    have h := e.toHomeomorph.image_closure A
-    change e '' closure A = closure (e '' A) at h
-    simpa only [D] using h
-  have heq : e.symm '' closure D = closure A := by
-    rw [← himage]
-    apply Set.Subset.antisymm
-    · rintro f ⟨_, ⟨g, hg, rfl⟩, rfl⟩
-      simpa only [e.symm_apply_apply] using hg
-    · intro f hf
-      exact ⟨e f, ⟨f, hf, rfl⟩, e.symm_apply_apply f⟩
-  rw [← heq]
-  exact hD.image e.symm.continuous
-
-private lemma donsker_compact_capture
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
-    {W : Ω → C(Set.Icc (0 : ℝ) 1, ℝ)} (hW : Measurable W)
-    {b : ℝ} (hb : 0 < b) :
-    ∃ C : Set C(Set.Icc (0 : ℝ) 1, ℝ), IsCompact C ∧
-      P.real {ω | W ω ∉ C} ≤ b := by
-  let _ : IsFiniteMeasure (P.map W) := P.isFiniteMeasure_map W
-  have htight : IsTightMeasureSet {P.map W} := isTightMeasureSet_singleton
-  rw [isTightMeasureSet_iff_exists_isCompact_measure_compl_le] at htight
-  obtain ⟨C, hC, hbound⟩ := htight (ENNReal.ofReal b) (ENNReal.ofReal_pos.2 hb)
-  refine ⟨C, hC, ?_⟩
-  have hmap := hbound (P.map W) (Set.mem_singleton _)
-  rw [Measure.map_apply_of_aemeasurable hW.aemeasurable hC.isClosed.measurableSet.compl] at hmap
-  have hreal := (ENNReal.toReal_le_toReal (measure_ne_top P _) ENNReal.ofReal_ne_top).2 hmap
-  change (P (W ⁻¹' Cᶜ)).toReal ≤ b
-  simpa only [ENNReal.toReal_ofReal hb.le] using hreal
-
-private lemma donsker_oscillation_schedule
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
-    (X : ℕ → Ω → ℝ) (hMeas : ∀ i, Measurable (X i)) (hIndep : iIndepFun X P)
-    (hIdent : ∀ i, IdentDistrib (X i) (X 0) P P)
-    (hMemLp : MemLp (X 0) 2 P) (hMean : P[X 0] = 0)
-    (hVar : Var[X 0; P] = 1) {b : ℝ} (hb : 0 < b) :
-    ∃ δ : ℕ → ℝ, ∃ N : ℕ → ℕ,
-      (∀ j, 0 < δ j) ∧ (∀ j, j ≤ N j) ∧
-        ∀ j n, N j ≤ n →
-          P.real {ω | ∃ s t : Set.Icc (0 : ℝ) 1,
-            dist s t ≤ δ j ∧
-              1 / ((j : ℝ) + 1) ≤
-                dist (donskerProcess n X ω s) (donskerProcess n X ω t)} ≤
-            b / 8 * (1 / 2 : ℝ) ^ j := by
-  have hdata (j : ℕ) :
-      ∃ δ > 0, ∃ N : ℕ, j ≤ N ∧ ∀ n, N ≤ n →
-        P.real {ω | ∃ s t : Set.Icc (0 : ℝ) 1,
-          dist s t ≤ δ ∧
-            1 / ((j : ℝ) + 1) ≤
-              dist (donskerProcess n X ω s) (donskerProcess n X ω t)} ≤
-          b / 8 * (1 / 2 : ℝ) ^ j := by
-    have hjε : 0 < 1 / ((j : ℝ) + 1) := by positivity
-    have hjb : 0 < b / 8 * (1 / 2 : ℝ) ^ j := by positivity
-    obtain ⟨δ, hδ, hev⟩ := donsker_oscillation_eventually
-      X hMeas hIndep hIdent hMemLp hMean hVar hjε hjb
-    obtain ⟨N, hN⟩ := eventually_atTop.1 hev
-    refine ⟨δ, hδ, max N j, le_max_right _ _, fun n hn => ?_⟩
-    exact hN n ((le_max_left _ _).trans hn)
-  choose δ hδ N hjN hprob using hdata
-  exact ⟨δ, N, hδ, hjN, hprob⟩
-
-private def donskerGoodFamily
-    (C : ℕ → Set C(Set.Icc (0 : ℝ) 1, ℝ)) (R : ℝ) (NR : ℕ)
-    (δ : ℕ → ℝ) (N : ℕ → ℕ) : Set C(Set.Icc (0 : ℝ) 1, ℝ) :=
-  {f | ∃ n, f ∈ C n ∧ (NR ≤ n → ‖f‖ ≤ R) ∧
-    ∀ j, N j ≤ n → ∀ s t : Set.Icc (0 : ℝ) 1, dist s t ≤ δ j →
-      dist (f s) (f t) < 1 / ((j : ℝ) + 1)}
-
-private lemma donsker_good_family_compact
-    (C : ℕ → Set C(Set.Icc (0 : ℝ) 1, ℝ)) (hC : ∀ n, IsCompact (C n))
-    (R : ℝ) (NR : ℕ) (δ : ℕ → ℝ) (N : ℕ → ℕ)
-    (hδ : ∀ j, 0 < δ j) :
-    IsCompact (closure (donskerGoodFamily C R NR δ N)) := by
-  let CEarly : Set C(Set.Icc (0 : ℝ) 1, ℝ) := ⋃ n ∈ Finset.range NR, C n
-  have hCEarly : IsCompact CEarly := by
-    exact (Finset.range NR).isCompact_biUnion fun n _ => hC n
-  obtain ⟨S, hS⟩ :=
-    (Metric.isBounded_iff_subset_closedBall
-      (0 : C(Set.Icc (0 : ℝ) 1, ℝ))).mp hCEarly.isBounded
-  have hbound (f : C(Set.Icc (0 : ℝ) 1, ℝ))
-      (hf : f ∈ donskerGoodFamily C R NR δ N) : ‖f‖ ≤ max R S := by
-    obtain ⟨n, hfn, hnorm, _⟩ := hf
-    by_cases hn : NR ≤ n
-    · exact (hnorm hn).trans (le_max_left _ _)
-    · have hnlt : n < NR := lt_of_not_ge hn
-      have hfearly : f ∈ CEarly := by
-        refine Set.mem_iUnion.2 ⟨n, Set.mem_iUnion.2 ⟨Finset.mem_range.2 hnlt, hfn⟩⟩
-      have hfball := hS hfearly
-      rw [Metric.mem_closedBall, dist_zero_right] at hfball
-      exact hfball.trans (le_max_right _ _)
-  have hequi : Equicontinuous
-      ((↑) : donskerGoodFamily C R NR δ N → Set.Icc (0 : ℝ) 1 → ℝ) := by
-    intro x
-    rw [Metric.equicontinuousAt_iff]
-    intro ε hε
-    obtain ⟨j, hj⟩ := exists_nat_one_div_lt hε
-    let CSmall : Set C(Set.Icc (0 : ℝ) 1, ℝ) := ⋃ n ∈ Finset.range (N j), C n
-    have hCSmall : IsCompact CSmall := by
-      exact (Finset.range (N j)).isCompact_biUnion fun n _ => hC n
-    have hearly := donsker_isCompact_equicontinuous hCSmall
-    have hearlyAt := hearly x
-    rw [Metric.equicontinuousAt_iff] at hearlyAt
-    obtain ⟨d, hd, hcontrol⟩ := hearlyAt ε hε
-    refine ⟨min d (δ j), lt_min hd (hδ j), fun y hy f => ?_⟩
-    obtain ⟨n, hfn, _, hosc⟩ := f.2
-    by_cases hjn : N j ≤ n
-    · have hxy : dist x y ≤ δ j := by
-        rw [dist_comm]
-        exact (hy.trans_le (min_le_right _ _)).le
-      exact (hosc j hjn x y hxy).trans hj
-    · have hnlt : n < N j := lt_of_not_ge hjn
-      have hfsmall : f.1 ∈ CSmall := by
-        refine Set.mem_iUnion.2 ⟨n, Set.mem_iUnion.2 ⟨Finset.mem_range.2 hnlt, hfn⟩⟩
-      exact hcontrol y (hy.trans_le (min_le_left _ _)) ⟨f.1, hfsmall⟩
-  exact donsker_isCompact_closure_of_bounded_equicontinuous hbound hequi
-
+/-- Tightness of the Donsker laws: the polygons start at `0`, so the shared modulus criterion
+`isTightMeasureSet_of_modulus` applies to the oscillation bound
+`donsker_oscillation_eventually`. -/
 private lemma donsker_laws_isTightMeasureSet
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
     (X : ℕ → Ω → ℝ) (hMeas : ∀ i, Measurable (X i)) (hIndep : iIndepFun X P)
@@ -2402,118 +2164,11 @@ private lemma donsker_laws_isTightMeasureSet
     (hMemLp : MemLp (X 0) 2 P) (hMean : P[X 0] = 0)
     (hVar : Var[X 0; P] = 1) :
     IsTightMeasureSet (Set.range fun n =>
-      P.map (fun ω => donskerProcess n X ω)) := by
-  rw [isTightMeasureSet_iff_exists_isCompact_measure_compl_le]
-  intro ζ hζ
-  by_cases hζtop : ζ = ∞
-  · exact ⟨∅, isCompact_empty, by simp only [hζtop, le_top, implies_true]⟩
-  let b := ζ.toReal
-  have hb : 0 < b := ENNReal.toReal_pos hζ.ne' hζtop
-  have hcapture (n : ℕ) :
-      ∃ C : Set C(Set.Icc (0 : ℝ) 1, ℝ), IsCompact C ∧
-        P.real {ω | donskerProcess n X ω ∉ C} ≤ b / 4 :=
-    donsker_compact_capture (donskerProcess_measurable X hMeas n) (div_pos hb (by norm_num))
-  choose C hC hCprob using hcapture
-  obtain ⟨R, hR, hnormEv⟩ := donsker_norm_tail_eventually
-    X hMeas hIndep hIdent hMemLp hMean hVar (div_pos hb (by norm_num : (0 : ℝ) < 4))
-  obtain ⟨NR, hnorm⟩ := eventually_atTop.1 hnormEv
-  obtain ⟨δ, N, hδ, hjN, hosc⟩ := donsker_oscillation_schedule
-    X hMeas hIndep hIdent hMemLp hMean hVar hb
-  let A := donskerGoodFamily C R NR δ N
-  let K := closure A
-  have hK : IsCompact K := by
-    exact donsker_good_family_compact C hC R NR δ N hδ
-  refine ⟨K, hK, ?_⟩
-  rintro μ ⟨n, rfl⟩
-  let W : Ω → C(Set.Icc (0 : ℝ) 1, ℝ) := fun ω => donskerProcess n X ω
-  let baseFail : Set Ω := {ω | W ω ∉ C n}
-  let normFail : Set Ω := {ω | R < ‖W ω‖}
-  let oscFail : ℕ → Set Ω := fun j =>
-    {ω | ∃ s t : Set.Icc (0 : ℝ) 1,
-      dist s t ≤ δ j ∧ 1 / ((j : ℝ) + 1) ≤ dist (W ω s) (W ω t)}
-  let J := (Finset.range (n + 1)).filter fun j => N j ≤ n
-  let allFail := baseFail ∪ (if NR ≤ n then normFail else ∅) ∪ ⋃ j ∈ J, oscFail j
-  have hpre : W ⁻¹' Kᶜ ⊆ allFail := by
-    intro ω hω
-    by_cases hCω : W ω ∈ C n
-    · by_cases hnR : NR ≤ n
-      · by_cases hnormω : R < ‖W ω‖
-        · exact Or.inl (Or.inr (by simp only [hnR, ite_true, normFail]; exact hnormω))
-        · by_cases hoscω : ∀ j, N j ≤ n → ∀ s t : Set.Icc (0 : ℝ) 1,
-              dist s t ≤ δ j → dist (W ω s) (W ω t) < 1 / ((j : ℝ) + 1)
-          · exfalso
-            apply hω
-            apply subset_closure
-            exact ⟨n, hCω, fun _ => le_of_not_gt hnormω, hoscω⟩
-          · push Not at hoscω
-            obtain ⟨j, hjn, s, t, hst, hbad⟩ := hoscω
-            have hjJ : j ∈ J := by
-              rw [Finset.mem_filter, Finset.mem_range]
-              exact ⟨Nat.lt_succ_of_le ((hjN j).trans hjn), hjn⟩
-            refine Or.inr (Set.mem_iUnion.2 ⟨j, Set.mem_iUnion.2 ⟨hjJ, ?_⟩⟩)
-            exact ⟨s, t, hst, hbad⟩
-      · by_cases hoscω : ∀ j, N j ≤ n → ∀ s t : Set.Icc (0 : ℝ) 1,
-            dist s t ≤ δ j → dist (W ω s) (W ω t) < 1 / ((j : ℝ) + 1)
-        · exfalso
-          apply hω
-          apply subset_closure
-          exact ⟨n, hCω, fun h => False.elim (hnR h), hoscω⟩
-        · push Not at hoscω
-          obtain ⟨j, hjn, s, t, hst, hbad⟩ := hoscω
-          have hjJ : j ∈ J := by
-            rw [Finset.mem_filter, Finset.mem_range]
-            exact ⟨Nat.lt_succ_of_le ((hjN j).trans hjn), hjn⟩
-          refine Or.inr (Set.mem_iUnion.2 ⟨j, Set.mem_iUnion.2 ⟨hjJ, ?_⟩⟩)
-          exact ⟨s, t, hst, hbad⟩
-    · exact Or.inl (Or.inl hCω)
-  have hnormFail : P.real (if NR ≤ n then normFail else ∅) ≤ b / 4 := by
-    by_cases hnR : NR ≤ n
-    · simp only [hnR, ite_true, normFail, W]
-      exact hnorm n hnR
-    · simp only [hnR, ite_false, measureReal_empty]
-      exact div_nonneg hb.le (by norm_num)
-  have hoscUnion : P.real (⋃ j ∈ J, oscFail j) ≤ b / 4 := by
-    calc
-      P.real (⋃ j ∈ J, oscFail j)
-          ≤ ∑ j ∈ J, P.real (oscFail j) :=
-        measureReal_biUnion_finset_le J oscFail
-      _ ≤ ∑ j ∈ J, b / 8 * (1 / 2 : ℝ) ^ j := by
-        apply Finset.sum_le_sum
-        intro j hj
-        have hjn := (Finset.mem_filter.mp hj).2
-        simpa only [oscFail, W] using hosc j n hjn
-      _ ≤ ∑ j ∈ Finset.range (n + 1), b / 8 * (1 / 2 : ℝ) ^ j := by
-        apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
-        intro j _ _
-        positivity
-      _ = b / 8 * ∑ j ∈ Finset.range (n + 1), (1 / 2 : ℝ) ^ j := by
-        rw [Finset.mul_sum]
-      _ ≤ b / 8 * 2 := mul_le_mul_of_nonneg_left (sum_geometric_two_le _) (by positivity)
-      _ = b / 4 := by ring
-  have hallFail : P.real allFail ≤ b := by
-    calc
-      P.real allFail
-          ≤ P.real baseFail + P.real (if NR ≤ n then normFail else ∅) +
-              P.real (⋃ j ∈ J, oscFail j) := by
-        dsimp only [allFail]
-        calc
-          P.real ((baseFail ∪ if NR ≤ n then normFail else ∅) ∪
-              ⋃ j ∈ J, oscFail j)
-              ≤ P.real (baseFail ∪ if NR ≤ n then normFail else ∅) +
-                P.real (⋃ j ∈ J, oscFail j) := measureReal_union_le _ _
-          _ ≤ (P.real baseFail + P.real (if NR ≤ n then normFail else ∅)) +
-                P.real (⋃ j ∈ J, oscFail j) := by
-            gcongr
-            exact measureReal_union_le _ _
-      _ ≤ b / 4 + b / 4 + b / 4 :=
-        add_le_add (add_le_add (hCprob n) hnormFail) hoscUnion
-      _ ≤ b := by linarith
-  have hreal : P.real (W ⁻¹' Kᶜ) ≤ b :=
-    (measureReal_mono (μ := P) hpre (measure_ne_top P _)).trans hallFail
-  rw [Measure.map_apply_of_aemeasurable
-    (donskerProcess_measurable X hMeas n).aemeasurable hK.isClosed.measurableSet.compl]
-  apply (ENNReal.toReal_le_toReal (measure_ne_top P _) hζtop).1
-  simpa only [measureReal_def, b, W] using hreal
+      P.map (fun ω => donskerProcess n X ω)) :=
+  isTightMeasureSet_of_modulus (fun n ω => donskerProcess n X ω)
+    (donskerProcess_measurable X hMeas) (donskerProcess_apply_zero · X)
+    fun _ hε _ hb =>
+      donsker_oscillation_eventually X hMeas hIndep hIdent hMemLp hMean hVar hε hb
 
 private lemma donsker_continuous_finsetEval
     (I : Finset (Set.Icc (0 : ℝ) 1)) :
