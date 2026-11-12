@@ -246,4 +246,17 @@ example {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
       · exact isValidPValue_coinP
       · exact isValidPValue_coinP_not) q hq₀ hq₁
 
+/-- `bhIndex` is the generic step-up index of `MultipleTesting.Basic` with thresholds
+`q k / m`, so `bhIndex_p3` evaluates `suIdx` too. -/
+example : suIdx (fun k => 1 / 10 * (k : ℝ) / ((3 : ℕ) : ℝ)) p3 = 2 := bhIndex_p3
+
+/-- `bhIndex_eq_sup` on the example: the finite-supremum form also gives `2`. -/
+example : (Finset.range (3 + 1)).sup
+    (fun k => if k ≤ numBelow p3 (1 / 10 * (k : ℝ) / ((3 : ℕ) : ℝ)) then k else 0) = 2 :=
+  (bhIndex_eq_sup (1 / 10) p3).symm.trans bhIndex_p3
+
+/-- `measurable_bhIndex` for the coordinate projections. -/
+example (q : ℝ) : Measurable fun x : Fin 3 → ℝ => bhIndex q x :=
+  measurable_bhIndex (fun i (x : Fin 3 → ℝ) => x i) (fun i => measurable_pi_apply i) q
+
 end MathlibExtTest.Probability.Statistics.MultipleTesting.BenjaminiHochberg

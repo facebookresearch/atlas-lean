@@ -416,4 +416,11 @@ example {Ω : Type*} [MeasurableSpace Ω] (μ' : Measure Ω) [IsProbabilityMeasu
   integral_falseDiscoveryProportion_storeyBHRejections_le_of_iIndepFun μ' p hp hindep _
     (fun i _ => hnull i) (by norm_num) (by norm_num) (by norm_num)
 
+/-- The Storey-BH index is the generic step-up index of `MultipleTesting.Basic` at the
+Storey-BH thresholds, so `suIdx_le` bounds it. -/
+example (q lam : ℝ) (p : Fin 3 → ℝ) :
+    suIdx (storeyThreshold q lam p) p = storeyBHIndex q lam p ∧
+      storeyBHIndex q lam p ≤ 3 :=
+  ⟨rfl, suIdx_le _ p⟩
+
 end MathlibExtTest.Probability.Statistics.MultipleTesting.Adaptive.StoreyBH
