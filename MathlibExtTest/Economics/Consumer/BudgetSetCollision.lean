@@ -23,6 +23,12 @@ open _root_.Economics.Consumer MathlibExt.Economics.Consumer
 it resolves to the `MathlibExt` copy. -/
 example : @budgetSet = @MathlibExt.Economics.Consumer.budgetSet := rfl
 
+/-- `Economics.Consumer.budgetSet` is an alias of the canonical `MathlibExt` copy, not a
+second definition: the two qualified names resolve to the same constant, so the
+previously public name keeps compiling. -/
+example : @Economics.Consumer.budgetSet =
+    @MathlibExt.Economics.Consumer.budgetSet := rfl
+
 /-- With both consumer namespaces open, `consumerBudgetSet` is the duality-API
 copy in `Economics.Consumer`. -/
 example : @consumerBudgetSet = @_root_.Economics.Consumer.consumerBudgetSet := rfl

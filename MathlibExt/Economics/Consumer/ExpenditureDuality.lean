@@ -12,6 +12,7 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.Topology.MetricSpace.Pseudo.Pi
 public import MathlibExt.Economics.Consumer.LocalNonsatiation
+public import MathlibExt.Economics.Consumer.TwoGood
 import Mathlib.Topology.Algebra.Monoid
 import Mathlib.Topology.Algebra.Ring.Real
 
@@ -33,6 +34,8 @@ condition on prices, no continuity of utility and no convexity is needed for thi
 ## Main definitions
 
 * `Economics.Consumer.consumerBudgetSet`: the budget set `B(p, w)`.
+* `Economics.Consumer.budgetSet`: the budget set `B(p, w)`, an alias of
+  `MathlibExt.Economics.Consumer.budgetSet`.
 * `Economics.Consumer.IsMarshallianDemand`: an affordable utility maximizer.
 * `Economics.Consumer.indirectUtility`: `v(p, w) = sup {u x | x ∈ B(p, w)}`.
 * `Economics.Consumer.expenditure`: `e(p, ū) = inf {p ⬝ᵥ x | x ∈ X, ū ≤ u x}`.
@@ -82,6 +85,11 @@ only when the target is feasible and costs are bounded below. -/
 noncomputable def expenditure {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
     (X : Set (ι → ℝ)) (p : ι → ℝ) (ubar : ℝ) : ℝ :=
   sInf ((fun x => p ⬝ᵥ x) '' {x | x ∈ X ∧ ubar ≤ u x})
+
+/- The budget set is defined once, in `MathlibExt.Economics.Consumer`; this alias keeps the
+name `Economics.Consumer.budgetSet` resolving to that same constant, so opening both
+consumer namespaces leaves unqualified `budgetSet` unambiguous. -/
+export MathlibExt.Economics.Consumer (budgetSet)
 
 /- Local nonsatiation is defined once, in `MathlibExt.Economics.Consumer`; this alias keeps the
 name `Economics.Consumer.LocallyNonsatiated` resolving to that same constant. -/
