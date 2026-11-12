@@ -35,20 +35,22 @@ spending budget (`pocockSpending`, a Lan–DeMets Pocock-type spending function)
 boundaries: no joint-law boundary, first-crossing spending constraint, or optimality claim is
 formalized here.
 
-Concretely, with two looks whose spending increments are `c₁, c₂ > 0` and independent
-uniform p-values, the procedure rejects with probability `1 - (1 - c₁)(1 - c₂) =
-c₁ + c₂ - c₁ * c₂ < c₁ + c₂` (`two_look_independent_gap` is the algebra), so it is
-conservative relative to the spend: it is weighted Bonferroni, not exact Lan–DeMets.
+Concretely, with two looks whose spending increments satisfy `0 < c₁, c₂ ≤ 1` and
+independent uniform p-values, the procedure rejects with probability
+`1 - (1 - c₁)(1 - c₂) = c₁ + c₂ - c₁ * c₂ < c₁ + c₂`, so it is conservative relative
+to the spend: it is weighted Bonferroni, not exact Lan–DeMets. This joint-law calculation
+is not formalized; `two_look_independent_gap` proves only the underlying real identity
+and non-strict inequality.
 
 ## Fixed-family testing versus optional stopping
 
 *Fixed-family testing* treats the `K` looks as `K` separate tests, each at level `α`. Every
 single look then has type-I error at most `α`, but the trial's error is the probability of the
 union of the per-look rejection events, and the union bound only gives `K α`
-(`measure_rejectedLooks_const_nonempty_le`). The bound is attained:
+(`measure_rejectedLooks_const_nonempty_le`). The bound can be attained:
 `exists_rejectedLooks_const_typeI_eq` exhibits two valid looks at level `1/4` whose sequential
 error is `1/2`. Testing each look at level `α` and stopping at the first rejection does not
-control the error at `α`.
+in general control the error at `α`.
 
 *Bonferroni allocation* fixes, before the trial, a spending function `f` with `f 0 = 0`,
 monotone on `[0, 1]`, `f 1 ≤ α` (`IsAlphaSpendingFunction`) and information times
@@ -225,12 +227,10 @@ theorem sum_bonferroniLookLevel_le (hf : IsAlphaSpendingFunction α f) (hτ0 : �
 
 end Spend
 
-/-- **Conservatism gap for two independent looks.** If two looks have spending increments
-`c₁, c₂ ≥ 0` and independent uniform p-values, the procedure rejects with probability
-`1 - (1 - c₁)(1 - c₂)`, which equals `c₁ + c₂ - c₁ * c₂` and is at most the Bonferroni
-bound `c₁ + c₂`, with gap `c₁ * c₂`. This is the algebra behind the claim that the
-procedure is conservative weighted Bonferroni, not exact Lan–DeMets: the joint-law
-calculation itself is not formalized, only the resulting real identity. -/
+/-- **Algebraic two-look gap.** For nonnegative real `c₁` and `c₂`, the expression
+`1 - (1 - c₁)(1 - c₂)` equals `c₁ + c₂ - c₁ * c₂` and is at most `c₁ + c₂`.
+This is only a real identity and inequality: no probability or independence statement is
+formalized, and the expression need not belong to `[0, 1]`. -/
 theorem two_look_independent_gap {c₁ c₂ : ℝ} (hc₁ : 0 ≤ c₁) (hc₂ : 0 ≤ c₂) :
     1 - (1 - c₁) * (1 - c₂) = c₁ + c₂ - c₁ * c₂ ∧
       1 - (1 - c₁) * (1 - c₂) ≤ c₁ + c₂ := by
@@ -350,8 +350,9 @@ theorem rejectedLooks_bonferroniLookLevel_eq_empty_of_eq_one {α : ℝ} {f : ℝ
 /-! ### Fixed-family testing at level `α` per look -/
 
 /-- **Fixed-family testing gives only `K α`.** Testing each of `K` valid looks at level
-`α ∈ [0, 1]` and rejecting if any look rejects has type-I error at most `K α`; the bound is
-attained (`exists_rejectedLooks_const_typeI_eq`), so it does not control the error at `α`. -/
+`α ∈ [0, 1]` and rejecting if any look rejects has type-I error at most `K α`. The bound
+can be attained: `exists_rejectedLooks_const_typeI_eq` gives `K = 2`, `α = 1/4`, and error
+`1/2`. Thus this procedure does not in general control the error at `α`. -/
 theorem measure_rejectedLooks_const_nonempty_le (μ : Measure Ω) (p : ℕ → Ω → ℝ) {α : ℝ}
     {K : ℕ} (hα₀ : 0 ≤ α) (hα₁ : α ≤ 1) (hnull : ∀ k < K, IsValidPValue μ (p k)) :
     μ {ω | (rejectedLooks K (fun _ => α) fun k => p k ω).Nonempty} ≤
