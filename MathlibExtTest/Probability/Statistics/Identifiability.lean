@@ -17,6 +17,7 @@ public import Mathlib.Probability.Kernel.Deterministic
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory MathlibExt.Probability.Statistics
+open MathlibExt.Probability.Causality
 
 namespace MathlibExtTest.Probability.Statistics.Identifiability
 
@@ -152,5 +153,217 @@ example :
     norm_num
   exact MathlibExt.Probability.Statistics.exists_measureReal_failure_ge_half_of_deterministic
     P τ hP hδ hε hsep
+
+/-- Negative: when the outcome drives treatment, conditional independence fails, so no
+`StronglyIgnorable` hypothesis is available and the per-setting equation does not apply.
+With two fair coins, `T = {fst}` and `V = fst` at `B = {true}`, `w = ()`: LHS `1/2`,
+RHS `1/4`. -/
+example : ¬ CondIndepDiscrete (fairCoin.prod fairCoin) {ω : Bool × Bool | ω.1 = true}
+    (fun ω : Bool × Bool => ω.1) (fun _ : Bool × Bool => ()) := by
+  intro h
+  have hcon := h {true} (measurableSet_singleton true) ()
+  have hT : {ω : Bool × Bool | ω.1 = true} = ({true} ×ˢ (Set.univ : Set Bool)) := by
+    ext ⟨a, b⟩
+    simp
+  have hV : (fun ω : Bool × Bool => ω.1) ⁻¹' ({true} : Set Bool) =
+      ({true} ×ˢ (Set.univ : Set Bool)) := by
+    ext ⟨a, b⟩
+    simp
+  have hW : (fun _ : Bool × Bool => ()) ⁻¹' ({()} : Set Unit) = Set.univ := by
+    ext ⟨a, b⟩
+    simp
+  rw [hT, hV, hW] at hcon
+  simp only [Set.inter_self, Set.inter_univ] at hcon
+  have hcoin : fairCoin {true} = (2 : ENNReal)⁻¹ := by simp [fairCoin]
+  have hprod : (fairCoin.prod fairCoin) ({true} ×ˢ (Set.univ : Set Bool)) = (2 : ENNReal)⁻¹ := by
+    rw [Measure.prod_prod, hcoin, measure_univ, mul_one]
+  unfold Measure.real at hcon
+  rw [hprod, measure_univ] at hcon
+  norm_num at hcon
+
+/-- Positive: ignorability passes through measurable transformations of the outcome. -/
+example {Ω β γ δ : Type*} [MeasurableSpace Ω] [MeasurableSpace β] [MeasurableSpace γ]
+    {μ : Measure Ω} {T : Set Ω} {V : Ω → β} {W : Ω → δ} {g : β → γ}
+    (h : StronglyIgnorable μ T V W) (hg : Measurable g) :
+    StronglyIgnorable μ T (g ∘ V) W := by
+  exact h.comp hg
+
+/-- Boundary: overlap gives strict propensity bounds at every positive-probability value. -/
+example {Ω β γ : Type*} [MeasurableSpace Ω] [MeasurableSpace β]
+    {μ : Measure Ω} {T : Set Ω} {V : Ω → β} {W : Ω → γ}
+    (h : StronglyIgnorable μ T V W) (w : γ) (hw : μ (W ⁻¹' {w}) ≠ 0) :
+    0 < propensity μ T W w ∧ propensity μ T W w < 1 := by
+  exact h.2 w hw
+
+/-- Positive: duplicate parameter labels with identical data are identified. Apply the
+wrapper with constant families. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {T : Set Ω} (hT : MeasurableSet T)
+    {𝒳 : Type*} [Finite 𝒳] [MeasurableSpace 𝒳] [MeasurableSingletonClass 𝒳]
+    {X : Ω → 𝒳} (hX : Measurable X) {Y₀ Y₁ : Ω → ℝ}
+    (hY₀ : Measurable Y₀) (hY₁ : Measurable Y₁)
+    (hY₀i : Integrable Y₀ μ) (hY₁i : Integrable Y₁ μ)
+    (hSI : StronglyIgnorable μ T (fun ω => (Y₀ ω, Y₁ ω)) X) :
+    IsIdentifiedBy (fun _ : Bool => obsLaw μ T X Y₀ Y₁)
+      (fun _ : Bool => ∫ ω, (Y₁ ω - Y₀ ω) ∂μ) := by
+  exact ate_isIdentifiedBy_observational_law (μ := fun _ => μ) (T := fun _ => T) (X := fun _ => X)
+    (Y₀ := fun _ => Y₀) (Y₁ := fun _ => Y₁) (fun _ => hT) (fun _ => hX) (fun _ => hY₀) (fun _ => hY₁)
+    (fun _ => hY₀i) (fun _ => hY₁i) (fun _ => hSI)
+
+/-- Two-coin observational model: the covariate reads the first coin, treatment is the
+second coin, and the potential outcomes read the first coin. -/
+private def obsT : Set (Bool × Bool) := {ω | ω.2 = true}
+private def obsX : Bool × Bool → Bool := fun ω => ω.1
+private def obsY0 : Bool × Bool → ℝ := fun ω => if ω.1 then 1 else 0
+private def obsY1 : Bool × Bool → ℝ := fun ω => if ω.1 then 3 else 0
+
+/-- Non-vacuous coverage: on the two-coin model the law-read propensity is `1 / 2` at both
+covariate values and the law-read IPW functional equals `1`. Both `propensityFromLaw` and
+`ipwATE` are evaluated on the pushed-forward observational law. -/
+example :
+    (∀ w : Bool, propensityFromLaw
+      (obsLaw (fairCoin.prod fairCoin) obsT obsX obsY0 obsY1) w = 1 / 2) ∧
+    ipwATE (obsLaw (fairCoin.prod fairCoin) obsT obsX obsY0 obsY1) = 1 := by
+  classical
+  have hT : MeasurableSet obsT := by
+    unfold obsT
+    exact measurable_snd (measurableSet_singleton true)
+  have hX : Measurable obsX := by
+    unfold obsX
+    exact measurable_fst
+  have hY0 : Measurable obsY0 := by
+    unfold obsY0
+    exact Measurable.of_discrete
+  have hY1 : Measurable obsY1 := by
+    unfold obsY1
+    exact Measurable.of_discrete
+  have hobsY : Measurable (observed obsT obsY0 obsY1) := by
+    unfold observed
+    exact (Measurable.indicator hY1 hT).add (Measurable.indicator hY0 hT.compl)
+  have h1 : Measurable fun ω : Bool × Bool => obsT.indicator (1 : Bool × Bool → ℝ) ω :=
+    Measurable.indicator measurable_const hT
+  have hobs : Measurable (obsDatum obsT obsX obsY0 obsY1) := by
+    unfold obsDatum
+    exact hX.prodMk (h1.prodMk hobsY)
+  have hdatum : ∀ ω : Bool × Bool, obsDatum obsT obsX obsY0 obsY1 ω
+      = (obsX ω, obsT.indicator 1 ω, observed obsT obsY0 obsY1 ω) := fun ω => rfl
+  have hXv : ∀ ω : Bool × Bool, obsX ω = ω.1 := fun ω => rfl
+  have hY0v : ∀ ω : Bool × Bool, obsY0 ω = (if ω.1 then (1 : ℝ) else 0) := fun ω => rfl
+  have hY1v : ∀ ω : Bool × Bool, obsY1 ω = (if ω.1 then (3 : ℝ) else 0) := fun ω => rfl
+  have hind : ∀ ω : Bool × Bool, obsT.indicator (1 : Bool × Bool → ℝ) ω = 1 ↔ ω ∈ obsT := by
+    intro ω
+    by_cases hmem : ω ∈ obsT
+    · rw [Set.indicator_of_mem hmem]; simp [hmem]
+    · rw [Set.indicator_of_notMem hmem]; simp [hmem]
+  have hmemT : ∀ ω : Bool × Bool, ω ∈ obsT ↔ ω.2 = true := fun ω => Iff.rfl
+  have hcoin : ∀ b : Bool, fairCoin {b} = (2 : ENNReal)⁻¹ := by
+    intro b
+    cases b <;> simp [fairCoin]
+  have hpre1 : ∀ w : Bool, (obsDatum obsT obsX obsY0 obsY1) ⁻¹'
+      ({w} ×ˢ ({1} ×ˢ (Set.univ : Set ℝ)))
+      = {w} ×ˢ ({true} : Set Bool) := by
+    intro w
+    ext ⟨a, b⟩
+    simp only [Set.mem_preimage, hdatum, hXv, Set.mem_prod, Set.mem_singleton_iff,
+      Set.mem_univ, and_true, hind, hmemT]
+  have hpre2 : ∀ w : Bool, (obsDatum obsT obsX obsY0 obsY1) ⁻¹'
+      ({w} ×ˢ (Set.univ ×ˢ (Set.univ : Set ℝ)))
+      = {w} ×ˢ (Set.univ : Set Bool) := by
+    intro w
+    ext ⟨a, b⟩
+    simp only [Set.mem_preimage, hdatum, hXv, Set.mem_prod, Set.mem_singleton_iff,
+      Set.mem_univ, and_true]
+  have hmuP : ∀ a b : Bool, ((fairCoin.prod fairCoin) ({a} ×ˢ ({b} : Set Bool))).toReal
+      = 1 / 4 := by
+    intro a b
+    rw [Measure.prod_prod, hcoin a, hcoin b]
+    norm_num [ENNReal.toReal_mul]
+  have hmu2 : ∀ w : Bool, ((fairCoin.prod fairCoin) ({w} ×ˢ (Set.univ : Set Bool))).toReal
+      = 1 / 2 := by
+    intro w
+    rw [Measure.prod_prod, hcoin w, measure_univ, mul_one]
+    simp
+  have hprop : ∀ w : Bool, propensityFromLaw
+      (obsLaw (fairCoin.prod fairCoin) obsT obsX obsY0 obsY1) w = 1 / 2 := by
+    intro w
+    unfold propensityFromLaw obsLaw Measure.real
+    rw [Measure.map_apply hobs ((measurableSet_singleton w).prod
+        ((measurableSet_singleton 1).prod MeasurableSet.univ)),
+      Measure.map_apply hobs ((measurableSet_singleton w).prod
+        (MeasurableSet.univ.prod MeasurableSet.univ)),
+      hpre1 w, hpre2 w, hmuP w true, hmu2 w]
+    norm_num
+  refine ⟨hprop, ?_⟩
+  have hFmeas : AEStronglyMeasurable
+      (fun s : Bool × ℝ × ℝ => ((({1} ×ˢ (Set.univ : Set ℝ)).indicator
+        (fun _ : ℝ × ℝ => (1 : ℝ)) s.2) * s.2.2 / (1 / 2 : ℝ) -
+      ((({0} ×ˢ (Set.univ : Set ℝ)).indicator (fun _ : ℝ × ℝ => (1 : ℝ)) s.2) *
+        s.2.2 / (1 - 1 / 2 : ℝ)))) (Measure.map (obsDatum obsT obsX obsY0 obsY1)
+      (fairCoin.prod fairCoin)) := by
+    apply Measurable.aestronglyMeasurable
+    have hA1 : Measurable fun s : Bool × ℝ × ℝ =>
+        ((({1} ×ˢ (Set.univ : Set ℝ)).indicator (fun _ : ℝ × ℝ => (1 : ℝ))) s.2) :=
+      (Measurable.indicator measurable_const
+        ((measurableSet_singleton (1 : ℝ)).prod MeasurableSet.univ)).comp measurable_snd
+    have hA0 : Measurable fun s : Bool × ℝ × ℝ =>
+        ((({0} ×ˢ (Set.univ : Set ℝ)).indicator (fun _ : ℝ × ℝ => (1 : ℝ))) s.2) :=
+      (Measurable.indicator measurable_const
+        ((measurableSet_singleton (0 : ℝ)).prod MeasurableSet.univ)).comp measurable_snd
+    have hB : Measurable fun s : Bool × ℝ × ℝ => s.2.2 :=
+      measurable_snd.comp measurable_snd
+    exact ((hA1.mul hB).div_const _).sub ((hA0.mul hB).div_const _)
+  have hfun : (fun ω : Bool × Bool => ((({1} ×ˢ (Set.univ : Set ℝ)).indicator
+        (fun _ : ℝ × ℝ => (1 : ℝ)) (obsDatum obsT obsX obsY0 obsY1 ω).2) *
+        (obsDatum obsT obsX obsY0 obsY1 ω).2.2 / (1 / 2 : ℝ) -
+      ((({0} ×ˢ (Set.univ : Set ℝ)).indicator (fun _ : ℝ × ℝ => (1 : ℝ))
+        (obsDatum obsT obsX obsY0 obsY1 ω).2) *
+        (obsDatum obsT obsX obsY0 obsY1 ω).2.2 / (1 - 1 / 2 : ℝ))))
+      = fun ω : Bool × Bool => ((({(true, true)} : Set (Bool × Bool)).indicator
+        fun _ => (6 : ℝ)) ω - (({(true, false)} : Set (Bool × Bool)).indicator
+        fun _ => (2 : ℝ)) ω) := by
+    funext ⟨a, b⟩
+    cases a <;> cases b <;>
+      simp [hdatum, hXv, hY0v, hY1v, observed, hmemT] <;> norm_num
+  have hTT : ({(true, true)} : Set (Bool × Bool)) = {true} ×ˢ ({true} : Set Bool) := by
+    ext ⟨a, b⟩
+    simp
+  have hTF : ({(true, false)} : Set (Bool × Bool)) = {true} ×ˢ ({false} : Set Bool) := by
+    ext ⟨a, b⟩
+    simp
+  have hITT : Integrable (fun ω : Bool × Bool => (({(true, true)} : Set (Bool × Bool)).indicator
+      fun _ => (6 : ℝ)) ω) (fairCoin.prod fairCoin) := Integrable.of_finite
+  have hITF : Integrable (fun ω : Bool × Bool => (({(true, false)} : Set (Bool × Bool)).indicator
+      fun _ => (2 : ℝ)) ω) (fairCoin.prod fairCoin) := Integrable.of_finite
+  unfold ipwATE
+  simp only [hprop]
+  unfold obsLaw
+  rw [integral_map hobs.aemeasurable hFmeas, hfun,
+    integral_sub hITT hITF,
+    integral_indicator_const _ (measurableSet_singleton (true, true)),
+    integral_indicator_const _ (measurableSet_singleton (true, false)),
+    hTT, hTF]
+  unfold Measure.real
+  rw [hmuP true true, hmuP true false, smul_eq_mul, smul_eq_mul]
+  norm_num
+
+/-- Non-vacuity: treated and control IPW functionals differ for a nontrivial outcome
+model. Constant outcomes `0`/`1` under a fair coin give treated value `1`, control `0`. -/
+example :
+    (∫ ω, (({true} : Set Bool).indicator fun _ => ((1 : ℝ) / (1 / 2 : ℝ))) ω ∂fairCoin) ≠
+    (∫ ω, (({true} : Set Bool)ᶜ.indicator fun _ => ((0 : ℝ) / (1 - 1 / 2 : ℝ))) ω ∂fairCoin) := by
+  have h1 : (∫ ω, (({true} : Set Bool).indicator fun _ => ((1 : ℝ) / (1 / 2 : ℝ))) ω ∂fairCoin) = 1 := by
+    rw [integral_indicator_const _ (measurableSet_singleton true)]
+    have hcoin : fairCoin.real {true} = (1/2 : ℝ) := by
+      have h : fairCoin {true} = (2 : ENNReal)⁻¹ := by simp [fairCoin]
+      unfold Measure.real
+      rw [h]
+      simp
+    rw [hcoin, smul_eq_mul]
+    norm_num
+  have h0 : (∫ ω, (({true} : Set Bool)ᶜ.indicator fun _ => ((0 : ℝ) / (1 - 1 / 2 : ℝ))) ω ∂fairCoin) = 0 := by
+    rw [integral_indicator_const _ (measurableSet_singleton true).compl]
+    simp
+  rw [h1, h0]
+  norm_num
 
 end MathlibExtTest.Probability.Statistics.Identifiability
