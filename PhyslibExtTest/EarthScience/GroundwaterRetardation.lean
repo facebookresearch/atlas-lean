@@ -7,11 +7,11 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import PhyslibExt.EarthScience.H06GroundwaterRetardation
+public import PhyslibExt.EarthScience.GroundwaterRetardation
 import Mathlib.Tactic.NormNum
 
 /-!
-# Tests for groundwater retardation (H06)
+# Tests for groundwater retardation
 
 Closed checks: the witness `phi = 0.3, rho_b = 1.5, Kd = 0.2, c = 2`
 gives `R = 2` and total storage `1.2`, no sorption gives `R = 1`, and

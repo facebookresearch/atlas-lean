@@ -12,7 +12,7 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
 /-!
-# Groundwater solutes and contaminant transport: retardation (H06)
+# Groundwater solutes and contaminant transport: retardation
 
 ## i. Overview
 
