@@ -173,19 +173,6 @@ variable {𝓧 : Type*} [MeasurableSpace 𝓧]
   {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
 
-/-- Convergence in distribution depends on the limit only through its law. -/
-private theorem tendstoInDistribution_of_hasLaw {Ω₂ Ω₃ : Type*} [MeasurableSpace Ω₂]
-    [MeasurableSpace Ω₃] {P₂ : Measure Ω₂} {P₃ : Measure Ω₃} [IsProbabilityMeasure P₂]
-    [IsProbabilityMeasure P₃] {A : ℕ → Ω → ℝ} {Y : Ω₂ → ℝ} {Z : Ω₃ → ℝ} {ρ : Measure ℝ}
-    (h : TendstoInDistribution A atTop Y (fun _ => P) P₂) (hY : HasLaw Y ρ P₂)
-    (hZ : HasLaw Z ρ P₃) :
-    TendstoInDistribution A atTop Z (fun _ => P) P₃ where
-  forall_aemeasurable := h.forall_aemeasurable
-  aemeasurable_limit := hZ.aemeasurable
-  tendsto := by
-    convert h.tendsto using 3
-    exact congrArg 𝓝 (Subtype.ext (hZ.map_eq.trans hY.map_eq.symm))
-
 /-- `x² / I` maps `N(0, I)` to `χ²₁`. -/
 private theorem hasLaw_sq_div {I : ℝ} (hI : 0 < I) :
     HasLaw (fun x : ℝ => x ^ 2 / I) (chiSquareMeasure 1) (gaussianReal 0 I.toNNReal) := by
@@ -356,7 +343,7 @@ theorem tendstoInDistribution_scoreStatistic {ν : Measure 𝓧} {p : ℝ → �
   have h := tendstoInDistribution_score
     (P' := gaussianReal 0 (fisherInformation ν p θ₀).toNNReal) hp_pos hp_meas hp_diff hX_law
     hX_indep hs_meas hs_sq hs_mean HasLaw.id
-  exact tendstoInDistribution_of_hasLaw
+  exact TendstoInDistribution.congr_hasLaw
     (h.continuous_comp (g := fun x => x ^ 2 / fisherInformation ν p θ₀) (by fun_prop))
     (hasLaw_sq_div hI_pos) hZ
 
@@ -387,7 +374,7 @@ theorem tendstoInDistribution_scoreStatistic_of_estimator {ν : Measure 𝓧} {p
       fun z => (lt_max_of_lt_right hI2).ne'
   have h2 := h.continuous_comp_prodMk_of_tendstoInMeasure_const hg hIhat hIhat_meas
   have hmax : max I (I / 2) = I := max_eq_left (by linarith)
-  refine tendstoInDistribution_of_hasLaw
+  refine TendstoInDistribution.congr_hasLaw
     (tendstoInDistribution_of_tendstoInMeasure_sub _ _ h2 ?_ fun n =>
       ((h.forall_aemeasurable n).pow_const 2).div (hIhat_meas n)) ?_ hZ
   · refine tendstoInMeasure_zero_of_abs_le (V := 0) (G := fun n => {ω | I / 2 ≤ Ihat n ω})
@@ -476,7 +463,7 @@ theorem tendstoInDistribution_waldStatistic
       (fun n => ae_of_all _ fun ω => by
         simp only [Function.comp_apply]
         rw [mul_pow, Real.sq_sqrt (Nat.cast_nonneg n)]) (ae_of_all _ fun _ => rfl)
-  exact tendstoInDistribution_of_hasLaw h2 (hasLaw_sq_mul hI_pos) hZ
+  exact TendstoInDistribution.congr_hasLaw h2 (hasLaw_sq_mul hI_pos) hZ
 
 /-- **Wald's test with an estimated information.** As `tendstoInDistribution_waldStatistic`,
 with `I(θ₀)` replaced by any estimators `Î n → I(θ₀)` in probability (for example the observed
@@ -522,7 +509,7 @@ theorem tendstoInDistribution_waldStatistic_of_estimator
     h2.congr (fun n => ae_of_all _ fun ω => by
         simp only
         rw [mul_pow, Real.sq_sqrt (Nat.cast_nonneg n)]) (ae_of_all _ fun _ => rfl)
-  exact tendstoInDistribution_of_hasLaw h3 (hasLaw_sq_mul hI_pos) hZ
+  exact TendstoInDistribution.congr_hasLaw h3 (hasLaw_sq_mul hI_pos) hZ
 
 /-- **Quadratic expansion of the log-likelihood ratio.** Let `θ̂ₙ` be `√n`-consistent
 (`√n (θ̂ₙ - θ₀)` converges in distribution) and solve the likelihood equation with probability
@@ -813,7 +800,7 @@ theorem tendstoInDistribution_two_mul_logLikelihood_max_zero_sub
     hs'_diff hM_meas hM_int hM hs'_meas hs'_int h_info hθ_meas hroot hcons hT
   set I := fisherInformation ν p 0 with hI_def
   have h2 := hT.continuous_comp (g := fun x => I * max x 0 ^ 2) (by fun_prop)
-  refine tendstoInDistribution_of_hasLaw
+  refine TendstoInDistribution.congr_hasLaw
     (tendstoInDistribution_of_tendstoInMeasure_sub _ _ h2 ?_ fun n =>
       aemeasurable_logLikelihood_sub hp_meas (fun i => (hX_law i).aemeasurable)
         ((hθ_meas n).max aemeasurable_const) n) (hasLaw_mul_max_zero_sq hI_pos) hZ
