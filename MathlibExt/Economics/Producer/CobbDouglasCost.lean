@@ -22,9 +22,9 @@ with `∑ᵢ aᵢ ≠ 1` have a different formula and are not covered.
 
 ## Main results
 
-* `Economics.Producer.cobbDouglasCost_le_dotProduct`
-* `Economics.Producer.cobbDouglas_cobbDouglasDemand`
-* `Economics.Producer.isLeast_cobbDouglasCost`
+* `MathlibExt.Economics.Producer.cobbDouglasCost_le_dotProduct`
+* `MathlibExt.Economics.Producer.cobbDouglas_cobbDouglasDemand`
+* `MathlibExt.Economics.Producer.isLeast_cobbDouglasCost`
 
 ## References
 
@@ -35,7 +35,7 @@ Atlas roadmap target EC07.T01.
 
 @[expose] public section
 
-namespace Economics.Producer
+namespace MathlibExt.Economics.Producer
 
 /-- Cobb–Douglas production function `A ∏ᵢ xᵢ ^ aᵢ` (real powers). -/
 noncomputable def cobbDouglas {ι : Type*} [Fintype ι] (A : ℝ) (a x : ι → ℝ) : ℝ :=
@@ -179,4 +179,4 @@ theorem isLeast_cobbDouglasCost {ι : Type*} [Fintype ι] {A q : ℝ} {a w : ι 
     obtain ⟨x, hx, hout, rfl⟩ := hc
     exact cobbDouglasCost_le_dotProduct hA ha hsum hw hx hout
 
-end Economics.Producer
+end MathlibExt.Economics.Producer

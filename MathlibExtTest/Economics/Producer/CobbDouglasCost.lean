@@ -16,7 +16,7 @@ public import MathlibExt.Economics.Producer.CobbDouglasCost
 
 namespace MathlibExtTest.Economics.Producer.CobbDouglasCost
 
-open _root_.Economics.Producer
+open _root_.MathlibExt.Economics.Producer
 
 /-- Helper for the tests: `x ^ (1/2 : ℝ)` when `x = y ^ 2`. -/
 private theorem test_rpow_half (x y : ℝ) (hy : 0 ≤ y) (h : y ^ 2 = x) : x ^ (1 / 2 : ℝ) = y := by
