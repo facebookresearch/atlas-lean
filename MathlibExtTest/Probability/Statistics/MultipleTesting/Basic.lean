@@ -47,6 +47,18 @@ example : IsValidPValue (Measure.dirac ()) fun _ : Unit => (1 : ℝ) := by
   · simp
   · simp [not_le.2 hlt]
 
+/-- Non-vacuity of `isValidPValue_of_forall_cond`: conditioning on a constant count recovers the
+constant p-value `1` under a Dirac measure. -/
+example : IsValidPValue (Measure.dirac ()) fun _ : Unit => (1 : ℝ) := by
+  refine isValidPValue_of_forall_cond (S := fun _ : Unit => 0) measurable_const (N := 0)
+    (ae_of_all _ fun _ => le_rfl) (q := fun _ _ => 1) (fun _ _ => rfl) fun t ht => ?_
+  obtain rfl : t = 0 := Nat.le_zero.1 ht
+  rw [show (fun _ : Unit => 0) ⁻¹' {0} = Set.univ by ext; simp, cond_univ]
+  intro s hs
+  rcases eq_or_lt_of_le hs.2 with rfl | hlt
+  · simp
+  · simp [not_le.2 hlt]
+
 /-- False discovery proportion: rejecting `{0, 1}` with `H0 = {1, 2}` gives `1 / 2`; rejecting
 nothing gives `0`. -/
 example : falseDiscoveryProportion ({1, 2} : Finset (Fin 3)) {0, 1} = 1 / 2 := by

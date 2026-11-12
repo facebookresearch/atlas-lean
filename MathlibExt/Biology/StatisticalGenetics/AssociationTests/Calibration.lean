@@ -22,23 +22,30 @@ the tested (risk) allele; among the `n₂` alleles carried by controls, `Y` are.
 upper Fisher exact p-value of `X` given the allele-count margin `X + Y`, rejecting for an excess
 of the tested allele in cases.
 
-**Stated null.** `X ~ Bin(n₁, f)` and `Y ~ Bin(n₂, f)` are independent with a common allele
-frequency `0 < f < 1`. Read on individuals, this says the `n₁ + n₂` alleles are independent draws
-with the same frequency in cases and controls: no association, unrelated individuals, and
-Hardy–Weinberg proportions within each group (allele counting is invalid without HWE; Sasieni
-1997). The frequency `f` is a nuisance parameter and is not assumed known.
+**Stated null (count laws).** `X ~ Bin(n₁, f)` and `Y ~ Bin(n₂, f)` are independent with a
+common `0 < f < 1`. The frequency `f` is a nuisance parameter and is not assumed known. This is an
+assumption about the laws of the two aggregate counts only. It does not say that the individual
+allele copies are independent, that individuals are unrelated, or that genotypes are in
+Hardy–Weinberg proportions: a binomial total can be assigned to allele copies by a dependent rule.
+
+**A sufficient individual-level model.** If the individuals are unrelated, genotypes within each
+group are in Hardy–Weinberg proportions, and the allele frequency `f` is the same in cases and
+controls (no association), then the `n₁ + n₂` allele copies are independent Bernoulli(`f`) draws,
+and the count laws above follow. HWE is part of this sufficient model, not a consequence of the
+count laws. When HWE fails the count laws generally fail too, and allele counting is then
+miscalibrated (Sasieni 1997).
 
 ## What is proved
 
 * `isValidPValue_allelicPValue`: under the stated null the allelic p-value is valid
   (`IsValidPValue`, super-uniform) under the *unconditional* law `μ`, for every `f`. It is
   obtained from the margin-conditional validity of Fisher's test by averaging over the margin
-  (`isValidPValue_of_forall_cond`), so it is a statement about one measure, the form a
-  genome-wide procedure consumes.
+  (the generic `isValidPValue_of_forall_cond` of `MultipleTesting.Basic`), so it is a statement
+  about one measure, the form a genome-wide procedure consumes.
 * `cond_allelicPValue_le_upperTail`: calibration in the exact regime. Given the margin
   `X + Y = t`, the p-value is *exactly* calibrated at each attainable level `s = P_H(X ≥ k)`
   (`P(p ≤ s | X + Y = t) = s`) and conservative between attainable levels. The general form for
-  any upper-tail p-value is `measure_upperTailPValue_le_upperTail`.
+  any upper-tail p-value is `measure_upperTailPValue_le_upperTail` (`ExactTests.TailPValue`).
 
 The regime is finite-sample and exact: no asymptotic approximation is used, and none is claimed.
 Calibration is *not* exact uniformity. With few copies of the allele the attainable levels are
@@ -50,8 +57,8 @@ test is strictly conservative there.
 There is no universal GWAS calibration statement. The conclusions above hold only under the
 stated per-variant null and its exact finite-sample regime. They are not guaranteed when that
 null fails, and can fail, for instance under population stratification or a Hardy–Weinberg
-violation, which make `X` and `Y` non-binomial or give the groups different frequencies (the test
-file has a wrong-null example).
+violation, which can make `X` and `Y` non-binomial or give the groups different frequencies (the
+test file has a wrong-null example).
 
 Genome-wide validity is a separate matter. `GenomeWideAssumptions` lists exactly what a
 downstream Benjamini–Hochberg-type pipeline needs from the vector of per-variant p-values:
@@ -78,9 +85,12 @@ downstream composition; this file does not require it.
 Reused, not redefined: `IsValidPValue` (`MultipleTesting.Basic`); `upperTail`, `upperTailPValue`,
 `upperTail_antitone`, `isValidPValue_upperTailPValue` (`ExactTests.TailPValue`);
 `fisherUpperPValue`, `isValidPValue_fisherUpper_cond`, `hasLaw_cond_hypergeometric`
-(`ExactTests.FisherExact`); `IsPRDSOn` (`MultipleTesting.BenjaminiHochberg`). Not found in the
-library and added here: validity of a margin-conditional p-value under the unconditional law,
-exact calibration at attainable levels, and the genome-wide assumption bundle. Trend tests,
+(`ExactTests.FisherExact`); `IsPRDSOn` (`MultipleTesting.BenjaminiHochberg`). Not in the library
+before this task, and added to the generic modules they belong to:
+`measure_upperTailPValue_le_upperTail` (exact calibration at attainable levels,
+`ExactTests.TailPValue`) and `isValidPValue_of_forall_cond` (validity of a conditionally valid
+p-value under the unconditional law, `MultipleTesting.Basic`). Added here: the allelic
+specialization and the genome-wide assumption bundle. Trend tests,
 genomic control and Hardy–Weinberg tests are not defined here.
 
 ## Main definitions
@@ -91,7 +101,6 @@ genomic control and Hardy–Weinberg tests are not defined here.
 
 ## Main results
 
-* `measure_upperTailPValue_le_upperTail`, `isValidPValue_of_forall_cond`.
 * `isValidPValue_allelicPValue`, `cond_allelicPValue_le_upperTail`,
   `measurable_allelicPValue`.
 * `GenomeWideAssumptions.of_allelic`: per-variant allelic nulls give the validity field; the
@@ -118,55 +127,6 @@ open scoped unitInterval
 namespace MathlibExt.Biology.StatisticalGenetics.AssociationTests.Calibration
 
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
-
-/-! ### Calibration of upper-tail p-values -/
-
-/-- **Exact calibration at attainable levels.** If the count `X` has law `ν` under `μ`, the
-upper-tail p-value is exactly calibrated at every attainable level `s = upperTail ν k`:
-`μ {upperTailPValue ν X ≤ s} = s`. Between attainable levels it is conservative
-(`isValidPValue_upperTailPValue`).
-
-Source: Lehmann–Romano (2005), Lemma 3.3.1. -/
-theorem measure_upperTailPValue_le_upperTail {ν : Measure ℕ} [IsProbabilityMeasure ν]
-    {X : Ω → ℕ} (hX : HasLaw X ν μ) (k : ℕ) :
-    μ {ω | upperTailPValue ν X ω ≤ upperTail ν k} = ENNReal.ofReal (upperTail ν k) := by
-  refine le_antisymm
-    (isValidPValue_upperTailPValue hX _ ⟨measureReal_nonneg, measureReal_le_one⟩) ?_
-  calc ENNReal.ofReal (upperTail ν k) = μ {ω | k ≤ X ω} := by
-        rw [hX.measure_eq (p := (k ≤ ·)) (measurableSet_Ici (a := k)), ← ofReal_measureReal]
-        rfl
-    _ ≤ _ := measure_mono fun ω h => upperTail_antitone ν h
-
-/-- **Validity from conditional validity.** Let `S` be a measurable count that is at most `N`
-almost surely, and let `P` agree with `q (S ω)` wherever `S ω ≤ N`. If each `q t` is a valid
-p-value conditionally on `S = t` (for `t ≤ N`), then `P` is valid under `μ`.
-
-This is the law of total probability: `μ {P ≤ s} ≤ ∑ₜ μ {S = t} μ[P ≤ s | S = t] ≤ s`. -/
-theorem isValidPValue_of_forall_cond [IsProbabilityMeasure μ] {S : Ω → ℕ} (hS : Measurable S)
-    {N : ℕ} (hSN : ∀ᵐ ω ∂μ, S ω ≤ N) {P : Ω → ℝ} {q : ℕ → Ω → ℝ}
-    (hPq : ∀ ω, S ω ≤ N → P ω = q (S ω) ω)
-    (hq : ∀ t ≤ N, IsValidPValue (μ[|S ⁻¹' {t}]) (q t)) : IsValidPValue μ P := by
-  intro s hs
-  have hsub : {ω | P ω ≤ s} ≤ᵐ[μ]
-      (⋃ t ∈ range (N + 1), S ⁻¹' {t} ∩ {ω | q t ω ≤ s} : Set Ω) := by
-    filter_upwards [hSN] with ω hω hP
-    simp only [Set.mem_iUnion, Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff,
-      Set.mem_ofPred_eq, mem_range, exists_prop]
-    exact ⟨S ω, Nat.lt_succ_of_le hω, rfl, by rwa [← hPq ω hω]⟩
-  have hdisj : (range (N + 1) : Set ℕ).PairwiseDisjoint fun t => S ⁻¹' {t} :=
-    fun a _ b _ hab => Set.disjoint_left.2 fun ω ha hb => hab (ha.symm.trans hb)
-  calc μ {ω | P ω ≤ s}
-      ≤ μ (⋃ t ∈ range (N + 1), S ⁻¹' {t} ∩ {ω | q t ω ≤ s}) := measure_mono_ae hsub
-    _ ≤ ∑ t ∈ range (N + 1), μ (S ⁻¹' {t} ∩ {ω | q t ω ≤ s}) := measure_biUnion_finset_le _ _
-    _ = ∑ t ∈ range (N + 1), μ[{ω | q t ω ≤ s} | S ⁻¹' {t}] * μ (S ⁻¹' {t}) :=
-        sum_congr rfl fun t _ => (cond_mul_eq_inter (hS (measurableSet_singleton t)) _ μ).symm
-    _ ≤ ∑ t ∈ range (N + 1), ENNReal.ofReal s * μ (S ⁻¹' {t}) := by
-        gcongr with t ht
-        exact hq t (Nat.lt_succ_iff.1 (mem_range.1 ht)) s hs
-    _ = ENNReal.ofReal s * μ (⋃ t ∈ range (N + 1), S ⁻¹' {t}) := by
-        rw [← mul_sum, measure_biUnion_finset hdisj fun t _ => hS (measurableSet_singleton t)]
-    _ ≤ ENNReal.ofReal s * 1 := by gcongr; exact prob_le_one
-    _ = ENNReal.ofReal s := mul_one _
 
 /-! ### The exact allelic test -/
 
