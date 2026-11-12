@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
-public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 
 /-!
 # Ideal gas density and potential temperature on a reversible adiabat
@@ -16,10 +15,13 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 ## i. Overview
 
 Under `p = ρ * R * T` with `R, T > 0`, the density is `ρ = p / (R * T)`.
-For a reversible ideal-gas adiabat, the Poisson relation in ratio form
+For a reversible ideal-gas adiabat with constant mass-specific heat capacity `cp`,
+the assumed Poisson relation in ratio form
 `T2 = T1 * (p2 / p1) ^ (R / cp)` implies the potential temperature
-`θ = T * (p_ref / p) ^ (R / cp)` is unchanged. `R` and `cp` are
-mass-specific with the same units; the molar gas constant is not mixed in.
+`θ = T * (p_ref / p) ^ (R / cp)` is unchanged. `R` and `cp` are positive
+mass-specific constants with the same units; the molar gas constant is not mixed in.
+These are algebraic consequences of the ideal-gas law and Poisson relation,
+not a derivation of those physical assumptions.
 
 ## ii. Key results
 
@@ -34,6 +36,13 @@ mass-specific with the same units; the molar gas constant is not mixed in.
 
 ## iv. References
 
+- John M. Wallace and Peter V. Hobbs, *Atmospheric Science: An Introductory
+  Survey*, 2nd ed., Academic Press, 2006, §3.1, Eq. (3.2) (mass-specific
+  ideal-gas law), and §3.4.3, Eq. (3.54) (Poisson's equation and potential
+  temperature for adiabatic motion with constant `R` and `cp`).
+  [Chapter 3](https://gibbs.science/teaching/efd/handouts/wallace_hobbs_ch3.pdf).
+  The source uses a standard reference pressure; the algebra here permits any
+  fixed positive `p_ref`.
 - `Real.div_rpow` / `Real.rpow_pos_of_pos` in Mathlib (real powers).
 -/
 
