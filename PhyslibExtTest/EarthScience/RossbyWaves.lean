@@ -7,12 +7,12 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-import PhyslibExt.EarthScience.A05RossbyWaves
+import PhyslibExt.EarthScience.RossbyWaves
 
 /-!
 # Rossby-wave checks
 
-Concrete consumers of `PhyslibExt.EarthScience.A05RossbyWaves`:
+Concrete consumers of `PhyslibExt.EarthScience.RossbyWaves`:
 the public shapes of the three theorems, the dispersion relation at
 `U = 10, beta = 0, k = 1, l = 0`, and the `beta = 0` / zero-flow
 boundaries.
@@ -34,7 +34,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.A05RossbyWaves`
+- `PhyslibExt.EarthScience.RossbyWaves`
 -/
 
 /-- Public shape of the dispersion theorem. -/
