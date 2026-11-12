@@ -44,8 +44,9 @@ example : -(2 : ℝ) * 3 / 2 = -3 ∧ -(2 * 3 / (2 : ℝ) ^ 2) = -(3 / 2) := by
 
 /-- Radial acceleration for the numeric point mass. -/
 example : HasDerivAt (fun r => -(2 : ℝ) * 3 / r) ((2 : ℝ) * 3 / 2 ^ 2) 2 ∧
-    -((2 : ℝ) * 3 / 2 ^ 2) = -(2 : ℝ) * 3 / 2 ^ 2 :=
-  EarthScience.pointMass_radial_acceleration (by norm_num)
+    -(deriv (fun s => -(2 : ℝ) * 3 / s) 2) = -(2 : ℝ) * 3 / 2 ^ 2 ∧
+    -(2 : ℝ) * 3 / 2 ^ 2 < 0 :=
+  EarthScience.pointMass_radial_acceleration (by norm_num) (by norm_num) (by norm_num)
 
 /-- Zero-mass boundary: the potential is identically zero, derivative zero. -/
 example (r : ℝ) (hr : 0 < r) :

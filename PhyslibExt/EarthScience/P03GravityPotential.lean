@@ -16,8 +16,9 @@ public import Mathlib.Analysis.Calculus.Deriv.Mul
 ## i. Overview
 
 For the stipulated point-mass potential `Φ(r) = -G * M / r` on `r > 0`,
-`dΦ/dr = G * M / r ^ 2`, so the radial acceleration is `-G * M / r ^ 2`
-(inward). `Φ` is a specific potential (`L ^ 2 / T ^ 2`); the singular
+`dΦ/dr = G * M / r ^ 2`, so for `G > 0` and `M > 0` the radial acceleration
+is `-G * M / r ^ 2` (inward, i.e. negative). `Φ` is a specific potential
+(`L ^ 2 / T ^ 2`); the singular
 origin is excluded, and extended bodies would need a separately proved
 spherical-enclosed-mass relation.
 
@@ -55,10 +56,16 @@ theorem hasDerivAt_pointMass_potential {G M : ℝ} {r : ℝ} (hr : 0 < r) :
   field_simp
 
 /-- The radial acceleration is the negative potential gradient:
-`-dΦ/dr = -G * M / r ^ 2`. -/
-theorem pointMass_radial_acceleration {G M : ℝ} {r : ℝ} (hr : 0 < r) :
+`-dΦ/dr = -G * M / r ^ 2`, and for `G > 0`, `M > 0` it is negative (inward). -/
+theorem pointMass_radial_acceleration {G M : ℝ} {r : ℝ} (hr : 0 < r) (hG : 0 < G)
+    (hM : 0 < M) :
     HasDerivAt (fun r => -G * M / r) (G * M / r ^ 2) r ∧
-      -(G * M / r ^ 2) = -G * M / r ^ 2 := by
-  exact ⟨hasDerivAt_pointMass_potential hr, by ring⟩
+      -(deriv (fun s => -G * M / s) r) = -G * M / r ^ 2 ∧
+      -G * M / r ^ 2 < 0 := by
+  refine ⟨hasDerivAt_pointMass_potential hr, ?_, ?_⟩
+  · rw [(hasDerivAt_pointMass_potential hr).deriv]
+    ring
+  · exact div_neg_of_neg_of_pos (mul_neg_of_neg_of_pos (by linarith) hM)
+      (pow_pos hr 2)
 
 end EarthScience
