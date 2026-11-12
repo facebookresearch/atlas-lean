@@ -35,3 +35,27 @@ example : (∑ b : Fin 3 → Fin 2, binCollisions b) / (2 : ℝ) ^ 3 =
     ((Nat.choose 3 2 : ℝ)) / 2 := by
   have h := expected_bin_collisions (k := 3) (M := 2) (by norm_num)
   simpa using h
+
+/-- A constant two-item binning has exactly one colliding pair. -/
+example : binCollisions (![0, 0] : Fin 2 → Fin 2) = 1 := by
+  norm_num [binCollisions, ← Finset.univ_product_univ, Finset.univ_fin2]
+  decide
+
+/-- Distinct bins have no colliding pair. -/
+example : binCollisions (![0, 1] : Fin 2 → Fin 2) = 0 := by
+  norm_num [binCollisions, ← Finset.univ_product_univ, Finset.univ_fin2]
+
+/-- Exhausting all four binnings gives the average without the general theorem. -/
+example : (∑ b : Fin 2 → Fin 2, binCollisions b) / (2 : ℝ) ^ 2 = 1 / 2 := by
+  have hcount : (∑ b : Fin 2 → Fin 2,
+      (Finset.univ.filter (fun ij : Fin 2 × Fin 2 =>
+        ij.1 < ij.2 ∧ b ij.1 = b ij.2)).card) = 2 := by decide
+  norm_num [binCollisions, ← Nat.cast_sum, hcount]
+
+/-- Empty binnings have zero collisions. -/
+example : (∑ b : Fin 0 → Fin 2, binCollisions b) / (2 : ℝ) ^ 0 = 0 := by
+  simp [binCollisions]
+
+/-- A singleton cannot collide with another item. -/
+example : (∑ b : Fin 1 → Fin 2, binCollisions b) / (2 : ℝ) ^ 1 = 0 := by
+  norm_num [binCollisions, ← Nat.cast_sum]
