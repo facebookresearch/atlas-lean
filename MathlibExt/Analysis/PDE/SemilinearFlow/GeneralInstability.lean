@@ -100,7 +100,8 @@ private theorem duhamel (L : X →L[𝕜] X) (y : ℕ → X) (n : ℕ) :
     simp only [Nat.add_sub_cancel, Nat.sub_zero]
     abel
 
-/-- Geometric bound `∑_{j<n} μʲ q^{n-1-j} ≤ qⁿ / (q - μ)` for `0 ≤ μ < q`. -/
+/-- Geometric bound `∑_{j<n} μʲ q^{n-1-j} ≤ qⁿ / (q - μ)` for `0 ≤ μ < q`.
+(Private copy of the helper in `Instability`.) -/
 private theorem geom_sum_le {μ q : ℝ} (hμ : 0 ≤ μ) (hq : μ < q) (n : ℕ) :
     ∑ j ∈ range n, μ ^ j * q ^ (n - 1 - j) ≤ q ^ n / (q - μ) := by
   have h := geom_sum₂_mul μ q n
@@ -111,7 +112,8 @@ private theorem geom_sum_le {μ q : ℝ} (hμ : 0 ≤ μ) (hq : μ < q) (n : ℕ
   linarith [pow_nonneg hμ n]
 
 /-- Choice of the escape radius: for `K ≥ 0`, `r > 0`, `p > 1`, `ρ > 0` there is `η > 0` with
-`η ≤ 2ρ/3` and `K (r η)^{p-1} ≤ 1/4`. -/
+`η ≤ 2ρ/3` and `K (r η)^{p-1} ≤ 1/4`. (Adapted from the helper in `Instability`, with 1/4 in
+place of 1/2.) -/
 private theorem exists_escape_radius {K r ρ p : ℝ} (hK : 0 ≤ K) (hr : 0 < r) (hρ : 0 < ρ)
     (hp : 1 < p) : ∃ η, 0 < η ∧ η ≤ 2 * ρ / 3 ∧ K * (r * η) ^ (p - 1) ≤ 1 / 4 := by
   set b : ℝ := (4 * K + 1)⁻¹ with hb
@@ -487,7 +489,8 @@ theorem exists_escape_of_one_lt_spectralRadius {G : Y → Y} {x₀ : Y} {L : Y �
 
 omit [NormedSpace ℂ Y] [CompleteSpace Y] in
 /-- Escape for the time-`T` map gives escape for the flow, when the flow steps by its time-`T`
-map along orbits that stay in the ball of radius `ρ`. -/
+map along orbits that stay in the ball of radius `ρ`. (Factored from the proof of
+`Instability.exists_escape_of_timeMap`.) -/
 private theorem flow_escape_of_map_escape {Φ : ℝ → Y → Y} {u₀ : Y} {T ρ : ℝ} (hT : 0 ≤ T)
     (hΦ0 : ∀ x, Φ 0 x = x)
     (hstep : ∀ (n : ℕ) (x : Y), (∀ k ≤ n, ‖Φ (k * T) x - u₀‖ ≤ ρ) →
