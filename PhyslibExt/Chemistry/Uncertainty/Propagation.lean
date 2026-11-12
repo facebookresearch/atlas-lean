@@ -14,6 +14,7 @@ public import Mathlib.Analysis.Calculus.FDeriv.Mul
 public import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Data.PNat.Notation
 public import Mathlib.Probability.IdentDistrib
 public import Mathlib.Probability.Moments.Variance
 
@@ -58,10 +59,11 @@ Section D shows that, for `n ≥ 2` pairwise independent, identically distribute
 finite variance, the sample mean is unbiased for the mean and the `(n - 1)` sample variance is
 unbiased for the variance.
 
-Section E defines rounding to `k` significant figures as a function `ℝ → ℝ` and proves that it is
-not an uncertainty calculus: rounding the inputs before combining them can change the reported
-result. Significant figures are a reporting convention only, never a substitute for the
-propagation laws of sections B and C.
+Section E defines rounding to `k` significant figures, for a positive count `k : ℕ+`, as a
+function `ℝ → ℝ` and proves that it is not an uncertainty calculus: rounding the inputs before
+combining them can change the reported result. Significant figures are a reporting convention
+only, never a substitute for the propagation laws of sections B and C. The type `ℕ+` excludes
+`k = 0`, which has no significant-figure interpretation.
 
 The results do not assert that the propagation law is exact for nonlinear measurement functions,
 any coverage probability, coverage factor or expanded uncertainty, any normality of the inputs,
@@ -91,9 +93,9 @@ or that significant figures propagate uncertainty.
 - `sampleMean`, `sampleVariance` : the estimators from `n` observations.
 - `integral_sampleMean` : the sample mean is unbiased.
 - `integral_sampleVariance` : the `(n - 1)` sample variance is unbiased for `n ≥ 2`.
-- `roundSigFig` : rounding to `k` significant figures, well defined by `roundSigFig_wellDefined`,
-  with `roundSigFig_eq_of_zpow_le_of_lt` and `abs_roundSigFig_sub_le` for its value and its
-  half-unit rounding error.
+- `roundSigFig` : rounding to `k` significant figures for a positive count `k : ℕ+`, well
+  defined by `roundSigFig_wellDefined`, with `roundSigFig_eq_of_zpow_le_of_lt` and
+  `abs_roundSigFig_sub_le` for its value and its half-unit rounding error.
 - `exists_roundSigFig_add_ne` : rounding the inputs before adding can change the reported sum.
 
 ## iii. Table of contents
@@ -356,8 +358,10 @@ lemma hasFDerivAt_log_powerLaw {ι : Type*} [Fintype ι] [DecidableEq ι] (p : �
 
 /-- **First-order relative-uncertainty rule for products, quotients and powers.** Let
 `y = ∏ i, x i ^ p i` with integer exponents `p i` and nonzero input estimates `x i ≠ 0`. Let the
-inputs have standard uncertainties `u i` (`Var[X i] = u i ^ 2`) and be independent in the sense
-of zero covariance, `cov[X i, X j] = 0` for `i ≠ j`. Then the first-order combined standard
+inputs have standard uncertainties `u i` (`Var[X i] = u i ^ 2`) and be uncorrelated,
+`cov[X i, X j] = 0` for `i ≠ j`. (Zero covariance is uncorrelatedness, not independence: dependent
+variables can have zero covariance. Independence implies uncorrelatedness.) Then the first-order
+combined standard
 uncertainty `u_y`, the standard deviation of the linearization
 `ω ↦ y + fderiv ℝ (powerLaw p) x (X ω - x)`, satisfies `(u_y / y) ^ 2 = ∑ i, (p i * u i / x i) ^ 2`.
 It is the law `measurementFunction_linearizedVariance_firstOrder_uncorrelated` with the
@@ -429,11 +433,20 @@ lemma integral_sampleMean {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure 
   field_simp
 
 /-- **The `(n - 1)` sample variance is unbiased.** Let `n ≥ 2` observations `X i` on a
-probability space be iid, stated as in Mathlib's strong law `ProbabilityTheory.strong_law_ae_real`:
-pairwise independent (`Pairwise fun i j => X i ⟂ᵢ[μ] X j`) and identically distributed with the
-common law of `X i₀` (`IdentDistrib (X i) (X i₀) μ μ`), with finite variance
-(`MemLp (X i₀) 2 μ`). Then `E[s²] = Var[X i₀]`. Mutual independence `iIndepFun X μ` implies the
-pairwise hypothesis through `ProbabilityTheory.iIndepFun.indepFun`. The case `n = 1` is excluded. -/
+probability space be pairwise independent and identically distributed, stated as in Mathlib's
+strong law `ProbabilityTheory.strong_law_ae_real`: pairwise independent
+(`Pairwise fun i j => X i ⟂ᵢ[μ] X j`) and identically distributed with the common law of `X i₀`
+(`IdentDistrib (X i) (X i₀) μ μ`), with finite variance (`MemLp (X i₀) 2 μ`). Then
+`E[s²] = Var[X i₀]`. Mutual independence `iIndepFun X μ` (hence `iid` in the conventional,
+mutually independent sense) implies the pairwise hypothesis through
+`ProbabilityTheory.iIndepFun.indepFun`, but the theorem only needs pairwise independence. The
+case `n = 1` is excluded.
+
+Note: `MathlibExt.Probability.Statistics.SampleMoments` on current `main` proves the sample
+variance unbiased under mutual independence (`iIndepFun`). Reusing it here would require
+rebasing this branch onto `main` (that module is not in this branch's ancestry) and
+generalizing its theorem to the pairwise hypothesis used here, so Section D keeps its own
+proof for now. -/
 lemma integral_sampleVariance {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ] {n : ℕ} (hn : 2 ≤ n) (X : Fin n → Ω → ℝ) (i₀ : Fin n)
     (hindep : Pairwise fun i j => X i ⟂ᵢ[μ] X j)
@@ -503,17 +516,19 @@ lemma integral_sampleVariance {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Meas
 -/
 
 /-- The decimal shift `k - 1 - ⌊log₁₀ |x|⌋` that moves the `k`-th significant digit of `x` to the
-units place. With Mathlib's convention `Real.logb 10 0 = 0` it is `k - 1` at `x = 0`. -/
-noncomputable def sigFigShift (k : ℕ) (x : ℝ) : ℤ :=
+units place. With Mathlib's convention `Real.logb 10 0 = 0` it is `k - 1` at `x = 0`. The count
+`k : ℕ+` is positive by type: `k = 0` has no significant-figure interpretation and is excluded. -/
+noncomputable def sigFigShift (k : ℕ+) (x : ℝ) : ℤ :=
   (k : ℤ) - 1 - ⌊Real.logb 10 |x|⌋
 
-/-- Rounding to `k` significant figures, a reporting function `ℝ → ℝ`:
-`roundSigFig k x = round (x * 10 ^ e) / 10 ^ e` with `e = sigFigShift k x = k - 1 - ⌊log₁₀ |x|⌋`,
-so the result is an integer multiple of `10 ^ (-e)`. Ties are rounded upward, since Mathlib's
-`round x = ⌊x + 1 / 2⌋`; OpenStax §1.5 instead rounds a dropped `5` to an even digit, and the
-conventions differ only at exact ties. Significant figures are reporting only, never a
-substitute for the propagation laws of sections B and C: see `exists_roundSigFig_add_ne`. -/
-noncomputable def roundSigFig (k : ℕ) (x : ℝ) : ℝ :=
+/-- Rounding to `k` significant figures, for a positive count `k : ℕ+`, a reporting function
+`ℝ → ℝ`: `roundSigFig k x = round (x * 10 ^ e) / 10 ^ e` with
+`e = sigFigShift k x = k - 1 - ⌊log₁₀ |x|⌋`, so the result is an integer multiple of
+`10 ^ (-e)`. Ties are rounded upward, since Mathlib's `round x = ⌊x + 1 / 2⌋`; OpenStax §1.5
+instead rounds a dropped `5` to an even digit, and the conventions differ only at exact ties.
+Significant figures are reporting only, never a substitute for the propagation laws of sections B
+and C: see `exists_roundSigFig_add_ne`. -/
+noncomputable def roundSigFig (k : ℕ+) (x : ℝ) : ℝ :=
   round (x * 10 ^ sigFigShift k x) / 10 ^ sigFigShift k x
 
 /-- The decimal exponent `⌊log₁₀ |x|⌋` is the unique integer `m` with
@@ -528,19 +543,19 @@ lemma floor_logb_ten_abs_eq {x : ℝ} {m : ℤ} (h1 : (10 : ℝ) ^ m ≤ |x|)
     omega
   · exact (Int.zpow_le_iff_le_log (b := 10) (by norm_num) hx).1 (by exact_mod_cast h1)
 
-/-- If `10 ^ m ≤ |x| < 10 ^ (m + 1)`, rounding to `k` significant figures rounds `x` at the
-decimal place `10 ^ (m + 1 - k)`. -/
-lemma roundSigFig_eq_of_zpow_le_of_lt {k : ℕ} {x : ℝ} {m : ℤ} (h1 : (10 : ℝ) ^ m ≤ |x|)
+/-- If `10 ^ m ≤ |x| < 10 ^ (m + 1)`, rounding to `k` significant figures (for a positive
+count `k : ℕ+`) rounds `x` at the decimal place `10 ^ (m + 1 - k)`. -/
+lemma roundSigFig_eq_of_zpow_le_of_lt {k : ℕ+} {x : ℝ} {m : ℤ} (h1 : (10 : ℝ) ^ m ≤ |x|)
     (h2 : |x| < 10 ^ (m + 1)) :
     roundSigFig k x = round (x * 10 ^ ((k : ℤ) - 1 - m)) / 10 ^ ((k : ℤ) - 1 - m) := by
   rw [roundSigFig, sigFigShift, floor_logb_ten_abs_eq h1 h2]
 
 /-- **Rounding to significant figures is well defined.** `roundSigFig k` is a total function
-`ℝ → ℝ`, with ties broken by `round`. For `x ≠ 0` the textbook description determines it: there
-is exactly one decimal exponent `m`, the place `10 ^ m` of the leading significant digit, with
-`10 ^ m ≤ |x| < 10 ^ (m + 1)`, and `roundSigFig k x` rounds `x` at the place `10 ^ (m + 1 - k)`
-for that `m`. -/
-lemma roundSigFig_wellDefined (k : ℕ) {x : ℝ} (hx : x ≠ 0) :
+`ℝ → ℝ`, with ties broken by `round`. For `x ≠ 0` and a positive count `k : ℕ+` the textbook
+description determines it: there is exactly one decimal exponent `m`, the place `10 ^ m` of the
+leading significant digit, with `10 ^ m ≤ |x| < 10 ^ (m + 1)`, and `roundSigFig k x` rounds `x`
+at the place `10 ^ (m + 1 - k)` for that `m`. -/
+lemma roundSigFig_wellDefined (k : ℕ+) {x : ℝ} (hx : x ≠ 0) :
     ∃! m : ℤ, (10 : ℝ) ^ m ≤ |x| ∧ |x| < 10 ^ (m + 1) ∧
       roundSigFig k x = round (x * 10 ^ ((k : ℤ) - 1 - m)) / 10 ^ ((k : ℤ) - 1 - m) := by
   have hx' : 0 < |x| := abs_pos.2 hx
@@ -554,12 +569,12 @@ lemma roundSigFig_wellDefined (k : ℕ) {x : ℝ} (hx : x ≠ 0) :
 
 /-- Zero is reported as zero. -/
 @[simp]
-lemma roundSigFig_zero (k : ℕ) : roundSigFig k 0 = 0 := by
+lemma roundSigFig_zero (k : ℕ+) : roundSigFig k 0 = 0 := by
   simp [roundSigFig]
 
-/-- Rounding to `k` significant figures changes `x` by at most half a unit in the last reported
-place, `10 ^ (-sigFigShift k x)`. -/
-lemma abs_roundSigFig_sub_le (k : ℕ) (x : ℝ) :
+/-- Rounding to `k` significant figures, for a positive count `k : ℕ+`, changes `x` by at most
+half a unit in the last reported place, `10 ^ (-sigFigShift k x)`. -/
+lemma abs_roundSigFig_sub_le (k : ℕ+) (x : ℝ) :
     |roundSigFig k x - x| ≤ 1 / 2 * 10 ^ (-sigFigShift k x) := by
   have hpos : (0 : ℝ) < 10 ^ sigFigShift k x := zpow_pos (by norm_num) _
   have hrw : roundSigFig k x - x =

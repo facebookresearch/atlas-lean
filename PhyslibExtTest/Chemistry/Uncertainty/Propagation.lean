@@ -494,7 +494,7 @@ lemma integral_biasedVariance_heads :
 /-! ### (d) Significant figures are not an uncertainty calculus -/
 
 /-- Evaluate `roundSigFig k x` from the decimal exponent `m` of `x` and the rounded integer `n`. -/
-lemma roundSigFig_eq_of_mem {k : ℕ} {x : ℝ} (m n : ℤ) (h1 : (10 : ℝ) ^ m ≤ |x|)
+lemma roundSigFig_eq_of_mem {k : ℕ+} {x : ℝ} (m n : ℤ) (h1 : (10 : ℝ) ^ m ≤ |x|)
     (h2 : |x| < 10 ^ (m + 1))
     (hn : x * 10 ^ ((k : ℤ) - 1 - m) ∈ Set.Ico (n - 1 / 2 : ℝ) (n + 1 / 2)) :
     roundSigFig k x = n / 10 ^ ((k : ℤ) - 1 - m) := by
