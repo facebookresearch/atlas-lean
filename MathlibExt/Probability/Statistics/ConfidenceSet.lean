@@ -28,7 +28,7 @@ p-values gives coverage `1 - α`.
 
 ## Main results
 
-* `coverage_iff_level`: level at every parameter iff coverage at every parameter.
+* `level_iff_coverage`: level at every parameter iff coverage at every parameter.
 * `coverage_of_isValidPValue`: inverting valid p-values gives coverage `1 - α`.
 -/
 
@@ -48,7 +48,7 @@ def confSetOfTests {X T : Type*} (R : T → Set X) (x : X) : Set T :=
 /-- **Test inversion.** For estimand-indexed tests with measurable rejection sets, level `α` at
 every parameter (each null is the estimand fiber) is equivalent to coverage `1 - α` of the
 inverted confidence set at every parameter. -/
-theorem coverage_iff_level {Θ X T : Type*} [MeasurableSpace X]
+theorem level_iff_coverage {Θ X T : Type*} [MeasurableSpace X]
     (P : Θ → Measure X) [∀ θ, IsProbabilityMeasure (P θ)] (τ : Θ → T) (R : T → Set X)
     (hR : ∀ t, MeasurableSet (R t)) {α : ℝ} :
     (∀ θ, (P θ).real (R (τ θ)) ≤ α) ↔
@@ -64,7 +64,7 @@ theorem coverage_of_isValidPValue {Θ X T : Type*} [MeasurableSpace X]
     (hp : ∀ t, Measurable (p t)) (hvalid : ∀ θ, IsValidPValue (P θ) (p (τ θ)))
     {α : ℝ} (hα : α ∈ Set.Icc (0 : ℝ) 1) (θ : Θ) :
     1 - α ≤ (P θ).real {x | τ θ ∈ confSetOfTests (fun t => {y | p t y ≤ α}) x} := by
-  refine (coverage_iff_level P τ (fun t => {y | p t y ≤ α})
+  refine (level_iff_coverage P τ (fun t => {y | p t y ≤ α})
     (fun t => measurableSet_le (hp t) measurable_const)).1 (fun θ' => ?_) θ
   rw [measureReal_def]
   exact ENNReal.toReal_le_of_le_ofReal hα.1 ((hvalid θ') α hα)

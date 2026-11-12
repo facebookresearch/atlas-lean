@@ -25,7 +25,7 @@ example {X T : Type*} (R : T → Set X) (t : T) :
   rfl
 
 /-- Hence the coverage section is measurable exactly when the rejection set is: `hR` is the
-measurability hypothesis of `coverage_iff_level` and cannot be dropped. -/
+measurability hypothesis of `level_iff_coverage` and cannot be dropped. -/
 example {X T : Type*} [MeasurableSpace X] (R : T → Set X) (t : T) :
     MeasurableSet {x | t ∈ confSetOfTests R x} ↔ MeasurableSet (R t) := by
   exact MeasurableSet.compl_iff
@@ -67,11 +67,11 @@ example (n : ℕ) (p : unitInterval) {α : ℝ} (hα0 : 0 < α) (hα1 : α < 1) 
     ExactTests.clopperPearson_coverage (HasLaw.id (μ := binomial n p)) hα0 hα1
 
 /-- **Use test: the Clopper–Pearson tests have level `α`,** obtained from the coverage above
-through `coverage_iff_level` (parameter = estimand = `p`). -/
+through `level_iff_coverage` (parameter = estimand = `p`). -/
 example (n : ℕ) {α : ℝ} (hα0 : 0 < α) (hα1 : α < 1) :
     ∀ p : unitInterval, (binomial n p).real {k : ℕ | ¬ (ExactTests.clopperPearsonLower n k α ≤ p ∧
       (p : ℝ) ≤ ExactTests.clopperPearsonUpper n k α)} ≤ α := by
-  refine (coverage_iff_level (fun q : unitInterval => binomial n q) id
+  refine (level_iff_coverage (fun q : unitInterval => binomial n q) id
     (fun t : unitInterval => {k : ℕ | ¬ (ExactTests.clopperPearsonLower n k α ≤ t ∧
       (t : ℝ) ≤ ExactTests.clopperPearsonUpper n k α)}) (fun _ => .of_discrete)).2 (fun q => ?_)
   simpa [confSetOfTests] using
