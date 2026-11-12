@@ -120,7 +120,7 @@ genomic control and Hardy–Weinberg tests are not defined here.
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory Finset
+open MeasureTheory ProbabilityTheory
 open MathlibExt.Probability.Statistics.ExactTests MathlibExt.Probability.Statistics.MultipleTesting
 open scoped unitInterval
 
