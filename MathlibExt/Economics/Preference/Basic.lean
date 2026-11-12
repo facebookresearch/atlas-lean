@@ -27,6 +27,39 @@ specialized to relations on lotteries `StdSimplex ℝ X`. Unifying them as insta
 
 namespace MathlibExt.Economics
 
+namespace PreferenceRelation
+
+/-- The strict part of an arbitrary weak preference relation. -/
+def StrictPref {α : Type*} (R : α → α → Prop) (x y : α) : Prop :=
+  R x y ∧ ¬ R y x
+
+/-- The greatest elements of a menu under an arbitrary weak preference relation. -/
+abbrev choice {α : Type*} (R : α → α → Prop) (B : Set α) : Set α :=
+  {x | x ∈ B ∧ ∀ y ∈ B, R x y}
+
+/-- The menu elements with no strictly preferred alternative in the menu. -/
+def maximal {α : Type*} (R : α → α → Prop) (B : Set α) : Set α :=
+  {x | x ∈ B ∧ ∀ y ∈ B, ¬ StrictPref R y x}
+
+/-- Completeness alone makes maximal and greatest menu elements coincide. -/
+theorem maximal_eq_choice {α : Type*} (R : α → α → Prop)
+    (hcomplete : ∀ x y, R x y ∨ R y x) (B : Set α) :
+    maximal R B = choice R B := by
+  ext x
+  simp only [maximal, choice, StrictPref, Set.mem_ofPred_eq]
+  constructor
+  · rintro ⟨hxB, hmax⟩
+    refine ⟨hxB, fun y hyB => ?_⟩
+    rcases hcomplete x y with h | h
+    · exact h
+    · by_contra hnx
+      exact hmax y hyB ⟨h, hnx⟩
+  · rintro ⟨hxB, hg⟩
+    refine ⟨hxB, fun y hyB hstrict => ?_⟩
+    exact hstrict.2 (hg y hyB)
+
+end PreferenceRelation
+
 /-- A rational preference relation on a set of alternatives `α` (Levin–Milgrom, *Introduction to
 Choice Theory*, §2): `R x y` reads "`x` is at least as good as `y`" (`x ≿ y`). The relation is
 complete (Definition 1) and transitive (Definition 2). -/
@@ -42,7 +75,7 @@ namespace Preference
 
 /-- Strict preference `x ≻ y`: `x ≿ y` but not `y ≿ x` (§2). -/
 def StrictPref {α : Type*} (P : Preference α) (x y : α) : Prop :=
-  P.R x y ∧ ¬ P.R y x
+  PreferenceRelation.StrictPref P.R x y
 
 /-- Indifference `x ∼ y`: `x ≿ y` and `y ≿ x` (§2). -/
 def Indiff {α : Type*} (P : Preference α) (x y : α) : Prop :=
@@ -51,28 +84,17 @@ def Indiff {α : Type*} (P : Preference α) (x y : α) : Prop :=
 /-- The choice rule `C(B; ≿) = {x ∈ B | x ≿ y for all y ∈ B}` (§2): the greatest elements of the
 menu `B`. -/
 def choice {α : Type*} (P : Preference α) (B : Set α) : Set α :=
-  {x | x ∈ B ∧ ∀ y ∈ B, P.R x y}
+  PreferenceRelation.choice P.R B
 
 /-- The maximal elements of the menu `B`: elements of `B` to which no element of `B` is strictly
 preferred. For an arbitrary relation this is weaker than being greatest. -/
 def maximal {α : Type*} (P : Preference α) (B : Set α) : Set α :=
-  {x | x ∈ B ∧ ∀ y ∈ B, ¬ P.StrictPref y x}
+  PreferenceRelation.maximal P.R B
 
 /-- For a complete preference, maximal and greatest elements of a menu coincide. -/
 theorem maximal_eq_choice {α : Type*} (P : Preference α) (B : Set α) :
-    P.maximal B = P.choice B := by
-  ext x
-  simp only [maximal, choice, StrictPref, Set.mem_ofPred_eq]
-  constructor
-  · rintro ⟨hxB, hmax⟩
-    refine ⟨hxB, fun y hyB => ?_⟩
-    rcases P.complete x y with h | h
-    · exact h
-    · by_contra hnx
-      exact hmax y hyB ⟨h, hnx⟩
-  · rintro ⟨hxB, hg⟩
-    refine ⟨hxB, fun y hyB hstrict => ?_⟩
-    exact hstrict.2 (hg y hyB)
+    P.maximal B = P.choice B :=
+  PreferenceRelation.maximal_eq_choice P.R P.complete B
 
 /-- Levin–Milgrom, Proposition 1(1): a complete transitive preference has a greatest element on
 every finite nonempty menu. -/

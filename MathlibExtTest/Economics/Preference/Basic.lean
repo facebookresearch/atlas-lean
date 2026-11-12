@@ -60,6 +60,24 @@ def cyclic (x y : Fin 3) : Prop :=
 theorem cyclic_complete (x y : Fin 3) : cyclic x y ∨ cyclic y x := by
   fin_cases x <;> fin_cases y <;> simp only [cyclic] <;> decide
 
+theorem cyclic_not_transitive :
+    ¬ (∀ x y z, cyclic x y → cyclic y z → cyclic x z) := by
+  intro h
+  have h02 := h 0 1 2 (by simp [cyclic]) (by simp [cyclic])
+  simp [cyclic] at h02
+
+/-- Completeness suffices even though the relation is intransitive. -/
+theorem cyclic_maximal_eq_choice (B : Set (Fin 3)) :
+    PreferenceRelation.maximal cyclic B = PreferenceRelation.choice cyclic B :=
+  PreferenceRelation.maximal_eq_choice cyclic cyclic_complete B
+
+/-- On a proper menu the cyclic relation has a nonempty choice set. -/
+theorem cyclic_maximal_pair :
+    PreferenceRelation.maximal cyclic ({0, 1} : Set (Fin 3)) = {0} := by
+  rw [cyclic_maximal_eq_choice]
+  ext x
+  fin_cases x <;> simp [PreferenceRelation.choice, cyclic]
+
 theorem cyclic_no_greatest : ¬ ∃ x : Fin 3, ∀ y, cyclic x y := by
   rintro ⟨x, hx⟩
   fin_cases x
