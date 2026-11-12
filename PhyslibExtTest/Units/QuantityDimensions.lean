@@ -19,8 +19,10 @@ public import PhyslibExt.Units.QuantityDimensions
   while a dimensionless count does not rescale;
 * the projection boundary `fromISQHom (single .amount) = 1`;
 * the count–amount round trips, with the arithmetic probe `N_A = 2`, which is not the SI value;
+  the constants are typed `WithDim` quantities, so moles-to-millimoles rescaling moves
+  `N_A` by `1 / 1000` as well and leaves the count unchanged;
 * the Celsius difference identity and doubling counterexample, and the `T = 0` boundary;
-* the dimensionless log/exp gate.
+* the dimensionless log/exp gate, with `logRatio` taking two quantities of one dimension.
 -/
 
 @[expose] public section
@@ -204,46 +206,120 @@ example : ¬ Function.Injective fromISQHom := fromISQHom_not_injective
 /-! ## C. The constants bridge -/
 
 -- With `N = N_A` the amount is `n = 1`, and counting its particles returns `N_A`.
-example {NA : ℝ} (hNA : 0 < NA) : (amountOfCount NA NA).val = 1 := div_self hNA.ne'
+example {NA : ℝ} (hNA : 0 < NA) :
+    (amountOfCount (⟨NA⟩ : WithDim avogadroDim ℝ) (⟨NA⟩ : WithDim dimensionlessDim ℝ)).val = 1 :=
+  div_self hNA.ne'
 
-example {NA : ℝ} (hNA : 0 < NA) : countOfAmount NA (amountOfCount NA NA) = NA :=
-  countOfAmount_amountOfCount hNA NA
+example {NA : ℝ} (hNA : 0 < NA) (N : ℝ) :
+    countOfAmount (⟨NA⟩ : WithDim avogadroDim ℝ)
+        (amountOfCount (⟨NA⟩ : WithDim avogadroDim ℝ) (⟨N⟩ : WithDim dimensionlessDim ℝ)) =
+      (⟨N⟩ : WithDim dimensionlessDim ℝ) :=
+  countOfAmount_amountOfCount hNA _
 
-example {NA : ℝ} (hNA : 0 < NA) (N : ℝ) : (amountOfCount NA N).val * NA = N :=
-  amountOfCount_val_mul hNA N
+example {NA : ℝ} (hNA : 0 < NA) (N : ℝ) :
+    (amountOfCount (⟨NA⟩ : WithDim avogadroDim ℝ) (⟨N⟩ : WithDim dimensionlessDim ℝ)).val * NA = N := by
+  rw [amountOfCount_val, div_mul_cancel₀ N hNA.ne']
 
-example {NA N : ℝ} (hNA : 0 < NA) (hN : 0 ≤ N) : 0 ≤ (amountOfCount NA N).val :=
+example {NA N : ℝ} (hNA : 0 < NA) (hN : 0 ≤ N) :
+    0 ≤ (amountOfCount (⟨NA⟩ : WithDim avogadroDim ℝ) (⟨N⟩ : WithDim dimensionlessDim ℝ)).val :=
   amountOfCount_nonneg hNA hN
 
 example {NA : ℝ} (hNA : 0 < NA) (n : WithDim amountDim ℝ) :
-    amountOfCount NA (countOfAmount NA n) = n :=
+    amountOfCount (⟨NA⟩ : WithDim avogadroDim ℝ)
+        (countOfAmount (⟨NA⟩ : WithDim avogadroDim ℝ) n) = n :=
   amountOfCount_countOfAmount hNA n
 
 -- An amount carries the amount dimension; a count carries none.
-example (NA N : ℝ) : dimOf (amountOfCount NA N) = amountDim := dimOf_amountOfCount NA N
+example (NA N : ℝ) :
+    dimOf (amountOfCount (⟨NA⟩ : WithDim avogadroDim ℝ) (⟨N⟩ : WithDim dimensionlessDim ℝ)) = amountDim :=
+  dimOf_amountOfCount _ _
 
-example (NA N : ℝ) : dimOf (amountOfCount NA N) ≠ 1 := dimOf_amountOfCount_ne_one NA N
+example (NA N : ℝ) :
+    dimOf (amountOfCount (⟨NA⟩ : WithDim avogadroDim ℝ) (⟨N⟩ : WithDim dimensionlessDim ℝ)) ≠ 1 :=
+  dimOf_amountOfCount_ne_one _ _
 
 -- Arithmetic probe `N_A = 2`, not the SI value: `6` particles are the amount `3`.
-example : (amountOfCount 2 6).val = 3 := by norm_num [amountOfCount]
+example : (amountOfCount (⟨2⟩ : WithDim avogadroDim ℝ) (⟨6⟩ : WithDim dimensionlessDim ℝ)).val = 3 := by
+  rw [amountOfCount_val]
+  norm_num
 
-example : countOfAmount 2 (amountOfCount 2 6) = 6 := countOfAmount_amountOfCount two_pos 6
+example : (countOfAmount (⟨2⟩ : WithDim avogadroDim ℝ)
+    (amountOfCount (⟨2⟩ : WithDim avogadroDim ℝ) (⟨6⟩ : WithDim dimensionlessDim ℝ))).val = 6 := by
+  rw [countOfAmount_amountOfCount two_pos]
 
-example {NA kB : ℝ} (hNA : 0 < NA) (hkB : 0 < kB) : 0 < gasConstant NA kB :=
+-- Moles to millimoles: the amount coordinate rescales by `1000`, `N_A` rescales by
+-- `1 / 1000` (its dimension is the inverse), and the count is unchanged. Holding `N_A`
+-- fixed while rescaling the amount would wrongly give `1000` times the count.
+example : (oneScale.dimScale milliAmountScale avogadroDim : ℝ) = 1 / 1000 := by
+  rw [avogadroDim, dimScale_inv,
+    show (oneScale.dimScale milliAmountScale amountDim : ℝ) = 1000 by
+      rw [amountDim, dimScale_single]; norm_num [oneScale, milliAmountScale]]
+  norm_num
+
+example (NA : WithDim avogadroDim ℝ) (n : WithDim amountDim ℝ) :
+    countOfAmount
+        ⟨(oneScale.dimScale milliAmountScale avogadroDim : ℝ) * NA.val⟩
+        ⟨(oneScale.dimScale milliAmountScale amountDim : ℝ) * n.val⟩ =
+      countOfAmount NA n :=
+  countOfAmount_dimScale oneScale milliAmountScale _ _
+
+example (NA : WithDim avogadroDim ℝ) (hNA : 0 < NA.val) (N : WithDim dimensionlessDim ℝ) :
+    amountOfCount
+        ⟨(oneScale.dimScale milliAmountScale avogadroDim : ℝ) * NA.val⟩
+        ⟨(oneScale.dimScale milliAmountScale 1 : ℝ) * N.val⟩ =
+      ⟨(oneScale.dimScale milliAmountScale amountDim : ℝ) *
+        (amountOfCount NA N).val⟩ :=
+  amountOfCount_dimScale oneScale milliAmountScale _ hNA _
+
+example {NA kB : ℝ} (hNA : 0 < NA) (hkB : 0 < kB) :
+    0 < gasConstant (⟨NA⟩ : WithDim avogadroDim ℝ) (⟨kB⟩ : WithDim boltzmannDim ℝ) :=
   gasConstant_pos hNA hkB
 
+example {NA kB : ℝ} :
+    (gasConstant (⟨NA⟩ : WithDim avogadroDim ℝ) (⟨kB⟩ : WithDim boltzmannDim ℝ)).val =
+      NA * kB := rfl
+
 -- `E / N_A = e` for a symbolic positive `N_A`, and for the probe `N_A = 2`.
-example {NA : ℝ} (hNA : 0 < NA) (e : ℝ) : molarEnergy NA e / NA = e := molarEnergy_div hNA e
+example {NA : ℝ} (hNA : 0 < NA) (e : ℝ) :
+    WithDim.cast ((molarEnergy (⟨NA⟩ : WithDim avogadroDim ℝ)
+        (⟨e⟩ : WithDim energyDim ℝ)) / (⟨NA⟩ : WithDim avogadroDim ℝ))
+      (by unfold avogadroDim; rw [inv_inv]; exact molarEnergyDim_mul_amount) =
+      (⟨e⟩ : WithDim energyDim ℝ) :=
+  molarEnergy_div hNA _
 
-example : molarEnergy 2 5 = 10 := by norm_num [molarEnergy]
-
-example : molarEnergy 2 5 / 2 = 5 := molarEnergy_div two_pos 5
+example : (molarEnergy (⟨2⟩ : WithDim avogadroDim ℝ) (⟨5⟩ : WithDim energyDim ℝ)).val = 10 := by
+  rw [molarEnergy_val]
+  norm_num
 
 -- `N_A (E / N_A) = E` for a symbolic positive `N_A`, and for the arithmetic probe `N_A = 2`
 -- (not the SI value): the molar energy of `7 / 2` is `7`.
 example {NA : ℝ} (hNA : 0 < NA) (E : ℝ) :
-    molarEnergy NA (E / NA) = E ∧ molarEnergy 2 (7 / 2) = 7 :=
-  ⟨molarEnergy_div_molarEnergy hNA E, molarEnergy_div_molarEnergy two_pos 7⟩
+    molarEnergy (⟨NA⟩ : WithDim avogadroDim ℝ)
+        (WithDim.cast ((⟨E⟩ : WithDim molarEnergyDim ℝ) / (⟨NA⟩ : WithDim avogadroDim ℝ))
+          (by unfold avogadroDim; rw [inv_inv]; exact molarEnergyDim_mul_amount)) =
+      (⟨E⟩ : WithDim molarEnergyDim ℝ) :=
+  molarEnergy_div_molarEnergy hNA _
+
+example : (molarEnergy (⟨2⟩ : WithDim avogadroDim ℝ)
+    (WithDim.cast ((⟨7⟩ : WithDim molarEnergyDim ℝ) / (⟨2⟩ : WithDim avogadroDim ℝ))
+      (by unfold avogadroDim; rw [inv_inv]; exact molarEnergyDim_mul_amount))).val = 7 := by
+  rw [molarEnergy_div_molarEnergy two_pos]
+
+example (NA : WithDim avogadroDim ℝ) (kB : WithDim boltzmannDim ℝ) :
+    gasConstant
+        ⟨(oneScale.dimScale milliAmountScale avogadroDim : ℝ) * NA.val⟩
+        ⟨(oneScale.dimScale milliAmountScale boltzmannDim : ℝ) * kB.val⟩ =
+      ⟨(oneScale.dimScale milliAmountScale gasConstantDim : ℝ) *
+        (gasConstant NA kB).val⟩ :=
+  gasConstant_dimScale oneScale milliAmountScale _ _
+
+example (NA : WithDim avogadroDim ℝ) (e : WithDim energyDim ℝ) :
+    molarEnergy
+        ⟨(oneScale.dimScale milliAmountScale avogadroDim : ℝ) * NA.val⟩
+        ⟨(oneScale.dimScale milliAmountScale energyDim : ℝ) * e.val⟩ =
+      ⟨(oneScale.dimScale milliAmountScale molarEnergyDim : ℝ) *
+        (molarEnergy NA e).val⟩ :=
+  molarEnergy_dimScale oneScale milliAmountScale _ _
 
 example : amountDim⁻¹ * energyDim = molarEnergyDim := inv_amountDim_mul_energyDim
 
@@ -270,41 +346,50 @@ example {kB T : ℝ} (hkB : 0 < kB) (hT : 0 < T) : 0 < 1 / (kB * T) :=
 -- At `T = 0` the expression `1 / (k_B T)` is `0` in Lean, so the hypothesis `T > 0` is needed.
 example (kB : ℝ) : ¬ 0 < 1 / (kB * 0) := by simp
 
-example {x : ℝ} (hx : 0 < x) : logRatio x x hx hx = 0 := logRatio_self hx
+example {x : WithDim concentrationDim ℝ} (hx : 0 < x.val) :
+    logRatio x x hx hx = 0 := logRatio_self hx
 
-example {x x0 : ℝ} (hx : 0 < x) (hx0 : 0 < x0) :
-    logRatio x x0 hx hx0 = Real.log x - Real.log x0 :=
+example {x x0 : WithDim concentrationDim ℝ} (hx : 0 < x.val) (hx0 : 0 < x0.val) :
+    logRatio x x0 hx hx0 = Real.log x.val - Real.log x0.val :=
   logRatio_eq_sub hx hx0
 
-example : logRatio 3 3 (by norm_num) (by norm_num) = 0 :=
+example : logRatio (⟨3⟩ : WithDim concentrationDim ℝ) ⟨3⟩ (by norm_num) (by norm_num) = 0 :=
   logRatio_eq_zero_of_div_eq_one _ _ (by norm_num)
 
-example {x x0 : ℝ} (hx : 0 < x) (hx0 : 0 < x0) :
-    logRatio ((kiloLengthScale.dimScale oneScale concentrationDim : ℝ) * x)
-        ((kiloLengthScale.dimScale oneScale concentrationDim : ℝ) * x0)
+example {x x0 : WithDim concentrationDim ℝ} (hx : 0 < x.val) (hx0 : 0 < x0.val) :
+    logRatio (⟨(kiloLengthScale.dimScale oneScale concentrationDim : ℝ) * x.val⟩ :
+        WithDim concentrationDim ℝ)
+        (⟨(kiloLengthScale.dimScale oneScale concentrationDim : ℝ) * x0.val⟩ :
+          WithDim concentrationDim ℝ)
         (mul_pos (NNReal.coe_pos.mpr (dimScale_pos _ _ _)) hx)
         (mul_pos (NNReal.coe_pos.mpr (dimScale_pos _ _ _)) hx0) =
       logRatio x x0 hx hx0 :=
-  logRatio_dimScale _ _ _ hx hx0
+  logRatio_dimScale _ _ hx hx0
 
 example : molarEnergyDim / (gasConstantDim * temperatureDim) = 1 :=
   molarEnergyDim_div_gasConstantDim_mul_temperatureDim
 
-example {R T : ℝ} (hR : 0 < R) (hT : 0 < T) : expScaledEnergy 0 R T hR hT = 1 := by
-  simp [expScaledEnergy]
+example {R : WithDim gasConstantDim ℝ} {T : WithDim temperatureDim ℝ} (hR : 0 < R.val)
+    (hT : 0 < T.val) :
+    expScaledEnergy (⟨0⟩ : WithDim molarEnergyDim ℝ) R T hR hT = 1 := by
+  rw [expScaledEnergy_val]
+  simp
 
-example (E : ℝ) {R T : ℝ} (hR : 0 < R) (hT : 0 < T) :
-    expScaledEnergy ((kiloLengthScale.dimScale oneScale molarEnergyDim : ℝ) * E)
-        ((kiloLengthScale.dimScale oneScale gasConstantDim : ℝ) * R)
-        ((kiloLengthScale.dimScale oneScale temperatureDim : ℝ) * T)
+example (E : WithDim molarEnergyDim ℝ) {R : WithDim gasConstantDim ℝ}
+    {T : WithDim temperatureDim ℝ} (hR : 0 < R.val) (hT : 0 < T.val) :
+    expScaledEnergy ⟨(kiloLengthScale.dimScale oneScale molarEnergyDim : ℝ) * E.val⟩
+        ⟨(kiloLengthScale.dimScale oneScale gasConstantDim : ℝ) * R.val⟩
+        ⟨(kiloLengthScale.dimScale oneScale temperatureDim : ℝ) * T.val⟩
         (mul_pos (NNReal.coe_pos.mpr (dimScale_pos _ _ _)) hR)
         (mul_pos (NNReal.coe_pos.mpr (dimScale_pos _ _ _)) hT) =
       expScaledEnergy E R T hR hT :=
   expScaledEnergy_dimScale _ _ E hR hT
 
-example {NA kB : ℝ} (hNA : 0 < NA) (hkB : 0 < kB) (e : ℝ) {T : ℝ} (hT : 0 < T) :
+example {NA : WithDim avogadroDim ℝ} {kB : WithDim boltzmannDim ℝ} (hNA : 0 < NA.val)
+    (hkB : 0 < kB.val) (e : WithDim energyDim ℝ) {T : WithDim temperatureDim ℝ}
+    (hT : 0 < T.val) :
     expScaledEnergy (molarEnergy NA e) (gasConstant NA kB) T (gasConstant_pos hNA hkB) hT =
-      Real.exp (-(e / (kB * T))) :=
+      Real.exp (-(e.val / (kB.val * T.val))) :=
   expScaledEnergy_molarEnergy_gasConstant hNA hkB e hT
 
 end PhyslibExtTest.Units.QuantityDimensions

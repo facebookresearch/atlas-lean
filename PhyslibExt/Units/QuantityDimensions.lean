@@ -36,19 +36,30 @@ dimensionless coordinate does not rescale. Physlib's projection `Dimension.fromI
 `LTMCTDimensionBase` sends `amountDim` to `1` and is not injective. It must never be used as a
 reversible conversion, and no conversion in this module is built on it.
 
-The Avogadro constant `N_A` and the Boltzmann constant `k_B` are positive real parameters, and no
-SI value is asserted for them. A particle count `N` is a dimensionless real, while the amount
-`amountOfCount N_A N = N / N_A` carries the amount dimension: it lies in
-`WithDim amountDim ℝ`. The molar gas constant is `R = N_A k_B`, and the molar energy of a
-per-particle energy `e` is `E = N_A e`. This bridge is a definition together with its proved round
-trips, not a proof that nature obeys it.
+The Avogadro constant `N_A` is a quantity of dimension `amountDim⁻¹` (per amount), the
+Boltzmann constant `k_B` is a quantity of dimension `energyDim / temperatureDim`, a
+per-particle energy `e` is a quantity of dimension `energyDim`, and no SI value is asserted
+for any of them. A particle count `N` is a dimensionless quantity in
+`WithDim dimensionlessDim ℝ`, while
+the amount `amountOfCount N_A N = N / N_A` carries the amount dimension: it lies in
+`WithDim amountDim ℝ`. The molar gas constant is `R = N_A k_B`, a quantity of dimension
+`gasConstantDim`, and the molar energy of a per-particle energy `e` is `E = N_A e`, a
+quantity of dimension `molarEnergyDim`. The bridge is built from `WithDim` multiplication
+and division, so every operand rescales with its own dimension (`countOfAmount_dimScale`,
+`gasConstant_dimScale`, `molarEnergy_dimScale`): in particular, converting an amount from
+moles to millimoles rescales `N_A` by `1 / 1000` as well, leaving the count unchanged.
+This bridge is a definition together with its proved round trips, not a proof that nature
+obeys it.
 
 Absolute temperatures are positive reals: the inverse temperature `1 / (k_B T)` is positive for
 `T > 0`, and the case `T = 0` is excluded by hypothesis. Celsius readings are affine reals
 converted by `celsiusToKelvin`: Celsius and Kelvin differences agree, but Celsius readings do not
 scale like absolute temperatures. `Real.log` and `Real.exp` are applied only to dimensionless real
-arguments. `logRatio x x0` is the logarithm of the ratio of two positive coordinates of one
-dimension, and `expScaledEnergy E R T` is `exp (-(E / (R T)))`, whose exponent has dimension
+arguments. `logRatio x x0` takes two `WithDim d ℝ` quantities of the *same* dimension `d`,
+so the type system, not a comment, enforces that the two coordinates share a dimension; it is
+the logarithm of their ratio, a dimensionless quantity. `expScaledEnergy E R T` takes a molar
+energy, a gas constant and an absolute temperature as typed `WithDim` quantities, and its
+exponent is the `WithDim dimensionlessDim ℝ` quotient `E / (R T)`, whose dimension is
 `molarEnergyDim / (gasConstantDim * temperatureDim) = 1`. Both are unchanged by a change of units.
 
 Non-goals: this is not a full SI unit system, and Celsius readings are not given a `Temperature`
@@ -66,9 +77,12 @@ declaration here applies them to a `WithDim` quantity. No thermodynamic law is p
   the identity, ratios are unchanged, and dimensionless coordinates do not rescale.
 - `fromISQHom_amountDim`, `fromISQHom_not_injective` : the projection onto `LTMCTDimensionBase`
   forgets amount and has no inverse.
-- `amountOfCount_val_mul`, `amountOfCount_nonneg`, `countOfAmount_amountOfCount`,
+- `amountOfCount_val`, `countOfAmount_val`, `gasConstant_val`, `molarEnergy_val`,
+  `amountOfCount_nonneg`, `countOfAmount_amountOfCount`,
   `amountOfCount_countOfAmount`, `dimOf_amountOfCount_ne_one`, `gasConstant_pos`,
-  `molarEnergy_div`, `molarEnergy_div_molarEnergy` : the constants bridge.
+  `molarEnergy_div`, `molarEnergy_div_molarEnergy`, `countOfAmount_dimScale`,
+  `gasConstant_dimScale`, `molarEnergy_dimScale`, `amountOfCount_dimScale` : the constants
+  bridge, with its rescaling behaviour.
 - `celsiusToKelvin_sub_celsiusToKelvin`, `celsiusToKelvin_two_mul_twenty_ne`,
   `celsiusToKelvin_mul_ne` : Celsius readings are affine.
 - `logRatio_eq_sub`, `logRatio_self`, `molarEnergyDim_div_gasConstantDim_mul_temperatureDim`,
@@ -103,6 +117,9 @@ namespace Units.QuantityDimensions
 
 /-- The amount-of-substance dimension `N`. -/
 def amountDim : Dimension ISQDimensionBase := single .amount
+
+/-- The dimensionless dimension `1`. -/
+def dimensionlessDim : Dimension ISQDimensionBase := 1
 
 /-- The amount concentration dimension `N L⁻³`. -/
 def concentrationDim : Dimension ISQDimensionBase := single .amount / single .length ^ 3
@@ -323,6 +340,17 @@ lemma dimScale_single {B : Type} [DimensionBasis B] [Fintype B] [DecidableEq B]
   rw [Finset.prod_eq_single b (fun b' _ hb' => by simp [hb']) (by simp)]
   simp
 
+/-- The scaling factor of an inverse dimension is the inverse scaling factor. -/
+lemma dimScale_inv {B : Type} [DimensionBasis B] [Fintype B] (u1 u2 : UnitScale B)
+    (d : Dimension B) : (u1.dimScale u2 d⁻¹ : ℝ) = (u1.dimScale u2 d : ℝ)⁻¹ := by
+  rw [← NNReal.coe_inv, map_inv]
+
+/-- The scaling factor of a product dimension is the product of the scaling factors. -/
+lemma dimScale_mul {B : Type} [DimensionBasis B] [Fintype B] (u1 u2 : UnitScale B)
+    (d₁ d₂ : Dimension B) :
+    (u1.dimScale u2 (d₁ * d₂) : ℝ) = (u1.dimScale u2 d₁ : ℝ) * (u1.dimScale u2 d₂ : ℝ) := by
+  rw [← NNReal.coe_mul, map_mul]
+
 /-- The projection of ISQ dimensions onto `LTMCTDimensionBase` forgets amount of substance. -/
 lemma fromISQHom_amountDim : fromISQHom amountDim = 1 := by
   ext b
@@ -338,60 +366,6 @@ lemma fromISQHom_not_injective : ¬ Function.Injective fromISQHom := fun h =>
 def dimOf {B : Type} [DimensionBasis B] {d : Dimension B} {M : Type} (_m : WithDim d M) :
     Dimension B := d
 
-/-- The amount of substance `n = N / N_A` of a dimensionless particle count `N`, given the
-Avogadro constant `N_A`. -/
-noncomputable def amountOfCount (NA N : ℝ) : WithDim amountDim ℝ := ⟨N / NA⟩
-
-/-- The dimensionless particle count `N = n N_A` of an amount of substance `n`. -/
-def countOfAmount (NA : ℝ) (n : WithDim amountDim ℝ) : ℝ := n.val * NA
-
-/-- The amount `n = N / N_A` satisfies `n N_A = N`. -/
-lemma amountOfCount_val_mul {NA : ℝ} (hNA : 0 < NA) (N : ℝ) :
-    (amountOfCount NA N).val * NA = N :=
-  div_mul_cancel₀ N hNA.ne'
-
-/-- The amount of a nonnegative particle count is nonnegative. -/
-lemma amountOfCount_nonneg {NA N : ℝ} (hNA : 0 < NA) (hN : 0 ≤ N) : 0 ≤ amountOfCount NA N :=
-  (WithDim.le_def _ _).mpr (div_nonneg hN hNA.le)
-
-/-- The particle count of the amount of a particle count is that count. -/
-lemma countOfAmount_amountOfCount {NA : ℝ} (hNA : 0 < NA) (N : ℝ) :
-    countOfAmount NA (amountOfCount NA N) = N :=
-  amountOfCount_val_mul hNA N
-
-/-- The amount of the particle count of an amount is that amount. -/
-lemma amountOfCount_countOfAmount {NA : ℝ} (hNA : 0 < NA) (n : WithDim amountDim ℝ) :
-    amountOfCount NA (countOfAmount NA n) = n :=
-  WithDim.ext _ _ (mul_div_cancel_right₀ n.val hNA.ne')
-
-/-- An amount of substance carries the dimension `amountDim`. This holds by construction:
-`amountOfCount` takes values in `WithDim amountDim ℝ`. -/
-lemma dimOf_amountOfCount (NA N : ℝ) : dimOf (amountOfCount NA N) = amountDim := rfl
-
-/-- Unlike a dimensionless particle count, an amount of substance does not have dimension `1`;
-the content is `amountDim_ne_one`. Its coordinate rescales with the amount unit
-(`dimScale_single`), while that of a count does not (`dimScale_one_mul`). -/
-lemma dimOf_amountOfCount_ne_one (NA N : ℝ) : dimOf (amountOfCount NA N) ≠ 1 :=
-  amountDim_ne_one
-
-/-- The molar gas constant `R = N_A k_B`. -/
-def gasConstant (NA kB : ℝ) : ℝ := NA * kB
-
-/-- The molar gas constant is positive. -/
-lemma gasConstant_pos {NA kB : ℝ} (hNA : 0 < NA) (hkB : 0 < kB) : 0 < gasConstant NA kB :=
-  mul_pos hNA hkB
-
-/-- The molar energy `E = N_A e` of a per-particle energy `e`. -/
-def molarEnergy (NA e : ℝ) : ℝ := NA * e
-
-/-- The molar energy `E = N_A e` satisfies `E / N_A = e`. -/
-lemma molarEnergy_div {NA : ℝ} (hNA : 0 < NA) (e : ℝ) : molarEnergy NA e / NA = e :=
-  mul_div_cancel_left₀ e hNA.ne'
-
-/-- The per-particle energy `e = E / N_A` of a molar energy `E` satisfies `N_A e = E`. -/
-lemma molarEnergy_div_molarEnergy {NA : ℝ} (hNA : 0 < NA) (E : ℝ) : molarEnergy NA (E / NA) = E :=
-  mul_div_cancel₀ E hNA.ne'
-
 /-- The dimension `N⁻¹` of `N_A` times an energy dimension is the dimension of `E = N_A e`. -/
 lemma inv_amountDim_mul_energyDim : amountDim⁻¹ * energyDim = molarEnergyDim := by
   decide
@@ -401,6 +375,177 @@ lemma inv_amountDim_mul_energyDim : amountDim⁻¹ * energyDim = molarEnergyDim 
 lemma inv_amountDim_mul_energyDim_div_temperatureDim :
     amountDim⁻¹ * (energyDim / temperatureDim) = gasConstantDim := by
   decide
+
+/-- The dimension `N⁻¹` of the Avogadro constant `N_A`. -/
+def avogadroDim : Dimension ISQDimensionBase := amountDim⁻¹
+
+/-- The dimension `M L² T⁻² Θ⁻¹` of the Boltzmann constant `k_B`. -/
+def boltzmannDim : Dimension ISQDimensionBase := energyDim / temperatureDim
+
+/-- The amount of substance `n = N / N_A` of a dimensionless particle count `N`, given the
+Avogadro constant `N_A` as an inverse-amount quantity. The quotient is a `WithDim`
+division, so its dimension `1 * (N⁻¹)⁻¹ = N` is computed by the type system. -/
+noncomputable def amountOfCount (NA : WithDim avogadroDim ℝ) (N : WithDim dimensionlessDim ℝ) :
+    WithDim amountDim ℝ :=
+  WithDim.cast (N / NA) (by unfold dimensionlessDim avogadroDim; rw [inv_inv, one_mul])
+
+/-- The dimensionless particle count `N = n N_A` of an amount of substance `n`, given the
+Avogadro constant `N_A` as an inverse-amount quantity. The product is a `WithDim`
+multiplication, so its dimension `N * N⁻¹ = 1` is computed by the type system. -/
+def countOfAmount (NA : WithDim avogadroDim ℝ) (n : WithDim amountDim ℝ) :
+    WithDim dimensionlessDim ℝ :=
+  WithDim.cast (n * NA) (by unfold dimensionlessDim avogadroDim; rw [mul_inv_cancel])
+
+/-- The coordinate of `amountOfCount N_A N` is `N / N_A`. -/
+lemma amountOfCount_val (NA : WithDim avogadroDim ℝ) (N : WithDim dimensionlessDim ℝ) :
+    (amountOfCount NA N).val = N.val / NA.val := rfl
+
+/-- The coordinate of `countOfAmount N_A n` is `n N_A`. -/
+lemma countOfAmount_val (NA : WithDim avogadroDim ℝ) (n : WithDim amountDim ℝ) :
+    (countOfAmount NA n).val = n.val * NA.val := rfl
+
+/-- The amount of a nonnegative particle count is nonnegative. -/
+lemma amountOfCount_nonneg {NA : WithDim avogadroDim ℝ} {N : WithDim dimensionlessDim ℝ}
+    (hNA : 0 < NA.val) (hN : 0 ≤ N.val) : 0 ≤ amountOfCount NA N :=
+  (WithDim.le_def _ _).mpr (div_nonneg hN hNA.le)
+
+/-- The particle count of the amount of a particle count is that count. -/
+lemma countOfAmount_amountOfCount {NA : WithDim avogadroDim ℝ} (hNA : 0 < NA.val)
+    (N : WithDim dimensionlessDim ℝ) : countOfAmount NA (amountOfCount NA N) = N := by
+  apply WithDim.ext
+  rw [countOfAmount_val, amountOfCount_val, div_mul_cancel₀ N.val hNA.ne']
+
+/-- The amount of the particle count of an amount is that amount. -/
+lemma amountOfCount_countOfAmount {NA : WithDim avogadroDim ℝ} (hNA : 0 < NA.val)
+    (n : WithDim amountDim ℝ) : amountOfCount NA (countOfAmount NA n) = n := by
+  apply WithDim.ext
+  rw [amountOfCount_val, countOfAmount_val, mul_div_cancel_right₀ n.val hNA.ne']
+
+/-- An amount of substance carries the dimension `amountDim`. This holds by construction:
+`amountOfCount` takes values in `WithDim amountDim ℝ`. -/
+lemma dimOf_amountOfCount (NA : WithDim avogadroDim ℝ) (N : WithDim dimensionlessDim ℝ) :
+    dimOf (amountOfCount NA N) = amountDim := rfl
+
+/-- Unlike a dimensionless particle count, an amount of substance does not have dimension `1`;
+the content is `amountDim_ne_one`. Its coordinate rescales with the amount unit
+(`dimScale_single`), while that of a count does not (`dimScale_one_mul`). -/
+lemma dimOf_amountOfCount_ne_one (NA : WithDim avogadroDim ℝ) (N : WithDim dimensionlessDim ℝ) :
+    dimOf (amountOfCount NA N) ≠ 1 :=
+  amountDim_ne_one
+
+/-- The molar gas constant `R = N_A k_B`, as a quantity of dimension `gasConstantDim`. -/
+noncomputable def gasConstant (NA : WithDim avogadroDim ℝ) (kB : WithDim boltzmannDim ℝ) :
+    WithDim gasConstantDim ℝ :=
+  WithDim.cast (NA * kB) (by
+    unfold avogadroDim boltzmannDim
+    exact inv_amountDim_mul_energyDim_div_temperatureDim)
+
+/-- The coordinate of `gasConstant N_A k_B` is `N_A k_B`. -/
+lemma gasConstant_val (NA : WithDim avogadroDim ℝ) (kB : WithDim boltzmannDim ℝ) :
+    (gasConstant NA kB).val = NA.val * kB.val := rfl
+
+/-- The molar gas constant is positive. -/
+lemma gasConstant_pos {NA : WithDim avogadroDim ℝ} {kB : WithDim boltzmannDim ℝ}
+    (hNA : 0 < NA.val) (hkB : 0 < kB.val) : 0 < gasConstant NA kB :=
+  mul_pos hNA hkB
+
+/-- The molar energy `E = N_A e` of a per-particle energy `e`, as a quantity of dimension
+`molarEnergyDim`. -/
+def molarEnergy (NA : WithDim avogadroDim ℝ) (e : WithDim energyDim ℝ) :
+    WithDim molarEnergyDim ℝ :=
+  WithDim.cast (NA * e) (by
+    unfold avogadroDim
+    exact inv_amountDim_mul_energyDim)
+
+/-- The coordinate of `molarEnergy N_A e` is `N_A e`. -/
+lemma molarEnergy_val (NA : WithDim avogadroDim ℝ) (e : WithDim energyDim ℝ) :
+    (molarEnergy NA e).val = NA.val * e.val := rfl
+
+/-- The molar energy `E = N_A e` satisfies `E / N_A = e`, as a quantity of dimension
+`energyDim`. -/
+lemma molarEnergy_div {NA : WithDim avogadroDim ℝ} (hNA : 0 < NA.val)
+    (e : WithDim energyDim ℝ) :
+    WithDim.cast ((molarEnergy NA e) / NA)
+      (by unfold avogadroDim; rw [inv_inv]; exact molarEnergyDim_mul_amount) = e := by
+  apply WithDim.ext
+  change (NA.val * e.val) / NA.val = e.val
+  rw [mul_div_cancel_left₀ e.val hNA.ne']
+
+/-- The per-particle energy `e = E / N_A` of a molar energy `E` satisfies `N_A e = E`. -/
+lemma molarEnergy_div_molarEnergy {NA : WithDim avogadroDim ℝ} (hNA : 0 < NA.val)
+    (E : WithDim molarEnergyDim ℝ) :
+    molarEnergy NA (WithDim.cast (E / NA)
+      (by unfold avogadroDim; rw [inv_inv]; exact molarEnergyDim_mul_amount)) = E := by
+  apply WithDim.ext
+  change NA.val * (E.val / NA.val) = E.val
+  rw [mul_div_cancel₀ E.val hNA.ne']
+
+/-- Rescaling an amount and `N_A` together leaves the count unchanged: the amount
+coordinate rescales by `dimScale amountDim` and the inverse-amount coordinate of `N_A`
+by its inverse. This is the counter-case to holding `N_A` fixed while rescaling the
+amount. -/
+lemma countOfAmount_dimScale (u1 u2 : UnitScale ISQDimensionBase)
+    (NA : WithDim avogadroDim ℝ) (n : WithDim amountDim ℝ) :
+    countOfAmount ⟨(u1.dimScale u2 avogadroDim : ℝ) * NA.val⟩
+        ⟨(u1.dimScale u2 amountDim : ℝ) * n.val⟩ = countOfAmount NA n := by
+  apply WithDim.ext
+  change ((u1.dimScale u2 amountDim : ℝ) * n.val) *
+      ((u1.dimScale u2 avogadroDim : ℝ) * NA.val) = n.val * NA.val
+  have hs : (0 : ℝ) < (u1.dimScale u2 amountDim : ℝ) :=
+    NNReal.coe_pos.mpr (dimScale_pos u1 u2 amountDim)
+  unfold avogadroDim
+  rw [dimScale_inv]
+  field_simp
+
+/-- Rescaling `N_A` and a count together rescales the amount by the amount factor. -/
+lemma amountOfCount_dimScale (u1 u2 : UnitScale ISQDimensionBase)
+    (NA : WithDim avogadroDim ℝ) (hNA : 0 < NA.val) (N : WithDim dimensionlessDim ℝ) :
+    amountOfCount ⟨(u1.dimScale u2 avogadroDim : ℝ) * NA.val⟩
+        ⟨(u1.dimScale u2 1 : ℝ) * N.val⟩ =
+      ⟨(u1.dimScale u2 amountDim : ℝ) * (amountOfCount NA N).val⟩ := by
+  apply WithDim.ext
+  change ((u1.dimScale u2 1 : ℝ) * N.val) / ((u1.dimScale u2 avogadroDim : ℝ) * NA.val) =
+    (u1.dimScale u2 amountDim : ℝ) * (N.val / NA.val)
+  have hs : (0 : ℝ) < (u1.dimScale u2 amountDim : ℝ) :=
+    NNReal.coe_pos.mpr (dimScale_pos u1 u2 amountDim)
+  rw [UnitScale.dimScale_one, NNReal.coe_one, one_mul]
+  unfold avogadroDim
+  rw [dimScale_inv]
+  field_simp
+
+/-- Rescaling `N_A` and `k_B` by their own dimension factors rescales `R` by the gas-constant
+factor. -/
+lemma gasConstant_dimScale (u1 u2 : UnitScale ISQDimensionBase)
+    (NA : WithDim avogadroDim ℝ) (kB : WithDim boltzmannDim ℝ) :
+    gasConstant ⟨(u1.dimScale u2 avogadroDim : ℝ) * NA.val⟩
+        ⟨(u1.dimScale u2 boltzmannDim : ℝ) * kB.val⟩ =
+      ⟨(u1.dimScale u2 gasConstantDim : ℝ) * (gasConstant NA kB).val⟩ := by
+  apply WithDim.ext
+  change ((u1.dimScale u2 avogadroDim : ℝ) * NA.val) *
+      ((u1.dimScale u2 boltzmannDim : ℝ) * kB.val) =
+    (u1.dimScale u2 gasConstantDim : ℝ) * (NA.val * kB.val)
+  have hdim : gasConstantDim = avogadroDim * boltzmannDim := by
+    unfold avogadroDim boltzmannDim
+    exact inv_amountDim_mul_energyDim_div_temperatureDim.symm
+  rw [hdim, dimScale_mul]
+  ring
+
+/-- Rescaling `N_A` and a per-particle energy by their own dimension factors rescales the
+molar energy by the molar-energy factor. -/
+lemma molarEnergy_dimScale (u1 u2 : UnitScale ISQDimensionBase)
+    (NA : WithDim avogadroDim ℝ) (e : WithDim energyDim ℝ) :
+    molarEnergy ⟨(u1.dimScale u2 avogadroDim : ℝ) * NA.val⟩
+        ⟨(u1.dimScale u2 energyDim : ℝ) * e.val⟩ =
+      ⟨(u1.dimScale u2 molarEnergyDim : ℝ) * (molarEnergy NA e).val⟩ := by
+  apply WithDim.ext
+  change ((u1.dimScale u2 avogadroDim : ℝ) * NA.val) *
+      ((u1.dimScale u2 energyDim : ℝ) * e.val) =
+    (u1.dimScale u2 molarEnergyDim : ℝ) * (NA.val * e.val)
+  have hdim : molarEnergyDim = avogadroDim * energyDim := by
+    unfold avogadroDim
+    exact inv_amountDim_mul_energyDim.symm
+  rw [hdim, dimScale_mul]
+  ring
 
 /-! ## D. Temperature and the dimensionless log/exp gate -/
 
@@ -431,33 +576,47 @@ lemma celsiusToKelvin_two_mul_twenty_ne :
 lemma inverseTemperature_pos {kB T : ℝ} (hkB : 0 < kB) (hT : 0 < T) : 0 < 1 / (kB * T) :=
   one_div_pos.mpr (mul_pos hkB hT)
 
-/-- The logarithm `log (x / x0)` of the ratio of two positive reals. The arguments are bare
-reals: the intended use is two coordinates of one dimension in one unit choice, whose ratio is
-dimensionless, so that `logRatio` is unchanged by a change of units (`logRatio_dimScale`). -/
-noncomputable def logRatio (x x0 : ℝ) (_hx : 0 < x) (_hx0 : 0 < x0) : ℝ := Real.log (x / x0)
+/-- The logarithm `log (x / x0)` of the ratio of two positive quantities of the *same*
+dimension `d`. Both arguments share the dimension index, so a ratio of quantities of
+different dimensions is a type error; only after the type-level quotient `d / d = 1`
+is formed is the coordinate ratio passed to `Real.log`. -/
+noncomputable def logRatio {d : Dimension ISQDimensionBase} (x x0 : WithDim d ℝ)
+    (_hx : 0 < x.val) (_hx0 : 0 < x0.val) : ℝ :=
+  Real.log (((WithDim.cast (x / x0) (by unfold dimensionlessDim; exact mul_inv_cancel d) :
+    WithDim dimensionlessDim ℝ)).val)
 
-/-- `logRatio x x0` is `log x - log x0`. -/
-lemma logRatio_eq_sub {x x0 : ℝ} (hx : 0 < x) (hx0 : 0 < x0) :
-    logRatio x x0 hx hx0 = Real.log x - Real.log x0 :=
-  Real.log_div hx.ne' hx0.ne'
+/-- `logRatio x x0` is `log (x / x0)` on coordinates. -/
+lemma logRatio_val {d : Dimension ISQDimensionBase} {x x0 : WithDim d ℝ}
+    (hx : 0 < x.val) (hx0 : 0 < x0.val) :
+    logRatio x x0 hx hx0 = Real.log (x.val / x0.val) := rfl
+
+/-- `logRatio x x0` is `log x - log x0` on coordinates. -/
+lemma logRatio_eq_sub {d : Dimension ISQDimensionBase} {x x0 : WithDim d ℝ}
+    (hx : 0 < x.val) (hx0 : 0 < x0.val) :
+    logRatio x x0 hx hx0 = Real.log x.val - Real.log x0.val := by
+  rw [logRatio_val, Real.log_div hx.ne' hx0.ne']
 
 /-- The `logRatio` of a coordinate to itself is `0`. -/
-lemma logRatio_self {x : ℝ} (hx : 0 < x) : logRatio x x hx hx = 0 := by
-  rw [logRatio, div_self hx.ne', Real.log_one]
+lemma logRatio_self {d : Dimension ISQDimensionBase} {x : WithDim d ℝ} (hx : 0 < x.val) :
+    logRatio x x hx hx = 0 := by
+  rw [logRatio_val, div_self hx.ne', Real.log_one]
 
 /-- The `logRatio` of coordinates with ratio `1` is `0`. -/
-lemma logRatio_eq_zero_of_div_eq_one {x x0 : ℝ} (hx : 0 < x) (hx0 : 0 < x0) (h : x / x0 = 1) :
+lemma logRatio_eq_zero_of_div_eq_one {d : Dimension ISQDimensionBase} {x x0 : WithDim d ℝ}
+    (hx : 0 < x.val) (hx0 : 0 < x0.val) (h : x.val / x0.val = 1) :
     logRatio x x0 hx hx0 = 0 := by
-  rw [logRatio, h, Real.log_one]
+  rw [logRatio_val, h, Real.log_one]
 
-/-- `logRatio` is unchanged by a change of units. -/
-lemma logRatio_dimScale {B : Type} [DimensionBasis B] [Fintype B] (u1 u2 : UnitScale B)
-    (d : Dimension B) {x x0 : ℝ} (hx : 0 < x) (hx0 : 0 < x0) :
-    logRatio ((u1.dimScale u2 d : ℝ) * x) ((u1.dimScale u2 d : ℝ) * x0)
+/-- `logRatio` is unchanged by a change of units: both coordinates rescale by the same
+factor for their shared dimension. -/
+lemma logRatio_dimScale (u1 u2 : UnitScale ISQDimensionBase)
+    {d : Dimension ISQDimensionBase} {x x0 : WithDim d ℝ} (hx : 0 < x.val) (hx0 : 0 < x0.val) :
+    logRatio (⟨(u1.dimScale u2 d : ℝ) * x.val⟩ : WithDim d ℝ)
+        (⟨(u1.dimScale u2 d : ℝ) * x0.val⟩ : WithDim d ℝ)
         (mul_pos (NNReal.coe_pos.mpr (dimScale_pos u1 u2 d)) hx)
         (mul_pos (NNReal.coe_pos.mpr (dimScale_pos u1 u2 d)) hx0) =
       logRatio x x0 hx hx0 := by
-  simp only [logRatio, dimScale_ratio]
+  simp only [logRatio_val, dimScale_ratio]
 
 /-- The exponent `E / (R T)` of a molar energy over a gas constant and a temperature is
 dimensionless. -/
@@ -465,18 +624,32 @@ lemma molarEnergyDim_div_gasConstantDim_mul_temperatureDim :
     molarEnergyDim / (gasConstantDim * temperatureDim) = 1 := by
   decide
 
-/-- The Boltzmann/Arrhenius-style factor `exp (-(E / (R T)))` for real coordinates of a molar
-energy `E`, a gas constant `R > 0` and an absolute temperature `T > 0`. The exponent is
-dimensionless by `molarEnergyDim_div_gasConstantDim_mul_temperatureDim`, so the factor is
-unchanged by a change of units (`expScaledEnergy_dimScale`). -/
-noncomputable def expScaledEnergy (E R T : ℝ) (_hR : 0 < R) (_hT : 0 < T) : ℝ :=
-  Real.exp (-(E / (R * T)))
+/-- The Boltzmann/Arrhenius-style factor `exp (-(E / (R T)))` for a molar energy `E`, a gas
+constant `R > 0` and an absolute temperature `T > 0`, each as a typed `WithDim` quantity.
+The exponent is the `WithDim dimensionlessDim ℝ` quotient `E / (R * T)`: the dimension identity
+`molarEnergyDim_div_gasConstantDim_mul_temperatureDim` is the cast that makes it
+dimensionless, rather than a comment alongside unrelated raw reals. -/
+noncomputable def expScaledEnergy (E : WithDim molarEnergyDim ℝ)
+    (R : WithDim gasConstantDim ℝ) (T : WithDim temperatureDim ℝ) (_hR : 0 < R.val)
+    (_hT : 0 < T.val) : ℝ :=
+  Real.exp (-(((WithDim.cast (E / (R * T))
+    (by unfold dimensionlessDim; rw [← div_eq_mul_inv]
+        exact molarEnergyDim_div_gasConstantDim_mul_temperatureDim) :
+    WithDim dimensionlessDim ℝ)).val))
 
-/-- `expScaledEnergy` is unchanged by a change of units. -/
-lemma expScaledEnergy_dimScale (u1 u2 : UnitScale ISQDimensionBase) (E : ℝ) {R T : ℝ}
-    (hR : 0 < R) (hT : 0 < T) :
-    expScaledEnergy ((u1.dimScale u2 molarEnergyDim : ℝ) * E)
-        ((u1.dimScale u2 gasConstantDim : ℝ) * R) ((u1.dimScale u2 temperatureDim : ℝ) * T)
+/-- `expScaledEnergy E R T` is `exp (-(E / (R * T)))` on coordinates. -/
+lemma expScaledEnergy_val (E : WithDim molarEnergyDim ℝ) (R : WithDim gasConstantDim ℝ)
+    (T : WithDim temperatureDim ℝ) (hR : 0 < R.val) (hT : 0 < T.val) :
+    expScaledEnergy E R T hR hT = Real.exp (-(E.val / (R.val * T.val))) := rfl
+
+/-- `expScaledEnergy` is unchanged by a change of units: each argument rescales by the
+factor for its own dimension, and those factors cancel in the dimensionless exponent. -/
+lemma expScaledEnergy_dimScale (u1 u2 : UnitScale ISQDimensionBase)
+    (E : WithDim molarEnergyDim ℝ) {R : WithDim gasConstantDim ℝ}
+    {T : WithDim temperatureDim ℝ} (hR : 0 < R.val) (hT : 0 < T.val) :
+    expScaledEnergy ⟨(u1.dimScale u2 molarEnergyDim : ℝ) * E.val⟩
+        ⟨(u1.dimScale u2 gasConstantDim : ℝ) * R.val⟩
+        ⟨(u1.dimScale u2 temperatureDim : ℝ) * T.val⟩
         (mul_pos (NNReal.coe_pos.mpr (dimScale_pos u1 u2 gasConstantDim)) hR)
         (mul_pos (NNReal.coe_pos.mpr (dimScale_pos u1 u2 temperatureDim)) hT) =
       expScaledEnergy E R T hR hT := by
@@ -487,14 +660,17 @@ lemma expScaledEnergy_dimScale (u1 u2 : UnitScale ISQDimensionBase) (E : ℝ) {R
   have hne : (u1.dimScale u2 gasConstantDim : ℝ) * (u1.dimScale u2 temperatureDim : ℝ) ≠ 0 :=
     (mul_pos (NNReal.coe_pos.mpr (dimScale_pos u1 u2 gasConstantDim))
       (NNReal.coe_pos.mpr (dimScale_pos u1 u2 temperatureDim))).ne'
-  simp only [expScaledEnergy]
+  simp only [expScaledEnergy_val]
   rw [hE, mul_mul_mul_comm, mul_div_mul_left _ _ hne]
 
 /-- For `E = N_A e` and `R = N_A k_B`, `expScaledEnergy E R T` is `exp (-(e / (k_B T)))`. -/
-lemma expScaledEnergy_molarEnergy_gasConstant {NA kB : ℝ} (hNA : 0 < NA) (hkB : 0 < kB)
-    (e : ℝ) {T : ℝ} (hT : 0 < T) :
+lemma expScaledEnergy_molarEnergy_gasConstant
+    {NA : WithDim avogadroDim ℝ} {kB : WithDim boltzmannDim ℝ} (hNA : 0 < NA.val)
+    (hkB : 0 < kB.val) (e : WithDim energyDim ℝ) {T : WithDim temperatureDim ℝ}
+    (hT : 0 < T.val) :
     expScaledEnergy (molarEnergy NA e) (gasConstant NA kB) T (gasConstant_pos hNA hkB) hT =
-      Real.exp (-(e / (kB * T))) := by
-  rw [expScaledEnergy, molarEnergy, gasConstant, mul_assoc, mul_div_mul_left _ _ hNA.ne']
+      Real.exp (-(e.val / (kB.val * T.val))) := by
+  simp only [expScaledEnergy_val, molarEnergy_val, gasConstant_val]
+  rw [mul_assoc, mul_div_mul_left _ _ hNA.ne']
 
 end Units.QuantityDimensions
