@@ -13,7 +13,7 @@ public meta import CSLibExt.Algorithms.Lean.Numerical.Summation
 
 /-! # Rounded-summation regression witnesses -/
 
-open CSLibExt.Algorithms.Lean.Numerical.Summation
+open Cslib.Algorithms.Lean.Numerical.Summation
 
 #guard rsum 2 ([] : List ℚ) = 0
 #guard rsum 2 ([0, 0, 0] : List ℚ) = 0
@@ -53,5 +53,5 @@ example : |rsum 0 ([1, -1, 3] : List ℝ) - 3| ≤ 35 := by
   norm_num [unitRoundoff] at h ⊢
   exact h
 
-#print axioms CSLibExt.Algorithms.Lean.Numerical.Summation.rsum_bound
-#print axioms CSLibExt.Algorithms.Lean.Numerical.Summation.rsum_abs_sub_le
+#print axioms Cslib.Algorithms.Lean.Numerical.Summation.rsum_bound
+#print axioms Cslib.Algorithms.Lean.Numerical.Summation.rsum_abs_sub_le

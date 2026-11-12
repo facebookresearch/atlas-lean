@@ -35,7 +35,7 @@ bounds are proved together by induction; there is no restriction on `n*u`.
 
 set_option autoImplicit false
 
-namespace CSLibExt.Algorithms.Lean.Numerical.Summation
+namespace Cslib.Algorithms.Lean.Numerical.Summation
 
 open Cslib.Algorithms.Lean.FloatingPoint
 
@@ -156,4 +156,4 @@ theorem rsum_abs_sub_le (p : ℕ) (xs : List ℝ) :
         ((xs.map fun a => |a|).sum) :=
   (rsum_bound p xs).1
 
-end CSLibExt.Algorithms.Lean.Numerical.Summation
+end Cslib.Algorithms.Lean.Numerical.Summation
