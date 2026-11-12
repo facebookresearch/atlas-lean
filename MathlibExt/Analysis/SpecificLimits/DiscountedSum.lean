@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.Normed.Group.InfiniteSum
 public import Mathlib.Analysis.SpecificLimits.Basic
+public import MathlibExt.Economics.Finance.DatedCashFlow
 
 /-!
 # Truncation error of discounted sums
@@ -21,12 +22,16 @@ For a discount factor `0 ≤ β < 1` and rewards with `|r t| ≤ M`, the discoun
 
 The tail after `T` periods is split off with `Summable.sum_add_tsum_nat_add` and dominated by the
 geometric series `M * β ^ T * ∑ β ^ t` (`tsum_of_norm_bounded`, `hasSum_geometric_of_lt_one`).
-The bound is attained by constant rewards.
+The bound is attained by constant rewards. The truncation is the present value of the first `T`
+rewards under the discount factors `t ↦ β ^ t` in the sense of
+`MathlibExt.Economics.Finance.presentValue`, so the bound also applies to present values.
 
 ## ii. Main results
 
 * `MathlibExt.DiscountedSum.summable_discounted`
 * `MathlibExt.DiscountedSum.abs_discountedValue_sub_truncatedValue_le`
+* `MathlibExt.DiscountedSum.truncatedValue_eq_presentValue`
+* `MathlibExt.DiscountedSum.abs_discountedValue_sub_presentValue_le`
 
 ## iii. References
 
@@ -91,5 +96,22 @@ theorem abs_discountedValue_sub_truncatedValue_le {β M : ℝ} {r : ℕ → ℝ}
       _ = (M * β ^ T) * β ^ i := by ring
   rw [div_eq_mul_inv]
   exact hbound
+
+/-- The truncation is the present value of the first `T` rewards under the discount factors
+`t ↦ β ^ t` (`MathlibExt.Economics.Finance.presentValue`). -/
+theorem truncatedValue_eq_presentValue (β : ℝ) (r : ℕ → ℝ) (T : ℕ) :
+    truncatedValue β r T =
+      MathlibExt.Economics.Finance.presentValue (fun t => β ^ t) (Finset.range T) r := by
+  rfl
+
+/-- **Truncation error bound, present-value form.** For `0 ≤ β < 1` and `|r t| ≤ M`, the present
+value of the first `T` rewards is within `M * β ^ T / (1 - β)` of the discounted value. -/
+theorem abs_discountedValue_sub_presentValue_le {β M : ℝ} {r : ℕ → ℝ} (hβ0 : 0 ≤ β)
+    (hβ1 : β < 1) (hr : ∀ t, |r t| ≤ M) (T : ℕ) :
+    |discountedValue β r -
+        MathlibExt.Economics.Finance.presentValue (fun t => β ^ t) (Finset.range T) r| ≤
+      M * β ^ T / (1 - β) := by
+  rw [← truncatedValue_eq_presentValue]
+  exact abs_discountedValue_sub_truncatedValue_le hβ0 hβ1 hr T
 
 end MathlibExt.DiscountedSum
