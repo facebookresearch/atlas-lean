@@ -29,8 +29,10 @@ against a process `M` is `(H • M)ₙ = ∑_{k < n} H_{k+1} (M_{k+1} - M_k)`.
 
 A **counting process** `N` has `N 0 = 0` and natural-number increments. Its compensator is Doob's
 predictable part `A = predictablePart N ℱ μ`, `ΔA_{n+1} = E[ΔN_{n+1} | ℱₙ]`, and the compensated
-process `M = N - A` is Mathlib's `martingalePart N ℱ μ`, a martingale
-(`martingale_martingalePart`).
+process `M = N - A` is Mathlib's `martingalePart N ℱ μ`. It is a martingale
+(`martingale_martingalePart`) only under the further hypotheses that `N` is adapted
+(`StronglyAdapted ℱ N`) and integrable (`∀ n, Integrable (N n) μ`); `IsCountingProcess`
+alone assumes neither.
 In **Aalen's multiplicative intensity model** the compensator is `∫ Y dα` for a predictable
 at-risk process `Y` and a deterministic cumulative hazard `α`
 (`predictablePart_eq_aalenCompensator`).
@@ -65,7 +67,9 @@ at-risk process `Y` and a deterministic cumulative hazard `α`
   is `1 - 0⁻¹ ΔN = 1`); the cost is that `Â` estimates the
   restricted hazard `Λ* = ∫ J dα` (`restrictedHazard`), not `α`, and the Kaplan–Meier
   representation carries an explicit remainder `∫ Ŝ₋ / S · 1{Y = 0} dα`.
-* **Non-predictable integrands.** For the adapted but anticipating integrand `H = ΔN`, `H • M` is a
+* **Non-predictable integrands.** For an adapted `N`, the integrand `H = ΔN` is adapted but
+  anticipating (adaptation of `N` is a separate hypothesis, not implied by
+  `IsCountingProcess`); `H • M` is a
   martingale only if `N` jumps solely where `ΔA = 1`
   (`HasUnitJumps.ae_jump_mul_eq_zero_of_martingale`); any unpredicted jump of positive
   probability makes it fail (`HasUnitJumps.not_martingale_of_unpredicted_jump`).
@@ -242,7 +246,9 @@ theorem stochasticIntegral_stochasticIntegral (H K X : ℕ → Ω → ℝ) (n : 
 /-! ### Counting processes and their compensators -/
 
 /-- A discrete-time **counting process**: `N 0 = 0` and every increment `N (n + 1) - N n` is a
-natural number (several events may occur in one step, e.g. tied event times). -/
+natural number (several events may occur in one step, e.g. tied event times). This assumes
+neither adaptation nor integrability: a martingale conclusion for `martingalePart N` needs
+`StronglyAdapted ℱ N` and `∀ n, Integrable (N n) μ` as separate hypotheses. -/
 structure IsCountingProcess (N : ℕ → Ω → ℝ) : Prop where
   /-- The process starts at `0`. -/
   zero : ∀ ω, N 0 ω = 0
@@ -683,8 +689,10 @@ theorem martingale_kaplanMeierProcess_div [IsFiniteMeasure μ] {N Y : ℕ → Ω
 /-! ### What fails without predictability -/
 
 /-- **An adapted but anticipating integrand breaks the martingale property.** Let `N` have unit
-jumps and `M = martingalePart N` be its compensated martingale. The integrand `H_k = ΔN_k` is
-adapted but not predictable. If `H • M` is nevertheless a martingale, then a.e. `N` can only jump
+jumps and `M = martingalePart N` be its compensated martingale. If `N` is adapted, the
+integrand `H_k = ΔN_k` is adapted but not predictable (adaptation is not implied by
+`IsCountingProcess` or `HasUnitJumps`). If `H • M` is nevertheless a martingale, then a.e. `N`
+can only jump
 at steps where its compensator jumps by exactly `1` (`ΔN_{k+1} (1 - ΔA_{k+1}) = 0`): the
 anticipating integral picks up `∑ ΔN (1 - ΔA) ≥ 0`, which has positive mean as soon as `N` has a
 jump that is not fully predicted. -/

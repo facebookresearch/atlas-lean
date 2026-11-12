@@ -205,7 +205,7 @@ noncomputable def boolN : ℕ → Bool → ℝ := fun n ω => if n = 0 then 0 el
 
 /-- Integrating the anticipating integrand `ΔN` against the compensated martingale `N - A` (here
 `ΔA₁ = 1/2`) does not give a martingale: `HasUnitJumps.not_martingale_of_unpredicted_jump` is not
-vacuous. -/
+vacuous. `boolN` is adapted (`boolN_adapted` below), so `ΔN` is adapted but not predictable. -/
 example : ¬ Martingale (stochasticIntegral (fun k ω => boolN k ω - boolN (k - 1) ω)
     (martingalePart boolN boolFiltration Measure.count)) boolFiltration Measure.count := by
   have hN : HasUnitJumps boolN := fun n ω => by
