@@ -26,8 +26,12 @@ namespace MathlibExt.Probability.Finance.PortfolioBeta
 
 open MeasureTheory ProbabilityTheory
 
-/-- The beta of return `X` against market return `Y` under measure `μ`:
-`β = cov[X, Y; μ] / Var[Y; μ]`. -/
+/-- The totalized beta ratio of return `X` against market return `Y` under
+measure `μ`: `β = cov[X, Y; μ] / Var[Y; μ]`, where division is Lean's totalized
+real division. This equals the CAPM beta when `0 < Var[Y; μ]`; when
+`Var[Y; μ] = 0` it takes the junk value `0` and is not a meaningful beta.
+Use `portfolio_beta_linear`, which carries the positive-variance hypothesis,
+for the meaningful case. -/
 noncomputable def assetBeta {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) (X Y : Ω → ℝ) : ℝ :=
   cov[X, Y; μ] / Var[Y; μ]
 
