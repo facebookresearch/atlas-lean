@@ -224,14 +224,13 @@ theorem one_period_fundamental_theorem_asset_pricing
       (∀ a : A, ∑ ω : Ω, q ω * g a ω = 0) :=
   one_period_fundamental_theorem_asset_pricing_general g
 
-set_option linter.unusedFintypeInType false in
 /-- **Perturbation lemma.** In a finite one-period market with gains `g`, if `q` is a strictly
 positive normalized state-price vector (`∑ ω, q ω = 1` and `∑ ω, q ω * g a ω = 0` for every
 asset `a`) and `d` is a nonzero direction preserving these linear constraints (`∑ ω, d ω = 0`
 and `∑ ω, d ω * g a ω = 0`), then a sufficiently small perturbation of `q` along `d` is a
 different strictly positive normalized state-price vector. -/
 theorem exists_ne_statePrice_of_ne_zero
-    {Ω : Type*} [Fintype Ω] {A : Type*} [Fintype A] (g : A → Ω → ℝ)
+    {Ω : Type*} [Fintype Ω] {A : Type*} (g : A → Ω → ℝ)
     {q d : Ω → ℝ} (hq : ∀ ω : Ω, 0 < q ω) (hq1 : ∑ ω : Ω, q ω = 1)
     (hqg : ∀ a : A, ∑ ω : Ω, q ω * g a ω = 0)
     (hd : d ≠ 0) (hd1 : ∑ ω : Ω, d ω = 0) (hdg : ∀ a : A, ∑ ω : Ω, d ω * g a ω = 0) :
@@ -283,7 +282,11 @@ theorem exists_ne_statePrice_of_ne_zero
 arbitrage-free finite market with a riskless numeraire, where `g a ω` is the discounted gain of
 asset `a` in state `ω`, the market is complete (every state-contingent payoff `x` is replicated
 by a riskless position `c` plus a portfolio `h` of the risky assets) iff the strictly positive
-normalized state-price vector is unique. -/
+normalized state-price vector is unique.
+Source: J. M. Harrison and S. R. Pliska, *Martingales and stochastic integrals in the theory of
+continuous trading*, Stochastic Process. Appl. 11 (1981), 215–260; finite-market statement as in
+R. J. Williams, *Introduction to the Mathematics of Finance*, Amer. Math. Soc. (2006),
+Chapter 3 (second fundamental theorem of asset pricing). -/
 theorem one_period_second_fundamental_theorem_asset_pricing
     {Ω : Type*} [Fintype Ω] [Nonempty Ω]
     {A : Type*} [Fintype A]

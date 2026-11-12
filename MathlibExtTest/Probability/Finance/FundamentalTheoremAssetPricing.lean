@@ -14,6 +14,7 @@ import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
+import Mathlib.Tactic.FinCases
 
 /-! # Tests for `MathlibExt.Probability.Finance.FundamentalTheoremAssetPricing` -/
 
@@ -113,5 +114,49 @@ example : ¬ ∀ x : Fin 2 → ℝ, ∃ c : ℝ, ∃ h : Unit → ℝ, ∀ ω : 
   intro hComplete
   exact hNonuniq ((one_period_second_fundamental_theorem_asset_pricing
     (fun (_ : Unit) (_ : Fin 2) => (0 : ℝ)) hNA).mp hComplete)
+
+/-- Reverse direction: in the binomial market with gains `1` and `-1`, the strictly positive
+normalized state price is unique (it is `(1/2, 1/2)`), so the market is complete. -/
+example : ∀ x : Fin 2 → ℝ, ∃ c : ℝ, ∃ h : Unit → ℝ, ∀ ω : Fin 2,
+    x ω = c + ∑ a : Unit, h a * (fun (_ : Unit) => (![1, -1] : Fin 2 → ℝ)) a ω := by
+  have hsum : ∀ f : Unit → ℝ, (∑ a : Unit, f a) = f () :=
+    fun f => Fintype.sum_unique f
+  have g0 : (![1, -1] : Fin 2 → ℝ) 0 = 1 := by simp
+  have g1 : (![1, -1] : Fin 2 → ℝ) 1 = -1 := by simp
+  have hNA : ¬ ∃ h : Unit → ℝ,
+      (∀ ω : Fin 2, 0 ≤ ∑ a : Unit, h a * (fun (_ : Unit) => (![1, -1] : Fin 2 → ℝ)) a ω) ∧
+      (∃ ω : Fin 2, 0 < ∑ a : Unit, h a * (fun (_ : Unit) => (![1, -1] : Fin 2 → ℝ)) a ω) := by
+    rintro ⟨h, hnn, ω, hpos⟩
+    have h0 := hnn 0
+    have h1 := hnn 1
+    simp only [hsum] at h0 h1 hpos
+    simp only [g0, g1] at h0 h1
+    have hz : h () = 0 := by linarith
+    simp only [hz, zero_mul] at hpos
+    simp at hpos
+  have huniq : ∃! q : Fin 2 → ℝ, (∀ ω : Fin 2, 0 < q ω) ∧ (∑ ω : Fin 2, q ω = 1) ∧
+      (∀ a : Unit, ∑ ω : Fin 2, q ω * (fun (_ : Unit) => (![1, -1] : Fin 2 → ℝ)) a ω = 0) := by
+    refine ⟨![1/2, 1/2], ⟨?_, ?_, ?_⟩, ?_⟩
+    · intro ω
+      fin_cases ω <;> simp
+    · rw [Fin.sum_univ_two]
+      simp
+      norm_num
+    · intro a
+      rw [Fin.sum_univ_two]
+      simp
+    · intro q hq
+      obtain ⟨hqpos, hq1, hqg⟩ := hq
+      rw [Fin.sum_univ_two] at hq1
+      have h2 := hqg ()
+      rw [Fin.sum_univ_two] at h2
+      simp only [g0, g1] at h2
+      have e0 : q 0 = 1 / 2 := by linarith
+      have e1 : q 1 = 1 / 2 := by linarith
+      apply funext
+      intro ω
+      fin_cases ω <;> simp [e0, e1]
+  exact (one_period_second_fundamental_theorem_asset_pricing
+    (fun (_ : Unit) => (![1, -1] : Fin 2 → ℝ)) hNA).mpr huniq
 
 end MathlibExtTest.FundamentalTheoremAssetPricing
