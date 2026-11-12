@@ -19,7 +19,6 @@ public import Batteries.Util.ProofWanted
 
 Statements requested but not yet proved:
 
-* the one-sample `t` statistic `√n (X̄ - μ) / S ~ t_{n-1}` for an i.i.d. normal sample;
 * Hoeffding's central limit theorem `√n (U - θ) ⇒ N(0, m² σ₁²)` for U-statistics.
 
 The independence inputs (`X̄ ⊥ S²`, joint independence in Cochran's theorem) are proved in
@@ -31,6 +30,9 @@ The Student `t` law of `Z / √(V / k)` is proved as
 The Snedecor `F` law of `(V₁ / d₁) / (V₂ / d₂)` for independent `Vᵢ ~ χ²_{dᵢ}` is proved as
 `ProbabilityTheory.map_div_chiSquare_eq_snedecorF` in
 `MathlibExt/Probability/Distributions/SnedecorF.lean`.
+The one-sample `t` law `√n (X̄ - μ) / S ~ t_{n-1}` is proved as
+`ProbabilityTheory.map_tStatistic_pi_gaussianReal` in
+`MathlibExt/Probability/Statistics/LinearModel/Inference.lean`.
 
 ## References
 
@@ -45,18 +47,6 @@ The Snedecor `F` law of `(V₁ / d₁) / (V₂ / d₂)` for independent `Vᵢ ~ 
 open MeasureTheory ProbabilityTheory Real
 
 namespace ProbabilityTheory.NormalTheoryWanted
-
-/-- **One-sample `t` statistic**: for an i.i.d. sample `X₁, …, Xₙ ~ N(μ, v)` with `n ≥ 2` and
-`v > 0`, `√n (X̄ - μ) / S` with `S² = ∑ (Xᵢ - X̄)² / (n - 1)` has the Student `t` law with
-`n - 1` degrees of freedom. -/
-public theorem_wanted map_tStatistic_pi_gaussianReal {n : ℕ} (hn : 2 ≤ n) (μ : ℝ) {v : NNReal}
-    (hv : v ≠ 0) :
-    (Measure.pi fun _ : Fin n => gaussianReal μ v).map
-        (fun x : Fin n → ℝ => √n * ((∑ i, x i) / n - μ) /
-          √((∑ i, (x i - (∑ j, x j) / n) ^ 2) / ((n : ℝ) - 1))) =
-      volume.withDensity fun t => ENNReal.ofReal
-        (Gamma (((n - 1 : ℕ) + 1) / 2) / (√((n - 1 : ℕ) * π) * Gamma ((n - 1 : ℕ) / 2)) *
-          (1 + t ^ 2 / (n - 1 : ℕ)) ^ (-(((n - 1 : ℕ) : ℝ) + 1) / 2))
 
 /-- **Hoeffding's central limit theorem** (1948, §7): for an i.i.d. sample from `μ` and a
 symmetric square-integrable kernel `h` of degree `m`, `√n (U_n - θ)` converges in distribution
