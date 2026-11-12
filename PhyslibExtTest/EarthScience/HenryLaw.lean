@@ -9,12 +9,12 @@ module
 
 import Mathlib.Tactic.NormNum
 
-import PhyslibExt.EarthScience.C03HenryLaw
+import PhyslibExt.EarthScience.HenryLaw
 
 /-!
 # Henry's-law checks
 
-Concrete consumers of `PhyslibExt.EarthScience.C03HenryLaw`:
+Concrete consumers of `PhyslibExt.EarthScience.HenryLaw`:
 `H = 0.034`, `p = 1` (so `c = 0.034`, doubled `0.068`), the zero-pressure
 boundary, and the reciprocal conversion with `H_pc = 2`, `H_cp = 1 / 2`.
 
@@ -34,7 +34,7 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.C03HenryLaw`
+- `PhyslibExt.EarthScience.HenryLaw`
 -/
 
 /-! ## A. Doubling and zero pressure -/
