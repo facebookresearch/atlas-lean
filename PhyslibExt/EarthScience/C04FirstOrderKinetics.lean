@@ -18,17 +18,21 @@ import MathlibExt.Biology.Biophysics.CompartmentKinetics
 /-!
 # First-order decay and its integrated consumption
 
-For `k` and initial concentration `c0`, `c(t) = c0 * exp(-k*t)` solves
-`c' = -k*c`, starts at `c0`, and its integrated consumption over `[0, t]`
-is `c0 - c(t)`. These are corollaries of the compartment model
+For real parameters `k` and `c0`, `c(t) = c0 * exp(-k*t)` solves
+`c' = -k*c`, starts at `c0`, and satisfies the signed balance identity
+`∫ s in 0..t, k*c(s) = c0 - c(t)`. These unrestricted identities are
+algebraic extensions: their interpretation as a nonnegative, nonincreasing
+concentration and nonnegative consumption requires `0 ≤ k`, `0 ≤ c0`,
+and `0 ≤ t`. A negative `k` instead permits exponential growth.
+These are corollaries of the compartment model
 `MathlibExt.Biology.Biophysics.CompartmentKinetics.amount` at infusion rate
 `R = 0`: `amount_bolus` identifies `amount k 0 c0 t` with this exponential,
 `hasDerivAt_amount` supplies the derivative, and `amount_zero` the initial
 value. The consumption identity is proved from `hasDerivAt_amount` by the
 fundamental theorem of calculus, so it holds for every `t`, including
 negative `t` (signed integral); the compartment mass balance
-`amount_add_eliminated` gives the same identity for the physical domain
-`0 ≤ t`.
+`amount_add_eliminated` gives the same identity for nonnegative time.
+The physical interpretation additionally requires `0 ≤ k` and `0 ≤ c0`.
 
 ## i. Overview
 
@@ -57,7 +61,8 @@ namespace EarthScience
 
 open MathlibExt.Biology.Biophysics.CompartmentKinetics
 
-/-- First-order decay: `c(t) = c0 * exp(-k*t)` solves `c' = -k*c`.
+/-- The exponential profile solves `c' = -k*c` for arbitrary real parameters.
+It describes nonnegative decay for `0 ≤ k` and `0 ≤ c0`.
 This is `hasDerivAt_amount` at infusion rate `R = 0`, with the amount
 identified with the exponential by `amount_bolus`. -/
 theorem firstOrder_decay_hasDerivAt (k c0 t : ℝ) :
@@ -77,7 +82,8 @@ theorem firstOrder_decay_initial (k c0 : ℝ) :
   rw [← amount_bolus k c0 0]
   exact amount_zero k 0 c0
 
-/-- Integrated consumption of first-order decay over `[0, t]` is `c0 - c(t)`.
+/-- The signed integrated balance over `0..t` is `c0 - c(t)`.
+It represents nonnegative consumption when `0 ≤ k`, `0 ≤ c0`, and `0 ≤ t`.
 Proved from `hasDerivAt_amount` at `R = 0` by the fundamental theorem of
 calculus, so it holds for every `t`; for `0 ≤ t` it is also the compartment
 mass balance `amount_add_eliminated` at `R = 0` rewritten by `amount_bolus`. -/
