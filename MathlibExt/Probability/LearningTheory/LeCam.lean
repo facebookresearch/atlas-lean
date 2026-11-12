@@ -10,7 +10,8 @@ module
 
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
-public import MathlibExt.Probability.FiniteProbability
+
+import Mathlib.Tactic.Ring
 
 @[expose] public section
 
@@ -37,10 +38,11 @@ theorem lecam_two_point {α : Type*} [Fintype α] (p q : PMF α) (δ : α → Bo
     1 - (1 / 2) * ∑ a, |(p a).toReal - (q a).toReal| ≤
       (∑ a ∈ Finset.univ.filter (fun a => δ a = true), (p a).toReal) +
         (∑ a ∈ Finset.univ.filter (fun a => δ a = false), (q a).toReal) := by
-  have hpsum : ∑ a, (p a).toReal = 1 :=
-    MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one p
-  have hqsum : ∑ a, (q a).toReal = 1 :=
-    MathlibExt.Probability.FiniteProbability.sum_toReal_eq_one q
+  have normalize (r : PMF α) : ∑ a, (r a).toReal = 1 := by
+    have h : ∑ a, r a = 1 := (tsum_fintype fun a => r a).symm.trans r.tsum_coe
+    rw [← ENNReal.toReal_sum fun a _ => r.apply_ne_top a, h, ENNReal.toReal_one]
+  have hpsum : ∑ a, (p a).toReal = 1 := normalize p
+  have hqsum : ∑ a, (q a).toReal = 1 := normalize q
   have hmin : ∀ a : α, min (p a).toReal (q a).toReal
       = ((p a).toReal + (q a).toReal - |(p a).toReal - (q a).toReal|) / 2 := by
     intro a

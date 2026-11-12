@@ -10,6 +10,10 @@ module
 
 public import MathlibExt.Probability.LearningTheory.LeCam
 
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Probability.ProbabilityMassFunction.Monad
+import Mathlib.Tactic.NormNum
+
 /-- Boundary check: for the two point masses `PMF.pure 0` and `PMF.pure 1` on `Fin 2`
 and the test that decides `q`'s point (`δ a = decide (a = 1)`), both error probabilities
 are `0` and the total-variation sum is `2`, so the Le Cam bound is the equality case
