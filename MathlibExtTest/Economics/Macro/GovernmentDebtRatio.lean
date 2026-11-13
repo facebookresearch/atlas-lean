@@ -80,4 +80,3 @@ theorem deficitRatio_test_eval :
 
 
 end MathlibExtTest.Economics.Macro.GovernmentDebtRatio
-
