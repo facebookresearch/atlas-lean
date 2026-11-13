@@ -50,7 +50,7 @@ theorem sampleCov_entry {N d : ℕ} {Ω : Type*} (X : Fin N → Ω → (Fin d �
       (X i ω k - (∑ l, X l ω k) / (N : ℝ))) := by
   simp [sampleCov_apply, colMean]
 
-theorem sum_centered_mul_eq {N : ℕ} (hN0 : (N : ℝ) ≠ 0) (a b : Fin N → ℝ) :
+private theorem sum_centered_mul_eq {N : ℕ} (hN0 : (N : ℝ) ≠ 0) (a b : Fin N → ℝ) :
     ∑ i, ((a i - (∑ l, a l) / (N : ℝ)) * (b i - (∑ l, b l) / (N : ℝ))) =
     (∑ i, a i * b i) - (N : ℝ) * (((∑ l, a l) / (N : ℝ)) * ((∑ l, b l) / (N : ℝ))) := by
   set Sa : ℝ := ∑ l, a l with hSa
@@ -81,7 +81,7 @@ theorem sum_centered_mul_eq {N : ℕ} (hN0 : (N : ℝ) ≠ 0) (a b : Fin N → �
   rw [hSa', hSb']
   ring
 
-theorem raw_offdiag_aux {N d : ℕ} {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
+private theorem raw_offdiag_aux {N d : ℕ} {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ]
     {X : Fin N → Ω → (Fin d → ℝ)} {m : Fin d → ℝ}
     (hMean : ∀ i j, ∫ ω, X i ω j ∂μ = m j)
@@ -100,7 +100,7 @@ theorem raw_offdiag_aux {N d : ℕ} {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ 
   have hEq := hInd.integral_mul_eq_mul_integral hA hB
   simpa [Pi.mul_apply, hMean] using hEq
 
-theorem raw_diag_aux {N d : ℕ} {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
+private theorem raw_diag_aux {N d : ℕ} {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ]
     {X : Fin N → Ω → (Fin d → ℝ)} {m : Fin d → ℝ} {Sig : Matrix (Fin d) (Fin d) ℝ}
     (hMean : ∀ i j, ∫ ω, X i ω j ∂μ = m j)
@@ -137,7 +137,7 @@ theorem raw_diag_aux {N d : ℕ} {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : M
   rw [hConstInt] at hC
   linarith
 
-theorem integrable_cross_aux {N d : ℕ} {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
+private theorem integrable_cross_aux {N d : ℕ} {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ]
     {X : Fin N → Ω → (Fin d → ℝ)}
     (hIndep : ∀ i j, i ≠ j → IndepFun (X i) (X j) μ)
