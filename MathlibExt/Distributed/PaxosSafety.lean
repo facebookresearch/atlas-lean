@@ -27,38 +27,45 @@ theorem majority_intersect {A : Type*} [Fintype A] [DecidableEq A]
   have hpos : 0 < (S ∩ T).card := by omega
   exact Finset.card_pos.mp hpos
 
-/-- The Paxos proposal-safety step. Acceptors' latest accepted
-(ballot, value) pairs are given by `acc`. A value `v` was
-accepted at ballot `b` by a majority `M`. A proposer at a later
-ballot `b' > b` reads a majority quorum `Q` whose members'
-accepted ballots are all below `b'` (they have promised `b'`),
-and — the induction hypothesis of the full safety proof — every
-value accepted within `Q` at a ballot in `[b, b')` is already
-known to be `v`. Then the quorum read is safe: some member of
-`Q` still holds `(b, v)`, and every accepted entry in `Q` at a
-ballot `≥ b` has value `v`; in particular the highest-ballot
-accepted value in `Q`, which the proposer must propose, is `v`.
-Iterating this step over ballots is the Synod safety proof. -/
+/-- The Paxos proposal-safety step. The acceptance history `accepted a c w` records that
+acceptor `a` accepted the proposal `(c, w)` (ballot `c`, value `w`) at some point. A proposer
+at ballot `b'` reads a majority quorum `Q`: each member `a` promises `b'` and returns
+`report a`, the highest-ballot proposal it had accepted so far, or `none`. For the members of
+`Q` three properties are assumed:
+
+* `hrep`: a report is a proposal the acceptor accepted, at a ballot below `b'`;
+* `hmono` (ballot monotonicity): after promising `b'` an acceptor accepts no ballot below
+  `b'`, so each of its acceptances below `b'` precedes its report and the reported ballot is
+  at least as high;
+* `hsafe` (the induction hypothesis of the full safety proof): every proposal accepted in `Q`
+  at a ballot in `[b, b')` has value `v`.
+
+If a majority `M` accepted `(b, v)` with `b < b'`, then some member of `Q` reports a ballot
+at least `b` with value `v`, and every highest-ballot report in `Q` has value `v`. The
+proposer of `b'` must propose the value of a highest-ballot report, so it proposes `v`;
+iterating this step over ballots is the Synod safety proof. -/
 theorem proposal_safety_step {n : ℕ} {V : Type*}
-    (acc : Fin n → Option (ℕ × V))
+    (accepted : Fin n → ℕ → V → Prop) (report : Fin n → Option (ℕ × V))
     {b b' : ℕ} (hb : b < b') {v : V}
     (M : Finset (Fin n)) (hM : n < 2 * M.card)
-    (hMacc : ∀ a ∈ M, acc a = some (b, v))
+    (hMacc : ∀ a ∈ M, accepted a b v)
     (Q : Finset (Fin n)) (hQ : n < 2 * Q.card)
-    (hQlt : ∀ a ∈ Q, ∀ bw : ℕ × V, acc a = some bw → bw.1 < b')
-    (hlower : ∀ b'' : ℕ, ∀ w : V, b ≤ b'' → b'' < b' →
-      ∀ a ∈ Q, acc a = some (b'', w) → w = v) :
-    (∃ a ∈ Q, acc a = some (b, v)) ∧
-      (∀ a ∈ Q, ∀ bw : ℕ × V, acc a = some bw → b ≤ bw.1 →
-        bw.2 = v) := by
-  have _hb' := hb
+    (hrep : ∀ a ∈ Q, ∀ c w, report a = some (c, w) → accepted a c w ∧ c < b')
+    (hmono : ∀ a ∈ Q, ∀ c w, accepted a c w → c < b' →
+      ∃ c' w', report a = some (c', w') ∧ c ≤ c')
+    (hsafe : ∀ a ∈ Q, ∀ c w, accepted a c w → b ≤ c → c < b' → w = v) :
+    (∃ a ∈ Q, ∃ c, b ≤ c ∧ report a = some (c, v)) ∧
+      (∀ a₀ ∈ Q, ∀ c₀ w₀, report a₀ = some (c₀, w₀) →
+        (∀ a ∈ Q, ∀ c w, report a = some (c, w) → c ≤ c₀) → w₀ = v) := by
   have hM' : Fintype.card (Fin n) < 2 * M.card := by rwa [Fintype.card_fin]
   have hQ' : Fintype.card (Fin n) < 2 * Q.card := by rwa [Fintype.card_fin]
   obtain ⟨a, ha⟩ := majority_intersect M Q hM' hQ'
   rw [Finset.mem_inter] at ha
   obtain ⟨haM, haQ⟩ := ha
-  constructor
-  · exact ⟨a, haQ, hMacc a haM⟩
-  · intro a' ha' bw hacc hbw
-    obtain ⟨b'', w⟩ := bw
-    exact hlower b'' w hbw (hQlt a' ha' (b'', w) hacc) a' ha' hacc
+  obtain ⟨c, w, hrepa, hbc⟩ := hmono a haQ b v (hMacc a haM) hb
+  obtain ⟨hacc, hcb'⟩ := hrep a haQ c w hrepa
+  have hw : w = v := hsafe a haQ c w hacc hbc hcb'
+  refine ⟨⟨a, haQ, c, hbc, hw ▸ hrepa⟩, ?_⟩
+  intro a₀ ha₀ c₀ w₀ hrep₀ hmax
+  obtain ⟨hacc₀, hc₀⟩ := hrep a₀ ha₀ c₀ w₀ hrep₀
+  exact hsafe a₀ ha₀ c₀ w₀ hacc₀ (le_trans hbc (hmax a haQ c w hrepa)) hc₀
