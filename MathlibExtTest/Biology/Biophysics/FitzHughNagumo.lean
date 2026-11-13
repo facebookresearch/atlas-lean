@@ -22,7 +22,7 @@ open Real Set
 
 namespace MathlibExtTest.Biology.Biophysics.FitzHughNagumo
 
-open MathlibExt.Biology.Biophysics.FitzHughNagumo
+open MathlibExt.Biology.Biophysics.FitzHughNagumo MathlibExt.Biology.Dynamics.PlanarStability
 
 /-! ### The rest state -/
 
@@ -65,6 +65,22 @@ example :
     IsLinearlyStable (jacTrace (4 / 5) (2 / 25) (-3 / 2)) (jacDet (4 / 5) (2 / 25) (-3 / 2)) :=
   (isLinearlyStable_iff_of_lt_one (by norm_num) (by norm_num) (by norm_num)).2 (by norm_num)
 
+/-- The same criterion in Hurwitz form: the Jacobian at rest is `Matrix.IsHurwitz`. -/
+example : (jacobian (4 / 5) (2 / 25) (-3 / 2)).IsHurwitz :=
+  (isHurwitz_jacobian_iff_of_lt_one (by norm_num) (by norm_num) (by norm_num)).2 (by norm_num)
+
+/-- Unstable probe: `b = 3/4`, `ε = 1`, `v = 0` has `v² = 0 < 1 - ε b = 1/4`, so the Jacobian has
+an eigenvalue with positive real part. -/
+example : ∃ μ ∈ spectrum ℂ ((jacobian (3 / 4) 1 0).map (algebraMap ℝ ℂ)), 0 < μ.re :=
+  (exists_spectrum_jacobian_re_pos_iff_of_lt_one (by norm_num) (by norm_num) (by norm_num)).2
+    (by norm_num)
+
+/-- At rest (`v*² = 9/4 > 117/125`) no eigenvalue of the Jacobian has positive real part. -/
+example : ¬ ∃ μ ∈ spectrum ℂ ((jacobian (4 / 5) (2 / 25) (-3 / 2)).map (algebraMap ℝ ℂ)),
+    0 < μ.re := by
+  rw [exists_spectrum_jacobian_re_pos_iff_of_lt_one (by norm_num) (by norm_num) (by norm_num)]
+  norm_num
+
 /-- Every eigenvalue of the Jacobian at rest has negative real part. -/
 example (z : ℂ)
     (hz : ((jacobian (4 / 5) (2 / 25) (-3 / 2)).map (fun r : ℝ => (r : ℂ)) -
@@ -79,6 +95,12 @@ example : equilibriumType (3 / 4) 1 (1 / 2) = .center :=
 
 example : jacTrace (3 / 4) 1 (1 / 2) = 0 ∧ jacDet (3 / 4) 1 (1 / 2) = 7 / 16 := by
   norm_num [jacTrace, jacDet]
+
+/-- At that probe every eigenvalue of the Jacobian is purely imaginary and nonzero. -/
+example {μ : ℂ} (hμ : μ ∈ spectrum ℂ ((jacobian (3 / 4) 1 (1 / 2)).map (algebraMap ℝ ℂ))) :
+    μ.re = 0 ∧ μ.im ≠ 0 :=
+  re_eq_zero_and_im_ne_zero_of_mem_spectrum_jacobian (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) hμ
 
 /-- Boundary probe (saddle; for `b > 0` only possible when `b > 1`): `b = 4`, `v = 0` has
 `b (1 - v²) = 4 > 1`. -/

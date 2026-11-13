@@ -14,6 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Matrix.Trace
+public import MathlibExt.Biology.Dynamics.PlanarStability
 import MathlibExt.Analysis.ODE.MaximalSolution
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
 import Mathlib.Analysis.Calculus.Deriv.Pow
@@ -67,16 +68,17 @@ the equilibrium needs `0 < b ≤ 1`.
   of partial derivatives of the field (`jacobian_eq_partials`); its trace is
   `jacTrace b ε v = 1 - v² - ε b` and its determinant `jacDet b ε v = ε (1 - b + b v²)`
   (`trace_jacobian`, `det_jacobian`), and its complex eigenvalues are the roots of
-  `z² - τ z + Δ` (`det_jacobian_sub`, `isCharRoot_iff_det`). `linearType τ Δ` classifies a
-  planar linearization (saddle, degenerate, center, stable/unstable node or focus;
-  `linearType_eq_*_iff`), and `IsCharRoot.re_neg`, `IsCharRoot.re_pos`, `IsCharRoot.re_eq_zero`,
-  `IsCharRoot.im_eq_zero`, `IsCharRoot.im_ne_zero` give the eigenvalue meaning of each class;
-  `isLinearlyStable_iff` is the planar Routh–Hurwitz criterion `τ < 0 < Δ`.
-  `equilibriumType b ε v` is the type of the equilibrium with voltage `v`. For `0 < b < 1`,
-  `ε > 0` it is a linear sink iff `v² > 1 - ε b` (`isLinearlyStable_iff_of_lt_one`), has an
-  eigenvalue in the right half-plane iff `v² < 1 - ε b` (`isLinearlyUnstable_iff_of_lt_one`),
-  and is a linear center (purely imaginary eigenvalues, a nonhyperbolic equilibrium) iff
-  `v² = 1 - ε b` (`equilibriumType_eq_center_iff_of_lt_one`).
+  `z² - τ z + Δ` (`det_jacobian_sub`, `isCharRoot_iff_det`). The planar trace–determinant theory
+  (characteristic roots, the Routh–Hurwitz criteria, and the classification `linearType`) is in
+  `MathlibExt.Biology.Dynamics.PlanarStability`. `equilibriumType b ε v` is the type of the
+  equilibrium with voltage `v`. For `0 < b < 1`, `ε > 0` the Jacobian is Hurwitz
+  (`Matrix.IsHurwitz`) iff `v² > 1 - ε b` (`isHurwitz_jacobian_iff_of_lt_one`), has an
+  eigenvalue in the open right half-plane iff `v² < 1 - ε b`
+  (`exists_spectrum_jacobian_re_pos_iff_of_lt_one`), and is a linear center (purely imaginary
+  eigenvalues, a nonhyperbolic equilibrium) iff `v² = 1 - ε b`
+  (`equilibriumType_eq_center_iff_of_lt_one`,
+  `re_eq_zero_and_im_ne_zero_of_mem_spectrum_jacobian`). `isLinearlyStable_iff_of_lt_one` and
+  `isLinearlyUnstable_iff_of_lt_one` state the first two in trace–determinant form.
   `equilibriumType_eq_saddle_iff`: saddles occur iff `b (1 - v²) > 1`.
 * **Excitability threshold (single pulse).** A pulse of amplitude `δ` moves the rest state
   `(v*, w*)` to `(v* + δ, w*)`. It is super-threshold (`IsSuperThreshold`) when the voltage
@@ -85,9 +87,9 @@ the equilibrium needs `0 < b ≤ 1`.
   `isSuperThreshold_iff`, `isSubThreshold_iff`: for `v*² ≤ 4` and `δ > 0` a pulse is
   super-threshold iff `thresholdLow v* < δ < thresholdHigh v*`, the two roots of the post-pulse
   factor. `thresholdLow_pos`: the lower root is positive for `v* < -1`.
-  `stable_rest_pulse_thresholds`: for `0 < b < 1`, `ε > 0`, a rest state on the left branch
-  `-2 ≤ v* < -1` is linearly stable, small pulses are sub-threshold, and pulses between the two
-  roots are super-threshold (an empty range at `v* = -2`, where the roots coincide).
+  `stable_rest_pulse_thresholds`: for `0 < b < 1`, `ε > 0`, at a rest state on the left branch
+  `-2 ≤ v* < -1` the Jacobian is Hurwitz, small pulses are sub-threshold, and pulses between the
+  two roots are super-threshold (an empty range at `v* = -2`, where the roots coincide).
   `excitable_rest`: on the open branch `-2 < v* < -1` the roots are moreover distinct
   (`thresholdLow_lt_thresholdHigh`), so `thresholdLow v*` is a positive firing threshold with a
   nonempty window of super-threshold pulses. Dynamically
@@ -119,6 +121,8 @@ open Set Filter Real
 open scoped Topology
 
 namespace MathlibExt.Biology.Biophysics.FitzHughNagumo
+
+open MathlibExt.Biology.Dynamics.PlanarStability
 
 /-! ### The model -/
 
@@ -512,10 +516,6 @@ theorem det_jacobian (b ε v : ℝ) : (jacobian b ε v).det = jacDet b ε v := b
   simp [jacobian, Matrix.det_fin_two, jacDet]
   ring
 
-/-- Roots `z ∈ ℂ` of the characteristic polynomial `z² - τ z + Δ` of a planar linear system with
-trace `τ` and determinant `Δ`. -/
-def IsCharRoot (τ Δ : ℝ) (z : ℂ) : Prop := z ^ 2 - τ * z + Δ = 0
-
 /-- The complex eigenvalues of the Jacobian are exactly the characteristic roots of
 `(jacTrace, jacDet)`: `det (J - z 1) = z² - τ z + Δ`. -/
 theorem det_jacobian_sub (b ε v : ℝ) (z : ℂ) :
@@ -529,199 +529,6 @@ theorem isCharRoot_iff_det (b ε v : ℝ) (z : ℂ) :
       ((jacobian b ε v).map (fun r : ℝ => (r : ℂ)) -
         z • (1 : Matrix (Fin 2) (Fin 2) ℂ)).det = 0 := by
   rw [det_jacobian_sub, IsCharRoot]
-
-/-! ### Planar linear classification -/
-
-section Classification
-
-variable {τ Δ : ℝ} {z : ℂ}
-
-theorem IsCharRoot.re_im (h : IsCharRoot τ Δ z) :
-    z.re ^ 2 - z.im ^ 2 - τ * z.re + Δ = 0 ∧ z.im * (2 * z.re - τ) = 0 := by
-  have h1 := congrArg Complex.re h
-  have h2 := congrArg Complex.im h
-  simp [pow_two] at h1 h2
-  constructor <;> linarith
-
-/-- If `τ < 0 < Δ`, every characteristic root lies in the open left half-plane. -/
-theorem IsCharRoot.re_neg (h : IsCharRoot τ Δ z) (hτ : τ < 0) (hΔ : 0 < Δ) : z.re < 0 := by
-  obtain ⟨h1, h2⟩ := h.re_im
-  rcases mul_eq_zero.1 h2 with him | hre
-  · rw [him] at h1
-    by_contra hz
-    push Not at hz
-    nlinarith
-  · linarith
-
-/-- If `0 < τ` and `0 < Δ`, every characteristic root lies in the open right half-plane. -/
-theorem IsCharRoot.re_pos (h : IsCharRoot τ Δ z) (hτ : 0 < τ) (hΔ : 0 < Δ) : 0 < z.re := by
-  obtain ⟨h1, h2⟩ := h.re_im
-  rcases mul_eq_zero.1 h2 with him | hre
-  · rw [him] at h1
-    by_contra hz
-    push Not at hz
-    nlinarith
-  · linarith
-
-/-- If `τ = 0 < Δ`, the characteristic roots are purely imaginary. -/
-theorem IsCharRoot.re_eq_zero (h : IsCharRoot τ Δ z) (hτ : τ = 0) (hΔ : 0 < Δ) : z.re = 0 := by
-  obtain ⟨h1, h2⟩ := h.re_im
-  rcases mul_eq_zero.1 h2 with him | hre
-  · rw [him, hτ] at h1
-    nlinarith
-  · linarith
-
-/-- If `4 Δ ≤ τ²`, every characteristic root is real. -/
-theorem IsCharRoot.im_eq_zero (h : IsCharRoot τ Δ z) (hd : 4 * Δ ≤ τ ^ 2) : z.im = 0 := by
-  obtain ⟨h1, h2⟩ := h.re_im
-  rcases mul_eq_zero.1 h2 with him | hre
-  · exact him
-  · have : z.re = τ / 2 := by linarith
-    rw [this] at h1
-    nlinarith [sq_nonneg z.im]
-
-/-- If `τ² < 4 Δ`, no characteristic root is real. -/
-theorem IsCharRoot.im_ne_zero (h : IsCharRoot τ Δ z) (hd : τ ^ 2 < 4 * Δ) : z.im ≠ 0 := by
-  intro him
-  obtain ⟨h1, -⟩ := h.re_im
-  rw [him] at h1
-  nlinarith [sq_nonneg (2 * z.re - τ)]
-
-/-- A characteristic root with real part at least `τ / 2`, which is positive when `Δ < 0` and
-nonnegative when `Δ ≤ 0` (an explicit root of the quadratic). -/
-theorem exists_isCharRoot (τ Δ : ℝ) :
-    ∃ z, IsCharRoot τ Δ z ∧ τ / 2 ≤ z.re ∧ (Δ < 0 → 0 < z.re) ∧ (Δ ≤ 0 → 0 ≤ z.re) := by
-  by_cases hd : 4 * Δ ≤ τ ^ 2
-  · set s := √(τ ^ 2 - 4 * Δ)
-    have hs0 : 0 ≤ s := Real.sqrt_nonneg _
-    have hs : s ^ 2 = τ ^ 2 - 4 * Δ := Real.sq_sqrt (by linarith)
-    refine ⟨(((τ + s) / 2 : ℝ) : ℂ), ?_, ?_, fun hΔ => ?_, fun hΔ => ?_⟩
-    · unfold IsCharRoot
-      have : ((τ + s) / 2) ^ 2 - τ * ((τ + s) / 2) + Δ = 0 := by nlinarith
-      exact_mod_cast this
-    · simp only [Complex.ofReal_re]; linarith
-    · simp only [Complex.ofReal_re]
-      nlinarith [sq_abs τ, abs_nonneg τ, neg_abs_le τ]
-    · simp only [Complex.ofReal_re]
-      nlinarith [sq_abs τ, abs_nonneg τ, neg_abs_le τ]
-  · push Not at hd
-    set s := √(4 * Δ - τ ^ 2)
-    have hs : s ^ 2 = 4 * Δ - τ ^ 2 := Real.sq_sqrt (by linarith)
-    refine ⟨⟨τ / 2, s / 2⟩, ?_, le_rfl, fun hΔ => by nlinarith, fun hΔ => by nlinarith⟩
-    unfold IsCharRoot
-    apply Complex.ext <;> simp [pow_two] <;> nlinarith
-
-/-- Linear stability: every eigenvalue lies in the open left half-plane. -/
-def IsLinearlyStable (τ Δ : ℝ) : Prop := ∀ z, IsCharRoot τ Δ z → z.re < 0
-
-/-- Linear instability: some eigenvalue lies in the open right half-plane. -/
-def IsLinearlyUnstable (τ Δ : ℝ) : Prop := ∃ z, IsCharRoot τ Δ z ∧ 0 < z.re
-
-/-- **Routh–Hurwitz for planar systems.** All eigenvalues lie in the open left half-plane iff
-`τ < 0` and `Δ > 0`. -/
-theorem isLinearlyStable_iff : IsLinearlyStable τ Δ ↔ τ < 0 ∧ 0 < Δ := by
-  constructor
-  · intro h
-    obtain ⟨z, hz, h1, -, h3⟩ := exists_isCharRoot τ Δ
-    have := h z hz
-    refine ⟨by linarith, ?_⟩
-    by_contra hΔ
-    push Not at hΔ
-    linarith [h3 hΔ]
-  · rintro ⟨hτ, hΔ⟩ z hz
-    exact hz.re_neg hτ hΔ
-
-/-- Some eigenvalue lies in the open right half-plane iff `τ > 0` or `Δ < 0`. -/
-theorem isLinearlyUnstable_iff : IsLinearlyUnstable τ Δ ↔ 0 < τ ∨ Δ < 0 := by
-  constructor
-  · rintro ⟨z, hz, hre⟩
-    by_contra hc
-    push Not at hc
-    obtain ⟨h1, h2⟩ := hz.re_im
-    rcases mul_eq_zero.1 h2 with him | hre'
-    · rw [him] at h1
-      nlinarith [mul_nonneg (neg_nonneg.2 hc.1) hre.le]
-    · linarith
-  · rintro (hτ | hΔ)
-    · obtain ⟨z, hz, h1, -, -⟩ := exists_isCharRoot τ Δ
-      exact ⟨z, hz, by linarith⟩
-    · obtain ⟨z, hz, -, h2, -⟩ := exists_isCharRoot τ Δ
-      exact ⟨z, hz, h2 hΔ⟩
-
-/-- Types of a planar linearization with trace `τ` and determinant `Δ`. -/
-inductive LinearType
-  /-- `Δ < 0`: real eigenvalues of opposite signs. -/
-  | saddle
-  /-- `Δ = 0`: a zero eigenvalue. -/
-  | degenerate
-  /-- `τ = 0 < Δ`: purely imaginary eigenvalues (a linear center; the equilibrium is
-  nonhyperbolic). -/
-  | center
-  /-- `τ < 0 < Δ`, `4Δ ≤ τ²`: real negative eigenvalues. -/
-  | stableNode
-  /-- `τ < 0`, `τ² < 4Δ`: non-real eigenvalues with negative real part. -/
-  | stableFocus
-  /-- `0 < τ`, `0 < Δ ≤ τ²/4`: real positive eigenvalues. -/
-  | unstableNode
-  /-- `0 < τ`, `τ² < 4Δ`: non-real eigenvalues with positive real part. -/
-  | unstableFocus
-  deriving DecidableEq
-
-/-- The trace–determinant classification of a planar linearization. -/
-def linearType (τ Δ : ℝ) : LinearType :=
-  if Δ < 0 then .saddle
-  else if Δ = 0 then .degenerate
-  else if τ = 0 then .center
-  else if τ < 0 then (if 4 * Δ ≤ τ ^ 2 then .stableNode else .stableFocus)
-  else (if 4 * Δ ≤ τ ^ 2 then .unstableNode else .unstableFocus)
-
-theorem linearType_eq_saddle_iff : linearType τ Δ = .saddle ↔ Δ < 0 := by
-  unfold linearType; split_ifs <;> grind
-
-theorem linearType_eq_degenerate_iff : linearType τ Δ = .degenerate ↔ Δ = 0 := by
-  unfold linearType; split_ifs <;> grind
-
-theorem linearType_eq_center_iff : linearType τ Δ = .center ↔ 0 < Δ ∧ τ = 0 := by
-  unfold linearType; split_ifs <;> grind
-
-theorem linearType_eq_stableNode_iff :
-    linearType τ Δ = .stableNode ↔ 0 < Δ ∧ τ < 0 ∧ 4 * Δ ≤ τ ^ 2 := by
-  unfold linearType; split_ifs <;> grind
-
-theorem linearType_eq_stableFocus_iff :
-    linearType τ Δ = .stableFocus ↔ 0 < Δ ∧ τ < 0 ∧ τ ^ 2 < 4 * Δ := by
-  unfold linearType; split_ifs <;> grind
-
-theorem linearType_eq_unstableNode_iff :
-    linearType τ Δ = .unstableNode ↔ 0 < Δ ∧ 0 < τ ∧ 4 * Δ ≤ τ ^ 2 := by
-  unfold linearType; split_ifs <;> grind
-
-theorem linearType_eq_unstableFocus_iff :
-    linearType τ Δ = .unstableFocus ↔ 0 < Δ ∧ 0 < τ ∧ τ ^ 2 < 4 * Δ := by
-  unfold linearType; split_ifs <;> grind
-
-/-- The stable classes are exactly the linearly stable linearizations (all eigenvalues in the
-open left half-plane). -/
-theorem isLinearlyStable_iff_linearType :
-    IsLinearlyStable τ Δ ↔ linearType τ Δ = .stableNode ∨ linearType τ Δ = .stableFocus := by
-  rw [isLinearlyStable_iff, linearType_eq_stableNode_iff, linearType_eq_stableFocus_iff]
-  constructor
-  · rintro ⟨hτ, hΔ⟩
-    rcases le_or_gt (4 * Δ) (τ ^ 2) with h | h
-    exacts [Or.inl ⟨hΔ, hτ, h⟩, Or.inr ⟨hΔ, hτ, h⟩]
-  · rintro (⟨hΔ, hτ, -⟩ | ⟨hΔ, hτ, -⟩) <;> exact ⟨hτ, hΔ⟩
-
-/-- Saddles and unstable nodes and foci have an eigenvalue in the open right half-plane. -/
-theorem isLinearlyUnstable_of_linearType
-    (h : linearType τ Δ = .saddle ∨ linearType τ Δ = .unstableNode ∨
-      linearType τ Δ = .unstableFocus) : IsLinearlyUnstable τ Δ := by
-  rw [isLinearlyUnstable_iff]
-  rw [linearType_eq_saddle_iff, linearType_eq_unstableNode_iff,
-    linearType_eq_unstableFocus_iff] at h
-  rcases h with h | ⟨-, h, -⟩ | ⟨-, h, -⟩
-  exacts [Or.inr h, Or.inl h, Or.inl h]
-
-end Classification
 
 /-! ### Classification of the FitzHugh–Nagumo equilibria -/
 
@@ -763,6 +570,29 @@ theorem isLinearlyUnstable_iff_of_lt_one (hb : 0 < b) (hb1 : b < 1) (hε : 0 < �
     · linarith
   · intro h; exact Or.inl (by linarith)
 
+/-- The Jacobian is Hurwitz (`Matrix.IsHurwitz`) iff its trace–determinant pair is linearly
+stable. -/
+theorem isHurwitz_jacobian_iff_isLinearlyStable (b ε v : ℝ) :
+    (jacobian b ε v).IsHurwitz ↔ IsLinearlyStable (jacTrace b ε v) (jacDet b ε v) := by
+  rw [isHurwitz_iff_isLinearlyStable, trace_jacobian, det_jacobian]
+
+/-- **Stability of the rest state, Hurwitz form (`0 < b < 1`, `ε > 0`).** The Jacobian at the
+equilibrium with voltage `v` is Hurwitz (every eigenvalue in the open left half-plane) iff
+`v² > 1 - ε b`. -/
+theorem isHurwitz_jacobian_iff_of_lt_one (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v : ℝ} :
+    (jacobian b ε v).IsHurwitz ↔ 1 - ε * b < v ^ 2 :=
+  (isHurwitz_jacobian_iff_isLinearlyStable b ε v).trans
+    (isLinearlyStable_iff_of_lt_one hb hb1 hε)
+
+/-- **Instability, eigenvalue form (`0 < b < 1`, `ε > 0`).** The Jacobian has an eigenvalue in the
+open right half-plane iff `v² < 1 - ε b` (from `exists_spectrum_re_pos_iff`). -/
+theorem exists_spectrum_jacobian_re_pos_iff_of_lt_one (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε)
+    {v : ℝ} :
+    (∃ μ ∈ spectrum ℂ ((jacobian b ε v).map (algebraMap ℝ ℂ)), 0 < μ.re) ↔
+      v ^ 2 < 1 - ε * b := by
+  rw [exists_spectrum_re_pos_iff, trace_jacobian, det_jacobian, ← isLinearlyUnstable_iff]
+  exact isLinearlyUnstable_iff_of_lt_one hb hb1 hε
+
 /-- **Purely imaginary eigenvalues (`0 < b < 1`, `ε > 0`).** The linearization is a center
 (purely imaginary eigenvalues, so the equilibrium is nonhyperbolic) iff `v² = 1 - ε b`. This is a
 condition on the linearization only: no transversality or nonlinear nondegeneracy is claimed. -/
@@ -774,6 +604,17 @@ theorem equilibriumType_eq_center_iff_of_lt_one (hb : 0 < b) (hb1 : b < 1) (hε 
   constructor
   · rintro ⟨-, h⟩; linarith
   · intro h; exact ⟨this, by linarith⟩
+
+/-- At the linear center `v² = 1 - ε b` (`0 < b < 1`, `ε > 0`) every eigenvalue of the Jacobian is
+purely imaginary and nonzero. -/
+theorem re_eq_zero_and_im_ne_zero_of_mem_spectrum_jacobian (hb : 0 < b) (hb1 : b < 1)
+    (hε : 0 < ε) {v : ℝ} (hv : v ^ 2 = 1 - ε * b) {μ : ℂ}
+    (hμ : μ ∈ spectrum ℂ ((jacobian b ε v).map (algebraMap ℝ ℂ))) :
+    μ.re = 0 ∧ μ.im ≠ 0 := by
+  rw [mem_spectrum_iff_isCharRoot, trace_jacobian, det_jacobian] at hμ
+  have hτ : jacTrace b ε v = 0 := by unfold jacTrace; linarith
+  have hΔ := jacDet_pos hb hb1 hε v
+  exact ⟨hμ.re_eq_zero hτ hΔ, hμ.im_ne_zero (by rw [hτ]; nlinarith)⟩
 
 /-! ### Excitability: the single-pulse threshold -/
 
@@ -878,36 +719,55 @@ theorem isSubThreshold_of_lt_thresholdLow {v w δ : ℝ} (h : vField I v w = 0) 
     (hv2 : -2 ≤ v) (hδ : 0 < δ) (hδθ : δ < thresholdLow v) : IsSubThreshold I v w δ :=
   (isSubThreshold_iff h (by nlinarith) hδ).2 (Or.inl hδθ)
 
-/-- **Pulse thresholds at a stable rest state.** In the classical regime `0 < b < 1`, `ε > 0`, an
-equilibrium on the left branch `-2 ≤ v < -1` is linearly stable and `thresholdLow v` is positive:
-pulses `0 < δ < thresholdLow v` are sub-threshold and pulses
+/-- **Pulse thresholds at a stable rest state.** In the classical regime `0 < b < 1`, `ε > 0`, at
+an equilibrium on the left branch `-2 ≤ v < -1` the Jacobian is Hurwitz and `thresholdLow v` is
+positive: pulses `0 < δ < thresholdLow v` are sub-threshold and pulses
 `thresholdLow v < δ < thresholdHigh v` are super-threshold. At the endpoint `v = -2` the two roots
 coincide (`thresholdLow (-2) = thresholdHigh (-2) = 3`), so the last statement is vacuous and no
 positive pulse is super-threshold; `excitable_rest` treats the nondegenerate branch
 `-2 < v < -1`. -/
 theorem stable_rest_pulse_thresholds (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v w : ℝ}
     (hrest : IsEquilibrium a b ε I v w) (hv1 : v < -1) (hv2 : -2 ≤ v) :
-    IsLinearlyStable (jacTrace b ε v) (jacDet b ε v) ∧ 0 < thresholdLow v ∧
+    (jacobian b ε v).IsHurwitz ∧ 0 < thresholdLow v ∧
       (∀ δ, 0 < δ → δ < thresholdLow v → IsSubThreshold I v w δ) ∧
       (∀ δ, thresholdLow v < δ → δ < thresholdHigh v → IsSuperThreshold I v w δ) := by
   have hpos := thresholdLow_pos hv1
-  refine ⟨(isLinearlyStable_iff_of_lt_one hb hb1 hε).2 (by nlinarith [mul_pos hε hb]), hpos,
+  refine ⟨(isHurwitz_jacobian_iff_of_lt_one hb hb1 hε).2 (by nlinarith [mul_pos hε hb]), hpos,
     fun δ hδ hδθ => isSubThreshold_of_lt_thresholdLow hrest.1 hv1 hv2 hδ hδθ,
     fun δ h1 h2 => (isSuperThreshold_iff hrest.1 (by nlinarith) (by linarith)).2 ⟨h1, h2⟩⟩
 
-/-- **Excitable rest state.** In the classical regime `0 < b < 1`, `ε > 0`, an equilibrium on the
-open left branch `-2 < v < -1` is linearly stable and has a positive firing threshold with a
-nonempty super-threshold window, `0 < thresholdLow v < thresholdHigh v`: pulses
+/-- `stable_rest_pulse_thresholds` with the stability conclusion in trace–determinant form. -/
+theorem stable_rest_pulse_thresholds_isLinearlyStable (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε)
+    {v w : ℝ} (hrest : IsEquilibrium a b ε I v w) (hv1 : v < -1) (hv2 : -2 ≤ v) :
+    IsLinearlyStable (jacTrace b ε v) (jacDet b ε v) ∧ 0 < thresholdLow v ∧
+      (∀ δ, 0 < δ → δ < thresholdLow v → IsSubThreshold I v w δ) ∧
+      (∀ δ, thresholdLow v < δ → δ < thresholdHigh v → IsSuperThreshold I v w δ) := by
+  obtain ⟨hst, hrest'⟩ := stable_rest_pulse_thresholds hb hb1 hε hrest hv1 hv2
+  exact ⟨(isHurwitz_jacobian_iff_isLinearlyStable b ε v).1 hst, hrest'⟩
+
+/-- **Excitable rest state.** In the classical regime `0 < b < 1`, `ε > 0`, at an equilibrium on the
+open left branch `-2 < v < -1` the Jacobian is Hurwitz and there is a positive firing threshold
+with a nonempty super-threshold window, `0 < thresholdLow v < thresholdHigh v`: pulses
 `0 < δ < thresholdLow v` are sub-threshold and pulses `thresholdLow v < δ < thresholdHigh v` are
 super-threshold. -/
 theorem excitable_rest (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v w : ℝ}
     (hrest : IsEquilibrium a b ε I v w) (hv1 : v < -1) (hv2 : -2 < v) :
-    IsLinearlyStable (jacTrace b ε v) (jacDet b ε v) ∧ 0 < thresholdLow v ∧
+    (jacobian b ε v).IsHurwitz ∧ 0 < thresholdLow v ∧
       thresholdLow v < thresholdHigh v ∧
       (∀ δ, 0 < δ → δ < thresholdLow v → IsSubThreshold I v w δ) ∧
       (∀ δ, thresholdLow v < δ → δ < thresholdHigh v → IsSuperThreshold I v w δ) := by
   obtain ⟨hst, hpos, hsub, hsup⟩ := stable_rest_pulse_thresholds hb hb1 hε hrest hv1 hv2.le
   exact ⟨hst, hpos, thresholdLow_lt_thresholdHigh (by nlinarith), hsub, hsup⟩
+
+/-- `excitable_rest` with the stability conclusion in trace–determinant form. -/
+theorem excitable_rest_isLinearlyStable (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v w : ℝ}
+    (hrest : IsEquilibrium a b ε I v w) (hv1 : v < -1) (hv2 : -2 < v) :
+    IsLinearlyStable (jacTrace b ε v) (jacDet b ε v) ∧ 0 < thresholdLow v ∧
+      thresholdLow v < thresholdHigh v ∧
+      (∀ δ, 0 < δ → δ < thresholdLow v → IsSubThreshold I v w δ) ∧
+      (∀ δ, thresholdLow v < δ → δ < thresholdHigh v → IsSuperThreshold I v w δ) := by
+  obtain ⟨hst, hrest'⟩ := excitable_rest hb hb1 hε hrest hv1 hv2
+  exact ⟨(isHurwitz_jacobian_iff_isLinearlyStable b ε v).1 hst, hrest'⟩
 
 /-! ### Single-pulse response of the full system -/
 
