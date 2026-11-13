@@ -36,9 +36,9 @@ A zero of odd order of ζ(1/2 + it) at `t` is a point where the order of vanishi
 at `s = 1/2 + it` (`analyticOrderNatAt`; ζ is analytic away from `s = 1`) is odd. An odd natural
 number is positive, and the order is then finite: an identically vanishing germ or a non-zero value
 gives `analyticOrderNatAt = 0`. The order of `t ↦ ζ(1/2 + it)` at `t` is the order of ζ at `1/2 +
-it` (affine change of variable). As in Hardy–Littlewood's Theorem 4.41 the interval is the closed
-segment from `1/2 + iT` to `1/2 + i(T + T^(1/4 + ε))`, for every `T > T₀(ε)`; the record's half-open
-interval `(T, T + H]` (which differs only at the endpoint `t = T`) is not stated separately.
+it` (affine change of variable). The interval is the record's half-open `(T, T + T^(1/4 + ε)]`, for
+every `T > T₀(ε)`. This implies the closed-segment form of Hardy–Littlewood's Theorem 4.41 (from
+`1/2 + iT` to `1/2 + i(T + T^(1/4 + ε))`) and follows from it, applied with `ε / 2` at `T + 1`.
 -/
 
 open Complex
@@ -49,17 +49,18 @@ an infinite order or a non-zero value gives `analyticOrderNatAt = 0`, which is e
 noncomputable def IsOddOrderCriticalZero (t : ℝ) : Prop :=
   Odd (analyticOrderNatAt riemannZeta ((1 / 2 : ℂ) + (t : ℂ) * I))
 
-/-- Hardy–Littlewood (Acta Math. 41, Theorem 4.41): for every `ε > 0` there is `T₀` such that for
-every `T > T₀` the segment of the critical line from `1/2 + iT` to `1/2 + i(T + T^{1/4 + ε})`
-contains a zero of `ζ` of odd order. -/
+/-- Hardy–Littlewood (Acta Math. 41, Theorem 4.41), in the record's half-open form: for every
+`ε > 0` there is `T₀` such that for every `T > T₀` some `t` with `T < t ≤ T + T^{1/4 + ε}` is the
+ordinate of a zero of `ζ` of odd order on the critical line. -/
 def oddOrderZeroInShortSegments : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ T₀ : ℝ, ∀ T : ℝ, T₀ < T →
-    ∃ t ∈ Set.Icc T (T + T ^ ((1 : ℝ) / 4 + ε)), IsOddOrderCriticalZero t
+    ∃ t ∈ Set.Ioc T (T + T ^ ((1 : ℝ) / 4 + ε)), IsOddOrderCriticalZero t
 
 /--
 Resolved true: the 'conjecture' is a theorem of Hardy and Littlewood (Acta Math. 41, Theorem 4.41):
 for every ε > 0 there is T₀(ε) such that for every T > T₀(ε) the segment of the critical line from
-1/2 + iT to 1/2 + i(T + T^(1/4 + ε)) contains a zero of ζ of odd order. Source: Wikipedia,
+1/2 + iT to 1/2 + i(T + T^(1/4 + ε)) contains a zero of ζ of odd order, and the half-open form
+stated here follows by applying this with ε / 2 at T + 1. Source: Wikipedia,
 Hardy–Littlewood zeta function conjectures, conjecture 1 (revision 1366636767), as listed in
 Wikipedia's List of unsolved problems in mathematics; the statement is Theorem 4.41 of G. H. Hardy
 and J. E. Littlewood, Contributions to the theory of the Riemann zeta-function and the theory of the
