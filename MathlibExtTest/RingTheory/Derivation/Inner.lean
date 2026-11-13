@@ -16,6 +16,16 @@ https://www.apache.org/licenses/LICENSE-2.0
 No individual authors are supplied for that file upstream.
 The matrix and block applications and boundaries are original here.
 -/
+/-
+Upstream repository `anthropics/fermats-last-theorem`:
+https://github.com/anthropics/fermats-last-theorem
+https://github.com/anthropics/fermats-last-theorem/blob/6e837e75355538c7f80bab5b956861e86c4eacc2/Theorems/Thm_Algebra_exists_forall_add_sub_eq_zero_of_map_mul_of_separabilityElement_tensor.lean
+https://github.com/anthropics/fermats-last-theorem/blob/6e837e75355538c7f80bab5b956861e86c4eacc2/P2M/Sol/S_Algebra_exists_forall_add_sub_eq_zero_of_map_mul_of_separabilityElement_tensor.lean
+The upstream NOTICE also credits Mathlib:
+https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in their file headers.
+Released under the Apache License, Version 2.0.
+-/
 import MathlibExt.RingTheory.Derivation.Inner
 import Mathlib.RingTheory.TensorProduct.Maps
 import Mathlib.LinearAlgebra.Matrix.Reindex

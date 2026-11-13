@@ -12,6 +12,16 @@ Authors: no individual authors are supplied for these files upstream.
 The scalar-extension and tensor-contraction argument is adapted here;
 P2M extraction machinery is not retained.
 -/
+/-
+Upstream repository `anthropics/fermats-last-theorem`:
+https://github.com/anthropics/fermats-last-theorem
+https://github.com/anthropics/fermats-last-theorem/blob/6e837e75355538c7f80bab5b956861e86c4eacc2/Theorems/Thm_Algebra_exists_forall_add_sub_eq_zero_of_map_mul_of_separabilityElement_tensor.lean
+https://github.com/anthropics/fermats-last-theorem/blob/6e837e75355538c7f80bab5b956861e86c4eacc2/P2M/Sol/S_Algebra_exists_forall_add_sub_eq_zero_of_map_mul_of_separabilityElement_tensor.lean
+The upstream NOTICE also credits Mathlib:
+https://github.com/leanprover-community/mathlib4
+Copyright (c) the respective Mathlib authors, as recorded in their file headers.
+Released under the Apache License, Version 2.0.
+-/
 module
 
 import Mathlib.LinearAlgebra.TensorProduct.Finiteness
