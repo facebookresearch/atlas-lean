@@ -37,11 +37,11 @@ No new definitions or results are introduced here.
 - `PhyslibExt.EarthScience.RossbyWaves`
 -/
 
-/-- Public shape of the dispersion theorem. -/
+/-- Public shape of the denominator-clearing theorem. -/
 example {U beta k l omega : ℝ} (h : k ^ 2 + l ^ 2 ≠ 0)
     (homega : omega = U * k - beta * k / (k ^ 2 + l ^ 2)) :
     (omega - U * k) * (k ^ 2 + l ^ 2) = -beta * k :=
-  EarthScience.rossby_dispersion h homega
+  EarthScience.rossby_dispersion_clear_denom h homega
 
 /-- Public shape of the dispersion iff theorem. -/
 example {U beta k l omega : ℝ} (h : k ^ 2 + l ^ 2 ≠ 0) :
@@ -58,7 +58,7 @@ example {beta k l : ℝ} :
   ring
 
 /-- Public shape of the phase-speed theorem. -/
-example {U beta k l omega : ℝ} (hk : k ≠ 0) (h : k ^ 2 + l ^ 2 ≠ 0)
+example {U beta k l omega : ℝ} (hk : k ≠ 0)
     (homega : omega = U * k - beta * k / (k ^ 2 + l ^ 2)) :
     omega / k = U - beta / (k ^ 2 + l ^ 2) :=
-  EarthScience.rossby_phase_speed hk h homega
+  EarthScience.rossby_phase_speed hk homega
