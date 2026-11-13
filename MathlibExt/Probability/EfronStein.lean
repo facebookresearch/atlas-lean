@@ -150,35 +150,6 @@ private theorem sum_eweight_eq_one
       rw [Fintype.sum_mul_sum]
     rw [hsplit, hfac, hp_sum, ih, mul_one]
 
-private theorem update_cons_zero
-    (α : Type*) [Nonempty α]
-    (n : ℕ)
-    (a b : α) (y : Fin n → α) :
-    Function.update (Fin.cons (α := fun _ : Fin (n + 1) => α) a y) 0 b
-      = Fin.cons (α := fun _ : Fin (n + 1) => α) b y := by
-  funext j
-  refine Fin.cases ?_ ?_ j
-  · rw [Function.update_self, Fin.cons_zero]
-  · intro m
-    have hne : m.succ ≠ (0 : Fin (n + 1)) := by simp
-    rw [Function.update_of_ne hne]
-    simp only [Fin.cons_succ]
-
-private theorem update_cons_succ
-    (α : Type*) [Nonempty α]
-    (n : ℕ)
-    (k : Fin n) (a b : α) (y : Fin n → α) :
-    Function.update (Fin.cons (α := fun _ : Fin (n + 1) => α) a y) k.succ b
-      = Fin.cons (α := fun _ : Fin (n + 1) => α) a (Function.update y k b) := by
-  funext j
-  refine Fin.cases ?_ ?_ j
-  · have h1 : k.succ ≠ (0 : Fin (n + 1)) := by simp
-    have hne : (0 : Fin (n + 1)) ≠ k.succ := Ne.symm h1
-    rw [Function.update_of_ne hne, Fin.cons_zero, Fin.cons_zero]
-  · intro m
-    have hiff : (m.succ = k.succ) ↔ (m = k) := Fin.succ_inj
-    simp only [Function.update_apply, Fin.cons_succ, hiff]
-
 -- E-versions by defeq
 private theorem update_consEquiv_zero
     (α : Type*) [Nonempty α]
@@ -186,7 +157,7 @@ private theorem update_consEquiv_zero
     (a b : α) (y : Fin n → α) :
     Function.update (Fin.consEquiv (fun _ : Fin (n + 1) => α) (a, y)) 0 b
       = Fin.consEquiv (fun _ : Fin (n + 1) => α) (b, y) :=
-  update_cons_zero α n a b y
+  Fin.update_cons_zero (α := fun _ => α) a y b
 
 private theorem update_consEquiv_succ
     (α : Type*) [Nonempty α]
@@ -194,7 +165,7 @@ private theorem update_consEquiv_succ
     (k : Fin n) (a b : α) (y : Fin n → α) :
     Function.update (Fin.consEquiv (fun _ : Fin (n + 1) => α) (a, y)) k.succ b
       = Fin.consEquiv (fun _ : Fin (n + 1) => α) (a, Function.update y k b) :=
-  update_cons_succ α n k a b y
+  (Fin.cons_update (α := fun _ => α) a y k b).symm
 
 private theorem weight_consEquiv
     (α : Type*) [Nonempty α]
