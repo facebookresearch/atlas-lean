@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import CSLibExt.MachineLearning.GraphicalModels.CausalAdjustment
+public import CSLibExt.MachineLearning.GraphicalModels.CausalBayesNet
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 public import Mathlib.Data.Fin.Tuple.Basic
