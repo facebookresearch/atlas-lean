@@ -21,10 +21,13 @@ recorded as `MathlibExt.NumberTheory.MihailescuWanted.mihailescu`,
 and its Theorems 2–5 (Fermat's little theorem and
 Legendre-symbol laws, including quadratic reciprocity)
 are already in Mathlib; all five are recorded as
-covered in the source audit table. Sanity-checked
-numerically: `19^x + 151^y` is never a square (it is
-`≡ 2 (mod 3)`), and Theorem 6 has no unexpected small
-solutions across its first instances.
+covered in the source audit table. Theorem 6 has no
+unexpected small solutions across its first instances
+(checked numerically).
+
+Proved in `MathlibExt.NumberTheory.ExponentialDiophantine`:
+Corollary 1, `19^x + 151^y` is never a square
+(`MetaMathlibExt.pow19_add_pow151_ne_sq`).
 
 Not stated (see the source audit table): Theorems 7
 and 8, whose Legendre-symbol hypotheses are garbled in
@@ -34,6 +37,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.Prime.Basic
+public import MathlibExt.NumberTheory.ExponentialDiophantine
 
 set_option autoImplicit false
 
@@ -57,15 +61,5 @@ theorem_wanted pow_add_pow_eq_sq (p a x y z : ℕ)
     (hpa : (p + a).Prime) (ha4 : a % 4 = 0)
     (hap : p ∣ a + 1) (h : p ^ x + (p + a) ^ y = z ^ 2) :
     x = 0 ∧ y = 1 ∧ z ^ 2 = p + a + 1
-
-/-- **Corollary 1**: the exponential Diophantine
-equation `19^x + 151^y = z^2` has no solution.
-
-Source: Shalini Choudhury and Naba Kanta Sarma, "On the
-Diophantine Equations `(p+a)^x + p^y = z^2` and
-`(p+a)^x - p^y = z^2` where `p` and `p+a` Are Odd
-Primes", Corollary 1. -/
-theorem_wanted pow19_add_pow151_ne_sq (x y z : ℕ) :
-    19 ^ x + 151 ^ y ≠ z ^ 2
 
 end MathlibExt.NumberTheory.ExponentialDiophantineWanted
