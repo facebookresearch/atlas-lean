@@ -42,6 +42,22 @@ Cohen–Macaulayness is expressed by the depth of `S` as a module over
 itself, at its own maximal ideal, equaling its Krull dimension.
 Mathlib's regular local ring class includes locality and Noetherianity.
 
+The credited Axiom source contains an ordinary proof, using its concrete
+regular-sequence definition of depth. The main theorem remains deferred
+here pending the following proof dependencies:
+
+* `Module.Flat.of_rTensor_subtype_injective_of_flat_quotient`, from
+  `StacksFrontier/RingTheory/Flat/LocalCriterionVariant/Criterion.lean`
+  (Stacks 00ML), with its Tor-vanishing and nilpotent-descent support.
+* `Module.IsMaximalCohenMacaulay.isRegular_iff_ringKrullDim_add_length_eq_ringKrullDim`,
+  from `StacksFrontier/RingTheory/CohenMacaulay/RegularSequence/DimensionCriterion.lean`
+  (Stacks 02JN), with its regular-sequence and depth dimension arguments.
+* Identification of the source's regular-sequence depth with the
+  Ext-based `IsLocalRing.depth` used in the statement below.
+
+The complete principal-ideal tensor injectivity lemma from the source
+argument is ported in `MathlibExt/RingTheory/MiracleFlatness.lean`.
+
 For the universal compactified Jacobian, flatness is already supplied by
 Kass–Pagani, Corollary 4.4. This
 module records the general local criterion. Applying it to a further
