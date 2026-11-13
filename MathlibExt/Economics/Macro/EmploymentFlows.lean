@@ -21,6 +21,12 @@ find jobs per period. Steady state means flow balance: `s * (1 - u) = f * u`. Wh
 labour-force growth, entry, or exit is modelled. The case `s = f = 0` is excluded: with
 no flows every `u` is steady.
 
+In the source (Mankiw), `s` and `f` are the fractions of the employed and of the
+unemployed who separate and find jobs each month, so `0 ≤ s ≤ 1` and `0 ≤ f ≤ 1` there.
+The results need no upper bound: uniqueness uses only flow balance and `0 < s + f`, and
+the verification uses only `0 ≤ s`, `0 ≤ f`, and `0 < s + f`. They therefore also cover
+continuous-time flow intensities, whose steady state solves the same balance equation.
+
 ## Main results
 
 * `steady_unemployment`: flow balance plus `0 < s + f` gives `u = s / (s + f)`.
@@ -29,7 +35,9 @@ no flows every `u` is steady.
 
 ## References
 
-* MIT 14.05 Intermediate Macroeconomics, Fall 2024, syllabus (measurement scope).
+* N. G. Mankiw, *Macroeconomics*, 11th ed., Chapter 7 (Unemployment and the Labor Market),
+  section "Job Loss, Job Finding, and the Natural Rate of Unemployment": the steady-state
+  condition `f U = s E` and the natural rate `U / L = s / (s + f)`.
 -/
 
 @[expose] public section
@@ -41,9 +49,9 @@ normalized to `1`, so employment is `1 - u` and unemployment is `u`. In each per
 fraction `s` of the employed separate and a fraction `f` of the unemployed find jobs.
 Steady state means flows balance: `s * (1 - u) = f * u`. When `s + f > 0`, the unique
 steady-state unemployment rate is `u = s / (s + f)`. No labour-force growth, entry, or
-exit is modelled; `s` and `f` are per-period rates, not probabilities with any further
-structure. The case `s = f = 0` is excluded: with no flows every `u` is steady. -/
-theorem steady_unemployment {s f u : ℝ} (hs : 0 ≤ s) (hf : 0 ≤ f) (hpos : 0 < s + f)
+exit is modelled. The calculation needs neither nonnegativity nor an upper bound on `s`
+and `f`. The case `s = f = 0` is excluded: with no flows every `u` is steady. -/
+theorem steady_unemployment {s f u : ℝ} (hpos : 0 < s + f)
     (hflow : s * (1 - u) = f * u) : u = s / (s + f) := by
   have hne : s + f ≠ 0 := ne_of_gt hpos
   field_simp
