@@ -184,4 +184,37 @@ example : height badCache = 5 := by decide
 #print axioms inorder_delete
 #print axioms height_balance_le
 
+/-! ### `Balanced` reads cached heights -/
+
+/-- A four-node left path whose caches all claim height one. -/
+public def stalePath : AvlTree.Tree Nat :=
+  .node 1 (.node 1 (.node 1 (.node 1 .empty 1 .empty) 2 .empty) 3 .empty) 4 .empty
+
+/-- `Balanced` holds of the path because it compares the stale caches. -/
+example : Balanced stalePath := by
+  simp [stalePath, Balanced]
+
+/-- The caches are wrong, so the path is not `Valid`. -/
+example : ¬ CacheCorrect stalePath := by
+  simp [stalePath, CacheCorrect]
+
+example : ¬ Valid stalePath := fun h => by
+  have := h.2.1
+  simp [stalePath, CacheCorrect] at this
+
+/-- The true height is four: the root's true subtree heights are three and zero. -/
+example : (toBinaryTree stalePath).height = 4 := by decide
+
+/-- `Valid` is preserved by insertion and deletion. -/
+example (xs : List Nat) (x y : Nat) :
+    Valid (erase y (insert x (fromList xs))) :=
+  valid_erase (valid_insert valid_fromList)
+
+example (xs : List Nat) : Valid (deleteMin (delete 3 (fromList xs))) :=
+  valid_deleteMin (valid_delete valid_fromList)
+
+#print axioms valid_insert
+#print axioms valid_erase
+#print axioms valid_fromList
+
 end Cslib.Algorithms.Lean.AvlTreeTests
