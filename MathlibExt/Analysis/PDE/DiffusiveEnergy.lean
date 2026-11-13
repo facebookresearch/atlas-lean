@@ -28,7 +28,8 @@ concentration, not thermodynamic energy.
 ## Key results
 
 - `energy_deriv`: the energy identity.
-- `energy_nonpos`: the energy is nonincreasing.
+- `dissipation_nonpos`: the dissipation term `-D * ∫_0^L c_x^2` is nonpositive, so with
+  `energy_deriv` the energy derivative at each `t` is `≤ 0`.
 -/
 
 @[expose] public section
@@ -126,8 +127,10 @@ theorem energy_deriv {L D U : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
   exact hInter
 
 set_option linter.unusedVariables false in
-/-- The diffusive energy is nonincreasing: `-D * ∫ c_x^2 ≤ 0` for `D ≥ 0`. -/
-theorem energy_nonpos {L D : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
+/-- Sign of the dissipation term of `energy_deriv`: `-D * ∫_0^L c_x^2 ≤ 0` for `D ≥ 0`. This is
+only the sign of that term, not a monotonicity statement; combined with `energy_deriv` it shows
+that the energy derivative at `t` is nonpositive. -/
+theorem dissipation_nonpos {L D : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
     (cx : ℝ → ℝ → ℝ) (t : ℝ)
     (hInt_cx2 : IntervalIntegrable (fun x => (cx t x) ^ 2) volume 0 L) :
     -D * ∫ x in (0 : ℝ)..L, (cx t x) ^ 2 ≤ 0 := by
