@@ -187,6 +187,23 @@ theorem cluster_two_obs_not_indep {Ω : Type*} {mΩ : MeasurableSpace Ω}
     (isRandomIntercept_cluster_response 2 γ ε hγ hε hind X β 1 1 (by norm_num)
       (by norm_num) hγl hεl) one_ne_zero 0 (by decide)
 
+/-- Zero within-cluster variance is allowed: with `σw2 = 0` the mean of a two-observation
+cluster has variance `σc2 = 1`; averaging removes nothing. -/
+theorem cluster_two_obs_mean_zero_residual {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ (Fin 1))
+    (ε : Ω → EuclideanSpace ℝ (Fin 2))
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix (Fin 2) (Fin 1) ℝ) (β : EuclideanSpace ℝ (Fin 1))
+    (hγl : P.map γ = multivariateGaussian 0 ((1 : ℝ) • 1))
+    (hεl : P.map ε = multivariateGaussian 0 ((0 : ℝ) • 1)) :
+    Var[fun ω => (∑ k, (toEuclideanLin X β +
+      toEuclideanLin (clusterDesign 2) (γ ω) + ε ω).ofLp k) / (2 : ℝ);
+      P] = 1 := by
+  have h := variance_cluster_mean 2 γ ε hγ hε hind X β 1 0 (by norm_num) le_rfl
+    hγl hεl (by norm_num)
+  simpa using h
+
 end
 
 end MathlibExtTest.Biology.StatisticalGenetics.CrossedRandomEffects

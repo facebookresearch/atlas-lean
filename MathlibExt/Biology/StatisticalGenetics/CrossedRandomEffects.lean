@@ -113,7 +113,7 @@ theorem covariance_crossed_response {I J : Type*} [DecidableEq I]
     (ε : Ω → EuclideanSpace ℝ (I × J)) (hγ : Measurable γ)
     (hε : Measurable ε) (hind : IndepFun γ ε P)
     (X : Matrix (I × J) p ℝ) (β : EuclideanSpace ℝ p) (σs2 σw2 σe2 : ℝ)
-    (hs : 0 ≤ σs2) (hw : 0 ≤ σw2) (he : 0 < σe2)
+    (hs : 0 ≤ σs2) (hw : 0 ≤ σw2) (he : 0 ≤ σe2)
     (hγl : P.map γ = multivariateGaussian 0 (crossedCov I J σs2 σw2))
     (hεl : P.map ε = multivariateGaussian 0 (σe2 • 1)) (k l : I × J) :
     cov[fun ω => (toEuclideanLin X β +
@@ -125,8 +125,8 @@ theorem covariance_crossed_response {I J : Type*} [DecidableEq I]
         (if k = l then σe2 else 0) := by
   have hG : (crossedCov I J σs2 σw2).PosSemidef :=
     posSemidef_crossedCov I J σs2 σw2 hs hw
-  have hR : (σe2 • (1 : Matrix (I × J) (I × J) ℝ)).PosDef :=
-    Matrix.PosDef.one.smul he
+  have hR : (σe2 • (1 : Matrix (I × J) (I × J) ℝ)).PosSemidef :=
+    Matrix.PosSemidef.one.smul he
   have hcov := covariance_mixedModel_response γ ε hγ hε hind X β
     (crossedDesign I J) (crossedCov I J σs2 σw2) (σe2 • 1) hG hR hγl hεl k l
   rw [phenCov_crossed_apply] at hcov
@@ -141,7 +141,7 @@ theorem variance_contrast_crossed_response {I J : Type*} [DecidableEq I]
     (ε : Ω → EuclideanSpace ℝ (I × J)) (hγ : Measurable γ)
     (hε : Measurable ε) (hind : IndepFun γ ε P)
     (X : Matrix (I × J) p ℝ) (β : EuclideanSpace ℝ p) (σs2 σw2 σe2 : ℝ)
-    (hs : 0 ≤ σs2) (hw : 0 ≤ σw2) (he : 0 < σe2)
+    (hs : 0 ≤ σs2) (hw : 0 ≤ σw2) (he : 0 ≤ σe2)
     (hγl : P.map γ = multivariateGaussian 0 (crossedCov I J σs2 σw2))
     (hεl : P.map ε = multivariateGaussian 0 (σe2 • 1)) (c : I × J → ℝ) :
     Var[fun ω => ∑ k, c k * (toEuclideanLin X β +
@@ -151,7 +151,7 @@ theorem variance_contrast_crossed_response {I J : Type*} [DecidableEq I]
   have hG : (crossedCov I J σs2 σw2).PosSemidef :=
     posSemidef_crossedCov I J σs2 σw2 hs hw
   have hR : (σe2 • (1 : Matrix (I × J) (I × J) ℝ)).PosSemidef :=
-    Matrix.PosSemidef.one.smul he.le
+    Matrix.PosSemidef.one.smul he
   have hvar := variance_contrast_mixedModel_response γ ε hγ hε hind X β
     (crossedDesign I J) (crossedCov I J σs2 σw2) (σe2 • 1) hG hR hγl hεl c
   rw [hvar]
@@ -184,18 +184,18 @@ theorem isRandomIntercept_cluster_response (m : ℕ) {p : Type*} [Fintype p] [De
     (γ : Ω → EuclideanSpace ℝ (Fin 1)) (ε : Ω → EuclideanSpace ℝ (Fin m))
     (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
     (X : Matrix (Fin m) p ℝ) (β : EuclideanSpace ℝ p) (σc2 σw2 : ℝ)
-    (hc : 0 ≤ σc2) (hw : 0 < σw2)
+    (hc : 0 ≤ σc2) (hw : 0 ≤ σw2)
     (hγl : P.map γ = multivariateGaussian 0 (σc2 • 1))
     (hεl : P.map ε = multivariateGaussian 0 (σw2 • 1)) :
     IsRandomIntercept P (fun (i : Fin 1 × Fin m) ω => (toEuclideanLin X β +
       toEuclideanLin (clusterDesign m) (γ ω) + ε ω).ofLp i.2) σc2 σw2 := by
   have hG : (σc2 • (1 : Matrix (Fin 1) (Fin 1) ℝ)).PosSemidef :=
     Matrix.PosSemidef.one.smul hc
-  have hR : (σw2 • (1 : Matrix (Fin m) (Fin m) ℝ)).PosDef :=
-    Matrix.PosDef.one.smul hw
-  refine ⟨hc, hw.le, fun i => ?_, fun i j => ?_⟩
+  have hR : (σw2 • (1 : Matrix (Fin m) (Fin m) ℝ)).PosSemidef :=
+    Matrix.PosSemidef.one.smul hw
+  refine ⟨hc, hw, fun i => ?_, fun i j => ?_⟩
   · have hmap := map_mixedModel_response γ ε hγ hε hind X β (clusterDesign m)
-      (σc2 • 1) (σw2 • 1) hG hR.posSemidef hγl hεl
+      (σc2 • 1) (σw2 • 1) hG hR hγl hεl
     have hY : AEMeasurable (fun ω => toEuclideanLin X β +
         toEuclideanLin (clusterDesign m) (γ ω) + ε ω) P := by
       fun_prop
@@ -229,7 +229,7 @@ private theorem variance_cluster_mean_eq_trueVar (m : ℕ) {p : Type*} [Fintype 
     [IsProbabilityMeasure P] (γ : Ω → EuclideanSpace ℝ (Fin 1))
     (ε : Ω → EuclideanSpace ℝ (Fin m)) (hγ : Measurable γ) (hε : Measurable ε)
     (hind : IndepFun γ ε P) (X : Matrix (Fin m) p ℝ) (β : EuclideanSpace ℝ p)
-    (σc2 σw2 : ℝ) (hc : 0 ≤ σc2) (hw : 0 < σw2)
+    (σc2 σw2 : ℝ) (hc : 0 ≤ σc2) (hw : 0 ≤ σw2)
     (hγl : P.map γ = multivariateGaussian 0 (σc2 • 1))
     (hεl : P.map ε = multivariateGaussian 0 (σw2 • 1)) (hm : 0 < m) :
     Var[fun ω => (∑ k, (toEuclideanLin X β +
@@ -248,7 +248,7 @@ theorem variance_cluster_row (m : ℕ) {p : Type*} [Fintype p] [DecidableEq p]
     (γ : Ω → EuclideanSpace ℝ (Fin 1)) (ε : Ω → EuclideanSpace ℝ (Fin m))
     (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
     (X : Matrix (Fin m) p ℝ) (β : EuclideanSpace ℝ p) (σc2 σw2 : ℝ)
-    (hc : 0 ≤ σc2) (hw : 0 < σw2)
+    (hc : 0 ≤ σc2) (hw : 0 ≤ σw2)
     (hγl : P.map γ = multivariateGaussian 0 (σc2 • 1))
     (hεl : P.map ε = multivariateGaussian 0 (σw2 • 1)) (k : Fin m) :
     Var[fun ω => (toEuclideanLin X β + toEuclideanLin (clusterDesign m) (γ ω) +
@@ -263,7 +263,7 @@ theorem variance_cluster_mean (m : ℕ) {p : Type*} [Fintype p] [DecidableEq p]
     (γ : Ω → EuclideanSpace ℝ (Fin 1)) (ε : Ω → EuclideanSpace ℝ (Fin m))
     (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
     (X : Matrix (Fin m) p ℝ) (β : EuclideanSpace ℝ p) (σc2 σw2 : ℝ)
-    (hc : 0 ≤ σc2) (hw : 0 < σw2)
+    (hc : 0 ≤ σc2) (hw : 0 ≤ σw2)
     (hγl : P.map γ = multivariateGaussian 0 (σc2 • 1))
     (hεl : P.map ε = multivariateGaussian 0 (σw2 • 1)) (hm : 0 < m) :
     Var[fun ω => (∑ k, (toEuclideanLin X β +
@@ -274,14 +274,15 @@ theorem variance_cluster_mean (m : ℕ) {p : Type*} [Fintype p] [DecidableEq p]
   simp
 
 /-- Design-effect form: under the marginal law the mean variance equals the
-design effect times the independent-row variance. -/
+design effect times the independent-row variance. When `σc2 = σw2 = 0` both
+sides vanish. -/
 theorem variance_cluster_mean_eq_designEffect (m : ℕ) {p : Type*}
     [Fintype p] [DecidableEq p] {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {P : Measure Ω} [IsProbabilityMeasure P]
     (γ : Ω → EuclideanSpace ℝ (Fin 1)) (ε : Ω → EuclideanSpace ℝ (Fin m))
     (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
     (X : Matrix (Fin m) p ℝ) (β : EuclideanSpace ℝ p) (σc2 σw2 : ℝ)
-    (hc : 0 ≤ σc2) (hw : 0 < σw2)
+    (hc : 0 ≤ σc2) (hw : 0 ≤ σw2)
     (hγl : P.map γ = multivariateGaussian 0 (σc2 • 1))
     (hεl : P.map ε = multivariateGaussian 0 (σw2 • 1)) (hm : 0 < m)
     (k : Fin m) :
@@ -292,10 +293,13 @@ theorem variance_cluster_mean_eq_designEffect (m : ℕ) {p : Type*}
         toEuclideanLin (clusterDesign m) (γ ω) + ε ω).ofLp k; P] /
         (m : ℝ)) := by
   rw [variance_cluster_mean_eq_trueVar m γ ε hγ hε hind X β σc2 σw2 hc hw hγl hεl hm,
-    variance_cluster_row m γ ε hγ hε hind X β σc2 σw2 hc hw hγl hεl k,
-    trueVar_eq_designEffect_mul_naiveVar (add_pos_of_nonneg_of_pos hc hw).ne'
-      one_ne_zero hm.ne']
-  simp [naiveVar, icc]
+    variance_cluster_row m γ ε hγ hε hind X β σc2 σw2 hc hw hγl hεl k]
+  rcases (add_nonneg hc hw).eq_or_lt with h0 | hpos
+  · have hc0 : σc2 = 0 := by linarith
+    have hw0 : σw2 = 0 := by linarith
+    simp [trueVar, hc0, hw0]
+  · rw [trueVar_eq_designEffect_mul_naiveVar hpos.ne' one_ne_zero hm.ne']
+    simp [naiveVar, icc]
 
 /-- True versus independent-row variance: under the marginal law with at
 least two observations and a positive shared effect, they differ. -/
@@ -305,7 +309,7 @@ theorem variance_cluster_row_div_lt_mean (m : ℕ) {p : Type*}
     (γ : Ω → EuclideanSpace ℝ (Fin 1)) (ε : Ω → EuclideanSpace ℝ (Fin m))
     (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
     (X : Matrix (Fin m) p ℝ) (β : EuclideanSpace ℝ p) (σc2 σw2 : ℝ)
-    (hw : 0 < σw2)
+    (hw : 0 ≤ σw2)
     (hγl : P.map γ = multivariateGaussian 0 (σc2 • 1))
     (hεl : P.map ε = multivariateGaussian 0 (σw2 • 1)) (hm : 2 ≤ m)
     (hcpos : 0 < σc2) (k : Fin m) :
@@ -327,7 +331,7 @@ theorem le_variance_cluster_mean (m : ℕ) {p : Type*} [Fintype p]
     (ε : Ω → EuclideanSpace ℝ (Fin m)) (hγ : Measurable γ)
     (hε : Measurable ε) (hind : IndepFun γ ε P)
     (X : Matrix (Fin m) p ℝ) (β : EuclideanSpace ℝ p) (σc2 σw2 : ℝ)
-    (hc : 0 ≤ σc2) (hw : 0 < σw2)
+    (hc : 0 ≤ σc2) (hw : 0 ≤ σw2)
     (hγl : P.map γ = multivariateGaussian 0 (σc2 • 1))
     (hεl : P.map ε = multivariateGaussian 0 (σw2 • 1)) (hm : 0 < m) :
     σc2 ≤ Var[fun ω => (∑ k, (toEuclideanLin X β +

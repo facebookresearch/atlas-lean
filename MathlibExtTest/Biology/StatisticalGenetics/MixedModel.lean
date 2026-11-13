@@ -102,7 +102,7 @@ example {Ω : Type*} (X : Matrix (Fin 0) (Fin 1) ℝ) (β : Fin 1 → ℝ) (ε :
 
 Concrete checks for the response laws: zero-matrix PSD (proved, not assumed), a small
 `phenCov` computation, zero-mean regression, nonzero fixed effects exercising the mean
-theorems, and a within-cluster contrast. -/
+theorems, a within-cluster contrast, and a singular (zero) residual covariance. -/
 
 section GaussianResponse
 
@@ -139,7 +139,7 @@ theorem test_integral_zero_mean {Ω : Type*} {mΩ : MeasurableSpace Ω}
     (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
     (Z : Matrix (Fin 2) (Fin 1) ℝ)
     (G : Matrix (Fin 1) (Fin 1) ℝ) (R : Matrix (Fin 2) (Fin 2) ℝ)
-    (hG : G.PosSemidef) (hR : R.PosDef)
+    (hG : G.PosSemidef) (hR : R.PosSemidef)
     (hγl : P.map γ = multivariateGaussian 0 G)
     (hεl : P.map ε = multivariateGaussian 0 R) :
     ∫ ω, (toEuclideanLin (0 : Matrix (Fin 2) (Fin 1) ℝ) 0 +
@@ -160,7 +160,7 @@ theorem test_integral_nonzero_mean {Ω : Type*} {mΩ : MeasurableSpace Ω}
     (X : Matrix (Fin 2) (Fin 1) ℝ) (β : EuclideanSpace ℝ (Fin 1))
     (hX : X ≠ 0) (hβ : β ≠ 0) (Z : Matrix (Fin 2) (Fin 1) ℝ)
     (G : Matrix (Fin 1) (Fin 1) ℝ) (R : Matrix (Fin 2) (Fin 2) ℝ)
-    (hG : G.PosSemidef) (hR : R.PosDef)
+    (hG : G.PosSemidef) (hR : R.PosSemidef)
     (hγl : P.map γ = multivariateGaussian 0 G)
     (hεl : P.map ε = multivariateGaussian 0 R) :
     ∫ ω, (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) ∂P =
@@ -226,6 +226,24 @@ theorem test_variance_contrast_within_cluster {Ω : Type*} {mΩ : MeasurableSpac
   simp [phenCov, dotProduct, Matrix.mulVec, Fin.sum_univ_two, Matrix.mul_apply,
     Matrix.one_apply]
   norm_num
+
+/-- Singular residual covariance is allowed: with `R = 0` (deterministic residuals) the response
+covariance is `Z G Zᵀ`. -/
+theorem test_covariance_zero_residual {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ (Fin 1))
+    (ε : Ω → EuclideanSpace ℝ (Fin 2))
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix (Fin 2) (Fin 1) ℝ) (β : EuclideanSpace ℝ (Fin 1))
+    (Z : Matrix (Fin 2) (Fin 1) ℝ) (G : Matrix (Fin 1) (Fin 1) ℝ) (hG : G.PosSemidef)
+    (hγl : P.map γ = multivariateGaussian 0 G)
+    (hεl : P.map ε = multivariateGaussian 0 (0 : Matrix (Fin 2) (Fin 2) ℝ)) (i j : Fin 2) :
+    cov[fun ω => (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω).ofLp i,
+      fun ω => (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω).ofLp j; P] =
+      (Z * G * Zᵀ) i j := by
+  rw [covariance_mixedModel_response γ ε hγ hε hind X β Z G 0 hG Matrix.PosSemidef.zero
+    hγl hεl i j]
+  simp [phenCov]
 
 end GaussianResponse
 

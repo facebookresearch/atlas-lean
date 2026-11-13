@@ -36,9 +36,10 @@ expectation of `u` given `y` when `b` is known (`condDistrib_mixedModel`,
 `condExp_mixedModel`); the BLUP plugs in `b̂`. The best-linear-unbiased-prediction optimality of
 `û` among all linear unbiased predictors is not formalized here.
 
-**Response laws.** In the same Gaussian model the response is `y ~ N(X b, V)`
-(`map_mixedModel_response`), so `𝔼[y] = X b` and `Cov(y) = V`; given `u = g` it is
-`y ~ N(X b + Z g, R)` (`condDistrib_mixedModel_response`). A contrast `cᵀ y` with fixed
+**Response laws.** With `u ~ N(0, G)` and `e ~ N(0, R)` independent and `G`, `R` only positive
+semidefinite (singular residuals such as `R = 0` are allowed), the response is
+`y ~ N(X b, V)` (`map_mixedModel_response`), so `𝔼[y] = X b` and `Cov(y) = V`; given `u = g`
+it is `y ~ N(X b + Z g, R)` (`condDistrib_mixedModel_response`). A contrast `cᵀ y` with fixed
 coefficients has variance `cᵀ V c` (`variance_contrast_mixedModel_response`).
 
 **LDpred-inf.** For `M` markers with LD matrix `R` and `N` individuals, the marginal estimates
@@ -58,8 +59,8 @@ et al. (2015).
 * `condDistrib_mixedModel`, `condExp_mixedModel`: in the Gaussian model, given `y`,
   `u ~ N(G Zᵀ V⁻¹ (y - X b), G - G Zᵀ V⁻¹ Z G)` and `𝔼[u | y] = G Zᵀ V⁻¹ (y - X b)`.
 * `map_mixedModel_response`, `integral_mixedModel_response`, `covariance_mixedModel_response`:
-  in the Gaussian model `y ~ N(X b, V)`, so `𝔼[y] = X b` and `Cov(y) = V`; `V` is positive
-  semidefinite for positive semidefinite `G` and `R` (`posSemidef_phenCov_of_posSemidef`).
+  for positive semidefinite `G` and `R`, `y ~ N(X b, V)`, so `𝔼[y] = X b` and `Cov(y) = V`;
+  `V` is then positive semidefinite (`posSemidef_phenCov_of_posSemidef`).
 * `condDistrib_mixedModel_response`, `integral_condDistrib_mixedModel_response`,
   `covariance_condDistrib_mixedModel_response`: given `u = g`, `y ~ N(X b + Z g, R)`.
 * `variance_contrast_mixedModel_response`: `Var[cᵀ y] = cᵀ V c` for fixed `c`.
@@ -326,9 +327,9 @@ section GaussianResponse
 /-! ### Response laws
 
 With random effects `γ ~ N(0, G)` and residuals `ε ~ N(0, R)` independent, the response
-`Y = X β + Z γ + ε` is `N(X β, Z G Zᵀ + R)`, and given `γ = g` it is `N(X β + Z g, R)`. The
-reverse conditional law, of the random effects given the response, is
-`condDistrib_mixedModel`. -/
+`Y = X β + Z γ + ε` is `N(X β, Z G Zᵀ + R)`, and given `γ = g` it is `N(X β + Z g, R)`. Only
+positive semidefiniteness of `G` and `R` is assumed. The reverse conditional law, of the random
+effects given the response, is `condDistrib_mixedModel`. -/
 
 /-- Marginal law of the mixed-model response: with `γ ~ N(0, G)` and
 `ε ~ N(0, R)` independent, `Y = X β + Z γ + ε` is
@@ -392,7 +393,7 @@ theorem integral_mixedModel_response {n p q : Type*} [Fintype n] [DecidableEq n]
     (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
     (X : Matrix n p ℝ) (β : EuclideanSpace ℝ p) (Z : Matrix n q ℝ)
     (G : Matrix q q ℝ) (R : Matrix n n ℝ)
-    (hG : G.PosSemidef) (hR : R.PosDef)
+    (hG : G.PosSemidef) (hR : R.PosSemidef)
     (hγl : P.map γ = multivariateGaussian 0 G)
     (hεl : P.map ε = multivariateGaussian 0 R) :
     ∫ ω, (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) ∂P =
@@ -401,9 +402,9 @@ theorem integral_mixedModel_response {n p q : Type*} [Fintype n] [DecidableEq n]
       (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) P := by
     fun_prop
   have hmap := map_mixedModel_response γ ε hγ hε hind X β Z G R hG
-    hR.posSemidef hγl hεl
+    hR hγl hεl
   have hpsd : (phenCov Z G R).PosSemidef :=
-    posSemidef_phenCov_of_posSemidef Z G R hG hR.posSemidef
+    posSemidef_phenCov_of_posSemidef Z G R hG hR
   calc ∫ ω, (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) ∂P
       = ∫ y, y ∂(P.map
         (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω)) :=
@@ -421,16 +422,16 @@ theorem covariance_mixedModel_response {n p q : Type*} [Fintype n] [DecidableEq 
     (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
     (X : Matrix n p ℝ) (β : EuclideanSpace ℝ p) (Z : Matrix n q ℝ)
     (G : Matrix q q ℝ) (R : Matrix n n ℝ)
-    (hG : G.PosSemidef) (hR : R.PosDef)
+    (hG : G.PosSemidef) (hR : R.PosSemidef)
     (hγl : P.map γ = multivariateGaussian 0 G)
     (hεl : P.map ε = multivariateGaussian 0 R) (i j : n) :
     cov[fun ω => (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω).ofLp i,
       fun ω => (toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω).ofLp j;
       P] = phenCov Z G R i j := by
   have hmap := map_mixedModel_response γ ε hγ hε hind X β Z G R hG
-    hR.posSemidef hγl hεl
+    hR hγl hεl
   have hpsd : (phenCov Z G R).PosSemidef :=
-    posSemidef_phenCov_of_posSemidef Z G R hG hR.posSemidef
+    posSemidef_phenCov_of_posSemidef Z G R hG hR
   have hYmeas : AEStronglyMeasurable
       (fun ω => toEuclideanLin X β + toEuclideanLin Z (γ ω) + ε ω) P := by
     fun_prop
@@ -513,7 +514,7 @@ theorem covariance_condDistrib_mixedModel_response {n p q : Type*}
     (γ : Ω → EuclideanSpace ℝ q) (ε : Ω → EuclideanSpace ℝ n)
     (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
     (X : Matrix n p ℝ) (β : EuclideanSpace ℝ p) (Z : Matrix n q ℝ)
-    (R : Matrix n n ℝ) (hR : R.PosDef)
+    (R : Matrix n n ℝ) (hR : R.PosSemidef)
     (hεl : P.map ε = multivariateGaussian 0 R) (i j : n) :
     ∀ᵐ g ∂P.map γ, cov[fun y : EuclideanSpace ℝ n => y.ofLp i,
       fun y : EuclideanSpace ℝ n => y.ofLp j;
@@ -522,7 +523,7 @@ theorem covariance_condDistrib_mixedModel_response {n p q : Type*}
   have hcond := condDistrib_mixedModel_response γ ε hγ hε hind X β Z R hεl
   filter_upwards [hcond] with g hg
   rw [hg]
-  exact covariance_eval_multivariateGaussian hR.posSemidef i j
+  exact covariance_eval_multivariateGaussian hR i j
 
 /-- Planned-contrast variance in any mixed model: for fixed coefficients
 `c`, the variance under the marginal law is the `phenCov` quadratic form. -/
