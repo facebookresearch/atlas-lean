@@ -16,7 +16,7 @@ public import MathlibExt.Combinatorics.SimpleGraph.SubgraphIsomorphism
 public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Filter.Basic
 

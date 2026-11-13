@@ -7,14 +7,6 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-Portions of this file are adapted from:
-
-`FormalConjectures/ErdosProblems/22.lean` (Formal Conjectures):
-Copyright 2026 The Formal Conjectures Authors.
-Licensed under the Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
--/
-
-/-
 # Erdős Problem 22
 -/
 module
@@ -25,7 +17,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.Combinatorics.SimpleGraph.Finite
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Filter.Basic
 public import Mathlib.Tactic.Positivity
