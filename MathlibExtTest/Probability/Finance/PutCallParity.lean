@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Probability.Finance.PutCallParity
+import Mathlib.Algebra.Group.Pi.Lemmas
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
@@ -22,14 +23,13 @@ open MathlibExt.Probability.Finance.PutCallParity
 example : callPayoff 110 100 - putPayoff 110 100 = (110 : ℝ) - 100 :=
   callPayoff_sub_putPayoff 110 100
 
-/-- Main parity theorem at the pinned example values. -/
-example : (fun f : ℝ → ℝ => f 110 / 1) (fun ω => callPayoff ω 100) -
-    (fun f : ℝ → ℝ => f 110 / 1) (fun ω => putPayoff ω 100) = (110 - 0) - 100 / 1 := by
-  have hSub : ∀ f g : ℝ → ℝ, (f 110 - g 110) / 1 = f 110 / 1 - g 110 / 1 :=
-    fun f g => by ring
-  have hStock : (110 : ℝ) / 1 = 110 - 0 := by norm_num
-  have hBond : (100 : ℝ) / 1 = 100 / 1 := rfl
-  exact putCallParity (price := fun f : ℝ → ℝ => f 110 / 1) hSub hStock hBond rfl rfl
+/-- Main parity theorem at the pinned example values: `price` is evaluation at
+the single terminal state `ω = 110`, an additive functional, with `R = 1`. -/
+example : Pi.evalAddMonoidHom (fun _ : ℝ => ℝ) 110 (fun ω => callPayoff ω 100) -
+    Pi.evalAddMonoidHom (fun _ : ℝ => ℝ) 110 (fun ω => putPayoff ω 100) =
+      (110 - 0) - 100 / 1 :=
+  putCallParity (price := Pi.evalAddMonoidHom (fun _ : ℝ => ℝ) 110) one_pos (by simp)
+    (by simp) rfl rfl
 
 /-- Concrete instance from the pinned example. -/
 example :

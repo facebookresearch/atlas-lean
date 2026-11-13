@@ -15,7 +15,7 @@ import Mathlib.Tactic.NormNum
 /-!
 # Put-call parity
 
-Replicable European claims satisfy put-call parity under a linear pricing
+Replicable European claims satisfy put-call parity under an additive pricing
 functional, with the dividend convention that `D` is the present value of
 dividends over the option's life, so the ex-dividend stock price `S0 - D`
 prices the terminal payoff alone. The payoff definitions are local copies of
@@ -25,7 +25,7 @@ the FI11.T01 payoffs; future unification with
 ## Main results
 
 * `callPayoff_sub_putPayoff`: the payoff identity (FI11.T01 helper).
-* `putCallParity`: `C - P = (S0 - D) - K / R`.
+* `putCallParity`: `C - P = (S0 - D) - K / R` for a positive gross return `R`.
 * `putCallParity_example`: a concrete instance.
 -/
 
@@ -52,45 +52,42 @@ theorem callPayoff_sub_putPayoff (S K : ℝ) :
   rw [h]
   exact max_zero_sub_max_neg_zero_eq_self (S - K)
 
-/-- Put-call parity for replicable European claims. `price` is a linear
+/-- Put-call parity for replicable European claims. `price` is an additive
 pricing functional on terminal payoffs (functions of the terminal underlying
-`ω`). Hypotheses:
+`ω`): an additive homomorphism `(ℝ → ℝ) →+ ℝ`, so the price of a difference of
+payoffs is the difference of their prices (`map_sub`). Hypotheses:
 
-* `hSub`: `price` distributes over pointwise subtraction of payoffs.
+* `_hR`: the gross risk-free return `R` is positive. The algebra below does not
+  use it (hence the underscore); it excludes `R = 0`, where Lean's `K / 0 = 0`
+  would let the zero functional satisfy `hBond`.
 * `hStock`: the price of the terminal-underlying payoff is `S0 - D`, where
   `S0` is today's spot and `D` is the present value of dividends paid over the
   option's life (dividend convention: the holder of the replicating stock
   position receives the dividends, so the ex-dividend stock price `S0 - D`
   prices the terminal payoff alone).
-* `hBond`: the price of the constant payoff `K` is `K / R`, where `R` is the
-  gross risk-free return.
+* `hBond`: the price of the constant payoff `K` is `K / R`, the strike
+  discounted at the gross risk-free return `R`.
 * `hC`, `hP`: `C` and `P` are the prices of the call and put payoffs.
 
 Conclusion: `C - P = (S0 - D) - K / R`. No no-arbitrage theorem is reproved:
-the law of one price is the `hSub` + payoff-identity input, applied once. -/
-theorem putCallParity {price : (ℝ → ℝ) → ℝ} {S0 D K R C P : ℝ}
-    (hSub : ∀ f g : ℝ → ℝ, price (fun ω => f ω - g ω) = price f - price g)
+the law of one price is the additivity of `price` plus the payoff identity,
+applied once. -/
+theorem putCallParity {price : (ℝ → ℝ) →+ ℝ} {S0 D K R C P : ℝ} (_hR : 0 < R)
     (hStock : price (fun ω => ω) = S0 - D)
     (hBond : price (fun _ => K) = K / R)
     (hC : C = price (fun ω => callPayoff ω K))
     (hP : P = price (fun ω => putPayoff ω K)) :
     C - P = (S0 - D) - K / R := by
-  rw [hC, hP]
-  have h := hSub (fun ω => callPayoff ω K) (fun ω => putPayoff ω K)
-  rw [← h]
-  have hpay : (fun ω => callPayoff ω K - putPayoff ω K) = (fun ω => ω - K) := by
-    funext ω
-    exact callPayoff_sub_putPayoff ω K
-  rw [hpay]
-  have h2 : price (fun ω : ℝ => ω - K) = price (fun ω => ω) - price (fun _ => K) :=
-    hSub (fun ω => ω) (fun _ => K)
-  rw [h2, hStock, hBond]
+  rw [hC, hP, ← hStock, ← hBond, ← map_sub price, ← map_sub price]
+  congr 1
+  funext ω
+  exact callPayoff_sub_putPayoff ω K
 
 /-- Concrete instance: one terminal state `ω = 110`, `S0 = 110`, `D = 0`,
 `K = 100`, `R = 1` (zero interest), and the one-state pricing functional
-`price f = f 110 / 1`. Then `C - P = 10 = 110 - 100`. (With `R ≠ 1` a valid
-instance needs `ω = R * (S0 - D)` so that `hStock` holds; the `R = 1` case
-keeps the arithmetic exact.) -/
+`price f = f 110 / 1`. Then `C - P = 10 = 110 - 100`. (For another gross return
+`R > 0`, the one-state functional `price f = f ω / R` satisfies `hStock` exactly
+when `ω = R * (S0 - D)`; the `R = 1` case keeps the arithmetic exact.) -/
 theorem putCallParity_example :
     let price : (ℝ → ℝ) → ℝ := fun f => f 110 / 1
     price (fun ω => callPayoff ω 100) - price (fun ω => putPayoff ω 100) =
