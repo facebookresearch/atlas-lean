@@ -9,25 +9,37 @@ module
 
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
+
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # Petrology: batch melting and partitioning
 
-With melt fraction `F ∈ [0, 1]`, bulk partition `D > 0` and conservation
-`C₀ = F * Cl + (1 - F) * Cs` plus `Cs = D * Cl`,
-`Cl = C₀ / [D + F * (1 - D)]`.
+Equilibrium (batch) melting with melt mass fraction `F`, bulk solid/melt
+partition coefficient `D`, mass balance `C₀ = F * Cl + (1 - F) * Cs` and
+partitioning `Cs = D * Cl` gives `Cl = C₀ / [D + F * (1 - D)]`.
 
 ## i. Overview
 
-`F` is the melt fraction, `D` the bulk solid/liquid partition coefficient,
-`C₀` the bulk concentration, `Cl` the liquid concentration, `Cs` the solid
-concentration, all in consistent mass or mole fractions, never mixed.
-`D` is a constant equilibrium partition coefficient (stipulated). The
-denominator `D + F * (1 - D) = D * (1 - F) + F` is positive for `D > 0`,
-`F ∈ [0, 1]`. The `D = 0` endpoint is separate.
+This is Shaw's (1970) equilibrium, or batch, melting model with modal melting.
+The melt stays in equilibrium with the residual solid until it is extracted as
+a single batch, and the minerals of the residue melt in their modal
+proportions, so the bulk partition coefficient `D` is constant.
+
+`F` is the mass fraction of melt, `0 ≤ F ≤ 1`. `C₀` is the trace-element
+concentration of the source before melting, `Cl` that of the melt and `Cs`
+that of the residual solid, all as mass fractions (or in one common
+mass-based unit). `D = Cs / Cl` is the bulk solid/melt partition coefficient:
+the mineral/melt partition coefficients averaged with the mass fractions of
+the minerals in the residue as weights, so `0 ≤ D` in the model.
+
+The model's formula holds wherever its denominator
+`D + F * (1 - D) = D * (1 - F) + F` is nonzero. The results here assume
+`0 < D`, which keeps the denominator positive on all of `0 ≤ F ≤ 1`,
+including the first-melt limit `F = 0`, where `Cl = C₀ / D`. The perfectly
+incompatible case `D = 0`, where `Cl = C₀ / F` for `0 < F`, is not covered.
 
 ## ii. Key results
 
@@ -41,7 +53,11 @@ denominator `D + F * (1 - D) = D * (1 - F) + F` is positive for `D > 0`,
 
 ## iv. References
 
-- None; proved from ordered-field algebra in Mathlib.
+- D. M. Shaw, "Trace element fractionation during anatexis", *Geochimica et
+  Cosmochimica Acta* 34 (1970), 237–243: equilibrium (batch) melting, the
+  bulk distribution coefficient of the residual solid, and the mass balance
+  `C₀ = F * Cl + (1 - F) * Cs`, which give `Cl / C₀ = 1 / (D + F * (1 - D))`
+  for modal melting.
 
 ## A. Batch melting
 -/
