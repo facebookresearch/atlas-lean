@@ -47,10 +47,13 @@ jobs:
     # runs mint a verdict: same-repo automatic runs, `@codex`
     # comment runs by a writer/maintainer/admin on a formal-eligible
     # PR, and fork runs whose PR author is an OWNER, MEMBER, or
-    # COLLABORATOR of the base repo (verified by check_auth through
-    # the API; the event payload under-reports private org
-    # membership, so the job `if` no longer filters fork runs by
-    # association). Trusted-head-owner fork runs — PRs whose HEAD
+    # COLLABORATOR of the base repo. check_auth verifies that class
+    # through the API (association, collaborator status, or org
+    # membership, each fail-closed; repo permission alone never
+    # qualifies, since a public repo grants `read` to everyone).
+    # The event payload under-reports private org membership, so
+    # the job `if` no longer filters fork runs by association.
+    # Trusted-head-owner fork runs — PRs whose HEAD
     # repository is owned by the immutable numeric account id in
     # TRUSTED_HEAD_OWNER_IDS below (currently just akiezun's id,
     # i.e. the owner's own fork akiezun/atlas-lean). The check is on
@@ -107,16 +110,18 @@ jobs:
             // payload's `author_association` under-reports private org
             // membership (Deicyde's PRs report MEMBER via REST, yet
             // their runs were skipped at the old job-level filter), so
-            // authorization accepts the payload association OR any
-            // repo permission for the author, which covers members
-            // with read-only access (e.g. Deicyde, whose PRs are the
-            // bulk of fork traffic). The job `if` no longer filters
-            // fork runs by association; this re-check is the only fork
-            // gate, so a job-`if` edit alone cannot open automatic
-            // fork reviews to untrusted authors. Authorized fork runs
-            // are formal: they mint a verdict. Fork runs for any other
-            // author are unauthorized here and stay advisory at best:
-            // they never mint a verdict.
+            // check_auth verifies the class through the API:
+            // association, repo collaborator status, or org
+            // membership, each fail-closed. Repo permission alone
+            // never authorizes: this repository is public, so
+            // `getCollaboratorPermissionLevel` reports `read` for
+            // every GitHub user, member or not. The job `if` no
+            // longer filters fork runs by association; this re-check
+            // is the only fork gate, so a job-`if` edit alone cannot
+            // open automatic fork reviews to untrusted authors.
+            // Authorized fork runs are formal: they mint a verdict.
+            // Fork runs for any other author are unauthorized here
+            // and stay advisory at best: they never mint a verdict.
             // Same-repo automatic runs stay formal, and `@codex`
             // comment runs on same-repo PRs are formal too, both
             // authorized by write/maintain/admin. Trusted-head-owner
@@ -137,6 +142,44 @@ jobs:
             const isComment =
               context.eventName === "issue_comment" ||
               context.eventName === "pull_request_review_comment";
+            // Positive-evidence class check for a PR author:
+            // OWNER/MEMBER/COLLABORATOR association, repo
+            // collaborator status, or org membership. Each API probe
+            // fails closed: any error (404, or a check this token
+            // cannot see) counts as no evidence. Repo permission is
+            // never consulted here: this repository is public, so a
+            // permission lookup reports `read` for every GitHub user
+            // and cannot separate members from outsiders.
+            async function authorInFormalClass(login, association) {
+              if (
+                ["OWNER", "MEMBER", "COLLABORATOR"].includes(association)
+              ) {
+                return true;
+              }
+              if (!login) {
+                return false;
+              }
+              try {
+                await github.rest.repos.checkCollaborator({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  username: login,
+                });
+                return true;
+              } catch (error) {
+                // Fail closed: no collaborator evidence.
+              }
+              try {
+                await github.rest.orgs.checkMembershipForUser({
+                  org: context.repo.owner,
+                  username: login,
+                });
+                return true;
+              } catch (error) {
+                // Fail closed: no org-membership evidence.
+              }
+              return false;
+            }
             // For comment runs, formality needs the PR's head repo,
             // which the payload does not carry: fetch the PR. Non-PR
             // issue comments and a missing head repo are not formal.
@@ -173,30 +216,13 @@ jobs:
                     pr.head.repo?.owner?.id
                   );
                   // A `@codex` run is formal when the PR author is in
-                  // the OWNER/MEMBER/COLLABORATOR class. The fetched
-                  // PR's association is computed for this token and
-                  // can under-report private membership, so any repo
-                  // permission for the author also qualifies.
-                  commentAuthorPermitted =
-                    ["OWNER", "MEMBER", "COLLABORATOR"].includes(
-                      pr.author_association
-                    );
-                  if (!commentAuthorPermitted && pr.user?.login) {
-                    try {
-                      const { data: authorPermission } =
-                        await github.rest.repos.getCollaboratorPermissionLevel({
-                          owner: context.repo.owner,
-                          repo: context.repo.repo,
-                          username: pr.user.login,
-                        });
-                      commentAuthorPermitted =
-                        authorPermission.permission !== "none";
-                    } catch (error) {
-                      if (error.status !== 404) {
-                        throw error;
-                      }
-                    }
-                  }
+                  // the OWNER/MEMBER/COLLABORATOR class, verified
+                  // with positive evidence only (see
+                  // authorInFormalClass).
+                  commentAuthorPermitted = await authorInFormalClass(
+                    pr.user?.login,
+                    pr.author_association
+                  );
                   trustedRepo = pr.head.repo?.full_name ?? "";
                   trustedSha = pr.head.sha ?? "";
                 } catch (error) {
@@ -228,26 +254,12 @@ jobs:
                 context.payload.pull_request.author_association;
               const authorLogin =
                 context.payload.pull_request.user?.login ?? username;
-              let authorPermission = "none";
-              try {
-                const { data } =
-                  await github.rest.repos.getCollaboratorPermissionLevel({
-                    owner: context.repo.owner,
-                    repo: context.repo.repo,
-                    username: authorLogin,
-                  });
-                authorPermission = data.permission;
-              } catch (error) {
-                if (error.status !== 404) {
-                  throw error;
-                }
-              }
-              authorized =
-                ["OWNER", "MEMBER", "COLLABORATOR"].includes(
-                  association
-                ) || authorPermission !== "none";
+              authorized = await authorInFormalClass(
+                authorLogin,
+                association
+              );
               core.info(
-                `${username}: author_association=${association}, author_permission=${authorPermission}, authorized=${authorized}`
+                `${username}: author=${authorLogin}, author_association=${association}, authorized=${authorized}`
               );
             } else {
               try {
