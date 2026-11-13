@@ -19,8 +19,10 @@ scalar relaxation with `C = 1, F = 0, lambda = 1, T0 = 1`,
 two-box equilibrium at `F = 2, lambda = 1`, the anomaly-energy
 derivative for trivial anomalies, the dissipation bound at
 `xs = 1, xd = 0` with `Cs = Cd = lambda = gamma = 1` (where
-`c = min (2/3) 1 = 2/3` and the bound reads `-2 <= -1/3`), and the
-energy decay `E' <= -(2/3)*E` along unit-parameter anomaly solutions.
+`c = min (2/3) 1 = 2/3` and the bound reads `-2 <= -1/3`), the
+energy decay `E' <= -(2/3)*E` along unit-parameter anomaly solutions,
+and the exponential energy bound for an abstract anomaly solution with
+arbitrary positive parameters.
 
 ## i. Overview
 
@@ -85,3 +87,16 @@ example (xs xd : ℝ → ℝ) (t : ℝ)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num) xs xd t hxs hxd).2
   have hc : min (2 * (1:ℝ) / (1 + 2 * 1)) ((1:ℝ) / 1) = 2 / 3 := by norm_num [min_def]
   rwa [hc] at h
+
+/-- Exponential energy bound along any forward anomaly solution on `[0, ∞)` (derivatives within
+`[0, ∞)`), for arbitrary positive parameters: `E(t) <= exp(-c*t) * E(0)` for `t >= 0`. -/
+example {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 < Cd) (hlam : 0 < lam) (hgam : 0 < gam)
+    (xs xd : ℝ → ℝ)
+    (hxs : ∀ t, 0 ≤ t →
+      HasDerivWithinAt xs ((-lam * xs t - gam * (xs t - xd t)) / Cs) (Set.Ici 0) t)
+    (hxd : ∀ t, 0 ≤ t → HasDerivWithinAt xd ((gam * (xs t - xd t)) / Cd) (Set.Ici 0) t)
+    (t : ℝ) (ht : 0 ≤ t) :
+    (Cs * (xs t) ^ 2 + Cd * (xd t) ^ 2) / 2 ≤
+      Real.exp (-(min (2 * lam / (Cs + 2 * Cd)) (gam / Cd)) * t) *
+        ((Cs * (xs 0) ^ 2 + Cd * (xd 0) ^ 2) / 2) :=
+  EarthScience.anomaly_energy_exp_bound hCs hCd hlam hgam xs xd hxs hxd ht

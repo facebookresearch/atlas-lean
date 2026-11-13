@@ -14,7 +14,8 @@ public import MathlibExt.Probability.OrnsteinUhlenbeck
 /-!
 # Tests for the quadratic variation of Brownian motion
 
-Boundary values of `weightedQVError` (no cells; zero weight), and a non-vacuity witness: the
+Boundary values of `weightedQVError` (no cells; zero weight), instances of the Gaussian fourth
+moment `integral_pow_four_gaussianReal`, and a non-vacuity witness: the
 coordinate process of the Kolmogorov-extension Brownian measure on paths has quadratic variation
 `t` in `L²` and in probability.
 -/
@@ -33,6 +34,13 @@ example (φ : ℝ → ℝ) (t : ℝ≥0) (ω : Ω) : weightedQVError φ B t 0 ω
 /-- With zero weight the error is `0`. -/
 example (t : ℝ≥0) (n : ℕ) (ω : Ω) : weightedQVError (fun _ ↦ 0) B t n ω = 0 := by
   simp [weightedQVError]
+
+/-- Gaussian fourth moment at `v = 1` and `v = 2`. -/
+example : ∫ x : ℝ, x ^ 4 ∂gaussianReal 0 1 = 3 := by
+  simpa using integral_pow_four_gaussianReal 1
+
+example : ∫ x : ℝ, x ^ 4 ∂gaussianReal 0 2 = 12 := by
+  rw [integral_pow_four_gaussianReal]; norm_num
 
 /-- Non-vacuity: a pre-Brownian motion exists, and its quadratic variation along uniform
 partitions of `[0, t]` tends to `t` in `L²` and in probability. -/
