@@ -16,7 +16,8 @@ import Mathlib.Tactic
 
 Prices `100 → 110 → 121` give the two-period gross compounding and log
 additivity instances; per-period gross returns `2, 3` give the multi-period
-log sum; the price path `100 * (11/10)^n` gives the telescoping instance.
+log sum; the price path `100 * (11/10)^n` gives the telescoping instance; the
+path `1 → 0` gives telescoping with a total loss at the end of the path.
 -/
 
 @[expose] public section
@@ -47,26 +48,42 @@ theorem test_grossReturn_prod_range :
         ((fun n : ℕ => 100 * (11 / 10 : ℝ) ^ n) (i + 1)) =
       grossReturn ((fun n : ℕ => 100 * (11 / 10 : ℝ) ^ n) 0)
         ((fun n : ℕ => 100 * (11 / 10 : ℝ) ^ n) 2) := by
-  have hP : ∀ i ≤ 2, (fun n : ℕ => 100 * (11 / 10 : ℝ) ^ n) i ≠ 0 := by
+  have hP : ∀ i < 2, (fun n : ℕ => 100 * (11 / 10 : ℝ) ^ n) i ≠ 0 := by
     intro i _
     simp only
     exact mul_ne_zero (by norm_num) (pow_ne_zero _ (by norm_num))
-  exact grossReturn_prod_range hP
+  exact grossReturn_prod_range (hP 0 (by norm_num)) hP
 
-/-- Telescoping only needs the prices on the path: this path is zero past
-index `2`, yet the product over `range 2` still telescopes. -/
+/-- Telescoping only needs the prices before the end of the path: this path is
+zero past index `2`, yet the product over `range 2` still telescopes. -/
 theorem test_grossReturn_prod_range_zero_continuation :
     ∏ i ∈ Finset.range 2,
         grossReturn ((fun n : ℕ => if n ≤ 2 then 100 * (11 / 10 : ℝ) ^ n else 0) i)
           ((fun n : ℕ => if n ≤ 2 then 100 * (11 / 10 : ℝ) ^ n else 0) (i + 1)) =
       grossReturn ((fun n : ℕ => if n ≤ 2 then 100 * (11 / 10 : ℝ) ^ n else 0) 0)
         ((fun n : ℕ => if n ≤ 2 then 100 * (11 / 10 : ℝ) ^ n else 0) 2) := by
-  have hP : ∀ i ≤ 2,
+  have hP : ∀ i < 2,
       (fun n : ℕ => if n ≤ 2 then 100 * (11 / 10 : ℝ) ^ n else 0) i ≠ 0 := by
     intro i hi
+    have hi2 : i ≤ 2 := hi.le
     show (if i ≤ 2 then 100 * (11 / 10 : ℝ) ^ i else (0 : ℝ)) ≠ 0
     split_ifs
     exact mul_ne_zero (by norm_num) (pow_ne_zero _ (by norm_num))
-  exact grossReturn_prod_range hP
+  exact grossReturn_prod_range (hP 0 (by norm_num)) hP
+
+/-- A zero terminal price is a valid total-loss gross return. -/
+theorem test_grossReturn_total_loss : grossReturn 100 0 = 0 := by
+  norm_num [grossReturn]
+
+/-- Telescoping allows a total loss at the end of the path: with `P 0 = 1` and
+`P 1 = 0`, only `P 0` must be nonzero. -/
+theorem test_grossReturn_prod_range_terminal_zero :
+    ∏ i ∈ Finset.range 1, grossReturn ((fun n : ℕ => if n = 0 then (1 : ℝ) else 0) i)
+        ((fun n : ℕ => if n = 0 then (1 : ℝ) else 0) (i + 1)) =
+      grossReturn ((fun n : ℕ => if n = 0 then (1 : ℝ) else 0) 0)
+        ((fun n : ℕ => if n = 0 then (1 : ℝ) else 0) 1) :=
+  grossReturn_prod_range (by norm_num) (fun i hi => by
+    obtain rfl : i = 0 := by omega
+    norm_num)
 
 end MathlibExtTest.Economics.Finance.Returns
