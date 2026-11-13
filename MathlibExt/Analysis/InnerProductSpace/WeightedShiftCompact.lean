@@ -133,27 +133,21 @@ theorem tendsto_weightedShiftCLM_trunc {w : ℕ → 𝕜}
       ≤ ε / 2 := hbound
     _ < ε := half_lt_self hε
 
-/-- The original upper-bound hypothesis supplies the canonical diagonal bound. -/
-private theorem diagonalBound {w : ℕ → 𝕜}
-    (hw : BddAbove (Set.range fun n => ‖w n‖)) : ∃ C, ∀ n, ‖w n‖ ≤ C := by
-  obtain ⟨C, hC⟩ := hw
-  exact ⟨C, fun n => hC ⟨n, rfl⟩⟩
-
 /-- The plain backward shift recovers diagonal multiplication from the weighted shift. -/
 private theorem backward_comp_weightedShift (w : ℕ → 𝕜)
     (hw : BddAbove (Set.range fun n => ‖w n‖)) :
     LpShiftOperator.backwardCLM ∘L weightedShiftCLM w hw =
-      LpDiagonalOperator.diagonalCLM w (diagonalBound hw) := by
+      LpDiagonalOperator.diagonalCLM w (exists_uniform_bound hw) := by
   simpa only [weightedShiftCLM, ← ContinuousLinearMap.comp_assoc,
     LpShiftOperator.backward_comp_shift, ContinuousLinearMap.one_def] using
-    (ContinuousLinearMap.id_comp (LpDiagonalOperator.diagonalCLM w (diagonalBound hw)))
+    (ContinuousLinearMap.id_comp (LpDiagonalOperator.diagonalCLM w (exists_uniform_bound hw)))
 
 /-- The weighted shift is compact if and only if its weights tend to `0`. -/
 theorem isCompactOperator_weightedShiftCLM_iff {w : ℕ → 𝕜}
     (hw : BddAbove (Set.range fun n => ‖w n‖)) :
     IsCompactOperator (weightedShiftCLM w hw) ↔ Tendsto w atTop (𝓝 0) := by
   rw [← Nat.cofinite_eq_atTop,
-    ← LpDiagonalOperator.isCompactOperator_diagonalCLM_iff (diagonalBound hw)]
+    ← LpDiagonalOperator.isCompactOperator_diagonalCLM_iff (exists_uniform_bound hw)]
   constructor
   · intro h
     have hc := h.clm_comp (LpShiftOperator.backwardCLM (𝕜 := 𝕜))
