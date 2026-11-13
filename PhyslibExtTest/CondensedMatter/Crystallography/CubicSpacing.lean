@@ -9,12 +9,12 @@ module
 
 import Mathlib.Tactic.NormNum
 
-import PhyslibExt.EarthScience.CubicSpacing
+import PhyslibExt.CondensedMatter.Crystallography.CubicSpacing
 
 /-!
 # Cubic spacing formula checks
 
-Concrete consumers of `PhyslibExt.EarthScience.CubicSpacing`: the expression
+Concrete consumers of `PhyslibExt.CondensedMatter.Crystallography.CubicSpacing`: the expression
 `a / √(h ^ 2 + k ^ 2 + l ^ 2)` at `a = 0.4` for the index patterns `(100)`,
 `(110)`, `(111)`, and `(200)`.
 
@@ -33,30 +33,30 @@ No new definitions or results are introduced here.
 
 ## iv. References
 
-- `PhyslibExt.EarthScience.CubicSpacing`
+- `PhyslibExt.CondensedMatter.Crystallography.CubicSpacing`
 -/
 
 /-- Numeric value: `(100)` gives `a`. -/
 example : (0.4 : ℝ) / Real.sqrt ((1 : ℝ) ^ 2 + 0 ^ 2 + 0 ^ 2) = 0.4 :=
-  EarthScience.div_sqrt_sumSq_100
+  Crystallography.div_sqrt_sumSq_100
 
 /-- Numeric value: `(110)` gives `a / √2`. -/
 example : (0.4 : ℝ) / Real.sqrt ((1 : ℝ) ^ 2 + 1 ^ 2 + 0 ^ 2)
     = 0.4 / Real.sqrt 2 :=
-  EarthScience.div_sqrt_sumSq_110
+  Crystallography.div_sqrt_sumSq_110
 
 /-- Numeric value: `(111)` gives `a / √3`. -/
 example : (0.4 : ℝ) / Real.sqrt ((1 : ℝ) ^ 2 + 1 ^ 2 + 1 ^ 2)
     = 0.4 / Real.sqrt 3 :=
-  EarthScience.div_sqrt_sumSq_111
+  Crystallography.div_sqrt_sumSq_111
 
 /-- Numeric value: `(200)` gives exactly `a / 2 = 0.4 / 2`, from the squared
 identity and positivity of both sides. -/
 example : (0.4 : ℝ) / Real.sqrt (((2 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2)
     = 0.4 / 2 := by
-  have hsq := EarthScience.div_sqrt_sumSq_sq (a := 0.4) (h := 2) (k := 0) (l := 0)
+  have hsq := Crystallography.div_sqrt_sumSq_sq (a := 0.4) (h := 2) (k := 0) (l := 0)
     (by norm_num)
-  have hpos := EarthScience.div_sqrt_sumSq_pos (a := 0.4) (h := 2) (k := 0) (l := 0)
+  have hpos := Crystallography.div_sqrt_sumSq_pos (a := 0.4) (h := 2) (k := 0) (l := 0)
     (by norm_num) (by norm_num)
   have h2 : ((0.4 : ℝ) / 2) ^ 2
       = 0.4 ^ 2 / (((2 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2) := by
@@ -65,5 +65,5 @@ example : (0.4 : ℝ) / Real.sqrt (((2 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2
 
 /-- Positivity for `(111)`. -/
 example : 0 < (0.4 : ℝ) / Real.sqrt (((1 : ℤ) : ℝ) ^ 2 + ((1 : ℤ) : ℝ) ^ 2 + ((1 : ℤ) : ℝ) ^ 2) :=
-  EarthScience.div_sqrt_sumSq_pos (a := 0.4) (h := 1) (k := 1) (l := 1)
+  Crystallography.div_sqrt_sumSq_pos (a := 0.4) (h := 1) (k := 1) (l := 1)
     (by norm_num) (by norm_num)

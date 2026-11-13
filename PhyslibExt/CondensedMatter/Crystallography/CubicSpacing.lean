@@ -15,16 +15,19 @@ import Mathlib.Tactic.NormNum
 
 For real `a` and integers `h, k, l` with `h ^ 2 + k ^ 2 + l ^ 2 > 0`, this
 file proves algebraic facts about the real expression
-`a / √(h ^ 2 + k ^ 2 + l ^ 2)`; only its positivity needs `a > 0`.
+`a / √(h ^ 2 + k ^ 2 + l ^ 2)`; only its positivity needs `a > 0`. The
+lattice reading of the expression needs a positive lattice parameter `a > 0`
+(see the overview); the identities themselves hold for every real `a`.
 
 ## i. Overview
 
 Textbooks identify `a / √(h ^ 2 + k ^ 2 + l ^ 2)` with the interplanar spacing
 `d_hkl` of the `(hkl)` planes of a simple cubic lattice with lattice parameter
 `a` (see References). Lattices, lattice planes, and reciprocal vectors are not
-formalized here, so that identification is not kernel-checked: the theorems
-below are algebraic identities about the expression, not crystallographic
-results.
+formalized in this file, so that identification is not kernel-checked: the
+theorems below are algebraic identities about the expression, not
+crystallographic results. The Bravais-lattice API of this hierarchy is
+`PhyslibExt.CondensedMatter.Crystallography.BravaisLattice`.
 
 Reciprocal convention of the cited formula: with the physics normalization
 `a_i · b_j = 2π δ_ij`, the simple-cubic reciprocal lattice is spanned by
@@ -34,12 +37,21 @@ the crystallographic normalization without `2π`,
 `|G_hkl| = √(h ^ 2 + k ^ 2 + l ^ 2) / a` and `d = 1 / |G_hkl|`. Both give
 `d = a / √(h ^ 2 + k ^ 2 + l ^ 2)`.
 
+This reciprocal-lattice reading assumes a positive lattice parameter `a > 0`.
+For `a = 0` there is no lattice and the reciprocal basis `(2π / a) e_i` is
+undefined; for `a < 0` the quantity `(2π / a) √(h ^ 2 + k ^ 2 + l ^ 2)` is
+negative, so it is not the length `|G_hkl|` (which is
+`(2π / |a|) √(h ^ 2 + k ^ 2 + l ^ 2)`), and `a / √(h ^ 2 + k ^ 2 + l ^ 2)`
+is not a spacing. The Lean identities below keep the general algebraic
+domain: they hold for every real `a`, and only `div_sqrt_sumSq_pos` assumes
+`a > 0`.
+
 ## ii. Key results
 
-- `EarthScience.div_sqrt_sumSq_sq`:
+- `Crystallography.div_sqrt_sumSq_sq`:
   `(a / √(h ^ 2 + k ^ 2 + l ^ 2)) ^ 2 = a ^ 2 / (h ^ 2 + k ^ 2 + l ^ 2)`.
-- `EarthScience.div_sqrt_sumSq_pos`: the expression is positive when `a > 0`.
-- `EarthScience.div_sqrt_sumSq_100`, `div_sqrt_sumSq_110`,
+- `Crystallography.div_sqrt_sumSq_pos`: the expression is positive when `a > 0`.
+- `Crystallography.div_sqrt_sumSq_100`, `div_sqrt_sumSq_110`,
   `div_sqrt_sumSq_111`: the index patterns `(1, 0, 0)`, `(1, 1, 0)`,
   `(1, 1, 1)` give `a`, `a / √2`, `a / √3`.
 
@@ -59,13 +71,15 @@ the crystallographic normalization without `2π`,
   family are `2π / K` apart, `K` the shortest reciprocal lattice vector
   normal to them).
 - `Real.sq_sqrt`, `Real.sqrt_pos_of_pos` in Mathlib.
+- `PhyslibExt.CondensedMatter.Crystallography.BravaisLattice`: Bravais lattices
+  in this hierarchy.
 
 ## A. Algebraic identities for `a / √(h ^ 2 + k ^ 2 + l ^ 2)`
 -/
 
 @[expose] public section
 
-namespace EarthScience
+namespace Crystallography
 
 /-- Algebraic identity:
 `(a / √(h ^ 2 + k ^ 2 + l ^ 2)) ^ 2 = a ^ 2 / (h ^ 2 + k ^ 2 + l ^ 2)` when
@@ -102,4 +116,4 @@ theorem div_sqrt_sumSq_111 {a : ℝ} :
   have h : ((1 : ℝ) ^ 2 + (1 : ℝ) ^ 2 + (1 : ℝ) ^ 2) = 3 := by norm_num
   rw [h]
 
-end EarthScience
+end Crystallography
