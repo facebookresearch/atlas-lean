@@ -214,17 +214,17 @@ theorem same_rates_crude_differ :
     crudeRate sameRatesNB sameRatesT = 41 / 500 ∧
     crudeRate sameRatesNA sameRatesT ≠ crudeRate sameRatesNB sameRatesT := by
   have hA : crudeRate sameRatesNA sameRatesT = 7 / 250 := by
-    simp [crudeRate, Fin.sum_univ_two, sameRatesNA, sameRatesT]
+    simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, sameRatesNA, sameRatesT]
     norm_num
   have hB : crudeRate sameRatesNB sameRatesT = 41 / 500 := by
-    simp [crudeRate, Fin.sum_univ_two, sameRatesNB, sameRatesT]
+    simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, sameRatesNB, sameRatesT]
     norm_num
   exact ⟨hA, hB, by rw [hA, hB]; norm_num⟩
 
 /-- Fixed standard `(50, 50)` gives `11/200` (populations' own compositions play no role). -/
 theorem same_rates_standardized_equal :
     directlyStandardizedRate sameRatesS sameRatesT = 11 / 200 := by
-  simp [directlyStandardizedRate, populationShare, Fin.sum_univ_two, sameRatesS, sameRatesT]
+  simp [directlyStandardizedRate, crudeRate_eq_sum_mul_div, Fin.sum_univ_two, sameRatesS, sameRatesT]
   norm_num
 
 /-- Crude-rate difference is purely compositional: `27/500`. -/
@@ -237,10 +237,10 @@ theorem same_rates_difference_is_compositional :
     0 < crudeRate sameRatesNA sameRatesT ∧
     0 < crudeRate sameRatesNB sameRatesT := by
   have hA : crudeRate sameRatesNA sameRatesT = 7 / 250 := by
-    simp [crudeRate, Fin.sum_univ_two, sameRatesNA, sameRatesT]
+    simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, sameRatesNA, sameRatesT]
     norm_num
   have hB : crudeRate sameRatesNB sameRatesT = 41 / 500 := by
-    simp [crudeRate, Fin.sum_univ_two, sameRatesNB, sameRatesT]
+    simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, sameRatesNB, sameRatesT]
     norm_num
   have hS : (∑ i, sameRatesT i * (populationShare sameRatesNB i - populationShare sameRatesNA i)) =
       27 / 500 := by
@@ -269,16 +269,16 @@ theorem same_rates_dsr_compositional_link :
       directlyStandardizedRate sameRatesNB sameRatesT -
         directlyStandardizedRate sameRatesNA sameRatesT := by
   have hA : crudeRate sameRatesNA sameRatesT = 7 / 250 := by
-    simp [crudeRate, Fin.sum_univ_two, sameRatesNA, sameRatesT]
+    simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, sameRatesNA, sameRatesT]
     norm_num
   have hB : crudeRate sameRatesNB sameRatesT = 41 / 500 := by
-    simp [crudeRate, Fin.sum_univ_two, sameRatesNB, sameRatesT]
+    simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, sameRatesNB, sameRatesT]
     norm_num
   have hDA : directlyStandardizedRate sameRatesNA sameRatesT = 7 / 250 := by
-    simp [directlyStandardizedRate, populationShare, Fin.sum_univ_two, sameRatesNA, sameRatesT]
+    simp [directlyStandardizedRate, crudeRate_eq_sum_mul_div, Fin.sum_univ_two, sameRatesNA, sameRatesT]
     norm_num
   have hDB : directlyStandardizedRate sameRatesNB sameRatesT = 41 / 500 := by
-    simp [directlyStandardizedRate, populationShare, Fin.sum_univ_two, sameRatesNB, sameRatesT]
+    simp [directlyStandardizedRate, crudeRate_eq_sum_mul_div, Fin.sum_univ_two, sameRatesNB, sameRatesT]
     norm_num
   have hlink : directlyStandardizedRate sameRatesNB sameRatesT -
       directlyStandardizedRate sameRatesNA sameRatesT = 27 / 500 := by
@@ -317,10 +317,10 @@ theorem decomposition_example :
     0 < crudeRate decN1 decT1 ∧
     0 < crudeRate decN2 decT2 := by
   have hC1 : crudeRate decN1 decT1 = 26 / 5 := by
-    simp [crudeRate, Fin.sum_univ_two, decN1, decT1]
+    simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, decN1, decT1]
     norm_num
   have hC2 : crudeRate decN2 decT2 = 13 / 2 := by
-    simp [crudeRate, Fin.sum_univ_two, decN2, decT2]
+    simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, decN2, decT2]
     norm_num
   have hB : ((∑ i, (populationShare decN2 i + populationShare decN1 i) / 2 * decT2 i -
       ∑ i, (populationShare decN2 i + populationShare decN1 i) / 2 * decT1 i) +
@@ -350,10 +350,10 @@ theorem single_standard_interaction :
       ((∑ i, populationShare decN1 i * (decT2 i - decT1 i) +
         ∑ i, decT1 i * (populationShare decN2 i - populationShare decN1 i))) = -9 / 10 := by
   have hC1 : crudeRate decN1 decT1 = 26 / 5 := by
-    simp [crudeRate, Fin.sum_univ_two, decN1, decT1]
+    simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, decN1, decT1]
     norm_num
   have hC2 : crudeRate decN2 decT2 = 13 / 2 := by
-    simp [crudeRate, Fin.sum_univ_two, decN2, decT2]
+    simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, decN2, decT2]
     norm_num
   have hS : (∑ i, populationShare decN1 i * (decT2 i - decT1 i) +
       ∑ i, decT1 i * (populationShare decN2 i - populationShare decN1 i)) = 11 / 5 := by
@@ -390,7 +390,7 @@ theorem crude_death_rate_example :
 /-- The `centerMass` bridge evaluates the crude rate of population 1 as `26/5`. -/
 theorem centerMass_bridge_example : Finset.univ.centerMass decN1 decT1 = 26 / 5 := by
   rw [← crudeRate_eq_centerMass]
-  simp [crudeRate, Fin.sum_univ_two, decN1, decT1]
+  simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, decN1, decT1]
   norm_num
 
 /-- The standardization bridge: standardizing to `(50, 50)` is the crude rate of
@@ -399,7 +399,7 @@ theorem standardization_bridge_example :
     directlyStandardizedRate sameRatesS sameRatesT = crudeRate sameRatesS sameRatesT ∧
     crudeRate sameRatesS sameRatesT = 11 / 200 := by
   refine ⟨directlyStandardizedRate_eq_crudeRate sameRatesS sameRatesT, ?_⟩
-  simp [crudeRate, Fin.sum_univ_two, sameRatesS, sameRatesT]
+  simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, sameRatesS, sameRatesT]
   norm_num
 
 /-- Population 1 is valid. -/
@@ -445,7 +445,7 @@ theorem signed_population_excluded :
     norm_num [signedSizes] at h0
   · simp [populationShare, Fin.sum_univ_two, signedSizes]
     norm_num
-  · simp [crudeRate, Fin.sum_univ_two, signedSizes, signedRates]
+  · simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, signedSizes, signedRates]
     norm_num
 
 /-- All-zero sizes `(0, 0)` for boundary exclusion. -/
@@ -464,8 +464,8 @@ theorem zero_total_excluded :
   have hsum : ∑ i, zeroSizes i = 0 := by norm_num [Fin.sum_univ_two, zeroSizes]
   refine ⟨hsum, ?_, ?_, ?_, ?_⟩
   · exact fun h => (lt_irrefl (0 : ℝ)) (hsum ▸ h.sum_pos)
-  · simp [crudeRate, Fin.sum_univ_two, zeroSizes, sameRatesT]
-  · simp [directlyStandardizedRate, populationShare, Fin.sum_univ_two, zeroSizes, sameRatesT]
+  · simp [crudeRate_eq_sum_mul_div, Fin.sum_univ_two, zeroSizes, sameRatesT]
+  · simp [directlyStandardizedRate, crudeRate_eq_sum_mul_div, Fin.sum_univ_two, zeroSizes, sameRatesT]
   · simp [populationShare, Fin.sum_univ_two, zeroSizes]
 
 /-- Empty total is `0`, so the population is not valid; crude rate junk `0`. -/
@@ -476,7 +476,7 @@ theorem empty_total_excluded :
   have hsum : ∑ i, emptySizes i = 0 := by simp
   refine ⟨hsum, ?_, ?_⟩
   · exact fun h => (lt_irrefl (0 : ℝ)) (hsum ▸ h.sum_pos)
-  · simp [crudeRate]
+  · simp [crudeRate_eq_sum_mul_div]
 
 /-- The share-weighted form of the crude rate holds without a nonzero total. -/
 theorem share_weighted_at_zero_total :
