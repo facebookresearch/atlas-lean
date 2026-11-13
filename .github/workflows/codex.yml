@@ -151,13 +151,13 @@ jobs:
             // permission lookup reports `read` for every GitHub user
             // and cannot separate members from outsiders.
             async function authorInFormalClass(login, association) {
+              if (!login) {
+                return false;
+              }
               if (
                 ["OWNER", "MEMBER", "COLLABORATOR"].includes(association)
               ) {
                 return true;
-              }
-              if (!login) {
-                return false;
               }
               try {
                 await github.rest.repos.checkCollaborator({
@@ -252,8 +252,12 @@ jobs:
             if (isForkTarget) {
               const association =
                 context.payload.pull_request.author_association;
+              // No sender fallback: `username` is the event sender,
+              // not the PR author. A missing author login (the PR
+              // user is nullable, e.g. after account deletion) fails
+              // closed in authorInFormalClass.
               const authorLogin =
-                context.payload.pull_request.user?.login ?? username;
+                context.payload.pull_request.user?.login;
               authorized = await authorInFormalClass(
                 authorLogin,
                 association
