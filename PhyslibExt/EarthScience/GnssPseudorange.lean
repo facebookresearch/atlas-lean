@@ -12,7 +12,6 @@ public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
-public import Mathlib.Data.Matrix.Basic
 public import Mathlib.Tactic.FieldSimp
 
 /-!
@@ -20,26 +19,38 @@ public import Mathlib.Tactic.FieldSimp
 
 ## i. Overview
 
-For the pseudorange model `r_j = ‖x - s_j‖ + b` with `b` in length units and a fixed frame/epoch,
-  the first-order Jacobian row at `x₀ ≠ s_j` is `[(x₀ - s_j) / ‖x₀ - s_j‖, 1]`, proved here as the
-  directional derivative along any `(d, db)`. Full column rank (injective `mulVec`) identifies the
-  local position/clock perturbation. The norm is the `Real.sqrt` of the sum of squared component
-  differences.
+The pseudorange of satellite `j` at receiver position `x` is `r_j = ‖x - s_j‖ + b`: the geometric
+range plus the receiver clock bias `b`, the receiver clock offset times the speed of light, so `b`
+is in length units. Positions are in one fixed Earth-centered frame at one epoch, and the other
+error terms (satellite clock, atmosphere, noise) are omitted, as for the error-free pseudoranges of
+Kaplan–Hegarty, Section 7.3.1. The norm is the `Real.sqrt` of the sum of squared component
+differences.
+
+At `x₀ ≠ s_j` the first-order Jacobian row of `r_j` with respect to `(x, b)` is
+`[(x₀ - s_j) / ‖x₀ - s_j‖, 1]`, proved here as the directional derivative along any `(d, db)`.
+Its position part is the gradient of `‖x - s_j‖`, the unit vector from the satellite toward the
+receiver. Kaplan–Hegarty, Section 7.3.1, write the same linearization with rows `(a_j, 1)` built
+from the opposite unit vector `a_j = (s_j - x₀) / ‖s_j - x₀‖`, from the receiver toward the
+satellite, with the offset vectors signed to match.
 
 ## ii. Key results
 
 - `EarthScience.gnss_directional_derivative`: directional derivative is the Jacobian row dotted
   with the direction.
 - `EarthScience.gnss_jacobian_row_dot`: the row-dot identity.
-- `EarthScience.gnss_full_rank_identifies`: injective `mulVec` and `A.mulVec δ = 0` give `δ = 0`.
 
 ## iii. Table of contents
 
 - A. Pseudorange Jacobian
-- B. Rank identification
 
 ## iv. References
 
+- E. D. Kaplan and C. J. Hegarty (eds.), *Understanding GPS: Principles and Applications*,
+  2nd ed., Artech House (2006). Section 2.4.1: the pseudorange is the geometric
+  satellite-to-user range plus the receiver clock offset times the speed of light. Section 2.4.2:
+  linearization of the pseudorange equations about an approximate user position and clock bias.
+  Section 7.3.1, Eqs. (7.30)–(7.31): the linearization matrix with rows `(a_i, 1)`, where `a_i` is
+  the unit vector from the linearization point toward satellite `i`.
 - `HasDerivAt.sqrt`, `HasDerivAt.fun_pow` in Mathlib.
 -/
 
@@ -116,16 +127,5 @@ theorem gnss_jacobian_row_dot (x₀ s d : ℝ × ℝ × ℝ) (db : ℝ)
         Real.sqrt ((x₀.1 - s.1) ^ 2 + (x₀.2.1 - s.2.1) ^ 2 +
           (x₀.2.2 - s.2.2) ^ 2) + db := by
   field_simp
-
-set_option linter.unusedFintypeInType false in
-/-- Full column rank identifies the perturbation: if the Jacobian matrix
-`A` has injective `mulVec` and `A.mulVec δ = 0`, then `δ = 0`. -/
-theorem gnss_full_rank_identifies {m : Type*} [Fintype m]
-    (A : Matrix m (Fin 4) ℝ) (δ : Fin 4 → ℝ)
-    (hinj : Function.Injective A.mulVec) (h : A.mulVec δ = 0) :
-    δ = 0 := by
-  apply hinj
-  rw [h]
-  simp
 
 end EarthScience
