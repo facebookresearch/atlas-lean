@@ -12,9 +12,8 @@ public import Mathlib.Analysis.Normed.Operator.Mul
 public import Mathlib.Analysis.RCLike.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.Normed.Algebra.Spectrum
-import Mathlib.Analysis.Normed.Algebra.GelfandFormula
-import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.Analysis.Normed.Ring.Units
+import MathlibExt.Analysis.PDE.SemilinearFlow.Instability
 
 /-!
 # Linearized instability without an eigenvector
@@ -35,7 +34,11 @@ Gelfand's formula then gives `‖Lⁿ‖ ≤ M μⁿ` for any `μ > r(L)`, in pa
 `μ < r(L)ᵖ` since `r(L) > 1`. For a fixed initial size `t`, the escape time `N` is fixed first
 and the approximate eigenvector is then chosen precise enough that `Lⁿ v` stays within
 `‖ν‖ⁿ / 4` of `νⁿ v` for all `n ≤ N`; the discrete Duhamel argument of the eigenvector case
-then goes through on `[0, N]`.
+then goes through on `[0, N]`. The steps shared with the eigenvector case are the public
+helpers of `Instability`: `Instability.duhamel`, `Instability.geom_sum_le`,
+`Instability.exists_escape_radius` (with the constant `1/4`),
+`Instability.exists_norm_pow_le_of_spectralRadius_lt` and
+`Instability.flow_escape_of_map_escape`.
 
 As in `Instability`, the flow and the linearized semigroup are explicit hypotheses, and the
 remainder estimate is assumed only on the ball `‖y‖ ≤ ρ`; the escaping orbit stays in that ball
@@ -80,56 +83,6 @@ open Filter Finset
 namespace MathlibExt.Analysis.PDE.SemilinearFlow.GeneralInstability
 
 variable {𝕜 X : Type*} [RCLike 𝕜] [NormedAddCommGroup X] [NormedSpace 𝕜 X]
-
-/-- Discrete Duhamel formula: `yₙ - Lⁿ y₀ = ∑_{j<n} Lʲ (y_{n-1-j+1} - L y_{n-1-j})`.
-(Private copy of the helper in `Instability`.) -/
-private theorem duhamel (L : X →L[𝕜] X) (y : ℕ → X) (n : ℕ) :
-    y n - (L ^ n) (y 0) =
-      ∑ j ∈ range n, (L ^ j) (y (n - 1 - j + 1) - L (y (n - 1 - j))) := by
-  induction n with
-  | zero => simp
-  | succ n ih =>
-    rw [sum_range_succ', pow_zero, one_apply_eq_self]
-    have hsum : ∑ j ∈ range n, (L ^ (j + 1)) (y (n + 1 - 1 - (j + 1) + 1) -
-        L (y (n + 1 - 1 - (j + 1)))) = L (y n - (L ^ n) (y 0)) := by
-      rw [ih, map_sum]
-      refine sum_congr rfl fun j hj => ?_
-      have : n + 1 - 1 - (j + 1) = n - 1 - j := by omega
-      rw [this, pow_succ', mul_apply_eq_comp]
-    rw [hsum, map_sub, pow_succ', mul_apply_eq_comp]
-    simp only [Nat.add_sub_cancel, Nat.sub_zero]
-    abel
-
-/-- Geometric bound `∑_{j<n} μʲ q^{n-1-j} ≤ qⁿ / (q - μ)` for `0 ≤ μ < q`.
-(Private copy of the helper in `Instability`.) -/
-private theorem geom_sum_le {μ q : ℝ} (hμ : 0 ≤ μ) (hq : μ < q) (n : ℕ) :
-    ∑ j ∈ range n, μ ^ j * q ^ (n - 1 - j) ≤ q ^ n / (q - μ) := by
-  have h := geom_sum₂_mul μ q n
-  rw [le_div_iff₀ (sub_pos.2 hq)]
-  have : (∑ j ∈ range n, μ ^ j * q ^ (n - 1 - j)) * (q - μ) = q ^ n - μ ^ n := by
-    linear_combination -h
-  rw [this]
-  linarith [pow_nonneg hμ n]
-
-/-- Choice of the escape radius: for `K ≥ 0`, `r > 0`, `p > 1`, `ρ > 0` there is `η > 0` with
-`η ≤ 2ρ/3` and `K (r η)^{p-1} ≤ 1/4`. (Adapted from the helper in `Instability`, with 1/4 in
-place of 1/2.) -/
-private theorem exists_escape_radius {K r ρ p : ℝ} (hK : 0 ≤ K) (hr : 0 < r) (hρ : 0 < ρ)
-    (hp : 1 < p) : ∃ η, 0 < η ∧ η ≤ 2 * ρ / 3 ∧ K * (r * η) ^ (p - 1) ≤ 1 / 4 := by
-  set b : ℝ := (4 * K + 1)⁻¹ with hb
-  have hb0 : 0 < b := inv_pos.2 (by linarith)
-  have hp1 : 0 < p - 1 := by linarith
-  refine ⟨min (2 * ρ / 3) (b ^ (1 / (p - 1)) / r), lt_min (by positivity) (by positivity),
-    min_le_left _ _, ?_⟩
-  have h1 : r * min (2 * ρ / 3) (b ^ (1 / (p - 1)) / r) ≤ b ^ (1 / (p - 1)) := by
-    rw [← le_div_iff₀' hr]; exact min_le_right _ _
-  have h2 : (r * min (2 * ρ / 3) (b ^ (1 / (p - 1)) / r)) ^ (p - 1) ≤ b := by
-    calc _ ≤ (b ^ (1 / (p - 1))) ^ (p - 1) :=
-          Real.rpow_le_rpow (by positivity) h1 hp1.le
-      _ = b := by rw [← Real.rpow_mul hb0.le, one_div_mul_cancel hp1.ne', Real.rpow_one]
-  calc K * _ ≤ K * b := mul_le_mul_of_nonneg_left h2 hK
-    _ ≤ 1 / 4 := by
-      rw [hb, ← div_eq_mul_inv, div_le_iff₀ (by linarith)]; linarith
 
 /-- Powers of `L` on an approximate eigenvector:
 `‖Lⁿ v - νⁿ v‖ ≤ ‖L v - ν v‖ ‖ν‖ⁿ ∑_{j<n} ‖Lʲ‖` when `‖ν‖ ≥ 1`. -/
@@ -184,7 +137,8 @@ theorem exists_escape_of_approxEigenvalue {G : X → X} {x₀ : X} {L : X →L[�
     exact (norm_nonneg _).trans this
   set K := M * C * (3 / 2 : ℝ) ^ p / (q - μ) with hK
   have hK0 : 0 ≤ K := div_nonneg (by positivity) (by linarith)
-  obtain ⟨η, hη0, hηρ, hηK⟩ := exists_escape_radius hK0 hr0 hρ hp
+  obtain ⟨η, hη0, hηρ, hηK⟩ :=
+    Instability.exists_escape_radius hK0 hr0 hρ hp (by norm_num : (0 : ℝ) < 1 / 4)
   refine ⟨η / 2, by positivity, fun δ hδ => ?_⟩
   set t : ℝ := min δ η / 2 with ht
   have ht0 : 0 < t := by positivity
@@ -267,7 +221,7 @@ theorem exists_escape_of_approxEigenvalue {G : X → X} {x₀ : X} {L : X →L[�
       calc t * r ^ n = r * (t * r ^ (n - 1)) := by
             rw [← mul_assoc, mul_comm r t, mul_assoc, ← pow_succ', Nat.sub_add_cancel hnpos]
         _ ≤ r * η := mul_le_mul_of_nonneg_left this hr0.le
-    rw [duhamel L y n]
+    rw [Instability.duhamel L y n]
     calc ‖∑ j ∈ range n, (L ^ j) (y (n - 1 - j + 1) - L (y (n - 1 - j)))‖
         ≤ ∑ j ∈ range n, ‖(L ^ j) (y (n - 1 - j + 1) - L (y (n - 1 - j)))‖ := norm_sum_le _ _
       _ ≤ ∑ j ∈ range n, M * μ ^ j * (C * ((3 / 2 : ℝ) ^ p * (t ^ p * q ^ (n - 1 - j)))) := by
@@ -278,7 +232,7 @@ theorem exists_escape_of_approxEigenvalue {G : X → X} {x₀ : X} {L : X →L[�
       _ = M * C * (3 / 2 : ℝ) ^ p * t ^ p * ∑ j ∈ range n, μ ^ j * q ^ (n - 1 - j) := by
           rw [mul_sum]; exact sum_congr rfl fun j _ => by ring
       _ ≤ M * C * (3 / 2 : ℝ) ^ p * t ^ p * (q ^ n / (q - μ)) :=
-          mul_le_mul_of_nonneg_left (geom_sum_le hμ0 hμ n) (by positivity)
+          mul_le_mul_of_nonneg_left (Instability.geom_sum_le hμ0 hμ n) (by positivity)
       _ = K * (t * r ^ n) ^ (p - 1) * (t * r ^ n) := by
           rw [mul_assoc K, ← Real.rpow_add_one (by positivity), sub_add_cancel, hpow, hK]
           ring
@@ -405,39 +359,6 @@ section Complex
 
 variable {Y : Type*} [NormedAddCommGroup Y] [NormedSpace ℂ Y] [CompleteSpace Y]
 
-/-- Gelfand's formula as a growth bound: if `r(L) < μ` then `‖Lⁿ‖ ≤ M μⁿ` for some `M`.
-(Private copy of the helper in `Instability`.) -/
-private theorem exists_norm_pow_le_of_spectralRadius_lt {L : Y →L[ℂ] Y} {μ : ℝ}
-    (hμ : spectralRadius ℂ L < ENNReal.ofReal μ) : ∃ M, ∀ n : ℕ, ‖L ^ n‖ ≤ M * μ ^ n := by
-  have hμ0 : 0 < μ := ENNReal.ofReal_pos.1 (lt_of_le_of_lt (by positivity) hμ)
-  obtain ⟨N, hN⟩ := eventually_atTop.1
-    ((spectrum.pow_nnnorm_pow_one_div_tendsto_nhds_spectralRadius L).eventually
-      (gt_mem_nhds hμ))
-  set N' := max N 1
-  refine ⟨1 + ∑ n ∈ range N', ‖L ^ n‖ / μ ^ n, fun n => ?_⟩
-  have hsum0 : 0 ≤ ∑ n ∈ range N', ‖L ^ n‖ / μ ^ n :=
-    sum_nonneg fun _ _ => by positivity
-  by_cases hn : n < N'
-  · have h1 : ‖L ^ n‖ / μ ^ n ≤ ∑ n ∈ range N', ‖L ^ n‖ / μ ^ n :=
-      single_le_sum (f := fun n => ‖L ^ n‖ / μ ^ n) (fun _ _ => by positivity) (mem_range.2 hn)
-    calc ‖L ^ n‖ = ‖L ^ n‖ / μ ^ n * μ ^ n := by field_simp
-      _ ≤ (1 + ∑ n ∈ range N', ‖L ^ n‖ / μ ^ n) * μ ^ n :=
-        mul_le_mul_of_nonneg_right (by linarith) (by positivity)
-  · push Not at hn
-    have hn1 : n ≠ 0 := by omega
-    have h := hN n (le_trans (le_max_left _ _) hn)
-    rw [← ENNReal.ofNNReal_toNNReal, ← ENNReal.coe_rpow_of_nonneg _ (by positivity),
-      ENNReal.coe_lt_coe, one_div] at h
-    have h2 : ‖L ^ n‖₊ < μ.toNNReal ^ n := by
-      calc ‖L ^ n‖₊ = (‖L ^ n‖₊ ^ ((n : ℝ)⁻¹)) ^ n := (NNReal.rpow_inv_natCast_pow _ hn1).symm
-        _ < μ.toNNReal ^ n := pow_lt_pow_left₀ h (by positivity) hn1
-    have h3 : ‖L ^ n‖ ≤ μ ^ n := by
-      have := NNReal.coe_lt_coe.2 h2
-      rw [coe_nnnorm, NNReal.coe_pow, Real.coe_toNNReal _ hμ0.le] at this
-      exact this.le
-    calc ‖L ^ n‖ ≤ 1 * μ ^ n := by rwa [one_mul]
-      _ ≤ _ := mul_le_mul_of_nonneg_right (by linarith) (by positivity)
-
 /-- **Linearized instability, spectral form** (Henry 1981, §5.1). On a complex Banach
 space, if `G (x₀ + y) = x₀ + L y + O(‖y‖ᵖ)` on the ball `‖y‖ ≤ ρ` with `p > 1` and the spectrum
 of `L` contains a point `z` with `‖z‖ > 1`, then the fixed point `x₀` of `G` is unstable; the
@@ -464,7 +385,7 @@ theorem exists_escape_of_mem_spectrum {G : Y → Y} {x₀ : Y} {L : Y →L[ℂ] 
     rw [← hνr, ← enorm_eq_nnnorm, ← ofReal_norm, ENNReal.ofReal_lt_ofReal_iff (by positivity)]
     exact Real.self_lt_rpow_of_one_lt hν hp
   obtain ⟨μ, hμ0, hrμ, hμν⟩ := ENNReal.lt_iff_exists_real_btwn.1 hr
-  obtain ⟨M, hM⟩ := exists_norm_pow_le_of_spectralRadius_lt hrμ
+  obtain ⟨M, hM⟩ := Instability.exists_norm_pow_le_of_spectralRadius_lt hrμ
   have hμ : μ < ‖ν‖ ^ p := (ENNReal.ofReal_lt_ofReal_iff (by positivity)).1 hμν
   exact exists_escape_of_approxEigenvalue hρ hC hp hG happrox hν hμ0 hμ hM
 
@@ -487,32 +408,6 @@ theorem exists_escape_of_one_lt_spectralRadius {G : Y → Y} {x₀ : Y} {L : Y �
   rw [← hνr] at hr
   exact_mod_cast hr
 
-omit [NormedSpace ℂ Y] [CompleteSpace Y] in
-/-- Escape for the time-`T` map gives escape for the flow, when the flow steps by its time-`T`
-map along orbits that stay in the ball of radius `ρ`. (Factored from the proof of
-`Instability.exists_escape_of_timeMap`.) -/
-private theorem flow_escape_of_map_escape {Φ : ℝ → Y → Y} {u₀ : Y} {T ρ : ℝ} (hT : 0 ≤ T)
-    (hΦ0 : ∀ x, Φ 0 x = x)
-    (hstep : ∀ (n : ℕ) (x : Y), (∀ k ≤ n, ‖Φ (k * T) x - u₀‖ ≤ ρ) →
-      Φ ((n + 1) * T) x = Φ T (Φ (n * T) x))
-    (h : ∃ ε > 0, ∀ δ > 0, ∃ x, ‖x - u₀‖ < δ ∧
-      ∃ n, (∀ k < n, ‖(Φ T)^[k] x - u₀‖ ≤ ρ) ∧ ε ≤ ‖(Φ T)^[n] x - u₀‖) :
-    ∃ ε > 0, ∀ δ > 0, ∃ x, ‖x - u₀‖ < δ ∧ ∃ t, 0 ≤ t ∧ ε ≤ ‖Φ t x - u₀‖ := by
-  obtain ⟨ε, hε, h⟩ := h
-  refine ⟨ε, hε, fun δ hδ => ?_⟩
-  obtain ⟨x, hx, n, hball, hesc⟩ := h δ hδ
-  have hiter : ∀ k ≤ n, Φ (k * T) x = (Φ T)^[k] x := by
-    intro k
-    induction k using Nat.strong_induction_on with
-    | _ k ih =>
-    intro hk
-    rcases k with _ | k
-    · simp [hΦ0]
-    · have hb : ∀ j ≤ k, ‖Φ (j * T) x - u₀‖ ≤ ρ := fun j hj =>
-        (ih j (by omega) (by omega)) ▸ hball j (by omega)
-      rw [Nat.cast_succ, hstep k x hb, ih k (by omega) (by omega), Function.iterate_succ_apply']
-  exact ⟨x, hx, n * T, by positivity, (hiter n le_rfl).symm ▸ hesc⟩
-
 /-- **Linearized instability for a flow, spectral form.**
 
 `Φ t x` is the state at time `t` of the solution starting at `x`; `u₀` is the equilibrium. The
@@ -531,7 +426,8 @@ theorem exists_escape_of_timeMap_mem_spectrum {Φ : ℝ → Y → Y} {u₀ : Y} 
     (hrem : ∀ y, ‖y‖ ≤ ρ → ‖Φ T (u₀ + y) - u₀ - L y‖ ≤ C * ‖y‖ ^ p)
     (hz : z ∈ spectrum ℂ L) (hz1 : 1 < ‖z‖) :
     ∃ ε > 0, ∀ δ > 0, ∃ x, ‖x - u₀‖ < δ ∧ ∃ t, 0 ≤ t ∧ ε ≤ ‖Φ t x - u₀‖ :=
-  flow_escape_of_map_escape hT hΦ0 hstep (exists_escape_of_mem_spectrum hρ hC hp hrem hz hz1)
+  Instability.flow_escape_of_map_escape hT hΦ0 hstep
+    (exists_escape_of_mem_spectrum hρ hC hp hrem hz hz1)
 
 /-- Lyapunov form of `exists_escape_of_timeMap_mem_spectrum`: the equilibrium `u₀` of the flow
 `Φ` is not Lyapunov stable in the norm of `Y`. -/
