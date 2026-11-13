@@ -24,10 +24,13 @@ open scoped ENNReal
 
 namespace ProbabilityTheory
 
-/-- Pointwise bias of the KDE vanishes at a continuity point of the density.
-Domination is by the integrable majorant `B * ‖K ·‖`, so no boundedness or
-compact-support hypothesis on the kernel is needed. -/
-theorem kde_bias_tends_to_zero {K f : ℝ → ℝ} {t B : ℝ}
+/-- **Kernel smoothing converges at a continuity point.** For an integrable kernel `K` with
+`∫ K = 1` and a bounded, nonnegative, measurable `f` that is continuous at `t`, the smoothed value
+`∫ K u * f (t - h * u) du` tends to `f t` as `h → 0⁺`. By `integral_kde_eq` this integral is the
+KDE expectation (`kde_expectation_tendsto`), so the KDE bias tends to zero
+(`kde_bias_tendsto_zero`). Domination is by the integrable majorant `B * ‖K ·‖`, so no
+boundedness or compact-support hypothesis on the kernel is needed. -/
+theorem kernel_smoothing_tendsto {K f : ℝ → ℝ} {t B : ℝ}
     (hf_meas : Measurable f) (hf_nonneg : ∀ x, 0 ≤ f x) (hf_le : ∀ x, f x ≤ B)
     (hK_int : Integrable K) (hK_one : ∫ u, K u = 1)
     (hcont : ContinuousAt f t) :
@@ -74,7 +77,7 @@ theorem kde_bias_tends_to_zero {K f : ℝ → ℝ} {t B : ℝ}
   rwa [hfin] at hmain
 
 /-- KDE expectation converges to the density value at a continuity point, by
-`integral_kde_eq` plus the smoothing limit above. -/
+`integral_kde_eq` plus `kernel_smoothing_tendsto`. -/
 theorem kde_expectation_tendsto {K f : ℝ → ℝ} {t B : ℝ}
     (hf_meas : Measurable f) (hf_nonneg : ∀ x, 0 ≤ f x) (hf_le : ∀ x, f x ≤ B)
     (hK_meas : Measurable K) (hK_int : Integrable K) (hK_one : ∫ u, K u = 1)
@@ -86,9 +89,23 @@ theorem kde_expectation_tendsto {K f : ℝ → ℝ} {t B : ℝ}
   have hexp : ∀ h : ℝ, 0 < h → ∫ ω, kde K h (fun i => X i ω) t ∂P
       = ∫ u, K u * f (t - h * u) :=
     fun h hh => integral_kde_eq hn hf_meas hf_nonneg hf_le hX hK_meas hK_int hh t
-  refine Tendsto.congr' ?_ (kde_bias_tends_to_zero hf_meas hf_nonneg hf_le
+  refine Tendsto.congr' ?_ (kernel_smoothing_tendsto hf_meas hf_nonneg hf_le
     hK_int hK_one hcont)
   filter_upwards [self_mem_nhdsWithin] with h hh
   exact (hexp h (Set.mem_Ioi.mp hh)).symm
+
+/-- **Pointwise bias of the KDE vanishes** at a continuity point of the density: the bias
+`(∫ ω, kde K h X t ∂P) - f t` tends to `0` as `h → 0⁺`. -/
+theorem kde_bias_tendsto_zero {K f : ℝ → ℝ} {t B : ℝ}
+    (hf_meas : Measurable f) (hf_nonneg : ∀ x, 0 ≤ f x) (hf_le : ∀ x, f x ≤ B)
+    (hK_meas : Measurable K) (hK_int : Integrable K) (hK_one : ∫ u, K u = 1)
+    (hcont : ContinuousAt f t)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
+    {n : ℕ} (hn : 0 < n) {X : Fin n → Ω → ℝ}
+    (hX : ∀ i, HasLaw (X i) (volume.withDensity fun x => ENNReal.ofReal (f x)) P) :
+    Tendsto (fun h : ℝ => (∫ ω, kde K h (fun i => X i ω) t ∂P) - f t) (𝓝[>] 0) (𝓝 0) := by
+  have h := (kde_expectation_tendsto hf_meas hf_nonneg hf_le hK_meas hK_int hK_one hcont
+    hn hX).sub_const (f t)
+  rwa [sub_self] at h
 
 end ProbabilityTheory

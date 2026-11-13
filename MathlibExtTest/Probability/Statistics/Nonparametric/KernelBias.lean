@@ -83,7 +83,7 @@ example : Tendsto (fun h : ℝ => ∫ u : ℝ, (if |u| ≤ (1 : ℝ) then (1 / 2
   have hft : (if (0:ℝ) ≤ 1/2 ∧ (1/2:ℝ) ≤ 1 then (1:ℝ) else 0) = 1 := by
     have hc : (0:ℝ) ≤ 1/2 ∧ (1/2:ℝ) ≤ 1 := by norm_num
     exact ite_eq_left hc
-  have main := ProbabilityTheory.kde_bias_tends_to_zero
+  have main := ProbabilityTheory.kernel_smoothing_tendsto
     (K := fun u : ℝ => if |u| ≤ (1:ℝ) then (1/2:ℝ) else 0)
     (f := fun x : ℝ => if (0:ℝ) ≤ x ∧ x ≤ 1 then (1:ℝ) else 0)
     (t := (1/2:ℝ)) (B := (1:ℝ))
@@ -136,8 +136,8 @@ example : (∫ u : ℝ, (if |u| ≤ (1 : ℝ) then (1 / 2 : ℝ) else 0)
   rw [hvol, smul_eq_mul]
   norm_num
 
-/-- Degenerate case: the bias-limit conclusion is false for the zero kernel
-when `f t ≠ 0`, so the `∫ K = 1` hypothesis is load-bearing. -/
+/-- Degenerate case: the smoothing-limit conclusion is false for the zero kernel
+when `f t ≠ 0`, so the `∫ K = 1` hypothesis is necessary. -/
 example {f : ℝ → ℝ} {t : ℝ} (hft : f t ≠ 0)
     (hlim : Tendsto (fun h : ℝ => ∫ u : ℝ, (0 : ℝ) * f (t - h * u))
       (𝓝[>] (0 : ℝ)) (𝓝 (f t))) : False := by
@@ -159,6 +159,19 @@ example {K f : ℝ → ℝ} {t B : ℝ}
     Tendsto (fun h : ℝ => ∫ ω, ProbabilityTheory.kde K h (fun i => X i ω) t ∂P)
       (𝓝[>] (0 : ℝ)) (𝓝 (f t)) :=
   ProbabilityTheory.kde_expectation_tendsto hf_meas hf_nonneg hf_le hK_meas hK_int
+    hK_one hcont hn hX
+
+/-- Focused case: the bias corollary states the vanishing bias with the same hypotheses. -/
+example {K f : ℝ → ℝ} {t B : ℝ}
+    (hf_meas : Measurable f) (hf_nonneg : ∀ x, 0 ≤ f x) (hf_le : ∀ x, f x ≤ B)
+    (hK_meas : Measurable K) (hK_int : Integrable K) (hK_one : ∫ u, K u = 1)
+    (hcont : ContinuousAt f t)
+    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
+    {n : ℕ} (hn : 0 < n) {X : Fin n → Ω → ℝ}
+    (hX : ∀ i, HasLaw (X i) (volume.withDensity fun x => ENNReal.ofReal (f x)) P) :
+    Tendsto (fun h : ℝ => (∫ ω, ProbabilityTheory.kde K h (fun i => X i ω) t ∂P) - f t)
+      (𝓝[>] (0 : ℝ)) (𝓝 0) :=
+  ProbabilityTheory.kde_bias_tendsto_zero hf_meas hf_nonneg hf_le hK_meas hK_int
     hK_one hcont hn hX
 
 /-- Noncompact case: a Gaussian-shaped kernel satisfies the hypotheses with no
@@ -208,7 +221,7 @@ example : Tendsto (fun h : ℝ => ∫ u : ℝ, ((Real.sqrt (2 * Real.pi))⁻¹
       rw [div_eq_iff (by norm_num : (1/2 : ℝ) ≠ 0)]; ring
     rw [h2]
     exact inv_mul_cancel₀ (by positivity : Real.sqrt (2 * Real.pi) ≠ 0)
-  have hmain := ProbabilityTheory.kde_bias_tends_to_zero
+  have hmain := ProbabilityTheory.kernel_smoothing_tendsto
     (K := fun u : ℝ => (Real.sqrt (2 * Real.pi))⁻¹ * Real.exp ((-(1/2):ℝ) * u ^ 2))
     (f := fun x : ℝ => if (0:ℝ) ≤ x ∧ x ≤ 1 then (1:ℝ) else 0)
     (t := (1/2:ℝ)) (B := (1:ℝ))
