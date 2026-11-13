@@ -118,18 +118,4 @@ example (A : Matrix (Fin 3) (Fin 2) ℝ) :
 /-- The truncated SVD of any rank is admissible. -/
 example (A : Matrix (Fin 4) (Fin 3) ℝ) : (truncSVD A 1).rank ≤ 1 := rank_truncSVD_le A 1
 
-/-! ### Subadditivity of the rank -/
-
-/-- `Matrix.rank_add_le` on a general pair. -/
-example (M N : Matrix (Fin 2) (Fin 3) ℝ) : (M + N).rank ≤ M.rank + N.rank :=
-  Matrix.rank_add_le M N
-
-/-- Splitting the `2 × 2` identity into two diagonal pieces: the bound forces the pieces to carry
-total rank at least `rank 1 = 2`, which is attained (each piece has rank `1`). -/
-example : 2 ≤ (diagonal ![(1 : ℝ), 0]).rank + (diagonal ![(0 : ℝ), 1]).rank := by
-  have h : diagonal ![(1 : ℝ), 0] + diagonal ![(0 : ℝ), 1] = 1 := by
-    ext i j; fin_cases i <;> fin_cases j <;> simp
-  have := Matrix.rank_add_le (diagonal ![(1 : ℝ), 0]) (diagonal ![(0 : ℝ), 1])
-  rwa [h, rank_one, Fintype.card_fin] at this
-
 end MathlibExtTest.Probability.Statistics.PCA

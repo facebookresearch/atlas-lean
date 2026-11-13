@@ -10,6 +10,8 @@ module
 
 public import MathlibExt.Biology.Omics.CovarianceBridge
 
+import MathlibExt.LinearAlgebra.Matrix.RankAddGeneral
+
 @[expose] public section
 
 open Matrix MathlibExt.Probability.Statistics.PCA MathlibExt.Biology.Omics.CovarianceBridge
@@ -172,8 +174,9 @@ example (Z : Matrix (Fin 1) (Fin 2) ℝ) (w : Fin 2 → ℝ) :
 /-- `S(-X) = S(X)`. -/
 example : sampleCov (-X) = sampleCov X := sampleCov_neg X
 
-/-- The public `Matrix.rank_add_le` (reused from PCA): a rank-one perturbation `X + u vᵀ` raises
-the rank by at most one. -/
+/-- The general `Matrix.rank_add_le` from `MathlibExt.LinearAlgebra.Matrix.RankAddGeneral`, as
+used by `rank_le_rank_center_add_one`: a rank-one perturbation `X + u vᵀ` raises the rank by at
+most one. -/
 example (X : Matrix (Fin 3) (Fin 2) ℝ) (u : Fin 3 → ℝ) (v : Fin 2 → ℝ) :
     (X + vecMulVec u v).rank ≤ X.rank + 1 :=
   (Matrix.rank_add_le _ _).trans (by gcongr; exact rank_vecMulVec_le _ _)

@@ -10,6 +10,8 @@ module
 
 public import MathlibExt.Probability.Statistics.PCA
 
+import MathlibExt.LinearAlgebra.Matrix.RankAddGeneral
+
 /-!
 # Centered sample covariance versus the uncentered second moment
 

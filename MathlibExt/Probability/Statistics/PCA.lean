@@ -17,6 +17,7 @@ public import Mathlib.LinearAlgebra.Matrix.Rank
 public import MathlibExt.Analysis.InnerProductSpace.CourantFischer
 
 import Mathlib.Analysis.InnerProductSpace.Trace
+import MathlibExt.LinearAlgebra.Matrix.RankAddGeneral
 
 /-!
 # Principal component analysis
@@ -43,7 +44,6 @@ the optimality statement behind PCA.
 * `sum_orderedEigenvalues`, `varianceExplained_le_one`, `varianceExplained_mono`,
   `varianceExplained_of_le` : the eigenvalues sum to the total variance `tr S`, and the
   proportion of variance explained by the first `k` components increases from `0` to `1`.
-* `Matrix.rank_add_le` : subadditivity of the rank of real matrices.
 * `rank_truncSVD_le`, `frobenius_sub_truncSVD_sq`, `sum_sq_singularValues_le_frobenius_sub_sq`,
   `isLeast_frobenius_sub_sq` : **Eckart–Young**: the rank-`k` truncated SVD has squared
   Frobenius error `∑_{i ≥ k} σᵢ²`, and no matrix of rank at most `k` does better.
@@ -378,14 +378,6 @@ where `Vₖ` collects the first `k` right singular vectors. -/
 noncomputable def truncSVD (A : Matrix (Fin m) (Fin n) ℝ) (k : ℕ) : Matrix (Fin m) (Fin n) ℝ :=
   A * ∑ i : Fin n with i.val < k,
     vecMulVec ⇑(rightSingularBasis A i) ⇑(rightSingularBasis A i)
-
-/-- Subadditivity of matrix rank: `rank (M + N) ≤ rank M + rank N` for real matrices. Mathlib
-has the cardinal-valued `LinearMap.rank_add_le` but no `Matrix.rank` version. -/
-theorem _root_.Matrix.rank_add_le {a b : ℕ} (M N : Matrix (Fin a) (Fin b) ℝ) :
-    (M + N).rank ≤ M.rank + N.rank := by
-  rw [Matrix.rank, Matrix.rank, Matrix.rank, Matrix.mulVecLin_add]
-  exact (Submodule.finrank_mono (LinearMap.range_add_le _ _)).trans
-    (Submodule.finrank_add_le_finrank_add_finrank _ _)
 
 /-- A sum of matrices of rank at most one has rank at most the number of summands. -/
 private theorem rank_sum_bound {a b : ℕ} {ι : Type*} (s : Finset ι)
