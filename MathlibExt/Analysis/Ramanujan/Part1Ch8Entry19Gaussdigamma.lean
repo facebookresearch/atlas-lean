@@ -326,46 +326,6 @@ private theorem ch8e19Tail_norm_le_uniform (N : ℕ) (hN : 0 < N) :
       field_simp [hne]
       ring_nf
 
-private theorem ch8e19_bernoulli_coeff (j : ℕ) :
-    ((bernoulli j : ℚ) : ℝ) =
-      if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ) := by
-  by_cases hj : j = 1
-  · subst j
-    simp [bernoulli_one]
-  · simp [hj]
-
-private theorem ch8e19_bernoulliFun_eq_sum (p : ℕ) (x : ℝ) :
-    bernoulliFun p x =
-      ∑ j ∈ Finset.range (p + 1), (Nat.choose p j : ℝ) *
-        (if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ)) * x ^ (p - j) := by
-  rw [show bernoulliFun p x =
-    Polynomial.eval x (Polynomial.map (algebraMap ℚ ℝ) (Polynomial.bernoulli p)) by rfl]
-  rw [Polynomial.bernoulli_def, Polynomial.map_sum, Polynomial.eval_finsetSum]
-  have hterm : ∀ i ∈ Finset.range (p + 1),
-      Polynomial.eval x (Polynomial.map (algebraMap ℚ ℝ)
-        (Polynomial.monomial i (bernoulli (p - i) * ↑(p.choose i)))) =
-        ((bernoulli (p - i) : ℚ) : ℝ) * (Nat.choose p i : ℝ) * x ^ i := by
-    intro i _
-    rw [Polynomial.map_monomial, Polynomial.eval_monomial]
-    simp only [map_mul, map_natCast, eq_ratCast]
-  rw [Finset.sum_congr rfl hterm]
-  have hrefl : (∑ i ∈ Finset.range (p + 1),
-      ((bernoulli (p - i) : ℚ) : ℝ) * (Nat.choose p i : ℝ) * x ^ i) =
-      ∑ j ∈ Finset.range (p + 1),
-        ((bernoulli j : ℚ) : ℝ) * (Nat.choose p (p - j) : ℝ) * x ^ (p - j) := by
-    rw [← Finset.sum_range_reflect (fun j => ((bernoulli j : ℚ) : ℝ) *
-      (Nat.choose p (p - j) : ℝ) * x ^ (p - j)) (p + 1)]
-    apply Finset.sum_congr rfl
-    intro i hi
-    simp only [Finset.mem_range] at hi
-    rw [show p + 1 - 1 - i = p - i by omega, show p - (p - i) = i by omega]
-  rw [hrefl]
-  apply Finset.sum_congr rfl
-  intro j hj
-  simp only [Finset.mem_range] at hj
-  rw [← ch8e19_bernoulli_coeff j, Nat.choose_symm (by omega : j ≤ p)]
-  ring
-
 private theorem ch8e19Kernel_eq_of_spec
     (P : ℕ → ℝ → ℝ) (p : ℕ)
     (hper : ∀ (m : ℕ) (x : ℝ), P m (x + 1) = P m x)
@@ -379,7 +339,7 @@ private theorem ch8e19Kernel_eq_of_spec
     rw [Int.fract]
     simpa only [mul_one] using hp.sub_int_mul_eq (Int.floor x)
   rw [← hfract, hunit (Int.fract x) ⟨Int.fract_nonneg x, Int.fract_lt_one x⟩]
-  exact (ch8e19_bernoulliFun_eq_sum p (Int.fract x)).symm
+  exact (MetaMathlibExt.bernoulliFun_eq_sum p (Int.fract x)).symm
 
 private theorem ch8e19EulerMaclaurin_real
     (a b : ℤ) (p : ℕ) (f : ℝ → ℝ) (hab : a < b) (hp : 1 ≤ p)
@@ -396,28 +356,6 @@ private theorem ch8e19EulerMaclaurin_real
   obtain ⟨P, hper, hunit, hformula⟩ :=
     MetaMathlibExt.eulerMaclaurinFormula a b p f hab hp hdf
   simpa only [ch8e19Kernel_eq_of_spec P p hper hunit] using hformula
-
-private theorem ch8e19_iteratedDerivWithin_re
-    {f : ℝ → ℂ} {s : Set ℝ} {x : ℝ} (q : ℕ)
-    (hf : ContDiffWithinAt ℝ q f s x) (hs : UniqueDiffOn ℝ s) (hx : x ∈ s) :
-    iteratedDerivWithin q (fun y => (f y).re) s x =
-      (iteratedDerivWithin q f s x).re := by
-  change iteratedDerivWithin q (Complex.reCLM ∘ f) s x =
-    Complex.reCLM (iteratedDerivWithin q f s x)
-  unfold iteratedDerivWithin
-  rw [Complex.reCLM.iteratedFDerivWithin_comp_left hf hs hx le_rfl]
-  rfl
-
-private theorem ch8e19_iteratedDerivWithin_im
-    {f : ℝ → ℂ} {s : Set ℝ} {x : ℝ} (q : ℕ)
-    (hf : ContDiffWithinAt ℝ q f s x) (hs : UniqueDiffOn ℝ s) (hx : x ∈ s) :
-    iteratedDerivWithin q (fun y => (f y).im) s x =
-      (iteratedDerivWithin q f s x).im := by
-  change iteratedDerivWithin q (Complex.imCLM ∘ f) s x =
-    Complex.imCLM (iteratedDerivWithin q f s x)
-  unfold iteratedDerivWithin
-  rw [Complex.imCLM.iteratedFDerivWithin_comp_left hf hs hx le_rfl]
-  rfl
 
 private theorem ch8e19EulerMaclaurin_complex
     (a b : ℤ) (p : ℕ) (f : ℝ → ℂ) (hab : a < b) (hp : 1 ≤ p) (hp1 : p ≠ 1)
@@ -445,11 +383,11 @@ private theorem ch8e19EulerMaclaurin_complex
   have hder_re (q : ℕ) (hq : q ≤ p) (x : ℝ) (hx : x ∈ s) :
       iteratedDerivWithin q (fun y => (f y).re) s x =
         (iteratedDerivWithin q f s x).re :=
-    ch8e19_iteratedDerivWithin_re q ((hdf x hx).of_le (by exact_mod_cast hq)) hs hx
+    ch7Entry1_iteratedDerivWithin_re q ((hdf x hx).of_le (by exact_mod_cast hq)) hs hx
   have hder_im (q : ℕ) (hq : q ≤ p) (x : ℝ) (hx : x ∈ s) :
       iteratedDerivWithin q (fun y => (f y).im) s x =
         (iteratedDerivWithin q f s x).im :=
-    ch8e19_iteratedDerivWithin_im q ((hdf x hx).of_le (by exact_mod_cast hq)) hs hx
+    ch7Entry1_iteratedDerivWithin_im q ((hdf x hx).of_le (by exact_mod_cast hq)) hs hx
   have hfint : IntervalIntegrable f volume (a : ℝ) (b : ℝ) :=
     (hdf.continuousOn.mono (by simp [Set.uIcc_of_le habr.le])).intervalIntegrable
   have hdcont : ContinuousOn (iteratedDerivWithin p f s) s :=
@@ -539,57 +477,6 @@ private theorem ch8e19EulerMaclaurin_complex
     rw [← hrem_im]
     simpa [s] using hI
 
-private theorem ch8e19Falling_succ (r : ℂ) (q : ℕ) :
-    chapter7FallingGammaRatio r (q + 1) =
-      chapter7FallingGammaRatio r q * (r - (q : ℂ)) := by
-  simp [chapter7FallingGammaRatio, Finset.prod_range_succ]
-
-private theorem ch8e19_iteratedDeriv_cpow
-    (r : ℂ) (q : ℕ) {x : ℝ} (hx : x ≠ 0) :
-    iteratedDeriv q (fun y : ℝ => (y : ℂ) ^ r) x =
-      chapter7FallingGammaRatio r q * (x : ℂ) ^ (r - (q : ℕ)) := by
-  induction q generalizing x with
-  | zero => simp [chapter7FallingGammaRatio]
-  | succ q ih =>
-      rw [iteratedDeriv_succ]
-      have heq : iteratedDeriv q (fun y : ℝ => (y : ℂ) ^ r) =ᶠ[𝓝 x]
-          fun y : ℝ => chapter7FallingGammaRatio r q * (y : ℂ) ^ (r - (q : ℕ)) := by
-        filter_upwards [isOpen_ne.mem_nhds hx] with y hy
-        exact ih hy
-      rw [heq.deriv_eq]
-      by_cases he : r - (q : ℕ) = 0
-      · simp [he, ch8e19Falling_succ]
-      · have hd := (hasDerivAt_ofReal_cpow_const hx he).const_mul
-            (chapter7FallingGammaRatio r q)
-        rw [hd.deriv, ch8e19Falling_succ]
-        rw [show r - ((q + 1 : ℕ) : ℂ) = r - (q : ℂ) - 1 by
-          push_cast
-          ring]
-        ring
-
-private theorem ch8e19_cpow_contDiffAt
-    (r : ℂ) {x : ℝ} (hx : 0 < x) {m : WithTop ℕ∞} :
-    ContDiffAt ℝ m (fun y : ℝ => (y : ℂ) ^ r) x := by
-  have hc : ContDiffAt ℂ m (fun z : ℂ => z ^ r) (x : ℂ) :=
-    (analyticAt_id.cpow analyticAt_const (Complex.ofReal_mem_slitPlane.mpr hx)).contDiffAt
-  exact (hc.restrict_scalars ℝ).comp x Complex.ofRealCLM.contDiff.contDiffAt
-
-private theorem ch8e19_cpow_contDiffOn
-    (r : ℂ) (p n : ℕ) :
-    ContDiffOn ℝ (p : WithTop ℕ∞) (fun x : ℝ => (x : ℂ) ^ r)
-      (Set.Icc 1 (n : ℝ)) := by
-  intro x hx
-  exact (ch8e19_cpow_contDiffAt r (lt_of_lt_of_le zero_lt_one hx.1)).contDiffWithinAt
-
-private theorem ch8e19_iteratedDerivWithin_cpow
-    (r : ℂ) (q n : ℕ) (hn : 1 < n) {x : ℝ} (hx : x ∈ Set.Icc 1 (n : ℝ)) :
-    iteratedDerivWithin q (fun y : ℝ => (y : ℂ) ^ r) (Set.Icc 1 (n : ℝ)) x =
-      chapter7FallingGammaRatio r q * (x : ℂ) ^ (r - (q : ℕ)) := by
-  rw [iteratedDerivWithin_eq_iteratedDeriv
-    (uniqueDiffOn_Icc (by exact_mod_cast hn))
-    (ch8e19_cpow_contDiffAt r (lt_of_lt_of_le zero_lt_one hx.1)) hx]
-  exact ch8e19_iteratedDeriv_cpow r q (ne_of_gt (lt_of_lt_of_le zero_lt_one hx.1))
-
 private noncomputable def ch8e19RemainderFactor (N : ℕ) (r : ℂ) : ℂ :=
   chapter7FallingGammaRatio r (2 * N + 1) / ((2 * N + 1).factorial : ℂ)
 
@@ -619,26 +506,6 @@ private theorem ch8e19_intervalIntegral_eq_mellin_sub_tail
       rw [ch8e19MellinIntegral_eq_integral N hN r]
       rfl
 
-private theorem ch8e19_sum_int_eq_powerSum (r : ℂ) (n : ℕ) :
-    (∑ k ∈ Finset.Icc (1 : ℤ) (n : ℤ), ((k : ℝ) : ℂ) ^ r) =
-      chapter7PowerSum r n := by
-  unfold chapter7PowerSum chapter7NatCpow
-  rw [eq_comm]
-  apply Finset.sum_bij (fun (k : ℕ) _ => (k : ℤ))
-  · intro k hk
-    simp only [Finset.mem_Icc] at hk ⊢
-    omega
-  · intro k₁ hk₁ k₂ hk₂ h
-    exact_mod_cast h
-  · intro k hk
-    simp only [Finset.mem_Icc] at hk
-    refine ⟨k.toNat, ?_, ?_⟩
-    · simp only [Finset.mem_Icc]
-      omega
-    · exact Int.toNat_of_nonneg (by omega)
-  · intro k hk
-    norm_cast
-
 private theorem ch8e19_eulerMaclaurin_raw
     (r : ℂ) (N n : ℕ) (hr : r ≠ -1) (hN : 0 < N) (hu : r.re < 2 * N)
     (hn : 1 < n) :
@@ -656,12 +523,12 @@ private theorem ch8e19_eulerMaclaurin_raw
   have hp1 : p ≠ 1 := by omega
   have hab : (1 : ℤ) < (n : ℤ) := by exact_mod_cast hn
   have hdf : ContDiffOn ℝ (p : WithTop ℕ∞) (fun x : ℝ => (x : ℂ) ^ r)
-      (Set.Icc (1 : ℝ) (n : ℝ)) := ch8e19_cpow_contDiffOn r p n
+      (Set.Icc (1 : ℝ) (n : ℝ)) := ch7Entry1_cpow_contDiffOn r p n
   have hem := ch8e19EulerMaclaurin_complex (1 : ℤ) (n : ℤ) p
     (fun x : ℝ => (x : ℂ) ^ r) hab hp hp1
       (by simpa only [Int.cast_one, Int.cast_natCast] using hdf)
   simp only [Int.cast_one, Int.cast_natCast] at hem
-  rw [ch8e19_sum_int_eq_powerSum r n] at hem
+  rw [ch7Entry1_sum_int_eq_powerSum r n] at hem
   have hpdiv : p / 2 = N := by omega
   rw [hpdiv] at hem
   have hle : (1 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn.le
@@ -689,9 +556,9 @@ private theorem ch8e19_eulerMaclaurin_raw
     apply Finset.sum_congr rfl
     intro k hk
     have hk1 : 1 ≤ k := (Finset.mem_Icc.mp hk).1
-    rw [ch8e19_iteratedDerivWithin_cpow r (2 * k - 1) n hn
+    rw [ch7Entry1_iteratedDerivWithin_cpow r (2 * k - 1) n hn
         (by exact ⟨by exact_mod_cast hn.le, le_rfl⟩),
-      ch8e19_iteratedDerivWithin_cpow r (2 * k - 1) n hn
+      ch7Entry1_iteratedDerivWithin_cpow r (2 * k - 1) n hn
         (by exact ⟨le_rfl, by exact_mod_cast hn.le⟩)]
     rw [show r - ((2 * k - 1 : ℕ) : ℂ) = r - (2 * k : ℕ) + 1 by
       rw [Nat.cast_sub (by omega : 1 ≤ 2 * k)]
@@ -724,7 +591,7 @@ private theorem ch8e19_eulerMaclaurin_raw
           rcases Set.mem_uIcc.mp hx with hx | hx
           · exact hx
           · exact ⟨hle.trans hx.1, hx.2.trans hle⟩
-        rw [ch8e19_iteratedDerivWithin_cpow r p n hn hx']
+        rw [ch7Entry1_iteratedDerivWithin_cpow r p n hn hx']
         ring
       _ = chapter7FallingGammaRatio r p *
           (∫ x : ℝ in (1 : ℝ)..(n : ℝ),
@@ -756,25 +623,6 @@ private theorem ch8e19_eulerMaclaurin_raw
   rw [hlast] at hem
   exact hem
 
-private theorem ch8e19_sum_Icc_eq_range {M : Type*} [AddCommMonoid M]
-    (N : ℕ) (f : ℕ → M) :
-    (∑ k ∈ Finset.Icc 1 N, f k) = ∑ j ∈ Finset.range N, f (j + 1) := by
-  rw [eq_comm]
-  apply Finset.sum_bij (fun j _ => j + 1)
-  · intro j hj
-    simp only [Finset.mem_range, Finset.mem_Icc] at hj ⊢
-    omega
-  · intro j₁ hj₁ j₂ hj₂ h
-    omega
-  · intro k hk
-    simp only [Finset.mem_Icc] at hk
-    refine ⟨k - 1, ?_, ?_⟩
-    · simp only [Finset.mem_range]
-      omega
-    · omega
-  · intro j hj
-    rfl
-
 private theorem ch8e19_exact_expansion
     (r : ℂ) (N n : ℕ) (hr : r ≠ -1) (hN : 0 < N) (hu : r.re < 2 * N)
     (hn : 1 < n) :
@@ -791,7 +639,7 @@ private theorem ch8e19_exact_expansion
             (chapter7NatCpow n (r - (2 * k : ℕ) + 1) - 1)) =
       (∑ j ∈ Finset.range N, chapter7Entry1Term r n j) -
         ∑ j ∈ Finset.range N, chapter7Entry1Term r 1 j := by
-    rw [ch8e19_sum_Icc_eq_range]
+    rw [ch7Entry1_sum_Icc_eq_range]
     rw [← Finset.sum_sub_distrib]
     apply Finset.sum_congr rfl
     intro j hj
@@ -1390,7 +1238,7 @@ private theorem ch8e19_falling_deriv_succ (m q : ℕ) :
   rw [show (fun r ↦ chapter7FallingGammaRatio r (q + 1)) =
       fun r ↦ chapter7FallingGammaRatio r q * (r - q) by
     funext r
-    exact ch8e19Falling_succ r q]
+    exact ch7Entry1Falling_succ r q]
   exact ch8e19_iteratedDeriv_mul_sub_nat m q _
     ((ch8e19_falling_differentiable q).contDiff.contDiffAt)
 

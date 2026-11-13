@@ -201,12 +201,15 @@ private theorem ch7Entry1Tail_integrable
   rw [hsr]
   simp [ch7Entry1MellinBase, hx.le, smul_eq_mul]
 
-private theorem ch7Entry1Falling_succ (r : ℂ) (q : ℕ) :
+/-- `chapter7FallingGammaRatio r (q + 1)` is `chapter7FallingGammaRatio r q * (r - q)`. -/
+theorem ch7Entry1Falling_succ (r : ℂ) (q : ℕ) :
     chapter7FallingGammaRatio r (q + 1) =
       chapter7FallingGammaRatio r q * (r - (q : ℂ)) := by
   simp [chapter7FallingGammaRatio, Finset.prod_range_succ]
 
-private theorem ch7Entry1_iteratedDeriv_cpow
+/-- For `x ≠ 0`, the `q`-th derivative of `y ↦ (y : ℂ) ^ r` on `ℝ` at `x` is
+`chapter7FallingGammaRatio r q * (x : ℂ) ^ (r - q)`. -/
+theorem ch7Entry1_iteratedDeriv_cpow
     (r : ℂ) (q : ℕ) {x : ℝ} (hx : x ≠ 0) :
     iteratedDeriv q (fun y : ℝ => (y : ℂ) ^ r) x =
       chapter7FallingGammaRatio r q * (x : ℂ) ^ (r - (q : ℕ)) := by
@@ -230,21 +233,25 @@ private theorem ch7Entry1_iteratedDeriv_cpow
           ring]
         ring
 
-private theorem ch7Entry1_cpow_contDiffAt
+/-- For every `m`, the function `y ↦ (y : ℂ) ^ r` on `ℝ` is `C^m` at every `x > 0`. -/
+theorem ch7Entry1_cpow_contDiffAt
     (r : ℂ) {x : ℝ} (hx : 0 < x) {m : WithTop ℕ∞} :
     ContDiffAt ℝ m (fun y : ℝ => (y : ℂ) ^ r) x := by
   have hc : ContDiffAt ℂ m (fun z : ℂ => z ^ r) (x : ℂ) :=
     (analyticAt_id.cpow analyticAt_const (Complex.ofReal_mem_slitPlane.mpr hx)).contDiffAt
   exact (hc.restrict_scalars ℝ).comp x Complex.ofRealCLM.contDiff.contDiffAt
 
-private theorem ch7Entry1_cpow_contDiffOn
+/-- The function `x ↦ (x : ℂ) ^ r` is `C^p` on `[1, n]`. -/
+theorem ch7Entry1_cpow_contDiffOn
     (r : ℂ) (p n : ℕ) :
     ContDiffOn ℝ (p : WithTop ℕ∞) (fun x : ℝ => (x : ℂ) ^ r)
       (Set.Icc 1 (n : ℝ)) := by
   intro x hx
   exact (ch7Entry1_cpow_contDiffAt r (lt_of_lt_of_le zero_lt_one hx.1)).contDiffWithinAt
 
-private theorem ch7Entry1_iteratedDerivWithin_cpow
+/-- For `1 < n` and `x ∈ [1, n]`, the `q`-th derivative of `y ↦ (y : ℂ) ^ r` within `[1, n]` at `x`
+is `chapter7FallingGammaRatio r q * (x : ℂ) ^ (r - q)`. -/
+theorem ch7Entry1_iteratedDerivWithin_cpow
     (r : ℂ) (q n : ℕ) (hn : 1 < n) {x : ℝ} (hx : x ∈ Set.Icc 1 (n : ℝ)) :
     iteratedDerivWithin q (fun y : ℝ => (y : ℂ) ^ r) (Set.Icc 1 (n : ℝ)) x =
       chapter7FallingGammaRatio r q * (x : ℂ) ^ (r - (q : ℕ)) := by
@@ -252,48 +259,6 @@ private theorem ch7Entry1_iteratedDerivWithin_cpow
     (uniqueDiffOn_Icc (by exact_mod_cast hn))
     (ch7Entry1_cpow_contDiffAt r (lt_of_lt_of_le zero_lt_one hx.1)) hx]
   exact ch7Entry1_iteratedDeriv_cpow r q (ne_of_gt (lt_of_lt_of_le zero_lt_one hx.1))
-
-private theorem ch7Entry1_bernoulli_coeff (j : ℕ) :
-    ((bernoulli j : ℚ) : ℝ) =
-      if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ) := by
-  by_cases hj : j = 1
-  · subst j
-    simp [bernoulli_one]
-  · simp [hj]
-
-private theorem ch7Entry1_bernoulliFun_eq_sum (p : ℕ) (x : ℝ) :
-    bernoulliFun p x =
-      ∑ j ∈ Finset.range (p + 1), (Nat.choose p j : ℝ) *
-        (if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ)) * x ^ (p - j) := by
-  rw [show bernoulliFun p x =
-    Polynomial.eval x (Polynomial.map (algebraMap ℚ ℝ) (Polynomial.bernoulli p)) by rfl]
-  rw [Polynomial.bernoulli_def, Polynomial.map_sum, Polynomial.eval_finsetSum]
-  have hterm : ∀ i ∈ Finset.range (p + 1),
-      Polynomial.eval x (Polynomial.map (algebraMap ℚ ℝ)
-        (Polynomial.monomial i (bernoulli (p - i) * ↑(p.choose i)))) =
-        ((bernoulli (p - i) : ℚ) : ℝ) * (Nat.choose p i : ℝ) * x ^ i := by
-    intro i _
-    rw [Polynomial.map_monomial, Polynomial.eval_monomial]
-    simp only [map_mul, map_natCast, eq_ratCast]
-  rw [Finset.sum_congr rfl hterm]
-  have hrefl : (∑ i ∈ Finset.range (p + 1),
-      ((bernoulli (p - i) : ℚ) : ℝ) * (Nat.choose p i : ℝ) * x ^ i) =
-      ∑ j ∈ Finset.range (p + 1),
-        ((bernoulli j : ℚ) : ℝ) * (Nat.choose p (p - j) : ℝ) * x ^ (p - j) := by
-    rw [← Finset.sum_range_reflect (fun j => ((bernoulli j : ℚ) : ℝ) *
-      (Nat.choose p (p - j) : ℝ) * x ^ (p - j)) (p + 1)]
-    apply Finset.sum_congr rfl
-    intro i hi
-    simp only [Finset.mem_range] at hi
-    have e1 : p + 1 - 1 - i = p - i := by omega
-    have e2 : p - (p - i) = i := by omega
-    rw [e1, e2]
-  rw [hrefl]
-  apply Finset.sum_congr rfl
-  intro j hj
-  simp only [Finset.mem_range] at hj
-  rw [← ch7Entry1_bernoulli_coeff j, Nat.choose_symm (by omega : j ≤ p)]
-  ring
 
 private theorem ch7Entry1Kernel_eq_of_spec
     (P : ℕ → ℝ → ℝ) (p : ℕ)
@@ -308,7 +273,7 @@ private theorem ch7Entry1Kernel_eq_of_spec
     rw [Int.fract]
     simpa only [mul_one] using hp.sub_int_mul_eq (Int.floor x)
   rw [← hfract, hunit (Int.fract x) ⟨Int.fract_nonneg x, Int.fract_lt_one x⟩]
-  exact (ch7Entry1_bernoulliFun_eq_sum p (Int.fract x)).symm
+  exact (MetaMathlibExt.bernoulliFun_eq_sum p (Int.fract x)).symm
 
 private theorem ch7Entry1EulerMaclaurin_real
     (a b : ℤ) (p : ℕ) (f : ℝ → ℝ) (hab : a < b) (hp : 1 ≤ p)
@@ -326,7 +291,9 @@ private theorem ch7Entry1EulerMaclaurin_real
     MetaMathlibExt.eulerMaclaurinFormula a b p f hab hp hdf
   simpa only [ch7Entry1Kernel_eq_of_spec P p hper hunit] using hformula
 
-private theorem ch7Entry1_iteratedDerivWithin_re
+/-- If `f : ℝ → ℂ` is `C^q` within a uniquely differentiable set `s` at `x ∈ s`, then the `q`-th
+iterated derivative within `s` of `fun y => (f y).re` at `x` is the real part of that of `f`. -/
+theorem ch7Entry1_iteratedDerivWithin_re
     {f : ℝ → ℂ} {s : Set ℝ} {x : ℝ} (q : ℕ)
     (hf : ContDiffWithinAt ℝ q f s x) (hs : UniqueDiffOn ℝ s) (hx : x ∈ s) :
     iteratedDerivWithin q (fun y => (f y).re) s x =
@@ -337,7 +304,10 @@ private theorem ch7Entry1_iteratedDerivWithin_re
   rw [Complex.reCLM.iteratedFDerivWithin_comp_left hf hs hx le_rfl]
   rfl
 
-private theorem ch7Entry1_iteratedDerivWithin_im
+/-- If `f : ℝ → ℂ` is `C^q` within a uniquely differentiable set `s` at `x ∈ s`, then the `q`-th
+iterated derivative within `s` of `fun y => (f y).im` at `x` is the imaginary part of that
+of `f`. -/
+theorem ch7Entry1_iteratedDerivWithin_im
     {f : ℝ → ℂ} {s : Set ℝ} {x : ℝ} (q : ℕ)
     (hf : ContDiffWithinAt ℝ q f s x) (hs : UniqueDiffOn ℝ s) (hx : x ∈ s) :
     iteratedDerivWithin q (fun y => (f y).im) s x =
@@ -470,7 +440,8 @@ private theorem ch7Entry1EulerMaclaurin_complex
     rw [← hrem_im]
     simpa [s] using hI
 
-private theorem ch7Entry1_sum_int_eq_powerSum (r : ℂ) (n : ℕ) :
+/-- The sum of `k ^ r` over the integers `1 ≤ k ≤ n` is `chapter7PowerSum r n`. -/
+theorem ch7Entry1_sum_int_eq_powerSum (r : ℂ) (n : ℕ) :
     (∑ k ∈ Finset.Icc (1 : ℤ) (n : ℤ), ((k : ℝ) : ℂ) ^ r) =
       chapter7PowerSum r n := by
   unfold chapter7PowerSum chapter7NatCpow
@@ -490,7 +461,8 @@ private theorem ch7Entry1_sum_int_eq_powerSum (r : ℂ) (n : ℕ) :
   · intro k hk
     norm_cast
 
-private theorem ch7Entry1_sum_Icc_eq_range {M : Type*} [AddCommMonoid M]
+/-- `∑ k ∈ Finset.Icc 1 N, f k = ∑ j ∈ Finset.range N, f (j + 1)`. -/
+theorem ch7Entry1_sum_Icc_eq_range {M : Type*} [AddCommMonoid M]
     (N : ℕ) (f : ℕ → M) :
     (∑ k ∈ Finset.Icc 1 N, f k) = ∑ j ∈ Finset.range N, f (j + 1) := by
   rw [eq_comm]

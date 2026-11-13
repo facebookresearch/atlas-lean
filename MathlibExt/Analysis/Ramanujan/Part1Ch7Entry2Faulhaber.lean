@@ -160,21 +160,6 @@ private lemma diff_cpow_two_add_one :
   rw [hexp]
   fun_prop
 
-private lemma diff_cpow_twopi_add_one :
-    Differentiable ℂ (fun r : ℂ => Complex.cpow (2 * (Real.pi : ℂ)) (r + 1)) := by
-  have hb : (2 * (Real.pi : ℂ)) ≠ 0 := by
-    exact_mod_cast mul_ne_zero two_ne_zero Real.pi_ne_zero
-  have hexp : (fun r : ℂ => Complex.cpow (2 * (Real.pi : ℂ)) (r + 1))
-      = fun r => Complex.exp (Complex.log (2 * (Real.pi : ℂ)) * (r + 1)) := by
-    ext r
-    exact Complex.cpow_def_of_ne_zero hb (r + 1)
-  rw [hexp]
-  fun_prop
-
-private lemma diff_sin_pi_half :
-    Differentiable ℂ (fun r : ℂ => Complex.sin ((Real.pi : ℂ) * r / 2)) := by
-  fun_prop
-
 private lemma meromorphic_entry2Value : Meromorphic chapter7Entry2Value := by
   have h2 : Meromorphic (fun r : ℂ => Complex.cpow 2 (r + 1)) :=
     meromorphic_of_differentiable diff_cpow_two_add_one
@@ -191,9 +176,9 @@ private lemma meromorphic_entry2Value : Meromorphic chapter7Entry2Value := by
     rw [meromorphicOn_univ] at h
     exact h
   have hP : Meromorphic (fun r : ℂ => Complex.cpow (2 * (Real.pi : ℂ)) (r + 1)) :=
-    meromorphic_of_differentiable diff_cpow_twopi_add_one
+    meromorphic_of_differentiable Entry10Zeta4.differentiable_two_mul_pi_cpow_add_one
   have hS : Meromorphic (fun r : ℂ => Complex.sin ((Real.pi : ℂ) * r / 2)) :=
-    meromorphic_of_differentiable diff_sin_pi_half
+    meromorphic_of_differentiable Entry10Zeta4.differentiable_sin_pi_mul_div_two
   have hD : Meromorphic (fun r : ℂ => r + 1) :=
     meromorphic_of_differentiable (by fun_prop)
   have hstar : Meromorphic (fun r : ℂ => chapter7BernoulliStar (r + 1)) := by

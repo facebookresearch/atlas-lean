@@ -53,7 +53,8 @@ def chapter9Entry8FTerm (x : ℝ) (n : ℕ) : ℝ :=
 def chapter9Entry8F (x : ℝ) : ℝ :=
   ∑' n : ℕ, chapter9Entry8FTerm x n
 
-private lemma oddHarmonic_nonneg (n : ℕ) : 0 ≤ chapter9OddHarmonic n := by
+/-- The odd harmonic numbers `chapter9OddHarmonic n` are nonnegative. -/
+lemma oddHarmonic_nonneg (n : ℕ) : 0 ≤ chapter9OddHarmonic n := by
   unfold chapter9OddHarmonic
   apply Finset.sum_nonneg
   intro j _

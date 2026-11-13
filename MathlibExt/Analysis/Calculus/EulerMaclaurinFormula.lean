@@ -11,8 +11,8 @@ module
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
+public import Mathlib.NumberTheory.ZetaValues
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.NumberTheory.ZetaValues
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -34,7 +34,9 @@ private lemma coef_eq (j : ℕ) :
     simp [h]
   · simp [hj]
 
-private lemma bernoulliFun_eq_sum (p : ℕ) (x : ℝ) :
+/-- `bernoulliFun p x = ∑ j ≤ p, p.choose j * bernoulli j * x ^ (p - j)`, with the Bernoulli
+number `bernoulli 1` written as `-1 / 2`. -/
+lemma bernoulliFun_eq_sum (p : ℕ) (x : ℝ) :
     bernoulliFun p x =
       ∑ j ∈ Finset.range (p + 1), (Nat.choose p j : ℝ) *
         (if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ)) * x ^ (p - j) := by

@@ -19,6 +19,7 @@ import Mathlib.Analysis.Normed.Operator.Bilinear
 import Mathlib.Analysis.InnerProductSpace.LinearMap
 import Mathlib.Topology.Algebra.InfiniteSum.Constructions
 import Mathlib.Topology.Algebra.InfiniteSum.Module
+import MathlibExt.Analysis.InnerProductSpace.HilbertSchmidt
 import MathlibExt.Analysis.InnerProductSpace.ShiftFredholmIndex
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
@@ -82,34 +83,6 @@ namespace MathlibExt.Analysis.InnerProductSpace.ToeplitzOperator
 
 variable {𝕜 : Type*} [RCLike 𝕜]
 
-/-- Norm squared of an `ℓ²(ℕ, 𝕜)` vector is the sum of the squared coordinate
-norms. -/
-private theorem toeplitz_normSq_eq_tsum (f : ℓ²(ℕ, 𝕜)) :
-    ‖f‖ ^ 2 = ∑' i, ‖f i‖ ^ 2 := by
-  have h := lp.norm_rpow_eq_tsum (p := (2 : ℝ≥0∞))
-    (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal) (E := fun _ : ℕ => 𝕜) f
-  rw [show ((2 : ℝ≥0∞).toReal) = (2 : ℝ) from by norm_num] at h
-  have h2 : ‖f‖ ^ (2 : ℝ) = ‖f‖ ^ 2 := by rw [Real.rpow_two]
-  rw [h2] at h
-  rw [h]
-  apply tsum_congr
-  intro i
-  rw [Real.rpow_two]
-
-/-- Summability of squared coordinate norms from `Memℓp`. -/
-private theorem toeplitz_summable_normSq_of_memℓp {f : ℕ → 𝕜} (hf : Memℓp f 2) :
-    Summable fun i => ‖f i‖ ^ 2 := by
-  have h := (memℓp_gen_iff (p := (2 : ℝ≥0∞))
-    (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal)).mp hf
-  simpa using h
-
-/-- `Memℓp` at `2` from summability of squared norms. -/
-private theorem toeplitz_memℓp_of_summable_normSq {f : ℕ → 𝕜}
-    (hf : Summable fun i => ‖f i‖ ^ 2) : Memℓp f 2 := by
-  apply (memℓp_gen_iff (p := (2 : ℝ≥0∞))
-    (by norm_num : (0 : ℝ) < (2 : ℝ≥0∞).toReal)).mpr
-  simpa using hf
-
 /-- The `k`-th diagonal slice function: shift coordinates by `k`, killing
 the coordinates that fall off the end. For `k ≥ 0` this is the `k`-fold
 forward shift; for `k < 0` it is the `(-k)`-fold backward shift. -/
@@ -165,8 +138,8 @@ private theorem toeplitz_summable_normSq_sliceFun {k : ℤ} {x : ℓ²(ℕ, 𝕜
           simp only [Function.comp_apply]
           rw [toeplitzSliceFun_add_of_nonneg hk]
         rw [hcomp]
-        rw [toeplitz_normSq_eq_tsum x]
-        exact (toeplitz_summable_normSq_of_memℓp (lp.memℓp x)).hasSum
+        rw [HilbertSchmidt.norm_sq_lp_eq_tsum x]
+        exact (HilbertSchmidt.summable_norm_sq_of_memℓp (lp.memℓp x)).hasSum
       · intro i hi
         by_cases hle : k ≤ (i : ℤ)
         · exfalso
@@ -188,7 +161,7 @@ private theorem toeplitz_summable_normSq_sliceFun {k : ℤ} {x : ℓ²(ℕ, 𝕜
       rw [toeplitzSliceFun_of_nonpos hk']
     rw [heq]
     exact (summable_nat_add_iff ((-k).toNat)).mpr
-      (toeplitz_summable_normSq_of_memℓp (lp.memℓp x))
+      (HilbertSchmidt.summable_norm_sq_of_memℓp (lp.memℓp x))
 
 /-- The `ℓ²` norm of a sliced sequence is at most the norm of the original. -/
 private theorem toeplitz_tsum_normSq_slice_le {k : ℤ} (x : ℓ²(ℕ, 𝕜)) :
@@ -203,8 +176,8 @@ private theorem toeplitz_tsum_normSq_slice_le {k : ℤ} (x : ℓ²(ℕ, 𝕜)) :
           simp only [Function.comp_apply]
           rw [toeplitzSliceFun_add_of_nonneg hk]
         rw [hcomp]
-        rw [toeplitz_normSq_eq_tsum x]
-        exact (toeplitz_summable_normSq_of_memℓp (lp.memℓp x)).hasSum
+        rw [HilbertSchmidt.norm_sq_lp_eq_tsum x]
+        exact (HilbertSchmidt.summable_norm_sq_of_memℓp (lp.memℓp x)).hasSum
       · intro i hi
         by_cases hle : k ≤ (i : ℤ)
         · exfalso
@@ -218,14 +191,14 @@ private theorem toeplitz_tsum_normSq_slice_le {k : ℤ} (x : ℓ²(ℕ, 𝕜)) :
           omega
         · rw [toeplitzSliceFun_eq_zero_of_not_le hle]
           simp
-    rw [hHas.tsum_eq, toeplitz_normSq_eq_tsum]
+    rw [hHas.tsum_eq, HilbertSchmidt.norm_sq_lp_eq_tsum]
   · have hk' : k ≤ 0 := le_of_lt (not_le.mp hk)
     have heq : (fun i => ‖toeplitzSliceFun k (x : ℕ → 𝕜) i‖ ^ 2) =
         fun i => ‖(x : ℕ → 𝕜) (i + (-k).toNat)‖ ^ 2 := by
       funext i
       rw [toeplitzSliceFun_of_nonpos hk']
     rw [heq]
-    have hsum := toeplitz_summable_normSq_of_memℓp (lp.memℓp x)
+    have hsum := HilbertSchmidt.summable_norm_sq_of_memℓp (lp.memℓp x)
     have h := hsum.sum_add_tsum_nat_add ((-k).toNat)
     calc ∑' i, ‖(x : ℕ → 𝕜) (i + (-k).toNat)‖ ^ 2
         ≤ (∑ i ∈ Finset.range ((-k).toNat), ‖(x : ℕ → 𝕜) i‖ ^ 2) +
@@ -236,7 +209,7 @@ private theorem toeplitz_tsum_normSq_slice_le {k : ℤ} (x : ℓ²(ℕ, 𝕜)) :
 /-- The slice of an `ℓ²` sequence is in `ℓ²`. -/
 theorem toeplitz_memℓp_sliceFun {k : ℤ} {x : ℓ²(ℕ, 𝕜)} :
     Memℓp (toeplitzSliceFun k (x : ℕ → 𝕜)) 2 :=
-  toeplitz_memℓp_of_summable_normSq toeplitz_summable_normSq_sliceFun
+  HilbertSchmidt.memℓp_of_summable_norm_sq toeplitz_summable_normSq_sliceFun
 
 /-- The `k`-th diagonal slice as a linear map. -/
 noncomputable def toeplitzSliceLinMap (k : ℤ) : ℓ²(ℕ, 𝕜) →ₗ[𝕜] ℓ²(ℕ, 𝕜) where
@@ -261,7 +234,7 @@ theorem toeplitzSliceLinMap_apply (k : ℤ) (x : ℓ²(ℕ, 𝕜)) (i : ℕ) :
 theorem norm_toeplitzSliceLinMap_apply_le (k : ℤ) (x : ℓ²(ℕ, 𝕜)) :
     ‖toeplitzSliceLinMap k x‖ ≤ ‖x‖ := by
   have hpow : ‖toeplitzSliceLinMap k x‖ ^ 2 ≤ ‖x‖ ^ 2 := by
-    rw [toeplitz_normSq_eq_tsum, toeplitz_normSq_eq_tsum]
+    rw [HilbertSchmidt.norm_sq_lp_eq_tsum, HilbertSchmidt.norm_sq_lp_eq_tsum]
     exact toeplitz_tsum_normSq_slice_le x
   exact le_of_sq_le_sq hpow (norm_nonneg _)
 
@@ -713,10 +686,10 @@ theorem not_isCompactOperator_toeplitzOperator_of_ne {a : ℤ → 𝕜}
         rw [hidx]
       rw [← hterm]
       exact Summable.le_tsum
-        (toeplitz_summable_normSq_of_memℓp
+        (HilbertSchmidt.summable_norm_sq_of_memℓp
           (lp.memℓp (toeplitzOperator a ha (lp.single 2 (φ n) (1 : 𝕜)))))
         ((k₀ + (φ n : ℤ)).toNat) (fun j _ => by positivity)
-    rw [← toeplitz_normSq_eq_tsum] at hle
+    rw [← HilbertSchmidt.norm_sq_lp_eq_tsum] at hle
     exact hle
   have h0 : ‖(0 : ℓ²(ℕ, 𝕜))‖ ^ 2 = 0 := by simp
   rw [hy0, h0] at hnorm

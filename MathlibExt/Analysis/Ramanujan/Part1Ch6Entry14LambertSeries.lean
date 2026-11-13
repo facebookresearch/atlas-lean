@@ -830,48 +830,6 @@ private lemma ch6Entry14_abs_bernoulliFun_odd_le (n : ℕ) (hn : 1 ≤ n) (y : �
       0 ≤ 2 * ((2 * n + 1).factorial : ℝ) / (2 * Real.pi) ^ (2 * n + 1))]
   exact mul_le_mul_of_nonneg_left hsum (by positivity)
 
-private lemma ch6Entry14_bernoulli_coeff (j : ℕ) :
-    ((bernoulli j : ℚ) : ℝ) =
-      if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ) := by
-  by_cases hj : j = 1
-  · subst j
-    simp [bernoulli_one]
-  · simp [hj]
-
-private lemma ch6Entry14_bernoulliFun_eq_sum (p : ℕ) (x : ℝ) :
-    bernoulliFun p x =
-      ∑ j ∈ Finset.range (p + 1), (Nat.choose p j : ℝ) *
-        (if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ)) * x ^ (p - j) := by
-  rw [show bernoulliFun p x =
-    Polynomial.eval x (Polynomial.map (algebraMap ℚ ℝ) (Polynomial.bernoulli p)) by rfl]
-  rw [Polynomial.bernoulli_def, Polynomial.map_sum, Polynomial.eval_finsetSum]
-  have hterm : ∀ i ∈ Finset.range (p + 1),
-      Polynomial.eval x (Polynomial.map (algebraMap ℚ ℝ)
-        (Polynomial.monomial i (bernoulli (p - i) * ↑(p.choose i)))) =
-        ((bernoulli (p - i) : ℚ) : ℝ) * (Nat.choose p i : ℝ) * x ^ i := by
-    intro i _
-    rw [Polynomial.map_monomial, Polynomial.eval_monomial]
-    simp only [map_mul, map_natCast, eq_ratCast]
-  rw [Finset.sum_congr rfl hterm]
-  have hrefl : (∑ i ∈ Finset.range (p + 1),
-      ((bernoulli (p - i) : ℚ) : ℝ) * (Nat.choose p i : ℝ) * x ^ i) =
-      ∑ j ∈ Finset.range (p + 1),
-        ((bernoulli j : ℚ) : ℝ) * (Nat.choose p (p - j) : ℝ) * x ^ (p - j) := by
-    rw [← Finset.sum_range_reflect (fun j ↦ ((bernoulli j : ℚ) : ℝ) *
-      (Nat.choose p (p - j) : ℝ) * x ^ (p - j)) (p + 1)]
-    apply Finset.sum_congr rfl
-    intro i hi
-    simp only [Finset.mem_range] at hi
-    have e1 : p + 1 - 1 - i = p - i := by omega
-    have e2 : p - (p - i) = i := by omega
-    rw [e1, e2]
-  rw [hrefl]
-  apply Finset.sum_congr rfl
-  intro j hj
-  simp only [Finset.mem_range] at hj
-  rw [← ch6Entry14_bernoulli_coeff j, Nat.choose_symm (by omega : j ≤ p)]
-  ring
-
 private noncomputable def ch6Entry14_periodicKernel (p : ℕ) (x : ℝ) : ℝ :=
   bernoulliFun p (Int.fract x)
 
@@ -887,7 +845,7 @@ private lemma ch6Entry14_periodicKernel_eq_of_spec
     rw [Int.fract]
     simpa only [mul_one] using hp.sub_int_mul_eq (Int.floor x)
   rw [← hfract, hunit (Int.fract x) ⟨Int.fract_nonneg x, Int.fract_lt_one x⟩]
-  exact (ch6Entry14_bernoulliFun_eq_sum p (Int.fract x)).symm
+  exact (MetaMathlibExt.bernoulliFun_eq_sum p (Int.fract x)).symm
 
 private lemma ch6Entry14_abs_periodicKernel_odd_le (n : ℕ) (hn : 1 ≤ n) (x : ℝ) :
     |ch6Entry14_periodicKernel (2 * n + 1) x| ≤

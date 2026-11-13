@@ -11,6 +11,7 @@ module
 public import MathlibExt.Analysis.CStarAlgebra.KadisonSinger.MixedCharPoly
 public import MathlibExt.Algebra.MvPolynomial.Stable
 public import Mathlib.Analysis.Matrix.Order
+public import Mathlib.Algebra.Polynomial.Degree.IsMonicOfDegree
 
 import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
 import Mathlib.Algebra.MvPolynomial.CommRing
@@ -19,7 +20,6 @@ import Mathlib.Analysis.Polynomial.CauchyBound
 import Mathlib.Analysis.Polynomial.MahlerMeasure
 import Mathlib.Algebra.Polynomial.Reverse
 import Mathlib.Algebra.Polynomial.Taylor
-import Mathlib.Algebra.Polynomial.Degree.IsMonicOfDegree
 import Mathlib.Data.List.OfFn
 import Mathlib.Topology.MetricSpace.Sequences
 
@@ -326,7 +326,8 @@ private lemma ksMixedCharacteristicPolynomial_eq_specialization
       simp
     · simp
 
-private theorem ksMixedCharacteristicPolynomial_isMonicOfDegree
+/-- A mixed characteristic polynomial is monic of degree `Fintype.card d`. -/
+public theorem mixedCharacteristicPolynomial_isMonicOfDegree
     {m : ℕ} {d : Type*} [Fintype d] [DecidableEq d]
     (A : Fin m → Matrix d d ℂ) :
     Polynomial.IsMonicOfDegree (mixedCharacteristicPolynomial A) (Fintype.card d) := by
@@ -340,14 +341,14 @@ private theorem ksMixedCharacteristicPolynomial_isMonicOfDegree
 public theorem mixedCharacteristicPolynomial_monic
     {m : ℕ} {d : Type*} [Fintype d] [DecidableEq d]
     (A : Fin m → Matrix d d ℂ) : (mixedCharacteristicPolynomial A).Monic :=
-  (ksMixedCharacteristicPolynomial_isMonicOfDegree A).monic
+  (mixedCharacteristicPolynomial_isMonicOfDegree A).monic
 
 /-- The degree of a mixed characteristic polynomial equals the matrix dimension. -/
 public theorem mixedCharacteristicPolynomial_natDegree
     {m : ℕ} {d : Type*} [Fintype d] [DecidableEq d]
     (A : Fin m → Matrix d d ℂ) :
     (mixedCharacteristicPolynomial A).natDegree = Fintype.card d :=
-  (ksMixedCharacteristicPolynomial_isMonicOfDegree A).natDegree_eq
+  (mixedCharacteristicPolynomial_isMonicOfDegree A).natDegree_eq
 
 /-- The mixed characteristic polynomial of positive semidefinite matrices is real-rooted. -/
 public theorem mixedCharacteristicPolynomial_isRealRooted_of_posSemidef

@@ -91,50 +91,6 @@ private lemma base3 : Summable (fun k : ℕ => 1 / ((k : ℝ) + 1) ^ 3) := by
   have h := (summable_nat_add_iff (f := fun n : ℕ => 1 / (n : ℝ) ^ 3) 1).mpr hp
   simpa using h
 
-private lemma factbound (k : ℕ) : 4 ^ k * (k.factorial ^ 2) ≤ (2 * k + 1).factorial := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    have key : 4 * (k + 1) ^ 2 ≤ (2 * (k + 1) + 1) * (2 * (k + 1)) := by
-      have h : (2 * (k + 1) + 1) * (2 * (k + 1))
-          = 4 * (k + 1) ^ 2 + 2 * (k + 1) := by ring
-      rw [h]
-      exact Nat.le_add_right _ _
-    calc 4 ^ (k + 1) * ((k + 1).factorial ^ 2)
-        = (4 * (k + 1) ^ 2) * (4 ^ k * (k.factorial ^ 2)) := by
-          rw [pow_succ, Nat.factorial_succ k]
-          ring
-      _ ≤ ((2 * (k + 1) + 1) * (2 * (k + 1))) * (2 * k + 1).factorial :=
-          mul_le_mul key ih (Nat.zero_le _) (Nat.zero_le _)
-      _ = (2 * (k + 1) + 1).factorial := by
-          have f1 := Nat.factorial_succ (2 * (k + 1))
-          have e : 2 * (k + 1) = (2 * k + 1) + 1 := by ring
-          have f2 : (2 * (k + 1)).factorial
-              = (2 * (k + 1)) * (2 * k + 1).factorial := by
-            have f := Nat.factorial_succ (2 * k + 1)
-            rwa [← e] at f
-          rw [f1, f2, mul_assoc]
-
-private lemma hFratio (k : ℕ) :
-    (2 : ℝ) ^ (2 * k) * ((k.factorial : ℝ) ^ 2)
-      / (((2 * k + 1).factorial : ℝ)) ≤ 1 := by
-  have hF : (0 : ℝ) < ((((2 * k + 1).factorial) : ℕ) : ℝ) := by
-    have h : 0 < (2 * k + 1).factorial := Nat.factorial_pos _
-    exact_mod_cast h
-  rw [div_le_one hF]
-  have hfb := factbound k
-  have h' : ((4 ^ k * (k.factorial ^ 2) : ℕ) : ℝ)
-      ≤ (((((2 * k + 1).factorial) : ℕ)) : ℝ) :=
-    Nat.cast_le.mpr hfb
-  have h4 : (4 : ℝ) ^ k * (((k.factorial : ℕ)) : ℝ) ^ 2
-      = (2 : ℝ) ^ (2 * k) * ((k.factorial : ℝ) ^ 2) := by
-    congr 1
-    have h42 : (4 : ℝ) = 2 ^ 2 := by norm_num
-    rw [h42, ← pow_mul]
-  rw [← h4]
-  push_cast at h'
-  exact h'
-
 private lemma chi3_summable : Summable chapter9Chi3Term := by
   rw [chapter9Chi3Term_eq_entry21]
   exact (Entry21Piseries2.ramanujan_part1_ch9_entry21_piseries2 0 (by
@@ -167,7 +123,7 @@ private lemma aCoeff_nonneg (k : ℕ) : 0 ≤ aCoeff k := by
 
 private lemma aCoeff_le_one (k : ℕ) : aCoeff k ≤ 1 := by
   unfold aCoeff
-  exact hFratio k
+  exact Entry20Piseries1.two_pow_mul_factorial_sq_div_factorial_le_one k
 
 private lemma e22_recip_term_eq (x : ℝ) (m : ℕ) :
     (2 * x) ^ (2 * (m + 1)) / ((((m + 1 : ℕ)) : ℝ) * (Nat.choose (2 * (m + 1)) (m + 1) : ℝ))
