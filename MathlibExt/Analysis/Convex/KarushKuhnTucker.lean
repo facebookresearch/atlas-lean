@@ -38,7 +38,6 @@ import Mathlib.Analysis.Calculus.FDeriv.Add
 import Mathlib.Analysis.Calculus.FDeriv.Mul
 import Mathlib.Analysis.Calculus.FDeriv.Pi
 import Mathlib.Analysis.Calculus.Implicit
-import Mathlib.Analysis.Calculus.LagrangeMultipliers
 import Mathlib.Analysis.Normed.Module.FiniteDimension
 import Mathlib.Basic.Real.Basic
 import Mathlib.LinearAlgebra.Dual.Lemmas
@@ -631,13 +630,12 @@ theorem karush_kuhn_tucker_mixed {E : Type*} [NormedAddCommGroup E] [NormedSpace
     set θ : Fin p → ℝ := fun j => φ (Pi.single j (1 : ℝ)) with hθ_def
     have hexpand : ∀ v : Fin p → ℝ, v = ∑ j, v j • Pi.single j (1 : ℝ) := by
       intro v
-      funext k
-      rw [Finset.sum_apply, Finset.sum_eq_single k _ (fun h => absurd (Finset.mem_univ k) h)]
-      · rw [Pi.smul_apply, Pi.single_eq_same, smul_eq_mul, mul_one]
-      · intro b _ hb
-        rw [Pi.smul_apply, Pi.single_eq_of_ne]
-        · exact smul_zero _
-        · exact Ne.symm hb
+      symm
+      trans ∑ j, Pi.single j (v j)
+      · apply Finset.sum_congr rfl
+        intro j _
+        rw [← Pi.single_smul, smul_eq_mul, mul_one]
+      · exact Finset.univ_sum_single v
     have hφ_expand : ∀ v : Fin p → ℝ, φ v = ∑ j, v j * θ j := by
       intro v
       conv_lhs => rw [hexpand v, map_sum]

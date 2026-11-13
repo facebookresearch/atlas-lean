@@ -344,40 +344,154 @@ example : ∃ (lam : Fin 1 → ℝ) (mu : Fin 1 → ℝ),
     linarith
   exact ⟨lam, mu, hlam, hcompl, hstat, hlam0, hmu0⟩
 
--- Test 2: without LICQ the KKT conclusion can fail (constraint qualification probe).
--- Minimize `f y = y` subject to `g 0 y = y^2 ≤ 0` (no equalities).
--- `0` is the unique feasible point, hence a local min, but no `lam ≥ 0` gives stationarity.
-example : IsLocalMinOn (fun y : ℝ => y)
-      {y | (∀ i : Fin 1, (fun _ y : ℝ => y ^ 2) i y ≤ 0)
-        ∧ ∀ j : Fin 0, (fun (_ : Fin 0) (_ : ℝ) => (0 : ℝ)) j y = 0} (0 : ℝ)
-    ∧ ¬∃ lam : Fin 1 → ℝ, (∀ i, 0 ≤ lam i)
-      ∧ (fderiv ℝ (fun y : ℝ => y) 0
-        + lam 0 • fderiv ℝ ((fun _ y : ℝ => y ^ 2) 0) 0 = 0) := by
-  constructor
-  · -- `0` is the only feasible point, hence a (global, so local) minimum.
-    change ∀ᶠ y : ℝ in 𝓝[{y | (∀ i : Fin 1, (fun _ y : ℝ => y ^ 2) i y ≤ 0)
-        ∧ ∀ j : Fin 0, (fun (_ : Fin 0) (_ : ℝ) => (0 : ℝ)) j y = 0}] 0,
-      (fun y : ℝ => y) 0 ≤ (fun y : ℝ => y) y
+-- Test 2: concrete instance on `ℝ × ℝ` with an active inequality and an equality.
+-- `f p = p.1 + p.2`, `h 0 p = p.2`, `g 0 p = -p.1`, `x = (0, 0)`.
+-- The inequality is active with multiplier `1`; the equality multiplier is `-1`.
+example : ∃ (lam : Fin 1 → ℝ) (mu : Fin 1 → ℝ),
+    (∀ i, 0 ≤ lam i)
+    ∧ (∀ i, lam i * ((fun _ p : ℝ × ℝ => -p.1) i) (0, 0) = 0)
+    ∧ (fderiv ℝ (fun p : ℝ × ℝ => p.1 + p.2) (0, 0)
+      + ∑ i : Fin 1, lam i • fderiv ℝ ((fun _ p : ℝ × ℝ => -p.1) i) (0, 0)
+      + ∑ j : Fin 1, mu j • fderiv ℝ ((fun _ p : ℝ × ℝ => p.2) j) (0, 0) = 0)
+    ∧ lam 0 = 1 ∧ mu 0 = -1 := by
+  have hf_diff : DifferentiableAt ℝ (fun p : ℝ × ℝ => p.1 + p.2) (0, 0) := by fun_prop
+  have hg_diff : ∀ i : Fin 1, DifferentiableAt ℝ ((fun _ p : ℝ × ℝ => -p.1) i) (0, 0) := by
+    intro i
+    fun_prop
+  have hh_diff : ∀ j : Fin 1, ContDiffAt ℝ 1 ((fun _ p : ℝ × ℝ => p.2) j) (0, 0) := by
+    intro j
+    exact contDiffAt_snd
+  have hfeas : ∀ i : Fin 1, (fun _ p : ℝ × ℝ => -p.1) i (0, 0) ≤ 0 := by
+    intro i
+    change -(0 : ℝ) ≤ 0
+    norm_num
+  have heq : ∀ j : Fin 1, (fun _ p : ℝ × ℝ => p.2) j (0, 0) = 0 := by
+    intro j
+    rfl
+  have hmin : IsLocalMinOn (fun p : ℝ × ℝ => p.1 + p.2)
+      {y | (∀ i : Fin 1, (fun _ p : ℝ × ℝ => -p.1) i y ≤ 0)
+        ∧ ∀ j : Fin 1, (fun _ p : ℝ × ℝ => p.2) j y = 0} (0, 0) := by
+    change ∀ᶠ y : ℝ × ℝ in 𝓝[{y | (∀ i : Fin 1, (fun _ p : ℝ × ℝ => -p.1) i y ≤ 0)
+        ∧ ∀ j : Fin 1, (fun _ p : ℝ × ℝ => p.2) j y = 0}] (0, 0),
+      (fun p : ℝ × ℝ => p.1 + p.2) (0, 0) ≤ (fun p : ℝ × ℝ => p.1 + p.2) y
     filter_upwards [self_mem_nhdsWithin] with y hy
-    obtain ⟨hg, -⟩ := hy
-    have h0 := hg 0
-    have hsq : (0 : ℝ) ≤ y ^ 2 := by positivity
-    have heq : y ^ 2 = 0 := le_antisymm h0 hsq
-    have hy0 : y = 0 := sq_eq_zero_iff.mp heq
-    rw [hy0]
-  · -- No multipliers exist: `fderiv` of `y` is `id ≠ 0`, of `y^2` at `0` is `0`.
-    rintro ⟨lam, -, hstat⟩
-    have hid : fderiv ℝ (fun y : ℝ => y) 0 = ContinuousLinearMap.id ℝ ℝ :=
-      (hasFDerivAt_id (0 : ℝ)).fderiv
-    have hzero : fderiv ℝ ((fun _ y : ℝ => y ^ 2) 0) 0 = 0 := by
-      have hfun : ((fun _ y : ℝ => y ^ 2) 0) = (fun y => y * y) := by
-        funext y
-        exact pow_two y
-      rw [hfun]
-      have hmul := (hasFDerivAt_id (𝕜 := ℝ) (0 : ℝ)).mul (hasFDerivAt_id (𝕜 := ℝ) (0 : ℝ))
-      have hfd := hmul.fderiv
-      simp at hfd
-      exact hfd
-    rw [hid, hzero, smul_zero, add_zero] at hstat
-    have hcon1 := congrArg (fun L : ℝ →L[ℝ] ℝ => L 1) hstat
-    simp at hcon1
+    obtain ⟨hg, hh⟩ := hy
+    have h0 : -y.1 ≤ 0 := hg 0
+    have h1 : y.2 = 0 := hh 0
+    show (0 : ℝ) + 0 ≤ y.1 + y.2
+    linarith
+  have hLICQ : LinearIndependent ℝ (Sum.elim
+      (fun j : Fin 1 => fderiv ℝ ((fun _ p : ℝ × ℝ => p.2) j) (0, 0))
+      (fun i : {i : Fin 1 // (fun _ p : ℝ × ℝ => -p.1) i (0, 0) = 0} =>
+        fderiv ℝ ((fun _ p : ℝ × ℝ => -p.1) i.val) (0, 0))) := by
+    -- The inequality is active.
+    have hact0 : (fun _ p : ℝ × ℝ => -p.1) 0 (0, 0) = 0 := by norm_num
+    -- The active index.
+    set a0 : {i : Fin 1 // (fun _ p : ℝ × ℝ => -p.1) i (0, 0) = 0} := ⟨0, hact0⟩
+    -- The active index is unique.
+    have hAsingle : ∀ a : {i : Fin 1 // (fun _ p : ℝ × ℝ => -p.1) i (0, 0) = 0},
+        a = a0 := by
+      intro a
+      exact Subtype.ext (Subsingleton.elim _ _)
+    -- The two derivatives are `snd` and `-fst`.
+    have hderiv_h : HasFDerivAt (fun p : ℝ × ℝ => p.2)
+        (ContinuousLinearMap.snd ℝ ℝ ℝ) (0, 0) := hasFDerivAt_snd
+    have hfderiv_h : fderiv ℝ ((fun _ p : ℝ × ℝ => p.2) 0) (0, 0)
+        = ContinuousLinearMap.snd ℝ ℝ ℝ := hderiv_h.fderiv
+    have hderiv_g : HasFDerivAt (fun p : ℝ × ℝ => -p.1)
+        (-ContinuousLinearMap.fst ℝ ℝ ℝ) (0, 0) := hasFDerivAt_fst.neg
+    have hfderiv_g0 : fderiv ℝ (fun p : ℝ × ℝ => -p.1) (0, 0)
+        = -ContinuousLinearMap.fst ℝ ℝ ℝ := hderiv_g.fderiv
+    -- Independence by direct sum analysis.
+    rw [Fintype.linearIndependent_iff]
+    intro c hc
+    rw [Fintype.sum_sum_type] at hc
+    simp only [Sum.elim_inl, Sum.elim_inr] at hc
+    have hA0 : ∀ a : {i : Fin 1 // (fun _ p : ℝ × ℝ => -p.1) i (0, 0) = 0},
+        a ≠ a0 →
+        c (Sum.inr a) • fderiv ℝ ((fun _ p : ℝ × ℝ => -p.1) a.val) (0, 0) = 0 := by
+      intro a hne
+      exact absurd (hAsingle a) hne
+    have hAsum : (∑ a : {i : Fin 1 // (fun _ p : ℝ × ℝ => -p.1) i (0, 0) = 0},
+        c (Sum.inr a) • fderiv ℝ ((fun _ p : ℝ × ℝ => -p.1) a.val) (0, 0))
+        = c (Sum.inr a0) • (-ContinuousLinearMap.fst ℝ ℝ ℝ) := by
+      have h1 := Fintype.sum_eq_single a0 hA0
+      rw [h1]
+      simp only [hfderiv_g0]
+    rw [Fin.sum_univ_one, hAsum, hfderiv_h] at hc
+    -- `hc` equates `c (inl 0) • snd + c (inr _) • (-fst)` with `0`; evaluate it.
+    have hsnd10 : (ContinuousLinearMap.snd ℝ ℝ ℝ) (1, 0) = 0 := by simp
+    have hfst10 : (-ContinuousLinearMap.fst ℝ ℝ ℝ) (1, 0) = -1 := by simp
+    have hsnd01 : (ContinuousLinearMap.snd ℝ ℝ ℝ) (0, 1) = 1 := by simp
+    have hfst01 : (-ContinuousLinearMap.fst ℝ ℝ ℝ) (0, 1) = 0 := by simp
+    have hcA : c (Sum.inr a0) = 0 := by
+      have h := congrArg (fun L : (ℝ × ℝ) →L[ℝ] ℝ => L (1, 0)) hc
+      simp only [add_apply, smul_apply, smul_eq_mul, zero_apply, hsnd10, hfst10] at h
+      linarith
+    have hc0 : c (Sum.inl 0) = 0 := by
+      have h := congrArg (fun L : (ℝ × ℝ) →L[ℝ] ℝ => L (0, 1)) hc
+      simp only [add_apply, smul_apply, smul_eq_mul, zero_apply, hsnd01, hfst01] at h
+      linarith
+    intro s
+    cases s with
+    | inl j =>
+      have hj0 : j = 0 := Fin.eq_zero j
+      subst hj0
+      exact hc0
+    | inr a =>
+      have ha0 : a = a0 := hAsingle a
+      subst ha0
+      exact hcA
+  obtain ⟨lam, mu, hlam, hcompl, hstat⟩ := karush_kuhn_tucker_mixed
+    hf_diff hg_diff hh_diff hfeas heq hmin hLICQ
+  have hlam0 : lam 0 = 1 := by
+    have hstat1 := congrArg (fun L : (ℝ × ℝ) →L[ℝ] ℝ => L (1, 0)) hstat
+    simp only [add_apply, smul_apply, smul_eq_mul, zero_apply, Fin.sum_univ_one] at hstat1
+    have hf10 : (fderiv ℝ (fun p : ℝ × ℝ => p.1 + p.2) (0, 0)) (1, 0) = 1 := by
+      have hadd : HasFDerivAt (fun p : ℝ × ℝ => p.1 + p.2)
+          (ContinuousLinearMap.fst ℝ ℝ ℝ + ContinuousLinearMap.snd ℝ ℝ ℝ) (0, 0) :=
+        hasFDerivAt_fst.add hasFDerivAt_snd
+      rw [hadd.fderiv]
+      simp
+    have hg10 : (fderiv ℝ ((fun _ p : ℝ × ℝ => -p.1) 0) (0, 0)) (1, 0) = -1 := by
+      have hneg : HasFDerivAt (fun p : ℝ × ℝ => -p.1)
+          (-ContinuousLinearMap.fst ℝ ℝ ℝ) (0, 0) := hasFDerivAt_fst.neg
+      have hfd : fderiv ℝ ((fun _ p : ℝ × ℝ => -p.1) 0) (0, 0)
+          = -ContinuousLinearMap.fst ℝ ℝ ℝ := hneg.fderiv
+      rw [hfd]
+      simp
+    have hh10 : (fderiv ℝ ((fun _ p : ℝ × ℝ => p.2) 0) (0, 0)) (1, 0) = 0 := by
+      have hsnd : HasFDerivAt (fun p : ℝ × ℝ => p.2)
+          (ContinuousLinearMap.snd ℝ ℝ ℝ) (0, 0) := hasFDerivAt_snd
+      have hfd : fderiv ℝ ((fun _ p : ℝ × ℝ => p.2) 0) (0, 0)
+          = ContinuousLinearMap.snd ℝ ℝ ℝ := hsnd.fderiv
+      rw [hfd]
+      simp
+    rw [hf10, hg10, hh10] at hstat1
+    linarith
+  have hmu0 : mu 0 = -1 := by
+    have hstat1 := congrArg (fun L : (ℝ × ℝ) →L[ℝ] ℝ => L (0, 1)) hstat
+    simp only [add_apply, smul_apply, smul_eq_mul, zero_apply, Fin.sum_univ_one] at hstat1
+    have hf01 : (fderiv ℝ (fun p : ℝ × ℝ => p.1 + p.2) (0, 0)) (0, 1) = 1 := by
+      have hadd : HasFDerivAt (fun p : ℝ × ℝ => p.1 + p.2)
+          (ContinuousLinearMap.fst ℝ ℝ ℝ + ContinuousLinearMap.snd ℝ ℝ ℝ) (0, 0) :=
+        hasFDerivAt_fst.add hasFDerivAt_snd
+      rw [hadd.fderiv]
+      simp
+    have hg01 : (fderiv ℝ ((fun _ p : ℝ × ℝ => -p.1) 0) (0, 0)) (0, 1) = 0 := by
+      have hneg : HasFDerivAt (fun p : ℝ × ℝ => -p.1)
+          (-ContinuousLinearMap.fst ℝ ℝ ℝ) (0, 0) := hasFDerivAt_fst.neg
+      have hfd : fderiv ℝ ((fun _ p : ℝ × ℝ => -p.1) 0) (0, 0)
+          = -ContinuousLinearMap.fst ℝ ℝ ℝ := hneg.fderiv
+      rw [hfd]
+      simp
+    have hh01 : (fderiv ℝ ((fun _ p : ℝ × ℝ => p.2) 0) (0, 0)) (0, 1) = 1 := by
+      have hsnd : HasFDerivAt (fun p : ℝ × ℝ => p.2)
+          (ContinuousLinearMap.snd ℝ ℝ ℝ) (0, 0) := hasFDerivAt_snd
+      have hfd : fderiv ℝ ((fun _ p : ℝ × ℝ => p.2) 0) (0, 0)
+          = ContinuousLinearMap.snd ℝ ℝ ℝ := hsnd.fderiv
+      rw [hfd]
+      simp
+    rw [hf01, hg01, hh01] at hstat1
+    linarith
+  exact ⟨lam, mu, hlam, hcompl, hstat, hlam0, hmu0⟩
