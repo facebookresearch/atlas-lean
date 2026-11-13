@@ -25,6 +25,16 @@ policy invariant: one finite numerical example, not a general Lucas-critique the
 
 * `MathlibExt.Economics.Macro.PolicyInvariance.policyOutcome_eq_reducedCoeff`: reduced form.
 * `MathlibExt.Economics.Macro.PolicyInvariance.lucas_notInvariant`: two-regime counterexample.
+
+## References
+
+* R. E. Lucas, Jr., "Econometric Policy Evaluation: A Critique", in K. Brunner and
+  A. H. Meltzer (eds.), *The Phillips Curve and Labor Markets*, Carnegie-Rochester
+  Conference Series on Public Policy 1 (1976), 19–46: estimated relations that embed
+  expectations shift when the policy rule changes.
+* The two-regime numerical construction (structural `y = θ * πe`, policy rule
+  `πe = λ * m`, `θ = 2`, `λ ∈ {1, 3}`) is original to this file; it is not taken from
+  Lucas's paper. Atlas roadmap target MA06.T04.
 -/
 
 namespace MathlibExt.Economics.Macro.PolicyInvariance
