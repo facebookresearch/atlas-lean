@@ -62,6 +62,7 @@ P. Hall and C. C. Heyde, *Martingale Limit Theory and Its Application*, Academic
 Theorem 2.23: under the conditional Lindeberg condition and tightness of
 `V²_{n k_n} = ∑_{i ≤ k_n} E[X_{ni}² | 𝓕_{n,i-1}]`,
 `max_{i ≤ k_n} |U²_{ni} - V²_{ni}| → 0` in probability, where `U²_{ni} = ∑_{j ≤ i} X_{nj}²`.
+(Statement paraphrased; theorem number from the task spec, not checked against the text.)
 -/
 
 @[expose] public section
@@ -394,7 +395,8 @@ The martingale property `E[ξ n i | 𝓕 n i] = 0` is not needed. Hall–Heyde a
 Lindeberg condition; the unconditional one used here (as in T82) implies it.
 
 Source: P. Hall and C. C. Heyde, *Martingale Limit Theory and Its Application*, Academic Press
-(1980), Theorem 2.23. -/
+(1980), Theorem 2.23 (statement paraphrased; theorem number from the task spec, not checked
+against the text). -/
 theorem tendstoInMeasure_sup_abs_sum_sq_sub_condExp {m : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ] {𝓕 : ℕ → Filtration ℕ m} {ξ : ℕ → ℕ → Ω → ℝ}
     (hξ : ∀ n i, StronglyMeasurable[𝓕 n (i + 1)] (ξ n i)) (hL2 : ∀ n i, MemLp (ξ n i) 2 μ)
