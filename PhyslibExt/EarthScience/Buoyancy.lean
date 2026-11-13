@@ -10,7 +10,6 @@ module
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
@@ -24,10 +23,7 @@ height `h` in a uniform fluid, with top pressure `P0` and bottom pressure
 algebraic identities in the given face pressures: each horizontal face
 force is taken to be its pressure times `A`, and the vertical side faces
 are assumed to carry no vertical force. No pressure field is integrated
-over the surface; a general shape requires a proved flux theorem. The
-floating configuration, with the submerged depth bounded by the prism
-height, is `EarthScience.flotation_submerged_fraction` in
-`PhyslibExt.EarthScience.Flotation`.
+over the surface; a general shape requires a proved flux theorem.
 
 ## ii. Key results
 
@@ -35,7 +31,6 @@ height, is `EarthScience.flotation_submerged_fraction` in
 - `EarthScience.pressure_difference`: bottom-minus-top pressure is `rho*g*h`.
 - `EarthScience.weight_eq_buoyancy_at_ratio_height`: the algebraic identity
   `rho_b*(A*H)*g = rho*g*A*((rho_b/rho)*H)`, not a flotation theorem.
-- `EarthScience.witness`: `rho = 1000, g = 10, A = 2, h = 3` gives `60000`.
 
 ## iii. Table of contents
 
@@ -73,12 +68,6 @@ theorem weight_eq_buoyancy_at_ratio_height {ρ ρb g A H : ℝ} (hρ : 0 < ρ) :
     ρb * (A * H) * g = ρ * g * A * ((ρb / ρ) * H) := by
   have hρ' : ρ ≠ 0 := ne_of_gt hρ
   field_simp
-
-/-- Non-vacuous witness: `rho = 1000, g = 10, A = 2, h = 3` gives
-buoyancy force `60000`. -/
-theorem witness :
-    (0 + (1000 : ℝ) * 10 * 3) * 2 - 0 * 2 = 60000 := by
-  norm_num
 
 
 end EarthScience

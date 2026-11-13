@@ -15,8 +15,9 @@ import PhyslibExt.EarthScience.Buoyancy
 # Buoyancy checks
 
 Concrete consumers of `PhyslibExt.EarthScience.Buoyancy`:
-`rho = 500, g = 10, A = 3, h = 2` (force `30000`), the weight identity
-at half-submersion, and the emerge case `h = 0`.
+`rho = 500, g = 10, A = 3, h = 2` (force `30000`), `rho = 1000, g = 10,
+A = 2, h = 3` (force `60000`), the weight identity at half-submersion, and
+the emerge case `h = 0`.
 
 ## i. Overview
 
@@ -37,6 +38,9 @@ No new definitions or results are introduced here.
 
 /-- Numeric buoyancy: `rho = 500, g = 10, A = 3, h = 2` gives force `30000`. -/
 example : ((0:ℝ) + 500 * 10 * 2) * 3 - 0 * 3 = 30000 := by norm_num
+
+/-- Numeric buoyancy: `rho = 1000, g = 10, A = 2, h = 3` gives force `60000`. -/
+example : (0 + (1000 : ℝ) * 10 * 3) * 2 - 0 * 2 = 60000 := by norm_num
 
 /-- Buoyancy theorem at the numeric values. -/
 example : ((0:ℝ) + 500 * 10 * 2) * 3 - 0 * 3 = 500 * 10 * 3 * 2 :=
