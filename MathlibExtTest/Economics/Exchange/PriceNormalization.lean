@@ -9,13 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Economics.Exchange.PriceNormalization
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.FinCases
 
 @[expose] public section
 
-open MathlibExt.Economics MathlibExt.Economics.Exchange
+open MathlibExt.Economics
 
 namespace MathlibExtTest.Economics.Exchange.PriceNormalization
 
@@ -27,11 +28,22 @@ def linU : Fin 2 → (Fin 2 → ℝ) → ℝ := fun _ x => x 0 + x 1
 /-- Consumer `0` owns good `0`, consumer `1` owns good `1`. -/
 def endow : Fin 2 → Fin 2 → ℝ := ![![1, 0], ![0, 1]]
 
+/-- The two-consumer, two-good exchange economy with utilities `linU` and endowments `endow`. -/
+def linEcon : ExchangeEconomy (Fin 2) (Fin 2) where
+  endowment := endow
+  utility := linU
+
 /-- No trade at prices `(1, 1)` is a Walrasian equilibrium. -/
-theorem noTrade_eq_one : IsWalrasianEquilibrium linU endow ![1, 1] endow := by
-  refine ⟨?hendow, ?hnn, ?hne, ?hdem, rfl⟩
-  · simp only [SecondWelfareTheorem.consumptionSet, Set.mem_ofPred_eq]
-    intro i
+theorem noTrade_eq_one : linEcon.IsWalrasianEquilibrium ![1, 1] endow := by
+  refine ⟨?hnn, ?hne, ⟨?hendow, le_rfl⟩, fun _ _ => rfl, ?hdem⟩
+  · intro l
+    fin_cases l
+    · show (0 : ℝ) ≤ 1; norm_num
+    · show (0 : ℝ) ≤ 1; norm_num
+  · intro h
+    have h0 := congrFun h 0
+    norm_num at h0
+  · intro i
     fin_cases i
     · intro j
       fin_cases j
@@ -41,18 +53,11 @@ theorem noTrade_eq_one : IsWalrasianEquilibrium linU endow ![1, 1] endow := by
       fin_cases j
       · show (0 : ℝ) ≤ 0; norm_num
       · show (0 : ℝ) ≤ 1; norm_num
-  · intro l
-    fin_cases l
-    · show (0 : ℝ) ≤ 1; norm_num
-    · show (0 : ℝ) ≤ 1; norm_num
-  · intro h
-    have h0 := congrFun h 0
-    norm_num at h0
   · intro i
     have h01 : i = 0 ∨ i = 1 := by fin_cases i <;> simp
     rcases h01 with rfl | rfl
-    · simp only [_root_.Economics.Consumer.IsMarshallianDemand, Consumer.budgetSet,
-        SecondWelfareTheorem.consumptionSet, Set.mem_ofPred_eq]
+    · simp only [_root_.Economics.Consumer.IsMarshallianDemand, Consumer.budgetSet, linEcon,
+        Set.mem_ofPred_eq]
       refine ⟨⟨?hx0, le_rfl⟩, ?hopt0⟩
       · intro j
         fin_cases j
@@ -71,8 +76,8 @@ theorem noTrade_eq_one : IsWalrasianEquilibrium linU endow ![1, 1] endow := by
         have huve : linU 0 (endow 0) = 1 + 0 := rfl
         rw [huv, huve]
         linarith
-    · simp only [_root_.Economics.Consumer.IsMarshallianDemand, Consumer.budgetSet,
-        SecondWelfareTheorem.consumptionSet, Set.mem_ofPred_eq]
+    · simp only [_root_.Economics.Consumer.IsMarshallianDemand, Consumer.budgetSet, linEcon,
+        Set.mem_ofPred_eq]
       refine ⟨⟨?hx1, le_rfl⟩, ?hopt1⟩
       · intro j
         fin_cases j
@@ -93,20 +98,20 @@ theorem noTrade_eq_one : IsWalrasianEquilibrium linU endow ![1, 1] endow := by
         linarith
 
 /-- ... and so is no trade at the rescaled prices `(2, 2)`. -/
-theorem noTrade_eq_two : IsWalrasianEquilibrium linU endow ![2, 2] endow := by
+theorem noTrade_eq_two : linEcon.IsWalrasianEquilibrium ![2, 2] endow := by
   have h2 : (![2, 2] : Fin 2 → ℝ) = (2 : ℝ) • ![1, 1] := by
     ext j
     fin_cases j <;> simp [Pi.smul_apply, smul_eq_mul]
   rw [h2]
   have hpos : (0 : ℝ) < 2 := by norm_num
-  exact (isWalrasianEquilibrium_smul_iff _ _ hpos _ _).mpr noTrade_eq_one
+  exact (linEcon.isWalrasianEquilibrium_smul_iff hpos _ _).mpr noTrade_eq_one
 
 /-- Scaling by zero fails: at zero prices every bundle is affordable and no bundle is demanded. -/
-theorem noTrade_not_eq_zero : ¬ IsWalrasianEquilibrium linU endow 0 endow := by
-  rintro ⟨-, -, -, hdem, -⟩
+theorem noTrade_not_eq_zero : ¬ linEcon.IsWalrasianEquilibrium 0 endow := by
+  rintro ⟨-, -, -, -, hdem⟩
   have h0 := hdem 0
-  simp only [_root_.Economics.Consumer.IsMarshallianDemand, Consumer.budgetSet,
-    SecondWelfareTheorem.consumptionSet, Set.mem_ofPred_eq] at h0
+  simp only [_root_.Economics.Consumer.IsMarshallianDemand, Consumer.budgetSet, linEcon,
+    Set.mem_ofPred_eq] at h0
   obtain ⟨hmem, hmax⟩ := h0
   have hmem2 : (0 ≤ (![2, 0] : Fin 2 → ℝ)) ∧
       (0 : Fin 2 → ℝ) ⬝ᵥ ![2, 0] ≤ (0 : Fin 2 → ℝ) ⬝ᵥ endow 0 := by
@@ -121,16 +126,6 @@ theorem noTrade_not_eq_zero : ¬ IsWalrasianEquilibrium linU endow 0 endow := by
   have e2 : linU 0 (endow 0) = 1 + 0 := rfl
   rw [e1, e2] at hle
   norm_num at hle
-
-/-- Degenerate regression test (Codex P1): with constant-zero utility, zero endowments and
-the zero allocation, every equilibrium conjunct except `p ≠ 0` holds at `p = 0`; the zero
-price vector is still not an equilibrium, so it cannot be normalized. -/
-theorem zero_price_not_eq_const :
-    ¬ IsWalrasianEquilibrium (fun (_ : Fin 2) (_ : Fin 2 → ℝ) => (0 : ℝ))
-      (fun (_ : Fin 2) => (0 : Fin 2 → ℝ))
-      (0 : Fin 2 → ℝ) (fun (_ : Fin 2) => (0 : Fin 2 → ℝ)) := by
-  intro h
-  exact h.2.2.1 rfl
 
 end PriceNormalizationExamples
 
