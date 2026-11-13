@@ -33,9 +33,9 @@ deprecated alias `solvable_of_surjective`; here the non-deprecated
 
 namespace GaloisTheory
 
-/-- **Abel–Ruffini, contrapositive form.** If `p` is irreducible and its
-Galois group is the full symmetric group `Sₙ` with `n ≥ 5`, then no root of
-`p` (in any extension) is solvable by radicals. -/
+/-- **Abel–Ruffini, contrapositive form.** Let $F$ be a field, let $E$ be a field extension of $F$,
+and let $n \ge 5$. If $p \in F[X]$ is irreducible and the Galois group of $p$ over $F$ is isomorphic
+to the symmetric group $S_n$, then no root of $p$ in $E$ is solvable by radicals over $F$. -/
 theorem not_solvableByRad_of_gal_iso_perm {F E : Type*} [Field F] [Field E]
     [Algebra F E] {n : ℕ} (hn : 5 ≤ n) {p : Polynomial F} (hp : Irreducible p)
     (hiso : p.Gal ≃* Equiv.Perm (Fin n)) {x : E} (hpx : Polynomial.aeval x p = 0) :
@@ -48,9 +48,11 @@ theorem not_solvableByRad_of_gal_iso_perm {F E : Type*} [Field F] [Field E]
     @Group.isSolvable_of_surjective _ _ _ _ hiso.toMonoidHom hiso.surjective hsol
   exact Equiv.Perm.not_isSolvable (X := Fin n) (by simpa using hn) hsol'
 
-/-- **Abel–Ruffini for `S₅`.** If `p` is irreducible and its Galois group
-is `S₅`, then no root of `p` is solvable by radicals. This is the v1
-statement `GaloisTheory.not_solvableByRad_of_gal_iso_S5`, restated with the
+/-- **Abel–Ruffini for $S_5$.** Let $F$ be a field and let $E$ be a field extension of $F$. If
+$p \in F[X]$ is irreducible and the Galois group of $p$ over $F$ is isomorphic to the symmetric
+group $S_5$, then no root of $p$ in $E$ is solvable by radicals over $F$.
+
+Source: v1 statement `GaloisTheory.not_solvableByRad_of_gal_iso_S5`, restated with the
 non-deprecated solvability transport. -/
 theorem not_solvableByRad_of_gal_iso_S5 {F E : Type*} [Field F] [Field E]
     [Algebra F E] {p : Polynomial F} (hp : Irreducible p)

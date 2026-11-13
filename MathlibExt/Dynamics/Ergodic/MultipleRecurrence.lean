@@ -199,16 +199,22 @@ private theorem furst_unshift_progression {α : Type*} [MeasurableSpace α]
   simpa [B] using hpos
 
 /--
-If `T` preserves a probability measure `μ` and `A` is measurable with `0 < μ A`, then for every `k
-> 0` there exists `n > 0` such that `⋂ i ∈ Finset.range k, T^[i * n] ⁻¹' A` has positive measure.
-Source: H. Furstenberg, J. Analyse Math. 31 (1977) and Recurrence in Ergodic Theory (1981); Lean
-states one-transformation arithmetic-progression k-term intersection form without ergodicity
-hypothesis.
+**Furstenberg multiple recurrence theorem.** Let $\mu$ be a probability measure on a measurable
+space $\alpha$, let $T : \alpha \to \alpha$ be a measurable map preserving $\mu$, and let $A$ be a
+measurable set with $\mu(A) > 0$. For $m \in \mathbb{N}$ write $T^{-m}(A)$ for the preimage of $A$
+under the $m$-th iterate of $T$. Then for every integer $k > 0$ there is an integer $n > 0$ such
+that
+
+$$\mu\Big(\bigcap_{i=0}^{k-1} T^{-i n}(A)\Big) > 0.$$
 
 Proves `Wanted` entry `furstenberg_multipleRecurrence`.
 
 Proof: We apply the finitary Szemerédi theorem to dense sets of return times in finite orbit
 segments, using an averaging argument to obtain a positive-measure family of such segments.
+
+Source: H. Furstenberg, J. Analyse Math. 31 (1977) and Recurrence in Ergodic Theory (1981); Lean
+states one-transformation arithmetic-progression k-term intersection form without ergodicity
+hypothesis.
 -/
 public theorem furstenberg_multipleRecurrence
     {α : Type*} [MeasurableSpace α] {μ : Measure α} [IsProbabilityMeasure μ]

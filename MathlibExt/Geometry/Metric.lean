@@ -27,45 +27,57 @@ open scoped Finset
 
 variable {X : Type*} [MetricSpace X]
 
-/-- The multiplicity of the distance `d` determined by `points`, that is, the number of unordered
-pairs of distinct points at distance `d` apart. -/
+/-- **Multiplicity of a distance.** Let $P$ be a finite set of points in a metric space and let
+$d$ be a real number. The multiplicity of $d$ in $P$ is the number of unordered pairs
+$\{p, q\}$ of distinct points of $P$ with $\operatorname{dist}(p, q) = d$. -/
 noncomputable def distanceMultiplicity (points : Finset X) (d : ℝ) : ℕ :=
   #(points.offDiag.filter fun (pair : X × X) => dist pair.1 pair.2 = d) / 2
 
-/-- The number of pairs of points of a finite set `s` in a metric space that are distance 1 apart.
+/-- **Number of unit distances.** For a finite set $S$ of points in a metric space, the number of
+unit distances of $S$ is the number of unordered pairs $\{p, q\}$ of points of $S$ with
+$\operatorname{dist}(p, q) = 1$, that is, the multiplicity of the distance $1$ in $S$.
 -/
 noncomputable def unitDistNum (s : Finset X) : ℕ := distanceMultiplicity s 1
 
 @[simp] theorem unitDistNum_eq_distanceMultiplicity (s : Finset X) :
     unitDistNum s = distanceMultiplicity s 1 := rfl
 
-/-- The set of distances determined by a finite set of points in a metric space. -/
+/-- **Distance set of a finite point set.** For a finite set $P$ of points in a metric space,
+the distance set of $P$ is the finite set of real numbers $\operatorname{dist}(p, q)$ with $p$
+and $q$ distinct points of $P$. -/
 noncomputable def distanceSet (points : Finset X) : Finset ℝ :=
   points.offDiag.image fun (pair : X × X) => dist pair.1 pair.2
 
 /--
-Given a finite set of points in a metric space, we define the number of distinct distances
-between pairs of points.
+**Number of distinct distances.** For a finite set $P$ of points in a metric space, the number
+of distinct distances of $P$ is the number of elements of its distance set, that is, the number
+of distinct values $\operatorname{dist}(p, q)$ with $p$ and $q$ distinct points of $P$.
 -/
 noncomputable def distinctDistances (points : Finset X) : ℕ :=
   #(distanceSet points)
 
 variable (X) in
-/-- The minimum number of distinct distances determined by a set of `n` points in `X`.
-The explicit existence witness prevents an empty candidate set, so the infimum is never
-taken silently over `∅` (where `Nat.sInf_empty = 0` would apply). -/
+/-- **Minimum number of distinct distances.** Let $X$ be a metric space and $n$ a natural number
+such that $X$ contains a set of exactly $n$ points. The minimum number of distinct distances for
+$n$ points in $X$ is the least number of distinct distances determined by a set of exactly $n$
+points of $X$.
+
+The hypothesis that some $n$-point set exists makes the minimum range over a nonempty
+collection of sets. -/
 noncomputable def minimalDistinctDistances (n : ℕ) (_ : ∃ points : Finset X, #points = n) : ℕ :=
   sInf {m : ℕ | ∃ points : Finset X, #points = n ∧ distinctDistances points = m}
 
 open Classical in
-/-- Given a finite set of points in a metric space, we define the number of distinct distances
-between a given point and all other points. -/
+/-- **Number of distinct distances from a point.** For a finite set $P$ of points in a metric
+space and a point $x$ of the space, this is the number of distinct values
+$\operatorname{dist}(y, x)$ with $y$ a point of $P$ other than $x$. -/
 noncomputable def distinctDistancesFrom (points : Finset X) (pt : X) : ℕ :=
   #((points.erase pt).image fun x => dist x pt)
 
 open Classical in
-/-- The number of unit-distance pairs of a finite set of `n` points is at most $\binom{n}{2}$,
-the total number of unordered pairs of distinct points. -/
+/-- **Trivial upper bound on unit distances.** For a finite set of $n$ points in a metric space,
+the number of unit distances is at most $\binom{n}{2}$, the total number of unordered pairs of
+distinct points. -/
 theorem unitDistNum_le_choose_two (s : Finset X) : unitDistNum s ≤ (#s).choose 2 := by
   unfold unitDistNum distanceMultiplicity
   calc #(s.offDiag.filter fun (pair : X × X) => dist pair.1 pair.2 = 1) / 2

@@ -61,12 +61,17 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimension
   {H : Type*} [TopologicalSpace H] (I : ModelWithCorners ℝ E H)
   (M : Type*) [TopologicalSpace M] [ChartedSpace H M] [IsManifold I ∞ M]
 
-/-- A `C^∞` Finsler metric on `M` (Bao–Chern–Shen, *An Introduction to Riemann–Finsler Geometry*,
-§1.1, where `F` takes values in `[0, ∞)` and the Hessian is that of `F² / 2`): a continuous
-function `F : TM → ℝ`, `C^∞` off the zero section, positive on nonzero vectors, positively
-homogeneous of degree one on each fiber (`F(c v) = c F(v)` for `c > 0`), and strongly convex: at
-every nonzero `v ∈ T_x M ≅ E` the Hessian of `u ↦ F(x, u)²` is positive definite. The model `E` is
-finite-dimensional. -/
+/-- **Finsler metric.** Let $M$ be a $C^\infty$ manifold (possibly with boundary or corners)
+modelled on a finite-dimensional real normed space $E$, so that each tangent space $T_xM$ is $E$.
+A $C^\infty$ Finsler metric on $M$ is a continuous function $F : TM \to \mathbb{R}$ that is
+$C^\infty$ off the zero section, satisfies $F(x, v) > 0$ for every $x \in M$ and every nonzero
+$v \in T_xM$, is positively homogeneous of degree one on each fiber, that is
+$F(x, cv) = c\,F(x, v)$ for all $x \in M$, $v \in T_xM$ and real $c > 0$, and is strongly convex:
+for every $x \in M$ and all nonzero $v, w \in E$, the second derivative at $v$ of the function
+$u \mapsto F(x, u)^2$ on $E$ satisfies $D^2\big(F(x, \cdot)^2\big)(v)(w, w) > 0$.
+
+Source: Bao–Chern–Shen, *An Introduction to Riemann–Finsler Geometry*, §1.1, where $F$ takes
+values in $[0, \infty)$ and the Hessian is that of $F^2/2$. -/
 structure FinslerMetric [FiniteDimensional ℝ E] where
   /-- The Finsler function `F : TM → ℝ`. -/
   toFun : TangentBundle I M → ℝ
@@ -84,30 +89,46 @@ variable {I M}
 
 instance : CoeFun (FinslerMetric I M) fun _ ↦ TangentBundle I M → ℝ := ⟨toFun⟩
 
-/-- A Finsler metric is reversible if `F(-v) = F(v)` for every tangent vector `v`. -/
+/-- **Reversible Finsler metric.** A Finsler metric $F$ on a manifold $M$ is reversible if
+$F(x, -v) = F(x, v)$ for every point $x \in M$ and every tangent vector $v \in T_xM$. -/
 def IsReversible (F : FinslerMetric I M) : Prop :=
   ∀ v : TangentBundle I M, F ⟨v.proj, -v.2⟩ = F v
 
-/-- The forward Finsler distance from `x` to `y`: the infimum of the Finsler lengths
-`∫ F(γ'(t)) dt` of `C¹` paths from `x` to `y` (Bao–Chern–Shen, §6.2). It is not symmetric unless
-`F` is reversible. The formula is that of Mathlib's `riemannianEDist` with `‖v‖ₑ` replaced by
-`F v`. -/
+/-- **Forward Finsler distance.** Let $F$ be a Finsler metric on a manifold $M$. The forward
+Finsler distance from $x \in M$ to $y \in M$ is the value in $[0, \infty]$
+$$
+d_F(x, y) = \inf_\gamma \int_0^1 F(\gamma(t), \gamma'(t))\, dt,
+$$
+the infimum over all $C^1$ paths $\gamma : [0, 1] \to M$ from $x$ to $y$; it is $\infty$ when
+there is no such path.
+
+It is not symmetric unless $F$ is reversible.
+
+Source: Bao–Chern–Shen, *An Introduction to Riemann–Finsler Geometry*, §6.2. The formula is that
+of Mathlib's `riemannianEDist` with `‖v‖ₑ` replaced by `F v`. -/
 def edist (F : FinslerMetric I M) (x y : M) : ℝ≥0∞ :=
   ⨅ (γ : Path x y) (_ : CMDiff 1 γ), ∫⁻ t, ENNReal.ofReal (F ⟨γ t, mfderiv% γ t 1⟩)
 
-/-- `γ` is a geodesic of speed `c` of the Finsler metric `F` on the set of times `s`: every
-`t ∈ s` has a neighborhood on which `γ` realizes forward distances with factor `c`,
-`F.edist (γ t₁) (γ t₂) = c * (t₂ - t₁)` for `t₁ ≤ t₂` in `s` that are `ε`-close to `t`. -/
+/-- **Finsler geodesic of given speed on a set of times.** Let $F$ be a Finsler metric on a
+manifold $M$ with forward distance $d_F$, let $\gamma : \mathbb{R} \to M$ be a curve, let
+$s \subseteq \mathbb{R}$ be a set of times and let $c \ge 0$ be a real number. Then $\gamma$ is a
+geodesic of speed $c$ of $F$ on $s$ if for every $t \in s$ there is $\varepsilon > 0$ such that
+$d_F(\gamma(t_1), \gamma(t_2)) = c\,(t_2 - t_1)$ for all $t_1, t_2 \in s$ with $t_1 \le t_2$,
+$|t_1 - t| < \varepsilon$ and $|t_2 - t| < \varepsilon$. -/
 def IsGeodesicOnWithSpeed (F : FinslerMetric I M) (γ : ℝ → M) (s : Set ℝ) (c : ℝ≥0) : Prop :=
   ∀ t ∈ s, ∃ ε > (0 : ℝ), ∀ t₁ ∈ s, ∀ t₂ ∈ s, |t₁ - t| < ε → |t₂ - t| < ε → t₁ ≤ t₂ →
     F.edist (γ t₁) (γ t₂) = c * ENNReal.ofReal (t₂ - t₁)
 
-/-- `γ : ℝ → M` is a geodesic of the Finsler metric `F`, defined for all times, of some constant
-speed. -/
+/-- **Finsler geodesic.** Let $F$ be a Finsler metric on a manifold $M$. A curve
+$\gamma : \mathbb{R} \to M$ is a geodesic of $F$ if there is a real number $c \ge 0$ such that
+$\gamma$ is a geodesic of speed $c$ of $F$ on all of $\mathbb{R}$. -/
 def IsGeodesic (F : FinslerMetric I M) (γ : ℝ → M) : Prop :=
   ∃ c : ℝ≥0, F.IsGeodesicOnWithSpeed γ univ c
 
-/-- A closed geodesic of the Finsler metric `F`: a non-constant periodic geodesic `ℝ → M`. -/
+/-- **Closed Finsler geodesic.** Let $F$ be a Finsler metric on a manifold $M$. A curve
+$\gamma : \mathbb{R} \to M$ is a closed geodesic of $F$ if it is a geodesic of $F$, it is periodic
+with some period $T > 0$, that is $\gamma(t + T) = \gamma(t)$ for all real $t$, and it is not
+constant: $\gamma(t_1) \ne \gamma(t_2)$ for some real $t_1, t_2$. -/
 def IsClosedGeodesic (F : FinslerMetric I M) (γ : ℝ → M) : Prop :=
   F.IsGeodesic γ ∧ (∃ T > 0, Function.Periodic γ T) ∧ ∃ t₁ t₂, γ t₁ ≠ γ t₂
 
@@ -119,7 +140,9 @@ namespace Manifold.FinslerMetric
 
 variable {F : Type*} [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDimensional ℝ F]
 
-/-- The Euclidean Finsler metric `F(x, v) = ‖v‖` of an inner product space `F`. -/
+/-- **Euclidean Finsler metric.** Let $V$ be a finite-dimensional real inner product space,
+viewed as a smooth manifold whose tangent spaces are $V$ itself. The Euclidean Finsler metric on
+$V$ is $F(x, v) = \|v\|$ for $x \in V$ and $v \in T_xV = V$. -/
 def euclidean : FinslerMetric 𝓘(ℝ, F) F where
   toFun v := ‖@id F v.2‖
   continuous_toFun := continuous_norm.comp
@@ -140,7 +163,9 @@ def euclidean : FinslerMetric 𝓘(ℝ, F) F where
     have := real_inner_self_pos.mpr hw
     positivity
 
-/-- The Euclidean Finsler metric is reversible. -/
+/-- **The Euclidean Finsler metric is reversible.** For every finite-dimensional real inner
+product space $V$, the Euclidean Finsler metric $F(x, v) = \|v\|$ on $V$ is reversible:
+$F(x, -v) = F(x, v)$ for all $x, v \in V$. -/
 theorem euclidean_isReversible : (euclidean : FinslerMetric 𝓘(ℝ, F) F).IsReversible :=
   fun v ↦ norm_neg (@id F v.2)
 

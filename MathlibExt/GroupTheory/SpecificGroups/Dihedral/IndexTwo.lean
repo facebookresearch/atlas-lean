@@ -26,8 +26,9 @@ set_option autoImplicit false
 namespace MetaMathlibExt
 @[expose] public section
 
-/-- A finite group with a cyclic index-two subgroup is dihedral
-when every element outside that subgroup is an involution. -/
+/-- **Dihedral groups from a cyclic subgroup of index two.** Let $G$ be a finite group and let
+$H$ be a cyclic subgroup of $G$ of index $2$. If $g^2 = 1$ for every element $g$ of $G$ that is
+not in $H$, then $G$ is isomorphic to the dihedral group $D_n$ of order $2n$, where $n = |H|$. -/
 theorem nonempty_mulEquiv_dihedralGroup_of_index_eq_two {G : Type*} [Group G] [Finite G]
     (H : Subgroup G) (hHcyc : IsCyclic H) (hindex : H.index = 2)
     (houtside : ∀ g : G, g ∉ H → g ^ 2 = 1) :

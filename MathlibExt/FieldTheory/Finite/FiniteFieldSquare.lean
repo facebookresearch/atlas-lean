@@ -74,8 +74,9 @@ private theorem card_filter_sq_eq_zero_le_one {F : Type*} [Field F] [Fintype F] 
       ≤ ({0} : Finset F).card := Finset.card_le_card hsub
     _ = 1 := Finset.card_singleton 0
 
-/-- In a field with more than five elements, some square avoids `0`, `1`,
-and `-1`. -/
+/-- **A square avoiding $0$, $1$ and $-1$ in a finite field.** If $F$ is a finite field with
+more than five elements, then there is an element $r \in F$ with $r^2 \neq 0$, $r^2 \neq 1$
+and $r^2 \neq -1$. -/
 theorem exists_sq_ne_zero_one_neg_one {F : Type*} [Field F] [Fintype F]
     (hF : 5 < Fintype.card F) :
     ∃ r : F, r ^ 2 ≠ 0 ∧ r ^ 2 ≠ 1 ∧ r ^ 2 ≠ -1 := by

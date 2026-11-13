@@ -94,9 +94,14 @@ private theorem mfderiv_sub_const_eq
   exact heq.trans (sub_zero _)
 
 omit [CompactSpace M] in
-/-- For a finite-dimensional boundaryless Hausdorff second-countable `C^∞` manifold `M`, every
-`C^∞` map `f : M → ℝ^n` and `ε>0` admits a `C^∞` map `g` with `‖f x - g x‖ < ε` for all `x` such
-that `0` is a regular value of `g`. No compactness is needed. -/
+/-- **Approximation by maps having zero as a regular value.** Let $M$ be a Hausdorff,
+second-countable smooth manifold without boundary modelled on a finite-dimensional real normed
+space, let $f : M \to \mathbb{R}^n$ be $C^\infty$, and let $\varepsilon > 0$. Then there is a
+$C^\infty$ map $g : M \to \mathbb{R}^n$ such that $\lVert f(x) - g(x) \rVert < \varepsilon$ for
+every $x \in M$ (Euclidean norm) and $0$ is a regular value of $g$, that is, the manifold
+derivative of $g$ at $x$ is surjective for every $x \in M$ with $g(x) = 0$.
+
+No compactness is needed. -/
 theorem thom_transversality_uniform_approx_regular_value_zero
     {n : ℕ}
     (f : M → EuclideanSpace ℝ (Fin n))
@@ -121,13 +126,18 @@ theorem thom_transversality_uniform_approx_regular_value_zero
     exact hsurj
 
 /--
-For a compact finite-dimensional boundaryless Hausdorff second-countable `C^∞` manifold `M`, every
-`C^∞` map `f : M → ℝ^n` and `ε>0` admits a `C^∞` map `g` with `‖f x - g x‖ < ε` for all `x` such
-that `0` is a regular value of `g`. Source: R. Thom, Comment. Math. Helv. 28 (1954) 17–86
-transversality; M. Hirsch, Differential Topology; Guillemin-Pollack, Differential Topology; J.
-Lee, ISMs; Lean states compact-source uniform-approx regular-value-zero corollary.
+**Approximation by maps having zero as a regular value, compact case.** Let $M$ be a compact,
+Hausdorff, second-countable smooth manifold without boundary modelled on a finite-dimensional real
+normed space, let $f : M \to \mathbb{R}^n$ be $C^\infty$, and let $\varepsilon > 0$. Then there is
+a $C^\infty$ map $g : M \to \mathbb{R}^n$ such that $\lVert f(x) - g(x) \rVert < \varepsilon$ for
+every $x \in M$ (Euclidean norm) and $0$ is a regular value of $g$, that is, the manifold
+derivative of $g$ at $x$ is surjective for every $x \in M$ with $g(x) = 0$.
 
 Proves `Wanted` entry `thom_transversality_compact_source_uniform_approx_regular_value_zero`.
+
+Source: R. Thom, Comment. Math. Helv. 28 (1954) 17–86
+transversality; M. Hirsch, Differential Topology; Guillemin-Pollack, Differential Topology; J.
+Lee, ISMs; Lean states compact-source uniform-approx regular-value-zero corollary.
 -/
 theorem thom_transversality_compact_source_uniform_approx_regular_value_zero
     {n : ℕ}

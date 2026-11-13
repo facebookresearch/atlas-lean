@@ -43,17 +43,27 @@ open Turing Function
 
 variable {K : Type} [DecidableEq K] {Γ : K → Type} {Λ σ : Type}
 
-/-- Whether the top of a stack is a bit symbol under the decoder `d`. -/
+/-- **Bit test for the top of a stack.** Let $d$ be a decoder that reads each symbol either as a
+bit or as a marker. For an optional symbol $o$ (the top of a stack, absent when the stack is
+empty), the test is true when $o$ is a symbol that $d$ reads as a bit, and false when $o$ is
+absent or $d$ reads it as a marker. -/
 def isBit {α : Type} (d : α → Option Bool) (o : Option α) : Bool := (o.bind d).isSome
 
-/-- The bit on top of a stack under the decoder `d` (`false` on a marker or an empty stack). -/
+/-- **Bit on top of a stack.** Let $d$ be a decoder that reads each symbol either as a bit or as
+a marker. For an optional symbol $o$ (the top of a stack, absent when the stack is empty), the
+bit of $o$ under $d$ is $x$ when $o$ is a symbol that $d$ reads as the bit $x$, and false when $o$
+is absent or $d$ reads it as a marker. -/
 def bitOf {α : Type} (d : α → Option Bool) (o : Option α) : Bool := (o.bind d).getD false
 
-/-- A list of symbols is the bit block `p` under `d`: every symbol decodes to the matching bit. -/
+/-- **Bit blocks.** Let $d$ be a decoder that reads each symbol either as a bit or as a marker. A
+list of symbols $s_1, \dots, s_n$ is the bit block of a bit string $p$ under $d$ when $p$ has the
+same length $n$ and, for each $i$, $d$ reads $s_i$ as the $i$-th bit of $p$. -/
 def IsBitBlock {α : Type} (d : α → Option Bool) (xs : List α) (p : List Bool) : Prop :=
   xs.map d = p.map some
 
-/-- A stack rest ends a block: it is empty or starts with a marker. -/
+/-- **End of a bit block.** Let $d$ be a decoder that reads each symbol either as a bit or as a
+marker. A list of symbols $A$ (the rest of a stack below a block) ends a bit block under $d$ when
+$A$ is empty or $d$ reads its first symbol as a marker. -/
 def EndsBitBlock {α : Type} (d : α → Option Bool) (A : List α) : Prop := A.head?.bind d = none
 
 theorem IsBitBlock.nil_left {α : Type} {d : α → Option Bool} {p : List Bool}
@@ -81,8 +91,12 @@ variable [Flag σ] {M : Λ → TM2.Stmt Γ Λ σ}
 
 section Move
 
-/-- Loop: while the top of `a` is a bit, pop it and push its re-encoding `g bit` onto `b`; at a
-marker or an empty stack go to `next`. -/
+/-- **Bit-moving loop.** For stacks $a$ and $b$, a decoder $d$ reading each symbol of $a$ as a bit
+or a marker, an encoder $g$ from bits to symbols of $b$, and labels $\mathit{self}$ and
+$\mathit{next}$, the bit-moving loop from $a$ to $b$ is the statement that looks at the top of
+$a$: if it is a symbol that $d$ reads as a bit $x$, it pops it, pushes $g(x)$ onto $b$ and goes to
+$\mathit{self}$; if it is a marker or $a$ is empty, it goes to $\mathit{next}$. It overwrites the
+state with a flag bit, used as scratch. -/
 def moveB (a b : K) (d : Γ a → Option Bool) (g : Bool → Γ b) (self next : Λ) :
     TM2.Stmt Γ Λ σ :=
   .peek a (fun _ o => Flag.tag (isBit d o))
@@ -93,8 +107,17 @@ def moveB (a b : K) (d : Γ a → Option Bool) (g : Bool → Γ b) (self next : 
           (.push b (fun _ => g false) (.goto fun _ => self))))
       (.goto fun _ => next))
 
-/-- `moveB` moves the bit block `p` of `a` onto `b` (reversed, re-encoded by `g`) in exactly
-`p.length + 1` steps, leaving the rest of `a` and every other stack unchanged. -/
+/-- **Running the bit-moving loop.** Let $a \ne b$ be stacks of a program $M$ whose state carries
+a flag bit, $d$ a decoder reading each symbol of $a$ as a bit or a marker, $g$ an encoder from bits
+to symbols of $b$, and $\mathit{self}$, $\mathit{next}$ labels such that $M$ runs at
+$\mathit{self}$ the bit-moving loop from $a$ to $b$ with decoder $d$ and encoder $g$, looping at
+$\mathit{self}$ and exiting to $\mathit{next}$. Let $p = p_1 \cdots p_n$ be a bit list and $S$
+stack contents in which $a$ holds a bit block for $p$ under $d$ followed by a rest $A$ that ends a
+bit block under $d$. Then for every state $v$ there are a state $v'$ and stack contents $S'$ such
+that $M$ runs in exactly $n + 1$ steps from label $\mathit{self}$, state $v$ and stacks $S$ to
+label $\mathit{next}$, state $v'$ and stacks $S'$, where $S'(a) = A$, $S'(b)$ is
+$g(p_n), \dots, g(p_1)$ (top first) followed by $S(b)$, and $S'(k) = S(k)$ for every other stack
+$k$. -/
 theorem moveB_run {self next : Λ} {a b : K} {d : Γ a → Option Bool} {g : Bool → Γ b}
     (hp : M self = moveB a b d g self next) (hab : a ≠ b) :
     ∀ (p : List Bool) (xs A : List (Γ a)) (v : σ) (S : ∀ k, List (Γ k)),
@@ -140,9 +163,14 @@ end Move
 
 section Compare
 
-/-- Compare the bit blocks of `a` and `b`. While both tops are equal bits, pop them and push the
-bit onto the scratch stacks `ta` (via `ea`) and `tb` (via `eb`). When both blocks end together go
-to `eqL`; on a mismatch (different bits, or one block ending first) go to `neL` without popping. -/
+/-- **Bit-block comparison statement.** Let $a$ and $b$ be stacks with decoders $d_a$ and $d_b$
+that read each symbol either as a bit or as a marker, let $t_a$ and $t_b$ be scratch stacks with
+bit encoders $e_a$ and $e_b$, and let $\ell$, $\ell_=$ and $\ell_{\ne}$ be labels. The comparison
+statement with loop label $\ell$ performs one round of comparison: if the tops of $a$ and $b$ are
+the same bit $x$, it pops both, pushes $e_a(x)$ onto $t_a$ and $e_b(x)$ onto $t_b$, and goes to
+$\ell$. Otherwise it changes no stack: it goes to $\ell_=$ if neither top is a bit (each of $a$
+and $b$ is empty or has a marker on top), and to $\ell_{\ne}$ if the tops are different bits or
+exactly one of them is a bit. It records its tests in the one-bit flag of the machine state. -/
 def cmpB (a b ta tb : K) (da : Γ a → Option Bool) (db : Γ b → Option Bool)
     (ea : Bool → Γ ta) (eb : Bool → Γ tb) (self eqL neL : Λ) : TM2.Stmt Γ Λ σ :=
   .peek a (fun _ o => Flag.tag (isBit da o))
@@ -167,7 +195,10 @@ def cmpB (a b ta tb : K) (da : Γ a → Option Bool) (db : Γ b → Option Bool)
 variable {a b ta tb : K} {da : Γ a → Option Bool} {db : Γ b → Option Bool}
   {ea : Bool → Γ ta} {eb : Bool → Γ tb} {self eqL neL : Λ}
 
-/-- The four stacks touched by `cmpB` are pairwise distinct. -/
+/-- **Four pairwise distinct stacks.** Four stack indices $a$, $b$, $t_a$, $t_b$ are pairwise
+distinct: $a \ne b$, $a \ne t_a$, $a \ne t_b$, $b \ne t_a$, $b \ne t_b$ and $t_a \ne t_b$.
+
+These are the two compared stacks and the two scratch stacks of the bit-block comparison. -/
 structure Distinct4 (a b ta tb : K) : Prop where
   /-- The compared stacks differ. -/
   ab : a ≠ b
@@ -182,8 +213,16 @@ structure Distinct4 (a b ta tb : K) : Prop where
   /-- The scratch stacks differ. -/
   tatb : ta ≠ tb
 
-/-- Common leading bits: if both blocks start with the bits `p`, `cmpB` pops them in exactly
-`p.length` steps, pushing them onto the scratch stacks, and is back at its own label. -/
+/-- **Comparison pops a common prefix.** Suppose the program has at label $\ell$ the bit-block
+comparison statement of stacks $a$ and $b$ (decoders $d_a$, $d_b$) with scratch stacks $t_a$ and
+$t_b$ (encoders $e_a$, $e_b$) and loop label $\ell$, and that $a$, $b$, $t_a$, $t_b$ are pairwise
+distinct. Let $p = p_1 \dots p_n$ be a bit string, and take a configuration at label $\ell$, with
+any state, in which stack $a$ holds a list $X$ on top of $A$ and stack $b$ holds a list $Y$ on
+top of $B$, where $X$ is the bit block $p$ under $d_a$ and $Y$ is the bit block $p$ under $d_b$.
+Then in exactly $n$ steps the program reaches a configuration at label $\ell$, with some state,
+in which stack $a$ is $A$, stack $b$ is $B$, stack $t_a$ holds $e_a(p_n), \dots, e_a(p_1)$ on top
+of its old contents, stack $t_b$ holds $e_b(p_n), \dots, e_b(p_1)$ on top of its old contents,
+and every other stack is unchanged. -/
 theorem cmpB_prefix (hp : M self = cmpB a b ta tb da db ea eb self eqL neL)
     (hd : Distinct4 a b ta tb) :
     ∀ (p : List Bool) (xs A : List (Γ a)) (ys B : List (Γ b)) (v : σ) (S : ∀ k, List (Γ k)),
@@ -238,8 +277,13 @@ theorem cmpB_prefix (hp : M self = cmpB a b ta tb da db ea eb self eqL neL)
           · rw [hk' k h1 h2 h3 h4, hS₁, update_of_ne h4, update_of_ne h3, update_of_ne h2,
               update_of_ne h1]
 
-/-- The deciding step: when the tops of `a` and `b` are not two equal bits, `cmpB` takes one step
-to `eqL` if both blocks have ended and to `neL` otherwise, changing no stack. -/
+/-- **Deciding step of the comparison.** Suppose the program has at label $\ell$ the bit-block
+comparison statement of stacks $a$ and $b$ (decoders $d_a$, $d_b$; scratch stacks arbitrary) with
+loop label $\ell$, equality label $\ell_=$ and mismatch label $\ell_{\ne}$. From a configuration
+at label $\ell$, with any state, in which the tops of $a$ and $b$ are not the same bit, the
+program takes one step to a configuration with the same stacks and some state, at label $\ell_=$
+if neither top is a bit (each of $a$ and $b$ is empty or has a marker on top) and at label
+$\ell_{\ne}$ otherwise. -/
 theorem cmpB_last (hp : M self = cmpB a b ta tb da db ea eb self eqL neL) (v : σ)
     (S : ∀ k, List (Γ k))
     (h : ¬ ∃ c, (S a).head?.bind da = some c ∧ (S b).head?.bind db = some c) :
@@ -260,10 +304,20 @@ theorem cmpB_last (hp : M self = cmpB a b ta tb da db ea eb self eqL neL) (v : �
       refine ⟨Flag.tag false, Run.single ?_⟩
       cases c <;> simp [cmpB, hp, TM2.stepAux, isBit, bitOf, ha, hb]
 
-/-- **Comparison.** With bit blocks `u` on `a` and `w` on `b`, `cmpB` ends at `eqL` if `u = w` and
-at `neL` otherwise, after `c.length + 1` steps where `c` is a common prefix of `u` and `w` (their
-longest one: after `c` the two blocks have no common next bit). The bits of `c` have moved from
-`a` and `b` to the scratch stacks `ta` and `tb`; no other stack changes. -/
+/-- **Correctness of the bit-block comparison.** Suppose the program has at label $\ell$ the
+bit-block comparison statement of stacks $a$ and $b$ (decoders $d_a$, $d_b$) with scratch stacks
+$t_a$ and $t_b$ (encoders $e_a$, $e_b$), loop label $\ell$, equality label $\ell_=$ and mismatch
+label $\ell_{\ne}$, and that $a$, $b$, $t_a$, $t_b$ are pairwise distinct. Let $u$ and $w$ be bit
+strings, and take a configuration at label $\ell$, with any state, in which stack $a$ holds a
+list $X$ on top of $A$ and stack $b$ holds a list $Y$ on top of $B$, where $X$ is the bit block
+$u$ under $d_a$, $Y$ is the bit block $w$ under $d_b$, $A$ ends a bit block under $d_a$ and $B$
+ends a bit block under $d_b$. Then there is a common prefix $c = c_1 \dots c_m$ of $u$ and $w$,
+after which $u$ and $w$ do not continue with the same bit, such that in exactly $m + 1$ steps the
+program reaches a configuration, with some state, at label $\ell_=$ if $u = w$ and at label
+$\ell_{\ne}$ otherwise, in which stack $a$ holds $X$ without its first $m$ symbols on top of $A$,
+stack $b$ holds $Y$ without its first $m$ symbols on top of $B$, stack $t_a$ holds
+$e_a(c_m), \dots, e_a(c_1)$ on top of its old contents, stack $t_b$ holds
+$e_b(c_m), \dots, e_b(c_1)$ on top of its old contents, and every other stack is unchanged. -/
 theorem cmpB_run (hp : M self = cmpB a b ta tb da db ea eb self eqL neL)
     (hd : Distinct4 a b ta tb) :
     ∀ (u w : List Bool) (xs A : List (Γ a)) (ys B : List (Γ b)) (v : σ) (S : ∀ k, List (Γ k)),
@@ -350,7 +404,11 @@ theorem cmpB_run (hp : M self = cmpB a b ta tb da db ea eb self eqL neL)
               by simp [hSa], by simp [hSb], by simp, by simp, fun _ _ _ _ _ => rfl⟩
             simpa [ha, hb, h12] using hrun
 
-/-- The symbols of a bit block are recovered from its bits by `g`, if `g` inverts the decoder. -/
+/-- **Recovering a bit block from its bits.** Let $d$ be a decoder reading symbols as bits or
+markers and $g$ an encoder from bits to symbols such that $g(b) = x$ whenever $d$ reads $x$ as the
+bit $b$. If the symbol list $xs$ is a bit block for the bit list $u$ under $d$ and
+$c = c_1 \cdots c_m$ is a prefix of $u$, then the first $m$ symbols of $xs$ are
+$g(c_1), \dots, g(c_m)$. -/
 theorem IsBitBlock.take_eq_map {α : Type} {d : α → Option Bool} {g : Bool → α}
     (hg : ∀ x b, d x = some b → g b = x) :
     ∀ {xs : List α} {u c : List Bool}, IsBitBlock d xs u → c <+: u → xs.take c.length = c.map g
@@ -363,10 +421,18 @@ theorem IsBitBlock.take_eq_map {α : Type} {d : α → Option Bool} {g : Bool �
       obtain ⟨rfl, hc'⟩ := List.cons_prefix_cons.1 hc
       simp [hg x b hdx, IsBitBlock.take_eq_map hg hxs' hc']
 
-/-- **Restoring after `cmpB`.** If the scratch stack `t` holds the moved prefix `c` (pushed by
-`et`) above old contents `R` that end a block, `moveB t a dt ga` puts the original symbols back on
-`a` in `c.length + 1` steps, leaving `R` on `t`. Needs `dt` to read back what `et` pushed and `ga`
-to give back the symbols of `a`'s block (`hga`). -/
+/-- **Restoring a stack after a comparison.** Let $t \ne a$ be stacks with decoders $d_t$ and
+$d_a$ that read each symbol either as a bit or as a marker. Let $e_t$ be a bit encoder for $t$
+that $d_t$ reads back ($d_t$ reads $e_t(x)$ as the bit $x$), and let $g_a$ be a bit encoder for
+$a$ that inverts $d_a$ ($g_a(x) = s$ whenever $d_a$ reads the symbol $s$ as the bit $x$). Suppose
+the program has at label $\ell$ the bit-block move statement from $t$ (decoder $d_t$) onto $a$
+(re-encoding $g_a$) with loop label $\ell$ and exit label $\ell'$. Let $X$ be the bit block of a
+bit string $u$ under $d_a$ and let $c = c_1 \dots c_m$ be a prefix of $u$. From a configuration
+at label $\ell$, with any state, in which stack $t$ holds $e_t(c_m), \dots, e_t(c_1)$ on top of a
+list $R$ that ends a bit block under $d_t$, and stack $a$ holds $X$ without its first $m$ symbols
+on top of a list $A$, the program reaches in exactly $m + 1$ steps a configuration at label
+$\ell'$, with some state, in which stack $t$ is $R$, stack $a$ holds $X$ on top of $A$, and every
+other stack is unchanged. -/
 theorem moveB_restore {t : K} {dt : Γ t → Option Bool} {et : Bool → Γ t} {ga : Bool → Γ a}
     {self' next : Λ} (hp : M self' = moveB t a dt ga self' next) (hta : t ≠ a)
     (hdt : ∀ bit, dt (et bit) = some bit) (hga : ∀ x bit, da x = some bit → ga bit = x)

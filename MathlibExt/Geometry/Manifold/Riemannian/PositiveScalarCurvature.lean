@@ -35,9 +35,10 @@ open scoped Manifold ContDiff
 
 namespace Manifold
 
-/-- The smooth `n`-manifold `M` (modeled on `𝓡 n`) admits a metric of positive scalar curvature:
-some `C^∞` Riemannian metric `g` on its tangent bundle has `scalarCurvature (𝓡 n) x > 0` at every
-point `x`, the scalar curvature being computed for `g`. -/
+/-- **Manifolds admitting a metric of positive scalar curvature.** A smooth manifold $M$ without
+boundary modeled on $\mathbb{R}^n$ admits a metric of positive scalar curvature when some
+$C^\infty$ Riemannian metric $g$ on its tangent bundle has scalar curvature, computed for $g$,
+strictly positive at every point of $M$. -/
 def AdmitsPositiveScalarCurvatureMetric (n : ℕ) (M : Type*) [TopologicalSpace M]
     [ChartedSpace (EuclideanSpace ℝ (Fin n)) M] [IsManifold (𝓡 n) ∞ M] : Prop :=
   ∃ g : ContMDiffRiemannianMetric (𝓡 n) ∞ (EuclideanSpace ℝ (Fin n))

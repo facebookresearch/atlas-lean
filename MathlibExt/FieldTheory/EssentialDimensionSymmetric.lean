@@ -51,27 +51,40 @@ teorth/optimizationproblems commit
 `2c1968cd520b60f1cf3cf50749f7285e800e4e15`.
 -/
 
-/-- The function field `ℂ(x₁, …, xₙ)`. -/
+/-- **The function field $\mathbb{C}(x_1, \dots, x_n)$.** For $n \in \mathbb{N}$, the function
+field $\mathbb{C}(x_1, \dots, x_n)$ is the fraction field of the polynomial ring
+$\mathbb{C}[x_1, \dots, x_n]$ in $n$ indeterminates. -/
 abbrev rootsField (n : ℕ) : Type :=
   FractionRing (MvPolynomial (Fin n) ℂ)
 
-/-- The root `xᵢ` of the general polynomial, as an element of the
-function field. -/
+/-- **The roots $x_i$.** For $n \in \mathbb{N}$ and $i \in \{1, \dots, n\}$, $x_i$ is the $i$-th
+indeterminate of the polynomial ring $\mathbb{C}[x_1, \dots, x_n]$, viewed as an element of its
+fraction field, the function field $\mathbb{C}(x_1, \dots, x_n)$.
+
+These elements are the roots of the general polynomial. -/
 noncomputable def root (n : ℕ) (i : Fin n) : rootsField n :=
   algebraMap (MvPolynomial (Fin n) ℂ) (rootsField n) (X i)
 
-/-- The coefficient `aₖ₊₁`: the `(k+1)`-st elementary symmetric
-function of the roots, as an element of the function field. -/
+/-- **The coefficients of the general polynomial.** For $0 \le i < n$, the coefficient
+$a_{i+1}$ is the $(i+1)$-st elementary symmetric function of $x_1, \dots, x_n$, as an element of
+the function field $\mathbb{C}(x_1, \dots, x_n)$. -/
 noncomputable def coeff (n : ℕ) (i : Fin n) : rootsField n :=
   algebraMap (MvPolynomial (Fin n) ℂ) (rootsField n)
     (esymm (Fin n) ℂ (i.val + 1))
 
-/-- The coefficient field `ℂ(a₁, …, aₙ)` of the general polynomial. -/
+/-- **Coefficient field of the general polynomial.** For a natural number $n$, let
+$\mathbb{C}(x_1, \dots, x_n)$ be the field of rational functions in $n$ indeterminates and,
+for $1 \le k \le n$, let $a_k$ be the $k$-th elementary symmetric function of
+$x_1, \dots, x_n$. The coefficient field $\mathbb{C}(a_1, \dots, a_n)$ is the intermediate
+field of $\mathbb{C} \subseteq \mathbb{C}(x_1, \dots, x_n)$ generated over $\mathbb{C}$ by
+$a_1, \dots, a_n$. -/
 noncomputable def generalBaseField (n : ℕ) :
     IntermediateField ℂ (rootsField n) :=
   IntermediateField.adjoin ℂ (Set.range (coeff n))
 
-/-- The coefficient `aₖ₊₁` as an element of the coefficient field. -/
+/-- **Coefficients in the coefficient field.** For $0 \le i < n$, the coefficient $a_{i+1}$,
+the $(i+1)$-st elementary symmetric function of $x_1, \dots, x_n$, regarded as an element of the
+coefficient field $\mathbb{C}(a_1, \dots, a_n)$. -/
 noncomputable def coeffElem (n : ℕ) (i : Fin n) : ↥(generalBaseField n) :=
   ⟨coeff n i, by exact (IntermediateField.subset_adjoin ℂ _) (Set.mem_range_self i)⟩
 
@@ -79,7 +92,9 @@ theorem val_coeffElem (n : ℕ) (i : Fin n) :
     ((coeffElem n i : ↥(generalBaseField n)) : rootsField n) = coeff n i :=
   rfl
 
-/-- The roots are pairwise distinct. -/
+/-- **The roots $x_i$ are pairwise distinct.** For every $n \in \mathbb{N}$, the elements
+$x_1, \dots, x_n$ of the function field $\mathbb{C}(x_1, \dots, x_n)$ are pairwise distinct:
+$x_i = x_j$ implies $i = j$. -/
 theorem root_injective (n : ℕ) : Function.Injective (root n) := by
   have hinj : Function.Injective
       (algebraMap (MvPolynomial (Fin n) ℂ) (rootsField n)) :=
@@ -88,8 +103,11 @@ theorem root_injective (n : ℕ) : Function.Injective (root n) := by
   have h2 : (X i : MvPolynomial (Fin n) ℂ) = X j := hinj h
   exact MvPolynomial.X_injective h2
 
-/-- The elementary symmetric polynomials are algebraically independent,
-by the fundamental theorem (`esymmAlgEquiv` is an isomorphism). -/
+/-- **Algebraic independence of the elementary symmetric polynomials.** For every natural number
+$n$, the elementary symmetric polynomials $e_1, \dots, e_n \in \mathbb{C}[X_1, \dots, X_n]$ are
+algebraically independent over $\mathbb{C}$.
+
+This follows from the fundamental theorem of symmetric polynomials. -/
 theorem algebraicIndependent_esymm (n : ℕ) :
     AlgebraicIndependent ℂ
       (fun i : Fin n => esymm (Fin n) ℂ (i.val + 1) :
@@ -105,7 +123,11 @@ theorem algebraicIndependent_esymm (n : ℕ) :
   rw [h1]
   exact Subtype.val_injective.comp (AlgEquiv.injective _)
 
-/-- Algebraic independence transports along injective algebra maps. -/
+/-- **Injective algebra maps preserve algebraic independence.** Let $A$ and $B$ be commutative
+$\mathbb{C}$-algebras, let $f : A \to B$ be an injective $\mathbb{C}$-algebra homomorphism, and
+let $(x_i)_{i \in \iota}$ be a family in $A$ that is algebraically independent over
+$\mathbb{C}$. Then the family $(f(x_i))_{i \in \iota}$ is algebraically independent over
+$\mathbb{C}$. -/
 theorem algebraicIndependent_map {ι : Type*} {A B : Type*}
     [CommRing A] [CommRing B] [Algebra ℂ A] [Algebra ℂ B]
     {x : ι → A} (hx : AlgebraicIndependent ℂ x) (f : A →ₐ[ℂ] B)
@@ -118,8 +140,10 @@ theorem algebraicIndependent_map {ι : Type*} {A B : Type*}
   rw [hcomp]
   exact hf.comp hx
 
-/-- The coefficients `a₁, …, aₙ` are algebraically independent in the
-function field. -/
+/-- **The coefficients are algebraically independent.** For every natural number $n$, the
+coefficients $a_1, \dots, a_n$ of the general polynomial, the elementary symmetric functions of
+$x_1, \dots, x_n$, are algebraically independent over $\mathbb{C}$ in the function field
+$\mathbb{C}(x_1, \dots, x_n)$. -/
 theorem algebraicIndependent_coeff (n : ℕ) :
     AlgebraicIndependent ℂ (coeff n) := by
   classical
@@ -134,7 +158,9 @@ theorem algebraicIndependent_coeff (n : ℕ) :
   exact algebraicIndependent_map (algebraicIndependent_esymm n) f
     (IsFractionRing.injective _ _)
 
-/-- The roots are algebraically independent in the function field. -/
+/-- **The roots are algebraically independent.** For every natural number $n$, the roots
+$x_1, \dots, x_n$ are algebraically independent over $\mathbb{C}$ in the function field
+$\mathbb{C}(x_1, \dots, x_n)$. -/
 theorem algebraicIndependent_root (n : ℕ) :
     AlgebraicIndependent ℂ (root n) := by
   classical
@@ -148,8 +174,10 @@ theorem algebraicIndependent_root (n : ℕ) :
   exact algebraicIndependent_map (algebraicIndependent_X (Fin n) ℂ) f
     (IsFractionRing.injective _ _)
 
-/-- Every element of the polynomial ring maps into the subalgebra
-generated by the roots. -/
+/-- **Polynomials in the roots.** For every natural number $n$ and every polynomial
+$p \in \mathbb{C}[X_1, \dots, X_n]$, the image of $p$ in the function field
+$\mathbb{C}(x_1, \dots, x_n)$ lies in the $\mathbb{C}$-subalgebra generated by the roots
+$x_1, \dots, x_n$. -/
 theorem algebraMap_mem_adjoin_roots (n : ℕ)
     (p : MvPolynomial (Fin n) ℂ) :
     algebraMap (MvPolynomial (Fin n) ℂ) (rootsField n) p ∈
@@ -172,8 +200,10 @@ theorem algebraMap_mem_adjoin_roots (n : ℕ)
     refine mul_mem hp ?_
     exact Algebra.subset_adjoin ⟨i, rfl⟩
 
-/-- Every element of the function field is algebraic over the subalgebra
-generated by the roots: it is a ratio of two polynomials in the roots. -/
+/-- **Rational functions are algebraic over the polynomial subalgebra.** For a natural number
+$n$, every element of the field $\mathbb{C}(x_1, \dots, x_n)$ of rational functions in $n$
+indeterminates is algebraic over the $\mathbb{C}$-subalgebra generated by $x_1, \dots, x_n$:
+it is a ratio of two polynomials in $x_1, \dots, x_n$. -/
 theorem isAlgebraic_adjoin_roots (n : ℕ) :
     Algebra.IsAlgebraic (Algebra.adjoin ℂ (Set.range (root n)))
       (rootsField n) := by
@@ -206,7 +236,8 @@ theorem isAlgebraic_adjoin_roots (n : ℕ) :
     rw [map_sub, map_mul, Polynomial.aeval_C, Polynomial.aeval_X, Polynomial.aeval_C]
     exact sub_eq_zero_of_eq (by rw [mul_comm]; exact hz)
 
-/-- The transcendence degree of the function field over `ℂ` is `n`, as a
+/-- **Transcendence degree of $\mathbb{C}(x_1, \dots, x_n)$.** For every $n \in \mathbb{N}$, the
+function field $\mathbb{C}(x_1, \dots, x_n)$ has transcendence degree $n$ over $\mathbb{C}$, as a
 cardinal. -/
 theorem trdeg_rootsField (n : ℕ) :
     Algebra.trdeg ℂ (rootsField n) = Cardinal.mk (Fin n) := by
@@ -220,7 +251,9 @@ theorem trdeg_rootsField (n : ℕ) :
     rwa [hEq] at h
   · exact (algebraicIndependent_root n).cardinalMk_le_trdeg
 
-/-- The numeric transcendence degree of a field over `ℂ`. -/
+/-- **Numeric transcendence degree.** For a field $F$ that is a $\mathbb{C}$-algebra, the numeric
+transcendence degree of $F$ is its transcendence degree over $\mathbb{C}$ as a natural number when
+that degree is finite, and $0$ when it is infinite. -/
 noncomputable def transDegNat (F : Type) [Field F] [Algebra ℂ F] : ℕ :=
   (Algebra.trdeg ℂ F).toNat
 
@@ -234,8 +267,11 @@ theorem transDegNat_rootsField (n : ℕ) :
     transDegNat (rootsField n) = n :=
   transDegNat_eq_of_trdeg_eq (trdeg_rootsField n)
 
-/-- Evaluating an elementary symmetric polynomial at the roots gives
-the elementary symmetric function of the root multiset. -/
+/-- **Elementary symmetric polynomials evaluated at the roots.** For all natural numbers $n$
+and $k$, the image of the $k$-th elementary symmetric polynomial
+$e_k \in \mathbb{C}[X_1, \dots, X_n]$ in the function field $\mathbb{C}(x_1, \dots, x_n)$ is the
+$k$-th elementary symmetric function of the multiset of roots $\{x_1, \dots, x_n\}$, that is,
+the sum of the products $x_{i_1} \cdots x_{i_k}$ over all $i_1 < \dots < i_k$. -/
 theorem algebraMap_esymm (n k : ℕ) :
     algebraMap (MvPolynomial (Fin n) ℂ) (rootsField n)
         (esymm (Fin n) ℂ k) =
@@ -252,8 +288,13 @@ theorem algebraMap_esymm (n k : ℕ) :
   rw [Function.comp_def, Function.comp_def, map_prod]
   rfl
 
-/-- A coefficient of the general polynomial indexed by a natural number:
-`1` in degree `0`, `aₖ` for `1 ≤ k ≤ n`, and `0` beyond. -/
+/-- **Coefficients indexed by degree.** Let $n$ be a natural number, for $1 \le k \le n$ let $a_k$
+be the $k$-th elementary symmetric function of $x_1, \dots, x_n$ in the function field
+$\mathbb{C}(x_1, \dots, x_n)$, and let $\mathbb{C}(a_1, \dots, a_n)$ be the coefficient field. For
+each natural number $k$, the element $c_k$ of $\mathbb{C}(a_1, \dots, a_n)$ is defined by
+$c_0 = 1$, $c_k = a_k$ for $1 \le k \le n$, and $c_k = 0$ for $k > n$.
+
+In a variable $X$, the general polynomial is $\sum_{k=0}^{n} (-1)^k c_k X^{n-k}$. -/
 noncomputable def coeffNat (n : ℕ) (k : ℕ) : ↥(generalBaseField n) :=
   if h0 : k = 0 then 1
   else if h2 : k ≤ n then
@@ -283,8 +324,12 @@ theorem val_coeffNat (n k : ℕ) :
       rw [Multiset.esymm, Multiset.powersetCard_eq_empty k hlt]
       simp
 
-/-- The general polynomial `Xⁿ - a₁Xⁿ⁻¹ + ⋯ + (-1)ⁿaₙ` over the
-coefficient field, written in the Vieta sum form. -/
+/-- **General polynomial.** For a natural number $n$, let $x_1, \dots, x_n$ be the
+indeterminates of the rational function field $\mathbb{C}(x_1, \dots, x_n)$, let $a_0 = 1$ and,
+for $1 \le k \le n$, let $a_k$ be the $k$-th elementary symmetric function of
+$x_1, \dots, x_n$. The general polynomial of degree $n$ is the polynomial
+$\sum_{j=0}^{n} (-1)^j a_j X^{n-j} = X^n - a_1 X^{n-1} + \cdots + (-1)^n a_n$ with
+coefficients in the coefficient field $\mathbb{C}(a_1, \dots, a_n)$. -/
 noncomputable def generalPolynomial (n : ℕ) :
     Polynomial (generalBaseField n) :=
   ∑ j ∈ Finset.range (n + 1),
@@ -310,7 +355,11 @@ theorem map_generalPolynomial (n : ℕ) :
       ((coeffNat n j : ↥(generalBaseField n)) : rootsField n) from rfl,
     val_coeffNat]
 
-/-- Distinct linear factors are coprime. -/
+/-- **Distinct linear factors are coprime.** For a natural number $n$ and distinct elements
+$a \ne b$ of the field $\mathbb{C}(x_1, \dots, x_n)$ of rational functions in $n$
+indeterminates, the polynomials $X - a$ and $X - b$ are coprime in
+$\mathbb{C}(x_1, \dots, x_n)[X]$: there are polynomials $u$ and $v$ with
+$u (X - a) + v (X - b) = 1$. -/
 theorem isCoprime_X_sub_C_of_ne (n : ℕ) {a b : rootsField n} (h : a ≠ b) :
     IsCoprime (Polynomial.X - Polynomial.C a)
       (Polynomial.X - Polynomial.C b) := by
@@ -328,7 +377,9 @@ theorem isCoprime_X_sub_C_of_ne (n : ℕ) {a b : rootsField n} (h : a ≠ b) :
     _ = Polynomial.C (b - a)⁻¹ * Polynomial.C (b - a) := by rw [h2]
     _ = 1 := by rw [← map_mul, inv_mul_cancel₀ hba, map_one]
 
-/-- The product of the distinct linear factors is separable. -/
+/-- **The product of the linear factors $X - x_i$ is separable.** For every $n \in \mathbb{N}$,
+the polynomial $\prod_{i=1}^{n} (X - x_i)$ over the function field
+$\mathbb{C}(x_1, \dots, x_n)$ is separable. -/
 theorem separable_prod_roots (n : ℕ) :
     (∏ i : Fin n, (Polynomial.X - Polynomial.C (root n i))).Separable := by
   have key : ∀ s : Finset (Fin n),
@@ -344,7 +395,9 @@ theorem separable_prod_roots (n : ℕ) :
       exact (root_injective n).ne (fun h => has (h ▸ hi))
   exact key Finset.univ
 
-/-- The roots generate the function field over `ℂ`. -/
+/-- **The roots generate the function field.** For every natural number $n$, the intermediate
+field of $\mathbb{C}(x_1, \dots, x_n)$ generated over $\mathbb{C}$ by the roots
+$x_1, \dots, x_n$ is the whole function field $\mathbb{C}(x_1, \dots, x_n)$. -/
 theorem adjoin_roots_eq_top (n : ℕ) :
     IntermediateField.adjoin ℂ (Set.range (root n)) = ⊤ := by
   apply top_unique
@@ -372,14 +425,21 @@ theorem adjoin_roots_eq_top (n : ℕ) :
   exact div_mem (hle (algebraMap_mem_adjoin_roots n p))
     (hle (algebraMap_mem_adjoin_roots n q))
 
-/-- Each root is a root of the general polynomial. -/
+/-- **Each $x_i$ is a root of the general polynomial.** For $n \in \mathbb{N}$, let
+$E_n = \mathbb{C}(x_1, \dots, x_n)$, let $a_k$ be the $k$-th elementary symmetric function of
+$x_1, \dots, x_n$, and let $f_n = X^n - a_1 X^{n-1} + \cdots + (-1)^n a_n$ be the general
+polynomial, with coefficients in $F_n = \mathbb{C}(a_1, \dots, a_n) \subseteq E_n$. Then
+$f_n(x_i) = 0$ in $E_n$ for every $i \in \{1, \dots, n\}$. -/
 theorem root_mem_generalPolynomial_roots (n : ℕ) (i : Fin n) :
     Polynomial.aeval (root n i) (generalPolynomial n) = 0 := by
   rw [Polynomial.aeval_def, Polynomial.eval₂_eq_eval_map,
     map_generalPolynomial, Polynomial.eval_prod]
   exact Finset.prod_eq_zero (Finset.mem_univ i) (by simp)
 
-/-- The coefficient field has transcendence degree `n`. -/
+/-- **Transcendence degree of the coefficient field.** For $n \in \mathbb{N}$, let $a_k$ be the
+$k$-th elementary symmetric function of $x_1, \dots, x_n$ in $\mathbb{C}(x_1, \dots, x_n)$. The
+coefficient field $F_n = \mathbb{C}(a_1, \dots, a_n)$ of the general polynomial has numeric
+transcendence degree $n$ over $\mathbb{C}$. -/
 theorem transDegNat_generalBaseField (n : ℕ) :
     transDegNat (generalBaseField n) = n := by
   apply transDegNat_eq_of_trdeg_eq
@@ -395,13 +455,18 @@ theorem transDegNat_generalBaseField (n : ℕ) :
       exact algebraicIndependent_coeff n
     exact hindep.cardinalMk_le_trdeg
 
-/-- A descent of the general polynomial extension to a parameter field
-`F₀`: an intermediate field `E₀` between `F₀` and the function field,
-linearly disjoint from the coefficient field over `F₀` in the lattice
-sense (`E₀ ⊓ F = F₀`, `E₀ ⊔ F = ⊤`), generated over `F₀` by the roots
-of a polynomial over `F₀` that splits separably in the function field.
-The separability and splitting are imposed after mapping to the
-function field, where they say the roots are distinct and all present. -/
+/-- **Descent of the general polynomial extension.** For a natural number $n$, let
+$E = \mathbb{C}(x_1, \dots, x_n)$ be the field of rational functions in $n$ indeterminates and
+let $F = \mathbb{C}(a_1, \dots, a_n) \subseteq E$ be the coefficient field of the general
+polynomial, where $a_k$ is the $k$-th elementary symmetric function of $x_1, \dots, x_n$. A
+pair $(F_0, E_0)$ of intermediate fields of $\mathbb{C} \subseteq E$ is a descent when
+$F_0 \subseteq F$, $F_0 \subseteq E_0$, $E_0 \cap F = F_0$, the compositum of $E_0$ and $F$ is
+all of $E$, and there is a nonzero polynomial $p$ with coefficients in $F_0$ whose image in
+$E[X]$ splits and is separable, such that $E_0$ is the field generated over $F_0$ by the
+roots of $p$ in $E$.
+
+Splitting and separability are imposed in $E$, where they say that the roots of $p$ are all
+present and distinct. -/
 def IsDescent (n : ℕ) (F0 E0 : IntermediateField ℂ (rootsField n)) :
     Prop :=
   F0 ≤ generalBaseField n ∧ F0 ≤ E0 ∧
@@ -413,9 +478,12 @@ def IsDescent (n : ℕ) (F0 E0 : IntermediateField ℂ (rootsField n)) :
         {x : rootsField n | Polynomial.aeval x p = 0}).restrictScalars
           ℂ = E0
 
-/-- The root field of the general polynomial, restricted to `ℂ`, is the
-whole function field: the roots are roots of the general polynomial and
-generate it. -/
+/-- **The roots of the general polynomial generate the function field.** For $n \in \mathbb{N}$,
+let $E_n = \mathbb{C}(x_1, \dots, x_n)$, let $a_k$ be the $k$-th elementary symmetric function
+of $x_1, \dots, x_n$, let $F_n = \mathbb{C}(a_1, \dots, a_n) \subseteq E_n$ be the coefficient
+field, and let $f_n = X^n - a_1 X^{n-1} + \cdots + (-1)^n a_n \in F_n[X]$ be the general
+polynomial. The subfield of $E_n$ generated over $F_n$ by all roots of $f_n$ in $E_n$ is $E_n$
+itself. -/
 theorem restrictScalars_adjoin_generalPolynomial (n : ℕ) :
     (IntermediateField.adjoin (generalBaseField n)
       {x : rootsField n |
@@ -429,8 +497,13 @@ theorem restrictScalars_adjoin_generalPolynomial (n : ℕ) :
   exact (IntermediateField.subset_adjoin (generalBaseField n) _)
     (root_mem_generalPolynomial_roots n i)
 
-/-- The trivial descent: the coefficient field itself, with the general
-polynomial as the defining polynomial. -/
+/-- **The trivial descent.** For every natural number $n$, the pair $(F, E)$ is a descent of
+the general polynomial extension, where $E = \mathbb{C}(x_1, \dots, x_n)$ is the field of
+rational functions in $n$ indeterminates and $F = \mathbb{C}(a_1, \dots, a_n)$ is the
+coefficient field, generated over $\mathbb{C}$ by the elementary symmetric functions
+$a_1, \dots, a_n$ of $x_1, \dots, x_n$.
+
+The general polynomial serves as the defining polynomial of this descent. -/
 theorem isDescent_generalBaseField (n : ℕ) :
     IsDescent n (generalBaseField n) ⊤ := by
   refine ⟨le_rfl, le_top, by simp, by simp,
@@ -448,26 +521,42 @@ theorem isDescent_generalBaseField (n : ℕ) :
   · rw [map_generalPolynomial]
     exact separable_prod_roots n
 
-/-- The essential dimension of the symmetric group `Sₙ` over `ℂ`, in
-the general-polynomial parameter sense: the least transcendence degree
-of a descent parameter field. -/
+/-- **Essential dimension of the symmetric group.** For a natural number $n$, let
+$\mathbb{C}(x_1, \dots, x_n)$ be the field of rational functions in $n$ indeterminates. The
+essential dimension of $S_n$ over $\mathbb{C}$, in the general-polynomial parameter sense, is
+the least natural number $d$ such that some intermediate field $F_0$ of
+$\mathbb{C} \subseteq \mathbb{C}(x_1, \dots, x_n)$ of transcendence degree at most $d$ over
+$\mathbb{C}$ admits an intermediate field $E_0$ for which $(F_0, E_0)$ is a descent of the
+general polynomial extension.
+
+The transcendence degree is read as a natural number (an infinite degree would count as $0$;
+this does not occur, since $F_0$ lies in the coefficient field). -/
 noncomputable def edSn (n : ℕ) : ℕ :=
   sInf {d : ℕ | ∃ F0 E0 : IntermediateField ℂ (rootsField n),
     IsDescent n F0 E0 ∧ transDegNat F0 ≤ d}
 
-/-- The trivial descent bounds the essential dimension by `n`. -/
+/-- **Trivial upper bound for the essential dimension of $S_n$.** For every natural
+number $n$, the essential dimension of the symmetric group $S_n$ over $\mathbb{C}$, in the
+general-polynomial parameter sense, is at most $n$.
+
+The bound comes from the trivial descent, whose parameter field is the coefficient field of
+the general polynomial, of transcendence degree $n$. -/
 theorem edSn_le (n : ℕ) : edSn n ≤ n := by
   apply Nat.sInf_le
   exact ⟨generalBaseField n, ⊤, isDescent_generalBaseField n,
     le_of_eq (transDegNat_generalBaseField n)⟩
 
-/-- The asymptotic essential-dimension ratio, catalogue constant
-`C₇₉ = limsup (ed_ℂ(Sₙ) / n)` in the general-polynomial parameter
-sense of this file. -/
+/-- **Asymptotic essential-dimension ratio of the symmetric groups.** The catalogue constant
+$C_{79}$ is the limit superior, as $n \to \infty$, of $\operatorname{ed}_{\mathbb{C}}(S_n) / n$,
+where $\operatorname{ed}_{\mathbb{C}}(S_n)$ is the essential dimension of the symmetric group
+$S_n$ over $\mathbb{C}$ in the general-polynomial parameter sense. -/
 noncomputable def essDimRatio : ℝ :=
   Filter.limsup (fun n : ℕ => (edSn n : ℝ) / n) Filter.atTop
 
-/-- The proved elementary upper bound `C₇₉ ≤ 1`. -/
+/-- **The essential-dimension ratio of the symmetric groups is at most one.** The constant
+$C_{79}$, the limit superior as $n \to \infty$ of $\operatorname{ed}_{\mathbb{C}}(S_n) / n$ with
+the essential dimension of $S_n$ over $\mathbb{C}$ taken in the general-polynomial parameter
+sense, satisfies $C_{79} \le 1$. -/
 theorem essDimRatio_le_one : essDimRatio ≤ 1 := by
   have hev : ∀ᶠ n : ℕ in Filter.atTop, (edSn n : ℝ) / n ≤ 1 := by
     refine Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩

@@ -931,15 +931,20 @@ private lemma opp_side_BD
           linarith
       linarith
 
-/-- Japanese theorem for concyclic quadrilaterals
-(stable source: https://en.wikipedia.org/wiki/Japanese_theorem_for_concyclic_quadrilaterals,
-statement id `japanese-quads-s1`): a convex cyclic quadrilateral with its two
-triangulations (diagonals); inradii `r1`, `r2` of one pair of opposite
-triangles (via incircles inscribed in triangles `ABC`, `CDA`) and `r3`, `r4`
-of the other pair (via incircles inscribed in triangles `BCD`, `DAB`).
-Then `r1 + r2 = r3 + r4`: the inradius sum is triangulation-independent.
+/-- **Japanese theorem for concyclic quadrilaterals.** Let $A, B, C, D$ be pairwise distinct
+points of the Euclidean plane $\mathbb{R}^2$ lying on a circle of positive radius, such that the
+diagonals $AC$ and $BD$, as closed segments, intersect; so $ABCD$ is a convex cyclic
+quadrilateral. Let $r_1, r_2, r_3, r_4 > 0$, and suppose that for each of the triangles $ABC$,
+$CDA$, $BCD$ and $DAB$ there is a closed disc of radius $r_1$, $r_2$, $r_3$ and $r_4$
+respectively that is contained in the closed triangle and whose boundary circle meets each of
+the three closed sides of the triangle; so $r_1, r_2$ are the inradii of the triangles $ABC$,
+$CDA$ of one triangulation and $r_3, r_4$ those of the triangles $BCD$, $DAB$ of the other.
+Then $r_1 + r_2 = r_3 + r_4$.
 
 Proves `Wanted` entry `japanese_theorem_concyclic_quadrilaterals`.
+
+Source: https://en.wikipedia.org/wiki/Japanese_theorem_for_concyclic_quadrilaterals
+(statement japanese-quads-s1).
 -/
 theorem japanese_theorem_concyclic_quadrilaterals :
     ∀ (A B C D : EuclideanSpace ℝ (Fin 2)) (r1 r2 r3 r4 : ℝ),

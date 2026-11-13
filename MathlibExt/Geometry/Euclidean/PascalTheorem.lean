@@ -58,15 +58,18 @@ private theorem line_param {k V P : Type*} [Field k] [AddCommGroup V] [Module k 
   refine ⟨(rq - ra) / (rb - ra), ?_⟩
   rw [hqa, hba, ← mul_smul, div_mul_cancel₀ (rq - ra) (sub_ne_zero.mpr hrbe)]
 
-/-- Pascal's theorem (statement ID `pascal-theorem-s1`):
-six distinct arbitrary points on a non-degenerate conic (ellipse, parabola, or hyperbola
-in an appropriate affine plane of dimension 2 over a field of characteristic `≠ 2`),
-presented as the affine chart of the zero locus of a non-degenerate homogeneous symmetric
-bilinear form `B3` on `V × k` (projective closure), joined in any order to form a hexagon;
-the three pairs of opposite sides (extended if necessary, via `Collinear`) meet at three
-points lying on a straight line (the Pascal line); in the Euclidean plane parallel
-opposite sides are handled by the explicit side condition that the three
-intersections exist and opposite lines are distinct. Source: https://en.wikipedia.org/wiki/Pascal%27s_theorem.
+/-- **Pascal's theorem in an affine plane.** Let $k$ be a field of characteristic different from
+$2$ and let $P$ be an affine plane over $k$, that is, an affine space whose space of translations
+$V$ is a $k$-vector space of dimension $2$. Fix a point $O \in P$ and a nondegenerate symmetric
+bilinear form $\beta$ on $V \times k$, and call the set of points $x \in P$ with
+$\beta((x - O, 1), (x - O, 1)) = 0$ the conic. Let $v_0, v_1, \dots, v_5$ be six distinct points
+of the conic such that, for each of the three pairs of opposite sides $(v_0 v_1, v_3 v_4)$,
+$(v_1 v_2, v_4 v_5)$ and $(v_2 v_3, v_5 v_0)$ of the hexagon $v_0 v_1 v_2 v_3 v_4 v_5$, the four
+endpoints are not collinear, so that the two lines are distinct. If $q_1$ lies on the lines
+$v_0 v_1$ and $v_3 v_4$, $q_2$ lies on the lines $v_1 v_2$ and $v_4 v_5$, and $q_3$ lies on the
+lines $v_2 v_3$ and $v_5 v_0$, then $q_1$, $q_2$, $q_3$ are collinear.
+
+Source: https://en.wikipedia.org/wiki/Pascal%27s_theorem.
 Proves `Wanted` entry `pascal_theorem`.
 -/
 theorem pascal_theorem {k V P : Type*} [Field k] [AddCommGroup V]

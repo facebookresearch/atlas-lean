@@ -25,14 +25,18 @@ namespace MathlibExt.GameTheory.SocialChoice.ArrowWanted
 Records Pareto and IIA for social welfare functions over strict total orders.
 -/
 
-/-- Strict total order for strict preference, reusing the shared `MathlibExt.Order` bundle. -/
+/-- **Strict preference orders for Arrow's theorem.** A strict total order on a type $\alpha$
+consists of a relation $<$ on $\alpha$ that is irreflexive ($a < a$ holds for no $a$),
+transitive ($a < b$ and $b < c$ imply $a < c$) and total on distinct elements ($a \ne b$
+implies $a < b$ or $b < a$). Here it models a strict preference over alternatives. -/
 abbrev StrictTotalOrder := MathlibExt.Order.StrictTotalOrder
 
 namespace StrictTotalOrder
 
-/-- Compatibility alias for the former `ArrowWanted.StrictTotalOrder.mk` constructor.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.mk` directly. -/
+/-- **Strict total order from a relation (Arrow's theorem).** A relation $<$ on a type $\alpha$
+that is irreflexive ($a < a$ holds for no $a$), transitive ($a < b$ and $b < c$ imply $a < c$)
+and total on distinct elements ($a \ne b$ implies $a < b$ or $b < a$) defines a strict total
+order on $\alpha$. -/
 abbrev mk {α : Type*} (lt : α → α → Prop)
     (irrefl : ∀ a, ¬lt a a)
     (trans : ∀ {a b c}, lt a b → lt b c → lt a c)
@@ -40,56 +44,62 @@ abbrev mk {α : Type*} (lt : α → α → Prop)
     StrictTotalOrder α :=
   MathlibExt.Order.StrictTotalOrder.mk lt irrefl trans total
 
-/-- Compatibility alias for the former `ArrowWanted.StrictTotalOrder.lt` projection.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.lt` directly. -/
+/-- **Preference relation of a strict total order (Arrow's theorem).** For a strict total order
+$T$ on a type $\alpha$, this is its underlying binary relation $<_T$ on $\alpha$. -/
 abbrev lt {α : Type*} (self : StrictTotalOrder α) : α → α → Prop :=
   MathlibExt.Order.StrictTotalOrder.lt self
 
-/-- Compatibility alias for the former `ArrowWanted.StrictTotalOrder.irrefl` projection.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.irrefl` directly. -/
+/-- **Irreflexivity of strict preference (Arrow's theorem).** Let $T$ be a strict total order on a
+type $\alpha$, and write $a <_T b$ for its relation. Then for every $a \in \alpha$, $a <_T a$ does
+not hold. -/
 abbrev irrefl {α : Type*} (self : StrictTotalOrder α) (a : α) : ¬self.lt a a :=
   MathlibExt.Order.StrictTotalOrder.irrefl self a
 
-/-- Compatibility alias for the former `ArrowWanted.StrictTotalOrder.trans` projection.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.trans` directly. -/
+/-- **Strict preference orders for Arrow's theorem are transitive.** If $<$ is a strict total order
+on a type $\alpha$ and $a, b, c \in \alpha$ satisfy $a < b$ and $b < c$, then $a < c$. -/
 abbrev trans {α : Type*} (self : StrictTotalOrder α) {a b c : α}
     (h1 : self.lt a b) (h2 : self.lt b c) : self.lt a c :=
   MathlibExt.Order.StrictTotalOrder.trans self h1 h2
 
-/-- Compatibility alias for the former `ArrowWanted.StrictTotalOrder.total` projection.
-
-For new code, use `MathlibExt.Order.StrictTotalOrder.total` directly. -/
+/-- **Strict preference orders for Arrow's theorem are total.** If $<$ is a strict total order on
+a type $\alpha$ and $a, b \in \alpha$ are distinct, then $a < b$ or $b < a$. -/
 abbrev total {α : Type*} (self : StrictTotalOrder α) {a b : α} (h : a ≠ b) :
     self.lt a b ∨ self.lt b a :=
   MathlibExt.Order.StrictTotalOrder.total self h
 
 end StrictTotalOrder
 
-/-- A profile assigns each voter a strict total order over alternatives. -/
+/-- **Preference profile (Arrow's theorem).** A profile assigns to each voter a strict total
+order on the alternatives. -/
 abbrev Profile (Alt Voter : Type*) := Voter → StrictTotalOrder Alt
 
 /-- A social welfare function maps each unrestricted profile to a social strict total order. -/
 abbrev SocialWelfareFunction (Alt Voter : Type*) := Profile Alt Voter → StrictTotalOrder Alt
 
-/-- Pareto/unanimity: if every voter strictly prefers `a` to `b`, so does society. -/
+/-- **Pareto condition.** A social welfare function $F$ satisfies the Pareto condition if for
+every profile $p$ and all alternatives $a, b$, whenever every voter strictly prefers $a$ to $b$ in
+$p$, the social order $F(p)$ also strictly prefers $a$ to $b$. -/
 def IsPareto {Alt Voter : Type*} (F : SocialWelfareFunction Alt Voter) : Prop :=
   ∀ (p : Profile Alt Voter) (a b : Alt), (∀ i, (p i).lt a b) → (F p).lt a b
 
-/-- Independence of irrelevant alternatives: the social comparison of each pair `a,b`
-depends only on voters' comparisons of that pair. That is, if two profiles agree on all
-voters' `a`-vs-`b` comparisons, the social `a`-vs-`b` comparison agrees. -/
+/-- **Independence of irrelevant alternatives.** A social welfare function $F$ satisfies
+independence of irrelevant alternatives if for all profiles $p_1, p_2$ and all alternatives
+$a, b$ the following holds: if every voter strictly prefers $a$ to $b$ in $p_1$ exactly when that
+voter strictly prefers $a$ to $b$ in $p_2$, then $F(p_1)$ strictly prefers $a$ to $b$ exactly
+when $F(p_2)$ does. -/
 def IsIIA {Alt Voter : Type*} (F : SocialWelfareFunction Alt Voter) : Prop :=
   ∀ (p₁ p₂ : Profile Alt Voter) (a b : Alt),
     (∀ i, (p₁ i).lt a b ↔ (p₂ i).lt a b) → ((F p₁).lt a b ↔ (F p₂).lt a b)
 
-/-- `d` is a dictator for `F`: the social order always extends `d`'s strict preferences. -/
+/-- **Dictator of a social welfare function.** A voter $d$ is a dictator for a social welfare
+function $F$ if for every profile $p$ and all alternatives $a, b$, whenever $d$ strictly prefers
+$a$ to $b$ in $p$, the social order $F(p)$ also strictly prefers $a$ to $b$. -/
 def IsDictator {Alt Voter : Type*} (F : SocialWelfareFunction Alt Voter) (d : Voter) : Prop :=
   ∀ (p : Profile Alt Voter) (a b : Alt), (p d).lt a b → (F p).lt a b
 
-/-- Dictatorship: some fixed voter whose strict preferences are always respected socially. -/
+/-- **Dictatorial social welfare function.** A social welfare function $F$ is dictatorial if some
+voter $d$ is a dictator for $F$: for every profile $p$ and all alternatives $a, b$, whenever $d$
+strictly prefers $a$ to $b$ in $p$, the social order $F(p)$ also strictly prefers $a$ to $b$. -/
 def IsDictatorial {Alt Voter : Type*} (F : SocialWelfareFunction Alt Voter) : Prop :=
   ∃ d : Voter, IsDictator F d
 
@@ -781,9 +791,15 @@ private lemma descent {Alt Voter : Type*} [Finite Alt]
         exact (Finset.mem_sdiff.mp hdC).1
 
 /--
-For ≥3 alternatives, every Pareto + IIA SWF on unrestricted strict profiles over finite nonempty
-voter type is dictatorial, with `Finite` hypotheses.
-`arrow_impossibility` is the source-shaped form with `Fintype`/`DecidableEq`.
+**Arrow's impossibility theorem for strict preferences, general form.** Suppose there are
+finitely many alternatives, at least three of them, and finitely many voters, at least one. Then
+every social welfare function, which assigns a strict total order of the alternatives to each
+profile of strict total orders (one per voter), that satisfies the Pareto condition and
+independence of irrelevant alternatives is dictatorial.
+
+Here finiteness is assumed only as a property. The companion statement of Arrow's impossibility
+theorem also fixes an explicit enumeration of the alternatives and of the voters and a decision
+procedure for equality on each; this extra data does not change the mathematical content.
 -/
 theorem arrow_impossibility_general
     {Alt Voter : Type*} [Finite Alt] [Finite Voter] [Nonempty Voter]
@@ -804,8 +820,12 @@ theorem arrow_impossibility_general
 set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
 /--
-For ≥3 alternatives, every Pareto + IIA SWF on unrestricted strict profiles over finite nonempty
-voter type is dictatorial.
+**Arrow's impossibility theorem for strict preferences.** Suppose there are finitely many
+alternatives, at least three of them, and finitely many voters, at least one. Then every social
+welfare function, which assigns a strict total order of the alternatives to each profile of strict
+total orders (one per voter), that satisfies the Pareto condition and independence of irrelevant
+alternatives is dictatorial.
+
 Source: K. J. Arrow, Social Choice and Individual Values, Wiley (1951; 2nd ed. 1963).
 
 Proves `Wanted` entry `arrow_impossibility`.

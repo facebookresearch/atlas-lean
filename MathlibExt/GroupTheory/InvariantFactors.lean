@@ -247,10 +247,11 @@ private theorem map_basisEquivFun_eq_pi {n r : ℕ} (hrm : r ≤ n)
 
 namespace AddCommGroup
 
-/-- The fundamental theorem of finitely generated abelian groups, invariant
-factor form: every finitely generated abelian group is the product of a free
-abelian group and a finite product of cyclic groups `ZMod (d i)` with
-`1 < d i` and `d i ∣ d j` for `i ≤ j`. -/
+/-- **Fundamental theorem of finitely generated abelian groups, invariant factor form.** Every
+finitely generated abelian group $A$ is isomorphic to
+$\mathbb{Z}^a \times \bigoplus_{i < k} \mathbb{Z}/d_i\mathbb{Z}$ for some $a, k \in \mathbb{N}$
+and natural numbers $d_0, \dots, d_{k-1}$ with $d_i > 1$ for every $i$ and $d_i \mid d_j$
+whenever $i \le j$. -/
 theorem equiv_free_prod_directSum_invariant_factors (A : Type*) [AddCommGroup A]
     [AddGroup.FG A] :
     ∃ (a : ℕ) (k : ℕ) (d : Fin k → ℕ),
@@ -345,9 +346,10 @@ theorem equiv_free_prod_directSum_invariant_factors (A : Type*) [AddCommGroup A]
     (AddEquiv.prodComm.trans
       ((AddEquiv.refl _).prodCongr (DirectSum.addEquivProd _).symm))
 
-/-- The finite case of the invariant-factor decomposition: a finite abelian
-group is a product of cyclic groups `ZMod (d i)` with `1 < d i` and
-`d i ∣ d j` for `i ≤ j`. -/
+/-- **Invariant factor decomposition of finite abelian groups.** Every finite abelian group $A$
+is isomorphic to $\bigoplus_{i < k} \mathbb{Z}/d_i\mathbb{Z}$ for some $k \in \mathbb{N}$ and
+natural numbers $d_0, \dots, d_{k-1}$ with $d_i > 1$ for every $i$ and $d_i \mid d_j$ whenever
+$i \le j$. -/
 theorem equiv_directSum_invariant_factors_of_finite (A : Type*) [AddCommGroup A]
     [Finite A] :
     ∃ (k : ℕ) (d : Fin k → ℕ),
@@ -371,9 +373,13 @@ theorem equiv_directSum_invariant_factors_of_finite (A : Type*) [AddCommGroup A]
       { (Equiv.prodUnique (⨁ i : Fin k, ZMod (d i)) (PUnit.{1})) with
         map_add' := by intro x y; rfl }))
 
-/-- Reorganize prime-power cyclic summands into a divisibility-ordered sequence of moduli.
-This completes the source's elementary-divisor conversion by applying the finite
-invariant-factor decomposition. Exponent zero is allowed, giving a trivial summand. -/
+/-- **From elementary divisors to invariant factors.** Let $I$ be a finite set, and for each
+$i \in I$ let $p_i$ be a prime and $e_i$ a natural number. Then there are $k \in \mathbb{N}$ and
+natural numbers $d_0, \dots, d_{k-1}$ with $d_j > 1$ for every $j$ and $d_j \mid d_l$ whenever
+$j \le l$, such that $\bigoplus_{i \in I} \mathbb{Z}/p_i^{e_i}\mathbb{Z}$ is isomorphic to
+$\bigoplus_{j < k} \mathbb{Z}/d_j\mathbb{Z}$.
+
+Exponent zero is allowed, giving a trivial summand. -/
 theorem elementary_divisors_equiv_invariant_factors
     (ι : Type*) [Fintype ι] (p : ι → ℕ) (hp : ∀ i, Nat.Prime (p i)) (e : ι → ℕ) :
     ∃ (k : ℕ) (d : Fin k → ℕ),

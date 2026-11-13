@@ -15,7 +15,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Order automorphisms: permutations preserving `<` in both directions. -/
+/-- **Order automorphism group.** For a type $\alpha$ equipped with a relation $<$, the order
+automorphism group of $\alpha$ is the subgroup of the group of permutations of $\alpha$
+consisting of the permutations $\sigma$ such that for all $a, b \in \alpha$, $a < b$ holds if and
+only if $\sigma(a) < \sigma(b)$ holds. -/
 def orderAutSubgroup (α : Type*) [LT α] : Subgroup (Equiv.Perm α) where
   carrier := {σ | ∀ a b, a < b ↔ σ a < σ b}
   one_mem' a b := by simp

@@ -39,9 +39,9 @@ namespace BurnsidePaqb
 
 universe u
 
-/-- Burnside's `p^a q^b` theorem for small-universe groups: if `G` is finite with
-`Fintype.card G = p ^ a * q ^ b` for primes `p, q`, then `G` is solvable.
-Proved via the simple-prime-power corollary and induction. -/
+/-- **Burnside's $p^a q^b$ theorem in the lowest universe.** Let $G$ be a finite group whose
+underlying type lies in the lowest type universe, let $p$ and $q$ be primes and let $a$ and
+$b$ be natural numbers. If $G$ has order $p^a q^b$, then $G$ is solvable. -/
 theorem burnside_paqb_zero {G : Type} [Group G] [Fintype G]
     (p q : ℕ) (a b : ℕ) (hp : Nat.Prime p) (hq : Nat.Prime q)
     (hcard : Fintype.card G = p ^ a * q ^ b) : Group.IsSolvable G :=
@@ -53,8 +53,8 @@ theorem burnside_paqb_zero {G : Type} [Group G] [Fintype G]
     p q a b hp hq hcard
 
 attribute [-instance] Fin.instMul in
-/-- If `G` is finite and `Fintype.card G = p ^ a * q ^ b` for primes `p, q` and
-`a, b : ℕ`, then `G` is solvable. Proved by descent to `Fin (Fintype.card G)`. -/
+/-- **Burnside's $p^a q^b$ theorem.** Let $G$ be a finite group, let $p$ and $q$ be primes and
+let $a$ and $b$ be natural numbers. If $G$ has order $p^a q^b$, then $G$ is solvable. -/
 theorem burnside_paqb {G : Type*} [Group G] [Fintype G]
     (p q a b : ℕ) (hp : Nat.Prime p) (hq : Nat.Prime q)
     (hcard : Fintype.card G = p ^ a * q ^ b) : Group.IsSolvable G := by

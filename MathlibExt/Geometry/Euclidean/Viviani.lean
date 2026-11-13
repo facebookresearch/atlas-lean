@@ -175,19 +175,21 @@ private lemma viviani_infDist_vertex_face_eq_height
     EuclideanGeometry.dist_orthogonalProjection_eq_infDist
       (affineSpan ℝ (Set.range (s.faceOpposite i).points)) (s.points i)
 
-/-- Viviani's theorem, general form (statement `viviani-s1`): an
-equilateral triangle in the Euclidean plane and an interior point `P`;
-the sum of the perpendicular distances from `P` to the three sides
-equals the altitude of the triangle. No positivity hypothesis on the
-side length is needed: membership of `P` in the ambient interior already
-yields affine independence, hence nondegeneracy.
-Source: https://en.wikipedia.org/wiki/Viviani%27s_theorem.
+/-- **Viviani's theorem.** Let $A$, $B$, $C$ be points of the Euclidean plane $\mathbb{R}^2$ with
+$AB = BC = CA$, and let $P$ be a point of the interior of the convex hull of
+$\lbrace A, B, C \rbrace$. Then the sum of the distances from $P$ to the lines $AB$, $BC$ and
+$CA$ equals the distance from $A$ to the line $BC$, the altitude of the triangle.
+
+No positivity hypothesis on the side length is needed: since $P$ is an interior point, the
+points $A$, $B$, $C$ are affinely independent, so the triangle is nondegenerate.
+
+Proof: Following the barycentric-coordinate area decomposition in Wikipedia, "Viviani's theorem"
+(Proof section), we express the three distances as barycentric weights times a common height.
 
 Proves `Wanted` entry `viviani` (via the source-shaped wrapper `viviani`
 below).
 
-Proof: Following the barycentric-coordinate area decomposition in Wikipedia, "Viviani's theorem"
-(Proof section), we express the three distances as barycentric weights times a common height.
+Source: https://en.wikipedia.org/wiki/Viviani%27s_theorem.
 -/
 theorem viviani_general : ∀ (A B C P : EuclideanSpace ℝ (Fin 2)),
   dist A B = dist B C → dist B C = dist C A →
@@ -250,11 +252,14 @@ theorem viviani_general : ∀ (A B C P : EuclideanSpace ℝ (Fin 2)),
         (w 0 + w 1 + w 2) * s.height 0 := by ring
     _ = s.height 0 := by rw [hwsum, one_mul]
 
-/-- Viviani's theorem, source-shaped form (statement `viviani-s1`): thin
-wrapper over `viviani_general` retaining the frozen Wanted signature,
-including its (unused) positivity hypothesis `0 < dist A B`, for exact
-compatibility with the former `Wanted` entry. New callers should prefer
-`viviani_general`, which needs no positivity hypothesis. -/
+/-- **Viviani's theorem with a positive side length.** Let $A$, $B$, $C$ be points of the
+Euclidean plane $\mathbb{R}^2$ with $AB = BC = CA$ and $AB > 0$, and let $P$ be a point of the
+interior of the convex hull of $\lbrace A, B, C \rbrace$. Then the sum of the distances from
+$P$ to the lines $AB$, $BC$ and $CA$ equals the distance from $A$ to the line $BC$, the
+altitude of the triangle.
+
+The hypothesis $AB > 0$ is not needed: Viviani's theorem gives the same conclusion without it.
+-/
 theorem viviani : ∀ (A B C P : EuclideanSpace ℝ (Fin 2)),
   dist A B = dist B C → dist B C = dist C A → 0 < dist A B →
   P ∈ interior (convexHull ℝ {A, B, C}) →

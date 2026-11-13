@@ -76,11 +76,20 @@ variable {M : Type*} [TopologicalSpace M] [ChartedSpace H M] [IsManifold I (⊤ 
 variable {n : ℕ} [MeasurableSpace (EuclideanSpace ℝ (Fin n))]
   [BorelSpace (EuclideanSpace ℝ (Fin n))]
 
-/-- Points of `M` where `mfderiv` of `f : M → ℝ^n` is not surjective. -/
+/-- **Critical points of a map to Euclidean space.** Let $M$ be a Hausdorff, second-countable
+smooth manifold without boundary modelled on a finite-dimensional real normed space, and let
+$f : M \to \mathbb{R}^n$ be a map. The critical set of $f$ is the set of points $x \in M$ at which
+the manifold derivative of $f$ at $x$, a linear map $T_xM \to \mathbb{R}^n$, is not surjective.
+
+The derivative is taken to be $0$ at points where $f$ is not differentiable. -/
 def criticalSet (f : M → EuclideanSpace ℝ (Fin n)) : Set M :=
   {x | ¬ Function.Surjective (mfderiv I 𝓘(ℝ, EuclideanSpace ℝ (Fin n)) f x)}
 
-/-- Image of `criticalSet` under `f`, i.e., the critical values. -/
+/-- **Critical values of a map to Euclidean space.** Let $M$ be a Hausdorff, second-countable
+smooth manifold without boundary modelled on a finite-dimensional real normed space, and let
+$f : M \to \mathbb{R}^n$ be a map. The set of critical values of $f$ is the image under $f$ of its
+critical set, the set of points $x \in M$ at which the manifold derivative of $f$ at $x$ is not
+surjective. -/
 def criticalValues (f : M → EuclideanSpace ℝ (Fin n)) : Set (EuclideanSpace ℝ (Fin n)) :=
   f '' criticalSet (I := I) (M := M) (n := n) f
 
@@ -1409,7 +1418,11 @@ private theorem sard_euclidean
   have h := sard_euclidean_aux (Module.finrank ℝ E) E rfl F μ U hU g hg
   exact h
 
-/-- Sard's theorem for a map that is smooth on an open subset of a finite-dimensional space. -/
+/-- **Sard's theorem on open subsets of finite-dimensional spaces.** Let $E$ and $F$ be
+finite-dimensional real normed spaces, let $\mu$ be an additive Haar measure on $F$ with its Borel
+$\sigma$-algebra, let $U \subseteq E$ be open, and let $g : E \to F$ be $C^\infty$ on $U$. Then the
+image under $g$ of the set of points $x \in U$ at which the derivative of $g$ is not surjective has
+$\mu$-measure zero. -/
 theorem sard_euclidean_open
     (E : Type u) [NormedAddCommGroup E] [NormedSpace ℝ E] [FiniteDimensional ℝ E]
     (F : Type v) [NormedAddCommGroup F] [NormedSpace ℝ F] [FiniteDimensional ℝ F]
@@ -1423,13 +1436,18 @@ theorem sard_euclidean_open
   exact h
 
 /--
-If `M` is finite-dimensional Hausdorff second-countable boundaryless `C^∞` and `f : M → ℝ^n` is
-`C^∞`, then the set of critical values has `volume` zero. Source: A. Sard, Bull. Amer. Math. Soc.
+**Sard's theorem for maps into Euclidean space.** Let $M$ be a Hausdorff, second-countable smooth
+manifold without boundary modelled on a finite-dimensional real normed space, and let
+$f : M \to \mathbb{R}^n$ be a $C^\infty$ map. Then the set of critical values of $f$, the image
+under $f$ of the points of $M$ at which the manifold derivative of $f$ is not surjective, has
+Lebesgue measure zero.
+
+Proves `Wanted` entry `sard_theorem`.
+
+Source: A. Sard, Bull. Amer. Math. Soc.
 48 (1942) 883–890 measure of critical values; J. Lee, Introduction to Smooth Manifolds, 2nd ed.;
 Guillemin-Pollack, Differential Topology; Lean states finite-dimensional manifold to
 `EuclideanSpace ℝ (Fin n)` specialization.
-
-Proves `Wanted` entry `sard_theorem`.
 -/
 theorem sard_theorem
     (f : M → EuclideanSpace ℝ (Fin n))

@@ -32,8 +32,14 @@ open MeasureTheory
 
 namespace MathlibExt.Geometry.Manifold.ParametricSardWanted
 
-/-- The set of parameters `a` where `y` fails to be a regular value of the slice
-`x ↦ F (a, x)`. -/
+/-- **Bad parameter set.** Let $F \colon \mathbb{R}^p \times \mathbb{R}^m \to \mathbb{R}^n$ be a map
+and $y \in \mathbb{R}^n$. For $a \in \mathbb{R}^p$ write $F_a = F(a, \cdot)$ for the slice
+$\mathbb{R}^m \to \mathbb{R}^n$. The bad parameter set of $F$ at $y$ is the set of
+$a \in \mathbb{R}^p$ for which there is $x \in \mathbb{R}^m$ with $F(a, x) = y$ and the derivative
+of $F_a$ at $x$ not surjective, that is, the set of $a$ for which $y$ is not a regular value of
+$F_a$.
+
+The derivative of a map at a point where it is not differentiable is taken to be zero. -/
 def badParameterSet {p m n : ℕ}
     (F : EuclideanSpace ℝ (Fin p) × EuclideanSpace ℝ (Fin m) → EuclideanSpace ℝ (Fin n))
     (y : EuclideanSpace ℝ (Fin n)) : Set (EuclideanSpace ℝ (Fin p)) :=
@@ -365,14 +371,20 @@ private theorem local_null_at {p m n : ℕ}
   exact ⟨V, hV.mem_nhds hz0V, hVnull⟩
 
 /--
-If `F : ℝ^p × ℝ^m → ℝ^n` is `C^∞` and `fderiv F` is surjective at every `(a, x)` with `F (a, x) =
-y`, then the set of parameters where `y` is not a regular value of the slice `x ↦ F (a, x)` has
-`volume` zero. Source: R. Abraham, Bull. Amer. Math. Soc. 69 (1963), 470–475, DOI
+**Parametric Sard theorem for real analytic families.** Let $p, m, n$ be natural numbers, let
+$F \colon \mathbb{R}^p \times \mathbb{R}^m \to \mathbb{R}^n$ be a real analytic ($C^\omega$) map
+and let $y \in \mathbb{R}^n$. Suppose that the derivative of $F$ is surjective at every point
+$(a, x)$ with $F(a, x) = y$. Then the bad parameter set of $F$ at $y$, the set of
+$a \in \mathbb{R}^p$ for which some $x \in \mathbb{R}^m$ has $F(a, x) = y$ and the derivative of
+the slice $F(a, \cdot) \colon \mathbb{R}^m \to \mathbb{R}^n$ at $x$ is not surjective, has
+Lebesgue measure zero.
+
+Proves `Wanted` entry `parametricSard`.
+
+Source: R. Abraham, Bull. Amer. Math. Soc. 69 (1963), 470–475, DOI
 10.1090/S0002-9904-1963-10969-6 parametric transversality; V. Guillemin and A. Pollack,
 Differential Topology; J. Lee, Intro to Smooth Manifolds, 2nd ed.; Lean states Euclidean
 finite-dimensional measure-zero form with `fderiv ℝ F` surjective hypothesis.
-
-Proves `Wanted` entry `parametricSard`.
 -/
 theorem parametricSard
     {p m n : ℕ}

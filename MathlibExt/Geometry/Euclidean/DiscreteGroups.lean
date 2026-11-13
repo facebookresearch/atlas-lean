@@ -54,26 +54,34 @@ Source: `v1/Atlas/AlgebraNotes/code/DiscreteGroups.lean` (targets
 
 namespace DiscreteGroups
 
-/-- The Euclidean plane, as `EuclideanSpace ℝ (Fin 2)`. -/
+/-- **The Euclidean plane for discrete isometry groups.** $E_2$ is the Euclidean plane:
+the real vector space $\mathbb{R}^2$ of pairs of real numbers with the standard Euclidean inner
+product and norm. -/
 abbrev E2 := EuclideanSpace ℝ (Fin 2)
 
-/-- The group of affine isometries of the Euclidean plane. -/
+/-- **Isometry group of the Euclidean plane.** $M_2$ is the group, under composition, of affine
+isometries of the Euclidean plane onto itself. -/
 abbrev M₂ := E2 ≃ᵃⁱ[ℝ] E2
 
-/-- The linear part of a plane isometry. -/
+/-- **Linear part of a plane isometry.** The linear part of an affine isometry $f$ of the
+Euclidean plane is the linear isometry $A$ of the plane such that $f(x + v) = f(x) + A v$ for
+every point $x$ and every vector $v$. -/
 noncomputable def linearPart (f : M₂) : E2 ≃ₗᵢ[ℝ] E2 := f.linearIsometryEquiv
 
-/-- The **point group** of a group `G` of plane isometries: the set of linear
-parts of the elements of `G`. -/
+/-- **Point group of a group of plane isometries.** The point group of a group $G$ of affine
+isometries of the Euclidean plane is the set of linear parts of the elements of $G$. -/
 noncomputable def pointGroupSet (G : Subgroup M₂) : Set (E2 ≃ₗᵢ[ℝ] E2) :=
   {A | ∃ f ∈ G, linearPart f = A}
 
-/-- The **translation lattice** of a group `G` of plane isometries: the set of
-vectors `v` for which translation by `v` belongs to `G`. -/
+/-- **Translation lattice.** The translation lattice of a subgroup $G$ of the group $M_2$ of
+affine isometries of the Euclidean plane $E_2$ is the set of vectors $v \in E_2$ such that the
+translation $x \mapsto v + x$ belongs to $G$. -/
 noncomputable def translationLattice (G : Subgroup M₂) : Set E2 :=
   {v : E2 | (AffineIsometryEquiv.constVAdd ℝ E2 v : M₂) ∈ G}
 
-/-- Translations, bundled as a homomorphism from the additive plane. -/
+/-- **Translation homomorphism.** The group homomorphism from the additive group of the Euclidean
+plane $\mathbb{R}^2$ (written multiplicatively) to the group of affine isometries of the plane that
+sends a vector $v$ to translation by $v$, the isometry $x \mapsto v + x$. -/
 noncomputable def translationHom : Multiplicative E2 →* M₂ where
   toFun v := AffineIsometryEquiv.constVAdd ℝ E2 (Multiplicative.toAdd v)
   map_one' := by
@@ -88,27 +96,44 @@ noncomputable def translationHom : Multiplicative E2 →* M₂ where
       Multiplicative.toAdd v + (Multiplicative.toAdd w + x)
     exact add_assoc _ _ _
 
-/-- The translation lattice with its canonical additive subgroup structure. -/
+/-- **Translation lattice as an additive subgroup.** For a group $G$ of affine isometries of the
+Euclidean plane $\mathbb{R}^2$, the additive subgroup of $\mathbb{R}^2$ consisting of the vectors
+$v$ such that translation by $v$ belongs to $G$; it is the preimage of $G$ under the translation
+homomorphism $v \mapsto (x \mapsto v + x)$. -/
 noncomputable def translationLatticeSubgroup (G : Subgroup M₂) : AddSubgroup E2 :=
   Subgroup.toAddSubgroup' (G.comap translationHom)
 
-/-- The bundled subgroup has exactly the original translation-vector carrier. -/
+/-- **Membership in the translation lattice subgroup.** For every group $G$ of affine isometries
+of the Euclidean plane and every vector $v$ of the plane, $v$ belongs to the translation lattice
+subgroup of $G$ if and only if $v$ belongs to the translation lattice of $G$. -/
 @[simp] theorem mem_translationLatticeSubgroup (G : Subgroup M₂) (v : E2) :
     v ∈ translationLatticeSubgroup G ↔ v ∈ translationLattice G := Iff.rfl
 
-/-- Forgetting the additive bundle recovers the original set. -/
+/-- **Carrier of the translation lattice subgroup.** For every group $G$ of affine isometries of
+the Euclidean plane, the underlying set of the translation lattice subgroup of $G$ is the
+translation lattice of $G$. -/
 @[simp] theorem coe_translationLatticeSubgroup (G : Subgroup M₂) :
     (translationLatticeSubgroup G : Set E2) = translationLattice G := rfl
 
-/-- A translation is determined by its displacement vector. -/
+/-- **Translations are determined by their vectors.** For vectors $v$ and $w$ of the Euclidean
+plane $\mathbb{R}^2$, if translation by $v$ and translation by $w$ are the same affine isometry,
+then $v = w$. Equivalently, the translation homomorphism $v \mapsto (x \mapsto v + x)$ from the
+additive group of the plane to the group of affine isometries of the plane is injective. -/
 theorem translationHom_injective : Function.Injective translationHom := by
   intro v w h
   have h0 := congrArg (fun f : M₂ => f 0) h
   change Multiplicative.toAdd v + 0 = Multiplicative.toAdd w + 0 at h0
   simpa using h0
 
-/-- The v1 separation criterion. Its linear-part condition measures operator-norm
-separation from the identity, rather than the numerical rotation angle. -/
+/-- **Separation criterion for groups of plane isometries.** A group $G$ of affine isometries of
+the Euclidean plane satisfies the separation criterion if there is $\varepsilon > 0$ such that
+every element $f \ne \mathrm{id}$ of $G$ whose linear part is the identity satisfies
+$\|f(0)\| \ge \varepsilon$, and every element $f$ of $G$ whose linear part $A$ is not the
+identity satisfies $\|A - I\| \ge \varepsilon$, where $I$ is the identity map and the norm is
+the operator norm.
+
+Its linear-part condition measures operator-norm separation from the identity, rather than the
+numerical rotation angle. -/
 def IsDiscrete (G : Subgroup M₂) : Prop :=
   ∃ ε > 0,
     (∀ f ∈ G, linearPart f = LinearIsometryEquiv.refl ℝ E2 → f ≠ 1 → ε ≤ ‖f 0‖) ∧
@@ -116,8 +141,13 @@ def IsDiscrete (G : Subgroup M₂) : Prop :=
       ε ≤ ‖(linearPart f).toLinearIsometry.toContinuousLinearMap -
         ContinuousLinearMap.id ℝ E2‖)
 
-/-- The source's translation separation gives the bundled lattice the standard
-subspace discrete topology. -/
+/-- **The translation lattice of a discrete isometry group is discrete.** Let $G$ be a group of
+affine isometries of the Euclidean plane $\mathbb{R}^2$, and suppose there is $\varepsilon > 0$
+such that every non-identity translation in $G$ moves the origin by at least $\varepsilon$, and
+every element of $G$ whose linear part $A$ is not the identity satisfies
+$\|A - I\| \ge \varepsilon$ in operator norm. Then the translation lattice of $G$, the additive
+subgroup of vectors $v$ such that translation by $v$ lies in $G$, is discrete in the subspace
+topology of $\mathbb{R}^2$. -/
 theorem translationLatticeSubgroup_discreteTopology (G : Subgroup M₂) (hG : IsDiscrete G) :
     DiscreteTopology (translationLatticeSubgroup G) := by
   obtain ⟨ε, hε, htrans, _⟩ := hG
@@ -146,8 +176,9 @@ theorem translationLatticeSubgroup_discreteTopology (G : Subgroup M₂) (hG : Is
   rw [← hball]
   exact Metric.isOpen_ball
 
-/-- Conjugating a translation by a plane isometry gives translation by the
-linearly transported vector. -/
+/-- **Conjugating a translation by a plane isometry.** Let $g$ be an affine isometry of the
+Euclidean plane with linear part $A$, let $v$ be a vector, and write $\tau_w$ for translation by
+a vector $w$. Then $g \circ \tau_v \circ g^{-1} = \tau_{A v}$. -/
 lemma conj_translation (g : M₂) (v : E2) :
     g * (AffineIsometryEquiv.constVAdd ℝ E2 v) * g⁻¹ =
     AffineIsometryEquiv.constVAdd ℝ E2 (g.linearIsometryEquiv v) := by
@@ -159,9 +190,10 @@ lemma conj_translation (g : M₂) (v : E2) :
   rw [g.map_vadd]
   simp [AffineIsometryEquiv.apply_symm_apply]
 
-/-- The point group of a group of plane isometries preserves its translation
-lattice: if `A` is the linear part of some element of `G` and `v` is a
-translation vector of `G`, then `A v` is also a translation vector of `G`. -/
+/-- **The point group preserves the translation lattice.** Let $G$ be a group of affine
+isometries of the Euclidean plane. If $A$ belongs to the point group of $G$, that is, $A$ is the
+linear part of some element of $G$, and $v$ belongs to the translation lattice of $G$, then $A v$
+belongs to the translation lattice of $G$. -/
 theorem point_group_preserves_lattice (G : Subgroup M₂)
     (A : E2 ≃ₗᵢ[ℝ] E2) (hA : A ∈ pointGroupSet G)
     (v : E2) (hv : v ∈ translationLattice G) :
@@ -303,8 +335,14 @@ theorem discrete_subgroup_R2_classification
       exact ⟨fun hx => congr_arg Subtype.val (@Subsingleton.elim _ hsub ⟨x, hx⟩ 0),
              fun hx => by rw [hx]; exact G.zero_mem⟩
 
-/-- The translation lattice of a plane-isometry group satisfying the source
-separation criterion is trivial, cyclic, or a rank-two lattice. -/
+/-- **Classification of translation lattices.** Let $G$ be a group of affine isometries of the
+Euclidean plane $\mathbb{R}^2$, and suppose there is $\varepsilon > 0$ such that every
+non-identity translation in $G$ moves the origin by at least $\varepsilon$, and every element of
+$G$ whose linear part $A$ is not the identity satisfies $\|A - I\| \ge \varepsilon$ in operator
+norm. Let $L$ be the translation lattice of $G$, the additive subgroup of vectors $v$ such that
+translation by $v$ lies in $G$. Then either $L = \{0\}$, or $L = \mathbb{Z}\alpha$ for some nonzero
+vector $\alpha$, or $L = \mathbb{Z}a + \mathbb{Z}b$ for some $\mathbb{R}$-linearly independent
+vectors $a$ and $b$. -/
 theorem translation_lattice_classification (G : Subgroup M₂) (hG : IsDiscrete G) :
     translationLatticeSubgroup G = ⊥ ∨
     (∃ α : E2, α ≠ 0 ∧ translationLatticeSubgroup G = AddSubgroup.zmultiples α) ∨
