@@ -89,9 +89,9 @@ conditional results come from `HierarchicalCountMLE`, which is merged (#1623) an
 edited. `MathlibExt.Probability.Statistics.GLM.NegativeBinomialDispersion` and
 `GLM.CountData.Model` treat negative binomial regression with offsets in the (shape, mean)
 parametrization with consistency hypotheses assumed abstractly, and prove no existence theorem.
-The third-order bound on `digammaIncrement` repeats a private lemma of `HierarchicalCountMLE`
-(private there, so not importable); `log (1 + x) ≥ x - x² / 2`, also a private lemma there, is
-derived here from Mathlib's `Real.le_log_one_add_of_nonneg`. The strong law is Mathlib's
+The third-order bound on `digammaIncrement` is `HierarchicalCountMLE`'s public
+`digammaIncrement_le_cubic`; `log (1 + x) ≥ x - x² / 2`, a private lemma there, is derived here
+from Mathlib's `Real.le_log_one_add_of_nonneg`. The strong law is Mathlib's
 `ProbabilityTheory.strong_law_ae`. Continuity of `b̂` is a short implicit-root argument (private)
 from strict monotonicity of `b ↦ b · ∂ℓ/∂b`; no Mathlib lemma packages it.
 
@@ -335,40 +335,11 @@ private lemma sub_sq_div_two_le_log_one_add {x : ℝ} (hx : 0 ≤ x) : x - x ^ 2
   rw [le_div_iff₀ (by linarith)]
   nlinarith [pow_nonneg hx 3]
 
-/-- The third-order upper bound `∑_{j<k} 1 / (a + j) ≤ k / a - k (k - 1) / (2 a²) + k³ / a³`
-(the same bound is a private lemma of `HierarchicalCountMLE`). -/
-private lemma digammaIncrement_le_cubic' {a : ℝ} (ha : 0 < a) (k : ℕ) :
-    digammaIncrement a k ≤ k / a - (k * (k - 1) / 2) / a ^ 2 + (k : ℝ) ^ 3 / a ^ 3 := by
-  have hterm : ∀ j : ℕ, (a + j)⁻¹ ≤ 1 / a - j / a ^ 2 + (j : ℝ) ^ 2 / a ^ 3 := fun j => by
-    have hj : (0 : ℝ) ≤ j := j.cast_nonneg
-    rw [inv_eq_one_div, div_le_iff₀ (by positivity)]
-    have : (1 / a - j / a ^ 2 + (j : ℝ) ^ 2 / a ^ 3) * (a + j) = 1 + (j : ℝ) ^ 3 / a ^ 3 := by
-      field_simp; ring
-    rw [this]
-    have : 0 ≤ (j : ℝ) ^ 3 / a ^ 3 := by positivity
-    linarith
-  have hsum1 : ∑ j ∈ range k, (j : ℝ) = k * (k - 1) / 2 := by
-    induction k with
-    | zero => simp
-    | succ k ih => rw [sum_range_succ, ih]; push_cast; ring
-  have hsum2 : ∑ j ∈ range k, (j : ℝ) ^ 2 ≤ (k : ℝ) ^ 3 := by
-    calc ∑ j ∈ range k, (j : ℝ) ^ 2 ≤ ∑ _j ∈ range k, (k : ℝ) ^ 2 :=
-          sum_le_sum fun j hj => by
-            have := mem_range.1 hj
-            exact pow_le_pow_left₀ j.cast_nonneg (by exact_mod_cast this.le) 2
-      _ = (k : ℝ) ^ 3 := by simp; ring
-  calc digammaIncrement a k ≤ ∑ j ∈ range k, (1 / a - j / a ^ 2 + (j : ℝ) ^ 2 / a ^ 3) :=
-        sum_le_sum fun j _ => hterm j
-    _ = k / a - (∑ j ∈ range k, (j : ℝ)) / a ^ 2 + (∑ j ∈ range k, (j : ℝ) ^ 2) / a ^ 3 := by
-        rw [sum_add_distrib, sum_sub_distrib, sum_div, sum_div]; simp [div_eq_mul_inv]
-    _ ≤ k / a - (k * (k - 1) / 2) / a ^ 2 + (k : ℝ) ^ 3 / a ^ 3 := by
-        rw [hsum1]; gcongr
-
 private lemma shapeScore_term_le {a m : ℝ} (ha : 0 < a) (hm : 0 ≤ m) (k : ℕ) :
     a ^ 2 * (digammaIncrement a k - log (1 + m / a)) ≤
       ((k : ℝ) - ((k : ℝ) - m) ^ 2) / 2 + (m - k) * m ^ 2 / (a + m) + (k : ℝ) ^ 3 / a -
         a * (a * (m - k) / (a + m)) := by
-  have hd := digammaIncrement_le_cubic' ha k
+  have hd := digammaIncrement_le_cubic ha k
   have hl := sub_sq_div_two_le_log_one_add (x := m / a) (by positivity)
   have ham : a + m ≠ 0 := by linarith
   calc a ^ 2 * (digammaIncrement a k - log (1 + m / a)) ≤
