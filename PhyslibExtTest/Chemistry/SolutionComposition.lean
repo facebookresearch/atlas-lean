@@ -96,9 +96,21 @@ example : dilutionVolume 6 (1/2) 1 = 3 := by
   simp only [dilutionVolume]
   norm_num
 
-/-- The computed final volume achieves the target concentration. -/
+/-- The cross-multiplied identity for the computed final volume. -/
 example : 1 * dilutionVolume 6 (1/2) 1 = 6 * (1/2) :=
-  dilutionVolume_spec (by norm_num)
+  dilutionVolume_cross_mul (by norm_num)
+
+/-- The computed final volume achieves the target concentration `1`. -/
+example : molarity (6 * (1/2)) (dilutionVolume 6 (1/2) 1) = 1 :=
+  molarity_dilutionVolume (by norm_num)
+
+/-- Boundary case with no solute (`c₁ = 0`, `V₁ = 1`, target `c₂ = 1`): the cross-multiplied
+identity still holds, but the final volume is `0` and the molarity is `0`, not the target `1`.
+`molarity_dilutionVolume` excludes this case through `c₁ * V₁ ≠ 0`. -/
+example : (1:ℝ) * dilutionVolume 0 1 1 = 0 * 1 ∧ dilutionVolume 0 1 1 = 0 ∧
+    molarity (0 * 1) (dilutionVolume 0 1 1) ≠ 1 := by
+  refine ⟨dilutionVolume_cross_mul (by norm_num), ?_, ?_⟩ <;>
+    simp only [dilutionVolume, molarity] <;> norm_num
 
 /-- Amount conservation gives `c₁ * V₁ = c₂ * V₂` at the stated numbers. -/
 example : (6:ℝ) * (1/2) = 1 * 3 :=

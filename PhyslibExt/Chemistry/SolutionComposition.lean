@@ -40,7 +40,8 @@ conversion identity. With solute mass `n * M` and solution mass `ρ * V`, the ma
 `c * M / ρ`.
 
 Dilution follows from amount conservation: if `n₁ = n₂` with `c₁ = n₁ / V₁` and `c₂ = n₂ / V₂`
-then `c₁ * V₁ = c₂ * V₂`, and the final volume `V₂ = c₁ * V₁ / c₂` achieves a target `c₂`.
+then `c₁ * V₁ = c₂ * V₂`, and the final volume `V₂ = c₁ * V₁ / c₂` achieves a target `c₂`
+whenever the initial amount `c₁ * V₁` is nonzero (with no solute it gives `V₂ = 0`).
 The final volume is always a separately given measured quantity; no volume additivity is used
 anywhere.
 
@@ -81,8 +82,9 @@ the given temperature), or any volume-additivity model.
 - `amounts_massFraction_eq_massFraction` : the family mass fraction
   `Chemistry.Amounts.massFraction M n i` is the scalar ratio of `n i * M i` over
   `∑ j, n j * M j`.
-- `dilutionVolume`, `dilution_conserved`, `dilutionVolume_spec` : `c₁ * V₁ = c₂ * V₂` and the
-  target-achieving final volume.
+- `dilutionVolume`, `dilution_conserved`, `dilutionVolume_cross_mul`,
+  `molarity_dilutionVolume` : `c₁ * V₁ = c₂ * V₂`, the cross-multiplied identity for the
+  computed final volume, and that this volume achieves the target molarity when `c₁ * V₁ ≠ 0`.
 - `Chemistry.Amounts.moleFraction_nonneg`, `Chemistry.Amounts.sum_moleFraction` : reused
   mole-fraction facts; mole fractions are nonnegative and sum to `1`.
 - `moleFraction_mix` : the algebraic mixing identity for mole fractions over
@@ -264,11 +266,22 @@ lemma dilution_conserved {n₁ n₂ V₁ V₂ c₁ c₂ : ℝ}
   simp only [hc₁, hc₂, molarity]
   rw [hn, div_mul_cancel₀ _ hV₁.ne', div_mul_cancel₀ _ hV₂.ne']
 
-/-- Inverse use: given a target concentration `c₂ > 0` (with arbitrary `c₁, V₁`), the final
-volume `V₂ = c₁ * V₁ / c₂` satisfies `c₂ * V₂ = c₁ * V₁`. -/
-lemma dilutionVolume_spec {c₁ V₁ c₂ : ℝ} (hc₂ : 0 < c₂) :
+/-- The cross-multiplied (algebraic) identity for the computed final volume: for `c₂ > 0` and
+arbitrary `c₁, V₁`, `V₂ = c₁ * V₁ / c₂` satisfies `c₂ * V₂ = c₁ * V₁`. This alone does not show
+that `V₂` achieves molarity `c₂`: with `c₁ * V₁ = 0` it gives `V₂ = 0`. For that, see
+`molarity_dilutionVolume`. -/
+lemma dilutionVolume_cross_mul {c₁ V₁ c₂ : ℝ} (hc₂ : 0 < c₂) :
     c₂ * dilutionVolume c₁ V₁ c₂ = c₁ * V₁ := by
   rw [dilutionVolume, mul_comm c₂ (c₁ * V₁ / c₂), div_mul_cancel₀ _ hc₂.ne']
+
+/-- **The computed final volume achieves the target concentration**: if the initial amount
+`c₁ * V₁` is nonzero (physically, positive initial concentration and volume), the solution of
+amount `c₁ * V₁` in volume `V₂ = c₁ * V₁ / c₂` has molarity `c₂`. For `c₂ = 0` the identity holds
+only through Lean's `x / 0 = 0` (final volume `0`). -/
+lemma molarity_dilutionVolume {c₁ V₁ c₂ : ℝ} (h : c₁ * V₁ ≠ 0) :
+    molarity (c₁ * V₁) (dilutionVolume c₁ V₁ c₂) = c₂ := by
+  rw [molarity, dilutionVolume]
+  exact div_div_cancel₀ h
 
 /-!
 
