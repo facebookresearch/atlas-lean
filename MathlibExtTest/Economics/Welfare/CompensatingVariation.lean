@@ -82,4 +82,18 @@ example : MathlibExt.Economics.Consumer.expenditure
   rw [MathlibExt.Economics.Consumer.expenditure_min hp1 hu]
   norm_num [Matrix.cons_val_zero, Matrix.cons_val_one]
 
+/-- The welfare spelling is the canonical expenditure declaration, not a copy: the two names
+agree at reducible transparency. -/
+example : MathlibExt.Economics.Consumer.expenditure (ι := Fin 2) =
+    MathlibExt.Economics.ExpenditureFunction.expenditure (ι := Fin 2) := by
+  with_reducible rfl
+
+/-- The canonical homogeneity lemma rewrites the welfare spelling directly. -/
+example (p : Fin 2 → ℝ) :
+    MathlibExt.Economics.Consumer.expenditure (fun x => min (x 0) (x 1))
+        MathlibExt.Economics.Consumer.twoGoodSet ((2 : ℝ) • p) 2 =
+      2 * MathlibExt.Economics.Consumer.expenditure (fun x => min (x 0) (x 1))
+        MathlibExt.Economics.Consumer.twoGoodSet p 2 := by
+  rw [MathlibExt.Economics.ExpenditureFunction.expenditure_smul _ _ _ _ (by norm_num)]
+
 end MathlibExtTest.Economics.Welfare.CompensatingVariation

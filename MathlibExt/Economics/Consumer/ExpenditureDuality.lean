@@ -12,6 +12,8 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
 public import Mathlib.Topology.MetricSpace.Pseudo.Pi
 public import MathlibExt.Economics.Consumer.LocalNonsatiation
+public import MathlibExt.Economics.Consumer.BudgetSet
+public import MathlibExt.Economics.Consumer.ExpenditureFunction
 import Mathlib.Topology.Algebra.Monoid
 import Mathlib.Topology.Algebra.Ring.Real
 
@@ -32,7 +34,8 @@ condition on prices, no continuity of utility and no convexity is needed for thi
 
 ## Main definitions
 
-* `Economics.Consumer.budgetSet`: the budget set `B(p, w)`.
+* `Economics.Consumer.budgetSet`: the budget set `B(p, w)`, an alias of
+  `MathlibExt.Economics.Consumer.budgetSet`.
 * `Economics.Consumer.IsMarshallianDemand`: an affordable utility maximizer.
 * `Economics.Consumer.indirectUtility`: `v(p, w) = sup {u x | x ∈ B(p, w)}`.
 * `Economics.Consumer.expenditure`: `e(p, ū) = inf {p ⬝ᵥ x | x ∈ X, ū ≤ u x}`.
@@ -56,11 +59,7 @@ condition on prices, no continuity of utility and no convexity is needed for thi
 
 namespace Economics.Consumer
 
-/-- The budget set `B(p, w) = {x ∈ X | p ⬝ᵥ x ≤ w}`: affordable consumption
-bundles at prices `p` and wealth `w`. -/
-def budgetSet {ι : Type*} [Fintype ι] (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) :
-    Set (ι → ℝ) :=
-  {x | x ∈ X ∧ p ⬝ᵥ x ≤ w}
+export MathlibExt.Economics.Consumer (budgetSet)
 
 /-- `x` is a Marshallian (utility-maximizing) demand at `(p, w)`: it is
 affordable and no affordable bundle gives strictly higher utility. This is the
@@ -76,12 +75,8 @@ noncomputable def indirectUtility {ι : Type*} [Fintype ι] (u : (ι → ℝ) �
     (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) : ℝ :=
   sSup (u '' budgetSet X p w)
 
-/-- The expenditure function `e(p, ū) = inf {p ⬝ᵥ x | x ∈ X, ū ≤ u x}`: the
-least cost of reaching utility at least `ū`. As a real infimum it is meaningful
-only when the target is feasible and costs are bounded below. -/
-noncomputable def expenditure {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
-    (X : Set (ι → ℝ)) (p : ι → ℝ) (ubar : ℝ) : ℝ :=
-  sInf ((fun x => p ⬝ᵥ x) '' {x | x ∈ X ∧ ubar ≤ u x})
+-- Preserve the consumer spelling while sharing the canonical expenditure declaration.
+export MathlibExt.Economics.ExpenditureFunction (expenditure)
 
 /- Local nonsatiation is defined once, in `MathlibExt.Economics.Consumer`; this alias keeps the
 name `Economics.Consumer.LocallyNonsatiated` resolving to that same constant. -/

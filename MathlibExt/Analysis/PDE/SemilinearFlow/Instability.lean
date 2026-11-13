@@ -62,12 +62,13 @@ assumptions are:
 ## Scope
 
 The general version, with only some spectrum outside the closed unit disk and no eigenvector,
-needs approximate eigenvectors at a spectral point of maximal modulus (or a spectral projection
-onto the unstable part); it is deferred, so we assume an eigenvector and the growth condition
-`μ < |ν|ᵖ`. An unstable *continuum* wavenumber of a reaction–diffusion system is not enough
-on a bounded domain: the spectral hypothesis concerns the actual operator, and when no
-admissible wavenumber of the domain lies in the unstable band, no Neumann Fourier mode is an
-unstable eigenvector (see the tests).
+uses approximate eigenvectors at a spectral point of maximal modulus; it is proved in
+`MathlibExt.Analysis.PDE.SemilinearFlow.GeneralInstability` from the public proof steps of this
+module. Here we assume an eigenvector and the growth condition `μ < |ν|ᵖ`. An unstable
+*continuum* wavenumber of a reaction–diffusion system is not enough on a bounded domain: the
+spectral hypothesis concerns the actual operator, and when no admissible wavenumber of the
+domain lies in the unstable band, no Neumann Fourier mode is an unstable eigenvector (see the
+tests).
 
 ## References
 

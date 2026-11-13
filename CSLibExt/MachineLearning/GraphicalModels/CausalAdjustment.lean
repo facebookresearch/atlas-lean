@@ -19,12 +19,8 @@ Graphical identification of causal effects in a causal Bayesian network (`BayesN
 topological order, finite state space; the intervention `do(X_k = a)` is `BayesNet.intervene`).
 The proofs combine the truncated factorization with the global Markov property
 (`BayesNet.condIndep_of_dSeparated`) applied to networks with the arrows into the intervened
-nodes removed.
-
-## Main definitions
-
-* `BayesNet.mutilateSet b W w`: the network of the intervention `do(X_W = w)` on a set `W` of
-  nodes, with the arrows into `W` removed.
+nodes removed. The network `BayesNet.mutilateSet b W w` of the intervention `do(X_W = w)` on a
+set `W` of nodes is defined in `CSLibExt/MachineLearning/GraphicalModels/CausalBayesNet.lean`.
 
 ## Main results
 
@@ -103,13 +99,6 @@ namespace BayesNet
 variable {n : ℕ} [Nonempty α] (b : BayesNet α n)
 
 /-! ### Interventions on a set of nodes -/
-
-/-- The network of the intervention `do(X_W = w)` with the arrows into `W` removed: every node
-`j ∈ W` has no parents and the point mass at `w j` as its table. -/
-noncomputable def mutilateSet (W : Finset (Fin n)) (w : Fin n → α) : BayesNet α n where
-  pa j := if j ∈ W then ∅ else b.pa j
-  cpt j z := if h : j ∈ W then StdSimplex.single (w j) else
-    b.cpt j fun i => z ⟨i, by simp [h]⟩
 
 /-- **The truncated factorization for a set of nodes**: after `do(X_W = w)`, the joint is the
 product of the tables of the nodes outside `W` on assignments agreeing with `w` on `W`. -/

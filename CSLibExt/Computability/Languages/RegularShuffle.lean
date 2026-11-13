@@ -13,6 +13,7 @@ module
 
 public import Cslib.Computability.Languages.RegularLanguage
 public import Mathlib.Computability.NFA
+public import CSLibExt.Computability.Languages.Shuffle
 
 /-!
 # Regular languages under shuffle and cyclic shift
@@ -34,29 +35,6 @@ Theory, Languages, and Computation*, 1979, exercises to Chapter 3):
 namespace Cslib.Language
 
 variable {α : Type*}
-
-/-- `IsShuffle u v w`: the word `w` interleaves `u` and `v`. -/
-inductive IsShuffle : List α → List α → List α → Prop
-  | nil : IsShuffle [] [] []
-  | left {u v w : List α} (a : α) : IsShuffle u v w → IsShuffle (a :: u) v (a :: w)
-  | right {u v w : List α} (a : α) : IsShuffle u v w → IsShuffle u (a :: v) (a :: w)
-
-theorem isShuffle_nil_iff {u v : List α} : IsShuffle u v [] ↔ u = [] ∧ v = [] := by
-  constructor
-  · rintro ⟨⟩
-    exact ⟨rfl, rfl⟩
-  · rintro ⟨rfl, rfl⟩
-    exact .nil
-
-theorem isShuffle_cons_iff {u v w : List α} {a : α} :
-    IsShuffle u v (a :: w) ↔
-      (∃ u', u = a :: u' ∧ IsShuffle u' v w) ∨ ∃ v', v = a :: v' ∧ IsShuffle u v' w := by
-  constructor
-  · rintro (_ | ⟨_, h⟩ | ⟨_, h⟩)
-    · exact .inl ⟨_, rfl, h⟩
-    · exact .inr ⟨_, rfl, h⟩
-  · rintro (⟨u', rfl, h⟩ | ⟨v', rfl, h⟩)
-    exacts [.left a h, .right a h]
 
 /-- The shuffle of two languages: all interleavings of a word of `L` with a word of `M`. -/
 def shuffle (L M : Language α) : Language α :=
