@@ -21,7 +21,7 @@ import Mathlib.Topology.Algebra.Order.Field
 import Mathlib.Topology.Order.IntermediateValue
 
 /-!
-# The Gardner–Collins–Cantor genetic toggle switch
+# The Gardner–Cantor–Collins genetic toggle switch
 
 Two repressors `U` and `V` each repress the other's promoter. In the nondimensional form of
 Gardner, Cantor and Collins (2000), with time measured in units of the (common) degradation

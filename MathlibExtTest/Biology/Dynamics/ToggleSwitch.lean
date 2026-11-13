@@ -11,7 +11,7 @@ module
 import MathlibExt.Biology.Dynamics.ToggleSwitch
 import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
 
-/-! Tests for the Gardner–Collins–Cantor toggle switch.
+/-! Tests for the Gardner–Cantor–Collins toggle switch.
 
 * Symmetric switch `α₁ = α₂ = 10`, `β = γ = 2`: exactly three equilibria `(2, 2)` and
   `(5 ± 2√6, 5 ∓ 2√6)`, computed from the equilibrium equations; the symmetric one is a saddle with
