@@ -8,46 +8,64 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Logics.Propositional.CNF.Semantics
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Insert
 
+/-!
+# Termination of CDCL without restarts or clause deletion
+
+The abstract CDCL system over the canonical CNF representation `Cslib.Logic.PL.CNF`, in which a
+literal is a pair `(variable, polarity)` and a clause is a list of literals. A state is a trail
+of assigned literals, newest first, together with the finite set of learned clauses
+(`Finset CNFClause`). `CDCLStep F` has two rules:
+
+* `decide`: push a literal whose variable is not on the trail yet (neither polarity present);
+* `learn`: add a new clause implied by the input formula `F` (`ImpliedBy`) and backjump, i.e.
+  replace the trail by any suffix of it, popping its newest literals. Keeping the whole trail is
+  the special case of learning without backjumping.
+
+`cdcl_step_potential_decreases`: within a finite universe (trail variables in `vars` and
+distinct, learned clauses in `clauses`), the potential
+`(clauses.card - L.card) * (vars.card + 1) + (vars.card - t.length)` strictly decreases along
+every step. A decide lengthens the trail by one; a learn step adds a clause, worth
+`vars.card + 1`, which exceeds the at most `vars.card` that backjumping can add to the second
+summand.
+
+Scope: unit propagation and conflict analysis are not separate rules. A learn step only needs the
+clause to be new and implied by `F`, and the literal that CDCL asserts after a backjump can be
+pushed by a later `decide`. Restarts and clause deletion are excluded.
+-/
+
 @[expose] public section
 
+namespace Cslib.Algorithms.SAT.CDCL
 
-/-- A literal is a (possibly negated) variable; a clause is a
-finset of literals; a formula is a finset of clauses. This file
-is the termination core for the abstract CDCL system without
-restart or clause deletion, restated self-containedly. -/
-abbrev Lit := ℕ × Bool
+open Cslib.Logic.PL
 
-def Lit.neg (l : Lit) : Lit := (l.1, !l.2)
+/-- The clause `C` is a semantic consequence of the formula `F`: every assignment satisfying `F`
+satisfies `C`. -/
+def ImpliedBy (F : CNF) (C : CNFClause) : Prop :=
+  ∀ σ, F.Satisfies σ → C.Satisfies σ
 
-def litSat (σ : ℕ → Bool) (l : Lit) : Prop := σ l.1 = l.2
-
-def clauseSat (σ : ℕ → Bool) (c : Finset Lit) : Prop :=
-  ∃ l ∈ c, litSat σ l
-
-def formulaSat (σ : ℕ → Bool) (φ : Finset (Finset Lit)) : Prop :=
-  ∀ c ∈ φ, clauseSat σ c
-
-def ImpliedBy (φ : Finset (Finset Lit)) (C : Finset Lit) : Prop :=
-  ∀ σ, formulaSat σ φ → clauseSat σ C
-
-abbrev CDCLState := List Lit × Finset (Finset Lit)
+/-- A CDCL state: the trail (newest literal first) and the learned clauses. -/
+abbrev CDCLState := List (Nat × Bool) × Finset CNFClause
 
 /-- CDCL steps without restart or clause deletion: decide a
 literal whose variable is not yet decided (neither polarity
-present), or learn a new clause implied by `F`. -/
-inductive CDCLStep (F : Finset (Finset Lit)) :
+present), or learn a new clause implied by `F` and backjump to a
+suffix of the trail. -/
+inductive CDCLStep (F : CNF) :
     CDCLState → CDCLState → Prop
-  | decide (t : List Lit) (L : Finset (Finset Lit)) (l : Lit)
-      (h : l ∉ t) (hneg : l.neg ∉ t) :
+  | decide (t : List (Nat × Bool)) (L : Finset CNFClause) (l : Nat × Bool)
+      (h : l ∉ t) (hneg : (l.1, !l.2) ∉ t) :
       CDCLStep F (t, L) (l :: t, L)
-  | learn (t : List Lit) (L : Finset (Finset Lit)) (C : Finset Lit)
-      (h : ImpliedBy F C) (hnew : C ∉ L) :
-      CDCLStep F (t, L) (t, insert C L)
+  | learn (t t' : List (Nat × Bool)) (L : Finset CNFClause) (C : CNFClause)
+      (h : ImpliedBy F C) (hnew : C ∉ L) (hback : t' <:+ t) :
+      CDCLStep F (t, L) (t', insert C L)
 
-inductive CDCLReach (F : Finset (Finset Lit)) :
+/-- Reachability: the reflexive-transitive closure of `CDCLStep F`. -/
+inductive CDCLReach (F : CNF) :
     CDCLState → CDCLState → Prop
   | refl (s : CDCLState) : CDCLReach F s s
   | tail {s₁ s₂ s₃ : CDCLState} (h : CDCLReach F s₁ s₂)
@@ -60,11 +78,12 @@ finite universe: fix finite sets `vars` of variables and
 t.length)` strictly decreases along every step taken from a
 state whose trail variables lie in `vars`, whose trail decides
 distinct variables, and whose learned clauses lie in `clauses`
-(and likewise for the successor state). Hence no infinite
-decide/learn sequence exists within the universe: well-founded
-induction on the potential bounds every run. -/
-theorem cdcl_step_potential_decreases {F : Finset (Finset Lit)}
-    (vars : Finset ℕ) (clauses : Finset (Finset Lit))
+(and likewise for the successor state), including learn steps
+that backjump. Hence no infinite decide/learn sequence exists
+within the universe: well-founded induction on the potential
+bounds every run. -/
+theorem cdcl_step_potential_decreases {F : CNF}
+    (vars : Finset ℕ) (clauses : Finset CNFClause)
     {s₁ s₂ : CDCLState} (hstep : CDCLStep F s₁ s₂)
     (hvars : ∀ l ∈ s₁.1, l.1 ∈ vars)
     (hnodup : (s₁.1.map Prod.fst).Nodup)
@@ -98,7 +117,7 @@ theorem cdcl_step_potential_decreases {F : Finset (Finset Lit)}
           have h3 : l'.2 = !l.2 := by
             revert h2
             cases l'.2 <;> cases l.2 <;> simp
-          have hEq : l' = l.neg := Prod.ext heq h3
+          have hEq : l' = (l.1, !l.2) := Prod.ext heq h3
           rw [hEq] at hl'
           exact hl'
       have hne : (t.map Prod.fst).toFinset ≠ vars := by
@@ -113,7 +132,7 @@ theorem cdcl_step_potential_decreases {F : Finset (Finset Lit)}
         exact hc
       rw [List.length_cons]
       exact Nat.add_lt_add_left (by omega) _
-  | learn t L C h hnew =>
+  | learn t t' L C h hnew hback =>
       dsimp only [] at hvars hnodup hclauses hvars₂ hclauses₂ ⊢
       have hC : C ∈ clauses := hclauses₂ C (Finset.mem_insert_self C L)
       have hsub : L ⊆ clauses := Finset.subset_iff.mpr hclauses
@@ -128,5 +147,8 @@ theorem cdcl_step_potential_decreases {F : Finset (Finset Lit)}
         Finset.card_insert_of_notMem hnew
       have hsucc : clauses.card - L.card = (clauses.card - (L.card + 1)) + 1 := by
         omega
+      -- the new clause is worth `vars.card + 1`; backjumping costs at most `vars.card`
       rw [hins, hsucc, Nat.add_mul, Nat.one_mul]
       omega
+
+end Cslib.Algorithms.SAT.CDCL
