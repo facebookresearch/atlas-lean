@@ -53,8 +53,9 @@ For `k₋₂ = 0` this is the irreversible system `MichaelisMenten.IsSolution`
 ## Not covered
 
 Convergence of every solution to the equilibrium of its class is proved in
-`MathlibExt.Analysis.ODE.LaSalle` (`IsSolution.tendsto_equilibrium`), using LaSalle's principle
-with the pseudo-Helmholtz function. It lives there, not here, because that file imports this one.
+`MathlibExt.Biology.Dynamics.ReversibleMichaelisMenten.LaSalle` (`IsSolution.tendsto_equilibrium`),
+using LaSalle's principle (`MathlibExt.Analysis.ODE.LaSalle`) with the pseudo-Helmholtz function.
+It lives there, not here, because that file imports this one.
 
 ## Source receipt (API-00 reuse gate)
 
