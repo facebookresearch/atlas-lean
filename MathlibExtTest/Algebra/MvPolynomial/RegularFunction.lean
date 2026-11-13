@@ -10,7 +10,7 @@ module
 
 import MathlibExt.Algebra.MvPolynomial.RegularFunction
 import Mathlib.Algebra.Algebra.Rat
-import Mathlib.Data.Real.Basic
+import Mathlib.Basic.Real.Basic
 
 open MvPolynomial
 
