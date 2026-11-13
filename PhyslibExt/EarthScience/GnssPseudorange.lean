@@ -36,7 +36,10 @@ satellite, with the offset vectors signed to match.
 
 - `EarthScience.gnss_directional_derivative`: directional derivative is the Jacobian row dotted
   with the direction.
-- `EarthScience.gnss_jacobian_row_dot`: the row-dot identity.
+- `EarthScience.gnss_row_dot_algebraic_identity`: the algebraic identity
+  `⟪‖x₀ - s‖⁻¹ • (x₀ - s), d⟫_ℝ + 1 * db = ⟪x₀ - s, d⟫_ℝ / ‖x₀ - s‖ + db` for all `x₀` and `s`.
+  It asserts no derivative; reading its left side as the Jacobian row dotted with `(d, db)` needs
+  `x₀ ≠ s`, as in `gnss_directional_derivative`.
 
 ## iii. Table of contents
 
@@ -79,9 +82,13 @@ theorem gnss_directional_derivative (x₀ s d : EuclideanSpace ℝ (Fin 3)) (b�
   convert hnorm.add hclk using 1
   simp
 
-/-- The Jacobian row dotted with a perturbation equals the directional derivative: the row
-`[(x₀ - s) / ‖x₀ - s‖, 1]` dotted with `(d, db)` is `⟪x₀ - s, d⟫_ℝ / ‖x₀ - s‖ + db`. -/
-theorem gnss_jacobian_row_dot (x₀ s d : EuclideanSpace ℝ (Fin 3)) (db : ℝ) :
+/-- Purely algebraic row-dot identity, for all `x₀` and `s`: the row
+`[‖x₀ - s‖⁻¹ • (x₀ - s), 1]` dotted with `(d, db)` is `⟪x₀ - s, d⟫_ℝ / ‖x₀ - s‖ + db`.
+
+It asserts no Jacobian or derivative. Only for `x₀ ≠ s` is this row the pseudorange Jacobian
+row, by `gnss_directional_derivative`. At `x₀ = s` both sides equal `db` because `‖0‖⁻¹ = 0`,
+while the range term `‖t • d‖ = |t| * ‖d‖` is not differentiable at `0` for `d ≠ 0`. -/
+theorem gnss_row_dot_algebraic_identity (x₀ s d : EuclideanSpace ℝ (Fin 3)) (db : ℝ) :
     ⟪‖x₀ - s‖⁻¹ • (x₀ - s), d⟫_ℝ + 1 * db = ⟪x₀ - s, d⟫_ℝ / ‖x₀ - s‖ + db := by
   rw [real_inner_smul_left]
   ring

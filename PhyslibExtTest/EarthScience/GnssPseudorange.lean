@@ -17,8 +17,8 @@ Concrete consumers of `PhyslibExt.EarthScience.GnssPseudorange`.
 
 ## i. Overview
 
-Numeric pseudorange directional derivative, with the value `7 / 5` checked, and the row-dot
-identity.
+Numeric pseudorange directional derivative, with the value `7 / 5` checked, and the algebraic
+row-dot identity.
 
 ## ii. Key results
 
@@ -55,10 +55,10 @@ example : HasDerivAt (fun t : ℝ =>
   · rw [hi, hs]
     norm_num
 
-/-- Numeric row dot with the same geometry. -/
+/-- The algebraic row-dot identity with the same geometry. -/
 example :
     ⟪‖(0 : EuclideanSpace ℝ (Fin 3)) - !₂[3, 4, 0]‖⁻¹ •
         ((0 : EuclideanSpace ℝ (Fin 3)) - !₂[3, 4, 0]), !₂[1, 0, 0]⟫_ℝ + 1 * 2 =
       ⟪(0 : EuclideanSpace ℝ (Fin 3)) - !₂[3, 4, 0], !₂[1, 0, 0]⟫_ℝ /
         ‖(0 : EuclideanSpace ℝ (Fin 3)) - !₂[3, 4, 0]‖ + 2 :=
-  EarthScience.gnss_jacobian_row_dot 0 !₂[3, 4, 0] !₂[1, 0, 0] 2
+  EarthScience.gnss_row_dot_algebraic_identity 0 !₂[3, 4, 0] !₂[1, 0, 0] 2
