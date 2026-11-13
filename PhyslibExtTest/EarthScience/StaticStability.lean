@@ -8,13 +8,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.StaticStability
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 
 /-!
 # Static-stability checks
 
 Concrete consumers of `PhyslibExt.EarthScience.StaticStability`:
 the buoyancy formula at `g = 9.81, a = 0.003, theta0 = 300, zeta = 10`,
-the stable/neutral/unstable sign classification, and the oscillator form.
+the stable/neutral/unstable sign classification, the algebraic rewrite of
+the buoyancy law, and the oscillator equation on concrete solutions.
 
 ## i. Overview
 
@@ -58,8 +60,36 @@ example : (9.81 : ℝ) * (0 : ℝ) / 300 = 0 := by
     (theta0 := 300) (by norm_num) (by norm_num)
   exact (h.2.1).mpr rfl
 
-/-- Oscillator form for a parcel whose velocity obeys the buoyancy law. -/
+/-- Public shape of the algebraic rewrite: it only changes the value of `v'`. -/
 example {zeta v : ℝ → ℝ} {t : ℝ} {g a theta0 : ℝ} (hth : theta0 ≠ 0)
     (hbuoy : HasDerivAt v (g * (theta0 - (theta0 + a * zeta t)) / theta0) t) :
     HasDerivAt v (-(g * a / theta0) * zeta t) t :=
-  EarthScience.static_stability_oscillator hth hbuoy
+  EarthScience.buoyancy_deriv_rewrite hth hbuoy
+
+/-- Public shape of the oscillator theorem. -/
+example {zeta v : ℝ → ℝ} {t : ℝ} {g a theta0 : ℝ} (hth : theta0 ≠ 0)
+    (hvel : ∀ s, HasDerivAt zeta (v s) s)
+    (hbuoy : HasDerivAt v (g * (theta0 - (theta0 + a * zeta t)) / theta0) t) :
+    HasDerivAt (deriv zeta) (-(g * a / theta0) * zeta t) t :=
+  EarthScience.static_stability_oscillator hth hvel hbuoy
+
+/-- Stable case, non-vacuity: for `g = a = theta0 = 1` (`N^2 = 1`) the
+displacement `zeta = cos` with velocity `v = -sin` satisfies both
+hypotheses, and the theorem gives `cos'' = -cos`. -/
+example (t : ℝ) : HasDerivAt (deriv Real.cos) (-((1 : ℝ) * 1 / 1) * Real.cos t) t :=
+  EarthScience.static_stability_oscillator (v := fun s => -Real.sin s) one_ne_zero
+    (fun s => Real.hasDerivAt_cos s)
+    (by convert (Real.hasDerivAt_sin t).neg using 1; ring)
+
+/-- The same solution in the form `zeta'' + N^2 * zeta = 0`. -/
+example (t : ℝ) : deriv (deriv Real.cos) t + (1 : ℝ) * 1 / 1 * Real.cos t = 0 :=
+  EarthScience.static_stability_oscillator_eq (v := fun s => -Real.sin s) one_ne_zero
+    (fun s => Real.hasDerivAt_cos s)
+    (by convert (Real.hasDerivAt_sin t).neg using 1; ring)
+
+/-- Neutral boundary (`a = 0`, `N^2 = 0`): the uniform drift `zeta t = t`
+with `v = 1` satisfies the hypotheses, and the equation reduces to
+`zeta'' = 0`. -/
+example (t : ℝ) : deriv (deriv fun s : ℝ => s) t + (9.81 : ℝ) * 0 / 300 * t = 0 :=
+  EarthScience.static_stability_oscillator_eq (v := fun _ => 1) (by norm_num)
+    (fun s => hasDerivAt_id' s) (by simpa using hasDerivAt_const t (1 : ℝ))
