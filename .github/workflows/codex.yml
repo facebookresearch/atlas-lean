@@ -63,12 +63,14 @@ jobs:
     # describes the author's relationship to the base repo — akiezun
     # is MEMBER, not OWNER — and does not authenticate the head
     # fork). A trusted-head diff is the owner's own code, so the fork
-    # prompt-injection risk does not apply to it. Fork runs whose
-    # author is not an OWNER, MEMBER, or COLLABORATOR stay advisory:
-    # a third-party fork diff is untrusted input that could steer
-    # Codex's verdict toward approval, and prompt instructions are
-    # not a security boundary, so third-party fork content must
-    # never mint a gate approval.
+    # prompt-injection risk does not apply to it. Automatic fork
+    # runs whose author is not an OWNER, MEMBER, or COLLABORATOR
+    # are unauthorized and skipped: nothing posts. A third-party
+    # fork diff is untrusted input that could steer Codex's verdict
+    # toward approval, and prompt instructions are not a security
+    # boundary, so third-party fork content must never mint a gate
+    # approval; only a maintainer's `@codex` on such a PR posts an
+    # advisory comment.
     # Formal trust is also bound to the exact reviewed head:
     # check_auth outputs the trusted repo + SHA it authorized, and
     # Resolve target fails closed if the live PR resolves to anything
@@ -127,8 +129,9 @@ jobs:
             // formal: they mint a verdict. A run on someone else's
             // fork stays advisory, because the fork owner, not the
             // author, controls the head content.
-            // Fork runs for any other author are unauthorized here
-            // and stay advisory at best: they never mint a verdict.
+            // Automatic fork runs for any other author are
+            // unauthorized here and skipped: nothing posts, and
+            // they never mint a verdict.
             // Same-repo automatic runs stay formal, and `@codex`
             // comment runs on same-repo PRs are formal too, both
             // authorized by write/maintain/admin. Trusted-head-owner
@@ -467,10 +470,11 @@ jobs:
               // has write/maintain/admin, so the maintainer's explicit
               // @codex comment is the approval to review that fork.
               // Fork runs for authors outside the
-              // OWNER/MEMBER/COLLABORATOR class are advisory only
-              // (see the job header): they carry no verdict and
-              // never mint an approval, because a third-party fork
-              // diff could steer the verdict. Fork runs on the
+              // OWNER/MEMBER/COLLABORATOR class never reach this
+              // step: check_auth leaves them unauthorized and
+              // skipped. They carry no verdict and never mint an
+              // approval, because a third-party fork diff could
+              // steer the verdict. Fork runs on the
               // author's own fork by an OWNER/MEMBER/COLLABORATOR
               // author, and trusted-head-owner fork runs, are
               // formal.
@@ -1261,12 +1265,14 @@ jobs:
             // Automatic mode and formality are separate: automatic
             // runs (and formal `@codex` runs) produced structured
             // JSON and are parsed the same way. Formal runs post a
-            // review carrying the verdict. A non-formal run
-            // (`@codex` on a plain issue, a fork PR whose author is
-            // outside the OWNER/MEMBER/COLLABORATOR class, or an
-            // authorized cross-fork run on someone else's fork)
-            // posts its findings as an advisory comment with no
-            // verdict.
+            // review carrying the verdict. A non-formal run that
+            // reaches this step (`@codex` on a plain issue, `@codex`
+            // on a fork PR whose author is outside the
+            // OWNER/MEMBER/COLLABORATOR class, or an authorized
+            // cross-fork run on someone else's fork) posts its
+            // findings as an advisory comment with no verdict.
+            // Automatic fork runs by outside-class authors are
+            // unauthorized and never reach this step.
             const formal = process.env.FORMAL_REVIEW === "true";
             const automatic = process.env.AUTOMATIC_REVIEW === "true";
             const triggerEvent = process.env.TRIGGER_EVENT || "";
