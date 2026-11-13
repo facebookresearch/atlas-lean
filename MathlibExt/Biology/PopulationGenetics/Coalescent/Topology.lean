@@ -45,6 +45,9 @@ injective for `n ≤ 5`, but injectivity for general `n` is not proved here. The
   `∏_{k=2}^n C(k, 2)` and `#histories * 2^{n-1} = n! (n - 1)!`.
 * `randomJoining`: the random-joining law (independent uniform pairs at each step).
 * `randomJoining_singleton`: each history has probability `2^{n-1} / (n! (n - 1)!)`.
+* `pairSeparateProb n k = (k - 1) (n + 1) / ((n - 1) (k + 1))`, the probability that a given
+  pair of the sample is still in two lineages while there are `k` lineages, and
+  `sum_pairSeparateProb_div_choose`: `∑_{k=2}^n pairSeparateProb n k / C(k, 2) = 1`.
 
 ## References
 
@@ -183,5 +186,52 @@ theorem randomJoining_singleton (n : ℕ) (h : RankedHistory n) :
     ENNReal.div_eq_inv_mul, ENNReal.mul_inv (by simp) (by simp), mul_comm, ← mul_assoc]
   push_cast
   rw [mul_right_comm, ENNReal.mul_inv_cancel (by simp) (by simp), one_mul]
+
+/-! ### The probability that a pair is still separate -/
+
+/-- The probability `(k - 1) (n + 1) / ((n - 1) (k + 1))` that a given pair of a sample of
+size `n` is still in two distinct lineages while the genealogy has `k` lineages
+(`2 ≤ k ≤ n`, `n ≥ 2`; at `n = 1` the definition divides by zero and returns `0`). -/
+noncomputable def pairSeparateProb (n k : ℕ) : ℝ :=
+  ((k : ℝ) - 1) * ((n : ℝ) + 1) / (((n : ℝ) - 1) * ((k : ℝ) + 1))
+
+/-- `∑_{k=2}^n 1 / (k (k + 1)) = 1/2 - 1/(n + 1)`. -/
+private theorem sum_recip_mul_succ (n : ℕ) (hn : 2 ≤ n) :
+    ∑ k ∈ Icc 2 n, 1 / ((k : ℝ) * ((k : ℝ) + 1)) =
+      1 / 2 - 1 / ((n : ℝ) + 1) := by
+  induction n, hn using Nat.le_induction with
+  | base => norm_num
+  | succ n hn ih =>
+    rw [sum_Icc_succ_top (Nat.le_trans hn (Nat.le_succ n)), ih]
+    norm_num only [Nat.cast_add, Nat.cast_one]
+    have h1 : (n : ℝ) + 1 ≠ 0 := by positivity
+    have h2 : (n : ℝ) + 1 + 1 ≠ 0 := by positivity
+    field_simp [h1, h2]
+    ring
+
+/-- `∑_{k=2}^n p_k / C(k, 2) = 1`: the mean coalescence time of a pair is `1`. -/
+theorem sum_pairSeparateProb_div_choose {n : ℕ} (hn : 2 ≤ n) :
+    ∑ k ∈ Icc 2 n, pairSeparateProb n k * ((k.choose 2 : ℕ) : ℝ)⁻¹ = 1 := by
+  have hn' : (2 : ℝ) ≤ n := by exact_mod_cast hn
+  have hn1 : (n : ℝ) - 1 ≠ 0 := by linarith
+  have hn2 : (n : ℝ) + 1 ≠ 0 := by positivity
+  calc
+    _ = ∑ k ∈ Icc 2 n,
+        (2 * ((n : ℝ) + 1) / ((n : ℝ) - 1)) *
+          (1 / ((k : ℝ) * ((k : ℝ) + 1))) := by
+      apply sum_congr rfl
+      intro k hk
+      have hk' : (2 : ℝ) ≤ k := by exact_mod_cast (mem_Icc.mp hk).1
+      have hk0 : (k : ℝ) ≠ 0 := by linarith
+      have hk1 : (k : ℝ) - 1 ≠ 0 := by linarith
+      have hk2 : (k : ℝ) + 1 ≠ 0 := by positivity
+      rw [pairSeparateProb, Nat.cast_choose_two]
+      field_simp [hn1, hk0, hk1, hk2]
+    _ = (2 * ((n : ℝ) + 1) / ((n : ℝ) - 1)) *
+        (1 / 2 - 1 / ((n : ℝ) + 1)) := by
+      rw [← mul_sum, sum_recip_mul_succ n hn]
+    _ = 1 := by
+      field_simp [hn1, hn2]
+      ring
 
 end MathlibExt.Biology.PopulationGenetics.Coalescent
