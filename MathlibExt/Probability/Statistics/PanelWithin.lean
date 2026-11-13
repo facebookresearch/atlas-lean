@@ -12,6 +12,7 @@ public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.Probability.StrongLaw
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.PullOut
 public import Mathlib.Analysis.Matrix.MeasurableSpace
+public import MathlibExt.Probability.Statistics.WithinEstimator
 
 import Mathlib.Topology.Instances.Matrix
 
@@ -25,7 +26,16 @@ individual effect `c i` (time-invariant parts removed by within transform).
 
 Main results:
 * `centering` and `centering_mulVec_const`: time-demeaning eliminates effects.
-* `withinGram`, `withinScore`, `withinEstimator`: within estimator.
+* `centering_mulVec_eq_withinVec`, `centering_mul_eq_withinMat`: time-demeaning is the
+  within transformation `WithinEstimator.withinVec`/`withinMat` with one group for all periods.
+* `withinGram`, `withinScore`, `withinEstimator`: within estimator, built from `withinMat` and
+  `withinVec` (`withinGram_eq_sum_centering`, `withinScore_eq_sum_centering` give the
+  `centering` form).
+* `withinGram_eq_stack`, `withinScore_eq_stack`, `withinEstimator_eq_stack`: the first `N`
+  clusters stacked as one panel indexed by `Fin N × τ` and grouped by cluster give the same
+  Gram matrix, score and estimator; `lsdv_slope_eq_withinEstimator` then identifies the
+  dummy-variable (LSDV) slope with `withinEstimator` through
+  `WithinEstimator.lsdv_slope_eq_within_estimator`.
 * `withinEstimator_eq_add`: algebra decomposing estimator around truth.
 * `tendsto_withinEstimator`: consistency under independent clusters.
 * `integral_withinScore_eq_zero_of_uncorrelated`: strict exogeneity moments.
@@ -47,6 +57,8 @@ not covered.
 namespace MathlibExt.Probability.Statistics.PanelWithin
 
 open MeasureTheory ProbabilityTheory Topology Filter Matrix
+open MathlibExt.Probability.Statistics.WithinEstimator (withinVec withinMat groupDummy
+  lsdv_slope_eq_within_estimator)
 
 /-- Time-demeaning matrix `Q = 1 - T⁻¹ • J`. -/
 noncomputable def centering (τ : Type*) [Fintype τ] [DecidableEq τ] :
@@ -72,22 +84,152 @@ theorem centering_mulVec_const {τ : Type*} [Fintype τ] [DecidableEq τ]
     field_simp
   rw [hsmul, sub_self]
 
-/-- Within Gram matrix: sum of demeaned `X'X` over clusters. -/
+/-- With a single group, the group mean is the time average. -/
+theorem groupMean_unit {τ : Type*} [Fintype τ] (x : τ → ℝ) :
+    groupMean (fun _ : τ => ()) x () = (∑ t, x t) / Fintype.card τ := by
+  simp [groupMean]
+
+/-- Time-demeaning is the within transformation `withinVec` with one group for all periods. -/
+theorem centering_mulVec_eq_withinVec {τ : Type*} [Fintype τ] [DecidableEq τ]
+    (v : τ → ℝ) : centering τ *ᵥ v = withinVec (fun _ : τ => ()) v := by
+  funext t
+  have hJ : ((Matrix.of fun _ _ => (1 : ℝ) : Matrix τ τ ℝ) *ᵥ v) t = ∑ s, v s := by
+    simp [Matrix.mulVec, dotProduct]
+  rw [centering, Matrix.sub_mulVec, Matrix.one_mulVec, Matrix.smul_mulVec, Pi.sub_apply,
+    Pi.smul_apply, hJ, smul_eq_mul]
+  simp only [withinVec, groupMean_unit]
+  ring
+
+/-- Time-demeaning a regressor matrix is `withinMat` with one group for all periods. -/
+theorem centering_mul_eq_withinMat {τ k : Type*} [Fintype τ] [DecidableEq τ]
+    (X : Matrix τ k ℝ) : centering τ * X = withinMat (fun _ : τ => ()) X := by
+  ext t j
+  have h := congrFun (centering_mulVec_eq_withinVec (fun s => X s j)) t
+  simpa [Matrix.mul_apply, Matrix.mulVec, dotProduct, withinVec, withinMat, mul_comm] using h
+
+/-- Within Gram matrix: sum over clusters of `Ẍᵀ Ẍ`, where `Ẍ` is the cluster's regressor
+matrix demeaned over its periods by `withinMat` with one group. -/
 noncomputable def withinGram {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
     (X : ℕ → Ω → Matrix τ k ℝ) (N : ℕ) (ω : Ω) : Matrix k k ℝ :=
-  ∑ i ∈ Finset.range N, (centering τ * X i ω)ᵀ * (centering τ * X i ω)
+  ∑ i ∈ Finset.range N,
+    (withinMat (fun _ : τ => ()) (X i ω))ᵀ * withinMat (fun _ : τ => ()) (X i ω)
 
-/-- Within score vector: sum of demeaned `X'y` over clusters. -/
+/-- Within score vector: sum over clusters of `Ẍᵀ v̈`, with `Ẍ` and `v̈` demeaned over the
+cluster's periods by `withinMat` and `withinVec` with one group. -/
 noncomputable def withinScore {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
     (X : ℕ → Ω → Matrix τ k ℝ) (v : ℕ → Ω → τ → ℝ) (N : ℕ)
     (ω : Ω) : k → ℝ :=
-  ∑ i ∈ Finset.range N, (centering τ * X i ω)ᵀ *ᵥ (centering τ *ᵥ v i ω)
+  ∑ i ∈ Finset.range N,
+    (withinMat (fun _ : τ => ()) (X i ω))ᵀ *ᵥ withinVec (fun _ : τ => ()) (v i ω)
+
+/-- The within Gram matrix in `centering` form. -/
+theorem withinGram_eq_sum_centering {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
+    (X : ℕ → Ω → Matrix τ k ℝ) (N : ℕ) (ω : Ω) :
+    withinGram X N ω
+      = ∑ i ∈ Finset.range N, (centering τ * X i ω)ᵀ * (centering τ * X i ω) := by
+  simp only [withinGram, centering_mul_eq_withinMat]
+
+/-- The within score in `centering` form. -/
+theorem withinScore_eq_sum_centering {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
+    (X : ℕ → Ω → Matrix τ k ℝ) (v : ℕ → Ω → τ → ℝ) (N : ℕ) (ω : Ω) :
+    withinScore X v N ω
+      = ∑ i ∈ Finset.range N, (centering τ * X i ω)ᵀ *ᵥ (centering τ *ᵥ v i ω) := by
+  simp only [withinScore, centering_mul_eq_withinMat, centering_mulVec_eq_withinVec]
 
 /-- Within estimator via Mathlib matrix inverse. -/
 noncomputable def withinEstimator {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
     [Fintype k] [DecidableEq k] (X : ℕ → Ω → Matrix τ k ℝ)
     (y : ℕ → Ω → τ → ℝ) (N : ℕ) (ω : Ω) : k → ℝ :=
   (withinGram X N ω)⁻¹ *ᵥ withinScore X y N ω
+
+/-- The first `N` clusters stacked as one panel: rows indexed by (cluster, period). -/
+def stackMat {τ k Ω : Type*} (X : ℕ → Ω → Matrix τ k ℝ) (N : ℕ) (ω : Ω) :
+    Matrix (Fin N × τ) k ℝ :=
+  Matrix.of fun p j => X p.1 ω p.2 j
+
+/-- The first `N` clusters of a response stacked as one vector indexed by (cluster, period). -/
+def stackVec {τ Ω : Type*} (v : ℕ → Ω → τ → ℝ) (N : ℕ) (ω : Ω) : Fin N × τ → ℝ :=
+  fun p => v p.1 ω p.2
+
+/-- Grouping a product by its first coordinate, the group mean is the average over the second
+coordinate. -/
+theorem groupMean_fst {A τ : Type*} [Fintype A] [DecidableEq A] [Fintype τ]
+    (x : A × τ → ℝ) (a : A) :
+    groupMean Prod.fst x a = (∑ t, x (a, t)) / Fintype.card τ := by
+  have hfilter : (Finset.univ.filter fun p : A × τ => p.1 = a) = {a} ×ˢ Finset.univ := by
+    ext ⟨b, t⟩
+    simp [eq_comm]
+  unfold groupMean
+  rw [hfilter, Finset.sum_product, Finset.sum_singleton, Finset.card_product,
+    Finset.card_singleton, one_mul, Finset.card_univ]
+
+/-- Demeaning the stacked response by cluster is time-demeaning each cluster. -/
+theorem withinVec_fst_stackVec {τ Ω : Type*} [Fintype τ] [DecidableEq τ]
+    (v : ℕ → Ω → τ → ℝ) (N : ℕ) (ω : Ω) :
+    withinVec Prod.fst (stackVec v N ω) = fun p => (centering τ *ᵥ v p.1 ω) p.2 := by
+  funext p
+  rw [centering_mulVec_eq_withinVec]
+  simp only [withinVec, groupMean_fst, groupMean_unit, stackVec]
+
+/-- Demeaning the stacked regressors by cluster is time-demeaning each cluster. -/
+theorem withinMat_fst_stackMat {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
+    (X : ℕ → Ω → Matrix τ k ℝ) (N : ℕ) (ω : Ω) :
+    withinMat Prod.fst (stackMat X N ω)
+      = Matrix.of fun p j => (centering τ * X p.1 ω) p.2 j := by
+  ext p j
+  simp only [Matrix.of_apply, centering_mul_eq_withinMat, withinMat, groupMean_fst,
+    groupMean_unit, stackMat]
+
+/-- The within Gram matrix of the first `N` clusters is `Ẍᵀ Ẍ` for the stacked panel grouped
+by cluster. -/
+theorem withinGram_eq_stack {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
+    (X : ℕ → Ω → Matrix τ k ℝ) (N : ℕ) (ω : Ω) :
+    withinGram X N ω
+      = (withinMat Prod.fst (stackMat X N ω))ᵀ * withinMat Prod.fst (stackMat X N ω) := by
+  rw [withinMat_fst_stackMat, withinGram_eq_sum_centering]
+  ext j l
+  simp only [Matrix.sum_apply, Matrix.mul_apply, Matrix.transpose_apply, Matrix.of_apply,
+    Fintype.sum_prod_type]
+  exact (Fin.sum_univ_eq_sum_range
+    (fun i => ∑ t, (centering τ * X i ω) t j * (centering τ * X i ω) t l) N).symm
+
+/-- The within score of the first `N` clusters is `Ẍᵀ v̈` for the stacked panel grouped by
+cluster. -/
+theorem withinScore_eq_stack {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
+    (X : ℕ → Ω → Matrix τ k ℝ) (v : ℕ → Ω → τ → ℝ) (N : ℕ) (ω : Ω) :
+    withinScore X v N ω
+      = (withinMat Prod.fst (stackMat X N ω))ᵀ *ᵥ withinVec Prod.fst (stackVec v N ω) := by
+  rw [withinMat_fst_stackMat, withinVec_fst_stackVec, withinScore_eq_sum_centering]
+  ext j
+  simp only [Finset.sum_apply, Matrix.mulVec, dotProduct, Matrix.transpose_apply,
+    Matrix.of_apply, Fintype.sum_prod_type]
+  exact (Fin.sum_univ_eq_sum_range
+    (fun i => ∑ t, (centering τ * X i ω) t j * (centering τ *ᵥ v i ω) t) N).symm
+
+/-- The within estimator of the first `N` clusters is `(Ẍᵀ Ẍ)⁻¹ Ẍᵀ ÿ` for the stacked panel
+grouped by cluster, the form used in `WithinEstimator`. -/
+theorem withinEstimator_eq_stack {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
+    [Fintype k] [DecidableEq k] (X : ℕ → Ω → Matrix τ k ℝ) (y : ℕ → Ω → τ → ℝ) (N : ℕ)
+    (ω : Ω) :
+    withinEstimator X y N ω
+      = ((withinMat Prod.fst (stackMat X N ω))ᵀ * withinMat Prod.fst (stackMat X N ω))⁻¹ *ᵥ
+        ((withinMat Prod.fst (stackMat X N ω))ᵀ *ᵥ withinVec Prod.fst (stackVec y N ω)) := by
+  rw [withinEstimator, withinGram_eq_stack, withinScore_eq_stack]
+
+/-- The slope of the dummy-variable (LSDV) regression on the stacked panel, with one dummy per
+cluster, is the within estimator, by `WithinEstimator.lsdv_slope_eq_within_estimator`. -/
+theorem lsdv_slope_eq_withinEstimator {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
+    [Fintype k] [DecidableEq k] {X : ℕ → Ω → Matrix τ k ℝ} {y : ℕ → Ω → τ → ℝ} {N : ℕ}
+    {ω : Ω} {α : Fin N → ℝ} {β : k → ℝ}
+    (hD : (groupDummy Prod.fst)ᵀ *ᵥ
+      (stackVec y N ω - groupDummy Prod.fst *ᵥ α - stackMat X N ω *ᵥ β) = 0)
+    (hX : (stackMat X N ω)ᵀ *ᵥ
+      (stackVec y N ω - groupDummy Prod.fst *ᵥ α - stackMat X N ω *ᵥ β) = 0)
+    (hG : IsUnit (withinGram X N ω).det) :
+    β = withinEstimator X y N ω := by
+  rw [withinGram_eq_stack] at hG
+  rw [withinEstimator_eq_stack]
+  exact lsdv_slope_eq_within_estimator Prod.fst hD hX hG
 
 /-- `*ᵥ` distributes over sums of matrices. -/
 private theorem sum_mulVec {ι k l : Type*} [Fintype l]
@@ -117,7 +259,8 @@ theorem withinEstimator_eq_add {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
     rw [hQy i, Matrix.mulVec_add, Matrix.mulVec_mulVec]
   have hScore : withinScore X y N ω
       = (withinGram X N ω) *ᵥ β + withinScore X u N ω := by
-    unfold withinScore withinGram
+    rw [withinScore_eq_sum_centering, withinScore_eq_sum_centering,
+      withinGram_eq_sum_centering]
     have hcongr : (∑ i ∈ Finset.range N,
           (centering τ * X i ω)ᵀ *ᵥ (centering τ *ᵥ y i ω))
         = ∑ i ∈ Finset.range N,
@@ -374,12 +517,12 @@ theorem tendsto_withinEstimator {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
       (withinGram X N ω) j l = ∑ i ∈ Finset.range N,
         ((centering τ * X i ω)ᵀ * (centering τ * X i ω)) j l := by
     intro N j l
-    simp only [withinGram, Matrix.sum_apply]
+    simp only [withinGram_eq_sum_centering, Matrix.sum_apply]
   have hScore_entry : ∀ (N : ℕ) (j : k),
       (withinScore X u N ω) j = ∑ i ∈ Finset.range N,
         ((centering τ * X i ω)ᵀ *ᵥ (centering τ *ᵥ u i ω)) j := by
     intro N j
-    simp [withinScore]
+    simp [withinScore_eq_sum_centering]
   have hG_tendsto : Tendsto
       (fun (N : ℕ) => (N : ℝ)⁻¹ • withinGram X N ω) atTop
       (𝓝 (Matrix.of fun j l => ∫ ω,

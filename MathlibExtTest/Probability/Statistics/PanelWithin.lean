@@ -26,10 +26,17 @@ the within (fixed-effects) estimator:
   demeaning, so the Gram matrix can never be invertible.
 * `periodic_alternating_survives`: zero-mean alternating regressors survive
   demeaning (only the time-invariant component is removed).
-* `feedback_ownProducts_vanish` and `feedback_score_ne_zero`: feedback from
-  errors to future regressors — permitted under sequential exogeneity — is
-  mixed into the score by demeaning, so sequential exogeneity alone does not
-  imply the estimating equation.
+* `lsdv_slope_noiseless`: the dummy-variable (LSDV) slope of the stacked
+  noiseless panel is the within estimator, through
+  `lsdv_slope_eq_withinEstimator`.
+* `feedback_sequentialExogeneity`, `feedback_integral_score` and
+  `sequentialExogeneity_not_estimatingEquation`: on a two-point probability
+  space with a mean-zero shock `ε`, regressors `X₁ = 0`, `X₂ = ε` and errors
+  `u₁ = ε`, `u₂ = 0` are sequentially exogenous (each error has conditional
+  mean zero given the current and past regressors), yet the expected within
+  score is `-1 / 2`. Feedback from an error to a future regressor is mixed into
+  every period by demeaning, so sequential exogeneity does not give the
+  estimating equation `hEE` of `tendsto_withinEstimator`.
 * `integral_withinScore_concrete`, `integral_mul_concrete`, and
   `tendsto_withinEstimator_degenerate`: end-to-end use of the integral lemmas
   and of consistency on a degenerate (Dirac) probability space.
@@ -46,6 +53,8 @@ namespace MathlibExtTest.Probability.Statistics.PanelWithin
 
 open MeasureTheory ProbabilityTheory Topology Filter Matrix
 open MathlibExt.Probability.Statistics.PanelWithin
+open MathlibExt.Probability.Statistics.WithinEstimator (groupDummy dummy_mulVec_apply)
+open scoped ENNReal
 
 /-- Varying regressor, rows `1` and `-1` (already mean-zero). -/
 noncomputable def testX0 : Matrix (Fin 2) (Fin 1) ℝ :=
@@ -54,14 +63,6 @@ noncomputable def testX0 : Matrix (Fin 2) (Fin 1) ℝ :=
 /-- Constant regressor, every entry `5` (time-invariant). -/
 noncomputable def testXc : Matrix (Fin 2) (Fin 1) ℝ :=
   Matrix.of fun _ _ => 5
-
-/-- Feedback regressor, rows `0` and `1`. -/
-noncomputable def testXf : Matrix (Fin 2) (Fin 1) ℝ :=
-  Matrix.of fun t _ => if t = 0 then (0 : ℝ) else 1
-
-/-- Feedback error pattern, `1` in period one and `0` in period two. -/
-noncomputable def testUf : Fin 2 → ℝ :=
-  fun t => if t = 0 then (1 : ℝ) else 0
 
 /-- Panel regressors, constant across clusters. -/
 noncomputable def testX : ℕ → Unit → Matrix (Fin 2) (Fin 1) ℝ :=
@@ -106,7 +107,7 @@ private theorem panel_gram_entry (N : ℕ) (ω : Unit) :
   have hterm : ∀ i, ((centering (Fin 2) * testX i ω)ᵀ
       * (centering (Fin 2) * testX i ω)) 0 0 = 2 :=
     fun _ => gram_entry_testX0
-  simp only [withinGram, Matrix.sum_apply, hterm, Finset.sum_const,
+  simp only [withinGram_eq_sum_centering, Matrix.sum_apply, hterm, Finset.sum_const,
     Finset.card_range, nsmul_eq_mul]
 
 /-- The noiseless panel Gram matrix is invertible for `N ≥ 1`. -/
@@ -127,7 +128,7 @@ private theorem panel_score_zero (N : ℕ) (ω : Unit) :
     show (centering (Fin 2) * testX0)ᵀ *ᵥ
       (centering (Fin 2) *ᵥ (0 : Fin 2 → ℝ)) = 0
     simp [Matrix.mulVec_zero]
-  simp only [withinScore, hterm, Finset.sum_const_zero]
+  simp only [withinScore_eq_sum_centering, hterm, Finset.sum_const_zero]
 
 /-- Noiseless exact recovery on the concrete two-period panel. -/
 theorem withinEstimator_noiseless_concrete (N : ℕ) (ω : Unit)
@@ -170,7 +171,7 @@ private theorem gram_timeInvariant_vanishes (N : ℕ) (ω : Unit) :
       exact demeaned_timeInvariant_zero t
     rw [h0]
     simp
-  simp only [withinGram, hterm, Finset.sum_const_zero]
+  simp only [withinGram_eq_sum_centering, hterm, Finset.sum_const_zero]
 
 /-- Time-invariant regressors: the Gram matrix is never invertible. -/
 theorem withinGram_timeInvariant_not_unit (N : ℕ) (ω : Unit) :
@@ -196,27 +197,106 @@ theorem periodic_alternating_survives :
       smul_eq_mul, Matrix.one_apply, Matrix.of_apply]
     norm_num
 
-/-- Each period's error is orthogonal to its own-period regressor.
+/-- The LSDV bridge on the noiseless panel: with one intercept per cluster equal
+to its effect, the dummy-variable residual of the stacked panel vanishes, so the
+dummy-variable slope `testB` is the within estimator. -/
+theorem lsdv_slope_noiseless (N : ℕ) (ω : Unit) (hN : 1 ≤ N) :
+    testB = withinEstimator testX testY N ω := by
+  have hres : stackVec testY N ω
+      - groupDummy Prod.fst *ᵥ (fun i : Fin N => testC i ω)
+      - stackMat testX N ω *ᵥ testB = 0 := by
+    funext p
+    rw [Pi.sub_apply, Pi.sub_apply, dummy_mulVec_apply]
+    simp only [stackVec, stackMat, testY, testU, Matrix.mulVec, dotProduct,
+      Matrix.of_apply, Pi.add_apply, Pi.zero_apply]
+    ring
+  exact lsdv_slope_eq_withinEstimator (α := fun i : Fin N => testC i ω)
+    (by rw [hres, Matrix.mulVec_zero]) (by rw [hres, Matrix.mulVec_zero])
+    (panel_gram_unit ω hN)
 
-Compatible with sequential exogeneity, which only restricts dependence on
-current and past regressors while permitting feedback to future ones. -/
-theorem feedback_ownProducts_vanish (t : Fin 2) :
-    testXf t 0 * testUf t = 0 := by
-  fin_cases t <;> simp [testXf, testUf, Matrix.of_apply]
+/-! ### Sequential exogeneity does not give the estimating equation -/
 
-/-- The demeaned feedback score equals `-1 / 2`, so it is nonzero.
+/-- Two-point probability space carrying the shock. -/
+noncomputable def shockP : Measure Bool :=
+  (2 : ℝ≥0∞)⁻¹ • (Measure.dirac true + Measure.dirac false)
 
-Demeaning mixes the future regressor value into every period, so feedback
-from errors to future regressors breaks the estimating equation. Hence
-sequential exogeneity alone does not imply consistency. -/
-theorem feedback_score_ne_zero :
-    ((centering (Fin 2) * testXf)ᵀ *ᵥ (centering (Fin 2) *ᵥ testUf)) 0
+/-- `shockP` is a probability measure. -/
+instance : IsProbabilityMeasure shockP := by
+  constructor
+  simp only [shockP, Measure.smul_apply, Measure.add_apply, measure_univ, smul_eq_mul]
+  rw [one_add_one_eq_two, ENNReal.inv_mul_cancel two_ne_zero ENNReal.ofNat_ne_top]
+
+/-- The shock `ε = ±1`. -/
+def shock : Bool → ℝ := fun b => if b then 1 else -1
+
+/-- The shock has mean zero. -/
+theorem integral_shock : ∫ ω, shock ω ∂shockP = 0 := by
+  rw [shockP, integral_smul_measure,
+    integral_add_measure Integrable.of_finite Integrable.of_finite,
+    integral_dirac, integral_dirac]
+  simp [shock]
+
+/-- Regressors `X₁ = 0` and `X₂ = ε`. -/
+noncomputable def fbX : Bool → Matrix (Fin 2) (Fin 1) ℝ :=
+  fun ω => Matrix.of fun t _ => if t = 0 then 0 else shock ω
+
+/-- Errors `u₁ = ε` and `u₂ = 0`: the period-one error feeds back into the
+period-two regressor. -/
+noncomputable def fbU : Bool → Fin 2 → ℝ :=
+  fun ω t => if t = 0 then shock ω else 0
+
+/-- The regressors of the periods up to `t`, with later periods set to `0`. -/
+noncomputable def fbPast (t : Fin 2) : Bool → Fin 2 → ℝ :=
+  fun ω s => if s ≤ t then fbX ω s 0 else 0
+
+/-- Sequential exogeneity: each period's error has conditional mean zero given
+the regressors of that period and the earlier ones. -/
+theorem feedback_sequentialExogeneity (t : Fin 2) :
+    shockP[fun ω => fbU ω t | MeasurableSpace.comap (fbPast t) inferInstance]
+      =ᵐ[shockP] 0 := by
+  fin_cases t
+  · have hconst : fbPast 0 = fun _ => (0 : Fin 2 → ℝ) := by
+      funext ω s
+      fin_cases s <;> simp [fbPast, fbX]
+    have hU : (fun ω => fbU ω 0) = shock := by
+      funext ω
+      simp [fbU]
+    simp only [Fin.zero_eta, Fin.isValue]
+    rw [hconst, MeasurableSpace.comap_const, condExp_bot, hU, integral_shock]
+    rfl
+  · have h0 : (fun ω => fbU ω 1) = 0 := by
+      funext ω
+      simp [fbU]
+    simp only [Fin.mk_one, Fin.isValue]
+    rw [h0, condExp_zero]
+
+/-- At every outcome the within score is `-ε² / 2 = -1 / 2`. -/
+theorem feedback_score_eq (ω : Bool) :
+    ((centering (Fin 2) * fbX ω)ᵀ *ᵥ (centering (Fin 2) *ᵥ fbU ω)) 0
       = -(1 / 2) := by
-  simp only [Matrix.mulVec, dotProduct, Matrix.mul_apply,
-    Matrix.transpose_apply, Fin.sum_univ_two]
-  simp only [centering, testXf, testUf, Matrix.sub_apply, Matrix.smul_apply,
-    smul_eq_mul, Matrix.one_apply, Matrix.of_apply]
-  norm_num
+  cases ω <;>
+  · simp only [Matrix.mulVec, dotProduct, Matrix.mul_apply, Matrix.transpose_apply,
+      Fin.sum_univ_two]
+    simp only [centering, fbX, fbU, shock, Matrix.sub_apply, Matrix.smul_apply,
+      smul_eq_mul, Matrix.one_apply, Matrix.of_apply]
+    norm_num
+
+/-- The expected within score is `-1 / 2`. -/
+theorem feedback_integral_score :
+    ∫ ω, ((centering (Fin 2) * fbX ω)ᵀ *ᵥ (centering (Fin 2) *ᵥ fbU ω)) 0 ∂shockP
+      = -(1 / 2) := by
+  simp_rw [feedback_score_eq]
+  rw [integral_const, probReal_univ, one_smul]
+
+/-- Sequential exogeneity holds while the expected within score is nonzero, so
+sequential exogeneity does not give the estimating equation `hEE` of
+`tendsto_withinEstimator`. -/
+theorem sequentialExogeneity_not_estimatingEquation :
+    (∀ t : Fin 2, shockP[fun ω => fbU ω t
+      | MeasurableSpace.comap (fbPast t) inferInstance] =ᵐ[shockP] 0) ∧
+    ∫ ω, ((centering (Fin 2) * fbX ω)ᵀ *ᵥ (centering (Fin 2) *ᵥ fbU ω)) 0 ∂shockP
+      ≠ 0 :=
+  ⟨feedback_sequentialExogeneity, by rw [feedback_integral_score]; norm_num⟩
 
 /-- End-to-end: strict-exogeneity moments on the degenerate panel. -/
 theorem integral_withinScore_concrete :
