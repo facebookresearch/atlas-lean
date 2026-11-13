@@ -12,7 +12,7 @@ public import Mathlib.Data.Finset.Defs
 public import Mathlib.Data.Finset.Range
 public import Mathlib.NumberTheory.Bernoulli
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 
 @[expose] public section
 

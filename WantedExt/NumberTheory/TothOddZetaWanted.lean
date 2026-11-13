@@ -47,7 +47,8 @@ where `(bₙ)_{n ≥ 1}` is the regular paperfolding sequence (`b_{2n} = bₙ`, 
 indexed by `n + 1`.
 
 Source: László Tóth, *Evaluating ζ(s) at Odd Positive Integers Using Automatic Dirichlet
-Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Theorem 2 (`jis-2025-25.4.4-thm-2`); `bₙ`, `tₙ` read from arXiv:2508.04151v1. -/
+Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Theorem 2
+(`jis-2025-25.4.4-thm-2`); `bₙ`, `tₙ` read from arXiv:2508.04151v1. -/
 public theorem_wanted riemannZeta_two_mul_add_one_sub_eq_tsum_paperfolding_thueMorse (k : ℕ)
     (hk : 1 ≤ k) :
     riemannZeta (2 * k + 1) - (2 : ℂ) ^ (2 * k - 1) / (2 * k).factorial *
@@ -64,7 +65,8 @@ with `(bₙ)` the regular paperfolding sequence (`bₙ = paperfoldingSeq (n - 1)
 by `n + 1`) and `E_{2k}` the even Euler number.
 
 Source: László Tóth, *Evaluating ζ(s) at Odd Positive Integers Using Automatic Dirichlet
-Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Lemma 5 (`jis-2025-25.4.4-lem-5`); `bₙ` read from arXiv:2508.04151v1. -/
+Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Lemma 5 (`jis-2025-25.4.4-lem-5`);
+`bₙ` read from arXiv:2508.04151v1. -/
 public theorem_wanted tsum_paperfolding_two_mul_add_one (k : ℕ) (hk : 1 ≤ k) :
     ((2 : ℝ) ^ (4 * k + 1) - 2 ^ (2 * k)) *
         ∑' n : ℕ, (2 * ((paperfoldingSeq n).toNat : ℝ) - 1) / ((n + 1 : ℕ) : ℝ) ^ (2 * k + 1) =
@@ -78,7 +80,8 @@ undetermined; the paper's proof (from Lemma 5) gives the sum over `n ≥ 1` of `
 i.e. the printed sum with the paperfolding sequence indexed from `0` (`paperfoldingSeq`).
 
 Source: László Tóth, *Evaluating ζ(s) at Odd Positive Integers Using Automatic Dirichlet
-Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Corollary 7 (`jis-2025-25.4.4-cor-7`); `bₙ` read from arXiv:2508.04151v1. -/
+Series*, Journal of Integer Sequences 28 (2025), Article 25.4.4, Corollary 7
+(`jis-2025-25.4.4-cor-7`); `bₙ` read from arXiv:2508.04151v1. -/
 public theorem_wanted tsum_neg_one_pow_paperfolding (k : ℕ) (hk : 1 ≤ k) :
     ∑' n : ℕ, (-1 : ℝ) ^ (paperfoldingSeq n).toNat / ((n + 1 : ℕ) : ℝ) ^ (2 * k + 1) =
       Real.pi ^ (2 * k + 1) * ((|chapter5EulerEven k| : ℤ) : ℝ) /

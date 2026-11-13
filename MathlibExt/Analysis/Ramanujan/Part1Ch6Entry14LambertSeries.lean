@@ -8,8 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Analysis.PSeries
-
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Floor.Defs
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
@@ -45,6 +43,7 @@ import Mathlib.NumberTheory.ZetaValues
 import Mathlib.Tactic
 import MathlibExt.Analysis.Calculus.EulerMaclaurinFormula
 import MathlibExt.Analysis.SpecialFunctions.ExpSubOneMittagLeffler
+import Mathlib.Analysis.PSeries
 
 @[expose] public section
 
