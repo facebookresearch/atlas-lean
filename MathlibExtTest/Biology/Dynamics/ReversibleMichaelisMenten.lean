@@ -17,7 +17,7 @@ and boundary cases showing why `E_T > 0`, `k₋₂ > 0` and nonnegative rates ar
 
 namespace MathlibExtTest.Biology.Dynamics.ReversibleMichaelisMenten
 
-open MathlibExt.Biology.Dynamics.MichaelisMenten (substrateRate complexRate mmField)
+open MathlibExt.Biology.Dynamics.MichaelisMenten (substrateRate complexRate mmField mmCurve)
 open MathlibExt.Biology.Dynamics.ReversibleMichaelisMenten
 
 /-! ### Smoke test: the field on concrete states -/
@@ -31,7 +31,7 @@ example : revField 1 1 1 1 ![0, 0, 1, 3] = ![0, 3, -3, -3] := by
   ext i; fin_cases i <;> norm_num [revField, substrateRate, revComplexRate, complexRate,
     revProductRate]
 
-example : revCurve (fun _ ↦ 2) (fun _ ↦ 0) (fun _ ↦ 1) (fun _ ↦ 0) 5 = ![2, 0, 1, 0] := rfl
+example : mmCurve (fun _ ↦ 2) (fun _ ↦ 0) (fun _ ↦ 1) (fun _ ↦ 0) 5 = ![2, 0, 1, 0] := rfl
 
 /-- The two conservation laws, read off the field at a concrete state: the `e + c` and
 `s + c + p` components of the field sum to zero. -/

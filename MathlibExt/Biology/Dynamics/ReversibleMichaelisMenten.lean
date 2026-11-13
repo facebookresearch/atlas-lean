@@ -61,9 +61,9 @@ neither file provides.
 ## Source receipt (API-00 reuse gate)
 
 Reused, not redefined: `substrateRate`, `complexRate`, `MichaelisMenten.IsSolution` from
-`MathlibExt.Biology.Dynamics.MichaelisMenten`; `mmField` from
-`MathlibExt.Biology.Dynamics.MichaelisMenten.Trajectories` (bridge `revField_zero`); the
-maximal-solution exit theorem
+`MathlibExt.Biology.Dynamics.MichaelisMenten`; `mmField` (bridge `revField_zero`) and the
+state-packing curve `mmCurve` from `MathlibExt.Biology.Dynamics.MichaelisMenten.Trajectories`;
+the maximal-solution exit theorem
 `MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_maximal_solution_exit_compact`; the
 orthant-invariance theorem `MetaMathlibExt.orthant_invariant_of_boundary_nonneg`; Mathlib's
 `ODE_solution_unique_of_mem_Icc_right` and `intermediate_value_Icc`. The global-existence proof
@@ -98,7 +98,7 @@ open scoped Topology
 
 namespace MathlibExt.Biology.Dynamics.ReversibleMichaelisMenten
 
-open MathlibExt.Biology.Dynamics.MichaelisMenten (substrateRate complexRate mmField)
+open MathlibExt.Biology.Dynamics.MichaelisMenten (substrateRate complexRate mmField mmCurve)
 
 variable {k₁ kb k₂ kb₂ : ℝ} {s c e p : ℝ → ℝ}
 
@@ -170,10 +170,6 @@ def revField (k₁ kb k₂ kb₂ : ℝ) (x : Fin 4 → ℝ) : Fin 4 → ℝ :=
   ![substrateRate k₁ kb (x 0) (x 1) (x 2), revComplexRate k₁ kb k₂ kb₂ (x 0) (x 1) (x 2) (x 3),
     -revComplexRate k₁ kb k₂ kb₂ (x 0) (x 1) (x 2) (x 3), revProductRate k₂ kb₂ (x 1) (x 2) (x 3)]
 
-/-- The curve in `Fin 4 → ℝ` obtained by packing `s`, `c`, `e`, `p`. -/
-def revCurve (s c e p : ℝ → ℝ) (t : ℝ) : Fin 4 → ℝ :=
-  ![s t, c t, e t, p t]
-
 /-- With `kb₂ = 0` the field is the irreversible field `mmField`. -/
 theorem revField_zero : revField k₁ kb k₂ 0 = mmField k₁ kb k₂ := by
   ext x i
@@ -181,24 +177,24 @@ theorem revField_zero : revField k₁ kb k₂ 0 = mmField k₁ kb k₂ := by
 
 /-- `IsSolution` is the statement that the packed curve has derivative `revField` at every
 `t ≥ 0`. -/
-theorem isSolution_iff_hasDerivAt_revCurve :
+theorem isSolution_iff_hasDerivAt_mmCurve :
     IsSolution k₁ kb k₂ kb₂ s c e p ↔
       ∀ t, 0 ≤ t →
-        HasDerivAt (revCurve s c e p) (revField k₁ kb k₂ kb₂ (revCurve s c e p t)) t := by
+        HasDerivAt (mmCurve s c e p) (revField k₁ kb k₂ kb₂ (mmCurve s c e p t)) t := by
   constructor
   · intro h t ht
     refine hasDerivAt_pi.2 fun i => ?_
     fin_cases i
-    · simpa [revCurve, revField] using h.hasDerivAt_substrate t ht
-    · simpa [revCurve, revField] using h.hasDerivAt_complex t ht
-    · simpa [revCurve, revField] using h.hasDerivAt_enzyme t ht
-    · simpa [revCurve, revField] using h.hasDerivAt_product t ht
+    · simpa [mmCurve, revField] using h.hasDerivAt_substrate t ht
+    · simpa [mmCurve, revField] using h.hasDerivAt_complex t ht
+    · simpa [mmCurve, revField] using h.hasDerivAt_enzyme t ht
+    · simpa [mmCurve, revField] using h.hasDerivAt_product t ht
   · intro h
     refine ⟨fun t ht => ?_, fun t ht => ?_, fun t ht => ?_, fun t ht => ?_⟩
-    · simpa [revCurve, revField] using hasDerivAt_pi.1 (h t ht) 0
-    · simpa [revCurve, revField] using hasDerivAt_pi.1 (h t ht) 1
-    · simpa [revCurve, revField] using hasDerivAt_pi.1 (h t ht) 2
-    · simpa [revCurve, revField] using hasDerivAt_pi.1 (h t ht) 3
+    · simpa [mmCurve, revField] using hasDerivAt_pi.1 (h t ht) 0
+    · simpa [mmCurve, revField] using hasDerivAt_pi.1 (h t ht) 1
+    · simpa [mmCurve, revField] using hasDerivAt_pi.1 (h t ht) 2
+    · simpa [mmCurve, revField] using hasDerivAt_pi.1 (h t ht) 3
 
 /-- The field is smooth: its components are polynomials. -/
 theorem revField_contDiff {n : WithTop ℕ∞} : ContDiff ℝ n (revField k₁ kb k₂ kb₂) := by
@@ -330,11 +326,11 @@ theorem IsSolution.eq_of_initial {s' c' e' p' : ℝ → ℝ} (h : IsSolution k�
     (h' : IsSolution k₁ kb k₂ kb₂ s' c' e' p') (hs : s 0 = s' 0) (hc : c 0 = c' 0)
     (he : e 0 = e' 0) (hp : p 0 = p' 0) {t : ℝ} (ht : 0 ≤ t) :
     s t = s' t ∧ c t = c' t ∧ e t = e' t ∧ p t = p' t := by
-  have hd := isSolution_iff_hasDerivAt_revCurve.1 h
-  have hd' := isSolution_iff_hasDerivAt_revCurve.1 h'
-  have hcont : ContinuousOn (revCurve s c e p) (Icc 0 t) :=
+  have hd := isSolution_iff_hasDerivAt_mmCurve.1 h
+  have hd' := isSolution_iff_hasDerivAt_mmCurve.1 h'
+  have hcont : ContinuousOn (mmCurve s c e p) (Icc 0 t) :=
     fun x hx => (hd x hx.1).continuousAt.continuousWithinAt
-  have hcont' : ContinuousOn (revCurve s' c' e' p') (Icc 0 t) :=
+  have hcont' : ContinuousOn (mmCurve s' c' e' p') (Icc 0 t) :=
     fun x hx => (hd' x hx.1).continuousAt.continuousWithinAt
   obtain ⟨C₁, hC₁⟩ := isCompact_Icc.exists_bound_of_continuousOn hcont
   obtain ⟨C₂, hC₂⟩ := isCompact_Icc.exists_bound_of_continuousOn hcont'
@@ -349,7 +345,7 @@ theorem IsSolution.eq_of_initial {s' c' e' p' : ℝ → ℝ} (h : IsSolution k�
     hcont' (fun x hx => (hd' x hx.1).hasDerivWithinAt)
     (fun x hx => mem_closedBall_zero_iff.2
       ((hC₂ x (Ico_subset_Icc_self hx)).trans (le_max_right _ _)))
-    (by simp [revCurve, hs, hc, he, hp]) ⟨ht, le_rfl⟩
+    (by simp [mmCurve, hs, hc, he, hp]) ⟨ht, le_rfl⟩
   exact ⟨congrFun heq 0, congrFun heq 1, congrFun heq 2, congrFun heq 3⟩
 
 /-- **Invariance of the nonnegative orthant.** Along every solution with nonnegative rate
@@ -384,10 +380,10 @@ theorem revField_eq_zero_iff {x : Fin 4 → ℝ} :
 theorem isSolution_const_iff {x : Fin 4 → ℝ} :
     IsSolution k₁ kb k₂ kb₂ (fun _ => x 0) (fun _ => x 1) (fun _ => x 2) (fun _ => x 3) ↔
       revField k₁ kb k₂ kb₂ x = 0 := by
-  rw [isSolution_iff_hasDerivAt_revCurve]
-  have hx : ∀ t, revCurve (fun _ => x 0) (fun _ => x 1) (fun _ => x 2) (fun _ => x 3) t = x :=
+  rw [isSolution_iff_hasDerivAt_mmCurve]
+  have hx : ∀ t, mmCurve (fun _ => x 0) (fun _ => x 1) (fun _ => x 2) (fun _ => x 3) t = x :=
     fun t => by ext i; fin_cases i <;> rfl
-  have hc : revCurve (fun _ => x 0) (fun _ => x 1) (fun _ => x 2) (fun _ => x 3) =
+  have hc : mmCurve (fun _ => x 0) (fun _ => x 1) (fun _ => x 2) (fun _ => x 3) =
       fun _ => x := funext hx
   simp only [hx, hc]
   constructor
