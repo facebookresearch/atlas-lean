@@ -29,12 +29,16 @@ def testAccounts : SectorAccounts where
   Sg := 5
   S := 30
   NX := 20
+  gdp := by norm_num
+  netExports := by norm_num
+  incomeDisposal := by norm_num
+  publicSaving := by norm_num
+  nationalSaving := by norm_num
 
 example : testAccounts.Y = testAccounts.C + testAccounts.I + testAccounts.G + testAccounts.NX :=
-  expenditure_identity _ (by norm_num [testAccounts]) (by norm_num [testAccounts])
+  expenditure_identity _
 
 example : testAccounts.S = testAccounts.I + testAccounts.NX :=
-  saving_investment_balance _ (by norm_num [testAccounts]) (by norm_num [testAccounts])
-    (by norm_num [testAccounts]) (by norm_num [testAccounts]) (by norm_num [testAccounts])
+  saving_investment_balance _
 
 end MathlibExtTest.Economics.Macro.SectorBalances
