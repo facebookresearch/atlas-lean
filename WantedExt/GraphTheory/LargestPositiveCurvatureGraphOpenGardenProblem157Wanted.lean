@@ -39,9 +39,11 @@ faces at `v` are counted once per corner, so the curvature `1 - deg(v)/2 + ∑_{
 face vector `f(v)` are those of Ghidelli, §1.1. Prisms and antiprisms are transcribed from Ghidelli,
 §1.1 (a prism of order `N` has exactly `2N` vertices, two faces of size `N`, `N` faces of size `4`
 and `f(v) = {4, 4, N}` at every vertex; an antiprism has `2N` vertices, two faces of size `N`, `2N`
-triangles and `f(v) = {3, 3, 3, N}`); every prism and antiprism with more than `8` vertices meets
-this literal definition. The answer to the question is formalized as: every planar PCC graph has at
-most `208` vertices, and one has exactly `208`.
+triangles and `f(v) = {3, 3, 3, N}`). Face counts are compared size by size, so the two kinds of
+faces are counted together when their sizes coincide (the cube, `N = 4`, has `6` square faces; the
+octahedron, the antiprism with `N = 3`, has `8` triangles), and every prism and antiprism meets the
+definition. The answer to the question is formalized as: every planar PCC graph has at most `208`
+vertices, and one has exactly `208`.
 -/
 
 variable {V : Type} [Fintype V] [DecidableEq V] (G : SimpleGraph V) [DecidableRel G.Adj]
@@ -89,15 +91,19 @@ noncomputable def numFacesOfSize (ρ : Equiv.Perm G.Dart) (k : ℕ) : ℕ :=
   (Finset.univ.filter fun d : G.Dart => faceSize G ρ d = k).card / k
 
 /-- A prism of order `N` (Ghidelli, §1.1): exactly `2N` vertices, two faces of size `N` and `N`
-faces of size `4`, and `f(v) = {4, 4, N}` at every vertex. -/
+faces of size `4` (`N + 2` faces of size `4` when `N = 4`), and `f(v) = {4, 4, N}` at every
+vertex. -/
 def IsPrism (ρ : Equiv.Perm G.Dart) : Prop :=
-  ∃ N : ℕ, Fintype.card V = 2 * N ∧ numFacesOfSize G ρ N = 2 ∧ numFacesOfSize G ρ 4 = N ∧
+  ∃ N : ℕ, Fintype.card V = 2 * N ∧
+    (∀ k, numFacesOfSize G ρ k = (if k = N then 2 else 0) + (if k = 4 then N else 0)) ∧
     ∀ v, faceVector G ρ v = {4, 4, N}
 
 /-- An antiprism of order `N` (Ghidelli, §1.1): exactly `2N` vertices, two faces of size `N` and
-`2N` faces of size `3`, and `f(v) = {3, 3, 3, N}` at every vertex. -/
+`2N` faces of size `3` (`2N + 2` triangles when `N = 3`), and `f(v) = {3, 3, 3, N}` at every
+vertex. -/
 def IsAntiprism (ρ : Equiv.Perm G.Dart) : Prop :=
-  ∃ N : ℕ, Fintype.card V = 2 * N ∧ numFacesOfSize G ρ N = 2 ∧ numFacesOfSize G ρ 3 = 2 * N ∧
+  ∃ N : ℕ, Fintype.card V = 2 * N ∧
+    (∀ k, numFacesOfSize G ρ k = (if k = N then 2 else 0) + (if k = 3 then 2 * N else 0)) ∧
     ∀ v, faceVector G ρ v = {3, 3, 3, N}
 
 /-- A planar PCC graph (Ghidelli, Definition 1.1): a simple connected graph embedded in the sphere
