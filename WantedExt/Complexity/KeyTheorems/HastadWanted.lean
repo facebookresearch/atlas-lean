@@ -45,7 +45,8 @@ random-assignment satisfaction probability differ from `7 / 8`: a repeated
 variable lowers it, e.g. `(x ∨ x ∨ y)` is satisfied with probability `3 / 4`
 and `(x ∨ x ∨ x)` with probability `1 / 2`, while a complementary pair makes
 the clause a tautology, satisfied with probability `1`. Only with all three
-literals distinct and non-complementary is the probability exactly `7 / 8`.  As in the MAXSNP file, the variable count
+literals distinct and non-complementary is the probability exactly `7 / 8`.  As in the MAXSNP file,
+the variable count
 is given in unary (a bitstring of length `n`), so an assignment of length
 `|x|` has at least `n` bits.
 -/
