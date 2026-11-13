@@ -108,7 +108,6 @@ example : K2.fracChromaticNumber ≤ 2 := by
 -- Combinatorics 438: Regular fractional colouring
 
 --  Sanity check: the fractional colouring of $K_2$ with 1 on both singleton independent sets is regular.
-/-- `fcc` is regular: every vertex is covered with total weight `1`. -/
 
 theorem fcc_regular : fcc.IsRegular := by
   intro w
