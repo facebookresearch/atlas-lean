@@ -47,24 +47,17 @@ inductive Shuffle : List α → List α → List α → Prop
   | right (a : α) {xs ys zs : List α} (h : Shuffle xs ys zs) :
       Shuffle xs (a :: ys) (a :: zs)
 
-/-- Determinacy of the last write: the final register value of
-any trace is the value of its last `write`, or the initial value
-if it has no writes. Stated as: appending one step updates the
-run by that step alone, the composition law of executions. -/
+/-- Composition of executions: running `xs ++ ys` from `init` is
+running `ys` from the state that `xs` reaches from `init`. -/
 theorem runTrace_append (init : ℕ) (xs ys : List (ℕ × RegOp)) :
     runTrace init (xs ++ ys) = runTrace (runTrace init xs) ys := by
   simp only [runTrace]
   exact List.foldl_append
 
-/-- Interleaving projection: in a shuffle of thread 0's and
-thread 1's tagged traces, projecting recovers each thread's
-operation list. Formally, if `trace` is a shuffle of the constant
-taggings of `ops₀` and `ops₁` (as tagged traces `tr₀`, `tr₁` with
-all tags `0` resp. `1`), then `project 0 trace = ops₀` extracted
-from `tr₀`'s steps. The usable form: for tagged lists where every
-element of `tr₀` has tag `0` and every element of `tr₁` has tag
-`1`, shuffling preserves both projections. -/
-theorem project_shuffle_left {tr₀ tr₁ trace : List (ℕ × RegOp)}
+/-- Helper for `project_shuffle_left`: in a shuffle of a trace
+`tr₀` whose steps are all tagged `0` with a trace `tr₁` whose tags
+avoid `0`, the steps tagged `0` are exactly `tr₀`, in order. -/
+theorem filter_shuffle_left {tr₀ tr₁ trace : List (ℕ × RegOp)}
     (h0 : ∀ step ∈ tr₀, step.1 = 0)
     (h1' : ∀ step ∈ tr₁, step.1 ≠ 0)
     (h : Shuffle tr₀ tr₁ trace) :
@@ -91,7 +84,10 @@ theorem project_shuffle_left {tr₀ tr₁ trace : List (ℕ × RegOp)}
     have ihn := ih h0 h1tail
     simp [ha, ihn]
 
-theorem project_shuffle_right {tr₀ tr₁ trace : List (ℕ × RegOp)}
+/-- Helper for `project_shuffle_right`: in a shuffle of a trace
+`tr₀` whose tags avoid `1` with a trace `tr₁`, the steps tagged `1`
+are exactly the steps of `tr₁` tagged `1`, in order. -/
+theorem filter_shuffle_right {tr₀ tr₁ trace : List (ℕ × RegOp)}
     (h0' : ∀ step ∈ tr₀, step.1 ≠ 1)
     (h1 : ∀ step ∈ tr₁, step.1 = 1)
     (h : Shuffle tr₀ tr₁ trace) :
@@ -118,3 +114,27 @@ theorem project_shuffle_right {tr₀ tr₁ trace : List (ℕ × RegOp)}
       exact h1 step (List.mem_cons_of_mem a hmem)
     have ihn := ih h0' h1tail
     simp [ha, ihn]
+
+/-- Interleaving projection onto thread `0`: in a shuffle of a trace
+`tr₀` whose steps are all tagged `0` with a trace `tr₁` whose tags
+avoid `0`, projecting onto thread `0` recovers the operations of
+`tr₀`, in order. -/
+theorem project_shuffle_left {tr₀ tr₁ trace : List (ℕ × RegOp)}
+    (h0 : ∀ step ∈ tr₀, step.1 = 0)
+    (h1' : ∀ step ∈ tr₁, step.1 ≠ 0)
+    (h : Shuffle tr₀ tr₁ trace) :
+    project 0 trace = tr₀.map Prod.snd := by
+  rw [project, filter_shuffle_left h0 h1' h]
+
+/-- Interleaving projection onto thread `1`: in a shuffle of a trace
+`tr₀` whose tags avoid `1` with a trace `tr₁` whose steps are all
+tagged `1`, projecting onto thread `1` recovers the operations of
+`tr₁`, in order. -/
+theorem project_shuffle_right {tr₀ tr₁ trace : List (ℕ × RegOp)}
+    (h0' : ∀ step ∈ tr₀, step.1 ≠ 1)
+    (h1 : ∀ step ∈ tr₁, step.1 = 1)
+    (h : Shuffle tr₀ tr₁ trace) :
+    project 1 trace = tr₁.map Prod.snd := by
+  rw [project, filter_shuffle_right h0' h1 h, List.filter_eq_self.mpr]
+  intro step hstep
+  simp [h1 step hstep]
