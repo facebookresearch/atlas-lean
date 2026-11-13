@@ -21,7 +21,7 @@ linear combination `a • f + b • g` is harmonic there.
 ## i. Overview
 
 The Laplacian commutes with addition (`ContDiffAt.laplacian_add`) and with
-scalar multiplication (`ContDiffAt.laplacian_smul`), so
+scalar multiplication (`InnerProductSpace.laplacian_smul`), so
 `Δ (a • f + b • g) x = a • Δ f x + b • Δ g x = 0`.
 
 ## ii. Key results
