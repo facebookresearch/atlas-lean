@@ -20,6 +20,7 @@ public import Mathlib.Analysis.Normed.Group.Constructions
 public import Mathlib.Analysis.Normed.Group.Continuity
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.MeasureTheory.Order.Group.Lattice
+public import Mathlib.Topology.Instances.Matrix
 
 /-!
 # HC0 (Eicker-Huber-White) sandwich estimator consistency
@@ -43,16 +44,19 @@ in measure for a general estimating-equation sandwich in
 continuous-linear-map form. It does not give the OLS HC0 matrix form, a.s.
 convergence, or the residual cross-term bound proved here.
 
-All convergence statements are ENTRYWISE (real-valued integrals and real
-`Tendsto`): `Matrix ι ι ℝ` has no global `NormedAddCommGroup` instance in
-Mathlib (only scoped instances), so no matrix-valued integral or `Tendsto`
-is stated.
+Limits of the meat are entrywise real-valued integrals: a matrix-valued Bochner integral
+would need a normed group structure on `Matrix ι ι ℝ`, which Mathlib provides only as scoped
+instances. Convergence needs no norm: `Matrix ι ι ℝ` is a function type with the product
+topology, so the meat and the sandwich also converge as matrices (`tendsto_pi_nhds`); the
+entrywise forms remain available.
 
 ## Main results
 
 - `hc0Meat_entrywise_sub_le`: deterministic entrywise residual bound.
-- `hc0Meat_tendsto_ae`: a.s. consistency of the HC0 meat.
-- `hc0Sandwich_tendsto_ae`: a.s. consistency of the HC0 sandwich.
+- `hc0Meat_matrix_tendsto_ae`: a.s. consistency of the HC0 meat as a matrix
+  (entrywise form `hc0Meat_tendsto_ae`).
+- `hc0Sandwich_matrix_tendsto_ae`: a.s. consistency of the HC0 sandwich as a matrix
+  (entrywise form `hc0Sandwich_tendsto_ae`).
 -/
 
 @[expose] public section
@@ -62,23 +66,20 @@ open scoped Matrix
 
 namespace MathlibExt.Probability.Statistics.HC0Sandwich
 
-/-- Outer product `v vᵀ` as a matrix. -/
-noncomputable def outerProduct {ι : Type*} (v : ι → ℝ) : Matrix ι ι ℝ :=
-  Matrix.of fun a b => v a * v b
-
 /-- The HC0 meat `n⁻¹ ∑_{i<n} û_i² * (x_i x_iᵀ)` for a sample of `n`
-regressor rows `x` and residuals `uhat`. -/
+regressor rows `x` and residuals `uhat`, with the outer product
+`x_i x_iᵀ = Matrix.vecMulVec (x i) (x i)`. -/
 noncomputable def hc0Meat {ι : Type*} [Fintype ι] (x : ℕ → ι → ℝ) (uhat : ℕ → ℝ)
     (n : ℕ) : Matrix ι ι ℝ :=
-  (n : ℝ)⁻¹ • ∑ i ∈ Finset.range n, (uhat i ^ 2) • outerProduct (x i)
+  (n : ℝ)⁻¹ • ∑ i ∈ Finset.range n, (uhat i ^ 2) • Matrix.vecMulVec (x i) (x i)
 
 /-- Entrywise formula for the HC0 meat. -/
 private lemma hc0Meat_entry {ι : Type*} [Fintype ι] (x : ℕ → ι → ℝ) (uhat : ℕ → ℝ)
     (n : ℕ) (a b : ι) :
     (hc0Meat x uhat n) a b
       = (n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, (uhat i ^ 2) * ((x i) a * (x i) b) := by
-  simp only [hc0Meat, outerProduct, Matrix.smul_apply, Matrix.sum_apply,
-    Matrix.of_apply, smul_eq_mul]
+  simp only [hc0Meat, Matrix.smul_apply, Matrix.sum_apply, Matrix.vecMulVec_apply,
+    smul_eq_mul]
 
 /-- Pointwise coordinate bound for the sup norm on `ι → ℝ`. -/
 private lemma abs_apply_le_norm_pi {ι : Type*} [Fintype ι] (v : ι → ℝ) (a : ι) :
@@ -181,9 +182,10 @@ theorem hc0Meat_entrywise_sub_le {ι : Type*} [Fintype ι] [DecidableEq ι]
   exact hfin
 
 /-- A.s. consistency of the HC0 meat, entrywise: under iid `(x_i, u_i)` pairs,
-the moment conditions `E ‖x‖⁴ < ∞`, `E ‖x‖² u² < ∞`, entrywise integrability
-of the oracle meat, and a.s. consistency of `β̂_n`, each entry of the
-residual meat converges a.s. to `Ω a b = E[u² * x_a * x_b]`. -/
+the moment conditions `E ‖x‖⁴ < ∞`, `E ‖x‖² u² < ∞`, and a.s. consistency of
+`β̂_n`, each entry of the residual meat converges a.s. to
+`Ω a b = E[u² * x_a * x_b]`. The oracle meat entries are integrable because
+`|u² * x_a * x_b| ≤ ‖x‖² u²`. -/
 theorem hc0Meat_tendsto_ae {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq ι]
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {x : ℕ → Ω → (ι → ℝ)} {u : ℕ → Ω → ℝ}
@@ -193,8 +195,6 @@ theorem hc0Meat_tendsto_ae {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq 
       (fun ω => (x 0 ω, u 0 ω)) μ μ)
     (hMom4 : Integrable (fun ω => ‖x 0 ω‖ ^ 4) μ)
     (hMom2 : Integrable (fun ω => ‖x 0 ω‖ ^ 2 * (u 0 ω) ^ 2) μ)
-    (hIntMeat : ∀ a b : ι, Integrable
-      (fun ω => (u 0 ω) ^ 2 * (x 0 ω) a * (x 0 ω) b) μ)
     (hβ : ∀ᵐ ω ∂μ, Filter.Tendsto (fun n : ℕ => βhat n ω) Filter.atTop (nhds β))
     (a b : ι) :
     ∀ᵐ ω ∂μ, Filter.Tendsto
@@ -209,6 +209,19 @@ theorem hc0Meat_tendsto_ae {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq 
     ((measurable_fst.norm).pow_const 3).mul measurable_snd.abs
   have hφ4 : Measurable (fun p : (ι → ℝ) × ℝ => ‖p.1‖ ^ 4) :=
     (measurable_fst.norm).pow_const 4
+  have hIntMeat : Integrable (fun ω => (u 0 ω) ^ 2 * (x 0 ω) a * (x 0 ω) b) μ := by
+    have hmeas : AEStronglyMeasurable (fun ω => (u 0 ω) ^ 2 * (x 0 ω) a * (x 0 ω) b) μ :=
+      (hφm.comp_aemeasurable (hIdent 0).aemeasurable_fst).aestronglyMeasurable
+    refine Integrable.mono' hMom2 hmeas (Filter.Eventually.of_forall fun ω => ?_)
+    have hab : |(x 0 ω) a| * |(x 0 ω) b| ≤ ‖x 0 ω‖ * ‖x 0 ω‖ :=
+      mul_le_mul (abs_apply_le_norm_pi _ _) (abs_apply_le_norm_pi _ _)
+        (abs_nonneg _) (norm_nonneg _)
+    rw [Real.norm_eq_abs, abs_mul, abs_mul, abs_of_nonneg (sq_nonneg (u 0 ω))]
+    calc (u 0 ω) ^ 2 * |(x 0 ω) a| * |(x 0 ω) b|
+        = (u 0 ω) ^ 2 * (|(x 0 ω) a| * |(x 0 ω) b|) := by ring
+      _ ≤ (u 0 ω) ^ 2 * (‖x 0 ω‖ * ‖x 0 ω‖) :=
+        mul_le_mul_of_nonneg_left hab (sq_nonneg _)
+      _ = ‖x 0 ω‖ ^ 2 * (u 0 ω) ^ 2 := by ring
   have hint3 : Integrable (fun ω => ‖x 0 ω‖ ^ 3 * |u 0 ω|) μ := by
     have hmeas : AEStronglyMeasurable (fun ω => ‖x 0 ω‖ ^ 3 * |u 0 ω|) μ := by
       have hgm : AEStronglyMeasurable
@@ -242,7 +255,7 @@ theorem hc0Meat_tendsto_ae {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq 
         ((u i ω) ^ 2 * (x i ω) a * (x i ω) b))
       Filter.atTop
       (nhds (∫ ω, (u 0 ω) ^ 2 * (x 0 ω) a * (x 0 ω) b ∂μ)) :=
-    strong_law_ae (fun i ω => (u i ω) ^ 2 * (x i ω) a * (x i ω) b) (hIntMeat a b)
+    strong_law_ae (fun i ω => (u i ω) ^ 2 * (x i ω) a * (x i ω) b) hIntMeat
       (fun i j hij => (hJoint.indepFun hij).comp hφm hφm)
       (fun i => (hIdent i).comp hφm)
   have h3 : ∀ᵐ ω ∂μ, Filter.Tendsto
@@ -368,5 +381,55 @@ theorem hc0Sandwich_tendsto_ae {ι : Type*} [Fintype ι] [Nonempty ι] [Decidabl
       (nhds (∑ c : ι, (∑ d : ι, (Q⁻¹) a d * Ωm d c) * (Q⁻¹) b c)) :=
     tendsto_finsetSum Finset.univ (fun c _ => hinner c)
   simpa only [Matrix.mul_apply, Matrix.transpose_apply] using houter
+
+/-- A.s. consistency of the HC0 meat as a matrix: under the hypotheses of
+`hc0Meat_tendsto_ae`, the residual meat converges a.s. in `Matrix ι ι ℝ` (product
+topology) to the matrix `Ω` of entries `E[u² * x_a * x_b]`. -/
+theorem hc0Meat_matrix_tendsto_ae {ι : Type*} [Fintype ι] [Nonempty ι]
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {x : ℕ → Ω → (ι → ℝ)} {u : ℕ → Ω → ℝ}
+    {β : ι → ℝ} {βhat : ℕ → Ω → (ι → ℝ)}
+    (hJoint : iIndepFun (fun i ω => (x i ω, u i ω)) μ)
+    (hIdent : ∀ i, IdentDistrib (fun ω => (x i ω, u i ω))
+      (fun ω => (x 0 ω, u 0 ω)) μ μ)
+    (hMom4 : Integrable (fun ω => ‖x 0 ω‖ ^ 4) μ)
+    (hMom2 : Integrable (fun ω => ‖x 0 ω‖ ^ 2 * (u 0 ω) ^ 2) μ)
+    (hβ : ∀ᵐ ω ∂μ, Filter.Tendsto (fun n : ℕ => βhat n ω) Filter.atTop (nhds β)) :
+    ∀ᵐ ω ∂μ, Filter.Tendsto
+      (fun n : ℕ => hc0Meat (fun i => x i ω)
+        (fun i => u i ω - (x i ω) ⬝ᵥ (βhat n ω - β)) n)
+      Filter.atTop
+      (nhds (Matrix.of fun a b => ∫ ω, (u 0 ω) ^ 2 * (x 0 ω) a * (x 0 ω) b ∂μ)) := by
+  classical
+  have h : ∀ᵐ ω ∂μ, ∀ a b : ι, Filter.Tendsto
+      (fun n : ℕ => (hc0Meat (fun i => x i ω)
+        (fun i => u i ω - (x i ω) ⬝ᵥ (βhat n ω - β)) n) a b)
+      Filter.atTop
+      (nhds (∫ ω, (u 0 ω) ^ 2 * (x 0 ω) a * (x 0 ω) b ∂μ)) :=
+    ae_all_iff.mpr fun a => ae_all_iff.mpr fun b =>
+      hc0Meat_tendsto_ae hJoint hIdent hMom4 hMom2 hβ a b
+  filter_upwards [h] with ω hω
+  exact tendsto_pi_nhds.mpr fun a => tendsto_pi_nhds.mpr fun b => hω a b
+
+/-- A.s. consistency of the HC0 sandwich as a matrix: if the bread inverse and the meat
+converge a.s. in `Matrix ι ι ℝ` (product topology), then
+`Q̂_n⁻¹ Ω̂_n Q̂_n⁻ᵀ → Q⁻¹ Ωm Q⁻ᵀ` a.s. -/
+theorem hc0Sandwich_matrix_tendsto_ae {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq ι]
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    {Qhat : ℕ → Ω → Matrix ι ι ℝ} {Q Ωm : Matrix ι ι ℝ}
+    {meat : ℕ → Ω → Matrix ι ι ℝ}
+    (hQinv : ∀ᵐ ω ∂μ, Filter.Tendsto (fun n : ℕ => (Qhat n ω)⁻¹) Filter.atTop (nhds Q⁻¹))
+    (hMeat : ∀ᵐ ω ∂μ, Filter.Tendsto (fun n : ℕ => meat n ω) Filter.atTop (nhds Ωm)) :
+    ∀ᵐ ω ∂μ, Filter.Tendsto
+      (fun n : ℕ => (Qhat n ω)⁻¹ * meat n ω * ((Qhat n ω)⁻¹)ᵀ)
+      Filter.atTop (nhds (Q⁻¹ * Ωm * (Q⁻¹)ᵀ)) := by
+  have hentry : ∀ a b : ι, ∀ᵐ ω ∂μ, Filter.Tendsto
+      (fun n : ℕ => ((Qhat n ω)⁻¹ * meat n ω * ((Qhat n ω)⁻¹)ᵀ) a b)
+      Filter.atTop (nhds ((Q⁻¹ * Ωm * (Q⁻¹)ᵀ) a b)) :=
+    hc0Sandwich_tendsto_ae
+      (fun a b => hQinv.mono fun _ h => tendsto_pi_nhds.mp (tendsto_pi_nhds.mp h a) b)
+      (fun a b => hMeat.mono fun _ h => tendsto_pi_nhds.mp (tendsto_pi_nhds.mp h a) b)
+  filter_upwards [ae_all_iff.mpr fun a => ae_all_iff.mpr fun b => hentry a b] with ω hω
+  exact tendsto_pi_nhds.mpr fun a => tendsto_pi_nhds.mpr fun b => hω a b
 
 end MathlibExt.Probability.Statistics.HC0Sandwich

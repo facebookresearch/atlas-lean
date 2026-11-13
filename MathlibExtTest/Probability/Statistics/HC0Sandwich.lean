@@ -16,12 +16,14 @@ import Mathlib.Tactic.NormNum
 /-!
 # Tests for HC0 sandwich estimator consistency
 
-Entrywise-bound checks, a degenerate satisfiability check, an exact-value
+Entrywise-bound checks, degenerate satisfiability checks (entrywise and
+matrix-valued meat), an exact-value
 application of `hc0Sandwich_tendsto_ae` for a constant `Fin 1` sandwich case
 (bread `1`, meat `5`, sandwich limit `5`), and a constant `Fin 2` case with the
 nonsymmetric bread `!![1, 1; 0, 1]` and identity meat: the sandwich limit
-`Q⁻¹ * 1 * Q⁻ᵀ = !![2, -1; -1, 1]` is symmetric, while the untransposed
-`Q⁻¹ * 1 * Q⁻¹ = !![1, -2; 0, 1]` is not.
+`Q⁻¹ * 1 * Q⁻ᵀ = !![2, -1; -1, 1]` is symmetric (checked entrywise and as a
+matrix-valued limit), while the untransposed `Q⁻¹ * 1 * Q⁻¹ = !![1, -2; 0, 1]`
+is not.
 -/
 
 @[expose] public section
@@ -111,13 +113,32 @@ example {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq ι]
     fun _ => IdentDistrib.refl aemeasurable_const
   have hM4 : Integrable (fun _ : Ω => ‖(0 : ι → ℝ)‖ ^ 4) μ := by simp
   have hM2 : Integrable (fun _ : Ω => ‖(0 : ι → ℝ)‖ ^ 2 * (0:ℝ) ^ 2) μ := by simp
-  have hIM : ∀ a' b' : ι, Integrable
-      (fun _ : Ω => (0:ℝ) ^ 2 * (0 : ι → ℝ) a' * (0 : ι → ℝ) b') μ := fun _ _ => by simp
   have hB : ∀ᵐ ω ∂μ, Filter.Tendsto (fun _ : ℕ => β) Filter.atTop (nhds β) :=
     Filter.Eventually.of_forall (fun _ => tendsto_const_nhds)
   have h := hc0Meat_tendsto_ae (x := fun _ _ => (0 : ι → ℝ)) (u := fun _ _ => (0:ℝ))
-    (β := β) (βhat := fun _ _ => β) hJ hI hM4 hM2 hIM hB a b
+    (β := β) (βhat := fun _ _ => β) hJ hI hM4 hM2 hB a b
   exact h
+
+/-- Degenerate satisfiability check for the matrix-valued meat consistency. -/
+example {ι : Type*} [Fintype ι] [Nonempty ι]
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    (β : ι → ℝ) :
+    ∀ᵐ _ ∂μ, Filter.Tendsto
+      (fun n : ℕ => hc0Meat (fun _ : ℕ => (0 : ι → ℝ))
+        (fun _ : ℕ => (0:ℝ) - (0 : ι → ℝ) ⬝ᵥ (β - β)) n)
+      Filter.atTop
+      (nhds (Matrix.of fun a b => ∫ _, (0:ℝ) ^ 2 * (0 : ι → ℝ) a * (0 : ι → ℝ) b ∂μ)) := by
+  have hJ : iIndepFun (fun _ : ℕ => fun _ : Ω => ((0 : ι → ℝ), (0:ℝ))) μ :=
+    iIndepFun_const_test _
+  have hI : ∀ i : ℕ, IdentDistrib (fun _ : Ω => ((0 : ι → ℝ), (0:ℝ)))
+      (fun _ : Ω => ((0 : ι → ℝ), (0:ℝ))) μ μ :=
+    fun _ => IdentDistrib.refl aemeasurable_const
+  have hM4 : Integrable (fun _ : Ω => ‖(0 : ι → ℝ)‖ ^ 4) μ := by simp
+  have hM2 : Integrable (fun _ : Ω => ‖(0 : ι → ℝ)‖ ^ 2 * (0:ℝ) ^ 2) μ := by simp
+  have hB : ∀ᵐ ω ∂μ, Filter.Tendsto (fun _ : ℕ => β) Filter.atTop (nhds β) :=
+    Filter.Eventually.of_forall (fun _ => tendsto_const_nhds)
+  exact hc0Meat_matrix_tendsto_ae (x := fun _ _ => (0 : ι → ℝ)) (u := fun _ _ => (0:ℝ))
+    (β := β) (βhat := fun _ _ => β) hJ hI hM4 hM2 hB
 
 /-- Exact-value check: a constant `Fin 1` sandwich converges to the stated
 `Q⁻¹ * Ωm * Q⁻ᵀ` value (here bread `Q = 1`, meat `Ωm = 5`, limit `5`). -/
@@ -189,6 +210,20 @@ example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} (a b : Fin 2) :
   exact hc0Sandwich_tendsto_ae
     (Qhat := fun _ _ => (!![1, 1; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ))
     (Q := !![1, 1; 0, 1]) (Ωm := 1) (meat := fun _ _ => 1) hQinv hMeat a b
+
+/-- Matrix-valued form of the same `Fin 2` check: the sandwich converges in
+`Matrix (Fin 2) (Fin 2) ℝ` to `!![2, -1; -1, 1]`. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} :
+    ∀ᵐ _ ∂μ, Filter.Tendsto
+      (fun _ : ℕ => ((!![1, 1; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ * 1 *
+        ((!![1, 1; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ)⁻¹)ᵀ : Matrix (Fin 2) (Fin 2) ℝ))
+      Filter.atTop (nhds (!![2, -1; -1, 1] : Matrix (Fin 2) (Fin 2) ℝ)) := by
+  rw [← sandwich_fin_two]
+  exact hc0Sandwich_matrix_tendsto_ae
+    (Qhat := fun _ _ => (!![1, 1; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ))
+    (Q := !![1, 1; 0, 1]) (Ωm := 1) (meat := fun _ _ => 1)
+    (Filter.Eventually.of_forall fun _ => tendsto_const_nhds)
+    (Filter.Eventually.of_forall fun _ => tendsto_const_nhds)
 
 /-- The sandwich limit for that bread is symmetric (equal off-diagonal entries), while the
 untransposed `Q⁻¹ * 1 * Q⁻¹` is not, so the two forms differ. -/
