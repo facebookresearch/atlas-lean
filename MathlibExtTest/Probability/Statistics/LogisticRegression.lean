@@ -23,6 +23,15 @@ example : logisticNLL (fun _ _ => (1 : ℝ)) (![0] : Fin 1 → ℝ)
   simp [logisticNLL]
   norm_num [Real.exp_zero]
 
+/-- Concrete test of the outcome term: one observation with design `2`,
+outcome `y = 1`, and coefficient `β = 3`, so `x ⬝ β = 6` and the NLL is
+`log (1 + exp 6) - 6`. A different sign or coefficient on the
+`- yᵢ (xᵢ ⬝ β)` term would change this value. -/
+example : logisticNLL (fun _ _ => (2 : ℝ)) (![1] : Fin 1 → ℝ)
+    (![3] : Fin 1 → ℝ) = Real.log (1 + Real.exp 6) - 6 := by
+  simp [logisticNLL]
+  norm_num
+
 /-- Concrete test: the one-dimensional softplus `β ↦ log (1 + exp β)`
 is convex, as the specialization of `convexOn_logisticNLL` to a single
 observation with unit design and `y = 0`. -/

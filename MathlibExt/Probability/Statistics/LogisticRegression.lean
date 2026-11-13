@@ -9,12 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Convex.Function
-public import Mathlib.Analysis.Convex.Deriv
-public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
-import Mathlib.Tactic.Ring
-import Mathlib.Tactic.Positivity
+import MathlibExt.Analysis.SpecialFunctions.Softplus
 
 /-!
 # Logistic negative log-likelihood is convex in coefficients
@@ -24,9 +20,8 @@ logistic negative log-likelihood
 `∑ i, [log (1 + exp (x_i ⬝ β)) - y_i (x_i ⬝ β)]` is convex in `β` on
 the whole coefficient space. Each summand is the scalar softplus
 composed with the linear map `β ↦ x_i ⬝ β`, minus a linear term
-(Atlas roadmap ST09.T02). The scalar softplus convexity is proved as a
-private helper from Mathlib's derivative criterion, because MathlibExt
-cannot import the PhyslibExt softplus kernel; see the helper's note.
+(Atlas roadmap ST09.T02). The scalar fact is the shared softplus
+convexity `Real.convexOn_softplus`.
 -/
 
 @[expose] public section
@@ -46,42 +41,6 @@ noncomputable def logisticNLL {n m : ℕ} (X : Fin n → Fin m → ℝ) (y : Fin
     (β : Fin m → ℝ) : ℝ :=
   ∑ i, (Real.log (1 + Real.exp (∑ j, X i j * β j)) - y i * ∑ j, X i j * β j)
 
-/-- Scalar softplus convexity, as a private helper. MathlibExt cannot
-import the PhyslibExt softplus-convexity kernel
-(`fsc_softplus_convexOn`), so this helper is proved here from Mathlib's
-derivative criterion (`MonotoneOn.convexOn_of_deriv`) via monotonicity
-of `Real.sigmoid`. It is not public API: a follow-up unification that
-moves the softplus kernel to MathlibExt would delete this helper and
-cite the kernel instead. -/
-private theorem convexOn_log_one_add_exp :
-    ConvexOn ℝ Set.univ (fun t => Real.log (1 + Real.exp t)) := by
-  have hderiv : ∀ t : ℝ, HasDerivAt (fun t => Real.log (1 + Real.exp t))
-      (Real.sigmoid t) t := by
-    intro t
-    have h1 : HasDerivAt (fun t : ℝ => 1 + Real.exp t) (Real.exp t) t :=
-      (Real.hasDerivAt_exp t).const_add 1
-    have hne : (1 : ℝ) + Real.exp t ≠ 0 := by positivity
-    have h2 : HasDerivAt (fun t : ℝ => Real.log (1 + Real.exp t))
-        (Real.exp t / (1 + Real.exp t)) t :=
-      h1.log hne
-    have h3 : Real.exp t / (1 + Real.exp t) = Real.sigmoid t := by
-      rw [Real.sigmoid_def, Real.exp_neg]
-      have hexp : Real.exp t ≠ 0 := Real.exp_ne_zero t
-      have hne2 : (1 : ℝ) + (Real.exp t)⁻¹ ≠ 0 := by positivity
-      field_simp
-      ring
-    rw [h3] at h2
-    exact h2
-  have hderiv_eq : deriv (fun t => Real.log (1 + Real.exp t)) = Real.sigmoid := by
-    funext t
-    exact (hderiv t).deriv
-  refine MonotoneOn.convexOn_of_deriv convex_univ ?_ ?_ ?_
-  · exact fun t _ => (hderiv t).differentiableAt.continuousAt.continuousWithinAt
-  · rw [interior_univ]
-    exact fun t _ => (hderiv t).differentiableAt.differentiableWithinAt
-  · rw [interior_univ, hderiv_eq]
-    exact Real.sigmoid_monotone.monotoneOn _
-
 /-- **Logistic NLL is convex in the coefficients (ST09.T02).** Each
 summand is the scalar softplus composed with the linear map
 `β ↦ x_i ⬝ β`, minus a linear term; a sum of convex functions is convex. -/
@@ -95,7 +54,7 @@ theorem convexOn_logisticNLL {n m : ℕ} (X : Fin n → Fin m → ℝ) (y : Fin 
   have hsoft : ∀ i : Fin n, ConvexOn ℝ Set.univ
       (fun β : Fin m → ℝ => Real.log (1 + Real.exp ((L i) β))) := by
     intro i
-    have h := convexOn_log_one_add_exp.comp_linearMap (L i)
+    have h := Real.convexOn_softplus.comp_linearMap (L i)
     rw [Set.preimage_univ] at h
     exact h.congr (fun β _ => rfl)
   have hlinmap : ∀ i : Fin n, ConcaveOn ℝ Set.univ
