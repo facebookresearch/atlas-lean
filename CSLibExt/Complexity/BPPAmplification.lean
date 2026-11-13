@@ -32,7 +32,9 @@ open Finset
 
 namespace Cslib.Complexity.BPPAmplification
 
-/-- Majority vote of a tuple of Boolean votes. -/
+/-- Majority vote of a tuple of Boolean votes: `true` iff strictly more than half of the `n`
+votes are `true` (more than `n / 2` in natural-number division). Ties, including the empty
+vote, go to `false`. -/
 def majority {n : ℕ} (v : Fin n → Bool) : Bool :=
   decide (n / 2 < (Finset.univ.filter (fun i => v i = true)).card)
 
