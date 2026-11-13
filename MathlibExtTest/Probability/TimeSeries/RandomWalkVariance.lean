@@ -20,13 +20,15 @@ Concrete non-vacuity: coordinate evaluations on the infinite product of
 `gaussianReal 0 3` with itself. Independence, square-integrability, and the
 common variance are all derived, and the single-innovation variance `3` is
 computed, not assumed. The random-walk variance formula is applied at
-horizons `0`, `1`, and `4` (giving `0`, `3`, and `12`).
+horizons `0`, `1`, and `4` (giving `0`, `3`, and `12`), with pairwise independence
+and through the mutually independent corollary.
 -/
 
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
 open MathlibExt.Probability.TimeSeries.RandomWalkVariance
+open MathlibExt.Probability.RandomWalkTailMeasurability (randomWalkPartialSum)
 
 namespace MathlibExtTest.Probability.TimeSeries.RandomWalkVariance
 
@@ -63,6 +65,10 @@ theorem testEps_memLp (i : ℕ) : MemLp (testEps i) 2 testMu := by
 theorem testEps_indep : iIndepFun testEps testMu :=
   iIndepFun_infinitePi (X := fun _ => id) (fun _ => measurable_id)
 
+/-- The coordinate evaluations are pairwise independent. -/
+theorem testEps_pairwise : Pairwise fun i j => testEps i ⟂ᵢ[testMu] testEps j :=
+  fun _ _ hij => testEps_indep.indepFun hij
+
 /-- All coordinates share the same variance. -/
 theorem testEps_variance (i : ℕ) :
     variance (testEps i) testMu = variance (testEps 0) testMu := by
@@ -86,21 +92,36 @@ theorem testEps_variance_zero : variance (testEps 0) testMu = 3 := by
 
 /-- Horizon `0` gives `0`. -/
 theorem test_randomWalk_h0 :
-    variance (fun ω => ∑ k ∈ Finset.range 0, testEps k ω) testMu = 0 := by
-  rw [randomWalk_variance testEps testEps_memLp testEps_indep testEps_variance 0]
+    variance (randomWalkPartialSum testEps 0) testMu = 0 := by
+  rw [randomWalk_variance testEps testEps_memLp testEps_pairwise testEps_variance 0]
   simp
 
 /-- Horizon `1` gives the computed single-innovation variance `3`. -/
 theorem test_randomWalk_h1 :
-    variance (fun ω => ∑ k ∈ Finset.range 1, testEps k ω) testMu = 3 := by
-  rw [randomWalk_variance testEps testEps_memLp testEps_indep testEps_variance 1,
+    variance (randomWalkPartialSum testEps 1) testMu = 3 := by
+  rw [randomWalk_variance testEps testEps_memLp testEps_pairwise testEps_variance 1,
     testEps_variance_zero]
   norm_num
 
 /-- Horizon `4` with computed variance `3` gives `12`. -/
 theorem test_randomWalk_h4 :
-    variance (fun ω => ∑ k ∈ Finset.range 4, testEps k ω) testMu = 12 :=
-  randomWalk_variance_four testEps testEps_memLp testEps_indep testEps_variance
+    variance (randomWalkPartialSum testEps 4) testMu = 12 :=
+  randomWalk_variance_four testEps testEps_memLp testEps_pairwise testEps_variance
     testEps_variance_zero
+
+/-- The mutually independent corollary at horizon `4`: `4 * 3 = 12`. -/
+theorem test_randomWalk_of_iIndepFun_h4 :
+    variance (randomWalkPartialSum testEps 4) testMu = 12 := by
+  rw [randomWalk_variance_of_iIndepFun testEps testEps_memLp testEps_indep testEps_variance 4,
+    testEps_variance_zero]
+  norm_num
+
+/-- The raw-sum form: `randomWalkPartialSum ε h` is `fun ω => ∑ k ∈ Finset.range h, ε k ω` by
+definition, so the formula applies to the explicit partial sum unchanged. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} (ε : ℕ → Ω → ℝ)
+    (hLp : ∀ i, MemLp (ε i) 2 μ) (hIndep : iIndepFun ε μ)
+    (hVar : ∀ i, variance (ε i) μ = variance (ε 0) μ) (h : ℕ) :
+    variance (fun ω => ∑ k ∈ Finset.range h, ε k ω) μ = (h : ℝ) * variance (ε 0) μ :=
+  randomWalk_variance_of_iIndepFun ε hLp hIndep hVar h
 
 end MathlibExtTest.Probability.TimeSeries.RandomWalkVariance
