@@ -88,12 +88,14 @@ example (xs xd : ℝ → ℝ) (t : ℝ)
   have hc : min (2 * (1:ℝ) / (1 + 2 * 1)) ((1:ℝ) / 1) = 2 / 3 := by norm_num [min_def]
   rwa [hc] at h
 
-/-- Exponential energy bound along any anomaly solution on `[0, ∞)`, for arbitrary positive
-parameters: `E(t) <= exp(-c*t) * E(0)` for `t >= 0`. -/
+/-- Exponential energy bound along any forward anomaly solution on `[0, ∞)` (derivatives within
+`[0, ∞)`), for arbitrary positive parameters: `E(t) <= exp(-c*t) * E(0)` for `t >= 0`. -/
 example {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 < Cd) (hlam : 0 < lam) (hgam : 0 < gam)
     (xs xd : ℝ → ℝ)
-    (hxs : ∀ t, 0 ≤ t → HasDerivAt xs ((-lam * xs t - gam * (xs t - xd t)) / Cs) t)
-    (hxd : ∀ t, 0 ≤ t → HasDerivAt xd ((gam * (xs t - xd t)) / Cd) t) (t : ℝ) (ht : 0 ≤ t) :
+    (hxs : ∀ t, 0 ≤ t →
+      HasDerivWithinAt xs ((-lam * xs t - gam * (xs t - xd t)) / Cs) (Set.Ici 0) t)
+    (hxd : ∀ t, 0 ≤ t → HasDerivWithinAt xd ((gam * (xs t - xd t)) / Cd) (Set.Ici 0) t)
+    (t : ℝ) (ht : 0 ≤ t) :
     (Cs * (xs t) ^ 2 + Cd * (xd t) ^ 2) / 2 ≤
       Real.exp (-(min (2 * lam / (Cs + 2 * Cd)) (gam / Cd)) * t) *
         ((Cs * (xs 0) ^ 2 + Cd * (xd 0) ^ 2) / 2) :=

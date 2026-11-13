@@ -107,12 +107,12 @@ lemma two_box_energy_bound {Ts Td : ℝ → ℝ}
     ∀ t : ℝ, 0 ≤ t →
       ((Ts t - 1) ^ 2 + (Td t - 1) ^ 2) / 2 ≤ Real.exp (-(2 / 3) * t) := by
   intro t ht
-  have hxs : ∀ s : ℝ, 0 ≤ s → HasDerivAt (fun s => Ts s - 1)
-      ((-1 * (Ts s - 1) - 1 * ((Ts s - 1) - (Td s - 1))) / 1) s :=
-    fun s _ => ((hODE s).1.sub_const 1).congr_deriv (by ring)
-  have hxd : ∀ s : ℝ, 0 ≤ s → HasDerivAt (fun s => Td s - 1)
-      ((1 * ((Ts s - 1) - (Td s - 1))) / 1) s :=
-    fun s _ => ((hODE s).2.sub_const 1).congr_deriv (by ring)
+  have hxs : ∀ s : ℝ, 0 ≤ s → HasDerivWithinAt (fun s => Ts s - 1)
+      ((-1 * (Ts s - 1) - 1 * ((Ts s - 1) - (Td s - 1))) / 1) (Set.Ici 0) s :=
+    fun s _ => (((hODE s).1.sub_const 1).congr_deriv (by ring)).hasDerivWithinAt
+  have hxd : ∀ s : ℝ, 0 ≤ s → HasDerivWithinAt (fun s => Td s - 1)
+      ((1 * ((Ts s - 1) - (Td s - 1))) / 1) (Set.Ici 0) s :=
+    fun s _ => (((hODE s).2.sub_const 1).congr_deriv (by ring)).hasDerivWithinAt
   have h := anomaly_energy_exp_bound (Cs := 1) (Cd := 1) (lam := 1) (gam := 1)
     one_pos one_pos one_pos one_pos (fun s => Ts s - 1) (fun s => Td s - 1) hxs hxd ht
   have hc : min (2 * (1 : ℝ) / (1 + 2 * 1)) (1 / 1) = 2 / 3 := by norm_num [min_def]

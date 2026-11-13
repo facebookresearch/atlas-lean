@@ -47,8 +47,9 @@ references. No nonlinear tipping or empirical sensitivity claim is made.
   `-lambda*xs^2 - gamma*(xs-xd)^2 <= -c*E` with `c > 0`.
 - `EarthScience.anomaly_energy_decay`: along solutions of the anomaly
   ODEs, `E' <= -c*E` with `c > 0`.
-- `EarthScience.anomaly_energy_exp_bound`: along solutions of the anomaly
-  ODEs on `[0, ∞)`, `E(t) <= exp(-c*t) * E(0)` for `t >= 0`.
+- `EarthScience.anomaly_energy_exp_bound`: along forward solutions of the
+  anomaly ODEs on `[0, ∞)` (derivatives within `[0, ∞)`),
+  `E(t) <= exp(-c*t) * E(0)` for `t >= 0`.
 
 ## iii. Table of contents
 
@@ -202,24 +203,35 @@ theorem anomaly_energy_decay {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 < Cd)
 
 /-- Anomaly-energy exponential bound: if `xs, xd` satisfy the anomaly ODEs
 `Cs*xs' = -lam*xs - gam*(xs - xd)` and `Cd*xd' = gam*(xs - xd)` at every
-`t >= 0`, then `E(t) = (Cs*xs^2 + Cd*xd^2)/2` satisfies
-`E(t) <= exp(-c*t) * E(0)` for `t >= 0`, with
-`c = min (2*lam/(Cs + 2*Cd)) (gam/Cd) > 0`. Integrates
-`anomaly_energy_hasDerivAt` and `anomaly_energy_dissipation_bound` with
-`le_exp_mul_of_hasDerivWithinAt_Ici`. -/
+`t >= 0`, with derivatives taken within `[0, ∞)` (so only the forward
+trajectory matters, and `t = 0` needs only a right derivative), then
+`E(t) = (Cs*xs^2 + Cd*xd^2)/2` satisfies `E(t) <= exp(-c*t) * E(0)` for
+`t >= 0`, with `c = min (2*lam/(Cs + 2*Cd)) (gam/Cd) > 0`. The energy
+derivative is computed as in `anomaly_energy_hasDerivAt`, within `[0, ∞)`;
+with `anomaly_energy_dissipation_bound`, `le_exp_mul_of_hasDerivWithinAt_Ici`
+gives the bound. -/
 theorem anomaly_energy_exp_bound {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 < Cd)
     (hlam : 0 < lam) (hgam : 0 < gam) (xs xd : ℝ → ℝ)
-    (hxs : ∀ t, 0 ≤ t → HasDerivAt xs ((-lam * xs t - gam * (xs t - xd t)) / Cs) t)
-    (hxd : ∀ t, 0 ≤ t → HasDerivAt xd ((gam * (xs t - xd t)) / Cd) t)
+    (hxs : ∀ t, 0 ≤ t →
+      HasDerivWithinAt xs ((-lam * xs t - gam * (xs t - xd t)) / Cs) (Set.Ici 0) t)
+    (hxd : ∀ t, 0 ≤ t → HasDerivWithinAt xd ((gam * (xs t - xd t)) / Cd) (Set.Ici 0) t)
     {t : ℝ} (ht : 0 ≤ t) :
     (Cs * (xs t) ^ 2 + Cd * (xd t) ^ 2) / 2 ≤
       Real.exp (-(min (2 * lam / (Cs + 2 * Cd)) (gam / Cd)) * t) *
-        ((Cs * (xs 0) ^ 2 + Cd * (xd 0) ^ 2) / 2) :=
-  le_exp_mul_of_hasDerivWithinAt_Ici
-    (u := fun t => (Cs * (xs t) ^ 2 + Cd * (xd t) ^ 2) / 2)
-    (u' := fun t => -lam * (xs t) ^ 2 - gam * (xs t - xd t) ^ 2)
-    (fun s hs =>
-      (anomaly_energy_hasDerivAt hCs hCd xs xd s (hxs s hs) (hxd s hs)).hasDerivWithinAt)
+        ((Cs * (xs 0) ^ 2 + Cd * (xd 0) ^ 2) / 2) := by
+  have hE : ∀ s, 0 ≤ s → HasDerivWithinAt (fun t => (Cs * (xs t) ^ 2 + Cd * (xd t) ^ 2) / 2)
+      (-lam * (xs s) ^ 2 - gam * (xs s - xd s) ^ 2) (Set.Ici 0) s := by
+    intro s hs
+    have hxs2 : HasDerivWithinAt (fun t : ℝ => (xs t) ^ 2)
+        (2 * xs s * ((-lam * xs s - gam * (xs s - xd s)) / Cs)) (Set.Ici 0) s := by
+      simpa using (hxs s hs).fun_pow 2
+    have hxd2 : HasDerivWithinAt (fun t : ℝ => (xd t) ^ 2)
+        (2 * xd s * ((gam * (xs s - xd s)) / Cd)) (Set.Ici 0) s := by
+      simpa using (hxd s hs).fun_pow 2
+    convert ((hxs2.const_mul Cs).fun_add (hxd2.const_mul Cd)).div_const 2 using 1
+    field_simp
+    ring
+  exact le_exp_mul_of_hasDerivWithinAt_Ici hE
     (fun s _ =>
       (anomaly_energy_dissipation_bound (xs := xs s) (xd := xd s) hCs hCd hlam hgam).2.trans_eq
         (by ring))
