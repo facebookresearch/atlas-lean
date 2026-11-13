@@ -11,6 +11,8 @@ module
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.HasLaw
 public import Mathlib.MeasureTheory.Constructions.Pi
+public import MathlibExt.Probability.Statistics.Likelihood
+import MathlibExt.MeasureTheory.Measure.PiWithDensity
 import MathlibExt.Probability.MonteCarloRate
 
 /-!
@@ -30,6 +32,8 @@ for every `n`, including `n = 0`. The normalized empirical mean additionally req
 * `hasLaw_statistic`: the sampling distribution of a measurable statistic.
 * `integral_empiricalMean_of_common_marginals`: the empirical average has expectation
   `∫ g dν` for common marginals, with no independence hypothesis.
+* `HasLaw_tuple_of_iidLikelihood`: an i.i.d. sample from a normalized density family has, as
+  its tuple law, the product base measure with density `iidLikelihood`.
 -/
 
 @[expose] public section
@@ -77,5 +81,47 @@ theorem integral_empiricalMean_of_common_marginals
   have h := MathlibExt.Probability.integral_sample_mean (ι := Fin n)
     (X := fun i ω => g (X i ω)) (mu := ∫ s, g s ∂ν) hInt hMean
   rwa [Fintype.card_fin] at h
+
+end MathlibExt.Probability.Statistics
+
+open MeasureTheory ProbabilityTheory
+open scoped BigOperators ENNReal
+
+namespace MathlibExt.Probability.Statistics
+
+/-- **Tuple law as a product density.** The joint law of an i.i.d. sample from a
+normalized density family is the product base measure with density `F.iidLikelihood n θ`.
+The proof reduces to `Measure.pi_withDensity` after replacing the a.e.-measurable density by a
+measurable representative. -/
+theorem HasLaw_tuple_of_iidLikelihood
+    {Ω S Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace S]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {μ₀ : Measure S} [SigmaFinite μ₀]
+    {F : NormalizedDensityFamily S Θ μ₀} {θ : Θ} {n : ℕ}
+    {X : Fin n → Ω → S}
+    (hlaw : ∀ i, HasLaw (X i) (F.law θ) μ) (hind : iIndepFun X μ) :
+    HasLaw (fun ω i => X i ω)
+      ((Measure.pi fun _ : Fin n => μ₀).withDensity (F.iidLikelihood n θ)) μ := by
+  have : IsProbabilityMeasure (F.law θ) := F.isProbabilityMeasure_law θ
+  set g : S → ℝ≥0∞ := AEMeasurable.mk (F.dens θ) (F.measurable θ)
+  have hg : Measurable g := (F.measurable θ).measurable_mk
+  have hdens : F.dens θ =ᵐ[μ₀] g := (F.measurable θ).ae_eq_mk
+  have hlaw_g : F.law θ = μ₀.withDensity g := withDensity_congr_ae hdens
+  have : IsProbabilityMeasure (μ₀.withDensity g) := hlaw_g ▸ F.isProbabilityMeasure_law θ
+  have hEq : (Measure.pi fun _ : Fin n => F.law θ)
+      = (Measure.pi fun _ : Fin n => μ₀).withDensity (F.iidLikelihood n θ) := by
+    calc (Measure.pi fun _ : Fin n => F.law θ)
+        = Measure.pi (fun _ : Fin n => μ₀.withDensity g) := by rw [hlaw_g]
+      _ = (Measure.pi fun _ : Fin n => μ₀).withDensity (fun x => ∏ i, g (x i)) :=
+          Measure.pi_withDensity (μ := fun _ => μ₀) (f := fun _ => g) fun _ => hg
+      _ = (Measure.pi fun _ : Fin n => μ₀).withDensity (F.iidLikelihood n θ) := by
+          refine withDensity_congr_ae ?_
+          have hcoord : ∀ i : Fin n, (fun x : Fin n → S => g (x i))
+              =ᵐ[Measure.pi fun _ : Fin n => μ₀] fun x => F.dens θ (x i) := fun i =>
+            (Measure.quasiMeasurePreserving_eval (fun _ : Fin n => μ₀) i).ae_eq_comp hdens.symm
+          filter_upwards [Filter.eventually_all.2 hcoord] with x hx
+          rw [NormalizedDensityFamily.iidLikelihood_apply]
+          exact Finset.prod_congr rfl fun i _ => hx i
+  rw [← hEq]
+  exact hind.hasLaw_pi hlaw
 
 end MathlibExt.Probability.Statistics

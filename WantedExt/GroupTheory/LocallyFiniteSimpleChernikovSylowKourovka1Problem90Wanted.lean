@@ -22,6 +22,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.PGroup
 public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -33,22 +34,15 @@ Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Pro
 Shunkov). UnsolvedMath record UM-00700079 (`KOU-1.90`), dataset ulamai/UnsolvedMath v1.8.0.
 
 Sylow `2`-subgroups of an infinite group are its maximal `2`-subgroups; locally finite means that
-every finitely generated subgroup is finite. A Chernikov group is read as a group with an abelian
-subgroup of finite index satisfying the minimal condition. `PSL₂(k)` is `SL₂(k) / Z(SL₂(k))`; fields
-are taken in `Type`, and odd characteristic is a prime characteristic `p ≠ 2`. The hypothesis does
-not hold vacuously with `H = 1`: every infinite simple locally finite group contains involutions (by
-the existence of Kegel covers and the Feit-Thompson theorem).
+every finitely generated subgroup is finite. A Chernikov group is `IsChernikov` of
+`GroupClassesShared`: a group with an abelian subgroup of finite index satisfying the minimal
+condition. `PSL₂(k)` is `SL₂(k) / Z(SL₂(k))`; fields are taken in `Type`, and odd characteristic is
+a prime characteristic `p ≠ 2`. The hypothesis does not hold vacuously with `H = 1`: every infinite
+simple locally finite group contains involutions (by the existence of Kegel covers and the
+Feit-Thompson theorem).
 -/
 
-/-- `G` is locally finite: every finitely generated subgroup is finite. -/
-def IsLocallyFinite (G : Type*) [Group G] : Prop :=
-  ∀ S : Finset G, (Subgroup.closure (S : Set G) : Set G).Finite
-
-/-- `G` is a Chernikov group: it has an abelian subgroup of finite index satisfying the minimal
-condition on subgroups (equivalently, a finite extension of a direct product of finitely many
-quasicyclic groups). -/
-def IsChernikov (G : Type*) [Group G] : Prop :=
-  ∃ A : Subgroup G, A.FiniteIndex ∧ (∀ x ∈ A, ∀ y ∈ A, x * y = y * x) ∧ WellFoundedLT (Subgroup A)
+open MathlibExt.GroupTheory.GroupClassesShared (IsChernikov IsLocallyFinite)
 
 /-- `S` is a Sylow `2`-subgroup of `G`: a maximal `2`-subgroup. -/
 def IsSylowTwo {G : Type*} [Group G] (S : Subgroup G) : Prop :=

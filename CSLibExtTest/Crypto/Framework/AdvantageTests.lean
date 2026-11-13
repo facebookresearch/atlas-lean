@@ -20,6 +20,9 @@ public import CSLibExt.Crypto.Framework.Advantage
 * The difference lemma on a uniform `Fin 4`: two outcomes differing only on `ω = 1` have advantage
   `1/4`, bounded by `Pr[ω = 1] = 1/4`.
 * Statistical distance equals advantage on `Bool`.
+* `winProb_bind_map_mono` on a key-guessing game with key and coins uniform on `Fin 4`: the exact
+  guess `r = k` wins no more often than the guess `r = k ∨ r = k + 1`. With the key fixed to `0`,
+  the implication has to hold only on the support of the key distribution.
 -/
 
 @[expose] public section
@@ -86,5 +89,26 @@ example : advantage
 example : dist (PMF.pure true) (PMF.pure false) = 1 := by
   rw [← advantage_eq_dist]
   simp [advantage]
+
+/-- A reduction that wins whenever the adversary does: with key `k` and coins `r` uniform on
+`Fin 4`, the exact guess `r = k` wins no more often than the guess `r = k ∨ r = k + 1`. -/
+example :
+    winProb ((Cslib.Probability.PMF.uniformOfFintype (Fin 4)).bind fun k =>
+        (Cslib.Probability.PMF.uniformOfFintype (Fin 4)).map fun r => decide (r = k)) ≤
+      winProb ((Cslib.Probability.PMF.uniformOfFintype (Fin 4)).bind fun k =>
+        (Cslib.Probability.PMF.uniformOfFintype (Fin 4)).map fun r =>
+          decide (r = k ∨ r = k + 1)) := by
+  refine winProb_bind_map_mono _ _ fun _ _ _ hw => ?_
+  exact decide_eq_true (Or.inl (of_decide_eq_true hw))
+
+/-- The implication has to hold only on the support of the key distribution: with the key fixed
+to `0`, winning on coin `true` implies `k = 0`, although that implication fails for every other
+key. -/
+example :
+    winProb ((PMF.pure (0 : Fin 4)).bind fun _ => fairCoin.map fun b => b) ≤
+      winProb ((PMF.pure (0 : Fin 4)).bind fun k => fairCoin.map fun _ => decide (k = 0)) := by
+  refine winProb_bind_map_mono _ _ fun _ hk _ _ => ?_
+  rw [PMF.support_pure, Set.mem_singleton_iff] at hk
+  exact decide_eq_true hk
 
 end Cslib.Crypto.FrameworkTests.Advantage

@@ -25,9 +25,10 @@ distribution `coins : PMF R` (`BindingAdversary`), and is otherwise a determinis
 the key and the coins; neither the coins nor the key need be uniform or finitely supported.
 
 * `BindingAdversary`, `BindingWin`, `bindingGame`, `bindingAdvantage`: the experiment.
-* `winProb_bind_map_mono`: if one outcome map implies another on every key in the support of the
-  key distribution, the success probability can only grow. Reductions that reuse the adversary's
-  coins and the same key distribution bound `bindingAdvantage` this way.
+* Reductions that reuse the adversary's coins and the same key distribution bound
+  `bindingAdvantage` with `Cslib.Crypto.Framework.winProb_bind_map_mono`: if one outcome map
+  implies another on every key in the support of the key distribution, the success probability
+  can only grow. `winProb_bind_map_mono` in this namespace is a deprecated alias of it.
 
 Pedersen commitments (`CSLibExt.Crypto.Protocols.Commitment.Pedersen`) and hash commitments
 (`CSLibExt.Crypto.Protocols.Commitment.HashCommitment`) are both instances.
@@ -78,21 +79,7 @@ noncomputable def bindingAdvantage (gen : PMF K) (S : K → Scheme M C O)
     (A : BindingAdversary K M C O R) : ℝ :=
   winProb (bindingGame gen S A)
 
-omit [DecidableEq M] in
-/-- Monotonicity of a two-stage experiment: if, for every key in the support of `μ` and all
-coins, the outcome `f` implies the outcome `g`, then `Pr[f] ≤ Pr[g]`. -/
-theorem winProb_bind_map_mono {α β : Type*} (μ : PMF α) (ν : PMF β) {f g : α → β → Bool}
-    (h : ∀ a ∈ μ.support, ∀ b, f a b = true → g a b = true) :
-    winProb (μ.bind fun a => ν.map (f a)) ≤ winProb (μ.bind fun a => ν.map (g a)) := by
-  rw [winProb, winProb]
-  refine ENNReal.toReal_mono (PMF.apply_ne_top _ _) ?_
-  simp only [PMF.bind_apply, PMF.map_apply]
-  refine ENNReal.tsum_le_tsum fun a => ?_
-  by_cases ha : a ∈ μ.support
-  · gcongr with b
-    by_cases hf : f a b = true
-    · simp [hf, h a ha b hf]
-    · simp [hf]
-  · simp [(PMF.mem_support_iff _ _).not.mp ha |> not_not.mp]
+@[deprecated (since := "2026-11-13")]
+alias winProb_bind_map_mono := Cslib.Crypto.Framework.winProb_bind_map_mono
 
 end Cslib.Crypto.Protocols.Commitment
