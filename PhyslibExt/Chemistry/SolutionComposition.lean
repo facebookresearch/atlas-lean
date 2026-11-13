@@ -33,8 +33,10 @@ volume; `b` (molality) is amount per solvent mass; `xᵢ` (mole fraction) is `n�
 Dimensions are not tracked.
 
 For a single-solute solution with solution density `ρ > 0` and solute molar mass `M > 0`, the
-maps `b = c / (ρ - c * M)` and `c = b * ρ / (1 + b * M)` are mutually inverse between the
-physical molarity domain `0 ≤ c ∧ c < ρ / M` and molalities `b ≥ 0`; at the boundary
+maps `b = c / (ρ - c * M)` and `c = b * ρ / (1 + b * M)` send the physical molarity domain
+`0 ≤ c ∧ c < ρ / M` and the molalities `b ≥ 0` into each other (`mapsTo_molarityToMolality`,
+`mapsTo_molalityToMolarity`) and are mutually inverse there, so each is a bijection between
+these two sets (`bijOn_molarityToMolality`, `bijOn_molalityToMolarity`); at the boundary
 `c = ρ / M` the conversion denominator vanishes and no finite molality satisfies the
 conversion identity. With solute mass `n * M` and solution mass `ρ * V`, the mass fraction is
 `c * M / ρ`.
@@ -44,8 +46,8 @@ then `c₁ * V₁ = c₂ * V₂`. For a positive target `c₂` and a positive in
 the final volume `V₂ = c₁ * V₁ / c₂` is positive and achieves the target. Without these
 hypotheses the formula degenerates: with no solute it gives `V₂ = 0`, and with target `c₂ = 0`
 the molarity identity survives only through Lean's `x / 0 = 0`.
-The final volume is always a separately given measured quantity; no volume additivity is used
-anywhere.
+In `dilution_conserved` the final volume is a separately given measured quantity, and no
+volume additivity is used anywhere.
 
 For amounts `n i ≥ 0` with `∑ i, n i > 0`, mole fractions are nonnegative and sum to `1`.
 When two solutions combine with no reaction, each mixture mole fraction is the average of the
@@ -56,9 +58,12 @@ Mixture molarity is not determined by the single-solution data: two scenarios ag
 `(c₁, c₂, n₁, n₂)` with different measured final volumes have different mixture molarities.
 
 A temperature change in a closed, nonreacting sample leaves solute amount and solvent mass
-unchanged while the solution volume may change, so molality is unchanged and molarity changes
-with the volume. Parts-per-million by mass is `10^6` times the mass fraction. With solute
-density `ρs` and solution density `ρ` it is `ρs / ρ` times parts-per-million by volume
+unchanged while the solution volume may change, so molality is unchanged, while for a positive
+amount molarity changes whenever the volume does (`molarity_temp_ne`), by the inverse volume
+ratio (`molarity_temp_ratio`).
+
+Parts-per-million by mass is `10^6` times the mass fraction. With solute density `ρs` and
+solution density `ρ` it is `ρs / ρ` times parts-per-million by volume
 (`ppmByMass_eq_mul_ppmByVolume`), so the relation depends on the density ratio, not on the
 numerical value of `ρ`; for a nonzero volume fraction the two agree exactly when `ρs = ρ`
 (`ppmByMass_eq_ppmByVolume_iff`).
@@ -74,10 +79,13 @@ the given temperature), or any volume-additivity model.
   defines no mole fraction of its own.
 - `molarityToMolality`, `molalityToMolarity` : the conversion maps `c / (ρ - c * M)` and
   `b * ρ / (1 + b * M)`.
-- `conversion_denom_pos_iff` : the denominator is positive exactly on `c < ρ / M`.
+- `conversion_denom_pos_iff` : for `M > 0`, the denominator is positive exactly on `c < ρ / M`.
 - `molalityToMolarity_molarityToMolality`, `molarityToMolality_molalityToMolarity` : both
   round trips.
 - `injOn_molarityToMolality`, `injOn_molalityToMolarity` : injectivity on each domain.
+- `mapsTo_molarityToMolality`, `mapsTo_molalityToMolarity`, `bijOn_molarityToMolality`,
+  `bijOn_molalityToMolarity` : each conversion maps its domain into the other's, and each is a
+  bijection between `0 ≤ c ∧ c < ρ / M` and `b ≥ 0`.
 - `boundary_denom_eq_zero`, `no_molality_at_boundary` : the boundary `c = ρ / M` is outside
   the conversion domain.
 - `massFraction`, `massFraction_eq_molarity_mul` : `w = mSolute / mSoln = c * M / ρ`.
@@ -141,13 +149,15 @@ convention (Loogle finds no `molality`), so it is defined here. -/
 noncomputable def molality (n mSolvent : ℝ) : ℝ := n / mSolvent
 
 /-- Molarity-to-molality conversion `b = c / (ρ - c * M)` for solution density `ρ` and solute
-molar mass `M`, valid on the physical domain `0 ≤ c ∧ c < ρ / M`. No Mathlib definition
+molar mass `M`, meant for the physical domain `0 ≤ c ∧ c < ρ / M`, which it maps bijectively
+onto `b ≥ 0` for positive `ρ` and `M` (`bijOn_molarityToMolality`). No Mathlib definition
 provides this conversion, so it is defined here. -/
 noncomputable def molarityToMolality (ρ M c : ℝ) : ℝ := c / (ρ - c * M)
 
 /-- Molality-to-molarity conversion `c = b * ρ / (1 + b * M)` for solution density `ρ` and
-solute molar mass `M`, valid for `b ≥ 0`. No Mathlib definition provides this conversion, so
-it is defined here. -/
+solute molar mass `M`, meant for `b ≥ 0`, which it maps bijectively onto the physical molarity
+domain for positive `ρ` and `M` (`bijOn_molalityToMolarity`). No Mathlib definition provides
+this conversion, so it is defined here. -/
 noncomputable def molalityToMolarity (ρ M b : ℝ) : ℝ := b * ρ / (1 + b * M)
 
 /-- The conversion denominator `ρ - c * M` (solvent mass per solution volume) is positive
@@ -156,6 +166,28 @@ lemma conversion_denom_pos_iff {ρ M c : ℝ} (hM : 0 < M) :
     0 < ρ - c * M ↔ c < ρ / M := by
   rw [sub_pos, lt_div_iff₀ hM]
 
+/-- Molarity-to-molality maps the physical molarity domain `0 ≤ c ∧ c < ρ / M` into the
+molalities `b ≥ 0`, for `M > 0`. -/
+lemma mapsTo_molarityToMolality {ρ M : ℝ} (hM : 0 < M) :
+    Set.MapsTo (molarityToMolality ρ M) {c | 0 ≤ c ∧ c < ρ / M} {b | 0 ≤ b} := by
+  intro c hc
+  simp only [Set.mem_ofPred_eq] at hc ⊢
+  exact div_nonneg hc.1 ((conversion_denom_pos_iff hM).mpr hc.2).le
+
+/-- Molality-to-molarity maps the molalities `b ≥ 0` into the physical molarity domain
+`0 ≤ c ∧ c < ρ / M`, for positive `ρ` and `M`. -/
+lemma mapsTo_molalityToMolarity {ρ M : ℝ} (hρ : 0 < ρ) (hM : 0 < M) :
+    Set.MapsTo (molalityToMolarity ρ M) {b | 0 ≤ b} {c | 0 ≤ c ∧ c < ρ / M} := by
+  intro b hb
+  simp only [Set.mem_ofPred_eq] at hb ⊢
+  have h1pos : (0 : ℝ) < 1 + b * M :=
+    lt_of_lt_of_le zero_lt_one (le_add_of_nonneg_right (mul_nonneg hb hM.le))
+  refine ⟨div_nonneg (mul_nonneg hb hρ.le) h1pos.le, ?_⟩
+  unfold molalityToMolarity
+  rw [lt_div_iff₀ hM, div_mul_eq_mul_div, div_lt_iff₀ h1pos]
+  have h := add_lt_add_right hρ (b * ρ * M)
+  rwa [add_zero, show b * ρ * M + ρ = ρ * (1 + b * M) from by ring] at h
+
 /-- Round trip: converting molarity to molality and back returns the molarity, on the
 physical domain `0 ≤ c ∧ c < ρ / M`. Only `M > 0` and the domain are needed. -/
 lemma molalityToMolarity_molarityToMolality {ρ M c : ℝ} (hM : 0 < M)
@@ -163,7 +195,7 @@ lemma molalityToMolarity_molarityToMolality {ρ M c : ℝ} (hM : 0 < M)
     molalityToMolarity ρ M (molarityToMolality ρ M c) = c := by
   have hdenom : 0 < ρ - c * M := (conversion_denom_pos_iff hM).mpr hc
   have hdenom' : ρ - c * M ≠ 0 := hdenom.ne'
-  have hb : 0 ≤ c / (ρ - c * M) := div_nonneg hc₀ hdenom.le
+  have hb : 0 ≤ c / (ρ - c * M) := mapsTo_molarityToMolality hM ⟨hc₀, hc⟩
   have h1 : (1 : ℝ) + c / (ρ - c * M) * M ≠ 0 :=
     (lt_of_lt_of_le zero_lt_one
       (le_add_of_nonneg_right (mul_nonneg hb hM.le))).ne'
@@ -171,19 +203,17 @@ lemma molalityToMolarity_molarityToMolality {ρ M c : ℝ} (hM : 0 < M)
   field_simp
   ring
 
-/-- Round trip: converting molality to molarity and back returns the molality, for `b ≥ 0`.
-The image domain is all of `b ≥ 0`: the converted molarity `b * ρ / (1 + b * M)` always lies
-in the physical domain for positive `ρ` and `M`. -/
+/-- Round trip: converting molality to molarity and back returns the molality, for `b ≥ 0`
+and positive `ρ` and `M`. The converted molarity lies in the physical domain
+(`mapsTo_molalityToMolarity`), so `molarityToMolality` maps that domain onto all of `b ≥ 0`
+(`bijOn_molarityToMolality`). -/
 lemma molarityToMolality_molalityToMolarity {ρ M b : ℝ} (hρ : 0 < ρ) (hM : 0 < M)
     (hb : 0 ≤ b) :
     molarityToMolality ρ M (molalityToMolarity ρ M b) = b := by
   have h1pos : (0 : ℝ) < 1 + b * M :=
     lt_of_lt_of_le zero_lt_one (le_add_of_nonneg_right (mul_nonneg hb hM.le))
   have h1 : (1 : ℝ) + b * M ≠ 0 := h1pos.ne'
-  have hc : b * ρ / (1 + b * M) < ρ / M := by
-    rw [lt_div_iff₀ hM, div_mul_eq_mul_div, div_lt_iff₀ h1pos]
-    have h := add_lt_add_right hρ (b * ρ * M)
-    rwa [add_zero, show b * ρ * M + ρ = ρ * (1 + b * M) from by ring] at h
+  have hc : b * ρ / (1 + b * M) < ρ / M := (mapsTo_molalityToMolarity hρ hM hb).2
   have hdenom : 0 < ρ - b * ρ / (1 + b * M) * M :=
     (conversion_denom_pos_iff hM).mpr hc
   have hdenom' : ρ - b * ρ / (1 + b * M) * M ≠ 0 := hdenom.ne'
@@ -214,13 +244,41 @@ lemma injOn_molalityToMolarity {ρ M : ℝ} (hρ : 0 < ρ) (hM : 0 < M) :
   rw [e₂] at e₁
   exact e₁.symm
 
+/-- **The conversion bijection**: for positive `ρ` and `M`, molarity-to-molality is a bijection
+from the physical molarity domain `0 ≤ c ∧ c < ρ / M` onto the molalities `b ≥ 0`, with inverse
+`molalityToMolarity`. -/
+lemma bijOn_molarityToMolality {ρ M : ℝ} (hρ : 0 < ρ) (hM : 0 < M) :
+    Set.BijOn (molarityToMolality ρ M) {c | 0 ≤ c ∧ c < ρ / M} {b | 0 ≤ b} := by
+  refine Set.InvOn.bijOn ⟨?_, ?_⟩ (mapsTo_molarityToMolality hM)
+    (mapsTo_molalityToMolarity hρ hM)
+  · intro c hc
+    simp only [Set.mem_ofPred_eq] at hc
+    exact molalityToMolarity_molarityToMolality hM hc.1 hc.2
+  · intro b hb
+    simp only [Set.mem_ofPred_eq] at hb
+    exact molarityToMolality_molalityToMolarity hρ hM hb
+
+/-- The inverse direction of the conversion bijection: for positive `ρ` and `M`,
+molality-to-molarity is a bijection from `b ≥ 0` onto the physical molarity domain
+`0 ≤ c ∧ c < ρ / M`. -/
+lemma bijOn_molalityToMolarity {ρ M : ℝ} (hρ : 0 < ρ) (hM : 0 < M) :
+    Set.BijOn (molalityToMolarity ρ M) {b | 0 ≤ b} {c | 0 ≤ c ∧ c < ρ / M} := by
+  refine Set.InvOn.bijOn ⟨?_, ?_⟩ (mapsTo_molalityToMolarity hρ hM)
+    (mapsTo_molarityToMolality hM)
+  · intro b hb
+    simp only [Set.mem_ofPred_eq] at hb
+    exact molarityToMolality_molalityToMolarity hρ hM hb
+  · intro c hc
+    simp only [Set.mem_ofPred_eq] at hc
+    exact molalityToMolarity_molarityToMolality hM hc.1 hc.2
+
 /-- At the boundary `c = ρ / M` the conversion denominator vanishes. -/
 lemma boundary_denom_eq_zero {ρ M : ℝ} (hM : M ≠ 0) : ρ - ρ / M * M = 0 := by
   rw [div_mul_cancel₀ _ hM, sub_self]
 
 /-- At the boundary `c = ρ / M` there is no finite molality satisfying the conversion
-identity `c = b * (ρ - c * M)`, for positive `ρ` and `M`. The conversion is undefined there;
-no value is claimed. -/
+identity `c = b * (ρ - c * M)`, for positive `ρ` and `M`. The conversion is physically
+undefined there; no value is claimed. -/
 lemma no_molality_at_boundary {ρ M : ℝ} (hρ : 0 < ρ) (hM : 0 < M) :
     ¬ ∃ b : ℝ, ρ / M = b * (ρ - ρ / M * M) := by
   rw [boundary_denom_eq_zero hM.ne']
@@ -254,9 +312,10 @@ lemma amounts_massFraction_eq_massFraction {ι : Type*} [Fintype ι] (M n : ι �
 
 -/
 
-/-- The final volume `V₂ = c₁ * V₁ / c₂` achieving the target concentration `c₂` from
-`c₁, V₁`. This pins the dilution-volume convention; no Mathlib definition provides it
-(Loogle finds no `dilutionVolume`). -/
+/-- The computed final volume `V₂ = c₁ * V₁ / c₂` for diluting from `c₁, V₁` to the target
+concentration `c₂`. It achieves the target when `c₂ > 0` and `c₁ * V₁ > 0`
+(`dilutionVolume_achieves_target`). This pins the dilution-volume convention; no Mathlib
+definition provides it (Loogle finds no `dilutionVolume`). -/
 noncomputable def dilutionVolume (c₁ V₁ c₂ : ℝ) : ℝ := c₁ * V₁ / c₂
 
 /-- Dilution from amount conservation: if `n₁ = n₂` with `c₁ = n₁ / V₁` and `c₂ = n₂ / V₂`

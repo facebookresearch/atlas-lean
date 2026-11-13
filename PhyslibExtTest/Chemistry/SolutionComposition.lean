@@ -75,6 +75,37 @@ example : Set.InjOn (molarityToMolality (11/10) (58/1000))
 example : Set.InjOn (molalityToMolarity (11/10) (58/1000)) {b | 0 ≤ b} :=
   injOn_molalityToMolarity (by norm_num) (by norm_num)
 
+/-- Molarity-to-molality maps the physical domain into `b ≥ 0` at the stated parameters. -/
+example : Set.MapsTo (molarityToMolality (11/10) (58/1000))
+    {c | 0 ≤ c ∧ c < (11/10)/(58/1000)} {b | 0 ≤ b} :=
+  mapsTo_molarityToMolality (by norm_num)
+
+/-- Molality-to-molarity maps `b ≥ 0` into the physical domain at the stated parameters. -/
+example : Set.MapsTo (molalityToMolarity (11/10) (58/1000))
+    {b | 0 ≤ b} {c | 0 ≤ c ∧ c < (11/10)/(58/1000)} :=
+  mapsTo_molalityToMolarity (by norm_num) (by norm_num)
+
+/-- The converted molarity of `b = 500/1071` lies in the physical domain. -/
+example : molalityToMolarity (11/10) (58/1000) (500/1071) ∈
+    {c : ℝ | 0 ≤ c ∧ c < (11/10)/(58/1000)} :=
+  mapsTo_molalityToMolarity (by norm_num) (by norm_num) (by norm_num : (0:ℝ) ≤ 500/1071)
+
+/-- The conversion bijection at the stated parameters. -/
+example : Set.BijOn (molarityToMolality (11/10) (58/1000))
+    {c | 0 ≤ c ∧ c < (11/10)/(58/1000)} {b | 0 ≤ b} :=
+  bijOn_molarityToMolality (by norm_num) (by norm_num)
+
+/-- Its inverse direction at the stated parameters. -/
+example : Set.BijOn (molalityToMolarity (11/10) (58/1000))
+    {b | 0 ≤ b} {c | 0 ≤ c ∧ c < (11/10)/(58/1000)} :=
+  bijOn_molalityToMolarity (by norm_num) (by norm_num)
+
+/-- Surjectivity in use: the molality `500/1071` is attained from the physical domain. -/
+example : ∃ c ∈ {c : ℝ | 0 ≤ c ∧ c < (11/10)/(58/1000)},
+    molarityToMolality (11/10) (58/1000) c = 500/1071 :=
+  (bijOn_molarityToMolality (by norm_num) (by norm_num)).surjOn
+    (by norm_num : (0:ℝ) ≤ 500/1071)
+
 /-- Mass fraction `(29/1000)/(11/10) = 29/1100`. -/
 example : massFraction (29/1000) (11/10) = 29/1100 := by
   simp only [massFraction]
