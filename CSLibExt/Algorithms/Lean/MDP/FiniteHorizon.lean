@@ -13,15 +13,17 @@ public import CSLibExt.Algorithms.Lean.MDP.ValueIteration
 /-!
 # Finite-horizon Bellman problems
 
-For a finite Markov decision process, the finite-horizon value is obtained by
-backward recursion: value `0` with `0` steps remaining, one Bellman optimality
-update per additional step. A nonstationary policy `π : ℕ → S → A` (`π k s`
-is the action taken with `k` steps remaining) has an expected discounted
-return defined by the same recursion with `qValue` at the policy's action.
-This supplies the finite-horizon return semantics that the infinite-horizon
-MDP module explicitly does not formalize, and proves by induction that the
-greedy backward-recursion policy attains the value and no policy beats it.
-No contraction and no discount `< 1` is needed: the horizon is finite.
+For a finite Markov decision process, the finite-horizon value with `k` steps
+remaining is `k` steps of value iteration from the zero terminal value,
+`valueIteration M γ k (fun _ => 0)`: backward recursion with value `0` at `0`
+steps remaining and one Bellman optimality update per additional step
+(`finiteHorizonValue_zero`, `finiteHorizonValue_succ`). A nonstationary
+policy `π : ℕ → S → A` (`π k s` is the action taken with `k` steps remaining)
+has an expected discounted return defined by the same recursion with `qValue`
+at the policy's action. This supplies the finite-horizon return semantics
+that the infinite-horizon MDP module explicitly does not formalize, and proves
+by induction that the greedy backward-recursion policy attains the value and
+no policy beats it. No contraction and no discount `< 1` is needed: the horizon is finite.
 
 ## Main results
 
@@ -48,18 +50,28 @@ namespace Cslib.Algorithms.Lean.MarkovDecision
 
 namespace FiniteHorizon
 
-/-- Finite-horizon value by backward recursion: with `0` steps remaining the
-value is `0` (no terminal reward); with `k + 1` steps remaining it is one
-Bellman optimality update of the `k`-step value. -/
+/-- Finite-horizon value: `k` steps of value iteration from the zero terminal
+value. With `0` steps remaining the value is `0` (no terminal reward); with
+`k + 1` steps remaining it is one Bellman optimality update of the `k`-step
+value (`finiteHorizonValue_succ`). -/
 noncomputable def finiteHorizonValue {S A : Type*} [Fintype S] [Fintype A] [Nonempty A]
-    (M : MDP S A ℝ) (γ : ℝ) : ℕ → S → ℝ
-  | 0 => fun _ => 0
-  | k + 1 => bellman M γ (finiteHorizonValue M γ k)
+    (M : MDP S A ℝ) (γ : ℝ) (k : ℕ) : S → ℝ :=
+  valueIteration M γ k (fun _ => 0)
+
+theorem finiteHorizonValue_zero {S A : Type*} [Fintype S] [Fintype A] [Nonempty A]
+    (M : MDP S A ℝ) (γ : ℝ) : finiteHorizonValue M γ 0 = fun _ => 0 :=
+  rfl
+
+theorem finiteHorizonValue_succ {S A : Type*} [Fintype S] [Fintype A] [Nonempty A]
+    (M : MDP S A ℝ) (γ : ℝ) (k : ℕ) :
+    finiteHorizonValue M γ (k + 1) = bellman M γ (finiteHorizonValue M γ k) :=
+  Function.iterate_succ_apply' (bellman M γ) k (fun _ => 0)
 
 /-- Expected discounted return of a nonstationary policy `π`, where `π k s` is
-the action taken with `k` steps remaining in state `s`. -/
-noncomputable def finiteHorizonPolicyValue {S A : Type*} [Fintype S] [Fintype A]
-    [Nonempty A] (M : MDP S A ℝ) (γ : ℝ) (π : ℕ → S → A) : ℕ → S → ℝ
+the action taken with `k` steps remaining in state `s`. Evaluating a given
+policy needs no maximization, so the action type may be infinite. -/
+noncomputable def finiteHorizonPolicyValue {S A : Type*} [Fintype S]
+    (M : MDP S A ℝ) (γ : ℝ) (π : ℕ → S → A) : ℕ → S → ℝ
   | 0 => fun _ => 0
   | k + 1 => fun s => qValue M γ (finiteHorizonPolicyValue M γ π k) s (π (k + 1) s)
 
@@ -87,6 +99,7 @@ theorem finiteHorizonGreedy_value {S A : Type*} [Fintype S] [Fintype A] [Nonempt
     intro s
     have hfun : finiteHorizonPolicyValue M γ (finiteHorizonGreedy M γ) k
         = finiteHorizonValue M γ k := funext ih
+    rw [finiteHorizonValue_succ]
     change qValue M γ (finiteHorizonPolicyValue M γ (finiteHorizonGreedy M γ) k) s
         (greedy M γ (finiteHorizonValue M γ k) s)
       = bellman M γ (finiteHorizonValue M γ k) s
@@ -106,6 +119,7 @@ theorem finiteHorizonValue_ge_policy {S A : Type*} [Fintype S] [Fintype A] [None
   | succ k ih =>
     intro s
     have hle : finiteHorizonPolicyValue M γ π k ≤ finiteHorizonValue M γ k := ih
+    rw [finiteHorizonValue_succ]
     change qValue M γ (finiteHorizonPolicyValue M γ π k) s (π (k + 1) s)
       ≤ bellman M γ (finiteHorizonValue M γ k) s
     have hmono : qValue M γ (finiteHorizonPolicyValue M γ π k) s (π (k + 1) s)

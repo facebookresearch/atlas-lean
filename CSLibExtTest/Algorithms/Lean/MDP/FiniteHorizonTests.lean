@@ -20,7 +20,9 @@ import Mathlib.Tactic.Ring
 A concrete two-state, two-action MDP (stay for reward `1`, move for reward
 `0`, deterministic transitions) with discount `1/2`: the horizon-1 value is
 `1` at each state, the horizon-2 value at state `0` is `3/2`, the greedy
-policy attains it, and the always-move policy earns weakly less.
+policy attains it, the always-move policy earns weakly less, and a
+nonstationary policy (move with `2` steps remaining, then stay) earns exactly
+`1/2`.
 -/
 
 @[expose] public section
@@ -109,5 +111,17 @@ theorem test_bad_le :
     testBad 2 0
   rw [test_value2] at h
   exact h
+
+/-- A nonstationary policy: move (action `1`) with `2` steps remaining, stay
+(action `0`) otherwise. -/
+noncomputable def testNonstationary : ℕ → Fin 2 → Fin 2 := fun k _ => if k = 2 then 1 else 0
+
+/-- Exact horizon-2 return of `testNonstationary` from state `0`, computed by
+unfolding `finiteHorizonPolicyValue`: move first (reward `0`, go to state `1`),
+then stay (reward `1`), so `0 + (1/2) * 1 = 1/2`. Reading the index as elapsed
+steps, or shifting it by one, gives `1` or `3/2` instead. -/
+theorem test_nonstationary_value :
+    finiteHorizonPolicyValue testMDP (1 / 2) testNonstationary 2 0 = 1 / 2 := by
+  simp [finiteHorizonPolicyValue, testNonstationary, qValue, testMDP, Fin.sum_univ_two]
 
 end Cslib.Algorithms.Lean.MarkovDecision.FiniteHorizon.Test
