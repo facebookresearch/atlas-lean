@@ -20,7 +20,10 @@ null hypothesis of equal group means:
 
 * `ProbabilityTheory.hasLaw_sumSqBetween_div`: `SSB / v ~ χ²_{G-1}` when `G ≥ 2`;
 * `ProbabilityTheory.hasLaw_sumSqWithin_div`: `SSW / v ~ χ²_{n-G}` when `n > G`;
-* `ProbabilityTheory.hasLaw_oneWay_ANOVA_F`: `(SSB / (G - 1)) / (SSW / (n - G)) ~ F(G-1, n-G)`.
+* `ProbabilityTheory.hasLaw_oneWay_ANOVA_F`: `((SSB / v) / (G - 1)) / ((SSW / v) / (n - G))
+  ~ F(G-1, n-G)`, the standardized ratio;
+* `ProbabilityTheory.hasLaw_oneWay_ANOVA_F_varianceFree`: the observable statistic
+  `(SSB / (G - 1)) / (SSW / (n - G)) ~ F(G-1, n-G)`, free of the unknown variance `v`.
 
 The sums of squares are quadratic forms `Zᵀ P_B Z` and `Zᵀ P_W Z` of the standardized vector in
 the symmetric idempotents built from group averaging and grand-mean centering; their ranks are
@@ -606,8 +609,9 @@ theorem hasLaw_sumSqWithin_div {ι G : Type*} [Fintype ι] [Fintype G] [Decidabl
   rw [← hrank]
   exact hHasQuad
 
-/-- **One-way ANOVA `F` test**: under `H₀` with `G ≥ 2` groups and `n > G`,
-`(SSB / (G - 1)) / (SSW / (n - G)) ~ F(G - 1, n - G)`. -/
+/-- **One-way ANOVA `F` test**: under `H₀` with `G ≥ 2` groups and `n > G`, the standardized
+ratio `((SSB / v) / (G - 1)) / ((SSW / v) / (n - G)) ~ F(G - 1, n - G)`. For the observable
+statistic without the unknown variance `v`, use `hasLaw_oneWay_ANOVA_F_varianceFree`. -/
 theorem hasLaw_oneWay_ANOVA_F {ι G : Type*} [Fintype ι] [Fintype G] [DecidableEq G]
     (grp : ι → G) (hne : ∀ g, ∃ i, grp i = g) (hG : 2 ≤ Fintype.card G)
     (hι : Fintype.card G < Fintype.card ι)
@@ -666,6 +670,41 @@ theorem hasLaw_oneWay_ANOVA_F {ι G : Type*} [Fintype ι] [Fintype G] [Decidable
     unfold sumSqBetween sumSqWithin groupMean
     fun_prop
   refine ⟨hF.comp_aemeasurable hX.aemeasurable, hFmap⟩
+
+/-- **One-way ANOVA `F` test, observable form**: under the hypotheses of
+`hasLaw_oneWay_ANOVA_F`, the variance-free statistic `(SSB / (G - 1)) / (SSW / (n - G))` has law
+`F(G - 1, n - G)`. The unknown variance `v` cancels from the standardized ratio. -/
+theorem hasLaw_oneWay_ANOVA_F_varianceFree {ι G : Type*} [Fintype ι] [Fintype G] [DecidableEq G]
+    (grp : ι → G) (hne : ∀ g, ∃ i, grp i = g) (hG : 2 ≤ Fintype.card G)
+    (hι : Fintype.card G < Fintype.card ι)
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {X : Ω → ι → ℝ} {m0 : ℝ} {v : NNReal}
+    (hv : v ≠ 0) (hX : HasLaw X (Measure.pi fun _ : ι => gaussianReal m0 v) μ) :
+    HasLaw (fun ω => (sumSqBetween grp (X ω) / ((Fintype.card G - 1 : ℕ) : ℝ)) /
+        (sumSqWithin grp (X ω) / ((Fintype.card ι - Fintype.card G : ℕ) : ℝ)))
+      (snedecorFMeasure (Fintype.card G - 1) (Fintype.card ι - Fintype.card G)) μ := by
+  have hneR : (v : ℝ) ≠ 0 := NNReal.coe_ne_zero.mpr hv
+  have hd1 : ((Fintype.card G - 1 : ℕ) : ℝ) ≠ 0 := by
+    have : 0 < Fintype.card G - 1 := by omega
+    exact_mod_cast this.ne'
+  have hd2 : ((Fintype.card ι - Fintype.card G : ℕ) : ℝ) ≠ 0 := by
+    have : 0 < Fintype.card ι - Fintype.card G := by omega
+    exact_mod_cast this.ne'
+  have halg : ∀ a b : ℝ, (a / ((Fintype.card G - 1 : ℕ) : ℝ)) /
+        (b / ((Fintype.card ι - Fintype.card G : ℕ) : ℝ))
+      = (a / (v : ℝ) / ((Fintype.card G - 1 : ℕ) : ℝ)) /
+        (b / (v : ℝ) / ((Fintype.card ι - Fintype.card G : ℕ) : ℝ)) := by
+    intro a b
+    rcases eq_or_ne b 0 with rfl | hb
+    · simp
+    · rw [div_eq_div_iff (div_ne_zero hb hd2) (div_ne_zero (div_ne_zero hb hneR) hd2)]
+      field_simp
+  have hfun : (fun ω => (sumSqBetween grp (X ω) / ((Fintype.card G - 1 : ℕ) : ℝ)) /
+        (sumSqWithin grp (X ω) / ((Fintype.card ι - Fintype.card G : ℕ) : ℝ)))
+      = fun ω => (sumSqBetween grp (X ω) / (v : ℝ) / ((Fintype.card G - 1 : ℕ) : ℝ)) /
+        (sumSqWithin grp (X ω) / (v : ℝ) / ((Fintype.card ι - Fintype.card G : ℕ) : ℝ)) :=
+    funext fun ω => halg _ _
+  rw [hfun]
+  exact hasLaw_oneWay_ANOVA_F grp hne hG hι hv hX
 
 end
 
