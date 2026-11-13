@@ -22,12 +22,24 @@ For constant eddy viscosity `nu` and Coriolis parameter `f`, the
 steady half-space Ekman profile in the depth coordinate `zeta >= 0`
 (downward from the surface) is
 `u(zeta) = exp(-a zeta) cos(a zeta)`,
-`v(zeta) = exp(-a zeta) sin(a zeta)`, where `a` is the inverse Ekman
+`v(zeta) = -exp(-a zeta) sin(a zeta)`, where `a` is the inverse Ekman
 depth, `2 * nu * a^2 = f`. It satisfies the coupled Ekman ODEs
-`nu * u'' = f * v` and `nu * v'' = -f * u`, the surface values
-`u(0) = 1`, `v(0) = 0`, the surface shear `u'(0) = -a`, `v'(0) = a`
-(the surface stress is at 45 degrees to the surface current), and both
-components decay to `0` as `zeta -> infinity`.
+`nu * u'' = -f * v` and `nu * v'' = f * u`, the surface values
+`u(0) = 1`, `v(0) = 0`, the surface shear `u'(0) = -a`, `v'(0) = -a`,
+and, for `a > 0`, both components decay to `0` as `zeta -> infinity`.
+
+Sign convention: these are the component equations
+`nu * d²u/dz² = -f * v`, `nu * d²v/dz² = f * u` of the Ekman balance with
+`z` upward, the convention of `PhyslibExt.EarthScience.EkmanLayers`
+(`ρ₀ f k̂ × M = τ`, `f > 0` in the northern hemisphere); the downward
+depth `zeta = -z` leaves second derivatives unchanged. For `nu > 0` the
+relation `2 * nu * a^2 = f` forces `f ≥ 0`, so for `a > 0` this is the
+northern-hemisphere spiral: the velocity
+`exp(-a zeta) (cos(-a zeta), sin(-a zeta))` turns clockwise (to the
+right) with depth, and the surface stress, which points along
+`-(u'(0), v'(0)) = (a, a)` (stress `ρ₀ nu d(u, v)/dz` with `z` upward), is
+at 45 degrees to the left of the surface current `(1, 0)`: the surface
+current is 45 degrees to the right of the stress.
 
 ## i. Overview
 
@@ -74,25 +86,25 @@ namespace EarthScience
 noncomputable def ekmanSpiralU (a : ℝ) : ℝ → ℝ :=
   fun ζ => Real.exp (-a * ζ) * Real.cos (a * ζ)
 
-/-- Ekman spiral cross-component: `v(ζ) = exp(-a ζ) sin(a ζ)`. -/
+/-- Ekman spiral cross-component: `v(ζ) = -exp(-a ζ) sin(a ζ)`. -/
 noncomputable def ekmanSpiralV (a : ℝ) : ℝ → ℝ :=
-  fun ζ => Real.exp (-a * ζ) * Real.sin (a * ζ)
+  fun ζ => -(Real.exp (-a * ζ) * Real.sin (a * ζ))
 
 /-- First derivative of `u`: `-a * exp(-a ζ) * (cos(a ζ) + sin(a ζ))`. -/
 noncomputable def ekmanSpiralUPrime (a : ℝ) : ℝ → ℝ :=
   fun ζ => -a * Real.exp (-a * ζ) * (Real.cos (a * ζ) + Real.sin (a * ζ))
 
-/-- First derivative of `v`: `a * exp(-a ζ) * (cos(a ζ) - sin(a ζ))`. -/
+/-- First derivative of `v`: `a * exp(-a ζ) * (sin(a ζ) - cos(a ζ))`. -/
 noncomputable def ekmanSpiralVPrime (a : ℝ) : ℝ → ℝ :=
-  fun ζ => a * Real.exp (-a * ζ) * (Real.cos (a * ζ) - Real.sin (a * ζ))
+  fun ζ => a * Real.exp (-a * ζ) * (Real.sin (a * ζ) - Real.cos (a * ζ))
 
 /-- Second derivative of `u`: `2 a² * exp(-a ζ) * sin(a ζ)`. -/
 noncomputable def ekmanSpiralUSecond (a : ℝ) : ℝ → ℝ :=
   fun ζ => 2 * a ^ 2 * Real.exp (-a * ζ) * Real.sin (a * ζ)
 
-/-- Second derivative of `v`: `-2 a² * exp(-a ζ) * cos(a ζ)`. -/
+/-- Second derivative of `v`: `2 a² * exp(-a ζ) * cos(a ζ)`. -/
 noncomputable def ekmanSpiralVSecond (a : ℝ) : ℝ → ℝ :=
-  fun ζ => -2 * a ^ 2 * Real.exp (-a * ζ) * Real.cos (a * ζ)
+  fun ζ => 2 * a ^ 2 * Real.exp (-a * ζ) * Real.cos (a * ζ)
 
 theorem ekman_spiral_hasDerivAt_u (a ζ : ℝ) :
     HasDerivAt (ekmanSpiralU a) (ekmanSpiralUPrime a ζ) ζ := by
@@ -119,7 +131,7 @@ theorem ekman_spiral_hasDerivAt_v (a ζ : ℝ) :
     simpa using h
   have hexp := hlin1.exp
   have hsin := hlin2.sin
-  have h := hexp.mul hsin
+  have h := (hexp.mul hsin).neg
   unfold ekmanSpiralV ekmanSpiralVPrime
   convert h using 1
   ring
@@ -152,17 +164,17 @@ theorem ekman_spiral_hasDerivAt_vPrime (a ζ : ℝ) :
   have hexp := hlin1.exp
   have hcos := hlin2.cos
   have hsin := hlin2.sin
-  have h := (hexp.const_mul a).mul (hcos.sub hsin)
+  have h := (hexp.const_mul a).mul (hsin.sub hcos)
   simp only [Pi.sub_apply] at h
   unfold ekmanSpiralVPrime ekmanSpiralVSecond
   convert h using 1
   ring
 
 /-- Ekman ODEs in depth coordinates, with `2 * ν * a² = f` (i.e. `a² = f / (2ν)`):
-`ν * u'' = f * v` and `ν * v'' = -f * u`. -/
+`ν * u'' = -f * v` and `ν * v'' = f * u`, the sign convention of `EkmanLayers`. -/
 theorem ekman_spiral_ode (a ν f ζ : ℝ) (h : 2 * ν * a ^ 2 = f) :
-    ν * deriv (fun ζ => deriv (ekmanSpiralU a) ζ) ζ = f * ekmanSpiralV a ζ ∧
-      ν * deriv (fun ζ => deriv (ekmanSpiralV a) ζ) ζ = -f * ekmanSpiralU a ζ := by
+    ν * deriv (fun ζ => deriv (ekmanSpiralU a) ζ) ζ = -f * ekmanSpiralV a ζ ∧
+      ν * deriv (fun ζ => deriv (ekmanSpiralV a) ζ) ζ = f * ekmanSpiralU a ζ := by
   have hderU : (fun ζ : ℝ => deriv (ekmanSpiralU a) ζ) = ekmanSpiralUPrime a := by
     ext ζ
     exact (ekman_spiral_hasDerivAt_u a ζ).deriv
@@ -180,14 +192,16 @@ theorem ekman_spiral_ode (a ν f ζ : ℝ) (h : 2 * ν * a ^ 2 = f) :
     ring
 
 /-- Surface values and surface shear: `u(0) = 1`, `v(0) = 0`,
-`u'(0) = -a`, `v'(0) = a` (stress at 45° to the surface current). -/
+`u'(0) = -a`, `v'(0) = -a`. For `a > 0` and `ν > 0` the surface stress,
+along `-(u'(0), v'(0)) = (a, a)`, is at 45° to the left of the surface
+current `(1, 0)`. -/
 theorem ekman_spiral_boundary (a : ℝ) :
     ekmanSpiralU a 0 = 1 ∧ ekmanSpiralV a 0 = 0 ∧
-      ekmanSpiralUPrime a 0 = -a ∧ ekmanSpiralVPrime a 0 = a := by
+      ekmanSpiralUPrime a 0 = -a ∧ ekmanSpiralVPrime a 0 = -a := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
     simp only [ekmanSpiralU, ekmanSpiralV, ekmanSpiralUPrime, ekmanSpiralVPrime,
       mul_zero, Real.exp_zero, Real.cos_zero, Real.sin_zero, mul_one, add_zero,
-      sub_zero]
+      neg_zero, zero_sub, mul_neg]
 
 /-- Helper: the exponential envelope `exp(-a * ζ)` tends to `0` as `ζ → ∞`. -/
 private theorem ekman_exp_decay (a : ℝ) (ha : 0 < a) :
@@ -224,7 +238,8 @@ theorem ekman_spiral_decay (a : ℝ) (ha : 0 < a) :
     refine squeeze_zero (fun ζ => abs_nonneg _) ?_ hexp0
     intro ζ
     change |ekmanSpiralV a ζ| ≤ Real.exp (-a * ζ)
-    change |Real.exp (-a * ζ) * Real.sin (a * ζ)| ≤ Real.exp (-a * ζ)
+    change |-(Real.exp (-a * ζ) * Real.sin (a * ζ))| ≤ Real.exp (-a * ζ)
+    rw [abs_neg]
     calc |Real.exp (-a * ζ) * Real.sin (a * ζ)|
         = |Real.exp (-a * ζ)| * |Real.sin (a * ζ)| := abs_mul _ _
       _ ≤ |Real.exp (-a * ζ)| * 1 :=
