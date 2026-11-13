@@ -1,18 +1,25 @@
 /-
 Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
 -/
 
 module
 
 public import PhyslibExt.CondensedMatter.Quantities.Composition
 public import PhyslibExt.Chemistry.Amounts.MolarMassComposition
+public import PhyslibExt.Chemistry.QuantityCalculus
 
 /-!
 # MS01 quantities: composition checks
 
 Exact compiling checks for `PhyslibExt.CondensedMatter.Quantities.Composition`:
-Arrhenius numeric instances, composition round trips, the dimension-kernel
-example, and boundary/invalid-domain checks.
+Arrhenius numeric instances, composition round trips through the canonical
+`Chemistry.Amounts` theorems, the dimension-kernel example through the canonical
+`Chemistry.QuantityCalculus.finrank_ker_mulVecLin`, and boundary/invalid-domain
+checks.
 -/
 
 open Matrix
@@ -35,7 +42,7 @@ example : Real.logb 10 (Real.exp (-2) / (1:ℝ)) = -2 / Real.log 10 := by
   simp only [div_one]
   linear_combination h2
 
--- Composition numeric instance (lemma 3): Fin 2 with M = ![55.85, 16.00],
+-- Composition numeric instance: Fin 2 with M = ![55.85, 16.00],
 -- x = ![0.4, 0.6]; massFraction values 1117/1597 and 480/1597 by exact
 -- arithmetic (55.85 * 0.4 = 22.34, 16.00 * 0.6 = 9.6, sum 31.94;
 -- 22.34 / 31.94 = 1117 / 1597, 9.6 / 31.94 = 480 / 1597).
@@ -56,31 +63,31 @@ example : Chemistry.Amounts.moleFractionOfMassFraction
       (Chemistry.Amounts.massFraction (![55.85, 16.00] : Fin 2 → ℝ)
         (![0.4, 0.6] : Fin 2 → ℝ))
     = (![0.4, 0.6] : Fin 2 → ℝ) := by
-  apply moleFrac_wtFrac
-  · intro i
-    fin_cases i <;>
-      norm_num [Matrix.cons_val_zero, Matrix.cons_val_one]
+  apply Chemistry.Amounts.moleFractionOfMassFraction_massFraction_of_sum_eq_one
   · intro i
     fin_cases i <;>
       norm_num [Matrix.cons_val_zero, Matrix.cons_val_one]
   · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
     norm_num
+  · intro i
+    fin_cases i <;>
+      norm_num [Matrix.cons_val_zero, Matrix.cons_val_one]
 
 example : Chemistry.Amounts.massFraction (![55.85, 16.00] : Fin 2 → ℝ)
       (Chemistry.Amounts.moleFractionOfMassFraction (![55.85, 16.00] : Fin 2 → ℝ)
         (![1117 / 1597, 480 / 1597] : Fin 2 → ℝ))
     = (![1117 / 1597, 480 / 1597] : Fin 2 → ℝ) := by
-  apply wtFrac_moleFrac
-  · intro i
-    fin_cases i <;>
-      norm_num [Matrix.cons_val_zero, Matrix.cons_val_one]
+  apply Chemistry.Amounts.massFraction_moleFractionOfMassFraction_of_sum_eq_one
   · intro i
     fin_cases i <;>
       norm_num [Matrix.cons_val_zero, Matrix.cons_val_one]
   · simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
     norm_num
+  · intro i
+    fin_cases i <;>
+      norm_num [Matrix.cons_val_zero, Matrix.cons_val_one]
 
--- Percent round trip (lemma 4): same numeric instance in percent form,
+-- Percent round trip: same numeric instance in percent form,
 -- exercising `wtPct` / `atPct` / `wtPct_atPct` in both directions.
 example : wtPct (![55.85, 16.00] : Fin 2 → ℝ)
         (Chemistry.Amounts.moleFractionOfMassFraction
@@ -116,7 +123,7 @@ example : ¬ (0:ℝ) < (0:ℝ) := lt_irrefl 0
 -- bijection claim is made (the maps require `∀ i, 0 < M i`).
 example (x : Fin 2 → ℝ) : ∑ j, x j * (fun _ => (0:ℝ)) j = 0 := by simp
 
--- Kernel example (lemma 5): D = !![1, 1, 0; 0, 1, 1] has rank 2 (upper bound
+-- Kernel example: D = !![1, 1, 0; 0, 1, 1] has rank 2 (upper bound
 -- by height, lower bound by the det-1 leading 2x2 submatrix).
 private lemma D_rank_test :
     (!![1, 1, 0; 0, 1, 1] : Matrix (Fin 2) (Fin 3) ℚ).rank = 2 := by
@@ -173,11 +180,8 @@ example : LinearMap.ker
     ext i
     fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_three]
 
--- finrank ker D = 3 - 2 = 1, via lemma 5 (`dim_kernel_finrank`).
+-- finrank ker D = 3 - 2 = 1, via the canonical
+-- `Chemistry.QuantityCalculus.finrank_ker_mulVecLin`.
 example : Module.finrank ℚ (LinearMap.ker
       (!![1, 1, 0; 0, 1, 1] : Matrix (Fin 2) (Fin 3) ℚ).toLin') = 1 := by
-  have h := dim_kernel_finrank
-    (!![1, 1, 0; 0, 1, 1] : Matrix (Fin 2) (Fin 3) ℚ)
-  rw [D_rank_test] at h
-  norm_num at h
-  exact h
+  rw [Matrix.toLin'_apply', Chemistry.QuantityCalculus.finrank_ker_mulVecLin, D_rank_test]

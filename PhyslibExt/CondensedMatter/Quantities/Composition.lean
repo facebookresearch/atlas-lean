@@ -1,5 +1,9 @@
 /-
 Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
 -/
 
 module
@@ -8,10 +12,6 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Algebra.BigOperators.Field
-public import Mathlib.LinearAlgebra.Matrix.Rank
-public import Mathlib.LinearAlgebra.Matrix.ToLin
-public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
-public import Mathlib.LinearAlgebra.Dimension.Constructions
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.Ring
 public import Mathlib.Tactic.NormNum
@@ -21,26 +21,28 @@ public import Mathlib.Tactic.LinearCombination
 public import PhyslibExt.Chemistry.Amounts.MolarMassComposition
 
 /-!
-# MS01 quantities: composition simplex maps and dimension kernels
+# MS01 quantities: Arrhenius coordinates and composition percentages
 
-Arrhenius log identities, weight/mole-fraction bijections, and the
-dimension-kernel dimension formula for the ATLAS MS01 pilot slice.
+Arrhenius log identities and weight/atomic-percent conversions for the ATLAS
+MS01 pilot slice.
 
 ## i. Overview
 
 This module proves the pure-mathematical cores needed by the MS01 roadmap slice
 (quantities, units, dimensional analysis, composition conventions): the Arrhenius
-log identity in natural and base-10 logarithms, open-simplex corollaries of the
-canonical weight-fraction/mole-fraction conversions (including the wt%/at%
-percent forms), and the rank-nullity dimension formula for the kernel of a
-rational dimension matrix.
+log identity in natural and base-10 logarithms and the wt%/at% percent forms of
+the canonical weight-fraction/mole-fraction conversions.
 
-Composition maps are NOT redefined here. The conversions are the canonical
-`Chemistry.Amounts.massFraction` /
+Composition maps and their round trips are NOT restated here. The conversions
+are the canonical `Chemistry.Amounts.massFraction` /
 `Chemistry.Amounts.moleFractionOfMassFraction` from ATLAS main
-(`PhyslibExt.Chemistry.Amounts.MolarMassComposition`), whose round-trip
-theorems on the closed simplex strictly generalize the open-simplex statements
-proved here as corollaries.
+(`PhyslibExt.Chemistry.Amounts.MolarMassComposition`), whose closed-simplex
+round-trip theorems
+`Chemistry.Amounts.moleFractionOfMassFraction_massFraction_of_sum_eq_one` and
+`Chemistry.Amounts.massFraction_moleFractionOfMassFraction_of_sum_eq_one` are
+used directly. Likewise, the rank-nullity count of dimensionless groups for a
+rational dimension matrix is `Chemistry.QuantityCalculus.finrank_ker_mulVecLin`
+(`PhyslibExt.Chemistry.QuantityCalculus`) and is not restated here.
 
 Reuse decision: SI quantities as value-plus-dimension-vector are provided by the
 Physlib `ISQDimensionBase` / `WithDim` interface (the MF01/CH01 Physlib-based ISQ
@@ -50,10 +52,9 @@ library; the Physlib `WithDim` wrapping is stated here as the reuse decision
 imported nor proved here).
 
 Reuse-verified against Mathlib/Physlib/ATLAS main: this file builds on the
-canonical `Chemistry.Amounts` composition API from ATLAS main and adds
-open-simplex corollaries plus percent forms. It imports no other ATLAS-50 module
-PR and does not depend on CH01/CH03/MF03/MF05 or any other roadmap module's new
-API.
+canonical `Chemistry.Amounts` composition API from ATLAS main and adds the
+percent forms. It imports no other ATLAS-50 module PR and does not depend on
+CH01/CH03/MF03/MF05 or any other roadmap module's new API.
 
 ## ii. Key results
 
@@ -63,24 +64,15 @@ API.
 * `arrhenius_log10`: the base-10 form,
   `Real.logb 10 (y / y_ref)
     = Real.logb 10 (A / y_ref) - E / (R * T * Real.log 10)`.
-* `moleFrac_wtFrac` / `wtFrac_moleFrac`:
-  `Chemistry.Amounts.moleFractionOfMassFraction` and
-  `Chemistry.Amounts.massFraction` are mutually inverse bijections of the open
-  simplex for positive molar masses (corollaries of
-  `Chemistry.Amounts.moleFractionOfMassFraction_massFraction_of_sum_eq_one` and
-  `Chemistry.Amounts.massFraction_moleFractionOfMassFraction_of_sum_eq_one`).
-* `wtPct_atPct`: the wt%/at% percent forms convert by the same mutually inverse
-  maps scaled by 100.
-* `dim_kernel_finrank`: for `D : Matrix (Fin m) (Fin n) ℚ`,
-  `Module.finrank ℚ (LinearMap.ker D.toLin') = n - D.rank`.
+* `wtPct_atPct`: the wt%/at% percent forms convert by the canonical mutually
+  inverse maps scaled by 100.
 
 ## iii. Table of contents
 
 * a. Arrhenius coordinates: `arrhenius_log`, `arrhenius_log10`.
-* b. Composition simplex maps: `moleFrac_wtFrac`, `wtFrac_moleFrac`, `wtPct`,
-  `atPct`, `wtPct_atPct` (maps are `Chemistry.Amounts.massFraction` /
+* b. Composition percentages: `wtPct`, `atPct`, `wtPct_atPct` (maps are
+  `Chemistry.Amounts.massFraction` /
   `Chemistry.Amounts.moleFractionOfMassFraction`).
-* c. Dimension kernels: `dim_kernel_finrank`.
 
 ## iv. References
 
@@ -88,6 +80,8 @@ API.
   analysis, composition conventions.
 * MF01/CH01 Physlib-based ISQ interface (`ISQDimensionBase` / `WithDim`).
 * `PhyslibExt.Chemistry.Amounts.MolarMassComposition`: canonical mole/mass-fraction API.
+* `PhyslibExt.Chemistry.QuantityCalculus`: canonical dimension-kernel count
+  `Chemistry.QuantityCalculus.finrank_ker_mulVecLin`.
 -/
 
 @[expose] public section
@@ -122,35 +116,7 @@ lemma arrhenius_log10 {y y_ref A T R E : ℝ} (hy_ref : 0 < y_ref) (hA : 0 < A)
   have h1 := arrhenius_log hy_ref hA hy hT hR h
   rw [← Real.log_div_log, ← Real.log_div_log, h1, sub_div, div_div]
 
-/-! ## b. Composition simplex maps -/
-
-/-- Mole-to-weight-to-mole round trip: on the open simplex (`∀ i, 0 < x i`,
-`∑ i, x i = 1`) with positive molar masses,
-`Chemistry.Amounts.moleFractionOfMassFraction M` inverts
-`Chemistry.Amounts.massFraction M`. Open-simplex corollary of
-`Chemistry.Amounts.moleFractionOfMassFraction_massFraction_of_sum_eq_one`
-(open implies closed). Mathematical consequence (MC) within the stated
-model. -/
-lemma moleFrac_wtFrac {ι : Type*} [Fintype ι] [Nonempty ι] {M x : ι → ℝ}
-    (hM : ∀ i, 0 < M i) (hx : ∀ i, 0 < x i) (hsum : ∑ i, x i = 1) :
-    Chemistry.Amounts.moleFractionOfMassFraction M
-      (Chemistry.Amounts.massFraction M x) = x :=
-  Chemistry.Amounts.moleFractionOfMassFraction_massFraction_of_sum_eq_one
-    (fun i => (hx i).le) hsum hM
-
-/-- Weight-to-mole-to-weight round trip: on the open simplex (`∀ i, 0 < w i`,
-`∑ i, w i = 1`) with positive molar masses,
-`Chemistry.Amounts.massFraction M` inverts
-`Chemistry.Amounts.moleFractionOfMassFraction M`. Open-simplex corollary of
-`Chemistry.Amounts.massFraction_moleFractionOfMassFraction_of_sum_eq_one`.
-Together with `moleFrac_wtFrac`, the two maps are mutually inverse bijections
-of the open simplex. -/
-lemma wtFrac_moleFrac {ι : Type*} [Fintype ι] [Nonempty ι] {M w : ι → ℝ}
-    (hM : ∀ i, 0 < M i) (hw : ∀ i, 0 < w i) (hsum : ∑ i, w i = 1) :
-    Chemistry.Amounts.massFraction M
-      (Chemistry.Amounts.moleFractionOfMassFraction M w) = w :=
-  Chemistry.Amounts.massFraction_moleFractionOfMassFraction_of_sum_eq_one
-    (fun i => (hw i).le) hsum hM
+/-! ## b. Composition percentages -/
 
 /-- Weight percent: `100 * Chemistry.Amounts.massFraction M x i`. -/
 noncomputable def wtPct {ι : Type*} [Fintype ι] (M x : ι → ℝ) : ι → ℝ :=
@@ -162,8 +128,10 @@ noncomputable def atPct {ι : Type*} (x : ι → ℝ) : ι → ℝ :=
 
 /-- wt%/at% conversion by the same mutually inverse maps scaled by 100:
 normalizing a positive 100-sum vector to the simplex, converting, and scaling
-back is the identity in both directions. Corollary of `wtFrac_moleFrac` and
-`moleFrac_wtFrac` with the factor 100 carried through. -/
+back is the identity in both directions. Corollary of the canonical round trips
+`Chemistry.Amounts.massFraction_moleFractionOfMassFraction_of_sum_eq_one` and
+`Chemistry.Amounts.moleFractionOfMassFraction_massFraction_of_sum_eq_one` with
+the factor 100 carried through. -/
 lemma wtPct_atPct {ι : Type*} [Fintype ι] [Nonempty ι] {M : ι → ℝ}
     (hM : ∀ i, 0 < M i) :
     (∀ {w : ι → ℝ}, (∀ i, 0 < w i) → ∑ i, w i = 100 →
@@ -178,28 +146,12 @@ lemma wtPct_atPct {ι : Type*} [Fintype ι] [Nonempty ι] {M : ι → ℝ}
     have h2 : ∑ i, w i / 100 = 1 := by
       rw [← Finset.sum_div, hsum]
       norm_num
-    have h3 := wtFrac_moleFrac hM h1 h2
+    have h3 := Chemistry.Amounts.massFraction_moleFractionOfMassFraction_of_sum_eq_one
+      (fun i => (h1 i).le) h2 hM
     funext i
     simp only [wtPct]
     rw [h3]
     ring
   · intro x hx hsum
-    have h3 := moleFrac_wtFrac hM hx hsum
-    rw [h3]
-
-/-! ## c. Dimension kernels -/
-
-/-- Dimension-kernel dimension formula (rank-nullity, MC): for a rational
-dimension matrix `D`, the rational exponent vectors in the kernel — the
-dimensionless-monomial exponents — form a space of dimension `n - D.rank`.
-A full functional Buckingham Pi theorem requires additional scaling
-hypotheses and is explicitly NOT claimed here. -/
-lemma dim_kernel_finrank {m n : ℕ} (D : Matrix (Fin m) (Fin n) ℚ) :
-    Module.finrank ℚ (LinearMap.ker D.toLin') = n - D.rank := by
-  have h := LinearMap.finrank_range_add_finrank_ker D.toLin'
-  rw [Module.finrank_pi] at h
-  rw [Fintype.card_fin] at h
-  have hrank : D.rank = Module.finrank ℚ (LinearMap.range D.toLin') := by
-    unfold Matrix.rank
-    rw [Matrix.toLin'_apply']
-  omega
+    rw [Chemistry.Amounts.moleFractionOfMassFraction_massFraction_of_sum_eq_one
+      (fun i => (hx i).le) hsum hM]
