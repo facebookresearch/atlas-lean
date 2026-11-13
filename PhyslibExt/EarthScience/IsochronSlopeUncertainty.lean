@@ -1,4 +1,3 @@
-
 /-
 Copyright (c) Meta Platforms, Inc. and affiliates.
 All rights reserved.
@@ -28,10 +27,13 @@ derivative term `δ / (λ * (1 + m))` by at most the explicit remainder
 
 ## i. Overview
 
-Write the age as `log (1 + m) / λ` and set `u = δ / (1 + m) ≥ 0`. Then
+The age `log (1 + m) / λ` is the isochron age of
+`EarthScience.isochron_age_eq`, and `EarthScience.isochron_age_inverts_slope`
+shows that it inverts an admissible slope `m > 0`. Set
+`u = δ / (1 + m) ≥ 0`. Then
 `log (1 + (m + δ)) - log (1 + m) = log (1 + u)`, and the claim reduces
 to the quadratic Taylor bound `|log (1 + u) - u| ≤ u ^ 2 / 2`, proved
-below as `EarthScience.log_one_add_abs_sub_le` by monotonicity of
+below as a private helper by monotonicity of
 `log (1 + t) - t + t ^ 2 / 2` on `t ≥ 0` (its derivative is
 `t ^ 2 / (1 + t) ≥ 0`). Dividing by `λ > 0` at the end gives the
 remainder bound. This is first-order propagation plus a rigorous
@@ -39,13 +41,15 @@ remainder bound, not just a derivative.
 
 ## ii. Key results
 
-- `EarthScience.log_one_add_abs_sub_le`: the quadratic Taylor bound
-  for `log` at `1`.
 - `EarthScience.isochron_age_slope_uncertainty`: the slope-uncertainty
   propagation bound with explicit remainder.
 
 ## iii. References
 
+- `EarthScience.isochron_age_eq` in `PhyslibExt.EarthScience.Isochrons`
+  and `EarthScience.isochron_age_inverts_slope` in
+  `PhyslibExt.EarthScience.IsochronAgeInvertsSlope`: the isochron age
+  `log (1 + m) / λ`.
 - `Real.log_le_sub_one_of_pos`, `Real.hasDerivAt_log`,
   `monotoneOn_of_deriv_nonneg` (Mathlib).
 -/
@@ -56,7 +60,7 @@ namespace EarthScience
 
 /-- Quadratic Taylor bound for `Real.log` at `1`: for `u ≥ 0`,
 `log (1 + u)` is within `u ^ 2 / 2` of `u`. -/
-theorem log_one_add_abs_sub_le (u : ℝ) (hu : 0 ≤ u) :
+private lemma log_one_add_abs_sub_le (u : ℝ) (hu : 0 ≤ u) :
     |Real.log (1 + u) - u| ≤ u ^ 2 / 2 := by
   have h1u : (0:ℝ) < 1 + u := by linarith
   have hub : Real.log (1 + u) ≤ u := by
@@ -131,7 +135,7 @@ model: for decay constant `λ > 0`, slope `m > 0` and nonnegative slope
 perturbation `δ ≥ 0`, the age change differs from the first-order
 derivative term `δ / (λ * (1 + m))` by at most the explicit remainder
 `δ ^ 2 / (2 * λ * (1 + m) ^ 2)`. -/
-theorem isochron_age_slope_uncertainty {lam m δ : ℝ} (hlam : 0 < lam)
+lemma isochron_age_slope_uncertainty {lam m δ : ℝ} (hlam : 0 < lam)
     (hm : 0 < m) (hδ : 0 ≤ δ) :
     |(Real.log (1 + (m + δ)) / lam - Real.log (1 + m) / lam)
         - δ / (lam * (1 + m))|

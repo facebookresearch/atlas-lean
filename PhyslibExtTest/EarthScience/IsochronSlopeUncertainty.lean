@@ -16,7 +16,7 @@ import Mathlib.Tactic.NormNum
 
 Concrete consumers of `PhyslibExt.EarthScience.IsochronSlopeUncertainty`:
 a generic elaboration check, the zero-perturbation boundary case
-`δ = 0`, and the helper log bound at `u = 0`.
+`δ = 0`, and a concrete positive perturbation `λ = 1`, `m = 1`, `δ = 1`.
 
 ## i. Overview
 
@@ -47,6 +47,10 @@ example {lam m : ℝ} (hlam : 0 < lam) (hm : 0 < m) :
       ≤ (0 : ℝ) ^ 2 / (2 * lam * (1 + m) ^ 2) :=
   EarthScience.isochron_age_slope_uncertainty hlam hm (le_refl 0)
 
-/-- Helper bound at `u = 0`: `|log 1 - 0| = 0 ≤ 0`. -/
-example : |Real.log (1 + (0 : ℝ)) - (0 : ℝ)| ≤ (0 : ℝ) ^ 2 / 2 :=
-  EarthScience.log_one_add_abs_sub_le 0 (le_refl 0)
+/-- Concrete positive perturbation `λ = 1`, `m = 1`, `δ = 1`: the age
+change `log 3 - log 2` is within `1 / 8` of the first-order term `1 / 2`. -/
+example : |(Real.log 3 - Real.log 2) - 1 / 2| ≤ 1 / 8 := by
+  have h := EarthScience.isochron_age_slope_uncertainty (lam := 1) (m := 1) (δ := 1)
+    one_pos one_pos zero_le_one
+  norm_num at h
+  exact h
