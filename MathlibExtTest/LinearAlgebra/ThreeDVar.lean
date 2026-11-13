@@ -51,29 +51,20 @@ example : ((1 : Matrix (Fin 1) (Fin 1) ℝ)⁻¹ +
     (1 : Matrix (Fin 1) (Fin 1) ℝ) Matrix.PosDef.one Matrix.PosDef.one
   exact h
 
-/-- Normal equations on a one-dimensional example: `B = R = H = 1`,
-`xb = 0`, `y = 2` gives `xa = 1` and `(1 + 1) * (1 - 0) = 1 * (2 - 0)`. -/
+/-- Normal equations on a one-dimensional example: with `B = R = H = 1`, `xb = 0`
+and `y = 2`, `normal_equation` reads `(1 + 1) (xa - 0) = 1 (2 - 0)`. -/
 example :
-    Minimizer (1 : Matrix (Fin 1) (Fin 1) ℝ) (1 : Matrix (Fin 1) (Fin 1) ℝ)
-        (1 : Matrix (Fin 1) (Fin 1) ℝ) 0 ![2] = ![1] := by
-  have h := minimizer_isMin_unique (1 : Matrix (Fin 1) (Fin 1) ℝ)
-    (1 : Matrix (Fin 1) (Fin 1) ℝ) (1 : Matrix (Fin 1) (Fin 1) ℝ) 0 ![2]
-    Matrix.PosDef.one Matrix.PosDef.one ![1]
-  -- The minimizer is the unique point attaining the minimum; show `![1]`
-  -- attains the same cost as the minimizer, hence equals it.
-  have hcost : Cost (1 : Matrix (Fin 1) (Fin 1) ℝ) (1 : Matrix (Fin 1) (Fin 1) ℝ)
-        (1 : Matrix (Fin 1) (Fin 1) ℝ) 0 ![2] ![1] =
-      Cost (1 : Matrix (Fin 1) (Fin 1) ℝ) (1 : Matrix (Fin 1) (Fin 1) ℝ)
-        (1 : Matrix (Fin 1) (Fin 1) ℝ) 0 ![2]
+    (2 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ
         (Minimizer (1 : Matrix (Fin 1) (Fin 1) ℝ) (1 : Matrix (Fin 1) (Fin 1) ℝ)
-          (1 : Matrix (Fin 1) (Fin 1) ℝ) 0 ![2]) := by
-    have hm : Minimizer (1 : Matrix (Fin 1) (Fin 1) ℝ) (1 : Matrix (Fin 1) (Fin 1) ℝ)
-        (1 : Matrix (Fin 1) (Fin 1) ℝ) 0 ![2] = ![1] := by
-      ext i
-      simp [Minimizer]
-      ring
-    rw [hm]
-  exact (h.2 hcost).symm
+          (1 : Matrix (Fin 1) (Fin 1) ℝ) 0 ![2] - 0) = ![2] := by
+  have h := normal_equation (1 : Matrix (Fin 1) (Fin 1) ℝ) (1 : Matrix (Fin 1) (Fin 1) ℝ)
+    (1 : Matrix (Fin 1) (Fin 1) ℝ) 0 ![2] Matrix.PosDef.one Matrix.PosDef.one
+  have hlhs : ((1 : Matrix (Fin 1) (Fin 1) ℝ)⁻¹ + (1 : Matrix (Fin 1) (Fin 1) ℝ)ᵀ *
+      (1 : Matrix (Fin 1) (Fin 1) ℝ)⁻¹ * (1 : Matrix (Fin 1) (Fin 1) ℝ)) = 2 := by
+    rw [inv_one, transpose_one, mul_one, mul_one, one_add_one_eq_two]
+  rw [hlhs] at h
+  rw [h]
+  simp
 
 #print axioms woodbury
 #print axioms normal_equation
