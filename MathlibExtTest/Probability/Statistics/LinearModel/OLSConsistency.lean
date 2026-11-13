@@ -13,7 +13,7 @@ import MathlibExt.Probability.Statistics.LinearModel.OLSConsistency
 namespace MathlibExtTest.LinearModelOLSConsistency
 
 open Matrix MeasureTheory ProbabilityTheory Filter Finset Topology
-  MathlibExt.Probability.Statistics.OLSConsistency
+  MathlibExt.Probability.Statistics.LinearModel
 
 open scoped Function
 
@@ -42,24 +42,25 @@ theorem popGram_const_one {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
   simp only [popGram, Matrix.of_apply, vec_single_one a, mul_one,
     integral_const, hreal, one_smul, Matrix.one_apply_eq]
 
-/-- With `k = Fin 1`, `X i ω = ![1]`, `U i ω = 0`, `β = ![3]`, the OLS
+/-- With `k = Fin 1`, regressors `X i ω = ![1]`, and observed responses
+`Y i ω = ![1] ⬝ᵥ ![3] + 0 = 3` (coefficient `![3]`, zero errors), the OLS
 estimator is exactly `![3]` for every positive `n` (sample Gram `[[1]]`,
 sample moment `![3]`). This checks the definition of `olsSeqEstimator`,
 not convergence. -/
-theorem olsSeqEstimator_const {Ω : Type*} [MeasurableSpace Ω] (ω : Ω) (n : ℕ)
-    (hn : 0 < n) :
-    olsSeqEstimator (fun _ _ => (![1] : Fin 1 → ℝ)) (fun _ _ => (0 : ℝ))
-      (![3] : Fin 1 → ℝ) n ω = ![3] := by
+theorem olsSeqEstimator_const {Ω : Type*} (ω : Ω) (n : ℕ) (hn : 0 < n) :
+    olsSeqEstimator (fun _ _ => (![1] : Fin 1 → ℝ))
+      (fun _ _ => (![1] : Fin 1 → ℝ) ⬝ᵥ (![3] : Fin 1 → ℝ) + 0) n ω = ![3] := by
   have hn0 : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (ne_of_gt hn)
   have hdot : (![1] : Fin 1 → ℝ) ⬝ᵥ (![3] : Fin 1 → ℝ) = 3 := by
     simp [dotProduct]
   have hsum1 : (∑ i ∈ Finset.range n, (1 : ℝ)) = n := by simp
   have hsum3 : (∑ i ∈ Finset.range n, (3 : ℝ)) = (n : ℝ) * 3 := by simp
-  have hQ : ((n : ℝ)⁻¹ • ∑ i ∈ Finset.range n, gramOuter (![1] : Fin 1 → ℝ)) = 1 := by
+  have hQ : ((n : ℝ)⁻¹ • ∑ i ∈ Finset.range n,
+      Matrix.vecMulVec (![1] : Fin 1 → ℝ) (![1] : Fin 1 → ℝ)) = 1 := by
     ext a b
     have hab : a = b := Subsingleton.elim a b
     subst hab
-    simp only [Matrix.smul_apply, Matrix.sum_apply, gramOuter, Matrix.of_apply,
+    simp only [Matrix.smul_apply, Matrix.sum_apply, Matrix.vecMulVec_apply,
       vec_single_one a, mul_one, smul_eq_mul]
     rw [hsum1, inv_mul_cancel₀ hn0, Matrix.one_apply_eq]
   have hG : ((n : ℝ)⁻¹ • ∑ i ∈ Finset.range n,
