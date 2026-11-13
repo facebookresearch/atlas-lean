@@ -11,6 +11,7 @@ module
 public import CSLibExt.Logics.Propositional.CNF.Semantics
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Insert
+public import Mathlib.Logic.Relation
 
 /-!
 # Termination of CDCL without restarts or clause deletion
@@ -65,11 +66,8 @@ inductive CDCLStep (F : CNF) :
       CDCLStep F (t, L) (t', insert C L)
 
 /-- Reachability: the reflexive-transitive closure of `CDCLStep F`. -/
-inductive CDCLReach (F : CNF) :
-    CDCLState → CDCLState → Prop
-  | refl (s : CDCLState) : CDCLReach F s s
-  | tail {s₁ s₂ s₃ : CDCLState} (h : CDCLReach F s₁ s₂)
-      (hstep : CDCLStep F s₂ s₃) : CDCLReach F s₁ s₃
+def CDCLReach (F : CNF) : CDCLState → CDCLState → Prop :=
+  Relation.ReflTransGen (CDCLStep F)
 
 /-- Termination of the no-restart, no-deletion system over a
 finite universe: fix finite sets `vars` of variables and
