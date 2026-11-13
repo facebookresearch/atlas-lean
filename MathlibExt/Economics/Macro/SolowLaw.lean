@@ -34,7 +34,15 @@ term to drop.
 
 ## References
 
-Atlas roadmap target MA03.T01.
+* P. B. Sørensen and H. J. Whitta-Jacobsen, *Introducing Advanced Macroeconomics: Growth
+  and Business Cycles*, 2nd ed., McGraw-Hill (2010), Chapter 5 (The Solow Model with
+  Technological Progress): the discrete-time Solow model with labor-augmenting
+  technological progress, written in capital per effective worker.
+* D. Acemoglu, *Introduction to Modern Economic Growth*, Princeton University Press (2009),
+  Section 2.2.1, equation (2.12), the discrete aggregate law of motion
+  `K(t + 1) = s F(K(t), L(t), A(t)) + (1 - δ) K(t)`; Section 2.7 treats labor-augmenting
+  technological progress and effective labor (in continuous time).
+* Atlas roadmap target MA03.T01.
 -/
 
 @[expose] public section
