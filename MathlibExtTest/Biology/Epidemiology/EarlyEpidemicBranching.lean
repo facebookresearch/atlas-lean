@@ -64,6 +64,24 @@ example : epiSize (fun _ _ => 2) (fun j => j + 1) {1, 2, 3} 3 = 0 := by decide
 example : epiSize (fun _ _ => 2) (fun j => j + 1) ({1, 2, 3} : Finset ℕ) 4 = 0 :=
   epiSize_card_add_one_eq_zero _ _ _
 
+/-! ### The index case
+
+In the one-individual population `Fin 1`, one contact per infective, always to the individual
+`0`. -/
+
+/-- An index case outside the population infects the individual `0` when it is susceptible. -/
+example : epiSize (fun _ _ => 1) (fun _ => (0 : Fin 1)) univ 1 = 1 := by decide
+
+/-- If the index case is the individual `0` itself, it is left out of `S₀ = ∅`, and its contact
+infects nobody. -/
+example : epiSize (fun _ _ => 1) (fun _ => (0 : Fin 1)) ∅ 1 = 0 := by decide
+
+/-- With the index case `0 ∉ S₀` inside `Fin 3`, the infectives of generations `0, …, n` never
+outnumber the population, whatever the offspring numbers and the contact targets. -/
+example (ξ : ℕ → ℕ → ℕ) (U : ℕ → Fin 3) (n : ℕ) :
+    ∑ m ∈ range (n + 1), epiSize ξ U ((univ : Finset (Fin 3)).erase 0) m ≤ 3 :=
+  (sum_epiSize_le_card ξ U _ (notMem_erase 0 univ) n).trans_eq (Fintype.card_fin 3)
+
 /-! ### Exponential bounds used below -/
 
 private lemma exp_eight_fifths_lt_five : exp (8 / 5) < 5 := by
@@ -135,9 +153,10 @@ example : 1 - extinctionProb (poissonMeasure 2) ∈ Set.Ioo (3 / 4 : ℝ) (4 / 5
 example : 0 < 1 - extinctionProb (poissonMeasure 2) :=
   one_sub_extinctionProb_pos (by rw [mean_poissonMeasure]; norm_num)
 
-/-- The canonical model with Poisson(2) offspring in the population `Fin (k + 1)`, one initial
-infective (`0`) and everybody else susceptible: as `k → ∞`, the probability that the epidemic
-reaches generation `1` converges to `1 - P(Z₁ = 0) = 1 - e^{-2}`. -/
+/-- The canonical model with Poisson(2) offspring in the population `Fin (k + 1)`, whose
+individual `0` is the index case (left out of `S₀`), with everybody else susceptible: as
+`k → ∞`, the probability that the epidemic reaches generation `1` converges to
+`1 - P(Z₁ = 0) = 1 - e^{-2}`. -/
 example : Tendsto (fun k : ℕ => (canonicalMeasure (poissonMeasure 2) (k + 1)).real
       {ω | epiSize (fun n i => ω.1 (n, i)) (fun j => ω.2 j)
         ((univ : Finset (Fin (k + 1))).erase 0) 1 ≠ 0}) atTop (𝓝 (1 - exp (-2))) := by

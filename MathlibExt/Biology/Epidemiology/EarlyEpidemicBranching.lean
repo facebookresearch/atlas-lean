@@ -17,12 +17,21 @@ public import Mathlib.Probability.Distributions.Uniform
 /-!
 # Early epidemic and its branching-process approximation
 
-A generation-based SIR epidemic in a population `α` (finite, `N` individuals) starts from one
-infective. The `i`-th infective of generation `n` makes `ξ n i` contacts; the contacts of the
-epidemic are numbered `0, 1, 2, …` in the order they are made (generation by generation, and
-within a generation infective by infective), and contact number `j` goes to the individual
-`U j`. A contact infects its target iff the target is initially susceptible (`U j ∈ S₀`) and
-has not been contacted before (`epiHit`); the infected targets form the next generation.
+A generation-based SIR epidemic in a population `α` (finite, `N` individuals) is started by one
+*index case*: an infective who is not an individual of `α` (an external ancestor, such as an
+imported case). The individuals of `S₀ ⊆ α` are initially susceptible; the others are immune and
+are never infected. The `i`-th infective of generation `n` (generation `0` is the index case)
+makes `ξ n i` contacts; the contacts of the epidemic are numbered `0, 1, 2, …` in the order they
+are made (generation by generation, and within a generation infective by infective), and contact
+number `j` goes to the individual `U j`. A contact infects its target iff the target is initially
+susceptible (`U j ∈ S₀`) and has not been contacted before (`epiHit`); the infected targets form
+the next generation.
+
+An index case who is an individual `i₀` of the population is the special case `i₀ ∉ S₀`:
+contacts to `i₀` never infect, and the infectives of all generations, index case included, never
+outnumber the population (`sum_epiSize_le_card`). The statements below hold for every `S₀`, so
+they apply to both readings; in the large-population results such an `i₀` is one of the `o(N)`
+individuals outside `S₀`.
 
 The branching process on the same randomness ignores depletion: every contact produces a new
 individual, so generation sizes are `Z 0 = 1`, `Z (n + 1) = ∑_{i < Z n} ξ n i` (`bpSize`). With
@@ -39,6 +48,8 @@ Deterministic coupling (any offspring numbers and contact targets):
 * `epiSize_card_add_one_eq_zero`: in a finite population the epidemic is extinct by
   generation `#S₀ + 1`; minor versus major outbreak is therefore a large-population notion
   (see "Minor and major outbreaks" below).
+* `sum_epiSize_le_card`: if the index case is an individual `i₀ ∉ S₀` of a finite population, the
+  infectives of generations `0, …, n` number at most `Fintype.card α`.
 
 Probabilistic statements (`IsEarlyEpidemic`: `ξ n i` i.i.d. `∼ ν`, targets i.i.d. uniform on
 `Fin N`; no assumption on the joint law of `ξ` and `U`):
@@ -129,16 +140,18 @@ instance (j : ℕ) : Decidable (epiHit U S₀ j) := by
   unfold epiHit; infer_instance
 
 /-- The state of the epidemic at generation `n`: the number of infectives of generation `n`
-and the number of contacts made by the earlier generations. Generation `n` makes the contacts
-numbered `D, …, D + c - 1` with `c = ∑_{i < I} ξ n i`, and the next generation consists of the
-targets of those contacts that hit (`epiHit`). -/
+and the number of contacts made by the earlier generations. Generation `0` is the index case
+alone, with no earlier contacts. Generation `n` makes the contacts numbered `D, …, D + c - 1`
+with `c = ∑_{i < I} ξ n i`, and the next generation consists of the targets of those contacts
+that hit (`epiHit`). -/
 def epi : ℕ → ℕ × ℕ
   | 0 => (1, 0)
   | n + 1 =>
     ((Ico (epi n).2 ((epi n).2 + ∑ i ∈ range (epi n).1, ξ n i)).filter (epiHit U S₀) |>.card,
       (epi n).2 + ∑ i ∈ range (epi n).1, ξ n i)
 
-/-- The number `I n` of infectives in generation `n` of the epidemic. -/
+/-- The number `I n` of infectives in generation `n` of the epidemic; `I 0 = 1` is the index
+case. -/
 def epiSize (n : ℕ) : ℕ :=
   (epi ξ U S₀ n).1
 
@@ -239,6 +252,18 @@ theorem epiSize_card_add_one_eq_zero : epiSize ξ U S₀ (S₀.card + 1) = 0 := 
   have hge : S₀.card + 1 ≤ ∑ m ∈ range (S₀.card + 1), epiSize ξ U S₀ (m + 1) := by
     simpa using card_nsmul_le_sum (range (S₀.card + 1)) (fun m => epiSize ξ U S₀ (m + 1)) 1
       (fun m hm => hpos m (Nat.lt_succ_iff.1 (mem_range.1 hm)))
+  omega
+
+/-- **An index case inside the population.** If the index case is an individual `i₀` of a finite
+population who is not initially susceptible (`i₀ ∉ S₀`), the infectives of generations
+`0, …, n` number at most `Fintype.card α`: the infections of generations `1, …, n` go to distinct
+individuals of `S₀` (`card_filter_epiHit_le`), and `#S₀ < Fintype.card α`. -/
+theorem sum_epiSize_le_card [Fintype α] {i₀ : α} (h₀ : i₀ ∉ S₀) (n : ℕ) :
+    ∑ m ∈ range (n + 1), epiSize ξ U S₀ m ≤ Fintype.card α := by
+  rw [sum_range_succ', sum_epiSize_eq_card]
+  have h1 := card_filter_epiHit_le U S₀ (epi ξ U S₀ n).2
+  have h2 := card_lt_univ_of_notMem h₀
+  have h3 : epiSize ξ U S₀ 0 = 1 := rfl
   omega
 
 end Deterministic
@@ -403,9 +428,10 @@ end IsOffspringFamily
 
 /-! ### Wasted contacts: the birthday bound -/
 
-/-- The hypotheses of the coupled model in a population `Fin N`: offspring numbers i.i.d. with
-law `ν`, and contact targets i.i.d. uniform on `Fin N`. Nothing is assumed about the joint law of
-the offspring numbers and the targets (in the epidemic model they are independent). -/
+/-- The hypotheses of the coupled model in a population `Fin N`, started by an index case outside
+`Fin N` or by an individual left out of `S₀` (see the module docstring): offspring numbers i.i.d.
+with law `ν`, and contact targets i.i.d. uniform on `Fin N`. Nothing is assumed about the joint
+law of the offspring numbers and the targets (in the epidemic model they are independent). -/
 structure IsEarlyEpidemic (P : Measure Ω) (ν : Measure ℕ) (N : ℕ) (ξ : ℕ → ℕ → Ω → ℕ)
     (U : ℕ → Ω → Fin N) : Prop extends IsOffspringFamily P ν ξ where
   indep_target : ProbabilityTheory.iIndepFun U P
@@ -682,8 +708,9 @@ variable {Ω : ℕ → Type*} [∀ k, MeasurableSpace (Ω k)] {P : ∀ k, Measur
   {ξ : ∀ k, ℕ → ℕ → Ω k → ℕ} {U : ∀ k, ℕ → Ω k → Fin (N k)} {S₀ : ∀ k, Finset (Fin (N k))}
 
 /-- **Large-population limit.** Along a sequence of models `k` with population sizes
-`N k → ∞` in which all but `o(N k)` individuals are initially susceptible, the probability that
-the epidemic is extinct by generation `n` converges to the branching-process value
+`N k → ∞` in which all but `o(N k)` individuals are initially susceptible (an index case inside
+the population is one of these `o(N k)` individuals), the probability that the epidemic is
+extinct by generation `n` converges to the branching-process value
 `P(Z n = 0) = f^[n](0)`. As `n → ∞` these values increase to the extinction probability `q`
 (`tendsto_law_real_zero`): `q` is the probability of a minor outbreak in the sense of the
 module docstring. -/
