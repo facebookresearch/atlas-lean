@@ -32,7 +32,11 @@ def cellAssignSpace {ι : Type*} [Fintype ι] [DecidableEq ι]
   Finset.univ.filter fun f =>
     ∀ c, (Finset.univ.filter fun i => f i = c).card = n c
 
-/-- Complete randomization over the four cells: uniform on `cellAssignSpace`. -/
+/-- Complete randomization over the four cells: uniform on `cellAssignSpace`. With positive
+cell sizes summing to `card ι` it is a probability measure
+(`isProbabilityMeasure_cellAssignment`). When no assignment has the prescribed sizes (for
+example, sizes that do not sum to `card ι`), `cellAssignSpace n` is empty and
+`cellAssignment n` is the zero measure. -/
 noncomputable def cellAssignment {ι : Type*} [Fintype ι] [DecidableEq ι]
     (n : Fin 4 → ℕ) : Measure (ι → Fin 4) :=
   Measure.uniformOfFinset (cellAssignSpace n)
@@ -176,6 +180,18 @@ theorem cellAssignSpace_nonempty (ι : Type*) [Fintype ι] [DecidableEq ι]
   · exact hP1
   · exact hP2
   · exact hP3
+
+/-- With positive cell sizes summing to `card ι`, the cell-assignment law is a probability
+measure. -/
+theorem isProbabilityMeasure_cellAssignment (ι : Type*) [Fintype ι] [DecidableEq ι]
+    (n : Fin 4 → ℕ) (hpos : ∀ c, 0 < n c) (hsum : ∑ c, n c = Fintype.card ι) :
+    IsProbabilityMeasure (cellAssignment (ι := ι) n) := by
+  constructor
+  have hC : ((cellAssignSpace (ι := ι) n).card : ENNReal) ≠ 0 := by
+    exact_mod_cast (cellAssignSpace_nonempty ι n hpos hsum).card_pos.ne'
+  rw [cellAssignment_eq, Measure.uniformOfFinset_apply]
+  simp only [Set.mem_univ, filter_true]
+  exact ENNReal.div_self hC (ENNReal.natCast_ne_top _)
 
 theorem integral_cellAssignment (ι : Type*) [Fintype ι] [DecidableEq ι]
     (n : Fin 4 → ℕ) (g : (ι → Fin 4) → ℝ)

@@ -14,8 +14,9 @@ public import MathlibExt.Probability.Causality.CausalIdentification
 /-!
 # Tests for 2x2 factorial unbiasedness
 
-Nonadditive and additive population fixtures, the one-unit-per-cell use case,
-and the empty-cell-size exclusion.
+Nonadditive and additive population fixtures, normalization of the cell-assignment law
+and its zero-measure behavior on infeasible margins, the one-unit-per-cell use case, and the
+empty-cell-size exclusion.
 -/
 
 @[expose] public section
@@ -61,6 +62,23 @@ example : mainEffectA (popMean (fun _ : Fin 4 => (0 : ℝ)))
     (popMean (fun _ : Fin 4 => (3 : ℝ))) = 2 := by
   simp only [popMean_const_fin4, mainEffectA]
   norm_num
+
+/-- Normalization: with one unit per cell the cell-assignment law is a probability measure. -/
+example : IsProbabilityMeasure (cellAssignment (ι := Fin 4) fun _ => 1) :=
+  isProbabilityMeasure_cellAssignment (Fin 4) (fun _ => 1) (fun _ => one_pos) (by decide)
+
+/-- Infeasible margins: no assignment of four units puts two units in every cell, so the
+cell-assignment law is the zero measure. -/
+example : cellAssignment (ι := Fin 4) (fun _ => 2) = 0 := by
+  have hempty : cellAssignSpace (ι := Fin 4) (fun _ => 2) = ∅ := by
+    refine Finset.eq_empty_of_forall_notMem fun f hf => ?_
+    simp only [cellAssignSpace, Finset.mem_filter, Finset.mem_univ, true_and] at hf
+    have h := Finset.card_eq_sum_card_fiberwise (f := f) (s := Finset.univ)
+      (t := Finset.univ) fun x _ => Finset.mem_univ (f x)
+    simp only [hf, Finset.sum_const, Finset.card_univ, Fintype.card_fin, smul_eq_mul] at h
+    omega
+  rw [cellAssignment_eq, hempty]
+  simp [Measure.uniformOfFinset]
 
 /-- Use case: one unit per cell, the per-cell unbiasedness instance. -/
 example (y : Fin 4 → ℝ) :
