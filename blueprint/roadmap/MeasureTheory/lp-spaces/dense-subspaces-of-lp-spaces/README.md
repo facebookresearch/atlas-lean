@@ -1,0 +1,16 @@
+# Dense subspaces of Lp spaces
+
+- [Vanishing cutoff factor](vanishing-cutoff.md)
+- [The vanishing cutoff factor is nonnegative](vanishing-cutoff-nonneg.md)
+- [The vanishing cutoff factor is at most one](vanishing-cutoff-le-one.md)
+- [Continuity of the vanishing cutoff factor](vanishing-cutoff-continuous.md)
+- [The vanishing cutoff factor vanishes at the left endpoint](vanishing-cutoff-eq-zero-left.md)
+- [The vanishing cutoff factor vanishes at the right endpoint](vanishing-cutoff-eq-zero-right.md)
+- [The vanishing cutoff factor equals one on its plateau](vanishing-cutoff-eq-one.md)
+- [Cutoff approximants](cutoff-approx.md)
+- [Continuity of the cutoff approximants](cutoff-approx-continuous.md)
+- [Cutoff approximants vanish at the left endpoint](cutoff-approx-eq-zero-left.md)
+- [Cutoff approximants vanish at the right endpoint](cutoff-approx-eq-zero-right.md)
+- [Cutoff approximants stay in $L^p$](cutoff-approx-mem-lp.md)
+- [Pointwise bound on the cutoff error](norm-sub-cutoff-approx-le.md)
+- [Continuous functions vanishing at the endpoints are dense in $L^p$ of a compact interval](exists-continuous-vanishing-endpoints-e.md)

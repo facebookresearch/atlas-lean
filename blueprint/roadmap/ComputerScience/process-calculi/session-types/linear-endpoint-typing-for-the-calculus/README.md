@@ -1,0 +1,17 @@
+# Linear endpoint typing for the π-calculus
+
+- [Finite linear π fragment and structural closure](finite-linear-fragment-and-structural-closure/README.md)
+- [Polarized endpoint identity](polarized-endpoint-identity/README.md)
+- [Guarded regular protocol graphs](guarded-regular-protocol-graphs/README.md)
+- [Name and capability protocols with guarded regular recursion](name-and-capability-protocols-with-guarded-regul/README.md)
+- [Finite endpoint ownership maps](finite-endpoint-ownership-maps/README.md)
+- [Binder transport of finite ownership maps](binder-transport-of-finite-ownership-maps/README.md)
+- [Balanced physical channels with distinct linear roles](balanced-physical-channels-with-distinct-linear/README.md)
+- [Finite ownership algebra for typing transport](finite-ownership-algebra-for-typing-transport/README.md)
+- [Pointwise semantic equivalence of actual finite ownership maps](pointwise-semantic-equivalence-of-actual-finite/README.md)
+- [Lossless finite passive-protocol bridge](lossless-finite-passive-protocol-bridge/README.md)
+- [Finite ownership maps for the original passive-name typing judgement](finite-ownership-maps-for-the-original-passive-n/README.md)
+- [Linear endpoint typing of the existing π syntax](linear-endpoint-typing-of-the-existing-syntax/README.md)
+- [Transport of the original finite typing API](transport-of-the-original-finite-typing-api/README.md)
+- [Capture-safe finite ownership transport](capture-safe-finite-ownership-transport/README.md)
+- [Binary session typing embeds into polarized endpoint typing](binary-has-type.md)

@@ -1,0 +1,3 @@
+# Profit
+
+Unregulated monopsony profit.

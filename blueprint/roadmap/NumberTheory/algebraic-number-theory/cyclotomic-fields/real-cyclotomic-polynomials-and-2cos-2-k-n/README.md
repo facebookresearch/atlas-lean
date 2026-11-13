@@ -1,0 +1,10 @@
+# Real cyclotomic polynomials and 2cos(2πk/n)
+
+- [Degree of the real cyclotomic polynomial](nat-degree-real-cyclotomic-polynomial-2.md)
+- [Real cyclotomic polynomial](real-cyclotomic-polynomial.md)
+- [Minimal polynomial of $2\cos(2\pi k/n)$ for $k$ coprime to $n$](real-cyclotomic-polynomial-eq-minpoly-tw.md)
+- [Minimal polynomial of $2\cos(2\pi k/n)$ for $1 \le k \le n$ coprime to $n$](real-cyclotomic-polynomial-eq-minpoly-tw-2.md)
+- [Real cyclotomic polynomial has degree half the totient](nat-degree-real-cyclotomic-polynomial.md)
+- [Lehmer's identity for the real cyclotomic polynomial](lehmer-cyclotomic-identity.md)
+- [The real cyclotomic polynomial is the minimal polynomial of $\zeta + \zeta^{-1}$](real-cyclotomic-polynomial-eq-minpoly-tr.md)
+- [Lehmer's theorem on the degree of 2cos(2πk/n)](finrank-adjoin-two-cos.md)

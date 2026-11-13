@@ -1,0 +1,17 @@
+# System Fω
+
+- [Intrinsically kinded type operators for pure Fω](intrinsically-kinded-type-operators-for-pure-f/README.md)
+- [Capture-avoiding binding laws for kinded type operators](capture-avoiding-binding-laws-for-kinded-type-op/README.md)
+- [Semantic kind interpretation and substitution](semantic-kind-interpretation-and-substitution/README.md)
+- [Proved type-beta conversion for pure Fω](proved-type-beta-conversion-for-pure-f/README.md)
+- [Type-beta confluence and conversion inversion](type-beta-confluence-and-conversion-inversion/README.md)
+- [Higher-kinded relational interpretation of Fω types](higher-kinded-relational-interpretation-of-f-typ/README.md)
+- [Scoped pure Fω terms](scoped-pure-f-terms/README.md)
+- [Erasure adapter to the existing System F scoped syntax](erasure-adapter-to-the-existing-system-f-scoped/README.md)
+- [Fω closing instances in the single existing term model](f-closing-instances-in-the-single-existing-term/README.md)
+- [Pure Fω typing with proved type-beta conversion](pure-f-typing-with-proved-type-beta-conversion/README.md)
+- [Higher-kinded relational parametricity of pure Fω](higher-kinded-relational-parametricity-of-pure-f/README.md)
+- [Conversion-aware weak call-by-value safety for pure Fω](conversion-aware-weak-call-by-value-safety-for-p/README.md)
+- [The star/forall System F fragment inside pure Fω](the-star-forall-system-f-fragment-inside-pure-f/README.md)
+- [System F embedding agreement with the single term/relation model](system-f-embedding-agreement-with-the-single-ter/README.md)
+- [Fω weak-CBV erasure into the existing full-beta term model](f-weak-cbv-erasure-into-the-existing-full-beta-t/README.md)

@@ -1,0 +1,15 @@
+# Superspreading and negative-binomial offspring
+
+- [Negative-binomial offspring probabilities](nb-pmf.md)
+- [Negative-binomial probability generating function](nb-pgf.md)
+- [Negative-binomial offspring distribution](nb-offspring.md)
+- [Nonnegativity of the negative-binomial probabilities](nb-pmf-nonneg.md)
+- [Generating-function identity](has-sum-nb-pmf-mul-pow.md)
+- [Negative-binomial offspring law is a probability measure](is-probability-measure-nb-offspring.md)
+- [Generating function of the negative-binomial law in closed form](pgf-nb-offspring.md)
+- [Monotonicity in the dispersion](nb-pgf-antitone.md)
+- [Negative-binomial law with dispersion one is geometric](nb-pgf-one-dispersion.md)
+- [Poisson limit](tendsto-nb-pgf-at-top.md)
+- [Comparison principle for Galton–Watson extinction](extinction-prob-le-of-pgf-le.md)
+- [Negative-binomial extinction probability is the least fixed point](is-least-extinction-prob-nb-offspring.md)
+- [Superspreading raises the extinction probability](extinction-prob-nb-offspring-antitone.md)

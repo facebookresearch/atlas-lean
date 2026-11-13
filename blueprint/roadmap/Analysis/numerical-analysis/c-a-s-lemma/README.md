@@ -1,0 +1,18 @@
+# Céa's lemma
+
+- [Restriction of a bilinear form to a subspace](restrict-bilin.md)
+- [Coercivity passes to restrictions to subspaces](is-coercive-restrict-bilin.md)
+- [Solution of a coercive variational problem](variational-solution.md)
+- [Variational solution satisfies the variational equation](variational-solution-spec.md)
+- [Uniqueness for coercive variational problems](eq-of-forall-bilin.md)
+- [Variational solution is the unique solution](variational-solution-eq-of-forall.md)
+- [Existence of a variational solution](exists-variational-solution.md)
+- [Galerkin solution](galerkin-solution.md)
+- [Galerkin solution satisfies the Galerkin equations](galerkin-solution-spec.md)
+- [Galerkin solution is the unique solution of the Galerkin equations](galerkin-solution-eq-of-forall.md)
+- [Existence of a Galerkin solution](exists-galerkin-solution.md)
+- [Galerkin orthogonality](galerkin-orthogonality.md)
+- [Céa's lemma](norm-sub-galerkin-solution-le.md)
+- [Céa's lemma](norm-sub-galerkin-solution-le-i-inf.md)
+- [Stability bound for the variational solution](norm-variational-solution-le.md)
+- [Stability bound for the Galerkin solution](norm-galerkin-solution-le.md)

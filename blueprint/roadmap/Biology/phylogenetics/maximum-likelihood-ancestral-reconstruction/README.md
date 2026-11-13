@@ -1,0 +1,17 @@
+# Maximum-likelihood ancestral reconstruction
+
+- [Nonnegative transition weights on a tree](nonneg-weights.md)
+- [State maximizing a function](argmax-state.md)
+- [The argmax state maximizes the function](le-argmax-state.md)
+- [Value at the argmax state is the maximum](sup-eq-argmax-state.md)
+- [Max-product pruning recursion](max-prune.md)
+- [Pupko's traceback](traceback.md)
+- [Nonnegativity of max-product pruning](max-prune-nonneg.md)
+- [The traced labeling attains `maxPrune`](weight-traceback.md)
+- [Nonnegativity of labeling weights](weight-nonneg.md)
+- [`maxPrune` bounds the weight of every labeling](weight-le-max-prune.md)
+- [The max-product recursion computes the maximal labeling weight](max-prune-eq-sup.md)
+- [Root state of Pupko's reconstruction](joint-root.md)
+- [Pupko's joint reconstruction](pupko.md)
+- [Likelihood of Pupko's joint reconstruction](joint-lik-pupko.md)
+- [Pupko et al. (2000): joint maximum likelihood](pupko-is-joint-ml.md)

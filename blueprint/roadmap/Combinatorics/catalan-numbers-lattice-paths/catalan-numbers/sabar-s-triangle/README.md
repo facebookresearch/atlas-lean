@@ -1,0 +1,16 @@
+# Sabar's triangle
+
+- [Sabar's triangle](sabar-number.md)
+- [Rows 5 and 10 of Sabar's triangle](sabar-number-rows-five-ten.md)
+- [A recurrence for Sabar's triangle in small cases](sabar-number-recurrence-small.md)
+- [Harmonic numbers from Sabar's triangle](harmonic-eq-sum-inv-choose-add-sum-sabar.md)
+- [Reciprocal binomial sums from Sabar's triangle](sum-inv-choose-succ-eq-one-add-sum-sabar.md)
+- [The harmonic numbers as an alternating sum of Sabar numbers](sum-sabar-number-div-succ-eq-harmonic.md)
+- [Fine numbers from Sabar's triangle](fine-number-eq-sabar-number-sub.md)
+- [Sabar's alternating binomial sum equal to $n$](sum-neg-one-pow-mul-choose-eq-self.md)
+- [Fine numbers as an alternating binomial sum](fine-number-eq-half-neg-one-pow-add-sum.md)
+- [Central entries of Sabar's triangle and Fine numbers](sabar-number-central-eq-fine-number.md)
+- [Consecutive binomial sums weighted by powers of 2](sum-choose-mul-two-pow-add-succ.md)
+- [Consecutive Whitt generalized Catalan numbers at $\alpha = 2$](whitt-generalized-catalan-two-add-succ.md)
+- [Central entries of Sabar's triangle and Whitt's numbers](sabar-number-central-eq-whitt-generalize.md)
+- [Fine numbers from Whitt's generalized Catalan numbers](two-pow-mul-fine-number-eq-whitt-general.md)

@@ -1,0 +1,17 @@
+# Source cut elimination for the locked CLL calculus
+
+- [List presentations of two summands from a supplied list](present-sum-for-cut.md)
+- [List presentation of a tail without choosing a representative](present-tail-for-cut.md)
+- [Splitting a selected occurrence against a rule head](split-cut-head.md)
+- [Principal shapes of a cut-free proof at the cut proposition](cut-principal.md)
+- [Cut step exposing a principal rule or commuting the cut](cut-step.md)
+- [Cut admissibility for a bang proposition](bang-cut-adm.md)
+- [Question-mark cut via the bang case, duality and exchange](quest-cut-adm.md)
+- [Reduction of a cut between matching principal rules](cut-principal-2.md)
+- [Cut admissibility for non-exponential propositions](cut-adm-non-exponential.md)
+- [Proposition-size induction step for cut admissibility](cut-adm-of-smaller.md)
+- [Core cut admissibility procedure on list sequents](cut-adm-impl.md)
+- [Cut admissibility for cut-free classical linear logic proofs](cut-adm.md)
+- [Cut elimination by structural recursion on the proof](cut-elim-aux.md)
+- [List-based cut elimination in the source calculus](cut-elim-list.md)
+- [Cut elimination with a noncomputable list presentation](cut-elim.md)

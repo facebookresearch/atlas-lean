@@ -1,0 +1,17 @@
+# GPS model of ChIP-seq binding events
+
+- [Surviving weight of a GPS event](survivor-weight.md)
+- [The GPS M-step with component elimination](m-step.md)
+- [Expected penalized complete-data log-likelihood of GPS](penalized-q.md)
+- [Truncated GPS objective](truncated-q.md)
+- [Nonnegativity of surviving weights](survivor-weight-nonneg.md)
+- [Total surviving weight is positive iff some event survives](sum-survivor-weight-pos.md)
+- [Nonnegativity of the GPS M-step update](m-step-nonneg.md)
+- [GPS M-step update sums to one when some event survives](sum-m-step.md)
+- [Elimination](m-step-eq-zero-iff.md)
+- [GPS M-step keeps positive probability exactly on surviving events](m-step-pos-iff.md)
+- [GPS M-step at zero sparseness is the ordinary mixture M-step](m-step-zero.md)
+- [The update is an upper bound for the truncated objective](truncated-q-le-m-step.md)
+- [Truncated and penalized objectives agree when every event survives](truncated-q-eq-penalized-q.md)
+- [GPS M-step formula when every event survives](m-step-of-forall-lt.md)
+- [The M-step of the restructured model](penalized-q-le-m-step.md)

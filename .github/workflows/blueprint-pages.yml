@@ -1,0 +1,221 @@
+name: Blueprint Pages
+
+# Every PR and merge-group checks the graph, including toolchain and dependency
+# changes. Only the default branch can publish, and publishing is opt-in.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: blueprint-pages-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+env:
+  AUTOFORM_SOURCE: "https://github.com/facebookresearch/autoform-bot.git"
+
+jobs:
+  wiki:
+    name: build the wiki
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    steps:
+      # v1 and Atlas are separate packages. Indexing them with the root package
+      # makes declarations ambiguous and would link the wrong Lean source.
+      - name: Check out project
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          sparse-checkout: |
+            /*
+            !/v1/
+            !/Atlas/
+          sparse-checkout-cone-mode: false
+
+      - name: Read the reviewed Autoform pin
+        run: |
+          set -euo pipefail
+          ref="$(cat .github/autoform-ref)"
+          [[ "$ref" =~ ^[0-9a-f]{40}$ ]] || { echo "Invalid Autoform pin" >&2; exit 1; }
+          echo "AUTOFORM_REF=$ref" >> "$GITHUB_ENV"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.1"
+
+      - name: Test the wiki scripts
+        run: >-
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          --with PyYAML==6.0.3
+          python -m unittest
+          scripts.test_generate_wiki_navigation
+          scripts.test_generate_wiki_docstrings
+          scripts.test_sync_wiki
+          scripts.test_extract_v2_lean_dependencies
+          scripts.test_check_blueprint_site_navigation
+          scripts.test_blueprint_workflow
+          scripts.test_blueprint_taxonomy
+
+      - name: Free disk space for Lean caches
+        run: |
+          set -euo pipefail
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          df -h /
+
+      - name: Add swap for cold Lean builds
+        run: |
+          set -euo pipefail
+          sudo fallocate -l 16G /mnt/lean-swap
+          sudo chmod 600 /mnt/lean-swap
+          sudo mkswap /mnt/lean-swap
+          sudo swapon /mnt/lean-swap
+
+      - name: Install elan v4.2.4
+        run: |
+          set -euo pipefail
+          installer_dir="${RUNNER_TEMP}/elan-installer"
+          archive="${installer_dir}/elan-x86_64-unknown-linux-gnu.tar.gz"
+          mkdir -p "$installer_dir"
+          curl --fail --silent --show-error --location \
+            --proto '=https' --tlsv1.2 \
+            https://github.com/leanprover/elan/releases/download/v4.2.4/elan-x86_64-unknown-linux-gnu.tar.gz \
+            --output "$archive"
+          echo "42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63  $archive" \
+            | sha256sum --check --strict
+          tar xzf "$archive" -C "$installer_dir"
+          "$installer_dir/elan-init" -y --default-toolchain none
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+
+      - name: Fetch Mathlib cache
+        run: lake exe cache get
+
+      - name: Restore local build
+        id: build-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: blueprint-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+          restore-keys: |
+            blueprint-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-
+            lake-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json') }}-
+
+      # Match ci.yml's cold-runner mitigation for the two heavy production
+      # modules. The test-only module is not in the wiki's build surface.
+      - name: Build memory-heavy modules one at a time
+        run: |
+          set -euo pipefail
+          lake build MathlibExt.Combinatorics.Enumerative.Nontrivial1234_3412Classes
+          lake build MathlibExt.Combinatorics.Words.TernaryAbelianCubeFreeLowerBound
+
+      - name: Build the current v2 libraries
+        run: lake build MathlibExt CSLibExt PhyslibExt WantedExt
+
+      # No failed modules or import collisions are silently dropped. Restoring
+      # a cache does not waive a successful Lake build of this exact checkout.
+      - name: Dump declaration dependencies
+        run: |
+          set -euo pipefail
+          olean_root=.lake/build/lib/lean
+          [ -d "$olean_root" ] || olean_root=.lake/build/lib
+          : > v2-modules.txt
+          while IFS= read -r source; do
+            module="${source%.lean}"
+            module="${module//\//.}"
+            test -f "$olean_root/${source%.lean}.olean" || {
+              echo "Missing compiled module: $source" >&2
+              exit 1
+            }
+            echo "$module" >> v2-modules.txt
+          done < <(git ls-files 'MathlibExt/*.lean' 'CSLibExt/*.lean' 'PhyslibExt/*.lean' 'WantedExt/*.lean')
+          test -s v2-modules.txt
+          lake env lean --run scripts/dump_v2_dependencies.lean v2-modules.txt \
+            > v2-dependencies.jsonl
+          test -s v2-dependencies.jsonl
+          gzip -9 v2-dependencies.jsonl
+
+      - name: Collapse dependencies onto the wiki articles
+        run: >-
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          python scripts/extract_v2_lean_dependencies.py
+          v2-dependencies.jsonl.gz build/lean-dependencies.json
+
+      - name: Add the Lean-owned facts to the articles
+        run: >-
+          uv run --no-project --with "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          python scripts/sync_wiki.py lean-facts build/lean-dependencies.json
+
+      - name: Validate the theorem DAG and its declarations
+        run: >-
+          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          autoform check blueprint --lean-root .
+
+      - name: Render the blueprint
+        run: >-
+          uvx --from "git+${AUTOFORM_SOURCE}@${AUTOFORM_REF}"
+          autoform render blueprint --output site-src --lean-root .
+          --require-declarations --ileans .lake/build/lib/lean
+
+      - name: Build the Markdown site
+        run: >-
+          uvx --from mkdocs==1.6.1
+          --with mkdocs-material==9.8.0
+          --with mkdocs-literate-nav==0.6.2
+          --with pymdown-extensions==11.0.1
+          --with markdown==3.10.3
+          mkdocs build --strict
+
+      - name: Check routes, anchors, and article cards
+        run: python scripts/check_blueprint_site.py site-src site
+
+      - name: Keep dependency diagnostics
+        if: always()
+        continue-on-error: true
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: blueprint-dependencies
+          path: |
+            build/lean-dependencies.json
+            v2-dependencies.jsonl.gz
+            v2-modules.txt
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Save successful main build
+        if: success() && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group' && steps.build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lake/build
+          key: blueprint-build-${{ runner.os }}-${{ hashFiles('lean-toolchain', 'lake-manifest.json', 'lakefile.toml') }}-${{ github.sha }}
+
+      - name: Upload Pages artifact
+        if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: site
+
+  # No package or Lean code executes in the job with deployment permissions.
+  # Repository settings, not a PR, opt the official site into publication.
+  deploy:
+    needs: wiki
+    if: vars.BLUEPRINT_PAGES == 'true' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && github.event_name != 'merge_group'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0

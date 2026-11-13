@@ -1,0 +1,18 @@
+# Discrete groups of plane isometries
+
+- [The Euclidean plane for discrete isometry groups](e2.md)
+- [Isometry group of the Euclidean plane](m.md)
+- [Linear part of a plane isometry](linear-part.md)
+- [Point group of a group of plane isometries](point-group-set.md)
+- [Translation lattice](translation-lattice.md)
+- [Translation homomorphism](translation-hom.md)
+- [Translation lattice as an additive subgroup](translation-lattice-subgroup.md)
+- [Membership in the translation lattice subgroup](mem-translation-lattice-subgroup.md)
+- [Carrier of the translation lattice subgroup](coe-translation-lattice-subgroup.md)
+- [Translations are determined by their vectors](translation-hom-injective.md)
+- [Separation criterion for groups of plane isometries](is-discrete.md)
+- [The translation lattice of a discrete isometry group is discrete](translation-lattice-subgroup-discrete-to.md)
+- [Conjugating a translation by a plane isometry](conj-translation.md)
+- [The point group preserves the translation lattice](point-group-preserves-lattice.md)
+- [Classification of discrete additive subgroups of the plane](discrete-subgroup-r2-classification.md)
+- [Classification of translation lattices](translation-lattice-classification.md)

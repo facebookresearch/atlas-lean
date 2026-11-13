@@ -1,0 +1,16 @@
+# Total progeny and the hitting-time theorem
+
+- [First passage of the exploration walk](is-first-passage.md)
+- [Cyclic shift of a tuple](rotate.md)
+- [Cycle lemma](card-filter-is-first-passage-rotate.md)
+- [Walk weight of step sequences ending at zero](walk-weight.md)
+- [Hitting weight of first-passage step sequences](hitting-weight.md)
+- [Hitting-time theorem](nat-cast-mul-hitting-weight.md)
+- [Probability of first passage at time n](measure-first-passage.md)
+- [Probability of the offspring walk event as a walk weight](measure-walk.md)
+- [Otter–Dwass formula](nat-cast-mul-measure-first-passage.md)
+- [Walk weights for Poisson offspring](walk-weight-poisson.md)
+- [Borel–Tanner law](nat-cast-mul-hitting-weight-poisson.md)
+- [Borel law](hitting-weight-poisson-one.md)
+- [Mean total progeny of a Galton–Watson process](mean-total-progeny.md)
+- [Mean total progeny equals $1/(1-m)$](mean-total-progeny-eq.md)

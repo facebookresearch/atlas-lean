@@ -1,0 +1,16 @@
+# Kronecker symbol and quadratic characters
+
+- [Fundamental discriminant](is-fundamental-discriminant.md)
+- [Kronecker symbol at two](kronecker-at-two.md)
+- [Kronecker symbol at a prime](kronecker-at-prime.md)
+- [Kronecker symbol](kronecker-sym.md)
+- [Kronecker symbol with a prime denominator](kronecker-sym-prime.md)
+- [Kronecker and Jacobi symbols agree at odd primes](kronecker-sym-eq-jacobi-sym-of-prime-ne.md)
+- [Quadratic Dirichlet character of a fundamental discriminant](quadratic-dirichlet-character.md)
+- [Quadratic reciprocity for the Kronecker symbol, positive $D \equiv 1 \pmod 4$](jacobi-sym-nat-abs-eq-kronecker-sym-of-p.md)
+- [Kronecker symbol at odd primes for negative integers congruent to 1 mod 4](jacobi-sym-nat-abs-eq-kronecker-sym-of-p-2.md)
+- [Kronecker symbol at odd primes for integers congruent to 1 mod 4](jacobi-sym-nat-abs-eq-kronecker-sym-of-p-3.md)
+- [Kronecker symbol at odd numbers for integers congruent to 3 mod 4](chi4-mul-jacobi-sym-nat-abs-eq-kronecker.md)
+- [Jacobi symbol of $4m$ at an odd denominator](jacobi-sym-four-mul-of-odd.md)
+- [Jacobi symbol of $2m$ at an odd denominator](jacobi-sym-two-mul-of-odd.md)
+- [Kronecker–Jacobi bridge for 4m with m ≡ 3 mod 4](kronecker-jacobi-bridge-for-4m-with-m-3.md)

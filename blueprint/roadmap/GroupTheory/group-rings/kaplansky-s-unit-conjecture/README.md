@@ -1,0 +1,17 @@
+# Kaplansky's unit conjecture
+
+- [Generators of Gardam's presentation](generators.md)
+- [First free generator of Gardam's presentation](a.md)
+- [Second free generator of Gardam's presentation](b.md)
+- [Relators of Gardam's group](relations.md)
+- [Gardam's group](p.md)
+- [The element x of Gardam's group](x.md)
+- [The element y of Gardam's group](y.md)
+- [The element z of Gardam's group](z.md)
+- [Group ring of Gardam's group over the field with two elements](r.md)
+- [Gardam's element p](p-2.md)
+- [Gardam's element q](q.md)
+- [Gardam's element r](r-2.md)
+- [Gardam's element s](s.md)
+- [Gardam's unit](u.md)
+- [Gardam's counterexample to the unit conjecture](theorem-a.md)

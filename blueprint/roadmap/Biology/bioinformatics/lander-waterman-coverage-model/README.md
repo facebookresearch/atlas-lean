@@ -1,0 +1,15 @@
+# Lander–Waterman coverage model
+
+- [Read covering a base of a circular genome](covers.md)
+- [Depth of coverage of a base](depth.md)
+- [Normalized count of read start tuples](normalized-count.md)
+- [Normalized count agrees with the totalized uniform measure](normalized-count-eq-uniform-of-finset.md)
+- [Exact coverage count](card-uncovered.md)
+- [Exact depth law (count form)](card-depth-eq.md)
+- [Exact uncovered probability](normalized-count-uncovered.md)
+- [Exact depth law](normalized-count-depth-eq.md)
+- [Lander–Waterman limit for the uncovered fraction](tendsto-normalized-count-uncovered.md)
+- [The coverage depth tends to Poisson(`c`)](tendsto-normalized-count-depth.md)
+- [Read with no successor](no-successor.md)
+- [Count of no-successor reads (exact)](sum-card-no-successor.md)
+- [Expected number of no-successor reads (exact)](expected-no-successor.md)

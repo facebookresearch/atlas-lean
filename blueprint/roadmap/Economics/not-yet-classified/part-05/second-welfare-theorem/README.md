@@ -1,0 +1,15 @@
+# Second Welfare Theorem
+
+- [Consumption Set](consumption-set.md)
+- [Value](value.md)
+- [Is Feasible](is-feasible.md)
+- [Is Pareto Optimal](is-pareto-optimal.md)
+- [Locally Nonsatiated](locally-nonsatiated.md)
+- [Is Quasi Supporting Price](is-quasi-supporting-price.md)
+- [Is Budget Optimal](is-budget-optimal.md)
+- [Exists is Quasi Supporting Price](exists-is-quasi-supporting-price.md)
+- [Is Budget Optimal of cheaper](is-budget-optimal-of-cheaper.md)
+- [Is Quasi Equilibrium With Transfers](is-quasi-equilibrium-with-transfers.md)
+- [Is Equilibrium With Transfers](is-equilibrium-with-transfers.md)
+- [Exists is Quasi Equilibrium With Transfers](exists-is-quasi-equilibrium-with-transfe.md)
+- [Is Equilibrium With Transfers of cheaper](is-equilibrium-with-transfers-of-cheaper.md)

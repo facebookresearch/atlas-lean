@@ -1,0 +1,16 @@
+# Weighted sums of Dirichlet convolutions
+
+- [Indicator of $B_\kappa$-free integers](b-free-indicator.md)
+- [Values of the $B_\kappa$-free indicator](b-free-indicator-apply.md)
+- [The integer $1$ is $B_\kappa$-free](b-free-indicator-one.md)
+- [The prime power $p^{\kappa(p)}$ is not $B_\kappa$-free](b-free-indicator-prime-pow.md)
+- [Product formula for homogeneous sums of powers](sum-pow-mul-pow-add-eq.md)
+- [Gcd expansion of a convolution of completely multiplicative functions at a product](dirichlet-convolution-mul-eq-sum-gcd.md)
+- [Sums of a Dirichlet convolution over multiples of $r$](sum-dirichlet-convolution-mul-eq.md)
+- [Möbius expansion of weighted sums of a Dirichlet convolution](sum-mul-dirichlet-convolution-eq-sum-moe.md)
+- [Weighted summation of Dirichlet convolutions](weighted-sum-dirichlet-convolution-eq.md)
+- [The $B_\kappa$-free indicator convolved with the Möbius function](b-free-indicator-mul-moebius-apply.md)
+- [The $B_\kappa$-free indicator twisted by the principal character, convolved with $\mu$](b-free-coprime-indicator-mul-moebius.md)
+- [Asymptotic for the divisor function summed over $k$-free integers](k-free-divisor-sum-asymptotic.md)
+- [Asymptotic for the divisor function summed over $B_\kappa$-free integers](b-free-divisor-sum-asymptotic.md)
+- [Asymptotic for the divisor function summed over $B_\kappa$-free integers in a progression](b-free-divisor-sum-progression-asymptoti.md)

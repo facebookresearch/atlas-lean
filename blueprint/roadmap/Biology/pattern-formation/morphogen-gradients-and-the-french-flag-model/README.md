@@ -1,0 +1,18 @@
+# Morphogen gradients and the French flag model
+
+- [Decay length of a morphogen gradient](decay-length.md)
+- [Steady-state exponential morphogen profile](profile.md)
+- [French-flag boundary position for a threshold](threshold-position.md)
+- [Bounded steady state of the synthesis–diffusion–degradation model](is-steady-state.md)
+- [Positivity of the decay length](decay-length-pos.md)
+- [Diffusion coefficient over squared decay length equals degradation rate](div-decay-length-sq.md)
+- [Source amplitude in terms of the decay length](sqrt-mul-eq.md)
+- [Slope of the morphogen profile](has-deriv-at-profile.md)
+- [Exponential profile is a bounded steady state](is-steady-state-profile.md)
+- [Uniqueness](eq-profile-of-is-steady-state.md)
+- [Morphogen profile is strictly decreasing](profile-strict-anti.md)
+- [Profile equals the threshold at the French-flag boundary](profile-threshold-position.md)
+- [French-flag boundary](profile-eq-iff.md)
+- [French-flag regions](le-profile-iff.md)
+- [Boundary shift](threshold-position-mul.md)
+- [Doubling the source flux shifts boundaries by $\lambda \log 2$](threshold-position-two-mul.md)

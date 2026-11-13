@@ -1,0 +1,16 @@
+# Primitive non-deficient numbers
+
+- [Prime-power bound for primitive non-deficient numbers](primitive-nondeficient-prime-power-bound.md)
+- [Non-deficient number](is-nondeficient.md)
+- [Primitive non-deficient number](is-primitive-nondeficient.md)
+- [Abundancy index](abundancy-index.md)
+- [Product of $p/(p-1)$ over the prime factors](abundancy-sup.md)
+- [Even primitive non-deficient numbers with two prime factors](is-primitive-nondeficient-two-pow-mul-pr.md)
+- [Odd numbers with two prime factors are deficient](deficient-of-odd-card-prime-factors-eq-t.md)
+- [Small component for odd primitive non-deficient numbers with three or four prime factors](exists-pow-factorization-add-one-lt-two.md)
+- [Grün's bound for non-deficient numbers](grun-bounds-of-is-nondeficient.md)
+- [The power of 2 in an even primitive non-deficient number is below its radical](two-pow-factorization-add-one-lt-radical.md)
+- [Zelinsky's reciprocal bound](one-div-one-sub-mul-lt-add.md)
+- [Abundancy ratio at an exactly dividing prime power](abundancy-index-div-le.md)
+- [Generalized Puchta lemma](exists-pow-factorization-add-one-lt-max.md)
+- [Dichotomy for odd primitive non-deficient numbers](max-prime-factor-lt-sqrt-radical-or-exis.md)

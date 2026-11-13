@@ -1,0 +1,15 @@
+# Meta-analysis
+
+- [Fisher's combined statistic](fisher-statistic.md)
+- [Minus twice the log of a uniform variable is chi-square](has-law-neg-two-mul-log-uniform.md)
+- [Fisher's method for combining p-values](has-law-fisher-statistic.md)
+- [Stouffer's weighted z statistic](stouffer-statistic.md)
+- [Stouffer's method](has-law-stouffer-statistic.md)
+- [Inverse-variance weights](inverse-variance-weights.md)
+- [Inverse-variance weights sum to one](sum-inverse-variance-weights.md)
+- [Variance of the inverse-variance-weighted average](sum-sq-mul-inverse-variance-weights.md)
+- [Optimality of inverse-variance weights](inv-sum-inv-le-sum-sq-mul.md)
+- [Cochran's minimum-variance theorem for weighted averages](variance-inverse-variance-le.md)
+- [Cochran's heterogeneity statistic Q](cochran-q.md)
+- [Cochran's Q as a squared projection norm](cochran-q-eq-norm-sq.md)
+- [Cochran (1954)](has-law-cochran-q.md)

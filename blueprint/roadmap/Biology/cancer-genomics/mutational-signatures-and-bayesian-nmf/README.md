@@ -1,0 +1,18 @@
+# Mutational signatures and Bayesian NMF
+
+- [Generalized Kullback–Leibler divergence](kl-div.md)
+- [Reconstruction matrix in nonnegative matrix factorization](recon.md)
+- [Data-fit term of the ARD-NMF objective](data-fit.md)
+- [H-dependent part of the ARD-NMF objective](objective-h.md)
+- [ARD multiplicative update of H](update-h.md)
+- [The `H` update is monotone](objective-h-update-h-le.md)
+- [W-dependent part of the ARD-NMF objective](objective-w.md)
+- [ARD multiplicative update of W](update-w.md)
+- [The `W` update is monotone](objective-w-update-w-le.md)
+- [Relevance update in ARD-NMF](relevance.md)
+- [The relevance update is the exact minimizer](relevance-is-min-on.md)
+- [The minimizer is unique](relevance-unique.md)
+- [Lower bound on the relevance update](div-le-relevance.md)
+- [Pruning](relevance-eq-floor-iff.md)
+- [A pruned entry stays pruned](update-h-eq-zero.md)
+- [A pruned entry stays pruned](update-w-eq-zero.md)

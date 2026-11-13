@@ -1,0 +1,15 @@
+# The π-calculus: syntax, substitution, structural congruence, reduction
+
+- [Channel name in the π-calculus](name.md)
+- [Processes of the π-calculus](proc.md)
+- [Lifting free de Bruijn indices of a π-calculus name](lift-name.md)
+- [Lifting free de Bruijn indices of a π-calculus process](lift-proc.md)
+- [Substitution of a name into a π-calculus name](subst-name.md)
+- [Substitution of a name into a π-calculus process at a cutoff](subst-proc.md)
+- [Substitution for the innermost bound variable of a process](subst.md)
+- [Swapping adjacent de Bruijn indices in a name](swap-name-at.md)
+- [Swapping adjacent binders throughout a process](swap-proc.md)
+- [Substitution leaves constant channels and the empty process unchanged](subst-nil.md)
+- [Structural congruence of π-calculus processes](cong.md)
+- [Guarded-choice resolution in the π-calculus](select.md)
+- [Reduction relation of the π-calculus](step.md)

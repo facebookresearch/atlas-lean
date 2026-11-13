@@ -1,0 +1,16 @@
+# Luria–Delbrück distribution
+
+- [Lea–Coulson clone-size law](clone-prob.md)
+- [Convolution power of a sequence on the naturals](conv-pow.md)
+- [Luria–Delbrück distribution](ld-pmf.md)
+- [Closed form of the clone-size generating function](clone-pgf.md)
+- [Clone-size law from the founding-time density](integral-clone-size.md)
+- [The clone-size law sums to one](has-sum-clone-prob.md)
+- [Clone-size generating function](has-sum-clone-prob-mul-pow.md)
+- [`p₀`](ld-pmf-zero.md)
+- [The `p₀` method](p0-method.md)
+- [Nonnegativity of Luria–Delbrück probabilities](ld-pmf-nonneg.md)
+- [The Luria–Delbrück probabilities sum to one](has-sum-ld-pmf.md)
+- [Lea–Coulson generating function](has-sum-ld-pmf-mul-pow.md)
+- [Power form of the Lea–Coulson generating function](exp-lea-coulson-eq-rpow.md)
+- [Ma–Sandri–Sarkar recursion](ld-pmf-recursion.md)

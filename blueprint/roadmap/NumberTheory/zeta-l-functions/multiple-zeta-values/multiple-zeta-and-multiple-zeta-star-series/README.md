@@ -1,0 +1,18 @@
+# Multiple-zeta and multiple-zeta-star series
+
+- [Empty multiple-zeta index](empty.md)
+- [Entry of a multiple-zeta index](entry.md)
+- [Strictly decreasing tuples](strict-decreasing-tuple.md)
+- [Empty strictly decreasing tuple](empty-2.md)
+- [Multiple zeta summand](strict-summand.md)
+- [Admissible or empty index](is-admissible-or-empty.md)
+- [Multiple zeta value](strict-value.md)
+- [Weakly decreasing tuples](weakly-decreasing-tuple.md)
+- [Empty weakly decreasing tuple](empty-3.md)
+- [Strictly decreasing tuples as weakly decreasing tuples](to-weakly-decreasing.md)
+- [Multiple-zeta-star summand](star-summand.md)
+- [Star and strict summands agree on strictly decreasing tuples](star-summand-to-weakly-decreasing.md)
+- [Multiple zeta-star value](star-value.md)
+- [Multiple-zeta-star value of the empty index](star-value-empty.md)
+- [Repeated index](replicate.md)
+- [Repeated indices with entry at least two are admissible or empty](replicate-is-admissible-or-empty.md)

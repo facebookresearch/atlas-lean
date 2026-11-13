@@ -1,0 +1,3 @@
+# Neg
+
+Interval negation.

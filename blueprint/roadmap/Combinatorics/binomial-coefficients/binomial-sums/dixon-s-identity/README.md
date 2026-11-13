@@ -1,0 +1,18 @@
+# Dixon's identity
+
+- [Dixon's alternating cubic binomial sum](dixon-alternating-cubic-binomial-sum.md)
+- [Extended factorial](ext-fact.md)
+- [The extended factorial vanishes at negative integers](ext-fact-of-neg.md)
+- [The extended factorial of a natural number](ext-fact-nat-cast.md)
+- [Inverse factorial on the integers](inv-fact.md)
+- [The inverse factorial vanishes at negative integers](inv-fact-of-neg.md)
+- [The inverse factorial at natural numbers](inv-fact-nat-cast.md)
+- [Shift identity for the inverse factorial](inv-fact-shift.md)
+- [Integer binomial coefficient](int-binom.md)
+- [Integer binomial coefficients of natural numbers](int-binom-nat-cast.md)
+- [Integer binomial coefficients vanish at negative lower index](int-binom-of-neg-right.md)
+- [Integer binomial coefficients vanish when the lower index exceeds the upper](int-binom-of-lt.md)
+- [Term of Dixon's alternating sum](dixon-summand.md)
+- [Bound of the Dixon summation window](dixon-bound.md)
+- [The Dixon sum $\upsilon_3$](upsilon.md)
+- [Dixon's summation theorem](dixon-summation.md)

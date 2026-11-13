@@ -1,0 +1,17 @@
+# Arithmetic progressions and progression-free sets
+
+- [Set arithmetic progressions with given first term and difference](is-apof-length-with.md)
+- [Sets that are arithmetic progressions](is-apof-length.md)
+- [Cardinality of a set arithmetic progression](card.md)
+- [First term and difference of a set arithmetic progression](eq.md)
+- [List arithmetic progressions with given start and difference](is-apof-length-with-2.md)
+- [Arithmetic progressions of lists](is-apof-length-2.md)
+- [Monotone arithmetic progressions in a function](has-monotone-ap.md)
+- [Progression-free sets](is-apof-length-free.md)
+- [A progression of length greater than one is not progression-free](not-is-apof-length-free.md)
+- [Progression-free finite sets](is-apof-length-free-2.md)
+- [Sets of naturals without three-term progressions](is-apof-length-free-three.md)
+- [Largest size of a progression-free subset of $\{1, \dots, N\}$](max-card.md)
+- [Trivial upper bound for the largest progression-free subset](max-card-le.md)
+- [A largest progression-free subset is attained](max-card-spec.md)
+- [Progression-free subsets are bounded by the extremal size](card-le-max-card.md)

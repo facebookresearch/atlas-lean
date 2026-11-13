@@ -1,0 +1,16 @@
+# Canonical projection of lists of binary Nat pairs
+
+- [Projected pair lists total at most four times the input length](projection-length-le.md)
+- [Stacks of the pair-list projector](k.md)
+- [Control labels of the pair-list projector](lab.md)
+- [Stack embedding of the pair normalizer in the pair-list projector](pair-emb.md)
+- [Pair-normalizer halt redirection in the pair-list projector](pair-label.md)
+- [Program of the pair-list projector](prog.md)
+- [Eleven-stack invariant of the pair-list projector](st.md)
+- [Pair-list projector emits one weight and one value frame per item](element-run.md)
+- [Pair-list projector main loop emits both lists in reverse](blocks-run.md)
+- [Pair-list projector yields canonical weight and value lists](run-some.md)
+- [Pair-list projector fails on malformed input in linear time](run-none.md)
+- [Pair-list projector as a host component](component.md)
+- [Pair-list projector always terminates at the decoding outcome](run.md)
+- [Embedded pair-list projector preserves outside stacks](run-embedded.md)

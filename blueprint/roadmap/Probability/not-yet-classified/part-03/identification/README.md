@@ -1,0 +1,16 @@
+# Identification
+
+- [Complete Case Mean](complete-case-mean.md)
+- [Ipw Mean](ipw-mean.md)
+- [Complete Case Mean congr](complete-case-mean-congr.md)
+- [Ipw Mean congr](ipw-mean-congr.md)
+- [No respondents](complete-case-mean-of-measure-real-eq-ze.md)
+- [Complete Case Mean eq integral cond](complete-case-mean-eq-integral-cond.md)
+- [Integral indicator eq measure Real mul of indep](integral-indicator-eq-measure-real-mul-o.md)
+- [Complete-case identification](complete-case-mean-eq-integral-of-indep.md)
+- [Complete-case identification under MCAR](complete-case-mean-eq-integral-of-mcar.md)
+- [Integral cond eq integral of mcar](integral-cond-eq-integral-of-mcar.md)
+- [Integrable ipw of mar](integrable-ipw-of-mar.md)
+- [Identification by inverse-response weighting under MAR](ipw-mean-eq-integral-of-mar.md)
+- [Identification by inverse-response weighting under MAR, general covariate](integral-ipw-eq-integral-of-mar-cond-exp.md)
+- [Identification](ate-is-identified-by-complete-randomizat.md)

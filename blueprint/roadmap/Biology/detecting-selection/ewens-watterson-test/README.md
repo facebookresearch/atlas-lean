@@ -1,0 +1,16 @@
+# Ewens–Watterson test
+
+- [Number of permutations with a given cycle type](cycle-type-weight.md)
+- [Probability of a given number of alleles under the Ewens formula](num-alleles-prob.md)
+- [Ewens conditional probability given the number of alleles](ewens-cond-prob.md)
+- [Conditional upper-tail p-value of the Ewens–Watterson test](cond-upper-pvalue.md)
+- [Sample homozygosity of an allelic partition](homozygosity.md)
+- [Positivity of the cycle-type weight](cycle-type-weight-pos.md)
+- [Factorization of the Ewens sampling formula](ewens-prob-eq-mul-cycle-type-weight.md)
+- [`K` is sufficient for `θ`](ewens-cond-prob-eq.md)
+- [Cauchy's count by number of cycles](sum-cycle-type-weight-eq-stirling-first.md)
+- [Law of the number of alleles](num-alleles-prob-eq.md)
+- [The Ewens–Watterson conditional law](ewens-cond-prob-eq-stirling-first.md)
+- [Validity of a discrete upper-tail p-value](sum-upper-tail-le.md)
+- [Conditional validity of the Ewens–Watterson test](sum-cond-upper-pvalue-le-cond.md)
+- [Validity of the Ewens–Watterson test](sum-cond-upper-pvalue-le.md)

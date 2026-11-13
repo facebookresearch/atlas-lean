@@ -1,0 +1,17 @@
+# Watson's cosecant and cosine sums
+
+- [Generalized Watson trigonometric sum](watson-cos-sum.md)
+- [Watson's alternating cosecant sum](watson-alternating-cosecant-sum.md)
+- [Watson's cosine sum at $n = 2$, $\nu = 1$](watson-cos-sum-two-one.md)
+- [Watson's alternating cosecant sum at $n = 2$](watson-alternating-cosecant-sum-two.md)
+- [Odd cotangent derivatives](watson-odd-cotangent-deriv.md)
+- [Digamma evaluation of a hyperbolic Laplace integral](watson-cosh-integral-digamma.md)
+- [Watson expansion terms](watson-expansion-term.md)
+- [Almost-asymptotic expansion of Watson's cosine sum](watson-cos-sum-almost-asymptotic.md)
+- [The odd cotangent derivatives in Watson's expansion are negative](watson-odd-cotangent-deriv-neg.md)
+- [Main part of the asymptotic expansion of Watson's alternating cosecant sum](watson-alternating-main.md)
+- [Complete asymptotic expansion of Watson's alternating cosecant sum](watson-alternating-complete-asymptotic.md)
+- [Watson's alternating cosecant sum vanishes for odd $n$](watson-alternating-odd-zero.md)
+- [Two-sided bounds for Watson's alternating cosecant sum](watson-alternating-sharp-bounds.md)
+- [Decimal bounds for Watson's alternating cosecant sum](watson-alternating-simple-bounds.md)
+- [Vanishing limits of Watson's cosine sum at one sixth and five sixths](watson-cos-sum-sixth-limits.md)

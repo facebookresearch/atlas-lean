@@ -1,0 +1,16 @@
+# Rough numbers
+
+- [Rough numbers](is-rough.md)
+- [Characterization of rough numbers](is-rough-iff.md)
+- [Rough numbers are nonzero](ne-zero.md)
+- [Rough numbers are positive](pos.md)
+- [Prime divisors of a rough number exceed the bound](lt-of-prime-dvd.md)
+- [Roughness through the list of prime factors](is-rough-iff-prime-factors-list.md)
+- [The number $1$ is rough](is-rough-one.md)
+- [A prime is rough exactly above the bound](is-rough-iff-2.md)
+- [Divisors of rough numbers are rough](of-dvd.md)
+- [A product is rough exactly when both factors are](is-rough-mul.md)
+- [Products of rough numbers are rough](mul.md)
+- [Roughness is antitone in the bound](of-le.md)
+- [Only $1$ is rough and smooth at the same bound](eq-one-of-mem-smooth-numbers.md)
+- [Rough numbers other than $1$ lie in Mathlib's rough numbers up to a bound](mem-rough-numbers-up-to.md)

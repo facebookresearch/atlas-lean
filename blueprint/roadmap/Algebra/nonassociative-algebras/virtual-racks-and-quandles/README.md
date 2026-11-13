@@ -1,0 +1,17 @@
+# Virtual racks and quandles
+
+- [Automorphism group of a rack](rack-aut.md)
+- [Isomorphism of virtual racks](virtual-rack-iso.md)
+- [Number of isomorphism classes of virtual racks on a rack](virtual-rack-class-count.md)
+- [Affine permutations of the dihedral quandle](dihedral-affine-perm.md)
+- [Reflexivity of virtual rack isomorphism](virtual-rack-iso-refl.md)
+- [Affine maps are automorphisms of the dihedral quandle](dihedral-affine-perm-mem-rack-aut.md)
+- [Multiplication action of the units of $\mathbb{Z}/n\mathbb{Z}$](zmod-units-mul-aut.md)
+- [Holomorph of $\mathbb{Z}/n\mathbb{Z}$](cyclic-holomorph.md)
+- [Multiplication in the holomorph of $\mathbb{Z}/n\mathbb{Z}$](cyclic-holomorph-mk-mul-mk.md)
+- [Isomorphism of virtual structures is conjugacy](virtual-rack-iso-iff-is-conj.md)
+- [Trivial center and automorphisms of the conjugation quandle](center-eq-bot-iff-mul-aut-eq-rack-aut-co.md)
+- [Isomorphism of affine virtual dihedral quandles](dihedral-virtual-rack-iso-iff.md)
+- [Conjugacy in the holomorph of $\mathbb{Z}/n\mathbb{Z}$](cyclic-holomorph-is-conj-iff.md)
+- [Class number of the holomorph of $\mathbb{Z}/n\mathbb{Z}$](card-conj-classes-cyclic-holomorph.md)
+- [Virtual quandle structures on the dihedral quandle](virtual-rack-class-count-dihedral.md)

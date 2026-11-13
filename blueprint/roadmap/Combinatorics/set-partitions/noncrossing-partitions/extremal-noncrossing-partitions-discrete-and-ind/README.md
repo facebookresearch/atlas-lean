@@ -1,0 +1,18 @@
+# Extremal noncrossing partitions: discrete and indiscrete
+
+- [The discrete partition is noncrossing](is-noncrossing-bot.md)
+- [The indiscrete partition is noncrossing](is-noncrossing-top.md)
+- [Discrete noncrossing partition](discrete.md)
+- [The indiscrete noncrossing partition](indiscrete.md)
+- [The block of a point in the discrete noncrossing partition](block-discrete.md)
+- [The block of a point in the indiscrete noncrossing partition](block-indiscrete.md)
+- [The discrete noncrossing partition consists of the singletons](discrete-parts.md)
+- [The indiscrete partition of the empty set has no blocks](indiscrete-parts-zero.md)
+- [The discrete partition of the empty set has no blocks](discrete-parts-zero.md)
+- [The indiscrete partition of a nonempty set has a single block](indiscrete-parts-pos.md)
+- [Characterization of the discrete noncrossing partition](eq-discrete-iff-val-eq-bot.md)
+- [Characterization of the indiscrete noncrossing partition](eq-indiscrete-iff-val-eq-top.md)
+- [A partition whose blocks are all the whole set is indiscrete](eq-indiscrete-of-forall-block-eq-univ.md)
+- [The empty set has a unique noncrossing partition](eq-indiscrete-zero.md)
+- [Discrete and indiscrete partitions agree on the empty set](discrete-zero-eq-indiscrete-zero.md)
+- [The only noncrossing partition of the empty set is the discrete one](eq-discrete-zero.md)

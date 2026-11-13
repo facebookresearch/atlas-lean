@@ -1,0 +1,18 @@
+# Backwards martingales and Lévy's downward theorem
+
+- [Lévy's downward theorem, almost sure convergence](levy-downward-ae.md)
+- [Lévy's downward theorem in L¹](levy-downward-tendsto-e-lp-norm-one.md)
+- [Backwards martingale](is-backwards-martingale.md)
+- [Backwards martingale convergence theorem, almost sure convergence](backwards-martingale-ae-tendsto.md)
+- [Backwards martingale convergence theorem in L¹](backwards-martingale-tendsto-e-lp-norm-o.md)
+- [Tail sigma-algebra of a decreasing filtration](tail-algebra.md)
+- [Tail sigma-algebra lies in the ambient sigma-algebra](tail-algebra-le.md)
+- [Tail sigma-algebra lies in every level of the filtration](tail-algebra-le-seq.md)
+- [Tail sigma-algebra of a constant filtration](tail-algebra-const.md)
+- [Conditional expectations along a filtration are strongly adapted](strongly-adapted-cond-exp.md)
+- [Terms of a backwards martingale are integrable](integrable.md)
+- [Backwards martingales are uniformly integrable](uniform-integrable.md)
+- [Conditioning a backwards martingale on the next level](cond-exp-succ-ae-eq.md)
+- [Conditional expectations form a backwards martingale](is-backwards-martingale-cond-exp.md)
+- [Almost-everywhere convergent conditional expectations converge in L¹](tendsto-e-lp-norm-cond-exp-sub-of-ae-ten.md)
+- [Identifying the a.e. limit of conditional expectations](cond-exp-antitone-limit-eq.md)

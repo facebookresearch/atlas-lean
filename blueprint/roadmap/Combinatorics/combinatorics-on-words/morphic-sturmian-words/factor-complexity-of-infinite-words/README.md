@@ -1,0 +1,15 @@
+# Factor complexity of infinite words
+
+- [Factor of an infinite word](factor.md)
+- [Set of factors of a given length](factor-set.md)
+- [Initial segment of an infinite word](initial.md)
+- [Finitely many factors of each length](finite-factor-set.md)
+- [Factor as a list](factor-list.md)
+- [Lists occurring in an infinite word](is-factor.md)
+- [Nonempty factors of an infinite word](is-nonempty-factor.md)
+- [Occurrence via list-valued factors](is-factor-iff-exists-factor-list.md)
+- [Nonempty factors via list-valued factors](is-nonempty-factor-iff-exists-factor-lis.md)
+- [Nonempty factors are the factors that are nonempty](is-nonempty-factor-iff-is-factor-and-ne.md)
+- [Factors as lists and as tuples agree](is-factor-of-fn-iff-mem-factor-set.md)
+- [Factor complexity of an infinite word](word-factor-complexity.md)
+- [Factor complexity at length zero](word-factor-complexity-zero.md)

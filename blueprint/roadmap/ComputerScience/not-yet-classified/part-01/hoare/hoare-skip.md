@@ -1,0 +1,3 @@
+# Hoare skip
+
+Skip rule.
