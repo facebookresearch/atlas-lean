@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.SeismicInverse
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
 
 /-!
 # Seismic-inverse capstone checks
