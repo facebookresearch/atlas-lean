@@ -36,7 +36,9 @@ namespace MetaMathlibExt
 /-- `restrictedSumset h A` is the finset of sums of `h` distinct elements of `A`,
 implemented by imaging the `h`-element subsets of `A` under summation. It is stated for
 finsets of any additive commutative monoid (so `0^∧ A = {0}`); the paper works in `ℤ`.
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of restricted sumset. -/
+Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
+Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of
+restricted sumset. -/
 public def restrictedSumset {G : Type*} [AddCommMonoid G] [DecidableEq G] (h : ℕ)
     (A : Finset G) : Finset G :=
   (A.powersetCard h).image (fun B => ∑ a ∈ B, a)
@@ -44,7 +46,9 @@ public def restrictedSumset {G : Type*} [AddCommMonoid G] [DecidableEq G] (h : �
 /-- `restrictedSignedSumset h A` is the finset of signed sums supported on `h` distinct
 elements of `A`: `B` is the support and `N ⊆ B` is the subset given negative sign, so
 the displayed value is `∑ a ∈ B, a - 2 * ∑ a ∈ N, a`.
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of restricted signed sumset. -/
+Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
+Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of
+restricted signed sumset. -/
 public def restrictedSignedSumset (h : ℕ) (A : Finset ℤ) : Finset ℤ :=
   ((A.powersetCard h).sigma (fun B => B.powerset)).image
     (fun p => ∑ a ∈ p.1, a - 2 * ∑ a ∈ p.2, a)
@@ -53,7 +57,9 @@ public def restrictedSignedSumset (h : ℕ) (A : Finset ℤ) : Finset ℤ :=
 /-- Membership in `restrictedSumset` is equivalent to the paper's coefficient definition:
 on `A`, every `c a` is `0` or `1`, their sum is `h`, and `x` is the corresponding
 weighted sum. No deviation from the paper's definition is made.
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of restricted sumset. -/
+Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
+Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of
+restricted sumset. -/
 public theorem mem_restrictedSumset_iff (h : ℕ) (A : Finset ℤ) (x : ℤ) :
     x ∈ restrictedSumset h A ↔
       ∃ c : ℤ → ℤ,
@@ -96,7 +102,9 @@ public theorem mem_restrictedSumset_iff (h : ℕ) (A : Finset ℤ) (x : ℤ) :
 /-- Membership in `restrictedSignedSumset` is equivalent to the paper's coefficient
 definition: coefficients on `A` lie in `{-1,0,1}`, their absolute values sum to `h`, and
 `x` is their weighted sum. No deviation from the paper's definition is made.
-Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of restricted signed sumset. -/
+Source: Mohan, Raj Kumar Mistri, Ram Krishna Pandey, *Some Direct and Inverse Problems for the
+Restricted Signed Sumset in the Set of Integers*, INTEGERS 24 (2024), Article A81, Definition of
+restricted signed sumset. -/
 public theorem mem_restrictedSignedSumset_iff (h : ℕ) (A : Finset ℤ) (x : ℤ) :
     x ∈ restrictedSignedSumset h A ↔
       ∃ c : ℤ → ℤ,

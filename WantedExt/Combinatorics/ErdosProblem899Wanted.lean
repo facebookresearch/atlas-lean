@@ -15,7 +15,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Pointwise.Set.Basic
 public import Mathlib.Data.EReal.Basic
 public import Mathlib.Data.EReal.Inv
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Filter.Basic
