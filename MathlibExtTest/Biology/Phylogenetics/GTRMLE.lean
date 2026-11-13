@@ -27,8 +27,12 @@ public import Mathlib.Probability.Independence.InfinitePi
   rules out point-mass laws.)
 * The JC69 (equal-rates GTR) branch-length model on two taxa. Boundary: at branch length `0`
   the law gives probability `0` to every pattern with different bases, so positivity fails and
-  the parameter box must stay away from `0`. On `t ∈ [1, 2]` all hypotheses hold and the MLE of
-  the branch length is consistent.
+  the parameter box must stay away from `0`. On `t ∈ [1, 2]` all model hypotheses hold
+  (continuity, positivity, normalization, injectivity) and the MLE of the branch length is
+  consistent for any sample satisfying the sampling hypotheses, which are left open there; the
+  fair-coin test is the only fully discharged instance.
+* Wald's argmax theorem on an abstract criterion: the maximizers `1/(n+1)` of
+  `-(θ - 1/(n+1))²` on `[-1, 1]` converge to the identified maximum `{0}`.
 -/
 
 @[expose] public section

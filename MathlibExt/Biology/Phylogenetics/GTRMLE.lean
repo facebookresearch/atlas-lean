@@ -23,14 +23,14 @@ identified.
 ## Setting (source-frozen)
 
 Chang (1996, §5, Theorem 5.1, via the Wald-type Lemma 5.1) derives almost-sure consistency of
-the maximum-likelihood estimator of a Markov model on a tree from identifiability on a compact
-parameter space. The argument is Wald's (1949): the expected log-likelihood
+the maximum-likelihood estimator of a Markov model on a tree from point identifiability, over
+the closure of a bounded parameter space. Wald (1949) and Chang argue by a finite cover of
+neighbourhoods together with the strong law of large numbers. This file instead uses the
+uniform-LLN/argmax form of Newey–McFadden (1994, Theorem 2.1): the expected log-likelihood
 `θ ↦ ∑ a, law θ₀ a * log (law θ a)` has a well-separated maximum at the identified class of
-`θ₀` (the information inequality), and the average log-likelihood converges to it uniformly
-in `θ`. We follow the presentation of Newey–McFadden (1994): Lemma 2.2 (identification of the
-maximum-likelihood criterion by the information inequality) and Theorem 2.5 (consistency of
-maximum likelihood under identification, compactness, continuity and a dominance condition),
-proved here through the argmax argument of their Theorem 2.1.
+`θ₀` (the information inequality, their Lemma 2.2), and the average log-likelihood converges to
+it uniformly in `θ`. The result is the finite-pattern case of their Theorem 2.5 (consistency of
+maximum likelihood under identification, compactness, continuity and a dominance condition).
 
 The setting is that of the minimum-distance corollary `GTRInference` (T67), whose empirical
 frequencies and sampling-law results are reused:
@@ -41,18 +41,22 @@ frequencies and sampling-law results are reused:
 * **Positivity and normalization, as hypotheses**: `0 < law θ a` and `∑ a, law θ a = 1` for
   every `θ` and `a`. For GTR this holds when the frequencies are positive and the branch lengths
   are bounded away from `0` (at length `0` a branch forbids every pattern with different bases at
-  its ends, see the JC69 boundary test). Positivity is Newey–McFadden's dominance condition
-  `E sup_θ |log f(z | θ)| < ∞` in the finite-pattern case: with it, `log ∘ law` is continuous
-  and bounded on `Θ`.
+  its ends, see the JC69 boundary test). Positivity is stronger than both sources:
+  Newey–McFadden's dominance condition only needs a lower bound on `law θ a` over `θ` for the
+  patterns `a` in the support of `law θ₀`, and Chang needs none (he works over the closure of
+  the parameter space). It is imposed here because of the convention `Real.log 0 = 0`, under
+  which a model assigning probability `0` to an observed pattern would not be penalized.
 * **Identifiability (the T66 input), as an explicit hypothesis** `hId`: there is a class
   `E ⊆ Θ` with `law θ = law θ₀ → θ ∈ E`, the parameters equivalent to `θ₀` under the permitted
   symmetries. Its proof is the GTR identifiability theorem and is not repeated or imported.
+  Passing T66's identifiability theorem in as `hId` waits on #1565 (`GTRIdentifiability.lean`)
+  merging; it is a follow-up, not part of this file.
 * **Sampling law, as a hypothesis**: the alignment columns `X i : Ω → σ` are measurable,
   pairwise independent, identically distributed, and `P (X 0 = a) = law θ₀ a`.
 
 The **uniform law of large numbers** for the log-likelihood is *proved*, not assumed: on a
 finite pattern set the average log-likelihood is `logLik law (empiricalFreq X n ω)`, which is
-Lipschitz in the frequencies uniformly in `θ` (`abs_logLik_sub_logLik_le`), so the strong law
+Lipschitz in the frequencies uniformly in `θ` (`exists_abs_logLik_sub_logLik_le`), so the strong law
 for the pattern frequencies gives almost-sure uniform convergence
 (`ae_tendstoUniformly_logLik_empiricalFreq`).
 
@@ -78,11 +82,13 @@ with the outer measure.
   log-likelihood of the sample.
 * `logLik_lt_logLik_self`: the information (Gibbs) inequality, strict off the true law.
 * `ae_tendstoUniformly_logLik_empiricalFreq`: the uniform law of large numbers.
-* `ae_tendsto_infDist_mle`: **almost-sure consistency** of the GTR MLE up to the symmetries
-  (Chang's Theorem 5.1 form).
+* `ae_tendsto_infDist_mle`: **almost-sure consistency** of the GTR MLE up to the symmetries,
+  a generalization of Chang's Lemma 5.1 from point identification to identification up to a
+  class `E`.
 * `tendstoInMeasure_infDist_mle`: consistency in probability (the T67 form).
-* `tendstoInMeasure_mle_of_injective`, `ae_tendsto_mle_of_injective`: with full
-  identifiability, `est n → θ₀`.
+* `ae_tendsto_mle_of_injective`: with full identifiability, `est n → θ₀` almost surely; the
+  direct analogue of Chang's Lemma 5.1, under positivity.
+* `tendstoInMeasure_mle_of_injective`: with full identifiability, `est n → θ₀` in probability.
 
 ## Scope
 
@@ -94,10 +100,11 @@ parameters with zero-probability patterns are outside this file.
 * A. Wald, *Note on the consistency of the maximum likelihood estimate*, Annals of Mathematical
   Statistics 20 (1949), 595–601.
 * J. T. Chang, *Full reconstruction of Markov models on evolutionary trees: identifiability and
-  consistency*, Mathematical Biosciences 137 (1996), 51–73; §5, Lemma 5.1 and Theorem 5.1.
+  consistency*, Mathematical Biosciences 137 (1996), 51–73; §5, Theorem 5.1 (p. 70) and
+  Lemma 5.1 (pp. 70–71).
 * W. K. Newey and D. McFadden, *Large sample estimation and hypothesis testing*, Handbook of
-  Econometrics, vol. 4, ch. 36, Elsevier, 1994, pp. 2111–2245; Theorem 2.1, Lemma 2.2 and
-  Theorem 2.5.
+  Econometrics, vol. 4, ch. 36, Elsevier, 1994, pp. 2111–2245; Theorem 2.1 (p. 2121),
+  Lemma 2.2 (p. 2124) and Theorem 2.5 (p. 2131).
 -/
 
 @[expose] public section
@@ -393,11 +400,13 @@ theorem tendstoInMeasure_infDist_mle_of_tendstoInMeasure {law : Θ → σ → �
 
 variable [DecidableEq σ] [MeasurableSpace σ] [MeasurableSingletonClass σ] [IsFiniteMeasure P]
 
-/-- **Almost-sure consistency of the GTR maximum-likelihood estimator** (Chang, Theorem 5.1;
-Newey–McFadden, Theorem 2.5). Let `Θ` be compact, `law` continuous, positive and normalized,
-and `θ₀` identified up to the class `E` (`hId`, the T66 input). If the alignment columns are
-pairwise independent and identically distributed with `P (X 0 = a) = law θ₀ a`, every MLE
-`est` satisfies `infDist (est n ω) E → 0` for almost every `ω`. -/
+/-- **Almost-sure consistency of the GTR maximum-likelihood estimator**, a generalization of
+Chang's Lemma 5.1 from point identification to identification up to a class `E`
+(Newey–McFadden, Theorem 2.5, finite-pattern case). Let `Θ` be compact, `law` continuous,
+positive and normalized, and `θ₀` identified up to the class `E` (`hId`, the T66 input). If the
+alignment columns are pairwise independent and identically distributed with
+`P (X 0 = a) = law θ₀ a`, every MLE `est` satisfies `infDist (est n ω) E → 0` for almost
+every `ω`. -/
 theorem ae_tendsto_infDist_mle {law : Θ → σ → ℝ} (hlaw : Continuous law)
     (hpos : ∀ θ a, 0 < law θ a) (hsum : ∀ θ, ∑ a, law θ a = 1) {θ₀ : Θ} {E : Set Θ}
     (hId : ∀ θ, law θ = law θ₀ → θ ∈ E) {X : ℕ → Ω → σ} (hX : ∀ i, Measurable (X i))
@@ -433,7 +442,8 @@ theorem tendstoInMeasure_infDist_mleEstimator [Nonempty Θ] {law : Θ → σ →
   tendstoInMeasure_infDist_mle hlaw hpos hsum hId hX hindep hident hsample (isMLE_mle hlaw hpos _)
 
 /-- **Full identifiability, almost surely**: if `law` is injective at `θ₀`, every MLE converges
-to `θ₀` almost surely. -/
+to `θ₀` almost surely. This is the direct analogue of Chang's Lemma 5.1, under the positivity
+hypothesis `hpos`. -/
 theorem ae_tendsto_mle_of_injective {law : Θ → σ → ℝ} (hlaw : Continuous law)
     (hpos : ∀ θ a, 0 < law θ a) (hsum : ∀ θ, ∑ a, law θ a = 1) {θ₀ : Θ}
     (hId : ∀ θ, law θ = law θ₀ → θ = θ₀) {X : ℕ → Ω → σ} (hX : ∀ i, Measurable (X i))
