@@ -282,18 +282,6 @@ private lemma true_inter_false {Ω : Type*} (X : ℕ → Ω → Bool) (j : ℕ) 
   rw [h1] at h2
   simp at h2
 
-private lemma sdiff_erase_eq {s t : Finset ℕ} {j : ℕ} :
-    (s.erase j) \ t = (s \ t).erase j := by
-  ext x
-  simp [Finset.mem_erase, Finset.mem_sdiff]
-  tauto
-
-private lemma insert_sdiff_eq {s t : Finset ℕ} {j : ℕ} :
-    s \ insert j t = (s \ t).erase j := by
-  ext x
-  simp [Finset.mem_erase, Finset.mem_sdiff]
-  tauto
-
 private lemma pat_split {Ω : Type*} (X : ℕ → Ω → Bool) (s t : Finset ℕ) (j : ℕ)
     (hjmem : j ∈ s \ t) :
     let E_mid := (t.inf fun i => {ω : Ω | X i ω = true}) ∩
@@ -306,9 +294,9 @@ private lemma pat_split {Ω : Type*} (X : ℕ → Ω → Bool) (s t : Finset ℕ
   have hjs : j ∈ s := (Finset.mem_sdiff.mp hjmem).1
   have hjt : j ∉ t := (Finset.mem_sdiff.mp hjmem).2
   have hsdiff : s \ t = insert j ((s \ t).erase j) := (Finset.insert_erase hjmem).symm
-  have hmid_eq : (s.erase j) \ t = (s \ t).erase j := sdiff_erase_eq
+  have hmid_eq : (s.erase j) \ t = (s \ t).erase j := Finset.erase_sdiff_comm s t j
   have hE2sdiff : s \ insert j t = (s.erase j) \ t := by
-    rw [insert_sdiff_eq, hmid_eq]
+    rw [Finset.sdiff_insert, hmid_eq]
   have hinf_false : ((s \ t).inf fun i => {ω : Ω | X i ω = false})
       = {ω : Ω | X j ω = false} ∩ (((s.erase j) \ t).inf fun i => {ω : Ω | X i ω = false}) := by
     conv_lhs => rw [hsdiff, ← hmid_eq]
@@ -415,14 +403,14 @@ private lemma pattern_aux {Ω : Type*} [MeasurableSpace Ω]
         exact absurd hx hjt
       · exact hsub hx
     have hcard_mid : ((s.erase j) \ t).card = k := by
-      have h1 : (s.erase j) \ t = (s \ t).erase j := sdiff_erase_eq
+      have h1 : (s.erase j) \ t = (s \ t).erase j := Finset.erase_sdiff_comm s t j
       rw [h1]
       have h2 := Finset.card_erase_add_one hjmem
       omega
     have hsub_ins : insert j t ⊆ s := by
       apply Finset.insert_subset hjs hsub
     have hcard_ins : (s \ insert j t).card = k := by
-      have h1 : s \ insert j t = (s \ t).erase j := insert_sdiff_eq
+      have h1 : s \ insert j t = (s \ t).erase j := Finset.sdiff_insert s t j
       rw [h1]
       have h2 := Finset.card_erase_add_one hjmem
       omega

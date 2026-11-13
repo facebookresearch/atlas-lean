@@ -8,8 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Matrix.Mul
+public import MathlibExt.Economics.Consumer.BudgetSet
 
 /-!
 # The two-good consumer problem
@@ -40,12 +39,6 @@ Atlas roadmap module EC03 (worked demand models).
 namespace MathlibExt.Economics.Consumer
 
 open Matrix
-
-/-- The budget set `B(p, w) = {x ∈ X | p ⬝ᵥ x ≤ w}`: affordable consumption
-bundles in the consumption set `X` at prices `p` and wealth `w`. -/
-def budgetSet {ι : Type*} [Fintype ι] (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) :
-    Set (ι → ℝ) :=
-  {x | x ∈ X ∧ p ⬝ᵥ x ≤ w}
 
 /-- `x` is a Marshallian (utility-maximizing) demand at `(p, w)`: it is
 affordable and no affordable bundle gives strictly higher utility. -/
