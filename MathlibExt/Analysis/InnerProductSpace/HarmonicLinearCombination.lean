@@ -13,9 +13,10 @@ public import Mathlib.Analysis.InnerProductSpace.Laplacian
 /-!
 # Linear combinations of harmonic functions remain harmonic
 
-If `f` and `g` are twice continuously differentiable at a point `x` and
-harmonic there (`Δ f x = 0`, `Δ g x = 0`), then every linear combination
-`a • f + b • g` is harmonic there.
+If `f` and `g`, defined on a finite-dimensional real inner product space
+and valued in a real normed space, are twice continuously differentiable at
+a point `x` and harmonic there (`Δ f x = 0`, `Δ g x = 0`), then every
+linear combination `a • f + b • g` is harmonic there.
 
 ## i. Overview
 
@@ -31,7 +32,7 @@ scalar multiplication (`ContDiffAt.laplacian_smul`), so
 
 ## iii. References
 
-- `ContDiffAt.laplacian_add`, `ContDiffAt.laplacian_smul` (Mathlib).
+- `ContDiffAt.laplacian_add`, `InnerProductSpace.laplacian_smul` (Mathlib).
 -/
 
 @[expose] public section
@@ -43,8 +44,9 @@ namespace MathlibExt.Analysis
 /-- Linear combinations of harmonic functions remain harmonic on their
 common domain: if `f` and `g` are twice continuously differentiable at `x`
 and `Δ f x = 0`, `Δ g x = 0`, then `Δ (a • f + b • g) x = 0`. -/
-theorem laplacian_linear_combination_eq_zero {f g : EuclideanSpace ℝ (Fin 3) → ℝ}
-    {a b : ℝ} {x : EuclideanSpace ℝ (Fin 3)}
+theorem laplacian_linear_combination_eq_zero {E F : Type*} [NormedAddCommGroup E]
+    [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] [NormedAddCommGroup F]
+    [NormedSpace ℝ F] {f g : E → F} {a b : ℝ} {x : E}
     (hf : ContDiffAt ℝ 2 f x) (hg : ContDiffAt ℝ 2 g x)
     (hf0 : Δ f x = 0) (hg0 : Δ g x = 0) :
     Δ (a • f + b • g) x = 0 := by
