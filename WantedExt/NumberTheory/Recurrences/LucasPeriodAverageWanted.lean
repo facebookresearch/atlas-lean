@@ -452,14 +452,14 @@ public theorem_wanted lucasAllAveragesIntegral_of_dvd_q (params : LucasSequenceP
     lucasAllAveragesIntegral params n ∧ lucasAllAveragesIntegral params (m * n)
 
 /-- Theorem 2.13: for nondegenerate `U(a, b)` with `d = gcd(a, b) > 1` and
-`gcd(n, d) > 1`, `A_U(n)` is not an integer.
+`gcd(n, d) > 1`, `A_U(n)` is not an integer for positive `n`.
 
 Source: Michal Křížek and Lawrence Somer, *Period Lengths Modulo n and Average of Terms of
 Second Order Linear Recurrences*, INTEGERS 24 (2024), Article A36, Theorem 2.13
 (`integers-2024-A36-thm-2-13`). -/
 public theorem_wanted not_dvd_lucasU_sum_of_gcd (params : LucasSequenceParams)
     (hnd : IsNondegenerateLucasPair params.p params.q) (hd : 1 < Int.gcd params.p params.q) (n : ℕ)
-    (hn : 1 < Nat.gcd n (Int.gcd params.p params.q)) :
+    (hn0 : 0 < n) (hn : 1 < Nat.gcd n (Int.gcd params.p params.q)) :
     ¬ (n : ℤ) ∣ ∑ i ∈ Finset.Icc 1 n, lucasU params i
 
 /-- Theorem 2.14: for nondegenerate `U(a, b)` with `a` even and `b` odd, `B_U(n)` is odd and
