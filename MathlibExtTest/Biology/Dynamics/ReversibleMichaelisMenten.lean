@@ -127,16 +127,17 @@ example : revField 1 1 1 1 ![1, 0, 0, 0] = 0 ∧ revField 1 1 1 1 ![0, 0, 0, 1] 
   · ext i; fin_cases i <;> norm_num [revField, substrateRate, revComplexRate, complexRate,
       revProductRate]
 
-/-- **`k₋₂ = 0`: no positive equilibrium.** In the irreversible limit the concrete
-detailed-balanced state is not an equilibrium (product keeps forming), so the hypothesis
-`0 < kb₂` of `existsUnique_equilibrium` / `pos_of_equilibrium` is needed. -/
+/-- **`k₋₂ = 0`.** In the irreversible limit the concrete detailed-balanced state above is no
+longer an equilibrium: product keeps forming. -/
 example : revField 1 1 1 0 ![1, 1 / 2, 1 / 2, 1] ≠ 0 := by
   intro h
   have := congrFun h 3
   norm_num [revField, revProductRate] at this
 
-/-- In the irreversible limit the equilibrium of the class `E_T = 1`, `S_T = 1` has all
-substrate converted: `(0, 0, 1, 1)`. -/
+/-- **`k₋₂ = 0`: `pos_of_equilibrium` needs `0 < kb₂`.** With `k₁, k₋₁, k₂ > 0` and
+`k₋₂ = 0`, `(0, 0, 1, 1)` is a nonnegative equilibrium of the class `E_T = 1`, `S_T = 1` with
+zero coordinates (all substrate converted). Uniqueness alone survives `k₋₂ = 0`: `p' = 0` forces
+`c = 0`, then `s' = 0` forces `s = 0`, leaving only `(0, 0, E_T, S_T)`. -/
 example : revField 1 1 1 0 ![0, 0, 1, 1] = 0 := by
   ext i; fin_cases i <;> norm_num [revField, substrateRate, revComplexRate, complexRate,
     revProductRate]

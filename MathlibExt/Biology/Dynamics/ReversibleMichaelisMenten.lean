@@ -52,9 +52,11 @@ For `k₋₂ = 0` this is the irreversible system `MichaelisMenten.IsSolution`
 
 ## Not covered
 
-Convergence of every solution to the equilibrium of its class (global asymptotic stability, e.g.
-via the pseudo-Helmholtz Lyapunov function of `MathlibExt.Biology.Dynamics.ComplexBalanced`
-and a LaSalle argument) is **not** proved here; neither file provides it.
+Convergence of every solution to the equilibrium of its class (global asymptotic stability) is
+**not** proved here. A Lyapunov function exists in the repository: the pseudo-Helmholtz function
+of `MathlibExt.Biology.Dynamics.ComplexBalanced` is nonincreasing along positive solutions
+(`antitoneOn_pseudoHelmholtz`). What is missing is the LaSalle-type convergence step, which
+neither file provides.
 
 ## Source receipt (API-00 reuse gate)
 
@@ -76,14 +78,14 @@ here is shorter, and covers nonnegative (not only positive) equilibria.
 Mathematical source: Keener–Sneyd, *Mathematical Physiology I*, §1.4 (enzyme kinetics: the
 mass-action system of the Michaelis–Menten mechanism and its conservation laws); Cornish-Bowden,
 *Fundamentals of Enzyme Kinetics*, ch. 2 (the reversible Michaelis–Menten mechanism and the
-Haldane relationship `K_eq = k₁ k₂ / (k₋₁ k₋₂)`); Segel–Slemrod §2 for the well-posedness
-argument.
+Haldane relationship `K_eq = k₁ k₂ / (k₋₁ k₋₂)`); Segel–Slemrod §2 (the mass-action
+formulation).
 
 ## References
 
 * J. Keener and J. Sneyd, *Mathematical Physiology I: Cellular Physiology*, 2nd ed., Springer
   (2009), §1.4.
-* A. Cornish-Bowden, *Fundamentals of Enzyme Kinetics*, 4th ed., Wiley-Blackwell (2012), §2.7.
+* A. Cornish-Bowden, *Fundamentals of Enzyme Kinetics*, 4th ed., Wiley-Blackwell (2012), ch. 2.
 * J. B. S. Haldane, *Enzymes*, Longmans, Green and Co. (1930).
 * L. A. Segel and M. Slemrod, *The quasi-steady-state assumption: a case study in
   perturbation*, SIAM Rev. 31 (1989) 446–477, §2.
