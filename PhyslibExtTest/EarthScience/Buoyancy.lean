@@ -1,4 +1,4 @@
- /-
+/-
 Copyright (c) Meta Platforms, Inc. and affiliates.
 All rights reserved.
 
@@ -12,10 +12,10 @@ import Mathlib.Tactic.NormNum
 import PhyslibExt.EarthScience.Buoyancy
 
 /-!
-# Integral buoyancy checks
+# Buoyancy checks
 
 Concrete consumers of `PhyslibExt.EarthScience.Buoyancy`:
-`rho = 500, g = 10, A = 3, h = 2` (force `30000`), neutral buoyancy
+`rho = 500, g = 10, A = 3, h = 2` (force `30000`), the weight identity
 at half-submersion, and the emerge case `h = 0`.
 
 ## i. Overview
@@ -45,10 +45,9 @@ example : ((0:ℝ) + 500 * 10 * 2) * 3 - 0 * 3 = 500 * 10 * 3 * 2 :=
 /-- Pressure difference: `rho = 500, g = 10, h = 2` gives `10000`. -/
 example : ((0:ℝ) + 500 * 10 * 2) - 0 = 10000 := by norm_num
 
-/-- Neutral buoyancy: `rho = 1000, rho_b = 500, A = 2, H = 4` balances at `h = 2`. -/
+/-- Weight identity: `rho = 1000, rho_b = 500, A = 2, H = 4` balances at `h = 2`. -/
 example : (500:ℝ) * (2 * 4) * 10 = 1000 * 10 * 2 * ((500 / 1000) * 4) :=
-  EarthScience.neutral_buoyancy (by norm_num)
+  EarthScience.weight_eq_buoyancy_at_ratio_height (by norm_num)
 
 /-- Emerge: `h = 0` gives zero buoyancy force. -/
 example : ((0:ℝ) + 1000 * 10 * 0) * 2 - 0 * 2 = 0 := by norm_num
-
