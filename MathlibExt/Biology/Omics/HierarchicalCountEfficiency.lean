@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Biology.Omics.HierarchicalCountMLE
 public import MathlibExt.Probability.Statistics.VectorInference
+public import MathlibExt.Probability.Statistics.GodambeInequality
 public import Mathlib.Analysis.CStarAlgebra.Matrix
 
 /-!
@@ -50,11 +51,10 @@ The hyperparameter is a vector `θ = (a, b) ∈ EuclideanSpace ℝ (Fin 2)` (sha
 * `tendstoInDistribution_mom`: `√n (momEstimator σ X n - θ₀) → -J⁻¹ N(0, E[g gᵀ])`, with no root
   or consistency hypothesis (`sum_momEstFun_mom_eq_zero`, the strong law, and
   `tendsto_mom_of_tendsto`).
-* `inner_inverse_le_integral_inner_sq`: Godambe's information inequality for estimating
-  functions.
 * `inner_inverse_countFisherInfo_le` and `variance_inner_countMLE_limit_le`: in every direction
   `u`, `⟪I⁻¹ u, u⟫ ≤ E ⟪g, (J⁻¹)ᵀ u⟫²`, i.e. the variance of every projection of the MLE limit is
-  at most that of the moment-estimator limit.
+  at most that of the moment-estimator limit. This applies Godambe's information inequality
+  for estimating functions (`GodambeInequality.inner_inverse_le_integral_inner_sq`).
 
 Source receipt: Cramér, *Mathematical Methods of Statistics* (1946), §33.3, and Lehmann and
 Casella, *Theory of Point Estimation* (1998), Theorem 6.5.1 (asymptotic normality of consistent
@@ -99,10 +99,9 @@ increment and the closed form `log_marginalLik_eq` from `HierarchicalCountMLE`; 
 `momRate`, `sampleMean`, `sampleVar`, `eq_mom_of_moment_equations` and `tendsto_mom_of_tendsto`
 from `HierarchicalCount`; the strong law is Mathlib's `strong_law_ae`. No Godambe/estimating-
 function information inequality existed; `VectorInference.cramerRao` is the unbiased-estimator
-bound, a different statement. `inner_inverse_le_integral_inner_sq` is general (any measure, any
-real inner product space) and is a candidate for promotion to `MathlibExt/Probability/Statistics`;
-it lives here only because this task owns this file. The 2×2 operators are
-`Matrix.toEuclideanCLM`.
+bound, a different statement. The general inequality (any measure, any real inner product
+space) is `MathlibExt.Probability.Statistics.GodambeInequality.inner_inverse_le_integral_inner_sq`,
+in its own statistics module. The 2×2 operators are `Matrix.toEuclideanCLM`.
 
 ## References
 
@@ -123,6 +122,8 @@ open scoped RealInnerProductSpace
 open MathlibExt.Probability.Statistics.VectorInference
   (tendstoInDistribution_sqrt_smul_sub_of_estimatingEquation apply_inverse_apply
     inverse_apply_apply inner_inverse_comm isUnit_of_inner_self_pos)
+open MathlibExt.Probability.Statistics.GodambeInequality
+  (integrable_inner_smul inner_inverse_le_integral_inner_sq)
 
 namespace MathlibExt.Biology.Omics.HierarchicalCount
 
@@ -1150,82 +1151,6 @@ theorem tendstoInDistribution_mom {Ω Ω' : Type*} [MeasurableSpace Ω] [Measura
   exact h
 
 /-! ### Efficiency of the MLE relative to the moment estimator -/
-
-section Godambe
-
-variable {𝓧 : Type*} [MeasurableSpace 𝓧] {μ : Measure 𝓧}
-  {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-
-private lemma integrable_inner_sq {f : 𝓧 → E} (hf_meas : AEStronglyMeasurable f μ)
-    (hf_sq : Integrable (fun x => ‖f x‖ ^ 2) μ) (w : E) :
-    Integrable (fun x => ⟪f x, w⟫ ^ 2) μ :=
-  (hf_sq.mul_const (‖w‖ ^ 2)).mono' ((hf_meas.inner aestronglyMeasurable_const).pow 2)
-    (ae_of_all _ fun x => by
-      rw [norm_pow, Real.norm_eq_abs, sq_abs, ← mul_pow]
-      calc ⟪f x, w⟫ ^ 2 = |⟪f x, w⟫| ^ 2 := (sq_abs _).symm
-        _ ≤ (‖f x‖ * ‖w‖) ^ 2 := pow_le_pow_left₀ (abs_nonneg _) (abs_real_inner_le_norm _ _) 2)
-
-private lemma integrable_inner_smul {f g : 𝓧 → E} (hf_meas : AEStronglyMeasurable f μ)
-    (hf_sq : Integrable (fun x => ‖f x‖ ^ 2) μ) (hg_meas : AEStronglyMeasurable g μ)
-    (hg_sq : Integrable (fun x => ‖g x‖ ^ 2) μ) (w : E) :
-    Integrable (fun x => ⟪g x, w⟫ • f x) μ :=
-  ((integrable_inner_sq hg_meas hg_sq w).add hf_sq).mono'
-    ((hg_meas.inner aestronglyMeasurable_const).smul hf_meas)
-    (ae_of_all _ fun x => by
-      rw [norm_smul, Real.norm_eq_abs]
-      change |⟪g x, w⟫| * ‖f x‖ ≤ ⟪g x, w⟫ ^ 2 + ‖f x‖ ^ 2
-      nlinarith [sq_nonneg (|⟪g x, w⟫| - ‖f x‖), sq_abs ⟪g x, w⟫, abs_nonneg ⟪g x, w⟫,
-        norm_nonneg (f x)])
-
-variable [CompleteSpace E]
-
-/-- **Information inequality for estimating functions** (Godambe 1960). Let `s, g : 𝓧 → E` be
-square integrable (a score and an estimating function) and let `I` be the invertible operator
-with `⟪I z, z⟫ = E ⟪s, z⟫²` (the Fisher information `E[s sᵀ]`). For every `w`, with
-`v = E[⟪g, w⟫ s]`, `⟪I⁻¹ v, v⟫ ≤ E ⟪g, w⟫²`: the information about `θ` carried by the linear
-combination `⟪g, w⟫` of the estimating function is at most the Fisher information. The proof is
-`0 ≤ E (⟪g, w⟫ - ⟪s, I⁻¹ v⟫)²`.
-
-Source: V. P. Godambe, *An optimum property of regular maximum likelihood estimation*, Ann.
-Math. Statist. 31 (1960), 1208–1211. -/
-theorem inner_inverse_le_integral_inner_sq {s g : 𝓧 → E} (hs_meas : AEStronglyMeasurable s μ)
-    (hs_sq : Integrable (fun x => ‖s x‖ ^ 2) μ) (hg_meas : AEStronglyMeasurable g μ)
-    (hg_sq : Integrable (fun x => ‖g x‖ ^ 2) μ) {I : E →L[ℝ] E} (hI : IsUnit I)
-    (hI_quad : ∀ z, ⟪I z, z⟫ = ∫ x, ⟪s x, z⟫ ^ 2 ∂μ) (w : E) :
-    ⟪Ring.inverse I (∫ x, ⟪g x, w⟫ • s x ∂μ), ∫ x, ⟪g x, w⟫ • s x ∂μ⟫ ≤
-      ∫ x, ⟪g x, w⟫ ^ 2 ∂μ := by
-  set v := ∫ x, ⟪g x, w⟫ • s x ∂μ
-  set z := Ring.inverse I v
-  have hIz : I z = v :=
-    apply_inverse_apply hI v
-  have hgw : AEStronglyMeasurable (fun x => ⟪g x, w⟫) μ :=
-    hg_meas.inner aestronglyMeasurable_const
-  have hsz : AEStronglyMeasurable (fun x => ⟪s x, z⟫) μ :=
-    hs_meas.inner aestronglyMeasurable_const
-  have hgw2 := integrable_inner_sq hg_meas hg_sq w
-  have hsz2 := integrable_inner_sq hs_meas hs_sq z
-  have hprod : Integrable (fun x => ⟪g x, w⟫ * ⟪s x, z⟫) μ :=
-    (hgw2.add hsz2).mono' (hgw.mul hsz) (ae_of_all _ fun x => by
-      rw [norm_mul, Real.norm_eq_abs, Real.norm_eq_abs]
-      change |⟪g x, w⟫| * |⟪s x, z⟫| ≤ ⟪g x, w⟫ ^ 2 + ⟪s x, z⟫ ^ 2
-      nlinarith [sq_nonneg (|⟪g x, w⟫| - |⟪s x, z⟫|), sq_abs ⟪g x, w⟫, sq_abs ⟪s x, z⟫])
-  have hC : ⟪z, v⟫ = ∫ x, ⟪g x, w⟫ * ⟪s x, z⟫ ∂μ := by
-    rw [← integral_inner (integrable_inner_smul hs_meas hs_sq hg_meas hg_sq w) z]
-    refine integral_congr_ae (ae_of_all _ fun x => ?_)
-    simp only
-    rw [real_inner_smul_right, real_inner_comm (s x) z]
-  have hQ : ∫ x, ⟪s x, z⟫ ^ 2 ∂μ = ⟪z, v⟫ := by rw [← hI_quad, hIz, real_inner_comm]
-  have hnonneg : 0 ≤ ∫ x, (⟪g x, w⟫ - ⟪s x, z⟫) ^ 2 ∂μ := integral_nonneg fun x => sq_nonneg _
-  have hexp : ∫ x, (⟪g x, w⟫ - ⟪s x, z⟫) ^ 2 ∂μ = ∫ x, ⟪g x, w⟫ ^ 2 ∂μ -
-      2 * ∫ x, ⟪g x, w⟫ * ⟪s x, z⟫ ∂μ + ∫ x, ⟪s x, z⟫ ^ 2 ∂μ := by
-    have e : ∀ x, (⟪g x, w⟫ - ⟪s x, z⟫) ^ 2 =
-        ⟪g x, w⟫ ^ 2 - 2 * (⟪g x, w⟫ * ⟪s x, z⟫) + ⟪s x, z⟫ ^ 2 := fun x => by ring
-    simp_rw [e]
-    rw [integral_add _ hsz2, integral_sub hgw2 (hprod.const_mul 2), integral_const_mul]
-    exact hgw2.sub (hprod.const_mul 2)
-  linarith
-
-end Godambe
 
 /-- **Efficiency of the count MLE relative to the moment estimator.** Let the count law `μX`
 have finite fourth moment, let `θ₀ = (a, b)` with `a, b, σ > 0` satisfy the profile-information
