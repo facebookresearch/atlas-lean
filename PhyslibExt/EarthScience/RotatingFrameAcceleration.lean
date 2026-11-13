@@ -23,8 +23,10 @@ acceleration decomposes, with the declared sign convention, as
 
 where `a_rot` is the acceleration measured in the rotating frame, `v_rot`
 the rotating-frame velocity, and `r` the position. The Coriolis term is
-`2 Ω × v_rot` and the centrifugal term is `Ω × (Ω × r)`. The Euler term
-`Ω̇ × r` vanishes for constant `Ω` and does not appear. Formally, the
+`2 Ω × v_rot` and the centripetal term is `Ω × (Ω × r)`, which points
+toward the rotation axis; its negative is the centrifugal acceleration of
+the rotating-frame equation of motion. The Euler term `Ω̇ × r` vanishes for
+constant `Ω` and does not appear. Formally, the
 inertial acceleration is the rotating-frame derivative of the inertial
 velocity `w = v + Ω × r` plus the transport correction `Ω × w`; expanding
 that correction gives the decomposition. The transport law itself
@@ -65,8 +67,9 @@ of the inertial velocity plus the transport correction `Ω × w`):
 where `a` is the rotating-frame acceleration, `v` the rotating-frame
 velocity, `r` the position, and `Ω × ·` is the Mathlib cross product `⨯₃`.
 The first term on the right is the rotating-frame acceleration, the
-second is Coriolis, the third centrifugal. The Euler term `Ω̇ × r`
-vanishes for constant `Ω` and does not appear. -/
+second is Coriolis, the third centripetal (its negative is the
+centrifugal acceleration). The Euler term `Ω̇ × r` vanishes for constant
+`Ω` and does not appear. -/
 theorem rotating_acceleration_decomposition (Ω v a r : Fin 3 → ℝ) :
     (a + Ω ⨯₃ v) + Ω ⨯₃ (v + Ω ⨯₃ r) =
       a + 2 • (Ω ⨯₃ v) + Ω ⨯₃ (Ω ⨯₃ r) := by

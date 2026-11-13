@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.RotatingFrameAcceleration
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
 
 open scoped Matrix
 
@@ -46,6 +48,25 @@ example : (![0, 1, 0] : Fin 3 → ℝ) + ![0, 0, 1] ⨯₃ ![1, 0, 0] +
   have h := EarthScience.rotating_acceleration_decomposition
     ![0, 0, 1] ![1, 0, 0] ![0, 1, 0] ![1, 1, 0]
   exact h
+
+/-- The left side of the numeric instance evaluates to `(-1, 2, 0)`. -/
+example : (![0, 1, 0] : Fin 3 → ℝ) + ![0, 0, 1] ⨯₃ ![1, 0, 0] +
+      ![0, 0, 1] ⨯₃ (![1, 0, 0] + ![0, 0, 1] ⨯₃ ![1, 1, 0]) = ![-1, 2, 0] := by
+  ext i
+  fin_cases i <;> norm_num [cross_apply]
+
+/-- The right side evaluates to `(-1, 2, 0)`: rotating-frame acceleration
+`(0, 1, 0)`, Coriolis term `2 • (0, 1, 0)`, centripetal term `(-1, -1, 0)`. -/
+example : (![0, 1, 0] : Fin 3 → ℝ) + 2 • (![0, 0, 1] ⨯₃ ![1, 0, 0]) +
+      ![0, 0, 1] ⨯₃ (![0, 0, 1] ⨯₃ ![1, 1, 0]) = ![-1, 2, 0] := by
+  ext i
+  fin_cases i <;> simp [cross_apply]
+
+/-- The centripetal term points toward the rotation axis: for `Ω = (0, 0, 1)`
+and `r = (1, 1, 0)`, `Ω × (Ω × r) = (-1, -1, 0)`. -/
+example : (![0, 0, 1] : Fin 3 → ℝ) ⨯₃ (![0, 0, 1] ⨯₃ ![1, 1, 0]) = ![-1, -1, 0] := by
+  ext i
+  fin_cases i <;> simp [cross_apply]
 
 /-- Derivative version applied to abstract data. -/
 example (Ω : Fin 3 → ℝ) (r v : ℝ → Fin 3 → ℝ) (a : Fin 3 → ℝ) (t : ℝ)
