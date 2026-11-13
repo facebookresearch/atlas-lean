@@ -553,10 +553,13 @@ private theorem pos_bwd (k : ℕ) (hk : 2 ≤ k) (bl : List ℕ) :
   exact zero_ne_one hm
 
 /--
-Munagi's theorem equating two classes of restricted compositions.
-Source: Jia Huang, "Even and Odd Compositions with Restricted Parts", Journal of Integer Sequences 27 (2024), Article 24.6.5, Theorem `thm:comp2` (Munagi), lines 160-162, <https://cs.uwaterloo.ca/journals/JIS/VOL27/Huang/huang9.tex>.
+**Munagi's theorem on restricted compositions.** For positive integers $n$ and $k$, the number
+of compositions of $n$ all of whose parts are congruent to $1$ modulo $k$ equals the number of
+compositions of $n + k - 1$ all of whose parts are at least $k$.
 
 Proves `Wanted` entry `munagi_restricted_compositions`.
+
+Source: Jia Huang, "Even and Odd Compositions with Restricted Parts", Journal of Integer Sequences 27 (2024), Article 24.6.5, Theorem `thm:comp2` (Munagi), lines 160-162, <https://cs.uwaterloo.ca/journals/JIS/VOL27/Huang/huang9.tex>.
 -/
 theorem munagi_restricted_compositions
     (n k : ℕ) (hn : 0 < n) (hk : 0 < k) :

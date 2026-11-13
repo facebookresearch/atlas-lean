@@ -71,7 +71,10 @@ private theorem fwdDiff_iter_pow_zero (t k : ℕ) :
     simp [hkl]
 
 /--
-The explicit finite-difference formula for Stirling numbers of the second kind.
+**Explicit formula for Stirling numbers of the second kind.** Write $S(t,k)$ for the Stirling
+numbers of the second kind. For all natural numbers $t$ and $k$,
+$$k!\, S(t,k) = \sum_{j=0}^{k} (-1)^{k-j} \binom{k}{j}\, j^t,$$
+with the convention $0^0 = 1$.
 
 Source: R. L. Graham, D. E. Knuth, and O. Patashnik, *Concrete Mathematics*,
 2nd ed., Section 6.1.
@@ -165,7 +168,11 @@ private theorem binomial_exp_sum (j : ℕ) (x : ℝ) :
       ring
 
 /--
-The exponential generating function for a shifted column of Stirling numbers of the second kind.
+**Exponential generating function of a shifted Stirling column.** Write $S(n,k)$ for the
+Stirling numbers of the second kind. For every natural number $j$ and every real number $x$, the
+series
+$$\sum_{n=0}^{\infty} S(n+1,j+1)\, \frac{x^n}{n!}$$
+converges unconditionally to $e^x (e^x - 1)^j / j!$.
 
 Source: R. L. Graham, D. E. Knuth, and O. Patashnik, *Concrete Mathematics*,
 2nd ed., Section 7.6 (the column generating function `(e^x - 1)^(j+1)/(j+1)!`, differentiated).

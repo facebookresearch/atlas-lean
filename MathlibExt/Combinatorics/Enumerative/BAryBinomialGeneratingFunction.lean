@@ -241,9 +241,13 @@ private lemma base_digits_sum_cast_coef {R : Type*} [CommSemiring R] (b n : ℕ)
       Nat.cast_prod]
 
 /--
-The generating function over `k` of the `b`-ary binomial coefficients
-`bAryBinomialCoefficient b n k` factors over the base-`b` digits `n_l` of `n` as
-`∏_l (1 + x^(b^l))^(n_l)`, over any commutative semiring.
+**Generating function of the $b$-ary binomial coefficients.** Let $R$ be a commutative semiring,
+let $x \in R$, let $b \ge 2$, and write $\binom{n}{k}_b$ for the $b$-ary binomial coefficient of
+natural numbers $n$ and $k$. Let $n$ have base-$b$ digits $n_0, \dots, n_{m-1}$, where $m$ is
+the number of base-$b$ digits of $n$ ($m = 0$ for $n = 0$). Then
+$$
+\sum_{k=0}^{n} \binom{n}{k}_b x^k = \prod_{l=0}^{m-1} \left(1 + x^{b^l}\right)^{n_l}.
+$$
 
 Source: Lin Jiu and Christophe Vignat, "On Binomial Identities in Arbitrary
 Bases," Journal of Integer Sequences 19 (2016), Article 16.5.5, Theorem
@@ -382,21 +386,24 @@ theorem bAryBinomialCoefficient_generating_function {R : Type*} [CommSemiring R]
   exact hLHS.trans hRHS.symm
 
 /--
-The generating function over `k` of the `b`-ary binomial coefficients of `n`
-(products of digitwise binomial coefficients) factors as the stated product
-over base-`b` digits.
+**Generating function of digitwise binomial products.** Let $R$ be a commutative ring, let
+$x \in R$, let $b \ge 2$, and let $n$ have base-$b$ digits $n_0, \dots, n_{m-1}$, where $m$ is
+the number of base-$b$ digits of $n$ ($m = 0$ for $n = 0$). For each natural number $k$ let
+$k_l$ be its $l$-th base-$b$ digit, taken to be $0$ beyond the last digit. Then
+$$
+\sum_{k=0}^{n} \Bigl(\prod_{l=0}^{m-1} \binom{n_l}{k_l}\Bigr) x^k
+= \prod_{l=0}^{m-1} \left(1 + x^{b^l}\right)^{n_l}.
+$$
+
+The product $\prod_{l=0}^{m-1} \binom{n_l}{k_l}$ is the $b$-ary binomial coefficient of $n$
+and $k$ whenever $k \le n$.
+
+Proves `Wanted` entry `base_digits_binomial_generating_function`.
 
 Source: Lin Jiu and Christophe Vignat, "On Binomial Identities in Arbitrary
 Bases," Journal of Integer Sequences 19 (2016), Article 16.5.5, Theorem
 (equation eq:barybinomialgeneratingfunction), lines 322–329,
 https://cs.uwaterloo.ca/journals/JIS/VOL19/Jiu/jiu4.tex
-
-The `b`-ary coefficient is the product over the `Nat.digits b n` positions of
-`choose` of the `n`/`k` digits (zero-padded via `getD`); the right side is the
-product of `(1 + x^(b^l))^(n_l)`. Verified computationally as a polynomial
-identity for `b ∈ {2, 3, 5, 10}` and `n ∈ {0, 1, 2, 5, 7, 13, 19, 29}`.
-
-Proves `Wanted` entry `base_digits_binomial_generating_function`.
 -/
 theorem base_digits_binomial_generating_function
     {R : Type*} [CommRing R] (b n : ℕ) (x : R) (hb : 2 ≤ b) :

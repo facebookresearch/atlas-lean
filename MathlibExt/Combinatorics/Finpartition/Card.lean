@@ -25,7 +25,10 @@ variable {α : Type*} [DecidableEq α] {s : Finset α}
 
 namespace Finpartition
 
-/-- Product of a weight function over the block cardinalities of a partition. -/
+/-- **Product over block sizes.** For a partition $P$ of a finite set $s$, a commutative monoid
+$R$ and a function $f : \mathbb{N} \to R$, the block-size product of $f$ over $P$ is
+$\prod_{B \in P} f(|B|)$, the product over the blocks $B$ of $P$ of $f$ applied to the
+cardinality of $B$. -/
 def cardProd {R : Type*} [CommMonoid R] (P : Finpartition s) (f : ℕ → R) : R :=
   ∏ B ∈ P.parts, f B.card
 
@@ -35,12 +38,14 @@ theorem cardProd_empty {R : Type*} [CommMonoid R] {P : Finpartition (∅ : Finse
   have h : P.parts = ∅ := parts_eq_empty_iff.mpr rfl
   simp [cardProd, h]
 
-/-- Every block of a finite-set partition is bounded by the carrier cardinality. -/
+/-- **Blocks are no larger than the ground set.** If $P$ is a partition of a finite set $s$
+and $B$ is a block of $P$, then $|B| \le |s|$. -/
 theorem card_le_of_mem_parts (P : Finpartition s) {B : Finset α} (hB : B ∈ P.parts) :
     B.card ≤ s.card :=
   card_le_card (P.subset hB)
 
-/-- Every block of a finite-set partition has cardinality at least one. -/
+/-- **Blocks are nonempty.** Every block $B$ of a partition of a finite set $s$ satisfies
+$|B| \ge 1$. -/
 theorem one_le_card_of_mem_parts (P : Finpartition s) {B : Finset α}
     (hB : B ∈ P.parts) : 1 ≤ B.card := by
   have hne : B.Nonempty := P.nonempty_of_mem_parts hB
@@ -89,7 +94,10 @@ private theorem eq_top_of_mem_eq_s (P : Finpartition s) {B : Finset α}
       top_parts_eq_singleton_of_ne_bot hs
     exact Finpartition.ext (by rw [h_parts_eq, h_top_parts])
 
-/-- If `P ≠ ⊤`, every block has cardinality strictly below the carrier. -/
+/-- **Blocks of a partition other than the coarsest are smaller than the ground set.** Let $P$
+be a partition of a finite set $s$ that is not the coarsest partition $\top$ of $s$ (the one
+whose only block is $s$ when $s$ is nonempty). Then every block $B$ of $P$ satisfies
+$|B| < |s|$. -/
 theorem card_lt_of_ne_top (P : Finpartition s) (h_ne_top : P ≠ ⊤)
     {B : Finset α} (hB : B ∈ P.parts) : B.card < s.card := by
   by_cases hs : s = ⊥
@@ -111,7 +119,9 @@ theorem card_lt_of_ne_top (P : Finpartition s) (h_ne_top : P ≠ ⊤)
       rw [h_parts_eq, h_top_parts]
     exact h_ne_top h_ext
 
-/-- A partition of a nonempty carrier is top iff it has one block. -/
+/-- **Recognizing the one-block partition.** If $P$ is a partition of a nonempty finite set
+$s$, then $P$ is the coarsest partition $\top$ of $s$, whose only block is $s$, if and only if
+$P$ has exactly one block. -/
 theorem eq_top_iff_card_parts_eq_one (P : Finpartition s) (hs : s.Nonempty) :
     P = ⊤ ↔ P.parts.card = 1 := by
   constructor
@@ -140,6 +150,9 @@ theorem eq_top_iff_card_parts_eq_one (P : Finpartition s) (hs : s.Nonempty) :
 ### Bottom recognition and general bounds
 -/
 
+/-- **A partition has a block exactly when its ground set is nonempty.** A partition $P$ of a
+finite set $s$ has at least one block, that is, its number of blocks is positive, if and only
+if $s$ is nonempty. -/
 theorem card_parts_pos_iff (P : Finpartition s) :
     0 < P.parts.card ↔ s.Nonempty := by
   rw [card_pos, parts_nonempty_iff, nonempty_iff_ne_empty, Ne, bot_eq_empty]
@@ -148,7 +161,9 @@ theorem one_le_card_parts_of_nonempty (P : Finpartition s) (hs : s.Nonempty) :
     1 ≤ P.parts.card :=
   (card_parts_pos_iff P).mpr hs
 
-/-- A partition is bottom iff its number of blocks equals the carrier cardinality. -/
+/-- **Recognizing the partition into singletons by its number of blocks.** A partition $P$ of a
+finite set $s$ is the finest partition $\bot$ of $s$, whose blocks are the singletons $\{a\}$
+for $a \in s$, if and only if the number of blocks of $P$ equals $|s|$. -/
 theorem eq_bot_iff_card_parts_eq_card (P : Finpartition s) :
     P = ⊥ ↔ P.parts.card = s.card := by
   constructor
@@ -235,7 +250,11 @@ theorem cardProd_top {R : Type*} [CommMonoid R] (hs : s.Nonempty) (f : ℕ → R
     exact hs.ne_empty h
   rw [cardProd, top_parts_eq_singleton_of_ne_bot hs', prod_singleton]
 
-/-- `cardProd` commutes with monoid homomorphisms. -/
+/-- **Monoid homomorphisms preserve block-size products.** Let $P$ be a partition of a finite
+set $s$, let $R$ and $S$ be commutative monoids, let $f : \mathbb{N} \to R$, and let
+$g : R \to S$ be a monoid homomorphism. Then
+$g\bigl(\prod_{B \in P} f(|B|)\bigr) = \prod_{B \in P} g(f(|B|))$, where both products run
+over the blocks $B$ of $P$. -/
 theorem cardProd_mapMonoidHom {R S : Type*} [CommMonoid R] [CommMonoid S]
     (P : Finpartition s) (f : ℕ → R) (g : R →* S) :
     g (P.cardProd f) = P.cardProd (g ∘ f) := by

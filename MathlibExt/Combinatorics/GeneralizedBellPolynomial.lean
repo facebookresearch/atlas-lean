@@ -37,12 +37,27 @@ def genStirling {R : Type*} [CommRing R] (s h : R) : ℕ → ℕ → R
       h * ((↑(k + 1) : R) + s * (↑(n - (k + 1)) : R)) *
         genStirling s h n (k + 1)
 
-/-- The generalized Bell number `𝔅_{s;h}(n) = ∑ k, 𝔖_{s;h}(n,k)`. -/
+/-- **Generalized Bell numbers.** For a commutative ring $R$, elements $s, h \in R$ and a natural
+number $n$, the generalized Bell number is
+$$\mathfrak{B}_{s;h}(n) = \sum_{k=0}^{n} \mathfrak{S}_{s;h}(n, k),$$
+where the generalized Stirling numbers $\mathfrak{S}_{s;h}(a, j) \in R$ are defined for all
+natural numbers $a$ and $j$ by $\mathfrak{S}_{s;h}(0, 0) = 1$,
+$\mathfrak{S}_{s;h}(0, j + 1) = \mathfrak{S}_{s;h}(a + 1, 0) = 0$ and
+$\mathfrak{S}_{s;h}(a + 1, j + 1) = \mathfrak{S}_{s;h}(a, j) +
+h\,(j + 1 + s \max(a - j - 1, 0))\,\mathfrak{S}_{s;h}(a, j + 1)$; here the natural number
+$\max(a - j - 1, 0)$ is viewed as an element of $R$. -/
 def genBellNumber {R : Type*} [CommRing R] (s h : R) (n : ℕ) : R :=
   ∑ k ∈ Finset.range (n + 1), genStirling s h n k
 
-/-- The generalized Bell polynomial
-`𝔅_{s;h|n}(x) = ∑ k, 𝔖_{s;h}(n,k) x^k`. -/
+/-- **Generalized Bell polynomials.** For a commutative ring $R$, elements $s, h \in R$, a natural
+number $n$ and $x \in R$, the generalized Bell polynomial evaluated at $x$ is
+$$\mathfrak{B}_{s;h|n}(x) = \sum_{k=0}^{n} \mathfrak{S}_{s;h}(n, k)\, x^k,$$
+where the generalized Stirling numbers $\mathfrak{S}_{s;h}(a, j) \in R$ are defined for all
+natural numbers $a$ and $j$ by $\mathfrak{S}_{s;h}(0, 0) = 1$,
+$\mathfrak{S}_{s;h}(0, j + 1) = \mathfrak{S}_{s;h}(a + 1, 0) = 0$ and
+$\mathfrak{S}_{s;h}(a + 1, j + 1) = \mathfrak{S}_{s;h}(a, j) +
+h\,(j + 1 + s \max(a - j - 1, 0))\,\mathfrak{S}_{s;h}(a, j + 1)$; here the natural number
+$\max(a - j - 1, 0)$ is viewed as an element of $R$. -/
 def genBellPolynomial {R : Type*} [CommRing R] (s h : R) (n : ℕ) (x : R) : R :=
   ∑ k ∈ Finset.range (n + 1), genStirling s h n k * x ^ k
 
@@ -58,14 +73,22 @@ theorem genStirling_zero_succ {R : Type*} [CommRing R] (s h : R) (k : ℕ) :
 theorem genStirling_succ_zero {R : Type*} [CommRing R] (s h : R) (n : ℕ) :
     genStirling s h (n + 1) 0 = 0 := rfl
 
-/-- The defining recurrence for the generalized Stirling numbers. -/
+/-- **Recurrence for generalized Stirling numbers.** Let $R$ be a commutative ring and
+$s, h \in R$. The generalized Stirling numbers $\mathfrak{S}_{s;h}(n, k) \in R$ are defined by
+$\mathfrak{S}_{s;h}(0, 0) = 1$, $\mathfrak{S}_{s;h}(0, k + 1) = \mathfrak{S}_{s;h}(n + 1, 0) = 0$
+and the recurrence below. For all natural numbers $n$ and $k$,
+$$\mathfrak{S}_{s;h}(n + 1, k + 1) = \mathfrak{S}_{s;h}(n, k) +
+h\,(k + 1 + s \max(n - k - 1, 0))\,\mathfrak{S}_{s;h}(n, k + 1).$$
+Here $\max(n - k - 1, 0)$ is a natural number viewed as an element of $R$. -/
 theorem genStirling_succ_succ {R : Type*} [CommRing R] (s h : R) (n k : ℕ) :
     genStirling s h (n + 1) (k + 1) = genStirling s h n k +
       h * ((↑(k + 1) : R) + s * (↑(n - (k + 1)) : R)) *
         genStirling s h n (k + 1) :=
   rfl
 
-/-- Evaluation at one gives the corresponding generalized Bell number. -/
+/-- **Generalized Bell polynomials at one.** For a commutative ring $R$, elements $s, h \in R$ and
+a natural number $n$, the generalized Bell polynomial $\mathfrak{B}_{s;h|n}$ evaluated at $x = 1$
+equals the generalized Bell number $\mathfrak{B}_{s;h}(n)$. -/
 theorem genBellPolynomial_eval_one {R : Type*} [CommRing R] (s h : R) (n : ℕ) :
     genBellPolynomial s h n 1 = genBellNumber s h n := by
   simp [genBellPolynomial, genBellNumber]

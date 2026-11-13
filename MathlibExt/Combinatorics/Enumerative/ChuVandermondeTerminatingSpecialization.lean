@@ -117,10 +117,12 @@ private theorem chu_aux_deg (n : ℕ) (hn : 1 ≤ n) :
     _ = n + 1 - 2 := Nat.card_Icc 2 n
     _ < n := by omega
 
-/-- Chu–Vandermonde summation for a terminating Gauss hypergeometric series:
-`∑ k ∈ Finset.range (n + 1), (n.choose k) * ((n + k).choose k) * (-1)^k / (k + 1) = 0`
-for `1 ≤ n`. The source identifies the sum as
-`₂F₁(n+1, -n; 2; 1) = (1-n)_n / (2)_n = 0`.
+/-- **Terminating Chu–Vandermonde specialization.** For every natural number $n \ge 1$, the
+following sum of rational numbers vanishes:
+$$\sum_{k=0}^{n} \binom{n}{k} \binom{n+k}{k} \frac{(-1)^k}{k+1} = 0.$$
+
+The source identifies the sum as the terminating Gauss hypergeometric value
+${}_2F_1(n+1, -n; 2; 1) = (1-n)_n / (2)_n = 0$, where $(a)_n$ is the rising factorial.
 
 Source: Carsten Elsner, "On Prime-Detecting Sequences From Apéry's Recurrence
 Formulae for ζ(3) and ζ(2)", Journal of Integer Sequences 11 (2008),

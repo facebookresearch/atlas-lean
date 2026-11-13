@@ -383,19 +383,22 @@ private lemma step0 (n : ℕ) :
   rw [← shift_range n (fun j => Aa n ((k:ℤ)-(n:ℤ)) * Aa n j * |((k:ℤ)-(n:ℤ))^2 - j^2|)]
 
 /--
-The Brent–Osborn binomial absolute moment identity: the centered double sum
-`W₁(n) = Σ_{k,ℓ} C(2n,n+k) C(2n,n+ℓ) |k²−ℓ²|` equals `2n² C(2n,n)²`.
-The sum is reindexed to `k, ℓ ∈ Fin (2 * n + 1)` with `k.1 - n` for the
-source's centered index; this has the same support since
-`C(2n, n+k) = 0` for `|k| > n`.
+**Brent–Osborn binomial absolute moment identity.** For every natural number $n$,
+
+$$\sum_{k=0}^{2n} \sum_{\ell=0}^{2n} \binom{2n}{k} \binom{2n}{\ell} \,
+\bigl| (k-n)^2 - (\ell-n)^2 \bigr| = 2n^2 \binom{2n}{n}^2.$$
+
+In centered form this says
+$\sum_{k,\ell} \binom{2n}{n+k} \binom{2n}{n+\ell} \, |k^2 - \ell^2| = 2n^2 \binom{2n}{n}^2$,
+the sum running over all integers $k, \ell$, since the binomial coefficients vanish for $|k| > n$.
+
+Proves `Wanted` entry `brent_osborn_binomial_absolute_moment`.
 
 Source: Richard P. Brent, Hideyuki Ohtsuka, Judy-anne H. Osborn, and Helmut
 Prodinger, "Some Binomial Sums Involving Absolute Values," Journal of Integer
 Sequences 19 (2016), Article 16.3.7, Theorem [Brent and Osborn]
 (label thm:S12), lines 377–383 (with the `W_β` definition at lines 345–349),
 https://cs.uwaterloo.ca/journals/JIS/VOL19/Brent/brent9.tex
-
-Proves `Wanted` entry `brent_osborn_binomial_absolute_moment`.
 -/
 theorem brent_osborn_binomial_absolute_moment (n : ℕ) :
     (∑ k : Fin (2 * n + 1), ∑ l : Fin (2 * n + 1),

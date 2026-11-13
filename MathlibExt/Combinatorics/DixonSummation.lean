@@ -29,31 +29,41 @@ Proposition (Dixon), terminating 3F2 summation: lines 502-512.
 
 namespace MetaMathlibExt
 
-/-- Extended factorial: ordinary factorial for `n >= 0`, zero for `n < 0`. -/
+/-- **Extended factorial.** For an integer $n$, the extended factorial of $n$ is the rational
+number $n!$ when $n \ge 0$ and $0$ when $n < 0$. -/
 public def extFact (n : ℤ) : ℚ :=
   if 0 ≤ n then (n.natAbs.factorial : ℚ) else 0
 
-/-- The extended factorial vanishes at negative integers. -/
+/-- **The extended factorial vanishes at negative integers.** For every integer $n < 0$, the
+extended factorial of $n$ is $0$. -/
 @[simp] public theorem extFact_of_neg {n : ℤ} (hn : n < 0) : extFact n = 0 := by
   simp [extFact, not_le_of_gt hn]
 
-/-- The extended factorial agrees with `Nat.factorial` on natural inputs. -/
+/-- **The extended factorial of a natural number.** For every natural number $n$, the extended
+factorial of $n$ equals the ordinary factorial $n!$. -/
 @[simp] public theorem extFact_natCast (n : ℕ) : extFact n = n.factorial := by
   simp [extFact]
 
-/-- Inverse factorial: reciprocal factorial for `n >= 0`, zero for `n < 0`. -/
+/-- **Inverse factorial on the integers.** For an integer $n$, the inverse factorial of $n$ is
+the rational number $1/n!$ when $n \ge 0$ and $0$ when $n < 0$. -/
 public def invFact (n : ℤ) : ℚ :=
   if 0 ≤ n then 1 / (n.natAbs.factorial : ℚ) else 0
 
-/-- The inverse factorial vanishes at negative integers. -/
+/-- **The inverse factorial vanishes at negative integers.** For every integer $n < 0$, the
+inverse factorial of $n$ is $0$. -/
 @[simp] public theorem invFact_of_neg {n : ℤ} (hn : n < 0) : invFact n = 0 := by
   simp [invFact, not_le_of_gt hn]
 
-/-- The inverse factorial is the reciprocal of `Nat.factorial` on natural inputs. -/
+/-- **The inverse factorial at natural numbers.** For every natural number $n$, the inverse
+factorial of $n$, viewed as an integer, equals $(n!)^{-1}$ in $\mathbb{Q}$. -/
 @[simp] public theorem invFact_natCast (n : ℕ) : invFact n = (n.factorial : ℚ)⁻¹ := by
   simp [invFact]
 
-/-- Universal shift identity for the inverse factorial with the negative-input convention. -/
+/-- **Shift identity for the inverse factorial.** For every integer $n$, the inverse
+factorial of $n$ equals $n + 1$ times the inverse factorial of $n + 1$, as rational numbers.
+
+For $n \ge 0$ this is $1/n! = (n+1)/(n+1)!$. For $n < 0$ both sides are $0$: the inverse
+factorial vanishes at negative integers, and the factor $n + 1$ is $0$ at $n = -1$. -/
 public theorem invFact_shift (n : ℤ) : invFact n = (n + 1) * invFact (n + 1) := by
   by_cases hn : n < 0
   · by_cases hn1 : n = -1
@@ -69,11 +79,18 @@ public theorem invFact_shift (n : ℤ) : invFact n = (n + 1) * invFact (n + 1) :
     field_simp
     rw [abs_of_nonneg hcast]
 
-/-- Integer binomial coefficient with the source zero conventions. -/
+/-- **Integer binomial coefficient.** For an integer $m$ write $m!$ for the extended factorial
+and $\frac{1}{m!}$ for the inverse factorial; both are $0$ when $m < 0$. For integers $n$ and
+$k$, the integer binomial coefficient is the rational number
+$\binom{n}{k} = n! \cdot \frac{1}{k!} \cdot \frac{1}{(n - k)!}$.
+
+These are the source's zero conventions: $\binom{n}{k} = 0$ unless $0 \le k \le n$. -/
 public def intBinom (n k : ℤ) : ℚ :=
   extFact n * invFact k * invFact (n - k)
 
-/-- Integer binomial coefficients agree with `Nat.choose` on their natural range. -/
+/-- **Integer binomial coefficients of natural numbers.** For natural numbers $k \le n$, the
+integer binomial coefficient of $n$ and $k$ equals the ordinary binomial coefficient
+$\binom{n}{k}$. -/
 @[simp] public theorem intBinom_natCast {n k : ℕ} (hk : k ≤ n) :
     intBinom n k = n.choose k := by
   rw [intBinom, ← Int.ofNat_sub hk]
@@ -81,24 +98,40 @@ public def intBinom (n k : ℤ) : ℚ :=
   rw [Nat.cast_choose ℚ hk]
   field_simp
 
-/-- Integer binomial coefficients vanish when the lower argument is negative. -/
+/-- **Integer binomial coefficients vanish at negative lower index.** For integers $n$ and
+$k$ with $k < 0$, the integer binomial coefficient $\binom{n}{k}$ is $0$. -/
 @[simp] public theorem intBinom_of_neg_right {n k : ℤ} (hk : k < 0) : intBinom n k = 0 := by
   simp [intBinom, invFact_of_neg hk]
 
-/-- Integer binomial coefficients vanish when the upper argument is below the lower one. -/
+/-- **Integer binomial coefficients vanish when the lower index exceeds the upper.** For
+integers $n < k$, the integer binomial coefficient $\binom{n}{k}$ is $0$. -/
 @[simp] public theorem intBinom_of_lt {n k : ℤ} (h : n < k) : intBinom n k = 0 := by
   simp [intBinom, invFact_of_neg (show n - k < 0 by omega)]
 
-/-- Single summand of `upsilon_3`: `(-1)^k` times the three binomial factors. -/
+/-- **Term of Dixon's alternating sum.** Write $\binom{n}{m}$ for the integer binomial coefficient
+of integers $n$ and $m$. For integers $a_1, a_2, a_3$ and $k$, the Dixon summand is the rational
+number $(-1)^k \binom{2a_1}{a_1 + k} \binom{2a_2}{a_2 + k} \binom{2a_3}{a_3 + k}$. -/
 public def dixonSummand (a₁ a₂ a₃ k : ℤ) : ℚ :=
   (-1 : ℚ) ^ k.natAbs * intBinom (2 * a₁) (a₁ + k) *
     (intBinom (2 * a₂) (a₂ + k) * intBinom (2 * a₃) (a₃ + k))
 
-/-- Faithful finite-support bound: every nonzero summand satisfies `|k| ≤ bound`. -/
+/-- **Bound of the Dixon summation window.** For integers $a_1, a_2, a_3$, the Dixon bound is
+$\max(|a_1|, |a_2|, |a_3|)$.
+
+Every integer $k$ whose term in Dixon's alternating sum is nonzero satisfies $|k|$ at most this
+bound, so summing over $k$ from minus the bound to the bound covers the whole sum. -/
 public def dixonBound (a₁ a₂ a₃ : ℤ) : ℤ :=
   max (|a₁|) (max (|a₂|) (|a₃|))
 
-/-- `upsilon_3`: finite-support alternating sum over all integers `k`. -/
+/-- **The Dixon sum $\upsilon_3$.** For integers $a_1, a_2, a_3$, let
+$B = \max(|a_1|, |a_2|, |a_3|)$. Then $\upsilon_3(a_1, a_2, a_3)$ is the rational number
+
+$$\upsilon_3(a_1, a_2, a_3) = \sum_{k=-B}^{B} (-1)^k \prod_{i=1}^{3} \binom{2a_i}{a_i + k},$$
+
+where for integers $n$ and $k$ the binomial coefficient $\binom{n}{k}$ is the ordinary one when
+$0 \le k \le n$ and is $0$ otherwise.
+
+Every summand with $|k| > B$ is zero, so this is the alternating sum over all integers $k$. -/
 public def upsilon₃ (a₁ a₂ a₃ : ℤ) : ℚ :=
   ∑ k ∈ Finset.Icc (-(dixonBound a₁ a₂ a₃)) (dixonBound a₁ a₂ a₃),
     dixonSummand a₁ a₂ a₃ k
@@ -415,14 +448,23 @@ private lemma dixon_upsilon_of_prefactor_eq_zero (a b c : ℤ)
   intro k _
   rw [dixon_summand_eq, h, zero_mul]
 
-/-- Dixon's summation theorem for terminating 3F2 series (Proposition (Dixon)).
+/-- **Dixon's summation theorem.** For an integer $m$ write $m!$ for the extended factorial
+and $\frac{1}{m!}$ for the inverse factorial; both are $0$ when $m < 0$. For all integers
+$a_1, a_2, a_3$, the Dixon sum $\Upsilon_3(a_1, a_2, a_3)$ equals
+$$
+(2a_1)!\,(2a_2)!\,(2a_3)!\,(a_1 + a_2 + a_3)! \cdot
+\frac{1}{(a_1 + a_2)!} \cdot \frac{1}{(a_1 + a_3)!} \cdot \frac{1}{(a_2 + a_3)!} \cdot
+\frac{1}{a_1!} \cdot \frac{1}{a_2!} \cdot \frac{1}{a_3!}.
+$$
 
 Proves `Wanted` entry `dixon_summation`.
 
-Proof: Wilf-Zeilberger pair. For `a, b ≥ 0` the normalized summand in `c = a₃` has the
-certificate ratio `R(c, k) = -(a + k)(b + k) / (2(c - k + 1)(a + b + c + 1))`; induction on `c`
-telescopes over the fixed window `[-a, a]`. Negative arguments make both sides zero.
-Statement source: Abdesselam, arXiv:1903.11147v2, Proposition (Dixon), TeX lines 502-512.
+Proof: a Wilf–Zeilberger pair. For $a = a_1 \ge 0$ and $b = a_2 \ge 0$ the normalized summand
+in $c = a_3$ has the certificate ratio
+$R(c, k) = -\frac{(a + k)(b + k)}{2(c - k + 1)(a + b + c + 1)}$; induction on $c$ telescopes
+over the fixed window $[-a, a]$. Negative arguments make both sides zero.
+
+Source: Abdesselam, arXiv:1903.11147v2, Proposition (Dixon), TeX lines 502-512.
 -/
 public theorem dixon_summation (a₁ a₂ a₃ : ℤ) :
   upsilon₃ a₁ a₂ a₃ =

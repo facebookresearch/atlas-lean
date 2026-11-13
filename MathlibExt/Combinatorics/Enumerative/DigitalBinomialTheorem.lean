@@ -23,10 +23,11 @@ namespace MetaMathlibExt
 /-! # Digital binomial theorem (carry-free expansion)
 -/
 
-/-- Sum of the base-2 digits of `n` (the binary digit sum). -/
+/-- **Binary digit sum.** For a natural number $n$, the binary digit sum $s(n)$ is the sum of the
+digits of $n$ in base $2$, that is, the number of ones in the binary expansion of $n$. -/
 def binDigitSum (n : ℕ) : ℕ := (Nat.digits 2 n).sum
 
-/-- The binary digit sum of `0` is `0`. -/
+/-- **Binary digit sum of zero.** The binary digit sum of $0$ is $0$. -/
 @[simp]
 theorem binDigitSum_zero : binDigitSum 0 = 0 := by
   simp [binDigitSum, Nat.digits_zero]
@@ -36,7 +37,8 @@ private theorem binDigitSum_rec (n : ℕ) (hn : n ≠ 0) :
   unfold binDigitSum
   rw [Nat.digits_def' (by norm_num) (Nat.pos_of_ne_zero hn), List.sum_cons]
 
-/-- Doubling appends a binary digit `0`. -/
+/-- **Binary digit sum of an even number.** For every natural number $k$, the binary digit sum of
+$2k$ equals the binary digit sum of $k$: doubling appends the binary digit $0$. -/
 @[simp]
 theorem binDigitSum_two_mul (k : ℕ) : binDigitSum (2 * k) = binDigitSum k := by
   rcases eq_or_ne k 0 with rfl | hk
@@ -44,7 +46,9 @@ theorem binDigitSum_two_mul (k : ℕ) : binDigitSum (2 * k) = binDigitSum k := b
   · rw [binDigitSum_rec _ (by omega), show (2 * k) % 2 = 0 by omega,
       show (2 * k) / 2 = k by omega, Nat.zero_add]
 
-/-- `2 * k + 1` appends a binary digit `1`. -/
+/-- **Binary digit sum of an odd number.** For every natural number $k$, the binary digit sum of
+$2k + 1$ is one more than the binary digit sum of $k$: the binary expansion of $2k + 1$ is that
+of $k$ followed by the digit $1$. -/
 @[simp]
 theorem binDigitSum_two_mul_add_one (k : ℕ) :
     binDigitSum (2 * k + 1) = binDigitSum k + 1 := by
@@ -52,7 +56,7 @@ theorem binDigitSum_two_mul_add_one (k : ℕ) :
     show (2 * k + 1) / 2 = k by omega]
   omega
 
-/-- The binary digit sum of `1` is `1`. -/
+/-- **Binary digit sum of one.** The binary digit sum of $1$ is $1$. -/
 @[simp]
 theorem binDigitSum_one : binDigitSum 1 = 1 := by
   simpa using binDigitSum_two_mul_add_one 0
@@ -146,9 +150,10 @@ private theorem odd_not_mem_even (k m : ℕ) (hm : m ≤ 2 * k) (hodd : Odd m) :
   omega
 
 /--
-Digital binomial theorem over a commutative semiring: `(x + y) ^ s(n)` is the sum of
-`x ^ s(m) * y ^ s(n - m)` over the `m ≤ n` with `s(m) + s(n - m) = s(n)`, where `s` is
-`binDigitSum`.
+**Digital binomial theorem over a commutative semiring.** Let $s(m)$ denote the binary digit sum
+of a natural number $m$. For every natural number $n$ and all elements $x$, $y$ of a commutative
+semiring, $(x + y)^{s(n)}$ equals the sum of $x^{s(m)} y^{s(n - m)}$ over all $m$ with
+$0 \le m \le n$ and $s(m) + s(n - m) = s(n)$.
 -/
 theorem digital_binomial_theorem_general
     (n : ℕ) {R : Type*} [CommSemiring R] (x y : R) :
@@ -306,10 +311,15 @@ theorem digital_binomial_theorem_general
         ring
 
 /--
-Digital binomial theorem: `(x + y)` to the binary digit sum of `n`
-expands as the sum over `m ≤ n` with `(m, n - m)` carry-free of
-`x ^ s(m) * y ^ s(n - m)`, where carry-free means the binary digit
-sums add up.
+**Digital binomial theorem.** Let $s(m)$ denote the binary digit sum of a natural number $m$. For
+every natural number $n$ and all elements $x$, $y$ of a commutative ring, $(x + y)^{s(n)}$ equals
+the sum of $x^{s(m)} y^{s(n - m)}$ over all $m$ with $0 \le m \le n$ and
+$s(m) + s(n - m) = s(n)$.
+
+The condition $s(m) + s(n - m) = s(n)$ says that adding $m$ and $n - m$ in binary produces no
+carries; equivalently, $m$ has a binary digit $1$ only in positions where $n$ has one.
+
+Proves `Wanted` entry `digital_binomial_theorem`.
 
 Source: Hieu D. Nguyen,
 "A Generalization of the Digital Binomial Theorem,"
@@ -317,13 +327,6 @@ Journal of Integer Sequences 18 (2015), Article 15.5.7,
 Theorem (label th:digital-binomial-theorem),
 equation (label eq:digital-binomial-theorem-carry-free), lines 107–113,
 https://cs.uwaterloo.ca/journals/JIS/VOL18/Nguyen/nguyen6.tex
-
-Carry-free is encoded as `s(m) + s(n - m) = s(n)`, which the source
-notes (line 114) is equivalent to binary addition without carries;
-this is also equivalent to `m` being a bitwise submask of `n`.
-Verified computationally for `n = 0..63` over four integer pairs.
-
-Proves `Wanted` entry `digital_binomial_theorem`.
 -/
 theorem digital_binomial_theorem
     (n : ℕ) {R : Type*} [CommRing R] (x y : R) :

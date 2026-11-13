@@ -25,9 +25,12 @@ namespace MetaMathlibExt
 /-! # Symmetry and Pascal recurrence for b-ary binomial coefficients
 -/
 
-/-- `bAryBinomialCoefficient b n k hb` is the product over positions `i < L` of the binomial
-coefficients of the base-`b` digits `n / b ^ i % b` and `k / b ^ i % b`, for any `L` with
-`n < b ^ L` and `k < b ^ L`. -/
+/-- **Digit-product formula for $b$-ary binomial coefficients.** Let $b \ge 2$ and let $n$, $k$
+and $L$ be natural numbers with $n < b^L$ and $k < b^L$. Then the $b$-ary binomial coefficient
+$\binom{n}{k}_b$ equals
+$$\prod_{i=0}^{L-1} \binom{\lfloor n / b^i \rfloor \bmod b}{\lfloor k / b^i \rfloor \bmod b},$$
+the product over the positions $i < L$ of the binomial coefficients of the $i$-th base-$b$ digits
+of $n$ and $k$. -/
 theorem bAryBinomialCoefficient_eq_prod_div_pow (b n k : ℕ) (hb : 2 ≤ b) {L : ℕ}
     (hn : n < b ^ L) (hk : k < b ^ L) :
     bAryBinomialCoefficient b n k hb =
@@ -150,7 +153,9 @@ private lemma bary_symm_of_digits (b : ℕ) (hb : 2 ≤ b) (N J : ℕ) (hJN : J 
   rw [hdig2 x]
   exact (Nat.choose_symm (hdig x)).symm
 
-/-- The `b`-ary binomial coefficients are symmetric: `C_b(n, k) = C_b(n, n - k)` for `k ≤ n`. -/
+/-- **Symmetry of $b$-ary binomial coefficients.** Let $b \ge 2$ and write $\binom{n}{k}_b$ for
+the $b$-ary binomial coefficient. For all natural numbers $k \le n$,
+$\binom{n}{k}_b = \binom{n}{n-k}_b$. -/
 theorem bAryBinomialCoefficient_symm (b n k : ℕ) (hb : 2 ≤ b) (hkn : k ≤ n) :
     bAryBinomialCoefficient b n k hb = bAryBinomialCoefficient b n (n - k) hb := by
   by_cases hzero : bAryBinomialCoefficient b n k hb = 0
@@ -287,8 +292,10 @@ private lemma bary_pascal_all (b : ℕ) (hb : 2 ≤ b) :
         rw [eNK, e1, e2]
         exact hfin
 
-/-- The `b`-ary binomial coefficients satisfy Pascal's recurrence where they are nonzero:
-`C_b(n, k) = C_b(n - 1, k - 1) + C_b(n - 1, k)` for `0 < k ≤ n` and `C_b(n, k) ≠ 0`. -/
+/-- **Pascal's recurrence for $b$-ary binomial coefficients.** Let $b \ge 2$ and write
+$\binom{n}{k}_b$ for the $b$-ary binomial coefficient. For all natural numbers $n$ and $k$ with
+$0 < k \le n$ and $\binom{n}{k}_b \ne 0$,
+$\binom{n}{k}_b = \binom{n-1}{k-1}_b + \binom{n-1}{k}_b$. -/
 theorem bAryBinomialCoefficient_pascal (b n k : ℕ) (hb : 2 ≤ b) (hk : 0 < k) (hkn : k ≤ n)
     (hne : bAryBinomialCoefficient b n k hb ≠ 0) :
     bAryBinomialCoefficient b n k hb =
@@ -302,15 +309,19 @@ private lemma bary_prod_eq (b : ℕ) (hb : 2 ≤ b) (M J : ℕ) :
     (lt_base_pow b hb J _ (by omega))).symm
 
 /--
-The b-ary binomial coefficients `C_b(n,k) = ∏_l C(n_l, k_l)` over base-`b`
-digits are symmetric and, when nonzero, satisfy Pascal's recurrence.
+**Symmetry and Pascal's recurrence for $b$-ary binomial coefficients.** Let $b \ge 2$. For a
+natural number $m$ write $m_i = \lfloor m / b^i \rfloor \bmod b$ for its $i$-th base-$b$ digit.
+For integers $m$ and $j$, let $C_b(m, j) = \prod_{i=0}^{m+j} \binom{m_i}{j_i}$ if $m \ge 0$ and
+$j \ge 0$, and $C_b(m, j) = 0$ otherwise. Then for all integers $n$ and $k$ with $0 < n$ and
+$0 \le k \le n$, we have $C_b(n, k) = C_b(n, n - k)$, and if $C_b(n, k) \ne 0$ then
+$C_b(n, k) = C_b(n - 1, k - 1) + C_b(n - 1, k)$.
+
+Proves `Wanted` entry `baryBinomial_symmetry_and_pascal`.
 
 Source: Lin Jiu and Christophe Vignat, "On Binomial Identities in Arbitrary
 Bases," Journal of Integer Sequences 19 (2016), Article 16.5.5, Theorem
 (Symmetry and recurrence), equation (label `eq:recurrence`), lines 432–445,
 https://cs.uwaterloo.ca/journals/JIS/VOL19/Jiu/jiu4.tex
-
-Proves `Wanted` entry `baryBinomial_symmetry_and_pascal`.
 -/
 theorem baryBinomial_symmetry_and_pascal
     (b : ℕ) (hb : 2 ≤ b) (n k : ℤ) (hn : 0 < n) (hk : 0 ≤ k) (hkn : k ≤ n) :

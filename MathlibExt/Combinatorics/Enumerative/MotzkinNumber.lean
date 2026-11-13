@@ -36,29 +36,31 @@ Sequences 27 (2024), Article 24.3.3, Definition 19 (2).
 the convolution identity `∑_{a + b = n} M(a) M(b) = ∑_k C(n + 1, 2k + 1) C(k + 1)`.
 -/
 
-/-- The Motzkin numbers (OEIS A001006) `M(n) = ∑_{k=0}^{n} C(n,2k) C(k)`, with `C(k)` the
-Catalan numbers (OEIS A000108). Terms with `2k > n` vanish.
+/-- **Motzkin numbers as a Catalan-weighted binomial sum.** Let $C_k$ denote the $k$-th Catalan
+number (OEIS A000108). For a natural number $n$, the $n$-th Motzkin number (OEIS A001006) is
+$$M(n) = \sum_{k=0}^{n} \binom{n}{2k} C_k.$$
+The terms with $2k > n$ vanish.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Definition 19 (2). -/
 def motzkinNumber (n : ℕ) : ℕ :=
   ∑ k ∈ Finset.range (n + 1), n.choose (2 * k) * catalan k
 
-/-- `M(0) = 1`.
+/-- **Value of the Motzkin number at 0.** The $0$-th Motzkin number is $M(0) = 1$.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Definition 19 (2). -/
 theorem motzkinNumber_zero : motzkinNumber 0 = 1 := by
   simp [motzkinNumber]
 
-/-- `M(1) = 1`.
+/-- **Value of the Motzkin number at 1.** The first Motzkin number is $M(1) = 1$.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Definition 19 (2). -/
 theorem motzkinNumber_one : motzkinNumber 1 = 1 := by
   simp [motzkinNumber, Finset.sum_range_succ]
 
-/-- `M(2) = 2`.
+/-- **Value of the Motzkin number at 2.** The second Motzkin number is $M(2) = 2$.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Definition 19 (2). -/
@@ -66,7 +68,10 @@ theorem motzkinNumber_two : motzkinNumber 2 = 2 := by
   simp [motzkinNumber, Finset.sum_range_succ, catalan_one,
     Nat.choose_eq_zero_of_lt (by norm_num : 2 < 4)]
 
-/-- The defining sum may stop at `k = ⌊n/2⌋`, since `C(n,2k) = 0` for `2k > n`.
+/-- **Truncated Catalan-weighted sum for Motzkin numbers.** Let $C_k$ denote the $k$-th Catalan
+number. For every natural number $n$, the $n$-th Motzkin number $M(n)$ satisfies
+$$M(n) = \sum_{k=0}^{\lfloor n/2 \rfloor} \binom{n}{2k} C_k.$$
+The terms dropped from the defining sum vanish, since $\binom{n}{2k} = 0$ for $2k > n$.
 
 Source: Geng-Rui Zhang, *Realizability of Some Combinatorial Sequences*, Journal of Integer
 Sequences 27 (2024), Article 24.3.3, Definition 19 (2). -/
@@ -81,8 +86,10 @@ theorem motzkinNumber_eq_sum_range_half (n : ℕ) :
     simp only [Finset.mem_range] at hk hnot
     rw [Nat.choose_eq_zero_of_lt (by omega : n < 2 * k), Nat.zero_mul]
 
-/-- The central trinomial coefficients satisfy `T(n+1) = T(n) + 2n M(n-1)` for `n ≥ 1`
-(`MetaMathlibExt.motzkin_central_trinomial_recurrence` specialized to `motzkinNumber`).
+/-- **Central trinomial recurrence via Motzkin numbers.** Write $T(n)$ for the central trinomial
+coefficient, the coefficient of $X^n$ in $(1 + X + X^2)^n$, and $M(n)$ for the $n$-th Motzkin
+number. For every natural number $n \ge 1$,
+$$T(n+1) = T(n) + 2n\,M(n-1).$$
 
 Source: P. Blasiak, G. Dattoli, A. Horzela, K. A. Penson, and K. Zhukovsky, *Motzkin Numbers,
 Central Trinomial Coefficients and Hybrid Polynomials*, Journal of Integer Sequences 11 (2008),

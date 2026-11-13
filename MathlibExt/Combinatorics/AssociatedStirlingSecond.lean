@@ -25,8 +25,13 @@ recurrence and support bound.
 
 namespace MetaMathlibExt
 
-/-- The 2-associated Stirling number of the second kind: the number of partitions of an
-`n`-element set into `k` blocks, each containing at least two elements. -/
+/-- **2-associated Stirling numbers of the second kind.** For natural numbers $n$ and $k$, the
+2-associated Stirling number of the second kind is the integer
+$S_2(n, k) = \sum_{j=0}^{k} (-1)^j \binom{n}{j} S(n - j, k - j)$, where $S$ denotes the
+Stirling numbers of the second kind.
+
+By inclusion and exclusion over singleton blocks, $S_2(n, k)$ is the number of partitions of an
+$n$-element set into $k$ blocks, each containing at least two elements. -/
 def twoAssocStirlingSecond (n k : ℕ) : ℤ :=
   ∑ j ∈ Finset.range (k + 1), ((-1 : ℤ) ^ j) * (Nat.choose n j : ℤ) *
       (Nat.stirlingSecond (n - j) (k - j) : ℤ)
@@ -74,7 +79,9 @@ private lemma choose_mul_aux (m u : ℕ) (hu : 1 ≤ u) :
   have h := Nat.add_one_mul_choose_eq m v
   exact (mul_comm _ _).trans h.symm
 
-/-- Recurrence for 2-associated Stirling numbers of the second kind. -/
+/-- **Recurrence for 2-associated Stirling numbers of the second kind.** Write $S_2(n, k)$ for
+the 2-associated Stirling number of the second kind. For natural numbers $m$ and $k$ with
+$1 \le k \le m$, we have $S_2(m + 2, k) = k \, S_2(m + 1, k) + (m + 1) \, S_2(m, k - 1)$. -/
 theorem twoAssocStirlingSecond_recurrence (m k : ℕ) (hk : 1 ≤ k) (hkm : k ≤ m) :
     twoAssocStirlingSecond (m + 2) k =
       (k : ℤ) * twoAssocStirlingSecond (m + 1) k +
@@ -322,8 +329,9 @@ private lemma twoAssoc_near_diagonal (m : ℕ) (hm : 0 < m) :
     _ = 0 := by
       rw [Int.alternating_sum_range_choose_of_ne (Nat.ne_of_gt hm), mul_zero]
 
-/-- A 2-associated Stirling number vanishes when there are too few elements to put at
-least two in each block. -/
+/-- **Vanishing of 2-associated Stirling numbers of the second kind.** For natural numbers
+$n$ and $k$ with $n < 2k$, the 2-associated Stirling number of the second kind $S_2(n, k)$
+equals $0$. -/
 theorem twoAssocStirlingSecond_eq_zero_of_lt_two_mul (n k : ℕ) (hnk : n < 2 * k) :
     twoAssocStirlingSecond n k = 0 := by
   induction n using Nat.strong_induction_on generalizing k with

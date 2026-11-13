@@ -1110,8 +1110,11 @@ private theorem nssd_card_five (a b c d e : ℤ) (hab : a < b) (hbc : b < c) (hc
               · exact nssd_five_generic a b c d e hab hbc hcd hde h7 h10 h9 h12 h11 h8
 
 /--
-Chu theorem with the nonnegativity normalization removed, since the argument
-works for every finite set of integers.
+**Chu's theorem for arbitrary finite sets of integers.** Let $A$ be a finite set of integers with
+$|A| < 6$. Then $|A + A| \le |A - A|$, where $A + A = \{a + b : a, b \in A\}$ is the sumset and
+$A - A = \{a - b : a, b \in A\}$ is the difference set of $A$.
+
+This is Chu's theorem without the assumption that the elements of $A$ are nonnegative.
 -/
 theorem card_add_le_card_sub_of_card_lt_six (A : Finset ℤ) (h_card : A.card < 6) :
     (A + A).card ≤ (A - A).card := by
@@ -1124,18 +1127,20 @@ theorem card_add_le_card_sub_of_card_lt_six (A : Finset ℤ) (h_card : A.card < 
     exact nssd_card_five a b c d e hab hbc hcd hde
 
 /--
-A set `A` with `|A| < 6` is not sum-dominant.
+**Chu's theorem: sets with fewer than six elements are not sum-dominant.** Let $A$ be a finite
+set of nonnegative integers with $|A| < 6$. Then $|A + A| \le |A - A|$, where
+$A + A = \{a + b : a, b \in A\}$ is the sumset and $A - A = \{a - b : a, b \in A\}$ is the
+difference set of $A$; that is, $A$ is not sum-dominant.
+
+The nonnegativity assumption follows the source's normalization and is not needed: the same
+bound holds for every finite set of integers with fewer than six elements.
+
+Proves `Wanted` entry `no_small_sum_dominant`.
 
 Source: Hùng Việt Chu, "When Sets Are Not Sum-Dominant," Journal of Integer
 Sequences 22 (2019), Article 19.3.7, Theorem (label notsum-dominant),
 lines 126–128,
 https://cs.uwaterloo.ca/journals/JIS/VOL22/Chu/chu5.tex
-
-The source works with sets of nonnegative integers; the hypothesis
-`h_nonneg` records the source's normalization and is not needed
-(see `card_add_le_card_sub_of_card_lt_six`).
-
-Proves `Wanted` entry `no_small_sum_dominant`.
 -/
 theorem no_small_sum_dominant :
     ∀ (A : Finset ℤ) (h_nonneg : ∀ x ∈ A, 0 ≤ x) (h_card : A.card < 6),

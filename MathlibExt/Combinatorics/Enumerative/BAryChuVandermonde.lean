@@ -182,9 +182,12 @@ private lemma bary_gf_coeff (b n r : ℕ) (hb : 2 ≤ b) :
   · rfl
   · exact (bary_eq_zero_of_lt b n r hb (by omega)).symm
 
-/-- Chu-Vandermonde identity for `b`-ary binomial coefficients: when `m` and `n` add without
-carries in base `b`, `bAryBinomialCoefficient b (m + n) r hb` is the convolution of the `b`-ary
-binomial coefficients of `m` and `n`. -/
+/-- **Chu–Vandermonde identity for $b$-ary binomial coefficients.** Let $b \ge 2$ and write
+$\binom{n}{k}_b$ for the $b$-ary binomial coefficient. Let $m$ and $n$ be natural numbers that
+add without carries in base $b$, that is,
+$\lfloor m / b^l \rfloor \bmod b + \lfloor n / b^l \rfloor \bmod b < b$ for every natural number
+$l$. Then for every natural number $r$,
+$$\binom{m+n}{r}_b = \sum_{k=0}^{r} \binom{m}{k}_b \binom{n}{r-k}_b.$$ -/
 theorem bAryBinomialCoefficient_chu_vandermonde (b m n r : ℕ) (hb : 2 ≤ b)
     (hcarry : ∀ l, (m / b ^ l) % b + (n / b ^ l) % b < b) :
     bAryBinomialCoefficient b (m + n) r hb =
@@ -208,19 +211,21 @@ theorem bAryBinomialCoefficient_chu_vandermonde (b m n r : ℕ) (hb : 2 ≤ b)
     bary_gf_coeff] at hc
   exact hc
 
-/-- B-ary Chu-Vandermonde identity under carry-free addition: when the base-`b`
-addition of `m` and `n` produces no carries digit by digit, the `b`-ary
-binomial coefficient of `m + n` expands as the convolution of the `b`-ary
-coefficients of `m` and `n`. The local `C` is the digitwise product of
-ordinary binomial coefficients; it agrees with `bAryBinomialCoefficient b x y hb`, so this is
-`bAryBinomialCoefficient_chu_vandermonde`.
+/-- **$b$-ary Chu–Vandermonde identity.** Let $b \ge 2$. For a natural number $x$ write
+$x_l = \lfloor x / b^l \rfloor \bmod b$ for its $l$-th base-$b$ digit, and for natural numbers
+$x$ and $y$ let $C(x, y) = \prod_{l=0}^{x+y} \binom{x_l}{y_l}$. Let $m$, $n$ and $r$ be natural
+numbers such that the addition of $m$ and $n$ in base $b$ has no carries, that is,
+$m_l + n_l < b$ for every $l \le m + n$. Then
+$$C(m + n, r) = \sum_{k=0}^{r} C(m, k)\, C(n, r - k).$$
+
+The product $C(x, y)$ is the $b$-ary binomial coefficient $\binom{x}{y}_b$.
+
+Proves `Wanted` entry `bary_chu_vandermonde`.
 
 Source: Lin Jiu and Christophe Vignat, "On Binomial Identities in Arbitrary
 Bases," Journal of Integer Sequences 19 (2016), Article 16.5.5,
 Theorem (equation bChuVandermonde), lines 371–377,
 https://cs.uwaterloo.ca/journals/JIS/VOL19/Jiu/jiu4.tex
-
-Proves `Wanted` entry `bary_chu_vandermonde`.
 -/
 theorem bary_chu_vandermonde (b m n r : ℕ) (hb : 2 ≤ b)
     (hcarry : ∀ l ∈ Finset.range (m + n + 1), (m / b ^ l) % b + (n / b ^ l) % b < b) :

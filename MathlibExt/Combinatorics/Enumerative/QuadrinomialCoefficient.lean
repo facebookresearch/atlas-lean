@@ -23,9 +23,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Quadrinomial coefficient `{n; 4 choose k}` (concept `jis_sem_21c48e3801524f9403d681b0`,
-source statement `jis_cb7e03aa435f1bbd253660ca`, OEIS A008287): the coefficient
-of `x ^ k` in `(1 + x + x ^ 2 + x ^ 3) ^ n`, with `0 ≤ k ≤ 3 * n`. -/
+/-- **Quadrinomial coefficient triangle.** For natural numbers $n$ and $k$, the quadrinomial
+coefficient $\binom{n}{k}_4$ is the coefficient of $x^k$ in the polynomial
+$(1 + x + x^2 + x^3)^n$ with natural-number coefficients. These numbers form the triangle
+OEIS A008287.
+
+Source: concept `jis_sem_21c48e3801524f9403d681b0`, source statement
+`jis_cb7e03aa435f1bbd253660ca`. -/
 noncomputable def polynomialQuadrinomialCoeff (n k : ℕ) : ℕ :=
   ((1 + Polynomial.X + Polynomial.X ^ 2 + Polynomial.X ^ 3 : Polynomial ℕ) ^ n).coeff k
 

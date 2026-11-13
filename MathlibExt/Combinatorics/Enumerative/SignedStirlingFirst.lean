@@ -15,8 +15,10 @@ import Mathlib.Tactic.Ring
 
 namespace MetaMathlibExt
 
-/-- `signedStirlingFirst n k = (-1)^(n-k) s(n,k)` with `s` the unsigned first-kind Stirling
-number. -/
+/-- **Signed Stirling numbers of the first kind.** For natural numbers $n$ and $k$, the signed
+Stirling number of the first kind is the integer $(-1)^{n-k} c(n,k)$, where $c(n,k)$ is the
+unsigned Stirling number of the first kind (the number of permutations of $n$ elements with
+exactly $k$ cycles) and $n - k$ is truncated subtraction, equal to $0$ when $k > n$. -/
 def signedStirlingFirst : ℕ → ℕ → ℤ :=
   fun n k => (-1 : ℤ) ^ (n - k) * (Nat.stirlingFirst n k : ℤ)
 

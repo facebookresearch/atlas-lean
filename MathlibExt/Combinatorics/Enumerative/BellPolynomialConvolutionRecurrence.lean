@@ -339,8 +339,24 @@ private lemma extraction (c y : ℕ → K) (r : ℕ) (hr : 0 < r)
     push_cast [Nat.cast_sub hm.2, Nat.cast_sub hr]; ring
   rw [hcast]; ring
 
-/-- The Bell-polynomial convolution recurrence over any characteristic-zero field;
-`bell_convolution_linear_recurrence` is the real case. -/
+/-- **Linear recurrence for INVERT convolution powers in characteristic zero.** Let $K$ be a
+field of characteristic zero and let $(c_m)_{m \ge 0}$ and $(y_n)_{n \ge 0}$ be sequences in $K$
+such that for every $n \ge 0$
+
+$$y_n = \sum_{k=0}^{n} k! \sum_{j} \prod_{i=1}^{n+1} \frac{c_i^{j_i}}{j_i!},$$
+
+where the inner sum runs over all tuples $(j_1, \dots, j_{n+1})$ of integers with
+$0 \le j_i \le n$, $j_1 + j_2 + \dots + j_{n+1} = k$ and $j_1 + 2 j_2 + \dots + (n+1) j_{n+1} = n$.
+Let $r \ge 1$ be an integer, and for $N \ge 0$ let $y^{(r)}_N$ be the sum of
+$y_{a_1} y_{a_2} \cdots y_{a_r}$ over all tuples $(a_1, \dots, a_r)$ of nonnegative integers with
+$a_1 + \dots + a_r = N$. Then for every $n \ge 1$
+
+$$n \, y^{(r)}_n = \sum_{m=1}^{n} \bigl(n + m(r-1)\bigr) \, c_m \, y^{(r)}_{n-m}.$$
+
+The hypothesis says that $y_n = \sum_{k=0}^{n} \frac{k!}{n!} B_{n,k}(1!\,c_1, 2!\,c_2, \dots)$
+with the partial Bell polynomials $B_{n,k}$, that is, $y$ is the INVERT transform of $c$: as
+formal power series in $z$, $\sum_{n \ge 0} y_n z^n = 1/(1 - \sum_{m \ge 1} c_m z^m)$. The value
+$c_0$ plays no role, and the theorem for real sequences is the case $K = \mathbb{R}$. -/
 theorem bell_convolution_linear_recurrence_of_charZero (c : ℕ → K) (y : ℕ → K)
     (r : ℕ) (hr : 0 < r)
     (hBell : ∀ n : ℕ, y n = ∑ k ∈ Finset.range (n + 1), (k.factorial : K) *
@@ -379,18 +395,31 @@ theorem bell_convolution_linear_recurrence_of_charZero (c : ℕ → K) (y : ℕ 
   exact extraction c y r hr hMain n hn
 
 /--
-Linear recurrence for the `r`-fold convolution of the INVERT transform sequence
-`y` built from partial exponential Bell polynomials in the coefficients `c`.
-The hypothesis `hBell` expands `y n` as the Bell sum over `k = 0..n`, and
-`conv` is the `r`-fold convolution over compositions of `N`.
+**Linear recurrence for convolution powers of an INVERT sequence.** Let $(c_m)_{m \ge 0}$ and
+$(y_n)_{n \ge 0}$ be real sequences such that for every $n \ge 0$
+
+$$y_n = \sum_{k=0}^{n} k! \sum_{j} \prod_{i=1}^{n+1} \frac{c_i^{j_i}}{j_i!},$$
+
+where the inner sum runs over all tuples $(j_1, \dots, j_{n+1})$ of integers with
+$0 \le j_i \le n$, $j_1 + j_2 + \dots + j_{n+1} = k$ and $j_1 + 2 j_2 + \dots + (n+1) j_{n+1} = n$.
+Let $r \ge 1$ be an integer, and for $N \ge 0$ let $y^{(r)}_N$ be the sum of
+$y_{a_1} y_{a_2} \cdots y_{a_r}$ over all tuples $(a_1, \dots, a_r)$ of nonnegative integers with
+$a_1 + \dots + a_r = N$. Then for every $n \ge 1$
+
+$$n \, y^{(r)}_n = \sum_{m=1}^{n} \bigl(n + m(r-1)\bigr) \, c_m \, y^{(r)}_{n-m}.$$
+
+The hypothesis says that $y_n = \sum_{k=0}^{n} \frac{k!}{n!} B_{n,k}(1!\,c_1, 2!\,c_2, \dots)$
+with the partial Bell polynomials $B_{n,k}$, that is, $y$ is the INVERT transform of $c$: as
+formal power series in $z$, $\sum_{n \ge 0} y_n z^n = 1/(1 - \sum_{m \ge 1} c_m z^m)$. The value
+$c_0$ plays no role.
+
+Proves `Wanted` entry `bell_convolution_linear_recurrence`.
 
 Source: Daniel Birmajer, Juan B. Gil, and Michael D. Weiner, "Linear Recurrence
 Sequences and Their Convolutions via Bell Polynomials," Journal of Integer
 Sequences 18 (2015), Article 15.1.2, Theorem (label `thm:linearRecurrence`),
 equation (label `eq:linearRecurrence`), lines 425–435,
 https://cs.uwaterloo.ca/journals/JIS/VOL18/Gil/gil3.tex
-
-Proves `Wanted` entry `bell_convolution_linear_recurrence`.
 -/
 theorem bell_convolution_linear_recurrence (c : ℕ → ℝ) (y : ℕ → ℝ)
     (r : ℕ) (hr : 0 < r)
@@ -442,8 +471,17 @@ private lemma bell_summand_eq_partialBellPolynomial (c : ℕ → K) (n k : ℕ) 
   field_simp
 
 /--
-`bell_convolution_linear_recurrence` with the Bell sum stated through the canonical
-`partialBellPolynomial`: `y n = ∑ k, k! / n! * B_(n,k)(1! c₁, 2! c₂, ...)`.
+**Linear recurrence for INVERT convolution powers via partial Bell polynomials.** Let $K$ be a
+field of characteristic zero, let $(c_m)_{m \ge 0}$ and $(y_n)_{n \ge 0}$ be sequences in $K$, and
+write $B_{n,k}$ for the partial Bell polynomial. Suppose that for every $n \ge 0$
+
+$$y_n = \sum_{k=0}^{n} \frac{k!}{n!} \, B_{n,k}(x_1, x_2, \dots), \qquad x_m = m! \, c_m.$$
+
+Let $r \ge 1$ be an integer, and for $N \ge 0$ let $y^{(r)}_N$ be the sum of
+$y_{a_1} y_{a_2} \cdots y_{a_r}$ over all tuples $(a_1, \dots, a_r)$ of nonnegative integers with
+$a_1 + \dots + a_r = N$. Then for every $n \ge 1$
+
+$$n \, y^{(r)}_n = \sum_{m=1}^{n} \bigl(n + m(r-1)\bigr) \, c_m \, y^{(r)}_{n-m}.$$
 -/
 theorem bell_convolution_linear_recurrence_partialBellPolynomial (c : ℕ → K) (y : ℕ → K)
     (r : ℕ) (hr : 0 < r)

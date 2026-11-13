@@ -30,7 +30,9 @@ namespace Nat
 
 namespace Partition
 
-/-- The least common multiple of the parts of an integer partition. -/
+/-- **Least common multiple of the parts of a partition.** For a natural number $n$ and a
+partition $p$ of $n$, this is the least common multiple of the parts of $p$, taken with
+the convention that it equals $1$ when $p$ has no parts. -/
 def partsLCM {n : ℕ} (p : n.Partition) : ℕ :=
   p.parts.lcm
 
@@ -44,16 +46,20 @@ theorem partsLCM_one (p : Partition 1) : p.partsLCM = 1 := by
 
 end Partition
 
-/-- The maximum least common multiple of the parts of a partition of `n`. -/
+/-- **Landau's function.** For a natural number $n$, Landau's function at $n$ is the maximum, over
+all partitions $p$ of $n$, of the least common multiple of the parts of $p$. -/
 def landauFunction (n : ℕ) : ℕ :=
   Finset.univ.sup (fun p : n.Partition => p.partsLCM)
 
-/-- The LCM of the parts of any partition is bounded by the Landau function. -/
+/-- **The Landau function bounds the LCM of the parts.** For every natural number $n$ and every
+partition $p$ of $n$, the least common multiple of the parts of $p$ is at most the Landau function
+at $n$. -/
 theorem Partition.partsLCM_le_landauFunction {n : ℕ} (p : n.Partition) :
     p.partsLCM ≤ landauFunction n := by
   exact Finset.le_sup (Finset.mem_univ p)
 
-/-- Some partition attains the value of the Landau function. -/
+/-- **The Landau function is attained.** For every natural number $n$, some partition of $n$
+has least common multiple of its parts equal to the Landau function at $n$. -/
 theorem exists_partition_partsLCM_eq_landauFunction (n : ℕ) :
     ∃ p : n.Partition, p.partsLCM = landauFunction n := by
   obtain ⟨p, _, hp⟩ := Finset.exists_mem_eq_sup (Finset.univ : Finset n.Partition)

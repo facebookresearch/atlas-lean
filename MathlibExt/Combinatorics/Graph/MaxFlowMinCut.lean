@@ -27,30 +27,44 @@ Proves the finite directed max-flow min-cut theorem with explicit definitions of
 feasible flow, conservation, flow value, and cut capacity.
 -/
 
-/-- A feasible flow respects  `0 ≤ f ≤ cap` and conserves flow at interior vertices. -/
+/-- **Feasible flow.** Let $V$ be a finite set, $c : V \times V \to \mathbb{R}$ a capacity
+function and $s, t \in V$. A function $f : V \times V \to \mathbb{R}$ is a feasible $s$-$t$ flow
+for $c$ if $0 \le f(u, v) \le c(u, v)$ for all $u, v \in V$ and $f$ is conserved at every vertex
+$v \ne s, t$, that is, $\sum_{u \in V} f(u, v) = \sum_{w \in V} f(v, w)$. -/
 def IsFeasibleFlow {V : Type*} [Fintype V] [DecidableEq V]
     (cap : V → V → ℝ) (s t : V) (f : V → V → ℝ) : Prop :=
   (∀ u v, 0 ≤ f u v) ∧
   (∀ u v, f u v ≤ cap u v) ∧
   (∀ v, v ≠ s → v ≠ t → ∑ u : V, f u v = ∑ w : V, f v w)
 
-/-- Net outflow from the source `s`; the flow value. -/
+/-- **Flow value.** For a finite set $V$, a vertex $s \in V$ and a function
+$f : V \times V \to \mathbb{R}$, the value of $f$ is its net outflow from the source $s$,
+$\sum_{v \in V} f(s, v) - \sum_{u \in V} f(u, s)$. -/
 def flowValue {V : Type*} [Fintype V] [DecidableEq V]
     (s : V) (f : V → V → ℝ) : ℝ :=
   (∑ v : V, f s v) - ∑ u : V, f u s
 
-/-- An `s-t` cut is a vertex set `S` with `s ∈ S`, `t ∉ S`. -/
+/-- **Source–sink cut.** For a finite set $V$ and vertices $s, t \in V$, an $s$-$t$ cut is a
+subset $S \subseteq V$ with $s \in S$ and $t \notin S$. -/
 def IsSTCut {V : Type*} [Fintype V] [DecidableEq V]
     (s t : V) (S : Finset V) : Prop :=
   s ∈ S ∧ t ∉ S
 
-/-- Capacity of cut `S`: sum of capacities of arcs leaving `S`. -/
+/-- **Cut capacity.** Let $V$ be a finite set and $c : V \times V \to \mathbb{R}$ a capacity
+function. The capacity of a subset $S \subseteq V$ is the total capacity of the arcs leaving $S$,
+$\sum_{u \in S} \sum_{v \in V \setminus S} c(u, v)$. -/
 def cutCapacity {V : Type*} [Fintype V] [DecidableEq V]
     (cap : V → V → ℝ) (S : Finset V) : ℝ :=
   ∑ u ∈ S, ∑ v ∈ (Finset.univ : Finset V) \ S, cap u v
 
-/-- Flow across a cut: for any flow conserved at interior vertices (no sign or capacity
-condition), the flow value equals forward minus backward flow. -/
+/-- **Flow across a cut.** Let $V$ be a finite set, $s, t \in V$, and
+$f : V \times V \to \mathbb{R}$ a function conserved at every vertex $v \ne s, t$, that is,
+$\sum_{u \in V} f(u, v) = \sum_{w \in V} f(v, w)$; no sign or capacity condition is imposed. Then
+for every subset $S \subseteq V$ with $s \in S$ and $t \notin S$, the flow value
+$\sum_{v \in V} f(s, v) - \sum_{u \in V} f(u, s)$ of $f$ equals
+$\sum_{u \in S} \sum_{v \in V \setminus S} f(u, v) -
+\sum_{u \in S} \sum_{v \in V \setminus S} f(v, u)$, the flow leaving $S$ minus the flow
+entering $S$. -/
 theorem cutFlow_eq {V : Type*} [Fintype V] [DecidableEq V]
     (s t : V) (f : V → V → ℝ)
     (hcons : ∀ v, v ≠ s → v ≠ t → ∑ u : V, f u v = ∑ w : V, f v w)
@@ -91,7 +105,9 @@ theorem cutFlow_eq {V : Type*} [Fintype V] [DecidableEq V]
   rw [hexpand, hSS, add_sub_add_left_eq_sub] at hsum
   exact hsum.symm
 
-/-- Weak duality: any feasible flow value is at most any s-t cut capacity. -/
+/-- **Weak duality for flows and cuts.** Let $V$ be a finite set, $c : V \times V \to \mathbb{R}$
+a capacity function and $s, t \in V$. If $f$ is a feasible $s$-$t$ flow for $c$ and $S$ is an
+$s$-$t$ cut, then the flow value of $f$ is at most the capacity of $S$ for $c$. -/
 theorem flowValue_le_cutCapacity {V : Type*} [Fintype V] [DecidableEq V]
     (cap : V → V → ℝ) (s t : V) (f : V → V → ℝ)
     (hf : IsFeasibleFlow cap s t f) (S : Finset V) (hS : IsSTCut s t S) :
@@ -622,11 +638,17 @@ private theorem exists_augmenting_flow {V : Type*} [Fintype V] [DecidableEq V]
   exact ⟨f', ⟨h0', hle', hcons'⟩, hval⟩
 
 /--
-The maximum value of a feasible s-t flow equals the minimum capacity of an s-t cut.
-Source: L. R. Ford and D. R. Fulkerson, Canad. J. Math. 8 (1956), 399-404, DOI
-10.4153/CJM-1956-045-5.
+**Max-flow min-cut theorem.** Let $V$ be a finite set, $c : V \times V \to \mathbb{R}$ a capacity
+function with $c(u, v) \ge 0$ for all $u, v \in V$, and $s, t \in V$ with $s \ne t$. Then there is
+a feasible $s$-$t$ flow $f$ for $c$ whose value is at least the value of every feasible $s$-$t$
+flow for $c$ and at most the capacity of every $s$-$t$ cut, and there is an $s$-$t$ cut whose
+capacity equals the value of $f$. In other words, the maximum value of a feasible $s$-$t$ flow
+equals the minimum capacity of an $s$-$t$ cut.
 
 Proves `Wanted` entry `max_flow_min_cut`.
+
+Source: L. R. Ford and D. R. Fulkerson, Canad. J. Math. 8 (1956), 399-404, DOI
+10.4153/CJM-1956-045-5.
 -/
 theorem max_flow_min_cut
     {V : Type*} [Fintype V] [DecidableEq V]

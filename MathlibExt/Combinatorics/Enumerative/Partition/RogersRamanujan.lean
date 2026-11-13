@@ -2624,24 +2624,19 @@ private theorem rrE_constantCoeff (n : ℕ) :
     rw [hX, sub_zero]
   · simp only [hg, ↓reduceIte, map_one]
 
-/-- Rogers–Ramanujan identity (first form): for every `n`, the number of partitions
-of `n` with pairwise gap at least two between distinct parts equals the number of
-partitions of `n` all of whose parts are congruent to `1` or `4` modulo `5`.
+/-- **Rogers–Ramanujan identity (first form).** For every natural number $n$, the number of
+partitions of $n$ into distinct parts, any two of which differ by at least $2$, equals the number
+of partitions of $n$ all of whose parts are congruent to $1$ or $4$ modulo $5$.
 
-The left side counts `p : Nat.Partition n` with `p.parts.Nodup` and
-`a + 2 ≤ b` whenever `a < b` are parts of `p` (nodup forbids the repeated
-equal parts that the gap condition alone would allow). The right side counts
-`p : Nat.Partition n` with every part satisfying `m % 5 = 1 ∨ m % 5 = 4`.
+Proves `Wanted` entry `rogers_ramanujan_difference_two_vs_one_four`.
 
-Provenance: George E. Andrews and David Newman, "The Minimal Excludant in
+Source: George E. Andrews and David Newman, "The Minimal Excludant in
 Integer Partitions," Journal of Integer Sequences 23 (2020), Article 20.2.3,
 quoted Rogers–Ramanujan theorem at lines 173–178.
 Public TeX URL:
 `https://cs.uwaterloo.ca/journals/JIS/VOL23/Andrews/andrews5.tex`
 Retrieved TeX SHA-256:
-`9f5fc80c212b5dc9cb8d7bcbc905d717f1aa9673ad7ada690f3eca3065c308c9`
-
-Proves `Wanted` entry `rogers_ramanujan_difference_two_vs_one_four`. -/
+`9f5fc80c212b5dc9cb8d7bcbc905d717f1aa9673ad7ada690f3eca3065c308c9` -/
 public theorem rogers_ramanujan_difference_two_vs_one_four (n : ℕ) :
     (Finset.univ.filter (fun p : Nat.Partition n =>
       p.parts.Nodup ∧ ∀ a ∈ p.parts, ∀ b ∈ p.parts, a < b → a + 2 ≤ b)).card =

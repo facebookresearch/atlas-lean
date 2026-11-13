@@ -714,21 +714,23 @@ private theorem seh_beta_product (n : ℕ) (x : ℝ) :
     seh_choose_product_shift]
 
 /--
-Hankel transform of the shifted Eulerian polynomials `P_{n+1}(x)`.
-The determinant of `(P_{i+j+1}(x))` over `Fin (n + 1)` equals
-`(2 * x) ^ Nat.choose (n + 1) 2` times the product over `Finset.range n`
-of `Nat.choose (k + 3) 2 ^ (n - (k + 1))`, where `P` is built from
-the closed-form coefficients `W`.
+**Hankel determinants of the shifted Eulerian polynomials.** Let $n \in \mathbb{N}$ and
+$x \in \mathbb{R}$. For natural numbers $k \le m$ let
+$W_{m,k} = \sum_{i=0}^{m-k} (-1)^i \binom{m+1}{i} (m-k-i)^m$, with $0^0 = 1$, and let
+$P_m(X) = \sum_{k=0}^{m} W_{m,k} X^k$ be the corresponding Eulerian polynomial. Then the
+$(n+1) \times (n+1)$ Hankel determinant of the shifted sequence $P_1(x), P_2(x), \dots$ is
+$$\det\bigl(P_{i+j+1}(x)\bigr)_{0 \le i, j \le n} =
+(2x)^{\binom{n+1}{2}} \prod_{k=0}^{n-1} \binom{k+3}{2}^{n-k-1}.$$
+
+Proves `Wanted` entry `hankel_transform_shifted_eulerian_polynomials`.
+Proof: The closed Eulerian coefficients identify a weighted-Motzkin Stieltjes table with
+Jacobi weights `euAlpha` and `euBeta`; its determinant follows by the Heilermann-Flajolet LDU
+route used by Barry and discussed by Krattenthaler.
+
 Source: Paul Barry, "Eulerian Polynomials as Moments, via Exponential Riordan Arrays,"
 Journal of Integer Sequences 14 (2011), Article 11.9.5, corollary lines 312–315,
 <https://cs.uwaterloo.ca/journals/JIS/VOL14/Barry7/barry172.tex>.
 Eulerian closed form `W_{n,k}` at lines 93–94.
-
-Proves `Wanted` entry `hankel_transform_shifted_eulerian_polynomials`.
-
-Proof: The closed Eulerian coefficients identify a weighted-Motzkin Stieltjes table with
-Jacobi weights `euAlpha` and `euBeta`; its determinant follows by the Heilermann-Flajolet LDU
-route used by Barry and discussed by Krattenthaler.
 -/
 public theorem hankel_transform_shifted_eulerian_polynomials :
   ∀ (n : ℕ) (x : ℝ) (W : ℕ → ℕ → ℝ) (P : ℕ → ℝ → ℝ),
