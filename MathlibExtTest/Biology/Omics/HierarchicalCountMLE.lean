@@ -39,6 +39,30 @@ example : digammaIncrement 1 3 = 11 / 6 := by
 /-- The digamma increment of a zero count is `0`. -/
 example (a : ℝ) : digammaIncrement a 0 = 0 := by simp [digammaIncrement]
 
+/-- **Cubic bound, checked at a point.** At `a = 10`, `k = 3`, computed from the definitions, the
+increment is `1/10 + 1/11 + 1/12 = 181/660 ≈ 0.2742` and the cubic bound is
+`3/10 - 3/100 + 27/1000 = 297/1000`, so the bound holds with slack `< 0.023`. -/
+example : digammaIncrement 10 3 = 181 / 660 ∧
+    ((3 : ℕ) : ℝ) / 10 - ((3 : ℕ) * ((3 : ℕ) - 1) / 2) / 10 ^ 2 + ((3 : ℕ) : ℝ) ^ 3 / 10 ^ 3 =
+      297 / 1000 ∧
+    (181 / 660 : ℝ) ≤ 297 / 1000 ∧ (297 / 1000 : ℝ) - 181 / 660 < 23 / 1000 := by
+  refine ⟨by norm_num [digammaIncrement, sum_range_succ], by norm_num, by norm_num, by norm_num⟩
+
+example : digammaIncrement 10 3 ≤ 297 / 1000 := by
+  have h := digammaIncrement_le_cubic (a := 10) (by norm_num) 3
+  norm_num at h
+  exact h
+
+/-- **Tight at `k = 0`**: both sides of `digammaIncrement_le_cubic` are `0`. -/
+example (a : ℝ) : digammaIncrement a 0 =
+    ((0 : ℕ) : ℝ) / a - ((0 : ℕ) * ((0 : ℕ) - 1) / 2) / a ^ 2 + ((0 : ℕ) : ℝ) ^ 3 / a ^ 3 := by
+  simp [digammaIncrement]
+
+/-- **The cubic term is needed.** At `a = 1`, `k = 2` the increment `1 + 1/2 = 3/2` exceeds the
+second-order truncation `2/1 - (2 · 1 / 2)/1² = 1`, so the bound fails without `k³ / a³`. -/
+example : ((2 : ℕ) : ℝ) / 1 - ((2 : ℕ) * ((2 : ℕ) - 1) / 2) / 1 ^ 2 < digammaIncrement 1 2 := by
+  norm_num [digammaIncrement, sum_range_succ]
+
 /-- Score equations at a concrete point: one count `k = 1`, `s = 1`, `a = b = 1`. The rate score
 `1 - 2 / 2` vanishes; the shape score is `1 + log 1 - log 2 = 1 - log 2`. -/
 example : rateScore 1 1 (fun _ : Unit => (1 : ℝ)) (fun _ => 1) = 0 ∧
