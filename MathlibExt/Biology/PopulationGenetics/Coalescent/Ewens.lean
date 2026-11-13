@@ -12,7 +12,6 @@ public import MathlibExt.Biology.PopulationGenetics.Ewens
 public import Mathlib.Probability.Distributions.Exponential
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Independence.Basic
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.Data.Nat.Choose.Cast
 import MathlibExt.Probability.Distributions.ExponentialMoments
 
@@ -39,8 +38,9 @@ and the expected number of alleles `K_n = ∑_j a_j` is `E[K_n] = ∑_{i=0}^{n-1
 * **The coalescent derivation of `E[K_n]`.** Looking back in time, while the genealogy has `k`
   lineages, coalescences occur at rate `k.choose 2` and mutations at rate `k θ / 2`. In the
   coalescent with killing (`KillingCoalescent`), a mutation removes its lineage and founds one
-  allele of the sample, so the number of alleles is one plus the number of levels at which the
-  mutation clock rings first. Competing exponential clocks give probability
+  allele of the sample, so the number of alleles in a nonempty sample is one plus the number of
+  levels at which the mutation clock rings first (the empty sample has none). Competing
+  exponential clocks (`ProbabilityTheory.measureReal_lt_of_hasLaw_expMeasure`) give probability
   `(k θ / 2) / (k θ / 2 + k (k - 1) / 2) = θ / (θ + k - 1)` for that event, and summing over
   `k = 2, …, n` gives `E[K_n] = ∑_{i=0}^{n-1} θ / (θ + i)` (`integral_numAlleles`), the Ewens mean
   (`integral_numAlleles_eq_ewens`).
@@ -57,8 +57,6 @@ of the full configuration from a gene-labeled genealogy with mutations is not de
 * `sum_ewensProb_alleleCount_eq`, `sum_ewensProb_alleleCount_eq_zero`: **the Ewens sampling
   formula** as the law of the configuration.
 * `sum_ewensProb_mul_sum_alleleCount`: `E[∑_j a_j] = ∑_{i<n} θ / (θ + i)`.
-* `prod_expMeasure_real_lt`, `measureReal_lt_of_hasLaw_expMeasure`: competing exponential
-  clocks, `P(X < Y) = a / (a + b)`.
 * `KillingCoalescent`, `KillingCoalescent.numAlleles`,
   `KillingCoalescent.measureReal_mutation_first`, `KillingCoalescent.integral_numAlleles`,
   `KillingCoalescent.integral_numAlleles_eq_ewens`: the coalescent derivation of `E[K_n]`.
@@ -198,52 +196,6 @@ theorem sum_ewensProb_mul_sum_alleleCount (θ : ℝ) (hθ : 0 < θ) (n : ℕ) :
   simp_rw [← Nat.cast_sum, sum_alleleCount]
   exact sum_ewensProb_mul_card_parts θ hθ n
 
-/-! ### Competing exponential clocks -/
-
-section Clocks
-
-open MeasureTheory ProbabilityTheory Real
-
-/-- **Competing exponential clocks**: if `X ~ Exp(a)` and `Y ~ Exp(b)` are independent, the
-first clock rings first with probability `a / (a + b)`; on the product law,
-`P(X < Y) = a / (a + b)`. -/
-theorem prod_expMeasure_real_lt {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
-    ((expMeasure a).prod (expMeasure b)).real {p : ℝ × ℝ | p.1 < p.2} = a / (a + b) := by
-  have := isProbabilityMeasure_expMeasure ha
-  have := isProbabilityMeasure_expMeasure hb
-  have hS : MeasurableSet {p : ℝ × ℝ | p.1 < p.2} := measurableSet_lt measurable_fst measurable_snd
-  have hsec : ∀ x : ℝ, Prod.mk x ⁻¹' {p : ℝ × ℝ | p.1 < p.2} = Set.Ioi x := fun _ ↦ rfl
-  have htail : ∀ x : ℝ, (expMeasure b).real (Set.Ioi x) =
-      1 - (if 0 ≤ x then 1 - exp (-(b * x)) else 0) := fun x ↦ by
-    rw [← cdf_expMeasure_eq hb, cdf_eq_real, ← Set.compl_Iic, measureReal_compl measurableSet_Iic,
-      probReal_univ]
-  rw [measureReal_def, Measure.prod_apply hS, ← integral_toReal
-    (measurable_measure_prodMk_left hS).aemeasurable (ae_of_all _ fun _ ↦ measure_lt_top _ _)]
-  simp_rw [hsec, ← measureReal_def, htail]
-  rw [integral_expMeasure_eq_setIntegral ha]
-  rw [setIntegral_congr_fun measurableSet_Ioi (g := fun x ↦ a * exp ((-(a + b)) * x))
-    fun x (hx : 0 < x) ↦ by
-      simp only [hx.le, ↓reduceIte]
-      rw [show -(a + b) * x = -(a * x) + -(b * x) by ring, exp_add]
-      ring]
-  rw [integral_const_mul, integral_exp_mul_Ioi (by linarith) 0]
-  simp only [mul_zero, exp_zero]
-  field_simp
-
-/-- `P(X < Y) = a / (a + b)` for independent `X ~ Exp(a)`, `Y ~ Exp(b)` on any probability
-space. -/
-theorem measureReal_lt_of_hasLaw_expMeasure {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {μ : Measure Ω} [IsProbabilityMeasure μ] {X Y : Ω → ℝ} {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
-    (hX : HasLaw X (expMeasure a) μ) (hY : HasLaw Y (expMeasure b) μ) (hXY : IndepFun X Y μ) :
-    μ.real {ω | X ω < Y ω} = a / (a + b) := by
-  have hP := IndepFun.hasLaw_prod hX hY hXY
-  have hS : MeasurableSet {p : ℝ × ℝ | p.1 < p.2} := measurableSet_lt measurable_fst measurable_snd
-  rw [← prod_expMeasure_real_lt ha hb, ← hP.map_eq, measureReal_def, measureReal_def,
-    Measure.map_apply_of_aemeasurable hP.aemeasurable hS]
-  rfl
-
-end Clocks
-
 /-! ### The coalescent with killing -/
 
 section Killing
@@ -287,8 +239,10 @@ theorem indepFun {k : ℕ} (hk : k ∈ Icc 2 n) : IndepFun (K.M k) (K.C k) μ :=
 open scoped Classical in
 /-- The **number of alleles** `K_n` in the sample: one allele per killing event, i.e. one for
 each level `2 ≤ k ≤ n` at which the mutation clock rings before the coalescence clock, plus one
-for the allele of the last remaining lineage. -/
-def numAlleles (ω : Ω) : ℕ := 1 + #{k ∈ Icc 2 n | K.M k ω < K.C k ω}
+for the allele of the last remaining lineage. The empty sample (`n = 0`) has no alleles, as for
+the Ewens statistic `π.parts.card` of the empty partition. -/
+def numAlleles (ω : Ω) : ℕ :=
+  if n = 0 then 0 else 1 + #{k ∈ Icc 2 n | K.M k ω < K.C k ω}
 
 /-- With `k ≥ 2` lineages, the next event back in time is a mutation with probability
 `θ / (θ + k - 1)`. -/
@@ -325,11 +279,13 @@ theorem integral_numAlleles [IsProbabilityMeasure μ] (hθ : 0 < θ) (hn : 1 ≤
     (hmeas k hk).nullMeasurableSet_preimage hS
   have hint : ∀ k ∈ Icc 2 n, Integrable ({ω | K.M k ω < K.C k ω}.indicator (1 : Ω → ℝ)) μ :=
     fun k hk ↦ (integrable_const (1 : ℝ)).indicator₀ (hnull k hk)
+  have hn0 : n ≠ 0 := Nat.one_le_iff_ne_zero.mp hn
   have hK : (fun ω ↦ (K.numAlleles ω : ℝ)) =
       fun ω ↦ 1 + ∑ k ∈ Icc 2 n, {ω | K.M k ω < K.C k ω}.indicator (1 : Ω → ℝ) ω := by
     funext ω
-    simp only [numAlleles, Nat.cast_add, Nat.cast_one, card_filter, Nat.cast_sum, Nat.cast_ite,
-      Nat.cast_zero, Set.indicator_apply, Set.mem_ofPred_eq, Pi.one_apply]
+    simp only [numAlleles, ite_eq_right hn0, Nat.cast_add, Nat.cast_one, card_filter,
+      Nat.cast_sum, Nat.cast_ite, Nat.cast_zero, Set.indicator_apply, Set.mem_ofPred_eq,
+      Pi.one_apply]
   rw [hK, integral_add (integrable_const 1) (integrable_finsetSum _ hint),
     integral_finsetSum _ hint, integral_const, probReal_univ, one_smul,
     ← sum_Icc_two θ hθ hn]

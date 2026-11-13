@@ -19,9 +19,10 @@ import Mathlib.Tactic.Positivity
 Samples of three genes: the configurations `(3, 0, 0)`, `(1, 1, 0)` and `(0, 0, 1)` have
 probabilities `θ² / ((θ + 1)(θ + 2))`, `3θ / ((θ + 1)(θ + 2))` and `2 / ((θ + 1)(θ + 2))`,
 computed from the definition, which sum to one; the configuration of the partition `{2, 1}`;
-a configuration with `∑ j a_j ≠ n`; the coalescent with killing for `n = 1` (always one allele)
-and `n = 2` (two alleles iff the mutation clock rings first); the clock rates; and the concrete
-model, with `E[K_3] = 1 + θ/(θ + 1) + θ/(θ + 2)`.
+a configuration with `∑ j a_j ≠ n`; the coalescent with killing for `n = 0` (no alleles, and
+`E[K_0] = 0`, the Ewens value), `n = 1` (always one allele) and `n = 2` (two alleles iff the
+mutation clock rings first); the clock rates; and the concrete model, with
+`E[K_3] = 1 + θ/(θ + 1) + θ/(θ + 2)`.
 -/
 
 @[expose] public section
@@ -107,6 +108,18 @@ section Killing
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} {θ : ℝ}
 
+/-- Boundary `n = 0`: the empty sample has no alleles, from the definition. -/
+example (K : KillingCoalescent μ 0 θ) (ω : Ω) : K.numAlleles ω = 0 := by
+  simp [KillingCoalescent.numAlleles]
+
+/-- Boundary `n = 0`: the coalescent statistic agrees with the Ewens statistic, whose mean over
+the partitions of `0` is `0`. -/
+example [IsProbabilityMeasure μ] (hθ : 0 < θ) (K : KillingCoalescent μ 0 θ) :
+    ∫ ω, (K.numAlleles ω : ℝ) ∂μ = ∑ π : Nat.Partition 0, ewensProb θ π * (π.parts.card : ℝ) := by
+  have h : ∀ ω, K.numAlleles ω = 0 := fun ω ↦ by simp [KillingCoalescent.numAlleles]
+  rw [sum_ewensProb_mul_card_parts θ hθ 0]
+  simp [h]
+
 /-- Boundary `n = 1`: a single gene carries exactly one allele, from the definition. -/
 example (K : KillingCoalescent μ 1 θ) (ω : Ω) : K.numAlleles ω = 1 := by
   simp [KillingCoalescent.numAlleles]
@@ -116,7 +129,7 @@ example (K : KillingCoalescent μ 2 θ) (ω : Ω) :
     K.numAlleles ω = if K.M 2 ω < K.C 2 ω then 2 else 1 := by
   classical
   unfold KillingCoalescent.numAlleles
-  rw [show Icc 2 2 = {2} from rfl, filter_singleton]
+  rw [ite_eq_right (show (2 : ℕ) ≠ 0 by norm_num), show Icc 2 2 = {2} from rfl, filter_singleton]
   split_ifs <;> simp
 
 end Killing
@@ -133,10 +146,5 @@ example {θ : ℝ} (hθ : 0 < θ) :
   have := isProbabilityMeasure_killingMeasure 3 hθ
   rw [KillingCoalescent.integral_numAlleles _ hθ (by norm_num)]
   simp [sum_range_succ, hθ.ne']
-
-/-- Competing clocks of equal rate ring first with probability `1/2`. -/
-example : ((expMeasure 1).prod (expMeasure 1)).real {p : ℝ × ℝ | p.1 < p.2} = 1 / 2 := by
-  rw [prod_expMeasure_real_lt one_pos one_pos]
-  norm_num
 
 end MathlibExtTest.Biology.PopulationGenetics.Coalescent.Ewens
