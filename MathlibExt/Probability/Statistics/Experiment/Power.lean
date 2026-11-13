@@ -119,7 +119,7 @@ theorem measureReal_zTestReject_eq_cdf {n : ℕ} (hn : 0 < n) (μ0 δ c : ℝ) {
 at least `1 - β` against the shift `δ > 0`. -/
 theorem power_ge_of_le_ceil {α β δ μ0 : ℝ} {v : NNReal}
     (hα : α ∈ Set.Ioo 0 (1 / 2)) (hβ : β ∈ Set.Ioo 0 (1 / 2)) (hδ : 0 < δ) (hv : v ≠ 0)
-    {n : ℕ} (hn : 0 < n)
+    {n : ℕ}
     (hN : ⌈(Real.sqrt (v : ℝ) * (cdfQuantile (gaussianReal 0 1) (1 - α)
         + cdfQuantile (gaussianReal 0 1) (1 - β)) / δ) ^ 2⌉₊ ≤ n) :
     1 - β ≤ (Measure.pi fun _ : Fin n => gaussianReal (μ0 + δ) v).real
@@ -168,6 +168,8 @@ theorem power_ge_of_le_ceil {α β δ μ0 : ℝ} {v : NNReal}
         cdfQuantile (gaussianReal 0 1) (1 - α) := by
     rw [le_sub_iff_add_le]
     linarith [h2]
+  have hn : 0 < n := lt_of_lt_of_le
+    (Nat.ceil_pos.mpr (pow_pos (div_pos (mul_pos hsv (add_pos hzα hzβ)) hδ) 2)) hN
   rw [measureReal_zTestReject_eq_cdf hn μ0 δ _ hv]
   have hu : 1 - β ∈ Set.Ioo (0 : ℝ) 1 := by
     obtain ⟨h0, h1⟩ := hβ
