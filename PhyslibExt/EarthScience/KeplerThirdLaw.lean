@@ -9,8 +9,8 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Ring
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Ring
 
 /-!
 # Orbital forcing groundwork and elementary planetary mechanics
@@ -20,6 +20,10 @@ public import Mathlib.Tactic.Ring
 For a stipulated inverse-square circular orbit, `v² = G * M / r` and `T = 2πr / v` with `G, M, r, v
   > 0` imply Kepler's third law `T² = 4π²r³ / (GM)`. Elliptic orbits are not covered; the circular
   force balance is a hypothesis.
+
+`M` is the mass of the central body, held fixed (test-particle limit: the orbiting mass is
+  negligible). For two bodies of masses `m₁` and `m₂`, the same relations hold for the relative
+  orbit with `r` the separation, `v` the relative speed, and `M = m₁ + m₂`.
 
 ## ii. Key results
 
@@ -32,6 +36,13 @@ For a stipulated inverse-square circular orbit, `v² = G * M / r` and `T = 2πr 
 
 ## iv. References
 
+- D. Halliday, R. Resnick and J. Walker, *Fundamentals of Physics*, 10th ed., Wiley (2014),
+  Chapter 13 (Gravitation): Kepler's law of periods, derived for a circular orbit about a central
+  mass `M` much larger than the orbiting mass.
+- H. Goldstein, C. Poole and J. Safko, *Classical Mechanics*, 3rd ed., Addison-Wesley (2002),
+  Chapter 3 (The Central Force Problem): reduction of the two-body problem to an equivalent
+  one-body problem, and the Kepler problem, where the third law holds for elliptic orbits with the
+  semi-major axis in place of `r`.
 - `Real.sqrt_sq`, `Real.pi` in Mathlib.
 -/
 
