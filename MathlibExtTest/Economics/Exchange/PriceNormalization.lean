@@ -51,7 +51,8 @@ theorem noTrade_eq_one : IsWalrasianEquilibrium linU endow ![1, 1] endow := by
   · intro i
     have h01 : i = 0 ∨ i = 1 := by fin_cases i <;> simp
     rcases h01 with rfl | rfl
-    · simp only [Consumer.marshallianDemand, Consumer.budgetSet, Set.mem_ofPred_eq]
+    · simp only [_root_.Economics.Consumer.IsMarshallianDemand, Consumer.budgetSet,
+        SecondWelfareTheorem.consumptionSet, Set.mem_ofPred_eq]
       refine ⟨⟨?hx0, le_rfl⟩, ?hopt0⟩
       · intro j
         fin_cases j
@@ -70,7 +71,8 @@ theorem noTrade_eq_one : IsWalrasianEquilibrium linU endow ![1, 1] endow := by
         have huve : linU 0 (endow 0) = 1 + 0 := rfl
         rw [huv, huve]
         linarith
-    · simp only [Consumer.marshallianDemand, Consumer.budgetSet, Set.mem_ofPred_eq]
+    · simp only [_root_.Economics.Consumer.IsMarshallianDemand, Consumer.budgetSet,
+        SecondWelfareTheorem.consumptionSet, Set.mem_ofPred_eq]
       refine ⟨⟨?hx1, le_rfl⟩, ?hopt1⟩
       · intro j
         fin_cases j
@@ -103,7 +105,8 @@ theorem noTrade_eq_two : IsWalrasianEquilibrium linU endow ![2, 2] endow := by
 theorem noTrade_not_eq_zero : ¬ IsWalrasianEquilibrium linU endow 0 endow := by
   rintro ⟨-, -, -, hdem, -⟩
   have h0 := hdem 0
-  simp only [Consumer.marshallianDemand, Consumer.budgetSet, Set.mem_ofPred_eq] at h0
+  simp only [_root_.Economics.Consumer.IsMarshallianDemand, Consumer.budgetSet,
+    SecondWelfareTheorem.consumptionSet, Set.mem_ofPred_eq] at h0
   obtain ⟨hmem, hmax⟩ := h0
   have hmem2 : (0 ≤ (![2, 0] : Fin 2 → ℝ)) ∧
       (0 : Fin 2 → ℝ) ⬝ᵥ ![2, 0] ≤ (0 : Fin 2 → ℝ) ⬝ᵥ endow 0 := by
