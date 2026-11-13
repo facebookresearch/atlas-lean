@@ -104,8 +104,10 @@ theorem alpha_three_items_unequal_errors {Ω : Type*} [MeasurableSpace Ω]
   rw [hmain, h15, variance_const_mul, hVarT]
   norm_num
 
-/-- With correlated errors, alpha can exceed the reliability ratio: on this
-three-item model alpha is `1` while the ratio is `0`. -/
+/-- Conditional correlated-error example: any three-item model
+`Xᵢ = F + Eᵢ` with `Var F = 0`, every error covariance `1`, and unit item
+spreads has alpha `1` and composite reliability ratio `0`. The moments are
+hypotheses; no model realizing them is constructed here. -/
 theorem alpha_one_ratio_zero_of_correlated_errors {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {X : Fin 3 → Ω → ℝ}
     {F : Ω → ℝ} {E : Fin 3 → Ω → ℝ}
@@ -149,15 +151,17 @@ theorem alpha_one_ratio_zero_of_correlated_errors {Ω : Type*} [MeasurableSpace 
     norm_num
   exact ⟨hA, hR⟩
 
-/-- On the correlated-error parameters above, omega is `0` while alpha is
-`1`: alpha is not a lower bound for omega. -/
+/-- Omega on the parameters of the correlated-error example above (unit
+loadings, factor spread `0`, every error covariance `1`) is `0`. -/
 theorem omega_zero_of_correlated_errors :
     coefficientOmega (fun _ : Fin 3 => (1 : ℝ)) 0 (fun _ _ => (1 : ℝ)) = 0 := by
   unfold coefficientOmega
   simp only [Fin.sum_univ_three]
   norm_num
 
-/-- Two negatively correlated items give a negative alpha of `-4`. -/
+/-- Conditional negative-alpha example: any two items with spreads `3 / 2` and
+composite spread `1` (so their covariance is `-1`) have alpha `-4`. The
+moments are hypotheses; no model realizing them is constructed here. -/
 theorem alpha_neg_four_of_negative_cov {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {X : Fin 2 → Ω → ℝ}
     (h0 : Var[X 0; μ] = 3 / 2) (h1 : Var[X 1; μ] = 3 / 2)
@@ -195,15 +199,17 @@ theorem alpha_zero_of_single_item {Ω : Type*} [MeasurableSpace Ω]
   unfold coefficientAlpha
   rw [ite_eq_right hn]
 
-/-- Cross-item errors need not be uncorrelated. -/
-theorem errors_correlated_witness {Ω : Type*} [MeasurableSpace Ω]
+/-- Conditional check, not a constructed witness: a cross-item error covariance
+equal to `1` is nonzero. -/
+theorem errors_cov_ne_zero_of_eq_one {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {E : Fin 2 → Ω → ℝ}
     (h : cov[E 0, E 1; μ] = 1) : cov[E 0, E 1; μ] ≠ 0 := by
   rw [h]
   norm_num
 
-/-- True score and error need not be uncorrelated. -/
-theorem true_error_correlated_witness {Ω : Type*} [MeasurableSpace Ω]
+/-- Conditional check, not a constructed witness: a true-score/error covariance
+equal to `1` is nonzero. -/
+theorem true_error_cov_ne_zero_of_eq_one {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {T : Ω → ℝ} {E : Fin 2 → Ω → ℝ}
     (h : cov[T, E 0; μ] = 1) : cov[T, E 0; μ] ≠ 0 := by
   rw [h]
@@ -292,8 +298,9 @@ theorem omega_one_ratio_one_of_zero_error {Ω : Type*} [MeasurableSpace Ω]
     coefficientOmega_mem_Icc μ hX hF hE hFE hφ hΘ hpos
   exact ⟨hom, hratio, hmem⟩
 
-/-- A degenerate zero-total model is outside the reliability domain: the
-total spread is `0`, the totalized omega is `0`, and positivity fails. -/
+/-- Conditional degenerate example: in any one-factor model with `∑ lam = 0`
+and `∑ Θ = 0`, the total spread is `0`, so positivity fails, and the
+totalized omega is `0`. -/
 theorem omega_degenerate_zero_total_outside_domain {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {X : Fin 2 → Ω → ℝ}
     {ν : Fin 2 → ℝ} {lam : Fin 2 → ℝ} {F : Ω → ℝ} {E : Fin 2 → Ω → ℝ}
@@ -327,17 +334,18 @@ theorem omega_degenerate_zero_total_outside_domain {Ω : Type*} [MeasurableSpace
     exact (lt_irrefl (0 : ℝ)) h
   exact ⟨hV, hom, hnpos⟩
 
-/-- Rescaling loadings by nonzero `c` and the factor spread to `φ / c ^ 2`
-leaves omega unchanged. -/
-theorem omega_invariant_under_rescaling {k : ℕ} (lam : Fin k → ℝ) (φ : ℝ)
-    (Θ : Fin k → Fin k → ℝ) (c : ℝ) (hc : c ≠ 0) :
-    coefficientOmega (fun i => c * lam i) (φ / c ^ 2) Θ
-      = coefficientOmega lam φ Θ := by
-  have hc2 : c ^ 2 ≠ 0 := pow_ne_zero 2 hc
-  have hnum : (c * ∑ i, lam i) ^ 2 * (φ / c ^ 2)
-      = (∑ i, lam i) ^ 2 * φ := by
-    field_simp
-  unfold coefficientOmega
-  simp only [← Finset.mul_sum, hnum]
+/-- The library rescaling invariance on a concrete one-item instance: loading
+`2` with factor spread `1 / 4` gives the same omega, `1 / 2`, as loading `1`
+with factor spread `1`. -/
+theorem omega_rescaled_one_item :
+    coefficientOmega (fun _ : Fin 1 => 2 * (1 : ℝ)) (1 / 2 ^ 2) (fun _ _ => (1 : ℝ))
+      = 1 / 2
+      ∧ coefficientOmega (fun _ : Fin 1 => (1 : ℝ)) 1 (fun _ _ => (1 : ℝ)) = 1 / 2 := by
+  have h1 : coefficientOmega (fun _ : Fin 1 => (1 : ℝ)) 1 (fun _ _ => (1 : ℝ)) = 1 / 2 := by
+    unfold coefficientOmega
+    simp only [Fin.sum_univ_one]
+    norm_num
+  exact ⟨(omega_invariant_under_rescaling (fun _ : Fin 1 => (1 : ℝ)) 1
+    (fun _ _ => (1 : ℝ)) 2 two_ne_zero).trans h1, h1⟩
 
 end MathlibExtTest.Probability.Statistics.Measurement

@@ -27,17 +27,21 @@ plus error spread. The spread here is Mathlib `variance`, defined as
 operative integrability condition.
 
 D02.4: Cronbach coefficient alpha (Cronbach 1951, as cited in Martinková
-and Hladká, Eq. 4.13). The public `coefficientAlpha` is domain-guarded: it
-agrees with the textbook `k / (k - 1) * (1 - ∑ item spreads / total spread)`
-ratio when `2 ≤ k` and the total spread is positive, and is `0` outside that
-domain. Under tau-equivalence with uncorrelated errors, alpha equals the
-composite reliability ratio (see
-`coefficientAlpha_eq_variance_div_of_tauEquivalent`), with the equal-error
-case in `coefficientAlpha_eq_of_tauEquivalent_of_variance_eq`. Without the
-zero-covariance model hypotheses, alpha can exceed the reliability ratio
-under correlated errors (see
-`alpha_one_ratio_zero_of_correlated_errors`) and can even be negative (see
-`alpha_neg_four_of_negative_cov`).
+and Hladká, Eq. 4.13). `coefficientAlpha` is only the raw totalized algebraic
+expression `k / (k - 1) * (1 - ∑ item spreads / total spread)`, set to `0`
+unless `2 ≤ k` and the total spread is positive. That guard is the algebraic
+domain of the ratio, not the textbook domain: the definition accepts any
+measure and any items, Mathlib `variance` turns an infinite variance into `0`,
+and under a measure that is not a probability measure it is not the population
+variance. The textbook population alpha needs `IsProbabilityMeasure μ` and
+square-integrable items; every theorem here about `coefficientAlpha` assumes
+both (item square-integrability follows from the model hypotheses). Under
+tau-equivalence with uncorrelated errors, alpha equals the composite
+reliability ratio (see `coefficientAlpha_eq_variance_div_of_tauEquivalent`),
+with the equal-error case in
+`coefficientAlpha_eq_of_tauEquivalent_of_variance_eq`. Without the
+zero-covariance model hypotheses this module proves no relation between alpha
+and reliability.
 
 D06.4: McDonald coefficient omega for a one-factor congeneric sum, with the
 displayed `ω₁` formula taken from the semTools `reliability` documentation
@@ -235,15 +239,18 @@ private theorem cov_X_of_tauEquivalent {Ω : Type*} [MeasurableSpace Ω]
   have h := cov_X_of_oneFactor μ hX' hT hE hTE i j
   simpa using h
 
-/-- Cronbach's coefficient alpha `α = k / (k - 1) * (1 - ∑ σ²_{Xᵢ} / σ²_X)`
-(Cronbach 1951, as cited in Martinková and Hladká, Eq. 4.13).
+/-- The raw totalized algebraic expression of Cronbach's coefficient alpha,
+`k / (k - 1) * (1 - ∑ Var[Xᵢ] / Var[∑ Xᵢ])` (Cronbach 1951, as cited in
+Martinková and Hladká, Eq. 4.13), set to `0` unless `2 ≤ k` and
+`0 < Var[∑ Xᵢ]`.
 
-The textbook ratio is defined only for `2 ≤ k` with positive total spread;
-this function returns `0` outside that domain. Without the zero-covariance
-model hypotheses, alpha is not identified with reliability: it can exceed
-the spread ratio under correlated errors (see
-`alpha_one_ratio_zero_of_correlated_errors`) and can even be negative (see
-`alpha_neg_four_of_negative_cov`). -/
+The guard covers only the algebraic domain of the ratio. The definition accepts
+any measure and any items: Mathlib `variance` is `(evariance X μ).toReal`, so an
+infinite variance counts as `0`, and without `IsProbabilityMeasure μ` it is not
+the population variance. The value is the textbook population alpha only for a
+probability measure and square-integrable items, which every theorem below
+assumes. Without the zero-covariance model hypotheses, alpha is not identified
+with reliability. -/
 noncomputable def coefficientAlpha {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) {k : ℕ} (X : Fin k → Ω → ℝ) : ℝ :=
   if 2 ≤ k ∧ 0 < Var[fun ω => ∑ i, X i ω; μ] then
@@ -357,6 +364,19 @@ noncomputable def coefficientOmega {k : ℕ} (lam : Fin k → ℝ) (φ : ℝ)
     (Θ : Fin k → Fin k → ℝ) : ℝ :=
   (∑ i, lam i) ^ 2 * φ / ((∑ i, lam i) ^ 2 * φ + ∑ i, ∑ j, Θ i j)
 
+/-- The factor scale of omega is not identified: rescaling the loadings by a
+nonzero `c` and the factor spread to `φ / c ^ 2` leaves omega unchanged. -/
+theorem omega_invariant_under_rescaling {k : ℕ} (lam : Fin k → ℝ) (φ : ℝ)
+    (Θ : Fin k → Fin k → ℝ) (c : ℝ) (hc : c ≠ 0) :
+    coefficientOmega (fun i => c * lam i) (φ / c ^ 2) Θ
+      = coefficientOmega lam φ Θ := by
+  have hc2 : c ^ 2 ≠ 0 := pow_ne_zero 2 hc
+  have hnum : (c * ∑ i, lam i) ^ 2 * (φ / c ^ 2)
+      = (∑ i, lam i) ^ 2 * φ := by
+    field_simp
+  unfold coefficientOmega
+  simp only [← Finset.mul_sum, hnum]
+
 /-- Spread of the composite under a one-factor congeneric model: the
 composite spread splits into `(∑ lam) ^ 2 * Var[F]` plus the summed error
 (co)spreads. -/
@@ -413,9 +433,7 @@ and error (co)spreads `Θ`, coefficient omega equals the composite
 reliability ratio `Var[(Σ lam) * F] / Var[∑ Xᵢ]`.
 
 This equality is a reliability only when the denominator is positive
-(hypothesis `hpos`); see `omega_degenerate_zero_total_outside_domain` for
-a model outside the domain. With correlated errors, alpha is not a lower
-bound for omega (see `omega_zero_of_correlated_errors`). -/
+(hypothesis `hpos`). -/
 theorem coefficientOmega_eq_variance_div_variance {Ω : Type*}
     [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {k : ℕ} {X : Fin k → Ω → ℝ}
