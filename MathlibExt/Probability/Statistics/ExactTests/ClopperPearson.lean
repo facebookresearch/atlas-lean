@@ -61,7 +61,8 @@ exactly, `1 - α`, since the binomial law has atoms.
 The level is `0 < α < 1`, split equally between the two tails. The endpoints are defined for
 every `n`, `x` and `α`; for `x > n` they are junk values. The binomial tails are taken from
 `binomTail` (`MathlibExt.Probability.Distributions.BinomialTail`) and connected to Mathlib's
-`binomial` measure by `upperTail_binomial` (`ExactTests.BinomialTest`) and `binomial_real_Iic`.
+`binomial` measure by `upperTail_binomial` and `binomial_real_Iic`
+(both `ExactTests.BinomialTest`).
 
 ## References
 
@@ -76,18 +77,6 @@ open MeasureTheory ProbabilityTheory Set
 open MathlibExt.Probability.Statistics.MultipleTesting
 
 namespace MathlibExt.Probability.Statistics.ExactTests
-
-/-! ### Binomial tails -/
-
-/-- The lower tail `P(X ≤ x)` of Mathlib's `Bin(n, p)` is `1 - binomTail n (x + 1) p`. -/
-theorem binomial_real_Iic (n x : ℕ) (p : unitInterval) :
-    (binomial n p).real (Iic x) = 1 - binomTail n (x + 1) p := by
-  have hc : Iic x = {j : ℕ | x + 1 ≤ j}ᶜ := by
-    ext j
-    simp only [mem_Iic, mem_compl_iff, mem_ofPred_eq, not_le]
-    omega
-  rw [hc, probReal_compl_eq_one_sub (MeasurableSet.of_discrete), ← upperTail,
-    upperTail_binomial]
 
 /-! ### The endpoints -/
 
