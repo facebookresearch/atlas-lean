@@ -33,9 +33,9 @@ UM-01101223 (`AMR-010-1223`), dataset ulamai/UnsolvedMath v1.8.0.
 `Bₙ` is the Artin group (MathlibExt `CoxeterMatrix.ArtinGroup`) of the Coxeter matrix of type
 `A_{n-1}`: the group on `σ₁, …, σ_{n-1}` (indexed by `Fin (n - 1)`) with Artin's relations, as in
 Paris's paper. `SBₙ` is the presented monoid with Birman's relations, transcribed from Paris's
-paper. A monoid homomorphism out of `SBₙ` is determined by its values on the generators, so the
-target quantifies over the homomorphisms `Φ` with the prescribed values (`Φ(σᵢ⁻¹) = σᵢ⁻¹` included)
-instead of constructing `Φ`; one exists, since Birman's relations hold for these values in `ℤ[Bₙ]`.
+paper. Instead of constructing `Φ`, the target asserts that a monoid homomorphism `Φ` with the
+prescribed values (`Φ(σᵢ⁻¹) = σᵢ⁻¹` included) exists and is injective. A monoid homomorphism out of
+`SBₙ` is determined by its values on the generators, so this `Φ` is the desingularization map.
 -/
 
 /-- The Artin braid group `B_n` on `n` strands: the Artin group (MathlibExt
@@ -78,19 +78,19 @@ abbrev SingularBraidMonoid (n : ℕ) : Type :=
   PresentedMonoid (singularBraidRels (n - 1))
 
 /-- Birman's conjecture (Bestvina Q 12.23): the desingularization map `Φ : SB_n → ℤ[B_n]`, the
-monoid homomorphism with `Φ(σᵢ^{±1}) = σᵢ^{±1}` and `Φ(τᵢ) = σᵢ - σᵢ⁻¹`, is injective. A monoid
-homomorphism is determined by its values on generators, so the statement quantifies over the
-homomorphisms with these values. -/
+monoid homomorphism with `Φ(σᵢ^{±1}) = σᵢ^{±1}` and `Φ(τᵢ) = σᵢ - σᵢ⁻¹`, exists and is injective.
+A monoid homomorphism is determined by its values on generators, so these values pin down `Φ`. -/
 def desingularizationInjective : Prop :=
-  ∀ (n : ℕ) (Φ : SingularBraidMonoid n →* MonoidAlgebra ℤ (BraidGroup n)),
+  ∀ n : ℕ,
     let σ : Fin (n - 1) → MonoidAlgebra ℤ (BraidGroup n) := fun i =>
       MonoidAlgebra.of ℤ (BraidGroup n) (CoxeterMatrix.ArtinGroup.of (CoxeterMatrix.A (n - 1)) i)
     let σInv : Fin (n - 1) → MonoidAlgebra ℤ (BraidGroup n) := fun i =>
       MonoidAlgebra.of ℤ (BraidGroup n) (CoxeterMatrix.ArtinGroup.of (CoxeterMatrix.A (n - 1)) i)⁻¹
-    (∀ i, Φ (PresentedMonoid.of _ (.sig i)) = σ i) →
-    (∀ i, Φ (PresentedMonoid.of _ (.sigInv i)) = σInv i) →
-    (∀ i, Φ (PresentedMonoid.of _ (.tau i)) = σ i - σInv i) →
-    Function.Injective Φ
+    ∃ Φ : SingularBraidMonoid n →* MonoidAlgebra ℤ (BraidGroup n),
+      (∀ i, Φ (PresentedMonoid.of _ (.sig i)) = σ i) ∧
+      (∀ i, Φ (PresentedMonoid.of _ (.sigInv i)) = σInv i) ∧
+      (∀ i, Φ (PresentedMonoid.of _ (.tau i)) = σ i - σInv i) ∧
+      Function.Injective Φ
 
 /--
 Resolved true: Paris proved Birman's conjecture: for every `n` the desingularization map `SBₙ →
