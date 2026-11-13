@@ -49,6 +49,17 @@ and `0 ≤ c`.
 
 ## iv. References
 
+- R. J. LeVeque, *Finite Volume Methods for Hyperbolic Problems*, Cambridge
+  University Press, 2002, Chapter 2. Eq. (2.2) is the integral conservation
+  law `d/dt ∫_{x₁}^{x₂} q dx = F₁(t) - F₂(t)`, with `F₁` and `-F₂` the
+  fluxes into the section through its endpoints. In §2.2 the flux
+  `ū q - β q_x` (advection plus Fick's law, Eq. (2.20)) gives the
+  advection-diffusion equation `q_t + ū q_x = β q_xx` (Eq. (2.23)). §2.5
+  adds a source density `ψ`, giving `q_t + f(q)_x = ψ` (Eq. (2.28)); §2.5.2
+  uses the decay source `-α q₁` for an advected tracer (Eq. (2.29)) and the
+  reaction-advection-diffusion form `q_t + A q_x = β q_xx + ψ(q)`
+  (Eq. (2.30)). Here `ū = U`, `β = D`, `ψ = -k c`, and the flux is
+  `J = U c - D c_x`.
 - `intervalIntegral.integral_eq_sub_of_hasDerivAt` in
   `Mathlib/MeasureTheory/Integral/IntervalIntegral/FundThmCalculus.lean`
   (Mathlib).
