@@ -18,6 +18,7 @@ open MeasureTheory ProbabilityTheory Finset
 open MathlibExt.Probability.Statistics.ExactTests MathlibExt.Probability.Statistics.MultipleTesting
 open MathlibExt.Biology.StatisticalGenetics.AssociationTests.ExactVsAsymptotic
 open MathlibExt.Biology.StatisticalGenetics.RareVariantInference.GenomicControl
+open MathlibExt.Biology.StatisticalGenetics.PearsonLimit
 
 namespace MathlibExtTest.Biology.StatisticalGenetics.AssociationTests.ExactVsAsymptotic
 
@@ -86,23 +87,24 @@ example : ¬ IsValidPValue (uniformArrangements 10 2)
   not_isValidPValue_asymptoticHWEPValue_sparse
 
 /-- The statistic grows with `N`: with one `AA` homozygote among `100` individuals, `X² = 100`. -/
-example : hweChiSq 1 0 99 = 100 := by
-  have := hweChiSq_one_zero (m := 99) (by norm_num)
+example : hweStat 100 ![99, 0, 1] = 100 := by
+  have := hweStat_one_homozygote (m := 99) (by norm_num)
   norm_num at this
   exact this
 
 /-! ### Regime boundaries -/
 
 /-- The sparse case is outside Cochran's rule. -/
-example : ¬ InChiSqRegime 5 1 0 9 := not_inChiSqRegime_sparse
+example : ¬ InChiSqRegime 5 10 ![9, 0, 1] := not_inChiSqRegime_sparse
 
 /-- A balanced sample at HWE proportions is inside it: `(25, 50, 25)` has expected counts
 `(25, 50, 25)`, and Pearson's statistic is `0`. -/
-example : InChiSqRegime 5 25 50 25 := by
-  refine ⟨?_, ?_, ?_⟩ <;> norm_num [expectedAA, expectedAB, expectedBB, freqA]
+example : InChiSqRegime 5 100 ![25, 50, 25] := by
+  intro i
+  fin_cases i <;> norm_num [hweProb, alleleFreqHat, Fin.sum_univ_three]
 
-example : hweChiSq 25 50 25 = 0 := by
-  norm_num [hweChiSq, expectedAA, expectedAB, expectedBB, freqA]
+example : hweStat 100 ![25, 50, 25] = 0 := by
+  norm_num [hweStat, pearsonStatistic, hweProb, alleleFreqHat, Fin.sum_univ_three]
 
 /-! ### Genomic control -/
 

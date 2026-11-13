@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Biology.StatisticalGenetics.AssociationTests.PearsonLimit
 public import MathlibExt.Biology.StatisticalGenetics.RareVariantInference.GenomicControl
 public import MathlibExt.Probability.Statistics.ExactTests.HardyWeinbergExact
 public import MathlibExt.Probability.Statistics.ExactTests.TailPValue
@@ -32,17 +33,17 @@ This file compares three ways of turning an observed `n_AB` into a p-value.
    a heterozygote deficit (`hweDeficitPValue`). Both are valid p-values in every finite sample
    with a feasible allele count (`nA ≤ 2 * N`)
    (`isValidPValue_hweExactPValue`, `isValidPValue_hweDeficitPValue`).
-2. **Asymptotic test.** Pearson's statistic `X²` (`hweChiSq`) compared with the `χ²₁` law
-   through the shared tail `chiSqOneTail` of `RareVariantInference.GenomicControl`
-   (`asymptoticHWEPValue`). Pearson's theorem says `X²` converges in law to `χ²₁` as `N → ∞`
-   with the allele frequency fixed in `(0, 1)`, which forces every expected genotype count to
-   infinity; the usual finite-sample proxy is Cochran's rule that every expected count is at
-   least `5` (`InChiSqRegime`). The limit theorem is **not** formalized here; this file proves
-   the failure side. With `N = 10` and `n_A = 2` the expected `AA` count is `0.1`
-   (`not_inChiSqRegime_sparse`), the observation of one `AA` homozygote gives `X² = 10`, and
-   the asymptotic test at level `0.05` rejects with null probability `1/19 > 0.05`
-   (`not_isValidPValue_asymptoticHWEPValue_sparse`), while the exact p-value of the same
-   observation is `1/19` (`hweExactPValue_sparse`).
+2. **Asymptotic test.** Pearson's statistic `X²` with the allele frequency estimated from the
+   sample, the canonical `PearsonLimit.hweStat`, compared with the `χ²₁` law through the shared
+   tail `chiSqOneTail` of `RareVariantInference.GenomicControl` (`asymptoticHWEPValue`).
+   Pearson's theorem (`PearsonLimit.tendstoInDistribution_hweStat`) says `X²` converges in law
+   to `χ²₁` as `N → ∞` with the allele frequency fixed in `(0, 1)`, which forces every expected
+   genotype count to infinity; the usual finite-sample proxy is Cochran's rule that every
+   expected count is at least `5` (`InChiSqRegime`). This file proves the failure side. With
+   `N = 10` and `n_A = 2` the expected `AA` count is `0.1` (`not_inChiSqRegime_sparse`), the
+   observation of one `AA` homozygote gives `X² = 10`, and the asymptotic test at level `0.05`
+   rejects with null probability `1/19 > 0.05` (`not_isValidPValue_asymptoticHWEPValue_sparse`),
+   while the exact p-value of the same observation is `1/19` (`hweExactPValue_sparse`).
 3. **Genomic control.** Dividing the statistic by an inflation factor `λ` before the `χ²₁`
    lookup (`gcPValue`, from `RareVariantInference.GenomicControl`) is valid under that module's
    common-inflation model, in which every null score has law `N(0, λ)`
@@ -67,17 +68,19 @@ This file compares three ways of turning an observed `n_AB` into a p-value.
 * `uniformArrangements N nA`: the uniform law on placements of `nA` alleles in `2N` slots.
 * `hweExactPValue`, `hweDeficitPValue`: the two-sided (probability-ordered) and the
   heterozygote-deficit exact p-values.
-* `hweChiSq nAA nAB nBB`: Pearson's HWE statistic; `hweChiSqOfHet N nA h` in terms of `h`.
+* `hweChiSqOfHet N nA h`: Pearson's statistic `PearsonLimit.hweStat` of the genotype table
+  determined by `N`, `nA` and the heterozygote count `h`.
 * `asymptoticHWEPValue N nA h`: the `χ²₁` tail `chiSqOneTail` at Pearson's statistic.
-* `InChiSqRegime c nAA nAB nBB`: every expected genotype count is at least `c`.
+* `InChiSqRegime c N n`: every expected genotype count `N * hweProb (alleleFreqHat n) i` is at
+  least `c`.
 
 ## Main results
 
 * `hasLaw_hetCount`: under `uniformArrangements N nA`, `hetCount` has law `leveneMeasure N nA`.
 * `isValidPValue_orderedPValue`: any ordered Levene p-value is valid when the count has
   Levene's law; `isValidPValue_hweExactPValue` and `isValidPValue_hweDeficitPValue`.
-* `hweChiSq_one_zero`: one `AA` homozygote among `m + 1` individuals with two `A` alleles gives
-  `X² = m + 1`, for every `m ≥ 1`.
+* `hweStat_one_homozygote`: one `AA` homozygote among `m + 1` individuals with two `A` alleles
+  gives `X² = m + 1`, for every `m ≥ 1`.
 * `not_isValidPValue_asymptoticHWEPValue_sparse`: the asymptotic p-value is anti-conservative
   in the sparse case.
 * `not_isValidPValue_gcPValue_sparse`, `gcPValue_sparse_rejection_ge`: genomic control does not
@@ -89,15 +92,16 @@ Searched `MathlibExt`, `MathlibExtTest`, `WantedExt` and Mathlib for `IsValidPVa
 `HardyWeinberg`, `leveneProb`, `hetCount`, `FisherExact`, `upperTail`, `genomic control`,
 `inflation factor`, `chiSquared`, `survival`, `mgf_gaussianReal`, `measure_ge_le_exp_mul_mgf`.
 Reused: `leveneProb`, `hetCount`, `card_hetCount_div_choose`, `sum_leveneProb`
-(`ExactTests/HardyWeinbergExact`), `IsValidPValue` (`MultipleTesting/Basic`),
-`sum_upperTail_le` (`ExactTests/TailPValue`, specialized to the key `-g`), Mathlib's `uniformOn`,
-and from `RareVariantInference/GenomicControl` the `χ²₁` tail `chiSqOneTail` (the canonical
+(`ExactTests/HardyWeinbergExact`), `IsValidPValue` (`MultipleTesting/Basic`), `sum_upperTail_le`
+(`ExactTests/TailPValue`, specialized to the key `-g`), Mathlib's `uniformOn`, the fitted Pearson
+statistic `hweStat` with `hweProb` and `alleleFreqHat` (`AssociationTests/PearsonLimit`, whose
+`tendstoInDistribution_hweStat` is the limit theorem behind the asymptotic test), and from
+`RareVariantInference/GenomicControl` the `χ²₁` tail `chiSqOneTail` (the canonical
 `chiSquareSurvival 1`) with `chiSqOneTail_antitone`, `chiSqOneTail_ne_top` and
 `chiSqOneTail_toReal_ten_le`, the genomic-control p-value `gcPValue` with `gcPValue_nonneg`,
-`gcPValue_antitone` and `gcPValue_lt_one`, and the common-inflation model under which that
-p-value is valid (`CommonInflationModel.isValidPValue_gcPValue`). Not found, so defined here: a
-measure form of Levene's law, a validity theorem for exact HWE p-values, a chi-square HWE
-statistic, and the sparse HWE counterexamples.
+`gcPValue_antitone` and `gcPValue_lt_one`, and the common-inflation model under which that p-value
+is valid (`CommonInflationModel.isValidPValue_gcPValue`). Not found, so defined here: a measure form
+of Levene's law, a validity theorem for exact HWE p-values, and the sparse HWE counterexamples.
 
 ## References
 
@@ -122,6 +126,7 @@ statistic, and the sparse HWE counterexamples.
 open MeasureTheory ProbabilityTheory Finset Filter Topology
 open MathlibExt.Probability.Statistics.ExactTests MathlibExt.Probability.Statistics.MultipleTesting
 open MathlibExt.Biology.StatisticalGenetics.RareVariantInference.GenomicControl
+open MathlibExt.Biology.StatisticalGenetics.PearsonLimit
 
 namespace MathlibExt.Biology.StatisticalGenetics.AssociationTests.ExactVsAsymptotic
 
@@ -314,66 +319,57 @@ theorem isValidPValue_hweDeficitPValue (N nA : ℕ) (_hnA : nA ≤ 2 * N) :
 
 /-! ### The asymptotic chi-square test and where it fails -/
 
-/-- The estimated frequency `(2 n_AA + n_AB) / (2N)` of allele `A`. -/
-noncomputable def freqA (nAA nAB nBB : ℕ) : ℝ :=
-  (2 * nAA + nAB : ℝ) / (2 * (nAA + nAB + nBB : ℝ))
-
-/-- Expected `AA` count `N p̂²` under HWE. -/
-noncomputable def expectedAA (nAA nAB nBB : ℕ) : ℝ :=
-  (nAA + nAB + nBB : ℝ) * freqA nAA nAB nBB ^ 2
-
-/-- Expected `AB` count `2 N p̂ (1 - p̂)` under HWE. -/
-noncomputable def expectedAB (nAA nAB nBB : ℕ) : ℝ :=
-  2 * (nAA + nAB + nBB : ℝ) * freqA nAA nAB nBB * (1 - freqA nAA nAB nBB)
-
-/-- Expected `BB` count `N (1 - p̂)²` under HWE. -/
-noncomputable def expectedBB (nAA nAB nBB : ℕ) : ℝ :=
-  (nAA + nAB + nBB : ℝ) * (1 - freqA nAA nAB nBB) ^ 2
-
-/-- Pearson's chi-square statistic for Hardy–Weinberg proportions with the allele frequency
-estimated from the sample. -/
-noncomputable def hweChiSq (nAA nAB nBB : ℕ) : ℝ :=
-  (nAA - expectedAA nAA nAB nBB) ^ 2 / expectedAA nAA nAB nBB +
-    (nAB - expectedAB nAA nAB nBB) ^ 2 / expectedAB nAA nAB nBB +
-    (nBB - expectedBB nAA nAB nBB) ^ 2 / expectedBB nAA nAB nBB
-
-/-- Pearson's statistic as a function of the heterozygote count `h`, given `N` and `nA`. For
-impossible counts (`h > nA` or `nA - h` odd) the natural-number floor division and truncated
-subtraction give a meaningless value; those counts have null probability `0`. -/
+/-- Pearson's statistic as a function of the heterozygote count `h`, given `N` and `nA`: the
+fitted statistic `PearsonLimit.hweStat` of the genotype table
+`(n_BB, n_AB, n_AA) = ((2N - nA - h) / 2, h, (nA - h) / 2)`, whose cell `i` counts the
+individuals carrying `i` copies of `A`. For impossible counts (`h > nA` or `nA - h` odd) the
+natural-number floor division and truncated subtraction give a meaningless value; those counts
+have null probability `0`. -/
 noncomputable def hweChiSqOfHet (N nA h : ℕ) : ℝ :=
-  hweChiSq ((nA - h) / 2) h ((2 * N - nA - h) / 2)
+  hweStat N ![(((2 * N - nA - h) / 2 : ℕ) : ℝ), (h : ℝ), (((nA - h) / 2 : ℕ) : ℝ)]
 
 /-- The asymptotic HWE p-value: the `χ²₁` tail `P(χ²₁ > X²)` at Pearson's statistic. -/
 noncomputable def asymptoticHWEPValue (N nA h : ℕ) : ℝ :=
   (chiSqOneTail (hweChiSqOfHet N nA h)).toReal
 
-/-- The large-sample regime: every expected genotype count is at least `c`. Pearson's limit
-theorem (not formalized here) needs every expected count to grow without bound; Cochran's
+/-- The large-sample regime for `N` individuals with genotype table `n`: every expected genotype
+count `N * hweProb (alleleFreqHat n) i`, the denominator of `hweStat N n`, is at least `c`.
+Pearson's limit theorem `PearsonLimit.tendstoInDistribution_hweStat` fixes the allele frequency
+in `(0, 1)` and lets `N → ∞`, which sends every expected count to infinity; Cochran's
 finite-sample rule takes `c = 5`. -/
-def InChiSqRegime (c : ℝ) (nAA nAB nBB : ℕ) : Prop :=
-  c ≤ expectedAA nAA nAB nBB ∧ c ≤ expectedAB nAA nAB nBB ∧ c ≤ expectedBB nAA nAB nBB
+def InChiSqRegime (c : ℝ) (N : ℕ) (n : Fin 3 → ℝ) : Prop :=
+  ∀ i, c ≤ N * hweProb (alleleFreqHat n) i
 
 /-- **Sparse-count statistic.** With two `A` alleles carried by a single `AA` homozygote among
 `m + 1` individuals (`m ≥ 1`), Pearson's statistic is `X² = m + 1`: it grows linearly in the
 sample size, so its `χ²₁` p-value decays like `e^{-(m+1)/2}` (`chiSqOneTail_toReal_le`), while for
 `m = 9` the configuration has Levene probability `1/19` (`leveneProb_sparse_zero`). -/
-theorem hweChiSq_one_zero {m : ℕ} (hm : 1 ≤ m) : hweChiSq 1 0 m = m + 1 := by
+theorem hweStat_one_homozygote {m : ℕ} (hm : 1 ≤ m) :
+    hweStat (m + 1) ![(m : ℝ), 0, 1] = m + 1 := by
   have hm' : (1 : ℝ) ≤ m := by exact_mod_cast hm
-  simp only [hweChiSq, expectedAA, expectedAB, expectedBB, freqA]
-  push_cast
   have h1 : (m : ℝ) + 1 ≠ 0 := by positivity
   have h2 : (m : ℝ) ≠ 0 := by positivity
-  have h3 : ((1 : ℝ) + 0 + m) * 2 - (2 + 0) ≠ 0 := by
-    intro h
-    linarith
+  have hp : alleleFreqHat ![(m : ℝ), 0, 1] = 1 / (m + 1) := by
+    simp only [alleleFreqHat, Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons]
+    field_simp
+    ring
+  have hq : 1 - 1 / ((m : ℝ) + 1) = m / (m + 1) := by
+    field_simp
+    ring
+  simp only [hweStat, pearsonStatistic, Fin.sum_univ_three, hweProb, hp, hq,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two, Matrix.head_cons,
+    Matrix.tail_cons]
+  push_cast
   field_simp
   ring
 
 /-- The sparse configuration (`N = 10`, `n_A = 2`, no heterozygote) violates Cochran's
 expected-count rule: the expected `AA` count is `0.1`. -/
-theorem not_inChiSqRegime_sparse : ¬ InChiSqRegime 5 1 0 9 := by
-  rintro ⟨h, -, -⟩
-  norm_num [expectedAA, freqA] at h
+theorem not_inChiSqRegime_sparse : ¬ InChiSqRegime 5 10 ![9, 0, 1] := by
+  intro h
+  have h2 := h 2
+  norm_num [hweProb, alleleFreqHat, Fin.sum_univ_three] at h2
 
 theorem leveneProb_sparse_zero : leveneProb 10 2 0 = 1 / 19 := by
   norm_num [leveneProb, Nat.factorial]
@@ -385,12 +381,12 @@ theorem leveneProb_sparse_two : leveneProb 10 2 2 = 18 / 19 := by
   norm_num [leveneProb, Nat.factorial]
 
 theorem hweChiSqOfHet_sparse_zero : hweChiSqOfHet 10 2 0 = 10 := by
-  have := hweChiSq_one_zero (m := 9) (by norm_num)
-  norm_num [hweChiSqOfHet] at this ⊢
-  exact this
+  have h := hweStat_one_homozygote (m := 9) (by norm_num)
+  norm_num [hweChiSqOfHet] at h ⊢
+  exact h
 
 theorem hweChiSqOfHet_sparse_two : hweChiSqOfHet 10 2 2 = 10 / 81 := by
-  norm_num [hweChiSqOfHet, hweChiSq, expectedAA, expectedAB, expectedBB, freqA]
+  norm_num [hweChiSqOfHet, hweStat, pearsonStatistic, hweProb, alleleFreqHat, Fin.sum_univ_three]
 
 /-- **The exact p-value of the sparse observation.** One `AA` homozygote and no heterozygote
 (`N = 10`, `n_A = 2`) has exact p-value `1/19 ≈ 0.053`: the exact test does not reject at
