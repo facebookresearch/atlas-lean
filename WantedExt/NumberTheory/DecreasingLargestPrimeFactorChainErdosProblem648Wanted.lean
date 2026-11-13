@@ -29,19 +29,16 @@ Source: T. F. Bloom, Erdős Problems, Problem #648, https://www.erdosproblems.co
 
 'Estimate `g(n)`' is formalized as Cambie's order `g(n) ≍ (n / log n)^{1/2}` (`Asymptotics.IsTheta`
 at `atTop`); his follow-up question whether `g(n) ∼ c (n / log n)^{1/2}` is open and not stated.
-`P(m)` is the largest element of `m.primeFactors`, correct for `m ≥ 2`. Compared with the
-formal-conjectures statement `ErdosProblems/648.lean` (equivalent; no code imported).
+`P(m)` is written `m.primeFactors.sup id`, the largest element of `m.primeFactors` (`0` for
+`m ≤ 1`), correct for `m ≥ 2`. Compared with the formal-conjectures statement
+`ErdosProblems/648.lean` (equivalent; no code imported).
 -/
-
-/-- The largest prime factor `P(m)` of `m` (`0` for `m ≤ 1`). -/
-def largestPrimeFactor (m : ℕ) : ℕ :=
-  m.primeFactors.sup id
 
 /-- `g(n)`: the largest `t` such that there are integers `2 ≤ a₁ < a₂ < ⋯ < a_t < n` with
 `P(a₁) > P(a₂) > ⋯ > P(a_t)` (bounded by `n`). -/
 noncomputable def decreasingPrimeFactorChain (n : ℕ) : ℕ :=
   sSup {t | ∃ a : Fin t → ℕ, StrictMono a ∧ (∀ i, 2 ≤ a i ∧ a i < n) ∧
-    StrictAnti fun i => largestPrimeFactor (a i)}
+    StrictAnti fun i => (a i).primeFactors.sup id}
 
 /-- Erdős Problem 648, in the form of its solution: `g(n) ≍ (n / log n)^{1/2}`. -/
 def decreasingPrimeFactorChainOrder : Prop :=

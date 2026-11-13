@@ -31,26 +31,23 @@ The two primes are taken distinct (for `p = q` no `n` works, `p` dividing both `
 problem page notes that the question as written fails for `p = 2, q = 7` and discusses amendments
 ('odd primes', 'all sufficiently large primes'); the second target is the weakest of these, the
 claim for all sufficiently large distinct primes, whose refutation answers every amended form.
-`P(m)` is the largest element of `m.primeFactors`. Compared with the formal-conjectures statement
-`ErdosProblems/649.lean` (the first target matches `erdos_649`; no code imported).
+`P(m)` is written `m.primeFactors.sup id`, the largest element of `m.primeFactors` (`0` for
+`m ≤ 1`). Compared with the formal-conjectures statement `ErdosProblems/649.lean` (the first target
+matches `erdos_649`; no code imported).
 -/
-
-/-- The largest prime factor `P(m)` of `m` (`0` for `m ≤ 1`). -/
-def largestPrimeFactor (m : ℕ) : ℕ :=
-  m.primeFactors.sup id
 
 /-- Erdős Problem 649, as posed: for any two distinct primes `p, q` there is an integer `n` with
 `P(n) = p` and `P(n + 1) = q`. -/
 def consecutiveLargestPrimeFactors : Prop :=
   ∀ p q : ℕ, p.Prime → q.Prime → p ≠ q →
-    ∃ n : ℕ, largestPrimeFactor n = p ∧ largestPrimeFactor (n + 1) = q
+    ∃ n : ℕ, n.primeFactors.sup id = p ∧ (n + 1).primeFactors.sup id = q
 
 /-- Erdős Problem 649 with the weakest amendment discussed on the problem page: for all
 sufficiently large distinct primes `p, q` there is an integer `n` with `P(n) = p` and
 `P(n + 1) = q`. -/
 def consecutiveLargestPrimeFactorsLargePrimes : Prop :=
   ∃ N : ℕ, ∀ p q : ℕ, p.Prime → q.Prime → N ≤ p → N ≤ q → p ≠ q →
-    ∃ n : ℕ, largestPrimeFactor n = p ∧ largestPrimeFactor (n + 1) = q
+    ∃ n : ℕ, n.primeFactors.sup id = p ∧ (n + 1).primeFactors.sup id = q
 
 /--
 Resolved false: no `n` has `P(n) = 2` and `P(n + 1) = 7`, since `n` would be a power of `2` and `2^k

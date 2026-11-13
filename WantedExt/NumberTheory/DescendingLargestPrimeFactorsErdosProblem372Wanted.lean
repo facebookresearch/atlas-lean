@@ -27,18 +27,15 @@ namespace MathlibExt.NumberTheory.DescendingLargestPrimeFactorsErdosProblem372Wa
 Source: T. F. Bloom, Erdős Problems, Problem #372, https://www.erdosproblems.com/372 (status
 PROVED). UnsolvedMath record UM-30006843 (`EP-372`), dataset ulamai/UnsolvedMath v1.8.0.
 
-`P(n)` is the maximum of `n.primeFactors` (`0` for `n ≤ 1`). Compared with the formal-conjectures
-statement `ErdosProblems/372.lean` (equivalent; no code imported).
+`P(n)` is written `n.primeFactors.sup id`, the maximum of `n.primeFactors` (`0` for `n ≤ 1`).
+Compared with the formal-conjectures statement `ErdosProblems/372.lean` (equivalent; no code
+imported).
 -/
-
-/-- The largest prime factor `P(n)` of `n` (`0` when `n ≤ 1`). -/
-def largestPrimeFactor (n : ℕ) : ℕ :=
-  n.primeFactors.sup id
 
 /-- Erdős Problem 372: there are infinitely many `n` with `P(n) > P(n + 1) > P(n + 2)`. -/
 def infinitelyManyDescendingLargestPrimeFactors : Prop :=
-  {n : ℕ | largestPrimeFactor (n + 1) < largestPrimeFactor n ∧
-    largestPrimeFactor (n + 2) < largestPrimeFactor (n + 1)}.Infinite
+  {n : ℕ | (n + 1).primeFactors.sup id < n.primeFactors.sup id ∧
+    (n + 2).primeFactors.sup id < (n + 1).primeFactors.sup id}.Infinite
 
 /--
 Resolved true: Balog proved that `P(n) > P(n + 1) > P(n + 2)` for `≫ √x` integers `n ≤ x` for all
