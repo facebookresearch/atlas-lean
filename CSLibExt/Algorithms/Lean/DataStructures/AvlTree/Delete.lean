@@ -79,15 +79,18 @@ public def delete [LinearOrder α] (x : α) (tree : Tree α) : Tree α :=
 
 /-! ## Membership and `All` -/
 
-@[simp] private theorem mem_empty_iff {x : α} :
+-- `nolint simpNF`: the parent module has private simp lemmas with these statements. The linter
+-- sees them (it loads private declarations of every module); this module does not, so these
+-- copies are the simp lemmas its proofs use.
+@[simp, nolint simpNF] private theorem mem_empty_iff {x : α} :
     x ∈ (Tree.empty : Tree α) ↔ False :=
   Iff.rfl
 
-@[simp] private theorem mem_node_iff {x key : α} {cached : Nat} {left right : Tree α} :
+@[simp, nolint simpNF] private theorem mem_node_iff {x key : α} {cached : Nat} {left right : Tree α} :
     x ∈ Tree.node cached left key right ↔ x ∈ left ∨ x = key ∨ x ∈ right :=
   Iff.rfl
 
-@[simp] private theorem mem_mkNode_iff {x key : α} {left right : Tree α} :
+@[simp, nolint simpNF] private theorem mem_mkNode_iff {x key : α} {left right : Tree α} :
     x ∈ mkNode left key right ↔ x ∈ left ∨ x = key ∨ x ∈ right :=
   Iff.rfl
 
@@ -818,6 +821,16 @@ public theorem inorder_delete [LinearOrder α] {x : α} {tree : Tree α}
     (hTree : Ordered tree) : inorder (delete x tree) = (inorder tree).erase x :=
   inorder_erase hTree
 
+/-- Deletion preserves validity. -/
+public theorem valid_erase [LinearOrder α] {x : α} {tree : Tree α}
+    (h : Valid tree) : Valid (erase x tree) :=
+  ⟨ordered_erase h.1, cacheCorrect_erase h.2.1, balanced_erase h.2.1 h.2.2⟩
+
+/-- Deletion, under the name `delete`, preserves validity. -/
+public theorem valid_delete [LinearOrder α] {x : α} {tree : Tree α}
+    (h : Valid tree) : Valid (delete x tree) :=
+  valid_erase h
+
 /-- `deleteMin` preserves correct cached heights. -/
 public theorem cacheCorrect_deleteMin {tree : Tree α} (hTree : CacheCorrect tree) :
     CacheCorrect (deleteMin tree) :=
@@ -833,6 +846,11 @@ public theorem balanced_deleteMin {tree : Tree α}
 public theorem ordered_deleteMin [LinearOrder α] {tree : Tree α}
     (hTree : Ordered tree) : Ordered (deleteMin tree) :=
   ordered_eraseMin hTree
+
+/-- `deleteMin` preserves validity. -/
+public theorem valid_deleteMin [LinearOrder α] {tree : Tree α}
+    (h : Valid tree) : Valid (deleteMin tree) :=
+  ⟨ordered_deleteMin h.1, cacheCorrect_deleteMin h.2.1, balanced_deleteMin h.2.1 h.2.2⟩
 
 end AvlTree
 end Cslib.Algorithms.Lean

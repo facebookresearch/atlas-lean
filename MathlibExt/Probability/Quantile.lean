@@ -11,6 +11,7 @@ module
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import Mathlib.Probability.CDF
+import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
 /-!
@@ -82,6 +83,32 @@ theorem cdfQuantile_le_iff (μ : Measure ℝ) {u : ℝ} (hu : u ∈ Ioo (0 : ℝ
   constructor
   · exact fun h ↦ hmem.trans (monotone_cdf μ h)
   · exact fun h ↦ csInf_le hbdd h
+
+/-- **Quantile inversion under a continuous cdf.** When `cdf μ` is continuous, the cdf at the
+generalized inverse quantile is exactly `u`. (`cdfQuantile_mem` gives `≥`; continuity rules out
+`>`, since just below the quantile the cdf is `< u`.) -/
+theorem cdf_cdfQuantile_eq_of_continuous (μ : Measure ℝ)
+    (hcont : Continuous (cdf μ)) {u : ℝ} (hu : u ∈ Set.Ioo (0 : ℝ) 1) :
+    cdf μ (cdfQuantile μ u) = u := by
+  have hge : u ≤ cdf μ (cdfQuantile μ u) := cdfQuantile_mem μ hu
+  rcases eq_or_lt_of_le hge with h | hlt
+  · exact h.symm
+  · exfalso
+    have hIoi : Set.Ioi u ∈ 𝓝 (cdf μ (cdfQuantile μ u)) := Ioi_mem_nhds hlt
+    have hmem : (cdf μ) ⁻¹' (Set.Ioi u) ∈ 𝓝 (cdfQuantile μ u) :=
+      hcont.continuousAt.preimage_mem_nhds hIoi
+    obtain ⟨δ, hδpos, hδ⟩ := Metric.mem_nhds_iff.mp hmem
+    have hxmem : cdfQuantile μ u - δ / 2 ∈ Metric.ball (cdfQuantile μ u) δ := by
+      rw [Metric.mem_ball, Real.dist_eq]
+      have h1 : (cdfQuantile μ u - δ / 2) - cdfQuantile μ u = -(δ / 2) := by ring
+      rw [h1, abs_neg, abs_of_pos (by linarith : (0 : ℝ) < δ / 2)]
+      linarith
+    have hlt' : u < cdf μ (cdfQuantile μ u - δ / 2) := by
+      simpa using hδ hxmem
+    have hle : cdfQuantile μ u ≤ cdfQuantile μ u - δ / 2 :=
+      (cdfQuantile_le_iff μ hu).mpr hlt'.le
+    have hlt'' : cdfQuantile μ u - δ / 2 < cdfQuantile μ u := by linarith
+    exact absurd hle (not_le_of_gt hlt'')
 
 /-- The generalized cdf inverse is monotone on `(0, 1)`. -/
 theorem cdfQuantile_monoOn (μ : Measure ℝ) : MonotoneOn (cdfQuantile μ) (Ioo 0 1) := by

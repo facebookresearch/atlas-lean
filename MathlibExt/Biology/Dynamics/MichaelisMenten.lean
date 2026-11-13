@@ -36,14 +36,16 @@ Briggs and Haldane rests:
   `V_max = k₂ e₀` (the Michaelis–Menten rate law).
 * `mmRate_strictMono`, `mmRate_michaelisConstant`, `tendsto_mmRate`: the rate law is strictly
   increasing, half-maximal at `s = K_M`, and saturates at `V_max`.
+* `mmRate_lt`, `mmRate_nonneg_and_le`: for `s ≥ 0` and `K_M > 0` the rate is below `V_max > 0`,
+  and lies in `[0, V_max]` for `V_max ≥ 0`.
 * `hasDerivAt_fastTransient`, `tendsto_fastTransient`: with the substrate frozen at `s̄ ≥ 0`
   (the boundary-layer system of the singular perturbation), the complex relaxes exponentially,
   at rate `k₁ (s̄ + K_M)`, onto the quasi-steady-state value.
 
 The rigorous statement that the full solution stays within `O(e₀)` of the reduced
 (Michaelis–Menten) solution on the slow time scale (Tikhonov's theorem as applied by Heineken,
-Tsuchiya and Aris) is recorded as a wanted theorem in
-`WantedExt.Biology.Dynamics.MichaelisMentenQSSAWanted`; it is not proved here.
+Tsuchiya and Aris) is proved, with explicit constants, as `abs_sub_reduced_le` in
+`MathlibExt.Biology.Dynamics.MichaelisMenten.UniformBound` (which imports this file).
 
 ## References
 
@@ -167,6 +169,15 @@ theorem mmRate_lt {Vmax KM s : ℝ} (hV : 0 < Vmax) (hK : 0 < KM) (hs : 0 ≤ s)
   unfold mmRate
   rw [div_lt_iff₀ (by linarith)]
   nlinarith
+
+/-- The rate law lies in `[0, V_max]`: `0 ≤ v(s) ≤ V_max` for `s ≥ 0`, `V_max ≥ 0`, `K_M > 0`.
+The upper bound is `mmRate_lt` for `V_max > 0`; at `V_max = 0` the rate is `0`. -/
+theorem mmRate_nonneg_and_le {Vmax KM s : ℝ} (hV : 0 ≤ Vmax) (hK : 0 < KM) (hs : 0 ≤ s) :
+    0 ≤ mmRate Vmax KM s ∧ mmRate Vmax KM s ≤ Vmax := by
+  refine ⟨div_nonneg (mul_nonneg hV hs) (add_pos_of_pos_of_nonneg hK hs).le, ?_⟩
+  rcases hV.eq_or_lt with h | h
+  · simp [mmRate, ← h]
+  · exact (mmRate_lt h hK hs).le
 
 /-- Saturation: `v(s) → V_max` as `s → ∞`. -/
 theorem tendsto_mmRate (Vmax KM : ℝ) :

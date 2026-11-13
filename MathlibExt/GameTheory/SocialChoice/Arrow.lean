@@ -13,7 +13,7 @@ public import MathlibExt.Order.StrictTotalOrder
 import Mathlib.Algebra.Order.Ring.Nat
 import Mathlib.Data.Fintype.EquivFin
 import Mathlib.Data.Nat.Cast.Order.Basic
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 
 @[expose] public section
 
@@ -785,6 +785,7 @@ For ≥3 alternatives, every Pareto + IIA SWF on unrestricted strict profiles ov
 voter type is dictatorial, with `Finite` hypotheses.
 `arrow_impossibility` is the source-shaped form with `Fintype`/`DecidableEq`.
 -/
+@[nolint unusedArguments]
 theorem arrow_impossibility_general
     {Alt Voter : Type*} [Finite Alt] [Finite Voter] [Nonempty Voter]
     (hAlt : ∃ a b c : Alt, a ≠ b ∧ a ≠ c ∧ b ≠ c)
@@ -810,6 +811,7 @@ Source: K. J. Arrow, Social Choice and Individual Values, Wiley (1951; 2nd ed. 1
 
 Proves `Wanted` entry `arrow_impossibility`.
 -/
+@[nolint unusedArguments]
 theorem arrow_impossibility
     {Alt Voter : Type*} [Fintype Alt] [DecidableEq Alt]
     [Fintype Voter] [DecidableEq Voter] [Nonempty Voter]
