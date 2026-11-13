@@ -326,9 +326,9 @@ theorem sfsKernel_nonneg (n i k : ℕ) : 0 ≤ sfsKernel n i k := by
   unfold sfsKernel
   positivity
 
-/-- The kernel entry for the last epoch (two lineages) is `2 / (n - 1) > 0`: either lineage
-can carry `i` copies. -/
-theorem sfsKernel_two_pos {n i : ℕ} (hn : 2 ≤ n) : 0 < sfsKernel n i 2 := by
+/-- For a spectrum class `1 ≤ i < n`, the kernel entry for the last epoch (two lineages) is
+`2 / (n - 1) > 0`: either lineage can carry `i` copies. -/
+theorem sfsKernel_two_pos {n i : ℕ} (hi : 1 ≤ i) (hin : i < n) : 0 < sfsKernel n i 2 := by
   have h : (0 : ℝ) < ((n - 1 : ℕ) : ℝ) := Nat.cast_pos.2 (by omega)
   simp only [sfsKernel, Nat.sub_self, Nat.choose_zero_right, Nat.cast_one, mul_one,
     show 2 - 1 = 1 from rfl, Nat.choose_one_right]
@@ -342,15 +342,16 @@ theorem variableSFS_le_variableSFS {θ : ℝ} (hθ : 0 ≤ θ) {n : ℕ} {t t' :
   exact mul_le_mul_of_nonneg_left (h k hk) (sfsKernel_nonneg n i k)
 
 /-- Strict monotonicity: shortening every epoch, and strictly the last one, strictly lowers
-every entry of the expected spectrum (for `θ > 0`). -/
-theorem variableSFS_lt_variableSFS {θ : ℝ} (hθ : 0 < θ) {n : ℕ} (hn : 2 ≤ n) {t t' : ℕ → ℝ}
-    (h : ∀ k ∈ Icc 2 n, t k ≤ t' k) (h2 : t 2 < t' 2) (i : ℕ) :
+every entry `1 ≤ i < n` of the expected spectrum (for `θ > 0`). -/
+theorem variableSFS_lt_variableSFS {θ : ℝ} (hθ : 0 < θ) {n : ℕ} {t t' : ℕ → ℝ}
+    (h : ∀ k ∈ Icc 2 n, t k ≤ t' k) (h2 : t 2 < t' 2) {i : ℕ} (hi : 1 ≤ i) (hin : i < n) :
     variableSFS θ n t i < variableSFS θ n t' i := by
+  have hn : 2 ≤ n := by omega
   unfold variableSFS
   refine mul_lt_mul_of_pos_left (sum_lt_sum (fun k hk => ?_) ⟨2, mem_Icc.2 ⟨le_rfl, hn⟩, ?_⟩)
     (by positivity)
   · exact mul_le_mul_of_nonneg_left (h k hk) (sfsKernel_nonneg n i k)
-  · exact mul_lt_mul_of_pos_left h2 (sfsKernel_two_pos hn)
+  · exact mul_lt_mul_of_pos_left h2 (sfsKernel_two_pos hi hin)
 
 /-! ### Kingman's coalescent under exponential growth -/
 
@@ -520,8 +521,8 @@ theorem integral_sfs_growth_lt (hθ : 0 < θ) (hρ : 0 < ρ) (hT : ∀ k, Measur
   have hn : 2 ≤ n := by omega
   rw [integral_sfs_growth hρ.le hT hτ hτ_law h_indep hξ_int hξ hi hin,
     ← variableSFS_inv_choose_two θ hi hin]
-  exact variableSFS_lt_variableSFS hθ hn (fun k hk => integral_growthTimes_le hρ.le hT hk)
-    (integral_growthTimes_lt hρ hT (mem_Icc.2 ⟨le_rfl, hn⟩)) i
+  exact variableSFS_lt_variableSFS hθ (fun k hk => integral_growthTimes_le hρ.le hT hk)
+    (integral_growthTimes_lt hρ hT (mem_Icc.2 ⟨le_rfl, hn⟩)) hi hin
 
 /-- **No growth recovers Fu's spectrum**: with `ρ = 0`, `E ξ_i = θ / i`. -/
 theorem integral_sfs_growth_zero (hT : ∀ k, Measurable (K.T k))

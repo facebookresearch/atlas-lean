@@ -111,7 +111,7 @@ example : sfsKernel 2 1 2 = 2 := by norm_num [sfsKernel]
 /-- The strict-monotonicity hypotheses are satisfiable: `t = 0 < t' = 1` gives
 `0 = variableSFS 1 2 0 1 < variableSFS 1 2 1 1 = 1`. -/
 example : variableSFS 1 2 (fun _ => 0) 1 < variableSFS 1 2 (fun _ => 1) 1 :=
-  variableSFS_lt_variableSFS one_pos le_rfl (fun _ _ => zero_le_one) zero_lt_one 1
+  variableSFS_lt_variableSFS one_pos (fun _ _ => zero_le_one) zero_lt_one le_rfl one_lt_two
 
 example : variableSFS 1 2 (fun _ => 1) 1 = 1 := by
   norm_num [variableSFS, sfsKernel]
