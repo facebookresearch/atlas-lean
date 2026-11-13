@@ -14,10 +14,11 @@ import Mathlib.Tactic
 /-!
 # Tests for returns
 
-Prices `100 → 110 → 121` give the two-period gross compounding and log
-additivity instances; per-period gross returns `2, 3` give the multi-period
-log sum; the price path `100 * (11/10)^n` gives the telescoping instance; the
-path `1 → 0` gives telescoping with a total loss at the end of the path.
+Prices `100 → 110 → 121` give the two-period gross compounding and price
+log-return additivity instances; per-period gross returns `2, 3` give the
+multi-period log sum; the price path `100 * (11/10)^n` gives the telescoping
+instance; the path `1 → 0` gives telescoping with a total loss at the end of the
+path.
 -/
 
 @[expose] public section
@@ -30,9 +31,9 @@ theorem test_grossReturn_mul :
     grossReturn 100 121 = grossReturn 100 110 * grossReturn 110 121 :=
   grossReturn_mul (by norm_num) (by norm_num)
 
-theorem test_logReturn_add :
-    logReturn 100 121 = logReturn 100 110 + logReturn 110 121 :=
-  logReturn_add (by norm_num) (by norm_num) (by norm_num)
+theorem test_priceLogReturn_add :
+    priceLogReturn 100 121 = priceLogReturn 100 110 + priceLogReturn 110 121 :=
+  priceLogReturn_add (by norm_num) (by norm_num) (by norm_num)
 
 theorem test_totalLogReturn :
     totalLogReturn (fun i : ℕ => if i = 0 then (2 : ℝ) else 3) (Finset.range 2) =
@@ -41,7 +42,7 @@ theorem test_totalLogReturn :
     intro i _
     by_cases hi : i = 0 <;> simp [hi]
   rw [totalLogReturn_eq_sum hG]
-  simp [Finset.sum_range_succ]
+  simp [Finset.sum_range_succ, logReturn]
 
 theorem test_grossReturn_prod_range :
     ∏ i ∈ Finset.range 2, grossReturn ((fun n : ℕ => 100 * (11 / 10 : ℝ) ^ n) i)
