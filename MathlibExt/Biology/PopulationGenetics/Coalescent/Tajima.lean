@@ -139,12 +139,6 @@ namespace KingmanTimes
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} {n : ℕ} (K : KingmanTimes μ n)
 
-/-- Each holding time is square integrable. -/
-private theorem memLp_T {k : ℕ} (hk : k ∈ Icc 2 n) : MemLp (K.T k) 2 μ :=
-  (K.hasLaw k hk).memLp_comp (f := id)
-    ((memLp_two_iff_integrable_sq aestronglyMeasurable_id).2
-      (by simpa using integrable_pow_expMeasure (choose_two_pos hk) 2))
-
 /-- `Var[T k] = ((k.choose 2)⁻¹)²`. -/
 private theorem variance_T {k : ℕ} (hk : k ∈ Icc 2 n) :
     Var[K.T k; μ] = (((k.choose 2 : ℕ) : ℝ)⁻¹) ^ 2 :=

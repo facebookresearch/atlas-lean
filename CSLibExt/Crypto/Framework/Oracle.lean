@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Cslib.Probability.PMF
+public import CSLibExt.Probability.PMF
 public import Cslib.Foundations.Data.PFunctor.Free
 
 /-!
@@ -29,7 +29,10 @@ probabilistic semantics and a cost measure.
   `Enc_k(·)`, Section 3.4.2). `OracleComp.evalPMF_pure_comp`: for a deterministic oracle it is the
   point mass at the deterministic run `OracleComp.run`.
 * `evalLog O c : PMF (α × List (X × Y))` additionally records the query transcript, which the
-  forgery experiments use to check freshness (Katz and Lindell, Definitions 4.2 and 12.2).
+  forgery experiments use to check freshness (Katz and Lindell, Definitions 4.2 and 12.2);
+  `OracleComp.evalLog_pure_comp` is its deterministic-oracle case. `OracleComp.relabel e c` maps
+  the queries of a forger-shaped computation, and the message it outputs, along `e`
+  (`OracleComp.evalLog_relabel`).
 * `OracleComp.runStateful s i c` runs `c` against a stateful deterministic oracle whose state is
   the query counter (the `i`-th query is answered by `s i`), returning the output and the
   transcript, as a stateful signer is run (Katz and Lindell, Section 12.6). `queryAt` names the
@@ -42,6 +45,13 @@ probabilistic semantics and a cost measure.
   (`evalPMF`). This is the step of Katz and Lindell's proof of Proposition 11.3 in which a
   reduction answers encryption queries itself; `OracleComp.exists_cont_runCoins` carries a
   two-phase query bound through it.
+* `OracleComp.runTape e d K c n ρ` runs `c` against the deterministic algorithm `e m r` on a
+  **tape** `ρ` of presampled randomness, one entry per query, and passes the output and the unused
+  tape to a continuation `K`. `OracleComp.evalPMF_bind_eq_runTape` (eager sampling): for a
+  query-bounded algorithm, a uniform tape sampled up front gives the distribution of the run
+  against the randomized oracle `m ↦ e m r` with fresh uniform `r` per query.
+  `OracleComp.simTape` replaces `e` by an oracle algorithm querying a keyed function, so that a
+  reduction can simulate the randomized oracle (`OracleComp.run_simTape`).
 
 **Cost model.** `OracleComp` has no notion of running time, and this file does not add one. The
 only resource measured is the **number of oracle queries**:
@@ -52,7 +62,9 @@ only resource measured is the **number of oracle queries**:
   deterministic, randomized or stateful (`OracleComp.length_queries_le`,
   `length_le_of_mem_support_evalLog`);
 * `IsQueryBoundedWith cont q c` bounds a two-phase algorithm whose output carries a continuation:
-  `c` makes some `j ≤ q` queries and its output `a` then satisfies `cont a (q - j)`.
+  `c` makes some `j ≤ q` queries and its output `a` then satisfies `cont a (q - j)`. Both bounds
+  are monotone in the budget (`IsQueryBounded.mono`, `isQueryBoundedWith_mono`).
+  `isQueryBounded_bind` composes such a bound with bounds on the continuations.
 
 What this defers: local computation is free, so a query-bounded adversary may be computationally
 unbounded (an information-theoretic, "oracle model" restriction). Polynomial running time in the
@@ -186,11 +198,30 @@ theorem IsQueryBounded.mono : ∀ {q q' : ℕ} {c : P.FreeM α}, q ≤ q' →
   | _ + 1, _ + 1, .liftBind _ _, hqq, hc => fun b =>
     IsQueryBounded.mono (Nat.le_of_succ_le_succ hqq) (hc b)
 
+/-- Two-phase query bounds are monotone in the budget when the continuation condition is. -/
+theorem isQueryBoundedWith_mono {cont : α → ℕ → Prop}
+    (hcont : ∀ x j j', j ≤ j' → cont x j → cont x j') :
+    ∀ {q q' : ℕ} {c : P.FreeM α}, q ≤ q' → IsQueryBoundedWith cont q c →
+      IsQueryBoundedWith cont q' c
+  | _, _, .pure x, hqq, hc => hcont x _ _ hqq hc
+  | 0, _, .liftBind _ _, _, hc => hc.elim
+  | _ + 1, 0, .liftBind _ _, hqq, _ => absurd hqq (Nat.not_succ_le_zero _)
+  | _ + 1, _ + 1, .liftBind _ _, hqq, hc => fun b =>
+    isQueryBoundedWith_mono hcont (Nat.le_of_succ_le_succ hqq) (hc b)
+
 /-- A `0`-bounded computation asks no query: it is `pure` of its output. -/
 theorem eq_pure_of_isQueryBoundedWith_zero {cont : α → ℕ → Prop} :
     ∀ {c : P.FreeM α}, IsQueryBoundedWith cont 0 c → ∃ x, c = .pure x ∧ cont x 0
   | .pure x, h => ⟨x, rfl, h⟩
   | .liftBind _ _, h => h.elim
+
+/-- A two-phase query bound whose continuation condition bounds `g` bounds the composition. -/
+theorem isQueryBounded_bind {β : Type*} {g : α → P.FreeM β} :
+    ∀ {q : ℕ} {c : P.FreeM α}, IsQueryBoundedWith (fun a j => IsQueryBounded j (g a)) q c →
+      IsQueryBounded q (PFunctor.FreeM.bind c g)
+  | _, .pure _, h => h
+  | 0, .liftBind _ _, h => h.elim
+  | _ + 1, .liftBind _ _, h => fun b => isQueryBounded_bind (h b)
 
 end FreeM
 
@@ -315,6 +346,36 @@ theorem length_le_of_mem_support_evalLog (O : X → PMF Y) :
     obtain ⟨y, -, p', hp', rfl⟩ := hp
     simpa using length_le_of_mem_support_evalLog O (hc y) p' hp'
 
+/-- Running against a deterministic oracle with a transcript: the point mass at the run and the
+list of its queries with their answers (the `evalLog` form of `evalPMF_pure_comp`). -/
+theorem evalLog_pure_comp (O : X → Y) :
+    ∀ c : OracleComp X Y α, evalLog (fun x => PMF.pure (O x)) c =
+      PMF.pure (c.run O, (c.queries O).map fun x => (x, O x))
+  | .pure _ => rfl
+  | .liftBind x k => by
+    rw [evalLog_liftBind, PMF.pure_bind, evalLog_pure_comp O (k (O x)), PMF.pure_map]
+    rfl
+
+/-- Relabel the queries of a computation that outputs a `(query, answer)` pair, and the query in
+its output, along `e : X → X'`; the oracle answers are unchanged. This turns a forger against
+messages in `X` into one against messages in `X'` (`Framework.MACForger.relabel`). -/
+def relabel {X' : Type*} (e : X → X') : OracleComp X Y (X × Y) → OracleComp X' Y (X' × Y)
+  | .pure p => .pure (e p.1, p.2)
+  | .liftBind x k => .liftBind (e x) fun y => relabel e (k y)
+
+/-- Running the relabeled computation against `O'` is running the original against `O' ∘ e` and
+relabeling the output and the transcript. -/
+theorem evalLog_relabel {X' : Type*} (e : X → X') (O' : X' → PMF Y) :
+    ∀ c : OracleComp X Y (X × Y), evalLog O' (relabel e c) =
+      (evalLog (fun x => O' (e x)) c).map
+        fun p => ((e p.1.1, p.1.2), p.2.map fun q => (e q.1, q.2))
+  | .pure _ => by
+    simp only [relabel, evalLog_pure, PMF.pure_map, List.map_nil]
+  | .liftBind x k => by
+    simp only [relabel, evalLog_liftBind, PMF.map_bind, PMF.map_comp,
+      evalLog_relabel e O' (k _)]
+    rfl
+
 end OracleComp
 
 /-! ### Stateful deterministic oracles -/
@@ -331,9 +392,10 @@ counter: the query `x` asked when the counter is `i` is answered by `s i x`. Sta
 how a stateful signer (Katz and Lindell, Section 12.6) is run in a forgery experiment. Each answer
 and the recursive run are computed once, so a run costs work linear in the number of queries.
 
-Relation to `runState` (`CSLibExt.Crypto.Framework.LazySampling`, and the function of the same
-name in the open random-oracle pull request): `runState` runs against a randomized oracle with an
-arbitrary state and returns a `PMF` of the output and final state, while `runStateful` is
+Relation to `LazySampling.runState` (`CSLibExt.Crypto.Framework.LazySampling`, also the runner of
+the random-oracle model `CSLibExt.Crypto.Framework.RandomOracle`): `runState` runs against a
+randomized oracle with an arbitrary state and returns a `PMF` of the output and final state, while
+`runStateful` is
 deterministic, fixes the state to the counter and returns the transcript. Whoever unifies the
 stateful runners in Wave 3 can derive this one as the deterministic, transcript-logging case. -/
 def runStateful (s : ℕ → X → Y) : ℕ → OracleComp X Y α → α × List (X × Y)
@@ -407,26 +469,6 @@ end OracleComp
 
 /-! ### Simulating a randomized oracle from presampled coins -/
 
-/-- A uniform function on `Fin (n + 1)` is a uniform head followed by an independent uniform
-tail. Private: open PR #9482 adds the same statement publicly as
-`Cslib.Crypto.Framework.uniformOfFintype_fin_succ` (`Framework/RandomOracle.lean`); once it
-merges, this copy can be replaced by that one. -/
-private theorem uniformOfFintype_fin_succ (X : Type*) [Fintype X] [Nonempty X] (n : ℕ) :
-    Cslib.Probability.PMF.uniformOfFintype (Fin (n + 1) → X) =
-      (Cslib.Probability.PMF.uniformOfFintype X).bind fun x =>
-        (Cslib.Probability.PMF.uniformOfFintype (Fin n → X)).map (Fin.cons x) := by
-  let e : X × (Fin n → X) ≃ (Fin (n + 1) → X) :=
-    { toFun := fun p => Fin.cons p.1 p.2
-      invFun := fun f => (f 0, Fin.tail f)
-      left_inv := fun p => by simp
-      right_inv := fun f => by simp }
-  rw [← Cslib.Probability.PMF.uniformOfFintype_map_equiv e,
-    ← Cslib.Probability.PMF.uniformOfFintype_prod, PMF.map_bind]
-  congr 1
-  funext x
-  rw [PMF.map_comp]
-  rfl
-
 namespace OracleComp
 
 variable {X : Type u} {Y : Type v} {α : Type w} {Rnd : Type*}
@@ -453,7 +495,8 @@ theorem map_runCoins [Fintype Rnd] [Nonempty Rnd] [Inhabited Rnd] (O : X → Rnd
     exact PMF.map_const _ a
   | 0, .liftBind _ _, hc => hc.elim
   | n + 1, .liftBind x k, hc => by
-    rw [FreeM.evalPMF_liftBind, PMF.bind_map, uniformOfFintype_fin_succ, PMF.map_bind]
+    rw [FreeM.evalPMF_liftBind, PMF.bind_map, Cslib.Probability.PMF.uniformOfFintype_fin_succ,
+      PMF.map_bind]
     congr 1
     funext ρ
     rw [PMF.map_comp, Function.comp_def, Function.comp_def]
@@ -475,5 +518,173 @@ theorem exists_cont_runCoins [Inhabited Rnd] (O : X → Rnd → Y) {cont : α �
     exact ⟨j, by omega, h⟩
 
 end OracleComp
+
+/-! ### Eager sampling: running against a tape of presampled randomness -/
+
+section Tape
+
+local notation "U" => Cslib.Probability.PMF.uniformOfFintype
+
+/-- Two independent uniform samples are one uniform sample of the pair. -/
+theorem uniformOfFintype_bind_bind {α β γ : Type*} [Fintype α] [Nonempty α] [Fintype β]
+    [Nonempty β] (g : α → β → PMF γ) :
+    ((U α).bind fun a => (U β).bind fun b => g a b) = (U (α × β)).bind fun p => g p.1 p.2 := by
+  rw [← Cslib.Probability.PMF.uniformOfFintype_prod, PMF.bind_bind]
+  congr 1
+  funext a
+  rw [PMF.bind_map]
+  rfl
+
+/-- A uniform tape of length `n + 1` is a uniform head followed by a uniform tape of length `n`
+(the `bind` form of sampling `Fin.cons` of a head and a tail). -/
+theorem uniformOfFintype_fin_succ_bind {α γ : Type*} [Fintype α] [Nonempty α] {n : ℕ}
+    (g : (Fin (n + 1) → α) → PMF γ) :
+    (U (Fin (n + 1) → α)).bind g =
+      (U α).bind fun a => (U (Fin n → α)).bind fun ρ => g (Fin.cons a ρ) := by
+  rw [uniformOfFintype_bind_bind, ← Cslib.Probability.PMF.uniformOfFintype_map_equiv
+    (Fin.consEquiv fun _ : Fin (n + 1) => α), PMF.bind_map]
+  rfl
+
+namespace OracleComp
+
+open FreeM
+
+variable {M : Type u} {C : Type v} {Rnd : Type*} {α : Type w} {γ : Type*}
+
+/-- Run an oracle algorithm against the deterministic algorithm `e m r` (typically encryption),
+taking the randomness `r` of successive queries from the tape `ρ` (one entry per query); on
+output `a`, continue with `K a n ρ'` on the unused part `ρ'` of the tape (of length `n`). If the
+tape runs out, the result is `d`.
+
+Unlike `OracleComp.runCoins` (above: list of coins, `default` once it runs out, no
+continuation), `runTape` passes the unused tape to a continuation, which two-phase experiments
+need; on a query-bounded algorithm with the trivial continuation the two agree. -/
+def runTape (e : M → Rnd → C) (d : γ) (K : α → (n : ℕ) → (Fin n → Rnd) → γ) :
+    OracleComp M C α → (n : ℕ) → (Fin n → Rnd) → γ
+  | .pure a, n, ρ => K a n ρ
+  | .liftBind _ _, 0, _ => d
+  | .liftBind m k, n + 1, ρ => runTape e d K (k (e m (ρ 0))) n (Fin.tail ρ)
+
+/-- Post-composition commutes with `runTape`. -/
+theorem comp_runTape {δ : Type*} (f : γ → δ) (e : M → Rnd → C) (d : γ)
+    (K : α → (n : ℕ) → (Fin n → Rnd) → γ) :
+    ∀ (c : OracleComp M C α) (n : ℕ) (ρ : Fin n → Rnd),
+      f (runTape e d K c n ρ) = runTape e (f d) (fun a n ρ => f (K a n ρ)) c n ρ
+  | .pure _, _, _ => rfl
+  | .liftBind _ _, 0, _ => rfl
+  | .liftBind m k, n + 1, ρ => comp_runTape f e d K (k (e m (ρ 0))) n (Fin.tail ρ)
+
+/-- A sampling step shared by every leaf commutes with `runTape`. -/
+theorem runTape_bind {Z δ : Type*} (p : PMF Z) (e : M → Rnd → C) (d : Z → δ)
+    (K : α → (n : ℕ) → (Fin n → Rnd) → Z → δ) :
+    ∀ (c : OracleComp M C α) (n : ℕ) (ρ : Fin n → Rnd),
+      runTape e (p.bind fun z => PMF.pure (d z)) (fun a n ρ => p.bind fun z => PMF.pure (K a n ρ z))
+        c n ρ = p.bind fun z => PMF.pure (runTape e (d z) (fun a n ρ => K a n ρ z) c n ρ)
+  | .pure _, _, _ => rfl
+  | .liftBind _ _, 0, _ => rfl
+  | .liftBind m k, n + 1, ρ => runTape_bind p e d K (k (e m (ρ 0))) n (Fin.tail ρ)
+
+/-- **Locality**: the run only depends on the encryption algorithm at the randomness on the
+tape. -/
+theorem runTape_congr {e e' : M → Rnd → C} (d : γ) (K : α → (n : ℕ) → (Fin n → Rnd) → γ) :
+    ∀ (c : OracleComp M C α) (n : ℕ) (ρ : Fin n → Rnd), (∀ m i, e m (ρ i) = e' m (ρ i)) →
+      runTape e d K c n ρ = runTape e' d K c n ρ
+  | .pure _, _, _, _ => rfl
+  | .liftBind _ _, 0, _, _ => rfl
+  | .liftBind m k, n + 1, ρ, h => by
+    simp only [runTape, h m 0]
+    exact runTape_congr d K _ n _ fun m i => h m i.succ
+
+/-- Where the run stops: `none` if it exhausts the tape, otherwise the output and the unused part
+of the tape. -/
+def runLeaf (e : M → Rnd → C) (c : OracleComp M C α) (n : ℕ) (ρ : Fin n → Rnd) :
+    Option (α × Σ n, Fin n → Rnd) :=
+  runTape e none (fun a n ρ => some (a, ⟨n, ρ⟩)) c n ρ
+
+/-- `runTape` is its continuation applied where the run stops (`runLeaf`). -/
+theorem runTape_eq_runLeaf (e : M → Rnd → C) (d : γ) (K : α → (n : ℕ) → (Fin n → Rnd) → γ) :
+    ∀ (c : OracleComp M C α) (n : ℕ) (ρ : Fin n → Rnd),
+      runTape e d K c n ρ = (runLeaf e c n ρ).elim d fun p => K p.1 p.2.1 p.2.2
+  | .pure _, _, _ => rfl
+  | .liftBind _ _, 0, _ => rfl
+  | .liftBind m k, n + 1, ρ => runTape_eq_runLeaf e d K (k (e m (ρ 0))) n (Fin.tail ρ)
+
+/-- The unused part of the tape consists of entries of the tape. -/
+theorem runLeaf_entries (e : M → Rnd → C) :
+    ∀ (c : OracleComp M C α) (n : ℕ) (ρ : Fin n → Rnd) (p : α × Σ n, Fin n → Rnd),
+      runLeaf e c n ρ = some p → ∀ i, ∃ j, p.2.2 i = ρ j
+  | .pure _, _, ρ, p, h => by
+    cases h
+    exact fun i => ⟨i, rfl⟩
+  | .liftBind _ _, 0, _, _, h => by cases h
+  | .liftBind m k, n + 1, ρ, p, h => fun i => by
+    obtain ⟨j, hj⟩ := runLeaf_entries e (k (e m (ρ 0))) n (Fin.tail ρ) p h i
+    exact ⟨j.succ, hj⟩
+
+section Eager
+
+variable [Fintype Rnd] [Nonempty Rnd]
+
+/-- **Eager sampling**: running a query-bounded algorithm against the randomized oracle
+`m ↦ e m r` with fresh uniform `r` per query is running it against a uniform tape of encryption
+randomness, sampled up front. The continuation `K` of the output is resampled in the same way
+(`K'`). -/
+theorem evalPMF_bind_eq_runTape {β : Type*} (e : M → Rnd → C) (d : PMF β)
+    {cont : α → ℕ → Prop} (K : α → PMF β) (K' : α → (n : ℕ) → (Fin n → Rnd) → PMF β)
+    (hK : ∀ a n, cont a n → (U (Fin n → Rnd)).bind (K' a n) = K a) :
+    ∀ {q : ℕ} {c : OracleComp M C α}, IsQueryBoundedWith cont q c →
+      (evalPMF (fun m => (U Rnd).map (e m)) c).bind K = (U (Fin q → Rnd)).bind (runTape e d K' c q)
+  | q, .pure a, hc => by
+    rw [evalPMF_pure', PMF.pure_bind, ← hK a q hc]
+    rfl
+  | 0, .liftBind _ _, hc => hc.elim
+  | q + 1, .liftBind m k, hc => by
+    rw [evalPMF_liftBind, PMF.bind_bind, PMF.bind_map, uniformOfFintype_fin_succ_bind]
+    congr 1
+    funext x
+    exact evalPMF_bind_eq_runTape e d K K' hK (hc (e m x))
+
+/-- Eager sampling for a single-phase algorithm. -/
+theorem evalPMF_eq_runTape (e : M → Rnd → C) (d : α) {q : ℕ} {c : OracleComp M C α}
+    (hc : IsQueryBounded q c) :
+    evalPMF (fun m => (U Rnd).map (e m)) c =
+      (U (Fin q → Rnd)).bind fun ρ => PMF.pure (runTape e d (fun a _ _ => a) c q ρ) := by
+  rw [← PMF.bind_pure (evalPMF _ c), evalPMF_bind_eq_runTape e (PMF.pure d) PMF.pure
+    (fun a _ _ => PMF.pure a) (fun a n _ => PMF.bind_const _ _) hc]
+  congr 1
+  funext ρ
+  exact (comp_runTape PMF.pure e d (fun a _ _ => a) c q ρ).symm
+
+end Eager
+
+variable {Q A : Type*}
+
+/-- Like `runTape`, but the encryption of `m` with randomness `r` is itself an oracle algorithm
+`encQ m r` querying a keyed function (a PRF or a block cipher); the result is one oracle algorithm
+for that keyed function. -/
+def simTape (encQ : M → Rnd → OracleComp Q A C) (d : γ)
+    (K : α → (n : ℕ) → (Fin n → Rnd) → OracleComp Q A γ) :
+    OracleComp M C α → (n : ℕ) → (Fin n → Rnd) → OracleComp Q A γ
+  | .pure a, n, ρ => K a n ρ
+  | .liftBind _ _, 0, _ => .pure d
+  | .liftBind m k, n + 1, ρ =>
+    PFunctor.FreeM.bind (encQ m (ρ 0)) fun c => simTape encQ d K (k c) n (Fin.tail ρ)
+
+/-- Running the simulation against the keyed function `O` is `runTape` with the encryption
+algorithm `m r ↦ (encQ m r).run O`. -/
+theorem run_simTape (O : Q → A) (encQ : M → Rnd → OracleComp Q A C) (d : γ)
+    (K : α → (n : ℕ) → (Fin n → Rnd) → OracleComp Q A γ) :
+    ∀ (c : OracleComp M C α) (n : ℕ) (ρ : Fin n → Rnd),
+      (simTape encQ d K c n ρ).run O =
+        runTape (fun m r => (encQ m r).run O) d (fun a n ρ => (K a n ρ).run O) c n ρ
+  | .pure _, _, _ => rfl
+  | .liftBind _ _, 0, _ => rfl
+  | .liftBind m k, n + 1, ρ => by
+    rw [simTape, run_bind, runTape]
+    exact run_simTape O encQ d K _ n _
+
+end OracleComp
+
+end Tape
 
 end Cslib.Crypto.Framework
