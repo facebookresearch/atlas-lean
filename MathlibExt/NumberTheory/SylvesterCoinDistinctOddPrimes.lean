@@ -72,15 +72,7 @@ private lemma repr_iff (p q n : ℕ) (hq : 2 ≤ q) :
     rw [hmod] at hdm
     omega
 
-private lemma mul_pred_eq (p q : ℕ) (hp : 1 ≤ p) (hq : 1 ≤ q) :
-    p * (q - 1) = p * q - p := by
-  obtain ⟨a, rfl⟩ : ∃ a, p = a + 1 := ⟨p - 1, by omega⟩
-  obtain ⟨b, rfl⟩ : ∃ b, q = b + 1 := ⟨q - 1, by omega⟩
-  rw [Nat.add_sub_cancel]
-  have e : (a + 1) * (b + 1) = (a + 1) * b + (a + 1) := by ring
-  omega
-
-private lemma repr_large (p q n : ℕ) (hcop : Nat.Coprime p q) (hq : 2 ≤ q) (hp : 2 ≤ p)
+private lemma repr_large (p q n : ℕ) (hcop : Nat.Coprime p q) (hq : 2 ≤ q)
     (hN : p * q - p - q + 1 ≤ n) : ∃ x y : ℕ, n = p * x + q * y := by
   obtain ⟨i, hiq, hmod⟩ := res_ex p q n hcop hq
   have hle : p * i ≤ n := by
@@ -91,7 +83,7 @@ private lemma repr_large (p q n : ℕ) (hcop : Nat.Coprime p q) (hq : 2 ≤ q) (
     have hqle : q ≤ p * i - n := Nat.le_of_dvd hpos hdvd
     have hmul : p * i ≤ p * (q - 1) :=
       Nat.mul_le_mul (le_refl p) (by omega : i ≤ q - 1)
-    have hpq := mul_pred_eq p q (by omega) (by omega)
+    have hpq := Nat.mul_sub_one p q
     omega
   rw [repr_iff p q n hq]
   exact ⟨i, hiq, hle, Nat.mod_eq_zero_of_dvd ((Nat.modEq_iff_dvd' hle).mp hmod)⟩
@@ -136,7 +128,7 @@ private lemma not_both (p q n m : ℕ) (hcop : Nat.Coprime p q) (hp : 2 ≤ p) (
   have hpos : 0 < q * p := Nat.mul_pos (by omega) (by omega)
   omega
 
-private lemma one_of (p q n m : ℕ) (hcop : Nat.Coprime p q) (hp : 2 ≤ p) (hq : 2 ≤ q)
+private lemma one_of (p q n m : ℕ) (hcop : Nat.Coprime p q) (hq : 2 ≤ q)
     (hsum : n + m + p + q = p * q) :
     (∃ x y : ℕ, n = p * x + q * y) ∨ ∃ x y : ℕ, m = p * x + q * y := by
   obtain ⟨i, hiq, hmod⟩ := res_ex p q n hcop hq
@@ -151,7 +143,7 @@ private lemma one_of (p q n m : ℕ) (hcop : Nat.Coprime p q) (hp : 2 ≤ p) (hq
     have hqle : q ≤ p * i - n := Nat.le_of_dvd hpos hdvd
     have hiq1 : i ≤ q - 1 := by omega
     have hmul : p * i ≤ p * (q - 1) := Nat.mul_le_mul (le_refl p) hiq1
-    have hpq := mul_pred_eq p q (by omega) (by omega)
+    have hpq := Nat.mul_sub_one p q
     have eadd : p * (q - 1 - i) + p * i = p * (q - 1) := by
       rw [← Nat.mul_add]
       congr 1
@@ -221,7 +213,7 @@ theorem sylvester_coin_distinct_odd_primes
         · exact ⟨hmem, hn⟩
         · exfalso
           have hge : N + 1 ≤ n := by omega
-          exact hn (repr_large p q n hcop hq2 hp2 (by omega))
+          exact hn (repr_large p q n hcop hq2 (by omega))
       · rintro ⟨-, hn⟩
         exact hn
     rw [h2c, Set.ncard_coe_finset]
@@ -258,7 +250,7 @@ theorem sylvester_coin_distinct_odd_primes
         simp only [Finset.mem_filter, Finset.mem_range]
         refine ⟨by omega, ?_⟩
         have hsum : (N - m) + m + p + q = p * q := by omega
-        rcases one_of p q (N - m) m hcop hp2 hq2 hsum with h | h
+        rcases one_of p q (N - m) m hcop hq2 hsum with h | h
         · exact h
         · exact absurd h hmR
   have hfin : B.card = (N + 1) / 2 := by omega
