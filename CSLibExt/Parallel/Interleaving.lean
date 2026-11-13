@@ -8,10 +8,14 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Computability.Languages.Shuffle
 public import Mathlib.Data.List.Basic
 
 @[expose] public section
 
+namespace Cslib.Parallel.Interleaving
+
+open Cslib.Language (IsShuffle)
 
 /-- Operations of one thread on a single atomic register:
 `write v` stores `v`, `read` observes (modeled as the identity
@@ -36,17 +40,6 @@ order. -/
 def project (t : ℕ) (trace : List (ℕ × RegOp)) : List RegOp :=
   (trace.filter (fun step => step.1 = t)).map Prod.snd
 
-variable {α : Type*}
-
-/-- Interleavings (shuffles) of two operation lists: the standard
-inductive shuffle. -/
-inductive Shuffle : List α → List α → List α → Prop
-  | nil : Shuffle [] [] []
-  | left (a : α) {xs ys zs : List α} (h : Shuffle xs ys zs) :
-      Shuffle (a :: xs) ys (a :: zs)
-  | right (a : α) {xs ys zs : List α} (h : Shuffle xs ys zs) :
-      Shuffle xs (a :: ys) (a :: zs)
-
 /-- Composition of executions: running `xs ++ ys` from `init` is
 running `ys` from the state that `xs` reaches from `init`. -/
 theorem runTrace_append (init : ℕ) (xs ys : List (ℕ × RegOp)) :
@@ -60,14 +53,14 @@ avoid `0`, the steps tagged `0` are exactly `tr₀`, in order. -/
 theorem filter_shuffle_left {tr₀ tr₁ trace : List (ℕ × RegOp)}
     (h0 : ∀ step ∈ tr₀, step.1 = 0)
     (h1' : ∀ step ∈ tr₁, step.1 ≠ 0)
-    (h : Shuffle tr₀ tr₁ trace) :
+    (h : IsShuffle tr₀ tr₁ trace) :
     (trace.filter (fun step => step.1 = 0)) = tr₀ := by
   revert h0 h1'
   induction h with
   | nil =>
     intro h0 h1'
     simp only [List.filter_nil]
-  | @left a xs ys zs _ ih =>
+  | @left xs ys zs a _ ih =>
     intro h0 h1'
     have ha : a.1 = 0 := h0 a List.mem_cons_self
     have h0tail : ∀ step ∈ xs, step.1 = 0 := by
@@ -75,7 +68,7 @@ theorem filter_shuffle_left {tr₀ tr₁ trace : List (ℕ × RegOp)}
       exact h0 step (List.mem_cons_of_mem a hmem)
     have ihn := ih h0tail h1'
     simp [ha, ihn]
-  | @right a xs ys zs _ ih =>
+  | @right xs ys zs a _ ih =>
     intro h0 h1'
     have ha : a.1 ≠ 0 := h1' a List.mem_cons_self
     have h1tail : ∀ step ∈ ys, step.1 ≠ 0 := by
@@ -90,7 +83,7 @@ are exactly the steps of `tr₁` tagged `1`, in order. -/
 theorem filter_shuffle_right {tr₀ tr₁ trace : List (ℕ × RegOp)}
     (h0' : ∀ step ∈ tr₀, step.1 ≠ 1)
     (h1 : ∀ step ∈ tr₁, step.1 = 1)
-    (h : Shuffle tr₀ tr₁ trace) :
+    (h : IsShuffle tr₀ tr₁ trace) :
     (trace.filter (fun step => step.1 = 1)) =
       tr₁.filter (fun step => step.1 = 1) := by
   revert h0' h1
@@ -98,7 +91,7 @@ theorem filter_shuffle_right {tr₀ tr₁ trace : List (ℕ × RegOp)}
   | nil =>
     intro h0' h1
     simp only [List.filter_nil]
-  | @left a xs ys zs _ ih =>
+  | @left xs ys zs a _ ih =>
     intro h0' h1
     have ha : a.1 ≠ 1 := h0' a List.mem_cons_self
     have h0tail : ∀ step ∈ xs, step.1 ≠ 1 := by
@@ -106,7 +99,7 @@ theorem filter_shuffle_right {tr₀ tr₁ trace : List (ℕ × RegOp)}
       exact h0' step (List.mem_cons_of_mem a hmem)
     have ihn := ih h0tail h1
     simp [ha, ihn]
-  | @right a xs ys zs _ ih =>
+  | @right xs ys zs a _ ih =>
     intro h0' h1
     have ha : a.1 = 1 := h1 a List.mem_cons_self
     have h1tail : ∀ step ∈ ys, step.1 = 1 := by
@@ -122,7 +115,7 @@ avoid `0`, projecting onto thread `0` recovers the operations of
 theorem project_shuffle_left {tr₀ tr₁ trace : List (ℕ × RegOp)}
     (h0 : ∀ step ∈ tr₀, step.1 = 0)
     (h1' : ∀ step ∈ tr₁, step.1 ≠ 0)
-    (h : Shuffle tr₀ tr₁ trace) :
+    (h : IsShuffle tr₀ tr₁ trace) :
     project 0 trace = tr₀.map Prod.snd := by
   rw [project, filter_shuffle_left h0 h1' h]
 
@@ -133,8 +126,10 @@ tagged `1`, projecting onto thread `1` recovers the operations of
 theorem project_shuffle_right {tr₀ tr₁ trace : List (ℕ × RegOp)}
     (h0' : ∀ step ∈ tr₀, step.1 ≠ 1)
     (h1 : ∀ step ∈ tr₁, step.1 = 1)
-    (h : Shuffle tr₀ tr₁ trace) :
+    (h : IsShuffle tr₀ tr₁ trace) :
     project 1 trace = tr₁.map Prod.snd := by
   rw [project, filter_shuffle_right h0' h1 h, List.filter_eq_self.mpr]
   intro step hstep
   simp [h1 step hstep]
+
+end Cslib.Parallel.Interleaving

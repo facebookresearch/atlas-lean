@@ -12,6 +12,11 @@ public import CSLibExt.Parallel.Interleaving
 
 @[expose] public section
 
+namespace CSLibExtTest.Parallel.Interleaving
+
+open Cslib.Language (IsShuffle)
+open Cslib.Parallel.Interleaving
+
 /-- Boundary check: running a trace of writes ends at the last
 write. -/
 example : runTrace 0 [(0, RegOp.write 3), (1, RegOp.read),
@@ -33,7 +38,7 @@ def interleaved : List (ℕ × RegOp) :=
   [(0, RegOp.write 1), (1, RegOp.write 2), (0, RegOp.read), (1, RegOp.write 3)]
 
 /-- `interleaved` is a shuffle of `thread₀` and `thread₁`. -/
-theorem interleaved_shuffle : Shuffle thread₀ thread₁ interleaved :=
+theorem interleaved_shuffle : IsShuffle thread₀ thread₁ interleaved :=
   .left _ (.right _ (.left _ (.right _ .nil)))
 
 /-- `project_shuffle_left` on the concrete shuffle: thread 0's
@@ -45,3 +50,5 @@ example : project 0 interleaved = [RegOp.write 1, RegOp.read] :=
 operations come back in their original order. -/
 example : project 1 interleaved = [RegOp.write 2, RegOp.write 3] :=
   project_shuffle_right (by decide) (by decide) interleaved_shuffle
+
+end CSLibExtTest.Parallel.Interleaving
