@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.BigOperators.Pi
 public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 public import Mathlib.Algebra.BigOperators.Ring.Finset
@@ -20,33 +20,43 @@ public import Mathlib.Data.Fintype.Card
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
+/-!
+# MAX-CUT: the random cut and local search
+
+A graph on `Fin n` is an `EdgeSet n`: a finset of ordered pairs `(i, j)` with `i < j`, so each
+undirected edge is stored exactly once. An assignment `x : Fin n → Bool` cuts the edge `(i, j)`
+when `x i ≠ x j`, and `cutCount E x` counts the cut edges.
+
+## Main results
+
+* `sum_cutCount`: summed over all `2 ^ n` assignments, the cut size is `2 ^ (n - 1) * |E|`, so a
+  uniformly random assignment cuts half the edges in expectation.
+* `locally_optimal_cut_ge`: a locally optimal cut (no single-vertex flip increases it) cuts at
+  least half the edges, so local search is a `1/2`-approximation.
+
+## References
+
+* J. Kleinberg and É. Tardos, *Algorithm Design*, Addison-Wesley, 2006, Section 12.4.
+* M. Mitzenmacher and E. Upfal, *Probability and Computing*, Cambridge University Press, 2005,
+  Chapter 6.
+-/
+
 @[expose] public section
 
-/-- Compatibility lemma for `Fintype.prod_sum` (sandbox Mathlib
-name): product of sums equals sum over the product type. In the
-Atlas Mathlib this is `Finset.prod_univ_sum` composed with
-`Finset.sum_univ_pi`. -/
-private lemma fintype_prod_sum {ι : Type*} [Fintype ι] [DecidableEq ι] {κ : ι → Type*}
-    [∀ i, Fintype (κ i)] {R : Type*} [CommSemiring R]
-    (f : ∀ i, κ i → R) :
-    ∏ i, ∑ b, f i b = ∑ p : ∀ i, κ i, ∏ i, f i (p i) := by
-  have hpi : Fintype.piFinset (fun i : ι => (Finset.univ : Finset (κ i))) =
-      Finset.univ := by
-    ext p
-    simp [Fintype.mem_piFinset]
-  rw [Finset.prod_univ_sum (fun _ => Finset.univ) f, hpi]
+namespace Cslib.Algorithms.Lean.MaxCut
 
-
-
-/-- A graph on `Fin n` given by its finset of edges, each edge an
-ordered pair `(i, j)` with `i < j` (each undirected edge stored
-once). -/
-abbrev EdgeSet (n : ℕ) := Finset (Fin n × Fin n)
+/-- A graph on `Fin n` given by its edges, each undirected edge stored once as an ordered pair
+`(i, j)` with `i < j`. -/
+structure EdgeSet (n : ℕ) where
+  /-- The edges, as ordered pairs `(i, j)`. -/
+  edges : Finset (Fin n × Fin n)
+  /-- Each edge is stored smaller endpoint first, so each undirected edge occurs once. -/
+  lt_of_mem : ∀ e ∈ edges, e.1 < e.2
 
 /-- The number of edges of `E` cut by the assignment `x`
 (an edge `(i, j)` is cut if `x i ≠ x j`). -/
 noncomputable def cutCount {n : ℕ} (E : EdgeSet n) (x : Fin n → Bool) : ℝ :=
-  ((E.filter (fun e => x e.1 ≠ x e.2)).card : ℝ)
+  ((E.edges.filter (fun e => x e.1 ≠ x e.2)).card : ℝ)
 
 private lemma sum_single_indicator {n : ℕ} (_hn : 0 < n) (i : Fin n) :
     (∑ x : Fin n → Bool, (if x i then (1:ℝ) else 0)) = 2 ^ (n - 1) := by
@@ -60,7 +70,7 @@ private lemma sum_single_indicator {n : ℕ} (_hn : 0 < n) (i : Fin n) :
       simp [hb]
     · simp
   rw [Finset.sum_congr rfl (fun x _ => hterm x)]
-  rw [← fintype_prod_sum f]
+  rw [← Fintype.prod_sum f]
   have hinner : ∀ j : Fin n, (∑ b : Bool, f j b) = (if j = i then 1 else 2) := by
     intro j
     simp only [f]
@@ -96,18 +106,22 @@ private lemma sum_pair_indicator {n : ℕ} (i j : Fin n) (hij : i ≠ j) (_hn2 :
     rw [Finset.prod_eq_mul_prod_sdiff_singleton i _ (by simp)]
     simp only [ite_true]
     rw [Finset.prod_eq_mul_prod_sdiff_singleton j _ (by intro h; exact absurd hjmem h)]
-    have h1 : (if j = i then (if x j then (1:ℝ) else 0) else if j = j then (if x j then (1:ℝ) else 0) else 1) = (if x j then (1:ℝ) else 0) := by
+    have h1 : (if j = i then (if x j then (1:ℝ) else 0)
+        else if j = j then (if x j then (1:ℝ) else 0) else 1) =
+        (if x j then (1:ℝ) else 0) := by
       simp [hji]
     rw [h1]
-    have hall1 : ∀ k ∈ (Finset.univ \ {i}) \ {j}, (if k = i then (if x k then (1:ℝ) else 0) else if k = j then (if x k then (1:ℝ) else 0) else 1) = 1 := by
+    have hall1 : ∀ k ∈ (Finset.univ \ {i}) \ {j}, (if k = i then (if x k then (1:ℝ) else 0)
+        else if k = j then (if x k then (1:ℝ) else 0) else 1) = 1 := by
       intro k hk
       simp only [Finset.mem_sdiff, Finset.mem_univ, Finset.mem_singleton, true_and] at hk
       simp [hk.1, hk.2]
     rw [Finset.prod_congr rfl hall1]
     simp
   rw [Finset.sum_congr rfl (fun x _ => hterm x)]
-  rw [← fintype_prod_sum f]
-  have hinner : ∀ k : Fin n, (∑ b : Bool, f k b) = (if k = i then 1 else if k = j then 1 else 2) := by
+  rw [← Fintype.prod_sum f]
+  have hinner : ∀ k : Fin n,
+      (∑ b : Bool, f k b) = (if k = i then 1 else if k = j then 1 else 2) := by
     intro k
     simp only [f]
     by_cases hki : k = i
@@ -121,7 +135,8 @@ private lemma sum_pair_indicator {n : ℕ} (i j : Fin n) (hij : i ≠ j) (_hn2 :
   rw [Finset.prod_eq_mul_prod_sdiff_singleton j _ (by intro h; exact absurd hjmem h)]
   have h2 : (if j = i then (1:ℝ) else if j = j then 1 else 2) = 1 := by simp [hji]
   rw [h2, one_mul]
-  have hall2 : ∀ k ∈ (Finset.univ \ {i}) \ {j}, (if k = i then (1:ℝ) else if k = j then 1 else 2) = 2 := by
+  have hall2 : ∀ k ∈ (Finset.univ \ {i}) \ {j},
+      (if k = i then (1:ℝ) else if k = j then 1 else 2) = 2 := by
     intro k hk
     simp only [Finset.mem_sdiff, Finset.mem_univ, Finset.mem_singleton, true_and] at hk
     simp [hk.1, hk.2]
@@ -167,7 +182,7 @@ private lemma sum_cut_indicator {n : ℕ} (hn : 0 < n) (hn2 : 2 ≤ n) (a b : Fi
   linarith
 
 private lemma cutCount_eq_sum {n : ℕ} (E : EdgeSet n) (x : Fin n → Bool) :
-    cutCount E x = ∑ e ∈ E, (if x e.1 ≠ x e.2 then (1:ℝ) else 0) := by
+    cutCount E x = ∑ e ∈ E.edges, (if x e.1 ≠ x e.2 then (1:ℝ) else 0) := by
   unfold cutCount
   rw [Finset.card_filter]
   rw [Nat.cast_sum]
@@ -180,7 +195,8 @@ private lemma cutCount_eq_sum {n : ℕ} (E : EdgeSet n) (x : Fin n → Bool) :
 private lemma flip_edge_indicator {n : ℕ} (x : Fin n → Bool) (e : Fin n × Fin n)
     (hne : e.1 ≠ e.2) (v : Fin n) :
     (if (Function.update x v (!x v)) e.1 ≠ (Function.update x v (!x v)) e.2 then (1:ℝ) else 0)
-      = (if v = e.1 ∨ v = e.2 then 1 - (if x e.1 ≠ x e.2 then (1:ℝ) else 0) else (if x e.1 ≠ x e.2 then (1:ℝ) else 0)) := by
+      = (if v = e.1 ∨ v = e.2 then 1 - (if x e.1 ≠ x e.2 then (1:ℝ) else 0)
+          else (if x e.1 ≠ x e.2 then (1:ℝ) else 0)) := by
   by_cases hv1 : v = e.1
   · by_cases hv2 : v = e.2
     · exfalso
@@ -213,7 +229,8 @@ private lemma flip_edge_indicator {n : ℕ} (x : Fin n → Bool) (e : Fin n × F
 
 private lemma sum_flip_indicator {n : ℕ} (x : Fin n → Bool) (e : Fin n × Fin n)
     (hne : e.1 ≠ e.2) :
-    (∑ v : Fin n, (if (Function.update x v (!x v)) e.1 ≠ (Function.update x v (!x v)) e.2 then (1:ℝ) else 0))
+    (∑ v : Fin n, (if (Function.update x v (!x v)) e.1 ≠ (Function.update x v (!x v)) e.2
+        then (1:ℝ) else 0))
       = (n : ℝ) * (if x e.1 ≠ x e.2 then (1:ℝ) else 0)
         + 2 * (1 - 2 * (if x e.1 ≠ x e.2 then (1:ℝ) else 0)) := by
   set c : ℝ := (if x e.1 ≠ x e.2 then (1:ℝ) else 0) with hc
@@ -262,81 +279,81 @@ private lemma sum_flip_indicator {n : ℕ} (x : Fin n → Bool) (e : Fin n × Fi
 /-- Expected cut size of a uniform random assignment is half the
 edges: the total over all assignments is `2 ^ (n - 1) * |E|`
 (for `n ≥ 1`). -/
-theorem sum_cutCount {n : ℕ} (hn : 0 < n) (E : EdgeSet n)
-    (hE : ∀ e ∈ E, e.1 < e.2) :
-    (∑ x : Fin n → Bool, cutCount E x) = 2 ^ (n - 1) * E.card := by
+theorem sum_cutCount {n : ℕ} (hn : 0 < n) (E : EdgeSet n) :
+    (∑ x : Fin n → Bool, cutCount E x) = 2 ^ (n - 1) * E.edges.card := by
   by_cases hn2 : 2 ≤ n
   · have hswap : (∑ x : Fin n → Bool, cutCount E x)
-        = ∑ e ∈ E, ∑ x : Fin n → Bool, (if x e.1 ≠ x e.2 then (1:ℝ) else 0) := by
+        = ∑ e ∈ E.edges, ∑ x : Fin n → Bool, (if x e.1 ≠ x e.2 then (1:ℝ) else 0) := by
       rw [Finset.sum_congr rfl (fun x _ => cutCount_eq_sum E x)]
       rw [Finset.sum_comm]
     rw [hswap]
-    have hper : ∀ e ∈ E, (∑ x : Fin n → Bool, (if x e.1 ≠ x e.2 then (1:ℝ) else 0)) = 2 ^ (n - 1) := by
+    have hper : ∀ e ∈ E.edges,
+        (∑ x : Fin n → Bool, (if x e.1 ≠ x e.2 then (1:ℝ) else 0)) = 2 ^ (n - 1) := by
       intro e he
-      have hlt := hE e he
+      have hlt := E.lt_of_mem e he
       have hne : e.1 ≠ e.2 := ne_of_lt hlt
       exact sum_cut_indicator hn hn2 e.1 e.2 hne
     rw [Finset.sum_congr rfl hper]
     rw [Finset.sum_const, nsmul_eq_mul]
     rw [mul_comm]
   · have hn1 : n = 1 := by omega
-    have hEmpty : E = ∅ := by
+    have hEmpty : E.edges = ∅ := by
       apply Finset.eq_empty_of_forall_notMem
       intro e he
-      have hlt := hE e he
+      have hlt := E.lt_of_mem e he
       subst hn1
       have h1 : e.1 = 0 := Fin.eq_zero e.1
       have h2 : e.2 = 0 := Fin.eq_zero e.2
       rw [h1, h2] at hlt
       exact lt_irrefl 0 hlt
-    rw [hEmpty]
-    simp [cutCount]
+    simp [cutCount, hEmpty]
 
 /-- Local-search optimality gives a `1 / 2`-approximation: if no
 single-vertex flip increases the cut, then the cut has at least
 half the edges. -/
-theorem locally_optimal_cut_ge {n : ℕ} (E : EdgeSet n)
-    (hE : ∀ e ∈ E, e.1 < e.2) (x : Fin n → Bool)
+theorem locally_optimal_cut_ge {n : ℕ} (E : EdgeSet n) (x : Fin n → Bool)
     (hlocal : ∀ v : Fin n, cutCount E x ≥
       cutCount E (Function.update x v (!x v))) :
-    (E.card : ℝ) ≤ 2 * cutCount E x := by
+    (E.edges.card : ℝ) ≤ 2 * cutCount E x := by
   have hswap : (∑ v : Fin n, cutCount E (Function.update x v (!x v)))
-      = ∑ e ∈ E, ∑ v : Fin n, (if (Function.update x v (!x v)) e.1 ≠ (Function.update x v (!x v)) e.2 then (1:ℝ) else 0) := by
+      = ∑ e ∈ E.edges, ∑ v : Fin n, (if (Function.update x v (!x v)) e.1 ≠
+          (Function.update x v (!x v)) e.2 then (1:ℝ) else 0) := by
     rw [Finset.sum_congr rfl (fun v _ => cutCount_eq_sum E (Function.update x v (!x v)))]
     rw [Finset.sum_comm]
-  have hper : ∀ e ∈ E, (∑ v : Fin n, (if (Function.update x v (!x v)) e.1 ≠ (Function.update x v (!x v)) e.2 then (1:ℝ) else 0))
+  have hper : ∀ e ∈ E.edges, (∑ v : Fin n, (if (Function.update x v (!x v)) e.1 ≠
+      (Function.update x v (!x v)) e.2 then (1:ℝ) else 0))
       = (n : ℝ) * (if x e.1 ≠ x e.2 then (1:ℝ) else 0)
         + 2 * (1 - 2 * (if x e.1 ≠ x e.2 then (1:ℝ) else 0)) := by
     intro e he
-    have hlt := hE e he
+    have hlt := E.lt_of_mem e he
     exact sum_flip_indicator x e (ne_of_lt hlt)
-  have hexpand : (∑ e ∈ E, ((n : ℝ) * (if x e.1 ≠ x e.2 then (1:ℝ) else 0)
+  have hexpand : (∑ e ∈ E.edges, ((n : ℝ) * (if x e.1 ≠ x e.2 then (1:ℝ) else 0)
       + 2 * (1 - 2 * (if x e.1 ≠ x e.2 then (1:ℝ) else 0))))
-      = (n : ℝ) * cutCount E x + 2 * (E.card : ℝ) - 4 * cutCount E x := by
+      = (n : ℝ) * cutCount E x + 2 * (E.edges.card : ℝ) - 4 * cutCount E x := by
     rw [Finset.sum_add_distrib]
-    have h1 : (∑ e ∈ E, (n : ℝ) * (if x e.1 ≠ x e.2 then (1:ℝ) else 0))
+    have h1 : (∑ e ∈ E.edges, (n : ℝ) * (if x e.1 ≠ x e.2 then (1:ℝ) else 0))
         = (n : ℝ) * cutCount E x := by
       rw [← Finset.mul_sum]
       rw [cutCount_eq_sum]
     rw [h1]
-    have h2 : ∀ e ∈ E, (2 : ℝ) * (1 - 2 * (if x e.1 ≠ x e.2 then (1:ℝ) else 0))
+    have h2 : ∀ e ∈ E.edges, (2 : ℝ) * (1 - 2 * (if x e.1 ≠ x e.2 then (1:ℝ) else 0))
         = 2 - 4 * (if x e.1 ≠ x e.2 then (1:ℝ) else 0) := by
       intro e _
       ring
     rw [Finset.sum_congr rfl h2]
     rw [Finset.sum_sub_distrib]
-    have h3 : (∑ _e ∈ E, (2:ℝ)) = 2 * (E.card : ℝ) := by
+    have h3 : (∑ _e ∈ E.edges, (2:ℝ)) = 2 * (E.edges.card : ℝ) := by
       rw [Finset.sum_const, nsmul_eq_mul]
       ring
     rw [h3]
-    have h4 : (∑ e ∈ E, (4:ℝ) * (if x e.1 ≠ x e.2 then (1:ℝ) else 0))
+    have h4 : (∑ e ∈ E.edges, (4:ℝ) * (if x e.1 ≠ x e.2 then (1:ℝ) else 0))
         = 4 * cutCount E x := by
       rw [← Finset.mul_sum]
       rw [cutCount_eq_sum]
     rw [h4]
     ring
   have hS : (∑ v : Fin n, cutCount E (Function.update x v (!x v)))
-      = (n : ℝ) * cutCount E x + 2 * (E.card : ℝ) - 4 * cutCount E x := by
+      = (n : ℝ) * cutCount E x + 2 * (E.edges.card : ℝ) - 4 * cutCount E x := by
     rw [hswap, Finset.sum_congr rfl hper, hexpand]
   have hlocal_sum : (∑ v : Fin n, cutCount E (Function.update x v (!x v)))
       ≤ (n : ℝ) * cutCount E x := by
@@ -348,3 +365,5 @@ theorem locally_optimal_cut_ge {n : ℕ} (E : EdgeSet n)
     rw [Finset.sum_const, nsmul_eq_mul, Finset.card_univ, Fintype.card_fin] at hle
     exact hle
   linarith
+
+end Cslib.Algorithms.Lean.MaxCut
