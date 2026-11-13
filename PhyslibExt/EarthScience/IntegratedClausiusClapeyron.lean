@@ -75,13 +75,13 @@ theorem clausius_clapeyron_differential {dp_dT L R T p v₂ v₁ : ℝ}
 `0 < T₁`, `p t > 0` there, and `p` satisfies the differential form
 `HasDerivAt p (L * p t / (R * t ^ 2)) t` for every `t ∈ [T₁, T₂]`, with
 constant latent heat `L` and `R > 0`, then
-`log (p T₂ / p T₁) = -(L / R) * (1 / T₂ - 1 / T₁)`. -/
+`log (p T₂ / p T₁) = -(L / R) * (1 / T₂ - 1 / T₁)`. The identity needs no sign
+condition on `L`: zero and negative `L` are allowed. -/
 theorem integrated_clausius_clapeyron {p : ℝ → ℝ} {T₁ T₂ L R : ℝ}
-    (hT : 0 < T₁) (hTle : T₁ ≤ T₂) (hL : 0 < L) (hR : 0 < R)
+    (hT : 0 < T₁) (hTle : T₁ ≤ T₂) (hR : 0 < R)
     (hp : ∀ t ∈ Set.Icc T₁ T₂, 0 < p t)
     (hder : ∀ t ∈ Set.Icc T₁ T₂, HasDerivAt p (L * p t / (R * t ^ 2)) t) :
     Real.log (p T₂ / p T₁) = -(L / R) * (1 / T₂ - 1 / T₁) := by
-  have _ := hL
   have hR' : R ≠ 0 := ne_of_gt hR
   have hT₁mem : T₁ ∈ Set.Icc T₁ T₂ := ⟨le_rfl, hTle⟩
   have hT₂mem : T₂ ∈ Set.Icc T₁ T₂ := ⟨hTle, le_rfl⟩

@@ -15,8 +15,8 @@ import PhyslibExt.EarthScience.IntegratedClausiusClapeyron
 Concrete consumers of
 `PhyslibExt.EarthScience.IntegratedClausiusClapeyron`: the ideal-vapor
 differential form with numbers, the integrated form applied to an
-abstract pressure satisfying the differential form, and the degenerate
-`T₁ = T₂` boundary case.
+abstract pressure satisfying the differential form (with positive and with
+negative latent heat), and the degenerate `T₁ = T₂` boundary case.
 
 ## i. Overview
 
@@ -56,9 +56,22 @@ example (p : ℝ → ℝ)
     Real.log (p 2 / p 1) = (1 : ℝ) / 2 := by
   have h := EarthScience.integrated_clausius_clapeyron (p := p)
     (T₁ := (1 : ℝ)) (T₂ := (2 : ℝ)) (L := (1 : ℝ)) (R := (1 : ℝ))
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num) hp hder
+    (by norm_num) (by norm_num) (by norm_num) hp hder
   calc Real.log (p 2 / p 1) = -(1 / 1 : ℝ) * (1 / 2 - 1 / 1) := h
     _ = (1 : ℝ) / 2 := by norm_num
+
+/-- No sign condition on the latent heat: with `L = -1`, `R = 1`, `T₁ = 1`,
+`T₂ = 2`, the integrated form gives `log (p 2 / p 1) = -1 / 2`. -/
+example (p : ℝ → ℝ)
+    (hp : ∀ t ∈ Set.Icc (1 : ℝ) 2, 0 < p t)
+    (hder : ∀ t ∈ Set.Icc (1 : ℝ) 2,
+      HasDerivAt p (-1 * p t / (1 * t ^ 2)) t) :
+    Real.log (p 2 / p 1) = -(1 : ℝ) / 2 := by
+  have h := EarthScience.integrated_clausius_clapeyron (p := p)
+    (T₁ := (1 : ℝ)) (T₂ := (2 : ℝ)) (L := (-1 : ℝ)) (R := (1 : ℝ))
+    (by norm_num) (by norm_num) (by norm_num) hp hder
+  calc Real.log (p 2 / p 1) = -(-1 / 1 : ℝ) * (1 / 2 - 1 / 1) := h
+    _ = -(1 : ℝ) / 2 := by norm_num
 
 /-- Boundary case `T₁ = T₂`: the integrated form gives `log 1 = 0`. -/
 example (p : ℝ → ℝ) (hp : 0 < p (1 : ℝ))
@@ -66,7 +79,7 @@ example (p : ℝ → ℝ) (hp : 0 < p (1 : ℝ))
     Real.log (p 1 / p 1) = 0 := by
   have h := EarthScience.integrated_clausius_clapeyron (p := p)
     (T₁ := (1 : ℝ)) (T₂ := (1 : ℝ)) (L := (1 : ℝ)) (R := (1 : ℝ))
-    (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num)
     (fun t ht => by
       have : t = 1 := by
         have h1 := ht.1
