@@ -86,7 +86,10 @@ elementary ingredients:
   (3 of them); the trefoil admits 9.
 
 See <https://en.wikipedia.org/wiki/Knot_invariant> for a survey. -/
-/-- Source: Classical; see https://en.wikipedia.org/wiki/Knot_invariant. Via leanprover/lean-eval@38361be, problem `exists_nonisotopic_knots`. -/
+/-- **Existence of non-isotopic knots.** There are two oriented smooth knots $K_1$ and $K_2$ in
+$\mathbb{R}^3$ that are not ambient-isotopic.
+
+Source: Classical; see https://en.wikipedia.org/wiki/Knot_invariant. Via leanprover/lean-eval@38361be, problem `exists_nonisotopic_knots`. -/
 public theorem_wanted exists_nonisotopic_knots : ∃ K₁ K₂ : Knot, ¬ K₁.Isotopic K₂
 
 end KnotTheory

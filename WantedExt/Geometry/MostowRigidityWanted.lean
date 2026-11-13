@@ -143,7 +143,11 @@ end Topology
 
 variable (p q : ℕ)
 
-/-- `PO p q` is the projective indefinite orthogonal group PO(p,q) over the reals. -/
+/-- **Projective indefinite orthogonal group.** For natural numbers $p$ and $q$, let $J$ be the
+diagonal $(p+q) \times (p+q)$ real matrix whose first $p$ diagonal entries are $1$ and whose last
+$q$ are $-1$, and let $\mathrm{O}(p,q)$ be the group of real $(p+q) \times (p+q)$ matrices $A$
+with $J A^{\mathsf{T}} J A = A J A^{\mathsf{T}} J = I$. The group $\mathrm{PO}(p,q)$ is the
+quotient of $\mathrm{O}(p,q)$ by its center. -/
 @[reducible]
 def PO := unitary (MatrixSum (Fin p) (Fin q) ℝ) ⧸ Subgroup.center _
 
@@ -160,7 +164,13 @@ namespace Geometry.MostowRigidity
 
 open MeasureTheory
 
-/-- Source: https://en.wikipedia.org/wiki/Mostow_rigidity_theorem#Algebraic_form and Gopal Prasad, *Strong rigidity of ℚ-rank 1 lattices*, Invent. Math. 21 (1973), 255–286. Via leanprover/lean-eval@38361be, problem `mostow_rigidity`. -/
+/-- **Mostow rigidity, algebraic form.** Let $n \ge 3$, and let $\Gamma$ and $\Lambda$ be lattices
+in the projective orthogonal group $\mathrm{PO}(n,1)$: discrete subgroups that have a fundamental
+domain for their action by left multiplication and finite covolume with respect to Haar measure.
+Then every group isomorphism $f : \Gamma \to \Lambda$ is a conjugation: there is
+$g \in \mathrm{PO}(n,1)$ such that $f(\gamma) = g \gamma g^{-1}$ for all $\gamma \in \Gamma$.
+
+Source: https://en.wikipedia.org/wiki/Mostow_rigidity_theorem#Algebraic_form and Gopal Prasad, *Strong rigidity of ℚ-rank 1 lattices*, Invent. Math. 21 (1973), 255–286. Via leanprover/lean-eval@38361be, problem `mostow_rigidity`. -/
 public theorem_wanted mostow_rigidity (n : ℕ) (hn : 3 ≤ n) (Γ Λ : Subgroup (PO n 1))
     (disc_Γ : IsDiscrete (SetLike.coe Γ)) (disc_Λ : IsDiscrete (SetLike.coe Λ))
     [HasFundamentalDomain Γ (PO n 1)] [HasFundamentalDomain Λ (PO n 1)]

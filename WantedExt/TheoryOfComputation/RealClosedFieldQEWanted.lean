@@ -107,7 +107,9 @@ namespace RealClosedFieldQE
 
 /-! ## Syntax -/
 
-/-- Terms in the language of ordered rings, with de Bruijn variables. -/
+/-- **Terms of the language of ordered rings.** Terms are built from variables $x_i$, one for
+each natural number $i$ (a de Bruijn index), and integer constants $k \in \mathbb{Z}$, using
+addition $s + t$, multiplication $s \cdot t$ and negation $-t$. -/
 inductive Term where
   | var : Nat → Term
   | const : Int → Term
@@ -117,8 +119,10 @@ inductive Term where
   deriving DecidableEq, Repr, Inhabited
 
 /--
-Formulas in the language of ordered rings. The connectives are the minimal set
-`⊥`, `→`, `∀`; the usual derived connectives are provided as abbreviations below.
+**Formulas of the language of ordered rings.** Formulas are built from the atomic formulas
+$s < t$ and $s = t$, for terms $s$ and $t$, and falsity $\bot$, by implication $\varphi \to \psi$
+and universal quantification $\forall \varphi$, which binds de Bruijn index $0$ in $\varphi$.
+Negation, truth, disjunction, conjunction and existential quantification are defined from these.
 -/
 inductive Formula where
   | lt : Term → Term → Formula
@@ -132,19 +136,24 @@ inductive Formula where
 
 namespace Formula
 
-/-- Negation. -/
+/-- **Negation of a formula.** The negation $\neg\varphi$ of a formula $\varphi$ is the formula
+$\varphi \to \bot$. -/
 def not (φ : Formula) : Formula := .imp φ .fals
 
-/-- Truth. -/
+/-- **The true formula.** The formula $\top$ is the negation $\neg\bot$ of falsity, that is, the
+formula $\bot \to \bot$. -/
 def tru : Formula := .not .fals
 
-/-- Disjunction. -/
+/-- **Disjunction of formulas.** The disjunction $\varphi \lor \psi$ of formulas $\varphi$ and
+$\psi$ is the formula $\neg\varphi \to \psi$. -/
 def or (φ ψ : Formula) : Formula := .imp φ.not ψ
 
-/-- Conjunction. -/
+/-- **Conjunction of formulas.** For formulas $\varphi$ and $\psi$, the conjunction
+$\varphi \wedge \psi$ is the formula $\neg(\varphi \to \neg\psi)$. -/
 def and (φ ψ : Formula) : Formula := (φ.imp ψ.not).not
 
-/-- Existential quantification; binds de Bruijn index `0` in the body. -/
+/-- **Existential quantification of formulas.** For a formula $\varphi$, the formula
+$\exists \varphi$ is $\neg \forall \neg \varphi$; it binds de Bruijn index $0$ in $\varphi$. -/
 def ex (φ : Formula) : Formula := φ.not.all.not
 
 /-!
@@ -156,12 +165,17 @@ end Formula
 
 /-! ## Semantics -/
 
-/-- Extend an environment, binding de Bruijn index `0` to `x`. -/
+/-- **Extending an environment.** An environment is a map $e : \mathbb{N} \to \mathbb{R}$ that
+assigns a real number to each de Bruijn index. For $x \in \mathbb{R}$, the extension of $e$ by $x$
+sends index $0$ to $x$ and index $i + 1$ to $e(i)$ for every $i \in \mathbb{N}$. -/
 def cons (x : ℝ) (env : Nat → ℝ) : Nat → ℝ
   | 0 => x
   | i + 1 => env i
 
-/-- Interpretation of a term in `ℝ`. -/
+/-- **Evaluation of terms.** Given an environment $e : \mathbb{N} \to \mathbb{R}$, the value of a
+term in $\mathbb{R}$ is defined by recursion on the term: the variable with de Bruijn index $i$ has
+value $e(i)$, the integer constant $k$ has value $k$, and the value of a sum, product or negation
+of terms is the sum, product or negation in $\mathbb{R}$ of the values of its parts. -/
 def Term.eval (env : Nat → ℝ) : Term → ℝ
   | .var i => env i
   | .const k => (k : ℝ)
@@ -169,7 +183,14 @@ def Term.eval (env : Nat → ℝ) : Term → ℝ
   | .mul a b => a.eval env * b.eval env
   | .neg a => -a.eval env
 
-/-- Satisfaction of a formula in `ℝ` under an environment. -/
+/--
+**Satisfaction of formulas over the reals.** Let $e : \mathbb{N} \to \mathbb{R}$ be an
+environment. Whether a formula holds under $e$ is defined by recursion on the formula: $s < t$
+holds when the value of $s$ under $e$ is less than the value of $t$ under $e$; $s = t$ holds when
+these values are equal; $\bot$ never holds; $\varphi \to \psi$ holds when $\varphi$ holding under
+$e$ implies $\psi$ holding under $e$; and $\forall \varphi$ holds when, for every
+$x \in \mathbb{R}$, $\varphi$ holds under the extension of $e$ by $x$.
+-/
 def Formula.Holds (env : Nat → ℝ) : Formula → Prop
   | .lt a b => a.eval env < b.eval env
   | .eq a b => a.eval env = b.eval env
@@ -177,7 +198,8 @@ def Formula.Holds (env : Nat → ℝ) : Formula → Prop
   | .imp φ ψ => φ.Holds env → ψ.Holds env
   | .all φ => ∀ x : ℝ, φ.Holds (cons x env)
 
-/-- A formula is quantifier free if it contains no `Formula.all`. -/
+/-- **Quantifier-free formulas.** A formula is quantifier free if it contains no universal
+quantifier $\forall$. -/
 def Formula.IsQF : Formula → Prop
   | .lt _ _ => True
   | .eq _ _ => True
@@ -188,24 +210,52 @@ def Formula.IsQF : Formula → Prop
 /-! ## The problem -/
 
 /--
-Quantifier elimination: `qe φ` is a quantifier-free formula equivalent to `φ` over `ℝ` in
-every environment. Its syntax may mention additional variables vacuously.
+**Quantifier elimination over the reals.** Quantifier elimination is a map sending each formula
+$\varphi$ of the language of ordered rings to a formula $\operatorname{qe}(\varphi)$, subject to
+two requirements: $\operatorname{qe}(\varphi)$ is quantifier free, and for every environment
+$e : \mathbb{N} \to \mathbb{R}$ assigning a real number to each variable,
+$\operatorname{qe}(\varphi)$ holds in $\mathbb{R}$ under $e$ if and only if $\varphi$ does.
+
+The formula $\operatorname{qe}(\varphi)$ may mention additional variables, but only vacuously.
+
 Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
 -/
 public def_wanted qe (φ : Formula) : Formula
 
 /- The output of `qe` is quantifier free. -/
-/-- Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`. -/
+/--
+**Quantifier elimination yields quantifier-free formulas.** Let $\mathrm{qe}$ be the quantifier
+elimination map on formulas. For every formula $\varphi$, the formula $\mathrm{qe}(\varphi)$ is
+quantifier free.
+
+Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
+-/
 public theorem_wanted isQF_qe (φ : Formula) : (❰qe❱ φ).IsQF
 
 /- The output of `qe` is equivalent to its input, under every environment. -/
-/-- Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`. -/
+/--
+**Quantifier elimination preserves truth.** Let $\mathrm{qe}$ be the quantifier elimination map
+on formulas. For every formula $\varphi$ and every environment $e : \mathbb{N} \to \mathbb{R}$,
+the formula $\mathrm{qe}(\varphi)$ holds in $\mathbb{R}$ under $e$ if and only if $\varphi$ holds
+in $\mathbb{R}$ under $e$.
+
+Together with the statement that $\mathrm{qe}(\varphi)$ is always quantifier free, this is
+Tarski's quantifier elimination theorem, stated for $\mathbb{R}$.
+
+Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
+-/
 public theorem_wanted holds_qe (φ : Formula) (env : Nat → ℝ) :
     (❰qe❱ φ).Holds env ↔ φ.Holds env
 
 /--
-Anti-vacuity guard for the semantics and de Bruijn convention: a real number is a square
-exactly when it is nonnegative.
+**A real number is a square exactly when it is nonnegative.** For every environment
+$e : \mathbb{N} \to \mathbb{R}$, the formula $\exists x.\ x \cdot x = a$ holds under $e$ if and
+only if the formula $\neg(a < 0)$ holds under $e$. In the first formula the bound variable $x$ is
+de Bruijn index $0$ and $a$ is index $1$; in the second $a$ is index $0$; in both, $a$ denotes
+$e(0)$. Thus $e(0)$ is a square in $\mathbb{R}$ exactly when $e(0) \ge 0$.
+
+This checks the semantics and the de Bruijn convention against a known fact.
+
 Source: Tarski, 'A Decision Method for Elementary Algebra and Geometry' (1951); Collins, 'Quantifier elimination for real closed fields by cylindrical algebraic decomposition' (1975); Mahboubi, 'Programming and certifying a CAD algorithm in the Coq system' (2006); Cohen and Mahboubi, 'Formal proofs in real algebraic geometry: from ordered fields to quantifier elimination' (2012). Via leanprover/lean-eval@38361be, problem `rcf_quantifier_elimination`.
 -/
 public theorem_wanted holds_ex_sq (env : Nat → ℝ) :

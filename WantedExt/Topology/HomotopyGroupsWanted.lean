@@ -53,7 +53,10 @@ where homotopy groups are based.
 -/
 
 /- The fundamental group of the complex unit circle is infinite cyclic. -/
-/-- Source: Classical theorem in algebraic topology. Via leanprover/lean-eval@38361be, problem `pi1_circle_mulEquiv_int`. -/
+/-- **The fundamental group of the circle is infinite cyclic.** The fundamental group of the unit
+circle in $\mathbb{C}$ based at $1$ is isomorphic, as a group, to the additive group $\mathbb{Z}$.
+
+Source: Classical theorem in algebraic topology. Via leanprover/lean-eval@38361be, problem `pi1_circle_mulEquiv_int`. -/
 public theorem_wanted pi1_circle_mulEquiv_int :
     Nonempty (HomotopyGroup.Pi 1 Circle (1 : Circle) ≃* Multiplicative ℤ)
 

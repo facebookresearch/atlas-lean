@@ -18,8 +18,16 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 namespace MathlibExt.Topology.ScottishBook42Wanted
 
-/-- `f` depends continuously, in the Hausdorff metric, on compact convex
-subsets of `K`: an epsilon-delta statement using `Metric.hausdorffDist`. -/
+/-- **Hausdorff continuity on compact convex sets.** Let $E$ be a real normed space, let
+$K \subseteq E$, let $f$ be a map from subsets of $E$ to subsets of $E$, and write $d_H$ for the
+Hausdorff distance between subsets of $E$. Then $f$ is Hausdorff continuous on the compact convex
+subsets of $K$ if for every nonempty compact convex set $X \subseteq K$ and every
+$\varepsilon > 0$ there is $\delta > 0$ such that every nonempty compact convex set
+$Y \subseteq K$ with $d_H(X, Y) < \delta$ satisfies $d_H(f(X), f(Y)) < \varepsilon$.
+
+Here $d_H$ is taken to be $0$ where the Hausdorff distance is infinite, in particular when exactly
+one of the two sets is empty. The values $f(X)$ are not required to be compact, convex or
+nonempty. -/
 def HausdorffContinuousOnConvexCompacts {E : Type} [NormedAddCommGroup E]
     [NormedSpace ℝ E] (f : Set E → Set E) (K : Set E) : Prop :=
   ∀ X : Set E, X ⊆ K → IsCompact X → Convex ℝ X → X.Nonempty → ∀ ε : ℝ, 0 < ε →
@@ -27,21 +35,21 @@ def HausdorffContinuousOnConvexCompacts {E : Type} [NormedAddCommGroup E]
       Metric.hausdorffDist X Y < δ → Metric.hausdorffDist (f X) (f Y) < ε
 
 /--
-Ulam, Problem 42 of the Scottish Book. Original question: suppose that to
-every convex closed set `X` inside a ball `K` in Euclidean space there is
-assigned another convex closed set `f(X)` inside `K`, depending continuously
-on `X` in the Hausdorff metric; must there be a fixed point, a closed convex
-`X₀` with `f(X₀) = X₀`? All sets in the statement are required nonempty:
-nonemptiness restores the ordinary Hausdorff-metric meaning, since Mathlib's
-`Metric.hausdorffDist` is degenerate at `∅` (`hausdorffDist s ∅ = 0` for all
-`s`, so without it a map sending every nonempty set to `∅` and `∅` to a point
-would vacuously satisfy the continuity and codomain conditions while having no
-fixed point). The answer is yes: the hyperspace of compact convex
-subsets of `K` is homeomorphic to the Hilbert cube `Q` (Nadler-Quinn-
-Stavrokas), and every continuous map from `Q` to itself has a fixed point, the
-infinite-dimensional extension of Brouwer's theorem. The typescript says
-"sphere `K`"; it is read as the solid ball, since convex sets are contained
-in it.
+**Fixed point theorem for maps of compact convex sets.** Let $n \ge 0$ and let $B$ be the
+closed unit ball about the origin in the Euclidean space $\mathbb{R}^n$. Let $f$ be a map from
+subsets of $\mathbb{R}^n$ to subsets of $\mathbb{R}^n$ that sends every nonempty compact convex
+subset of $B$ to a nonempty compact convex subset of $B$, and that is continuous in the Hausdorff
+metric on the nonempty compact convex subsets of $B$. Then there is a nonempty compact convex set
+$X_0 \subseteq B$ with $f(X_0) = X_0$.
+
+This answers Ulam's Problem 42 of the Scottish Book, which asks this for closed convex sets inside
+a ball $K$; inside a ball the closed convex sets are the compact ones, and the typescript's
+"sphere $K$" is read as the solid ball. All sets are required to be nonempty, because the
+Hausdorff distance used is degenerate at the empty set. The answer is yes: for $n \ge 2$ the space
+of nonempty compact convex subsets of $B$ is homeomorphic to the Hilbert cube (Nadler, Quinn and
+Stavrokas), which has the fixed-point property; for $n \le 1$ that space is a point or a $2$-cell,
+and Brouwer's theorem applies.
+
 Source: S. Ulam, Problem 42 of the Scottish Book; S. B. Nadler, J. Quinn and
 N. Stavrokas, Pacific J. Math. 83 (1979), 441-462; the fixed-point theorem
 for the Hilbert cube; see the commentary in R. D. Mauldin (ed.),

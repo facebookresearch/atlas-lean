@@ -55,13 +55,20 @@ Category-(b) candidate from §153 of the Knill survey.
 
 open CategoryTheory AlgebraicTopology
 
-/-- Integral singular homology in degree `n`, as an additive group. -/
+/-- **Integral singular homology.** For a natural number $n$ and a topological space $X$,
+$H_n(X; \mathbb{Z})$ denotes the $n$-th singular homology group of $X$ with coefficients in
+$\mathbb{Z}$, regarded as an abelian group. -/
 noncomputable abbrev IntegralHomology (n : ℕ) (X : Type) [TopologicalSpace X] : AddCommGrpCat :=
   ((singularHomologyFunctor AddCommGrpCat.{0} n).obj (AddCommGrpCat.of ℤ)).obj (TopCat.of X)
 
 /- **Hurewicz (n = 1).** For a path-connected space `X`, `H₁(X;ℤ)` is the
 abelianization of `π₁(X, x)`. -/
-/-- Source: W. Hurewicz (1935); see Hatcher, *Algebraic Topology*, Theorem 2A.1. Knill, *Some fundamental theorems in mathematics*, §153. Via leanprover/lean-eval@38361be, problem `hurewicz_h1_abelianization`. -/
+/-- **First homology is the abelianized fundamental group.** Let $X$ be a path-connected
+topological space and let $x \in X$. Then the abelianization of the fundamental group
+$\pi_1(X, x)$ is isomorphic, as a group, to the first integral singular homology group
+$H_1(X; \mathbb{Z})$ of $X$.
+
+Source: W. Hurewicz (1935); see Hatcher, *Algebraic Topology*, Theorem 2A.1. Knill, *Some fundamental theorems in mathematics*, §153. Via leanprover/lean-eval@38361be, problem `hurewicz_h1_abelianization`. -/
 public theorem_wanted hurewicz_h1_abelianization
     (X : Type) [TopologicalSpace X] [PathConnectedSpace X] (x : X) :
     Nonempty (Additive (Abelianization (FundamentalGroup X x)) ≃+

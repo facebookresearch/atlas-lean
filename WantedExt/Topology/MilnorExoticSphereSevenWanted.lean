@@ -72,7 +72,12 @@ open Metric (sphere)
 
 /- **Milnor's exotic 7-sphere.** There exists a smooth 7-manifold
 homeomorphic to the standard 7-sphere `𝕊⁷` but not diffeomorphic to it. -/
-/-- Source: J. Milnor, On manifolds homeomorphic to the 7-sphere, Ann. of Math. 64 (1956), 399-405. Recorded as a `proof_wanted` in Mathlib/Geometry/Manifold/PoincareConjecture.lean at rev 5450b53e5ddc. Via leanprover/lean-eval@38361be, problem `milnor_exotic_sphere_seven`. -/
+/-- **Milnor's exotic 7-sphere.** There is a smooth manifold $M$ modelled on $\mathbb{R}^7$ (a
+topological space with a $C^\infty$ atlas of charts into $\mathbb{R}^7$) that is homeomorphic to
+the unit sphere $S^7 \subset \mathbb{R}^8$ but is not diffeomorphic to $S^7$ with its standard
+smooth structure.
+
+Source: J. Milnor, On manifolds homeomorphic to the 7-sphere, Ann. of Math. 64 (1956), 399-405. Recorded as a `proof_wanted` in Mathlib/Geometry/Manifold/PoincareConjecture.lean at rev 5450b53e5ddc. Via leanprover/lean-eval@38361be, problem `milnor_exotic_sphere_seven`. -/
 public theorem_wanted milnor_exotic_sphere_seven :
     ∃ (M : Type) (_ : TopologicalSpace M)
       (_ : ChartedSpace (EuclideanSpace ℝ (Fin 7)) M)

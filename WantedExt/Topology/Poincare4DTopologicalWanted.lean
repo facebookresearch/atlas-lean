@@ -69,7 +69,12 @@ open ContinuousMap
 /- **4D topological Poincaré conjecture** (Freedman, 1982). Every Hausdorff
 4-manifold that is homotopy-equivalent to the standard 4-sphere `𝕊⁴` is
 homeomorphic to `𝕊⁴`. -/
-/-- Source: M. H. Freedman, The topology of four-dimensional manifolds, J. Differential Geom. 17 (1982), 357-453. Specialization of `proof_wanted ContinuousMap.HomotopyEquiv.nonempty_homeomorph_sphere` in Mathlib/Geometry/Manifold/PoincareConjecture.lean. Via leanprover/lean-eval@38361be, problem `poincare_4d_topological`. -/
+/-- **Topological Poincaré conjecture in dimension 4.** Let $M$ be a Hausdorff space with an
+atlas of charts to $\mathbb{R}^4$ (a topological 4-manifold without boundary, not assumed
+second countable). If $M$ is homotopy equivalent to the unit sphere
+$S^4 = \{x \in \mathbb{R}^5 : \|x\| = 1\}$, then $M$ is homeomorphic to $S^4$.
+
+Source: M. H. Freedman, The topology of four-dimensional manifolds, J. Differential Geom. 17 (1982), 357-453. Specialization of `proof_wanted ContinuousMap.HomotopyEquiv.nonempty_homeomorph_sphere` in Mathlib/Geometry/Manifold/PoincareConjecture.lean. Via leanprover/lean-eval@38361be, problem `poincare_4d_topological`. -/
 public theorem_wanted poincare_4d_topological
     {M : Type*} [TopologicalSpace M] [T2Space M]
     [ChartedSpace (EuclideanSpace ℝ (Fin 4)) M]

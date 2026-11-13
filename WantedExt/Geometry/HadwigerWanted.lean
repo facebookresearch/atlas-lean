@@ -63,13 +63,16 @@ and that case is dropped (mathlib's `ConvexBody` is nonempty).
 
 open scoped Classical
 
-/-- The model space `ℝⁿ`. -/
+/-- **Model space for convex bodies.** For a natural number $n$, $E_n$ is the real Euclidean
+space $\mathbb{R}^n$ with its standard inner product and Euclidean norm. -/
 abbrev E (n : ℕ) := EuclideanSpace ℝ (Fin n)
 
-/-- A continuous, rigid-motion-invariant, additive real valuation on the
-convex bodies of `ℝⁿ`: continuity in the Hausdorff metric, inclusion–
-exclusion additivity, and invariance under linear isometries and
-translations. -/
+/-- **Continuous invariant valuation.** For a natural number $n$, a real-valued function $f$ on
+the convex bodies (nonempty compact convex subsets) of the Euclidean space $\mathbb{R}^n$ is a
+continuous invariant valuation if: $f$ is continuous for the Hausdorff metric;
+$f(A) + f(B) = f(C) + f(D)$ for all convex bodies $A, B, C, D$ with $A = C \cup D$ and
+$B = C \cap D$; $f(e(A)) = f(A)$ for every convex body $A$ and every linear isometry $e$ of
+$\mathbb{R}^n$; and $f(A + t) = f(A)$ for every convex body $A$ and every $t \in \mathbb{R}^n$. -/
 def IsValuation {n : ℕ} (f : ConvexBody (E n) → ℝ) : Prop :=
   Continuous f ∧
   (∀ A B C D : ConvexBody (E n),
@@ -81,7 +84,9 @@ def IsValuation {n : ℕ} (f : ConvexBody (E n) → ℝ) : Prop :=
   (∀ A B : ConvexBody (E n), ∀ t : E n,
       (B : Set (E n)) = (· + t) '' (A : Set (E n)) → f A = f B)
 
-/-- The valuations form an `ℝ`-subspace of `ConvexBody ℝⁿ → ℝ`. -/
+/-- **The space of continuous invariant valuations.** For a natural number $n$, the continuous
+invariant valuations on the convex bodies of $\mathbb{R}^n$ form a real linear subspace of the
+vector space of all functions from the convex bodies of $\mathbb{R}^n$ to $\mathbb{R}$. -/
 noncomputable def valuations (n : ℕ) : Submodule ℝ (ConvexBody (E n) → ℝ) where
   carrier := {f | IsValuation f}
   add_mem' := by
@@ -106,7 +111,11 @@ noncomputable def valuations (n : ℕ) : Submodule ℝ (ConvexBody (E n) → ℝ
 
 /- **Hadwiger's theorem.** The space of continuous rigid-motion-invariant
 valuations on convex bodies in `ℝⁿ` is `(n+1)`-dimensional. -/
-/-- Source: H. Hadwiger (1937). Listed as §31 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `hadwiger`. -/
+/-- **Hadwiger's theorem.** For every natural number $n$, the real vector space of continuous
+invariant valuations on the convex bodies of $\mathbb{R}^n$ (continuous, additive, and invariant
+under linear isometries and translations) is finite-dimensional of dimension $n + 1$.
+
+Source: H. Hadwiger (1937). Listed as §31 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `hadwiger`. -/
 public theorem_wanted hadwiger (n : ℕ) : Module.finrank ℝ (valuations n) = n + 1
 
 end ConvexGeometry

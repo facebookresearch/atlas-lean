@@ -46,22 +46,33 @@ set_option autoImplicit false
 
 namespace MathlibExt.Probability.DiversityStatisticsWanted
 
-/-- The number of possible values of the Gini-Simpson
-index across all samples of size `N`, counted as the
-number of distinct sums of squared cell counts. -/
+/-- **Number of values of the Gini–Simpson index.** For a natural number $N$, $\gamma(N)$ is the
+number of distinct values of $a_1^2 + \dots + a_k^2$ over all finite sequences $(a_1, \dots, a_k)$
+of natural numbers with $a_1 + \dots + a_k = N$.
+
+For $N \ge 1$, the Gini–Simpson index of a sample of size $N$ with type counts $a_1, \dots, a_k$ is
+$1 - \sum_i (a_i / N)^2$, so $\gamma(N)$ is the number of possible values of the Gini–Simpson index
+across all samples of size $N$. -/
 noncomputable def giniSimpsonCount (N : ℕ) : ℕ :=
   Set.ncard {s : ℕ | ∃ l : List ℕ, l.sum = N ∧
     (l.map (fun a => a ^ 2)).sum = s}
 
-/-- The number of possible values of the Shannon
-index `-∑ (a / N) log (a / N)` across all samples of
-size `N` (with the convention `0 log 0 = 0`, which
-matches `Real.log 0 = 0`). -/
+/-- **Number of values of the Shannon index.** For a natural number $N$, $\sigma(N)$ is the number
+of distinct real numbers $-\sum_{i=1}^{k} (a_i / N) \log (a_i / N)$ over all finite sequences $(a_1,
+\dots, a_k)$ of natural numbers with $a_1 + \dots + a_k = N$, where a term with $a_i = 0$ counts as
+$0$ (the convention $0 \log 0 = 0$).
+
+For $N \ge 1$, this is the number of possible values of the Shannon index across all samples of size
+$N$. -/
 noncomputable def shannonCount (N : ℕ) : ℕ :=
   Set.ncard {v : ℝ | ∃ l : List ℕ, l.sum = N ∧
     v = -(l.map (fun a => ((a : ℝ) / N) * Real.log ((a : ℝ) / N))).sum}
 
-/-- **Proposition 4**: `γ(N) ≤ (1 / 2) N^2 - (1 / 2) N + 1`.
+/-- **Upper bound on the number of Gini–Simpson values.** Let $\gamma(N)$ be the number of distinct
+values of $a_1^2 + \dots + a_k^2$ over all finite sequences $(a_1, \dots, a_k)$ of natural numbers
+with $a_1 + \dots + a_k = N$ (for $N \ge 1$, the number of possible values of the Gini–Simpson index
+across samples of size $N$). Then for every natural number $N$,
+$$\gamma(N) \le \tfrac{1}{2} N^2 - \tfrac{1}{2} N + 1.$$
 
 Source: Bradley K. Moon and Noah A. Rosenberg,
 "Integer Sequences for Diversity Statistics",
@@ -69,9 +80,12 @@ Proposition 4. -/
 theorem_wanted giniSimpsonCount_le (N : ℕ) :
     (giniSimpsonCount N : ℚ) ≤ (1 / 2) * N ^ 2 - (1 / 2) * N + 1
 
-/-- **Proposition 5**: `γ(N)` is bounded below by
-`(1 / 3) m (m^2 + 3r - 1) + 1`, where `N = C(m + 1, 2) + r`
-with `0 ≤ r ≤ m`.
+/-- **Triangular-number lower bound on the number of Gini–Simpson values.** Let $\gamma(N)$ be the
+number of distinct values of $a_1^2 + \dots + a_k^2$ over all finite sequences $(a_1, \dots, a_k)$
+of natural numbers with $a_1 + \dots + a_k = N$ (for $N \ge 1$, the number of possible values of the
+Gini–Simpson index across samples of size $N$). Let $m$ and $r$ be natural numbers with $r \le m$,
+and let $N = \binom{m+1}{2} + r$. Then
+$$\tfrac{1}{3} m (m^2 + 3r - 1) + 1 \le \gamma(N).$$
 
 Source: Bradley K. Moon and Noah A. Rosenberg,
 "Integer Sequences for Diversity Statistics",
@@ -81,8 +95,11 @@ theorem_wanted giniSimpsonCount_ge_triangular (N m r : ℕ)
     (1 / 3) * (m : ℚ) * ((m : ℚ) ^ 2 + 3 * r - 1) + 1 ≤
       (giniSimpsonCount N : ℚ)
 
-/-- **Proposition 6**: `γ(N)` is bounded below by
-`(⌊N^2 / 5⌋ - N) / 2`.
+/-- **Quadratic lower bound on the number of Gini–Simpson values.** Let $\gamma(N)$ be the number of
+distinct values of $a_1^2 + \dots + a_k^2$ over all finite sequences $(a_1, \dots, a_k)$ of natural
+numbers with $a_1 + \dots + a_k = N$ (for $N \ge 1$, the number of possible values of the
+Gini–Simpson index across samples of size $N$). Then for every natural number $N$,
+$$\tfrac{1}{2} \left( \lfloor N^2 / 5 \rfloor - N \right) \le \gamma(N).$$
 
 Source: Bradley K. Moon and Noah A. Rosenberg,
 "Integer Sequences for Diversity Statistics",
@@ -90,7 +107,11 @@ Proposition 6. -/
 theorem_wanted giniSimpsonCount_ge (N : ℕ) :
     (((N ^ 2 / 5 : ℕ) : ℚ) - N) / 2 ≤ (giniSimpsonCount N : ℚ)
 
-/-- **Proposition 7**: `γ(N) ~ (1 / 2) N^2`.
+/-- **Asymptotics of the number of Gini–Simpson values.** Let $\gamma(N)$ be the number of distinct
+values of $a_1^2 + \dots + a_k^2$ over all finite sequences $(a_1, \dots, a_k)$ of natural numbers
+with $a_1 + \dots + a_k = N$ (for $N \ge 1$, the number of possible values of the Gini–Simpson index
+across samples of size $N$). Then $\gamma(N) / N^2 \to 1/2$ as $N \to \infty$, that is, $\gamma(N)
+\sim \tfrac{1}{2} N^2$.
 
 Source: Bradley K. Moon and Noah A. Rosenberg,
 "Integer Sequences for Diversity Statistics",
@@ -100,8 +121,12 @@ theorem_wanted giniSimpsonCount_asymp :
       (fun N : ℕ => (giniSimpsonCount N : ℝ) / (N : ℝ) ^ 2)
       Filter.atTop (nhds (1 / 2))
 
-/-- **Proposition 8**: for all `N ≥ 1`,
-`σ(N) ≤ exp (π √(2 / 3) √N)`.
+/-- **Upper bound on the number of Shannon values.** Let $\sigma(N)$ be the number of distinct real
+numbers $-\sum_{i=1}^{k} (a_i / N) \log (a_i / N)$ over all finite sequences $(a_1, \dots, a_k)$ of
+natural numbers with $a_1 + \dots + a_k = N$, where a term with $a_i = 0$ counts as $0$ (for $N \ge
+1$, the number of possible values of the Shannon index across samples of size $N$). Then for every
+natural number $N \ge 1$,
+$$\sigma(N) \le \exp\left(\pi \sqrt{2/3} \sqrt{N}\right).$$
 
 Source: Bradley K. Moon and Noah A. Rosenberg,
 "Integer Sequences for Diversity Statistics",
@@ -110,9 +135,12 @@ theorem_wanted shannonCount_le (N : ℕ) (hN : 1 ≤ N) :
     (shannonCount N : ℝ) ≤
       Real.exp (Real.pi * Real.sqrt (2 / 3) * Real.sqrt N)
 
-/-- **Theorem 9**: `σ(N)` grows faster than every
-polynomial: for every (nonzero) polynomial `q`,
-`lim_{N → ∞} σ(N) / |q(N)| = ∞`.
+/-- **The number of Shannon values grows faster than every polynomial.** Let $\sigma(N)$ be the
+number of distinct real numbers $-\sum_{i=1}^{k} (a_i / N) \log (a_i / N)$ over all finite sequences
+$(a_1, \dots, a_k)$ of natural numbers with $a_1 + \dots + a_k = N$, where a term with $a_i = 0$
+counts as $0$ (for $N \ge 1$, the number of possible values of the Shannon index across samples of
+size $N$). Then for every nonzero polynomial $q$ with real coefficients, $\sigma(N) / |q(N)| \to
+\infty$ as $N \to \infty$.
 
 Source: Bradley K. Moon and Noah A. Rosenberg,
 "Integer Sequences for Diversity Statistics",

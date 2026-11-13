@@ -82,11 +82,15 @@ open Bundle ContDiff Set VectorField CovariantDerivative
 /- A covariant derivative `cov` on `TM` is **compatible with the
 Riemannian metric** if `v · ⟨Y, Z⟩ = ⟨∇_v Y, Z⟩ + ⟨Y, ∇_v Z⟩` for all
 smooth vector fields `Y, Z` and every point/direction `(x, v)`. -/
-/-- Two covariant derivatives **agree on smooth sections** if they produce
-the same image on every smooth vector field. mathlib's
-`CovariantDerivative` is bundled over all sections; the textbook Levi-Civita
-uniqueness statement is uniqueness on the smooth-section subspace, captured
-by `SameOnSmooth`. -/
+/-- **Agreement of covariant derivatives on smooth vector fields.** Let $M$ be a smooth manifold,
+possibly with boundary or corners, modelled on a finite-dimensional real normed space, whose
+tangent bundle carries a smooth Riemannian metric. Two covariant derivatives $\nabla$ and
+$\nabla'$ on the tangent bundle of $M$ agree on smooth sections when $\nabla_v Y = \nabla'_v Y$
+for every smooth vector field $Y$ on $M$, every point $x \in M$ and every tangent vector $v$ at
+$x$.
+
+Covariant derivatives here act on all sections of the tangent bundle, not only smooth ones, so the
+uniqueness in the Levi-Civita theorem is stated as agreement on smooth vector fields. -/
 def SameOnSmooth
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
       [FiniteDimensional ℝ E] [CompleteSpace E]
@@ -103,7 +107,15 @@ def SameOnSmooth
 `C^∞` finite-dimensional Riemannian manifold there exists a smooth
 torsion-free metric-compatible covariant derivative on `TM`, and any other
 such connection agrees with it on smooth vector fields. -/
-/-- Source: T. Levi-Civita, Nozione di parallelismo in una varietà qualunque, Rend. Circ. Mat. Palermo 42 (1917). Listed as §38 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `levi_civita_exists_unique`. -/
+/-- **Fundamental theorem of Riemannian geometry (Levi-Civita).** Let $M$ be a Hausdorff smooth
+manifold, possibly with boundary or corners, modelled on a finite-dimensional real normed space,
+whose tangent bundle carries a smooth Riemannian metric. Then there is a smooth covariant
+derivative $\nabla$ on the tangent bundle of $M$ that is torsion-free and compatible with the
+metric, and every smooth, torsion-free, metric-compatible covariant derivative $\nabla'$ on the
+tangent bundle of $M$ agrees with $\nabla$ on smooth vector fields: $\nabla'_v Y = \nabla_v Y$ for
+every smooth vector field $Y$ on $M$, every point $x \in M$ and every tangent vector $v$ at $x$.
+
+Source: T. Levi-Civita, Nozione di parallelismo in una varietà qualunque, Rend. Circ. Mat. Palermo 42 (1917). Listed as §38 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `levi_civita_exists_unique`. -/
 public theorem_wanted levi_civita_exists_unique
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
       [FiniteDimensional ℝ E] [CompleteSpace E]

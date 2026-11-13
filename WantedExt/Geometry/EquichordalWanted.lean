@@ -55,14 +55,19 @@ result. Category-(b) candidate from §205 of the Knill survey.
 
 open Metric Set
 
-/-- The Euclidean plane. -/
+/-- **Euclidean plane for the equichordal point problem.** The Euclidean plane is the space
+$\mathbb{R}^2$ of pairs of real numbers with the Euclidean inner product and norm. -/
 abbrev Plane := EuclideanSpace ℝ (Fin 2)
 
-/-- A point `P` is equichordal for the boundary of a planar domain `K` if
-there is a constant chord length `L` such that every unit direction through
-`P` meets the boundary at opposite chord endpoints whose total chord length
-is `L`.  The open segment condition rules out choosing non-endpoint boundary
-crossings for nonconvex star-like domains. -/
+/-- **Equichordal point.** Let $K$ be a subset of the Euclidean plane. A point $P$ is an
+equichordal point of $K$ if $P$ lies in the interior of $K$ and there is a real $L > 0$ such
+that for every unit vector $u$ there are reals $a > 0$ and $b > 0$ for which $P + a u$ and
+$P - b u$ lie in the boundary (frontier) of $K$, the open segment between $P - b u$ and
+$P + a u$ lies in the interior of $K$, and the distance between $P + a u$ and $P - b u$
+equals $L$.
+
+The open segment condition makes $P + a u$ and $P - b u$ the endpoints of the chord through $P$
+in direction $u$, ruling out other boundary crossings for nonconvex star-shaped domains. -/
 def IsEquichordalPoint (K : Set Plane) (P : Plane) : Prop :=
   P ∈ interior K ∧
     ∃ L : ℝ, 0 < L ∧
@@ -76,7 +81,11 @@ def IsEquichordalPoint (K : Set Plane) (P : Plane) : Prop :=
 
 /- **Equichordal point theorem** (§205).  A convex planar curve cannot have
 two distinct equichordal points. -/
-/-- Source: M. R. Rychlik, A complete solution to the equichordal point problem of Fujiwara, Blaschke, Rothe and Weizenböck, Invent. Math. 129 (1997). Listed as §205 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §205. Via leanprover/lean-eval@38361be, problem `equichordal_point_unique`. -/
+/-- **Equichordal point theorem.** Let $K$ be a compact convex subset of the Euclidean plane
+with nonempty interior. Then $K$ does not have two distinct equichordal points: there are no
+points $P \ne Q$ of the plane such that both $P$ and $Q$ are equichordal points of $K$.
+
+Source: M. R. Rychlik, A complete solution to the equichordal point problem of Fujiwara, Blaschke, Rothe and Weizenböck, Invent. Math. 129 (1997). Listed as §205 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §205. Via leanprover/lean-eval@38361be, problem `equichordal_point_unique`. -/
 public theorem_wanted equichordal_point_unique {K : Set Plane}
     (hK : IsCompact K) (hconv : Convex ℝ K) (hne : (interior K).Nonempty) :
     ¬ ∃ P Q : Plane,

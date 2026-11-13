@@ -73,13 +73,14 @@ Mathlib has `HomotopyGroup`, singular homology (`singularHomologyFunctor`),
 Davis/Tschantz construction.
 -/
 
-/-- A closed connected topological 4-manifold, bundled with its topological-space
-and chart instances so its existence can be quantified over. Charts model
-`carrier` on `EuclideanSpace ℝ (Fin 4)` (the whole space, not a half-space), so
-the space is locally Euclidean with no boundary; together with `CompactSpace`
-this is a closed manifold. This is the charted topological-manifold model — it
-carries `ChartedSpace`, not Mathlib's stronger bundled `IsManifold` class, which
-is exactly right for a topological (not necessarily smooth) manifold. -/
+/-- **Closed topological 4-manifold.** A closed topological 4-manifold is a nonempty, compact,
+connected, Hausdorff, second-countable topological space $M$ together with an atlas of charts
+covering $M$, each a homeomorphism from an open subset of $M$ onto an open subset of
+$\mathbb{R}^4$ (charts are modelled on all of $\mathbb{R}^4$, not on a half-space, so $M$ has no
+boundary).
+
+No smoothness or compatibility between charts is required, so this is a topological, not
+necessarily smooth, manifold. -/
 structure Closed4Manifold where
   /-- The underlying point set. -/
   carrier : Type
@@ -96,18 +97,21 @@ attribute [instance] Closed4Manifold.topology Closed4Manifold.t2
   Closed4Manifold.secondCountable Closed4Manifold.charted Closed4Manifold.compact
   Closed4Manifold.connected Closed4Manifold.nonempty
 
-/-- `Hₖ(X; ℤ)`, the `k`-th singular homology with integer coefficients, as an
-object of `ModuleCat ℤ`. -/
+/-- **Integral singular homology as a $\mathbb{Z}$-module.** For a natural number $k$ and a
+topological space $X$, $H_k(X; \mathbb{Z})$ is the $k$-th singular homology of $X$ with
+coefficients in $\mathbb{Z}$, viewed as a $\mathbb{Z}$-module. -/
 noncomputable def intHomology (k : ℕ) (X : TopCat) : ModuleCat ℤ :=
   ((singularHomologyFunctor (ModuleCat.{0} ℤ) k).obj (ModuleCat.of ℤ ℤ)).obj X
 
-/-- `M` is **aspherical**: every higher homotopy group vanishes at every
-basepoint. -/
+/-- **Aspherical closed 4-manifold.** A closed topological 4-manifold $M$ is aspherical if for
+every $k \ge 2$ and every point $x \in M$ the homotopy group $\pi_k(M, x)$ is trivial. -/
 def Closed4Manifold.IsAspherical (M : Closed4Manifold) : Prop :=
   ∀ k : ℕ, 2 ≤ k → ∀ x : M.carrier, Subsingleton (HomotopyGroup (Fin k) M.carrier x)
 
-/-- `M` is an **integer homology 4-sphere**: in every degree its integral
-singular homology is isomorphic to that of the standard 4-sphere. -/
+/-- **Integer homology 4-sphere.** A closed topological 4-manifold $M$ is an integer homology
+4-sphere if for every $k \ge 0$ the integral singular homology $H_k(M; \mathbb{Z})$ is isomorphic,
+as a $\mathbb{Z}$-module, to $H_k(S^4; \mathbb{Z})$, where $S^4$ is the unit sphere in
+$\mathbb{R}^5$. -/
 def Closed4Manifold.IsIntegerHomologySphere (M : Closed4Manifold) : Prop :=
   ∀ k : ℕ, Nonempty (intHomology k (TopCat.of M.carrier) ≅
     intHomology k (TopCat.of (sphere (0 : EuclideanSpace ℝ (Fin 5)) 1)))
@@ -115,7 +119,13 @@ def Closed4Manifold.IsIntegerHomologySphere (M : Closed4Manifold) : Prop :=
 /- **Existence of an aspherical integer homology 4-sphere** (Tschantz, answering
 `[Kir97, Problem 4.17]`). There is a closed topological 4-manifold that is both
 aspherical and an integer homology 4-sphere. -/
-/-- Source: J. G. Ratcliffe and S. T. Tschantz, *Some examples of aspherical 4-manifolds that are homology 4-spheres*, arXiv:math/0312436 (2003), solving [Kir97, Problem 4.17]. Earlier, F. Luo constructed an aspherical rational homology 4-sphere (1988). Via leanprover/lean-eval@38361be, problem `aspherical_integer_homology_four_sphere`. -/
+/-- **Existence of an aspherical integer homology 4-sphere.** There is a closed connected
+topological 4-manifold $M$ that is aspherical, meaning that for every $k \ge 2$ and every point
+$x \in M$ the homotopy group $\pi_k(M, x)$ is trivial, and that is an integer homology 4-sphere,
+meaning that for every $k \ge 0$ the integral singular homology $H_k(M; \mathbb{Z})$ is isomorphic
+to $H_k(S^4; \mathbb{Z})$, where $S^4$ is the unit sphere in $\mathbb{R}^5$.
+
+Source: J. G. Ratcliffe and S. T. Tschantz, *Some examples of aspherical 4-manifolds that are homology 4-spheres*, arXiv:math/0312436 (2003), solving [Kir97, Problem 4.17]. Earlier, F. Luo constructed an aspherical rational homology 4-sphere (1988). Via leanprover/lean-eval@38361be, problem `aspherical_integer_homology_four_sphere`. -/
 public theorem_wanted aspherical_integer_homology_four_sphere :
     ∃ M : Closed4Manifold, M.IsAspherical ∧ M.IsIntegerHomologySphere
 

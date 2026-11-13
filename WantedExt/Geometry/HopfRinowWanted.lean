@@ -89,17 +89,23 @@ missing metric-smoothness hypotheses were added, after Aristotle flagged the
 flat-cone counterexample described above. Thanks to both.
 -/
 
-/-- A path `γ : ℝ → M` is a **(constant-speed) geodesic** if there is
-some speed `c : ℝ≥0` such that at every parameter `t₀ : ℝ`, the
-Riemannian distance is locally linear in the parameter. -/
+/-- **Constant-speed geodesic in a metric space.** Let $M$ be an extended metric space with
+distance $d$. A path $\gamma : \mathbb{R} \to M$ is a constant-speed geodesic if there is a real
+number $c \ge 0$ such that every $t_0 \in \mathbb{R}$ has a $\delta > 0$ with
+$d(\gamma(s), \gamma(t)) = c\,|t - s|$ for all real $s, t$ with $|s - t_0| < \delta$ and
+$|t - t_0| < \delta$. -/
 def IsGeodesic {M : Type*} [EMetricSpace M] (γ : ℝ → M) : Prop :=
   ∃ c : NNReal, ∀ t₀ : ℝ, ∃ δ > (0 : ℝ),
     ∀ s t : ℝ, |s - t₀| < δ → |t - t₀| < δ →
       edist (γ s) (γ t) = (c : ℝ≥0∞) * ENNReal.ofReal |t - s|
 
-/-- The Riemannian manifold `M` is **geodesically complete** if every
-geodesic defined on a bounded open interval `(a, b) ⊂ ℝ` extends to a
-geodesic defined on all of `ℝ`. -/
+/-- **Geodesically complete metric space.** An extended metric space $M$ with distance $d$ is
+geodesically complete if the following holds for all real numbers $a < b$ and every path
+$\gamma : \mathbb{R} \to M$. Suppose there is a real $c \ge 0$ such that every
+$t_0 \in (a, b)$ has a $\delta > 0$ with $d(\gamma(s), \gamma(t)) = c\,|t - s|$ for all $s, t$
+in the interval $(a, b) \cap (t_0 - \delta, t_0 + \delta)$. Then there is a constant-speed
+geodesic $\tilde\gamma : \mathbb{R} \to M$ with $\tilde\gamma(t) = \gamma(t)$ for all
+$t \in (a, b)$. -/
 def IsGeodesicallyComplete (M : Type*) [EMetricSpace M] : Prop :=
   ∀ (a b : ℝ) (γ : ℝ → M), a < b →
     (∃ c : NNReal, ∀ t₀ ∈ Set.Ioo a b, ∃ δ > (0 : ℝ),
@@ -112,7 +118,12 @@ def IsGeodesicallyComplete (M : Type*) [EMetricSpace M] : Prop :=
 /- **Hopf–Rinow theorem.** For a connected, locally compact,
 finite-dimensional smooth Riemannian manifold `M` *without boundary*,
 metric completeness and geodesic completeness are equivalent. -/
-/-- Source: H. Hopf and W. Rinow, *Ueber den Begriff der vollständigen differentialgeometrischen Fläche*, Comment. Math. Helv. 3 (1931), 209-225. Listed as §93 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `hopf_rinow`. -/
+/-- **Hopf–Rinow theorem.** Let $M$ be a connected, locally compact smooth manifold without
+boundary, modelled on a finite-dimensional real normed space, with a smooth Riemannian metric
+whose Riemannian distance is the (extended) distance of $M$. Then $M$ is geodesically complete
+if and only if $M$ is complete for its distance.
+
+Source: H. Hopf and W. Rinow, *Ueber den Begriff der vollständigen differentialgeometrischen Fläche*, Comment. Math. Helv. 3 (1931), 209-225. Listed as §93 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `hopf_rinow`. -/
 public theorem_wanted hopf_rinow
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E]

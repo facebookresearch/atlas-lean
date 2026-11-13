@@ -19,11 +19,16 @@ open MeasureTheory
 
 namespace MathlibExt.MeasureTheory.Geometry.SphericalCoordinatesWanted
 
-/-- Change of variables to spherical coordinates in `ℝ³`: the integral of `f`
-over all of space equals the integral over `(r, θ, φ)` with `r > 0`,
-`0 < θ < 2π`, `0 < φ < π` of `f` at
-`(r sin φ cos θ, r sin φ sin θ, r cos φ)` against the Jacobian `r² sin φ`.
-This mirrors the polar-coordinate formula `integral_comp_polarCoord_symm`.
+/-- **Change of variables to spherical coordinates.** Let $E$ be a real Banach space and let
+$f \colon \mathbb{R}^3 \to E$ be any function. Then the integral of $f$ over $\mathbb{R}^3$
+equals the integral over the set of $(r, \theta, \varphi) \in \mathbb{R}^3$ with $r > 0$,
+$0 < \theta < 2\pi$ and $0 < \varphi < \pi$ of
+$r^2 \sin\varphi \cdot f(r \sin\varphi \cos\theta,\, r \sin\varphi \sin\theta,\, r \cos\varphi)$,
+both integrals being Bochner integrals with respect to Lebesgue measure.
+
+No integrability hypothesis is assumed; as usual for Bochner integrals, a non-integrable
+function has integral $0$. This is the three-dimensional analogue of the polar-coordinate
+change of variables.
 
 Sources:
 - Mathlib `docs/undergrad.yaml`, section "Measures and integral calculus /

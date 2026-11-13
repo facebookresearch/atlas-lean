@@ -59,23 +59,25 @@ open Function
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
-/-- The diameter of a set, as a real supremum of all pairwise distances inside
-the set.  This keeps the normal-structure statement in ordinary metric
-language. -/
+/-- **Diameter of a set.** The diameter of a set $s$ in a real normed space is the supremum in
+$\mathbb{R}$ of the distances $\operatorname{dist}(x, y)$ over all $x, y \in s$; by the convention
+for real suprema it is $0$ when $s$ is empty or these distances are unbounded. -/
 noncomputable def metricDiameter (s : Set E) : ℝ :=
   sSup {r : ℝ | ∃ x ∈ s, ∃ y ∈ s, dist x y = r}
 
-/-- Radius of a point relative to a set, i.e. the supremum of its distances to
-points of the set. -/
+/-- **Radius of a point in a set.** The radius of a point $x$ in a set $s$ of a real normed space
+is the supremum in $\mathbb{R}$ of the distances $\operatorname{dist}(x, y)$ over all $y \in s$; by
+the convention for real suprema it is $0$ when $s$ is empty or these distances are unbounded. -/
 noncomputable def pointRadiusIn (x : E) (s : Set E) : ℝ :=
   sSup {r : ℝ | ∃ y ∈ s, dist x y = r}
 
-/-- A point is diametral in `s` if its radius in `s` is the diameter of `s`. -/
+/-- **Diametral point.** A point $x$ of a real normed space is diametral in a set $s$
+if $x \in s$ and the radius of $x$ in $s$ equals the diameter of $s$. -/
 def IsDiametralPoint (s : Set E) (x : E) : Prop :=
   x ∈ s ∧ pointRadiusIn x s = metricDiameter s
 
-/-- A bounded convex set has normal structure if every nontrivial convex subset
-contains a non-diametral point. -/
+/-- **Normal structure.** A set $K$ in a real normed space has normal structure if every convex
+subset $H \subseteq K$ with at least two points contains a point that is not diametral in $H$. -/
 def HasNormalStructure (K : Set E) : Prop :=
   ∀ H : Set E,
     H ⊆ K →
@@ -83,15 +85,21 @@ def HasNormalStructure (K : Set E) : Prop :=
         H.Nontrivial →
           ∃ x ∈ H, ¬ IsDiametralPoint H x
 
-/-- A self-map of a set is nonexpansive when it is `1`-Lipschitz for the
-subtype metric. -/
+/-- **Nonexpansive self-map.** A map $T : K \to K$ from a subset $K$ of a real normed space to
+itself is nonexpansive if $\|T(x) - T(y)\| \le \|x - y\|$ for all $x, y \in K$, that is, if $T$
+is $1$-Lipschitz for the distance inherited from the space. -/
 def IsNonexpansiveSelfMap (K : Set E) (T : K → K) : Prop :=
   LipschitzWith 1 T
 
 /- **Kirk's normal-structure fixed-point theorem** (§228).  A nonexpansive
 self-map of a nonempty bounded closed convex subset of a reflexive Banach
 space with normal structure has a fixed point. -/
-/-- Source: W. A. Kirk, A fixed point theorem for mappings which do not increase distances, Amer. Math. Monthly 72 (1965). Listed as §228 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §228. Via leanprover/lean-eval@38361be, problem `kirk_normal_structure`. -/
+/-- **Kirk's fixed-point theorem for sets with normal structure.** Let $E$ be a reflexive real
+Banach space, meaning that the canonical embedding of $E$ into its double dual is surjective, and
+let $K \subseteq E$ be a nonempty, closed, bounded, convex set with normal structure. Then every
+nonexpansive self-map $T : K \to K$ has a fixed point.
+
+Source: W. A. Kirk, A fixed point theorem for mappings which do not increase distances, Amer. Math. Monthly 72 (1965). Listed as §228 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Knill, §228. Via leanprover/lean-eval@38361be, problem `kirk_normal_structure`. -/
 public theorem_wanted kirk_normal_structure [CompleteSpace E]
     (hE_reflexive : Function.Surjective (NormedSpace.inclusionInDoubleDual ℝ E))
     (K : Set E) (hK_nonempty : K.Nonempty) (hK_closed : IsClosed K)

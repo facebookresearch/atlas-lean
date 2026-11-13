@@ -17,10 +17,14 @@ public import Mathlib.Topology.Compactness.Compact
 namespace MathlibExt.Geometry.ScottishBook3Wanted
 
 /--
-No compact set is congruent to a proper subset of itself. Congruence is rendered
-as a distance-preserving map sending the set onto a proper subset of itself;
-an isometric embedding of a compact set into itself is surjective, so no such
-map exists. Source: S. Banach and S. Ulam, Problem 3 of the Scottish Book,
+**No compact set is congruent to a proper subset of itself.** Let $K$ be a compact subset of
+a metric space $X$. Then there is no map $f : X \to X$ with $d(f(x), f(y)) = d(x, y)$ for all
+$x, y \in X$ such that $f(K) \subseteq K$ and $f(K) \neq K$.
+
+The underlying fact is that an isometric embedding of a compact metric space into itself is
+surjective.
+
+Source: S. Banach and S. Ulam, Problem 3 of the Scottish Book,
 stated and proved in the Scottish Book typescript.
 -/
 theorem_wanted noCompactSetCongruentToProperSubset :

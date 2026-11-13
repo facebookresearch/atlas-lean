@@ -22,11 +22,13 @@ open Ordinal Filter Topology
 open MathlibExt.NumberTheory.IntegerComplexityWanted (cx)
 open scoped Pointwise
 
-/-- A self-similar compact set of module `μ` and ratio `ρ`: a nonempty compact set
-`K ⊆ [0, ∞)` that is well ordered by the reverse order `x ≼ y ↔ x ≥ y` (every
-nonempty subset has a largest element) and satisfies `ρ K^{(μ)} = K`, where
-`K^{(μ)}` is the `μ`-th derived set (Mathlib's `derivedSet`, the set of accumulation
-points, iterated `μ` times).
+/-- **Self-similar compact set.** Let $\mu$ be a natural number and $\rho$ a real number. A set
+$K \subseteq \mathbb{R}$ is a self-similar compact set of module $\mu$ and ratio $\rho$ when
+$\rho > 1$, $K$ is nonempty and compact, $K \subseteq [0, \infty)$, $K$ is well ordered by the
+reverse order $x \preceq y \iff x \ge y$ (every nonempty subset of $K$ has a largest element),
+and $\rho K^{(\mu)} = K$, where $K^{(\mu)}$ is the $\mu$-th derived set of $K$ (the operation
+$A \mapsto A'$ taking a set to its set of accumulation points, applied $\mu$ times) and
+$\rho K^{(\mu)} = \{\rho x : x \in K^{(\mu)}\}$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Definition 1. -/
@@ -34,8 +36,10 @@ public def IsSelfSimilarCompactSet (K : Set ℝ) (μ : ℕ) (ρ : ℝ) : Prop :=
   1 < ρ ∧ K.Nonempty ∧ IsCompact K ∧ K ⊆ Set.Ici 0 ∧ K.WellFoundedOn (· > ·) ∧
     ρ • derivedSet^[μ] K = K
 
-/-- Characteristic lemma: a self-similar compact set satisfies its defining equation
-`ρ K^{(μ)} = K`.
+/-- **Self-similarity equation.** If $K \subseteq \mathbb{R}$ is a self-similar compact set of
+module $\mu$ and ratio $\rho$, then $\rho K^{(\mu)} = K$, where $K^{(\mu)}$ is the $\mu$-th derived
+set of $K$ (the set of accumulation points, iterated $\mu$ times) and $\rho K^{(\mu)}$ is its
+image under multiplication by $\rho$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Definition 1, equation (1). -/
@@ -43,22 +47,30 @@ public theorem IsSelfSimilarCompactSet.smul_derivedSet_iterate {K : Set ℝ} {μ
     (hK : IsSelfSimilarCompactSet K μ ρ) : ρ • derivedSet^[μ] K = K :=
   hK.2.2.2.2.2
 
-/-- The layer `T_u := K^{(u)} \ K^{(u+1)}` of a set `K ⊆ ℝ`: the points of the `u`-th
-derived set that are isolated in it.
+/-- **Layers of the iterated derived sets.** For a set $K \subseteq \mathbb{R}$ and a natural
+number $u$, let $K^{(u)}$ be the $u$-th derived set of $K$ (the derived set, i.e. the set of
+accumulation points, iterated $u$ times, with $K^{(0)} = K$). The layer of $K$ of index $u$ is
+$T_u = K^{(u)} \setminus K^{(u+1)}$, the set of points of $K^{(u)}$ that are isolated in
+$K^{(u)}$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Proposition 2. -/
 public def selfSimilarLayer (K : Set ℝ) (u : ℕ) : Set ℝ :=
   derivedSet^[u] K \ derivedSet^[u + 1] K
 
-/-- Characteristic value: the layer `T_0` is `K \ K'`, the isolated points of `K`.
+/-- **The zeroth layer is the set of isolated points.** For every set
+$K \subseteq \mathbb{R}$, the layer $T_0$ of $K$ equals $K \setminus K'$, where $K'$ is the derived
+set of $K$ (its set of accumulation points); that is, $T_0$ is the set of isolated points of $K$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Proposition 2. -/
 public theorem selfSimilarLayer_zero (K : Set ℝ) :
     selfSimilarLayer K 0 = K \ derivedSet K := rfl
 
-/-- Recurrence: the layer `T_{u+1}` of `K` is the layer `T_u` of the derived set `K'`.
+/-- **Layers of the derived set.** For a set $A \subseteq \mathbb{R}$ and $u \ge 0$, write
+$T_u(A) = A^{(u)} \setminus A^{(u+1)}$ for the $u$-th layer of $A$, where $A^{(u)}$ is the $u$-th
+derived set of $A$. Then for every set $K \subseteq \mathbb{R}$ and every $u \ge 0$,
+$T_{u+1}(K) = T_u(K')$, where $K'$ is the derived set of $K$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, proof of Proposition 7. -/
@@ -66,12 +78,13 @@ public theorem selfSimilarLayer_succ (K : Set ℝ) (u : ℕ) :
     selfSimilarLayer K (u + 1) = selfSimilarLayer (derivedSet K) u := by
   simp only [selfSimilarLayer, Function.iterate_succ, Function.comp_apply]
 
-/-- Proposition 1 together with the order-type claim of its proof: a self-similar
-compact set of positive module has order type `ω^ω + 1` under the reverse order,
-i.e. it is the image of `[0, ω^ω]` under a strictly decreasing enumeration
-`α ↦ K[α]`, and `K[ω^ω] = 0`, `K[0] > 0`, `K ⊆ [0, K[0]]`. The hypothesis `0 < μ`
-is the paper's convention that `μ` is a natural number (for `μ = 0` the set `{0}`
-satisfies Definition 1).
+/-- **Order type of a self-similar compact set.** Let $K$ be a self-similar compact set of module
+$\mu \ge 1$ and ratio $\rho$. Then there is a strictly decreasing map $\alpha \mapsto K[\alpha]$
+from the ordinals $\alpha \le \omega^\omega$ onto $K$ (so $K$ has order type $\omega^\omega + 1$
+under the reverse order) with $K[\omega^\omega] = 0$, $K[0] > 0$ and $K \subseteq [0, K[0]]$.
+
+The hypothesis $\mu \ge 1$ is the paper's convention that $\mu$ is a natural number; for
+$\mu = 0$ the set $\{0\}$ would satisfy the definition.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Proposition 1. -/
@@ -80,8 +93,13 @@ public theorem_wanted isSelfSimilarCompactSet_enumeration {K : Set ℝ} {μ : �
     ∃ f : Ordinal.{0} → ℝ, StrictAntiOn f (Set.Iic (ω ^ ω)) ∧ f '' Set.Iic (ω ^ ω) = K ∧
       f (ω ^ ω) = 0 ∧ 0 < f 0 ∧ K ⊆ Set.Icc 0 (f 0)
 
-/-- Proposition 2: a self-similar compact set of module `μ` and ratio `ρ` is
-`K = {0} ∪ ⋃_{n ≥ 0} (T_0 ∪ ⋯ ∪ T_{μ-1}) / ρ^n`.
+/-- **Decomposition of a self-similar compact set into layers.** Let $K$ be a self-similar
+compact set of module $\mu$ and ratio $\rho$, and for $u \ge 0$ let
+$T_u = K^{(u)} \setminus K^{(u+1)}$, where $K^{(u)}$ is the $u$-th derived set of $K$. Then
+
+$$K = \{0\} \cup \bigcup_{n \ge 0} \bigcup_{0 \le u < \mu} \rho^{-n} T_u,$$
+
+where $\rho^{-n} T_u = \{\rho^{-n} x : x \in T_u\}$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Proposition 2, equation (2). -/
@@ -89,9 +107,12 @@ public theorem_wanted isSelfSimilarCompactSet_eq_union_layers {K : Set ℝ} {μ 
     (hK : IsSelfSimilarCompactSet K μ ρ) :
     K = {0} ∪ ⋃ n : ℕ, ⋃ u ∈ Finset.range μ, (ρ ^ n)⁻¹ • selfSimilarLayer K u
 
-/-- Proposition 3, first formula: if `α ↦ K[α]` and `α ↦ K^{(n)}[α]` are the strictly
-decreasing enumerations of `K` and of its `n`-th derived set by `[0, ω^ω]`, then
-`K^{(n)}[α] = K[ω^n (1 + α)]` for `n ≥ 1` and `0 ≤ α ≤ ω^ω`.
+/-- **Enumerating the derived sets of a self-similar compact set.** Let $K$ be a self-similar
+compact set of module $\mu$ and ratio $\rho$, let $n \ge 1$, and write $K^{(n)}$ for the $n$-th
+derived set of $K$. Let $\alpha \mapsto K[\alpha]$ and $\alpha \mapsto K^{(n)}[\alpha]$ be
+strictly decreasing maps from the ordinals $\alpha \le \omega^\omega$ onto $K$ and onto
+$K^{(n)}$, respectively. Then $K^{(n)}[\alpha] = K[\omega^n (1 + \alpha)]$ (ordinal
+arithmetic) for every ordinal $\alpha \le \omega^\omega$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Proposition 3. -/
@@ -102,11 +123,17 @@ public theorem_wanted isSelfSimilarCompactSet_derivedSet_enum {K : Set ℝ} {μ 
     {α : Ordinal.{0}} (hα : α ≤ ω ^ ω) :
     g α = f (ω ^ (n : Ordinal) * (1 + α))
 
-/-- Proposition 3, second formula: if `α ↦ T_0[α]` is the strictly decreasing
-enumeration of the layer `T_0` by `[0, ω^ω)`, then `T_0[α] = K[α]` for `α < ω` and
-`T_0[α] = K[α + 1]` for `ω ≤ α`. The paper writes `0 ≤ α ≤ ω^ω`; the layer has order
-type `ω^ω` (its indices in `K` are `0` and the successor ordinals below `ω^ω`), so
-`T_0[ω^ω]` is undefined and the range here is `α < ω^ω`.
+/-- **Enumerating the isolated points of a self-similar compact set.** Let $K$ be a self-similar
+compact set of module $\mu$ and ratio $\rho$, and let $T_0 = K \setminus K'$ be the set of
+isolated points of $K$, where $K'$ is the derived set of $K$. Let $\alpha \mapsto K[\alpha]$ be a
+strictly decreasing map from the ordinals $\alpha \le \omega^\omega$ onto $K$, and
+$\alpha \mapsto T_0[\alpha]$ a strictly decreasing map from the ordinals $\alpha < \omega^\omega$
+onto $T_0$. Then for every ordinal $\alpha < \omega^\omega$, $T_0[\alpha] = K[\alpha]$ if
+$\alpha < \omega$, and $T_0[\alpha] = K[\alpha + 1]$ if $\omega \le \alpha$.
+
+The paper writes $0 \le \alpha \le \omega^\omega$; the layer has order type $\omega^\omega$ (its
+indices in $K$ are $0$ and the successor ordinals below $\omega^\omega$), so $T_0[\omega^\omega]$
+is undefined and the range here is $\alpha < \omega^\omega$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Proposition 3. -/
@@ -117,10 +144,16 @@ public theorem_wanted isSelfSimilarCompactSet_layer_zero_enum {K : Set ℝ} {μ 
     {α : Ordinal.{0}} (hα : α < ω ^ ω) :
     (α < ω → t α = f α) ∧ (ω ≤ α → t α = f (α + 1))
 
-/-- Proposition 3, third formula: for `u ≥ 1`, if `α ↦ T_u[α]` is the strictly
-decreasing enumeration of the layer `T_u` by `[0, ω^ω)`, then
-`T_u[α] = K[ω^u (α + 1)]`. The paper writes `0 ≤ α ≤ ω^ω`; the layer has order type
-`ω^ω`, so the range here is `α < ω^ω`.
+/-- **Enumerating the higher layers of a self-similar compact set.** Let $K$ be a self-similar
+compact set of module $\mu$ and ratio $\rho$, let $u \ge 1$, and let
+$T_u = K^{(u)} \setminus K^{(u+1)}$, where $K^{(u)}$ is the $u$-th derived set of $K$. Let
+$\alpha \mapsto K[\alpha]$ be a strictly decreasing map from the ordinals $\alpha \le \omega^\omega$
+onto $K$, and $\alpha \mapsto T_u[\alpha]$ a strictly decreasing map from the ordinals
+$\alpha < \omega^\omega$ onto $T_u$. Then $T_u[\alpha] = K[\omega^u (\alpha + 1)]$ (ordinal
+arithmetic) for every ordinal $\alpha < \omega^\omega$.
+
+The paper writes $0 \le \alpha \le \omega^\omega$; the layer has order type $\omega^\omega$, so the
+range here is $\alpha < \omega^\omega$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Proposition 3. -/
@@ -131,9 +164,13 @@ public theorem_wanted isSelfSimilarCompactSet_layer_enum {K : Set ℝ} {μ : ℕ
     {α : Ordinal.{0}} (hα : α < ω ^ ω) :
     t α = f (ω ^ (u : Ordinal) * (α + 1))
 
-/-- Proposition 4, first part: if `T_u[·]` denotes the strictly decreasing enumeration
-of the layer `T_u` by `[0, ω^ω)` (for every `u`), then
-`lim_{n → ∞} T_u[ω α + n] = T_{u+1}[α]` for every ordinal `α < ω^ω` and `u ≥ 0`.
+/-- **Limits between consecutive layers of a self-similar compact set.** Let $K$ be a
+self-similar compact set of module $\mu$ and ratio $\rho$, with layers
+$T_u = K^{(u)} \setminus K^{(u+1)}$ for $u \ge 0$, where $K^{(u)}$ is the $u$-th derived set of
+$K$. Suppose that for every $u$, $\alpha \mapsto T_u[\alpha]$ is a strictly decreasing map from
+the ordinals $\alpha < \omega^\omega$ onto $T_u$. Then for every $u \ge 0$ and every ordinal
+$\alpha < \omega^\omega$, $T_u[\omega \alpha + n] \to T_{u+1}[\alpha]$ as $n \to \infty$ through
+the natural numbers (ordinal arithmetic in the index).
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Proposition 4. -/
@@ -144,9 +181,15 @@ public theorem_wanted isSelfSimilarCompactSet_layer_enum_tendsto {K : Set ℝ} {
     (u : ℕ) {α : Ordinal.{0}} (hα : α < ω ^ ω) :
     Tendsto (fun n : ℕ => t u (ω * α + n)) atTop (𝓝 (t (u + 1) α))
 
-/-- Proposition 4, second part: with the enumerations of the first part,
-`lim_{n → ∞} T_{μ-1}[ω α + n] = T_0[α] / ρ`. (The enumeration hypotheses force
-`μ ≥ 1`, so `μ - 1` is the paper's index.)
+/-- **Limits across the last layer of a self-similar compact set.** Let $K$ be a self-similar
+compact set of module $\mu$ and ratio $\rho$, with layers $T_u = K^{(u)} \setminus K^{(u+1)}$
+for $u \ge 0$, where $K^{(u)}$ is the $u$-th derived set of $K$. Suppose that for every $u$,
+$\alpha \mapsto T_u[\alpha]$ is a strictly decreasing map from the ordinals $\alpha < \omega^\omega$
+onto $T_u$. Then for every ordinal $\alpha < \omega^\omega$,
+$T_{\mu-1}[\omega \alpha + n] \to T_0[\alpha] / \rho$ as $n \to \infty$ through the natural numbers
+(ordinal arithmetic in the index).
+
+These hypotheses force $\mu \ge 1$, so $\mu - 1$ is a genuine index.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Proposition 4. -/
@@ -157,10 +200,14 @@ public theorem_wanted isSelfSimilarCompactSet_layer_enum_tendsto_last {K : Set �
     {α : Ordinal.{0}} (hα : α < ω ^ ω) :
     Tendsto (fun n : ℕ => t (μ - 1) (ω * α + n)) atTop (𝓝 (t 0 α / ρ))
 
-/-- A quasi-arithmetical compact set of module `μ` and ratio `ρ`: a self-similar compact
-set whose ratio is a natural number `ρ ≥ 2` and for which there is `κ` with
-`K \ {0} = {n / ρ^k : ρ ∤ n, k ≥ κ(n)}`. The paper's `κ` is defined on `ℕ \ ρℕ`; here it
-is a function on `ℕ` whose values off `ℕ \ ρℕ` are irrelevant.
+/-- **Quasi-arithmetical compact sets.** Let $K \subseteq \mathbb{R}$ and let $\mu$ and $\rho$ be
+natural numbers. Then $K$ is a quasi-arithmetical compact set of module $\mu$ and ratio $\rho$
+when $\rho \ge 2$, $K$ is a self-similar compact set of module $\mu$ and ratio $\rho$, and there
+is a function $\kappa : \mathbb{N} \to \mathbb{N}$ such that
+$K \setminus \{0\} = \{n / \rho^k : n, k \in \mathbb{N},\ \rho \nmid n,\ k \ge \kappa(n)\}$.
+
+The paper's $\kappa$ is defined only on $\mathbb{N} \setminus \rho\mathbb{N}$; here its values at
+multiples of $\rho$ are irrelevant.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Definition 2. -/
@@ -168,8 +215,9 @@ public def IsQuasiArithmeticalCompactSet (K : Set ℝ) (μ ρ : ℕ) : Prop :=
   2 ≤ ρ ∧ IsSelfSimilarCompactSet K μ ρ ∧
     ∃ κ : ℕ → ℕ, K \ {0} = {x | ∃ n k : ℕ, ¬ ρ ∣ n ∧ κ n ≤ k ∧ x = n / (ρ : ℝ) ^ k}
 
-/-- Characteristic lemma: a quasi-arithmetical compact set is self-similar with the same
-module and ratio.
+/-- **Quasi-arithmetical compact sets are self-similar.** If $K$ is a quasi-arithmetical compact
+set of module $\mu$ and natural-number ratio $\rho$, then $K$ is a self-similar compact set of
+module $\mu$ and ratio $\rho$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Definition 2. -/
@@ -177,9 +225,14 @@ public theorem IsQuasiArithmeticalCompactSet.isSelfSimilarCompactSet {K : Set �
     (hK : IsQuasiArithmeticalCompactSet K μ ρ) : IsSelfSimilarCompactSet K μ ρ :=
   hK.2.1
 
-/-- Proposition 5: in a quasi-arithmetical compact set, if `n / ρ^p ∈ T_v` and
-`n / ρ^q ∈ T_w` then `p μ - v = q μ - w`. The paper takes `n` a positive natural number;
-`n = 0` is allowed here (then `0` lies in no layer and the claim is vacuous).
+/-- **The layer index of a quasi-arithmetical compact set is well defined (Proposition 5).** Let
+$K \subseteq \mathbb{R}$ be a quasi-arithmetical compact set of module $\mu$ and ratio $\rho$. For
+each natural number $j$ let $K^{(j)}$ be the $j$-th iterated derived set of $K$ and
+$T_j = K^{(j)} \setminus K^{(j+1)}$ its $j$-th layer. If $n, p, q, v, w$ are natural numbers with
+$n / \rho^p \in T_v$ and $n / \rho^q \in T_w$, then $p \mu - v = q \mu - w$ as integers.
+
+The paper takes $n$ positive; $n = 0$ is allowed here, and then the claim is vacuous because $0$
+lies in no layer.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Proposition 5. -/
@@ -189,10 +242,16 @@ public theorem_wanted isQuasiArithmeticalCompactSet_layer_index {K : Set ℝ} {�
     (hw : (n : ℝ) / (ρ : ℝ) ^ q ∈ selfSimilarLayer K w) :
     (p * μ - v : ℤ) = q * μ - w
 
-/-- Proposition 6: the stability gauge satisfies `‖ρ n‖_K = ‖n‖_K + μ`. The gauge is
-`‖n‖_K = ℓ μ + d - u` whenever `n / ρ^ℓ ∈ T_u`, with a displacement `d` independent of
-`n` (Definition 3); `d` cancels, so the claim is stated as: if `n / ρ^ℓ ∈ T_u` and
-`ρ n / ρ^{ℓ'} ∈ T_{u'}` then `ℓ' μ - u' = ℓ μ - u + μ`.
+/-- **Multiplying by the ratio raises the gauge index by the module (Proposition 6).** Let
+$K \subseteq \mathbb{R}$ be a quasi-arithmetical compact set of module $\mu$ and ratio $\rho$. For
+each natural number $j$ let $K^{(j)}$ be the $j$-th iterated derived set of $K$ and
+$T_j = K^{(j)} \setminus K^{(j+1)}$ its $j$-th layer. If $n, \ell, u, \ell', u'$ are natural
+numbers with $n / \rho^\ell \in T_u$ and $\rho n / \rho^{\ell'} \in T_{u'}$, then
+$\ell' \mu - u' = \ell \mu - u + \mu$ as integers.
+
+The stability gauge of Definition 3 is $\lVert m \rVert_K = \ell \mu + d - u$ whenever
+$m / \rho^\ell \in T_u$, with a displacement $d$ independent of $m$; so this is the identity
+$\lVert \rho n \rVert_K = \lVert n \rVert_K + \mu$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Proposition 6. -/
@@ -202,10 +261,15 @@ public theorem_wanted isQuasiArithmeticalCompactSet_gauge_ratio_mul {K : Set ℝ
     (h' : ((ρ * n : ℕ) : ℝ) / (ρ : ℝ) ^ ℓ' ∈ selfSimilarLayer K u') :
     (ℓ' * μ - u' : ℤ) = ℓ * μ - u + μ
 
-/-- The un-normalized stability gauge `ℓ μ - u` of `n`, read off the witness
-`n / ρ^ℓ ∈ T_u` with the least `ℓ` (and the `u` of that witness). By Proposition 5 the
-value `ℓ μ - u` is the same for every witness when `K` is quasi-arithmetical; the least
-`ℓ` only fixes a choice.
+/-- **Un-normalized stability gauge.** Let $K \subseteq \mathbb{R}$, let $\mu$, $\rho$ and $n$ be
+natural numbers, and let $T_u$ denote the layer of $K$ of index $u$. Let $\ell$ be the least
+natural number such that $n / \rho^\ell$ lies in some layer $T_u$ (division by $0$ gives $0$), and
+let $u$ be the least index with $n / \rho^\ell \in T_u$. The un-normalized stability gauge of $n$
+is the integer $\ell \mu - u$. If $n / \rho^\ell$ lies in no layer for any $\ell$, its value is $0$.
+
+When $K$ is a quasi-arithmetical compact set of module $\mu$ and ratio $\rho$, Proposition 5 of the
+source says that $\ell \mu - u$ is the same for every $\ell$ and $u$ with $n / \rho^\ell \in T_u$;
+taking the least $\ell$ only fixes a choice.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Definition 3. -/
@@ -213,29 +277,47 @@ public noncomputable def stabilityGaugeIndex (K : Set ℝ) (μ ρ : ℕ) (n : �
   let ℓ : ℕ := sInf {ℓ : ℕ | ∃ u, (n : ℝ) / (ρ : ℝ) ^ ℓ ∈ selfSimilarLayer K u}
   ((ℓ * μ : ℕ) : ℤ) - (sInf {u : ℕ | (n : ℝ) / (ρ : ℝ) ^ ℓ ∈ selfSimilarLayer K u} : ℕ)
 
-/-- The stability gauge `‖n‖_K := ℓ μ + d - u` (when `n / ρ^ℓ ∈ T_u`) of a
-quasi-arithmetical compact set of module `μ` and ratio `ρ`, with the displacement `d`
-chosen so that `‖1‖_K = 0`, i.e. `d = -(ℓ₁ μ - u₁)` for the witness `1 / ρ^{ℓ₁} ∈ T_{u₁}`.
+/-- **Stability gauge.** Let $K \subseteq \mathbb{R}$, let $\mu$ and $\rho$ be natural numbers, and
+for a natural number $n$ let $g(n)$ be the un-normalized stability gauge of $n$ for $K$, $\mu$
+and $\rho$: the integer $\ell \mu - u$, where $\ell$ is least such that $n / \rho^\ell$ lies in
+some layer $T_u$ of $K$ and $u$ is the least such index (and $g(n) = 0$ if there is no such
+$\ell$). The stability gauge of $n$ is the integer $\lVert n \rVert_K = g(n) - g(1)$. When such
+an $\ell$ exists, this is $\ell \mu + d - u$ with the displacement $d = -g(1)$, chosen so that
+$\lVert 1 \rVert_K = 0$.
+
+The source defines the gauge only for quasi-arithmetical compact sets of module $\mu$ and ratio
+$\rho$; this definition applies to every set $K$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Definition 3. -/
 public noncomputable def stabilityGauge (K : Set ℝ) (μ ρ : ℕ) (n : ℕ) : ℤ :=
   stabilityGaugeIndex K μ ρ n - stabilityGaugeIndex K μ ρ 1
 
-/-- Characteristic value: the displacement normalizes the gauge so that `‖1‖_K = 0`.
+/-- **The stability gauge vanishes at one.** For every set $K \subseteq \mathbb{R}$ and all
+natural numbers $\mu$ and $\rho$, the stability gauge $n \mapsto \lVert n \rVert_K$ of $K$ with
+module $\mu$ and ratio $\rho$ takes the value $0$ at $n = 1$, that is, $\lVert 1 \rVert_K = 0$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Definition 3. -/
 public theorem stabilityGauge_one (K : Set ℝ) (μ ρ : ℕ) : stabilityGauge K μ ρ 1 = 0 :=
   sub_self _
 
-/-- An arithmetical compact set of module `μ` and ratio `ρ`: a quasi-arithmetical compact
-set such that, for every ordinal `α < ω^ω` and `u ≥ 0`, writing `T_{u+1}[α] = n / ρ^k`
-with `ρ ∤ n`, the sets `{T_u[ω α + r] : r ≥ 0}` and
-`{b (a ρ^r + 1) / ρ^{r+k} : n = a b, ‖n‖_K = ‖a‖_K + ‖b‖_K, r ≥ 0}` have finite
-symmetric difference. `T_u[·]` is the strictly decreasing enumeration of the layer `T_u`
-by `[0, ω^ω)` (such an enumeration is unique; Proposition 3 gives the order type `ω^ω`),
-taken here as a quantified family `t`.
+/-- **Arithmetical compact sets.** Let $K \subseteq \mathbb{R}$ and let $\mu$ and $\rho$ be natural
+numbers. For each natural number $j$ let $K^{(j)}$ be the $j$-th iterated derived set (the set of
+accumulation points, iterated $j$ times) of $K$ and $T_j = K^{(j)} \setminus K^{(j+1)}$ its $j$-th
+layer, and for a natural number $m$ let $\lVert m \rVert_K$ be the stability gauge of $K$ with
+module $\mu$ and ratio $\rho$ at $m$. Then $K$ is an arithmetical compact set of module $\mu$ and
+ratio $\rho$ when $K$ is a quasi-arithmetical compact set of module $\mu$ and ratio $\rho$ and the
+following holds for every family of maps $\alpha \mapsto T_j[\alpha]$ ($j \in \mathbb{N}$), each
+strictly decreasing on the ordinals $\alpha < \omega^\omega$ and mapping them onto $T_j$: for every
+$j \in \mathbb{N}$, every ordinal $\alpha < \omega^\omega$ and all natural numbers $n$ and $k$ with
+$\rho \nmid n$ and $T_{j+1}[\alpha] = n / \rho^k$, the sets
+$\{T_j[\omega \alpha + r] : r \in \mathbb{N}\}$ and
+$\{b (a \rho^r + 1) / \rho^{r+k} : a, b, r \in \mathbb{N},\ n = ab,\
+\lVert n \rVert_K = \lVert a \rVert_K + \lVert b \rVert_K\}$ have finite symmetric difference.
+
+Such an enumeration of a layer is unique when it exists; by Proposition 3 each layer has order
+type $\omega^\omega$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Definition 4, displays (4) and (5). -/
@@ -250,8 +332,9 @@ public def IsArithmeticalCompactSet (K : Set ℝ) (μ ρ : ℕ) : Prop :=
             stabilityGauge K μ ρ n = stabilityGauge K μ ρ a + stabilityGauge K μ ρ b ∧
             x = b * (a * (ρ : ℝ) ^ r + 1) / (ρ : ℝ) ^ (r + k)}).Finite
 
-/-- Characteristic lemma: an arithmetical compact set is quasi-arithmetical with the same
-module and ratio.
+/-- **Arithmetical compact sets are quasi-arithmetical.** If $K \subseteq \mathbb{R}$ is an
+arithmetical compact set of module $\mu$ and ratio $\rho$, then $K$ is a quasi-arithmetical
+compact set of module $\mu$ and ratio $\rho$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Definition 4. -/
@@ -259,8 +342,10 @@ public theorem IsArithmeticalCompactSet.isQuasiArithmeticalCompactSet {K : Set �
     {μ ρ : ℕ} (hK : IsArithmeticalCompactSet K μ ρ) : IsQuasiArithmeticalCompactSet K μ ρ :=
   hK.1
 
-/-- Proposition 7: every derived set `K^{(n)}` of an arithmetical compact set of module `μ`
-and ratio `ρ` is an arithmetical compact set of the same module and ratio.
+/-- **Derived sets of an arithmetical compact set are arithmetical (Proposition 7).** Let $K$ be
+an arithmetical compact set of module $\mu$ and ratio $\rho$. For every natural number $n$, the
+$n$-th derived set $K^{(n)}$ of $K$ (the set of accumulation points, iterated $n$ times, so that
+$K^{(0)} = K$) is an arithmetical compact set of module $\mu$ and ratio $\rho$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Proposition 7. -/
@@ -268,17 +353,24 @@ public theorem_wanted isArithmeticalCompactSet_derivedSet_iterate {K : Set ℝ} 
     (hK : IsArithmeticalCompactSet K μ ρ) (n : ℕ) :
     IsArithmeticalCompactSet (derivedSet^[n] K) μ ρ
 
-/-- A stable number: a positive `n` with `‖3^k n‖ = ‖n‖ + 3k` for all `k`, where `‖·‖` is
-integer complexity (`cx`, MathlibExt's `IntegerComplexity.complexity` over `ℕ`). The paper
-quantifies over `k ≥ 1`; `k = 0` is trivial.
+/-- **Stable numbers for integer complexity.** A natural number $n$ is stable when $n > 0$ and
+$\lVert 3^k n \rVert = \lVert n \rVert + 3k$ for every natural number $k$, where $\lVert m \rVert$
+is the integer complexity of $m$.
+
+The paper quantifies over $k \ge 1$; the case $k = 0$ holds trivially.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Section 1. -/
 public def IsComplexityStable (n : ℕ) : Prop :=
   0 < n ∧ ∀ k : ℕ, cx (3 ^ k * n) = cx n + 3 * k
 
-/-- The stable complexity `‖n‖_st := ‖3^a n‖ - 3a`, for the least `a` with `3^a n` stable
-(Altman and Zelinsky show such `a` exists for `n ≥ 1`; any larger `a` gives the same value).
+/-- **Stable complexity.** For a natural number $n$, let $\lVert m \rVert$ denote the integer
+complexity of a positive integer $m$, with $\lVert 0 \rVert = 0$, and let $a$ be the least natural
+number such that $3^a n$ is stable, with $a = 0$ if there is none. The stable complexity of $n$
+is the integer $\lVert n \rVert_{\mathrm{st}} = \lVert 3^a n \rVert - 3a$.
+
+Altman and Zelinsky show that such an $a$ exists for $n \ge 1$, and any larger $a$ gives the
+same value. For $n = 0$ there is none, so $\lVert 0 \rVert_{\mathrm{st}} = \lVert 0 \rVert = 0$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Section 1. -/
@@ -286,7 +378,8 @@ public noncomputable def stableComplexity (n : ℕ) : ℤ :=
   (cx (3 ^ sInf {a : ℕ | IsComplexityStable (3 ^ a * n)} * n) : ℤ) -
     3 * (sInf {a : ℕ | IsComplexityStable (3 ^ a * n)} : ℕ)
 
-/-- Characteristic value: a stable number's stable complexity is its complexity.
+/-- **Stable complexity of a stable number.** If $n$ is a stable natural number, then its
+stable complexity equals its integer complexity: $\lVert n \rVert_{\mathrm{st}} = \lVert n \rVert$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Section 1. -/
@@ -296,14 +389,20 @@ public theorem stableComplexity_of_isComplexityStable {n : ℕ} (h : IsComplexit
     Nat.sInf_eq_zero.mpr (Or.inl (by simpa using h))
   simp [stableComplexity, h0]
 
-/-- The set `T_0 := {n / 3^k : n stable with ‖n‖ = 3k + 2}` of display (7).
+/-- **The set $T_0$ built from stable numbers.** Write $\lVert n \rVert$ for the integer complexity
+of a natural number $n$, and call $n$ stable when $n > 0$ and
+$\lVert 3^k n \rVert = \lVert n \rVert + 3k$ for every natural number $k$. The set
+$T_0 \subseteq \mathbb{R}$ consists of the reals $n / 3^k$, where $n$ and $k$ are natural numbers,
+$n$ is stable and $\lVert n \rVert = 3k + 2$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Section 3, equation (7). -/
 public def complexityLayerZero : Set ℝ :=
   {x | ∃ n k : ℕ, IsComplexityStable n ∧ cx n = 3 * k + 2 ∧ x = n / (3 : ℝ) ^ k}
 
-/-- Characteristic lemma: `T_0` consists of nonnegative reals.
+/-- **The set $T_0$ is nonnegative.** Every element of the set $T_0$ of reals $n / 3^k$, where
+$n$ and $k$ are natural numbers, $n$ is stable and $\lVert n \rVert = 3k + 2$ (with
+$\lVert n \rVert$ the integer complexity of $n$), is a nonnegative real number.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Section 3, equation (7). -/
@@ -311,10 +410,12 @@ public theorem complexityLayerZero_subset_Ici : complexityLayerZero ⊆ Set.Ici 
   rintro x ⟨n, k, -, -, rfl⟩
   exact Set.mem_Ici.mpr (by positivity)
 
-/-- Theorem 2: the closure `K` of `T_0` (display (7)) is an arithmetical compact set with
-module `μ = 3` and ratio `ρ = 3`, and its stability gauge coincides with the stable
-complexity, `‖n‖_K = ‖n‖_st` for `n ≥ 1`. The extracted record prints `K = T0`; the paper
-writes `K` as the closure of `T_0`.
+/-- **The closure of $T_0$ is an arithmetical compact set (Theorem 2).** Let $T_0$ be the set of
+reals $n / 3^k$, where $n$ and $k$ are natural numbers, $n$ is stable and
+$\lVert n \rVert = 3k + 2$ (with $\lVert n \rVert$ the integer complexity of $n$), and let $K$ be
+the closure of $T_0$ in $\mathbb{R}$. Then $K$ is an arithmetical compact set of module $3$ and
+ratio $3$, and for every natural number $n \ge 1$ the stability gauge $\lVert n \rVert_K$ of $K$
+with module $3$ and ratio $3$ equals the stable complexity $\lVert n \rVert_{\mathrm{st}}$.
 
 Source: J. Arias de Reyna, *Arithmetical Self-Similar Compact Sets*, INTEGERS 24
 (2024), Article A21, Theorem 2. -/

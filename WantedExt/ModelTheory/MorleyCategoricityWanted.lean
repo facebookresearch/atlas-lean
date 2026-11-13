@@ -50,7 +50,13 @@ Morley's categoricity theorem.
 A complete theory in a countable language, all of whose models are infinite, that is
 categorical in some uncountable cardinal is categorical in every uncountable cardinal.  -/
 
-/-- Source: M. Ramsey, *Morley's Categoricity Theorem* (UChicago VIGRE REU 2010), Corollary 7.3. https://www.math.uchicago.edu/~may/VIGRE/VIGRE2010/REUPapers/RamseyN.pdf Via leanprover/lean-eval@38361be, problem `morley_categoricity_theorem`. -/
+/-- **Morley's categoricity theorem.** Let $L$ be a first-order language with at most countably
+many symbols, and let $T$ be a complete $L$-theory all of whose models are infinite. Call $T$
+$\kappa$-categorical if any two models of $T$ of cardinality $\kappa$ are isomorphic. If $T$ is
+$\kappa$-categorical for some uncountable cardinal $\kappa$, then $T$ is $\mu$-categorical for
+every uncountable cardinal $\mu$.
+
+Source: M. Ramsey, *Morley's Categoricity Theorem* (UChicago VIGRE REU 2010), Corollary 7.3. https://www.math.uchicago.edu/~may/VIGRE/VIGRE2010/REUPapers/RamseyN.pdf Via leanprover/lean-eval@38361be, problem `morley_categoricity_theorem`. -/
 public theorem_wanted morley_categoricity_theorem
     (L : FirstOrder.Language.{0, 0}) (hL : L.card ≤ ℵ₀)
     (T : L.Theory) (hT : T.IsComplete)

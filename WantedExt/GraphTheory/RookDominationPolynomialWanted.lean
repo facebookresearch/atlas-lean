@@ -39,30 +39,38 @@ set_option autoImplicit false
 
 namespace MathlibExt.GraphTheory.RookDominationPolynomialWanted
 
-/-- The number of `k`-rook placements on an `n × m` board meeting
-every row and every column (Mertens' `E_{n,m}(k)`). -/
+/-- **Rook placements covering all rows and columns.** For natural numbers $n$, $m$ and $k$,
+$E_{n,m}(k)$ is the number of $k$-element sets of cells of the $n \times m$ board that contain a
+cell in every row and a cell in every column (Mertens' $E_{n,m}(k)$). -/
 def rookCoverCount (n m k : ℕ) : ℕ :=
   (((Finset.univ : Finset (Fin n × Fin m)).powersetCard k).filter
     (fun s => (∀ i : Fin n, ∃ j : Fin m, (i, j) ∈ s) ∧
       ∀ j : Fin m, ∃ i : Fin n, (i, j) ∈ s)).card
 
-/-- The number of dominating `k`-rook placements on an `n × m`
-board (Mertens' `d_{R_{n,m}}(k)`), using the canonical
-`SimpleGraph.IsDominating` predicate for `SimpleGraph.rookGraph`. -/
+/-- **Dominating rook placements.** For natural numbers $n$, $m$ and $k$, $d_{n,m}(k)$ is the
+number of $k$-element sets of cells of the $n \times m$ board that are dominating sets of the rook
+graph on that board (Mertens' $d_{R_{n,m}}(k)$). -/
 def rookDominatingCount (n m k : ℕ) : ℕ :=
   (((Finset.univ : Finset (Fin n × Fin m)).powersetCard k).filter
     (fun s : Finset (Fin n × Fin m) =>
       (SimpleGraph.rookGraph n m).IsDominating (s : Set (Fin n × Fin m)))).card
 
-/-- The rook domination polynomial over `ℤ`, as the generating
-polynomial of `rookDominatingCount`. -/
+/-- **Domination polynomial of the rook graph.** For natural numbers $n$ and $m$, the rook
+domination polynomial of the $n \times m$ board is the integer polynomial
+$D_{n,m}(x) = \sum_{k=0}^{nm} d_{n,m}(k)\, x^k$, where $d_{n,m}(k)$ is the number of $k$-element
+sets of cells of the $n \times m$ board that are dominating sets of the rook graph on that
+board. -/
 noncomputable def rookDominationPolynomial (n m : ℕ) : Polynomial ℤ :=
   ∑ k ∈ Finset.range (n * m + 1),
     Polynomial.C (rookDominatingCount n m k : ℤ) * Polynomial.X ^ k
 
-/-- Mertens' Theorem 1, over `ℤ`: the dominating count is the
-total placement count minus the placements whose nonempty rows
-and columns form a smaller covered board.
+/-- **Dominating rook placements via covering placements.** For natural numbers $n, m \ge 1$ and
+$k$, let $d_{n,m}(k)$ be the number of $k$-element sets of cells of the $n \times m$ board that
+are dominating sets of the rook graph on that board, and let $E_{a,b}(k)$ be the number of
+$k$-element sets of cells of the $a \times b$ board that contain a cell in every row and a cell
+in every column. Then
+$$d_{n,m}(k) = \binom{nm}{k} -
+\sum_{r=1}^{n} \sum_{c=1}^{m} \binom{n}{r} \binom{m}{c} E_{n-r,m-c}(k).$$
 
 Source: Stephan Mertens, "Domination Polynomial of the Rook
 Graph", Theorem 1 (`thm:R-E`). -/
@@ -74,8 +82,12 @@ theorem_wanted rookDominatingCount_eq_choose_sub_sum_rookCoverCount
           (n.choose r : ℤ) * (m.choose c : ℤ) *
             (rookCoverCount (n - r) (m - c) k : ℤ)
 
-/-- Mertens' Theorem 2, over `ℤ`: the recursion for the cover
-count, with the `(0,0)` summand excluded.
+/-- **Recursion for rook placements covering all rows and columns.** For natural numbers
+$n, m \ge 1$ and $k$, let $E_{a,b}(k)$ denote the number of $k$-element sets of cells of the
+$a \times b$ board that contain a cell in every row and a cell in every column. Then
+$$E_{n,m}(k) = \binom{nm}{k} -
+\sum_{(r,c) \ne (0,0)} \binom{n}{r} \binom{m}{c} E_{n-r,m-c}(k),$$
+where the sum runs over all pairs $(r, c) \ne (0, 0)$ with $0 \le r \le n$ and $0 \le c \le m$.
 
 Source: Stephan Mertens, "Domination Polynomial of the Rook
 Graph", Theorem 2 (`thm:E-recursion`). -/
@@ -88,8 +100,10 @@ theorem_wanted rookCoverCount_eq_choose_sub_sum_rookCoverCount
             (rookCoverCount (n - r) (m - c) k : ℤ) *
             (if r = 0 ∧ c = 0 then 0 else 1)
 
-/-- Mertens' Corollary 3, over `ℤ`: the high-density formula for
-the dominating count.
+/-- **Dominating rook placements at high density.** For natural numbers $n, m \ge 1$ and $k$ with
+$k > nm - n - m - \min(n, m) + 2$, let $d_{n,m}(k)$ be the number of $k$-element sets of cells
+of the $n \times m$ board that are dominating sets of the rook graph on that board. Then
+$$d_{n,m}(k) = \binom{nm}{k} - nm \binom{(n-1)(m-1)}{k}.$$
 
 Source: Stephan Mertens, "Domination Polynomial of the Rook
 Graph", Corollary 3 (`cor:high-density`). -/
@@ -100,8 +114,11 @@ theorem_wanted rookDominatingCount_eq_choose_sub_mul_choose
       ((n * m).choose k : ℤ) -
         (n : ℤ) * m * (((n - 1) * (m - 1)).choose k : ℤ)
 
-/-- Mertens' Theorem 4: the single-sum form of the rook domination
-polynomial.
+/-- **Single-sum formula for the rook domination polynomial.** For natural numbers $n, m \ge 1$,
+the rook domination polynomial $D_{n,m}(x)$ of the $n \times m$ board, an integer polynomial,
+satisfies
+$$D_{n,m}(x) = ((1+x)^n - 1)^m -
+(-1)^m \sum_{k=0}^{m-1} (-1)^k \binom{m}{k} ((1+x)^k - 1)^n.$$
 
 Source: Stephan Mertens, "Domination Polynomial of the Rook
 Graph", Theorem 4 (`thm:domination-polynomial`). -/
@@ -114,8 +131,12 @@ theorem_wanted rookDominationPolynomial_eq
             (-1 : Polynomial ℤ) ^ k * Polynomial.C (m.choose k : ℤ) *
               ((1 + Polynomial.X) ^ k - 1) ^ n
 
-/-- Mertens' Corollary 5: the symmetric form of the rook
-domination polynomial.
+/-- **Symmetric formula for the rook domination polynomial.** For natural numbers $n, m \ge 1$,
+the rook domination polynomial $D_{n,m}(x)$ of the $n \times m$ board, an integer polynomial,
+satisfies
+$$D_{n,m}(x) = ((1+x)^n - 1)^m + ((1+x)^m - 1)^n -
+(-1)^{n+m} \sum_{\ell=0}^{n} \sum_{k=0}^{m} (-1)^{k+\ell}
+\binom{n}{\ell} \binom{m}{k} (1+x)^{k\ell}.$$
 
 Source: Stephan Mertens, "Domination Polynomial of the Rook
 Graph", Corollary 5 (`cor:domination-polynomial`). -/

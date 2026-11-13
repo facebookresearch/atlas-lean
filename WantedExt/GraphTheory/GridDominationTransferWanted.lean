@@ -36,8 +36,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The state of a vertex relative to a vertex set `S` (Mertens, Definition 1): occupied
-(in `S`), covered (not in `S` but adjacent to `S`), or uncovered.
+/-- **Domination states.** A domination state is one of three labels: uncovered, covered or
+occupied.
+
+Relative to a set $S$ of vertices of a graph, a vertex is occupied if it lies in $S$, covered if
+it lies outside $S$ but is adjacent to a vertex of $S$, and uncovered otherwise.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Definition 1. -/
@@ -61,8 +64,9 @@ section Defs
 variable {V W : Type*}
 
 open scoped Classical in
-/-- The domination polynomial `∑_S z^{|S|}` of a finite graph, the sum running over the
-dominating sets `S` (canonical `SimpleGraph.IsDominating`).
+/-- **Domination polynomial.** For a finite graph $G$, the domination polynomial of $G$ is the
+polynomial $\sum_S z^{|S|}$ with integer coefficients, the sum running over the dominating sets
+$S$ of $G$.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Section 1. -/
@@ -71,8 +75,10 @@ noncomputable def dominationPolynomial [Fintype W] (G : SimpleGraph W) : ℤ[X] 
     X ^ S.card
 
 open scoped Classical in
-/-- The state of the vertex `v` relative to the vertex set `S` in the graph `G`
-(Mertens, Definition 1).
+/-- **Domination state of a vertex.** Let $G$ be a simple graph, $S$ a finite set of vertices of
+$G$ and $v$ a vertex of $G$. The domination state of $v$ relative to $S$ in $G$ is occupied if
+$v \in S$, covered if $v \notin S$ and $v$ is adjacent in $G$ to some vertex of $S$, and
+uncovered otherwise.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Definition 1. -/
@@ -80,17 +86,26 @@ noncomputable def vertexDominationState (G : SimpleGraph W) (S : Finset W) (v : 
     DominationState :=
   if v ∈ S then occupied else if ∃ u ∈ S, G.Adj u v then covered else uncovered
 
-/-- A signature for the row graph `R` (Mertens, Definition 3): a state for every vertex of the
-row such that no uncovered vertex is adjacent to an occupied one.  For `R = pathGraph m` these
-are the strings avoiding the substrings `(∘,•)` and `(•,∘)`; for `R = cycleGraph m` the
-constraint also applies to the pair `(σ₁, σₘ)` (cyclic signatures).
+/-- **Domination signature.** Let $R$ be a simple graph on a vertex set $V$ (the row). A map
+$\sigma$ assigning to each vertex of $V$ a domination state (uncovered, covered or occupied) is a
+signature for $R$ if no uncovered vertex is adjacent in $R$ to an occupied vertex: for all
+vertices $i, j$ adjacent in $R$, it is not the case that $\sigma(i)$ is uncovered and $\sigma(j)$
+is occupied.
+
+When $R$ is the path on $m$ vertices, signatures are the strings of length $m$ in which no
+uncovered entry is next to an occupied one; when $R$ is the cycle on $m$ vertices the condition
+also applies to the first and last entries (the paper's cyclic signatures).
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Definition 3. -/
 def IsDominationSignature (R : SimpleGraph V) (σ : V → DominationState) : Prop :=
   ∀ i j, R.Adj i j → ¬(σ i = uncovered ∧ σ j = occupied)
 
-/-- The type of (cyclic) signatures of the row graph `R`.
+/-- **Signatures of a row graph.** For a simple graph $R$ on a vertex set $V$ (the row), a
+signature of $R$ is a map $\sigma$ assigning to each vertex of $V$ a domination state (uncovered,
+covered or occupied) such that $\sigma$ is a domination signature for $R$, that is, no uncovered
+vertex is adjacent in $R$ to an occupied vertex. This is the type of all signatures of $R$; when
+$R$ is a cycle they are the paper's cyclic signatures.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Definition 3. -/
@@ -117,17 +132,21 @@ noncomputable instance [Fintype V] (R : SimpleGraph V) :
   unfold DominationSignature
   infer_instance
 
-/-- The signature that is covered everywhere, `σ_• = (•,…,•)` in gray (Mertens, Theorem 7).
+/-- **All-covered signature.** For a graph $R$ (the row), the all-covered signature
+$\sigma_\bullet$ of $R$ is the signature that gives every vertex of $R$ the state covered; it
+is a signature because it has no uncovered vertex.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Theorem 7. -/
 def allCoveredSignature (R : SimpleGraph V) : DominationSignature R :=
   ⟨fun _ => covered, fun _ _ _ h => DominationState.noConfusion h.1⟩
 
-/-- Compatibility of a new row signature `τ` with the previous row signature `σ`
-(Mertens, Definition 5): an uncovered vertex of `σ` lies below an occupied vertex of `τ`, an
-occupied vertex of `σ` lies below a covered or occupied vertex of `τ`, and a covered vertex of
-`τ` lies below an occupied vertex of `σ` or is adjacent in the row to an occupied vertex of `τ`.
+/-- **Compatible row signatures.** Let $R$ be a graph (the row) and let $\sigma$ and $\tau$
+assign a domination state (uncovered, covered or occupied) to each vertex of $R$. The new row
+$\tau$ is compatible with the previous row $\sigma$ when, for every vertex $i$ of $R$: if
+$\sigma(i)$ is uncovered then $\tau(i)$ is occupied; if $\sigma(i)$ is occupied then $\tau(i)$
+is not uncovered; and if $\tau(i)$ is covered then $\sigma(i)$ is occupied or some neighbour $j$
+of $i$ in $R$ has $\tau(j)$ occupied.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Definition 5. -/
@@ -136,7 +155,9 @@ def DominationCompatible (R : SimpleGraph V) (τ σ : V → DominationState) : P
     (τ i = covered → σ i = occupied ∨ ∃ j, R.Adj i j ∧ τ j = occupied)
 
 open scoped Classical in
-/-- The number `occ(σ)` of occupied vertices of a row state.
+/-- **Number of occupied vertices.** Let $V$ be a finite set and let $\sigma$ assign a domination
+state (uncovered, covered or occupied) to each element of $V$. The occupied count
+$\operatorname{occ}(\sigma)$ is the number of elements $i \in V$ such that $\sigma(i)$ is occupied.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Definition 6. -/
@@ -144,9 +165,12 @@ noncomputable def occupiedCount [Fintype V] (σ : V → DominationState) : ℕ :
   ((Finset.univ : Finset V).filter fun i => σ i = occupied).card
 
 open scoped Classical in
-/-- Mertens' transfer matrix `A` (Definition 6), rows indexed by the new signature `τ` and
-columns by the old signature `σ`: `A τ σ = z^{occ(τ)}` if `τ` is compatible with `σ`, and `0`
-otherwise.  For `R = cycleGraph m` this is the paper's `Ā`.
+/-- **Domination transfer matrix.** Let $R$ be a simple graph on a finite vertex set (the row).
+The transfer matrix $A$ of $R$ is the matrix with entries in $\mathbb{Z}[z]$, rows indexed by the
+new signature $\tau$ and columns by the old signature $\sigma$, both ranging over the signatures
+of $R$, whose entry $A_{\tau\sigma}$ is $z^{\operatorname{occ}(\tau)}$ if $\tau$ is compatible
+with $\sigma$ and $0$ otherwise; here $\operatorname{occ}(\tau)$ is the number of occupied
+vertices of $\tau$. When $R$ is the cycle on $m$ vertices this is Mertens' matrix $\bar A$.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Definition 6. -/
@@ -155,9 +179,14 @@ noncomputable def dominationTransferMatrix [Fintype V] (R : SimpleGraph V) :
   fun τ σ => if DominationCompatible R τ.1 σ.1 then X ^ occupiedCount τ.1 else 0
 
 open scoped Classical in
-/-- The generating function `G^σ_{m×(n+1)}(z)` of almost dominating sets with signature `σ`
-on `R □ pathGraph (n + 1)` (Mertens, Definition 2 and Section 2): vertex sets `S` such that no
-vertex outside the last row `Fin.last n` is uncovered, and whose last row has state `σ`.
+/-- **Almost dominating polynomial.** Let $R$ be a finite graph (the row), $n$ a natural number
+and $\sigma$ an assignment of a domination state to each vertex of $R$. Let $H$ be the box
+product of $R$ with the path on the vertices $0, \dots, n$, so that the last row of $H$ consists
+of the vertices $(i, n)$. Relative to a vertex set $S$ of $H$, a vertex is occupied if it lies in
+$S$, covered if it lies outside $S$ but is adjacent to a vertex of $S$, and uncovered otherwise.
+The almost dominating polynomial $G^\sigma(z)$ is the polynomial $\sum_S z^{|S|}$ with integer
+coefficients, the sum running over the vertex sets $S$ of $H$ such that no vertex of $H$ outside
+the last row is uncovered and every vertex $(i, n)$ of the last row has state $\sigma(i)$.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Definition 2. -/
@@ -169,7 +198,9 @@ noncomputable def almostDominatingPolynomial [Fintype V] (R : SimpleGraph V) (n 
       ∀ i, vertexDominationState (R □ pathGraph (n + 1)) S (i, Fin.last n) = σ i),
     X ^ S.card
 
-/-- A vertex is occupied exactly when it lies in `S`.
+/-- **A vertex is occupied exactly when it lies in the set.** Let $G$ be a simple graph, $S$ a
+finite set of vertices of $G$ and $v$ a vertex of $G$. Then the domination state of $v$ relative
+to $S$ in $G$ is occupied if and only if $v \in S$.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Definition 1. -/
@@ -178,7 +209,9 @@ theorem vertexDominationState_eq_occupied_iff (G : SimpleGraph W) (S : Finset W)
   unfold vertexDominationState
   split_ifs <;> simp_all
 
-/-- `S` is dominating exactly when no vertex is uncovered.
+/-- **Dominating sets have no uncovered vertex.** Let $G$ be a simple graph and $S$ a finite set
+of vertices of $G$. Then $S$ dominates $G$ if and only if no vertex of $G$ has domination state
+uncovered relative to $S$ in $G$.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Definition 1. -/
@@ -189,7 +222,8 @@ theorem isDominating_iff_forall_vertexDominationState_ne_uncovered (G : SimpleGr
   refine forall_congr' fun v => ?_
   split_ifs with h₁ h₂ <;> simp_all
 
-/-- The value of the domination polynomial at `1` is the number of dominating sets.
+/-- **The domination polynomial at one counts dominating sets.** For every finite graph $G$, the
+value at $1$ of the domination polynomial of $G$ equals the number of dominating sets of $G$.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Section 1. -/
@@ -203,7 +237,8 @@ theorem dominationPolynomial_eval_one [Fintype W] [DecidableEq W] (G : SimpleGra
     Finset.sum_const, nsmul_eq_mul, mul_one]
   congr
 
-/-- The all-covered signature has no occupied vertex.
+/-- **The all-covered signature has no occupied vertex.** For every simple graph $R$ on a finite
+vertex set, the number of occupied vertices of the all-covered signature of $R$ is $0$.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Theorem 7. -/
@@ -211,9 +246,12 @@ theorem occupiedCount_allCoveredSignature [Fintype V] (R : SimpleGraph V) :
     occupiedCount (allCoveredSignature R).1 = 0 := by
   simp [occupiedCount, allCoveredSignature]
 
-/-- The transfer matrix entry `A τ σ_•` is `z^{occ(τ)}` exactly when every covered vertex of
-`τ` has an occupied neighbour in the row (the initial-value step in the proof of Theorem 7), and
-`0` otherwise.
+/-- **Transfer matrix column of the all-covered signature.** Let $R$ be a simple graph on a
+finite vertex set (the row), let $A$ be its domination transfer matrix, with entries in
+$\mathbb{Z}[z]$, and let $\sigma_\bullet$ be its all-covered signature. For every signature $\tau$
+of $R$, the entry $A_{\tau\sigma_\bullet}$ equals $z^{\operatorname{occ}(\tau)}$, where
+$\operatorname{occ}(\tau)$ is the number of occupied vertices of $\tau$, if every covered vertex of
+$\tau$ is adjacent in $R$ to an occupied vertex of $\tau$, and equals $0$ otherwise.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Theorem 7. -/
@@ -232,9 +270,14 @@ theorem dominationTransferMatrix_apply_allCoveredSignature [Fintype V] (R : Simp
 end Defs
 
 open scoped Classical in
-/-- Mertens' Lemma 4, grid case: the domination polynomial of the `m × (n + 1)` grid is the sum
-of `G^σ` over the signatures `σ` with no uncovered vertex.  Stated for `n + 1 ≥ 1` rows, since
-the last row carrying `σ` must exist.
+/-- **Grid domination polynomial as a sum of almost dominating polynomials.** For all natural
+numbers $m$ and $n$, let $P_k$ denote the path on the vertices $0, \dots, k - 1$. Then the
+domination polynomial of the grid $P_m \mathbin{\square} P_{n+1}$ equals $\sum_\sigma G^\sigma(z)$,
+the sum running over the signatures $\sigma$ of the row graph $P_m$ with no uncovered vertex,
+where $G^\sigma(z)$ is the almost dominating polynomial of $P_m$ with $n + 1$ rows and last-row
+state $\sigma$.
+
+The grid is taken with at least one row, so that the last row carrying $\sigma$ exists.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Lemma 4
@@ -246,8 +289,13 @@ public theorem_wanted dominationPolynomial_grid_eq_sum_almostDominatingPolynomia
         almostDominatingPolynomial (pathGraph m) n σ.1
 
 open scoped Classical in
-/-- Mertens' Lemma 4, cylinder case: the domination polynomial of the `m × (n + 1)` cylinder is
-the sum of `G^σ` over the cyclic signatures `σ` with no uncovered vertex.
+/-- **Cylinder domination polynomial as a sum of almost dominating polynomials.** For all
+natural numbers $m$ and $n$, let $C_m$ be the cycle graph on the vertices $0, \dots, m - 1$, in
+which distinct $i$ and $j$ are adjacent when $i - j \equiv \pm 1 \pmod m$, and let $P_{n+1}$ be
+the path on the vertices $0, \dots, n$. Then the domination polynomial of the cylinder
+$C_m \mathbin{\square} P_{n+1}$ equals $\sum_\sigma G^\sigma(z)$, the sum running over the
+signatures $\sigma$ of the row graph $C_m$ with no uncovered vertex, where $G^\sigma(z)$ is the
+almost dominating polynomial of $C_m$ with $n + 1$ rows and last-row state $\sigma$.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Lemma 4
@@ -260,7 +308,15 @@ public theorem_wanted dominationPolynomial_cylinder_eq_sum_almostDominatingPolyn
         almostDominatingPolynomial (cycleGraph m) n σ.1
 
 open scoped Classical in
-/-- Mertens' Theorem 7, grid case: `G_{m×n}(z) = ∑_{σ : unc(σ) = 0} (A^n)_{σ, σ_•}`.
+/-- **Transfer-matrix formula for the domination polynomial of the grid.** For all natural
+numbers $m$ and $n$, let $P_k$ denote the path on the vertices $0, \dots, k - 1$, let $A$ be the
+domination transfer matrix of the row graph $P_m$, indexed by the signatures of $P_m$, and let
+$\sigma_\bullet$ be the all-covered signature. Then the domination polynomial of the grid
+$P_m \mathbin{\square} P_n$ is
+
+$$\sum_\sigma (A^n)_{\sigma, \sigma_\bullet},$$
+
+the sum running over the signatures $\sigma$ of $P_m$ with no uncovered vertex.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Theorem 7
@@ -272,8 +328,16 @@ public theorem_wanted dominationPolynomial_grid_eq_sum_transferMatrix_pow (m n :
         (dominationTransferMatrix (pathGraph m) ^ n) σ (allCoveredSignature _)
 
 open scoped Classical in
-/-- Mertens' Theorem 7, cylinder case: `G_{m̄×n}(z) = ∑_{σ : unc(σ) = 0} (Ā^n)_{σ, σ_•}`, the
-sum over cyclic signatures.
+/-- **Transfer-matrix formula for the domination polynomial of the cylinder.** For all natural
+numbers $m$ and $n$, let $C_m$ be the cycle graph on the vertices $0, \dots, m - 1$, in which
+distinct $i$ and $j$ are adjacent when $i - j \equiv \pm 1 \pmod m$, and let $P_n$ be the path on
+the vertices $0, \dots, n - 1$. Let $\bar A$ be the domination transfer matrix of the row graph
+$C_m$, indexed by the signatures of $C_m$, and let $\sigma_\bullet$ be the all-covered signature.
+Then the domination polynomial of the cylinder $C_m \mathbin{\square} P_n$ is
+
+$$\sum_\sigma (\bar A^n)_{\sigma, \sigma_\bullet},$$
+
+the sum running over the signatures $\sigma$ of $C_m$ with no uncovered vertex.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Theorem 7
@@ -284,10 +348,15 @@ public theorem_wanted dominationPolynomial_cylinder_eq_sum_transferMatrix_pow (m
           (fun σ => ∀ i, σ.1 i ≠ uncovered),
         (dominationTransferMatrix (cycleGraph m) ^ n) σ (allCoveredSignature _)
 
-/-- Mertens' Theorem 8: the domination polynomial of the `m × n` torus is `Tr Ā^n`.  Stated for
-`n ≥ 1` (at `n = 0` the trace counts the cyclic signatures instead of the empty set); for
-`n = 1, 2` the torus is `cycleGraph m □ cycleGraph n` with Mathlib's `cycleGraph 1 = ⊥` and
-`cycleGraph 2 = K₂`.
+/-- **Transfer-matrix formula for the domination polynomial of the torus.** For all natural
+numbers $m$ and $n$ with $n \ge 1$, let $C_k$ denote the cycle graph on the vertices
+$0, \dots, k - 1$, in which distinct $i$ and $j$ are adjacent when $i - j \equiv \pm 1 \pmod k$,
+and let $\bar A$ be the domination transfer matrix of the row graph $C_m$. Then the domination
+polynomial of the torus $C_m \mathbin{\square} C_n$ equals the trace of $\bar A^n$.
+
+The hypothesis $n \ge 1$ is needed: for $n = 0$ the trace counts the signatures of $C_m$, while
+the torus $C_m \mathbin{\square} C_0$ has no vertices, so its domination polynomial is $1$. For
+$n = 1$ and $n = 2$ the cycle $C_n$ is a single vertex and a single edge respectively.
 
 Source: Stephan Mertens, *Domination Polynomials of the Grid, the Cylinder, the Torus, and the
 King Graph*, Journal of Integer Sequences 27 (2024), Article 24.7.6, Theorem 8

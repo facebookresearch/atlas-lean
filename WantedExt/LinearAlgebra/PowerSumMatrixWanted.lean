@@ -44,14 +44,13 @@ set_option autoImplicit false
 
 namespace MathlibExt.LinearAlgebra.PowerSumMatrixWanted
 
-/-- **Theorem 1**: for any positive integer `m` and
-any `2 × 2` real-valued matrix `M`,
-`Tr (M ^ (2m)) = 2m * ∑_{r=0}^m (-1)^r *
-  (2m - r - 1)! / (r! (2m - 2r)!) *
-  (Det M)^r * (Tr M)^(2m - 2r)` and
-`Tr (M ^ (2m+1)) = (2m + 1) * ∑_{r=0}^m (-1)^r *
-  (2m - r)! / (r! (2m + 1 - 2r)!) *
-  (Det M)^r * (Tr M)^(2m + 1 - 2r)`.
+/-- **Traces of powers of a $2 \times 2$ matrix.** Let $M$ be a real $2 \times 2$ matrix and
+let $m \ge 1$ be an integer. Then
+$$\operatorname{tr}(M^{2m}) = 2m \sum_{r=0}^{m} (-1)^r \frac{(2m - r - 1)!}{r! \, (2m - 2r)!}
+(\det M)^r (\operatorname{tr} M)^{2m - 2r}$$
+and
+$$\operatorname{tr}(M^{2m+1}) = (2m + 1) \sum_{r=0}^{m} (-1)^r
+\frac{(2m - r)!}{r! \, (2m + 1 - 2r)!} (\det M)^r (\operatorname{tr} M)^{2m + 1 - 2r}.$$
 
 Source: Peiran Ding, Yanjun Zhu and Lei Wang, "A New
 Formula for the Sum of Integer Powers Based on
@@ -74,9 +73,9 @@ theorem_wanted trace_pow_two (M : Matrix (Fin 2) (Fin 2) ℝ)
                 (Nat.factorial (2 * m + 1 - 2 * r) : ℝ))) *
             M.det ^ r * Matrix.trace M ^ (2 * m + 1 - 2 * r)
 
-/-- **Lemma 3**: for every positive integer `r`
-(indeed every `r`, including `0`),
-`∫₀¹ x^r (1 - x)^r dx = 1 / ((2r + 1) * C(2r, r))`.
+/-- **Integral of $x^r (1 - x)^r$ over $[0, 1]$.** For every natural number $r$ (including
+$r = 0$),
+$$\int_0^1 x^r (1 - x)^r \, dx = \frac{1}{(2r + 1) \binom{2r}{r}}.$$
 
 Source: Peiran Ding, Yanjun Zhu and Lei Wang, "A New
 Formula for the Sum of Integer Powers Based on

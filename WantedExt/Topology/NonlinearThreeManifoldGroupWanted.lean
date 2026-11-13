@@ -69,10 +69,11 @@ graph manifolds and none of the linearity obstructions (residual properties,
 the structure theory of 3-manifold groups) Button's argument relies on.
 -/
 
-/-- A closed connected topological 3-manifold, bundled with its topological-space
-and chart instances so its existence can be quantified over. Charts model
-`carrier` on `EuclideanSpace ℝ (Fin 3)` (the whole space), so it is locally
-Euclidean with no boundary; with `CompactSpace` this is a closed manifold. -/
+/-- **Closed topological 3-manifold.** A closed topological 3-manifold is a nonempty, compact,
+connected, Hausdorff, second-countable topological space $M$ together with an atlas of charts,
+homeomorphisms from open subsets of $M$ onto open subsets of $\mathbb{R}^3$, whose domains cover
+$M$. Since the charts land in $\mathbb{R}^3$ itself rather than in a half-space, $M$ has no
+boundary. -/
 structure Closed3Manifold where
   /-- The underlying point set. -/
   carrier : Type
@@ -93,7 +94,11 @@ attribute [instance] Closed3Manifold.topology Closed3Manifold.t2
 negatively). There is a closed connected topological 3-manifold `M` and a
 basepoint `x` such that the fundamental group `π₁(M, x)` admits no faithful
 (injective) representation into `GL(4, ℝ)`. -/
-/-- Source: J. O. Button, *Aspherical 3-manifold groups not in GL(4, k) for any field k*, arXiv:1404.4639 (2014). See the discussion of [Kir97, Problem 3.33] in the K3 problem list. Via leanprover/lean-eval@38361be, problem `nonlinear_three_manifold_group`. -/
+/-- **A closed 3-manifold group with no faithful representation in $GL_4(\mathbb{R})$.** There
+is a closed connected topological 3-manifold $M$ with a point $x$ such that no group
+homomorphism from the fundamental group $\pi_1(M, x)$ to $GL_4(\mathbb{R})$ is injective.
+
+Source: J. O. Button, *Aspherical 3-manifold groups not in GL(4, k) for any field k*, arXiv:1404.4639 (2014). See the discussion of [Kir97, Problem 3.33] in the K3 problem list. Via leanprover/lean-eval@38361be, problem `nonlinear_three_manifold_group`. -/
 public theorem_wanted nonlinear_three_manifold_group :
     ∃ (M : Closed3Manifold) (x : M.carrier),
       ∀ f : FundamentalGroup M.carrier x →* GL (Fin 4) ℝ, ¬ Function.Injective f

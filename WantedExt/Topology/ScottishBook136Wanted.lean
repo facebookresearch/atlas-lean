@@ -19,11 +19,12 @@ public import Mathlib.Topology.SmallInductiveDimension
 namespace MathlibExt.Topology.ScottishBook136Wanted
 
 /--
-An interior (open) mapping can raise dimension: there is a continuous open
-surjective map from a 1-dimensional compact metrizable space onto a
-2-dimensional compact metrizable space. Dimension here is the small inductive
-dimension: a space has dimension exactly `1` (resp. `2`) when it has small
-inductive dimension `≤ 1` (resp. `≤ 2`) but not `≤ 0` (resp. `≤ 1`).
+**Kolmogorov's open map raising dimension.** An interior (open) mapping can raise dimension:
+there are compact metrizable spaces $X$ and $Y$, where $X$ has small inductive dimension exactly
+$1$ and $Y$ has small inductive dimension exactly $2$, and a continuous open surjective map
+$f \colon X \to Y$. A space has small inductive dimension exactly $n$ when its small inductive
+dimension is at most $n$ but not at most $n - 1$.
+
 Source: S. Eilenberg, Problem 136 of the Scottish Book, asking whether an
 interior mapping can increase dimension; answered affirmatively by
 A. Kolmogorov, Annals of Mathematics 38 (1937), pp. 34-38, who gave an example

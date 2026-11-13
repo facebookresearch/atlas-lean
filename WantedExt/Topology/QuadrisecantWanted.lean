@@ -54,20 +54,25 @@ quadrisecant (a line meeting it in four points). Trusted helpers (`IsSmoothKnot`
 Category-(b) candidate from §161 of the Knill survey.
 -/
 
-/-- The `2π` period. -/
+/-- **Period.** The period is the real number $2\pi$. -/
 noncomputable def period : ℝ := 2 * Real.pi
 
-/-- The standard round unknot curve in the `xy`-plane. -/
+/-- **Standard circle.** The standard circle is the curve $\mathbb{R} \to \mathbb{R}^3$ given by
+$t \mapsto (\cos t, \sin t, 0)$, the unit circle in the $xy$-plane. -/
 noncomputable def standardCircle (t : ℝ) : R3 :=
   !₂[Real.cos t, Real.sin t, 0]
 
-/-- A knot is *unknotted* if it is ambient-isotopic (in the shared
-`Knot.Isotopic` sense) to a knot parametrized by the standard circle. -/
+/-- **Unknotted knot.** A knot $K$ is unknotted when there is a knot $J$ whose parametrization is
+the standard circle $t \mapsto (\cos t, \sin t, 0)$ such that $K$ is ambient-isotopic to $J$ as
+an oriented knot. -/
 def IsUnknotted (K : Knot) : Prop :=
   ∃ J : Knot, J.curve = standardCircle ∧ K.Isotopic J
 
-/-- A quadrisecant: four distinct parameter values whose image points are
-collinear. -/
+/-- **Quadrisecant of a knot.** A knot $K$ with parametrization
+$\gamma \colon \mathbb{R} \to \mathbb{R}^3$ has a quadrisecant when there are pairwise distinct
+reals $t_0, t_1, t_2, t_3 \in [0, 2\pi)$, a point $p \in \mathbb{R}^3$, a nonzero vector
+$v \in \mathbb{R}^3$ and reals $a_0, a_1, a_2, a_3$ such that $\gamma(t_i) = p + a_i v$ for each
+$i$, that is, the four points $\gamma(t_i)$ lie on one line. -/
 def HasQuadrisecant (K : Knot) : Prop :=
   ∃ t0 t1 t2 t3 : ℝ, ∃ p v : R3, ∃ a0 a1 a2 a3 : ℝ,
     t0 ∈ Set.Ico (0 : ℝ) period ∧ t1 ∈ Set.Ico (0 : ℝ) period ∧
@@ -78,7 +83,10 @@ def HasQuadrisecant (K : Knot) : Prop :=
 
 /- **Quadrisecant theorem** (Pannwitz–Kuperberg). Every smooth nontrivial knot
 has a quadrisecant. -/
-/-- Source: E. Pannwitz (1933); G. Kuperberg, *Quadrisecants of knots and links*, J. Knot Theory Ramif. 3 (1994). Knill, §161. Via leanprover/lean-eval@38361be, problem `smooth_knot_has_quadrisecant`. -/
+/-- **Quadrisecant theorem (Pannwitz–Kuperberg).** Every smooth knot $K$ in $\mathbb{R}^3$ that is
+not unknotted has a quadrisecant.
+
+Source: E. Pannwitz (1933); G. Kuperberg, *Quadrisecants of knots and links*, J. Knot Theory Ramif. 3 (1994). Knill, §161. Via leanprover/lean-eval@38361be, problem `smooth_knot_has_quadrisecant`. -/
 public theorem_wanted smooth_knot_has_quadrisecant
     (K : Knot) (_hnontrivial : ¬ IsUnknotted K) :
     HasQuadrisecant K

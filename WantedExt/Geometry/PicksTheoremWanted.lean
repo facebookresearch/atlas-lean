@@ -55,26 +55,38 @@ Category-(b) candidate from §154 of the Knill survey.
 
 open MeasureTheory
 
-/-- Coordinatewise cast of a lattice point to the plane. -/
+/-- **Lattice points in the plane.** The map $\mathbb{Z}^2 \to \mathbb{R}^2$ sending a lattice
+point $(a, b)$ to the point $(a, b)$ of the real plane. -/
 def toPlane (z : ℤ × ℤ) : ℝ × ℝ := ((z.1 : ℝ), (z.2 : ℝ))
 
-/-- The lattice polygon on integer vertex data `v`. -/
+/-- **Lattice polygon.** Given integer points $v_0, \dots, v_{n-1} \in \mathbb{Z}^2$, the lattice
+polygon on $v$ is the polygon in $\mathbb{R}^2$ with $n$ vertices whose $i$-th vertex is $v_i$,
+viewed as a point of $\mathbb{R}^2$. -/
 def latPoly {n : ℕ} (v : Fin n → ℤ × ℤ) : Polygon (ℝ × ℝ) n :=
   ⟨fun i => toPlane (v i)⟩
 
-/-- The open interior region of a planar curve `S`: points off `S` whose
-component in `Sᶜ` is bounded (the Jordan interior for a simple closed curve). -/
+/-- **Region enclosed by a planar set.** For a set $S \subseteq \mathbb{R}^2$, the region enclosed
+by $S$ is the set of points $x \notin S$ whose connected component in the complement
+$\mathbb{R}^2 \setminus S$ is bounded. For a simple closed curve $S$ this is the Jordan interior. -/
 def inside (S : Set (ℝ × ℝ)) : Set (ℝ × ℝ) :=
   {x | x ∉ S ∧ Bornology.IsBounded (connectedComponentIn Sᶜ x)}
 
-/-- Enclosed area: Lebesgue measure of the interior region. -/
+/-- **Enclosed area.** The area enclosed by a set $S \subseteq \mathbb{R}^2$ is the Lebesgue
+measure, as a real number, of the region enclosed by $S$ (the points $x \notin S$ whose connected
+component in $\mathbb{R}^2 \setminus S$ is bounded); it is taken to be $0$ when that measure is
+infinite. -/
 noncomputable def area (S : Set (ℝ × ℝ)) : ℝ := (volume (inside S)).toReal
 
-/-- Cyclic adjacency of edge indices. -/
+/-- **Cyclically adjacent indices.** Two indices $i, j \in \{0, \dots, n-1\}$ are adjacent when
+$j \equiv i + 1 \pmod n$ or $i \equiv j + 1 \pmod n$. -/
 def Adjacent {n : ℕ} (i j : Fin n) : Prop :=
   finRotate n i = j ∨ finRotate n j = i
 
-/-- A simple (Jordan) polygon. -/
+/-- **Simple polygon.** A polygon in $\mathbb{R}^2$ with vertices $p_0, \dots, p_{n-1}$ (indices
+taken mod $n$) and edges the segments $e_i = [p_i, p_{i+1}]$ is simple when consecutive vertices
+are distinct ($p_i \ne p_{i+1}$ for all $i$), any two edges $e_i$ and $e_j$ with $i \ne j$,
+$j \not\equiv i + 1$ and $i \not\equiv j + 1 \pmod n$ are disjoint, and every two consecutive
+edges meet only in their common vertex: $e_i \cap e_{i+1} = \{p_{i+1}\}$ for all $i$. -/
 def IsSimple {n : ℕ} (poly : Polygon (ℝ × ℝ) n) : Prop :=
   poly.HasNondegenerateEdges ∧
   (∀ i j : Fin n, i ≠ j → ¬ Adjacent i j →
@@ -82,17 +94,28 @@ def IsSimple {n : ℕ} (poly : Polygon (ℝ × ℝ) n) : Prop :=
   (∀ i : Fin n, poly.edgeSet ℝ i ∩ poly.edgeSet ℝ (finRotate n i)
       = {poly (finRotate n i)})
 
-/-- Number of boundary lattice points. -/
+/-- **Number of boundary lattice points.** For integer points
+$v_0, \dots, v_{n-1} \in \mathbb{Z}^2$, the number of lattice points $z \in \mathbb{Z}^2$ that lie
+on the boundary (the union of the edges) of the lattice polygon on $v$. -/
 noncomputable def boundaryPts {n : ℕ} (v : Fin n → ℤ × ℤ) : ℕ :=
   Nat.card {z : ℤ × ℤ | toPlane z ∈ (latPoly v).boundary (R := ℝ)}
 
-/-- Number of interior lattice points. -/
+/-- **Number of interior lattice points.** For integer points
+$v_0, \dots, v_{n-1} \in \mathbb{Z}^2$, the number of lattice points $z \in \mathbb{Z}^2$ that lie
+in the region enclosed by the boundary of the lattice polygon on $v$, that is, the points off the
+boundary whose connected component in its complement is bounded. -/
 noncomputable def interiorPts {n : ℕ} (v : Fin n → ℤ × ℤ) : ℕ :=
   Nat.card {z : ℤ × ℤ | toPlane z ∈ inside ((latPoly v).boundary (R := ℝ))}
 
 /- **Pick's theorem.** A simple lattice polygon with `n ≥ 3` vertices has area
 `I + B/2 − 1`. -/
-/-- Source: G. Pick, *Geometrisches zur Zahlenlehre* (1899). Knill, *Some fundamental theorems in mathematics*, §154. Via leanprover/lean-eval@38361be, problem `pick`. -/
+/-- **Pick's theorem.** Let $n \ge 3$ and let $v_0, \dots, v_{n-1} \in \mathbb{Z}^2$ be integer
+points such that the lattice polygon $P$ in $\mathbb{R}^2$ with vertices $v_0, \dots, v_{n-1}$ is
+simple. Then the area of the region enclosed by the boundary of $P$ equals $I + B/2 - 1$, where
+$I$ is the number of lattice points in that region and $B$ is the number of lattice points on the
+boundary of $P$.
+
+Source: G. Pick, *Geometrisches zur Zahlenlehre* (1899). Knill, *Some fundamental theorems in mathematics*, §154. Via leanprover/lean-eval@38361be, problem `pick`. -/
 public theorem_wanted pick {n : ℕ} (hn : 3 ≤ n) (v : Fin n → ℤ × ℤ)
     (hsimple : IsSimple (latPoly v)) :
     area ((latPoly v).boundary (R := ℝ))

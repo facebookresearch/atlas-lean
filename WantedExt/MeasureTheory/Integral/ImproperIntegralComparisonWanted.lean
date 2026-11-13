@@ -17,8 +17,10 @@ open MeasureTheory Filter Set
 
 namespace MathlibExt.MeasureTheory.Integral.ImproperIntegralComparisonWanted
 
-/-- Comparison test for improper integrals: a nonnegative function dominated on
-`[a, ∞)` by an improper-integrable function is itself improper-integrable.
+/-- **Comparison test for improper integrals.** Let $a \in \mathbb{R}$ and let
+$f, g : \mathbb{R} \to \mathbb{R}$ be interval integrable on $[a, b]$ for every $b \ge a$, with
+$0 \le f(x) \le g(x)$ for all $x \ge a$. If $\int_a^b g(x)\,dx$ converges to a real limit as
+$b \to \infty$, then $\int_a^b f(x)\,dx$ also converges to a real limit as $b \to \infty$.
 
 Sources:
 - Mathlib `docs/undergrad.yaml`, section "Single Variable Real Analysis / Integration",
@@ -32,8 +34,11 @@ public theorem_wanted improper_integral_comparison_test {f g : ℝ → ℝ} {a :
     (hg : ∃ L : ℝ, Tendsto (fun b ↦ ∫ x in a..b, g x) atTop (nhds L)) :
     ∃ L : ℝ, Tendsto (fun b ↦ ∫ x in a..b, f x) atTop (nhds L)
 
-/-- Limit comparison test for improper integrals: two eventually strictly positive
-functions whose ratio tends to a nonzero limit are improper-integrable together.
+/-- **Limit comparison test for improper integrals.** Let $a, L \in \mathbb{R}$
+with $L \ne 0$, and let $f, g : \mathbb{R} \to \mathbb{R}$ be interval integrable on $[a, b]$ for
+every $b \ge a$, with $f(x) > 0$ and $g(x) > 0$ for all $x \ge a$. If $f(x) / g(x) \to L$ as
+$x \to \infty$, then $\int_a^b f(x)\,dx$ converges to a real limit as $b \to \infty$ if and
+only if $\int_a^b g(x)\,dx$ converges to a real limit as $b \to \infty$.
 
 Sources:
 - Mathlib `docs/undergrad.yaml`, section "Single Variable Real Analysis / Integration",

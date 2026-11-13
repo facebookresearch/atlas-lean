@@ -43,9 +43,11 @@ open MeasureTheory Filter
 
 namespace MathlibExt.MeasureTheory.AeNullSequenceUnboundedMultipliersWanted
 
-/-- Suppose that $\{f_n\}_{n=1}^{\infty}$ is a sequence of measurable functions such that $f_n \to
-0$ almost everywhere on $[0, 1]$. Prove that there exists a sequence $c_n$ such that $|c_n| \to
-\infty$ as $n \to \infty$ and $c_n f_n \to 0$ almost everywhere.
+/-- **Unbounded multipliers preserving almost-everywhere convergence to zero.** Let
+$(f_n)_{n \in \mathbb{N}}$ be a sequence of Borel measurable functions $f_n : \mathbb{R} \to
+\mathbb{R}$ such that $f_n(x) \to 0$ for almost every $x \in [0, 1]$. Then there is a sequence of
+real numbers $(c_n)_{n \in \mathbb{N}}$ with $|c_n| \to \infty$ such that $c_n f_n(x) \to 0$ for
+almost every $x \in [0, 1]$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Measure and integration;
 Classical measure theory), `benchmark/level2/ma_proofbench_l2_38.lean` at

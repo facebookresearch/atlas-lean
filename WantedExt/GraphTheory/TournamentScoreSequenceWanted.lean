@@ -46,14 +46,18 @@ set_option autoImplicit false
 
 namespace MathlibExt.GraphTheory.TournamentScoreSequenceWanted
 
-/-- A tournament on `Fin n`: `T i j = true` means `i`
-beats `j`; every pair has exactly one winner and there
-are no self-wins. -/
+/-- **Tournament.** A tournament on the players $1, \dots, n$ is a binary relation $T$, where
+$T(i, j)$ means that $i$ beats $j$, such that no player beats itself and for any two distinct
+players $i$ and $j$ exactly one of $T(i, j)$ and $T(j, i)$ holds. -/
 def IsTournament {n : ℕ} (T : Fin n → Fin n → Bool) :
     Prop :=
   (∀ i, T i i = false) ∧ ∀ i j, i ≠ j → T i j ≠ T j i
 
-/-- The score (outdegree) of a player in a tournament. -/
+/-- **Score of a player.** Let $T$ be a binary relation on the players $1, \dots, n$, where
+$T(i, j)$ means that $i$ beats $j$. The score of a player $i$ is the number of players $j$ such
+that $T(i, j)$ holds, that is, the number of players that $i$ beats.
+
+In a tournament this is the outdegree of $i$. -/
 def score {n : ℕ} (T : Fin n → Fin n → Bool) (i : Fin n) :
     ℕ :=
   (Finset.univ.filter (fun j => T i j)).card
@@ -65,8 +69,11 @@ def IsReducible {n : ℕ} (T : Fin n → Fin n → Bool) :
   ∃ S : Finset (Fin n), S.Nonempty ∧ S ≠ Finset.univ ∧
     ∀ i ∈ S, ∀ j, j ∉ S → T i j = false
 
-/-- A circular triad: a 3-subset in which every vertex
-has outdegree exactly `1` (a directed 3-cycle). -/
+/-- **Circular triad.** Let $T$ be a binary relation on the players $1, \dots, n$, where
+$T(i, j)$ means that $i$ beats $j$. A set $S$ of players is a circular triad of $T$ if $S$ has
+exactly three elements and every $i \in S$ beats exactly one $j \in S$.
+
+In a tournament this means that the three players form a directed $3$-cycle. -/
 def IsCircularTriad {n : ℕ} (T : Fin n → Fin n → Bool)
     (S : Finset (Fin n)) : Prop :=
   S.card = 3 ∧
@@ -78,10 +85,11 @@ instance {n : ℕ} (T : Fin n → Fin n → Bool)
   inferInstanceAs (Decidable (S.card = 3 ∧
     ∀ i ∈ S, (S.filter (fun j => T i j)).card = 1))
 
-/-- **Theorem 1**: the sequence `g(n) = n! * C(n-a+b, b)`
-(`n ≥ a`) has exponential generating function
-`x^a * (1 - x)^{-(b+1)}` (stated in the multiplied-out
-form `(1 - x)^{b+1} * A(x) = x^a` over `ℚ`).
+/-- **Exponential generating function of a shifted binomial sequence.** For natural numbers $a$
+and $b$, let $g(n) = n! \binom{n-a+b}{b}$ for $n \ge a$ and $g(n) = 0$ for $n < a$, and let
+$A(x) = \sum_{n \ge 0} g(n) x^n / n!$ be its exponential generating function, a formal power
+series over $\mathbb{Q}$. Then $(1 - x)^{b+1} A(x) = x^a$; equivalently,
+$A(x) = x^a (1 - x)^{-(b+1)}$.
 
 Source: Ian R. Harris and Ryan P. A. McShane, "Counting
 Tournaments with a Specified Number of Circular
@@ -93,10 +101,10 @@ theorem_wanted egf_factorial_choose (a b : ℕ) :
           else 0)
       = PowerSeries.X ^ a
 
-/-- **Theorem 4** (Landau, via Moon): a nondecreasing
-sequence `s_1 ≤ ⋯ ≤ s_n` is the score sequence of a
-tournament if and only if `∑_{i=1}^k s_i ≥ C(k, 2)` for
-`1 ≤ k ≤ n`, with equality when `k = n`.
+/-- **Landau's theorem on score sequences.** Let $s_1 \le s_2 \le \dots \le s_n$ be a
+nondecreasing sequence of natural numbers. There is a tournament on $n$ players in which player
+$i$ has score $s_i$ for every $i$ if and only if $\sum_{i=1}^{k} s_i \ge \binom{k}{2}$ for every
+$k$ with $1 \le k \le n$ and $\sum_{i=1}^{n} s_i = \binom{n}{2}$.
 
 Source: Ian R. Harris and Ryan P. A. McShane, "Counting
 Tournaments with a Specified Number of Circular
@@ -111,10 +119,9 @@ theorem_wanted landau_score_sequence (n : ℕ)
         ∑ i : Fin k, s (Fin.castLE hk i)) ∧
     (∑ i, s i) = Nat.choose n 2
 
-/-- **Theorem 5** (Moon): a tournament with score
-sequence `s_1 ≤ ⋯ ≤ s_n` is reducible if and only if
-`∑_{i=1}^k s_i = C(k, 2)` for some positive integer
-`k < n`.
+/-- **Moon's reducibility criterion.** Let $T$ be a tournament on $n$ players in which the score
+$s_i$ of player $i$ satisfies $s_1 \le s_2 \le \dots \le s_n$. Then $T$ is reducible if and only
+if $\sum_{i=1}^{k} s_i = \binom{k}{2}$ for some integer $k$ with $1 \le k < n$.
 
 Source: Ian R. Harris and Ryan P. A. McShane, "Counting
 Tournaments with a Specified Number of Circular
@@ -129,9 +136,9 @@ theorem_wanted isReducible_iff (n : ℕ)
         (∑ i : Fin k, s (Fin.castLE hk i)) =
           Nat.choose k 2
 
-/-- **Theorem 6** (Moon): the number of circular triads
-in a tournament with scores `s_1, …, s_n` is
-`C(n, 3) - ∑_i C(s_i, 2)`.
+/-- **Moon's count of circular triads.** In a tournament on $n$ players with scores
+$s_1, \dots, s_n$, the number of circular triads is
+$\binom{n}{3} - \sum_{i=1}^{n} \binom{s_i}{2}$.
 
 Source: Ian R. Harris and Ryan P. A. McShane, "Counting
 Tournaments with a Specified Number of Circular

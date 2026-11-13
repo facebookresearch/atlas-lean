@@ -49,24 +49,35 @@ Clause list (every item below appears in the formal text below):
 8. Status: posed as a question-Prop; the file asserts no answer.
 -/
 
-/-- First Betti rank of a group, as the `ℤ`-rank of its abelianization
-[AMR-109-0273] (Question 2.5, PDF p. 330). -/
+/-- **First Betti number of a group.** The first Betti number of a group $G$ is the rank, as a
+cardinal, of its abelianization $G^{\mathrm{ab}}$ viewed as a $\mathbb{Z}$-module.
+
+Source: [AMR-109-0273] (Question 2.5, PDF p. 330). -/
 noncomputable def firstBettiRank (G : Type*) [Group G] : Cardinal :=
   Module.rank ℤ (Additive (Abelianization G))
 
-/-- Farb Question 2.5 [AMR-109-0273] (PDF p. 330): for `n > 3`, does
-`Aut(F_n)` have a finite-index subgroup with positive first Betti
-number? -/
+/-- **Farb's positive first Betti number question for $\mathrm{Aut}(F_n)$.** The proposition that
+for every natural number $n > 3$, the automorphism group $\mathrm{Aut}(F_n)$ of the free group
+$F_n$ on $n$ generators has a finite-index subgroup $H$ whose first Betti number, the
+$\mathbb{Z}$-rank of the abelianization of $H$, is positive.
+
+Source: Farb Question 2.5 [AMR-109-0273] (PDF p. 330). -/
 def conjecture : Prop :=
   ∀ (n : ℕ), 3 < n →
     ∃ (H : Subgroup (MulAut (FreeGroup (Fin n)))),
       H.FiniteIndex ∧ 0 < firstBettiRank ↥H
 
 /--
-Resolved false: Kaluba-Nowak-Ozawa proved Aut(F5) has Kazhdan property (T) (Math. Ann. 375
-(2019), 1169-1191). Property (T) passes to finite-index subgroups and forces finite
-abelianization, so every finite-index subgroup of Aut(F5) has first Betti rank 0. The n = 5
-instance is therefore false, refuting the universal claim over n > 3. Source: M. Kaluba, P. W.
+**Some $\mathrm{Aut}(F_n)$ with $n > 3$ has no finite-index subgroup of positive first Betti
+number.** It is not the case that for every natural number $n > 3$ the automorphism group
+$\mathrm{Aut}(F_n)$ of the free group $F_n$ on $n$ generators has a finite-index subgroup $H$ whose
+first Betti number, the $\mathbb{Z}$-rank of the abelianization of $H$, is positive.
+
+The case $n = 5$ fails: Kaluba, Nowak and Ozawa proved that $\mathrm{Aut}(F_5)$ has Kazhdan's
+property (T), which passes to finite-index subgroups and forces finite abelianization, so every
+finite-index subgroup of $\mathrm{Aut}(F_5)$ has first Betti number $0$.
+
+Source: M. Kaluba, P. W.
 Nowak, N. Ozawa, Aut(F5) has property (T), Math. Ann. 375 (2019), no. 3-4, 1169-1191,
 https://arxiv.org/abs/1712.07167. Moved from
 `OpenConjectures/Topology/AutFnFiniteIndexPositiveBetti`.

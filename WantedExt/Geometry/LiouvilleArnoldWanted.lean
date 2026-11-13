@@ -69,20 +69,35 @@ on bounded entire functions, a different theorem). The Challenge ships
 open Set
 open scoped ContDiff
 
-/-- The model space `ℝ^{2n}`. -/
+/-- **The model space $\mathbb{R}^{2n}$ of the Liouville–Arnold theorem.** For a natural number
+$n$, $E_n$ is the Euclidean space $\mathbb{R}^{2n}$, with coordinates indexed by
+$0, \dots, 2n-1$ and the standard inner product. -/
 abbrev E (n : ℕ) := EuclideanSpace ℝ (Fin (2 * n))
 
-/-- The "p" coordinate index `i ∈ Fin n` viewed in `Fin (2n)`. -/
+/-- **Liouville–Arnold coordinates: index of $p_i$.** For $i \in \{0, \dots, n-1\}$, the
+coordinate $p_i$ of $\mathbb{R}^{2n}$ is coordinate number $i$: this map sends $i$ to the same
+number $i$, regarded as an index in $\{0, \dots, 2n-1\}$. -/
 def idxP {n : ℕ} (i : Fin n) : Fin (2 * n) :=
   ⟨i.val, by have := i.isLt; omega⟩
 
-/-- The "q" coordinate index `i ∈ Fin n` viewed in `Fin (2n)`. -/
+/-- **Liouville–Arnold coordinates: index of $q_i$.** For $i \in \{0, \dots, n-1\}$, the
+coordinate $q_i$ of $\mathbb{R}^{2n}$ is coordinate number $n + i$: this map sends $i$ to
+$n + i \in \{0, \dots, 2n-1\}$. -/
 def idxQ {n : ℕ} (i : Fin n) : Fin (2 * n) :=
   ⟨i.val + n, by have := i.isLt; omega⟩
 
-/-- Standard **Poisson bracket** on `ℝ^{2n}` for the symplectic form
-`ω₀ = ∑ᵢ dpᵢ ∧ dqᵢ`:
-`{F, G}(x) = ∑ᵢ ((∂F/∂pᵢ)(x)(∂G/∂qᵢ)(x) − (∂F/∂qᵢ)(x)(∂G/∂pᵢ)(x))`. -/
+/-- **Standard Poisson bracket on $\mathbb{R}^{2n}$.** Write the coordinates of a point
+$x \in \mathbb{R}^{2n}$ as $p_i = x_i$ and $q_i = x_{n+i}$ for $i = 0, \dots, n-1$. For functions
+$F, G \colon \mathbb{R}^{2n} \to \mathbb{R}$, the Poisson bracket for the symplectic form
+$\omega_0 = \sum_i dp_i \wedge dq_i$ is the function
+$$
+\{F, G\}(x) = \sum_{i=0}^{n-1} \left( \frac{\partial F}{\partial p_i}(x)
+\frac{\partial G}{\partial q_i}(x) - \frac{\partial F}{\partial q_i}(x)
+\frac{\partial G}{\partial p_i}(x) \right).
+$$
+
+Partial derivatives are read off the Fréchet derivative, which is taken to be zero at points
+where the function is not differentiable. -/
 noncomputable def poissonBracket {n : ℕ} (F G : E n → ℝ) (x : E n) : ℝ :=
   ∑ i : Fin n,
     (fderiv ℝ F x (EuclideanSpace.single (idxP i) (1 : ℝ)) *
@@ -90,16 +105,22 @@ noncomputable def poissonBracket {n : ℕ} (F G : E n → ℝ) (x : E n) : ℝ :
       - fderiv ℝ F x (EuclideanSpace.single (idxQ i) (1 : ℝ)) *
         fderiv ℝ G x (EuclideanSpace.single (idxP i) (1 : ℝ)))
 
-/-- A tuple `F : Fin n → (E n → ℝ)` is **Liouville integrable on `U`**
-(an open subset of `ℝ^{2n}`) if each component is smooth on `U`, they
-pairwise Poisson-commute on `U`, and their Fréchet derivatives are
-linearly independent at every point of `U`. -/
+/-- **Liouville integrable system on a subset of $\mathbb{R}^{2n}$.** Functions
+$F_0, \dots, F_{n-1} \colon \mathbb{R}^{2n} \to \mathbb{R}$ are Liouville integrable on a set
+$U \subseteq \mathbb{R}^{2n}$ if each $F_i$ is $C^\infty$ on $U$, the Poisson brackets
+$\{F_i, F_j\}$ vanish at every point of $U$ for all $i, j$, and at every $x \in U$ the
+Fréchet derivatives $dF_0(x), \dots, dF_{n-1}(x)$ are linearly independent over $\mathbb{R}$.
+
+The set $U$ is not required to be open; the Liouville–Arnold theorem assumes this separately. -/
 def IsLiouvilleIntegrable {n : ℕ} (F : Fin n → E n → ℝ) (U : Set (E n)) : Prop :=
   (∀ i, ContDiffOn ℝ ∞ (F i) U) ∧
   (∀ i j, ∀ x ∈ U, poissonBracket (F i) (F j) x = 0) ∧
   (∀ x ∈ U, LinearIndependent ℝ (fun i => fderiv ℝ (F i) x))
 
-/-- The common level set `{x : F₁(x) = c₁, …, F_n(x) = c_n}`. -/
+/-- **Common level set of $n$ functions on $\mathbb{R}^{2n}$.** For functions
+$F_0, \dots, F_{n-1} \colon \mathbb{R}^{2n} \to \mathbb{R}$ and values
+$c_0, \dots, c_{n-1} \in \mathbb{R}$, the common level set is
+$\{x \in \mathbb{R}^{2n} : F_i(x) = c_i \text{ for all } i\}$. -/
 def levelSet {n : ℕ} (F : Fin n → E n → ℝ) (c : Fin n → ℝ) : Set (E n) :=
   {x | ∀ i, F i x = c i}
 
@@ -112,7 +133,19 @@ The hypotheses *compact* and *connected* on the level set, and its
 containment in the open set where the derivatives are independent,
 restore standard regularity assumptions that Knill elides; without them
 the conclusion fails. -/
-/-- Source: V. I. Arnold, *Mathematical Methods of Classical Mechanics* (2nd ed., 1989), Theorem 49.A.1 (the standard modern reference). The result is due to Liouville (1855) for the local existence of action-angle coordinates and Arnold (1963) for the compact-connected-component topology. Listed as §45 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `liouville_arnold`. -/
+/-- **Liouville–Arnold theorem.** Let $U \subseteq \mathbb{R}^{2n}$ be open and let
+$F_0, \dots, F_{n-1} \colon \mathbb{R}^{2n} \to \mathbb{R}$ be Liouville integrable on $U$. For
+$c = (c_0, \dots, c_{n-1}) \in \mathbb{R}^n$, let
+$M_c = \{x \in \mathbb{R}^{2n} : F_i(x) = c_i \text{ for all } i\}$ be the common level set. If
+$M_c \subseteq U$ and $M_c$ is compact and connected (in particular nonempty), then $M_c$ is
+homeomorphic to the $n$-torus $(\mathbb{R}/\mathbb{Z})^n$.
+
+The hypotheses *compact* and *connected* on the level set, and its
+containment in the open set where the derivatives are independent,
+restore standard regularity assumptions that Knill elides; without them
+the conclusion fails.
+
+Source: V. I. Arnold, *Mathematical Methods of Classical Mechanics* (2nd ed., 1989), Theorem 49.A.1 (the standard modern reference). The result is due to Liouville (1855) for the local existence of action-angle coordinates and Arnold (1963) for the compact-connected-component topology. Listed as §45 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `liouville_arnold`. -/
 public theorem_wanted liouville_arnold
     {n : ℕ} (F : Fin n → E n → ℝ) (U : Set (E n)) (_hU : IsOpen U)
     (_hLI : IsLiouvilleIntegrable F U)
