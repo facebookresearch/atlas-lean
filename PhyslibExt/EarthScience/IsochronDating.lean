@@ -58,7 +58,7 @@ ratios `x₁ = 1` and `x₂ = 2`, common initial ratio `b`, and
 daughter/reference ratios `yᵢ = b + xᵢ * (exp (lam * t) - 1)`.
 The isochron slope `(y₂ - y₁) / (x₂ - x₁)` is `1`: `isochron_slope_eq`
 gives `exp (lam * 10) - 1`, and `exp (log 2) = 2`. -/
-theorem isochron_slope_eq_one {b : ℝ} :
+lemma isochron_slope_eq_one {b : ℝ} :
     ((b + 2 * (Real.exp ((Real.log 2 / 10) * 10) - 1))
       - (b + 1 * (Real.exp ((Real.log 2 / 10) * 10) - 1))) / (2 - 1) = 1 := by
   rw [isochron_slope_eq (Real.log 2 / 10) 10 b 1 2
@@ -70,7 +70,7 @@ theorem isochron_slope_eq_one {b : ℝ} :
 /-- Age recovery: `isochron_age_eq` recovers the age `10` from the sample
 slope, and that slope is `1` (`isochron_slope_eq_one`), so
 `log (1 + 1) / (log 2 / 10) = 10`. -/
-theorem isochron_age_recovery :
+lemma isochron_age_recovery :
     Real.log (1 + 1) / (Real.log 2 / 10) = 10 := by
   have h := isochron_age_eq (Real.log 2 / 10) 10 0 1 2
     (0 + 1 * (Real.exp ((Real.log 2 / 10) * 10) - 1))
@@ -80,7 +80,7 @@ theorem isochron_age_recovery :
 
 /-- Boundary case: at age `t = 0`, `isochron_slope_eq` gives the slope
 `exp (lam * 0) - 1 = 0`. -/
-theorem isochron_slope_at_zero_age {b : ℝ} :
+lemma isochron_slope_at_zero_age {b : ℝ} :
     ((b + 2 * (Real.exp ((Real.log 2 / 10) * 0) - 1))
       - (b + 1 * (Real.exp ((Real.log 2 / 10) * 0) - 1))) / (2 - 1) = 0 := by
   rw [isochron_slope_eq (Real.log 2 / 10) 0 b 1 2
