@@ -34,6 +34,8 @@ For normalized interpolation weights over a finite index set summing to `1`, a c
 ## iv. References
 
 - `Finset.sum_mul`, `Finset.sum_le_sum` in Mathlib.
+
+## A. Normalized interpolation
 -/
 
 @[expose] public section
