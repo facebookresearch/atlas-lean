@@ -50,9 +50,7 @@ namespace MathlibExt.Economics.Finance.ForwardCostOfCarry
 /-- State-price value of a state-contingent payoff `X` under state prices `ψ`: the
 linear pricing functional whose existence under no arbitrage is the FTAP conclusion
 (cited, not reproved here). Only its pricing equations are used below; positivity
-of `ψ` is not needed for these identities. This is a local copy of the one-line
-functional; the Modigliani–Miller file carries its own copy, and the two may be
-unified in the future. -/
+of `ψ` is not needed for these identities. -/
 noncomputable def statePriceValue {Ω : Type*} [Fintype Ω] (ψ : Ω → ℝ) (X : Ω → ℝ) : ℝ :=
   ∑ ω, ψ ω * X ω
 
