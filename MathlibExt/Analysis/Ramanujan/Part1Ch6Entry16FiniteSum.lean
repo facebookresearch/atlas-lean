@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.Field.GeomSum
 import Mathlib.Tactic.Abel
@@ -209,6 +209,7 @@ It follows from `ramanujan_part1_ch6_entry16_finite_sum_general` with `K := ℝ`
 hypothesis `hn` is unused and keeps the source's shape.
 Proves `Wanted` entry `ramanujan_part1_ch6_entry16_harmonicasymptotic`.
 -/
+@[nolint unusedArguments]
 theorem ramanujan_part1_ch6_entry16_finite_sum
     (a r x : ℝ) (n : ℕ) (hn : 0 < n)
     (hax : ∀ k ∈ Icc 1 n, 1 - a * x ^ k ≠ 0)
