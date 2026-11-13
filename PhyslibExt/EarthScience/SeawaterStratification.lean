@@ -10,7 +10,6 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Mul
-public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.Ring
 
 /-!
@@ -34,7 +33,8 @@ by algebra, and the sign classification follows from the signs of
 ## ii. Key results
 
 - `EarthScience.boussinesq_density_deriv`: gradient of the linear profile.
-- `EarthScience.brunt_vaisala_from_gradient`: `N^2` from the gradient.
+- `EarthScience.brunt_vaisala_from_gradient`: `N^2` from the profile's
+  actual vertical gradient `deriv (fun z => rho0 - beta * z) z`.
 - `EarthScience.brunt_vaisala_sq_sign_ocean`: sign classification of `N^2`.
 
 ## iii. Table of contents
@@ -44,6 +44,12 @@ by algebra, and the sign classification follows from the signs of
 
 ## iv. References
 
+- G. K. Vallis, *Atmospheric and Oceanic Fluid Dynamics*, 2nd ed.,
+  Cambridge University Press (2017), Chapter 2 (Effects of Rotation and
+  Stratification): the Boussinesq approximation with a constant reference
+  density `rho0`, and the buoyancy (Brunt-Vaisala) frequency
+  `N^2 = -(g / rho0) * d rho / d z` with `z` pointing upward, so that
+  `N^2 > 0` is statically stable and `N^2 < 0` is unstable.
 - `HasDerivAt.const_sub` in Mathlib (derivative of a constant minus a function).
 - `div_pos_iff` / `div_neg_iff` / `div_eq_zero_iff` in Mathlib.
 -/
@@ -52,6 +58,7 @@ by algebra, and the sign classification follows from the signs of
 
 namespace EarthScience
 
+/-! ## A. Density gradient and Brunt-Vaisala frequency -/
 
 /-- The vertical gradient of the incompressible Boussinesq profile
 `rho(z) = rho0 - beta * z` is `-beta` everywhere. -/
@@ -61,10 +68,14 @@ theorem boussinesq_density_deriv {rho0 beta : ℝ} (z : ℝ) :
   rwa [mul_one] at h
 
 /-- `N^2 = -(g / rho0) * rho_z = g * beta / rho0` for the profile above,
-with `rho_z = -beta`. -/
-theorem brunt_vaisala_from_gradient {g beta rho0 : ℝ} (hrho : rho0 ≠ 0) :
-    -(g / rho0) * (-beta) = g * beta / rho0 := by
-  field_simp
+where `rho_z = deriv (fun z => rho0 - beta * z) z` is its vertical
+gradient at height `z` (equal to `-beta` by `boussinesq_density_deriv`). -/
+theorem brunt_vaisala_from_gradient {g beta rho0 : ℝ} (z : ℝ) :
+    -(g / rho0) * deriv (fun z => rho0 - beta * z) z = g * beta / rho0 := by
+  rw [(boussinesq_density_deriv z).deriv]
+  ring
+
+/-! ## B. Stability signs -/
 
 /-- Sign classification of `N^2 = g * beta / rho0` for `g, rho0 > 0`:
 uniform density (`beta = 0`) gives `N^2 = 0`, stable (`beta > 0`) gives
