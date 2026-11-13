@@ -20,12 +20,13 @@ public import PhyslibExt.CondensedMatter.Elasticity.StressStrain
 * Mohr example `σx = 80`, `σy = 20`, `τ = 30`: `σ'₀₀ = 80`, `σ'₀₁ = -30` at `θ = π/4`, and
   `σ'₀₀ = 80`, `σ'₀₁ = 30` at `θ = 0`; with `τ = 0` the radius is `|σx - σy|/2`.
 * Maximum shear `s₁ = 100`, `s₃ = 20`: `τmax = 40`, attained at `θ = π/4`.
-* Small strain for simple shear with `γ = 0.02`: tensor shear `0.01`, engineering shear `0.02`,
-  symmetric `ε`, trace `3`; the pure-shear displacement has trace `0`.
+* Small strain for the simple-shear displacement `u(x) = (γ x₁, 0, 0)` with `γ = 0.02`: tensor
+  shear `0.01`, engineering shear `0.02`, symmetric `ε`, the full tensor, and trace `0`; at
+  `γ = 0` the strain is zero.
 * True strain at `e = 0.1`: `ln 1.1`, between `0` and `0.1`; true stress `110` from
   `F = 1000`, `A₀ = 10`, `e = 0.1`.
-* Countermodels: a non-symmetric matrix is not a symmetric stress; `e = -1` violates the
-  true-strain domain with `1 + e = 0`.
+* Countermodels: a non-symmetric matrix is not a symmetric stress; `e = -1` has no proof of the
+  true-strain domain `-1 < e`, while the unrestricted helper gives `logStrain (-1) = 0`.
 -/
 
 @[expose] public section
@@ -76,15 +77,15 @@ example : !![(2:ℝ),1;1,2].det = 3 := by
   norm_num
 
 -- 3x3 analogue: mean stress `p = 4/3`.
-example : hydrostaticPressure !![(2:ℝ),1,0;1,2,0;0,0,0] = 4/3 := by
-  unfold hydrostaticPressure
+example : meanStress !![(2:ℝ),1,0;1,2,0;0,0,0] = 4/3 := by
+  unfold meanStress
   simp [Matrix.trace, Matrix.diag_apply, Fin.sum_univ_three]
   norm_num
 
 -- 3x3 analogue: the deviatoric matrix.
 example : deviatoricStress !![(2:ℝ),1,0;1,2,0;0,0,0]
     = !![2/3,1,0;1,2/3,0;0,0,-4/3] := by
-  unfold deviatoricStress hydrostaticPressure
+  unfold deviatoricStress meanStress
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [Matrix.trace, Matrix.diag_apply, Fin.sum_univ_three, Matrix.sub_apply,
@@ -170,39 +171,39 @@ example (x : Fin 3 → ℝ) :
       = smallStrain (displacementGradient (simpleShearField 0.02) x) :=
   smallStrain_symmetric _
 
--- Trace of the stated field is `3` (the stated shear field includes the identity part;
--- the pure-shear displacement below has trace `0`).
+-- The full strain tensor: only `ε₀₁ = ε₁₀ = 0.01` are nonzero.
 example (x : Fin 3 → ℝ) :
-    (smallStrain (displacementGradient (simpleShearField 0.02) x)).trace = 3 := by
-  unfold simpleShearField
-  rw [displacementGradient_affine]
-  unfold smallStrain
-  simp [Matrix.trace, Matrix.diag_apply, Fin.sum_univ_three, Matrix.smul_apply,
-    Matrix.add_apply, Matrix.transpose_apply, smul_eq_mul]
+    smallStrain (displacementGradient (simpleShearField 0.02) x)
+      = !![0, 0.01, 0; 0.01, 0, 0; 0, 0, 0] := by
+  rw [simpleShear_smallStrain]
   norm_num
 
--- Pure-shear displacement has trace `0` (first-order volume preservation).
+-- Simple shear has trace `0` (no first-order volume change).
 example (x : Fin 3 → ℝ) :
-    (smallStrain (displacementGradient
-      (affineDisplacement !![(0:ℝ),0.02,0;0,0,0;0,0,0] 0) x)).trace = 0 := by
-  rw [displacementGradient_affine]
-  unfold smallStrain
-  simp [Matrix.trace, Matrix.diag_apply, Fin.sum_univ_three, Matrix.smul_apply,
-    Matrix.add_apply, Matrix.transpose_apply, smul_eq_mul]
+    (smallStrain (displacementGradient (simpleShearField 0.02) x)).trace = 0 := by
+  rw [simpleShear_smallStrain]
+  simp [Matrix.trace, Fin.sum_univ_three]
+
+-- At `γ = 0` the displacement is zero, and so is the strain.
+example (x : Fin 3 → ℝ) :
+    smallStrain (displacementGradient (simpleShearField 0) x) = 0 := by
+  rw [simpleShear_smallStrain]
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp
 
 /-! ### True strain and true stress -/
 
-example : trueStrain 0.1 = Real.log 1.1 := by
-  unfold trueStrain
+example : trueStrain 0.1 (by norm_num) = Real.log 1.1 := by
+  rw [trueStrain_eq]
   congr 1
   norm_num
 
-example : 0 < trueStrain 0.1 ∧ trueStrain 0.1 < 0.1 := by
+example : 0 < trueStrain 0.1 (by norm_num) ∧ trueStrain 0.1 (by norm_num) < 0.1 := by
   constructor
-  · have h := trueStrain_lower 0.1 (by norm_num)
+  · have h := logStrain_lower 0.1 (by norm_num)
     have hpos : (0:ℝ) < 0.1/(1+0.1) := by norm_num
-    linarith
-  · exact trueStrain_lt 0.1 (by norm_num) (by norm_num)
+    exact lt_of_lt_of_le hpos h
+  · exact logStrain_lt 0.1 (by norm_num) (by norm_num)
 
 example : engStress 1000 10 = 100 := by
   unfold engStress
@@ -225,9 +226,11 @@ example : ¬ IsSymmetricStress !![(0:ℝ),1;0,0] := by
   rw [heq] at h01
   simp at h01
 
--- True strain is not defined at `e = -1`: the domain hypothesis fails and `1 + e = 0`.
+-- True strain is not defined at `e = -1`: `trueStrain (-1)` needs a proof of `-1 < -1`.
 example : ¬ (-1:ℝ) < -1 := by norm_num
 
-example : (1:ℝ) + (-1) = 0 := by norm_num
+-- The unrestricted helper totalizes there: `logStrain (-1) = Real.log 0 = 0`.
+example : logStrain (-1) = 0 := by
+  simp [logStrain]
 
 end PhyslibExtTest.CondensedMatter.Elasticity.StressStrain

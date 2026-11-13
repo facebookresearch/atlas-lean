@@ -39,9 +39,9 @@ for Hermitian matrices (`Matrix.IsHermitian.spectral_theorem`, reused, not re-pr
 principal stresses, an orthonormal eigenbasis, and the spectral decomposition; for real symmetric
 matrices conjugation by the eigenvector unitary is conjugation by an orthogonal matrix. The
 invariants `I₁ = trace σ`, `I₂ = (trace² - trace σ²)/2`, `I₃ = det σ` are invariant under
-orthogonal conjugation by trace/determinant cyclicity. The split `σ = p • 1 + s` with
-`p = trace σ / 3` is unique and orthogonal for the Frobenius inner product
-`⟨A, B⟩ = trace (Aᵀ * B)`.
+orthogonal conjugation by trace/determinant cyclicity. The split `σ = σₘ • 1 + s` with mean
+(hydrostatic) stress `σₘ = trace σ / 3` is unique and orthogonal for the Frobenius inner product
+`⟨A, B⟩ = trace (Aᵀ * B)`. With tension positive, the pressure is `-σₘ`.
 
 In 2D, `R θ` rotates the coordinate axes by `θ` (the physical rotation by `-θ`), which is the
 convention for which the standard transformation formulas for `σ₂' = R θ * σ₂ * (R θ)ᵀ` hold.
@@ -52,9 +52,12 @@ argument), not separately proved here.
 
 Small strain `ε = (H + Hᵀ)/2` is the symmetrized displacement gradient, a stated small-strain
 approximation; it is symmetric, vanishes for infinitesimal rigid motions, and finite rotations are
-not in this module's scope. Engineering shear is `γ_xy = 2 ε_xy`. True strain `ln(1+e)` comes
-with upper and lower bounds on `e > -1`, and true stress `σ = s(1+e)` follows from the volume-
-constancy model hypothesis for uniaxial incompressible deformation.
+not in this module's scope. Engineering shear is `γ_xy = 2 ε_xy`; the simple-shear displacement
+`u(x) = (γ x₁, 0, 0)` has strain `ε₀₁ = ε₁₀ = γ/2` and no other entries. True strain `ln(1+e)` is
+defined only for `e > -1`: `trueStrain` takes a proof of `-1 < e`, while the unrestricted helper
+`logStrain` (which Lean totalizes, e.g. `logStrain (-1) = Real.log 0 = 0`) carries the upper and
+lower bounds on `e > -1`. True stress `σ = s(1+e)` follows from the volume-constancy model
+hypothesis for uniaxial incompressible deformation.
 
 No constitutive law (no Hooke's law or elasticity tensor), no finite-strain measures, no
 yield/failure criteria, and no beam or pressure-vessel applications.
@@ -69,8 +72,9 @@ yield/failure criteria, and no beam or pressure-vessel applications.
 - `Elasticity.stressInvariant1_conjugate`, `Elasticity.stressInvariant2_conjugate`,
   `Elasticity.stressInvariant3_conjugate` : invariance of `I₁`, `I₂`, `I₃` under orthogonal
   conjugation.
-- `Elasticity.stress_split`, `Elasticity.trace_deviatoric`, `Elasticity.stress_split_unique`,
-  `Elasticity.stress_split_orthogonal` : the unique orthogonal hydrostatic/deviatoric split.
+- `Elasticity.meanStress`, `Elasticity.stress_split`, `Elasticity.trace_deviatoric`,
+  `Elasticity.stress_split_unique`, `Elasticity.stress_split_orthogonal` : the unique orthogonal
+  split into mean (hydrostatic) stress and deviatoric stress.
 - `Elasticity.rotatedStress2_00`, `Elasticity.rotatedStress2_11`,
   `Elasticity.rotatedStress2_01` : the 2D stress transformation formulas.
 - `Elasticity.mohr_circle` : Mohr's circle equation.
@@ -79,10 +83,12 @@ yield/failure criteria, and no beam or pressure-vessel applications.
 - `Elasticity.smallStrain_symmetric` : small strain is symmetric.
 - `Elasticity.displacementGradient_affine` : the gradient of an affine field is its matrix.
 - `Elasticity.smallStrain_rigid` : infinitesimal rigid motions have zero small strain.
-- `Elasticity.simpleShear_strain`, `Elasticity.simpleShear_engineering` : tensor and engineering
-  shear of simple shear.
-- `Elasticity.trueStrain_le`, `Elasticity.trueStrain_lt`, `Elasticity.trueStrain_lower` : upper
-  and lower bounds for true strain.
+- `Elasticity.simpleShear_smallStrain`, `Elasticity.simpleShear_strain`,
+  `Elasticity.simpleShear_engineering` : the full strain tensor, tensor shear, and engineering
+  shear of the simple-shear displacement.
+- `Elasticity.trueStrain` : true strain on its domain `e > -1`.
+- `Elasticity.logStrain_le`, `Elasticity.logStrain_lt`, `Elasticity.logStrain_lower` : upper
+  and lower bounds for `ln(1+e)` on `e > -1`, which is `trueStrain` there.
 - `Elasticity.trueStress_of_volumeConstancy` : `σ_true = s(1+e)` from volume constancy.
 
 ## iii. Table of contents
@@ -216,20 +222,21 @@ lemma stressInvariant3_conjugate (σ Q : Matrix (Fin 3) (Fin 3) ℝ)
     _ = σ.det * (Q.det * Q.det) := by rw [Matrix.det_transpose]; ring
     _ = σ.det := by rw [hd, mul_one]
 
-/-- Hydrostatic pressure (mean normal stress) `p = trace σ / 3`. -/
-noncomputable def hydrostaticPressure (σ : Matrix (Fin 3) (Fin 3) ℝ) : ℝ := σ.trace / 3
+/-- Mean (hydrostatic) stress `σₘ = trace σ / 3`. Stress is tension-positive, so this is not a
+pressure: the pressure is `-σₘ`. -/
+noncomputable def meanStress (σ : Matrix (Fin 3) (Fin 3) ℝ) : ℝ := σ.trace / 3
 
-/-- Deviatoric stress `s = σ - p • 1`. -/
+/-- Deviatoric stress `s = σ - σₘ • 1`. -/
 noncomputable def deviatoricStress (σ : Matrix (Fin 3) (Fin 3) ℝ) : Matrix (Fin 3) (Fin 3) ℝ :=
-  σ - hydrostaticPressure σ • 1
+  σ - meanStress σ • 1
 
 /-- Helper: the 3x3 identity has trace 3. -/
 lemma trace_one_fin3 : (1 : Matrix (Fin 3) (Fin 3) ℝ).trace = 3 := by
   simp [Matrix.trace_one, Fintype.card_fin]
 
-/-- The hydrostatic/deviatoric split reconstructs `σ`. -/
+/-- The mean-stress/deviatoric split reconstructs `σ`. -/
 lemma stress_split (σ : Matrix (Fin 3) (Fin 3) ℝ) :
-    σ = hydrostaticPressure σ • 1 + deviatoricStress σ := by
+    σ = meanStress σ • 1 + deviatoricStress σ := by
   unfold deviatoricStress
   rw [add_comm]
   exact (sub_add_cancel σ _).symm
@@ -237,21 +244,21 @@ lemma stress_split (σ : Matrix (Fin 3) (Fin 3) ℝ) :
 /-- The deviatoric stress is traceless. -/
 lemma trace_deviatoric (σ : Matrix (Fin 3) (Fin 3) ℝ) :
     (deviatoricStress σ).trace = 0 := by
-  unfold deviatoricStress hydrostaticPressure
+  unfold deviatoricStress meanStress
   rw [Matrix.trace_sub, Matrix.trace_smul, trace_one_fin3, smul_eq_mul]
   ring
 
-/-- The hydrostatic/deviatoric split is unique. -/
+/-- The mean-stress/deviatoric split is unique. -/
 lemma stress_split_unique (σ : Matrix (Fin 3) (Fin 3) ℝ) (p₁ : ℝ)
     (s₁ : Matrix (Fin 3) (Fin 3) ℝ)
     (hdecomp : σ = p₁ • 1 + s₁) (htr : s₁.trace = 0) :
-    p₁ = hydrostaticPressure σ ∧ s₁ = deviatoricStress σ := by
+    p₁ = meanStress σ ∧ s₁ = deviatoricStress σ := by
   have htrσ : σ.trace = p₁ * 3 := by
     have h := congrArg Matrix.trace hdecomp
     rw [Matrix.trace_add, Matrix.trace_smul, trace_one_fin3, htr] at h
     simpa [smul_eq_mul] using h
-  have hp : p₁ = hydrostaticPressure σ := by
-    unfold hydrostaticPressure
+  have hp : p₁ = meanStress σ := by
+    unfold meanStress
     rw [htrσ]
     ring
   refine ⟨hp, ?_⟩
@@ -260,12 +267,12 @@ lemma stress_split_unique (σ : Matrix (Fin 3) (Fin 3) ℝ) (p₁ : ℝ)
 
 /-- The split is orthogonal for the Frobenius inner product `⟨A, B⟩ = trace (Aᵀ * B)`. -/
 lemma stress_split_orthogonal (σ : Matrix (Fin 3) (Fin 3) ℝ) :
-    ((hydrostaticPressure σ • 1)ᵀ * deviatoricStress σ).trace = 0 := by
-  have hT : (hydrostaticPressure σ • (1 : Matrix (Fin 3) (Fin 3) ℝ))ᵀ
-      = hydrostaticPressure σ • 1 := by
+    ((meanStress σ • 1)ᵀ * deviatoricStress σ).trace = 0 := by
+  have hT : (meanStress σ • (1 : Matrix (Fin 3) (Fin 3) ℝ))ᵀ
+      = meanStress σ • 1 := by
     rw [Matrix.transpose_smul, Matrix.transpose_one]
-  have hmul : (hydrostaticPressure σ • 1) * deviatoricStress σ
-      = hydrostaticPressure σ • deviatoricStress σ := by
+  have hmul : (meanStress σ • 1) * deviatoricStress σ
+      = meanStress σ • deviatoricStress σ := by
     rw [smul_mul_assoc, one_mul]
   rw [hT, hmul, Matrix.trace_smul, trace_deviatoric, smul_zero]
 
@@ -452,9 +459,22 @@ lemma smallStrain_rigid (W : Matrix (Fin 3) (Fin 3) ℝ) (x : Fin 3 → ℝ)
 /-- Engineering shear strain `γ_xy = 2 ε_xy`. -/
 def engineeringShear (ε : Matrix (Fin 3) (Fin 3) ℝ) : ℝ := 2 * ε 0 1
 
-/-- Simple shear field with amount `γ`: `(x₀ + γ x₁, x₁, x₂)`. -/
+/-- Simple-shear displacement field with amount `γ`: `u(x) = (γ x₁, 0, 0)`, so the deformation
+is `x ↦ x + u x = (x₀ + γ x₁, x₁, x₂)`. -/
 def simpleShearField (γ : ℝ) : (Fin 3 → ℝ) → (Fin 3 → ℝ) :=
-  affineDisplacement !![1, γ, 0; 0, 1, 0; 0, 0, 1] 0
+  affineDisplacement !![0, γ, 0; 0, 0, 0; 0, 0, 0] 0
+
+/-- The full small-strain tensor of simple shear: `ε₀₁ = ε₁₀ = γ/2` and every other entry `0`.
+In particular it is traceless and vanishes at `γ = 0`. -/
+lemma simpleShear_smallStrain (γ : ℝ) (x : Fin 3 → ℝ) :
+    smallStrain (displacementGradient (simpleShearField γ) x) =
+      !![0, γ / 2, 0; γ / 2, 0, 0; 0, 0, 0] := by
+  unfold simpleShearField
+  rw [displacementGradient_affine]
+  unfold smallStrain
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [Matrix.smul_apply, Matrix.add_apply, Matrix.transpose_apply] <;> ring
 
 /-- Simple shear produces tensor shear `ε₀₁ = γ/2`, i.e. engineering shear `γ`. -/
 lemma simpleShear_strain (γ : ℝ) (x : Fin 3 → ℝ) :
@@ -474,27 +494,37 @@ lemma simpleShear_engineering (γ : ℝ) (x : Fin 3 → ℝ) :
   rw [simpleShear_strain]
   ring
 
-/-- True (logarithmic) strain `ε_true = ln(1 + e)`. -/
-noncomputable def trueStrain (e : ℝ) : ℝ := Real.log (1 + e)
+/-- The logarithmic helper `ln(1 + e)`, for every real `e`. Lean totalizes `Real.log`, so it
+also assigns values outside the physical domain, e.g. `logStrain (-1) = Real.log 0 = 0`; the
+physical true strain is `trueStrain`, which requires `-1 < e`. -/
+noncomputable def logStrain (e : ℝ) : ℝ := Real.log (1 + e)
 
-/-- True strain vanishes at zero engineering strain. -/
-lemma trueStrain_zero : trueStrain 0 = 0 := by
-  simp [trueStrain]
+/-- True (logarithmic) strain `ε_true = ln(1 + e)`, defined only on the physical domain
+`e > -1` (the proof argument). It is `logStrain e` there, so `logStrain_le`, `logStrain_lt`
+and `logStrain_lower` bound it. -/
+noncomputable def trueStrain (e : ℝ) (_he : -1 < e) : ℝ := logStrain e
+
+/-- On its domain, true strain is `ln(1 + e)`. -/
+lemma trueStrain_eq (e : ℝ) (he : -1 < e) : trueStrain e he = Real.log (1 + e) := rfl
+
+/-- The logarithmic strain vanishes at zero engineering strain. -/
+lemma logStrain_zero : logStrain 0 = 0 := by
+  simp [logStrain]
 
 /-- The true-strain argument is positive when `e > -1`. -/
 lemma trueStrain_pos_arg (e : ℝ) (he : -1 < e) : (0 : ℝ) < 1 + e := by
   linarith
 
 /-- Upper bound: `ln(1+e) ≤ e` for `e > -1`. -/
-lemma trueStrain_le (e : ℝ) (he : -1 < e) : trueStrain e ≤ e := by
-  unfold trueStrain
+lemma logStrain_le (e : ℝ) (he : -1 < e) : logStrain e ≤ e := by
+  unfold logStrain
   have hpos : (0 : ℝ) < 1 + e := by linarith
   have h := Real.log_le_sub_one_of_pos hpos
   linarith [h]
 
 /-- Strict upper bound: `ln(1+e) < e` for `e > -1`, `e ≠ 0`. -/
-lemma trueStrain_lt (e : ℝ) (he : -1 < e) (hne : e ≠ 0) : trueStrain e < e := by
-  unfold trueStrain
+lemma logStrain_lt (e : ℝ) (he : -1 < e) (hne : e ≠ 0) : logStrain e < e := by
+  unfold logStrain
   have hpos : (0 : ℝ) < 1 + e := by linarith
   have hne1 : (1 + e : ℝ) ≠ 1 := by
     intro hcon
@@ -504,8 +534,8 @@ lemma trueStrain_lt (e : ℝ) (he : -1 < e) (hne : e ≠ 0) : trueStrain e < e :
   linarith [h]
 
 /-- Lower bound: `e/(1+e) ≤ ln(1+e)` for `e > -1`. -/
-lemma trueStrain_lower (e : ℝ) (he : -1 < e) : e / (1 + e) ≤ trueStrain e := by
-  unfold trueStrain
+lemma logStrain_lower (e : ℝ) (he : -1 < e) : e / (1 + e) ≤ logStrain e := by
+  unfold logStrain
   have hpos : (0 : ℝ) < 1 + e := by linarith
   have hne : (1 + e : ℝ) ≠ 0 := ne_of_gt hpos
   have hpos' : (0 : ℝ) < (1 + e)⁻¹ := by positivity
