@@ -139,6 +139,19 @@ private lemma hd₁ : ∀ l : Fin 2, l ≤ (0 : Fin 2) → l ≤ (0 : Fin 2) →
   rw [Fin.sum_univ_one, cellMean_inl, cellMean_inr]
   norm_num
 
+/-- At horizon `1` the at-risk mass is `P(T ≥ 1) P(C ≥ 1) = 1/2 · 1`, computed from the
+definitions. -/
+private lemma causeAtRiskMass_one : causeAtRiskMass μ₁ 1 = 1 / 2 := by
+  rw [μ₁, causeAtRiskMass_indepCauseLaw_eq, survivalMass_eq_sum, survivalMass_eq_sum]
+  have h : univ.filter (fun t : Fin 2 => (1 : Fin 2) ≤ t) = {1} := by decide
+  rw [h, sum_singleton, sum_singleton, toReal_map_fst_apply, Fin.sum_univ_one]
+  simp [pTJ, pC, PMF.ofFintype_apply]
+
+/-- The `hd` discharge is non-vacuous: at horizon `1` the hypothesis `d_0 ≠ y_0` follows from
+`P(X ≥ 1) = 1/2 ≠ 0` alone, and agrees with the direct computation `d_0 = 1/2 ≠ 1 = y_0`. -/
+example : ∑ c, cellMean μ₁ (Sum.inl ((0 : Fin 2), c)) ≠ cellMean μ₁ (Sum.inr 0) :=
+  sum_cellMean_inl_ne_inr_of_lt (m := 1) (by decide) (by rw [causeAtRiskMass_one]; norm_num)
+
 private lemma filter_zero : univ.filter (fun l : Fin 2 => l ≤ 0 ∧ l ≤ 0) = {0} := by decide
 
 /-- The Kaplan–Meier survival at `0` of the mean cell vector is `1 - 1/2 = 1/2`. -/

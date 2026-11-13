@@ -58,21 +58,26 @@ coordinates of the mean cell vector `cellMean μ` (`X = min T C`, `δ = 1[T ≤ 
 Fixed grid and horizon `m` with `P(X ≥ m) ≠ 0`, the hypotheses of the merged joint CLT. The
 general closed form `covariance_influence_eq_incrementCov` needs nothing more. The explicit
 entry formulas assume `d_l ≠ y_l` at the grid indices `l ≤ j ∧ j'` they sum over, the domain of
-the textbook denominators `y_l - d_l`. These are population (asymptotic) covariances at the mean
+the textbook denominators `y_l - d_l`. For `l < m` this is automatic
+(`sum_cellMean_inl_ne_inr_of_lt`: `y_l - d_l ≥ P(X ≥ m) > 0`), so the hypothesis only binds at
+`l = j = j' = m`. These are population (asymptotic) covariances at the mean
 cell vector; the plug-in identification of Greenwood's data *estimate*
 `KaplanMeier.CensoredData.greenwoodVariance` with `n⁻¹` times this formula at the empirical cell
 means is not stated here.
 
 ## References
 
-* M. Greenwood, *The natural duration of cancer*, Reports on Public Health and Medical Subjects
-  33, HMSO, London (1926).
-* O. O. Aalen and S. Johansen, *An empirical transition matrix for non-homogeneous Markov chains
-  based on censored observations*, Scand. J. Statist. 5 (1978), 141–150.
-* P. K. Andersen, Ø. Borgan, R. D. Gill and N. Keiding, *Statistical Models Based on Counting
+Bibliographic details and section/theorem numbers below are as recalled and have not been
+checked against the printed sources (no page numbers are given); read them as "cf.".
+
+* cf. M. Greenwood, *The natural duration of cancer*, Reports on Public Health and Medical
+  Subjects 33, HMSO, London (1926).
+* cf. O. O. Aalen and S. Johansen, *An empirical transition matrix for non-homogeneous Markov
+  chains based on censored observations*, Scand. J. Statist. 5 (1978), 141–150.
+* cf. P. K. Andersen, Ø. Borgan, R. D. Gill and N. Keiding, *Statistical Models Based on Counting
   Processes*, Springer (1993), Section IV.3 (Kaplan–Meier, Greenwood's formula) and Section IV.4
   (Aalen–Johansen, asymptotic covariance).
-* A. W. van der Vaart, *Asymptotic Statistics* (1998), Theorem 3.1 (delta method).
+* cf. A. W. van der Vaart, *Asymptotic Statistics* (1998), Theorem 3.1 (delta method).
 -/
 
 @[expose] public section
@@ -541,6 +546,42 @@ private lemma gram_summand (e α α' : Fin r → ℝ) (B B' y : ℝ) :
       simp only [mul_sum, ← sum_sub_distrib]
       exact sum_congr rfl fun x _ => by ring
   rw [h1, h2, h2]
+
+/-- **The textbook denominator is positive before the horizon.** If `P(X ≥ m) ≠ 0` and `l < m`,
+then `d_l ≠ y_l`: indeed `y_l - d_l = P(X > l) + P(X = l, δ = 0) ≥ P(X ≥ m) > 0`. This discharges
+the hypothesis `hd` of `covariance_influence_km`, `covariance_influence_aj` and
+`covariance_influence_km_aj` at every summed index `l < m`. -/
+theorem sum_cellMean_inl_ne_inr_of_lt [IsFiniteMeasure μ] {l m : Fin k} (hlm : l < m)
+    (hm : causeAtRiskMass μ m ≠ 0) :
+    ∑ c, cellMean μ (Sum.inl (l, c)) ≠ cellMean μ (Sum.inr l) := by
+  classical
+  intro h
+  change ∑ c, causeEventMass μ l c = causeAtRiskMass μ l at h
+  set D : Set ((Fin k × Fin r) × Fin k) := {ω | min ω.1.1 ω.2 = l ∧ ω.1.1 ≤ ω.2}
+  set B : Set ((Fin k × Fin r) × Fin k) := {ω | m ≤ min ω.1.1 ω.2}
+  have hD : ∑ c, causeEventMass μ l c = μ.real D := by
+    have : D = ⋃ c ∈ (univ : Finset (Fin r)),
+        {ω : (Fin k × Fin r) × Fin k | min ω.1.1 ω.2 = l ∧ ω.1.1 ≤ ω.2 ∧ ω.1.2 = c} := by
+      ext ω; simp [D]
+    rw [this, measureReal_biUnion_finset]
+    · rfl
+    · intro c _ c' _ hcc'
+      exact Set.disjoint_left.2 fun ω h1 h2 => hcc' (h1.2.2.symm.trans h2.2.2)
+    · intro c _; exact MeasurableSet.of_discrete
+  have hdisj : Disjoint D B := Set.disjoint_left.2 fun ω h1 h2 =>
+    absurd (h1.1 ▸ h2 : m ≤ l) (not_le.2 hlm)
+  have hsub : D ∪ B ⊆ {ω | l ≤ min ω.1.1 ω.2} := by
+    rintro ω (h1 | h2)
+    · exact h1.1.symm.le
+    · exact hlm.le.trans h2
+  have h1 := measureReal_union (μ := μ) hdisj MeasurableSet.of_discrete
+  have h2 := measureReal_mono (μ := μ) hsub
+  have h3 : (0 : ℝ) ≤ μ.real B := measureReal_nonneg
+  have h4 : μ.real B ≠ 0 := hm
+  rw [h1] at h2
+  change μ.real D + μ.real B ≤ causeAtRiskMass μ l at h2
+  rw [← h, hD] at h2
+  linarith [lt_of_le_of_ne h3 (Ne.symm h4)]
 
 private lemma factor_cellMean_eq [IsFiniteMeasure μ] {l : Fin k}
     (hy : cellMean μ (Sum.inr l) ≠ 0) :
