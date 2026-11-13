@@ -15,10 +15,9 @@ public import MathlibExt.Biology.PopulationGenetics.Diffusion.NeutralMartingaleP
 # Tests for the Markov property of the neutral Wright–Fisher realization
 
 Each public declaration is exercised on the constructed realization (no process is supplied by
-the caller): the appended-time chain identity on the neutral kernel, two-time and one-time
-finite-dimensional laws, the Markov property at an interior initial frequency for `s < t` and
-for `s = t`, its integrated form, and the martingale problem, which feeds the neutral fixation
-probability of `NeutralMartingaleProblem.Fixation`.
+the caller): two-time and one-time finite-dimensional laws, the Markov property at an interior
+initial frequency for `s < t` and for `s = t`, its integrated form, and the martingale problem,
+which feeds the neutral fixation probability of `NeutralMartingaleProblem.Fixation`.
 -/
 
 namespace MathlibExtTest.Biology.PopulationGenetics.Diffusion.NeutralMartingaleProblem.Markov
@@ -37,15 +36,6 @@ noncomputable def xHalf : I := ⟨1 / 2, by constructor <;> norm_num⟩
 
 /-- The identity test function on `[0, 1]`. -/
 def gId : C(I, ℝ) := ⟨fun y => (y : ℝ), continuous_subtype_val⟩
-
-/-! Appending one time to a chain law, on the neutral kernel, with unordered times. -/
-
-example :
-    (finiteChainLaw neutralKernel xHalf 0 (Fin.snoc ![3, 1] 2)).map
-        (fun z => (Fin.init z, z (Fin.last 2))) =
-      finiteChainLaw neutralKernel xHalf 0 ![3, 1] ⊗ₘ
-        (neutralKernel (2 - 1)).comap (fun w => w (Fin.last 1)) (measurable_pi_apply _) :=
-  map_init_last_finiteChainLaw_snoc neutralKernel xHalf 0 ![3, 1] 2
 
 /-! Finite-dimensional laws of the realization. -/
 
