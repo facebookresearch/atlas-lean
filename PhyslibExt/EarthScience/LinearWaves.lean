@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+public import PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves
 
 /-!
 # Linear waves and oscillations
@@ -19,6 +20,9 @@ comparing them.
 
 ## i. Overview
 
+The wave is the repository's plane-wave model
+`PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves.planeWave A k omega x t
+= A * cos (k * x - omega * t)` with `omega = c * k`, i.e. `planeWave A k (c * k)`.
 Derivatives are iterated `deriv` with the other variable held fixed. The
 first-derivative helpers are stated as separate lemmas so the second
 derivatives can be computed by rewriting the inner derivative. Zero
@@ -36,6 +40,8 @@ amplitude and zero wavenumber are allowed.
 
 ## iv. References
 
+- `PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves.planeWave`, the
+  plane-wave model.
 - `HasDerivAt.cos` / `HasDerivAt.sin` in
   `Mathlib/Analysis/SpecialFunctions/Trigonometric/Deriv.lean` (Mathlib).
 
@@ -46,10 +52,13 @@ amplitude and zero wavenumber are allowed.
 
 namespace EarthScience
 
-/-- First time derivative of the travelling wave. -/
+open PhyslibExt.Electromagnetism.ElectrostaticsAndLinearWaves (planeWave)
+
+/-- First time derivative of the travelling wave `planeWave A k (c * k)`. -/
 theorem wave_first_deriv_time (A k c x t : ℝ) :
-    deriv (fun t' => A * Real.cos (k * x - c * k * t')) t =
+    deriv (fun t' => planeWave A k (c * k) x t') t =
       A * (-Real.sin (k * x - c * k * t)) * (-(c * k)) := by
+  unfold planeWave
   have hlin : HasDerivAt (fun t' : ℝ => k * x - c * k * t') (-(c * k)) t := by
     have h1 : HasDerivAt (fun t' : ℝ => t') 1 t := hasDerivAt_id' t
     have h2 := h1.const_mul (c * k)
@@ -61,10 +70,11 @@ theorem wave_first_deriv_time (A k c x t : ℝ) :
       A * (-Real.sin (k * x - c * k * t) * (-(c * k))) := hmul.deriv
   linear_combination h
 
-/-- First space derivative of the travelling wave. -/
+/-- First space derivative of the travelling wave `planeWave A k (c * k)`. -/
 theorem wave_first_deriv_space (A k c x t : ℝ) :
-    deriv (fun x' => A * Real.cos (k * x' - c * k * t)) x =
+    deriv (fun x' => planeWave A k (c * k) x' t) x =
       A * (-Real.sin (k * x - c * k * t)) * k := by
+  unfold planeWave
   have hlin : HasDerivAt (fun x' : ℝ => k * x' - c * k * t) k x := by
     have h1 : HasDerivAt (fun x' : ℝ => x') 1 x := hasDerivAt_id' x
     have h2 := h1.const_mul k
@@ -77,10 +87,11 @@ theorem wave_first_deriv_space (A k c x t : ℝ) :
   linear_combination h
 
 /-- Second time derivative of the travelling wave
-`u(t, x) = A cos (k x - c k t)` at fixed `x`. -/
+`u(t, x) = planeWave A k (c * k) x t = A cos (k x - c k t)` at fixed `x`. -/
 theorem wave_second_deriv_time (A k c x t : ℝ) :
-    deriv (fun t => deriv (fun t' => A * Real.cos (k * x - c * k * t')) t) t =
-      -(c * k) ^ 2 * (A * Real.cos (k * x - c * k * t)) := by
+    deriv (fun t => deriv (fun t' => planeWave A k (c * k) x t') t) t =
+      -(c * k) ^ 2 * planeWave A k (c * k) x t := by
+  unfold planeWave
   have h1 : ∀ s : ℝ, deriv (fun t' => A * Real.cos (k * x - c * k * t')) s =
       A * (-Real.sin (k * x - c * k * s)) * (-(c * k)) :=
     fun s => wave_first_deriv_time A k c x s
@@ -102,10 +113,11 @@ theorem wave_second_deriv_time (A k c x t : ℝ) :
   linear_combination h
 
 /-- Second space derivative of the travelling wave
-`u(t, x) = A cos (k x - c k t)` at fixed `t`. -/
+`u(t, x) = planeWave A k (c * k) x t = A cos (k x - c k t)` at fixed `t`. -/
 theorem wave_second_deriv_space (A k c x t : ℝ) :
-    deriv (fun x => deriv (fun x' => A * Real.cos (k * x' - c * k * t)) x) x =
-      -(k ^ 2) * (A * Real.cos (k * x - c * k * t)) := by
+    deriv (fun x => deriv (fun x' => planeWave A k (c * k) x' t) x) x =
+      -(k ^ 2) * planeWave A k (c * k) x t := by
+  unfold planeWave
   have h1 : ∀ s : ℝ, deriv (fun x' => A * Real.cos (k * x' - c * k * t)) s =
       A * (-Real.sin (k * s - c * k * t)) * k :=
     fun s => wave_first_deriv_space A k c s t
@@ -125,12 +137,12 @@ theorem wave_second_deriv_space (A k c x t : ℝ) :
       (A * (-(Real.cos (k * x - c * k * t) * k))) * k := hmc.deriv
   linear_combination h
 
-/-- The travelling wave `u(t, x) = A cos (k x - c k t)` solves the wave
-equation `u_tt = c² u_xx`: the second time derivative equals `c²` times
-the second space derivative. -/
+/-- The travelling wave `u(t, x) = planeWave A k (c * k) x t = A cos (k x - c k t)`
+solves the wave equation `u_tt = c² u_xx`: the second time derivative equals
+`c²` times the second space derivative. -/
 theorem wave_travelling_solves (A k c x t : ℝ) :
-    deriv (fun t => deriv (fun t' => A * Real.cos (k * x - c * k * t')) t) t =
-      c ^ 2 * deriv (fun x => deriv (fun x' => A * Real.cos (k * x' - c * k * t)) x) x := by
+    deriv (fun t => deriv (fun t' => planeWave A k (c * k) x t') t) t =
+      c ^ 2 * deriv (fun x => deriv (fun x' => planeWave A k (c * k) x' t) x) x := by
   rw [wave_second_deriv_time, wave_second_deriv_space]
   ring
 
