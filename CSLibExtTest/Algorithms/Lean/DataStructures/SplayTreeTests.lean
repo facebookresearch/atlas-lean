@@ -188,6 +188,22 @@ example (x : Nat) :
 #check SplayTree.contains_eq_true_iff
 
 #print axioms SplayTree.inorder_splay
+/-! ### Which splay variant runs -/
+
+/-- The left path `4, 3, 2, 1`. -/
+public def leftPath4 : BinaryTree Nat :=
+  .node 4 (.node 3 (.node 2 (.node 1 .nil .nil) .nil) .nil) .nil
+
+/-- Rotations are paired from the root down: the single zig happens at the
+bottom (1 over 2), then a zig-zig lifts 1 over 3 and 4. -/
+example : SplayTree.splay 1 leftPath4 =
+    .node 1 .nil (.node 3 (.node 2 .nil .nil) (.node 4 .nil .nil)) := by decide
+
+/-- Sleator-Tarjan bottom-up splaying (zig-zig at the bottom, zig at the
+root) would give a different tree. -/
+example : SplayTree.splay 1 leftPath4 ≠
+    .node 1 .nil (.node 4 (.node 2 .nil (.node 3 .nil .nil)) .nil) := by decide
+
 #print axioms SplayTree.mem_splay
 #print axioms SplayTree.numNodes_splay
 #print axioms SplayTree.ordered_splay
@@ -201,5 +217,19 @@ example (x : Nat) :
 #print axioms SplayTree.ordered_insert
 #print axioms SplayTree.root?_insert
 #print axioms SplayTree.contains_eq_true_iff
+
+/-! ### Pairing from the root on an odd-depth search (Codex execution idea) -/
+
+/-- A right path of odd search depth for keys `11` and `12`. -/
+private def rightPath : BinaryTree Nat :=
+  .node 2 .nil (.node 5 .nil (.node 8 .nil (leaf 11)))
+
+/-- Splaying the present key `11` pairs rotations from the root. -/
+example : SplayTree.splay 11 rightPath =
+    .node 11 (.node 5 (leaf 2) (leaf 8)) .nil := by decide
+
+/-- Splaying the absent key `12` ends with the last-visited node `11` at the root. -/
+example : SplayTree.splay 12 rightPath =
+    .node 11 (.node 5 (leaf 2) (leaf 8)) .nil := by decide
 
 end Cslib.Algorithms.Lean.SplayTreeTests
