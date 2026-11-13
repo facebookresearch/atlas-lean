@@ -36,7 +36,9 @@ of loadings up to a global sign with equal error variances. Gaussian
 loading-model bridge connecting the psychometric model to its observation law.
 Multi-group linear factor model after Wu and Estabrook (2016): affine
 reparametrization invariance of means, covariances and Gaussian laws, with
-strong-invariance constraints identifying the transform.
+strong-invariance constraints identifying the transform, and two-group
+indeterminacy: without such constraints, group-specific transforms keep every
+group's law while making equal latent means unequal.
 -/
 
 namespace MathlibExt.Probability.Statistics.Measurement
@@ -446,33 +448,40 @@ public theorem transformedMeans_agree_iff_of_common {ι κ : Type*}
   · intro h
     rw [h]
 
-/-- Two-group affine indeterminacy, joint form (Wu and Estabrook (2016),
-Section 3.1): parameterization `A` has equal factor means across the two
-groups, while parameterization `B` applies independent group-specific affine
-transforms `U g`, `β g` to loadings, intercepts, factor means and covariances.
-Both per-group observed Gaussian laws agree, yet the factor means are equal in
-`A` and unequal in `B`; proved via per-group instantiation of the universal
-single-group theorem `multivariateGaussian_factorModel_transform`. -/
+/-- Two-group affine indeterminacy (Wu and Estabrook (2016), Section 3.1): for
+any loadings `Λ`, intercepts `ν`, factor covariance `Φ`, error covariance `Θ`
+and a factor mean `a` shared by both groups (parameterization `A`, equal latent
+means), there are invertible group-specific affine transforms `U g`, `β g`
+(parameterization `B`) under which each group's Gaussian observation law is
+unchanged while the transformed factor means of the two groups differ. Without
+invariance constraints the observed laws therefore cannot decide whether the
+latent means are equal. The witness is `U g = 1`, `β 0 = 0` and `β 1 = 1`; the
+law equalities are `multivariateGaussian_factorModel_transform`. -/
 public theorem twoGroup_affine_indeterminacy {ι κ : Type*}
-    [Fintype ι] [Fintype κ] [DecidableEq ι] [DecidableEq κ]
-    (Λ : Matrix ι κ ℝ) (ν : ι → ℝ) (a : Fin 2 → (κ → ℝ))
-    (Φ : Matrix κ κ ℝ) (Θ : Matrix ι ι ℝ)
-    (U : Fin 2 → Matrix κ κ ℝ) (β : Fin 2 → (κ → ℝ))
-    (hU : ∀ g, IsUnit (U g).det)
-    (hEq : a 0 = a 1)
-    (hNe : (U 0)⁻¹ *ᵥ (a 0 - β 0) ≠ (U 1)⁻¹ *ᵥ (a 1 - β 1)) :
-    (∀ g, ProbabilityTheory.multivariateGaussian
-        ((WithLp.equiv 2 _).symm (factorModelMean ν Λ (a g)))
-        (factorModelCov Λ Φ Θ)
-      = ProbabilityTheory.multivariateGaussian
-        ((WithLp.equiv 2 _).symm
-          (factorModelMean (ν + Λ *ᵥ β g) (Λ * U g)
-            ((U g)⁻¹ *ᵥ (a g - β g))))
-        (factorModelCov (Λ * U g) ((U g)⁻¹ * Φ * (U g)⁻¹ᵀ) Θ))
-    ∧ a 0 = a 1
-    ∧ (U 0)⁻¹ *ᵥ (a 0 - β 0) ≠ (U 1)⁻¹ *ᵥ (a 1 - β 1) := by
-  refine ⟨fun g => multivariateGaussian_factorModel_transform Λ ν (a g) Φ Θ
-    (U g) (β g) (hU g), hEq, hNe⟩
+    [Fintype ι] [Fintype κ] [DecidableEq ι] [DecidableEq κ] [Nonempty κ]
+    (Λ : Matrix ι κ ℝ) (ν : ι → ℝ) (a : κ → ℝ)
+    (Φ : Matrix κ κ ℝ) (Θ : Matrix ι ι ℝ) :
+    ∃ (U : Fin 2 → Matrix κ κ ℝ) (β : Fin 2 → (κ → ℝ)),
+      (∀ g, IsUnit (U g).det) ∧
+      (∀ g, ProbabilityTheory.multivariateGaussian
+          ((WithLp.equiv 2 _).symm (factorModelMean ν Λ a))
+          (factorModelCov Λ Φ Θ)
+        = ProbabilityTheory.multivariateGaussian
+          ((WithLp.equiv 2 _).symm
+            (factorModelMean (ν + Λ *ᵥ β g) (Λ * U g) ((U g)⁻¹ *ᵥ (a - β g))))
+          (factorModelCov (Λ * U g) ((U g)⁻¹ * Φ * (U g)⁻¹ᵀ) Θ)) ∧
+      (U 0)⁻¹ *ᵥ (a - β 0) ≠ (U 1)⁻¹ *ᵥ (a - β 1) := by
+  obtain ⟨k⟩ := ‹Nonempty κ›
+  have hU : ∀ _g : Fin 2, IsUnit (1 : Matrix κ κ ℝ).det := fun _ => by
+    rw [Matrix.det_one]
+    exact isUnit_one
+  refine ⟨fun _ => 1, ![0, fun _ => 1], hU, fun g =>
+    multivariateGaussian_factorModel_transform Λ ν a Φ Θ 1 _ (hU g), ?_⟩
+  intro h
+  have hk := congrFun h k
+  simp only [inv_one, Matrix.one_mulVec, Matrix.cons_val_zero, Matrix.cons_val_one,
+    sub_zero, Pi.sub_apply] at hk
+  linarith
 
 end
 

@@ -281,26 +281,28 @@ public theorem explicitCov_three :
     rw [loadingColumn_mul_transpose]
   exact ⟨hmat, hcol⟩
 
-/-- Nonvacuity of the bridge: the three-indicator loading model has the
-stated Gaussian law on the product space. -/
-public theorem bridge_nonvacuous {Ω : Type*} [MeasurableSpace Ω]
-    (P : Measure Ω) [IsProbabilityMeasure P]
-    (X : Ω → EuclideanSpace ℝ (Fin 3))
-    (F : Ω → EuclideanSpace ℝ (Fin 1))
-    (E : Ω → EuclideanSpace ℝ (Fin 3))
-    (μ : EuclideanSpace ℝ (Fin 3))
-    (hFm : Measurable F) (hEm : Measurable E)
-    (hF : Measure.map F P = ProbabilityTheory.multivariateGaussian 0 1)
-    (hE : Measure.map E P = ProbabilityTheory.multivariateGaussian 0
-      (Matrix.diagonal variances3))
-    (hindep : IndepFun F E P)
-    (hX : ∀ᵐ ω ∂P, X ω = μ + (WithLp.equiv 2 _).symm
-      ((loadingColumn loadings3) *ᵥ ((WithLp.equiv 2 _) (F ω))) + E ω)
-    (hψ : ∀ i, 0 ≤ variances3 i) :
-    Measure.map X P = ProbabilityTheory.multivariateGaussian μ
+/-- Nonvacuity of the bridge on an explicit product space: the factor `F` and
+the error `E` are the coordinate projections of
+`N(0, 1) ⊗ N(0, diagonal variances3)`, and the observation `X = μ + Λ F + E` of
+the three-indicator loading model is defined from them. Every hypothesis of
+`gaussian_oneFactor_observation` is discharged: measurability of the
+projections, their Gaussian marginals, their independence, the observation
+equation and nonnegative error variances. -/
+public theorem bridge_nonvacuous (μ : EuclideanSpace ℝ (Fin 3)) :
+    Measure.map (fun ω : EuclideanSpace ℝ (Fin 1) × EuclideanSpace ℝ (Fin 3) =>
+        μ + (WithLp.equiv 2 _).symm
+          ((loadingColumn loadings3) *ᵥ ((WithLp.equiv 2 _) ω.1)) + ω.2)
+      ((ProbabilityTheory.multivariateGaussian 0 1).prod
+        (ProbabilityTheory.multivariateGaussian 0 (Matrix.diagonal variances3)))
+    = ProbabilityTheory.multivariateGaussian μ
       (oneFactorCovariance loadings3 variances3) := by
-  exact gaussian_oneFactor_observation P X F E μ loadings3 variances3
-    hFm hEm hF hE hindep hX hψ
+  refine gaussian_oneFactor_observation _ _ Prod.fst Prod.snd μ loadings3 variances3
+    measurable_fst measurable_snd ?_ ?_ ?_ (ae_of_all _ fun _ => rfl) ?_
+  · rw [Measure.map_fst_prod, measure_univ, one_smul]
+  · rw [Measure.map_snd_prod, measure_univ, one_smul]
+  · exact indepFun_prod measurable_id measurable_id
+  · intro i
+    simp [variances3]
 
 /-- The two-indicator loading models have the same observation law although
 the loadings differ by more than a sign. -/
@@ -407,7 +409,8 @@ public def U_ex : Fin 2 → Matrix (Fin 1) (Fin 1) ℝ := fun _ => 1
 public def b_ex : Fin 2 → (Fin 1 → ℝ) := ![![-1], ![0]]
 
 /-- Original factor means agree, but transformed means `![1]` and `![0]`
-differ: latent comparisons change without invariance. -/
+differ: latent comparisons change without invariance. The per-group laws are
+`multivariateGaussian_factorModel_transform`. -/
 public theorem means_agree_transformed_differ :
     (∀ g, ProbabilityTheory.multivariateGaussian
           ((WithLp.equiv 2 _).symm
@@ -448,9 +451,27 @@ public theorem means_agree_transformed_differ :
       (U_ex 1)⁻¹ *ᵥ (a_ex 1 - b_ex 1) := by
     rw [htrans0, htrans1]
     exact vec_one_ne_zero
-  obtain ⟨hlaws, heq, _hne'⟩ := twoGroup_affine_indeterminacy loadingMat2x1
-    0 a_ex 1 1 U_ex b_ex hU hEq hNe
-  exact ⟨hlaws, heq, htrans0, htrans1, hNe⟩
+  have hlaws := fun g => multivariateGaussian_factorModel_transform loadingMat2x1
+    (0 : Fin 2 → ℝ) (a_ex g) 1 1 (U_ex g) (b_ex g) (hU g)
+  exact ⟨hlaws, hEq, htrans0, htrans1, hNe⟩
+
+/-- `twoGroup_affine_indeterminacy` on the 2-by-1 example with the common factor
+mean `![0]`: it supplies invertible group-specific transforms that keep both
+groups' Gaussian laws and give unequal transformed means. -/
+public theorem twoGroup_indeterminacy_example :
+    ∃ (U : Fin 2 → Matrix (Fin 1) (Fin 1) ℝ) (β : Fin 2 → (Fin 1 → ℝ)),
+      (∀ g, IsUnit (U g).det) ∧
+      (∀ g, ProbabilityTheory.multivariateGaussian
+          ((WithLp.equiv 2 _).symm
+            (factorModelMean (0 : Fin 2 → ℝ) loadingMat2x1 ![0]))
+          (factorModelCov loadingMat2x1 1 1)
+        = ProbabilityTheory.multivariateGaussian
+          ((WithLp.equiv 2 _).symm
+            (factorModelMean ((0 : Fin 2 → ℝ) + loadingMat2x1 *ᵥ β g)
+              (loadingMat2x1 * U g) ((U g)⁻¹ *ᵥ (![0] - β g))))
+          (factorModelCov (loadingMat2x1 * U g) ((U g)⁻¹ * 1 * (U g)⁻¹ᵀ) 1)) ∧
+      (U 0)⁻¹ *ᵥ ((![0] : Fin 1 → ℝ) - β 0) ≠ (U 1)⁻¹ *ᵥ (![0] - β 1) :=
+  twoGroup_affine_indeterminacy loadingMat2x1 0 ![0] 1 1
 
 /-- With zero loadings, common loadings and intercepts hold yet transformed
 means differ: injectivity in `transform_eq_of_common` is necessary. -/
