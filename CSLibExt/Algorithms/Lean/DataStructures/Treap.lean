@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.Algorithms.Lean.DataStructures.CartesianTree
 public import Mathlib.Data.List.Nodup
 public import Mathlib.Data.Nat.Basic
 public import Mathlib.Order.Basic
@@ -24,6 +25,11 @@ universe u v
 This module defines deterministic treap operations. Each node stores an explicit
 priority; no correctness theorem depends on a random source. Insertion and
 deletion are implemented from key splitting and priority-guided merging.
+
+The projections `keyTree` and `priorityTree` keep the shape of a treap and
+forget everything except its keys, respectively its priorities. Through them,
+`Ordered` is `BinarySearchTree.Ordered` (`ordered_keyTree`) and `HeapOrdered` is
+`CartesianTree.HeapOrdered` (`heapOrdered_priorityTree`).
 
 The implementation and proofs were authored for this module. The representation
 style follows `BinarySearchTree` from D123980084; no public treap implementation
@@ -99,7 +105,7 @@ public theorem contents_node {κ : Type u} {ν : Type v}
     (left : Tree κ ν) (key : κ) (value : ν) (priority : Nat) (right : Tree κ ν) :
     contents (.node left key value priority right) =
       contents left ++ (key, value) :: contents right := by
-  show contentsAux left ((key, value) :: contentsAux right []) =
+  change contentsAux left ((key, value) :: contentsAux right []) =
     contentsAux left [] ++ (key, value) :: contentsAux right []
   rw [← List.singleton_append, contentsAux_append]
   conv_lhs => rw [← List.nil_append [(key, value)], contentsAux_append]
@@ -269,7 +275,7 @@ public theorem mem_contents {κ : Type u} {ν : Type v} {key : κ} {value : ν}
     {tree : Tree κ ν} :
     (key, value) ∈ contents tree ↔ ∃ priority, MemNode key value priority tree := by
   induction tree with
-  | empty => simp [contents, contentsAux, contents_node, contentsAux, MemNode]
+  | empty => simp [contents, contentsAux, contentsAux, MemNode]
   | node left rootKey rootValue rootPriority right ihLeft ihRight =>
     simp only [contents_node, List.mem_append, List.mem_cons, ihLeft, ihRight]
     constructor
@@ -288,7 +294,7 @@ public theorem key_mem_contents {κ : Type u} {ν : Type v} {key : κ}
     {tree : Tree κ ν} :
     (∃ value, (key, value) ∈ contents tree) ↔ key ∈ tree := by
   induction tree with
-  | empty => simp [contents, contentsAux, contents_node, contentsAux]
+  | empty => simp [contents, contentsAux, contentsAux]
   | node left rootKey rootValue rootPriority right ihLeft ihRight =>
     simp only [contents_node, List.mem_append, List.mem_cons]
     constructor
@@ -337,7 +343,7 @@ public theorem keys_node {κ : Type u} {ν : Type v}
 public theorem mem_keys {κ : Type u} {ν : Type v} {key : κ} {tree : Tree κ ν} :
     key ∈ keys tree ↔ key ∈ tree := by
   induction tree with
-  | empty => simp [keys, contents, contentsAux, contents_node, contentsAux]
+  | empty => simp [keys, contents, contentsAux, contentsAux]
   | node left rootKey value priority right ihLeft ihRight =>
     simp [keys_node, ihLeft, ihRight, or_left_comm]
 
@@ -346,7 +352,7 @@ public theorem ordered_keys {κ : Type u} {ν : Type v} [LinearOrder κ]
     {tree : Tree κ ν} (hOrdered : Ordered tree) :
     List.Pairwise (· < ·) (keys tree) := by
   induction tree with
-  | empty => simp [keys, contents, contentsAux, contents_node, contentsAux]
+  | empty => simp [keys, contents, contentsAux, contentsAux]
   | node left key value priority right ihLeft ihRight =>
     rcases hOrdered with ⟨hLeft, hRight, hKeysLeft, hKeysRight⟩
     rw [keys_node, List.pairwise_append]
@@ -469,8 +475,8 @@ public theorem memKey_merge {κ : Type u} {ν : Type v} {key : κ}
 public theorem contents_merge {κ : Type u} {ν : Type v} (left right : Tree κ ν) :
     contents (merge left right) = contents left ++ contents right := by
   induction left, right using merge.induct with
-  | case1 right => simp [merge, contents, contentsAux, contents_node]
-  | case2 left hLeft => cases left <;> simp_all [merge, contents, contentsAux, contents_node]
+  | case1 right => simp [merge, contents, contentsAux]
+  | case2 left hLeft => cases left <;> simp_all [merge, contents, contentsAux]
   | case3 leftLeft leftKey leftValue leftPriority leftRight rightLeft rightKey
       rightValue rightPriority rightRight hPriority ih =>
     simp [merge, hPriority, contents_node, ih, List.append_assoc]
@@ -713,7 +719,7 @@ public theorem contents_split {κ : Type u} {ν : Type v} [LinearOrder κ]
       ((split pivot tree).found.map fun result => (pivot, result.1)).toList ++
       contents (split pivot tree).greater := by
   induction tree with
-  | empty => simp [split, contents, contentsAux, contents_node]
+  | empty => simp [split, contents, contentsAux]
   | node left key value priority right ihLeft ihRight =>
     by_cases hKey : key < pivot
     · simp [split, hKey, contents_node, ihRight, List.append_assoc]
@@ -721,7 +727,7 @@ public theorem contents_split {κ : Type u} {ν : Type v} [LinearOrder κ]
       · simp [split, hKey, hPivot, contents_node, ihLeft, List.append_assoc]
       · have hEq : key = pivot := le_antisymm (le_of_not_gt hPivot) (le_of_not_gt hKey)
         subst key
-        simp only [split, contents, contentsAux, contents_node]
+        simp only [split, contents, contentsAux]
         rw [← List.singleton_append, contentsAux_append]
         conv_lhs => rw [← List.nil_append [(pivot, value)], contentsAux_append]
         rw [List.append_assoc, List.singleton_append]
@@ -769,6 +775,142 @@ public theorem lookup_erase_eq_none {κ : Type u} {ν : Type v} [LinearOrder κ]
     · have hKeyMem : key ∈ (split key tree).greater :=
         key_mem_contents.mp ⟨value, hGreater⟩
       exact (lt_irrefl key ((allNodes_key_iff.mp hBounds.2) key hKeyMem)).elim
+
+/-- Insertion preserves strict key ordering, without assuming heap order. -/
+public theorem ordered_insert {κ : Type u} {ν : Type v} [LinearOrder κ]
+    {key : κ} {value : ν} {priority : Nat} {tree : Tree κ ν}
+    (hOrdered : Ordered tree) : Ordered (insert key value priority tree) := by
+  obtain ⟨hLess, hGreater⟩ := ordered_split (pivot := key) hOrdered
+  obtain ⟨hBelow, hAbove⟩ := split_bounds (pivot := key) hOrdered
+  have hSingleton : Ordered (.node .empty key value priority .empty : Tree κ ν) := by
+    simp [Ordered, AllNodes]
+  refine ordered_merge _ _ (ordered_merge _ _ hLess hSingleton ?_) hGreater ?_
+  · intro leftKey hLeftKey rightKey hRightKey
+    obtain rfl : rightKey = key := by simpa using hRightKey
+    exact allNodes_key_iff.mp hBelow leftKey hLeftKey
+  · intro leftKey hLeftKey rightKey hRightKey
+    rcases (memKey_merge _ _).mp hLeftKey with hLess | hRoot
+    · exact lt_trans (allNodes_key_iff.mp hBelow leftKey hLess)
+        (allNodes_key_iff.mp hAbove rightKey hRightKey)
+    · obtain rfl : leftKey = key := by simpa using hRoot
+      exact allNodes_key_iff.mp hAbove rightKey hRightKey
+
+/-- Deletion preserves strict key ordering, without assuming heap order. -/
+public theorem ordered_erase {κ : Type u} {ν : Type v} [LinearOrder κ]
+    {key : κ} {tree : Tree κ ν} (hOrdered : Ordered tree) :
+    Ordered (erase key tree) := by
+  obtain ⟨hLess, hGreater⟩ := ordered_split (pivot := key) hOrdered
+  obtain ⟨hBelow, hAbove⟩ := split_bounds (pivot := key) hOrdered
+  exact ordered_merge _ _ hLess hGreater fun leftKey hLeftKey rightKey hRightKey =>
+    lt_trans (allNodes_key_iff.mp hBelow leftKey hLeftKey)
+      (allNodes_key_iff.mp hAbove rightKey hRightKey)
+
+/-- On an ordered tree, inserting `key` does not change the lookup of any other
+key `query ≠ key`. -/
+public theorem lookup_insert_ne {κ : Type u} {ν : Type v} [LinearOrder κ]
+    {query key : κ} {value : ν} {priority : Nat} {tree : Tree κ ν}
+    (hOrdered : Ordered tree) (hNe : query ≠ key) :
+    lookup query (insert key value priority tree) = lookup query tree := by
+  refine Option.ext fun result => ?_
+  rw [lookup_contents (ordered_insert hOrdered), lookup_contents hOrdered,
+    contents_insert, contents_split key tree]
+  simp [hNe, Ne.symm hNe]
+
+/-- On an ordered tree, erasing `key` does not change the lookup of any other
+key `query ≠ key`. -/
+public theorem lookup_erase_ne {κ : Type u} {ν : Type v} [LinearOrder κ]
+    {query key : κ} {tree : Tree κ ν} (hOrdered : Ordered tree) (hNe : query ≠ key) :
+    lookup query (erase key tree) = lookup query tree := by
+  refine Option.ext fun result => ?_
+  rw [lookup_contents (ordered_erase hOrdered), lookup_contents hOrdered,
+    contents_erase, contents_split key tree]
+  simp [Ne.symm hNe]
+
+/-- Forget values and priorities, keeping the keys in the shape of the treap. -/
+public def keyTree {κ : Type u} {ν : Type v} : Tree κ ν → BinaryTree κ
+  | .empty => .nil
+  | .node left key _ _ right => .node key (keyTree left) (keyTree right)
+
+/-- Forget keys and values, keeping the priorities in the shape of the treap. -/
+public def priorityTree {κ : Type u} {ν : Type v} : Tree κ ν → BinaryTree Nat
+  | .empty => .nil
+  | .node left _ _ priority right =>
+      .node priority (priorityTree left) (priorityTree right)
+
+/-- The key tree of the empty treap is empty. -/
+@[simp] public theorem keyTree_empty {κ : Type u} {ν : Type v} :
+    keyTree (.empty : Tree κ ν) = .nil :=
+  rfl
+
+/-- The key tree of a node has the node's key at its root and the key trees of
+the children below it. -/
+@[simp] public theorem keyTree_node {κ : Type u} {ν : Type v}
+    {left right : Tree κ ν} {key : κ} {value : ν} {priority : Nat} :
+    keyTree (.node left key value priority right) =
+      .node key (keyTree left) (keyTree right) :=
+  rfl
+
+/-- The priority tree of the empty treap is empty. -/
+@[simp] public theorem priorityTree_empty {κ : Type u} {ν : Type v} :
+    priorityTree (.empty : Tree κ ν) = .nil :=
+  rfl
+
+/-- The priority tree of a node has the node's priority at its root and the
+priority trees of the children below it. -/
+@[simp] public theorem priorityTree_node {κ : Type u} {ν : Type v}
+    {left right : Tree κ ν} {key : κ} {value : ν} {priority : Nat} :
+    priorityTree (.node left key value priority right) =
+      .node priority (priorityTree left) (priorityTree right) :=
+  rfl
+
+/-- `AllNodes` of a predicate on keys is `BinarySearchTree.All` of that predicate
+on the key tree. -/
+public theorem allNodes_keyTree {κ : Type u} {ν : Type v} {p : κ → Prop}
+    {tree : Tree κ ν} :
+    AllNodes (fun key _ _ => p key) tree ↔ BinarySearchTree.All p (keyTree tree) := by
+  induction tree with
+  | empty => exact Iff.rfl
+  | node left key value priority right ihLeft ihRight =>
+    exact and_congr ihLeft (and_congr Iff.rfl ihRight)
+
+/-- `AllNodes` of a predicate on priorities is `BinarySearchTree.All` of that
+predicate on the priority tree. -/
+public theorem allNodes_priorityTree {κ : Type u} {ν : Type v} {p : Nat → Prop}
+    {tree : Tree κ ν} :
+    AllNodes (fun _ _ priority => p priority) tree ↔
+      BinarySearchTree.All p (priorityTree tree) := by
+  induction tree with
+  | empty => exact Iff.rfl
+  | node left key value priority right ihLeft ihRight =>
+    exact and_congr ihLeft (and_congr Iff.rfl ihRight)
+
+/-- A key belongs to a treap exactly when it belongs to the key tree. -/
+public theorem mem_keyTree {κ : Type u} {ν : Type v} {key : κ} {tree : Tree κ ν} :
+    key ∈ tree ↔ key ∈ keyTree tree := by
+  induction tree with
+  | empty => exact Iff.rfl
+  | node left rootKey value priority right ihLeft ihRight =>
+    exact or_congr ihLeft (or_congr Iff.rfl ihRight)
+
+/-- A treap is ordered by key exactly when its key tree satisfies
+`BinarySearchTree.Ordered`. -/
+public theorem ordered_keyTree {κ : Type u} {ν : Type v} [LT κ] {tree : Tree κ ν} :
+    Ordered tree ↔ BinarySearchTree.Ordered (keyTree tree) := by
+  induction tree with
+  | empty => exact Iff.rfl
+  | node left key value priority right ihLeft ihRight =>
+    exact and_congr ihLeft
+      (and_congr ihRight (and_congr allNodes_keyTree allNodes_keyTree))
+
+/-- A treap is heap-ordered by priority exactly when its priority tree satisfies
+`CartesianTree.HeapOrdered`. -/
+public theorem heapOrdered_priorityTree {κ : Type u} {ν : Type v} {tree : Tree κ ν} :
+    HeapOrdered tree ↔ CartesianTree.HeapOrdered (priorityTree tree) := by
+  induction tree with
+  | empty => exact Iff.rfl
+  | node left key value priority right ihLeft ihRight =>
+    exact and_congr ihLeft
+      (and_congr ihRight (and_congr allNodes_priorityTree allNodes_priorityTree))
 
 end Tree
 end Treap

@@ -18,7 +18,8 @@ Client examples exercise empty heaps, lazy insertion and meld, duplicate
 minima, consolidation through repeated deletion, and decrease-key:
 invalid addresses, an increase in disguise, a root cut that becomes the
 new minimum, a root cut that does not, and a nested cut inside a
-consolidated tree.
+consolidated tree. A validity-only degree-three tree with four stored
+elements shows `Valid` alone does not imply the Fibonacci size bound.
 -/
 
 @[expose] public section
@@ -26,6 +27,33 @@ consolidated tree.
 set_option autoImplicit false
 
 namespace Cslib.Algorithms.Lean.FibonacciHeapTests
+
+-- Validity alone permits degree three with only four stored elements: the classical
+-- Fibonacci bound would need at least five here, so `Valid` (heap order plus
+-- `degree = children.length`, without the mark/cut invariant) does not imply it.
+-- This is insufficiency of `Valid` for the bound, not reachability of such a tree
+-- by the public operations.
+private def shallowTree : FibonacciTree Nat :=
+  .node 3 0 [.singleton 6, .singleton 8, .singleton 10]
+
+example : FibonacciTree.Valid shallowTree := by
+  apply FibonacciTree.Valid.node
+  · intro child hc
+    rcases List.mem_cons.mp hc with rfl | hc
+    · exact FibonacciTree.valid_singleton 6
+    · rcases List.mem_cons.mp hc with rfl | hc
+      · exact FibonacciTree.valid_singleton 8
+      · have heq := List.mem_singleton.mp hc
+        subst child
+        exact FibonacciTree.valid_singleton 10
+  · rfl
+  · intro value _
+    exact Nat.zero_le value
+
+example : shallowTree.degree = 3 := by rfl
+
+example : shallowTree.elements.card = 4 := by
+  simp [shallowTree, FibonacciTree.elements, FibonacciTree.singleton]
 
 public def heapOfList (values : List Nat) : FibonacciHeap Nat :=
   values.foldl (fun heap value => heap.insert value) FibonacciHeap.empty

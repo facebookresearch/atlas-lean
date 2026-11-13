@@ -17,13 +17,16 @@ Banded alignment (Durbin et al., *Biological Sequence Analysis*, Cambridge, 1998
 restricts Needleman–Wunsch to alignments whose path stays within a diagonal band:
 after each prefix of the alignment, the numbers of consumed letters from the two
 sequences differ by at most `w`. This is the right restriction when the sequences
-are known to be similar, and it is what makes the banded dynamic program visit only
-`O((2 * w + 1) * (min(|xs|, |ys|) + 1))` cells instead of the full table: the
-band contains `2 * w + 1` diagonals (offsets `-w` through `w`, so the diagonal
-itself counts even when `w = 0`), each of length at most `min(|xs|, |ys|) + 1`.
+are known to be similar. The module specifies the restricted optimum by filtering
+the finite alignment enumeration and maximizing its scores; it does not construct
+a dynamic-programming table.
 
 Main results:
 
+* `alignmentScore_le_bandedScore`: when the banded score is `some s`, every
+  valid banded alignment scores at most `s`.
+* `exists_banded_eq_bandedScore`: when the banded score is `some s`, a valid
+  banded alignment has score `s`.
 * `bandedScore_le_nwScore`: a banded optimum is at most the unrestricted optimum.
 * `bandedScore_eq_nwScore_of_banded_optimal`: if some optimal alignment is banded,
   the banded score is the unrestricted optimum.
@@ -35,7 +38,11 @@ Main results:
 The banded score is specified as the maximum over banded alignments (an `Option`,
 `none` when no banded alignment exists), not as a banded dynamic-programming table;
 a tabulated banded DP proved equal to it is future work, as is a banded
-recurrence for the offset-parameterized score.
+recurrence for the offset-parameterized score. Such a DP would visit only
+`O((2 * w + 1) * (min(|xs|, |ys|) + 1))` cells instead of the full table: the
+band contains `2 * w + 1` diagonals (offsets `-w` through `w`, so the diagonal
+itself counts even when `w = 0`), each of length at most `min(|xs|, |ys|) + 1`.
+No cell count is proved here.
 -/
 
 @[expose] public section
@@ -177,9 +184,9 @@ theorem isAlignment_diagAlign (xs ys : List α) :
             · simp
             · exact ih'.1 c hc
           · simp only [diagAlign]
-            simp [List.filterMap_cons, ih'.2.1]
+            simp [ih'.2.1]
           · simp only [diagAlign]
-            simp [List.filterMap_cons, ih'.2.2]
+            simp [ih'.2.2]
 
 /-- A gap-only tail in `ys` stays in the band when its endpoints do. -/
 theorem bandedFrom_map_gapY : ∀ (ys : List α) (i j : ℕ),
@@ -190,7 +197,7 @@ theorem bandedFrom_map_gapY : ∀ (ys : List α) (i j : ℕ),
       simp only [List.map_nil, bandedFrom]
       exact decide_eq_true_eq.mpr h0
   | b :: ys, i, j, h0, hend => by
-      show bandedFrom w i j
+      change bandedFrom w i j
         ((none, some b) :: ys.map (fun b => (none, some b))) = true
       simp only [bandedFrom, Bool.and_eq_true]
       refine ⟨decide_eq_true_eq.mpr h0, ?_⟩
@@ -204,7 +211,6 @@ theorem bandedFrom_map_gapY : ∀ (ys : List α) (i j : ℕ),
           (d := ((b :: ys).length : ℤ)) (t := (1 : ℤ)) (w := (w : ℤ)) h0 (by
             have hcast2 : ((i : ℤ) - (j : ℤ)) - ((b :: ys).length : ℤ)
                 = (i : ℤ) - (j + (b :: ys).length) := by
-              push_cast
               ring
             rw [hcast2]
             exact hend) (by norm_num) (by simp)
@@ -223,7 +229,7 @@ theorem bandedFrom_map_gapX : ∀ (xs : List α) (i j : ℕ),
       simp only [List.map_nil, bandedFrom]
       exact decide_eq_true_eq.mpr h0
   | a :: xs, i, j, h0, hend => by
-      show bandedFrom w i j
+      change bandedFrom w i j
         ((some a, none) :: xs.map (fun a => (some a, none))) = true
       simp only [bandedFrom, Bool.and_eq_true]
       refine ⟨decide_eq_true_eq.mpr h0, ?_⟩
@@ -237,7 +243,6 @@ theorem bandedFrom_map_gapX : ∀ (xs : List α) (i j : ℕ),
           (d := ((a :: xs).length : ℤ)) (t := (1 : ℤ)) (w := (w : ℤ)) h0 (by
             have hcast2 : ((i : ℤ) - (j : ℤ)) + ((a :: xs).length : ℤ)
                 = (i + (a :: xs).length : ℤ) - (j : ℤ) := by
-              push_cast
               ring
             rw [hcast2]
             exact hend) (by norm_num) (by simp)
@@ -292,6 +297,33 @@ theorem isBanded_diagAlign {xs ys : List α}
 def bandedScore (xs ys : List α) : Option ℤ :=
   List.argmax id (((alignments xs ys).filter (fun A => bandedFrom w 0 0 A)).map
     (alignmentScore σ gap))
+
+/-- Every valid alignment within width `w` scores at most `s` when the banded
+score of its rows is `some s`. -/
+theorem alignmentScore_le_bandedScore {xs ys : List α} {A : Alignment α} {s : ℤ}
+    (hA : IsAlignment A xs ys) (hb : IsBanded w A)
+    (h : bandedScore σ gap w xs ys = some s) : alignmentScore σ gap A ≤ s := by
+  have hmem : A ∈ (alignments xs ys).filter (fun A => bandedFrom w 0 0 A) := by
+    rw [List.mem_filter]
+    exact ⟨(mem_alignments _ _ _).mpr hA, hb⟩
+  have hmem_argmax : s ∈ List.argmax id (((alignments xs ys).filter
+      (fun A => bandedFrom w 0 0 A)).map (alignmentScore σ gap)) :=
+    Option.mem_def.2 h
+  exact List.le_of_mem_argmax (f := id)
+    (List.mem_map_of_mem (f := alignmentScore σ gap) hmem) hmem_argmax
+
+/-- If the banded score of `xs` and `ys` is `some s`, a valid alignment of those
+rows stays within width `w` and has score `s`. -/
+theorem exists_banded_eq_bandedScore {xs ys : List α} {s : ℤ}
+    (h : bandedScore σ gap w xs ys = some s) :
+    ∃ A, IsAlignment A xs ys ∧ IsBanded w A ∧ alignmentScore σ gap A = s := by
+  have hmem : s ∈ (((alignments xs ys).filter
+      (fun A => bandedFrom w 0 0 A)).map (alignmentScore σ gap)) :=
+    List.argmax_mem (Option.mem_def.2 h)
+  rw [List.mem_map] at hmem
+  obtain ⟨A, hA, hAscore⟩ := hmem
+  rw [List.mem_filter] at hA
+  exact ⟨A, (mem_alignments _ _ _).mp hA.1, hA.2, hAscore⟩
 
 /-- A banded optimum is at most the unrestricted optimum. -/
 theorem bandedScore_le_nwScore {xs ys : List α} {s : ℤ}
