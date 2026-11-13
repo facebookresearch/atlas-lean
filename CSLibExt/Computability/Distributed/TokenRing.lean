@@ -11,8 +11,28 @@ module
 public import Mathlib.Data.Nat.Basic
 public import Mathlib.Data.ZMod.Basic
 
+/-!
+# Dijkstra's token ring: non-deadlock and closure
+
+Dijkstra's `K`-state token ring, the first protocol of E. W. Dijkstra, *Self-stabilizing systems
+in spite of distributed control*, CACM 17(11), 1974. There are `n + 1` machines on a ring,
+indexed by `ZMod (n + 1)`, each with a state in `ZMod K`. Machine `0` is privileged when its
+state equals that of its predecessor `-1`, and then increments its state. Every other machine
+`i` is privileged when its state differs from that of its predecessor `i - 1`, and then copies
+it. Under a central daemon, a step lets one privileged machine, chosen arbitrarily, make its
+move (`Step`). A configuration is legitimate when exactly one machine is privileged (`Legit`).
+
+* `exists_privileged`: every configuration has a privileged machine (no deadlock).
+* `legit_closed`: every step from a legitimate configuration leads to a legitimate one.
+
+Both hold for every `n` and `K`, including the one-machine ring `n = 0`. Convergence, that
+every execution from an arbitrary configuration reaches a legitimate one, is not formalized
+here; it needs a lower bound on `K` in terms of the ring size.
+-/
+
 @[expose] public section
 
+namespace Cslib.Distributed.TokenRing
 
 /-- In Dijkstra's token ring on `n + 1` machines arranged on a
 ring (indices in `ZMod (n + 1)`), machine `0` is privileged
@@ -319,3 +339,5 @@ theorem legit_closed {n K : ℕ} {x y : ZMod (n + 1) → ZMod K}
         · subst hji
           exact absurd hpj hi_unpriv
         · exact absurd hpj (hother j hji hjs)
+
+end Cslib.Distributed.TokenRing
