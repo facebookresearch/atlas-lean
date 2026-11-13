@@ -15,11 +15,14 @@ public import Mathlib.Data.Nat.Basic
 # Linearizability and the projection direction of locality
 
 A concurrent history is a list of completed operations (`OpRec`), each with the positions of its
-invocation and response in the global event order. It is linearizable against a sequential
-specification when some permutation of its operations respects the real-time order and is legal
-for every object (`Linearizable`). `linearizable_project` proves the projection direction of
-Herlihy and Wing's locality: the projection of a linearizable history onto one object is
-linearizable, provided the empty sequence is legal for every object.
+invocation and response in the global event order. A history is well formed (`WellFormed`) when
+its events, the invocations and responses of all its operations, occupy distinct positions. It is
+linearizable against a sequential specification when it is well formed and some permutation of
+its operations respects the real-time order and is legal for every object (`Linearizable`).
+Projection onto one object keeps a history well formed (`wellFormed_proj`), and
+`linearizable_project` proves the projection direction of Herlihy and Wing's locality: the
+projection of a linearizable history onto one object is linearizable, provided the empty sequence
+is legal for every object.
 
 ## References
 
@@ -34,7 +37,9 @@ namespace Cslib.Distributed.Linearizability
 /-- One completed operation in a concurrent history: object,
 operation, argument, return value, and the positions `lo < hi`
 of its invocation and response in the global event order
-(positions are abstract; only their order matters). -/
+(positions are abstract; only their order matters). Distinct
+events of a history occupy distinct positions; `WellFormed`
+states this for a whole history. -/
 structure OpRec where
   /-- The object the operation acts on. -/
   obj : ℕ
@@ -84,11 +89,36 @@ theorem respectsRT_iff (lin : List OpRec) :
 def proj (H : List OpRec) (o : ℕ) : List OpRec :=
   H.filter (fun r => r.obj = o)
 
-/-- `H` is linearizable against `spec`: some permutation of
-its operations respects real-time order and is legal for
-every object. -/
+/-- The positions of the events of a history: the invocation
+and then the response of each operation, in list order. -/
+def eventPositions (H : List OpRec) : List ℕ :=
+  H.flatMap fun r => [r.lo, r.hi]
+
+/-- `H` is a well-formed history: its events, the invocations
+and responses of all its operations, occupy pairwise distinct
+positions of the global event order. So no operation occurs
+twice, and no event of one operation shares a position with an
+event of another. -/
+def WellFormed (H : List OpRec) : Prop :=
+  (eventPositions H).Nodup
+
+instance (H : List OpRec) : Decidable (WellFormed H) :=
+  inferInstanceAs (Decidable (eventPositions H).Nodup)
+
+/-- Projection onto one object keeps a history well formed:
+the events of the projection are a sublist of the events of
+the history. -/
+theorem wellFormed_proj {H : List OpRec} (h : WellFormed H)
+    (o : ℕ) : WellFormed (proj H o) := by
+  unfold WellFormed eventPositions proj at *
+  rw [List.Nodup, List.pairwise_flatMap] at *
+  exact ⟨fun r hr => h.1 r (List.mem_of_mem_filter hr), h.2.filter _⟩
+
+/-- `H` is linearizable against `spec`: it is well formed, and
+some permutation of its operations respects real-time order and
+is legal for every object. -/
 def Linearizable (spec : SeqSpec) (H : List OpRec) : Prop :=
-  ∃ lin, List.Perm lin H ∧ RespectsRT lin ∧
+  WellFormed H ∧ ∃ lin, List.Perm lin H ∧ RespectsRT lin ∧
     ∀ o, spec o ((lin.filter (fun r => r.obj = o)).map
       (fun r => (r.op, r.arg, r.ret)))
 
@@ -101,8 +131,8 @@ theorem linearizable_project (spec : SeqSpec)
     (hspec : ∀ o, spec o []) (H : List OpRec)
     (o : ℕ) (h : Linearizable spec H) :
     Linearizable spec (proj H o) := by
-  obtain ⟨lin, hperm, hrt, hleg⟩ := h
-  refine ⟨lin.filter (fun r => r.obj = o), ?_, ?_, ?_⟩
+  obtain ⟨hwf, lin, hperm, hrt, hleg⟩ := h
+  refine ⟨wellFormed_proj hwf o, lin.filter (fun r => r.obj = o), ?_, ?_, ?_⟩
   · show List.Perm _ (proj H o)
     unfold proj
     exact hperm.filter _

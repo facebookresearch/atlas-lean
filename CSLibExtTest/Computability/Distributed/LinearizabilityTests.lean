@@ -16,9 +16,13 @@ public import CSLibExt.Computability.Distributed.Linearizability
 * **Well-formed intervals.** No operation record has its response at or before its invocation,
   so the degenerate record with `lo = hi = 0`, for which real-time order would be vacuous, cannot
   be built.
-* **Real-time order on occurrences.** `a1` responds before `b1` is invoked. The order
+* **Distinct event positions.** `c1` responds at position `2`, where `d2` is invoked, so
+  `[c1, d2]` is not a well-formed history and is not linearizable, even when every sequence is
+  legal; shifting `d2` to `[3, 4]` (`d2'`) makes the history linearizable.
+* **Real-time order on occurrences.** `a1` responds before `b1` is invoked. As lists, the order
   `[a1, a1, b1]` respects real time and `[a1, b1, a1]` does not: the second occurrence of `a1`
-  follows `b1`, although the first occurrence precedes it.
+  follows `b1`, although the first occurrence precedes it. Neither list is a well-formed history,
+  since both repeat the two events of `a1`.
 * **A register.** `regSpec` is a register with initial value `0` on every object: a write
   `(0, a, _)` stores `a`, and a read `(1, _, r)` must return the stored value. The read `bad` of
   `3` from a fresh register is not linearizable, so legality is a real constraint.
@@ -46,6 +50,30 @@ example (r : OpRec) (h : r.lo = 0) : r.hi ≠ 0 := by
   have := r.lo_lt_hi
   omega
 
+/-! ### Distinct event positions -/
+
+/-- Specification for checks where only the history matters: every sequence is legal. -/
+private def specAll : SeqSpec := fun _ _ => True
+
+/-- An operation on object `1` during `[0, 2]`. -/
+def c1 : OpRec := ⟨1, 0, 0, 0, 0, 2, by decide⟩
+
+/-- An operation on object `2` invoked at position `2`, where `c1` responds. -/
+def d2 : OpRec := ⟨2, 0, 0, 0, 2, 3, by decide⟩
+
+/-- The same operation on object `2`, invoked at position `3` instead. -/
+def d2' : OpRec := ⟨2, 0, 0, 0, 3, 4, by decide⟩
+
+/-- `c1` and `d2` share the event position `2`, so `[c1, d2]` is not a well-formed history. -/
+example : ¬ WellFormed [c1, d2] := by decide
+
+/-- So `[c1, d2]` is not linearizable, although every sequence is legal under `specAll`. -/
+example : ¬ Linearizable specAll [c1, d2] := fun h => absurd h.1 (by decide)
+
+/-- With distinct positions the history is linearizable in its own order. -/
+example : Linearizable specAll [c1, d2'] :=
+  ⟨by decide, [c1, d2'], List.Perm.refl _, by unfold RespectsRT; decide, fun _ => trivial⟩
+
 /-! ### Real-time order on occurrences -/
 
 /-- An operation on object `1` during `[0, 1]`. -/
@@ -60,6 +88,10 @@ example : RespectsRT [a1, a1, b1] := by unfold RespectsRT; decide
 /-- The second occurrence of `a1` follows `b1`, so real-time order fails, even though the first
 occurrence precedes `b1`. -/
 example : ¬ RespectsRT [a1, b1, a1] := by unfold RespectsRT; decide
+
+/-- Repeating `a1` repeats both of its event positions, so `[a1, a1, b1]` is not a well-formed
+history and is not linearizable. -/
+example : ¬ Linearizable specAll [a1, a1, b1] := fun h => absurd h.1 (by decide)
 
 /-- The same failure through the index form `respectsRT_iff`: position `2` holds `a1`, which
 responds before `b1` at position `1` is invoked. -/
@@ -89,7 +121,7 @@ def bad : OpRec := ⟨1, 1, 0, 3, 0, 1, by decide⟩
 
 /-- The read `bad` is illegal, so the one-operation history `[bad]` is not linearizable. -/
 theorem not_linearizable_bad : ¬ Linearizable regSpec [bad] := by
-  rintro ⟨lin, hperm, -, hleg⟩
+  rintro ⟨-, lin, hperm, -, hleg⟩
   rw [List.perm_singleton.mp hperm] at hleg
   exact absurd (hleg 1) (by decide)
 
@@ -110,7 +142,7 @@ def hist : List OpRec := [w1, w2, r1]
 /-- The history is linearizable in its own order: each earlier operation responds before each
 later one is invoked, and every object sees a legal register sequence. -/
 theorem linearizable_hist : Linearizable regSpec hist := by
-  refine ⟨hist, List.Perm.refl _, by unfold RespectsRT; decide, ?_⟩
+  refine ⟨by decide, hist, List.Perm.refl _, by unfold RespectsRT; decide, ?_⟩
   intro o
   by_cases h1 : o = 1
   · subst h1; decide
@@ -138,14 +170,11 @@ example : Linearizable regSpec [] :=
 
 /-! ### Boundary -/
 
-/-- Boundary check specification: every sequence is legal. -/
-private def specAll : SeqSpec := fun _ _ => True
-
 /-- Boundary check: a one-operation history on object 1 is linearizable, so its projection to
 object 1 is too. -/
 example : Linearizable specAll (proj [⟨1, 5, 6, 7, 0, 1, by decide⟩] 1) := by
   apply linearizable_project specAll (fun _ => trivial)
-  exact ⟨[⟨1, 5, 6, 7, 0, 1, by decide⟩], List.Perm.refl _, List.pairwise_singleton _ _,
-    fun _ => trivial⟩
+  exact ⟨by decide, [⟨1, 5, 6, 7, 0, 1, by decide⟩], List.Perm.refl _,
+    List.pairwise_singleton _ _, fun _ => trivial⟩
 
 end Cslib.Distributed.Linearizability.Tests
