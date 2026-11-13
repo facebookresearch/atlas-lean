@@ -10,12 +10,16 @@ module
 
 import MathlibExt.Probability.Statistics.LinearModel.LinearHypothesisF
 
-/-!
-# Tests for `MathlibExt.Probability.Statistics.LinearModel.LinearHypothesisF`
+open Matrix
 
-The `F(1, 1)` specialization is a direct instance of the linear-hypothesis `F` law.
-A rank-deficient design is excluded, and chi-square with zero degrees of freedom is
-not a Dirac mass.
+/-!
+# Tests for linear-hypothesis `F` and single-contrast `T ^ 2`
+
+The `F(1, 1)` specialization is a direct instance of the linear-hypothesis `F` law; a
+rank-deficient design is excluded; chi-square with zero degrees of freedom is not a Dirac
+measure. The intercept design with `n = 2`, `p = 1` gives `F(1, 1)`; a zero contrast has
+zero variance factor; the squared `t` statistic agrees pointwise with the rank-one `F`
+statistic.
 -/
 
 namespace MathlibExt.Probability.Statistics.LinearModel.FStatChecks
@@ -64,3 +68,73 @@ example : chiSquareMeasure 0 ≠ Measure.dirac (0 : ℝ) := by
   exact one_ne_zero h0
 
 end MathlibExt.Probability.Statistics.LinearModel.FStatChecks
+
+namespace ProbabilityTheory
+
+open MeasureTheory Real
+
+private lemma intercept_gram (n : ℕ) :
+    (Matrix.of fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ))ᵀ *
+        Matrix.of (fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ)) =
+      Matrix.of fun _ _ => (n : ℝ) := by
+  ext i j
+  simp [Matrix.mul_apply]
+
+private lemma intercept_isUnit_gram {n : ℕ} (hn : n ≠ 0) :
+    IsUnit ((Matrix.of fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ))ᵀ *
+        Matrix.of (fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ))) := by
+  rw [Matrix.isUnit_iff_isUnit_det, intercept_gram, Matrix.det_unique]
+  simpa using hn
+
+end ProbabilityTheory
+
+namespace MathlibExt.Probability.Statistics.LinearModel
+
+open Matrix MeasureTheory ProbabilityTheory
+
+private theorem tsq_contrastVariance_zero {m k : Type*} [Fintype m] [Fintype k]
+    [DecidableEq k] (X : Matrix m k ℝ) : contrastVariance X 0 = 0 := by
+  classical
+  simp [contrastVariance, dotProduct]
+
+end MathlibExt.Probability.Statistics.LinearModel
+
+namespace MathlibExt.Probability.Statistics.LinearModel.TSqChecks
+
+open Matrix MeasureTheory ProbabilityTheory MathlibExt.Probability.Statistics.LinearModel
+
+/-- Use case: intercept design with `n = 2`, `p = 1` (positive residual df) gives
+`F(1, 1)` law. -/
+example {σ : ℝ} (hσ : 0 < σ) (β : Fin 1 → ℝ) :
+    HasLaw (fun x : Fin 2 → ℝ => (tStatistic
+        (Matrix.of fun (_ : Fin 2) (_ : Fin 1) => (1 : ℝ)) (fun _ => 1) β
+        ((Matrix.of fun (_ : Fin 2) (_ : Fin 1) => (1 : ℝ)) *ᵥ β + σ • x)) ^ 2)
+      (snedecorFMeasure 1 (Fintype.card (Fin 2) - Fintype.card (Fin 1)))
+      (Measure.pi fun _ : Fin 2 => gaussianReal 0 1) := by
+  have hX : IsUnit ((Matrix.of fun (_ : Fin 2) (_ : Fin 1) => (1 : ℝ))ᵀ *
+      (Matrix.of fun (_ : Fin 2) (_ : Fin 1) => (1 : ℝ))) :=
+    ProbabilityTheory.intercept_isUnit_gram (by norm_num)
+  have hsmul : (fun x : Fin 2 → ℝ => σ⁻¹ • (σ • x)) = id := by
+    funext x
+    simp [smul_smul, inv_mul_cancel₀ hσ.ne']
+  have hε : HasLaw (fun x : Fin 2 → ℝ => σ⁻¹ • (σ • x))
+      (Measure.pi fun _ : Fin 2 => gaussianReal 0 1)
+      (Measure.pi fun _ : Fin 2 => gaussianReal 0 1) := by
+    rw [hsmul]
+    exact ⟨measurable_id.aemeasurable, MeasureTheory.Measure.map_id⟩
+  exact hasLaw_tStatistic_sq hX (by decide) β hσ hε (fun h => one_ne_zero (congrFun h 0))
+
+/-- Boundary: a zero contrast has zero variance factor, so `a ≠ 0` cannot be dropped. -/
+example {m k : Type*} [Fintype m] [DecidableEq m] [Fintype k] [DecidableEq k]
+    (X : Matrix m k ℝ) : contrastVariance X 0 = 0 := by
+  exact tsq_contrastVariance_zero X
+
+/-- Rank-one agreement use case: the `F` statistic of the single-row hypothesis matrix
+equals `T ^ 2`, by the production theorem. -/
+example {m k : Type*} [Fintype m] [DecidableEq m] [Fintype k] [DecidableEq k]
+    {X : Matrix m k ℝ} (a β : k → ℝ) (y : m → ℝ) :
+    (tStatistic X a β y) ^ 2 =
+      fStatistic X (Matrix.of fun _ : Fin 1 => a) (fun _ => a ⬝ᵥ β) y :=
+  tStatistic_sq_eq_fStatistic (X := X) a β y
+
+end MathlibExt.Probability.Statistics.LinearModel.TSqChecks
