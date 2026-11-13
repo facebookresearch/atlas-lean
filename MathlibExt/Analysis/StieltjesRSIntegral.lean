@@ -30,8 +30,16 @@ against monotone or bounded-variation integrators.
 The bound `abs_rsSum_le_of_abs_le` / `HasRSIntegral.abs_le_of_abs_le` uses only `|h| ≤ B`, not any
 regularity of `h`: for a bounded-variation integrand `f`, summation by parts gives
 `|∫ f dh| ≤ ‖h‖_∞ (2‖f‖_∞ + V(f))`. This is the estimate that makes `h ↦ ∫ f dh` Lipschitz for the
-uniform norm (`HasRSIntegral.abs_sub_le_of_abs_sub_le`), the input needed to extend the Duhamel
-operator of `ContinuousProductIntegral.lean` from bounded-variation to regulated integrators.
+uniform norm (`HasRSIntegral.abs_sub_le_of_abs_sub_le`) wherever the integrals exist.
+
+**Limitation for the Duhamel operator.** The integral does not exist when `f` and `h` jump on the
+same side at the same point: for `f = h = 𝟙[1, ∞)` on `[0, 2]` every partition has a refinement
+with sum `0` (left tags) and one with sum `1` (right tags), so no limit exists (see the test
+file). The Duhamel integrand `s ↦ P(A)(0, s) P(B)(s, t]` of `ContinuousProductIntegral.lean`
+jumps at the jumps of `B`, and so does `h = B - A` for a multi-jump pure-jump `B`, so this
+integral does not by itself define the Duhamel operator on that dense set: the Ψ bridge needs
+left-continuous integrands (e.g. `P(A)(0, s-)`) or a different integral. The bound on the sums
+holds regardless.
 
 Partitions, tagged partitions and point-set refinement are the canonical ones of
 `MathlibExt.Analysis.Integration.RiemannPartition`; against `h = id` the sum is `riemannSum`
@@ -67,6 +75,10 @@ integrator) and no notion of regulated function.
   `rsIntegrable_of_continuousOn_of_boundedVariationOn`: existence.
 
 ## Not covered
+
+* Integrands and integrators with a common same-side jump: the refinement integral does not exist
+  there, so the Ψ bridge cannot use this integral for `s ↦ P(A)(0, s) P(B)(s, t]` against
+  pure-jump `B - A` without passing to left-continuous integrands or another integral.
 
 * Integration by parts `∫ f dh + ∫ h df = f(b)h(b) - f(a)h(a)`, and existence of `∫ f dh` for a
   bounded-variation integrand against a regulated integrator without common discontinuities.
@@ -269,8 +281,9 @@ theorem abs_rsSum_le_of_monotoneOn {f h : ℝ → ℝ} {M : ℝ} (hf : ∀ x ∈
     _ = M * (h b - h a) := by rw [← mul_sum, T.toPartition.sum_range_sub_pointN]
 
 /-- Abel summation by parts, in the form used for Riemann–Stieltjes sums. Mathlib's
-`Finset.sum_range_by_parts` writes the partial sums as `H (i + 1) - H 0`, which would double the
-constant in `abs_rsSum_le_of_abs_le`. -/
+`Finset.sum_range_by_parts` writes the partial sums as `H (i + 1) - H 0`; bounding that form
+directly gives `B (2M + 2V(f))`, and telescoping out the `H 0` term recovers this identity. The
+three-line induction is shorter. -/
 private theorem sum_range_succ_mul_sub_eq (F H : ℕ → ℝ) (n : ℕ) :
     ∑ i ∈ range (n + 1), F i * (H (i + 1) - H i) =
       F n * H (n + 1) - F 0 * H 0 - ∑ i ∈ range n, (F (i + 1) - F i) * H (i + 1) := by
@@ -552,6 +565,24 @@ theorem rsIntegral_smul_left {f h : ℝ → ℝ} (c : ℝ) (hf : RSIntegrable f 
 theorem rsIntegral_smul_right {f h : ℝ → ℝ} (c : ℝ) (hh : RSIntegrable f h a b) :
     rsIntegral f (c • h) a b = c * rsIntegral f h a b :=
   (hh.hasRSIntegral.smul_right c).rsIntegral_eq
+
+theorem rsIntegral_neg_left {f h : ℝ → ℝ} (hf : RSIntegrable f h a b) :
+    rsIntegral (-f) h a b = -rsIntegral f h a b :=
+  hf.hasRSIntegral.neg_left.rsIntegral_eq
+
+theorem rsIntegral_neg_right {f h : ℝ → ℝ} (hh : RSIntegrable f h a b) :
+    rsIntegral f (-h) a b = -rsIntegral f h a b :=
+  hh.hasRSIntegral.neg_right.rsIntegral_eq
+
+theorem rsIntegral_sub_left {f g h : ℝ → ℝ} (hf : RSIntegrable f h a b)
+    (hg : RSIntegrable g h a b) :
+    rsIntegral (f - g) h a b = rsIntegral f h a b - rsIntegral g h a b :=
+  (hf.hasRSIntegral.sub_left hg.hasRSIntegral).rsIntegral_eq
+
+theorem rsIntegral_sub_right {f g h : ℝ → ℝ} (hg : RSIntegrable f g a b)
+    (hh : RSIntegrable f h a b) :
+    rsIntegral f (g - h) a b = rsIntegral f g a b - rsIntegral f h a b :=
+  (hg.hasRSIntegral.sub_right hh.hasRSIntegral).rsIntegral_eq
 
 /-! ### Bounds on the integral -/
 

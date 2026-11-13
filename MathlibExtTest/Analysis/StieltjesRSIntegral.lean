@@ -174,7 +174,7 @@ example : |rsIntegral (fun _ => (1 : ℝ)) jump2 0 3| = 1 * (jump2 3 - jump2 0) 
   rw [(hasRSIntegral_const 1 jump2 (by norm_num)).rsIntegral_eq]
   norm_num [jump2]
 
-/-- Linearity in the integrator, with values: `∫₀³ x d(2·𝟙[2,∞) + x²·0) = 4`. -/
+/-- Linearity in the integrator, with values: `∫₀³ x d(2 • 𝟙[2,∞)) = 4`. -/
 example : rsIntegral id ((2 : ℝ) • jump2) 0 3 = 4 := by
   rw [(hasRSIntegral_id_jump2.smul_right 2).rsIntegral_eq]; norm_num
 
@@ -203,6 +203,35 @@ example (f h : ℝ → ℝ) : ¬ RSIntegrable f h 1 0 ∧ rsIntegral f h 1 0 = 0
     obtain ⟨P, -⟩ := hI 1 one_pos
     linarith [P.a_le_b]
   exact ⟨hnot, by simp [rsIntegral, hnot]⟩
+
+/-! ### Non-existence at a common jump -/
+
+/-- The unit jump at `1`. -/
+noncomputable def step1 (x : ℝ) : ℝ := if 1 ≤ x then 1 else 0
+
+/-- `∫₀² 𝟙[1,∞) d𝟙[1,∞)` does not exist: on every partition the right-tagged and left-tagged sums
+differ by `∑ (Δh)² = ∑ Δh = 1`, so no value is within `1/2` of both. -/
+theorem not_rsIntegrable_step1_step1 : ¬ RSIntegrable step1 step1 0 2 := by
+  rintro ⟨I, hI⟩
+  obtain ⟨P, hP⟩ := hI (1 / 2) (by norm_num)
+  have hdiff : rsSum step1 step1 P.rightTag - rsSum step1 step1 P.leftTag = 1 := by
+    rw [rsSum_eq_sum_range, rsSum_eq_sum_range]
+    change ∑ k ∈ Finset.range P.n, _ - ∑ k ∈ Finset.range P.n, _ = _
+    rw [← Finset.sum_sub_distrib]
+    rw [← (show step1 2 - step1 0 = 1 by norm_num [step1]), ← P.sum_range_sub_pointN step1]
+    refine Finset.sum_congr rfl fun k hk => ?_
+    rw [Finset.mem_range] at hk
+    rw [P.rightTag_tagN hk, P.leftTag_tagN hk]
+    change step1 (P.pointN (k + 1)) * (step1 (P.pointN (k + 1)) - step1 (P.pointN k)) -
+      step1 (P.pointN k) * (step1 (P.pointN (k + 1)) - step1 (P.pointN k)) =
+        step1 (P.pointN (k + 1)) - step1 (P.pointN k)
+    have hle : P.pointN k ≤ P.pointN (k + 1) := P.monotone_pointN (Nat.le_succ k)
+    unfold step1
+    split_ifs <;> first | (exfalso; linarith) | norm_num
+  have h1 := hP P.rightTag P.isRefinement_refl
+  have h2 := hP P.leftTag P.isRefinement_refl
+  rw [abs_lt] at h1 h2
+  linarith
 
 /-! ### Existence and the uniform-norm bound -/
 
@@ -243,5 +272,7 @@ example (g h : ℝ → ℝ) (δ : ℝ) (hgh : ∀ x ∈ Icc (0 : ℝ) 1, |g x - 
 #print axioms rsIntegrable_of_continuousOn_of_monotoneOn
 #print axioms rsIntegrable_of_continuousOn_of_boundedVariationOn
 #print axioms hasRSIntegral_id_jump2
+#print axioms not_rsIntegrable_step1_step1
+#print axioms rsIntegral_sub_right
 
 end MetaMathlibExt
