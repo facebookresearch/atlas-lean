@@ -6,29 +6,11 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-The projectivity definitions are adapted from
-`WantedExt/AlgebraicGeometry/TopologicalReconstructionWanted.lean` in ATLAS
-at commit 841d5b685836b986f0bb29cd63fd2300f957e849. That file attributes
-`LeanEval.AlgebraicGeometry.TopologicalReconstruction` in leanprover/lean-eval
-at commit 38361be884302c7edce1908c4aef8296eb2cb27e, distributed under the
-Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0).
-
-Modification notice: renamed the graded structure morphism, specialized the
-projectivity predicate to schemes over `ℂ`, and used `n + 1` homogeneous
-coordinates for `ℙⁿ`.
--/
-
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.Algebra.Category.ModuleCat.AB
-public import Mathlib.Algebra.Homology.DerivedCategory.RightDerivedFunctorPlus
-public import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Basic
-public import
-  Mathlib.CategoryTheory.Abelian.GrothendieckCategory.EnoughInjectives
-public import Mathlib.RingTheory.MvPolynomial.Homogeneous
-public import WantedExt.AlgebraicGeometry.PerverseSheavesWanted
+public import MathlibExt.AlgebraicGeometry.PerverseSheaves
+public import MathlibExt.AlgebraicGeometry.ProjectiveDirectImage
 
 @[expose] public section
 
@@ -45,10 +27,11 @@ and (c) of Theorem 2.1.1 in de Cataldo–Migliorini's Hodge theoretic treatment.
 The splitting is an existence statement.
 
 The independent construction request for perverse sheaves is in
-`PerverseSheavesWanted.lean`. This file uses its public
-characterized interface `[PerverseSheafTheory Y]`. The ambient rational
-sheaf/derived categories, bounded constructibility, perverse cohomology,
-and semisimplicity definitions are in the same perverse-sheaf module.
+`PerverseSheavesWanted.lean`. This file uses the public characterized
+interface `[PerverseSheafTheory Y]` supplied by
+`MathlibExt/AlgebraicGeometry/PerverseSheaves.lean`. The projectivity and
+normalized direct-image definitions, with their source attribution, are in
+`MathlibExt/AlgebraicGeometry/ProjectiveDirectImage.lean`.
 
 The normalized direct image uses Mathlib's derived pushforward on the
 analytic topological spaces of complex points. In particular, `ℚ_X[n]`
@@ -71,33 +54,6 @@ noncomputable section
 
 attribute [local instance] HasDerivedCategory.standard
 
-/-- The structure morphism of the projective spectrum of a graded algebra.
-This is the same projective-over-a-field construction used by
-`WantedExt/AlgebraicGeometry/TopologicalReconstructionWanted.lean`. -/
-def gradedProjToSpec {R A : Type} [CommRing R] [CommRing A] [Algebra R A]
-    (𝒜 : ℕ → Submodule R A) [GradedAlgebra 𝒜] :
-    Proj 𝒜 ⟶ Spec (.of R) :=
-  Proj.toSpecZero 𝒜 ≫ Spec.map (CommRingCat.ofHom (algebraMap ..))
-
-/-- Projectivity over `ℂ`, expressed by a closed immersion into some `ℙⁿ_ℂ`.
-The equation requires the immersion to respect the structure morphism. -/
-def IsProjectiveOverC (X : ComplexScheme) : Prop :=
-  let := @MvPolynomial.gradedAlgebra
-  ∃ (n : ℕ)
-    (i : X.left ⟶
-      Proj (MvPolynomial.homogeneousSubmodule (Fin (n + 1)) ℂ)),
-    IsClosedImmersion i ∧ X.hom = i ≫ gradedProjToSpec _
-
-/-- The actual derived direct image of the rational constant sheaf placed
-in degree `-n`, namely `Rf_* ℚ_X[n]`. -/
-def normalizedDirectImage (X Y : ComplexScheme) (f : X ⟶ Y) (n : ℕ) :
-    RationalDerived (space Y) :=
-  DerivedCategory.Plus.ι.obj
-    (((TopCat.Sheaf.pushforward (ModuleCat.{0} ℚ)
-      (spaceMap f)).rightDerivedFunctorPlus).obj
-        ((DerivedCategory.Plus.singleFunctor (RationalSheaf (space X))
-          (-(n : ℤ))).obj (rationalConstantSheaf (space X))))
-
 /-- Bounded algebraic constructibility of the projective direct image.
 Source: de Cataldo–Migliorini (2005), §§3.2–3.3. -/
 public theorem_wanted normalizedDirectImage_boundedConstructible
@@ -105,16 +61,6 @@ public theorem_wanted normalizedDirectImage_boundedConstructible
     (f : X ⟶ Y) (n : ℕ) [SmoothOfRelativeDimension n X.hom]
     (hX : IsProjectiveOverC X) (hY : IsProjectiveOverC Y) :
     boundedConstructible Y (normalizedDirectImage X Y f n)
-
-/-- The same actual direct image, packaged in the bounded constructible
-full subcategory using the preceding constructibility obligation. -/
-public def_wanted constructibleDirectImage
-    (X Y : ComplexScheme) [IsComplexVariety X] [IsComplexVariety Y]
-    (f : X ⟶ Y) (n : ℕ) [SmoothOfRelativeDimension n X.hom]
-    (hX : IsProjectiveOverC X) (hY : IsProjectiveOverC Y) :
-    (boundedConstructible Y).FullSubcategory :=
-  ⟨normalizedDirectImage X Y f n,
-    ❰normalizedDirectImage_boundedConstructible❱ X Y f n hX hY⟩
 
 /-- De Cataldo–Migliorini's decomposition theorem for a smooth projective
 source and a projective target. The finite set includes every nonzero perverse
@@ -125,7 +71,9 @@ public theorem_wanted deCataldoMigliorini_decomposition
     [PerverseSheafTheory Y]
     (f : X ⟶ Y) (n : ℕ) [SmoothOfRelativeDimension n X.hom]
     (hX : IsProjectiveOverC X) (hY : IsProjectiveOverC Y) :
-    let K := ❰constructibleDirectImage❱ X Y f n hX hY
+    let K : (boundedConstructible Y).FullSubcategory :=
+      ⟨normalizedDirectImage X Y f n,
+        ❰normalizedDirectImage_boundedConstructible❱ X Y f n hX hY⟩
     ∃ degrees : Finset ℤ,
       (∀ j : ℤ, j ∉ degrees →
         IsZero ((perverseCohomology Y j K).obj)) ∧
@@ -142,7 +90,9 @@ public theorem_wanted deCataldoMigliorini_semisimplicity
     [PerverseSheafTheory Y]
     (f : X ⟶ Y) (n : ℕ) [SmoothOfRelativeDimension n X.hom]
     (hX : IsProjectiveOverC X) (hY : IsProjectiveOverC Y) :
-    let K := ❰constructibleDirectImage❱ X Y f n hX hY
+    let K : (boundedConstructible Y).FullSubcategory :=
+      ⟨normalizedDirectImage X Y f n,
+        ❰normalizedDirectImage_boundedConstructible❱ X Y f n hX hY⟩
     ∀ j : ℤ, IsSemisimplePerverse (perverseTStructure Y)
       (perverseCohomology Y j K)
 
