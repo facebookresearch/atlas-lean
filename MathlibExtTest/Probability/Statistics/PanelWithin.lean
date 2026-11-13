@@ -41,10 +41,14 @@ the within (fixed-effects) estimator:
   `tendsto_withinEstimator_degenerate`: end-to-end use of the integral lemmas
   and of consistency on a degenerate (Dirac) probability space.
 
-Unit-root (nonstationary, cluster-varying laws) processes lie outside the
-independent-clusters regime used here: across-cluster identical distribution
-and fixed integrability fail, and time-series (`T → ∞`) asymptotics are out of
-scope, so no formal exhibit is attempted for them.
+Unit roots are nonstationarity across periods, not across clusters. With the
+finite period set `τ` fixed, independently replicated unit-root paths can
+satisfy the cross-cluster independence, identical distribution, integrability
+and identification hypotheses of `tendsto_withinEstimator` (the estimating
+equation `hEE` is a separate condition), so the consistency result can apply to
+them as `N → ∞`. Outside its scope are time-series (`T → ∞`) asymptotics and
+triangular arrays whose cluster laws change with `N`; no formal exhibit is
+attempted for those.
 -/
 
 @[expose] public section
