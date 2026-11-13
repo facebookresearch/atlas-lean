@@ -10,6 +10,9 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.LinearAlgebra.CrossProduct
 public import Mathlib.Tactic.Abel
+import Mathlib.Analysis.Calculus.Deriv.Comp
+import Mathlib.Analysis.Calculus.FDeriv.Linear
+import Mathlib.Topology.Algebra.Module.FiniteDimension
 
 open scoped Matrix
 
@@ -29,10 +32,9 @@ the rotating-frame equation of motion. The Euler term `Ω̇ × r` vanishes for
 constant `Ω` and does not appear. Formally, the
 inertial acceleration is the rotating-frame derivative of the inertial
 velocity `w = v + Ω × r` plus the transport correction `Ω × w`; expanding
-that correction gives the decomposition. The transport law itself
-(derivative of `Ω × r`) is taken as a hypothesis, not proved here; the
-companion open PR for `PhyslibExt.EarthScience.RotatingFrames` proves it
-for the componentwise cross product.
+that correction gives the decomposition. The transport law (the
+derivative of `Ω × r` is `Ω × v`) follows from the derivative of `r`
+because `Ω × ·` is linear.
 
 ## i. Overview
 
@@ -44,7 +46,7 @@ distributes over addition and scalar multiplication.
 - `EarthScience.rotating_acceleration_decomposition`: the algebraic
   decomposition.
 - `EarthScience.rotating_acceleration_hasDerivAt`: the decomposition
-  with derivatives, from the transport law as a hypothesis.
+  with derivatives, from the derivatives of `r` and `v`.
 
 ## iii. Table of contents
 
@@ -53,7 +55,8 @@ distributes over addition and scalar multiplication.
 ## iv. References
 
 - `Matrix.crossProduct` / `cross_apply` in Mathlib.
-- `HasDerivAt.add` in Mathlib.
+- `HasDerivAt.add`, `HasFDerivAt.comp_hasDerivAt`, and
+  `LinearMap.toContinuousLinearMap` in Mathlib.
 -/
 
 @[expose] public section
@@ -77,22 +80,20 @@ theorem rotating_acceleration_decomposition (Ω v a r : Fin 3 → ℝ) :
   abel
 
 /-- Decomposition with derivatives: let `w t = v t + Ω × r t` be the
-inertial velocity. If `r` has rotating-frame velocity `v`, `v` has
-rotating-frame acceleration `a`, and the transport law
-`HasDerivAt (fun t => Ω × r t) (Ω × v) t` holds at `t`, then `w` has
-rotating-frame derivative `a + Ω × v`, and adding the transport
+inertial velocity. If `r` has rotating-frame velocity `v` and `v` has
+rotating-frame acceleration `a` at `t`, then `w` has rotating-frame
+derivative `a + Ω × v` (the transport law `HasDerivAt (fun t => Ω × r t)
+(Ω × v) t` follows from linearity of `Ω × ·`), and adding the transport
 correction `Ω × w` gives the decomposition
 `a + 2 • (Ω × v) + Ω × (Ω × r)`. -/
 theorem rotating_acceleration_hasDerivAt (Ω : Fin 3 → ℝ)
     (r v : ℝ → Fin 3 → ℝ) (a : Fin 3 → ℝ) (t : ℝ)
     (hr : HasDerivAt (fun t : ℝ => r t) (v t) t)
-    (hv : HasDerivAt (fun t : ℝ => v t) a t)
-    (htransport : HasDerivAt (fun t : ℝ => Ω ⨯₃ r t) (Ω ⨯₃ v t) t) :
+    (hv : HasDerivAt (fun t : ℝ => v t) a t) :
     HasDerivAt (fun t : ℝ => v t + Ω ⨯₃ r t) (a + Ω ⨯₃ v t) t ∧
       (a + Ω ⨯₃ v t) + Ω ⨯₃ (v t + Ω ⨯₃ r t) =
         a + 2 • (Ω ⨯₃ v t) + Ω ⨯₃ (Ω ⨯₃ r t) := by
-  have _ := hr
-  constructor
-  · exact hv.add htransport
-  · exact rotating_acceleration_decomposition Ω (v t) a (r t)
+  have htransport : HasDerivAt (fun t : ℝ => Ω ⨯₃ r t) (Ω ⨯₃ v t) t :=
+    (LinearMap.toContinuousLinearMap (crossProduct Ω)).hasFDerivAt.comp_hasDerivAt t hr
+  exact ⟨hv.add htransport, rotating_acceleration_decomposition Ω (v t) a (r t)⟩
 end EarthScience

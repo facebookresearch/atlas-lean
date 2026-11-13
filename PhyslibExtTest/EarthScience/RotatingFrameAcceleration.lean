@@ -71,9 +71,8 @@ example : (![0, 0, 1] : Fin 3 → ℝ) ⨯₃ (![0, 0, 1] ⨯₃ ![1, 1, 0]) = !
 /-- Derivative version applied to abstract data. -/
 example (Ω : Fin 3 → ℝ) (r v : ℝ → Fin 3 → ℝ) (a : Fin 3 → ℝ) (t : ℝ)
     (hr : HasDerivAt (fun t : ℝ => r t) (v t) t)
-    (hv : HasDerivAt (fun t : ℝ => v t) a t)
-    (htransport : HasDerivAt (fun t : ℝ => Ω ⨯₃ r t) (Ω ⨯₃ v t) t) :
+    (hv : HasDerivAt (fun t : ℝ => v t) a t) :
     HasDerivAt (fun t : ℝ => v t + Ω ⨯₃ r t) (a + Ω ⨯₃ v t) t ∧
       (a + Ω ⨯₃ v t) + Ω ⨯₃ (v t + Ω ⨯₃ r t) =
         a + 2 • (Ω ⨯₃ v t) + Ω ⨯₃ (Ω ⨯₃ r t) :=
-  EarthScience.rotating_acceleration_hasDerivAt Ω r v a t hr hv htransport
+  EarthScience.rotating_acceleration_hasDerivAt Ω r v a t hr hv
