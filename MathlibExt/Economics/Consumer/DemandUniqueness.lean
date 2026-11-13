@@ -81,10 +81,11 @@ theorem convex_budgetSet {L : Type*} [Fintype L] {X : Set (L → ℝ)} (hX : Con
       _ = 1 * w := by rw [hab]
       _ = w := one_mul w
 
-/-- Levin, Proposition 5: on a convex consumption set, a utility strictly quasiconcave on the
-budget set has at most one Marshallian demand. -/
+/-- Levin, Proposition 5: a utility strictly quasiconcave on the budget set has at most one
+Marshallian demand. Strict quasiconcavity includes convexity of the budget set, which holds on a
+convex consumption set by `convex_budgetSet`. -/
 theorem eq_of_isMarshallianDemand {L : Type*} [Fintype L] {u : (L → ℝ) → ℝ}
-    {X : Set (L → ℝ)} {p : L → ℝ} {w : ℝ} {x y : L → ℝ} (hX : Convex ℝ X)
+    {X : Set (L → ℝ)} {p : L → ℝ} {w : ℝ} {x y : L → ℝ}
     (hu : StrictQuasiconcaveOn (budgetSet X p w) u) (hx : IsMarshallianDemand u X p w x)
     (hy : IsMarshallianDemand u X p w y) : x = y := by
   by_contra hxy
@@ -93,9 +94,8 @@ theorem eq_of_isMarshallianDemand {L : Type*} [Fintype L] {u : (L → ℝ) → �
   have hxy_le : u x ≤ u y := hyopt x hxmem
   have hyx_le : u y ≤ u x := hxopt y hymem
   have heq : u x = u y := le_antisymm hxy_le hyx_le
-  have hconv := convex_budgetSet hX p w
   have hmid : (1/2 : ℝ) • x + (1/2 : ℝ) • y ∈ budgetSet X p w :=
-    hconv hxmem hymem (by norm_num) (by norm_num) (by norm_num)
+    hu.1 hxmem hymem (by norm_num) (by norm_num) (by norm_num)
   have hlt := hu.2 hxmem hymem hxy (by norm_num : (0:ℝ) < 1/2) (by norm_num : (0:ℝ) < 1/2)
     (by norm_num : (1/2:ℝ) + (1/2) = 1)
   have hmin : min (u x) (u y) = u x := by simp [heq]

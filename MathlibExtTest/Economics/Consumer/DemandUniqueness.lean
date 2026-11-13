@@ -218,7 +218,7 @@ theorem sqrtU_isMarshallianDemand :
 
 theorem sqrtU_demand_unique (x : Fin 2 → ℝ)
     (hx : IsMarshallianDemand sqrtU (consumptionSet (Fin 2)) ![1, 1] 2 x) : x = ![1, 1] := by
-  exact eq_of_isMarshallianDemand convex_consumptionSet_fin2
+  exact eq_of_isMarshallianDemand
     (strictQuasiconcaveOn_of_strictConcaveOn sqrtU_strictConcaveOn) hx
     sqrtU_isMarshallianDemand
 
