@@ -1,4 +1,4 @@
- /-
+/-
 Copyright (c) Meta Platforms, Inc. and affiliates.
 All rights reserved.
 
@@ -28,6 +28,14 @@ isolated-sphere regime is assumed, and no high-Reynolds drag claim is
 made. The spherical buoyancy identity is stipulated until a geometric
 proof is available.
 
+Sign convention: `v` is the particle velocity along the downward vertical
+(the direction of gravity, whose magnitude is `g > 0`), so the drag
+`6*pi*eta*a*v` acts upward when `v > 0`. A dense particle
+(`rho_s > rho_f`) settles with `v > 0`; a buoyant one (`rho_s < rho_f`)
+rises with `v < 0`. Stokes' drag law assumes creeping flow: a rigid sphere
+moving steadily through unbounded fluid at rest, at small particle
+Reynolds number.
+
 ## ii. Key results
 
 - `EarthScience.terminal_velocity`: force balance implies the terminal velocity formula.
@@ -41,7 +49,17 @@ proof is available.
 
 ## iv. References
 
-- See the individual theorem docstrings.
+- G. G. Stokes, "On the effect of the internal friction of fluids on the
+  motion of pendulums", *Transactions of the Cambridge Philosophical
+  Society* 9 (1851) (the drag `6*pi*eta*a*v` on a sphere of radius `a`
+  moving slowly through a viscous fluid).
+- L. D. Landau and E. M. Lifshitz, *Fluid Mechanics*, 2nd ed., Pergamon
+  Press, 1987, §20 (flow with small Reynolds numbers; Stokes' formula for
+  the drag on a sphere, which holds only in the creeping-flow regime).
+- R. I. Ferguson and M. Church, "A simple universal equation for grain
+  settling velocity", *Journal of Sedimentary Research* 74 (2004),
+  933–937 (the Stokes settling law for fine sediment grains, written there
+  with the grain diameter `D = 2*a`).
 -/
 
 @[expose] public section

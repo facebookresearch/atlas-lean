@@ -1,4 +1,4 @@
- /-
+/-
 Copyright (c) Meta Platforms, Inc. and affiliates.
 All rights reserved.
 
@@ -53,4 +53,3 @@ example : 2 * ((1000:ℝ) - 1000) * 10 * (1:ℝ) ^ 2 / (9 * 1) = 0 :=
 /-- Buoyant rise: `rho_s = 500 < rho_f = 1000` gives negative velocity. -/
 example : 2 * ((500:ℝ) - 1000) * 10 * (1:ℝ) ^ 2 / (9 * 1) < 0 :=
   EarthScience.buoyant_rises (by norm_num) (by norm_num) (by norm_num) (by norm_num)
-
