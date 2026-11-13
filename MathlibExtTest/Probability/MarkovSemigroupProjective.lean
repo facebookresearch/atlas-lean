@@ -16,8 +16,9 @@ import Mathlib.Data.Fin.VecNotation
 # Compile checks for canonical Markov-semigroup laws
 
 These checks pin the public construction used by the neutral Wright--Fisher
-realization: finite laws are built from kernels, projectivity is proved, and
-the resulting path measure is a genuine probability measure.
+realization: finite laws are built from kernels, appending a time adds one
+kernel step, projectivity is proved, and the resulting path measure is a
+genuine probability measure.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -54,6 +55,15 @@ example (K : NNReal → Kernel E E) [∀ t, IsMarkovKernel (K t)]
     IsProjectiveMeasureFamily (α := fun _ : NNReal => E)
       (finiteLaw K x) :=
   isProjectiveMeasureFamily_finiteLaw K hKadd x
+
+/-- Appending one time to a finite chain law adds one kernel step from the last state, for
+arbitrary Markov kernels and times in any order. -/
+example (K : NNReal → Kernel E E) [∀ t, IsMarkovKernel (K t)] {n : ℕ} (x : E) (s₀ : NNReal)
+    (τ : Fin (n + 1) → NNReal) (b : NNReal) :
+    (finiteChainLaw K x s₀ (Fin.snoc τ b)).map (fun z => (Fin.init z, z (Fin.last (n + 1)))) =
+      finiteChainLaw K x s₀ τ ⊗ₘ
+        (K (b - τ (Fin.last n))).comap (fun w => w (Fin.last n)) (measurable_pi_apply _) :=
+  map_init_last_finiteChainLaw_snoc K x s₀ τ b
 
 variable [TopologicalSpace E] [PolishSpace E] [BorelSpace E]
 
@@ -123,6 +133,15 @@ example (x : ℝ) :
 example : IsProbabilityMeasure
     (pathMeasure kernel kernel_add (0 : ℝ)) := by
   infer_instance
+
+/-- Appending the time `2` to the unordered times `3, 1` adds one kernel step from the last
+state. -/
+example (x : ℝ) :
+    (finiteChainLaw kernel x 0 (Fin.snoc ![3, 1] 2)).map
+        (fun z => (Fin.init z, z (Fin.last 2))) =
+      finiteChainLaw kernel x 0 ![3, 1] ⊗ₘ
+        (kernel (2 - 1)).comap (fun w => w (Fin.last 1)) (measurable_pi_apply _) :=
+  map_init_last_finiteChainLaw_snoc kernel x 0 ![3, 1] 2
 
 /-- The concrete one-point ordered law is its single transition marginal. -/
 example (x : ℝ) (s t : NNReal) :

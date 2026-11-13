@@ -16,7 +16,10 @@ public import MathlibExt.Probability.Distributions.CochranIndependence
 The rank criterion on the coordinate projections of `ℚ²` (both directions) and a non-example
 (`A₁ = A₂ = ½ I` sums to `I` but the ranks add up to `4 ≠ 2`); independence of a projection and
 its orthogonal complement; the sample-mean statements for `n = 3` and the boundary `n = 1`; a
-two-group analysis of variance; and the empty-group convention `groupMean = 0`.
+two-group analysis of variance; the empty-group convention `groupMean = 0`; and independence of
+linear images on `ℝ²` (mean row vs residual maker, averaging vs residual projection, the `Bool`
+family, the `HasLaw` transfer with `Z = id`, and mean vs residual quadratic form), with the
+covariance entries computed from the matrices, including a nonzero one.
 -/
 
 @[expose] public section
@@ -109,5 +112,78 @@ example (x : Fin 2 → ℝ) : groupMean (fun _ : Fin 2 => true) x false = 0 := b
 /-- A group mean over a nonempty group is the average. -/
 example (x : Fin 2 → ℝ) : groupMean (fun _ : Fin 2 => ()) x () = (x 0 + x 1) / 2 := by
   simp [groupMean, Fin.sum_univ_two]
+
+/-- The averaging functional `x ↦ (x₀ + x₁) / 2` on `ℝ²` as a `1 × 2` matrix. -/
+noncomputable def meanRow : Matrix (Fin 1) (Fin 2) ℝ := !![1 / 2, 1 / 2]
+
+/-- The residual maker `x ↦ x - x̄ 1` on `ℝ²`. -/
+noncomputable def residMat : Matrix (Fin 2) (Fin 2) ℝ := !![1 / 2, -1 / 2; -1 / 2, 1 / 2]
+
+/-- The averaging projection `x ↦ x̄ 1` on `ℝ²`. -/
+noncomputable def avgMat : Matrix (Fin 2) (Fin 2) ℝ := !![1 / 2, 1 / 2; 1 / 2, 1 / 2]
+
+theorem meanRow_mul_residMat_transpose : meanRow * residMatᵀ = 0 := by
+  ext i j; fin_cases i; fin_cases j <;> norm_num [meanRow, residMat, Matrix.mul_apply]
+
+theorem avgMat_mul_residMat : avgMat * residMat = 0 := by
+  ext i j; fin_cases i <;> fin_cases j <;> norm_num [avgMat, residMat, Matrix.mul_apply]
+
+theorem residMat_isHermitian : residMat.IsHermitian := by
+  ext i j; fin_cases i <;> fin_cases j <;> simp [residMat]
+
+theorem residMat_transpose : residMatᵀ = residMat := by
+  simpa [Matrix.conjTranspose_eq_transpose_of_trivial] using residMat_isHermitian.eq
+
+theorem residMat_mul_self : residMat * residMat = residMat := by
+  ext i j; fin_cases i <;> fin_cases j <;> norm_num [residMat, Matrix.mul_apply]
+
+/-- The covariance of the sample mean and the first residual of two i.i.d. standard normals is
+`0`, computed from the matrix entries. -/
+example : cov[fun x : Fin 2 → ℝ => (meanRow *ᵥ x) 0, fun x => (residMat *ᵥ x) 0;
+    Measure.pi fun _ : Fin 2 => gaussianReal 0 1] = 0 := by
+  rw [covariance_mulVec_pi_gaussianReal]
+  norm_num [meanRow, residMat, Matrix.mul_apply]
+
+/-- Non-vacuity: a nonzero covariance, `Var((x₀ + x₁) / 2) = 1 / 2`. -/
+example : cov[fun x : Fin 2 → ℝ => (meanRow *ᵥ x) 0, fun x => (meanRow *ᵥ x) 0;
+    Measure.pi fun _ : Fin 2 => gaussianReal 0 1] = 1 / 2 := by
+  rw [covariance_mulVec_pi_gaussianReal]
+  norm_num [meanRow, Matrix.mul_apply]
+
+/-- The sample mean, as a `1 × 2` matrix image, is independent of the residual vector. -/
+example : IndepFun (fun x : Fin 2 → ℝ => meanRow *ᵥ x) (fun x => residMat *ᵥ x)
+    (Measure.pi fun _ : Fin 2 => gaussianReal 0 1) :=
+  indepFun_mulVec_mulVec_pi_gaussianReal meanRow_mul_residMat_transpose
+
+/-- The averaging and residual projections of a standard Gaussian vector are independent. -/
+example : IndepFun (fun x : Fin 2 → ℝ => avgMat *ᵥ x) (fun x => residMat *ᵥ x)
+    (Measure.pi fun _ : Fin 2 => gaussianReal 0 1) :=
+  indepFun_mulVec_mulVec_pi_gaussianReal_of_isHermitian avgMat_mul_residMat residMat_isHermitian
+
+/-- Family version: the mean row and the residual maker, indexed by `Bool`. -/
+example : iIndepFun (fun (b : Bool) (x : Fin 2 → ℝ) =>
+      (if b then avgMat else residMat) *ᵥ x)
+    (Measure.pi fun _ : Fin 2 => gaussianReal 0 1) := by
+  refine iIndepFun_mulVec_pi_gaussianReal (m := fun _ => Fin 2) _ fun b c hbc => ?_
+  have hT' : avgMatᵀ = avgMat := by ext i j; fin_cases i <;> fin_cases j <;> simp [avgMat]
+  have hRA : residMat * avgMat = 0 := by
+    ext i j; fin_cases i <;> fin_cases j <;> norm_num [avgMat, residMat, Matrix.mul_apply]
+  cases b <;> cases c
+  · exact absurd rfl hbc
+  · simpa [hT'] using hRA
+  · simpa [residMat_transpose] using avgMat_mul_residMat
+  · exact absurd rfl hbc
+
+/-- Transfer form on the canonical space (`Z = id`). -/
+example : IndepFun (fun x : Fin 2 → ℝ => meanRow *ᵥ id x) (fun x => residMat *ᵥ id x)
+    (Measure.pi fun _ : Fin 2 => gaussianReal 0 1) :=
+  indepFun_mulVec_mulVec_of_hasLaw HasLaw.id meanRow_mul_residMat_transpose
+
+/-- The sample mean is independent of the quadratic form `xᵀ M x = ∑ (xᵢ - x̄)²`. -/
+example : IndepFun (fun x : Fin 2 → ℝ => meanRow *ᵥ x) (fun x => x ⬝ᵥ residMat *ᵥ x)
+    (Measure.pi fun _ : Fin 2 => gaussianReal 0 1) :=
+  indepFun_mulVec_dotProduct_mulVec_pi_gaussianReal
+    (by simpa [residMat_transpose] using meanRow_mul_residMat_transpose)
+    residMat_isHermitian residMat_mul_self
 
 end MathlibExtTest.Probability.Distributions.CochranIndependence

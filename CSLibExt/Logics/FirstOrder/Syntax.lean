@@ -25,6 +25,12 @@ proof calculus needs:
   `t` and shifts the others down.  `∀' φ` with `φ : L.BoundedFormula α 1` is a
   quantified formula, and `instantiate t φ : L.Formula α` is its instance at `t`.
 * `rename f φ` renames free variables along `f : α → β`.
+* `substBoundTerm s t`, `substBoundFormula s φ` substitute a one-variable term `s`
+  for the outermost bound variable (index `0`), keeping the bound-variable count:
+  the bound variables of `s` still refer to the outermost bound variable, and every
+  other bound variable is unchanged. This is the substitution an induction schema
+  needs: in `∀x (φ(x) → φ(S x))` the term `S x` still mentions the bound variable
+  `x`. It differs from `instantiate`, which eliminates the outermost bound variable.
 
 ## Main results
 
@@ -37,6 +43,8 @@ proof calculus needs:
 - `rename_instantiate`, `rename_rename`, `rename_congr`, `freeVarFinset_rename` : renaming
   commutes with instantiation, composes, is the identity when it fixes the free
   variables, and maps the free variables.
+- `realize_substBoundTerm`, `realize_substBoundFormula` : the substituted term /
+  formula holds with the outermost bound variable replaced by the value of `s`.
 -/
 
 @[expose] public section
@@ -189,6 +197,113 @@ theorem realize_congr [DecidableEq α] {n : ℕ} {φ : L.BoundedFormula α n} {v
     (BoundedFormula.realize_restrictFreeVar (f := id) (v := fun a ↦ v a) v' fun a ↦ h a a.2)
 
 end Realize
+
+/-! ### Substituting a one-variable term for the outermost bound variable -/
+
+/-- Substitute the one-variable term `s` for the outermost bound variable (index `0`) of a
+term, keeping the bound-variable count: the bound variables of `s` still refer to the
+outermost bound variable, and every other bound variable is unchanged. -/
+def substBoundTerm {L : FirstOrder.Language} {α : Type*} (s : L.Term (α ⊕ Fin 1)) :
+    ∀ {m : ℕ}, L.Term (α ⊕ Fin (m + 1)) → L.Term (α ⊕ Fin (m + 1)) :=
+  fun t => t.subst (Sum.elim (fun a => Term.var (Sum.inl a))
+    (Fin.cases (s.relabel (Sum.map id (Fin.castLE (by omega))))
+      (fun i => Term.var (Sum.inr i.succ))))
+
+@[simp] theorem substBoundTerm_var_inl {L : FirstOrder.Language} {α : Type*}
+    (s : L.Term (α ⊕ Fin 1)) {m : ℕ} (a : α) :
+    substBoundTerm s (Term.var (Sum.inl a) : L.Term (α ⊕ Fin (m + 1))) =
+      Term.var (Sum.inl a) := rfl
+
+@[simp] theorem substBoundTerm_var_zero {L : FirstOrder.Language} {α : Type*}
+    (s : L.Term (α ⊕ Fin 1)) {m : ℕ} :
+    substBoundTerm s (Term.var (Sum.inr (0 : Fin (m + 1))) :
+        L.Term (α ⊕ Fin (m + 1))) =
+      s.relabel (Sum.map id (Fin.castLE (by omega : 1 ≤ m + 1))) := rfl
+
+@[simp] theorem substBoundTerm_var_succ {L : FirstOrder.Language} {α : Type*}
+    (s : L.Term (α ⊕ Fin 1)) {m : ℕ} (i : Fin m) :
+    substBoundTerm s (Term.var (Sum.inr i.succ) : L.Term (α ⊕ Fin (m + 1))) =
+      Term.var (Sum.inr i.succ) := rfl
+
+/-- Substitute the one-variable term `s` for the outermost bound variable (index `0`) of a
+formula, keeping the bound-variable count. -/
+def substBoundFormula {L : FirstOrder.Language} {α : Type*} (s : L.Term (α ⊕ Fin 1)) :
+    ∀ {m : ℕ}, L.BoundedFormula α (m + 1) → L.BoundedFormula α (m + 1)
+  | _, .falsum => .falsum
+  | _, .equal t₁ t₂ => .equal (substBoundTerm s t₁) (substBoundTerm s t₂)
+  | _, .rel R ts => .rel R fun i => substBoundTerm s (ts i)
+  | _, .imp φ ψ => .imp (substBoundFormula s φ) (substBoundFormula s ψ)
+  | _, .all φ => .all (substBoundFormula s φ)
+termination_by _ φ => sizeOf φ
+
+/-- The value of the substituted term is the value of the original term with the outermost
+bound variable replaced by the value of `s`. -/
+theorem realize_substBoundTerm {L : FirstOrder.Language} {α : Type*} {M : Type*}
+    [L.Structure M]
+    (s : L.Term (α ⊕ Fin 1)) {m : ℕ} (t : L.Term (α ⊕ Fin (m + 1)))
+    (v : α → M) (xs : Fin (m + 1) → M) :
+    (substBoundTerm s t).realize (Sum.elim v xs) =
+      t.realize (Sum.elim v (Function.update xs 0
+        (s.realize (Sum.elim v fun _ => xs 0)))) := by
+  induction t with
+  | var x =>
+    rcases x with a | i
+    · rfl
+    · refine Fin.cases ?_ (fun j => ?_) i
+      · have hcomp : (Sum.elim v xs) ∘ (Sum.map id (Fin.castLE (by omega : 1 ≤ m + 1)) :
+            α ⊕ Fin 1 → α ⊕ Fin (m + 1)) = Sum.elim v fun _ => xs 0 := by
+          funext y
+          rcases y with a | j
+          · rfl
+          · have hj : j = 0 := Fin.fin_one_eq_zero j
+            subst hj
+            rfl
+        simp only [substBoundTerm_var_zero, Term.realize_relabel, hcomp, Term.realize_var,
+          Sum.elim_inr, Function.update_self]
+      · simp only [substBoundTerm_var_succ, Term.realize_var, Sum.elim_inr,
+          Function.update_of_ne (Fin.succ_ne_zero j)]
+  | func f ts ih =>
+    rw [show substBoundTerm s (Term.func f ts) =
+      Term.func f (fun i => substBoundTerm s (ts i)) from rfl]
+    simp only [Term.realize, ih]
+
+/-- The substituted formula holds iff the original holds with the outermost bound variable
+replaced by the value of `s`. -/
+theorem realize_substBoundFormula {L : FirstOrder.Language} {α : Type*} {M : Type*}
+    [L.Structure M]
+    (s : L.Term (α ⊕ Fin 1)) :
+    ∀ {m : ℕ} (φ : L.BoundedFormula α (m + 1)) (v : α → M) (xs : Fin (m + 1) → M),
+      (substBoundFormula s φ).Realize v xs ↔
+        φ.Realize v (Function.update xs 0 (s.realize (Sum.elim v fun _ => xs 0)))
+  | _, .falsum, _, _ => by simp only [substBoundFormula, BoundedFormula.Realize]
+  | _, .equal t₁ t₂, v, xs => by
+    simp only [substBoundFormula, BoundedFormula.Realize, realize_substBoundTerm]
+  | _, .rel R ts, v, xs => by
+    simp only [substBoundFormula, BoundedFormula.Realize, realize_substBoundTerm]
+  | _, .imp φ ψ, v, xs => by
+    simp only [substBoundFormula, BoundedFormula.realize_imp,
+      realize_substBoundFormula s φ, realize_substBoundFormula s ψ]
+  | m, .all φ, v, xs => by
+    have hsnoc : ∀ a : M, Function.update (@Fin.snoc (m + 1) (fun _ => M) xs a) 0
+        (s.realize (Sum.elim v fun _ => @Fin.snoc (m + 1) (fun _ => M) xs a 0)) =
+        @Fin.snoc (m + 1) (fun _ => M) (Function.update xs 0
+          (s.realize (Sum.elim v fun _ => xs 0))) a := by
+      intro a
+      have : NeZero (m + 1) := ⟨by omega⟩
+      have hzero : @Fin.snoc (m + 1) (fun _ => M) xs a 0 = xs 0 := by
+        simp only [Fin.snoc_apply_zero]
+      rw [hzero, Fin.snoc_update]
+      congr 1
+    simp only [substBoundFormula, BoundedFormula.realize_all]
+    constructor
+    · intro h a
+      have h' := h a
+      rw [realize_substBoundFormula s φ] at h'
+      rw [hsnoc a] at h'
+      exact h'
+    · intro h a
+      rw [realize_substBoundFormula s φ, hsnoc a]
+      exact h a
 
 /-! ### Renaming free variables -/
 
