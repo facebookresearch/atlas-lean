@@ -10,7 +10,7 @@ module
 
 import MathlibExt.NumberTheory.DirichletCharacter.Period
 
-import Mathlib.Data.Complex.Basic
+import Mathlib.Basic.Complex.Basic
 
 /-!
 # Tests for Dirichlet character periods (ATLAS `NumberTheoryI` Lemma 18.8)

@@ -17,12 +17,10 @@ namespace MetaMathlibExt
 theorem unsignedCharlierOrder0_nat_zero :
     unsignedCharlierOrder0 ℕ 0 = 1 := by
   simp [unsignedCharlierOrder0, ascPochhammer_zero]
-  try ring
 
 theorem unsignedCharlierOrder0_nat_one :
     unsignedCharlierOrder0 ℕ 1 = 1 + Polynomial.X := by
   simp [unsignedCharlierOrder0, ascPochhammer_zero, ascPochhammer_succ_right, Finset.sum_range_succ]
-  try ring
 
 theorem unsignedCharlierOrder0_nat_two :
     unsignedCharlierOrder0 ℕ 2 = 1 + 3 * Polynomial.X + Polynomial.X ^ 2 := by

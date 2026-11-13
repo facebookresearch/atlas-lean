@@ -19,7 +19,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.Data.Complex.Basic
+public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Topology.Basic
 public import Mathlib.Topology.Connected.Basic

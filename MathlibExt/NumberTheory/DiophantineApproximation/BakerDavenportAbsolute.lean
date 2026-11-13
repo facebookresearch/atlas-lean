@@ -63,6 +63,7 @@ theorem bakerDavenport_reduction_absolute_general
   linarith
 
 
+set_option linter.unusedVariables false in
 /-- Absolute-value Baker–Davenport reduction lemma.
 
 Concept `baker_davenport_reduction_absolute`, semantic id
@@ -85,6 +86,7 @@ It follows from `bakerDavenport_reduction_absolute_general`. The hypotheses `hM`
 are unused and keep the source's shape; `hqM` only supplies `0 < q`.
 Proves `Wanted` entry `bakerDavenport_reduction_absolute`.
 -/
+@[nolint unusedArguments] -- `hkappa` keeps the `Wanted` entry's statement
 theorem bakerDavenport_reduction_absolute
     (M : ℕ) (hM : 0 < M)
     (kappa : ℝ) (hkappa : Irrational kappa)

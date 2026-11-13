@@ -23,10 +23,12 @@ namespace MathlibExt.NumberTheory.Ramanujan.Part1Ch3
 
 namespace Entry12SummableRN
 
+set_option linter.unusedVariables false in
 /-- Source: Berndt, Ramanujan's Notebooks Part I, Chapter 3, definition (12.1) and Entry 12,
     printed pp. 66-67 / PDF pp. 76-77.
 Proves `Wanted` entry `ramanujan_part1_ch3_entry12_summable_r_n`.
 -/
+@[nolint unusedArguments] -- `hn` keeps the `Wanted` entry's statement
 theorem ramanujan_part1_ch3_entry12_summable_r_n (r : ℤ)
     (n a : ℂ)
         (ha : ‖a‖ > Real.exp 1 ∨ (a = (Real.exp 1 : ℂ) ∧ r ≤ -2))

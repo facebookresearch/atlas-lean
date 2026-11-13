@@ -28,7 +28,8 @@ namespace MetaMathlibExt
 
 /-- Let `a` be a natural number that is a primitive root modulo infinitely many primes (this
 forces `a ≥ 2`), and `S = {a^k : k ≥ 1}`. For every non-decreasing unbounded `f : ℕ → ℕ` there
-is an infinite `A ⊆ S` with `|A ∩ {1, …, N}| ≤ f(N)` for all `N` such that no translate `A + n` (`n ∈ ℤ`)
+is an infinite `A ⊆ S` with `|A ∩ {1, …, N}| ≤ f(N)` for all `N` such that no translate
+`A + n` (`n ∈ ℤ`)
 consists of (positive) primes. The exponent range `k ≥ 1` is the reading in which the paper's
 remark "`S` is admissible" holds: with `k = 0` and `a` even, `S ∋ 1, a` meets both classes
 mod `2`.

@@ -13,7 +13,7 @@ public import Mathlib.NumberTheory.PrimeCounting
 public import MathlibExt.Combinatorics.Enumerative.TotienomialCoefficient
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Field.Lemmas
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.GCongr
 import Mathlib.Tactic.Linarith

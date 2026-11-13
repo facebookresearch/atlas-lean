@@ -52,10 +52,13 @@ height the rebuilt tree of the remaining keys has, subject only to
 `flatten tree` is linear in the number of stored keys (`flattenAux`
 prepends each key once), erasing from the materialized flattening is
 linear, and rebuilding inserts every remaining key; each insertion
-performs `O(t)` list work at each of `O(log_t n)` levels, so the rebuild
-is `O(n · t · log_t n)` when `t` is counted as a parameter
-(`Θ(n log_t n)` insertions only at fixed `t`), not the `O(t log_t n)` of
-the CLRS descent. The single-pass borrow/merge algorithm, with its height
+performs `O(t)` list work at each level of the tree it descends. A leaf
+has height `0`, so a tree of height at most `h` has at most `h + 1`
+levels, and the rebuild is `O(n · t · (h + 1))`, against the
+`O(t · (h + 1))` of the CLRS descent. The standard occupancy argument gives
+`h = O(log_t n)`, so these are `O(n · t · (1 + log_t n))` and
+`O(t · (1 + log_t n))`; that height-versus-size bound is not proved in
+these modules, and there is no formal cost model. The single-pass borrow/merge algorithm, with its height
 statement (the height decreases only when the root's two children merge),
 is `delete` in
 `CSLibExt.Algorithms.Lean.DataStructures.BTree.DeleteBalanced`; this

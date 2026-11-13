@@ -30,7 +30,8 @@ library, so each statement quantifies over `a` with `n - 1 ≤ a` and
 `lambertMap (-a / (n - 1)) = -(1/(n-1)) (4/7)^(1/(n-1))`: writing `y = -a / (n - 1)`,
 these say `y ≤ -1` and `y * exp y` equals the argument, which characterizes
 `y = W₋₁(argument)` uniquely (`existsUnique_lambertMap_lower_preimage` in
-`MathlibExt.Analysis.SpecialFunctions.LambertWFunction`). The same encoding is used for the two-parameter sequence
+`MathlibExt.Analysis.SpecialFunctions.LambertWFunction`). The same encoding is used for the
+two-parameter sequence
 `A n m` with `4/7` replaced by `4/(7m)`. `exists_lambertSequence` proves that such `a`
 (and `A`) exist for `n ≥ 4`, so the statements are not vacuous.
 -/

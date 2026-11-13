@@ -23,20 +23,24 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.GroupTheory.BooneHigmanEmbedding` — boone_higman_embedding (manifest `manifests/problems/boone_higman_embedding.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.GroupTheory.BooneHigmanEmbedding` —
+boone_higman_embedding (manifest `manifests/problems/boone_higman_embedding.toml`, rev 1, submitter
+Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.GroupTheory.BooneHigmanEmbeddingWanted` namespace. Mathematical statements are unchanged except that the source's extra finite-normal-generation hypothesis on `ker φ` is dropped, matching the cited Boone–Higman theorem. Source: W. W. Boone & G. Higman, *An algebraic characterization of groups with soluble word problem*, J. Austral. Math. Soc. 18 (1974). Knill, *Some fundamental theorems in mathematics*, §122.
+and placed the declarations in the `MathlibExt.GroupTheory.BooneHigmanEmbeddingWanted` namespace.
+Mathematical statements are unchanged except that the source's extra finite-normal-generation
+hypothesis on `ker φ` is dropped, matching the cited Boone–Higman theorem. Source: W. W. Boone &
+G. Higman, *An algebraic characterization of groups with soluble word problem*, J. Austral. Math.
+Soc. 18 (1974). Knill, *Some fundamental theorems in mathematics*, §122.
 -/
 module
 
 public import Batteries.Util.ProofWanted
-public import Mathlib.GroupTheory.FinitelyPresentedGroup
 public import Mathlib.GroupTheory.FreeGroup.Basic
-public import Mathlib.GroupTheory.PresentedGroup
 public import Mathlib.GroupTheory.FinitelyPresentedGroup
 public import Mathlib.GroupTheory.Subgroup.Simple
 public import Mathlib.Computability.PartrecCode
@@ -69,7 +73,9 @@ Category-(b) candidate from §122 of the Knill survey (additional statement 1).
 embeds (via injective `f`) into a simple group `H`, which embeds (via injective
 `g`) into a finitely presented group `K`, then the word problem of `G` is
 solvable. -/
-/-- Source: W. W. Boone & G. Higman, *An algebraic characterization of groups with soluble word problem*, J. Austral. Math. Soc. 18 (1974). Knill, *Some fundamental theorems in mathematics*, §122. Via leanprover/lean-eval@38361be, problem `boone_higman_embedding`. -/
+/-- Source: W. W. Boone & G. Higman, *An algebraic characterization of groups with soluble word
+problem*, J. Austral. Math. Soc. 18 (1974). Knill, *Some fundamental theorems in mathematics*,
+§122. Via leanprover/lean-eval@38361be, problem `boone_higman_embedding`. -/
 public theorem_wanted boone_higman_embedding
     {G H K : Type*} [Group G] [Group H] [Group K]
     [IsSimpleGroup H] [Group.IsFinitelyPresented K]

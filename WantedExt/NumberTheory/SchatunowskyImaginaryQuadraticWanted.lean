@@ -112,7 +112,8 @@ public theorem_wanted gaussianInt_schatunowsky_max_norm_five_add_five_i :
 ideal of `𝓞 K` (distinct primes of `P_m^+` have distinct norms `p` or `p^2`).
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 1 and Section 4 (`N(π_n)`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 1 and
+Section 4 (`N(π_n)`). -/
 public noncomputable def quadPrimeNorm (K : Type*) [Field K] [NumberField K] (n : ℕ) : ℕ :=
   if n = 0 then 1
   else Nat.nth (fun x => ∃ P : Ideal (𝓞 K), P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P = x) (n - 1)
@@ -120,7 +121,8 @@ public noncomputable def quadPrimeNorm (K : Type*) [Field K] [NumberField K] (n 
 /-- `N(π_0) = 1`.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 1 (convention `π_0 = 1`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 1
+(convention `π_0 = 1`). -/
 public theorem quadPrimeNorm_zero (K : Type*) [Field K] [NumberField K] :
     quadPrimeNorm K 0 = 1 := by
   simp [quadPrimeNorm]
@@ -129,7 +131,8 @@ public theorem quadPrimeNorm_zero (K : Type*) [Field K] [NumberField K] :
 of the nonzero prime ideals of norm at most `N(π_n)`.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 2 (`π_n#`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 2
+(`π_n#`). -/
 public noncomputable def quadPrimorialNorm (K : Type*) [Field K] [NumberField K] (n : ℕ) : ℕ :=
   ∏ᶠ P ∈ {P : Ideal (𝓞 K) | P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P ≤ quadPrimeNorm K n},
     Ideal.absNorm P
@@ -137,7 +140,8 @@ public noncomputable def quadPrimorialNorm (K : Type*) [Field K] [NumberField K]
 /-- `N(π_0#) = 1`: no nonzero prime ideal has norm at most `1`.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 2 (`π_0# = 1`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Definition 2
+(`π_0# = 1`). -/
 public theorem quadPrimorialNorm_zero (K : Type*) [Field K] [NumberField K] :
     quadPrimorialNorm K 0 = 1 := by
   have hempty : {P : Ideal (𝓞 K) | P.IsPrime ∧ P ≠ ⊥ ∧ Ideal.absNorm P ≤ 1} = ∅ := by
@@ -152,7 +156,8 @@ multiplication by units): `α` with `N(α) > 1` such that every `β` with `1 < N
 `gcd(α, β) = 1` has `Ω(β) ≤ ℓ`.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Section 5, Equation (4). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Section 5, Equation
+(4). -/
 public def quadSchatunowskySet (K : Type*) [Field K] [NumberField K] (ℓ : ℕ) : Set (𝓞 K) :=
   {α | 1 < Ideal.absNorm (Ideal.span {α}) ∧ ∀ β : 𝓞 K,
       1 < Ideal.absNorm (Ideal.span {β}) →
@@ -162,7 +167,8 @@ public def quadSchatunowskySet (K : Type*) [Field K] [NumberField K] (ℓ : ℕ)
 /-- `1 ∉ Q_{m,ℓ}` (its norm is `1`).
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Section 5, Equation (4). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Section 5, Equation
+(4). -/
 public theorem one_not_mem_quadSchatunowskySet (K : Type*) [Field K] [NumberField K] (ℓ : ℕ) :
     (1 : 𝓞 K) ∉ quadSchatunowskySet K ℓ := by
   simp [quadSchatunowskySet]
@@ -173,7 +179,8 @@ and `2` otherwise. The representative convention `-θ_m < arg α ≤ θ_m` in th
 and is not stated.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 2 (`integers-2026-A110-prop-2`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 2
+(`integers-2026-A110-prop-2`). -/
 public theorem_wanted imagQuadratic_units_isCyclic_card {K : Type*} [Field K] [NumberField K]
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] :
     IsCyclic (𝓞 K)ˣ ∧
@@ -185,7 +192,8 @@ over all primes up to units, Definition 1). Indices are shifted by one (`n ≥ 1
 imaginary quadratic field: the norms do not need the paper's class-number-one assumption.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 1 (`integers-2026-A110-lem-1`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 1
+(`integers-2026-A110-lem-1`). -/
 public theorem_wanted tendsto_quadPrimeNorm_succ_div {K : Type*} [Field K] [NumberField K]
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] :
     Filter.Tendsto (fun n : ℕ =>
@@ -202,7 +210,8 @@ public theorem_wanted tendsto_quadPrimeNorm_succ_div {K : Type*} [Field K] [Numb
 at the level of norms).
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 4 (`integers-2026-A110-prop-4`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 4
+(`integers-2026-A110-prop-4`). -/
 public theorem_wanted exists_quadPrimeNorm_pow_lt_quadPrimorialNorm {K : Type*} [Field K]
     [NumberField K]
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (ℓ : ℕ) :
@@ -212,7 +221,8 @@ public theorem_wanted exists_quadPrimeNorm_pow_lt_quadPrimorialNorm {K : Type*} 
 nonzero prime ideal of norm at most `N(π_n)`.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 4 (`integers-2026-A110-lem-4`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Lemma 4
+(`integers-2026-A110-lem-4`). -/
 public theorem_wanted mem_prime_of_mem_quadSchatunowskySet {K : Type*} [Field K] [NumberField K]
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n : ℕ)
     (α : 𝓞 K) (hα : α ∈ quadSchatunowskySet K ℓ)
@@ -223,7 +233,8 @@ public theorem_wanted mem_prime_of_mem_quadSchatunowskySet {K : Type*} [Field K]
 `n ≥ n₀`), then no `α` with `N(π_{n₀})^{ℓ+1} < N(α)` lies in `Q_{m,ℓ}`; and `Q_{m,ℓ}` is finite.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 4 (`integers-2026-A110-thm-4`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 4
+(`integers-2026-A110-thm-4`). -/
 public theorem_wanted quadSchatunowskySet_norm_bound_and_finite {K : Type*} [Field K]
     [NumberField K]
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n₀ : ℕ)
@@ -241,7 +252,8 @@ the least admissible `n₀`: for the Gaussian integers with `ℓ = 1`, `n₀ = 4
 omitted.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 5 (`integers-2026-A110-thm-5`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Theorem 5
+(`integers-2026-A110-thm-5`). -/
 public theorem_wanted quadSchatunowskySet_eq_iUnion {K : Type*} [Field K] [NumberField K]
     (hK : Module.finrank ℚ K = 2) [IsTotallyComplex K] (hK1 : classNumber K = 1) (ℓ n₀ : ℕ)
     (hn₀ : ∀ n ≥ n₀, quadPrimeNorm K (n + 1) ^ (ℓ + 1) < quadPrimorialNorm K n) :
@@ -256,7 +268,8 @@ public theorem_wanted quadSchatunowskySet_eq_iUnion {K : Type*} [Field K] [Numbe
 not stated.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 5 (`integers-2026-A110-prop-5`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 5
+(`integers-2026-A110-prop-5`). -/
 public theorem_wanted gaussian_quadPrimeNorm_pow_lt_quadPrimorialNorm {K : Type*} [Field K]
     [NumberField K]
     (hK : discr K = -4) :
@@ -268,7 +281,8 @@ public theorem_wanted gaussian_quadPrimeNorm_pow_lt_quadPrimorialNorm {K : Type*
 `N(π_{n+1})^{ℓ+1} < N(π_n#)` for all `n ≥ n(ℓ)`. The record's trailing "…" is not stated.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 6 (`integers-2026-A110-prop-6`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Proposition 6
+(`integers-2026-A110-prop-6`). -/
 public theorem_wanted eisenstein_quadPrimeNorm_pow_lt_quadPrimorialNorm {K : Type*} [Field K]
     [NumberField K]
     (hK : discr K = -3) :
@@ -286,7 +300,8 @@ the elements of largest norm are `π_2# = 5(1+i)`, `2(π_3#) = 30(1+i)` and `π_
 unique up to units. The record's closing remark on Dalezman is omitted.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Corollary 1 (`integers-2026-A110-cor-1`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Corollary 1
+(`integers-2026-A110-cor-1`). -/
 public theorem_wanted gaussian_quadSchatunowskySet_eq {K : Type*} [Field K] [NumberField K]
     (hK : discr K = -4) :
     quadSchatunowskySet K 1 =
@@ -339,7 +354,8 @@ norm `3` (any element `π` of norm `3`), `π_2# = 2π`, `π_3# = 14π`, `π_4# =
 element of largest norm in the `γ(π_3#)` part.
 
 Source: Hirofumi Nakai, Ken Sasaki and Konoka Yoshida, *Schatunowsky-type Theorems for Imaginary
-Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Corollary 2 (`integers-2026-A110-cor-2`). -/
+Quadratic Integer Rings of Class Number One*, INTEGERS 26 (2026), Article A110, Corollary 2
+(`integers-2026-A110-cor-2`). -/
 public theorem_wanted eisenstein_quadSchatunowskySet_eq {K : Type*} [Field K] [NumberField K]
     (hK : discr K = -3) :
     quadSchatunowskySet K 1 =

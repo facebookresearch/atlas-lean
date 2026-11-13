@@ -23,14 +23,20 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.NumberTheory.WieferichNineCubes` — wieferich_g_three (manifest `manifests/problems/wieferich_g_three.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.NumberTheory.WieferichNineCubes` —
+wieferich_g_three (manifest `manifests/problems/wieferich_g_three.toml`, rev 1, submitter Kim
+Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.NumberTheory.WieferichNineCubesWanted` namespace. Mathematical
-statements are unchanged. Source: A. Wieferich, *Beweis des Satzes, daß sich eine jede ganze Zahl als Summe von höchstens neun positiven Kuben darstellen läßt*, Math. Ann. 66 (1909); A. Kempner, *Über das Waringsche Problem und einige Verallgemeinerungen*, Math. Ann. 72 (1912). Knill, *Some fundamental theorems in mathematics*, §76.
+and placed the declarations in the `MathlibExt.NumberTheory.WieferichNineCubesWanted` namespace.
+Mathematical
+statements are unchanged. Source: A. Wieferich, *Beweis des Satzes, daß sich eine jede ganze Zahl
+als Summe von höchstens neun positiven Kuben darstellen läßt*, Math. Ann. 66 (1909); A.
+Kempner, *Über das Waringsche Problem und einige Verallgemeinerungen*, Math. Ann. 72 (1912).
+Knill, *Some fundamental theorems in mathematics*, §76.
 -/
 module
 
@@ -68,7 +74,10 @@ def IsSumOfCubes (k n : ℕ) : Prop :=
 /- **Wieferich's theorem `g(3) = 9`.** Every natural number is a sum of nine
 cubes, and nine is necessary: some `n` (namely `23`) is not a sum of eight
 cubes. -/
-/-- Source: A. Wieferich, *Beweis des Satzes, daß sich eine jede ganze Zahl als Summe von höchstens neun positiven Kuben darstellen läßt*, Math. Ann. 66 (1909); A. Kempner, *Über das Waringsche Problem und einige Verallgemeinerungen*, Math. Ann. 72 (1912). Knill, *Some fundamental theorems in mathematics*, §76. Via leanprover/lean-eval@38361be, problem `wieferich_g_three`. -/
+/-- Source: A. Wieferich, *Beweis des Satzes, daß sich eine jede ganze Zahl als Summe von
+höchstens neun positiven Kuben darstellen läßt*, Math. Ann. 66 (1909); A. Kempner, *Über das
+Waringsche Problem und einige Verallgemeinerungen*, Math. Ann. 72 (1912). Knill, *Some fundamental
+theorems in mathematics*, §76. Via leanprover/lean-eval@38361be, problem `wieferich_g_three`. -/
 public theorem_wanted wieferich_g_three :
     (∀ n : ℕ, IsSumOfCubes 9 n) ∧ ∃ n : ℕ, ¬ IsSumOfCubes 8 n
 

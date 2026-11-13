@@ -85,4 +85,9 @@ example : cycle.detect 0 [0, 1, 2] = [0, 1, 2] := by decide
 
 example : (cycle.detect 0 [0, 1, 2]).filter (fun p => cycle.alloc p ≠ 0) = [0, 1] := by decide
 
+/-- A later process can be erased after crediting its allocation in advance,
+even though its request does not fit in the initial free resources. -/
+example : ok.Reduces (none0 + ok.alloc 1) ([0, 2, 3, 1, 4].erase 1) :=
+  State.Reduces.erase_of_mem (by decide : ok.Reduces none0 [0, 2, 3, 1, 4]) (by simp)
+
 end Cslib.Algorithms.Concurrency.DeadlockDetection.Tests

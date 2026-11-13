@@ -104,4 +104,20 @@ example : starSummand Index.empty WeaklyDecreasingTuple.empty = 1 :=
 example : starValue Index.empty (.inr Index.empty_depth) = 1 := by
   apply starValue_empty
 
+example : (Index.replicate 3 2).entries = [2, 2, 2] := by simp
+
+example : (Index.replicate 3 2).depth = 3 := by simp
+
+example : (Index.replicate 3 2).weight = 6 := by simp
+
+example : Index.replicate 0 2 = Index.empty := rfl
+
+example : (Index.replicate 2 3).entry ⟨1, by simp⟩ = 3 := by simp
+
+example : (Index.replicate 2 2).IsAdmissibleOrEmpty :=
+  Index.replicate_isAdmissibleOrEmpty 2 le_rfl
+
+example : ¬(Index.replicate 1 1).IsAdmissibleOrEmpty := by
+  simp [Index.replicate, Index.IsAdmissibleOrEmpty, Index.IsAdmissible, Index.depth]
+
 end MetaMathlibExt.MultipleZeta

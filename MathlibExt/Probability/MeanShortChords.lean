@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Finset.Powerset
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 import Mathlib.Algebra.BigOperators.Ring.Finset
@@ -50,13 +50,6 @@ private theorem block_map_inv' (E : ℕ ≃ ℕ) (B : Finset ℕ) :
     exact hx''B
   · intro hxB
     exact ⟨E.symm.toEmbedding x, ⟨x, hxB, rfl⟩, Equiv.apply_symm_apply E x⟩
-
-private theorem block_map_injective (E : ℕ ≃ ℕ) :
-    Function.Injective (fun B : Finset ℕ => B.map E.toEmbedding) := by
-  intro B1 B2 h
-  have h2 := congrArg (fun B => B.map E.symm.toEmbedding) h
-  rw [block_map_inv, block_map_inv] at h2
-  exact h2
 
 private theorem range_map_symm_of (E : ℕ ≃ ℕ) (N : ℕ)
     (hR : (Finset.range N).map E.toEmbedding = Finset.range N) :
@@ -105,7 +98,7 @@ private theorem image_mem_diagrams (F : ℕ ≃ ℕ) (N m k : ℕ) (D : Finset (
     obtain ⟨z, hzB', hzE⟩ := hy
     rw [← hR]
     exact Finset.mem_map.mpr ⟨z, hB'sub hzB', hzE⟩
-  · rw [Finset.card_image_of_injective _ (block_map_injective F)]
+  · rw [Finset.card_image_of_injective _ (Finset.map_injective F.toEmbedding)]
     exact hDcard
   · intro B hB
     rw [Finset.mem_image] at hB

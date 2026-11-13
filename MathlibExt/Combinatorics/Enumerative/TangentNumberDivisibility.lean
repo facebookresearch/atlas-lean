@@ -12,7 +12,7 @@ public import Mathlib.Data.Int.ModEq
 public import Mathlib.Data.Nat.Choose.Sum
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Data.Nat.Prime.Defs
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Linarith

@@ -11,7 +11,7 @@ module
 public import Mathlib.Data.Nat.Fib.Basic
 public import Mathlib.NumberTheory.Padics.PadicVal.Basic
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.NormNum.Prime

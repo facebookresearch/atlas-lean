@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.GraphicalModels.StructuralCausalModels
+public meta import CSLibExt.MachineLearning.GraphicalModels.StructuralCausalModels
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Tactic.FinCases
@@ -41,7 +42,10 @@ Surgery on the Boolean xor model above (`x_0 = u_0`, `x_1 = x_0 xor u_1`, `P(u_0
 `P(u_1) = 1/3`):
 
 * after `do(X_0 = true)` the law of `(true, false)` is `1/3` and of `(false, false)` is `0`;
-* after surgery on the set `{0}` with value `true` the law of `(true, false)` is `1/3`.
+* after surgery on the set `{0}` with value `true` the law of `(true, false)` is `1/3`;
+* node `1` starts with the nonempty parent set `{0}`; after `do(X_1 = false)`, and after surgery
+  on the set `{0, 1}`, its parent set is empty and its solution is `false` at every noise value;
+* after `do(X_1 = false)` the law of `(true, false)` is `1/4`.
 
 Counterfactuals in the same xor model, with evidence `X_1 = false` and `do(X_0 = false)`:
 
@@ -49,6 +53,9 @@ Counterfactuals in the same xor model, with evidence `X_1 = false` and `do(X_0 =
 * `P(X_1 = true had X_0 been false | X_1 = false) = 1/7`, while the interventional probability
   `P(X_1 = true | do(X_0 = false))` is `1/3`: sharing the noise between the factual and the
   counterfactual world matters.
+
+With noise on `ℕ`, which has no `Fintype` instance, trivial evidence has probability `1`, the
+posterior sums to `1`, and `counterfactualProb_true` applies.
 
 Effectiveness, consistency and composition in the xor model (without noise laws): at
 `u = (true, true)` the solution is `(true, false)`, setting `X_0 = true` changes nothing, and
@@ -192,6 +199,12 @@ example (z : testPa 1 → Bool) (hz : z testJ0 = true) :
     ((testM.inducedBayesNet testMu).cpt 1 z).weights false = 1/3 :=
   test_cpt1 z hz
 
+/-- `inducedLaw_eq_joint` applies to noise types that are not finite: a finitely
+supported law on `ℕ` needs no `Fintype ℕ` instance. -/
+example (M : FiniteSCM Bool 1 (fun _ => ℕ)) (μ : (k : Fin 1) → StdSimplex ℝ ℕ)
+    (x : Fin 1 → Bool) : M.inducedLaw μ x = (M.inducedBayesNet μ).joint x :=
+  M.inducedLaw_eq_joint μ x
+
 example : testM.inducedLaw testMu ![true, false] = 1/12 := by
   have x0 : ![true, false] (0 : Fin 2) = true := by simp
   have x1 : ![true, false] (1 : Fin 2) = false := by simp
@@ -318,6 +331,22 @@ example : testNet.responseSCM.inducedLaw testNet.responseLaw ![true, true] = (1/
   norm_num
 
 end ResponseRealization
+
+private def chainPa {n : ℕ} (k : Fin n) : Finset (Fin k) :=
+  if h : 0 < k.val then {⟨k.val - 1, Nat.sub_lt h (by decide)⟩} else ∅
+
+private def chainModel (n : ℕ) : FiniteSCM ℕ n (fun _ => Unit) where
+  pa := chainPa
+  f k z _ := if h : 0 < k.val then
+    z ⟨⟨k.val - 1, Nat.sub_lt h (by decide)⟩, by simp [chainPa, h]⟩ + 1
+    else 1
+
+-- Exercise the compiled solver at increasing sizes, not just its equations.
+#eval show IO Unit from do
+  for n in [7, 15, 31, 63] do
+    let result := (chainModel (n + 1)).solve (fun _ => ()) (Fin.last n)
+    unless result == n + 1 do
+      throw (IO.userError s!"chain of length {n + 1}: got {result}")
 
 namespace Surgery
 
@@ -475,6 +504,60 @@ example : (M.doSet {0} ![true, true]).inducedLaw μ ![true, false] = 1 / 3 := by
     omega
   exact x_castLE_zero _ _ _ hj0
 
+/-- The node-0 push-forward factor at `true` is `1/4`: node 0 copies its noise. -/
+theorem map0_weights (g : paXor 0 → Bool) : ((μ 0).map (fXor 0 g)).weights true = 1 / 4 := by
+  have hid : fXor 0 g = id := funext fun v => fXor_zero g v
+  have hμ0 : μ 0 = μ0 := by simp [μ]
+  rw [hid, StdSimplex.map_id, hμ0, μ0_true]
+
+/-- Before surgery, node `1` has the nonempty parent set `{0}`. -/
+example : (M.pa 1).Nonempty := by
+  have h10 : (1 : Fin 2) ≠ 0 := by decide
+  simp only [M, paXor, dite_eq_right h10]
+  exact Finset.singleton_nonempty _
+
+/-- Surgery on node `1` deletes its parents. -/
+example : (M.doNode 1 false).pa 1 = ∅ := by
+  simp [FiniteSCM.doNode]
+
+/-- Surgery on a set containing node `1` deletes its parents. -/
+example : (M.doSet {0, 1} ![true, false]).pa 1 = ∅ := by
+  simp [FiniteSCM.doSet]
+
+/-- After surgery on node `1`, its solution is the intervention value at every noise value. -/
+example (u : (k : Fin 2) → Bool) : (M.doNode 1 false).solve u 1 = false := by
+  have h := (M.doNode 1 false).solve_isSolution u 1
+  rw [M.doNode_f_of_eq] at h
+  exact h
+
+/-- After surgery on a set containing node `1`, its solution is the intervention value. -/
+example (u : (k : Fin 2) → Bool) : (M.doSet {0, 1} ![true, false]).solve u 1 = false := by
+  have h1W : (1 : Fin 2) ∈ ({0, 1} : Finset (Fin 2)) := by simp
+  have h := (M.doSet {0, 1} ![true, false]).solve_isSolution u 1
+  rw [M.doSet_f_of_mem _ _ h1W] at h
+  simpa using h
+
+/-- After `do(X_1 = false)`, the law of `(true, false)` is the probability `1/4` of
+`X_0 = true`. -/
+example : (M.doNode 1 false).inducedLaw μ ![true, false] = 1 / 4 := by
+  have h01 : (0 : Fin 2) ≠ 1 := by decide
+  have hx0 : (![true, false] : Fin 2 → Bool) 0 = true := by simp
+  have hfac1 : ∀ z : ((M.inducedBayesNet μ).intervene 1 false).pa 1 → Bool,
+      (((M.inducedBayesNet μ).intervene 1 false).cpt 1 z).weights
+        ((![true, false] : Fin 2 → Bool) 1) = 1 := by
+    intro z
+    have hcpt : ((M.inducedBayesNet μ).intervene 1 false).cpt 1 z
+        = StdSimplex.single false := by
+      simp [BayesNet.intervene]
+    rw [hcpt]
+    have hx1 : (![true, false] : Fin 2 → Bool) 1 = false := by simp
+    rw [hx1]
+    simp [StdSimplex.weights_single]
+  rw [FiniteSCM.inducedLaw_doNode, BayesNet.joint_eq_prod, Fin.prod_univ_two, hfac1, mul_one,
+    hx0]
+  simp only [BayesNet.intervene, dite_eq_right h01, FiniteSCM.inducedBayesNet, M]
+  exact map0_weights _
+
 end Surgery
 
 namespace Counterfactuals
@@ -568,6 +651,24 @@ theorem xorTest_f10 : ¬ ((xorTestModel.counterfactual 0 false ![true, false]) 1
 theorem xorTest_f11 : (xorTestModel.counterfactual 0 false ![true, true]) 1 = true := by
   decide
 
+/-- Both test noise laws give every value positive weight, so the product of their supports,
+over which the counterfactual sums run, is every noise value. -/
+theorem xorTest_support :
+    Fintype.piFinset (fun k => (xorTestNoise k).weights.support) = Finset.univ := by
+  have h : ∀ k, (xorTestNoise k).weights.support = Finset.univ := by
+    intro k
+    refine Finset.eq_univ_of_forall fun b => Finsupp.mem_support_iff.mpr ?_
+    fin_cases k <;> cases b
+    · show (3 / 4 : ℝ) ≠ 0
+      norm_num
+    · show (1 / 4 : ℝ) ≠ 0
+      norm_num
+    · show (2 / 3 : ℝ) ≠ 0
+      norm_num
+    · show (1 / 3 : ℝ) ≠ 0
+      norm_num
+  simp only [h, Fintype.piFinset_univ]
+
 /-- A sum over the four noise values, as an explicit sum. -/
 theorem sum_xorTest_four (g : ((k : Fin 2) → Bool) → ℝ) :
     ∑ u, g u
@@ -581,8 +682,8 @@ theorem sum_xorTest_four (g : ((k : Fin 2) → Bool) → ℝ) :
 /-- (a) The evidence has probability `7/12`. -/
 theorem xorTest_evidenceProb :
     xorTestModel.evidenceProb xorTestNoise (fun x : Fin 2 → Bool => x 1 = false) = 7 / 12 := by
-  simp only [evidenceProb, Finset.sum_filter, sum_xorTest_four, xorTest_e00, xorTest_e01,
-    xorTest_e10, xorTest_e11, xorTest_w00, xorTest_w11]
+  simp only [evidenceProb, xorTest_support, Finset.sum_filter, sum_xorTest_four, xorTest_e00,
+    xorTest_e01, xorTest_e10, xorTest_e11, xorTest_w00, xorTest_w11]
   norm_num
 
 example :
@@ -593,9 +694,9 @@ example :
 theorem xorTest_counterfactualProb :
     xorTestModel.counterfactualProb xorTestNoise (fun x : Fin 2 → Bool => x 1 = false) 0 false
       (fun x : Fin 2 → Bool => x 1 = true) = 1 / 7 := by
-  simp only [counterfactualProb, Finset.sum_filter, sum_xorTest_four, xorTest_e00, xorTest_e01,
-    xorTest_e10, xorTest_e11, xorTest_f00, xorTest_f01, xorTest_f10, xorTest_f11, xorTest_w11,
-    xorTest_evidenceProb]
+  simp only [counterfactualProb, xorTest_support, Finset.sum_filter, sum_xorTest_four,
+    xorTest_e00, xorTest_e01, xorTest_e10, xorTest_e11, xorTest_f00, xorTest_f01, xorTest_f10,
+    xorTest_f11, xorTest_w11, xorTest_evidenceProb]
   norm_num
 
 example :
@@ -612,14 +713,39 @@ theorem xorTest_evidenceTrue : xorTestModel.evidenceProb xorTestNoise (fun _ => 
 theorem xorTest_counterfactualTrue :
     xorTestModel.counterfactualProb xorTestNoise (fun _ => True) 0 false
       (fun x : Fin 2 → Bool => x 1 = true) = 1 / 3 := by
-  simp only [counterfactualProb, Finset.sum_filter, sum_xorTest_four, true_and, xorTest_f00,
-    xorTest_f01, xorTest_f10, xorTest_f11, xorTest_w01, xorTest_w11, xorTest_evidenceTrue]
+  simp only [counterfactualProb, xorTest_support, Finset.sum_filter, sum_xorTest_four, true_and,
+    xorTest_f00, xorTest_f01, xorTest_f10, xorTest_f11, xorTest_w01, xorTest_w11,
+    xorTest_evidenceTrue]
   norm_num
 
 example :
     xorTestModel.counterfactualProb xorTestNoise (fun _ => True) 0 false
       (fun x : Fin 2 → Bool => x 1 = true) = 1 / 3 :=
   xorTest_counterfactualTrue
+
+/-! The counterfactual API needs no finiteness of the noise types: below, the noise of a
+one-node model lives on `ℕ`, which has no `Fintype` instance. -/
+
+/-- Trivial evidence has probability `1` for any noise laws on `ℕ`. -/
+example (M : FiniteSCM Bool 1 (fun _ => ℕ)) (μ : (k : Fin 1) → StdSimplex ℝ ℕ) :
+    M.evidenceProb μ (fun _ => True) = 1 := by
+  simp only [evidenceProb, Finset.filter_true]
+  exact sum_noiseWeight_eq_one μ
+
+/-- The posterior given evidence of positive probability sums to `1` with noise on `ℕ`. -/
+example (M : FiniteSCM Bool 1 (fun _ => ℕ)) (μ : (k : Fin 1) → StdSimplex ℝ ℕ)
+    (E : (Fin 1 → Bool) → Prop) [DecidablePred E] (hE : M.evidenceProb μ E ≠ 0) :
+    ∑ u ∈ Fintype.piFinset (fun j => (μ j).weights.support), M.posteriorWeight μ E u = 1 :=
+  (M.sum_posteriorWeight μ E hE).2
+
+/-- Without evidence the counterfactual probability is the interventional one, with noise on
+`ℕ`. -/
+example (M : FiniteSCM Bool 1 (fun _ => ℕ)) (μ : (k : Fin 1) → StdSimplex ℝ ℕ)
+    (F : (Fin 1 → Bool) → Prop) [DecidablePred F] :
+    M.counterfactualProb μ (fun _ => True) 0 true F =
+      ∑ x with F x, (@BayesNet.joint Bool _ ⟨true⟩
+        ((M.inducedBayesNet μ).intervene 0 true) x) :=
+  M.counterfactualProb_true μ 0 true F
 
 end Counterfactuals
 
@@ -701,6 +827,16 @@ noncomputable def ca04t03_xorM : FiniteSCM Bool 2 (fun _ => Bool) where
     | ⟨n + 2, h⟩ => absurd h (by omega)
 
 noncomputable def ca04t03_xorG : Bool → ℝ := fun b => if b then 1 else 0
+
+/-! The noise law is registered as a probability measure, so probability APIs such as
+`integral_ipw_ate` find the instance. -/
+
+example {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)] [∀ k, MeasurableSpace (U k)]
+    (μ : (k : Fin n) → StdSimplex ℝ (U k)) : IsProbabilityMeasure (noiseMeasure μ) := by
+  infer_instance
+
+example : IsProbabilityMeasure (noiseMeasure ca04t03_xorμ) := by
+  infer_instance
 
 theorem ca04t03_xor_solve_zero (u : (k : Fin 2) → Bool) :
     ca04t03_xorM.solve u ⟨0, by omega⟩ = u ⟨0, by omega⟩ := by

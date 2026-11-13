@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Topology.Constructions
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Linarith.Lemmas
 import Mathlib.Tactic.Ring

@@ -185,7 +185,7 @@ the binding experiment for `scheme H` is at most the collision-finding advantage
 `reduction A` (Katz and Lindell, Section 5.6.5). -/
 theorem bindingAdvantage_le (gen : PMF K) (H : K → N × M → D) (A : BindingAdversary K M D N R) :
     bindingAdvantage gen (scheme H) A ≤ collAdvantage gen H (reduction A) := by
-  refine winProb_bind_map_mono _ _ fun s _ t hw => ?_
+  refine Cslib.Crypto.Framework.winProb_bind_map_mono _ _ fun s _ t hw => ?_
   obtain ⟨h₁, h₂, hne⟩ := of_decide_eq_true hw
   exact decide_eq_true (collision_of_openings hne (accepts_iff.mp h₁) (accepts_iff.mp h₂))
 

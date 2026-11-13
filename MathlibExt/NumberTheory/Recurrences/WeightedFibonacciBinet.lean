@@ -9,19 +9,19 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.Polynomial.Derivative
+import Mathlib.Algebra.Polynomial.Degree.Domain
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.Complex.Norm
 import Mathlib.Algebra.BigOperators.Field
 import Mathlib.Algebra.EuclideanDomain.Basic
 import Mathlib.Algebra.EuclideanDomain.Field
-import Mathlib.Algebra.Polynomial.Degree.Domain
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Algebra.Order.Star.Real
 import Mathlib.Algebra.Ring.IsFormallyReal
 import Mathlib.Analysis.Asymptotics.Lemmas
 import Mathlib.Analysis.Normed.Order.Lattice
 import Mathlib.Computability.Reduce
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 
 @[expose] public section
 
@@ -941,6 +941,7 @@ Proves `Wanted` entry `binet`.
 It follows from `binet_general`; the hypotheses `hlam_simple` and `hlam_dom` are unused and
 keep the source's shape.
 -/
+@[nolint unusedArguments]
 theorem binet
     (r : ℕ) (hr : 2 ≤ r)
     (A c : Fin r → ℝ)

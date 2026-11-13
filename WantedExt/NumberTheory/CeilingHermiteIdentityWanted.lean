@@ -116,7 +116,8 @@ public theorem tverbergSum_one (F : ℝ → ℤ) (a : ℤ) (m : ℕ) (k : ℤ) :
 
 /-- Lemma 1: for `n ≥ 2`, (i) `g_3(x) = g_1(x) - g_1(x, 1/2)`,
 (ii) `g_4(x) = g_2(x) - g_2(x, -1/2)`, and (iii) each `g_j` has period `1` in each variable.
-Parts (i) and (ii) also hold for `n < 2`; part (iii) fails at `n = 1` (`g_1(x) = ⌊x⌋`), so the paper's `n ≥ 2` is kept.
+Parts (i) and (ii) also hold for `n < 2`; part (iii) fails at `n = 1` (`g_1(x) = ⌊x⌋`), so the
+paper's `n ≥ 2` is kept.
 
 Source: Kritkhajohn Onphaeng, Tammatada Khemaratchatakumthorn, Prapanpong Pongsriiam,
 *Inequalities for Inclusion-Exclusion-Like Sums Involving the Ceiling and the Nearest Integer

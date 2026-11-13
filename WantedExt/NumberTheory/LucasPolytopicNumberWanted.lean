@@ -30,7 +30,8 @@ The bracket `{n}_{s,t}` is `lucasBracket P n` and the fibonomial `[n, k]_{s,t}` 
 they are any real pair with `φ + φ' = s` and `φ φ' = -t` (each identity was checked for both
 orderings), and in the series identities they are the paper's
 `φ = (s + √(s ^ 2 + 4 t)) / 2`, `φ' = (s - √(s ^ 2 + 4 t)) / 2`. The paper's `q` is
-`φ' / φ` (stated in the proof of Theorem 13), so `(φ^d x; q)_{d+1} = ∏_{k ≤ d} (1 - φ^{d-k} φ'^k x)`.
+`φ' / φ` (stated in the proof of Theorem 13), so
+`(φ^d x; q)_{d+1} = ∏_{k ≤ d} (1 - φ^{d-k} φ'^k x)`.
 -/
 
 namespace MetaMathlibExt

@@ -10,7 +10,7 @@ module
 
 import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.Additive.DoublingConst
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.GroupTheory.Nilpotent
 public import Mathlib.SetTheory.Cardinal.Finite
 

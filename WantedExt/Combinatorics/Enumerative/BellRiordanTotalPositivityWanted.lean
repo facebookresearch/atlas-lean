@@ -86,7 +86,8 @@ theorem riordanCoeffMatrix_zero_one (z a : ℕ → ℝ) (n : ℕ) :
 `Z`-sequences `a`, `z` is totally positive if its coefficient matrix `J(Z(x), A(x))` is.
 
 Source: Lili Mu, Yuanyuan Xing and Sai-Nan Zheng, *A New Criterion for the Total Positivity of
-Riordan Arrays*, Journal of Integer Sequences 28 (2025), Article 25.7.5, Proposition 1 (`jis-2025-25.7.5-prop-1`). -/
+Riordan Arrays*, Journal of Integer Sequences 28 (2025), Article 25.7.5, Proposition 1
+(`jis-2025-25.7.5-prop-1`). -/
 public theorem_wanted riordanArray_hasNonnegativeMinors_of_coeffMatrix {a z : ℕ → ℝ}
     {R : ℕ → ℕ → ℝ} (hR : IsRiordanArrayAZ a z R)
     (hJ : Matrix.HasNonnegativeMinors (riordanCoeffMatrix z a)) :
@@ -100,7 +101,8 @@ cleared). If `J(Q(x), P(x))` is totally positive, `s² ≥ 4t` and `as + a√(s�
 `R` is totally positive. The paper leaves `P(0) ≠ 0` implicit (it makes `A`, `Z` well defined).
 
 Source: Lili Mu, Yuanyuan Xing and Sai-Nan Zheng, *A New Criterion for the Total Positivity of
-Riordan Arrays*, Journal of Integer Sequences 28 (2025), Article 25.7.5, Theorem 2 (`jis-2025-25.7.5-thm-2`). -/
+Riordan Arrays*, Journal of Integer Sequences 28 (2025), Article 25.7.5, Theorem 2
+(`jis-2025-25.7.5-thm-2`). -/
 public theorem_wanted riordanArray_hasNonnegativeMinors_of_params (P Q A Z : PowerSeries ℝ)
     (hP : PowerSeries.constantCoeff P ≠ 0) {a b r s t : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
     (hr : 0 ≤ r) (hs : 0 ≤ s) (ht : 0 ≤ t)
@@ -119,11 +121,13 @@ public theorem_wanted riordanArray_hasNonnegativeMinors_of_params (P Q A Z : Pow
 /-- Corollary 6: let `P` be a Pólya frequency formal power series (its coefficient sequence is
 PF: the lower Toeplitz matrix has non-negative minors), `r, s, t ≥ 0` with `s² ≥ 4t`, and let
 `R = R(P; r, s, t)` be the Bell-type Riordan array (`z_i = a_{i+1}`) with
-`A(x) = (P² + sxP + tx²) / (P - rx)` (denominator cleared). Then `R` is totally positive. `P(0) ≠ 0` is added, as in Theorem 2: for
+`A(x) = (P² + sxP + tx²) / (P - rx)` (denominator cleared). Then `R` is totally positive.
+`P(0) ≠ 0` is added, as in Theorem 2: for
 `P = 0` the cleared equation for `A` is vacuous (`A = -1` gives `R n n = (-1)^n`).
 
 Source: Lili Mu, Yuanyuan Xing and Sai-Nan Zheng, *A New Criterion for the Total Positivity of
-Riordan Arrays*, Journal of Integer Sequences 28 (2025), Article 25.7.5, Corollary 6 (`jis-2025-25.7.5-cor-6`). -/
+Riordan Arrays*, Journal of Integer Sequences 28 (2025), Article 25.7.5, Corollary 6
+(`jis-2025-25.7.5-cor-6`). -/
 public theorem_wanted bellRiordanArray_hasNonnegativeMinors_of_pf (P A : PowerSeries ℝ)
     (hP : PowerSeries.constantCoeff P ≠ 0) {r s t : ℝ} (hr : 0 ≤ r) (hs : 0 ≤ s) (ht : 0 ≤ t)
     (hpf : Matrix.HasNonnegativeMinors (Matrix.lowerToeplitz fun n => PowerSeries.coeff n P))

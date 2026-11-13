@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Finite.Defs
+public import Mathlib.Basic.Finite.Defs
 public import Mathlib.Data.List.Basic
 
 /-!
@@ -115,6 +115,7 @@ coding and no global non-erasing hypothesis (concept
 `jis_59581da9ed7395999b79fb6c`, `jis_686fde4820b8be0b1543930a`,
 `jis_83acfc0f995c923dbbbed9e5`, `jis_95467c21193bf40b4aae1281`,
 `jis_e5dacb15b7f36a3e2d33683c`, `jis_f0ae0eecd29e48e7e5a45717`). -/
+@[nolint unusedArguments]
 public def IsPureMorphic {A : Type*} [Finite A] (w : Nat → A) : Prop :=
   ∃ (f : A → List A) (a : A), IsPrefixPreserving f a ∧ IsOmegaLimit f a w
 

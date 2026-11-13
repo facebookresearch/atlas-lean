@@ -13,7 +13,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Rat.Defs
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Field.Lemmas
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.RingTheory.Binomial
 import Mathlib.RingTheory.PowerSeries.Catalan
 import Mathlib.RingTheory.PowerSeries.Substitution

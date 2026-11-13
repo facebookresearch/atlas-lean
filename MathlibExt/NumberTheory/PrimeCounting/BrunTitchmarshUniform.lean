@@ -744,6 +744,7 @@ private theorem brunTitchmarsh_primeCount_le_uniform (X k ell : ℕ)
     _ = 42 * (X : ℝ) /
         ((Nat.totient k : ℝ) * Real.log y) := by ring
 
+set_option linter.unusedVariables false in
 /-- For every exponent `β ∈ (0, 1)` there is a constant `ξ₁ > 0`, depending only
 on `β`, such that the inclusive residue-class prime count satisfies
 `π(X; k, ell) < ξ₁ X / (φ(k) log(X/k))` whenever `2 ≤ X`, `1 ≤ k`, and
@@ -765,6 +766,7 @@ Proves `Wanted` entry `brun_titchmarsh_uniform`.
 Proof: Selberg's `Λ²` upper-bound sieve on an arithmetic progression, with
 optimized weights and a harmonic lower bound for the diagonal sum.
 -/
+@[nolint unusedArguments] -- `hβ0` keeps the `Wanted` entry's statement
 public theorem brun_titchmarsh_uniform (β : ℝ) (hβ0 : 0 < β)
     (hβ1 : β < 1) :
     ∃ ξ₁ : ℝ, 0 < ξ₁ ∧ ∀ X k ell : ℕ, 2 ≤ X → 1 ≤ k →

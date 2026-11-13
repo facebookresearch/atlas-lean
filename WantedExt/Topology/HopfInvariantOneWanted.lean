@@ -23,14 +23,20 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.HopfInvariantOne` — hSpace_sphere_iff (manifest `manifests/problems/hSpace_sphere_iff.toml`, rev 1, submitter Vasily Ilin, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.HopfInvariantOne` —
+hSpace_sphere_iff (manifest `manifests/problems/hSpace_sphere_iff.toml`, rev 1, submitter Vasily
+Ilin, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.HopfInvariantOneWanted` namespace. Mathematical
-statements are unchanged. Source: J. F. Adams, 'On the non-existence of elements of Hopf invariant one', Ann. of Math. 72 (1960), 20-104; J. F. Adams and M. F. Atiyah, 'K-theory and the Hopf invariant', Quart. J. Math. Oxford 17 (1966), 31-38. See also A. Hatcher, 'Algebraic Topology', Section 4.B.
+and placed the declarations in the `MathlibExt.Topology.HopfInvariantOneWanted` namespace.
+Mathematical
+statements are unchanged. Source: J. F. Adams, 'On the non-existence of elements of Hopf invariant
+one', Ann. of Math. 72 (1960), 20-104; J. F. Adams and M. F. Atiyah, 'K-theory and the Hopf
+invariant', Quart. J. Math. Oxford 17 (1966), 31-38. See also A. Hatcher, 'Algebraic Topology',
+Section 4.B.
 -/
 module
 
@@ -57,7 +63,10 @@ Adams' theorem.
 
 /- **Adams' Hopf-invariant-one theorem** (H-space form). The sphere `𝕊ⁿ`
 admits an H-space structure if and only if `n = 0`, `1`, `3`, or `7`. -/
-/-- Source: J. F. Adams, 'On the non-existence of elements of Hopf invariant one', Ann. of Math. 72 (1960), 20-104; J. F. Adams and M. F. Atiyah, 'K-theory and the Hopf invariant', Quart. J. Math. Oxford 17 (1966), 31-38. See also A. Hatcher, 'Algebraic Topology', Section 4.B. Via leanprover/lean-eval@38361be, problem `hSpace_sphere_iff`. -/
+/-- Source: J. F. Adams, 'On the non-existence of elements of Hopf invariant one', Ann. of Math. 72
+(1960), 20-104; J. F. Adams and M. F. Atiyah, 'K-theory and the Hopf invariant', Quart. J. Math.
+Oxford 17 (1966), 31-38. See also A. Hatcher, 'Algebraic Topology', Section 4.B. Via
+leanprover/lean-eval@38361be, problem `hSpace_sphere_iff`. -/
 public theorem_wanted hSpace_sphere_iff (n : ℕ) :
     Nonempty (HSpace (Metric.sphere (0 : EuclideanSpace ℝ (Fin (n + 1))) 1)) ↔
       n = 0 ∨ n = 1 ∨ n = 3 ∨ n = 7

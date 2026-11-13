@@ -62,4 +62,9 @@ example (O : Nat.Overpartition 0) : O.overlines = ∅ :=
 example (O₁ O₂ : Nat.Overpartition 0) : O₁ = O₂ :=
   eq_of_zero O₁ O₂
 
+-- Finiteness: the `Fintype` instance enumerates `Overpartition n`; there is `1` overpartition
+-- of `0` and there are `2` of `1` (`1̄` and `1`), OEIS A015128.
+example : Fintype.card (Nat.Overpartition 0) = 1 := by decide
+example : Fintype.card (Nat.Overpartition 1) = 2 := by decide
+
 end Nat.Overpartition

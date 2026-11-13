@@ -15,7 +15,6 @@ public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Matrix.Trace
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
-import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Analysis.Calculus.MeanValue
@@ -26,6 +25,7 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Topology.Order.ProjIcc
 import MathlibExt.Analysis.ODE.MaximalSolution
+import Mathlib.Analysis.Calculus.Deriv.Prod
 
 /-!
 # Fundamental matrices for linear ODE systems
@@ -364,6 +364,7 @@ theorem fundamental_matrix_linear_system
     intro y hy0 hy
     exact (hunique y ⟨hy0, fun t ↦ by simpa [C] using hy t⟩).trans hxz.symm
 
+set_option linter.unusedVariables false in
 /-- Liouville (Abel) formula: the Wronskian determinant of a fundamental
 matrix grows by the exponential of the integrated trace.
 Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
@@ -376,6 +377,7 @@ Proves `Wanted` entry `fundamental_matrix_liouville_det`.
 Proof: Jacobi's formula follows from the determinant's first-order term; an integrating factor then
 gives Teschl, Lemma 3.11, formula (3.91).
 -/
+@[nolint unusedArguments] -- `hΦ0` keeps the stated hypothesis
 theorem fundamental_matrix_liouville_det
     {n : ℕ} (A : ℝ → Matrix (Fin n) (Fin n) ℝ) (t₀ : ℝ)
     (hA : Continuous A)

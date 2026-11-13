@@ -14,7 +14,8 @@ public import CSLibExt.Algorithms.Lean.DataStructures.AdjacencyMatrix
 # Tests for the adjacency-matrix API
 
 These client examples exercise empty graphs, self-loops, repeated insertion, off-pair
-preservation, deletion, and concrete increasing neighbor output through the public
+preservation, deletion, concrete increasing neighbor output, the empty vertex type,
+and insertion through the Mathlib digraph bridge, all through the public
 executable and correctness API.
 -/
 
@@ -157,5 +158,82 @@ example {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) :
 example {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) :
     j ∉ (m.eraseEdge i j).neighbors i :=
   m.not_mem_neighbors_eraseEdge i j
+
+-- Bridge to Mathlib matrices: entries are edge queries, and a matrix converts back.
+example : AdjacencyMatrix.equivMatrix 4 graph 0 3 = true := by
+  decide
+
+example : AdjacencyMatrix.equivMatrix 4 graph 3 0 = false := by
+  decide
+
+example : ((AdjacencyMatrix.equivMatrix 3).symm (Matrix.of fun i j => decide (i < j))).neighbors 0
+    = [1, 2] := by
+  decide
+
+example {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) :
+    AdjacencyMatrix.equivMatrix n m i j = m.hasEdge i j := by
+  simp
+
+example {n : Nat} (M : Matrix (Fin n) (Fin n) Bool) (i j : Fin n) :
+    ((AdjacencyMatrix.equivMatrix n).symm M).hasEdge i j = M i j := by
+  simp
+
+-- Bridge to Mathlib digraphs: adjacency is the edge query, in both directions.
+example : (AdjacencyMatrix.equivDigraph 4 graph).Adj 2 0 := by
+  simp only [AdjacencyMatrix.equivDigraph_adj]
+  decide
+
+example : ¬(AdjacencyMatrix.equivDigraph 4 graph).Adj 1 0 := by
+  simp only [AdjacencyMatrix.equivDigraph_adj]
+  decide
+
+example {n : Nat} (m : AdjacencyMatrix n) (i j : Fin n) :
+    (AdjacencyMatrix.equivDigraph n m).Adj i j ↔ AdjacencyMatrix.equivMatrix n m i j = true := by
+  simp
+
+example {n : Nat} (G : Digraph (Fin n)) (i j : Fin n) :
+    ((AdjacencyMatrix.equivDigraph n).symm G).hasEdge i j = true ↔ G.Adj i j := by
+  simp
+
+example : ((AdjacencyMatrix.equivDigraph 3).symm ⊤).hasEdge 2 1 = true := by
+  simp
+
+example : ((AdjacencyMatrix.equivDigraph 3).symm ⊥).neighbors 0 = [] := by
+  rw [List.eq_nil_iff_forall_not_mem]
+  simp
+
+-- The empty vertex type: no edges and no neighbors, converted either way.
+example (i j : Fin 0) :
+    (AdjacencyMatrix.empty : AdjacencyMatrix 0).hasEdge i j = false :=
+  Fin.elim0 i
+
+example (i : Fin 0) :
+    (AdjacencyMatrix.empty : AdjacencyMatrix 0).neighbors i = [] :=
+  Fin.elim0 i
+
+example : AdjacencyMatrix.equivMatrix 0 (AdjacencyMatrix.empty : AdjacencyMatrix 0) =
+    fun i _ => Fin.elim0 i := by
+  funext i
+  exact Fin.elim0 i
+
+example (g : Digraph (Fin 0)) : (AdjacencyMatrix.equivDigraph 0).symm g =
+    (AdjacencyMatrix.empty : AdjacencyMatrix 0) := by
+  apply AdjacencyMatrix.ext
+  intro i
+  exact Fin.elim0 i
+
+-- Self-loop and directedness through the conversions.
+example : AdjacencyMatrix.equivMatrix 4 graph 0 0 = true := by
+  decide
+
+example : ¬(AdjacencyMatrix.equivDigraph 4 graph).Adj 0 2 := by
+  simp only [AdjacencyMatrix.equivDigraph_adj]
+  decide
+
+-- Insertion through the digraph bridge adds one directed edge and nothing else.
+example {n : Nat} (m : AdjacencyMatrix n) (i j a b : Fin n) :
+    (AdjacencyMatrix.equivDigraph n (m.addEdge i j)).Adj a b ↔
+      (a = i ∧ b = j) ∨ (AdjacencyMatrix.equivDigraph n m).Adj a b := by
+  simp only [AdjacencyMatrix.equivDigraph_adj, AdjacencyMatrix.hasEdge_addEdge_iff]
 
 end Cslib.Algorithms.Lean.AdjacencyMatrixTests

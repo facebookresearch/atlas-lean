@@ -17,8 +17,8 @@ import Mathlib.Algebra.Order.Interval.Finset.Basic
 import Mathlib.Algebra.Order.Interval.Finset.SuccPred
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Data.Int.Interval
-import Mathlib.Data.Int.Star
-import Mathlib.Data.Int.SuccPred
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.Order.SuccPred.Int
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Linarith.Lemmas
 import Mathlib.Tactic.LinearCombination

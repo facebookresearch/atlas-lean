@@ -15,7 +15,7 @@ import Mathlib.Analysis.Calculus.Deriv.Inv
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Chebyshev.Orthogonality
-import Mathlib.Data.ENNReal.Real
+import Mathlib.Basic.ENNReal.Real
 import Mathlib.Tactic
 
 namespace MetaMathlibExt

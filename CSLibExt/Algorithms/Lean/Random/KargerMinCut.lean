@@ -27,12 +27,18 @@ and Raghavan, *Randomized Algorithms*, Section 1.1): while the multigraph has mo
 (super-)vertices, contract a uniformly random edge, merging its endpoints and deleting the
 self-loops this creates; return the number of edges between the last two vertices.
 
-Theorem (`successProb_ge`): if the multigraph on `n ≥ 2` vertices has minimum cut size `k`, one
-run returns `k` with probability at least `2 / (n (n - 1))`. Amplification
-(`repeatSuccessProb_ge_half`): `n (n - 1) / 2` independent runs find `k` with probability at least
-`1 / 2`, `c · n (n - 1) / 2` runs with probability at least `1 - (1/2)^c` (`repeatSuccessProb_ge`),
-and `⌈log₂ n⌉ · n (n - 1) / 2` runs with probability at least `1 - 1/n`
-(`repeatSuccessProb_ge_one_sub_inv`).
+Theorem (`successProb_ge`): if a valid multigraph on `n ≥ 2` vertices has minimum cut size `k`,
+one run with fuel `n` returns `k` with probability at least `2 / (n (n - 1))`, and no run returns
+less than `k` at any fuel (`successProb_eq_zero_of_lt_minCut`, including early fuel exhaustion).
+Amplification (`repeatSuccessProb_ge_half`): with `n (n - 1) / 2` independent runs, some run
+returns `k` with probability at least `1 / 2`, with `c · n (n - 1) / 2` runs with probability at
+least `1 - (1/2)^c` (`repeatSuccessProb_ge`), and with `⌈log₂ n⌉ · n (n - 1) / 2` runs with
+probability at least `1 - 1/n` (`repeatSuccessProb_ge_one_sub_inv`). The success probability of
+`t` runs, `repeatSuccessProb`, is defined as the closed form `1 - (1 - p) ^ t` where
+`p = successProb k n st` is the one-run probability; reading it as a probability assumes `t`
+mutually independent runs from the same starting state with fuel `n` and common single-run law
+`p`, and no joint distribution of runs is modelled. Since no run returns less than `k`, the
+smallest answer over the runs is `k` exactly when some run returns `k`.
 
 The proof follows the textbook. A minimum cut `X` survives a contraction unless the chosen edge
 crosses it; contraction never creates smaller cuts (every cut of the contracted multigraph is a
@@ -413,16 +419,72 @@ private theorem successProb_ge_aux (k : ℕ) : ∀ (fuel : ℕ) (st : State V), 
         nlinarith [mul_pos hN0 h1, mul_pos h1 h2]
 
 /-- Karger's bound: on a valid multigraph with `n ≥ 2` vertices and minimum cut size `k`, the
-contraction process returns `k` with probability at least `2 / (n (n - 1))`. -/
+contraction process with fuel `n` returns `k` with probability at least `2 / (n (n - 1))`. -/
 theorem successProb_ge (st : State V) (hv : st.Valid) {k : ℕ} (hmin : IsMinCut st k)
     (hn : 2 ≤ st.verts.length) :
     2 / ((st.verts.length : ℚ) * (st.verts.length - 1)) ≤
       successProb k st.verts.length st :=
   successProb_ge_aux k _ st hv hmin hn (by omega)
 
+omit [DecidableEq V] in
+/-- A state with at least two vertices has at least as many edges as any lower bound on its cut
+sizes. -/
+private theorem le_length_edges {st : State V} (hv : st.Valid) (hn : 2 ≤ st.verts.length)
+    {k : ℕ} (hlow : ∀ X, IsCut st X → k ≤ cutSize st.edges X) : k ≤ st.edges.length := by
+  classical
+  match hvs : st.verts, hn with
+  | a :: b :: _, _ =>
+      have hab : a ≠ b := by
+        have := hv.1
+        rw [hvs] at this
+        exact fun h => (List.nodup_cons.1 this).1 (h ▸ List.mem_cons_self)
+      have hX : IsCut st fun v => decide (v = a) := by
+        rw [IsCut, hvs]
+        exact ⟨⟨a, List.mem_cons_self, by simp⟩,
+          ⟨b, List.mem_cons_of_mem _ List.mem_cons_self, by simp [Ne.symm hab]⟩⟩
+      exact (hlow _ hX).trans (List.length_filter_le _ _)
+
+/-- **Every run returns at least the minimum cut size**: if every cut of a valid state with at
+least two vertices has size at least `k`, the contraction process returns a value `j < k` with
+probability `0`, at any fuel value including early fuel exhaustion. So the minimum over several
+runs is the minimum cut size exactly when some run returns it. -/
+theorem successProb_eq_zero_of_lt {k : ℕ} : ∀ (fuel : ℕ) (st : State V), st.Valid →
+    2 ≤ st.verts.length → (∀ X, IsCut st X → k ≤ cutSize st.edges X) →
+    ∀ {j : ℕ}, j < k → successProb j fuel st = 0
+  | 0, st, hv, hn, hlow, j, hj => by
+      have := le_length_edges hv hn hlow
+      simp only [successProb, ite_eq_right_iff, one_ne_zero, imp_false]
+      omega
+  | fuel + 1, st, hv, hn, hlow, j, hj => by
+      have hk := le_length_edges hv hn hlow
+      simp only [successProb]
+      split_ifs with hstop
+      · omega
+      · rfl
+      · push Not at hstop
+        have hzero : ∀ e ∈ st.edges, successProb j fuel (contract st e) = 0 := by
+          intro e he
+          obtain ⟨hv', hlen⟩ := valid_contract hv he
+          refine successProb_eq_zero_of_lt fuel _ hv' (by omega) (fun Y hY => ?_) hj
+          rw [cutSize_contract]
+          exact hlow _ (isCut_lift hv hY)
+        rw [List.map_congr_left hzero]
+        simp
+
+/-- On a valid state with at least two vertices and minimum cut size `k`, the probability of
+returning any `j < k` is zero, for every fuel value including early fuel exhaustion. -/
+theorem successProb_eq_zero_of_lt_minCut (st : State V) (hv : st.Valid) {k : ℕ}
+    (hmin : IsMinCut st k) (hn : 2 ≤ st.verts.length) {j : ℕ} (hj : j < k) (fuel : ℕ) :
+    successProb j fuel st = 0 :=
+  successProb_eq_zero_of_lt fuel st hv hn hmin.2 hj
+
 /-! ## Amplification -/
 
-/-- The probability that at least one of `t` independent runs returns `k`. -/
+/-- The success probability of `t` independent runs, defined by the closed form
+`1 - (1 - p) ^ t` where `p = successProb k n st` is the success probability of one run with fuel
+`n`: the probability that at least one of `t` mutually independent runs returns `k`, each run
+starting from `st` with the same single-run law. Independence is built into the
+definition; there is no model of the joint distribution of the runs. -/
 def repeatSuccessProb (k t : ℕ) (st : State V) : ℚ :=
   1 - (1 - successProb k st.verts.length st) ^ t
 
@@ -473,8 +535,12 @@ private theorem fail_pow_le_half (st : State V) (hv : st.Valid) {k : ℕ} (hmin 
   have hqN : q ^ N ≤ (1 - 1 / (N : ℚ)) ^ N := pow_le_pow_left₀ hq0 hq1 N
   exact ⟨N, hNeq, hq0, by linarith, hqN.trans (one_sub_inv_pow_le_half hN)⟩
 
-/-- Repeating the algorithm `n (n - 1) / 2` times (or more) and keeping the best answer finds the
-minimum cut size with probability at least `1 / 2`. -/
+/-- On a valid multigraph with `n ≥ 2` vertices and minimum cut size `k`, with `n (n - 1) / 2`
+independent runs (or more, `n (n - 1) ≤ 2 t`), at least one run returns the minimum cut
+size with probability at least `1 / 2` (`repeatSuccessProb`). Its probability reading uses the
+independence and common single-run law assumptions documented in `repeatSuccessProb`. Since every
+run returns at least the minimum cut size (`successProb_eq_zero_of_lt_minCut`), the smallest
+answer is then the minimum cut size. -/
 theorem repeatSuccessProb_ge_half (st : State V) (hv : st.Valid) {k : ℕ} (hmin : IsMinCut st k)
     (hn : 2 ≤ st.verts.length) {t : ℕ} (ht : st.verts.length * (st.verts.length - 1) ≤ 2 * t) :
     1 / 2 ≤ repeatSuccessProb k t st := by
@@ -483,8 +549,11 @@ theorem repeatSuccessProb_ge_half (st : State V) (hv : st.Valid) {k : ℕ} (hmin
   unfold repeatSuccessProb
   linarith
 
-/-- **Amplification with high probability.** Repeating the algorithm `c · n (n - 1) / 2` times (or
-more) finds the minimum cut size with probability at least `1 - (1/2)^c`. -/
+/-- **Amplification with high probability.** On a valid multigraph with `n ≥ 2` vertices and
+minimum cut size `k`, with `c · n (n - 1) / 2` independent runs (or more, `c · n (n - 1) ≤ 2 t`),
+at least one run returns the minimum cut size with probability at least `1 - (1/2)^c`
+(`repeatSuccessProb`). Its probability reading uses the independence and common single-run law
+assumptions documented in `repeatSuccessProb`. -/
 theorem repeatSuccessProb_ge (st : State V) (hv : st.Valid) {k : ℕ} (hmin : IsMinCut st k)
     (hn : 2 ≤ st.verts.length) {c t : ℕ}
     (ht : c * (st.verts.length * (st.verts.length - 1)) ≤ 2 * t) :
@@ -499,9 +568,12 @@ theorem repeatSuccessProb_ge (st : State V) (hv : st.Valid) {k : ℕ} (hmin : Is
   unfold repeatSuccessProb
   linarith
 
-/-- With `⌈log₂ n⌉ · n (n - 1) / 2` runs (or more), the minimum cut size is found with probability
-at least `1 - 1 / n` (Karger's algorithm succeeds with high probability after `O(n² log n)`
-runs). -/
+/-- On a valid multigraph with `n ≥ 2` vertices and minimum cut size `k`, with
+`⌈log₂ n⌉ · n (n - 1) / 2` independent runs (or more, `⌈log₂ n⌉ · n (n - 1) ≤ 2 t`), at least one
+run returns the minimum cut size with probability at least `1 - 1 / n` (`repeatSuccessProb`;
+Karger's algorithm succeeds with high probability after `O(n² log n)` runs). Its probability
+reading uses the independence and common single-run law assumptions documented in
+`repeatSuccessProb`. -/
 theorem repeatSuccessProb_ge_one_sub_inv (st : State V) (hv : st.Valid) {k : ℕ}
     (hmin : IsMinCut st k) (hn : 2 ≤ st.verts.length) {t : ℕ}
     (ht : Nat.clog 2 st.verts.length * (st.verts.length * (st.verts.length - 1)) ≤ 2 * t) :

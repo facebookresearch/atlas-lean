@@ -8,10 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Algebra.GCDMonoid.FinsetLemmas
-
 public import Mathlib.Data.Nat.Digits.Defs
 public import Mathlib.NumberTheory.BernoulliPolynomials
+import Mathlib.Algebra.GCDMonoid.FinsetLemmas
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Push

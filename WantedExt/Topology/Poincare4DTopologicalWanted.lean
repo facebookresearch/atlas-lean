@@ -23,14 +23,20 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.Poincare4DTopological` — poincare_4d_topological (manifest `manifests/problems/poincare_4d_topological.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.Poincare4DTopological` —
+poincare_4d_topological (manifest `manifests/problems/poincare_4d_topological.toml`, rev 1,
+submitter Kim Morrison, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.Poincare4DTopologicalWanted` namespace. Mathematical
-statements are unchanged. Source: M. H. Freedman, The topology of four-dimensional manifolds, J. Differential Geom. 17 (1982), 357-453. Specialization of `proof_wanted ContinuousMap.HomotopyEquiv.nonempty_homeomorph_sphere` in Mathlib/Geometry/Manifold/PoincareConjecture.lean.
+and placed the declarations in the `MathlibExt.Topology.Poincare4DTopologicalWanted` namespace.
+Mathematical
+statements are unchanged. Source: M. H. Freedman, The topology of four-dimensional manifolds, J.
+Differential Geom. 17 (1982), 357-453. Specialization of
+`proof_wanted ContinuousMap.HomotopyEquiv.nonempty_homeomorph_sphere` in
+Mathlib/Geometry/Manifold/PoincareConjecture.lean.
 -/
 module
 
@@ -69,7 +75,11 @@ open ContinuousMap
 /- **4D topological Poincaré conjecture** (Freedman, 1982). Every Hausdorff
 4-manifold that is homotopy-equivalent to the standard 4-sphere `𝕊⁴` is
 homeomorphic to `𝕊⁴`. -/
-/-- Source: M. H. Freedman, The topology of four-dimensional manifolds, J. Differential Geom. 17 (1982), 357-453. Specialization of `proof_wanted ContinuousMap.HomotopyEquiv.nonempty_homeomorph_sphere` in Mathlib/Geometry/Manifold/PoincareConjecture.lean. Via leanprover/lean-eval@38361be, problem `poincare_4d_topological`. -/
+/-- Source: M. H. Freedman, The topology of four-dimensional manifolds, J. Differential Geom. 17
+(1982), 357-453. Specialization of
+`proof_wanted ContinuousMap.HomotopyEquiv.nonempty_homeomorph_sphere` in
+Mathlib/Geometry/Manifold/PoincareConjecture.lean. Via leanprover/lean-eval@38361be, problem
+`poincare_4d_topological`. -/
 public theorem_wanted poincare_4d_topological
     {M : Type*} [TopologicalSpace M] [T2Space M]
     [ChartedSpace (EuclideanSpace ℝ (Fin 4)) M]

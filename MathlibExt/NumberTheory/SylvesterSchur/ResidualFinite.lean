@@ -8,8 +8,6 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Tactic.NormNum.Prime
-
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Choose.Dvd
@@ -19,6 +17,7 @@ public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Data.Nat.Sqrt
 public import MathlibExt.NumberTheory.SylvesterSchur.BlockReductions
 
+import Mathlib.Tactic.NormNum.Prime
 import Mathlib.Tactic.Ring
 
 /-!

@@ -189,6 +189,7 @@ public theorem srg_reachable_eq_or_adj_mu_zero {V : Type*} [Fintype V]
     v = w ∨ G.Adj v w := by
   exact hre.elim (srg_walk_eq_or_adj_mu_zero h)
 
+set_option linter.unusedVariables false in
 /--
 Every non-principal eigenvalue of a connected non-complete strongly regular
 graph satisfies the quadratic `x ^ 2 = (ℓ - μ) * x + (k - μ)`.
@@ -205,6 +206,7 @@ coordinate sum zero, and the complement identity then gives the quadratic.
 This is the proof of Theorem 9.1.2, (ii) ⇒ (iii), in Brouwer and Haemers,
 Section 9.1.3.
 -/
+@[nolint unusedArguments] -- `hconn`, `hncomp` keep the `Wanted` entry's statement
 public theorem srg_nonprincipal_eigenvalue_quadratic {V : Type*}
     [Fintype V] {n k ℓ μ : ℕ} (G : SimpleGraph V) [DecidableRel G.Adj]
     [DecidableEq V] (h : G.IsSRGWith n k ℓ μ) (hconn : G.Connected)

@@ -35,12 +35,10 @@ computation (the extraction of this paper flattens most
 displays; the ranges and coefficients stated here are the
 unique readings consistent with the surviving fragments).
 
-Not stated (see the source audit table): Lemmas 2.1, 2.3
-and 2.4 (statements inside the paper's operator/Appell
-framework), Lemma 2.2's closed form for `α_k` (its
-summand is not recoverable from the extraction; `α_k` is
-instead pinned by the generating function), and
-Theorem 4.4 (its formula could not be recovered).
+Lemmas 2.1, 2.3 and 2.4 use the composition operator
+`S(D) = ∑_k s_k D^k` of a formal power series `S`, acting on
+polynomials (`powerSeriesOp`); Lemma 2.2's closed form for
+`α_k` and Theorem 4.4 were read from the journal PDF.
 -/
 module
 
@@ -51,6 +49,11 @@ public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.Data.Nat.Factorial.Basic
 public import Mathlib.NumberTheory.BernoulliPolynomials
+public import Mathlib.RingTheory.PowerSeries.Derivative
+public import Mathlib.RingTheory.PowerSeries.Exp
+public import Mathlib.RingTheory.PowerSeries.Inverse
+public import Mathlib.RingTheory.PowerSeries.Substitution
+public import Mathlib.RingTheory.Polynomial.Pochhammer
 public import Mathlib.Order.Interval.Finset.Nat
 
 set_option autoImplicit false
@@ -215,5 +218,116 @@ theorem_wanted eulerPoly_eq_double_sum (n : ℕ) :
             ((Nat.factorial (k + l + 1) : ℚ) / (2 : ℚ) ^ k *
                 (Nat.choose (l + 1) k : ℚ)) •
               (genStirlingPoly n (k + l)).comp (C 2 * X - 1)
+
+/-- The composition operator `S(D) = ∑_k s_k D^k` of a formal
+power series `S = ∑_k s_k z^k`, applied to a polynomial `p`
+(the sum is finite: `D^k p = 0` for `k > deg p`).
+
+Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
+Bencherif, "Generalizations of Several Explicit Formulas
+for Euler Polynomials", INTEGERS 25 (2025), Article A65, Section 1 (composition operators). -/
+noncomputable def powerSeriesOp {R : Type*} [CommRing R]
+    (S : PowerSeries R) (p : R[X]) : R[X] :=
+  ∑ k ∈ Finset.range (p.natDegree + 1),
+    PowerSeries.coeff k S • derivative^[k] p
+
+/-- `S(D)(1) = S(0)`.
+
+Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
+Bencherif, "Generalizations of Several Explicit Formulas
+for Euler Polynomials", INTEGERS 25 (2025), Article A65, Section 1 (composition operators). -/
+theorem powerSeriesOp_one {R : Type*} [CommRing R]
+    (S : PowerSeries R) :
+    powerSeriesOp S 1 = C (PowerSeries.constantCoeff S) := by
+  simp [powerSeriesOp, Polynomial.smul_eq_C_mul]
+
+/-- **Lemma 2.1**: for the polynomial sequence
+`A_n(x) = S(D)(xⁿ)` associated with a composition operator
+`S(D)` and nonzero `λ`:
+`A_{n+1}(x) - x A_n(x) = S'(D)(xⁿ)`,
+`A_n(λx) = λⁿ S(D/λ)(xⁿ)` and
+`(-1)ⁿ A_n(λ - x) = e^{-λD} S(-D)(xⁿ)`.
+
+Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
+Bencherif, "Generalizations of Several Explicit Formulas
+for Euler Polynomials", INTEGERS 25 (2025), Article A65, Lemma 2.1. -/
+theorem_wanted powerSeriesOp_appell_identities
+    (S : PowerSeries ℂ) (lam : ℂ) (hlam : lam ≠ 0) (n : ℕ) :
+    powerSeriesOp S (X ^ (n + 1)) - X * powerSeriesOp S (X ^ n) =
+        powerSeriesOp (PowerSeries.derivative S) (X ^ n) ∧
+      (powerSeriesOp S (X ^ n)).comp (C lam * X) =
+        lam ^ n • powerSeriesOp (PowerSeries.rescale lam⁻¹ S) (X ^ n) ∧
+      (-1 : ℂ) ^ n • (powerSeriesOp S (X ^ n)).comp (C lam - X) =
+        powerSeriesOp
+          (PowerSeries.rescale (-lam) (PowerSeries.exp ℂ) *
+            PowerSeries.rescale (-1) S) (X ^ n)
+
+/-- **Lemma 2.2**: `(2 + 2z) / (2 + 2z + z²) = ∑ α_k z^k`
+with `α_k = ((k + 1) / 2^k) ∑_{ℓ=0}^k (-1)^ℓ (2^ℓ / (ℓ + 1))
+(ℓ + 1 choose k - ℓ)`; the generating function is stated
+multiplicatively.
+
+Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
+Bencherif, "Generalizations of Several Explicit Formulas
+for Euler Polynomials", INTEGERS 25 (2025), Article A65, Lemma 2.2. -/
+theorem_wanted eulerAlpha_gf_and_closed_form :
+    PowerSeries.mk eulerAlpha *
+          (2 + 2 * PowerSeries.X + PowerSeries.X ^ 2) =
+        2 + 2 * PowerSeries.X ∧
+      ∀ k : ℕ, eulerAlpha k =
+        (k + 1 : ℚ) / 2 ^ k *
+          ∑ l ∈ Finset.range (k + 1),
+            (-1) ^ l * 2 ^ l / (l + 1 : ℚ) *
+              (Nat.choose (l + 1) (k - l) : ℚ)
+
+/-- **Lemma 2.3** (corrected reading): with
+`S(z) = 2e^z / (1 + e^{2z}) = e^z S_E(2z)`,
+`2ⁿ E_n((x + 1)/2) = S(D)(xⁿ)`, and with `Δ = e^z - 1`,
+`S = (2 + 2Δ)/(2 + 2Δ + Δ²) = ∑_k α_k Δ^k`. The paper prints
+the denominator as `2 + e^{2D}`, which contradicts its own
+`e^D S_E(2D)` and `2 + 2Δ + Δ²` (constant terms `2/3` versus
+`1`); `1 + e^{2D}` is used.
+
+Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
+Bencherif, "Generalizations of Several Explicit Formulas
+for Euler Polynomials", INTEGERS 25 (2025), Article A65, Lemma 2.3. -/
+theorem_wanted eulerPoly_half_appell :
+    let S : PowerSeries ℚ := (2 * PowerSeries.exp ℚ) *
+      (1 + PowerSeries.exp ℚ ^ 2)⁻¹
+    let Δ : PowerSeries ℚ := PowerSeries.exp ℚ - 1
+    (∀ n : ℕ, (2 : ℚ) ^ n • (eulerPoly n).comp (C (1 / 2) * (X + 1)) =
+        powerSeriesOp S (X ^ n)) ∧
+      S * (2 + 2 * Δ + Δ ^ 2) = 2 + 2 * Δ ∧
+      S = (PowerSeries.mk eulerAlpha).subst Δ
+
+/-- **Lemma 2.4**: `S(D) M_x - M_x S(D) = S'(D)` on
+polynomials, `M_x` being multiplication by `x`.
+
+Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
+Bencherif, "Generalizations of Several Explicit Formulas
+for Euler Polynomials", INTEGERS 25 (2025), Article A65, Lemma 2.4. -/
+theorem_wanted powerSeriesOp_mul_X_sub {R : Type*} [CommRing R]
+    (S : PowerSeries R) (p : R[X]) :
+    powerSeriesOp S (X * p) - X * powerSeriesOp S p =
+      powerSeriesOp (PowerSeries.derivative S) p
+
+/-- **Theorem 4.4**: for every complex `α` and
+`m ≥ ⌊n/2⌋`, `E_n^{(α)}(x) = ∑_{k=0}^m ((-1)^k / 2^{n+k})
+(α + k - 1 choose k) ∑_{j=0}^{2k} (-1)^j (2k choose j)
+(2x - α - k + j)ⁿ`, with
+`(α + k - 1 choose k) = α(α + 1)⋯(α + k - 1)/k!`.
+
+Source: Nouara Mokhtari, Rachid Boumahdi, and Farid
+Bencherif, "Generalizations of Several Explicit Formulas
+for Euler Polynomials", INTEGERS 25 (2025), Article A65, Theorem 4.4. -/
+theorem_wanted eulerPolyGen_eq_sum (α : ℂ) (n m : ℕ)
+    (hm : n / 2 ≤ m) :
+    eulerPolyGen α n =
+      ∑ k ∈ Finset.range (m + 1),
+        C ((-1) ^ k / (2 : ℂ) ^ (n + k) *
+            ((ascPochhammer ℂ k).eval α / (Nat.factorial k : ℂ))) *
+          ∑ j ∈ Finset.range (2 * k + 1),
+            C ((-1) ^ j * (Nat.choose (2 * k) j : ℂ)) *
+              (C 2 * X + C ((j : ℂ) - α - k)) ^ n
 
 end MathlibExt.NumberTheory.EulerPolynomialFormulasWanted

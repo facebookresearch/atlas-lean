@@ -35,15 +35,18 @@ numbers are taken in `ZMod m` (all denominators are
 units at the stated ranges). All congruences were
 verified numerically at small primes.
 
-Not stated (see the source audit table): Lemma 12,
-whose sequence `T_k(b, c)` is not defined in the
-extracted statements.
+Lemma 12 (quoted from Sun) uses Sun's generalized
+central trinomial coefficients `T_n(b, c)`, defined in
+`MathlibExt.NumberTheory.TrinomialCoefficient`
+as `MetaMathlibExt.generalizedCentralTrinomial`.
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Data.Nat.Choose.Basic
+public import MathlibExt.NumberTheory.TrinomialCoefficient
+public import WantedExt.Combinatorics.Enumerative.GeneralizedMotzkinModPWanted
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.NumberTheory.LegendreSymbol.Basic
 public import MathlibExt.LinearAlgebra.Matrix.OrdinaryRiordanPascalLikeMatrix
@@ -198,5 +201,35 @@ theorem_wanted sum_choose_choose_binomialPowerSeq (k : ℕ) :
         (Nat.choose k j * Nat.choose (k + j) (k + 1) : ℤ)) =
       (MetaMathlibExt.binomialPowerSeq 1 1 (k + 1) : ℤ) -
         3 * (MetaMathlibExt.binomialPowerSeq 1 1 k : ℤ)
+
+/-- Bridge to the existing symmetric-case API: the constant
+term of `(a x⁻¹ + b + a x)ⁿ`
+(`MetaMathlibExt.centralTrinomial a b n`) is `T_n(b, a²)`.
+
+Source: Chahinaze Djadi and Hacène Belbachir,
+"Congruence Properties for the Delannoy Triangle
+Coefficients", Section 4; Nadav Kohen, *Density and
+Symmetry in the Generalized Motzkin Numbers Modulo p*,
+INTEGERS 26 (2026), Article A22, Definitions. -/
+theorem_wanted centralTrinomial_eq_generalizedCentralTrinomial
+    (a b : ℤ) (n : ℕ) :
+    MetaMathlibExt.centralTrinomial a b n =
+      MetaMathlibExt.generalizedCentralTrinomial b (a ^ 2) n
+
+/-- **Lemma 12** (Sun, Theorem 1.2(i)): for an odd prime
+`p`, `b, c ∈ ℤ` and `m ≢ 0 (mod p)`,
+`∑_{k=0}^{p-1} T_k(b, c) / m^k ≡ (((m - b)² - 4c)/p) (mod p)`,
+with `1/m^k` read as `(m⁻¹)^k` in `ZMod p`.
+
+Source: Chahinaze Djadi and Hacène Belbachir,
+"Congruence Properties for the Delannoy Triangle
+Coefficients", Journal of Integer Sequences 29 (2026),
+Article 26.5.2, Lemma 12 (quoting Z.-W. Sun, Sci. China
+Math. 57 (2014), Theorem 1.2(i)). -/
+theorem_wanted sum_generalizedCentralTrinomial_div_pow (p : ℕ)
+    [Fact p.Prime] (hp2 : p ≠ 2) (b c m : ℤ) (hm : ¬ (p : ℤ) ∣ m) :
+    (∑ k ∈ Finset.range p,
+        (MetaMathlibExt.generalizedCentralTrinomial b c k : ZMod p) * ((m : ZMod p)⁻¹) ^ k) =
+      (legendreSym p ((m - b) ^ 2 - 4 * c) : ZMod p)
 
 end MathlibExt.NumberTheory.DelannoyTriangleWanted

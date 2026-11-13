@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.NumberTheory.SchinzelZassenhaus` — dimitrov (manifest `manifests/problems/dimitrov.toml`, rev 1, submitter Zou Jinping, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.NumberTheory.SchinzelZassenhaus` —
+dimitrov (manifest `manifests/problems/dimitrov.toml`, rev 1, submitter Zou Jinping, status active)
+—
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.NumberTheory.SchinzelZassenhausWanted` namespace. Mathematical
-statements are unchanged. Source: James McKee and Chris Smyth, Around the Unit Circle, Chapter 4, Theorem 4.1; Vesselin Dimitrov (2019).
+and placed the declarations in the `MathlibExt.NumberTheory.SchinzelZassenhausWanted` namespace.
+Mathematical
+statements are unchanged. Source: James McKee and Chris Smyth, Around the Unit Circle, Chapter 4,
+Theorem 4.1; Vesselin Dimitrov (2019).
 -/
 module
 
@@ -58,7 +62,8 @@ is `NumberField.house`.
 ## Reference
 
 The formalization is based on Chapter 4 ("The Schinzel–Zassenhaus Conjecture") of the book:
-* **James McKee, Chris Smyth**, *Around the Unit Circle: Mahler Measure, Integer Matrices and Roots of Unity*, Springer, Universitext, 2021.
+* **James McKee, Chris Smyth**, *Around the Unit Circle: Mahler Measure, Integer Matrices and Roots
+  of Unity*, Springer, Universitext, 2021.
 （https://link.springer.com/chapter/10.1007/978-3-030-80031-4_4）
 -/
 
@@ -72,10 +77,12 @@ different phases among its conjugates.
 
 The condition "not a root of unity" is expressed as `¬ IsOfFinOrder α`,
 Mathlib's standard predicate for an element having no positive power equal to 1.
-Source: James McKee and Chris Smyth, Around the Unit Circle, Chapter 4, Theorem 4.1; Vesselin Dimitrov (2019). Via leanprover/lean-eval@38361be, problem `dimitrov`.
+Source: James McKee and Chris Smyth, Around the Unit Circle, Chapter 4, Theorem 4.1; Vesselin
+Dimitrov (2019). Via leanprover/lean-eval@38361be, problem `dimitrov`.
 -/
 
-/-- Source: James McKee and Chris Smyth, Around the Unit Circle, Chapter 4, Theorem 4.1; Vesselin Dimitrov (2019). Via leanprover/lean-eval@38361be, problem `dimitrov`. -/
+/-- Source: James McKee and Chris Smyth, Around the Unit Circle, Chapter 4, Theorem 4.1; Vesselin
+Dimitrov (2019). Via leanprover/lean-eval@38361be, problem `dimitrov`. -/
 public theorem_wanted dimitrov {K : Type*} [Field K] [NumberField K]
     (α : K)
     (α_int : IsIntegral ℤ α)

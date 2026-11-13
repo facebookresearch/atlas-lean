@@ -9,13 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Convex.Hull
-import Mathlib.Analysis.Normed.Affine.AddTorsorBases
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.MeasureTheory.Measure.Lebesgue.Basic
 
 import Mathlib.Analysis.Convex.BetweenList
 import Mathlib.Analysis.Convex.Measure
 import Mathlib.Analysis.Convex.Side
+import Mathlib.Analysis.Normed.Affine.AddTorsorBases
 import Mathlib.RingTheory.Valuation.LocalSubring
 import MathlibExt.MeasureTheory.Measure.Lebesgue.TriangleArea
 

@@ -10,7 +10,7 @@ module
 
 public import Mathlib.NumberTheory.Bernoulli
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 
 namespace MetaMathlibExt
 

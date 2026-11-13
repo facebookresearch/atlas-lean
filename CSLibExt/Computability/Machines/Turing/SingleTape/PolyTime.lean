@@ -47,6 +47,9 @@ steps. Before emulating, the multi-stack machine for the problem is
   `C t (n + 1 + C t + 1) + 4` steps on an input of length `n`.
 - `Cslib.Complexity.SingleTapeP`, `Cslib.Complexity.P_subset_singleTapeP`: every problem in `P` is
   decided in polynomial time by a single-tape machine.
+- `Cslib.Complexity.mem_singleTapeP_of_polyTimeComputable`: an upstream
+  `SingleTapeTM.PolyTimeComputable` function that answers `L` on encoded inputs puts `L` in
+  `SingleTapeP`.
 
 ## References
 
@@ -451,11 +454,31 @@ attribute [local instance] FinTM2.kFin
 /-- **Polynomial time on single-tape machines.** A decision problem `L` is in `SingleTapeP` when a
 CSLib single-tape machine over a finite alphabet, reading the input word `w` through an injective
 copy `ι` of the bits, halts on the one-cell tape `ι (L w)` within `p |w|` steps, for a polynomial
-`p`. -/
+`p`.
+
+The witness carries the same data as upstream `SingleTapeTM.PolyTimeComputable` (a machine, an
+`OutputsWithinTime` run and a polynomial bound), restricted to decision problems: unlike
+`PolyTimeComputable`, only inputs in the image of `ι` are constrained, so the machine may diverge
+on other words of the larger tape alphabet. `mem_singleTapeP_of_polyTimeComputable` turns an
+upstream polynomial-time computable function that answers `L` on encoded inputs into membership. -/
 def SingleTapeP : DecisionComplexityClass :=
   {L | ∃ (Symbol : Type) (_ : Inhabited Symbol) (_ : Fintype Symbol) (ι : Bool → Symbol),
     Function.Injective ι ∧ ∃ (tm : SingleTapeTM Symbol) (p : Polynomial ℕ),
       ∀ w : List Bool, tm.OutputsWithinTime (w.map ι) [ι (L w)] (p.eval w.length)}
+
+/-- **Upstream polynomial-time functions decide `SingleTapeP` problems.** If an upstream
+`SingleTapeTM.PolyTimeComputable` function `f` over a finite alphabet maps every encoded input
+`w.map ι` to the one-symbol answer `[ι (L w)]`, for an injective `ι`, then `L ∈ SingleTapeP`, with
+the same machine and polynomial. -/
+theorem mem_singleTapeP_of_polyTimeComputable (L : DecisionProblem) {Symbol : Type}
+    [Inhabited Symbol] [Fintype Symbol] (ι : Bool → Symbol) (hι : Function.Injective ι)
+    {f : List Symbol → List Symbol} (hf : PolyTimeComputable f)
+    (hfL : ∀ w, f (w.map ι) = [ι (L w)]) :
+    L ∈ SingleTapeP := by
+  refine ⟨Symbol, inferInstance, inferInstance, ι, hι, hf.tm, hf.poly, fun w => ?_⟩
+  have h := hf.outputsFunInTime (w.map ι)
+  rw [hfL] at h
+  exact RelatesWithinSteps.mono (by simpa using hf.bounds (w.map ι).length) h
 
 /-- **Problems in `P` are decided in polynomial time by single-tape machines**: the multi-stack
 machine of `P`, after the input reversal and restricted to finite alphabets, is emulated within

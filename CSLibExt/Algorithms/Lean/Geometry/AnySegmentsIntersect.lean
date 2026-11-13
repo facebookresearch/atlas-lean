@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Algorithms.Lean.Geometry.SegmentIntersection
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Data.List.Chain
 public import Mathlib.Data.List.TakeWhile
 public import Mathlib.Data.Fintype.Card

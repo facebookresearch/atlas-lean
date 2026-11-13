@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import MathlibExt.NumberTheory.HankelTransform
 import Mathlib.Tactic.LinearCombination
 
