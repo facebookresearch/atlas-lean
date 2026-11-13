@@ -329,19 +329,6 @@ section Asymptotics
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {X : ℕ → Ω → Fin 3} {p : ℝ}
 
-private theorem integral_comp_eq_sum (hY : AEMeasurable (X 0) P)
-    (hX0 : ∀ i, P.real (X 0 ⁻¹' {i}) = hweProb p i) (g : Fin 3 → ℝ) :
-    ∫ ω, g (X 0 ω) ∂P = ∑ j, hweProb p j * g j := by
-  rw [← integral_map hY Measurable.of_discrete.aestronglyMeasurable,
-    integral_fintype Integrable.of_finite]
-  refine Finset.sum_congr rfl fun j _ => ?_
-  rw [smul_eq_mul, ← hX0 j, measureReal_def, measureReal_def,
-    Measure.map_apply_of_aemeasurable hY (measurableSet_singleton j)]
-
-private theorem memLp_comp (hY : AEMeasurable (X 0) P) (g : Fin 3 → ℝ) :
-    MemLp (fun ω => g (X 0 ω)) 2 P :=
-  (memLp_map_measure_iff Measurable.of_discrete.aestronglyMeasurable hY).1 MemLp.of_discrete
-
 /-- **Pearson's `X² → χ²₁` limit theorem for Hardy–Weinberg equilibrium with estimated allele
 frequency.** Let the genotypes `X 0, X 1, …` (number of copies of the counted allele) be i.i.d. in
 Hardy–Weinberg proportions `P(X 0 = i) = hweProb p i` at a polymorphic allele frequency
@@ -362,7 +349,7 @@ theorem tendstoInDistribution_hweStat (hX0 : ∀ i, P.real (X 0 ⁻¹' {i}) = hw
   have hq : 0 < 1 - p := by linarith
   have hr : 0 < p * (1 - p) := mul_pos hp0 hq
   have hXm : ∀ m, AEMeasurable (X m) P := fun m => (hident m).aemeasurable_fst
-  have hE := integral_comp_eq_sum (hXm 0) hX0
+  have hE := integral_comp_eq_sum_of_measureReal_preimage (hXm 0) hX0
   have hind : ∀ g : Fin 3 → ℝ, iIndepFun (fun m ω => g (X m ω)) P := fun g =>
     hindep.comp (fun _ => g) fun _ => Measurable.of_discrete
   have hid : ∀ g : Fin 3 → ℝ, ∀ m, IdentDistrib (fun ω => g (X m ω)) (fun ω => g (X 0 ω)) P P :=
@@ -400,12 +387,12 @@ theorem tendstoInDistribution_hweStat (hX0 : ∀ i, P.real (X 0 ⁻¹' {i}) = hw
   have h2a : TendstoInDistribution (fun N ω => cltY X N ω p) atTop id (fun _ => P)
       (gaussianReal 0 (Var[fun ω => yv (X 0 ω); P]).toNNReal) := by
     have := tendstoInDistribution_inv_sqrt_mul_sum_sub (X := fun m ω => yv (X m ω))
-      HasLaw.id (memLp_comp (hXm 0) yv) (hind yv) (hid yv)
+      HasLaw.id (memLp_comp_of_discrete (hXm 0) yv) (hind yv) (hid yv)
     simp only [hymean] at this
     exact this
   have hlln : ∀ᵐ ω ∂P, Tendsto (fun N => meanY X N ω) atTop (𝓝 p) := by
     have := strong_law_ae_real (fun m ω => yv (X m ω))
-      ((memLp_comp (hXm 0) yv).integrable one_le_two)
+      ((memLp_comp_of_discrete (hXm 0) yv).integrable one_le_two)
       (fun i j hij => (hind yv).indepFun hij) (hid yv)
     simp only [hymean] at this
     exact this
@@ -500,11 +487,6 @@ theorem hweStat_ae_eq_zero_of_monomorphic [IsFiniteMeasure P]
   · filter_upwards [hnot 1 (by simp), hnot 0 (by simp)] with ω h1 h0 N
     exact hzero ω N (hcount ω 1 h1 N) (Or.inl (hcount ω 0 h0 N))
 
-/-- `χ²₁` has no atom at `0`. -/
-private theorem chiSquareMeasure_one_singleton_zero : chiSquareMeasure 1 {0} = 0 := by
-  rw [chiSquareMeasure, gammaMeasure, withDensity_apply _ (measurableSet_singleton 0)]
-  exact setLIntegral_measure_zero _ _ Real.volume_singleton
-
 /-- **A monomorphic locus has no `χ²₁` limit.** At `p = 0` or `p = 1` the fitted statistic
 converges in distribution to the Dirac mass at `0` (it is almost surely `0`), so it does not
 converge to `χ²₁`: the hypothesis `0 < p < 1` of `tendstoInDistribution_hweStat` cannot be
@@ -525,7 +507,7 @@ theorem not_tendstoInDistribution_hweStat_of_monomorphic
   have huniq := tendstoInDistribution_unique _ h hconst
   rw [hZ.map_eq, Measure.map_const, measure_univ, one_smul] at huniq
   have := congrArg (fun μ : Measure ℝ => μ {0}) huniq
-  simp only [chiSquareMeasure_one_singleton_zero] at this
+  simp only [chiSquareMeasure_singleton] at this
   simp at this
 
 end Asymptotics

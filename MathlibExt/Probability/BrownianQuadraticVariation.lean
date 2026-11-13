@@ -31,6 +31,8 @@ bounded measurable `φ`, is the form used in the proof of Itô's formula.
 
 ## Main results
 
+* `ProbabilityTheory.integral_pow_four_gaussianReal`: the Gaussian fourth moment
+  `∫ x⁴ ∂N(0, v) = 3 v²`.
 * `ProbabilityTheory.integral_weightedQVError_sq_le`: `E[weightedQVError²] ≤ 2 C² t² / n` when
   `|φ| ≤ C`, `B` is adapted to a filtration `F` and its increments are independent of the past.
 * `ProbabilityTheory.tendsto_eLpNorm_weightedQVError`: hence `weightedQVError φ B t n → 0` in
@@ -71,7 +73,8 @@ noncomputable def weightedQVError {Ω : Type*} (φ : ℝ → ℝ) (B : ℝ≥0 �
   ∑ k ∈ Finset.range n, φ (B (t * k / n) ω) *
     ((B (t * (k + 1) / n) ω - B (t * k / n) ω) ^ 2 - ((t : ℝ) / n))
 
-private lemma gaussian_fourth (v : ℝ≥0) :
+/-- The fourth moment of a centered real Gaussian: `E Z⁴ = 3 v²` for `Z ~ N(0, v)`. -/
+lemma integral_pow_four_gaussianReal (v : ℝ≥0) :
     ∫ x : ℝ, x ^ 4 ∂gaussianReal 0 v = 3 * (v : ℝ) ^ 2 := by
   change (∫ x, ((fun x : ℝ ↦ x) ^ 4) x ∂gaussianReal 0 v) = _
   rw [← iteratedDeriv_mgf_zero (by simp), mgf_fun_id_gaussianReal]
@@ -142,7 +145,8 @@ private lemma gaussian_centered_stats (v : ℝ≥0) :
       convert hi4.sub (hi2.const_mul (2 * (v : ℝ))) using 1
     rw [integral_add his
         (integrable_const ((v : ℝ) ^ 2)),
-      integral_sub hi4 (hi2.const_mul (2 * (v : ℝ))), integral_const_mul, gaussian_fourth, hm2]
+      integral_sub hi4 (hi2.const_mul (2 * (v : ℝ))), integral_const_mul,
+      integral_pow_four_gaussianReal, hm2]
     simp
     ring
 

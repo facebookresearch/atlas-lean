@@ -29,6 +29,15 @@ The probability space is two independent fair coins, `Ω = Bool × Bool` (from t
   `E[Y] = 1`.
 * The MAR hypothesis is implied by Mathlib's `CondIndep`: on a standard Borel space it follows
   from `CondIndep m σ(R) σ(Y)` by `condIndep_iff`.
+* The MAR hypothesis is implied by Mathlib's `CondIndepFun`
+  (`condExp_inter_preimage_ae_eq_mul_of_condIndepFun`): directly from
+  `MissingAtRandomCondIndepFun`, and from `CondIndepDiscrete μ R Y X` for a countable `X`, which
+  yields mean MAR for `σ(X)`.
+* Non-vacuity of `CondIndepFun`: the first coin as response, the trivial covariate `X = ()` and
+  the outcome `Y = 1_{ω.2 = true}` (not `σ(X)`-measurable) satisfy `CondIndepFun`, and the
+  weighted mean through `condExp_inter_preimage_ae_eq_mul_of_condIndepFun` identifies `E[Y]`.
+* Boundary: for the response first coin and the outcome `Y = 1_{ω.1 = true}` the set-wise MAR
+  equation given `⊥` fails at `S = {1}`, so `CondIndepFun ⊥ (· ∈ R) Y` fails.
 -/
 
 @[expose] public section
@@ -78,6 +87,29 @@ example [StandardBorelSpace Ω] [IsFiniteMeasure μ] (hm : m ≤ mΩ) {R : Set �
     (μ⟦R ∩ Y ⁻¹' S | m⟧) =ᵐ[μ] (μ⟦R | m⟧) * (μ⟦Y ⁻¹' S | m⟧) :=
   (condIndep_iff m _ _ hm (MeasurableSpace.generateFrom_le (by simpa using hR)) hY.comap_le μ).1
     h R (Y ⁻¹' S) (MeasurableSpace.measurableSet_generateFrom rfl) ⟨S, hS, rfl⟩
+
+/-- `MissingAtRandomCondIndepFun μ R X hX Y` gives the MAR hypothesis given `σ(X)`. -/
+example [StandardBorelSpace Ω] [IsFiniteMeasure μ] {𝒳 : Type*} [MeasurableSpace 𝒳] {R : Set Ω}
+    (hR : MeasurableSet R) {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y)
+    (h : MissingAtRandomCondIndepFun μ R X hX Y) :
+    ∀ S, MeasurableSet S →
+      (μ⟦R ∩ Y ⁻¹' S | MeasurableSpace.comap X inferInstance⟧) =ᵐ[μ]
+        (μ⟦R | MeasurableSpace.comap X inferInstance⟧) *
+          (μ⟦Y ⁻¹' S | MeasurableSpace.comap X inferInstance⟧) :=
+  condExp_inter_preimage_ae_eq_mul_of_condIndepFun hX.comap_le hR hY h
+
+/-- **Mean MAR from `CondIndepDiscrete`**: for a countably valued covariate on a standard Borel
+space, `CondIndepDiscrete μ R Y X` gives `E[1_R Y | σ(X)] = P(R | σ(X)) E[Y | σ(X)]`. -/
+example [StandardBorelSpace Ω] [IsFiniteMeasure μ] {𝒳 : Type*} [MeasurableSpace 𝒳]
+    [Countable 𝒳] [MeasurableSingletonClass 𝒳] {R : Set Ω} (hR : MeasurableSet R) {X : Ω → 𝒳}
+    (hX : Measurable X) {Y : Ω → ℝ} (hY : Measurable Y) (hYi : Integrable Y μ)
+    (h : CondIndepDiscrete μ R Y X) :
+    μ[R.indicator Y | MeasurableSpace.comap X inferInstance] =ᵐ[μ]
+      (μ⟦R | MeasurableSpace.comap X inferInstance⟧) *
+        μ[Y | MeasurableSpace.comap X inferInstance] :=
+  condExp_indicator_ae_eq_mul_of_mar hX.comap_le hR hY hYi
+    (condExp_inter_preimage_ae_eq_mul_of_condIndepFun hX.comap_le hR hY
+      ((missingAtRandomCondIndepFun_iff_condIndepDiscrete hR hX hY).2 h))
 
 end General
 
@@ -179,5 +211,68 @@ example :
       exact Set.indicator_congr fun ω hω => by simp [hω]
     rw [heq, integral_indicator_const _ measurableSet_resp, coins_real_resp, smul_eq_mul,
       mul_one]
+
+/-! ### `CondIndepFun` on the coins: non-vacuity and boundary -/
+
+/-- The covariate information `σ(X)` of the trivial covariate `X = ()`. -/
+abbrev mUnit : MeasurableSpace (Bool × Bool) :=
+  MeasurableSpace.comap (fun _ : Bool × Bool => ()) inferInstance
+
+lemma mUnit_le : mUnit ≤ mTop := measurable_const.comap_le
+
+/-- The outcome `1_{ω.2 = true}`, a function of the second coin. -/
+noncomputable def ySecond : Bool × Bool → ℝ := fun ω => if ω.2 then 1 else 0
+
+lemma measurable_ySecond : Measurable ySecond := measurable_of_finite _
+
+/-- **Non-vacuity of `CondIndepFun`**: the first coin as response is conditionally independent,
+given the trivial covariate, of the second-coin outcome (from the MCAR witness `mcar_resp`). -/
+theorem condIndepFun_resp_ySecond : CondIndepFun mUnit mUnit_le (· ∈ resp) ySecond coins :=
+  (missingAtRandomCondIndepFun_iff_condIndepDiscrete (μ := coins) measurableSet_resp
+    measurable_const measurable_ySecond).2 (mcar_resp fun b => if b then (1 : ℝ) else 0)
+
+/-- The outcome `ySecond` is not measurable in the covariate information, so the MAR equations
+below are not the trivial ones of `mar_sigma_of_measurable`. -/
+example : ¬ Measurable[mUnit] ySecond := by
+  intro h
+  obtain ⟨A, -, hA⟩ := h (measurableSet_singleton (1 : ℝ))
+  have h1 : (true, true) ∈ ySecond ⁻¹' {1} := by simp [ySecond]
+  have h0 : (true, false) ∉ ySecond ⁻¹' {1} := by simp [ySecond]
+  rw [← hA] at h1 h0
+  exact h0 h1
+
+lemma condExp_resp_mUnit : (coins⟦resp | mUnit⟧) =ᵐ[coins] fun _ => 1 / 2 := by
+  filter_upwards [condExp_indicator_comap_ae_eq (μ := coins)
+    (measurable_const : Measurable fun _ : Bool × Bool => ()) measurableSet_resp] with ω h
+  have hc : (fun _ : Bool × Bool => ()) ⁻¹' {()} = Set.univ :=
+    Set.eq_univ_of_forall fun _ => rfl
+  rw [h, propensity, hc, Set.inter_univ, coins_real_resp, probReal_univ, div_one]
+
+/-- IPW identification through `CondIndepFun`: the set-wise MAR hypothesis comes from
+`condExp_inter_preimage_ae_eq_mul_of_condIndepFun`. -/
+example :
+    ∫ ω, resp.indicator (fun ω => ySecond ω / (coins⟦resp | mUnit⟧) ω) ω ∂coins =
+      ∫ ω, ySecond ω ∂coins :=
+  integral_ipw_eq_integral_of_mar_sigma mUnit_le measurableSet_resp measurable_ySecond
+    Integrable.of_finite
+    (condExp_inter_preimage_ae_eq_mul_of_condIndepFun mUnit_le measurableSet_resp
+      measurable_ySecond condIndepFun_resp_ySecond)
+    (by norm_num : (0 : ℝ) < 1 / 2) (condExp_resp_mUnit.mono fun _ h => h.ge)
+
+/-- The outcome `1_{ω.1 = true}`, the response indicator itself. -/
+noncomputable def yFirst : Bool × Bool → ℝ := fun ω => if ω.1 then 1 else 0
+
+lemma yFirst_preimage_one : yFirst ⁻¹' {1} = resp := by
+  ext ⟨a, b⟩; cases a <;> simp [yFirst, resp]
+
+/-- **Boundary**: the response is not conditionally independent of itself given `⊥`. The
+set-wise MAR equation at `S = {1}` reads `1/2 = 1/2 * 1/2`. -/
+example : ¬ CondIndepFun ⊥ bot_le (· ∈ resp) yFirst coins := by
+  intro h
+  have key := condExp_inter_preimage_ae_eq_mul_of_condIndepFun bot_le measurableSet_resp
+    (measurable_of_finite yFirst) h {1} (measurableSet_singleton _)
+  rw [yFirst_preimage_one, Set.inter_self, condExp_resp_bot] at key
+  obtain ⟨ω, hω⟩ := key.exists
+  norm_num at hω
 
 end MathlibExtTest.Probability.Causality.MissingData.GeneralIPW

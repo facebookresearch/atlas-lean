@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.Economics.Finance.Returns
 
 /-!
 # Portfolio log return is not the weighted average of component log returns
@@ -23,7 +24,8 @@ two-asset counterexample below has equal weights `1/2, 1/2` on gross returns
 ## Main results
 
 * `portfolioGrossReturn`: weight-weighted sum of component gross returns.
-* `logReturn`: log of a gross return.
+* `logReturn`: log of a gross return, the shared operation
+  `MathlibExt.Economics.Finance.Returns.logReturn`, re-exported here.
 * `portfolio_logReturn_ne_weightedAverage_logReturns`: the counterexample.
 
 Atlas roadmap target FI05.T04.
@@ -38,9 +40,10 @@ returns (source clause: "portfolio gross return is the weighted average of
 component gross returns"). -/
 noncomputable def portfolioGrossReturn (w₁ w₂ G₁ G₂ : ℝ) : ℝ := w₁ * G₁ + w₂ * G₂
 
-/-- Log return of a (positive) gross return: `log G`
-(source clause: "log return is the log of the gross return"). -/
-noncomputable def logReturn (G : ℝ) : ℝ := Real.log G
+-- Log return of a (positive) gross return, `log G` (source clause: "log return is
+-- the log of the gross return"): the shared finance operation, re-exported so that
+-- `PortfolioLogReturn.logReturn` names the same declaration.
+export MathlibExt.Economics.Finance.Returns (logReturn)
 
 /-- **Portfolio log return is not the weighted average of component log
 returns.** Explicit two-asset counterexample (Atlas roadmap FI05.T04): equal
