@@ -43,7 +43,17 @@ identity).
 
 ## References
 
-Atlas roadmap target MA03.T02 (new result).
+* D. Acemoglu, *Introduction to Modern Economic Growth*, Princeton University Press (2009),
+  Sections 2.2–2.3: the discrete-time Solow model `k(t + 1) = s f(k(t)) + (1 - δ) k(t)`
+  (equation (2.17)), Example 2.1 (Cobb-Douglas production), Proposition 2.2 (a unique
+  positive steady state) and Proposition 2.5 (from any `k(0) > 0` the path converges
+  monotonically to it). These treat the case `D = 1`, without population growth or
+  technological progress.
+* P. B. Sørensen and H. J. Whitta-Jacobsen, *Introducing Advanced Macroeconomics: Growth
+  and Business Cycles*, 2nd ed., McGraw-Hill (2010), Chapter 5 (The Solow Model with
+  Technological Progress): the discrete-time Solow model with technological progress,
+  written in capital per effective worker.
+* Atlas roadmap target MA03.T02.
 -/
 
 @[expose] public section
