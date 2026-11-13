@@ -48,10 +48,11 @@ are read at the first letter, `next` moves to `w.tail`, and `until` quantifies o
 * `satisfies_map`: relabelling the letters of a word is composing the valuation.
 * Boolean structure of `language`: `language_not`, `language_and`, `language_or`.
 
-The ω-word semantics is independent of any transition system;
-`CSLibExt.Logics.LTL.OmegaWordBridge` proves that it agrees with
-`Cslib.LTL.Satisfies`, the state-run semantics over canonical `Cslib.LTS` in
-`CSLibExt.Logics.LTL.Basic`.
+The ω-word semantics is independent of any transition system. It agrees with
+the CTL* path semantics of embedded LTL formulas on every state sequence
+`ℕ → State` (`Cslib.CTLStar.embedLTL_sat` in `CSLibExt.Logics.CTLStar.Basic`),
+and `CSLibExt.Logics.LTL.ModelChecking` applies it to the state sequences of
+runs of canonical `Cslib.LTS`.
 -/
 
 @[expose] public section

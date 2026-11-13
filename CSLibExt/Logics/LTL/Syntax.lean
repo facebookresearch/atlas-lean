@@ -21,8 +21,9 @@ negation, conjunction, `next`, and `until`, and the derived connectives falsity,
 implication, bi-implication, `eventually`, `always`, and `release`.
 
 The syntax is independent of any semantics. It is interpreted over canonical
-CSLib ω-words (`Cslib.ωSequence`) in `CSLibExt.Logics.LTL.OmegaWord`, and over
-state runs `ℕ → State` of canonical `Cslib.LTS` in `CSLibExt.Logics.LTL.Basic`.
+CSLib ω-words (`Cslib.ωSequence`) in `CSLibExt.Logics.LTL.OmegaWord`, and
+`CSLibExt.Logics.CTLStar.Basic` embeds it into CTL* path formulas over state
+sequences `ℕ → State` (`Cslib.CTLStar.embedLTL`).
 -/
 
 @[expose] public section
