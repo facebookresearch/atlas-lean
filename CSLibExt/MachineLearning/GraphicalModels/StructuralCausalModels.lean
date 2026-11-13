@@ -407,7 +407,13 @@ theorem responseSCM_inducedLaw {α : Type*} [Fintype α] [DecidableEq α] [Nonem
   rw [FiniteSCM.inducedLaw_eq_joint]
   simp only [joint_eq_prod]
   refine Finset.prod_congr rfl fun k _ => ?_
-  have hfb := FiniteSCM.map_weights_eq_sum b.responseSCM b.responseLaw x k
+  have hfb : ((b.responseLaw k).map (b.responseSCM.f k (b.responseSCM.paVal k x))).weights (x k)
+      = ∑ v, (if b.responseSCM.f k (b.responseSCM.paVal k x) v = x k then
+          (b.responseLaw k).weights v else 0) := by
+    rw [FiniteSCM.map_weights_eq_sum b.responseSCM b.responseLaw x k]
+    refine (Finset.sum_subset (Finset.subset_univ _) fun v _ hv => ?_).trans
+      (Finset.sum_congr rfl fun v _ => by split_ifs <;> rfl)
+    simp [Finsupp.notMem_support_iff.mp hv]
   change ((b.responseLaw k).map (b.responseSCM.f k (b.responseSCM.paVal k x))).weights (x k)
     = (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)
   rw [hfb]
