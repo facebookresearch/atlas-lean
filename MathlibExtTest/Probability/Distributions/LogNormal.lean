@@ -13,8 +13,8 @@ import MathlibExt.Probability.Distributions.LogNormal
 /-!
 # Tests for the log-normal law
 
-The probability instance, no mass on `(-∞, 0]`, the CDF identity at the median point
-`t = exp μ`, the degenerate case `v = 0` as a Dirac mass at `exp μ`, and the mean at concrete
+The probability instance, no mass on `(-∞, 0]`, the CDF and survival identities at the median
+point `t = exp μ`, the degenerate case `v = 0` as a Dirac mass at `exp μ`, and the mean at concrete
 parameters, cross-checked against the Dirac mass when `v = 0`.
 -/
 
@@ -34,6 +34,11 @@ example : logNormalMeasure 1 2 (Iic 0) = 0 := logNormalMeasure_Iic_zero 1 2
 example (μ : ℝ) (v : ℝ≥0) :
     (logNormalMeasure μ v).real (Iic (exp μ)) = (gaussianReal μ v).real (Iic μ) := by
   rw [logNormalMeasure_real_Iic μ v (exp_pos μ), log_exp]
+
+/-- The survival function at `t = exp μ` is the Gaussian survival function at its mean. -/
+example (μ : ℝ) (v : ℝ≥0) :
+    (logNormalMeasure μ v).real (Ioi (exp μ)) = (gaussianReal μ v).real (Ioi μ) := by
+  rw [logNormalMeasure_real_Ioi μ v (exp_pos μ), log_exp]
 
 /-- Zero log-variance: the law is the Dirac mass at `exp μ`. -/
 example (μ : ℝ) : logNormalMeasure μ 0 = Measure.dirac (exp μ) :=

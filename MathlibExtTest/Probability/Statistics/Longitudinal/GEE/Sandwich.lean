@@ -34,6 +34,9 @@ public import Mathlib.Probability.StrongLaw
     `tendstoInDistribution_sqrt_smul_sub_sandwich_of_hasFDerivAt`, hence
     `linearization_of_hasFDerivAt` (`tendstoInDistribution_randomIntercept_of_hasFDerivAt`); the
     cluster Lindeberg condition comes from `lindebergConditionTriangular_inner_of_identDistrib`;
+  - (b) the cluster-CLT step `tendstoInDistribution_inv_sqrt_smul_sum_sandwich`
+    (`tendstoInDistribution_transformed_randomIntercept`): the transformed scores
+    `-A⁻¹ U k β₀ = ⟪ξ k, s⟫ / 2` give `(√n)⁻¹ ∑ ⟪ξ k, s⟫ / 2 → N(0, 3/2)`;
   - (c) `tendstoInMeasure_empirical_sandwichCovariance_of_eq`, hence
     `tendstoInMeasure_empirical_sandwichCovariance` and `tendstoInMeasure_sandwichCovariance`
     (`tendstoInMeasure_empirical_sandwich_randomIntercept`), with meat limit
@@ -43,6 +46,9 @@ public import Mathlib.Probability.StrongLaw
 * Boundary: a singular bread. With `A = 0`, deterministic bread estimators `Ahat n → 0` and meat
   `1` give sandwiches `(n + 1)² • 1` that do not converge to `sandwichCovariance 0 1 = 0`: the
   invertibility hypothesis of `tendstoInMeasure_sandwichCovariance` cannot be dropped.
+* Boundary: a singular bread in the cluster CLT. `tendstoInDistribution_inv_sqrt_smul_sum_sandwich`
+  has no `IsUnit A` hypothesis and applies at `A = 0`, where `Ring.inverse 0 = 0`, the transformed
+  sums vanish and `sandwichCovariance 0 B = 0` (the library lemma `sandwichCovariance_zero_left`).
 * Boundary: Lindeberg failure. Exploding cluster scores `U k = 2 ^ k` violate the cluster
   Lindeberg condition, so the hypothesis is not vacuous.
 -/
@@ -296,6 +302,52 @@ theorem tendstoInDistribution_randomIntercept (hξ : ∀ i, Measurable (ξ i))
     simp only [Set.mem_ofPred_eq] at hω
     rw [hrem n hn ω, norm_zero] at hω
     exact absurd hω (not_lt.2 (by positivity))
+
+/-! ### The cluster CLT for the transformed scores -/
+
+/-- The inverse bread of the model: `A⁻¹ = (-2)⁻¹`. -/
+theorem inverse_A : Ring.inverse A = (-2 : ℝ)⁻¹ • 1 :=
+  Ring.inverse_unit ⟨(-2 : ℝ) • 1, (-2 : ℝ)⁻¹ • 1,
+    by rw [smul_mul_smul_comm, mul_one]; norm_num, by rw [smul_mul_smul_comm, mul_one]; norm_num⟩
+
+/-- **The cluster CLT for the transformed scores in the random-intercept model**, from
+`tendstoInDistribution_inv_sqrt_smul_sum_sandwich`: the transformed score is
+`-A⁻¹ U k β₀ = ⟪ξ k, s⟫ / 2`, and `(√n)⁻¹ ∑_{k<n} ⟪ξ k, s⟫ / 2 → N(0, 3/2)`, the sandwich
+variance `6 / 2² = 3 / 2`. -/
+theorem tendstoInDistribution_transformed_randomIntercept (hξ : ∀ i, Measurable (ξ i))
+    (hlaw : ∀ i, HasLaw (ξ i) (stdGaussian F) P) (hind : iIndepFun ξ P) (β₀ : ℝ) :
+    TendstoInDistribution (fun (n : ℕ) ω ↦ (√n)⁻¹ * ∑ k ∈ range n, ⟪ξ k ω, s⟫ / 2) atTop id
+      (fun _ ↦ P) (gaussianReal 0 (3 / 2)) := by
+  refine (tendstoInDistribution_inv_sqrt_smul_sum_sandwich (A := A) (B := B)
+    (fun k ↦ by rw [U_self]; exact measurable_inner_s.comp (hξ k))
+    (by simp_rw [U_self]; exact hind.comp (fun _ x ↦ ⟪x, s⟫) fun _ ↦ measurable_inner_s)
+    (fun k ↦ by rw [U_self]; exact integral_inner_s hlaw k) (memLp_U hlaw β₀)
+    (tendsto_meat hlaw β₀)
+    (fun t ↦ lindebergConditionTriangular_inner_of_identDistrib (identDistrib_U hlaw β₀)
+      (memLp_U hlaw β₀ 0) t) aemeasurable_id hasLaw_limit).congr
+    (fun n ↦ ae_of_all _ fun ω ↦ ?_) (ae_of_all _ fun _ ↦ rfl)
+  simp only [inverse_A, U_self, smul_apply, one_apply_eq_self, smul_eq_mul]
+  congr 1
+  exact Finset.sum_congr rfl fun k _ ↦ by ring
+
+/-- **Boundary: a singular bread.** `tendstoInDistribution_inv_sqrt_smul_sum_sandwich` carries no
+`IsUnit A` hypothesis and still applies at `A = 0`: there `Ring.inverse A = 0`, the transformed
+sums vanish, and the limit law `N(0, sandwichCovariance 0 B) = N(0, 0)` is the point mass at
+`0`. -/
+example (hξ : ∀ i, Measurable (ξ i)) (hlaw : ∀ i, HasLaw (ξ i) (stdGaussian F) P)
+    (hind : iIndepFun ξ P) (β₀ : ℝ) :
+    TendstoInDistribution
+      (fun (n : ℕ) ω ↦ (√n)⁻¹ • ∑ k ∈ range n, -Ring.inverse (0 : ℝ →L[ℝ] ℝ) (U β₀ ξ k β₀ ω))
+      atTop (fun _ ↦ (0 : ℝ)) (fun _ ↦ P) P :=
+  tendstoInDistribution_inv_sqrt_smul_sum_sandwich (B := B)
+    (fun k ↦ by rw [U_self]; exact measurable_inner_s.comp (hξ k))
+    (by simp_rw [U_self]; exact hind.comp (fun _ x ↦ ⟪x, s⟫) fun _ ↦ measurable_inner_s)
+    (fun k ↦ by rw [U_self]; exact integral_inner_s hlaw k) (memLp_U hlaw β₀)
+    (tendsto_meat hlaw β₀)
+    (fun t ↦ lindebergConditionTriangular_inner_of_identDistrib (identDistrib_U hlaw β₀)
+      (memLp_U hlaw β₀ 0) t) aemeasurable_const
+    (fun t ↦ ⟨aemeasurable_const, by
+      simp [sandwichCovariance_zero_left, Measure.map_const, gaussianReal_zero_var]⟩)
 
 /-! ### Consistency, differentiable linearization and the empirical sandwich in the model -/
 

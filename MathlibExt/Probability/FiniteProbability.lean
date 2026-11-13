@@ -65,8 +65,8 @@ its coverage under the posterior is definitional.
 
 - `expectation_linear`, `expectation_indicator`, `sum_prob_filter_eq` : linearity, indicators and
   total probability.
-- `variance_nonneg`, `variance_affine`, `covariance_sum_mul_sum`, `covMatrix_mulVec` : second
-  moments and linear maps.
+- `variance_nonneg`, `variance_affine`, `covariance_sq_le_variance_mul_variance`,
+  `covariance_sum_mul_sum`, `covMatrix_mulVec` : second moments and linear maps.
 - `covariance_prod_eq_zero`, `exists_covariance_eq_zero_prob_ne` : independence gives zero
   covariance, and the converse fails.
 - `expectation_sampleVarUnbiased` : Bessel's correction for i.i.d. finite samples.
@@ -228,6 +228,38 @@ lemma covariance_eq_sub {α : Type*} [Fintype α] {p : α → ℝ} (hp : ∑ x, 
   rw [covariance, h, expectation_sub, expectation_sub, expectation_sub, expectation_const_mul,
     expectation_const_mul, expectation_const hp]
   ring
+
+/-- Cauchy--Schwarz for the finite-state covariance: `(Cov_P(X, Y)) ^ 2 ≤ Var_P(X) * Var_P(Y)`
+when the weights are nonnegative. From `Finset.sum_mul_sq_le_sq_mul_sq` with `√P` weights
+on the centered variables; it is the key step of the Hansen--Jagannathan bound. -/
+theorem covariance_sq_le_variance_mul_variance {α : Type*} [Fintype α] {p X Y : α → ℝ}
+    (hp : ∀ x, 0 ≤ p x) :
+    (covariance p X Y) ^ 2 ≤ variance p X * variance p Y := by
+  have hcov : covariance p X Y
+      = ∑ ω, (Real.sqrt (p ω) * (X ω - expectation p X))
+        * (Real.sqrt (p ω) * (Y ω - expectation p Y)) := by
+    unfold covariance
+    change (∑ x, p x * ((X x - expectation p X) * (Y x - expectation p Y))) = _
+    apply Finset.sum_congr rfl
+    intro ω _
+    conv_lhs => rw [← Real.mul_self_sqrt (hp ω)]
+    ring
+  have hvar1 : variance p X
+      = ∑ ω, (Real.sqrt (p ω) * (X ω - expectation p X)) ^ 2 := by
+    unfold variance
+    change (∑ x, p x * ((X x - expectation p X) ^ 2)) = _
+    apply Finset.sum_congr rfl
+    intro ω _
+    rw [mul_pow, Real.sq_sqrt (hp ω)]
+  have hvar2 : variance p Y
+      = ∑ ω, (Real.sqrt (p ω) * (Y ω - expectation p Y)) ^ 2 := by
+    unfold variance
+    change (∑ x, p x * ((Y x - expectation p Y) ^ 2)) = _
+    apply Finset.sum_congr rfl
+    intro ω _
+    rw [mul_pow, Real.sq_sqrt (hp ω)]
+  rw [hcov, hvar1, hvar2]
+  exact Finset.sum_mul_sq_le_sq_mul_sq Finset.univ _ _
 
 lemma variance_eq_sub {α : Type*} [Fintype α] {p : α → ℝ} (hp : ∑ x, p x = 1) (X : α → ℝ) :
     variance p X = expectation p (fun x => X x ^ 2) - expectation p X ^ 2 := by
