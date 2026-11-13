@@ -64,27 +64,40 @@ open scoped unitInterval
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
-/-- `x` is a **critical point** of `f` when `f'(x) = 0`. -/
+/-- **Critical point.** Let $E$ be a real Banach space and $f : E \to \mathbb{R}$. A point
+$x \in E$ is a critical point of $f$ when the Fréchet derivative of $f$ at $x$ vanishes,
+$f'(x) = 0$. Here $f'(x)$ is taken to be $0$ when $f$ is not differentiable at $x$, so such
+points are critical as well. -/
 def IsCriticalPoint (f : E → ℝ) (x : E) : Prop :=
   fderiv ℝ f x = 0
 
-/-- `f` satisfies **Palais–Smale**: every sequence along which `f` is
-bounded and `f'` tends to `0` admits a convergent subsequence. -/
+/-- **Palais–Smale condition.** Let $E$ be a real Banach space. A function $f : E \to \mathbb{R}$
+satisfies the Palais–Smale condition when every sequence $(u_k)$ in $E$ such that $(f(u_k))$ is
+bounded and the Fréchet derivatives $f'(u_k)$ tend to $0$ in operator norm has a subsequence
+converging in $E$. Here $f'(x)$ is taken to be $0$ at points where $f$ is not differentiable. -/
 def PalaisSmale (f : E → ℝ) : Prop :=
   ∀ u : ℕ → E, (∃ M : ℝ, ∀ k, |f (u k)| ≤ M) →
       Filter.Tendsto (fun k => fderiv ℝ f (u k)) Filter.atTop (nhds 0) →
       ∃ (x : E) (φ : ℕ → ℕ), StrictMono φ ∧
         Filter.Tendsto (u ∘ φ) Filter.atTop (nhds x)
 
-/-- `a, b` are separated by a **mountain range** at height `ε`, radius
-`r`: `f a = 0`, `f ≥ ε > 0` on the sphere `S_r(a)`, and `f b ≤ 0` for
-some `b` strictly outside that sphere. -/
+/-- **Mountain range.** Let $E$ be a real Banach space, $f : E \to \mathbb{R}$, $a, b \in E$ and
+$\varepsilon, r \in \mathbb{R}$. The points $a$ and $b$ are separated by a mountain range of $f$
+at height $\varepsilon$ and radius $r$ when $f(a) = 0$, $\varepsilon > 0$, $r > 0$,
+$f(y) \ge \varepsilon$ for every $y \in E$ with $\|y - a\| = r$, $\|b - a\| > r$ and
+$f(b) \le 0$. -/
 def MountainRange (f : E → ℝ) (a b : E) (ε r : ℝ) : Prop :=
   f a = 0 ∧ 0 < ε ∧ 0 < r ∧
     (∀ y ∈ Metric.sphere a r, ε ≤ f y) ∧ r < ‖b - a‖ ∧ f b ≤ 0
 
-/-- The **mini-max value** over continuous paths from `a` to `b`:
-`c = inf_γ sup_t f(γ t)`. -/
+/-- **Mountain pass level.** Let $E$ be a real Banach space, $f : E \to \mathbb{R}$ and
+$a, b \in E$. The mountain pass level of $f$ between $a$ and $b$ is
+$$
+c = \inf_{\gamma} \sup_{t \in [0, 1]} f(\gamma(t)),
+$$
+the infimum taken over all continuous paths $\gamma : [0, 1] \to E$ with $\gamma(0) = a$ and
+$\gamma(1) = b$. Suprema and infima are taken in $\mathbb{R}$, where a family that is unbounded
+on the relevant side has supremum or infimum $0$ by convention. -/
 noncomputable def mountainPassLevel (f : E → ℝ) (a b : E) : ℝ :=
   ⨅ γ : Path a b, ⨆ t : I, f (γ t)
 
@@ -92,7 +105,15 @@ noncomputable def mountainPassLevel (f : E → ℝ) (a b : E) : ℝ :=
 functional on a real Banach space satisfying Palais–Smale with mountain
 range geometry has a critical point at the mini-max level
 `c ≥ ε > 0`. -/
-/-- Source: A. Ambrosetti and P.H. Rabinowitz, 'Dual variational methods in critical point theory and applications', J. Funct. Anal. 14 (1973) 349–381. Listed as §119 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `mountain_pass`. -/
+/-- **Mountain pass theorem.** Let $E$ be a real Banach space and let $f : E \to \mathbb{R}$ be
+continuously differentiable and satisfy the Palais–Smale condition. Let $a, b \in E$ and let
+$\varepsilon, r$ be real numbers such that $a$ and $b$ are separated by a mountain range of $f$
+at height $\varepsilon$ and radius $r$: $f(a) = 0$, $\varepsilon > 0$, $r > 0$,
+$f(y) \ge \varepsilon$ for every $y$ with $\|y - a\| = r$, $\|b - a\| > r$ and $f(b) \le 0$.
+Then the mountain pass level $c$ of $f$ between $a$ and $b$ satisfies $c \ge \varepsilon$, and
+$f$ has a critical point $x$ with $f(x) = c$.
+
+Source: A. Ambrosetti and P.H. Rabinowitz, 'Dual variational methods in critical point theory and applications', J. Funct. Anal. 14 (1973) 349–381. Listed as §119 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `mountain_pass`. -/
 public theorem_wanted mountain_pass (f : E → ℝ) (_hf : ContDiff ℝ 1 f) (_hps : PalaisSmale f)
     {a b : E} {ε r : ℝ} (_hmr : MountainRange f a b ε r) :
     ∃ x : E, IsCriticalPoint f x ∧

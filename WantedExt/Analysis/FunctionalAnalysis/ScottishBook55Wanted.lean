@@ -19,13 +19,17 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook55Wanted
 
-/-- Mazur's Problem 55 from the Scottish Book, in the general Banach-space
-form for scalar-valued 2-polynomials: every continuous 2-polynomial `W`
-bounded on an `ε`-neighbourhood of an unbounded set `R` factors as
-`W = V ∘ φ` for a univariate polynomial `V` and a first-degree (affine)
-polynomial `φ` with `φ(R)` bounded. Here `W x = B x x` for a continuous
-bilinear map `B`, and `φ x = L x + c` for a continuous linear functional
-`L`. -/
+/-- **Mazur's factorisation claim (Scottish Book Problem 55).** The claim that for every real
+Banach space $E$, every unbounded set $R \subseteq E$ and every continuous bilinear form
+$B : E \times E \to \mathbb{R}$, if the quadratic form $W(x) = B(x, x)$ is bounded on the set
+of points at distance less than $\varepsilon$ from $R$ for some $\varepsilon > 0$, then there
+are a continuous linear functional $L : E \to \mathbb{R}$, a constant $c \in \mathbb{R}$ and a
+real polynomial $V$ such that $W(x) = V(L(x) + c)$ for all $x \in E$ and $|L(r) + c|$ is
+bounded for $r \in R$.
+
+This is Mazur's question in the general Banach-space form for scalar-valued 2-polynomials: $W$
+factors as $V \circ \varphi$ through the first-degree polynomial $\varphi(x) = L(x) + c$, which
+maps $R$ to a bounded set. -/
 def ScottishBookProblem55Claim : Prop :=
   ∀ (E : Type) [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     (R : Set E) (B : E →L[ℝ] E →L[ℝ] ℝ),
@@ -37,8 +41,14 @@ def ScottishBookProblem55Claim : Prop :=
       ∃ M : ℝ, ∀ r ∈ R, |L r + c| ≤ M
 
 /--
-Mazur's Problem 55 is false in the general Banach-space form above: the
-factorisation through an affine map with bounded image on `R` fails.
+**Mazur's Problem 55 has a negative answer.** The factorisation claim of Scottish Book
+Problem 55 is false: there are a real Banach space $E$, an unbounded set $R \subseteq E$ and a
+continuous bilinear form $B : E \times E \to \mathbb{R}$ such that for some $\varepsilon > 0$
+the quadratic form $W(x) = B(x, x)$ is bounded on the set of points at distance less than
+$\varepsilon$ from $R$, yet there are no continuous linear functional $L : E \to \mathbb{R}$,
+constant $c \in \mathbb{R}$ and real polynomial $V$ with $W(x) = V(L(x) + c)$ for all $x \in E$
+and $|L(r) + c|$ bounded for $r \in R$.
+
 Source: S. Mazur, Problem 55 of the Scottish Book; refuted by V. Pestov,
 who constructs a continuous scalar-valued 2-polynomial `W` on the
 separable Hilbert space `ℓ²` and an unbounded set `R` such that `W` is

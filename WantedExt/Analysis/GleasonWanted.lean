@@ -68,13 +68,20 @@ This file states two versions:
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- An orthogonal projection on `H`: a self-adjoint idempotent continuous linear map. -/
+/-- **Orthogonal projection.** A continuous linear operator $P$ on a complex Hilbert space $H$ is
+an orthogonal projection if it is idempotent, $P^2 = P$, and self-adjoint, $P^* = P$. -/
 def IsOrthProj (P : H →L[ℂ] H) : Prop :=
   IsIdempotentElem P ∧ IsSelfAdjoint P
 
-/-- A frame function on the projection lattice: non-negative on orthogonal projections,
-finitely additive on orthogonal pairs, and `μ I = 1`. (In finite dimensions any countable
-orthogonal family is finite, so finite additivity already yields countable additivity.) -/
+/-- **Frame function on projections.** Let $H$ be a complex Hilbert space. A frame function on
+the projection lattice of $H$ is a function $\mu$ from the continuous linear operators on $H$ to
+$\mathbb{R}$ such that $\mu(P) \ge 0$ for every orthogonal projection $P$ on $H$,
+$\mu(P + Q) = \mu(P) + \mu(Q)$ for all orthogonal projections $P$ and $Q$ on $H$ with $PQ = 0$,
+and $\mu(I) = 1$ for the identity operator $I$ on $H$.
+
+Only the values of $\mu$ on orthogonal projections are constrained. In finite dimensions every
+orthogonal family of nonzero projections is finite, so additivity on orthogonal pairs already
+yields countable additivity. -/
 structure FrameFunction (H : Type*) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] where
   μ : (H →L[ℂ] H) → ℝ
@@ -83,15 +90,24 @@ structure FrameFunction (H : Type*) [NormedAddCommGroup H] [InnerProductSpace �
     μ (P + Q) = μ P + μ Q
   normalized : μ (1 : H →L[ℂ] H) = 1
 
-/-- The real part of the complex trace of a continuous linear operator on a
-finite-dimensional complex inner product space. -/
+/-- **Real part of the trace.** For a continuous linear operator $A$ on a finite-dimensional
+complex Hilbert space $H$, let $\operatorname{tr}(A) \in \mathbb{C}$ be the trace of $A$ as a
+$\mathbb{C}$-linear map on $H$. The real part of the trace of $A$ is the real number
+$\operatorname{Re} \operatorname{tr}(A)$. -/
 noncomputable def reTr [FiniteDimensional ℂ H] (A : H →L[ℂ] H) : ℝ :=
   (LinearMap.trace ℂ H A.toLinearMap).re
 
 /- **Gleason's theorem**, finite-dimensional version. For `dim H ≥ 3`, every frame
 function on the projection lattice of `H` is given by `P ↦ re Tr(ρ P)` for the unique
 density operator `ρ` (positive, `re Tr ρ = 1`). -/
-/-- Source: A. M. Gleason, Measures on the closed subspaces of a Hilbert space, J. Math. Mech. 6 (1957), 885-893. Via leanprover/lean-eval@38361be, problem `gleason_theorem_finite`. -/
+/-- **Gleason's theorem in finite dimensions.** Let $H$ be a finite-dimensional complex Hilbert
+space of dimension at least $3$, write $\operatorname{tr}$ for the trace of a $\mathbb{C}$-linear
+map on $H$, and let $\mu$ be a frame function on the projection lattice of $H$. Then there is a
+unique continuous linear operator $\rho$ on $H$ such that $\rho$ is positive,
+$\operatorname{Re} \operatorname{tr}(\rho) = 1$, and
+$\mu(P) = \operatorname{Re} \operatorname{tr}(\rho P)$ for every orthogonal projection $P$ on $H$.
+
+Source: A. M. Gleason, Measures on the closed subspaces of a Hilbert space, J. Math. Mech. 6 (1957), 885-893. Via leanprover/lean-eval@38361be, problem `gleason_theorem_finite`. -/
 public theorem_wanted gleason_theorem_finite
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
       [CompleteSpace H] [FiniteDimensional ℂ H]
@@ -102,9 +118,13 @@ public theorem_wanted gleason_theorem_finite
       reTr ρ = 1 ∧
       ∀ P : H →L[ℂ] H, IsOrthProj P → f.μ P = reTr (ρ * P)
 
-/-- A frame function on the unit sphere of `H` (Gleason's original 1957 definition).
-A non-negative function on unit vectors whose values sum to `1` along every Hilbert
-basis. -/
+/-- **Frame function on the unit sphere.** Let $H$ be a complex Hilbert space. A frame function
+on the unit sphere of $H$ is a function $f$ from the unit vectors of $H$ to $\mathbb{R}$ such that
+$f(x) \ge 0$ for every unit vector $x$ in $H$ and, for every Hilbert basis $(b_i)_{i \in \iota}$
+of $H$, the family $(f(b_i))_{i \in \iota}$ is unconditionally summable with sum $1$.
+
+This is Gleason's 1957 notion of a frame function, normalized to weight $1$ and required to be
+non-negative. -/
 structure SphereFrameFunction (H : Type*) [NormedAddCommGroup H] [InnerProductSpace ℂ H]
     [CompleteSpace H] where
   f : Metric.sphere (0 : H) 1 → ℝ
@@ -119,7 +139,15 @@ formulation). For a separable complex Hilbert space `H` of dimension at least `3
 frame function on the unit sphere of `H` is given by `x ↦ re ⟨x, ρ x⟩` for some positive
 bounded operator `ρ`. (The Lean conclusion does not separately assert trace-class /
 `Tr ρ = 1`; see the file docstring.) -/
-/-- Source: A. M. Gleason, Measures on the closed subspaces of a Hilbert space, J. Math. Mech. 6 (1957), 885-893. Via leanprover/lean-eval@38361be, problem `gleason_theorem_separable`. -/
+/-- **Gleason's theorem for separable Hilbert spaces.** Let $H$ be a separable complex Hilbert
+space whose dimension over $\mathbb{C}$ is at least $3$, and let $f$ be a frame function on the
+unit sphere of $H$. Then there is a positive continuous linear operator $\rho$ on $H$ such that
+$f(x) = \operatorname{Re} \langle x, \rho x \rangle$ for every unit vector $x$ in $H$.
+
+The statement does not assert that $\rho$ is trace class with trace $1$, nor that $\rho$ is
+unique.
+
+Source: A. M. Gleason, Measures on the closed subspaces of a Hilbert space, J. Math. Mech. 6 (1957), 885-893. Via leanprover/lean-eval@38361be, problem `gleason_theorem_separable`. -/
 public theorem_wanted gleason_theorem_separable
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H]
       [CompleteSpace H] [TopologicalSpace.SeparableSpace H]

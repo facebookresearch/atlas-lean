@@ -18,20 +18,18 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Theorem 6 (Waterhouse), as quoted by Vallières, in point-count form: let
-`F` be a finite field with `q = p ^ a` elements. An integer `β` is the
-Frobenius trace `q + 1 - #E(F)` of some elliptic curve `E` over `F` if and only
-if `|β| ≤ 2 √q` (written `β² ≤ 4q`) and one of the following holds:
-1. `gcd(β, p) = 1`;
-2. `a` is even and `β = ± 2 √q`;
-3. `a` is even, `p ≢ 1 (mod 3)` and `β = ± √q`;
-4. `a` is odd, `p = 2` or `p = 3`, and `β = ± p ^ ((a + 1) / 2)`;
-5. `a` is odd, or `a` is even and `p ≢ 1 (mod 4)`, and `β = 0`.
+/-- **Waterhouse's theorem on Frobenius traces.** Let $p$ be a prime, let $a \ge 1$, and let $F$
+be a finite field with $q = p^a$ elements. An integer $\beta$ is the Frobenius trace
+$q + 1 - \#E(F)$ of some elliptic curve $E$ over $F$ if and only if $\beta^2 \le 4q$ and one of
+the following holds:
+1. $\gcd(\beta, p) = 1$;
+2. $a$ is even and $\beta = \pm 2p^{a/2}$;
+3. $a$ is even, $p \not\equiv 1 \pmod 3$ and $\beta = \pm p^{a/2}$;
+4. $a$ is odd, $p = 2$ or $p = 3$, and $\beta = \pm p^{(a+1)/2}$;
+5. $a$ is odd, or $a$ is even and $p \not\equiv 1 \pmod 4$, and $\beta = 0$.
 
-The paper states a one-to-one correspondence between `F`-isogeny classes and
-these `β`; this declaration records which `β` occur (the image of the
-correspondence). Injectivity is Tate's isogeny theorem (Corollary 2), which
-Mathlib cannot state without isogenies.
+The paper states a one-to-one correspondence between $F$-isogeny classes of elliptic curves and
+these integers; the statement above describes its image. Injectivity is Tate's isogeny theorem.
 
 Source: Daniel Vallières, *Elliptic Curves over Finite Fields and Ramanujan
 Graphs on Two Vertices*, INTEGERS 24 (2024), Article A8, Theorem 6
@@ -47,16 +45,18 @@ public theorem_wanted exists_isElliptic_frobeniusTrace_eq_iff {F : Type*} [Field
             (β = (p : ℤ) ^ ((a + 1) / 2) ∨ β = -(p : ℤ) ^ ((a + 1) / 2))) ∨
           ((Odd a ∨ (Even a ∧ ¬ p ≡ 1 [MOD 4])) ∧ β = 0))
 
-/-- Theorem 2 (Ihara, as quoted by Vallières), in adjacency-matrix form. Let `q ≥ 2` and let `A`
-be a symmetric integer matrix (the adjacency matrix of a `(q + 1)`-regular graph). The graph is
-Ramanujan, i.e. every eigenvalue `μ ≠ q + 1` of `A` satisfies `|μ| ≤ 2 √q`, if and only if every
-non-trivial zero of `Q_X(s) = ζ_X(q^{-s})⁻¹`, i.e. every `s` with
-`1 - μ q^{-s} + q^{1 - 2s} = 0` for an eigenvalue `μ ≠ q + 1`, lies on `Re s = 1/2`.
+/-- **Ihara's criterion for Ramanujan graphs.** Let $q \ge 2$ be a natural number and let $A$ be a
+symmetric $n \times n$ matrix with integer entries. Every complex root $\mu \ne q + 1$ of the
+characteristic polynomial of $A$ satisfies $|\mu| \le 2\sqrt{q}$ if and only if, for every such
+root $\mu \ne q + 1$, every complex number $s$ with $1 - \mu q^{-s} + q^{1 - 2s} = 0$ has real
+part $1/2$.
 
-The non-trivial zeros are those of `P_X(q^{-s}) = ∏_{μ ≠ q + 1} (1 - μ q^{-s} + q^{1 - 2s})`, as in
-the paper. Eigenvalues are the complex roots of the characteristic polynomial (all real, since `A`
-is symmetric). The paper's connectedness, regularity and `|V_X| ≥ 2` assumptions are not needed
-in this form: the equivalence holds eigenvalue by eigenvalue.
+When $A$ is the adjacency matrix of a $(q + 1)$-regular graph $X$, the left side says that $X$ is
+Ramanujan. Writing $\zeta_X$ for the Ihara zeta function of $X$, the numbers $s$ on the right are
+the non-trivial zeros of $Q_X(s) = \zeta_X(q^{-s})^{-1}$, that is, the zeros of
+$P_X(q^{-s}) = \prod_{\mu \ne q + 1} (1 - \mu q^{-s} + q^{1 - 2s})$. The roots $\mu$ are real
+because $A$ is symmetric. The paper also assumes that $X$ is connected and regular and has at
+least two vertices; these assumptions are not needed, since the equivalence holds root by root.
 
 Source: Daniel Vallières, *Elliptic Curves over Finite Fields and Ramanujan Graphs on Two
 Vertices*, INTEGERS 24 (2024), Article A8, Theorem 2 (`integers-2024-A8-thm-2`). -/
@@ -66,17 +66,18 @@ public theorem_wanted ramanujan_iff_nontrivial_zeros_re_eq_half {n q : ℕ} (hq 
       ∀ μ ∈ A.charpoly.aroots ℂ, μ ≠ (q : ℂ) + 1 → ∀ s : ℂ,
         1 - μ * (q : ℂ) ^ (-s) + (q : ℂ) ^ (1 - 2 * s) = 0 → s.re = 1 / 2
 
-/-- Proposition 1 of Vallières, in adjacency-matrix form: let `A` be a symmetric integer matrix
-(the adjacency matrix of a `(q + 1)`-regular graph `X`) that is Ramanujan, i.e. every eigenvalue
-`μ ≠ q + 1` satisfies `|μ| ≤ 2 √q`. Then every inverse root `α` of
-`P_X(u) = ∏_{μ ≠ q + 1} (1 - μ u + q u²)`, i.e. every root of `t² - μ t + q` for an eigenvalue
-`μ ≠ q + 1`, is a Weil `q`-number: an algebraic integer all of whose conjugates (the roots in `ℂ`
-of its minimal polynomial over `ℚ`, i.e. its images under the embeddings `ℚ(α) → ℂ`) have
-absolute value `√q`.
+/-- **Ramanujan graphs give Weil numbers.** Let $q$ be a natural number and let $A$ be a symmetric
+$n \times n$ matrix with integer entries such that every complex root $\mu \ne q + 1$ of its
+characteristic polynomial satisfies $|\mu| \le 2\sqrt{q}$. Let $\mu \ne q + 1$ be a complex root
+of the characteristic polynomial of $A$ and let $\alpha \in \mathbb{C}$ satisfy
+$\alpha^2 - \mu\alpha + q = 0$. Then $\alpha$ is an algebraic integer, and every complex root of
+the minimal polynomial of $\alpha$ over $\mathbb{Q}$ has absolute value $\sqrt{q}$; that is,
+$\alpha$ is a Weil $q$-number.
 
-The paper takes `q = p ^ a` and `X` connected; neither is needed here, so `q` is any natural
-number and the regularity and connectedness hypotheses are dropped (symmetry keeps the eigenvalues
-real). The product formula for `P_X` is the one displayed in the paper (Section 2.1.3).
+When $A$ is the adjacency matrix of a $(q + 1)$-regular graph $X$, the hypothesis says that $X$ is
+Ramanujan, and the numbers $\alpha$ are the inverse roots of
+$P_X(u) = \prod_{\mu \ne q + 1} (1 - \mu u + q u^2)$. The paper takes $q = p^a$ and $X$
+connected; neither assumption is needed.
 
 Source: Daniel Vallières, *Elliptic Curves over Finite Fields and Ramanujan Graphs on Two
 Vertices*, INTEGERS 24 (2024), Article A8, Proposition 1 (`integers-2024-A8-prop-1`). -/
@@ -87,17 +88,18 @@ public theorem_wanted isWeilNumber_of_ramanujan {n q : ℕ} (A : Matrix (Fin n) 
     (hα : α ^ 2 - μ * α + q = 0) :
     IsIntegral ℤ α ∧ ∀ β ∈ (minpoly ℚ α).aroots ℂ, ‖β‖ = Real.sqrt q
 
-/-- Theorem 8 (Theorem A) of Vallières, in point-count form. Let `F` be a finite field with
-`q = p ^ a` elements, `p` an odd prime and `a ∈ {1, 2}`. A natural number `N` is the number of
-`F`-points of an elliptic curve over `F` with `4 ∣ N` if and only if `N = 2m` for the two-vertex
-graph `X(l, m)` (`m` edges between the vertices, `l` loops at each vertex, `2l + m = q + 1`) that is
-connected (`0 < m`) and Ramanujan. The non-trivial eigenvalue of `X(l, m)` is `2l - m`, so the
-Ramanujan condition `|2l - m| ≤ 2 √q` is written `(2l - m)² ≤ 4q`.
+/-- **Elliptic curves with point count divisible by 4 and Ramanujan graphs on two vertices.** Let
+$p$ be an odd prime, let $a \in \{1, 2\}$, and let $F$ be a finite field with $q = p^a$ elements. A
+natural number $N$ is the number $\#E(F)$ of $F$-points (counting the point at infinity) of some
+elliptic curve $E$ over $F$ with $4 \mid N$ if and only if there are natural numbers $l$ and $m$
+with $N = 2m$, $2l + m = q + 1$, $m > 0$ and $(2l - m)^2 \le 4q$.
 
-The paper's map `[C] ↦ X(l, m)` with `m = #C(F)/2` and `l = (q + 1)/2 - #C(F)/4` is a bijection from
-`F`-isogeny classes; this declaration states that it is well defined (lands in connected Ramanujan
-graphs with `l, m ∈ ℕ`) and surjective, at the level of point counts. Injectivity on isogeny classes
-is Tate's theorem (Corollary 2), omitted because Mathlib has no isogenies.
+In graph terms, $X(l, m)$ is the two-vertex graph with $l$ loops at each vertex and $m$ edges
+between the two vertices. For such $l$ and $m$ it is $(q + 1)$-regular, it is connected exactly
+when $m > 0$, and its non-trivial eigenvalue is $2l - m$, so the last condition says that $X(l, m)$
+is Ramanujan. The paper states a bijection from $F$-isogeny classes of such curves to these
+graphs; the statement above is its point-count form, and injectivity on isogeny classes is Tate's
+theorem.
 
 Source: Daniel Vallières, *Elliptic Curves over Finite Fields and Ramanujan Graphs on Two
 Vertices*, INTEGERS 24 (2024), Article A8, Theorem 8 (`integers-2024-A8-thm-8`). -/
@@ -108,16 +110,20 @@ public theorem_wanted exists_isElliptic_card_eq_iff_ramanujan_two_vertices {F : 
       ∃ l m : ℕ, N = 2 * m ∧ 2 * l + m = p ^ a + 1 ∧ 0 < m ∧
         ((2 * l : ℤ) - m) ^ 2 ≤ 4 * (p : ℤ) ^ a
 
-/-- Theorem 9 of Vallières, in point-count form. Let `F` be a finite field with `q = p ^ a`
-elements, `p` an odd prime and `a ≥ 1` arbitrary. A natural number `N` is the number of `F`-points
-of an ordinary elliptic curve over `F` with `4 ∣ N` if and only if `N = 2m` for a connected
-Ramanujan two-vertex graph `X(l, m)` (`2l + m = q + 1`, `0 < m`, `(2l - m)² ≤ 4q`) with
-`2m ≢ 1 (mod p)`.
+/-- **Ordinary elliptic curves with point count divisible by 4 and Ramanujan graphs on two
+vertices.** Let $p$ be an odd prime, let $a \ge 1$, and let $F$ be a finite field with $q = p^a$
+elements. A natural number $N$ is the number $\#E(F)$ of $F$-points (counting the point at
+infinity) of some elliptic curve $E$ over $F$ with $4 \mid N$ whose Frobenius trace
+$q + 1 - \#E(F)$ is coprime to $p$ if and only if there are natural numbers $l$ and $m$ with
+$N = 2m$, $2l + m = q + 1$, $m > 0$, $(2l - m)^2 \le 4q$ and $2m \not\equiv 1 \pmod p$.
 
-Ordinary is written `gcd(a_q(E), p) = 1` for the Frobenius trace `a_q(E) = q + 1 - #E(F)`, the
-criterion the paper uses (an elliptic curve is supersingular iff `p ∣ a_q(E)`). As for Theorem 8,
-the isogeny-class bijection is stated at the level of point counts (well defined and surjective);
-injectivity (Tate) is omitted.
+A Frobenius trace coprime to $p$ is the paper's criterion for $E$ to be ordinary; since $p \mid q$,
+the trace $q + 1 - 2m$ is coprime to $p$ exactly when $2m \not\equiv 1 \pmod p$. In graph terms,
+$X(l, m)$ is the two-vertex graph with $l$ loops at each vertex and $m$ edges between the two
+vertices; it is $(q + 1)$-regular, connected exactly when $m > 0$, and Ramanujan exactly when
+$(2l - m)^2 \le 4q$. The paper states a bijection from $F$-isogeny classes of such curves to these
+graphs; the statement above is its point-count form, and injectivity on isogeny classes is Tate's
+theorem.
 
 Source: Daniel Vallières, *Elliptic Curves over Finite Fields and Ramanujan Graphs on Two
 Vertices*, INTEGERS 24 (2024), Article A8, Theorem 9 (`integers-2024-A8-thm-9`). -/

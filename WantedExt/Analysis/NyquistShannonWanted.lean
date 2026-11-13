@@ -57,24 +57,33 @@ sampling theorem. Category-(b) candidate from §179 of the Knill survey.
 open scoped FourierTransform SchwartzMap
 open Set
 
-/-- The unnormalised cardinal sine, with the removable singularity filled by
-the standard value `1`.  Knill writes `sinc x = sin x / x`; the reconstruction
-formula evaluates this at `0` when `t` is an integer, so the total version is
-the faithful formal spelling. -/
+/-- **Unnormalised cardinal sine.** The function $\operatorname{sinc} \colon \mathbb{R} \to
+\mathbb{C}$ is defined by $\operatorname{sinc}(x) = \frac{\sin x}{x}$ for $x \neq 0$ and
+$\operatorname{sinc}(0) = 1$, the value that removes the singularity at $0$. Its values are real.
+
+The Whittaker–Shannon interpolation formula evaluates $\operatorname{sinc}$ at $0$ at the integer
+sample points, so the value at $0$ is part of the definition. -/
 noncomputable def sinc (x : ℝ) : ℂ :=
   if x = 0 then 1 else ((Real.sin x / x : ℝ) : ℂ)
 
-/-- The Fourier transform of `f` is supported in the Nyquist band for
-mathlib's `e^{-2π i x ξ}` Fourier convention, namely `[-1/2, 1/2]`. -/
+/-- **Fourier support in the Nyquist band.** A Schwartz function
+$f \colon \mathbb{R} \to \mathbb{C}$ has Fourier support in the Nyquist band when its Fourier
+transform $\hat f(\xi) = \int_{\mathbb{R}} f(x)\, e^{-2\pi i x \xi}\, dx$ vanishes at every real
+$\xi$ outside the closed interval $[-\frac12, \frac12]$. -/
 def FourierSupportedInNyquist (f : 𝓢(ℝ, ℂ)) : Prop :=
   ∀ ξ : ℝ, ξ ∉ Icc (-(1 / 2 : ℝ)) (1 / 2 : ℝ) → 𝓕 f ξ = 0
 
-/-- **Nyquist--Shannon sampling theorem / Whittaker--Shannon interpolation
-formula** for Schwartz functions with Fourier support in the mathlib-convention
-Nyquist band `[-1/2, 1/2]`.
+/-- **Nyquist–Shannon sampling theorem (Whittaker–Shannon interpolation formula).** Let
+$\operatorname{sinc}(x) = \frac{\sin x}{x}$ for real $x \neq 0$ and $\operatorname{sinc}(0) = 1$,
+and let $f \colon \mathbb{R} \to \mathbb{C}$ be a Schwartz function whose Fourier transform
+$\hat f(\xi) = \int_{\mathbb{R}} f(x)\, e^{-2\pi i x \xi}\, dx$ vanishes at every real $\xi$
+outside $[-\frac12, \frac12]$. Then for every real $t$ the series
+$\sum_{n \in \mathbb{Z}} f(n) \operatorname{sinc}(\pi(n - t))$ is summable over $\mathbb{Z}$
+(unconditionally convergent) and
+$$
+f(t) = \sum_{n \in \mathbb{Z}} f(n) \operatorname{sinc}(\pi(n - t)).
+$$
 
-The explicit `Summable` conjunct records the convergence content of the
-cardinal series, rather than relying only on Lean's total `tsum`.
 Source: C. E. Shannon, *Communication in the presence of noise*, Proc. IRE 37 (1949); H. Nyquist (1928); E. T. Whittaker (1915). Knill, *Some fundamental theorems in mathematics*, §179. Via leanprover/lean-eval@38361be, problem `nyquist_shannon_sampling`.
 -/
 public theorem_wanted nyquist_shannon_sampling (f : 𝓢(ℝ, ℂ)) (hf : FourierSupportedInNyquist f) :

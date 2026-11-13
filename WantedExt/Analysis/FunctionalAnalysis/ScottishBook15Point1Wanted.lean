@@ -23,8 +23,11 @@ public import Mathlib.Order.Filter.AtTopBot.Defs
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook15Point1Wanted
 
-/-- A space of type (F): a complete topological vector space whose topology
-is given by a complete translation-invariant metric. -/
+/-- **Spaces of type (F).** A real vector space $E$ with a topology is of type (F) when addition
+$E \times E \to E$ and scalar multiplication $\mathbb{R} \times E \to E$ are continuous and there
+is a metric $d$ on $E$ that is translation invariant, $d(x + z, y + z) = d(x, y)$ for all
+$x, y, z \in E$, that induces the topology of $E$, and that is complete: every Cauchy sequence
+for $d$ converges for $d$. -/
 def IsTypeF (E : Type) [TopologicalSpace E] [AddCommGroup E] [Module ℝ E] : Prop :=
   ∃ d : E → E → ℝ, (∀ x y, 0 ≤ d x y) ∧ (∀ x y, d x y = 0 ↔ x = y) ∧
     (∀ x y, d x y = d y x) ∧ (∀ x y z, d x z ≤ d x y + d y z) ∧
@@ -34,21 +37,30 @@ def IsTypeF (E : Type) [TopologicalSpace E] [AddCommGroup E] [Module ℝ E] : Pr
       ∃ y, ∀ ε > 0, ∃ N, ∀ n, n ≥ N → d (x n) y < ε) ∧
     Continuous (fun p : E × E => p.1 + p.2) ∧ Continuous fun p : ℝ × E => p.1 • p.2
 
-/-- A "sphere" in the ray sense: every ray from the origin meets it exactly
-once, in a positive multiple. -/
+/-- **Spheres in the ray sense.** Let $E$ be a real vector space. A set $K \subseteq E$ is a
+sphere when $0 \notin K$ and for every $x \ne 0$ in $E$ there is exactly one real $t > 0$ with
+$t x \in K$; that is, every open ray from the origin meets $K$ exactly once. -/
 def IsSphere (E : Type) [AddCommGroup E] [Module ℝ E] (K : Set E) : Prop :=
   0 ∉ K ∧ ∀ x : E, x ≠ 0 → ∃! t : ℝ, 0 < t ∧ t • x ∈ K
 
-/-- A set `R` is bounded if `t n → 0` and `x n ∈ R` imply `t n • x n → 0`,
-as printed in the problem statement. -/
+/-- **Sequentially bounded sets.** Let $E$ be a real vector space with a topology. A set
+$R \subseteq E$ is bounded when for every sequence $(x_n)$ of points of $R$ and every sequence
+$(t_n)$ of real numbers with $t_n \to 0$, the sequence $(t_n x_n)$ tends to $0$ in $E$.
+
+This is the definition of boundedness as printed in the statement of Scottish Book
+Problem 15.1. -/
 def IsBoundedSet (E : Type) [TopologicalSpace E] [AddCommGroup E] [Module ℝ E]
     (R : Set E) : Prop :=
   ∀ (x : ℕ → E) (t : ℕ → ℝ), (∀ n, x n ∈ R) →
     Filter.Tendsto t Filter.atTop (nhds 0) →
     Filter.Tendsto (fun n => t n • x n) Filter.atTop (nhds 0)
 
-/-- The space has a norm inducing its topology and complete for that norm,
-i.e. it is of type (B). -/
+/-- **Spaces of type (B).** A real vector space $E$ with a topology is of type (B) when there is
+a function $\|\cdot\| : E \to \mathbb{R}$ with $\|x\| \ge 0$, with $\|x\| = 0$ exactly when
+$x = 0$, with $\|x + y\| \le \|x\| + \|y\|$ and with $\|a x\| = |a| \, \|x\|$ for all
+$x, y \in E$ and $a \in \mathbb{R}$, such that a set $U \subseteq E$ is open exactly when every
+$x \in U$ has an $\varepsilon > 0$ with $y \in U$ whenever $\|y - x\| < \varepsilon$, and such
+that every Cauchy sequence for $\|\cdot\|$ converges in $E$ for $\|\cdot\|$. -/
 def AdmitsBanachNorm (E : Type) [TopologicalSpace E] [AddCommGroup E] [Module ℝ E] : Prop :=
   ∃ normFn : E → ℝ, (∀ x, 0 ≤ normFn x) ∧ (∀ x, normFn x = 0 ↔ x = 0) ∧
     (∀ x y, normFn (x + y) ≤ normFn x + normFn y) ∧
@@ -57,14 +69,18 @@ def AdmitsBanachNorm (E : Type) [TopologicalSpace E] [AddCommGroup E] [Module �
     (∀ x : ℕ → E, (∀ ε > 0, ∃ N, ∀ m n, m ≥ N → n ≥ N → normFn (x m - x n) < ε) →
       ∃ y, ∀ ε > 0, ∃ N, ∀ n, n ≥ N → normFn (x n - y) < ε)
 
-/-- Mazur and Orlicz's Problem 15.1 from the Scottish Book: is every space
-`E` of type (F) that possesses a bounded sphere necessarily of type (B)? -/
+/-- **Scottish Book Problem 15.1.** The claim of Mazur and Orlicz that every real vector space $E$
+with a topology that is of type (F) and contains a bounded sphere is of type (B). -/
 def ScottishBookProblem15Point1Claim : Prop :=
   ∀ (E : Type) [TopologicalSpace E] [AddCommGroup E] [Module ℝ E],
     IsTypeF E → (∃ K : Set E, IsSphere E K ∧ IsBoundedSet E K) → AdmitsBanachNorm E
 
 /--
-Problem 15.1 is false: the answer is negative. Source: S. Mazur and
+**Negative answer to Scottish Book Problem 15.1.** The Mazur–Orlicz claim of Problem 15.1 is
+false: there is a real vector space $E$ with a topology that is of type (F) and contains a
+bounded sphere, but is not of type (B).
+
+Source: S. Mazur and
 W. Orlicz, Problem 15.1 of the Scottish Book; the typescript itself records
 the negative answer (Ad 15.1, Mazur, May 1 1937) with the spaces `ℓ ^ p` and
 `L ^ p` for `0 < p < 1`, with quasi-norm given by the sum (respectively

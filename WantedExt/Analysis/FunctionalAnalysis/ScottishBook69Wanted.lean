@@ -18,10 +18,10 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook69Wanted
 
-/-- The iterated sets defining the metric center of a pair `(p, q)`:
-`R 0` is the set of points `x` with `px + xq = pq`, and `R (n + 1)` is
-the set of points `r` in `R n` whose distance to every point of `R n`
-is at most half the diameter of `R n`. -/
+/-- **Iterated metric center sets.** Let $p, q$ be points of a pseudometric space $E$ with
+distance $d$. The iterated metric center sets $R_n \subseteq E$ of $(p, q)$, for
+$n \in \mathbb{N}$, are defined by $R_0 = \{x \in E : d(p, x) + d(x, q) = d(p, q)\}$ and
+$R_{n+1} = \{r \in R_n : d(r, x) \le \operatorname{diam}(R_n) / 2 \text{ for all } x \in R_n\}$. -/
 noncomputable def metricCenterSets (E : Type*) [PseudoMetricSpace E]
     (p q : E) : ℕ → Set E
   | 0 => {x | dist p x + dist x q = dist p q}
@@ -30,16 +30,21 @@ noncomputable def metricCenterSets (E : Type*) [PseudoMetricSpace E]
       ∀ x ∈ metricCenterSets E p q n,
         dist r x ≤ Metric.diam (metricCenterSets E p q n) / 2}
 
-/-- `c` is the metric center of the pair `(p, q)`: it lies in every
-iterated set, and it is the only point that does. -/
+/-- **Metric center of a pair of points.** Let $p, q, c$ be points of a pseudometric space $E$
+and let $R_n$, for $n \in \mathbb{N}$, be the iterated metric center sets of $(p, q)$. We say
+that $c$ is the metric center of $(p, q)$ when $c \in R_n$ for every $n$, and every point
+$y \in E$ with $y \in R_n$ for every $n$ equals $c$. -/
 def IsMetricCenter (E : Type*) [PseudoMetricSpace E] (p q c : E) : Prop :=
   (∀ n, c ∈ metricCenterSets E p q n) ∧
   ∀ y, (∀ n, y ∈ metricCenterSets E p q n) → y = c
 
-/-- Mazur and Ulam's Problem 69 from the Scottish Book: is a complete
-metric space `E` in which (1) every pair has exactly one metric center
-and (2) for every `p, q` there is exactly one `x` such that `q` is the
-metric center of `(p, x)` necessarily isometric to a Banach space? -/
+/-- **Scottish Book Problem 69 claim.** The statement that every complete pseudometric space
+$E$ with the following two properties is isometric to a real Banach space: (1) for all
+$p, q \in E$ there is exactly one point $c \in E$ that is the metric center of $(p, q)$, and
+(2) for all $p, q \in E$ there is exactly one point $x \in E$ such that $q$ is the metric
+center of $(p, x)$. Here "isometric to a real Banach space" means that there are a complete
+real normed space $F$ and an isometric bijection $E \to F$. This is the affirmative answer to
+Problem 69 of S. Mazur and S. Ulam in the Scottish Book. -/
 def ScottishBookProblem69Claim : Prop :=
   ∀ (E : Type) [PseudoMetricSpace E] [CompleteSpace E],
     (∀ p q : E, ∃! c, IsMetricCenter E p q c) →
@@ -48,8 +53,13 @@ def ScottishBookProblem69Claim : Prop :=
       (_ : CompleteSpace F), Nonempty (E ≃ᵢ F)
 
 /--
-Mazur–Ulam Problem 69 is false: properties (1) and (2) do not
-characterize Banach spaces among metric spaces. Source: S. Mazur and
+**Mazur–Ulam Problem 69 refuted.** The Scottish Book Problem 69 claim is false: there is a
+complete pseudometric space $E$ such that (1) for all $p, q \in E$ there is exactly one point
+$c \in E$ that is the metric center of $(p, q)$, and (2) for all $p, q \in E$ there is exactly
+one point $x \in E$ such that $q$ is the metric center of $(p, x)$, but there is no complete
+real normed space $F$ with an isometric bijection $E \to F$.
+
+Source: S. Mazur and
 S. Ulam, Problem 69 of the Scottish Book; typescript Ad 69 records the
 negative answer (S. Mazur, December 21, 1936).
 -/

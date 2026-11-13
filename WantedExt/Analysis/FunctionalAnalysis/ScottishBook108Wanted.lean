@@ -17,8 +17,9 @@ public import Mathlib.Order.Filter.Basic
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook108Wanted
 
-/-- A Schauder basis of a real Banach space: every vector has a unique
-expansion as a convergent series in the basis vectors, in order. -/
+/-- **Schauder basis.** A sequence $(e_n)_{n \ge 0}$ in a real normed space $E$ is a Schauder
+basis when for every $x \in E$ there is exactly one sequence of real numbers $(a_n)_{n \ge 0}$
+such that the partial sums $\sum_{i < N} a_i e_i$ converge to $x$ as $N \to \infty$. -/
 def IsSchauderBasis {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     (e : ℕ → E) : Prop :=
   ∀ x : E, ∃! a : ℕ → ℝ,
@@ -26,10 +27,12 @@ def IsSchauderBasis {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
       Filter.atTop (nhds x)
 
 /--
-Krein's affirmative answer to Banach-Mazur-Ulam Problem 108: in a Banach
-space with a (Schauder) basis, (1) for every everywhere-dense set `H` there
-is a basis whose terms lie in `H`, and (2) the same holds when `H` is a
-linear subspace, here encoded by a dense submodule. Source: S. Banach,
+**Krein's theorem on bases in dense sets.** Let $E$ be a real Banach space that has a Schauder
+basis. Then for every dense subset $H \subseteq E$ there is a Schauder basis $(e_n)_{n \ge 0}$ of
+$E$ with $e_n \in H$ for all $n$, and likewise for every dense linear subspace $S \subseteq E$
+there is a Schauder basis $(e_n)_{n \ge 0}$ of $E$ with $e_n \in S$ for all $n$.
+
+Source: S. Banach,
 S. Mazur, S. Ulam, Problem 108 of the Scottish Book; affirmative answer
 (Krein), typescript addendum Ad 108.
 -/

@@ -44,14 +44,18 @@ open MeasureTheory
 
 namespace MathlibExt.Analysis.OperatorTheory.MulByIdOnL2OneTwoSelfAdjointWanted
 
-/-- `L²([1, 2])` for Lebesgue measure. -/
+/-- **The space $L^2([1,2])$.** $L^2([1,2])$ is the space of real-valued functions on
+$\mathbb{R}$ that are square-integrable for Lebesgue measure restricted to $[1,2]$, taken modulo
+equality almost everywhere on $[1,2]$. -/
 noncomputable abbrev L2OnOneTwo : Type :=
   (ℝ →₂[volume.restrict (Set.Icc (1 : ℝ) 2)] ℝ)
 
-/-- Let $L^2([1,2])$ be the Hilbert space of real-valued functions with inner product $\langle f,
-g\rangle = \int_1^2 f(x)g(x)\,dx$.
-Consider the linear map $T : L^2([1,2]) \to L^2([1,2])$ given by $Tf(x)=xf(x)$ for $x\in[1,2]$. Show
-that this map is continuous and invertible, and show that $T=T^*$.
+/-- **Multiplication by $x$ on $L^2([1,2])$ is bounded, bijective and self-adjoint.** Let
+$L^2([1,2])$ be the real Hilbert space of square-integrable real functions for Lebesgue measure
+on $[1,2]$, with inner product $\langle f, g\rangle = \int_1^2 f(x)g(x)\,dx$. Let
+$T : L^2([1,2]) \to L^2([1,2])$ be a linear map such that for every $f$, $(Tf)(x) = x f(x)$ for
+almost every $x \in [1,2]$. Then $T$ is continuous and bijective, and $T = T^*$, where $T^*$ is
+the Hilbert space adjoint of $T$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Operator theory; General
 theory of linear operators), `benchmark/level2/ma_proofbench_l2_26.lean` at

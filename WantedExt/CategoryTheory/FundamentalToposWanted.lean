@@ -58,8 +58,9 @@ Category-(b) candidate from §54 of the Knill survey.
 
 open _root_.CategoryTheory _root_.CategoryTheory.Limits
 
-/-- An **elementary topos**: finite limits, a cartesian closed structure
-(cartesian-monoidal with internal homs), and a subobject classifier. -/
+/-- **Elementary topos.** A category $E$ is an elementary topos if it has all finite limits, it
+admits a cartesian monoidal structure for which it is monoidal closed (that is, $E$ is cartesian
+closed), and it has a subobject classifier. -/
 def IsTopos (E : Type*) [Category E] : Prop :=
   HasFiniteLimits E ∧
   ∃ cm : CartesianMonoidalCategory E,
@@ -69,7 +70,10 @@ def IsTopos (E : Type*) [Category E] : Prop :=
 
 /- **Fundamental theorem of topos theory.** The slice category `E/X` of an
 elementary topos `E` is again an elementary topos. -/
-/-- Source: F. W. Lawvere & M. Tierney (elementary topos, 1970); see S. Mac Lane & I. Moerdijk, *Sheaves in Geometry and Logic*, IV.7. Knill, *Some fundamental theorems in mathematics*, §54. Via leanprover/lean-eval@38361be, problem `fundamental_topos_theory`. -/
+/-- **Fundamental theorem of topos theory.** If $E$ is an elementary topos and $X$ is an object
+of $E$, then the slice category $E/X$ of objects of $E$ over $X$ is again an elementary topos.
+
+Source: F. W. Lawvere & M. Tierney (elementary topos, 1970); see S. Mac Lane & I. Moerdijk, *Sheaves in Geometry and Logic*, IV.7. Knill, *Some fundamental theorems in mathematics*, §54. Via leanprover/lean-eval@38361be, problem `fundamental_topos_theory`. -/
 public theorem_wanted fundamental_topos_theory {E : Type*} [Category E]
     (hE : IsTopos E) (X : E) : IsTopos (Over X)
 

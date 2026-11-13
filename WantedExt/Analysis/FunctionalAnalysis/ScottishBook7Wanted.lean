@@ -20,8 +20,9 @@ public import Mathlib.RingTheory.Finiteness.Basic
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook7Wanted
 
-/-- Mazur and Banach's Problem 7 from the Scottish Book: are any two closed,
-infinite-dimensional convex subsets of a Banach space always homeomorphic? -/
+/-- **Scottish Book Problem 7 (Mazur–Banach).** The claim that in every real Banach space $E$,
+any two closed convex subsets $A, B \subseteq E$ whose linear spans are infinite-dimensional are
+homeomorphic, with the subspace topologies. -/
 def ScottishBookProblem7Claim : Prop :=
   ∀ (E : Type) [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     (A B : Set E), IsClosed A → Convex ℝ A →
@@ -29,9 +30,15 @@ def ScottishBookProblem7Claim : Prop :=
     ¬ Module.Finite ℝ ↥(Submodule.span ℝ B) → Nonempty (↥A ≃ₜ ↥B)
 
 /--
-Problem 7 is false as stated: a compact infinite-dimensional closed convex
-set, such as the Hilbert cube, is not homeomorphic to a noncompact one, such
-as the whole space, since compactness is a topological invariant. Source:
+**Scottish Book Problem 7 fails: closed convex sets need not be homeomorphic.** The Scottish Book
+Problem 7 claim is false: there are a real Banach space $E$ and closed convex subsets
+$A, B \subseteq E$, each with infinite-dimensional linear span, that are not homeomorphic.
+
+For example, a compact infinite-dimensional closed convex set, such as the Hilbert cube, is not
+homeomorphic to a noncompact one, such as the whole space, since compactness is a topological
+invariant.
+
+Source:
 S. Mazur and S. Banach, Problem 7 of the Scottish Book; T. Banakh's
 observation as reported in the 2026 survey "90+ years of the Scottish Book"
 (arXiv:2603.27867). The modified classification problem was solved for

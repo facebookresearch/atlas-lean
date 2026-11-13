@@ -20,18 +20,28 @@ namespace MathlibExt.Analysis.ScottishBook4Wanted
 
 open scoped ENNReal
 
-/-- The fair-coin measure on `Bool`: mass `1 / 2` on each of `true` and `false`. -/
+/-- **Fair coin measure.** The fair coin measure is the measure on the Booleans
+$\{\mathrm{true}, \mathrm{false}\}$ that gives mass $1/2$ to each of $\mathrm{true}$ and
+$\mathrm{false}$, that is,
+$\frac{1}{2}\delta_{\mathrm{true}} + \frac{1}{2}\delta_{\mathrm{false}}$. -/
 noncomputable def fairCoinMeasure : MeasureTheory.Measure Bool :=
   (1 / 2 : ℝ≥0∞) • MeasureTheory.Measure.dirac true +
     (1 / 2 : ℝ≥0∞) • MeasureTheory.Measure.dirac false
 
 /--
-If a bounded sequence is summable by the first mean (Cesaro mean) to a limit
-`S`, then almost every subsequence of it is also summable by the first mean
-to `S`. "Almost every subsequence" is rendered by the fair-coin product
-measure on subsets of `ℕ`: a subset is identified with its indicator
-`ω : ℕ → Bool`, and the subsequence is `a` composed with the enumeration
-`Nat.nth (fun n => ω n = true)`. Source: J. Schreier, Problem 4 of the
+**Schreier's theorem on Cesàro means of random subsequences.** Let $(a_n)_{n \ge 0}$ be a
+bounded sequence of real numbers whose Cesàro means $\frac{1}{n} \sum_{i < n} a_i$ converge
+to a real number $S$ as $n \to \infty$. Give the space of Boolean sequences
+$\omega = (\omega_n)_{n \ge 0}$ the infinite product of fair coin measures. For such $\omega$
+let $n_0 < n_1 < \cdots$ list, in increasing order, the indices $n$ with
+$\omega_n = \mathrm{true}$, with $n_k = 0$ whenever there are at most $k$ such indices. Then
+for almost every $\omega$ the Cesàro means $\frac{1}{N} \sum_{k < N} a_{n_k}$ of the
+subsequence $(a_{n_k})$ converge to $S$ as $N \to \infty$.
+
+Identifying a subset of $\mathbb{N}$ with its indicator sequence $\omega$, this says that
+almost every subsequence of $(a_n)$ has Cesàro means converging to $S$.
+
+Source: J. Schreier, Problem 4 of the
 Scottish Book, stated as a theorem in the Scottish Book typescript.
 -/
 theorem_wanted schreierCesaroSubsequences :

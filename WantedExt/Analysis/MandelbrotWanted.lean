@@ -54,15 +54,23 @@ in 1982 (full development 1984–85) that `M` is connected.
 
 open Function
 
-/-- The quadratic family member `T_c(z) = z² + c`. -/
+/-- **The quadratic family.** For $c \in \mathbb{C}$, $T_c \colon \mathbb{C} \to \mathbb{C}$ is the
+map $T_c(z) = z^2 + c$. -/
 def Tc (c : ℂ) (z : ℂ) : ℂ := z ^ 2 + c
 
-/-- The **Mandelbrot set** `M = { c ∈ ℂ | T_c^n(0) stays bounded }`. -/
+/-- **The Mandelbrot set.** The Mandelbrot set is the set of all $c \in \mathbb{C}$ for which the
+orbit of $0$ under $T_c(z) = z^2 + c$ is bounded: there is a real number $M$ with
+$|T_c^n(0)| \le M$ for every $n \in \mathbb{N}$, where $T_c^n$ is the $n$-th iterate of $T_c$
+and $T_c^0$ is the identity. -/
 def Mandelbrot : Set ℂ :=
   { c : ℂ | ∃ M : ℝ, ∀ n : ℕ, ‖(Tc c)^[n] 0‖ ≤ M }
 
 /- **Mandelbrot set is connected** (Douady–Hubbard). -/
-/-- Source: A. Douady and J. H. Hubbard, *Étude dynamique des polynômes complexes I, II*, Publ. Math. Orsay 84-02, 85-04. Listed as §62 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `mandelbrot_connected`. -/
+/-- **The Mandelbrot set is connected (Douady–Hubbard).** The Mandelbrot set, the set of all
+$c \in \mathbb{C}$ for which the sequence $(T_c^n(0))_{n \ge 0}$ of iterates of $0$ under
+$T_c(z) = z^2 + c$ is bounded, is a nonempty connected subset of $\mathbb{C}$.
+
+Source: A. Douady and J. H. Hubbard, *Étude dynamique des polynômes complexes I, II*, Publ. Math. Orsay 84-02, 85-04. Listed as §62 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `mandelbrot_connected`. -/
 public theorem_wanted mandelbrot_connected : IsConnected Mandelbrot
 
 end MandelbrotProblem

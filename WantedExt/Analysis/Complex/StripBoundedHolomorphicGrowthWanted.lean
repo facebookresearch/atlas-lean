@@ -41,11 +41,13 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.Complex.StripBoundedHolomorphicGrowthWanted
 
-/-- The open unit disc. -/
+/-- **The open unit disc $D$.** The set $D=\{z\in\mathbb{C}:|z|<1\}$ is the open disc of radius $1$
+about $0$. -/
 abbrev D : Set ℂ := Metric.ball (0 : ℂ) 1
 
-/-- Let $D=\{z:|z|<1\}\subset\mathbb{C}$ be the unit disk and $g:D\to\mathbb{C}$ be a holomorphic
-function such that $g(0)=0$ and $|\operatorname{Re} g(z)|<1$ for any $z\in D$. Prove that for any
+/-- **Growth bound for holomorphic maps from the unit disc into a vertical strip.** Let
+$D=\{z:|z|<1\}\subset\mathbb{C}$ be the unit disk and $g:D\to\mathbb{C}$ be a holomorphic
+function such that $g(0)=0$ and $|\operatorname{Re} g(z)|<1$ for any $z\in D$. Then for any
 $z\in D$,
 \[
 |g(z)|\le \frac{2}{\pi}\log\frac{1+|z|}{1-|z|}.

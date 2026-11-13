@@ -66,9 +66,11 @@ the compact-metric form is the standard Furstenberg–Weiss statement.
 
 open Filter Topology
 
-/-- A point `x : X` is **multiply recurrent** for `T : X → X` if for
-every `d ≥ 1` there is a strictly increasing `n : ℕ → ℕ` such that
-`T^{j · n_k}(x) → x` for every `j ∈ {1, …, d}`. -/
+/-- **Multiply recurrent point.** Let $X$ be a topological space and $T \colon X \to X$ a map.
+A point $x \in X$ is multiply recurrent for $T$ if for every integer $d \ge 1$ there is a
+strictly increasing sequence of natural numbers $(n_k)$ such that $T^{j n_k}(x) \to x$ as
+$k \to \infty$ for every integer $j$ with $1 \le j \le d$, where $T^{m}$ denotes the $m$-th
+iterate of $T$. -/
 def IsMultiplyRecurrent {X : Type*} [TopologicalSpace X]
     (T : X → X) (x : X) : Prop :=
   ∀ d : ℕ, 1 ≤ d →
@@ -79,7 +81,13 @@ def IsMultiplyRecurrent {X : Type*} [TopologicalSpace X]
 /- **Furstenberg–Weiss topological multiple recurrence** (single-
 transformation form). Every homeomorphism `T` of a nonempty compact
 metric space `X` has a multiply recurrent point. -/
-/-- Source: H. Furstenberg and B. Weiss, *Topological dynamics and combinatorial number theory*, Journal d'Analyse Mathématique 34 (1978), 61-85. Listed as §56 (main theorem) in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `furstenberg_topological`. -/
+/-- **Furstenberg–Weiss multiple recurrence for a single homeomorphism.** Every homeomorphism
+$T$ of a nonempty compact metric space $X$ has a multiply recurrent point: there is a point
+$x \in X$ such that for every integer $d \ge 1$ there is a strictly increasing sequence of
+natural numbers $(n_k)$ with $T^{j n_k}(x) \to x$ as $k \to \infty$ for every integer $j$ with
+$1 \le j \le d$, where $T^{m}$ denotes the $m$-th iterate of $T$.
+
+Source: H. Furstenberg and B. Weiss, *Topological dynamics and combinatorial number theory*, Journal d'Analyse Mathématique 34 (1978), 61-85. Listed as §56 (main theorem) in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `furstenberg_topological`. -/
 public theorem_wanted furstenberg_topological_recurrence {X : Type*} [MetricSpace X]
     [CompactSpace X] [Nonempty X] (T : X ≃ₜ X) :
     ∃ x : X, IsMultiplyRecurrent (T : X → X) x

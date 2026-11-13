@@ -43,21 +43,22 @@ Context only (not a formal target): if α satisfies a diophantine condition,
 the global analytic conjugacy theorem holds (Herman, Yoccoz).
 -/
 
-/-- Diophantine condition on a real number, in the standard inhomogeneous
-approximation sense: some margin γ > 0 and exponent τ ≥ 0 bound
-|α - p / q| from below by γ / q ^ (2 + τ) for all integers p and all
-positive integers q.
-Cites: Hayman (2018), Problem 2.90; https://arxiv.org/abs/1809.07200. -/
+/-- **Diophantine numbers.** A real number $\alpha$ is Diophantine when there are real numbers
+$\gamma > 0$ and $\tau \ge 0$ such that $|\alpha - p/q| \ge \gamma / q^{2 + \tau}$ for every
+integer $p$ and every integer $q \ge 1$.
+
+Source: Hayman (2018), Problem 2.90; https://arxiv.org/abs/1809.07200. -/
 def IsDiophantine (α : ℝ) : Prop :=
   ∃ γ : ℝ, 0 < γ ∧ ∃ τ : ℝ, 0 ≤ τ ∧ ∀ p : ℤ, ∀ q : ℕ, 1 ≤ q →
     γ / (q : ℝ) ^ (2 + τ) ≤ |α - (p : ℝ) / (q : ℝ)|
 
-/-- Real-analytic orientation-preserving diffeomorphism of the circle,
-modeled by its degree-one lift F : ℝ → ℝ to the universal cover.
-Characteristic properties: analyticity of the lift and of the inverse lift,
-degree-one periodicity F (x + 1) = F x + 1 (circle map), two-sided inverse
-(diffeomorphism), and strict monotonicity (orientation-preserving).
-Cites: Hayman (2018), Problem 2.90; https://arxiv.org/abs/1809.07200. -/
+/-- **Real-analytic circle diffeomorphisms.** A real-analytic orientation-preserving
+diffeomorphism of the circle is given by a lift $F : \mathbb{R} \to \mathbb{R}$ together with an
+inverse lift $G : \mathbb{R} \to \mathbb{R}$, both real-analytic on all of $\mathbb{R}$, such that
+for every real $x$ we have $F(x + 1) = F(x) + 1$, $G(x + 1) = G(x) + 1$, $G(F(x)) = x$ and
+$F(G(x)) = x$, and $F$ is strictly increasing.
+
+Source: Hayman (2018), Problem 2.90; https://arxiv.org/abs/1809.07200. -/
 structure AnalyticCircleDiffeo where
   toLift : ℝ → ℝ
   invLift : ℝ → ℝ
@@ -69,34 +70,48 @@ structure AnalyticCircleDiffeo where
   right_inv : ∀ x : ℝ, toLift (invLift x) = x
   strictly_mono : StrictMono toLift
 
-/-- Poincaré rotation number of a circle-map lift F : ℝ → ℝ: the mean motion
-(F^[n] x - x) / n tends to α for every base point x.
-Cites: Hayman (2018), Problem 2.90; https://arxiv.org/abs/1809.07200. -/
+/-- **Rotation number of a lift.** Let $F : \mathbb{R} \to \mathbb{R}$ be a function, and for a
+natural number $n$ write $F^n$ for the $n$-th iterate of $F$. Then $F$ has rotation number
+$\alpha \in \mathbb{R}$ when, for every real $x$, $(F^n(x) - x)/n$ tends to $\alpha$ as $n$ tends
+to infinity.
+
+Source: Hayman (2018), Problem 2.90; https://arxiv.org/abs/1809.07200. -/
 def HasRotationNumber (F : ℝ → ℝ) (α : ℝ) : Prop :=
   ∀ x : ℝ, Filter.Tendsto (fun n : ℕ => (F^[n] x - x) / (n : ℝ)) Filter.atTop (nhds α)
 
-/-- Real-analytic conjugacy of a circle-map lift F to the rigid rotation by α:
-there exists an analytic orientation-preserving circle diffeomorphism H whose
-lift intertwines F with the translation y ↦ y + α, i.e. H ∘ F = R_α ∘ H.
-Cites: Hayman (2018), Problem 2.90; https://arxiv.org/abs/1809.07200. -/
+/-- **Analytic conjugacy to a rotation.** A function $F : \mathbb{R} \to \mathbb{R}$ is
+analytically conjugate to the rotation by $\alpha \in \mathbb{R}$ when there is a real-analytic
+circle diffeomorphism with lift $H$ such that $H(F(x)) = H(x) + \alpha$ for every real $x$.
+
+Source: Hayman (2018), Problem 2.90; https://arxiv.org/abs/1809.07200. -/
 def IsAnalyticallyConjugateToRotation (F : ℝ → ℝ) (α : ℝ) : Prop :=
   ∃ H : AnalyticCircleDiffeo, ∀ x : ℝ, H.toLift (F x) = H.toLift x + α
 
-/-- Hayman Problem 2.90 (M. R. Herman): does there exist an irrational number
-α satisfying no diophantine condition such that every ℝ-analytic
-orientation-preserving diffeomorphism of the circle with rotation number α
-is ℝ-analytically conjugated to a rotation?
-Cites: Hayman (2018), Problem 2.90; https://arxiv.org/abs/1809.07200. -/
+/-- **Herman's analytic linearization problem.** The statement that there is an irrational real
+number $\alpha$ that is not Diophantine such that, for every real-analytic circle diffeomorphism
+whose lift $F$ has rotation number $\alpha$, $F$ is analytically conjugate to the rotation by
+$\alpha$.
+
+M. R. Herman asked whether such an $\alpha$ exists; this is Problem 2.90 in Hayman's list.
+
+Source: Hayman (2018), Problem 2.90; https://arxiv.org/abs/1809.07200. -/
 def conjecture : Prop :=
   ∃ α : ℝ, Irrational α ∧ ¬ IsDiophantine α ∧
     ∀ F : AnalyticCircleDiffeo, HasRotationNumber F.toLift α →
       IsAnalyticallyConjugateToRotation F.toLift α
 
 /--
-Resolved true: Yoccoz (Analytic linearization of circle diffeomorphisms, LNM 1784, 2002)
-characterized the Herman class H of rotation numbers for which every analytic circle
-diffeomorphism is analytically linearizable and proved CD strictly contained in H; any alpha in
-H minus CD is the required non-Diophantine number. Source: H. Eliasson, B. Fayad and R.
+**Herman's analytic linearization problem has a positive answer.** There is an irrational real
+number $\alpha$ that is not Diophantine such that, for every real-analytic circle diffeomorphism
+whose lift $F$ has rotation number $\alpha$, $F$ is analytically conjugate to the rotation by
+$\alpha$.
+
+Yoccoz characterized the Herman class $\mathcal{H}$ of rotation numbers $\alpha$ for which every
+real-analytic circle diffeomorphism with rotation number $\alpha$ is analytically linearizable,
+and proved that $\mathcal{H}$ strictly contains the set of Diophantine numbers; any $\alpha$ in
+$\mathcal{H}$ that is not Diophantine has the required property.
+
+Source: H. Eliasson, B. Fayad and R.
 Krikorian, Jean-Christophe Yoccoz and the theory of circle diffeomorphisms (2018),
 arXiv:1810.07107 (account of J.-C. Yoccoz, Analytic linearization of circle diffeomorphisms,
 Lecture Notes in Math. 1784, Springer (2002), 125-173), https://arxiv.org/abs/1810.07107. Moved

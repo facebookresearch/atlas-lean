@@ -18,9 +18,12 @@ public import Mathlib.Topology.Algebra.InfiniteSum.Basic
 namespace MathlibExt.Analysis.Complex.LaurentSeriesWanted
 
 /--
-Laurent expansion on an annulus: if `f : ℂ → ℂ` is holomorphic on the annulus
-`{z | r < ‖z - c‖ < R}`, then there are coefficients `a : ℤ → ℂ` such that
-`f z = ∑' n : ℤ, a n * (z - c)^n` (unconditional sum) at every point of the annulus.
+**Laurent expansion on an annulus.** Let $c \in \mathbb{C}$, let $r$ and $R$ be real numbers, and
+let $f : \mathbb{C} \to \mathbb{C}$ be holomorphic on the annulus
+$A = \{z \in \mathbb{C} : r < |z - c| < R\}$. Then there are coefficients $a_n \in \mathbb{C}$
+for $n \in \mathbb{Z}$ such that for every $z \in A$ the series
+$\sum_{n \in \mathbb{Z}} a_n (z - c)^n$ is unconditionally summable with sum $f(z)$. Here
+$0^n = 0$ for $n < 0$, which matters only at $z = c$ when $r < 0$.
 
 Sources: Mathlib `docs/undergrad.yaml`, section "Functions on one complex variable",
 entry "Laurent series"; L. V. Ahlfors, Complex Analysis, 3rd ed.,

@@ -23,9 +23,13 @@ curve integral of the complex-linear 1-form `z ↦ f z • id`.
 -/
 
 /--
-Fundamental theorem of contour integration: if `γ` is `C¹` and `F` has complex
-derivative `f` on an open neighborhood of the path, then the contour integral
-of `f` along `γ` is `F b - F a`.
+**Fundamental theorem of contour integration.** Let $U \subseteq \mathbb{C}$ be open and let
+$F, f : \mathbb{C} \to \mathbb{C}$ be such that $F$ is complex-differentiable at every $z \in U$
+with $F'(z) = f(z)$. Let $\gamma : [0, 1] \to \mathbb{C}$ be a path from $a$ to $b$ whose image
+lies in $U$ and which is continuously differentiable on $[0, 1]$, with derivative $\gamma'$
+(one-sided at the endpoints). If $t \mapsto f(\gamma(t))\,\gamma'(t)$ is integrable on $[0, 1]$,
+then $\int_\gamma f(z)\,dz = F(b) - F(a)$, where
+$\int_\gamma f(z)\,dz = \int_0^1 f(\gamma(t))\,\gamma'(t)\,dt$.
 
 Sources: Mathlib `docs/undergrad.yaml`, section "Functions on one complex variable",
 entry "contour integrals of continuous functions in ℂ";
@@ -40,9 +44,15 @@ theorem_wanted contourIntegral_of_hasDerivAt
     curveIntegral (fun z => f z • ContinuousLinearMap.id ℂ ℂ) γ = F b - F a
 
 /--
-ML estimate for contour integrals: if `γ` is `C¹`, `‖f‖ ≤ M` on the path and `‖γ'‖ ≤ L` on the
-parameter interval `[0, 1]`, then `‖∫_γ f‖ ≤ M * L` (the parameter interval has length one, so
-`L` bounds the length of `γ`).
+**ML estimate for contour integrals.** Let $f : \mathbb{C} \to \mathbb{C}$ and let
+$\gamma : [0, 1] \to \mathbb{C}$ be a path from $a$ to $b$ which is continuously differentiable
+on $[0, 1]$, with derivative $\gamma'$ (one-sided at the endpoints). Let $M$ and $L$ be real
+numbers with $|f(\gamma(t))| \le M$ and $|\gamma'(t)| \le L$ for every $t \in [0, 1]$. If
+$t \mapsto f(\gamma(t))\,\gamma'(t)$ is integrable on $[0, 1]$, then
+$\left|\int_\gamma f(z)\,dz\right| \le ML$, where
+$\int_\gamma f(z)\,dz = \int_0^1 f(\gamma(t))\,\gamma'(t)\,dt$.
+
+The parameter interval has length one, so $L$ bounds the length of $\gamma$.
 
 Sources: Mathlib `docs/undergrad.yaml`, section "Functions on one complex variable",
 entry "contour integrals of continuous functions in ℂ";

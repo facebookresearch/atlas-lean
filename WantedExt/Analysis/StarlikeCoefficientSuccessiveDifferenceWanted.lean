@@ -33,30 +33,51 @@ Source clause list (every item appears in the formal text below):
   source's question (a `Prop` with no proof in this repository).
 -/
 
-/-- Class `S` from Hayman and Lingham, Research Problems in Function Theory (2018),
-Problem 6.46 (https://arxiv.org/abs/1809.07200): normalized univalent
-analytic functions on the unit disc. -/
+/-- **Normalized univalent functions (the class $S$).** A function $f : \mathbb{C} \to \mathbb{C}$
+is in the class $S$ when it is analytic on the open unit disc $\mathbb{D} = \{z : |z| < 1\}$,
+satisfies $f(0) = 0$ and $f'(0) = 1$, and is injective on $\mathbb{D}$.
+
+Source: Hayman and Lingham, Research Problems in Function Theory (2018), Problem 6.46,
+https://arxiv.org/abs/1809.07200. -/
 def IsInClassS (f : ℂ → ℂ) : Prop :=
   AnalyticOn ℂ f (Metric.ball (0 : ℂ) 1) ∧
     f 0 = 0 ∧ HasDerivAt f 1 0 ∧ Set.InjOn f (Metric.ball (0 : ℂ) 1)
 
-/-- Star-like functions from Hayman, Research Problems in Function Theory
-(2018), Problem 6.46 (https://arxiv.org/abs/1809.07200): positive real part
-of `z * f'(z) / f z` off `0` in the unit disc. -/
+/-- **Starlike functions on the unit disc.** A function $f : \mathbb{C} \to \mathbb{C}$ is
+starlike when it is analytic on the open unit disc $\mathbb{D} = \{z : |z| < 1\}$ and, for every
+$z \ne 0$ in $\mathbb{D}$, $f(z) \ne 0$ and $\operatorname{Re}\bigl(z f'(z) / f(z)\bigr) > 0$.
+
+Source: Hayman, Research Problems in Function Theory (2018), Problem 6.46,
+https://arxiv.org/abs/1809.07200. -/
 def IsStarlike (f : ℂ → ℂ) : Prop :=
   AnalyticOn ℂ f (Metric.ball (0 : ℂ) 1) ∧
     ∀ z ∈ Metric.ball (0 : ℂ) 1, z ≠ 0 → 0 < (z * deriv f z / f z).re
 
-/-- Question of Hayman and Lingham, Research Problems in Function Theory (2018),
-Problem 6.46 (https://arxiv.org/abs/1809.07200): if `f` is in `S` and star-like, with Taylor
-coefficients `a n` at `0`, is `‖ |a (n+1)| - |a n| ‖ ≤ 1` for all `n ≥ 1`? -/
+/-- **Hayman's successive coefficient problem for starlike functions.** The statement that for
+every function $f : \mathbb{C} \to \mathbb{C}$ in the class $S$ (analytic on the open unit disc
+$\mathbb{D} = \{z : |z| < 1\}$, with $f(0) = 0$ and $f'(0) = 1$, and injective on $\mathbb{D}$)
+that is moreover starlike ($\operatorname{Re}\bigl(z f'(z) / f(z)\bigr) > 0$ for every $z \ne 0$
+in $\mathbb{D}$), the Taylor coefficients $a_n = f^{(n)}(0) / n!$ of $f$ at $0$ satisfy
+$\bigl| |a_{n+1}| - |a_n| \bigr| \le 1$ for every natural number $n \ge 1$.
+
+Source: Hayman and Lingham, Research Problems in Function Theory (2018), Problem 6.46,
+https://arxiv.org/abs/1809.07200. -/
 def conjecture : Prop :=
   ∀ f : ℂ → ℂ, IsInClassS f → IsStarlike f →
     ∀ n : ℕ, 1 ≤ n → |‖wimanTaylorCoefficient f (n + 1)‖ - ‖wimanTaylorCoefficient f n‖| ≤ 1
 /--
-Resolved true: Y. Leung (Bull. London Math. Soc. 10 (1978), 193-196) proved ||a_{n+1}|-|a_n|| <=
-1 for every n >= 1 and every starlike f in S, answering Problem 6.46 affirmatively; D. H.
-Hamilton proved it independently. Source: Moduli difference of initial inverse logarithmic
+**Leung's theorem on successive coefficients of starlike functions.** Let
+$f : \mathbb{C} \to \mathbb{C}$ be analytic on the open unit disc $\mathbb{D} = \{z : |z| < 1\}$,
+with $f(0) = 0$ and $f'(0) = 1$, injective on $\mathbb{D}$, and starlike, meaning that
+$\operatorname{Re}\bigl(z f'(z) / f(z)\bigr) > 0$ for every $z \ne 0$ in $\mathbb{D}$. Let
+$a_n = f^{(n)}(0) / n!$ be the Taylor coefficients of $f$ at $0$. Then
+$\bigl| |a_{n+1}| - |a_n| \bigr| \le 1$ for every natural number $n \ge 1$.
+
+This answers Problem 6.46 of Hayman and Lingham, Research Problems in Function Theory (2018),
+affirmatively. It was proved by Y. Leung (Bull. London Math. Soc. 10 (1978), 193-196) and
+independently by D. H. Hamilton.
+
+Source: Moduli difference of initial inverse logarithmic
 coefficients for starlike and convex functions (2026), arXiv:2603.17600,
 https://arxiv.org/abs/2603.17600. Moved from
 `OpenConjectures/Analysis/StarlikeCoefficientSuccessiveDifference`.

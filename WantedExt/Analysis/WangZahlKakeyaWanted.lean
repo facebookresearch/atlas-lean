@@ -57,11 +57,13 @@ benchmark hole.
 
 open MeasureTheory
 
-/-- Three-dimensional Euclidean space. -/
+/-- **Three-dimensional Euclidean space.** The space $\mathbb{R}^3$ with the Euclidean inner
+product. -/
 abbrev Space := EuclideanSpace ℝ (Fin 3)
 
-/-- A **Kakeya set** is a compact subset of three-dimensional Euclidean space
-that contains a unit line segment pointing in every unit direction. -/
+/-- **Kakeya set.** A Kakeya set is a compact subset $K$ of three-dimensional Euclidean space
+that contains a unit line segment in every direction: for every unit vector $v$ there is a
+point $x$ with $x + t v \in K$ for all $t \in [0, 1]$. -/
 def IsKakeya (K : Set Space) : Prop :=
   IsCompact K ∧
     ∀ v : Space, ‖v‖ = 1 →
@@ -69,7 +71,10 @@ def IsKakeya (K : Set Space) : Prop :=
 
 /- **Wang--Zahl's three-dimensional Kakeya theorem.** Every Kakeya set in
 three-dimensional Euclidean space has full Hausdorff dimension. -/
-/-- Source: H. Wang and J. Zahl, 'Volume estimates for unions of convex sets, and the Kakeya set conjecture in three dimensions', Theorem 1.1, arXiv:2502.17655 (2025), https://arxiv.org/abs/2502.17655. The proof builds on their 'Sticky Kakeya sets and the sticky Kakeya conjecture', arXiv:2210.09581, and 'The Assouad dimension of Kakeya sets in R^3', arXiv:2401.12337. Via leanprover/lean-eval@38361be, problem `wang_zahl_kakeya_dimH`. -/
+/-- **Wang–Zahl theorem: the Kakeya conjecture in three dimensions.** Every Kakeya set in
+three-dimensional Euclidean space has Hausdorff dimension $3$.
+
+Source: H. Wang and J. Zahl, 'Volume estimates for unions of convex sets, and the Kakeya set conjecture in three dimensions', Theorem 1.1, arXiv:2502.17655 (2025), https://arxiv.org/abs/2502.17655. The proof builds on their 'Sticky Kakeya sets and the sticky Kakeya conjecture', arXiv:2210.09581, and 'The Assouad dimension of Kakeya sets in R^3', arXiv:2401.12337. Via leanprover/lean-eval@38361be, problem `wang_zahl_kakeya_dimH`. -/
 public theorem_wanted wang_zahl_kakeya_dimH {K : Set Space} (hK : IsKakeya K) :
     dimH K = 3
 

@@ -40,12 +40,10 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.EhrlingInequalityWanted
 
-/-- Let $(X,\|\cdot\|_X)$, $(Y,\|\cdot\|_Y)$, $(Z,\|\cdot\|_Z)$ be Banach spaces. Suppose $X\subset
-Y$ is compact and $Y\subset Z$ is continuous. Prove that for every $\varepsilon>0$, there exists
-$C_\varepsilon>0$ such that
- \[
- \|u\|_Y \le \varepsilon \|u\|_X + C_\varepsilon \|u\|_Z \qquad \forall\, u\in X.
- \]
+/-- **Ehrling's inequality.** Let $X$, $Y$, $Z$ be real Banach spaces, let $i \colon X \to Y$ be an
+injective compact bounded linear operator, and let $j \colon Y \to Z$ be an injective bounded
+linear operator. Then for every $\varepsilon > 0$ there is $C_\varepsilon > 0$ such that
+$\|i(u)\|_Y \le \varepsilon \|u\|_X + C_\varepsilon \|j(i(u))\|_Z$ for all $u \in X$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Functional analysis; Normed
 linear spaces and Banach spaces; Banach lattices), `benchmark/level2/ma_proofbench_l2_36.lean`

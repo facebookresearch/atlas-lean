@@ -42,15 +42,18 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- An ideal `I` of a commutative ring is a *divided-power ideal* when `a ^ k ∈ k! • I` for every
-`a ∈ I` and every `k ≥ 1`; in a torsion-free `ℤ_(p)`-algebra this says `a ^ k / k! ∈ I`.
+/-- **Divided-power ideal.** An ideal $I$ of a commutative ring $A$ is a *divided-power ideal* when
+for every $a \in I$ and every integer $k \ge 1$ there is $c \in I$ with $a^k = k! \, c$, that is,
+$a^k \in k! \, I$. For a prime $p$, in a torsion-free $\mathbb{Z}_{(p)}$-algebra this says
+$a^k / k! \in I$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Section 2.2. -/
 def IsDividedPowerIdeal {A : Type*} [CommRing A] (I : Ideal A) : Prop :=
   ∀ a ∈ I, ∀ k : ℕ, 1 ≤ k → ∃ c ∈ I, a ^ k = (k.factorial : A) * c
 
-/-- The zero ideal is a divided-power ideal.
+/-- **The zero ideal is a divided-power ideal.** In every commutative ring, the zero ideal is a
+divided-power ideal.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Section 2.2 (the definition). -/
@@ -60,7 +63,10 @@ theorem isDividedPowerIdeal_bot {A : Type*} [CommRing A] : IsDividedPowerIdeal (
   refine ⟨0, Ideal.zero_mem _, ?_⟩
   rw [ha, zero_pow (by omega), mul_zero]
 
-/-- An ideal carrying a divided-power structure in Mathlib's sense is a divided-power ideal.
+/-- **Ideals with divided powers are divided-power ideals.** Let $I$ be an ideal of a commutative
+ring $A$. If $I$ carries a divided-power structure $(\gamma_k)_{k \ge 0}$ in the usual sense, then
+$I$ is a divided-power ideal: for every $a \in I$ and every $k \ge 1$ there is $c \in I$ with
+$a^k = k!\, c$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Section 2.2 (the maps `γ_k(a) = a ^ k / k!`). -/
@@ -69,15 +75,18 @@ theorem DividedPowers.isDividedPowerIdeal {A : Type*} [CommRing A] {I : Ideal A}
   intro a ha k hk
   exact ⟨hI.dpow k a, hI.dpow_mem (by omega) ha, (hI.factorial_mul_dpow_eq_pow ha).symm⟩
 
-/-- The paper's `e_n(P)` for a monic polynomial `P` of degree `d`: `1` for `n = 0`, the
-`X ^ (d - n)`-coefficient times `(-1) ^ n` for `1 ≤ n ≤ d`, and `0` for `n > d`.
+/-- **Elementary symmetric functions of a polynomial.** Let $P$ be a polynomial of degree $d$ over
+a commutative ring, with $d = 0$ for $P = 0$. For a natural number $n$, $e_n(P)$ is $(-1)^n$ times
+the coefficient of $X^{d - n}$ in $P$ if $n \le d$, and $0$ if $n > d$. In particular
+$e_0(P) = 1$ when $P$ is monic.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Section 3.2, Notation. -/
 noncomputable def polyElemSymm {A : Type*} [CommRing A] (P : A[X]) (n : ℕ) : A :=
   if n ≤ P.natDegree then (-1) ^ n * P.coeff (P.natDegree - n) else 0
 
-/-- `e_0(P) = 1` for monic `P`.
+/-- **The zeroth elementary symmetric function of a monic polynomial.** For every monic
+polynomial $P$ over a commutative ring, $e_0(P) = 1$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Section 3.2, Notation. -/
@@ -85,7 +94,8 @@ theorem polyElemSymm_zero {A : Type*} [CommRing A] {P : A[X]} (hP : P.Monic) :
     polyElemSymm P 0 = 1 := by
   simp [polyElemSymm, hP.coeff_natDegree]
 
-/-- `e_n(P) = 0` for `n > deg P`.
+/-- **Elementary symmetric functions vanish above the degree.** Let $P$ be a polynomial of degree
+$d$ over a commutative ring, with $d = 0$ for $P = 0$. Then $e_n(P) = 0$ for every $n > d$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Section 3.2, Notation. -/
@@ -93,9 +103,15 @@ theorem polyElemSymm_of_natDegree_lt {A : Type*} [CommRing A] {P : A[X]} {n : �
     (h : P.natDegree < n) : polyElemSymm P n = 0 := by
   simp [polyElemSymm, Nat.not_le.mpr h]
 
-/-- The paper's `p_n(P)`: `p_0(P) = deg P` and, for `n ≥ 1`, Newton's identity
-`p_n = Σ_{i=1}^{n-1} (-1)^(i-1) e_i p_(n-i) + (-1)^(n-1) n e_n` with `e_i = e_i(P)`. For `P` with
-roots `α_1, …, α_d` in a domain this is `α_1 ^ n + ⋯ + α_d ^ n`.
+/-- **Power sums of a polynomial.** For a polynomial $P$ over a commutative ring $A$, with
+elementary symmetric functions $e_i = e_i(P)$, the power sums $p_n = p_n(P) \in A$ are defined
+recursively: $p_0$ is the degree of $P$ as a natural number ($0$ for $P = 0$), and for
+$n \ge 1$ Newton's identity holds:
+
+$$p_n = \sum_{i=1}^{n-1} (-1)^{i-1} e_i\, p_{n-i} + (-1)^{n-1} n\, e_n.$$
+
+If $P$ is monic and $P = (X - \alpha_1) \cdots (X - \alpha_d)$, then
+$p_n = \alpha_1^n + \cdots + \alpha_d^n$ for every $n$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Sections 2.1 and 3.2 (Newton's identities,
@@ -106,7 +122,9 @@ noncomputable def polyPowerSum {A : Type*} [CommRing A] (P : A[X]) : ℕ → A
       ∑ i : Fin n, (-1) ^ (i : ℕ) * polyElemSymm P (i + 1) * polyPowerSum P (n - i)
   decreasing_by omega
 
-/-- `p_0(P) = deg P`.
+/-- **The zeroth power sum of a polynomial is its degree.** For every polynomial $P$ over a
+commutative ring $A$, the power sum $p_0(P)$ equals the degree of $P$ as a natural number
+(taken to be $0$ for $P = 0$), viewed as an element of $A$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Section 3.2, Notation. -/
@@ -114,7 +132,8 @@ theorem polyPowerSum_zero {A : Type*} [CommRing A] (P : A[X]) :
     polyPowerSum P 0 = P.natDegree := by
   rw [polyPowerSum]
 
-/-- `p_1(P) = e_1(P)`.
+/-- **The first power sum is the first elementary symmetric function.** For every polynomial $P$
+over a commutative ring, $p_1(P) = e_1(P)$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Section 3.2 (Newton's identities). -/
@@ -123,7 +142,11 @@ theorem polyPowerSum_one {A : Type*} [CommRing A] (P : A[X]) :
   rw [polyPowerSum]
   simp
 
-/-- Newton's recurrence for `p_(n+1)(P)`.
+/-- **Newton's recurrence for the power sums of a polynomial.** For every polynomial $P$ over a
+commutative ring and every $n \ge 0$, writing $e_i = e_i(P)$ and $p_i = p_i(P)$ for the
+elementary symmetric functions and power sums of $P$,
+
+$$p_{n+1} = (-1)^n (n+1)\, e_{n+1} + \sum_{i=0}^{n-1} (-1)^i e_{i+1}\, p_{n-i}.$$
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Section 3.2 (Newton's identities). -/
@@ -132,8 +155,11 @@ theorem polyPowerSum_succ {A : Type*} [CommRing A] (P : A[X]) (n : ℕ) :
       ∑ i : Fin n, (-1) ^ (i : ℕ) * polyElemSymm P (i + 1) * polyPowerSum P (n - i) := by
   rw [polyPowerSum]
 
-/-- For an ideal `b` of any commutative ring, `a ^ n ∈ p ^ v_p(n!) b` for all `n ≥ 1` and `a ∈ b`
-if and only if `a ^ p ∈ p b` for all `a ∈ b`.
+/-- **A prime-exponent criterion for powers in an ideal.** Let $p$ be a prime, $v_p$ the $p$-adic
+valuation, and $\mathfrak{b}$ an ideal of a commutative ring $B$.
+The following are equivalent: for every $n \ge 1$ and every $a \in \mathfrak{b}$ there is
+$c \in \mathfrak{b}$ with $a^n = p^{v_p(n!)} c$; and for every $a \in \mathfrak{b}$ there is
+$c \in \mathfrak{b}$ with $a^p = p c$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Proposition 3 (`integers-2024-A46-prop-3`). -/
@@ -142,8 +168,13 @@ public theorem_wanted pow_mem_prime_pow_padicValNat_factorial_iff {p : ℕ} [Fac
     (∀ n : ℕ, 1 ≤ n → ∀ a ∈ I, ∃ c ∈ I, a ^ n = (p : B) ^ padicValNat p n.factorial * c) ↔
       ∀ a ∈ I, ∃ c ∈ I, a ^ p = (p : B) * c
 
-/-- In a `ℤ_(p)`-algebra, an ideal is a divided-power ideal if and only if `a ^ p ∈ p 𝔞` for every
-`a ∈ 𝔞`. The paper also assumes `A` torsion-free; the statement does not need it.
+/-- **The $p$-th power criterion for divided-power ideals.** Let $p$ be a prime and let $A$ be a
+commutative ring in which every natural number not divisible by $p$ is a unit (a
+$\mathbb{Z}_{(p)}$-algebra). An ideal $\mathfrak{a}$ of $A$ is a divided-power ideal if and only if
+for every $a \in \mathfrak{a}$ there is $c \in \mathfrak{a}$ with $a^p = p\,c$, that is,
+$a^p \in p\mathfrak{a}$.
+
+The paper also assumes $A$ torsion-free; the statement does not need it.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Corollary 4 (`integers-2024-A46-cor-4`). -/
@@ -151,8 +182,13 @@ public theorem_wanted isDividedPowerIdeal_iff_pow_prime_mem {p : ℕ} [Fact p.Pr
     {A : Type*} [CommRing A] (hA : ∀ n : ℕ, ¬ p ∣ n → IsUnit (n : A)) (I : Ideal A) :
     IsDividedPowerIdeal I ↔ ∀ a ∈ I, ∃ c ∈ I, a ^ p = (p : A) * c
 
-/-- In a `ℤ_(p)`-algebra, the ideal generated by `S` is a divided-power ideal if and only if
-`a ^ p ∈ p 𝔞` for every generator `a ∈ S`. Torsion-freeness is not needed.
+/-- **Divided-power ideals generated by a set.** Let $p$ be a prime and $A$ a commutative ring in
+which every natural number not divisible by $p$ is a unit (a $\mathbb{Z}_{(p)}$-algebra). For a
+subset $S \subseteq A$, the ideal $\mathfrak{a}$ generated by $S$ is a divided-power ideal if and
+only if for every $a \in S$ there is $c \in \mathfrak{a}$ with $a^p = pc$, that is,
+$a^p \in p\mathfrak{a}$.
+
+Torsion-freeness of $A$ is not needed.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Proposition 5 (`integers-2024-A46-prop-5`). -/
@@ -160,18 +196,23 @@ public theorem_wanted isDividedPowerIdeal_span_iff {p : ℕ} [Fact p.Prime]
     {A : Type*} [CommRing A] (hA : ∀ n : ℕ, ¬ p ∣ n → IsUnit (n : A)) (S : Set A) :
     IsDividedPowerIdeal (Ideal.span S) ↔ ∀ a ∈ S, ∃ c ∈ Ideal.span S, a ^ p = (p : A) * c
 
-/-- If `𝔞` is a divided-power ideal, then so is `𝔞𝔟` for every ideal `𝔟`. Stated for any
-commutative ring.
+/-- **Product of a divided-power ideal with an ideal.** Let $A$ be a commutative ring. If
+$\mathfrak{a}$ is a divided-power ideal of $A$, then for every ideal $\mathfrak{b}$ of $A$ the
+product $\mathfrak{a}\mathfrak{b}$ is a divided-power ideal.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Corollary 6 (`integers-2024-A46-cor-6`). -/
 public theorem_wanted IsDividedPowerIdeal.mul {A : Type*} [CommRing A] {I : Ideal A}
     (hI : IsDividedPowerIdeal I) (J : Ideal A) : IsDividedPowerIdeal (I * J)
 
-/-- In a discrete valuation ring `O` with `p O = 𝔪 ^ e`, `e ≥ 1` (so `v_p(𝔪) = 1 / e`), the ideal
-`𝔪 ^ k` is a divided-power ideal if and only if `e ≤ (p - 1) k`, that is
-`v_p(𝔪 ^ k) ≥ 1 / (p - 1)`. The paper states this for `p`-adic DVRs and remarks that it also holds
-for localizations of rings of integers; here `O` is any such DVR, and the zero ideal is omitted.
+/-- **Powers of the maximal ideal of a DVR that are divided-power ideals.** Let $p$ be a prime and
+let $O$ be a discrete valuation ring with maximal ideal $\mathfrak{m}$ such that
+$pO = \mathfrak{m}^e$ for some integer $e \ge 1$. Then for every $k \ge 0$, the ideal
+$\mathfrak{m}^k$ is a divided-power ideal if and only if $e \le (p - 1)k$.
+
+Equivalently, with $v_p(\mathfrak{m}) = 1/e$, the condition is $v_p(\mathfrak{m}^k) \ge 1/(p - 1)$.
+The paper states this for $p$-adic discrete valuation rings and remarks that it also holds for
+localizations of rings of integers; here $O$ is any such ring, and the zero ideal is omitted.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Lemma 7 (`integers-2024-A46-lem-7`). -/
@@ -180,8 +221,9 @@ public theorem_wanted isDividedPowerIdeal_maximalIdeal_pow_iff {p : ℕ} [Fact p
     (he : Ideal.span {(p : O)} = IsLocalRing.maximalIdeal O ^ e) (k : ℕ) :
     IsDividedPowerIdeal (IsLocalRing.maximalIdeal O ^ k) ↔ e ≤ (p - 1) * k
 
-/-- The maximal ideal of a discrete valuation ring `O` with `p O = 𝔪 ^ e`, `e ≥ 1`, is a
-divided-power ideal if and only if the ramification degree `e` is at most `p - 1`.
+/-- **When the maximal ideal of a DVR is a divided-power ideal.** Let $p$ be a prime and let $O$ be
+a discrete valuation ring with maximal ideal $\mathfrak{m}$ such that $pO = \mathfrak{m}^e$ for
+some integer $e \ge 1$. Then $\mathfrak{m}$ is a divided-power ideal if and only if $e \le p - 1$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Corollary 8 (`integers-2024-A46-cor-8`). -/
@@ -190,7 +232,8 @@ public theorem_wanted isDividedPowerIdeal_maximalIdeal_iff {p : ℕ} [Fact p.Pri
     (he : Ideal.span {(p : O)} = IsLocalRing.maximalIdeal O ^ e) :
     IsDividedPowerIdeal (IsLocalRing.maximalIdeal O) ↔ e ≤ p - 1
 
-/-- `(p)` is a divided-power ideal of `ℤ_p`.
+/-- **$(p)$ is a divided-power ideal of $\mathbb{Z}_p$.** For every prime $p$, the ideal generated
+by $p$ in the ring $\mathbb{Z}_p$ of $p$-adic integers is a divided-power ideal.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Corollary 8, last sentence
@@ -198,8 +241,14 @@ Congruences*, INTEGERS 24 (2024), Article A46, Corollary 8, last sentence
 public theorem_wanted isDividedPowerIdeal_span_prime_padicInt (p : ℕ) [Fact p.Prime] :
     IsDividedPowerIdeal (Ideal.span {(p : ℤ_[p])})
 
-/-- Let `A` be a torsion-free `ℤ_(p)`-algebra, `𝔞` a divided-power ideal, `P, Q` monic and
-`N ≥ 1`. If `e_n(P) ≡ e_n(Q) mod 𝔞` for `1 ≤ n ≤ N`, then `p_N(P) ≡ p_N(Q) mod N𝔞`.
+/-- **Congruent elementary symmetric functions give deep power-sum congruences.** Let $p$ be a
+prime and let $A$ be a commutative ring without additive torsion in which every natural number
+not divisible by $p$ is a unit (a torsion-free $\mathbb{Z}_{(p)}$-algebra). Let
+$\mathfrak{a}$ be a divided-power ideal of $A$, let $P, Q \in A[X]$ be monic and let $N \ge 1$;
+write $e_n$ and $p_n$ for the elementary symmetric functions and power sums of a polynomial.
+If $e_n(P) - e_n(Q) \in \mathfrak{a}$ for every $n$ with $1 \le n \le N$, then there is
+$c \in \mathfrak{a}$ with $p_N(P) - p_N(Q) = N c$, that is,
+$p_N(P) \equiv p_N(Q) \pmod{N \mathfrak{a}}$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Proposition 12 (`integers-2024-A46-prop-12`). -/
@@ -210,8 +259,13 @@ public theorem_wanted polyPowerSum_sub_mem_of_polyElemSymm_sub_mem {p : ℕ} [Fa
     (h : ∀ n, 1 ≤ n → n ≤ N → polyElemSymm P n - polyElemSymm Q n ∈ I) :
     ∃ c ∈ I, polyPowerSum P N - polyPowerSum Q N = (N : A) * c
 
-/-- Let `A` be a torsion-free `ℤ_(p)`-algebra, `𝔞` a divided-power ideal and `P, Q` monic. If
-`p_n(P) ≡ p_n(Q) mod n𝔞` for `1 ≤ n ≤ N`, then `e_n(P) ≡ e_n(Q) mod 𝔞` for `1 ≤ n ≤ N`.
+/-- **Power-sum congruences imply elementary symmetric congruences.** Let $p$ be a prime and $A$ a
+torsion-free commutative ring in which every natural number not divisible by $p$ is a unit (a
+torsion-free $\mathbb{Z}_{(p)}$-algebra). Let $\mathfrak{a}$ be a divided-power ideal of $A$, let
+$P, Q \in A[X]$ be monic and let $N$ be a natural number. Suppose that for every $n$ with
+$1 \le n \le N$ there is $c \in \mathfrak{a}$ with $p_n(P) - p_n(Q) = n c$, that is,
+$p_n(P) \equiv p_n(Q) \pmod{n \mathfrak{a}}$. Then $e_n(P) - e_n(Q) \in \mathfrak{a}$ for every $n$
+with $1 \le n \le N$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Proposition 13 (`integers-2024-A46-prop-13`). -/
@@ -222,9 +276,17 @@ public theorem_wanted polyElemSymm_sub_mem_of_polyPowerSum_sub_mem {p : ℕ} [Fa
     (h : ∀ n, 1 ≤ n → n ≤ N → ∃ c ∈ I, polyPowerSum P n - polyPowerSum Q n = (n : A) * c) :
     ∀ n, 1 ≤ n → n ≤ N → polyElemSymm P n - polyElemSymm Q n ∈ I
 
-/-- For `S ⊆ ℕ`, `exp P_S(t) = Σ_n Σ_{λ ⊢ n, parts in S} (-1)^λ p_λ / z_λ tⁿ`, where
-`P_S(t) = Σ_{s ∈ S} (-1)^(s-1) p_s tˢ / s`, `(-1)^λ = (-1)^(n - #parts)` and
-`z_λ = Π_a a^(r_a) r_a!`. A `0 ∈ S` is ignored, as the paper's `S` consists of positive integers.
+/-- **Exponential of a power-sum series restricted to a set of degrees.** Let $\sigma$ be a finite
+set of variables, and in $\mathbb{Q}[x_i : i \in \sigma]$ let $p_s = \sum_{i \in \sigma} x_i^s$
+be the $s$-th power sum. Let $S$ be a set of natural numbers and let
+$P_S(t) = \sum_{s \in S,\ s \ge 1} \frac{(-1)^{s-1}}{s} p_s t^s$. For a partition $\lambda$ of
+$n$ with parts $\lambda_1, \dots, \lambda_\ell$, write
+$p_\lambda = p_{\lambda_1} \cdots p_{\lambda_\ell}$, $\varepsilon_\lambda = (-1)^{n - \ell}$ and
+$z_\lambda = \prod_a a^{r_a} \, r_a!$, where $r_a$ is the number of parts equal to $a$ and the
+product runs over the distinct parts $a$. Then, as formal power series in $t$ with coefficients
+in $\mathbb{Q}[x_i : i \in \sigma]$, $\exp P_S(t) = \sum_{n \ge 0} c_n t^n$, where $c_n$ is the
+sum of $\varepsilon_\lambda p_\lambda / z_\lambda$ over the partitions $\lambda$ of $n$ all of
+whose parts lie in $S$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Proposition 19 (`integers-2024-A46-prop-19`). -/
@@ -238,7 +300,11 @@ public theorem_wanted exp_signedPowerSumSeries_eq_sum_partitions (σ : Type*) [F
           ((l.parts.toFinset.prod fun a => a ^ l.parts.count a * (l.parts.count a).factorial :
             ℕ) : ℚ)) • (l.parts.map (MvPolynomial.psum σ ℚ)).prod
 
-/-- `E(t) = exp P(t)`: `Σ_k e_k tᵏ = exp (Σ_{n ≥ 1} (-1)^(n-1) p_n tⁿ / n)`.
+/-- **The generating function of the elementary symmetric polynomials.** Let $\sigma$ be a finite
+set of variables, and in $\mathbb{Q}[x_i : i \in \sigma]$ let $e_k$ be the $k$-th elementary
+symmetric polynomial and $p_n = \sum_{i \in \sigma} x_i^n$ the $n$-th power sum. Then, as formal
+power series in $t$ with coefficients in $\mathbb{Q}[x_i : i \in \sigma]$,
+$$\sum_{k \ge 0} e_k t^k = \exp\Big(\sum_{n \ge 1} \frac{(-1)^{n-1}}{n} p_n t^n\Big).$$
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Proposition 20 (`integers-2024-A46-prop-20`). -/
@@ -248,8 +314,14 @@ public theorem_wanted exp_signedPowerSumSeries_eq_esymmSeries (σ : Type*) [Fint
         PowerSeries (MvPolynomial σ ℚ)) =
       PowerSeries.mk fun k => MvPolynomial.esymm σ ℚ k
 
-/-- `e_n = Σ_{λ ⊢ n} (-1)^λ p_λ / z_λ`, with `(-1)^λ = (-1)^(n - #parts)` and
-`z_λ = Π_a a^(r_a) r_a!`.
+/-- **Elementary symmetric polynomials in terms of power sums.** Let $\sigma$ be a finite set of
+variables, and in $\mathbb{Q}[x_i : i \in \sigma]$ let $e_n$ be the $n$-th elementary symmetric
+polynomial and $p_k = \sum_{i \in \sigma} x_i^k$ the $k$-th power sum. For a partition $\lambda$
+of $n$ with parts $\lambda_1, \dots, \lambda_\ell$, write
+$p_\lambda = p_{\lambda_1} \cdots p_{\lambda_\ell}$, $\varepsilon_\lambda = (-1)^{n - \ell}$ and
+$z_\lambda = \prod_a a^{r_a} \, r_a!$, where $r_a$ is the number of parts equal to $a$ and the
+product runs over the distinct parts $a$. Then for every $n \ge 0$,
+$$e_n = \sum_{\lambda \vdash n} \frac{\varepsilon_\lambda}{z_\lambda} \, p_\lambda.$$
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Corollary 21 (`integers-2024-A46-cor-21`). -/
@@ -259,9 +331,14 @@ public theorem_wanted esymm_eq_sum_partitions (σ : Type*) [Fintype σ] (n : ℕ
         ((l.parts.toFinset.prod fun a => a ^ l.parts.count a * (l.parts.count a).factorial :
           ℕ) : ℚ)) • (l.parts.map (MvPolynomial.psum σ ℚ)).prod
 
-/-- Kummer: `v_p` of the multinomial coefficient `(r_1 + ⋯ + r_k; r_1, …, r_k)` is the sum of the
-carries when `r_1 + ⋯ + r_k` is added in base `p`; the carry into digit position `i ≥ 1` is
-`⌊Σ_j (r_j mod pⁱ) / pⁱ⌋`, and positions beyond `m = Σ_j r_j` carry nothing.
+/-- **Kummer's theorem for multinomial coefficients.** Let $p$ be a prime and let
+$r_1, \dots, r_k$ be natural numbers with sum $m$. For $i \ge 1$ let
+$c_i = \lfloor ((r_1 \bmod p^i) + \dots + (r_k \bmod p^i)) / p^i \rfloor$. Then
+
+$$v_p\binom{m}{r_1, \dots, r_k} = \sum_{i=1}^{m} c_i.$$
+
+Here $c_i$ is the carry into digit position $i$ when $r_1 + \dots + r_k$ is added in base $p$, and
+$c_i = 0$ for $i > m$, so the right side is the sum of all the carries.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Theorem 23 (`integers-2024-A46-thm-23`). -/
@@ -270,8 +347,15 @@ public theorem_wanted padicValNat_multinomial_eq_sum_carries {p : ℕ} [Fact p.P
     padicValNat p (Nat.multinomial s r) =
       ∑ i ∈ Finset.Icc 1 (∑ j ∈ s, r j), (∑ j ∈ s, r j % p ^ i) / p ^ i
 
-/-- `v_p(r_i) ≥ v_p(m) - v_p((m; r_1, …, r_k))` for `m = r_1 + ⋯ + r_k` and `r_i ≠ 0` (the paper
-has `v_p(0) = ∞`; with `r = (0, p)` and Mathlib's `v_p(0) = 0` the inequality fails).
+/-- **A valuation bound from Kummer's theorem.** Let $p$ be a prime, let $r_1, \dots, r_k$ be
+natural numbers with sum $m$, and let $j$ be an index with $r_j \ne 0$. Then
+
+$$v_p(m) \le v_p(r_j) + v_p\binom{m}{r_1, \dots, r_k},$$
+
+that is, $v_p(r_j) \ge v_p(m) - v_p\binom{m}{r_1, \dots, r_k}$.
+
+The hypothesis $r_j \ne 0$ is needed because $v_p(0)$ is taken to be $0$: for $(r_1, r_2) = (0, p)$
+the inequality fails at $j = 1$. With the paper's convention $v_p(0) = \infty$ that case is trivial.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Corollary 24 (`integers-2024-A46-cor-24`). -/
@@ -279,9 +363,14 @@ public theorem_wanted padicValNat_sum_le_add_padicValNat_multinomial {p : ℕ} [
     {ι : Type*} (s : Finset ι) (r : ι → ℕ) {j : ι} (hj : j ∈ s) (hr : r j ≠ 0) :
     padicValNat p (∑ i ∈ s, r i) ≤ padicValNat p (r j) + padicValNat p (Nat.multinomial s r)
 
-/-- In a `ℤ_(p)`-algebra with divided-power ideal `𝔞`, `x ≡ y mod 𝔞` implies
-`x ^ (p ^ m) ≡ y ^ (p ^ m) mod p ^ m 𝔞` for all `m` and `xⁿ ≡ yⁿ mod n𝔞` for all `n`.
-Torsion-freeness is not needed.
+/-- **Powers of elements congruent modulo a divided-power ideal.** Let $p$ be a prime, let $A$ be
+a commutative ring in which every natural number not divisible by $p$ is a unit (a
+$\mathbb{Z}_{(p)}$-algebra), and let $\mathfrak{a}$ be a divided-power ideal of $A$. If
+$x, y \in A$ satisfy $x - y \in \mathfrak{a}$, then for every $m \ge 0$ there is
+$c \in \mathfrak{a}$ with $x^{p^m} - y^{p^m} = p^m c$, and for every $n \ge 0$ there is
+$c \in \mathfrak{a}$ with $x^n - y^n = n c$.
+
+The ring $A$ is not assumed to be torsion-free.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Lemma 25 (`integers-2024-A46-lem-25`). -/
@@ -291,13 +380,22 @@ public theorem_wanted pow_sub_pow_mem_of_sub_mem {p : ℕ} [Fact p.Prime] {A : T
     (∀ m : ℕ, ∃ c ∈ I, x ^ p ^ m - y ^ p ^ m = (p : A) ^ m * c) ∧
       ∀ n : ℕ, ∃ c ∈ I, x ^ n - y ^ n = (n : A) * c
 
-/-- If `f_n ≡ g_n mod 𝔞` for all `n ≥ 1` (`𝔞` a divided-power ideal) and every part of the
-partition `λ` occurs a multiple of `p ^ v` times, then `f_λ ≡ g_λ mod p ^ v 𝔞`. Corrected reading:
-the paper writes `v = v_p(λ) = min_i v_p(λ_i)`, which is false (`f = e`, `p = 2`, `λ = (2)`,
-`P = X² + 2`, `Q = X²`: `e_n(P) ≡ e_n(Q) mod 2` for all `n`, but `e_2(P) - e_2(Q) = 2 ∉ 4ℤ`); the
-proof, writing `λ = μ ^ (p ^ v)` in the partition monoid and using `v_p(r_i(λ))` in Proposition 12,
-uses the multiplicity valuation stated here. The symmetric functions are abstracted to arbitrary
-sequences `f, g`, as the statement only uses their values.
+/-- **Congruence of products over a partition with multiplicities divisible by $p^v$.** Let $p$
+be a prime, $A$ a commutative ring and $\mathfrak{a}$ a divided-power ideal of $A$. Let
+$f, g : \mathbb{N} \to A$ satisfy $f_n - g_n \in \mathfrak{a}$ for every $n \ge 1$. For a
+partition $\lambda = (\lambda_1, \dots, \lambda_k)$ of a natural number $m$, write
+$f_\lambda = f_{\lambda_1} \cdots f_{\lambda_k}$ and
+$g_\lambda = g_{\lambda_1} \cdots g_{\lambda_k}$. If $v$ is a natural number such that every part
+of $\lambda$ occurs a multiple of $p^v$ times, then $f_\lambda - g_\lambda = p^v c$ for some
+$c \in \mathfrak{a}$, that is, $f_\lambda \equiv g_\lambda \bmod p^v \mathfrak{a}$.
+
+The paper takes $v = v_p(\lambda) = \min_i v_p(\lambda_i)$, which is false: for $p = 2$,
+$\lambda = (2)$, $A = \mathbb{Z}_{(2)}$, $\mathfrak{a} = (2)$, $f_n = e_n(X^2 + 2)$ and
+$g_n = e_n(X^2)$, where $e_n(P)$ is the $n$-th elementary symmetric function of the roots of $P$,
+$f_n \equiv g_n \bmod 2$ for all $n$ but $f_2 - g_2 = 2 \notin 4\mathbb{Z}_{(2)}$. The paper's
+proof writes $\lambda = \mu^{p^v}$ in the partition monoid, which uses the multiplicity condition
+stated here. The paper's symmetric functions are abstracted to arbitrary sequences $f, g$, as the
+statement only uses their values.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Corollary 26 (`integers-2024-A46-cor-26`). -/
@@ -307,7 +405,9 @@ public theorem_wanted multiset_prod_sub_prod_mem_of_count_dvd {p : ℕ} [Fact p.
     (hv : ∀ a ∈ l.parts, p ^ v ∣ l.parts.count a) :
     ∃ c ∈ I, (l.parts.map f).prod - (l.parts.map g).prod = (p : A) ^ v * c
 
-/-- `Σ_{d ∣ n, p ∤ d} μ(d)` is `1` if `n` is a power of `p` and `0` otherwise (`n ≥ 1`).
+/-- **Möbius sum over the divisors prime to a given prime.** Let $p$ be a prime, $\mu$ the Möbius
+function and $n \ge 1$. The sum of $\mu(d)$ over the divisors $d$ of $n$ with $p \nmid d$ is $1$ if
+$n$ is a power of $p$ (including $n = 1 = p^0$) and $0$ otherwise.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Lemma 28 (`integers-2024-A46-lem-28`). -/
@@ -316,8 +416,10 @@ public theorem_wanted sum_moebius_divisors_not_dvd_prime {p : ℕ} (hp : p.Prime
     ∑ d ∈ n.divisors with ¬ p ∣ d, ArithmeticFunction.moebius d =
       if p ^ Nat.log p n = n then 1 else 0
 
-/-- The Artin-Hasse exponential `F(z) = exp (Σ_{j ≥ 0} z^(p^j) / p^j)` has `p`-integral
-coefficients: no coefficient has denominator divisible by `p`.
+/-- **The Artin–Hasse exponential has $p$-integral coefficients.** Let $p$ be a prime and let
+$F(z) = \exp\big(\sum_{j \ge 0} z^{p^j} / p^j\big) \in \mathbb{Q}[[z]]$ be the Artin–Hasse
+exponential. For every $n \ge 0$, the coefficient of $z^n$ in $F$, written in lowest terms, has a
+denominator not divisible by $p$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Corollary 29 (`integers-2024-A46-cor-29`). -/
@@ -326,12 +428,14 @@ public theorem_wanted artinHasse_coeff_den_not_dvd (p : ℕ) [Fact p.Prime] (n :
       (PowerSeries.mk fun m : ℕ => if p ^ Nat.log p m = m then (m : ℚ)⁻¹ else 0)
       (PowerSeries.exp ℚ) : PowerSeries ℚ)).den
 
-/-- The Artin-Hasse exponential as an infinite product:
-`F(z) = Π_{p ∤ d} (1 - z^d)^(-μ(d)/d)`. The rational power of a series with constant term `1` is
-`(1 - z^d)^a = exp (a · log (1 - z^d))` with `log (1 - z^d) = -Σ_{k ≥ 1} z^(dk)/k`, whose
-coefficient at `z^m` (`d ∣ m`, `m ≠ 0`) is `-d/m`; the infinite product is read coefficientwise:
-the factors with `d > N` are `1 + O(z^(N+1))`, so the identity says that `F` agrees with the
-finite product over `d ≤ N` up to `z^N`, for every `N`. `F` is written as in Corollary 29.
+/-- **The Artin–Hasse exponential as a product.** Let $p$ be a prime, let $\mu$ be the Möbius
+function and let $F(z) = \exp\big(\sum_{j \ge 0} z^{p^j} / p^j\big) \in \mathbb{Q}[[z]]$ be the
+Artin–Hasse exponential. For $d \ge 1$ and $a \in \mathbb{Q}$ write
+$(1 - z^d)^a = \exp\big(a \log(1 - z^d)\big)$, where $\log(1 - z^d) = -\sum_{k \ge 1} z^{dk}/k$.
+Then for every $N \ge 0$, $F$ has the same coefficients of $z^0, \dots, z^N$ as the finite product
+of the series $(1 - z^d)^{-\mu(d)/d}$ over the integers $1 \le d \le N$ not divisible by $p$.
+Since the factors with $d > N$ are $1 + O(z^{N+1})$, this is the identity
+$F(z) = \prod_{p \nmid d} (1 - z^d)^{-\mu(d)/d}$ read coefficientwise.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Proposition 27 (`integers-2024-A46-prop-27`). -/
@@ -344,15 +448,19 @@ public theorem_wanted artinHasse_eq_prod_one_sub_pow (p : ℕ) [Fact p.Prime] (N
           (-(ArithmeticFunction.moebius d : ℚ) / d) * (-(d : ℚ) / m) else 0)
         (PowerSeries.exp ℚ) : PowerSeries ℚ))
 
-/-- `s` is a *`p`-splitting* of `t` (multisets of parts): `t` contains a part `p u` with `u ≥ 1`,
-and `s` is obtained from `t` by replacing one instance of `p u` with `p` copies of `u`.
+/-- **$p$-splitting of multisets of parts.** Let $p$ be a natural number and $s$, $t$ multisets of
+natural numbers (multisets of parts). Then $s$ is a *$p$-splitting* of $t$ when there is $u \ge 1$
+such that $t$ contains the part $pu$ and $s$ is obtained from $t$ by removing one instance of $pu$
+and adding $p$ copies of $u$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Definition 30. -/
 public def IsPSplitting (p : ℕ) (s t : Multiset ℕ) : Prop :=
   ∃ u, 1 ≤ u ∧ p * u ∈ t ∧ s = t.erase (p * u) + Multiset.replicate p u
 
-/-- `(u)^p` is a `p`-splitting of `(pu)`.
+/-- **$p$ copies of $u$ form a $p$-splitting of $\{pu\}$.** For every natural number $p$ and every
+integer $u \ge 1$, the multiset consisting of $p$ copies of $u$ is a $p$-splitting of the
+one-element multiset $\{pu\}$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Definition 30. -/
@@ -360,9 +468,10 @@ public theorem isPSplitting_replicate_singleton (p : ℕ) {u : ℕ} (hu : 1 ≤ 
     IsPSplitting p (Multiset.replicate p u) {p * u} :=
   ⟨u, hu, Multiset.mem_singleton_self _, by simp⟩
 
-/-- The `p`-equivalence class `C_λ` of the multiset of parts `s`: the partitions `μ` of `|s|`
-with `μ ∼_p s`, where `∼_p` (`p`-equivalence) is the equivalence relation generated by
-`p`-splitting.
+/-- **The $p$-equivalence class of a multiset of parts.** Let $p$ be a natural number and $\lambda$
+a multiset of natural numbers whose elements sum to $n$. The $p$-equivalence class $C_\lambda$ is
+the set of partitions $\mu$ of $n$ with $\mu \sim_p \lambda$, where $\sim_p$ ($p$-equivalence) is
+the equivalence relation on multisets of natural numbers generated by $p$-splitting.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Definition 31. -/
@@ -370,9 +479,18 @@ public noncomputable def pEquivClass (p : ℕ) (s : Multiset ℕ) : Finset s.sum
   classical
   exact Finset.univ.filter fun μ => Relation.EqvGen (IsPSplitting p) μ.parts s
 
-/-- The contribution `g_λ = Σ_{μ ∼_p λ} (-1)^μ p_μ / z_μ` of one `p`-equivalence class to
-`e_n` (Corollary 21), with `(-1)^μ = (-1)^(n - #parts)` and `z_μ = Π_a a^(r_a) r_a!`, as a
-symmetric polynomial in finitely many variables over `ℚ`.
+/-- **The $p$-equivalence class sum.** Let $\sigma$ be a finite set of variables, let $p$ be a
+natural number and let $\lambda$ be a multiset of natural numbers whose elements sum to $n$. In
+$\mathbb{Q}[x_i : i \in \sigma]$ let $p_k = \sum_{i \in \sigma} x_i^k$ be the $k$-th power sum. For
+a partition $\mu$ of $n$ with parts $\mu_1, \dots, \mu_\ell$, write
+$p_\mu = p_{\mu_1} \cdots p_{\mu_\ell}$, $\varepsilon_\mu = (-1)^{n - \ell}$ and
+$z_\mu = \prod_a a^{r_a} \, r_a!$, where $r_a$ is the number of parts of $\mu$ equal to $a$ and the
+product runs over the distinct parts $a$ of $\mu$. The $p$-equivalence class sum of $\lambda$ is
+
+$$g_\lambda = \sum_{\mu \in C_\lambda} \frac{\varepsilon_\mu}{z_\mu} \, p_\mu,$$
+
+where $C_\lambda$ is the $p$-equivalence class of $\lambda$: the set of partitions of $n$ that are
+$p$-equivalent to $\lambda$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Section 5.2, display (8). -/
@@ -381,7 +499,8 @@ public noncomputable def pEquivClassSum (σ : Type*) [Fintype σ] (p : ℕ) (s :
   ∑ μ ∈ pEquivClass p s, ((-1 : ℚ) ^ (s.sum - Multiset.card μ.parts) /
     ((μ.parts.toFinset.prod fun a => a ^ μ.parts.count a * (μ.parts.count a).factorial : ℕ) : ℚ)) • (μ.parts.map (MvPolynomial.psum σ ℚ)).prod
 
-/-- `g_∅ = 1`.
+/-- **The class sum of the empty partition.** For every finite set of variables $\sigma$ and every
+natural number $p$, the $p$-equivalence class sum of the empty multiset is $g_\emptyset = 1$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Section 5.2. -/
@@ -400,9 +519,14 @@ public theorem pEquivClassSum_zero (σ : Type*) [Fintype σ] (p : ℕ) :
   rw [Finset.univ_unique, Finset.sum_singleton, h0]
   simp
 
-/-- For `p`-deprived multisets of parts `λ`, `μ` (no part divisible by `p`, so no part is `0`)
-with no common parts, `g_{λμ} = g_λ g_μ`; consequently `g_λ = Π_u g_{(u)^(r_u(λ))}`, the
-product over the distinct parts `u` of `λ` (the factors with `r_u(λ) = 0` are `g_∅ = 1`).
+/-- **Multiplicativity of $g_\lambda$ over disjoint parts.** Let $p$ be a prime, $\sigma$ a finite
+set of variables, and for a multiset $\lambda$ of parts let $g_\lambda$ be its $p$-equivalence class
+sum in $\mathbb{Q}[x_i : i \in \sigma]$. Let $\lambda$ and $\mu$ be multisets of natural numbers,
+none of whose elements is divisible by $p$ (so no part is $0$), with no part in common. Then
+$g_{\lambda + \mu} = g_\lambda \, g_\mu$, where $\lambda + \mu$ is the union of $\lambda$ and $\mu$
+counted with multiplicity. Moreover $g_\lambda = \prod_u g_{(u)^{r_u(\lambda)}}$, the product over
+the distinct parts $u$ of $\lambda$, where $r_u(\lambda)$ is the number of times $u$ occurs in
+$\lambda$ and $(u)^r$ is the multiset of $r$ copies of $u$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Lemma 34 (`integers-2024-A46-lem-34`). -/
@@ -413,8 +537,16 @@ public theorem_wanted pEquivClassSum_add_of_disjoint (σ : Type*) [Fintype σ] {
       pEquivClassSum σ p s =
         ∏ u ∈ s.toFinset, pEquivClassSum σ p (Multiset.replicate (s.count u) u)
 
-/-- For odd `p` the signs in `g_λ` are constant on the class:
-`g_λ = (-1)^λ Σ_{μ ∼_p λ} p_μ / z_μ`.
+/-- **For odd $p$ the signs in $g_\lambda$ are constant.** Let $p$ be an odd prime, $\sigma$ a
+finite set of variables and $\lambda$ a partition of $n$ with $\ell(\lambda)$ parts. Then the
+$p$-equivalence class sum $g_\lambda$ in $\mathbb{Q}[x_i : i \in \sigma]$ satisfies
+
+$$g_\lambda = (-1)^{n - \ell(\lambda)} \sum_{\mu \in C_\lambda} \frac{p_\mu}{z_\mu},$$
+
+where $C_\lambda$ is the $p$-equivalence class of $\lambda$ (the partitions $\mu$ of $n$ with
+$\mu \sim_p \lambda$), $p_\mu = \prod_i p_{\mu_i}$ is the product of the power sums
+$p_k = \sum_{i \in \sigma} x_i^k$, and $z_\mu = \prod_a a^{r_a} \, r_a!$, the product over the
+distinct parts $a$ of $\mu$, with $r_a$ the number of parts of $\mu$ equal to $a$.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Lemma 35 (`integers-2024-A46-lem-35`). -/
@@ -423,8 +555,12 @@ public theorem_wanted pEquivClassSum_eq_neg_one_pow_smul (σ : Type*) [Fintype �
     pEquivClassSum σ p l.parts = ((-1 : ℚ) ^ (n - Multiset.card l.parts)) •
       ∑ μ ∈ pEquivClass p l.parts, (1 / ((μ.parts.toFinset.prod fun a => a ^ μ.parts.count a * (μ.parts.count a).factorial : ℕ) : ℚ)) • (μ.parts.map (MvPolynomial.psum σ ℚ)).prod
 
-/-- `g_λ` is `p`-integral: in any finite number of variables, no coefficient of `g_λ` has
-denominator divisible by `p` (the paper's `g_λ ∈ Λ_{ℤ_(p)}`).
+/-- **$g_\lambda$ is $p$-integral.** Let $p$ be a prime, $\sigma$ a finite set of variables and
+$\lambda$ a partition of $n$. Every coefficient of the $p$-equivalence class sum $g_\lambda$ in
+$\mathbb{Q}[x_i : i \in \sigma]$ is a rational number whose denominator in lowest terms is not
+divisible by $p$.
+
+This is the paper's $g_\lambda \in \Lambda_{\mathbb{Z}_{(p)}}$, in finitely many variables.
 
 Source: S. Anni, A. Ghitza and A. Medvedovsky, *Elementary Symmetric Functions and Deep Power-Sum
 Congruences*, INTEGERS 24 (2024), Article A46, Proposition 36 (`integers-2024-A46-prop-36`). -/

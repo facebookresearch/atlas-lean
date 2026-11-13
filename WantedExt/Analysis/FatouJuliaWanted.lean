@@ -61,21 +61,32 @@ Cantor set.
 
 open Function
 
-/-- The quadratic family member `T_c(z) = z² + c`. -/
+/-- **Quadratic map $T_c$.** For $c \in \mathbb{C}$, $T_c \colon \mathbb{C} \to \mathbb{C}$ is the
+map $T_c(z) = z^2 + c$. -/
 def Tc (c : ℂ) (z : ℂ) : ℂ := z ^ 2 + c
 
-/-- The Mandelbrot set `M = { c ∈ ℂ | T_c^n(0) stays bounded }`. -/
+/-- **Mandelbrot set of the quadratic family.** Let $T_c(z) = z^2 + c$ for $c \in \mathbb{C}$
+and let $T_c^n$ be its $n$-fold iterate. The Mandelbrot set $M$ is the set of $c \in \mathbb{C}$
+for which the orbit of $0$ under $T_c$ is bounded: there is a real $R$ such that
+$|T_c^n(0)| \le R$ for every $n \ge 0$. -/
 def Mandelbrot : Set ℂ :=
   { c : ℂ | ∃ M : ℝ, ∀ n : ℕ, ‖(Tc c)^[n] 0‖ ≤ M }
 
-/-- The filled Julia set `K_c = { z ∈ ℂ | T_c^n(z) stays bounded }`. -/
+/-- **Filled Julia set.** For $c \in \mathbb{C}$, let $T_c(z) = z^2 + c$ and let $T_c^n$ be its
+$n$-fold iterate. The filled Julia set $K_c$ is the set of $z \in \mathbb{C}$ whose orbit under
+$T_c$ is bounded: there is a real $M$ such that $|T_c^n(z)| \le M$ for every $n \ge 0$. -/
 def FilledJulia (c : ℂ) : Set ℂ :=
   { z : ℂ | ∃ M : ℝ, ∀ n : ℕ, ‖(Tc c)^[n] z‖ ≤ M }
 
 /- **Fatou–Julia dichotomy.** For the quadratic family, `c ∈ M` implies
 the filled Julia set `K_c` is connected; `c ∉ M` implies `K_c` is
 homeomorphic to the Cantor space `ℕ → Bool`. -/
-/-- Source: P. Fatou, *Sur les équations fonctionnelles*, Bull. Soc. Math. France 47 (1919), 161-271; 48 (1920), 33-94, 208-314. G. Julia, *Mémoire sur l'itération des fonctions rationnelles*, J. Math. Pures Appl. 1 (1918), 47-245. Modern statement: A. Douady and J. H. Hubbard, *Étude dynamique des polynômes complexes I, II*, Publ. Math. Orsay 84-02, 85-04. Listed as §62 (additional statement 1) in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `fatou_julia_dichotomy`. -/
+/-- **Fatou–Julia dichotomy for quadratic polynomials.** For $c \in \mathbb{C}$, let $K_c$ be the
+filled Julia set of $T_c(z) = z^2 + c$ and let $M$ be the Mandelbrot set. If $c \in M$, then $K_c$
+is nonempty and connected. If $c \notin M$, then $K_c$ is homeomorphic to the Cantor space
+$\{0, 1\}^{\mathbb{N}}$ of binary sequences with the product topology.
+
+Source: P. Fatou, *Sur les équations fonctionnelles*, Bull. Soc. Math. France 47 (1919), 161-271; 48 (1920), 33-94, 208-314. G. Julia, *Mémoire sur l'itération des fonctions rationnelles*, J. Math. Pures Appl. 1 (1918), 47-245. Modern statement: A. Douady and J. H. Hubbard, *Étude dynamique des polynômes complexes I, II*, Publ. Math. Orsay 84-02, 85-04. Listed as §62 (additional statement 1) in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `fatou_julia_dichotomy`. -/
 public theorem_wanted julia_cantor_dichotomy (c : ℂ) :
     (c ∈ Mandelbrot → IsConnected (FilledJulia c)) ∧
     (c ∉ Mandelbrot → Nonempty ((FilledJulia c) ≃ₜ (ℕ → Bool)))

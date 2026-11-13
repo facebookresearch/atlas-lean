@@ -19,9 +19,12 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook35Wanted
 
-/-- The projective Hilbert space of `E`: diameters (lines through the origin)
-of the unit sphere, identified with antipodal pairs of unit vectors, with the
-quotient topology. -/
+/-- **Projective Hilbert space.** Let $E$ be a normed additive commutative group, in practice a
+real inner product space. The projective Hilbert space of $E$ is the quotient of the unit sphere
+$\{x \in E : \|x\| = 1\}$ by the relation identifying each $x$ with $-x$. Its points are the
+antipodal pairs $\{x, -x\}$ of unit vectors, that is, the diameters of the unit sphere.
+
+When $E$ is a real inner product space, it carries the quotient topology of the unit sphere. -/
 def ProjectiveHilbertSpace (E : Type) [NormedAddCommGroup E] : Type :=
   Quot (fun x y : ↥(Metric.sphere (0 : E) 1) => (x : E) = y ∨ (x : E) = -(y : E))
 
@@ -39,21 +42,25 @@ instance (E : Type) [NormedAddCommGroup E] [InnerProductSpace ℝ E] :
   unfold ProjectiveHilbertSpace
   infer_instance
 
-/-- The claim of Problem 35, that projective Hilbert space is homeomorphic to
-Hilbert space itself. -/
+/-- **Projective Hilbert space homeomorphic to the space itself.** For a real inner product
+space $E$, the statement that the projective Hilbert space of $E$, the unit sphere
+$\{x \in E : \|x\| = 1\}$ with each $x$ identified with $-x$ and given the quotient topology,
+is homeomorphic to $E$. -/
 def ProjectiveHilbertSpaceHomeomorphicToHilbertSpace (E : Type)
     [NormedAddCommGroup E] [InnerProductSpace ℝ E] : Prop :=
   Nonempty (ProjectiveHilbertSpace E ≃ₜ E)
 
 /--
-Ulam, Problem 35 of the Scottish Book. Original question: is the projective
-Hilbert space, the collection of all diameters of the unit sphere in Hilbert
-space equipped with the Hausdorff metric, homeomorphic to Hilbert space
-itself? The answer is no: Hilbert space is contractible, hence simply
-connected, while projective Hilbert space is not, its fundamental group
-being `Z / 2` via the double covering by the unit sphere. The projective
-space here is the quotient of the unit sphere by the antipodal identification,
-the standard model of the space of diameters.
+**Projective Hilbert space is not homeomorphic to Hilbert space.** Let $E$ be an
+infinite-dimensional real Hilbert space. Then the projective Hilbert space of $E$, the unit
+sphere $\{x \in E : \|x\| = 1\}$ with each $x$ identified with $-x$ and given the quotient
+topology, is not homeomorphic to $E$.
+
+This answers Ulam's Problem 35 of the Scottish Book in the negative. The projective space is the
+standard model of the space of diameters of the unit sphere with the Hausdorff metric. Hilbert
+space is contractible, hence simply connected, while projective Hilbert space is not, its
+fundamental group being $\mathbb{Z}/2$ via the double covering by the unit sphere.
+
 Source: S. Ulam, Problem 35 of the Scottish Book; see the commentary of
 Holsztynski in R. D. Mauldin (ed.), The Scottish Book, 2nd ed. (Birkhäuser,
 2015), and the Hilbert-manifold classification by homotopy type.

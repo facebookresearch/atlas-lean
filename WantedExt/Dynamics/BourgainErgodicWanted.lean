@@ -58,15 +58,20 @@ open scoped BigOperators ENNReal Topology
 
 variable {X : Type*} [MeasurableSpace X] {μ : Measure X}
 
-/-- A sequence of natural iterate exponents coming from an integer polynomial
-which is nonnegative on `ℕ`.  This avoids baking a particular coefficient
-representation into the ergodic theorem statements. -/
+/-- **Integer polynomial sequences.** A sequence $a : \mathbb{N} \to \mathbb{N}$ is an integer
+polynomial sequence if there is a polynomial $P$ with integer coefficients such that
+$P(n) \ge 0$ and $a(n) = P(n)$ for every $n \in \mathbb{N}$. -/
 def IsIntegerPolynomialSequence (a : ℕ → ℕ) : Prop :=
   ∃ P : Polynomial ℤ,
     ∀ n : ℕ, 0 ≤ P.eval (n : ℤ) ∧ a n = Int.toNat (P.eval (n : ℤ))
 
-/-- Bourgain's polynomial ergodic averages
-`(1 / n) * ∑_{k < n} f (T^[a k] x)`. -/
+/-- **Polynomial ergodic averages.** Given a sequence $a : \mathbb{N} \to \mathbb{N}$, a map
+$T : X \to X$, a function $f : X \to \mathbb{R}$, $n \in \mathbb{N}$ and $x \in X$, the $n$-th
+polynomial ergodic average of $f$ at $x$ is
+
+$$\frac{1}{n} \sum_{k=0}^{n-1} f\bigl(T^{a(k)}(x)\bigr),$$
+
+where $T^{a(k)}$ is the $a(k)$-fold iterate of $T$; for $n = 0$ the average is $0$. -/
 noncomputable def polynomialErgodicAverage (a : ℕ → ℕ) (T : X → X) (f : X → ℝ)
     (n : ℕ) (x : X) : ℝ :=
   (n : ℝ)⁻¹ * ∑ k ∈ range n, f (T^[a k] x)
@@ -74,7 +79,15 @@ noncomputable def polynomialErgodicAverage (a : ℕ → ℕ) (T : X → X) (f : 
 /- Bourgain's polynomial ergodic theorem: for every integer-polynomial
 iterate sequence and every `L^p`, `p > 1`, function, the polynomial ergodic
 averages converge pointwise almost everywhere. -/
-/-- Source: J. Bourgain, *Pointwise ergodic theorems for arithmetic sets*, Publ. Math. IHÉS 69 (1989). Knill, *Some fundamental theorems in mathematics*, §173. Via leanprover/lean-eval@38361be, problem `bourgain_polynomial_ergodic`. -/
+/-- **Bourgain's polynomial ergodic theorem.** Let $(X, \mu)$ be a probability space, let
+$T : X \to X$ be a measure-preserving map, let $a : \mathbb{N} \to \mathbb{N}$ be an integer
+polynomial sequence, and let $f : X \to \mathbb{R}$ be a function in $L^p(\mu)$ for some
+$p$ with $1 < p < \infty$. Then there is a function $F : X \to \mathbb{R}$ such that for
+$\mu$-almost every $x \in X$ the polynomial ergodic averages
+$\frac{1}{n} \sum_{k=0}^{n-1} f(T^{a(k)}(x))$, $n \ge 1$, where $T^{a(k)}$ is the $a(k)$-fold
+iterate of $T$, converge to $F(x)$ as $n \to \infty$.
+
+Source: J. Bourgain, *Pointwise ergodic theorems for arithmetic sets*, Publ. Math. IHÉS 69 (1989). Knill, *Some fundamental theorems in mathematics*, §173. Via leanprover/lean-eval@38361be, problem `bourgain_polynomial_ergodic`. -/
 public theorem_wanted bourgain_polynomial_ergodic
     [IsProbabilityMeasure μ] {p : ℝ≥0∞} (hp : 1 < p) (hp_ne_top : p ≠ ∞)
     {T : X → X} (hT : MeasurePreserving T μ μ)

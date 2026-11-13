@@ -63,9 +63,9 @@ supplied here.
 
 open MeasureTheory Filter Topology Real Complex
 
-/-- The `k`-th Fourier coefficient of a Borel measure `μ` on the circle
-`AddCircle (2π)`: `μ̂_k := ∫ exp(i k x) dμ(x)`. With mathlib's normalisation
-`fourier k x = exp(2π i k x / T)`, taking `T = 2π` gives `exp(i k x)`. -/
+/-- **Fourier coefficients of a measure on the circle.** For a measure $\mu$ on the circle
+$\mathbb{T} = \mathbb{R}/2\pi\mathbb{Z}$ and an integer $k$, the $k$-th Fourier coefficient of
+$\mu$ is $\hat\mu_k = \int_{\mathbb{T}} e^{ikx} \, d\mu(x)$. -/
 noncomputable def fourierCoeffMeasure (μ : Measure (AddCircle (2 * Real.pi)))
     (k : ℤ) : ℂ :=
   ∫ x, fourier k x ∂μ
@@ -75,7 +75,13 @@ the circle `𝕋 = ℝ/2πℤ`, the Cesàro average of `|μ̂_k|²` for `k = 1, 
 converges to the sum of the squared masses of the atoms of `μ`. The right-hand
 side is automatically summable: the atoms of a finite measure are at most
 countable and their masses are bounded by `μ(𝕋) = 1`. -/
-/-- Source: N. Wiener, The Fourier Integral and Certain of its Applications (1933). Listed as §66 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `wiener_atom_detection`. -/
+/-- **Wiener's atom-detection formula.** Let $\mu$ be a probability measure on the circle
+$\mathbb{T} = \mathbb{R}/2\pi\mathbb{Z}$, with Fourier coefficients
+$\hat\mu_k = \int_{\mathbb{T}} e^{ikx} \, d\mu(x)$. Then
+$\frac{1}{N} \sum_{k=1}^{N} \lvert \hat\mu_k \rvert^2 \to \sum_{x \in \mathbb{T}} \mu(\{x\})^2$
+as $N \to \infty$.
+
+Source: N. Wiener, The Fourier Integral and Certain of its Applications (1933). Listed as §66 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `wiener_atom_detection`. -/
 public theorem_wanted wiener_atom_detection
     (μ : Measure (AddCircle (2 * Real.pi))) [IsProbabilityMeasure μ] :
     Tendsto

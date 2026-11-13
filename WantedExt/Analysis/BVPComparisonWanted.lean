@@ -61,7 +61,13 @@ boundary, where `ψ ≤ 0`; let `δ → 0`.
 /- **Comparison principle for the Dirichlet BVP.** If two functions are `C²` on an open
 interval `J` containing `[0, 1]`, satisfy `-u'' ≤ -v''` on the interior, and are ordered
 at the boundary, then `u ≤ v` throughout `[0, 1]`. -/
-/-- Source: Standard maximum-principle argument; Protter-Weinberger. Via leanprover/lean-eval@38361be, problem `bvp_comparison`. -/
+/-- **Comparison principle for the Dirichlet problem on $[0, 1]$.** Let $J \subseteq \mathbb{R}$
+be an open set containing $[0, 1]$, and let $u, v : \mathbb{R} \to \mathbb{R}$ be functions
+that are differentiable at every point of $J$ and whose derivatives $u'$ and $v'$ are
+differentiable at every point of $J$. If $-u''(x) \le -v''(x)$ for every $x \in (0, 1)$,
+$u(0) \le v(0)$ and $u(1) \le v(1)$, then $u(x) \le v(x)$ for every $x \in [0, 1]$.
+
+Source: Standard maximum-principle argument; Protter-Weinberger. Via leanprover/lean-eval@38361be, problem `bvp_comparison`. -/
 public theorem_wanted bvp_comparison
     (J : Set ℝ) (hJ_open : IsOpen J) (hJ_sub : Set.Icc (0 : ℝ) 1 ⊆ J)
     (u v : ℝ → ℝ)

@@ -41,9 +41,10 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.Complex.NoProperHolomorphicMapUnitDiscWanted
 
-/-- Let $\Delta := \{z\in\mathbb{C}\mid |z|<1\}$ be the unit disc in the complex plane. Prove there
-is no proper holomorphic map $f:\Delta\to\mathbb{C}$. (Proper means that the preimage of a compact
-set is compact.)
+/-- **No proper holomorphic map from the unit disc to the complex plane.** Let
+$\Delta := \{z\in\mathbb{C}\mid |z|<1\}$ be the unit disc in the complex plane. There is no proper
+holomorphic map $f:\Delta\to\mathbb{C}$, where proper means that the preimage under $f$ of every
+compact subset of $\mathbb{C}$ is a compact subset of $\Delta$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Functions of a complex
 variable; Geometric function theory), `benchmark/level2/ma_proofbench_l2_41.lean` at

@@ -41,18 +41,14 @@ public import Mathlib
 
 namespace MathlibExt.Analysis.OperatorTheory.NumericalRangeDistanceLowerBoundWanted
 
-/-- Let $H$ be a complex Hilbert space, $T:H\to H$ be a bounded linear operator,
-$\sigma(T)$ be the spectrum of $T$. We also define the numerical range of $T$ to be
-\[
-N(T):=\{(\psi,T\psi)\mid \psi\in H,\ \|\psi\|=1\}\subset\mathbb{C}
-\]
-where $(\cdot,\cdot)$ and $\|\cdot\|$ denote the inner product and the norm on $H$, respectively.
-
-For any $\psi\in H$ and $z\in\mathbb{C}$, show that
-\[
-\|(T-z)\psi\|\ge d(z,N(T))\|\psi\|.
-\]
-Here $d(z,N(T))$ is the distance from $z$ to $N(T)$ in $\mathbb{C}$.
+/-- **Lower bound from the numerical range.** Let $H$ be a complex Hilbert space with inner
+product $\langle \cdot, \cdot \rangle$, conjugate-linear in the first argument and linear in the
+second, and let $T : H \to H$ be a bounded linear operator. Let
+$N(T) = \{\langle \psi, T\psi \rangle : \psi \in H,\ \|\psi\| = 1\} \subseteq \mathbb{C}$ be the
+numerical range of $T$, and for $z \in \mathbb{C}$ let $d(z, N(T))$ be the infimum of the
+distances from $z$ to the points of $N(T)$, taken to be $0$ when $N(T)$ is empty. Then for every
+$\psi \in H$ and every $z \in \mathbb{C}$, $\|(T - zI)\psi\| \ge d(z, N(T))\,\|\psi\|$, where $I$
+is the identity operator on $H$.
 
 Source: MA-ProofBench (L. Pu et al., arXiv:2606.13782), Level II (Operator theory; General
 theory of linear operators), `benchmark/level2/ma_proofbench_l2_55.lean` at

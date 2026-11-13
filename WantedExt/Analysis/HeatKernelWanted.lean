@@ -67,8 +67,14 @@ intended PDE.
 
 open Real MeasureTheory
 
-/-- The 1D Gaussian heat kernel. Extended by `f x` for `t ≤ 0` so that it is a global
-function `ℝ × ℝ → ℝ`; the PDE statement only constrains its behaviour on `t > 0`. -/
+/-- **Heat-kernel solution.** For $f\colon \mathbb{R} \to \mathbb{R}$, the heat solution
+$u(t, x)$ of $f$ is given for $t > 0$ by
+$$u(t, x) = (4 \pi t)^{-1/2} \int_{\mathbb{R}} e^{-(x - y)^2/(4t)} f(y) \, dy$$
+and by $u(t, x) = f(x)$ for $t \le 0$.
+
+The integral is the Lebesgue integral, taken to be $0$ when the integrand is not integrable. The
+value for $t \le 0$ only makes $u$ defined for all real $t$ and $x$; the heat equation statement
+constrains $u$ only for $t > 0$. -/
 noncomputable def heatSolution (f : ℝ → ℝ) (t x : ℝ) : ℝ :=
   if 0 < t then
     (4 * Real.pi * t)⁻¹ ^ ((1 : ℝ) / 2) *
@@ -82,7 +88,15 @@ For continuous bounded `f : ℝ → ℝ`, the heat-kernel convolution `u := heat
 satisfies the 1D heat equation `∂_t u = ∂_x² u` on `(0, ∞) × ℝ` (in the sense that the
 required spatial derivatives exist and equal the time derivative), and `u(t, x) → f x`
 as `t ↓ 0` for every `x`. -/
-/-- Source: Classical heat-equation theory. Via leanprover/lean-eval@38361be, problem `heat_kernel_solves_heat_equation`. -/
+/-- **The Gaussian heat kernel solves the heat equation.** Let $f\colon \mathbb{R} \to \mathbb{R}$
+be continuous and bounded, and let $u(t, x)$ be the heat solution of $f$. Then for every
+$t > 0$ and every $x \in \mathbb{R}$ there are a function $u_x\colon \mathbb{R} \to \mathbb{R}$
+and a real number $u_{xx}$ such that $u(t, \cdot)$ has derivative $u_x(y)$ at every
+$y \in \mathbb{R}$, $u_x$ has derivative $u_{xx}$ at $x$, and $u(\cdot, x)$ has derivative
+$u_{xx}$ at $t$; that is, $\partial_t u = \partial_x^2 u$ on $(0, \infty) \times \mathbb{R}$.
+Moreover, for every $x \in \mathbb{R}$, $u(t, x) \to f(x)$ as $t \to 0$ from above.
+
+Source: Classical heat-equation theory. Via leanprover/lean-eval@38361be, problem `heat_kernel_solves_heat_equation`. -/
 public theorem_wanted heat_kernel_solves_heat_equation
     (f : ℝ → ℝ) (hf_cont : Continuous f) (hf_bdd : ∃ M : ℝ, ∀ x, |f x| ≤ M) :
     -- The PDE on (0, ∞) × ℝ.

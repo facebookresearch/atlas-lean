@@ -16,17 +16,17 @@ public import Mathlib.Topology.Instances.Complex
 
 namespace MathlibExt.Analysis.Complex.ScottishBook39Wanted
 
-/--
-Auerbach, Problem 39 of the Scottish Book. A function `φ` is said to satisfy:
-(1) `φ(x) ≥ 0` for all `x`, and `φ` is not identically `0` and not
-identically `1`; (2) `φ(x + y) ≤ φ(x) + φ(y)`; (3) `φ(x * y) = φ(x) * φ(y)`.
-The continuous functions meeting these conditions are exactly
-`φ(x) = |x|^α` with constant `α`, `0 < α ≤ 1`. The problem asks whether
-discontinuous functions meeting these conditions exist. The answer is yes:
-there is a discontinuous field automorphism `f` of the complex numbers, and
-`φ(x) = |f(x)|` satisfies (1), (2), (3) and is discontinuous. Condition (1)
-is read as in the addendum: `φ` is not identically `0` or `1`, since for
-`φ(x) = |f(x)|` one has `φ(0) = 0` and `φ(1) = 1`.
+/-- **Discontinuous subadditive multiplicative functions on $\mathbb{C}$.** There is a function
+$\varphi : \mathbb{C} \to \mathbb{R}$ that is not continuous, satisfies $\varphi(x) \ge 0$ for
+all $x \in \mathbb{C}$, is not identically $0$ and not identically $1$, and satisfies
+$\varphi(x + y) \le \varphi(x) + \varphi(y)$ and $\varphi(xy) = \varphi(x)\varphi(y)$ for all
+$x, y \in \mathbb{C}$.
+
+This answers Problem 39 of the Scottish Book (Auerbach), which notes that the continuous
+functions with these properties are exactly $\varphi(x) = |x|^\alpha$ with $0 < \alpha \le 1$ and
+asks whether discontinuous ones exist. Mazur's answer is $\varphi(x) = |f(x)|$ for a
+discontinuous field automorphism $f$ of $\mathbb{C}$.
+
 Source: H. Auerbach, Problem 39 of the Scottish Book; addendum of S. Mazur,
 10 April 1937, in the Scottish Book, via Lebesgue's theorem on the existence
 of a discontinuous automorphism of `ℂ` (Kamke); see the commentary in

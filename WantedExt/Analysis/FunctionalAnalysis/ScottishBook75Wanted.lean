@@ -17,12 +17,13 @@ public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.ScottishBook75Wanted
 
-/-- Mazur's Problem 75 from the Scottish Book, in the general
-Banach-space form for scalar-valued 2-polynomials: if a continuous
-2-polynomial `W` (given by `W x = B x x` for a continuous bilinear map
-`B`) is bounded in some `ε`-neighbourhood of a set `R`, is `W` then
-bounded in some `δ`-neighbourhood of the scaled set `α • R`, for every
-nonzero scalar `α`? -/
+/-- **Scottish Book Problem 75 (Mazur), general Banach-space form.** The claim that for every real
+Banach space $E$, every set $R \subseteq E$, every continuous bilinear form $B$ on $E$ and every
+real $\alpha \ne 0$ the following holds: if for some $\varepsilon > 0$ the values $|B(x, x)|$ are
+bounded on the open $\varepsilon$-neighbourhood of $R$, that is, for the $x \in E$ with
+$\operatorname{dist}(x, r) < \varepsilon$ for some $r \in R$, then for some $\delta > 0$ the values
+$|B(x, x)|$ are bounded on the open $\delta$-neighbourhood of the scaled set
+$\alpha R = \{\alpha r : r \in R\}$. -/
 def ScottishBookProblem75Claim : Prop :=
   ∀ (E : Type) [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
     (R : Set E) (B : E →L[ℝ] E →L[ℝ] ℝ) (α : ℝ), α ≠ 0 →
@@ -32,7 +33,12 @@ def ScottishBookProblem75Claim : Prop :=
       ∀ x : E, (∃ r ∈ R, dist x (α • r) < δ) → |B x x| ≤ C
 
 /--
-Mazur's Problem 75 is false in the general Banach-space form above.
+**Mazur's Scottish Book Problem 75 fails in general Banach spaces.** The Scottish Book Problem 75
+claim is false: there are a real Banach space $E$, a set $R \subseteq E$, a continuous bilinear
+form $B$ on $E$ and a real $\alpha \ne 0$ such that $|B(x, x)|$ is bounded on some open
+$\varepsilon$-neighbourhood of $R$ with $\varepsilon > 0$, but is unbounded on every open
+$\delta$-neighbourhood of $\alpha R = \{\alpha r : r \in R\}$ with $\delta > 0$.
+
 Source: S. Mazur, Problem 75 of the Scottish Book; refuted by
 V. Pestov, whose counterexample to Problem 55 is a continuous
 scalar-valued 2-polynomial `W` on `ℓ²`, bounded on an
