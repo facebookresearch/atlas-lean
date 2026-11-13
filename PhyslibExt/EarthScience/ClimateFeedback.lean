@@ -1,4 +1,4 @@
- /-
+/-
 Copyright (c) Meta Platforms, Inc. and affiliates.
 All rights reserved.
 
@@ -25,17 +25,24 @@ The scalar model `C*T' = F - lambda*T` has the explicit relaxation
 solution `T(t) = F/lambda + (T0 - F/lambda)*exp(-lambda*t/C)`. For the
 two-box system `Cs*Ts' = F - lambda*Ts - gamma*(Ts - Td)` and
 `Cd*Td' = gamma*(Ts - Td)`, the equilibrium is `Ts = Td = F/lambda`.
-For anomaly variables, `E = (Cs*xs^2 + Cd*xd^2)/2` satisfies
-`E' = -lambda*xs^2 - gamma*(xs - xd)^2 <= -c*E` with
-`c = min (2*lambda/(Cs + 2*Cd)) (gamma/Cd) > 0`. No nonlinear tipping
-or empirical sensitivity claim is made.
+For anomaly variables (departures from that equilibrium), solutions of
+the anomaly ODEs `Cs*xs' = -lambda*xs - gamma*(xs - xd)` and
+`Cd*xd' = gamma*(xs - xd)` have energy `E = (Cs*xs^2 + Cd*xd^2)/2` with
+`E' = -lambda*xs^2 - gamma*(xs - xd)^2 <= -c*E`, where
+`c = min (2*lambda/(Cs + 2*Cd)) (gamma/Cd) > 0`. The energy, its
+dissipation identity, and the rate `c` are an elementary estimate
+derived here, not taken from the references. No nonlinear tipping or
+empirical sensitivity claim is made.
 
 ## ii. Key results
 
 - `EarthScience.scalar_relaxation`: explicit relaxation solution and `T(0) = T0`.
 - `EarthScience.two_box_equilibrium`: equilibrium is `Ts = Td = F/lambda`.
 - `EarthScience.anomaly_energy_hasDerivAt`: `E' = -lambda*xs^2 - gamma*(xs-xd)^2`.
-- `EarthScience.anomaly_energy_decay`: `E' <= -c*E` with `c > 0`.
+- `EarthScience.anomaly_energy_dissipation_bound`: the algebraic bound
+  `-lambda*xs^2 - gamma*(xs-xd)^2 <= -c*E` with `c > 0`.
+- `EarthScience.anomaly_energy_decay`: along solutions of the anomaly
+  ODEs, `E' <= -c*E` with `c > 0`.
 
 ## iii. Table of contents
 
@@ -43,7 +50,22 @@ or empirical sensitivity claim is made.
 
 ## iv. References
 
-- See the individual theorem docstrings.
+- I. M. Held, M. Winton, K. Takahashi, T. Delworth, F. Zeng and
+  G. K. Vallis, "Probing the fast and slow components of global warming
+  by returning abruptly to preindustrial forcing", *J. Climate* 23
+  (2010), 2418-2427: the two-box model of a fast surface (upper-ocean)
+  box exchanging heat with a slow deep-ocean box.
+- O. Geoffroy, D. Saint-Martin, D. J. L. Olivié, A. Voldoire, G. Bellon
+  and S. Tytéca, "Transient climate response in a two-layer
+  energy-balance model. Part I: Analytical solution and parameter
+  calibration using CMIP5 AOGCM experiments", *J. Climate* 26 (2013),
+  1841-1857: the two-layer model, in this module's notation
+  `Cs*Ts' = F - lambda*Ts - gamma*(Ts - Td)` and
+  `Cd*Td' = gamma*(Ts - Td)`, its equilibrium, and its analytical
+  solution as a sum of two decaying modes.
+- The scalar model is the surface equation without deep-ocean exchange
+  (`gamma = 0`). The anomaly energy, its dissipation identity, and the
+  decay rate `c` are derived here.
 -/
 
 @[expose] public section
@@ -128,11 +150,11 @@ theorem anomaly_energy_hasDerivAt {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 
   field_simp
   ring
 
-/-- Anomaly-energy decay bound: with
-`c = min (2*lam/(Cs + 2*Cd)) (gam/Cd)`,
+/-- Anomaly-energy dissipation bound (algebraic, pointwise in the state):
+with `c = min (2*lam/(Cs + 2*Cd)) (gam/Cd)`,
 `-lam*xs^2 - gam*(xs-xd)^2 <= -c * (Cs*xs^2 + Cd*xd^2)/2`
 for all `xs, xd`, and `c > 0` when `lam, gam > 0`. -/
-theorem anomaly_energy_decay {Cs Cd lam gam xs xd : ℝ}
+lemma anomaly_energy_dissipation_bound {Cs Cd lam gam xs xd : ℝ}
     (hCs : 0 < Cs) (hCd : 0 < Cd) (hlam : 0 < lam) (hgam : 0 < gam) :
     0 < min (2 * lam / (Cs + 2 * Cd)) (gam / Cd) ∧
     -lam * xs ^ 2 - gam * (xs - xd) ^ 2
@@ -153,5 +175,23 @@ theorem anomaly_energy_decay {Cs Cd lam gam xs xd : ℝ}
   nlinarith [hxd, e1, e2, sq_nonneg xs, sq_nonneg (xs - xd),
     mul_nonneg hc0 hCd.le, mul_nonneg hc0 hCs.le, hc0, hCs.le, hCd.le]
 
+/-- Anomaly-energy decay: if `xs, xd` satisfy the anomaly ODEs
+`Cs*xs' = -lam*xs - gam*(xs - xd)` and `Cd*xd' = gam*(xs - xd)` at `t`,
+then `E(t) = (Cs*xs^2 + Cd*xd^2)/2` satisfies `E'(t) <= -c * E(t)` with
+`c = min (2*lam/(Cs + 2*Cd)) (gam/Cd) > 0`. Combines
+`anomaly_energy_hasDerivAt` with `anomaly_energy_dissipation_bound`. -/
+theorem anomaly_energy_decay {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 < Cd)
+    (hlam : 0 < lam) (hgam : 0 < gam) (xs xd : ℝ → ℝ) (t : ℝ)
+    (hxs : HasDerivAt xs ((-lam * xs t - gam * (xs t - xd t)) / Cs) t)
+    (hxd : HasDerivAt xd ((gam * (xs t - xd t)) / Cd) t) :
+    0 < min (2 * lam / (Cs + 2 * Cd)) (gam / Cd) ∧
+      deriv (fun t => (Cs * (xs t) ^ 2 + Cd * (xd t) ^ 2) / 2) t ≤
+        -(min (2 * lam / (Cs + 2 * Cd)) (gam / Cd)) *
+          ((Cs * (xs t) ^ 2 + Cd * (xd t) ^ 2) / 2) := by
+  obtain ⟨hc, hbound⟩ :=
+    anomaly_energy_dissipation_bound (xs := xs t) (xd := xd t) hCs hCd hlam hgam
+  refine ⟨hc, ?_⟩
+  rw [(anomaly_energy_hasDerivAt hCs hCd xs xd t hxs hxd).deriv]
+  exact hbound.trans_eq (by ring)
 
 end EarthScience
