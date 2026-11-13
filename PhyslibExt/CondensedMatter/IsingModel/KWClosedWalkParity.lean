@@ -530,11 +530,10 @@ lemma subgraphF_le_of_subset {Gd : SimpleGraph V} [DecidableRel Gd.Adj]
   exact this
 
 omit [DecidableEq V] in
+@[deprecated "Use `SimpleGraph.not_isDiag_of_mem_edgeFinset`." (since := "2026-11-12")]
 lemma evenSubgraphs_no_diag {Gd : SimpleGraph V} [DecidableRel Gd.Adj]
-    {F : Finset (Sym2 V)} (hFsub : F ⊆ Gd.edgeFinset) (e : Sym2 V) (he : e ∈ F) : ¬ e.IsDiag := by
-  have : e ∈ Gd.edgeFinset := hFsub he
-  rw [SimpleGraph.mem_edgeFinset] at this
-  exact Gd.not_isDiag_of_mem_edgeSet this
+    {F : Finset (Sym2 V)} (hFsub : F ⊆ Gd.edgeFinset) (e : Sym2 V) (he : e ∈ F) : ¬ e.IsDiag :=
+  SimpleGraph.not_isDiag_of_mem_edgeFinset (hFsub he)
 
 omit [Fintype V] in
 lemma edges_mapLe_toFinset {G H : SimpleGraph V} (h : G ≤ H) {a b : V} (p : G.Walk a b) :
@@ -548,7 +547,7 @@ lemma evenSubgraphWalkDecomp_general (Gd : SimpleGraph V) [DecidableRel Gd.Adj] 
   intro F hF
   rw [evenSubgraphs, Finset.mem_filter, Finset.mem_powerset] at hF
   obtain ⟨hFsub, hFev⟩ := hF
-  have hF_no_diag : ∀ e ∈ F, ¬ e.IsDiag := fun e he => evenSubgraphs_no_diag hFsub e he
+  have hF_no_diag : ∀ e ∈ F, ¬ e.IsDiag := fun e he => not_isDiag_of_mem_edgeFinset (hFsub he)
   obtain ⟨ι, hιdec, s, w, W, hcov, hdisj⟩ := evenSubgraph_decomp F hF_no_diag hFev
   have hle : subgraphF F ≤ Gd := subgraphF_le_of_subset hFsub
   have hbu : s.biUnion (fun i => (W i).edges.toFinset)
