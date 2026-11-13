@@ -11,6 +11,7 @@ module
 public import MathlibExt.Probability.Donsker
 import Mathlib.MeasureTheory.Constructions.BorelSpace.ContinuousMap
 import Mathlib.Probability.Moments.Variance
+import MathlibExt.Probability.Martingale.McLeishCLT
 
 @[expose] public section
 
@@ -18,6 +19,8 @@ open scoped BigOperators
 
 open MeasureTheory ProbabilityTheory
 open MathlibExt.Probability.DonskerWanted
+open MathlibExt.Probability.Martingale
+open scoped NNReal
 
 namespace MathlibExtTest.Probability.Donsker
 
@@ -58,5 +61,70 @@ example {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure
         ENNReal.ofReal (Var[fun ω => ∑ i ∈ Finset.range k, X i ω; P] / a ^ 2)) := by
       gcongr with k hk
       simpa [hmean k] using meas_ge_le_variance_div_sq (hLp k) ha
+
+-- Boundary computed from the definition of the variance formula, not via the adapter: for one
+-- time `t` and coefficient `1` the double sum is `t`, the variance of `B t`.
+example (t : Set.Icc (0 : ℝ) 1) :
+    (∑ s : ({t} : Finset (Set.Icc (0 : ℝ) 1)), ∑ u : ({t} : Finset (Set.Icc (0 : ℝ) 1)),
+      (fun _ => (1 : ℝ)) s * (fun _ => (1 : ℝ)) u * (min (s : Set.Icc (0 : ℝ) 1) u).1) = t.1 := by
+  simp
+
+-- Same, at the left endpoint: the variance is `0`, so the predicted law is the Dirac mass.
+example (c : ({⟨0, le_rfl, zero_le_one⟩} : Finset (Set.Icc (0 : ℝ) 1)) → ℝ) :
+    gaussianReal 0 (∑ s : ({⟨0, le_rfl, zero_le_one⟩} : Finset (Set.Icc (0 : ℝ) 1)),
+      ∑ u : ({⟨0, le_rfl, zero_le_one⟩} : Finset (Set.Icc (0 : ℝ) 1)),
+        c s * c u * (min (s : Set.Icc (0 : ℝ) 1) u).1).toNNReal = Measure.dirac 0 := by
+  simp
+
+-- Cross-check against an independent route: the adapter's one-point law of `Zc · t` agrees with
+-- Mathlib's `IsPreBrownianReal.hasLaw_eval` transported along the a.e. equality `Zc = B`.
+example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'}
+    (B : ℝ≥0 → Ω' → ℝ) (hB : IsBrownianReal B P') (t : Set.Icc (0 : ℝ) 1) :
+    ∃ Zc : Ω' → C(Set.Icc (0 : ℝ) 1, ℝ), Measurable Zc ∧
+      P'.map (fun ω => Zc ω t) = gaussianReal 0 (iccToNNReal t) ∧
+      P'.map (fun ω => ∑ s : ({t} : Finset (Set.Icc (0 : ℝ) 1)), (1 : ℝ) * Zc ω s) =
+        gaussianReal 0 (iccToNNReal t) := by
+  obtain ⟨Zc, hm, hae, hZ⟩ := exists_measurable_brownianPath_gaussian B hB
+  refine ⟨Zc, hm, ?_, ?_⟩
+  · rw [Measure.map_congr (g := B (iccToNNReal t)) (by filter_upwards [hae] with ω hω using hω t)]
+    exact (hB.hasLaw_eval (iccToNNReal t)).map_eq
+  · rw [hZ {t} (fun _ => 1)]
+    congr 1
+    ext
+    simp [iccToNNReal, t.2.1]
+    rfl
+
+-- The adapter output is pinned at `0` at the left endpoint, as Brownian motion is.
+example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'}
+    (B : ℝ≥0 → Ω' → ℝ) (hB : IsBrownianReal B P') :
+    ∃ Zc : Ω' → C(Set.Icc (0 : ℝ) 1, ℝ), Measurable Zc ∧
+      ∀ᵐ ω ∂P', Zc ω ⟨0, le_rfl, zero_le_one⟩ = 0 := by
+  obtain ⟨Zc, hm, hae, -⟩ := exists_measurable_brownianPath_gaussian B hB
+  refine ⟨Zc, hm, ?_⟩
+  filter_upwards [hae, hB.eval_zero_ae_eq_zero] with ω h1 h2
+  rw [h1]
+  exact h2
+
+-- Downstream use: the adapter discharges the `hZm` and `hZ` inputs of McLeish's
+-- finite-dimensional CLT, so its conclusion (the `hT81` input of the martingale functional CLT)
+-- holds with a Brownian limit.
+example {Ω : Type*} [m0 : MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
+    {𝓕 : ℕ → Filtration ℕ m0} {ξ : ℕ → ℕ → Ω → ℝ}
+    (hξ : ∀ n i, StronglyMeasurable[𝓕 n (i + 1)] (ξ n i))
+    (hmds : ∀ n i, μ[ξ n i | 𝓕 n i] =ᵐ[μ] 0) (hL2 : ∀ n i, MemLp (ξ n i) 2 μ)
+    (hLind : LindebergConditionTriangular ξ μ)
+    (hRQV : ∀ t : Set.Icc (0 : ℝ) 1, TendstoInMeasure μ
+      (fun (n : ℕ) ω => ∑ j ∈ Finset.range ⌊(n : ℝ) * t.1⌋₊, ξ n j ω ^ 2) Filter.atTop
+        (fun _ => t.1))
+    (B : ℝ≥0 → Ω' → ℝ) (hB : IsBrownianReal B P') :
+    ∃ Zc : Ω' → C(Set.Icc (0 : ℝ) 1, ℝ),
+      (∀ᵐ ω ∂P', ∀ t : Set.Icc (0 : ℝ) 1, Zc ω t = B (iccToNNReal t) ω) ∧
+      ∀ I : Finset (Set.Icc (0 : ℝ) 1), TendstoInDistribution
+        (fun (n : ℕ) ω => I.restrict (fun t => ∑ i ∈ Finset.range ⌊(n : ℝ) * t.1⌋₊, ξ n i ω))
+        Filter.atTop (fun ω => I.restrict (fun t => Zc ω t)) (fun _ => μ) P' := by
+  obtain ⟨Zc, hm, hae, hZ⟩ := exists_measurable_brownianPath_gaussian B hB
+  exact ⟨Zc, hae, tendstoInDistribution_fdd_martingaleDifference_floor hξ hmds hL2 hLind hRQV
+    Zc hm hZ⟩
 
 end MathlibExtTest.Probability.Donsker
