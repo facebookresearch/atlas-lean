@@ -7,6 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 import PhyslibExt.EarthScience.Overturning
 
 /-!
@@ -38,7 +40,7 @@ No new definitions or results are introduced here.
 - `PhyslibExt.EarthScience.Overturning`
 -/
 
-/-- Stommel sign: positive and negative cases. -/
+/-- Shape of the Stommel sign classification at `DeltaT = 10, DeltaS = 1`. -/
 example : (0 < (1 : ℝ) * ((2e-4 : ℝ) * 10 - (8e-4 : ℝ) * 1) ↔
       0 < (2e-4 : ℝ) * 10 - (8e-4 : ℝ) * 1) ∧
     ((1 : ℝ) * ((2e-4 : ℝ) * 10 - (8e-4 : ℝ) * 1) = 0 ↔
@@ -46,6 +48,16 @@ example : (0 < (1 : ℝ) * ((2e-4 : ℝ) * 10 - (8e-4 : ℝ) * 1) ↔
       ((1 : ℝ) * ((2e-4 : ℝ) * 10 - (8e-4 : ℝ) * 1) < 0 ↔
         (2e-4 : ℝ) * 10 - (8e-4 : ℝ) * 1 < 0) :=
   EarthScience.stommel_exchange_sign (show (0 : ℝ) < 1 by norm_num)
+
+/-- Stommel sign, positive case `DeltaT = 10, DeltaS = 1`: the bracket is
+`2e-4 * 10 - 8e-4 * 1 = 0.0012 > 0`, so `q > 0`. -/
+example : 0 < (1 : ℝ) * ((2e-4 : ℝ) * 10 - (8e-4 : ℝ) * 1) :=
+  (EarthScience.stommel_exchange_sign (show (0 : ℝ) < 1 by norm_num)).1.2 (by norm_num)
+
+/-- Stommel sign, negative case `DeltaT = 0, DeltaS = 1`: the bracket is
+`2e-4 * 0 - 8e-4 * 1 = -0.0008 < 0`, so `q < 0`. -/
+example : (1 : ℝ) * ((2e-4 : ℝ) * 0 - (8e-4 : ℝ) * 1) < 0 :=
+  (EarthScience.stommel_exchange_sign (show (0 : ℝ) < 1 by norm_num)).2.2.2 (by norm_num)
 
 /-- Public shape of the closed-loop total-salt theorem: each balance has the incoming flux
 `|q| * S_other` and the outgoing flux `|q| * S_self`. -/
