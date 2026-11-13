@@ -52,11 +52,9 @@ For `k₋₂ = 0` this is the irreversible system `MichaelisMenten.IsSolution`
 
 ## Not covered
 
-Convergence of every solution to the equilibrium of its class (global asymptotic stability) is
-**not** proved here. A Lyapunov function exists in the repository: the pseudo-Helmholtz function
-of `MathlibExt.Biology.Dynamics.ComplexBalanced` is nonincreasing along positive solutions
-(`antitoneOn_pseudoHelmholtz`). What is missing is the LaSalle-type convergence step, which
-neither file provides.
+Convergence of every solution to the equilibrium of its class is proved in
+`MathlibExt.Analysis.ODE.LaSalle` (`IsSolution.tendsto_equilibrium`), using LaSalle's principle
+with the pseudo-Helmholtz function. It lives there, not here, because that file imports this one.
 
 ## Source receipt (API-00 reuse gate)
 
