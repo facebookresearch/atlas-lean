@@ -21,7 +21,7 @@ equilibrium `(1, 1)`, the combined budget and energy identities at
 
 These are elaboration and non-vacuity checks, not new results. The
 exponential bound is not instantiated here: no closed-form solution
-is introduced in the tests; the bound theorem itself is the checked
+is introduced in the tests; the bound lemma itself is the checked
 statement.
 
 ## ii. Key results

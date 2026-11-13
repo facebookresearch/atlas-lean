@@ -24,7 +24,7 @@ public import Mathlib.Tactic.Ring
 ## i. Overview
 
 Synthetic nondimensional two-box model with `Cs = Cd = lam = γ = F = 1`.
-The ODE, stated directly in the theorems below, is
+The ODE, stated directly in the lemmas below, is
 `Ts' = 1 - Ts - (Ts - Td)`, `Td' = Ts - Td`. Equilibrium observations
 `T = 1, F = 1` identify `lam = 1` only under this model. This is a
 nondimensional teaching example; synthetic agreement does not validate
@@ -62,13 +62,13 @@ namespace EarthScience
 /-- Capstone (two-box model, `Cs = Cd = lam = γ = F = 1`):
 equilibrium `(Ts, Td) = (1, 1)` annihilates both right-hand sides:
 `1 - 1 - (1 - 1) = 0` and `1 - 1 = 0`. -/
-theorem two_box_equilibrium :
+lemma two_box_equilibrium :
     (1 : ℝ) - 1 - (1 - 1) = 0 ∧ (1 : ℝ) - 1 = 0 := by
   constructor <;> norm_num
 
 /-- Combined budget: if `Ts' = 1 - Ts - (Ts - Td)` and `Td' = Ts - Td`
 then `(Ts + Td)' = Ts' + Td' = 1 - Ts`. -/
-theorem two_box_combined_budget {Ts Td Ts' Td' : ℝ}
+lemma two_box_combined_budget {Ts Td Ts' Td' : ℝ}
     (hTs : Ts' = 1 - Ts - (Ts - Td)) (hTd : Td' = Ts - Td) :
     Ts' + Td' = 1 - Ts := by
   linarith [hTs, hTd]
@@ -77,7 +77,7 @@ theorem two_box_combined_budget {Ts Td Ts' Td' : ℝ}
 derivative of `E = ((Ts - 1) ^ 2 + (Td - 1) ^ 2) / 2` along the flow,
 `(Ts - 1) * Ts' + (Td - 1) * Td'`, equals
 `-((Ts - 1) ^ 2 + (Ts - Td) ^ 2)`. -/
-theorem two_box_energy_derivative {Ts Td Ts' Td' : ℝ}
+lemma two_box_energy_derivative {Ts Td Ts' Td' : ℝ}
     (hTs : Ts' = 1 - Ts - (Ts - Td)) (hTd : Td' = Ts - Td) :
     (Ts - 1) * Ts' + (Td - 1) * Td'
       = -((Ts - 1) ^ 2 + (Ts - Td) ^ 2) := by
@@ -86,7 +86,7 @@ theorem two_box_energy_derivative {Ts Td Ts' Td' : ℝ}
 
 /-- Differential energy inequality: the same derivative is at most
 `-(2 / 3) * E`, where `E = ((Ts - 1) ^ 2 + (Td - 1) ^ 2) / 2`. -/
-theorem two_box_energy_differential_inequality {Ts Td Ts' Td' : ℝ}
+lemma two_box_energy_differential_inequality {Ts Td Ts' Td' : ℝ}
     (hTs : Ts' = 1 - Ts - (Ts - Td)) (hTd : Td' = Ts - Td) :
     (Ts - 1) * Ts' + (Td - 1) * Td'
       ≤ -(2 / 3) * (((Ts - 1) ^ 2 + (Td - 1) ^ 2) / 2) := by
@@ -100,7 +100,7 @@ theorem two_box_energy_differential_inequality {Ts Td Ts' Td' : ℝ}
 every `t` and start at `Ts 0 = Td 0 = 0` (so `E 0 = 1`), then for
 `t ≥ 0`, `E t ≤ exp (-(2 / 3) * t)`, i.e.
 `E t ≤ E 0 * exp (-(2 / 3) * t)`. -/
-theorem two_box_energy_bound {Ts Td : ℝ → ℝ}
+lemma two_box_energy_bound {Ts Td : ℝ → ℝ}
     (hODE : ∀ t : ℝ, HasDerivAt Ts (1 - Ts t - (Ts t - Td t)) t ∧
       HasDerivAt Td (Ts t - Td t) t)
     (hTs0 : Ts 0 = 0) (hTd0 : Td 0 = 0) :
