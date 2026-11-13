@@ -1,6 +1,6 @@
 # Verification — development source `7a5f47d`
 
-Run all commands below from `Atlas/CPythonListsort` in the ATLAS repository.
+Run all commands below from `CPythonListsort` in the ATLAS repository.
 The exported development snapshot is
 `7a5f47de2501d41980fafa0a363c61c2a2fa688c`, as recorded in
 [`sources/upstream-pins.md`](../sources/upstream-pins.md). This is the source

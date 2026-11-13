@@ -1745,7 +1745,7 @@ theorem isSimplyConnected_loewnerUnswallowedDomain
 /-! ## Holomorphic dependence on the initial point
 
 The following variational argument is migrated from
-`Atlas/StatisticalMechanics/Code/SLE/LoewnerHolomorphicDependence.lean`. It proves that the
+`StatisticalMechanics/Code/SLE/LoewnerHolomorphicDependence.lean`. It proves that the
 homeomorphism `g_t : H_t → ℍ` has nonzero complex derivative, hence is conformal.
 -/
 

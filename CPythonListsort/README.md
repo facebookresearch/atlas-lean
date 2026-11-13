@@ -230,7 +230,7 @@ Use Lean `v4.33.1` and run the commands in
 [`verify/VERIFY.md`](verify/VERIFY.md).  In short:
 
 ```sh
-cd Atlas/CPythonListsort
+cd CPythonListsort
 python3 verify/verify_excerpts.py
 python3 verify/verify_trust_boundary.py
 lake build
