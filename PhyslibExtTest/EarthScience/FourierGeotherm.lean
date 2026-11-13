@@ -15,7 +15,7 @@ import PhyslibExt.EarthScience.FourierGeotherm
 Concrete consumers of `PhyslibExt.EarthScience.FourierGeotherm`:
 gradient magnitude at the stated flux, the linear profile at
 `T₀ = 300` (`T(1000) = 280`, derivative `-(2 / 100)`, flux `6 / 100`),
-and the constant-gradient boundary.
+the constant gradient, and the zero second derivative.
 
 ## i. Overview
 
@@ -48,4 +48,8 @@ example : HasDerivAt (fun z => (300 : ℝ) - (2 / 100 : ℝ) * z) (-(2 / 100 : �
 
 /-- Constant gradient at `T₀ = 300`: derivative is `-(2 / 100)` everywhere. -/
 example (z : ℝ) : deriv (fun z => (300 : ℝ) - (2 / 100 : ℝ) * z) z = -(2 / 100 : ℝ) :=
+  EarthScience.geotherm_deriv_const (T₀ := 300) z
+
+/-- Zero production at `T₀ = 300`: the second derivative is `0` everywhere. -/
+example (z : ℝ) : iteratedDeriv 2 (fun z => (300 : ℝ) - (2 / 100 : ℝ) * z) z = 0 :=
   EarthScience.geotherm_second_derivative_zero (T₀ := 300) z
