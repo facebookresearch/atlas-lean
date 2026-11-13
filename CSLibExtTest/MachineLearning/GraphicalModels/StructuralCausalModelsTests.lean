@@ -775,7 +775,8 @@ def ca05t04_testSCM : FiniteSCM Bool 3 (fun _ => Bool) where
   f := fun _ _ u => u
 
 /-- Test noise laws: point mass on `true`. -/
-noncomputable def ca05t04_testMu : (k : Fin 3) → StdSimplex ℝ Bool := fun _ => StdSimplex.single true
+noncomputable def ca05t04_testMu : (k : Fin 3) → StdSimplex ℝ Bool :=
+  fun _ => StdSimplex.single true
 
 theorem ca05t04_test_hdesc : ∀ z ∈ ({0} : Finset (Fin 3)),
     ¬ (ca05t04_testSCM.inducedBayesNet ca05t04_testMu).IsDescendant 1 z := by
@@ -829,6 +830,457 @@ example : CondIndepDiscrete (noiseMeasure ca05t04_testMu) (ca05t04_testSCM.treat
   exact condIndepDiscrete_of_backdoor ca05t04_testSCM ca05t04_testMu 1 2 true true
     (fun b => if b then (1 : ℝ) else 0) {0} ca05t04_test_hdesc ca05t04_test_hblock
 
+
+/-- Nondegenerate confounded model `Z → T → Y`, `Z → Y` on `Bool`: node `0` is the
+confounder, node `1` the treatment, node `2` the outcome. Parents: `pa 0 = ∅`, `pa 1 = {0}`,
+`pa 2 = {0, 1}`. All three noise laws are fair coins (strictly positive on `true` and `false`),
+`T = Z ∨ U_T` genuinely depends on the confounder, and `Y = (Z ∧ T) ∨ U_Y` genuinely depends
+on both `Z` and `T`. The interventional law `P(Y_{T←true} = true)` is `3/4` while the naive
+observational conditional `P(Y = true | T = true)` is `5/6`, so adjustment matters. -/
+def ca05t04_nd_pa : (k : Fin 3) → Finset (Fin k) :=
+  fun k => if k.val = 0 then ∅ else Finset.univ
+
+def ca05t04_nd_f : (k : Fin 3) → (ca05t04_nd_pa k → Bool) → Bool → Bool := fun k =>
+  if h0 : k.val = 0 then fun _ u => u
+  else if _h1 : k.val = 1 then fun z u =>
+    (z ⟨⟨0, by have hk := k.2; omega⟩, by simp [ca05t04_nd_pa, h0]⟩) || u
+  else fun z u =>
+    ((z ⟨⟨0, by have hk := k.2; omega⟩, by simp [ca05t04_nd_pa, h0]⟩) &&
+      (z ⟨⟨1, by have hk := k.2; omega⟩, by simp [ca05t04_nd_pa, h0]⟩)) || u
+
+def ca05t04_nd_SCM : FiniteSCM Bool 3 (fun _ => Bool) := ⟨ca05t04_nd_pa, ca05t04_nd_f⟩
+
+/-- A fair coin on `Bool`: strictly positive on both values. -/
+noncomputable def ca05t04_nd_coin : StdSimplex ℝ Bool where
+  weights := Finsupp.single true (1/2 : ℝ) + Finsupp.single false (1/2 : ℝ)
+  nonneg := by
+    intro x
+    cases x <;> simp [Finsupp.add_apply, Finsupp.single_apply] <;> norm_num
+  total := by
+    first
+      | (simp [Finsupp.sum_add_index, Finsupp.sum_single_index]; norm_num)
+      | (simp [Finsupp.sum_add_index', Finsupp.sum_single_index]; norm_num)
+      | (rw [Finsupp.sum_fintype (fun _ => rfl)]
+         simp [Fintype.sum_bool, Finsupp.add_apply, Finsupp.single_apply]
+         norm_num)
+
+/-- Test noise laws: a fair coin at every node. -/
+noncomputable def ca05t04_nd_μ : (k : Fin 3) → StdSimplex ℝ Bool :=
+  fun _ => ca05t04_nd_coin
+
+theorem ca05t04_nd_w_true (k : Fin 3) : (ca05t04_nd_μ k).weights true = (1/2 : ℝ) := by
+  show (Finsupp.single true (1/2 : ℝ) + Finsupp.single false (1/2 : ℝ)) true = _
+  simp [Finsupp.add_apply, Finsupp.single_apply]
+
+theorem ca05t04_nd_w_false (k : Fin 3) : (ca05t04_nd_μ k).weights false = (1/2 : ℝ) := by
+  show (Finsupp.single true (1/2 : ℝ) + Finsupp.single false (1/2 : ℝ)) false = _
+  simp [Finsupp.add_apply, Finsupp.single_apply]
+
+/-- Both noise values have strictly positive weight at every node. -/
+theorem ca05t04_nd_pos_true (k : Fin 3) : 0 < (ca05t04_nd_μ k).weights true := by
+  rw [ca05t04_nd_w_true]; norm_num
+
+theorem ca05t04_nd_pos_false (k : Fin 3) : 0 < (ca05t04_nd_μ k).weights false := by
+  rw [ca05t04_nd_w_false]; norm_num
+
+/-- `T = Z ∨ U_T` genuinely depends on the confounder `Z`: flipping the parent value at fixed
+noise flips the treatment. -/
+example : ca05t04_nd_SCM.f 1 (fun _ => true) false
+    ≠ ca05t04_nd_SCM.f 1 (fun _ => false) false := by
+  decide
+
+/-- `Y = (Z ∧ T) ∨ U_Y` genuinely depends on `Z`: varying the `Z` parent at fixed `T` parent
+and fixed noise changes the outcome. -/
+example : ca05t04_nd_SCM.f 2 (fun _ => true) false
+    ≠ ca05t04_nd_SCM.f 2 (fun j => decide (j.val.val = 1)) false := by
+  decide
+
+/-- `Y = (Z ∧ T) ∨ U_Y` genuinely depends on `T`: varying the `T` parent at fixed `Z` parent
+and fixed noise changes the outcome. -/
+example : ca05t04_nd_SCM.f 2 (fun _ => true) false
+    ≠ ca05t04_nd_SCM.f 2 (fun j => decide (j.val.val = 0)) false := by
+  decide
+
+/-- Every noise value has weight `(1/2)^3 = 1/8`. -/
+theorem ca05t04_nd_weight_all (u : (k : Fin 3) → Bool) :
+    noiseWeight ca05t04_nd_μ u = 1/8 := by
+  unfold noiseWeight
+  rw [Fin.prod_univ_three]
+  cases h0 : u 0 <;> cases h1 : u 1 <;> cases h2 : u 2 <;>
+    simp only [ca05t04_nd_w_true, ca05t04_nd_w_false] <;> norm_num
+
+/-- Enumeration of the eight noise values. -/
+def ca05t04_nd_equiv : ((k : Fin 3) → Bool) ≃ Bool × Bool × Bool where
+  toFun u := (u 0, u 1, u 2)
+  invFun p := ![p.1, p.2.1, p.2.2]
+  left_inv u := by funext k; fin_cases k <;> simp
+  right_inv p := by obtain ⟨a, b, c⟩ := p; simp
+
+/-- A sum over the noise values, as an explicit sum. -/
+theorem ca05t04_nd_sum8 (g : ((k : Fin 3) → Bool) → ℝ) :
+    ∑ u, g u
+      = ((g ![true, true, true] + g ![true, true, false])
+        + (g ![true, false, true] + g ![true, false, false]))
+        + ((g ![false, true, true] + g ![false, true, false])
+        + (g ![false, false, true] + g ![false, false, false])) := by
+  have h := ca05t04_nd_equiv.symm.sum_comp g
+  rw [← h]
+  simp only [show ∀ p : Bool × Bool × Bool, ca05t04_nd_equiv.symm p = ![p.1, p.2.1, p.2.2]
+    from fun p => rfl]
+  rw [Fintype.sum_prod_type]
+  simp only [Fintype.sum_prod_type, Fintype.sum_bool]
+
+/-- Treatment values `T = Z ∨ U_T` on the eight noise values. -/
+theorem ca05t04_nd_t_ttt : ca05t04_nd_SCM.solve ![true, true, true] 1 = true := by decide
+theorem ca05t04_nd_t_ttf : ca05t04_nd_SCM.solve ![true, true, false] 1 = true := by decide
+theorem ca05t04_nd_t_tft : ca05t04_nd_SCM.solve ![true, false, true] 1 = true := by decide
+theorem ca05t04_nd_t_tff : ca05t04_nd_SCM.solve ![true, false, false] 1 = true := by decide
+theorem ca05t04_nd_t_ftt : ca05t04_nd_SCM.solve ![false, true, true] 1 = true := by decide
+theorem ca05t04_nd_t_ftf : ca05t04_nd_SCM.solve ![false, true, false] 1 = true := by decide
+theorem ca05t04_nd_t_fft : ¬ (ca05t04_nd_SCM.solve ![false, false, true] 1 = true) := by decide
+theorem ca05t04_nd_t_fff : ¬ (ca05t04_nd_SCM.solve ![false, false, false] 1 = true) := by decide
+
+/-- `Y ∧ T` on the eight noise values. -/
+theorem ca05t04_nd_n_ttt : ca05t04_nd_SCM.solve ![true, true, true] 2 = true ∧
+    ca05t04_nd_SCM.solve ![true, true, true] 1 = true := by
+  decide
+theorem ca05t04_nd_n_ttf : ca05t04_nd_SCM.solve ![true, true, false] 2 = true ∧
+    ca05t04_nd_SCM.solve ![true, true, false] 1 = true := by
+  decide
+theorem ca05t04_nd_n_tft : ca05t04_nd_SCM.solve ![true, false, true] 2 = true ∧
+    ca05t04_nd_SCM.solve ![true, false, true] 1 = true := by
+  decide
+theorem ca05t04_nd_n_tff : ca05t04_nd_SCM.solve ![true, false, false] 2 = true ∧
+    ca05t04_nd_SCM.solve ![true, false, false] 1 = true := by
+  decide
+theorem ca05t04_nd_n_ftt : ca05t04_nd_SCM.solve ![false, true, true] 2 = true ∧
+    ca05t04_nd_SCM.solve ![false, true, true] 1 = true := by
+  decide
+theorem ca05t04_nd_n_ftf : ¬ (ca05t04_nd_SCM.solve ![false, true, false] 2 = true ∧
+    ca05t04_nd_SCM.solve ![false, true, false] 1 = true) := by
+  decide
+theorem ca05t04_nd_n_fft : ¬ (ca05t04_nd_SCM.solve ![false, false, true] 2 = true ∧
+    ca05t04_nd_SCM.solve ![false, false, true] 1 = true) := by
+  decide
+theorem ca05t04_nd_n_fff : ¬ (ca05t04_nd_SCM.solve ![false, false, false] 2 = true ∧
+    ca05t04_nd_SCM.solve ![false, false, false] 1 = true) := by
+  decide
+
+/-- Counterfactual outcome `Y_{T←true} = Z ∨ U_Y` on the eight noise values. -/
+theorem ca05t04_nd_c_ttt :
+    ca05t04_nd_SCM.counterfactual 1 true ![true, true, true] 2 = true := by
+  decide
+theorem ca05t04_nd_c_ttf :
+    ca05t04_nd_SCM.counterfactual 1 true ![true, true, false] 2 = true := by
+  decide
+theorem ca05t04_nd_c_tft :
+    ca05t04_nd_SCM.counterfactual 1 true ![true, false, true] 2 = true := by
+  decide
+theorem ca05t04_nd_c_tff :
+    ca05t04_nd_SCM.counterfactual 1 true ![true, false, false] 2 = true := by
+  decide
+theorem ca05t04_nd_c_ftt :
+    ca05t04_nd_SCM.counterfactual 1 true ![false, true, true] 2 = true := by
+  decide
+theorem ca05t04_nd_c_ftf :
+    ¬ (ca05t04_nd_SCM.counterfactual 1 true ![false, true, false] 2 = true) := by
+  decide
+theorem ca05t04_nd_c_fft :
+    ca05t04_nd_SCM.counterfactual 1 true ![false, false, true] 2 = true := by
+  decide
+theorem ca05t04_nd_c_fff :
+    ¬ (ca05t04_nd_SCM.counterfactual 1 true ![false, false, false] 2 = true) := by
+  decide
+
+/-- `T ∧ (Z = true)` on the eight noise values. -/
+theorem ca05t04_nd_zt_ttt : ca05t04_nd_SCM.solve ![true, true, true] 1 = true ∧
+    ca05t04_nd_SCM.solve ![true, true, true] 0 = true := by
+  decide
+theorem ca05t04_nd_zt_ttf : ca05t04_nd_SCM.solve ![true, true, false] 1 = true ∧
+    ca05t04_nd_SCM.solve ![true, true, false] 0 = true := by
+  decide
+theorem ca05t04_nd_zt_tft : ca05t04_nd_SCM.solve ![true, false, true] 1 = true ∧
+    ca05t04_nd_SCM.solve ![true, false, true] 0 = true := by
+  decide
+theorem ca05t04_nd_zt_tff : ca05t04_nd_SCM.solve ![true, false, false] 1 = true ∧
+    ca05t04_nd_SCM.solve ![true, false, false] 0 = true := by
+  decide
+theorem ca05t04_nd_zt_ftt : ¬ (ca05t04_nd_SCM.solve ![false, true, true] 1 = true ∧
+    ca05t04_nd_SCM.solve ![false, true, true] 0 = true) := by
+  decide
+theorem ca05t04_nd_zt_ftf : ¬ (ca05t04_nd_SCM.solve ![false, true, false] 1 = true ∧
+    ca05t04_nd_SCM.solve ![false, true, false] 0 = true) := by
+  decide
+theorem ca05t04_nd_zt_fft : ¬ (ca05t04_nd_SCM.solve ![false, false, true] 1 = true ∧
+    ca05t04_nd_SCM.solve ![false, false, true] 0 = true) := by
+  decide
+theorem ca05t04_nd_zt_fff : ¬ (ca05t04_nd_SCM.solve ![false, false, false] 1 = true ∧
+    ca05t04_nd_SCM.solve ![false, false, false] 0 = true) := by
+  decide
+
+/-- `T ∧ (Z = false)` on the eight noise values. -/
+theorem ca05t04_nd_zf_ttt : ¬ (ca05t04_nd_SCM.solve ![true, true, true] 1 = true ∧
+    ca05t04_nd_SCM.solve ![true, true, true] 0 = false) := by
+  decide
+theorem ca05t04_nd_zf_ttf : ¬ (ca05t04_nd_SCM.solve ![true, true, false] 1 = true ∧
+    ca05t04_nd_SCM.solve ![true, true, false] 0 = false) := by
+  decide
+theorem ca05t04_nd_zf_tft : ¬ (ca05t04_nd_SCM.solve ![true, false, true] 1 = true ∧
+    ca05t04_nd_SCM.solve ![true, false, true] 0 = false) := by
+  decide
+theorem ca05t04_nd_zf_tff : ¬ (ca05t04_nd_SCM.solve ![true, false, false] 1 = true ∧
+    ca05t04_nd_SCM.solve ![true, false, false] 0 = false) := by
+  decide
+theorem ca05t04_nd_zf_ftt : ca05t04_nd_SCM.solve ![false, true, true] 1 = true ∧
+    ca05t04_nd_SCM.solve ![false, true, true] 0 = false := by
+  decide
+theorem ca05t04_nd_zf_ftf : ca05t04_nd_SCM.solve ![false, true, false] 1 = true ∧
+    ca05t04_nd_SCM.solve ![false, true, false] 0 = false := by
+  decide
+theorem ca05t04_nd_zf_fft : ¬ (ca05t04_nd_SCM.solve ![false, false, true] 1 = true ∧
+    ca05t04_nd_SCM.solve ![false, false, true] 0 = false) := by
+  decide
+theorem ca05t04_nd_zf_fff : ¬ (ca05t04_nd_SCM.solve ![false, false, false] 1 = true ∧
+    ca05t04_nd_SCM.solve ![false, false, false] 0 = false) := by
+  decide
+
+/-- The naive numerator `P(Y = true ∧ T = true)` is `5/8`. -/
+theorem ca05t04_nd_naive_num : (noiseMeasure ca05t04_nd_μ).real
+    ({u | ca05t04_nd_SCM.solve u 2 = true} ∩ ca05t04_nd_SCM.treated 1 true) = 5/8 := by
+  classical
+  rw [noiseMeasure_real_eq]
+  simp only [Set.mem_inter_iff, Set.mem_ofPred_eq, treated, Finset.sum_filter,
+    ca05t04_nd_sum8, ca05t04_nd_weight_all, ca05t04_nd_n_ttt, ca05t04_nd_n_ttf,
+    ca05t04_nd_n_tft, ca05t04_nd_n_tff, ca05t04_nd_n_ftt, ca05t04_nd_n_ftf,
+    ca05t04_nd_n_fft, ca05t04_nd_n_fff]
+  norm_num
+
+/-- The naive denominator `P(T = true)` is `3/4`. -/
+theorem ca05t04_nd_naive_den : (noiseMeasure ca05t04_nd_μ).real
+    (ca05t04_nd_SCM.treated 1 true) = 3/4 := by
+  classical
+  rw [noiseMeasure_real_eq]
+  simp only [Set.mem_ofPred_eq, treated, Finset.sum_filter, ca05t04_nd_sum8,
+    ca05t04_nd_weight_all, ca05t04_nd_t_ttt, ca05t04_nd_t_ttf, ca05t04_nd_t_tft,
+    ca05t04_nd_t_tff, ca05t04_nd_t_ftt, ca05t04_nd_t_ftf, ca05t04_nd_t_fft,
+    ca05t04_nd_t_fff]
+  have hfeq : @Finset.filter (Fin 3 → Bool) (fun u => ca05t04_nd_SCM.solve u 1 = true)
+      (fun a => Classical.propDecidable (a ∈ ca05t04_nd_SCM.treated 1 true)) Finset.univ =
+      Finset.univ.filter (fun u => ca05t04_nd_SCM.solve u 1 = true) :=
+    @Finset.filter_congr (Fin 3 → Bool) _ _
+      (fun a => Classical.propDecidable (a ∈ ca05t04_nd_SCM.treated 1 true)) _
+      Finset.univ (fun u _ => Iff.rfl)
+  rw [Finset.sum_const, nsmul_eq_mul, hfeq]
+  have hcard : (Finset.univ.filter (fun u => ca05t04_nd_SCM.solve u 1 = true)).card = 6 := by decide
+  rw [hcard]
+  norm_num
+
+/-- The potential-outcome law `P(Y_{T←true} = true)` is `3/4`. -/
+theorem ca05t04_nd_cf : (noiseMeasure ca05t04_nd_μ).real
+    {u | ca05t04_nd_SCM.counterfactual 1 true u 2 = true} = 3/4 := by
+  classical
+  rw [noiseMeasure_real_eq]
+  simp only [Set.mem_ofPred_eq, Finset.sum_filter, ca05t04_nd_sum8, ca05t04_nd_weight_all,
+    ca05t04_nd_c_ttt, ca05t04_nd_c_ttf, ca05t04_nd_c_tft, ca05t04_nd_c_tff,
+    ca05t04_nd_c_ftt, ca05t04_nd_c_ftf, ca05t04_nd_c_fft, ca05t04_nd_c_fff]
+  norm_num
+
+/-- The naive observational conditional `P(Y = true | T = true)` is `5/6`. -/
+theorem ca05t04_nd_naive : (noiseMeasure ca05t04_nd_μ).real
+      ({u | ca05t04_nd_SCM.solve u 2 = true} ∩ ca05t04_nd_SCM.treated 1 true) /
+      (noiseMeasure ca05t04_nd_μ).real (ca05t04_nd_SCM.treated 1 true) = 5/6 := by
+  rw [ca05t04_nd_naive_num, ca05t04_nd_naive_den]
+  norm_num
+
+/-- Adjustment matters: the potential-outcome law differs from the naive conditional. -/
+theorem ca05t04_nd_matters : (noiseMeasure ca05t04_nd_μ).real
+      {u | ca05t04_nd_SCM.counterfactual 1 true u 2 = true} ≠
+      (noiseMeasure ca05t04_nd_μ).real
+        ({u | ca05t04_nd_SCM.solve u 2 = true} ∩ ca05t04_nd_SCM.treated 1 true) /
+        (noiseMeasure ca05t04_nd_μ).real (ca05t04_nd_SCM.treated 1 true) := by
+  rw [ca05t04_nd_cf, ca05t04_nd_naive]
+  norm_num
+
+theorem ca05t04_nd_hdesc : ∀ z ∈ ({0} : Finset (Fin 3)),
+    ¬ (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).IsDescendant 1 z := by
+  intro z hz
+  simp only [Finset.mem_singleton] at hz
+  subst hz
+  intro h
+  have hle := desc_val_le_aux (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ) h
+  exact absurd hle (by decide)
+
+theorem ca05t04_nd_hblock : ∀ p, (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).IsPath 1 2 p →
+    (∃ h : 1 < p.length, (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).Edge p[1] 1) →
+      (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).PathBlocked
+        (↑({0} : Finset (Fin 3)) : Set (Fin 3)) p := by
+  intro p hp hex
+  obtain ⟨hnd, hchain, hhead, hlast⟩ := hp
+  obtain ⟨hlen1, hedge⟩ := hex
+  have hlen0 : 0 < p.length := by omega
+  have h0 : p[0] = 1 := by
+    rw [List.head?_eq_getElem?] at hhead
+    rw [List.getElem?_eq_getElem hlen0] at hhead
+    simpa using hhead
+  have h1 : p[1] = 0 := by
+    obtain ⟨hlt, -⟩ := hedge
+    have hv1 : (1 : Fin 3).val = 1 := rfl
+    have hv0 : p[1].val = 0 := by omega
+    exact Fin.ext hv0
+  have h1' : p[0 + 1] = (0 : Fin 3) := h1
+  by_cases hlen2 : p.length = 2
+  · have hlen1' : p.length - 1 = 1 := by omega
+    rw [List.getLast?_eq_getElem?, hlen1', List.getElem?_eq_getElem hlen1] at hlast
+    have h12 : p[1] = 2 := by simpa using hlast
+    rw [h1] at h12
+    exact absurd h12 (by decide)
+  · have hib : 0 + 2 < p.length := by omega
+    refine ⟨0, hib, Or.inr ⟨?_, ?_⟩⟩
+    · intro hcon
+      obtain ⟨e10, -⟩ := hcon
+      obtain ⟨hlt10, -⟩ := e10
+      rw [h0, h1'] at hlt10
+      exact absurd hlt10 (by decide)
+    · rw [h1']
+      simp
+
+/-- Test instance of `condIndepDiscrete_of_backdoor` on the nondegenerate confounded model. -/
+example : CondIndepDiscrete (noiseMeasure ca05t04_nd_μ) (ca05t04_nd_SCM.treated 1 true)
+    (ca05t04_nd_SCM.potentialOutcome 1 true 2 (fun b => if b then (1 : ℝ) else 0))
+    (fun u (i : ({0} : Finset (Fin 3))) => ca05t04_nd_SCM.solve u i) := by
+  letI : MeasurableSpace Bool := ⊤
+  haveI : MeasurableSingletonClass Bool := ⟨fun _ => trivial⟩
+  exact condIndepDiscrete_of_backdoor ca05t04_nd_SCM ca05t04_nd_μ 1 2 true true
+    (fun b => if b then (1 : ℝ) else 0) {0} ca05t04_nd_hdesc ca05t04_nd_hblock
+
+/-- The confounder value as an element of `Z = {0}`. -/
+def ca05t04_nd_z0 : ↥(({0} : Finset (Fin 3))) := ⟨0, by simp⟩
+
+/-- Node `0` copies its noise. -/
+theorem ca05t04_nd_solve_zero (u : (k : Fin 3) → Bool) :
+    ca05t04_nd_SCM.solve u 0 = u 0 := by
+  have h := ca05t04_nd_SCM.solve_isSolution u 0
+  have h0 : ∀ (zz : ca05t04_nd_SCM.pa 0 → Bool) (v : Bool),
+      ca05t04_nd_SCM.f 0 zz v = v := fun _ _ => rfl
+  rw [h0] at h
+  exact h
+
+/-- Agreement on `Z = {0}` is agreement at node `0`. -/
+theorem ca05t04_nd_pred_iff (x : Fin 3 → Bool) (z : ↥(({0} : Finset (Fin 3))) → Bool) :
+    (((fun i : ↥(({0} : Finset (Fin 3))) => x ↑i) = z) ↔
+      (x 0 = z ca05t04_nd_z0)) := by
+  constructor
+  · intro h
+    exact congrFun h ca05t04_nd_z0
+  · intro h
+    funext ⟨i, hi⟩
+    have hi0 : i = 0 := Finset.mem_singleton.1 hi
+    subst hi0
+    exact h
+
+/-- Positivity for the back-door formula at `a = true`: every `Z` value jointly with
+`T = true` has positive probability. -/
+theorem ca05t04_nd_hpos : ∀ z : ↥(({0} : Finset (Fin 3))) → Bool,
+    (∑ x with (fun i : ↥(({0} : Finset (Fin 3))) => x ↑i) = z,
+      (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint x) ≠ 0 →
+    (∑ x with x 1 = true ∧ (fun i : ↥(({0} : Finset (Fin 3))) => x ↑i) = z,
+      (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint x) ≠ 0 := by
+  classical
+  intro z _
+  have hnoise_nonneg : ∀ u : (k : Fin 3) → Bool, 0 ≤ noiseWeight ca05t04_nd_μ u := by
+    intro u
+    unfold noiseWeight
+    exact Finset.prod_nonneg fun k _ => (ca05t04_nd_μ k).nonneg _
+  have hj_nonneg : ∀ x ∈ Finset.univ.filter
+      (fun x => x 1 = true ∧ (fun i : ↥(({0} : Finset (Fin 3))) => x ↑i) = z),
+      0 ≤ (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint x := by
+    intro x _
+    exact (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).toChain.joint_nonneg 3 x
+  cases hcz : z ca05t04_nd_z0
+  · -- `z` is `false` on `Z`: witness `![false, true, true]`.
+    have hx1 : (![false, true, true] : Fin 3 → Bool) 1 = true := by simp
+    have hx0_false : (![false, true, true] : Fin 3 → Bool) 0 = false := by simp
+    have hx0_eq : (![false, true, true] : Fin 3 → Bool) 0 = z ca05t04_nd_z0 := by
+      rw [hx0_false, hcz]
+    have hxz : (fun i : ↥(({0} : Finset (Fin 3))) => (![false, true, true] : Fin 3 → Bool) ↑i) = z :=
+      (ca05t04_nd_pred_iff _ _).mpr hx0_eq
+    have hmem : (![false, true, true] : Fin 3 → Bool) ∈ Finset.univ.filter
+        (fun x => x 1 = true ∧ (fun i : ↥(({0} : Finset (Fin 3))) => x ↑i) = z) :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hx1, hxz⟩
+    have hsolve : ca05t04_nd_SCM.solve ![false, true, true] = ![false, true, true] := by decide
+    have hu_pos : 0 < noiseWeight ca05t04_nd_μ ![false, true, true] := by
+      rw [ca05t04_nd_weight_all]; norm_num
+    have hnoise_mem : ∀ u ∈ Finset.univ.filter
+        (fun u => ca05t04_nd_SCM.solve u = ![false, true, true]),
+        0 ≤ noiseWeight ca05t04_nd_μ u :=
+      fun u _ => hnoise_nonneg u
+    have hu_mem : (![false, true, true] : (k : Fin 3) → Bool) ∈ Finset.univ.filter
+        (fun u => ca05t04_nd_SCM.solve u = ![false, true, true]) :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hsolve⟩
+    have h_ind_pos : 0 < ca05t04_nd_SCM.inducedLaw ca05t04_nd_μ ![false, true, true] := by
+      show 0 < ∑ u with ca05t04_nd_SCM.solve u = ![false, true, true],
+        noiseWeight ca05t04_nd_μ u
+      exact Finset.sum_pos' hnoise_mem ⟨_, hu_mem, hu_pos⟩
+    have hj_eq : (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint ![false, true, true] =
+        ca05t04_nd_SCM.inducedLaw ca05t04_nd_μ ![false, true, true] :=
+      (ca05t04_nd_SCM.inducedLaw_eq_joint ca05t04_nd_μ _).symm
+    have hjpos : 0 < (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint ![false, true, true] := by
+      rw [hj_eq]; exact h_ind_pos
+    have h_sum_pos : 0 < ∑ x with x 1 = true ∧
+        (fun i : ↥(({0} : Finset (Fin 3))) => x ↑i) = z,
+        (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint x :=
+      Finset.sum_pos' hj_nonneg ⟨_, hmem, hjpos⟩
+    exact ne_of_gt h_sum_pos
+  · -- `z` is `true` on `Z`: witness `![true, true, true]`.
+    have hx1 : (![true, true, true] : Fin 3 → Bool) 1 = true := by simp
+    have hx0_true : (![true, true, true] : Fin 3 → Bool) 0 = true := by simp
+    have hx0_eq : (![true, true, true] : Fin 3 → Bool) 0 = z ca05t04_nd_z0 := by
+      rw [hx0_true, hcz]
+    have hxz : (fun i : ↥(({0} : Finset (Fin 3))) => (![true, true, true] : Fin 3 → Bool) ↑i) = z :=
+      (ca05t04_nd_pred_iff _ _).mpr hx0_eq
+    have hmem : (![true, true, true] : Fin 3 → Bool) ∈ Finset.univ.filter
+        (fun x => x 1 = true ∧ (fun i : ↥(({0} : Finset (Fin 3))) => x ↑i) = z) :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hx1, hxz⟩
+    have hsolve : ca05t04_nd_SCM.solve ![true, true, true] = ![true, true, true] := by decide
+    have hu_pos : 0 < noiseWeight ca05t04_nd_μ ![true, true, true] := by
+      rw [ca05t04_nd_weight_all]; norm_num
+    have hnoise_mem : ∀ u ∈ Finset.univ.filter
+        (fun u => ca05t04_nd_SCM.solve u = ![true, true, true]),
+        0 ≤ noiseWeight ca05t04_nd_μ u :=
+      fun u _ => hnoise_nonneg u
+    have hu_mem : (![true, true, true] : (k : Fin 3) → Bool) ∈ Finset.univ.filter
+        (fun u => ca05t04_nd_SCM.solve u = ![true, true, true]) :=
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hsolve⟩
+    have h_ind_pos : 0 < ca05t04_nd_SCM.inducedLaw ca05t04_nd_μ ![true, true, true] := by
+      show 0 < ∑ u with ca05t04_nd_SCM.solve u = ![true, true, true],
+        noiseWeight ca05t04_nd_μ u
+      exact Finset.sum_pos' hnoise_mem ⟨_, hu_mem, hu_pos⟩
+    have hj_eq : (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint ![true, true, true] =
+        ca05t04_nd_SCM.inducedLaw ca05t04_nd_μ ![true, true, true] :=
+      (ca05t04_nd_SCM.inducedLaw_eq_joint ca05t04_nd_μ _).symm
+    have hjpos : 0 < (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint ![true, true, true] := by
+      rw [hj_eq]; exact h_ind_pos
+    have h_sum_pos : 0 < ∑ x with x 1 = true ∧
+        (fun i : ↥(({0} : Finset (Fin 3))) => x ↑i) = z,
+        (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint x :=
+      Finset.sum_pos' hj_nonneg ⟨_, hmem, hjpos⟩
+    exact ne_of_gt h_sum_pos
+
+/-- The potential-outcome law equals the back-door adjustment formula on this model. -/
+example : (noiseMeasure ca05t04_nd_μ).real
+      {u | ca05t04_nd_SCM.counterfactual 1 true u 2 = true}
+    = ∑ z : ↥(({0} : Finset (Fin 3))) → Bool,
+      (∑ x with (fun i : ↥(({0} : Finset (Fin 3))) => x ↑i) = z,
+        (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint x) *
+      ((∑ x with x 1 = true ∧ x 2 = true ∧
+        (fun i : ↥(({0} : Finset (Fin 3))) => x ↑i) = z,
+        (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint x) /
+      ∑ x with x 1 = true ∧ (fun i : ↥(({0} : Finset (Fin 3))) => x ↑i) = z,
+        (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint x) := by
+  letI : MeasurableSpace Bool := ⊤
+  haveI : MeasurableSingletonClass Bool := ⟨fun _ => trivial⟩
+  exact measureReal_counterfactual_eq_backdoor ca05t04_nd_SCM ca05t04_nd_μ 1 2 {0} true
+    true (by decide) (by decide) ca05t04_nd_hdesc ca05t04_nd_hblock ca05t04_nd_hpos
 
 end Backdoor
 

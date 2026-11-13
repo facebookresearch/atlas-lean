@@ -1482,34 +1482,10 @@ theorem stronglyIgnorable_of_pa_eq_empty {α : Type*} {n : ℕ} {U : Fin n → T
 
 open MeasureTheory Convexity MathlibExt.Probability.Causality
 
-theorem noiseWeight_nonneg_aux {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
-    (μ : (k : Fin n) → StdSimplex ℝ (U k)) (u : (k : Fin n) → U k) :
-    0 ≤ noiseWeight μ u := by
-  unfold noiseWeight
-  exact Finset.prod_nonneg fun k _ => (μ k).nonneg _
 
-open Classical in
-theorem noiseMeasure_real_aux {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
-    [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
-    (μ : (k : Fin n) → StdSimplex ℝ (U k)) (S : Set ((k : Fin n) → U k)) :
-    (noiseMeasure μ).real S = ∑ u with u ∈ S, noiseWeight μ u := by
-  classical
-  unfold noiseMeasure Measure.real
-  rw [Measure.finsetSum_apply Finset.univ _ S]
-  have h1 : ∀ u : (k : Fin n) → U k,
-      (ENNReal.ofReal (noiseWeight μ u) • Measure.dirac u) S =
-        (if u ∈ S then ENNReal.ofReal (noiseWeight μ u) else 0) := by
-    intro u
-    rw [Measure.smul_apply, Measure.dirac_apply]
-    by_cases hu : u ∈ S
-    · simp [hu]
-    · simp [hu]
-  simp_rw [h1]
-  rw [ENNReal.toReal_sum (fun u _ => by split_ifs <;> simp [ENNReal.ofReal_ne_top])]
-  rw [Finset.sum_filter]
-  refine Finset.sum_congr rfl fun u _ => ?_
-  by_cases hu : u ∈ S <;> simp [hu, ENNReal.toReal_ofReal (noiseWeight_nonneg_aux μ u)]
-
+/-- The cut model: the SCM equal to `M` except every child of `t` reads the constant `a` in
+place of `X_t`, so `t` has no outgoing edges. Used to prove back-door ignorability via
+d-separation. -/
 def cutModel {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U) (t : Fin n) (a : α) :
     FiniteSCM α n U where
   pa k := if h : t.val < k.val then (M.pa k).erase ⟨t.val, h⟩ else M.pa k
@@ -1562,8 +1538,8 @@ theorem noiseMeasure_real_preimage_solve {n : ℕ} {U : Fin n → Type*} [∀ k,
     (noiseMeasure μ).real (M'.solve ⁻¹' {x | E x})
       = ∑ x with E x, (M'.inducedBayesNet μ).joint x := by
   classical
-  rw [noiseMeasure_real_aux]
-  simp only [Set.mem_preimage, Set.mem_setOf_eq]
+  rw [noiseMeasure_real_eq]
+  simp only [Set.mem_preimage, Set.mem_ofPred_eq]
   have hfib := sum_filter_fiber_eq (g := M'.solve) (w := fun u => noiseWeight μ u)
     (P := fun _ => True) (Q := E)
   simp only [true_and] at hfib
@@ -1589,12 +1565,12 @@ theorem cutModel_f_eq {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSC
           if hi : i.val = (⟨t.val, htk⟩ : Fin k) then a
           else z' ⟨i.val, by
             have hpa : (cutModel M t a).pa k = (M.pa k).erase ⟨t.val, htk⟩ := by
-              rw [cutModel_pa_eq M t a k, dif_pos htk]
+              rw [cutModel_pa_eq M t a k, dite_eq_left htk]
             rw [hpa]
             exact Finset.mem_erase.2 ⟨hi, i.property⟩⟩
         else z' ⟨i.val, by
           have hpa : (cutModel M t a).pa k = M.pa k := by
-            rw [cutModel_pa_eq M t a k, dif_neg htk]
+            rw [cutModel_pa_eq M t a k, dite_eq_right htk]
           rw [hpa]
           exact i.property⟩) w := rfl
 
@@ -1607,7 +1583,7 @@ theorem cutModel_edge_out_false {α : Type*} {n : ℕ} {U : Fin n → Type*}
   obtain ⟨h, hmem⟩ := hcon
   have hpa : ((cutModel M t a).inducedBayesNet μ).pa j = (M.pa j).erase ⟨t.val, h⟩ := by
     have e := cutModel_pa_eq M t a j
-    rw [dif_pos h] at e
+    rw [dite_eq_left h] at e
     exact e
   rw [hpa] at hmem
   exact (Finset.mem_erase.1 hmem).1 rfl
@@ -1622,9 +1598,9 @@ theorem cutModel_edge_to_orig {α : Type*} {n : ℕ} {U : Fin n → Type*}
   have hmem' : (⟨i.val, h⟩ : Fin j) ∈ (cutModel M t a).pa j := hmem
   rw [cutModel_pa_eq] at hmem'
   by_cases htj : t.val < j.val
-  · rw [dif_pos htj] at hmem'
+  · rw [dite_eq_left htj] at hmem'
     exact (Finset.mem_erase.1 hmem').2
-  · rw [dif_neg htj] at hmem'
+  · rw [dite_eq_right htj] at hmem'
     exact hmem'
 
 /-- Edges out of nodes other than `t` are also cut-model edges. -/
@@ -1638,12 +1614,12 @@ theorem cutModel_edge_of_orig {α : Type*} {n : ℕ} {U : Fin n → Type*}
   have hmem' : (⟨i.val, h⟩ : Fin j) ∈ (cutModel M t a).pa j := by
     rw [cutModel_pa_eq]
     by_cases htj : t.val < j.val
-    · rw [dif_pos htj]
+    · rw [dite_eq_left htj]
       refine Finset.mem_erase.2 ⟨?_, hmemM⟩
       intro hcon
       apply hi
       exact Fin.ext (by simpa using hcon)
-    · rw [dif_neg htj]
+    · rw [dite_eq_right htj]
       exact hmemM
   exact hmem'
 
@@ -1717,9 +1693,9 @@ theorem cutModel_solve_agree {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : F
     congr 1
     funext i
     by_cases htk : t.val < j.val
-    · rw [dif_pos htk]
+    · rw [dite_eq_left htk]
       by_cases hi : i.val = (⟨t.val, htk⟩ : Fin j)
-      · rw [dif_pos hi]
+      · rw [dite_eq_left hi]
         exfalso
         have hmem : (⟨t.val, htk⟩ : Fin j) ∈ M.pa j := by
           rw [← hi]
@@ -1732,14 +1708,14 @@ theorem cutModel_solve_agree {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : F
           rw [hjt] at htk
           exact absurd htk (lt_irrefl _)
         | inr hnj => exact hnj hdesc_tj
-      · rw [dif_neg hi]
+      · rw [dite_eq_right hi]
         exact hpar i
-    · rw [dif_neg htk]
+    · rw [dite_eq_right htk]
       exact hpar i
 
 /-- The cut-model solution agrees with the counterfactual solution away from `t`. -/
 theorem cutModel_solve_counterfactual {α : Type*} {n : ℕ} {U : Fin n → Type*}
-    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k)) (t : Fin n) (a : α)
+    (M : FiniteSCM α n U) (t : Fin n) (a : α)
     (u : (k : Fin n) → U k) (j : Fin n) (hj : j ≠ t) :
     (cutModel M t a).solve u j = M.counterfactual t a u j := by
   show (cutModel M t a).solve u j = (M.doNode t a).solve u j
@@ -1763,14 +1739,14 @@ theorem cutModel_solve_counterfactual {α : Type*} {n : ℕ} {U : Fin n → Type
       have h3 : (Fin.castLE j.2.le (i.val : Fin j)).val = (i.val : Fin j).val := rfl
       omega
     by_cases htk : t.val < j.val
-    · rw [dif_pos htk]
+    · rw [dite_eq_left htk]
       by_cases hpt : Fin.castLE j.2.le (i.val : Fin j) = t
       · have hicond : i.val = (⟨t.val, htk⟩ : Fin j) := by
           apply Fin.ext
           have hvv : (Fin.castLE j.2.le (i.val : Fin j)).val = t.val := by rw [hpt]
           have h2 : (i.val : Fin j).val = t.val := hvv
           exact h2
-        rw [dif_pos hicond]
+        rw [dite_eq_left hicond]
         have hgen : ∀ Q : (i.val : Fin j) ∈ (M.doNode t a).pa j,
             (M.doNode t a).paVal j ((M.doNode t a).solve u) ⟨i.val, Q⟩
               = (M.doNode t a).solve u t := by
@@ -1785,11 +1761,11 @@ theorem cutModel_solve_counterfactual {α : Type*} {n : ℕ} {U : Fin n → Type
           apply Fin.ext
           have hvv : (i.val : Fin j).val = (⟨t.val, htk⟩ : Fin j).val := by rw [hcon]
           exact hvv
-        rw [dif_neg hnicond]
+        rw [dite_eq_right hnicond]
         show (cutModel M t a).solve u (Fin.castLE j.2.le i.val)
           = (M.doNode t a).solve u (Fin.castLE j.2.le i.val)
         exact ih _ hpt hlt
-    · rw [dif_neg htk]
+    · rw [dite_eq_right htk]
       by_cases hpt : Fin.castLE j.2.le (i.val : Fin j) = t
       · exfalso
         have hvv : (Fin.castLE j.2.le (i.val : Fin j)).val = t.val := by rw [hpt]
@@ -1918,7 +1894,7 @@ theorem condIndepDiscrete_of_backdoor {α : Type*} [Fintype α] [Nonempty α] {n
       show g (M.counterfactual t a u t) = g a
       rw [M.counterfactual_self]
     have h0 : (noiseMeasure μ).real ∅ = 0 := by
-      rw [noiseMeasure_real_aux]
+      rw [noiseMeasure_real_eq]
       simp
     by_cases hga : g a ∈ B
     · have hVB : M.potentialOutcome t a t g ⁻¹' B = Set.univ := by
@@ -1941,7 +1917,7 @@ theorem condIndepDiscrete_of_backdoor {α : Type*} [Fintype α] [Nonempty α] {n
       fun u => funext fun i => hZ u i
     have hY : ∀ u : (k : Fin n) → U k,
         M.counterfactual t a u y = (cutModel M t a).solve u y := fun u =>
-      (cutModel_solve_counterfactual M μ t a u y hyt).symm
+      (cutModel_solve_counterfactual M t a u y hyt).symm
     have e_TVW : (noiseMeasure μ).real
           (M.treated t a₁ ∩ M.potentialOutcome t a y g ⁻¹' B ∩
             (fun u (i : Z) => M.solve u i) ⁻¹' {w})
@@ -1952,7 +1928,7 @@ theorem condIndepDiscrete_of_backdoor {α : Type*} [Fintype α] [Nonempty α] {n
           = (cutModel M t a).solve ⁻¹' {x | (x t = a₁ ∧ g (x y) ∈ B) ∧
               (fun i : Z => x i) = w} := by
         ext u
-        simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_setOf_eq, treated,
+        simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_ofPred_eq, treated,
           potentialOutcome, Set.mem_singleton_iff]
         rw [hTt u, hY u, hfun u]
       rw [hset]
@@ -1964,7 +1940,7 @@ theorem condIndepDiscrete_of_backdoor {α : Type*} [Fintype α] [Nonempty α] {n
       have hset : M.treated t a₁ ∩ (fun u (i : Z) => M.solve u i) ⁻¹' {w}
           = (cutModel M t a).solve ⁻¹' {x | x t = a₁ ∧ (fun i : Z => x i) = w} := by
         ext u
-        simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_setOf_eq, treated,
+        simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_ofPred_eq, treated,
           Set.mem_singleton_iff]
         rw [hTt u, hfun u]
       rw [hset]
@@ -1976,7 +1952,7 @@ theorem condIndepDiscrete_of_backdoor {α : Type*} [Fintype α] [Nonempty α] {n
       have hset : M.potentialOutcome t a y g ⁻¹' B ∩ (fun u (i : Z) => M.solve u i) ⁻¹' {w}
           = (cutModel M t a).solve ⁻¹' {x | g (x y) ∈ B ∧ (fun i : Z => x i) = w} := by
         ext u
-        simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_setOf_eq, potentialOutcome,
+        simp only [Set.mem_inter_iff, Set.mem_preimage, Set.mem_ofPred_eq, potentialOutcome,
           Set.mem_singleton_iff]
         rw [hY u, hfun u]
       rw [hset]
@@ -1987,7 +1963,7 @@ theorem condIndepDiscrete_of_backdoor {α : Type*} [Fintype α] [Nonempty α] {n
       have hset : (fun u (i : Z) => M.solve u i) ⁻¹' {w}
           = (cutModel M t a).solve ⁻¹' {x | (fun i : Z => x i) = w} := by
         ext u
-        simp only [Set.mem_preimage, Set.mem_setOf_eq, Set.mem_singleton_iff]
+        simp only [Set.mem_preimage, Set.mem_ofPred_eq, Set.mem_singleton_iff]
         rw [hfun u]
       rw [hset]
       exact noiseMeasure_real_preimage_solve (cutModel M t a) μ _
@@ -2183,7 +2159,7 @@ theorem condIndepDiscrete_of_backdoor {α : Type*} [Fintype α] [Nonempty α] {n
         · funext i
           have hnt : (i : Fin n) ≠ t := fun h => htZ (by rw [← h]; exact i.property)
           have hny : (i : Fin n) ≠ y := fun h => hyZ (by rw [← h]; exact i.property)
-          simp only [dif_neg hnt, dif_neg hny, dif_pos i.property]
+          simp only [dite_eq_right hnt, dite_eq_right hny, dite_eq_left i.property]
       have hperv : ∀ v : α,
           (∑ x with (x t = a₁ ∧ (fun i : Z => x i) = w) ∧ x y = v,
               ((cutModel M t a).inducedBayesNet μ).joint x) *
@@ -2243,7 +2219,7 @@ theorem measureReal_counterfactual_eq_backdoor {α : Type*} [Fintype α] [Decida
         ((∑ x with x t = a ∧ x y = v ∧ (fun i : Z => x i) = z, (M.inducedBayesNet μ).joint x) /
           ∑ x with x t = a ∧ (fun i : Z => x i) = z, (M.inducedBayesNet μ).joint x) := by
   classical
-  rw [noiseMeasure_real_aux μ _]
+  rw [noiseMeasure_real_eq μ _]
   simp only [Set.mem_ofPred_eq]
   rw [sum_filter_counterfactual_fiber M μ t a (fun x => x y = v)]
   have hfib : ∀ x : Fin n → α,
