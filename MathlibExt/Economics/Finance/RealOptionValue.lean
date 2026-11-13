@@ -36,7 +36,16 @@ below need only nonnegative weights `p`, not `∑ ω, p ω = 1`.
 
 ## References
 
-Roadmap FI13 (risk measures, insurance pooling, real options), sources C06/C08/C09/C10.
+* H. Raiffa and R. Schlaifer, *Applied Statistical Decision Theory*, Division of Research,
+  Graduate School of Business Administration, Harvard University (1961), Chapter 4, Section 5
+  (the value of perfect information): choosing the act after the state is known is worth
+  `E[max_a V_a]`, and its excess over the best act chosen in advance, `max_a E[V_a]`, is the
+  expected value of perfect information, which is nonnegative. This is the comparison proved
+  here: `optionValue` is `E[max_a V_a]`, and a commitment to `b` is worth `E[V_b]`.
+* A. K. Dixit and R. S. Pindyck, *Investment under Uncertainty*, Princeton University Press
+  (1994), Chapter 2: the value of the option to wait and decide after the uncertainty is
+  resolved, compared with committing now, in simple two-period examples.
+
 Atlas roadmap target FI13.T04.
 -/
 
@@ -47,8 +56,8 @@ namespace MathlibExt.Economics.Finance.RealOptionValue
 open MathlibExt.Probability.FiniteProbability
 
 /-- Value of the option to choose, after seeing the state, the best feasible action: the
-expected value of the statewise maximum over `actions` (source clause: "option value =
-E[max_a V_a]"). `actions` must be nonempty so the statewise maximum exists. -/
+expected value of the statewise maximum over `actions`, `E[max_a V_a]` (Raiffa and Schlaifer,
+Chapter 4, Section 5). `actions` must be nonempty so the statewise maximum exists. -/
 noncomputable def optionValue {α Ω : Type*} [Fintype Ω] (actions : Finset α)
     (hne : actions.Nonempty) (p : Ω → ℝ) (V : α → Ω → ℝ) : ℝ :=
   expectation p (fun ω => actions.sup' hne (fun a => V a ω))
