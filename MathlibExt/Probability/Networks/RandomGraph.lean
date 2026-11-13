@@ -28,7 +28,22 @@ Exponential-family random graph laws on `SimpleGraph V` for fixed
 finite `V`: normalized `PMF`, score and covariance derivatives,
 identifiability iff. Stochastic block model: latent labelings,
 admissible parameters giving a `PMF`, label swapping leaves the law
-unchanged (Allman-Matias-Rhodes, Section 1).
+unchanged (Allman, Matias and Rhodes 2009, Section 2).
+
+## References
+
+* T. A. B. Snijders, *Markov chain Monte Carlo estimation of exponential random graph models*,
+  Journal of Social Structure 3 (2002),
+  <https://www.cmu.edu/joss/content/articles/volume3/Snijders.pdf>. Its sufficient statistic `u`
+  and log-normalizer `ψ` are `t` and `Real.log (ergmNormalizer t θ)` here. Equation (3) is the
+  exponential random graph law. Section 6 gives the moment equation `µ(θ) = u(y)` (eq. (24)),
+  the mean as the gradient of `ψ` (eq. (25)) and the covariance as the matrix of derivatives of
+  the mean (eq. (26)). Section 4.1 notes that when the number of ties is fixed, the edge
+  statistic and its parameter are irrelevant.
+* E. S. Allman, C. Matias and J. A. Rhodes, *Identifiability of parameters in latent structure
+  models with many observed variables*, Annals of Statistics 37(6A) (2009), 3099–3132,
+  <https://arxiv.org/abs/0809.5032>. Section 2 describes label swapping: relabeling the latent
+  classes leaves the distribution of the observations unchanged.
 -/
 
 open scoped Matrix
@@ -103,7 +118,7 @@ theorem toReal_ergmPMF_apply {V : Type*} [Fintype V] [DecidableEq V]
   rw [ergmPMF_apply]
   exact ENNReal.toReal_ofReal (le_of_lt (ergmProb_pos t θ G))
 
-/-- Log-likelihood, source eq. (3) in log form. -/
+/-- Log-likelihood: the logarithm of the law in Snijders (2002), eq. (3). -/
 noncomputable def ergmLogLik {V : Type*} [Fintype V] [DecidableEq V]
     {ι : Type*} [Fintype ι] (t : SimpleGraph V → ι → ℝ)
     (θ : ι → ℝ) (y : SimpleGraph V) : ℝ :=
@@ -125,7 +140,7 @@ noncomputable def ergmMean {V : Type*} [Fintype V] [DecidableEq V]
     (θ : ι → ℝ) : ι → ℝ :=
   fun k => ∑ G, ergmProb t θ G * t G k
 
-/-- Observed minus expected; its zero set is the moment equation (24). -/
+/-- Observed minus expected; its zero set is the moment equation, Snijders (2002), eq. (24). -/
 noncomputable def ergmScore {V : Type*} [Fintype V] [DecidableEq V]
     {ι : Type*} [Fintype ι] (t : SimpleGraph V → ι → ℝ)
     (θ : ι → ℝ) (y : SimpleGraph V) : ι → ℝ :=
@@ -258,7 +273,8 @@ private theorem update_eq_add_single {ι : Type*} [DecidableEq ι]
     ring
   · simp [h]
 
-/-- Coordinate derivative of the log-likelihood, source (25). -/
+/-- Coordinate derivative of the log-likelihood: the mean is the gradient of the
+log-normalizer, Snijders (2002), eq. (25). -/
 theorem hasDerivAt_ergmLogLik_update {V : Type*} [Fintype V]
     [DecidableEq V] {ι : Type*} [Fintype ι]
     (t : SimpleGraph V → ι → ℝ) (θ : ι → ℝ)
@@ -412,7 +428,7 @@ private theorem sum_mean_factor {V : Type*} [Fintype V]
     rw [h0, zero_mul]
   exact sub_eq_zero.mp hdiff
 
-/-- Derivative of the mean is the covariance, source (26). -/
+/-- Derivative of the mean is the covariance, Snijders (2002), eq. (26). -/
 theorem hasDerivAt_ergmMean {V : Type*} [Fintype V]
     [DecidableEq V] {ι : Type*} [Fintype ι]
     (t : SimpleGraph V → ι → ℝ) (θ : ι → ℝ)
@@ -436,7 +452,8 @@ theorem hasDerivAt_ergmScore {V : Type*} [Fintype V]
   have h := hmean.const_sub (t y j)
   simpa [ergmScore, Pi.sub_apply] using h
 
-/-- A constant-statistic direction is irrelevant, Section 4.1. -/
+/-- A constant-statistic direction is irrelevant. This generalizes Snijders (2002),
+Section 4.1, where a fixed number of ties makes the edge parameter irrelevant. -/
 theorem ergmProb_add_of_affine {V : Type*} [Fintype V]
     [DecidableEq V] {ι : Type*} [Fintype ι]
     (t : SimpleGraph V → ι → ℝ) (θ : ι → ℝ)
@@ -497,7 +514,7 @@ theorem ergmProb_injective_iff {V : Type*} [Fintype V]
 /-! ## Stochastic block model and label swapping
 
 The graph weight below sums over latent labelings; permuting the class
-labels leaves the weight unchanged (Allman-Matias-Rhodes, Section 1).
+labels leaves the weight unchanged (Allman, Matias and Rhodes 2009, Section 2).
 Admissible parameters (positive mixing proportions summing to one,
 symmetric affinities in `[0,1]`) make the weight a probability law,
 exposed as a `PMF` with nonnegativity and normalization.
@@ -547,7 +564,8 @@ theorem sbmEdgeWeight_relabel {V : Type*} [Fintype V] [LinearOrder V]
       = sbmEdgeWeight W (σ ∘ z) G := by
   simp only [sbmEdgeWeight, Function.comp_apply]
 
-/-- Label swapping (AMR Section 1): relabeled parameters give the same weight.
+/-- Label swapping (Allman, Matias and Rhodes 2009, Section 2): relabeled parameters give the
+same weight.
 
 Parameters are identified at most modulo permutation of the classes: a
 numerical clustering output is not statistical identification. Under
