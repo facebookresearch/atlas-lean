@@ -38,11 +38,11 @@ No new definitions or results are introduced here.
 /-- Numeric profile boundary: `z(3) = z(-3) = 0`. -/
 example : (2 : ℝ) * ((3 : ℝ) ^ 2 - (3 : ℝ) ^ 2) / (2 * 1) = 0 ∧
     (2 : ℝ) * ((3 : ℝ) ^ 2 - (-(3 : ℝ)) ^ 2) / (2 * 1) = 0 :=
-  EarthScience.profile_boundary (by norm_num) (by norm_num) (by norm_num)
+  EarthScience.hillslope_profile_boundary (by norm_num) (by norm_num) (by norm_num)
 
 /-- Numeric profile at `x = 0`: `z(0) = 9`. -/
 example : (2 : ℝ) * ((3 : ℝ) ^ 2 - (0 : ℝ) ^ 2) / (2 * 1) = 9 :=
-  EarthScience.profile_witness
+  EarthScience.hillslope_profile_witness
 
 /-- Numeric profile at `x = 1`: `z(1) = 8`. -/
 example : (2 : ℝ) * ((3 : ℝ) ^ 2 - (1 : ℝ) ^ 2) / (2 * 1) = 8 := by norm_num
@@ -50,18 +50,18 @@ example : (2 : ℝ) * ((3 : ℝ) ^ 2 - (1 : ℝ) ^ 2) / (2 * 1) = 8 := by norm_n
 /-- Numeric profile derivative at `x = 1`: `z'(1) = -2`. -/
 example :
     HasDerivAt (fun x => (2 : ℝ) * ((3 : ℝ) ^ 2 - x ^ 2) / (2 * 1)) (-(2 : ℝ) * 1 / 1) 1 :=
-  EarthScience.profile_hasDerivAt (L := 3) (by norm_num) (by norm_num) (by norm_num) 1
+  EarthScience.hillslope_profile_hasDerivAt (L := 3) (by norm_num) (by norm_num) (by norm_num) 1
 
 /-- Numeric profile steadiness: `z'' = -2` and `U + D * z'' = 0`, for the actual profile. -/
 example :
     iteratedDeriv 2 (fun x => (2 : ℝ) * ((3 : ℝ) ^ 2 - x ^ 2) / (2 * 1)) 1 = -(2 : ℝ) / 1 ∧
       (2 : ℝ) + 1 * iteratedDeriv 2 (fun x => (2 : ℝ) * ((3 : ℝ) ^ 2 - x ^ 2) / (2 * 1)) 1 = 0 :=
-  EarthScience.profile_steady (L := 3) (by norm_num) (by norm_num) (by norm_num) 1
+  EarthScience.hillslope_profile_steady (L := 3) (by norm_num) (by norm_num) (by norm_num) 1
 
 /-- No uplift: the zero profile has derivative `0`. -/
 example (x : ℝ) :
     HasDerivAt (fun x => (0 : ℝ) * ((3 : ℝ) ^ 2 - x ^ 2) / (2 * 1)) (-(0 : ℝ) * x / 1) x :=
-  EarthScience.profile_hasDerivAt (L := 3) (by norm_num) (by norm_num) (by norm_num) x
+  EarthScience.hillslope_profile_hasDerivAt (L := 3) (by norm_num) (by norm_num) (by norm_num) x
 
 /-- Second profile `U = 1, D = 2, L = 4`: `z(0) = 4`, `z(4) = 0`. -/
 example : (1 : ℝ) * ((4 : ℝ) ^ 2 - (0 : ℝ) ^ 2) / (2 * 2) = 4 ∧
