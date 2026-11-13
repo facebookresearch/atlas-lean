@@ -20,16 +20,25 @@ namespace MetaMathlibExt
 
 open UpperHalfPlane MatrixGroups ArithmeticFunction
 
-/-- The normalized Fourier coefficient `λ_f(n) = a_f(n) / n^{(k-1)/2}` of a level-one cusp form
-`f` of weight `k`, where `a_f(n)` is the `n`-th coefficient of the `q`-expansion
-`f(z) = ∑ a_f(n) e(nz)`.
+/-- **Normalized Fourier coefficients of a cusp form.** Let $f$ be a cusp form of weight
+$k \in \mathbb{Z}$ for $\mathrm{SL}_2(\mathbb{Z})$, with $q$-expansion
+$f(z) = \sum_{n \ge 0} a_f(n) e(nz)$, where $e(z) = e^{2\pi i z}$. For each natural number $n$,
+the normalized Fourier coefficient of $f$ is the complex number
+$\lambda_f(n) = a_f(n) / n^{(k-1)/2}$, where $n^{(k-1)/2}$ is the real power.
+
+At $n = 0$ the real power follows $0^0 = 1$ and $0^s = 0$ for $s \ne 0$, and division by $0$
+gives $0$.
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Section 1 (Fourier expansion of `f ∈ H_k^*`). -/
 public noncomputable def cuspFormNormalizedCoeff {k : ℤ} (f : CuspForm 𝒮ℒ k) (n : ℕ) : ℂ :=
   (qExpansion 1 f).coeff n / (((n : ℝ) ^ (((k : ℝ) - 1) / 2) : ℝ) : ℂ)
 
-/-- `λ_f(1)` is the first `q`-expansion coefficient.
+/-- **Normalized cusp form coefficient at one.** Let $f$ be a cusp form of weight
+$k \in \mathbb{Z}$ for $\mathrm{SL}_2(\mathbb{Z})$, with $q$-expansion
+$f(z) = \sum_{n \ge 0} a_f(n) e^{2\pi i n z}$, and let $\lambda_f$ be its normalized Fourier
+coefficients. Then $\lambda_f(1) = a_f(1)$, the coefficient of $e^{2\pi i z}$ in the
+$q$-expansion of $f$.
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Section 1. -/
@@ -37,10 +46,15 @@ public theorem cuspFormNormalizedCoeff_one {k : ℤ} (f : CuspForm 𝒮ℒ k) :
     cuspFormNormalizedCoeff f 1 = (qExpansion 1 f).coeff 1 := by
   simp [cuspFormNormalizedCoeff]
 
-/-- A level-one cusp form `f` lies in `H_k^*` (is a normalized Hecke eigenform) when
-`λ_f(1) = 1` and its normalized coefficients satisfy the Hecke relation (1) of the paper,
-`λ_f(m) λ_f(n) = ∑_{d ∣ (m,n)} λ_f(mn/d²)`. At level one this is equivalent to `f` being a
-simultaneous eigenform of all Hecke operators normalized by `a_f(1) = 1`.
+/-- **Normalized Hecke eigenform.** Let $f$ be a cusp form of weight $k \in \mathbb{Z}$ for
+$\mathrm{SL}_2(\mathbb{Z})$, with normalized Fourier coefficients $\lambda_f$. Then $f$ is a
+normalized Hecke eigenform when $\lambda_f(1) = 1$ and, for all positive integers $m$ and $n$,
+$\lambda_f(m) \lambda_f(n) = \sum_{d \mid \gcd(m, n)} \lambda_f(mn/d^2)$, the sum running over the
+positive divisors $d$ of $\gcd(m, n)$. The set of these forms is denoted $H_k^*$.
+
+At level one this is equivalent to $f$ being a simultaneous eigenform of all Hecke operators
+normalized by $a_f(1) = 1$, where $f(z) = \sum_{n \ge 0} a_f(n) e^{2\pi i n z}$ is the
+$q$-expansion of $f$.
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Section 1, Equation (1). -/
@@ -50,7 +64,9 @@ public def IsNormalizedHeckeEigenform {k : ℤ} (f : CuspForm 𝒮ℒ k) : Prop 
       cuspFormNormalizedCoeff f m * cuspFormNormalizedCoeff f n =
         ∑ d ∈ (Nat.gcd m n).divisors, cuspFormNormalizedCoeff f (m * n / d ^ 2)
 
-/-- For a normalized Hecke eigenform and a prime `p`, `λ_f(p)² = λ_f(p²) + 1`.
+/-- **Hecke relation at the square of a prime.** Let $f$ be a normalized Hecke eigenform of weight
+$k \in \mathbb{Z}$ for $\mathrm{SL}_2(\mathbb{Z})$, with normalized Fourier coefficients
+$\lambda_f$. Then $\lambda_f(p)^2 = \lambda_f(p^2) + 1$ for every prime $p$.
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Equation (1) with `m = n = p`. -/
@@ -64,9 +80,17 @@ public theorem IsNormalizedHeckeEigenform.normalizedCoeff_prime_sq {k : ℤ}
   rw [show p * p / p ^ 2 = 1 by rw [← sq, Nat.div_self (Nat.pos_of_ne_zero hp0)], hf.1] at h
   rw [sq, h, sq]
 
-/-- The Rankin–Selberg coefficients `λ_{f×f}(n) = ∑_{l² m = n} λ_f(m)²`, i.e. the Dirichlet
-coefficients of `L(f × f, s) = ζ(2s) ∑ λ_f(n)² n^{-s}`, as an arithmetic function (so that its
-`w`-th power under Dirichlet convolution is `λ_{w,f×f}`).
+/-- **Rankin–Selberg coefficients.** Let $f$ be a cusp form of weight $k \in \mathbb{Z}$ for
+$\mathrm{SL}_2(\mathbb{Z})$, with normalized Fourier coefficients $\lambda_f$. The Rankin–Selberg
+coefficients of $f$ form the arithmetic function $\lambda_{f \times f}$ with
+$\lambda_{f \times f}(0) = 0$ and, for $n \ge 1$,
+$\lambda_{f \times f}(n) = \sum_{l^2 m = n} \lambda_f(m)^2$, the sum running over the pairs of
+positive integers $(l, m)$ with $l^2 m = n$; equivalently, $\lambda_{f \times f}(n)$ is the sum of
+$\lambda_f(n/d)^2$ over the positive divisors $d$ of $n$ that are perfect squares.
+
+These are the Dirichlet coefficients of
+$L(f \times f, s) = \zeta(2s) \sum_{n \ge 1} \lambda_f(n)^2 n^{-s}$. The $w$-th power of
+$\lambda_{f \times f}$ under Dirichlet convolution is denoted $\lambda_{w, f \times f}$.
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Section 1 (definition of `λ_{f×f}` and
@@ -74,7 +98,11 @@ Progressions*, INTEGERS 24 (2024), Article A3, Section 1 (definition of `λ_{f×
 public noncomputable def rankinSelbergCoeff {k : ℤ} (f : CuspForm 𝒮ℒ k) : ArithmeticFunction ℂ :=
   ⟨fun n => ∑ d ∈ n.divisors with IsSquare d, cuspFormNormalizedCoeff f (n / d) ^ 2, by simp⟩
 
-/-- Unfolding `λ_{f×f}(n) = ∑_{d ∣ n, d a square} λ_f(n/d)²`.
+/-- **Rankin–Selberg coefficients as a sum over square divisors.** Let $f$ be a cusp form of
+weight $k \in \mathbb{Z}$ for $\mathrm{SL}_2(\mathbb{Z})$, with normalized Fourier coefficients
+$\lambda_f$ and Rankin–Selberg coefficients $\lambda_{f \times f}$. For every natural number $n$,
+$\lambda_{f \times f}(n) = \sum_d \lambda_f(n/d)^2$, where $d$ runs over the positive divisors of
+$n$ that are perfect squares (so the sum is empty when $n = 0$).
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Section 1. -/
@@ -82,7 +110,9 @@ public theorem rankinSelbergCoeff_apply {k : ℤ} (f : CuspForm 𝒮ℒ k) (n : 
     rankinSelbergCoeff f n =
       ∑ d ∈ n.divisors with IsSquare d, cuspFormNormalizedCoeff f (n / d) ^ 2 := rfl
 
-/-- `λ_{f×f}(1) = λ_f(1)²`.
+/-- **Rankin–Selberg coefficient at one.** Let $f$ be a cusp form of weight $k \in \mathbb{Z}$ for
+$\mathrm{SL}_2(\mathbb{Z})$, with normalized Fourier coefficients $\lambda_f$ and Rankin–Selberg
+coefficients $\lambda_{f \times f}$. Then $\lambda_{f \times f}(1) = \lambda_f(1)^2$.
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Section 1. -/
@@ -91,7 +121,10 @@ public theorem rankinSelbergCoeff_one {k : ℤ} (f : CuspForm 𝒮ℒ k) :
   rw [rankinSelbergCoeff_apply, Nat.divisors_one, Finset.filter_singleton]
   simp [show IsSquare (1 : ℕ) from ⟨1, rfl⟩]
 
-/-- For a prime `p`, `λ_{f×f}(p) = λ_f(p)²`.
+/-- **Rankin–Selberg coefficients at primes.** Let $f$ be a cusp form of weight $k \in \mathbb{Z}$
+for $\mathrm{SL}_2(\mathbb{Z})$, with normalized Fourier coefficients $\lambda_f$ and
+Rankin–Selberg coefficients $\lambda_{f \times f}$. Then $\lambda_{f \times f}(p) = \lambda_f(p)^2$
+for every prime $p$.
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Section 1. -/
@@ -109,13 +142,20 @@ public theorem rankinSelbergCoeff_prime {k : ℤ} (f : CuspForm 𝒮ℒ k) {p : 
   rw [rankinSelbergCoeff_apply, hp.divisors, Finset.filter_insert, Finset.filter_singleton]
   simp [show IsSquare (1 : ℕ) from ⟨1, rfl⟩, hns]
 
-/-- **Theorem 1.1** (quoted from Zou et al., [52, Theorem 1]). Let `f ∈ H_k^*`, `j ≥ 2`, and
-`δ_2 = 92/597`, `δ_j = 92/(69(j-1)(j+3)+247)` for `j ≥ 3`. For primes `q`, residues `l` coprime
-to `q`, and real `x ≥ 1` with `q ≤ x^{3δ_j/4}`,
-`∑_{n ≤ x, n ≡ l (mod q)} λ_f(n^j)² = c x/φ(q) + O_{f,ε}(q x^{1 - 3δ_j/2 + ε})` with `c > 0`.
-The constant `c` is allowed to depend on `q` (a weaker reading; the main term is the residue
-of the `χ_0`-twisted series); the implied constant depends only on `f`, `j`, `ε`. The record's
-trailing introduction text is not part of the statement.
+/-- **Sums of squared normalized coefficients at perfect powers in arithmetic progressions.** Let
+$f$ be a normalized Hecke eigenform of weight $k \in \mathbb{Z}$ for $\mathrm{SL}_2(\mathbb{Z})$,
+with normalized Fourier coefficients $\lambda_f$, let $j \ge 2$ be an integer, and put
+$\delta = 92/597$ if $j = 2$ and $\delta = 92/(69(j-1)(j+3) + 247)$ if $j \ge 3$. Then there are
+real numbers $c_q > 0$, one for each prime $q$, with the following property: for every
+$\varepsilon > 0$ there is a real constant $C$ such that for every prime $q$, every natural
+number $l$ coprime to $q$ and every real $x \ge 1$ with $q \le x^{3\delta/4}$,
+$\bigl|\sum_{n} \lambda_f(n^j)^2 - c_q x / \varphi(q)\bigr| \le
+C q x^{1 - 3\delta/2 + \varepsilon}$, where $n$ runs over the integers $1 \le n \le x$ with
+$n \equiv l \pmod q$ and $\varphi$ is Euler's totient function.
+
+Hua quotes this result from Zou et al. [52, Theorem 1]. The constant $c_q$ is allowed to depend
+on $q$, a weaker reading of the printed main term, whose constant does not depend on $q$; the
+constant $C$ depends only on $f$, $j$ and $\varepsilon$.
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Theorem 1.1 (`integers-2024-A3-thm-1-1`). -/
@@ -129,13 +169,20 @@ public theorem_wanted sum_cuspFormNormalizedCoeff_pow_sq_arithmeticProgression {
               - ((c q * x / (q.totient : ℝ) : ℝ) : ℂ)‖ ≤
             C * q * x ^ (1 - 3 / 2 * δ + ε)
 
-/-- **Theorem 1.2.** Let `f ∈ H_k^*` and `η = 23/261`. For primes `q`, residues `l` coprime to
-`q`, and real `x ≥ 1` with `q ≤ x^η`,
-`∑_{n ≤ x, n ≡ l (mod q)} λ_{f×f}(n)² = (x/φ(q)) P(log x) + O_{f,ε}(q x^{1 - 3η/2 + ε})`,
-where `P` has degree `1` and positive leading coefficient. `q ≪ x^η` is read as `q ≤ x^η`;
-`P` may depend on `q` (it is the residue of the `χ_0`-twisted series, Proposition 3.2); the
-implied constant depends only on `f` and `ε`. The stray "`j ≥ 1`" of the printed statement is
-dropped (no `j` occurs).
+/-- **Hua's theorem on squared Rankin–Selberg coefficients in arithmetic progressions.** Let $f$
+be a level-one cusp form of weight $k$ that is a normalized Hecke eigenform, let
+$\lambda_{f\times f}$ be its Rankin–Selberg coefficients, let $\varphi$ be Euler's totient
+function, and put $\eta = 23/261$. There are real polynomials $P_q$, one for each prime $q$, each
+of degree $1$ with positive leading coefficient, such that for every $\varepsilon > 0$ there is a
+constant $C$ with
+
+$$
+\Bigl|\sum_{\substack{1 \le n \le x \\ n \equiv l \ (\mathrm{mod}\ q)}} \lambda_{f\times f}(n)^2 -
+\frac{x}{\varphi(q)}\,P_q(\log x)\Bigr| \le C\,q\,x^{1 - 3\eta/2 + \varepsilon}
+$$
+
+for every prime $q$, every natural number $l$ coprime to $q$ and every real $x \ge 1$ with
+$q \le x^{\eta}$.
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Theorem 1.2 (`integers-2024-A3-thm-1-2`). -/
@@ -148,12 +195,21 @@ public theorem_wanted sum_rankinSelbergCoeff_sq_arithmeticProgression {k : ℤ}
               - ((x / (q.totient : ℝ) * (P q).eval (Real.log x) : ℝ) : ℂ)‖ ≤
             C * q * x ^ (1 - 3 / 2 * ((23 : ℝ) / 261) + ε)
 
-/-- **Theorem 1.3.** Let `f ∈ H_k^*`, `w ≥ 2`, and `ϑ_w = 92/(247w+10)`. For primes `q`,
-residues `l` coprime to `q`, and real `x ≥ 1` with `q ≤ x^{ϑ_w}`,
-`∑_{n ≤ x, n ≡ l (mod q)} λ_{w,f×f}(n) = (x/φ(q)) P_{w-1}(log x) + O_{f,ε}(q x^{1 - 3ϑ_w/2 + ε})`,
-where `λ_{w,f×f}` is the `w`-fold Dirichlet convolution power of `λ_{f×f}` and `P_{w-1}` has
-degree `w - 1` and positive leading coefficient. `q ≪ x^{ϑ_w}` is read as `q ≤ x^{ϑ_w}`; the
-polynomial may depend on `q`; the implied constant depends only on `f`, `w`, `ε`.
+/-- **Sums of Rankin–Selberg convolution powers in arithmetic progressions.** Let $f$ be a
+normalized Hecke eigenform of weight $k \in \mathbb{Z}$ for $\mathrm{SL}_2(\mathbb{Z})$, with
+Rankin–Selberg coefficients $\lambda_{f \times f}$, let $w \ge 2$ be an integer, write
+$\lambda_{w, f \times f}$ for the $w$-fold Dirichlet convolution power of $\lambda_{f \times f}$,
+and put $\vartheta_w = 92/(247w + 10)$. Then there are real polynomials $P_q$, one for each prime
+$q$, each of degree $w - 1$ with positive leading coefficient, with the following property: for
+every $\varepsilon > 0$ there is a real constant $C$ such that for every prime $q$, every natural
+number $l$ coprime to $q$ and every real $x \ge 1$ with $q \le x^{\vartheta_w}$,
+$\bigl|\sum_{n} \lambda_{w, f \times f}(n) - (x / \varphi(q)) P_q(\log x)\bigr| \le
+C q x^{1 - 3\vartheta_w/2 + \varepsilon}$, where $n$ runs over the integers $1 \le n \le x$ with
+$n \equiv l \pmod q$, $\varphi$ is Euler's totient function and $\log$ is the natural logarithm.
+
+The printed hypothesis $q \ll x^{\vartheta_w}$ is read as $q \le x^{\vartheta_w}$, and the
+polynomial is allowed to depend on $q$; the constant $C$ depends only on $f$, $w$ and
+$\varepsilon$.
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Theorem 1.3 (`integers-2024-A3-thm-1-3`). -/
@@ -167,10 +223,16 @@ public theorem_wanted sum_rankinSelbergCoeff_pow_arithmeticProgression {k : ℤ}
               - ((x / (q.totient : ℝ) * (P q).eval (Real.log x) : ℝ) : ℂ)‖ ≤
             C * q * x ^ (1 - 3 / 2 * ((92 : ℝ) / (247 * w + 10)) + ε)
 
-/-- **Proposition 3.1.** Let `f ∈ H_k^*`, `χ` a primitive Dirichlet character modulo a prime
-`q`, and `η = 23/261`. For real `x ≥ 1` with `q ≤ x^η`,
-`∑_{n ≤ x} λ_{f×f}(n)² χ(n) = O_{f,ε}(q x^{1 - 3η/2 + ε})`, the implied constant depending only
-on `f` and `ε`. `q ≪ x^η` is read as `q ≤ x^η`.
+/-- **Sums of squared Rankin–Selberg coefficients twisted by a primitive character.** Let $f$ be
+a level-one cusp form of weight $k$ that is a normalized Hecke eigenform, let
+$\lambda_{f\times f}$ be its Rankin–Selberg coefficients, and put $\eta = 23/261$. For every
+$\varepsilon > 0$ there is a constant $C$ such that for every prime $q$, every primitive Dirichlet
+character $\chi$ modulo $q$ and every real $x \ge 1$ with $q \le x^{\eta}$,
+
+$$
+\Bigl|\sum_{1 \le n \le x} \lambda_{f\times f}(n)^2\,\chi(n)\Bigr| \le
+C\,q\,x^{1 - 3\eta/2 + \varepsilon}.
+$$
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Proposition 3.1 (`integers-2024-A3-prop-3-1`). -/
@@ -181,10 +243,19 @@ public theorem_wanted sum_rankinSelbergCoeff_sq_mul_primitive_character {k : ℤ
         ‖∑ n ∈ Finset.Icc 1 ⌊x⌋₊, rankinSelbergCoeff f n ^ 2 * χ n‖ ≤
           C * q * x ^ (1 - 3 / 2 * ((23 : ℝ) / 261) + ε)
 
-/-- **Proposition 3.2.** Let `f ∈ H_k^*` and `χ_0` the principal character modulo a prime `q`.
-For `q ≤ x`, `∑_{n ≤ x} λ_{f×f}(n)² χ_0(n) = x P(log x) + O_{f,ε}(x^{179/209 + ε})` with `P` of
-degree `1` and positive leading coefficient. `q ≪ x` is read as `q ≤ x`; `P` may depend on `q`;
-the implied constant depends only on `f` and `ε`.
+/-- **Sums of squared Rankin–Selberg coefficients twisted by the principal character.** Let $f$ be
+a level-one cusp form of weight $k$ that is a normalized Hecke eigenform, let
+$\lambda_{f\times f}$ be its Rankin–Selberg coefficients, and for a prime $q$ let $\chi_0$ be the
+principal Dirichlet character modulo $q$. There are real polynomials $P_q$, one for each prime
+$q$, each of degree $1$ with positive leading coefficient, such that for every $\varepsilon > 0$
+there is a constant $C$ with
+
+$$
+\Bigl|\sum_{1 \le n \le x} \lambda_{f\times f}(n)^2\,\chi_0(n) - x\,P_q(\log x)\Bigr| \le
+C\,x^{179/209 + \varepsilon}
+$$
+
+for every prime $q$ and every real $x \ge q$.
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Proposition 3.2 (`integers-2024-A3-prop-3-2`). -/
@@ -196,10 +267,18 @@ public theorem_wanted sum_rankinSelbergCoeff_sq_mul_principal_character {k : ℤ
             - ((x * (P q).eval (Real.log x) : ℝ) : ℂ)‖ ≤
           C * x ^ ((179 : ℝ) / 209 + ε)
 
-/-- **Proposition 4.1.** Let `f ∈ H_k^*`, `w ≥ 2`, `χ` a primitive Dirichlet character modulo a
-prime `q`, and `ϑ_w = 92/(247w+10)`. For real `x ≥ 1` with `q ≤ x^{ϑ_w}`,
-`∑_{n ≤ x} λ_{w,f×f}(n) χ(n) = O_{f,ε}(q x^{1 - 3ϑ_w/2 + ε})`, the implied constant depending
-only on `f`, `w`, `ε`. `q ≪ x^{ϑ_w}` is read as `q ≤ x^{ϑ_w}`.
+/-- **Sums of Rankin–Selberg convolution powers twisted by a primitive character.** Let $f$ be a
+level-one cusp form of weight $k$ that is a normalized Hecke eigenform, let $\lambda_{f\times f}$
+be its Rankin–Selberg coefficients, let $w \ge 2$, let $\lambda_{w,f\times f}$ be the $w$-th
+power of $\lambda_{f\times f}$ under Dirichlet convolution, and put
+$\vartheta_w = 92/(247w + 10)$. For every $\varepsilon > 0$ there is a constant $C$ such that for
+every prime $q$, every primitive Dirichlet character $\chi$ modulo $q$ and every real $x \ge 1$
+with $q \le x^{\vartheta_w}$,
+
+$$
+\Bigl|\sum_{1 \le n \le x} \lambda_{w,f\times f}(n)\,\chi(n)\Bigr| \le
+C\,q\,x^{1 - 3\vartheta_w/2 + \varepsilon}.
+$$
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Proposition 4.1 (`integers-2024-A3-prop-4-1`). -/
@@ -211,11 +290,20 @@ public theorem_wanted sum_rankinSelbergCoeff_pow_mul_primitive_character {k : �
         ‖∑ n ∈ Finset.Icc 1 ⌊x⌋₊, (rankinSelbergCoeff f ^ w) n * χ n‖ ≤
           C * q * x ^ (1 - 3 / 2 * ((92 : ℝ) / (247 * w + 10)) + ε)
 
-/-- **Proposition 4.2.** Let `f ∈ H_k^*`, `w ≥ 2`, and `χ_0` the principal character modulo a
-prime `q`. For `q ≤ x`,
-`∑_{n ≤ x} λ_{w,f×f}(n) χ_0(n) = x P_{w-1}(log x) + O_{f,ε}(x^{ϑ̃_w + ε})` with
-`ϑ̃_w = 1 - 210/(317w+115)` and `P_{w-1}` of degree `w - 1`. `q ≪ x` is read as `q ≤ x`; the
-polynomial may depend on `q`; the implied constant depends only on `f`, `w`, `ε`.
+/-- **Sums of Rankin–Selberg convolution powers twisted by the principal character.** Let $f$ be a
+level-one cusp form of weight $k$ that is a normalized Hecke eigenform, let $\lambda_{f\times f}$
+be its Rankin–Selberg coefficients, let $w \ge 2$, let $\lambda_{w,f\times f}$ be the $w$-th
+power of $\lambda_{f\times f}$ under Dirichlet convolution, and for a prime $q$ let $\chi_0$ be
+the principal Dirichlet character modulo $q$. There are real polynomials $P_q$, one for each
+prime $q$, each of degree $w - 1$, such that for every $\varepsilon > 0$ there is a constant $C$
+with
+
+$$
+\Bigl|\sum_{1 \le n \le x} \lambda_{w,f\times f}(n)\,\chi_0(n) - x\,P_q(\log x)\Bigr| \le
+C\,x^{1 - 210/(317w + 115) + \varepsilon}
+$$
+
+for every prime $q$ and every real $x \ge q$.
 
 Source: Guodong Hua, *The General Divisor Problem of Cusp Form Coefficients over Arithmetic
 Progressions*, INTEGERS 24 (2024), Article A3, Proposition 4.2 (`integers-2024-A3-prop-4-2`). -/

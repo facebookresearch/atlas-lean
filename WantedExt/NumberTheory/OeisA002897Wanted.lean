@@ -35,19 +35,23 @@ namespace MathlibExt.NumberTheory.OeisA002897Wanted
 binomial coefficients; `AddMonoidAlgebra.coeff` is Mathlib's. Test
 evaluations omitted (proofs live upstream). Status: resolved true. -/
 
-/-- Cubed central binomial coefficients. -/
+/-- **Cubed central binomial coefficients.** For a natural number $n$, $a(n) = \binom{2n}{n}^3$. -/
 def a (n : ℕ) : ℕ := (Nat.choose (2 * n) n) ^ 3
 
-/-- Variable indices. -/
+/-- **Indices for three variables.** Three polynomial variables are indexed by the set
+$\{0, 1, 2\}$. -/
 abbrev Vars := Fin 3
 
-/-- The finsupp for the monomial `x^n y^n z^n`. -/
+/-- **Exponent vector of $x^n y^n z^n$.** For a natural number $n$, the exponent vector assigning
+exponent $n$ to each of the three variables $x, y, z$, that is, the monomial $x^n y^n z^n$. -/
 noncomputable def xyzPowN (n : ℕ) : Finsupp Vars ℕ :=
   Finsupp.ofSupportFinite (fun _ : Vars => n) (Set.toFinite _)
 
 local notation "P" => MvPolynomial Vars ℤ
 
-/-- The product polynomial. -/
+/-- **Product polynomial for the cubed central binomial coefficients.** For a natural number $n$,
+this is the polynomial $(1 + x + y + z)^{2n} (1 + x + y - z)^n (1 + x - y + z)^n$ in three
+variables $x, y, z$ (indexed by $0, 1, 2$) with integer coefficients. -/
 noncomputable def pPoly (n : ℕ) : P :=
   let X := MvPolynomial.X 0
   let Y := MvPolynomial.X 1
@@ -57,13 +61,20 @@ noncomputable def pPoly (n : ℕ) : P :=
   let p3 : P := 1 + X - Y + Z
   p1 ^ (2 * n) * p2 ^ n * p3 ^ n
 
-/-- The sequence gives the diagonal coefficients. -/
+/-- **Diagonal-coefficient property of the cubed central binomial coefficients.** This is the
+proposition that for every natural number $n$, the coefficient of $x^n y^n z^n$ in the
+polynomial $(1 + x + y + z)^{2n} (1 + x + y - z)^n (1 + x - y + z)^n$ in three variables
+$x, y, z$ with integer coefficients equals $\binom{2n}{n}^3$. -/
 def a_eq_coeff : Prop :=
   ∀ (n : ℕ), (a n : ℤ) = AddMonoidAlgebra.coeff (pPoly n) (xyzPowN n)
 
 /--
-Resolved true: Proved: the diagonal-coefficient identity holds for all `n` (formal proof
-upstream, Tsoukalas et al.). Source: Formal proof of the A002897 diagonal-coefficient identity
+**Cubed central binomial coefficients as diagonal coefficients.** For every natural number $n$,
+the coefficient of $x^n y^n z^n$ in the polynomial
+$(1 + x + y + z)^{2n} (1 + x + y - z)^n (1 + x - y + z)^n$ in three variables $x, y, z$ with
+integer coefficients equals $\binom{2n}{n}^3$.
+
+Source: Formal proof of the A002897 diagonal-coefficient identity
 (methods of Tsoukalas et al. [arXiv/2605.22763]),
 https://github.com/mo271/formal-conjectures/blob/a32396489dcb8f86c3549b93aa358ac6a10a3a1f/FormalConjectures/OEIS/2897.wip.lean#L408.
 Moved from `OpenConjectures/NumberTheory/OeisA002897`.

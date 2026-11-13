@@ -22,10 +22,12 @@ namespace MetaMathlibExt
 open MathlibExt.Analysis.Ramanujan.Part1Ch5.Entry10bEuleriansymmetry
 open MathlibExt.Analysis.Ramanujan.Part1Ch7.DirichletBeta
 
-/-- The odd-denominator zeta series: for integers `k > 1`,
-`∑_{n ≥ 1} 1/(2n - 1)^k = (1 - 2^{-k}) ζ(k)`, stated over `ℂ` with Mathlib's `riemannZeta`
-and the index shifted to `n ≥ 0` (`2n + 1`). The source writes `k > 1`; it uses `k` as an
-integer throughout, so `k` is a natural number with `2 ≤ k` here.
+/-- **Zeta series over odd denominators.** Let $\zeta$ be the Riemann zeta function. For every
+natural number $k \ge 2$, the series $\sum_{n \ge 0} 1/(2n+1)^k$ converges in $\mathbb{C}$ and
+$$\sum_{n=0}^{\infty} \frac{1}{(2n+1)^k} = \Bigl(1 - \frac{1}{2^k}\Bigr) \zeta(k).$$
+
+The source writes this as $\sum_{n \ge 1} 1/(2n-1)^k = (1 - 2^{-k}) \zeta(k)$ for integers
+$k > 1$.
 
 Source: Jan W. H. Swanepoel, *A Short Simple Probabilistic Proof of a Well Known Identity
 and the Derivation of Related New Identities Involving the Bernoulli Numbers and the Euler
@@ -34,16 +36,16 @@ Numbers*, INTEGERS 25 (2025), Article A50, Proposition 2, Equation (11)
 public theorem_wanted hasSum_one_div_odd_pow (k : ℕ) (hk : 2 ≤ k) :
     HasSum (fun n : ℕ => 1 / (2 * (n : ℂ) + 1) ^ k) ((1 - 1 / 2 ^ k) * riemannZeta k)
 
-/-- Dirichlet beta at odd positive integers: for each even `k ≥ 2`,
-`β(k - 1) = (π/2)^{k-1} |E_{k-2}| / (2 (k - 2)!)`, equivalently
-`β(k - 1) = π^{k-1} |E_{k-2}| / (2^k (k - 2)!)`, the source's Equation (12)
-(`β(1) = π/4`, `β(3) = π³/32`, `β(5) = 5π⁵/1536`, `β(7) = 61π⁷/184320`). With `k = 2m + 2`:
-`β(2m + 1) = π^{2m+1} |E_{2m}| / (2^{2m+2} (2m)!)`. Here `β` is the existing
-`chapter7DirichletBeta`, the `L`-function of the nontrivial character mod `4`, which equals the
-source's series `∑_{n ≥ 1} (-1)^{n-1}/(2n - 1)^s` for `Re s > 1` and is
-its analytic continuation at `s = 1`, where the series converges only conditionally to the same
-value. `E_{2m}` (OEIS A028296, the source's Euler numbers `1, -1, 5, -61, …`) is the existing
-`chapter5EulerEven m`.
+/-- **Dirichlet beta at odd positive integers.** Let $\beta$ be the Dirichlet $L$-function of the
+nontrivial character modulo $4$, which for $\operatorname{Re} s > 1$ is the series
+$\beta(s) = \sum_{n \ge 1} (-1)^{n-1}/(2n-1)^s$, and let $E_0 = 1, E_2 = -1, E_4 = 5,
+E_6 = -61, \dots$ be the even-index Euler numbers. Then for every natural number $m$,
+$$\beta(2m+1) = \frac{\pi^{2m+1} \, |E_{2m}|}{2^{2m+2} \, (2m)!}.$$
+
+For example $\beta(1) = \pi/4$, $\beta(3) = \pi^3/32$, $\beta(5) = 5\pi^5/1536$ and
+$\beta(7) = 61\pi^7/184320$. With $k = 2m+2$ this is the source's Equation (12),
+$\beta(k-1) = (\pi/2)^{k-1} |E_{k-2}| / (2 (k-2)!)$ for even $k \ge 2$. At $s = 1$ the series
+converges only conditionally, and its sum is the value of the $L$-function there.
 
 Source: Jan W. H. Swanepoel, *A Short Simple Probabilistic Proof of a Well Known Identity
 and the Derivation of Related New Identities Involving the Bernoulli Numbers and the Euler
@@ -54,10 +56,14 @@ public theorem_wanted dirichletBeta_two_mul_add_one (m : ℕ) :
       (Real.pi : ℂ) ^ (2 * m + 1) * ((|chapter5EulerEven m| : ℤ) : ℂ) /
         (2 ^ (2 * m + 2) * ((2 * m).factorial : ℂ))
 
-/-- Theorem 1 (Equation (1)): for every integer `k ≥ 1`,
-`I_k = (1/π) ∫_0^∞ (sin x / x)^k dx = (1 / (2^k (k-1)!)) ∑_{i=0}^{⌊k/2⌋} (-1)^i C(k,i) (k - 2i)^(k-1)`.
-The integral is taken as the improper limit `lim_{R → ∞} ∫_0^R` (for `k = 1` it converges only
-conditionally), so the statement is `∫_0^R (sin x / x)^k dx → π I_k`.
+/-- **Integrals of powers of $\sin x / x$.** For every natural number $k \ge 1$, the improper
+integral $\lim_{R \to \infty} \int_0^R (\sin x / x)^k \, dx$ exists and
+$$
+\lim_{R \to \infty} \int_0^R \Bigl(\frac{\sin x}{x}\Bigr)^k dx =
+\frac{\pi}{2^k (k-1)!} \sum_{i=0}^{\lfloor k/2 \rfloor} (-1)^i \binom{k}{i} (k-2i)^{k-1}.
+$$
+
+For $k = 1$ the integral converges only conditionally, hence the limit over $R$.
 
 Source: Jan W. H. Swanepoel, *A Short Simple Probabilistic Proof of a Well Known Identity
 and the Derivation of Related New Identities Involving the Bernoulli Numbers and the Euler
@@ -68,11 +74,14 @@ public theorem_wanted tendsto_integral_sinc_pow (k : ℕ) (hk : 1 ≤ k) :
           (-1 : ℝ) ^ i * (k.choose i : ℝ) * ((k : ℝ) - 2 * i) ^ (k - 1)) /
         (2 ^ k * ((k - 1).factorial : ℝ)))))
 
-/-- Proposition 4 (quoting Tuck): for `k ≥ 1`,
-`∑_{n ≥ 1} sin^k(n t) / n^k = π t^(k-1) I_k - t^k / 2` for `0 < t < 2π` if `k = 1` and for
-`0 ≤ t ≤ 2π/k` if `k ≥ 2`. Here `π I_k = L` is the improper integral
-`lim_{R → ∞} ∫_0^R (sin x / x)^k dx`, supplied as a hypothesis, and the series is the limit of
-its partial sums (for `k = 1` it converges only conditionally).
+/-- **Sums of powers of $\sin(nt)/n$.** Let $k \ge 1$ be a natural number, suppose that the
+limit $L = \lim_{R \to \infty} \int_0^R (\sin x / x)^k \, dx$ exists, and let $t$ be a real
+number with $0 < t < 2\pi$ if $k = 1$ and $0 \le t \le 2\pi/k$ if $k \ge 2$. Then the partial
+sums of $\sum_{n \ge 1} \sin^k(nt)/n^k$ converge and
+$$\sum_{n=1}^{\infty} \frac{\sin^k(nt)}{n^k} = t^{k-1} L - \frac{t^k}{2}.$$
+
+The source writes $L$ as $\pi I_k$, with $I_k$ the normalized integral of its Theorem 1. For
+$k = 1$ the series converges only conditionally.
 
 Source: Jan W. H. Swanepoel, *A Short Simple Probabilistic Proof of a Well Known Identity
 and the Derivation of Related New Identities Involving the Bernoulli Numbers and the Euler

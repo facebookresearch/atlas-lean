@@ -46,23 +46,29 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.IntegerComplexityWanted
 
-/-- Integer complexity `‖n‖` phrased over `ℕ`:
-`IntegerComplexity.complexity ⟨n, ·⟩` for positive `n`,
-and `0` at `n = 0`. -/
+/-- **Integer complexity extended to all natural numbers.** For a natural number $n$, the value
+$\lVert n \rVert$ is the integer complexity of $n$ when $n$ is positive, that is, the least number
+of ones needed to write $n$ using $1$, $+$, $\times$ and parentheses, and $\lVert 0 \rVert = 0$. -/
 noncomputable def cx (n : ℕ) : ℕ :=
   if h : 0 < n then IntegerComplexity.complexity ⟨n, h⟩ else 0
 
-/-- The lower-bound function `g` of Corollary 2 (see the
-module docstring). -/
+/-- **Lower-bound function for integer complexity.** For a natural number $n$, let $a$ be the
+largest natural number with $3^a \le n$ when $n \ge 1$, and let $a = 0$ when $n = 0$. The function
+$g$ on the natural numbers is given by $g(n) = 3a$ if $n < \frac{4}{3} \cdot 3^a$,
+$g(n) = 3a + 1$ if $\frac{4}{3} \cdot 3^a \le n < 2 \cdot 3^a$, and $g(n) = 3a + 2$ if
+$n \ge 2 \cdot 3^a$. -/
 def complexityLowerBoundG (n : ℕ) : ℕ :=
   let a := Nat.log 3 n
   if 3 * (n - 3 ^ a) < 3 ^ a then 3 * a
   else if n < 2 * 3 ^ a then 3 * a + 1
   else 3 * a + 2
 
-/-- **Proposition 1**: for `n > 1`, `‖n‖` is the minimum of
-`‖d‖ + ‖n / d‖` over divisors `d` of `n` with `d ≥ 2` and
-of `‖j‖ + ‖n - j‖` over `1 ≤ j ≤ n / 2`.
+/-- **Integer complexity as a minimum over factorizations and sums.** Write
+$\lVert m \rVert$ for the integer complexity of a positive integer $m$, the least number of ones
+needed to write $m$ using $1$, $+$, $\times$ and parentheses. For every integer $n \ge 2$,
+$\lVert n \rVert$ is the least element of the set consisting of the numbers
+$\lVert d \rVert + \lVert n/d \rVert$ for the divisors $d \ge 2$ of $n$ and the numbers
+$\lVert j \rVert + \lVert n - j \rVert$ for the integers $j$ with $1 \le j \le n/2$.
 
 Source: Juan Arias de Reyna, "Complexity of Natural
 Numbers", Proposition 1. -/
@@ -72,10 +78,11 @@ theorem_wanted complexity_eq_min (n : ℕ) (hn : 2 ≤ n) :
       (∃ j : ℕ, 1 ≤ j ∧ j ≤ n / 2 ∧ k = cx j + cx (n - j))}
       (cx n)
 
-/-- **Proposition 2**: if `P : ℕ → ℝ` satisfies `P 1 = 1`
-and `P (n + m) ≤ P n + P m`, `P (n * m) ≤ P n + P m` for
-all positive `n, m`, then `P n ≤ ‖n‖` for all positive
-`n`.
+/-- **A criterion for lower bounds on integer complexity.** Write $\lVert n \rVert$ for the
+integer complexity of a positive integer $n$, the least number of ones needed to write $n$ using
+$1$, $+$, $\times$ and parentheses. Let $P$ be a real-valued function on the natural numbers with
+$P(1) = 1$ such that $P(n + m) \le P(n) + P(m)$ and $P(nm) \le P(n) + P(m)$ for all positive
+integers $n$ and $m$. Then $P(n) \le \lVert n \rVert$ for every positive integer $n$.
 
 Source: Juan Arias de Reyna, "Complexity of Natural
 Numbers", Proposition 2. -/
@@ -86,15 +93,19 @@ theorem_wanted le_complexity_of_subadditive (P : ℕ → ℝ)
     (n : ℕ) (hn : 1 ≤ n) :
     P n ≤ (cx n : ℝ)
 
-/-- **Corollary 1**: `log₂ (1 + n) ≤ ‖n‖` for every `n`.
+/-- **Logarithmic lower bound for integer complexity.** Write $\lVert n \rVert$ for the integer
+complexity of a positive integer $n$, the least number of ones needed to write $n$ using $1$, $+$,
+$\times$ and parentheses. For every positive integer $n$, $\log_2(1 + n) \le \lVert n \rVert$.
 
 Source: Juan Arias de Reyna, "Complexity of Natural
 Numbers", Corollary 1. -/
 theorem_wanted logb_two_add_one_le (n : ℕ) (hn : 1 ≤ n) :
     Real.logb 2 (1 + n) ≤ (cx n : ℝ)
 
-/-- **Corollary 2**, first claim: `‖2^a * 3^b‖ = 2a + 3b`
-for `a ∈ {0, 1, 2}` and all `b`, other than `a = b = 0`.
+/-- **Integer complexity of $2^a 3^b$ for $a \le 2$.** Write $\lVert n \rVert$ for the integer
+complexity of a positive integer $n$, the least number of ones needed to write $n$ using $1$, $+$,
+$\times$ and parentheses. For all natural numbers $a \le 2$ and $b$, not both zero,
+$\lVert 2^a 3^b \rVert = 2a + 3b$.
 
 Source: Juan Arias de Reyna, "Complexity of Natural
 Numbers", Corollary 2. -/
@@ -102,11 +113,11 @@ theorem_wanted complexity_two_pow_mul_three_pow (a b : ℕ)
     (ha : a ≤ 2) (hab : 1 ≤ 2 * a + 3 * b) :
     cx (2 ^ a * 3 ^ b) = 2 * a + 3 * b
 
-/-- **Corollary 2**, second claim: writing an integer
-`v > 1` uniquely as `v = 2a + 3b` with `a ∈ {0, 1, 2}`,
-the number `2^a * 3^b` is the greatest `m` with
-`‖m‖ = v`; in particular `m > 2^a * 3^b` implies
-`‖m‖ > 2a + 3b`.
+/-- **Integers above $2^a 3^b$ have complexity above $2a + 3b$ when $a \le 2$ and $2a + 3b \ge 2$.**
+Write $\lVert m \rVert$ for the integer complexity of a positive integer $m$, the least number
+of ones needed to write $m$ using $1$, $+$, $\times$ and parentheses. Let $a \le 2$ and $b$ be
+natural numbers with $2a + 3b \ge 2$. Then every natural number $m > 2^a 3^b$ satisfies
+$\lVert m \rVert > 2a + 3b$.
 
 Source: Juan Arias de Reyna, "Complexity of Natural
 Numbers", Corollary 2. -/
@@ -115,9 +126,12 @@ theorem_wanted complexity_lt_of_gt_extremal (a b m : ℕ)
     (hm : 2 ^ a * 3 ^ b < m) :
     2 * a + 3 * b < cx m
 
-/-- **Corollary 2**, third claim: `g n ≤ ‖n‖` for all
-positive `n`, for the lower-bound function `g` given by
-`complexityLowerBoundG`.
+/-- **The function $g$ bounds integer complexity from below.** Write $\lVert n \rVert$ for the
+integer complexity of a positive integer $n$, the least number of ones needed to write $n$ using
+$1$, $+$, $\times$ and parentheses. For a positive integer $n$, let $a$ be the largest natural
+number with $3^a \le n$, and let $g(n) = 3a$ if $n < \frac{4}{3} \cdot 3^a$, $g(n) = 3a + 1$ if
+$\frac{4}{3} \cdot 3^a \le n < 2 \cdot 3^a$, and $g(n) = 3a + 2$ if $n \ge 2 \cdot 3^a$. Then
+$g(n) \le \lVert n \rVert$ for every positive integer $n$.
 
 Source: Juan Arias de Reyna, "Complexity of Natural
 Numbers", Corollary 2. -/
