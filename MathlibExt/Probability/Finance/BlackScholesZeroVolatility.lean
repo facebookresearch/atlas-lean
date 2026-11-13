@@ -21,12 +21,11 @@ sign of `A = log (S0 / K) + r T`: if `A > 0`, both `d₁, d₂ → +∞` and
 `Φ → 1`; if `A < 0`, both `→ -∞` and `Φ → 0`; if `A = 0`, both `→ 0` and
 `Φ → Φ(0) = 1/2`, and `S0 = K e^{-rT}` makes the limit `0` in that case.
 This is a limit of the formula function; no stochastic limit theorem is claimed.
-The facts `Φ(0) = 1/2` and continuity of the Gaussian cdf are cited from
+Continuity of the Gaussian cdf is cited from
 `MathlibExt.Probability.Distributions.GaussianCdf`, not reproved.
 
 ## Main results
 
-* `stdNormal_cdf_zero`: `Φ(0) = 1/2`.
 * `tendsto_blackScholesCall_zeroVol`: the zero-volatility limit.
 -/
 
@@ -36,13 +35,6 @@ namespace MathlibExt.Probability.Finance.BlackScholesZeroVolatility
 
 open MeasureTheory ProbabilityTheory Real MathlibExt.Probability.Finance.BlackScholes
 open Filter Topology
-
-/-- The standard normal cdf at `0` is `1/2`, cited from
-`ProbabilityTheory.cdf_gaussianReal_zero` in
-`MathlibExt.Probability.Distributions.GaussianCdf`.
-Needed for the at-the-money case of the zero-volatility limit. -/
-theorem stdNormal_cdf_zero : cdf (gaussianReal 0 1) 0 = 1 / 2 :=
-  ProbabilityTheory.cdf_gaussianReal_zero
 
 /-- Zero-volatility limit (FI17.T04): as `σ → 0+`, the Black-Scholes call price
 approaches the discounted deterministic-payoff limit `max (S0 - K e^{-rT}) 0`.
