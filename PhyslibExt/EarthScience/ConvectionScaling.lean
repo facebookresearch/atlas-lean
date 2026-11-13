@@ -9,8 +9,8 @@ module
 
 public import Mathlib.Algebra.Order.Field.Basic
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Positivity
 
 /-!
 # Geodynamics and convection scaling: the Rayleigh number
