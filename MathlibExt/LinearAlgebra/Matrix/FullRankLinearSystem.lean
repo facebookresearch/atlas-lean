@@ -56,11 +56,11 @@ namespace Matrix
 
 /-! ## A. Existence and uniqueness from injective `mulVec` -/
 
-set_option linter.unusedDecidableInType false in
 /-- A full-rank (injective `mulVec`) square system has exactly one solution. -/
-theorem exists_unique_mulVec_eq {n : Type*} [Fintype n] [DecidableEq n]
+theorem exists_unique_mulVec_eq {n : Type*} [Fintype n]
     {A : Matrix n n ℝ} (hinj : Function.Injective A.mulVec) (b : n → ℝ) :
     ∃! x : n → ℝ, A *ᵥ x = b := by
+  classical
   have hUnit : IsUnit A := Matrix.mulVec_injective_iff_isUnit.mp hinj
   have hsurj : Function.Surjective A.mulVec :=
     Matrix.mulVec_surjective_iff_isUnit.mpr hUnit

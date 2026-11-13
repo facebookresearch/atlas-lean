@@ -50,6 +50,13 @@ example :
   exact ⟨⟨x, hx, huniq⟩,
     ((Matrix.mulVec_eq_iff_inv_mulVec hdet).mp hx).symm.trans hxeq⟩
 
+/-- `exists_unique_mulVec_eq` applies over an abstract finite index type with
+no `DecidableEq` instance in scope. -/
+example {n : Type*} [Fintype n] {A : Matrix n n ℝ}
+    (hinj : Function.Injective A.mulVec) (b : n → ℝ) :
+    ∃! x : n → ℝ, A *ᵥ x = b :=
+  Matrix.exists_unique_mulVec_eq hinj b
+
 /-- Boundary: the singular system with inconsistent right-hand side has
 no unique solution, because it has no solution at all. -/
 example :
