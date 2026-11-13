@@ -223,6 +223,11 @@ instance (n : ℕ) (k : Icc 2 n) :
     IsProbabilityMeasure (expMeasure (((k : ℕ).choose 2 : ℕ) : ℝ)) :=
   isProbabilityMeasure_expMeasure (KingmanTimes.choose_two_pos k.2)
 
+/-- `piMeasure n` is a probability measure. -/
+instance (n : ℕ) : IsProbabilityMeasure (piMeasure n) := by
+  unfold piMeasure
+  infer_instance
+
 /-- The coordinate projections of `piMeasure n` form a Kingman coalescent; in particular
 `KingmanTimes` is inhabited for every sample size. -/
 def KingmanTimes.ofPi (n : ℕ) : KingmanTimes (piMeasure n) n where

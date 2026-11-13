@@ -226,7 +226,7 @@ theorem posSemidef_partialTraceRight [Fintype m] [Fintype n]
 
 /-- The partial trace over the first factor is adjoint to amplification by
 the identity, in the trace pairing. -/
-theorem trace_partialTraceLeft_mul [Fintype m] [Fintype n] [DecidableEq m] [DecidableEq n]
+theorem trace_partialTraceLeft_mul [Fintype m] [Fintype n] [DecidableEq m]
     (A : Matrix (m × n) (m × n) 𝕜) (B : Matrix n n 𝕜) :
     Matrix.trace (partialTraceLeft A * B)
       = Matrix.trace (A * ((1 : Matrix m m 𝕜) ⊗ₖ B)) := by
@@ -257,7 +257,7 @@ theorem trace_partialTraceLeft_mul [Fintype m] [Fintype n] [DecidableEq m] [Deci
 
 /-- The partial trace over the second factor is adjoint to amplification by
 the identity, in the trace pairing. -/
-theorem trace_partialTraceRight_mul [Fintype m] [Fintype n] [DecidableEq m] [DecidableEq n]
+theorem trace_partialTraceRight_mul [Fintype m] [Fintype n] [DecidableEq n]
     (A : Matrix (m × n) (m × n) 𝕜) (C : Matrix m m 𝕜) :
     Matrix.trace (partialTraceRight A * C)
       = Matrix.trace (A * (C ⊗ₖ (1 : Matrix n n 𝕜))) := by
