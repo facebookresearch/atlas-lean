@@ -17,7 +17,7 @@ public import Mathlib.Data.Fintype.Prod
 /-!
 # Codes are complete for finite-state binary machines
 
-Codes (`Code k`, MT1) and binary multi-tape machines with finitely many states describe the same
+Codes (`Code k`) and binary multi-tape machines with finitely many states describe the same
 computations:
 
 - **Codes give finite-state machines.** The machine of a code, `Code.toTM c`, has states in `ℕ`,
