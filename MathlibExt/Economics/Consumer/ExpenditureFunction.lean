@@ -36,7 +36,8 @@ set, and homogeneity needs no hypothesis. The positive-orthant corollary is the
 source's setting.
 
 Implementation note: this is the canonical expenditure declaration. Consumer duality
-re-exports it as `Economics.Consumer.expenditure`.
+re-exports it as `Economics.Consumer.expenditure`, and compensating variation as
+`MathlibExt.Economics.Consumer.expenditure`.
 
 ## References
 
