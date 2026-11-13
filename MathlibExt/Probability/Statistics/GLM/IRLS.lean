@@ -35,21 +35,25 @@ identity (`hasFDerivAt_canonicalScore`).
 
 Under these hypotheses, at a `β` where the IRLS weights `wᵢ = weight (X β)ᵢ` are nonzero and
 the weighted Gram matrix `Xᵀ W(β) X` is invertible (`IsUnit`), the Newton–Raphson update
-`β - (∇²ℓ)⁻¹ ∇ℓ` is a weighted least-squares fit of the *working response*
+`β - (∇²ℓ)⁻¹ ∇ℓ` is the closed-form weighted least-squares candidate for the *working response*
 `zᵢ = ηᵢ + (yᵢ - μᵢ) / wᵢ` on `X` with weights `wᵢ`, and `β` is a fixed point of this update
-exactly when the score vanishes at `β`. Iterating the update is the IRLS algorithm of Nelder
-and Wedderburn. Without these assumptions `irlsStep` is only the closed-form candidate built
-from Mathlib's total matrix inverse, not a least-squares fit, and its fixed points and the
-score roots need not coincide in either direction; the tests give singular-Gram
-counterexamples.
+exactly when the score vanishes at `β`. When the weights are moreover positive, as the
+variances `b''` of a nondegenerate family are, the candidate minimizes the weighted residual
+sum of squares, so the update is a weighted least-squares fit. Iterating the update is the IRLS
+algorithm of Nelder and Wedderburn. With a negative weight the candidate need not minimize the
+weighted residual sum of squares. Without nonzero weights and an invertible Gram matrix
+`irlsStep` is only the closed-form candidate built from Mathlib's total matrix inverse, and its
+fixed points and the score roots need not coincide in either direction. The tests give a
+negative-weight counterexample and singular-Gram counterexamples.
 
 ## Main definitions
 
 * `weightedGram X w`: the weighted Gram matrix `Xᵀ diag(w) X`.
 * `wlsClosedForm X w z`: the closed-form weighted least-squares candidate, i.e. the GLS formula
-  with covariance `diag(w)⁻¹` (reusing `GeneralizedLeastSquares.glsMatrix`). It is the
-  weighted least-squares estimate when the weights are nonzero and the weighted Gram matrix is
-  invertible; for a singular Gram matrix it is a junk value of Mathlib's total matrix inverse.
+  with covariance `diag(w)⁻¹` (reusing `GeneralizedLeastSquares.glsMatrix`). For nonzero
+  weights and an invertible weighted Gram matrix it is the unique solution of the weighted
+  normal equations; it is the weighted least-squares estimate when the weights are moreover
+  nonnegative. For a singular Gram matrix it is a junk value of Mathlib's total matrix inverse.
 * `newtonStep score hess β`: the Newton–Raphson update `β - (hess β)⁻¹ score β`.
 * `irlsWeights`, `workingResponse`, `irlsStep`, `irlsIterate`: the IRLS weights, working
   response, one IRLS update (the closed-form candidate for the working response), and the
@@ -66,7 +70,10 @@ counterexamples.
   matrix, the candidate minimizes the weighted residual sum of squares, so it is the weighted
   least-squares estimate.
 * `newtonStep_eq_irlsStep`: with nonzero weights and an invertible weighted Gram matrix at `β`,
-  the Newton step equals the IRLS (weighted least-squares) step.
+  the Newton step equals the IRLS step, the closed-form candidate for the working response.
+* `irlsStep_wrss_le`: with positive weights and an invertible weighted Gram matrix at `β`, the
+  IRLS step minimizes the weighted residual sum of squares of the working response, so it is a
+  weighted least-squares fit.
 * `newtonIterate_eq_irlsIterate`: when those assumptions hold at every point, Newton–Raphson
   and IRLS produce the same iterates.
 * `irlsStep_eq_self_iff`: with nonzero weights and an invertible weighted Gram matrix at `β`,
@@ -101,11 +108,12 @@ def weightedGram (X : Matrix m k ℝ) (w : m → ℝ) : Matrix k k ℝ :=
 
 /-- The closed-form weighted least-squares candidate for `b` in `z ≈ X b` with weights `w`: the
 generalized least-squares formula with covariance `diag(w)⁻¹`, which for nonzero weights is
-`(Xᵀ W X)⁻¹ Xᵀ W z` (`wlsClosedForm_eq`). It is the weighted least-squares estimate when the
-weights are nonzero and the weighted Gram matrix is invertible
-(`normal_eq_iff_eq_wlsClosedForm`, `wrss_wlsClosedForm_le`). For a singular Gram matrix,
-Mathlib's total matrix inverse makes it a junk value that need not minimize the weighted
-residual sum of squares. -/
+`(Xᵀ W X)⁻¹ Xᵀ W z` (`wlsClosedForm_eq`). With nonzero weights and an invertible weighted Gram
+matrix it is the unique solution of the weighted normal equations
+(`normal_eq_iff_eq_wlsClosedForm`); if the weights are also nonnegative it minimizes the
+weighted residual sum of squares, so it is the weighted least-squares estimate
+(`wrss_wlsClosedForm_le`). With a negative weight it need not minimize, and for a singular Gram
+matrix Mathlib's total matrix inverse makes it a junk value. -/
 noncomputable def wlsClosedForm (X : Matrix m k ℝ) (w z : m → ℝ) : k → ℝ :=
   glsMatrix X (diagonal w⁻¹) *ᵥ z
 
@@ -201,9 +209,10 @@ noncomputable def workingResponse (X : Matrix m k ℝ) (y : m → ℝ) (mean wei
   fun i => (X *ᵥ β) i + (y i - mean ((X *ᵥ β) i)) / weight ((X *ᵥ β) i)
 
 /-- One IRLS update: the closed-form weighted least-squares candidate for the working response
-on `X` with the IRLS weights. It is the weighted least-squares fit when the weights are nonzero
-and the weighted Gram matrix is invertible (`irlsStep_eq`); otherwise it need not be a
-least-squares fit (see `wlsClosedForm`). -/
+on `X` with the IRLS weights. With nonzero weights and an invertible weighted Gram matrix it is
+`β + (Xᵀ W X)⁻¹ Xᵀ (y - μ(β))` (`irlsStep_eq`), and it is a weighted least-squares fit when the
+weights are moreover positive (`irlsStep_wrss_le`); otherwise it need not be a least-squares
+fit (see `wlsClosedForm`). -/
 noncomputable def irlsStep (X : Matrix m k ℝ) (y : m → ℝ) (mean weight : ℝ → ℝ)
     (β : k → ℝ) : k → ℝ :=
   wlsClosedForm X (irlsWeights weight X β) (workingResponse X y mean weight β)
@@ -249,9 +258,21 @@ theorem irlsStep_eq (β : k → ℝ) (hw : ∀ i, irlsWeights weight X β i ≠ 
   rw [irlsStep, wlsClosedForm_eq hw, weights_mul_workingResponse β hw, mulVec_add,
     transpose_mulVec_mul_mulVec, mulVec_add, mulVec_mulVec, nonsing_inv_mul _ hdet, one_mulVec]
 
+/-- **IRLS is weighted least squares.** With positive IRLS weights and an invertible weighted
+Gram matrix at `β`, the IRLS step minimizes the weighted residual sum of squares of the working
+response with the IRLS weights. -/
+theorem irlsStep_wrss_le (β : k → ℝ) (hw : ∀ i, 0 < irlsWeights weight X β i)
+    (hG : IsUnit (weightedGram X (irlsWeights weight X β))) (b : k → ℝ) :
+    wrss X (irlsWeights weight X β) (workingResponse X y mean weight β)
+        (irlsStep X y mean weight β) ≤
+      wrss X (irlsWeights weight X β) (workingResponse X y mean weight β) b :=
+  wrss_wlsClosedForm_le (fun i => (hw i).ne') (fun i => (hw i).le) hG _ b
+
 /-- **Newton–Raphson is IRLS.** Under the canonical-link score and Hessian identities, with
 nonzero weights and an invertible weighted Gram matrix at `β`, the Newton–Raphson update equals
-the weighted least-squares fit of the working response with the IRLS weights. -/
+the IRLS step, the closed-form weighted least-squares candidate for the working response with
+the IRLS weights; with positive weights that step is a weighted least-squares fit
+(`irlsStep_wrss_le`). -/
 theorem newtonStep_eq_irlsStep {score : (k → ℝ) → k → ℝ} {hess : (k → ℝ) → Matrix k k ℝ}
     (h : IsCanonicalScoreHessian X y mean weight score hess) (β : k → ℝ)
     (hw : ∀ i, irlsWeights weight X β i ≠ 0)

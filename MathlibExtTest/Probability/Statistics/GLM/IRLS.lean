@@ -60,6 +60,14 @@ example (β : Fin 1 → ℝ) :
   newtonStep_eq_irlsStep (gaussian_isCanonical 1 ![3]) β (fun _ => one_ne_zero)
     (by rw [irlsWeights_one, weightedGram_one]; simp)
 
+/-- With the positive Gaussian weights `1`, the IRLS step from `β = 0` minimizes the weighted
+residual sum of squares of the working response (`irlsStep_wrss_le`). -/
+example (b : Fin 1 → ℝ) :
+    wrss (1 : Matrix (Fin 1) (Fin 1) ℝ) (irlsWeights (fun _ => 1) 1 ![0])
+        (workingResponse 1 ![3] id (fun _ => 1) ![0]) (irlsStep 1 ![3] id (fun _ => 1) ![0]) ≤
+      wrss 1 (irlsWeights (fun _ => 1) 1 ![0]) (workingResponse 1 ![3] id (fun _ => 1) ![0]) b :=
+  irlsStep_wrss_le ![0] (fun _ => one_pos) (by rw [irlsWeights_one, weightedGram_one]; simp) b
+
 /-- The least-squares fit `β = 3` is an IRLS fixed point, and the score vanishes there. -/
 example : irlsStep (1 : Matrix (Fin 1) (Fin 1) ℝ) ![3] id (fun _ => 1) ![3] = ![3] := by
   rw [irlsStep_eq_self_iff _ (fun _ => one_ne_zero)
@@ -121,6 +129,22 @@ example : wlsClosedForm (!![1; 1] : Matrix (Fin 2) (Fin 1) ℝ) ![1, 3] ![0, 4] 
   fin_cases i
   simp [weightedGram, Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.mul_apply]
   norm_num
+
+/-! ### Boundary: a negative weight -/
+
+/-- Nonnegativity cannot be dropped from `wrss_wlsClosedForm_le`: for `X = [1]`, `z = [0]` and
+the nonzero weight `w = [-1]`, the weighted Gram matrix `[-1]` is invertible and the closed-form
+candidate is `0`, with weighted residual sum of squares `0`, but `b = 1` gives `-1`. -/
+example : IsUnit (weightedGram (1 : Matrix (Fin 1) (Fin 1) ℝ) ![-1]) ∧
+    wlsClosedForm (1 : Matrix (Fin 1) (Fin 1) ℝ) ![-1] ![0] = ![0] ∧
+    wrss (1 : Matrix (Fin 1) (Fin 1) ℝ) ![-1] ![0] ![1] <
+      wrss (1 : Matrix (Fin 1) (Fin 1) ℝ) ![-1] ![0] (wlsClosedForm 1 ![-1] ![0]) := by
+  have h0 : wlsClosedForm (1 : Matrix (Fin 1) (Fin 1) ℝ) ![-1] ![0] = ![0] := by
+    funext i
+    simp [wlsClosedForm, Matrix.mulVec, dotProduct]
+  refine ⟨(isUnit_iff_isUnit_det _).mpr (by simp [weightedGram]), h0, ?_⟩
+  rw [h0]
+  norm_num [wrss]
 
 /-! ### Boundary: a singular weighted Gram matrix -/
 
