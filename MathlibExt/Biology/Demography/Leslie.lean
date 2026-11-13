@@ -58,12 +58,27 @@ matrices, through the similarity `P i j = L i j * v j / (r * v i)`.
 
 ## References
 
+* P. H. Leslie, _On the use of matrices in certain population mathematics_,
+  Biometrika 33 (1945), 183–212: the primary source of the matrix projection
+  `x (t + 1) = L *ᵥ x t`, with fertilities in the first row and survival
+  probabilities on the subdiagonal (`leslieMatrix f s` here), and of its stable
+  age distribution.
+* G. Frobenius, _Über Matrizen aus nicht negativen Elementen_, S.-Ber. Preuss.
+  Akad. Wiss. Berlin (1912), 456–477: the primary source for primitive
+  nonnegative matrices, whose Perron root strictly dominates every other
+  eigenvalue in modulus.
 * J. M. Cushing, _Matrix Models and Population Dynamics_, IAS/Park City
   Mathematics Series lecture notes (AMS, 2008/2009), Lecture 1, Exercise 2
   ("Strong Ergodic Theorem").
 * H. Caswell, _Matrix Population Models: Construction, Analysis, and
   Interpretation_, 2nd edition, Sinauer Associates, Sunderland, MA, 2001,
   Chapter 4 (Strong Ergodic Theorem for primitive projection matrices).
+
+Correspondence with the hypotheses here: `(leslieMatrix f s).IsPrimitive` is
+primitivity in Frobenius's sense, the condition under which normalized iterates
+converge (the imprimitive swap matrix in the tests has no limiting age shares).
+The initial population is nonnegative and nonzero, so its pairing with the
+positive left eigenvector `w` is positive and the age shares are defined.
 -/
 @[expose] public section
 
