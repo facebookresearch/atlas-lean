@@ -76,6 +76,18 @@ theorem test_instance :
   · rw [surplus_quad_eq]
     exact (hasDerivAt_quad 0).continuousAt
 
+/-- The strict abstract lemma: the quadratic surplus `r²` is strictly positive
+near, but not at, `r₀ = 0`. -/
+theorem test_instance_strict :
+    ∃ δ > 0, ∀ r, r ≠ 0 → |r - 0| < δ →
+      0 < surplus (fun r : ℝ => r ^ 2 + 1) (fun _ => 1) r := by
+  refine surplus_pos_near_of_matched ?_ ?_ ?_ ?_
+  · norm_num [surplus]
+  · exact test_deriv_first
+  · exact test_deriv_second
+  · rw [surplus_quad_eq]
+    exact (hasDerivAt_quad 0).continuousAt
+
 theorem deriv_quad_add_one_eq : deriv (fun r : ℝ => r ^ 2 + 1) = fun r => 2 * r := by
   funext x
   exact ((hasDerivAt_quad x).add_const 1).deriv
@@ -92,6 +104,28 @@ theorem test_redington_instance :
       0 ≤ surplus (fun r : ℝ => r ^ 2 + 1) (fun _ => 1) r := by
   refine redington_immunization ?_ ?_ ?_ ?_ ?_ ?_ ?_
   · exact Filter.Eventually.of_forall fun x => ((hasDerivAt_quad x).add_const 1).differentiableAt
+  · exact Filter.Eventually.of_forall fun x => differentiableAt_const 1
+  · rw [deriv_quad_add_one_eq]
+    exact (hasDerivAt_id (0 : ℝ)).const_mul 2 |>.differentiableAt
+  · rw [deriv_one_eq]
+    exact differentiableAt_const 0
+  · norm_num
+  · rw [deriv_quad_add_one_eq, deriv_one_eq]
+    norm_num
+  · rw [deriv_quad_add_one_eq, deriv_one_eq, deriv_const]
+    have h2 : HasDerivAt (fun r : ℝ => 2 * r) 2 0 := by
+      simpa using (hasDerivAt_id (0 : ℝ)).const_mul (2 : ℝ)
+    rw [h2.deriv]
+    norm_num
+
+/-- The strict Redington theorem on the same instance: the surplus is strictly
+positive at every nearby nonzero rate shift. -/
+theorem test_redington_strict_instance :
+    ∃ δ > 0, ∀ r, r ≠ 0 → |r - 0| < δ →
+      0 < surplus (fun r : ℝ => r ^ 2 + 1) (fun _ => 1) r := by
+  refine redington_immunization_strict ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · exact Filter.Eventually.of_forall fun x =>
+      ((hasDerivAt_quad x).add_const 1).differentiableAt
   · exact Filter.Eventually.of_forall fun x => differentiableAt_const 1
   · rw [deriv_quad_add_one_eq]
     exact (hasDerivAt_id (0 : ℝ)).const_mul 2 |>.differentiableAt
