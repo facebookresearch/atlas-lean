@@ -19,7 +19,7 @@ public import Mathlib.Tactic.Ring
 /-!
 # Crystal structures and packing in the hard-sphere model
 
-Atomic packing factors, theoretical density, coordination numbers, ideal HCP
+Atomic packing factors, theoretical density, explicit offset lists, ideal HCP
 geometry, FCC interstitial holes, and radius-ratio thresholds, proved from
 explicit conventional-cell geometry with hard-sphere touching relations as
 hypotheses.
@@ -35,7 +35,10 @@ packing formulas from explicit cell geometry (lattice parameters and atom
 counts as hypotheses). It does not create a competing lattice/crystal
 abstraction, does not claim a canonical crystal representation or space-group
 classification, and does not prove densest packing (Kepler/Hales is referenced
-only, never reproved).
+only, never reproved). It does not prove coordination numbers either: the offset
+lists in section B are explicit finsets whose cardinalities are computed, with no
+statement connecting them to lattice positions, distances, or the complete set of
+touching neighbors.
 
 ## ii. Key results
 
@@ -44,8 +47,10 @@ only, never reproved).
   within the hard-sphere model.
 * `theoreticalDensity_eq`, `density_mat_c1`: the symbolic density formula
   and the MAT-C1 numeric instance.
-* `fcc_coordination`, `bcc_coordination`, `diamond_coordination`,
-  `sc_coordination`: touching-neighbor counts 12, 8, 4, 6 by enumeration.
+* `fccFaceDiagonalOffsets_card`, `bccBodyDiagonalOffsets_card`,
+  `diamondTetrahedralOffsets_card`, `scEdgeOffsets_card`: the listed offset sets
+  have 12, 8, 4, 6 elements (cardinalities of explicit lists, not coordination
+  numbers).
 * `hcp_ideal_ratio`: ideal HCP `c/a = √(8/3)` via tetrahedron geometry.
 * `fcc_octahedral_hole`, `fcc_tetrahedral_hole`: hole-radius ratios
   `√2 - 1`, `√(3/2) - 1` with certified decimals.
@@ -57,7 +62,7 @@ only, never reproved).
 * Bounds: certified intervals for `√2`, `√3`, `√(3/2)` (`π` bounds come
   from Mathlib).
 * A. Atomic packing factor.
-* B. Theoretical density and coordination.
+* B. Theoretical density and offset lists.
 * C. Ideal HCP ratio and FCC interstitial holes.
 * D. Radius-ratio thresholds (geometry) and empirical predictive use.
 
@@ -239,7 +244,7 @@ lemma apf_diamond (R a Vc : ℝ) (hR : 0 < R)
   rw [div_eq_div_iff ha3 h16]
   ring
 
-/-! ## B. Theoretical density and coordination -/
+/-! ## B. Theoretical density and offset lists -/
 
 /-- Theoretical density: `n` atoms per cell, molar mass `A`, cell volume `Vc`,
 Avogadro constant `NA`. All quantities are plain reals in consistent units. -/
@@ -283,47 +288,53 @@ lemma density_unit_conversion (ρ : ℝ) :
   rw [hfactor]
   ring
 
-/-- FCC touching-neighbor offsets: permutations of `(±1, ±1, 0)` in units of
-half the cubic lattice parameter `a/2`, relative to a corner atom.
-These 12 offsets ARE the touching-neighbor set of the hard-sphere model
-(the model assumption); the proved content is the enumeration count
-(`fcc_coordination`). No claim is made that no other lattice point touches,
-and no space-group or classification result is claimed. -/
-def fccTouchingOffsets : Finset (ℤ × ℤ × ℤ) :=
+/-- FCC face-diagonal offsets: the permutations of `(±1, ±1, 0)` in units of half
+the cubic lattice parameter `a/2`, i.e. the half face diagonals of the
+conventional cube. This is an explicit list only: no statement here connects it
+to FCC atomic positions or distances, or claims that it is the set of touching
+neighbors, so its cardinality (`fccFaceDiagonalOffsets_card`) is not a
+coordination number. No space-group or classification result is claimed. -/
+def fccFaceDiagonalOffsets : Finset (ℤ × ℤ × ℤ) :=
   {(1, 1, 0), (1, -1, 0), (-1, 1, 0), (-1, -1, 0),
    (1, 0, 1), (1, 0, -1), (-1, 0, 1), (-1, 0, -1),
    (0, 1, 1), (0, 1, -1), (0, -1, 1), (0, -1, -1)}
 
-/-- BCC touching-neighbor offsets: `(±1, ±1, ±1)` in units of `a/2`,
-relative to a corner atom (the 8 body centers of adjacent cells).
-Model-assumption reading as in `fccTouchingOffsets`. -/
-def bccTouchingOffsets : Finset (ℤ × ℤ × ℤ) :=
+/-- BCC body-diagonal offsets: `(±1, ±1, ±1)` in units of `a/2`, i.e. the half
+body diagonals of the conventional cube. An explicit list only, as in
+`fccFaceDiagonalOffsets`; its cardinality is not a coordination number. -/
+def bccBodyDiagonalOffsets : Finset (ℤ × ℤ × ℤ) :=
   {(1, 1, 1), (1, 1, -1), (1, -1, 1), (1, -1, -1),
    (-1, 1, 1), (-1, 1, -1), (-1, -1, 1), (-1, -1, -1)}
 
-/-- Diamond touching-neighbor offsets: the 4 tetrahedral offsets
-`(1,1,1)`, `(1,-1,-1)`, `(-1,1,-1)`, `(-1,-1,1)` in units of `a/4`.
-Model-assumption reading as in `fccTouchingOffsets`. -/
-def diamondTouchingOffsets : Finset (ℤ × ℤ × ℤ) :=
+/-- Diamond tetrahedral offsets: `(1,1,1)`, `(1,-1,-1)`, `(-1,1,-1)`,
+`(-1,-1,1)` in units of `a/4`, quarter body diagonals pointing to the vertices of
+a regular tetrahedron. An explicit list only, as in `fccFaceDiagonalOffsets`; its
+cardinality is not a coordination number. -/
+def diamondTetrahedralOffsets : Finset (ℤ × ℤ × ℤ) :=
   {(1, 1, 1), (1, -1, -1), (-1, 1, -1), (-1, -1, 1)}
 
-/-- SC touching-neighbor offsets: permutations of `(±2, 0, 0)` in units of
-`a/2`, relative to a corner atom. Model-assumption reading as in
-`fccTouchingOffsets`. -/
-def scTouchingOffsets : Finset (ℤ × ℤ × ℤ) :=
+/-- SC edge offsets: the permutations of `(±2, 0, 0)` in units of `a/2`, i.e. the
+cube edge vectors `(±a, 0, 0)`, `(0, ±a, 0)`, `(0, 0, ±a)`. An explicit list
+only, as in `fccFaceDiagonalOffsets`; its cardinality is not a coordination
+number. -/
+def scEdgeOffsets : Finset (ℤ × ℤ × ℤ) :=
   {(2, 0, 0), (-2, 0, 0), (0, 2, 0), (0, -2, 0), (0, 0, 2), (0, 0, -2)}
 
-/-- FCC coordination number 12, by enumeration. -/
-lemma fcc_coordination : fccTouchingOffsets.card = 12 := by decide
+/-- The FCC face-diagonal offset list has 12 elements (a list cardinality, not a
+coordination number). -/
+lemma fccFaceDiagonalOffsets_card : fccFaceDiagonalOffsets.card = 12 := by decide
 
-/-- BCC coordination number 8, by enumeration. -/
-lemma bcc_coordination : bccTouchingOffsets.card = 8 := by decide
+/-- The BCC body-diagonal offset list has 8 elements (a list cardinality, not a
+coordination number). -/
+lemma bccBodyDiagonalOffsets_card : bccBodyDiagonalOffsets.card = 8 := by decide
 
-/-- Diamond coordination number 4, by enumeration. -/
-lemma diamond_coordination : diamondTouchingOffsets.card = 4 := by decide
+/-- The diamond tetrahedral offset list has 4 elements (a list cardinality, not a
+coordination number). -/
+lemma diamondTetrahedralOffsets_card : diamondTetrahedralOffsets.card = 4 := by decide
 
-/-- SC coordination number 6, by enumeration. -/
-lemma sc_coordination : scTouchingOffsets.card = 6 := by decide
+/-- The SC edge offset list has 6 elements (a list cardinality, not a
+coordination number). -/
+lemma scEdgeOffsets_card : scEdgeOffsets.card = 6 := by decide
 
 /-! ## C. Ideal HCP ratio and FCC interstitial holes -/
 

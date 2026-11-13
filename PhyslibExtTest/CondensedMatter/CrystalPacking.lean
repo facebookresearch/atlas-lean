@@ -105,10 +105,10 @@ example : |atomicPackingFactor 8 (Real.sqrt 3) 512 - 0.34009| < 0.001 := by
 
 #print axioms atomicPackingFactor
 #print axioms theoreticalDensity
-#print axioms fccTouchingOffsets
-#print axioms bccTouchingOffsets
-#print axioms diamondTouchingOffsets
-#print axioms scTouchingOffsets
+#print axioms fccFaceDiagonalOffsets
+#print axioms bccBodyDiagonalOffsets
+#print axioms diamondTetrahedralOffsets
+#print axioms scEdgeOffsets
 #print axioms sqrt2_bounds
 #print axioms sqrt3_bounds
 #print axioms sqrt32_bounds
@@ -121,10 +121,10 @@ example : |atomicPackingFactor 8 (Real.sqrt 3) 512 - 0.34009| < 0.001 := by
 #print axioms angstrom_cubed_to_cm_cubed
 #print axioms density_mat_c1
 #print axioms density_unit_conversion
-#print axioms fcc_coordination
-#print axioms bcc_coordination
-#print axioms diamond_coordination
-#print axioms sc_coordination
+#print axioms fccFaceDiagonalOffsets_card
+#print axioms bccBodyDiagonalOffsets_card
+#print axioms diamondTetrahedralOffsets_card
+#print axioms scEdgeOffsets_card
 #print axioms equilateral_centroid_sq
 #print axioms equilateral_centroid_dist
 #print axioms tetrahedron_height
