@@ -318,6 +318,16 @@ noncomputable def inducedBayesNet {α : Type*} {n : ℕ} {U : Fin n → Type*}
   pa := M.pa
   cpt k z := (μ k).map (M.f k z)
 
+theorem map_weights_eq {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+    [DecidableEq α] (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+    (t : Fin n) (w : M.pa t → α) (a₁ : α) :
+    ((μ t).map (M.f t w)).weights a₁
+      = ∑ v, (if M.f t w v = a₁ then (μ t).weights v else 0) := by
+  rw [StdSimplex.weights_map, Finsupp.mapDomain_fintype, Finsupp.coe_finsetSum,
+    Finset.sum_apply]
+  refine Finset.sum_congr rfl fun v _ => ?_
+  rw [Finsupp.single_apply]
+
 /-- The push-forward weights of a noise law under a structural function are the sums of the
 noise weights over the fibers. -/
 private theorem map_weights_eq_sum {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
@@ -325,10 +335,7 @@ private theorem map_weights_eq_sum {α : Type*} {n : ℕ} {U : Fin n → Type*} 
     (x : Fin n → α) (k : Fin n) :
     ((μ k).map (M.f k (M.paVal k x))).weights (x k)
       = ∑ v, (if M.f k (M.paVal k x) v = x k then (μ k).weights v else 0) := by
-  rw [StdSimplex.weights_map, Finsupp.mapDomain_fintype, Finsupp.coe_finsetSum,
-    Finset.sum_apply]
-  refine Finset.sum_congr rfl fun v _ => ?_
-  rw [Finsupp.single_apply]
+  exact map_weights_eq M μ k (M.paVal k x) (x k)
 
 /-- **A Markovian SCM induces its Bayesian network**: under independent noises, the law of the
 unique solution is the joint distribution of the Bayesian network whose tables are the
@@ -932,16 +939,11 @@ theorem noiseMeasure_apply_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U
     intro u
     rw [Measure.smul_apply, smul_eq_mul]
     by_cases h : u ∈ s
-    · rw [if_pos h]
+    · rw [ite_eq_left h]
       have h1 : Measure.dirac u s = 1 := by
-        first
-          | exact Measure.dirac_apply_of_mem h
-          | rw [Measure.dirac_apply _ (noise_measSet s)]
-            exact Set.indicator_of_mem h 1
-          | rw [Measure.dirac_apply' _ (noise_measSet s)]
-            exact Set.indicator_of_mem h 1
+        exact Measure.dirac_apply_of_mem h
       rw [h1, mul_one]
-    · rw [if_neg h]
+    · rw [ite_eq_right h]
       have h0 : Measure.dirac u s = 0 := by
         first
           | exact Measure.dirac_apply_of_notMem h
@@ -971,21 +973,7 @@ theorem noiseMeasure_real_univ_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintyp
     [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) : (noiseMeasure μ).real Set.univ = 1 := by
   classical
-  rw [noiseMeasure_real_eq]
-  rw [Finset.filter_true_of_mem (fun u _ => Set.mem_univ u)]
-  have hps : (∏ k, ∑ v, (μ k).weights v)
-      = ∑ u : (k : Fin n) → U k, ∏ k, (μ k).weights (u k) :=
-    Fintype.prod_sum _
-  have hsum1 : ∀ k : Fin n, (∑ v, (μ k).weights v) = 1 := fun k => by
-    first
-      | exact (μ k).total_of_fintype
-      | exact (μ k).total
-      | simp
-  calc ∑ u ∈ Finset.univ, noiseWeight μ u
-      = ∏ k, ∑ v, (μ k).weights v := by
-        simp only [noiseWeight]
-        exact hps.symm
-    _ = 1 := by simp [hsum1]
+  rw [noiseMeasure_real_eq]; simpa using sum_noiseWeight_eq_one μ
 
 theorem noiseMeasure_lt_top {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
@@ -1001,10 +989,7 @@ theorem noiseMeasure_real_ne_zero {n : ℕ} {U : Fin n → Type*} [∀ k, Fintyp
     (h : noiseMeasure μ s ≠ 0) : (noiseMeasure μ).real s ≠ 0 := by
   rw [measureReal_def]
   have htop : noiseMeasure μ s ≠ ⊤ := ne_of_lt (noiseMeasure_lt_top μ s)
-  first
-    | rw [ENNReal.toReal_ne_zero]; exact ⟨h, htop⟩
-    | exact ENNReal.toReal_ne_zero.mpr ⟨h, htop⟩
-    | simp [h, htop]
+  rw [ENNReal.toReal_ne_zero]; exact ⟨h, htop⟩
 
 noncomputable def restWeight {n : ℕ} {U : Fin n → Type*} (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (t : Fin n) (u : (k : Fin n) → U k) : ℝ :=
@@ -1076,16 +1061,6 @@ theorem treated_inter_fiber {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : Fi
     show M.solve u t = a₁
     rw [hsol, hw]
     exact hf'
-
-theorem map_weights_eq {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
-    [DecidableEq α] (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
-    (t : Fin n) (w : M.pa t → α) (a₁ : α) :
-    ((μ t).map (M.f t w)).weights a₁
-      = ∑ v, (if M.f t w v = a₁ then (μ t).weights v else 0) := by
-  rw [StdSimplex.weights_map, Finsupp.mapDomain_fintype, Finsupp.coe_finsetSum,
-    Finset.sum_apply]
-  refine Finset.sum_congr rfl fun v _ => ?_
-  rw [Finsupp.single_apply]
 
 theorem fiber_sum_update_congr {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (t : Fin n)
@@ -1450,10 +1425,7 @@ theorem stronglyIgnorable_potentialOutcomes {α : Type*} {n : ℕ} {U : Fin n �
         a * (noiseMeasure μ).real ((fun u => M.paVal t (M.solve u)) ⁻¹' {w}) /
           (noiseMeasure μ).real ((fun u => M.paVal t (M.solve u)) ⁻¹' {w}) = a := by
       intro a
-      first
-        | exact mul_div_cancel_right₀ a hCreal
-        | exact mul_div_cancel_right a hCreal
-        | field_simp
+      exact mul_div_cancel_right₀ a hCreal
     rw [hcancel]
     exact hover w
 

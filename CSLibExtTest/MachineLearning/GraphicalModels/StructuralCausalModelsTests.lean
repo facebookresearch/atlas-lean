@@ -676,12 +676,7 @@ noncomputable def ca04t03_xorμ0 : StdSimplex ℝ Bool where
     intro x
     cases x <;> simp [Finsupp.add_apply, Finsupp.single_apply] <;> norm_num
   total := by
-    first
-      | (simp [Finsupp.sum_add_index, Finsupp.sum_single_index]; norm_num)
-      | (simp [Finsupp.sum_add_index', Finsupp.sum_single_index]; norm_num)
-      | (rw [Finsupp.sum_fintype (fun _ => rfl)]
-         simp [Fintype.sum_bool, Finsupp.add_apply, Finsupp.single_apply]
-         norm_num)
+    (simp [Finsupp.sum_add_index, Finsupp.sum_single_index]; norm_num)
 
 noncomputable def ca04t03_xorμ1 : StdSimplex ℝ Bool where
   weights := Finsupp.single true (1/3 : ℝ) + Finsupp.single false (2/3 : ℝ)
@@ -689,12 +684,7 @@ noncomputable def ca04t03_xorμ1 : StdSimplex ℝ Bool where
     intro x
     cases x <;> simp [Finsupp.add_apply, Finsupp.single_apply] <;> norm_num
   total := by
-    first
-      | (simp [Finsupp.sum_add_index, Finsupp.sum_single_index]; norm_num)
-      | (simp [Finsupp.sum_add_index', Finsupp.sum_single_index]; norm_num)
-      | (rw [Finsupp.sum_fintype (fun _ => rfl)]
-         simp [Fintype.sum_bool, Finsupp.add_apply, Finsupp.single_apply]
-         norm_num)
+    (simp [Finsupp.sum_add_index, Finsupp.sum_single_index]; norm_num)
 
 noncomputable def ca04t03_xorμ : (k : Fin 2) → StdSimplex ℝ Bool
   | ⟨0, _⟩ => ca04t03_xorμ0
@@ -737,18 +727,16 @@ example : (noiseMeasure ca04t03_xorμ).real (ca04t03_xorM.treated ⟨0, by omega
     rw [ca04t03_xor_solve_zero]
   rw [hT, real_coord_eq ca04t03_xorμ ⟨0, by omega⟩ (fun v => v = true), Finset.sum_filter]
   simp only [Fintype.sum_bool]
-  rw [if_true, if_neg (by decide : ¬(false = true : Prop)), add_zero]
+  rw [ite_true, ite_eq_right (by decide : ¬(false = true : Prop)), add_zero]
   rw [ca04t03_xor_weights_true0]
 
-example : ca04t03_xorM.potentialOutcome ⟨0, by omega⟩ false ⟨1, by omega⟩ ca04t03_xorG ![true, true] = 1 := by
-  first
-    | rfl
-    | simp [potentialOutcome, counterfactual, ca04t03_xorM, ca04t03_xorG, solve, solvePrefix, doNode, paVal]
+example : ca04t03_xorM.potentialOutcome ⟨0, by omega⟩ false ⟨1, by omega⟩ ca04t03_xorG
+    ![true, true] = 1 := by
+  rfl
 
-example : ca04t03_xorM.potentialOutcome ⟨0, by omega⟩ true ⟨1, by omega⟩ ca04t03_xorG ![true, true] = 0 := by
-  first
-    | rfl
-    | simp [potentialOutcome, counterfactual, ca04t03_xorM, ca04t03_xorG, solve, solvePrefix, doNode, paVal]
+example : ca04t03_xorM.potentialOutcome ⟨0, by omega⟩ true ⟨1, by omega⟩ ca04t03_xorG
+    ![true, true] = 0 := by
+  rfl
 
 example : StronglyIgnorable (noiseMeasure ca04t03_xorμ) (ca04t03_xorM.treated ⟨0, by omega⟩ true)
     (fun u => (ca04t03_xorM.potentialOutcome ⟨0, by omega⟩ false ⟨1, by omega⟩ ca04t03_xorG u,
@@ -757,7 +745,7 @@ example : StronglyIgnorable (noiseMeasure ca04t03_xorμ) (ca04t03_xorM.treated �
   classical
   apply stronglyIgnorable_of_pa_eq_empty
   · show (Finset.univ : Finset (Fin 0)) = ∅
-    first | simp | decide | rfl
+    simp
   · intro w
     have hf : ∀ v, ca04t03_xorM.f ⟨0, by omega⟩ w v = v := fun v => rfl
     have hmap : ((ca04t03_xorμ ⟨0, by omega⟩).map (ca04t03_xorM.f ⟨0, by omega⟩ w)).weights true
