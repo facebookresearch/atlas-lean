@@ -375,7 +375,7 @@ theorem portfolioVariance_minVariancePortfolio {ι : Type*} [Fintype ι] [Decida
     {S : Matrix ι ι ℝ} (hS : S.PosDef) (μ : ι → ℝ) (m : ℝ)
     (hD : 0 < (μ ⬝ᵥ (S⁻¹ *ᵥ μ)) * ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ 1)) -
       ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ μ)) ^ 2) :
-    portfolioVariance S (minVariancePortfolio S μ m) =
+    quadForm S (minVariancePortfolio S μ m) =
       (μ ⬝ᵥ (S⁻¹ *ᵥ μ) - 2 * ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ μ)) * m +
           ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ 1)) * m ^ 2) /
         ((μ ⬝ᵥ (S⁻¹ *ᵥ μ)) * ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ 1)) -
@@ -400,9 +400,9 @@ theorem portfolioVariance_minVariancePortfolio {ι : Type*} [Fintype ι] [Decida
     rw [Matrix.isUnit_iff_isUnit_det, hdet]
     exact isUnit_iff_ne_zero.mpr hDne
   have hgls := glsMatrix_mul_mul_transpose (X := constraintMatrix μ) (V := S) hS hX
-  have hvar : portfolioVariance S (minVariancePortfolio S μ m)
+  have hvar : quadForm S (minVariancePortfolio S μ m)
       = ![1, m] ⬝ᵥ ((((constraintMatrix μ)ᵀ * S⁻¹ * constraintMatrix μ)⁻¹) *ᵥ ![1, m]) := by
-    simp only [portfolioVariance, minVariancePortfolio]
+    simp only [quadForm, minVariancePortfolio]
     rw [transpose_mulVec_dotProduct_mulVec, hgls]
   rw [hvar, Matrix.inv_def, Matrix.adjugate_fin_two, hdet, Ring.inverse_eq_inv,
     hG00, hG01, hG10, hG11]

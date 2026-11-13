@@ -74,7 +74,7 @@ example : ¬ IsUnit ((constraintMatrix (fun _ : Fin 3 => (5 : ℝ)))ᵀ *
   simp
 
 -- Frontier variance (FI06.T03): `A = 5`, `B = 3`, `C = 3`, `A C - B² = 6`.
-example : portfolioVariance (1 : Matrix (Fin 3) (Fin 3) ℝ)
+example : quadForm (1 : Matrix (Fin 3) (Fin 3) ℝ)
     (minVariancePortfolio (1 : Matrix (Fin 3) (Fin 3) ℝ) ![0, 1, 2] 1) = 1 / 3 := by
   have hA : (![0, 1, 2] : Fin 3 → ℝ) ⬝ᵥ
       ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ ![0, 1, 2]) = 5 := by
@@ -98,7 +98,7 @@ example : portfolioVariance (1 : Matrix (Fin 3) (Fin 3) ℝ)
   rw [hmain, hA, hB, hC]
   norm_num
 
-example : portfolioVariance (1 : Matrix (Fin 3) (Fin 3) ℝ)
+example : quadForm (1 : Matrix (Fin 3) (Fin 3) ℝ)
     (minVariancePortfolio (1 : Matrix (Fin 3) (Fin 3) ℝ) ![0, 1, 2] 2) = 5 / 6 := by
   have hA : (![0, 1, 2] : Fin 3 → ℝ) ⬝ᵥ
       ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ ![0, 1, 2]) = 5 := by
