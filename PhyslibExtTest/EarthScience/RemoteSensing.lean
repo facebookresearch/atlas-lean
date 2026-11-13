@@ -1,4 +1,4 @@
- /-
+/-
 Copyright (c) Meta Platforms, Inc. and affiliates.
 All rights reserved.
 
@@ -65,4 +65,3 @@ example (L : ℝ) (hL : 0 ≤ L) :
 
 /-- Integral evaluation: `∫ _x in 0..2, 1 = 2`. -/
 example : (∫ _x in (0:ℝ)..(2:ℝ), (1:ℝ)) = 2 := by simp
-
