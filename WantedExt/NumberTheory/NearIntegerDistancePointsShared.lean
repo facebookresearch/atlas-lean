@@ -9,23 +9,22 @@ LICENSE file in the root directory of this source tree.
 /-
 # Near-integer distance configurations (Erdős Problems 465 and 466)
 
-Shared definitions for the `N(X, δ)` problems: the distance `‖x‖` from a real number to the nearest
-integer, and the finite planar configurations in a closed disc of radius `X` whose pairwise
-distances are all at distance at least `δ` from the nearest integer. Erdős Problem 465 bounds their
-size from above, Erdős Problem 466 from below.
+Shared definition for the `N(X, δ)` problems: the finite planar configurations in a closed disc of
+radius `X` whose pairwise distances are all at distance at least `δ` from the nearest integer
+(`MetaMathlibExt.distToNearestInt`). Erdős Problem 465 bounds their size from above, Erdős Problem
+466 from below.
 -/
 
 module
 
 public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import MathlibExt.NumberTheory.DiophantineApproximation.DistToNearestInt
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.NearIntegerDistancePointsShared
 
-/-- `‖x‖`, the distance from the real number `x` to the nearest integer. -/
-noncomputable def distToNearestInt (x : ℝ) : ℝ :=
-  |x - round x|
+open MetaMathlibExt (distToNearestInt)
 
 /-- The finite set `P` of points of the plane lies in some closed disc of radius `X`, and the
 distance between any two distinct points of `P` is at distance at least `δ` from the nearest

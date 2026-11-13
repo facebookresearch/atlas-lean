@@ -18,7 +18,8 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
-public import WantedExt.NumberTheory.NearIntegerDistancePointsShared
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import MathlibExt.NumberTheory.DiophantineApproximation.DistToNearestInt
 
 @[expose] public section
 
@@ -32,7 +33,7 @@ Problem 1 and Definition 1, DOI 10.4171/OWR/2016/48. UnsolvedMath record UM-3000
 
 `Bad(i, j)` is defined in the same report (p. 2757, Definition 2) for weights `0 < i, j < 1`, `i + j
 = 1`: `(x, y)` with `max(‖qx‖^{1/i}, ‖qy‖^{1/j}) > c q⁻¹` for all `q ∈ ℕ`, some `c > 0`, `‖·‖` the
-distance to the nearest integer (WantedExt `NearIntegerDistancePointsShared.distToNearestInt`). The
+distance to the nearest integer (`MetaMathlibExt.distToNearestInt`). The
 report notes that the answer is negative for some lines and states the problem for `C^(2)`
 non-degenerate curves `C_f = {(x, f(x)) : x ∈ I}` (Definition 1: `f` twice continuously
 differentiable on the interval `I`, `f''(x₀) ≠ 0` at some `x₀ ∈ I`), as the record does; `I` is
@@ -40,7 +41,7 @@ taken open. The boundary weights `(1, 0)`, `(0, 1)`, allowed by the record but o
 are not covered.
 -/
 
-open MathlibExt.NumberTheory.NearIntegerDistancePointsShared
+open MetaMathlibExt (distToNearestInt)
 
 /-- The `(i, j)`-badly approximable points of the plane (Oberwolfach Report 48/2016, p. 2757,
 Definition 2, for `0 < i, j < 1`, `i + j = 1`): the `(x, y)` for which some `c > 0` satisfies

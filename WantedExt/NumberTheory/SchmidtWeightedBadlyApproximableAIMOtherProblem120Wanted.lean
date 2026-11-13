@@ -18,7 +18,8 @@ distance to the nearest integer), `C_s ∩ C_t ≠ ∅` for any `s, t ∈ [0, 1]
 module
 
 public import Batteries.Util.ProofWanted
-public import WantedExt.NumberTheory.NearIntegerDistancePointsShared
+public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import MathlibExt.NumberTheory.DiophantineApproximation.DistToNearestInt
 
 @[expose] public section
 
@@ -34,10 +35,10 @@ The sets are Badziahin, Pollington and Velani's `Bad(i, j)`, `0 ≤ i, j ≤ 1`,
 with their convention `t^{1/0} = 0`, so `Bad(0, 1) = ℝ × Bad`. For `0 < s < 1` the list's `C_s` is
 `Bad(s, 1 - s)` (raise the two terms to the powers `1/s` and `1/(1 - s)`); at `s = 0` the list's
 literal `C_0` contains `Bad(0, 1)`, so the statement implies the list's form. `‖x‖` is
-`distToNearestInt` of the shared module of Erdős Problems 465 and 466.
+`MetaMathlibExt.distToNearestInt`.
 -/
 
-open MathlibExt.NumberTheory.NearIntegerDistancePointsShared
+open MetaMathlibExt (distToNearestInt)
 
 /-- `t ^ (1 / i)`, with the convention `t ^ (1 / 0) = 0` of Badziahin, Pollington and Velani. -/
 noncomputable def weightedRoot (i t : ℝ) : ℝ :=
