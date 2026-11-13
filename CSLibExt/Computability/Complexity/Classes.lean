@@ -39,22 +39,33 @@ the variant recorded in its docstring:
   gates; `AC0Mod m` allows only `mod` gates of modulus `m`; `ACC0` is the
   union over fixed `m` of `AC0Mod m`. A `mod m` gate outputs `true` iff the
   number of true inputs is `≡ 0 (mod m)` (`m = 0` is defined as `false`).
+  `AC0`, `AC0Mod m` and `ACC0` are non-uniform: the circuit family is an
+  arbitrary function of the input length, so every language that depends only
+  on the input length, including undecidable ones, is in `AC0`. This is the
+  setting of the lower bounds of Furst-Saxe-Sipser, Håstad, Smolensky and
+  Williams.
 * `NC^k` (`NCK`) is log-space uniform circuits of polynomial size and
   depth `O(log^k n)`: uniformity is a log-space computable description
   function from the unary input `replicate n true` to the bit-encoding of
-  the serial circuit, `NC` is the union over `k`.
+  the serial circuit, `NC` is the union over `k`. Unlike `AC0`, `AC0Mod`,
+  `ACC0` and `PPoly`, these classes contain only decidable languages, so the
+  textbook inclusion `AC⁰ ⊆ NC¹`, which is about uniform classes, does not hold
+  for these definitions without adding `UniformCircuitFamily` to `AC0`.
 * Quantum circuits are 2-local unitary gates with rational entries
   (`QGate`, canonical in this file and reused by the Local Hamiltonian
   `QMA` file):
   states are `Fin (2 ^ N) → ℂ` vectors, `applyGate`/`applyCircuit` evolve
   them, `acceptProb` is the Born-rule probability that qubit `0` measures
   `1`. `BQP` is polynomial-size uniform quantum circuits with bounded error.
-* Optimization problems (`OptProblem`) are value / feasibility / bound
-  bundles; `IsNPO` is the separate computational-content predicate
+* Optimization problems (`OptProblem`) are maximization value / feasibility /
+  bound bundles; `IsNPO` is the separate computational-content predicate
   (poly-time feasibility and poly-time objective encoding, as in the
   `MAXSNP` file's `NPOProblem`), and `APX`, `PTAS`, `FPTAS` all require it,
   sharing one call convention (the algorithm takes `(instance, unary
   precision tape)`) so that the inclusions `FPTAS ⊆ PTAS ⊆ APX` are direct.
+  These classes contain maximization problems only: `ApproxAt` rewards larger
+  values, so a minimization problem such as vertex cover or metric TSP cannot be
+  stated by taking its cost as `val`.
 * One-way functions (`IsOneWayFunction`) are polynomially balanced families
   with a uniform polynomial-time evaluator that no uniform polynomial-time
   probabilistic inverter (receiving `(n, output, coins)`) inverts with
@@ -554,7 +565,10 @@ def IsMonotoneCircuit {n : ℕ} (C : List (ACGate n)) : Prop :=
     | .orGate _ => True
     | _ => False
 
-/-- `AC0`: polynomial size, constant depth, no `mod` gates. -/
+/-- `AC0`: languages decided by a non-uniform family of polynomial-size,
+constant-depth, unbounded fan-in circuits with no `mod` gates. The family `C` is
+an arbitrary function of the input length, with no uniformity condition, so
+`AC0` contains undecidable unary languages; compare the log-space uniform `NCK`. -/
 def AC0 : DecisionComplexityClass :=
   {L | ∃ d, ∃ p : Polynomial ℕ, ∃ C : (n : ℕ) → List (ACGate n),
     ∀ n, WellFormedCircuit (C n) ∧ IsModFree (C n) ∧ (C n).length ≤ p.eval n ∧
@@ -563,7 +577,9 @@ def AC0 : DecisionComplexityClass :=
         (L x = true ↔
           (circuitEval (C n) (fun i => x.getD (i : ℕ) false)).getLast? = some true)}
 
-/-- `AC0[mod m]`: polynomial size, constant depth, `mod` gates of modulus exactly `m`. -/
+/-- `AC0[mod m]`: languages decided by a non-uniform family of polynomial-size,
+constant-depth, unbounded fan-in circuits whose `mod` gates all have modulus
+exactly `m`. As for `AC0`, there is no uniformity condition. -/
 def AC0Mod (m : ℕ) : DecisionComplexityClass :=
   {L | ∃ d, ∃ p : Polynomial ℕ, ∃ C : (n : ℕ) → List (ACGate n),
     ∀ n, WellFormedCircuit (C n) ∧ ModOnly m (C n) ∧ (C n).length ≤ p.eval n ∧
@@ -572,8 +588,9 @@ def AC0Mod (m : ℕ) : DecisionComplexityClass :=
         (L x = true ↔
           (circuitEval (C n) (fun i => x.getD (i : ℕ) false)).getLast? = some true)}
 
-/-- `ACC0`: the union over fixed moduli `m` of `AC0[mod m]`.
-A circuit family in `ACC0` uses one fixed modulus throughout. -/
+/-- `ACC0`: the union over fixed moduli `m` of the non-uniform classes
+`AC0[mod m]`. A circuit family in `ACC0` uses one fixed modulus throughout.
+Non-uniform, as in Williams' `NEXP ⊄ ACC0`. -/
 def ACC0 : DecisionComplexityClass := ⋃ m, AC0Mod m
 
 /-- The parity language: bitstrings with an odd number of `true` bits. -/
@@ -932,10 +949,10 @@ structure OptProblem where
   /-- Every instance has a feasible solution. -/
   feas_nonempty : ∀ x, ∃ s, feas x s = true
 
-/-- `ApproxAt P A k ρ`: algorithm `A` achieves approximation ratio `ρ` on `P`
-at precision tape `k`: on every instance, its output on `(x, replicate k true)`
-is feasible and worth at least `ρ` times every feasible solution's value
-(hence at least `ρ` times the optimum). The shared call convention (algorithm
+/-- `ApproxAt P A k ρ`: algorithm `A` achieves approximation ratio `ρ` on the
+maximization problem `P` at precision tape `k`: on every instance, its output on
+`(x, replicate k true)` is feasible and worth at least `ρ` times every feasible
+solution's value (hence at least `ρ` times the optimum). The shared call convention (algorithm
 takes `(instance, unary precision tape)`) is what makes `FPTAS ⊆ PTAS ⊆ APX`
 direct: an `FPTAS` algorithm is one algorithm handling every precision tape,
 a `PTAS` has one algorithm per tape, and `APX` is the `k = 2` (ratio `1/2`)
@@ -986,8 +1003,9 @@ def IsAPX (P : OptProblem) : Prop :=
   IsNPO P ∧ ∃ ρ : ℚ, 0 < ρ ∧ ρ ≤ 1 ∧ ∃ A : List Bool × List Bool → List Bool,
     IsPolyTime A ∧ ApproxAt P A 2 ρ
 
-/-- The class `APX` of optimization problems with a polynomial-time
+/-- The class `APX` of maximization problems with a polynomial-time
 constant-factor approximation.
+Minimization problems are not covered (see `ApproxAt`).
 Source: C. H. Papadimitriou and M. Yannakakis, "Optimization, approximation,
 and complexity classes", Journal of Computer and System Sciences 43 (1991),
 425-440. -/
@@ -1003,8 +1021,9 @@ def IsPTAS (P : OptProblem) : Prop :=
   IsNPO P ∧ ∀ k : ℕ, 1 ≤ k → ∃ A : List Bool × List Bool → List Bool,
     IsPolyTime A ∧ ApproxAt P A k (1 - 1 / (k : ℚ))
 
-/-- The class `PTAS` of optimization problems with a polynomial-time
+/-- The class `PTAS` of maximization problems with a polynomial-time
 approximation scheme.
+Minimization problems are not covered (see `ApproxAt`).
 Source: C. H. Papadimitriou and M. Yannakakis, "Optimization, approximation,
 and complexity classes", Journal of Computer and System Sciences 43 (1991),
 425-440. -/
@@ -1021,8 +1040,9 @@ def IsFPTAS (P : OptProblem) : Prop :=
   IsNPO P ∧ ∃ A : List Bool × List Bool → List Bool, IsPolyTime A ∧
     ∀ k : ℕ, 1 ≤ k → ApproxAt P A k (1 - 1 / (k : ℚ))
 
-/-- The class `FPTAS` of optimization problems with a fully polynomial-time
+/-- The class `FPTAS` of maximization problems with a fully polynomial-time
 approximation scheme.
+Minimization problems are not covered (see `ApproxAt`).
 Source: C. H. Papadimitriou and M. Yannakakis, "Optimization, approximation,
 and complexity classes", Journal of Computer and System Sciences 43 (1991),
 425-440. -/

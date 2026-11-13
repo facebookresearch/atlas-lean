@@ -29,11 +29,11 @@ follow the shape of the classes in the open upstream PR leanprover/cslib#767 (`D
 `P`, `PSPACE`), stated against the pinned CSLib's `MultiTapeTM.DecidableInTimeAndSpace`, so that
 they can be replaced by the upstream ones when CSLib provides them. They are not the repository's
 canonical `P`, which is defined on Mathlib's `FinTM2` (`MetaMathlibExt.ComplexityTheory.P`); a
-bridge between the two models is future work and is not built here.
+bridge between the two models is a separate backlog item (`CSLibExt/BACKLOG.md`, MT5).
 
 `NP` and `NL` are not defined here: the pinned CSLib has no acceptance predicate for its
 nondeterministic multi-tape machines, and the verifier characterization of `NP` on this model is
-itself future work.
+itself a backlog theorem (MT7).
 
 ## Main definitions
 

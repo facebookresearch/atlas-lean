@@ -129,7 +129,8 @@ def AvgEasy (p : Polynomial ℕ) (L : MetaMathlibExt.ComplexityTheory.DecisionPr
           (2 : ℚ) ^ (p.eval n)
 
 /-- `(L, S)` is hard on average: it is *not* easy on average, in the sense of
-`AvgEasy` above: no polynomial-time algorithm achieves negligible error. Hardness is defined as the logical
+`AvgEasy` above: no polynomial-time algorithm achieves negligible error. Hardness is defined as the
+logical
 complement of easiness, with matching infinitely-often quantifiers: an error profile
 that is zero on infinitely many lengths and inverse-polynomial on infinitely many
 others satisfies neither an all-but-finitely-many inverse-polynomial bound nor
