@@ -11,11 +11,12 @@ public import Mathlib.Analysis.Real.Pi.Bounds
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Finset.Card
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
+
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 /-!
 # Crystal structures and packing in the hard-sphere model
 
@@ -27,7 +28,15 @@ hypotheses.
 ## i. Overview
 
 All lengths are plain reals in one consistent unit. `R > 0` is an explicit
-hypothesis wherever an atomic radius is used. Every hard-sphere touching
+hypothesis wherever an atomic radius is used. The physical APIs
+`atomicPackingFactor` and `theoreticalDensity` take a natural-number atom count
+and proofs that the radius, the cell volume and the Avogadro constant are
+positive; on that domain they equal the raw algebraic helpers
+`atomicPackingFactorRaw` and `theoreticalDensityRaw` (`atomicPackingFactor_eq_raw`,
+`theoreticalDensity_eq_raw`). The raw helpers accept arbitrary reals and, since
+Lean's division is total, return `0` for a zero cell volume, so they have no
+physical meaning off that domain; the lemmas below compute them under explicit
+geometry hypotheses. Every hard-sphere touching
 relation (touching along a cube edge, face diagonal, or body diagonal) is
 carried as an explicit hypothesis on each lemma that uses it; no touching
 relation is asserted as a standalone fact about nature. This module proves
@@ -45,7 +54,9 @@ touching neighbors.
 * `apf_simpleCubic`, `apf_bcc`, `apf_fcc`, `apf_hcp`, `apf_diamond`:
   atomic packing factors `π/6`, `π√3/8`, `π/(3√2)`, `π/(3√2)`, `π√3/16`
   within the hard-sphere model.
-* `theoreticalDensity_eq`, `density_mat_c1`: the symbolic density formula
+* `atomicPackingFactor_eq_raw`, `theoreticalDensity_eq_raw`: the domain-safe
+  physical APIs agree with the raw helpers on their domain.
+* `theoreticalDensityRaw_eq`, `density_mat_c1`: the symbolic density formula
   and the MAT-C1 numeric instance.
 * `fccFaceDiagonalOffsets_card`, `bccBodyDiagonalOffsets_card`,
   `diamondTetrahedralOffsets_card`, `scEdgeOffsets_card`: the listed offset sets
@@ -110,27 +121,41 @@ lemma sqrt32_bounds :
 
 /-! ## A. Atomic packing factor -/
 
-/-- Atomic packing factor: `n` atoms per conventional cell, sphere radius `R`,
-conventional-cell volume `Vc`. All lengths in one consistent unit. -/
-noncomputable def atomicPackingFactor (n : ℕ) (R Vc : ℝ) : ℝ :=
+/-- Raw packing-factor expression `n * ((4/3) π R³) / Vc` for `n` atoms of
+radius `R` in a cell of volume `Vc`, on arbitrary reals `R` and `Vc`. Lean's
+division is total, so this is `0` for `Vc = 0`; it is a packing factor only for
+`0 < R` and `0 < Vc`, the domain that `atomicPackingFactor` enforces. -/
+noncomputable def atomicPackingFactorRaw (n : ℕ) (R Vc : ℝ) : ℝ :=
   n * ((4 / 3) * Real.pi * R ^ 3) / Vc
+
+/-- Atomic packing factor on its physical domain: `n` atoms per conventional
+cell, sphere radius `R > 0`, conventional-cell volume `Vc > 0`. All lengths in
+one consistent unit. -/
+noncomputable def atomicPackingFactor (n : ℕ) (R Vc : ℝ) (_hR : 0 < R)
+    (_hVc : 0 < Vc) : ℝ :=
+  atomicPackingFactorRaw n R Vc
+
+/-- On its domain the physical packing factor is the raw expression, so the
+`apf_*` lemmas below evaluate it. -/
+lemma atomicPackingFactor_eq_raw (n : ℕ) (R Vc : ℝ) (hR : 0 < R) (hVc : 0 < Vc) :
+    atomicPackingFactor n R Vc hR hVc = atomicPackingFactorRaw n R Vc := rfl
 
 /-- SC packing factor `π/6` from the edge-touching relation `a = 2R`. -/
 lemma apf_simpleCubic (R a Vc : ℝ) (hR : 0 < R) (ha : a = 2 * R)
     (hVc : Vc = a ^ 3) :
-    atomicPackingFactor 1 R Vc = Real.pi / 6 := by
+    atomicPackingFactorRaw 1 R Vc = Real.pi / 6 := by
   have hRne : R ≠ 0 := ne_of_gt hR
   have h2ne : (2 : ℝ) ≠ 0 := by norm_num
   have h2R3 : ((2 : ℝ) * R) ^ 3 ≠ 0 := pow_ne_zero 3 (mul_ne_zero h2ne hRne)
   have h6 : (6 : ℝ) ≠ 0 := by norm_num
-  simp only [atomicPackingFactor, hVc, ha, Nat.cast_one, one_mul]
+  simp only [atomicPackingFactorRaw, hVc, ha, Nat.cast_one, one_mul]
   rw [div_eq_div_iff h2R3 h6]
   ring
 
 /-- BCC packing factor `π√3/8` from the body-diagonal touching relation. -/
 lemma apf_bcc (R a Vc : ℝ) (hR : 0 < R)
     (h : 4 * R = Real.sqrt 3 * a) (hVc : Vc = a ^ 3) :
-    atomicPackingFactor 2 R Vc = Real.pi * Real.sqrt 3 / 8 := by
+    atomicPackingFactorRaw 2 R Vc = Real.pi * Real.sqrt 3 / 8 := by
   have hs3pos : 0 < Real.sqrt 3 :=
     Real.sqrt_pos.mpr (show (0 : ℝ) < 3 by norm_num)
   have hs3ne : Real.sqrt 3 ≠ 0 := ne_of_gt hs3pos
@@ -150,14 +175,14 @@ lemma apf_bcc (R a Vc : ℝ) (hR : 0 < R)
   have ha' : a ≠ 0 := ne_of_gt ha_pos
   have ha3 : (a : ℝ) ^ 3 ≠ 0 := pow_ne_zero 3 ha'
   have h8 : (8 : ℝ) ≠ 0 := by norm_num
-  simp only [atomicPackingFactor, hVc, hR3, Nat.cast_ofNat]
+  simp only [atomicPackingFactorRaw, hVc, hR3, Nat.cast_ofNat]
   rw [div_eq_div_iff ha3 h8]
   ring
 
 /-- FCC packing factor `π/(3√2)` from the face-diagonal touching relation. -/
 lemma apf_fcc (R a Vc : ℝ) (hR : 0 < R)
     (h : 4 * R = Real.sqrt 2 * a) (hVc : Vc = a ^ 3) :
-    atomicPackingFactor 4 R Vc = Real.pi / (3 * Real.sqrt 2) := by
+    atomicPackingFactorRaw 4 R Vc = Real.pi / (3 * Real.sqrt 2) := by
   have hs2pos : 0 < Real.sqrt 2 :=
     Real.sqrt_pos.mpr (show (0 : ℝ) < 2 by norm_num)
   have hs2ne : Real.sqrt 2 ≠ 0 := ne_of_gt hs2pos
@@ -178,7 +203,7 @@ lemma apf_fcc (R a Vc : ℝ) (hR : 0 < R)
   have ha3 : (a : ℝ) ^ 3 ≠ 0 := pow_ne_zero 3 ha'
   have h3s2 : (0 : ℝ) < 3 * Real.sqrt 2 := by linarith [hs2pos]
   have h3s2ne : (3 : ℝ) * Real.sqrt 2 ≠ 0 := ne_of_gt h3s2
-  simp only [atomicPackingFactor, hVc, hR3, Nat.cast_ofNat]
+  simp only [atomicPackingFactorRaw, hVc, hR3, Nat.cast_ofNat]
   rw [div_eq_div_iff ha3 h3s2ne]
   linear_combination (Real.pi * a ^ 3 / 2) * hsq2
 
@@ -188,7 +213,7 @@ conventional cell, from basal-plane touching and the ideal ratio proved in
 lemma apf_hcp (R a c Vc : ℝ) (hR : 0 < R) (ha : a = 2 * R)
     (hVc : Vc = (3 * Real.sqrt 3 / 2) * a ^ 2 * c)
     (hc : c = a * Real.sqrt (8 / 3)) :
-    atomicPackingFactor 6 R Vc = Real.pi / (3 * Real.sqrt 2) := by
+    atomicPackingFactorRaw 6 R Vc = Real.pi / (3 * Real.sqrt 2) := by
   have hs2pos : 0 < Real.sqrt 2 :=
     Real.sqrt_pos.mpr (show (0 : ℝ) < 2 by norm_num)
   have hs2ne : Real.sqrt 2 ≠ 0 := ne_of_gt hs2pos
@@ -213,14 +238,14 @@ lemma apf_hcp (R a c Vc : ℝ) (hR : 0 < R) (ha : a = 2 * R)
   have h3s2ne : (3 : ℝ) * Real.sqrt 2 ≠ 0 := ne_of_gt h3s2
   have hden : (3 : ℝ) * Real.sqrt 2 * a ^ 3 ≠ 0 :=
     mul_ne_zero h3s2ne (pow_ne_zero 3 ha')
-  simp only [atomicPackingFactor, hVc, hc, hR3, Nat.cast_ofNat]
+  simp only [atomicPackingFactorRaw, hVc, hc, hR3, Nat.cast_ofNat]
   rw [hVc_simp, div_eq_div_iff hden h3s2ne]
   ring
 
 /-- Diamond packing factor `π√3/16` from the nearest-neighbour relation. -/
 lemma apf_diamond (R a Vc : ℝ) (hR : 0 < R)
     (h : 8 * R = Real.sqrt 3 * a) (hVc : Vc = a ^ 3) :
-    atomicPackingFactor 8 R Vc = Real.pi * Real.sqrt 3 / 16 := by
+    atomicPackingFactorRaw 8 R Vc = Real.pi * Real.sqrt 3 / 16 := by
   have hs3pos : 0 < Real.sqrt 3 :=
     Real.sqrt_pos.mpr (show (0 : ℝ) < 3 by norm_num)
   have hs3ne : Real.sqrt 3 ≠ 0 := ne_of_gt hs3pos
@@ -240,20 +265,35 @@ lemma apf_diamond (R a Vc : ℝ) (hR : 0 < R)
   have ha' : a ≠ 0 := ne_of_gt ha_pos
   have ha3 : (a : ℝ) ^ 3 ≠ 0 := pow_ne_zero 3 ha'
   have h16 : (16 : ℝ) ≠ 0 := by norm_num
-  simp only [atomicPackingFactor, hVc, hR3, Nat.cast_ofNat]
+  simp only [atomicPackingFactorRaw, hVc, hR3, Nat.cast_ofNat]
   rw [div_eq_div_iff ha3 h16]
   ring
 
 /-! ## B. Theoretical density and offset lists -/
 
-/-- Theoretical density: `n` atoms per cell, molar mass `A`, cell volume `Vc`,
-Avogadro constant `NA`. All quantities are plain reals in consistent units. -/
-noncomputable def theoreticalDensity (n A Vc NA : ℝ) : ℝ :=
+/-- Raw density expression `n * A / (Vc * NA)`: `n` atoms per cell, molar mass
+`A`, cell volume `Vc`, Avogadro constant `NA`, on arbitrary reals `A`, `Vc` and
+`NA`. Lean's division is total, so this is `0` for `Vc = 0` or `NA = 0`; it is a
+density only for `0 < Vc` and `0 < NA`, the domain that `theoreticalDensity`
+enforces. -/
+noncomputable def theoreticalDensityRaw (n : ℕ) (A Vc NA : ℝ) : ℝ :=
   n * A / (Vc * NA)
 
-/-- The symbolic density formula is exactly this definition. -/
-lemma theoreticalDensity_eq (n A Vc NA : ℝ) :
-    theoreticalDensity n A Vc NA = n * A / (Vc * NA) := rfl
+/-- Theoretical density on its physical domain: `n` atoms per conventional
+cell, molar mass `A`, cell volume `Vc > 0`, Avogadro constant `NA > 0`, in
+consistent units. -/
+noncomputable def theoreticalDensity (n : ℕ) (A Vc NA : ℝ) (_hVc : 0 < Vc)
+    (_hNA : 0 < NA) : ℝ :=
+  theoreticalDensityRaw n A Vc NA
+
+/-- On its domain the physical density is the raw expression, so
+`theoreticalDensityRaw_eq` and `density_mat_c1` evaluate it. -/
+lemma theoreticalDensity_eq_raw (n : ℕ) (A Vc NA : ℝ) (hVc : 0 < Vc) (hNA : 0 < NA) :
+    theoreticalDensity n A Vc NA hVc hNA = theoreticalDensityRaw n A Vc NA := rfl
+
+/-- The symbolic density formula is exactly the raw expression. -/
+lemma theoreticalDensityRaw_eq (n : ℕ) (A Vc NA : ℝ) :
+    theoreticalDensityRaw n A Vc NA = n * A / (Vc * NA) := rfl
 
 /-- Unit conversion for the MAT-C1 fixture: `Vc = 4³ = 64 Å³` with
 `1 Å = 1e-8 cm` gives `Vc = 64e-24 cm³`. -/
@@ -265,9 +305,10 @@ lemma angstrom_cubed_to_cm_cubed : (4 : ℝ) ^ 3 * (1e-8) ^ 3 = 64e-24 := by
 `6.64216 g/cm³` up to `0.001`. This is a synthetic fixture; it does not
 identify a real metal. -/
 lemma density_mat_c1 (NA : ℝ) (hNA : NA = 6.02214076e23) :
-    |theoreticalDensity 4 64 (64e-24) NA - 6.64216| < 0.001 := by
+    |theoreticalDensityRaw 4 64 (64e-24) NA - 6.64216| < 0.001 := by
   rw [hNA]
-  unfold theoreticalDensity
+  unfold theoreticalDensityRaw
+  rw [Nat.cast_ofNat]
   have hden : (64e-24 : ℝ) * 6.02214076e23 = 38.541700864 := by norm_num
   rw [hden]
   have hpos : (0 : ℝ) < 38.541700864 := by norm_num

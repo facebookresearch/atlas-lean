@@ -9,11 +9,16 @@ module
 
 public import PhyslibExt.CondensedMatter.CrystalPacking
 
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
+
 /-!
 # Tests for crystal structures and packing
 
 Numeric checks of the atomic packing factor identities against reference
-decimals, plus `#print axioms` audits for every public declaration of
+decimals, checks that the domain-safe physical APIs evaluate through the raw
+helpers, plus `#print axioms` audits for every public declaration of
 `PhyslibExt.CondensedMatter.CrystalPacking`.
 -/
 
@@ -22,8 +27,8 @@ decimals, plus `#print axioms` audits for every public declaration of
 open CondensedMatter.CrystalPacking
 
 /-- SC packing factor `π/6 ≈ 0.52360`. -/
-example : |atomicPackingFactor 1 1 8 - 0.52360| < 0.001 := by
-  have hid : atomicPackingFactor 1 1 8 = Real.pi / 6 :=
+example : |atomicPackingFactorRaw 1 1 8 - 0.52360| < 0.001 := by
+  have hid : atomicPackingFactorRaw 1 1 8 = Real.pi / 6 :=
     apf_simpleCubic 1 2 8 (by norm_num) (by norm_num) (by norm_num)
   rw [hid]
   have hpi1 := Real.pi_gt_d4
@@ -32,10 +37,10 @@ example : |atomicPackingFactor 1 1 8 - 0.52360| < 0.001 := by
   constructor <;> linarith
 
 /-- BCC packing factor `π√3/8 ≈ 0.68017`. -/
-example : |atomicPackingFactor 2 (Real.sqrt 3) 64 - 0.68017| < 0.001 := by
+example : |atomicPackingFactorRaw 2 (Real.sqrt 3) 64 - 0.68017| < 0.001 := by
   have hs3pos : 0 < Real.sqrt 3 :=
     Real.sqrt_pos.mpr (show (0 : ℝ) < 3 by norm_num)
-  have hid : atomicPackingFactor 2 (Real.sqrt 3) 64 =
+  have hid : atomicPackingFactorRaw 2 (Real.sqrt 3) 64 =
       Real.pi * Real.sqrt 3 / 8 :=
     apf_bcc (Real.sqrt 3) 4 64 hs3pos (by ring) (by norm_num)
   rw [hid]
@@ -57,10 +62,10 @@ example : |atomicPackingFactor 2 (Real.sqrt 3) 64 - 0.68017| < 0.001 := by
   constructor <;> linarith [e1, e2, e3, e4]
 
 /-- FCC packing factor `π/(3√2) ≈ 0.74048`. -/
-example : |atomicPackingFactor 4 (Real.sqrt 2) 64 - 0.74048| < 0.001 := by
+example : |atomicPackingFactorRaw 4 (Real.sqrt 2) 64 - 0.74048| < 0.001 := by
   have hs2pos : 0 < Real.sqrt 2 :=
     Real.sqrt_pos.mpr (show (0 : ℝ) < 2 by norm_num)
-  have hid : atomicPackingFactor 4 (Real.sqrt 2) 64 =
+  have hid : atomicPackingFactorRaw 4 (Real.sqrt 2) 64 =
       Real.pi / (3 * Real.sqrt 2) :=
     apf_fcc (Real.sqrt 2) 4 64 hs2pos (by ring) (by norm_num)
   rw [hid]
@@ -78,10 +83,10 @@ example : |atomicPackingFactor 4 (Real.sqrt 2) 64 - 0.74048| < 0.001 := by
   constructor <;> linarith [hlo, hhi]
 
 /-- Diamond packing factor `π√3/16 ≈ 0.34009`. -/
-example : |atomicPackingFactor 8 (Real.sqrt 3) 512 - 0.34009| < 0.001 := by
+example : |atomicPackingFactorRaw 8 (Real.sqrt 3) 512 - 0.34009| < 0.001 := by
   have hs3pos : 0 < Real.sqrt 3 :=
     Real.sqrt_pos.mpr (show (0 : ℝ) < 3 by norm_num)
-  have hid : atomicPackingFactor 8 (Real.sqrt 3) 512 =
+  have hid : atomicPackingFactorRaw 8 (Real.sqrt 3) 512 =
       Real.pi * Real.sqrt 3 / 16 :=
     apf_diamond (Real.sqrt 3) 8 512 hs3pos (by ring) (by norm_num)
   rw [hid]
@@ -103,8 +108,26 @@ example : |atomicPackingFactor 8 (Real.sqrt 3) 512 - 0.34009| < 0.001 := by
   rw [abs_lt]
   constructor <;> linarith [e1, e2, e3, e4]
 
+/-- The physical packing factor on its domain evaluates through the raw helper:
+SC packing factor `π/6`. -/
+example : atomicPackingFactor 1 1 8 one_pos (by norm_num) = Real.pi / 6 := by
+  rw [atomicPackingFactor_eq_raw]
+  exact apf_simpleCubic 1 2 8 (by norm_num) (by norm_num) (by norm_num)
+
+/-- The physical density on its domain evaluates through the raw helper: the
+MAT-C1 fixture. -/
+example :
+    |theoreticalDensity 4 64 (64e-24) 6.02214076e23 (by norm_num) (by norm_num) -
+      6.64216| < 0.001 := by
+  rw [theoreticalDensity_eq_raw]
+  exact density_mat_c1 _ rfl
+
+#print axioms atomicPackingFactorRaw
 #print axioms atomicPackingFactor
+#print axioms atomicPackingFactor_eq_raw
+#print axioms theoreticalDensityRaw
 #print axioms theoreticalDensity
+#print axioms theoreticalDensity_eq_raw
 #print axioms fccFaceDiagonalOffsets
 #print axioms bccBodyDiagonalOffsets
 #print axioms diamondTetrahedralOffsets
@@ -117,7 +140,7 @@ example : |atomicPackingFactor 8 (Real.sqrt 3) 512 - 0.34009| < 0.001 := by
 #print axioms apf_fcc
 #print axioms apf_hcp
 #print axioms apf_diamond
-#print axioms theoreticalDensity_eq
+#print axioms theoreticalDensityRaw_eq
 #print axioms angstrom_cubed_to_cm_cubed
 #print axioms density_mat_c1
 #print axioms density_unit_conversion
