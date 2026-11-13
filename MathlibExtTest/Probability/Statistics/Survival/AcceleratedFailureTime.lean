@@ -17,8 +17,9 @@ Probability instance, scaling law, a concrete Weibull survival value under accel
 log-normal parameter map, the hazard transform on an exponential baseline, the quantile transform,
 and both sides of the PH-versus-AFT distinction: the Weibull AFT law has a PH reading with an
 explicit hazard ratio, the log-normal AFT law has none. Boundary probes: zero baseline survival
-cannot discharge the hazard hypothesis, and a negative hazard ratio is no PH reading even where
-`S = S₀ ^ c` holds pointwise.
+cannot discharge the hazard hypothesis, a negative hazard ratio is no PH reading even where
+`S = S₀ ^ c` holds pointwise, and neither Lebesgue measure nor the zero measure has a PH reading,
+although for both `S = S₀ ^ c` reduces to `0 = 0 ^ c`.
 -/
 
 open MeasureTheory ProbabilityTheory Real Set Filter
@@ -112,7 +113,19 @@ example : ∀ t : ℝ, 0 ≤ t →
 
 /-- A negative hazard ratio is rejected despite the pointwise identity above. -/
 example : ¬ HasProportionalHazards (Measure.dirac (1 : ℝ)) (Measure.dirac 1) (-1) :=
-  fun h => absurd h.1 (by norm_num)
+  fun h => absurd h.2.2.1 (by norm_num)
+
+/-- Lebesgue measure has no PH reading against itself, although each `Ioi t` has infinite mass,
+read by `Measure.real` as `0`, so that `S = S₀ ^ c` reduces to `0 = 0 ^ c`: it is not a
+probability law. -/
+example (c : ℝ) : ¬ HasProportionalHazards (volume : Measure ℝ) volume c := fun h => by
+  have h₁ := @measure_univ ℝ _ volume h.1
+  simp at h₁
+
+/-- The zero measure, for which `S = S₀ ^ c` also reduces to `0 = 0 ^ c`, has no PH reading. -/
+example (c : ℝ) : ¬ HasProportionalHazards (0 : Measure ℝ) 0 c := fun h => by
+  have h₁ := @measure_univ ℝ _ 0 h.1
+  simp at h₁
 
 /-- Weibull cumulative hazard under acceleration: `H(t | η) = exp (-k η) H₀(t)` at `t = 1`. -/
 example (η : ℝ) :

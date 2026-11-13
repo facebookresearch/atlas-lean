@@ -36,9 +36,10 @@ proportional-hazards (PH) reading.
   (`aftMeasure_weibullMeasure`); log-normal `LN(μ, v)` goes to `LN(μ + η, v)`
   (`aftMeasure_logNormalMeasure`).
 * PH versus AFT. `HasProportionalHazards μ₀ μ c` is the PH reading `S = S₀^c` on `[0, ∞)`
-  with hazard ratio `c > 0`, which multiplies hazards at a fixed time rather than rescaling
-  time. `hasProportionalHazards_aftMeasure_iff` says an AFT law has a PH reading iff `c > 0`
-  and `S₀(exp (-η) t) = S₀(t)^c`.
+  between probability laws `μ₀` and `μ`, with hazard ratio `c > 0`, which multiplies hazards at
+  a fixed time rather than rescaling time. `hasProportionalHazards_aftMeasure_iff` says an AFT
+  law has a PH reading iff its baseline is a probability law, `c > 0`, and
+  `S₀(exp (-η) t) = S₀(t)^c`.
   - **Weibull admits both readings**: `hasProportionalHazards_aftMeasure_weibullMeasure`, the
     AFT law with time ratio `exp η` is PH with hazard ratio `exp (-k η)`; equivalently
     (`neg_log_aftMeasure_weibullMeasure_real_Ioi`) `H(t | η) = exp (-k η) H₀(t)`. The PH
@@ -221,23 +222,34 @@ theorem aftMeasure_logNormalMeasure (μ : ℝ) (v : ℝ≥0) (η : ℝ) :
 
 /-! ### Proportional hazards versus accelerated failure time -/
 
-/-- **Proportional-hazards reading** with hazard ratio `c > 0`: the survival function of `μ` is
-the `c`-th power of that of `μ₀` on `[0, ∞)`, `S(t) = S₀(t)^c`. A hazard ratio is strictly
-positive; without `0 < c`, survival functions taking only the values `0` and `1` would allow
-every negative `c`, since `0 ^ c = 0` and `1 ^ c = 1` for `c < 0`. Where `S₀(t) > 0` this says
-the cumulative hazards satisfy `H(t) = c H₀(t)`, and hence, where they are differentiable, the
-hazard rates satisfy `h(t) = c h₀(t)`. This is a statement about multiplying hazards at the same
-time `t`; the AFT reading `μ = aftMeasure μ₀ η` instead rescales time. -/
+/-- **Proportional-hazards reading** with hazard ratio `c > 0`: `μ₀` and `μ` are probability
+laws and the survival function of `μ` is the `c`-th power of that of `μ₀` on `[0, ∞)`,
+`S(t) = S₀(t)^c`. Both laws must be probability measures: `Measure.real` reads an infinite mass
+as `0`, so Lebesgue measure (every `Ioi t` has infinite mass) and the zero measure would otherwise
+satisfy `0 = 0 ^ c` against themselves for every `c > 0`. A hazard ratio is strictly positive;
+without `0 < c`, survival functions taking only the values `0` and `1` would allow every negative
+`c`, since `0 ^ c = 0` and `1 ^ c = 1` for `c < 0`. Where `S₀(t) > 0` this says the cumulative
+hazards satisfy `H(t) = c H₀(t)`, and hence, where they are differentiable, the hazard rates
+satisfy `h(t) = c h₀(t)`. This is a statement about multiplying hazards at the same time `t`; the
+AFT reading `μ = aftMeasure μ₀ η` instead rescales time. -/
 def HasProportionalHazards (μ₀ μ : Measure ℝ) (c : ℝ) : Prop :=
-  0 < c ∧ ∀ t, 0 ≤ t → μ.real (Ioi t) = μ₀.real (Ioi t) ^ c
+  IsProbabilityMeasure μ₀ ∧ IsProbabilityMeasure μ ∧ 0 < c ∧
+    ∀ t, 0 ≤ t → μ.real (Ioi t) = μ₀.real (Ioi t) ^ c
 
 /-- **When an AFT law is also a PH law**: the AFT law with predictor `η` has the PH reading with
-hazard ratio `c` iff `c > 0` and the baseline survival function satisfies
-`S₀(exp (-η) t) = S₀(t)^c` on `[0, ∞)`. -/
+hazard ratio `c` iff the baseline `μ₀` is a probability law, `c > 0`, and the baseline survival
+function satisfies `S₀(exp (-η) t) = S₀(t)^c` on `[0, ∞)`. The AFT law of a probability law is a
+probability law, so no separate condition on it remains. -/
 theorem hasProportionalHazards_aftMeasure_iff (μ₀ : Measure ℝ) (η c : ℝ) :
     HasProportionalHazards μ₀ (aftMeasure μ₀ η) c ↔
-      0 < c ∧ ∀ t, 0 ≤ t → μ₀.real (Ioi (exp (-η) * t)) = μ₀.real (Ioi t) ^ c := by
+      IsProbabilityMeasure μ₀ ∧ 0 < c ∧
+        ∀ t, 0 ≤ t → μ₀.real (Ioi (exp (-η) * t)) = μ₀.real (Ioi t) ^ c := by
   simp only [HasProportionalHazards, aftMeasure_real_Ioi]
+  constructor
+  · rintro ⟨h₀, -, h⟩
+    exact ⟨h₀, h⟩
+  · rintro ⟨h₀, h⟩
+    exact ⟨h₀, @isProbabilityMeasure_aftMeasure μ₀ h₀ η, h⟩
 
 /-- **The Weibull AFT law admits both readings.** With Weibull baseline of shape `k`, the AFT law
 with predictor `η` (time ratio `exp η`) is also a PH law with hazard ratio `exp (-k η)`. -/
@@ -246,7 +258,7 @@ theorem hasProportionalHazards_aftMeasure_weibullMeasure {k l : ℝ} (hk : 0 < k
     HasProportionalHazards (weibullMeasure k l) (aftMeasure (weibullMeasure k l) η)
       (exp (-(k * η))) := by
   rw [hasProportionalHazards_aftMeasure_iff]
-  refine ⟨exp_pos _, fun t ht => ?_⟩
+  refine ⟨isProbabilityMeasure_weibullMeasure hk hl, exp_pos _, fun t ht => ?_⟩
   have hη : 0 ≤ exp (-η) := (exp_pos _).le
   rw [weibullMeasure_real_Ioi hk hl (mul_nonneg hη ht), weibullMeasure_real_Ioi hk hl ht,
     ← exp_mul, mul_div_assoc, mul_rpow hη (div_nonneg ht hl.le), ← exp_mul]
@@ -259,7 +271,7 @@ theorem neg_log_aftMeasure_weibullMeasure_real_Ioi {k l t : ℝ} (hk : 0 < k) (h
     (ht : 0 ≤ t) (η : ℝ) :
     -log ((aftMeasure (weibullMeasure k l) η).real (Ioi t)) =
       exp (-(k * η)) * -log ((weibullMeasure k l).real (Ioi t)) := by
-  rw [(hasProportionalHazards_aftMeasure_weibullMeasure hk hl η).2 t ht,
+  rw [(hasProportionalHazards_aftMeasure_weibullMeasure hk hl η).2.2.2 t ht,
     log_rpow (by rw [weibullMeasure_real_Ioi hk hl ht]; exact exp_pos _)]
   ring
 
@@ -377,7 +389,7 @@ theorem not_hasProportionalHazards_aftMeasure_logNormalMeasure (μ : ℝ) {v : �
     ¬ HasProportionalHazards (logNormalMeasure μ v) (aftMeasure (logNormalMeasure μ v) η) c := by
   intro hPH
   rw [hasProportionalHazards_aftMeasure_iff] at hPH
-  obtain ⟨hc, hPH⟩ := hPH
+  obtain ⟨-, hc, hPH⟩ := hPH
   set q : ℝ → ℝ := fun x => (gaussianReal μ v).real (Ioi x) with hq_def
   have hq : ∀ x, q (x - η) = q x ^ c := by
     intro x
