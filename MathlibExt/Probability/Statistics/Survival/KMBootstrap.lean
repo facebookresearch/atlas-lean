@@ -48,8 +48,6 @@ x`), and recompute the Kaplan–Meier estimate on it: `Ŝ*ₙ = kmGrid ht (ω n)
 * Every at-risk probability `P(T ≥ tⱼ)` must be positive (`hpos`). At a grid point beyond the
   support (no mass at or after it) `kmMap` is not even continuous, and no bootstrap validity is
   claimed there; the test file exhibits the discontinuity.
-* Observation times are positive (`ht0`): the bootstrap world's unused row zero is the point
-  mass at `0 ∈ ℝ × ℝ`, and the indicator encoding must send it to `0`.
 
 ## References
 
@@ -111,14 +109,6 @@ theorem obsVec_inr (t : Fin k → ℝ) (o : ℝ × ℝ) (j : Fin k) [Decidable (
     obsVec t o (Sum.inr j) = if t j ≤ o.1 then 1 else 0 := by
   simp only [obsVec, PiLp.toLp_apply, Sum.elim_inr]
   congr
-
-/-- For positive grid times the encoding sends `0` to `0`. -/
-theorem obsVec_zero {t : Fin k → ℝ} (ht0 : ∀ j, 0 < t j) : obsVec t 0 = 0 := by
-  classical
-  ext i
-  rcases i with j | j
-  · simp [Prod.ext_iff]
-  · simp [not_le.2 (ht0 j)]
 
 theorem measurable_obsVec (t : Fin k → ℝ) : Measurable (obsVec t) := by
   classical
@@ -258,12 +248,37 @@ private theorem tendstoInDistribution_of_map_limit_eq {Ω₁ Ω₁' Ω₂' F : T
   rw [hlim]
   exact h.tendsto
 
+/-- Encoding every positive row of the bootstrap world of `x` gives the bootstrap world of the
+encoded data. The unused row zero is sent to `0` instead of being encoded: its empirical law is
+the point mass at `0` on both sides, so no condition on the grid times is needed. -/
+private theorem map_world_obsVec (t : Fin k → ℝ) (x : ℕ → ℝ × ℝ) :
+    (world x).map (fun ω n m => if n = 0 then (0 : Coord k) else obsVec t (ω n m)) =
+      world (fun i => obsVec t (x i)) := by
+  have hg : ∀ n : ℕ, Measurable fun o : ℝ × ℝ => if n = 0 then (0 : Coord k) else obsVec t o :=
+    fun n => Measurable.ite (MeasurableSet.const _) measurable_const (measurable_obsVec t)
+  unfold world
+  refine (Measure.infinitePi_map_pi
+    (μ := fun n => Measure.infinitePi fun _ : ℕ => empirical x n)
+    (f := fun n (row : ℕ → ℝ × ℝ) m => if n = 0 then (0 : Coord k) else obsVec t (row m))
+    (fun n => measurable_pi_iff.2 fun m => (hg n).comp (measurable_pi_apply m))).trans ?_
+  congr 1; funext n
+  rw [Measure.infinitePi_map_pi (fun _ : ℕ => empirical x n)
+    (f := fun _ o => if n = 0 then (0 : Coord k) else obsVec t o) (fun _ => hg n)]
+  congr 1; funext m
+  rcases eq_or_ne n 0 with rfl | hn
+  · simp [empirical]
+  · simp only [hn, ↓reduceIte]
+    rw [empirical_of_ne_zero hn, empirical_of_ne_zero hn,
+      Measure.map_smul _ (measurable_obsVec t).aemeasurable,
+      Measure.map_finset_sum (measurable_obsVec t).aemeasurable]
+    simp [Measure.map_dirac' (measurable_obsVec t)]
+
 variable {t : Fin k → ℝ} (ht : StrictMono t)
 
 /-- The bootstrap Kaplan–Meier statistic on the bootstrap world of the data equals, almost
 surely, the smooth statistic `kmMap` of the bootstrap indicator mean on the bootstrap world of
 the encoded data; so their convergence in distribution is equivalent. -/
-private theorem tendstoInDistribution_kmGrid_of_kmMap (ht0 : ∀ j, 0 < t j) {x : ℕ → ℝ × ℝ}
+private theorem tendstoInDistribution_kmGrid_of_kmMap {x : ℕ → ℝ × ℝ}
     (hgrid : ∀ i, (x i).1 ∈ Set.range t) {Ω' : Type*} [MeasurableSpace Ω'] {μ' : Measure Ω'}
     [IsProbabilityMeasure μ'] {W : Ω' → Fin k → ℝ}
     (h : TendstoInDistribution (fun (n : ℕ) ω => √(n : ℝ) •
@@ -271,9 +286,11 @@ private theorem tendstoInDistribution_kmGrid_of_kmMap (ht0 : ∀ j, 0 < t j) {x 
       atTop W (fun _ => world (fun i => obsVec t (x i))) μ') :
     TendstoInDistribution (fun (n : ℕ) ω => √(n : ℝ) • (kmGrid ht (ω n) n - kmGrid ht x n))
       atTop W (fun _ => world x) μ' := by
-  have hΦ : Measurable fun (ω : ℕ → ℕ → ℝ × ℝ) (n m : ℕ) => obsVec t (ω n m) :=
+  have hΦ : Measurable fun (ω : ℕ → ℕ → ℝ × ℝ) (n m : ℕ) =>
+      if n = 0 then (0 : Coord k) else obsVec t (ω n m) :=
     measurable_pi_iff.2 fun n => measurable_pi_iff.2 fun m =>
-      (measurable_obsVec t).comp ((measurable_pi_apply m).comp (measurable_pi_apply n))
+      Measurable.ite (MeasurableSet.const _) measurable_const
+        ((measurable_obsVec t).comp ((measurable_pi_apply m).comp (measurable_pi_apply n)))
   have hY : ∀ n : ℕ, Measurable fun ω : ℕ → ℕ → Coord k => √(n : ℝ) •
       (kmMap (bootMeanVec n ω) - kmMap (sampleMeanVec (fun i => obsVec t (x i)) n)) :=
     fun n => by
@@ -281,14 +298,15 @@ private theorem tendstoInDistribution_kmGrid_of_kmMap (ht0 : ∀ j, 0 < t j) {x 
         (measurable_const (a := kmMap (sampleMeanVec (fun i => obsVec t (x i)) n)))).const_smul
         (√(n : ℝ))
       exact h
-  have h1 := tendstoInDistribution_comp_of_map_eq hΦ
-    (map_world x (measurable_obsVec t) (obsVec_zero ht0)) hY h
+  have h1 := tendstoInDistribution_comp_of_map_eq hΦ (map_world_obsVec t x) hY h
   refine h1.congr (fun n => ?_) (ae_of_all _ fun _ => rfl)
+  rcases eq_or_ne n 0 with rfl | hn
+  · exact ae_of_all _ fun ω => by simp
   have hS : MeasurableSet {o : ℝ × ℝ | o.1 ∈ Set.range t} :=
     measurable_fst (Set.finite_range t).measurableSet
   filter_upwards [ae_resample_mem x hS (n := n) fun i _ => hgrid i] with ω hω
   rw [kmGrid_eq_kmMap ht _ n hω, kmGrid_eq_kmMap ht x n fun i _ => hgrid i]
-  rfl
+  simp only [bootMeanVec, sampleMeanVec, hn, ↓reduceIte]
 
 end Transfer
 
@@ -297,13 +315,13 @@ section Deterministic
 variable {t : Fin k → ℝ} (ht : StrictMono t)
 
 /-- **Bootstrap validity for grid Kaplan–Meier, fixed data.** Let the data `x` have every
-observed time on the positive grid `t`, and let `Z` be a random vector in the indicator space
+observed time on the grid `t`, and let `Z` be a random vector in the indicator space
 whose projections are `N(0, v s)`. If, in every direction `s`, the plug-in variances of the
 encoded data converge to `v s` and satisfy the Lindeberg condition, the encoded sample means
 converge to `θ`, and every at-risk mean `θ (inr j)` is positive, then, conditionally on the data
 (under `world x`), `√n (Ŝ*ₙ - Ŝₙ)` converges in distribution to `L Z`, `L = fderiv kmMap θ`.
 This is the delta-method limit of `√n (Ŝₙ - kmMap θ)` when `√n (x̄ₙ - θ) ⇒ Z`. -/
-theorem tendstoInDistribution_bootstrap_kmGrid (ht0 : ∀ j, 0 < t j) (x : ℕ → ℝ × ℝ)
+theorem tendstoInDistribution_bootstrap_kmGrid (x : ℕ → ℝ × ℝ)
     (hgrid : ∀ i, (x i).1 ∈ Set.range t) {Ω' : Type*} [MeasurableSpace Ω']
     {μ' : Measure Ω'} [IsProbabilityMeasure μ'] {Z : Ω' → Coord k} (hZ : AEMeasurable Z μ')
     (v : Coord k → ℝ≥0) (hZlaw : ∀ s, HasLaw (fun ω => ⟪Z ω, s⟫) (gaussianReal 0 (v s)) μ')
@@ -319,7 +337,7 @@ theorem tendstoInDistribution_bootstrap_kmGrid (ht0 : ∀ j, 0 < t j) (x : ℕ �
     (hpos : ∀ j, 0 < θ (Sum.inr j)) :
     TendstoInDistribution (fun (n : ℕ) ω => √(n : ℝ) • (kmGrid ht (ω n) n - kmGrid ht x n))
       atTop (fun ω => fderiv ℝ kmMap θ (Z ω)) (fun _ => world x) μ' :=
-  tendstoInDistribution_kmGrid_of_kmMap ht ht0 hgrid
+  tendstoInDistribution_kmGrid_of_kmMap ht hgrid
     (tendstoInDistribution_bootstrapVec_of_hasStrictFDerivAt _ hZ v hZlaw hvar hLind hθ
       (hasStrictFDerivAt_kmMap fun j => (hpos j).ne') measurable_kmMap)
 
@@ -340,7 +358,7 @@ variable {t : Fin k → ℝ} (ht : StrictMono t)
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
 
 /-- **Bootstrap consistency for grid Kaplan–Meier.** Let `X 0, X 1, …` be iid observations
-whose observed times lie almost surely on the positive grid `t`, let
+whose observed times lie almost surely on the grid `t`, let
 `θ = E[obsVec t (X 0)]` (so `θ (inl j) = P(X = (t j, 1))` and `θ (inr j) = P(t j ≤ T)`), and
 assume every at-risk probability `θ (inr j)` is positive. Let `Z` be a centred Gaussian vector
 with the covariance of `obsVec t (X 0)` and `L = fderiv kmMap θ`. Then
@@ -349,7 +367,7 @@ with the covariance of `obsVec t (X 0)` and `L = fderiv kmMap θ`. Then
   function `∏_{l ≤ j} (1 - P(X = (t l, 1)) / P(t l ≤ T))`;
 * for almost every data sequence, the conditional law of `√n (Ŝ*ₙ - Ŝₙ)` given the data
   converges to the same limit `L Z`. -/
-theorem kmGrid_bootstrap_consistent (ht0 : ∀ j, 0 < t j) (X : ℕ → Ω → ℝ × ℝ)
+theorem kmGrid_bootstrap_consistent (X : ℕ → Ω → ℝ × ℝ)
     (hindep : iIndepFun X P) (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
     (hgrid : ∀ i, ∀ᵐ ω ∂P, (X i ω).1 ∈ Set.range t)
     (hpos : ∀ j, 0 < (∫ ω, obsVec t (X 0 ω) ∂P) (Sum.inr j))
@@ -399,14 +417,14 @@ theorem kmGrid_bootstrap_consistent (ht0 : ∀ j, 0 < t j) (X : ℕ → Ω → �
     filter_upwards [ae_tendstoInDistribution_bootstrapVec_of_hasStrictFDerivAt
       (fun i ω => obsVec t (X i ω)) hmem (fun _ _ hij => hindep'.indepFun hij) hident' hZ
       hZlaw hg measurable_kmMap, hgridω] with ω h hω
-    exact tendstoInDistribution_kmGrid_of_kmMap ht ht0 hω h
+    exact tendstoInDistribution_kmGrid_of_kmMap ht hω h
 
 /-- **Bootstrap validity with the Kaplan–Meier limit as hypothesis.** Under the hypotheses of
 `kmGrid_bootstrap_consistent`, if the Kaplan–Meier estimator satisfies
 `√n (Ŝₙ - S) ⇒ W` for some limit `W` (on any probability space), then for almost every data
 sequence the conditional law of the bootstrap statistic `√n (Ŝ*ₙ - Ŝₙ)` converges to the law
 of `W`: the bootstrap reproduces the Kaplan–Meier limit law. -/
-theorem ae_tendstoInDistribution_bootstrap_kmGrid_of_limit (ht0 : ∀ j, 0 < t j)
+theorem ae_tendstoInDistribution_bootstrap_kmGrid_of_limit
     (X : ℕ → Ω → ℝ × ℝ) (hindep : iIndepFun X P) (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
     (hgrid : ∀ i, ∀ᵐ ω ∂P, (X i ω).1 ∈ Set.range t)
     (hpos : ∀ j, 0 < (∫ ω, obsVec t (X 0 ω) ∂P) (Sum.inr j))
@@ -424,7 +442,7 @@ theorem ae_tendstoInDistribution_bootstrap_kmGrid_of_limit (ht0 : ∀ j, 0 < t j
       (fun (n : ℕ) ω' => √(n : ℝ) • (kmGrid ht (ω' n) n - kmGrid ht (fun i => X i ω) n))
       atTop W (fun _ => world (fun i => X i ω)) ν := by
   obtain ⟨hsamp, hboot⟩ :=
-    kmGrid_bootstrap_consistent ht ht0 X hindep hident hgrid hpos hZ hZlaw
+    kmGrid_bootstrap_consistent ht X hindep hident hgrid hpos hZ hZlaw
   have heq := tendsto_nhds_unique hsamp.tendsto hKM.tendsto
   filter_upwards [hboot] with ω h
   exact tendstoInDistribution_of_map_limit_eq h hKM.aemeasurable_limit

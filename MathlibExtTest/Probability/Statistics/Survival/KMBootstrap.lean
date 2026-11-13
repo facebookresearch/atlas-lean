@@ -34,9 +34,6 @@ theorem t₂_strictMono : StrictMono t₂ := by
   fin_cases i
   norm_num [t₂]
 
-theorem t₂_pos : ∀ j, 0 < t₂ j := by
-  intro j; fin_cases j <;> norm_num [t₂]
-
 /-- The death at `1`. -/
 noncomputable def a₂ : ℝ × ℝ := (1, 1)
 
@@ -304,7 +301,7 @@ example : ∃ A : Coord 2 →L[ℝ] Coord 2,
         (fun _ => world (fun i => XKM i ω)) (stdGaussian (Coord 2)) := by
   obtain ⟨hind, hid, hgr, hpos⟩ := XKM_hyps
   obtain ⟨A, hA⟩ := exists_hasLaw_inner_gaussianReal memLp_obsVec_XKM
-  exact ⟨A, kmGrid_bootstrap_consistent t₂_strictMono t₂_pos XKM hind hid hgr hpos
+  exact ⟨A, kmGrid_bootstrap_consistent t₂_strictMono XKM hind hid hgr hpos
     A.continuous.aemeasurable hA⟩
 
 /-- **The limit-as-hypothesis theorem applies**, with the sampling limit as `hKM`. -/
@@ -316,9 +313,9 @@ example : ∃ A : Coord 2 →L[ℝ] Coord 2,
       (fun _ => world (fun i => XKM i ω)) (stdGaussian (Coord 2)) := by
   obtain ⟨hind, hid, hgr, hpos⟩ := XKM_hyps
   obtain ⟨A, hA⟩ := exists_hasLaw_inner_gaussianReal memLp_obsVec_XKM
-  exact ⟨A, ae_tendstoInDistribution_bootstrap_kmGrid_of_limit t₂_strictMono t₂_pos XKM hind
+  exact ⟨A, ae_tendstoInDistribution_bootstrap_kmGrid_of_limit t₂_strictMono XKM hind
     hid hgr hpos A.continuous.aemeasurable hA
-    (kmGrid_bootstrap_consistent t₂_strictMono t₂_pos XKM hind hid hgr hpos
+    (kmGrid_bootstrap_consistent t₂_strictMono XKM hind hid hgr hpos
       A.continuous.aemeasurable hA).1⟩
 
 /-! ### Satisfiability of the fixed-data theorem
@@ -345,8 +342,8 @@ example : TendstoInDistribution
       MathlibExt.Probability.Causality.sampleMean (fun _ => ⟪obsVec t₁ a₂, s⟫) (range n) = 0 :=
     fun s n i hi => by
       rw [sampleMean_const _ (Finset.nonempty_range_iff.1 ⟨i, hi⟩), sub_self]
-  refine tendstoInDistribution_bootstrap_kmGrid t₁_strictMono (fun j => by
-      fin_cases j; norm_num [t₁]) (fun _ => a₂) (fun _ => ⟨0, by simp [a₂, t₁]⟩)
+  refine tendstoInDistribution_bootstrap_kmGrid t₁_strictMono (fun _ => a₂)
+    (fun _ => ⟨0, by simp [a₂, t₁]⟩)
     (Z := fun _ : Unit => (0 : Coord 1)) aemeasurable_const 0 (fun s => ?_) (fun s => ?_)
     (fun s ε hε => ?_) (θ := obsVec t₁ a₂) ?_ (fun j => ?_)
   · exact ⟨aemeasurable_const, by simp [gaussianReal_zero_var]⟩
@@ -362,5 +359,53 @@ example : TendstoInDistribution
     simp only [sampleMeanVec, Finset.sum_const, Finset.card_range]
     rw [← Nat.cast_smul_eq_nsmul ℝ, smul_smul, inv_mul_cancel₀ (Nat.cast_ne_zero.2 hn), one_smul]
   · fin_cases j; simp [a₂, t₁]
+
+/-! ### A grid containing time `0`
+
+The fixed-data theorem has no sign condition on the grid. On the one-point grid `0` the
+encoding does not send the origin of `ℝ × ℝ` to `0` (the origin is at risk at time `0`), and the
+theorem still applies to constant data, a death at time `0`. -/
+
+/-- The one-point grid `0`. -/
+noncomputable def t₀ : Fin 1 → ℝ := ![0]
+
+theorem t₀_strictMono : StrictMono t₀ := fun i j h => by
+  fin_cases i; fin_cases j; exact absurd h (lt_irrefl _)
+
+/-- The death at time `0`. -/
+noncomputable def a₀ : ℝ × ℝ := (0, 1)
+
+/-- The origin is at risk at time `0`, so its encoding on the grid `0` is not `0`. -/
+theorem obsVec_t₀_zero_ne : obsVec t₀ 0 ≠ 0 := by
+  intro h
+  have h1 := congrArg (fun v : Coord 1 => v (Sum.inr 0)) h
+  simp [t₀] at h1
+
+example : TendstoInDistribution
+    (fun (n : ℕ) ω => √(n : ℝ) •
+      (kmGrid t₀_strictMono (ω n) n - kmGrid t₀_strictMono (fun _ => a₀) n))
+    atTop (fun _ => fderiv ℝ kmMap (obsVec t₀ a₀) 0) (fun _ => world fun _ => a₀)
+    (Measure.dirac ()) := by
+  have hdev : ∀ (s : Coord 1) (n : ℕ), ∀ i ∈ range n, ⟪obsVec t₀ a₀, s⟫ -
+      MathlibExt.Probability.Causality.sampleMean (fun _ => ⟪obsVec t₀ a₀, s⟫) (range n) = 0 :=
+    fun s n i hi => by
+      rw [sampleMean_const _ (Finset.nonempty_range_iff.1 ⟨i, hi⟩), sub_self]
+  refine tendstoInDistribution_bootstrap_kmGrid t₀_strictMono (fun _ => a₀)
+    (fun _ => ⟨0, by simp [a₀, t₀]⟩)
+    (Z := fun _ : Unit => (0 : Coord 1)) aemeasurable_const 0 (fun s => ?_) (fun s => ?_)
+    (fun s ε hε => ?_) (θ := obsVec t₀ a₀) ?_ (fun j => ?_)
+  · exact ⟨aemeasurable_const, by simp [gaussianReal_zero_var]⟩
+  · refine tendsto_const_nhds.congr fun n => ?_
+    simp only [empiricalVar]
+    rw [Finset.sum_eq_zero fun i hi => by rw [hdev s n i hi]; ring]
+    simp
+  · refine tendsto_const_nhds.congr fun n => ?_
+    rw [Finset.sum_eq_zero fun i hi => by rw [hdev s n i hi]; simp]
+    simp
+  · refine tendsto_const_nhds.congr' ?_
+    filter_upwards [eventually_ne_atTop 0] with n hn
+    simp only [sampleMeanVec, Finset.sum_const, Finset.card_range]
+    rw [← Nat.cast_smul_eq_nsmul ℝ, smul_smul, inv_mul_cancel₀ (Nat.cast_ne_zero.2 hn), one_smul]
+  · fin_cases j; simp [a₀, t₀]
 
 end MathlibExtTest.Probability.Statistics.KMBootstrap
