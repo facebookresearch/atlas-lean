@@ -364,8 +364,7 @@ theorem exists_lyapunov_le_exp :
     nlinarith
   have := le_of_hasDerivAt_nonpos hF hF' ht
   simp only [F, mul_zero, exp_zero, mul_one] at this
-  rw [show -(c * t) = -(c * t) from rfl, Real.exp_neg, ← div_eq_mul_inv,
-    le_div_iff₀ (exp_pos _)]
+  rw [Real.exp_neg, ← div_eq_mul_inv, le_div_iff₀ (exp_pos _)]
   exact this
 
 /-- `(I(t) - I*)² ≤ 2 N V(S(t), I(t))` along a solution in the open segment. -/

@@ -22,7 +22,9 @@ Concrete model `β = 2`, `γ = 1`, `N = 1` (`R₀ = 2`), endemic equilibrium `(1
   of `SIS.lean` (`isSolution_sis`) and by the constant endemic solution;
 * the attractivity limit agrees with the independent explicit-solution limit
   `tendsto_sisInfected_endemic`;
-* the boundary `R₀ = 1` (`β = γ`), where `I* = 0` leaves the open orthant.
+* the boundary `R₀ = 1` (`β = γ`), where `I* = 0` leaves the open orthant (so the Lyapunov
+  function, which needs `log (I / I*)`, is undefined), and `R₀ < 1`, where `I* < 0` while
+  `I → 0`, so convergence to `(S*, I*)` fails.
 -/
 
 open Real Filter Set
@@ -135,15 +137,20 @@ example (t : ℝ) :
     lyapunov 2 1 1 ((fun _ => (1 : ℝ) * 1 / 2) t) ((fun _ => (1 : ℝ) * (1 - 1 / 2)) t) = 0 := by
   norm_num [lyapunov]
 
-/-- Stability applied to the equilibrium solution itself. -/
+/-- Lyapunov stability instantiated at `ε = 1/10` for `β = 2`, `γ = 1`, `N = 1`. -/
 example : ∃ δ > 0, ∀ S I : ℝ → ℝ, IsSolution 2 1 1 S I → S 0 + I 0 = 1 → 0 < S 0 → 0 < I 0 →
     dist (S 0, I 0) ((1 : ℝ) * 1 / 2, (1 : ℝ) * (1 - 1 / 2)) < δ →
     ∀ t, 0 ≤ t → dist (S t, I t) ((1 : ℝ) * 1 / 2, (1 : ℝ) * (1 - 1 / 2)) < 1 / 10 :=
   endemic_lyapunovStable one_pos (by norm_num) one_pos _ (by norm_num)
 
-example : ∃ δ > 0,
-    dist ((1 : ℝ) * 1 / 2, (1 : ℝ) * (1 - 1 / 2)) ((1 : ℝ) * 1 / 2, (1 : ℝ) * (1 - 1 / 2)) < δ :=
-  ⟨1, one_pos, by simp⟩
+/-- The `δ` from Lyapunov stability, applied to the constant endemic solution: its hypotheses
+are all satisfied and it stays within `1/10` of the equilibrium at `t = 3`. -/
+example : dist ((fun _ => (1 : ℝ) * 1 / 2) 3, (fun _ => (1 : ℝ) * (1 - 1 / 2)) 3)
+    ((1 : ℝ) * 1 / 2, (1 : ℝ) * (1 - 1 / 2)) < 1 / 10 := by
+  obtain ⟨δ, hδ, hstab⟩ := endemic_lyapunovStable (β := 2) (γ := 1) (N := 1) one_pos
+    (by norm_num) one_pos (1 / 10) (by norm_num)
+  exact hstab _ _ (isSolution_const_endemic two_ne_zero) (by norm_num) (by norm_num)
+    (by norm_num) (by simpa using hδ) 3 (by norm_num)
 
 example : IsSolution 2 1 1 (fun _ => 1 * 1 / 2) (fun _ => 1 * (1 - 1 / 2)) :=
   isSolution_const_endemic two_ne_zero
@@ -152,12 +159,22 @@ example : IsSolution 2 1 1 (fun _ => 1 * 1 / 2) (fun _ => 1 * (1 - 1 / 2)) :=
 example := endemic_globallyAsymptoticallyStable (β := 2) (γ := 1) (N := 1) one_pos (by norm_num)
   one_pos
 
-/-! ### Boundary `R₀ = 1` -/
+/-! ### Boundaries `R₀ = 1` and `R₀ < 1` -/
 
 /-- At `β = γ` (`R₀ = 1`) the "endemic" level `I* = N (1 - γ / β)` is `0`: the equilibrium
-leaves the open orthant, so the strict hypothesis `1 < β / γ` cannot be weakened to `≤`. -/
+`(N, 0)` leaves the open orthant and `log (I / I*)` in `lyapunov` is meaningless. Strictness of
+`1 < β / γ` is needed by this Lyapunov proof, not by the convergence statement, which still
+holds at `R₀ = 1` (`IsSolution.tendsto_infected_zero`). -/
 example : (1 : ℝ) * (1 - 1 / 1) = 0 := by norm_num
 
 example : ¬ ((1 : ℝ) < 1 / 1) := by norm_num
+
+/-- For `R₀ = 1/2 < 1` (`β = 1`, `γ = 2`, `N = 1`) the formula gives `I* = 1 · (1 - 2/1) = -1`. -/
+example : (1 : ℝ) * (1 - 2 / 1) = -1 := by norm_num
+
+/-- ...while every positive solution has `I → 0 ≠ -1`, so for `R₀ < 1` convergence to the
+formula point fails and the hypothesis `1 < β / γ` cannot be dropped. -/
+example : Tendsto (sisInfected 1 2 1 (1 / 100)) atTop (𝓝 0) :=
+  tendsto_sisInfected_zero (by norm_num) (by norm_num) (by norm_num) one_pos (by norm_num)
 
 end MathlibExtTest.Biology.Epidemiology.SISGlobalStability
