@@ -48,15 +48,20 @@ The final volume is always a separately given measured quantity; no volume addit
 anywhere.
 
 For amounts `n i ≥ 0` with `∑ i, n i > 0`, mole fractions are nonnegative and sum to `1`.
-When two solutions combine with no reaction, each mixture mole fraction is the
-total-weighted convex combination of the two mole fractions. Mixture molarity is not
-determined by the single-solution data: two scenarios agreeing on `(c₁, c₂, n₁, n₂)` with
-different measured final volumes have different mixture molarities.
+When two solutions combine with no reaction, each mixture mole fraction is the average of the
+two mole fractions weighted by the total amounts `N₁` and `N₂`: an algebraic identity whenever
+both totals are nonzero (`moleFraction_mix`), and a convex combination, with weight
+`N₁ / (N₁ + N₂)` in `(0, 1)`, when both totals are positive (`moleFraction_mix_convex`).
+Mixture molarity is not determined by the single-solution data: two scenarios agreeing on
+`(c₁, c₂, n₁, n₂)` with different measured final volumes have different mixture molarities.
 
 A temperature change in a closed, nonreacting sample leaves solute amount and solvent mass
 unchanged while the solution volume may change, so molality is unchanged and molarity changes
-with the volume. Parts-per-million by mass is `10^6` times the mass fraction; it differs from
-parts-per-million by volume when the solution density is not `1` in consistent units.
+with the volume. Parts-per-million by mass is `10^6` times the mass fraction. With solute
+density `ρs` and solution density `ρ` it is `ρs / ρ` times parts-per-million by volume
+(`ppmByMass_eq_mul_ppmByVolume`), so the relation depends on the density ratio, not on the
+numerical value of `ρ`; for a nonzero volume fraction the two agree exactly when `ρs = ρ`
+(`ppmByMass_eq_ppmByVolume_iff`).
 
 The results are algebraic. They provide no reaction stoichiometry, activity coefficients,
 colligative properties, titration, temperature dependence of density (density is a parameter at
@@ -83,13 +88,16 @@ the given temperature), or any volume-additivity model.
   target-achieving final volume.
 - `Chemistry.Amounts.moleFraction_nonneg`, `Chemistry.Amounts.sum_moleFraction` : reused
   mole-fraction facts; mole fractions are nonnegative and sum to `1`.
-- `moleFraction_mix` : mixture mole fractions over `Chemistry.Amounts.moleFraction` are
-  total-weighted convex combinations.
+- `moleFraction_mix` : the algebraic mixing identity for mole fractions over
+  `Chemistry.Amounts.moleFraction`, for nonzero totals.
+- `moleFraction_mix_convex` : for positive totals, mixture mole fractions are convex
+  combinations with weight `N₁ / (N₁ + N₂)` in `(0, 1)`.
 - `mixtureMolarity_notDeterminedByComponents` : mixture molarity needs the final volume.
 - `molality_temp_invariant`, `molarity_temp_ne`, `molarity_temp_ratio` : molality is
   temperature-invariant at fixed composition; molarity tracks the volume.
-- `ppmByMass`, `ppmByVolume`, `ppmByMass_eq`, `massFraction_of_volumes` : parts-per-million
-  by mass and by volume and how they differ.
+- `ppmByMass`, `ppmByVolume`, `ppmByMass_eq`, `massFraction_of_volumes`,
+  `ppmByMass_eq_mul_ppmByVolume`, `ppmByMass_eq_ppmByVolume_iff` : parts-per-million by mass
+  and by volume, related by the density ratio `ρs / ρ`.
 
 ## iii. Table of contents
 
@@ -271,10 +279,13 @@ lemma dilutionVolume_spec {c₁ V₁ c₂ : ℝ} (hc₂ : 0 < c₂) :
 
 -/
 
-/-- Mixing: when two solutions with amount families `n₁, n₂` over the same species are
-combined with no reaction (amounts add), each mixture mole fraction (over
-`Chemistry.Amounts.moleFraction`) is the total-weighted convex combination of the two mole
-fractions. Both totals must be nonzero. -/
+/-- **Mixing identity** (algebraic): when two solutions with amount families `n₁, n₂` over the
+same species are combined with no reaction (amounts add), each mixture mole fraction (over
+`Chemistry.Amounts.moleFraction`) is the average of the two mole fractions weighted by the
+totals `N₁ = ∑ j, n₁ j` and `N₂ = ∑ j, n₂ j`. Only `N₁ ≠ 0` and `N₂ ≠ 0` are assumed, so this
+is not a convexity claim: totals `-1` and `2` give weights `-1` and `2`, and when
+`N₁ + N₂ = 0` both sides are `0` by Lean's division convention. For positive totals see
+`moleFraction_mix_convex`. -/
 lemma moleFraction_mix {ι : Type*} [Fintype ι] (n₁ n₂ : ι → ℝ) (i : ι)
     (h₁ : ∑ j, n₁ j ≠ 0) (h₂ : ∑ j, n₂ j ≠ 0) :
     Chemistry.Amounts.moleFraction (n₁ + n₂) i =
@@ -287,6 +298,24 @@ lemma moleFraction_mix {ι : Type*} [Fintype ι] (n₁ n₂ : ι → ℝ) (i : �
     rw [Chemistry.Amounts.moleFraction, mul_comm (∑ j, n₂ j) _, div_mul_cancel₀ _ h₂]
   rw [hmul₁, hmul₂]
   simp only [Chemistry.Amounts.moleFraction, Pi.add_apply, Finset.sum_add_distrib]
+
+/-- **Mixing as a convex combination**: if both solutions have positive total amounts
+`N₁ = ∑ j, n₁ j` and `N₂ = ∑ j, n₂ j`, the weight `w = N₁ / (N₁ + N₂)` lies in `(0, 1)` and each
+mixture mole fraction is `w * x₁ + (1 - w) * x₂`. With nonnegative amounts each `xₖ` is also
+nonnegative (`Chemistry.Amounts.moleFraction_nonneg`). -/
+lemma moleFraction_mix_convex {ι : Type*} [Fintype ι] (n₁ n₂ : ι → ℝ) (i : ι)
+    (h₁ : 0 < ∑ j, n₁ j) (h₂ : 0 < ∑ j, n₂ j) :
+    0 < (∑ j, n₁ j) / ((∑ j, n₁ j) + ∑ j, n₂ j) ∧
+      (∑ j, n₁ j) / ((∑ j, n₁ j) + ∑ j, n₂ j) < 1 ∧
+      Chemistry.Amounts.moleFraction (n₁ + n₂) i =
+        (∑ j, n₁ j) / ((∑ j, n₁ j) + ∑ j, n₂ j) * Chemistry.Amounts.moleFraction n₁ i +
+          (1 - (∑ j, n₁ j) / ((∑ j, n₁ j) + ∑ j, n₂ j)) *
+            Chemistry.Amounts.moleFraction n₂ i := by
+  have hS : 0 < (∑ j, n₁ j) + ∑ j, n₂ j := add_pos h₁ h₂
+  refine ⟨div_pos h₁ hS, (div_lt_one hS).2 (lt_add_of_pos_right _ h₂), ?_⟩
+  rw [moleFraction_mix n₁ n₂ i h₁.ne' h₂.ne']
+  field_simp
+  ring
 
 /-- Mixture molarity is not determined by the single-solution data: two scenarios agreeing on
 `(c₁, c₂, n₁, n₂)` with different measured final volumes have different mixture molarities.
@@ -344,7 +373,8 @@ lemma ppmByMass_eq (w : ℝ) : ppmByMass w = 10 ^ 6 * w := rfl
 
 /-- Mass fraction from volumes: with solute density `ρs` (so `mSolute = ρs * vSolute`) and
 solution density `ρ` (so `mSoln = ρ * vSoln`), the mass fraction is `(ρs / ρ)` times the
-volume fraction. In particular the two ppm figures agree only when the densities agree. -/
+volume fraction. Hence ppm by mass is `ρs / ρ` times ppm by volume
+(`ppmByMass_eq_mul_ppmByVolume`). -/
 lemma massFraction_of_volumes {mSolute mSoln vSolute vSoln ρs ρ : ℝ}
     (hs : mSolute = ρs * vSolute) (h : mSoln = ρ * vSoln)
     (hρ : ρ ≠ 0) (hv : vSoln ≠ 0) :
@@ -353,5 +383,34 @@ lemma massFraction_of_volumes {mSolute mSoln vSolute vSoln ρs ρ : ℝ}
   rw [hs, h]
   simp only [massFraction]
   field_simp
+
+/-- **ppm by mass versus ppm by volume**: with solute density `ρs` (`mSolute = ρs * vSolute`)
+and solution density `ρ` (`mSoln = ρ * vSoln`), ppm by mass is `ρs / ρ` times ppm by volume.
+The factor is the density ratio, not the numerical value of `ρ`. -/
+lemma ppmByMass_eq_mul_ppmByVolume {mSolute mSoln vSolute vSoln ρs ρ : ℝ}
+    (hs : mSolute = ρs * vSolute) (h : mSoln = ρ * vSoln)
+    (hρ : ρ ≠ 0) (hv : vSoln ≠ 0) :
+    ppmByMass (massFraction mSolute mSoln) = (ρs / ρ) * ppmByVolume vSolute vSoln := by
+  rw [ppmByMass_eq, massFraction_of_volumes hs h hρ hv, ppmByVolume]
+  ring
+
+/-- For a nonzero volume fraction, ppm by mass equals ppm by volume exactly when the solute
+and solution densities agree. -/
+lemma ppmByMass_eq_ppmByVolume_iff {mSolute mSoln vSolute vSoln ρs ρ : ℝ}
+    (hs : mSolute = ρs * vSolute) (h : mSoln = ρ * vSoln)
+    (hρ : ρ ≠ 0) (hv : vSoln ≠ 0) (hvs : vSolute ≠ 0) :
+    ppmByMass (massFraction mSolute mSoln) = ppmByVolume vSolute vSoln ↔ ρs = ρ := by
+  have hP : ppmByVolume vSolute vSoln ≠ 0 :=
+    mul_ne_zero (by norm_num) (div_ne_zero hvs hv)
+  rw [ppmByMass_eq_mul_ppmByVolume hs h hρ hv]
+  constructor
+  · intro heq
+    have h0 : (ρs / ρ - 1) * ppmByVolume vSolute vSoln = 0 := by
+      rw [sub_mul, heq, one_mul, sub_self]
+    rcases mul_eq_zero.1 h0 with h1 | h1
+    · rwa [sub_eq_zero, div_eq_one_iff_eq hρ] at h1
+    · exact absurd h1 hP
+  · intro heq
+    rw [heq, div_self hρ, one_mul]
 
 end Chemistry.SolutionComposition

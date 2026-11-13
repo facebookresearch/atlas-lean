@@ -134,14 +134,22 @@ example : ∑ i, Chemistry.Amounts.moleFraction mixN1 i = 1 :=
 example (i : Fin 2) : 0 ≤ Chemistry.Amounts.moleFraction mixN1 i :=
   Chemistry.Amounts.moleFraction_nonneg mixN1_nonneg i
 
-/-- Mixture mole fractions are the total-weighted convex combination, for the stated amount
-families with totals `3` and `7`. -/
+/-- The algebraic mixing identity, for the stated amount families with totals `3` and `7`. -/
 example (i : Fin 2) : Chemistry.Amounts.moleFraction (mixN1 + mixN2) i =
     ((∑ j, mixN1 j) * Chemistry.Amounts.moleFraction mixN1 i +
       (∑ j, mixN2 j) * Chemistry.Amounts.moleFraction mixN2 i) /
       ((∑ j, mixN1 j) + (∑ j, mixN2 j)) :=
   moleFraction_mix mixN1 mixN2 i (by rw [mixN1_sum]; norm_num)
     (by rw [mixN2_sum]; norm_num)
+
+/-- With positive totals `3` and `7` the mixture is a convex combination with weight `3/10`. -/
+example (i : Fin 2) : Chemistry.Amounts.moleFraction (mixN1 + mixN2) i =
+    3/10 * Chemistry.Amounts.moleFraction mixN1 i +
+      (1 - 3/10) * Chemistry.Amounts.moleFraction mixN2 i := by
+  obtain ⟨-, -, h⟩ := moleFraction_mix_convex mixN1 mixN2 i
+    (by rw [mixN1_sum]; norm_num) (by rw [mixN2_sum]; norm_num)
+  rw [h, mixN1_sum, mixN2_sum]
+  norm_num
 
 /-- Concretely, the first mixture mole fraction is `(1 + 3) / (3 + 7) = 2/5`. -/
 example : Chemistry.Amounts.moleFraction (mixN1 + mixN2) 0 = 2/5 := by
@@ -188,9 +196,9 @@ example : molarity (1:ℝ) 2 ≠ molality 1 3 := by
 /-- `ppmByMass` is `10^6` times the mass fraction. -/
 example (w : ℝ) : ppmByMass w = 10^6 * w := ppmByMass_eq w
 
-/-- ppm by mass differs from ppm by volume when the solution density is not `1`: with solute
-mass `2` in solution mass `100` (solute density `1`, solution density `2`), ppm by mass is
-`20000` while ppm by volume from solute volume `2` in solution volume `50` is `40000`. -/
+/-- ppm by mass differs from ppm by volume when the solute and solution densities differ: with
+solute mass `2` in solution mass `100` (solute density `1`, solution density `2`), ppm by mass
+is `20000` while ppm by volume from solute volume `2` in solution volume `50` is `40000`. -/
 example : ppmByMass (massFraction 2 100) = 20000 ∧ ppmByVolume 2 50 = 40000 ∧
     ppmByMass (massFraction 2 100) ≠ ppmByVolume 2 50 := by
   refine ⟨?_, ?_, ?_⟩ <;>
@@ -200,5 +208,16 @@ example : ppmByMass (massFraction 2 100) = 20000 ∧ ppmByVolume 2 50 = 40000 �
 example : massFraction 2 100 = ((1:ℝ)/2) * (2/50) :=
   massFraction_of_volumes (ρs := 1) (ρ := 2) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num)
+
+/-- ppm by mass is `ρs / ρ = 1/2` times ppm by volume at the same numbers. -/
+example : ppmByMass (massFraction 2 100) = ((1:ℝ)/2) * ppmByVolume 2 50 :=
+  ppmByMass_eq_mul_ppmByVolume (ρs := 1) (ρ := 2) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num)
+
+/-- Equal densities give equal ppm figures even though the density is `2`, not `1`: solute
+volume `1` in solution volume `50`, both densities `2`. -/
+example : ppmByMass (massFraction 2 100) = ppmByVolume 1 50 :=
+  (ppmByMass_eq_ppmByVolume_iff (ρs := 2) (ρ := 2) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num)).2 rfl
 
 end PhyslibExtTest.Chemistry.SolutionComposition
