@@ -46,6 +46,16 @@ example : ParityEven zeroOrIndex :=
   ⟨0, ⟨0, rfl⟩, (frequently_zeroOrIndex_iff 0).mpr rfl,
     fun m hm => ((frequently_zeroOrIndex_iff m).mp hm).le⟩
 
+/-- `0` is the greatest element of upstream `infOcc zeroOrIndex`. -/
+example : IsGreatest (infOcc zeroOrIndex) 0 :=
+  isMaxInfOcc_iff_isGreatest_infOcc.1
+    ⟨(frequently_zeroOrIndex_iff 0).mpr rfl, fun m hm => ((frequently_zeroOrIndex_iff m).mp hm).le⟩
+
+/-- `1` is not the greatest element of upstream `infOcc zeroOrIndex`, so it is not the maximal
+infinitely occurring value either. -/
+example : ¬ IsMaxInfOcc zeroOrIndex 1 := fun h =>
+  absurd ((frequently_zeroOrIndex_iff 1).mp (isMaxInfOcc_iff_isGreatest_infOcc.1 h).1) one_ne_zero
+
 /-- No tail of `zeroOrIndex` is bounded by `0`. -/
 example : ¬ ∀ᶠ k in atTop, zeroOrIndex k ≤ 0 := by
   intro h
