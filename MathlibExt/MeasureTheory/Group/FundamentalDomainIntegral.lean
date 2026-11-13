@@ -62,10 +62,6 @@ variable {G X : Type*} [Group G] [MulAction G X] [MeasurableSpace X]
   [MeasurableSpace G] [MeasurableSMul G X]
   (μ : Measure X) [SMulInvariantMeasure G X μ]
 
-omit [MeasurableSpace X] [MeasurableSpace G] [MeasurableSMul G X] in
-private theorem subgroup_smul_set (Γ : Subgroup G) (γ : Γ) (s : Set X) :
-    γ • s = (γ : G) • s := rfl
-
 private theorem setLIntegral_smul_set (g : G) (s : Set X) (f : X → ℝ≥0∞) :
     ∫⁻ x in g • s, f x ∂μ = ∫⁻ x in s, f (g • x) ∂μ := by
   have he : MeasurePreserving (MeasurableEquiv.smul g : X ≃ᵐ X) μ μ :=
@@ -113,7 +109,7 @@ theorem setLIntegral_iUnion_inv_smul_eq_and_setIntegral_eq_of_leftCosetRepresent
   have hnull : ∀ i, NullMeasurableSet (((R i : G)⁻¹) • 𝓕) μ := by
     intro i
     have h := h𝓕.nullMeasurableSet_smul (R i)⁻¹
-    rwa [FundamentalDomainIntegralAux.subgroup_smul_set, Subgroup.coe_inv] at h
+    rwa [Set.subtype_smul_set, Subgroup.coe_inv] at h
   have hdist : ∀ i j, i ≠ j → ((R i)⁻¹ : Γ₁) ≠ (R j)⁻¹ := by
     intro i j hij heq
     apply hij
@@ -127,7 +123,7 @@ theorem setLIntegral_iUnion_inv_smul_eq_and_setIntegral_eq_of_leftCosetRepresent
   have hdisj : Pairwise (AEDisjoint μ on fun i => ((R i : G)⁻¹) • 𝓕) := by
     intro i j hij
     have h := h𝓕.aedisjoint (hdist i j hij)
-    simpa only [Function.onFun, FundamentalDomainIntegralAux.subgroup_smul_set,
+    simpa only [Function.onFun, Set.subtype_smul_set,
       Subgroup.coe_inv] using h
   have hmp : ∀ i, MeasurePreserving (fun x : X => (R i : G)⁻¹ • x) μ μ :=
     fun i => measurePreserving_smul _ μ

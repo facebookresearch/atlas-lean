@@ -253,23 +253,6 @@ private theorem cassini (R : Type _) [CommRing R] (F : ℕ → R) (a : R)
   rw [e1, e2]
   exact h
 
-private theorem coeff_C_Xpow_thm (R : Type _) [CommRing R] (c : R) (nn k : ℕ) :
-    PowerSeries.coeff k (PowerSeries.C c * PowerSeries.X ^ nn : PowerSeries R) =
-      if k = nn then c else 0 := by
-  have h1 : (PowerSeries.C c * PowerSeries.X ^ nn : PowerSeries R)
-      = PowerSeries.C c * PowerSeries.X ^ nn * 1 := by ring
-  rw [h1, coeff_C_Xpow_mul]
-  by_cases h : k < nn
-  · simp only [h, ite_true]
-    have hkn : ¬ k = nn := by omega
-    simp [hkn]
-  · simp only [h, ite_false]
-    by_cases h2 : k = nn
-    · subst h2
-      simp [PowerSeries.coeff_one]
-    · have h3 : k - nn ≠ 0 := by omega
-      simp [PowerSeries.coeff_one, h3, h2]
-
 @[expose] public section
 
 namespace MetaMathlibExt
@@ -393,7 +376,7 @@ theorem hadamard_fibonacci_product (R : Type _) [CommRing R] (a b : R)
       (if k = 0 then 1 else 0) - (if k = n then f (n - 2) else 0) := by
     intro k
     rw [hC0def]
-    simp only [map_sub, PowerSeries.coeff_one, coeff_C_Xpow_thm]
+    simp only [map_sub, PowerSeries.coeff_one, PowerSeries.coeff_C_mul_X_pow]
   have key : ∀ k : ℕ, PowerSeries.coeff k (D * H) = PowerSeries.coeff k C0 := by
     intro k
     rw [expandDH k, expandC k]

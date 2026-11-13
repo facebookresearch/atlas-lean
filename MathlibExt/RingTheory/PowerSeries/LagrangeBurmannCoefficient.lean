@@ -19,33 +19,6 @@ import Mathlib.Tactic.Ring
 open PowerSeries Finset
 
 
-private theorem coeff_X_pow_mul_coeff {R : Type*} [CommRing R] (k n : ℕ) (F : PowerSeries R) :
-    coeff n (X ^ k * F) = if k ≤ n then coeff (n - k) F else 0 := by
-  by_cases h : k ≤ n
-  · obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
-    have hsub : k + d - k = d := Nat.add_sub_cancel_left k d
-    simp only [h, hsub, ↓reduceIte]
-    rw [add_comm k d]
-    exact coeff_X_pow_mul F k d
-  · simp only [h, ↓reduceIte]
-    rw [coeff_mul]
-    apply Finset.sum_eq_zero
-    intro ⟨i, j⟩ hij
-    rw [Finset.HasAntidiagonal.mem_antidiagonal] at hij
-    have hi : i ≤ n := by omega
-    have hik : i ≠ k := by omega
-    simp only [coeff_X_pow, hik, ↓reduceIte, zero_mul]
-
-private theorem coeff_X_mul_zero {R : Type*} [CommRing R] (F : PowerSeries R) :
-    coeff 0 (X * F) = 0 := by
-  have h := coeff_X_pow_mul_coeff (R := R) 1 0 F
-  simp
-
-private theorem coeff_X_mul_succ {R : Type*} [CommRing R] (m : ℕ) (F : PowerSeries R) :
-    coeff (m + 1) (X * F) = coeff m F := by
-  have h := coeff_X_pow_mul_coeff (R := R) 1 (m + 1) F
-  simp
-
 private theorem Apow_eq {R : Type*} [CommRing R] (A phi : PowerSeries R)
     (hfix : A = X * subst A phi) (k : ℕ) :
     A ^ k = X ^ k * (subst A phi) ^ k := by
@@ -56,7 +29,7 @@ private theorem coeff_Apow {R : Type*} [CommRing R] (A phi : PowerSeries R)
     (hfix : A = X * subst A phi) (k n : ℕ) :
     coeff n (A ^ k) = if k ≤ n then coeff (n - k) ((subst A phi) ^ k) else 0 := by
   rw [Apow_eq A phi hfix k]
-  exact coeff_X_pow_mul_coeff k n _
+  exact coeff_X_pow_mul' _ k n
 
 private theorem coeff_subst_eq_sum_range {R : Type*} [CommRing R] (A g : PowerSeries R)
     (hsubst : HasSubst A) (phi : PowerSeries R)
@@ -97,7 +70,7 @@ private theorem coeff_derivXk_mul {R : Type*} [CommRing R] (phi : PowerSeries R)
   congr 1
   have hk1' : k - 1 ≤ m' := by omega
   have hsub : m' - (k - 1) = n - k := by omega
-  rw [coeff_X_pow_mul_coeff]
+  rw [coeff_X_pow_mul']
   simp only [hk1', ↓reduceIte, hsub]
 
 private theorem coeff_derivX0_mul {R : Type*} [CommRing R] (phi : PowerSeries R) (n m' : ℕ) :
@@ -157,44 +130,12 @@ private theorem reduction {R : Type*} [CommRing R] (A phi g : PowerSeries R)
     have hmk := hmono k hk1 hkn
     rw [hmk]
 
-private theorem exact_key {R : Type*} [CommRing R] (A U : PowerSeries R)
-    (hAU : A = X * U) (k m : ℕ) (hk : 0 < k) :
-    (m + k : R) * coeff m (U ^ k) = (k : R) * coeff m (U ^ (k - 1) * derivative A) := by
-  have hA' : derivative A = U + X * derivative U := by
-    rw [hAU, Derivation.leibniz, derivative_X]
-    simp only [smul_eq_mul, mul_one]
-    rw [add_comm]
-  have hUk : U ^ (k - 1) * U = U ^ k := by
-    conv_rhs => rw [← Nat.sub_add_cancel hk, pow_add, pow_one]
-  have hexpand : U ^ (k - 1) * derivative A = U ^ k + X * (U ^ (k - 1) * derivative U) := by
-    rw [hA', mul_add, hUk]
-    ring
-  by_cases hm : m = 0
-  · subst hm
-    rw [hexpand, map_add, coeff_X_mul_zero, add_zero]
-    simp
-  · obtain ⟨m', rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm
-    simp only [Nat.succ_eq_add_one] at hm ⊢
-    have hX : coeff (m' + 1) (X * (U ^ (k - 1) * derivative U))
-        = coeff m' (U ^ (k - 1) * derivative U) :=
-      coeff_X_mul_succ m' _
-    have hpow := derivative_pow (R := R) U k
-    have hderiv := coeff_derivative (U ^ k) m'
-    have hU : (k : R) * coeff m' (U ^ (k - 1) * derivative U)
-        = coeff m' (derivative (U ^ k)) := by
-      rw [hpow, mul_assoc, show (k : PowerSeries R) = C (k : R) from by simp, coeff_C_mul]
-    have hUm : (k : R) * coeff m' (U ^ (k - 1) * derivative U)
-        = ((m' + 1 : ℕ) : R) * coeff (m' + 1) (U ^ k) := by
-      rw [hU, hderiv, Nat.cast_add, Nat.cast_one, mul_comm]
-    rw [hexpand, map_add, hX]
-    push_cast at hUm ⊢
-    linear_combination -hUm
 private theorem coeff_pow_eq_zero_of_const_zero {R : Type*} [CommRing R] (B : PowerSeries R)
     (hB : constantCoeff B = 0) (k n : ℕ) (hkn : n < k) :
     coeff n (B ^ k) = 0 := by
   obtain ⟨C, hC⟩ := X_dvd_iff.mpr hB
   have : B ^ k = X ^ k * C ^ k := by rw [hC, mul_pow]
-  rw [this, coeff_X_pow_mul_coeff]
+  rw [this, coeff_X_pow_mul']
   simp only [Nat.not_le.mpr hkn, ↓reduceIte]
 
 private theorem coeff_subst_eq_sum_range_of_const {R : Type*} [CommRing R] (B g : PowerSeries R)
@@ -272,7 +213,7 @@ private theorem exists_fixed_point {S : Type*} [CommRing S] (Phi : PowerSeries S
       subst hi0
       have h1 : B (0 + 1) = X * subst (B 0) Phi := hBstep 0
       rw [hB0, h1, map_zero]
-      exact (coeff_X_mul_zero _).symm
+      exact (coeff_zero_X_mul _).symm
     | succ m ih =>
       intro i hi
       by_cases hi0 : i = 0
@@ -287,10 +228,10 @@ private theorem exists_fixed_point {S : Type*} [CommRing S] (Phi : PowerSeries S
         have hj : j ≤ m := by omega
         have e1 : coeff (j + 1) (B (m + 1)) = coeff j (subst (B m) Phi) := by
           rw [hBstep m]
-          exact coeff_X_mul_succ j _
+          exact coeff_succ_X_mul j _
         have e2 : coeff (j + 1) (B (m + 1 + 1)) = coeff j (subst (B (m + 1)) Phi) := by
           rw [hBstep (m + 1)]
-          exact coeff_X_mul_succ j _
+          exact coeff_succ_X_mul j _
         rw [e1, e2]
         apply subst_coeff_agree _ _ _ (hBsubst m) (hBsubst (m + 1)) (hBconst m) (hBconst (m + 1)) j
         intro t ht
@@ -314,7 +255,7 @@ private theorem exists_fixed_point {S : Type*} [CommRing S] (Phi : PowerSeries S
       rw [hDcoeff]
       have h1 : B (0 + 1) = X * subst (B 0) Phi := hBstep 0
       rw [h1]
-      exact coeff_X_mul_zero _
+      exact coeff_zero_X_mul _
     rw [coeff_zero_eq_constantCoeff_apply] at h0
     exact h0
   refine ⟨D, HasSubst.of_constantCoeff_zero hDconst, ?_⟩
@@ -326,15 +267,15 @@ private theorem exists_fixed_point {S : Type*} [CommRing S] (Phi : PowerSeries S
       rw [hDcoeff]
       have h1 : B (0 + 1) = X * subst (B 0) Phi := hBstep 0
       rw [h1]
-      exact coeff_X_mul_zero _
-    have r : coeff 0 (X * subst D Phi) = 0 := coeff_X_mul_zero _
+      exact coeff_zero_X_mul _
+    have r : coeff 0 (X * subst D Phi) = 0 := coeff_zero_X_mul _
     rw [l, r]
   · obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm0
     simp only [Nat.succ_eq_add_one] at *
     have lhs : coeff (j + 1) D = coeff (j + 1) (B (j + 1 + 1)) := by
       rw [hDcoeff]
     have rhs : coeff (j + 1) (X * subst D Phi) = coeff j (subst D Phi) :=
-      coeff_X_mul_succ j _
+      coeff_succ_X_mul j _
     have hDsubst : HasSubst D := HasSubst.of_constantCoeff_zero hDconst
     have agree : coeff j (subst D Phi) = coeff j (subst (B (j + 1)) Phi) :=
       subst_coeff_agree D (B (j + 1)) Phi hDsubst (hBsubst (j + 1)) hDconst (hBconst (j + 1)) j
@@ -342,7 +283,7 @@ private theorem exists_fixed_point {S : Type*} [CommRing S] (Phi : PowerSeries S
     have fin : coeff j (subst (B (j + 1)) Phi) = coeff (j + 1) (B (j + 1 + 1)) := by
       have hbj : B (j + 1 + 1) = X * subst (B (j + 1)) Phi := hBstep (j + 1)
       rw [hbj]
-      exact (coeff_X_mul_succ j _).symm
+      exact (coeff_succ_X_mul j _).symm
     rw [lhs, rhs, agree, fin]
 
 private theorem eq_of_fixed_point {R : Type*} [CommRing R] (Phi : PowerSeries R)
@@ -371,10 +312,10 @@ private theorem eq_of_fixed_point {R : Type*} [CommRing R] (Phi : PowerSeries R)
         have hj : j ≤ m := by omega
         have e1 : coeff (j + 1) B1 = coeff j (subst B1 Phi) := by
           conv_lhs => rw [h1]
-          exact coeff_X_mul_succ j _
+          exact coeff_succ_X_mul j _
         have e2 : coeff (j + 1) B2 = coeff j (subst B2 Phi) := by
           conv_lhs => rw [h2]
-          exact coeff_X_mul_succ j _
+          exact coeff_succ_X_mul j _
         rw [e1, e2]
         apply subst_coeff_agree B1 B2 Phi h1s h2s h1c h2c j
         intro t ht
@@ -617,11 +558,11 @@ private theorem mono_transport {R : Type*} [CommRing R] (A Phi : PowerSeries R)
       -- RHS: [X * subst (map AS) Phi]_m ; relate to e([X * subst AS PhiS]_m) via expansions
       by_cases hm0 : m = 0
       · subst hm0
-        rw [coeff_X_mul_zero, coeff_X_mul_zero]
+        rw [coeff_zero_X_mul, coeff_zero_X_mul]
         exact map_zero e
       · obtain ⟨j, rfl⟩ := Nat.exists_eq_succ_of_ne_zero hm0
         simp only [Nat.succ_eq_add_one] at *
-        rw [coeff_X_mul_succ, coeff_X_mul_succ]
+        rw [coeff_succ_X_mul, coeff_succ_X_mul]
         -- [subst (map AS) Phi]_{j} vs e([subst AS PhiS]_{j}) via finite sums
         rw [coeff_subst_eq_sum_range_of_const (PowerSeries.map e AS) Phi hmsubst (by
           have h1 : constantCoeff (PowerSeries.map e AS) = e (constantCoeff AS) := by

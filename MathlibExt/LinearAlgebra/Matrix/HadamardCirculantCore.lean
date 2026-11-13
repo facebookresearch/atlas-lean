@@ -444,13 +444,6 @@ private lemma hcSumOne (r : ℕ) [NeZero r] : ∑ _b : ZMod r, (1 : ℤ) = (r : 
   classical
   simp [Finset.sum_const, Finset.card_univ, ZMod.card]
 
-/-- A point indicator over `ZMod` sums to one. -/
-private lemma hcSumIndZero (r : ℕ) [Fact r.Prime] :
-    ∑ a : ZMod r, (if a = 0 then (1 : ℤ) else 0) = 1 := by
-  classical
-  rw [Finset.sum_ite_eq']
-  simp
-
 /-- A double sum of split factors over a product. -/
 private lemma hcProdSum (p q : ℕ) [Fact p.Prime] [Fact q.Prime]
     (F : ZMod p → ℤ) (G : ZMod q → ℤ) :
@@ -769,7 +762,7 @@ private lemma hcTwinEE (p q : ℕ) [Fact p.Prime] [Fact q.Prime]
       ring
     rw [Finset.sum_congr rfl (fun a _ => hsplit a)]
     rw [Finset.sum_add_distrib, Finset.sum_add_distrib, Finset.sum_add_distrib]
-    rw [hcSumOne p, hcSumIndZero p, hcPinOneAdd p s, hF4pin]
+    rw [hcSumOne p, Fintype.sum_ite_eq', hcPinOneAdd p s, hF4pin]
     ring
   have hGsum : ∑ b : ZMod q, (if b = 0 then (1 : ℤ) else 0) *
       (if b + t = 0 then (1 : ℤ) else 0) = (if t = 0 then (1 : ℤ) else 0) := by
@@ -845,7 +838,7 @@ private lemma hcTwinEE (p q : ℕ) [Fact p.Prime] [Fact q.Prime]
             (fun a : ZMod p => (1 + (if a = 0 then (1 : ℤ) else 0)) *
               (if a + s = 0 then (1 : ℤ) else 0))
             (fun b : ZMod q => (if b = 0 then (1 : ℤ) else 0))]
-          rw [hF2, hcSumIndZero q, mul_one]
+          rw [hF2, Fintype.sum_ite_eq', mul_one]
   have hV3 : ∑ x : ZMod p × ZMod q,
       ((if x.1 = 0 then (1 : ℤ) else 0) * (if x.2 + t = 0 then (1 : ℤ) else 0)) *
       (1 + (if x.1 + s = 0 then (1 : ℤ) else 0))
@@ -914,7 +907,7 @@ private lemma hcDiagZero (r : ℕ) [Fact r.Prime] :
       rw [pow_two] at h
       rw [ite_eq_right ha, h, sub_zero]
   rw [Finset.sum_congr rfl (fun a _ => hterm a)]
-  rw [Finset.sum_sub_distrib, hcSumOne r, hcSumIndZero r]
+  rw [Finset.sum_sub_distrib, hcSumOne r, Fintype.sum_ite_eq']
 
 /-- Twin-prime sequence: sum and autocorrelations. -/
 private lemma hcTwin (p : ℕ) [Fact p.Prime] [Fact (p + 2).Prime]
@@ -948,8 +941,8 @@ private lemma hcTwin (p : ℕ) [Fact p.Prime] [Fact (p + 2).Prime]
             (fun b : ZMod (p + 2) => (if b = 0 then (1 : ℤ) else 0))
       _ = _ := by
           have h1 : (∑ a : ZMod p, (1 + (if a = 0 then (1 : ℤ) else 0))) = (p : ℤ) + 1 := by
-            rw [Finset.sum_add_distrib, hcSumOne p, hcSumIndZero p]
-          rw [h1, hcSumIndZero (p + 2)]
+            rw [Finset.sum_add_distrib, hcSumOne p, Fintype.sum_ite_eq']
+          rw [h1, Fintype.sum_ite_eq']
   have hE2 : (∑ x : ZMod p × ZMod (p + 2), (if x.1 = 0 then (1 : ℤ) else 0))
       = 1 * (((p + 2 : ℕ)) : ℤ) := by
     calc _ = ∑ x : ZMod p × ZMod (p + 2), (if x.1 = 0 then (1 : ℤ) else 0) * 1 := by
@@ -960,7 +953,7 @@ private lemma hcTwin (p : ℕ) [Fact p.Prime] [Fact (p + 2).Prime]
           (∑ _b : ZMod (p + 2), (1 : ℤ)) :=
           hcProdSum p (p + 2) (fun a : ZMod p => (if a = 0 then (1 : ℤ) else 0))
             (fun _ : ZMod (p + 2) => (1 : ℤ))
-      _ = _ := by rw [hcSumIndZero p, hcSumOne (p + 2)]
+      _ = _ := by rw [Fintype.sum_ite_eq', hcSumOne (p + 2)]
   have hsum : ∑ x, ψ x = -1 := by
     rw [Finset.sum_congr rfl (fun x _ => hψ x)]
     rw [Finset.sum_add_distrib, Finset.sum_sub_distrib]

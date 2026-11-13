@@ -19,16 +19,6 @@ namespace MetaMathlibExt
 
 variable {R : Type*} [Field R]
 
-/-- `p 0 = 1` for a monic family indexed by degree. -/
-private theorem favard_p_zero (p : ℕ → Polynomial R)
-    (hmonic : ∀ n, (p n).Monic) (hdeg : ∀ n, (p n).natDegree = n) :
-    p 0 = 1 := by
-  have hC : p 0 = C ((p 0).coeff 0) := eq_C_of_natDegree_eq_zero (hdeg 0)
-  have h1 : (p 0).coeff 0 = 1 := by
-    have h := (hmonic 0).coeff_natDegree
-    rwa [hdeg 0] at h
-  rw [hC, h1, C_1]
-
 /-- Every polynomial is a combination of `p 0, .., p d` when the monic family
 is indexed by degree. Induction on a degree bound. -/
 private theorem favard_expand (p : ℕ → Polynomial R)
@@ -46,7 +36,7 @@ private theorem favard_expand (p : ℕ → Polynomial R)
     change q = q.coeff 0 • p 0
     have hC0 : q.coeff 0 • (1 : Polynomial R) = C (q.coeff 0) := by
       rw [smul_eq_C_mul, mul_one]
-    rw [favard_p_zero p hmonic hdeg]
+    rw [eq_one_of_monic_natDegree_zero (hmonic 0) (hdeg 0)]
     exact (eq_C_of_natDegree_eq_zero h0).trans hC0.symm
   | succ d ih =>
     intro q hq
@@ -300,7 +290,7 @@ public theorem favard_forward
   have hα0 : α 0 = -a0 := rfl
   have hαS : ∀ n, α (n + 1) = A n := fun n => rfl
   have hβS : ∀ n, β (n + 1) = B n := fun n => rfl
-  refine ⟨α, β, fun n => ?_, favard_p_zero p hmonic hdeg, ?_, fun n => ?_⟩
+  refine ⟨α, β, fun n => ?_, eq_one_of_monic_natDegree_zero (hmonic 0) (hdeg 0), ?_, fun n => ?_⟩
   · rw [hβS n]; exact (hAB n).1
   · rw [hα0, C_neg, sub_neg_eq_add]
     exact ha0

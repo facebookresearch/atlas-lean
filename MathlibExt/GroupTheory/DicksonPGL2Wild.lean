@@ -2683,18 +2683,6 @@ private lemma card_parabolic_borel_le_twice_range {F : Type*} [Field F]
 
 end DicksonWildAffine
 
-private lemma dicksonWild_sylow_ne_bot_of_dvd_card
-    {p : ℕ} [Fact p.Prime] {A : Type*} [Group A] [Finite A]
-    (P : Sylow p A) (hp : p ∣ Nat.card A) : (P : Subgroup A) ≠ ⊥ := by
-  have hfac : 0 < (Nat.card A).factorization p :=
-    (Fact.out : p.Prime).factorization_pos_of_dvd (Nat.card_pos.ne') hp
-  have hcard : 1 < Nat.card (P : Subgroup A) := by
-    rw [P.card_eq_multiplicity]
-    exact Nat.one_lt_pow hfac.ne' (Fact.out : p.Prime).one_lt
-  intro hbot
-  rw [hbot] at hcard
-  simp at hcard
-
 private lemma dicksonWild_frobenius_case_of_normal_sylow
     {p : ℕ} [Fact p.Prime] [Fact (2 < p)]
     (G : Subgroup (PGL p)) [Finite G] (hpG : p ∣ Nat.card G)
@@ -2708,7 +2696,7 @@ private lemma dicksonWild_frobenius_case_of_normal_sylow
   classical
   let Pbar : Subgroup (PGL p) := Subgroup.map G.subtype (P : Subgroup G)
   have hPbar : IsPGroup p Pbar := P.isPGroup'.map G.subtype
-  have hPne : (P : Subgroup G) ≠ ⊥ := dicksonWild_sylow_ne_bot_of_dvd_card P hpG
+  have hPne : (P : Subgroup G) ≠ ⊥ := P.ne_bot_of_dvd_card hpG
   have hPbarNe : Pbar ≠ ⊥ := by
     exact (Subgroup.map_eq_bot_iff_of_injective (P : Subgroup G)
       G.subtype_injective).not.mpr hPne
@@ -2787,7 +2775,7 @@ private lemma dicksonWild_normalizer_affine_equiv
   let Pbar : Subgroup (PGL p) := Subgroup.map G.subtype (P : Subgroup G)
   have hPbar : IsPGroup p Pbar := P.isPGroup'.map G.subtype
   have hPne : (P : Subgroup G) ≠ ⊥ :=
-    dicksonWild_sylow_ne_bot_of_dvd_card P hpG
+    P.ne_bot_of_dvd_card hpG
   have hPbarNe : Pbar ≠ ⊥ :=
     (Subgroup.map_eq_bot_iff_of_injective (P : Subgroup G)
       G.subtype_injective).not.mpr hPne
@@ -3267,7 +3255,7 @@ private lemma dicksonWild_normalizer_borel_coordinates
   have hPbarNe : Pbar ≠ ⊥ := by
     change Subgroup.map G.subtype (P : Subgroup G) ≠ ⊥
     intro h
-    apply dicksonWild_sylow_ne_bot_of_dvd_card P hpG
+    apply P.ne_bot_of_dvd_card hpG
     exact (Subgroup.map_eq_bot_iff_of_injective (P : Subgroup G)
       G.subtype_injective).mp h
   obtain ⟨x, hx, hunique⟩ :=
