@@ -29,17 +29,6 @@ open scoped BigOperators
 
 namespace MathlibExt.Analysis.InnerProductSpace.HoffmanWielandtWanted
 
-/-- Two antitone real functions on `Fin n` monovary. -/
-private lemma monovary_of_antitone_antitone {n : ℕ} {f g : Fin n → ℝ}
-    (hf : Antitone f) (hg : Antitone g) : Monovary f g :=
-  hf.monovary hg
-
-/-- Rearrangement: permuting one side of a monovarying pair can only decrease the sum. -/
-private lemma sum_mul_comp_perm_le {n : ℕ} {f g : Fin n → ℝ}
-    (hfg : Monovary f g) (σ : Equiv.Perm (Fin n)) :
-    ∑ i, f i * g (σ i) ≤ ∑ i, f i * g i :=
-  Monovary.sum_mul_comp_perm_le_sum_mul hfg
-
 /-- A permutation matrix picks out the permuted entry under summation. -/
 private lemma sum_permMatrix_mul {n : ℕ} (σ : Equiv.Perm (Fin n)) (i : Fin n) (f : Fin n → ℝ) :
     ∑ j, (σ.permMatrix ℝ) i j * f j = f (σ i) := by
@@ -89,7 +78,7 @@ private lemma sum_doublyStochastic_mul_le {n : ℕ} {f g : Fin n → ℝ}
     _ ≤ ∑ σ : Equiv.Perm (Fin n), w σ * (∑ i, f i * g i) := by
         apply Finset.sum_le_sum
         intro σ _
-        apply mul_le_mul_of_nonneg_left (sum_mul_comp_perm_le hfg σ) (hw_nonneg σ)
+        apply mul_le_mul_of_nonneg_left (hfg.sum_mul_comp_perm_le_sum_mul (σ := σ)) (hw_nonneg σ)
     _ = ∑ i, f i * g i := by
         rw [← Finset.sum_mul, hw_sum, one_mul]
 
