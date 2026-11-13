@@ -43,9 +43,18 @@ such a uniform `C` and `∑_{i<j} A_ij² → ∞`, `ĥ²` converges in probabili
 
 The covariance row-sum bound is an explicit hypothesis on fourth moments of the phenotype; it
 is not derived here from a distributional assumption (for Gaussian phenotypes Isserlis'
-theorem expresses those covariances through `h² A + (1 - h²) I`). Implementations such as
-GCTA's `--HEreg` also fit an intercept and use sample-standardized phenotypes; neither variant
-is covered. The likelihood-based (REML) estimator of GREML is not formalized in this file.
+theorem expresses those covariances through `h² A + (1 - h²) I`). For Gaussian phenotypes the
+consistency hypotheses hold for family-structured GRMs: if `A` is block diagonal with blocks of
+bounded size and bounded entries, only pairs within the blocks of `i` and `j` covary with
+`y_i y_j`, so `C` stays bounded, while `∑_{i<j} A_ij²` grows with the number of blocks (for
+example sib pairs with `A_ij = 1/2`). They probably fail in the usual GCTA setting of unrelated
+individuals, where off-diagonal entries are `O(M^{-1/2})`: heuristically, the pairs disjoint
+from `{i, j}` contribute about `h⁴ ∑_{k<l} A_kl²` to the row sum of the pair `(i, j)`, so
+`C / ∑_{i<j} A_ij²` need not tend to `0`. Small numerical experiments suggest this; it is not
+proved here, and the theorem should not be read as covering unrelated-sample GREML.
+Implementations such as GCTA's `--HEreg` also fit an intercept and use sample-standardized
+phenotypes; neither variant is covered. The likelihood-based (REML) estimator of GREML is not
+formalized in this file.
 
 ## Main results
 
@@ -378,7 +387,9 @@ theorem measure_abs_heEstimate_sub_ge_le [IsFiniteMeasure μ] (D : Model μ N M)
 probability spaces), with `N n` individuals,
 `M n` markers and common SNP heritability `h²`. Suppose the phenotype cross-products are square
 integrable and their covariance matrix has absolute row sums bounded by a constant `C`
-uniformly in `n` (a weak-dependence condition on the pairs), and the off-diagonal GRM energy
+uniformly in `n` (a weak-dependence condition on the pairs; see the module docstring for
+family GRMs, where it holds, and unrelated samples, where it probably does not), and the
+off-diagonal GRM energy
 `∑_{i<j} A_ij²` tends to infinity. Then the HE estimator converges in probability to `h²`:
 `μₙ {|ĥ²ₙ - h²| ≥ ε} → 0` for every `ε > 0`. -/
 theorem tendsto_measure_abs_heEstimate_sub_ge {Ω : ℕ → Type*} {mΩ : ∀ n, MeasurableSpace (Ω n)}
