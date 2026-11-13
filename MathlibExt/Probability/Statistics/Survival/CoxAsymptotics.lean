@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.Survival.ProcessInference
+import MathlibExt.Probability.BoundedInProbability
 import MathlibExt.Probability.Statistics.Slutsky
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.LocalExtr.Basic
@@ -36,8 +37,12 @@ statements are the hypotheses here**; their derivation from conditions A–D is 
   `i(β₀) = v > 0`. The supremum is stated without measurability assumptions, as
   `P {ω | ∃ b ∈ [β₀ - r, β₀ + r], η ≤ |Iₙ(b) / n - i(b)|} → 0` for every `η > 0`.
 
-That the score variance and the information limit are the same `v` is the Andersen–Gill
-information identity: `Uₙ(β₀)` is a martingale whose predictable variation is `Iₙ(β₀)`.
+That the score limit has variance `v` and the information limit is `v` reflects a shared limit,
+not an identity between processes. In counting-process notation `Uₙ(β₀)` is a martingale whose
+predictable variation integrates the risk-set variance against the compensator of the pooled
+counting process; the observed information `Iₙ(β₀)` integrates the same variance against the
+observed events. Under the Andersen–Gill conditions both, divided by `n`, converge in probability
+to the same limit, and the limit of the predictable variation is the variance of the score limit.
 
 ## Main results
 
@@ -59,9 +64,9 @@ The deterministic core: `riskVar_nonneg` and `antitone_coxScore` (concavity),
 `isMaxOn_of_coxScore_eq_zero` and `coxScore_eq_zero_of_isMaxOn` (maximizers are the roots of the
 score), `coxScore_eq_zero_and_abs_sub_lt` (a lower bound on the information near `β₀` and a small
 score at `β₀` locate every maximizer near `β₀`), and `abs_sqrt_mul_sub_sub_le` (the one-step
-mean-value expansion `√n (βhat - β₀) ≈ (Uₙ(β₀) / √n) / v`). The probabilistic helpers are
-`exists_eventually_measure_le_abs_lt` (convergence in distribution implies tightness) and
-`tendstoInMeasure_div_sqrt`.
+mean-value expansion `√n (βhat - β₀) ≈ (Uₙ(β₀) / √n) / v`). The probabilistic helper is
+`tendstoInMeasure_div_sqrt`; tightness of the normalized score comes from the shared
+`ProbabilityTheory.exists_forall_measure_lt_norm_le_of_tendstoInDistribution`.
 
 ## Scope
 
@@ -279,30 +284,6 @@ section Probability
 variable {Ω Ω' : Type*} {mΩ : MeasurableSpace Ω} {mΩ' : MeasurableSpace Ω'}
   {P : Measure Ω} [IsProbabilityMeasure P] {P' : Measure Ω'} [IsProbabilityMeasure P']
 
-/-- **Convergence in distribution implies tightness.** If `X n` converges in distribution, then
-for every `ε > 0` there is `M > 0` with `P (M ≤ |X n|) < ε` for all large `n`. -/
-theorem exists_eventually_measure_le_abs_lt {X : ℕ → Ω → ℝ} {Z : Ω' → ℝ}
-    (h : TendstoInDistribution X atTop Z (fun _ ↦ P) P') {ε : ENNReal} (hε : 0 < ε) :
-    ∃ M : ℝ, 0 < M ∧ ∀ᶠ n in atTop, P {ω | M ≤ |X n ω|} < ε := by
-  set F : ℕ → Set ℝ := fun k => {x | (k : ℝ) + 1 ≤ |x|} with hF
-  have hFc : ∀ k, IsClosed (F k) := fun k => isClosed_le (by fun_prop) (by fun_prop)
-  have hanti : Antitone F := fun k l hkl x (hx : (l : ℝ) + 1 ≤ |x|) =>
-    show (k : ℝ) + 1 ≤ |x| from le_trans (by gcongr) hx
-  have hempty : (⋂ k, F k) = ∅ := by
-    ext x
-    simp only [Set.mem_iInter, Set.mem_empty_iff_false, iff_false, not_forall]
-    obtain ⟨k, hk⟩ := exists_nat_gt |x|
-    exact ⟨k, fun (hx : (k : ℝ) + 1 ≤ |x|) => by linarith⟩
-  have hlim := tendsto_measure_iInter_atTop (μ := P'.map Z)
-    (fun k => (hFc k).measurableSet.nullMeasurableSet) hanti ⟨0, measure_ne_top _ _⟩
-  rw [hempty, measure_empty] at hlim
-  obtain ⟨k, hk⟩ := (hlim.eventually (gt_mem_nhds hε)).exists
-  refine ⟨(k : ℝ) + 1, by positivity, ?_⟩
-  have hport := ProbabilityMeasure.limsup_measure_closed_le_of_tendsto h.tendsto (hFc k)
-  simp only [ProbabilityMeasure.coe_mk] at hport
-  filter_upwards [eventually_lt_of_limsup_lt (hport.trans_lt hk)] with n hn
-  rwa [Measure.map_apply_of_aemeasurable (h.forall_aemeasurable n) (hFc k).measurableSet] at hn
-
 /-- If `X n` converges in distribution, then `X n / √n` converges to `0` in probability. -/
 theorem tendstoInMeasure_div_sqrt {X : ℕ → Ω → ℝ} {Z : Ω' → ℝ}
     (h : TendstoInDistribution X atTop Z (fun _ ↦ P) P') :
@@ -311,11 +292,16 @@ theorem tendstoInMeasure_div_sqrt {X : ℕ → Ω → ℝ} {Z : Ω' → ℝ}
   intro ε hε
   rw [ENNReal.tendsto_nhds_zero]
   intro η hη
-  obtain ⟨M, hM, hMn⟩ := exists_eventually_measure_le_abs_lt h hη
+  obtain ⟨K, hK⟩ := exists_forall_measure_lt_norm_le_of_tendstoInDistribution h hη
+  obtain ⟨M, hM, hMn⟩ : ∃ M : ℝ, 0 < M ∧ ∀ n, P {ω | M ≤ |X n ω|} ≤ η := by
+    refine ⟨max K 0 + 1, by linarith [le_max_right K 0], fun n => le_trans ?_ (hK n)⟩
+    refine measure_mono fun ω (hω : max K 0 + 1 ≤ |X n ω|) => ?_
+    change K < |X n ω|
+    linarith [le_max_left K 0]
   have hsqrt : Tendsto (fun n : ℕ => √(n : ℝ)) atTop atTop :=
     Real.tendsto_sqrt_atTop.comp tendsto_natCast_atTop_atTop
-  filter_upwards [hMn, hsqrt.eventually_gt_atTop (M / ε)] with n hn hn'
-  refine le_trans (measure_mono fun ω (hω : ε ≤ ‖X n ω / √(n : ℝ) - 0‖) => ?_) hn.le
+  filter_upwards [hsqrt.eventually_gt_atTop (M / ε)] with n hn'
+  refine le_trans (measure_mono fun ω (hω : ε ≤ ‖X n ω / √(n : ℝ) - 0‖) => ?_) (hMn n)
   have hpos : 0 < √(n : ℝ) := lt_trans (by positivity) hn'
   rw [sub_zero, Real.norm_eq_abs, abs_div, abs_of_pos hpos, le_div_iff₀ hpos] at hω
   rw [div_lt_iff₀ hε] at hn'
@@ -480,7 +466,13 @@ theorem tendstoInDistribution_coxMPLE (hv : v ≠ 0)
   intro ε hε
   rw [ENNReal.tendsto_nhds_zero]
   intro κ hκ
-  obtain ⟨M, hM, hMn⟩ := exists_eventually_measure_le_abs_lt hscore (ENNReal.half_pos hκ.ne')
+  obtain ⟨K, hK⟩ :=
+    exists_forall_measure_lt_norm_le_of_tendstoInDistribution hscore (ENNReal.half_pos hκ.ne')
+  obtain ⟨M, hM, hMn⟩ : ∃ M : ℝ, 0 < M ∧ ∀ n, P {ω | M ≤ |S n ω|} ≤ κ / 2 := by
+    refine ⟨max K 0 + 1, by linarith [le_max_right K 0], fun n => le_trans ?_ (hK n)⟩
+    refine measure_mono fun ω (hω : max K 0 + 1 ≤ |S n ω|) => ?_
+    change K < |S n ω|
+    linarith [le_max_left K 0]
   set η := min ((v : ℝ) / 4) (ε * (v : ℝ) ^ 2 / (4 * M)) with hηdef
   have hη : 0 < η := lt_min (by positivity) (by positivity)
   obtain ⟨r₁', hr₁', hr₁''⟩ := Metric.continuousAt_iff.1 hi (η / 2) (by positivity)
@@ -491,14 +483,14 @@ theorem tendstoInDistribution_coxMPLE (hv : v ≠ 0)
   have hB := hinfo (η / 2) (by positivity)
   have hGB := hG.add hB
   rw [add_zero] at hGB
-  filter_upwards [hMn, (ENNReal.tendsto_nhds_zero.1 hGB) (κ / 2) (ENNReal.half_pos hκ.ne'),
-    eventually_gt_atTop 0] with n hn hn' hn0
+  filter_upwards [(ENNReal.tendsto_nhds_zero.1 hGB) (κ / 2) (ENNReal.half_pos hκ.ne'),
+    eventually_gt_atTop 0] with n hn' hn0
   let A : Set Ω := {ω | M ≤ |coxScore (T n ω) (δ n ω) (z n ω) β₀ / √(n : ℝ)|}
   let B : Set Ω := {ω | ¬ (coxScore (T n ω) (δ n ω) (z n ω) (βhat n ω) = 0 ∧
     |βhat n ω - β₀| < r₁)}
   let C : Set Ω := {ω | ∃ b ∈ Set.Icc (β₀ - r) (β₀ + r),
     η / 2 ≤ |coxInformation (T n ω) (δ n ω) (z n ω) b / n - i b|}
-  have hA : P A ≤ κ / 2 := hn.le
+  have hA : P A ≤ κ / 2 := hMn n
   have hBC : P B + P C ≤ κ / 2 := hn'
   refine le_trans (measure_mono (t := A ∪ (B ∪ C)) ?_) (le_trans
     ((measure_union_le _ _).trans (add_le_add_right (measure_union_le _ _) _))

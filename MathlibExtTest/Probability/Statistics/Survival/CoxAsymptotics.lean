@@ -306,7 +306,6 @@ example (βhat : ℕ → Unit → ℝ)
 #print axioms isMaxOn_of_coxScore_eq_zero
 #print axioms coxScore_eq_zero_and_abs_sub_lt
 #print axioms abs_sqrt_mul_sub_sub_le
-#print axioms exists_eventually_measure_le_abs_lt
 #print axioms tendstoInMeasure_div_sqrt
 #print axioms tendsto_measure_not_exists_isMaxOn
 #print axioms tendstoInMeasure_coxMPLE
