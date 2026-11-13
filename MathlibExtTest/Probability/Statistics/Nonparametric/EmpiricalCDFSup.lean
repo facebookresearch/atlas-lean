@@ -60,3 +60,43 @@ example : ProbabilityTheory.cdfQuantile (Measure.dirac (0 : ℝ)) (1 / 2) = 0 :=
 -- (the exact count equality needs hle, available only inside (0,1)).
 example : ProbabilityTheory.cdfQuantile (Measure.dirac (0 : ℝ)) 0 = 0 := by
   simp [ProbabilityTheory.cdfQuantile]
+
+-- Use (empCDF API): the reduction fires for the atomic law `dirac 0` and a two-point
+-- sample of median draws.
+example :
+    (⨆ x, |ProbabilityTheory.empCDF
+        (fun i : Fin 2 => ProbabilityTheory.cdfQuantile (Measure.dirac (0 : ℝ))
+          ((fun _ => (1 / 2 : ℝ)) i)) x - cdf (Measure.dirac (0 : ℝ)) x|) ≤
+    (⨆ v ∈ Set.Icc (0 : ℝ) 1,
+      |ProbabilityTheory.empCDF (fun _ : Fin 2 => (1 / 2 : ℝ)) v - v|) :=
+  ProbabilityTheory.ks_reduction_quantile_coupling_empCDF
+    (fun _ => Set.mem_Ioo.mpr ⟨by norm_num, by norm_num⟩)
+
+-- Boundary (smallest sample, empCDF API): a single draw, `Fin 1`.
+example :
+    (⨆ x, |ProbabilityTheory.empCDF
+        (fun i : Fin 1 => ProbabilityTheory.cdfQuantile (Measure.dirac (0 : ℝ))
+          ((fun _ => (1 / 2 : ℝ)) i)) x - cdf (Measure.dirac (0 : ℝ)) x|) ≤
+    (⨆ v ∈ Set.Icc (0 : ℝ) 1,
+      |ProbabilityTheory.empCDF (fun _ : Fin 1 => (1 / 2 : ℝ)) v - v|) :=
+  ProbabilityTheory.ks_reduction_quantile_coupling_empCDF
+    (fun _ => Set.mem_Ioo.mpr ⟨by norm_num, by norm_num⟩)
+
+-- Use (sequence form): the original theorem on the constant median sequence.
+example :
+    (⨆ x, |((MathlibExt.Probability.Statistics.GlivenkoCantelliWanted.empiricalCount
+        (fun i _ => ProbabilityTheory.cdfQuantile (Measure.dirac (0 : ℝ))
+          ((fun _ : ℕ => (1 / 2 : ℝ)) i)) 1 () x : ℝ) / ((1 + 1 : ℕ) : ℝ))
+        - cdf (Measure.dirac (0 : ℝ)) x|) ≤
+    (⨆ v ∈ Set.Icc (0 : ℝ) 1,
+      |((MathlibExt.Probability.Statistics.GlivenkoCantelliWanted.empiricalCount
+        (fun i _ => (fun _ : ℕ => (1 / 2 : ℝ)) i) 1 () v : ℝ) / ((1 + 1 : ℕ) : ℝ)) - v|) :=
+  ProbabilityTheory.ks_reduction_quantile_coupling
+    (fun _ _ => Set.mem_Ioo.mpr ⟨by norm_num, by norm_num⟩)
+
+-- Bridge: `empCDF` of a `Fin (n+1)` prefix is the `empiricalCount` ratio.
+example (x : ℝ) :
+    ProbabilityTheory.empCDF (fun i : Fin 3 => ((i : ℕ) : ℝ)) x =
+      (MathlibExt.Probability.Statistics.GlivenkoCantelliWanted.empiricalCount
+        (fun i _ => ((i : ℕ) : ℝ)) 2 () x : ℝ) / ((2 + 1 : ℕ) : ℝ) :=
+  ProbabilityTheory.empCDF_fin_eq_empiricalCount_div (fun i : ℕ => (i : ℝ)) x

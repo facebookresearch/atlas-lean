@@ -230,6 +230,52 @@ theorem ks_reduction_quantile_coupling
           |((empiricalCount (fun i _ => u i) n () v : ℝ) / ((n + 1 : ℕ) : ℝ)) - v|) :=
           le_ciSup hbdd (cdf μ x)
 
+/-- **Bridge from `empCDF` to `empiricalCount`.** For any real sequence `v`, the
+empirical CDF (`/(n+1)` normalization) of its first `n + 1` terms, viewed as a
+`Fin (n + 1)` sample, equals `empiricalCount (fun i _ => v i) n () x / (n + 1)`. -/
+theorem empCDF_fin_eq_empiricalCount_div {n : ℕ} (v : ℕ → ℝ) (x : ℝ) :
+    empCDF (fun i : Fin (n + 1) => v i) x =
+      (empiricalCount (fun i _ => v i) n () x : ℝ) / ((n + 1 : ℕ) : ℝ) := by
+  classical
+  unfold empiricalCount
+  rw [empCDF_eq_sum_div, Fin.sum_univ_eq_sum_range (fun i => if v i ≤ x then (1 : ℝ) else 0),
+    Finset.card_filter, Nat.cast_sum]
+  congr 1
+  apply Finset.sum_congr rfl
+  intro i _
+  by_cases h : v i ≤ x <;> simp [h]
+
+/-- **Quantile-coupling reduction, `empCDF` form.** This is the `empCDF`-API form of
+`ks_reduction_quantile_coupling`: for a `Fin (n + 1)` sample `u` of draws in `(0,1)`,
+the KS distance between the empirical CDF of the coupled sample
+`fun i => cdfQuantile μ (u i)` and `cdf μ` is bounded by the uniform deviation of
+`empCDF u` over `[0,1]`. Proved from the sequence form through
+`empCDF_fin_eq_empiricalCount_div`. -/
+theorem ks_reduction_quantile_coupling_empCDF
+    {μ : Measure ℝ} [IsProbabilityMeasure μ]
+    {n : ℕ} {u : Fin (n + 1) → ℝ}
+    (hu : ∀ i, u i ∈ Set.Ioo (0 : ℝ) 1) :
+    (⨆ x, |empCDF (fun i => cdfQuantile μ (u i)) x - cdf μ x|) ≤
+    (⨆ v ∈ Set.Icc (0 : ℝ) 1, |empCDF u v - v|) := by
+  set w : ℕ → ℝ := fun i => if h : i < n + 1 then u ⟨i, h⟩ else 1 / 2 with hw_def
+  have hwu : ∀ i : Fin (n + 1), w i = u i := fun i => by
+    rw [hw_def]
+    exact dite_eq_left i.isLt
+  have hw : ∀ i ∈ Finset.range (n + 1), w i ∈ Set.Ioo (0 : ℝ) 1 := by
+    intro i hi
+    have hi' : i < n + 1 := Finset.mem_range.mp hi
+    rw [hw_def]
+    dsimp only
+    rw [dite_eq_left hi']
+    exact hu ⟨i, hi'⟩
+  have hL : (fun i => cdfQuantile μ (u i)) = fun i : Fin (n + 1) => cdfQuantile μ (w i) :=
+    funext fun i => by rw [hwu]
+  have hR : u = fun i : Fin (n + 1) => w i := funext fun i => (hwu i).symm
+  rw [hL, hR]
+  simp only [empCDF_fin_eq_empiricalCount_div (fun i => cdfQuantile μ (w i)),
+    empCDF_fin_eq_empiricalCount_div w]
+  exact ks_reduction_quantile_coupling hw
+
 end KSReduction
 
 end ProbabilityTheory
