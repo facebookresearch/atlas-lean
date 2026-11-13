@@ -10,8 +10,25 @@ module
 
 public import Mathlib.Data.List.Basic
 
+/-!
+# Fork-join programs: work and span
+
+A fork-join program (`Prog`) is built from unit tasks by sequential composition (`seq`) and
+parallel composition (`par`). Its *work* is the number of tasks and its *span* the number of
+tasks on a longest sequential chain: both add under `seq`, while under `par` the work adds and
+the span is the maximum (CLRS, third edition, Section 27.1).
+
+* `Prog.work`, `Prog.span`, the composition identities `Prog.work_seq`, `Prog.work_par`,
+  `Prog.span_seq`, `Prog.span_par`, and `Prog.span_le_work`.
+* `brent_level_bound`: a standalone list inequality in natural numbers, the arithmetic step of
+  Brent's level-by-level bound. It is not connected to `Prog`: no level decomposition or
+  schedule of a program is constructed here. The scheduling theorem itself, on computation
+  DAGs, is `Cslib.Algorithms.Lean.Parallel.Brent.levelSchedule_length`.
+-/
+
 @[expose] public section
 
+namespace Cslib.Algorithms.Lean.Parallel.ForkJoin
 
 /-- A fork-join program: sequential composition and parallel
 composition of atomic unit tasks. -/
@@ -67,12 +84,14 @@ private theorem ceil_div_le (w p : ℕ) (hp : 0 < p) :
     rw [heq, Nat.add_mul_div_right _ _ hp]
   omega
 
-/-- Brent-type bound for the level schedule: running a program
-whose level decomposition (list of per-level work amounts, the
-level count being the span) on `p ≥ 1` processors takes total
-time `∑ w ∈ levels, ⌈w / p⌉ ≤ work / p + span` (real form). For
-the abstract statement, `levels` is any list of naturals whose
-sum is the work and whose length is the span. -/
+/-- Standalone list inequality, the arithmetic step of Brent's
+level-by-level bound: for any list `levels` of per-level task counts
+and `p ≥ 1`, running each level in `⌈w / p⌉` steps takes in total
+`∑ w ∈ levels, ⌈w / p⌉ ≤ (∑ w ∈ levels, w) / p + levels.length`
+steps. This is the natural-number form: `⌈w / p⌉` is written
+`(w + p - 1) / p` and `/` is truncating `Nat` division. The lemma
+does not relate `levels` to a `Prog`; it does not construct a level
+decomposition or a schedule. -/
 theorem brent_level_bound (levels : List ℕ) {p : ℕ} (hp : 0 < p) :
     (levels.map (fun w => (w + p - 1) / p)).sum ≤
       levels.sum / p + levels.length := by
@@ -83,3 +102,5 @@ theorem brent_level_bound (levels : List ℕ) {p : ℕ} (hp : 0 < p) :
     have hpoint := ceil_div_le a p hp
     have hdiv := Nat.div_add_div_le_add_div (x := a) (y := l.sum) (z := p)
     omega
+
+end Cslib.Algorithms.Lean.Parallel.ForkJoin
