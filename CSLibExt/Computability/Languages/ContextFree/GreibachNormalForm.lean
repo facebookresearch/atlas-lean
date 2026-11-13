@@ -19,8 +19,9 @@ nonterminals, or the empty word with the initial nonterminal on the
 left; and either the initial nonterminal occurs in no output (so an
 empty production cannot leak the empty word to other nonterminals) or
 there are no empty outputs at all. Every context-free grammar has an
-equivalent grammar in Greibach normal form; that existence theorem is not
-formalized here. The standard route is Chomsky normal form, then elimination of left
+equivalent grammar in Greibach normal form (see
+`WantedExt.TheoryOfComputation.GreibachNormalFormWanted`); the
+standard route is Chomsky normal form, then elimination of left
 recursion and substitution.
 
 ## Main definitions

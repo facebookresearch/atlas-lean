@@ -37,7 +37,8 @@ Relabelling preserves outputs, time and space (`IsRelabelling.computes_iff` and 
 the classes of CSLib's model, and `DTIME`/`DSPACE`, can be stated equivalently over codes
 (`computableInTimeAndSpace_iff_exists_code`, `decidableInTimeAndSpace_iff_exists_code`,
 `mem_DTIME_iff_exists_code`, `mem_DSPACE_iff_exists_code`). This is what a diagonal argument
-over codes needs; the universal machine that runs codes is future work.
+over codes needs; the universal machine that runs codes is a separate item
+(`CSLibExt/BACKLOG.md`, MT3).
 
 ## Main definitions
 

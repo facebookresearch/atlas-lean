@@ -20,7 +20,7 @@ the union of the context-free languages `{a ^ n b ^ n c ^ *}` and `{a ^ * b ^ n 
 but every context-free grammar generating it is ambiguous. The context-free half is proved
 here. The inherent-ambiguity half, which needs the derivation-tree pumping argument (any
 grammar for the language must give two different parse trees to some word of the form
-`a ^ n b ^ n c ^ n`), is not proved here.
+`a ^ n b ^ n c ^ n`), is registered as a `theorem_wanted` in `WantedExt`.
 
 ## Main results
 
