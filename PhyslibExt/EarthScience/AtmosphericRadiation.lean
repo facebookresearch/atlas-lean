@@ -113,7 +113,7 @@ theorem transparent_limit {σ Te Ts Ta : ℝ} (hσ : 0 < σ)
 /-- Arithmetic normalization only: the right side of `surface_temperature`
 at `eps = 1`, `Te^4 / (1 - 1/2)`, is `2 * Te^4`. It does not use the
 balances; `opaque_surface_temperature` is the model result. -/
-theorem opaque_normalization {Te Ts : ℝ}
+lemma opaque_normalization {Te Ts : ℝ}
     (h : Ts ^ 4 = Te ^ 4 / (1 - (1 : ℝ) / 2)) :
     Ts ^ 4 = 2 * Te ^ 4 := by
   norm_num at h
