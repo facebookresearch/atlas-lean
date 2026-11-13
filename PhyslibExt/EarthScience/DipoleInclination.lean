@@ -24,9 +24,11 @@ the magnetic latitude, `r > 0` the distance, `C ≠ 0` the dipole moment
 factor (units chosen so `B` is a magnetic flux density). The inclination
 satisfies `tan I = B_r / B_θ = 2 * cot θ = 2 * tan λ`, since
 `tan (π / 2 - θ) = cos θ / sin θ`. Signs are tied to the magnetic axis.
-Model field, not proof Earth is dipolar. The singular source `r = 0` and
-the axis/equator branches where a component vanishes are excluded from
-the ratio theorem and treated separately.
+Model field, not proof Earth is dipolar. The singular source `r = 0` is
+excluded from every theorem. The ratio theorem excludes only the axis
+`sin θ = 0`, where `B_θ` vanishes; it covers the magnetic equator
+`θ = π / 2`, where both sides are `0`. The equator and pole component
+values are also stated separately.
 
 ## ii. Key results
 
@@ -51,9 +53,10 @@ the ratio theorem and treated separately.
 namespace EarthScience
 
 /-- Dipole inclination: `B_r / B_θ = 2 * tan λ` where `λ = π / 2 - θ` is the
-magnetic latitude, `B_r = 2 * C * cos θ / r ^ 3`, `B_θ = C * sin θ / r ^ 3`. -/
+magnetic latitude, `B_r = 2 * C * cos θ / r ^ 3`, `B_θ = C * sin θ / r ^ 3`.
+Only the axis `sin θ = 0` is excluded; at the equator both sides are `0`. -/
 theorem dipole_inclination_ratio {C r θ : ℝ} (hr : 0 < r) (hC : C ≠ 0)
-    (hsin : Real.sin θ ≠ 0) (hcos : Real.cos θ ≠ 0) :
+    (hsin : Real.sin θ ≠ 0) :
     (2 * C * Real.cos θ / r ^ 3) / (C * Real.sin θ / r ^ 3)
       = 2 * Real.tan (Real.pi / 2 - θ) := by
   have hr3 : r ^ 3 ≠ 0 := pow_ne_zero 3 hr.ne'
@@ -62,14 +65,18 @@ theorem dipole_inclination_ratio {C r θ : ℝ} (hr : 0 < r) (hC : C ≠ 0)
   rw [Real.tan_eq_sin_div_cos, Real.sin_pi_div_two_sub, Real.cos_pi_div_two_sub]
   field_simp
 
-/-- Dipole at the magnetic equator (`θ = π / 2`): `B_r = 0`, `B_θ = C / r ^ 3`. -/
-theorem dipole_equator {C r : ℝ} :
+set_option linter.unusedVariables false in
+/-- Dipole at the magnetic equator (`θ = π / 2`), away from the source
+(`r > 0`): `B_r = 0`, `B_θ = C / r ^ 3`. -/
+theorem dipole_equator {C r : ℝ} (hr : 0 < r) :
     2 * C * Real.cos (Real.pi / 2) / r ^ 3 = 0 ∧
       C * Real.sin (Real.pi / 2) / r ^ 3 = C / r ^ 3 := by
   simp [Real.cos_pi_div_two, Real.sin_pi_div_two]
 
-/-- Dipole at the magnetic pole (`θ = 0`): `B_θ = 0`, `B_r = 2 * C / r ^ 3`. -/
-theorem dipole_pole {C r : ℝ} :
+set_option linter.unusedVariables false in
+/-- Dipole at the magnetic pole (`θ = 0`), away from the source (`r > 0`):
+`B_θ = 0`, `B_r = 2 * C / r ^ 3`. -/
+theorem dipole_pole {C r : ℝ} (hr : 0 < r) :
     C * Real.sin 0 / r ^ 3 = 0 ∧ 2 * C * Real.cos 0 / r ^ 3 = 2 * C / r ^ 3 := by
   simp
 
