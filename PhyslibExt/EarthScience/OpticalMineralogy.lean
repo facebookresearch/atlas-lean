@@ -89,7 +89,7 @@ theorem phaseRetardation_equal_indices (n h lam : ℝ) :
   simp [phaseRetardation]
 
 /-- Non-vacuous case: `n₁ = 3 / 2, n₂ = 1, h = 1, lam = 1` gives `δ = π`. -/
-theorem phaseRetardation_example :
+lemma phaseRetardation_example :
     phaseRetardation (3 / 2) 1 1 1 = Real.pi := by
   rw [phaseRetardation_eq]
   norm_num
