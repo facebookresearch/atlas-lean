@@ -18,7 +18,10 @@ import Mathlib.Tactic.NormNum
 
 Two states with `ψ = ![2/5, 1/2]` (`D = 9/10`), default in state `0`, `N = 100`,
 `R = 1/4`: state-price value `60`, `q_D = 4/9`, plus the full-recovery (`R = 1`,
-price `90`) and zero-recovery (`R = 0`, price `50`) edge cases.
+price `90`) and zero-recovery (`R = 0`, price `50`) edge cases. The risk-neutral
+weights are `4/9` and `5/9` and sum to `1`; the subtracted term `30` is the discounted
+expected loss, while the undiscounted risk-neutral expected loss is `100/3`. On an empty
+state space positivity is vacuous, `D = 0`, and the weights sum to `0`.
 -/
 
 @[expose] public section
@@ -125,5 +128,59 @@ theorem zeroRecovery_discount :
         (fun ω : Fin 2 => ω = 0)) = 50 := by
   rw [discountFactor_val, defaultProb_val]
   norm_num
+
+/-- The risk-neutral weights of the example are `4/9` and `5/9`. -/
+theorem riskNeutralWeights_val :
+    (![2/5, 1/2] : Fin 2 → ℝ) 0 / riskFreeDiscountFactor (![2/5, 1/2] : Fin 2 → ℝ) = 4 / 9 ∧
+      (![2/5, 1/2] : Fin 2 → ℝ) 1 / riskFreeDiscountFactor (![2/5, 1/2] : Fin 2 → ℝ)
+        = 5 / 9 := by
+  rw [discountFactor_val]
+  norm_num
+
+/-- Normalization applies to the example: both state prices are positive. -/
+theorem riskNeutralWeights_sum_val :
+    ∑ ω, (![2/5, 1/2] : Fin 2 → ℝ) ω / riskFreeDiscountFactor (![2/5, 1/2] : Fin 2 → ℝ)
+      = 1 :=
+  (riskNeutralWeights_pos_and_sum_eq_one
+    (Fin.forall_fin_two.mpr ⟨by norm_num, by norm_num⟩)).2
+
+/-- `q_D` is the weight of the default state. -/
+theorem defaultProb_eq_weight :
+    riskNeutralDefaultProb (![2/5, 1/2] : Fin 2 → ℝ) (fun ω : Fin 2 => ω = 0)
+      = (![2/5, 1/2] : Fin 2 → ℝ) 0 / riskFreeDiscountFactor (![2/5, 1/2] : Fin 2 → ℝ) := by
+  rw [riskNeutralDefaultProb_eq_sum_div]
+  have hfilter : Finset.univ.filter (fun ω : Fin 2 => ω = 0) = {0} := by
+    ext ω
+    simp
+  rw [hfilter, Finset.sum_singleton]
+
+/-- The undiscounted risk-neutral expected loss `q_D * (1 - R) * N` is `100/3`. -/
+theorem expectedLoss_val :
+    riskNeutralDefaultProb (![2/5, 1/2] : Fin 2 → ℝ) (fun ω : Fin 2 => ω = 0)
+      * (1 - 1/4) * 100 = 100 / 3 := by
+  rw [defaultProb_val]
+  norm_num
+
+/-- The subtracted term is the discounted expected loss `D * (q_D * (1 - R) * N) = 30`,
+the gap between the risk-free value `90` and the price `60`. -/
+theorem discountedExpectedLoss_val :
+    riskFreeDiscountFactor (![2/5, 1/2] : Fin 2 → ℝ)
+      * (riskNeutralDefaultProb (![2/5, 1/2] : Fin 2 → ℝ) (fun ω : Fin 2 => ω = 0)
+        * (1 - 1/4) * 100) = 30 := by
+  rw [discountFactor_val, expectedLoss_val]
+  norm_num
+
+/-- Empty state space: positivity holds vacuously and the `[0, 1]` bound still applies, but
+`D = 0` and the weights sum to `0`, not `1`. -/
+example : riskNeutralDefaultProb (fun _ : Fin 0 => (1 : ℝ)) (fun _ => True)
+    ∈ Set.Icc (0 : ℝ) 1 :=
+  riskNeutralDefaultProb_mem_Icc (fun ω => Fin.elim0 ω)
+
+example : riskFreeDiscountFactor (fun _ : Fin 0 => (1 : ℝ)) = 0 := by
+  simp [riskFreeDiscountFactor]
+
+example : ∑ ω : Fin 0, (fun _ : Fin 0 => (1 : ℝ)) ω
+    / riskFreeDiscountFactor (fun _ : Fin 0 => (1 : ℝ)) = 0 := by
+  simp
 
 end MathlibExtTest.Probability.Finance.DefaultableZeroCoupon
