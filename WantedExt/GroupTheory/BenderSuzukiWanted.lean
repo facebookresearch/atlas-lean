@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.GroupTheory.BenderSuzuki` — bender_suzuki (manifest `manifests/problems/bender_suzuki.toml`, rev 1, submitter Tianjiao Nie, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.GroupTheory.BenderSuzuki` —
+bender_suzuki (manifest `manifests/problems/bender_suzuki.toml`, rev 1, submitter Tianjiao Nie,
+status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.GroupTheory.BenderSuzukiWanted` namespace. Mathematical
-statements are unchanged. Source: D. Gorenstein, R. Lyons, and R. Solomon, The classification of the finite simple groups, Number 2
+and placed the declarations in the `MathlibExt.GroupTheory.BenderSuzukiWanted` namespace.
+Mathematical
+statements are unchanged. Source: D. Gorenstein, R. Lyons, and R. Solomon, The classification of the
+finite simple groups, Number 2
 -/
 module
 
@@ -118,7 +122,8 @@ Introduces `Defs/Suzuki.lean`.
 -/
 
 /- **Bender–Suzuki theorem.** -/
-/-- Source: D. Gorenstein, R. Lyons, and R. Solomon, The classification of the finite simple groups, Number 2 Via leanprover/lean-eval@38361be, problem `bender_suzuki`. -/
+/-- Source: D. Gorenstein, R. Lyons, and R. Solomon, The classification of the finite simple groups,
+Number 2 Via leanprover/lean-eval@38361be, problem `bender_suzuki`. -/
 public theorem_wanted bender_suzuki {X : Type*} [Group X] [Finite X] [IsSimpleGroup X]
     (M : Subgroup X) (h : IsStronglyEmbedded M) :
     IsSimpleBenderGroup X
