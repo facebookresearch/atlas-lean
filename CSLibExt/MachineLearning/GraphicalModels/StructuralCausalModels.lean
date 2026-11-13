@@ -14,6 +14,7 @@ public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.Finset.Defs
+import CSLibExt.MachineLearning.GraphicalModels.CausalAdjustment
 
 /-!
 # Finite structural causal models: structural equations and unique solutions
@@ -1554,8 +1555,8 @@ open MeasureTheory Convexity MathlibExt.Probability.Causality
 /-- The cut model: the SCM equal to `M` except every child of `t` reads the constant `a` in
 place of `X_t`, so `t` has no outgoing edges. Used to prove back-door ignorability via
 d-separation. -/
-def cutModel {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U) (t : Fin n) (a : α) :
-    FiniteSCM α n U where
+private def cutModel {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U) (t : Fin n)
+    (a : α) : FiniteSCM α n U where
   pa k := if h : t.val < k.val then (M.pa k).erase ⟨t.val, h⟩ else M.pa k
   f k z' u :=
     M.f k (fun i =>
@@ -1576,7 +1577,7 @@ def cutModel {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
 
 /-- Splitting a filtered sum by the values of a map: summing `w u` over `u` with
 `P u ∧ Q (g u)` equals, for each value `c` with `Q c`, the sum over the fiber. -/
-theorem sum_filter_fiber_eq {Ω' 𝒳 : Type*} [Fintype Ω'] [Fintype 𝒳] [DecidableEq 𝒳]
+private theorem sum_filter_fiber_eq {Ω' 𝒳 : Type*} [Fintype Ω'] [Fintype 𝒳] [DecidableEq 𝒳]
     (g : Ω' → 𝒳) (w : Ω' → ℝ) (P : Ω' → Prop) [DecidablePred P] (Q : 𝒳 → Prop)
     [DecidablePred Q] :
     ∑ u with P u ∧ Q (g u), w u = ∑ c with Q c, ∑ u with P u ∧ g u = c, w u := by
@@ -1596,9 +1597,28 @@ theorem sum_filter_fiber_eq {Ω' 𝒳 : Type*} [Fintype Ω'] [Fintype 𝒳] [Dec
   exact Finset.filter_congr fun u _ =>
     ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, by rwa [h.2]⟩, h.2⟩⟩
 
+/-- For finite noise types, a filtered sum of the noise weights over all noise values equals the
+same sum over the product of the supports of the noise laws: the weight vanishes off it. -/
+private theorem sum_filter_univ_noiseWeight_eq {n : ℕ} {U : Fin n → Type*}
+    [∀ k, Fintype (U k)] (μ : (k : Fin n) → StdSimplex ℝ (U k))
+    (P : ((k : Fin n) → U k) → Prop) [DecidablePred P] :
+    ∑ u with P u, noiseWeight μ u =
+      ∑ u ∈ Fintype.piFinset (fun j => (μ j).weights.support) with P u, noiseWeight μ u := by
+  classical
+  symm
+  refine Finset.sum_subset (Finset.filter_subset_filter _ (Finset.subset_univ _)) ?_
+  intro u hu hnot
+  have hns : u ∉ Fintype.piFinset (fun j => (μ j).weights.support) := fun h =>
+    hnot (Finset.mem_filter.2 ⟨h, (Finset.mem_filter.1 hu).2⟩)
+  rw [Fintype.mem_piFinset] at hns
+  push Not at hns
+  obtain ⟨k, hk⟩ := hns
+  unfold noiseWeight
+  exact Finset.prod_eq_zero (Finset.mem_univ k) (Finsupp.notMem_support_iff.1 hk)
+
 /-- The `noiseMeasure` probability that the solution of `M'` lies in `E` is the sum of the
 induced joint over `E`. -/
-theorem noiseMeasure_real_preimage_solve {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+private theorem noiseMeasure_real_preimage_solve {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
     {α : Type*} [Fintype α] [Nonempty α] [DecidableEq α]
     (M' : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
@@ -1613,19 +1633,23 @@ theorem noiseMeasure_real_preimage_solve {n : ℕ} {U : Fin n → Type*} [∀ k,
   simp only [true_and] at hfib
   refine hfib.trans ?_
   refine Finset.sum_congr rfl fun x _ => ?_
-  have hrfl : (∑ u with M'.solve u = x, noiseWeight μ u) = M'.inducedLaw μ x := rfl
-  exact hrfl.trans (M'.inducedLaw_eq_joint μ x)
+  have hlaw : (∑ u with M'.solve u = x, noiseWeight μ u) = M'.inducedLaw μ x := by
+    rw [sum_filter_univ_noiseWeight_eq μ, Finset.sum_filter]
+    unfold inducedLaw
+    refine Finset.sum_congr rfl fun u _ => ?_
+    by_cases h : M'.solve u = x <;> simp [h]
+  exact hlaw.trans (M'.inducedLaw_eq_joint μ x)
 
 /-! Cut-model graph helpers. -/
 
 /-- Parents of the cut model, unfolded. -/
-theorem cutModel_pa_eq {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
+private theorem cutModel_pa_eq {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
     (t : Fin n) (a : α) (k : Fin n) :
     (cutModel M t a).pa k =
       (if h : t.val < k.val then (M.pa k).erase ⟨t.val, h⟩ else M.pa k) := rfl
 
 /-- Structural functions of the cut model, unfolded. -/
-theorem cutModel_f_eq {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
+private theorem cutModel_f_eq {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
     (t : Fin n) (a : α) (k : Fin n) (z' : (cutModel M t a).pa k → α) (w : U k) :
     (cutModel M t a).f k z' w =
       M.f k (fun i =>
@@ -1643,7 +1667,7 @@ theorem cutModel_f_eq {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSC
           exact i.property⟩) w := rfl
 
 /-- In the cut model, `t` has no outgoing edges. -/
-theorem cutModel_edge_out_false {α : Type*} {n : ℕ} {U : Fin n → Type*}
+private theorem cutModel_edge_out_false {α : Type*} {n : ℕ} {U : Fin n → Type*}
     (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k)) (t : Fin n) (a : α)
     (j : Fin n) :
     ¬ ((cutModel M t a).inducedBayesNet μ).Edge t j := by
@@ -1657,7 +1681,7 @@ theorem cutModel_edge_out_false {α : Type*} {n : ℕ} {U : Fin n → Type*}
   exact (Finset.mem_erase.1 hmem).1 rfl
 
 /-- Every cut-model edge is an original-model edge. -/
-theorem cutModel_edge_to_orig {α : Type*} {n : ℕ} {U : Fin n → Type*}
+private theorem cutModel_edge_to_orig {α : Type*} {n : ℕ} {U : Fin n → Type*}
     (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k)) (t : Fin n) (a : α)
     {i j : Fin n} (h : ((cutModel M t a).inducedBayesNet μ).Edge i j) :
     (M.inducedBayesNet μ).Edge i j := by
@@ -1672,7 +1696,7 @@ theorem cutModel_edge_to_orig {α : Type*} {n : ℕ} {U : Fin n → Type*}
     exact hmem'
 
 /-- Edges out of nodes other than `t` are also cut-model edges. -/
-theorem cutModel_edge_of_orig {α : Type*} {n : ℕ} {U : Fin n → Type*}
+private theorem cutModel_edge_of_orig {α : Type*} {n : ℕ} {U : Fin n → Type*}
     (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k)) (t : Fin n) (a : α)
     {i j : Fin n} (hi : i ≠ t) (h : (M.inducedBayesNet μ).Edge i j) :
     ((cutModel M t a).inducedBayesNet μ).Edge i j := by
@@ -1692,7 +1716,7 @@ theorem cutModel_edge_of_orig {α : Type*} {n : ℕ} {U : Fin n → Type*}
   exact hmem'
 
 /-- Every cut-model descendant is an original-model descendant. -/
-theorem cutModel_desc_to_orig {α : Type*} {n : ℕ} {U : Fin n → Type*}
+private theorem cutModel_desc_to_orig {α : Type*} {n : ℕ} {U : Fin n → Type*}
     (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k)) (t : Fin n) (a : α)
     {i j : Fin n} (h : ((cutModel M t a).inducedBayesNet μ).IsDescendant i j) :
     (M.inducedBayesNet μ).IsDescendant i j := by
@@ -1702,7 +1726,7 @@ theorem cutModel_desc_to_orig {α : Type*} {n : ℕ} {U : Fin n → Type*}
   | tail _ h2 ih => exact Relation.ReflTransGen.tail ih (cutModel_edge_to_orig M μ t a h2)
 
 /-- Descendants come later in the topological order. -/
-theorem desc_val_le_aux {α : Type*} {n : ℕ} (b : BayesNet α n) {i j : Fin n}
+private theorem desc_val_le_aux {α : Type*} {n : ℕ} (b : BayesNet α n) {i j : Fin n}
     (h : b.IsDescendant i j) : i.val ≤ j.val := by
   unfold BayesNet.IsDescendant at h
   induction h with
@@ -1712,7 +1736,7 @@ theorem desc_val_le_aux {α : Type*} {n : ℕ} (b : BayesNet α n) {i j : Fin n}
     exact Nat.le_trans ih (Nat.le_of_lt hlt)
 
 /-- A parent node is edge-connected to its child. -/
-theorem parent_edge_aux {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
+private theorem parent_edge_aux {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (k : Fin n) (i : M.pa k) :
     (M.inducedBayesNet μ).Edge (Fin.castLE k.2.le i.val) k := by
   refine ⟨(i.val).isLt, ?_⟩
@@ -1722,7 +1746,7 @@ theorem parent_edge_aux {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : Finite
   exact i.property
 
 /-- The cut-model solution agrees with the factual solution at `t` and at non-descendants. -/
-theorem cutModel_solve_agree {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
+private theorem cutModel_solve_agree {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (t : Fin n) (a : α) (u : (k : Fin n) → U k)
     (j : Fin n) (hj : j = t ∨ ¬ (M.inducedBayesNet μ).IsDescendant t j) :
     (cutModel M t a).solve u j = M.solve u j := by
@@ -1782,7 +1806,7 @@ theorem cutModel_solve_agree {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : F
       exact hpar i
 
 /-- The cut-model solution agrees with the counterfactual solution away from `t`. -/
-theorem cutModel_solve_counterfactual {α : Type*} {n : ℕ} {U : Fin n → Type*}
+private theorem cutModel_solve_counterfactual {α : Type*} {n : ℕ} {U : Fin n → Type*}
     (M : FiniteSCM α n U) (t : Fin n) (a : α)
     (u : (k : Fin n) → U k) (j : Fin n) (hj : j ≠ t) :
     (cutModel M t a).solve u j = M.counterfactual t a u j := by
@@ -1846,7 +1870,7 @@ theorem cutModel_solve_counterfactual {α : Type*} {n : ℕ} {U : Fin n → Type
 
 /-- In the cut model, `Z` d-separates `t` from `y`: every cut-path from `t` starts with an
 arrow into `t` (outgoing edges were removed), hence is blocked by the back-door hypothesis. -/
-theorem cutModel_dSeparated {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
+private theorem cutModel_dSeparated {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (t y : Fin n) (a : α) (Z : Finset (Fin n))
     (hty : t ≠ y)
     (hblock : ∀ p, (M.inducedBayesNet μ).IsPath t y p →
@@ -2289,14 +2313,17 @@ theorem measureReal_counterfactual_eq_backdoor {α : Type*} [Fintype α] [Decida
   classical
   rw [noiseMeasure_real_eq μ _]
   simp only [Set.mem_ofPred_eq]
-  rw [sum_filter_counterfactual_fiber M μ t a (fun x => x y = v)]
+  rw [sum_filter_univ_noiseWeight_eq μ,
+    sum_filter_counterfactual_fiber M μ t a (fun x => x y = v)]
   have hfib : ∀ x : Fin n → α,
-      (∑ u with M.counterfactual t a u = x, noiseWeight μ u) =
+      (∑ u ∈ Fintype.piFinset (fun j => (μ j).weights.support) with
+          M.counterfactual t a u = x, noiseWeight μ u) =
         ((M.inducedBayesNet μ).intervene t a).joint x := by
     intro x
-    have h1 : (∑ u with M.counterfactual t a u = x, noiseWeight μ u) =
-        (M.doNode t a).inducedLaw μ x := rfl
-    rw [h1, M.inducedLaw_doNode μ t a x]
+    rw [← M.inducedLaw_doNode μ t a x, Finset.sum_filter]
+    unfold inducedLaw
+    refine Finset.sum_congr rfl fun u _ => ?_
+    by_cases h : (M.doNode t a).solve u = x <;> simp [h, counterfactual]
   simp_rw [hfib]
   exact (M.inducedBayesNet μ).backdoor_adjustment t y Z a v hty hyZ hdesc hblock hpos
 

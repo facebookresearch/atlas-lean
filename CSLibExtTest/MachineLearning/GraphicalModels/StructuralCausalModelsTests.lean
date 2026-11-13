@@ -901,6 +901,14 @@ namespace Backdoor
 
 open Convexity MeasureTheory MathlibExt.Probability.Causality
 
+/-- A descendant never precedes its ancestor in the node order: every edge goes forward. -/
+private theorem ca05t04_desc_val_le {α : Type*} {n : ℕ} (b : BayesNet α n) {i j : Fin n}
+    (h : b.IsDescendant i j) : i.val ≤ j.val := by
+  unfold BayesNet.IsDescendant at h
+  induction h with
+  | refl => exact le_rfl
+  | tail _ h2 ih => exact ih.trans h2.1.le
+
 /-! ### CA05.T04 tests: three-node confounded model on `Bool`. -/
 
 /-- Test model `Z → T → Y`, `Z → Y` on `Bool`: node `0` is the confounder, node `1` the
@@ -920,7 +928,7 @@ theorem ca05t04_test_hdesc : ∀ z ∈ ({0} : Finset (Fin 3)),
   simp only [Finset.mem_singleton] at hz
   subst hz
   intro h
-  have hle := desc_val_le_aux (ca05t04_testSCM.inducedBayesNet ca05t04_testMu) h
+  have hle := ca05t04_desc_val_le (ca05t04_testSCM.inducedBayesNet ca05t04_testMu) h
   exact absurd hle (by decide)
 
 theorem ca05t04_test_hblock : ∀ p, (ca05t04_testSCM.inducedBayesNet ca05t04_testMu).IsPath 1 2 p →
@@ -1018,6 +1026,16 @@ theorem ca05t04_nd_pos_true (k : Fin 3) : 0 < (ca05t04_nd_μ k).weights true := 
 
 theorem ca05t04_nd_pos_false (k : Fin 3) : 0 < (ca05t04_nd_μ k).weights false := by
   rw [ca05t04_nd_w_false]; norm_num
+
+/-- Every noise value lies in the product of the supports of the fair-coin noise laws. -/
+private theorem ca05t04_nd_mem_supp (u : (k : Fin 3) → Bool) :
+    u ∈ Fintype.piFinset (fun j => (ca05t04_nd_μ j).weights.support) := by
+  rw [Fintype.mem_piFinset]
+  intro k
+  rw [Finsupp.mem_support_iff]
+  cases u k
+  · exact (ca05t04_nd_pos_false k).ne'
+  · exact (ca05t04_nd_pos_true k).ne'
 
 /-- `T = Z ∨ U_T` genuinely depends on the confounder `Z`: flipping the parent value at fixed
 noise flips the treatment. -/
@@ -1243,7 +1261,7 @@ theorem ca05t04_nd_hdesc : ∀ z ∈ ({0} : Finset (Fin 3)),
   simp only [Finset.mem_singleton] at hz
   subst hz
   intro h
-  have hle := desc_val_le_aux (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ) h
+  have hle := ca05t04_desc_val_le (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ) h
   exact absurd hle (by decide)
 
 theorem ca05t04_nd_hblock : ∀ p, (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).IsPath 1 2 p →
@@ -1346,17 +1364,14 @@ theorem ca05t04_nd_hpos : ∀ z : ↥(({0} : Finset (Fin 3))) → Bool,
     have hsolve : ca05t04_nd_SCM.solve ![false, true, true] = ![false, true, true] := by decide
     have hu_pos : 0 < noiseWeight ca05t04_nd_μ ![false, true, true] := by
       rw [ca05t04_nd_weight_all]; norm_num
-    have hnoise_mem : ∀ u ∈ Finset.univ.filter
-        (fun u => ca05t04_nd_SCM.solve u = ![false, true, true]),
-        0 ≤ noiseWeight ca05t04_nd_μ u :=
-      fun u _ => hnoise_nonneg u
-    have hu_mem : (![false, true, true] : (k : Fin 3) → Bool) ∈ Finset.univ.filter
-        (fun u => ca05t04_nd_SCM.solve u = ![false, true, true]) :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hsolve⟩
     have h_ind_pos : 0 < ca05t04_nd_SCM.inducedLaw ca05t04_nd_μ ![false, true, true] := by
-      show 0 < ∑ u with ca05t04_nd_SCM.solve u = ![false, true, true],
-        noiseWeight ca05t04_nd_μ u
-      exact Finset.sum_pos' hnoise_mem ⟨_, hu_mem, hu_pos⟩
+      unfold inducedLaw
+      refine Finset.sum_pos' (fun u _ => ?_) ⟨![false, true, true], ca05t04_nd_mem_supp _, ?_⟩
+      · split_ifs
+        · exact hnoise_nonneg u
+        · exact le_rfl
+      · rw [ite_eq_left hsolve]
+        exact hu_pos
     have hj_eq : (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint ![false, true, true] =
         ca05t04_nd_SCM.inducedLaw ca05t04_nd_μ ![false, true, true] :=
       (ca05t04_nd_SCM.inducedLaw_eq_joint ca05t04_nd_μ _).symm
@@ -1380,17 +1395,14 @@ theorem ca05t04_nd_hpos : ∀ z : ↥(({0} : Finset (Fin 3))) → Bool,
     have hsolve : ca05t04_nd_SCM.solve ![true, true, true] = ![true, true, true] := by decide
     have hu_pos : 0 < noiseWeight ca05t04_nd_μ ![true, true, true] := by
       rw [ca05t04_nd_weight_all]; norm_num
-    have hnoise_mem : ∀ u ∈ Finset.univ.filter
-        (fun u => ca05t04_nd_SCM.solve u = ![true, true, true]),
-        0 ≤ noiseWeight ca05t04_nd_μ u :=
-      fun u _ => hnoise_nonneg u
-    have hu_mem : (![true, true, true] : (k : Fin 3) → Bool) ∈ Finset.univ.filter
-        (fun u => ca05t04_nd_SCM.solve u = ![true, true, true]) :=
-      Finset.mem_filter.mpr ⟨Finset.mem_univ _, hsolve⟩
     have h_ind_pos : 0 < ca05t04_nd_SCM.inducedLaw ca05t04_nd_μ ![true, true, true] := by
-      show 0 < ∑ u with ca05t04_nd_SCM.solve u = ![true, true, true],
-        noiseWeight ca05t04_nd_μ u
-      exact Finset.sum_pos' hnoise_mem ⟨_, hu_mem, hu_pos⟩
+      unfold inducedLaw
+      refine Finset.sum_pos' (fun u _ => ?_) ⟨![true, true, true], ca05t04_nd_mem_supp _, ?_⟩
+      · split_ifs
+        · exact hnoise_nonneg u
+        · exact le_rfl
+      · rw [ite_eq_left hsolve]
+        exact hu_pos
     have hj_eq : (ca05t04_nd_SCM.inducedBayesNet ca05t04_nd_μ).joint ![true, true, true] =
         ca05t04_nd_SCM.inducedLaw ca05t04_nd_μ ![true, true, true] :=
       (ca05t04_nd_SCM.inducedLaw_eq_joint ca05t04_nd_μ _).symm
