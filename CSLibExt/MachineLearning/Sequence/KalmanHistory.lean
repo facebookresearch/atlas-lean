@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import CSLibExt.MachineLearning.Sequence.KalmanFilter
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.Notation
@@ -14,51 +15,92 @@ public import Mathlib.LinearAlgebra.Matrix.Notation
 /-!
 # Sequential Kalman conditioning over observation histories
 
-Two-observation scalar specialization: for `x1 = F * x0 + w`,
-`y0 = H0 * x0 + v0`, `y1 = H1 * x1 + v1`, with prior variance `P0 ≥ 0`,
-process variance `Q ≥ 0`, and observation variances `R0, R1 > 0`, the
-recursively computed Kalman belief after the two observations (update,
-predict, update) equals the one-shot joint Gaussian conditioning of
-the final state `x1` given the whole observation history `(y0, y1)`,
-by the Schur-complement formulas.
+Two-observation scalar specialization of the filter in
+`Cslib.MachineLearning.Sequence.KalmanFilter`, at `n = p = Fin 1`: for
+`x1 = F * x0 + w`, `y0 = H0 * x0 + v0`, `y1 = H1 * x1 + v1`, with prior
+variance `P0 ≥ 0`, process variance `Q ≥ 0`, and observation variances
+`R0, R1 > 0`, the belief computed recursively by the existing filter
+(`update` with `y0`, then one `step`, i.e. `predict` and `update` with `y1`)
+has the mean and variance of the one-shot joint Gaussian conditioning of the
+final state `x1` on the whole observation history `(y0, y1)`, given by the
+Schur-complement formulas.
 
 This is explicitly the two-observation scalar case with general
 parameters, not the general-horizon matrix case: the batch formulas
 use the joint covariance of the whole history, and the proof verifies
 the recursive steps reproduce exactly that joint conditioning rather
-than chaining an unconditional one-step theorem. The law-level
-statement (the recursive belief's law is a version of
-`condDistrib x1 (y0, y1)`) follows in a consumer from these parameters
-plus the fact that a Gaussian law is determined by its mean and
-covariance, and is not proved in this file.
+than chaining an unconditional one-step theorem.
+
+The result is an identity between parameter formulas. It involves no random
+variables, Gaussian-law assumptions, noise independence, or conditional
+distributions, and it does not show that the law of the recursive belief is a
+version of `condDistrib x1 (y0, y1)`. That law-level statement needs a
+probabilistic model with the noise independence assumptions and the
+conditional independence of the past given the current state (see the module
+note in `KalmanFilter`); it is not proved here.
 
 ## Key results
 
+- `predict_mean_fin_one`, `predict_cov_fin_one`, `gain_fin_one`,
+  `update_mean_fin_one`, `update_cov_fin_one`: the existing `predict`, `gain`,
+  and `update` at `n = p = Fin 1`, in scalar form.
 - `recursive_eq_batch`: recursive belief = batch conditioning.
 -/
 
 @[expose] public section
 
 open Matrix
+open Cslib.MachineLearning.Sequence.KalmanFilter
 
 namespace Cslib.MachineLearning.Sequence.KalmanHistory
 
-/-- Scalar Kalman predict step: `(m, P) ↦ (F * m, F^2 * P + Q)`. -/
-noncomputable def Predict (F Q : ℝ) (b : ℝ × ℝ) : ℝ × ℝ :=
+/-- Scalar predict step on `(mean, variance)`, used only in the proof. -/
+private noncomputable def Predict (F Q : ℝ) (b : ℝ × ℝ) : ℝ × ℝ :=
   (F * b.1, F ^ 2 * b.2 + Q)
 
-/-- Scalar Kalman update step with observation `y`: gain
-`K = P * H / (H^2 * P + R)`, mean `m + K * (y - H * m)`,
-covariance `(1 - K * H) * P`. -/
-noncomputable def Update (H R : ℝ) (b : ℝ × ℝ) (y : ℝ) : ℝ × ℝ :=
+/-- Scalar update step on `(mean, variance)`, used only in the proof. -/
+private noncomputable def Update (H R : ℝ) (b : ℝ × ℝ) (y : ℝ) : ℝ × ℝ :=
   (b.1 + (b.2 * H / (H ^ 2 * b.2 + R)) * (y - H * b.1),
     (1 - (b.2 * H / (H ^ 2 * b.2 + R)) * H) * b.2)
 
-/-- Recursive Kalman belief for the final state `x1`: update with `y0`
-on `x0`, predict to `x1`, update with `y1` on `x1`. -/
-noncomputable def Recursive (F Q H0 H1 R0 R1 : ℝ) (b0 : ℝ × ℝ)
+/-- Scalar recursion (update, predict, update), used only in the proof. -/
+private noncomputable def Recursive (F Q H0 H1 R0 R1 : ℝ) (b0 : ℝ × ℝ)
     (y0 y1 : ℝ) : ℝ × ℝ :=
   Update H1 R1 (Predict F Q (Update H0 R0 b0 y0)) y1
+
+/-- The predict step at `n = Fin 1`: the mean becomes `F * m`. -/
+theorem predict_mean_fin_one (F Q : ℝ) (b : Belief (Fin 1)) :
+    (predict !![F] !![Q] b).mean 0 = F * b.mean 0 := by
+  simp [predict, Matrix.mulVec, dotProduct]
+
+/-- The predict step at `n = Fin 1`: the variance becomes `F^2 * P + Q`. -/
+theorem predict_cov_fin_one (F Q : ℝ) (b : Belief (Fin 1)) :
+    (predict !![F] !![Q] b).cov 0 0 = F ^ 2 * b.cov 0 0 + Q := by
+  simp [predict, Matrix.vecHead, Matrix.vecMul, dotProduct, Matrix.mul_apply]
+  ring
+
+/-- The gain at `n = p = Fin 1` is `P * H / (H^2 * P + R)`. -/
+theorem gain_fin_one (H R : ℝ) (b : Belief (Fin 1)) :
+    gain !![H] !![R] b 0 0 = b.cov 0 0 * H / (H ^ 2 * b.cov 0 0 + R) := by
+  simp [gain, Matrix.vecHead, Matrix.vecMul, dotProduct, Matrix.mul_apply, Ring.inverse_eq_inv]
+  ring
+
+/-- The update step at `n = p = Fin 1` with observation `y`: the mean becomes
+`m + K * (y - H * m)` with gain `K = P * H / (H^2 * P + R)`. -/
+theorem update_mean_fin_one (H R : ℝ) (y : EuclideanSpace ℝ (Fin 1)) (b : Belief (Fin 1)) :
+    (update !![H] !![R] y b).mean 0 =
+      b.mean 0 + (b.cov 0 0 * H / (H ^ 2 * b.cov 0 0 + R)) * (y 0 - H * b.mean 0) := by
+  rw [← gain_fin_one]
+  simp [update, Matrix.mulVec, dotProduct]
+  ring
+
+/-- The update step at `n = p = Fin 1`: the variance becomes `(1 - K * H) * P` with gain
+`K = P * H / (H^2 * P + R)`. -/
+theorem update_cov_fin_one (H R : ℝ) (y : EuclideanSpace ℝ (Fin 1)) (b : Belief (Fin 1)) :
+    (update !![H] !![R] y b).cov 0 0 =
+      (1 - (b.cov 0 0 * H / (H ^ 2 * b.cov 0 0 + R)) * H) * b.cov 0 0 := by
+  rw [← gain_fin_one]
+  simp [update, Matrix.mul_apply, Matrix.sub_apply]
 
 /-- Prior mean of the final state `x1 = F * x0 + w`. -/
 noncomputable def BatchMeanX (F : ℝ) (m0 : ℝ) : ℝ :=
@@ -139,15 +181,8 @@ lemma det_pos (F H0 H1 R0 R1 Q P0 : ℝ) (hP0 : 0 ≤ P0) (hQ : 0 ≤ Q)
   have h4 : 0 ≤ (H0 * H1) ^ 2 * P0 * Q := by positivity
   linarith
 
-/-- Two-observation specialization of sequential Kalman conditioning
-(scalar case, general parameters): the recursively computed belief
-after two observations equals the one-shot joint Gaussian conditioning
-of the final state given the whole observation history. States:
-`x1 = F * x0 + w`, `y0 = H0 * x0 + v0`, `y1 = H1 * x1 + v1`.
-The observation-noise variances are positive (so both innovation
-variances and the joint observation covariance are invertible), the
-prior and process variances are nonnegative. -/
-theorem recursive_eq_batch (F Q H0 H1 R0 R1 : ℝ) (b0 : ℝ × ℝ)
+/-- The scalar form of `recursive_eq_batch`, on `(mean, variance)` pairs. -/
+private theorem recursive_eq_batch_scalar (F Q H0 H1 R0 R1 : ℝ) (b0 : ℝ × ℝ)
     (y0 y1 : ℝ) (hP0 : 0 ≤ b0.2) (hQ : 0 ≤ Q)
     (hR0 : 0 < R0) (hR1 : 0 < R1) :
     Recursive F Q H0 H1 R0 R1 b0 y0 y1 =
@@ -201,5 +236,28 @@ theorem recursive_eq_batch (F Q H0 H1 R0 R1 : ℝ) (b0 : ℝ × ℝ)
   · field_simp
     simp only [hS0def, hN1def, hDDdef]
     ring
+
+/-- Two-observation specialization of sequential Kalman conditioning
+(scalar case, general parameters): the belief computed by the existing filter
+at `n = p = Fin 1` (update with `y0`, then one `step` with `y1`) has the mean
+and variance of the one-shot joint Gaussian conditioning of the final state on
+the whole observation history. States: `x1 = F * x0 + w`,
+`y0 = H0 * x0 + v0`, `y1 = H1 * x1 + v1`. The observation-noise variances are
+positive (so both innovation variances and the joint observation covariance
+are invertible), the prior and process variances are nonnegative. This is an
+identity of parameter formulas, not a statement about conditional laws. -/
+theorem recursive_eq_batch (F Q H0 H1 R0 R1 : ℝ) (b0 : Belief (Fin 1))
+    (y0 y1 : EuclideanSpace ℝ (Fin 1)) (hP0 : 0 ≤ b0.cov 0 0) (hQ : 0 ≤ Q)
+    (hR0 : 0 < R0) (hR1 : 0 < R1) :
+    (step !![F] !![Q] !![H1] !![R1] y1 (update !![H0] !![R0] y0 b0)).mean 0 =
+        BatchMean F H0 H1 R0 R1 Q (b0.cov 0 0) (b0.mean 0) ![y0 0, y1 0] ∧
+      (step !![F] !![Q] !![H1] !![R1] y1 (update !![H0] !![R0] y0 b0)).cov 0 0 =
+        BatchVar F H0 H1 R0 R1 Q (b0.cov 0 0) := by
+  have h := recursive_eq_batch_scalar F Q H0 H1 R0 R1 (b0.mean 0, b0.cov 0 0) (y0 0) (y1 0)
+    hP0 hQ hR0 hR1
+  simp only [Recursive, Predict, Update, Prod.mk.injEq] at h
+  simp only [step, update_mean_fin_one, update_cov_fin_one, predict_mean_fin_one,
+    predict_cov_fin_one]
+  exact h
 
 end Cslib.MachineLearning.Sequence.KalmanHistory
