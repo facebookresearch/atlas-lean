@@ -49,15 +49,13 @@ here; phase speed `ω / k` is distinct from group speed.
 
 namespace EarthScience
 
-set_option linter.unusedVariables false in
 /-- Finite-depth surface-gravity-wave dispersion from the linearized
 free-surface conditions. For a wave of (nonzero) surface amplitude `a`,
 frequency `ω`, wavenumber `k`, depth `H`, the kinematic condition
 `ω a = k tanh (kH) b` and the dynamic condition `ω b = g a` (with `b` the
 velocity-potential amplitude) eliminate `a, b` and give
 `ω² = g k tanh (kH)`. -/
-theorem dispersion_from_surface_conditions (ω g k H a b : ℝ)
-    (hω : ω ≠ 0) (ha : a ≠ 0)
+theorem dispersion_from_surface_conditions (ω g k H a b : ℝ) (ha : a ≠ 0)
     (hkin : ω * a = k * Real.tanh (k * H) * b)
     (hdyn : ω * b = g * a) :
     ω ^ 2 = g * k * Real.tanh (k * H) := by
@@ -76,11 +74,11 @@ theorem dispersion_from_surface_conditions (ω g k H a b : ℝ)
 /-- The dispersion relation forces a positive `ω²` for `g, k, H > 0`,
 and hence `ω ≠ 0`: with the same surface conditions, `0 < ω ^ 2`. -/
 theorem dispersion_positive (ω g k H a b : ℝ) (hg : 0 < g) (hk : 0 < k)
-    (hH : 0 < H) (hω : ω ≠ 0) (ha : a ≠ 0)
+    (hH : 0 < H) (ha : a ≠ 0)
     (hkin : ω * a = k * Real.tanh (k * H) * b)
     (hdyn : ω * b = g * a) :
     0 < ω ^ 2 := by
-  have hdisp := dispersion_from_surface_conditions ω g k H a b hω ha hkin hdyn
+  have hdisp := dispersion_from_surface_conditions ω g k H a b ha hkin hdyn
   rw [hdisp]
   have hkH : 0 < k * H := mul_pos hk hH
   have htanh : 0 < Real.tanh (k * H) := by
