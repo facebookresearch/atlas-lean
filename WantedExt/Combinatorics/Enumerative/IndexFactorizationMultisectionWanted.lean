@@ -299,7 +299,8 @@ Corollary 16 gives with `n^μ` in place of `n`: there `2^{2j+k} = 2^{j+k} · 2^j
 the factor of the index `(2n-1) 2^j` in the summand `n`, which becomes `2^{μ j}` for `n^μ`.
 
 Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5, Corollary 17 (`jis-2024-24.5.5-cor-17`). -/
+Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5, Corollary 17
+(`jis-2024-24.5.5-cor-17`). -/
 public theorem_wanted lambertMu_sigma_eq_tsum_twoAdic (μ : {μ : ℕ // 1 ≤ μ}) (q : ℂ)
     (hq : ‖q‖ < 1) :
     lambertFMu ⟨q, hq⟩ μ
@@ -320,7 +321,8 @@ three series; `s > 1` is needed for `η` itself when `K < -1`) and interval
 `0 < x < 1` are added so that both sides are defined. The values `a 0`, `b 0` are unused.
 
 Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5, Proposition 18 (`jis-2024-24.5.5-prop-18`). -/
+Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5, Proposition 18
+(`jis-2024-24.5.5-prop-18`). -/
 public theorem_wanted eta_mul_LSeries_iff_lambert (a b : ℕ → ℂ) (C K : ℝ)
     (ha : ∀ n : ℕ, 1 ≤ n → ‖a n‖ ≤ C * (n : ℝ) ^ K)
     (hb : ∀ n : ℕ, 1 ≤ n → ‖b n‖ ≤ C * (n : ℝ) ^ K) :
@@ -358,7 +360,8 @@ every integer `m ≥ 0` and every `m = -2^j` (`j ≥ 0`), then
 `g(a, b, z) = ∏_{j ≥ 0} g(a/2^{j+1} - 1/2, 1/4 - a/2^{j+1} + b/2^{2j+2}, z/2^{2j+2})`.
 Corrected reading: the paper prints the parameters `a/2^j - 1` and `1 - a/2^{j+1} + b/2^{2j+2}`,
 which is false even under the hypotheses below (`a = 3/10`, `b = -2`, `z = 7/10`: numerically
-`g(a, b, z) ≈ 1.6283`, while the printed product is `≈ 6.18 · 10⁴` and the corrected one matches). The corrected parameters are those of the penultimate line of the paper's proof,
+`g(a, b, z) ≈ 1.6283`, while the printed product is `≈ 6.18 · 10⁴` and the corrected one
+matches). The corrected parameters are those of the penultimate line of the paper's proof,
 `m² + 2am + b = 2^{2j+2}(n² + n(a/2^j - 1) + (1/4 + b/2^{2j+2} - a/2^{j+1}))` for
 `m = (2n - 1) 2^j`, from which the printed last step drops the factor `1/2` in the linear
 coefficient and `1/4` in the constant. The hypotheses exclude poles of every Gamma factor on both
@@ -368,7 +371,8 @@ when `m² + 2am + b = 0` for `m = (2n - 1) 2^j`, `n ≥ 0`, i.e. `m = -2^j` or `
 integer roots (e.g. `m = -3` for `a = 5/4`, `b = -3/2`) are allowed.
 
 Source: Christophe Vignat and Michael Milgram, *Curious Multisection Identities by
-Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5, Proposition 23 (`jis-2024-24.5.5-prop-23`). -/
+Index Factorization*, Journal of Integer Sequences 27 (2024), Article 24.5.5, Proposition 23
+(`jis-2024-24.5.5-prop-23`). -/
 public theorem_wanted gammaQuadraticRatio_eq_tprod_twoAdic (a b z : ℂ)
     (hb : ∀ m : ℤ, (0 ≤ m ∨ ∃ j : ℕ, m = -2 ^ j) → (m : ℂ) ^ 2 + 2 * a * m + b ≠ 0)
     (hz : ∀ m : ℤ, (0 ≤ m ∨ ∃ j : ℕ, m = -2 ^ j) → (m : ℂ) ^ 2 + 2 * a * m + b - z ≠ 0) :

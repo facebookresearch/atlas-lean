@@ -169,7 +169,8 @@ public theorem_wanted rainbowFree_powDiff_iff
 
 /-- Rainbow number for even `k`: the least `r` such that every exact `r`-coloring of `ℤ/pℤ`
 contains a rainbow solution of `x - y = z ^ k` is `3` if every prime factor of `p - 1` divides
-`k`, and `4` otherwise. The infimum ranges over `r ≥ 3` (a rainbow solution needs three colors; `r = 0`
+`k`, and `4` otherwise. The infimum ranges over `r ≥ 3` (a rainbow solution needs three colors;
+`r = 0`
 would hold vacuously, as there is no map `ZMod p → Fin 0`).
 
 Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
@@ -348,7 +349,8 @@ coprime to `k`. A nonzero `a ∈ ℤ/pℤ` lies on a cycle of `x ↦ xᵏ` (`a^(
 two components iff `t = 1`) are omitted.
 
 Source: Katie Ansaldi, Gabriel Cowley, Eric Green, Kihyun Kim and JT Rapp, *Rainbow-Free
-Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Theorem 6 (after Lucheta, Miller and Reiter)
+Colorings and Rainbow Numbers for x-y=z^k*, INTEGERS 24 (2024), Article A105, Theorem 6 (after
+Lucheta, Miller and Reiter)
 (`integers-2024-A105-thm-6`). -/
 public theorem_wanted isCycleVertex_powMap_iff_orderOf_dvd (p k : ℕ) [Fact p.Prime]
     (hp : p ≠ 2) (t : ℕ) (ht : t ∣ p - 1) (htk : Nat.Coprime t k)

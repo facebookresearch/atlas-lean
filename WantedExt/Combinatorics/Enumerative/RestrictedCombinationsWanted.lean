@@ -211,7 +211,8 @@ public theorem oneTBonacciPolynomial_succ_of_lt (s n : ℕ) (h : n < s) :
 
 /-- Corollary 14, counting part: for `j ≥ 1`, `i ≥ 0` and `0 ≤ r < m` (which gives the
 paper's `m ≥ 1`), `P^{\{-m,0,jm\}}_{im+r} = (f^{(j+1)}_i)^{m-r} (f^{(j+1)}_{i+1})^r`.
-The `(1,t)`-bonacci numbers `f^{(t)}_n` (`f^{(t)}_n = f^{(t)}_{n-1} + f^{(t)}_{n-t} + δ_{n,0}`) are the existing
+The `(1,t)`-bonacci numbers `f^{(t)}_n` (`f^{(t)}_n = f^{(t)}_{n-1} + f^{(t)}_{n-t} + δ_{n,0}`) are
+the existing
 Fibonacci `p`-numbers shifted: `f^{(j+1)}_n = fibonacciP j (n + 1)`.
 
 Source: Michael A. Allen, *Connections Between Combinations Without Specified Separations and

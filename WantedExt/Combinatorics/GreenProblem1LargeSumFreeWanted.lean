@@ -13,7 +13,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Filter.AtTopBot.Basic
 
 @[expose] public section

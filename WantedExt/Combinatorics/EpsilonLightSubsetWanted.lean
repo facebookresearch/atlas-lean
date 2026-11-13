@@ -13,7 +13,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Combinatorics.SimpleGraph.LapMatrix
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.Matrix.PosDef
 
 @[expose] public section

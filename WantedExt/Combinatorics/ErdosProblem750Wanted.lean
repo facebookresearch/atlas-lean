@@ -13,8 +13,8 @@ module
 
 public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
 public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.NNReal.Defs
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.NNReal.Defs
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Batteries.Util.ProofWanted

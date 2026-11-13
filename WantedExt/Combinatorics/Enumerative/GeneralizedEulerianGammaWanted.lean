@@ -98,7 +98,8 @@ theorem generalizedEulerianP_zero_left (t x y : ℚ) (n : ℕ) :
 with constant term `1` is Mathlib's `PowerSeries.logOf`.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Proposition 1 (`jis-2024-24.1.5-prop-1`). -/
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Proposition 1
+(`jis-2024-24.1.5-prop-1`). -/
 public theorem_wanted cyclicExcedanceEGF_eq (x : ℚ) (hx : x ≠ 1) :
     PowerSeries.mk (fun n ↦ if n = 0 then 0 else
         (∑ m ∈ Finset.range (n + 1), (circularEulerian n m : ℚ) * x ^ m) / (n.factorial : ℚ)) =
@@ -108,7 +109,8 @@ public theorem_wanted cyclicExcedanceEGF_eq (x : ℚ) (hx : x ≠ 1) :
 (x + y)^(fix w)`, for rational `q, t, x, y` with `x ≠ y`.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 2 (`jis-2024-24.1.5-thm-2`). -/
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 2
+(`jis-2024-24.1.5-thm-2`). -/
 public theorem_wanted generalizedEulerianP_eq_sum_perm (q t x y : ℚ) (hxy : x ≠ y) (n : ℕ) :
     generalizedEulerianP q t x y n =
       ∑ w : Equiv.Perm (Fin n),
@@ -123,7 +125,8 @@ polynomials in `q, t` with nonnegative integer coefficients: there are natural n
 rational `q, t, x, y` with `x ≠ y` (such `γ_{n,k}` are unique).
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 4 (`jis-2024-24.1.5-thm-4`). -/
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 4
+(`jis-2024-24.1.5-thm-4`). -/
 public theorem_wanted generalizedEulerianP_gamma_nonneg (n : ℕ) :
     ∃ c : ℕ → ℕ → ℕ → ℕ, ∀ q t x y : ℚ, x ≠ y →
       generalizedEulerianP q t x y n =
@@ -138,7 +141,8 @@ Corollary 5 asserts unimodality only ("`P_n(q,t;x)` is a unimodal polynomial in 
 is not part of it.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Corollary 5 (`jis-2024-24.1.5-cor-5`). -/
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Corollary 5
+(`jis-2024-24.1.5-cor-5`). -/
 public theorem_wanted generalizedEulerianP_unimodal (q t n : ℕ) :
     ∃ p : Polynomial ℚ, (∀ x : ℚ, x ≠ 1 → p.eval x = generalizedEulerianP q t x 1 n) ∧
       ∃ m : ℕ, (∀ i < m, p.coeff i ≤ p.coeff (i + 1)) ∧
@@ -151,7 +155,8 @@ with these coefficients (for rational `q, t, x, y`, `x ≠ y`), and each is
 `dexc w = 0`, `cyc w = i`, `fix w = j`.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 7 (`jis-2024-24.1.5-thm-7`). -/
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Theorem 7
+(`jis-2024-24.1.5-thm-7`). -/
 public theorem_wanted generalizedEulerianP_gamma_eq (n : ℕ) :
     (∀ q t x y : ℚ, x ≠ y →
       generalizedEulerianP q t x y n =
@@ -176,7 +181,8 @@ public theorem_wanted generalizedEulerianP_gamma_eq (n : ℕ) :
 `D_{2n}` is the set of derangements (`fix w = 0`); `(-1)^(n - exc w)` is an integer power.
 
 Source: Pasquale Petrullo and Domenico Senato, *Generalized Eulerian Polynomials with a
-Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Corollary 8 (`jis-2024-24.1.5-cor-8`). -/
+Nonnegative Gamma Vector*, Journal of Integer Sequences 27 (2024), Article 24.1.5, Corollary 8
+(`jis-2024-24.1.5-cor-8`). -/
 public theorem_wanted generalizedEulerianP_neg_one (q t : ℚ) (n : ℕ) :
     generalizedEulerianP q t (-1) 1 (2 * n + 1) = 0 ∧
       (-1) ^ n * generalizedEulerianP q t (-1) 1 (2 * n) =
