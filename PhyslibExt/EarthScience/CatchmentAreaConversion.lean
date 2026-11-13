@@ -14,8 +14,9 @@ import Mathlib.Tactic.Ring
 /-!
 # Catchment budget: closing after area and time conversion
 
-A catchment budget is usually stated in depths (precipitation, evaporation
-and runoff as depths per time), but storage is a volume. Multiplying by
+A catchment budget is usually stated in depths: precipitation, evaporation
+and runoff as depth rates (depth per time), and the storage change as an
+equivalent depth (storage volume per unit catchment area). Multiplying by
 the catchment area converts every depth term to a volume, and the budget
 closes exactly.
 
@@ -26,9 +27,13 @@ rate `r` is the volume flux `A * r`. A depth flux times a duration is a
 depth, so area times that depth equals the volume flux times the
 duration. Depth in millimetres converts to metres by dividing by 1000
 before area multiplication, and a daily depth rate agrees with the
-hourly rate over `24 * n` hours. The volume budget closes: if the depth
-storage change satisfies `ds = (p - e - q) * dt`, then
+hourly rate over `24 * n` hours. The volume budget closes: if the
+storage change `ds`, expressed as an equivalent depth, satisfies
+`ds = (p - e - q) * dt`, then
 `A * ds + (A * e) * dt + (A * q) * dt = (A * p) * dt`.
+Every quantity is a real number, so the units are not checked: a storage
+change that is already a volume must be divided by `A` before it is
+passed as `ds`, since `catchmentVolume A ds` multiplies by the area.
 
 ## ii. Key results
 
@@ -40,7 +45,13 @@ storage change satisfies `ds = (p - e - q) * dt`, then
 - `EarthScience.catchment_budget_closes`: the volume budget closes.
 - `EarthScience.catchment_volume_daily_hourly`: daily/hourly agreement.
 
-## iii. References
+## iii. Table of contents
+
+- A. Area conversion
+- B. Budget closure
+- C. Time conversion
+
+## iv. References
 
 - `ring` for the conversion and budget identities.
 -/
@@ -48,6 +59,8 @@ storage change satisfies `ds = (p - e - q) * dt`, then
 @[expose] public section
 
 namespace EarthScience
+
+/-! ## A. Area conversion -/
 
 /-- Volume from catchment area `A` and a depth `d`: `A * d`. -/
 noncomputable def catchmentVolume (A d : ℝ) : ℝ := A * d
@@ -57,22 +70,26 @@ noncomputable def catchmentVolumeFlux (A r : ℝ) : ℝ := A * r
 
 /-- Area conversion: a depth flux times a duration gives a depth, and
 area times that depth is the volume. -/
-theorem catchment_volume_flux_time (A r dt : ℝ) :
+lemma catchment_volume_flux_time (A r dt : ℝ) :
     catchmentVolume A (r * dt) = catchmentVolumeFlux A r * dt := by
   unfold catchmentVolume catchmentVolumeFlux
   ring
 
 /-- Depth in millimetres converts to metres by dividing by 1000 before
 area multiplication. -/
-theorem catchment_volume_mm_to_m (A d_mm : ℝ) :
+lemma catchment_volume_mm_to_m (A d_mm : ℝ) :
     catchmentVolume A (d_mm / 1000) = A * d_mm / 1000 := by
   unfold catchmentVolume
   ring
 
-/-- The catchment budget closes after area conversion: if the depth
-storage change satisfies `ds = (p - e - q) * dt`, then the volume budget
+/-! ## B. Budget closure -/
+
+/-- The catchment budget closes after area conversion: if the storage
+change `ds`, expressed as an equivalent depth (storage volume per unit
+catchment area), satisfies `ds = (p - e - q) * dt` for precipitation,
+evaporation and runoff depth rates `p`, `e`, `q`, then the volume budget
 `A * ds + (A * e) * dt + (A * q) * dt = (A * p) * dt` holds. -/
-theorem catchment_budget_closes (A p e q dt ds : ℝ)
+lemma catchment_budget_closes (A p e q dt ds : ℝ)
     (h : ds = (p - e - q) * dt) :
     catchmentVolume A ds + catchmentVolumeFlux A e * dt
       + catchmentVolumeFlux A q * dt = catchmentVolumeFlux A p * dt := by
@@ -80,9 +97,11 @@ theorem catchment_budget_closes (A p e q dt ds : ℝ)
   unfold catchmentVolume catchmentVolumeFlux
   ring
 
+/-! ## C. Time conversion -/
+
 /-- Time conversion: a daily depth rate over `n` days gives the same
 volume as the hourly rate over `24 * n` hours. -/
-theorem catchment_volume_daily_hourly (A r_day n : ℝ) :
+lemma catchment_volume_daily_hourly (A r_day n : ℝ) :
     catchmentVolumeFlux A (r_day / 24) * (24 * n)
       = catchmentVolumeFlux A r_day * n := by
   unfold catchmentVolumeFlux

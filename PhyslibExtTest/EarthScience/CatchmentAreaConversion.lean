@@ -16,9 +16,10 @@ import PhyslibExt.EarthScience.CatchmentAreaConversion
 Concrete consumers of `PhyslibExt.EarthScience.CatchmentAreaConversion`:
 with area `A = 100`, precipitation depth rate `p = 1/100`,
 evaporation `e = 3/1000`, runoff `q = 2/1000` and duration `dt = 2`,
-the depth storage change is `ds = 1/100`, the volume budget closes at
-`2`, `50` mm of depth over area `100` is `5` cubic units, and the daily
-rate over `2` days agrees with the hourly rate over `48` hours.
+the storage change, as an equivalent depth, is `ds = 1/100`, the volume
+budget closes at `2`, `50` mm of depth over area `100` is `5` cubic
+units, and the daily rate over `2` days agrees with the hourly rate over
+`48` hours.
 
 ## i. Overview
 
@@ -30,12 +31,19 @@ precipitation rate, where the budget still closes with storage decreasing.
 
 No new definitions or results are introduced here.
 
-## iii. References
+## iii. Table of contents
+
+- A. Numeric conversions and budget closure
+- B. Boundary cases
+
+## iv. References
 
 - `PhyslibExt.EarthScience.CatchmentAreaConversion`
 -/
 
 open EarthScience
+
+/-! ## A. Numeric conversions and budget closure -/
 
 /-- Volume: area `100` times depth `1/100` is `1`. -/
 example : catchmentVolume 100 (1 / 100) = 1 := by
@@ -63,6 +71,8 @@ as the hourly rate over `48` hours, with area `100`. -/
 example : catchmentVolumeFlux 100 (24 / 24) * (24 * 2)
     = catchmentVolumeFlux 100 24 * 2 :=
   catchment_volume_daily_hourly 100 24 2
+
+/-! ## B. Boundary cases -/
 
 /-- Boundary case: zero duration gives a zero storage volume. -/
 example : catchmentVolume 100 ((1 / 100) * 0) = 0 := by
