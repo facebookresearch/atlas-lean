@@ -328,8 +328,9 @@ finite linear combinations `∑ s ∈ I, c s * Zc · s` are centered Gaussian wi
 measurability also gives the `AEMeasurable Z P'` input of
 `MathlibExt.Probability.Martingale.tendstoInDistribution_arrayStepProcess`.
 
-`Zc` is `AEMeasurable.mk` applied to the a.s.-continuous path map `donskerBrownianPath B`, so
-`Zc =ᵐ[P'] donskerBrownianPath B`. The Gaussian laws come from `IsPreBrownianReal.hasLaw`
+`Zc` is a measurable modification (`AEMeasurable.mk`) of the a.s.-continuous path map
+`ω ↦ (t ↦ B t ω)`, so `Zc` agrees a.s. with a continuous version of `B` on `[0,1]`. The Gaussian
+laws come from `IsPreBrownianReal.hasLaw`
 (through `IsGaussianProcess`), closure of Gaussian laws under linear maps, and the Brownian
 covariance `cov[B s, B u] = min s u`.
 

@@ -94,6 +94,53 @@ example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'}
     simp [iccToNNReal, t.2.1]
     rfl
 
+-- Two-point cross-check covering the off-diagonal covariance: with `I = {s, u}` and
+-- `c = (1, -1)` the adapter's predicted variance `s + u - 2 * min s u` is `|s - u|`, the law of
+-- `B s - B u` given independently by Mathlib's `IsPreBrownianReal.hasLaw_sub`. Replacing `min` by
+-- `max` would give `-|s - u|`, so this distinguishes the Brownian covariance.
+example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'}
+    (B : ℝ≥0 → Ω' → ℝ) (hB : IsBrownianReal B P') (s u : Set.Icc (0 : ℝ) 1) (hsu : s ≠ u) :
+    ∃ Zc : Ω' → C(Set.Icc (0 : ℝ) 1, ℝ), Measurable Zc ∧
+      P'.map (fun ω => Zc ω s - Zc ω u) = gaussianReal 0 (nndist s.1 u.1) ∧
+      P'.map (fun ω => ∑ x : ({s, u} : Finset (Set.Icc (0 : ℝ) 1)),
+        (if (x : Set.Icc (0 : ℝ) 1) = s then (1 : ℝ) else -1) * Zc ω x) =
+          gaussianReal 0 (nndist s.1 u.1) := by
+  obtain ⟨Zc, hm, hae, hZ⟩ := exists_measurable_brownianPath_gaussian B hB
+  refine ⟨Zc, hm, ?_, ?_⟩
+  · rw [Measure.map_congr (g := B (iccToNNReal s) - B (iccToNNReal u))
+      (by filter_upwards [hae] with ω hω using by simp [hω s, hω u])]
+    exact (hB.hasLaw_sub (iccToNNReal s) (iccToNNReal u)).map_eq
+  · have key : ∀ x : Set.Icc (0 : ℝ) 1,
+        (∑ y : ({s, u} : Finset (Set.Icc (0 : ℝ) 1)), (if x = s then (1 : ℝ) else -1) *
+          (if (y : Set.Icc (0 : ℝ) 1) = s then (1 : ℝ) else -1) * (min x y).1) =
+        ∑ y ∈ ({s, u} : Finset (Set.Icc (0 : ℝ) 1)), (if x = s then (1 : ℝ) else -1) *
+          (if y = s then (1 : ℝ) else -1) * (min x y).1 := fun x =>
+      Finset.sum_coe_sort _ (fun y => (if x = s then (1 : ℝ) else -1) *
+          (if y = s then (1 : ℝ) else -1) * (min x y).1)
+    have hv : (∑ x : ({s, u} : Finset (Set.Icc (0 : ℝ) 1)),
+        ∑ y : ({s, u} : Finset (Set.Icc (0 : ℝ) 1)),
+          (if (x : Set.Icc (0 : ℝ) 1) = s then (1 : ℝ) else -1) *
+            (if (y : Set.Icc (0 : ℝ) 1) = s then (1 : ℝ) else -1) *
+              (min (x : Set.Icc (0 : ℝ) 1) y).1) = |s.1 - u.1| := by
+      rw [Finset.sum_coe_sort ({s, u} : Finset (Set.Icc (0 : ℝ) 1))
+        (fun x => ∑ y : ({s, u} : Finset (Set.Icc (0 : ℝ) 1)),
+          (if x = s then (1 : ℝ) else -1) *
+            (if (y : Set.Icc (0 : ℝ) 1) = s then (1 : ℝ) else -1) * (min x y).1)]
+      simp only [key]
+      rw [Finset.sum_pair hsu, Finset.sum_pair hsu, Finset.sum_pair hsu]
+      simp only [↓reduceIte, hsu.symm, min_self]
+      rcases le_total s u with h | h
+      · rw [min_eq_left h, min_eq_right h,
+          abs_of_nonpos (sub_nonpos.2 (Subtype.coe_le_coe.2 h))]
+        ring
+      · rw [min_eq_right h, min_eq_left h,
+          abs_of_nonneg (sub_nonneg.2 (Subtype.coe_le_coe.2 h))]
+        ring
+    rw [hZ {s, u} (fun x => if (x : Set.Icc (0 : ℝ) 1) = s then 1 else -1), hv]
+    congr 1
+    ext
+    simp [Real.dist_eq]
+
 -- The adapter output is pinned at `0` at the left endpoint, as Brownian motion is.
 example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'}
     (B : ℝ≥0 → Ω' → ℝ) (hB : IsBrownianReal B P') :
