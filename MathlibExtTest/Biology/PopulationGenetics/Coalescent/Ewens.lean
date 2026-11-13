@@ -85,6 +85,18 @@ example (θ : ℝ) :
       ∀ j ∈ Icc 1 3, alleleCount π j = (fun j ↦ if j = 1 then 1 else 0) j, ewensProb θ π = 0 :=
   sum_ewensProb_alleleCount_eq_zero θ (by decide)
 
+open scoped Classical in
+/-- The headline theorem at `(1, 1, 0)`: the probability that a sample of three genes has one
+singleton and one doubleton is `3θ / ((θ + 1)(θ + 2))`, the from-definition value above. -/
+example {θ : ℝ} (hθ : 0 < θ) :
+    ∑ π : Nat.Partition 3 with
+      ∀ j ∈ Icc 1 3, alleleCount π j = (fun j ↦ if j = 1 ∨ j = 2 then 1 else 0) j,
+        ewensProb θ π = 3 * θ / ((θ + 1) * (θ + 2)) := by
+  rw [sum_ewensProb_alleleCount_eq θ (by decide)]
+  simp [ewensConfigProb, ascPochhammer_succ_eval, Finset.prod_Icc_succ_top, Nat.factorial]
+  field_simp
+  ring
+
 /-- The clock rates, from the definition: the mutation clock at level `2` has rate `θ`, the
 coalescence clock at level `3` has rate `3`. -/
 example (θ : ℝ) : killingRate 3 θ (.inl ⟨2, by simp⟩) = θ ∧
