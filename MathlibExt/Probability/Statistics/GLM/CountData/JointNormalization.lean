@@ -38,13 +38,14 @@ law it defines identifies the parameters.
   and `CountModel.eq_of_likelihood_eq` (with a known design in which every condition has a
   replicate, the parameters are identified).
 * `CountModel.likelihood_rescale`: multiplying all library sizes by `t ≠ 0` and dividing all
-  rates by `t` does not change the joint law. Library sizes are not identified (when at least two
-  conditions each occur in a sample with nonzero library size, not even up to a common scale: the
-  samples of each condition can be rescaled separately, with that condition's rates divided by
-  the same factor), so they are taken as known in the identifiability results. DESeq and DESeq2
-  estimate them by the median-of-ratios method (Anders, Huber, *Differential expression analysis
-  for sequence count data*, Genome Biology 11 (2010) R106), which relies on most genes not being
-  differentially expressed.
+  rates by `t` does not change the likelihood function; for a valid model and `0 < t` the
+  rescaled model is valid (`CountModel.valid_rescale`), with the same joint law. Library sizes are
+  not identified (when at least two conditions each occur in a sample with nonzero library size,
+  not even up to a common scale: the samples of each condition can be rescaled separately, with
+  that condition's rates divided by the same factor), so they are taken as known in the
+  identifiability results. DESeq and DESeq2 estimate them by the median-of-ratios method (Anders,
+  Huber, *Differential expression analysis for sequence count data*, Genome Biology 11 (2010)
+  R106), which relies on most genes not being differentially expressed.
 
 A sample with library size `0` carries no information
 (`CountModel.countPMF_eq_of_librarySize_eq_zero`), hence the nonzero library size hypotheses.
@@ -305,9 +306,11 @@ theorem mean_rescale (M : CountModel G J C) {t : ℝ} (ht : t ≠ 0) (g : G) (j 
   simp only [mean, rescale]
   field_simp
 
-/-- **Rescaling is invisible in the joint law.** Multiplying every library size by `t ≠ 0` and
-dividing every rate by `t` leaves every entry mean, hence the likelihood, unchanged; this is why
-`rate_eq_of_likelihood_eq` and `likelihood_eq_iff` take the library sizes as known. -/
+/-- **Rescaling leaves the likelihood function unchanged.** Multiplying every library size by
+`t ≠ 0` and dividing every rate by `t` leaves every entry mean, hence the likelihood function,
+unchanged. For a valid model and `0 < t` the rescaled model is also valid (`valid_rescale`), so
+the two have the same joint law; this is why `rate_eq_of_likelihood_eq` and `likelihood_eq_iff`
+take the library sizes as known. -/
 theorem likelihood_rescale [Fintype G] [Fintype J] (M : CountModel G J C) {t : ℝ} (ht : t ≠ 0) :
     (M.rescale t).likelihood = M.likelihood := by
   funext Y
