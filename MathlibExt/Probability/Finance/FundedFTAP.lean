@@ -18,14 +18,20 @@ import Mathlib.Basic.Real.Basic
 
 Embed the funded gains `g a ω = X a ω - R * p a` (payoff minus
 gross-risk-free-return times price) in the existing gain-form FTAP: the funded
-gains admit no arbitrage iff there is a strictly positive normalized `q` with
-`E_q[X a] = R * p a` for every asset. This does not reprove the FTAP; it
-applies `one_period_fundamental_theorem_asset_pricing_general` and rewrites
+gains admit no arbitrage (`NoFundedArbitrage X p R`) iff there is a strictly
+positive normalized `q` with `E_q[X a] = R * p a` for every asset. This does
+not reprove the FTAP; it applies
+`one_period_fundamental_theorem_asset_pricing_general` and rewrites
 `∑ ω, q ω * (X a ω - R * p a) = 0` as `∑ ω, q ω * X a ω = R * p a` using
 `∑ ω, q ω = 1`.
 
+`NoFundedArbitrage` is defined here, below the state-price modules:
+`MathlibExt.Probability.Finance.StatePriceVector` re-exports it under its
+original name and takes its pricing identity from `funded_ftap`.
+
 ## Main results
 
+* `NoFundedArbitrage`: no arbitrage on funded gains.
 * `funded_ftap`: the funded-gains FTAP.
 
 Atlas roadmap target FI08.T01.
@@ -36,6 +42,15 @@ Atlas roadmap target FI08.T01.
 namespace MathlibExt.Probability.Finance.FundedFTAP
 
 open MathlibExt.Probability.Finance.FundamentalTheoremAssetPricing
+
+/-- No arbitrage on funded gains: no portfolio `h` has nonnegative funded gain in
+every state and strictly positive funded gain in some state. The funded gain of
+buying `h a` units of asset `a` at price `p a`, financed at gross risk-free
+return `R`, is `h a * (X a ω - R * p a)` in state `ω`. -/
+def NoFundedArbitrage {Ω : Type*} [Fintype Ω] {A : Type*} [Fintype A]
+    (X : A → Ω → ℝ) (p : A → ℝ) (R : ℝ) : Prop :=
+  ¬ ∃ h : A → ℝ, (∀ ω : Ω, 0 ≤ ∑ a : A, h a * (X a ω - R * p a)) ∧
+    (∃ ω : Ω, 0 < ∑ a : A, h a * (X a ω - R * p a))
 
 /-- **Funded-gains FTAP.** Embed the funded gains `g a ω = X a ω - R * p a`
 (payoff minus gross-risk-free-return times price) in the existing gain-form
@@ -48,8 +63,7 @@ FI08.T01). This does NOT reprove the FTAP; it applies
 algebra plus the FTAP. -/
 theorem funded_ftap {Ω : Type*} [Fintype Ω] [Nonempty Ω] {A : Type*} [Fintype A]
     (X : A → Ω → ℝ) (p : A → ℝ) (R : ℝ) :
-    (¬ ∃ h : A → ℝ, (∀ ω : Ω, 0 ≤ ∑ a : A, h a * (X a ω - R * p a)) ∧
-      (∃ ω : Ω, 0 < ∑ a : A, h a * (X a ω - R * p a))) ↔
+    NoFundedArbitrage X p R ↔
     ∃ q : Ω → ℝ, (∀ ω : Ω, 0 < q ω) ∧ (∑ ω : Ω, q ω = 1) ∧
       (∀ a : A, ∑ ω : Ω, q ω * X a ω = R * p a) := by
   have hFTAP := one_period_fundamental_theorem_asset_pricing_general
