@@ -71,8 +71,8 @@ example (z : ℂ)
       z • (1 : Matrix (Fin 2) (Fin 2) ℂ)).det = 0) : z.re < 0 :=
   ((isCharRoot_iff_det _ _ _ z).2 hz).re_neg (by norm_num [jacTrace]) (by norm_num [jacDet])
 
-/-- Boundary probe (Hopf point): `b = 3/4`, `ε = 1`, `v = 1/2` gives `v² = 1/4 = 1 - ε b`, a
-linear center; the eigenvalues `± i √(7/16)` are purely imaginary. -/
+/-- Boundary probe (purely imaginary eigenvalues): `b = 3/4`, `ε = 1`, `v = 1/2` gives
+`v² = 1/4 = 1 - ε b`, a linear center; the eigenvalues `± i √(7/16)` are purely imaginary. -/
 example : equilibriumType (3 / 4) 1 (1 / 2) = .center :=
   (equilibriumType_eq_center_iff_of_lt_one (by norm_num) (by norm_num) (by norm_num)).2
     (by norm_num)
@@ -80,7 +80,7 @@ example : equilibriumType (3 / 4) 1 (1 / 2) = .center :=
 example : jacTrace (3 / 4) 1 (1 / 2) = 0 ∧ jacDet (3 / 4) 1 (1 / 2) = 7 / 16 := by
   norm_num [jacTrace, jacDet]
 
-/-- Boundary probe (saddle, only possible for `b > 1`): `b = 4`, `v = 0` has
+/-- Boundary probe (saddle; for `b > 0` only possible when `b > 1`): `b = 4`, `v = 0` has
 `b (1 - v²) = 4 > 1`. -/
 example : equilibriumType 4 1 0 = .saddle := (equilibriumType_eq_saddle_iff one_pos).2 (by norm_num)
 
@@ -154,9 +154,14 @@ example : 1 / 2 < thresholdLow (-3 / 2) ∧ thresholdLow (-3 / 2) < 2 ∧
   unfold thresholdLow thresholdHigh
   refine ⟨by linarith, by linarith, by linarith⟩
 
+/-- At the endpoint `v = -2` of `stable_rest_pulse_thresholds` the two roots coincide, so the
+super-threshold window is empty there. -/
+example : thresholdLow (-2) = 3 ∧ thresholdHigh (-2) = 3 := by
+  norm_num [thresholdLow, thresholdHigh]
+
 /-- The excitable-rest theorem applies to the rest state. -/
 example : 0 < thresholdLow (-3 / 2) ∧ IsSubThreshold 0 (-3 / 2) (-3 / 8) (1 / 2) := by
-  obtain ⟨-, hpos, hsub, -⟩ := excitable_rest (a := 6 / 5) (b := 4 / 5) (ε := 2 / 25) (I := 0)
+  obtain ⟨-, hpos, -, hsub, -⟩ := excitable_rest (a := 6 / 5) (b := 4 / 5) (ε := 2 / 25) (I := 0)
     (v := -3 / 2) (w := -3 / 8) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num [IsEquilibrium, vField, wField])
     (by norm_num) (by norm_num)

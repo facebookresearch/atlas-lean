@@ -57,7 +57,8 @@ the equilibrium needs `0 < b ≤ 1`.
   ellipse `energy = R`. `IsSolution.energy_le`: the sublevel set `energy ≤ R` is therefore
   forward invariant, and `IsSolution.energy_le_max` bounds every solution.
   `IsSolution.energy_le_absorb`: `energy(t) ≤ e^{-2κt} energy(0) + (C/κ)(1 - e^{-2κt})`
-  (`C = absorbConst a b I`, `κ = decayRate b ε`); the bound decreases to `C/κ = trapRadius`.
+  (`C = absorbConst a b I`, `κ = decayRate b ε`); the bound converges exponentially to
+  `C/κ = trapRadius`.
 * **Global existence and uniqueness.** `exists_isSolution`: for `b, ε > 0` every initial state
   has a solution on `[0, ∞)`; `IsSolution.eq_of_initial`: it is unique forward in time.
 * **Equilibria.** `isEquilibrium_iff`: equilibria are `w = (v + a) / b` with
@@ -74,17 +75,22 @@ the equilibrium needs `0 < b ≤ 1`.
   `equilibriumType b ε v` is the type of the equilibrium with voltage `v`. For `0 < b < 1`,
   `ε > 0` it is a linear sink iff `v² > 1 - ε b` (`isLinearlyStable_iff_of_lt_one`), has an
   eigenvalue in the right half-plane iff `v² < 1 - ε b` (`isLinearlyUnstable_iff_of_lt_one`),
-  and is a center (Hopf point) iff `v² = 1 - ε b` (`equilibriumType_eq_center_iff_of_lt_one`).
+  and is a linear center (purely imaginary eigenvalues, a nonhyperbolic equilibrium) iff
+  `v² = 1 - ε b` (`equilibriumType_eq_center_iff_of_lt_one`).
   `equilibriumType_eq_saddle_iff`: saddles occur iff `b (1 - v²) > 1`.
 * **Excitability threshold (single pulse).** A pulse of amplitude `δ` moves the rest state
   `(v*, w*)` to `(v* + δ, w*)`. It is super-threshold (`IsSuperThreshold`) when the voltage
   field is positive there and sub-threshold (`IsSubThreshold`) when it is negative.
   `vField_pulse`: at rest, `vField I (v* + δ) w* = δ (1 - v*² - v* δ - δ² / 3)`;
   `isSuperThreshold_iff`, `isSubThreshold_iff`: for `v*² ≤ 4` and `δ > 0` a pulse is
-  super-threshold iff `thresholdLow v* < δ < thresholdHigh v*`. `thresholdLow_pos`: the
-  threshold is positive for `v* < -1`. `excitable_rest`: for `0 < b < 1`, `ε > 0`, a rest state
-  on the left branch `-2 ≤ v* < -1` is linearly stable, small pulses are sub-threshold, and
-  pulses between the two thresholds are super-threshold. Dynamically
+  super-threshold iff `thresholdLow v* < δ < thresholdHigh v*`, the two roots of the post-pulse
+  factor. `thresholdLow_pos`: the lower root is positive for `v* < -1`.
+  `stable_rest_pulse_thresholds`: for `0 < b < 1`, `ε > 0`, a rest state on the left branch
+  `-2 ≤ v* < -1` is linearly stable, small pulses are sub-threshold, and pulses between the two
+  roots are super-threshold (an empty range at `v* = -2`, where the roots coincide).
+  `excitable_rest`: on the open branch `-2 < v* < -1` the roots are moreover distinct
+  (`thresholdLow_lt_thresholdHigh`), so `thresholdLow v*` is a positive firing threshold with a
+  nonempty window of super-threshold pulses. Dynamically
   (`IsSolution.v_le_of_barrier`, `IsSolution.le_v_of_barrier`, `IsSolution.exists_v_ge`,
   `single_pulse_response`): while the slow variable has drifted by at most `η` (bounded by
   `|ε| M t`, `IsSolution.abs_w_sub_le`, with `M` from the trapping ellipse,
@@ -93,7 +99,8 @@ the equilibrium needs `0 < b ≤ 1`.
   level `γ` within an explicit time.
 
 The singular-perturbation (`ε → 0`) analysis, the full return to rest after a spike, periodic
-orbits / Hopf bifurcation beyond the linear center, and the Nagumo cubic `v (v - α)(1 - v)` form
+orbits and bifurcations (a linear center is only a nonhyperbolic linearization; no transversality
+or nonlinear nondegeneracy condition is checked), and the Nagumo cubic `v (v - α)(1 - v)` form
 are not treated.
 
 ## References
@@ -647,7 +654,8 @@ inductive LinearType
   | saddle
   /-- `Δ = 0`: a zero eigenvalue. -/
   | degenerate
-  /-- `τ = 0 < Δ`: purely imaginary eigenvalues (the linear center at a Hopf point). -/
+  /-- `τ = 0 < Δ`: purely imaginary eigenvalues (a linear center; the equilibrium is
+  nonhyperbolic). -/
   | center
   /-- `τ < 0 < Δ`, `4Δ ≤ τ²`: real negative eigenvalues. -/
   | stableNode
@@ -721,7 +729,7 @@ end Classification
 parameters `b`, `ε` and of `v` (which itself depends on `a`, `b`, `I` through `eqCubic`). -/
 def equilibriumType (b ε v : ℝ) : LinearType := linearType (jacTrace b ε v) (jacDet b ε v)
 
-/-- Saddles occur exactly when `b (1 - v²) > 1` (impossible for `b ≤ 1`). -/
+/-- Saddles occur exactly when `b (1 - v²) > 1` (impossible for `0 < b ≤ 1`). -/
 theorem equilibriumType_eq_saddle_iff (hε : 0 < ε) {v : ℝ} :
     equilibriumType b ε v = .saddle ↔ 1 < b * (1 - v ^ 2) := by
   rw [equilibriumType, linearType_eq_saddle_iff, jacDet]
@@ -755,8 +763,9 @@ theorem isLinearlyUnstable_iff_of_lt_one (hb : 0 < b) (hb1 : b < 1) (hε : 0 < �
     · linarith
   · intro h; exact Or.inl (by linarith)
 
-/-- **Hopf point (`0 < b < 1`, `ε > 0`).** The linearization is a center (purely imaginary
-eigenvalues) iff `v² = 1 - ε b`. -/
+/-- **Purely imaginary eigenvalues (`0 < b < 1`, `ε > 0`).** The linearization is a center
+(purely imaginary eigenvalues, so the equilibrium is nonhyperbolic) iff `v² = 1 - ε b`. This is a
+condition on the linearization only: no transversality or nonlinear nondegeneracy is claimed. -/
 theorem equilibriumType_eq_center_iff_of_lt_one (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε)
     {v : ℝ} :
     equilibriumType b ε v = .center ↔ v ^ 2 = 1 - ε * b := by
@@ -784,12 +793,16 @@ theorem vField_pulse {v w : ℝ} (h : vField I v w = 0) (δ : ℝ) :
   unfold vField at *
   linear_combination h
 
-/-- The firing threshold `(-3v - √(12 - 3v²))/2`: the smallest pulse amplitude that is
-super-threshold from rest voltage `v`. -/
+/-- The lower root `(-3v - √(12 - 3v²))/2` of the post-pulse factor `1 - v² - v δ - δ²/3` in `δ`
+(`pulse_factor`, for `v² ≤ 4`). On the nondegenerate left branch `-2 < v < -1` it is a positive
+firing threshold: from a rest state with voltage `v`, the positive super-threshold pulses are
+exactly those with `thresholdLow v < δ < thresholdHigh v` (`isSuperThreshold_iff`), a nonempty
+open interval (`thresholdLow_lt_thresholdHigh`). -/
 def thresholdLow (v : ℝ) : ℝ := (-3 * v - √(12 - 3 * v ^ 2)) / 2
 
-/-- The upper end `(-3v + √(12 - 3v²))/2` of the super-threshold amplitudes (beyond the
-excited branch of the cubic nullcline). -/
+/-- The upper root `(-3v + √(12 - 3v²))/2` of the post-pulse factor (`pulse_factor`). On the left
+branch `-2 < v < -1` it is the upper end of the open interval of positive super-threshold pulses
+from a rest state with voltage `v`. -/
 def thresholdHigh (v : ℝ) : ℝ := (-3 * v + √(12 - 3 * v ^ 2)) / 2
 
 theorem pulse_factor {v : ℝ} (hv : v ^ 2 ≤ 4) (δ : ℝ) :
@@ -801,6 +814,13 @@ theorem pulse_factor {v : ℝ} (hv : v ^ 2 ≤ 4) (δ : ℝ) :
 theorem thresholdLow_le_thresholdHigh (v : ℝ) : thresholdLow v ≤ thresholdHigh v := by
   unfold thresholdLow thresholdHigh
   have := Real.sqrt_nonneg (12 - 3 * v ^ 2)
+  linarith
+
+/-- For `v² < 4` the two roots are distinct. -/
+theorem thresholdLow_lt_thresholdHigh {v : ℝ} (hv : v ^ 2 < 4) :
+    thresholdLow v < thresholdHigh v := by
+  unfold thresholdLow thresholdHigh
+  have := Real.sqrt_pos.2 (by linarith : (0 : ℝ) < 12 - 3 * v ^ 2)
   linarith
 
 /-- **Threshold characterization.** At rest with `v² ≤ 4`, a positive pulse `δ` is
@@ -844,8 +864,8 @@ theorem isSubThreshold_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 2 ≤
         mul_pos (by linarith) (by linarith)
       nlinarith
 
-/-- For a rest voltage `v < -1` (left branch of the cubic nullcline) the threshold is
-positive. -/
+/-- For a rest voltage `v < -1` (left branch of the cubic nullcline) the lower root
+`thresholdLow v` is positive. -/
 theorem thresholdLow_pos {v : ℝ} (hv1 : v < -1) : 0 < thresholdLow v := by
   unfold thresholdLow
   have hs : √(12 - 3 * v ^ 2) < -3 * v := by
@@ -858,11 +878,14 @@ theorem isSubThreshold_of_lt_thresholdLow {v w δ : ℝ} (h : vField I v w = 0) 
     (hv2 : -2 ≤ v) (hδ : 0 < δ) (hδθ : δ < thresholdLow v) : IsSubThreshold I v w δ :=
   (isSubThreshold_iff h (by nlinarith) hδ).2 (Or.inl hδθ)
 
-/-- **Excitable rest state.** In the classical regime `0 < b < 1`, `ε > 0`, an equilibrium on the
-left branch `-2 ≤ v < -1` is linearly stable and has a positive finite firing threshold:
+/-- **Pulse thresholds at a stable rest state.** In the classical regime `0 < b < 1`, `ε > 0`, an
+equilibrium on the left branch `-2 ≤ v < -1` is linearly stable and `thresholdLow v` is positive:
 pulses `0 < δ < thresholdLow v` are sub-threshold and pulses
-`thresholdLow v < δ < thresholdHigh v` are super-threshold. -/
-theorem excitable_rest (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v w : ℝ}
+`thresholdLow v < δ < thresholdHigh v` are super-threshold. At the endpoint `v = -2` the two roots
+coincide (`thresholdLow (-2) = thresholdHigh (-2) = 3`), so the last statement is vacuous and no
+positive pulse is super-threshold; `excitable_rest` treats the nondegenerate branch
+`-2 < v < -1`. -/
+theorem stable_rest_pulse_thresholds (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v w : ℝ}
     (hrest : IsEquilibrium a b ε I v w) (hv1 : v < -1) (hv2 : -2 ≤ v) :
     IsLinearlyStable (jacTrace b ε v) (jacDet b ε v) ∧ 0 < thresholdLow v ∧
       (∀ δ, 0 < δ → δ < thresholdLow v → IsSubThreshold I v w δ) ∧
@@ -871,6 +894,20 @@ theorem excitable_rest (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v w : ℝ}
   refine ⟨(isLinearlyStable_iff_of_lt_one hb hb1 hε).2 (by nlinarith [mul_pos hε hb]), hpos,
     fun δ hδ hδθ => isSubThreshold_of_lt_thresholdLow hrest.1 hv1 hv2 hδ hδθ,
     fun δ h1 h2 => (isSuperThreshold_iff hrest.1 (by nlinarith) (by linarith)).2 ⟨h1, h2⟩⟩
+
+/-- **Excitable rest state.** In the classical regime `0 < b < 1`, `ε > 0`, an equilibrium on the
+open left branch `-2 < v < -1` is linearly stable and has a positive firing threshold with a
+nonempty super-threshold window, `0 < thresholdLow v < thresholdHigh v`: pulses
+`0 < δ < thresholdLow v` are sub-threshold and pulses `thresholdLow v < δ < thresholdHigh v` are
+super-threshold. -/
+theorem excitable_rest (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v w : ℝ}
+    (hrest : IsEquilibrium a b ε I v w) (hv1 : v < -1) (hv2 : -2 < v) :
+    IsLinearlyStable (jacTrace b ε v) (jacDet b ε v) ∧ 0 < thresholdLow v ∧
+      thresholdLow v < thresholdHigh v ∧
+      (∀ δ, 0 < δ → δ < thresholdLow v → IsSubThreshold I v w δ) ∧
+      (∀ δ, thresholdLow v < δ → δ < thresholdHigh v → IsSuperThreshold I v w δ) := by
+  obtain ⟨hst, hpos, hsub, hsup⟩ := stable_rest_pulse_thresholds hb hb1 hε hrest hv1 hv2.le
+  exact ⟨hst, hpos, thresholdLow_lt_thresholdHigh (by nlinarith), hsub, hsup⟩
 
 /-! ### Single-pulse response of the full system -/
 
