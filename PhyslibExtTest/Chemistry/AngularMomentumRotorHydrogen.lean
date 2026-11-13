@@ -26,7 +26,8 @@ Concrete consumers of `PhyslibExt.Chemistry.AngularMomentumRotorHydrogen`, plus
 These are elaboration and non-vacuity checks, not new results: concrete commutator, Casimir
 and `Lz` values; the irreducibility theorems applied to an invariant subspace that contains a
 basis vector; rotor and hydrogen values; the principal-quantum-number domain `ℕ+` of the
-hydrogen levels and Rydberg lines; the bridge to Physlib's Bohr levels; and the filling counts.
+hydrogen levels, degeneracies and Rydberg lines; the bridge to Physlib's Bohr levels; and the
+shell and orbital counts.
 
 ## ii. Key results
 
@@ -36,7 +37,7 @@ No new definitions or results are introduced here.
 
 - A. Angular momentum
 - B. Rigid rotor and hydrogen-like atom
-- C. Filling heuristics
+- C. Shell capacity and Hund's rule
 - D. Axiom diagnostics
 
 ## iv. References
@@ -56,7 +57,7 @@ open PhyslibExt.Chemistry.AngularMomentumRotorHydrogen
 
 /-- Concrete spin-1/2 commutator entry at `hbar = 1`. -/
 theorem test_spinHalf_commutator_entry :
-    (commutator (spinHalfJx 1) (spinHalfJy 1)) 0 0 = Complex.I / 2 := by
+    ⁅spinHalfJx 1, spinHalfJy 1⁆ 0 0 = Complex.I / 2 := by
   rw [(spinHalf_commutators 1).1]
   simp [spinHalfJz, PauliMatrix.pauliMatrix]
   ring
@@ -69,7 +70,7 @@ theorem test_spinHalf_casimir_entry :
 
 /-- The `l = 0` commutator and Casimir at `hbar = 1`. -/
 theorem test_lZero :
-    commutator lZeroL lZeroL = (Complex.I * ((1 : ℝ) : ℂ)) • lZeroL ∧
+    ⁅lZeroL, lZeroL⁆ = (Complex.I * ((1 : ℝ) : ℂ)) • lZeroL ∧
       lZeroL ^ 2 + lZeroL ^ 2 + lZeroL ^ 2 = 0 :=
   ⟨lZero_commutator 1, lZero_casimir⟩
 
@@ -146,10 +147,17 @@ theorem test_hydrogenEnergy_neg {Z R : ℝ} (hZ : Z ≠ 0) (hR : 0 < R) (n : ℕ
 theorem test_hydrogenEnergy_ground (Z R : ℝ) : hydrogenEnergy Z R 1 = -(Z ^ 2 * R) := by
   simp [hydrogenEnergy]
 
+/-- Concrete hydrogen degeneracy: the ground level `n = 1` has one orbital state. -/
+theorem test_hydrogen_degeneracy_ground :
+    ∑ l ∈ Finset.range ((1 : ℕ+) : ℕ), (2 * l + 1) = 1 := by
+  rw [hydrogen_degeneracy]
+  rfl
+
 /-- Concrete hydrogen degeneracy at `n = 2`. -/
 theorem test_hydrogen_degeneracy_two :
-    ∑ l ∈ Finset.range 2, (2 * l + 1) = 4 := by
-  simp [hydrogen_degeneracy]
+    ∑ l ∈ Finset.range ((2 : ℕ+) : ℕ), (2 * l + 1) = 4 := by
+  rw [hydrogen_degeneracy]
+  rfl
 
 /-- The 2s radial node at `r = 2`. -/
 theorem test_hydrogenRadial20_node : hydrogenRadial20 2 = 0 := by
@@ -174,11 +182,12 @@ theorem test_energyLevel_ground (H : QuantumMechanics.HydrogenAtom) (hd : H.d = 
     H.energyLevel 0 = hydrogenEnergy 1 H.rydbergEnergy 1 :=
   energyLevel_eq_hydrogenEnergy H hd 0
 
-/-! ## C. Filling heuristics -/
+/-! ## C. Shell capacity and Hund's rule -/
 
-/-- Concrete Aufbau capacity at `N = 2`. -/
-theorem test_aufbau_two : ∑ n ∈ Finset.Icc (1 : ℕ) 2, 2 * ((n : ℝ)) ^ 2 = 10 := by
-  rw [aufbau_shellCapacity]
+/-- Concrete capacity of the principal shells `n ≤ 2`: `2 + 8 = 10` electrons. -/
+theorem test_principalShells_capacity_two :
+    ∑ n ∈ Finset.Icc (1 : ℕ) 2, 2 * ((n : ℝ)) ^ 2 = 10 := by
+  rw [principalShells_capacity]
   norm_num
 
 /-- Concrete Hund count. -/
@@ -187,7 +196,6 @@ theorem test_hundUnpaired_three_three : hundUnpaired 3 3 = 3 := by
 
 /-! ## D. Axiom diagnostics -/
 
-#print axioms commutator_eq_lie
 #print axioms lZero_commutator
 #print axioms lZero_casimir
 #print axioms spinHalf_commutators
@@ -204,6 +212,7 @@ theorem test_hundUnpaired_three_three : hundUnpaired 3 3 = 3 := by
 #print axioms sphericalHarmonic10_at_pole
 #print axioms rigidRotorEnergy_l1
 #print axioms hydrogenEnergy_scaling
+#print axioms sum_range_odd_eq_sq
 #print axioms hydrogen_degeneracy
 #print axioms hydrogen_degeneracy_spin
 #print axioms radialResidual_1s
@@ -215,7 +224,7 @@ theorem test_hundUnpaired_three_three : hundUnpaired 3 3 = 3 := by
 #print axioms rydbergWavenumber_pos
 #print axioms energyLevel_eq_hydrogenEnergy
 #print axioms wavelength_inv_eq_rydbergWavenumber
-#print axioms aufbau_shellCapacity
+#print axioms principalShells_capacity
 #print axioms hundUnpaired_le_g
 
 end PhyslibExtTest.Chemistry.AngularMomentumRotorHydrogen

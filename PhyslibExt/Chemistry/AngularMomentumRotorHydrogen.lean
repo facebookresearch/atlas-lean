@@ -36,7 +36,8 @@ import Mathlib.Tactic.Ring
 # Angular momentum, rigid rotor and hydrogen-like atom
 
 Explicit `l = 0, 1/2, 1` angular-momentum representations, the rigid rotor, hydrogen-like
-radial functions and levels, the Rydberg formula, and the Aufbau and Hund counting rules.
+radial functions and levels, the Rydberg formula, principal-shell capacities, and Hund's
+unpaired-electron count.
 
 ## i. Overview
 
@@ -48,9 +49,10 @@ Physlib's Pauli matrices `PauliMatrix.pauliMatrix` for `l = 1/2`, and `lOneLx`, 
 `[Jx, Jy] = i hbar Jz` (and cyclic), the Casimir value `J^2 = l (l + 1) hbar^2`, and
 irreducibility: for `hbar ≠ 0` every subspace of the carrier `Fin (2 * l + 1) → ℂ` invariant
 under `Jx` and `Jz` is `⊥` or `⊤`. The classification of all finite-dimensional irreducible
-representations is not proved. `commutator A B = A * B - B * A` is Mathlib's ring commutator
-`⁅A, B⁆` (`commutator_eq_lie`). Physlib's operator-level angular momentum on Schwartz functions
-(`QuantumMechanics.angularMomentumDimThreeOperator`, with the commutation relations
+representations is not proved. Commutators are Mathlib's ring commutator
+`⁅A, B⁆ = A * B - B * A` (`Ring.lie_def`). Physlib's operator-level angular momentum on
+Schwartz functions (`QuantumMechanics.angularMomentumDimThreeOperator`, with the commutation
+relations
 `QuantumMechanics.angularMomentumDimThree_commutation`) satisfies the same relations; no bridge
 between those operators and the matrices here is built.
 
@@ -64,12 +66,17 @@ radial functions `R_10`, `R_20`, `R_21` are in atomic units with `Z = 1`: their 
 proved with `HasDerivAt`, and substituted into the radial equation they give the energies
 `-1/2` and `-1/8` (`radialResidual_1s`, `radialResidual_2s`, `radialResidual_2p`, an algebraic
 identity at each `r ≠ 0`). The levels `E_n = -Z^2 R / n^2` and the Rydberg wavenumbers are
-indexed by the principal quantum number `n : ℕ+`, and they agree with Physlib's Bohr levels and
-Rydberg formula for a three-dimensional `QuantumMechanics.HydrogenAtom`
+indexed by the principal quantum number `n : ℕ+`, as is the degeneracy `n^2` of level `n`
+(`hydrogen_degeneracy`, from the arithmetic identity `sum_range_odd_eq_sq`). The levels and
+lines agree with Physlib's Bohr levels and Rydberg formula for a three-dimensional
+`QuantumMechanics.HydrogenAtom`
 (`energyLevel_eq_hydrogenEnergy`, `wavelength_inv_eq_rydbergWavenumber`).
 
-The Aufbau shell capacity and Hund's unpaired-electron count are counting forms of empirical
-filling heuristics, not theorems about real atoms.
+The principal shells `n ≤ N`, each holding `2 n^2` electrons, hold
+`N (N + 1) (2 N + 1) / 3` electrons in total (`principalShells_capacity`); this counts complete
+principal shells and is not the Aufbau filling order, in which for example `4s` fills before
+`3d`. Hund's unpaired-electron count is the counting form of an empirical rule, not a theorem
+about real atoms.
 
 ## ii. Key results
 
@@ -80,13 +87,13 @@ filling heuristics, not theorems about real atoms.
 - `rigidRotorEnergy_spacing`, `rigidRotorMagnetic_count`: rotor spacing and degeneracy.
 - `l1_Lz_eigenvalues`: `Lz` has eigenvalues `hbar, 0, -hbar` in the `l = 1` matrices.
 - `hydrogenEnergy_scaling`, `hydrogen_degeneracy`, `hydrogen_degeneracy_spin`: levels and
-  degeneracies `n^2` and `2 n^2`.
+  degeneracies `n^2` and `2 n^2` for `n : ℕ+`; `sum_range_odd_eq_sq`: the counting identity.
 - `radialResidual_1s`, `radialResidual_2s`, `radialResidual_2p` with
   `hydrogenRadial_deriv_1s`, `hydrogenRadial_deriv_2s`, `hydrogenRadial_deriv_2p`: the
   `1s`, `2s`, `2p` radial eigen-equations.
 - `rydbergWavenumber_pos`: emission lines have positive wavenumber.
 - `energyLevel_eq_hydrogenEnergy`, `wavelength_inv_eq_rydbergWavenumber`: bridges to Physlib.
-- `aufbau_shellCapacity`, `hundUnpaired_le_g`: filling counts.
+- `principalShells_capacity`, `hundUnpaired_le_g`: shell and orbital counts.
 
 ## iii. Table of contents
 
@@ -94,7 +101,7 @@ filling heuristics, not theorems about real atoms.
 - B. Irreducibility
 - C. Rigid rotor and spherical harmonics
 - D. Hydrogen-like atom
-- E. Filling heuristics
+- E. Shell capacity and Hund's rule
 
 ## iv. References
 
@@ -105,7 +112,7 @@ filling heuristics, not theorems about real atoms.
   University Press, 2018, Chapter 4 (quantum mechanics in three dimensions): angular momentum,
   spin, the hydrogen atom, its radial functions and spectrum, and the Rydberg formula.
 - P. Atkins and J. de Paula, *Atkins' Physical Chemistry*, Oxford University Press: the rigid
-  rotor, the hydrogen atom, the building-up (Aufbau) principle and Hund's rules.
+  rotor, the hydrogen atom, atomic shell structure and Hund's rules.
 -/
 
 @[expose] public section
@@ -116,17 +123,6 @@ open scoped BigOperators
 open scoped Matrix
 
 /-! ## A. Angular-momentum matrices -/
-
-/-- Commutator `[A, B] = A * B - B * A`, Mathlib's ring commutator `⁅A, B⁆`
-(`commutator_eq_lie`). -/
-noncomputable def commutator {n : ℕ} (A B : Matrix (Fin n) (Fin n) ℂ) :
-    Matrix (Fin n) (Fin n) ℂ :=
-  A * B - B * A
-
-/-- `commutator` is Mathlib's ring commutator `⁅A, B⁆` (`Ring.lie_def`). -/
-lemma commutator_eq_lie {n : ℕ} (A B : Matrix (Fin n) (Fin n) ℂ) :
-    commutator A B = ⁅A, B⁆ :=
-  (Ring.lie_def A B).symm
 
 /-- Each component `Lx = Ly = Lz` of the `l = 0` angular momentum (the trivial
 representation) is the zero operator on the one-dimensional carrier `Fin 1 → ℂ`. -/
@@ -163,8 +159,8 @@ noncomputable def lOneLz (hbar : ℝ) : Matrix (Fin 3) (Fin 3) ℂ :=
 /-- `l = 0` commutation relations: the commutator of the zero components is `i hbar` times
 the zero component. -/
 lemma lZero_commutator (hbar : ℝ) :
-    commutator lZeroL lZeroL = (Complex.I * (hbar : ℂ)) • lZeroL := by
-  simp [commutator, lZeroL]
+    ⁅lZeroL, lZeroL⁆ = (Complex.I * (hbar : ℂ)) • lZeroL := by
+  simp [lZeroL, Ring.lie_def]
 
 /-- `l = 0` Casimir: `L^2 = 0`, since `l (l + 1) = 0`. -/
 lemma lZero_casimir : lZeroL ^ 2 + lZeroL ^ 2 + lZeroL ^ 2 = 0 := by
@@ -174,17 +170,17 @@ lemma lZero_casimir : lZeroL ^ 2 + lZeroL ^ 2 + lZeroL ^ 2 = 0 := by
 Physlib's Pauli commutators `PauliMatrix.σ1_σ2_commutator`, `PauliMatrix.σ2_σ3_commutator`
 and `PauliMatrix.σ3_σ1_commutator`. -/
 theorem spinHalf_commutators (hbar : ℝ) :
-    commutator (spinHalfJx hbar) (spinHalfJy hbar) =
+    ⁅spinHalfJx hbar, spinHalfJy hbar⁆ =
       (Complex.I * (hbar : ℂ)) • spinHalfJz hbar ∧
-    commutator (spinHalfJy hbar) (spinHalfJz hbar) =
+    ⁅spinHalfJy hbar, spinHalfJz hbar⁆ =
       (Complex.I * (hbar : ℂ)) • spinHalfJx hbar ∧
-    commutator (spinHalfJz hbar) (spinHalfJx hbar) =
+    ⁅spinHalfJz hbar, spinHalfJx hbar⁆ =
       (Complex.I * (hbar : ℂ)) • spinHalfJy hbar := by
   have key : ∀ a b c : Matrix (Fin 2) (Fin 2) ℂ, a * b - b * a = (2 * Complex.I) • c →
-      commutator (((hbar : ℂ) / 2) • a) (((hbar : ℂ) / 2) • b) =
+      ⁅((hbar : ℂ) / 2) • a, ((hbar : ℂ) / 2) • b⁆ =
         (Complex.I * (hbar : ℂ)) • (((hbar : ℂ) / 2) • c) := by
     intro a b c h
-    rw [commutator, smul_mul_smul_comm, smul_mul_smul_comm, ← smul_sub, h, smul_smul,
+    rw [Ring.lie_def, smul_mul_smul_comm, smul_mul_smul_comm, ← smul_sub, h, smul_smul,
       smul_smul]
     congr 1
     ring
@@ -203,11 +199,11 @@ theorem spinHalf_casimir (hbar : ℝ) :
 
 /-- l = 1 angular-momentum commutators `[Lx, Ly] = i * hbar * Lz` (and cyclic). -/
 theorem lOne_commutators (hbar : ℝ) :
-    commutator (lOneLx hbar) (lOneLy hbar) =
+    ⁅lOneLx hbar, lOneLy hbar⁆ =
       (Complex.I * (hbar : ℂ)) • lOneLz hbar ∧
-    commutator (lOneLy hbar) (lOneLz hbar) =
+    ⁅lOneLy hbar, lOneLz hbar⁆ =
       (Complex.I * (hbar : ℂ)) • lOneLx hbar ∧
-    commutator (lOneLz hbar) (lOneLx hbar) =
+    ⁅lOneLz hbar, lOneLx hbar⁆ =
       (Complex.I * (hbar : ℂ)) • lOneLy hbar := by
   have hsq : ((Real.sqrt 2 : ℝ) : ℂ) ^ 2 = 2 := by
     exact_mod_cast Real.sq_sqrt (show (0 : ℝ) ≤ 2 by norm_num)
@@ -221,7 +217,7 @@ theorem lOne_commutators (hbar : ℝ) :
     rw [pow_two]
     exact Complex.I_mul_I
   refine ⟨?_, ?_, ?_⟩ <;> ext i j <;> fin_cases i <;> fin_cases j
-  all_goals simp [commutator, lOneLx, lOneLy, lOneLz, Matrix.mul_apply,
+  all_goals simp [Ring.lie_def, lOneLx, lOneLy, lOneLz, Matrix.mul_apply,
     Matrix.sub_apply, Matrix.smul_apply, Fin.sum_univ_three,
     Matrix.cons_val_zero, Matrix.cons_val_one]
   all_goals (try field_simp [hs0])
@@ -578,16 +574,23 @@ theorem hydrogenEnergy_scaling (Z R : ℝ) (n : ℕ+) :
   unfold hydrogenEnergy
   simp
 
-/-- Hydrogen degeneracy by counting: `sum_{l<n} (2l+1) = n^2`. -/
-theorem hydrogen_degeneracy (n : ℕ) :
+/-- The first `n` odd numbers sum to `n ^ 2`: `sum_{l<n} (2l+1) = n^2`. -/
+lemma sum_range_odd_eq_sq (n : ℕ) :
     ∑ l ∈ Finset.range n, (2 * l + 1) = n ^ 2 := by
   induction n with
   | zero => decide
   | succ k ih => rw [Finset.sum_range_succ, ih] <;> ring
 
-/-- With spin, the degeneracy is `2 * n^2`. -/
-lemma hydrogen_degeneracy_spin (n : ℕ) :
-    2 * (∑ l ∈ Finset.range n, (2 * l + 1)) = 2 * n ^ 2 := by
+/-- Hydrogen degeneracy: the level with principal quantum number `n : ℕ+` has orbital quantum
+numbers `l < n`, each with `2 l + 1` magnetic sublevels, so `n ^ 2` orbital states
+(`sum_range_odd_eq_sq`). -/
+theorem hydrogen_degeneracy (n : ℕ+) :
+    ∑ l ∈ Finset.range (n : ℕ), (2 * l + 1) = (n : ℕ) ^ 2 :=
+  sum_range_odd_eq_sq n
+
+/-- With spin, the level with principal quantum number `n : ℕ+` holds `2 * n^2` states. -/
+lemma hydrogen_degeneracy_spin (n : ℕ+) :
+    2 * (∑ l ∈ Finset.range (n : ℕ), (2 * l + 1)) = 2 * (n : ℕ) ^ 2 := by
   rw [hydrogen_degeneracy]
 
 /-- 1s eigen-equation, algebraic form: with `R'' = R` and `R' = -R`, the radial
@@ -767,17 +770,18 @@ lemma wavelength_inv_eq_rydbergWavenumber (H : QuantumMechanics.HydrogenAtom) (h
     Nat.succPNat_coe, Nat.cast_succ, Nat.cast_succ]
   norm_num
 
-/-! ## E. Filling heuristics -/
+/-! ## E. Shell capacity and Hund's rule -/
 
-/-- Hund's rule (empirical heuristic, counting form): unpaired electrons for
-`e` electrons in a shell of degeneracy `g`. Meaningful for `e ≤ 2 * g`, the capacity of the
-shell; for larger `e` the truncated subtraction returns `0`. -/
+/-- Hund's rule (empirical heuristic, counting form): unpaired electrons when `e` electrons
+occupy `g` degenerate orbitals singly before pairing. Meaningful for `e ≤ 2 * g`, the capacity
+of the orbitals; for larger `e` the truncated subtraction returns `0`. -/
 noncomputable def hundUnpaired (e g : ℕ) : ℕ := min e (2 * g - e)
 
-/-- Aufbau shell capacity: filling shells `1..N` with `2 * n^2` electrons each
-holds `N * (N+1) * (2*N+1) / 3` electrons (an empirical filling rule, not a
-derived theorem about real atoms). -/
-lemma aufbau_shellCapacity (N : ℕ) :
+/-- Capacity of the principal shells `n = 1, ..., N`: with `2 * n^2` electrons in shell `n`
+(`hydrogen_degeneracy_spin`), they hold `N * (N+1) * (2*N+1) / 3` electrons. This counts
+complete principal shells; it is not the Aufbau filling order, in which for example `4s` fills
+before `3d`. -/
+lemma principalShells_capacity (N : ℕ) :
     ∑ n ∈ Finset.Icc 1 N, 2 * ((n : ℝ)) ^ 2 =
       (N : ℝ) * ((N : ℝ) + 1) * (2 * (N : ℝ) + 1) / 3 := by
   induction N with
@@ -794,7 +798,7 @@ lemma aufbau_shellCapacity (N : ℕ) :
         omega
       rw [hset, Finset.sum_insert hmem, ih] <;> push_cast <;> ring
 
-/-- Hund's unpaired count never exceeds the shell degeneracy. -/
+/-- Hund's unpaired count never exceeds the number `g` of degenerate orbitals. -/
 lemma hundUnpaired_le_g {e g : ℕ} (he : e ≤ 2 * g) : hundUnpaired e g ≤ g := by
   unfold hundUnpaired <;> omega
 
