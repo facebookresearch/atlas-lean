@@ -341,8 +341,8 @@ theorem fTest_size_eq {m k r : Type*} [Fintype m] [DecidableEq m] [Fintype k]
 
 /-- **Exact `F` confidence region for `C β`.** In `y = X β + ε` with full-rank `X`, `σ > 0`,
 `σ⁻¹ ε` i.i.d. standard normal, a full-row-rank `C` with `q = card r ≥ 1`, `p < n`, and
-`α ∈ (0, 1)`, the region `{γ | F(γ; y) ≤ cdfQuantile (F(q, n - p)) (1 - α)}` (an ellipsoid
-centred at `C β̂`) contains the true `C β` with probability exactly `1 - α`, for every `β`. -/
+`α ∈ (0, 1)`, the region `{γ | F(γ; y) ≤ cdfQuantile (F(q, n - p)) (1 - α)}` contains the true
+`C β` with probability exactly `1 - α`, for every `β`. -/
 theorem fConfidenceRegion_coverage_eq {m k r : Type*} [Fintype m] [DecidableEq m] [Fintype k]
     [DecidableEq k] [Fintype r] [DecidableEq r]
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {X : Matrix m k ℝ} {C : Matrix r k ℝ}
