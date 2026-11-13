@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.Survival.ProcessInference
+import MathlibExt.Probability.Statistics.Slutsky
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.LocalExtr.Basic
 import Mathlib.MeasureTheory.Measure.Portmanteau
@@ -46,11 +47,13 @@ information identity: `Uₙ(β₀)` is a martingale whose predictable variation 
 * `tendstoInDistribution_coxMPLE_gaussian` (**asymptotic normality**, Andersen–Gill Theorem
   3.3): `√n (βhat n - β₀) ⟶ Z / v` and `Z / v ~ N(0, v⁻¹)`: the asymptotic variance is the
   inverse of the limiting information. `tendstoInDistribution_coxMPLE` is the limit statement
-  for an arbitrary score limit `Z`.
+  for an arbitrary score limit `Z`. Both assume the estimator is measurable,
+  `AEMeasurable (βhat n) P`.
 * `tendstoInMeasure_coxInformation_coxMPLE`: `Iₙ(βhat n) / n → v` in probability.
 * `tendsto_coverage_cox_waldInterval_coxMPLE`: the Wald interval `βhat n ± c / √(Iₙ(βhat n))`
   has asymptotic coverage equal to the standard-normal mass of `[-c, c]`; this discharges the
-  limit hypotheses of `ProcessInference.tendsto_coverage_cox_waldInterval`.
+  limit hypotheses of `ProcessInference.tendsto_coverage_cox_waldInterval`. It assumes the
+  estimator and the model-based standard deviation `√(n / Iₙ(βhat n))` are measurable.
 
 The deterministic core: `riskVar_nonneg` and `antitone_coxScore` (concavity),
 `isMaxOn_of_coxScore_eq_zero` and `coxScore_eq_zero_of_isMaxOn` (maximizers are the roots of the
@@ -318,21 +321,6 @@ theorem tendstoInMeasure_div_sqrt {X : ℕ → Ω → ℝ} {Z : Ω' → ℝ}
   rw [div_lt_iff₀ hε] at hn'
   change M ≤ |X n ω|
   nlinarith
-
-omit [IsProbabilityMeasure P] in
-/-- **Continuous mapping for convergence in probability to a constant.** If `f n → c` in
-probability and `g` is continuous at `c`, then `g ∘ f n → g c` in probability. -/
-theorem tendstoInMeasure_comp_continuousAt_const {f : ℕ → Ω → ℝ} {c : ℝ} {g : ℝ → ℝ}
-    (hf : TendstoInMeasure P f atTop (fun _ => c)) (hg : ContinuousAt g c) :
-    TendstoInMeasure P (fun n ω => g (f n ω)) atTop (fun _ => g c) := by
-  rw [tendstoInMeasure_iff_dist] at hf ⊢
-  intro ε hε
-  obtain ⟨η, hη, hη'⟩ := Metric.continuousAt_iff.1 hg ε hε
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds (hf η hη)
-    (fun _ => zero_le) fun n => measure_mono fun ω (hω : ε ≤ dist (g (f n ω)) (g c)) => ?_
-  change η ≤ dist (f n ω) c
-  by_contra h
-  exact absurd (hη' (lt_of_not_ge h)) (not_lt.2 hω)
 
 omit [IsProbabilityMeasure P'] in
 /-- Dividing a centered Gaussian of variance `v ≠ 0` by `v` gives variance `v⁻¹`. -/
@@ -619,9 +607,12 @@ theorem tendstoInMeasure_coxInformation_coxMPLE (hv : v ≠ 0)
   linarith
 
 /-- **Coverage of the Cox Wald interval under the Andersen–Gill conditions.** Under the hypotheses
-of `tendstoInDistribution_coxMPLE`, the Wald interval `βhat n ± c / √(I_n(βhat n))` covers the
-true coefficient `β₀` with probability tending to the standard-normal mass of `[-c, c]`. This
-discharges the two limit hypotheses of `ProcessInference.tendsto_coverage_cox_waldInterval`
+of `tendstoInDistribution_coxMPLE_gaussian` (including the Gaussian law `hZ` of the score limit
+and measurability of `βhat n`), and assuming the model-based standard deviation
+`√(n / Iₙ(βhat n))` is a.e.-measurable (`hsd_meas`), the Wald interval
+`βhat n ± c / √(Iₙ(βhat n))` covers the true coefficient `β₀` with probability tending to the
+standard-normal mass of `[-c, c]`. This discharges the two limit hypotheses of
+`ProcessInference.tendsto_coverage_cox_waldInterval`
 (the estimator limit and the consistency of the model-based standard deviation). -/
 theorem tendsto_coverage_cox_waldInterval_coxMPLE (hv : v ≠ 0)
     (hβhat : ∀ n ω, (∃ b, IsMaxOn (logPartialLikelihood₁ (T n ω) (δ n ω) (z n ω)) Set.univ b) →
@@ -641,9 +632,8 @@ theorem tendsto_coverage_cox_waldInterval_coxMPLE (hv : v ≠ 0)
       (𝓝 ((gaussianReal 0 1).real (Set.Icc (-c) c))) := by
   have hv' : (v : ℝ) ≠ 0 := by exact_mod_cast hv
   have hAN := tendstoInDistribution_coxMPLE hv hβhat hβhat_meas hscore hi hiv hinfo hr
-  have hsd := tendstoInMeasure_comp_continuousAt_const (g := fun x => √(x⁻¹))
-    (tendstoInMeasure_coxInformation_coxMPLE hv hβhat hscore hi hiv hinfo hr)
-    ((continuousAt_inv₀ hv').sqrt)
+  have hsd := (tendstoInMeasure_coxInformation_coxMPLE hv hβhat hscore hi hiv hinfo hr
+    ).comp_const_of_continuousAt (f := fun x => √(x⁻¹)) ((continuousAt_inv₀ hv').sqrt)
   refine ProcessInference.tendsto_coverage_cox_waldInterval (inv_ne_zero hv) c hAN
     (hasLaw_div_gaussianReal hv hZ) ?_ hsd_meas
   convert hsd using 3 with n ω
