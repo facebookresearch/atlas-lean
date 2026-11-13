@@ -38,19 +38,22 @@ No new definitions or results are introduced here.
 /-- Concrete case: `σ = 1`, `T = 2`, integrated flux `16`. -/
 example : ∫ θ in (0 : ℝ)..(Real.pi / 2),
     ((1 : ℝ) * (2 : ℝ) ^ 4 / Real.pi) * Real.cos θ * (2 * Real.pi * Real.sin θ) = 16 := by
-  rw [EarthScience.integrated_blackbody_flux_eq (by norm_num : (0 : ℝ) ≤ 2)]
+  rw [EarthScience.integrated_blackbody_flux_eq (by norm_num : (0 : ℝ) ≤ 1)
+    (by norm_num : (0 : ℝ) ≤ 2)]
   norm_num
 
 /-- Boundary case: `σ = 0` gives flux `0`. -/
 example : ∫ θ in (0 : ℝ)..(Real.pi / 2),
     ((0 : ℝ) * (300 : ℝ) ^ 4 / Real.pi) * Real.cos θ * (2 * Real.pi * Real.sin θ) = 0 := by
-  rw [EarthScience.integrated_blackbody_flux_eq (by norm_num : (0 : ℝ) ≤ 300)]
+  rw [EarthScience.integrated_blackbody_flux_eq (le_refl (0 : ℝ))
+    (by norm_num : (0 : ℝ) ≤ 300)]
   simp
 
 /-- Boundary case: absolute zero, `σ = 3`, `T = 0`, gives flux `0`. -/
 example : ∫ θ in (0 : ℝ)..(Real.pi / 2),
     ((3 : ℝ) * (0 : ℝ) ^ 4 / Real.pi) * Real.cos θ * (2 * Real.pi * Real.sin θ) = 0 := by
-  rw [EarthScience.integrated_blackbody_flux_eq (le_refl (0 : ℝ))]
+  rw [EarthScience.integrated_blackbody_flux_eq (by norm_num : (0 : ℝ) ≤ 3)
+    (le_refl (0 : ℝ))]
   simp
 
 /-- Nonnegativity: `σ = 3`, `T = 2`. -/
