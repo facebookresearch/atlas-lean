@@ -49,7 +49,7 @@ The model is the intercept-only negative binomial regression with offsets `log s
   numerator of the Dean–Lawless (1989) score statistic for overdispersion. At a common size factor
   it is T86's `M < V` (`overdispersed_const_iff`). The proof uses the profile: `b̂` is continuous,
   the profile is positive near `a = 0`, and by `sq_mul_shapeScore_le` and `tendsto_div_rateRoot`
-  `a² · profile(a) → (∑ᵢ kᵢ - ∑ᵢ (kᵢ - sᵢ μ̂)²) / 2 < 0` as `a → ∞`.
+  `a² · profile(a)` is at most a term tending to `(∑ᵢ kᵢ - ∑ᵢ (kᵢ - sᵢ μ̂)²) / 2 < 0` as `a → ∞`.
 * Consistency, with i.i.d. pairs `(Sᵢ, Kᵢ)` of a positive size factor and a count:
   `ae_tendsto_rateRoot` (strong consistency of `b̂ₙ(a)` for the population rate root);
   `popRateScoreLog_eq_zero_of_condMean` (the true `(a₀, b₀)` solve the population rate equation
