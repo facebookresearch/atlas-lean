@@ -14,7 +14,6 @@ public import Mathlib.LinearAlgebra.Matrix.Trace
 public import MathlibExt.LinearAlgebra.Matrix.MMatrix
 import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.LinearAlgebra.Matrix.ToLinearEquiv
-import MathlibExt.Biology.Dynamics.TuringPatterns
 
 /-!
 # Trace–determinant stability of planar linearizations
@@ -37,10 +36,10 @@ models such as `MathlibExt.Biology.Biophysics.FitzHughNagumo`, and relates it to
   the open left half-plane iff `τ < 0 < Δ`. `isHurwitz_iff_isLinearlyStable` identifies
   `M.IsHurwitz` with `IsLinearlyStable (tr M) (det M)`, so `isHurwitz_iff_trace_neg_and_det_pos`:
   `M` is Hurwitz iff `tr M < 0 < det M`.
-* **Instability.** `exists_spectrum_re_pos_iff`: `M` has an eigenvalue with positive real part
-  iff `0 < tr M` or `det M < 0`. This is `TuringPatterns.exists_eigenvalue_re_pos_iff`, restated
-  for the spectrum; `isLinearlyUnstable_iff`, the same criterion for `(τ, Δ)`, follows from it
-  through the companion matrix `!![0, -Δ; 1, τ]`.
+* **Instability.** `isLinearlyUnstable_iff`: some root lies in the open right half-plane iff
+  `0 < τ` or `Δ < 0`; `exists_spectrum_re_pos_iff`: `M` has an eigenvalue with positive real part
+  iff `0 < tr M` or `det M < 0`. `TuringPatterns.exists_eigenvalue_re_pos_iff` is the
+  eigenvector form of the latter and is derived from it.
 * **Classification.** `linearType τ Δ` sorts a planar linearization into saddle, degenerate,
   center, stable or unstable node, and stable or unstable focus (`linearType_eq_*_iff`);
   `isLinearlyStable_iff_linearType` and `isLinearlyUnstable_of_linearType` relate the classes to
@@ -216,27 +215,30 @@ theorem isHurwitz_iff_trace_neg_and_det_pos (M : Matrix (Fin 2) (Fin 2) ℝ) :
     M.IsHurwitz ↔ M.trace < 0 ∧ 0 < M.det := by
   rw [isHurwitz_iff_isLinearlyStable, isLinearlyStable_iff]
 
+/-- **Instability criterion for planar systems.** Some root of `z² - τ z + Δ` lies in the open
+right half-plane iff `τ > 0` or `Δ < 0`. -/
+theorem isLinearlyUnstable_iff : IsLinearlyUnstable τ Δ ↔ 0 < τ ∨ Δ < 0 := by
+  constructor
+  · rintro ⟨z, hz, hre⟩
+    by_contra hc
+    push Not at hc
+    obtain ⟨h1, h2⟩ := hz.re_im
+    rcases mul_eq_zero.1 h2 with him | hre'
+    · rw [him] at h1
+      nlinarith [mul_nonneg (neg_nonneg.2 hc.1) hre.le]
+    · linarith
+  · rintro (hτ | hΔ)
+    · obtain ⟨z, hz, h1, -, -⟩ := exists_isCharRoot τ Δ
+      exact ⟨z, hz, by linarith⟩
+    · obtain ⟨z, hz, -, h2, -⟩ := exists_isCharRoot τ Δ
+      exact ⟨z, hz, h2 hΔ⟩
+
 /-- **Instability criterion for `2 × 2` matrices.** A real `2 × 2` matrix has a complex eigenvalue
-with positive real part iff its trace is positive or its determinant negative. This is
-`TuringPatterns.exists_eigenvalue_re_pos_iff`, restated for the spectrum used by
-`Matrix.IsHurwitz`. -/
+with positive real part iff its trace is positive or its determinant negative. -/
 theorem exists_spectrum_re_pos_iff (M : Matrix (Fin 2) (Fin 2) ℝ) :
     (∃ μ ∈ spectrum ℂ (M.map (algebraMap ℝ ℂ)), 0 < μ.re) ↔ 0 < M.trace ∨ M.det < 0 := by
-  rw [← TuringPatterns.exists_eigenvalue_re_pos_iff M]
-  simp only [mem_spectrum_iff_exists_mulVec_eq_smul]
-  exact ⟨fun ⟨μ, hμ, hre⟩ => ⟨μ, hre, hμ⟩, fun ⟨μ, hre, hμ⟩ => ⟨μ, hμ, hre⟩⟩
-
-/-- **Instability criterion for planar systems.** Some root of `z² - τ z + Δ` lies in the open
-right half-plane iff `τ > 0` or `Δ < 0`: `exists_spectrum_re_pos_iff` for the companion matrix
-`!![0, -Δ; 1, τ]`, whose trace is `τ` and determinant `Δ`. -/
-theorem isLinearlyUnstable_iff : IsLinearlyUnstable τ Δ ↔ 0 < τ ∨ Δ < 0 := by
-  have htr : (!![0, -Δ; 1, τ] : Matrix (Fin 2) (Fin 2) ℝ).trace = τ := by
-    simp [Matrix.trace_fin_two]
-  have hdet : (!![0, -Δ; 1, τ] : Matrix (Fin 2) (Fin 2) ℝ).det = Δ := by
-    simp [Matrix.det_fin_two]
-  have h := exists_spectrum_re_pos_iff (!![0, -Δ; 1, τ] : Matrix (Fin 2) (Fin 2) ℝ)
-  simp only [mem_spectrum_iff_isCharRoot, htr, hdet] at h
-  exact h
+  rw [← isLinearlyUnstable_iff, IsLinearlyUnstable]
+  simp only [mem_spectrum_iff_isCharRoot]
 
 end Stability
 

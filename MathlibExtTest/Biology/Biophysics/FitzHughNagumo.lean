@@ -14,9 +14,9 @@ import MathlibExt.Biology.Biophysics.FitzHughNagumo
 (FitzHugh's `b = 0.8`; `a` chosen so that the rest state is rational): the rest state
 `(v*, w*) = (-3/2, -3/8)` and its uniqueness, its linearization type, the trapping ellipse checked
 pointwise on its boundary from the definitions (and a non-trapping small ellipse), boundary probes
-of the classification (center, saddle), and sub- vs super-threshold pulses, both by the
-definitions and through the full dynamics (`single_pulse_response` along solutions given by
-`exists_isSolution`, with `ε = 10⁻⁵`). -/
+of the classification (center, saddle), and pulses after which the voltage falls or rises, both
+by the definitions and through the full dynamics (`single_pulse_response` along solutions given
+by `exists_isSolution`, with `ε = 10⁻⁵`). -/
 
 open Real Set
 
@@ -151,46 +151,47 @@ example {v w : ℝ → ℝ} (h : IsSolution (6 / 5) (4 / 5) (2 / 25) 0 v w)
 
 /-! ### Single pulses from the rest state: definitions -/
 
-/-- `δ = 1/2`: `vField 0 (-1) (-3/8) = -7/24 < 0`, sub-threshold. -/
-example : IsSubThreshold 0 (-3 / 2) (-3 / 8) (1 / 2) := by norm_num [IsSubThreshold, vField]
+/-- `δ = 1/2`: `vField 0 (-1) (-3/8) = -7/24 < 0`, the voltage falls after the pulse. -/
+example : IsFallingAfterPulse 0 (-3 / 2) (-3 / 8) (1 / 2) := by
+  norm_num [IsFallingAfterPulse, vField]
 
-/-- `δ = 2`: `vField 0 (1/2) (-3/8) = 5/6 > 0`, super-threshold. -/
-example : IsSuperThreshold 0 (-3 / 2) (-3 / 8) 2 := by norm_num [IsSuperThreshold, vField]
+/-- `δ = 2`: `vField 0 (1/2) (-3/8) = 5/6 > 0`, the voltage rises after the pulse. -/
+example : IsRisingAfterPulse 0 (-3 / 2) (-3 / 8) 2 := by norm_num [IsRisingAfterPulse, vField]
 
 /-- `δ = 4` overshoots the excited branch: `vField 0 (5/2) (-3/8) = -7/3 < 0`. -/
-example : IsSubThreshold 0 (-3 / 2) (-3 / 8) 4 := by norm_num [IsSubThreshold, vField]
+example : IsFallingAfterPulse 0 (-3 / 2) (-3 / 8) 4 := by norm_num [IsFallingAfterPulse, vField]
 
 /-- The closed form of the post-pulse field agrees with the definition at `δ = 2`. -/
 example : vField 0 (-3 / 2 + 2) (-3 / 8) = 2 * (1 - (-3 / 2) ^ 2 - (-3 / 2) * 2 - 2 ^ 2 / 3) :=
   vField_pulse (by norm_num [vField]) 2
 
-/-- The firing threshold `thresholdLow (-3/2) = (9/2 - √(21/4))/2 ≈ 1.10` separates the two
-pulses: `1/2 < thresholdLow (-3/2) < 2 < thresholdHigh (-3/2)`. -/
-example : 1 / 2 < thresholdLow (-3 / 2) ∧ thresholdLow (-3 / 2) < 2 ∧
-    2 < thresholdHigh (-3 / 2) := by
+/-- The lower root `pulseRootLow (-3/2) = (9/2 - √(21/4))/2 ≈ 1.10` separates the two pulses:
+`1/2 < pulseRootLow (-3/2) < 2 < pulseRootHigh (-3/2)`. -/
+example : 1 / 2 < pulseRootLow (-3 / 2) ∧ pulseRootLow (-3 / 2) < 2 ∧
+    2 < pulseRootHigh (-3 / 2) := by
   have h0 := Real.sqrt_nonneg (12 - 3 * (-3 / 2 : ℝ) ^ 2)
   have h1 : √(12 - 3 * (-3 / 2 : ℝ) ^ 2) < 7 / 2 := by
     rw [Real.sqrt_lt' (by norm_num)]; norm_num
   have h2 : 1 / 2 < √(12 - 3 * (-3 / 2 : ℝ) ^ 2) := by
     rw [Real.lt_sqrt (by norm_num)]; norm_num
-  unfold thresholdLow thresholdHigh
+  unfold pulseRootLow pulseRootHigh
   refine ⟨by linarith, by linarith, by linarith⟩
 
-/-- At the endpoint `v = -2` of `stable_rest_pulse_thresholds` the two roots coincide, so the
-super-threshold window is empty there. -/
-example : thresholdLow (-2) = 3 ∧ thresholdHigh (-2) = 3 := by
-  norm_num [thresholdLow, thresholdHigh]
+/-- At the endpoint `v = -2` of `stable_rest_pulse_drift` the two roots coincide, so the rising
+window is empty there. -/
+example : pulseRootLow (-2) = 3 ∧ pulseRootHigh (-2) = 3 := by
+  norm_num [pulseRootLow, pulseRootHigh]
 
-/-- The excitable-rest theorem applies to the rest state. -/
-example : 0 < thresholdLow (-3 / 2) ∧ IsSubThreshold 0 (-3 / 2) (-3 / 8) (1 / 2) := by
-  obtain ⟨-, hpos, -, hsub, -⟩ := excitable_rest (a := 6 / 5) (b := 4 / 5) (ε := 2 / 25) (I := 0)
-    (v := -3 / 2) (w := -3 / 8) (by norm_num) (by norm_num) (by norm_num)
+/-- The rising-window theorem applies to the rest state. -/
+example : 0 < pulseRootLow (-3 / 2) ∧ IsFallingAfterPulse 0 (-3 / 2) (-3 / 8) (1 / 2) := by
+  obtain ⟨-, hpos, -, hsub, -⟩ := stable_rest_rising_pulse_window (a := 6 / 5) (b := 4 / 5)
+    (ε := 2 / 25) (I := 0) (v := -3 / 2) (w := -3 / 8) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num [IsEquilibrium, vField, wField])
     (by norm_num) (by norm_num)
   refine ⟨hpos, hsub _ (by norm_num) ?_⟩
   have h1 : √(12 - 3 * (-3 / 2 : ℝ) ^ 2) < 7 / 2 := by
     rw [Real.sqrt_lt' (by norm_num)]; norm_num
-  unfold thresholdLow
+  unfold pulseRootLow
   linarith
 
 /-! ### Single pulses from the rest state: full dynamics (`ε = 10⁻⁵`, `T = 2`) -/
@@ -219,7 +220,7 @@ theorem drift_bound {v w : ℝ → ℝ} (h : IsSolution (6 / 5) (4 / 5) (1 / 100
   have : |(4 / 5 : ℝ)| = 4 / 5 := abs_of_pos (by norm_num)
   linarith
 
-/-- **Sub-threshold pulse, full dynamics.** The solution started by the pulse `δ = 1/2` from rest
+/-- **Falling pulse, full dynamics.** The solution started by the pulse `δ = 1/2` from rest
 never exceeds `v = -1` on `[0, 2]`. -/
 example : ∃ v w : ℝ → ℝ, IsSolution (6 / 5) (4 / 5) (1 / 100000) 0 v w ∧ v 0 = -3 / 2 + 1 / 2 ∧
     w 0 = -3 / 8 ∧ ∀ t ∈ Icc (0 : ℝ) 2, v t ≤ -1 := by
@@ -231,8 +232,8 @@ example : ∃ v w : ℝ → ℝ, IsSolution (6 / 5) (4 / 5) (1 / 100000) 0 v w �
     (by norm_num)
   exact ⟨v, w, h, hv0, hw0, fun t ht => by have := hsub t ht; linarith⟩
 
-/-- **Super-threshold pulse, full dynamics.** The solution started by the pulse `δ = 2` from the
-same rest state fires: it reaches `v = 3/2` (beyond the knee `v = 1` of the cubic nullcline)
+/-- **Rising pulse, full dynamics.** The solution started by the pulse `δ = 2` from the same rest
+state reaches `v = 3/2` (beyond the knee `v = 1` of the cubic nullcline)
 within `[0, 2]`. -/
 example : ∃ v w : ℝ → ℝ, IsSolution (6 / 5) (4 / 5) (1 / 100000) 0 v w ∧ v 0 = -3 / 2 + 2 ∧
     w 0 = -3 / 8 ∧ ∃ t ∈ Icc (0 : ℝ) 2, 3 / 2 ≤ v t := by

@@ -26,7 +26,7 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Topology.Order.IntermediateValue
 
 /-!
-# FitzHugh–Nagumo excitable dynamics
+# FitzHugh–Nagumo dynamics
 
 ## The model (frozen form)
 
@@ -80,30 +80,33 @@ the equilibrium needs `0 < b ≤ 1`.
   `re_eq_zero_and_im_ne_zero_of_mem_spectrum_jacobian`). `isLinearlyStable_iff_of_lt_one` and
   `isLinearlyUnstable_iff_of_lt_one` state the first two in trace–determinant form.
   `equilibriumType_eq_saddle_iff`: saddles occur iff `b (1 - v²) > 1`.
-* **Excitability threshold (single pulse).** A pulse of amplitude `δ` moves the rest state
-  `(v*, w*)` to `(v* + δ, w*)`. It is super-threshold (`IsSuperThreshold`) when the voltage
-  field is positive there and sub-threshold (`IsSubThreshold`) when it is negative.
+* **Post-pulse drift (single pulse).** A pulse of amplitude `δ` moves the rest state `(v*, w*)`
+  to `(v* + δ, w*)`. The voltage is rising after the pulse (`IsRisingAfterPulse`) when the
+  voltage field is positive there and falling (`IsFallingAfterPulse`) when it is negative; this
+  is the instantaneous drift only, not a statement about the trajectory.
   `vField_pulse`: at rest, `vField I (v* + δ) w* = δ (1 - v*² - v* δ - δ² / 3)`;
-  `isSuperThreshold_iff`, `isSubThreshold_iff`: for `v*² ≤ 4` and `δ > 0` a pulse is
-  super-threshold iff `thresholdLow v* < δ < thresholdHigh v*`, the two roots of the post-pulse
-  factor. `thresholdLow_pos`: the lower root is positive for `v* < -1`.
-  `stable_rest_pulse_thresholds`: for `0 < b < 1`, `ε > 0`, at a rest state on the left branch
-  `-2 ≤ v* < -1` the Jacobian is Hurwitz, small pulses are sub-threshold, and pulses between the
-  two roots are super-threshold (an empty range at `v* = -2`, where the roots coincide).
-  `excitable_rest`: on the open branch `-2 < v* < -1` the roots are moreover distinct
-  (`thresholdLow_lt_thresholdHigh`), so `thresholdLow v*` is a positive firing threshold with a
-  nonempty window of super-threshold pulses. Dynamically
+  `isRisingAfterPulse_iff`, `isFallingAfterPulse_iff`: for `v*² ≤ 4` and `δ > 0` the voltage
+  rises after the pulse iff `pulseRootLow v* < δ < pulseRootHigh v*`, the two amplitudes at
+  which the post-pulse state lies on the voltage nullcline. `pulseRootLow_pos`: the lower root
+  is positive for `v* < -1`. `stable_rest_pulse_drift`: for `0 < b < 1`, `ε > 0`, at a rest state
+  on the left branch `-2 ≤ v* < -1` the Jacobian is Hurwitz, the voltage falls after small
+  pulses and rises after pulses between the two roots (an empty range at `v* = -2`, where the
+  roots coincide). `stable_rest_rising_pulse_window`: on the open branch `-2 < v* < -1` the
+  roots are moreover distinct (`pulseRootLow_lt_pulseRootHigh`), so the rising window is a
+  nonempty open interval of positive amplitudes. Along trajectories
   (`IsSolution.v_le_of_barrier`, `IsSolution.le_v_of_barrier`, `IsSolution.exists_v_ge`,
   `single_pulse_response`): while the slow variable has drifted by at most `η` (bounded by
   `|ε| M t`, `IsSolution.abs_w_sub_le`, with `M` from the trapping ellipse,
-  `abs_le_of_energy_le`), a pulse that is sub-threshold with margin `η` never raises the voltage
-  above its post-pulse value, whereas a super-threshold pulse with margin climbs to an excited
-  level `γ` within an explicit time.
+  `abs_le_of_energy_le`), after a pulse whose drift is negative with margin `η` the voltage
+  never exceeds its post-pulse value, whereas if the voltage field stays above `η` up to a level
+  `γ` the voltage reaches `γ` within an explicit time. These trajectory statements carry their
+  slow-drift, margin and time hypotheses explicitly; they do not follow from
+  `IsRisingAfterPulse` alone.
 
-The singular-perturbation (`ε → 0`) analysis, the full return to rest after a spike, periodic
-orbits and bifurcations (a linear center is only a nonhyperbolic linearization; no transversality
-or nonlinear nondegeneracy condition is checked), and the Nagumo cubic `v (v - α)(1 - v)` form
-are not treated.
+The singular-perturbation (`ε → 0`) analysis, a trajectory-level firing threshold, the full return
+to rest after a spike, periodic orbits and bifurcations (a linear center is only a nonhyperbolic
+linearization; no transversality or nonlinear nondegeneracy condition is checked), and the Nagumo
+cubic `v (v - α)(1 - v)` form are not treated.
 
 ## References
 
@@ -616,16 +619,16 @@ theorem re_eq_zero_and_im_ne_zero_of_mem_spectrum_jacobian (hb : 0 < b) (hb1 : b
   have hΔ := jacDet_pos hb hb1 hε v
   exact ⟨hμ.re_eq_zero hτ hΔ, hμ.im_ne_zero (by rw [hτ]; nlinarith)⟩
 
-/-! ### Excitability: the single-pulse threshold -/
+/-! ### Post-pulse drift of a single pulse -/
 
-/-- A pulse of amplitude `δ` applied to the state `(v, w)` (an instantaneous voltage jump to
-`(v + δ, w)`) is **super-threshold** when the voltage field is positive at the post-pulse state:
-the voltage keeps rising, away from rest. -/
-def IsSuperThreshold (I v w δ : ℝ) : Prop := 0 < vField I (v + δ) w
+/-- After a pulse of amplitude `δ` applied to the state `(v, w)` (an instantaneous voltage jump to
+`(v + δ, w)`) the voltage is **rising**: the voltage field is positive at the post-pulse state.
+This is the instantaneous drift only; it says nothing about the later trajectory. -/
+def IsRisingAfterPulse (I v w δ : ℝ) : Prop := 0 < vField I (v + δ) w
 
-/-- A pulse of amplitude `δ` is **sub-threshold** when the voltage field is negative at the
-post-pulse state: the voltage immediately falls back toward rest. -/
-def IsSubThreshold (I v w δ : ℝ) : Prop := vField I (v + δ) w < 0
+/-- After a pulse of amplitude `δ` the voltage is **falling**: the voltage field is negative at the
+post-pulse state. -/
+def IsFallingAfterPulse (I v w δ : ℝ) : Prop := vField I (v + δ) w < 0
 
 /-- At a zero of the voltage field (in particular at rest), the post-pulse voltage field is
 `δ (1 - v² - v δ - δ²/3)`. -/
@@ -635,138 +638,139 @@ theorem vField_pulse {v w : ℝ} (h : vField I v w = 0) (δ : ℝ) :
   linear_combination h
 
 /-- The lower root `(-3v - √(12 - 3v²))/2` of the post-pulse factor `1 - v² - v δ - δ²/3` in `δ`
-(`pulse_factor`, for `v² ≤ 4`). On the nondegenerate left branch `-2 < v < -1` it is a positive
-firing threshold: from a rest state with voltage `v`, the positive super-threshold pulses are
-exactly those with `thresholdLow v < δ < thresholdHigh v` (`isSuperThreshold_iff`), a nonempty
-open interval (`thresholdLow_lt_thresholdHigh`). -/
-def thresholdLow (v : ℝ) : ℝ := (-3 * v - √(12 - 3 * v ^ 2)) / 2
+(`pulse_factor`, for `v² ≤ 4`): from a rest state with voltage `v`, a pulse of this amplitude
+lands on the voltage nullcline. On the left branch `-2 < v < -1` it is positive, and the positive
+pulses after which the voltage rises are exactly those with
+`pulseRootLow v < δ < pulseRootHigh v` (`isRisingAfterPulse_iff`), a nonempty open interval
+(`pulseRootLow_lt_pulseRootHigh`). -/
+def pulseRootLow (v : ℝ) : ℝ := (-3 * v - √(12 - 3 * v ^ 2)) / 2
 
 /-- The upper root `(-3v + √(12 - 3v²))/2` of the post-pulse factor (`pulse_factor`). On the left
-branch `-2 < v < -1` it is the upper end of the open interval of positive super-threshold pulses
-from a rest state with voltage `v`. -/
-def thresholdHigh (v : ℝ) : ℝ := (-3 * v + √(12 - 3 * v ^ 2)) / 2
+branch `-2 < v < -1` it is the upper end of the open interval of positive pulses after which the
+voltage rises, from a rest state with voltage `v`. -/
+def pulseRootHigh (v : ℝ) : ℝ := (-3 * v + √(12 - 3 * v ^ 2)) / 2
 
 theorem pulse_factor {v : ℝ} (hv : v ^ 2 ≤ 4) (δ : ℝ) :
-    1 - v ^ 2 - v * δ - δ ^ 2 / 3 = -((δ - thresholdLow v) * (δ - thresholdHigh v)) / 3 := by
+    1 - v ^ 2 - v * δ - δ ^ 2 / 3 = -((δ - pulseRootLow v) * (δ - pulseRootHigh v)) / 3 := by
   have hs : √(12 - 3 * v ^ 2) ^ 2 = 12 - 3 * v ^ 2 := Real.sq_sqrt (by linarith)
-  unfold thresholdLow thresholdHigh
+  unfold pulseRootLow pulseRootHigh
   linear_combination (-1 / 12 : ℝ) * hs
 
-theorem thresholdLow_le_thresholdHigh (v : ℝ) : thresholdLow v ≤ thresholdHigh v := by
-  unfold thresholdLow thresholdHigh
+theorem pulseRootLow_le_pulseRootHigh (v : ℝ) : pulseRootLow v ≤ pulseRootHigh v := by
+  unfold pulseRootLow pulseRootHigh
   have := Real.sqrt_nonneg (12 - 3 * v ^ 2)
   linarith
 
 /-- For `v² < 4` the two roots are distinct. -/
-theorem thresholdLow_lt_thresholdHigh {v : ℝ} (hv : v ^ 2 < 4) :
-    thresholdLow v < thresholdHigh v := by
-  unfold thresholdLow thresholdHigh
+theorem pulseRootLow_lt_pulseRootHigh {v : ℝ} (hv : v ^ 2 < 4) :
+    pulseRootLow v < pulseRootHigh v := by
+  unfold pulseRootLow pulseRootHigh
   have := Real.sqrt_pos.2 (by linarith : (0 : ℝ) < 12 - 3 * v ^ 2)
   linarith
 
-/-- **Threshold characterization.** At rest with `v² ≤ 4`, a positive pulse `δ` is
-super-threshold iff `thresholdLow v < δ < thresholdHigh v`. -/
-theorem isSuperThreshold_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 2 ≤ 4) (hδ : 0 < δ) :
-    IsSuperThreshold I v w δ ↔ thresholdLow v < δ ∧ δ < thresholdHigh v := by
-  rw [IsSuperThreshold, vField_pulse h, pulse_factor hv]
-  have hle := thresholdLow_le_thresholdHigh v
+/-- **Rising window.** At rest with `v² ≤ 4`, the voltage rises after a positive pulse `δ` iff
+`pulseRootLow v < δ < pulseRootHigh v`. -/
+theorem isRisingAfterPulse_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 2 ≤ 4) (hδ : 0 < δ) :
+    IsRisingAfterPulse I v w δ ↔ pulseRootLow v < δ ∧ δ < pulseRootHigh v := by
+  rw [IsRisingAfterPulse, vField_pulse h, pulse_factor hv]
+  have hle := pulseRootLow_le_pulseRootHigh v
   constructor
   · intro hpos
-    have : (δ - thresholdLow v) * (δ - thresholdHigh v) < 0 := by
+    have : (δ - pulseRootLow v) * (δ - pulseRootHigh v) < 0 := by
       by_contra hc; push Not at hc
       nlinarith
     rcases mul_neg_iff.1 this with ⟨h1, h2⟩ | ⟨h1, h2⟩
     · exact ⟨by linarith, by linarith⟩
     · exact absurd hle (by linarith)
   · rintro ⟨h1, h2⟩
-    have : (δ - thresholdLow v) * (δ - thresholdHigh v) < 0 :=
+    have : (δ - pulseRootLow v) * (δ - pulseRootHigh v) < 0 :=
       mul_neg_of_pos_of_neg (by linarith) (by linarith)
     nlinarith
 
-/-- At rest with `v² ≤ 4`, a positive pulse is sub-threshold iff `δ < thresholdLow v` or
-`δ > thresholdHigh v`. -/
-theorem isSubThreshold_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 2 ≤ 4) (hδ : 0 < δ) :
-    IsSubThreshold I v w δ ↔ δ < thresholdLow v ∨ thresholdHigh v < δ := by
-  rw [IsSubThreshold, vField_pulse h, pulse_factor hv]
-  have hle := thresholdLow_le_thresholdHigh v
+/-- At rest with `v² ≤ 4`, the voltage falls after a positive pulse `δ` iff `δ < pulseRootLow v`
+or `δ > pulseRootHigh v`. -/
+theorem isFallingAfterPulse_iff {v w δ : ℝ} (h : vField I v w = 0) (hv : v ^ 2 ≤ 4) (hδ : 0 < δ) :
+    IsFallingAfterPulse I v w δ ↔ δ < pulseRootLow v ∨ pulseRootHigh v < δ := by
+  rw [IsFallingAfterPulse, vField_pulse h, pulse_factor hv]
+  have hle := pulseRootLow_le_pulseRootHigh v
   constructor
   · intro hneg
-    have : 0 < (δ - thresholdLow v) * (δ - thresholdHigh v) := by
+    have : 0 < (δ - pulseRootLow v) * (δ - pulseRootHigh v) := by
       by_contra hc; push Not at hc
       nlinarith
     rcases mul_pos_iff.1 this with ⟨h1, h2⟩ | ⟨h1, h2⟩
     · exact Or.inr (by linarith)
     · exact Or.inl (by linarith)
   · rintro (h1 | h1)
-    · have : 0 < (δ - thresholdLow v) * (δ - thresholdHigh v) :=
+    · have : 0 < (δ - pulseRootLow v) * (δ - pulseRootHigh v) :=
         mul_pos_of_neg_of_neg (by linarith) (by linarith)
       nlinarith
-    · have : 0 < (δ - thresholdLow v) * (δ - thresholdHigh v) :=
+    · have : 0 < (δ - pulseRootLow v) * (δ - pulseRootHigh v) :=
         mul_pos (by linarith) (by linarith)
       nlinarith
 
 /-- For a rest voltage `v < -1` (left branch of the cubic nullcline) the lower root
-`thresholdLow v` is positive. -/
-theorem thresholdLow_pos {v : ℝ} (hv1 : v < -1) : 0 < thresholdLow v := by
-  unfold thresholdLow
+`pulseRootLow v` is positive. -/
+theorem pulseRootLow_pos {v : ℝ} (hv1 : v < -1) : 0 < pulseRootLow v := by
+  unfold pulseRootLow
   have hs : √(12 - 3 * v ^ 2) < -3 * v := by
     rw [Real.sqrt_lt' (by linarith)]
     nlinarith
   linarith
 
-/-- **Small pulses are sub-threshold** on the left branch `-2 ≤ v < -1`. -/
-theorem isSubThreshold_of_lt_thresholdLow {v w δ : ℝ} (h : vField I v w = 0) (hv1 : v < -1)
-    (hv2 : -2 ≤ v) (hδ : 0 < δ) (hδθ : δ < thresholdLow v) : IsSubThreshold I v w δ :=
-  (isSubThreshold_iff h (by nlinarith) hδ).2 (Or.inl hδθ)
+/-- **The voltage falls after small pulses** on the left branch `-2 ≤ v < -1`. -/
+theorem isFallingAfterPulse_of_lt_pulseRootLow {v w δ : ℝ} (h : vField I v w = 0) (hv1 : v < -1)
+    (hv2 : -2 ≤ v) (hδ : 0 < δ) (hδθ : δ < pulseRootLow v) : IsFallingAfterPulse I v w δ :=
+  (isFallingAfterPulse_iff h (by nlinarith) hδ).2 (Or.inl hδθ)
 
-/-- **Pulse thresholds at a stable rest state.** In the classical regime `0 < b < 1`, `ε > 0`, at
-an equilibrium on the left branch `-2 ≤ v < -1` the Jacobian is Hurwitz and `thresholdLow v` is
-positive: pulses `0 < δ < thresholdLow v` are sub-threshold and pulses
-`thresholdLow v < δ < thresholdHigh v` are super-threshold. At the endpoint `v = -2` the two roots
-coincide (`thresholdLow (-2) = thresholdHigh (-2) = 3`), so the last statement is vacuous and no
-positive pulse is super-threshold; `excitable_rest` treats the nondegenerate branch
-`-2 < v < -1`. -/
-theorem stable_rest_pulse_thresholds (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v w : ℝ}
+/-- **Post-pulse drift at a stable rest state.** In the classical regime `0 < b < 1`, `ε > 0`, at
+an equilibrium on the left branch `-2 ≤ v < -1` the Jacobian is Hurwitz and `pulseRootLow v` is
+positive: the voltage falls after pulses `0 < δ < pulseRootLow v` and rises after pulses
+`pulseRootLow v < δ < pulseRootHigh v`. At the endpoint `v = -2` the two roots coincide
+(`pulseRootLow (-2) = pulseRootHigh (-2) = 3`), so the last statement is vacuous and the voltage
+rises after no positive pulse; `stable_rest_rising_pulse_window` treats `-2 < v < -1`. -/
+theorem stable_rest_pulse_drift (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v w : ℝ}
     (hrest : IsEquilibrium a b ε I v w) (hv1 : v < -1) (hv2 : -2 ≤ v) :
-    (jacobian b ε v).IsHurwitz ∧ 0 < thresholdLow v ∧
-      (∀ δ, 0 < δ → δ < thresholdLow v → IsSubThreshold I v w δ) ∧
-      (∀ δ, thresholdLow v < δ → δ < thresholdHigh v → IsSuperThreshold I v w δ) := by
-  have hpos := thresholdLow_pos hv1
+    (jacobian b ε v).IsHurwitz ∧ 0 < pulseRootLow v ∧
+      (∀ δ, 0 < δ → δ < pulseRootLow v → IsFallingAfterPulse I v w δ) ∧
+      (∀ δ, pulseRootLow v < δ → δ < pulseRootHigh v → IsRisingAfterPulse I v w δ) := by
+  have hpos := pulseRootLow_pos hv1
   refine ⟨(isHurwitz_jacobian_iff_of_lt_one hb hb1 hε).2 (by nlinarith [mul_pos hε hb]), hpos,
-    fun δ hδ hδθ => isSubThreshold_of_lt_thresholdLow hrest.1 hv1 hv2 hδ hδθ,
-    fun δ h1 h2 => (isSuperThreshold_iff hrest.1 (by nlinarith) (by linarith)).2 ⟨h1, h2⟩⟩
+    fun δ hδ hδθ => isFallingAfterPulse_of_lt_pulseRootLow hrest.1 hv1 hv2 hδ hδθ,
+    fun δ h1 h2 => (isRisingAfterPulse_iff hrest.1 (by nlinarith) (by linarith)).2 ⟨h1, h2⟩⟩
 
-/-- `stable_rest_pulse_thresholds` with the stability conclusion in trace–determinant form. -/
-theorem stable_rest_pulse_thresholds_isLinearlyStable (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε)
+/-- `stable_rest_pulse_drift` with the stability conclusion in trace–determinant form. -/
+theorem stable_rest_pulse_drift_isLinearlyStable (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε)
     {v w : ℝ} (hrest : IsEquilibrium a b ε I v w) (hv1 : v < -1) (hv2 : -2 ≤ v) :
-    IsLinearlyStable (jacTrace b ε v) (jacDet b ε v) ∧ 0 < thresholdLow v ∧
-      (∀ δ, 0 < δ → δ < thresholdLow v → IsSubThreshold I v w δ) ∧
-      (∀ δ, thresholdLow v < δ → δ < thresholdHigh v → IsSuperThreshold I v w δ) := by
-  obtain ⟨hst, hrest'⟩ := stable_rest_pulse_thresholds hb hb1 hε hrest hv1 hv2
+    IsLinearlyStable (jacTrace b ε v) (jacDet b ε v) ∧ 0 < pulseRootLow v ∧
+      (∀ δ, 0 < δ → δ < pulseRootLow v → IsFallingAfterPulse I v w δ) ∧
+      (∀ δ, pulseRootLow v < δ → δ < pulseRootHigh v → IsRisingAfterPulse I v w δ) := by
+  obtain ⟨hst, hrest'⟩ := stable_rest_pulse_drift hb hb1 hε hrest hv1 hv2
   exact ⟨(isHurwitz_jacobian_iff_isLinearlyStable b ε v).1 hst, hrest'⟩
 
-/-- **Excitable rest state.** In the classical regime `0 < b < 1`, `ε > 0`, at an equilibrium on the
-open left branch `-2 < v < -1` the Jacobian is Hurwitz and there is a positive firing threshold
-with a nonempty super-threshold window, `0 < thresholdLow v < thresholdHigh v`: pulses
-`0 < δ < thresholdLow v` are sub-threshold and pulses `thresholdLow v < δ < thresholdHigh v` are
-super-threshold. -/
-theorem excitable_rest (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v w : ℝ}
+/-- **Rising window at a stable rest state.** In the classical regime `0 < b < 1`, `ε > 0`, at an
+equilibrium on the open left branch `-2 < v < -1` the Jacobian is Hurwitz and
+`0 < pulseRootLow v < pulseRootHigh v`: the voltage falls after pulses `0 < δ < pulseRootLow v`
+and rises after pulses in the nonempty window `pulseRootLow v < δ < pulseRootHigh v`. This is
+the instantaneous post-pulse drift; `single_pulse_response` gives trajectory bounds under
+explicit slow-drift hypotheses. -/
+theorem stable_rest_rising_pulse_window (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v w : ℝ}
     (hrest : IsEquilibrium a b ε I v w) (hv1 : v < -1) (hv2 : -2 < v) :
-    (jacobian b ε v).IsHurwitz ∧ 0 < thresholdLow v ∧
-      thresholdLow v < thresholdHigh v ∧
-      (∀ δ, 0 < δ → δ < thresholdLow v → IsSubThreshold I v w δ) ∧
-      (∀ δ, thresholdLow v < δ → δ < thresholdHigh v → IsSuperThreshold I v w δ) := by
-  obtain ⟨hst, hpos, hsub, hsup⟩ := stable_rest_pulse_thresholds hb hb1 hε hrest hv1 hv2.le
-  exact ⟨hst, hpos, thresholdLow_lt_thresholdHigh (by nlinarith), hsub, hsup⟩
+    (jacobian b ε v).IsHurwitz ∧ 0 < pulseRootLow v ∧
+      pulseRootLow v < pulseRootHigh v ∧
+      (∀ δ, 0 < δ → δ < pulseRootLow v → IsFallingAfterPulse I v w δ) ∧
+      (∀ δ, pulseRootLow v < δ → δ < pulseRootHigh v → IsRisingAfterPulse I v w δ) := by
+  obtain ⟨hst, hpos, hsub, hsup⟩ := stable_rest_pulse_drift hb hb1 hε hrest hv1 hv2.le
+  exact ⟨hst, hpos, pulseRootLow_lt_pulseRootHigh (by nlinarith), hsub, hsup⟩
 
-/-- `excitable_rest` with the stability conclusion in trace–determinant form. -/
-theorem excitable_rest_isLinearlyStable (hb : 0 < b) (hb1 : b < 1) (hε : 0 < ε) {v w : ℝ}
-    (hrest : IsEquilibrium a b ε I v w) (hv1 : v < -1) (hv2 : -2 < v) :
-    IsLinearlyStable (jacTrace b ε v) (jacDet b ε v) ∧ 0 < thresholdLow v ∧
-      thresholdLow v < thresholdHigh v ∧
-      (∀ δ, 0 < δ → δ < thresholdLow v → IsSubThreshold I v w δ) ∧
-      (∀ δ, thresholdLow v < δ → δ < thresholdHigh v → IsSuperThreshold I v w δ) := by
-  obtain ⟨hst, hrest'⟩ := excitable_rest hb hb1 hε hrest hv1 hv2
+/-- `stable_rest_rising_pulse_window` with the stability conclusion in trace–determinant form. -/
+theorem stable_rest_rising_pulse_window_isLinearlyStable (hb : 0 < b) (hb1 : b < 1)
+    (hε : 0 < ε) {v w : ℝ} (hrest : IsEquilibrium a b ε I v w) (hv1 : v < -1) (hv2 : -2 < v) :
+    IsLinearlyStable (jacTrace b ε v) (jacDet b ε v) ∧ 0 < pulseRootLow v ∧
+      pulseRootLow v < pulseRootHigh v ∧
+      (∀ δ, 0 < δ → δ < pulseRootLow v → IsFallingAfterPulse I v w δ) ∧
+      (∀ δ, pulseRootLow v < δ → δ < pulseRootHigh v → IsRisingAfterPulse I v w δ) := by
+  obtain ⟨hst, hrest'⟩ := stable_rest_rising_pulse_window hb hb1 hε hrest hv1 hv2
   exact ⟨(isHurwitz_jacobian_iff_isLinearlyStable b ε v).1 hst, hrest'⟩
 
 /-! ### Single-pulse response of the full system -/
@@ -796,7 +800,7 @@ theorem abs_le_of_energy_le (hε : 0 < ε) {R v w : ℝ} (h : energy ε v w ≤ 
         exact (abs_sub _ _).trans (by gcongr; exact abs_add_le _ _)
     _ ≤ √R + |a| + |b| * √(ε * R) := by gcongr
 
-/-- **Sub-threshold barrier.** If the recovery variable stays within `η` of `w₀` on `[0, T]` and
+/-- **Upper voltage barrier.** If the recovery variable stays within `η` of `w₀` on `[0, T]` and
 `vField I β w₀ + η < 0`, a solution with `v 0 ≤ β` keeps `v ≤ β` on `[0, T]`. -/
 theorem IsSolution.v_le_of_barrier (h : IsSolution a b ε I v w) {T β w₀ η : ℝ}
     (hw : ∀ t ∈ Icc 0 T, |w t - w₀| ≤ η) (hβ : vField I β w₀ + η < 0) (h0 : v 0 ≤ β) :
@@ -811,7 +815,7 @@ theorem IsSolution.v_le_of_barrier (h : IsSolution a b ε I v w) {T β w₀ η :
   rw [hvs]
   linarith
 
-/-- **Super-threshold barrier.** If the recovery variable stays within `η` of `w₀` on `[0, T]` and
+/-- **Lower voltage barrier.** If the recovery variable stays within `η` of `w₀` on `[0, T]` and
 `vField I α w₀ > η`, a solution with `α ≤ v 0` keeps `α ≤ v` on `[0, T]`. -/
 theorem IsSolution.le_v_of_barrier (h : IsSolution a b ε I v w) {T α w₀ η : ℝ}
     (hw : ∀ t ∈ Icc 0 T, |w t - w₀| ≤ η) (hα : η < vField I α w₀) (h0 : α ≤ v 0) :
@@ -829,8 +833,8 @@ theorem IsSolution.le_v_of_barrier (h : IsSolution a b ε I v w) {T α w₀ η :
   rw [hvs']
   linarith
 
-/-- **Firing.** If the recovery variable stays within `η` of `w₀` on `[0, T]`, the voltage field
-satisfies `vField I u w₀ ≥ m > η` for all `u ∈ [α, γ]`, and `T` is long enough
+/-- **Reaching a voltage level.** If the recovery variable stays within `η` of `w₀` on `[0, T]`,
+the voltage field satisfies `vField I u w₀ ≥ m > η` for all `u ∈ [α, γ]`, and `T` is long enough
 (`γ - α ≤ (m - η) T`), then a solution with `α ≤ v 0` reaches the level `γ` within `[0, T]`. -/
 theorem IsSolution.exists_v_ge (h : IsSolution a b ε I v w) {T α γ w₀ η m : ℝ} (hT : 0 ≤ T)
     (hw : ∀ t ∈ Icc 0 T, |w t - w₀| ≤ η) (hαγ : α ≤ γ)
@@ -859,11 +863,11 @@ post-pulse state `(vr + δ, wr)`, and let `T ≥ 0`. Suppose `|v + a - b w| ≤ 
 `b, ε > 0` such an
 `M` comes from the trapping ellipse, `abs_le_of_energy_le`), and put `η = |ε| M T`.
 
-* If the pulse is sub-threshold with margin `η`, i.e. `δ (1 - vr² - vr δ - δ²/3) + η < 0`, the
-  voltage never exceeds its post-pulse value `vr + δ` on `[0, T]`.
+* If the post-pulse drift is negative with margin `η`, i.e. `δ (1 - vr² - vr δ - δ²/3) + η < 0`,
+  the voltage never exceeds its post-pulse value `vr + δ` on `[0, T]`.
 * If the voltage field at the frozen recovery value satisfies `vField I u wr ≥ m > η` on
-  `[vr + δ, γ]` (in particular the pulse is super-threshold with margin `η`) and
-  `γ - (vr + δ) ≤ (m - η) T`, the voltage fires: it reaches `γ` within `[0, T]`. -/
+  `[vr + δ, γ]` (in particular the voltage rises after the pulse, with margin `η`) and
+  `γ - (vr + δ) ≤ (m - η) T`, the voltage reaches `γ` within `[0, T]`. -/
 theorem single_pulse_response {vr wr δ : ℝ} (hrest : IsEquilibrium a b ε I vr wr)
     (h : IsSolution a b ε I v w) (hv0 : v 0 = vr + δ) (hw0 : w 0 = wr) {T M : ℝ} (hT : 0 ≤ T)
     (hM : ∀ s ∈ Icc 0 T, |v s + a - b * w s| ≤ M) :
