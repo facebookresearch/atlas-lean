@@ -13,6 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 public import Mathlib.Analysis.Convex.Function
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Order.Filter.Extr
+public import Mathlib.Probability.Distributions.Poisson.Basic
 public import MathlibExt.Analysis.Calculus.DotProductGradient
 import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
@@ -22,28 +23,32 @@ import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
 Observations are indexed by a finite type `ι`, coefficients by a finite type `κ`. A design matrix
 `X : Matrix ι κ ℝ` and a fixed offset vector `o : ι → ℝ` (never optimized) give the linear
-predictor `η(β) = X β + o` (`linearPredictor`). The responses `y : ι → ℝ` are fixed observed
-values; every likelihood here is a deterministic function of `β`.
+predictor `η(β) = X β + o` (`linearPredictor`). The responses `y` are fixed observed values (real
+for the logistic objective and the Poisson kernel, natural counts for the Poisson likelihood); every
+objective here is a deterministic function of `β`.
 
 * **Bernoulli with logit link.** The mean is `μᵢ = σ(ηᵢ)` with Mathlib's `Real.sigmoid`. The log
   likelihood is `ℓ(β) = ∑ᵢ (yᵢ ηᵢ - log (1 + exp ηᵢ))` (`logisticLogLik`);
   `sigmoid_logLik_term` is the per-observation identity
   `y log σ(η) + (1 - y) log (1 - σ(η)) = y η - log (1 + exp η)`, valid for every real `y`.
-* **Poisson with log link.** The mean is `exp ηᵢ` and the log likelihood, up to the constant
-  `-∑ᵢ log yᵢ!`, is `∑ᵢ (yᵢ ηᵢ - exp ηᵢ)` (`poissonLogLik`).
+* **Poisson with log link.** The mean is `exp ηᵢ`. For counts `y : ι → ℕ` the log likelihood
+  `poissonLogLik` is `∑ᵢ log P(Yᵢ = yᵢ)` with `Yᵢ ~ Poisson(exp ηᵢ)`. The algebraic kernel
+  `poissonLogLikKernel` is `∑ᵢ (yᵢ ηᵢ - exp ηᵢ)` for every real `y`. For counts,
+  `poissonLogLik_eq_kernel` shows that the likelihood is the kernel minus the `β`-free constant
+  `∑ᵢ log yᵢ!`, and `isMaxOn_poissonLogLik_iff` that both have the same maximizers.
 
-For both models:
+For both models (the Poisson statements are about the kernel `poissonLogLikKernel`):
 
-* `hasFDerivAt_logisticLogLik`, `hasFDerivAt_poissonLogLik`: the Fréchet derivative at `β` is
+* `hasFDerivAt_logisticLogLik`, `hasFDerivAt_poissonLogLikKernel`: the Fréchet derivative at `β` is
   `Real.dotL (Xᵀ (y - μ(β)))`, and the `hasGradientAt_*` corollaries state that `Xᵀ (y - μ(β))` is
   the gradient on `EuclideanSpace ℝ κ`.
-* `deriv2_logisticLogLik_line`, `deriv2_poissonLogLik_line`: along `t ↦ β + t u` the second
+* `deriv2_logisticLogLik_line`, `deriv2_poissonLogLikKernel_line`: along `t ↦ β + t u` the second
   derivative at `0` is `-∑ᵢ wᵢ ((X u)ᵢ)²` with `wᵢ = σ(ηᵢ)(1 - σ(ηᵢ))`, resp. `wᵢ = exp ηᵢ`.
-* `concaveOn_logisticLogLik`, `concaveOn_poissonLogLik`: concavity on all of `κ → ℝ`.
-* `logisticLogLik_maximizer_unique`, `poissonLogLik_maximizer_unique`: if `β ↦ X β` is injective
-  there is at most one maximizer. Existence is not claimed and can fail:
+* `concaveOn_logisticLogLik`, `concaveOn_poissonLogLikKernel`: concavity on all of `κ → ℝ`.
+* `logisticLogLik_maximizer_unique`, `poissonLogLikKernel_maximizer_unique`: if `β ↦ X β` is
+  injective there is at most one maximizer. Existence is not claimed and can fail:
   `logisticLogLik_separation_not_isMaxOn` (complete separation) and
-  `poissonLogLik_allZero_not_isMaxOn` (all-zero counts) have no maximizer, the first with an
+  `poissonLogLikKernel_allZero_not_isMaxOn` (all-zero counts) have no maximizer, the first with an
   injective design (`separationDesign_mulVec_injective`).
 * `logisticDeviance` and `logisticDeviance_nonneg` for binary responses.
 
@@ -51,8 +56,9 @@ For both models:
 
 The models are normalized: `σ(η) ∈ (0, 1)` (`unitInterval.sigmoid η`), so the Bernoulli response
 law is `ProbabilityTheory.bernoulliMeasure 1 0 (unitInterval.sigmoid η)`, and the Poisson law is
-`ProbabilityTheory.poissonMeasure ⟨exp η, (exp_pos η).le⟩`. Identifying the log likelihoods
-above with the log density of the product of these laws is not done here.
+`ProbabilityTheory.poissonMeasure ⟨exp η, (exp_pos η).le⟩`. `poissonLogLik` sums the log masses
+of the Poisson laws at the observed counts; the product measure of the responses is not
+constructed here.
 -/
 
 @[expose] public section
@@ -398,30 +404,60 @@ private lemma strictConcaveOn_poissonTerm (y : ℝ) :
   strictConcaveOn_of_deriv _ _ _ (hasDerivAt_poissonTerm y) (hasDerivAt_poissonScoreTerm y)
     fun x => neg_neg_of_pos (exp_pos x)
 
-/-- The log likelihood of the canonical Poisson (log-linear) model up to an additive constant,
-`ℓ(β) = ∑ᵢ (yᵢ ηᵢ(β) - exp ηᵢ(β))`. The omitted term `-∑ᵢ log yᵢ!` does not depend on `β`. -/
-noncomputable def poissonLogLik (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) : ℝ :=
+/-- The algebraic kernel of the canonical Poisson (log-linear) log likelihood,
+`∑ᵢ (yᵢ ηᵢ(β) - exp ηᵢ(β))`, defined for every real response vector `y`. It is a likelihood only
+up to a constant and only for counts: for `y : ι → ℕ` it exceeds `poissonLogLik` by the `β`-free
+term `∑ᵢ log yᵢ!` (`poissonLogLik_eq_kernel`). -/
+noncomputable def poissonLogLikKernel (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) : ℝ :=
   ∑ i, (y i * linearPredictor X o β i - exp (linearPredictor X o β i))
 
-/-- **The Poisson score.** The Fréchet derivative of the Poisson log likelihood at `β` is
+/-- **The canonical Poisson log likelihood of counts.** For natural-valued counts `y : ι → ℕ` and
+independent responses `Yᵢ ~ Poisson(exp ηᵢ(β))` (`ProbabilityTheory.poissonMeasure`), this is
+`ℓ(β) = ∑ᵢ log P(Yᵢ = yᵢ)`. -/
+noncomputable def poissonLogLik (X : Matrix ι κ ℝ) (o : ι → ℝ) (y : ι → ℕ) (β : κ → ℝ) : ℝ :=
+  ∑ i, log ((ProbabilityTheory.poissonMeasure (exp (linearPredictor X o β i)).toNNReal).real {y i})
+
+/-- **The Poisson likelihood of counts is the kernel minus a `β`-free constant:**
+`ℓ(β) = ∑ᵢ (yᵢ ηᵢ(β) - exp ηᵢ(β)) - ∑ᵢ log yᵢ!`. -/
+theorem poissonLogLik_eq_kernel (X : Matrix ι κ ℝ) (o : ι → ℝ) (y : ι → ℕ) (β : κ → ℝ) :
+    poissonLogLik X o y β =
+      poissonLogLikKernel X o (fun i => (y i : ℝ)) β - ∑ i, log ((y i).factorial : ℝ) := by
+  simp only [poissonLogLik, poissonLogLikKernel, ← Finset.sum_sub_distrib]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  have hfac : (0 : ℝ) < ((y i).factorial : ℝ) := by exact_mod_cast Nat.factorial_pos _
+  rw [ProbabilityTheory.poissonMeasure_real_singleton, Real.coe_toNNReal _ (exp_pos _).le,
+    log_div (by positivity) hfac.ne', log_mul (exp_pos _).ne' (by positivity), log_exp, log_pow,
+    log_exp]
+  ring
+
+/-- The Poisson likelihood of counts and its kernel have the same maximizers on every set, so
+`poissonLogLikKernel_maximizer_unique` and `poissonLogLikKernel_allZero_not_isMaxOn` apply to
+`poissonLogLik`. -/
+theorem isMaxOn_poissonLogLik_iff (X : Matrix ι κ ℝ) (o : ι → ℝ) (y : ι → ℕ) {s : Set (κ → ℝ)}
+    {β : κ → ℝ} :
+    IsMaxOn (poissonLogLik X o y) s β ↔
+      IsMaxOn (poissonLogLikKernel X o (fun i => (y i : ℝ))) s β := by
+  simp only [isMaxOn_iff, poissonLogLik_eq_kernel, sub_le_sub_iff_right]
+
+/-- **The Poisson score.** The Fréchet derivative of the Poisson kernel at `β` is
 `v ↦ ⟪v, Xᵀ (y - exp (η(β)))⟫`. -/
-theorem hasFDerivAt_poissonLogLik (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) :
-    HasFDerivAt (poissonLogLik X o y)
+theorem hasFDerivAt_poissonLogLikKernel (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) :
+    HasFDerivAt (poissonLogLikKernel X o y)
       (Real.dotL (X.transpose *ᵥ (y - exp ∘ linearPredictor X o β))) β :=
   hasFDerivAt_sum_terms X o (fun i x => y i * x - exp x) (fun i x => y i - exp x)
     (fun i => hasDerivAt_poissonTerm (y i)) β
 
-/-- The Poisson score `Xᵀ (y - exp (η(β)))` is the gradient of the log likelihood on
+/-- The Poisson score `Xᵀ (y - exp (η(β)))` is the gradient of the Poisson kernel on
 `EuclideanSpace ℝ κ`. -/
-theorem hasGradientAt_poissonLogLik (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) :
-    HasGradientAt (fun b : EuclideanSpace ℝ κ => poissonLogLik X o y b.ofLp)
+theorem hasGradientAt_poissonLogLikKernel (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) :
+    HasGradientAt (fun b : EuclideanSpace ℝ κ => poissonLogLikKernel X o y b.ofLp)
       (WithLp.toLp 2 (X.transpose *ᵥ (y - exp ∘ linearPredictor X o β))) (WithLp.toLp 2 β) :=
-  Real.hasGradientAt_ofLp (hasFDerivAt_poissonLogLik X o y β)
+  Real.hasGradientAt_ofLp (hasFDerivAt_poissonLogLikKernel X o y β)
 
 /-- **The Poisson Hessian quadratic form.** Along `t ↦ β + t u` the second derivative at `0` is
 `-∑ᵢ exp ηᵢ ((X u)ᵢ)²`. -/
-theorem deriv2_poissonLogLik_line (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β u : κ → ℝ) :
-    deriv^[2] (fun t : ℝ => poissonLogLik X o y (β + t • u)) 0 =
+theorem deriv2_poissonLogLikKernel_line (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β u : κ → ℝ) :
+    deriv^[2] (fun t : ℝ => poissonLogLikKernel X o y (β + t • u)) 0 =
       -∑ i, exp (linearPredictor X o β i) * (X *ᵥ u) i ^ 2 := by
   refine (deriv2_sum_terms_line X o (fun i x => y i * x - exp x) (fun i x => y i - exp x)
     (fun i x => -exp x) (fun i => hasDerivAt_poissonTerm (y i))
@@ -430,36 +466,40 @@ theorem deriv2_poissonLogLik_line (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β 
   refine Finset.sum_congr rfl fun i _ => ?_
   ring
 
-/-- The Poisson log likelihood is concave on `κ → ℝ`. -/
-theorem concaveOn_poissonLogLik (X : Matrix ι κ ℝ) (o y : ι → ℝ) :
-    ConcaveOn ℝ Set.univ (poissonLogLik X o y) :=
+/-- The Poisson kernel is concave on `κ → ℝ`. -/
+theorem concaveOn_poissonLogLikKernel (X : Matrix ι κ ℝ) (o y : ι → ℝ) :
+    ConcaveOn ℝ Set.univ (poissonLogLikKernel X o y) :=
   concaveOn_sum_terms X o (fun i x => y i * x - exp x)
     fun i => (strictConcaveOn_poissonTerm (y i)).concaveOn
 
-/-- **At most one Poisson maximum likelihood estimate** when `β ↦ X β` is injective. -/
-theorem poissonLogLik_maximizer_unique (X : Matrix ι κ ℝ) (o y : ι → ℝ)
+/-- **At most one maximizer of the Poisson kernel** when `β ↦ X β` is injective, hence at most
+one Poisson maximum likelihood estimate for counts (`isMaxOn_poissonLogLik_iff`). -/
+theorem poissonLogLikKernel_maximizer_unique (X : Matrix ι κ ℝ) (o y : ι → ℝ)
     (hX : Function.Injective X.mulVec) {β₁ β₂ : κ → ℝ}
-    (h₁ : IsMaxOn (poissonLogLik X o y) Set.univ β₁)
-    (h₂ : IsMaxOn (poissonLogLik X o y) Set.univ β₂) : β₁ = β₂ :=
+    (h₁ : IsMaxOn (poissonLogLikKernel X o y) Set.univ β₁)
+    (h₂ : IsMaxOn (poissonLogLikKernel X o y) Set.univ β₂) : β₁ = β₂ :=
   maximizer_unique_sum_terms X o (fun i x => y i * x - exp x) hX
     (fun i => strictConcaveOn_poissonTerm (y i)) h₁ h₂
 
 /-! ### All-zero counts: no Poisson maximizer -/
 
-/-- With all-zero counts, an intercept-only design and no offset, the Poisson log likelihood is
+/-- With all-zero counts, an intercept-only design and no offset, the Poisson kernel is
 `-|ι| exp β`. -/
-theorem poissonLogLik_allZero (β : Fin 1 → ℝ) :
-    poissonLogLik (Matrix.of fun (_ : ι) (_ : Fin 1) => (1 : ℝ)) 0 0 β =
+theorem poissonLogLikKernel_allZero (β : Fin 1 → ℝ) :
+    poissonLogLikKernel (Matrix.of fun (_ : ι) (_ : Fin 1) => (1 : ℝ)) 0 0 β =
       -(Fintype.card ι * exp (β 0)) := by
-  simp [poissonLogLik, linearPredictor_apply, Matrix.mulVec, dotProduct, Finset.sum_neg_distrib]
+  simp [poissonLogLikKernel, linearPredictor_apply, Matrix.mulVec, dotProduct,
+    Finset.sum_neg_distrib]
 
-/-- **All-zero counts: no Poisson maximum likelihood estimate** (at least one observation):
-lowering the intercept always increases the likelihood. -/
-theorem poissonLogLik_allZero_not_isMaxOn [Nonempty ι] (β : Fin 1 → ℝ) :
-    ¬ IsMaxOn (poissonLogLik (Matrix.of fun (_ : ι) (_ : Fin 1) => (1 : ℝ)) 0 0) Set.univ β := by
+/-- **All-zero counts: no maximizer of the Poisson kernel** (at least one observation), hence no
+Poisson maximum likelihood estimate (`isMaxOn_poissonLogLik_iff`): lowering the intercept always
+increases the kernel. -/
+theorem poissonLogLikKernel_allZero_not_isMaxOn [Nonempty ι] (β : Fin 1 → ℝ) :
+    ¬ IsMaxOn (poissonLogLikKernel (Matrix.of fun (_ : ι) (_ : Fin 1) => (1 : ℝ)) 0 0)
+      Set.univ β := by
   intro h
   have hle := h (Set.mem_univ (β - 1))
-  simp only [Set.mem_ofPred_eq, poissonLogLik_allZero, Pi.sub_apply, Pi.one_apply] at hle
+  simp only [Set.mem_ofPred_eq, poissonLogLikKernel_allZero, Pi.sub_apply, Pi.one_apply] at hle
   have hc : (0 : ℝ) < Fintype.card ι := by exact_mod_cast Fintype.card_pos
   have : exp (β 0 - 1) < exp (β 0) := exp_lt_exp.2 (by linarith)
   nlinarith

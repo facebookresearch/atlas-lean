@@ -59,7 +59,7 @@ example : HasFDerivAt (logisticLogLik X₀ 0 ![1, 0]) (Real.dotL ![0, -1 / 2]) 0
   exact hasFDerivAt_logisticLogLik X₀ 0 ![1, 0] 0
 
 /-- Poisson score at `β = 0`, `y = (2, 0)`: `exp η = (1, 1)`, `Xᵀ (y - exp η) = (0, -1)`. -/
-example : HasFDerivAt (poissonLogLik X₀ 0 ![2, 0]) (Real.dotL ![0, -1]) 0 := by
+example : HasFDerivAt (poissonLogLikKernel X₀ 0 ![2, 0]) (Real.dotL ![0, -1]) 0 := by
   have e : (![0, -1] : Fin 2 → ℝ) =
       X₀.transpose *ᵥ (![2, 0] - exp ∘ linearPredictor X₀ 0 0) := by
     ext j
@@ -67,7 +67,7 @@ example : HasFDerivAt (poissonLogLik X₀ 0 ![2, 0]) (Real.dotL ![0, -1]) 0 := b
       simp [X₀, linearPredictor_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
     norm_num
   rw [e]
-  exact hasFDerivAt_poissonLogLik X₀ 0 ![2, 0] 0
+  exact hasFDerivAt_poissonLogLikKernel X₀ 0 ![2, 0] 0
 
 /-- Logistic curvature at `β = 0` along the covariate direction: `-(1/4) · 1`. -/
 example : deriv^[2] (fun t : ℝ => logisticLogLik X₀ 0 ![1, 0] (0 + t • ![0, 1])) 0 = -1 / 4 := by
@@ -76,22 +76,23 @@ example : deriv^[2] (fun t : ℝ => logisticLogLik X₀ 0 ![1, 0] (0 + t • ![0
   norm_num
 
 /-- Poisson curvature at `β = 0` along the covariate direction: `-exp 0 · 1`. -/
-example : deriv^[2] (fun t : ℝ => poissonLogLik X₀ 0 ![2, 0] (0 + t • ![0, 1])) 0 = -1 := by
-  rw [deriv2_poissonLogLik_line]
+example : deriv^[2] (fun t : ℝ => poissonLogLikKernel X₀ 0 ![2, 0] (0 + t • ![0, 1])) 0 = -1 := by
+  rw [deriv2_poissonLogLikKernel_line]
   simp [X₀, linearPredictor_apply, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
 
 example : ConcaveOn ℝ Set.univ (logisticLogLik X₀ 0 ![1, 0]) := concaveOn_logisticLogLik _ _ _
 
-example : ConcaveOn ℝ Set.univ (poissonLogLik X₀ 0 ![2, 0]) := concaveOn_poissonLogLik _ _ _
+example : ConcaveOn ℝ Set.univ (poissonLogLikKernel X₀ 0 ![2, 0]) :=
+  concaveOn_poissonLogLikKernel _ _ _
 
 /-- Uniqueness applied to the full-rank fixture. -/
 example {β₁ β₂ : Fin 2 → ℝ} (h₁ : IsMaxOn (logisticLogLik X₀ 0 ![1, 0]) Set.univ β₁)
     (h₂ : IsMaxOn (logisticLogLik X₀ 0 ![1, 0]) Set.univ β₂) : β₁ = β₂ :=
   logisticLogLik_maximizer_unique X₀ 0 _ X₀_mulVec_injective h₁ h₂
 
-example {β₁ β₂ : Fin 2 → ℝ} (h₁ : IsMaxOn (poissonLogLik X₀ 0 ![2, 0]) Set.univ β₁)
-    (h₂ : IsMaxOn (poissonLogLik X₀ 0 ![2, 0]) Set.univ β₂) : β₁ = β₂ :=
-  poissonLogLik_maximizer_unique X₀ 0 _ X₀_mulVec_injective h₁ h₂
+example {β₁ β₂ : Fin 2 → ℝ} (h₁ : IsMaxOn (poissonLogLikKernel X₀ 0 ![2, 0]) Set.univ β₁)
+    (h₂ : IsMaxOn (poissonLogLikKernel X₀ 0 ![2, 0]) Set.univ β₂) : β₁ = β₂ :=
+  poissonLogLikKernel_maximizer_unique X₀ 0 _ X₀_mulVec_injective h₁ h₂
 
 /-- Separation fixture: `ℓ(0) = -2 log 2`. -/
 example : logisticLogLik separationDesign 0 ![0, 1] 0 = -2 * log 2 := by
@@ -110,12 +111,35 @@ example (β : Fin 1 → ℝ) : ¬ IsMaxOn (logisticLogLik separationDesign 0 ![0
 
 /-- All-zero counts over three observations: no Poisson maximizer. -/
 example (β : Fin 1 → ℝ) :
-    ¬ IsMaxOn (poissonLogLik (Matrix.of fun (_ : Fin 3) (_ : Fin 1) => (1 : ℝ)) 0 0) Set.univ β :=
-  poissonLogLik_allZero_not_isMaxOn β
+    ¬ IsMaxOn (poissonLogLikKernel (Matrix.of fun (_ : Fin 3) (_ : Fin 1) => (1 : ℝ)) 0 0)
+      Set.univ β :=
+  poissonLogLikKernel_allZero_not_isMaxOn β
 
-example : poissonLogLik (Matrix.of fun (_ : Fin 3) (_ : Fin 1) => (1 : ℝ)) 0 0 0 = -3 := by
-  rw [poissonLogLik_allZero]
+example : poissonLogLikKernel (Matrix.of fun (_ : Fin 3) (_ : Fin 1) => (1 : ℝ)) 0 0 0 = -3 := by
+  rw [poissonLogLikKernel_allZero]
   simp
+
+/-- The count likelihood at `β = 0` with counts `(2, 0)`: both means are `1`, so
+`ℓ = (2 · 0 - 1 - log 2!) + (0 · 0 - 1 - log 0!) = -2 - log 2`. -/
+example : poissonLogLik X₀ 0 ![2, 0] 0 = -2 - log 2 := by
+  rw [poissonLogLik_eq_kernel]
+  simp [poissonLogLikKernel, linearPredictor_apply, Fin.sum_univ_two, Nat.factorial_two]
+
+/-- Uniqueness transfers from the kernel to the count likelihood. -/
+example {β₁ β₂ : Fin 2 → ℝ} (h₁ : IsMaxOn (poissonLogLik X₀ 0 ![2, 0]) Set.univ β₁)
+    (h₂ : IsMaxOn (poissonLogLik X₀ 0 ![2, 0]) Set.univ β₂) : β₁ = β₂ :=
+  poissonLogLikKernel_maximizer_unique X₀ 0 _ X₀_mulVec_injective
+    ((isMaxOn_poissonLogLik_iff _ _ _).1 h₁) ((isMaxOn_poissonLogLik_iff _ _ _).1 h₂)
+
+/-- All-zero counts: the count likelihood has no maximizer either. -/
+example (β : Fin 1 → ℝ) :
+    ¬ IsMaxOn (poissonLogLik (Matrix.of fun (_ : Fin 3) (_ : Fin 1) => (1 : ℝ)) 0 0)
+      Set.univ β := by
+  have e : (fun i => ((0 : Fin 3 → ℕ) i : ℝ)) = 0 := by
+    ext
+    simp
+  rw [isMaxOn_poissonLogLik_iff, e]
+  exact poissonLogLikKernel_allZero_not_isMaxOn β
 
 /-- The saturated term is not identically zero: `-H(1/2) = -log 2`. -/
 example : logisticLogLikSaturated (![2⁻¹] : Fin 1 → ℝ) = -log 2 := by
