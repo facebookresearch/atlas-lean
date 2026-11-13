@@ -7,10 +7,11 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Tactic.NormNum
 import PhyslibExt.EarthScience.GroundwaterTracer
 
 /-!
-# Groundwater-tracer capstone checks
+# Groundwater column and tracer-update checks
 
 Concrete consumers of `PhyslibExt.EarthScience.GroundwaterTracer`:
 Darcy flux and pore velocity at the stated inputs, and the tracer

@@ -8,33 +8,48 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
-# Capstone: groundwater column and tracer budget
+# Groundwater column arithmetic and a two-cell tracer update
 
 ## i. Overview
 
-Saturated column, exact rational inputs; decimal numerals in the
-contract are the exact stated rational inputs below. Darcy flux
-`q = -K * grad h` with `K = 10⁻⁴ m/s` and head gradient `0.01` is
-`-10⁻⁶ m/s`; pore velocity `v = q / φ` with porosity `φ = 1 / 4` is
-`-4 * 10⁻⁶ m/s`. The Darcy/tracer coupling is the conservative
-periodic tracer update on two cells with upwind weight `ν ∈ [0, 1]`:
-`c₁' = (1 - ν) * c₁ + ν * c₂`, `c₂' = (1 - ν) * c₂ + ν * c₁`,
-which conserves total mass and preserves nonnegativity. This capstone
-is proved self-contained from Mathlib primitives; it does not depend
-on any sibling development.
+Two independent pieces, stated over exact rationals; decimal numerals
+in the docstrings are the exact rational inputs below.
+
+The Darcy flux and pore velocity are evaluations at fixed inputs, not
+general laws. Darcy's law `q = -K * dh/dx`, with the sign convention
+that flow runs down the head gradient, gives the specific discharge
+`q = -10⁻⁶ m/s` for hydraulic conductivity `K = 10⁻⁴ m/s` and head
+gradient `dh/dx = 0.01` in a saturated column; the pore (average
+linear) velocity `v = q / φ` with effective porosity `φ = 1 / 4` is
+`-4 * 10⁻⁶ m/s`.
+
+The tracer results are abstract and independent of those numbers. On
+two periodic cells of equal size, the first-order upwind update with
+weight `ν` is `c₁' = (1 - ν) * c₁ + ν * c₂`,
+`c₂' = (1 - ν) * c₂ + ν * c₁`; with two periodic cells each cell's
+upstream neighbour is the other cell, so the update is the same for
+either flow direction. It conserves total mass for every `ν` and
+preserves nonnegativity under the CFL condition `0 ≤ ν ≤ 1`. Here `ν`
+is a free real parameter: for a cell width `Δx` and a time step `Δt`
+it would be the Courant number `|v| * Δt / Δx`, but no coupling to the
+flux or velocity above is formalized. The module is self-contained
+from Mathlib primitives.
 
 ## ii. Key results
 
-- `EarthScience.darcy_flux_value`: Darcy flux `-10⁻⁶ m/s`.
-- `EarthScience.pore_velocity_value`: pore velocity `-4 * 10⁻⁶ m/s`.
-- `EarthScience.tracer_update_mass_conserved`: the periodic update
-  conserves total tracer mass.
-- `EarthScience.tracer_update_nonneg`: the update preserves nonnegativity.
+- `EarthScience.darcy_flux_value`: Darcy flux `-10⁻⁶ m/s` at the
+  stated inputs.
+- `EarthScience.pore_velocity_value`: pore velocity `-4 * 10⁻⁶ m/s` at
+  the stated inputs.
+- `EarthScience.tracer_update_mass_conserved`: the two-cell periodic
+  update conserves total tracer mass.
+- `EarthScience.tracer_update_nonneg`: the update preserves
+  nonnegativity for `ν ∈ [0, 1]`.
 
 ## iii. Table of contents
 
@@ -43,6 +58,15 @@ on any sibling development.
 
 ## iv. References
 
+- R. A. Freeze and J. A. Cherry, *Groundwater*, Prentice-Hall (1979),
+  Chapter 2 (Physical Properties and Principles), for Darcy's law
+  `q = -K dh/dl` and the specific discharge, and Chapter 9
+  (Groundwater Contamination), for advective transport at the average
+  linear velocity `q / n`.
+- R. J. LeVeque, *Finite Volume Methods for Hyperbolic Problems*,
+  Cambridge University Press (2002), Chapter 4 (Finite Volume
+  Methods), for the conservative first-order upwind method on a
+  uniform grid and the CFL condition.
 - `add_nonneg`, `mul_nonneg` in Mathlib.
 
 ## A. Darcy flux and pore velocity
@@ -52,32 +76,32 @@ on any sibling development.
 
 namespace EarthScience
 
-/-- Capstone (groundwater column): Darcy flux `q = -K * grad h` with
+/-- Darcy flux at fixed inputs: `q = -K * dh/dx` with
 `K = 10⁻⁴ m/s` and head gradient `0.01` is `-10⁻⁶ m/s`. All numerals
 are exact rationals. -/
-theorem darcy_flux_value :
+lemma darcy_flux_value :
     -(1 / 10000 : ℝ) * (1 / 100) = -1 / 1000000 := by
   norm_num
 
 /-- Pore velocity `v = q / φ` with porosity `φ = 1 / 4` and the Darcy
 flux above is `-4 * 10⁻⁶ m/s = -1 / 250000`. -/
-theorem pore_velocity_value :
+lemma pore_velocity_value :
     (-1 / 1000000 : ℝ) / (1 / 4) = -4 / 1000000 := by
   norm_num
 
 /-! ## B. Conservative periodic tracer update -/
 
-/-- Conservative periodic tracer update on two cells: with upwind weight
-`ν ∈ [0, 1]`, `c₁' = (1 - ν) * c₁ + ν * c₂` and
-`c₂' = (1 - ν) * c₂ + ν * c₁`, total mass is conserved:
+/-- Conservative periodic tracer update on two cells: for every real
+upwind weight `ν`, `c₁' = (1 - ν) * c₁ + ν * c₂` and
+`c₂' = (1 - ν) * c₂ + ν * c₁` conserve total mass:
 `c₁' + c₂' = c₁ + c₂`. -/
-theorem tracer_update_mass_conserved {ν c₁ c₂ : ℝ} :
+lemma tracer_update_mass_conserved {ν c₁ c₂ : ℝ} :
     ((1 - ν) * c₁ + ν * c₂) + ((1 - ν) * c₂ + ν * c₁) = c₁ + c₂ := by
   ring
 
 /-- The same update preserves nonnegativity: for `ν ∈ [0, 1]` and
 `c₁, c₂ ≥ 0`, both updated concentrations are nonnegative. -/
-theorem tracer_update_nonneg {ν c₁ c₂ : ℝ} (hν0 : 0 ≤ ν) (hν1 : ν ≤ 1)
+lemma tracer_update_nonneg {ν c₁ c₂ : ℝ} (hν0 : 0 ≤ ν) (hν1 : ν ≤ 1)
     (hc₁ : 0 ≤ c₁) (hc₂ : 0 ≤ c₂) :
     0 ≤ (1 - ν) * c₁ + ν * c₂ ∧ 0 ≤ (1 - ν) * c₂ + ν * c₁ := by
   have h1ν : 0 ≤ 1 - ν := by linarith
