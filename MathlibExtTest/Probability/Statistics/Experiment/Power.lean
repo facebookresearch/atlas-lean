@@ -109,4 +109,87 @@ example {n : ℕ} (hn : 0 < n) (μ0 c : ℝ) {δ : ℝ} (hδ : 0 < δ) {v w : NN
     exact hsqrt
   exact strictMono_cdf_gaussianReal 0 one_ne_zero hlt
 
+/-- Use (equality case): `n = ⌈(√v (z_α + z_β) / δ)²⌉` itself is certified; its positivity
+follows from the other hypotheses, so no `0 < n` premise is needed. -/
+theorem samplesize_eq_ceil_certified {α β δ μ0 : ℝ} {v : NNReal}
+    (hα : α ∈ Set.Ioo 0 (1 / 2))
+    (hβ : β ∈ Set.Ioo 0 (1 / 2)) (hδ : 0 < δ) (hv : v ≠ 0) :
+    1 - β ≤ (Measure.pi fun _ : Fin ⌈(Real.sqrt (v : ℝ) * (cdfQuantile (gaussianReal 0 1)
+        (1 - α) + cdfQuantile (gaussianReal 0 1) (1 - β)) / δ) ^ 2⌉₊ =>
+          gaussianReal (μ0 + δ) v).real
+      (zTestReject ⌈(Real.sqrt (v : ℝ) * (cdfQuantile (gaussianReal 0 1) (1 - α)
+        + cdfQuantile (gaussianReal 0 1) (1 - β)) / δ) ^ 2⌉₊ μ0 v
+        (cdfQuantile (gaussianReal 0 1) (1 - α))) := by
+  have hzα : 0 < cdfQuantile (gaussianReal 0 1) (1 - α) := by
+    apply cdfQuantile_gaussianReal_pos
+    obtain ⟨h0, h1⟩ := hα
+    exact ⟨by linarith, by linarith⟩
+  have hzβ : 0 < cdfQuantile (gaussianReal 0 1) (1 - β) := by
+    apply cdfQuantile_gaussianReal_pos
+    obtain ⟨h0, h1⟩ := hβ
+    exact ⟨by linarith, by linarith⟩
+  have hvR : 0 < (v : ℝ) := by
+    have h : (0 : NNReal) < v := pos_iff_ne_zero.mpr hv
+    exact_mod_cast h
+  refine power_ge_of_le_ceil hα hβ hδ hv ?_ le_rfl
+  exact Nat.ceil_pos.mpr (pow_pos (div_pos (mul_pos (Real.sqrt_pos.mpr hvR)
+    (add_pos hzα hzβ)) hδ) 2)
+
+/-- Boundary: at `α = β = 49/100`, just inside the `(0, 1/2)` window, the certificate still
+guarantees power at least `51/100`. -/
+theorem samplesize_alpha_beta_near_half {δ μ0 : ℝ} {v : NNReal} (hδ : 0 < δ) (hv : v ≠ 0)
+    {n : ℕ} (hn : 0 < n)
+    (hN : ⌈(Real.sqrt (v : ℝ) * (cdfQuantile (gaussianReal 0 1) (1 - 49 / 100)
+        + cdfQuantile (gaussianReal 0 1) (1 - 49 / 100)) / δ) ^ 2⌉₊ ≤ n) :
+    (51 / 100 : ℝ) ≤ (Measure.pi fun _ : Fin n => gaussianReal (μ0 + δ) v).real
+      (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - 49 / 100))) := by
+  have hα : (49 / 100 : ℝ) ∈ Set.Ioo 0 (1 / 2) := by norm_num
+  have hβ : (49 / 100 : ℝ) ∈ Set.Ioo 0 (1 / 2) := by norm_num
+  have h := power_ge_of_le_ceil (μ0 := μ0) hα hβ hδ hv hn hN
+  linarith
+
+/-- Use: a sample size certified for a larger known variance `w` is certified for any smaller
+nonzero variance `v` (the bound is monotone in the variance). -/
+theorem samplesize_mono_variance {α β δ μ0 : ℝ} {v w : NNReal}
+    (hα : α ∈ Set.Ioo 0 (1 / 2))
+    (hβ : β ∈ Set.Ioo 0 (1 / 2)) (hδ : 0 < δ) (hv : v ≠ 0) (hvw : v ≤ w) {n : ℕ} (hn : 0 < n)
+    (hN : ⌈(Real.sqrt (w : ℝ) * (cdfQuantile (gaussianReal 0 1) (1 - α)
+        + cdfQuantile (gaussianReal 0 1) (1 - β)) / δ) ^ 2⌉₊ ≤ n) :
+    1 - β ≤ (Measure.pi fun _ : Fin n => gaussianReal (μ0 + δ) v).real
+      (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α))) := by
+  have hzα : 0 < cdfQuantile (gaussianReal 0 1) (1 - α) := by
+    apply cdfQuantile_gaussianReal_pos
+    obtain ⟨h0, h1⟩ := hα
+    exact ⟨by linarith, by linarith⟩
+  have hzβ : 0 < cdfQuantile (gaussianReal 0 1) (1 - β) := by
+    apply cdfQuantile_gaussianReal_pos
+    obtain ⟨h0, h1⟩ := hβ
+    exact ⟨by linarith, by linarith⟩
+  have hAB : 0 ≤ cdfQuantile (gaussianReal 0 1) (1 - α) +
+      cdfQuantile (gaussianReal 0 1) (1 - β) := le_of_lt (add_pos hzα hzβ)
+  have hvwR : (v : ℝ) ≤ (w : ℝ) := by exact_mod_cast hvw
+  have hsqrt : Real.sqrt (v : ℝ) ≤ Real.sqrt (w : ℝ) := Real.sqrt_le_sqrt hvwR
+  have hmul : Real.sqrt (v : ℝ) * (cdfQuantile (gaussianReal 0 1) (1 - α) +
+      cdfQuantile (gaussianReal 0 1) (1 - β)) ≤ Real.sqrt (w : ℝ) *
+      (cdfQuantile (gaussianReal 0 1) (1 - α) +
+        cdfQuantile (gaussianReal 0 1) (1 - β)) :=
+    mul_le_mul_of_nonneg_right hsqrt hAB
+  have hle : Real.sqrt (v : ℝ) * (cdfQuantile (gaussianReal 0 1) (1 - α) +
+      cdfQuantile (gaussianReal 0 1) (1 - β)) / δ ≤ Real.sqrt (w : ℝ) *
+      (cdfQuantile (gaussianReal 0 1) (1 - α) +
+        cdfQuantile (gaussianReal 0 1) (1 - β)) / δ :=
+    div_le_div_of_nonneg_right hmul (le_of_lt hδ)
+  have hnonneg : 0 ≤ Real.sqrt (v : ℝ) * (cdfQuantile (gaussianReal 0 1) (1 - α) +
+      cdfQuantile (gaussianReal 0 1) (1 - β)) / δ :=
+    div_nonneg (mul_nonneg (Real.sqrt_nonneg _) hAB) (le_of_lt hδ)
+  refine power_ge_of_le_ceil hα hβ hδ hv hn (le_trans (Nat.ceil_mono ?_) hN)
+  exact pow_le_pow_left₀ hnonneg hle 2
+
+/-- Negative: at `β = 1/2` the quantile `z_β` is not positive, so the open upper end of `hβ`
+is exactly where the positivity step of the route stops. -/
+theorem samplesize_zBeta_half_nonpos : cdfQuantile (gaussianReal 0 1) (1 - 1 / 2) ≤ 0 := by
+  have h : (1 - 1 / 2 : ℝ) ∈ Set.Ioo (0 : ℝ) 1 := by norm_num
+  rw [cdfQuantile_le_iff _ h, cdf_gaussianReal_zero]
+  norm_num
+
 end MathlibExt.Probability.Statistics.Experiment
