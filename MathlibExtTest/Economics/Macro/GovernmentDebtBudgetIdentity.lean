@@ -17,7 +17,7 @@ import Mathlib.Tactic.NormNum
 
 namespace MathlibExtTest.Economics.Macro.GovernmentDebtBudgetIdentity
 
-open MathlibExt.Economics.Macro.GovernmentDebtBudgetIdentity
+open MathlibExt.Economics.Finance MathlibExt.Economics.Macro.GovernmentDebtBudgetIdentity
 
 /-- Concrete budget identity: interest rate `r = 1`, initial debt `100`, primary
 deficits `D 1 = 10`, `D 2 = 20`. Then `B 1 = 210`, `B 2 = 440`, and
@@ -41,6 +41,22 @@ theorem governmentDebt_example {B D : ℕ → ℝ} (h : DebtRecursion B D 1)
   rw [hsum] at hmain
   norm_num at hmain
   exact ⟨h1, hmain⟩
+
+/-- The same data in the canonical present-value form: the present value of the deficits
+is `presentValue (discountFactor 1) (Finset.Icc 1 2) D = 10 / 2 + 20 / 4 = 10`, and by
+`governmentBudgetIdentity_presentValue` the discounted terminal debt is
+`discountFactor 1 2 * B 2 = 100 + 10 = 110`. -/
+theorem governmentDebt_presentValue_example {B D : ℕ → ℝ} (h : DebtRecursion B D 1)
+    (hB : B 0 = 100) (hD1 : D 1 = 10) (hD2 : D 2 = 20) :
+    presentValue (discountFactor 1) (Finset.Icc 1 2) D = 10 ∧
+      discountFactor 1 2 * B 2 = 110 := by
+  have hpv : presentValue (discountFactor 1) (Finset.Icc 1 2) D = 10 := by
+    rw [presentValue, Finset.sum_Icc_succ_top (by norm_num : 1 ≤ 1 + 1) _]
+    rw [Finset.Icc_self, Finset.sum_singleton]
+    norm_num [discountFactor, hD1, hD2]
+  have hmain := governmentBudgetIdentity_presentValue h (by norm_num : (1 + (1 : ℝ)) ≠ 0) 2
+  rw [hpv, hB] at hmain
+  exact ⟨hpv, by linarith⟩
 
 /-- Concrete zero-deficit case: with no primary deficits, debt compounds at the interest
 rate, `B 2 = 4 * B 0` at `r = 1`. Prove from the recursion (two steps). -/
