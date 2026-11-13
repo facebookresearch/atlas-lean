@@ -62,6 +62,10 @@ GWAS p-values) satisfies it.
 
 * `bhIndex_le_numBelow`, `le_bhIndex`: `bhIndex q p` is the largest qualifying `k`.
 * `card_bhRejections`: BH at level `q ≥ 0` rejects exactly `bhIndex q p` hypotheses.
+* `bhIndex_eq_sup`, `measurable_bhIndex`, `measurable_falseDiscoveryProportion_bhRejections`:
+  for measurable p-values, the BH index and the false discovery proportion of the BH rejections
+  are measurable. `bhIndex q p` is definitionally `stepUpIndex (fun k => q * k / m) p`, so these and
+  the leave-one-out step reuse the step-up lemmas of `MultipleTesting.Basic`.
 * `integral_falseDiscoveryProportion_bhRejections_le_of_isValidPValue`: `E[FDP] ≤ q |H0| / m`
   for independent p-values whose true-null p-values are valid (super-uniform)
   (Benjamini–Hochberg 1995, Theorem 1).
@@ -72,7 +76,10 @@ GWAS p-values) satisfies it.
   are valid (Benjamini–Yekutieli 2001, Theorem 1.3).
 * `one_le_harmonic`: Mathlib's harmonic number satisfies `1 ≤ H_m` for `m ≥ 1`.
 * `IsPRDSOn`: PRDS of the p-values on the true nulls; `isPRDSOn_iff_setLIntegral`,
-  `IsPRDSOn.measure_inter_mul_le`.
+  `IsPRDSOn.measure_inter_mul_le`, `IsPRDSOn.measure_inter_mul_measure_slab_le`.
+* `not_isPRDSOn_of_measure_inter_mul_lt`, `not_isPRDSOn_of_separated`: refuting PRDS by an
+  increasing event that is more likely given `p i ≤ s` than given `s < p i ≤ t`, e.g. when a
+  threshold on `p k` separates the two events.
 * `isPRDSOn_of_iIndepFun`, `isPRDSOn_of_monotone_comp`, `isPRDSOn_empty`: independent p-values,
   deterministic positive dependence (e.g. identical p-values) and the empty null set are PRDS.
 * `integral_falseDiscoveryProportion_bhRejections_le_of_isPRDSOn`: BH at level `q` has
@@ -110,34 +117,23 @@ noncomputable def bhRejections (q : ℝ) (p : Fin m → ℝ) : Finset (Fin m) :=
   Finset.univ.filter fun i => p i ≤ q * bhIndex q p / m
 
 /-- The BH step-up index is at most `m`. -/
-theorem bhIndex_le (q : ℝ) (p : Fin m → ℝ) : bhIndex q p ≤ m := by
-  have h := Finset.max'_mem ((Finset.range (m + 1)).filter fun k : ℕ =>
-    k ≤ numBelow p (q * (k : ℝ) / m)) ⟨0, by simp⟩
-  simp only [Finset.mem_filter, Finset.mem_range] at h
-  exact Nat.lt_succ_iff.1 h.1
+theorem bhIndex_le (q : ℝ) (p : Fin m → ℝ) : bhIndex q p ≤ m :=
+  stepUpIndex_le _ p
 
 /-- At the BH step-up index `k`, at least `k` p-values are at most `q k / m`. -/
 theorem bhIndex_le_numBelow (q : ℝ) (p : Fin m → ℝ) :
-    bhIndex q p ≤ numBelow p (q * bhIndex q p / m) := by
-  have h := Finset.max'_mem ((Finset.range (m + 1)).filter fun k : ℕ =>
-    k ≤ numBelow p (q * (k : ℝ) / m)) ⟨0, by simp⟩
-  simp only [Finset.mem_filter] at h
-  exact h.2
+    bhIndex q p ≤ numBelow p (q * bhIndex q p / m) :=
+  stepUpIndex_le_numBelow _ p
 
 /-- The BH step-up index is the largest `k ≤ m` with at least `k` p-values at most `q k / m`. -/
 theorem le_bhIndex {q : ℝ} {p : Fin m → ℝ} {k : ℕ} (hk : k ≤ m)
     (h : k ≤ numBelow p (q * k / m)) : k ≤ bhIndex q p :=
-  Finset.le_max' _ k (by simpa [Nat.lt_succ_iff] using ⟨hk, h⟩)
+  le_stepUpIndex hk h
 
 /-- The BH procedure at level `q ≥ 0` rejects exactly `bhIndex q p` hypotheses. -/
 theorem card_bhRejections {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ) :
-    (bhRejections q p).card = bhIndex q p := by
-  change numBelow p (q * bhIndex q p / m) = bhIndex q p
-  refine le_antisymm ?_ (bhIndex_le_numBelow q p)
-  by_contra! hlt
-  have hle : numBelow p (q * bhIndex q p / m) ≤ bhIndex q p :=
-    le_bhIndex (numBelow_le p _) (numBelow_mono p (by gcongr))
-  omega
+    (bhRejections q p).card = bhIndex q p :=
+  numBelow_stepUpIndex (c := fun k => q * (k : ℝ) / m) (fun _ _ h => by dsimp only; gcongr) p
 
 private theorem threshold_mono {m k l : ℕ} {q : ℝ} (hq : 0 ≤ q) (hkl : k ≤ l) :
     q * (k : ℝ) / m ≤ q * (l : ℝ) / m := by
@@ -147,45 +143,9 @@ private theorem threshold_mono {m k l : ℕ} {q : ℝ} (hq : 0 ≤ q) (hkl : k �
 private theorem threshold_nonneg {m k : ℕ} {q : ℝ} (hq : 0 ≤ q) :
     0 ≤ q * (k : ℝ) / m := by positivity
 
-private theorem numBelow_update_le {m : ℕ} (p : Fin m → ℝ) (i : Fin m) {t : ℝ}
-    (ht : 0 ≤ t) : numBelow p t ≤ numBelow (Function.update p i 0) t := by
-  classical
-  apply Finset.card_le_card
-  intro j hj
-  refine Finset.mem_filter.mpr ⟨Finset.mem_univ _, ?_⟩
-  by_cases hji : j = i
-  · simpa [hji] using ht
-  · simpa [Function.update_of_ne hji] using (Finset.mem_filter.mp hj).2
-
-private theorem numBelow_update_eq {m : ℕ} (p : Fin m → ℝ) (i : Fin m) {t : ℝ}
-    (ht : 0 ≤ t) (hpi : p i ≤ t) : numBelow (Function.update p i 0) t = numBelow p t := by
-  classical
-  unfold numBelow
-  congr 1
-  ext j
-  by_cases hji : j = i
-  · simp [hji, ht, hpi]
-  · simp [Function.update_of_ne hji]
-
-private theorem bhIndex_le_update {m : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ)
-    (i : Fin m) : bhIndex q p ≤ bhIndex q (Function.update p i 0) := by
-  exact le_bhIndex (bhIndex_le q p) ((bhIndex_le_numBelow q p).trans
-    (numBelow_update_le p i (threshold_nonneg hq)))
-
 private theorem bhIndex_update_pos {m : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ)
-    (i : Fin m) : 1 ≤ bhIndex q (Function.update p i 0) := by
-  apply le_bhIndex (by have := i.isLt; omega)
-  apply Finset.card_pos.mpr
-  exact ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ _, by
-    simpa using (threshold_nonneg (m := m) (k := 1) hq)⟩⟩
-
-private theorem bhIndex_update_eq {m : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ)
-    (i : Fin m) (hpi : p i ≤ q * bhIndex q (Function.update p i 0) / m) :
-    bhIndex q p = bhIndex q (Function.update p i 0) := by
-  apply Nat.le_antisymm (bhIndex_le_update hq p i)
-  apply le_bhIndex (bhIndex_le q _)
-  rw [← numBelow_update_eq p i (threshold_nonneg hq) hpi]
-  exact bhIndex_le_numBelow q _
+    (i : Fin m) : 1 ≤ bhIndex q (Function.update p i 0) :=
+  one_le_stepUpIndex_update (fun _ => threshold_nonneg hq) p i
 
 private theorem bh_leave_one_out {m k : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m → ℝ)
     (i : Fin m) :
@@ -194,53 +154,48 @@ private theorem bh_leave_one_out {m k : ℕ} {q : ℝ} (hq : 0 ≤ q) (p : Fin m
   classical
   rw [card_bhRejections hq, card_bhRejections hq]
   simp only [bhRejections, Finset.mem_filter, Finset.mem_univ, true_and]
-  constructor
-  · rintro ⟨hpi, hk⟩
-    have heq := bhIndex_update_eq hq p i (hpi.trans
-      (threshold_mono hq (bhIndex_le_update hq p i)))
-    exact ⟨by simpa [hk] using hpi, heq.symm.trans hk⟩
-  · rintro ⟨hpi, hk⟩
-    have heq := bhIndex_update_eq hq p i (by simpa [hk] using hpi)
-    exact ⟨by simpa [heq, hk] using hpi, heq.trans hk⟩
+  exact stepUp_leave_one_out (c := fun k => q * (k : ℝ) / m) (fun _ _ h => by dsimp only; gcongr)
+    (fun _ => by positivity) p i k
 
-private theorem measurable_numBelow {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
-    (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (t : ℝ) :
-    Measurable (fun ω => numBelow (fun i => p i ω) t) := by
-  classical
-  simp only [numBelow, Finset.card_filter]
-  exact Finset.measurable_sum _ fun i _ => Measurable.ite
-    (measurableSet_le (hp i) measurable_const) measurable_const measurable_const
-
-private theorem bhIndex_eq_sup {m : ℕ} (q : ℝ) (p : Fin m → ℝ) :
+/-- The BH step-up index as a finite supremum, the form used to prove measurability. -/
+theorem bhIndex_eq_sup {m : ℕ} (q : ℝ) (p : Fin m → ℝ) :
     bhIndex q p = (Finset.range (m + 1)).sup
-      (fun k => if k ≤ numBelow p (q * (k : ℝ) / m) then k else 0) := by
-  classical
-  apply Nat.le_antisymm
-  · have h := Finset.le_sup (f := fun (k : ℕ) =>
-      if k ≤ numBelow p (q * (k : ℝ) / m) then k else 0)
-      (Finset.mem_range.mpr (Nat.lt_succ_of_le (bhIndex_le q p)))
-    simpa [bhIndex_le_numBelow q p] using h
-  · apply Finset.sup_le
-    intro k hk
-    split_ifs with h
-    · exact le_bhIndex (Nat.le_of_lt_succ (Finset.mem_range.mp hk)) h
-    · exact Nat.zero_le _
+      (fun k => if k ≤ numBelow p (q * (k : ℝ) / m) then k else 0) :=
+  stepUpIndex_eq_sup _ p
 
-private theorem measurable_bhIndex {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
+/-- The BH step-up index of measurable p-values is a measurable function. -/
+theorem measurable_bhIndex {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (q : ℝ) :
-    Measurable (fun ω => bhIndex q (fun i => p i ω)) := by
+    Measurable (fun ω => bhIndex q (fun i => p i ω)) :=
+  measurable_stepUpIndex_comp (fun _ k => q * (k : ℝ) / m) (fun ω i => p i ω)
+    (fun _ => measurable_const) hp
+
+/-- The false discovery proportion of the BH rejection set is a measurable function of
+measurable p-values. -/
+theorem measurable_falseDiscoveryProportion_bhRejections {Ω : Type*} [MeasurableSpace Ω]
+    (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (H0 : Finset (Fin m)) (q : ℝ) :
+    Measurable fun ω => falseDiscoveryProportion H0 (bhRejections q fun i => p i ω) := by
   classical
-  simp_rw [bhIndex_eq_sup]
-  have h : ∀ s : Finset ℕ, Measurable (fun ω => s.sup
-      (fun k => if k ≤ numBelow (fun i => p i ω) (q * (k : ℝ) / m) then k else 0)) := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty => simp
-    | @insert k s hk ih =>
-      simp only [Finset.sup_insert]
-      exact (Measurable.ite (measurableSet_le measurable_const
-        (measurable_numBelow p hp _)) measurable_const measurable_const).max ih
-  exact h _
+  have hK : Measurable fun ω => q * (bhIndex q (fun i => p i ω) : ℝ) / m :=
+    (measurable_const.mul (measurable_from_nat.comp (measurable_bhIndex p hp q))).div_const _
+  have hE (i : Fin m) : MeasurableSet {ω | p i ω ≤ q * (bhIndex q (fun i => p i ω) : ℝ) / m} :=
+    measurableSet_le (hp i) hK
+  have hcount (s : Finset (Fin m)) : Measurable fun ω =>
+      ((s.filter fun i => p i ω ≤ q * (bhIndex q (fun i => p i ω) : ℝ) / m).card : ℝ) := by
+    simp_rw [Finset.natCast_card_filter]
+    exact Finset.measurable_sum _ fun i _ =>
+      Measurable.ite (hE i) measurable_const measurable_const
+  have heq : (fun ω => falseDiscoveryProportion H0 (bhRejections q fun i => p i ω)) =
+      fun ω => ((H0.filter fun i => p i ω ≤ q * (bhIndex q (fun i => p i ω) : ℝ) / m).card : ℝ) /
+        max ((Finset.univ.filter fun i => p i ω ≤
+          q * (bhIndex q (fun i => p i ω) : ℝ) / m).card : ℝ) 1 := by
+    funext ω
+    unfold falseDiscoveryProportion bhRejections
+    congr 3
+    ext i
+    simp [and_comm]
+  rw [heq]
+  exact (hcount H0).div ((hcount Finset.univ).max measurable_const)
 
 private theorem indep_bhIndex_update {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i))
@@ -275,29 +230,12 @@ private theorem indep_bhIndex_update {m : ℕ} {Ω : Type*} [MeasurableSpace Ω]
   rw [heq]
   exact h
 
-private theorem valid_measureReal_le {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    (X : Ω → ℝ) (hX : IsValidPValue μ X) {t : ℝ} (ht₀ : 0 ≤ t) (ht₁ : t ≤ 1) :
-    μ.real {ω | X ω ≤ t} ≤ t :=
-  ENNReal.toReal_le_of_le_ofReal ht₀ (hX t ⟨ht₀, ht₁⟩)
-
 private theorem threshold_le_one {m k : ℕ} {q : ℝ} (hq₁ : q ≤ 1)
     (hm : 0 < m) (hkm : k ≤ m) : q * (k : ℝ) / m ≤ 1 := by
   apply (div_le_one (by exact_mod_cast hm)).mpr
   calc
     q * (k : ℝ) ≤ 1 * (k : ℝ) := mul_le_mul_of_nonneg_right hq₁ (Nat.cast_nonneg _)
     _ ≤ m := by simpa using (show (k : ℝ) ≤ m by exact_mod_cast hkm)
-
-private theorem fdp_eq_sum {m : ℕ} (H0 R : Finset (Fin m)) :
-    falseDiscoveryProportion H0 R =
-      ∑ i ∈ H0, if i ∈ R then 1 / max (R.card : ℝ) 1 else 0 := by
-  classical
-  have hc : ((R ∩ H0).card : ℝ) = ∑ i ∈ H0, if i ∈ R then (1 : ℝ) else 0 := by
-    rw [← Finset.sum_filter]
-    simp [Finset.filter_mem_eq_inter, Finset.inter_comm]
-  rw [falseDiscoveryProportion, hc, Finset.sum_div]
-  apply Finset.sum_congr rfl
-  intro i hi
-  split_ifs <;> simp
 
 private theorem bh_contribution_eq_sum {m : ℕ} {q : ℝ} (hq : 0 ≤ q)
     (p : Fin m → ℝ) (i : Fin m) :
@@ -356,7 +294,7 @@ private theorem integral_bh_contribution_le {m : ℕ} {Ω : Type*} [MeasurableSp
       simpa [K, Set.preimage, Set.inter_def, measureReal_def, ENNReal.toReal_mul]
         using congrArg ENNReal.toReal h
     rw [hr]
-    exact mul_le_mul_of_nonneg_right (valid_measureReal_le μ (p i) hnull (threshold_nonneg hq₀)
+    exact mul_le_mul_of_nonneg_right (valid_measureReal_le hnull (threshold_nonneg hq₀)
       (threshold_le_one hq₁ hm (Finset.mem_Icc.mp hk).2)) measureReal_nonneg
   have hsum : (∑ k ∈ Finset.Icc 1 m, μ.real {ω | K ω = k}) = 1 := by
     have hpre : K ⁻¹' (↑(Finset.Icc 1 m) : Set ℕ) = Set.univ := by
@@ -525,7 +463,7 @@ private theorem integral_bh_contribution_le_of_arbitrary {m : ℕ} {Ω : Type*}
     _ ≤ μ.real {ω | p i ω ≤ α * (N : ℝ) / m} := by
       refine measureReal_mono (Set.iUnion₂_subset fun k hk ω hω => ?_)
       exact hω.1.trans (threshold_mono hα₀ (Finset.mem_Icc.mp hk).2)
-    _ ≤ α * (N : ℝ) / m := valid_measureReal_le μ (p i) hnull (threshold_nonneg hα₀)
+    _ ≤ α * (N : ℝ) / m := valid_measureReal_le hnull (threshold_nonneg hα₀)
       (threshold_le_one hα₁ hm (Finset.mem_Icc.mp hN).2)
     _ = α / m * N := by ring
 
@@ -647,6 +585,88 @@ theorem IsPRDSOn.measure_inter_mul_le {Ω : Type*} [MeasurableSpace Ω] {μ : Me
     _ = a * ν (Set.Iic s) + g s * ν (Set.Ioc s t) * ν (Set.Iic s) := by ring
     _ ≤ a * ν (Set.Iic s) + b * ν (Set.Iic s) := by gcongr
     _ = (a + b) * ν (Set.Iic s) := (add_mul _ _ _).symm
+
+/-- **PRDS compares adjacent slabs.** If `p` is PRDS on `H0`, `i ∈ H0` and `D` is a measurable
+increasing set, then for all `s, t`
+`μ (P ∈ D, p i ≤ s) * μ (s < p i ≤ t) ≤ μ (P ∈ D, s < p i ≤ t) * μ (p i ≤ s)`, i.e. (when the
+denominators are positive) `P(P ∈ D | p i ≤ s) ≤ P(P ∈ D | s < p i ≤ t)`. This is
+`IsPRDSOn.measure_inter_mul_le` with the common part `{p i ≤ s}` cancelled; no `s ≤ t` is needed,
+since for `t < s` the slab is empty. -/
+theorem IsPRDSOn.measure_inter_mul_measure_slab_le {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} [IsFiniteMeasure μ] {p : Fin m → Ω → ℝ} {H0 : Finset (Fin m)}
+    (h : IsPRDSOn μ p H0) (hp : ∀ i, Measurable (p i)) {i : Fin m} (hi : i ∈ H0)
+    {D : Set (Fin m → ℝ)} (hD : MeasurableSet D) (hup : IsUpperSet D) (s t : ℝ) :
+    μ ({ω | (fun j => p j ω) ∈ D} ∩ {ω | p i ω ≤ s}) * μ {ω | s < p i ω ∧ p i ω ≤ t} ≤
+      μ ({ω | (fun j => p j ω) ∈ D} ∩ {ω | s < p i ω ∧ p i ω ≤ t}) * μ {ω | p i ω ≤ s} := by
+  rcases lt_or_ge t s with hts | hst
+  · have hB : {ω | s < p i ω ∧ p i ω ≤ t} = ∅ :=
+      Set.eq_empty_of_forall_notMem fun ω hω => absurd (hω.1.trans_le hω.2) (not_lt.2 hts.le)
+    simp [hB]
+  have hE : MeasurableSet {ω | (fun j => p j ω) ∈ D} := Measurable.of_eval hp hD
+  have hBm : MeasurableSet {ω | s < p i ω ∧ p i ω ≤ t} :=
+    (measurableSet_lt measurable_const (hp i)).inter (measurableSet_le (hp i) measurable_const)
+  have hAB : Disjoint {ω | p i ω ≤ s} {ω | s < p i ω ∧ p i ω ≤ t} :=
+    Set.disjoint_left.2 fun ω h1 h2 => absurd h1 (not_le.2 h2.1)
+  have hT : {ω | p i ω ≤ t} = {ω | p i ω ≤ s} ∪ {ω | s < p i ω ∧ p i ω ≤ t} := by
+    ext ω
+    simp only [Set.mem_union, Set.mem_ofPred_eq]
+    constructor
+    · intro h
+      rcases le_or_gt (p i ω) s with hs | hs
+      · exact Or.inl hs
+      · exact Or.inr ⟨hs, h⟩
+    · rintro (h | h)
+      · exact h.trans hst
+      · exact h.2
+  have key := h.measure_inter_mul_le hp hi hD hup hst
+  rw [hT, Set.inter_union_distrib_left, measure_union hAB hBm,
+    measure_union (hAB.mono Set.inter_subset_right Set.inter_subset_right) (hE.inter hBm),
+    mul_add, add_mul] at key
+  exact ENNReal.le_of_add_le_add_left
+    (ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)) key
+
+/-- **Refuting PRDS by a reversed conditional probability.** If for some true null `i ∈ H0`, some
+measurable increasing set `D` and some `s, t`, the event `P ∈ D` is strictly more likely given
+`p i ≤ s` than given `s < p i ≤ t`, in the cross-multiplied form
+`μ (P ∈ D, s < p i ≤ t) * μ (p i ≤ s) < μ (P ∈ D, p i ≤ s) * μ (s < p i ≤ t)`, then `p` is not
+PRDS on `H0`. This is the contrapositive of `IsPRDSOn.measure_inter_mul_measure_slab_le`. -/
+theorem not_isPRDSOn_of_measure_inter_mul_lt {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    [IsFiniteMeasure μ] {p : Fin m → Ω → ℝ} (hp : ∀ i, Measurable (p i)) {H0 : Finset (Fin m)}
+    {i : Fin m} (hi : i ∈ H0) {D : Set (Fin m → ℝ)} (hD : MeasurableSet D) (hup : IsUpperSet D)
+    {s t : ℝ}
+    (hlt : μ ({ω | (fun j => p j ω) ∈ D} ∩ {ω | s < p i ω ∧ p i ω ≤ t}) * μ {ω | p i ω ≤ s} <
+      μ ({ω | (fun j => p j ω) ∈ D} ∩ {ω | p i ω ≤ s}) * μ {ω | s < p i ω ∧ p i ω ≤ t}) :
+    ¬ IsPRDSOn μ p H0 := fun h =>
+  (not_lt.2 (h.measure_inter_mul_measure_slab_le hp hi hD hup s t)) hlt
+
+/-- **A separation criterion that refutes PRDS.** Suppose `p k` is at least `u` (almost surely)
+whenever `p i ≤ s`, and below `u` whenever `s < p i ≤ t`, with both events of positive
+probability, for some true null `i ∈ H0`. Then the increasing set `D = {x | u ≤ x k}` has
+`P(P ∈ D | p i ≤ s) = 1 > 0 = P(P ∈ D | s < p i ≤ t)`, so `p` is not PRDS on `H0`
+(`not_isPRDSOn_of_measure_inter_mul_lt`). Typical instance: `p k` a decreasing function of `p i`
+(counter-monotone pairs, coupled corrected statistics). -/
+theorem not_isPRDSOn_of_separated {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    [IsFiniteMeasure μ] {p : Fin m → Ω → ℝ} (hp : ∀ i, Measurable (p i)) {H0 : Finset (Fin m)}
+    {i k : Fin m} (hi : i ∈ H0) {s t u : ℝ} (hA : μ {ω | p i ω ≤ s} ≠ 0)
+    (hB : μ {ω | s < p i ω ∧ p i ω ≤ t} ≠ 0) (hAu : ∀ᵐ ω ∂μ, p i ω ≤ s → u ≤ p k ω)
+    (hBu : ∀ᵐ ω ∂μ, s < p i ω → p i ω ≤ t → p k ω < u) :
+    ¬ IsPRDSOn μ p H0 := by
+  refine not_isPRDSOn_of_measure_inter_mul_lt hp hi (D := {x | u ≤ x k}) (s := s) (t := t)
+    (measurableSet_le measurable_const (measurable_pi_apply k))
+    (fun x y hxy hx => le_trans hx (hxy k)) ?_
+  have hDA : μ ({ω | (fun j => p j ω) ∈ {x : Fin m → ℝ | u ≤ x k}} ∩ {ω | p i ω ≤ s}) =
+      μ {ω | p i ω ≤ s} := by
+    refine measure_congr (Filter.eventuallyEqSet_iff.2 ?_)
+    filter_upwards [hAu] with ω hω
+    simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
+    exact ⟨fun h => h.2, fun h => ⟨hω h, h⟩⟩
+  have hDB : μ ({ω | (fun j => p j ω) ∈ {x : Fin m → ℝ | u ≤ x k}} ∩
+      {ω | s < p i ω ∧ p i ω ≤ t}) = 0 := by
+    refine measure_eq_zero_iff_ae_notMem.2 ?_
+    filter_upwards [hBu] with ω hω hmem
+    exact absurd hmem.1 (not_le.2 (hω hmem.2.1 hmem.2.2))
+  rw [hDA, hDB, zero_mul]
+  exact pos_iff_ne_zero.2 (mul_ne_zero hA hB)
 
 /-- Every family is PRDS on the empty set of true nulls. -/
 theorem isPRDSOn_empty {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ]
@@ -843,7 +863,7 @@ private theorem integral_bh_contribution_le_of_isPRDSOn {Ω : Type*} [Measurable
       exact congrArg (· / π (t k)) (hA k hk1 (t k)).symm
     rw [hΔ]
     have hAle : A ≤ π (t k) := measureReal_mono fun ω hω => hω.1
-    have hπt : π (t k) ≤ t k := valid_measureReal_le μ (p i) hnull (threshold_nonneg hq₀)
+    have hπt : π (t k) ≤ t k := valid_measureReal_le hnull (threshold_nonneg hq₀)
       (threshold_le_one hq₁ hm hk2)
     have hkpos : (0 : ℝ) < k := by exact_mod_cast hk1
     have hA0 : 0 ≤ A := measureReal_nonneg
