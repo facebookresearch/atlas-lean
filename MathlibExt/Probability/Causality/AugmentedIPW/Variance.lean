@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Probability.Causality.AugmentedIPW.Score
 public import MathlibExt.Probability.Causality.AugmentedIPW.DoubleRobustness
+public import MathlibExt.Probability.Statistics.Bootstrap
 public import MathlibExt.Probability.Statistics.Slutsky
 public import MathlibExt.Probability.Statistics.Survival.ProcessInference
 public import Mathlib.Probability.CentralLimitTheorem
@@ -38,7 +39,9 @@ treatment effect (Hahn 1998); `Var(φ) = Var(ψ) = E[φ²]` (`variance_aipwScore
 * `aipwEstimator O T X Y e m₀ m₁ n`: the AIPW estimator, the sample mean of the fitted scores
   of units `0, …, n - 1`.
 * `aipwVarianceEstimator O T X Y e m₀ m₁ n`: the plug-in variance estimator, the sample variance
-  `n⁻¹ ∑ (ψ̂ᵢ - τ̂)²` of the estimated influence-function values `ψ̂ᵢ - τ̂`.
+  `n⁻¹ ∑ (ψ̂ᵢ - τ̂)²` of the estimated influence-function values `ψ̂ᵢ - τ̂`. It is the generic
+  plug-in sample variance `ProbabilityTheory.Bootstrap.empiricalVar` of the fitted scores, whose
+  center is the AIPW estimator (`aipwVarianceEstimator_eq`).
 
 ## Main results
 
@@ -76,7 +79,9 @@ The score is `AugmentedIPW.Score.aipwScore`; the mean identity at the true nuisa
 `MeasureTheory.TendstoInDistribution.add_of_tendstoInMeasure_const` (Slutsky). The interval is
 `ProcessInference.waldInterval` and its coverage limit is
 `ProcessInference.tendsto_coverage_waldInterval`;
-`MeasureTheory.TendstoInMeasure.comp_const_of_continuousAt` gives the square root.
+`MeasureTheory.TendstoInMeasure.comp_const_of_continuousAt` gives the square root. The variance
+estimator is `ProbabilityTheory.Bootstrap.empiricalVar` of the fitted scores, and its
+mean-of-squares form is `ProbabilityTheory.Bootstrap.empiricalVar_eq`.
 
 ## References
 
@@ -113,11 +118,22 @@ noncomputable def aipwEstimator (O : ℕ → Ω → Ω₁) (T : Set Ω₁) (X : 
   (n : ℝ)⁻¹ * ∑ i ∈ range n, aipwFittedScore O T X Y e m₀ m₁ n i ω
 
 /-- The **plug-in variance estimator** for the AIPW estimator: the sample variance
-`n⁻¹ ∑_{i < n} (ψ̂ₙᵢ - τ̂ₙ)²` of the estimated influence-function values `ψ̂ₙᵢ - τ̂ₙ`. -/
+`n⁻¹ ∑_{i < n} (ψ̂ₙᵢ - τ̂ₙ)²` of the estimated influence-function values `ψ̂ₙᵢ - τ̂ₙ`, defined as
+the plug-in sample variance `Bootstrap.empiricalVar` of the fitted scores of units
+`0, …, n - 1` (`aipwVarianceEstimator_eq` gives the centered form). -/
 noncomputable def aipwVarianceEstimator (O : ℕ → Ω → Ω₁) (T : Set Ω₁) (X : Ω₁ → 𝒳)
     (Y : Ω₁ → ℝ) (e m₀ m₁ : ℕ → ℕ → Ω → 𝒳 → ℝ) (n : ℕ) (ω : Ω) : ℝ :=
-  (n : ℝ)⁻¹ * ∑ i ∈ range n,
-    (aipwFittedScore O T X Y e m₀ m₁ n i ω - aipwEstimator O T X Y e m₀ m₁ n ω) ^ 2
+  Bootstrap.empiricalVar (fun i => aipwFittedScore O T X Y e m₀ m₁ n i ω) n
+
+/-- The plug-in variance estimator is centered at the AIPW estimator:
+`σ̂ₙ² = n⁻¹ ∑_{i < n} (ψ̂ₙᵢ - τ̂ₙ)²`, since the sample mean in `Bootstrap.empiricalVar` is
+`aipwEstimator` (`Bootstrap.sampleMean_range`). -/
+theorem aipwVarianceEstimator_eq (O : ℕ → Ω → Ω₁) (T : Set Ω₁) (X : Ω₁ → 𝒳) (Y : Ω₁ → ℝ)
+    (e m₀ m₁ : ℕ → ℕ → Ω → 𝒳 → ℝ) (n : ℕ) (ω : Ω) :
+    aipwVarianceEstimator O T X Y e m₀ m₁ n ω = (n : ℝ)⁻¹ * ∑ i ∈ range n,
+      (aipwFittedScore O T X Y e m₀ m₁ n i ω - aipwEstimator O T X Y e m₀ m₁ n ω) ^ 2 := by
+  simp only [aipwVarianceEstimator, Bootstrap.empiricalVar, Bootstrap.sampleMean_range,
+    aipwEstimator]
 
 end Definitions
 
@@ -192,16 +208,6 @@ private lemma tendstoInMeasure_of_abs_sub_le {f g : ℕ → Ω → ℝ} {c : ℝ
   simp only [Set.mem_ofPred_eq, Real.dist_eq, sub_zero] at hω ⊢
   exact hω.trans ((hn ω).trans (le_abs_self _))
 
-/-- The `1/n` sample variance is the mean square minus the squared mean. -/
-private lemma sampleVar_eq {n : ℕ} (hn : 0 < n) (x : ℕ → ℝ) :
-    (n : ℝ)⁻¹ * ∑ i ∈ range n, (x i - (n : ℝ)⁻¹ * ∑ j ∈ range n, x j) ^ 2 =
-      (n : ℝ)⁻¹ * ∑ i ∈ range n, x i ^ 2 - ((n : ℝ)⁻¹ * ∑ i ∈ range n, x i) ^ 2 := by
-  have hn' : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.2 hn.ne'
-  simp only [sub_sq, sum_add_distrib, sum_sub_distrib, ← sum_mul, ← mul_sum, sum_const,
-    card_range, nsmul_eq_mul]
-  field_simp
-  ring
-
 /-- The real-number core of the perturbation bound for the sample variance. -/
 private lemma abs_perturb_le {B₁ B₂ C D₁ D₂ : ℝ} (hB₂ : 0 ≤ B₂) (hD₂ : 0 ≤ D₂)
     (hC : C ^ 2 ≤ B₂ * D₂) (hD : D₁ ^ 2 ≤ D₂) :
@@ -214,11 +220,11 @@ private lemma abs_perturb_le {B₁ B₂ C D₁ D₂ : ℝ} (hB₂ : 0 ≤ B₂) 
   constructor <;> nlinarith [sq_nonneg D₁]
 
 /-- **Perturbation bound for the sample variance.** For `n > 0` and reals `aᵢ = bᵢ + dᵢ`, the
-`1/n` sample variance of `a` differs from `B₂ - B₁²` (the sample variance of `b`, with
-`B₁ = n⁻¹ ∑ bᵢ`, `B₂ = n⁻¹ ∑ bᵢ²`) by at most `2 √B₂ √D₂ + 2 D₂ + 2 |B₁| √D₂`, where
-`D₂ = n⁻¹ ∑ dᵢ²`. -/
-private lemma abs_sampleVar_sub_le {n : ℕ} (hn : 0 < n) (a b : ℕ → ℝ) :
-    |(n : ℝ)⁻¹ * ∑ i ∈ range n, (a i - (n : ℝ)⁻¹ * ∑ j ∈ range n, a j) ^ 2 -
+`1/n` sample variance `Bootstrap.empiricalVar a n` differs from `B₂ - B₁²` (the sample variance
+of `b`, with `B₁ = n⁻¹ ∑ bᵢ`, `B₂ = n⁻¹ ∑ bᵢ²`) by at most `2 √B₂ √D₂ + 2 D₂ + 2 |B₁| √D₂`,
+where `D₂ = n⁻¹ ∑ dᵢ²`. -/
+private lemma abs_empiricalVar_sub_le {n : ℕ} (hn : 0 < n) (a b : ℕ → ℝ) :
+    |Bootstrap.empiricalVar a n -
         ((n : ℝ)⁻¹ * ∑ i ∈ range n, b i ^ 2 - ((n : ℝ)⁻¹ * ∑ i ∈ range n, b i) ^ 2)| ≤
       2 * (√((n : ℝ)⁻¹ * ∑ i ∈ range n, b i ^ 2) *
           √((n : ℝ)⁻¹ * ∑ i ∈ range n, (a i - b i) ^ 2)) +
@@ -255,7 +261,7 @@ private lemma abs_sampleVar_sub_le {n : ℕ} (hn : 0 < n) (a b : ℕ → ℝ) :
     mul_nonneg hni (sum_nonneg fun _ _ => sq_nonneg _)
   have hD₂ : 0 ≤ (n : ℝ)⁻¹ * ∑ i ∈ range n, d i ^ 2 :=
     mul_nonneg hni (sum_nonneg fun _ _ => sq_nonneg _)
-  rw [sampleVar_eq hn, hA2, hA1]
+  rw [Bootstrap.empiricalVar_eq hn.ne', Bootstrap.sampleMean_range, hA2, hA1]
   convert abs_perturb_le hB₂ hD₂ hC hD using 2
   ring
 
@@ -396,12 +402,12 @@ theorem tendstoInMeasure_aipwVarianceEstimator {e m₀ m₁ : 𝒳 → ℝ}
   rw [hG0] at hGlim
   refine tendstoInMeasure_of_abs_sub_le hGlim ?_
   filter_upwards [eventually_gt_atTop 0] with n hn ω
-  have hW := abs_sampleVar_sub_le hn (fun i => aipwFittedScore O T X Y eₙ m₀ₙ m₁ₙ n i ω)
+  have hW := abs_empiricalVar_sub_le hn (fun i => aipwFittedScore O T X Y eₙ m₀ₙ m₁ₙ n i ω)
     (fun i => ψ (O i ω))
   have htri := abs_sub_le (aipwVarianceEstimator O T X Y eₙ m₀ₙ m₁ₙ n ω)
     ((n : ℝ)⁻¹ * ∑ i ∈ range n, ψ (O i ω) ^ 2 - ((n : ℝ)⁻¹ * ∑ i ∈ range n, ψ (O i ω)) ^ 2)
     (Var[ψ; μ₁])
-  simp only [aipwVarianceEstimator, aipwEstimator] at htri ⊢
+  simp only [aipwVarianceEstimator] at htri ⊢
   simp only [hGdef]
   linarith
 
@@ -449,8 +455,10 @@ theorem tendsto_coverage_aipwWaldInterval {e m₀ m₁ : 𝒳 → ℝ}
   have hA : ∀ n, AEMeasurable (aipwEstimator O T X Y eₙ m₀ₙ m₁ₙ n) P := fun n =>
     (Finset.aemeasurable_fun_sum _ fun i _ => hfit n i).const_mul _
   have hse_meas : ∀ n, AEMeasurable (fun ω => √(aipwVarianceEstimator O T X Y eₙ m₀ₙ m₁ₙ n ω)) P :=
-    fun n => ((Finset.aemeasurable_fun_sum _ fun i _ =>
-      ((hfit n i).sub (hA n)).pow_const 2).const_mul _).sqrt
+    fun n => by
+      simp only [aipwVarianceEstimator_eq]
+      exact ((Finset.aemeasurable_fun_sum _ fun i _ =>
+        ((hfit n i).sub (hA n)).pow_const 2).const_mul _).sqrt
   have hse : TendstoInMeasure P (fun n ω => √(aipwVarianceEstimator O T X Y eₙ m₀ₙ m₁ₙ n ω))
       atTop fun _ => √(v.toNNReal : ℝ) := by
     rw [Real.coe_toNNReal _ hv0]

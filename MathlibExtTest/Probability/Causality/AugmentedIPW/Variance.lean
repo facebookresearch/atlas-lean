@@ -49,12 +49,12 @@ example : aipwEstimator O₀ Set.univ (fun _ : ℝ => ()) id (fun _ _ _ _ => 1) 
 /-- Boundary: the empty sample has variance estimate `0`. -/
 example : aipwVarianceEstimator O₀ Set.univ (fun _ : ℝ => ()) id (fun _ _ _ _ => 1)
     (fun _ _ _ _ => 0) (fun _ _ _ _ => 0) 0 () = 0 := by
-  simp [aipwVarianceEstimator]
+  simp [aipwVarianceEstimator_eq]
 
 /-- Boundary: a single unit has variance estimate `0`. -/
 example : aipwVarianceEstimator O₀ Set.univ (fun _ : ℝ => ()) id (fun _ _ _ _ => 1)
     (fun _ _ _ _ => 0) (fun _ _ _ _ => 0) 1 () = 0 := by
-  simp [aipwVarianceEstimator, aipwEstimator, aipwFittedScore]
+  simp [aipwVarianceEstimator_eq, aipwEstimator, aipwFittedScore]
 
 /-- Two units with scores `0` and `1`: estimator `1/2`. -/
 example : aipwEstimator O₀ Set.univ (fun _ : ℝ => ()) id (fun _ _ _ _ => 1) (fun _ _ _ _ => 0)
@@ -65,7 +65,7 @@ example : aipwEstimator O₀ Set.univ (fun _ : ℝ => ()) id (fun _ _ _ _ => 1) 
 the `1/n` sample variance (not the `1/(n - 1)` one, which would give `1/2`). -/
 example : aipwVarianceEstimator O₀ Set.univ (fun _ : ℝ => ()) id (fun _ _ _ _ => 1)
     (fun _ _ _ _ => 0) (fun _ _ _ _ => 0) 2 () = 1 / 4 := by
-  simp [aipwVarianceEstimator, aipwEstimator, aipwFittedScore, aipwScore_univ_one, O₀,
+  simp [aipwVarianceEstimator_eq, aipwEstimator, aipwFittedScore, aipwScore_univ_one, O₀,
     sum_range_succ]
   norm_num
 
@@ -83,7 +83,7 @@ example : aipwVarianceEstimator (fun i (_ : Unit) => if i = 0 then (3 : ℝ) els
       (fun _ => 1) (-1) = 3 := by
     rw [aipwScore_of_notMem (show (-1 : ℝ) ∉ {y : ℝ | 0 < y} by norm_num)]
     norm_num
-  simp only [aipwVarianceEstimator, aipwEstimator, aipwFittedScore, sum_range_succ,
+  simp only [aipwVarianceEstimator_eq, aipwEstimator, aipwFittedScore, sum_range_succ,
     sum_range_zero, one_ne_zero, ite_false, ite_true, h1]
   rw [h3]
   norm_num
