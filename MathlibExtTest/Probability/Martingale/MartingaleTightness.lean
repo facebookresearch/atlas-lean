@@ -115,13 +115,19 @@ example : ¬ AldousCondition topFiltration firstJumpArray (Measure.dirac ()) := 
 -- The modulus criterion for the constant zero process.
 example : IsTightMeasureSet (Set.range fun _ : ℕ =>
     (Measure.dirac ()).map (fun _ : Unit => (0 : C(Set.Icc (0 : ℝ) 1, ℝ)))) :=
-  isTightMeasureSet_of_modulus (P := Measure.dirac ()) (fun _ _ => 0)
+  MathlibExt.Probability.ContinuousTightness.isTightMeasureSet_of_modulus
+    (P := Measure.dirac ()) (fun _ _ => 0)
     (fun _ => measurable_const) (fun _ _ => rfl)
     (fun ε hε b hb => ⟨1, one_pos, Eventually.of_forall fun _ => by
       have : {ω : Unit | ∃ s t : Set.Icc (0 : ℝ) 1, dist s t ≤ 1 ∧
           ε ≤ dist ((0 : C(Set.Icc (0 : ℝ) 1, ℝ)) s) ((0 : C(Set.Icc (0 : ℝ) 1, ℝ)) t)} = ∅ := by
         ext ω; simp [not_le.2 hε]
       rw [this, measureReal_empty]; exact hb.le⟩)
+
+-- The pre-move name still elaborates, as a deprecated alias with the same statement.
+set_option linter.deprecated false in
+example : @MathlibExt.Probability.Martingale.isTightMeasureSet_of_modulus =
+    @MathlibExt.Probability.ContinuousTightness.isTightMeasureSet_of_modulus := rfl
 
 -- Aldous's criterion, all hypotheses discharged, for the zero array.
 example : IsTightMeasureSet (Set.range fun n =>

@@ -8,13 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.ContinuousTightness
 public import MathlibExt.Probability.Martingale.FunctionalCLT
 public import Mathlib.Probability.Process.Stopping
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Real
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 
 import Mathlib.Algebra.Order.Floor.Semifield
-import MathlibExt.Probability.ContinuousTightness
 
 /-!
 # Aldous's tightness criterion and the functional CLT for martingale arrays
@@ -1230,5 +1230,9 @@ theorem tendstoInDistribution_arrayStepProcess {m : MeasurableSpace Ω} {μ : Me
       exact abs_arrayStepProcess_sub_arrayPolygon_le n ξ ω hε.le hω t
 
 end
+
+@[deprecated (since := "2026-11-13")]
+alias isTightMeasureSet_of_modulus :=
+  MathlibExt.Probability.ContinuousTightness.isTightMeasureSet_of_modulus
 
 end MathlibExt.Probability.Martingale
