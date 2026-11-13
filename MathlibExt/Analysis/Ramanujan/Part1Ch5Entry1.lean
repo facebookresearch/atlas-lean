@@ -31,23 +31,6 @@ noncomputable section
 def chapter5Entry1MinusCoeff (n : ℕ) : ℝ :=
   (bernoulli n : ℝ) / (n.factorial : ℝ)
 
-private lemma iter_deriv_zero (n : ℕ) :
-    (Polynomial.derivative^[n]) (0 : ℝ[X]) = 0 := by
-  induction n with
-  | zero => simp
-  | succ k ih =>
-    rw [Function.iterate_succ_apply', ih]
-    simp
-
-private lemma iter_deriv_C_mul (a : ℝ) (p : ℝ[X]) (n : ℕ) :
-    (Polynomial.derivative^[n]) (Polynomial.C a * p)
-      = Polynomial.C a * (Polynomial.derivative^[n]) p := by
-  induction n generalizing p with
-  | zero => simp
-  | succ k ih =>
-    rw [Function.iterate_succ_apply', Function.iterate_succ_apply', ih]
-    exact Polynomial.derivative_C_mul a _
-
 private lemma eval_iter_deriv_X_pow (x : ℝ) (m n : ℕ) :
     Polynomial.eval x ((Polynomial.derivative^[n]) ((Polynomial.X : ℝ[X]) ^ m)) =
       (Nat.descFactorial m n : ℝ) * x ^ (m - n) := by
@@ -62,7 +45,7 @@ private lemma eval_iter_deriv_X_pow (x : ℝ) (m n : ℕ) :
       have hder : Polynomial.derivative (Polynomial.C (1 : ℝ)) = 0 :=
         Polynomial.derivative_C
       have h0 : (Polynomial.derivative^[k]) (Polynomial.derivative (Polynomial.C (1 : ℝ))) = 0 := by
-        rw [hder]; exact iter_deriv_zero k
+        rw [hder]; exact Polynomial.iterate_derivative_zero
       have hdesc : Nat.descFactorial 0 (k + 1) = 0 := by
         cases k with
         | zero => simp [Nat.descFactorial_succ]
@@ -73,7 +56,7 @@ private lemma eval_iter_deriv_X_pow (x : ℝ) (m n : ℕ) :
           = Polynomial.C ((m + 1 : ℕ) : ℝ) * Polynomial.X ^ m := by
         have h := Polynomial.derivative_X_pow (R := ℝ) (m + 1)
         rwa [Nat.add_sub_cancel] at h
-      rw [hder, iter_deriv_C_mul]
+      rw [hder, Polynomial.iterate_derivative_C_mul]
       have hih := ih m
       rw [Polynomial.eval_mul, Polynomial.eval_C, hih]
       have hdesc : Nat.descFactorial (m + 1) (k + 1) = (m + 1) * Nat.descFactorial m k := by
@@ -94,19 +77,6 @@ private lemma desc_eq_fact_div_real (m n : ℕ) (h : n ≤ m) :
   rw [eq_div_iff hne, mul_comm]
   exact hcast
 
-private lemma choose_eq_fact_div_real (m j : ℕ) (h : j ≤ m) :
-    (Nat.choose m j : ℝ) = (m.factorial : ℝ) / ((j.factorial : ℝ) * ((m - j).factorial : ℝ)) := by
-  have hnat := Nat.choose_mul_factorial_mul_factorial h
-  have hcast : ((Nat.choose m j : ℕ) : ℝ) * (j.factorial : ℝ) * (((m - j).factorial : ℕ) : ℝ)
-      = (m.factorial : ℝ) := by
-    exact_mod_cast hnat
-  have hne : (j.factorial : ℝ) * (((m - j).factorial : ℕ) : ℝ) ≠ 0 := by
-    apply mul_ne_zero
-    · exact Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero _)
-    · exact Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero _)
-  rw [eq_div_iff hne]
-  linarith [hcast]
-
 private lemma desc_choose_mul_real (m n j : ℕ) (h : n + j ≤ m) :
     (Nat.descFactorial m n : ℝ) * (Nat.choose (m - n) j : ℝ)
       = (Nat.choose m j : ℝ) * (Nat.descFactorial (m - j) n : ℝ) := by
@@ -116,8 +86,8 @@ private lemma desc_choose_mul_real (m n j : ℕ) (h : n + j ≤ m) :
   have hnj : n ≤ m - j := by omega
   have hsub : m - n - j = m - j - n := by omega
   rw [desc_eq_fact_div_real m n hn_le,
-    choose_eq_fact_div_real (m - n) j hjn,
-    choose_eq_fact_div_real m j hj_le,
+    Nat.cast_choose ℝ hjn,
+    Nat.cast_choose ℝ hj_le,
     desc_eq_fact_div_real (m - j) n hnj,
     hsub]
   field_simp
@@ -354,15 +324,6 @@ private lemma desc_zero_of_lt {i n : ℕ} (h : i < n) : i.descFactorial n = 0 :=
       rw [Nat.descFactorial_succ]
       simp
 
-private lemma iter_deriv_sum {ι : Type*} (s : Finset ι) (g : ι → ℝ[X]) (n : ℕ) :
-    (Polynomial.derivative^[n]) (∑ i ∈ s, g i) = ∑ i ∈ s, (Polynomial.derivative^[n]) (g i) := by
-  induction n with
-  | zero => simp
-  | succ k ih =>
-    simp only [Function.iterate_succ_apply']
-    rw [ih]
-    exact Polynomial.derivative_sum
-
 private lemma eval_expansion (a : ℕ → ℝ) (h x : ℝ) (phi : ℝ[X]) :
     Polynomial.eval x (chapter5DerivativeExpansion a h phi)
       = ∑ n ∈ range (phi.natDegree + 1),
@@ -381,10 +342,11 @@ private lemma eval_iter_deriv_phi (phi : ℝ[X]) (y : ℝ) (n : ℕ) :
       = ∑ i ∈ range (phi.natDegree + 1), Polynomial.C (phi.coeff i) * Polynomial.X ^ i :=
     Polynomial.as_sum_range_C_mul_X_pow phi
   nth_rewrite 1 [hphi]
-  rw [iter_deriv_sum, Polynomial.eval_finsetSum]
+  rw [Polynomial.iterate_derivative_sum, Polynomial.eval_finsetSum]
   apply Finset.sum_congr rfl
   intro i _
-  rw [iter_deriv_C_mul, Polynomial.eval_mul, Polynomial.eval_C, eval_iter_deriv_X_pow]
+  rw [Polynomial.iterate_derivative_C_mul, Polynomial.eval_mul, Polynomial.eval_C,
+    eval_iter_deriv_X_pow]
   ring
 
 private lemma eval_expansion_X_pow (a : ℕ → ℝ) (h x : ℝ) (m : ℕ) :

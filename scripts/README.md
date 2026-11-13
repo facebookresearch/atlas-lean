@@ -2,8 +2,8 @@
 
 Run `scripts/check.sh` from the repository root. With no argument it performs
 the deterministic preflight checks, enforces the library trust and dependency
-policies, and builds `MathlibExt`, `CSLibExt`, `WantedExt`, `MathlibExtTest`,
-and `CSLibExtTest`.
+policies, and builds `MathlibExt`, `CSLibExt`, `PhyslibExt`, `WantedExt`,
+`MathlibExtTest`, `CSLibExtTest`, and `PhyslibExtTest`.
 
 Use `scripts/check.sh preflight` for the fast structure and shell checks, or
 `scripts/check.sh build` to build the libraries and inspect compiler diagnostics,
@@ -19,3 +19,7 @@ identity without scanning or compiling Lean.
 
 For AlgebraNotes' compact, non-accepted migration ledger and identity validator,
 see [`blueprint/migrations/README.md`](../blueprint/migrations/README.md).
+
+For the reproducible, opt-in Tau Ceti quality evaluation of maintained Atlas
+libraries, see [`QUALITY_EVAL.md`](QUALITY_EVAL.md). Its deterministic tests run
+in preflight; model inference is never launched by repository CI.

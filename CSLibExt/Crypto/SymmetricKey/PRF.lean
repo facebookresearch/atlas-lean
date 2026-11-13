@@ -10,6 +10,8 @@ module
 
 public import Cslib.Probability.PMF
 public import Cslib.Foundations.Data.PFunctor.Free
+public import CSLibExt.Crypto.Framework.Oracle
+public import CSLibExt.Crypto.Framework.Asymptotic
 
 /-!
 # Pseudorandom functions: concrete-security reductions for a MAC and for CPA encryption
@@ -19,16 +21,28 @@ tells the oracle `F k` (for a uniform key `k`) from a uniformly random function 
 than a small advantage. This file proves the textbook reductions as **concrete inequalities** for
 fixed finite types: the advantage of any adversary against the MAC or the encryption scheme is
 bounded by the PRF advantage of an explicit distinguisher built from it, plus an explicit
-statistical term. Security parameters, polynomial-time restrictions and negligible functions are
-not modelled; the asymptotic statements of Katz and Lindell follow from these bounds but are out
-of scope here.
+statistical term. The reductions themselves fix the types and do not model security parameters,
+polynomial-time restrictions or negligible functions. The asymptotic security notion is
+`PRFSecure`: a family of keyed functions indexed by the security parameter is secure against an
+admissible class of distinguisher families when each admissible family has negligible advantage
+(`CSLibExt.Crypto.Framework.Asymptotic`); deriving the asymptotic MAC and CPA statements from the
+concrete bounds is not done here.
 
-Distinguishers and adversaries are **adaptive oracle algorithms** (`OracleComp`): finite query
-trees in CSLib's free monad `PFunctor.FreeM` whose next query may depend on the previous answers,
-with random coins drawn up front from a finite type.
+Distinguishers and adversaries are **adaptive oracle algorithms** (`OracleComp`, defined in
+`CSLibExt.Crypto.Framework.Oracle` and re-exported here): finite query trees in CSLib's free monad
+`PFunctor.FreeM` whose next query may depend on the previous answers, with random coins drawn up
+front from a finite type.
 
 * `prfReal F D`, `prfRand D : PMF Bool` are the two worlds of the PRF experiment and
   `prfAdvantage F D` is the difference of their success probabilities.
+* `PRFSecure F Admissible`: asymptotic PRF security of a family `F n : K n → X n → Y n`
+  relative to a caller-supplied class of distinguisher families (the indistinguishability
+  condition of Katz and Lindell, Definition 3.25). It is an abstract relative-indistinguishability
+  predicate, not Definition 3.25 verbatim: the source requires `F` to be an *efficient*,
+  length-preserving keyed function (`F_k(x)` computable in deterministic polynomial time) and
+  quantifies over probabilistic polynomial-time distinguishers. The efficiency of `F` is not
+  imposed, so a noncomputable family can satisfy `PRFSecure`; the restriction on distinguishers
+  is whatever `Admissible` encodes.
 
 **The MAC from a PRF** (Katz and Lindell, Construction 4.5 and Theorem 4.6). The tag of `m` is
 `F k m`. `macGame F A` is the existential-forgery experiment under an adaptive chosen-message
@@ -74,53 +88,15 @@ namespace Cslib.Crypto.PRF
 
 open Finset
 
-universe u v w
+/-! The oracle-computation API is the framework's (`CSLibExt.Crypto.Framework.Oracle`), re-exported
+here so that `Cslib.Crypto.PRF.OracleComp`, `OracleComp.run`, `OracleComp.queries`, ... name the
+same declarations. -/
 
-/-- The polynomial functor of one oracle: an operation is a query `x : X`, answered by `y : Y`. -/
-abbrev OracleSig (X : Type u) (Y : Type v) : PFunctor.{u, v} := ⟨X, fun _ => Y⟩
-
-/-- An adaptive deterministic oracle algorithm: a computation in CSLib's free monad over one oracle;
-it either stops with an output in `α`, or asks a query in `X` and continues depending on the
-answer in `Y`. -/
-abbrev OracleComp (X : Type u) (Y : Type v) (α : Type w) : Type (max u v w) :=
-  (OracleSig X Y).FreeM α
+export Cslib.Crypto.Framework (OracleSig OracleComp)
 
 namespace OracleComp
 
-variable {X : Type u} {Y : Type v} {α : Type w}
-
-/-- Stop with output `a`. -/
-abbrev done (a : α) : OracleComp X Y α := .pure a
-
-/-- Query `x` and continue with the answer. -/
-abbrev query (x : X) (k : Y → OracleComp X Y α) : OracleComp X Y α := .liftBind x k
-
-/-- The output of the algorithm when the oracle is the function `O`. -/
-def run (O : X → Y) : OracleComp X Y α → α
-  | .pure a => a
-  | .liftBind x k => run O (k (O x))
-
-/-- The queries the algorithm asks when the oracle is the function `O`, in order. -/
-def queries (O : X → Y) : OracleComp X Y α → List X
-  | .pure _ => []
-  | .liftBind x k => x :: queries O (k (O x))
-
-/-- **Locality**: the run only depends on the oracle at the queried points. -/
-theorem run_congr {O O' : X → Y} :
-    ∀ (c : OracleComp X Y α), (∀ x ∈ c.queries O, O x = O' x) →
-      c.run O = c.run O' ∧ c.queries O = c.queries O'
-  | .pure _, _ => ⟨rfl, rfl⟩
-  | .liftBind x k, h => by
-    have hx : O x = O' x := h x List.mem_cons_self
-    have ih := run_congr (k (O x)) fun z hz => h z (List.mem_cons_of_mem _ hz)
-    simp only [run, queries, ← hx]
-    exact ⟨ih.1, by rw [ih.2]⟩
-
-/-- Running a sequential composition (CSLib's `PFunctor.FreeM.bind`). -/
-theorem run_bind {β : Type*} (O : X → Y) (g : α → OracleComp X Y β) :
-    ∀ c : OracleComp X Y α, run O (PFunctor.FreeM.bind c g) = (g (c.run O)).run O
-  | .pure _ => rfl
-  | .liftBind x k => run_bind O g (k (O x))
+export Cslib.Crypto.Framework.OracleComp (done query run queries run_congr run_bind)
 
 end OracleComp
 
@@ -154,6 +130,22 @@ noncomputable def prfAdvantage (F : K → X → Y) (D : S → OracleComp X Y Boo
   |(prfReal F D true).toReal - (prfRand D true).toReal|
 
 end PRFGame
+
+/-- **Asymptotic PRF security relative to `Admissible`** of a family of keyed functions
+`F n : K n → X n → Y n`: every admissible family of distinguishers with coins in `S n` has
+negligible `prfAdvantage` (the indistinguishability condition of Katz and Lindell,
+Definition 3.25, with the admissible class as a parameter).
+
+This is an abstract relative-indistinguishability predicate. Omitted source conditions: `F` an
+efficient, length-preserving keyed function (`F_k(x)` computable in deterministic polynomial
+time), and probabilistic polynomial-time distinguishers. Nothing here constrains how `F` is
+computed, so a noncomputable family can satisfy `PRFSecure`; any restriction on distinguishers
+must be supplied through `Admissible`. -/
+def PRFSecure {K X Y S : ℕ → Type*} [∀ n, Fintype (K n)] [∀ n, Nonempty (K n)]
+    [∀ n, Fintype (X n)] [∀ n, DecidableEq (X n)] [∀ n, Fintype (Y n)] [∀ n, Nonempty (Y n)]
+    [∀ n, Fintype (S n)] [∀ n, Nonempty (S n)] (F : (n : ℕ) → K n → X n → Y n)
+    (Admissible : ((n : ℕ) → S n → OracleComp (X n) (Y n) Bool) → Prop) : Prop :=
+  Cslib.Crypto.Framework.AsymptoticallySecure (fun n D => prfAdvantage (F n) D) Admissible
 
 /-! ### The MAC from a PRF -/
 
