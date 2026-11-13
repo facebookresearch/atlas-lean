@@ -8,6 +8,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.ThermalWind
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # Thermal-wind checks
@@ -73,7 +76,7 @@ example (t : ℝ) :
     (rho_x := 3) (by norm_num) (by norm_num) hug hvg hpy hpx
     hgeo_u hgeo_v (by norm_num) (by norm_num)
 
-/-- No-gradient boundary: `rho_y = rho_x = 0` gives zero shear products. -/
+/-- No-gradient boundary: `rho_y = rho_x = 0` gives zero shears. -/
 example {f rho0 g : ℝ} {ug vg py px : ℝ → ℝ} {t : ℝ} {A B Dpy Dpx : ℝ}
     (hf : f ≠ 0) (hrho : rho0 ≠ 0)
     (hug : HasDerivAt ug A t) (hvg : HasDerivAt vg B t)
@@ -81,6 +84,6 @@ example {f rho0 g : ℝ} {ug vg py px : ℝ → ℝ} {t : ℝ} {A B Dpy Dpx : �
     (hgeo_u : ∀ z, f * ug z = -py z / rho0)
     (hgeo_v : ∀ z, f * vg z = px z / rho0)
     (hhydro_y : Dpy = -g * 0) (hhydro_x : Dpx = -g * 0) :
-    f * A = 0 ∧ f * B = 0 :=
+    A = 0 ∧ B = 0 :=
   EarthScience.thermal_wind_no_gradient hf hrho hug hvg hpy hpx hgeo_u hgeo_v
     hhydro_y hhydro_x

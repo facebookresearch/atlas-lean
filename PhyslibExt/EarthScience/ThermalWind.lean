@@ -7,11 +7,11 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Mul
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Positivity
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Positivity
 
 /-!
 # Balanced atmospheric winds
@@ -47,6 +47,19 @@ relations convert these into the thermal-wind formulas.
 
 ## iv. References
 
+- G. K. Vallis, *Atmospheric and Oceanic Fluid Dynamics*, 2nd ed.,
+  Cambridge University Press (2017), Chapter 2, section on geostrophic and
+  thermal wind balance (Boussinesq form). Conventions there and here:
+  Cartesian f-plane with `x` east, `y` north, `z` up, Coriolis parameter
+  `f` (positive in the Northern Hemisphere), constant reference density
+  `rho0`. Geostrophic balance `f k × u_g = -∇p / rho0` is, componentwise,
+  `f * ug = -py / rho0` and `f * vg = px / rho0` (`hgeo_u`, `hgeo_v`, with
+  `py = ∂p/∂y`, `px = ∂p/∂x`); hydrostatic balance `∂p/∂z = -rho * g`,
+  differentiated in `y` and `x` with mixed partials commuted, gives
+  `hhydro_y`, `hhydro_x`. The conclusions of `thermal_wind` are the
+  Boussinesq thermal-wind balance `f ∂u_g/∂z = k × ∇b` for the buoyancy
+  `b = -g * rho / rho0` (up to an additive constant), i.e.
+  `f * ∂ug/∂z = (g / rho0) * rho_y` and `f * ∂vg/∂z = -(g / rho0) * rho_x`.
 - `HasDerivAt.const_mul` / `HasDerivAt.div_const` / `HasDerivAt.unique` in Mathlib.
 -/
 
@@ -95,7 +108,7 @@ theorem thermal_wind {f rho0 g rho_y rho_x : ℝ} {ug vg py px : ℝ → ℝ} {t
   exact ⟨hA, hB⟩
 
 /-- No horizontal density gradient: `rho_y = rho_x = 0` gives no thermal
-wind shear, `f * A = 0` and `f * B = 0`. -/
+wind shear, `A = 0` and `B = 0` (cancelling `f ≠ 0`). -/
 theorem thermal_wind_no_gradient {f rho0 g : ℝ} {ug vg py px : ℝ → ℝ} {t : ℝ}
     {A B Dpy Dpx : ℝ}
     (hf : f ≠ 0) (hrho : rho0 ≠ 0)
@@ -104,9 +117,9 @@ theorem thermal_wind_no_gradient {f rho0 g : ℝ} {ug vg py px : ℝ → ℝ} {t
     (hgeo_u : ∀ z, f * ug z = -py z / rho0)
     (hgeo_v : ∀ z, f * vg z = px z / rho0)
     (hhydro_y : Dpy = -g * 0) (hhydro_x : Dpx = -g * 0) :
-    f * A = 0 ∧ f * B = 0 := by
+    A = 0 ∧ B = 0 := by
   have h := thermal_wind hf hrho hug hvg hpy hpx hgeo_u hgeo_v hhydro_y hhydro_x
-  simpa using h
+  simpa [hf] using h
 
 /-- Hemispheric sign: for `f, g, rho0 > 0`, a positive northward density
 gradient `rho_y > 0` gives positive vertical shear `A > 0`. -/
