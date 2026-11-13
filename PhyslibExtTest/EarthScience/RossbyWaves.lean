@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.RossbyWaves
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # Rossby-wave checks
