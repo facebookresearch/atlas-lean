@@ -36,10 +36,12 @@ unchanged (Allman, Matias and Rhodes 2009, Section 2).
   Journal of Social Structure 3 (2002),
   <https://www.cmu.edu/joss/content/articles/volume3/Snijders.pdf>. Its sufficient statistic `u`
   and log-normalizer `ψ` are `t` and `Real.log (ergmNormalizer t θ)` here. Equation (3) is the
-  exponential random graph law. Section 6 gives the moment equation `µ(θ) = u(y)` (eq. (24)),
-  the mean as the gradient of `ψ` (eq. (25)) and the covariance as the matrix of derivatives of
-  the mean (eq. (26)). Section 4.1 notes that when the number of ties is fixed, the edge
-  statistic and its parameter are irrelevant.
+  exponential random graph law (`ergmProb`, `ergmLogLik`). Section 6 gives the moment equation
+  `µ(θ) = u(y)` (eq. (24), `ergmScore_eq_zero_iff`), the mean as the gradient of `ψ`
+  (eq. (25), `hasDerivAt_log_ergmNormalizer`, `hasDerivAt_log_ergmNormalizer_update`) and the
+  covariance as the matrix of derivatives of the mean (eq. (26), `hasDerivAt_ergmMean`).
+  Section 4.1 notes that when the number of ties is fixed, the edge statistic and its parameter
+  are irrelevant (generalized by `ergmProb_add_of_affine`).
 * E. S. Allman, C. Matias and J. A. Rhodes, *Identifiability of parameters in latent structure
   models with many observed variables*, Annals of Statistics 37(6A) (2009), 3099–3132,
   <https://arxiv.org/abs/0809.5032>. Section 2 describes label swapping: relabeling the latent
@@ -237,6 +239,16 @@ private theorem dot_mean_eq_div {V : Type*} [Fintype V]
         ergmNormalizer t θ := by
   rw [dot_mean_eq, sum_prob_mul_eq]
 
+/-- The mean is the gradient of the log-normalizer `ψ = log κ`, Snijders (2002), eq. (25):
+the derivative of `ψ` along `v` is `v ⬝ᵥ µ(θ)`. -/
+theorem hasDerivAt_log_ergmNormalizer {V : Type*} [Fintype V]
+    [DecidableEq V] {ι : Type*} [Fintype ι]
+    (t : SimpleGraph V → ι → ℝ) (θ v : ι → ℝ) :
+    HasDerivAt (fun s : ℝ => Real.log (ergmNormalizer t (θ + s • v)))
+      (v ⬝ᵥ ergmMean t θ) 0 := by
+  rw [dot_mean_eq_div]
+  exact hasDerivAt_log_normalizer_line t θ v
+
 /-- Directional derivative of the log-likelihood is the score. -/
 theorem hasDerivAt_ergmLogLik {V : Type*} [Fintype V]
     [DecidableEq V] {ι : Type*} [Fintype ι]
@@ -273,8 +285,35 @@ private theorem update_eq_add_single {ι : Type*} [DecidableEq ι]
     ring
   · simp [h]
 
-/-- Coordinate derivative of the log-likelihood: the mean is the gradient of the
-log-normalizer, Snijders (2002), eq. (25). -/
+/-- The mean is the gradient of the log-normalizer `ψ = log κ`, Snijders (2002), eq. (25):
+`∂ψ/∂θ_k = µ_k(θ)`. -/
+theorem hasDerivAt_log_ergmNormalizer_update {V : Type*} [Fintype V]
+    [DecidableEq V] {ι : Type*} [Fintype ι]
+    (t : SimpleGraph V → ι → ℝ) (θ : ι → ℝ) [DecidableEq ι] (k : ι) :
+    HasDerivAt
+      (fun s : ℝ => Real.log (ergmNormalizer t (Function.update θ k s)))
+      (ergmMean t θ k) (θ k) := by
+  let v : ι → ℝ := Pi.single k 1
+  have hdir : HasDerivAt (fun u : ℝ => Real.log (ergmNormalizer t (θ + u • v)))
+      (v ⬝ᵥ ergmMean t θ) ((fun s : ℝ => s - θ k) (θ k)) := by
+    simpa using hasDerivAt_log_ergmNormalizer t θ v
+  have hlin : HasDerivAt (fun s : ℝ => s - θ k) 1 (θ k) := by
+    simpa using (hasDerivAt_id (θ k)).sub_const (θ k)
+  have hcomp : HasDerivAt ((fun u : ℝ => Real.log (ergmNormalizer t (θ + u • v))) ∘
+      (fun s : ℝ => s - θ k)) ((v ⬝ᵥ ergmMean t θ) * 1) (θ k) :=
+    HasDerivAt.comp (θ k) hdir hlin
+  have hder : (v ⬝ᵥ ergmMean t θ) * 1 = ergmMean t θ k := by
+    simp [v, dotProduct, Pi.single_apply]
+  have heq : ((fun u : ℝ => Real.log (ergmNormalizer t (θ + u • v))) ∘
+      (fun s : ℝ => s - θ k)) =
+      (fun s : ℝ => Real.log (ergmNormalizer t (Function.update θ k s))) := by
+    funext s
+    simp only [Function.comp_apply]
+    rw [update_eq_add_single θ k s]
+  rw [heq, hder] at hcomp
+  exact hcomp
+
+/-- Coordinate derivative of the log-likelihood is the score coordinate. -/
 theorem hasDerivAt_ergmLogLik_update {V : Type*} [Fintype V]
     [DecidableEq V] {ι : Type*} [Fintype ι]
     (t : SimpleGraph V → ι → ℝ) (θ : ι → ℝ)

@@ -87,6 +87,20 @@ theorem score_zero_iff_edgeStat :
       edgeStat ⊤ = ergmMean edgeStat 0 :=
   ergmScore_eq_zero_iff _ _ _
 
+/-- The mean is the gradient of the log-normalizer, directional form, edge case. -/
+theorem deriv_log_normalizer_edgeStat :
+    HasDerivAt
+      (fun s : ℝ => Real.log (ergmNormalizer edgeStat (0 + s • fun _ => (1:ℝ))))
+      ((fun _ => (1:ℝ)) ⬝ᵥ ergmMean edgeStat 0) 0 :=
+  hasDerivAt_log_ergmNormalizer _ _ _
+
+/-- The mean is the gradient of the log-normalizer, coordinate form, edge case. -/
+theorem deriv_log_normalizer_update_edgeStat :
+    HasDerivAt
+      (fun s : ℝ => Real.log (ergmNormalizer edgeStat (Function.update 0 0 s)))
+      (ergmMean edgeStat 0 0) ((0 : Fin 1 → ℝ) 0) :=
+  hasDerivAt_log_ergmNormalizer_update _ _ _
+
 /-- Directional derivative is the score, edge case. -/
 theorem deriv_loglik_edgeStat :
     HasDerivAt
