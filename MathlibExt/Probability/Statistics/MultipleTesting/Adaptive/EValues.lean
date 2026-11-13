@@ -40,11 +40,16 @@ endpoints:
   `α |H0| / m ≤ α` (`measure_exists_mem_exists_eBonferroniRejections_le`), under arbitrary
   dependence across endpoints.
 * **FDR** (e-BH, Wang–Ramdas): every *self-consistent* rejection set (each rejected `i`
-  satisfies `E i ≥ m / (α |R|)`) has FDR at most `α |H0| / m` under arbitrary dependence
-  (`lintegral_falseDiscoveryProportion_le_of_isEBHSelfConsistent`); the e-BH procedure is
-  self-consistent (`eBHRejections_isEBHSelfConsistent`), and applying it to e-processes stopped
-  at a common bounded stopping time keeps the guarantee
-  (`lintegral_falseDiscoveryProportion_eBHRejections_stoppedValue_le`).
+  satisfies `E i ≥ m / (α |R|)`) with a measurable false discovery proportion has an integrable
+  FDP and FDR at most `α |H0| / m` under arbitrary dependence
+  (`integral_falseDiscoveryProportion_le_of_isEBHSelfConsistent`; the bound on the lower
+  integral of the FDP, `lintegral_falseDiscoveryProportion_le_of_isEBHSelfConsistent`, needs no
+  measurability). The e-BH procedure is self-consistent (`eBHRejections_isEBHSelfConsistent`)
+  and its FDP is measurable when every statistic `E i` is
+  (`measurable_falseDiscoveryProportion_eBHRejections`), so it controls the FDR
+  (`integral_falseDiscoveryProportion_eBHRejections_le`); applying it to e-processes stopped at
+  a common bounded stopping time keeps the guarantee
+  (`integral_falseDiscoveryProportion_eBHRejections_stoppedValue_le`).
 
 ## Comparison with alpha spending
 
@@ -59,6 +64,9 @@ conservative than a p-value threshold at a fixed sample size.
 
 E-values are real-valued and nonnegative; their expectation is taken as a lower Lebesgue
 integral `∫⁻ ofReal E`, so the condition `E[E] ≤ 1` needs no separate integrability hypothesis.
+For a false discovery proportion the lower integral is the expectation only when the FDP is
+measurable, so the FDR theorems assume measurability of the procedure and derive integrability
+of the FDP from the finite lower-integral bound.
 `IsEValue.of_integral_le_one` converts from the Bochner form. Ville's inequality for
 nonnegative supermartingales in the measure-real form is `Supermartingale.ville_maximal_ineq`
 in `Sequential/Ville.lean`; the version here is stated for e-processes, which need not be
@@ -453,9 +461,11 @@ theorem falseDiscoveryProportion_le_of_isEBHSelfConsistent {α : ℝ} (hα : 0 �
       _ = α / m * e i * R.card := by ring
   · exact mul_nonneg (div_nonneg hα (Nat.cast_nonneg _)) (he i hi)
 
-/-- **FDR control for self-consistent rejection sets under arbitrary dependence.** If every
-true-null statistic is an e-value and `R ω` is self-consistent for every outcome, then
-`E[FDP] ≤ α |H0| / m`. No assumption is made on the joint law of the e-values.
+/-- **Lower-integral FDP bound for self-consistent rejection sets under arbitrary
+dependence.** If every true-null statistic is an e-value and `R ω` is self-consistent for every
+outcome, then the lower integral of the FDP is at most `α |H0| / m`. No assumption is made on
+the joint law of the e-values. The lower integral is the FDR `E[FDP]` only for a measurable FDP;
+`integral_falseDiscoveryProportion_le_of_isEBHSelfConsistent` states the FDR bound.
 
 Source: Wang and Ramdas (2022). -/
 theorem lintegral_falseDiscoveryProportion_le_of_isEBHSelfConsistent {α : ℝ} (hα : 0 ≤ α)
@@ -482,7 +492,39 @@ theorem lintegral_falseDiscoveryProportion_le_of_isEBHSelfConsistent {α : ℝ} 
         congr 1
         ring
 
-/-- **e-BH controls the FDR under arbitrary dependence**: `E[FDP] ≤ α |H0| / m`.
+/-- A nonnegative a.e.-measurable function whose lower integral is at most `ofReal b` is
+integrable, and its Bochner integral is at most `b`. -/
+theorem integrable_and_integral_le_of_lintegral_ofReal_le {f : Ω → ℝ} (hf : ∀ ω, 0 ≤ f ω)
+    (hfm : AEMeasurable f μ) {b : ℝ} (hb : 0 ≤ b)
+    (h : ∫⁻ ω, ENNReal.ofReal (f ω) ∂μ ≤ ENNReal.ofReal b) :
+    Integrable f μ ∧ ∫ ω, f ω ∂μ ≤ b := by
+  have hi : Integrable f μ :=
+    ⟨hfm.aestronglyMeasurable,
+      (hasFiniteIntegral_iff_ofReal (ae_of_all _ hf)).2 (h.trans_lt ENNReal.ofReal_lt_top)⟩
+  refine ⟨hi, ?_⟩
+  rw [integral_eq_lintegral_of_nonneg_ae (ae_of_all _ hf) hi.aestronglyMeasurable]
+  exact ENNReal.toReal_le_of_le_ofReal hb h
+
+/-- **FDR control for measurable self-consistent rejection procedures under arbitrary
+dependence.** If every true-null statistic is an e-value, `R ω` is self-consistent for every
+outcome, and the FDP of `R` is a.e.-measurable, then the FDP is integrable and
+`E[FDP] ≤ α |H0| / m`. No assumption is made on the joint law of the e-values.
+
+Source: Wang and Ramdas (2022). -/
+theorem integral_falseDiscoveryProportion_le_of_isEBHSelfConsistent {α : ℝ} (hα : 0 ≤ α)
+    (E : Fin m → Ω → ℝ) (H0 : Finset (Fin m)) (hnull : ∀ i ∈ H0, IsEValue μ (E i))
+    (R : Ω → Finset (Fin m)) (hR : ∀ ω, IsEBHSelfConsistent α (fun j => E j ω) (R ω))
+    (hRm : AEMeasurable (fun ω => falseDiscoveryProportion H0 (R ω)) μ) :
+    Integrable (fun ω => falseDiscoveryProportion H0 (R ω)) μ ∧
+      ∫ ω, falseDiscoveryProportion H0 (R ω) ∂μ ≤ α * H0.card / m :=
+  integrable_and_integral_le_of_lintegral_ofReal_le
+    (fun _ => falseDiscoveryProportion_nonneg _ _) hRm (by positivity)
+    (lintegral_falseDiscoveryProportion_le_of_isEBHSelfConsistent hα E H0 hnull R hR)
+
+/-- **Lower-integral FDP bound for e-BH under arbitrary dependence**: the lower integral of the
+e-BH FDP is at most `α |H0| / m`. The false-null coordinates enter the e-BH index, so this is
+the FDR `E[FDP]` only when they are measurable too;
+`integral_falseDiscoveryProportion_eBHRejections_le` states the FDR bound.
 
 Source: Wang and Ramdas (2022). -/
 theorem lintegral_falseDiscoveryProportion_eBHRejections_le {α : ℝ} (hα : 0 ≤ α)
@@ -492,29 +534,100 @@ theorem lintegral_falseDiscoveryProportion_eBHRejections_le {α : ℝ} (hα : 0 
   lintegral_falseDiscoveryProportion_le_of_isEBHSelfConsistent hα E H0 hnull _
     fun _ => eBHRejections_isEBHSelfConsistent α _
 
-/-- A nonnegative function whose lower integral is at most `ofReal b` has Bochner integral at
-most `b` (non-integrable functions have Bochner integral `0`). -/
-theorem integral_le_of_lintegral_ofReal_le {f : Ω → ℝ} (hf : ∀ ω, 0 ≤ f ω) {b : ℝ}
-    (hb : 0 ≤ b) (h : ∫⁻ ω, ENNReal.ofReal (f ω) ∂μ ≤ ENNReal.ofReal b) :
-    ∫ ω, f ω ∂μ ≤ b := by
-  by_cases hi : Integrable f μ
-  · rw [integral_eq_lintegral_of_nonneg_ae (ae_of_all _ hf) hi.aestronglyMeasurable]
-    exact ENNReal.toReal_le_of_le_ofReal hb h
-  · rw [integral_undef hi]
-    exact hb
+/-- The e-BH index as a finite supremum, the form used to prove measurability. -/
+theorem eBHIndex_eq_sup (α : ℝ) (e : Fin m → ℝ) :
+    eBHIndex α e = (Finset.range (m + 1)).sup
+      (fun k => if k ≤ eBHCount α e k then k else 0) := by
+  classical
+  apply le_antisymm
+  · have h := Finset.le_sup (f := fun (k : ℕ) => if k ≤ eBHCount α e k then k else 0)
+      (Finset.mem_range.mpr (Nat.lt_succ_of_le (eBHIndex_le α e)))
+    have hmem := eBHIndex_mem α e
+    simp only [Finset.mem_filter] at hmem
+    simpa [hmem.2] using h
+  · apply Finset.sup_le
+    intro k hk
+    split_ifs with h
+    · exact le_eBHIndex (Nat.le_of_lt_succ (Finset.mem_range.mp hk)) h
+    · exact Nat.zero_le _
 
-/-- **e-BH controls the FDR, Bochner form**: `∫ FDP ≤ α |H0| / m ≤ α`. -/
+/-- The number of measurable e-values clearing the e-BH threshold for `k` rejections is a
+measurable function. -/
+theorem measurable_eBHCount {α : ℝ} {E : Fin m → Ω → ℝ} (hE : ∀ i, Measurable (E i)) (k : ℕ) :
+    Measurable fun ω => eBHCount α (fun j => E j ω) k := by
+  classical
+  simp only [eBHCount, Finset.card_filter]
+  exact Finset.measurable_sum _ fun j _ => Measurable.ite
+    (measurableSet_le measurable_const ((hE j).const_mul _)) measurable_const measurable_const
+
+/-- The e-BH index of measurable e-values is a measurable function. -/
+theorem measurable_eBHIndex {α : ℝ} {E : Fin m → Ω → ℝ} (hE : ∀ i, Measurable (E i)) :
+    Measurable fun ω => eBHIndex α (fun j => E j ω) := by
+  classical
+  simp_rw [eBHIndex_eq_sup]
+  have h : ∀ s : Finset ℕ, Measurable (fun ω => s.sup
+      (fun k => if k ≤ eBHCount α (fun j => E j ω) k then k else 0)) := by
+    intro s
+    induction s using Finset.induction_on with
+    | empty => simp
+    | @insert k s hk ih =>
+      simp only [Finset.sup_insert]
+      exact (Measurable.ite (measurableSet_le measurable_const (measurable_eBHCount hE k))
+        measurable_const measurable_const).max ih
+  exact h _
+
+/-- The false discovery proportion of the e-BH rejection set is a measurable function of
+measurable e-values. Every coordinate, true null or not, enters the e-BH index. -/
+theorem measurable_falseDiscoveryProportion_eBHRejections {α : ℝ} {E : Fin m → Ω → ℝ}
+    (hE : ∀ i, Measurable (E i)) (H0 : Finset (Fin m)) :
+    Measurable fun ω => falseDiscoveryProportion H0 (eBHRejections α fun j => E j ω) := by
+  classical
+  have hK : Measurable fun ω => α * (eBHIndex α (fun j => E j ω) : ℝ) :=
+    measurable_const.mul (measurable_from_nat.comp (measurable_eBHIndex hE))
+  have hS (i : Fin m) :
+      MeasurableSet {ω | (m : ℝ) ≤ α * (eBHIndex α (fun j => E j ω) : ℝ) * E i ω} :=
+    measurableSet_le measurable_const (hK.mul (hE i))
+  have hcount (s : Finset (Fin m)) : Measurable fun ω =>
+      ((s.filter fun i => (m : ℝ) ≤ α * (eBHIndex α (fun j => E j ω) : ℝ) * E i ω).card :
+        ℝ) := by
+    simp_rw [Finset.natCast_card_filter]
+    exact Finset.measurable_sum _ fun i _ =>
+      Measurable.ite (hS i) measurable_const measurable_const
+  have heq : (fun ω => falseDiscoveryProportion H0 (eBHRejections α fun j => E j ω)) =
+      fun ω => ((H0.filter fun i =>
+          (m : ℝ) ≤ α * (eBHIndex α (fun j => E j ω) : ℝ) * E i ω).card : ℝ) /
+        max ((Finset.univ.filter fun i =>
+          (m : ℝ) ≤ α * (eBHIndex α (fun j => E j ω) : ℝ) * E i ω).card : ℝ) 1 := by
+    funext ω
+    unfold falseDiscoveryProportion eBHRejections
+    congr 3
+    ext i
+    simp [and_comm]
+  rw [heq]
+  exact (hcount H0).div ((hcount Finset.univ).max measurable_const)
+
+/-- **e-BH controls the FDR under arbitrary dependence.** If every true-null statistic is an
+e-value and every false-null statistic is measurable, the e-BH FDP is integrable and
+`E[FDP] ≤ α |H0| / m ≤ α`.
+
+Source: Wang and Ramdas (2022). -/
 theorem integral_falseDiscoveryProportion_eBHRejections_le {α : ℝ} (hα : 0 ≤ α)
-    (E : Fin m → Ω → ℝ) (H0 : Finset (Fin m)) (hnull : ∀ i ∈ H0, IsEValue μ (E i)) :
-    ∫ ω, falseDiscoveryProportion H0 (eBHRejections α fun j => E j ω) ∂μ ≤ α :=
-  (integral_le_of_lintegral_ofReal_le (fun _ => falseDiscoveryProportion_nonneg _ _)
-    (by positivity) (lintegral_falseDiscoveryProportion_eBHRejections_le hα E H0 hnull)).trans
-    (mul_card_div_le_alpha hα H0)
+    (E : Fin m → Ω → ℝ) (H0 : Finset (Fin m)) (hnull : ∀ i ∈ H0, IsEValue μ (E i))
+    (hE : ∀ i ∉ H0, Measurable (E i)) :
+    Integrable (fun ω => falseDiscoveryProportion H0 (eBHRejections α fun j => E j ω)) μ ∧
+      ∫ ω, falseDiscoveryProportion H0 (eBHRejections α fun j => E j ω) ∂μ ≤ α := by
+  have hmeas : ∀ i, Measurable (E i) := fun i =>
+    if hi : i ∈ H0 then (hnull i hi).measurable else hE i hi
+  obtain ⟨hint, hle⟩ := integral_falseDiscoveryProportion_le_of_isEBHSelfConsistent hα E H0
+    hnull _ (fun _ => eBHRejections_isEBHSelfConsistent α _)
+    (measurable_falseDiscoveryProportion_eBHRejections hmeas H0).aemeasurable
+  exact ⟨hint, hle.trans (mul_card_div_le_alpha hα H0)⟩
 
-/-- **e-BH at a stopping time.** If every true-null endpoint carries an e-process for a common
-filtration and `τ` is a bounded stopping time, the e-BH procedure applied to the stopped
-values `E i τ` has `E[FDP] ≤ α |H0| / m`: the analyst may choose when to stop, using all data
-so far, and still control the FDR. -/
+/-- **e-BH at a stopping time, lower-integral form.** If every true-null endpoint carries an
+e-process for a common filtration and `τ` is a bounded stopping time, the e-BH procedure
+applied to the stopped values `E i τ` has lower-integral FDP at most `α |H0| / m`. This is the
+FDR when the false-null stopped values are measurable;
+`integral_falseDiscoveryProportion_eBHRejections_stoppedValue_le` states the FDR bound. -/
 theorem lintegral_falseDiscoveryProportion_eBHRejections_stoppedValue_le {α : ℝ}
     (hα : 0 ≤ α) {𝒢 : Filtration ℕ m0} (E : Fin m → ℕ → Ω → ℝ) (H0 : Finset (Fin m))
     (hnull : ∀ i ∈ H0, IsEProcess μ 𝒢 (E i)) {τ : Ω → WithTop ℕ} (hτ : IsStoppingTime 𝒢 τ)
@@ -524,5 +637,21 @@ theorem lintegral_falseDiscoveryProportion_eBHRejections_stoppedValue_le {α : �
       ENNReal.ofReal (α * H0.card / m) :=
   lintegral_falseDiscoveryProportion_eBHRejections_le hα (fun j => stoppedValue (E j) τ) H0
     fun i hi => (hnull i hi).isEValue_stoppedValue hτ hbdd
+
+/-- **e-BH at a stopping time.** If every true-null endpoint carries an e-process for a common
+filtration, `τ` is a bounded stopping time, and the false-null stopped values `E i τ` are
+measurable, then the e-BH procedure applied to the stopped values has an integrable FDP and
+`E[FDP] ≤ α |H0| / m ≤ α`: the analyst may choose when to stop, using all data so far, and still
+control the FDR. -/
+theorem integral_falseDiscoveryProportion_eBHRejections_stoppedValue_le {α : ℝ}
+    (hα : 0 ≤ α) {𝒢 : Filtration ℕ m0} (E : Fin m → ℕ → Ω → ℝ) (H0 : Finset (Fin m))
+    (hnull : ∀ i ∈ H0, IsEProcess μ 𝒢 (E i)) {τ : Ω → WithTop ℕ} (hτ : IsStoppingTime 𝒢 τ)
+    {N : ℕ} (hbdd : ∀ ω, τ ω ≤ N) (hE : ∀ i ∉ H0, Measurable (stoppedValue (E i) τ)) :
+    Integrable (fun ω =>
+        falseDiscoveryProportion H0 (eBHRejections α fun j => stoppedValue (E j) τ ω)) μ ∧
+      ∫ ω, falseDiscoveryProportion H0 (eBHRejections α fun j => stoppedValue (E j) τ ω) ∂μ ≤
+        α :=
+  integral_falseDiscoveryProportion_eBHRejections_le hα (fun j => stoppedValue (E j) τ) H0
+    (fun i hi => (hnull i hi).isEValue_stoppedValue hτ hbdd) hE
 
 end MathlibExt.Probability.Statistics.MultipleTesting

@@ -354,4 +354,24 @@ example :
   measure_exists_mem_exists_eBonferroniRejections_le_alpha (by norm_num)
     (fun _ _ => lr) _ fun _ _ => isEProcess_lr_const
 
+/-- e-BH FDR with one true null (the likelihood ratio) and one false null (the constant `10`,
+measurable like every function on `Bool`): the FDP is integrable with expectation at most
+`α = 1/2`. -/
+example :
+    Integrable (fun b => falseDiscoveryProportion {0} (eBHRejections (1 / 2) ![lr b, 10])) coin ∧
+      ∫ b, falseDiscoveryProportion {0} (eBHRejections (1 / 2) ![lr b, 10]) ∂coin ≤ 1 / 2 :=
+  integral_falseDiscoveryProportion_eBHRejections_le (by norm_num) (fun i b => ![lr b, 10] i)
+    {0} (fun i hi => by obtain rfl := Finset.mem_singleton.1 hi; exact isEValue_lr)
+    (fun _ _ => measurable_of_countable _)
+
+/-- e-BH FDR at the bounded stopping time `1` for two endpoints carrying the constant
+e-process. -/
+example :
+    ∫ b, falseDiscoveryProportion (Finset.univ : Finset (Fin 2))
+        (eBHRejections (1 / 2) fun j => stoppedValue ((fun (_ : Fin 2) (_ : ℕ) => lr) j)
+          (fun _ => ((1 : ℕ) : WithTop ℕ)) b) ∂coin ≤ 1 / 2 :=
+  (integral_falseDiscoveryProportion_eBHRejections_stoppedValue_le (by norm_num)
+    (fun _ _ => lr) _ (fun _ _ => isEProcess_lr_const) (isStoppingTime_const _ 1)
+    (N := 1) (fun _ => le_rfl) fun i hi => absurd (Finset.mem_univ i) hi).2
+
 end MathlibExtTest.Probability.Statistics.MultipleTesting.EValues
