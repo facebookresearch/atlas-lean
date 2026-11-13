@@ -718,7 +718,10 @@ private lemma log_one_add_ge {x : ℝ} (hx : 0 ≤ x) : x - x ^ 2 / 2 ≤ log (1
     zero_pow, zero_div] at this
   linarith
 
-private lemma digammaIncrement_le_cubic {a : ℝ} (ha : 0 < a) (k : ℕ) :
+/-- Cubic upper bound on the digamma increment: for `a > 0`,
+`∑_{j<k} 1 / (a + j) ≤ k / a - (k (k - 1) / 2) / a² + k³ / a³`, from the termwise bound
+`1 / (a + j) ≤ 1 / a - j / a² + j² / a³`. -/
+lemma digammaIncrement_le_cubic {a : ℝ} (ha : 0 < a) (k : ℕ) :
     digammaIncrement a k ≤ k / a - (k * (k - 1) / 2) / a ^ 2 + (k : ℝ) ^ 3 / a ^ 3 := by
   have hterm : ∀ j : ℕ, (a + j)⁻¹ ≤ 1 / a - j / a ^ 2 + (j : ℝ) ^ 2 / a ^ 3 := fun j => by
     have hj : (0 : ℝ) ≤ j := j.cast_nonneg
