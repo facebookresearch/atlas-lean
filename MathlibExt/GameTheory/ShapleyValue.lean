@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Fintype.BigOperators
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.Module.LinearMap.Basic
 public import Mathlib.Data.Finset.Powerset
 public import Mathlib.Data.Finset.Card
@@ -51,6 +51,7 @@ namespace MathlibExt.GameTheory.ShapleyValue
 /-- A cooperative TU-game: real-valued characteristic function normalized at `∅`. -/
 @[ext]
 structure CoopGame (Player : Type*) where
+  /-- The characteristic function, giving the worth of each coalition. -/
   charFun : Set Player → ℝ
   empty : charFun ∅ = 0
 
