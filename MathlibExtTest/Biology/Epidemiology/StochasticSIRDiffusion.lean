@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Biology.Epidemiology.StochasticSIRDiffusion
+import MathlibExt.Biology.Epidemiology.StochasticSIRKurtz
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Probability.Distributions.Gaussian.Real
@@ -19,7 +20,11 @@ import Mathlib.Probability.Distributions.Gaussian.Real
   covariance at `t = 1` is computed from the Lyapunov equation and its uniqueness:
   `V(1) = (0, 0, 1/4)`.
 * The degenerate case of zero initial infectives, where the limit covariance vanishes and the
-  diffusion approximation applies with the zero fluctuation path.
+  diffusion approximation applies with the zero fluctuation path. A constant driving path has
+  no increments, so it leaves the zero fluctuation path unchanged, and every fluctuation path
+  starts at its initial value.
+* `StochasticSIR.tendsto_measure_deviation` concludes the hypothesis of
+  `tendsto_measure_norm_sub_of_deviation`.
 * A case where the CLT scaling fails: for `N = 1` the scaled fluctuation of the infectives at
   `t = 1` lives on the two points `±1/2`, so its law is not the Gaussian limit law. -/
 
@@ -131,6 +136,31 @@ theorem isFluctuationPath_diseaseFree_eq_zero {β γ T : ℝ} (hβ : 0 ≤ β) (
     {U : ℝ → ℝ × ℝ} (hU : IsFluctuationPath β γ T (fun _ => (1, 0)) 0 (fun _ => 0) U) :
     ∀ t ∈ Icc 0 T, U t = 0 :=
   hU.unique hβ hγ continuousOn_const ⟨continuousOn_const, fun t _ => by simp⟩
+
+/-- The driving path enters only through its increments: the constant path `m ≡ (5, 5)` drives
+nothing, so the fluctuation path from `0` around the disease-free state is still `0`. -/
+example {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {U : ℝ → ℝ × ℝ}
+    (hU : IsFluctuationPath β γ T (fun _ => (1, 0)) 0 (fun _ => ((5 : ℝ), (5 : ℝ))) U) :
+    ∀ t ∈ Icc 0 T, U t = 0 :=
+  hU.unique hβ hγ continuousOn_const ⟨continuousOn_const, fun t _ => by simp⟩
+
+/-- A solution driven by a path with `m(0) ≠ 0` exists and starts at its initial value. -/
+example : ∃ U, IsFluctuationPath 2 1 1 (fun _ => (1, 0)) (1, 1) (fun t => (t + 5, 5)) U ∧
+    U 0 = (1, 1) := by
+  obtain ⟨U, hU⟩ := exists_isFluctuationPath (β := 2) (γ := 1) (T := 1) (by norm_num)
+    (by norm_num) continuousOn_const (1, 1) (m := fun t => (t + 5, 5)) (by fun_prop)
+  exact ⟨U, hU, hU.initial zero_le_one⟩
+
+/-- `StochasticSIR.tendsto_measure_deviation` concludes exactly the hypothesis of
+`tendsto_measure_norm_sub_of_deviation`: its `deviation` is the `ℓ¹` sum used there. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {S I R : ℕ → Ω → ℝ → ℕ}
+    {s i r : ℝ → ℝ} {T : ℝ}
+    (h : ∀ ε, 0 < ε → Tendsto (fun N => μ {ω | ∃ t ∈ Icc 0 T,
+      ε ≤ StochasticSIR.deviation N (S N ω) (I N ω) (R N ω) s i r t}) atTop (𝓝 0))
+    {δ : ℝ} (hδ : 0 < δ) :
+    Tendsto (fun N => μ {ω | ∃ t ∈ Icc 0 T,
+      δ ≤ ‖((S N ω t : ℝ) / N, (I N ω t : ℝ) / N) - (s t, i t)‖}) atTop (𝓝 0) :=
+  tendsto_measure_norm_sub_of_deviation h hδ
 
 /-! ### Failure of the CLT scaling for small `N` -/
 

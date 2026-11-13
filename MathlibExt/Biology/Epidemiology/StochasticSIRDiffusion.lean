@@ -12,6 +12,7 @@ public import MathlibExt.Biology.Epidemiology.SIR
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import MathlibExt.Analysis.ODE.MaximalSolution
+import MathlibExt.Biology.Epidemiology.StochasticSIRKurtz
 import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Analysis.ODE.Gronwall
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
@@ -54,9 +55,9 @@ controls `U_N - U` pathwise by the initial error, the martingale error `sup |M_N
 `sup |X_N - x|` (`norm_sqrt_smul_sub_sub_le`). This file proves that deterministic estimate and
 the probabilistic conclusion, taking as **explicit hypotheses**
 
-* the law of large numbers `sup_{t ≤ T} |X_N - x| → 0` in probability (the open sibling
-  task T190 proves it for the SIR chain; see `tendsto_measure_norm_sub_of_deviation` for the
-  translation from its `ℓ¹` form), and
+* the law of large numbers `sup_{t ≤ T} |X_N - x| → 0` in probability
+  (`StochasticSIR.tendsto_measure_deviation` proves it for the SIR chain;
+  `tendsto_measure_norm_sub_of_deviation` translates its `ℓ¹` form), and
 * the martingale functional CLT in coupled (Skorokhod-representation) form:
   `sup_{t ≤ T} |M_N - M| → 0` in probability for a process `M` with continuous paths.
 
@@ -76,10 +77,12 @@ the SIR chain, and it is not used here.
   distribution for each `t ∈ [0, T]`.
 * `tendsto_measure_norm_gt`: tightness of the limit data `(U₀, sup_{[0, T]} ‖M‖)`, used to
   control the remainder term.
-* `tendsto_measure_norm_sub_of_deviation`: the `ℓ¹` law of large numbers of T190 implies the
-  law-of-large-numbers hypothesis used here.
-* `exists_isFluctuationPath`, `IsFluctuationPath.unique`: the linear fluctuation equation has
-  exactly one continuous solution on `[0, T]` for each continuous driving path.
+* `tendsto_measure_norm_sub_of_deviation`: the `ℓ¹` law of large numbers
+  `StochasticSIR.tendsto_measure_deviation` implies the law-of-large-numbers hypothesis used
+  here.
+* `exists_isFluctuationPath`, `IsFluctuationPath.unique`, `IsFluctuationPath.initial`: the linear
+  fluctuation equation has exactly one continuous solution on `[0, T]` for each initial value
+  `u₀` and each continuous driving path, and it starts at `u₀`.
 * `IsLimitCovariance.eqOn`: the Lyapunov equation for the limit covariance has at most one
   solution from a given initial covariance.
 
@@ -223,82 +226,7 @@ theorem norm_jacobian_le_of_le {β γ B : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
   refine (norm_jacobian_le hβ hγ p h).trans ?_
   gcongr
 
-/-! ### Gronwall's inequality in integral form -/
-
--- Copy of `le_mul_exp_of_le_add_integral` from the open sibling task T190
--- (`StochasticSIRKurtz.lean`, PR #2009), which cannot be imported while unmerged.
--- Delete this copy and use the public version once #2009 merges.
-/-- **Gronwall's inequality in integral form.** If a nonnegative integrable `u` satisfies
-`u(t) ≤ a + K ∫₀ᵗ u` on `[0, T]` with `K ≥ 0`, then `u(t) ≤ a e^{K t}` there. -/
-private theorem le_mul_exp_of_le_add_integral' {u : ℝ → ℝ} {a K T : ℝ} (hK : 0 ≤ K)
-    (hu : IntegrableOn u (Icc 0 T)) (hu0 : ∀ t ∈ Icc 0 T, 0 ≤ u t)
-    (h : ∀ t ∈ Icc 0 T, u t ≤ a + K * ∫ s in (0 : ℝ)..t, u s) :
-    ∀ t ∈ Icc 0 T, u t ≤ a * exp (K * t) := by
-  intro t ht
-  have hT : 0 ≤ T := ht.1.trans ht.2
-  set v : ℝ → ℝ := fun t => ∫ s in (0 : ℝ)..t, u s with hv
-  have hii : ∀ x ∈ Icc 0 T, ∀ z ∈ Icc 0 T, IntervalIntegrable u volume x z := fun x hx z hz =>
-    (hu.mono_set (uIcc_subset_Icc hx hz)).intervalIntegrable
-  have hvc : ContinuousOn v (Icc 0 T) := by
-    have := intervalIntegral.continuousOn_primitive_interval (μ := volume) (a := 0) (b := T)
-      (f := u) (by rwa [uIcc_of_le hT])
-    rwa [uIcc_of_le hT] at this
-  have hvmono : ∀ x ∈ Icc 0 T, ∀ z ∈ Icc 0 T, x ≤ z → v x ≤ v z := by
-    intro x hx z hz hxz
-    have hsplit : v z - v x = ∫ s in x..z, u s :=
-      intervalIntegral.integral_interval_sub_left (hii 0 ⟨le_rfl, hT⟩ z hz)
-        (hii 0 ⟨le_rfl, hT⟩ x hx)
-    have : 0 ≤ ∫ s in x..z, u s :=
-      intervalIntegral.integral_nonneg hxz fun s hs => hu0 s ⟨hx.1.trans hs.1, hs.2.trans hz.2⟩
-    linarith
-  have hvle : ∀ x ∈ Icc 0 T, v x ≤ gronwallBound 0 K a (x - 0) := by
-    refine le_gronwallBound_of_liminf_deriv_right_le (f' := fun x => K * v x + a) hvc ?_
-      (by simp [hv]) (fun x _ => le_rfl)
-    intro x hx r hr
-    have hxT : x < T := hx.2
-    have hsub : Ioo x T ⊆ Icc 0 T := fun z hz => ⟨hx.1.trans hz.1.le, hz.2.le⟩
-    have htend : Tendsto v (𝓝[>] x) (𝓝 (v x)) := by
-      rw [← nhdsWithin_Ioo_eq_nhdsGT hxT]
-      exact (hvc x ⟨hx.1, hxT.le⟩).mono hsub
-    have hlim : Tendsto (fun z => K * v z + a) (𝓝[>] x) (𝓝 (K * v x + a)) :=
-      (htend.const_mul K).add_const a
-    refine Eventually.frequently ?_
-    filter_upwards [hlim.eventually (gt_mem_nhds hr), Ioo_mem_nhdsGT hxT] with z hz hzI
-    have hxz : x < z := hzI.1
-    have hzI' : z ∈ Icc 0 T := hsub hzI
-    have hxI : x ∈ Icc 0 T := ⟨hx.1, hxT.le⟩
-    have hint : v z - v x ≤ (z - x) * (K * v z + a) := by
-      have hsplit : v z - v x = ∫ s in x..z, u s :=
-        intervalIntegral.integral_interval_sub_left (hii 0 ⟨le_rfl, hT⟩ z hzI')
-          (hii 0 ⟨le_rfl, hT⟩ x hxI)
-      rw [hsplit]
-      have := intervalIntegral.integral_mono_on hxz.le (hii x hxI z hzI')
-        (intervalIntegrable_const (c := K * v z + a)) fun s hs => by
-          have hsI : s ∈ Icc 0 T := ⟨hx.1.trans hs.1, hs.2.trans hzI'.2⟩
-          have := h s hsI
-          have := hvmono s hsI z hzI' hs.2
-          nlinarith
-      rwa [intervalIntegral.integral_const, smul_eq_mul] at this
-    have hpos : 0 < z - x := sub_pos.2 hxz
-    calc (z - x)⁻¹ * (v z - v x) ≤ (z - x)⁻¹ * ((z - x) * (K * v z + a)) :=
-          mul_le_mul_of_nonneg_left hint (inv_nonneg.2 hpos.le)
-      _ = K * v z + a := by field_simp
-      _ < r := hz
-  have hut := h t ht
-  have hvt := hvle t ht
-  rw [sub_zero] at hvt
-  rcases hK.eq_or_lt with hK0 | hKpos
-  · subst hK0
-    simpa using hut
-  · rw [gronwallBound_of_K_ne_0 hKpos.ne'] at hvt
-    have : K * v t ≤ a * (exp (K * t) - 1) := by
-      have := mul_le_mul_of_nonneg_left hvt hK
-      simp only [zero_mul, zero_add] at this
-      calc K * v t ≤ K * (a / K * (exp (K * t) - 1)) := this
-        _ = a * (exp (K * t) - 1) := by field_simp
-    change u t ≤ a * exp (K * t)
-    have : u t ≤ a + K * v t := hut
-    nlinarith
+/-! ### Integrability helpers -/
 
 private theorem intervalIntegrable_of_integrableOn {E : Type*} [NormedAddCommGroup E]
     {f : ℝ → E} {T t : ℝ} (hf : IntegrableOn f (Icc 0 T)) (ht : t ∈ Icc 0 T) :
@@ -313,15 +241,17 @@ private theorem continuousOn_uIcc_of_Icc {E : Type*} [TopologicalSpace E] {f : �
 
 /-- `U` solves the **linear fluctuation equation** on `[0, T]` driven by the path `m`, with
 initial value `u₀`, around the deterministic path `x`:
-`U(t) = u₀ + m(t) + ∫₀ᵗ DF(x(s)) U(s) ds`, and `U` is continuous on `[0, T]`. With `m` the
-Gaussian martingale of the module docstring this is the Ornstein–Uhlenbeck-type SDE
-`dU = DF(x(t)) U dt + dM(t)` of the diffusion approximation, solved pathwise. -/
+`U(t) = u₀ + (m(t) - m(0)) + ∫₀ᵗ DF(x(s)) U(s) ds`, and `U` is continuous on `[0, T]`. The
+driving path enters only through its increments, so `U(0) = u₀` for every `m`
+(`IsFluctuationPath.initial`). With `m` the Gaussian martingale of the module docstring, which
+starts at `0`, this is the Ornstein–Uhlenbeck-type SDE `dU = DF(x(t)) U dt + dM(t)` of the
+diffusion approximation, solved pathwise. -/
 structure IsFluctuationPath (β γ T : ℝ) (x : ℝ → ℝ × ℝ) (u₀ : ℝ × ℝ) (m U : ℝ → ℝ × ℝ) :
     Prop where
   /-- The solution is continuous on `[0, T]`. -/
   continuousOn : ContinuousOn U (Icc 0 T)
   /-- The integral equation. -/
-  eq : ∀ t ∈ Icc 0 T, U t = u₀ + m t + ∫ s in (0 : ℝ)..t, jacobian β γ (x s) (U s)
+  eq : ∀ t ∈ Icc 0 T, U t = u₀ + (m t - m 0) + ∫ s in (0 : ℝ)..t, jacobian β γ (x s) (U s)
 
 namespace IsFluctuationPath
 
@@ -332,32 +262,37 @@ private theorem continuousOn_jacobian (hxc : ContinuousOn x (Icc 0 T))
     ContinuousOn (fun s => jacobian β γ (x s) (U s)) (Icc 0 T) :=
   (continuous_jacobian β γ).comp_continuousOn (hxc.prodMk hU)
 
+/-- The solution starts at its initial value: `U(0) = u₀` for every driving path `m`. -/
+theorem initial (hT : 0 ≤ T) (hU : IsFluctuationPath β γ T x u₀ m U) : U 0 = u₀ := by
+  simpa using hU.eq 0 ⟨le_rfl, hT⟩
+
 /-- A priori bound: if `‖u₀‖ ≤ k`, `‖m‖ ≤ k` and `‖x‖ ≤ B` on `[0, T]`, then
-`‖U(t)‖ ≤ 2 k e^{(2 β B + γ) t}`. -/
+`‖U(t)‖ ≤ 3 k e^{(2 β B + γ) t}` (the increment `m(t) - m(0)` contributes `2 k`). -/
 theorem norm_le (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {B k : ℝ} (hB0 : 0 ≤ B)
     (hB : ∀ t ∈ Icc 0 T, ‖x t‖ ≤ B) (hxc : ContinuousOn x (Icc 0 T))
     (hU : IsFluctuationPath β γ T x u₀ m U) (hu₀ : ‖u₀‖ ≤ k) (hm : ∀ t ∈ Icc 0 T, ‖m t‖ ≤ k) :
-    ∀ t ∈ Icc 0 T, ‖U t‖ ≤ 2 * k * exp ((2 * β * B + γ) * t) := by
+    ∀ t ∈ Icc 0 T, ‖U t‖ ≤ 3 * k * exp ((2 * β * B + γ) * t) := by
   have hL : 0 ≤ 2 * β * B + γ := by positivity
   have hcont := continuousOn_jacobian (β := β) (γ := γ) hxc hU.continuousOn
-  refine le_mul_exp_of_le_add_integral' hL (hU.continuousOn.norm.integrableOn_Icc (μ := volume))
-    (fun _ _ => norm_nonneg _) fun t ht => ?_
+  refine StochasticSIR.le_mul_exp_of_le_add_integral hL
+    (hU.continuousOn.norm.integrableOn_Icc (μ := volume)) (fun _ _ => norm_nonneg _)
+    fun t ht => ?_
   have hii : IntervalIntegrable (fun s => jacobian β γ (x s) (U s)) volume 0 t :=
     (continuousOn_uIcc_of_Icc hcont ht).intervalIntegrable
   have hUi : IntervalIntegrable (fun s => ‖U s‖) volume 0 t :=
     (continuousOn_uIcc_of_Icc hU.continuousOn.norm ht).intervalIntegrable
   rw [hU.eq t ht]
-  calc ‖u₀ + m t + ∫ s in (0 : ℝ)..t, jacobian β γ (x s) (U s)‖
-      ≤ ‖u₀‖ + ‖m t‖ + ‖∫ s in (0 : ℝ)..t, jacobian β γ (x s) (U s)‖ := norm_add₃_le
-    _ ≤ k + k + ∫ s in (0 : ℝ)..t, ‖jacobian β γ (x s) (U s)‖ := by
+  calc ‖u₀ + (m t - m 0) + ∫ s in (0 : ℝ)..t, jacobian β γ (x s) (U s)‖
+      ≤ ‖u₀‖ + ‖m t - m 0‖ + ‖∫ s in (0 : ℝ)..t, jacobian β γ (x s) (U s)‖ := norm_add₃_le
+    _ ≤ k + (k + k) + ∫ s in (0 : ℝ)..t, ‖jacobian β γ (x s) (U s)‖ := by
         gcongr
-        · exact hm t ht
+        · exact norm_sub_le_of_le (hm t ht) (hm 0 ⟨le_rfl, ht.1.trans ht.2⟩)
         · exact intervalIntegral.norm_integral_le_integral_norm ht.1
-    _ ≤ k + k + ∫ s in (0 : ℝ)..t, (2 * β * B + γ) * ‖U s‖ := by
+    _ ≤ k + (k + k) + ∫ s in (0 : ℝ)..t, (2 * β * B + γ) * ‖U s‖ := by
         gcongr
         refine intervalIntegral.integral_mono_on ht.1 hii.norm (hUi.const_mul _) fun s hs => ?_
         exact norm_jacobian_le_of_le hβ hγ (hB s ⟨hs.1, hs.2.trans ht.2⟩) _
-    _ = 2 * k + (2 * β * B + γ) * ∫ s in (0 : ℝ)..t, ‖U s‖ := by
+    _ = 3 * k + (2 * β * B + γ) * ∫ s in (0 : ℝ)..t, ‖U s‖ := by
         rw [intervalIntegral.integral_const_mul]; ring
 
 /-- **Uniqueness** of the solution of the fluctuation equation on `[0, T]`. -/
@@ -373,8 +308,8 @@ theorem unique (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hxc : ContinuousOn x (Icc 0 T)
   have hD : ContinuousOn (fun s => U s - U' s) (Icc 0 T) := hU.continuousOn.sub hU'.continuousOn
   have hc := continuousOn_jacobian (β := β) (γ := γ) hxc hU.continuousOn
   have hc' := continuousOn_jacobian (β := β) (γ := γ) hxc hU'.continuousOn
-  have key := le_mul_exp_of_le_add_integral' (a := 0) hL (hD.norm.integrableOn_Icc (μ := volume))
-    (fun _ _ => norm_nonneg _) fun t ht => ?_
+  have key := StochasticSIR.le_mul_exp_of_le_add_integral (a := 0) hL
+    (hD.norm.integrableOn_Icc (μ := volume)) (fun _ _ => norm_nonneg _) fun t ht => ?_
   · intro t ht
     have := key t ht
     rw [zero_mul] at this
@@ -400,7 +335,7 @@ end IsFluctuationPath
 
 /-- **Existence** of the solution of the fluctuation equation on `[0, T]` for a driving path `m`
 continuous on `[0, T]`. The proof extends `x` and `m` continuously to `ℝ`, solves the globally
-Lipschitz ODE `V' = DF(x) (V + m)`, `V(0) = u₀`, and sets `U = V + m`. -/
+Lipschitz ODE `V' = DF(x) (V + (m - m(0)))`, `V(0) = u₀`, and sets `U = V + (m - m(0))`. -/
 theorem exists_isFluctuationPath {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {x : ℝ → ℝ × ℝ}
     (hxc : ContinuousOn x (Icc 0 T)) (u₀ : ℝ × ℝ) {m : ℝ → ℝ × ℝ}
     (hm : ContinuousOn m (Icc 0 T)) :
@@ -422,11 +357,11 @@ theorem exists_isFluctuationPath {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ �
   have hxe : Continuous xe := hxc.comp_continuous hπc hπmem
   have hme : Continuous me := hm.comp_continuous hπc hπmem
   have hxeB : ∀ t, ‖xe t‖ ≤ B := fun t => (hC _ (hπmem t)).trans (le_max_left _ _)
-  set f : ℝ → ℝ × ℝ → ℝ × ℝ := fun t v => jacobian β γ (xe t) (v + me t)
+  set f : ℝ → ℝ × ℝ → ℝ × ℝ := fun t v => jacobian β γ (xe t) (v + (me t - m 0))
   have hfc : Continuous (Function.uncurry f) := by
-    change Continuous (fun q : ℝ × (ℝ × ℝ) => jacobian β γ (xe q.1) (q.2 + me q.1))
+    change Continuous (fun q : ℝ × (ℝ × ℝ) => jacobian β γ (xe q.1) (q.2 + (me q.1 - m 0)))
     exact (continuous_jacobian β γ).comp ((hxe.comp continuous_fst).prodMk
-      (continuous_snd.add (hme.comp continuous_fst)))
+      (continuous_snd.add ((hme.comp continuous_fst).sub continuous_const)))
   have hL : 0 ≤ 2 * β * B + γ := by positivity
   have hlip : ∀ t, LipschitzWith (Real.toNNReal (2 * β * B + γ)) (f t) := by
     intro t
@@ -439,13 +374,14 @@ theorem exists_isFluctuationPath {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ �
     MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz
       f 0 u₀ _ hfc hlip
   have hVc : Continuous V := continuous_iff_continuousAt.2 fun t => (hV t).continuousAt
-  refine ⟨fun t => V t + m t, hVc.continuousOn.add hm, fun t ht => ?_⟩
+  refine ⟨fun t => V t + (m t - m 0), hVc.continuousOn.add (hm.sub continuousOn_const),
+    fun t ht => ?_⟩
   have hfV : Continuous (fun s => f s (V s)) :=
     hfc.comp (continuous_id.prodMk hVc)
   have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt (a := 0) (b := t)
     (fun s _ => hV s) (hfV.intervalIntegrable 0 t)
   have hcongr : ∫ s in (0 : ℝ)..t, f s (V s) =
-      ∫ s in (0 : ℝ)..t, jacobian β γ (x s) (V s + m s) := by
+      ∫ s in (0 : ℝ)..t, jacobian β γ (x s) (V s + (m s - m 0)) := by
     refine intervalIntegral.integral_congr fun s hs => ?_
     rw [uIcc_of_le ht.1] at hs
     have hsI : s ∈ Icc 0 T := ⟨hs.1, hs.2.trans ht.2⟩
@@ -487,8 +423,10 @@ and let `U` solve the fluctuation equation driven by `m` from `u₀`, with `‖u
 initial fluctuation `√N (X(0) - x(0))` is within `ρ` of `u₀` and the scaled martingale
 `√N (X(t) - X(0) - ∫₀ᵗ F(X))` is within `ρ` of `m(t)` on `[0, T]`, then on `[0, T]`
 
-  `‖√N (X(t) - x(t)) - U(t)‖ ≤ (2 ρ + β δ T · 2 k e^{L T}) e^{(L + β) T}`,  `L = 2 β B + γ`.
+  `‖√N (X(t) - x(t)) - U(t)‖ ≤ (3 ρ + β δ T · 3 k e^{L T}) e^{(L + β) T}`,  `L = 2 β B + γ`.
 
+The scaled martingale vanishes at `t = 0`, so `‖m(0)‖ ≤ ρ`; this third `ρ` and the `3 k` of
+`IsFluctuationPath.norm_le` come from the increment `m(t) - m(0)` in the fluctuation equation.
 The proof writes `√N (F(X) - F(x)) = DF(x) U_N + β (U_N)₁ (X - x)₂ (-1, 1)` (`drift_add`) and
 applies Gronwall's inequality to `‖U_N - U‖`. -/
 theorem norm_sqrt_smul_sub_sub_le {β γ T B δ ρ k : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {N : ℕ}
@@ -501,7 +439,7 @@ theorem norm_sqrt_smul_sub_sub_le {β γ T B δ ρ k : ℝ} (hβ : 0 ≤ β) (h�
     (hρ : ∀ t ∈ Icc 0 T,
       ‖Real.sqrt N • (X t - X 0 - ∫ s in (0 : ℝ)..t, drift β γ (X s)) - m t‖ ≤ ρ) :
     ∀ t ∈ Icc 0 T, ‖Real.sqrt N • (X t - x t) - U t‖ ≤
-      (2 * ρ + β * δ * T * (2 * k * exp ((2 * β * B + γ) * T))) *
+      (3 * ρ + β * δ * T * (3 * k * exp ((2 * β * B + γ) * T))) *
         exp ((2 * β * B + γ + β) * T) := by
   intro t₀ ht₀
   have hT : 0 ≤ T := ht₀.1.trans ht₀.2
@@ -509,11 +447,13 @@ theorem norm_sqrt_smul_sub_sub_le {β γ T B δ ρ k : ℝ} (hβ : 0 ≤ β) (h�
   have hk : 0 ≤ k := (norm_nonneg _).trans hu₀
   have hδ0 : 0 ≤ δ := (norm_nonneg _).trans (hδ 0 h0)
   have hρ0 : 0 ≤ ρ := (norm_nonneg _).trans hρ₀
+  -- the scaled martingale vanishes at `t = 0`, so `m 0` is within `ρ` of `0`
+  have hm0 : ‖m 0‖ ≤ ρ := by simpa using hρ 0 h0
   set c : ℝ := Real.sqrt N with hc
   have hc0 : 0 ≤ c := Real.sqrt_nonneg _
   set L : ℝ := 2 * β * B + γ with hLdef
   have hL : 0 ≤ L := by positivity
-  set K' : ℝ := 2 * k * exp (L * T) with hK'
+  set K' : ℝ := 3 * k * exp (L * T) with hK'
   have hK'0 : 0 ≤ K' := by positivity
   have hUb : ∀ s ∈ Icc 0 T, ‖U s‖ ≤ K' := fun s hs =>
     (hU.norm_le hβ hγ hB0 hB hxc hu₀ hm s hs).trans (by
@@ -601,7 +541,7 @@ theorem norm_sqrt_smul_sub_sub_le {β γ T B δ ρ k : ℝ} (hβ : 0 ≤ β) (h�
     gcongr
   -- the integral identity
   have hident : ∀ t ∈ Icc 0 T, d t = (c • (X 0 - x 0) - u₀) +
-      (c • (X t - X 0 - ∫ s in (0 : ℝ)..t, drift β γ (X s)) - m t) +
+      (c • (X t - X 0 - ∫ s in (0 : ℝ)..t, drift β γ (X s)) - m t) + m 0 +
       ∫ s in (0 : ℝ)..t, g s := by
     intro t ht
     have hpt : ∀ s, g s = c • (drift β γ (X s) - drift β γ (x s)) - jacobian β γ (x s) (U s) := by
@@ -623,39 +563,39 @@ theorem norm_sqrt_smul_sub_sub_le {β γ T B δ ρ k : ℝ} (hβ : 0 ≤ β) (h�
     have hUt := hU.eq t ht
     have hint_x : ∫ s in (0 : ℝ)..t, drift β γ (x s) = x t - x 0 := by
       rw [hxt]; abel
-    have hint_U : ∫ s in (0 : ℝ)..t, jacobian β γ (x s) (U s) = U t - u₀ - m t := by
+    have hint_U : ∫ s in (0 : ℝ)..t, jacobian β γ (x s) (U s) = U t - u₀ - (m t - m 0) := by
       rw [hUt]; abel
     rw [hint_x, hint_U]
     simp only [d, u, smul_sub]
     abel
   -- Gronwall
-  have hgron := le_mul_exp_of_le_add_integral' (a := 2 * ρ + β * δ * T * K')
+  have hgron := StochasticSIR.le_mul_exp_of_le_add_integral (a := 3 * ρ + β * δ * T * K')
     (by positivity : 0 ≤ L + β) hdi.norm (fun _ _ => norm_nonneg _) fun t ht => ?_
   · calc ‖c • (X t₀ - x t₀) - U t₀‖ = ‖d t₀‖ := rfl
-      _ ≤ (2 * ρ + β * δ * T * K') * exp ((L + β) * t₀) := hgron t₀ ht₀
-      _ ≤ (2 * ρ + β * δ * T * K') * exp ((L + β) * T) := by
+      _ ≤ (3 * ρ + β * δ * T * K') * exp ((L + β) * t₀) := hgron t₀ ht₀
+      _ ≤ (3 * ρ + β * δ * T * K') * exp ((L + β) * T) := by
           gcongr
           exact ht₀.2
   have hgii := intervalIntegrable_of_integrableOn hgi ht
   have hdii := intervalIntegrable_of_integrableOn hdi.norm ht
   rw [hident t ht]
   calc ‖(c • (X 0 - x 0) - u₀) + (c • (X t - X 0 - ∫ s in (0 : ℝ)..t, drift β γ (X s)) - m t) +
-        ∫ s in (0 : ℝ)..t, g s‖
+        m 0 + ∫ s in (0 : ℝ)..t, g s‖
       ≤ ‖c • (X 0 - x 0) - u₀‖ +
-          ‖c • (X t - X 0 - ∫ s in (0 : ℝ)..t, drift β γ (X s)) - m t‖ +
-          ‖∫ s in (0 : ℝ)..t, g s‖ := norm_add₃_le
-    _ ≤ ρ + ρ + ∫ s in (0 : ℝ)..t, ((L + β) * ‖d s‖ + β * δ * K') := by
+          ‖c • (X t - X 0 - ∫ s in (0 : ℝ)..t, drift β γ (X s)) - m t‖ + ‖m 0‖ +
+          ‖∫ s in (0 : ℝ)..t, g s‖ := norm_add₄_le
+    _ ≤ ρ + ρ + ρ + ∫ s in (0 : ℝ)..t, ((L + β) * ‖d s‖ + β * δ * K') := by
         gcongr
         · exact hρ t ht
         · refine (intervalIntegral.norm_integral_le_integral_norm ht.1).trans ?_
           exact intervalIntegral.integral_mono_on ht.1 hgii.norm
             ((hdii.const_mul _).add intervalIntegrable_const) fun s hs =>
               hgb s ⟨hs.1, hs.2.trans ht.2⟩
-    _ = 2 * ρ + β * δ * K' * t + (L + β) * ∫ s in (0 : ℝ)..t, ‖d s‖ := by
+    _ = 3 * ρ + β * δ * K' * t + (L + β) * ∫ s in (0 : ℝ)..t, ‖d s‖ := by
         rw [intervalIntegral.integral_add (hdii.const_mul _) intervalIntegrable_const,
           intervalIntegral.integral_const_mul, intervalIntegral.integral_const, smul_eq_mul]
         ring
-    _ ≤ 2 * ρ + β * δ * T * K' + (L + β) * ∫ s in (0 : ℝ)..t, ‖d s‖ := by
+    _ ≤ 3 * ρ + β * δ * T * K' + (L + β) * ∫ s in (0 : ℝ)..t, ‖d s‖ := by
         have : β * δ * K' * t ≤ β * δ * T * K' := by
           have := mul_le_mul_of_nonneg_left ht.2 (by positivity : 0 ≤ β * δ * K')
           linarith
@@ -757,7 +697,8 @@ let `X N ω : ℝ → ℝ × ℝ` be measurable density paths. Assume, for every
 * (martingale CLT, coupled form) `P(sup_{t ∈ [0, T]} ‖M_N(t) - M(t)‖ ≥ δ) → 0`, for a process
   `M` with continuous paths on `[0, T]` and measurable marginals;
 
-and let `U` solve the linear fluctuation equation `U(t) = U₀ + M(t) + ∫₀ᵗ DF(x) U` pathwise.
+and let `U` solve the linear fluctuation equation `U(t) = U₀ + (M(t) - M(0)) + ∫₀ᵗ DF(x) U`
+pathwise.
 Then the scaled fluctuations converge to `U` uniformly on `[0, T]` in probability:
 `P(sup_{t ∈ [0, T]} ‖√N (X_N(t) - x(t)) - U(t)‖ ≥ ε) → 0` for every `ε > 0`. -/
 theorem tendsto_measure_fluctuation_sub [IsFiniteMeasure μ] {β γ T : ℝ} (hβ : 0 ≤ β)
@@ -795,7 +736,7 @@ theorem tendsto_measure_fluctuation_sub [IsFiniteMeasure μ] {β γ T : ℝ} (h�
     (tendsto_measure_norm_gt (μ := μ) hU₀ hMc hMm)) _ hη2).exists
   set kk : ℝ := (k : ℝ)
   have hkk : 0 ≤ kk := Nat.cast_nonneg k
-  set Cst : ℝ := (2 + β * T * (2 * kk * exp (L * T))) * exp ((L + β) * T) with hCst
+  set Cst : ℝ := (3 + β * T * (3 * kk * exp (L * T))) * exp ((L + β) * T) with hCst
   have hCst0 : 0 < Cst := by positivity
   set θ : ℝ := min 1 (ε / (2 * Cst))
   have hθ : 0 < θ := lt_min one_pos (by positivity)
@@ -818,7 +759,7 @@ theorem tendsto_measure_fluctuation_sub [IsFiniteMeasure μ] {β γ T : ℝ} (h�
     have hbound := norm_sqrt_smul_sub_sub_le (N := N) (δ := θ) (ρ := θ) (k := kk) hβ hγ hB0 hB
       hxc hxint (hX N ω) (fun t ht => (h₁ t ht).le) hθ1 (hU ω) hU₀k hMk h₂.le
       (fun t ht => (h₃ t ht).le) t ht
-    have heq : (2 * θ + β * θ * T * (2 * kk * exp ((2 * β * B + γ) * T))) *
+    have heq : (3 * θ + β * θ * T * (3 * kk * exp ((2 * β * B + γ) * T))) *
         exp ((2 * β * B + γ + β) * T) = θ * Cst := by
       simp only [hCst, L]; ring
     rw [heq] at hbound
@@ -869,9 +810,9 @@ theorem tendstoInDistribution_fluctuation [IsProbabilityMeasure μ] {β γ T : �
   unfold fluctuation
   exact ((hXt N t).sub (aemeasurable_const (b := (s t, i t)))).const_smul (Real.sqrt N)
 
-/-- **Interface with the law of large numbers of T190.** The `ℓ¹` form of Kurtz's law of large
-numbers for the count paths `(S, I, R)`, as proved in the sibling task T190
-(`StochasticSIR.tendsto_measure_deviation`, open PR #2009), implies the hypothesis `hLLN` of
+/-- **Interface with Kurtz's law of large numbers.** The `ℓ¹` form of Kurtz's law of large
+numbers for the count paths `(S, I, R)`, as proved by `StochasticSIR.tendsto_measure_deviation`
+(whose `StochasticSIR.deviation` is the sum below), implies the hypothesis `hLLN` of
 `tendsto_measure_fluctuation_sub` for the density paths `X_N = (S / N, I / N)`. -/
 theorem tendsto_measure_norm_sub_of_deviation {S I R : ℕ → Ω → ℝ → ℕ} {s i r : ℝ → ℝ} {T : ℝ}
     (h : ∀ ε, 0 < ε → Tendsto (fun N => μ {ω | ∃ t ∈ Icc 0 T,
