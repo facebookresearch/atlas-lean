@@ -35,9 +35,10 @@ discounted at `rD`. No claim is made about risky debt or finite maturity.
 
 ## References
 
-F. Modigliani and M. H. Miller, "The Cost of Capital, Corporation Finance and
-the Theory of Investment", American Economic Review 48(3), 1958; M. J. Gordon,
-"The Investment, Financing, and Valuation of the Corporation" (growth formula),
+F. Modigliani and M. H. Miller, "Corporate Income Taxes and the Cost of
+Capital: A Correction", American Economic Review 53(3), 1963, 433–443 (the
+`τ * D` value of the tax shield on perpetual debt); M. J. Gordon, "The
+Investment, Financing, and Valuation of the Corporation" (growth formula),
 1962. Atlas roadmap target FI09.T03.
 -/
 
