@@ -240,34 +240,45 @@ theorem test_periodic_not_primitive :
     ¬ (leslieMatrix f_per s_per).IsPrimitive :=
   hnotprim_per
 
-/-- Age shares fail to converge for the periodic matrix. -/
+private theorem share_per_even (m : ℕ) :
+    (leslieMatrix f_per s_per ^ (2 * m) *ᵥ x0per) 0 /
+      ∑ j, (leslieMatrix f_per s_per ^ (2 * m) *ᵥ x0per) j = 1 := by
+  rw [pow_mul, hsq_per, one_pow]
+  simp [x0per, Matrix.one_mulVec, Fin.sum_univ_two]
+
+private theorem share_per_odd (m : ℕ) :
+    (leslieMatrix f_per s_per ^ (2 * m + 1) *ᵥ x0per) 0 /
+      ∑ j, (leslieMatrix f_per s_per ^ (2 * m + 1) *ᵥ x0per) j = 0 := by
+  rw [pow_succ, pow_mul, hsq_per, one_pow, one_mul]
+  simp [leslieMatrix, f_per, s_per, x0per, Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+
+/-- Age shares have no limit for the periodic matrix: the share of age class `0` is `1`
+at even times and `0` at odd times, so the two subsequences would force any limit to be
+both `1` and `0`. -/
 theorem test_periodic_no_limit :
+    ¬ ∃ l : ℝ, Tendsto
+      (fun t : ℕ => (leslieMatrix f_per s_per ^ t *ᵥ x0per) 0 /
+        ∑ j, (leslieMatrix f_per s_per ^ t *ᵥ x0per) j)
+      atTop (𝓝 l) := by
+  rintro ⟨l, hlim⟩
+  have h2m : Tendsto (fun m : ℕ => 2 * m) atTop atTop :=
+    tendsto_atTop_atTop.mpr fun b => ⟨b, fun a ha => by omega⟩
+  have h2m1 : Tendsto (fun m : ℕ => 2 * m + 1) atTop atTop :=
+    tendsto_atTop_atTop.mpr fun b => ⟨b, fun a ha => by omega⟩
+  have hl1 : l = 1 := tendsto_nhds_unique
+    ((hlim.comp h2m).congr fun m => share_per_even m) tendsto_const_nhds
+  have hl0 : l = 0 := tendsto_nhds_unique
+    ((hlim.comp h2m1).congr fun m => share_per_odd m) tendsto_const_nhds
+  exact one_ne_zero (hl1.symm.trans hl0)
+
+/-- Age shares do not converge to `1/2`, the share at which the even-time value `1` and
+the odd-time value `0` would balance, for the periodic matrix; this is the special case
+`l = 1/2` of `test_periodic_no_limit`. -/
+theorem test_periodic_not_tendsto_half :
     ¬ Tendsto
       (fun t : ℕ => (leslieMatrix f_per s_per ^ t *ᵥ x0per) 0 /
         ∑ j, (leslieMatrix f_per s_per ^ t *ᵥ x0per) j)
-      atTop (𝓝 (1/2 : ℝ)) := by
-  have heven : ∀ m, leslieMatrix f_per s_per ^ (2 * m) = 1 := by
-    intro m
-    rw [pow_mul, hsq_per, one_pow]
-  have hf_even : ∀ m, (leslieMatrix f_per s_per ^ (2 * m) *ᵥ x0per) 0 /
-      ∑ j, (leslieMatrix f_per s_per ^ (2 * m) *ᵥ x0per) j = 1 := by
-    intro m
-    rw [heven]
-    simp [x0per, Matrix.one_mulVec, Fin.sum_univ_two]
-  intro hlim
-  have hmem :=
-    hlim (Metric.ball_mem_nhds (1/2 : ℝ) (by norm_num : (0:ℝ) < 1/4))
-  rw [Filter.mem_map] at hmem
-  have hmem' : ∀ᶠ t in (Filter.atTop : Filter ℕ),
-      (fun t : ℕ => (leslieMatrix f_per s_per ^ t *ᵥ x0per) 0 /
-        ∑ j, (leslieMatrix f_per s_per ^ t *ᵥ x0per) j) t ∈
-        Metric.ball (1/2 : ℝ) (1/4 : ℝ) := hmem
-  rw [Filter.eventually_atTop] at hmem'
-  obtain ⟨N, hN⟩ := hmem'
-  have hle : N ≤ 2 * N := by rw [two_mul]; exact Nat.le_add_right N N
-  have h2N := hN (2 * N) hle
-  simp only [Metric.mem_ball, Real.dist_eq] at h2N
-  rw [hf_even N] at h2N
-  norm_num at h2N
+      atTop (𝓝 (1/2 : ℝ)) :=
+  fun h => test_periodic_no_limit ⟨1/2, h⟩
 
 end MathlibExtTest.Biology.Demography.Leslie
