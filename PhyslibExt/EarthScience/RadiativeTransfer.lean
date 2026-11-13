@@ -8,7 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-public import Mathlib.Analysis.Calculus.Deriv.Mul
+
+import PhyslibExt.EarthScience.RadioactiveDecay
 
 /-!
 # Absorption-only radiative transfer: Beer–Lambert law
@@ -25,7 +26,8 @@ energy laws are separate model assumptions.
 ## ii. Key results
 
 - `EarthScience.beer_lambert_initial`: `I(0) = I0`.
-- `EarthScience.beer_lambert_hasDerivAt`: `I' = -κ * I`.
+- `EarthScience.beer_lambert_hasDerivAt`: `I' = -κ * I`, the exponential-decay
+  derivative `EarthScience.decay_hasDerivAt` with `λ := κ`, `N0 := I0`, `t := s`.
 - `EarthScience.beer_lambert_nonneg`: `I ≥ 0` for `I0 ≥ 0`.
 - `EarthScience.beer_lambert_witness`: `I0 = 1, κ = 1` gives `I(1) = exp(-1)`.
 - `EarthScience.beer_lambert_no_absorption`: `κ = 0` gives constant `I`.
@@ -37,7 +39,8 @@ energy laws are separate model assumptions.
 
 ## iv. References
 
-- `HasDerivAt.exp`, `HasDerivAt.const_mul` in Mathlib.
+- `EarthScience.decay_hasDerivAt` (`PhyslibExt.EarthScience.RadioactiveDecay`) for
+  the derivative: the absorption-only ray obeys the same exponential-decay law.
 -/
 
 @[expose] public section
@@ -49,15 +52,12 @@ theorem beer_lambert_initial {I0 κ : ℝ} :
     I0 * Real.exp (-κ * 0) = I0 := by
   simp
 
-/-- Absorption-only ray: `I(s) = I0 * exp(-kappa * s)` solves `I' = -kappa * I`. -/
+/-- Absorption-only ray: `I(s) = I0 * exp(-kappa * s)` solves `I' = -kappa * I`. This is
+`decay_hasDerivAt` with decay constant `κ`, initial value `I0` and path length `s` in place
+of time; it is not a new exponential-decay derivative. -/
 theorem beer_lambert_hasDerivAt {I0 κ : ℝ} (s : ℝ) :
-    HasDerivAt (fun s => I0 * Real.exp (-κ * s)) (-κ * (I0 * Real.exp (-κ * s))) s := by
-  have h1 : HasDerivAt (fun s : ℝ => -κ * s) (-κ) s := by
-    simpa using (hasDerivAt_id s).const_mul (-κ)
-  have h2 := h1.exp
-  have h3 := h2.const_mul I0
-  convert h3 using 1
-  ring
+    HasDerivAt (fun s => I0 * Real.exp (-κ * s)) (-κ * (I0 * Real.exp (-κ * s))) s :=
+  decay_hasDerivAt κ I0 s
 
 /-- Absorption-only ray: the solution is nonnegative for `I0 >= 0`. -/
 theorem beer_lambert_nonneg {I0 κ : ℝ} (hI0 : 0 ≤ I0) (s : ℝ) :
