@@ -23,12 +23,13 @@ Worked example: two individuals, an intercept, `V = I`, so `P = I - J/2`.
   and the burden test has a degenerate null law (`N(0, 0)`) although every individual carries a
   rare allele, while SKAT keeps `Q_SKAT = (y₀ - y₁)² / 2`.
 
-Davies boundary: with all weights `0`, the Davies integral converges to the mid-p value `½` at
-`q = 0`, not to `P(Q > 0) = 0`. -/
+Davies' formula itself (including the all-zero-weights boundary) is tested with its module,
+`MathlibExt.Probability.Distributions.DaviesFormula`; here it is applied to SKAT-O. -/
 
 open MeasureTheory ProbabilityTheory Matrix WithLp Filter Topology Set
 open MathlibExt.Biology.StatisticalGenetics.BurdenSKAT
 open MathlibExt.Biology.StatisticalGenetics.BurdenSKATO
+open MathlibExt.Probability.Distributions.DaviesFormula
 open MathlibExt.Probability.Statistics.GeneralizedLeastSquares
 open scoped MatrixOrder
 
@@ -41,20 +42,12 @@ example : burdenQ (0 : Matrix (Fin 1) (Fin 1) ℝ) 1 (0 : Matrix (Fin 1) (Fin 1)
 
 example : kernelQ (0 : Matrix (Fin 1) (Fin 1) ℝ) 1 0 0 = 0 := by simp [kernelQ]
 
-example : sineIntegral 0 = 0 := sineIntegral_zero
-
 /-- `R₀ = I`. -/
 example : (skatOCorr 0 : Matrix (Fin 2) (Fin 2) ℝ) = 1 := by simp [skatOCorr]
 
 /-- `R₁ = 𝟙 𝟙ᵀ`. -/
 example : (skatOCorr 1 : Matrix (Fin 2) (Fin 2) ℝ) = Matrix.of fun _ _ => 1 := by
   simp [skatOCorr]
-
-/-- With zero weights Davies' characteristic function is `1`. -/
-example (t : ℝ) : daviesCharFun (0 : Fin 3 → ℝ) t = 1 := by simp [daviesCharFun]
-
-/-- Every characteristic function is `1` at `t = 0`. -/
-example (lam : Fin 2 → ℝ) : daviesCharFun lam 0 = 1 := by simp [daviesCharFun]
 
 /-! ### Fixtures -/
 
@@ -255,47 +248,5 @@ example (α : Fin 1 → ℝ) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
         {y | skatOMinP X0 1 G2 a1 {0, 1 / 2, 1} (by simp) (ofLp y) ≤ t} ≤
       ({0, 1 / 2, 1} : Finset ℝ).card * ENNReal.ofReal t :=
   measure_skatOMinP_le isUnit_X0 α _ _ ht
-
-/-! ### Davies' formula -/
-
-/-- Degenerate mixture: with all weights `0`, the Davies integral at `q = 0` converges to the
-mid-p value `½`, while `P(Q > 0) = 0` and `P(Q ≥ 0) = 1`. -/
-example : Tendsto (fun T => 1 / 2 + Real.pi⁻¹ * ∫ t in (0 : ℝ)..T,
-    (Complex.exp (-(t * 0) * Complex.I) * daviesCharFun (0 : Fin 1 → ℝ) t).im / t) atTop
-      (𝓝 (1 / 2)) := by
-  have h := tendsto_davies (0 : Fin 1 → ℝ) 0
-  have hv : ((weightedChiSq (0 : Fin 1 → ℝ)).real (Ioi 0) +
-      (weightedChiSq (0 : Fin 1 → ℝ)).real (Ici 0)) / 2 = 1 / 2 := by
-    simp [weightedChiSq_zero]
-  rw [hv] at h
-  exact h
-
-/-- The exact tail of `P(Q > 0)` is `0` for the zero mixture, so the mid-p form is needed. -/
-example : (weightedChiSq (0 : Fin 1 → ℝ)).real (Ioi 0) = 0 := by
-  simp [weightedChiSq_zero]
-
-/-- For `χ²₁` Davies' integral converges to the exact upper tail at every `q`. -/
-example (q : ℝ) : Tendsto (fun T => 1 / 2 + Real.pi⁻¹ * ∫ t in (0 : ℝ)..T,
-    (Complex.exp (-(t * q) * Complex.I) * daviesCharFun (fun _ : Fin 1 => (1 : ℝ)) t).im / t)
-      atTop (𝓝 ((weightedChiSq fun _ : Fin 1 => (1 : ℝ)).real (Ioi q))) :=
-  tendsto_davies_of_ne_zero (j := 0) one_ne_zero q
-
-/-- `χ²₁` has no atoms. -/
-example (q : ℝ) : weightedChiSq (fun _ : Fin 1 => (1 : ℝ)) {q} = 0 :=
-  weightedChiSq_singleton (j := 0) one_ne_zero q
-
-/-- Gil-Pelaez on a point mass: the limit is the mid-p value `½` at the atom. -/
-example : Tendsto (fun T => 1 / 2 + Real.pi⁻¹ * ∫ t in (0 : ℝ)..T,
-    (Complex.exp (-(t * 0) * Complex.I) * charFun (Measure.dirac (0 : ℝ)) t).im / t) atTop
-      (𝓝 (1 / 2)) := by
-  have h := tendsto_gilPelaez (μ := Measure.dirac (0 : ℝ)) (integrable_dirac (by simp)) 0
-  have hv : ((Measure.dirac (0 : ℝ)).real (Ioi 0) + (Measure.dirac (0 : ℝ)).real (Ici 0)) / 2 =
-      1 / 2 := by
-    simp
-  rw [hv] at h
-  exact h
-
-/-- The Dirichlet integral. -/
-example : Tendsto sineIntegral atTop (𝓝 (Real.pi / 2)) := tendsto_sineIntegral_atTop
 
 end MathlibExtTest.BurdenSKATO

@@ -9,17 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.StatisticalGenetics.RareVariantInference.BurdenSKAT
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Sinc
-public import Mathlib.Basic.Real.Sign
-public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import MathlibExt.Probability.Distributions.DaviesFormula
 public import MathlibExt.Probability.Statistics.MultipleTesting.Basic
 import MathlibExt.Biology.StatisticalGenetics.RareVariantInference.MultipleTesting
 import Mathlib.Algebra.Order.Chebyshev
-import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.Probability.Distributions.Gaussian.Fernique
-import Mathlib.Probability.Independence.CharacteristicFunction
 
 /-!
 # Burden test, SKAT-O and the Davies p-value formula
@@ -52,17 +46,15 @@ write `wⱼ`); SKAT then uses T37's `skatQ` with weights `aⱼ²`.
   (`skatOPValue`) is valid (`isValidPValue_skatOPValue`), and the SKAT-O statistic
   `min_{ρ ∈ grid} p_ρ` (`skatOMinP`) satisfies the Bonferroni bound
   `P₀(min p_ρ ≤ t) ≤ |grid| t` (`measure_skatOMinP_le`).
-* **Davies' p-value formula.** The characteristic function of `∑ⱼ λⱼ χ²₁` is
-  `∏ⱼ (1 - 2 i λⱼ t)^{-1/2}` (`charFun_weightedChiSq`, `daviesCharFun`). With Gil-Pelaez's
-  inversion theorem (`tendsto_gilPelaez`), this gives
-  `½ + π⁻¹ ∫₀^T Im(e^{-i t q} φ(t)) / t dt → ½ (P(Q > q) + P(Q ≥ q))` (`tendsto_davies`), and
-  `→ P(Q > q)` whenever some `λⱼ ≠ 0` (`weightedChiSq_singleton`, `tendsto_davies_of_ne_zero`).
-  `tendsto_davies_kernelQ` applies it to SKAT, burden and every `Q_ρ`, and
-  `tendsto_davies_skatOPValue` shows the limit is the validated p-value `skatOPValue`.
-* **Dirichlet integral** (needed for Gil-Pelaez, absent from Mathlib):
-  `Si T = ∫₀^T sin u / u du → π / 2` (`tendsto_sineIntegral_atTop`), with rate
-  `|Si T - π / 2| ≤ 2 / T` (`abs_sineIntegral_sub_le`) and bound `|Si| ≤ 4`
-  (`abs_sineIntegral_le`).
+* **Davies' p-value formula.** The generic inversion API is imported:
+  `MathlibExt.Probability.Distributions.DaviesFormula` proves
+  `½ + π⁻¹ ∫₀^T Im(e^{-i t q} φ(t)) / t dt → ½ (P(Q > q) + P(Q ≥ q))` for `Q ~ ∑ⱼ λⱼ χ²₁`
+  (`tendsto_davies`), and `→ P(Q > q)` whenever some `λⱼ ≠ 0` (`tendsto_davies_of_ne_zero`),
+  from `MathlibExt.Analysis.WeightedChiSquare` (`charFun_weightedChiSq`) and
+  `MathlibExt.Analysis.GilPelaez` (`tendsto_gilPelaez`, which uses the Dirichlet integral of
+  `MathlibExt.Analysis.SineIntegral`). Here `tendsto_davies_kernelQ` applies it to SKAT, burden
+  and every `Q_ρ`, and `tendsto_davies_skatOPValue` shows the limit is the validated p-value
+  `skatOPValue`.
 
 ## Boundary cases
 
@@ -96,15 +88,18 @@ its error bounds); noncentral terms and the normal component in Davies' formula;
 SKAT-O p-value of `min_ρ p_ρ` (Lee et al.'s one-dimensional integral), for which we give the
 Bonferroni bound `|grid| t` instead; estimation of the variance components.
 
-## API-00 receipt (base `origin/main` f9d20c04a)
+## API-00 receipt
 
 Reuse search of `MathlibExt`, `WantedExt`, `CSLibExt` and the pinned Mathlib for burden tests,
-SKAT-O, Davies' method, Gil-Pelaez or Imhof inversion, the Dirichlet integral and the chi-square
-characteristic function found nothing beyond T37. Reused: T37's `weightedChiSq`,
+SKAT-O and Davies' method found nothing beyond T37. Reused: T37's `weightedChiSq` (now in
+`MathlibExt.Analysis.WeightedChiSquare`, re-exported by `BurdenSKAT`),
 `stdGaussian_map_inner_eq_weightedChiSq`, `skatQ`, `projP`, `variantScore`, `skatKernel`,
 `projP_mul_self`, `transpose_projP`, `projP_mul_mul_projP`; the repository's
-`isValidPValue_of_tail_le` and `IsValidPValue`; Mathlib's `Real.sinc`, `charFun`,
-`charFun_map_sum_pi_eq_prod`, `integral_gaussian_complex`, `IsGaussian.map_eq_gaussianReal`,
+`isValidPValue_of_tail_le` and `IsValidPValue`; the generic modules
+`MathlibExt.Analysis.SineIntegral`, `MathlibExt.Analysis.GilPelaez` and
+`MathlibExt.Analysis.WeightedChiSquare` (T108 copied them from this file's former sections
+`GilPelaez` and `Davies`) and `MathlibExt.Probability.Distributions.DaviesFormula` (the rest of
+the former section `Davies`); Mathlib's `IsGaussian.map_eq_gaussianReal`,
 `covarianceBilin_multivariateGaussian` and `Measure.pi_map_pi`. `kernelQ` generalizes T37's
 `skatQ` to an arbitrary kernel (bridge `skatQ_eq_kernelQ`), because the burden and SKAT-O kernels
 are not of the form `G diag(w) Gᵀ`.
@@ -471,477 +466,10 @@ theorem eigenvalues_skatO_nonneg {ρ : ℝ} (h0 : 0 ≤ ρ) (h1 : ρ ≤ 1) (V' 
 
 end SKATO
 
-section GilPelaez
-
-open Real Set Filter Topology
-
-/-- The sine integral `Si z = ∫₀ᶻ sinc u du`, `sinc u = sin u / u` (Mathlib's `Real.sinc`). -/
-noncomputable def sineIntegral (z : ℝ) : ℝ := ∫ u in (0 : ℝ)..z, sinc u
-
-private theorem hasDerivAt_expSinAux (t u : ℝ) :
-    HasDerivAt (fun u => -(exp (-(u * t)) * (t * sin u + cos u)) / (1 + t ^ 2))
-      (exp (-(u * t)) * sin u) u := by
-  have h1 : HasDerivAt (fun u => exp (-(u * t))) (exp (-(u * t)) * (-t)) u := by
-    have := ((hasDerivAt_id u).mul_const t).neg.exp
-    simpa using this
-  have h2 : HasDerivAt (fun u => t * sin u + cos u) (t * cos u - sin u) u := by
-    exact (((hasDerivAt_sin u).const_mul t).add (hasDerivAt_cos u)).congr_deriv (by ring)
-  have := ((h1.mul h2).neg).div_const (1 + t ^ 2)
-  convert this using 1
-  have : (1 + t ^ 2) ≠ 0 := by positivity
-  field_simp
-  ring
-
-private theorem integral_exp_mul_sin (t T : ℝ) :
-    ∫ u in (0 : ℝ)..T, exp (-(u * t)) * sin u =
-      (1 - exp (-(T * t)) * (t * sin T + cos T)) / (1 + t ^ 2) := by
-  rw [intervalIntegral.integral_eq_sub_of_hasDerivAt (fun u _ => hasDerivAt_expSinAux t u)
-    (by apply Continuous.intervalIntegrable; fun_prop)]
-  have : (1 + t ^ 2) ≠ 0 := by positivity
-  simp
-  field_simp
-  ring
-
-/-- Laplace representation of the sine integral: writing `1 / u = ∫₀^∞ e^{-u t} dt` and
-swapping the integrals (Fubini),
-`Si T = ∫₀^∞ (1 - e^{-T t} (t sin T + cos T)) / (1 + t²) dt` for `T > 0`. -/
-theorem sineIntegral_eq {T : ℝ} (hT : 0 < T) :
-    sineIntegral T =
-      ∫ t in Ioi 0, (1 - exp (-(T * t)) * (t * sin T + cos T)) / (1 + t ^ 2) := by
-  set F : ℝ → ℝ → ℝ := fun u t => exp (-(u * t)) * sin u
-  have hF : Continuous (Function.uncurry F) := by unfold F; fun_prop
-  have hinner : ∀ u, 0 < u → ∫ t in Ioi 0, ‖F u t‖ = |sin u| / u := by
-    intro u hu
-    have h := integral_exp_mul_Ioi (neg_lt_zero.2 hu) 0
-    simp only [mul_zero, exp_zero] at h
-    simp only [F, norm_mul, Real.norm_eq_abs, abs_exp]
-    rw [integral_mul_const]
-    simp_rw [neg_mul] at h ⊢
-    rw [h]
-    field_simp
-  have hint : Integrable (Function.uncurry F)
-      ((volume.restrict (Ioc 0 T)).prod (volume.restrict (Ioi 0))) := by
-    rw [integrable_prod_iff hF.aestronglyMeasurable]
-    refine ⟨?_, ?_⟩
-    · rw [ae_restrict_iff' measurableSet_Ioc]
-      refine Filter.Eventually.of_forall fun u hu => ?_
-      have h := integrableOn_exp_mul_Ioi (neg_lt_zero.2 hu.1) 0
-      simpa [F, neg_mul] using h.mul_const (sin u)
-    · refine Integrable.mono' (integrable_const (1 : ℝ))
-        (hF.norm.aestronglyMeasurable.integral_prod_right') ?_
-      rw [ae_restrict_iff' measurableSet_Ioc]
-      refine Filter.Eventually.of_forall fun u hu => ?_
-      simp only [Function.uncurry_apply_pair]
-      rw [hinner u hu.1, Real.norm_eq_abs, abs_div, abs_abs, abs_of_pos hu.1]
-      exact div_le_one_of_le₀ (by simpa [abs_of_pos hu.1] using abs_sin_le_abs (x := u)) hu.1.le
-  have h1 : sineIntegral T = ∫ u in Ioc 0 T, ∫ t in Ioi 0, F u t := by
-    rw [sineIntegral, intervalIntegral.integral_of_le hT.le]
-    refine setIntegral_congr_fun measurableSet_Ioc fun u hu => ?_
-    have h := integral_exp_mul_Ioi (neg_lt_zero.2 hu.1) 0
-    simp only [mul_zero, exp_zero] at h
-    simp only [F]
-    rw [integral_mul_const]
-    simp_rw [neg_mul] at h ⊢
-    rw [h, sinc_of_ne_zero hu.1.ne']
-    field_simp
-  rw [h1, integral_integral_swap hint]
-  refine setIntegral_congr_fun measurableSet_Ioi fun t ht => ?_
-  rw [← intervalIntegral.integral_of_le hT.le]
-  exact integral_exp_mul_sin t T
-
-/-- Rate in the Dirichlet integral: `|Si T - π / 2| ≤ 2 / T` for `T > 0`. -/
-theorem abs_sineIntegral_sub_le {T : ℝ} (hT : 0 < T) : |sineIntegral T - π / 2| ≤ 2 / T := by
-  set B : ℝ → ℝ := fun t => exp (-(T * t)) * (t * sin T + cos T) / (1 + t ^ 2)
-  have hexp : IntegrableOn (fun t => exp (-(T * t))) (Ioi 0) := by
-    simpa [neg_mul] using integrableOn_exp_mul_Ioi (neg_lt_zero.2 hT) 0
-  have hbound : ∀ t ∈ Ioi (0 : ℝ), ‖B t‖ ≤ 2 * exp (-(T * t)) := by
-    intro t ht
-    have ht : 0 < t := ht
-    have h1 : |t * sin T + cos T| ≤ t + 1 := by
-      calc |t * sin T + cos T| ≤ |t * sin T| + |cos T| := abs_add_le _ _
-        _ ≤ t * 1 + 1 := by
-          rw [abs_mul, abs_of_pos ht]
-          gcongr
-          · exact abs_sin_le_one T
-          · exact abs_cos_le_one T
-        _ = t + 1 := by ring
-    have hd : 0 < 1 + t ^ 2 := by positivity
-    rw [Real.norm_eq_abs, abs_div, abs_mul, abs_exp, abs_of_pos hd, div_le_iff₀ hd]
-    have he := exp_pos (-(T * t))
-    have : exp (-(T * t)) * |t * sin T + cos T| ≤ exp (-(T * t)) * (t + 1) :=
-      mul_le_mul_of_nonneg_left h1 he.le
-    nlinarith [sq_nonneg (t - 1/2)]
-  have hB : IntegrableOn B (Ioi 0) := by
-    refine Integrable.mono' (hexp.const_mul 2)
-      ((Continuous.div (by fun_prop) (by fun_prop) fun t => by positivity).aestronglyMeasurable) ?_
-    rw [ae_restrict_iff' measurableSet_Ioi]
-    exact Filter.Eventually.of_forall hbound
-  have hA : IntegrableOn (fun t : ℝ => (1 + t ^ 2)⁻¹) (Ioi 0) :=
-    integrable_inv_one_add_sq.integrableOn
-  have hsplit : sineIntegral T = π / 2 - ∫ t in Ioi 0, B t := by
-    have hπ : ∫ t in Ioi (0 : ℝ), (1 + t ^ 2)⁻¹ = π / 2 := by simp
-    rw [sineIntegral_eq hT, ← hπ, ← integral_sub hA hB]
-    refine setIntegral_congr_fun measurableSet_Ioi fun t _ => ?_
-    simp only [B]
-    have hd : (1 + t ^ 2) ≠ 0 := by positivity
-    field_simp
-  rw [hsplit, sub_sub_cancel_left, abs_neg]
-  have hI : ∫ t in Ioi 0, 2 * exp (-(T * t)) = 2 / T := by
-    rw [integral_const_mul]
-    have h := integral_exp_mul_Ioi (neg_lt_zero.2 hT) 0
-    simp only [mul_zero, exp_zero, neg_mul] at h
-    rw [h]
-    field_simp
-  rw [← hI, ← Real.norm_eq_abs]
-  exact norm_integral_le_of_norm_le (hexp.const_mul 2)
-    ((ae_restrict_iff' measurableSet_Ioi).2 (Filter.Eventually.of_forall hbound))
-
-/-- **The Dirichlet integral**: `∫₀^T sin u / u du → π / 2`. -/
-theorem tendsto_sineIntegral_atTop : Tendsto sineIntegral atTop (𝓝 (π / 2)) := by
-  rw [tendsto_iff_norm_sub_tendsto_zero]
-  refine squeeze_zero' (Filter.Eventually.of_forall fun _ => norm_nonneg _)
-    ((eventually_gt_atTop 0).mono fun T hT => abs_sineIntegral_sub_le hT)
-    (tendsto_const_nhds.div_atTop tendsto_id)
-
-/-- The sine integral is odd. -/
-theorem sineIntegral_neg (z : ℝ) : sineIntegral (-z) = -sineIntegral z := by
-  have h := intervalIntegral.integral_comp_neg (a := 0) (b := z) sinc
-  simp only [sinc_neg, neg_zero] at h
-  rw [sineIntegral, sineIntegral, h, intervalIntegral.integral_symm]
-
-/-- `Si 0 = 0`. -/
-theorem sineIntegral_zero : sineIntegral 0 = 0 := by simp [sineIntegral]
-
-/-- The sine integral is continuous. -/
-theorem continuous_sineIntegral : Continuous sineIntegral :=
-  intervalIntegral.continuous_primitive (fun a b => continuous_sinc.intervalIntegrable a b) 0
-
-/-- The sine integral is bounded: `|Si z| ≤ 4`. -/
-theorem abs_sineIntegral_le (z : ℝ) : |sineIntegral z| ≤ 4 := by
-  have hpos : ∀ z, 0 ≤ z → |sineIntegral z| ≤ 4 := by
-    intro z hz
-    rcases le_or_gt z 1 with h1 | h1
-    · have h := intervalIntegral.norm_integral_le_of_norm_le_const (a := 0) (b := z) (C := 1)
-        (f := sinc) fun x _ => by simpa using abs_sinc_le_one x
-      rw [sub_zero, abs_of_nonneg hz, one_mul] at h
-      exact (h.trans h1).trans (by norm_num)
-    · have h := abs_sineIntegral_sub_le (by linarith : (0 : ℝ) < z)
-      have h2 : 2 / z ≤ 2 := div_le_self (by norm_num) h1.le
-      have := abs_sub_abs_le_abs_sub (sineIntegral z) (π / 2)
-      rw [abs_of_pos (by positivity : (0 : ℝ) < π / 2)] at this
-      linarith [pi_le_four]
-  rcases le_total 0 z with hz | hz
-  · exact hpos z hz
-  · have := hpos (-z) (by linarith)
-    rwa [sineIntegral_neg, abs_neg] at this
-
-/-- `Si(s T) → (π / 2) sign s` as `T → ∞`. -/
-theorem tendsto_sineIntegral_mul_atTop (s : ℝ) :
-    Tendsto (fun T => sineIntegral (s * T)) atTop (𝓝 (π / 2 * Real.sign s)) := by
-  rcases lt_trichotomy s 0 with hs | rfl | hs
-  · rw [Real.sign_of_neg hs, mul_neg_one]
-    have h := tendsto_sineIntegral_atTop.comp (tendsto_id.const_mul_atTop (neg_pos.2 hs))
-    have h2 := h.neg
-    refine h2.congr fun T => ?_
-    simp [Function.comp, ← sineIntegral_neg, neg_mul]
-  · simp [sineIntegral_zero]
-  · rw [Real.sign_of_pos hs, mul_one]
-    exact tendsto_sineIntegral_atTop.comp (tendsto_id.const_mul_atTop hs)
-
-open Complex in
-/-- `Im(e^{-i t x} φ_μ(t)) = ∫ sin(t (y - x)) dμ(y)`. -/
-theorem im_cexp_mul_charFun (μ : Measure ℝ) [IsProbabilityMeasure μ] (t x : ℝ) :
-    (cexp (-(t * x) * I) * charFun μ t).im = ∫ y, Real.sin (t * (y - x)) ∂μ := by
-  have h : ∀ y : ℝ, cexp (-(t * x) * I) * cexp (t * y * I) = cexp (↑(t * (y - x)) * I) := by
-    intro y
-    rw [← Complex.exp_add]
-    congr 1
-    push_cast
-    ring
-  have hint : Integrable (fun y : ℝ => cexp (↑(t * (y - x)) * I)) μ := by
-    refine (integrable_const (1 : ℝ)).mono' (by fun_prop) (ae_of_all _ fun y => ?_)
-    rw [norm_exp_ofReal_mul_I]
-  rw [charFun_apply_real, ← integral_const_mul]
-  simp_rw [h]
-  have := integral_im hint
-  simp only [RCLike.im_to_complex] at this
-  rw [← this]
-  simp_rw [exp_ofReal_mul_I_im]
-
-private theorem sin_div_eq_mul_sinc {t : ℝ} (ht : t ≠ 0) (s : ℝ) :
-    Real.sin (t * s) / t = s * sinc (t * s) := by
-  rcases eq_or_ne s 0 with rfl | hs
-  · simp
-  · rw [sinc_of_ne_zero (mul_ne_zero ht hs)]
-    field_simp
-
-/-- `∫₀^T sin(t s) / t dt = Si(s T)`, written with `sinc`. -/
-theorem integral_mul_sinc (s T : ℝ) :
-    ∫ t in (0 : ℝ)..T, s * sinc (t * s) = sineIntegral (s * T) := by
-  rcases eq_or_ne s 0 with rfl | hs
-  · simp [sineIntegral_zero]
-  · rw [intervalIntegral.integral_const_mul]
-    simp_rw [mul_comm _ s]
-    rw [intervalIntegral.integral_comp_mul_left (fun u => sinc u) hs, mul_zero, smul_eq_mul,
-      ← mul_assoc, mul_inv_cancel₀ hs, one_mul, sineIntegral]
-
-/-- `∫ sign(y - x) dμ(y) = P(Y > x) + P(Y ≥ x) - 1`. -/
-theorem integral_sign_sub {μ : Measure ℝ} [IsProbabilityMeasure μ] (x : ℝ) :
-    ∫ y, Real.sign (y - x) ∂μ = μ.real (Ioi x) + μ.real (Ici x) - 1 := by
-  have h : (fun y => Real.sign (y - x)) =
-      fun y => (Ioi x).indicator 1 y - (Iio x).indicator 1 y := by
-    funext y
-    rcases lt_trichotomy y x with h | rfl | h
-    · simp [Real.sign_of_neg (sub_neg.2 h), h, not_lt.2 h.le]
-    · simp
-    · simp [Real.sign_of_pos (sub_pos.2 h), h, not_lt.2 h.le]
-  have h1 : Integrable ((Ioi x).indicator (1 : ℝ → ℝ)) μ :=
-    (integrable_const (1 : ℝ)).indicator measurableSet_Ioi
-  have h2 : Integrable ((Iio x).indicator (1 : ℝ → ℝ)) μ :=
-    (integrable_const (1 : ℝ)).indicator measurableSet_Iio
-  rw [h, integral_sub h1 h2,
-    integral_indicator_one measurableSet_Ioi, integral_indicator_one measurableSet_Iio,
-    ← compl_Ici, measureReal_compl measurableSet_Ici, probReal_univ]
-  ring
-
-open Complex in
-/-- **Gil-Pelaez inversion formula** (Gil-Pelaez 1951). For a probability law `μ` on `ℝ` with
-finite mean and every `x`,
-`½ + π⁻¹ ∫₀^T Im(e^{-i t x} φ_μ(t)) / t dt → ½ (μ(x, ∞) + μ[x, ∞))` as `T → ∞`.
-The finite mean is used only for Fubini on `[0, T] × ℝ`. -/
-theorem tendsto_gilPelaez {μ : Measure ℝ} [IsProbabilityMeasure μ] (hμ : Integrable id μ)
-    (x : ℝ) :
-    Tendsto (fun T => 1 / 2 + π⁻¹ * ∫ t in (0 : ℝ)..T, (cexp (-(t * x) * I) * charFun μ t).im / t)
-      atTop (𝓝 ((μ.real (Ioi x) + μ.real (Ici x)) / 2)) := by
-  have hsub : Integrable (fun y => y - x) μ := hμ.sub (integrable_const x)
-  -- the inner integral over `t`, after Fubini
-  have key : ∀ T, 0 < T → ∫ t in (0 : ℝ)..T, (cexp (-(t * x) * I) * charFun μ t).im / t =
-      ∫ y, sineIntegral ((y - x) * T) ∂μ := by
-    intro T hT
-    set F : ℝ → ℝ → ℝ := fun t y => (y - x) * sinc (t * (y - x))
-    have hF : Continuous (Function.uncurry F) := by
-      unfold F; exact (by fun_prop : Continuous fun p : ℝ × ℝ => (p.2 - x) * sinc (p.1 * (p.2 - x)))
-    have hFle : ∀ t y, ‖F t y‖ ≤ |y - x| := by
-      intro t y
-      simp only [F, Real.norm_eq_abs, abs_mul]
-      exact mul_le_of_le_one_right (abs_nonneg _) (abs_sinc_le_one _)
-    have hint : Integrable (Function.uncurry F) ((volume.restrict (Ioc 0 T)).prod μ) := by
-      rw [integrable_prod_iff hF.aestronglyMeasurable]
-      refine ⟨Filter.Eventually.of_forall fun t => ?_, ?_⟩
-      · exact hsub.abs.mono' (hF.comp (Continuous.prodMk_right t)).aestronglyMeasurable
-          (ae_of_all _ fun y => hFle t y)
-      · refine Integrable.mono' (integrable_const (∫ y, |y - x| ∂μ))
-          (hF.norm.aestronglyMeasurable.integral_prod_right') (ae_of_all _ fun t => ?_)
-        simp only [Function.uncurry_apply_pair]
-        rw [Real.norm_eq_abs, abs_of_nonneg (integral_nonneg fun _ => norm_nonneg _)]
-        exact integral_mono (hsub.abs.mono'
-          (hF.comp (Continuous.prodMk_right t)).norm.aestronglyMeasurable
-          (ae_of_all _ fun y => by simpa using hFle t y)) hsub.abs fun y => hFle t y
-    calc ∫ t in (0 : ℝ)..T, (cexp (-(t * x) * I) * charFun μ t).im / t
-        = ∫ t in Ioc 0 T, ∫ y, F t y ∂μ := by
-          rw [intervalIntegral.integral_of_le hT.le]
-          refine setIntegral_congr_fun measurableSet_Ioc fun t ht => ?_
-          rw [im_cexp_mul_charFun, ← integral_div]
-          exact integral_congr_ae (ae_of_all _ fun y => sin_div_eq_mul_sinc ht.1.ne' _)
-      _ = ∫ y, (∫ t in Ioc 0 T, F t y) ∂μ := integral_integral_swap hint
-      _ = ∫ y, sineIntegral ((y - x) * T) ∂μ := by
-          refine integral_congr_ae (ae_of_all _ fun y => ?_)
-          beta_reduce
-          rw [← intervalIntegral.integral_of_le hT.le]
-          exact integral_mul_sinc (y - x) T
-  have hlim : Tendsto (fun T => ∫ y, sineIntegral ((y - x) * T) ∂μ) atTop
-      (𝓝 (∫ y, π / 2 * Real.sign (y - x) ∂μ)) := by
-    refine tendsto_integral_filter_of_dominated_convergence (fun _ => 4)
-      (Filter.Eventually.of_forall fun T => ?_) (Filter.Eventually.of_forall fun T =>
-        ae_of_all _ fun y => abs_sineIntegral_le _) (integrable_const _)
-      (ae_of_all _ fun y => tendsto_sineIntegral_mul_atTop (y - x))
-    exact (continuous_sineIntegral.comp
-      (by fun_prop : Continuous fun y : ℝ => (y - x) * T)).aestronglyMeasurable
-  rw [integral_const_mul, integral_sign_sub] at hlim
-  have h2 := (hlim.const_mul π⁻¹).const_add (1 / 2)
-  have hval : 1 / 2 + π⁻¹ * (π / 2 * (μ.real (Ioi x) + μ.real (Ici x) - 1)) =
-      (μ.real (Ioi x) + μ.real (Ici x)) / 2 := by
-    field_simp
-    ring
-  rw [hval] at h2
-  refine h2.congr' ((eventually_gt_atTop 0).mono fun T hT => ?_)
-  beta_reduce
-  rw [key T hT]
-
-end GilPelaez
-
-section Davies
-
-open Real Set Filter Topology
-
-open Complex in
-private theorem ofReal_mul_cpow' {a : ℝ} (ha : 0 < a) {z : ℂ} (hz : z ≠ 0) (s : ℂ) :
-    ((a : ℂ) * z) ^ s = (a : ℂ) ^ s * z ^ s := by
-  rw [cpow_def_of_ne_zero (mul_ne_zero (ofReal_ne_zero.2 ha.ne') hz),
-    cpow_def_of_ne_zero (ofReal_ne_zero.2 ha.ne'), cpow_def_of_ne_zero hz, log_ofReal_mul ha hz,
-    ← Complex.exp_add, ofReal_log ha.le]
-  ring_nf
-
-open Complex in
-/-- The characteristic function of `c χ²₁`: `𝔼 exp(i t c ξ²) = (1 - 2 i c t)^{-1/2}`. -/
-theorem charFun_map_mul_sq_gaussianReal (c t : ℝ) :
-    charFun ((gaussianReal 0 1).map fun x => c * x ^ 2) t =
-      (1 - 2 * c * t * I) ^ (-(1 / 2) : ℂ) := by
-  set w : ℂ := 1 - 2 * c * t * I
-  set b : ℂ := 1 / 2 - c * t * I
-  have hw0 : w ≠ 0 := by
-    intro h
-    have := congrArg Complex.re h
-    simp [w] at this
-  have hbre : 0 < b.re := by simp [b]
-  have hwarg : w.arg ≠ π := by
-    have h := abs_arg_lt_pi_div_two_iff.2 (Or.inl (by simp [w] : 0 < w.re))
-    intro hπ
-    rw [hπ, abs_of_pos pi_pos] at h
-    linarith [pi_pos]
-  have hpi : (π : ℂ) / b = ((2 * π : ℝ) : ℂ) * w⁻¹ := by
-    have hb : b = w / 2 := by simp only [b, w]; ring
-    rw [hb]
-    push_cast
-    field_simp
-  have hsq : ((2 * π : ℝ) : ℂ) ^ (1 / 2 : ℂ) = ((√(2 * π) : ℝ) : ℂ) := by
-    rw [Real.sqrt_eq_rpow, ofReal_cpow (by positivity)]
-    push_cast
-    ring_nf
-  rw [charFun_apply_real, integral_map (by fun_prop) (by fun_prop),
-    integral_gaussianReal_eq_integral_smul one_ne_zero]
-  have h : ∀ x : ℝ, gaussianPDFReal 0 1 x • cexp (↑t * ↑(c * x ^ 2) * I) =
-      ((√(2 * π))⁻¹ : ℝ) * cexp (-b * (x : ℂ) ^ 2) := by
-    intro x
-    rw [gaussianPDFReal, Complex.real_smul, ofReal_mul, ofReal_exp, mul_assoc, ← Complex.exp_add]
-    congr 2
-    · simp
-    · simp only [b]; push_cast; ring
-  simp_rw [h]
-  rw [integral_const_mul, integral_gaussian_complex hbre, hpi,
-    ofReal_mul_cpow' (by positivity) (inv_ne_zero hw0), hsq, inv_cpow _ _ hwarg, cpow_neg]
-  have : ((√(2 * π) : ℝ) : ℂ) ≠ 0 := by
-    rw [ofReal_ne_zero]; positivity
-  push_cast
-  field_simp
-
-open Complex in
-/-- **Characteristic function of a weighted chi-square mixture**:
-`𝔼 exp(i t ∑ⱼ λⱼ ξⱼ²) = ∏ⱼ (1 - 2 i λⱼ t)^{-1/2}`. -/
-theorem charFun_weightedChiSq {k : Type*} [Fintype k] (lam : k → ℝ) (t : ℝ) :
-    charFun (weightedChiSq lam) t = ∏ j, (1 - 2 * lam j * t * I) ^ (-(1 / 2) : ℂ) := by
-  have hpi : (Measure.pi fun _ : k => gaussianReal 0 1).map (fun ξ j => lam j * ξ j ^ 2) =
-      Measure.pi fun j => (gaussianReal 0 1).map fun x => lam j * x ^ 2 :=
-    Measure.pi_map_pi (f := fun j x => lam j * x ^ 2) fun j => by fun_prop
-  have hw : weightedChiSq lam = (Measure.pi fun j => (gaussianReal 0 1).map
-      fun x => lam j * x ^ 2).map fun p => ∑ j, p j := by
-    rw [← hpi, Measure.map_map (by fun_prop) (by fun_prop)]
-    rfl
-  rw [hw, charFun_map_sum_pi_eq_prod, Finset.prod_apply]
-  exact Finset.prod_congr rfl fun j _ => charFun_map_mul_sq_gaussianReal (lam j) t
-
-/-- The characteristic function of `∑ⱼ λⱼ χ²₁` used in Davies' formula,
-`φ(t) = ∏ⱼ (1 - 2 i λⱼ t)^{-1/2}` (principal branch; each base has real part `1`). -/
-noncomputable def daviesCharFun {k : Type*} [Fintype k] (lam : k → ℝ) (t : ℝ) : ℂ :=
-  ∏ j, (1 - 2 * lam j * t * Complex.I) ^ (-(1 / 2) : ℂ)
-
-/-- The weighted chi-square law has a finite mean. -/
-theorem integrable_id_weightedChiSq {k : Type*} [Fintype k] (lam : k → ℝ) :
-    Integrable id (weightedChiSq lam) := by
-  have hmap : ∀ j, (Measure.pi fun _ : k => gaussianReal 0 1).map (Function.eval j) =
-      gaussianReal 0 1 := fun j =>
-    (measurePreserving_eval (fun _ : k => gaussianReal 0 1) j).map_eq
-  have hint : ∀ j, Integrable (fun ξ : k → ℝ => ξ j ^ 2)
-      (Measure.pi fun _ => gaussianReal 0 1) := by
-    intro j
-    have h2 : Integrable (fun x : ℝ => x ^ 2) (gaussianReal 0 1) :=
-      (memLp_id_gaussianReal 2).integrable_sq
-    rw [← hmap j] at h2
-    exact (integrable_map_measure (continuous_pow 2).aestronglyMeasurable
-      (measurable_pi_apply j).aemeasurable).1 h2
-  rw [weightedChiSq, integrable_map_measure aestronglyMeasurable_id
-    (by fun_prop : Measurable fun ξ : k → ℝ => ∑ j, lam j * ξ j ^ 2).aemeasurable]
-  exact integrable_finsetSum _ fun j _ => (hint j).const_mul _
-
-/-- **Davies' p-value formula** (Davies 1980, eq. (1), from Gil-Pelaez's inversion theorem).
-For `Q ~ ∑ⱼ λⱼ χ²₁` and every `q`,
-`½ + π⁻¹ ∫₀^T Im(e^{-i t q} φ(t)) / t dt → ½ (P(Q > q) + P(Q ≥ q))` as `T → ∞`, with
-`φ = daviesCharFun λ`. The improper integral is the one Davies' algorithm discretizes. -/
-theorem tendsto_davies {k : Type*} [Fintype k] (lam : k → ℝ) (q : ℝ) :
-    Tendsto (fun T => 1 / 2 + π⁻¹ * ∫ t in (0 : ℝ)..T,
-        (Complex.exp (-(t * q) * Complex.I) * daviesCharFun lam t).im / t) atTop
-      (𝓝 (((weightedChiSq lam).real (Ioi q) + (weightedChiSq lam).real (Ici q)) / 2)) := by
-  have h := tendsto_gilPelaez (integrable_id_weightedChiSq lam) q
-  simp_rw [charFun_weightedChiSq] at h
-  exact h
-
-/-- **Davies' formula for the upper tail**: at a point `q` without mass, the limit is the
-p-value `P(Q > q)`. -/
-theorem tendsto_davies_of_measure_singleton {k : Type*} [Fintype k] (lam : k → ℝ) {q : ℝ}
-    (hq : weightedChiSq lam {q} = 0) :
-    Tendsto (fun T => 1 / 2 + π⁻¹ * ∫ t in (0 : ℝ)..T,
-        (Complex.exp (-(t * q) * Complex.I) * daviesCharFun lam t).im / t) atTop
-      (𝓝 ((weightedChiSq lam).real (Ioi q))) := by
-  have h := tendsto_davies lam q
-  rwa [measureReal_congr (Ioi_ae_eq_Ici' hq).symm, add_self_div_two] at h
-
-/-- **No atoms**: if some weight is nonzero, the weighted chi-square law gives every point
-mass `0`. -/
-theorem weightedChiSq_singleton {k : Type*} [Fintype k] {lam : k → ℝ} {j : k} (hj : lam j ≠ 0)
-    (q : ℝ) : weightedChiSq lam {q} = 0 := by
-  classical
-  set f : (k → ℝ) → ℝ := fun ξ => ∑ i, lam i * ξ i ^ 2 with hfdef
-  have hf : Measurable f := by fun_prop
-  set e := MeasurableEquiv.piEquivPiSubtypeProd (fun _ : k => ℝ) (· = j)
-  have he := measurePreserving_piEquivPiSubtypeProd (fun _ : k => gaussianReal 0 1) (· = j)
-  set j0 : {i // i = j} := ⟨j, rfl⟩
-  have hpt : ∀ c : ℝ, gaussianReal 0 1 {x | lam j * x ^ 2 = c} = 0 := by
-    intro c
-    refine measure_mono_null (t := {√(c / lam j), -√(c / lam j)}) (fun x hx => ?_)
-      (gaussianReal_absolutelyContinuous 0 one_ne_zero ((Set.toFinite _).measure_zero _))
-    have hx : lam j * x ^ 2 = c := hx
-    have hx2 : x ^ 2 = c / lam j := by rw [← hx]; field_simp
-    have habs : |x| = √(c / lam j) := by rw [← hx2, Real.sqrt_sq_eq_abs]
-    rcases (abs_eq (Real.sqrt_nonneg _)).1 habs with h | h <;> simp [h]
-  have key : ∀ a b, f (e.symm (a, b)) = lam j * a j0 ^ 2 + f (e.symm (0, b)) := by
-    intro a b
-    have h : f (e.symm (a, b)) - f (e.symm (0, b)) = lam j * a j0 ^ 2 := by
-      simp only [hfdef, ← Finset.sum_sub_distrib]
-      rw [Finset.sum_eq_single j]
-      · simp [e, MeasurableEquiv.piEquivPiSubtypeProd, j0]
-      · intro i _ hi
-        simp [e, MeasurableEquiv.piEquivPiSubtypeProd, hi]
-      · simp
-    linarith
-  rw [weightedChiSq, Measure.map_apply hf (measurableSet_singleton q), ← he.symm.map_eq,
-    MeasurableEquiv.map_apply,
-    Measure.prod_apply_symm (e.symm.measurable (hf (measurableSet_singleton q)))]
-  refine (lintegral_congr fun b => ?_).trans lintegral_zero
-  have hs : (fun a => (a, b)) ⁻¹' (e.symm ⁻¹' (f ⁻¹' {q})) =
-      Function.eval j0 ⁻¹' {x | lam j * x ^ 2 = q - f (e.symm (0, b))} := by
-    ext a
-    simp only [mem_preimage, mem_singleton_iff, mem_ofPred_eq, Function.eval, key a b]
-    constructor <;> intro h <;> linarith
-  rw [hs]
-  convert ((measurePreserving_eval (fun _ : {i // i = j} => gaussianReal 0 1) j0).measure_preimage
-    (s := {x | lam j * x ^ 2 = q - f (e.symm (0, b))})
-    (measurableSet_eq_fun (by fun_prop : Measurable fun x : ℝ => lam j * x ^ 2)
-      measurable_const).nullMeasurableSet).trans (hpt _)
-
-/-- **Davies' formula, nondegenerate case**: when some weight is nonzero, the limit is the exact
-upper tail `P(Q > q)` for every `q`. -/
-theorem tendsto_davies_of_ne_zero {k : Type*} [Fintype k] {lam : k → ℝ} {j : k} (hj : lam j ≠ 0)
-    (q : ℝ) :
-    Tendsto (fun T => 1 / 2 + π⁻¹ * ∫ t in (0 : ℝ)..T,
-        (Complex.exp (-(t * q) * Complex.I) * daviesCharFun lam t).im / t) atTop
-      (𝓝 ((weightedChiSq lam).real (Ioi q))) :=
-  tendsto_davies_of_measure_singleton lam (weightedChiSq_singleton hj q)
-
-end Davies
-
 section Application
 
 open Real Set Filter Topology MathlibExt.Probability.Statistics.MultipleTesting
+open MathlibExt.Probability.Distributions.DaviesFormula
 
 variable {n q m : Type*} [Fintype n] [DecidableEq n] [Fintype q] [DecidableEq q] [Fintype m]
   [DecidableEq m] {X : Matrix n q ℝ} {V : Matrix n n ℝ}
