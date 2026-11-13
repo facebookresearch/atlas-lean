@@ -18,8 +18,9 @@ log-normal parameter map, the hazard transform on an exponential baseline, the q
 and both sides of the PH-versus-AFT distinction: the Weibull AFT law has a PH reading with an
 explicit hazard ratio, the log-normal AFT law has none. Boundary probes: zero baseline survival
 cannot discharge the hazard hypothesis, a negative hazard ratio is no PH reading even where
-`S = S₀ ^ c` holds pointwise, and neither Lebesgue measure nor the zero measure has a PH reading,
-although for both `S = S₀ ^ c` reduces to `0 = 0 ^ c`.
+`S = S₀ ^ c` holds pointwise, neither Lebesgue measure nor the zero measure has a PH reading,
+although for both `S = S₀ ^ c` reduces to `0 = 0 ^ c`, and the Dirac laws at `-1` and `-2` have no
+PH reading, although both survival functions vanish on `[0, ∞)`, so that `S = S₀ ^ 2` holds there.
 -/
 
 open MeasureTheory ProbabilityTheory Real Set Filter
@@ -113,7 +114,7 @@ example : ∀ t : ℝ, 0 ≤ t →
 
 /-- A negative hazard ratio is rejected despite the pointwise identity above. -/
 example : ¬ HasProportionalHazards (Measure.dirac (1 : ℝ)) (Measure.dirac 1) (-1) :=
-  fun h => absurd h.2.2.1 (by norm_num)
+  fun h => absurd h.2.2.2.2.1 (by norm_num)
 
 /-- Lebesgue measure has no PH reading against itself, although each `Ioi t` has infinite mass,
 read by `Measure.real` as `0`, so that `S = S₀ ^ c` reduces to `0 = 0 ^ c`: it is not a
@@ -126,6 +127,31 @@ example (c : ℝ) : ¬ HasProportionalHazards (volume : Measure ℝ) volume c :=
 example (c : ℝ) : ¬ HasProportionalHazards (0 : Measure ℝ) 0 c := fun h => by
   have h₁ := @measure_univ ℝ _ 0 h.1
   simp at h₁
+
+/-- Event times below zero: for the Dirac laws at `-1` and `-2` both survival functions vanish on
+`[0, ∞)`, so `S = S₀ ^ 2` holds there pointwise. -/
+example : ∀ t : ℝ, 0 ≤ t →
+    (Measure.dirac (-2 : ℝ)).real (Ioi t) = (Measure.dirac (-1 : ℝ)).real (Ioi t) ^ (2 : ℝ) := by
+  intro t ht
+  have h₁ : (-1 : ℝ) ∉ Ioi t := fun h => by linarith [mem_Ioi.mp h]
+  have h₂ : (-2 : ℝ) ∉ Ioi t := fun h => by linarith [mem_Ioi.mp h]
+  rw [measureReal_def, measureReal_def, Measure.dirac_apply' _ measurableSet_Ioi,
+    Measure.dirac_apply' _ measurableSet_Ioi, indicator_of_notMem h₁, indicator_of_notMem h₂]
+  simp
+
+/-- These Dirac laws are probability laws, but they put mass below `0`, so they have no PH reading
+with hazard ratio `2`. -/
+example : ¬ HasProportionalHazards (Measure.dirac (-1 : ℝ)) (Measure.dirac (-2)) 2 := fun h => by
+  have h₁ := h.2.2.1
+  rw [Measure.dirac_apply' _ measurableSet_Iio,
+    indicator_of_mem (by norm_num : (-1 : ℝ) ∈ Iio 0)] at h₁
+  simp at h₁
+
+/-- The AFT map keeps the lifetime condition: the AFT law of a Weibull law puts no mass below
+`0`. -/
+example (η : ℝ) : aftMeasure (weibullMeasure 2 1) η (Iio 0) = 0 := by
+  rw [aftMeasure_Iio, mul_zero]
+  exact measure_mono_null Iio_subset_Iic_self (weibullMeasure_Iic_zero 2 1)
 
 /-- Weibull cumulative hazard under acceleration: `H(t | η) = exp (-k η) H₀(t)` at `t = 1`. -/
 example (η : ℝ) :
