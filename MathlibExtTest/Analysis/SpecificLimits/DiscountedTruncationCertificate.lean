@@ -15,8 +15,10 @@ import Mathlib.Tactic.NormNum
 
 namespace MathlibExtTest.Analysis.SpecificLimits.DiscountedTruncationCertificate
 
+open MathlibExt.DiscountedSum
+
 /-- The `T = 5`, `β = 1/2` truncation itself equals `31/16`. -/
-example : ∑ t ∈ Finset.range 5, (1 / 2 : ℝ) ^ t = 31 / 16 := by
-  norm_num [Finset.sum_range_succ]
+example : truncatedValue (1 / 2) (fun _ => 1) 5 = 31 / 16 := by
+  norm_num [truncatedValue, Finset.sum_range_succ]
 
 end MathlibExtTest.Analysis.SpecificLimits.DiscountedTruncationCertificate
