@@ -247,9 +247,27 @@ example {k r : ℕ} (Ω : Type) [MeasurableSpace Ω] (P : Measure Ω) [IsProbabi
             (fun _ => 1) c n})
         atTop (𝓝 (stdGaussian (EuclideanSpace ℝ (Cell k r))
           {z | weightedSup (fun _ => 1) (Y z) ≤ c})) := by
-  obtain ⟨Y, -, h⟩ := tendsto_coverage_kaplanMeierBand_indepCauseLaw pTJ pC hind hlaw m hm
+  obtain ⟨Y, -, -, h⟩ := tendsto_coverage_kaplanMeierBand_indepCauseLaw pTJ pC hind hlaw m hm
   exact ⟨Y, fun hatom => h (ŵ := fun _ _ _ => 1) (ĉ := fun _ _ => c) (fun _ => one_pos)
     (tendstoInMeasure_const_self _) (fun _ => aemeasurable_const) (tendstoInMeasure_const_self c)
     (fun _ => aemeasurable_const) hatom⟩
+
+open MathlibExt.Probability.Statistics.AalenJohansenCLT MathlibExt.Probability.Statistics.Censoring
+  MathlibExt.Probability.Statistics.SurvivalConsistency in
+/-- The Kaplan–Meier grid limit of the band theorem is centered: from its linear-combination laws,
+every coordinate `Y j` has mean `0`. -/
+example {k r : ℕ} (Ω : Type) [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
+    (W : ℕ → Ω → (Fin k × Fin r) × Fin k) (pTJ : PMF (Fin k × Fin r)) (pC : PMF (Fin k))
+    (hind : iIndepFun W P) (hlaw : ∀ i, HasLaw (W i) (indepCauseLaw pTJ pC) P) (m : Fin k)
+    (hm : causeAtRiskMass (indepCauseLaw pTJ pC) m ≠ 0) :
+    ∃ Y : EuclideanSpace ℝ (Cell k r) → {j : Fin k // j ≤ m} → ℝ,
+      ∀ j, ∫ z, Y z j ∂stdGaussian (EuclideanSpace ℝ (Cell k r)) = 0 := by
+  classical
+  obtain ⟨Y, -, hlin, -⟩ := tendsto_coverage_kaplanMeierBand_indepCauseLaw pTJ pC hind hlaw m hm
+  refine ⟨Y, fun j => ?_⟩
+  have h := hlin (Pi.single j 1)
+  simp only [Pi.single_apply, ite_mul, one_mul, zero_mul, Finset.sum_ite_eq', Finset.mem_univ,
+    ite_true] at h
+  rw [h.integral_eq, integral_id_gaussianReal]
 
 end MathlibExtTest.Probability.Statistics.SimultaneousBands

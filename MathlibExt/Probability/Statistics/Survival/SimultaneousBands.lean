@@ -22,10 +22,10 @@ public import MathlibExt.Probability.Statistics.Survival.AalenJohansenCLT
 Hall–Wellner-type simultaneous confidence bands for a survival-type curve `θ` (a Kaplan–Meier
 survival curve or a Nelson–Aalen cumulative hazard) evaluated on a finite grid `ι`. The band
 around an estimate `est` is `est i ± c · w i / √n` at every grid point `i` simultaneously, for a
-weight function `w` and a critical value `c`. Covering `θ` at every grid point is the event that
-the scaled weighted sup statistic `√n · max_i |est i - θ i| / w i` is at most `c`; the asymptotic
-coverage follows from a grid limit `√n (est - θ) → Z` by the continuous mapping theorem for the
-sup norm, together with Slutsky's theorem for estimated weights and critical values.
+positive weight function `w` and a critical value `c`. Covering `θ` at every grid point is the
+event that the scaled weighted sup statistic `√n · max_i |est i - θ i| / w i` is at most `c`; the
+asymptotic coverage follows from a grid limit `√n (est - θ) → Z` by the continuous mapping theorem
+for the sup norm, together with Slutsky's theorem for estimated weights and critical values.
 
 ## Source receipt
 
@@ -48,7 +48,8 @@ sup norm, together with Slutsky's theorem for estimated weights and critical val
 
 ## Main definitions
 
-* `weightedSup w v`: the statistic `max_i |v i| / w i`, as the sup norm of `v / w`.
+* `weightedSup w v`: the statistic `max_i |v i / w i| = max_i |v i| / |w i|`, the sup norm of
+  `v / w` (a zero weight contributes `0`); for positive weights it is `max_i |v i| / w i`.
 * `simultaneousBand est w c n`: curves `f` with `|est i - f i| ≤ c · w i / √n` for all `i`.
 * `pointwiseInterval est w c n i`: the same condition at the single grid point `i`.
 * `criticalValue μ α`: the `(1 - α)`-quantile `cdfQuantile μ (1 - α)` of a real law `μ`.
@@ -85,7 +86,8 @@ sup norm, together with Slutsky's theorem for estimated weights and critical val
   so the limiting weighted sup and its critical value depend only on the times `K i`.
 * `tendsto_coverage_kaplanMeierBand_indepCauseLaw`: the band coverage limit for the
   Kaplan–Meier estimator on the grid `{j ≤ m}` under independent censoring, from the merged
-  fixed-grid joint CLT `tendstoInDistribution_estimator_indepCauseLaw`.
+  fixed-grid joint CLT `tendstoInDistribution_estimator_indepCauseLaw`, whose centered
+  linear-combination laws it keeps for the Kaplan–Meier grid limit.
 
 ## Scope
 
@@ -109,8 +111,10 @@ open MeasureTheory ProbabilityTheory Filter Topology Set
 
 variable {ι : Type*}
 
-/-- The **weighted sup statistic** `max_i |v i| / w i` of a vector `v` on the finite grid `ι`
-with weight function `w`, written as the sup norm of `v / w`. -/
+/-- The **weighted sup statistic** `max_i |v i / w i| = max_i |v i| / |w i|` of a vector `v` on
+the finite grid `ι` with weight function `w`: the sup norm of `v / w`. The weight enters through its
+absolute value, and a zero weight contributes `0` (Lean's `x / 0 = 0`). For positive weights, as in
+the band theorems, this is `max_i |v i| / w i`. -/
 noncomputable def weightedSup [Fintype ι] (w v : ι → ℝ) : ℝ :=
   ‖fun i => v i / w i‖
 
@@ -395,7 +399,7 @@ theorem tendsto_coverage_pointwiseInterval [Fintype ι] {est : ℕ → Ω → ι
 
 omit [IsProbabilityMeasure P'] in
 /-- **Simultaneous limit coverage is at most pointwise limit coverage**: for every grid point
-`i`, `P'(max_j |Z j| / w j ≤ c) ≤ P'(|Z i| / w i ≤ c)`. -/
+`i`, `P'(max_j |Z j / w j| ≤ c) ≤ P'(|Z i / w i| ≤ c)`. -/
 theorem measure_weightedSup_le_le [Fintype ι] (Z : Ω' → ι → ℝ) (w : ι → ℝ) (c : ℝ) (i : ι) :
     P' {ω | weightedSup w (Z ω) ≤ c} ≤ P' {ω | |Z ω i / w i| ≤ c} :=
   measure_mono fun _ h => (abs_div_le_weightedSup _ _ i).trans h
@@ -652,7 +656,9 @@ variable {k r : ℕ} {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProba
 /-- **Simultaneous Kaplan–Meier bands on the grid `{j ≤ m}` under independent censoring.**
 For i.i.d. subjects with law `indepCauseLaw pTJ pC` and `P(min T C ≥ m) ≠ 0`, there is a centered
 Gaussian grid limit `Y` (the Kaplan–Meier block of the joint limit of
-`tendstoInDistribution_estimator_indepCauseLaw`) such that, for all estimated weights
+`tendstoInDistribution_estimator_indepCauseLaw`): every linear combination `∑_j s j · Y j` has law
+`N(0, Var(∑_j s j · ψ j))`, where `ψ j` is the Kaplan–Meier coordinate `(none, j)` of the
+influence vector of one subject. Moreover, for all estimated weights
 `ŵ n → w > 0` and estimated critical values `ĉ n → c` in probability with
 `P(max_j |Y j| / w j = c) = 0`, the band `Ŝ(j) ± ĉ n · ŵ n j / √n`, `j ≤ m`, covers the survival
 curve `P(T > j)` at all grid points with probability tending to `P(max_j |Y j| / w j ≤ c)`. -/
@@ -662,6 +668,10 @@ theorem tendsto_coverage_kaplanMeierBand_indepCauseLaw (pTJ : PMF (Fin k × Fin 
     (hm : causeAtRiskMass (indepCauseLaw pTJ pC) m ≠ 0) :
     ∃ Y : EuclideanSpace ℝ (Cell k r) → {j : Fin k // j ≤ m} → ℝ,
       HasGaussianLaw Y (stdGaussian (EuclideanSpace ℝ (Cell k r))) ∧
+      (∀ s : {j : Fin k // j ≤ m} → ℝ, HasLaw (fun z => ∑ j, s j * Y z j)
+        (gaussianReal 0 (Var[fun ω => ∑ j, s j *
+          influence (indepCauseLaw pTJ pC) m (W 0 ω) (none, j); P]).toNNReal)
+        (stdGaussian (EuclideanSpace ℝ (Cell k r)))) ∧
       ∀ {ŵ : ℕ → Ω → {j : Fin k // j ≤ m} → ℝ} {w : {j : Fin k // j ≤ m} → ℝ}
         {ĉ : ℕ → Ω → ℝ} {c : ℝ}, (∀ j, 0 < w j) → TendstoInMeasure P ŵ atTop (fun _ => w) →
         (∀ n, AEMeasurable (ŵ n) P) → TendstoInMeasure P ĉ atTop (fun _ => c) →
@@ -671,13 +681,20 @@ theorem tendsto_coverage_kaplanMeierBand_indepCauseLaw (pTJ : PMF (Fin k × Fin 
             simultaneousBand (fun j => estimator m (empiricalCauseData W n ω) (none, j))
               (ŵ n ω) (ĉ n ω) n})
           atTop (𝓝 (stdGaussian (EuclideanSpace ℝ (Cell k r)) {z | weightedSup w (Y z) ≤ c})) := by
-  obtain ⟨Y, hYg, -, hconv⟩ := tendstoInDistribution_estimator_indepCauseLaw pTJ pC hind hlaw m hm
+  obtain ⟨Y, hYg, hYlaw, hconv⟩ :=
+    tendstoInDistribution_estimator_indepCauseLaw pTJ pC hind hlaw m hm
   let L : (Coord k r m → ℝ) →L[ℝ] ({j : Fin k // j ≤ m} → ℝ) :=
     ContinuousLinearMap.pi fun j => ContinuousLinearMap.proj (none, j)
   have : Nonempty {j : Fin k // j ≤ m} := ⟨⟨m, le_rfl⟩⟩
-  refine ⟨fun z => L (Y z), hYg.map L, fun hw hŵ hŵm hĉ hĉm hatom => ?_⟩
-  exact tendsto_coverage_simultaneousBand (hconv.continuous_comp L.continuous) hw hŵ hŵm hĉ hĉm
-    hatom
+  refine ⟨fun z => L (Y z), hYg.map L, fun s => ?_, fun hw hŵ hŵm hĉ hĉm hatom => ?_⟩
+  · have hsum : ∀ v : Coord k r m → ℝ,
+        ∑ a, (a.1.elim (s a.2) fun _ => 0) * v a = ∑ j, s j * v (none, j) := fun v => by
+      simp [Fintype.sum_prod_type, Fintype.sum_option]
+    have h := hYlaw fun a => a.1.elim (s a.2) fun _ => 0
+    simp only [hsum] at h
+    exact h
+  · exact tendsto_coverage_simultaneousBand (hconv.continuous_comp L.continuous) hw hŵ hŵm hĉ hĉm
+      hatom
 
 end KaplanMeier
 
