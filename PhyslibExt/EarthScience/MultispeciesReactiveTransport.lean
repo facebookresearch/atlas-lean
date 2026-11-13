@@ -20,6 +20,13 @@ If `c_t + ∂ₓ J = S *ᵥ r(c)` and `lᵀ S = 0`, then the derivative of
 proved on a one-dimensional box `[a, b]`, where the boundary term is
 `l ⬝ᵥ J(t, b) - l ⬝ᵥ J(t, a)`.
 
+No ordering of `a` and `b` is assumed: the integrals are Mathlib's oriented
+interval integrals `∫ x in a..b` and the pointwise hypotheses range over
+`Set.uIcc a b`, so both results are signed oriented-interval identities, and
+for `b < a` both sides change sign together. The physical reading as an
+inventory over the box `[a, b]` with the boundary flux as written requires
+`a ≤ b`.
+
 ## i. Overview
 
 Integrate the PDE in `x`, weighted by the conservation vector `l`: the
@@ -68,7 +75,9 @@ rate vector. Suppose that at every `x ∈ [a, b]` each concentration
 differentiable at `x`. If `l` is a conservation vector,
 `∑ i, l i * S i j = 0` for every reaction `j`, then the integral of
 `l ⬝ᵥ c_t` over `[a, b]` equals minus the boundary flux
-`l ⬝ᵥ J(t, b) - l ⬝ᵥ J(t, a)`; the reaction term drops out. -/
+`l ⬝ᵥ J(t, b) - l ⬝ᵥ J(t, a)`; the reaction term drops out. Without
+`a ≤ b` this is a signed identity for the oriented integral `∫ x in a..b`;
+the box interpretation requires `a ≤ b`. -/
 theorem multispecies_integrated (n m : ℕ) (c J : ℝ → ℝ → Fin n → ℝ)
     (S : Fin n → Fin m → ℝ) (r : (Fin n → ℝ) → Fin m → ℝ)
     (l : Fin n → ℝ) (a b t : ℝ)
@@ -153,6 +162,17 @@ theorem multispecies_integrated (n m : ℕ) (c J : ℝ → ℝ → Fin n → ℝ
   rw [hB_eq] at hsum_zero
   linarith
 
+/-- Multispecies mass balance on a one-dimensional box `[a, b]`, at time
+`t`. Under the hypotheses of `multispecies_integrated`, the conserved
+inventory `t ↦ ∫ x in a..b, l ⬝ᵥ c t x` has derivative
+`-(l ⬝ᵥ J(t, b) - l ⬝ᵥ J(t, a))` at `t`: it changes only by the net boundary
+flux. Two further hypotheses are explicit: `hswap`, differentiation under the
+integral sign per species (each `t ↦ ∫ x in a..b, c t x i` has derivative
+`∫ x in a..b, ∂ₜ c t x i` at `t`), and `hc_all`, interval integrability of
+every species concentration on `[a, b]` at every time `t'`, which is used to
+split the inventory into per-species integrals. Without `a ≤ b` this is a
+signed identity for the oriented integral; the inventory interpretation
+requires `a ≤ b`. -/
 theorem multispecies_mass_balance (n m : ℕ)
     (c J : ℝ → ℝ → Fin n → ℝ)
     (S : Fin n → Fin m → ℝ) (r : (Fin n → ℝ) → Fin m → ℝ)
