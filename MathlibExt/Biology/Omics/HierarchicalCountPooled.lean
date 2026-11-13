@@ -38,9 +38,12 @@ the total count `K = ∑ⱼ kⱼ` and the total exposure `S = ∑ⱼ sⱼ`.
   weight `S / (b + S)` on the pooled rate `K / S`; `shrinkageWeight_strictMonoOn` (more exposure,
   less shrinkage).
 * `sum_pooledMarginalLik`: the pooled count `K` has law `NB(a, S a / b)`.
-* `tendsto_posteriorMean_of_tendsto`, `ae_tendsto_pooledPosterior`: **posterior consistency.**
-  As the pooled exposure grows and `K / S → r₀`, the posterior mean tends to `r₀` and the
-  posterior variance to `0`; a.s. for i.i.d. cell counts with mean `s r₀`.
+* `tendsto_posteriorMean_of_tendsto`, `ae_tendsto_posteriorMean_pooled`: **limits of the
+  posterior-moment expressions.** For arbitrary real `a, b`, as the pooled exposure grows and
+  `K / S → r₀`, the rational expressions `(a + K) / (b + S)` and `(a + K) / (b + S)²` tend to
+  `r₀` and `0`; a.s. for i.i.d. cell counts with mean `s r₀`. They are the posterior mean and
+  variance only for a valid prior `a, b > 0` (`integral_id_pooledPosterior`,
+  `variance_pooledPosterior`), where these limits express posterior consistency.
 * `ae_tendsto_pooledEB`: **empirical Bayes with pooled counts.** For i.i.d. units whose pooled
   count has the pooled law above, the moment estimates from the pooled counts converge a.s. to
   `(a, b)` and the empirical-Bayes posterior mean to the oracle pooled posterior mean.
@@ -191,11 +194,19 @@ theorem sum_pooledMarginalLik [Nonempty ι] [DecidableEq ι] {a b : ℝ} (ha : 0
     rw [pooledMarginalLik_eq_negBinomialReal ha hb hs, (mem_piAntidiag.1 hk).1], ← sum_mul,
     sum_multinomialReal (by rw [← sum_div, div_self hS.ne']), one_mul]
 
-/-! ### Posterior consistency -/
+/-! ### Limits of the posterior-moment expressions
 
-/-- **Posterior consistency, deterministic core.** If the pooled exposure `S → ∞` and the
-pooled rate `K / S → r₀`, the pooled posterior mean `(a + K) / (b + S)` tends to `r₀` and the
-posterior variance `(a + K) / (b + S) ^ 2` tends to `0`: the prior washes out. -/
+The two results below hold for arbitrary real `a, b`, so they are limit theorems for the
+rational expressions `(a + K) / (b + S)` and `(a + K) / (b + S) ^ 2`, not posterior statements.
+For a valid prior `a, b > 0` these expressions are the mean and variance of the pooled posterior
+`Gamma(a + K, b + S)` (`integral_id_pooledPosterior`, `variance_pooledPosterior`), and the limits
+are then posterior consistency. -/
+
+/-- **Limit of the posterior-moment expressions, deterministic core.** For arbitrary real `a`
+and `b`, if the pooled exposure `S → ∞` and the pooled rate `K / S → r₀`, the rational
+expression `posteriorMean a b S K = (a + K) / (b + S)` tends to `r₀` and
+`(a + K) / (b + S) ^ 2` tends to `0`. For `a, b > 0` these are the mean and variance of the
+pooled posterior, and the prior washes out. -/
 theorem tendsto_posteriorMean_of_tendsto {α : Type*} {l : Filter α} {a b r₀ : ℝ} {S : α → ℝ}
     {K : α → ℕ} (hS : Tendsto S l atTop) (hK : Tendsto (fun i => (K i : ℝ) / S i) l (𝓝 r₀)) :
     Tendsto (fun i => posteriorMean a b (S i) (K i)) l (𝓝 r₀) ∧
@@ -219,12 +230,15 @@ theorem tendsto_posteriorMean_of_tendsto {α : Type*} {l : Filter α} {a b r₀ 
   rw [sq, ← div_div]
   exact (div_eq_mul_inv _ _).symm
 
-/-- **Almost-sure posterior consistency of the pooled posterior.** Let the cell counts
-`X₀, X₁, …` (natural numbers) be pairwise independent and identically distributed, with
+/-- **Almost-sure limit of the posterior-moment expressions at pooled counts.** Let the cell
+counts `X₀, X₁, …` (natural numbers) be pairwise independent and identically distributed, with
 integrable mean `E X₀ = s r₀` for a common size factor `s > 0` (e.g. `Xⱼ ~ Po(s r₀)` at a true
-rate `r₀`). Then almost surely the posterior mean of the pooled posterior over the first `n`
-cells tends to `r₀` and its variance tends to `0`. -/
-theorem ae_tendsto_pooledPosterior {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
+rate `r₀`). Then for arbitrary real `a, b`, almost surely `(a + K) / (b + S)` tends to `r₀` and
+`(a + K) / (b + S) ^ 2` tends to `0`, where `K` and `S = n s` are the pooled count and exposure
+of the first `n` cells. For a valid prior `a, b > 0` these are the mean and variance of the
+pooled posterior `Gamma(a + K, b + S)`, so the result is then almost-sure posterior
+consistency. -/
+theorem ae_tendsto_posteriorMean_pooled {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     [IsProbabilityMeasure μ] {X : ℕ → Ω → ℕ} {a b s r₀ : ℝ} (hs : 0 < s)
     (hint : Integrable (fun ω => (X 0 ω : ℝ)) μ) (hindep : Pairwise ((· ⟂ᵢ[μ] ·) on X))
     (hident : ∀ j, IdentDistrib (X j) (X 0) μ μ) (hmean : μ[fun ω => (X 0 ω : ℝ)] = s * r₀) :

@@ -70,8 +70,8 @@ example : shrinkageWeight 1 1 < shrinkageWeight 1 2 ∧ shrinkageWeight 1 1 = 1 
   refine ⟨shrinkageWeight_strictMonoOn one_pos (Set.mem_Ici.2 zero_le_one)
     (Set.mem_Ici.2 zero_le_two) one_lt_two, ?_, ?_⟩ <;> norm_num [shrinkageWeight]
 
-/-- Deterministic posterior consistency on a concrete sequence: exposure `n` and pooled count
-`2 n`, so `K / S → 2`; the posterior mean tends to `2` for any prior. -/
+/-- The deterministic limit on a concrete sequence: exposure `n` and pooled count `2 n`, so
+`K / S → 2`; the expression `posteriorMean a b n (2 n)` tends to `2` for any real `a, b`. -/
 example (a b : ℝ) :
     Tendsto (fun n : ℕ => posteriorMean a b n (2 * n)) atTop (𝓝 2) := by
   refine (tendsto_posteriorMean_of_tendsto (K := fun n => 2 * n) tendsto_natCast_atTop_atTop
@@ -81,13 +81,13 @@ example (a b : ℝ) :
   push_cast
   field_simp
 
-/-- Almost-sure posterior consistency is not vacuous: constant cell counts `3` at size factor
-`1` (independent and identically distributed) have mean `1 · 3`, so on any probability space the
-pooled posterior mean tends to `3` almost surely. -/
+/-- The almost-sure limit is not vacuous: constant cell counts `3` at size factor `1`
+(independent and identically distributed) have mean `1 · 3`, so on any probability space the
+posterior-mean expression at the pooled counts tends to `3` almost surely. -/
 example {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ] (a b : ℝ) :
     ∀ᵐ ω ∂μ, Tendsto (fun n => posteriorMean a b (∑ _j : Fin n, (1 : ℝ))
       (∑ _j : Fin n, (fun (_ : ℕ) (_ : Ω) => 3) _j ω)) atTop (𝓝 3) := by
-  have h := ae_tendsto_pooledPosterior (μ := μ) (X := fun _ _ => 3) (a := a) (b := b) (s := 1)
+  have h := ae_tendsto_posteriorMean_pooled (μ := μ) (X := fun _ _ => 3) (a := a) (b := b) (s := 1)
     (r₀ := 3) one_pos (integrable_const _) (fun i j _ => indepFun_const_left 3 _)
     (fun j => IdentDistrib.refl aemeasurable_const) (by simp)
   filter_upwards [h] with ω hω
