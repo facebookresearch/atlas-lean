@@ -12,7 +12,6 @@ Author: Mark Sepanski
 module
 
 public import Mathlib.Combinatorics.Enumerative.Partition.Basic
-public import Mathlib.Tactic.IntervalCases
 
 @[expose] public section
 
@@ -30,6 +29,97 @@ public import Mathlib.Tactic.IntervalCases
 * ec1 2.5.1 (for `Nat.VPartition`)
 * ec1 2.5.2 (for `List.IsUnimodal`)
 * ec2 7.2 p 288 (for `Nat.Partition.Dominates`)
+-/
+
+/-! ### Informal statement of `Nat.VPartition`
+
+Let n∈ℤ_{≥ 0}. A partition is
+a finite multiset of positive integers, and
+its weight |λ| is the sum
+of its parts. Written in weakly decreasing
+order a partition is
+λ=[λ₁,…,λₘ] with
+λ₁≥⋯≥λₘ≥ 1; for
+m=0 it is the empty partition
+∅, of weight 0.
+
+A V-partition of weight n is a triple
+(c,λ,μ) in which
+c∈ℤ_{≥ 0}, both λ and
+μ are partitions all of whose parts are
+at most c, and
+
+  c+|λ|+|μ|=n.
+
+The name comes from the shape of the array
+in which c sits at the vertex, λ is
+written along the upper arm and μ along
+the lower one, with trailing zero entries
+omitted. The two arms are ordered, so
+(c,λ,μ) and (c,μ,λ) are
+distinct whenever λ≠μ.
+
+No separate bound on c is needed, since
+c, |λ| and
+|μ| are nonnegative with sum
+n, whence c≤ n. If c=0 then every
+part of λ and of μ is a positive
+integer at most 0, so both are empty and
+n=0. Hence (0,∅,∅) is
+the unique V-partition of weight 0.
+Writing v(n) for the number of
+V-partitions of weight n, this gives
+v(0)=1, and the next values are v(1)=1,
+v(2)=3, v(3)=6 and v(4)=12.
+-/
+
+/-! ### Informal statement of `List.IsUnimodal`
+
+Let m∈ℤ_{≥ 1} and write
+[m]={1,…,m}. A unimodal sequence is
+a nonempty list d=[d₁,…,dₘ] of
+integers with dᵢ≥ 1 for
+1≤ i≤ m, for which there is a peak
+index j∈[m] with
+
+  dᵢ≤ dᵢ₊₁ (1≤ i<j),
+
+  dᵢ≥ dᵢ₊₁ (j≤ i<m),
+
+that is, with
+
+  d₁≤⋯≤ dⱼ
+   and
+  dⱼ≥⋯≥ dₘ.
+
+The term dⱼ lies in both runs and is the
+largest, so dᵢ≤ dⱼ for every i with
+1≤ i≤ m. Either range of i may be
+empty: for j=1 the first condition is
+vacuous and d is weakly decreasing, and
+for j=m the second is vacuous and d is
+weakly increasing. For m=1 the one-term
+list [d₁] is unimodal. The empty list is
+not unimodal. The inequalities are weak, so
+a plateau is allowed and any index inside a
+plateau may serve as j; the index j is
+part of the condition and not part of the
+object.
+
+The weight of d is
+
+  | d|=∑ᵢ₌₁ᵐdᵢ,
+
+and u(n) denotes the number of unimodal
+sequences of weight n. Every unimodal
+sequence has at least one term and every
+term is at least 1, so its weight is at
+least 1 and u(0)=0. The next values are
+u(1)=1, u(2)=2, u(3)=4, u(4)=8 and
+u(5)=15.
+
+The Lean indexes positions from 0, so the
+peak index there is j-1.
 -/
 
 namespace MetaMathlibExt
@@ -86,8 +176,6 @@ def SetComposition {α : Type*} [DecidableEq α]
   }
 
 -- Combinatorics 444: Conjugate Partition
-
-
 /-- Let L∈ℤ_{≥ 0} and let
 λ=[λ₁,…,λ_L] be a
 partition, presented as the list of its parts in
@@ -111,12 +199,12 @@ again weakly decreasing with
 partition. For L=0 the conjugate partition is
 the empty list.
 -/
+
 def _root_.List.partitionConjugate (l : List ℕ) : List ℕ :=
   (List.range (l.head?.getD 0)).map fun j =>
     (l.filter fun p => decide (j + 1 ≤ p)).length
 
 -- Combinatorics 445: Self-Conjugate Partition
-
 
 /-- Let λ=[λ₁,…,λ_L]
 be a partition, where L is an integer
@@ -136,7 +224,6 @@ def List.IsSelfConjugate (l : List ℕ) : Prop :=
   l.partitionConjugate = l
 
 -- Combinatorics 452: Partitions in a Box
-
 
 /-- Let j,k,n∈ℤ_{≥ 0}. A
 partition of n is a finite multiset of
@@ -161,7 +248,6 @@ def Nat.partitionsInBox (j k n : ℕ) : ℕ :=
       ∀ x ∈ p.parts, x ≤ j).card
 
 -- Combinatorics 460: V-Partition
-
 
 /-! ### Informal statement of `Nat.VPartition`
 
@@ -223,7 +309,6 @@ structure Nat.VPartition (n : ℕ) where
 
 -- Combinatorics 461: Unimodal Sequence
 
-
 /-! ### Informal statement of `List.IsUnimodal`
 
 Let m∈ℤ_{≥ 1} and write
@@ -284,8 +369,6 @@ def List.IsUnimodal (d : List ℕ) : Prop :=
         (d.drop j).Pairwise (· ≥ ·)
 
 -- Combinatorics 489: Dominance Order
-
-
 /-- Let n∈ℤ_{≥ 0}. A partition of n is a list
 λ=[λ₁,…,λₘ] of integers with
 m∈ℤ_{≥ 0}, whose entries are called the parts of
@@ -307,6 +390,7 @@ every integer j>m. For partitions λ and μ of n,
 for every i∈ℤ_{≥ 0}, where both sums are 0 when
 i=0. When n=0, the empty partition dominates itself.
 -/
+
 def _root_.Nat.Partition.Dominates {n : ℕ} (p q : n.Partition) : Prop :=
   ∀ i : ℕ, ((q.parts.sort (· ≥ ·)).take i).sum ≤
     ((p.parts.sort (· ≥ ·)).take i).sum

@@ -26,8 +26,7 @@ jobs:
       (github.event_name == 'pull_request_target' &&
        github.event.pull_request.draft == false &&
        github.event.pull_request.head.repo.full_name != github.repository &&
-       github.event.pull_request.user.type != 'Bot' &&
-       contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association)) ||
+       github.event.pull_request.user.type != 'Bot') ||
       (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '@codex')) ||
       (github.event_name == 'pull_request_review_comment' && startsWith(github.event.comment.body, '@codex'))
     runs-on: ubuntu-latest
@@ -45,10 +44,18 @@ jobs:
     # approval, empty when no review was posted. `review_id` carries the
     # created review's ID so the verdict job can attest the exact review
     # (empty when no review was posted). Formal (`formal == 'true'`)
-    # runs mint a verdict: same-repo automatic runs, same-repo
-    # `@codex` comment runs by a writer/maintainer/admin, and
-    # trusted-head-owner fork runs — PRs whose HEAD repository is
-    # owned by the immutable numeric account id in
+    # runs mint a verdict: same-repo automatic runs, `@codex`
+    # comment runs by a writer/maintainer/admin on a formal-eligible
+    # PR, and fork runs whose head the author controls (their own
+    # fork) as an OWNER, MEMBER, or COLLABORATOR of the base repo.
+    # check_auth verifies that class
+    # through the API (association, collaborator status, or org
+    # membership, each fail-closed; repo permission alone never
+    # qualifies, since a public repo grants `read` to everyone).
+    # The event payload under-reports private org membership, so
+    # the job `if` no longer filters fork runs by association.
+    # Trusted-head-owner fork runs — PRs whose HEAD
+    # repository is owned by the immutable numeric account id in
     # TRUSTED_HEAD_OWNER_IDS below (currently just akiezun's id,
     # i.e. the owner's own fork akiezun/atlas-lean). The check is on
     # the head repo owner's id, not on a login (logins are mutable
@@ -56,11 +63,14 @@ jobs:
     # describes the author's relationship to the base repo — akiezun
     # is MEMBER, not OWNER — and does not authenticate the head
     # fork). A trusted-head diff is the owner's own code, so the fork
-    # prompt-injection risk does not apply to it. Fork runs with any
-    # other head owner stay advisory: a third-party fork diff is
-    # untrusted input that could steer Codex's verdict toward
-    # approval, and prompt instructions are not a security boundary,
-    # so third-party fork content must never mint a gate approval.
+    # prompt-injection risk does not apply to it. Automatic fork
+    # runs whose author is not an OWNER, MEMBER, or COLLABORATOR
+    # are unauthorized and skipped: nothing posts. A third-party
+    # fork diff is untrusted input that could steer Codex's verdict
+    # toward approval, and prompt instructions are not a security
+    # boundary, so third-party fork content must never mint a gate
+    # approval; only a maintainer's `@codex` on such a PR posts an
+    # advisory comment.
     # Formal trust is also bound to the exact reviewed head:
     # check_auth outputs the trusted repo + SHA it authorized, and
     # Resolve target fails closed if the live PR resolves to anything
@@ -98,14 +108,30 @@ jobs:
               throw new Error("Unable to determine requesting user.");
             }
             // pull_request_target fork runs are authorized by the PR
-            // author's association, not by repo permission: the authors
-            // this covers (e.g. Deicyde, whose PRs are the bulk of fork
-            // traffic) have read-only repo permission, and the job `if`
-            // already restricted this event to OWNER/MEMBER/COLLABORATOR
-            // authors. Re-check here so a job-`if` edit alone cannot open
-            // automatic fork reviews to untrusted authors. Fork runs
-            // with an untrusted head owner are advisory only
-            // (formal == 'false'): they never mint a verdict.
+            // author's class, not by the commenter: OWNER, MEMBER, and
+            // COLLABORATOR authors get automatic reviews. The event
+            // payload's `author_association` under-reports private org
+            // membership (Deicyde's PRs report MEMBER via REST, yet
+            // their runs were skipped at the old job-level filter), so
+            // check_auth verifies the class through the API: the
+            // fetched PR's REST association (which reports MEMBER for
+            // private members), repo collaborator status, or org
+            // membership, each fail-closed and taken only as positive
+            // evidence (this repo-scoped token cannot see private org
+            // membership, so the org probe may add nothing). Repo permission alone
+            // never authorizes: this repository is public, so
+            // `getCollaboratorPermissionLevel` reports `read` for
+            // every GitHub user, member or not. The job `if` no
+            // longer filters fork runs by association; this re-check
+            // is the only fork gate, so a job-`if` edit alone cannot
+            // open automatic fork reviews to untrusted authors.
+            // Authorized fork runs on the author's own fork are
+            // formal: they mint a verdict. A run on someone else's
+            // fork stays advisory, because the fork owner, not the
+            // author, controls the head content.
+            // Automatic fork runs for any other author are
+            // unauthorized here and skipped: nothing posts, and
+            // they never mint a verdict.
             // Same-repo automatic runs stay formal, and `@codex`
             // comment runs on same-repo PRs are formal too, both
             // authorized by write/maintain/admin. Trusted-head-owner
@@ -126,6 +152,44 @@ jobs:
             const isComment =
               context.eventName === "issue_comment" ||
               context.eventName === "pull_request_review_comment";
+            // Positive-evidence class check for a PR author:
+            // OWNER/MEMBER/COLLABORATOR association, repo
+            // collaborator status, or org membership. Each API probe
+            // fails closed: any error (404, or a check this token
+            // cannot see) counts as no evidence. Repo permission is
+            // never consulted here: this repository is public, so a
+            // permission lookup reports `read` for every GitHub user
+            // and cannot separate members from outsiders.
+            async function authorInFormalClass(login, association) {
+              if (!login) {
+                return false;
+              }
+              if (
+                ["OWNER", "MEMBER", "COLLABORATOR"].includes(association)
+              ) {
+                return true;
+              }
+              try {
+                await github.rest.repos.checkCollaborator({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  username: login,
+                });
+                return true;
+              } catch (error) {
+                // Fail closed: no collaborator evidence.
+              }
+              try {
+                await github.rest.orgs.checkMembershipForUser({
+                  org: context.repo.owner,
+                  username: login,
+                });
+                return true;
+              } catch (error) {
+                // Fail closed: no org-membership evidence.
+              }
+              return false;
+            }
             // For comment runs, formality needs the PR's head repo,
             // which the payload does not carry: fetch the PR. Non-PR
             // issue comments and a missing head repo are not formal.
@@ -134,11 +198,38 @@ jobs:
             // live PR resolves to anything else.
             let commentSameRepo = false;
             let commentTrustedHead = false;
+            let commentAuthorPermitted = false;
             let trustedRepo = "";
             let trustedSha = "";
+            // Automatic fork runs also fetch the live PR: the REST
+            // `author_association` on the fetched PR reports MEMBER
+            // for private org members, which neither the event
+            // payload nor this repo-scoped token's org-membership
+            // probe can see. The fetched head and author ids are
+            // also the values formal trust binds to below.
+            let targetPr = null;
+            if (isForkTarget) {
+              const number = context.payload.pull_request?.number;
+              if (number) {
+                try {
+                  const { data: pr } = await github.rest.pulls.get({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    pull_number: number,
+                  });
+                  targetPr = pr;
+                  trustedRepo = pr.head.repo?.full_name ?? trustedRepo;
+                  trustedSha = pr.head.sha ?? trustedSha;
+                } catch (error) {
+                  if (error.status !== 404) {
+                    throw error;
+                  }
+                }
+              }
+            }
             const observedPr =
               context.payload.pull_request ?? null;
-            if (observedPr) {
+            if (observedPr && !targetPr) {
               trustedRepo =
                 observedPr.head?.repo?.full_name ?? "";
               trustedSha = observedPr.head?.sha ?? "";
@@ -160,6 +251,23 @@ jobs:
                   commentTrustedHead = TRUSTED_HEAD_OWNER_IDS.includes(
                     pr.head.repo?.owner?.id
                   );
+                  // A `@codex` run on a fork PR is formal only when
+                  // the head owner controls the content and is in
+                  // the OWNER/MEMBER/COLLABORATOR class: the head
+                  // repository owner is the PR author (verified with
+                  // positive evidence only, see authorInFormalClass)
+                  // or a trusted head owner. The PR author alone
+                  // does not authenticate the head: anyone can open
+                  // a PR from another user's fork, and that fork's
+                  // owner can push to the head afterwards.
+                  commentAuthorPermitted =
+                    commentTrustedHead ||
+                    (pr.head.repo?.owner?.id != null &&
+                      pr.head.repo?.owner?.id === pr.user?.id &&
+                      (await authorInFormalClass(
+                        pr.user?.login,
+                        pr.author_association
+                      )));
                   trustedRepo = pr.head.repo?.full_name ?? "";
                   trustedSha = pr.head.sha ?? "";
                 } catch (error) {
@@ -169,27 +277,53 @@ jobs:
                 }
               }
             }
+            const effectivePr =
+              targetPr ?? context.payload.pull_request ?? null;
             const trustedHeadTarget =
               isForkTarget &&
               TRUSTED_HEAD_OWNER_IDS.includes(
-                context.payload.pull_request?.head?.repo?.owner?.id
+                effectivePr?.head?.repo?.owner?.id
               );
+            // Formal fork trust binds to the head owner, who
+            // controls the branch content, not just the PR author:
+            // a trusted head owner, or the author reviewing their
+            // own fork (head owner id == author id; the class check
+            // itself runs as `authorized` below, and `formal`
+            // requires it).
+            const forkHeadSelfOwned =
+              isForkTarget &&
+              effectivePr?.head?.repo?.owner?.id != null &&
+              effectivePr?.head?.repo?.owner?.id ===
+                effectivePr?.user?.id;
             const isFormal =
               (context.eventName === "pull_request" &&
                 context.payload.pull_request?.head?.repo?.full_name ===
                   context.payload.repository.full_name) ||
-              (isComment && (commentSameRepo || commentTrustedHead)) ||
-              trustedHeadTarget;
+              (isComment &&
+                (commentSameRepo ||
+                  commentTrustedHead ||
+                  commentAuthorPermitted)) ||
+              trustedHeadTarget ||
+              forkHeadSelfOwned;
             let authorized;
             let permission = "none";
             if (isForkTarget) {
+              // Prefer the fetched PR: its REST author_association
+              // reports MEMBER for private org members. No sender
+              // fallback: `username` is the event sender, not the PR
+              // author. A missing author login (the PR user is
+              // nullable, e.g. after account deletion) fails closed
+              // in authorInFormalClass.
               const association =
+                effectivePr?.author_association ??
                 context.payload.pull_request.author_association;
-              authorized = ["OWNER", "MEMBER", "COLLABORATOR"].includes(
+              const authorLogin = effectivePr?.user?.login;
+              authorized = await authorInFormalClass(
+                authorLogin,
                 association
               );
               core.info(
-                `${username}: author_association=${association}, authorized=${authorized}`
+                `${username}: author=${authorLogin}, author_association=${association}, authorized=${authorized}`
               );
             } else {
               try {
@@ -335,11 +469,15 @@ jobs:
               // is different again: check_auth verified the commenter
               // has write/maintain/admin, so the maintainer's explicit
               // @codex comment is the approval to review that fork.
-              // Fork runs with an untrusted head owner are advisory
-              // only (see the job header): they carry no verdict and
-              // never mint an approval, because a third-party fork
-              // diff could steer the verdict. Trusted-head-owner
-              // fork runs are formal.
+              // Fork runs for authors outside the
+              // OWNER/MEMBER/COLLABORATOR class never reach this
+              // step: check_auth leaves them unauthorized and
+              // skipped. They carry no verdict and never mint an
+              // approval, because a third-party fork diff could
+              // steer the verdict. Fork runs on the
+              // author's own fork by an OWNER/MEMBER/COLLABORATOR
+              // author, and trusted-head-owner fork runs, are
+              // formal.
               if (!actualRepo) {
                 throw new Error(
                   "Cannot review a pull request whose head repository is unavailable."
@@ -882,9 +1020,11 @@ jobs:
           # run, and for formal `@codex` runs, so Submit can parse
           # the verdict and post a review. A freeform prompt would
           # leave a run with no verdict to post. Automatic and
-          # formal are separate: fork automatic runs are structured
-          # but advisory (no verdict), while `@codex` on a plain
-          # issue is freeform and non-formal.
+          # formal are separate: every automatic run is structured.
+          # Authorized automatic runs are formal, except authorized
+          # cross-fork runs (an OWNER/MEMBER/COLLABORATOR author on
+          # someone else's fork), which stay advisory. `@codex` on a
+          # plain issue is freeform and non-formal.
           AUTOMATIC_REVIEW: ${{ github.event_name == 'pull_request' || github.event_name == 'pull_request_target' || steps.check_auth.outputs.formal == 'true' }}
           BASE_SHA: ${{ steps.target.outputs.base }}
           CONTEXT_FILE: ${{ steps.target.outputs.context }}
@@ -1125,10 +1265,14 @@ jobs:
             // Automatic mode and formality are separate: automatic
             // runs (and formal `@codex` runs) produced structured
             // JSON and are parsed the same way. Formal runs post a
-            // review carrying the verdict. A non-formal run (fork
-            // automatic, or `@codex` on a plain issue / fork PR)
-            // posts its findings as an advisory comment with no
-            // verdict.
+            // review carrying the verdict. A non-formal run that
+            // reaches this step (`@codex` on a plain issue, `@codex`
+            // on a fork PR whose author is outside the
+            // OWNER/MEMBER/COLLABORATOR class, or an authorized
+            // cross-fork run on someone else's fork) posts its
+            // findings as an advisory comment with no verdict.
+            // Automatic fork runs by outside-class authors are
+            // unauthorized and never reach this step.
             const formal = process.env.FORMAL_REVIEW === "true";
             const automatic = process.env.AUTOMATIC_REVIEW === "true";
             const triggerEvent = process.env.TRIGGER_EVENT || "";
