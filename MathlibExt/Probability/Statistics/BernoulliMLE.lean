@@ -11,11 +11,14 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Finset.Card
+import Mathlib.Analysis.SpecialFunctions.Log.Base
+import Mathlib.Basic.ENNReal.Basic
+import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.FieldSimp
-import Mathlib.Tactic.Positivity
+import MathlibExt.InformationTheory.FiniteEntropy
 
 /-!
 # Bernoulli likelihood is maximized at the sample proportion
@@ -25,14 +28,20 @@ For a nonempty binary sample, the Bernoulli likelihood at any
 explicit boundary cases (all successes: likelihood `θ ^ n`,
 proportion `1`; no successes: likelihood `(1 - θ) ^ n`, proportion
 `0`). With both outcomes present the sample proportion is the unique
-maximizer. The proof goes through the log-likelihood and the scalar
-inequality `log x ≤ x - 1` (Atlas roadmap ST09.T01).
+maximizer. The proof goes through a Bernoulli bridge to the Atlas
+Gibbs inequality (`shannonEntropy_le_crossEntropy`) for the empirical
+PMF on `Bool` against the Bernoulli(θ) PMF: the log-likelihood is
+`-(n log 2)` times the cross-entropy, so Gibbs gives the comparison,
+and the equality case (`crossEntropy_eq_shannonEntropy_iff`) gives
+uniqueness. Boundary cases (all successes / no successes, `θ ∈ {0, 1}`)
+are by direct computation. (Atlas roadmap ST09.T01.)
 -/
 
 @[expose] public section
 
-
 open Finset
+
+open scoped ENNReal
 
 namespace MathlibExt.Probability.Statistics.BernoulliMLE
 
@@ -137,19 +146,117 @@ private theorem log_likelihood_eq {n k : ℕ} (hkn : k ≤ n) (θ : ℝ) (hθ0 :
   rw [Real.log_mul (pow_ne_zero k hθ0) (pow_ne_zero (n - k) h1θ),
     Real.log_pow, Real.log_pow, Nat.cast_sub hkn]
 
-private theorem mle_key_identity {n k : ℕ} (hn : 0 < n) (hk0 : 0 < k) (hkn : k < n)
-    (θ : ℝ) :
-    (k : ℝ) * (θ / ((k : ℝ) / n) - 1)
-      + ((n : ℝ) - k) * ((1 - θ) / (1 - (k : ℝ) / n) - 1) = 0 := by
-  have hnR : (0 : ℝ) < n := by exact_mod_cast hn
-  have hkR : (0 : ℝ) < k := by exact_mod_cast hk0
-  have hknR : (k : ℝ) < n := by exact_mod_cast hkn
-  have hphat0 : (0 : ℝ) < (k : ℝ) / n := div_pos hkR hnR
-  have hphat1 : (k : ℝ) / n < 1 := (div_lt_one hnR).mpr hknR
-  have hnne : (n : ℝ) ≠ 0 := ne_of_gt hnR
-  have hphatne : (k : ℝ) / n ≠ 0 := ne_of_gt hphat0
-  have h1phatne : (1 : ℝ) - (k : ℝ) / n ≠ 0 := ne_of_gt (sub_pos.mpr hphat1)
-  have hsubne : (n : ℝ) - k ≠ 0 := ne_of_gt (sub_pos.mpr hknR)
+private theorem div_card_le_one {k n : ℕ} (hkn : k ≤ n) : (k : ℝ) / n ≤ 1 := by
+  rcases eq_or_ne n 0 with rfl | hn0
+  · simp
+  · rw [div_le_one (by exact_mod_cast Nat.pos_of_ne_zero hn0)]
+    exact_mod_cast hkn
+
+private noncomputable def empPMF (k n : ℕ) (hkn : k ≤ n) : PMF Bool :=
+  PMF.ofFintype (fun b =>
+    bif b then ENNReal.ofReal ((k : ℝ) / n) else ENNReal.ofReal (1 - (k : ℝ) / n)) (by
+    have h0 : (0 : ℝ) ≤ (k : ℝ) / n :=
+      div_nonneg (Nat.cast_nonneg k) (Nat.cast_nonneg n)
+    have h1 : (k : ℝ) / n ≤ 1 := div_card_le_one hkn
+    calc (∑ b, bif b then ENNReal.ofReal ((k : ℝ) / n)
+            else ENNReal.ofReal (1 - (k : ℝ) / n))
+        = ENNReal.ofReal ((k : ℝ) / n) + ENNReal.ofReal (1 - (k : ℝ) / n) :=
+          Fintype.sum_bool _
+      _ = ENNReal.ofReal (((k : ℝ) / n) + (1 - (k : ℝ) / n)) :=
+          (ENNReal.ofReal_add h0 (sub_nonneg.mpr h1)).symm
+      _ = 1 := by rw [add_sub_cancel]; exact ENNReal.ofReal_one)
+
+private theorem empPMF_true {k n : ℕ} (hkn : k ≤ n) :
+    empPMF k n hkn true = ENNReal.ofReal ((k : ℝ) / n) := rfl
+
+private theorem empPMF_false {k n : ℕ} (hkn : k ≤ n) :
+    empPMF k n hkn false = ENNReal.ofReal (1 - (k : ℝ) / n) := rfl
+
+private theorem bernoulli_true_eq (q : NNReal) (h : q ≤ 1) :
+    PMF.bernoulli q h true = ENNReal.ofReal (q : ℝ) := by
+  have hb : (bif true then q else 1 - q) = q := by simp
+  rw [PMF.bernoulli_apply, hb, ← ENNReal.ofReal_coe_nnreal]
+
+private theorem bernoulli_false_eq (q : NNReal) (h : q ≤ 1) :
+    PMF.bernoulli q h false = ENNReal.ofReal (1 - (q : ℝ)) := by
+  have hb : (bif false then q else 1 - q) = 1 - q := by simp
+  rw [PMF.bernoulli_apply, hb, ← ENNReal.ofReal_coe_nnreal, NNReal.coe_sub h]
+  simp
+
+private theorem surprisal_ofReal_of_pos {t : ℝ} (ht0 : 0 < t) :
+    InformationTheory.surprisal (ENNReal.ofReal t) = ENNReal.ofReal (-Real.logb 2 t) := by
+  have hne : ENNReal.ofReal t ≠ 0 := by
+    rw [ne_eq, ENNReal.ofReal_eq_zero]
+    exact not_le.mpr ht0
+  unfold InformationTheory.surprisal
+  rw [ite_eq_right hne, ENNReal.toReal_ofReal ht0.le]
+
+private theorem empPMF_eq_bernoulli {k n : ℕ} (hkn : k ≤ n) (q : NNReal) (h : q ≤ 1)
+    (hq : (q : ℝ) = (k : ℝ) / n) : empPMF k n hkn = PMF.bernoulli q h := by
+  apply PMF.ext
+  intro b
+  cases b
+  · rw [empPMF_false, bernoulli_false_eq, hq]
+  · rw [empPMF_true, bernoulli_true_eq, hq]
+
+private theorem crossEntropy_emp_bernoulli_eq {k n : ℕ} (hkn : k ≤ n)
+    (q : NNReal) (h : q ≤ 1) (hq0 : 0 < (q : ℝ)) (hq1 : (q : ℝ) < 1) :
+    InformationTheory.crossEntropy (empPMF k n hkn) (PMF.bernoulli q h)
+      = ENNReal.ofReal ((k : ℝ) / n) * ENNReal.ofReal (-Real.logb 2 (q : ℝ))
+        + ENNReal.ofReal (1 - (k : ℝ) / n) * ENNReal.ofReal (-Real.logb 2 (1 - (q : ℝ))) := by
+  unfold InformationTheory.crossEntropy
+  rw [Fintype.sum_bool, empPMF_true, empPMF_false, bernoulli_true_eq,
+    bernoulli_false_eq, surprisal_ofReal_of_pos hq0,
+    surprisal_ofReal_of_pos (sub_pos.mpr hq1)]
+
+private theorem crossEntropy_emp_bernoulli_ne_top {k n : ℕ} (hkn : k ≤ n)
+    (q : NNReal) (h : q ≤ 1) (hq0 : 0 < (q : ℝ)) (hq1 : (q : ℝ) < 1) :
+    InformationTheory.crossEntropy (empPMF k n hkn) (PMF.bernoulli q h) ≠ ∞ := by
+  have hCE := crossEntropy_emp_bernoulli_eq hkn q h hq0 hq1
+  rw [hCE, ne_eq, ENNReal.add_eq_top, not_or]
+  exact ⟨ENNReal.mul_ne_top ENNReal.ofReal_ne_top ENNReal.ofReal_ne_top,
+    ENNReal.mul_ne_top ENNReal.ofReal_ne_top ENNReal.ofReal_ne_top⟩
+
+private theorem crossEntropy_toReal_emp_bernoulli {k n : ℕ} (hkn : k ≤ n)
+    (q : NNReal) (h : q ≤ 1) (hq0 : 0 < (q : ℝ)) (hq1 : (q : ℝ) < 1) :
+    (InformationTheory.crossEntropy (empPMF k n hkn) (PMF.bernoulli q h)).toReal
+      = ((k : ℝ) / n) * (-Real.logb 2 (q : ℝ))
+        + (1 - (k : ℝ) / n) * (-Real.logb 2 (1 - (q : ℝ))) := by
+  have hCE := crossEntropy_emp_bernoulli_eq hkn q h hq0 hq1
+  have hA : ENNReal.ofReal ((k : ℝ) / n) * ENNReal.ofReal (-Real.logb 2 (q : ℝ)) ≠ ∞ :=
+    ENNReal.mul_ne_top ENNReal.ofReal_ne_top ENNReal.ofReal_ne_top
+  have hB : ENNReal.ofReal (1 - (k : ℝ) / n) * ENNReal.ofReal (-Real.logb 2 (1 - (q : ℝ))) ≠ ∞ :=
+    ENNReal.mul_ne_top ENNReal.ofReal_ne_top ENNReal.ofReal_ne_top
+  have hnn1 : (0 : ℝ) ≤ (k : ℝ) / n :=
+    div_nonneg (Nat.cast_nonneg k) (Nat.cast_nonneg n)
+  have hnn2 : (0 : ℝ) ≤ 1 - (k : ℝ) / n := sub_nonneg.mpr (div_card_le_one hkn)
+  have hnn3 : (0 : ℝ) ≤ -Real.logb 2 (q : ℝ) :=
+    neg_nonneg.mpr (Real.logb_nonpos one_lt_two hq0.le hq1.le)
+  have hnn4 : (0 : ℝ) ≤ -Real.logb 2 (1 - (q : ℝ)) :=
+    neg_nonneg.mpr (Real.logb_nonpos one_lt_two (sub_pos.mpr hq1).le (by linarith [hq0.le]))
+  rw [hCE, ENNReal.toReal_add hA hB, ENNReal.toReal_mul, ENNReal.toReal_mul,
+    ENNReal.toReal_ofReal hnn1, ENNReal.toReal_ofReal hnn3,
+    ENNReal.toReal_ofReal hnn2, ENNReal.toReal_ofReal hnn4]
+
+private theorem crossEntropy_emp_bernoulli_self {k n : ℕ} (hkn : k ≤ n)
+    (q : NNReal) (h : q ≤ 1) (hq : (q : ℝ) = (k : ℝ) / n) :
+    InformationTheory.crossEntropy (empPMF k n hkn) (PMF.bernoulli q h)
+      = ENNReal.ofReal (InformationTheory.shannonEntropy (empPMF k n hkn)) := by
+  rw [empPMF_eq_bernoulli hkn q h hq]
+  exact (InformationTheory.crossEntropy_eq_shannonEntropy_iff _ _).mpr rfl
+
+private theorem log_likelihood_bridge {n k : ℕ} (hn : 0 < n) (hkn : k ≤ n)
+    (q : NNReal) (h : q ≤ 1) (hq0 : 0 < (q : ℝ)) (hq1 : (q : ℝ) < 1) :
+    Real.log ((q : ℝ) ^ k * (1 - (q : ℝ)) ^ (n - k))
+      = -((n : ℝ) * Real.log 2)
+        * (InformationTheory.crossEntropy (empPMF k n hkn) (PMF.bernoulli q h)).toReal := by
+  have h1q0 : (0 : ℝ) < 1 - (q : ℝ) := sub_pos.mpr hq1
+  have e1 := log_likelihood_eq hkn _ (ne_of_gt hq0) (ne_of_gt h1q0)
+  have e2 := crossEntropy_toReal_emp_bernoulli hkn q h hq0 hq1
+  have hn0 : (n : ℝ) ≠ 0 := by exact_mod_cast ne_of_gt hn
+  have hlog2 : Real.log 2 ≠ 0 := ne_of_gt (Real.log_pos one_lt_two)
+  have hlb : ∀ x : ℝ, Real.logb 2 x = Real.log x / Real.log 2 := fun x => rfl
+  rw [e1, e2, hlb, hlb]
   field_simp
   ring
 
@@ -191,39 +298,32 @@ private theorem pow_mul_pow_le_at_sample {n k : ℕ} (hn : 0 < n) (hkn : k ≤ n
           have h1θ0 : (0 : ℝ) < 1 - θ := sub_pos.mpr hθ1'
           have hLHS : (0 : ℝ) < θ ^ k * (1 - θ) ^ (n - k) :=
             mul_pos (pow_pos hθ0' k) (pow_pos h1θ0 _)
-          rw [← Real.log_le_log_iff hLHS hRHS]
-          have e1 := log_likelihood_eq hkn θ (ne_of_gt hθ0') (ne_of_gt h1θ0)
-          have e2 := log_likelihood_eq hkn ((k : ℝ) / n) (ne_of_gt hphat0)
-            (ne_of_gt h1phat0)
-          have b1 : Real.log (θ / ((k : ℝ) / n)) ≤ θ / ((k : ℝ) / n) - 1 :=
-            Real.log_le_sub_one_of_pos (div_pos hθ0' hphat0)
-          have b2 : Real.log ((1 - θ) / (1 - (k : ℝ) / n))
-              ≤ (1 - θ) / (1 - (k : ℝ) / n) - 1 :=
-            Real.log_le_sub_one_of_pos (div_pos h1θ0 h1phat0)
-          have g1 : (k : ℝ) * Real.log (θ / ((k : ℝ) / n))
-              ≤ (k : ℝ) * (θ / ((k : ℝ) / n) - 1) :=
-            mul_le_mul_of_nonneg_left b1 (le_of_lt hkR)
-          have g2 : ((n : ℝ) - k) * Real.log ((1 - θ) / (1 - (k : ℝ) / n))
-              ≤ ((n : ℝ) - k) * ((1 - θ) / (1 - (k : ℝ) / n) - 1) :=
-            mul_le_mul_of_nonneg_left b2 (le_of_lt (sub_pos.mpr hknR))
-          have hsum := mle_key_identity hn hk0' hkn'' θ
-          have hle : (k : ℝ) * Real.log (θ / ((k : ℝ) / n))
-              + ((n : ℝ) - k) * Real.log ((1 - θ) / (1 - (k : ℝ) / n)) ≤ 0 :=
-            calc (k : ℝ) * Real.log (θ / ((k : ℝ) / n))
-                  + ((n : ℝ) - k) * Real.log ((1 - θ) / (1 - (k : ℝ) / n))
-                ≤ (k : ℝ) * (θ / ((k : ℝ) / n) - 1)
-                  + ((n : ℝ) - k) * ((1 - θ) / (1 - (k : ℝ) / n) - 1) :=
-                  add_le_add g1 g2
-              _ = 0 := hsum
-          rw [e1, e2]
-          have hdiv1 : Real.log (θ / ((k : ℝ) / n))
-              = Real.log θ - Real.log ((k : ℝ) / n) :=
-            Real.log_div (ne_of_gt hθ0') (ne_of_gt hphat0)
-          have hdiv2 : Real.log ((1 - θ) / (1 - (k : ℝ) / n))
-              = Real.log (1 - θ) - Real.log (1 - (k : ℝ) / n) :=
-            Real.log_div (ne_of_gt h1θ0) (ne_of_gt h1phat0)
-          rw [hdiv1, hdiv2] at hle
-          linarith [hle]
+          have hθle : (⟨θ, hθ0'.le⟩ : NNReal) ≤ 1 := by exact_mod_cast hθ1'.le
+          have hphatle : (⟨(k : ℝ) / n, hphat0.le⟩ : NNReal) ≤ 1 := by
+            exact_mod_cast hphat1.le
+          have hq0θ : (0 : ℝ) < ((⟨θ, hθ0'.le⟩ : NNReal) : ℝ) := hθ0'
+          have hq1θ : ((⟨θ, hθ0'.le⟩ : NNReal) : ℝ) < 1 := hθ1'
+          have hq0p : (0 : ℝ) < ((⟨(k : ℝ) / n, hphat0.le⟩ : NNReal) : ℝ) := hphat0
+          have hq1p : ((⟨(k : ℝ) / n, hphat0.le⟩ : NNReal) : ℝ) < 1 := hphat1
+          have eθ : Real.log (θ ^ k * (1 - θ) ^ (n - k)) = -((n : ℝ) * Real.log 2)
+              * (InformationTheory.crossEntropy (empPMF k n hkn)
+                (PMF.bernoulli ⟨θ, hθ0'.le⟩ hθle)).toReal :=
+            log_likelihood_bridge hn hkn _ hθle hq0θ hq1θ
+          have ephat : Real.log (((k : ℝ) / n) ^ k * (1 - (k : ℝ) / n) ^ (n - k))
+              = -((n : ℝ) * Real.log 2)
+              * (InformationTheory.crossEntropy (empPMF k n hkn)
+                (PMF.bernoulli ⟨(k : ℝ) / n, hphat0.le⟩ hphatle)).toReal :=
+            log_likelihood_bridge hn hkn _ hphatle hq0p hq1p
+          have hGibbs := InformationTheory.shannonEntropy_le_crossEntropy
+            (empPMF k n hkn) (PMF.bernoulli ⟨θ, hθ0'.le⟩ hθle)
+          have hCEeq := crossEntropy_emp_bernoulli_self hkn _ hphatle rfl
+          rw [← hCEeq] at hGibbs
+          have hneθ := crossEntropy_emp_bernoulli_ne_top hkn _ hθle hq0θ hq1θ
+          have hmono := ENNReal.toReal_mono hneθ hGibbs
+          have hCneg : -((n : ℝ) * Real.log 2) < 0 :=
+            neg_lt_zero.mpr (mul_pos hnR (Real.log_pos one_lt_two))
+          rw [← Real.log_le_log_iff hLHS hRHS, eθ, ephat]
+          exact mul_le_mul_of_nonpos_left hmono hCneg.le
 
 private theorem pow_mul_pow_lt_of_ne_at_sample {n k : ℕ} (hn : 0 < n)
     (hk0 : 0 < k) (hkn : k < n)
@@ -251,44 +351,76 @@ private theorem pow_mul_pow_lt_of_ne_at_sample {n k : ℕ} (hn : 0 < n)
       have h1θ0 : (0 : ℝ) < 1 - θ := sub_pos.mpr hθ1'
       have hLHS : (0 : ℝ) < θ ^ k * (1 - θ) ^ (n - k) :=
         mul_pos (pow_pos hθ0' k) (pow_pos h1θ0 _)
-      rw [← Real.log_lt_log_iff hLHS hRHS]
-      have e1 := log_likelihood_eq (le_of_lt hkn) θ (ne_of_gt hθ0')
-        (ne_of_gt h1θ0)
-      have e2 := log_likelihood_eq (le_of_lt hkn) ((k : ℝ) / n)
-        (ne_of_gt hphat0) (ne_of_gt h1phat0)
-      have htp1 : θ / ((k : ℝ) / n) ≠ 1 := by
+      have hle : θ ^ k * (1 - θ) ^ (n - k)
+          ≤ ((k : ℝ) / n) ^ k * (1 - (k : ℝ) / n) ^ (n - k) :=
+        pow_mul_pow_le_at_sample hn (le_of_lt hkn) hθ
+      have hne' : θ ^ k * (1 - θ) ^ (n - k)
+          ≠ ((k : ℝ) / n) ^ k * (1 - (k : ℝ) / n) ^ (n - k) := by
         intro hcon
-        apply hne
-        exact (div_eq_one_iff_eq (ne_of_gt hphat0)).mp hcon
-      have b1 : Real.log (θ / ((k : ℝ) / n)) < θ / ((k : ℝ) / n) - 1 :=
-        Real.log_lt_sub_one_of_pos (div_pos hθ0' hphat0) htp1
-      have b2 : Real.log ((1 - θ) / (1 - (k : ℝ) / n))
-          ≤ (1 - θ) / (1 - (k : ℝ) / n) - 1 :=
-        Real.log_le_sub_one_of_pos (div_pos h1θ0 h1phat0)
-      have g1 : (k : ℝ) * Real.log (θ / ((k : ℝ) / n))
-          < (k : ℝ) * (θ / ((k : ℝ) / n) - 1) :=
-        mul_lt_mul_of_pos_left b1 hkR
-      have g2 : ((n : ℝ) - k) * Real.log ((1 - θ) / (1 - (k : ℝ) / n))
-          ≤ ((n : ℝ) - k) * ((1 - θ) / (1 - (k : ℝ) / n) - 1) :=
-        mul_le_mul_of_nonneg_left b2 (le_of_lt (sub_pos.mpr hknR))
-      have hsum := mle_key_identity hn hk0 hkn θ
-      have hlt : (k : ℝ) * Real.log (θ / ((k : ℝ) / n))
-          + ((n : ℝ) - k) * Real.log ((1 - θ) / (1 - (k : ℝ) / n)) < 0 :=
-        calc (k : ℝ) * Real.log (θ / ((k : ℝ) / n))
-              + ((n : ℝ) - k) * Real.log ((1 - θ) / (1 - (k : ℝ) / n))
-            < (k : ℝ) * (θ / ((k : ℝ) / n) - 1)
-              + ((n : ℝ) - k) * ((1 - θ) / (1 - (k : ℝ) / n) - 1) :=
-              add_lt_add_of_lt_of_le g1 g2
-          _ = 0 := hsum
-      rw [e1, e2]
-      have hdiv1 : Real.log (θ / ((k : ℝ) / n))
-          = Real.log θ - Real.log ((k : ℝ) / n) :=
-        Real.log_div (ne_of_gt hθ0') (ne_of_gt hphat0)
-      have hdiv2 : Real.log ((1 - θ) / (1 - (k : ℝ) / n))
-          = Real.log (1 - θ) - Real.log (1 - (k : ℝ) / n) :=
-        Real.log_div (ne_of_gt h1θ0) (ne_of_gt h1phat0)
-      rw [hdiv1, hdiv2] at hlt
-      linarith [hlt]
+        have hθle : (⟨θ, hθ0'.le⟩ : NNReal) ≤ 1 := by exact_mod_cast hθ1'.le
+        have hphatle : (⟨(k : ℝ) / n, hphat0.le⟩ : NNReal) ≤ 1 := by
+          exact_mod_cast hphat1.le
+        have hq0θ : (0 : ℝ) < ((⟨θ, hθ0'.le⟩ : NNReal) : ℝ) := hθ0'
+        have hq1θ : ((⟨θ, hθ0'.le⟩ : NNReal) : ℝ) < 1 := hθ1'
+        have hq0p : (0 : ℝ) < ((⟨(k : ℝ) / n, hphat0.le⟩ : NNReal) : ℝ) := hphat0
+        have hq1p : ((⟨(k : ℝ) / n, hphat0.le⟩ : NNReal) : ℝ) < 1 := hphat1
+        have eθ : Real.log (θ ^ k * (1 - θ) ^ (n - k)) = -((n : ℝ) * Real.log 2)
+            * (InformationTheory.crossEntropy (empPMF k n (le_of_lt hkn))
+              (PMF.bernoulli ⟨θ, hθ0'.le⟩ hθle)).toReal :=
+          log_likelihood_bridge hn (le_of_lt hkn) _ hθle hq0θ hq1θ
+        have ephat : Real.log (((k : ℝ) / n) ^ k * (1 - (k : ℝ) / n) ^ (n - k))
+            = -((n : ℝ) * Real.log 2)
+            * (InformationTheory.crossEntropy (empPMF k n (le_of_lt hkn))
+              (PMF.bernoulli ⟨(k : ℝ) / n, hphat0.le⟩ hphatle)).toReal :=
+          log_likelihood_bridge hn (le_of_lt hkn) _ hphatle hq0p hq1p
+        have hlogeq : Real.log (θ ^ k * (1 - θ) ^ (n - k))
+            = Real.log (((k : ℝ) / n) ^ k * (1 - (k : ℝ) / n) ^ (n - k)) := by
+          rw [hcon]
+        rw [eθ, ephat] at hlogeq
+        have hCne : -((n : ℝ) * Real.log 2) ≠ 0 :=
+          ne_of_lt (neg_lt_zero.mpr (mul_pos hnR (Real.log_pos one_lt_two)))
+        have hToRealEq : (InformationTheory.crossEntropy (empPMF k n (le_of_lt hkn))
+              (PMF.bernoulli ⟨θ, hθ0'.le⟩ hθle)).toReal
+            = (InformationTheory.crossEntropy (empPMF k n (le_of_lt hkn))
+              (PMF.bernoulli ⟨(k : ℝ) / n, hphat0.le⟩ hphatle)).toReal :=
+          mul_left_cancel₀ hCne hlogeq
+        have hneθ :=
+          crossEntropy_emp_bernoulli_ne_top (le_of_lt hkn) _ hθle hq0θ hq1θ
+        have hnep :=
+          crossEntropy_emp_bernoulli_ne_top (le_of_lt hkn) _ hphatle hq0p hq1p
+        have hCEθ := (ENNReal.ofReal_toReal hneθ).symm
+        have hCEp := (ENNReal.ofReal_toReal hnep).symm
+        have hCECE : InformationTheory.crossEntropy (empPMF k n (le_of_lt hkn))
+              (PMF.bernoulli ⟨θ, hθ0'.le⟩ hθle)
+            = InformationTheory.crossEntropy (empPMF k n (le_of_lt hkn))
+              (PMF.bernoulli ⟨(k : ℝ) / n, hphat0.le⟩ hphatle) := by
+          rw [hCEθ, hCEp, hToRealEq]
+        have hCEeq := crossEntropy_emp_bernoulli_self (le_of_lt hkn) _ hphatle rfl
+        have hGibbsEq : InformationTheory.crossEntropy (empPMF k n (le_of_lt hkn))
+              (PMF.bernoulli ⟨θ, hθ0'.le⟩ hθle)
+            = ENNReal.ofReal
+              (InformationTheory.shannonEntropy (empPMF k n (le_of_lt hkn))) := by
+          rw [hCECE]; exact hCEeq
+        have hbern :=
+          (InformationTheory.crossEntropy_eq_shannonEntropy_iff _ _).mp hGibbsEq
+        have hemp := empPMF_eq_bernoulli (le_of_lt hkn) _ hphatle rfl
+        have hbb : PMF.bernoulli ⟨θ, hθ0'.le⟩ hθle
+            = PMF.bernoulli ⟨(k : ℝ) / n, hphat0.le⟩ hphatle :=
+          hbern.trans hemp
+        have htrue : PMF.bernoulli ⟨θ, hθ0'.le⟩ hθle true
+            = PMF.bernoulli ⟨(k : ℝ) / n, hphat0.le⟩ hphatle true :=
+          congrArg (fun P : PMF Bool => P true) hbb
+        have h1 : PMF.bernoulli ⟨θ, hθ0'.le⟩ hθle true = ENNReal.ofReal θ :=
+          bernoulli_true_eq _ _
+        have h2 : PMF.bernoulli ⟨(k : ℝ) / n, hphat0.le⟩ hphatle true
+            = ENNReal.ofReal ((k : ℝ) / n) :=
+          bernoulli_true_eq _ _
+        have hOfReal : ENNReal.ofReal θ = ENNReal.ofReal ((k : ℝ) / n) :=
+          h1.symm.trans (htrue.trans h2)
+        have hθeq : θ = (k : ℝ) / n :=
+          (ENNReal.ofReal_eq_ofReal_iff hθ0'.le hphat0.le).mp hOfReal
+        exact hne hθeq
+      exact lt_of_le_of_ne hle hne'
 
 /-- **Bernoulli MLE (ST09.T01).** For a nonempty sample, the Bernoulli
 likelihood at any `θ ∈ [0, 1]` is at most the likelihood at the sample
