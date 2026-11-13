@@ -178,6 +178,26 @@ example : |(1 / 2 : ℝ)| ≤ 1 * ((fun x => if (1 / 2 : ℝ) ≤ x then (1 : �
     split_ifs <;> linarith
   · rw [id, abs_of_nonneg hx.1]; exact hx.2
 
+/-! ### Agreement with the free-tag integral -/
+
+/-- The left-endpoint sum over the points of any partition is the left-tagged `rsSum`. -/
+example (f h : ℝ → ℝ) (P : MathlibExt.Analysis.Integration.Partition 0 1) :
+    leftSum f h (univ.image P.points) = MathlibExt.Analysis.Integration.rsSum f h P.leftTag :=
+  leftSum_image_points_eq_rsSum_leftTag f h P
+
+/-- A free-tag integral transfers with its value: the free-tag `∫₀¹ c dh = c (h 1 - h 0)` gives
+the left-endpoint integral, the value of `hasLeftRSIntegral_const`. -/
+example (c : ℝ) (h : ℝ → ℝ) : HasLeftRSIntegral (fun _ => c) h 0 1 (c * (h 1 - h 0)) :=
+  hasLeftRSIntegral_of_hasRSIntegral
+    (MathlibExt.Analysis.Integration.hasRSIntegral_const c h zero_le_one)
+
+/-- The two integrals agree: for `f = id` (continuous) against `h = id` (monotone) on `[0, 1]`,
+the left-endpoint integral is the free-tag `rsIntegral`. -/
+example : leftRSIntegral id id 0 1 = MathlibExt.Analysis.Integration.rsIntegral id id 0 1 :=
+  (hasLeftRSIntegral_of_hasRSIntegral
+    (MathlibExt.Analysis.Integration.rsIntegrable_of_continuousOn_of_monotoneOn zero_le_one
+      continuous_id.continuousOn (monotone_id.monotoneOn _)).hasRSIntegral).leftRSIntegral_eq
+
 /-! ### Axioms -/
 
 #print axioms leftRSIntegrable_of_boundedVariationOn
@@ -189,5 +209,7 @@ example : |(1 / 2 : ℝ)| ≤ 1 * ((fun x => if (1 / 2 : ℝ) ≤ x then (1 : �
 #print axioms HasLeftRSIntegral.abs_sub_le_of_abs_sub_le
 #print axioms hasLeftRSIntegral_ite_le
 #print axioms hasLeftRSIntegral_ite_lt
+#print axioms leftSum_image_points_eq_rsSum_leftTag
+#print axioms hasLeftRSIntegral_of_hasRSIntegral
 
 end MetaMathlibExt

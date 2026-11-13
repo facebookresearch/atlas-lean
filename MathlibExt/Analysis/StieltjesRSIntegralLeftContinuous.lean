@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.StieltjesProductIntegral
+public import MathlibExt.Analysis.StieltjesRSIntegral
 public import Mathlib.Algebra.Polynomial.Eval.Defs
 import Mathlib.Analysis.Calculus.Deriv.Polynomial
 import Mathlib.Analysis.Calculus.MeanValue
@@ -68,6 +69,10 @@ left-endpoint integral weights every jump of `h` at `c` by `f c`; for general `f
   `f(c-)`, hence `f c` for `f` left-continuous at `c`
   (`hasLeftRSIntegral_ite_le_of_continuousWithinAt`); `hasLeftRSIntegral_ite_lt`: against
   `1_{(c, ∞)}` it is `f c` for every `f`.
+* `hasLeftRSIntegral_of_hasRSIntegral`: **agreement**: if the free-tag refinement integral
+  `MathlibExt.Analysis.Integration.HasRSIntegral f h a b I` exists, the left-endpoint integral
+  exists and equals `I`. `leftSum_image_points_eq_rsSum_leftTag` identifies the left-endpoint sum
+  over the points of a partition with `rsSum` of its left tagging.
 
 ## Implementation notes
 
@@ -95,13 +100,16 @@ integrator) and no notion of regulated function. Reused from the merged
 `LocallyBoundedVariationOn.exists_monotoneOn_sub_monotoneOn` (Jordan decomposition),
 `tendsto_atTop_ciSup`, `exists_polynomial_near_of_continuousOn` (Weierstrass),
 `Convex.lipschitzOnWith_of_nnnorm_deriv_le`, `LipschitzOnWith.locallyBoundedVariationOn`.
-Proved here: the left-endpoint sums and integral, their bilinearity, the insertion formula,
-monotonicity, existence, summation by parts, the bounds, and the two step-integrator values.
+Reused from T125's `MathlibExt.Analysis.StieltjesRSIntegral` (the refinement integral with free
+tags) and `MathlibExt.Analysis.Integration.RiemannPartition`: `Partition`, `Partition.leftTag`,
+`Partition.ofFinset`, `Partition.pointSet_ofFinset`, `Partition.points_mem_Icc`,
+`Partition.a_le_b`, `rsSum` and `HasRSIntegral`. Proved here: the left-endpoint sums and integral,
+their bilinearity, the insertion formula, monotonicity, existence, summation by parts, the bounds,
+the two step-integrator values, and the bridge to T125's sums and integral.
 
-T125's refinement integral with free tags (`MathlibExt/Analysis/StieltjesRSIntegral.lean`, open
-PR #1835) is not imported. Its uniform-norm bound `|∫ f dh| ≤ B (2M + V(f))` is proved here again
-for the left-endpoint sums by the same Abel summation. That the two integrals agree whenever
-T125's exists is not proved here.
+T125's uniform-norm bound `|∫ f dh| ≤ B (2M + V(f))` is proved here again for the left-endpoint
+sums by the same Abel summation: the left-endpoint integral also exists where T125's does not,
+so the bound cannot be transferred through `hasLeftRSIntegral_of_hasRSIntegral`.
 
 ## References
 
@@ -620,5 +628,61 @@ theorem hasLeftRSIntegral_ite_lt {c : ℝ} (hac : a ≤ c) (hcb : c < b) :
     · exact left_mem_partitionPts s
     · exact mem_partitionPts.2 (Or.inr (Or.inr ⟨hs (mem_singleton_self c), hlt, hcb⟩))
   exact (leftPartitionSum_ite_lt f hcb hcP).symm
+
+/-! ### Agreement with the free-tag refinement integral -/
+
+/-- The left-endpoint sum over the points of a partition `P` of `[a, b]` (the canonical
+`MathlibExt.Analysis.Integration.Partition`) is the Riemann–Stieltjes sum `rsSum` of its
+left-endpoint tagging `P.leftTag`. -/
+theorem leftSum_image_points_eq_rsSum_leftTag (f h : ℝ → ℝ) (P : Integration.Partition a b) :
+    leftSum f h (univ.image P.points) = Integration.rsSum f h P.leftTag := by
+  have hprev0 : prev (univ.image P.points) (P.points 0) = P.points 0 := by
+    refine prev_eq_self ?_
+    rintro ⟨z, hz, hzlt⟩
+    obtain ⟨k, -, rfl⟩ := mem_image.1 hz
+    exact absurd (P.ordered.lt_iff_lt.1 hzlt) (Fin.not_lt_zero k)
+  have hprev : ∀ i : Fin P.n,
+      prev (univ.image P.points) (P.points i.succ) = P.points i.castSucc := by
+    intro i
+    refine prev_eq_of (mem_image_of_mem _ (mem_univ _)) (P.ordered Fin.castSucc_lt_succ) ?_
+    intro z hz hzlt
+    obtain ⟨k, -, rfl⟩ := mem_image.1 hz
+    exact P.ordered.monotone (Fin.le_castSucc_iff.2 (P.ordered.lt_iff_lt.1 hzlt))
+  rw [leftSum, sum_image fun x _ y _ hxy => P.ordered.injective hxy, Fin.sum_univ_succ, hprev0,
+    sub_self, mul_zero, zero_add]
+  simp only [hprev]
+  rfl
+
+/-- **Agreement with the free-tag integral.** If `∫ₐᵇ f dh = I` in the refinement sense with
+arbitrary tags (`MathlibExt.Analysis.Integration.HasRSIntegral`), then the left-endpoint
+integral exists and equals `I`. The converse fails: for `f = h = 1_{[c, ∞)}` with `a < c < b`
+the left-endpoint integral exists and the free-tag one does not. -/
+theorem hasLeftRSIntegral_of_hasRSIntegral (hI : Integration.HasRSIntegral f h a b I) :
+    HasLeftRSIntegral f h a b I := by
+  rw [HasLeftRSIntegral, Metric.tendsto_atTop]
+  intro ε hε
+  obtain ⟨P, hP⟩ := hI ε hε
+  have hab : a ≤ b := P.a_le_b
+  refine ⟨univ.image P.points, fun s hs => ?_⟩
+  set Q := Integration.Partition.ofFinset (partitionPts a b s)
+    (fun x hx => Set.mem_Icc.2 (mem_Icc_of_mem_partitionPts hab hx)) (left_mem_partitionPts s)
+    (right_mem_partitionPts s) with hQdef
+  have hQpts : univ.image Q.points = partitionPts a b s := by
+    apply Finset.coe_injective
+    rw [Finset.coe_image, Finset.coe_univ, Set.image_univ]
+    exact Integration.Partition.pointSet_ofFinset _ _ _ _
+  have hQP : Q.IsRefinement P := by
+    rintro x ⟨i, rfl⟩
+    have hx := Integration.Partition.points_mem_Icc P i
+    have hmem : P.points i ∈ partitionPts a b s := by
+      rcases hx.1.eq_or_lt with h1 | h1
+      · rw [← h1]; exact left_mem_partitionPts s
+      rcases hx.2.eq_or_lt with h2 | h2
+      · rw [h2]; exact right_mem_partitionPts s
+      exact mem_partitionPts.2 (Or.inr (Or.inr ⟨hs (mem_image_of_mem _ (mem_univ i)), h1, h2⟩))
+    rw [hQdef, Integration.Partition.pointSet_ofFinset]
+    exact hmem
+  rw [Real.dist_eq, leftPartitionSum, ← hQpts, leftSum_image_points_eq_rsSum_leftTag]
+  exact hP Q.leftTag hQP
 
 end MathlibExt.Analysis.StieltjesRSIntegralLeftContinuous
