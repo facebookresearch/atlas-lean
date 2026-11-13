@@ -14,6 +14,7 @@ public import Mathlib.Probability.Moments.Covariance
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.Probability.Independence.Basic
+import MathlibExt.LinearAlgebra.Matrix.FullRankLinearSystem
 
 /-!
 # Boundary tests for linear SEM reduced form and covariance
@@ -201,8 +202,10 @@ public theorem chain_model_cov (b : ℝ) (i j : Fin 2) :
     have hz : (0 : Matrix (Fin 2) (Fin 1) ℝ) *ᵥ czero ω = 0 :=
       Matrix.zero_mulVec _
     rw [hz, add_zero]
-    exact (MathlibExt.Probability.Statistics.Measurement.eq_inv_mulVec_iff
-      (chainB b) _ _ hdet).mpr rfl
+    have h := (Matrix.mulVec_eq_iff_inv_mulVec hdet
+      (b := ![ω.1, ω.2]) (x := (1 - chainB b)⁻¹ *ᵥ ![ω.1, ω.2])).mpr rfl
+    rw [Matrix.sub_mulVec, Matrix.one_mulVec] at h
+    exact sub_eq_iff_eq_add'.mp h
   have hx : ∀ k : Fin 1, MemLp
     (fun ω : ℝ × ℝ => czero ω k) 2
     ((gaussianReal 0 1).prod (gaussianReal 0 1)) := by
@@ -370,9 +373,12 @@ public theorem chain_exo_model_cov (b g₁ g₂ : ℝ) (i j : Fin 2) :
         (exoLoading g₁ g₂ *ᵥ exoInput ω + exoNoise ω)) +
         exoLoading g₁ g₂ *ᵥ exoInput ω + exoNoise ω := by
     intro ω
+    have h := (Matrix.mulVec_eq_iff_inv_mulVec hdet
+      (b := exoLoading g₁ g₂ *ᵥ exoInput ω + exoNoise ω)
+      (x := (1 - chainB b)⁻¹ *ᵥ (exoLoading g₁ g₂ *ᵥ exoInput ω + exoNoise ω))).mpr rfl
+    rw [Matrix.sub_mulVec, Matrix.one_mulVec] at h
     rw [add_assoc]
-    exact (MathlibExt.Probability.Statistics.Measurement.eq_inv_mulVec_iff
-      (chainB b) _ _ hdet).mpr rfl
+    exact sub_eq_iff_eq_add'.mp h
   have ex : ∀ k : Fin 1, (fun ω : ℝ × ℝ => exoInput ω k) =
     fun ω : ℝ × ℝ => ω.1 := fun _ => rfl
   have e0 : (fun ω : ℝ × ℝ => exoNoise ω 0) = fun ω : ℝ × ℝ => ω.2 := by

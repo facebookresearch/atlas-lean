@@ -12,6 +12,7 @@ public import Mathlib.Probability.Moments.Covariance
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 
 import Mathlib.MeasureTheory.Function.LpSpace.Basic
+import MathlibExt.LinearAlgebra.Matrix.FullRankLinearSystem
 
 /-!
 # Linear SEM reduced form and covariance
@@ -34,30 +35,9 @@ namespace MathlibExt.Probability.Statistics.Measurement
 open MeasureTheory ProbabilityTheory
 open scoped BigOperators Matrix ProbabilityTheory
 
-/-- Reduced form equivalence for `v = B *ᵥ v + w` when `I - B` is a unit. -/
-public theorem eq_inv_mulVec_iff {p : Type*} [Fintype p] [DecidableEq p]
-  (B : Matrix p p ℝ) (v w : p → ℝ) (hdet : IsUnit (1 - B).det) :
-  v = B *ᵥ v + w ↔ v = (1 - B)⁻¹ *ᵥ w := by
-  have hN : (1 - B)⁻¹ * (1 - B) = 1 := Matrix.nonsing_inv_mul _ hdet
-  have hN' : (1 - B) * (1 - B)⁻¹ = 1 := Matrix.mul_nonsing_inv _ hdet
-  constructor
-  · intro hv
-    have h1 : (1 - B) *ᵥ v = w := by
-      rw [Matrix.sub_mulVec, Matrix.one_mulVec]
-      exact sub_eq_of_eq_add' hv
-    have h2 : (1 - B)⁻¹ *ᵥ (1 - B) *ᵥ v = v := by
-      rw [Matrix.mulVec_mulVec, hN, Matrix.one_mulVec]
-    rw [h1] at h2
-    exact h2.symm
-  · intro hv
-    have h3 : (1 - B) *ᵥ v = w := by
-      rw [hv, Matrix.mulVec_mulVec, hN', Matrix.one_mulVec]
-    have h4 : v - B *ᵥ v = w := by
-      rw [← h3, Matrix.sub_mulVec, Matrix.one_mulVec]
-    rw [← h4]
-    abel
-
-/-- Reduced form for structural equations with invertible `I - B`. -/
+/-- Reduced form for structural equations with invertible `I - B`: the
+structural equation is the linear system `(1 - B) *ᵥ y = Γ *ᵥ x + ζ`,
+solved by `Matrix.mulVec_eq_iff_inv_mulVec`. -/
 public theorem reducedForm_of_structural {p q : Type*} [Fintype p]
   [DecidableEq p] [Fintype q] {Ω : Type*} (B : Matrix p p ℝ)
   (Γ : Matrix p q ℝ) (y : Ω → p → ℝ) (x : Ω → q → ℝ)
@@ -65,9 +45,9 @@ public theorem reducedForm_of_structural {p q : Type*} [Fintype p]
   (hstruct : ∀ ω, y ω = B *ᵥ y ω + Γ *ᵥ x ω + ζ ω) :
   ∀ ω, y ω = (1 - B)⁻¹ *ᵥ (Γ *ᵥ x ω + ζ ω) := by
   intro ω
-  have hω := hstruct ω
-  rw [add_assoc] at hω
-  exact (eq_inv_mulVec_iff B (y ω) (Γ *ᵥ x ω + ζ ω) hdet).mp hω
+  refine (Matrix.mulVec_eq_iff_inv_mulVec hdet).mp ?_
+  rw [Matrix.sub_mulVec, Matrix.one_mulVec, sub_eq_iff_eq_add', ← add_assoc]
+  exact hstruct ω
 
 private theorem cov_univ_weighted {ι κ : Type*} [Fintype ι] [Fintype κ]
   {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
