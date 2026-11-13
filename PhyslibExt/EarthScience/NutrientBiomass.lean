@@ -8,7 +8,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import MathlibExt.Biology.Dynamics.MichaelisMenten
 
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Tactic.Ring
@@ -18,13 +17,13 @@ import Mathlib.Tactic.Ring
 
 For the closed nutrient-biomass model `N' = -u(N) * B + r * B` and
 `B' = u(N) * B - r * B`, the total `N + B` is constant (derivative
-`0`), with one nutrient-equivalent unit on both compartments. The
-Michaelis-Menten uptake `mmRate umax K N = umax * N / (K + N)` with
-`umax >= 0`, `K > 0`, `N >= 0` stays in `[0, umax]`, and at zero nutrient
-(with `u(0) = 0`) the derivatives of biomass and nutrient are `-r * B` and
-`r * B`. The stoichiometric conversion between mass and mole units is
-explicit in the model convention; no empirical stoichiometric claim is
-made here.
+`0`), with one nutrient-equivalent unit on both compartments. For
+Michaelis-Menten uptake `u = MichaelisMenten.mmRate umax K`, the bound
+`0 ≤ u(N) ≤ umax` (`umax >= 0`, `K > 0`, `N >= 0`) is
+`MichaelisMenten.mmRate_nonneg_and_le`. At zero nutrient (with `u(0) = 0`)
+the derivatives of biomass and nutrient are `-r * B` and `r * B`. The
+stoichiometric conversion between mass and mole units is explicit in the
+model convention; no empirical stoichiometric claim is made here.
 
 ## i. Overview
 
@@ -36,22 +35,22 @@ of biomass), `u(N)` the uptake rate per unit biomass, and `r` the biomass
 loss rate (respiration and mortality), whose losses return to the nutrient
 pool at once (complete recycling, no export). Adding the two balance
 equations cancels uptake and recycling exactly, so total nutrient is
-conserved. The uptake law is the canonical Michaelis-Menten rate
-`MichaelisMenten.mmRate`; its bounds follow from `0 < K + N` and, for
-`umax > 0`, from `mmRate_lt`. The zero-nutrient identities hold for all
-real `r` and `B t`; no sign is asserted (`-r * B t ≤ 0 ≤ r * B t` would
-need `0 ≤ r` and `0 ≤ B t`, which are not assumed).
+conserved. Michaelis-Menten uptake is the canonical rate
+`MichaelisMenten.mmRate`, whose bounds (`mmRate_lt`,
+`mmRate_nonneg_and_le`) live with it in `MathlibExt`. The zero-nutrient
+identities hold for all real `r` and `B t`; no sign is asserted
+(`-r * B t ≤ 0 ≤ r * B t` would need `0 ≤ r` and `0 ≤ B t`, which are not
+assumed).
 
 ## ii. Key results
 
 - `EarthScience.nutrient_biomass_conservation`: `N + B` has derivative `0`.
-- `EarthScience.michaelis_menten_bounds`: uptake `mmRate umax K N` stays in `[0, umax]`.
 - `EarthScience.nutrient_biomass_zero_nutrient`: the derivative identities at zero nutrient.
 
 ## iii. Table of contents
 
 - A. Nutrient-biomass conservation
-- B. Michaelis-Menten uptake and zero-nutrient boundary
+- B. Zero-nutrient boundary
 
 ## iv. References
 
@@ -60,15 +59,13 @@ need `0 ≤ r` and `0 ≤ B t`, which are not assumed).
   nutrient-phytoplankton-zooplankton models in nitrogen units, in which uptake moves
   nitrogen from the nutrient pool to phytoplankton and losses return it, so the balances
   sum to zero and total nitrogen is conserved.
-- `MathlibExt.Biology.Dynamics.MichaelisMenten` (`mmRate`, `mmRate_lt`) for the
-  Michaelis-Menten uptake law.
+- `MathlibExt.Biology.Dynamics.MichaelisMenten` (`mmRate`, `mmRate_lt`,
+  `mmRate_nonneg_and_le`) for the Michaelis-Menten uptake law and its bounds.
 -/
 
 @[expose] public section
 
 namespace EarthScience
-
-open MathlibExt.Biology.Dynamics.MichaelisMenten (mmRate mmRate_lt)
 
 /-- Closed nutrient-biomass model `N' = -u(N) * B + r * B`,
 `B' = u(N) * B - r * B` (the model of Franks (2002) without zooplankton): the total
@@ -82,17 +79,6 @@ theorem nutrient_biomass_conservation {N B : ℝ → ℝ} {u : ℝ → ℝ} {r :
     ring
   rw [hsum] at h
   exact h
-
-/-- Michaelis-Menten uptake `mmRate umax K N = umax * N / (K + N)` with
-`umax >= 0`, `K > 0`, `N >= 0` stays in `[0, umax]`; in particular
-`u(0) = 0`. For `umax > 0` the upper bound is `mmRate_lt`. -/
-lemma michaelis_menten_bounds {umax K N : ℝ} (humax : 0 ≤ umax) (hK : 0 < K)
-    (hN : 0 ≤ N) :
-    0 ≤ mmRate umax K N ∧ mmRate umax K N ≤ umax := by
-  refine ⟨div_nonneg (mul_nonneg humax hN) (add_pos_of_pos_of_nonneg hK hN).le, ?_⟩
-  rcases humax.eq_or_lt with h | h
-  · simp [mmRate, ← h]
-  · exact (mmRate_lt h hK hN).le
 
 /-- Boundary case: at zero nutrient, with `u(0) = 0`, the derivative of biomass is
 `-r * B t` (respiration only) and the derivative of nutrient is `r * B t`. These are
