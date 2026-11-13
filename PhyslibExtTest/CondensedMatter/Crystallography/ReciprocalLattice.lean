@@ -8,250 +8,228 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.CondensedMatter.Crystallography.ReciprocalLattice
-public import Mathlib.LinearAlgebra.Matrix.Notation
-public import Mathlib.Analysis.SpecialFunctions.Complex.Log
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
-public import Mathlib.Tactic.FinCases
 
 /-!
 # Tests for `PhyslibExt.CondensedMatter.Crystallography.ReciprocalLattice`
 
-* Simple cubic, `a = 1`: the cell volume is `1`, each reciprocal vector is `2π • eᵢ`,
-  duality holds via `recip_duality`, and the reciprocal cell volume is `(2π)³` via
-  `recip_volume`.
-* FCC/BCC numeric instance, `a = 2`: the three `fcc_bcc` equalities reduce to the
-  explicit vectors stated, the FCC primitive cell volume is `a³/4 = 2`, and the
-  reciprocal volume is `(2π)³/2`.
-* G_hkl instance: cubic `a = 1`, `(h, k, l) = (1, 1, 1)`: `G = 2π • ![1, 1, 1]`,
-  `‖G‖ = 2π√3`, spacing `1/√3` via `spacing_mul_norm`, and `G ⬝ᵥ R = 2π(n₁+n₂+n₃)`.
-* Fourier: the plane-wave coefficient is `1` for `G = G₀ = b₁` and `0` for
-  `G₀ = b₁`, `G = b₂` on the `2 × 2 × 2` grid.
-* Boundary: coplanar `a₁ a₂ (a₁ + a₂)` have `V = 0`; no reciprocal claim is made there.
+* Cross-product formula: the cyclic indices give `b₃ = (2π / V) • (a₁ ⨯₃ a₂)` for every Bravais
+  lattice, and for the simple cubic lattice of side `1` they give `b₁ = 2π e₁`.
+* Simple cubic: the reciprocal basis matrix of the simple cubic lattice of side `1` is `2π • 1`,
+  the duality relations hold, and the reciprocal cell has volume `(2π)³`. For side `a`, the
+  Wigner–Seitz cell has volume `a³` and the first Brillouin zone has volume `(2π / a)³`.
+* fcc and bcc: at `a = 2` the reciprocal basis matrix of the fcc lattice is
+  `π • !![-1, 1, 1; 1, -1, 1; 1, 1, -1]`, the fcc primitive cell has volume `a³ / 4 = 2` and the
+  reciprocal one `(2π)³ / 2`; composing `reciprocal_faceCenteredCubic` and
+  `reciprocal_bodyCenteredCubic` returns the fcc lattice of side `a`, as `reciprocal_reciprocal`
+  predicts.
+* `G₁₁₁` for side `1`: `G = 2π (1, 1, 1)`, `‖G‖ = 2π √3`, `2π / ‖G‖ = 1 / √3`, and
+  `G ⬝ R = 2π (n₁ + n₂ + n₃)` for the lattice vector `R` with cell index `n`.
+* Membership for side `1`: `2π e₁` is a reciprocal lattice vector and `π e₁` is not, since
+  `exp (i π) = -1`. The first Brillouin zone is not all of space: it does not contain `2π e₁`.
+* A shear relabeling of the cells changes the reciprocal primitive vectors but not the reciprocal
+  lattice.
+* Singular bases are excluded by type: no Bravais lattice has the coplanar primitive vectors
+  `e₁, e₂, e₁ + e₂`.
 -/
 
 @[expose] public section
 
 namespace PhyslibExtTest.CondensedMatter.Crystallography.ReciprocalLattice
 
-open _root_.Crystallography
-open scoped Matrix
+open _root_.Crystallography _root_.Crystallography.BravaisLattice MeasureTheory Real
+open scoped Matrix RealInnerProductSpace
 
-/-! ### Simple cubic, `a = 1` -/
+/-! ### The cross-product formula -/
 
-/-- The simple cubic cell volume is `1`. -/
-lemma cubic_volume : cellVolume ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] = 1 := by
-  simp [cellVolume, cross_apply]
+-- The indices are taken modulo `3`: `b₃ = (2π / V) • (a₁ ⨯₃ a₂)`.
+example (Λ : BravaisLattice) :
+    Λ.reciprocal.primitiveVector 2 = WithLp.toLp 2 ((2 * π / Λ.basisMatrix.det) •
+      (Λ.primitiveVector 0).ofLp ⨯₃ (Λ.primitiveVector 1).ofLp) :=
+  Λ.reciprocal_primitiveVector 2
 
-/-- The simple cubic cell volume is nonzero. -/
-lemma cubic_volume_ne : cellVolume ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] ≠ 0 := by
-  rw [cubic_volume]
-  norm_num
+/-- The simple cubic lattice of side `1`. -/
+noncomputable abbrev simpleCubicOne : BravaisLattice := simpleCubic 1 one_pos
 
-/-- Cubic reciprocal vector `b₁ = 2π • e₀`. -/
-lemma cubic_b1 : b₁ ![1, 0, 0] ![0, 1, 0] ![0, 0, 1]
-    = 2 * Real.pi • ![1, 0, 0] := by
-  simp only [b₁]
-  rw [cubic_volume]
+/-- The simple cubic lattice of side `1` has `det B = 1`. -/
+lemma det_simpleCubicOne : simpleCubicOne.basisMatrix.det = 1 := by
+  simp [simpleCubic]
+
+-- For side `1`: `b₁ = (2π / 1) • (e₂ ⨯₃ e₃) = 2π e₁`.
+example : (simpleCubicOne.reciprocal.primitiveVector 0).ofLp = ![2 * π, 0, 0] := by
+  rw [reciprocal_primitiveVector, det_simpleCubicOne]
   ext i
-  fin_cases i <;> simp [cross_apply] <;> ring
+  fin_cases i <;>
+    simp [simpleCubic, BravaisLattice.primitiveVector, cross_apply]
 
-/-- Cubic reciprocal vector `b₂ = 2π • e₁`. -/
-lemma cubic_b2 : b₂ ![1, 0, 0] ![0, 1, 0] ![0, 0, 1]
-    = 2 * Real.pi • ![0, 1, 0] := by
-  simp only [b₂]
-  rw [cubic_volume]
-  ext i
-  fin_cases i <;> simp [cross_apply] <;> ring
+/-! ### Simple cubic lattices -/
 
-/-- Cubic reciprocal vector `b₃ = 2π • e₂`. -/
-lemma cubic_b3 : b₃ ![1, 0, 0] ![0, 1, 0] ![0, 0, 1]
-    = 2 * Real.pi • ![0, 0, 1] := by
-  simp only [b₃]
-  rw [cubic_volume]
-  ext i
-  fin_cases i <;> simp [cross_apply] <;> ring
+-- The reciprocal of the simple cubic lattice of side `1` has basis matrix `2π • 1`.
+example : simpleCubicOne.reciprocal.basisMatrix = (2 * π) • 1 := by
+  rw [reciprocal_simpleCubic]
+  simp [simpleCubic]
 
-/-- Duality check via lemma 1, indexed form. -/
-example (i j : Fin 3) :
-    ![![1, 0, 0], ![0, 1, 0], ![0, 0, 1]] i ⬝ᵥ
-      ![b₁ ![1, 0, 0] ![0, 1, 0] ![0, 0, 1],
-        b₂ ![1, 0, 0] ![0, 1, 0] ![0, 0, 1],
-        b₃ ![1, 0, 0] ![0, 1, 0] ![0, 0, 1]] j
-      = 2 * Real.pi * (if i = j then (1 : ℝ) else 0) :=
-  recip_duality _ _ _ cubic_volume_ne i j
+-- Duality, diagonal case: `a₁ ⬝ b₁ = 2π`.
+example :
+    ⟪simpleCubicOne.primitiveVector 0, simpleCubicOne.reciprocal.primitiveVector 0⟫ = 2 * π := by
+  simpa using inner_primitiveVector_reciprocal simpleCubicOne 0 0
 
-/-- Duality check via lemma 1, diagonal case. -/
-example : ![1, 0, 0] ⬝ᵥ b₁ ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] = 2 * Real.pi := by
-  have h := recip_duality _ _ _ cubic_volume_ne 0 0
-  simpa using h
+-- Duality, off-diagonal case: `a₁ ⬝ b₂ = 0`.
+example : ⟪simpleCubicOne.primitiveVector 0, simpleCubicOne.reciprocal.primitiveVector 1⟫ = 0 := by
+  simpa using inner_primitiveVector_reciprocal simpleCubicOne 0 1
 
-/-- Duality check via lemma 1, off-diagonal case. -/
-example : ![1, 0, 0] ⬝ᵥ b₂ ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] = 0 := by
-  have h := recip_duality _ _ _ cubic_volume_ne 0 1
-  simpa using h
+-- The reciprocal primitive cell for side `1` has volume `(2π)³`.
+example : volume (parallelepiped simpleCubicOne.reciprocal.primitiveVector) =
+    ENNReal.ofReal ((2 * π) ^ 3) := by
+  rw [volume_parallelepiped_reciprocal, det_simpleCubicOne, abs_one, div_one]
 
-/-- Cubic reciprocal cell volume `(2π)³` via lemma 2. -/
-example : cellVolume (b₁ ![1, 0, 0] ![0, 1, 0] ![0, 0, 1])
-    (b₂ ![1, 0, 0] ![0, 1, 0] ![0, 0, 1])
-    (b₃ ![1, 0, 0] ![0, 1, 0] ![0, 0, 1]) = (2 * Real.pi)^3 := by
-  rw [recip_volume _ _ _ cubic_volume_ne, cubic_volume, div_one]
+/-- The simple cubic lattice of side `a` has `|det B| = a³`. -/
+lemma abs_det_simpleCubic (a : ℝ) (ha : 0 < a) : |(simpleCubic a ha).basisMatrix.det| = a ^ 3 := by
+  simp [simpleCubic, abs_of_pos ha]
 
-/-! ### FCC/BCC numeric instance, `a = 2` -/
+-- The Wigner–Seitz cell of the simple cubic lattice of side `a` has volume `a³`.
+example (a : ℝ) (ha : 0 < a) :
+    volume (simpleCubic a ha).wignerSeitzCell = ENNReal.ofReal (a ^ 3) := by
+  rw [volume_wignerSeitzCell, abs_det_simpleCubic]
 
-/-- First `fcc_bcc` equality at `a = 2` reduces to `π • ![-1, 1, 1]`. -/
-example : b₁ (((2 : ℝ) / 2) • ![0, 1, 1]) (((2 : ℝ) / 2) • ![1, 0, 1])
-    (((2 : ℝ) / 2) • ![1, 1, 0]) = Real.pi • ![-1, 1, 1] := by
-  have h := (fcc_bcc (2 : ℝ) (by norm_num)).1
-  rw [h]
+-- The first Brillouin zone of the simple cubic lattice of side `a` has volume `(2π / a)³`.
+example (a : ℝ) (ha : 0 < a) :
+    volume (simpleCubic a ha).firstBrillouinZone = ENNReal.ofReal ((2 * π / a) ^ 3) := by
+  rw [volume_firstBrillouinZone, abs_det_simpleCubic, div_pow]
+
+/-! ### Face-centered and body-centered cubic lattices -/
+
+-- At `a = 2` the reciprocal primitive vectors of the fcc lattice are `π (-1, 1, 1)`,
+-- `π (1, -1, 1)` and `π (1, 1, -1)`.
+example : (faceCenteredCubic 2 two_pos).reciprocal.basisMatrix =
+    π • !![-1, 1, 1; 1, -1, 1; 1, 1, -1] := by
+  rw [reciprocal_faceCenteredCubic]
+  simp only [bodyCenteredCubic]
   congr 1
   ring
 
-/-- Second `fcc_bcc` equality at `a = 2` reduces to `π • ![1, -1, 1]`. -/
-example : b₂ (((2 : ℝ) / 2) • ![0, 1, 1]) (((2 : ℝ) / 2) • ![1, 0, 1])
-    (((2 : ℝ) / 2) • ![1, 1, 0]) = Real.pi • ![1, -1, 1] := by
-  have h := (fcc_bcc (2 : ℝ) (by norm_num)).2.1
-  rw [h]
-  congr 1
-  ring
-
-/-- Third `fcc_bcc` equality at `a = 2` reduces to `π • ![1, 1, -1]`. -/
-example : b₃ (((2 : ℝ) / 2) • ![0, 1, 1]) (((2 : ℝ) / 2) • ![1, 0, 1])
-    (((2 : ℝ) / 2) • ![1, 1, 0]) = Real.pi • ![1, 1, -1] := by
-  have h := (fcc_bcc (2 : ℝ) (by norm_num)).2.2
-  rw [h]
-  congr 1
-  ring
-
-/-- The FCC primitive cell volume at `a = 2` is `a³/4 = 2`. -/
-lemma fcc_volume : cellVolume (((2 : ℝ) / 2) • ![0, 1, 1])
-    (((2 : ℝ) / 2) • ![1, 0, 1]) (((2 : ℝ) / 2) • ![1, 1, 0]) = 2 := by
-  simp [cellVolume, cross_apply]
+/-- The fcc primitive cell at `a = 2` has oriented volume `a³ / 4 = 2`. -/
+lemma det_faceCenteredCubic_two : (faceCenteredCubic 2 two_pos).basisMatrix.det = 2 := by
+  simp [faceCenteredCubic, Matrix.det_fin_three]
   norm_num
 
-/-- The FCC primitive cell volume at `a = 2` is nonzero. -/
-lemma fcc_volume_ne : cellVolume (((2 : ℝ) / 2) • ![0, 1, 1])
-    (((2 : ℝ) / 2) • ![1, 0, 1]) (((2 : ℝ) / 2) • ![1, 1, 0]) ≠ 0 := by
-  rw [fcc_volume]
-  norm_num
+-- The reciprocal of the fcc lattice at `a = 2` has oriented cell volume `(2π)³ / 2`.
+example : (faceCenteredCubic 2 two_pos).reciprocal.basisMatrix.det = (2 * π) ^ 3 / 2 := by
+  rw [det_reciprocal_basisMatrix, det_faceCenteredCubic_two]
 
-/-- The reciprocal volume at `a = 2` is `(2π)³/2` via lemma 2. -/
-example : cellVolume
-    (b₁ (((2 : ℝ) / 2) • ![0, 1, 1]) (((2 : ℝ) / 2) • ![1, 0, 1])
-      (((2 : ℝ) / 2) • ![1, 1, 0]))
-    (b₂ (((2 : ℝ) / 2) • ![0, 1, 1]) (((2 : ℝ) / 2) • ![1, 0, 1])
-      (((2 : ℝ) / 2) • ![1, 1, 0]))
-    (b₃ (((2 : ℝ) / 2) • ![0, 1, 1]) (((2 : ℝ) / 2) • ![1, 0, 1])
-      (((2 : ℝ) / 2) • ![1, 1, 0])) = (2 * Real.pi)^3 / 2 := by
-  rw [recip_volume _ _ _ fcc_volume_ne, fcc_volume]
-
-/-! ### G_hkl instance: cubic `a = 1`, `(h, k, l) = (1, 1, 1)` -/
-
-/-- `G_111 = 2π • ![1, 1, 1]` in the cubic cell. -/
-lemma cubic_G111 : recipVec ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] 1 1 1
-    = (2 * Real.pi) • ![1, 1, 1] := by
-  simp only [recipVec, cubic_b1, cubic_b2, cubic_b3]
-  ext i
-  fin_cases i <;> simp <;> ring
-
-/-- `‖G_111‖ = 2π√3`. -/
-lemma cubic_G111_norm : euclidNorm ((2 * Real.pi) • ![1, 1, 1])
-    = 2 * Real.pi * Real.sqrt 3 := by
-  have hv : ![1, 1, 1] ⬝ᵥ ![1, 1, 1] = (3 : ℝ) := by
-    simp [Matrix.vec3_dotProduct]
-    norm_num
-  have hdot : ((2 * Real.pi) • ![1, 1, 1]) ⬝ᵥ ((2 * Real.pi) • ![1, 1, 1])
-      = (2 * Real.pi * Real.sqrt 3)^2 := by
-    simp only [smul_dotProduct, dotProduct_smul, smul_eq_mul, hv, mul_pow,
-      Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
-    ring
-  simp only [euclidNorm, hdot, Real.sqrt_sq_eq_abs]
-  exact abs_of_nonneg
-    (mul_nonneg (mul_nonneg (by norm_num) Real.pi_pos.le) (Real.sqrt_nonneg 3))
-
-/-- Interplanar spacing `d_111 = 1/√3` via lemma 5. -/
-example : interplanarSpacing ((2 * Real.pi) • ![1, 1, 1])
-    = 1 / Real.sqrt 3 := by
-  have hpi2 : (2 : ℝ) * Real.pi ≠ 0 :=
-    mul_ne_zero (by norm_num) (ne_of_gt Real.pi_pos)
-  have hsq3 : Real.sqrt 3 ≠ 0 := ne_of_gt (Real.sqrt_pos.mpr (by norm_num))
-  have hprod : (2 : ℝ) * Real.pi * Real.sqrt 3 ≠ 0 := mul_ne_zero hpi2 hsq3
-  simp only [interplanarSpacing, cubic_G111_norm]
+-- Composing the fcc and bcc results returns the fcc lattice, as `reciprocal_reciprocal` predicts.
+example (a : ℝ) (ha : 0 < a) :
+    ((faceCenteredCubic a ha).reciprocal).reciprocal = faceCenteredCubic a ha := by
+  rw [reciprocal_faceCenteredCubic, reciprocal_bodyCenteredCubic]
+  apply basisMatrix_injective
+  simp only [faceCenteredCubic]
+  congr 2
   field_simp
 
-/-- `G_111 ⬝ᵥ R = 2π(n₁ + n₂ + n₃)` via lemma 4. -/
-example (n₁ n₂ n₃ : ℤ) :
-    recipVec ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] 1 1 1 ⬝ᵥ
-        latticeVec ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] n₁ n₂ n₃
-      = 2 * Real.pi * (((n₁ + n₂ + n₃ : ℤ)) : ℝ) := by
-  have h := recipVec_dot_lattice ![1, 0, 0] ![0, 1, 0] ![0, 0, 1]
-    cubic_volume_ne 1 1 1 n₁ n₂ n₃
-  simp only [one_mul] at h
-  exact h
+/-! ### The reciprocal lattice vector `G₁₁₁` for side `1` -/
 
-/-! ### Fourier plane-wave checks on the `2 × 2 × 2` grid -/
+/-- `G₁₁₁ = 2π (1, 1, 1)` for the simple cubic lattice of side `1`. -/
+lemma latticeVector_reciprocal_simpleCubicOne_111 :
+    simpleCubicOne.reciprocal.latticeVector ![1, 1, 1] = WithLp.toLp 2 ![2 * π, 2 * π, 2 * π] := by
+  rw [reciprocal_simpleCubic, latticeVector_apply]
+  congr 1
+  ext i
+  fin_cases i <;> simp [simpleCubic, Matrix.mulVec, dotProduct, Fin.sum_univ_three]
 
-/-- Plane-wave coefficient: `G = G₀ = b₁` gives `1`. -/
-example : fourierCoeffDiscrete ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] 2
-    (planeWave (recipVec ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] 1 0 0))
-    (recipVec ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] 1 0 0) = 1 := by
-  have hprod := fourierCoeffDiscrete_planeWave ![1, 0, 0] ![0, 1, 0] ![0, 0, 1]
-    cubic_volume_ne 2 (by decide) 1 0 0 1 0 0
-  rw [hprod]
-  have a1 : (2 * ↑Real.pi * Complex.I * (↑((1 : ℤ) - (1 : ℤ)) : ℂ) / ↑(2 : ℕ))
-      = (0 : ℂ) := by
-    simp only [Int.cast_sub, Int.cast_one]
-    ring
-  have c1 : Complex.exp (2 * ↑Real.pi * Complex.I * ↑((1 : ℤ) - (1 : ℤ)) / ↑(2 : ℕ))
-      = 1 := by
-    rw [a1]
-    exact Complex.exp_zero
-  have a2 : (2 * ↑Real.pi * Complex.I * (↑((0 : ℤ) - (0 : ℤ)) : ℂ) / ↑(2 : ℕ))
-      = (0 : ℂ) := by
-    simp only [Int.cast_sub, Int.cast_zero]
-    ring
-  have c2 : Complex.exp (2 * ↑Real.pi * Complex.I * ↑((0 : ℤ) - (0 : ℤ)) / ↑(2 : ℕ))
-      = 1 := by
-    rw [a2]
-    exact Complex.exp_zero
-  exact if_pos ⟨c1, c2, c2⟩
+/-- `‖G₁₁₁‖ = 2π √3`. -/
+lemma norm_G111 : ‖(WithLp.toLp 2 ![2 * π, 2 * π, 2 * π] : EuclideanSpace ℝ (Fin 3))‖ =
+    2 * π * √3 := by
+  rw [EuclideanSpace.norm_eq]
+  simp only [Fin.sum_univ_three, Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
+    Matrix.head_cons, Matrix.tail_cons, Real.norm_eq_abs, sq_abs]
+  rw [show (2 * π) ^ 2 + (2 * π) ^ 2 + (2 * π) ^ 2 = (2 * π) ^ 2 * 3 by ring,
+    Real.sqrt_mul (sq_nonneg _), Real.sqrt_sq (by positivity)]
 
-/-- Plane-wave coefficient: `G₀ = b₁`, `G = b₂` gives `0`. -/
-example : fourierCoeffDiscrete ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] 2
-    (planeWave (recipVec ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] 1 0 0))
-    (recipVec ![1, 0, 0] ![0, 1, 0] ![0, 0, 1] 0 1 0) = 0 := by
-  have hprod := fourierCoeffDiscrete_planeWave ![1, 0, 0] ![0, 1, 0] ![0, 0, 1]
-    cubic_volume_ne 2 (by decide) 0 1 0 1 0 0
-  rw [hprod]
-  have earg : (2 * ↑Real.pi * Complex.I * (↑((1 : ℤ) - (0 : ℤ)) : ℂ) / ↑(2 : ℕ))
-      = 2 * ↑Real.pi * Complex.I * (↑(1 : ℕ) : ℂ) / ↑(2 : ℕ) := by
-    simp only [Int.cast_sub, Int.cast_one, Int.cast_zero, Nat.cast_one]
-    ring
-  have hne1 : Complex.exp
-      (2 * ↑Real.pi * Complex.I * ↑((1 : ℤ) - (0 : ℤ)) / ↑(2 : ℕ)) ≠ 1 := by
-    rw [earg]
-    intro hcon1
-    rw [Complex.exp_two_pi_mul_I_mul_div_eq_one_iff (show (2 : ℕ) ≠ 0 by decide)]
-      at hcon1
-    exact absurd hcon1 (by decide)
-  have hneg : ¬ (Complex.exp (2 * ↑Real.pi * Complex.I * ↑((1 : ℤ) - (0 : ℤ))
-      / ↑(2 : ℕ)) = 1
-    ∧ Complex.exp (2 * ↑Real.pi * Complex.I * ↑((0 : ℤ) - (1 : ℤ)) / ↑(2 : ℕ)) = 1
-    ∧ Complex.exp (2 * ↑Real.pi * Complex.I * ↑((0 : ℤ) - (0 : ℤ)) / ↑(2 : ℕ))
-      = 1) :=
-    fun hcon => hne1 hcon.1
-  exact if_neg hneg
+-- `2π / ‖G₁₁₁‖ = 1 / √3`, the `(111)` spacing `a / √3` for side `a = 1`.
+example : 2 * π / ‖(WithLp.toLp 2 ![2 * π, 2 * π, 2 * π] : EuclideanSpace ℝ (Fin 3))‖ =
+    1 / √3 := by
+  rw [norm_G111]
+  field_simp
 
-/-! ### Boundary: coplanar vectors have `V = 0` -/
+-- `G₁₁₁ ⬝ R = 2π (n₁ + n₂ + n₃)` for the lattice vector `R` with cell index `n`.
+example (n : Fin 3 → ℤ) :
+    ⟪simpleCubicOne.reciprocal.latticeVector ![1, 1, 1], simpleCubicOne.latticeVector n⟫ =
+      2 * π * ((n 0 + n 1 + n 2 : ℤ) : ℝ) := by
+  rw [inner_reciprocal_latticeVector]
+  simp [dotProduct, Fin.sum_univ_three]
 
-/-- Coplanar `a₁ a₂ (a₁ + a₂)` have `V = 0`; the reciprocal construction needs
-`V ≠ 0`, so no reciprocal claim is made here. -/
-example (a₁ a₂ : Fin 3 → ℝ) : cellVolume a₁ a₂ (a₁ + a₂) = 0 := by
-  show a₁ ⬝ᵥ (a₂ ⨯₃ (a₁ + a₂)) = 0
-  rw [cross_apply, Matrix.vec3_dotProduct]
-  dsimp only [Matrix.cons_val]
-  simp only [Pi.add_apply]
-  ring
+/-! ### Membership in the reciprocal lattice and the first Brillouin zone -/
+
+/-- `2π e₁` is a reciprocal lattice vector of the simple cubic lattice of side `1`. -/
+lemma mem_simpleCubicOne_reciprocal : (WithLp.toLp 2 ![2 * π, 0, 0] : EuclideanSpace ℝ (Fin 3)) ∈
+    simpleCubicOne.reciprocal.lattice := by
+  rw [mem_lattice_iff]
+  refine ⟨![1, 0, 0], ?_⟩
+  rw [reciprocal_simpleCubic, latticeVector_apply]
+  congr 1
+  ext i
+  fin_cases i <;> simp [simpleCubic, Matrix.mulVec, dotProduct, Fin.sum_univ_three]
+
+-- `π e₁` is not a reciprocal lattice vector for side `1`: `exp (i π e₁ ⬝ e₁) = -1 ≠ 1`.
+example : (WithLp.toLp 2 ![π, 0, 0] : EuclideanSpace ℝ (Fin 3)) ∉
+    simpleCubicOne.reciprocal.lattice := by
+  rw [mem_lattice_reciprocal_iff_exp]
+  intro h
+  have h1 := h _ (simpleCubicOne.primitiveVector_mem_lattice 0)
+  have hinner : ⟪(WithLp.toLp 2 ![π, 0, 0] : EuclideanSpace ℝ (Fin 3)),
+      simpleCubicOne.primitiveVector 0⟫ = π := by
+    simp [simpleCubic, BravaisLattice.primitiveVector, EuclideanSpace.inner_eq_star_dotProduct,
+      dotProduct, Fin.sum_univ_three]
+  rw [hinner, Complex.exp_pi_mul_I] at h1
+  norm_num at h1
+
+-- The first Brillouin zone for side `1` is not all of space: it does not contain `2π e₁`.
+example : (WithLp.toLp 2 ![2 * π, 0, 0] : EuclideanSpace ℝ (Fin 3)) ∉
+    simpleCubicOne.firstBrillouinZone := by
+  intro h
+  have h1 := h _ mem_simpleCubicOne_reciprocal
+  rw [sub_self, norm_zero, norm_le_zero_iff] at h1
+  have h2 := congrArg (fun x : EuclideanSpace ℝ (Fin 3) => x 0) h1
+  simp [pi_pos.ne'] at h2
+
+/-! ### A change of primitive vectors -/
+
+/-- A shear of the cells: the second primitive vector becomes `e₁ + e₂`. -/
+def shearCells : Matrix (Fin 3) (Fin 3) ℤ := !![1, 1, 0; 0, 1, 0; 0, 0, 1]
+
+/-- The shear is unimodular. -/
+lemma isUnit_det_shearCells : IsUnit shearCells.det := by
+  simp [shearCells, Matrix.det_fin_three]
+
+/-- After the shear, the reciprocal primitive vectors are `2π (e₁ - e₂)`, `2π e₂` and `2π e₃`. -/
+lemma reciprocal_relabel_shearCells :
+    (simpleCubicOne.relabel shearCells isUnit_det_shearCells).reciprocal.basisMatrix =
+      (2 * π) • !![1, 0, 0; -1, 1, 0; 0, 0, 1] := by
+  rw [reciprocal_basisMatrix_eq_iff, relabel_basisMatrix]
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [simpleCubic, shearCells, Matrix.mul_apply, Fin.sum_univ_three]
+
+-- The shear changes the reciprocal primitive vectors ...
+example : (simpleCubicOne.relabel shearCells isUnit_det_shearCells).reciprocal.basisMatrix ≠
+    simpleCubicOne.reciprocal.basisMatrix := by
+  rw [reciprocal_relabel_shearCells, reciprocal_simpleCubic]
+  intro h
+  have h10 := congrFun (congrFun h 1) 0
+  simp [simpleCubic, pi_pos.ne'] at h10
+
+-- ... but not the reciprocal lattice.
+example : (simpleCubicOne.relabel shearCells isUnit_det_shearCells).reciprocal.lattice =
+    simpleCubicOne.reciprocal.lattice :=
+  lattice_reciprocal_relabel _ _ _
+
+/-! ### Singular bases are excluded -/
+
+-- No Bravais lattice has the coplanar primitive vectors `e₁, e₂, e₁ + e₂`: their basis matrix
+-- has determinant `0`, so the reciprocal construction never meets a singular basis.
+example : ¬ ∃ Λ : BravaisLattice, Λ.basisMatrix = !![1, 0, 1; 0, 1, 1; 0, 0, 0] := by
+  rintro ⟨Λ, hΛ⟩
+  have h := Λ.det_ne_zero
+  rw [hΛ, Matrix.det_fin_three] at h
+  simp at h
 
 end PhyslibExtTest.CondensedMatter.Crystallography.ReciprocalLattice
