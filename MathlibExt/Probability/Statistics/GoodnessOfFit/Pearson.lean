@@ -178,7 +178,11 @@ section Probability
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω} [IsProbabilityMeasure P]
   [MeasurableSpace ι] [DiscreteMeasurableSpace ι]
 
-private theorem integral_comp_eq_sum {Y : Ω → ι} (hY : AEMeasurable Y P) {p : ι → ℝ}
+/-- **Expectation of a function of a finite-valued random variable.** If `Y` takes values in a
+finite discrete space `ι` with cell probabilities `P(Y = i) = pᵢ`, then
+`𝔼[g(Y)] = ∑ⱼ pⱼ g(j)` for every real function `g` on `ι`. -/
+theorem integral_comp_eq_sum_of_measureReal_preimage {Y : Ω → ι} (hY : AEMeasurable Y P)
+    {p : ι → ℝ}
     (hp : ∀ i, P.real (Y ⁻¹' {i}) = p i) (g : ι → ℝ) :
     ∫ ω, g (Y ω) ∂P = ∑ j, p j * g j := by
   rw [← integral_map hY Measurable.of_discrete.aestronglyMeasurable,
@@ -189,10 +193,12 @@ private theorem integral_comp_eq_sum {Y : Ω → ι} (hY : AEMeasurable Y P) {p 
 
 private theorem sum_eq_one {Y : Ω → ι} (hY : AEMeasurable Y P) {p : ι → ℝ}
     (hp : ∀ i, P.real (Y ⁻¹' {i}) = p i) : ∑ j, p j = 1 := by
-  simpa using (integral_comp_eq_sum hY hp fun _ => 1).symm
+  simpa using (integral_comp_eq_sum_of_measureReal_preimage hY hp fun _ => 1).symm
 
 omit [Fintype ι] in
-private theorem memLp_comp [Finite ι] {F : Type*} [NormedAddCommGroup F] [MeasurableSpace F]
+/-- Any function of a random variable with values in a finite discrete space is square
+integrable (every such function is bounded). -/
+theorem memLp_comp_of_discrete [Finite ι] {F : Type*} [NormedAddCommGroup F] [MeasurableSpace F]
     [BorelSpace F] [SecondCountableTopology F] {Y : Ω → ι} (hY : AEMeasurable Y P) (f : ι → F) :
     MemLp (fun ω => f (Y ω)) 2 P :=
   (memLp_map_measure_iff Measurable.of_discrete.aestronglyMeasurable hY).1 MemLp.of_discrete
@@ -212,9 +218,11 @@ private theorem sum_mul_sub_inner_eq_zero {Y : Ω → ι} (hY : AEMeasurable Y P
 private theorem integral_increment [DecidableEq ι] {Y : Ω → ι} (hY : AEMeasurable Y P) {p : ι → ℝ}
     (hp : ∀ i, P.real (Y ⁻¹' {i}) = p i) : ∫ ω, increment p (Y ω) ∂P = 0 := by
   refine ext_inner_left ℝ fun t => ?_
-  rw [inner_zero_right, ← integral_inner ((memLp_comp hY _).integrable one_le_two) t]
+  rw [inner_zero_right,
+    ← integral_inner ((memLp_comp_of_discrete hY _).integrable one_le_two) t]
   simp_rw [← real_inner_comm t, inner_increment]
-  rw [integral_comp_eq_sum hY hp fun j => t j / √(p j) - ⟪sqrtVec p, t⟫]
+  rw [integral_comp_eq_sum_of_measureReal_preimage hY hp
+    fun j => t j / √(p j) - ⟪sqrtVec p, t⟫]
   exact sum_mul_sub_inner_eq_zero hY hp t
 
 private theorem variance_inner_increment [DecidableEq ι] {Y : Ω → ι} (hY : AEMeasurable Y P)
@@ -225,9 +233,10 @@ private theorem variance_inner_increment [DecidableEq ι] {Y : Ω → ι} (hY : 
   have h1 := sum_mul_sub_inner_eq_zero hY hp t
   simp_rw [inner_increment]
   set c := ⟪sqrtVec p, t⟫
-  rw [variance_of_integral_eq_zero (memLp_comp hY fun j => t j / √(p j) - c).aemeasurable
-    ((integral_comp_eq_sum hY hp fun j => t j / √(p j) - c).trans h1)]
-  rw [integral_comp_eq_sum hY hp fun j => (t j / √(p j) - c) ^ 2]
+  rw [variance_of_integral_eq_zero
+    (memLp_comp_of_discrete hY fun j => t j / √(p j) - c).aemeasurable
+    ((integral_comp_eq_sum_of_measureReal_preimage hY hp fun j => t j / √(p j) - c).trans h1)]
+  rw [integral_comp_eq_sum_of_measureReal_preimage hY hp fun j => (t j / √(p j) - c) ^ 2]
   have h2 : ∀ j, p j * (t j / √(p j) - c) ^ 2 =
       t j ^ 2 - 2 * c * (√(p j) * t j) + c ^ 2 * p j := by
     intro j
@@ -322,7 +331,7 @@ theorem tendstoInDistribution_pearsonResidual [DecidableEq ι] {X : ℕ → Ω �
       ← norm_sq_starProjection_orthogonal_unit hu t]
     exact hasLaw_inner_starProjection _ t
   have hclt := tendstoInDistribution_inv_sqrt_smul_sum_sub
-    (X := fun k ω => increment p (X k ω)) (by fun_prop) hlaw (memLp_comp hY _)
+    (X := fun k ω => increment p (X k ω)) (by fun_prop) hlaw (memLp_comp_of_discrete hY _)
     (hindep.comp (fun _ => increment p) fun _ => Measurable.of_discrete)
     (fun k => (hident k).comp (u := increment p) Measurable.of_discrete)
   rw [integral_increment hY hX0] at hclt

@@ -8,6 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import CSLibExt.MachineLearning.GraphicalModels.BayesianNetwork
+public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.Order.BigOperators.GroupWithZero.Finset
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.Finset.Defs
 
@@ -27,6 +30,10 @@ recursive case; the linear-Gaussian case is Evans, *Graphical Models*, §8.6, eq
   of the statements that use a law.
 * `FiniteSCM.IsSolution M u x`: `x` satisfies every structural equation at the noise value `u`.
 * `FiniteSCM.solve M u`: the solution map, computed by recursion along the order.
+* `FiniteSCM.inducedLaw M μ`: the observational law under independent noises with laws `μ k`,
+  the push-forward of the product noise law under `solve`.
+* `FiniteSCM.inducedBayesNet M μ`: the Bayesian network with the model's parents whose table at
+  node `k` is the push-forward of `μ k` under the structural function `f_k (z, ·)`.
 
 ## Main results
 
@@ -36,6 +43,15 @@ recursive case; the linear-Gaussian case is Evans, *Graphical Models*, §8.6, eq
 * `FiniteSCM.solve_congr_of_ancestral`: on a parent-closed (ancestral) set of nodes the solution
   depends only on the noise on that set; in particular a node's value depends only on its own and
   its ancestors' noise.
+* `FiniteSCM.inducedLaw_eq_joint`: **a Markovian SCM induces its Bayesian network**: under
+  independent noises the law of the solution is the joint of `inducedBayesNet` (Pearl 2009,
+  Theorem 1.4.1), so it factorizes along the graph (`BayesNet.joint_eq_prod`). Dependent noises
+  are not covered: they need explicit latent nodes.
+* `BayesNet.responseSCM_inducedLaw`: **every finite Bayesian network has a Markovian SCM
+  realization**: the response-function SCM (`BayesNet.responseSCM`, noise of node `k` a function
+  from parent values to values) with independent response noises (`BayesNet.responseLaw`, rows of
+  the tables drawn independently) has the network's joint as its law. The coupling of responses
+  at different parent values is one choice among many; it is not identified by the network.
 
 Cyclic systems (where a solution may fail to exist or be unique) are not expressible: parents
 always precede their child.
@@ -45,7 +61,7 @@ always precede their child.
 * J. Pearl, M. Glymour and N. P. Jewell, *Causal Inference in Statistics: A Primer*, Wiley
   (2016), §1.5.
 * J. Pearl, *Causality: Models, Reasoning, and Inference*, 2nd ed., Cambridge University Press
-  (2009), §7.1.
+  (2009), §1.4, §7.1.
 * R. Evans, *Graphical Models*, lecture notes, University of Oxford, §8.6.
 -/
 
@@ -250,6 +266,236 @@ theorem solve_congr_of_ancestral {α : Type*} {n : ℕ} {U : Fin n → Type*}
     exact hk
   exact M.solvePrefix_ancestral hS hu n le_rfl k hmem
 
+/-! ### Markovian models and their Bayesian networks -/
+
+section Markovian
+
+open Finset Convexity
+
+/-- The probability of the noise value `u` when the noises of the nodes are independent with
+laws `μ k` (the Markovian case): `∏ k, μ_k (u_k)`. -/
+noncomputable def noiseWeight {n : ℕ} {U : Fin n → Type*} (μ : (k : Fin n) → StdSimplex ℝ (U k))
+    (u : (k : Fin n) → U k) : ℝ :=
+  ∏ k, (μ k).weights (u k)
+
+open Classical in
+/-- The observational law induced by the model under independent noises with laws `μ k`: the
+probability that the solution is `x`, that is, the push-forward of the product noise law under
+the solution map. The sum runs over the product of the supports of the noise laws, so the
+noise types need not be finite: a finitely supported law on an infinite type, such as
+`U k = ℕ`, is covered. Equality is decided classically, so no `DecidableEq α` is required. -/
+noncomputable def inducedLaw {α : Type*} {n : ℕ} {U : Fin n → Type*}
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+    (x : Fin n → α) : ℝ :=
+  ∑ u ∈ Fintype.piFinset (fun k => (μ k).weights.support),
+    if M.solve u = x then noiseWeight μ u else 0
+
+/-- The Bayesian network of the model under independent noises with laws `μ k`: it has the
+model's parents, and the table of node `k` at parent values `z` is the law of
+`f_k (z, u_k)` for `u_k ∼ μ_k`, the push-forward of `μ_k` under `f_k (z, ·)`. -/
+noncomputable def inducedBayesNet {α : Type*} {n : ℕ} {U : Fin n → Type*}
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k)) : BayesNet α n where
+  pa := M.pa
+  cpt k z := (μ k).map (M.f k z)
+
+open Classical in
+/-- The push-forward weights of a noise law under a structural function are the sums of the
+noise weights over the fibers. The sum runs over the support of the noise law, so no
+finiteness of the noise type is needed. -/
+private theorem map_weights_eq_sum {α : Type*} {n : ℕ} {U : Fin n → Type*}
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+    (x : Fin n → α) (k : Fin n) :
+    ((μ k).map (M.f k (M.paVal k x))).weights (x k)
+      = ∑ v ∈ (μ k).weights.support,
+        (if M.f k (M.paVal k x) v = x k then (μ k).weights v else 0) := by
+  classical
+  rw [StdSimplex.weights_map]
+  simp only [Finsupp.mapDomain_apply, Finsupp.sum, Finsupp.single_apply]
+
+/-- **A Markovian SCM induces its Bayesian network**: under independent noises, the law of the
+unique solution is the joint distribution of the Bayesian network whose tables are the
+push-forwards of the noise laws under the structural functions. -/
+theorem inducedLaw_eq_joint {α : Type*} {n : ℕ} {U : Fin n → Type*} [Nonempty α]
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+    (x : Fin n → α) : M.inducedLaw μ x = (M.inducedBayesNet μ).joint x := by
+  classical
+  rw [(M.inducedBayesNet μ).joint_eq_prod x]
+  have hfactor : ∀ k : Fin n,
+      ((M.inducedBayesNet μ).cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)
+        = ∑ v ∈ (μ k).weights.support,
+          (if M.f k (M.paVal k x) v = x k then (μ k).weights v else 0) :=
+    fun k => map_weights_eq_sum M μ x k
+  simp only [hfactor]
+  rw [Finset.prod_univ_sum]
+  unfold inducedLaw
+  refine Finset.sum_congr rfl fun u _ => ?_
+  unfold noiseWeight
+  by_cases h : M.solve u = x
+  · rw [ite_eq_left h]
+    have hsol : M.IsSolution u x := by
+      rw [← h]
+      exact M.solve_isSolution u
+    have hall : ∀ k, M.f k (M.paVal k x) (u k) = x k := fun k => (hsol k).symm
+    exact Finset.prod_congr rfl fun k _ => (ite_eq_left (hall k)).symm
+  · rw [ite_eq_right h]
+    have hnex : ∃ k, x k ≠ M.f k (M.paVal k x) (u k) := by
+      by_contra hall
+      push Not at hall
+      exact h (IsSolution.eq_solve hall).symm
+    obtain ⟨k0, hk0⟩ := hnex
+    exact (Finset.prod_eq_zero (Finset.mem_univ k0)
+      (ite_eq_right (fun hc => hk0 hc.symm))).symm
+
+end Markovian
+
 end FiniteSCM
+
+/-! ### Markovian SCM realization of a Bayesian network -/
+
+namespace BayesNet
+
+open Finset Convexity
+
+/-- The response-function SCM of a Bayesian network: the noise of node `k` is a response
+function `r : (pa k → α) → α`, choosing a value of node `k` for every value of its parents, and
+the structural equation is `x_k = r (x_{pa k})`. -/
+def responseSCM {α : Type*} {n : ℕ} (b : BayesNet α n) :
+    FiniteSCM α n (fun k => (b.pa k → α) → α) where
+  pa := b.pa
+  f _ z r := r z
+
+/-- The weight of a response function of node `k`: the response values at different parent
+values are drawn independently from the tables, `∏_z p_k (r z | z)`. -/
+noncomputable def responseWeight {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ}
+    (b : BayesNet α n) (k : Fin n) (r : (b.pa k → α) → α) : ℝ :=
+  ∏ z, (b.cpt k z).weights (r z)
+
+/-- Response weights are nonnegative. -/
+theorem responseWeight_nonneg {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ}
+    (b : BayesNet α n) (k : Fin n) (r : (b.pa k → α) → α) : 0 ≤ b.responseWeight k r := by
+  simp only [responseWeight]
+  exact Finset.prod_nonneg fun z _ => (b.cpt k z).nonneg _
+
+/-- Response weights sum to one. -/
+theorem sum_responseWeight {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ}
+    (b : BayesNet α n) (k : Fin n) :
+    (Finsupp.equivFunOnFinite.symm (b.responseWeight k)).sum (fun _ w => w) = 1 := by
+  classical
+  rw [Finsupp.sum_fintype _ _ fun _ => rfl]
+  have hpoint : ∀ r : (b.pa k → α) → α,
+      (Finsupp.equivFunOnFinite.symm (b.responseWeight k)) r = b.responseWeight k r :=
+    fun _ => rfl
+  simp only [hpoint, responseWeight]
+  rw [← Fintype.prod_sum]
+  have htot : ∀ z : b.pa k → α, (∑ a, (b.cpt k z).weights a) = 1 :=
+    fun z => (b.cpt k z).total_of_fintype
+  simp only [htot, Finset.prod_const_one]
+
+/-- The law of the response function of node `k`. -/
+noncomputable def responseLaw {α : Type*} [Fintype α] [DecidableEq α] {n : ℕ}
+    (b : BayesNet α n) (k : Fin n) : StdSimplex ℝ ((b.pa k → α) → α) where
+  weights := Finsupp.equivFunOnFinite.symm (b.responseWeight k)
+  nonneg r := b.responseWeight_nonneg k r
+  total := b.sum_responseWeight k
+
+/-- **Every finite Bayesian network is induced by a Markovian SCM**: the response-function SCM
+with independent response-function noises has the network's joint as its observational law. -/
+theorem responseSCM_inducedLaw {α : Type*} [Fintype α] [DecidableEq α] [Nonempty α] {n : ℕ}
+    (b : BayesNet α n) (x : Fin n → α) :
+    b.responseSCM.inducedLaw b.responseLaw x = b.joint x := by
+  classical
+  rw [FiniteSCM.inducedLaw_eq_joint]
+  simp only [joint_eq_prod]
+  refine Finset.prod_congr rfl fun k _ => ?_
+  have hfb : ((b.responseLaw k).map (b.responseSCM.f k (b.responseSCM.paVal k x))).weights (x k)
+      = ∑ v, (if b.responseSCM.f k (b.responseSCM.paVal k x) v = x k then
+          (b.responseLaw k).weights v else 0) := by
+    rw [FiniteSCM.map_weights_eq_sum b.responseSCM b.responseLaw x k]
+    refine (Finset.sum_subset (Finset.subset_univ _) fun v _ hv => ?_).trans
+      (Finset.sum_congr rfl fun v _ => by split_ifs <;> rfl)
+    simp [Finsupp.notMem_support_iff.mp hv]
+  change ((b.responseLaw k).map (b.responseSCM.f k (b.responseSCM.paVal k x))).weights (x k)
+    = (b.cpt k fun j => x (Fin.castLE k.2.le j)).weights (x k)
+  rw [hfb]
+  have hpoint : ∀ v : (b.pa k → α) → α,
+      (if b.responseSCM.f k (b.responseSCM.paVal k x) v = x k then (b.responseLaw k).weights v
+        else 0)
+        = (if v (b.responseSCM.paVal k x) = x k then ∏ z, (b.cpt k z).weights (v z) else 0) :=
+    fun _ => rfl
+  simp only [hpoint]
+  have hpa : b.responseSCM.paVal k x
+      = (fun j : b.pa k => x (Fin.castLE k.2.le (j : Fin k))) := rfl
+  rw [hpa]
+  set z₀ : b.pa k → α := (fun j => x (Fin.castLE k.2.le (j : Fin k))) with hz₀
+  set a₀ := x k with ha₀
+  let g : (b.pa k → α) → α → ℝ := fun z a =>
+    if z = z₀ then (if a = a₀ then (b.cpt k z).weights a else 0) else (b.cpt k z).weights a
+  have hg : ∀ z a, g z a
+      = (if z = z₀ then (if a = a₀ then (b.cpt k z).weights a else 0)
+        else (b.cpt k z).weights a) :=
+    fun _ _ => rfl
+  have hpoint_g : ∀ v : (b.pa k → α) → α,
+      (∏ z, g z (v z)) = (if v z₀ = a₀ then ∏ z, (b.cpt k z).weights (v z) else 0) := by
+    intro v
+    by_cases h : v z₀ = a₀
+    · rw [ite_eq_left h]
+      refine Finset.prod_congr rfl fun z _ => ?_
+      by_cases hz : z = z₀
+      · simp [hg, hz, h]
+      · simp [hg, hz]
+    · rw [ite_eq_right h]
+      have hz0 : g z₀ (v z₀) = 0 := by simp [hg, h]
+      exact Finset.prod_eq_zero (Finset.mem_univ z₀) hz0
+  have hsum_eq : (∑ v : (b.pa k → α) → α, ∏ z : b.pa k → α, g z (v z))
+      = ∑ v : (b.pa k → α) → α,
+        (if v z₀ = a₀ then ∏ z : b.pa k → α, (b.cpt k z).weights (v z) else 0) :=
+    Finset.sum_congr rfl fun v _ => hpoint_g v
+  have hprod_g : (∏ z : b.pa k → α, ∑ a : α, g z a) = (b.cpt k z₀).weights a₀ := by
+    have hfactor : ∀ z : b.pa k → α,
+        (∑ a : α, g z a) = (if z = z₀ then (b.cpt k z₀).weights a₀ else 1) := by
+      intro z
+      by_cases hz : z = z₀
+      · subst hz
+        rw [ite_eq_left rfl]
+        have hgg : ∀ a, g z₀ a = (if a = a₀ then (b.cpt k z₀).weights a else 0) := by
+          intro a
+          simp [hg]
+        simp only [hgg]
+        have hW' : (if a₀ = a₀ then (b.cpt k z₀).weights a₀ else (0 : ℝ))
+            = (b.cpt k z₀).weights a₀ := ite_eq_left rfl
+        have h1' : (∑ a : α, (if a = a₀ then (b.cpt k z₀).weights a else 0))
+            = (if a₀ = a₀ then (b.cpt k z₀).weights a₀ else 0) := by
+          apply Finset.sum_eq_single a₀
+          · intro a _ ha
+            simp [ha]
+          · intro hmem
+            exact absurd (Finset.mem_univ a₀) hmem
+        rw [hW'] at h1'
+        exact h1'
+      · rw [ite_eq_right hz]
+        have hgg : ∀ a, g z a = (b.cpt k z).weights a := by
+          intro a
+          simp [hg, hz]
+        simp only [hgg]
+        exact (b.cpt k z).total_of_fintype
+    simp only [hfactor]
+    have hW : (if z₀ = z₀ then (b.cpt k z₀).weights a₀ else (1 : ℝ))
+        = (b.cpt k z₀).weights a₀ := ite_eq_left rfl
+    have h1 : (∏ z : b.pa k → α, (if z = z₀ then (b.cpt k z₀).weights a₀ else 1))
+        = (if z₀ = z₀ then (b.cpt k z₀).weights a₀ else 1) := by
+      apply Finset.prod_eq_single z₀
+      · intro z _ hz
+        simp [hz]
+      · intro hmem
+        exact absurd (Finset.mem_univ z₀) hmem
+    rw [hW] at h1
+    exact h1
+  calc ∑ v : (b.pa k → α) → α,
+          (if v z₀ = a₀ then ∏ z : b.pa k → α, (b.cpt k z).weights (v z) else 0)
+      = ∑ v : (b.pa k → α) → α, ∏ z : b.pa k → α, g z (v z) := hsum_eq.symm
+    _ = ∏ z : b.pa k → α, ∑ a : α, g z a := by rw [Fintype.prod_sum]
+    _ = (b.cpt k z₀).weights a₀ := hprod_g
+
+end BayesNet
 
 end Cslib.MachineLearning.GraphicalModels

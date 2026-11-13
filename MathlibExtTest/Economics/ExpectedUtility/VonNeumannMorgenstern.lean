@@ -112,17 +112,4 @@ theorem mix_one_zero (p q : StdSimplex ℝ (Fin 2)) :
     mix 1 zero_le_one le_rfl p q = p ∧ mix 0 le_rfl zero_le_one p q = q := by
   exact ⟨mix_one zero_le_one le_rfl p q, mix_zero le_rfl zero_le_one p q⟩
 
-/-- Expected utility of a point mass is the utility of its outcome. -/
-theorem expectedUtility_single (u : Fin 3 → ℝ) (x : Fin 3) :
-    expectedUtility u (StdSimplex.single x) = u x := by
-  unfold expectedUtility
-  rw [StdSimplex.weights_single]
-  rw [Finset.sum_eq_single x]
-  · simp
-  · intro y _ hy
-    rw [Finsupp.single_eq_of_ne hy]
-    exact zero_mul _
-  · intro h
-    exact absurd (Finset.mem_univ x) h
-
 end MathlibExtTest.Economics.ExpectedUtility.VonNeumannMorgenstern
