@@ -23,9 +23,8 @@ then the first-order Taylor remainder satisfies
 Taylor's theorem with the Lagrange remainder at order one gives
 `ξ` between `x₀` and `x₀ + h` with
 `f (x₀ + h) - (f x₀ + f' x₀ * h) = f'' ξ * h ^ 2 / 2`. Taking absolute
-values and using `|f'' ξ| ≤ M` gives the bound. The hypothesis `0 ≤ M` is
-kept for the statement's shape; it is not needed by the proof, since
-`|f'' ξ| ≤ M` already forces `M ≥ 0`.
+values and using `|f'' ξ| ≤ M` gives the bound. No separate nonnegativity
+hypothesis is needed, since `|f'' ξ| ≤ M` already forces `M ≥ 0`.
 
 ## ii. Key results
 
