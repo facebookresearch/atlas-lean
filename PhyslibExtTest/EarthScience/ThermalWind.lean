@@ -16,7 +16,8 @@ import Mathlib.Tactic.Ring
 # Thermal-wind checks
 
 Concrete consumers of `PhyslibExt.EarthScience.ThermalWind`:
-the public shapes of the three theorems, the thermal-wind relations
+the public shapes of `thermal_wind`, `thermal_wind_no_gradient` and
+`thermal_wind_shear_sign` (zonal data only), the thermal-wind relations
 for linear profiles with `f = 1, rho0 = 1, g = 10, rho_y = 2, rho_x = 3`,
 and the no-gradient boundary.
 
@@ -51,6 +52,14 @@ example {f rho0 g rho_y rho_x : ℝ} {ug vg py px : ℝ → ℝ} {t : ℝ} {A B 
     (hhydro_y : Dpy = -g * rho_y) (hhydro_x : Dpx = -g * rho_x) :
     f * A = (g / rho0) * rho_y ∧ f * B = -(g / rho0) * rho_x :=
   EarthScience.thermal_wind hf hrho hug hvg hpy hpx hgeo_u hgeo_v hhydro_y hhydro_x
+
+/-- Public shape of the shear-sign theorem: only the zonal balance is required. -/
+example {f rho0 g rho_y : ℝ} {ug py : ℝ → ℝ} {t A Dpy : ℝ}
+    (hf : 0 < f) (hrho : 0 < rho0) (hg : 0 < g) (hry : 0 < rho_y)
+    (hug : HasDerivAt ug A t) (hpy : HasDerivAt py Dpy t)
+    (hgeo_u : ∀ z, f * ug z = -py z / rho0) (hhydro_y : Dpy = -g * rho_y) :
+    0 < A :=
+  EarthScience.thermal_wind_shear_sign hf hrho hg hry hug hpy hgeo_u hhydro_y
 
 /-- Linear-profile case: `f = 1, rho0 = 1, g = 10, rho_y = 2, rho_x = 3`. -/
 example :
