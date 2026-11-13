@@ -26,30 +26,23 @@ import Mathlib.Tactic.Ring
 /-!
 # Modified duration and the price derivative
 
-For fixed cash flows at a common yield `r`, the price is
-`P(r) = ∑_{t∈s} c t * (1 + r)^(-t)`. Termwise differentiation gives
-`P′(r) = -∑_{t∈s} t * c t * (1 + r)^(-t-1)`, so with modified duration
+For fixed cash flows at a common yield `r`, the price is FI03.T02's
+`cashFlowPrice c s r = ∑_{t∈s} c t * (1 + r)^(-t)`. Termwise differentiation
+gives `P′(r) = -∑_{t∈s} t * c t * (1 + r)^(-t-1)`, so with modified duration
 `Dmod = Macaulay / (1 + r)`, `P′(r) = -Dmod(r) * P(r)` when `P(r) ≠ 0`.
 
 ## Main results
 
-* `MathlibExt.Economics.Finance.hasDerivAt_yieldPrice`: the termwise
+* `MathlibExt.Economics.Finance.hasDerivAt_cashFlowPrice`: the termwise
   derivative (`HasDerivAt.fun_sum`, `hasDerivAt_zpow`, `HasDerivAt.comp`).
-* `MathlibExt.Economics.Finance.deriv_yieldPrice_eq_neg_modifiedDuration_mul`:
+* `MathlibExt.Economics.Finance.deriv_cashFlowPrice_eq_neg_modifiedDuration_mul`:
   `P′(r) = -Dmod(r) * P(r)`.
-* `MathlibExt.Economics.Finance.yieldPrice_eq_presentValue`: the zpow price
-  agrees with the FI01 present value.
-* `MathlibExt.Economics.Finance.yieldPrice_eq_cashFlowPrice`: the zpow price is
-  FI03.T02's `cashFlowPrice` as a function of the yield, with no condition on
-  `r`, so FI03 and FI04 results apply to the same function.
-* `MathlibExt.Economics.Finance.hasDerivAt_cashFlowPrice` and
-  `MathlibExt.Economics.Finance.deriv_cashFlowPrice_eq_neg_modifiedDuration_mul`:
-  the derivative and `P′(r) = -Dmod(r) * P(r)` stated for `cashFlowPrice`.
 
-The pinned theorems assume only `-1 < r` and (for the `deriv` identity) a
-nonzero price (`yieldPrice ≠ 0`, or `cashFlowPrice ≠ 0` in the `cashFlowPrice`
-form); no sign hypothesis on the cash flows is needed. The
-roadmap's "fixed positive cash flows" is the usual case giving `P > 0`.
+The price is the existing `cashFlowPrice`; its zpow form, used to
+differentiate termwise, is a private proof lemma. The theorems assume only
+`-1 < r` and (for the `deriv` identity) `cashFlowPrice c s r ≠ 0`; no sign
+hypothesis on the cash flows is needed. The roadmap's "fixed positive cash
+flows" is the usual case giving `P > 0`.
 
 ## References
 
@@ -60,34 +53,37 @@ SOA Exam FM syllabus (modified duration). Atlas roadmap target FI04.T01.
 
 namespace MathlibExt.Economics.Finance
 
-/-- Price at a common yield `r` of the fixed cash flows `c t` at dates `t ∈ s`,
-in zpow form (source clause: "`P(r) = Σ_t c_t (1 + r)^(-t)`"). The zpow form
-is chosen so the derivative is a zpow derivative; `yieldPrice_eq_cashFlowPrice`
-identifies it with the FI03.T02 price `cashFlowPrice` (the FI01 present-value
-form). -/
-noncomputable def yieldPrice (c : ℕ → ℝ) (s : Finset ℕ) (r : ℝ) : ℝ :=
-  ∑ t ∈ s, c t * (1 + r) ^ (-(t : ℤ))
+/-- Proof device: the zpow form `∑ t ∈ s, c t * (1 + r) ^ (-(t : ℤ))` of
+`cashFlowPrice c s r`, for every `r` (`zpow_neg`, `zpow_natCast`). -/
+private theorem cashFlowPrice_eq_zpow_sum (c : ℕ → ℝ) (s : Finset ℕ) :
+    cashFlowPrice c s = fun r => ∑ t ∈ s, c t * (1 + r) ^ (-(t : ℤ)) := by
+  funext r
+  unfold cashFlowPrice presentValue discountFactor
+  apply Finset.sum_congr rfl
+  intro t _
+  rw [zpow_neg, zpow_natCast, mul_comm]
 
 /-- Macaulay duration: the payment-date-weighted average discount factor,
-divided by the price (source clause: "Macaulay = `Σ t * c_t (1+r)^(-t) / P`"). -/
+divided by the price `cashFlowPrice` (source clause: "Macaulay =
+`Σ t * c_t (1+r)^(-t) / P`"). -/
 noncomputable def macaulayDuration (c : ℕ → ℝ) (s : Finset ℕ) (r : ℝ) : ℝ :=
-  (∑ t ∈ s, (t : ℝ) * c t * (1 + r) ^ (-(t : ℤ))) / yieldPrice c s r
+  (∑ t ∈ s, (t : ℝ) * c t * (1 + r) ^ (-(t : ℤ))) / cashFlowPrice c s r
 
 /-- Modified duration: Macaulay duration divided by `1 + r`
 (source clause: "`Dmod = Macaulay / (1 + r)`"). -/
 noncomputable def modifiedDuration (c : ℕ → ℝ) (s : Finset ℕ) (r : ℝ) : ℝ :=
   macaulayDuration c s r / (1 + r)
 
-/-- Termwise derivative of the price at a common yield (Atlas roadmap FI04.T01). -/
-theorem hasDerivAt_yieldPrice {c : ℕ → ℝ} {s : Finset ℕ} {r : ℝ} (hr : -1 < r) :
-    HasDerivAt (yieldPrice c s)
+/-- Termwise derivative of the price `cashFlowPrice` at a common yield above `-1`
+(Atlas roadmap FI04.T01). -/
+theorem hasDerivAt_cashFlowPrice {c : ℕ → ℝ} {s : Finset ℕ} {r : ℝ} (hr : -1 < r) :
+    HasDerivAt (cashFlowPrice c s)
       (-∑ t ∈ s, (t : ℝ) * c t * (1 + r) ^ (-(t : ℤ) - 1)) r := by
   have h1pos : (0 : ℝ) < 1 + r := by linarith
   have h1ne : (1 : ℝ) + r ≠ 0 := ne_of_gt h1pos
   have h_inner : HasDerivAt (fun r : ℝ => 1 + r) 1 r :=
     HasDerivAt.const_add 1 (hasDerivAt_id' r)
-  unfold yieldPrice
-  rw [← Finset.sum_neg_distrib]
+  rw [cashFlowPrice_eq_zpow_sum, ← Finset.sum_neg_distrib]
   apply HasDerivAt.fun_sum
   intro t ht
   have h_outer := hasDerivAt_zpow (-(t : ℤ)) (1 + r) (Or.inl h1ne)
@@ -99,13 +95,14 @@ theorem hasDerivAt_yieldPrice {c : ℕ → ℝ} {s : Finset ℕ} {r : ℝ} (hr :
   push_cast
   ring
 
-/-- `P′(r) = -Dmod(r) * P(r)` for a nonzero price (Atlas roadmap FI04.T01). -/
-theorem deriv_yieldPrice_eq_neg_modifiedDuration_mul {c : ℕ → ℝ} {s : Finset ℕ}
-    {r : ℝ} (hr : -1 < r) (hP : yieldPrice c s r ≠ 0) :
-    deriv (yieldPrice c s) r = -modifiedDuration c s r * yieldPrice c s r := by
+/-- `P′(r) = -Dmod(r) * P(r)` for the price `cashFlowPrice` at a nonzero price
+(Atlas roadmap FI04.T01). -/
+theorem deriv_cashFlowPrice_eq_neg_modifiedDuration_mul {c : ℕ → ℝ} {s : Finset ℕ}
+    {r : ℝ} (hr : -1 < r) (hP : cashFlowPrice c s r ≠ 0) :
+    deriv (cashFlowPrice c s) r = -modifiedDuration c s r * cashFlowPrice c s r := by
   have h1pos : (0 : ℝ) < 1 + r := by linarith
   have h1ne : (1 : ℝ) + r ≠ 0 := ne_of_gt h1pos
-  rw [(hasDerivAt_yieldPrice hr).deriv]
+  rw [(hasDerivAt_cashFlowPrice hr).deriv]
   unfold modifiedDuration macaulayDuration
   have hz : ∀ t : ℕ, (1 + r : ℝ) ^ (-(t : ℤ) - 1) = (1 + r) ^ (-(t : ℤ)) * (1 + r)⁻¹ := by
     intro t
@@ -117,40 +114,5 @@ theorem deriv_yieldPrice_eq_neg_modifiedDuration_mul {c : ℕ → ℝ} {s : Fins
     intro t; ring
   simp_rw [hterm, ← Finset.sum_mul]
   field_simp
-
-/-- The zpow price agrees with the FI01 present value at any yield above `-1`. -/
-theorem yieldPrice_eq_presentValue {c : ℕ → ℝ} {s : Finset ℕ} {r : ℝ}
-    (hr : -1 < r) : yieldPrice c s r = presentValue (discountFactor r) s c := by
-  have _ : (0 : ℝ) < 1 + r := by linarith
-  unfold yieldPrice presentValue discountFactor
-  apply Finset.sum_congr rfl
-  intro t ht
-  rw [zpow_neg, zpow_natCast, mul_comm]
-
-/-- The zpow price is the FI03.T02 price `cashFlowPrice`, as functions of the
-yield and with no condition on `r` (`zpow_neg`, `zpow_natCast`). -/
-theorem yieldPrice_eq_cashFlowPrice (c : ℕ → ℝ) (s : Finset ℕ) :
-    yieldPrice c s = cashFlowPrice c s := by
-  funext r
-  unfold yieldPrice cashFlowPrice presentValue discountFactor
-  apply Finset.sum_congr rfl
-  intro t _
-  rw [zpow_neg, zpow_natCast, mul_comm]
-
-/-- Termwise derivative of the FI03.T02 price `cashFlowPrice` at a common yield
-above `-1` (Atlas roadmap FI04.T01). -/
-theorem hasDerivAt_cashFlowPrice {c : ℕ → ℝ} {s : Finset ℕ} {r : ℝ} (hr : -1 < r) :
-    HasDerivAt (cashFlowPrice c s)
-      (-∑ t ∈ s, (t : ℝ) * c t * (1 + r) ^ (-(t : ℤ) - 1)) r := by
-  rw [← yieldPrice_eq_cashFlowPrice]
-  exact hasDerivAt_yieldPrice hr
-
-/-- `P′(r) = -Dmod(r) * P(r)` for the FI03.T02 price `cashFlowPrice` at a nonzero
-price (Atlas roadmap FI04.T01). -/
-theorem deriv_cashFlowPrice_eq_neg_modifiedDuration_mul {c : ℕ → ℝ} {s : Finset ℕ}
-    {r : ℝ} (hr : -1 < r) (hP : cashFlowPrice c s r ≠ 0) :
-    deriv (cashFlowPrice c s) r = -modifiedDuration c s r * cashFlowPrice c s r := by
-  rw [← yieldPrice_eq_cashFlowPrice] at hP ⊢
-  exact deriv_yieldPrice_eq_neg_modifiedDuration_mul hr hP
 
 end MathlibExt.Economics.Finance
