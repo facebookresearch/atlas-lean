@@ -25,9 +25,12 @@ move (`Step`). A configuration is legitimate when exactly one machine is privile
 * `exists_privileged`: every configuration has a privileged machine (no deadlock).
 * `legit_closed`: every step from a legitimate configuration leads to a legitimate one.
 
-Both hold for every `n` and `K`, including the one-machine ring `n = 0`. Convergence, that
-every execution from an arbitrary configuration reaches a legitimate one, is not formalized
-here; it needs a lower bound on `K` in terms of the ring size.
+Dijkstra's protocol is the case `K ≠ 0`, with the states `0, …, K - 1` added modulo `K`. For
+`K = 0`, Mathlib's `ZMod 0` is `ℤ`, so the same definitions describe a variant with unbounded
+integer states rather than a `K`-state protocol. Both theorems hold for every `n` and every `K`,
+including the one-machine ring `n = 0` and the integer variant `K = 0`. Convergence, that every
+execution from an arbitrary configuration reaches a legitimate one, is not formalized here; in
+Dijkstra's protocol it needs a lower bound on `K` in terms of the ring size.
 -/
 
 @[expose] public section
