@@ -28,8 +28,7 @@ public import Mathlib.AlgebraicGeometry.ProjectiveSpectrum.Basic
 public import
   Mathlib.CategoryTheory.Abelian.GrothendieckCategory.EnoughInjectives
 public import Mathlib.RingTheory.MvPolynomial.Homogeneous
-public import
-  WantedExt.AlgebraicGeometry.PerverseSheaves.PerverseSheavesWanted
+public import WantedExt.AlgebraicGeometry.PerverseSheavesWanted
 
 @[expose] public section
 
@@ -46,10 +45,10 @@ and (c) of Theorem 2.1.1 in de Cataldo–Migliorini's Hodge theoretic treatment.
 The splitting is an existence statement.
 
 The independent construction request for perverse sheaves is in
-`PerverseSheaves/PerverseSheavesWanted.lean`. This file uses its public
+`PerverseSheavesWanted.lean`. This file uses its public
 characterized interface `[PerverseSheafTheory Y]`. The ambient rational
 sheaf/derived categories, bounded constructibility, perverse cohomology,
-and semisimplicity definitions are in `PerverseSheaves/Basic.lean`.
+and semisimplicity definitions are in the same perverse-sheaf module.
 
 The normalized direct image uses Mathlib's derived pushforward on the
 analytic topological spaces of complex points. In particular, `ℚ_X[n]`

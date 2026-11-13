@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Category.ModuleCat.FilteredColimits
 public import Mathlib.Algebra.Category.ModuleCat.Limits
 public import Mathlib.Algebra.Homology.DerivedCategory.HomologySequence
@@ -26,12 +27,12 @@ public import MathlibExt.AlgebraicGeometry.ComplexAnalytification
 @[expose] public section
 
 /-!
-# Rational perverse sheaves: public definitions and target interface
+# Rational perverse sheaves: definitions and wanted constructions
 
 This module specifies bounded algebraically constructible rational complexes
 on general complex varieties and the middle perverse t-structure through its
 stalk and costalk dimension conditions. `PerverseSheafTheory` is the target
-of the separate construction request in `PerverseSheavesWanted.lean`.
+of the wanted construction request at the end of this file.
 
 Given that characterized theory, `PerverseSheaf` is its heart and
 `perverseCohomology` is computed using Mathlib's truncations. Consumers can
@@ -178,7 +179,7 @@ def costalkSupport (X : ComplexScheme) (K : RationalDerived (space X))
 
 /-- The data of the rational middle perverse t-structure on a complex
 variety, characterized by its support and cosupport conditions.
-The separate wanted construction supplies this interface for every variety.
+The wanted construction below supplies this interface for every variety.
 Source: de Cataldo–Migliorini (2005), §§3.3, 3.6; (2009), §2.3. -/
 class PerverseSheafTheory (X : ComplexScheme) [IsComplexVariety X] where
   /-- Closure of bounded constructible complexes under shifts and triangles. -/
@@ -227,6 +228,28 @@ def IsSemisimplePerverse {C : Type*} [Category* C] [Preadditive C]
   ∃ n : ℕ, ∃ S : Fin n → t.heart.FullSubcategory,
     (∀ a, Simple (S a)) ∧
       Nonempty (P.obj ≅ biproduct (fun a ↦ (S a).obj))
+
+
+/-! ## Wanted constructions -/
+
+/-- Construct the rational middle perverse t-structure and the closure
+properties needed for the bounded constructible category.
+Source: de Cataldo–Migliorini (2005), §§3.3, 3.6. -/
+public instance_wanted perverseSheafTheoryWanted (X : ComplexScheme)
+    [IsComplexVariety X] : PerverseSheafTheory X
+
+/-- Construct the category of rational perverse sheaves as the heart of the
+middle perverse t-structure.
+Source: de Cataldo–Migliorini (2005), §3.6. -/
+public def_wanted perverseSheaves (X : ComplexScheme)
+    [IsComplexVariety X] : Type 1 :=
+  letI : PerverseSheafTheory X := ❰perverseSheafTheoryWanted❱ X
+  PerverseSheaf X
+
+/-- The category of rational perverse sheaves is abelian.
+Source: de Cataldo–Migliorini (2005), §3.6. -/
+public instance_wanted perverseSheafAbelianWanted (X : ComplexScheme)
+    [IsComplexVariety X] : Abelian (PerverseSheaf X)
 
 end
 
