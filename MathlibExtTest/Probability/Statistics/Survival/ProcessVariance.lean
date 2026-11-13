@@ -108,8 +108,8 @@ example [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m0) {t : ℝ} (ht : t �
       rcases Nat.eq_zero_or_pos n with h | h
       · left; simp [h]
       · right; exact_mod_cast h)
-    (fun n j => by simp [aalenCompensator, stochasticIntegral, gridHazard])
-    (fun n j => by simp [aalenCompensator, stochasticIntegral, gridHazard])
+    (fun n j _ => by simp [aalenCompensator, stochasticIntegral, gridHazard])
+    (fun n j _ => by simp [aalenCompensator, stochasticIntegral, gridHazard])
     (fun δ hδ => by
       refine tendsto_const_nhds.congr' ?_
       filter_upwards [eventually_gt_atTop 0] with n hn
@@ -188,8 +188,8 @@ example [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m0) :
       rcases Nat.eq_zero_or_pos n with h | h
       · left; simp [h]
       · right; exact_mod_cast h)
-    (fun n j => by rw [show _ = _ from hinc n j]; exact integrable_const _)
-    (fun n j => by
+    (fun n j _ => by rw [show _ = _ from hinc n j]; exact integrable_const _)
+    (fun n j _ => by
       rw [show _ = _ from hinc n j, condExp_const (ℱ.le j)]
       exact Filter.EventuallyEq.rfl)
     (fun δ hδ => by

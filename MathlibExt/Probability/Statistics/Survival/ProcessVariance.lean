@@ -155,34 +155,59 @@ private lemma sq_inv_mul_self (y : ℝ) : (y⁻¹) ^ 2 * y = y⁻¹ := by
   · simp [h]
   · field_simp
 
+/-- The square-sum identity for `H • M` (`predictableQuadraticVariation_stochasticIntegral`),
+localized: at step `n` it needs the integrability hypotheses only for the steps `k < n`. -/
+private lemma predictableQuadraticVariation_stochasticIntegral_of_lt {H M : ℕ → Ω → ℝ}
+    (hH : IsStronglyPredictable ℱ H) {n : ℕ}
+    (hint : ∀ k < n, Integrable (fun ω => H (k + 1) ω ^ 2 * (M (k + 1) ω - M k ω) ^ 2) μ)
+    (hint' : ∀ k < n, Integrable (fun ω => (M (k + 1) ω - M k ω) ^ 2) μ) :
+    predictableQuadraticVariation μ ℱ (stochasticIntegral H M) n =ᵐ[μ]
+      stochasticIntegral (fun k ω => H k ω ^ 2) (predictableQuadraticVariation μ ℱ M) n := by
+  have hk : ∀ k, ∀ᵐ ω ∂μ, k < n →
+      μ[(fun ω => (H (k + 1) ω * (M (k + 1) ω - M k ω)) ^ 2) | ℱ k] ω =
+        H (k + 1) ω ^ 2 * μ[(fun ω => (M (k + 1) ω - M k ω) ^ 2) | ℱ k] ω := by
+    intro k
+    by_cases hkn : k < n
+    · have heq : (fun ω => (H (k + 1) ω * (M (k + 1) ω - M k ω)) ^ 2) =
+          (fun ω => H (k + 1) ω ^ 2) * fun ω => (M (k + 1) ω - M k ω) ^ 2 := by
+        funext ω; simp only [Pi.mul_apply]; ring
+      rw [heq]
+      filter_upwards [condExp_mul_of_stronglyMeasurable_left ((hH.measurable_add_one k).pow 2)
+        (hint k hkn) (hint' k hkn)] with ω hω _ using hω
+    · exact Eventually.of_forall fun _ h => absurd h hkn
+  filter_upwards [ae_all_iff.2 hk] with ω hω
+  simp only [predictableQuadraticVariation, stochasticIntegral, sum_range_succ,
+    add_sub_cancel_left]
+  exact sum_congr rfl fun k hk => hω k (mem_range.1 hk)
+
 /-- **Conditional square sum of the scaled Nelson–Aalen process** (exact, on the grid). For
 `M = N - ∫ Y dα` with an arbitrary real process `N`, suppose the increments have the conditional
-second moment `E[(ΔM_{k+1})² | ℱ_k] = Y_{k+1} Δα_{k+1} (1 - Δα_{k+1})`. Then the conditional
-square sum `∑_{i < k} E[(Δ √n (Â - Λ*))² | ℱ_i]` (`predictableQuadraticVariation`) equals
+second moment `E[(ΔM_{j+1})² | ℱ_j] = Y_{j+1} Δα_{j+1} (1 - Δα_{j+1})` at the steps `j < k`
+(only those are used). Then the conditional square sum `∑_{i < k} E[(Δ √n (Â - Λ*))² | ℱ_i]`
+(`predictableQuadraticVariation`) equals
 `n ∑_{i < k} Y_{i+1}⁻¹ Δα_{i+1} (1 - Δα_{i+1})` a.e. The martingale property of `M` is not
 assumed; for a martingale `M` (binomial variance: each of the `Y_{k+1}` subjects at risk fails
 independently with probability `Δα_{k+1}`) this is `⟨√n (Â - Λ*)⟩_k`, the grid form of
 `∫_0^t n J / Y dΛ`. The proof is the square-sum identity for `H • M`
 (`predictableQuadraticVariation_stochasticIntegral`) applied to the T45 representation. -/
 theorem predictableQuadraticVariation_naScaledProcess {n : ℕ} {N Y : ℕ → Ω → ℝ} {α : ℕ → ℝ}
-    (hY : IsStronglyPredictable ℱ Y) (hY1 : ∀ k ω, Y k ω = 0 ∨ 1 ≤ Y k ω)
-    (hsq : ∀ k, Integrable (fun ω => ((N (k + 1) ω - aalenCompensator Y α (k + 1) ω) -
-      (N k ω - aalenCompensator Y α k ω)) ^ 2) μ)
-    (hcv : ∀ k, μ[fun ω => ((N (k + 1) ω - aalenCompensator Y α (k + 1) ω) -
-      (N k ω - aalenCompensator Y α k ω)) ^ 2 | ℱ k] =ᵐ[μ]
-        fun ω => Y (k + 1) ω * (α (k + 1) - α k) * (1 - (α (k + 1) - α k)))
-    (k : ℕ) :
+    (k : ℕ) (hY : IsStronglyPredictable ℱ Y) (hY1 : ∀ k ω, Y k ω = 0 ∨ 1 ≤ Y k ω)
+    (hsq : ∀ j < k, Integrable (fun ω => ((N (j + 1) ω - aalenCompensator Y α (j + 1) ω) -
+      (N j ω - aalenCompensator Y α j ω)) ^ 2) μ)
+    (hcv : ∀ j < k, μ[fun ω => ((N (j + 1) ω - aalenCompensator Y α (j + 1) ω) -
+      (N j ω - aalenCompensator Y α j ω)) ^ 2 | ℱ j] =ᵐ[μ]
+        fun ω => Y (j + 1) ω * (α (j + 1) - α j) * (1 - (α (j + 1) - α j))) :
     predictableQuadraticVariation μ ℱ (naScaledProcess n N Y α) k =ᵐ[μ]
       naVarianceSum n Y α k := by
   have hYi := isStronglyPredictable_inv hY
   have hH : IsStronglyPredictable ℱ fun k ω => Real.sqrt n * (Y k ω)⁻¹ :=
     .of_measurable_add_one (stronglyMeasurable_const.mul (hYi.stronglyAdapted 0))
       fun j => stronglyMeasurable_const.mul (hYi.measurable_add_one j)
-  have hint : ∀ j, Integrable (fun ω => (Real.sqrt n * (Y (j + 1) ω)⁻¹) ^ 2 *
+  have hint : ∀ j < k, Integrable (fun ω => (Real.sqrt n * (Y (j + 1) ω)⁻¹) ^ 2 *
       ((N (j + 1) ω - aalenCompensator Y α (j + 1) ω) -
         (N j ω - aalenCompensator Y α j ω)) ^ 2) μ := by
-    intro j
-    refine (hsq j).bdd_mul (c := (n : ℝ))
+    intro j hj
+    refine (hsq j hj).bdd_mul (c := (n : ℝ))
       (((hH.measurable_add_one j).mono (ℱ.le j)).pow 2).aestronglyMeasurable
       (ae_of_all _ fun ω => ?_)
     rw [Real.norm_eq_abs, abs_of_nonneg (sq_nonneg _), mul_pow, Real.sq_sqrt (Nat.cast_nonneg n)]
@@ -191,16 +216,23 @@ theorem predictableQuadraticVariation_naScaledProcess {n : ℕ} {N Y : ℕ → �
       · simp [h]
       · exact pow_le_one₀ (inv_nonneg.2 (by linarith)) (inv_le_one_of_one_le₀ h)
     nlinarith [Nat.cast_nonneg (α := ℝ) n]
-  have h := predictableQuadraticVariation_stochasticIntegral (μ := μ)
+  have h := predictableQuadraticVariation_stochasticIntegral_of_lt (μ := μ)
     (H := fun k ω => Real.sqrt n * (Y k ω)⁻¹)
-    (M := fun k ω => N k ω - aalenCompensator Y α k ω) hH hint hsq k
+    (M := fun k ω => N k ω - aalenCompensator Y α k ω) hH hint hsq
+  have hcv' : ∀ j, ∀ᵐ ω ∂μ, j < k →
+      μ[fun ω => ((N (j + 1) ω - aalenCompensator Y α (j + 1) ω) -
+        (N j ω - aalenCompensator Y α j ω)) ^ 2 | ℱ j] ω =
+        Y (j + 1) ω * (α (j + 1) - α j) * (1 - (α (j + 1) - α j)) := fun j => by
+    by_cases hj : j < k
+    · filter_upwards [hcv j hj] with ω hω _ using hω
+    · exact Eventually.of_forall fun _ h => absurd h hj
   rw [naScaledProcess_eq_stochasticIntegral]
-  filter_upwards [h, ae_all_iff.2 hcv] with ω h1 h2
+  filter_upwards [h, ae_all_iff.2 hcv'] with ω h1 h2
   rw [h1]
   simp only [stochasticIntegral, naVarianceSum]
-  refine sum_congr rfl fun i _ => ?_
+  refine sum_congr rfl fun i hi => ?_
   rw [predictableQuadraticVariation, predictableQuadraticVariation, sum_range_succ,
-    add_sub_cancel_left, h2 i, mul_pow, Real.sq_sqrt (Nat.cast_nonneg n)]
+    add_sub_cancel_left, h2 i (mem_range.1 hi), mul_pow, Real.sq_sqrt (Nat.cast_nonneg n)]
   have := sq_inv_mul_self (Y (i + 1) ω)
   linear_combination (n : ℝ) * (α (i + 1) - α i) * (1 - (α (i + 1) - α i)) * this
 
@@ -351,7 +383,8 @@ theorem tendstoInMeasure_naVarianceSum {Y : ℕ → ℕ → Ω → ℝ} {α ybar
 /-- **Conditional square sums of the scaled Nelson–Aalen process** (grid form). For each `n`, let
 `N n` be a real process and `Y n` a predictable at-risk process with values in `{0} ∪ [1, ∞)`, on a
 grid with filtration `ℱ n`, with the conditional second moment of
-`predictableQuadraticVariation_naScaledProcess`; no martingale property is assumed. Under the
+`predictableQuadraticVariation_naScaledProcess` at the steps `j < k n`; no martingale property is
+assumed. Under the
 uniform LLN for `Y n / n`, the mesh condition and the grid limit of
 `tendstoInMeasure_naVarianceSum`, the conditional square sums of `√n (Â - Λ*)` up to step `k n`
 converge in probability to `σ²`. -/
@@ -359,9 +392,10 @@ theorem tendstoInMeasure_predictableQuadraticVariation_naScaledProcess
     {ℱ : ℕ → Filtration ℕ m0} {N Y : ℕ → ℕ → Ω → ℝ} {α ybar : ℕ → ℕ → ℝ} {k : ℕ → ℕ}
     {ε L σsq : ℝ} (hε : 0 < ε)
     (hY : ∀ n, IsStronglyPredictable (ℱ n) (Y n)) (hY1 : ∀ n j ω, Y n j ω = 0 ∨ 1 ≤ Y n j ω)
-    (hsq : ∀ n j, Integrable (fun ω => ((N n (j + 1) ω - aalenCompensator (Y n) (α n) (j + 1) ω) -
-      (N n j ω - aalenCompensator (Y n) (α n) j ω)) ^ 2) μ)
-    (hcv : ∀ n j, μ[fun ω => ((N n (j + 1) ω - aalenCompensator (Y n) (α n) (j + 1) ω) -
+    (hsq : ∀ n, ∀ j < k n, Integrable (fun ω =>
+      ((N n (j + 1) ω - aalenCompensator (Y n) (α n) (j + 1) ω) -
+        (N n j ω - aalenCompensator (Y n) (α n) j ω)) ^ 2) μ)
+    (hcv : ∀ n, ∀ j < k n, μ[fun ω => ((N n (j + 1) ω - aalenCompensator (Y n) (α n) (j + 1) ω) -
       (N n j ω - aalenCompensator (Y n) (α n) j ω)) ^ 2 | ℱ n j] =ᵐ[μ]
         fun ω => Y n (j + 1) ω * (α n (j + 1) - α n j) * (1 - (α n (j + 1) - α n j)))
     (hinc : ∀ n, ∀ i < k n, 0 ≤ α n (i + 1) - α n i)
@@ -375,7 +409,7 @@ theorem tendstoInMeasure_predictableQuadraticVariation_naScaledProcess
     TendstoInMeasure μ (fun n => predictableQuadraticVariation μ (ℱ n)
       (naScaledProcess n (N n) (Y n) (α n)) (k n)) atTop (fun _ => σsq) :=
   (tendstoInMeasure_naVarianceSum hε hinc hmesh hL hyb hLLN hgrid).congr_left fun n =>
-    (predictableQuadraticVariation_naScaledProcess (hY n) (hY1 n) (hsq n) (hcv n) (k n)).symm
+    (predictableQuadraticVariation_naScaledProcess (k n) (hY n) (hY1 n) (hsq n) (hcv n)).symm
 /-! ### The grid limit: Riemann–Stieltjes sums of `dΛ / y` -/
 
 /-- The cumulative hazard `Λ` sampled on the uniform grid of mesh `h`: `i ↦ Λ (i h)`. -/
@@ -591,14 +625,14 @@ Setting: a continuous cumulative hazard `Λ` (a continuous `StieltjesFunction`),
 and a time `t ∈ [0, τ]`; for each `n` a grid of mesh `h_n = τ / K n` (`K n → ∞`) carrying a real
 process `N n` and a predictable at-risk process `Y n` (values in `{0} ∪ [1, ∞)`), with hazard
 increments `ΔΛ` (`gridHazard`) and the conditional second moment `E[(ΔM)² | ℱ] = Y ΔΛ (1 - ΔΛ)` of
-`M = N n - ∫ Y n dΛ`. Neither that `N n` is a counting process nor that `M` is a martingale is
-assumed. The limiting at-risk fraction `y` is continuous on `[0, τ]` and bounded below by `ε > 0`
-(the horizon is supported), and the **law of large numbers**
-`sup_{grid points ≤ t} |Y n / n - y| → 0` holds in probability. Then the conditional square sums
-`∑ E[(Δ √n (Â - Λ*))² | ℱ]` up to the grid point `⌊t / h_n⌋ h_n` converge in probability to
-`∫_{(0, t]} (y s)⁻¹ dΛ(s)`. If `M` is a martingale (`martingale_nelsonAalenProcess_sub` then makes
-`√n (Â - Λ*)` one), these sums are the predictable variations `⟨√n (Â - Λ*)⟩` and the limit is the
-variance function of the Gaussian-martingale limit
+`M = N n - ∫ Y n dΛ` at the grid steps before `t` (with its integrability). Neither that `N n` is
+a counting process nor that `M` is a martingale is assumed. The limiting at-risk fraction `y` is
+continuous on `[0, τ]` and bounded below by `ε > 0` (the horizon is supported), and the **law of
+large numbers** `sup_{grid points ≤ t} |Y n / n - y| → 0` holds in probability. Then the conditional
+square sums `∑ E[(Δ √n (Â - Λ*))² | ℱ]` up to the grid point `⌊t / h_n⌋ h_n` converge in
+probability to `∫_{(0, t]} (y s)⁻¹ dΛ(s)`. If `M` is a martingale
+(`martingale_nelsonAalenProcess_sub` then makes `√n (Â - Λ*)` one), these sums are the predictable
+variations `⟨√n (Â - Λ*)⟩` and the limit is the variance function of the Gaussian-martingale limit
 (Andersen–Borgan–Gill–Keiding, §IV.1). -/
 theorem tendstoInMeasure_predictableQuadraticVariation_naScaledProcess_integral
     {ℱ : ℕ → Filtration ℕ m0} {N Y : ℕ → ℕ → Ω → ℝ} (Λ : StieltjesFunction ℝ)
@@ -606,10 +640,10 @@ theorem tendstoInMeasure_predictableQuadraticVariation_naScaledProcess_integral
     (hε : 0 < ε) (hy : ContinuousOn y (Set.Icc 0 τ)) (hyε : ∀ s ∈ Set.Icc 0 τ, ε ≤ y s)
     {K : ℕ → ℕ} (hK : Tendsto K atTop atTop)
     (hY : ∀ n, IsStronglyPredictable (ℱ n) (Y n)) (hY1 : ∀ n j ω, Y n j ω = 0 ∨ 1 ≤ Y n j ω)
-    (hsq : ∀ n j, Integrable (fun ω =>
+    (hsq : ∀ n, ∀ j < gridIndex t (τ / K n), Integrable (fun ω =>
       ((N n (j + 1) ω - aalenCompensator (Y n) (gridHazard Λ (τ / K n)) (j + 1) ω) -
         (N n j ω - aalenCompensator (Y n) (gridHazard Λ (τ / K n)) j ω)) ^ 2) μ)
-    (hcv : ∀ n j, μ[fun ω =>
+    (hcv : ∀ n, ∀ j < gridIndex t (τ / K n), μ[fun ω =>
       ((N n (j + 1) ω - aalenCompensator (Y n) (gridHazard Λ (τ / K n)) (j + 1) ω) -
         (N n j ω - aalenCompensator (Y n) (gridHazard Λ (τ / K n)) j ω)) ^ 2 | ℱ n j] =ᵐ[μ]
         fun ω => Y n (j + 1) ω * (gridHazard Λ (τ / K n) (j + 1) - gridHazard Λ (τ / K n) j) *
