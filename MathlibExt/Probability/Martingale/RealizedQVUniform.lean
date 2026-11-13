@@ -75,10 +75,9 @@ convergence of monotone functions to a continuous limit is uniform).
 
 Reused from `RealizedQV` (merged): `tendstoInMeasure_sup_abs_sum_sq_sub_condExp` (Theorem 2.23,
 `V`-tight case) and `tendstoInMeasure_sum_sq_floor_of_qv`. Proved here: the grid lemma, the
-tightness transfer, and the corollaries. Two private helpers are copied verbatim from
-`RealizedQV`, where they are private: `measure_ge_le_ofReal_integral_div'` (copy of
-`measure_ge_le_ofReal_integral_div`) and `exists_eventually_measure_lt_le'` (copy of
-`exists_eventually_measure_lt_le`); delete both once the originals are made public.
+tightness transfer, and the corollaries. Also reused from `RealizedQV`: the Markov bound
+`measure_ge_le_ofReal_integral_div` and `exists_eventually_measure_lt_le` (convergence in
+probability to a constant gives boundedness in probability).
 -/
 
 @[expose] public section
@@ -208,19 +207,6 @@ theorem tendstoInMeasure_iSup_abs_sum_sq_floor_sub_of_qv {m : MeasurableSpace Ω
 
 /-! ### Converse direction: tightness transfer from realized to predictable variation -/
 
-/-- Markov's inequality: for an a.e. nonnegative integrable `f` and `δ > 0`,
-`μ {δ ≤ f} ≤ ofReal (∫ f / δ)`.
-
-Private copy of `RealizedQV`'s private `measure_ge_le_ofReal_integral_div`; delete once that
-lemma is made public (T165 follow-up). -/
-private lemma measure_ge_le_ofReal_integral_div' {m : MeasurableSpace Ω} {μ : Measure Ω}
-    [IsFiniteMeasure μ] {f : Ω → ℝ} (hf0 : 0 ≤ᵐ[μ] f) (hf : Integrable f μ) {δ : ℝ}
-    (hδ : 0 < δ) : μ {ω | δ ≤ f ω} ≤ ENNReal.ofReal ((∫ ω, f ω ∂μ) / δ) := by
-  rw [← ofReal_measureReal]
-  refine ENNReal.ofReal_le_ofReal ?_
-  rw [le_div_iff₀ hδ, mul_comm]
-  exact mul_meas_ge_le_integral_of_nonneg hf0 hf δ
-
 /-- Stopping a sum of terms in `[0,1]` once the partial sum before the current term exceeds
 `C` overshoots `C` by at most `1`: `∑_{j < K} 𝟙{∑_{i < j} a i ≤ C} a j ≤ C + 1`. -/
 private lemma sum_ite_lt_le (a : ℕ → ℝ) (ha : ∀ j, 0 ≤ a j ∧ a j ≤ 1) {C : ℝ} (hC : 0 ≤ C)
@@ -310,7 +296,7 @@ lemma measure_lt_sum_condExp_le {m : MeasurableSpace Ω} {μ : Measure Ω}
     filter_upwards [this] with ω hω
     exact Finset.sum_nonneg fun j _ => Set.indicator_nonneg (fun ω _ => hω j) ω
   have hPW : μ {ω | M ≤ W ω} ≤ ENNReal.ofReal ((C + 1) / M) :=
-    (measure_ge_le_ofReal_integral_div' hW_nn hW_int hM).trans
+    (measure_ge_le_ofReal_integral_div hW_nn hW_int hM).trans
       (ENNReal.ofReal_le_ofReal (div_le_div_of_nonneg_right hEW hM.le))
   -- the large parts: Markov
   set L := ∑ j ∈ Finset.range K, ∫ ω, x j ω ^ 2 * Set.indicator {ω' | 1 < |x j ω'|} 1 ω ∂μ
@@ -324,7 +310,7 @@ lemma measure_lt_sum_condExp_le {m : MeasurableSpace Ω} {μ : Measure Ω}
     · simp only [hb_def, Set.indicator_of_notMem h]
       rw [Set.indicator_of_notMem (show ω ∉ {ω' | 1 < |x j ω'|} from h), mul_zero]
   have hPB : μ {ω | 1 ≤ ∑ j ∈ Finset.range K, (μ[b j | F j]) ω} ≤ ENNReal.ofReal L := by
-    refine (measure_ge_le_ofReal_integral_div' ?_
+    refine (measure_ge_le_ofReal_integral_div ?_
       (integrable_finsetSum _ fun j _ => integrable_condExp) one_pos).trans (le_of_eq ?_)
     · have : ∀ᵐ ω ∂μ, ∀ j, 0 ≤ (μ[b j | F j]) ω := ae_all_iff.2 fun j =>
         condExp_nonneg (Eventually.of_forall fun ω => hb_nn j ω)
@@ -432,21 +418,6 @@ theorem tendstoInMeasure_sup_abs_sum_sq_sub_condExp_of_sq {m : MeasurableSpace �
   tendstoInMeasure_sup_abs_sum_sq_sub_condExp hξ hL2 hLind k hk
     (exists_eventually_measure_lt_sum_condExp_le hξ hL2 hLind k hk htightU)
 
-/-- Convergence in probability to a constant gives boundedness in probability.
-
-Private copy of `RealizedQV`'s private `exists_eventually_measure_lt_le`; delete once that
-lemma is made public (T165 follow-up). -/
-private lemma exists_eventually_measure_lt_le' {m : MeasurableSpace Ω} {μ : Measure Ω}
-    {f : ℕ → Ω → ℝ} {t : ℝ} (h : TendstoInMeasure μ f atTop fun _ => t) (η : ℝ) (hη : 0 < η) :
-    ∃ C : ℝ, ∀ᶠ n in atTop, μ {ω | C < f n ω} ≤ ENNReal.ofReal η := by
-  refine ⟨t + 1, ?_⟩
-  filter_upwards [ENNReal.tendsto_nhds_zero.1 (tendstoInMeasure_iff_norm.1 h 1 one_pos)
-    (ENNReal.ofReal η) (ENNReal.ofReal_pos.2 hη)] with n hn
-  refine (measure_mono fun ω (hω : t + 1 < f n ω) => ?_).trans hn
-  change 1 ≤ ‖f n ω - t‖
-  rw [Real.norm_eq_abs]
-  exact le_trans (by linarith) (le_abs_self _)
-
 /-- If `f n → t` in probability and `|g n - f n| ≤ D n` with `D n → 0` in probability, then
 `g n → t` in probability. -/
 private lemma tendstoInMeasure_of_abs_sub_le {m : MeasurableSpace Ω} {μ : Measure Ω}
@@ -488,7 +459,7 @@ theorem tendstoInMeasure_sum_condExp_floor_of_rqv {m : MeasurableSpace Ω} {μ :
   have hk : ∀ n : ℕ, ⌊(n : ℝ) * t⌋₊ ≤ n := fun n =>
     Nat.floor_le_of_le (by nlinarith [ht.2, (Nat.cast_nonneg n : (0 : ℝ) ≤ n)])
   have hD := tendstoInMeasure_sup_abs_sum_sq_sub_condExp_of_sq hξ hL2 hLind
-    (fun n => ⌊(n : ℝ) * t⌋₊) hk (exists_eventually_measure_lt_le' hU)
+    (fun n => ⌊(n : ℝ) * t⌋₊) hk (exists_eventually_measure_lt_le hU)
   refine tendstoInMeasure_of_abs_sub_le hU hD fun n ω => ?_
   set K := ⌊(n : ℝ) * t⌋₊
   have hle : |∑ j ∈ Finset.range K, (ξ n j ω ^ 2 - (μ[fun ω => ξ n j ω ^ 2 | 𝓕 n j]) ω)| ≤
