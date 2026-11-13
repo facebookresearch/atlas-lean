@@ -22,7 +22,9 @@ equity holders the European call payoff on the firm value with strike `F`,
 `europeanCallPayoff V F = max (V - F) 0`; the two payoffs sum to `V`. The identity
 holds for every real `V`, so the source's nonnegativity of `V` (limited liability) is
 not needed for it; it is retained where it matters, in the nonnegativity of the debt
-payoff. Both payoffs are nonnegative when `V, F ≥ 0`.
+payoff. Both payoffs are nonnegative when `V, F ≥ 0`; the call (equity) payoff is
+nonnegative for all inputs by the canonical
+`MathlibExt.Probability.Finance.OptionPayoffs.europeanCallPayoff_nonneg`.
 
 Equity as a call on firm value is the Merton insight; the call payoff itself is the
 canonical `MathlibExt.Probability.Finance.OptionPayoffs.europeanCallPayoff`, reused
@@ -31,7 +33,7 @@ here rather than redefined.
 ## Main results
 
 * `debtPayoff_add_europeanCallPayoff`: the balance-sheet identity.
-* `debtPayoff_nonneg`, `europeanCallPayoff_nonneg`: nonnegativity of the payoffs.
+* `debtPayoff_nonneg`: nonnegativity of the debt payoff.
 
 ## References
 
@@ -69,12 +71,6 @@ theorem debtPayoff_nonneg {V F : ℝ} (hV : 0 ≤ V) (hF : 0 ≤ F) :
     0 ≤ debtPayoff V F := by
   unfold debtPayoff
   exact le_min hV hF
-
-/-- The equity (call) payoff is always nonnegative (limited liability). -/
-theorem europeanCallPayoff_nonneg (V F : ℝ) :
-    0 ≤ MathlibExt.Probability.Finance.OptionPayoffs.europeanCallPayoff V F := by
-  unfold MathlibExt.Probability.Finance.OptionPayoffs.europeanCallPayoff
-  exact le_max_right _ _
 
 
 end MathlibExt.Economics.Finance.DebtEquityPayoff
