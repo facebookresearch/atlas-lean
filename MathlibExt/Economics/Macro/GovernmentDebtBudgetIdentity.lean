@@ -12,7 +12,7 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import MathlibExt.Economics.Finance.DatedCashFlow
-import Mathlib.Algebra.BigOperators.Intervals
+import MathlibExt.Economics.Finance.FiniteDividendDiscount
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
@@ -38,6 +38,16 @@ canonically with the shared `MathlibExt.Economics.Finance.presentValue` and
   in raw division form.
 * `MathlibExt.Economics.Macro.GovernmentDebtBudgetIdentity.governmentBudgetIdentity_terminal`:
   terminal-debt form.
+
+## References
+
+* O. Blanchard, *Macroeconomics*, 4th edition, Chapter 26 ("Fiscal Policy: A Summing Up"),
+  section "The Government Budget Constraint": in real terms,
+  `B_t = (1 + r) B_{t-1} + (G_t - T_t)`, where `G_t - T_t` is the primary deficit of year
+  `t`. `DebtRecursion` is this recursion with the index shifted by one: `D (t + 1)` is the
+  primary deficit of period `t + 1`.
+
+Atlas roadmap target MA07.T01.
 -/
 
 namespace MathlibExt.Economics.Macro.GovernmentDebtBudgetIdentity
@@ -66,31 +76,26 @@ the debt recursion, initial debt plus the present value of primary deficits thro
 `n` equals the discounted terminal debt; the terminal debt is retained explicitly and not
 assumed away:
 `B 0 + presentValue (discountFactor r) (Finset.Icc 1 n) D = discountFactor r n * B n`.
-The sum telescopes via `Finset.sum_range_sub`; this theorem does not reprove telescoping. -/
+Rewritten as `B t = (-D (t + 1) + B (t + 1)) / (1 + r)`, the debt recursion is the price
+recursion of `FiniteDividendDiscount.finiteDividendDiscount` with cash flow `-D`; the
+identity is that theorem plus `presentValue_smul`. -/
 theorem governmentBudgetIdentity_presentValue {B D : ℕ → ℝ} {r : ℝ} (h : DebtRecursion B D r)
     (hr : (1 + r) ≠ 0) (n : ℕ) :
     B 0 + presentValue (discountFactor r) (Finset.Icc 1 n) D = discountFactor r n * B n := by
-  set f : ℕ → ℝ := fun t => discountFactor r t * B t with hf
-  have hIcc : Finset.Icc 1 n = Finset.Ico 1 (n + 1) := by
-    ext x
-    simp only [Finset.mem_Icc, Finset.mem_Ico]
-    omega
-  have hstep : ∀ k, discountFactor r (k + 1) * D (k + 1) = f (k + 1) - f k := by
-    intro k
-    have hdisc := debt_discounted_step h hr k
-    simp only [hf, discountFactor, inv_mul_eq_div]
-    linarith
-  have hrewrite : presentValue (discountFactor r) (Finset.Icc 1 n) D
-      = ∑ k ∈ Finset.range n, (f (k + 1) - f k) := by
-    rw [presentValue, hIcc, Finset.sum_Ico_eq_sum_range, show n + 1 - 1 = n by omega]
-    refine Finset.sum_congr rfl (fun k _ => ?_)
-    show discountFactor r (1 + k) * D (1 + k) = f (k + 1) - f k
-    rw [add_comm (1 : ℕ) k]
-    exact hstep k
-  rw [hrewrite, Finset.sum_range_sub f n]
-  have hf0 : f 0 = B 0 := by simp only [hf, discountFactor, pow_zero, inv_one, one_mul]
-  rw [hf0]
-  ring
+  have hrec : ∀ t, B t = ((-D) (t + 1) + B (t + 1)) / (1 + r) := by
+    intro t
+    rw [Pi.neg_apply, h t]
+    field_simp
+    ring
+  have hdd := FiniteDividendDiscount.finiteDividendDiscount hr hrec n
+  have hneg : presentValue (discountFactor r) (Finset.Icc 1 n) (-D)
+      = -presentValue (discountFactor r) (Finset.Icc 1 n) D := by
+    have hD : -D = (-1 : ℝ) • D := by
+      funext t
+      simp only [Pi.neg_apply, Pi.smul_apply, smul_eq_mul, neg_one_mul]
+    rw [hD, presentValue_smul, neg_one_mul]
+  rw [hneg] at hdd
+  linarith
 
 /-- **Finite-horizon government budget identity (MA07.T01), raw division form.** The
 present-value identity `governmentBudgetIdentity_presentValue` with the discount factors
