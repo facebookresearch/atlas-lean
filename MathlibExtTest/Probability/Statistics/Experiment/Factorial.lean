@@ -35,6 +35,18 @@ theorem popMean_const_fin4 (c : ℝ) : popMean (fun _ : Fin 4 => c) = c := by
   rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
   field_simp
 
+/-- Normalization: each main effect is a difference of two arm averages. -/
+example (m₀₀ m₀₁ m₁₀ m₁₁ : ℝ) :
+    mainEffectA m₀₀ m₀₁ m₁₀ m₁₁ = (m₁₀ + m₁₁) / 2 - (m₀₀ + m₀₁) / 2 ∧
+      mainEffectB m₀₀ m₀₁ m₁₀ m₁₁ = (m₀₁ + m₁₁) / 2 - (m₀₀ + m₁₀) / 2 :=
+  ⟨by unfold mainEffectA; ring, by unfold mainEffectB; ring⟩
+
+/-- Normalization: twice the interaction is the unhalved difference-in-differences. -/
+example (m₀₀ m₀₁ m₁₀ m₁₁ : ℝ) :
+    2 * interactionAB m₀₀ m₀₁ m₁₀ m₁₁ = (m₁₁ - m₀₁) - (m₁₀ - m₀₀) := by
+  unfold interactionAB
+  ring
+
 /-- Nonadditive population fixture: constant surfaces `1, 0, 0, 1` give
 population main effects `0` and interaction `1`. -/
 example : mainEffectA (popMean (fun _ : Fin 4 => (1 : ℝ)))

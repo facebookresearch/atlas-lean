@@ -17,6 +17,26 @@ public import MathlibExt.Probability.Causality.CausalIdentification
 Complete randomization over four cells of fixed positive sizes; observed
 main-effect and interaction contrasts are unbiased with no additivity
 assumption. Cell sizes need not be equal.
+
+## Coding and normalization
+
+Factors `A` and `B` each have a low level `0` and a high level `1`. Cell `c : Fin 4` is the
+treatment combination `(a, b)` with `c = 2 a + b`, so cells `0, 1, 2, 3` are `(0, 0)`, `(0, 1)`,
+`(1, 0)` and `(1, 1)`, and `m_ab` is the mean of cell `(a, b)`. The contrasts use the
+factorial-effect normalization of Dasgupta, Pillai and Rubin: an effect is `2^{-(K-1)} g ⬝ m`
+for a `±1` contrast vector `g`, here with `K = 2`.
+
+* `mainEffectA = (m₁₁ + m₁₀ - m₀₁ - m₀₀) / 2`: the average of the two `A = 1` cell means minus
+  the average of the two `A = 0` cell means.
+* `mainEffectB = (m₁₁ + m₀₁ - m₁₀ - m₀₀) / 2`: the same for `B`.
+* `interactionAB = (m₁₁ - m₁₀ - m₀₁ + m₀₀) / 2`: half the difference between the effect of `A`
+  at `B = 1` and its effect at `B = 0`. The unhalved difference-in-differences, which part of
+  the literature also calls the interaction, is `2 * interactionAB`.
+
+## References
+
+* T. Dasgupta, N. S. Pillai and D. B. Rubin, *Causal inference from `2^K` factorial designs
+  using the potential outcomes model*, arXiv:1211.2481, Section 3.1, equations (1) and (2).
 -/
 
 @[expose] public section
@@ -48,15 +68,20 @@ noncomputable def factorialCellMean {ι : Type*} [Fintype ι] [DecidableEq ι]
     (y : ι → ℝ) (c : Fin 4) (f : ι → Fin 4) : ℝ :=
   sampleMean y (Finset.univ.filter fun i => f i = c)
 
-/-- Factorial contrasts as explicit averages of the four cell means: each main
-effect is the average of one arm's two cell means minus the average of the
-other arm's, halved; the interaction is half the diagonal difference. -/
+/-- **Main effect of `A`** from the cell means `m_ab` of the treatment combinations `(a, b)`
+(cells `0, 1, 2, 3`, see the module docstring): the average of the two `A = 1` cell means minus
+the average of the two `A = 0` cell means. -/
 noncomputable def mainEffectA (m₀₀ m₀₁ m₁₀ m₁₁ : ℝ) : ℝ :=
   (m₁₁ + m₁₀ - m₀₁ - m₀₀) / 2
 
+/-- **Main effect of `B`**: the average of the two `B = 1` cell means minus the average of the
+two `B = 0` cell means. -/
 noncomputable def mainEffectB (m₀₀ m₀₁ m₁₀ m₁₁ : ℝ) : ℝ :=
   (m₁₁ + m₀₁ - m₁₀ - m₀₀) / 2
 
+/-- **Interaction of `A` and `B`**: half the difference between the effect of `A` at `B = 1`,
+`m₁₁ - m₀₁`, and its effect at `B = 0`, `m₁₀ - m₀₀`; that is, half the difference-in-differences.
+-/
 noncomputable def interactionAB (m₀₀ m₀₁ m₁₀ m₁₁ : ℝ) : ℝ :=
   (m₁₁ - m₁₀ - m₀₁ + m₀₀) / 2
 
