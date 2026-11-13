@@ -29,6 +29,8 @@ Section 7.1.
 
 open Finset
 
+namespace Cslib.Complexity.BPPAmplification
+
 /-- Majority vote of a tuple of Boolean votes. -/
 def majority {n : ℕ} (v : Fin n → Bool) : Bool :=
   decide (n / 2 < (Finset.univ.filter (fun i => v i = true)).card)
@@ -310,3 +312,5 @@ theorem bpp_majority_amplify {n : ℕ} (p : PMF Bool)
       _ ≤ (2 * Real.sqrt 2 / 3) ^ n := hpow1
       _ ≤ (Real.exp (-((1:ℝ)/18))) ^ n := hpow2
       _ = Real.exp (-(n / 18 : ℝ)) := hexp_pow
+
+end Cslib.Complexity.BPPAmplification
