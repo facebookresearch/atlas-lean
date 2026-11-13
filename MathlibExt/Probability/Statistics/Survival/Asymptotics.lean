@@ -67,6 +67,25 @@ lies outside the risk set of `j`). Studentization is Slutsky's division
 Fixed grid time `m`, positive at-risk mass at `m`; no uniformity in `m`, no process-level
 (Skorokhod) statement, no joint (Aalen–Johansen / cumulative incidence) version. The variance and
 studentized results need `P(T > m) ≠ 0`; the studentized one also needs `τ² > 0`.
+
+## References
+
+* E. L. Kaplan and P. Meier, *Nonparametric estimation from incomplete observations*, J. Amer.
+  Statist. Assoc. 53 (1958), 457–481 (the product-limit estimator).
+* M. Greenwood, *The natural duration of cancer*, Reports on Public Health and Medical Subjects
+  33, HMSO, London (1926) (Greenwood's variance formula).
+* N. Breslow and J. Crowley, *A large sample study of the life table and product limit estimates
+  under random censorship*, Ann. Statist. 2 (1974), 437–453 (asymptotic normality of the
+  product-limit estimate).
+* P. K. Andersen, Ø. Borgan, R. D. Gill and N. Keiding, *Statistical Models Based on Counting
+  Processes*, Springer (1993), Chapter IV (large-sample theory of the Kaplan–Meier estimator and
+  Greenwood's variance estimate).
+* A. W. van der Vaart, *Asymptotic Statistics*, Cambridge University Press (1998), Chapters 2
+  and 3 (multivariate central limit theorem, Slutsky's lemma, delta method).
+
+The derivation is the standard delta-method argument of the last reference applied to the
+multinomial cell proportions, not the counting-process route of Andersen et al.; the Greenwood
+form of the limit variance is computed directly from the cell probabilities.
 -/
 
 @[expose] public section
