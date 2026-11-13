@@ -7,16 +7,13 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.Field
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
 public import PhyslibExt.Chemistry.Amounts.MolarMassComposition
+import Mathlib.Algebra.BigOperators.Field
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 

@@ -8,6 +8,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Chemistry.SolutionComposition
+public import Mathlib.Data.Fin.VecNotation
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
 
 /-!
 
