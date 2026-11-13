@@ -80,7 +80,7 @@ variable {Ω : Type*}
 
 /-- Markov's inequality in the form used below: for an a.e. nonnegative integrable `f` and
 `δ > 0`, `μ {δ ≤ f} ≤ ofReal (∫ f / δ)`. -/
-private lemma measure_ge_le_ofReal_integral_div {m : MeasurableSpace Ω} {μ : Measure Ω}
+lemma measure_ge_le_ofReal_integral_div {m : MeasurableSpace Ω} {μ : Measure Ω}
     [IsFiniteMeasure μ] {f : Ω → ℝ} (hf0 : 0 ≤ᵐ[μ] f) (hf : Integrable f μ) {δ : ℝ}
     (hδ : 0 < δ) : μ {ω | δ ≤ f ω} ≤ ENNReal.ofReal ((∫ ω, f ω ∂μ) / δ) := by
   rw [← ofReal_measureReal]
@@ -474,7 +474,7 @@ theorem tendstoInMeasure_sup_abs_sum_sq_sub_condExp {m : MeasurableSpace Ω} {μ
 
 /-- Convergence in probability to a constant gives boundedness in probability, in the form of
 the hypothesis `htight` of `tendstoInMeasure_sup_abs_sum_sq_sub_condExp`. -/
-private lemma exists_eventually_measure_lt_le {m : MeasurableSpace Ω} {μ : Measure Ω}
+lemma exists_eventually_measure_lt_le {m : MeasurableSpace Ω} {μ : Measure Ω}
     {f : ℕ → Ω → ℝ} {t : ℝ} (h : TendstoInMeasure μ f atTop fun _ => t) (η : ℝ) (hη : 0 < η) :
     ∃ C : ℝ, ∀ᶠ n in atTop, μ {ω | C < f n ω} ≤ ENNReal.ofReal η := by
   refine ⟨t + 1, ?_⟩
