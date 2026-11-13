@@ -97,26 +97,26 @@ example (β₀ : Fin 1 → ℝ) (n : ℕ) :
 
 /-! ### Weighted least squares -/
 
-/-- With unit weights the WLS estimate solves the ordinary normal equations. -/
+/-- With unit weights the closed-form candidate solves the ordinary normal equations. -/
 example : (1 : Matrix (Fin 1) (Fin 1) ℝ)ᵀ *ᵥ
-    ((1 : Fin 1 → ℝ) * (![3] - 1 *ᵥ wlsEstimate (1 : Matrix (Fin 1) (Fin 1) ℝ) 1 ![3])) = 0 :=
-  normal_eq_wlsEstimate (fun _ => one_ne_zero) (by simp [weightedGram]) ![3]
+    ((1 : Fin 1 → ℝ) * (![3] - 1 *ᵥ wlsClosedForm (1 : Matrix (Fin 1) (Fin 1) ℝ) 1 ![3])) = 0 :=
+  normal_eq_wlsClosedForm (fun _ => one_ne_zero) (by simp [weightedGram]) ![3]
 
-/-- The WLS estimate has weighted residual sum of squares no larger than at `b = 0`. -/
-example : wrss (1 : Matrix (Fin 1) (Fin 1) ℝ) ![2] ![3] (wlsEstimate 1 ![2] ![3]) ≤
+/-- The closed-form candidate has weighted residual sum of squares no larger than at `b = 0`. -/
+example : wrss (1 : Matrix (Fin 1) (Fin 1) ℝ) ![2] ![3] (wlsClosedForm 1 ![2] ![3]) ≤
     wrss 1 ![2] ![3] ![0] :=
-  wrss_wlsEstimate_le (fun i => by fin_cases i; norm_num) (fun i => by fin_cases i; norm_num)
+  wrss_wlsClosedForm_le (fun i => by fin_cases i; norm_num) (fun i => by fin_cases i; norm_num)
     ((isUnit_iff_isUnit_det _).mpr (by simp [weightedGram])) ![3] ![0]
 
 /-- The weighted residual sum of squares of `z = 3`, `w = 2` at `b = 0` is `2 · 3² = 18`. -/
 example : wrss (1 : Matrix (Fin 1) (Fin 1) ℝ) ![2] ![3] ![0] = 18 := by
   norm_num [wrss]
 
-/-- Two observations with unequal weights: the WLS estimate is the weighted mean
+/-- Two observations with unequal weights: the closed-form candidate is the weighted mean
 `(1 · 0 + 3 · 4) / (1 + 3) = 3`. Using `w⁻¹` in place of `w` would give `1`, so this example
 detects a weight/covariance flip. -/
-example : wlsEstimate (!![1; 1] : Matrix (Fin 2) (Fin 1) ℝ) ![1, 3] ![0, 4] = ![3] := by
-  rw [wlsEstimate_eq (fun i => by fin_cases i <;> norm_num)]
+example : wlsClosedForm (!![1; 1] : Matrix (Fin 2) (Fin 1) ℝ) ![1, 3] ![0, 4] = ![3] := by
+  rw [wlsClosedForm_eq (fun i => by fin_cases i <;> norm_num)]
   funext i
   fin_cases i
   simp [weightedGram, Matrix.mulVec, dotProduct, Fin.sum_univ_two, Matrix.mul_apply]
@@ -125,28 +125,29 @@ example : wlsEstimate (!![1; 1] : Matrix (Fin 2) (Fin 1) ℝ) ![1, 3] ![0, 4] = 
 /-! ### Boundary: a singular weighted Gram matrix -/
 
 /-- The invertibility hypothesis cannot be dropped from `irlsStep_eq_self_iff`: for
-`X = [1 1]` the Gram matrix `Xᵀ X` is singular, `β = 0` is an IRLS fixed point, yet the score
-`Xᵀ (5 - 0)` is nonzero. -/
+`X = [1 1]` the Gram matrix `Xᵀ X` is singular, so `irlsStep` is the total-inverse junk value
+`0`, not a least-squares fit (`![5, 0]` fits exactly). Then `β = 0` is a fixed point of
+`irlsStep`, yet the score `Xᵀ (5 - 0)` is nonzero. -/
 example : irlsStep (!![1, 1] : Matrix (Fin 1) (Fin 2) ℝ) ![5] id (fun _ => 1) 0 = 0 ∧
     (!![1, 1] : Matrix (Fin 1) (Fin 2) ℝ)ᵀ *ᵥ
       (![5] - fun i => id ((!![1, 1] : Matrix (Fin 1) (Fin 2) ℝ) *ᵥ 0) i) ≠ 0 := by
   constructor
-  · simp [irlsStep, wlsEstimate,
+  · simp [irlsStep, wlsClosedForm,
       MathlibExt.Probability.Statistics.GeneralizedLeastSquares.glsMatrix,
       Matrix.inv_def, Matrix.det_fin_two, Matrix.mul_apply]
   · intro h
     have := congrFun h 0
     simp [Matrix.mulVec, dotProduct] at this
 
-/-- Conversely, for `X = 0` the score vanishes at `β = 1` but `β = 1` is not an IRLS fixed
-point. -/
+/-- Conversely, for `X = 0` (a singular Gram matrix, so `irlsStep` is the junk value `0`) the
+score vanishes at `β = 1` but `β = 1` is not a fixed point of `irlsStep`. -/
 example : (0 : Matrix (Fin 1) (Fin 1) ℝ)ᵀ *ᵥ
       (![5] - fun i => id ((0 : Matrix (Fin 1) (Fin 1) ℝ) *ᵥ ![1]) i) = 0 ∧
     irlsStep (0 : Matrix (Fin 1) (Fin 1) ℝ) ![5] id (fun _ => 1) ![1] ≠ ![1] := by
   refine ⟨by simp, ?_⟩
   intro h
   have := congrFun h 0
-  simp [irlsStep, wlsEstimate,
+  simp [irlsStep, wlsClosedForm,
     MathlibExt.Probability.Statistics.GeneralizedLeastSquares.glsMatrix] at this
 
 /-- The Gaussian Hessian `-Xᵀ X` is the derivative of the least-squares score, via

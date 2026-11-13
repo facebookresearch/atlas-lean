@@ -38,27 +38,33 @@ the weighted Gram matrix `Xᵀ W(β) X` is invertible (`IsUnit`), the Newton–R
 `β - (∇²ℓ)⁻¹ ∇ℓ` is a weighted least-squares fit of the *working response*
 `zᵢ = ηᵢ + (yᵢ - μᵢ) / wᵢ` on `X` with weights `wᵢ`, and `β` is a fixed point of this update
 exactly when the score vanishes at `β`. Iterating the update is the IRLS algorithm of Nelder
-and Wedderburn. Without invertibility the fixed-point characterization fails in both
-directions; the tests give singular-Gram counterexamples.
+and Wedderburn. Without these assumptions `irlsStep` is only the closed-form candidate built
+from Mathlib's total matrix inverse, not a least-squares fit, and its fixed points and the
+score roots need not coincide in either direction; the tests give singular-Gram
+counterexamples.
 
 ## Main definitions
 
 * `weightedGram X w`: the weighted Gram matrix `Xᵀ diag(w) X`.
-* `wlsEstimate X w z`: the weighted least-squares estimate, i.e. the GLS estimate with
-  covariance `diag(w)⁻¹` (reusing `GeneralizedLeastSquares.glsMatrix`).
+* `wlsClosedForm X w z`: the closed-form weighted least-squares candidate, i.e. the GLS formula
+  with covariance `diag(w)⁻¹` (reusing `GeneralizedLeastSquares.glsMatrix`). It is the
+  weighted least-squares estimate when the weights are nonzero and the weighted Gram matrix is
+  invertible; for a singular Gram matrix it is a junk value of Mathlib's total matrix inverse.
 * `newtonStep score hess β`: the Newton–Raphson update `β - (hess β)⁻¹ score β`.
 * `irlsWeights`, `workingResponse`, `irlsStep`, `irlsIterate`: the IRLS weights, working
-  response, one IRLS update, and the iteration.
+  response, one IRLS update (the closed-form candidate for the working response), and the
+  iteration.
 * `IsCanonicalScoreHessian`: the canonical-link score and Hessian identities, as hypotheses.
 
 ## Main results
 
-* `wlsEstimate_eq`: for nonzero weights, the closed form `(Xᵀ W X)⁻¹ Xᵀ W z` of the weighted
+* `wlsClosedForm_eq`: for nonzero weights, the candidate is `(Xᵀ W X)⁻¹ Xᵀ W z`.
+* `normal_eq_iff_eq_wlsClosedForm`: for nonzero weights and an invertible weighted Gram
+  matrix, the candidate is the unique solution of the weighted normal equations
+  `Xᵀ W (z - X b) = 0`.
+* `wrss_wlsClosedForm_le`: with nonzero, nonnegative weights and an invertible weighted Gram
+  matrix, the candidate minimizes the weighted residual sum of squares, so it is the weighted
   least-squares estimate.
-* `normal_eq_iff_eq_wlsEstimate`: for nonzero weights and an invertible weighted Gram matrix,
-  the WLS estimate is the unique solution of the weighted normal equations `Xᵀ W (z - X b) = 0`.
-* `wrss_wlsEstimate_le`: with nonzero, nonnegative weights and an invertible weighted Gram
-  matrix, the WLS estimate minimizes the weighted residual sum of squares.
 * `newtonStep_eq_irlsStep`: with nonzero weights and an invertible weighted Gram matrix at `β`,
   the Newton step equals the IRLS (weighted least-squares) step.
 * `newtonIterate_eq_irlsIterate`: when those assumptions hold at every point, Newton–Raphson
@@ -93,10 +99,14 @@ variable {m k : Type*} [Fintype m] [DecidableEq m] [Fintype k] [DecidableEq k]
 def weightedGram (X : Matrix m k ℝ) (w : m → ℝ) : Matrix k k ℝ :=
   Xᵀ * diagonal w * X
 
-/-- The weighted least-squares estimate of `b` in `z ≈ X b` with weights `w`: the generalized
-least-squares estimate with covariance `diag(w)⁻¹`. For nonzero weights it equals
-`(Xᵀ W X)⁻¹ Xᵀ W z` (`wlsEstimate_eq`). -/
-noncomputable def wlsEstimate (X : Matrix m k ℝ) (w z : m → ℝ) : k → ℝ :=
+/-- The closed-form weighted least-squares candidate for `b` in `z ≈ X b` with weights `w`: the
+generalized least-squares formula with covariance `diag(w)⁻¹`, which for nonzero weights is
+`(Xᵀ W X)⁻¹ Xᵀ W z` (`wlsClosedForm_eq`). It is the weighted least-squares estimate when the
+weights are nonzero and the weighted Gram matrix is invertible
+(`normal_eq_iff_eq_wlsClosedForm`, `wrss_wlsClosedForm_le`). For a singular Gram matrix,
+Mathlib's total matrix inverse makes it a junk value that need not minimize the weighted
+residual sum of squares. -/
+noncomputable def wlsClosedForm (X : Matrix m k ℝ) (w z : m → ℝ) : k → ℝ :=
   glsMatrix X (diagonal w⁻¹) *ᵥ z
 
 /-- The weighted residual sum of squares `∑ᵢ wᵢ (zᵢ - (X b)ᵢ)²`. -/
@@ -121,39 +131,41 @@ private theorem transpose_mulVec_mul_mulVec (b : k → ℝ) :
     Xᵀ *ᵥ (w * (X *ᵥ b)) = weightedGram X w *ᵥ b := by
   rw [weightedGram, ← diagonal_mulVec_eq, mulVec_mulVec, mulVec_mulVec]
 
-/-- For nonzero weights the WLS estimate is `(Xᵀ W X)⁻¹ Xᵀ W z`. -/
-theorem wlsEstimate_eq (hw : ∀ i, w i ≠ 0) (z : m → ℝ) :
-    wlsEstimate X w z = (weightedGram X w)⁻¹ *ᵥ (Xᵀ *ᵥ (w * z)) := by
-  rw [wlsEstimate, glsMatrix, inv_diagonal_inv hw, ← weightedGram, ← diagonal_mulVec_eq,
+/-- For nonzero weights the closed-form candidate is `(Xᵀ W X)⁻¹ Xᵀ W z`. -/
+theorem wlsClosedForm_eq (hw : ∀ i, w i ≠ 0) (z : m → ℝ) :
+    wlsClosedForm X w z = (weightedGram X w)⁻¹ *ᵥ (Xᵀ *ᵥ (w * z)) := by
+  rw [wlsClosedForm, glsMatrix, inv_diagonal_inv hw, ← weightedGram, ← diagonal_mulVec_eq,
     mulVec_mulVec, mulVec_mulVec, Matrix.mul_assoc]
 
 /-- With nonzero weights and an invertible weighted Gram matrix, `b` solves the weighted normal
-equations `Xᵀ W (z - X b) = 0` iff `b` is the WLS estimate. -/
-theorem normal_eq_iff_eq_wlsEstimate (hw : ∀ i, w i ≠ 0) (hG : IsUnit (weightedGram X w))
+equations `Xᵀ W (z - X b) = 0` iff `b` is the closed-form candidate. -/
+theorem normal_eq_iff_eq_wlsClosedForm (hw : ∀ i, w i ≠ 0) (hG : IsUnit (weightedGram X w))
     (z : m → ℝ) (b : k → ℝ) :
-    Xᵀ *ᵥ (w * (z - X *ᵥ b)) = 0 ↔ b = wlsEstimate X w z := by
+    Xᵀ *ᵥ (w * (z - X *ᵥ b)) = 0 ↔ b = wlsClosedForm X w z := by
   have hdet : IsUnit (weightedGram X w).det := (isUnit_iff_isUnit_det _).mp hG
-  rw [mul_sub, mulVec_sub, transpose_mulVec_mul_mulVec, sub_eq_zero, wlsEstimate_eq hw]
+  rw [mul_sub, mulVec_sub, transpose_mulVec_mul_mulVec, sub_eq_zero, wlsClosedForm_eq hw]
   constructor
   · intro h
     rw [h, mulVec_mulVec, nonsing_inv_mul _ hdet, one_mulVec]
   · intro h
     rw [h, mulVec_mulVec, mul_nonsing_inv _ hdet, one_mulVec]
 
-/-- The WLS estimate solves the weighted normal equations. -/
-theorem normal_eq_wlsEstimate (hw : ∀ i, w i ≠ 0) (hG : IsUnit (weightedGram X w))
-    (z : m → ℝ) : Xᵀ *ᵥ (w * (z - X *ᵥ wlsEstimate X w z)) = 0 :=
-  (normal_eq_iff_eq_wlsEstimate hw hG z _).mpr rfl
+/-- With nonzero weights and an invertible weighted Gram matrix, the closed-form candidate
+solves the weighted normal equations. -/
+theorem normal_eq_wlsClosedForm (hw : ∀ i, w i ≠ 0) (hG : IsUnit (weightedGram X w))
+    (z : m → ℝ) : Xᵀ *ᵥ (w * (z - X *ᵥ wlsClosedForm X w z)) = 0 :=
+  (normal_eq_iff_eq_wlsClosedForm hw hG z _).mpr rfl
 
-/-- With nonzero, nonnegative weights and an invertible weighted Gram matrix, the WLS estimate
-minimizes the weighted residual sum of squares. -/
-theorem wrss_wlsEstimate_le (hw : ∀ i, w i ≠ 0) (hw0 : ∀ i, 0 ≤ w i)
+/-- With nonzero, nonnegative weights and an invertible weighted Gram matrix, the closed-form
+candidate minimizes the weighted residual sum of squares: it is the weighted least-squares
+estimate. -/
+theorem wrss_wlsClosedForm_le (hw : ∀ i, w i ≠ 0) (hw0 : ∀ i, 0 ≤ w i)
     (hG : IsUnit (weightedGram X w)) (z : m → ℝ) (b : k → ℝ) :
-    wrss X w z (wlsEstimate X w z) ≤ wrss X w z b := by
-  set b₀ := wlsEstimate X w z
+    wrss X w z (wlsClosedForm X w z) ≤ wrss X w z b := by
+  set b₀ := wlsClosedForm X w z
   set r := z - X *ᵥ b₀
   set d := X *ᵥ (b₀ - b)
-  have hnormal : Xᵀ *ᵥ (w * r) = 0 := normal_eq_wlsEstimate hw hG z
+  have hnormal : Xᵀ *ᵥ (w * r) = 0 := normal_eq_wlsClosedForm hw hG z
   have hcross : ∑ i, w i * r i * d i = 0 := by
     have : (w * r) ⬝ᵥ d = 0 := by
       rw [dotProduct_mulVec, ← mulVec_transpose, hnormal, zero_dotProduct]
@@ -188,11 +200,13 @@ noncomputable def workingResponse (X : Matrix m k ℝ) (y : m → ℝ) (mean wei
     (β : k → ℝ) : m → ℝ :=
   fun i => (X *ᵥ β) i + (y i - mean ((X *ᵥ β) i)) / weight ((X *ᵥ β) i)
 
-/-- One IRLS update: the weighted least-squares fit of the working response on `X` with the
-IRLS weights. -/
+/-- One IRLS update: the closed-form weighted least-squares candidate for the working response
+on `X` with the IRLS weights. It is the weighted least-squares fit when the weights are nonzero
+and the weighted Gram matrix is invertible (`irlsStep_eq`); otherwise it need not be a
+least-squares fit (see `wlsClosedForm`). -/
 noncomputable def irlsStep (X : Matrix m k ℝ) (y : m → ℝ) (mean weight : ℝ → ℝ)
     (β : k → ℝ) : k → ℝ :=
-  wlsEstimate X (irlsWeights weight X β) (workingResponse X y mean weight β)
+  wlsClosedForm X (irlsWeights weight X β) (workingResponse X y mean weight β)
 
 /-- The `n`-th IRLS iterate from the starting value `β₀`. -/
 noncomputable def irlsIterate (X : Matrix m k ℝ) (y : m → ℝ) (mean weight : ℝ → ℝ)
@@ -232,7 +246,7 @@ theorem irlsStep_eq (β : k → ℝ) (hw : ∀ i, irlsWeights weight X β i ≠ 
       β + (weightedGram X (irlsWeights weight X β))⁻¹ *ᵥ
         (Xᵀ *ᵥ (y - fun i => mean ((X *ᵥ β) i))) := by
   have hdet := (isUnit_iff_isUnit_det _).mp hG
-  rw [irlsStep, wlsEstimate_eq hw, weights_mul_workingResponse β hw, mulVec_add,
+  rw [irlsStep, wlsClosedForm_eq hw, weights_mul_workingResponse β hw, mulVec_add,
     transpose_mulVec_mul_mulVec, mulVec_add, mulVec_mulVec, nonsing_inv_mul _ hdet, one_mulVec]
 
 /-- **Newton–Raphson is IRLS.** Under the canonical-link score and Hessian identities, with
@@ -266,7 +280,7 @@ Gram matrix at `β`, the IRLS step fixes `β` iff the canonical score `Xᵀ (y -
 theorem irlsStep_eq_self_iff (β : k → ℝ) (hw : ∀ i, irlsWeights weight X β i ≠ 0)
     (hG : IsUnit (weightedGram X (irlsWeights weight X β))) :
     irlsStep X y mean weight β = β ↔ Xᵀ *ᵥ (y - fun i => mean ((X *ᵥ β) i)) = 0 := by
-  rw [irlsStep, eq_comm, ← normal_eq_iff_eq_wlsEstimate hw hG, mul_sub,
+  rw [irlsStep, eq_comm, ← normal_eq_iff_eq_wlsClosedForm hw hG, mul_sub,
     weights_mul_workingResponse β hw, add_sub_cancel_left]
 
 /-- Under the canonical-link hypotheses, with nonzero weights and an invertible weighted Gram
