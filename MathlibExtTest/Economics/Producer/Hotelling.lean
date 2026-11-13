@@ -288,3 +288,80 @@ example : (((-1 : ℝ) • ContinuousLinearMap.proj 0 + (1 : ℝ) • Continuous
   exact hasFDerivAt_profit_eq_dotL hπ hy₀ hprofit hdiff
 
 end MathlibExtTest.Economics.Producer.Hotelling.DotL
+
+/-! The same two technologies through the producer API, `IsProfitMax` and `profitFn`. At `(1, 2)`
+the smooth technology's profit function has derivative `Real.dotL (-1, 1)`: its derivative in the
+output price `p₁` is the supply `1`, and in the input price `p₀` minus the input demand `1`. The
+two-point technology's `profitFn` is `max p₀ p₁`, which has two profit-maximizing plans at
+`(1, 1)`, so it is not differentiable there. -/
+
+namespace MathlibExtTest.Economics.Producer.Hotelling.ProfitFn
+
+open _root_.MathlibExt.Economics.Producer
+
+theorem smooth_isProfitMax :
+    IsProfitMax {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2} ![1, 2] ![-1, 1] := by
+  refine ⟨smooth_y0_mem, fun y hy => ?_⟩
+  rw [smooth_attainment]
+  exact (smooth_isLUB ![1, 2] (by norm_num)).1 ⟨y, hy, rfl⟩
+
+theorem smooth_bddAbove :
+    ∀ᶠ p in 𝓝 (![1, 2] : Fin 2 → ℝ),
+      BddAbove ((fun y => p ⬝ᵥ y) '' {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2}) :=
+  smooth_eventually.mono fun _ hp => hp.bddAbove
+
+theorem smooth_profitFn_eventuallyEq :
+    profitFn {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2} =ᶠ[𝓝 ![1, 2]]
+      fun p => (p 1) ^ 2 / (4 * p 0) :=
+  smooth_eventually.mono fun _ hp => hp.csSup_eq ⟨_, ![-1, 1], smooth_y0_mem, rfl⟩
+
+theorem smooth_profitFn_hasFDerivAt :
+    HasFDerivAt (profitFn {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2})
+      ((ContinuousLinearMap.proj 1 : (Fin 2 → ℝ) →L[ℝ] ℝ) -
+        (ContinuousLinearMap.proj 0 : (Fin 2 → ℝ) →L[ℝ] ℝ)) ![1, 2] :=
+  smooth_hasFDerivAt.congr_of_eventuallyEq smooth_profitFn_eventuallyEq
+
+/-- Hotelling's lemma for `profitFn`: the derivative in the output price `p₁` is the supply `1`,
+and the derivative in the input price `p₀` is minus the input demand `1`. -/
+theorem smooth_profitFn_price_derivatives :
+    fderiv ℝ (profitFn {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2}) ![1, 2] (Pi.single 1 1) = 1 ∧
+      fderiv ℝ (profitFn {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2}) ![1, 2] (Pi.single 0 1) = -1 := by
+  have h := hasFDerivAt_profitFn_eq_of_isProfitMax smooth_bddAbove smooth_isProfitMax
+    smooth_profitFn_hasFDerivAt.differentiableAt.hasFDerivAt
+  rw [h, h, dotProduct_single, dotProduct_single]
+  simp
+
+/-- Canonical gradient form for `profitFn`: the derivative at `(1, 2)` is `Real.dotL (-1, 1)`. -/
+theorem smooth_profitFn_fderiv_eq_dotL :
+    fderiv ℝ (profitFn {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2}) ![1, 2] = Real.dotL ![-1, 1] :=
+  hasFDerivAt_profitFn_eq_dotL_of_isProfitMax smooth_bddAbove smooth_isProfitMax
+    smooth_profitFn_hasFDerivAt.differentiableAt.hasFDerivAt
+
+theorem kinked_profitFn :
+    profitFn ({![1, 0], ![0, 1]} : Set (Fin 2 → ℝ)) = fun p => max (p 0) (p 1) :=
+  funext fun p => (kinked_isLUB p).csSup_eq ⟨_, ![1, 0], by simp, rfl⟩
+
+theorem kinked_isProfitMax_left :
+    IsProfitMax ({![1, 0], ![0, 1]} : Set (Fin 2 → ℝ)) ![1, 1] ![1, 0] := by
+  refine ⟨by simp, fun y hy => ?_⟩
+  rw [kinked_opt1]
+  exact (kinked_isLUB ![1, 1]).1 ⟨y, hy, rfl⟩
+
+theorem kinked_isProfitMax_right :
+    IsProfitMax ({![1, 0], ![0, 1]} : Set (Fin 2 → ℝ)) ![1, 1] ![0, 1] := by
+  refine ⟨by simp, fun y hy => ?_⟩
+  rw [kinked_opt2]
+  exact (kinked_isLUB ![1, 1]).1 ⟨y, hy, rfl⟩
+
+/-- Two profit-maximizing plans at `(1, 1)`: by the uniqueness corollary, `profitFn` of the
+two-point technology is not differentiable there. -/
+theorem kinked_profitFn_not_differentiableAt :
+    ¬ DifferentiableAt ℝ (profitFn ({![1, 0], ![0, 1]} : Set (Fin 2 → ℝ))) ![1, 1] := by
+  intro hdiff
+  have heq := isProfitMax_unique_of_hasFDerivAt
+    (Eventually.of_forall fun p => (kinked_isLUB p).bddAbove)
+    kinked_isProfitMax_left kinked_isProfitMax_right hdiff.hasFDerivAt
+  have hcon := congrArg (fun v : Fin 2 → ℝ => v 0) heq
+  simp at hcon
+
+end MathlibExtTest.Economics.Producer.Hotelling.ProfitFn
