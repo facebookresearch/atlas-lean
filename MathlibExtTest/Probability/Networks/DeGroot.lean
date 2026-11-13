@@ -25,7 +25,9 @@ import Mathlib.Topology.Order.OrderClosed
 # Boundary tests for DeGroot opinion dynamics
 
 Two-agent examples exercising `tendsto_degrootOpinion`: a primitive matrix whose
-consensus is not the arithmetic mean, the periodic swap matrix of Golub-Jackson
+consensus is not the arithmetic mean (with weights also derived by
+`exists_tendsto_degrootOpinion_consensus`), the empty agent type that rules out that
+corollary without `Nonempty`, the periodic swap matrix of Golub-Jackson
 Example 1, a non-primitive dictatorial matrix that still reaches consensus, a
 dangling node outside the stochastic class with its self-loop repair, and a
 doubly-stochastic averaging matrix.
@@ -121,6 +123,29 @@ theorem influence_consensus :
     simp [influenceWeights, Matrix.cons_val_zero, Matrix.cons_val_one]
   rw [hdot] at h
   exact h
+
+/-- Consensus for `influence` from row-stochasticity and primitivity alone: the weights
+that `exists_tendsto_degrootOpinion_consensus` derives are `influenceWeights`. -/
+theorem influence_derived_weights :
+    ∃ π : Fin 2 → ℝ, π = influenceWeights ∧
+      ∀ x₀ : Fin 2 → ℝ, Filter.Tendsto (degrootOpinion influence x₀) Filter.atTop
+        (nhds (fun _ => π ⬝ᵥ x₀)) := by
+  obtain ⟨π, -, hπ1, hstat, hlim⟩ :=
+    exists_tendsto_degrootOpinion_consensus influence_rowStochastic influence_primitive
+  exact ⟨π, (FiniteMarkovChainConvergence.stationary_unique influence_rowStochastic
+    influence_primitive influenceWeights_nonneg influenceWeights_sum
+    influenceWeights_stationary hπ1 hstat).symm, hlim⟩
+
+/-- Why `exists_tendsto_degrootOpinion_consensus` needs a nonempty agent type: on
+`Fin 0` every matrix is row-stochastic and primitive, yet no weights sum to `1`. -/
+theorem empty_agents_no_weights (T : Matrix (Fin 0) (Fin 0) ℝ) :
+    T ∈ Matrix.rowStochastic ℝ (Fin 0) ∧ T.IsPrimitive ∧
+      ¬ ∃ π : Fin 0 → ℝ, ∑ j, π j = 1 := by
+  refine ⟨?_, ⟨fun i => i.elim0, 1, one_pos, fun i => i.elim0⟩, ?_⟩
+  · rw [Matrix.mem_rowStochastic_iff_sum]
+    exact ⟨fun i => i.elim0, fun i => i.elim0⟩
+  · rintro ⟨π, hπ⟩
+    simp at hπ
 
 /-- The periodic swap matrix of Golub-Jackson Example 1. -/
 def swap : Matrix (Fin 2) (Fin 2) ℝ := !![0, 1; 1, 0]

@@ -15,6 +15,7 @@ public import Mathlib.LinearAlgebra.Matrix.Irreducible.Defs
 public import Mathlib.LinearAlgebra.Matrix.Stochastic
 public import Mathlib.Topology.Basic
 
+import MathlibExt.LinearAlgebra.Matrix.PerronFrobenius
 import Mathlib.Data.Fintype.Card
 import Mathlib.Topology.Algebra.Monoid
 import Mathlib.Topology.Constructions
@@ -28,16 +29,21 @@ neighbors' beliefs, `p(t) = T p(t-1)`, where `T` is a row-stochastic influence m
 For a primitive `T`, opinions converge to a consensus: every agent's belief tends to the
 same stationary weighted average of the initial beliefs.
 
-The stationary weights `π` are ASSUMED (supplied as a hypothesis), not proved here.
-For primitive `T`, existence already follows at base from Atlas's
-`Matrix.IsIrreducible.perron_frobenius` applied to `Tᵀ`. Existence of `π` is residual
-scope only for general row-stochastic matrices, not for the primitive case here.
+The convergence theorems take stationary weights `π` as hypotheses.
+`exists_tendsto_degrootOpinion_consensus` derives them: for a nonempty set of agents and a
+primitive row-stochastic `T`, `Matrix.IsIrreducible.perron_frobenius` applied to `Tᵀ`
+gives a positive left eigenvector, whose eigenvalue is `1` because `T` preserves the total
+mass of a left vector; normalized, it is the vector of influence weights. Consensus thus
+follows from row-stochasticity and primitivity alone.
 
 ## Main results
 
 - `degrootOpinion`: belief vector after `t` rounds, `(T ^ t) *ᵥ x₀`.
 - `tendsto_degrootOpinion`: each agent's opinion tends to `π ⬝ᵥ x₀`.
 - `tendsto_degrootOpinion_consensus`: opinion vectors tend to the constant consensus.
+- `exists_tendsto_degrootOpinion_consensus`: for primitive row-stochastic `T` on a
+  nonempty set of agents, positive influence weights `π` exist and opinions tend to the
+  consensus `π ⬝ᵥ x₀`.
 - `tendsto_degrootOpinion_of_mem_doublyStochastic`: doubly-stochastic case tends to
   the arithmetic mean.
 
@@ -76,11 +82,11 @@ public theorem degrootOpinion_succ {n : Type*} [Fintype n] [DecidableEq n]
 
 /-- Golub-Jackson Lemma 3 (convergence clause): for a primitive stochastic influence
 matrix with stationary weights `π`, every agent's opinion tends to the stationary
-weighted average `∑ j, π j * x₀ j`, which is the same for every agent. The vector `π`
-is ASSUMED (supplied as a hypothesis), not proved here; for primitive `T`, existence
-already follows at base from Atlas's `Matrix.IsIrreducible.perron_frobenius` applied
-to `Tᵀ`. Positivity and uniqueness of `π` are `stationary_pos` and `stationary_unique`
-in `MathlibExt.Probability.FiniteMarkovChainConvergence`. -/
+weighted average `∑ j, π j * x₀ j`, which is the same for every agent. This version
+takes `π` as a hypothesis; `exists_tendsto_degrootOpinion_consensus` derives it from
+`hT` and `hprim` for a nonempty set of agents. Positivity and uniqueness of `π` are
+`stationary_pos` and `stationary_unique` in
+`MathlibExt.Probability.FiniteMarkovChainConvergence`. -/
 public theorem tendsto_degrootOpinion {n : Type*} [Fintype n] [DecidableEq n]
     {T : Matrix n n ℝ} (hT : T ∈ Matrix.rowStochastic ℝ n) (hprim : T.IsPrimitive)
     {π : n → ℝ} (hπ0 : ∀ j, 0 ≤ π j) (hπ1 : ∑ j, π j = 1) (hstat : π ᵥ* T = π)
@@ -104,6 +110,47 @@ public theorem tendsto_degrootOpinion_consensus {n : Type*} [Fintype n]
     Filter.Tendsto (degrootOpinion T x₀) Filter.atTop (nhds (fun _ => π ⬝ᵥ x₀)) := by
   rw [tendsto_pi_nhds]
   exact fun i => tendsto_degrootOpinion hT hprim hπ0 hπ1 hstat x₀ i
+
+/-- A primitive row-stochastic matrix on a nonempty finite type has a stationary
+distribution with positive entries: `Matrix.IsIrreducible.perron_frobenius` applied to `Tᵀ`
+gives a positive vector `v` with `v ᵥ* T = r • v`; comparing total masses gives `r = 1`,
+and `v` is normalized to sum to `1`. -/
+private theorem exists_stationary_of_isPrimitive {n : Type*} [Fintype n]
+    [DecidableEq n] [Nonempty n] {T : Matrix n n ℝ}
+    (hT : T ∈ Matrix.rowStochastic ℝ n) (hprim : T.IsPrimitive) :
+    ∃ π : n → ℝ, (∀ j, 0 < π j) ∧ ∑ j, π j = 1 ∧ π ᵥ* T = π := by
+  obtain ⟨r, v, -, hv, hev, -⟩ := hprim.isIrreducible.transpose.perron_frobenius
+  rw [Matrix.mulVec_transpose] at hev
+  have hs : 0 < ∑ j, v j := Finset.sum_pos (fun j _ => hv j) Finset.univ_nonempty
+  have hmass : ∑ j, (v ᵥ* T) j = ∑ j, v j := by
+    simp only [Matrix.vecMul, dotProduct]
+    rw [Finset.sum_comm]
+    simp [← Finset.mul_sum, Matrix.sum_row_of_mem_rowStochastic hT]
+  have hr : r = 1 := by
+    rw [hev] at hmass
+    simp only [Pi.smul_apply, smul_eq_mul, ← Finset.mul_sum] at hmass
+    exact mul_right_cancel₀ hs.ne' (hmass.trans (one_mul _).symm)
+  refine ⟨(∑ j, v j)⁻¹ • v, fun j => ?_, ?_, ?_⟩
+  · simpa using mul_pos (inv_pos.mpr hs) (hv j)
+  · simp [← Finset.mul_sum, inv_mul_cancel₀ hs.ne']
+  · rw [Matrix.smul_vecMul, hev, hr, one_smul]
+
+/-- Golub-Jackson Lemma 3 with the influence weights derived rather than assumed: for a
+nonempty set of agents and a primitive row-stochastic influence matrix `T`, there are
+influence weights `π` (entrywise positive, summing to `1`, with `π ᵥ* T = π`) such that
+from every initial belief vector the opinions converge to the consensus `π ⬝ᵥ x₀`. The
+only substantive hypotheses are `hT` and `hprim`; the weights are unique by
+`stationary_unique`. Nonemptiness is needed: on an empty agent type every matrix is
+row-stochastic and primitive, but no weights sum to `1`. -/
+public theorem exists_tendsto_degrootOpinion_consensus {n : Type*} [Fintype n]
+    [DecidableEq n] [Nonempty n] {T : Matrix n n ℝ}
+    (hT : T ∈ Matrix.rowStochastic ℝ n) (hprim : T.IsPrimitive) :
+    ∃ π : n → ℝ, (∀ j, 0 < π j) ∧ ∑ j, π j = 1 ∧ π ᵥ* T = π ∧
+      ∀ x₀ : n → ℝ, Filter.Tendsto (degrootOpinion T x₀) Filter.atTop
+        (nhds (fun _ => π ⬝ᵥ x₀)) := by
+  obtain ⟨π, hπ0, hπ1, hstat⟩ := exists_stationary_of_isPrimitive hT hprim
+  exact ⟨π, hπ0, hπ1, hstat, fun x₀ =>
+    tendsto_degrootOpinion_consensus hT hprim (fun j => (hπ0 j).le) hπ1 hstat x₀⟩
 
 /-- A derived application (not a source clause): for a doubly-stochastic primitive
 influence matrix, every agent's opinion tends to the arithmetic mean of the initial
