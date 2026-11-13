@@ -8,14 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Biology.StatisticalGenetics.RareVariantInference.GenomicControl
 public import MathlibExt.Probability.Statistics.ExactTests.HardyWeinbergExact
 public import MathlibExt.Probability.Statistics.ExactTests.TailPValue
 public import MathlibExt.Probability.Statistics.MultipleTesting.Basic
-public import MathlibExt.Probability.Distributions.ChiSquare
 public import Mathlib.Probability.UniformOn
-
-import Mathlib.Analysis.Complex.ExponentialBounds
-import Mathlib.Probability.Moments.Basic
 
 /-!
 # Exact versus asymptotic Hardy–Weinberg tests, and the limits of genomic control
@@ -36,6 +33,7 @@ This file compares three ways of turning an observed `n_AB` into a p-value.
    with a feasible allele count (`nA ≤ 2 * N`)
    (`isValidPValue_hweExactPValue`, `isValidPValue_hweDeficitPValue`).
 2. **Asymptotic test.** Pearson's statistic `X²` (`hweChiSq`) compared with the `χ²₁` law
+   through the shared tail `chiSqOneTail` of `RareVariantInference.GenomicControl`
    (`asymptoticHWEPValue`). Pearson's theorem says `X²` converges in law to `χ²₁` as `N → ∞`
    with the allele frequency fixed in `(0, 1)`, which forces every expected genotype count to
    infinity; the usual finite-sample proxy is Cochran's rule that every expected count is at
@@ -46,10 +44,11 @@ This file compares three ways of turning an observed `n_AB` into a p-value.
    (`not_isValidPValue_asymptoticHWEPValue_sparse`), while the exact p-value of the same
    observation is `1/19` (`hweExactPValue_sparse`).
 3. **Genomic control.** Dividing the statistic by an inflation factor `λ` before the `χ²₁`
-   lookup (`gcPValue`) is valid under an additional model: the null statistic is `λ Z²` with
-   `Z ~ N(0, 1)` (`MultiplicativeInflation`, `isValidPValue_gcPValue`). It is not a universal
-   repair: in the sparse HWE model above, **no** `λ > 0` makes the scaled p-value valid
-   (`not_isValidPValue_gcPValue_sparse`). That failure occurs at the level
+   lookup (`gcPValue`, from `RareVariantInference.GenomicControl`) is valid under that module's
+   common-inflation model, in which every null score has law `N(0, λ)`
+   (`CommonInflationModel.measure_reject_eq`, `CommonInflationModel.isValidPValue_gcPValue`).
+   It is not a universal repair: in the sparse HWE model above, **no** `λ > 0` makes the
+   scaled p-value valid (`not_isValidPValue_gcPValue_sparse`). That failure occurs at the level
    `t = gcPValue λ (10/81)` (about `0.72` at `λ = 1`, tending to `1` as `λ` grows) and comes from
    the discreteness of the null law, as for any non-randomized p-value below `1` on a finite
    support. At the usual level `0.05` the failure is proved only for `λ ∈ (0, 1]`
@@ -69,24 +68,20 @@ This file compares three ways of turning an observed `n_AB` into a p-value.
 * `hweExactPValue`, `hweDeficitPValue`: the two-sided (probability-ordered) and the
   heterozygote-deficit exact p-values.
 * `hweChiSq nAA nAB nBB`: Pearson's HWE statistic; `hweChiSqOfHet N nA h` in terms of `h`.
-* `chiSqOneSurvival x = P(Z² ≥ x)` for `Z ~ N(0, 1)`; `asymptoticHWEPValue`.
+* `asymptoticHWEPValue N nA h`: the `χ²₁` tail `chiSqOneTail` at Pearson's statistic.
 * `InChiSqRegime c nAA nAB nBB`: every expected genotype count is at least `c`.
-* `MultiplicativeInflation μ T λ`, `gcPValue λ x`.
 
 ## Main results
 
 * `hasLaw_hetCount`: under `uniformArrangements N nA`, `hetCount` has law `leveneMeasure N nA`.
 * `isValidPValue_orderedPValue`: any ordered Levene p-value is valid when the count has
   Levene's law; `isValidPValue_hweExactPValue` and `isValidPValue_hweDeficitPValue`.
-* `chiSqOneSurvival_le`: the Chernoff bound `P(Z² ≥ x) ≤ 2 e^{-x/2}`.
 * `hweChiSq_one_zero`: one `AA` homozygote among `m + 1` individuals with two `A` alleles gives
   `X² = m + 1`, for every `m ≥ 1`.
 * `not_isValidPValue_asymptoticHWEPValue_sparse`: the asymptotic p-value is anti-conservative
   in the sparse case.
-* `isValidPValue_survival` (reused from `ExactTests/TailPValue`): for any law `ν` on `ℝ`,
-  `y ↦ ν [y, ∞)` evaluated at a variable with law `ν` is a valid p-value.
-* `isValidPValue_gcPValue`, `not_isValidPValue_gcPValue_sparse`,
-  `gcPValue_sparse_rejection_ge`.
+* `not_isValidPValue_gcPValue_sparse`, `gcPValue_sparse_rejection_ge`: genomic control does not
+  repair the sparse case.
 
 ## Reuse receipt (API-00)
 
@@ -95,12 +90,14 @@ Searched `MathlibExt`, `MathlibExtTest`, `WantedExt` and Mathlib for `IsValidPVa
 `inflation factor`, `chiSquared`, `survival`, `mgf_gaussianReal`, `measure_ge_le_exp_mul_mgf`.
 Reused: `leveneProb`, `hetCount`, `card_hetCount_div_choose`, `sum_leveneProb`
 (`ExactTests/HardyWeinbergExact`), `IsValidPValue` (`MultipleTesting/Basic`),
-`sum_upperTail_le` and `isValidPValue_survival` (`ExactTests/TailPValue`, the former specialized
-to the key `-g`),
-`chiSquareMeasure` and `gaussianReal_map_sq` (`Distributions/ChiSquare`), and Mathlib's
-`gaussianReal`, `mgf_id_gaussianReal`, `measure_ge_le_exp_mul_mgf`, `uniformOn`. Not found, so
-defined here: a measure form of Levene's law, a validity theorem for exact HWE p-values, a
-chi-square HWE statistic, and any genomic-control statement.
+`sum_upperTail_le` (`ExactTests/TailPValue`, specialized to the key `-g`), Mathlib's `uniformOn`,
+and from `RareVariantInference/GenomicControl` the `χ²₁` tail `chiSqOneTail` (the canonical
+`chiSquareSurvival 1`) with `chiSqOneTail_antitone`, `chiSqOneTail_ne_top` and
+`chiSqOneTail_toReal_ten_le`, the genomic-control p-value `gcPValue` with `gcPValue_nonneg`,
+`gcPValue_antitone` and `gcPValue_lt_one`, and the common-inflation model under which that
+p-value is valid (`CommonInflationModel.isValidPValue_gcPValue`). Not found, so defined here: a
+measure form of Levene's law, a validity theorem for exact HWE p-values, a chi-square HWE
+statistic, and the sparse HWE counterexamples.
 
 ## References
 
@@ -124,6 +121,7 @@ chi-square HWE statistic, and any genomic-control statement.
 
 open MeasureTheory ProbabilityTheory Finset Filter Topology
 open MathlibExt.Probability.Statistics.ExactTests MathlibExt.Probability.Statistics.MultipleTesting
+open MathlibExt.Biology.StatisticalGenetics.RareVariantInference.GenomicControl
 
 namespace MathlibExt.Biology.StatisticalGenetics.AssociationTests.ExactVsAsymptotic
 
@@ -345,19 +343,9 @@ subtraction give a meaningless value; those counts have null probability `0`. -/
 noncomputable def hweChiSqOfHet (N nA h : ℕ) : ℝ :=
   hweChiSq ((nA - h) / 2) h ((2 * N - nA - h) / 2)
 
-/-- The `χ²₁` survival function `x ↦ P(Z² ≥ x)` for `Z ~ N(0, 1)`. -/
-noncomputable def chiSqOneSurvival (x : ℝ) : ℝ :=
-  (chiSquareMeasure 1).real (Set.Ici x)
-
-private theorem chiSqOneSurvival_eq_gaussian (x : ℝ) :
-    chiSqOneSurvival x = (gaussianReal 0 1).real {z | x ≤ z ^ 2} := by
-  rw [chiSqOneSurvival, ← gaussianReal_map_sq, measureReal_def,
-    Measure.map_apply (by fun_prop) measurableSet_Ici]
-  rfl
-
-/-- The asymptotic HWE p-value: the `χ²₁` tail at Pearson's statistic. -/
+/-- The asymptotic HWE p-value: the `χ²₁` tail `P(χ²₁ > X²)` at Pearson's statistic. -/
 noncomputable def asymptoticHWEPValue (N nA h : ℕ) : ℝ :=
-  chiSqOneSurvival (hweChiSqOfHet N nA h)
+  (chiSqOneTail (hweChiSqOfHet N nA h)).toReal
 
 /-- The large-sample regime: every expected genotype count is at least `c`. Pearson's limit
 theorem (not formalized here) needs every expected count to grow without bound; Cochran's
@@ -365,70 +353,9 @@ finite-sample rule takes `c = 5`. -/
 def InChiSqRegime (c : ℝ) (nAA nAB nBB : ℕ) : Prop :=
   c ≤ expectedAA nAA nAB nBB ∧ c ≤ expectedAB nAA nAB nBB ∧ c ≤ expectedBB nAA nAB nBB
 
-theorem chiSqOneSurvival_nonneg (x : ℝ) : 0 ≤ chiSqOneSurvival x := measureReal_nonneg
-
-theorem chiSqOneSurvival_le_one (x : ℝ) : chiSqOneSurvival x ≤ 1 := by
-  let := isProbabilityMeasure_chiSquareMeasure (p := 1) one_pos
-  exact measureReal_le_one
-
-theorem chiSqOneSurvival_antitone : Antitone chiSqOneSurvival := by
-  let := isProbabilityMeasure_chiSquareMeasure (p := 1) one_pos
-  exact fun _ _ hxy => measureReal_mono (Set.Ici_subset_Ici.mpr hxy)
-
-/-- **Chernoff bound for `χ²₁`.** `P(Z² ≥ x) ≤ 2 e^{-x/2}` for `x ≥ 0`. -/
-theorem chiSqOneSurvival_le {x : ℝ} (hx : 0 ≤ x) : chiSqOneSurvival x ≤ 2 * Real.exp (-x / 2) := by
-  set a := √x with ha
-  have ha2 : a * a = x := Real.mul_self_sqrt hx
-  have hsub : {z : ℝ | x ≤ z ^ 2} ⊆ {z | a ≤ id z} ∪ {z | id z ≤ -a} := by
-    intro z hz
-    have : a ≤ |z| := by
-      rw [ha, ← Real.sqrt_sq_eq_abs]
-      exact Real.sqrt_le_sqrt hz
-    rcases le_abs'.mp this with h | h
-    · exact Or.inr (by simp only [Set.mem_ofPred_eq, id]; linarith)
-    · exact Or.inl h
-  have hup : (gaussianReal 0 1).real {z | a ≤ id z} ≤ Real.exp (-x / 2) := by
-    have := measure_ge_le_exp_mul_mgf (μ := gaussianReal 0 1) (X := id) a (Real.sqrt_nonneg x)
-      (integrable_exp_mul_gaussianReal a)
-    rw [mgf_id_gaussianReal, ← Real.exp_add] at this
-    refine this.trans_eq (congrArg Real.exp ?_)
-    push_cast
-    nlinarith
-  have hlow : (gaussianReal 0 1).real {z | id z ≤ -a} ≤ Real.exp (-x / 2) := by
-    have := measure_le_le_exp_mul_mgf (μ := gaussianReal 0 1) (X := id) (-a)
-      (neg_nonpos.mpr (Real.sqrt_nonneg x)) (integrable_exp_mul_gaussianReal (-a))
-    rw [mgf_id_gaussianReal, ← Real.exp_add] at this
-    refine this.trans_eq (congrArg Real.exp ?_)
-    push_cast
-    nlinarith
-  calc chiSqOneSurvival x = (gaussianReal 0 1).real {z | x ≤ z ^ 2} :=
-        chiSqOneSurvival_eq_gaussian x
-    _ ≤ (gaussianReal 0 1).real ({z | a ≤ id z} ∪ {z | id z ≤ -a}) :=
-        measureReal_mono hsub
-    _ ≤ (gaussianReal 0 1).real {z | a ≤ id z} + (gaussianReal 0 1).real {z | id z ≤ -a} :=
-        measureReal_union_le _ _
-    _ ≤ _ := by linarith
-
-/-- `P(Z² ≥ 10) ≤ 0.05`: the asymptotic test rejects `X² ≥ 10` at level `0.05`. -/
-theorem chiSqOneSurvival_ten_le : chiSqOneSurvival 10 ≤ 1 / 20 := by
-  refine (chiSqOneSurvival_le (by norm_num)).trans ?_
-  have he : (2.7182818283 : ℝ) ^ 5 < Real.exp 5 := by
-    have h15 : Real.exp 1 ^ 5 = Real.exp 5 := by
-      rw [Real.exp_one_pow]
-      norm_num
-    rw [← h15]
-    exact pow_lt_pow_left₀ Real.exp_one_gt_d9 (by norm_num) (by norm_num)
-  have h5 : Real.exp (-10 / 2) = (Real.exp 5)⁻¹ := by
-    rw [← Real.exp_neg]
-    norm_num
-  rw [h5]
-  have hpos : 0 < Real.exp 5 := Real.exp_pos 5
-  rw [← div_eq_mul_inv, div_le_div_iff₀ hpos (by norm_num)]
-  nlinarith
-
 /-- **Sparse-count statistic.** With two `A` alleles carried by a single `AA` homozygote among
 `m + 1` individuals (`m ≥ 1`), Pearson's statistic is `X² = m + 1`: it grows linearly in the
-sample size, so its `χ²₁` p-value decays like `e^{-(m+1)/2}` (`chiSqOneSurvival_le`), while for
+sample size, so its `χ²₁` p-value decays like `e^{-(m+1)/2}` (`chiSqOneTail_toReal_le`), while for
 `m = 9` the configuration has Levene probability `1/19` (`leveneProb_sparse_zero`). -/
 theorem hweChiSq_one_zero {m : ℕ} (hm : 1 ≤ m) : hweChiSq 1 0 m = m + 1 := by
   have hm' : (1 : ℝ) ≤ m := by exact_mod_cast hm
@@ -476,7 +403,7 @@ theorem hweExactPValue_sparse : hweExactPValue 10 2 0 = 1 / 19 := by
 /-- The asymptotic p-value of the sparse observation is at most `0.05`. -/
 theorem asymptoticHWEPValue_sparse_le : asymptoticHWEPValue 10 2 0 ≤ 1 / 20 := by
   rw [asymptoticHWEPValue, hweChiSqOfHet_sparse_zero]
-  exact chiSqOneSurvival_ten_le
+  exact chiSqOneTail_toReal_ten_le
 
 /-- Under the sparse null model, the event "no heterozygote" has probability `1/19`. -/
 theorem uniformArrangements_sparse_zero :
@@ -504,59 +431,7 @@ theorem not_isValidPValue_asymptoticHWEPValue_sparse :
   rw [uniformArrangements_sparse_zero, ENNReal.ofReal_le_ofReal_iff (by norm_num)] at this
   norm_num at this
 
-/-! ### Genomic control: valid under multiplicative inflation, not a universal repair -/
-
-/-- The genomic-control p-value: the `χ²₁` tail at the statistic divided by the inflation
-factor `lam` (written `λ` in the literature). -/
-noncomputable def gcPValue (lam x : ℝ) : ℝ :=
-  chiSqOneSurvival (x / lam)
-
-/-- **The additional model behind genomic control.** Devlin and Roeder's multiplicative
-inflation model: under the null, the test statistic is `T = lam · Z²` for a standard normal
-`Z`, the same factor `lam` for every marker (e.g. stratification or cryptic relatedness that
-scales the variance of an asymptotically normal score). -/
-def MultiplicativeInflation (μ : Measure Ω) (T : Ω → ℝ) (lam : ℝ) : Prop :=
-  ∃ Z : Ω → ℝ, HasLaw Z (gaussianReal 0 1) μ ∧ ∀ ω, T ω = lam * Z ω ^ 2
-
-/-- **Genomic control is valid under multiplicative inflation.** If the null statistic is
-`lam · Z²` with `Z ~ N(0, 1)` and `lam > 0`, then dividing by `lam` restores the `χ²₁` law and
-the genomic-control p-value is valid.
-
-Source: Devlin and Roeder (1999). -/
-theorem isValidPValue_gcPValue {T : Ω → ℝ} {lam : ℝ} (hlam : 0 < lam)
-    (hT : MultiplicativeInflation μ T lam) : IsValidPValue μ (fun ω => gcPValue lam (T ω)) := by
-  obtain ⟨Z, hZ, hTZ⟩ := hT
-  let := isProbabilityMeasure_chiSquareMeasure (p := 1) one_pos
-  have hsq : HasLaw (fun z : ℝ => z ^ 2) (chiSquareMeasure 1) (gaussianReal 0 1) :=
-    ⟨by fun_prop, gaussianReal_map_sq⟩
-  have heq : (fun ω => gcPValue lam (T ω)) =
-      fun ω => (chiSquareMeasure 1).real (Set.Ici (Z ω ^ 2)) := by
-    funext ω
-    rw [gcPValue, hTZ ω, mul_div_cancel_left₀ _ hlam.ne', chiSqOneSurvival]
-  rw [heq]
-  exact isValidPValue_survival (hsq.comp hZ)
-
-/-- `P(Z² ≥ x) < 1` for `x > 0`: a standard normal lands in `(-√x, √x)` with positive
-probability. -/
-theorem chiSqOneSurvival_lt_one {x : ℝ} (hx : 0 < x) : chiSqOneSurvival x < 1 := by
-  set s : Set ℝ := {z | x ≤ z ^ 2}
-  have hs : MeasurableSet s := measurableSet_le measurable_const (measurable_id.pow_const 2)
-  have hsub : Set.Ioo (-√x) √x ⊆ sᶜ := by
-    intro z hz
-    simp only [s, Set.mem_compl_iff, Set.mem_ofPred_eq, not_le]
-    calc z ^ 2 < √x ^ 2 := sq_lt_sq' hz.1 hz.2
-      _ = x := Real.sq_sqrt hx.le
-  have hvol : volume (Set.Ioo (-√x) √x) ≠ 0 := by
-    rw [Real.volume_Ioo]
-    simp [Real.sqrt_pos.mpr hx]
-  have hpos : (gaussianReal 0 1) sᶜ ≠ 0 := fun h0 =>
-    hvol (gaussianReal_absolutelyContinuous' 0 one_ne_zero (measure_mono_null hsub h0))
-  have hreal : 0 < (gaussianReal 0 1).real sᶜ :=
-    ENNReal.toReal_pos hpos (measure_ne_top _ _)
-  have := measureReal_add_measureReal_compl (μ := gaussianReal 0 1) hs
-  have hu : (gaussianReal 0 1).real Set.univ = 1 := by simp
-  rw [chiSqOneSurvival_eq_gaussian]
-  linarith
+/-! ### Genomic control is not a universal repair -/
 
 /-- **Genomic control is not a universal repair.** In the sparse HWE null model (`N = 10`,
 `n_A = 2`) the chi-square statistic takes only the two values `10` and `10/81`, and for every
@@ -571,14 +446,14 @@ theorem not_isValidPValue_gcPValue_sparse {lam : ℝ} (hlam : 0 < lam) :
       (fun s => gcPValue lam (hweChiSqOfHet 10 2 (hetCount s))) := by
   intro hv
   set p₂ := gcPValue lam (10 / 81)
-  have hp₂ : p₂ < 1 := chiSqOneSurvival_lt_one (by positivity)
-  have hle := hv p₂ ⟨chiSqOneSurvival_nonneg _, hp₂.le⟩
+  have hp₂ : p₂ < 1 := gcPValue_lt_one hlam (by norm_num)
+  have hle := hv p₂ ⟨gcPValue_nonneg _ _, hp₂.le⟩
   have h0 : {s : Finset (Fin 10 × Fin 2) | hetCount s = 0} ⊆
       {s | gcPValue lam (hweChiSqOfHet 10 2 (hetCount s)) ≤ p₂} := by
     intro s hs
     simp only [Set.mem_ofPred_eq] at hs ⊢
     rw [hs, hweChiSqOfHet_sparse_zero]
-    exact chiSqOneSurvival_antitone (div_le_div_of_nonneg_right (by norm_num) hlam.le)
+    exact gcPValue_antitone hlam (by norm_num)
   have h2 : {s : Finset (Fin 10 × Fin 2) | hetCount s = 2} ⊆
       {s | gcPValue lam (hweChiSqOfHet 10 2 (hetCount s)) ≤ p₂} := by
     intro s hs
@@ -597,7 +472,7 @@ theorem not_isValidPValue_gcPValue_sparse {lam : ℝ} (hlam : 0 < lam) :
     leveneProb_sparse_two, ← ENNReal.ofReal_add (by norm_num) (by norm_num)] at hunion
   have hone := (measure_mono (Set.union_subset h0 h2)).trans hle
   rw [hunion] at hone
-  have h := (ENNReal.ofReal_le_ofReal_iff (chiSqOneSurvival_nonneg (10 / 81 / lam))).mp hone
+  have h := (ENNReal.ofReal_le_ofReal_iff (gcPValue_nonneg lam (10 / 81))).mp hone
   norm_num at h
   exact absurd hp₂ (not_lt.mpr h)
 
@@ -616,7 +491,8 @@ theorem gcPValue_sparse_rejection_ge {lam : ℝ} (hlam : 0 < lam) (hlam1 : lam �
   refine measure_mono fun s hs => ?_
   simp only [Set.mem_ofPred_eq] at hs ⊢
   rw [hs, hweChiSqOfHet_sparse_zero, gcPValue]
-  refine (chiSqOneSurvival_antitone ?_).trans chiSqOneSurvival_ten_le
+  refine (ENNReal.toReal_mono (chiSqOneTail_ne_top _) (chiSqOneTail_antitone ?_)).trans
+    chiSqOneTail_toReal_ten_le
   rw [le_div_iff₀ hlam]
   nlinarith
 

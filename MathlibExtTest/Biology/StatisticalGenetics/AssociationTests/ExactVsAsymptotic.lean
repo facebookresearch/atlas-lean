@@ -17,6 +17,7 @@ import Mathlib.Tactic.NormNum
 open MeasureTheory ProbabilityTheory Finset
 open MathlibExt.Probability.Statistics.ExactTests MathlibExt.Probability.Statistics.MultipleTesting
 open MathlibExt.Biology.StatisticalGenetics.AssociationTests.ExactVsAsymptotic
+open MathlibExt.Biology.StatisticalGenetics.RareVariantInference.GenomicControl
 
 namespace MathlibExtTest.Biology.StatisticalGenetics.AssociationTests.ExactVsAsymptotic
 
@@ -105,12 +106,6 @@ example : hweChiSq 25 50 25 = 0 := by
 
 /-! ### Genomic control -/
 
-/-- Under the multiplicative-inflation model genomic control is valid. -/
-example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {Z : Ω → ℝ}
-    (hZ : HasLaw Z (gaussianReal 0 1) μ) :
-    IsValidPValue μ fun ω => gcPValue 2 (2 * Z ω ^ 2) :=
-  isValidPValue_gcPValue (by norm_num) ⟨Z, hZ, fun _ => rfl⟩
-
 /-- No inflation factor repairs the sparse case: `λ = 1` (the clipping floor), `λ = 1/2`
 (below the clipping floor, inflating the statistic), and `λ = 100` (heavy deflation) all fail. -/
 example : ¬ IsValidPValue (uniformArrangements 10 2)
@@ -131,27 +126,10 @@ example : ENNReal.ofReal (1 / 19) ≤ uniformArrangements 10 2
     {s | gcPValue 1 (hweChiSqOfHet 10 2 (hetCount s)) ≤ 1 / 20} :=
   gcPValue_sparse_rejection_ge one_pos le_rfl
 
-example (x : ℝ) : chiSqOneSurvival x = (chiSquareMeasure 1).real (Set.Ici x) := rfl
-
-example (x : ℝ) : chiSqOneSurvival x = (gaussianReal 0 1).real {z | x ≤ z ^ 2} := by
-  rw [chiSqOneSurvival, ← gaussianReal_map_sq, measureReal_def,
-    Measure.map_apply (by fun_prop) measurableSet_Ici]
-  rfl
-
-example : chiSqOneSurvival 0 = 1 := by
-  rw [chiSqOneSurvival, ← gaussianReal_map_sq, measureReal_def,
-    Measure.map_apply (by fun_prop) measurableSet_Ici]
-  simp [Set.preimage, sq_nonneg]
-
 example : orderedPValue (fun _ => 1 / 3) (fun _ => 0) 3 1 = 1 := by
   norm_num [orderedPValue, sum_range_succ]
 
 example (f g : ℕ → ℝ) : orderedPValue f g 0 0 = 0 := by
   simp [orderedPValue]
-
-/-- `χ²₁` tail bounds used above. -/
-example : chiSqOneSurvival 10 ≤ 1 / 20 := chiSqOneSurvival_ten_le
-
-example : chiSqOneSurvival 1 < 1 := chiSqOneSurvival_lt_one one_pos
 
 end MathlibExtTest.Biology.StatisticalGenetics.AssociationTests.ExactVsAsymptotic
