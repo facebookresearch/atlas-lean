@@ -15,8 +15,9 @@ import Mathlib.Tactic.NormNum
 # Tests for retained earnings and the value of growth
 
 Tests for retained-earnings value creation: a value-creating case (`P = 100` vs
-no-growth `50`), a value-destroying case (`P = 25` vs no-growth `100/3`), and the
-Gordon-form substitution.
+no-growth `50`), a value-destroying case (`P = 25` vs no-growth `100/3`), the
+Gordon-form substitution, and a retention parameter `b = 2` outside the
+retention-share domain, where the formula is only an algebraic extension.
 -/
 
 @[expose] public section
@@ -35,7 +36,7 @@ example : noGrowthPrice 10 (1/5) = 50 := by
   norm_num
 
 example : retentionPrice 10 (1/2) (3/10) (1/5) > noGrowthPrice 10 (1/5) :=
-  (retentionCreatesValue_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  (retentionPrice_gt_noGrowthPrice_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num [retentionGrowth])).mpr
     (by norm_num)
 
@@ -49,7 +50,7 @@ example : noGrowthPrice 10 (3/10) = 100 / 3 := by
   norm_num
 
 example : ¬ retentionPrice 10 (1/2) (1/5) (3/10) > noGrowthPrice 10 (3/10) := by
-  rw [retentionCreatesValue_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+  rw [retentionPrice_gt_noGrowthPrice_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num [retentionGrowth])]
   norm_num
 
@@ -73,6 +74,12 @@ example : retentionPrice 10 (1/2) (3/10) (1/5)
         (retentionGrowth (1/2) (3/10)) :=
   retentionPrice_eq_growingPerpetuity (by norm_num) (by norm_num [retentionGrowth])
     (by norm_num [retentionGrowth])
+
+-- Test 5 (outside the retention-share domain): `b = 2` makes the "dividend"
+-- `E₁ * (1 - b) = -1` negative, so the formula value `-1` is not an equity price.
+example : retentionPrice 1 2 0 1 = -1 := by
+  unfold retentionPrice
+  norm_num
 
 
 end MathlibExtTest.Economics.Finance.RetentionValue

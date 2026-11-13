@@ -24,10 +24,17 @@ In the constant-return reinvestment model (next-year earnings `E₁`, retention 
 at `g = b * ROE`, so Gordon gives the price `E₁ * (1 - b) / (r - b * ROE)`. That
 price exceeds the no-growth price `E₁ / r` exactly when `ROE > r`.
 
+Domain note: the retained-earnings interpretation needs a retention share `0 ≤ b ≤ 1`,
+so that the dividend `E₁ * (1 - b)` is nonnegative. The declarations below do not
+assume `b ≤ 1`: they are algebraic extensions that also cover `b > 1`, where the
+"dividend" is negative and the formula values a negative-payment stream rather than
+equity (e.g. `E₁ = 1`, `b = 2`, `ROE = 0`, `r = 1` gives `retentionPrice = -1`).
+
 ## Main results
 
 * `MathlibExt.Economics.Finance.RetentionValue.retentionGrowth`: dividend growth `b * ROE`.
-* `MathlibExt.Economics.Finance.RetentionValue.retentionPrice`: Gordon price with reinvestment.
+* `MathlibExt.Economics.Finance.RetentionValue.retentionPrice`: Gordon price with reinvestment
+  (an equity price only for `0 ≤ b ≤ 1`).
 * `MathlibExt.Economics.Finance.RetentionValue.noGrowthPrice`: no-growth price `E₁ / r`.
 * `MathlibExt.Economics.Finance.RetentionValue.retentionPrice_eq_gordonForm`: `retentionPrice`
   is the Gordon formula with the reinvestment-model dividend and growth substituted in
@@ -35,9 +42,11 @@ price exceeds the no-growth price `E₁ / r` exactly when `ROE > r`.
 * `MathlibExt.Economics.Finance.RetentionValue.retentionPrice_eq_growingPerpetuity`:
   under the convergence hypotheses of `growingPerpetuity_eq`, `retentionPrice` is the
   value of the corresponding growing perpetuity, so the rational expression is an
-  equity price only when the discounted cash flows converge.
-* `MathlibExt.Economics.Finance.RetentionValue.retentionCreatesValue_iff`: value
-  creation iff `ROE > r`, under the same convergence hypotheses.
+  equity price only when the discounted cash flows converge and `b ≤ 1`.
+* `MathlibExt.Economics.Finance.RetentionValue.retentionPrice_gt_noGrowthPrice_iff`: the
+  retention price exceeds the no-growth price iff `ROE > r`, under the same convergence
+  hypotheses, for every `b > 0` (an algebraic extension); on the retention-share domain
+  `b ≤ 1` this says retained earnings create value iff `ROE > r`.
 
 ## References
 
@@ -56,7 +65,9 @@ noncomputable def retentionGrowth (b ROE : ℝ) : ℝ :=
   b * ROE
 
 /-- Equity price under the constant-return reinvestment model: Gordon's formula with
-`D₁ = E₁ * (1 - b)` and `g = b * ROE` (source clause: "`P = E₁(1-b) / (r - b*ROE)`"). -/
+`D₁ = E₁ * (1 - b)` and `g = b * ROE` (source clause: "`P = E₁(1-b) / (r - b*ROE)`").
+It is an equity price only for a retention share `0 ≤ b ≤ 1`, where the dividend is
+nonnegative; the formula is defined for every `b` (an algebraic extension). -/
 noncomputable def retentionPrice (E₁ b ROE r : ℝ) : ℝ :=
   E₁ * (1 - b) / (r - b * ROE)
 
@@ -78,7 +89,9 @@ reinvestment-model dividend `E₁ * (1 - b)` growing at `retentionGrowth b ROE`,
 convergence hypotheses of `growingPerpetuity_eq`. In particular, the rational
 expression is an equity price only when `0 ≤ (1 + b * ROE) / (1 + r)`; without this,
 e.g. `b = 1 / 2`, `ROE = -8`, `r = 1` gives ratio `-3 / 2` and the discounted flows
-diverge even though the rational expression is finite. -/
+diverge even though the rational expression is finite. It is also an equity price only
+for a retention share `b ≤ 1`: the identity holds for every `b`, but for `b > 1` the
+payments `E₁ * (1 - b)` are negative (an algebraic extension, not an equity value). -/
 theorem retentionPrice_eq_growingPerpetuity {E₁ b ROE r : ℝ} (hr : 0 < 1 + r)
     (hx₀ : 0 ≤ (1 + retentionGrowth b ROE) / (1 + r))
     (hx₁ : (1 + retentionGrowth b ROE) / (1 + r) < 1) :
@@ -86,14 +99,18 @@ theorem retentionPrice_eq_growingPerpetuity {E₁ b ROE r : ℝ} (hr : 0 < 1 + r
       = growingPerpetuity (E₁ * (1 - b)) r (retentionGrowth b ROE) :=
   (growingPerpetuity_eq (E₁ * (1 - b)) r (retentionGrowth b ROE) hr hx₀ hx₁).symm
 
-/-- **Retained earnings create value iff `ROE > r`.** With positive earnings, a positive
-retention share, a positive required return, growth below the required return
+/-- **The retention price exceeds the no-growth price iff `ROE > r`** (an algebraic
+extension of value creation by retained earnings). With positive earnings, a positive
+retention parameter `b`, a positive required return, growth below the required return
 (`b * ROE < r`, so the Gordon denominator is positive), and the convergence
 hypothesis `0 ≤ (1 + b * ROE) / (1 + r)` (so the retention price is the value of a
 convergent growing perpetuity, via `retentionPrice_eq_growingPerpetuity`), the
 retention price exceeds the no-growth price exactly when the reinvestment return
-exceeds the required return. -/
-theorem retentionCreatesValue_iff {E₁ b ROE r : ℝ} (hE : 0 < E₁) (hb₀ : 0 < b)
+exceeds the required return. The statement does not assume `b ≤ 1`, so it extends
+past the retention-share domain: for `b > 1` the "dividend" `E₁ * (1 - b)` is negative
+and the comparison is between formulas, not equity values. On the retention-share
+domain `0 < b ≤ 1` it says that retained earnings create value iff `ROE > r`. -/
+theorem retentionPrice_gt_noGrowthPrice_iff {E₁ b ROE r : ℝ} (hE : 0 < E₁) (hb₀ : 0 < b)
     (hr : 0 < r) (hg : b * ROE < r)
     (hx₀ : 0 ≤ (1 + retentionGrowth b ROE) / (1 + r)) :
     retentionPrice E₁ b ROE r > noGrowthPrice E₁ r ↔ ROE > r := by
