@@ -36,7 +36,9 @@ Source: Jerrum, Valiant and Vazirani (1986); Alon, Matias and Szegedy
 text (e.g. Motwani and Raghavan, Randomized Algorithms, 1995).
 -/
 
-open MeasureTheory ProbabilityTheory
+open MeasureTheory
+
+namespace ProbabilityTheory
 
 /-- The median of finitely many reals: the middle element of the sorted
 list of values (index `r / 2`), or `0` for the empty family. -/
@@ -373,3 +375,4 @@ theorem median_trick {r : ℕ} (hr : Odd r) {Ω : Type*} [MeasurableSpace Ω]
   rw [← ofReal_measureReal hfin_bad]
   exact ENNReal.ofReal_le_ofReal hreal
 
+end ProbabilityTheory
