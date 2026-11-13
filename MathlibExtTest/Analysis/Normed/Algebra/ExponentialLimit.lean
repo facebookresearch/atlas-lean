@@ -14,7 +14,7 @@ public import MathlibExt.Analysis.Normed.Algebra.ExponentialLimit
 # Tests for the compound-interest limit in a Banach algebra
 
 The scalar case `(1 + x / M) ^ M → exp x` recovered in `ℝ`, the case `m M = 0` (limit `1`),
-and the telescoping estimate at `m = 0` and `m = 1`.
+the general time scale `c N = (2 N)⁻¹`, and the telescoping estimate at `m = 1` and `m = 2`.
 -/
 
 @[expose] public section
@@ -35,6 +35,19 @@ example (x : ℝ) :
 example (Y : ℕ → ℝ) (X : ℝ) (hY : Tendsto Y atTop (𝓝 X)) :
     Tendsto (fun M : ℕ => (1 + (M : ℝ)⁻¹ • Y M) ^ (0 : ℕ)) atTop (𝓝 (exp ((0 : ℝ) • X))) :=
   tendsto_one_add_inv_smul_pow hY (by simp)
+
+/-- A general time scale: `c N = (2 N)⁻¹` with `N` steps, so `m N * c N = 1 / 2` and
+`(1 + (2 N)⁻¹ • x) ^ N → exp ((1 / 2) • x)`. -/
+example (x : ℝ) :
+    Tendsto (fun N : ℕ => (1 + (2 * N : ℝ)⁻¹ • x) ^ N) atTop (𝓝 (exp ((1 / 2 : ℝ) • x))) := by
+  refine tendsto_one_add_smul_pow (c := fun N : ℕ => (2 * N : ℝ)⁻¹) ?_ ?_ tendsto_const_nhds ?_
+  · filter_upwards [eventually_gt_atTop 0] with N hN
+    exact inv_pos.2 (mul_pos two_pos (Nat.cast_pos.2 hN))
+  · exact tendsto_inv_atTop_zero.comp (tendsto_natCast_atTop_atTop.const_mul_atTop two_pos)
+  · refine tendsto_const_nhds.congr' ?_
+    filter_upwards [eventually_ne_atTop 0] with N hN
+    have hN' : (N : ℝ) ≠ 0 := by exact_mod_cast hN
+    field_simp
 
 /-- The telescoping estimate at `m = 1` is `‖a - b‖ ≤ ‖a - b‖`. -/
 example (a b : ℝ) : ‖a ^ 1 - b ^ 1‖ ≤ (1 : ℕ) * ‖a - b‖ * max ‖a‖ ‖b‖ ^ (1 - 1) :=

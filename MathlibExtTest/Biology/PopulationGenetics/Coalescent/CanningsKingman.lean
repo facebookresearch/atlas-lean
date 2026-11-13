@@ -16,7 +16,9 @@ public import MathlibExt.Biology.PopulationGenetics.Coalescent.CanningsKingman
 * **Wright–Fisher** (every child picks its parent uniformly and independently, `wf N`): the
   coalescence probabilities are computed by counting parent maps, giving `c_N = 1 / N` (the
   `1 - noCoalProb N 2` of `Kingman.lean`) and `E[(ν₁)_3] = (N)_3 / N³`; the Möhle–Sagitov
-  conditions hold, so the main theorem applies.
+  conditions hold, so the main theorem applies, including its finite-dimensional form
+  (`MohleSagitov.tendsto_chainFDD`). A chain that never moves shows that `chainFDD` contains the
+  law at the first observation time, and with one observation time `kingmanFDD` is `timeLaw`.
 * **Moran** (exactly one parent has two offspring and every other parent at most one, children
   labeled uniformly, `moran N`): `c_N = 2 / (N (N - 1))` and `E[(ν₁)_3] = 0`, computed from the
   support of the law; the conditions hold.
@@ -207,6 +209,29 @@ example (n : ℕ) {t : ℝ} (ht : 0 ≤ t) (π : SamplePartition n) :
     Tendsto (fun N => (ancestralMatrix (wf N) n ^ ⌊t / (wf N).pairCoalescence⌋₊) ⊥ π) atTop
       (𝓝 (timeLaw n t π)) :=
   wf_mohleSagitov.tendsto_ancestralMatrix_pow_bot n ht π
+
+/-- Kingman's limit for Wright–Fisher in finite-dimensional distributions, as an instance of
+the main theorem: started from singletons and observed at the generations `⌊t i / c_N⌋`, the
+ancestral partition process has Kingman's finite-dimensional distributions in the limit. -/
+example (n : ℕ) {k : ℕ} (t : Fin (k + 1) → ℝ) (ht0 : 0 ≤ t 0) (ht : Monotone t)
+    (x : Fin (k + 1) → SamplePartition n) :
+    Tendsto (fun N => chainFDD (ancestralMatrix (wf N) n) ⊥
+        (fun i => ⌊t i / (wf N).pairCoalescence⌋₊) x) atTop (𝓝 (kingmanFDD n t x)) :=
+  wf_mohleSagitov.tendsto_chainFDD n t ht0 ht x
+
+/-! ### Finite-dimensional distributions include the initial law -/
+
+/-- A chain that never moves, started from `0` and observed once (at time `3`) in state `1`, has
+finite-dimensional distribution `0`: the law at the first observation, reached from the initial
+state, is part of `chainFDD` (the transition product alone is the empty product `1`). -/
+example : chainFDD (1 : Matrix (Fin 2) (Fin 2) ℝ) 0 (k := 0) (fun _ => 3) (fun _ => 1) = 0 := by
+  simp [chainFDD]
+
+/-- With one observation time, Kingman's finite-dimensional distribution is the time-`t 0` law
+from singletons. -/
+example (n : ℕ) (t : Fin 1 → ℝ) (x : Fin 1 → SamplePartition n) :
+    kingmanFDD n t x = timeLaw n (t 0) (x 0) := by
+  simp [kingmanFDD]
 
 /-! ### Moran -/
 

@@ -38,14 +38,17 @@ a Markov chain on `SamplePartition n`: from a partition `ξ` with `b` blocks, th
 lineages sit at `b` distinct children of the current generation and two blocks merge iff their
 lineages pick the same parent (`step`). Its one-generation transition matrix is
 `ancestralMatrix (W N) n` (row-stochastic, `sum_ancestralMatrix`). As in `PartitionCoalescent`,
-the processes are given by their transition matrices; finite-dimensional distributions are the
-products of transition probabilities (`chainFDD`, `kingmanFDD`), and no path space is built.
+the processes are given by their transition matrices and no path space is built. The
+finite-dimensional distribution of a chain started from the sample in singletons (`⊥`) at time
+`0` is the probability of the first observed state, reached from `⊥`, times the transition
+probabilities between consecutive observations (`chainFDD`, `kingmanFDD`).
 
 **The theorem** (Möhle 2000; Möhle–Sagitov 2001). Under the Möhle–Sagitov conditions, with time
 measured in units of `1 / c_N` generations, the ancestral process converges to Kingman's
-coalescent in finite-dimensional distributions (`MohleSagitov.tendsto_chainFDD`): observed at
-the generations `⌊t_i / c_N⌋`, `0 ≤ t_0 ≤ ⋯ ≤ t_k`, its finite-dimensional distributions converge
-to those of Kingman's `n`-coalescent (`PartitionCoalescent.partitionRate`) at the times `t_i`.
+coalescent in finite-dimensional distributions (`MohleSagitov.tendsto_chainFDD`): started from
+singletons at generation `0` and observed at the generations `⌊t_i / c_N⌋`,
+`0 ≤ t_0 ≤ ⋯ ≤ t_k`, its finite-dimensional distributions converge to those of Kingman's
+`n`-coalescent (`PartitionCoalescent.partitionRate`), started from singletons, at the times `t_i`.
 
 **Proof.** By exchangeability of the children, `(N)_m P(F of a sample of m distinct children)`
 is the expected number of ordered `m`-samples with property `F`
@@ -59,8 +62,12 @@ conditions simultaneous double mergers are negligible as well; this is derived, 
 from a partition with `b` blocks, the probability `c_N + O(triple + double)` of each of the
 `b.choose 2` single mergers and `O(triple + double)` of every other change, so
 `c_N⁻¹ (Π_N - 1) → Q` entrywise (`MohleSagitov.tendsto_generator`). A compound-interest limit
-on the general time scale `c_N` (`tendsto_one_add_smul_pow`) then gives
+on the general time scale `c_N` (`NormedSpace.tendsto_one_add_smul_pow`) then gives
 `Π_N ^ (⌊t / c_N⌋ - ⌊s / c_N⌋) → exp ((t - s) • Q)` (`MohleSagitov.tendsto_ancestralMatrix_pow`).
+The finite-dimensional distributions are products of such matrix entries: the factor from
+singletons at generation `0` to the first observation converges to `timeLaw n (t_0)`
+(`MohleSagitov.tendsto_ancestralMatrix_pow_bot`), and each transition factor converges to an
+entry of `exp ((t_{i+1} - t_i) • Q)`.
 
 ## Main results
 
@@ -594,91 +601,6 @@ theorem MohleSagitov.tendsto_multiple {W : ∀ N, CanningsModel N} (hW : MohleSa
     rw [add_div, hT]
     linarith
 
-/-! ### The compound-interest limit on a general time scale -/
-
-/-- **Compound-interest limit in a Banach algebra, general scale.** If `c N → 0` with
-`c N > 0`, `Y N → X` and `m N * c N → t`, then `(1 + c N • Y N) ^ m N → exp (t • X)`. -/
-theorem tendsto_one_add_smul_pow {𝔸 : Type*} [NormedRing 𝔸] [NormOneClass 𝔸]
-    [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸] {c : ℕ → ℝ} (hc0 : ∀ᶠ N in atTop, 0 < c N)
-    (hc : Tendsto c atTop (𝓝 0)) {Y : ℕ → 𝔸} {X : 𝔸} (hY : Tendsto Y atTop (𝓝 X))
-    {m : ℕ → ℕ} {t : ℝ} (hm : Tendsto (fun N => (m N : ℝ) * c N) atTop (𝓝 t)) :
-    Tendsto (fun N => (1 + c N • Y N) ^ m N) atTop (𝓝 (NormedSpace.exp (t • X))) := by
-  set Z : ℕ → 𝔸 := fun N => c N • Y N with hZ
-  set g : ℕ → ℝ := fun N => ‖NormedSpace.exp (Z N) - (1 + Z N)‖ with hg
-  set C := ‖X‖ + 1 with hC
-  have hC0 : 0 ≤ C := by positivity
-  have hYC : ∀ᶠ N in atTop, ‖Y N‖ ≤ C :=
-    hY.norm.eventually (ge_mem_nhds (by linarith))
-  have hZ0 : Tendsto Z atTop (𝓝 0) := by
-    simpa using hc.smul hY
-  have hZO : Z =O[atTop] c := by
-    refine Asymptotics.IsBigO.of_bound C ?_
-    filter_upwards [hYC] with N hN
-    rw [hZ, norm_smul, mul_comm]
-    exact mul_le_mul_of_nonneg_right hN (norm_nonneg _)
-  have hexp : (fun z : 𝔸 => NormedSpace.exp z - (1 + z)) =o[𝓝 0] (fun z => z) := by
-    have h := (hasFDerivAt_exp_zero (𝕂 := ℝ) (𝔸 := 𝔸)).isLittleO
-    simp only [NormedSpace.exp_zero, sub_zero, one_apply_eq_self] at h
-    refine h.congr_left fun z => ?_
-    abel
-  have hgo : g =o[atTop] c :=
-    ((hexp.comp_tendsto hZ0).trans_isBigO hZO).norm_left
-  have hgc : Tendsto (fun N => g N / c N) atTop (𝓝 0) := hgo.tendsto_div_nhds_zero
-  have hb : Tendsto (fun N => NormedSpace.exp (Z N) ^ m N) atTop
-      (𝓝 (NormedSpace.exp (t • X))) := by
-    let _ : NormedAlgebra ℚ 𝔸 := NormedAlgebra.restrictScalars ℚ ℝ 𝔸
-    have h := (NormedSpace.exp_continuous.tendsto _).comp (hm.smul hY)
-    refine h.congr fun N => ?_
-    rw [Function.comp_apply, ← NormedSpace.exp_nsmul, ← Nat.cast_smul_eq_nsmul ℝ, hZ, smul_smul]
-  set B := Real.exp ((C + 1) * (t + 1)) with hB
-  have hmt : ∀ᶠ N in atTop, (m N : ℝ) * c N ≤ t + 1 := hm.eventually (ge_mem_nhds (by linarith))
-  have hK : ∀ᶠ N in atTop,
-      max ‖1 + Z N‖ ‖NormedSpace.exp (Z N)‖ ^ (m N - 1) ≤ B := by
-    filter_upwards [hYC, hmt, hgc.eventually (ge_mem_nhds one_pos), hc0]
-      with N hYN hmN hgN hcN
-    have hZN : ‖Z N‖ ≤ C * c N := by
-      rw [hZ, norm_smul, Real.norm_of_nonneg hcN.le, mul_comm]
-      exact mul_le_mul_of_nonneg_right hYN hcN.le
-    have hgN' : g N ≤ c N := by rwa [div_le_one hcN] at hgN
-    have h1 : ‖1 + Z N‖ ≤ 1 + ‖Z N‖ := (norm_add_le _ _).trans (by rw [norm_one])
-    have h2 : ‖NormedSpace.exp (Z N)‖ ≤ 1 + ‖Z N‖ + g N := by
-      have := norm_add_le (NormedSpace.exp (Z N) - (1 + Z N)) (1 + Z N)
-      rw [sub_add_cancel] at this
-      linarith
-    have hKle : max ‖1 + Z N‖ ‖NormedSpace.exp (Z N)‖ ≤ 1 + (C + 1) * c N := by
-      have : 1 + ‖Z N‖ + g N ≤ 1 + (C + 1) * c N := by nlinarith
-      exact max_le (by linarith [norm_nonneg (NormedSpace.exp (Z N) - (1 + Z N))])
-        (h2.trans this)
-    have hc1 : 0 ≤ (C + 1) * c N := by positivity
-    calc max ‖1 + Z N‖ ‖NormedSpace.exp (Z N)‖ ^ (m N - 1)
-        ≤ (1 + (C + 1) * c N) ^ (m N - 1) :=
-          pow_le_pow_left₀ (le_max_of_le_left (norm_nonneg _)) hKle _
-      _ ≤ (1 + (C + 1) * c N) ^ m N :=
-          pow_le_pow_right₀ (by linarith) (Nat.sub_le _ _)
-      _ ≤ Real.exp ((C + 1) * c N) ^ m N := by
-          gcongr
-          linarith [Real.add_one_le_exp ((C + 1) * c N)]
-      _ = Real.exp ((C + 1) * ((m N : ℝ) * c N)) := by
-          rw [← Real.exp_nat_mul]; congr 1; ring
-      _ ≤ B := Real.exp_le_exp.2 (mul_le_mul_of_nonneg_left hmN (by linarith))
-  have hdiff : Tendsto (fun N => (1 + Z N) ^ m N - NormedSpace.exp (Z N) ^ m N) atTop
-      (𝓝 0) := by
-    rw [tendsto_zero_iff_norm_tendsto_zero]
-    have hlim : Tendsto (fun N => (m N : ℝ) * c N * (g N / c N) * B) atTop (𝓝 (t * 0 * B)) :=
-      (hm.mul hgc).mul_const B
-    rw [mul_zero, zero_mul] at hlim
-    refine squeeze_zero' (Eventually.of_forall fun _ => norm_nonneg _) ?_ hlim
-    filter_upwards [hK, hc0] with N hKN hcN
-    calc ‖(1 + Z N) ^ m N - NormedSpace.exp (Z N) ^ m N‖
-        ≤ m N * ‖(1 + Z N) - NormedSpace.exp (Z N)‖ *
-            max ‖1 + Z N‖ ‖NormedSpace.exp (Z N)‖ ^ (m N - 1) :=
-          NormedSpace.norm_pow_sub_pow_le _ _ _
-      _ ≤ m N * g N * B := by
-          rw [norm_sub_rev]
-          exact mul_le_mul_of_nonneg_left hKN (by positivity)
-      _ = (m N : ℝ) * c N * (g N / c N) * B := by field_simp
-  simpa using hb.add hdiff
-
 /-! ### Partitions: blocks, kernels -/
 
 section Partitions
@@ -1047,10 +969,6 @@ namespace CanningsModel
 
 variable (W : CanningsModel N)
 
-theorem ite_mul_ite (P Q : Prop) [Decidable P] [Decidable Q] :
-    (if P then (1 : ℝ) else 0) * (if Q then 1 else 0) = if P ∧ Q then 1 else 0 := by
-  by_cases hP : P <;> by_cases hQ : Q <;> simp [hP, hQ]
-
 /-- Expected number of coalescing pairs among `b` lineages: `(b.choose 2) c_N`. -/
 theorem expect_collCount {b : ℕ} (h : b ≤ N) :
     W.expect (fun f => (collCount (f ∘ Fin.castLE h) : ℝ)) =
@@ -1081,7 +999,8 @@ theorem expect_collCount_sq_le {b : ℕ} (h : b ≤ N) :
     by_cases hpq : p = q
     · simp only [hpq, ne_eq, not_true_eq_false, ite_false]
       rw [W.expect_const]
-    · simp only [hpq, ne_eq, not_false_eq_true, ite_true, ite_mul_ite, Function.comp_apply]
+    · simp only [hpq, ne_eq, not_false_eq_true, ite_true, ite_zero_mul_ite_zero, mul_one,
+        Function.comp_apply]
       exact W.expect_two_pairs_le (Fin.castLE_injective h) hp hq hpq
   calc _ ≤ ∑ p ∈ S, ∑ q ∈ S, (if p ≠ q then K else 0) :=
         sum_le_sum fun p hp => sum_le_sum fun q hq => hle p hp q hq
@@ -1339,7 +1258,7 @@ theorem MohleSagitov.tendsto_ancestralMatrix_pow {W : ∀ N, CanningsModel N}
     filter_upwards [hW.pairCoalescence_pos] with N hcN
     rw [Nat.cast_sub (Nat.floor_le_floor (div_le_div_of_nonneg_right hst hcN.le)), sub_mul]
   open scoped Matrix.Norms.Operator in
-  refine (tendsto_one_add_smul_pow hW.pairCoalescence_pos hW.tendsto_pairCoalescence
+  refine (NormedSpace.tendsto_one_add_smul_pow hW.pairCoalescence_pos hW.tendsto_pairCoalescence
     (hW.tendsto_generator n) hm).congr' ?_
   filter_upwards [hW.pairCoalescence_pos] with N hcN
   rw [smul_smul, mul_inv_cancel₀ hcN.ne', one_smul, add_sub_cancel]
@@ -1354,31 +1273,37 @@ theorem MohleSagitov.tendsto_ancestralMatrix_pow_bot {W : ∀ N, CanningsModel N
   simp only [zero_div, Nat.floor_zero, Nat.sub_zero, sub_zero] at h
   exact ((continuous_apply π).comp (continuous_apply ⊥)).continuousAt.tendsto.comp h
 
-/-- The finite-dimensional distribution of a Markov chain with transition matrix `P` observed at
-the times `m 0 ≤ m 1 ≤ ⋯ ≤ m k`: the probability, started from `x 0` at time `m 0`, of being at
-`x i` at time `m i` for every `i` (Markov property: a product of transition probabilities). -/
-noncomputable def chainFDD {S : Type*} [Fintype S] [DecidableEq S] (P : Matrix S S ℝ) {k : ℕ}
-    (m : Fin (k + 1) → ℕ) (x : Fin (k + 1) → S) : ℝ :=
-  ∏ i : Fin k, (P ^ (m i.succ - m i.castSucc)) (x i.castSucc) (x i.succ)
+/-- The finite-dimensional distribution of a Markov chain with transition matrix `P`, started
+from `x₀` at time `0` and observed at the times `m 0 ≤ m 1 ≤ ⋯ ≤ m k`: the probability of being
+at `x i` at time `m i` for every `i`. By the Markov property it is the time-`m 0` law
+`(P ^ m 0) x₀ (x 0)` times the transition probabilities between consecutive observations. -/
+noncomputable def chainFDD {S : Type*} [Fintype S] [DecidableEq S] (P : Matrix S S ℝ) (x₀ : S)
+    {k : ℕ} (m : Fin (k + 1) → ℕ) (x : Fin (k + 1) → S) : ℝ :=
+  (P ^ m 0) x₀ (x 0) * ∏ i : Fin k, (P ^ (m i.succ - m i.castSucc)) (x i.castSucc) (x i.succ)
 
-/-- The finite-dimensional distribution of Kingman's `n`-coalescent observed at the times
-`t 0 ≤ t 1 ≤ ⋯ ≤ t k`, started from `x 0` at time `t 0`. -/
+/-- The finite-dimensional distribution of Kingman's `n`-coalescent, started from singletons at
+time `0` and observed at the times `t 0 ≤ t 1 ≤ ⋯ ≤ t k`: the time-`t 0` law
+`timeLaw n (t 0) (x 0) = exp (t 0 • Q) ⊥ (x 0)` times the transition probabilities
+`exp ((t (i + 1) - t i) • Q) (x i) (x (i + 1))`. -/
 noncomputable def kingmanFDD (n : ℕ) {k : ℕ} (t : Fin (k + 1) → ℝ)
     (x : Fin (k + 1) → SamplePartition n) : ℝ :=
-  ∏ i : Fin k, NormedSpace.exp ((t i.succ - t i.castSucc) • partitionRate n)
-    (x i.castSucc) (x i.succ)
+  timeLaw n (t 0) (x 0) * ∏ i : Fin k,
+    NormedSpace.exp ((t i.succ - t i.castSucc) • partitionRate n) (x i.castSucc) (x i.succ)
 
 /-- **Cannings genealogies converge to Kingman's coalescent** (finite-dimensional
 distributions; Möhle 2000, Möhle–Sagitov 2001). Under the Möhle–Sagitov conditions, the
-ancestral partition process of a sample of `n` genes, observed at the generations
-`⌊t i / c_N⌋` for times `0 ≤ t 0 ≤ t 1 ≤ ⋯ ≤ t k`, has finite-dimensional distributions
-converging to those of Kingman's `n`-coalescent at the times `t i`. -/
+ancestral partition process of a sample of `n` genes, started from singletons at generation `0`
+and observed at the generations `⌊t i / c_N⌋` for times `0 ≤ t 0 ≤ t 1 ≤ ⋯ ≤ t k`, has
+finite-dimensional distributions converging to those of Kingman's `n`-coalescent, started from
+singletons, at the times `t i`. -/
 theorem MohleSagitov.tendsto_chainFDD {W : ∀ N, CanningsModel N} (hW : MohleSagitov W)
     (n : ℕ) {k : ℕ} (t : Fin (k + 1) → ℝ) (ht0 : 0 ≤ t 0) (ht : Monotone t)
     (x : Fin (k + 1) → SamplePartition n) :
-    Tendsto (fun N => chainFDD (ancestralMatrix (W N) n)
+    Tendsto (fun N => chainFDD (ancestralMatrix (W N) n) ⊥
         (fun i => ⌊t i / (W N).pairCoalescence⌋₊) x) atTop (𝓝 (kingmanFDD n t x)) := by
-  refine tendsto_finsetProd _ fun i _ => ?_
+  unfold chainFDD kingmanFDD
+  refine (hW.tendsto_ancestralMatrix_pow_bot n ht0 (x 0)).mul
+    (tendsto_finsetProd _ fun i _ => ?_)
   have hs : 0 ≤ t i.castSucc := ht0.trans (ht (Fin.zero_le _))
   have hst : t i.castSucc ≤ t i.succ := ht (Fin.castSucc_le_succ i)
   exact ((continuous_apply (x i.succ)).comp
