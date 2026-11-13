@@ -28,10 +28,11 @@ of the model; no convexity of `Y` and no sign condition on prices is used.
 
 ## Main results
 
-* `Economics.Producer.hasFDerivAt_profit_eq_netSupply`: Hotelling's lemma.
-* `Economics.Producer.netSupply_unique_of_hasFDerivAt`: uniqueness of the optimal net supply.
-* `Economics.Producer.hasFDerivAt_profit_eq_dotL`: the derivative of profit is `Real.dotL y₀`,
-  the repository's gradient representation on `ι → ℝ`.
+* `MathlibExt.Economics.Producer.hasFDerivAt_profit_eq_netSupply`: Hotelling's lemma.
+* `MathlibExt.Economics.Producer.netSupply_unique_of_hasFDerivAt`: uniqueness of the optimal
+  net supply.
+* `MathlibExt.Economics.Producer.hasFDerivAt_profit_eq_dotL`: the derivative of profit is
+  `Real.dotL y₀`, the repository's gradient representation on `ι → ℝ`.
 
 ## References
 
@@ -45,7 +46,7 @@ of the model; no convexity of `Y` and no sign condition on prices is used.
 
 open Filter Topology
 
-namespace Economics.Producer
+namespace MathlibExt.Economics.Producer
 
 /-- **Hotelling's lemma.** Let `π` be the profit function of the production
 set `Y` on a neighborhood of `p₀` (the supremum of `p ⬝ᵥ y` over `y ∈ Y`), and
@@ -98,4 +99,4 @@ theorem hasFDerivAt_profit_eq_dotL {ι : Type*} [Fintype ι]
   rw [h v, Real.dotL_apply]
   exact dotProduct_comm _ _
 
-end Economics.Producer
+end MathlibExt.Economics.Producer

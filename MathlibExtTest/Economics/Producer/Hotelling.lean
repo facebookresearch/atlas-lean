@@ -30,7 +30,7 @@ theorem shows the profit function is not differentiable there. -/
 
 namespace MathlibExtTest.Economics.Producer.Hotelling
 
-open _root_.Economics.Producer
+open _root_.MathlibExt.Economics.Producer
 
 theorem smooth_isLUB (p : Fin 2 → ℝ) (hp0 : 0 < p 0) :
     IsLUB ((fun y => p ⬝ᵥ y) '' {y : Fin 2 → ℝ | y 0 ≤ -(y 1) ^ 2})
@@ -194,7 +194,7 @@ end MathlibExtTest.Economics.Producer.Hotelling
 
 namespace MathlibExtTest.Economics.Producer.Hotelling.DotL
 
-open _root_.Economics.Producer
+open _root_.MathlibExt.Economics.Producer
 
 example : (((-1 : ℝ) • ContinuousLinearMap.proj 0 + (1 : ℝ) • ContinuousLinearMap.proj 1 :
     (Fin 2 → ℝ) →L[ℝ] ℝ)) = Real.dotL ![-1, 1] := by
