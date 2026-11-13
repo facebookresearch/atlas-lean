@@ -737,58 +737,64 @@ def counterfactual {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM �
   (M.doNode k a).solve u
 
 /-- The probability, under independent noises with laws `μ`, of factual evidence `E` about the
-solution of the model. -/
-noncomputable def evidenceProb {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+solution of the model. As in `inducedLaw`, the sum runs over the product of the supports of the
+noise laws, so the noise types need not be finite. -/
+noncomputable def evidenceProb {α : Type*} {n : ℕ} {U : Fin n → Type*}
     (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k)) (E : (Fin n → α) → Prop)
     [DecidablePred E] : ℝ :=
-  ∑ u with E (M.solve u), noiseWeight μ u
+  ∑ u ∈ Fintype.piFinset (fun j => (μ j).weights.support) with E (M.solve u), noiseWeight μ u
 
 /-- The conditional counterfactual probability `P(X_{k ← a} ∈ F | E)`: the probability that the
 factual solution satisfies the evidence `E` and the counterfactual solution, at the same noise
-value, satisfies `F`, divided by the probability of `E`. This is a genuine conditional
+value, satisfies `F`, divided by the probability of `E`. The sum runs over the product of the
+supports of the noise laws, so the noise types need not be finite. This is a genuine conditional
 probability only when `M.evidenceProb μ E ≠ 0`; when the evidence has probability zero,
 Lean's totalized real division makes the result `0` by convention, not a conditional
 probability. -/
 noncomputable def counterfactualProb {α : Type*} {n : ℕ} {U : Fin n → Type*}
-    [∀ k, Fintype (U k)] (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (E : (Fin n → α) → Prop) [DecidablePred E] (k : Fin n) (a : α) (F : (Fin n → α) → Prop)
     [DecidablePred F] : ℝ :=
-  (∑ u with E (M.solve u) ∧ F (M.counterfactual k a u), noiseWeight μ u) / M.evidenceProb μ E
+  (∑ u ∈ Fintype.piFinset (fun j => (μ j).weights.support) with
+      E (M.solve u) ∧ F (M.counterfactual k a u), noiseWeight μ u) / M.evidenceProb μ E
 
 /-- **Abduction**: the posterior weight of the noise value `u` given the factual evidence `E`.
 These are genuine posterior weights only when `M.evidenceProb μ E ≠ 0`; when the evidence
 has probability zero, Lean's totalized real division makes every weight `0` by convention,
 so they do not form a posterior distribution in that case. -/
-noncomputable def posteriorWeight {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+noncomputable def posteriorWeight {α : Type*} {n : ℕ} {U : Fin n → Type*}
     (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k)) (E : (Fin n → α) → Prop)
     [DecidablePred E] (u : (k : Fin n) → U k) : ℝ :=
   if E (M.solve u) then noiseWeight μ u / M.evidenceProb μ E else 0
 
-/-- The noise weights sum to `1`: the product noise law is a probability distribution. -/
-theorem sum_noiseWeight_eq_one {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+/-- The noise weights sum to `1` over the product of the supports of the noise laws: the
+product noise law is a probability distribution. No finiteness of the noise types is needed. -/
+theorem sum_noiseWeight_eq_one {n : ℕ} {U : Fin n → Type*}
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) :
-    ∑ u, noiseWeight μ u = 1 := by
-  have h : ∏ k, ∑ v, (μ k).weights v
-      = ∑ u : (k : Fin n) → U k, ∏ k, (μ k).weights (u k) :=
-    Fintype.prod_sum _
+    ∑ u ∈ Fintype.piFinset (fun j => (μ j).weights.support), noiseWeight μ u = 1 := by
   unfold noiseWeight
-  rw [← h]
-  simp only [StdSimplex.total_of_fintype, Finset.prod_const_one]
+  rw [← Finset.prod_univ_sum]
+  refine Finset.prod_eq_one fun k _ => ?_
+  have h := (μ k).total
+  rwa [Finsupp.sum] at h
 
 /-- Splitting a filtered noise sum by the value of the counterfactual solution. -/
 private theorem sum_filter_counterfactual_fiber {α : Type*} {n : ℕ} {U : Fin n → Type*} [Fintype α]
-    [∀ k, Fintype (U k)] [DecidableEq α] (M : FiniteSCM α n U)
+    [DecidableEq α] (M : FiniteSCM α n U)
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (k : Fin n) (a : α)
     (F : (Fin n → α) → Prop) [DecidablePred F] :
-    ∑ u with F (M.counterfactual k a u), noiseWeight μ u =
-      ∑ x with F x, ∑ u with M.counterfactual k a u = x, noiseWeight μ u := by
-  have hmaps : ∀ u ∈ Finset.univ.filter (fun u => F (M.counterfactual k a u)),
-      M.counterfactual k a u ∈ Finset.univ.filter F := by
+    ∑ u ∈ Fintype.piFinset (fun j => (μ j).weights.support) with F (M.counterfactual k a u),
+        noiseWeight μ u =
+      ∑ x with F x, ∑ u ∈ Fintype.piFinset (fun j => (μ j).weights.support) with
+        M.counterfactual k a u = x, noiseWeight μ u := by
+  have hmaps : ∀ u ∈ (Fintype.piFinset (fun j => (μ j).weights.support)).filter
+      (fun u => F (M.counterfactual k a u)), M.counterfactual k a u ∈ Finset.univ.filter F := by
     intro u hu
     rw [Finset.mem_filter] at hu ⊢
     exact ⟨Finset.mem_univ _, hu.2⟩
   have hfib := Finset.sum_fiberwise_of_maps_to
-    (s := Finset.univ.filter (fun u => F (M.counterfactual k a u)))
+    (s := (Fintype.piFinset (fun j => (μ j).weights.support)).filter
+      (fun u => F (M.counterfactual k a u)))
     (t := Finset.univ.filter F) (g := fun u => M.counterfactual k a u) hmaps
     (f := fun u => noiseWeight μ u)
   rw [← hfib]
@@ -799,11 +805,12 @@ private theorem sum_filter_counterfactual_fiber {α : Type*} {n : ℕ} {U : Fin 
   exact Finset.filter_congr fun u _ => ⟨fun h => h.2, fun h => ⟨by rwa [h], h⟩⟩
 
 /-- The posterior weights given evidence of positive probability form a probability
-distribution on the noise values. -/
-theorem sum_posteriorWeight {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+distribution on the noise values in the product of the supports of the noise laws. -/
+theorem sum_posteriorWeight {α : Type*} {n : ℕ} {U : Fin n → Type*}
     (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k)) (E : (Fin n → α) → Prop)
     [DecidablePred E] (hE : M.evidenceProb μ E ≠ 0) :
-    (∀ u, 0 ≤ M.posteriorWeight μ E u) ∧ ∑ u, M.posteriorWeight μ E u = 1 := by
+    (∀ u, 0 ≤ M.posteriorWeight μ E u) ∧
+      ∑ u ∈ Fintype.piFinset (fun j => (μ j).weights.support), M.posteriorWeight μ E u = 1 := by
   have hnoise : ∀ u, 0 ≤ noiseWeight μ u := by
     intro u
     unfold noiseWeight
@@ -826,11 +833,12 @@ the evidence (abduction), solving the model after surgery `do(X_k = a)` at each 
 (action), and adding the posterior weights of the noise values whose counterfactual solution lies
 in `F` (prediction). (For evidence of probability zero both sides are `0`.) -/
 theorem counterfactualProb_eq_sum_posteriorWeight {α : Type*} {n : ℕ} {U : Fin n → Type*}
-    [∀ k, Fintype (U k)] (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (E : (Fin n → α) → Prop) [DecidablePred E] (k : Fin n) (a : α) (F : (Fin n → α) → Prop)
     [DecidablePred F] :
     M.counterfactualProb μ E k a F =
-      ∑ u with F (M.counterfactual k a u), M.posteriorWeight μ E u := by
+      ∑ u ∈ Fintype.piFinset (fun j => (μ j).weights.support) with F (M.counterfactual k a u),
+        M.posteriorWeight μ E u := by
   simp only [counterfactualProb, posteriorWeight, Finset.sum_filter, Finset.sum_div]
   refine Finset.sum_congr rfl fun u _ => ?_
   by_cases hE' : E (M.solve u) <;> by_cases hF : F (M.counterfactual k a u) <;> simp [hE', hF]
@@ -840,7 +848,7 @@ mass of `F` under the joint of the induced Bayesian network after `do(X_k = a)`.
 `Nonempty α` instance that `BayesNet.joint` requires is supplied from `a` itself, so
 callers need not provide a separate instance. -/
 theorem counterfactualProb_true {α : Type*} [Fintype α] {n : ℕ} {U : Fin n → Type*}
-    [∀ k, Fintype (U k)] (M : FiniteSCM α n U)
+    (M : FiniteSCM α n U)
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (k : Fin n) (a : α) (F : (Fin n → α) → Prop)
     [DecidablePred F] :
     M.counterfactualProb μ (fun _ => True) k a F =
@@ -848,10 +856,9 @@ theorem counterfactualProb_true {α : Type*} [Fintype α] {n : ℕ} {U : Fin n �
         ((M.inducedBayesNet μ).intervene k a) x) := by
   classical
   have _nonempty : Nonempty α := ⟨a⟩
-  have hsum1 : ∑ u, noiseWeight μ u = 1 := sum_noiseWeight_eq_one μ
   have hE1 : M.evidenceProb μ (fun _ => True) = 1 := by
     simp only [evidenceProb, Finset.filter_true]
-    exact hsum1
+    exact sum_noiseWeight_eq_one μ
   unfold counterfactualProb
   rw [hE1, div_one]
   simp only [true_and]
@@ -860,17 +867,8 @@ theorem counterfactualProb_true {α : Type*} [Fintype α] {n : ℕ} {U : Fin n �
   rw [← M.inducedLaw_doNode μ k a x]
   unfold inducedLaw
   rw [Finset.sum_filter]
-  symm
-  refine (Fintype.sum_subset fun u hu => ?_).trans (Finset.sum_congr rfl fun u _ => ?_)
-  · rw [Fintype.mem_piFinset]
-    intro j
-    by_contra hj
-    apply hu
-    have hw : noiseWeight μ u = 0 := by
-      unfold noiseWeight
-      exact Finset.prod_eq_zero (Finset.mem_univ j) (Finsupp.notMem_support_iff.mp hj)
-    simp [hw]
-  · by_cases h : (M.doNode k a).solve u = x <;> simp [h, counterfactual]
+  refine Finset.sum_congr rfl fun u _ => ?_
+  by_cases h : (M.doNode k a).solve u = x <;> simp [h, counterfactual]
 
 end FiniteSCM
 

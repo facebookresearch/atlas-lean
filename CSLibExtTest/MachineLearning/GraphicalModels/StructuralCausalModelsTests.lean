@@ -53,6 +53,9 @@ Counterfactuals in the same xor model, with evidence `X_1 = false` and `do(X_0 =
 * `P(X_1 = true had X_0 been false | X_1 = false) = 1/7`, while the interventional probability
   `P(X_1 = true | do(X_0 = false))` is `1/3`: sharing the noise between the factual and the
   counterfactual world matters.
+
+With noise on `ℕ`, which has no `Fintype` instance, trivial evidence has probability `1`, the
+posterior sums to `1`, and `counterfactualProb_true` applies.
 -/
 
 @[expose] public section
@@ -643,6 +646,24 @@ theorem xorTest_f10 : ¬ ((xorTestModel.counterfactual 0 false ![true, false]) 1
 theorem xorTest_f11 : (xorTestModel.counterfactual 0 false ![true, true]) 1 = true := by
   decide
 
+/-- Both test noise laws give every value positive weight, so the product of their supports,
+over which the counterfactual sums run, is every noise value. -/
+theorem xorTest_support :
+    Fintype.piFinset (fun k => (xorTestNoise k).weights.support) = Finset.univ := by
+  have h : ∀ k, (xorTestNoise k).weights.support = Finset.univ := by
+    intro k
+    refine Finset.eq_univ_of_forall fun b => Finsupp.mem_support_iff.mpr ?_
+    fin_cases k <;> cases b
+    · show (3 / 4 : ℝ) ≠ 0
+      norm_num
+    · show (1 / 4 : ℝ) ≠ 0
+      norm_num
+    · show (2 / 3 : ℝ) ≠ 0
+      norm_num
+    · show (1 / 3 : ℝ) ≠ 0
+      norm_num
+  simp only [h, Fintype.piFinset_univ]
+
 /-- A sum over the four noise values, as an explicit sum. -/
 theorem sum_xorTest_four (g : ((k : Fin 2) → Bool) → ℝ) :
     ∑ u, g u
@@ -656,8 +677,8 @@ theorem sum_xorTest_four (g : ((k : Fin 2) → Bool) → ℝ) :
 /-- (a) The evidence has probability `7/12`. -/
 theorem xorTest_evidenceProb :
     xorTestModel.evidenceProb xorTestNoise (fun x : Fin 2 → Bool => x 1 = false) = 7 / 12 := by
-  simp only [evidenceProb, Finset.sum_filter, sum_xorTest_four, xorTest_e00, xorTest_e01,
-    xorTest_e10, xorTest_e11, xorTest_w00, xorTest_w11]
+  simp only [evidenceProb, xorTest_support, Finset.sum_filter, sum_xorTest_four, xorTest_e00,
+    xorTest_e01, xorTest_e10, xorTest_e11, xorTest_w00, xorTest_w11]
   norm_num
 
 example :
@@ -668,9 +689,9 @@ example :
 theorem xorTest_counterfactualProb :
     xorTestModel.counterfactualProb xorTestNoise (fun x : Fin 2 → Bool => x 1 = false) 0 false
       (fun x : Fin 2 → Bool => x 1 = true) = 1 / 7 := by
-  simp only [counterfactualProb, Finset.sum_filter, sum_xorTest_four, xorTest_e00, xorTest_e01,
-    xorTest_e10, xorTest_e11, xorTest_f00, xorTest_f01, xorTest_f10, xorTest_f11, xorTest_w11,
-    xorTest_evidenceProb]
+  simp only [counterfactualProb, xorTest_support, Finset.sum_filter, sum_xorTest_four,
+    xorTest_e00, xorTest_e01, xorTest_e10, xorTest_e11, xorTest_f00, xorTest_f01, xorTest_f10,
+    xorTest_f11, xorTest_w11, xorTest_evidenceProb]
   norm_num
 
 example :
@@ -687,14 +708,39 @@ theorem xorTest_evidenceTrue : xorTestModel.evidenceProb xorTestNoise (fun _ => 
 theorem xorTest_counterfactualTrue :
     xorTestModel.counterfactualProb xorTestNoise (fun _ => True) 0 false
       (fun x : Fin 2 → Bool => x 1 = true) = 1 / 3 := by
-  simp only [counterfactualProb, Finset.sum_filter, sum_xorTest_four, true_and, xorTest_f00,
-    xorTest_f01, xorTest_f10, xorTest_f11, xorTest_w01, xorTest_w11, xorTest_evidenceTrue]
+  simp only [counterfactualProb, xorTest_support, Finset.sum_filter, sum_xorTest_four, true_and,
+    xorTest_f00, xorTest_f01, xorTest_f10, xorTest_f11, xorTest_w01, xorTest_w11,
+    xorTest_evidenceTrue]
   norm_num
 
 example :
     xorTestModel.counterfactualProb xorTestNoise (fun _ => True) 0 false
       (fun x : Fin 2 → Bool => x 1 = true) = 1 / 3 :=
   xorTest_counterfactualTrue
+
+/-! The counterfactual API needs no finiteness of the noise types: below, the noise of a
+one-node model lives on `ℕ`, which has no `Fintype` instance. -/
+
+/-- Trivial evidence has probability `1` for any noise laws on `ℕ`. -/
+example (M : FiniteSCM Bool 1 (fun _ => ℕ)) (μ : (k : Fin 1) → StdSimplex ℝ ℕ) :
+    M.evidenceProb μ (fun _ => True) = 1 := by
+  simp only [evidenceProb, Finset.filter_true]
+  exact sum_noiseWeight_eq_one μ
+
+/-- The posterior given evidence of positive probability sums to `1` with noise on `ℕ`. -/
+example (M : FiniteSCM Bool 1 (fun _ => ℕ)) (μ : (k : Fin 1) → StdSimplex ℝ ℕ)
+    (E : (Fin 1 → Bool) → Prop) [DecidablePred E] (hE : M.evidenceProb μ E ≠ 0) :
+    ∑ u ∈ Fintype.piFinset (fun j => (μ j).weights.support), M.posteriorWeight μ E u = 1 :=
+  (M.sum_posteriorWeight μ E hE).2
+
+/-- Without evidence the counterfactual probability is the interventional one, with noise on
+`ℕ`. -/
+example (M : FiniteSCM Bool 1 (fun _ => ℕ)) (μ : (k : Fin 1) → StdSimplex ℝ ℕ)
+    (F : (Fin 1 → Bool) → Prop) [DecidablePred F] :
+    M.counterfactualProb μ (fun _ => True) 0 true F =
+      ∑ x with F x, (@BayesNet.joint Bool _ ⟨true⟩
+        ((M.inducedBayesNet μ).intervene 0 true) x) :=
+  M.counterfactualProb_true μ 0 true F
 
 end Counterfactuals
 
