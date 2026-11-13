@@ -14,7 +14,7 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-! Tests for Lyapunov's direct method on the scalar equation `x' = -x` with `V x = x²`:
 `x(t) = e^{-t} x₀` is a forward solution (non-vacuity witness for the solution hypothesis), and
-the decay, attraction, sublevel and stability statements apply to it. -/
+the decay, attraction, sublevel and conditional trajectory-bound statements apply to it. -/
 
 open Set Filter Real
 open scoped Topology
@@ -85,16 +85,16 @@ example : MapsTo (fun τ => exp (-τ) * 3) (Ici 0) {x : ℝ | x ^ 2 ≤ 9} :=
     (fun _ _ => mem_univ _) (fun y _ => hasFDerivAt_sq y)
     (fun t ht y hy => (orbital_sq t ht y hy).trans (by nlinarith [sq_nonneg y])) (by norm_num)
 
-/-- `ε`-`δ` stability and attraction of `0` for `x' = -x`. -/
+/-- The conditional `ε`-`δ` bound and convergence to `0` for trajectories of `x' = -x`. -/
 example : (∀ ε > 0, ∃ δ > 0, ∀ γ : ℝ → ℝ, IsIntegralCurveOn γ (fun _ y => -1 * y) (Ici 0) →
       (∀ t, 0 ≤ t → γ t ∈ (univ : Set ℝ)) → ‖γ 0 - 0‖ < δ → ∀ t, 0 ≤ t → ‖γ t - 0‖ < ε) ∧
     ∀ γ : ℝ → ℝ, IsIntegralCurveOn γ (fun _ y => -1 * y) (Ici 0) →
       (∀ t, 0 ≤ t → γ t ∈ (univ : Set ℝ)) → Tendsto γ atTop (𝓝 0) :=
-  lyapunov_asymptotically_stable (V := fun z => z ^ 2) (fun y _ => hasFDerivAt_sq y) orbital_sq
-    two_pos one_pos (c₂ := 1) (fun y _ => by simp) (fun y _ => by simp)
+  trajectory_bound_and_tendsto_of_lyapunov (V := fun z => z ^ 2) (fun y _ => hasFDerivAt_sq y)
+    orbital_sq two_pos one_pos (c₂ := 1) (fun y _ => by simp) (fun y _ => by simp)
 
-/-- The non-asymptotic stability theorem with a conserved quantity: for `x' = 0`, `V x = x²` has
-orbital derivative `0`, so the stability bound holds with `√(c₂/c₁) = 1`. -/
+/-- The non-asymptotic uniform bound with a conserved quantity: for `x' = 0`, `V x = x²` has
+orbital derivative `0`, so the uniform bound holds with `√(c₂/c₁) = 1`. -/
 example (x₀ t : ℝ) (ht : 0 ≤ t) :
     ‖(fun _ : ℝ => x₀) t - 0‖ ≤ √(1 / 1) * ‖(fun _ : ℝ => x₀) 0 - 0‖ :=
   IsIntegralCurveOn.norm_sub_le_of_lyapunov_nonpos (f := fun _ _ => 0) (s := univ) (x₀ := 0)

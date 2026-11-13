@@ -17,7 +17,7 @@ import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.Deriv.Slope
 
 /-!
-# Lyapunov's direct method: exponential stability on a set
+# Lyapunov's direct method: decay bounds for trajectories in a set
 
 Let `γ` be a forward solution of `x' = f(t, x)`, i.e. `IsIntegralCurveOn γ f (Set.Ici 0)`, that
 stays in a set `s` of a real normed space `E`. Let `V : E → ℝ` have Fréchet derivative `V' x` at
@@ -27,16 +27,22 @@ every `x ∈ s` (no continuity of `V'` is needed), and suppose the orbital deriv
 
   `‖γ t - x₀‖ ≤ √(c₂ / c₁) * exp (-(a / 2) * t) * ‖γ 0 - x₀‖`,
 
-so for `a > 0` the point `x₀` is exponentially stable and attracting for every initial value
-whose forward solution remains in `s`. With `a = 0` (orbital derivative `≤ 0`) the same argument
-gives sublevel invariance and Lyapunov stability.
+so for `a > 0` every forward solution that remains in `s` converges to `x₀` exponentially fast.
+With `a = 0` (orbital derivative `≤ 0`) the same argument gives sublevel invariance and the
+uniform bound `‖γ t - x₀‖ ≤ √(c₂ / c₁) * ‖γ 0 - x₀‖`.
 
 ## Scope
 
-The theorems take a given forward solution and the hypothesis that it stays in `s`; they do not
-construct solutions, and they do not show that solutions starting near `x₀` remain in `s`.
-A merely negative *semi*definite orbital derivative (`V' x (f t x) ≤ 0`) gives only stability,
-not attraction: asymptotic statements in that case need LaSalle's invariance principle
+These are conditional bounds on trajectories, not stability theorems. They take a given forward
+solution and the hypothesis that it stays in `s`; they do not construct solutions, they do not
+show that solutions starting near `x₀` remain in `s`, and they do not require `x₀` to be an
+equilibrium. In particular they hold vacuously when `s = ∅`. Lyapunov stability or asymptotic
+stability of `x₀`, as in Khalil 2002, Theorems 4.1 and 4.10, additionally needs `x₀` to be an
+equilibrium, solutions to exist, and `s` to contain a neighborhood of `x₀` so that solutions
+starting near `x₀` provably remain in `s`; none of this is proved here. Compare
+`globalSolution_decay_of_hasFDerivAt` in `MathlibExt.Analysis.ODE.LinearizedStability`.
+A merely negative *semi*definite orbital derivative (`V' x (f t x) ≤ 0`) gives only the uniform
+bound, not attraction: asymptotic statements in that case need LaSalle's invariance principle
 (`Flow.lasalle` in `MathlibExt.Dynamics.LaSalle`) and are not covered here. Equilibria without the
 two-sided quadratic comparison bounds and global convergence on noncompact sets are also out of
 scope.
@@ -49,9 +55,10 @@ scope.
 * `IsIntegralCurveOn.norm_sub_le_of_lyapunov`: exponential decay of `‖γ t - x₀‖`.
 * `IsIntegralCurveOn.tendsto_of_lyapunov`: convergence to `x₀` when `a > 0`.
 * `IsIntegralCurveOn.lyapunov_le_of_nonpos`, `IsIntegralCurveOn.mapsTo_sublevel_of_lyapunov`,
-  `IsIntegralCurveOn.norm_sub_le_of_lyapunov_nonpos`, `lyapunov_stable`: the non-asymptotic
-  version (orbital derivative `≤ 0`).
-* `lyapunov_asymptotically_stable`: stability and attraction when `a > 0`.
+  `IsIntegralCurveOn.norm_sub_le_of_lyapunov_nonpos`, `trajectory_bound_of_lyapunov`: the
+  non-asymptotic version (orbital derivative `≤ 0`).
+* `trajectory_bound_and_tendsto_of_lyapunov`: the `ε`-`δ` bound and convergence when `a > 0`,
+  for trajectories that remain in `s`.
 * `IsIntegralCurveOn.abs_le_exp_neg_mul`: the scalar linear equation `x' = -k x`, by the
   criterion with `V x = x²`.
 
@@ -169,7 +176,7 @@ theorem mapsTo_sublevel_of_lyapunov (hγ : IsIntegralCurveOn γ f (Ici 0))
     MapsTo γ (Ici 0) {x | V x ≤ c} :=
   fun _ ht => (hγ.lyapunov_le_of_nonpos hγs hV hdV ht).trans h₀
 
-/-- **Lyapunov's direct method, stability bound.** If the orbital derivative is `≤ 0` on `s` and
+/-- **Lyapunov's direct method, uniform bound.** If the orbital derivative is `≤ 0` on `s` and
 `c₁ ‖x - x₀‖² ≤ V x ≤ c₂ ‖x - x₀‖²` on `s` with `c₁ > 0`, then a forward solution that stays in
 `s` satisfies `‖γ t - x₀‖ ≤ √(c₂ / c₁) * ‖γ 0 - x₀‖` for `t ≥ 0`. -/
 theorem norm_sub_le_of_lyapunov_nonpos (hγ : IsIntegralCurveOn γ f (Ici 0))
@@ -182,11 +189,13 @@ theorem norm_sub_le_of_lyapunov_nonpos (hγ : IsIntegralCurveOn γ f (Ici 0))
 
 end IsIntegralCurveOn
 
-/-- **Lyapunov stability on a set.** If the orbital derivative of `V` is `≤ 0` on `s` and
-`c₁ ‖x - x₀‖² ≤ V x ≤ c₂ ‖x - x₀‖²` on `s` with `c₁ > 0`, then for every `ε > 0` there is
-`δ > 0` such that every forward solution that stays in `s` and starts within `δ` of `x₀` stays
-within `ε` of `x₀`. -/
-theorem lyapunov_stable (hV : ∀ x ∈ s, HasFDerivAt V (V' x) x)
+/-- **Conditional `ε`-`δ` bound for trajectories in a set.** If the orbital derivative of `V` is
+`≤ 0` on `s` and `c₁ ‖x - x₀‖² ≤ V x ≤ c₂ ‖x - x₀‖²` on `s` with `c₁ > 0`, then for every
+`ε > 0` there is `δ > 0` such that every forward solution that stays in `s` and starts within `δ`
+of `x₀` stays within `ε` of `x₀`. This is not Lyapunov stability by itself: it constructs no
+solutions, assumes rather than proves that the trajectories stay in `s`, and does not require
+`x₀` to be an equilibrium (with `s = ∅` it holds vacuously). -/
+theorem trajectory_bound_of_lyapunov (hV : ∀ x ∈ s, HasFDerivAt V (V' x) x)
     (hdV : ∀ t, 0 ≤ t → ∀ x ∈ s, V' x (f t x) ≤ 0) {x₀ : E} {c₁ c₂ : ℝ} (hc₁ : 0 < c₁)
     (hlow : ∀ x ∈ s, c₁ * ‖x - x₀‖ ^ 2 ≤ V x) (hup : ∀ x ∈ s, V x ≤ c₂ * ‖x - x₀‖ ^ 2)
     {ε : ℝ} (hε : 0 < ε) :
@@ -200,12 +209,14 @@ theorem lyapunov_stable (hV : ∀ x ∈ s, HasFDerivAt V (V' x) x)
     _ < (√(c₂ / c₁) + 1) * (ε / (√(c₂ / c₁) + 1)) := mul_lt_mul_of_pos_left h₀ hC
     _ = ε := mul_div_cancel₀ _ hC.ne'
 
-/-- **Exponential asymptotic stability on a set.** If `V' x (f t x) ≤ -a * V x` on `s` with
-`a > 0` and `c₁ ‖x - x₀‖² ≤ V x ≤ c₂ ‖x - x₀‖²` on `s` with `c₁ > 0`, then `x₀` is stable (in
-the `ε`-`δ` sense of `lyapunov_stable`) and attracting for forward solutions that stay in `s`.
-The rate `‖γ t - x₀‖ ≤ √(c₂ / c₁) e^{-a t / 2} ‖γ 0 - x₀‖` is
-`IsIntegralCurveOn.norm_sub_le_of_lyapunov`. -/
-theorem lyapunov_asymptotically_stable (hV : ∀ x ∈ s, HasFDerivAt V (V' x) x)
+/-- **Conditional bound and convergence for trajectories in a set.** If
+`V' x (f t x) ≤ -a * V x` on `s` with `a > 0` and `c₁ ‖x - x₀‖² ≤ V x ≤ c₂ ‖x - x₀‖²` on `s` with
+`c₁ > 0`, then forward solutions that stay in `s` satisfy the `ε`-`δ` bound of
+`trajectory_bound_of_lyapunov` and converge to `x₀`. Like that theorem, this is a statement
+about the given trajectories, not asymptotic stability of `x₀`: it supplies no solutions and does
+not show that solutions starting near `x₀` remain in `s`. The rate
+`‖γ t - x₀‖ ≤ √(c₂ / c₁) e^{-a t / 2} ‖γ 0 - x₀‖` is `IsIntegralCurveOn.norm_sub_le_of_lyapunov`. -/
+theorem trajectory_bound_and_tendsto_of_lyapunov (hV : ∀ x ∈ s, HasFDerivAt V (V' x) x)
     (hdV : ∀ t, 0 ≤ t → ∀ x ∈ s, V' x (f t x) ≤ -a * V x) (ha : 0 < a) {x₀ : E} {c₁ c₂ : ℝ}
     (hc₁ : 0 < c₁) (hlow : ∀ x ∈ s, c₁ * ‖x - x₀‖ ^ 2 ≤ V x)
     (hup : ∀ x ∈ s, V x ≤ c₂ * ‖x - x₀‖ ^ 2) :
@@ -216,7 +227,7 @@ theorem lyapunov_asymptotically_stable (hV : ∀ x ∈ s, HasFDerivAt V (V' x) x
   have hdV' : ∀ t, 0 ≤ t → ∀ x ∈ s, V' x (f t x) ≤ 0 := fun t ht x hx => by
     have hVx : 0 ≤ V x := (by positivity : 0 ≤ c₁ * ‖x - x₀‖ ^ 2).trans (hlow x hx)
     nlinarith [hdV t ht x hx]
-  exact ⟨fun ε hε => lyapunov_stable hV hdV' hc₁ hlow hup hε,
+  exact ⟨fun ε hε => trajectory_bound_of_lyapunov hV hdV' hc₁ hlow hup hε,
     fun γ hγ hγs => hγ.tendsto_of_lyapunov hγs hV hdV ha hc₁ hlow hup⟩
 
 /-- **Scalar linear decay via the Lyapunov criterion.** Every forward solution of `x' = -k x`
