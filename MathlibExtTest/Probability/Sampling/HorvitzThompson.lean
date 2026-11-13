@@ -21,7 +21,8 @@ import Mathlib.Tactic.NormNum.Basic
 /-!
 # Boundary tests for the Horvitz-Thompson estimator
 
-Unequal design on `Fin 2`, census design, and a never-sampled counterexample.
+Unequal design on `Fin 2`, census design, a never-sampled counterexample, and the empty
+population.
 -/
 
 @[expose] public section
@@ -151,11 +152,18 @@ theorem unequal_mean_unbiased :
       / (Fintype.card (Fin 2) : ℝ)) ∂unequalPmf.toMeasure
       = (∑ i, unequalY i) / (Fintype.card (Fin 2) : ℝ) := by
   apply integral_horvitzThompsonTotal_div_card
-  · rw [Fin.forall_fin_two]
-    constructor
-    · rw [unequal_pi0]; norm_num
-    · rw [unequal_pi1]; norm_num
-  · decide
+  rw [Fin.forall_fin_two]
+  constructor
+  · rw [unequal_pi0]; norm_num
+  · rw [unequal_pi1]; norm_num
+
+/-- Empty population: the mean identity holds at cardinality zero, where both sides are `0`
+under Lean's division convention and the positivity hypothesis is vacuous. -/
+example (y : Fin 0 → ℝ) :
+    ∫ s, (horvitzThompsonTotal (PMF.pure ∅) y s / (Fintype.card (Fin 0) : ℝ))
+      ∂(PMF.pure (∅ : Finset (Fin 0))).toMeasure
+      = (∑ i, y i) / (Fintype.card (Fin 0) : ℝ) :=
+  integral_horvitzThompsonTotal_div_card _ y fun i => i.elim0
 
 /-- Expected value on the unequal design equals the total `3`. -/
 theorem unequal_expectation :

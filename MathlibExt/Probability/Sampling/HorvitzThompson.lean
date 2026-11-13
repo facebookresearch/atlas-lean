@@ -86,7 +86,7 @@ theorem integral_horvitzThompsonTotal {α : Type*} [Fintype α] [DecidableEq α]
 theorem integral_horvitzThompsonTotal_div_card {α : Type*} [Fintype α]
     [DecidableEq α] [MeasurableSpace (Finset α)]
     [MeasurableSingletonClass (Finset α)] (p : PMF (Finset α)) (y : α → ℝ)
-    (hpos : ∀ i, 0 < inclusionProbability p i) (_hcard : 0 < Fintype.card α) :
+    (hpos : ∀ i, 0 < inclusionProbability p i) :
     ∫ s, (horvitzThompsonTotal p y s / (Fintype.card α : ℝ)) ∂p.toMeasure
       = (∑ i, y i) / (Fintype.card α : ℝ) := by
   rw [MeasureTheory.integral_div, integral_horvitzThompsonTotal p y hpos]
