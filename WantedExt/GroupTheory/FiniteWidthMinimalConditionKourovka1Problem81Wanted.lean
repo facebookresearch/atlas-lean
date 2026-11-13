@@ -63,7 +63,8 @@ def finiteWidthMinimalCondition : Prop :=
 def minimalConditionFiniteWidth : Prop :=
   ∀ (G : Type) [Group G], WellFoundedLT (Subgroup G) → HasFiniteWidth G
 
-/-- Kourovka 1.81(c): every locally finite group of finite width is a Chernikov group. -/
+/-- Kourovka 1.81(c), its "in particular" question: every locally finite group of finite width is a
+Chernikov group. The locally finite versions of the questions (a) and (b) are not stated here. -/
 def locallyFiniteFiniteWidthChernikov : Prop :=
   ∀ (G : Type) [Group G], IsLocallyFinite G → HasFiniteWidth G → IsChernikov G
 
@@ -91,13 +92,14 @@ Algebra and Logic 9 (1970), 137-151 and 10 (1971), 127-142 (c), Kourovka Archive
 public theorem_wanted minimalConditionFiniteWidth_refuted : ¬ minimalConditionFiniteWidth
 
 /--
-Resolved true: the Kourovka Archive answers 1.81(c) "Yes, it is", citing Shunkov (1970, 1971): every
-locally finite group of finite width is a Chernikov group. Source: E. I. Khukhro and V. D. Mazurov
-(eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49
-(2026), Archive of Solved Problems, Problem 1.81 (L. N. Shevrin); resolution: S. V. Ivanov,
-Geometric methods in the study of groups with given subgroup properties, Cand. Diss., Moscow Univ.,
-1988 (a); G. S. Deryabina, Math. USSR-Sb. 52 (1985), 481-490 (b); V. P. Shunkov, Algebra and Logic 9
-(1970), 137-151 and 10 (1971), 127-142 (c), Kourovka Archive, Problem 1.81.
+Resolved true for the "in particular" question of 1.81(c) only; the locally finite versions of (a)
+and (b) are not formalized here. The Kourovka Archive answers 1.81(c) "Yes, it is", citing Shunkov
+(1970, 1971): every locally finite group of finite width is a Chernikov group. Source: E. I. Khukhro
+and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
+arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 1.81 (L. N. Shevrin); resolution: S.
+V. Ivanov, Geometric methods in the study of groups with given subgroup properties, Cand. Diss.,
+Moscow Univ., 1988 (a); G. S. Deryabina, Math. USSR-Sb. 52 (1985), 481-490 (b); V. P. Shunkov,
+Algebra and Logic 9 (1970), 137-151 and 10 (1971), 127-142 (c), Kourovka Archive, Problem 1.81.
 -/
 public theorem_wanted locallyFiniteFiniteWidthChernikov_holds : locallyFiniteFiniteWidthChernikov
 
