@@ -16,13 +16,16 @@ import Mathlib.Tactic.NormNum
 /-!
 # Covered interest parity
 
-A one-period two-currency market: the domestic deposit and the converted
-foreign deposit plus forward replicate the same terminal domestic payoff.
-Covered interest parity is the resulting forward-rate formula.
+A one-period two-currency market with two ways to invest one unit of domestic
+currency: the domestic deposit, and the covered foreign strategy (convert at the
+spot rate, deposit abroad, and sell the foreign proceeds forward). For a nonzero
+spot rate and foreign gross return, the two have the same terminal domestic
+payoff exactly when the forward rate satisfies covered interest parity; for any
+other forward rate the payoffs differ.
 
 ## Main results
 
-* `coveredInterestParity_iff`: the replication equality iff
+* `coveredInterestParity_iff`: the two payoffs are equal iff
   `forward = spot * domesticGross / foreignGross`.
 * `coveredInterestParity_example`: a concrete instance.
 -/
@@ -38,7 +41,9 @@ namespace MathlibExt.Probability.Finance.CoveredInterestParity
 * `domesticGross`: gross domestic return over the period (`1 + r_d`).
 * `foreignGross`: gross foreign return over the period (`1 + r_f`).
 
-All four are period gross quantities; no interest-rate sign assumption is made. -/
+`spot` and `forward` are exchange rates in domestic currency per unit of foreign
+currency; `domesticGross` and `foreignGross` are dimensionless gross returns. No
+interest-rate sign assumption is made. -/
 structure CoveredInterestMarket where
   /-- Spot rate: domestic currency per one unit of foreign currency. -/
   spot : ℝ
@@ -54,14 +59,16 @@ domestic gross return: `domesticGross`. -/
 noncomputable def domesticDepositPayoff (M : CoveredInterestMarket) : ℝ :=
   M.domesticGross
 
-/-- Terminal domestic payoff of the replicating strategy: convert one unit of
+/-- Terminal domestic payoff of the covered foreign strategy: convert one unit of
 domestic currency to `1 / spot` units of foreign currency, invest at the foreign
 gross return, and convert the proceeds back at the locked-in forward rate:
-`forward * foreignGross / spot`. -/
+`forward * foreignGross / spot`. For nonzero `spot` and `foreignGross` it equals
+the domestic deposit payoff only when covered interest parity holds
+(`coveredInterestParity_iff`). -/
 noncomputable def convertedForeignPayoff (M : CoveredInterestMarket) : ℝ :=
   M.forward * M.foreignGross / M.spot
 
-/-- Covered interest parity: the replicating strategy has the same terminal
+/-- Covered interest parity: the covered foreign strategy has the same terminal
 domestic payoff as the domestic deposit iff the forward rate is
 `spot * domesticGross / foreignGross`. -/
 theorem coveredInterestParity_iff (M : CoveredInterestMarket)
