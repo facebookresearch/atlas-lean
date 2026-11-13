@@ -7,14 +7,13 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.SpecialFunctions.Exp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
-import MathlibExt.Analysis.ODE.LyapunovStability
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
+import PhyslibExt.EarthScience.ClimateFeedback
 
 /-!
 # Capstone: planetary energy and two-box warming
@@ -26,10 +25,10 @@ The ODE, stated directly in the lemmas below, is
 `Ts' = 1 - Ts - (Ts - Td)`, `Td' = Ts - Td`. Equilibrium observations
 `T = 1, F = 1` identify `lam = 1` only under this model. This is a
 nondimensional teaching example; synthetic agreement does not validate
-a climate model. The exponential bound applies the existing estimate
-`le_exp_mul_of_hasDerivWithinAt_Ici` to the anomaly energy; the capstone
-does not depend on any sibling development and does not re-prove or
-assume any "K02" (`ClimateFeedback`) theorem.
+a climate model. The exponential bound is the unit-parameter case
+(`Cs = Cd = lam = γ = 1`, `xs = Ts - 1`, `xd = Td - 1`, so
+`c = min (2 / 3) 1 = 2 / 3`) of `EarthScience.anomaly_energy_exp_bound`
+in `PhyslibExt.EarthScience.ClimateFeedback`.
 
 ## ii. Key results
 
@@ -48,7 +47,7 @@ assume any "K02" (`ClimateFeedback`) theorem.
 
 ## iv. References
 
-- `le_exp_mul_of_hasDerivWithinAt_Ici` in `MathlibExt.Analysis.ODE.LyapunovStability`.
+- `EarthScience.anomaly_energy_exp_bound` in `PhyslibExt.EarthScience.ClimateFeedback`.
 
 ## A. Equilibrium, budget, energy identity and inequality
 -/
@@ -98,34 +97,26 @@ lemma two_box_energy_differential_inequality {Ts Td Ts' Td' : ℝ}
 /-- Exponential energy bound: if `Ts, Td` satisfy the two-box ODE at
 every `t` and start at `Ts 0 = Td 0 = 0` (so `E 0 = 1`), then for
 `t ≥ 0`, `E t ≤ exp (-(2 / 3) * t)`, i.e.
-`E t ≤ E 0 * exp (-(2 / 3) * t)`. This is
-`le_exp_mul_of_hasDerivWithinAt_Ici` with `u = E` and `a = 2 / 3`. -/
+`E t ≤ E 0 * exp (-(2 / 3) * t)`. This is the unit-parameter case of
+`anomaly_energy_exp_bound` with `xs = Ts - 1`, `xd = Td - 1` and
+`c = min (2 / 3) 1 = 2 / 3`. -/
 lemma two_box_energy_bound {Ts Td : ℝ → ℝ}
     (hODE : ∀ t : ℝ, HasDerivAt Ts (1 - Ts t - (Ts t - Td t)) t ∧
       HasDerivAt Td (Ts t - Td t) t)
     (hTs0 : Ts 0 = 0) (hTd0 : Td 0 = 0) :
     ∀ t : ℝ, 0 ≤ t →
       ((Ts t - 1) ^ 2 + (Td t - 1) ^ 2) / 2 ≤ Real.exp (-(2 / 3) * t) := by
-  have hE : ∀ t : ℝ, 0 ≤ t → HasDerivWithinAt
-      (fun t => ((Ts t - 1) ^ 2 + (Td t - 1) ^ 2) / 2)
-      ((Ts t - 1) * (1 - Ts t - (Ts t - Td t)) + (Td t - 1) * (Ts t - Td t))
-      (Set.Ici 0) t := by
-    intro t _
-    have hTs1 := (hODE t).1.sub_const 1
-    have hTd1 := (hODE t).2.sub_const 1
-    convert (((hTs1.mul hTs1).add (hTd1.mul hTd1)).div_const 2).hasDerivWithinAt using 1
-    · funext s
-      simp only [Pi.add_apply, Pi.mul_apply]
-      ring
-    · ring
   intro t ht
-  calc ((Ts t - 1) ^ 2 + (Td t - 1) ^ 2) / 2
-      ≤ Real.exp (-(2 / 3) * t) * (((Ts 0 - 1) ^ 2 + (Td 0 - 1) ^ 2) / 2) :=
-        le_exp_mul_of_hasDerivWithinAt_Ici hE
-          (fun s _ => two_box_energy_differential_inequality (Ts := Ts s) (Td := Td s)
-            (Ts' := 1 - Ts s - (Ts s - Td s)) (Td' := Ts s - Td s) rfl rfl) ht
-    _ = Real.exp (-(2 / 3) * t) := by
-        rw [hTs0, hTd0]
-        norm_num
+  have hxs : ∀ s : ℝ, 0 ≤ s → HasDerivAt (fun s => Ts s - 1)
+      ((-1 * (Ts s - 1) - 1 * ((Ts s - 1) - (Td s - 1))) / 1) s :=
+    fun s _ => ((hODE s).1.sub_const 1).congr_deriv (by ring)
+  have hxd : ∀ s : ℝ, 0 ≤ s → HasDerivAt (fun s => Td s - 1)
+      ((1 * ((Ts s - 1) - (Td s - 1))) / 1) s :=
+    fun s _ => ((hODE s).2.sub_const 1).congr_deriv (by ring)
+  have h := anomaly_energy_exp_bound (Cs := 1) (Cd := 1) (lam := 1) (gam := 1)
+    one_pos one_pos one_pos one_pos (fun s => Ts s - 1) (fun s => Td s - 1) hxs hxd ht
+  have hc : min (2 * (1 : ℝ) / (1 + 2 * 1)) (1 / 1) = 2 / 3 := by norm_num [min_def]
+  simp only [hc, hTs0, hTd0] at h
+  convert h using 1 <;> ring
 
 end EarthScience

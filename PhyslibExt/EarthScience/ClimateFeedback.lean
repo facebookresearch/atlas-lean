@@ -15,6 +15,7 @@ import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
+import MathlibExt.Analysis.ODE.LyapunovStability
 
 /-!
 # Climate feedback and two-box response
@@ -29,10 +30,13 @@ For anomaly variables (departures from that equilibrium), solutions of
 the anomaly ODEs `Cs*xs' = -lambda*xs - gamma*(xs - xd)` and
 `Cd*xd' = gamma*(xs - xd)` have energy `E = (Cs*xs^2 + Cd*xd^2)/2` with
 `E' = -lambda*xs^2 - gamma*(xs - xd)^2 <= -c*E`, where
-`c = min (2*lambda/(Cs + 2*Cd)) (gamma/Cd) > 0`. The energy, its
-dissipation identity, and the rate `c` are an elementary estimate
-derived here, not taken from the references. No nonlinear tipping or
-empirical sensitivity claim is made.
+`c = min (2*lambda/(Cs + 2*Cd)) (gamma/Cd) > 0`. Integrating that
+inequality with `le_exp_mul_of_hasDerivWithinAt_Ici`
+(`MathlibExt.Analysis.ODE.LyapunovStability`) gives
+`E(t) <= exp(-c*t) * E(0)` for `t >= 0` along solutions on `[0, ∞)`.
+The energy, its dissipation identity, the rate `c`, and the exponential
+bound are an elementary estimate derived here, not taken from the
+references. No nonlinear tipping or empirical sensitivity claim is made.
 
 ## ii. Key results
 
@@ -43,6 +47,8 @@ empirical sensitivity claim is made.
   `-lambda*xs^2 - gamma*(xs-xd)^2 <= -c*E` with `c > 0`.
 - `EarthScience.anomaly_energy_decay`: along solutions of the anomaly
   ODEs, `E' <= -c*E` with `c > 0`.
+- `EarthScience.anomaly_energy_exp_bound`: along solutions of the anomaly
+  ODEs on `[0, ∞)`, `E(t) <= exp(-c*t) * E(0)` for `t >= 0`.
 
 ## iii. Table of contents
 
@@ -64,8 +70,8 @@ empirical sensitivity claim is made.
   `Cd*Td' = gamma*(Ts - Td)`, its equilibrium, and its analytical
   solution as a sum of two decaying modes.
 - The scalar model is the surface equation without deep-ocean exchange
-  (`gamma = 0`). The anomaly energy, its dissipation identity, and the
-  decay rate `c` are derived here.
+  (`gamma = 0`). The anomaly energy, its dissipation identity, the
+  decay rate `c`, and the exponential bound are derived here.
 -/
 
 @[expose] public section
@@ -193,5 +199,30 @@ theorem anomaly_energy_decay {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 < Cd)
   refine ⟨hc, ?_⟩
   rw [(anomaly_energy_hasDerivAt hCs hCd xs xd t hxs hxd).deriv]
   exact hbound.trans_eq (by ring)
+
+/-- Anomaly-energy exponential bound: if `xs, xd` satisfy the anomaly ODEs
+`Cs*xs' = -lam*xs - gam*(xs - xd)` and `Cd*xd' = gam*(xs - xd)` at every
+`t >= 0`, then `E(t) = (Cs*xs^2 + Cd*xd^2)/2` satisfies
+`E(t) <= exp(-c*t) * E(0)` for `t >= 0`, with
+`c = min (2*lam/(Cs + 2*Cd)) (gam/Cd) > 0`. Integrates
+`anomaly_energy_hasDerivAt` and `anomaly_energy_dissipation_bound` with
+`le_exp_mul_of_hasDerivWithinAt_Ici`. -/
+theorem anomaly_energy_exp_bound {Cs Cd lam gam : ℝ} (hCs : 0 < Cs) (hCd : 0 < Cd)
+    (hlam : 0 < lam) (hgam : 0 < gam) (xs xd : ℝ → ℝ)
+    (hxs : ∀ t, 0 ≤ t → HasDerivAt xs ((-lam * xs t - gam * (xs t - xd t)) / Cs) t)
+    (hxd : ∀ t, 0 ≤ t → HasDerivAt xd ((gam * (xs t - xd t)) / Cd) t)
+    {t : ℝ} (ht : 0 ≤ t) :
+    (Cs * (xs t) ^ 2 + Cd * (xd t) ^ 2) / 2 ≤
+      Real.exp (-(min (2 * lam / (Cs + 2 * Cd)) (gam / Cd)) * t) *
+        ((Cs * (xs 0) ^ 2 + Cd * (xd 0) ^ 2) / 2) :=
+  le_exp_mul_of_hasDerivWithinAt_Ici
+    (u := fun t => (Cs * (xs t) ^ 2 + Cd * (xd t) ^ 2) / 2)
+    (u' := fun t => -lam * (xs t) ^ 2 - gam * (xs t - xd t) ^ 2)
+    (fun s hs =>
+      (anomaly_energy_hasDerivAt hCs hCd xs xd s (hxs s hs) (hxd s hs)).hasDerivWithinAt)
+    (fun s _ =>
+      (anomaly_energy_dissipation_bound (xs := xs s) (xd := xd s) hCs hCd hlam hgam).2.trans_eq
+        (by ring))
+    ht
 
 end EarthScience
