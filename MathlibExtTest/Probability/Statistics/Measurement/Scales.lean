@@ -21,8 +21,8 @@ import Mathlib.Tactic.Ring
 # Tests for ordinal scales and affine laws
 
 Checks ranks, order statistics and medians via the public API, affine laws
-for means and variances, guarded ratio invariance, and the group-mean
-reversal consequence.
+for means and variances, guarded ratio invariance, ratio-scale admissibility
+(positive similarities only), and the group-mean reversal consequence.
 -/
 
 @[expose] public section
@@ -239,6 +239,33 @@ theorem t7_similarity_guarded_holds :
   have ha : (2 : ℝ) ≠ 0 := by norm_num
   have hiff := forall_affine_div_affine_eq_div_iff (b := (0 : ℝ)) ha
   exact hiff.mpr rfl
+
+/-- The order-reversing similarity `x ↦ -x` preserves ratios of values but is
+not an admissible ratio-scale recoding. -/
+theorem t7_negative_similarity_not_admissible :
+    (∀ x y : ℝ, y ≠ 0 → (-1 : ℝ) * y + 0 ≠ 0 →
+      ((-1) * x + 0) / ((-1) * y + 0) = x / y) ∧
+    ¬(StrictMono (fun x : ℝ => (-1 : ℝ) * x + 0) ∧
+      ∀ x y : ℝ, y ≠ 0 → (-1 : ℝ) * y + 0 ≠ 0 →
+        ((-1) * x + 0) / ((-1) * y + 0) = x / y) := by
+  refine ⟨(forall_affine_div_affine_eq_div_iff (by norm_num)).mpr rfl, fun h => ?_⟩
+  have hpos := (ratioScale_admissible_iff.mp h).1
+  norm_num at hpos
+
+/-- The positive similarity `x ↦ 2 * x` is an admissible ratio-scale recoding. -/
+theorem t7_positive_similarity_admissible :
+    StrictMono (fun x : ℝ => (2 : ℝ) * x + 0) ∧
+      ∀ x y : ℝ, y ≠ 0 → (2 : ℝ) * y + 0 ≠ 0 → (2 * x + 0) / (2 * y + 0) = x / y :=
+  ratioScale_admissible_iff.mpr ⟨by norm_num, rfl⟩
+
+/-- Fahrenheit is increasing but not a ratio-scale recoding (`b = 32 ≠ 0`). -/
+theorem t7_fahrenheit_not_ratio_admissible :
+    ¬(StrictMono (fun x : ℝ => (9/5 : ℝ) * x + 32) ∧
+      ∀ x y : ℝ, y ≠ 0 → (9/5 : ℝ) * y + 32 ≠ 0 →
+        ((9/5) * x + 32) / ((9/5) * y + 32) = x / y) := by
+  intro h
+  have hb := (ratioScale_admissible_iff.mp h).2
+  norm_num at hb
 
 /-- Ratios of differences are invariant on a concrete example. -/
 theorem t8_ratio_diff_example :

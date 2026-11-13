@@ -19,12 +19,17 @@ import Mathlib.Tactic.Linarith
 # Interval and ratio scales: affine laws for means, variances and ratios
 
 This file formalizes the Stevens (1946) interval- and ratio-scale laws: means
-transform affinely and variances quadratically under `x ↦ a * x + b`, ratios
-of differences are invariant when `a ≠ 0`, and ratios of values are invariant
-on admissible inputs (nonzero denominators) exactly for similarity maps
-(`b = 0`). Main results: `MeasureTheory.integral_const_mul_add_const`,
-`ProbabilityTheory.variance_const_mul_add_const`, `affine_sub_div_affine_sub`
-and `forall_affine_div_affine_eq_div_iff`.
+transform affinely and variances quadratically under `x ↦ a * x + b`. Two
+purely algebraic lemmas hold for every nonzero slope `a`, including the
+order-reversing `a < 0`: ratios of differences are invariant, and ratios of
+values are invariant on inputs with nonzero denominators exactly when `b = 0`.
+Admissible recodings of a measurement scale preserve order, so they have
+`0 < a`; `ratioScale_admissible_iff` shows that an affine recoding is strictly
+increasing and preserves ratios of values exactly when it is a positive
+similarity (`0 < a` and `b = 0`). Main results:
+`MeasureTheory.integral_const_mul_add_const`,
+`ProbabilityTheory.variance_const_mul_add_const`, `affine_sub_div_affine_sub`,
+`forall_affine_div_affine_eq_div_iff` and `ratioScale_admissible_iff`.
 
 ## References
 
@@ -81,8 +86,10 @@ end ProbabilityTheory
 
 namespace MathlibExt.Probability.Statistics.Measurement
 
-/-- Ratios of differences are invariant under `x ↦ a * x + b` when `a ≠ 0`,
-on admissible inputs (nonzero denominator `z - w`). -/
+/-- Purely algebraic: ratios of differences are invariant under `x ↦ a * x + b`
+for every nonzero slope, including the order-reversing `a < 0`, on inputs with
+nonzero denominator `z - w`. The admissible interval-scale recodings are the
+increasing ones (`0 < a`), a special case. -/
 theorem affine_sub_div_affine_sub {a b : ℝ} (ha : a ≠ 0)
     (x y z w : ℝ) (hz : z - w ≠ 0) :
     (a * x + b - (a * y + b)) / (a * z + b - (a * w + b)) =
@@ -93,9 +100,11 @@ theorem affine_sub_div_affine_sub {a b : ℝ} (ha : a ≠ 0)
   have haz : a * (z - w) ≠ 0 := mul_ne_zero ha hz
   exact mul_div_mul_left _ _ ha
 
-/-- Ratios of values are invariant on admissible inputs iff `b = 0`,
-when `a ≠ 0`. Admissible means nonzero denominators: `y ≠ 0` and
-`a * y + b ≠ 0`. -/
+/-- Purely algebraic: for a nonzero slope `a` of either sign, ratios of values
+are invariant on inputs with nonzero denominators (`y ≠ 0` and
+`a * y + b ≠ 0`) iff `b = 0`. A negative slope reverses order and is not an
+admissible scale transformation; `ratioScale_admissible_iff` is the
+measurement-scale statement. -/
 theorem forall_affine_div_affine_eq_div_iff {a b : ℝ} (ha : a ≠ 0) :
     (∀ x y : ℝ, y ≠ 0 → a * y + b ≠ 0 →
       (a * x + b) / (a * y + b) = x / y) ↔ b = 0 := by
@@ -130,5 +139,24 @@ theorem forall_affine_div_affine_eq_div_iff {a b : ℝ} (ha : a ≠ 0) :
   · intro hb x y _ _
     rw [hb, add_zero, add_zero]
     exact mul_div_mul_left _ _ ha
+
+/-- **Admissible ratio-scale recodings** (Stevens 1946): an affine recoding
+`x ↦ a * x + b` is strictly increasing and preserves ratios of values on inputs
+with nonzero denominators exactly when it is a positive similarity, `0 < a` and
+`b = 0`. The order-reversing similarity `x ↦ -x` preserves ratios but is
+excluded. -/
+theorem ratioScale_admissible_iff {a b : ℝ} :
+    (StrictMono (fun x : ℝ => a * x + b) ∧
+      ∀ x y : ℝ, y ≠ 0 → a * y + b ≠ 0 → (a * x + b) / (a * y + b) = x / y) ↔
+      0 < a ∧ b = 0 := by
+  constructor
+  · rintro ⟨hmono, hratio⟩
+    have h01 : a * 0 + b < a * 1 + b := hmono (by norm_num : (0 : ℝ) < 1)
+    have ha : 0 < a := by linarith
+    exact ⟨ha, (forall_affine_div_affine_eq_div_iff ha.ne').mp hratio⟩
+  · rintro ⟨ha, rfl⟩
+    refine ⟨fun x y hxy => ?_, (forall_affine_div_affine_eq_div_iff ha.ne').mpr rfl⟩
+    change a * x + 0 < a * y + 0
+    linarith [mul_lt_mul_of_pos_left hxy ha]
 
 end MathlibExt.Probability.Statistics.Measurement
