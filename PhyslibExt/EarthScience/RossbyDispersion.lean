@@ -16,12 +16,20 @@ import Mathlib.Tactic.Ring
 /-!
 # Beta-plane Rossby mode dispersion
 
-A linear beta-plane Rossby mode `psi(t, x, y) = A cos(kx + ly - omega t)`
-has Laplacian `-(k^2 + l^2) psi`, and its beta-plane vorticity residual
-`d/dt (nabla^2 psi) + beta * psi_x` factorises as
-`-A sin(kx + ly - omega t) * ((k^2 + l^2) omega + beta k)`. The
-dispersion relation `omega = -beta k / (k^2 + l^2)` makes the factor
-vanish, so the mode satisfies its dispersion relation.
+Convention (Holton, Section 7.7.1): `x` points east and `y` north, `beta = df/dy` is the
+meridional gradient of the Coriolis parameter `f`, and the perturbation streamfunction `psi`
+gives the velocity `u = -∂psi/∂y`, `v = ∂psi/∂x`, so the relative vorticity is
+`zeta = ∂v/∂x - ∂u/∂y = nabla^2 psi`. Linearized about a state of rest, the barotropic vorticity
+equation on a midlatitude beta-plane is `d/dt (nabla^2 psi) + beta * psi_x = 0` (Holton's (7.90)
+with zero mean zonal wind).
+
+A linear beta-plane Rossby mode `psi(t, x, y) = A cos(kx + ly - omega t)`, the real part of
+Holton's plane wave with phase `kx + ly - omega t`, has Laplacian `-(k^2 + l^2) psi`, and its
+beta-plane vorticity residual `d/dt (nabla^2 psi) + beta * psi_x` factorises as
+`-A sin(kx + ly - omega t) * ((k^2 + l^2) omega + beta k)`. The dispersion relation
+`omega = -beta k / (k^2 + l^2)` (Holton's (7.91) with zero mean zonal wind) makes the factor
+vanish, so the mode satisfies its dispersion relation. With this phase convention the zonal
+phase speed `omega / k = -beta / (k^2 + l^2)` is westward for `beta > 0` and `k ≠ 0`.
 
 ## i. Overview
 
@@ -43,6 +51,13 @@ relation is exactly the vanishing of that factor.
 
 ## iv. References
 
+- J. R. Holton, *An Introduction to Dynamic Meteorology*, 4th ed., Elsevier Academic Press
+  (2004), Chapter 7 (Atmospheric Oscillations: Linear Perturbation Theory), Section 7.7.1 (Free
+  Barotropic Rossby Waves): the beta-plane barotropic vorticity equation (7.89), the
+  perturbation streamfunction `u' = -∂psi'/∂y`, `v' = ∂psi'/∂x` with `zeta' = nabla^2 psi'`, the
+  perturbation vorticity equation (7.90), the plane wave `Re (Psi * exp (i (kx + ly - nu t)))`,
+  and the dispersion relation `nu = ubar k - beta k / K^2`, `K^2 = k^2 + l^2` (7.91). Holton
+  writes `nu` for `omega` and `ubar` for the mean zonal wind, which is zero here.
 - `HasDerivAt.cos`, `HasDerivAt.sin` in Mathlib.
 
 ## A. Rossby mode residual and dispersion
