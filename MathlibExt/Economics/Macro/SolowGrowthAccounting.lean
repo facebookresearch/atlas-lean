@@ -25,10 +25,14 @@ import Mathlib.Tactic
 For output `Y = A * F(K, L)` with TFP `A`, capital `K`, labour `L`, and a
 differentiable two-input production function `F`, log differentiation gives
 growth accounting: `Ẏ/Y = Ȧ/A + ε_K * K̇/K + ε_L * L̇/L`, where the
-elasticities are `ε_K = K * F_K / F` and `ε_L = L * F_L / F`. Factor shares
-equal the elasticities ONLY under additional premises, kept explicit here:
-competitive pricing (factor prices `A * F' (1, 0)` and `A * F' (0, 1)`) and
-constant returns, stated as the Euler equation. Neither premise is proved.
+elasticities are `ε_K = K * F_K / F` and `ε_L = L * F_L / F`, with the partial
+derivatives `F_K = fderiv ℝ F (K, L) (1, 0)` and `F_L = fderiv ℝ F (K, L) (0, 1)`.
+Factor shares equal the elasticities ONLY under additional premises, kept
+explicit here: competitive pricing (factor prices equal to the marginal products
+`A * F_K` and `A * F_L`) and the pointwise Euler identity
+`F (K, L) = K * F_K + L * F_L` at the point considered. Constant returns imply
+that identity, but it is strictly weaker than constant returns. Neither premise
+is proved.
 
 ## Main results
 
@@ -36,7 +40,8 @@ constant returns, stated as the Euler equation. Neither premise is proved.
 * `competitiveShare_capital_eq_elasticity`,
   `competitiveShare_labour_eq_elasticity`: shares equal elasticities under
   competitive pricing.
-* `competitiveShares_sum_eq_one`: shares sum to 1 under competitive pricing plus the Euler equation.
+* `competitiveShares_sum_eq_one`: shares sum to 1 under competitive pricing plus
+  the pointwise Euler identity.
 
 ## References
 
@@ -51,23 +56,40 @@ Atlas roadmap target MA03.T04.
 namespace MathlibExt.Economics.Macro.SolowGrowthAccounting
 
 /-- Output elasticity of the production function `F` with respect to capital:
-`K * F_K / F`, where `F_K = F' (1, 0)` is the partial derivative of `F` in its
-first argument (source clause: "capital elasticity"). -/
-noncomputable def capitalElasticity (F : ℝ × ℝ → ℝ) (F' : ℝ × ℝ →L[ℝ] ℝ)
-    (K L : ℝ) : ℝ :=
-  K * F' (1, 0) / F (K, L)
+`K * F_K / F`, where `F_K = fderiv ℝ F (K, L) (1, 0)` is the partial derivative
+of `F` in its first argument (source clause: "capital elasticity"). As a total
+function: if `F` is not differentiable at `(K, L)` or `F (K, L) = 0`, the total
+`fderiv` and division may yield Mathlib's junk values. -/
+noncomputable def capitalElasticity (F : ℝ × ℝ → ℝ) (K L : ℝ) : ℝ :=
+  K * fderiv ℝ F (K, L) (1, 0) / F (K, L)
 
 /-- Output elasticity of the production function `F` with respect to labour:
-`L * F_L / F`, where `F_L = F' (0, 1)` is the partial derivative of `F` in its
-second argument (source clause: "labour elasticity"). -/
-noncomputable def labourElasticity (F : ℝ × ℝ → ℝ) (F' : ℝ × ℝ →L[ℝ] ℝ)
-    (K L : ℝ) : ℝ :=
-  L * F' (0, 1) / F (K, L)
+`L * F_L / F`, where `F_L = fderiv ℝ F (K, L) (0, 1)` is the partial derivative
+of `F` in its second argument (source clause: "labour elasticity"). As a total
+function, with the same junk-value caveat as `capitalElasticity`. -/
+noncomputable def labourElasticity (F : ℝ × ℝ → ℝ) (K L : ℝ) : ℝ :=
+  L * fderiv ℝ F (K, L) (0, 1) / F (K, L)
+
+/-- With a derivative `F'` of `F` at `(K, L)`, the capital elasticity is
+`K * F' (1, 0) / F (K, L)`. -/
+theorem capitalElasticity_eq_of_hasFDerivAt {F : ℝ × ℝ → ℝ} {F' : ℝ × ℝ →L[ℝ] ℝ}
+    {K L : ℝ} (hF : HasFDerivAt F F' (K, L)) :
+    capitalElasticity F K L = K * F' (1, 0) / F (K, L) := by
+  unfold capitalElasticity
+  rw [hF.fderiv]
+
+/-- With a derivative `F'` of `F` at `(K, L)`, the labour elasticity is
+`L * F' (0, 1) / F (K, L)`. -/
+theorem labourElasticity_eq_of_hasFDerivAt {F : ℝ × ℝ → ℝ} {F' : ℝ × ℝ →L[ℝ] ℝ}
+    {K L : ℝ} (hF : HasFDerivAt F F' (K, L)) :
+    labourElasticity F K L = L * F' (0, 1) / F (K, L) := by
+  unfold labourElasticity
+  rw [hF.fderiv]
 
 /-- **Growth accounting.** For `Y = A * F(K, L)` with all paths differentiable at
-`t` and `F` differentiable at `(K t, L t)`, the growth rate of output is TFP
-growth plus the elasticity-weighted growth rates of capital and labour
-(Atlas roadmap MA03.T04). Growth rates are `deriv f t / f t`, i.e. derivatives
+`t` and `F` differentiable at `(K t, L t)` (derivative `F'`), the growth rate of
+output is TFP growth plus the elasticity-weighted growth rates of capital and
+labour (Atlas roadmap MA03.T04). Growth rates are `deriv f t / f t`, i.e. derivatives
 of `Real.log ∘ f` by `HasDerivAt.log`. -/
 theorem growthAccounting {F : ℝ × ℝ → ℝ} {F' : ℝ × ℝ →L[ℝ] ℝ}
     {A K L Y : ℝ → ℝ} {t : ℝ}
@@ -78,8 +100,8 @@ theorem growthAccounting {F : ℝ × ℝ → ℝ} {F' : ℝ × ℝ →L[ℝ] ℝ
     (hA0 : A t ≠ 0) (hK0 : K t ≠ 0) (hL0 : L t ≠ 0)
     (hF0 : F (K t, L t) ≠ 0) :
     deriv Y t / Y t = deriv A t / A t +
-      capitalElasticity F F' (K t) (L t) * (deriv K t / K t) +
-      labourElasticity F F' (K t) (L t) * (deriv L t / L t) := by
+      capitalElasticity F (K t) (L t) * (deriv K t / K t) +
+      labourElasticity F (K t) (L t) * (deriv L t / L t) := by
   -- Growth rates `deriv f t / f t` are derivatives of `Real.log ∘ f`
   -- (required reuse of `HasDerivAt.log`).
   have _hlogA := hA.log hA0
@@ -104,20 +126,20 @@ theorem growthAccounting {F : ℝ × ℝ → ℝ} {F' : ℝ × ℝ →L[ℝ] ℝ
     simp only [map_add, map_smul, smul_eq_mul]
   have hYt : Y t = A t * F (K t, L t) := hY t
   have hden : A t * F (K t, L t) ≠ 0 := mul_ne_zero hA0 hF0
-  rw [hderivY, hderivA, hderivK, hderivL, hlin, hYt]
-  unfold capitalElasticity labourElasticity
+  rw [capitalElasticity_eq_of_hasFDerivAt hF, labourElasticity_eq_of_hasFDerivAt hF,
+    hderivY, hderivA, hderivK, hderivL, hlin, hYt]
   field_simp
   try ring
 
 /-- **Capital share = capital elasticity under competitive pricing.** If capital
-is paid its marginal product, the capital price is `A * F' (1, 0)` (this is an
-explicit expression in the statement, NOT a proved claim about markets), then
-the capital income share `(price * K) / Y` equals the capital elasticity. -/
-theorem competitiveShare_capital_eq_elasticity {F : ℝ × ℝ → ℝ}
-    {F' : ℝ × ℝ →L[ℝ] ℝ} {A K L Y : ℝ}
+is paid its marginal product, the capital price is `A * F_K` with
+`F_K = fderiv ℝ F (K, L) (1, 0)` (this is an explicit expression in the
+statement, NOT a proved claim about markets), then the capital income share
+`(price * K) / Y` equals the capital elasticity. -/
+theorem competitiveShare_capital_eq_elasticity {F : ℝ × ℝ → ℝ} {A K L Y : ℝ}
     (hY : Y = A * F (K, L))
     (hA0 : A ≠ 0) (hF0 : F (K, L) ≠ 0) :
-    (A * F' (1, 0)) * K / Y = capitalElasticity F F' K L := by
+    (A * fderiv ℝ F (K, L) (1, 0)) * K / Y = capitalElasticity F K L := by
   have hden : A * F (K, L) ≠ 0 := mul_ne_zero hA0 hF0
   rw [hY]
   unfold capitalElasticity
@@ -125,14 +147,13 @@ theorem competitiveShare_capital_eq_elasticity {F : ℝ × ℝ → ℝ}
   try ring
 
 /-- **Labour share = labour elasticity under competitive pricing.** If labour is
-paid its marginal product, the wage is `A * F' (0, 1)` (explicit expression,
-NOT a proved claim), then the labour income share equals the labour
-elasticity. -/
-theorem competitiveShare_labour_eq_elasticity {F : ℝ × ℝ → ℝ}
-    {F' : ℝ × ℝ →L[ℝ] ℝ} {A K L Y : ℝ}
+paid its marginal product, the wage is `A * F_L` with
+`F_L = fderiv ℝ F (K, L) (0, 1)` (explicit expression, NOT a proved claim), then
+the labour income share equals the labour elasticity. -/
+theorem competitiveShare_labour_eq_elasticity {F : ℝ × ℝ → ℝ} {A K L Y : ℝ}
     (hY : Y = A * F (K, L))
     (hA0 : A ≠ 0) (hF0 : F (K, L) ≠ 0) :
-    (A * F' (0, 1)) * L / Y = labourElasticity F F' K L := by
+    (A * fderiv ℝ F (K, L) (0, 1)) * L / Y = labourElasticity F K L := by
   have hden : A * F (K, L) ≠ 0 := mul_ne_zero hA0 hF0
   rw [hY]
   unfold labourElasticity
@@ -140,15 +161,16 @@ theorem competitiveShare_labour_eq_elasticity {F : ℝ × ℝ → ℝ}
   try ring
 
 /-- **Competitive shares sum to one.** Under competitive pricing (factor prices
-`A * F' (1, 0)` and `A * F' (0, 1)`) AND constant returns, stated as the Euler
-equation `hEuler` (an explicit hypothesis, NOT proved here), the two factor
-shares sum to 1. -/
-theorem competitiveShares_sum_eq_one {F : ℝ × ℝ → ℝ} {F' : ℝ × ℝ →L[ℝ] ℝ}
-    {A K L Y : ℝ}
+equal to the marginal products `A * F_K` and `A * F_L`) AND the pointwise Euler
+identity `hEuler : F (K, L) = K * F_K + L * F_L` at `(K, L)` (an explicit
+hypothesis, NOT proved here), the two factor shares sum to 1. Constant returns
+imply `hEuler`, but the pointwise identity is strictly weaker: `F (K, L) = K ^ 2 + 1`
+satisfies it at `(1, 1)` without having constant returns. -/
+theorem competitiveShares_sum_eq_one {F : ℝ × ℝ → ℝ} {A K L Y : ℝ}
     (hY : Y = A * F (K, L))
-    (hEuler : F (K, L) = K * F' (1, 0) + L * F' (0, 1))
+    (hEuler : F (K, L) = K * fderiv ℝ F (K, L) (1, 0) + L * fderiv ℝ F (K, L) (0, 1))
     (hA0 : A ≠ 0) (hF0 : F (K, L) ≠ 0) :
-    (A * F' (1, 0)) * K / Y + (A * F' (0, 1)) * L / Y = 1 := by
+    (A * fderiv ℝ F (K, L) (1, 0)) * K / Y + (A * fderiv ℝ F (K, L) (0, 1)) * L / Y = 1 := by
   have hY0 : Y ≠ 0 := by rw [hY]; exact mul_ne_zero hA0 hF0
   rw [← add_div, div_eq_iff hY0, hY, hEuler]
   ring

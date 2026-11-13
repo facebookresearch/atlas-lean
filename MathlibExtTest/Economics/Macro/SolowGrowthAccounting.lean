@@ -17,7 +17,8 @@ import Mathlib.Tactic
 
 Concrete instance `F (K, L) = K + L`, `F' = fst + snd`, `A = 1`, `K t = t`,
 `L t = 2 * t`, at `t = 1`: `Y = 3`, growth `= 1`, elasticities `1/3` and
-`2/3`, competitive shares sum to 1.
+`2/3`, competitive shares sum to 1. Regression: for `F (K, L) = K` at `(1, 1)`
+the capital elasticity is the actual elasticity `1`.
 -/
 
 @[expose] public section
@@ -60,15 +61,24 @@ theorem testY_1 : testY 1 = 3 := by
   show testA 1 * testF (testK 1, testL 1) = 3
   rw [testA_1, testK_1, testL_1, testF_12, one_mul]
 
-theorem testcap : capitalElasticity testF testF' 1 2 = 1 / 3 := by
-  unfold capitalElasticity
-  rw [testFderiv_10, testF_12]
+theorem testF_hasFDerivAt (p : ℝ × ℝ) : HasFDerivAt testF testF' p :=
+  hasFDerivAt_fst.add hasFDerivAt_snd
+
+theorem testcap : capitalElasticity testF 1 2 = 1 / 3 := by
+  rw [capitalElasticity_eq_of_hasFDerivAt (testF_hasFDerivAt (1, 2)), testFderiv_10, testF_12]
   norm_num
 
-theorem testlab : labourElasticity testF testF' 1 2 = 2 / 3 := by
-  unfold labourElasticity
-  rw [testFderiv_01, testF_12]
+theorem testlab : labourElasticity testF 1 2 = 2 / 3 := by
+  rw [labourElasticity_eq_of_hasFDerivAt (testF_hasFDerivAt (1, 2)), testFderiv_01, testF_12]
   norm_num
+
+/-- Regression for the derivative tie: for `F (K, L) = K` at `(1, 1)` the
+capital elasticity is the actual elasticity `1`. -/
+theorem test_capitalElasticity_fst : capitalElasticity (fun p : ℝ × ℝ => p.1) 1 1 = 1 := by
+  have h : HasFDerivAt (fun p : ℝ × ℝ => p.1) (ContinuousLinearMap.fst ℝ ℝ ℝ) (1, 1) :=
+    hasFDerivAt_fst
+  rw [capitalElasticity_eq_of_hasFDerivAt h]
+  simp
 
 theorem testA_hasDeriv : HasDerivAt testA 0 1 := by
   unfold testA
@@ -84,7 +94,7 @@ theorem testL_hasDeriv : HasDerivAt testL 2 1 := by
   simpa using h
 
 theorem testF_hasFDeriv : HasFDerivAt testF testF' (testK 1, testL 1) :=
-  hasFDerivAt_fst.add hasFDerivAt_snd
+  testF_hasFDerivAt _
 
 theorem testderivA : deriv testA 1 = 0 := testA_hasDeriv.deriv
 
@@ -111,12 +121,11 @@ example : (testA 1 * testF' (1, 0)) * testK 1 / testY 1 = 1 / 3 := by
   have hA0 : testA 1 ≠ 0 := by rw [testA_1]; exact one_ne_zero
   have hF0 : testF (testK 1, testL 1) ≠ 0 := by
     rw [testK_1, testL_1, testF_12]; norm_num
-  have h := competitiveShare_capital_eq_elasticity (F := testF) (F' := testF')
-    hY hA0 hF0
-  have hcap : capitalElasticity testF testF' (testK 1) (testL 1) = 1 / 3 := by
+  have h := competitiveShare_capital_eq_elasticity (F := testF) hY hA0 hF0
+  have hcap : capitalElasticity testF (testK 1) (testL 1) = 1 / 3 := by
     rw [testK_1, testL_1]
     exact testcap
-  rw [hcap] at h
+  rw [testF_hasFDeriv.fderiv, hcap] at h
   exact h
 
 example : (testA 1 * testF' (0, 1)) * testL 1 / testY 1 = 2 / 3 := by
@@ -124,24 +133,25 @@ example : (testA 1 * testF' (0, 1)) * testL 1 / testY 1 = 2 / 3 := by
   have hA0 : testA 1 ≠ 0 := by rw [testA_1]; exact one_ne_zero
   have hF0 : testF (testK 1, testL 1) ≠ 0 := by
     rw [testK_1, testL_1, testF_12]; norm_num
-  have h := competitiveShare_labour_eq_elasticity (F := testF) (F' := testF')
-    hY hA0 hF0
-  have hlab : labourElasticity testF testF' (testK 1) (testL 1) = 2 / 3 := by
+  have h := competitiveShare_labour_eq_elasticity (F := testF) hY hA0 hF0
+  have hlab : labourElasticity testF (testK 1) (testL 1) = 2 / 3 := by
     rw [testK_1, testL_1]
     exact testlab
-  rw [hlab] at h
+  rw [testF_hasFDeriv.fderiv, hlab] at h
   exact h
 
 example : (testA 1 * testF' (1, 0)) * testK 1 / testY 1 +
     (testA 1 * testF' (0, 1)) * testL 1 / testY 1 = 1 := by
   have hY : testY 1 = testA 1 * testF (testK 1, testL 1) := rfl
   have hEuler : testF (testK 1, testL 1)
-      = testK 1 * testF' (1, 0) + testL 1 * testF' (0, 1) := by
-    rw [testK_1, testL_1, testF_12, testFderiv_10, testFderiv_01]
+      = testK 1 * fderiv ℝ testF (testK 1, testL 1) (1, 0)
+        + testL 1 * fderiv ℝ testF (testK 1, testL 1) (0, 1) := by
+    rw [testF_hasFDeriv.fderiv, testK_1, testL_1, testF_12, testFderiv_10, testFderiv_01]
     norm_num
   have hA0 : testA 1 ≠ 0 := by rw [testA_1]; exact one_ne_zero
   have hF0 : testF (testK 1, testL 1) ≠ 0 := by
     rw [testK_1, testL_1, testF_12]; norm_num
-  exact competitiveShares_sum_eq_one hY hEuler hA0 hF0
+  have h := competitiveShares_sum_eq_one hY hEuler hA0 hF0
+  rwa [testF_hasFDeriv.fderiv] at h
 
 end MathlibExtTest.Economics.Macro.SolowGrowthAccounting
