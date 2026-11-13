@@ -24,6 +24,7 @@ zero-weights case.
 namespace MathlibExtTest.Economics.Finance.RealOptionValue
 
 open MathlibExt.Economics.Finance.RealOptionValue
+open MathlibExt.Probability.FiniteProbability
 
 /-- Test 1a: two actions, two states. The statewise maxima are `10` (at `true`) and `3`
 (at `false`), so the option value is their average `13 / 2`. -/
@@ -54,29 +55,29 @@ example (hne : (({1, 2} : Finset ℕ).Nonempty)) :
           = (fun a => (if a = 1 then (3 : ℝ) else if (false : Bool) then 10 else 0)) 1 := by simp
         _ ≤ _ := Finset.le_sup'
           (fun a => (if a = 1 then (3 : ℝ) else if (false : Bool) then 10 else 0)) h1
-  simp only [optionValue, finiteExpectedValue, Fintype.sum_bool, hT, hF]
+  simp only [optionValue, expectation, Fintype.sum_bool, hT, hF]
   norm_num
 
 /-- Test 1b: committing to action `1` yields expected value `3`. -/
-example : finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+example : expectation (fun _ : Bool => (1 / 2 : ℝ))
     ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) 1) = 3 := by
   have h1 : ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) 1)
       = (fun _ : Bool => (3 : ℝ)) := by
     funext b
     simp
   rw [h1]
-  simp only [finiteExpectedValue, Fintype.sum_bool]
+  simp only [expectation, Fintype.sum_bool]
   norm_num
 
 /-- Test 1c: committing to action `2` yields expected value `5`. -/
-example : finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+example : expectation (fun _ : Bool => (1 / 2 : ℝ))
     ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) 2) = 5 := by
   have h2 : ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) 2)
       = (fun b : Bool => if b then (10 : ℝ) else 0) := by
     funext b
     simp
   rw [h2]
-  simp only [finiteExpectedValue, Fintype.sum_bool, ite_true]
+  simp only [expectation, Fintype.sum_bool, ite_true]
   norm_num
 
 /-- Test 2 (equality case): with a single feasible action, the option value equals the
@@ -84,34 +85,34 @@ committed expected value. -/
 example (hne : (({1} : Finset ℕ).Nonempty)) :
     optionValue {1} hne (fun _ : Bool => (1 / 2 : ℝ))
       (fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0)
-      = finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+      = expectation (fun _ : Bool => (1 / 2 : ℝ))
         ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) 1) := rfl
 
 /-- Test 3: with zero weights, the option value is `0` (no positivity of weights used). -/
 example (hne : (({1, 2} : Finset ℕ).Nonempty)) :
     optionValue {1, 2} hne (fun _ : Bool => (0 : ℝ))
       (fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) = 0 := by
-  simp [optionValue, finiteExpectedValue]
+  simp [optionValue, expectation]
 
 
-theorem commit1_eq : finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+theorem commit1_eq : expectation (fun _ : Bool => (1 / 2 : ℝ))
     ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) 1) = 3 := by
   have h1 : ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) 1)
       = (fun _ : Bool => (3 : ℝ)) := by
     funext b
     simp
   rw [h1]
-  simp only [finiteExpectedValue, Fintype.sum_bool]
+  simp only [expectation, Fintype.sum_bool]
   norm_num
 
-theorem commit2_eq : finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+theorem commit2_eq : expectation (fun _ : Bool => (1 / 2 : ℝ))
     ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) 2) = 5 := by
   have h2 : ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) 2)
       = (fun b : Bool => if b then (10 : ℝ) else 0) := by
     funext b
     simp
   rw [h2]
-  simp only [finiteExpectedValue, Fintype.sum_bool, ite_true]
+  simp only [expectation, Fintype.sum_bool, ite_true]
   norm_num
 
 theorem option_eq (hne : (({1, 2} : Finset ℕ).Nonempty)) :
@@ -141,17 +142,17 @@ theorem option_eq (hne : (({1, 2} : Finset ℕ).Nonempty)) :
           = (fun a => (if a = 1 then (3 : ℝ) else if (false : Bool) then 10 else 0)) 1 := by simp
         _ ≤ _ := Finset.le_sup'
           (fun a => (if a = 1 then (3 : ℝ) else if (false : Bool) then 10 else 0)) h1
-  simp only [optionValue, finiteExpectedValue, Fintype.sum_bool, hT, hF]
+  simp only [optionValue, expectation, Fintype.sum_bool, hT, hF]
   norm_num
 
 theorem maxCommit_eq (hne : (({1, 2} : Finset ℕ).Nonempty)) :
     (({1, 2} : Finset ℕ).sup' hne
-      (fun a => finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+      (fun a => expectation (fun _ : Bool => (1 / 2 : ℝ))
         ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) a))) = 5 := by
-  have h1' : (fun a => finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+  have h1' : (fun a => expectation (fun _ : Bool => (1 / 2 : ℝ))
       ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) a)) 1 = 3 :=
     commit1_eq
-  have h2' : (fun a => finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+  have h2' : (fun a => expectation (fun _ : Bool => (1 / 2 : ℝ))
       ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) a)) 2 = 5 :=
     commit2_eq
   apply le_antisymm
@@ -163,16 +164,16 @@ theorem maxCommit_eq (hne : (({1, 2} : Finset ℕ).Nonempty)) :
     · rw [commit2_eq]
   · have h2mem : (2 : ℕ) ∈ ({1, 2} : Finset ℕ) := by simp
     calc (5 : ℝ)
-        = (fun a => finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+        = (fun a => expectation (fun _ : Bool => (1 / 2 : ℝ))
             ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) a)) 2 :=
           h2'.symm
       _ ≤ _ := Finset.le_sup'
-        (fun a => finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+        (fun a => expectation (fun _ : Bool => (1 / 2 : ℝ))
           ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) a)) h2mem
 
 theorem test_commitment_b1_le_option (hne : (({1, 2} : Finset ℕ).Nonempty)) :
     (3 : ℝ) ≤ 13 / 2 := by
-  have hle : finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+  have hle : expectation (fun _ : Bool => (1 / 2 : ℝ))
         ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) 1) ≤
       optionValue {1, 2} hne (fun _ : Bool => (1 / 2 : ℝ))
         (fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) := by
@@ -186,7 +187,7 @@ theorem test_commitment_b1_le_option (hne : (({1, 2} : Finset ℕ).Nonempty)) :
 
 theorem test_commitment_b2_le_option (hne : (({1, 2} : Finset ℕ).Nonempty)) :
     (5 : ℝ) ≤ 13 / 2 := by
-  have hle : finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+  have hle : expectation (fun _ : Bool => (1 / 2 : ℝ))
         ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) 2) ≤
       optionValue {1, 2} hne (fun _ : Bool => (1 / 2 : ℝ))
         (fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) := by
@@ -202,7 +203,7 @@ theorem test_maxCommitment_le_option (hne : (({1, 2} : Finset ℕ).Nonempty)) :
     (5 : ℝ) ≤ 13 / 2 := by
   have hp : ∀ ω : Bool, 0 ≤ (fun _ : Bool => (1 / 2 : ℝ)) ω := fun ω => by norm_num
   have hle : (({1, 2} : Finset ℕ).sup' hne
-        (fun a => finiteExpectedValue (fun _ : Bool => (1 / 2 : ℝ))
+        (fun a => expectation (fun _ : Bool => (1 / 2 : ℝ))
           ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) a))) ≤
       optionValue {1, 2} hne (fun _ : Bool => (1 / 2 : ℝ))
         (fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) :=
@@ -211,7 +212,7 @@ theorem test_maxCommitment_le_option (hne : (({1, 2} : Finset ℕ).Nonempty)) :
   exact hle
 
 theorem test_zeroWeights_inequality (hne : (({1, 2} : Finset ℕ).Nonempty)) :
-    finiteExpectedValue (fun _ : Bool => (0 : ℝ))
+    expectation (fun _ : Bool => (0 : ℝ))
         ((fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) 1) ≤
       optionValue {1, 2} hne (fun _ : Bool => (0 : ℝ))
         (fun a b => if a = 1 then (3 : ℝ) else if b then 10 else 0) := by
