@@ -19,9 +19,9 @@ import Mathlib.Topology.Algebra.InfiniteSum.Basic
 
 Boundary checks for `MathlibExt.Probability.Networks.Contagion`: spot values
 of the contagion observed law, the statistical association in the joint law,
-non-recovery of the latent traits from the observed triple, and the extended
+non-recovery of the latent traits from the observed triple, the extended
 observation (with both traits revealed) whose law still coincides across the
-two mechanisms.
+two mechanisms, and the contagion effect: one on the tie and zero off it.
 
 ## References
 
@@ -136,6 +136,25 @@ theorem extended_effect_not_recoverable
   rw [ate_contagion] at hC
   rw [extended_same_observedLaw] at hH
   rw [hH] at hC
-  exact zero_ne_one hC
+  norm_num at hC
+
+/-- No contagion without a tie: off the tie the contagion potential outcomes
+agree, so the ego intervention does not move the peer. -/
+theorem contagion_no_effect_off_tie (ω : Bool × Bool × Bool) (h : tie ω = false) :
+    contagionOutcome₁ ω = contagionOutcome₀ ω := by
+  simp [contagionOutcome₀, contagionOutcome₁, h]
+
+/-- On the tie the ego intervention moves the peer by one. -/
+theorem contagion_effect_on_tie (ω : Bool × Bool × Bool) (h : tie ω = true) :
+    contagionOutcome₁ ω - contagionOutcome₀ ω = 1 := by
+  simp [contagionOutcome₀, contagionOutcome₁, h]
+
+/-- The latent states `(true, false, false)` and `(false, true, false)` have no
+tie, and their contagion potential outcomes agree. -/
+theorem contagion_no_effect_examples :
+    tie (true, false, false) = false ∧ tie (false, true, false) = false ∧
+      contagionOutcome₁ (true, false, false) = contagionOutcome₀ (true, false, false) ∧
+      contagionOutcome₁ (false, true, false) = contagionOutcome₀ (false, true, false) := by
+  simp [tie, contagionOutcome₀, contagionOutcome₁]
 
 end MathlibExt.Probability.Networks.ContagionTest

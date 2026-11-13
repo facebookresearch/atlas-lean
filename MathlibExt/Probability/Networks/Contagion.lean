@@ -55,13 +55,16 @@ def egoBehavior : Bool × Bool × Bool → Bool := fun ω => ω.1 ^^ ω.2.2
 def homophilyOutcome : Bool × Bool × Bool → ℝ :=
   fun ω => if ω.2.1 ^^ ω.2.2 then 1 else 0
 
-/-- Contagion mechanism: peer behavior had ego not acted, through the tie. -/
+/-- Contagion mechanism, peer behavior had ego not acted: on the tie the peer
+does not act; off the tie the peer behaves as under homophily. -/
 def contagionOutcome₀ : Bool × Bool × Bool → ℝ := fun ω =>
-  if egoBehavior ω then (if tie ω then 0 else -1) else (if tie ω then 0 else 1)
+  if tie ω then 0 else homophilyOutcome ω
 
-/-- Contagion mechanism: peer behavior had ego acted, through the tie. -/
+/-- Contagion mechanism, peer behavior had ego acted: on the tie the peer acts;
+off the tie the peer behaves as under homophily, so the ego intervention reaches
+the peer only through the tie. -/
 def contagionOutcome₁ : Bool × Bool × Bool → ℝ := fun ω =>
-  if egoBehavior ω then (if tie ω then 1 else 0) else (if tie ω then 1 else 2)
+  if tie ω then 1 else homophilyOutcome ω
 
 /-- Observed triple: tie, ego behavior at the earlier time, and peer observed
 behavior at the later time. -/
@@ -139,21 +142,16 @@ theorem ate_homophily :
   simp [MathlibExt.Probability.Causality.ate,
     MathlibExt.Probability.Causality.popMean]
 
-/-- Contagion mechanism: the average effect is one. -/
+/-- Contagion mechanism: the average effect is `1 / 2`, the probability of the
+tie, since the ego intervention moves the peer by one on the tie and not at all
+off it. -/
 theorem ate_contagion :
     MathlibExt.Probability.Causality.ate contagionOutcome₀ contagionOutcome₁
-      = 1 := by
-  have h : ∀ ω : Bool × Bool × Bool,
-      contagionOutcome₁ ω - contagionOutcome₀ ω = 1 := by
-    intro ω
-    obtain ⟨a, b, c⟩ := ω
-    cases a <;> cases b <;> cases c <;>
-      simp [contagionOutcome₀, contagionOutcome₁, egoBehavior, tie] <;> norm_num
+      = 1 / 2 := by
   simp only [MathlibExt.Probability.Causality.ate,
-    MathlibExt.Probability.Causality.popMean]
-  rw [Finset.sum_congr rfl (fun ω _ => h ω), Finset.sum_const, Finset.card_univ,
-    nsmul_eq_mul, card_latent]
-  norm_num
+    MathlibExt.Probability.Causality.popMean, card_latent, Fintype.sum_prod_type,
+    Fintype.sum_bool]
+  norm_num [contagionOutcome₀, contagionOutcome₁, tie, homophilyOutcome]
 
 /-- Finite witness motivated by Shalizi and Thomas: same observed law,
 different average effects. -/
@@ -166,7 +164,7 @@ theorem ate_not_identified :
         MathlibExt.Probability.Causality.ate contagionOutcome₀
           contagionOutcome₁ := by
   refine ⟨homophily_contagion_same_observedLaw, ?_⟩
-  simp [ate_homophily, ate_contagion]
+  norm_num [ate_homophily, ate_contagion]
 
 /-- No function of the observed law recovers the average effect in both
 mechanisms. -/
@@ -183,6 +181,6 @@ theorem ate_not_recoverable (f : PMF (Bool × Bool × ℝ) → ℝ) :
   rw [ate_contagion] at hC
   rw [homophily_contagion_same_observedLaw] at hH
   rw [hH] at hC
-  exact zero_ne_one hC
+  norm_num at hC
 
 end MathlibExt.Probability.Networks
