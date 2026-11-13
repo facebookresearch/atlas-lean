@@ -17,7 +17,8 @@ import Mathlib.MeasureTheory.Integral.Pi
 
 Nonadditive and additive population fixtures, normalization of the cell-assignment law
 and its zero-measure behavior on infeasible margins, the one-unit-per-cell use case, and the
-empty-cell-size exclusion.
+empty-cell-size exclusion. Under independent categorical assignment: IPW unbiasedness with an
+empty realized cell of positive probability, and bias when a cell probability is zero.
 -/
 
 @[expose] public section
@@ -30,30 +31,6 @@ namespace MathlibExtTest.Probability.Statistics.Experiment
 
 open MathlibExt.Probability.Statistics.Experiment
 open MathlibExt.Probability.Causality
-
--- Test-local verbatim copies of production-private helpers, kept private
--- per the body (the production file owns the canonical versions).
-
-/-- The per-unit categorical law is a probability measure under nonnegativity and
-per-unit normalization. -/
-private theorem isProbabilityMeasure_bernoulliCell {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (π : ι → Fin 4 → ℝ) (i : ι)
-    (hnn : ∀ i c, 0 ≤ π i c) (hnorm : ∀ i, ∑ c, π i c = 1) :
-    IsProbabilityMeasure (bernoulliCell π i) := by
-  constructor
-  rw [bernoulliCell, Measure.finsetSum_apply]
-  simp only [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _), smul_eq_mul,
-    mul_one]
-  rw [← ENNReal.ofReal_sum_of_nonneg (fun c _ => hnn i c), hnorm i,
-    ENNReal.ofReal_one]
-
-/-- The IPW cell mean as a sum of single-unit contributions. -/
-private theorem ipwCellMean_eq_sum {ι : Type*} [Fintype ι] [DecidableEq ι]
-    (Y : ι → ℝ) (π : ι → Fin 4 → ℝ) (c : Fin 4) (f : ι → Fin 4) :
-    ipwCellMean Y π c f =
-      ∑ i, (if f i = c then Y i / ((Fintype.card ι : ℝ) * π i c) else 0) := by
-  rw [ipwCellMean, Finset.sum_filter]
-
 
 theorem popMean_const_fin4 (c : ℝ) : popMean (fun _ : Fin 4 => c) = c := by
   unfold popMean
@@ -197,7 +174,7 @@ example :
   have hfactor : ∀ (i : Fin 2) (a : Fin 4),
       0 < (bernoulliCell (fun _ _ => (1 / 4 : ℝ)) i) {a} := by
     intro i a
-    rw [bernoulliCell, Measure.finsetSum_apply]
+    rw [bernoulliCell, MathlibExt.Probability.weightLaw, Measure.finsetSum_apply]
     simp only [Measure.smul_apply]
     have hnn : ∀ c ∈ (Finset.univ : Finset (Fin 4)),
         0 ≤ (ENNReal.ofReal ((fun _ _ => (1 / 4 : ℝ)) i c)) • (Measure.dirac c {a}) :=
@@ -224,9 +201,8 @@ example :
     (pos_iff_ne_zero.mp (hfactor 1 _))
 
 /-- Positivity counterexample: with `π 0 0 = 0` while unit `0` carries a
-nonzero outcome, the IPW cell mean is biased for the population cell mean.
-The pinned statement is that the unbiasedness conclusion fails, i.e. the
-integral differs from `popMean`. -/
+nonzero outcome, the IPW cell mean is biased for the population cell mean:
+its integral differs from `popMean`. -/
 example (Y : Fin 2 → ℝ) (hY : Y 0 = 2 ∧ Y 1 = 0) :
     ∫ f, ipwCellMean Y
       (![![0, 1 / 2, 1 / 4, 1 / 4], ![1 / 4, 1 / 4, 1 / 4, 1 / 4]] :
