@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.LinearAlgebra.Complex.Module
 public import Mathlib.Data.Set.Card
 public import Mathlib.LinearAlgebra.Matrix.Charpoly.Eigs
+public import MathlibExt.LinearAlgebra.Matrix.MMatrix
 import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
 import Mathlib.Topology.Algebra.Order.Field
 import Mathlib.Topology.Order.IntermediateValue
@@ -45,9 +46,10 @@ An equilibrium is a point of the closed positive quadrant where both right-hand 
 The Jacobian (`jacobian`, entries justified by `hasDerivAt_uDot_u` … `hasDerivAt_vDot_v`) is
 `!![-1, h₁; h₂, -1]` with `h₁ = ∂_v (α₁ / (1 + v^β)) ≤ 0` and `h₂ = ∂_u (α₂ / (1 + u^γ)) ≤ 0`.
 With the loop gain `P = h₁ h₂ ≥ 0` its complex spectrum is exactly `{-1 + √P, -1 - √P}`
-(`eigenvalues_eq`). Hence a point is linearly stable (all eigenvalues have negative real part)
-iff `P < 1`, a saddle (one positive, one negative eigenvalue) iff `P > 1`, and `0` is an
-eigenvalue iff `P = 1`, which is exactly tangency of the two nullclines (`nullclinesTangent_iff`).
+(`eigenvalues_eq`). Hence a point is linearly stable (the Jacobian is `Matrix.IsHurwitz`: all
+eigenvalues have negative real part) iff `P < 1`, a saddle (one positive, one negative
+eigenvalue) iff `P > 1`, and `0` is an eigenvalue iff `P = 1`, which is exactly tangency of the
+two nullclines (`nullclinesTangent_iff`).
 
 ## Equilibria, saddle-node and bistability (`β = 1`, `γ = 2`)
 
@@ -59,9 +61,9 @@ real roots of the cubic `cubic a b u = u³ - a u² + (1 + b) u - a`, all of whic
 * `ncard_equilibria_eq_two_iff`: there are exactly 2 iff some equilibrium has tangent nullclines
   (a double root of the cubic, `P = 1`, eigenvalue `0`) and is not the cusp `3u = a`;
 * `saddleNode_collision`: at such a tangency `(u₀, b₀)` two equilibria collide: for `b` on one side
-  of `b₀` (fixed by the sign of `3 u₀ - a`) and close to `b₀` there are two distinct equilibria
-  arbitrarily close to `u₀`, while on the other side a whole neighbourhood of `u₀` is free of
-  equilibria (a saddle-node bifurcation in `b`);
+  of `b₀` (fixed by the sign of `3 u₀ - a`) and close to `b₀` there are two equilibria
+  `u₁ < u₀ < u₂` arbitrarily close to `u₀`, while on the other side a whole neighbourhood of `u₀`
+  is free of equilibria (a saddle-node bifurcation in `b`);
 * `three_equilibria`: with exactly three equilibria `u₁ < u₂ < u₃` (so `v₁ > v₂ > v₃`), the two
   outer ones are linearly stable and the middle one is a saddle;
 * `ncard_equilibria_eq_three_iff_bistable`: exactly three equilibria iff two distinct linearly
@@ -120,9 +122,10 @@ noncomputable def loopGain (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : ℝ :
 noncomputable def eigenvalues (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Set ℂ :=
   spectrum ℂ ((jacobian α₁ α₂ β γ u v).map (algebraMap ℝ ℂ))
 
-/-- Linear stability: every eigenvalue has negative real part. -/
+/-- Linear stability: the Jacobian is Hurwitz (`Matrix.IsHurwitz`), i.e. every eigenvalue has
+negative real part. -/
 def IsLinearlyStable (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Prop :=
-  ∀ μ ∈ eigenvalues α₁ α₂ β γ u v, μ.re < 0
+  (jacobian α₁ α₂ β γ u v).IsHurwitz
 
 /-- A saddle: one eigenvalue with positive and one with negative real part. -/
 def IsSaddle (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Prop :=
@@ -211,7 +214,8 @@ theorem isLinearlyStable_iff (hα₁ : 0 ≤ α₁) (hα₂ : 0 ≤ α₂) (hu :
     IsLinearlyStable α₁ α₂ β γ u v ↔ loopGain α₁ α₂ β γ u v < 1 := by
   have hP := loopGain_nonneg β γ hα₁ hα₂ hu hv
   have hs := Real.sqrt_nonneg (loopGain α₁ α₂ β γ u v)
-  simp only [IsLinearlyStable, eigenvalues_eq hα₁ hα₂ hu hv, mem_insert_iff, mem_singleton_iff,
+  change (∀ μ ∈ eigenvalues α₁ α₂ β γ u v, μ.re < 0) ↔ _
+  simp only [eigenvalues_eq hα₁ hα₂ hu hv, mem_insert_iff, mem_singleton_iff,
     forall_eq_or_imp, forall_eq, Complex.ofReal_re]
   constructor
   · rintro ⟨h, -⟩
@@ -601,9 +605,10 @@ theorem ncard_equilibria_eq_three_iff_bistable (ha : 0 < a) (hb : 0 < b) :
 /-- **Saddle-node bifurcation in `b`.** Let `(u₀, v₀)` be an equilibrium at `b = b₀` with tangent
 nullclines (a zero eigenvalue) that is not the cusp `3 u₀ = a`, and put `d = 3 u₀ - a ≠ 0`.
 
-* For `b` with `(b - b₀) d > 0` a fixed neighbourhood `|u - u₀| < η` contains no equilibrium.
-* For `b` with `(b₀ - b) d > 0` and `|b - b₀|` small, there are two distinct equilibria
-  `u₁ < u₀ < u₂` within any prescribed distance `δ` of `u₀`.
+* For `b > 0` with `(b - b₀) d > 0` a fixed neighbourhood `|u - u₀| < η` contains no
+  equilibrium.
+* For `b > 0` with `(b₀ - b) d > 0` and `|b - b₀|` small, there are two equilibria
+  `u₁ < u₀ < u₂`, one on each side of `u₀`, within any prescribed distance `δ` of `u₀`.
 
 So as `b → b₀` from the second side two equilibria collide at `u₀` and then disappear. -/
 theorem saddleNode_collision (ha : 0 < a) {b₀ u₀ v₀ : ℝ} (hb₀ : 0 < b₀)
@@ -612,7 +617,7 @@ theorem saddleNode_collision (ha : 0 < a) {b₀ u₀ v₀ : ℝ} (hb₀ : 0 < b�
     (∃ η > 0, ∀ b u v, 0 < b → 0 < (b - b₀) * (3 * u₀ - a) → IsEquilibrium a b 1 2 u v →
       η ≤ |u - u₀|) ∧
     ∀ δ > 0, ∃ ε > 0, ∀ b, 0 < b → |b - b₀| < ε → 0 < (b₀ - b) * (3 * u₀ - a) →
-      ∃ u₁ u₂, u₁ < u₂ ∧ |u₁ - u₀| < δ ∧ |u₂ - u₀| < δ ∧
+      ∃ u₁ u₂, u₁ < u₀ ∧ u₀ < u₂ ∧ |u₁ - u₀| < δ ∧ |u₂ - u₀| < δ ∧
         IsEquilibrium a b 1 2 u₁ (b / (1 + u₁ ^ 2)) ∧
         IsEquilibrium a b 1 2 u₂ (b / (1 + u₂ ^ 2)) := by
   have hc0 := ((isEquilibrium_iff ha hb₀).1 he).1
@@ -687,7 +692,7 @@ theorem saddleNode_collision (ha : 0 < a) {b₀ u₀ v₀ : ℝ} (hb₀ : 0 < b�
       (hgc.mono (Icc_subset_Icc (by linarith) le_rfl)) ⟨hg0, hgr⟩
     have hc₁ : cubic a b u₁ = 0 := (mul_eq_zero.1 hgu₁).resolve_left hd
     have hc₂ : cubic a b u₂ = 0 := (mul_eq_zero.1 hgu₂).resolve_left hd
-    refine ⟨u₁, u₂, hu₁r.trans hu₂l, ?_, ?_, (isEquilibrium_iff ha hb).2 ⟨hc₁, rfl⟩,
+    refine ⟨u₁, u₂, hu₁r, hu₂l, ?_, ?_, (isEquilibrium_iff ha hb).2 ⟨hc₁, rfl⟩,
       (isEquilibrium_iff ha hb).2 ⟨hc₂, rfl⟩⟩
     · rw [abs_lt]; constructor <;> linarith
     · rw [abs_lt]; constructor <;> linarith

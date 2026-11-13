@@ -323,9 +323,9 @@ example : (equilibria (16 / 3) (25 / 3) 1 2).ncard = 2 :=
     ⟨2, 5 / 3, by norm_num [IsEquilibrium, uDot, vDot, hill], tangent_example, by norm_num⟩
 
 /-- The collision theorem applies at `(u₀, b₀) = (2, 25/3)`; here `3 u₀ - a = 2/3 > 0`, so the
-two colliding equilibria exist for `b < 25/3`. -/
+two colliding equilibria exist for `b < 25/3`, one on each side of `u₀ = 2`. -/
 example : ∀ δ > 0, ∃ ε > 0, ∀ b, 0 < b → |b - 25 / 3| < ε → 0 < (25 / 3 - b) * (3 * 2 - 16 / 3) →
-    ∃ u₁ u₂, u₁ < u₂ ∧ |u₁ - 2| < δ ∧ |u₂ - 2| < δ ∧
+    ∃ u₁ u₂, u₁ < 2 ∧ 2 < u₂ ∧ |u₁ - 2| < δ ∧ |u₂ - 2| < δ ∧
       IsEquilibrium (16 / 3) b 1 2 u₁ (b / (1 + u₁ ^ 2)) ∧
       IsEquilibrium (16 / 3) b 1 2 u₂ (b / (1 + u₂ ^ 2)) :=
   (saddleNode_collision (by norm_num) (by norm_num)
