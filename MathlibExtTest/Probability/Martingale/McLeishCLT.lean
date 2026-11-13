@@ -470,6 +470,43 @@ example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMea
       sum_sq_rademacherArray_range]
     exact hn
 
+/-! ### Public helpers -/
+
+/-- The cut bound is attained: with `c ≡ 1` and `K = 2`, exactly two terms are kept. Computed
+from the definition, not through `sum_range_cut_le`. -/
+example : ∑ k ∈ range 5, (if ∑ _j ∈ range (k + 1), (1 : ℝ) ≤ 2 then (1 : ℝ) else 0) = 2 := by
+  simp only [sum_const, card_range, nsmul_eq_mul, mul_one, sum_range_succ, range_zero,
+    sum_empty]
+  norm_num
+
+/-- A sequence with a negative term: `c = (3, -3, 1, 0, 0, …)`. -/
+def cutSeq (k : ℕ) : ℝ := if k = 0 then 3 else if k = 1 then -3 else if k = 2 then 1 else 0
+
+/-- With `K = 1` the cut drops `c 0 = 3` (running sum `3 > 1`) and keeps the later terms
+(running sums `0` and `1`), so the kept sum is `-3 + 1 = -2`. Computed from the definition. -/
+example : ∑ k ∈ range 3, (if ∑ j ∈ range (k + 1), cutSeq j ≤ 1 then cutSeq k else 0) = -2 := by
+  simp only [sum_range_succ, range_zero, sum_empty, cutSeq]
+  norm_num
+
+/-- The cut bound needs no sign condition on `c`. -/
+example : ∑ k ∈ range 3, (if ∑ j ∈ range (k + 1), cutSeq j ≤ 1 then cutSeq k else 0) ≤ 1 :=
+  sum_range_cut_le cutSeq zero_le_one 3
+
+example (c : ℕ → ℝ) (m : ℕ) :
+    ∑ k ∈ range m, (if ∑ j ∈ range (k + 1), c j ≤ 2 then c k else 0) ≤ 2 :=
+  sum_range_cut_le c zero_le_two m
+
+example {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} [IsFiniteMeasure μ]
+    {F : Filtration ℕ m0} {X : ℕ → Ω → ℝ}
+    (h : Martingale (fun k ω => ∑ j ∈ range k, X j ω) F μ) (k : ℕ) :
+    μ[X k | F k] =ᵐ[μ] 0 :=
+  (martingale_increment h k).2.2
+
+example {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} {f f' : ℕ → Ω → ℝ}
+    {g g' : Ω → ℝ} (hf : TendstoInMeasure μ f atTop g) (hf' : TendstoInMeasure μ f' atTop g') :
+    TendstoInMeasure μ (fun n ω => f n ω + f' n ω) atTop (fun ω => g ω + g' ω) :=
+  tendstoInMeasure_add hf hf'
+
 end
 
 end MathlibExtTest.Probability.Martingale.McLeishCLT
