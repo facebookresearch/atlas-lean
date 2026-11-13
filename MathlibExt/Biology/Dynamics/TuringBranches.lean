@@ -37,7 +37,9 @@ between two consecutive `k_n²`, so instability is not monotone in `L`.
 
 **Onset of a Neumann mode.** Since `h` is affine in the inhibitor diffusion `d = d_v`, an
 admissible mode (`0 < f_u k² - d_u k⁴`) is unstable iff `d` exceeds its *neutral diffusion*
-`d_n(k²)` (`neutralDiffusion`); the onset on `[0, L]` is governed by the discrete Neumann values.
+`d_n(k²)` (`neutralDiffusion`); on `[0, L]` the homogeneous state is unstable iff some admissible
+Neumann mode has `d_n(k_n²) < d`. The onset diffusion is thus the infimum of the discrete values
+`d_n(k_n²)`, which need not be attained (for `d_u = 0` it can be `0`).
 At `d_n(k²)` the mode matrix has exactly the eigenvalues `0` and `tr (J - k² D)` (so `0` is a
 simple root of its characteristic polynomial whenever this trace is nonzero, e.g. negative), under
 non-resonance mode `n` is the only Neumann mode with eigenvalue `0`, and the leading real
@@ -46,10 +48,13 @@ eigenvalue crosses zero with positive speed `(d_u k⁴ - f_u k²) / tr (J - k² 
 **Local pattern branch.** The steady-state bifurcation from the homogeneous state at a simple
 critical mode is formalized for the *reduced bifurcation equation* `Φ(a, d) = a G(a, d)` in the
 critical-mode amplitude `a`. The implicit function theorem gives a unique local pattern branch
-`d = φ(a)`; when `G(0, ·)` is the critical eigenvalue, transversality is derived from the Turing
-data and the homogeneous state exchanges stability at `d₀`. With a reflection-symmetric reduced
-map `G(a, d) = G(0, d) + a² H(a, d)`, the branch is supercritical iff `H(0, d₀) < 0`, and then it is
-linearly stable in the reduced equation.
+`d = φ(a)`; when `G(0, ·)` is the critical eigenvalue of the selected mode, transversality is
+derived from the Turing data and `G(0, d)` changes sign from negative to positive at `d₀`. This is
+a statement about the selected mode only: the hypotheses do not control the other Neumann modes,
+one of which may already be unstable at `d₀` (see the `[0, 8π]` example in the tests), so it is
+not an exchange of stability of the homogeneous state on `[0, L]`. With a reflection-symmetric
+reduced map `G(a, d) = G(0, d) + a² H(a, d)`, the branch is supercritical iff `H(0, d₀) < 0`, and
+then it is linearly stable in the reduced equation.
 
 ## Scope
 
@@ -70,8 +75,8 @@ Stability of the branch is linear stability for the reduced equation `ȧ = Φ(a,
 * `exists_eigenvector_modeMatrix_iff_of_neutral`, `setOf_neumann_zero_eigen_eq_singleton`:
   simple zero eigenvalue at onset.
 * `hasDerivAt_leadingEigenvalue_modeMatrix`, `leadingEigenvalue_crossing`: transversal crossing.
-* `exists_patternBranch`, `turing_patternBranch`: local branch existence and exchange of
-  stability.
+* `exists_patternBranch`, `turing_patternBranch`: local branch existence and the sign change
+  of the selected critical eigenvalue.
 * `patternBranch_direction_stability`, `turing_patternBranch_stability`: branch direction and
   stability (pitchfork).
 
@@ -320,8 +325,9 @@ theorem not_isUnstableMode_of_inadmissible {J : Matrix (Fin 2) (Fin 2) ℝ} {du 
 
 /-- **Finite-domain onset.** On `[0, L]` (with `0 < det J`, `g_v ≤ 0`, `tr J < 0`), the
 homogeneous state is unstable iff some *admissible Neumann* mode has neutral diffusion below
-`d`. The onset threshold is a minimum over the discrete Neumann wavenumbers, not over the
-continuum of wavenumbers. -/
+`d`. The criterion ranges over the discrete Neumann wavenumbers, not over the continuum of
+wavenumbers; the onset diffusion is the infimum of the admissible values `d_n(k_n²)`, which need
+not be a minimum (for `d_u = 0` infinitely many modes can be admissible with `d_n(k_n²) → 0`). -/
 theorem isNeumannUnstable_iff_exists_neutralDiffusion_lt {J : Matrix (Fin 2) (Fin 2) ℝ}
     {du d L : ℝ} (htr : J.trace < 0) (hdu : 0 ≤ du) (hd : 0 ≤ d) (hdet : 0 < J.det)
     (hgv : J 1 1 ≤ 0) :
@@ -528,15 +534,20 @@ private theorem hasDerivAt_trivialBranch {G : ℝ × ℝ → ℝ} {G' : ℝ × �
     (hasDerivAt_const d₀ (0 : ℝ)).prodMk (hasDerivAt_id d₀)
   exact hG.hasFDerivAt.comp_hasDerivAt d₀ hin
 
-/-- **Turing pattern branch and exchange of stability on the trivial branch.** Let mode `k`
+/-- **Turing pattern branch and sign change of the selected critical eigenvalue.** Let mode `k`
 be admissible (`0 < f_u k² - d_u k⁴`) with neutral diffusion `d₀ = d_n(k²)` and negative trace
 there, and let `G` be a reduced bifurcation map for this mode: strictly differentiable at
 `(0, d₀)` and equal on the trivial branch to the critical eigenvalue,
 `G (0, d) = leadingEigenvalue (J - k² D(d))` for `d` near `d₀` (the output of a Lyapunov–Schmidt
 reduction, assumed). Then the crossing is transversal (`0 < ∂_d G (0, d₀)`), a unique local
-pattern branch `d = φ(a)` bifurcates from `(0, d₀)`, and the homogeneous state exchanges
-stability there: its critical eigenvalue is negative for `d < d₀` and positive for `d > d₀`
-near `d₀`. -/
+pattern branch `d = φ(a)` bifurcates from `(0, d₀)`, and the critical eigenvalue of mode `k`
+changes sign there: `G (0, d)` is negative for `d < d₀` and positive for `d > d₀` near `d₀`.
+
+Only mode `k` is controlled. The hypotheses say nothing about the other Neumann modes, so this is
+not an exchange of stability of the homogeneous state on `[0, L]`: another mode may already be
+unstable at `d₀` (for `J₀`, `d_u = 1`, `k = 1/2` on `[0, 8π]`, mode `4` is neutral while mode
+`5` is unstable; see the tests). That stronger conclusion would need every other Neumann mode
+to be stable near `d₀`. -/
 theorem turing_patternBranch {J : Matrix (Fin 2) (Fin 2) ℝ} {du k d₀ : ℝ}
     (htr : J.trace - k ^ 2 * (du + d₀) < 0) (hk : 0 < J 0 0 * k ^ 2 - du * (k ^ 2) ^ 2)
     (hd₀ : d₀ = neutralDiffusion J du (k ^ 2)) {G : ℝ × ℝ → ℝ} {G' : ℝ × ℝ →L[ℝ] ℝ}
@@ -564,11 +575,12 @@ and `H` differentiable in `a` with partial derivative `H_a` continuous at `(0, d
 trivial branch cross transversally, `∂_d G(0, d₀) = σ > 0`, and let `φ` be the pattern branch of
 `exists_patternBranch`. Then for small `a ≠ 0`:
 
-* `c (φ(a) - d₀) < 0`: the branch bifurcates *supercritically* (into `d > d₀`, where the
-  homogeneous state is unstable) iff `c < 0`, and subcritically iff `c > 0`;
+* `c (φ(a) - d₀) < 0`: the branch bifurcates *supercritically* (into `d > d₀`, where the trivial
+  equilibrium of the reduced equation is unstable, `G(0, d) > 0`) iff `c < 0`, and
+  subcritically iff `c > 0`;
 * the branch equilibrium `a` of the reduced equation `ȧ = Φ(a, d) = a G(a, d)` at `d = φ(a)` has
   linearization `λ = ∂_a Φ(a, φ(a))` with `0 < c λ`: it is linearly stable (`λ < 0`) iff the
-  bifurcation is supercritical (exchange of stability). -/
+  bifurcation is supercritical (exchange of stability within the reduced equation). -/
 theorem patternBranch_direction_stability {G H Ha : ℝ × ℝ → ℝ} {φ : ℝ → ℝ} {d₀ σ : ℝ}
     (hφ0 : φ 0 = d₀) (hφc : ContinuousAt φ 0)
     (hzero : ∀ᶠ p in 𝓝 ((0 : ℝ), d₀), (p.1 * G p = 0 ↔ p.1 = 0 ∨ p.2 = φ p.1))
@@ -646,8 +658,10 @@ its neutral diffusion `d₀`, a reduced map `G` (strictly differentiable, equal 
 eigenvalue on the trivial branch, reflection-symmetric to second order with coefficient
 `c = H(0, d₀) ≠ 0`) has a local pattern branch `d = φ(a)` through `(0, d₀)` which, for small
 amplitudes `a ≠ 0`, lies on the side `c (φ(a) - d₀) < 0` and has reduced linearization `λ` with
-`0 < c λ`. In particular, if `c < 0` the branch exists for `d > d₀`, exactly where the
-homogeneous state is unstable, and is linearly stable. -/
+`0 < c λ`. In particular, if `c < 0` the branch exists for `d > d₀`, where the critical
+eigenvalue of mode `k` is positive, and is linearly stable in the reduced equation. As in
+`turing_patternBranch`, other Neumann modes are not controlled, so this says nothing about the
+stability of the homogeneous state on `[0, L]` for `d < d₀`, nor of the branch in the full PDE. -/
 theorem turing_patternBranch_stability {J : Matrix (Fin 2) (Fin 2) ℝ} {du k d₀ : ℝ}
     (htr : J.trace - k ^ 2 * (du + d₀) < 0) (hk : 0 < J 0 0 * k ^ 2 - du * (k ^ 2) ^ 2)
     (hd₀ : d₀ = neutralDiffusion J du (k ^ 2)) {G H Ha : ℝ × ℝ → ℝ} {G' : ℝ × ℝ →L[ℝ] ℝ}

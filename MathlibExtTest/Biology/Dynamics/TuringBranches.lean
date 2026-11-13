@@ -19,7 +19,10 @@ import Mathlib.Analysis.SpecialFunctions.Sqrt
 Jacobian `J₀ = [[4/5, 1], [-9/5, -1]]` with `d_u = 1`, `d_v = 9` (unstable on `[0, 11/2]` but
 stable on the longer `[0, 7]`, whose band falls in a Neumann gap), neutral diffusions on both
 sides of onset, the leading eigenvalue, and an explicit supercritical pitchfork
-`G(a, d) = (d - 1) - a²` exercising the branch theorems. -/
+`G(a, d) = (d - 1) - a²` exercising the branch theorems. Two regressions pin the scope of the
+documentation: on `[0, 8π]` the branch theorem's mode is neutral while another Neumann mode is
+already unstable (no exchange of stability of the homogeneous state), and for `d_u = 0` the
+onset diffusion is an infimum that no Neumann mode attains. -/
 
 open Matrix Filter Topology
 
@@ -289,7 +292,8 @@ lemma J₀_G_contDiffAt : ContDiffAt ℝ 1
 
 /-- **Non-vacuity of `turing_patternBranch_stability`.** For `J₀` at the neutral diffusion
 `100/11` of `k = 1/2`, with `G(a, d) = leadingEigenvalue (J₀ - (1/2)² D(d)) - a²` and `H = -1`,
-the pattern branch is supercritical (`φ(a) > 100/11`) and linearly stable. -/
+the pattern branch is supercritical (`φ(a) > 100/11`) and linearly stable in the reduced
+equation. -/
 example : ∃ φ : ℝ → ℝ, φ 0 = 100 / 11 ∧ ∀ᶠ a in 𝓝[≠] (0 : ℝ), 100 / 11 < φ a ∧
     ∃ lam : ℝ, HasDerivAt
       (fun x => x * (leadingEigenvalue (modeMatrix J₀ 1 (φ a) (1 / 2)) - x ^ 2)) lam a ∧
@@ -305,5 +309,98 @@ example : ∃ φ : ℝ → ℝ, φ 0 = 100 / 11 ∧ ∀ᶠ a in 𝓝[≠] (0 : �
   refine ⟨φ, hφ0, ?_⟩
   filter_upwards [hbr] with a ⟨hdir, lam, hlam, hneg⟩
   exact ⟨by linarith, lam, hlam, by linarith⟩
+
+/-! ### The branch theorems control only the selected mode
+
+On `[0, 8π]` the Neumann wavenumbers are `k_n = n / 8`. Mode `4` (`k = 1/2`) is neutral at
+`d₀ = 100/11`, so `turing_patternBranch` applies to it and its critical eigenvalue is negative
+just below `d₀`. Mode `5` (`k² = 25/64`) is nevertheless unstable for every `d ≥ 9`, in
+particular at and just below `d₀`: the homogeneous state on `[0, 8π]` does not exchange stability
+at `d₀`. -/
+
+lemma neumannWavenumber_eight_pi (n : ℕ) : neumannWavenumber (8 * Real.pi) n = n / 8 := by
+  rw [neumannWavenumber]
+  field_simp
+
+lemma J₀_mode4_8pi : neumannWavenumber (8 * Real.pi) 4 = 1 / 2 := by
+  rw [neumannWavenumber_eight_pi]
+  norm_num
+
+/-- Mode `4` on `[0, 8π]` is neutral at `d₀ = 100/11`. -/
+lemma J₀_mode4_neutral_8pi :
+    dispersionDet J₀ 1 (100 / 11) (neumannWavenumber (8 * Real.pi) 4 ^ 2) = 0 := by
+  rw [J₀_mode4_8pi, dispersionDet, J₀_det, J₀_00, J₀_11]
+  norm_num
+
+/-- Mode `5` on `[0, 8π]` is unstable for every `d ≥ 9`
+(`h(25/64) = (5696 - 655 d) / 4096`). -/
+lemma J₀_unstable_8pi {d : ℝ} (hd : 9 ≤ d) : IsNeumannUnstable J₀ 1 d (8 * Real.pi) := by
+  rw [isNeumannUnstable_iff]
+  refine ⟨5, ?_⟩
+  rw [isUnstableMode_iff_dispersionDet_neg (by rw [J₀_trace]; norm_num) zero_le_one
+    (by linarith), neumannWavenumber_eight_pi, dispersionDet, J₀_det, J₀_00, J₀_11]
+  push_cast
+  linarith
+
+/-- **Regression: no exchange of stability of the homogeneous state.** All hypotheses of
+`turing_patternBranch` hold for the neutral Neumann mode `4` on `[0, 8π]`, and its critical
+eigenvalue is negative just below `d₀ = 100/11`; yet the homogeneous state on `[0, 8π]` is
+unstable just below `d₀` and at `d₀`, because of mode `5`. -/
+example :
+    dispersionDet J₀ 1 (100 / 11) (neumannWavenumber (8 * Real.pi) 4 ^ 2) = 0 ∧
+    (∀ᶠ d in 𝓝[<] (100 / 11 : ℝ),
+      leadingEigenvalue (modeMatrix J₀ 1 d (neumannWavenumber (8 * Real.pi) 4)) < 0) ∧
+    (∀ᶠ d in 𝓝[<] (100 / 11 : ℝ), IsNeumannUnstable J₀ 1 d (8 * Real.pi)) ∧
+    IsNeumannUnstable J₀ 1 (100 / 11) (8 * Real.pi) := by
+  obtain ⟨-, -, hleft, -⟩ := turing_patternBranch (J := J₀) (du := 1) (k := 1 / 2)
+    (d₀ := 100 / 11)
+    (G := fun p : ℝ × ℝ => leadingEigenvalue (modeMatrix J₀ 1 p.2 (1 / 2)) - p.1 ^ 2)
+    (by rw [J₀_trace]; norm_num) J₀_admissible J₀_neutral.symm
+    (J₀_G_contDiffAt.hasStrictFDerivAt one_ne_zero) (Eventually.of_forall fun d => by simp)
+  refine ⟨J₀_mode4_neutral_8pi, ?_, ?_, J₀_unstable_8pi (by norm_num)⟩
+  · rw [J₀_mode4_8pi]
+    filter_upwards [hleft] with d hd
+    simpa using hd
+  · filter_upwards [Ioo_mem_nhdsLT (show (9 : ℝ) < 100 / 11 by norm_num)] with d hd
+    exact J₀_unstable_8pi hd.1.le
+
+/-! ### The onset diffusion need not be attained
+
+For `J₀` with `d_u = 0` on `[0, π]` every mode `n ≥ 1` is admissible with neutral diffusion
+`5 / (4 n²) → 0`. The homogeneous state is unstable for every `d > 0` but not at `d = 0`, so the
+onset diffusion is the infimum `0`, which is not the neutral diffusion of any admissible mode. -/
+
+lemma J₀_neutral_du_zero (n : ℕ) :
+    neutralDiffusion J₀ 0 (neumannWavenumber Real.pi n ^ 2) = 5 / (4 * (n : ℝ) ^ 2) := by
+  rw [neutralDiffusion, neumannWavenumber, J₀_det, J₀_00, J₀_11,
+    mul_div_cancel_right₀ _ Real.pi_ne_zero]
+  simp only [zero_mul, mul_neg, neg_zero, sub_zero]
+  ring
+
+lemma J₀_admissible_du_zero {n : ℕ} (hn : (0 : ℝ) < n) :
+    0 < (J₀) 0 0 * neumannWavenumber Real.pi n ^ 2 - 0 * (neumannWavenumber Real.pi n ^ 2) ^ 2 := by
+  rw [J₀_00, neumannWavenumber, mul_div_cancel_right₀ _ Real.pi_ne_zero, zero_mul, sub_zero]
+  positivity
+
+/-- **Regression: the onset threshold is an infimum, not a minimum.** -/
+example :
+    (∀ d : ℝ, 0 < d → IsNeumannUnstable J₀ 0 d Real.pi) ∧ ¬ IsNeumannUnstable J₀ 0 0 Real.pi := by
+  have htr : (J₀).trace < 0 := by rw [J₀_trace]; norm_num
+  have hdet : 0 < (J₀).det := by rw [J₀_det]; norm_num
+  have hgv : (J₀) 1 1 ≤ 0 := by rw [J₀_11]; norm_num
+  refine ⟨fun d hd => ?_, fun h => ?_⟩
+  · rw [isNeumannUnstable_iff_exists_neutralDiffusion_lt htr le_rfl hd.le hdet hgv]
+    obtain ⟨n, hn⟩ := exists_nat_gt (2 / d)
+    have hn0 : (0 : ℝ) < n := lt_of_le_of_lt (by positivity) hn
+    have h1 : (1 : ℝ) ≤ n := Nat.one_le_cast.2 (Nat.cast_pos.1 hn0)
+    have h2 : 2 < d * n := by rwa [div_lt_iff₀ hd, mul_comm] at hn
+    refine ⟨n, J₀_admissible_du_zero hn0, ?_⟩
+    rw [J₀_neutral_du_zero, div_lt_iff₀ (by positivity)]
+    nlinarith [mul_le_mul_of_nonneg_left h1 (mul_pos hd hn0).le]
+  · rw [isNeumannUnstable_iff_exists_neutralDiffusion_lt htr le_rfl le_rfl hdet hgv] at h
+    obtain ⟨n, -, hn⟩ := h
+    rw [J₀_neutral_du_zero] at hn
+    have : 0 ≤ 5 / (4 * (n : ℝ) ^ 2) := by positivity
+    linarith
 
 end MathlibExtTest.Biology.Dynamics.TuringBranches
