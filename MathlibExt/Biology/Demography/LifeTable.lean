@@ -30,8 +30,12 @@ differences. Counts are real sequences indexed by `ℕ`. Death probabilities
 and central rates are only defined on positive risk sets and exposures.
 Categories form a finite type; sizes and rates are real functions; totals
 may be zero, in which case shares and crude rates take the junk value `0`.
-Demographic theorems require nonzero totals; empty or all-zero populations
-are excluded by explicit hypotheses, not silently assigned rate `0`.
+The algebraic identities (share-weighted sums, the `centerMass` bridge,
+standardization, and both decompositions) hold for all real sizes, junk
+values included, and carry no hypotheses. Demographic corollaries (shares in
+`[0, 1]`, crude and standardized rates within the range of the category
+rates) assume `IsValidPopulation`: nonnegative sizes with a positive total,
+which excludes signed "counts" as well as empty and all-zero populations.
 `crudeRate` is the demographic name for `Finset.univ.centerMass` (see the
 bridge); it parallels `MendelianRandomization.weightedMean`, which is not
 imported to keep `Demography` independent.
@@ -43,6 +47,7 @@ imported to keep `Demography` independent.
 - `populationShare`: share of category `i` in the total.
 - `crudeRate`: crude rate from category sizes and rates.
 - `directlyStandardizedRate`: directly standardized rate under a standard.
+- `IsValidPopulation`: nonnegative category sizes with a positive total.
 
 ## Main results
 
@@ -64,6 +69,11 @@ imported to keep `Demography` independent.
   differences.
 - `crudeRate_sub_crudeRate_of_same_rates`: equal rates leave only the
   composition effect, as a `directlyStandardizedRate` difference.
+- `sum_populationShare`: shares sum to `1` when the total is nonzero.
+- `populationShare_mem_Icc`, `crudeRate_mem_Icc`,
+  `directlyStandardizedRate_mem_Icc`: for a valid population, shares lie in
+  `[0, 1]` and crude and standardized rates lie in any interval containing
+  every category rate.
 
 ## Not covered
 
@@ -208,25 +218,34 @@ theorem survivors_eq_zero_of_le (l d : ℕ → ℝ) (hstep : ∀ x, l (x + 1) = 
     rw [hstep n, ih, hdn0, sub_zero]
 
 /-- Share of category `i`, Das Gupta (5.2); junk value `0` when the total
-  is `0`. Demographic theorems require a nonzero total. -/
+  is `0`. Demographic corollaries assume `IsValidPopulation`. -/
 noncomputable def populationShare {ι : Type*} [Fintype ι] (N : ι → ℝ) (i : ι) : ℝ :=
   N i / ∑ j, N j
 
 /-- Crude rate from sizes and rates, Das Gupta (5.1); junk value `0` when
-  the total is `0`. Demographic theorems require a nonzero total. Kept as
-  the demographic name for `Finset.univ.centerMass` for readability. -/
+  the total is `0`. Demographic corollaries assume `IsValidPopulation`. Kept
+  as the demographic name for `Finset.univ.centerMass` for readability. -/
 noncomputable def crudeRate {ι : Type*} [Fintype ι] (N T : ι → ℝ) : ℝ :=
   (∑ i, T i * N i) / ∑ i, N i
 
 /-- Directly standardized rate of `T` under standard `S`, Das Gupta Ch. 1;
-  junk `0` when standard total is `0`. Theorems need a nonzero total. -/
+  junk `0` when the standard's total is `0`. Demographic corollaries assume
+  `IsValidPopulation S`. -/
 noncomputable def directlyStandardizedRate {ι : Type*} [Fintype ι] (S T : ι → ℝ) : ℝ :=
   ∑ i, populationShare S i * T i
 
-/-- Crude rate as a share-weighted sum, Das Gupta (5.1)-(5.2); requires a nonzero total.
-The equality holds even at zero total. -/
-theorem crudeRate_eq_sum_populationShare_mul {ι : Type*} [Fintype ι] (N T : ι → ℝ)
-    (_hN : ∑ i, N i ≠ 0) :
+/-- A valid population: nonnegative category sizes with a positive total. The
+  demographic corollaries assume it; the algebraic identities need no
+  hypothesis on the sizes. -/
+structure IsValidPopulation {ι : Type*} [Fintype ι] (N : ι → ℝ) : Prop where
+  /-- Every category size is nonnegative. -/
+  nonneg : ∀ i, 0 ≤ N i
+  /-- The total size is positive. -/
+  sum_pos : 0 < ∑ i, N i
+
+/-- Crude rate as a share-weighted sum, Das Gupta (5.1)-(5.2); holds for all
+  real sizes, including zero total. -/
+theorem crudeRate_eq_sum_populationShare_mul {ι : Type*} [Fintype ι] (N T : ι → ℝ) :
     crudeRate N T = ∑ i, populationShare N i * T i := by
   unfold crudeRate populationShare
   have h : ∀ i, N i / (∑ j, N j) * T i = (T i * N i) / ∑ j, N j := fun i => by
@@ -234,10 +253,9 @@ theorem crudeRate_eq_sum_populationShare_mul {ι : Type*} [Fintype ι] (N T : ι
   simp only [h, Finset.sum_div]
 
 /-- Crude rate equals `Finset.univ.centerMass`; the demographic name is kept
-  for Das Gupta (5.1) readability. Requires a nonzero total.
-The equality holds even at zero total. -/
-theorem crudeRate_eq_centerMass {ι : Type*} [Fintype ι] (N T : ι → ℝ)
-    (_hN : ∑ i, N i ≠ 0) :
+  for Das Gupta (5.1) readability. Holds for all real sizes, including zero
+  total. -/
+theorem crudeRate_eq_centerMass {ι : Type*} [Fintype ι] (N T : ι → ℝ) :
     crudeRate N T = Finset.univ.centerMass N T := by
   unfold crudeRate Finset.centerMass
   rw [div_eq_inv_mul, smul_eq_mul]
@@ -246,17 +264,17 @@ theorem crudeRate_eq_centerMass {ι : Type*} [Fintype ι] (N T : ι → ℝ)
   intro i _
   rw [smul_eq_mul, mul_comm]
 
-/-- Standardized rate is the crude rate with the standard's composition; needs a nonzero total. -/
-theorem directlyStandardizedRate_eq_crudeRate {ι : Type*} [Fintype ι] (S T : ι → ℝ)
-    (hS : ∑ i, S i ≠ 0) :
+/-- Standardized rate is the crude rate with the standard's composition; holds
+  for every real standard, including zero total. -/
+theorem directlyStandardizedRate_eq_crudeRate {ι : Type*} [Fintype ι] (S T : ι → ℝ) :
     directlyStandardizedRate S T = crudeRate S T := by
   unfold directlyStandardizedRate
-  exact (crudeRate_eq_sum_populationShare_mul S T hS).symm
+  exact (crudeRate_eq_sum_populationShare_mul S T).symm
 
-/-- Crude rate of central death rates is total deaths over total exposure; needs nonzero.
-The equality holds even at zero total. -/
+/-- Crude rate of central death rates is total deaths over total exposure; the
+  positive exposures are needed only to define the central rates. -/
 theorem crudeRate_centralDeathRate {ι : Type*} [Fintype ι] (D N : ι → ℝ)
-    (hN : ∀ i, 0 < N i) (_hTot : ∑ i, N i ≠ 0) :
+    (hN : ∀ i, 0 < N i) :
     crudeRate N (fun i => centralDeathRate (D i) (N i) (hN i)) = (∑ i, D i) / ∑ i, N i := by
   unfold crudeRate centralDeathRate
   congr 1
@@ -267,30 +285,28 @@ theorem crudeRate_centralDeathRate {ι : Type*} [Fintype ι] (D N : ι → ℝ)
 /-- Rate/composition decomposition of crude-rate differences, Das Gupta
   (5.3)-(5.4) with the Kitagawa (1955) averaged standard. The first bracket
   is the rate effect (5.3) and the second is the composition effect (5.4).
-  Requires nonzero totals for both populations. -/
-theorem crudeRate_sub_crudeRate {ι : Type*} [Fintype ι] (N n T t : ι → ℝ)
-    (hN : ∑ i, N i ≠ 0) (hn : ∑ i, n i ≠ 0) :
+  Holds for all real sizes, including zero totals. -/
+theorem crudeRate_sub_crudeRate {ι : Type*} [Fintype ι] (N n T t : ι → ℝ) :
     crudeRate n t - crudeRate N T =
       (∑ i, (populationShare n i + populationShare N i) / 2 * t i -
         ∑ i, (populationShare n i + populationShare N i) / 2 * T i) +
       (∑ i, (t i + T i) / 2 * populationShare n i -
         ∑ i, (t i + T i) / 2 * populationShare N i) := by
-  rw [crudeRate_eq_sum_populationShare_mul n t hn, crudeRate_eq_sum_populationShare_mul N T hN]
+  rw [crudeRate_eq_sum_populationShare_mul n t, crudeRate_eq_sum_populationShare_mul N T]
   simp only [← Finset.sum_sub_distrib, ← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro i _
   ring
 
 /-- Equal rates leave only the composition effect, as a `directlyStandardizedRate`
-  difference; needs nonzero totals. -/
-theorem crudeRate_sub_crudeRate_of_same_rates {ι : Type*} [Fintype ι] (N n T : ι → ℝ)
-    (hN : ∑ i, N i ≠ 0) (hn : ∑ i, n i ≠ 0) :
+  difference; holds for all real sizes, including zero totals. -/
+theorem crudeRate_sub_crudeRate_of_same_rates {ι : Type*} [Fintype ι] (N n T : ι → ℝ) :
     crudeRate n T - crudeRate N T = ∑ i, T i * (populationShare n i - populationShare N i) ∧
       ∑ i, T i * (populationShare n i - populationShare N i) =
         directlyStandardizedRate n T - directlyStandardizedRate N T := by
   have hsum : crudeRate n T - crudeRate N T =
       ∑ i, T i * (populationShare n i - populationShare N i) := by
-    rw [crudeRate_eq_sum_populationShare_mul n T hn, crudeRate_eq_sum_populationShare_mul N T hN]
+    rw [crudeRate_eq_sum_populationShare_mul n T, crudeRate_eq_sum_populationShare_mul N T]
     rw [← Finset.sum_sub_distrib]
     apply Finset.sum_congr rfl
     intro i _
@@ -303,5 +319,36 @@ theorem crudeRate_sub_crudeRate_of_same_rates {ι : Type*} [Fintype ι] (N n T :
     intro i _
     ring
   exact ⟨hsum, hdsr⟩
+
+/-- Shares sum to `1` when the total is nonzero. -/
+theorem sum_populationShare {ι : Type*} [Fintype ι] {N : ι → ℝ} (hN : ∑ i, N i ≠ 0) :
+    ∑ i, populationShare N i = 1 := by
+  unfold populationShare
+  rw [← Finset.sum_div, div_self hN]
+
+/-- Shares of a valid population lie in `[0, 1]`. -/
+theorem populationShare_mem_Icc {ι : Type*} [Fintype ι] {N : ι → ℝ}
+    (hN : IsValidPopulation N) (i : ι) : populationShare N i ∈ Set.Icc (0 : ℝ) 1 := by
+  unfold populationShare
+  refine ⟨div_nonneg (hN.nonneg i) hN.sum_pos.le, (div_le_one hN.sum_pos).mpr ?_⟩
+  exact Finset.single_le_sum (fun j _ => hN.nonneg j) (Finset.mem_univ i)
+
+/-- The crude rate of a valid population lies in any interval `[a, b]` that
+  contains every category rate. -/
+theorem crudeRate_mem_Icc {ι : Type*} [Fintype ι] {N T : ι → ℝ} (hN : IsValidPopulation N)
+    {a b : ℝ} (hT : ∀ i, T i ∈ Set.Icc a b) : crudeRate N T ∈ Set.Icc a b := by
+  unfold crudeRate
+  rw [Set.mem_Icc, le_div_iff₀ hN.sum_pos, div_le_iff₀ hN.sum_pos, Finset.mul_sum,
+    Finset.mul_sum]
+  exact ⟨Finset.sum_le_sum fun i _ => mul_le_mul_of_nonneg_right (hT i).1 (hN.nonneg i),
+    Finset.sum_le_sum fun i _ => mul_le_mul_of_nonneg_right (hT i).2 (hN.nonneg i)⟩
+
+/-- The rate standardized to a valid standard lies in any interval `[a, b]`
+  that contains every category rate. -/
+theorem directlyStandardizedRate_mem_Icc {ι : Type*} [Fintype ι] {S T : ι → ℝ}
+    (hS : IsValidPopulation S) {a b : ℝ} (hT : ∀ i, T i ∈ Set.Icc a b) :
+    directlyStandardizedRate S T ∈ Set.Icc a b := by
+  rw [directlyStandardizedRate_eq_crudeRate]
+  exact crudeRate_mem_Icc hS hT
 
 end MathlibExt.Biology.Demography.LifeTable

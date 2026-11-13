@@ -25,8 +25,10 @@ Concrete populations exercising the `LifeTable` API: cohort accounting,
 death probabilities, survival products, extinction, open populations,
 person-years non-identification, same-rates composition effects with the
 `directlyStandardizedRate` link, the Kitagawa decomposition,
-single-standard interaction, crude death rates, and boundary exclusion
-for zero and empty totals.
+single-standard interaction, crude death rates, the `centerMass` and
+standardization bridges, valid-population bounds, and boundary exclusion
+for signed, zero, and empty populations. Each focused test applies the
+corresponding public theorem and discharges its hypotheses.
 -/
 
 @[expose] public section
@@ -66,10 +68,14 @@ theorem example_deathProbability :
   unfold deathProbability
   refine ⟨?_, ?_, ?_⟩ <;> norm_num [exampleL, exampleD]
 
-/-- Survivors at age `3` via the survival product. -/
+/-- Survivors at age `3` via the survival product `survivors_eq_mul_prod`. -/
 theorem example_survival_product :
     exampleL 3 = 1000 * ((1 - 1 / 10) * (1 - 1 / 5) * (1 - 1 / 2)) := by
-  norm_num [exampleL]
+  have hpos : ∀ k : Fin 3, 0 < exampleL k := by
+    intro k
+    fin_cases k <;> norm_num [exampleL]
+  rw [survivors_eq_mul_prod exampleL exampleD example_step 3 hpos, Fin.prod_univ_three]
+  norm_num [deathProbability, exampleL, exampleD]
 
 /-- Extinct survivors `(3, 2, 0)` then `0`. -/
 def extinctL : ℕ → ℝ
@@ -83,9 +89,18 @@ def extinctD : ℕ → ℝ
   | 1 => 2
   | _ => 0
 
-/-- Initial size `1 + 2` from the extinct cohort. -/
+/-- Closed accounting holds at every age for the extinct cohort. -/
+theorem extinct_step : ∀ t, extinctL (t + 1) = extinctL t - extinctD t := by
+  intro t
+  match t with
+  | 0 => norm_num [extinctL, extinctD]
+  | 1 => norm_num [extinctL, extinctD]
+  | n + 2 => norm_num [extinctL, extinctD]
+
+/-- Initial size `1 + 2` from the extinct cohort, via `extinct_cohort`. -/
 theorem example_extinct_cohort : extinctL 0 = 1 + 2 := by
-  norm_num [extinctL]
+  rw [extinct_cohort extinctL extinctD extinct_step (T := 2) (by norm_num [extinctL])]
+  norm_num [Finset.sum_range_succ, extinctD]
 
 /-- Zero survivors `(10, 4, 0)` then `0`. -/
 def zeroL : ℕ → ℝ
@@ -103,9 +118,26 @@ def zeroD : ℕ → ℝ
 theorem zero_survivors_no_risk_set : ¬ (0 < zeroL 2) := by
   simp [zeroL]
 
+/-- Closed accounting holds at every age for the zero-survivor cohort. -/
+theorem zero_step : ∀ x, zeroL (x + 1) = zeroL x - zeroD x := by
+  intro x
+  match x with
+  | 0 => norm_num [zeroL, zeroD]
+  | 1 => norm_num [zeroL, zeroD]
+  | n + 2 => norm_num [zeroL, zeroD]
+
 /-- Extinct cohort stays at zero, from `survivors_eq_zero_of_le`. -/
 theorem zero_survivors_stay_zero : zeroL 5 = 0 := by
-  simp [zeroL]
+  refine survivors_eq_zero_of_le zeroL zeroD zero_step (fun x => ?_) (fun x => ?_)
+    (k := 2) (by norm_num [zeroL]) (by norm_num)
+  · match x with
+    | 0 => norm_num [zeroD]
+    | 1 => norm_num [zeroD]
+    | n + 2 => norm_num [zeroD]
+  · match x with
+    | 0 => norm_num [zeroL, zeroD]
+    | 1 => norm_num [zeroL, zeroD]
+    | n + 2 => norm_num [zeroL, zeroD]
 
 /-- Open sizes `10` then `9`. -/
 def openP : ℕ → ℝ
@@ -122,10 +154,17 @@ def openM : ℕ → ℝ
   | 0 => 1
   | _ => 0
 
-/-- Open balance holds at `T = 1`. -/
+/-- Open accounting holds at every year. -/
+theorem open_step : ∀ t, openP (t + 1) = openP t - openD t + openM t := by
+  intro t
+  match t with
+  | 0 => norm_num [openP, openD, openM]
+  | n + 1 => norm_num [openP, openD, openM]
+
+/-- Open balance holds at `T = 1`, via `cohort_balance`. -/
 theorem open_cohort_balance :
-    openP 1 = openP 0 - ∑ t ∈ Finset.range 1, openD t + ∑ t ∈ Finset.range 1, openM t := by
-  norm_num [Finset.sum_range_succ, openP, openD, openM]
+    openP 1 = openP 0 - ∑ t ∈ Finset.range 1, openD t + ∑ t ∈ Finset.range 1, openM t :=
+  cohort_balance openP openD openM open_step 1
 
 /-- Open population is not closed. -/
 theorem open_cohort_not_closed : openP 1 ≠ openP 0 - openD 0 := by
@@ -216,7 +255,8 @@ theorem same_rates_difference_is_compositional :
   have hposB : 0 < crudeRate sameRatesNB sameRatesT := by
     rw [hB]
     norm_num
-  exact ⟨hdiff, hS, by rw [hdiff, hS], hposA, hposB⟩
+  exact ⟨hdiff, hS, (crudeRate_sub_crudeRate_of_same_rates sameRatesNA sameRatesNB sameRatesT).1,
+    hposA, hposB⟩
 
 /-- Composition effect as a DSR difference: `27/500` for the same-rates pair. -/
 theorem same_rates_dsr_compositional_link :
@@ -240,8 +280,6 @@ theorem same_rates_dsr_compositional_link :
   have hDB : directlyStandardizedRate sameRatesNB sameRatesT = 41 / 500 := by
     simp [directlyStandardizedRate, populationShare, Fin.sum_univ_two, sameRatesNB, sameRatesT]
     norm_num
-  have hNA : ∑ i, sameRatesNA i ≠ 0 := by norm_num [Fin.sum_univ_two, sameRatesNA]
-  have hNB : ∑ i, sameRatesNB i ≠ 0 := by norm_num [Fin.sum_univ_two, sameRatesNB]
   have hlink : directlyStandardizedRate sameRatesNB sameRatesT -
       directlyStandardizedRate sameRatesNA sameRatesT = 27 / 500 := by
     rw [hDA, hDB]
@@ -249,7 +287,7 @@ theorem same_rates_dsr_compositional_link :
   have hdiff : crudeRate sameRatesNB sameRatesT - crudeRate sameRatesNA sameRatesT = 27 / 500 := by
     rw [hA, hB]
     norm_num
-  have hprod := (crudeRate_sub_crudeRate_of_same_rates sameRatesNA sameRatesNB sameRatesT hNA hNB).2
+  have hprod := (crudeRate_sub_crudeRate_of_same_rates sameRatesNA sameRatesNB sameRatesT).2
   exact ⟨hlink, by rw [hdiff, hlink], hprod⟩
 
 /-- Sizes `(60, 40)` for population 1 in the decomposition group. -/
@@ -293,9 +331,7 @@ theorem decomposition_example :
   have hdiff : crudeRate decN2 decT2 - crudeRate decN1 decT1 = 13 / 10 := by
     rw [hC1, hC2]
     norm_num
-  have hN1 : ∑ i, decN1 i ≠ 0 := by norm_num [Fin.sum_univ_two, decN1]
-  have hN2 : ∑ i, decN2 i ≠ 0 := by norm_num [Fin.sum_univ_two, decN2]
-  have hKit := crudeRate_sub_crudeRate decN1 decN2 decT1 decT2 hN1 hN2
+  have hKit := crudeRate_sub_crudeRate decN1 decN2 decT1 decT2
   have hpos1 : 0 < crudeRate decN1 decT1 := by
     rw [hC1]
     norm_num
@@ -339,13 +375,78 @@ def crudeDeathD : Fin 2 → ℝ := ![3, 12]
 /-- Exposures `(300, 400)`. -/
 def crudeDeathE : Fin 2 → ℝ := ![300, 400]
 
-/-- Crude rate of central death rates is `3/140`. -/
+/-- Exposures are positive. -/
+theorem crudeDeathE_pos : ∀ i, 0 < crudeDeathE i := by
+  intro i
+  fin_cases i <;> norm_num [crudeDeathE]
+
+/-- Crude rate of central death rates is `3/140`, via `crudeRate_centralDeathRate`. -/
 theorem crude_death_rate_example :
     crudeRate crudeDeathE (fun i => centralDeathRate (crudeDeathD i) (crudeDeathE i)
-      ((by intro i; fin_cases i <;> norm_num [crudeDeathE] : ∀ i, 0 < crudeDeathE i) i)) =
-      3 / 140 := by
-  simp [crudeRate, centralDeathRate, Fin.sum_univ_two, crudeDeathD, crudeDeathE]
+      (crudeDeathE_pos i)) = 3 / 140 := by
+  rw [crudeRate_centralDeathRate crudeDeathD crudeDeathE crudeDeathE_pos]
+  norm_num [Fin.sum_univ_two, crudeDeathD, crudeDeathE]
+
+/-- The `centerMass` bridge evaluates the crude rate of population 1 as `26/5`. -/
+theorem centerMass_bridge_example : Finset.univ.centerMass decN1 decT1 = 26 / 5 := by
+  rw [← crudeRate_eq_centerMass]
+  simp [crudeRate, Fin.sum_univ_two, decN1, decT1]
   norm_num
+
+/-- The standardization bridge: standardizing to `(50, 50)` is the crude rate of
+  the standard, `11/200`. -/
+theorem standardization_bridge_example :
+    directlyStandardizedRate sameRatesS sameRatesT = crudeRate sameRatesS sameRatesT ∧
+    crudeRate sameRatesS sameRatesT = 11 / 200 := by
+  refine ⟨directlyStandardizedRate_eq_crudeRate sameRatesS sameRatesT, ?_⟩
+  simp [crudeRate, Fin.sum_univ_two, sameRatesS, sameRatesT]
+  norm_num
+
+/-- Population 1 is valid. -/
+theorem decN1_valid : IsValidPopulation decN1 where
+  nonneg i := by fin_cases i <;> norm_num [decN1]
+  sum_pos := by norm_num [Fin.sum_univ_two, decN1]
+
+/-- The standard `(50, 50)` is valid. -/
+theorem sameRatesS_valid : IsValidPopulation sameRatesS where
+  nonneg i := by fin_cases i <;> norm_num [sameRatesS]
+  sum_pos := by norm_num [Fin.sum_univ_two, sameRatesS]
+
+/-- Valid-population bounds: shares in `[0, 1]` summing to `1`, and crude and
+  standardized rates between the smallest and largest category rate. -/
+theorem valid_population_bounds :
+    populationShare decN1 0 ∈ Set.Icc (0 : ℝ) 1 ∧
+    ∑ i, populationShare decN1 i = 1 ∧
+    crudeRate decN1 decT1 ∈ Set.Icc (2 : ℝ) 10 ∧
+    directlyStandardizedRate sameRatesS sameRatesT ∈ Set.Icc (1 / 100 : ℝ) (1 / 10) := by
+  have hT1 : ∀ i, decT1 i ∈ Set.Icc (2 : ℝ) 10 := by
+    intro i
+    fin_cases i <;> norm_num [decT1]
+  have hT : ∀ i, sameRatesT i ∈ Set.Icc (1 / 100 : ℝ) (1 / 10) := by
+    intro i
+    fin_cases i <;> norm_num [sameRatesT]
+  exact ⟨populationShare_mem_Icc decN1_valid 0, sum_populationShare decN1_valid.sum_pos.ne',
+    crudeRate_mem_Icc decN1_valid hT1, directlyStandardizedRate_mem_Icc sameRatesS_valid hT⟩
+
+/-- Signed sizes `(-1, 2)` with total `1`. -/
+def signedSizes : Fin 2 → ℝ := ![-1, 2]
+
+/-- Rates `(0, 1)` for the signed population. -/
+def signedRates : Fin 2 → ℝ := ![0, 1]
+
+/-- Signed sizes are not a valid population, and outside the predicate the share
+  `-1` and crude rate `2` lose their demographic meaning. -/
+theorem signed_population_excluded :
+    ¬ IsValidPopulation signedSizes ∧
+    populationShare signedSizes 0 = -1 ∧
+    crudeRate signedSizes signedRates = 2 := by
+  refine ⟨fun h => ?_, ?_, ?_⟩
+  · have h0 := h.nonneg 0
+    norm_num [signedSizes] at h0
+  · simp [populationShare, Fin.sum_univ_two, signedSizes]
+    norm_num
+  · simp [crudeRate, Fin.sum_univ_two, signedSizes, signedRates]
+    norm_num
 
 /-- All-zero sizes `(0, 0)` for boundary exclusion. -/
 def zeroSizes : Fin 2 → ℝ := ![0, 0]
@@ -353,28 +454,33 @@ def zeroSizes : Fin 2 → ℝ := ![0, 0]
 /-- Empty sizes on `Fin 0` for boundary exclusion. -/
 def emptySizes : Fin 0 → ℝ := fun _ => 1
 
-/-- All-zero total is `0`, so the nonzero hypothesis fails; crude rate junk `0`. -/
+/-- All-zero total is `0`, so the population is not valid; crude rate junk `0`. -/
 theorem zero_total_excluded :
     ∑ i, zeroSizes i = 0 ∧
-    ¬ (∑ i, zeroSizes i ≠ 0) ∧
+    ¬ IsValidPopulation zeroSizes ∧
     crudeRate zeroSizes sameRatesT = 0 ∧
     directlyStandardizedRate zeroSizes sameRatesT = 0 ∧
     populationShare zeroSizes 0 = 0 := by
   have hsum : ∑ i, zeroSizes i = 0 := by norm_num [Fin.sum_univ_two, zeroSizes]
   refine ⟨hsum, ?_, ?_, ?_, ?_⟩
-  · simp [hsum]
+  · exact fun h => (lt_irrefl (0 : ℝ)) (hsum ▸ h.sum_pos)
   · simp [crudeRate, Fin.sum_univ_two, zeroSizes, sameRatesT]
   · simp [directlyStandardizedRate, populationShare, Fin.sum_univ_two, zeroSizes, sameRatesT]
   · simp [populationShare, Fin.sum_univ_two, zeroSizes]
 
-/-- Empty total is `0`, so the nonzero hypothesis fails; crude rate junk `0`. -/
+/-- Empty total is `0`, so the population is not valid; crude rate junk `0`. -/
 theorem empty_total_excluded :
     ∑ i, emptySizes i = 0 ∧
-    ¬ (∑ i, emptySizes i ≠ 0) ∧
+    ¬ IsValidPopulation emptySizes ∧
     crudeRate emptySizes (fun _ => 1) = 0 := by
   have hsum : ∑ i, emptySizes i = 0 := by simp
   refine ⟨hsum, ?_, ?_⟩
-  · simp
+  · exact fun h => (lt_irrefl (0 : ℝ)) (hsum ▸ h.sum_pos)
   · simp [crudeRate]
+
+/-- The share-weighted form of the crude rate holds without a nonzero total. -/
+theorem share_weighted_at_zero_total :
+    crudeRate zeroSizes sameRatesT = ∑ i, populationShare zeroSizes i * sameRatesT i :=
+  crudeRate_eq_sum_populationShare_mul zeroSizes sameRatesT
 
 end MathlibExtTest.Biology.Demography.LifeTable
