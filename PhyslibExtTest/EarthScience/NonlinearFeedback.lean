@@ -86,5 +86,5 @@ example : HasDerivAt (fun s : ℝ => (3 - 2 * s - 1) ^ 2 / 2) (-4) 0 := by
   have hsign : ((3 - 2 * 0) - 1) * (-((3 - 2 * 0) - 1)) < (0 : ℝ) := by norm_num
   obtain ⟨hV, -⟩ := EarthScience.quadratic_energy_decay_about_reference
     (F := fun x : ℝ => -(x - 1)) (C := 1) (Tstar := 1) one_pos (fun s : ℝ => 3 - 2 * s) 0
-    (by norm_num) hODE hsign
+    hODE hsign
   exact hV.congr_deriv (by norm_num)

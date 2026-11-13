@@ -151,12 +151,11 @@ assumed, so this alone says nothing about attraction. At an equilibrium
 the Lyapunov reading: `V` decreases at every time the solution lies in the
 punctured neighbourhood. -/
 theorem quadratic_energy_decay_about_reference {F : ℝ → ℝ} {C Tstar : ℝ} (hC : 0 < C)
-    (T : ℝ → ℝ) (t : ℝ) (hne : T t ≠ Tstar)
+    (T : ℝ → ℝ) (t : ℝ)
     (hODE : HasDerivAt T (F (T t) / C) t)
     (hsign : (T t - Tstar) * F (T t) < 0) :
     HasDerivAt (fun t => (T t - Tstar) ^ 2 / 2) ((T t - Tstar) * F (T t) / C) t
     ∧ (T t - Tstar) * F (T t) / C < 0 := by
-  have _ : T t ≠ Tstar := hne
   have hCne : C ≠ 0 := ne_of_gt hC
   have h1 : HasDerivAt (fun t => T t - Tstar) (F (T t) / C) t :=
     hODE.sub_const Tstar
