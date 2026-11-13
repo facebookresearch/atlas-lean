@@ -25,7 +25,9 @@ public import Mathlib.Tactic.Ring
   plus certified `log 2` bounds.
 * Bond model numeric instance: `72 / √2`.
 * Born-Lande numeric instance and negativity.
-* Boundary checks: `r = 0` excluded; Madelung ordered sums only, no `tsum`.
+* Boundary checks: the Lennard-Jones hypotheses force `r₀ ≠ 0` (derived through
+  `lennardJones_eq_at_min`); `madelung_one_dim` is pinned to the limit of the
+  ordered partial sums over `Finset.range N`.
 -/
 
 @[expose] public section
@@ -271,12 +273,21 @@ example : bornLandeEnergy 1 1 1 1 1 1 1 2 < 0 :=
 
 /-! ### Boundary checks -/
 
--- Boundary check: the Lennard-Jones lemmas exclude `r = 0` (division by zero in `σ / r`).
-example (h : (0 : ℝ) ≠ 0) : False := h rfl
+-- Boundary check: the Lennard-Jones hypotheses force `r₀ ≠ 0`. If `r₀ = 0`, then
+-- `σ / r₀ = 0` and `φ(r₀) = 0`, contradicting `lennardJones_eq_at_min` (`φ(r₀) = -ε < 0`).
+example (ε σ r₀ : ℝ) (hε : 0 < ε) (hσ : 0 < σ) (hr₀ : r₀ = Real.rpow 2 (1 / 6) * σ) :
+    r₀ ≠ 0 := by
+  intro h0
+  have h := lennardJones_eq_at_min ε σ r₀ hε hσ hr₀
+  rw [h0, div_zero] at h
+  norm_num at h
+  linarith
 
--- Madelung note: the constant is the limit of explicitly ordered partial sums
--- (`Finset.range`); reordering is not permitted and no `tsum` appears anywhere.
-example : True := trivial
+-- Boundary check: `madelung_one_dim` is the limit of the ordered partial sums over
+-- `Finset.range N`, not a `tsum`; this ascription fails if the statement changes shape.
+example : Filter.Tendsto (fun N : ℕ => 2 * ∑ k ∈ Finset.range N, (-1 : ℝ) ^ k / (k + 1))
+    Filter.atTop (𝓝 (2 * Real.log 2)) :=
+  madelung_one_dim
 
 
 end PhyslibExtTest.CondensedMatter.Bonding.PairPotentials
