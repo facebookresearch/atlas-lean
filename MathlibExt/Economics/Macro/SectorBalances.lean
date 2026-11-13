@@ -12,17 +12,23 @@ public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic
 
 /-!
-# Sector accounts, the expenditure identity, and the saving-investment balance
+# Sector-account identities and the saving-investment balance
 
-Sector accounts for one period in nominal terms, under pinned conventions: `Y` is GDP
-(gross, domestic, expenditure approach), split without overlap into personal consumption
-expenditure `C`, gross private domestic investment `I`, government consumption expenditure and
-gross investment `G` (purchases of final goods and services, not transfers), and net exports
-`NX = X - M`; `T` is taxes net of transfers; accounting is not a causal model. The accounting
-laws are fields of `SectorAccounts`, so only consistent accounts inhabit the type. Substituting
-the net-export law into the GDP law gives the expenditure identity; combining income disposal,
-public saving, national saving, the GDP law, and the net-export law gives the
-saving-investment balance: national saving finances private investment plus net exports.
+`SectorAccounts` is an assumption bundle: eleven nominal aggregates for one period together with
+the national-accounts identities they are assumed to satisfy (GDP by expenditure, net exports,
+income disposal, public saving, national saving). The identities are hypotheses supplied when a
+record is built; nothing here derives them from a classification of transactions. The pinned
+conventions are: `Y` is GDP (gross, domestic, expenditure approach), read as split without
+overlap into personal consumption expenditure `C`, gross private domestic investment `I`,
+government consumption expenditure and gross investment `G` (purchases of final goods and
+services, not transfers), and net exports `NX = X - M`; `T` is taxes net of transfers;
+accounting is not a causal model. The nonoverlapping reading of `C`, `I`, `G` is a documented
+convention that Lean does not check.
+
+From the bundle, `expenditure_identity` restates the assumed GDP identity with the assumed
+net-export identity substituted (no further accounting content), and
+`saving_investment_balance` derives `S = I + NX` by combining all five identities: national
+saving finances private investment plus net exports.
 
 Open-economy simplification: income disposal `Y = C + Sp + T` treats GDP as national
 disposable income, so these accounts assume zero net primary income and zero net current
@@ -32,8 +38,9 @@ not investment plus net exports.
 
 ## Main results
 
-* `expenditure_identity`: `Y = C + I + G + NX`.
-* `saving_investment_balance`: `S = I + NX`, under the simplification above.
+* `expenditure_identity`: `Y = C + I + G + NX`, the assumed GDP identity rewritten with `NX`.
+* `saving_investment_balance`: `S = I + NX`, derived from the five assumed identities under the
+  simplification above.
 * `sectorAccounts_example`: the concrete accounts `Y = 110, S = 25` satisfy both.
 
 ## References
@@ -45,16 +52,19 @@ not investment plus net exports.
 
 namespace MathlibExt.Economics.Macro.SectorBalances
 
-/-- Sector accounts for one period, in nominal terms, under the conventions pinned below. The
-accounting laws are fields, so a record cannot violate them.
+/-- An assumption bundle of sector accounts for one period, in nominal terms, under the
+conventions pinned below. The law fields are hypotheses: a record is a choice of aggregates
+together with evidence that they satisfy the accounting identities, which are assumed here, not
+derived from transaction-level data.
 
 * `Y` is GDP (gross domestic product, expenditure approach): the value of final goods and
   services produced domestically in the period. Gross means no depreciation is subtracted;
   domestic means production inside the borders, not the product of nationals.
-* The expenditure components do not overlap: `C` is personal (household) consumption
-  expenditure, `I` is gross private domestic investment, `G` is government consumption
-  expenditure and gross investment (government purchases of final goods and services, not
-  transfers), `X` is exports and `M` is imports of goods and services.
+* The expenditure components are read as nonoverlapping (a convention, not checked by Lean):
+  `C` is personal (household) consumption expenditure, `I` is gross private domestic
+  investment, `G` is government consumption expenditure and gross investment (government
+  purchases of final goods and services, not transfers), `X` is exports and `M` is imports of
+  goods and services.
 * `Sp` is private saving and `T` is taxes net of transfers. `Sg = T - G` is public saving in
   the textbook sense: since `G` includes government gross investment, public investment is
   not counted as saving, matching `I`, which counts only private investment. `S = Sp + Sg` is
@@ -77,29 +87,31 @@ structure SectorAccounts where
   Sg : ℝ
   S : ℝ
   NX : ℝ
-  /-- GDP by expenditure: `Y = C + I + G + (X - M)`. -/
+  /-- Assumed identity, GDP by expenditure: `Y = C + I + G + (X - M)`. -/
   gdp : Y = C + I + G + (X - M)
-  /-- Net exports: `NX = X - M`. -/
+  /-- Assumed identity, net exports: `NX = X - M`. -/
   netExports : NX = X - M
-  /-- Income disposal: `Y = C + Sp + T`. This treats GDP as national disposable income, i.e.
-  zero net primary income and zero net current transfers from the rest of the world. -/
+  /-- Assumed identity, income disposal: `Y = C + Sp + T`. This treats GDP as national
+  disposable income, i.e. zero net primary income and zero net current transfers from the rest
+  of the world. -/
   incomeDisposal : Y = C + Sp + T
-  /-- Public saving: `Sg = T - G`. -/
+  /-- Assumed identity, public saving: `Sg = T - G`. -/
   publicSaving : Sg = T - G
-  /-- National saving: `S = Sp + Sg`. -/
+  /-- Assumed identity, national saving: `S = Sp + Sg`. -/
   nationalSaving : S = Sp + Sg
 
-/-- **Expenditure identity.** Substituting the net-export law `NX = X - M` into the GDP
-expenditure law `Y = C + I + G + (X - M)` gives `Y = C + I + G + NX`. -/
+/-- **Expenditure identity.** The assumed GDP identity `Y = C + I + G + (X - M)` with the
+assumed net-export identity `NX = X - M` substituted. This restates assumptions of
+`SectorAccounts`; it is not derived from a classification of final expenditures. -/
 theorem expenditure_identity (a : SectorAccounts) : a.Y = a.C + a.I + a.G + a.NX := by
   linarith [a.gdp, a.netExports]
 
-/-- **Saving-investment balance.** Income disposal (`Y = C + Sp + T`), public saving
-(`Sg = T - G`), national saving (`S = Sp + Sg`), the GDP expenditure law, and the net-export
-law together give `S = I + NX`: national saving finances private investment plus net exports
-(equivalently `S - I = NX`). This relies on the open-economy simplification pinned in
-`SectorAccounts` (zero net primary income and net current transfers from abroad); in general
-the right side is investment plus the current-account balance. -/
+/-- **Saving-investment balance.** The five assumed identities of `SectorAccounts`, income
+disposal (`Y = C + Sp + T`), public saving (`Sg = T - G`), national saving (`S = Sp + Sg`), GDP
+by expenditure, and net exports, together give `S = I + NX`: national saving finances private
+investment plus net exports (equivalently `S - I = NX`). This relies on the open-economy
+simplification pinned in `SectorAccounts` (zero net primary income and net current transfers
+from abroad); in general the right side is investment plus the current-account balance. -/
 theorem saving_investment_balance (a : SectorAccounts) : a.S = a.I + a.NX := by
   linarith [a.gdp, a.netExports, a.incomeDisposal, a.publicSaving, a.nationalSaving]
 
@@ -124,8 +136,9 @@ def exampleAccounts : SectorAccounts where
   publicSaving := by norm_num
   nationalSaving := by norm_num
 
-/-- The concrete accounts satisfy both the expenditure identity and the saving-investment
-balance: both identities hold at `exampleAccounts`. -/
+/-- The concrete accounts satisfy the assumed identities (checked by `norm_num` when
+`exampleAccounts` is built), so the expenditure identity and the saving-investment balance hold
+at `exampleAccounts`. -/
 theorem sectorAccounts_example :
     exampleAccounts.Y = exampleAccounts.C + exampleAccounts.I + exampleAccounts.G +
         exampleAccounts.NX ∧
