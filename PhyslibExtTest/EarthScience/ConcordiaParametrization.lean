@@ -16,7 +16,9 @@ import PhyslibExt.EarthScience.ConcordiaParametrization
 Concrete consumers of `PhyslibExt.EarthScience.ConcordiaParametrization`:
 with decay constants `l1 = 1`, `l2 = 2`, the concordia point at `t = 0` is
 `(0, 0)`, at `t = 1` it is `(exp 1 - 1, exp 2 - 1)`, distinct times give
-distinct points, and the logarithm recovers the time.
+distinct points, and the logarithm recovers the time; with equal decay
+constants `l1 = l2 = 1`, distinct times still give distinct points. The
+constants are illustrative, not the U–Pb values.
 
 ## i. Overview
 
@@ -51,11 +53,20 @@ example : 0 < (concordiaPoint 1 2 1).1 ∧ 0 < (concordiaPoint 1 2 1).2 := by
     rw [Real.exp_zero] at h2
     linarith
 
-/-- Distinct times give distinct concordia points: injectivity at `0` vs `1`. -/
+/-- Distinct times give distinct concordia points: injectivity at `0` vs `1`,
+for the positive distinct decay constants `l1 = 1`, `l2 = 2`. -/
 example : concordiaPoint 1 2 0 ≠ concordiaPoint 1 2 1 := by
   intro h
   have hinj := concordia_injectiveOn (l1 := 1) (l2 := 2) (by norm_num) (by norm_num)
     (by norm_num : (1 : ℝ) ≠ 2)
+  have := hinj (by norm_num : (0 : ℝ) ∈ Set.Ici 0) (by norm_num : (1 : ℝ) ∈ Set.Ici 0) h
+  norm_num at this
+
+/-- Injectivity needs only `l1 > 0`: with equal decay constants `l1 = l2 = 1`
+(outside the distinct-constant setting) the points at `0` and `1` still differ. -/
+example : concordiaPoint 1 1 0 ≠ concordiaPoint 1 1 1 := by
+  intro h
+  have hinj := concordia_injectiveOn_of_first_pos (l1 := 1) (l2 := 1) (by norm_num)
   have := hinj (by norm_num : (0 : ℝ) ∈ Set.Ici 0) (by norm_num : (1 : ℝ) ∈ Set.Ici 0) h
   norm_num at this
 
