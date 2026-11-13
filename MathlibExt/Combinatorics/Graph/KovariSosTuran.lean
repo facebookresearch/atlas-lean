@@ -326,7 +326,7 @@ private theorem kst_fixed_graph_bound {m n s t : ℕ}
 Proves `Wanted` entry `kovari_sos_turan`.
 
 Proof: Double-count common right neighborhoods, apply the power-mean inequality, and take a real
-`t`th root, following Kővári–Sós–Turán (1954) and Jukna, Theorem 2.10.
+`t`th root, following Kővári–Sós–Turán (1954).
 -/
 public theorem kovari_sos_turan (m n s t : ℕ) (ht : 0 < t) (hs : 1 ≤ s)
     (htn : t ≤ n) :

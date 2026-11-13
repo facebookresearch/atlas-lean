@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
-public import Mathlib.Data.Prod.Lex
+public import Mathlib.Order.Prod.Lex.Basic
 public import Mathlib.Data.ZMod.Basic
 
 /-!

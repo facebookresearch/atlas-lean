@@ -12,8 +12,8 @@ public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Nat.Choose.Basic
 public import Mathlib.RingTheory.PowerSeries.Basic
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Int
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Positivity
