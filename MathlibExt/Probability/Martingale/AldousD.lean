@@ -273,8 +273,11 @@ Jacod–Shiryaev VI.4.5 (ii)), then the laws of the step processes
 J1 topology.
 
 Source: Jacod–Shiryaev (2003), Theorem VI.4.5 (Aldous's criterion for tightness in `D`), for
-step processes with asymptotically negligible jumps (Proposition VI.3.26); Aldous (1978). The
-paths start at `0`, so the compact-containment condition (i) of VI.4.5 is not needed.
+step processes with asymptotically negligible jumps (Proposition VI.3.26); Aldous (1978). With
+`hjump` the criterion reduces to `C`-tightness, where paths starting at `0` make the
+compact-containment condition (i) of VI.4.5 unnecessary. (Without `hjump` condition (i) is
+needed: `n · 1{t ≥ U}` with `U` uniform starts at `0` and satisfies Aldous's condition, but its
+suprema are not tight.)
 Proof: `C`-tightness of the polygons (`isTightMeasureSet_arrayPolygon_of_aldousCondition`),
 transferred to `D` by
 `isTightMeasureSet_arrayStepProcess_of_isTightMeasureSet_arrayPolygon`. -/
