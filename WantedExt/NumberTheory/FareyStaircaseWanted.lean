@@ -26,7 +26,8 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The Farey staircase of order `n`: `A_n(x) = (1/n) Σ_{k=1}^n ⌊kx⌋/k`, the average of the first `n`
+/-- The Farey staircase of order `n`: `A_n(x) = (1/n) Σ_{k=1}^n ⌊kx⌋/k`, the average of the
+first `n`
 lower rational approximations `⌊kx⌋/k` of `x` (`A_0 = 0`).
 
 Source: David Harry Richman, *Lower Rational Approximations and Farey Staircases*, INTEGERS 24

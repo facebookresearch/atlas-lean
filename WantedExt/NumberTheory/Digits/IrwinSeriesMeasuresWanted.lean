@@ -174,7 +174,8 @@ public def HasBaseDepth (b : ℕ) (x : ℝ) (l : ℕ) : Prop :=
   (∃ z : ℤ, x = (z : ℝ) / (b : ℝ) ^ l) ∧
     ∀ q < l, ¬ ∃ z : ℤ, x = (z : ℝ) / (b : ℝ) ^ q
 
-/-- The affine image `b^l U - b^l x` appearing in the local mass formulas. Source: Jean-François Burnol,
+/-- The affine image `b^l U - b^l x` appearing in the local mass formulas. Source: Jean-François
+Burnol,
 *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026), Article A11,
 Lemma 2. -/
 public def affineScaleSet (b l : ℕ) (x : ℝ) (U : Set ℝ) : Set ℝ :=
@@ -186,7 +187,8 @@ Irwin Series*, INTEGERS 26 (2026), Article A11, Notation and Terminology. -/
 public theorem digitCount_zero (b d : ℕ) : digitCount b d 0 = 0 := by
   simp [digitCount]
 
-/-- The empty string evaluates to zero, in every base. Source: Jean-François Burnol, *Measures for the Summation of Irwin
+/-- The empty string evaluates to zero, in every base. Source: Jean-François Burnol, *Measures for
+the Summation of Irwin
 Series*, INTEGERS 26 (2026), Article A11, Notation and Terminology. -/
 public theorem stringValue_nil (b : ℕ) : stringValue b [] = 0 := by
   rfl
@@ -225,7 +227,8 @@ public theorem_wanted irwinSum_hasSum_alternating
           ∑ n ∈ Finset.Ico (b ^ (l - 1)) (b ^ l),
             if digitCount b d n ≤ k then (1 : ℝ) / n else 0)
 
-/-- Theorem 1(b–d): every zeroth moment is `b`; for `m≥1`, the recurrence family is nonnegative and has
+/-- Theorem 1(b–d): every zeroth moment is `b`; for `m≥1`, the recurrence family is nonnegative
+and has
 the stated unique zero case; it decreases in `m`, strictly when nonzero; it
 increases strictly in `j`; and its `j`-limit is `b/(m+1)`. The arbitrary-family
 form follows the paper. Source: Jean-François Burnol, *Measures for the
@@ -450,7 +453,8 @@ public theorem_wanted irwinMeasure_halfOpen_local_mass
 /-- Proposition 9: aligned `b`-imal endpoints have exact mass `bu-bt` once
 `k≥l'`; for every nonempty order-connected subset of `[0,1)`, real masses tend
 to `b(sSup I-sInf I)`. The integrality clauses spell out “`b^{l'}t` and
-`b^{l'}u` are integers” (which makes `t`, `u` `b`-imal). Source: Jean-François Burnol, *Measures for the
+`b^{l'}u` are integers” (which makes `t`, `u` `b`-imal). Source: Jean-François Burnol, *Measures
+for the
 Summation of Irwin Series*, INTEGERS 26 (2026), Article A11, Proposition 9. -/
 public theorem_wanted irwinMeasure_interval_convergence
     (b d : ℕ) (hb : 1 < b) (hd : d < b) :

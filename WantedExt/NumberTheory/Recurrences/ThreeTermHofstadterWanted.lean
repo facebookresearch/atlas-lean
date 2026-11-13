@@ -174,7 +174,8 @@ public theorem_wanted threeTermHofstadter_padded_linear_endsAfter {N : ℕ}
       (2 * N + [27, 254, 524, 560, 20, 4547, 9].getD (N % 7) 0)
 
 /-- Seven-cycle lemma. Let `K ≥ 7`, `c ≥ 1`, `0 ≤ γ ≤ 6`, `L = K - 7c - γ ≥ 0`,
-`M = K + L + 5`, and let `λ ≥ -2c + (2, 1, 4, 3, 2, 1, 0)_γ` and `μ ≥ -c + (0, 0, 3, 2, 1, 0, -1)_γ`.
+`M = K + L + 5`, and let `λ ≥ -2c + (2, 1, 4, 3, 2, 1, 0)_γ` and
+`μ ≥ -c + (0, 0, 3, 2, 1, 0, -1)_γ`.
 For arbitrary integers `a_1, …, a_L`, the padded sequence with initial conditions
 `⟨0̄; 1, 2, …, K, 6, a_1, …, a_L, 2K+λ-2, 2K+μ-1, K-2⟩` satisfies
 `B(M+7k) = L+7k+7`, `B(M+7k+1) = M+7k+2`, `B(M+7k+2) = M+7k+4`, `B(M+7k+3) = 7`,

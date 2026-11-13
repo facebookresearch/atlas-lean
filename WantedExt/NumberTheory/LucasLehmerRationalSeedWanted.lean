@@ -49,7 +49,8 @@ theorem_wanted mersenne_prime_iff_lucasLehmer_six_div_five {n : ℕ} (h3 : 3 ≤
 `V_k(√R, Q)` for even `k` and `V_k(√R, Q)/√R` for odd `k`.
 
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 2 (definition of `V̄_n` and recurrence (4thLehmer)). -/
+Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 2 (definition of `V̄_n` and
+recurrence (4thLehmer)). -/
 def lehmerV (R Q : ℤ) : ℕ → ℤ
   | 0 => 2
   | 1 => 1
@@ -69,7 +70,8 @@ theorem lehmerV_add_four (R Q : ℤ) (k : ℕ) :
 and `V̄_8 = 194 = 14² - 2`, as the doubling formula (LehmerV2n) predicts.
 
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 2 (formula (LehmerV2n) and the case `R = 2`, `Q = -1` after Theorem 6). -/
+Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 2 (formula (LehmerV2n) and
+the case `R = 2`, `Q = -1` after Theorem 6). -/
 theorem lehmerV_two_neg_one :
     lehmerV 2 (-1) 2 = 4 ∧ lehmerV 2 (-1) 4 = 14 ∧ lehmerV 2 (-1) 8 = 194 := by
   decide
@@ -141,14 +143,16 @@ def IsOddSquarefreePart (N : ℤ) (k : ℕ) : Prop :=
 /-- `360^* = 5` (`sqf(360) = 10`).
 
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example `10 = sqf(360)`). -/
+Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example
+`10 = sqf(360)`). -/
 theorem isOddSquarefreePart_360 : IsOddSquarefreePart 360 5 :=
   ⟨by decide, Nat.prime_five.prime.squarefree, 1, 6, by norm_num⟩
 
 /-- `Ω(m)`: the order `ω(m)` of `2` modulo `m`, doubled when it is odd.
 
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (definitions of `ω(m)` and `Ω(m)`). -/
+Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (definitions of `ω(m)` and
+`Ω(m)`). -/
 noncomputable def mersenneOmega (m : ℕ) : ℕ :=
   if Odd (orderOf (2 : ZMod m)) then 2 * orderOf (2 : ZMod m) else orderOf (2 : ZMod m)
 
@@ -179,7 +183,8 @@ def MersenneEtaCondition (sm sp n : ℕ) : Prop :=
 `n = 1`.
 
 Source: E. L. Roettger and H. C. Williams, *Some Remarks Concerning the Lucas-Lehmer Primality
-Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example `s_1 = 37`, `𝒜(37) = {7}`). -/
+Test*, Journal of Integer Sequences 28 (2025), Article 25.2.5, Section 7 (example `s_1 = 37`,
+`𝒜(37) = {7}`). -/
 theorem mersenneEtaCondition_37 :
     MersenneEtaCondition 35 39 7 ∧ ¬ MersenneEtaCondition 35 39 1 := by
   norm_num [MersenneEtaCondition, mersenne]

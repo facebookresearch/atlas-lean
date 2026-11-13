@@ -115,7 +115,8 @@ the shape `x_1 ⋯ x_m P(x_1, …, x_m) ± 1`). Here
 `z` a positive integer with fewer than `l` distinct prime divisors.
 
 Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
-Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 2 (`integers-2025-A71-thm-2`). -/
+Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 2
+(`integers-2025-A71-thm-2`). -/
 public theorem_wanted brocardRamanujan_polynomial_powerFree_mul_fewPrimeFactors_finite
     {k l m : ℕ} (hk : 2 ≤ k) (hl : 2 ≤ l) (hm : 1 ≤ m) (P : MvPolynomial (Fin m) ℤ) :
     {p : ℕ × ℤ | ((p.1 ! : ℕ) : ℤ) + 1 = p.2 ^ 2 ∧

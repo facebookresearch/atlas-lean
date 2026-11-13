@@ -16,7 +16,7 @@ public import Mathlib.Algebra.Group.Pointwise.Finset.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 
 @[expose] public section
 
