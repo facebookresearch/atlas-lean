@@ -42,9 +42,11 @@ example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasur
 
 /-- `sampleSlopeME` at `n = 1` is junk-but-well-defined (single centered term
 is zero, so the ratio is `0 / _ = 0`). -/
-example {Ω : Type*} [MeasurableSpace Ω] (X e ε : ℕ → Ω → ℝ) (α β : ℝ) (ω : Ω) :
+example {Ω : Type*} (X e ε : ℕ → Ω → ℝ) (α β : ℝ) (ω : Ω) :
     sampleSlopeME X e ε α β 1 ω = 0 := by
-  simp [sampleSlopeME]
+  simp [sampleSlopeME, MathlibExt.Probability.FiniteProbability.olsSlope,
+    MathlibExt.Probability.FiniteProbability.sxy,
+    MathlibExt.Probability.FiniteProbability.sampleMean_eq_sum_div]
 
 
 end MathlibExtTest.Probability.Statistics.MeasurementErrorAttenuation

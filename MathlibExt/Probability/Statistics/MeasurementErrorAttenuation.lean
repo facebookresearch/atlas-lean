@@ -11,6 +11,7 @@ module
 public import Mathlib.Probability.Moments.Covariance
 public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Probability.StrongLaw
+public import MathlibExt.Probability.FiniteProbability
 
 /-!
 # Classical measurement error and attenuation
@@ -29,13 +30,17 @@ formula is false: with `e = 0` and `ε = X`, the `W`-slope is `β + 1`, not
 Reuse: the population proof uses Mathlib covariance algebra
 (`covariance_add_left/right`, `covariance_self`, `covariance_eq_sub`,
 `variance_eq_sub`); the equivalent packaged OLS identity is Atlas
-`LinearMomentModel.covariance_div_variance`. The plim uses the strong law
-`ProbabilityTheory.strong_law_ae_real` for the four sample moments.
+`LinearMomentModel.covariance_div_variance`. The sample slope is Atlas's
+finite-sample least-squares slope `FiniteProbability.olsSlope` on the first `n`
+observations, and the plim rewrites it with `FiniteProbability.sxy_eq_sum_mul_sub`
+before applying the strong law `ProbabilityTheory.strong_law_ae_real` to the
+four sample moments.
 
 ## Main results
 
 - `measurementError_population_attenuation`: the population attenuated slope.
-- `sampleSlopeME`: the centered sample OLS slope of `Y` on `W`.
+- `sampleSlopeME`: the centered sample OLS slope of `Y` on `W`
+  (`FiniteProbability.olsSlope` on the first `n` observations).
 - `measurementError_plim`: the sample slope converges a.s. to the
   attenuated value.
 -/
@@ -47,38 +52,17 @@ open scoped ENNReal
 
 namespace MathlibExt.Probability.Statistics.MeasurementErrorAttenuation
 
-/-- Centered cross-sum identity, division-free core. -/
-private theorem centered_sum_core (w y : ℕ → ℝ) (a b : ℝ) (n : ℕ) :
-    ∑ i ∈ Finset.range n, (w i - a) * (y i - b)
-    = (∑ i ∈ Finset.range n, w i * y i) - a * (∑ i ∈ Finset.range n, y i)
-      - b * (∑ i ∈ Finset.range n, w i) + (n : ℝ) * (a * b) := by
-  simp_rw [sub_mul, mul_sub]
-  rw [Finset.sum_sub_distrib, Finset.sum_sub_distrib, Finset.sum_sub_distrib]
-  have e1 : ∑ i ∈ Finset.range n, a * y i = a * (∑ i ∈ Finset.range n, y i) :=
-    (Finset.mul_sum _ _ _).symm
-  have e2 : ∑ i ∈ Finset.range n, w i * b = (∑ i ∈ Finset.range n, w i) * b :=
-    (Finset.sum_mul _ _ _).symm
-  have e3 : ∑ i ∈ Finset.range n, a * b = (n : ℝ) * (a * b) := by
-    rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-  rw [e1, e2, e3]
-  ring
+open MathlibExt.Probability.FiniteProbability (olsSlope sxy sxy_eq_sum_mul_sub
+  sampleMean_eq_sum_div)
 
-/-- Centered cross-sum identity with sample means. -/
-private theorem centered_sum_div (w y : ℕ → ℝ) (n : ℕ) (hn : 1 ≤ n) :
-    ∑ i ∈ Finset.range n,
-        (w i - (∑ j ∈ Finset.range n, w j) / (n : ℝ)) *
-          (y i - (∑ j ∈ Finset.range n, y j) / (n : ℝ))
-    = (∑ i ∈ Finset.range n, w i * y i)
-      - ((∑ j ∈ Finset.range n, w j) / (n : ℝ)) *
-        ((∑ j ∈ Finset.range n, y j) / (n : ℝ)) * (n : ℝ) := by
-  have hn0 : (n : ℝ) ≠ 0 := by
-    have h : n ≠ 0 := by omega
-    exact_mod_cast h
-  have h := centered_sum_core w y ((∑ j ∈ Finset.range n, w j) / (n : ℝ))
-    ((∑ j ∈ Finset.range n, y j) / (n : ℝ)) n
-  rw [h]
-  field_simp
-  ring
+/-- `sxy_eq_sum_mul_sub` for the first `n` terms of two sequences, written with range
+sums (the form the strong law uses). -/
+private theorem sxy_fin_eq_range (x y : ℕ → ℝ) (n : ℕ) :
+    sxy (fun i : Fin n => x i) (fun i : Fin n => y i) =
+      ∑ i ∈ Finset.range n, x i * y i -
+        n * ((∑ i ∈ Finset.range n, x i) / n) * ((∑ i ∈ Finset.range n, y i) / n) := by
+  rw [sxy_eq_sum_mul_sub, sampleMean_eq_sum_div, sampleMean_eq_sum_div, Fintype.card_fin]
+  simp only [Finset.sum_range]
 
 set_option linter.unusedVariables false in
 /-- Population attenuation: the OLS slope of `Y` on the mismeasured `W` equals
@@ -140,15 +124,11 @@ theorem measurementError_population_attenuation {Ω : Type*} [MeasurableSpace Ω
   rw [hCov, hVarW]
 
 /-- The centered sample OLS slope of `Y` on `W` from the first `n`
-observations (intercept included via centering). -/
-noncomputable def sampleSlopeME {Ω : Type*} [MeasurableSpace Ω]
-    (X e ε : ℕ → Ω → ℝ) (α β : ℝ) (n : ℕ) : Ω → ℝ := fun ω =>
-  (∑ i ∈ Finset.range n,
-      ((X i ω + e i ω) - (∑ j ∈ Finset.range n, (X j ω + e j ω)) / (n : ℝ)) *
-        ((α + β * X i ω + ε i ω) -
-          (∑ j ∈ Finset.range n, (α + β * X j ω + ε j ω)) / (n : ℝ))) /
-    (∑ i ∈ Finset.range n,
-      ((X i ω + e i ω) - (∑ j ∈ Finset.range n, (X j ω + e j ω)) / (n : ℝ)) ^ 2)
+observations (intercept included via centering): `FiniteProbability.olsSlope` of the
+data `(X i ω + e i ω, α + β * X i ω + ε i ω)`, `i < n`. -/
+noncomputable def sampleSlopeME {Ω : Type*} (X e ε : ℕ → Ω → ℝ) (α β : ℝ) (n : ℕ) :
+    Ω → ℝ := fun ω =>
+  olsSlope (fun i : Fin n => X i ω + e i ω) (fun i : Fin n => α + β * X i ω + ε i ω)
 
 /-- Attenuation probability limit: the sample slope converges a.s. to
 `β * Var X / (Var X + Var e)`. The triples `(X i, e i, ε i)` are iid across `i`;
@@ -173,16 +153,15 @@ theorem measurementError_plim {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω
   have hφY : Measurable (fun t : ℝ × ℝ × ℝ => α + β * t.1 + t.2.2) := by fun_prop
   have hφWY : Measurable
       (fun t : ℝ × ℝ × ℝ => (t.1 + t.2.1) * (α + β * t.1 + t.2.2)) := by fun_prop
-  have hφW2 : Measurable (fun t : ℝ × ℝ × ℝ => (t.1 + t.2.1) ^ 2) := by fun_prop
+  have hφWW : Measurable
+      (fun t : ℝ × ℝ × ℝ => (t.1 + t.2.1) * (t.1 + t.2.1)) := by fun_prop
   have iW : Integrable (fun ω => X 0 ω + e 0 ω) μ := hW0.integrable h1
   have iY : Integrable (fun ω => α + β * X 0 ω + ε 0 ω) μ := hY0.integrable h1
   have iWY : Integrable
       (fun ω => (X 0 ω + e 0 ω) * (α + β * X 0 ω + ε 0 ω)) μ :=
     hW0.integrable_mul hY0
-  have iW2 : Integrable (fun ω => (X 0 ω + e 0 ω) ^ 2) μ := by
-    have h : Integrable (fun ω => (X 0 ω + e 0 ω) * (X 0 ω + e 0 ω)) μ :=
-      hW0.integrable_mul hW0
-    simpa [pow_two] using h
+  have iWW : Integrable (fun ω => (X 0 ω + e 0 ω) * (X 0 ω + e 0 ω)) μ :=
+    hW0.integrable_mul hW0
   have sW := strong_law_ae_real (fun i ω => X i ω + e i ω) iW
     (fun i j hij => (hJoint.indepFun hij).comp hφW hφW)
     (fun i => (hIdent i).comp hφW)
@@ -193,74 +172,50 @@ theorem measurementError_plim {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω
     (fun i ω => (X i ω + e i ω) * (α + β * X i ω + ε i ω)) iWY
     (fun i j hij => (hJoint.indepFun hij).comp hφWY hφWY)
     (fun i => (hIdent i).comp hφWY)
-  have sW2 := strong_law_ae_real (fun i ω => (X i ω + e i ω) ^ 2) iW2
-    (fun i j hij => (hJoint.indepFun hij).comp hφW2 hφW2)
-    (fun i => (hIdent i).comp hφW2)
-  filter_upwards [sW, sY, sWY, sW2] with ω mW mY mWY mW2
-  have hCxy : ∀ n : ℕ, 1 ≤ n →
-      (∑ i ∈ Finset.range n, ((X i ω + e i ω)
-        - (∑ i ∈ Finset.range n, (X i ω + e i ω)) / (n : ℝ)) *
-        ((α + β * X i ω + ε i ω)
-        - (∑ i ∈ Finset.range n, (α + β * X i ω + ε i ω)) / (n : ℝ)))
-      = (∑ i ∈ Finset.range n, (X i ω + e i ω) * (α + β * X i ω + ε i ω))
-        - ((∑ i ∈ Finset.range n, (X i ω + e i ω)) / (n : ℝ))
-          * ((∑ i ∈ Finset.range n, (α + β * X i ω + ε i ω)) / (n : ℝ)) * n := by
-    intro n hn
-    exact centered_sum_div (fun i => X i ω + e i ω)
-      (fun i => α + β * X i ω + ε i ω) n hn
-  have hCxx : ∀ n : ℕ, 1 ≤ n →
-      (∑ i ∈ Finset.range n, ((X i ω + e i ω)
-        - (∑ i ∈ Finset.range n, (X i ω + e i ω)) / (n : ℝ)) ^ 2)
-      = (∑ i ∈ Finset.range n, (X i ω + e i ω) ^ 2)
-        - ((∑ i ∈ Finset.range n, (X i ω + e i ω)) / (n : ℝ))
-          * ((∑ i ∈ Finset.range n, (X i ω + e i ω)) / (n : ℝ)) * n := by
-    intro n hn
-    have h := centered_sum_div (fun i => X i ω + e i ω)
-      (fun i => X i ω + e i ω) n hn
-    simpa [pow_two] using h
+  have sWW := strong_law_ae_real (fun i ω => (X i ω + e i ω) * (X i ω + e i ω)) iWW
+    (fun i j hij => (hJoint.indepFun hij).comp hφWW hφWW)
+    (fun i => (hIdent i).comp hφWW)
+  filter_upwards [sW, sY, sWY, sWW] with ω mW mY mWY mWW
+  -- For `n ≥ 1`, `sxy / n` is the sample cross moment minus the product of sample means.
+  have hmom : ∀ (x y : ℕ → ℝ) (n : ℕ), 1 ≤ n →
+      sxy (fun i : Fin n => x i) (fun i : Fin n => y i) / n =
+        (∑ i ∈ Finset.range n, x i * y i) / n -
+          (∑ i ∈ Finset.range n, x i) / n * ((∑ i ∈ Finset.range n, y i) / n) := by
+    intro x y n hn
+    have hn0 : (n : ℝ) ≠ 0 := by
+      have hne : n ≠ 0 := by omega
+      exact_mod_cast hne
+    rw [sxy_fin_eq_range, sub_div, mul_assoc, mul_div_cancel_left₀ _ hn0]
   have hNum : Filter.Tendsto
-      (fun n : ℕ => (∑ i ∈ Finset.range n, ((X i ω + e i ω)
-        - (∑ i ∈ Finset.range n, (X i ω + e i ω)) / (n : ℝ)) *
-        ((α + β * X i ω + ε i ω)
-        - (∑ i ∈ Finset.range n, (α + β * X i ω + ε i ω)) / (n : ℝ))) / (n : ℝ))
+      (fun n : ℕ => sxy (fun i : Fin n => X i ω + e i ω)
+        (fun i : Fin n => α + β * X i ω + ε i ω) / n)
       Filter.atTop
       (nhds ((∫ x, (X 0 x + e 0 x) * (α + β * X 0 x + ε 0 x) ∂μ)
         - (∫ x, (X 0 x + e 0 x) ∂μ) * (∫ x, (α + β * X 0 x + ε 0 x) ∂μ))) := by
-    have h := mWY.sub (mW.mul mY)
-    refine h.congr' ?_
+    refine (mWY.sub (mW.mul mY)).congr' ?_
     filter_upwards [Filter.eventually_ge_atTop 1] with n hn
-    have hn0 : (n : ℝ) ≠ 0 := by
-      have hne : n ≠ 0 := by omega
-      exact_mod_cast hne
-    rw [hCxy n hn, sub_div, mul_div_cancel_right₀ _ hn0]
+    exact (hmom (fun i => X i ω + e i ω) (fun i => α + β * X i ω + ε i ω) n hn).symm
   have hDen : Filter.Tendsto
-      (fun n : ℕ => (∑ i ∈ Finset.range n, ((X i ω + e i ω)
-        - (∑ i ∈ Finset.range n, (X i ω + e i ω)) / (n : ℝ)) ^ 2) / (n : ℝ))
+      (fun n : ℕ => sxy (fun i : Fin n => X i ω + e i ω)
+        (fun i : Fin n => X i ω + e i ω) / n)
       Filter.atTop
-      (nhds ((∫ x, (X 0 x + e 0 x) ^ 2 ∂μ)
+      (nhds ((∫ x, (X 0 x + e 0 x) * (X 0 x + e 0 x) ∂μ)
         - (∫ x, (X 0 x + e 0 x) ∂μ) * (∫ x, (X 0 x + e 0 x) ∂μ))) := by
-    have h := mW2.sub (mW.mul mW)
-    refine h.congr' ?_
+    refine (mWW.sub (mW.mul mW)).congr' ?_
     filter_upwards [Filter.eventually_ge_atTop 1] with n hn
-    have hn0 : (n : ℝ) ≠ 0 := by
-      have hne : n ≠ 0 := by omega
-      exact_mod_cast hne
-    rw [hCxx n hn, sub_div, mul_div_cancel_right₀ _ hn0]
+    exact (hmom (fun i => X i ω + e i ω) (fun i => X i ω + e i ω) n hn).symm
   have hL1 : (∫ x, (X 0 x + e 0 x) * (α + β * X 0 x + ε 0 x) ∂μ)
         - (∫ x, (X 0 x + e 0 x) ∂μ) * (∫ x, (α + β * X 0 x + ε 0 x) ∂μ)
       = covariance (fun ω => X 0 ω + e 0 ω)
         (fun ω => α + β * X 0 ω + ε 0 ω) μ := by
     have h := covariance_eq_sub hW0 hY0
     simpa [Pi.mul_apply] using h.symm
-  have hL2 : (∫ x, (X 0 x + e 0 x) ^ 2 ∂μ)
+  have hL2 : (∫ x, (X 0 x + e 0 x) * (X 0 x + e 0 x) ∂μ)
         - (∫ x, (X 0 x + e 0 x) ∂μ) * (∫ x, (X 0 x + e 0 x) ∂μ)
       = variance (fun ω => X 0 ω + e 0 ω) μ := by
     have h := variance_eq_sub hW0
-    have h2 : (∫ x, (X 0 x + e 0 x) ∂μ) * (∫ x, (X 0 x + e 0 x) ∂μ)
-        = (∫ x, (X 0 x + e 0 x) ∂μ) ^ 2 := by ring
-    rw [h2]
-    simpa [Pi.pow_apply] using h.symm
-  have hDen0 : (∫ x, (X 0 x + e 0 x) ^ 2 ∂μ)
+    simpa [Pi.pow_apply, pow_two] using h.symm
+  have hDen0 : (∫ x, (X 0 x + e 0 x) * (X 0 x + e 0 x) ∂μ)
       - (∫ x, (X 0 x + e 0 x) ∂μ) * (∫ x, (X 0 x + e 0 x) ∂μ) ≠ 0 := by
     rw [hL2]
     exact hW
@@ -278,7 +233,6 @@ theorem measurementError_plim {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω
     have hn0 : (n : ℝ) ≠ 0 := by
       have hne : n ≠ 0 := by omega
       exact_mod_cast hne
-    simp only [sampleSlopeME]
     exact div_div_div_cancel_right₀ hn0 _ _
   rw [hpop] at hFinal
   exact hFinal
