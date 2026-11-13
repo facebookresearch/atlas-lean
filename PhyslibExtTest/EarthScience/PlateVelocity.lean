@@ -31,18 +31,26 @@ No new definitions or results are introduced here.
 - `PhyslibExt.EarthScience.PlateVelocity`
 -/
 
-/-- Numeric plate: `ω = (1,2,3)`, `r = (4,5,6)`, cross `(-3,6,-3)`, dot `0`. -/
-example : (2 * 6 - 3 * 5 : ℝ) * 4 + (3 * 4 - 1 * 6) * 5 + (1 * 5 - 2 * 4) * 6 = 0 :=
-  EarthScience.plate_velocity_tangent (1, 2, 3) (4, 5, 6)
+open Matrix
 
-/-- Euler pole: `r = 2 * ω` gives velocity `(0, 0, 0)`. -/
-example : (2 * (2 * 3 : ℝ) - 3 * (2 * 2), 3 * (2 * 1) - 1 * (2 * 3), 1 * (2 * 2) - 2 * (2 * 1)) =
-    (0, 0, 0) := by
-  norm_num [Prod.mk.injEq]
+/-- Numeric plate: `ω = (1,2,3)`, `r = (4,5,6)` gives velocity `ω ⨯₃ r = (-3,6,-3)`. -/
+example : (![1, 2, 3] : Fin 3 → ℝ) ⨯₃ ![4, 5, 6] = ![-3, 6, -3] := by
+  rw [cross_apply]
+  ext i
+  fin_cases i <;> norm_num
+
+/-- The numeric plate velocity is tangent to `r`, via the theorem. -/
+example : ((![1, 2, 3] : Fin 3 → ℝ) ⨯₃ ![4, 5, 6]) ⬝ᵥ ![4, 5, 6] = 0 :=
+  EarthScience.plate_velocity_tangent _ _
+
+/-- Direct check of the numeric dot product: `(-3,6,-3) ⬝ᵥ (4,5,6) = 0`. -/
+example : (![-3, 6, -3] : Fin 3 → ℝ) ⬝ᵥ ![4, 5, 6] = 0 := by
+  norm_num [dotProduct, Fin.sum_univ_three]
+
+/-- Euler pole: `r = 2 • ω` with `ω = (1,2,3)` gives zero velocity. -/
+example : (![1, 2, 3] : Fin 3 → ℝ) ⨯₃ ((2 : ℝ) • ![1, 2, 3]) = 0 :=
+  EarthScience.plate_velocity_eq_zero_at_euler_pole _ 2
 
 /-- General Euler-pole instance, via the theorem. -/
-example (ω : ℝ × ℝ × ℝ) (c : ℝ) :
-    (ω.2.1 * (c * ω.2.2) - ω.2.2 * (c * ω.2.1),
-     ω.2.2 * (c * ω.1) - ω.1 * (c * ω.2.2),
-     ω.1 * (c * ω.2.1) - ω.2.1 * (c * ω.1)) = (0, 0, 0) :=
+example (ω : Fin 3 → ℝ) (c : ℝ) : ω ⨯₃ (c • ω) = 0 :=
   EarthScience.plate_velocity_eq_zero_at_euler_pole ω c
