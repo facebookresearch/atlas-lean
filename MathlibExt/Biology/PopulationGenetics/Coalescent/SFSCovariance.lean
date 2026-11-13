@@ -318,13 +318,6 @@ private lemma half_mul_integral_sfsLength (hT : ∀ k, Measurable (K.T k))
   exact integral_sfs K hT hτ hτ_law h_indep (fun j => (h.memLp_count j).integrable one_le_two)
     h.condExp_count (mem_Ico.1 hi).1 (mem_Ico.1 hi).2
 
-omit [IsProbabilityMeasure μ] in
-/-- Each Kingman holding time is square integrable. -/
-private lemma memLp_T {k : ℕ} (hk : k ∈ Icc 2 n) : MemLp (K.T k) 2 μ :=
-  (K.hasLaw k hk).memLp_comp (f := id)
-    ((memLp_two_iff_integrable_sq aestronglyMeasurable_id).2
-      (by simpa using integrable_pow_expMeasure (KingmanTimes.choose_two_pos hk) 2))
-
 /-- Under Kingman's coalescent with a random-joining block-size history, each branch-length
 class `L_i = sfsLength n i τ T` is square integrable (the block counts are a.s. bounded, the
 holding times are exponential). -/
@@ -351,7 +344,7 @@ theorem memLp_sfsLength (hτ : MeasurableSpace.comap τ ⊤ ≤ mΩ)
     filter_upwards [hae] with ω hω
     rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
     exact single_le_sum (f := g) (fun _ _ => by positivity) hω
-  exact hbd.fun_mul (memLp_T hk)
+  exact hbd.fun_mul (K.memLp_T hk)
 
 /-- Build `SFSCondMoments` for the Kingman genealogy: square integrability of the branch-length
 classes is automatic (`memLp_sfsLength`). -/

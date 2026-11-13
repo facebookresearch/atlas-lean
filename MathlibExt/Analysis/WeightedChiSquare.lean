@@ -23,8 +23,8 @@ has real part `1`. The one-term case is `charFun_map_mul_sq_gaussianReal`:
 `charFun_map_mul_sq_gaussianReal` and `charFun_weightedChiSq` are copied verbatim (statements and
 proofs unchanged) from
 `MathlibExt/Biology/StatisticalGenetics/RareVariantInference/BurdenSKATO.lean`, section `Davies`
-(open PR #1621, commit 45948b862); only the namespace changed. The BurdenSKATO copies are deleted
-after #1621 merges; until then both namespaces hold identical copies.
+(open PR #1621, commit 45948b862); only the namespace changed. PR #1621 deleted the BurdenSKATO
+copies and imports this module.
 
 `weightedChiSq`, its `IsProbabilityMeasure` instance and `weightedChiSq_zero` are moved verbatim
 from the module `MathlibExt.Biology.StatisticalGenetics.RareVariantInference.BurdenSKAT` (T37),
