@@ -50,7 +50,7 @@ variable {ι : Type*} {τ : Type*} [LinearOrder τ] [DecidableEq ι]
 
 /-- Weighted interval scheduling: the largest total `weight` of a subfamily of `S` whose distinct
 members are pairwise `IntervalCompatible start finish`. -/
-noncomputable def wisOpt (start finish : ι → τ) (weight : ι → ℕ) (S : Finset ι) : ℕ :=
+def wisOpt (start finish : ι → τ) (weight : ι → ℕ) (S : Finset ι) : ℕ :=
   (S.powerset.filter (fun F => ∀ a ∈ F, ∀ b ∈ F, a ≠ b →
     IntervalCompatible start finish a b)).sup (fun F => ∑ a ∈ F, weight a)
 
