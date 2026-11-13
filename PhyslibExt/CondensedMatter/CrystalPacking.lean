@@ -10,7 +10,6 @@ module
 public import Mathlib.Analysis.Real.Pi.Bounds
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.Data.Finset.Card
 
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -20,18 +19,19 @@ import Mathlib.Tactic.Ring
 /-!
 # Crystal structures and packing in the hard-sphere model
 
-Atomic packing factors, theoretical density, explicit offset lists, ideal HCP
-geometry, FCC interstitial holes, and radius-ratio thresholds, proved from
-explicit conventional-cell geometry with hard-sphere touching relations as
-hypotheses.
+Atomic packing factors, theoretical density, ideal HCP geometry and FCC
+interstitial holes, proved from explicit conventional-cell geometry with
+hard-sphere touching relations as hypotheses, and radius-ratio values as
+algebraic consequences of stated center distances.
 
 ## i. Overview
 
 All lengths are plain reals in one consistent unit. `R > 0` is an explicit
 hypothesis wherever an atomic radius is used. The physical APIs
 `atomicPackingFactor` and `theoreticalDensity` take a natural-number atom count
-and proofs that the radius, the cell volume and the Avogadro constant are
-positive; on that domain they equal the raw algebraic helpers
+and positivity proofs (radius and cell volume for the packing factor; molar
+mass, cell volume and Avogadro constant for the density); on that domain they
+equal the raw algebraic helpers
 `atomicPackingFactorRaw` and `theoreticalDensityRaw` (`atomicPackingFactor_eq_raw`,
 `theoreticalDensity_eq_raw`). The raw helpers accept arbitrary reals and, since
 Lean's division is total, return `0` for a zero cell volume, so they have no
@@ -44,10 +44,9 @@ packing formulas from explicit cell geometry (lattice parameters and atom
 counts as hypotheses). It does not create a competing lattice/crystal
 abstraction, does not claim a canonical crystal representation or space-group
 classification, and does not prove densest packing (Kepler/Hales is referenced
-only, never reproved). It does not prove coordination numbers either: the offset
-lists in section B are explicit finsets whose cardinalities are computed, with no
-statement connecting them to lattice positions, distances, or the complete set of
-touching neighbors.
+only, never reproved). It does not prove coordination numbers or radius-ratio
+thresholds either: no neighbor sets or surrounding-sphere configurations are
+modeled.
 
 ## ii. Key results
 
@@ -58,24 +57,23 @@ touching neighbors.
   physical APIs agree with the raw helpers on their domain.
 * `theoreticalDensityRaw_eq`, `density_mat_c1`: the symbolic density formula
   and the MAT-C1 numeric instance.
-* `fccFaceDiagonalOffsets_card`, `bccBodyDiagonalOffsets_card`,
-  `diamondTetrahedralOffsets_card`, `scEdgeOffsets_card`: the listed offset sets
-  have 12, 8, 4, 6 elements (cardinalities of explicit lists, not coordination
-  numbers).
 * `hcp_ideal_ratio`: ideal HCP `c/a = √(8/3)` via tetrahedron geometry.
 * `fcc_octahedral_hole`, `fcc_tetrahedral_hole`: hole-radius ratios
   `√2 - 1`, `√(3/2) - 1` with certified decimals.
-* `threshold_CN3`, `threshold_CN4`, `threshold_CN6`, `threshold_CN8`:
-  radius-ratio thresholds as pure geometry (predictive use is empirical).
+* `radiusRatio_eq_two_div_sqrt_three_sub_one`,
+  `radiusRatio_eq_sqrt_three_halves_sub_one`, `radiusRatio_eq_sqrt_two_sub_one`,
+  `radiusRatio_eq_sqrt_three_sub_one`: `r/R` equals `2/√3 - 1`, `√(3/2) - 1`,
+  `√2 - 1`, `√3 - 1` as algebraic consequences of stated center distances (no
+  sphere configuration is modeled).
 
 ## iii. Table of contents
 
 * Bounds: certified intervals for `√2`, `√3`, `√(3/2)` (`π` bounds come
   from Mathlib).
 * A. Atomic packing factor.
-* B. Theoretical density and offset lists.
+* B. Theoretical density.
 * C. Ideal HCP ratio and FCC interstitial holes.
-* D. Radius-ratio thresholds (geometry) and empirical predictive use.
+* D. Radius-ratio values and empirical predictive use.
 
 ## iv. References
 
@@ -269,27 +267,28 @@ lemma apf_diamond (R a Vc : ℝ) (hR : 0 < R)
   rw [div_eq_div_iff ha3 h16]
   ring
 
-/-! ## B. Theoretical density and offset lists -/
+/-! ## B. Theoretical density -/
 
 /-- Raw density expression `n * A / (Vc * NA)`: `n` atoms per cell, molar mass
 `A`, cell volume `Vc`, Avogadro constant `NA`, on arbitrary reals `A`, `Vc` and
 `NA`. Lean's division is total, so this is `0` for `Vc = 0` or `NA = 0`; it is a
-density only for `0 < Vc` and `0 < NA`, the domain that `theoreticalDensity`
-enforces. -/
+density only for `0 < A`, `0 < Vc` and `0 < NA`, the domain that
+`theoreticalDensity` enforces. -/
 noncomputable def theoreticalDensityRaw (n : ℕ) (A Vc NA : ℝ) : ℝ :=
   n * A / (Vc * NA)
 
 /-- Theoretical density on its physical domain: `n` atoms per conventional
-cell, molar mass `A`, cell volume `Vc > 0`, Avogadro constant `NA > 0`, in
+cell, molar mass `A > 0`, cell volume `Vc > 0`, Avogadro constant `NA > 0`, in
 consistent units. -/
-noncomputable def theoreticalDensity (n : ℕ) (A Vc NA : ℝ) (_hVc : 0 < Vc)
-    (_hNA : 0 < NA) : ℝ :=
+noncomputable def theoreticalDensity (n : ℕ) (A Vc NA : ℝ) (_hA : 0 < A)
+    (_hVc : 0 < Vc) (_hNA : 0 < NA) : ℝ :=
   theoreticalDensityRaw n A Vc NA
 
 /-- On its domain the physical density is the raw expression, so
 `theoreticalDensityRaw_eq` and `density_mat_c1` evaluate it. -/
-lemma theoreticalDensity_eq_raw (n : ℕ) (A Vc NA : ℝ) (hVc : 0 < Vc) (hNA : 0 < NA) :
-    theoreticalDensity n A Vc NA hVc hNA = theoreticalDensityRaw n A Vc NA := rfl
+lemma theoreticalDensity_eq_raw (n : ℕ) (A Vc NA : ℝ) (hA : 0 < A) (hVc : 0 < Vc)
+    (hNA : 0 < NA) :
+    theoreticalDensity n A Vc NA hA hVc hNA = theoreticalDensityRaw n A Vc NA := rfl
 
 /-- The symbolic density formula is exactly the raw expression. -/
 lemma theoreticalDensityRaw_eq (n : ℕ) (A Vc NA : ℝ) :
@@ -328,54 +327,6 @@ lemma density_unit_conversion (ρ : ℝ) :
   have hfactor : ((1 / 1000 : ℝ) / (1 / 1000000)) = 1000 := by norm_num
   rw [hfactor]
   ring
-
-/-- FCC face-diagonal offsets: the permutations of `(±1, ±1, 0)` in units of half
-the cubic lattice parameter `a/2`, i.e. the half face diagonals of the
-conventional cube. This is an explicit list only: no statement here connects it
-to FCC atomic positions or distances, or claims that it is the set of touching
-neighbors, so its cardinality (`fccFaceDiagonalOffsets_card`) is not a
-coordination number. No space-group or classification result is claimed. -/
-def fccFaceDiagonalOffsets : Finset (ℤ × ℤ × ℤ) :=
-  {(1, 1, 0), (1, -1, 0), (-1, 1, 0), (-1, -1, 0),
-   (1, 0, 1), (1, 0, -1), (-1, 0, 1), (-1, 0, -1),
-   (0, 1, 1), (0, 1, -1), (0, -1, 1), (0, -1, -1)}
-
-/-- BCC body-diagonal offsets: `(±1, ±1, ±1)` in units of `a/2`, i.e. the half
-body diagonals of the conventional cube. An explicit list only, as in
-`fccFaceDiagonalOffsets`; its cardinality is not a coordination number. -/
-def bccBodyDiagonalOffsets : Finset (ℤ × ℤ × ℤ) :=
-  {(1, 1, 1), (1, 1, -1), (1, -1, 1), (1, -1, -1),
-   (-1, 1, 1), (-1, 1, -1), (-1, -1, 1), (-1, -1, -1)}
-
-/-- Diamond tetrahedral offsets: `(1,1,1)`, `(1,-1,-1)`, `(-1,1,-1)`,
-`(-1,-1,1)` in units of `a/4`, quarter body diagonals pointing to the vertices of
-a regular tetrahedron. An explicit list only, as in `fccFaceDiagonalOffsets`; its
-cardinality is not a coordination number. -/
-def diamondTetrahedralOffsets : Finset (ℤ × ℤ × ℤ) :=
-  {(1, 1, 1), (1, -1, -1), (-1, 1, -1), (-1, -1, 1)}
-
-/-- SC edge offsets: the permutations of `(±2, 0, 0)` in units of `a/2`, i.e. the
-cube edge vectors `(±a, 0, 0)`, `(0, ±a, 0)`, `(0, 0, ±a)`. An explicit list
-only, as in `fccFaceDiagonalOffsets`; its cardinality is not a coordination
-number. -/
-def scEdgeOffsets : Finset (ℤ × ℤ × ℤ) :=
-  {(2, 0, 0), (-2, 0, 0), (0, 2, 0), (0, -2, 0), (0, 0, 2), (0, 0, -2)}
-
-/-- The FCC face-diagonal offset list has 12 elements (a list cardinality, not a
-coordination number). -/
-lemma fccFaceDiagonalOffsets_card : fccFaceDiagonalOffsets.card = 12 := by decide
-
-/-- The BCC body-diagonal offset list has 8 elements (a list cardinality, not a
-coordination number). -/
-lemma bccBodyDiagonalOffsets_card : bccBodyDiagonalOffsets.card = 8 := by decide
-
-/-- The diamond tetrahedral offset list has 4 elements (a list cardinality, not a
-coordination number). -/
-lemma diamondTetrahedralOffsets_card : diamondTetrahedralOffsets.card = 4 := by decide
-
-/-- The SC edge offset list has 6 elements (a list cardinality, not a
-coordination number). -/
-lemma scEdgeOffsets_card : scEdgeOffsets.card = 6 := by decide
 
 /-! ## C. Ideal HCP ratio and FCC interstitial holes -/
 
@@ -485,25 +436,27 @@ lemma fcc_tetrahedral_hole (a R r : ℝ) (ha : 0 < a)
   rw [abs_lt]
   constructor <;> linarith [hb.1, hb.2]
 
-/-! ## D. Radius-ratio thresholds (geometry) and empirical predictive use
+/-! ## D. Radius-ratio values and empirical predictive use
 
-The thresholds below are geometry: each is proved from its stated geometric
-configuration (hole center with `N` surrounding spheres of radius `R` at the
-stated center distance, hole sphere of radius `r` touching all of them) taken
-as hypotheses. Their PREDICTIVE use -- inferring a coordination number from
-an observed radius ratio -- is EMPIRICAL: it is a rule of thumb, not a
-theorem, and it fails when radii depend on coordination, when bonding is not
-hard-sphere, or when `c/a` deviates from ideal. No lemma in this file claims
-a predictive implication. The same element has different effective radii at
-different coordinations, so a single `R` is a model input, not a physical
+Each lemma below is an algebraic consequence of a stated center distance `d`
+and `r = d - R`: it evaluates `r / R` with a certified decimal. The sphere
+configurations that produce these distances are not modeled (no surrounding
+centers or tangency conditions occur in the statements), so these lemmas
+certify no geometric threshold and no coordination number. Inferring a
+coordination number from an observed radius ratio is an empirical rule of
+thumb, not a theorem: it fails when radii depend on coordination, when bonding
+is not hard-sphere, or when `c/a` deviates from ideal. No lemma in this file
+claims a predictive implication. The same element has different effective radii
+at different coordinations, so a single `R` is a model input, not a physical
 constant.
 
 Non-goals: no Kepler/Hales densest-packing proof; no claim that real crystals
 attain the ideal ratios.
 -/
 
-/-- Triangular-hole (`CN = 3`) threshold: `r/R = 2/√3 - 1 ≈ 0.155`. -/
-lemma threshold_CN3 (R d r : ℝ) (hR : 0 < R)
+/-- Algebraic consequence of the center distance `d = 2R/√3` and `r = d - R`:
+`r/R = 2/√3 - 1 ≈ 0.155`. -/
+lemma radiusRatio_eq_two_div_sqrt_three_sub_one (R d r : ℝ) (hR : 0 < R)
     (hd : d = 2 * R / Real.sqrt 3) (hr : r = d - R) :
     r / R = 2 / Real.sqrt 3 - 1 ∧ |r / R - 0.155| < 0.001 := by
   have hs3pos : 0 < Real.sqrt 3 :=
@@ -525,27 +478,26 @@ lemma threshold_CN3 (R d r : ℝ) (hR : 0 < R)
   rw [abs_lt]
   constructor <;> linarith
 
-/-- Tetrahedral-hole (`CN = 4`) threshold, derived from `fcc_tetrahedral_hole`:
-`r/R = √(3/2) - 1 ≈ 0.225`. -/
-lemma threshold_CN4 (a d R r : ℝ) (ha : 0 < a)
+/-- Algebraic consequence of `R = a/(2√2)`, the center distance `d = √3a/4` and
+`r = d - R`, via `fcc_tetrahedral_hole`: `r/R = √(3/2) - 1 ≈ 0.225`. -/
+lemma radiusRatio_eq_sqrt_three_halves_sub_one (a d R r : ℝ) (ha : 0 < a)
     (hR : R = a / (2 * Real.sqrt 2))
     (hd : d = Real.sqrt 3 * a / 4) (hr : r = d - R) :
     r / R = Real.sqrt (3 / 2) - 1 ∧ |r / R - 0.225| < 0.001 := by
   rw [hd] at hr
   exact fcc_tetrahedral_hole a R r ha hR hr
 
-/-- Octahedral-hole (`CN = 6`) threshold, derived from `fcc_octahedral_hole`:
-`r/R = √2 - 1 ≈ 0.414`. -/
-lemma threshold_CN6 (a d R r : ℝ) (ha : 0 < a)
+/-- Algebraic consequence of `R = a/(2√2)`, the center distance `d = a/2` and
+`r = d - R`, via `fcc_octahedral_hole`: `r/R = √2 - 1 ≈ 0.414`. -/
+lemma radiusRatio_eq_sqrt_two_sub_one (a d R r : ℝ) (ha : 0 < a)
     (hR : R = a / (2 * Real.sqrt 2)) (hd : d = a / 2) (hr : r = d - R) :
     r / R = Real.sqrt 2 - 1 ∧ |r / R - 0.414| < 0.001 := by
   rw [hd] at hr
   exact fcc_octahedral_hole a R r ha hR hr
 
-/-- Cubic-hole (`CN = 8`) threshold: from cube body-diagonal geometry
-(center-to-corner `√3a/2`, corner spheres touching along the edge),
-`r/R = √3 - 1 ≈ 0.732`. -/
-lemma threshold_CN8 (R a d r : ℝ) (hR : 0 < R) (ha : a = 2 * R)
+/-- Algebraic consequence of `a = 2R`, the center distance `d = √3a/2` and
+`r = d - R`: `r/R = √3 - 1 ≈ 0.732`. -/
+lemma radiusRatio_eq_sqrt_three_sub_one (R a d r : ℝ) (hR : 0 < R) (ha : a = 2 * R)
     (hd : d = Real.sqrt 3 * a / 2) (hr : r = d - R) :
     r / R = Real.sqrt 3 - 1 ∧ |r / R - 0.732| < 0.001 := by
   have hs3ne : Real.sqrt 3 ≠ 0 :=

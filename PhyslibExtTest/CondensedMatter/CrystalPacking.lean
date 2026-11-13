@@ -117,8 +117,8 @@ example : atomicPackingFactor 1 1 8 one_pos (by norm_num) = Real.pi / 6 := by
 /-- The physical density on its domain evaluates through the raw helper: the
 MAT-C1 fixture. -/
 example :
-    |theoreticalDensity 4 64 (64e-24) 6.02214076e23 (by norm_num) (by norm_num) -
-      6.64216| < 0.001 := by
+    |theoreticalDensity 4 64 (64e-24) 6.02214076e23 (by norm_num) (by norm_num)
+        (by norm_num) - 6.64216| < 0.001 := by
   rw [theoreticalDensity_eq_raw]
   exact density_mat_c1 _ rfl
 
@@ -128,10 +128,6 @@ example :
 #print axioms theoreticalDensityRaw
 #print axioms theoreticalDensity
 #print axioms theoreticalDensity_eq_raw
-#print axioms fccFaceDiagonalOffsets
-#print axioms bccBodyDiagonalOffsets
-#print axioms diamondTetrahedralOffsets
-#print axioms scEdgeOffsets
 #print axioms sqrt2_bounds
 #print axioms sqrt3_bounds
 #print axioms sqrt32_bounds
@@ -144,17 +140,13 @@ example :
 #print axioms angstrom_cubed_to_cm_cubed
 #print axioms density_mat_c1
 #print axioms density_unit_conversion
-#print axioms fccFaceDiagonalOffsets_card
-#print axioms bccBodyDiagonalOffsets_card
-#print axioms diamondTetrahedralOffsets_card
-#print axioms scEdgeOffsets_card
 #print axioms equilateral_centroid_sq
 #print axioms equilateral_centroid_dist
 #print axioms tetrahedron_height
 #print axioms hcp_ideal_ratio
 #print axioms fcc_octahedral_hole
 #print axioms fcc_tetrahedral_hole
-#print axioms threshold_CN3
-#print axioms threshold_CN4
-#print axioms threshold_CN6
-#print axioms threshold_CN8
+#print axioms radiusRatio_eq_two_div_sqrt_three_sub_one
+#print axioms radiusRatio_eq_sqrt_three_halves_sub_one
+#print axioms radiusRatio_eq_sqrt_two_sub_one
+#print axioms radiusRatio_eq_sqrt_three_sub_one
