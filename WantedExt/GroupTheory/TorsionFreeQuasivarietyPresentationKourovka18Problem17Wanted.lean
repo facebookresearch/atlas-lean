@@ -36,32 +36,42 @@ Finitely presented in `𝔎` means `X` and `S` finite; the presentation is given
 `Group.IsFinitelyPresented`.
 -/
 
-/-- The relation subgroup of the presentation `⟨X | S⟩` in the quasivariety of torsion-free groups:
-the least normal subgroup `N ⊇ S` of the free group `F(X)` with `F(X) ⧸ N` torsion-free, i.e. with
-`xᵏ ∈ N → x ∈ N` for every `k ≥ 1`. -/
+/-- **Relation subgroup of a torsion-free presentation.** Let $n$ be a natural number, let $F_n$ be
+the free group on the $n$ letters $0, 1, \dots, n - 1$, and let $S$ be a subset of $F_n$. The
+relation subgroup of $S$ in the quasivariety of torsion-free groups is the intersection of all
+normal subgroups $N$ of $F_n$ that contain $S$ and satisfy the following: for every $x \in F_n$
+and every integer $k \ge 1$, if $x^k \in N$ then $x \in N$. Equivalently, it is the least normal
+subgroup $N$ of $F_n$ containing $S$ for which $F_n / N$ is torsion-free. -/
 def torsionFreeRelations {n : ℕ} (S : Set (FreeGroup (Fin n))) : Subgroup (FreeGroup (Fin n)) :=
   sInf {N | N.Normal ∧ S ⊆ N ∧ ∀ (x : FreeGroup (Fin n)) (k : ℕ), 0 < k → x ^ k ∈ N → x ∈ N}
 
-/-- `G` is finitely presented in the quasivariety of torsion-free groups: `G ≅ F(X) ⧸ R` for a
-finite alphabet `X`, a finite set `S` of relators and `R = torsionFreeRelations S`. -/
+/-- **Groups finitely presented in the torsion-free quasivariety.** A group $G$ is finitely
+presented in the quasivariety of torsion-free groups if there are a natural number $n$, a finite
+subset $S$ of the free group $F_n$ on $n$ letters, and a surjective homomorphism
+$f \colon F_n \to G$ whose kernel is the relation subgroup of $S$ in the quasivariety of
+torsion-free groups. -/
 def IsTorsionFreeFinitelyPresented (G : Type) [Group G] : Prop :=
   ∃ (n : ℕ) (S : Finset (FreeGroup (Fin n))) (f : FreeGroup (Fin n) →* G),
     Function.Surjective f ∧ f.ker = torsionFreeRelations (S : Set (FreeGroup (Fin n)))
 
-/-- Kourovka 18.17 (O. V. Belegradek): there is a torsion-free group that is finitely presented in
-the quasivariety of torsion-free groups but not finitely presentable in the variety of all
-groups. -/
+/-- **Kourovka Problem 18.17 (statement).** The statement that there is a torsion-free group $G$ (no
+element of $G$ other than the identity has finite order) that is finitely presented in the
+quasivariety of torsion-free groups but is not a finitely presented group.
+
+The problem was posed by O. V. Belegradek. -/
 def torsionFreePresentedNotFinitelyPresented : Prop :=
   ∃ (G : Type) (_ : Group G), (∀ g : G, g ≠ 1 → ¬ IsOfFinOrder g) ∧
     IsTorsionFreeFinitelyPresented G ∧ ¬ Group.IsFinitelyPresented G
 
 /--
-Resolved true: the Kourovka Archive answers 18.17 "Yes, there is" (A. I. Budkin, 2017): some
-torsion-free group is finitely presented in the quasivariety of torsion-free groups but is not a
-finitely presented group. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group
-Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems,
-Problem 18.17 (O. V. Belegradek); resolution: A. I. Budkin, Siberian Electron. Math. Rep. 14 (2017),
-937-945, Kourovka Archive, Problem 18.17: Yes, there is, http://semr.math.nsc.ru.
+**Budkin's theorem (Kourovka Problem 18.17).** There is a torsion-free group $G$ (no element of $G$
+other than the identity has finite order) that is finitely presented in the quasivariety of
+torsion-free groups but is not a finitely presented group.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 18.17 (O. V.
+Belegradek); resolution: A. I. Budkin, Siberian Electron. Math. Rep. 14 (2017), 937-945, Kourovka
+Archive, Problem 18.17: Yes, there is, http://semr.math.nsc.ru.
 -/
 public theorem_wanted torsionFreePresentedNotFinitelyPresented_holds :
     torsionFreePresentedNotFinitelyPresented

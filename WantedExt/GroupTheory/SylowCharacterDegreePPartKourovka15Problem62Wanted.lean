@@ -41,26 +41,40 @@ allow a dependence on `p`, unlike 15.32). Yang and Qian's bound has an absolute 
 with `|P : O_p(G)| = |G : F(G)|_p`), so `f(e) = (k + 1) e` works.
 -/
 
-/-- The degrees of the irreducible complex representations of `G` (the degrees `χ(1)` of its
-irreducible characters). -/
+/-- **Irreducible complex representation degrees.** For a group $G$, the set of natural numbers $d$
+such that $G$ has an irreducible complex representation of finite dimension $d$; for a finite
+group these are the degrees $\chi(1)$ of its irreducible characters. -/
 def irreducibleDegrees (G : Type*) [Group G] : Set ℕ :=
   {d | ∃ (V : Type) (_ : AddCommGroup V) (_ : Module ℂ V) (_ : FiniteDimensional ℂ V)
     (ρ : Representation ℂ G V), ρ.IsIrreducible ∧ Module.finrank ℂ V = d}
 
-/-- `e_p(G)`: the largest exponent of `p` dividing an irreducible character degree of `G`. -/
+/-- **Largest $p$-adic exponent of the irreducible degrees.** For a natural number $p$ and a group
+$G$, $e_p(G)$ is the supremum in $\mathbb{N}$ of the exponents of $p$ in the prime factorizations
+of the dimensions of the finite-dimensional irreducible complex representations of $G$, where the
+supremum of an empty or unbounded set is $0$. For a prime $p$ and a finite group $G$, it is the
+largest $e$ such that $p^e$ divides the degree $\chi(1)$ of some irreducible character $\chi$ of
+$G$. -/
 noncomputable def maxPPartExponent (p : ℕ) (G : Type*) [Group G] : ℕ :=
   sSup ((fun d => d.factorization p) '' irreducibleDegrees G)
 
-/-- Kourovka 15.62 (A. Moretó): there is a function `f` such that `e_p(P) ≤ f(e_p(G))` for every
-prime `p`, finite group `G` and Sylow `p`-subgroup `P` of `G`. -/
+/-- **Kourovka Problem 15.62 ($p$-parts of character degrees of Sylow subgroups).** The statement,
+asked by A. Moretó, that there is a function $f \colon \mathbb{N} \to \mathbb{N}$ such that
+$e_p(P) \le f(e_p(G))$ for every prime $p$, every finite group $G$ and every Sylow $p$-subgroup $P$
+of $G$, where $e_p(H)$ is the largest exponent of $p$ dividing an irreducible character degree of
+$H$. -/
 def sylowCharacterDegreeExponentBounded : Prop :=
   ∃ f : ℕ → ℕ, ∀ p : ℕ, p.Prime → ∀ (G : Type) [Group G] [Finite G] (P : Sylow p G),
     maxPPartExponent p (P : Subgroup G) ≤ f (maxPPartExponent p G)
 
 /--
-Resolved true: the Kourovka Archive answers 15.62 "Yes, it is true" (Yang and Qian; the solvable
-case by Moretó and Wolf): `e_p(P)` is bounded by a function of `e_p(G)`, one function for all
-primes, since Yang and Qian's bound `|G : F(G)|_p ≤ p^(k e_p(G))` has an absolute constant `k`.
+**Character degrees of Sylow subgroups are bounded in terms of those of the group.** There is a
+function $f \colon \mathbb{N} \to \mathbb{N}$ such that for every prime $p$, every finite group
+$G$ and every Sylow $p$-subgroup $P$ of $G$, $e_p(P) \le f(e_p(G))$, where $e_p(H)$ is the
+largest exponent of $p$ dividing an irreducible character degree of $H$.
+
+One function works for all primes, since Yang and Qian's bound $|G : F(G)|_p \le p^{k e_p(G)}$,
+with $F(G)$ the Fitting subgroup of $G$, has an absolute constant $k$.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 15.62 (A.
 Moretó); resolution: Yong Yang and Guohua Qian, Adv. Math. 328 (2018), 356-366, abstract (|G :

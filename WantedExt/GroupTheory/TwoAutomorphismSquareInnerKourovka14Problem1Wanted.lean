@@ -33,9 +33,10 @@ A 2-automorphism is an automorphism whose order is a power of `2`; "centralizing
 1`.
 -/
 
-/-- Kourovka 14.1 (R. Zh. Aleev): if a finite group `G` has no nontrivial normal subgroup of odd
-order and `φ` is an automorphism of `G` of `2`-power order centralizing a Sylow `2`-subgroup of
-`G`, then `φ²` is inner. -/
+/-- **Kourovka Problem 14.1.** The statement that for every finite group $G$ with no nontrivial
+normal subgroup of odd order and every automorphism $\varphi$ of $G$ whose order is a power of
+$2$, if $\varphi$ fixes every element of some Sylow $2$-subgroup of $G$, then $\varphi^2$ is
+conjugation by some element of $G$, that is, $\varphi^2$ is an inner automorphism. -/
 def twoAutomorphismCentralizingSylowSquareInner : Prop :=
   ∀ (G : Type) [Group G] [Finite G],
     (∀ N : Subgroup G, N.Normal → Odd (Nat.card N) → N = ⊥) →
@@ -43,8 +44,12 @@ def twoAutomorphismCentralizingSylowSquareInner : Prop :=
       (∃ S : Sylow 2 G, ∀ s ∈ (S : Subgroup G), φ s = s) → ∃ g : G, φ ^ 2 = MulAut.conj g
 
 /--
-Resolved true: the Kourovka Archive answers 14.1 "Yes, it is true", citing Glauberman: if `O(G) = 1`
-and a 2-automorphism `φ` of the finite group `G` centralizes a Sylow 2-subgroup, then `φ²` is inner.
+**Glauberman's theorem on squares of $2$-automorphisms (Kourovka Problem 14.1).** Let $G$ be a
+finite group with no nontrivial normal subgroup of odd order, and let $\varphi$ be an automorphism
+of $G$ whose order is a power of $2$. If $\varphi$ fixes every element of some Sylow $2$-subgroup
+of $G$, then $\varphi^2$ is an inner automorphism of $G$, that is, $\varphi^2$ is conjugation by
+some $g \in G$.
+
 Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 14.1 (R. Zh.
 Aleev); resolution: G. Glauberman, Math. Z. 107 (1968), 1-20, Kourovka Archive, Problem 14.1

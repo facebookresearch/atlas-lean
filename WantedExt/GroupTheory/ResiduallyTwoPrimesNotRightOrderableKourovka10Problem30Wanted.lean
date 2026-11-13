@@ -38,20 +38,28 @@ order is invariant under right multiplication.
 
 open MathlibExt.GroupTheory.KourovkaNotebookShared (IsResiduallyFiniteP)
 
-/-- `G` is right-orderable: some linear order on `G` is invariant under right multiplication. -/
+/-- **Right-orderable groups.** A group $G$ is right-orderable when it admits a linear order $\le$
+that is invariant under right multiplication: $a \le b$ implies $ac \le bc$ for all
+$a, b, c \in G$. -/
 def IsRightOrderable (G : Type*) [Group G] : Prop :=
   ∃ _ : LinearOrder G, ∀ a b c : G, a ≤ b → a * c ≤ b * c
 
-/-- Kourovka 10.30 (N. Ya. Medvedev): some group that is residually a finite `p`-group for two
-distinct primes `p` and `q` is not right-orderable. -/
+/-- **Medvedev's question on right-orderability (Kourovka 10.30).** The statement that there exist
+a group $G$ and distinct primes $p$ and $q$ such that $G$ is residually a finite $p$-group and
+residually a finite $q$-group, but $G$ is not right-orderable. -/
 def residuallyTwoPrimesNotRightOrderable : Prop :=
   ∃ (G : Type) (_ : Group G) (p q : ℕ), p.Prime ∧ q.Prime ∧ p ≠ q ∧
     IsResiduallyFiniteP p G ∧ IsResiduallyFiniteP q G ∧ ¬ IsRightOrderable G
 
 /--
-Resolved true: the Kourovka Archive answers "Yes, there does", citing Linnell (2002): some group
-that is residually a finite `p`-group for two distinct primes is not right-orderable (for infinitely
-many primes such a group is orderable, by Rhemtulla). Source: E. I. Khukhro and V. D. Mazurov
+**A non-right-orderable group that is residually $p$ for two primes (Linnell).** There exist a
+group $G$ and distinct primes $p$ and $q$ such that $G$ is residually a finite $p$-group and
+residually a finite $q$-group but is not right-orderable.
+
+By Rhemtulla, a group that is residually a finite $p$-group for infinitely many primes $p$ is
+orderable.
+
+Source: E. I. Khukhro and V. D. Mazurov
 (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49
 (2026), Archive of Solved Problems, Problem 10.30 (N. Ya. Medvedev); resolution: P. A. Linnell, J.
 Algebra 248 (2002), 605-607, Kourovka Archive, Problem 10.30 ("Yes, there does").

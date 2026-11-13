@@ -15,9 +15,12 @@ public import Mathlib.Algebra.Group.Subgroup.Basic
 
 namespace MathlibExt.GroupTheory.ScottishBook62Wanted
 
-/-- Mazur and Ulam's Problem 62 from the Scottish Book: if a group `G`
-is the union of an increasing chain of subgroups `H n`, each isomorphic
-to `H 1`, is `G` itself isomorphic to `H 1`? -/
+/-- **Claim of Scottish Book Problem 62.** The claim that for every abelian group $G$ and
+every sequence of subgroups $H_0 \le H_1 \le H_2 \le \cdots$ of $G$ whose union is $G$ and
+each of which is isomorphic to $H_1$, the group $G$ is itself isomorphic to $H_1$.
+
+The problem is posed for groups; the claim here is restricted to abelian groups, which loses
+nothing for its refutation since Baer's counterexample is abelian. -/
 def ScottishBookProblem62Claim : Prop :=
   ∀ (G : Type) [AddCommGroup G] (H : ℕ → AddSubgroup G),
     (∀ n, H n ≤ H (n + 1)) →
@@ -26,7 +29,15 @@ def ScottishBookProblem62Claim : Prop :=
     Nonempty (G ≃+ ↥(H 1))
 
 /--
-Mazur–Ulam Problem 62 is false: the answer is no. Source: S. Mazur and
+**Refutation of Scottish Book Problem 62.** The claim of Scottish Book Problem 62 is false:
+there are an abelian group $G$ and subgroups $H_0 \le H_1 \le H_2 \le \cdots$ of $G$ whose
+union is $G$, each isomorphic to $H_1$, such that $G$ is not isomorphic to $H_1$.
+
+R. Baer's counterexample is $G = \mathbb{Q}$ with $H_n = \frac{1}{n!}\mathbb{Z}$: each $H_n$
+is isomorphic to $\mathbb{Z}$ and their union is $\mathbb{Q}$, but $\mathbb{Q}$ is not
+isomorphic to $\mathbb{Z}$.
+
+Source: S. Mazur and
 S. Ulam, Problem 62 of the Scottish Book; the typescript Ad 62 records
 R. Baer's remark giving the counterexample, with `G` the group of
 rational numbers and `G 1` the integers: the rationals are the union of

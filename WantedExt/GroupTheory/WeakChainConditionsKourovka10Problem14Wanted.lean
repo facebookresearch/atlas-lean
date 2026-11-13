@@ -34,8 +34,9 @@ which each member has infinite index in the next larger one; an infinite index i
 The minimum and maximum conditions are `WellFoundedLT` and `WellFoundedGT` on `Subgroup G`.
 -/
 
-/-- The weak maximal condition on subgroups: there is no infinite ascending chain
-`H₀ ≤ H₁ ≤ ⋯` of subgroups with every index `|Hᵢ₊₁ : Hᵢ|` infinite (`relIndex = 0`). -/
+/-- **Weak maximal condition on subgroups.** A group $G$ satisfies the weak maximal condition on
+subgroups when there is no infinite ascending chain $H_0 \le H_1 \le \cdots$ of subgroups of $G$
+in which every index $|H_{i+1} : H_i|$ is infinite. -/
 def WeakMaximalCondition (G : Type*) [Group G] : Prop :=
   ¬ ∃ H : ℕ → Subgroup G, ∀ i, H i ≤ H (i + 1) ∧ (H i).relIndex (H (i + 1)) = 0
 
@@ -55,9 +56,14 @@ def maximalImpliesWeakMinimal : Prop :=
   ∀ (G : Type) [Group G], WellFoundedGT (Subgroup G) → WeakMinimalCondition G
 
 /--
-Resolved false: the Kourovka Archive answers 10.14(a) "No, not always", citing Obraztsov (1990):
-some group with the minimum condition on subgroups has an infinite ascending chain of subgroups with
-all successive indices infinite. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems
+**A group with the minimal condition can fail the weak maximal condition.** There is a group $G$
+satisfying the minimal condition on subgroups (there is no infinite strictly descending chain of
+subgroups of $G$) that has an infinite ascending chain $H_0 \le H_1 \le \cdots$ of subgroups in
+which every index $|H_{i+1} : H_i|$ is infinite. This answers Kourovka Problem 10.14(a) negatively.
+
+The Kourovka Archive answers 10.14(a) "No, not always", citing Obraztsov (1990).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems
 in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved
 Problems, Problem 10.14 (D. I. Zaitsev); resolution: V. N. Obraztsov, Math. USSR-Sb. 66, no. 2
 (1990), 541-553 (a); V. N. Obraztsov, Siberian Math. J. 32, no. 1 (1991), 79-84 (b), Kourovka
@@ -66,9 +72,14 @@ Archive, Problem 10.14 (both parts "No, not always").
 public theorem_wanted minimalImpliesWeakMaximal_refuted : ¬ minimalImpliesWeakMaximal
 
 /--
-Resolved false: the Kourovka Archive answers 10.14(b) "No, not always", citing Obraztsov (1991):
-some group with the maximum condition on subgroups has an infinite descending chain of subgroups
-with all successive indices infinite. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
+**A group with the maximal condition can fail the weak minimal condition.** There is a group $G$
+satisfying the maximal condition on subgroups (there is no infinite strictly ascending chain of
+subgroups of $G$) that has an infinite descending chain $H_0 \ge H_1 \ge \cdots$ of subgroups in
+which every index $|H_i : H_{i+1}|$ is infinite. This answers Kourovka Problem 10.14(b) negatively.
+
+The Kourovka Archive answers 10.14(b) "No, not always", citing Obraztsov (1991).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
 Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of
 Solved Problems, Problem 10.14 (D. I. Zaitsev); resolution: V. N. Obraztsov, Math. USSR-Sb. 66, no.
 2 (1990), 541-553 (a); V. N. Obraztsov, Siberian Math. J. 32, no. 1 (1991), 79-84 (b), Kourovka

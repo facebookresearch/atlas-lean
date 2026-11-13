@@ -36,28 +36,40 @@ b - a + a * c`, where `x - y = x + (-y)`. A group is left-orderable when some st
 invariant under left multiplication (left addition for `+`).
 -/
 
-/-- The multiplication of `B` is left-orderable: some strict total order on `B` is invariant under
-left multiplication. -/
+/-- **Left-orderable multiplication.** The multiplication of a set $B$ is left-orderable when there
+is a strict total order $<$ on $B$ that is invariant under left multiplication: for all
+$a, b, c \in B$, if $b < c$ then $a b < a c$. -/
 def LeftOrderableMul (B : Type*) [Mul B] : Prop :=
   ∃ r : B → B → Prop, IsStrictTotalOrder B r ∧ ∀ a b c : B, r b c → r (a * b) (a * c)
 
-/-- The addition of `B` is left-orderable: some strict total order on `B` is invariant under left
-addition. -/
+/-- **Left-orderable addition.** The addition of a set $B$ is left-orderable when there is a strict
+total order $<$ on $B$ that is invariant under left addition: for all $a, b, c \in B$, if $b < c$
+then $a + b < a + c$. -/
 def LeftOrderableAdd (B : Type*) [Add B] : Prop :=
   ∃ r : B → B → Prop, IsStrictTotalOrder B r ∧ ∀ a b c : B, r b c → r (a + b) (a + c)
 
-/-- Kourovka 19.49 (V. Lebed, L. Vendramin): in a skew brace `(B, +, ·)` (two group structures on
-`B`, the additive one not necessarily abelian, with `a (b + c) = a b - a + a c`) whose
-multiplicative group is left-orderable, the additive group is left-orderable. -/
+/-- **Left-orderability of the additive group of a skew brace (Kourovka 19.49).** The statement
+that for every skew brace $B$, that is, a set with two group structures, an addition $+$ (not
+necessarily commutative) and a multiplication $\cdot$, satisfying
+$a \cdot (b + c) = a \cdot b - a + a \cdot c$ for all $a, b, c \in B$: if the multiplication of
+$B$ is left-orderable, then the addition of $B$ is left-orderable. -/
 def skewBraceAdditiveLeftOrderable : Prop :=
   ∀ (B : Type) [AddGroup B] [Group B], (∀ a b c : B, a * (b + c) = a * b - a + a * c) →
     LeftOrderableMul B → LeftOrderableAdd B
 
 /--
-Resolved false: Nasybullov (Example 3.1) gives the skew brace on `ℤ` with `a ⊕ b = a + (−1)^a b` and
-`a ⊙ b = a + b`, whose multiplicative group is infinite cyclic (left-orderable) and whose additive
-group is infinite dihedral, with an element of order 2, so not left-orderable; the Kourovka Archive
-answers 19.49 "No, not always". Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in
+**A skew brace whose additive group is not left-orderable.** There is a skew brace $B$, that is, a
+set with two group structures, an addition $+$ and a multiplication $\cdot$, satisfying
+$a \cdot (b + c) = a \cdot b - a + a \cdot c$ for all $a, b, c \in B$, whose multiplication is
+left-orderable but whose addition is not left-orderable. That is, the statement of Kourovka
+Problem 19.49 fails.
+
+Nasybullov's example (Example 3.1) is $\mathbb{Z}$ with addition $a \oplus b = a + (-1)^a b$ and
+multiplication $a \odot b = a + b$: the multiplicative group is infinite cyclic, hence
+left-orderable, while the additive group is infinite dihedral and has an element of order $2$, so
+it is not left-orderable. The Kourovka Archive answers 19.49 "No, not always".
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in
 Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved
 Problems, Problem 19.49 (V. Lebed, L. Vendramin); resolution: T. Nasybullov, Connections between
 properties of the additive and the multiplicative groups of a two-sided skew brace, J. Algebra 540

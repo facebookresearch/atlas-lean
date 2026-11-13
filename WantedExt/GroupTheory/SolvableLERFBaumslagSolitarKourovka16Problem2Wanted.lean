@@ -40,40 +40,48 @@ problem's background, Alperin). Containing `BS(1, n)` means having a subgroup is
 stated as an injective homomorphism from the presented group.
 -/
 
-/-- The solvable Baumslag-Solitar group `BS(1, n) = ⟨a, b | b a b⁻¹ = aⁿ⟩`, with `a = x₀` and
-`b = x₁`. -/
+/-- **The Baumslag–Solitar group BS(1, n).** For a natural number $n$, $\mathrm{BS}(1, n)$ is the
+group with presentation $\langle a, b \mid b a b^{-1} = a^n \rangle$. -/
 abbrev BS1 (n : ℕ) : Type :=
   PresentedGroup ({FreeGroup.of 1 * FreeGroup.of 0 * (FreeGroup.of 1)⁻¹ * (FreeGroup.of 0 ^ n)⁻¹} :
     Set (FreeGroup (Fin 2)))
 
-/-- The subgroup `H` of `G` is separable: every `x ∉ H` stays outside the image of `H` under some
-homomorphism to a finite group. -/
+/-- **Separable subgroup.** A subgroup $H$ of a group $G$ is separable when for every element
+$x \in G$ with $x \notin H$ there are a finite group $F$ and a group homomorphism
+$f \colon G \to F$ with $f(x) \notin f(H)$. -/
 def IsSeparableSubgroup {G : Type} [Group G] (H : Subgroup G) : Prop :=
   ∀ x : G, x ∉ H → ∃ (F : Type) (_ : Group F) (_ : Finite F) (f : G →* F), f x ∉ H.map f
 
-/-- `G` is locally subgroup-separable (LERF): every finitely generated subgroup is separable. -/
+/-- **Locally subgroup-separable (LERF) group.** A group $G$ is locally subgroup-separable, or
+LERF, when every finitely generated subgroup of $G$ is separable. -/
 def IsLocallySubgroupSeparable (G : Type) [Group G] : Prop :=
   ∀ H : Subgroup G, H.FG → IsSeparableSubgroup H
 
-/-- Kourovka 16.2 (R. C. Alperin): a finitely generated solvable group is locally
-subgroup-separable if and only if it has no subgroup isomorphic to a solvable Baumslag-Solitar
-group `BS(1, n)` with `n > 1`. -/
+/-- **Kourovka Problem 16.2 (R. C. Alperin).** A finitely generated solvable group $G$ is locally
+subgroup-separable if and only if there is no $n > 1$ such that $G$ has a subgroup isomorphic to
+the Baumslag–Solitar group $\mathrm{BS}(1, n)$. -/
 def solvableLERFIffNoBaumslagSolitar : Prop :=
   ∀ (G : Type) [Group G], Group.FG G → Group.IsSolvable G →
     (IsLocallySubgroupSeparable G ↔ ¬ ∃ n : ℕ, 1 < n ∧ ∃ f : BS1 n →* G, Function.Injective f)
 
 /--
-Resolved false: Button (Theorem 2.1) shows that the soluble group `G = ⟨t, ℤ × ℤ⟩`, the ascending
-HNN extension of `ℤ × ℤ = ⟨u, v⟩` by the injective endomorphism `u ↦ u⁵ v⁻¹`, `v ↦ u²`, is not LERF
-but contains no `BS(1, m)` with `m ≠ 0, ±1`, and concludes that the answer to Problem 16.2 is no;
-the Kourovka Archive answers 16.2 "No, it is not", citing Button. Source: E. I. Khukhro and V. D.
-Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
-arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 16.2 (R. C. Alperin); resolution: J.
-O. Button, Strictly ascending HNN extensions in soluble groups, Ricerche di Matematica 61 (2012),
-no. 1, 139-145, arXiv:1004.0197, Theorem 2.1 and the remark after it (the soluble ascending HNN
-extension G = ⟨t, ℤ × ℤ⟩ with θ(u) = u⁵v⁻¹, θ(v) = u² is not LERF and contains no BS(1, m), m ≠ 0,
-±1, so the answer to Problem 16.2 is no); Kourovka Archive, Problem 16.2 (No, it is not),
-https://arxiv.org/abs/1004.0197.
+**Kourovka Problem 16.2 has a negative answer.** There is a finitely generated solvable group $G$
+for which the following two conditions are not equivalent: $G$ is locally subgroup-separable;
+there is no $n > 1$ such that $G$ has a subgroup isomorphic to the Baumslag–Solitar group
+$\mathrm{BS}(1, n)$.
+
+Button's counterexample is the solvable ascending HNN extension of
+$\mathbb{Z} \times \mathbb{Z} = \langle u, v \rangle$ by the injective endomorphism
+$u \mapsto u^5 v^{-1}$, $v \mapsto u^2$: it is not locally subgroup-separable but contains no
+$\mathrm{BS}(1, m)$ with $m \ne 0, \pm 1$.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 16.2 (R. C.
+Alperin); resolution: J. O. Button, Strictly ascending HNN extensions in soluble groups, Ricerche
+di Matematica 61 (2012), no. 1, 139-145, arXiv:1004.0197, Theorem 2.1 and the remark after it
+(the soluble ascending HNN extension G = ⟨t, ℤ × ℤ⟩ with θ(u) = u⁵v⁻¹, θ(v) = u² is not LERF and
+contains no BS(1, m), m ≠ 0, ±1, so the answer to Problem 16.2 is no); Kourovka Archive, Problem
+16.2 (No, it is not), https://arxiv.org/abs/1004.0197.
 -/
 public theorem_wanted solvableLERFIffNoBaumslagSolitar_refuted : ¬ solvableLERFIffNoBaumslagSolitar
 

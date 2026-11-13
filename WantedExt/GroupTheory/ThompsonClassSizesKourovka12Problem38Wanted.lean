@@ -36,25 +36,37 @@ ulamai/UnsolvedMath v1.8.0.
 b, a b ≠ b a`, and trivial centre is `Subgroup.center H = ⊥`.
 -/
 
-/-- `N(G)`: the set of sizes of the conjugacy classes of `G`. -/
+/-- **The set of conjugacy class sizes.** For a group $G$, $N(G)$ is the set of natural numbers
+$|\{y \in G : y \text{ is conjugate to } x\}|$ for $x \in G$, that is, the set of sizes of the
+conjugacy classes of $G$, where an infinite class counts as size $0$. -/
 def classSizes (G : Type*) [Group G] : Set ℕ :=
   Set.range fun x : G => Nat.card {y : G // IsConj x y}
 
-/-- Kourovka 12.38 (J. G. Thompson): if `G` is a finite non-abelian simple group and `H` is a
-finite group with trivial centre and `N(G) = N(H)`, then `G ≅ H`. -/
+/-- **Thompson's conjecture on conjugacy class sizes.** Write $N(G)$ for the set of sizes of the
+conjugacy classes of a group $G$. Thompson's conjecture is the statement that for all finite
+groups $G$ and $H$, if $G$ is simple and non-abelian, $H$ has trivial centre, and
+$N(G) = N(H)$, then $G$ and $H$ are isomorphic.
+
+This is Kourovka Notebook Problem 12.38 (J. G. Thompson). -/
 def simpleGroupRecognizedByClassSizes : Prop :=
   ∀ (G H : Type) [Group G] [Finite G] [Group H] [Finite H], IsSimpleGroup G →
     (∃ a b : G, a * b ≠ b * a) → Subgroup.center H = ⊥ → classSizes G = classSizes H →
     Nonempty (G ≃* H)
 
 /--
+**Thompson's conjecture on conjugacy class sizes is true.** For all finite groups $G$ and $H$, if
+$G$ is simple and non-abelian, $H$ has trivial centre, and $G$ and $H$ have the same set of
+conjugacy class sizes, then $G$ and $H$ are isomorphic.
+
 Resolved true: the Kourovka Archive answers 12.38 "Yes, it is true" (Thompson's conjecture); the
 final step is I. B. Gorshkov (Commun. Algebra 47 (2019)), completing a case-by-case proof over the
-finite simple groups by many authors. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
-Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of
-Solved Problems, Problem 12.38 (J. G. Thompson; A. S. Kondratiev, W. J. Shi); resolution: I. B.
-Gorshkov, Commun. Algebra 47 (2019), no. 12, 5192-5206 (final step), Kourovka Archive, Problem
-12.38: Yes, it is true; earlier steps by many authors cited there.
+finite simple groups by many authors.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 12.38 (J. G.
+Thompson; A. S. Kondratiev, W. J. Shi); resolution: I. B. Gorshkov, Commun. Algebra 47 (2019),
+no. 12, 5192-5206 (final step), Kourovka Archive, Problem 12.38: Yes, it is true; earlier steps
+by many authors cited there.
 -/
 public theorem_wanted simpleGroupRecognizedByClassSizes_holds : simpleGroupRecognizedByClassSizes
 

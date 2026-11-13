@@ -35,29 +35,36 @@ nilpotent; a Schmidt subgroup is a subgroup that is a Schmidt group. `ℙ`-subno
 reflexive-transitive closure of the relation `A ≤ B` with `|B : A|` prime, ending at `⊤`.
 -/
 
-/-- `H` is a Schmidt (Shmidt) subgroup: `H` is not nilpotent but every proper subgroup of `H` is
-nilpotent. -/
+/-- **Schmidt subgroup.** A subgroup $H$ of a group $G$ is a Schmidt subgroup when $H$ is not
+nilpotent but every proper subgroup of $H$ is nilpotent.
+
+Finiteness of $H$ is not part of this definition. -/
 def IsSchmidtSubgroup {G : Type} [Group G] (H : Subgroup G) : Prop :=
   ¬ Group.IsNilpotent H ∧ ∀ K : Subgroup G, K < H → Group.IsNilpotent K
 
-/-- `H` is `ℙ`-subnormal in `G`: `H = G`, or there is a chain `H = H₀ < H₁ < ⋯ < Hₙ = G` in which
-every index `|Hᵢ : Hᵢ₋₁|` is a prime. -/
+/-- **$\mathbb{P}$-subnormal subgroup.** A subgroup $H$ of a group $G$ is $\mathbb{P}$-subnormal in
+$G$ when $H = G$ or there is a chain of subgroups $H = H_0 < H_1 < \cdots < H_n = G$ in which every
+index $|H_i : H_{i-1}|$ is a prime number. -/
 def IsPSubnormal {G : Type} [Group G] (H : Subgroup G) : Prop :=
   Relation.ReflTransGen (fun A B : Subgroup G => A ≤ B ∧ (A.relIndex B).Prime) H ⊤
 
-/-- Kourovka 18.30 (A. F. Vasil'ev, T. I. Vasil'eva, V. N. Tyutyanov): a finite group in which every
-Schmidt subgroup is `ℙ`-subnormal is soluble. -/
+/-- **Claim of Kourovka Problem 18.30.** The statement that every finite group in which every
+Schmidt subgroup is $\mathbb{P}$-subnormal is soluble. The problem is due to A. F. Vasil'ev,
+T. I. Vasil'eva and V. N. Tyutyanov. -/
 def schmidtSubgroupsPSubnormalImpliesSoluble : Prop :=
   ∀ (G : Type) [Group G] [Finite G],
     (∀ H : Subgroup G, IsSchmidtSubgroup H → IsPSubnormal H) → Group.IsSolvable G
 
 /--
-Resolved true: the Kourovka Archive answers 18.30 "Yes, it must" (V. N. Tyutyanov, 2015): a finite
-group all of whose Schmidt subgroups are `ℙ`-subnormal is soluble. Source: E. I. Khukhro and V. D.
-Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
-arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 18.30 (A. F. Vasil'ev, T. I.
-Vasil'eva, V. N. Tyutyanov); resolution: V. N. Tyutyanov, Probl. Fiz. Mat. Tekhn. 2015, no. 1 (22),
-88-91 (Russian), Kourovka Archive, Problem 18.30: Yes, it must, https://arxiv.org/abs/1401.0300v49.
+**Finite groups with $\mathbb{P}$-subnormal Schmidt subgroups are soluble.** Every finite group in
+which every Schmidt subgroup is $\mathbb{P}$-subnormal is soluble. This answers Kourovka Notebook
+Problem 18.30 in the affirmative.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 18.30 (A. F.
+Vasil'ev, T. I. Vasil'eva, V. N. Tyutyanov); resolution: V. N. Tyutyanov, Probl. Fiz. Mat. Tekhn.
+2015, no. 1 (22), 88-91 (Russian), Kourovka Archive, Problem 18.30: Yes, it must,
+https://arxiv.org/abs/1401.0300v49.
 -/
 public theorem_wanted schmidtSubgroupsPSubnormalImpliesSoluble_holds :
     schmidtSubgroupsPSubnormalImpliesSoluble
