@@ -228,8 +228,13 @@ private lemma exists_delta_match_aroots (f : K'[X]) (hf : f.Monic)
   rw [← hspec]
   exact hfin
 
-/-- Roots of a sufficiently small monic coefficient perturbation generate the same local
-extension as a closest root of an irreducible separable polynomial. -/
+/-- **Closest conjugate roots of nearby monic polynomials.** Let $K$ be a complete nontrivially
+normed field whose norm is ultrametric, with algebraic closure $\overline{K}$, and let
+$f \in K[X]$ be monic, irreducible and separable. Then there is a real $\delta > 0$ such that for
+every monic $g \in K[X]$ with $\lVert f - g \rVert_1 < \delta$, where $\lVert \cdot \rVert_1$ is
+the $\ell^1$ norm (the sum of the norms of the coefficients), and every root
+$\beta \in \overline{K}$ of $g$, there is a root $\alpha \in \overline{K}$ of $f$ such that
+$\alpha$ is the closest conjugate to $\beta$ and $K(\alpha) = K(\beta)$. -/
 theorem exists_isClosestConjugate_root_of_l1Norm_sub_lt
     (K : Type*) [NontriviallyNormedField K] [IsUltrametricDist K] [CompleteSpace K]
     (f : K[X]) (hf : f.Monic) (hirr : Irreducible f) (hsep : f.Separable) :
@@ -311,8 +316,11 @@ theorem exists_isClosestConjugate_root_of_l1Norm_sub_lt
     exact hrankβ_le)
   exact ⟨α, hαroot, hclosest, heq⟩
 
-/-- Irreducibility and separability persist under sufficiently small monic coefficient
-perturbations. -/
+/-- **Small monic perturbations stay irreducible and separable.** Let $K$ be a complete
+nontrivially normed field whose norm is ultrametric, and let $f \in K[X]$ be monic, irreducible
+and separable. Then there is a real $\delta > 0$ such that every monic $g \in K[X]$ with
+$\lVert f - g \rVert_1 < \delta$, where $\lVert \cdot \rVert_1$ is the $\ell^1$ norm (the sum of
+the norms of the coefficients), is irreducible and separable. -/
 theorem exists_pos_irreducible_and_separable_of_l1Norm_sub_lt
     (K : Type*) [NontriviallyNormedField K] [IsUltrametricDist K] [CompleteSpace K]
     (f : K[X]) (hf : f.Monic) (hirr : Irreducible f) (hsep : f.Separable) :
@@ -371,8 +379,14 @@ theorem exists_pos_irreducible_and_separable_of_l1Norm_sub_lt
       (AlgebraicClosure K)).mp
         ‹Algebra.IsSeparable K (IntermediateField.adjoin K {β})›
 
-/-- Dense scalar coefficients approximate a monic irreducible separable polynomial in `l1Norm`
-while preserving irreducibility and separability after mapping to the complete field. -/
+/-- **Approximation by irreducible separable polynomials over a dense field.** Let $K$ be a field
+and $L$ a complete nontrivially normed field whose norm is ultrametric, with a $K$-algebra
+structure such that the image of $K$ in $L$ is dense. Let $f \in L[X]$ be monic, irreducible and
+separable, and let $\varepsilon > 0$ be real. Then there is a monic $g \in K[X]$ with
+$\deg g = \deg f$ such that, writing $\bar g \in L[X]$ for the image of $g$,
+$\lVert f - \bar g \rVert_1 < \varepsilon$, where $\lVert \cdot \rVert_1$ is the $\ell^1$ norm
+(the sum of the norms of the coefficients), and $\bar g$ is irreducible and separable in
+$L[X]$. -/
 theorem exists_monic_and_natDegree_eq_and_l1Norm_sub_lt_and_map_irreducible_and_separable
     {K L : Type*} [Field K] [NontriviallyNormedField L]
     [IsUltrametricDist L] [CompleteSpace L] [Algebra K L]

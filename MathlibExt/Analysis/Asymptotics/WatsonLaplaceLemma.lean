@@ -52,9 +52,16 @@ private theorem watson_aux_value (m : ℝ) (hm : 0 < m) (n : ℕ) :
   rw [hRHS] at h
   exact h
 
-/-- Watson's lemma for real Laplace integrals: an all-orders right-hand expansion of `g`
-at zero with coefficients `c` integrates termwise against `Real.exp (-m * ·)` over
-`(0, ∞)`, leaving a `1 / m ^ (N + 2)` remainder for every truncation order `N`.
+/-- **Watson's lemma for Laplace integrals.** Let $g : \mathbb{R} \to \mathbb{R}$ and let
+$(c_k)_{k \ge 1}$ be real numbers such that for every $N \ge 0$,
+$g(s) - \sum_{k=1}^{N} c_k s^k = O(s^{N+1})$ as $s \to 0^+$. Suppose there is $m_0 \in \mathbb{R}$
+such that $s \mapsto g(s) e^{-ms}$ is integrable on $(0, \infty)$ for every $m \ge m_0$. Then
+for every $N \ge 0$,
+$\int_0^\infty g(s) e^{-ms} \, ds - \sum_{k=1}^{N} k! \, c_k / m^{k+1} = O(1 / m^{N+2})$ as
+$m \to \infty$.
+
+The case $N = 0$ of the hypothesis says $g(s) = O(s)$ as $s \to 0^+$: the expansion of $g$ has no
+constant term.
 
 Grounded record: `jis_grounded_f44808e9542400b9602c4bfc`
 Concept: `jis_dep_4b8d33719e173348274b207f`

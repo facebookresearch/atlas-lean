@@ -72,8 +72,11 @@ private theorem newton_exists_mean_value_point
         abs_of_nonneg (sub_nonneg.mpr hcx_lt.le)]
       linarith [hξ.1]
 
-/-- A Newton step has quadratic error when the derivative is Lipschitz and bounded away
-from zero between the current point and a root. -/
+/-- **One-step error bound for Newton's method.** Let $f : \mathbb{R} \to \mathbb{R}$ be
+differentiable with $f(c) = 0$, let $x \in \mathbb{R}$, let $m > 0$ and let $K \ge 0$. If $f'$ is
+Lipschitz with constant $K$ on the closed interval between $c$ and $x$ and $m \le |f'(x)|$,
+then the Newton step from $x$ satisfies
+$\left| x - f(x) / f'(x) - c \right| \le (K / m)\, |x - c|^2$. -/
 theorem newton_step_sub_root_abs_le
     {f : ℝ → ℝ} {c x m : ℝ} {K : NNReal}
     (hf : Differentiable ℝ f) (hc : f c = 0) (hm : 0 < m)
@@ -202,23 +205,28 @@ private theorem newton_invariant_and_convergence
   rw [tendsto_iff_dist_tendsto_zero]
   simpa only [Real.dist_eq] using habs
 
-/-- Newton's method converges locally quadratically to a simple root: near
-`c` the iterates stay in the basin, satisfy a quadratic error recursion, and
-converge to `c`.
+/-- **Local quadratic convergence of Newton's method.** Let $f : \mathbb{R} \to \mathbb{R}$ be twice
+continuously differentiable and let $c$ be a simple root of $f$: $f(c) = 0$ and $f'(c) \ne 0$.
+Then there exist $\delta > 0$ and a real constant $C$ with the following property. For every
+$x_0 \in (c - \delta, c + \delta)$ and every real sequence $(x_n)$ that starts at $x_0$ and
+satisfies $x_{n+1} = x_n - f(x_n) / f'(x_n)$ for all $n$, every $x_n$ lies in
+$(c - \delta, c + \delta)$, $|x_{n+1} - c| \le C\, |x_n - c|^2$ for all $n$, and $x_n \to c$.
+
+Proof: Continuity keeps $f'$ away from zero near $c$, and $C^2$ regularity makes $f'$ Lipschitz
+on a compact interval around $c$. The mean value theorem then bounds one Newton step by
+$(K / m)\, |x - c|^2$, where $m > 0$ bounds $|f'|$ from below and $K$ is a Lipschitz constant
+of $f'$; this replaces the Lagrange remainder in Wikipedia's "Proof of quadratic convergence
+for Newton's iterative method". Shrinking the neighborhood gives an invariant half-contraction
+and geometric convergence.
+
+Proves `Wanted` entry `newton_method_local_quadratic_convergence`.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Numerical Analysis` /
 `Iterative methods of solving systems of real and vector-valued equations`,
 entries `Newton's method` and `rate of convergence and estimation of error`
 (unmapped); R. L. Burden and J. D. Faires, Numerical Analysis, 10th ed.,
 Theorem 2.6;
 stable ref https://en.wikipedia.org/wiki/Newton%27s_method.
-
-Proves `Wanted` entry `newton_method_local_quadratic_convergence`.
-
-Proof: Continuity keeps `f'` away from zero near `c`, and `C²` regularity makes `f'` Lipschitz
-on a compact interval around `c`. The mean value theorem then bounds one Newton step by
-`(K / m) * |x - c| ^ 2`; this replaces the Lagrange remainder in Wikipedia's "Proof of quadratic
-convergence for Newton's iterative method". Shrinking the neighborhood gives an invariant
-half-contraction and geometric convergence.
 -/
 theorem newton_method_local_quadratic_convergence
     {f : ℝ → ℝ} {c : ℝ}

@@ -27,14 +27,18 @@ namespace Real
 open Filter MeasureTheory Set
 open scoped ENNReal Interval
 
-/-- The log-radius points where a positive function grows at least as fast as
-the prescribed power of its current value. -/
+/-- **Power-growth exceptional set.** For a function $h : \mathbb{R} \to \mathbb{R}$ and real
+numbers $p$ and $x_0$, this is the set of real numbers $x \ge x_0$ such that
+$h(x)^p \le h'(x)$, where $h(x)^p$ is the real power and $h'(x)$ is the derivative of $h$ at
+$x$, taken to be $0$ where $h$ is not differentiable. -/
 def powerGrowthBadSet (h : ℝ → ℝ) (p x₀ : ℝ) : Set ℝ :=
   {x | x₀ ≤ x ∧ h x ^ p ≤ deriv h x}
 
-/-- If a positive monotone `C¹` function grows at least like its `p`th power
-at a point, with `p > 1`, then all such points form a set of finite Lebesgue
-measure. -/
+/-- **The power-growth exceptional set has finite measure.** Let $p > 1$ and $x_0$ be real
+numbers, and let $h : \mathbb{R} \to \mathbb{R}$ be continuously differentiable, with
+$h(x) > 0$ for all $x \ge x_0$ and $h$ nondecreasing on $[x_0, \infty)$. Then the
+power-growth exceptional set of $h$, the set of $x \ge x_0$ with $h(x)^p \le h'(x)$, has finite
+Lebesgue measure. -/
 theorem volume_powerGrowthBadSet_lt_top
     (h : ℝ → ℝ) {p x₀ : ℝ} (hp : 1 < p)
     (hpos : ∀ x, x₀ ≤ x → 0 < h x)

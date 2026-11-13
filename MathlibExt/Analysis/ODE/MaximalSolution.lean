@@ -32,7 +32,12 @@ or infinite end of their interval of definition.
 open Filter Function Metric Set
 open scoped NNReal Topology
 
-/-- Solutions that agree on the overlap of two open domains glue to a solution on their union. -/
+/-- **Gluing solutions of an ODE.** Let $E$ be a real normed space, let
+$v : \mathbb{R} \times E \to E$, let $I, J \subseteq \mathbb{R}$ be open, and let
+$x, y : \mathbb{R} \to E$ satisfy $x'(t) = v(t, x(t))$ for every $t \in I$ and
+$y'(t) = v(t, y(t))$ for every $t \in J$, with $x = y$ on $I \cap J$. Then there is
+$z : \mathbb{R} \to E$ with $z = x$ on $I$, $z = y$ on $J$ and $z'(t) = v(t, z(t))$ for every
+$t \in I \cup J$. -/
 theorem hasDerivAt_piecewise_union_of_eqOn
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {v : ℝ → E → E} {x y : ℝ → E} {I J : Set ℝ}
@@ -626,18 +631,23 @@ private lemma odeMaximalGlobalNotBddAbove
   · simpa only [Function.comp_apply] using hut.prodMk_nhds hy
   · trivial
 
-/-- Global existence and uniqueness for globally Lipschitz right-hand sides.
-Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
-`Differential equations`, entry `maximal solutions` (unmapped);
-G. Teschl, Ordinary Differential Equations and Dynamical Systems, Section 2.2;
-stable ref https://en.wikipedia.org/wiki/Picard%E2%80%93Lindel%C3%B6f_theorem.
-
-Proves `Wanted` entry `ode_global_exists_of_global_lipschitz`.
+/-- **Global existence and uniqueness for globally Lipschitz ODEs.** Let $E$ be a real Banach
+space, let $f : \mathbb{R} \times E \to E$ be continuous, and let $L \ge 0$ be such that
+$f(t, \cdot)$ is $L$-Lipschitz for every $t \in \mathbb{R}$. Then for every $t_0 \in \mathbb{R}$
+and $x_0 \in E$ there is exactly one function $x : \mathbb{R} \to E$ with $x(t_0) = x_0$ and
+$x'(t) = f(t, x(t))$ for every $t \in \mathbb{R}$.
 
 Proof: local Picard--Lindelöf solutions are continued using the Gronwall bound of Teschl's
 Theorem 2.17 and the extension criterion of Lemma 2.14.  Time reversal supplies the
 negative-time solution, and global Gronwall uniqueness identifies every solution with the glued
 one.
+
+Proves `Wanted` entry `ode_global_exists_of_global_lipschitz`.
+
+Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
+`Differential equations`, entry `maximal solutions` (unmapped);
+G. Teschl, Ordinary Differential Equations and Dynamical Systems, Section 2.2;
+stable ref https://en.wikipedia.org/wiki/Picard%E2%80%93Lindel%C3%B6f_theorem.
 -/
 theorem ode_global_exists_of_global_lipschitz
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
@@ -725,21 +735,28 @@ theorem ode_global_exists_of_global_lipschitz
   · exact fun t ↦ ⟨hzderiv t, trivial⟩
   · exact hw.1.trans hzinitial.symm
 
-/-- Maximal solutions exit compacts: an ODE whose right-hand side is locally
-Lipschitz in the state variable, locally uniformly in time, on an open set
-admits a solution on a maximal open interval which, at each end, eventually
-leaves every compact subset of the domain.
+/-- **Solutions of locally Lipschitz ODEs that leave every compact set.** Let $E$ be a real
+Banach space, let $U \subseteq \mathbb{R} \times E$ be open, let $(t_0, x_0) \in U$, and let
+$f : \mathbb{R} \times E \to E$ be continuous on $U$ and locally Lipschitz in the state variable,
+uniformly in time: every $p \in U$ has a neighbourhood $N$ and a constant $C \ge 0$ such that
+$\|f(t, u) - f(t, w)\| \le C \|u - w\|$ whenever $(t, u)$ and $(t, w)$ lie in $N \cap U$. Then
+there are an open interval $I$ (possibly unbounded) containing $t_0$ and a function
+$x : \mathbb{R} \to E$ with $x(t_0) = x_0$ such that $(t, x(t)) \in U$ and
+$x'(t) = f(t, x(t))$ for every $t \in I$, and such that for every compact $K \subseteq U$ there
+are $c_1, c_2 \in I$ with $(t, x(t)) \notin K$ for every $t \in I$ with $t \ge c_1$ and for
+every $t \in I$ with $t \le c_2$.
+
+Proof: local Picard--Lindelöf solutions are glued by uniqueness into Teschl's maximal solution
+(Theorem 2.13).  A compactly recurrent finite endpoint extends by Lemma 2.14, giving the two exit
+statements of Corollaries 2.15--2.16.
+
+Proves `Wanted` entry `ode_maximal_solution_exit_compact`.
+
 Sources: `Mathlib/docs/undergrad.yaml`, section `Multivariable calculus` /
 `Differential equations`, entries `maximal solutions` and
 `exit theorem of a compact subspace` (unmapped);
 G. Teschl, Ordinary Differential Equations and Dynamical Systems,
 Section 2.4.
-
-Proves `Wanted` entry `ode_maximal_solution_exit_compact`.
-
-Proof: local Picard--Lindelöf solutions are glued by uniqueness into Teschl's maximal solution
-(Theorem 2.13).  A compactly recurrent finite endpoint extends by Lemma 2.14, giving the two exit
-statements of Corollaries 2.15--2.16.
 -/
 theorem ode_maximal_solution_exit_compact
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
