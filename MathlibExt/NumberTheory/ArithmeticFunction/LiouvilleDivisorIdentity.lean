@@ -10,7 +10,7 @@ module
 
 public import Mathlib.NumberTheory.Divisors
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.LinearAlgebra.LinearPMap
 import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
@@ -148,6 +148,7 @@ It follows from `liouville_divisor_function_identity_general`; the hypothesis `h
 and keeps the source's shape (at `n = 0` both sides are `0`, since `Nat.divisors 0 = ∅`).
 Proves `Wanted` entry `liouville_divisor_function_identity`.
 -/
+@[nolint unusedArguments]
 theorem liouville_divisor_function_identity
     (n : ℕ) (hn : 0 < n) :
     (∑ d ∈ n.divisors, d.divisors.card) ^ 2 =

@@ -174,6 +174,7 @@ private lemma digits_repunit_mul_aux (b B M N e : ℕ) (hb : 1 < b)
     simp at hne
   · exact h1
 
+set_option linter.unusedVariables false in
 /--
 Chinese-remainder-compatible positive integer with trivial nonzero-digit
 product: any consistent system of congruences with `r_v = 0` whenever
@@ -191,6 +192,7 @@ paper's `b > 2` setting.
 
 Proves `Wanted` entry `exists_positive_crt_solution_nonzero_digit_product_one`.
 -/
+@[nolint unusedArguments] -- `hw` keeps the `Wanted` entry's statement
 theorem exists_positive_crt_solution_nonzero_digit_product_one
     (w b : ℕ)
     (r : Fin w → ℤ)

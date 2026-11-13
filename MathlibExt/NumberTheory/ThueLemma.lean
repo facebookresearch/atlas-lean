@@ -11,7 +11,7 @@ module
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Data.Int.ModEq
 import Mathlib.Algebra.Order.Ring.Star
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.RingTheory.Coprime.Lemmas
 import Mathlib.Tactic.IntervalCases
 
@@ -288,6 +288,7 @@ It follows from `thue_lemma_general`; the hypothesis `ha` is unused and keeps th
 shape.
 Proves `Wanted` entry `thue_lemma`.
 -/
+@[nolint unusedArguments]
 theorem thue_lemma (a n : ℤ) (ha : 1 < a) (hn : 1 < n)
     (hcop : Int.gcd a n = 1) :
     ∃ x y : ℤ,
