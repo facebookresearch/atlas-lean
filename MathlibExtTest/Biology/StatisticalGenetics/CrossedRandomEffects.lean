@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Statistics.CrossedRandomEffects
+public import MathlibExt.Biology.StatisticalGenetics.CrossedRandomEffects
 import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
@@ -23,12 +23,15 @@ Clause mapping: LI03.1 (no independent-trials inference) is witnessed by
 correlation (nonzero covariance of distinct rows sharing a participant).
 LI03.2 (shared cluster effect) is witnessed by the gap between true and
 independent-row variance and the design-effect identity in one cluster.
+The random-intercept adapter is exercised through Pseudobulk's
+`not_indepFun_sameDonor`: two rows of one cluster are not independent.
 -/
 
 open MeasureTheory ProbabilityTheory Matrix MetaMathlibExt
 open MathlibExt.Biology.StatisticalGenetics.MixedModel (phenCov)
+open MathlibExt.Biology.StatisticalGenetics.CrossedRandomEffects
 
-namespace MathlibExt.Probability.Statistics.CrossedRandomEffects
+namespace MathlibExtTest.Biology.StatisticalGenetics.CrossedRandomEffects
 
 public section
 
@@ -165,6 +168,25 @@ theorem cluster_two_obs_lower_bound {Ω : Type*} {mΩ : MeasurableSpace Ω}
     (hind := hind)
   exact h
 
+/-- Through `isRandomIntercept_cluster_response`, Pseudobulk's `not_indepFun_sameDonor`
+applies: two rows of one Gaussian cluster with a positive cluster variance are not
+independent. -/
+theorem cluster_two_obs_not_indep {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {P : Measure Ω} [IsProbabilityMeasure P]
+    (γ : Ω → EuclideanSpace ℝ (Fin 1))
+    (ε : Ω → EuclideanSpace ℝ (Fin 2))
+    (hγ : Measurable γ) (hε : Measurable ε) (hind : IndepFun γ ε P)
+    (X : Matrix (Fin 2) (Fin 1) ℝ) (β : EuclideanSpace ℝ (Fin 1))
+    (hγl : P.map γ = multivariateGaussian 0 ((1 : ℝ) • 1))
+    (hεl : P.map ε = multivariateGaussian 0 ((1 : ℝ) • 1)) :
+    ¬ IndepFun (fun ω => (toEuclideanLin X β +
+        toEuclideanLin (clusterDesign 2) (γ ω) + ε ω).ofLp 0)
+      (fun ω => (toEuclideanLin X β +
+        toEuclideanLin (clusterDesign 2) (γ ω) + ε ω).ofLp 1) P :=
+  MathlibExt.Biology.Omics.Pseudobulk.not_indepFun_sameDonor
+    (isRandomIntercept_cluster_response 2 γ ε hγ hε hind X β 1 1 (by norm_num)
+      (by norm_num) hγl hεl) one_ne_zero 0 (by decide)
+
 end
 
-end MathlibExt.Probability.Statistics.CrossedRandomEffects
+end MathlibExtTest.Biology.StatisticalGenetics.CrossedRandomEffects
