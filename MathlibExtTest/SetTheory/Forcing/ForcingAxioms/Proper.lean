@@ -12,7 +12,6 @@ Author: Nam Trang
 module
 
 public import MathlibExt.SetTheory.Forcing.ForcingAxioms.Proper
-public import Mathlib.Order.Defs.Unbundled
 
 @[expose] public section
 

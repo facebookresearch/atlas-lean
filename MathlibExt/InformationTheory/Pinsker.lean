@@ -9,16 +9,20 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 import MathlibExt.InformationTheory.LogSum
 
 /-!
 # Csiszar-Kullback-Pinsker inequality
 
-For strictly positive probability vectors `p` and `q` on a finite type,
+For nonnegative probability vectors `p` and `q` on a finite type,
+where `q a = 0` implies `p a = 0`,
 `(∑ |p a - q a|)² ≤ 2 * ∑ p a * log (p a / q a)`. The proof splits the type by the sign of
 `p a - q a`, applies the log-sum inequality on each part, and reduces to the two-point case, which
-is proved by calculus.
+is proved by calculus. The strictly positive theorem is a corollary.
+
+Source for the support-aware form: Tsybakov, Introduction to Nonparametric
+Estimation (2009), Section 2.3.
 -/
 
 @[expose] public section
@@ -27,248 +31,311 @@ open Finset BigOperators
 
 namespace MathlibExt.InformationTheory.Pinsker
 
-/-- The gap in the binary Pinsker inequality at `q`, for the reference point `v`. -/
-private noncomputable def pinskerGap (v q : ℝ) : ℝ :=
-  q * Real.log (q / v) + (1 - q) * Real.log ((1 - q) / (1 - v)) - 2 * (q - v) ^ 2
+private lemma pos_of_nonneg_ne {a : ℝ} (ha : 0 ≤ a) (hne : a ≠ 0) : 0 < a :=
+  lt_of_le_of_ne ha (fun h => hne h.symm)
 
-/-- The derivative of `pinskerGap v`. -/
-private noncomputable def pinskerGapDeriv (v q : ℝ) : ℝ :=
-  Real.log (q / v) - Real.log ((1 - q) / (1 - v)) - 4 * (q - v)
+/-- Log-sum (grouping) inequality over a finset: the unnormalized binary KL
+of the aggregates is at most the sum of pointwise terms. This is a reduction
+to the shared `Real.sum_mul_log_sum_div_sum_le_sum_mul_log_div` in
+`MathlibExt/InformationTheory/LogSum.lean`: filter `t` to the indices where
+`y a ≠ 0`, where the shared theorem's strict-positivity hypothesis holds, and
+the removed indices contribute `0` to every sum by `hac`. -/
+private lemma log_sum_le {α : Type*} [Fintype α] (x y : α → ℝ) (t : Finset α)
+    (hx : ∀ a ∈ t, 0 ≤ x a) (hy : ∀ a ∈ t, 0 ≤ y a)
+    (hac : ∀ a ∈ t, y a = 0 → x a = 0) :
+    (∑ a ∈ t, x a) * Real.log ((∑ a ∈ t, x a) / (∑ a ∈ t, y a))
+      ≤ ∑ a ∈ t, x a * Real.log (x a / y a) := by
+  classical
+  have hsub : ∀ a ∈ t, a ∉ t.filter (fun a => y a ≠ 0) → x a = 0 := by
+    intro a ha ha'
+    by_contra hxa
+    have hya : y a ≠ 0 := by
+      intro hy0
+      exact hxa (hac a ha hy0)
+    exact ha' (Finset.mem_filter.mpr ⟨ha, hya⟩)
+  have hsumx : ∑ a ∈ t, x a = ∑ a ∈ t.filter (fun a => y a ≠ 0), x a :=
+    (Finset.sum_subset (Finset.filter_subset _ _) (fun a ha ha' => hsub a ha ha')).symm
+  have hsumy : ∑ a ∈ t, y a = ∑ a ∈ t.filter (fun a => y a ≠ 0), y a :=
+    (Finset.sum_subset (Finset.filter_subset _ _)
+      (fun a ha ha' => by
+        by_contra hyne
+        exact ha' (Finset.mem_filter.mpr ⟨ha, hyne⟩))).symm
+  have hsumRHS : ∑ a ∈ t, x a * Real.log (x a / y a) =
+      ∑ a ∈ t.filter (fun a => y a ≠ 0), x a * Real.log (x a / y a) :=
+    (Finset.sum_subset (Finset.filter_subset _ _)
+      (fun a ha ha' => by rw [hsub a ha ha', zero_mul])).symm
+  have hmain := Real.sum_mul_log_sum_div_sum_le_sum_mul_log_div
+    (t.filter (fun a => y a ≠ 0)) x y
+    (fun a ha => hx a (Finset.mem_of_mem_filter a ha))
+    (fun a ha => lt_of_le_of_ne (hy a (Finset.mem_of_mem_filter a ha))
+      (Ne.symm (Finset.mem_filter.mp ha).2))
+  rwa [← hsumx, ← hsumy, ← hsumRHS] at hmain
 
-private lemma binary_pinsker {u v : ℝ} (hu0 : 0 < u) (hu1 : u < 1) (hv0 : 0 < v) (hv1 : v < 1) :
-    2 * (u - v)^2 ≤ u * Real.log (u / v) + (1 - u) * Real.log ((1-u)/(1-v)) := by
-  by_cases huv : u = v
-  · subst huv
-    have hune : u ≠ 0 := ne_of_gt hu0
-    have h1une : (1:ℝ) - u ≠ 0 := ne_of_gt (by linarith)
-    simp [sub_self, div_self hune, div_self h1une, Real.log_one]
-  · -- calculus
-    have hv1' : (0:ℝ) < 1 - v := by linarith
-    have h1v : (1:ℝ) - v ≠ 0 := ne_of_gt hv1'
-    have hvne : v ≠ 0 := ne_of_gt hv0
-    -- auxiliary derivative facts
-    have hsub1 : ∀ p : ℝ, HasDerivAt (fun x : ℝ => (1:ℝ) - x) (-1) p := by
-      intro p
-      have h := ((hasDerivAt_const p (1:ℝ)).sub (hasDerivAt_id p))
-      have hfun : ((fun _ : ℝ => (1:ℝ)) - id) = (fun x => (1:ℝ) - x) := by
-        ext x; simp [Pi.sub_apply, id_eq]
-      have hder : (0:ℝ) - (1:ℝ) = -1 := by ring
-      rw [hfun, hder] at h
-      exact h
-    have hdiv1 : ∀ p : ℝ, HasDerivAt (fun x : ℝ => x / v) (1 / v) p := by
-      intro p
-      have h := ((hasDerivAt_id p).div_const v)
-      have hfun : (fun x : ℝ => id x / v) = (fun x : ℝ => x / v) := by
-        ext x; simp [id_eq]
-      rwa [hfun] at h
-    have hdiv2 : ∀ p : ℝ, HasDerivAt (fun x : ℝ => ((1:ℝ) - x) / (1 - v)) ((-1) / (1 - v)) p := by
-      intro p
-      exact ((hsub1 p).div_const (1 - v))
-    have hlog1 : ∀ p : ℝ, 0 < p → HasDerivAt (fun x : ℝ => Real.log (x / v)) (p⁻¹) p := by
-      intro p hp0
-      have hne : p / v ≠ 0 := div_ne_zero (ne_of_gt hp0) hvne
-      have h := ((hdiv1 p).log hne)
-      have heq : (1 / v) / (p / v) = p⁻¹ := by field_simp
-      rwa [heq] at h
-    have hlog2 : ∀ p : ℝ, p < 1 →
-        HasDerivAt (fun x : ℝ => Real.log (((1:ℝ) - x) / (1 - v))) (-((1 - p)⁻¹)) p := by
-      intro p hp1
-      have hp1' : (0:ℝ) < 1 - p := by linarith
-      have hne : ((1:ℝ) - p) / (1 - v) ≠ 0 := div_ne_zero (ne_of_gt hp1') h1v
-      have h := ((hdiv2 p).log hne)
-      have heq : ((-1) / (1 - v)) / (((1:ℝ) - p) / (1 - v)) = -((1 - p)⁻¹) := by
-        field_simp
-      rwa [heq] at h
-    have hbase : ∀ p : ℝ, HasDerivAt (fun x : ℝ => x - v) 1 p := by
-      intro p
-      have h := ((hasDerivAt_id p).sub (hasDerivAt_const p v))
-      have hfun : (id - (fun _ : ℝ => v)) = (fun x : ℝ => x - v) := by
-        ext x; simp [Pi.sub_apply, id_eq]
-      have hder : (1:ℝ) - 0 = 1 := by ring
-      rw [hfun, hder] at h
-      exact h
-    have hF : ∀ p : ℝ, 0 < p → p < 1 →
-        HasDerivAt (pinskerGap v)
-        (Real.log (p / v) - Real.log ((1 - p) / (1 - v)) - 4 * (p - v)) p := by
-      intro p hp0 hp1
-      have hp1' : (0:ℝ) < 1 - p := by linarith
-      have e1' : HasDerivAt (fun x : ℝ => x * Real.log (x / v))
-          (1 * Real.log (p / v) + p * p⁻¹) p := by
-        have h := (hasDerivAt_id p).mul (hlog1 p hp0)
-        have hfun : (id * (fun x : ℝ => Real.log (x / v))) =
-            (fun x : ℝ => x * Real.log (x / v)) := by
-          ext x; simp [Pi.mul_apply, id_eq]
-        rwa [hfun] at h
-      have e2 : HasDerivAt (fun x : ℝ => ((1:ℝ) - x) * Real.log (((1:ℝ) - x) / (1 - v)))
-          ((-1) * Real.log (((1:ℝ) - p) / (1 - v)) + (1 - p) * (-((1 - p)⁻¹))) p := by
-        have h := (hsub1 p).mul (hlog2 p hp1)
-        have hfun : ((fun x : ℝ => (1:ℝ) - x) * (fun x : ℝ => Real.log (((1:ℝ) - x) / (1 - v))))
-            = (fun x : ℝ => ((1:ℝ) - x) * Real.log (((1:ℝ) - x) / (1 - v))) := by
-          ext x; simp [Pi.mul_apply]
-        rwa [hfun] at h
-      have hpow : HasDerivAt (fun x : ℝ => (x - v)^2) ((2:ℝ) * (p - v)) p := by
-        have h := (hbase p).mul (hbase p)
-        have hfun : ((fun x : ℝ => x - v) * (fun x : ℝ => x - v)) = (fun x : ℝ => (x - v)^2) := by
-          ext x; simp [Pi.mul_apply, pow_two]
-        have hder : (1:ℝ) * (p - v) + (p - v) * 1 = 2 * (p - v) := by ring
-        rw [hfun, hder] at h
-        exact h
-      have e3 : HasDerivAt (fun x : ℝ => (2:ℝ) * (x - v)^2) (4 * (p - v)) p := by
-        have hcm := hpow.const_mul (2:ℝ)
-        have hfun : (fun y : ℝ => (2:ℝ) * ((fun x : ℝ => (x - v)^2) y)) =
-            (fun x : ℝ => (2:ℝ) * (x - v)^2) := rfl
-        have hder : (2:ℝ) * (2 * (p - v)) = 4 * (p - v) := by ring
-        rw [hfun, hder] at hcm
-        exact hcm
-      have hcomb := (e1'.add e2).sub e3
-      have hfun : ((fun x : ℝ => x * Real.log (x / v)) +
-          (fun x : ℝ => ((1:ℝ) - x) * Real.log (((1:ℝ) - x) / (1 - v))) -
-          (fun x : ℝ => (2:ℝ) * (x - v)^2)) = pinskerGap v := by
-        ext x; simp [pinskerGap, Pi.add_apply, Pi.sub_apply]
-      rw [hfun] at hcomb
-      have hsimp : 1 * Real.log (p / v) + p * p⁻¹ +
-            ((-1) * Real.log (((1:ℝ) - p) / (1 - v)) + (1 - p) * (-((1 - p)⁻¹))) - 4 * (p - v)
-          = Real.log (p / v) - Real.log ((1 - p) / (1 - v)) - 4 * (p - v) := by
-        field_simp
-        ring
-      rwa [hsimp] at hcomb
-    have hFp : ∀ p : ℝ, 0 < p → p < 1 →
-        HasDerivAt (pinskerGapDeriv v)
-        (p⁻¹ + (1 - p)⁻¹ - 4) p := by
-      intro p hp0 hp1
-      have e4 : HasDerivAt (fun x : ℝ => 4 * (x - v)) 4 p := by
-        have hcm := (hbase p).const_mul (4:ℝ)
-        have hfun : (fun y : ℝ => (4:ℝ) * ((fun x : ℝ => x - v) y)) =
-            (fun x : ℝ => 4 * (x - v)) := rfl
-        have hder : (4:ℝ) * 1 = 4 := by ring
-        rw [hfun, hder] at hcm
-        exact hcm
-      have hcomb := ((hlog1 p hp0).sub (hlog2 p hp1)).sub e4
-      have hfun : ((fun x : ℝ => Real.log (x / v)) -
-          (fun x : ℝ => Real.log (((1:ℝ) - x) / (1 - v))) - (fun x : ℝ => 4 * (x - v))) =
-          pinskerGapDeriv v := by
-        ext x; simp [pinskerGapDeriv, Pi.sub_apply]
-      rw [hfun] at hcomb
-      have hsimp : p⁻¹ - -((1 - p)⁻¹) - 4 = p⁻¹ + (1 - p)⁻¹ - 4 := by ring
-      rwa [hsimp] at hcomb
-    have hFpp_nonneg : ∀ p : ℝ, 0 < p → p < 1 → 0 ≤ p⁻¹ + (1 - p)⁻¹ - 4 := by
-      intro p hp0 hp1
-      have hp1' : (0:ℝ) < 1 - p := by linarith
-      have hpp : (0:ℝ) < p * (1 - p) := mul_pos hp0 hp1'
-      have heq : p⁻¹ + (1 - p)⁻¹ - 4 = ((2 * p - 1)^2) / (p * (1 - p)) := by
-        field_simp
-        ring
-      rw [heq]
-      exact div_nonneg (sq_nonneg _) (le_of_lt hpp)
-    -- Monotonicity of Fp on Ioo 0 1
-    have hFpDiff : DifferentiableOn ℝ (pinskerGapDeriv v) (Set.Ioo 0 1) := by
-      intro x hx
-      exact ((hFp x hx.1 hx.2).differentiableAt.differentiableWithinAt)
-    have hFpCont : ContinuousOn (pinskerGapDeriv v) (Set.Ioo 0 1) :=
-      hFpDiff.continuousOn
-    have hMonoFp : MonotoneOn (pinskerGapDeriv v) (Set.Ioo 0 1) := by
-      apply monotoneOn_of_deriv_nonneg (convex_Ioo 0 1) hFpCont
-      · -- differentiable on interior
-        rw [IsOpen.interior_eq isOpen_Ioo]
-        exact hFpDiff
-      · intro x hx
-        rw [IsOpen.interior_eq isOpen_Ioo] at hx
-        have hder : deriv (pinskerGapDeriv v) x
-            = x⁻¹ + (1 - x)⁻¹ - 4 := (hFp x hx.1 hx.2).deriv
-        rw [hder]
-        exact hFpp_nonneg x hx.1 hx.2
-    have hFpv : pinskerGapDeriv v v = 0 := by
-      simp [pinskerGapDeriv, div_self hvne, div_self h1v, Real.log_one]
-    have hvIoo : v ∈ Set.Ioo (0:ℝ) 1 := ⟨hv0, hv1⟩
-    have huIoo : u ∈ Set.Ioo (0:ℝ) 1 := ⟨hu0, hu1⟩
-    have hsign_le : ∀ x : ℝ, x ∈ Set.Ioo (0:ℝ) 1 → x ≤ v →
-        pinskerGapDeriv v x ≤ 0 := by
-      intro x hx hxle
-      have h := hMonoFp hx hvIoo hxle
-      rwa [hFpv] at h
-    have hsign_ge : ∀ x : ℝ, x ∈ Set.Ioo (0:ℝ) 1 → v ≤ x →
-        0 ≤ pinskerGapDeriv v x := by
-      intro x hx hxle
-      have h := hMonoFp hvIoo hx hxle
-      rwa [hFpv] at h
-    have hFv : pinskerGap v v = 0 := by
-      simp [pinskerGap, div_self hvne, div_self h1v, Real.log_one, sub_self]
-    -- split on order
-    rcases lt_or_gt_of_ne huv with hlt | hgt
-    · -- u < v: F antitone on Icc u v
-      have hsub : Set.Icc u v ⊆ Set.Ioo (0:ℝ) 1 := by
-        intro x hx
-        obtain ⟨hx1, hx2⟩ := hx
-        constructor <;> linarith
-      have hFdiff : DifferentiableOn ℝ (pinskerGap v) (Set.Icc u v) := by
-        intro x hx
-        have hxIoo := hsub hx
-        exact ((hF x hxIoo.1 hxIoo.2).differentiableAt.differentiableWithinAt)
-      have hFcont : ContinuousOn (pinskerGap v) (Set.Icc u v) :=
-        hFdiff.continuousOn
-      have hAnti : AntitoneOn (pinskerGap v) (Set.Icc u v) := by
-        apply antitoneOn_of_deriv_nonpos (convex_Icc u v) hFcont
-        · -- differentiable on interior
-          rw [interior_Icc]
-          intro x hx
-          obtain ⟨hx1, hx2⟩ := hx
-          have hxIoo : x ∈ Set.Ioo (0:ℝ) 1 := ⟨by linarith, by linarith⟩
-          exact ((hF x hxIoo.1 hxIoo.2).differentiableAt.differentiableWithinAt)
-        · intro x hx
-          rw [interior_Icc] at hx
-          obtain ⟨hx1, hx2⟩ := hx
-          have hxIoo : x ∈ Set.Ioo (0:ℝ) 1 := ⟨by linarith, by linarith⟩
-          have hxle : x ≤ v := le_of_lt hx2
-          have hder : deriv (pinskerGap v) x
-              = pinskerGapDeriv v x :=
-            (hF x hxIoo.1 hxIoo.2).deriv
-          rw [hder]
-          exact hsign_le x hxIoo hxle
-      have hle : pinskerGap v v
-          ≤ pinskerGap v u :=
-        hAnti (Set.left_mem_Icc.mpr hlt.le) (Set.right_mem_Icc.mpr hlt.le) hlt.le
-      rw [hFv] at hle
-      -- hle : 0 ≤ F u, unfold to goal
-      have hFu : pinskerGap v u
-          = u * Real.log (u / v) + (1 - u) * Real.log ((1-u)/(1-v)) - 2 * (u - v)^2 := rfl
-      rw [hFu] at hle
+/-- First derivative of the binary-Pinsker auxiliary function
+`H(t) = t * log t + (1 - t) * log (1 - t) - 2 * t^2` on `(0, 1)`. -/
+private lemma hasDerivAt_H (x : ℝ) (hx0 : x ≠ 0) (hx1 : (1:ℝ) - x ≠ 0) :
+    HasDerivAt (fun t => t * Real.log t + (1 - t) * Real.log (1 - t) - 2 * t^2)
+      (Real.log x - Real.log (1 - x) - 4 * x) x := by
+  have hu : HasDerivAt (fun t : ℝ => 1 - t) (-1) x := by
+    have h := (hasDerivAt_const x (1:ℝ)).sub (hasDerivAt_id x)
+    have hval0 : (0:ℝ) - 1 = -1 := by ring
+    rw [hval0] at h
+    exact h
+  have h1 : HasDerivAt (fun t => t * Real.log t) (Real.log x + 1) x :=
+    Real.hasDerivAt_mul_log hx0
+  have h2 : HasDerivAt (fun t : ℝ => (1 - t) * Real.log (1 - t))
+      ((Real.log (1 - x) + 1) * -1) x :=
+    (Real.hasDerivAt_mul_log hx1).comp x hu
+  have h3 : HasDerivAt (fun t : ℝ => 2 * t^2) (2 * (↑2 * x^(2-1))) x :=
+    (hasDerivAt_pow 2 x).const_mul 2
+  have hfull := (h1.add h2).sub h3
+  have hval : ((Real.log x + 1) + ((Real.log (1 - x) + 1) * -1))
+      - 2 * (↑2 * x^(2-1))
+      = Real.log x - Real.log (1 - x) - 4 * x := by
+    rw [show (2:ℕ) - 1 = 1 from rfl, pow_one]
+    ring
+  rw [hval] at hfull
+  exact hfull
+
+/-- Second derivative of the auxiliary function. -/
+private lemma hasDerivAt_H' (x : ℝ) (hx0 : x ≠ 0) (hx1 : (1:ℝ) - x ≠ 0) :
+    HasDerivAt (fun t => Real.log t - Real.log (1 - t) - 4 * t)
+      (x⁻¹ + (1 - x)⁻¹ - 4) x := by
+  have hu : HasDerivAt (fun t : ℝ => 1 - t) (-1) x := by
+    have h := (hasDerivAt_const x (1:ℝ)).sub (hasDerivAt_id x)
+    have hval0 : (0:ℝ) - 1 = -1 := by ring
+    rw [hval0] at h
+    exact h
+  have k1 : HasDerivAt (fun t => Real.log t) (x⁻¹) x := Real.hasDerivAt_log hx0
+  have k2 : HasDerivAt (fun t => Real.log (1 - t)) ((-1) / (1 - x)) x :=
+    hu.log hx1
+  have k3 : HasDerivAt (fun t : ℝ => 4 * t) (4 * 1) x :=
+    (hasDerivAt_id x).const_mul 4
+  have hfull := (k1.sub k2).sub k3
+  have e : (-1:ℝ) / (1 - x) = -((1 - x)⁻¹) := by
+    rw [div_eq_mul_inv]
+    ring
+  have hval : (x⁻¹ - -1 / (1 - x)) - 4 * 1 = x⁻¹ + (1 - x)⁻¹ - 4 := by
+    rw [e]
+    ring
+  rw [hval] at hfull
+  exact hfull
+
+/-- The auxiliary function is convex on `[0, 1]`: its second derivative
+`1 / (t * (1 - t)) - 4 = (1 - 2t)^2 / (t * (1 - t))` is nonnegative on `(0, 1)`. -/
+private lemma convexOn_H :
+    ConvexOn ℝ (Set.Icc 0 1)
+      (fun t => t * Real.log t + (1 - t) * Real.log (1 - t) - 2 * t^2) := by
+  apply convexOn_of_hasDerivWithinAt2_nonneg (convex_Icc 0 1)
+  · have h1 : ContinuousOn (fun t => t * Real.log t) (Set.Icc 0 1) :=
+      Real.continuous_mul_log.continuousOn
+    have h2 : ContinuousOn (fun t => (1 - t) * Real.log (1 - t)) (Set.Icc 0 1) :=
+      (Real.continuous_mul_log.comp
+        (continuous_const.sub continuous_id)).continuousOn
+    have h3 : Continuous (fun t : ℝ => 2 * t^2) := by continuity
+    exact (h1.add h2).sub h3.continuousOn
+  · intro x hx
+    rw [interior_Icc] at hx
+    obtain ⟨hx0, hx1⟩ := Set.mem_Ioo.mp hx
+    have hx0' : x ≠ 0 := ne_of_gt hx0
+    have hx1' : (1:ℝ) - x ≠ 0 := ne_of_gt (sub_pos.mpr hx1)
+    exact (hasDerivAt_H x hx0' hx1').hasDerivWithinAt
+  · intro x hx
+    rw [interior_Icc] at hx
+    obtain ⟨hx0, hx1⟩ := Set.mem_Ioo.mp hx
+    have hx0' : x ≠ 0 := ne_of_gt hx0
+    have hx1' : (1:ℝ) - x ≠ 0 := ne_of_gt (sub_pos.mpr hx1)
+    exact (hasDerivAt_H' x hx0' hx1').hasDerivWithinAt
+  · intro x hx
+    rw [interior_Icc] at hx
+    obtain ⟨hx0, hx1⟩ := Set.mem_Ioo.mp hx
+    show (0:ℝ) ≤ x⁻¹ + (1 - x)⁻¹ - 4
+    have hx1pos : (0:ℝ) < 1 - x := sub_pos.mpr hx1
+    have hpos : (0:ℝ) < x * (1 - x) := mul_pos hx0 hx1pos
+    have heq : x⁻¹ + (1 - x)⁻¹ - 4 = (1 - 2 * x)^2 / (x * (1 - x)) := by
+      field_simp
+      ring
+    rw [heq]
+    exact div_nonneg (sq_nonneg _) hpos.le
+
+/-- Binary Pinsker inequality: for `X, Y ∈ [0, 1]`, `2 * (X - Y)^2` is at most
+the binary KL divergence. Proved via convexity of the auxiliary function `H`. -/
+private lemma binary_pinsker (X Y : ℝ) (hX0 : 0 ≤ X) (hX1 : X ≤ 1)
+    (hY0 : 0 ≤ Y) (hY1 : Y ≤ 1) (hac0 : Y = 0 → X = 0) (hac1 : Y = 1 → X = 1) :
+    2 * (X - Y)^2
+      ≤ X * Real.log (X / Y) + (1 - X) * Real.log ((1 - X) / (1 - Y)) := by
+  by_cases hY0' : Y = 0
+  · rw [hY0', hac0 hY0']
+    simp
+  · by_cases hY1' : Y = 1
+    · rw [hY1', hac1 hY1']
+      simp
+    · have hYpos : 0 < Y := pos_of_nonneg_ne hY0 hY0'
+      have hYlt : Y < 1 := lt_of_le_of_ne hY1 hY1'
+      have hYne1 : (1:ℝ) - Y ≠ 0 := ne_of_gt (sub_pos.mpr hYlt)
+      have hXmem : X ∈ Set.Icc 0 1 := ⟨hX0, hX1⟩
+      have hYmem : Y ∈ Set.Icc 0 1 := ⟨hY0, hY1⟩
+      have hYd : HasDerivAt
+          (fun t => t * Real.log t + (1 - t) * Real.log (1 - t) - 2 * t^2)
+          (Real.log Y - Real.log (1 - Y) - 4 * Y) Y :=
+        hasDerivAt_H Y hY0' hYne1
+      have hfo : (Y * Real.log Y + (1 - Y) * Real.log (1 - Y) - 2 * Y^2)
+          + (Real.log Y - Real.log (1 - Y) - 4 * Y) * (X - Y)
+          ≤ X * Real.log X + (1 - X) * Real.log (1 - X) - 2 * X^2 := by
+        rcases lt_trichotomy X Y with hlt | heq | hgt
+        · have h := convexOn_H.slope_le_of_hasDerivAt hXmem hYmem hlt hYd
+          rw [slope_def_field, div_le_iff₀ (sub_pos.mpr hlt)] at h
+          have h' : (Y * Real.log Y + (1 - Y) * Real.log (1 - Y) - 2 * Y^2)
+              - (X * Real.log X + (1 - X) * Real.log (1 - X) - 2 * X^2)
+              ≤ (Real.log Y - Real.log (1 - Y) - 4 * Y) * (Y - X) := h
+          linarith
+        · subst heq
+          simp
+        · have h := convexOn_H.le_slope_of_hasDerivAt hYmem hXmem hgt hYd
+          rw [slope_def_field, le_div_iff₀ (sub_pos.mpr hgt)] at h
+          have h' : (Real.log Y - Real.log (1 - Y) - 4 * Y) * (X - Y)
+              ≤ (X * Real.log X + (1 - X) * Real.log (1 - X) - 2 * X^2)
+              - (Y * Real.log Y + (1 - Y) * Real.log (1 - Y) - 2 * Y^2) := h
+          linarith
+      have e1 : X * Real.log (X / Y) = X * Real.log X - X * Real.log Y := by
+        by_cases hx0 : X = 0
+        · rw [hx0]
+          simp
+        · rw [Real.log_div hx0 hY0', mul_sub]
+      have e2 : (1 - X) * Real.log ((1 - X) / (1 - Y))
+          = (1 - X) * Real.log (1 - X) - (1 - X) * Real.log (1 - Y) := by
+        by_cases hx1 : (1:ℝ) - X = 0
+        · rw [hx1]
+          simp
+        · rw [Real.log_div hx1 hYne1, mul_sub]
+      rw [e1, e2]
+      linear_combination hfo
+
+/-- Csiszar-Kullback-Pinsker for nonnegative finite probability vectors:
+`(∑ |x - y|)^2 ≤ 2 * ∑ x log (x / y)`, provided `x` vanishes wherever
+`y` does. Zero coordinates are allowed; the support hypothesis rules out
+infinite divergence, which the real logarithm cannot represent. -/
+theorem csiszar_kullback_pinsker_of_support {α : Type*} [Fintype α] (x y : α → ℝ)
+    (hx : ∀ a, 0 ≤ x a) (hy : ∀ a, 0 ≤ y a)
+    (hsumx : ∑ a, x a = 1) (hsumy : ∑ a, y a = 1)
+    (hac : ∀ a, y a = 0 → x a = 0) :
+    (∑ a, |x a - y a|) ^ 2 ≤ 2 * ∑ a, x a * Real.log (x a / y a) := by
+  classical
+  have hsplit_abs :
+      (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), |x a - y a|)
+        + (∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), |x a - y a|)
+        = ∑ a, |x a - y a| :=
+    Finset.sum_filter_add_sum_filter_not _ _ _
+  have hsplit :
+      (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), (x a - y a))
+        + (∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), (x a - y a))
+        = ∑ a, (x a - y a) :=
+    Finset.sum_filter_add_sum_filter_not _ _ _
+  have hsplitx :
+      (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), x a)
+        + (∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), x a)
+        = ∑ a, x a :=
+    Finset.sum_filter_add_sum_filter_not _ _ _
+  have hsplity :
+      (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), y a)
+        + (∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), y a)
+        = ∑ a, y a :=
+    Finset.sum_filter_add_sum_filter_not _ _ _
+  have hsplitS :
+      (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), x a * Real.log (x a / y a))
+        + (∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a),
+          x a * Real.log (x a / y a))
+        = ∑ a, x a * Real.log (x a / y a) :=
+    Finset.sum_filter_add_sum_filter_not _ _ _
+  have htot : ∑ a, (x a - y a) = 0 := by
+    rw [Finset.sum_sub_distrib, hsumx, hsumy, sub_self]
+  have hS1 : (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), |x a - y a|)
+      = ∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), (x a - y a) := by
+    apply Finset.sum_congr rfl
+    intro a ha
+    have hle : y a ≤ x a := (Finset.mem_filter.mp ha).2
+    exact abs_of_nonneg (sub_nonneg.mpr hle)
+  have hS2 : (∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), |x a - y a|)
+      = ∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), (y a - x a) := by
+    apply Finset.sum_congr rfl
+    intro a ha
+    have hna : ¬ y a ≤ x a := (Finset.mem_filter.mp ha).2
+    have hlt : x a < y a := lt_of_not_ge hna
+    rw [abs_of_neg (sub_neg.mpr hlt)]
+    ring
+  have hS2' : (∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), (y a - x a))
+      = ∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), (x a - y a) := by
+    have e : (∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), (y a - x a))
+        = - ∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), (x a - y a) := by
+      rw [← Finset.sum_neg_distrib]
+      apply Finset.sum_congr rfl
+      intro a _
+      ring
+    rw [e]
+    linarith
+  have hTV : (∑ a, |x a - y a|)
+      = 2 * ∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), (x a - y a) := by
+    have h := hsplit_abs
+    rw [hS1, hS2, hS2'] at h
+    linarith
+  have hXnn : 0 ≤ ∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), x a :=
+    Finset.sum_nonneg (fun a _ => hx a)
+  have hYnn : 0 ≤ ∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), y a :=
+    Finset.sum_nonneg (fun a _ => hy a)
+  have hXbar_nn : 0 ≤ ∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), x a :=
+    Finset.sum_nonneg (fun a _ => hx a)
+  have hYbar_nn : 0 ≤ ∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), y a :=
+    Finset.sum_nonneg (fun a _ => hy a)
+  have hX1 : (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), x a) ≤ 1 := by
+    linarith
+  have hY1 : (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), y a) ≤ 1 := by
+    linarith
+  have hac0 : (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), y a) = 0
+      → (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), x a) = 0 := by
+    intro hY0
+    have hy0 : ∀ a ∈ Finset.univ.filter (fun a => y a ≤ x a), y a = 0 :=
+      (Finset.sum_eq_zero_iff_of_nonneg (fun a _ => hy a)).mp hY0
+    apply Finset.sum_eq_zero
+    intro a ha
+    exact hac a (hy0 a ha)
+  have hac1 : (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), y a) = 1
+      → (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), x a) = 1 := by
+    intro hY1h
+    have hYbar0 : (∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), y a) = 0 := by
       linarith
-    · -- v < u: F monotone on Icc v u
-      have hsub : Set.Icc v u ⊆ Set.Ioo (0:ℝ) 1 := by
-        intro x hx
-        obtain ⟨hx1, hx2⟩ := hx
-        constructor <;> linarith
-      have hFdiff : DifferentiableOn ℝ (pinskerGap v) (Set.Icc v u) := by
-        intro x hx
-        have hxIoo := hsub hx
-        exact ((hF x hxIoo.1 hxIoo.2).differentiableAt.differentiableWithinAt)
-      have hFcont : ContinuousOn (pinskerGap v) (Set.Icc v u) :=
-        hFdiff.continuousOn
-      have hMono : MonotoneOn (pinskerGap v) (Set.Icc v u) := by
-        apply monotoneOn_of_deriv_nonneg (convex_Icc v u) hFcont
-        · rw [interior_Icc]
-          intro x hx
-          obtain ⟨hx1, hx2⟩ := hx
-          have hxIoo : x ∈ Set.Ioo (0:ℝ) 1 := ⟨by linarith, by linarith⟩
-          exact ((hF x hxIoo.1 hxIoo.2).differentiableAt.differentiableWithinAt)
-        · intro x hx
-          rw [interior_Icc] at hx
-          obtain ⟨hx1, hx2⟩ := hx
-          have hxIoo : x ∈ Set.Ioo (0:ℝ) 1 := ⟨by linarith, by linarith⟩
-          have hxge : v ≤ x := le_of_lt hx1
-          have hder : deriv (pinskerGap v) x
-              = pinskerGapDeriv v x :=
-            (hF x hxIoo.1 hxIoo.2).deriv
-          rw [hder]
-          exact hsign_ge x hxIoo hxge
-      have hle : pinskerGap v v
-          ≤ pinskerGap v u :=
-        hMono (Set.left_mem_Icc.mpr hgt.le) (Set.right_mem_Icc.mpr hgt.le) hgt.le
-      rw [hFv] at hle
-      have hFu : pinskerGap v u
-          = u * Real.log (u / v) + (1 - u) * Real.log ((1-u)/(1-v)) - 2 * (u - v)^2 := rfl
-      rw [hFu] at hle
-      linarith
+    have hy0 : ∀ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), y a = 0 :=
+      (Finset.sum_eq_zero_iff_of_nonneg (fun a _ => hy a)).mp hYbar0
+    have hXbar0 : (∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), x a) = 0 :=
+      Finset.sum_eq_zero (fun a ha => hac a (hy0 a ha))
+    linarith
+  have hlog1 := log_sum_le x y (Finset.univ.filter (fun a => y a ≤ x a))
+    (fun a _ => hx a) (fun a _ => hy a) (fun a _ => hac a)
+  have hlog2 := log_sum_le x y (Finset.univ.filter (fun a => ¬ y a ≤ x a))
+    (fun a _ => hx a) (fun a _ => hy a) (fun a _ => hac a)
+  have hbin := binary_pinsker _ _ hXnn hX1 hYnn hY1 hac0 hac1
+  have eX : (1:ℝ) - (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), x a)
+      = ∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), x a := by
+    linarith
+  have eY : (1:ℝ) - (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), y a)
+      = ∑ a ∈ Finset.univ.filter (fun a => ¬ y a ≤ x a), y a := by
+    linarith
+  rw [eX, eY] at hbin
+  have h2 : 2 * ((∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), x a)
+      - (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), y a))^2
+      ≤ ∑ a, x a * Real.log (x a / y a) := by
+    linarith
+  have hXYδ : (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), x a)
+      - (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), y a)
+      = ∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), (x a - y a) :=
+    (Finset.sum_sub_distrib x y).symm
+  rw [hXYδ] at h2
+  rw [hTV]
+  have hsq : (2 * ∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a), (x a - y a))^2
+      = 2 * (2 * (∑ a ∈ Finset.univ.filter (fun a => y a ≤ x a),
+        (x a - y a))^2) := by
+    ring
+  rw [hsq]
+  linarith
 
 /--
 Finite strictly-positive Csiszar-Kullback-Pinsker inequality: for finite nonempty `α` and pmfs `p, q
@@ -288,108 +355,8 @@ theorem csiszar_kullback_pinsker
     (hp_sum : ∑ a : α, p a = 1)
     (hq_sum : ∑ a : α, q a = 1) :
     (∑ a : α, |p a - q a|) ^ 2 ≤ 2 * ∑ a : α, p a * Real.log (p a / q a) := by
-  classical
-  set s : Finset α := Finset.univ.filter (fun a => q a ≤ p a) with hs_def
-  set sc : Finset α := Finset.univ.filter (fun a => ¬ q a ≤ p a) with hsc_def
-  have hs_nonempty : s.Nonempty := by
-    by_contra h
-    rw [Finset.not_nonempty_iff_eq_empty] at h
-    have hall : ∀ a : α, p a < q a := by
-      intro a
-      have hmem : a ∉ s := by rw [h]; exact Finset.notMem_empty a
-      simpa [hs_def, Finset.mem_filter] using hmem
-    obtain ⟨a0⟩ : Nonempty α := inferInstance
-    have hlt : ∑ a : α, p a < ∑ a : α, q a :=
-      Finset.sum_lt_sum (fun i _ => le_of_lt (hall i)) ⟨a0, Finset.mem_univ a0, hall a0⟩
-    rw [hp_sum, hq_sum] at hlt
-    exact lt_irrefl _ hlt
-  by_cases hsc : sc.Nonempty
-  · -- both parts nonempty: reduce to binary Pinsker
-    have hp_s : ∀ a ∈ s, 0 < p a := fun a _ => hp_pos a
-    have hq_s : ∀ a ∈ s, 0 < q a := fun a _ => hq_pos a
-    have hp_sc : ∀ a ∈ sc, 0 < p a := fun a _ => hp_pos a
-    have hq_sc : ∀ a ∈ sc, 0 < q a := fun a _ => hq_pos a
-    have hP : 0 < ∑ a ∈ s, p a := Finset.sum_pos hp_s hs_nonempty
-    have hQ : 0 < ∑ a ∈ s, q a := Finset.sum_pos hq_s hs_nonempty
-    have hPc : 0 < ∑ a ∈ sc, p a := Finset.sum_pos hp_sc hsc
-    have hQc : 0 < ∑ a ∈ sc, q a := Finset.sum_pos hq_sc hsc
-    have hsumP : ∑ a ∈ s, p a + ∑ a ∈ sc, p a = 1 := by
-      have h := Finset.sum_filter_add_sum_filter_not Finset.univ (fun a => q a ≤ p a) p
-      simpa [hs_def, hsc_def, hp_sum] using h
-    have hsumQ : ∑ a ∈ s, q a + ∑ a ∈ sc, q a = 1 := by
-      have h := Finset.sum_filter_add_sum_filter_not Finset.univ (fun a => q a ≤ p a) q
-      simpa [hs_def, hsc_def, hq_sum] using h
-    have hP1 : ∑ a ∈ s, p a < 1 := by linarith
-    have hQ1 : ∑ a ∈ s, q a < 1 := by linarith
-    have hPc_eq : ∑ a ∈ sc, p a = 1 - ∑ a ∈ s, p a := by linarith
-    have hQc_eq : ∑ a ∈ sc, q a = 1 - ∑ a ∈ s, q a := by linarith
-    have hlog_s := Real.sum_mul_log_sum_div_sum_le_sum_mul_log_div s p q
-      (fun a ha => (hp_s a ha).le) hq_s
-    have hlog_sc := Real.sum_mul_log_sum_div_sum_le_sum_mul_log_div sc p q
-      (fun a ha => (hp_sc a ha).le) hq_sc
-    have hKL_split : ∑ a : α, p a * Real.log (p a / q a)
-        = (∑ a ∈ s, p a * Real.log (p a / q a)) + (∑ a ∈ sc, p a * Real.log (p a / q a)) := by
-      have h := Finset.sum_filter_add_sum_filter_not Finset.univ (fun a => q a ≤ p a)
-        (fun a => p a * Real.log (p a / q a))
-      simpa [hs_def, hsc_def] using h.symm
-    have hKL_ge : (∑ a ∈ s, p a) * Real.log ((∑ a ∈ s, p a) / (∑ a ∈ s, q a))
-        + (∑ a ∈ sc, p a) * Real.log ((∑ a ∈ sc, p a) / (∑ a ∈ sc, q a))
-        ≤ ∑ a : α, p a * Real.log (p a / q a) := by
-      linarith
-    rw [hPc_eq, hQc_eq] at hKL_ge
-    have hbin := binary_pinsker hP hP1 hQ hQ1
-    have hL1 : ∑ a : α, |p a - q a|
-        = 2 * ((∑ a ∈ s, p a) - (∑ a ∈ s, q a)) := by
-      have h := Finset.sum_filter_add_sum_filter_not Finset.univ (fun a => q a ≤ p a)
-        (fun a => |p a - q a|)
-      have h1 : ∀ a ∈ Finset.univ.filter (fun a => q a ≤ p a), |p a - q a| = p a - q a := by
-        intro a ha
-        exact abs_of_nonneg (sub_nonneg.mpr (Finset.mem_filter.mp ha).2)
-      have h2 : ∀ a ∈ Finset.univ.filter (fun a => ¬ q a ≤ p a), |p a - q a| = q a - p a := by
-        intro a ha
-        have hlt : p a < q a := not_le.mp (Finset.mem_filter.mp ha).2
-        rw [abs_of_neg (sub_neg.mpr hlt)]
-        ring
-      rw [Finset.sum_congr rfl h1, Finset.sum_congr rfl h2] at h
-      have hL : ∑ a : α, |p a - q a|
-          = (∑ a ∈ s, (p a - q a)) + (∑ a ∈ sc, (q a - p a)) := by
-        simpa [hs_def, hsc_def] using h.symm
-      rw [hL, Finset.sum_sub_distrib, Finset.sum_sub_distrib]
-      linarith [hsumP, hsumQ]
-    rw [hL1]
-    have hsq : (2 * ((∑ a ∈ s, p a) - (∑ a ∈ s, q a))) ^ 2
-        = 2 * (2 * ((∑ a ∈ s, p a) - (∑ a ∈ s, q a)) ^ 2) := by ring
-    rw [hsq]
-    apply mul_le_mul_of_nonneg_left _ (by norm_num : (0:ℝ) ≤ 2)
-    linarith
-  · -- complement empty: p = q pointwise, both sides vanish
-    rw [Finset.not_nonempty_iff_eq_empty] at hsc
-    have hle : ∀ a : α, q a ≤ p a := by
-      intro a
-      by_contra hlt
-      have hmem : a ∈ sc := Finset.mem_filter.mpr ⟨Finset.mem_univ a, hlt⟩
-      rw [hsc] at hmem
-      simp at hmem
-    have heq : ∀ a : α, p a = q a := by
-      have hsum : ∑ a ∈ Finset.univ, (p a - q a) = 0 := by
-        rw [Finset.sum_sub_distrib]
-        simpa using (by rw [hp_sum, hq_sum, sub_self] : (∑ a : α, p a) - (∑ a : α, q a) = 0)
-      have hnonneg : ∀ a ∈ Finset.univ, 0 ≤ p a - q a := fun a _ => sub_nonneg.mpr (hle a)
-      have hzero := (Finset.sum_eq_zero_iff_of_nonneg hnonneg).mp hsum
-      intro a
-      have h0 := hzero a (Finset.mem_univ a)
-      linarith
-    have hL : (∑ a : α, |p a - q a|) = 0 := by
-      apply Finset.sum_eq_zero
-      intro a _
-      rw [heq a, sub_self, abs_zero]
-    have hR : (∑ a : α, p a * Real.log (p a / q a)) = 0 := by
-      apply Finset.sum_eq_zero
-      intro a _
-      rw [heq a]
-      have hne : q a ≠ 0 := ne_of_gt (hq_pos a)
-      simp [div_self hne, Real.log_one]
-    rw [hL, hR]
-    simp
+  exact csiszar_kullback_pinsker_of_support p q
+    (fun a => (hp_pos a).le) (fun a => (hq_pos a).le) hp_sum hq_sum
+    (fun a ha => ((hq_pos a).ne' ha).elim)
 
 end MathlibExt.InformationTheory.Pinsker
