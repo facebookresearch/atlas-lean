@@ -51,8 +51,12 @@ are `ProbabilityTheory.IsPoissonProcess` of rate `1`.
   numbers for a unit Poisson clock, `P(sup_{a ≤ B} |Y(N a) / N - a| > η) ≤ C / N`, uniformly over
   unit Poisson processes.
 * `tendsto_measure_deviation`: **Kurtz's theorem for SIR.** If the scaled initial state
-  converges in probability, then for every `T` and `ε > 0`,
-  `P(sup_{t ∈ [0, T]} |S/N - s| + |I/N - i| + |R/N - r| ≥ ε) → 0`.
+  converges in probability, then for every `T` and `ε > 0`, the probability that the deviation
+  reaches `ε` at some time of `[0, T]` tends to `0`:
+  `P(∃ t ∈ [0, T], |S/N - s| + |I/N - i| + |R/N - r| ≥ ε) → 0`.
+* `tendsto_measure_iSup_deviation`: the same for the supremum event,
+  `P(sup_{t ∈ [0, T]} |S/N - s| + |I/N - i| + |R/N - r| ≥ ε) → 0`; the supremum need not be
+  attained.
 * `tendsto_measure_deviation_zero_of_initial`: the initial-condition hypothesis for
   deterministic initial counts with `S₀(N) / N → s(0)`, etc.
 * `tendsto_integral_infected`: consequently `E[I(t) / N] → i(t)` (via the general
@@ -68,8 +72,8 @@ are `ProbabilityTheory.IsPoissonProcess` of rate `1`.
   the two clocks, so it is not assumed.
 * Only the law of large numbers is proved, with an `O(1/N)` Chebyshev bound for the clock
   errors; the central limit (diffusion) correction is not treated.
-* The supremum over `[0, T]` is not assumed measurable; probabilities of such events are outer
-  measures.
+* The events over `[0, T]` (a time with deviation at least `ε`, or the supremum at least `ε`)
+  are not assumed measurable; their probabilities are outer measures.
 
 ## References
 
@@ -624,11 +628,15 @@ Ethier–Kurtz 1986, ch. 11, Thm 2.1, SIR instance). For each population size `N
 `IsChainPath` with infection rate `β S I / N` and recovery rate `γ I`. Let `(s, i, r)` solve the
 SIR system `s' = -β s i`, `i' = β s i - γ i`, `r' = γ i` from a point of the simplex. If the
 scaled initial state converges to `(s 0, i 0, r 0)` in probability, then the scaled chain
-converges to `(s, i, r)` in probability, uniformly on every time interval `[0, T]`:
+converges to `(s, i, r)` in probability, uniformly on every time interval `[0, T]`: the
+probability that the deviation reaches `ε` at some time of `[0, T]` tends to `0`,
 
-  `P(sup_{t ∈ [0, T]} |S/N - s| + |I/N - i| + |R/N - r| ≥ ε) → 0`  as `N → ∞`.
+  `P(∃ t ∈ [0, T], |S/N - s| + |I/N - i| + |R/N - r| ≥ ε) → 0`  as `N → ∞`.
 
-The event is not assumed measurable; `μ` is applied as an outer measure. -/
+This event contains the strict supremum event `sup_{t ∈ [0, T]} deviation > ε`. A supremum need
+not be attained, so the non-strict supremum event `sup deviation ≥ ε` is the separate corollary
+`tendsto_measure_iSup_deviation`. The event is not assumed measurable; `μ` is applied as an outer
+measure. -/
 theorem tendsto_measure_deviation (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
     (hY₁ : ∀ N, IsPoissonProcess (Y₁ N) 1 μ) (hY₂ : ∀ N, IsPoissonProcess (Y₂ N) 1 μ)
     (hchain : ∀ N, ∀ᵐ ω ∂μ, IsChainPath β γ N (fun u => Y₁ N u ω) (fun u => Y₂ N u ω)
@@ -690,6 +698,40 @@ theorem tendsto_measure_deviation (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
   refine (measure_union_le _ _).trans ?_
   gcongr
   exact measure_union_le _ _
+
+/-- **Kurtz's theorem for SIR, supremum form.** Under the hypotheses of
+`tendsto_measure_deviation`, the supremum over `[0, T]` of the deviation between the scaled chain
+and the ODE solution is at least `ε` with probability tending to `0`:
+
+  `P(sup_{t ∈ [0, T]} |S/N - s| + |I/N - i| + |R/N - r| ≥ ε) → 0`  as `N → ∞`.
+
+The supremum is taken in `ℝ≥0∞` (the deviation is nonnegative), so it exists for every path,
+bounded or not, and need not be attained. The event lies inside the event of
+`tendsto_measure_deviation` at threshold `ε / 2`; it is not assumed measurable, and `μ` is applied
+as an outer measure. -/
+theorem tendsto_measure_iSup_deviation (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
+    (hY₁ : ∀ N, IsPoissonProcess (Y₁ N) 1 μ) (hY₂ : ∀ N, IsPoissonProcess (Y₂ N) 1 μ)
+    (hchain : ∀ N, ∀ᵐ ω ∂μ, IsChainPath β γ N (fun u => Y₁ N u ω) (fun u => Y₂ N u ω)
+      (S N ω) (I N ω) (R N ω))
+    (hode : SIR.IsSolution β γ 1 s i r) (hs0 : 0 ≤ s 0) (hi0 : 0 ≤ i 0) (hr0 : 0 ≤ r 0)
+    (hsum : s 0 + i 0 + r 0 = 1)
+    (hinit : ∀ δ, 0 < δ → Tendsto (fun N =>
+      μ {ω | δ ≤ deviation N (S N ω) (I N ω) (R N ω) s i r 0}) atTop (𝓝 0))
+    (T : ℝ) {ε : ℝ} (hε : 0 < ε) :
+    Tendsto (fun N => μ {ω | ENNReal.ofReal ε ≤
+      ⨆ t ∈ Icc 0 T, ENNReal.ofReal (deviation N (S N ω) (I N ω) (R N ω) s i r t)})
+      atTop (𝓝 0) := by
+  have hε2 : 0 < ε / 2 := half_pos hε
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds
+    (tendsto_measure_deviation hβ hγ hY₁ hY₂ hchain hode hs0 hi0 hr0 hsum hinit T hε2)
+    (fun _ => bot_le) (fun N => measure_mono fun ω hω => ?_)
+  simp only [mem_ofPred_eq] at hω ⊢
+  have hlt : ENNReal.ofReal (ε / 2) <
+      ⨆ t ∈ Icc 0 T, ENNReal.ofReal (deviation N (S N ω) (I N ω) (R N ω) s i r t) :=
+    lt_of_lt_of_le ((ENNReal.ofReal_lt_ofReal_iff hε).2 (half_lt_self hε)) hω
+  obtain ⟨t, ht⟩ := lt_iSup_iff.1 hlt
+  obtain ⟨htT, hdev⟩ := lt_iSup_iff.1 ht
+  exact ⟨t, htT, ((ENNReal.ofReal_lt_ofReal_iff_of_nonneg hε2.le).1 hdev).le⟩
 
 omit [IsProbabilityMeasure μ] in
 /-- Deterministic initial counts: if almost surely `S N 0 = S₀ N`, `I N 0 = I₀ N`,

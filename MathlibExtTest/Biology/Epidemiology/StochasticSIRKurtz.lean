@@ -21,8 +21,9 @@ import Mathlib.Probability.Independence.InfinitePi
   count at `t = 1` converging to it (order `o(1)` as `N → ∞`);
 * the small-`N` case `N = 1`, where every sample path is more than `1/4` away from `i(1)`, so
   no limit statement is claimed at fixed `N`;
-* non-vacuity: the full hypothesis bundle of Kurtz's theorem is satisfied by genuine unit Poisson
-  processes (exponential interarrivals on an infinite product space) and the disease-free chain.
+* non-vacuity: the full hypothesis bundle of Kurtz's theorem, in its attained-time form and its
+  supremum form, is satisfied by genuine unit Poisson processes (exponential interarrivals on an
+  infinite product space) and the disease-free chain.
 -/
 
 open MeasureTheory ProbabilityTheory Real Set Filter
@@ -292,6 +293,33 @@ example (β γ : ℝ) (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (T ε : ℝ) (hε : 0 < 
       fun t _ => by simpa using hasDerivAt_const t (0 : ℝ),
       fun t _ => by simpa using hasDerivAt_const t (0 : ℝ)⟩
   refine tendsto_measure_deviation (Y₁ := fun _ => _) (Y₂ := fun _ => _)
+    (S := fun N _ _ => N) (I := fun _ _ _ => 0) (R := fun _ _ _ => 0) hβ hγ
+    (fun _ => hY) (fun _ => hY) (fun N => ?_) hode zero_le_one le_rfl le_rfl (by norm_num)
+    (fun δ hδ => ?_) T hε
+  · filter_upwards [hY.ae_zero] with ω hω
+    exact diseaseFree_isChainPath β γ N hω hω
+  · refine tendsto_measure_deviation_zero_of_initial (S₀ := fun N => N) (I₀ := fun _ => 0)
+      (R₀ := fun _ => 0) (fun _ => ae_of_all _ fun _ => rfl) (fun _ => ae_of_all _ fun _ => rfl)
+      (fun _ => ae_of_all _ fun _ => rfl) ?_ (by simp) (by simp) hδ
+    refine tendsto_const_nhds.congr' ?_
+    filter_upwards [eventually_gt_atTop 0] with N hN
+    rw [div_self (Nat.cast_ne_zero.2 hN.ne')]
+
+/-- The supremum form `tendsto_measure_iSup_deviation` under the same genuine Poisson clocks and
+disease-free chain: the supremum of the deviation over `[0, T]` is at least `ε` with probability
+tending to `0`. -/
+example (β γ : ℝ) (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (T ε : ℝ) (hε : 0 < ε) :
+    haveI : IsProbabilityMeasure (expMeasure 1) := isProbabilityMeasure_expMeasure (by norm_num)
+    Tendsto (fun N : ℕ => Measure.infinitePi (fun _ : ℕ => expMeasure 1)
+      {_ω | ENNReal.ofReal ε ≤ ⨆ t ∈ Icc 0 T, ENNReal.ofReal (deviation N (fun _ => N)
+        (fun _ => 0) (fun _ => 0) (fun _ => 1) (fun _ => 0) (fun _ => 0) t)}) atTop (𝓝 0) := by
+  have : IsProbabilityMeasure (expMeasure 1) := isProbabilityMeasure_expMeasure (by norm_num)
+  have hY := isPoissonProcess_expCount
+  have hode : SIR.IsSolution β γ 1 (fun _ => 1) (fun _ => 0) (fun _ => 0) :=
+    ⟨fun t _ => by simpa using hasDerivAt_const t (1 : ℝ),
+      fun t _ => by simpa using hasDerivAt_const t (0 : ℝ),
+      fun t _ => by simpa using hasDerivAt_const t (0 : ℝ)⟩
+  refine tendsto_measure_iSup_deviation (Y₁ := fun _ => _) (Y₂ := fun _ => _)
     (S := fun N _ _ => N) (I := fun _ _ _ => 0) (R := fun _ _ _ => 0) hβ hγ
     (fun _ => hY) (fun _ => hY) (fun N => ?_) hode zero_le_one le_rfl le_rfl (by norm_num)
     (fun δ hδ => ?_) T hε
