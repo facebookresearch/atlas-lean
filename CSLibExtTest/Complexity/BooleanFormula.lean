@@ -20,7 +20,7 @@ namespace Cslib.Complexity.BooleanFormulaTests
 open Cslib.Complexity
 
 /-- Computation: an AND of the two inputs evaluates as expected. -/
-example : BooleanFormula.eval (fun i : Fin 2 => i = 0)
+example : BooleanFormula.eval (fun i : Fin 2 => decide (i = 0))
     (BooleanFormula.and (BooleanFormula.input 0) (BooleanFormula.input 1)) = false := rfl
 
 /-- Computation: NOT of a constant. -/
@@ -47,10 +47,10 @@ example : outer.subst wiring =
     .and (.not (.input 0)) (.or (.not (.input 0)) (.and (.input 0) (.input 1))) := rfl
 
 /-- Exact evaluation of the substituted formula at `y = (false, true)`, and `eval_subst` there. -/
-example : (outer.subst wiring).eval (fun i : Fin 2 => i = 1) = true ∧
-    (outer.subst wiring).eval (fun i : Fin 2 => i = 1) =
-      outer.eval (fun i => (wiring i).eval (fun j : Fin 2 => j = 1)) :=
-  ⟨rfl, BooleanFormula.eval_subst wiring outer (fun i : Fin 2 => i = 1)⟩
+example : (outer.subst wiring).eval (fun i : Fin 2 => decide (i = 1)) = true ∧
+    (outer.subst wiring).eval (fun i : Fin 2 => decide (i = 1)) =
+      outer.eval (fun i => (wiring i).eval (fun j : Fin 2 => decide (j = 1))) :=
+  ⟨rfl, BooleanFormula.eval_subst wiring outer (fun i : Fin 2 => decide (i = 1))⟩
 
 /-- Exact depth `3` and size `5` of the substituted formula. -/
 example : (outer.subst wiring).depth = 3 ∧ (outer.subst wiring).size = 5 := ⟨rfl, rfl⟩
