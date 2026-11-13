@@ -8,13 +8,14 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.Calculus.Deriv.Mul
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
+public import Mathlib.InformationTheory.KullbackLeibler.Basic
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
-public import MathlibExt.InformationTheory.FiniteEntropy
 
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+import MathlibExt.InformationTheory.FiniteEntropy
 import MathlibExt.InformationTheory.Pinsker
 
 @[expose] public section

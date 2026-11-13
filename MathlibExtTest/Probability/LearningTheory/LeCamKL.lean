@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Probability.LearningTheory.LeCamKL
 
+import MathlibExt.InformationTheory.FiniteEntropy
 import MathlibExt.Probability.ProbabilityMassFunction.Uniform
 
 instance : MeasurableSpace (Fin 2) := ⊤
