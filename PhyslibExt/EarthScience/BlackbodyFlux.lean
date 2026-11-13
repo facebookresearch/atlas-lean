@@ -18,7 +18,7 @@ open MeasureTheory intervalIntegral
 /-!
 # Integrated outgoing blackbody flux
 
-A blackbody at temperature `T` emits outgoing flux `σ T⁴`
+A blackbody at absolute temperature `T ≥ 0` emits outgoing flux `σ T⁴`
 (Stefan-Boltzmann, with `σ ≥ 0`). A Lambertian surface has intensity
 `σ T⁴ / π`; integrating that intensity over the outgoing hemisphere,
 with the `cos θ` projection factor and the azimuthal factor `2π sin θ`,
@@ -27,13 +27,16 @@ recovers the adopted law `σ T⁴`.
 ## i. Overview
 
 The integrand equals `σ T⁴ * 2 sin θ cos θ` after cancelling `π`, and
-`∫₀^{π/2} 2 sin θ cos θ dθ = [sin² θ]₀^{π/2} = 1`. Nonnegativity is
-`σ ≥ 0` times `T⁴ ≥ 0`.
+`∫₀^{π/2} 2 sin θ cos θ dθ = [sin² θ]₀^{π/2} = 1`. This integral identity
+holds for all real `σ` and `T`; the physical statement assumes `T ≥ 0`.
+Nonnegativity is `σ ≥ 0` times `T⁴ ≥ 0`.
 
 ## ii. Key results
 
-- `EarthScience.integrated_blackbody_flux_eq`: hemispheric integration
-  gives `σ T⁴`.
+- `EarthScience.hemispheric_cos_sin_integral_eq`: the unrestricted
+  algebraic identity, for all real `σ` and `T`.
+- `EarthScience.integrated_blackbody_flux_eq`: for absolute temperature
+  `T ≥ 0`, hemispheric integration gives `σ T⁴`.
 - `EarthScience.integrated_blackbody_flux_nonneg`: the flux is
   nonnegative for `σ ≥ 0`.
 
@@ -53,11 +56,11 @@ The integrand equals `σ T⁴ * 2 sin θ cos θ` after cancelling `π`, and
 
 namespace EarthScience
 
-/-- Integrated outgoing blackbody flux: hemispheric integration of the
-Lambertian intensity `σ T⁴ / π` with the `cos θ` projection and the
-azimuthal factor `2π sin θ` gives the adopted Stefan-Boltzmann law
-`σ T⁴`. -/
-theorem integrated_blackbody_flux_eq {σ T : ℝ} :
+/-- Unrestricted algebraic identity behind the integrated blackbody flux: for
+all real `σ` and `T`, integrating `(σ T⁴ / π) cos θ · 2π sin θ` over
+`θ ∈ [0, π/2]` gives `σ T⁴`. It is the outgoing blackbody flux only for an
+absolute temperature `T ≥ 0`; see `integrated_blackbody_flux_eq`. -/
+theorem hemispheric_cos_sin_integral_eq {σ T : ℝ} :
     ∫ θ in (0 : ℝ)..(Real.pi / 2), (σ * T ^ 4 / Real.pi) * Real.cos θ * (2 * Real.pi * Real.sin θ)
       = σ * T ^ 4 := by
   have hpi : Real.pi ≠ 0 := Real.pi_ne_zero
@@ -68,6 +71,15 @@ theorem integrated_blackbody_flux_eq {σ T : ℝ} :
   rw [hfun, intervalIntegral.integral_const_mul, intervalIntegral.integral_const_mul,
     integral_sin_mul_cos₁, Real.sin_pi_div_two, Real.sin_zero]
   ring
+
+/-- Integrated outgoing blackbody flux: for an absolute temperature `T ≥ 0`,
+hemispheric integration of the Lambertian intensity `σ T⁴ / π` with the
+`cos θ` projection and the azimuthal factor `2π sin θ` gives the adopted
+Stefan-Boltzmann law `σ T⁴`. -/
+theorem integrated_blackbody_flux_eq {σ T : ℝ} (_hT : 0 ≤ T) :
+    ∫ θ in (0 : ℝ)..(Real.pi / 2), (σ * T ^ 4 / Real.pi) * Real.cos θ * (2 * Real.pi * Real.sin θ)
+      = σ * T ^ 4 :=
+  hemispheric_cos_sin_integral_eq
 
 /-- The integrated blackbody flux is nonnegative for `σ ≥ 0`. -/
 theorem integrated_blackbody_flux_nonneg {σ T : ℝ} (hσ : 0 ≤ σ) :
