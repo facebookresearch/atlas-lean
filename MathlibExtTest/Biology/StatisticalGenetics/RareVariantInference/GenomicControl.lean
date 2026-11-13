@@ -15,6 +15,7 @@ public import MathlibExt.Biology.StatisticalGenetics.RareVariantInference.Genomi
 open MeasureTheory ProbabilityTheory MathlibExt.Biology.StatisticalGenetics.LDScore
   MathlibExt.Biology.StatisticalGenetics.LDScoreInflation
   MathlibExt.Biology.StatisticalGenetics.RareVariantInference.GenomicControl
+open MathlibExt.Probability.Statistics.MultipleTesting
 open scoped NNReal ENNReal
 
 namespace MathlibExtTest.Biology.StatisticalGenetics.RareVariantInference.GenomicControl
@@ -211,7 +212,33 @@ example : (∫ ω, chiSqStrat D1 X1 0 0 1 ω ∂μ8) / lambdaGC D1 X1 0 0 < 1 �
     simp [ldScore, ldCorr, X1, Fin.sum_univ_three, Fin.sum_univ_four]
     norm_num
 
+/-! ### Genomic-control p-values and `χ²₁` tail bounds -/
+
+/-- The corrected statistic of `G2` has law `χ²₁`. -/
+example : HasLaw (fun ω => G2.score () ω ^ 2 / G2.lam) (chiSquareMeasure 1)
+    (gaussianReal 0 2) :=
+  G2.hasLaw_sq_div ()
+
+/-- The genomic-control p-value of the single score of `G2` is valid. -/
+example : IsValidPValue (gaussianReal 0 2) fun ω => gcPValue G2.lam (G2.score () ω ^ 2) :=
+  G2.isValidPValue_gcPValue ()
+
+/-- A larger statistic gets a smaller genomic-control p-value, and a positive one is below `1`. -/
+example : gcPValue 2 10 ≤ gcPValue 2 1 ∧ gcPValue 2 1 < 1 :=
+  ⟨gcPValue_antitone two_pos (by norm_num), gcPValue_lt_one two_pos one_pos⟩
+
+example : chiSqOneTail 1 < 1 := chiSqOneTail_lt_one one_pos
+
+example : (chiSqOneTail 10).toReal ≤ 1 / 20 := chiSqOneTail_toReal_ten_le
+
 #print axioms chiSqOneTail_lt_of_lt
+#print axioms chiSqOneTail_lt_one
+#print axioms chiSqOneTail_toReal_le
+#print axioms chiSqOneTail_toReal_ten_le
+#print axioms gcPValue_antitone
+#print axioms gcPValue_lt_one
+#print axioms CommonInflationModel.hasLaw_sq_div
+#print axioms CommonInflationModel.isValidPValue_gcPValue
 #print axioms measure_reject_eq_chiSqOneTail
 #print axioms CommonInflationModel.measure_reject_eq
 #print axioms CommonInflationModel.typeI_eq

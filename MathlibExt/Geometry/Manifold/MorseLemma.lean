@@ -215,9 +215,6 @@ private theorem contDiff_parametric_intervalIntegral {n : ℕ} {F : Type*}
   intro x₀
   exact contDiffAt_parametric_aux m hH x₀
 
-/-- Smoothness order arithmetic. -/
-private lemma top_succ_le : ((⊤ : ℕ∞) : ℕ∞ω) + 1 ≤ (⊤ : ℕ∞) := by simp
-
 /-- `ContDiffOn` on a set from pointwise `ContDiffAt`. -/
 private lemma contDiffOn_of_contDiffAt {E F : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] [NormedAddCommGroup F] [NormedSpace ℝ F] {V : Set E}
@@ -250,12 +247,12 @@ private lemma morse_coeff_form {n : ℕ} {f : EuclideanSpace ℝ (Fin n) → ℝ
     f x = f 0 + ∑ i, ∑ j, (x i) * (x j) * morseCoeff f x i j := by
   have hDf : ∀ y : EuclideanSpace ℝ (Fin n), HasFDerivAt f (fderiv ℝ f y) y :=
     fun y => (hf.contDiffAt.differentiableAt top_order_ne_zero).hasFDerivAt
-  have hD1 : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ f) := hf.fderiv_right top_succ_le
+  have hD1 : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ f) := hf.fderiv_right ENat.coe_top_add_one.le
   have hDDf : ∀ y : EuclideanSpace ℝ (Fin n),
       HasFDerivAt (fderiv ℝ f) (fderiv ℝ (fderiv ℝ f) y) y :=
     fun y => (hD1.contDiffAt.differentiableAt top_order_ne_zero).hasFDerivAt
   have hD2c : Continuous (fderiv ℝ (fderiv ℝ f)) :=
-    (hD1.fderiv_right top_succ_le).continuous
+    (hD1.fderiv_right ENat.coe_top_add_one.le).continuous
   have hc : ∀ t : ℝ, HasDerivAt (fun t : ℝ => t • x) x t := by
     intro t
     simpa using (hasDerivAt_id t).smul_const x
@@ -389,7 +386,7 @@ private lemma morse_coeff_smooth {n : ℕ} {f : EuclideanSpace ℝ (Fin n) → �
     (hf : ContDiff ℝ (⊤ : ℕ∞) f) :
     ContDiff ℝ (⊤ : ℕ∞) (morseCoeff f) := by
   have hD2 : ContDiff ℝ (⊤ : ℕ∞) (fderiv ℝ (fderiv ℝ f)) :=
-    (hf.fderiv_right top_succ_le).fderiv_right top_succ_le
+    (hf.fderiv_right ENat.coe_top_add_one.le).fderiv_right ENat.coe_top_add_one.le
   have hsm : ContDiff ℝ (⊤ : ℕ∞)
       (fun p : ℝ × EuclideanSpace ℝ (Fin n) => p.1 • p.2) :=
     contDiff_fst.smul contDiff_snd

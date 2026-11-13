@@ -129,4 +129,28 @@ example (p : unitInterval) (hp : (p : ℝ) = 1 / 2) :
     norm_num
   exact absurd hle2 (not_le_of_gt hlt)
 
+/-! ### Survival-function p-values at an atom -/
+
+/-- At the atom of a point mass the closed tail `Set.Ici` gives p-value `1`. -/
+example : (Measure.dirac (0 : ℝ)).real (Set.Ici 0) = 1 := by
+  rw [measureReal_def, Measure.dirac_apply_of_mem (Set.mem_Ici.mpr le_rfl), ENNReal.toReal_one]
+
+/-- `isValidPValue_survival` applies to a law with an atom: the point mass at `0`. -/
+example : IsValidPValue (Measure.dirac (0 : ℝ))
+    (fun y : ℝ => (Measure.dirac (0 : ℝ)).real (Set.Ici y)) :=
+  isValidPValue_survival HasLaw.id
+
+/-- The strict tail `Set.Ioi` would give p-value `0` at the atom, which occurs with probability
+`1`, so that p-value is not valid: the closed tail in `isValidPValue_survival` is necessary. -/
+example : ¬ IsValidPValue (Measure.dirac (0 : ℝ))
+    (fun y : ℝ => (Measure.dirac (0 : ℝ)).real (Set.Ioi y)) := by
+  intro h
+  have h0 := h 0 ⟨le_rfl, zero_le_one⟩
+  have hmem : (0 : ℝ) ∈ {y : ℝ | (Measure.dirac (0 : ℝ)).real (Set.Ioi y) ≤ 0} := by
+    show (Measure.dirac (0 : ℝ)).real (Set.Ioi 0) ≤ 0
+    rw [measureReal_def, Measure.dirac_apply' _ measurableSet_Ioi]
+    simp
+  rw [Measure.dirac_apply_of_mem hmem, ENNReal.ofReal_zero] at h0
+  exact one_ne_zero (le_zero_iff.mp h0)
+
 end MathlibExtTest.Probability.Statistics.ExactTests.TailPValue
