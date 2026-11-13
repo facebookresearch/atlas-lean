@@ -7,8 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+public import Mathlib.Analysis.Calculus.Deriv.Basic
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Tactic.LinearCombination
 
 /-!
@@ -20,6 +22,16 @@ For ponded Green-Ampt infiltration `F' = K (1 + A / F)` on an interval
 head (`A = 0`) this reduces to constant-rate infiltration.
 
 ## i. Overview
+
+Green and Ampt model ponded infiltration into a uniform soil by a sharp
+wetting front. Here `F` is the cumulative infiltration depth, `K > 0` the
+saturated hydraulic conductivity, and `A = ψ Δθ ≥ 0` the wetting-front
+suction head `ψ` times the moisture deficit `Δθ`; the infiltration rate is
+`F' = K (1 + A / F)`. The standard statement starts ponding at `t = 0`
+with `F(0) = 0` and integrates to `K t = F - A log (1 + F / A)`. Because
+the rate is singular at `F = 0` when `A > 0`, the theorem here starts
+instead from a positive cumulative depth `F(t₀) = F₀ > 0` at any time
+`t₀`; the standard form is the limiting case `t₀ = 0`, `F₀ → 0⁺`.
 
 The hypotheses are stated on the interval `[t₀, t]`, where they are
 satisfiable (e.g. `K = 1`, `A = 0`, `F(s) = s + 2` on `[0, 1]`). The
@@ -41,6 +53,13 @@ initial state `F₀ = 0` is a separate limit and is not proved here.
 
 ## iv. References
 
+- W. H. Green and G. A. Ampt, "Studies on soil physics, Part I: The flow
+  of air and water through soils", *J. Agric. Sci.* 4 (1911), 1-24: the
+  sharp-wetting-front infiltration model.
+- V. T. Chow, D. R. Maidment and L. W. Mays, *Applied Hydrology*,
+  McGraw-Hill, 1988, Chapter 4 (Subsurface water), the Green-Ampt method:
+  the infiltration rate `f = K (ψ Δθ / F + 1)` and, for ponding from
+  `F(0) = 0`, the cumulative infiltration `F - ψ Δθ log (1 + F / (ψ Δθ)) = K t`.
 - `intervalIntegral.integral_eq_sub_of_hasDerivAt` in
   `Mathlib/MeasureTheory/Integral/IntervalIntegral/FundThmCalculus.lean`
   (Mathlib).
