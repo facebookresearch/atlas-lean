@@ -16,7 +16,8 @@ import Mathlib.Analysis.Calculus.Deriv.Add
 Consumers of `PhyslibExt.EarthScience.GreenAmptInfiltration`: the
 satisfiability witness `K = 1`, `A = 0`, `F(s) = s + 2` on `[0, 1]`,
 the public shape of the integrated law, the degenerate case `t = t₀`,
-and the `A = 0` reduction of the integrated formula.
+the `A = 0` reduction of the integrated formula, and the no-suction dry
+start `F₀ = 0`.
 
 ## i. Overview
 
@@ -32,7 +33,7 @@ No new definitions or results are introduced here.
 ## iii. Table of contents
 
 - A. Satisfiability witness
-- B. Shape, degenerate case, and `A = 0` reduction
+- B. Shape, degenerate case, `A = 0` reduction, and dry start
 
 ## iv. References
 
@@ -68,12 +69,21 @@ example (F : ℝ → ℝ) (K A F₀ t₀ t : ℝ) (hK : 0 < K)
 
 /-- The public statement shape of the no-suction case. -/
 example (F : ℝ → ℝ) (K F₀ t₀ t : ℝ) (hK : 0 < K)
-    (hF₀ : 0 < F₀) (ht : t₀ ≤ t)
-    (hFpos : ∀ s ∈ Set.Icc t₀ t, F s > 0)
+    (ht : t₀ ≤ t)
     (hF₀eq : F t₀ = F₀)
     (hode : ∀ s ∈ Set.Icc t₀ t, HasDerivAt F (K * (1 + 0 / F s)) s) :
     t - t₀ = (F t - F₀) / K :=
-  EarthScience.green_ampt_no_suction F K F₀ t₀ t hK hF₀ ht hFpos hF₀eq hode
+  EarthScience.green_ampt_no_suction F K F₀ t₀ t hK ht hF₀eq hode
+
+/-- Dry start in the no-suction case: `K = 1` and `F(s) = s` on `[0, 1]`,
+with `F 0 = 0`, gives `1 - 0 = (1 - 0) / 1`. -/
+example : (1 : ℝ) - 0 = ((fun s : ℝ => s) 1 - 0) / 1 := by
+  have hode : ∀ s ∈ Set.Icc (0 : ℝ) 1,
+      HasDerivAt (fun s : ℝ => s) (1 * (1 + 0 / s)) s := by
+    intro s _
+    simpa using hasDerivAt_id' s
+  exact EarthScience.green_ampt_no_suction (fun s => s) 1 0 0 1 (by norm_num)
+    (by norm_num) rfl hode
 
 /-- Degenerate case `t = t₀`: the integrated formula gives `0 = 0`. -/
 example (F : ℝ → ℝ) (K A F₀ t₀ : ℝ) (hK : 0 < K)

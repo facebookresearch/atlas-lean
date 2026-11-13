@@ -19,7 +19,8 @@ import Mathlib.Tactic.LinearCombination
 For ponded Green-Ampt infiltration `F' = K (1 + A / F)` on an interval
 `[t₀, t]` with `K > 0`, `A ≥ 0` and `F > 0` there, integrating gives
 `t - t₀ = (F - F₀ - A log ((F + A) / (F₀ + A))) / K`. With no suction
-head (`A = 0`) this reduces to constant-rate infiltration.
+head (`A = 0`) this reduces to constant-rate infiltration, which needs no
+positivity of `F` and so also covers the dry start `F₀ = 0`.
 
 ## i. Overview
 
@@ -29,8 +30,8 @@ saturated hydraulic conductivity, and `A = ψ Δθ ≥ 0` the wetting-front
 suction head `ψ` times the moisture deficit `Δθ`; the infiltration rate is
 `F' = K (1 + A / F)`. The standard statement starts ponding at `t = 0`
 with `F(0) = 0` and integrates to `K t = F - A log (1 + F / A)`. Because
-the rate is singular at `F = 0` when `A > 0`, the theorem here starts
-instead from a positive cumulative depth `F(t₀) = F₀ > 0` at any time
+the rate is singular at `F = 0` when `A > 0`, the general theorem here
+starts instead from a positive cumulative depth `F(t₀) = F₀ > 0` at any time
 `t₀`; the standard form is the limiting case `t₀ = 0`, `F₀ → 0⁺`.
 
 The hypotheses are stated on the interval `[t₀, t]`, where they are
@@ -39,13 +40,16 @@ proof goes through the antiderivative `G(F) = F - A log (F + A)`,
 whose derivative along `F` is the constant `K`: indeed
 `G'(F) = F / (F + A) = 1 / (1 + A / F)`. The fundamental theorem of
 calculus then gives `G(F(t)) - G(F(t₀)) = K (t - t₀)`. This is a
-sharp-front empirical model with unlimited ponded supply; the dry
-initial state `F₀ = 0` is a separate limit and is not proved here.
+sharp-front empirical model with unlimited ponded supply; for `A > 0` the
+dry initial state `F₀ = 0` is a separate limit and is not proved here, while
+for `A = 0` the rate is the constant `K` and `green_ampt_no_suction` covers
+it.
 
 ## ii. Key results
 
 - `EarthScience.green_ampt_integrated`: the integrated Green-Ampt law.
-- `EarthScience.green_ampt_no_suction`: the `A = 0` case.
+- `EarthScience.green_ampt_no_suction`: the `A = 0` case, without positivity
+  hypotheses on `F`, so including the dry start `F₀ = 0`.
 
 ## iii. Table of contents
 
@@ -145,15 +149,22 @@ theorem green_ampt_integrated (F : ℝ → ℝ) (K A F₀ t₀ t : ℝ) (hK : 0 
   linear_combination -hHeq
 
 /-- Green-Ampt with no suction head (`A = 0`) reduces to constant-rate
-infiltration: `t - t₀ = (F t - F₀) / K`, with the same interval
-hypotheses. -/
+infiltration: `t - t₀ = (F t - F₀) / K`. The rate `K * (1 + 0 / F s)` is the
+constant `K` whatever the value of `F s`, so no positivity of `F` or `F₀` is
+assumed; in particular the dry start `F t₀ = F₀ = 0` is covered. -/
 theorem green_ampt_no_suction (F : ℝ → ℝ) (K F₀ t₀ t : ℝ) (hK : 0 < K)
-    (hF₀ : 0 < F₀) (ht : t₀ ≤ t)
-    (hFpos : ∀ s ∈ Set.Icc t₀ t, F s > 0)
+    (ht : t₀ ≤ t)
     (hF₀eq : F t₀ = F₀)
     (hode : ∀ s ∈ Set.Icc t₀ t, HasDerivAt F (K * (1 + 0 / F s)) s) :
     t - t₀ = (F t - F₀) / K := by
-  have h := green_ampt_integrated F K 0 F₀ t₀ t hK le_rfl hF₀ ht hFpos hF₀eq hode
-  simpa using h
+  have hderiv : ∀ x ∈ Set.uIcc t₀ t, HasDerivAt F K x := by
+    intro x hx
+    rw [Set.uIcc_of_le ht] at hx
+    simpa using hode x hx
+  have hint : IntervalIntegrable (fun _ => K) volume t₀ t := intervalIntegrable_const
+  have h := integral_eq_sub_of_hasDerivAt (f := F) (f' := fun _ => K) hderiv hint
+  rw [intervalIntegral.integral_const, smul_eq_mul, hF₀eq] at h
+  rw [eq_div_iff (ne_of_gt hK)]
+  exact h
 
 end EarthScience
