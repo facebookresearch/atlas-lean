@@ -22,7 +22,8 @@ For the damped linear oscillator `x'' + 2γ x' + ω₀² x = 0`, the energy
 `E'(t) = -2γ (x'(t))²`. For `γ ≥ 0` the energy is therefore nonincreasing;
 `γ = 0` recovers conservation. No boundary or initial conditions are
 assumed. The differentiability hypotheses are the `HasDerivAt` data the
-proofs use.
+proofs use; the derivative identity needs them, and the oscillator equation,
+only at the point `t`.
 
 ## i. Overview
 
@@ -54,25 +55,24 @@ then gives antitonicity through the mean-value theorem.
 namespace EarthScience
 
 /-- Energy derivative for the damped oscillator `x'' + 2γ x' + ω₀² x = 0`:
-with `E(t) = (x'(t))²/2 + ω₀² (x(t))²/2`, `E'(t) = -2γ (x'(t))²`. -/
-theorem damped_oscillator_energy_hasDerivAt {γ ω₀ : ℝ} {x : ℝ → ℝ}
-    (hx1 : ∀ t, HasDerivAt x (deriv x t) t)
-    (hx2 : ∀ t, HasDerivAt (deriv x) (deriv (deriv x) t) t)
-    (hode : ∀ t, deriv (deriv x) t + 2 * γ * deriv x t + ω₀ ^ 2 * x t = 0)
-    (t : ℝ) :
+with `E(t) = (x'(t))²/2 + ω₀² (x(t))²/2`, `E'(t) = -2γ (x'(t))²`. The
+differentiability data and the oscillator equation are needed only at `t`. -/
+theorem damped_oscillator_energy_hasDerivAt {γ ω₀ : ℝ} {x : ℝ → ℝ} (t : ℝ)
+    (hx1 : HasDerivAt x (deriv x t) t)
+    (hx2 : HasDerivAt (deriv x) (deriv (deriv x) t) t)
+    (hode : deriv (deriv x) t + 2 * γ * deriv x t + ω₀ ^ 2 * x t = 0) :
     HasDerivAt (fun τ => (deriv x τ) ^ 2 / 2 + ω₀ ^ 2 * (x τ) ^ 2 / 2)
       (-2 * γ * (deriv x t) ^ 2) t := by
   have h1 : HasDerivAt (fun τ => deriv x τ * deriv x τ)
       (deriv (deriv x) t * deriv x t + deriv x t * deriv (deriv x) t) t :=
-    (hx2 t).mul (hx2 t)
+    hx2.mul hx2
   have h1d := h1.div_const (2 : ℝ)
   have h2 : HasDerivAt (fun τ => x τ * x τ)
       (deriv x t * x t + x t * deriv x t) t :=
-    (hx1 t).mul (hx1 t)
+    hx1.mul hx1
   have h2c := h2.const_mul (ω₀ ^ 2)
   have h2d := h2c.div_const (2 : ℝ)
   have hE := h1d.add h2d
-  have hode_t := hode t
   have hxx : deriv (deriv x) t = -2 * γ * deriv x t - ω₀ ^ 2 * x t := by
     linarith
   convert hE using 1
@@ -91,7 +91,7 @@ theorem damped_oscillator_energy_antitone {γ ω₀ : ℝ} {x : ℝ → ℝ}
     Antitone (fun t => (deriv x t) ^ 2 / 2 + ω₀ ^ 2 * (x t) ^ 2 / 2) := by
   have hE : ∀ t, HasDerivAt (fun τ => (deriv x τ) ^ 2 / 2 + ω₀ ^ 2 * (x τ) ^ 2 / 2)
       (-2 * γ * (deriv x t) ^ 2) t :=
-    fun t => damped_oscillator_energy_hasDerivAt hx1 hx2 hode t
+    fun t => damped_oscillator_energy_hasDerivAt t (hx1 t) (hx2 t) (hode t)
   have hdiff : Differentiable ℝ
       (fun t => (deriv x t) ^ 2 / 2 + ω₀ ^ 2 * (x t) ^ 2 / 2) :=
     fun t => (hE t).differentiableAt
