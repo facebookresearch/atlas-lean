@@ -24,8 +24,8 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 /-!
 # Random graphs: exponential families and block models
 
-Exponential-family random graph laws on `SimpleGraph V` for fixed
-finite `V`: normalized `PMF`, score and covariance derivatives,
+Exponential-family random graph laws with full support on `SimpleGraph V`
+for fixed finite `V`: normalized `PMF`, score and covariance derivatives,
 identifiability iff. Stochastic block model: latent labelings,
 admissible parameters giving a `PMF`, label swapping leaves the law
 unchanged (Allman, Matias and Rhodes 2009, Section 2).
@@ -40,8 +40,6 @@ unchanged (Allman, Matias and Rhodes 2009, Section 2).
   `µ(θ) = u(y)` (eq. (24), `ergmScore_eq_zero_iff`), the mean as the gradient of `ψ`
   (eq. (25), `hasDerivAt_log_ergmNormalizer`, `hasDerivAt_log_ergmNormalizer_update`) and the
   covariance as the matrix of derivatives of the mean (eq. (26), `hasDerivAt_ergmMean`).
-  Section 4.1 notes that when the number of ties is fixed, the edge statistic and its parameter
-  are irrelevant (generalized by `ergmProb_add_of_affine`).
 * E. S. Allman, C. Matias and J. A. Rhodes, *Identifiability of parameters in latent structure
   models with many observed variables*, Annals of Statistics 37(6A) (2009), 3099–3132,
   <https://arxiv.org/abs/0809.5032>. Section 2 describes label swapping: relabeling the latent
@@ -491,8 +489,8 @@ theorem hasDerivAt_ergmScore {V : Type*} [Fintype V]
   have h := hmean.const_sub (t y j)
   simpa [ergmScore, Pi.sub_apply] using h
 
-/-- A constant-statistic direction is irrelevant. This generalizes Snijders (2002),
-Section 4.1, where a fixed number of ties makes the edge parameter irrelevant. -/
+/-- A constant-statistic direction is irrelevant: if `v ⬝ᵥ t G = c` for every graph `G`, then
+adding `v` to `θ` leaves the law unchanged. -/
 theorem ergmProb_add_of_affine {V : Type*} [Fintype V]
     [DecidableEq V] {ι : Type*} [Fintype ι]
     (t : SimpleGraph V → ι → ℝ) (θ : ι → ℝ)
