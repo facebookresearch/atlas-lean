@@ -27,8 +27,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The generating function `A(x) = (a(1 - px) + bx) / (1 - px - x²)` of `A_0 = a`, `A_1 = b`,
-`A_{n+1} = p A_n + A_{n-1}`, as a rational function evaluated at `x ∈ ℚ`.
+/-- **Generating function of the recurrence $A_{n+1} = pA_n + A_{n-1}$.** For integers $a$, $b$,
+$p$ and a rational number $x$, $A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$, with the convention
+that a fraction with denominator $0$ is $0$. As a rational function, $A$ is the generating function
+$\sum_{n \ge 0} A_n x^n$ of the sequence with $A_0 = a$, $A_1 = b$ and $A_{n+1} = pA_n + A_{n-1}$;
+for $p \ne 0$ the denominator $1 - px - x^2$ has no rational root.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -36,7 +39,8 @@ Article 25.8.3, Section 2. -/
 def secondOrderGenValue (a b p : ℤ) (x : ℚ) : ℚ :=
   (a * (1 - p * x) + b * x) / (1 - p * x - x ^ 2)
 
-/-- Characteristic value: `A(0) = a`.
+/-- **Value of the generating function at zero.** For all integers $a, b, p$, the function
+$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ on the rationals satisfies $A(0) = a$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -44,8 +48,9 @@ Article 25.8.3, proof of Theorem 2. -/
 theorem secondOrderGenValue_zero (a b p : ℤ) : secondOrderGenValue a b p 0 = a := by
   simp [secondOrderGenValue]
 
-/-- Forward part `A^{(r,s)}_n` (`n ≥ 0`) of the two-sided sequence with `A_0 = r`, `A_1 = s`,
-`A_{n+1} = p A_n + A_{n-1}`.
+/-- **Forward part of a second-order sequence.** For integers $p, r, s$, this is the sequence
+$(A^{(r,s)}_n)_{n \ge 0}$ of integers with $A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and
+$A^{(r,s)}_{n+2} = pA^{(r,s)}_{n+1} + A^{(r,s)}_n$ for every natural number $n$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -55,8 +60,10 @@ def secondOrderFwd (p r s : ℤ) : ℕ → ℤ
   | 1 => s
   | n + 2 => p * secondOrderFwd p r s (n + 1) + secondOrderFwd p r s n
 
-/-- Backward part: `secondOrderBwd p r s k = A^{(r,s)}_{1-k}`, using
-`A_n = A_{n+2} - p A_{n+1}` for `n < 0`.
+/-- **Backward part of the two-sided sequence.** For integers $p$, $r$ and $s$, the backward
+part is the sequence $(B_k)_{k \ge 0}$ with $B_0 = s$, $B_1 = r$ and $B_{k+2} = B_k - pB_{k+1}$.
+Thus $B_k$ is the term of index $1 - k$ of the two-sided sequence with $A_0 = r$, $A_1 = s$ and
+$A_{n+1} = pA_n + A_{n-1}$, computed backwards by $A_n = A_{n+2} - pA_{n+1}$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -66,9 +73,12 @@ def secondOrderBwd (p r s : ℤ) : ℕ → ℤ
   | 1 => r
   | n + 2 => secondOrderBwd p r s n - p * secondOrderBwd p r s (n + 1)
 
-/-- The two-sided sequence `(A^{(r,s)}_n)_{n ∈ ℤ}` with `A_0 = r`, `A_1 = s` and
-`A_{n+1} = p A_n + A_{n-1}` for all `n` (the paper's forward rule "if `n > 1`" is read as
-`n ≥ 1`, as the definition of `A_2` requires).
+/-- **Two-sided second-order sequence.** For integers $p$, $r$ and $s$, the two-sided sequence
+$(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ for $p$ is the integer sequence indexed by $\mathbb{Z}$ with
+$A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and $A^{(r,s)}_{n+1} = pA^{(r,s)}_n + A^{(r,s)}_{n-1}$ for
+every integer $n$.
+
+The paper's forward rule "if $n > 1$" is read as $n \ge 1$, as the definition of $A_2$ requires.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -77,7 +87,9 @@ def secondOrderBiSeq (p r s : ℤ) : ℤ → ℤ
   | (n : ℕ) => secondOrderFwd p r s n
   | Int.negSucc n => secondOrderBwd p r s (n + 2)
 
-/-- Characteristic values: `A_0 = r`, `A_1 = s`, `A_2 = ps + r`, `A_{-1} = s - pr`.
+/-- **First values of the two-sided sequence.** For all integers $p$, $r$, $s$, the two-sided
+sequence $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ for $p$ with initial values $r$ and $s$ satisfies
+$A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$, $A^{(r,s)}_2 = ps + r$ and $A^{(r,s)}_{-1} = s - pr$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -89,21 +101,28 @@ theorem secondOrderBiSeq_small (p r s : ℤ) :
   show secondOrderBwd p r s 2 = s - p * r
   rfl
 
-/-- Initial value `A^{(r,s)}_0 = r`.
+/-- **First initial value of the two-sided sequence.** For all integers $p$, $r$, $s$, the
+two-sided sequence $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ for $p$ with initial values $r$ and $s$
+satisfies $A^{(r,s)}_0 = r$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
 Article 25.8.3, Theorem 1. -/
 @[simp] theorem secondOrderBiSeq_zero (p r s : ℤ) : secondOrderBiSeq p r s 0 = r := rfl
 
-/-- Initial value `A^{(r,s)}_1 = s`.
+/-- **Second initial value of the two-sided sequence.** For all integers $p$, $r$, $s$, the
+two-sided sequence $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ for $p$ with initial values $r$ and $s$
+satisfies $A^{(r,s)}_1 = s$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
 Article 25.8.3, Theorem 1. -/
 @[simp] theorem secondOrderBiSeq_one (p r s : ℤ) : secondOrderBiSeq p r s 1 = s := rfl
 
-/-- The defining recurrence on all of `ℤ`: `A_{n+2} = p A_{n+1} + A_n` for every integer `n`.
+/-- **The two-sided sequence satisfies its recurrence at every index.** Let $p$, $r$, $s$ be
+integers and $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ the two-sided sequence for $p$ with initial values
+$A^{(r,s)}_0 = r$ and $A^{(r,s)}_1 = s$. Then
+$A^{(r,s)}_{n+2} = pA^{(r,s)}_{n+1} + A^{(r,s)}_n$ for every integer $n$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -131,8 +150,15 @@ theorem secondOrderBiSeq_add_two (p r s : ℤ) (n : ℤ) :
       rw [e]
       ring
 
-/-- The quantity `M(r, s) = (b r² + b s² - a p r² + 2 a r s) / (s² - p r s - r²)`, equal to
-`±√((kp + b - ap)² - 4k(a - k))` for `k = A(r/s)`.
+/-- **The quantity $M(r, s)$ for the recurrence $A_{n+1} = pA_n + A_{n-1}$.** For integers $a$,
+$b$, $p$, $r$, $s$, $M(r, s) = \frac{br^2 + bs^2 - apr^2 + 2ars}{s^2 - prs - r^2}$, a rational
+number, with the convention that a fraction with denominator $0$ is $0$.
+
+When $s \ne 0$ and $s^2 - prs - r^2 \ne 0$, write $k = A(r/s)$, where
+$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ is the generating function of the sequence with
+$A_0 = a$, $A_1 = b$ and $A_{n+1} = pA_n + A_{n-1}$; then
+$M(r, s)^2 = (kp + b - ap)^2 - 4k(a - k)$, that is,
+$M(r, s) = \pm\sqrt{(kp + b - ap)^2 - 4k(a - k)}$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -140,7 +166,8 @@ Article 25.8.3, Section 2 (before Lemma 8). -/
 def secondOrderMValue (a b p r s : ℤ) : ℚ :=
   (b * r ^ 2 + b * s ^ 2 - a * p * r ^ 2 + 2 * a * r * s) / (s ^ 2 - p * r * s - r ^ 2)
 
-/-- Characteristic value: `M(0, 1) = b`.
+/-- **Value of $M$ at $(0, 1)$.** For all integers $a$, $b$, $p$, the quantity
+$M(r, s) = \frac{br^2 + bs^2 - apr^2 + 2ars}{s^2 - prs - r^2}$ satisfies $M(0, 1) = b$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -148,8 +175,12 @@ Article 25.8.3, Section 2. -/
 theorem secondOrderMValue_zero_one (a b p : ℤ) : secondOrderMValue a b p 0 1 = b := by
   simp [secondOrderMValue]
 
-/-- `x` belongs to the family generated by `x₀ = r/s` (lowest terms, `s > 0`): `x` is a ratio
-`A^{(r,s)}_n / A^{(r,s)}_{n+1}` with `A^{(r,s)}_{n+1} ≠ 0`.
+/-- **Family generated by a rational number.** Let $p$ be an integer and $x_0$ a rational number,
+written $x_0 = r/s$ in lowest terms with $s > 0$, and let $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ be
+the two-sided sequence with $A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and
+$A^{(r,s)}_{n+1} = pA^{(r,s)}_n + A^{(r,s)}_{n-1}$. A rational number $x$ belongs to the family
+generated by $x_0$ when there is an integer $n$ with $A^{(r,s)}_{n+1} \ne 0$ and
+$x = A^{(r,s)}_n / A^{(r,s)}_{n+1}$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -158,7 +189,8 @@ def IsInSecondOrderFamily (p : ℤ) (x₀ x : ℚ) : Prop :=
   ∃ n : ℤ, secondOrderBiSeq p x₀.num x₀.den (n + 1) ≠ 0 ∧
     x = (secondOrderBiSeq p x₀.num x₀.den n : ℚ) / secondOrderBiSeq p x₀.num x₀.den (n + 1)
 
-/-- Characteristic property: every `x₀` belongs to its own family (`n = 0`).
+/-- **Every rational number lies in its own family.** For every integer $p$ and every rational
+number $x_0$, $x_0$ belongs to the family generated by $x_0$ for $p$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -167,8 +199,13 @@ theorem isInSecondOrderFamily_self (p : ℤ) (x₀ : ℚ) : IsInSecondOrderFamil
   ⟨0, by simp [secondOrderBiSeq, secondOrderFwd], by
     simp [secondOrderBiSeq, secondOrderFwd, Rat.num_div_den]⟩
 
-/-- If `r, s` are coprime (`s ≠ 0`) and `A(r/s)` is an integer, then
-`A(A^{(r,s)}_n / A^{(r,s)}_{n+1})` is an integer whenever `A^{(r,s)}_{n+1} ≠ 0` (all `n ∈ ℤ`).
+/-- **Integer values propagate along a family.** Let $a, b, p$ be integers with $p \ne 0$, let
+$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$, and for integers $r, s$ let
+$A^{(r,s)}$ be the two-sided integer sequence with $A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and
+$A^{(r,s)}_{n+2} = pA^{(r,s)}_{n+1} + A^{(r,s)}_n$ for all integers $n$. If $r$ and $s$ are
+coprime integers with $s \ne 0$ and $A(r/s)$ is an integer, then
+$A(A^{(r,s)}_n / A^{(r,s)}_{n+1})$ is an integer for every integer $n$ with
+$A^{(r,s)}_{n+1} \ne 0$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -180,8 +217,13 @@ public theorem_wanted secondOrderGenValue_family_integer (a b p : ℤ) (hp : p �
     ∃ z : ℤ, secondOrderGenValue a b p
       ((secondOrderBiSeq p r s n : ℚ) / secondOrderBiSeq p r s (n + 1)) = z
 
-/-- (i) `A(A^{(0,1)}_n / A^{(0,1)}_{n+1})` is an integer for all `n ≠ -1`; (ii)
-`A(A^{(-b,a)}_n / A^{(-b,a)}_{n+1})` is an integer whenever `A^{(-b,a)}_{n+1} ≠ 0`.
+/-- **Two families of integer values.** Let $a, b, p$ be integers with $p \ne 0$, let
+$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$, and for integers $r, s$ let
+$A^{(r,s)}$ be the two-sided integer sequence with $A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and
+$A^{(r,s)}_{n+2} = pA^{(r,s)}_{n+1} + A^{(r,s)}_n$ for all integers $n$. Then
+$A(A^{(0,1)}_n / A^{(0,1)}_{n+1})$ is an integer for every integer $n \ne -1$, and
+$A(A^{(-b,a)}_n / A^{(-b,a)}_{n+1})$ is an integer for every integer $n$ with
+$A^{(-b,a)}_{n+1} \ne 0$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -192,8 +234,12 @@ public theorem_wanted secondOrderGenValue_trivial_families_integer (a b p : ℤ)
     ∀ n : ℤ, secondOrderBiSeq p (-b) a (n + 1) ≠ 0 → ∃ z : ℤ, secondOrderGenValue a b p
       ((secondOrderBiSeq p (-b) a n : ℚ) / secondOrderBiSeq p (-b) a (n + 1)) = z
 
-/-- For coprime `r, s` (`s ≠ 0`), `A(r/s)` is an integer iff `b ≡ -a r s⁻¹ (mod |s² - prs - r²|)`,
-stated for every inverse `t` of `s` modulo `s² - prs - r²`.
+/-- **Integrality criterion at a rational point.** Let $a, b, p$ be integers with $p \ne 0$ and let
+$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$. Let $r, s$ be coprime integers
+with $s \ne 0$ and put $D = s^2 - prs - r^2$. Then $A(r/s)$ is an integer if and only if
+$b \equiv -art \pmod{D}$ for every integer $t$ with $st \equiv 1 \pmod{D}$.
+
+Since $s$ is invertible modulo $D$, this is the congruence $b \equiv -ars^{-1} \pmod{|D|}$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -205,8 +251,10 @@ public theorem_wanted secondOrderGenValue_integer_iff (a b p : ℤ) (hp : p ≠ 
       ∀ t : ℤ, s * t ≡ 1 [ZMOD (s ^ 2 - p * r * s - r ^ 2)] →
         b ≡ -a * r * t [ZMOD (s ^ 2 - p * r * s - r ^ 2)]
 
-/-- If `r, s ≠ 0`, `r + ps ≠ 0`, `gcd(r, s) = 1` and `A(r/s)` is an integer, then `A(s/(r + ps))`
-and `A((s - pr)/r)` are integers.
+/-- **Neighbours of an integer value.** Let $a, b, p$ be integers with $p \ne 0$ and let
+$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$. If $r, s$ are coprime integers
+with $r \ne 0$, $s \ne 0$ and $r + ps \ne 0$, and $A(r/s)$ is an integer, then $A(s/(r + ps))$
+and $A((s - pr)/r)$ are integers.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -218,10 +266,14 @@ public theorem_wanted secondOrderGenValue_neighbors_integer (a b p : ℤ) (hp : 
     (∃ z : ℤ, secondOrderGenValue a b p ((s : ℚ) / (r + p * s)) = z) ∧
       ∃ z : ℤ, secondOrderGenValue a b p (((s : ℚ) - p * r) / r) = z
 
-/-- (i) `M(s - pr, r) + (p² + 2) M(r, s) + M(s, r + ps) = 0`; (ii)
-`M(r, s)² + (p² + 2) M(r, s) M(s, r + ps) + M(s, r + ps)² = abp³ + (a² - b²)p²`. Domain
-extension: stated for all `(r, s) ≠ (0, 0)` instead of `r, s ≠ 0`, `r + ps ≠ 0`; with `p ≠ 0`
-all three denominators are `±(s² - prs - r²) ≠ 0`.
+/-- **Relations between values of $M$ at neighbouring pairs.** Let $a$, $b$, $p$ be integers with
+$p \ne 0$, and for integers $r$, $s$ let
+$M(r, s) = \frac{br^2 + bs^2 - apr^2 + 2ars}{s^2 - prs - r^2}$. Then for all integers $r$, $s$
+that are not both zero, $M(s - pr, r) + (p^2 + 2)M(r, s) + M(s, r + ps) = 0$ and
+$M(r, s)^2 + (p^2 + 2)M(r, s)M(s, r + ps) + M(s, r + ps)^2 = abp^3 + (a^2 - b^2)p^2$.
+
+The source assumes $r \ne 0$, $s \ne 0$ and $r + ps \ne 0$; here only $(r, s) \ne (0, 0)$ is
+assumed. Since $p \ne 0$, the three denominators equal $\pm(s^2 - prs - r^2)$, which is nonzero.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -235,12 +287,20 @@ public theorem_wanted secondOrderMValue_relations (a b p : ℤ) (hp : p ≠ 0) (
           secondOrderMValue a b p s (r + p * s) ^ 2 =
         a * b * p ^ 3 + (a ^ 2 - b ^ 2) * p ^ 2
 
-/-- Assume `abp + a² - b² < 0` and `A(r/s)` is an integer (`r, s` coprime, `s ≠ 0`). Then some
-member `A_n / A_{n+1}` of the family of `r/s` has `|M| ≤ √(-abp - a² + b²)`. Corrected reading:
-the family has no zero term (`A^{(r,s)}_n ≠ 0` for all `n`), as the paper assumes before Lemma 8
-("we can assume that the conditions `r ≠ 0, s ≠ 0, r + ps ≠ 0` automatically hold"). Without it
-the claim fails: for `(a, b, p) = (-1, 8, -1)` and `x = 0` the family `A^{(0,1)}` has
-`min |M| = 8 > √55`.
+/-- **A small value of $M$ in the family of $r/s$ when $abp + a^2 - b^2 < 0$.** Let $a, b, p$ be
+integers with $p \ne 0$ and $abp + a^2 - b^2 < 0$. Let $A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$
+for rational $x$, and for integers $u, v$ let
+$M(u, v) = \frac{bu^2 + bv^2 - apu^2 + 2auv}{v^2 - puv - u^2}$, where in both a fraction with
+denominator $0$ is read as $0$. Let $r, s$ be coprime integers with $s \ne 0$ such that $A(r/s)$
+is an integer, and let $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ be the two-sided sequence with
+$A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and $A^{(r,s)}_{n+1} = pA^{(r,s)}_n + A^{(r,s)}_{n-1}$ for
+every integer $n$. If $A^{(r,s)}_n \ne 0$ for every integer $n$, then there is an integer $n$
+with $|M(A^{(r,s)}_n, A^{(r,s)}_{n+1})| \le \sqrt{b^2 - a^2 - abp}$.
+
+The hypothesis that no term vanishes is the paper's assumption before Lemma 8 ("we can assume
+that the conditions $r \ne 0, s \ne 0, r + ps \ne 0$ automatically hold"). Without it the paper's
+claim fails: for $(a, b, p) = (-1, 8, -1)$ and $x = 0$, the members $A_n/A_{n+1}$ of the family
+$A^{(0,1)}$ with $A_{n+1} \ne 0$ have $\min |M| = 8 > \sqrt{55}$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -252,11 +312,20 @@ public theorem_wanted exists_small_secondOrderMValue_of_neg (a b p : ℤ) (hp : 
     ∃ n : ℤ, |(secondOrderMValue a b p (secondOrderBiSeq p r s n)
         (secondOrderBiSeq p r s (n + 1)) : ℝ)| ≤ √((-a * b * p - a ^ 2 + b ^ 2 : ℤ) : ℝ)
 
-/-- Assume `abp + a² - b² ≥ 0` and `A(r/s)` is an integer (`r, s` coprime, `s ≠ 0`). Then some
-member of the family of `r/s` has `|M| ≤ √((abp³ + (a² - b²)p²)/(p² + 4))`. Corrected reading:
-the family has no zero term, as assumed in the paper before Lemma 8; without it the claim fails:
-for `(a, b, p) = (-3, -8, 5)` and `x = 0`, `min |M| = 8` while
-`(abp³ + (a² - b²)p²)/(p² + 4) = 1625/29 < 64`.
+/-- **A small value of $M$ in the family of $r/s$ when $abp + a^2 - b^2 \ge 0$.** Let $a, b, p$
+be integers with $p \ne 0$ and $abp + a^2 - b^2 \ge 0$. Let
+$A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$ for rational $x$, and for integers $u, v$ let
+$M(u, v) = \frac{bu^2 + bv^2 - apu^2 + 2auv}{v^2 - puv - u^2}$, where in both a fraction with
+denominator $0$ is read as $0$. Let $r, s$ be coprime integers with $s \ne 0$ such that $A(r/s)$
+is an integer, and let $(A^{(r,s)}_n)_{n \in \mathbb{Z}}$ be the two-sided sequence with
+$A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and $A^{(r,s)}_{n+1} = pA^{(r,s)}_n + A^{(r,s)}_{n-1}$ for
+every integer $n$. If $A^{(r,s)}_n \ne 0$ for every integer $n$, then there is an integer $n$
+with $|M(A^{(r,s)}_n, A^{(r,s)}_{n+1})| \le \sqrt{(abp^3 + (a^2 - b^2)p^2)/(p^2 + 4)}$.
+
+The hypothesis that no term vanishes is the paper's assumption before Lemma 8. Without it the
+paper's claim fails: for $(a, b, p) = (-3, -8, 5)$ and $x = 0$, the members $A_n/A_{n+1}$ of the
+family $A^{(0,1)}$ with $A_{n+1} \ne 0$ have $\min |M| = 8$, while
+$(abp^3 + (a^2 - b^2)p^2)/(p^2 + 4) = 1625/29 < 64$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -269,13 +338,24 @@ public theorem_wanted exists_small_secondOrderMValue_of_nonneg (a b p : ℤ) (hp
         (secondOrderBiSeq p r s (n + 1)) : ℝ)| ≤
       √(((a * b * p ^ 3 + (a ^ 2 - b ^ 2) * p ^ 2 : ℤ) : ℝ) / (p ^ 2 + 4))
 
-/-- The algorithm. Let `E = abp³ + (a² - b²)p²` and `C = √(E/(p² + 4))` if `E ≥ 0`,
-`C = √(-abp + b² - a²)` if `E < 0`. (Soundness) for integers `M, k` with `k ≠ 0` and
-`M² = (kp - ap + b)² - 4k(a - k)`, both values `x = (ap - kp - b ± M)/(2k)` give integer `A(x)`.
-(Completeness) every `x ∈ ℚ` with `A(x) ∈ ℤ` lies in one of the families of Theorem 2 or in the
-family of such an `x'` obtained from integers `M, N, k` with `|M| ≤ C`,
-`M² + (p² + 2)MN + N² = E`, `k ≠ 0` and `M² = (kp - ap + b)² - 4k(a - k)`. The ± is written as
-`M` versus `-M`, `|M| ≤ C` as `M² ≤ C²`; uses `(a, b) ≠ (0, 0)`.
+/-- **Algorithm for integer values of a second-order generating function.** Let $a, b, p$ be
+integers with $p \ne 0$ and $(a, b) \ne (0, 0)$, let $A(x) = \frac{a(1 - px) + bx}{1 - px - x^2}$
+for rational $x$, and for integers $r, s$ let $A^{(r,s)}$ be the two-sided integer sequence with
+$A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and $A^{(r,s)}_{n+2} = pA^{(r,s)}_{n+1} + A^{(r,s)}_n$ for all
+integers $n$. Put $E = abp^3 + (a^2 - b^2)p^2$, and let $B = E/(p^2 + 4)$ if $E \ge 0$ and
+$B = -abp + b^2 - a^2$ if $E < 0$. (Soundness) If $M$ and $k$ are integers with $k \ne 0$ and
+$M^2 = (kp - ap + b)^2 - 4k(a - k)$, then $A(x)$ is an integer for both
+$x = (ap - kp - b + M)/(2k)$ and $x = (ap - kp - b - M)/(2k)$. (Completeness) If $x$ is a
+rational number for which $A(x)$ is an integer, then at least one of the following holds: there
+is an integer $n$ with $A^{(0,1)}_{n+1} \ne 0$ and $x = A^{(0,1)}_n / A^{(0,1)}_{n+1}$; there is
+an integer $n$ with $A^{(-b,a)}_{n+1} \ne 0$ and $x = A^{(-b,a)}_n / A^{(-b,a)}_{n+1}$; or there
+are integers $M, N, k$ with $M^2 \le B$, $M^2 + (p^2 + 2)MN + N^2 = E$, $k \ne 0$ and
+$M^2 = (kp - ap + b)^2 - 4k(a - k)$, and a rational number
+$x' \in \{(ap - kp - b + M)/(2k), (ap - kp - b - M)/(2k)\}$ such that $x$ lies in the family of
+$x'$: writing $x' = u/v$ in lowest terms with $v > 0$, there is an integer $n$ with
+$A^{(u,v)}_{n+1} \ne 0$ and $x = A^{(u,v)}_n / A^{(u,v)}_{n+1}$.
+
+The bound $M^2 \le B$ is the condition $|M| \le \sqrt{B}$ of the source.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -299,9 +379,12 @@ public theorem_wanted secondOrderGenValue_algorithm (a b p : ℤ) (hp : p ≠ 0)
         ∃ x' : ℚ, (x' = (a * p - k * p - b + M) / (2 * k) ∨
           x' = (a * p - k * p - b - M) / (2 * k)) ∧ IsInSecondOrderFamily p x' x
 
-/-- For `U_0 = 0`, `U_1 = 1`, `U_{n+1} = p U_n + U_{n-1}` (the case `(a, b) = (0, 1)`), the set of
-rationals at which the generating function `U(x)` is an integer is
-`{A^{(0,1)}_n / A^{(0,1)}_{n+1} : n ≠ -1}`.
+/-- **Rationals where $x/(1 - px - x^2)$ is an integer.** Let $p \ne 0$ be an integer, let
+$G(x) = \frac{x}{1 - px - x^2}$ for rational $x$, and let $A^{(0,1)}$ be the two-sided integer
+sequence with $A^{(0,1)}_0 = 0$, $A^{(0,1)}_1 = 1$ and
+$A^{(0,1)}_{n+2} = pA^{(0,1)}_{n+1} + A^{(0,1)}_n$ for all integers $n$. Then the set of rational
+numbers $x$ for which $G(x)$ is an integer is
+$\{A^{(0,1)}_n / A^{(0,1)}_{n+1} : n \in \mathbb{Z},\ n \ne -1\}$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -311,9 +394,11 @@ public theorem_wanted secondOrderGenValue_zero_one_integer_set (p : ℤ) (hp : p
       {x | ∃ n : ℤ, n ≠ -1 ∧
         x = (secondOrderBiSeq p 0 1 n : ℚ) / secondOrderBiSeq p 0 1 (n + 1)}
 
-/-- For `U_n = lucasU (p, -1)` (`U_0 = 0`, `U_1 = 1`, `U_{n+1} = p U_n + U_{n-1}`) and its
-generating function `U`: (i) `U(U_n/U_{n+1})` is an integer for all `n ≥ 0`; (ii) if `U(x) = k`
-is an integer for a rational `x`, then `U(U_n/U_{n+1}) = k` for some `n ≥ 0`.
+/-- **Integer values of $x/(1 - px - x^2)$ come from Lucas ratios.** Let $p \ne 0$ be an integer,
+let $(U_n)_{n \ge 0}$ be the Lucas sequence $U(p, -1)$, so $U_0 = 0$, $U_1 = 1$ and
+$U_{n+2} = pU_{n+1} + U_n$, and let $G(x) = \frac{x}{1 - px - x^2}$ for rational $x$. Then
+$G(U_n/U_{n+1})$ is an integer for every natural number $n$; and if $G(x) = k$ for a rational
+number $x$ and an integer $k$, then $G(U_n/U_{n+1}) = k$ for some natural number $n$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),
@@ -324,8 +409,13 @@ public theorem_wanted secondOrderGenValue_lucasU (p : ℤ) (hp : p ≠ 0) :
     ∀ (x : ℚ) (k : ℤ), secondOrderGenValue 0 1 p x = k → ∃ n : ℕ, secondOrderGenValue 0 1 p
       ((lucasU ⟨p, -1, by norm_num⟩ n : ℚ) / lucasU ⟨p, -1, by norm_num⟩ (n + 1)) = k
 
-/-- For `(a, b) = (1, 1)` there are no families beyond those of Theorem 2: every rational `x`
-with `A(x) ∈ ℤ` is a ratio of consecutive terms of `A^{(0,1)}` or of `A^{(-1,1)}`.
+/-- **Integer values of $(1 - px + x)/(1 - px - x^2)$.** Let $p \ne 0$ be an integer, let
+$A(x) = \frac{1 - px + x}{1 - px - x^2}$ for rational $x$, and for integers $r, s$ let $A^{(r,s)}$
+be the two-sided integer sequence with $A^{(r,s)}_0 = r$, $A^{(r,s)}_1 = s$ and
+$A^{(r,s)}_{n+2} = pA^{(r,s)}_{n+1} + A^{(r,s)}_n$ for all integers $n$. If $x$ is a rational
+number for which $A(x)$ is an integer, then there is an integer $n$ with $A^{(0,1)}_{n+1} \ne 0$
+and $x = A^{(0,1)}_n / A^{(0,1)}_{n+1}$, or there is an integer $n$ with $A^{(-1,1)}_{n+1} \ne 0$
+and $x = A^{(-1,1)}_n / A^{(-1,1)}_{n+1}$.
 
 Source: Luu Ba Thang and Nguyen Duy Nguyen, *Integer Values of Generating Functions for a Type of
 Second-Order Linear Recurrence Sequence*, Journal of Integer Sequences 28 (2025),

@@ -60,15 +60,19 @@ This is a category-(b) candidate from §76 of the Knill survey
 (`sections/076-four-square-theorem.md`).
 -/
 
-/-- An integer `n` is a **sum of `k` cubes** if `n = x₁³ + ⋯ + x_k³` for some
-natural numbers `x₁, …, x_k`. -/
+/-- **Sum of $k$ cubes.** A natural number $n$ is a sum of $k$ cubes if there are natural numbers
+$x_1, \dots, x_k$ with $n = x_1^3 + \dots + x_k^3$. -/
 def IsSumOfCubes (k n : ℕ) : Prop :=
   ∃ x : Fin k → ℕ, ∑ i, (x i) ^ 3 = n
 
 /- **Wieferich's theorem `g(3) = 9`.** Every natural number is a sum of nine
 cubes, and nine is necessary: some `n` (namely `23`) is not a sum of eight
 cubes. -/
-/-- Source: A. Wieferich, *Beweis des Satzes, daß sich eine jede ganze Zahl als Summe von höchstens neun positiven Kuben darstellen läßt*, Math. Ann. 66 (1909); A. Kempner, *Über das Waringsche Problem und einige Verallgemeinerungen*, Math. Ann. 72 (1912). Knill, *Some fundamental theorems in mathematics*, §76. Via leanprover/lean-eval@38361be, problem `wieferich_g_three`. -/
+/-- **Wieferich's nine cubes theorem.** Every natural number is a sum of $9$ cubes of natural
+numbers, and $9$ cannot be replaced by $8$: some natural number is not a sum of $8$ cubes of
+natural numbers.
+
+Source: A. Wieferich, *Beweis des Satzes, daß sich eine jede ganze Zahl als Summe von höchstens neun positiven Kuben darstellen läßt*, Math. Ann. 66 (1909); A. Kempner, *Über das Waringsche Problem und einige Verallgemeinerungen*, Math. Ann. 72 (1912). Knill, *Some fundamental theorems in mathematics*, §76. Via leanprover/lean-eval@38361be, problem `wieferich_g_three`. -/
 public theorem_wanted wieferich_g_three :
     (∀ n : ℕ, IsSumOfCubes 9 n) ∧ ∃ n : ℕ, ¬ IsSumOfCubes 8 n
 

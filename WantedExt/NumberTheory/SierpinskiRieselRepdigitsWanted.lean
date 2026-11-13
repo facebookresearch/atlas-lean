@@ -40,59 +40,78 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- A Sierpiński number: an odd `k` such that `k·2^n + 1` is composite for every `n ≥ 1`.
+/-- **Sierpiński number.** A natural number $k$ is a Sierpiński number if $k$ is odd and,
+for every integer $n \ge 1$, the number $k \cdot 2^n + 1$ is not prime.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, abstract and Section 1. -/
 public def IsSierpinskiNumber (k : ℕ) : Prop :=
   Odd k ∧ ∀ n : ℕ, 1 ≤ n → ¬ (k * 2 ^ n + 1).Prime
 
-/-- A Riesel number: an odd `k` such that `k·2^n - 1` is composite for every `n ≥ 1`.
+/-- **Riesel number.** A natural number $k$ is a Riesel number if $k$ is odd and, for every
+integer $n \ge 1$, the number $k \cdot 2^n - 1$ is not prime.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, abstract and Section 1. -/
 public def IsRieselNumber (k : ℕ) : Prop :=
   Odd k ∧ ∀ n : ℕ, 1 ≤ n → ¬ (k * 2 ^ n - 1).Prime
 
-/-- `1` is not a Sierpiński number: `1·2 + 1 = 3` is prime.
+/-- **$1$ is not a Sierpiński number.** The number $1$ is not a Sierpiński number, since
+$1 \cdot 2 + 1 = 3$ is prime.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Section 1. -/
 public theorem not_isSierpinskiNumber_one : ¬ IsSierpinskiNumber 1 := fun h =>
   h.2 1 le_rfl (by simpa using Nat.prime_three)
 
-/-- `1` is not a Riesel number: `1·2^2 - 1 = 3` is prime.
+/-- **One is not a Riesel number.** The number $1$ is not a Riesel number, since
+$1 \cdot 2^2 - 1 = 3$ is prime.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Section 1. -/
 public theorem not_isRieselNumber_one : ¬ IsRieselNumber 1 := fun h =>
   h.2 2 (by norm_num) (by simpa using Nat.prime_three)
 
-/-- The `b`-repstring `k_b^{(z;t)} = k (b^{(z+ℓ)t} - 1)/(b^{z+ℓ} - 1)`, `ℓ` the number of base-`b`
-digits of `k`; `repstring b k 0 t` is the repinteger `k_b^{(t)}`.
+/-- **Repstrings.** For natural numbers $b$, $k$, $z$ and $t$, let $\ell$ be the number of base-$b$
+digits of $k$. The $b$-repstring is
+
+$$k_b^{(z;t)} = \left\lfloor \frac{k\,(b^{(z+\ell)t} - 1)}{b^{z+\ell} - 1} \right\rfloor,$$
+
+where subtraction is truncated at $0$ and the integer division gives $0$ when the denominator is
+$0$. For $z = 0$ it is the $b$-repinteger $k_b^{(t)}$.
+
+For $b \ge 2$ and $k \ge 1$ the division is exact, and $k_b^{(z;t)}$ is the number whose base-$b$
+expansion is $k$ written $t$ times with $z$ zeros between consecutive copies.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Sections 1 and 4. -/
 public def repstring (b k z t : ℕ) : ℕ :=
   k * (b ^ ((z + (Nat.digits b k).length) * t) - 1) / (b ^ (z + (Nat.digits b k).length) - 1)
 
-/-- The paper's example: `1001001` is the repstring with `b = 10`, `k = 1`, `z = 2`, `t = 3`.
+/-- **A $10$-repstring.** The $10$-repstring with $k = 1$, $z = 2$ and $t = 3$ is
+$1_{10}^{(2;3)} = 1001001$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Section 4. -/
 public theorem repstring_ten_one_two_three : repstring 10 1 2 3 = 1001001 := by
   norm_num [repstring]
 
-/-- The `2`-repunit with three digits is `7`.
+/-- **The three-digit $2$-repunit.** The $2$-repstring with $k = 1$, $z = 0$ and $t = 3$, that is,
+the $2$-repunit $1_2^{(3)}$ with three digits, equals $7$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Section 1. -/
 public theorem repstring_two_one_zero_three : repstring 2 1 0 3 = 7 := by
   norm_num [repstring]
 
-/-- Covering data `{(r_j, m_j, p_j)}` producing `k` as a Sierpiński number by the covering
-system method: the classes `r_j mod m_j` cover `ℤ`, the `p_j` are distinct primes,
-`p_j ∣ 2^{m_j} - 1` with `m_j ≥ 1`, and `p_j ∣ k·2^{r_j} + 1` (that is, `k ≡ -2^{-r_j}`).
+/-- **Sierpiński covering data.** Let $k$ be a natural number and $S$ a finite set of triples
+$(r, m, p)$ of natural numbers. Then $S$ is Sierpiński covering data for $k$ if every integer is
+congruent to $r$ modulo $m$ for some $(r, m, p) \in S$, distinct triples in $S$ have distinct
+third entries, and every $(r, m, p) \in S$ has $m \ge 1$, $p$ prime, $p \mid 2^m - 1$ and
+$p \mid k \cdot 2^r + 1$.
+
+This is the input of the covering system method for Sierpiński numbers; the last condition says
+that $k \equiv -2^{-r} \pmod{p}$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Section 2, Equation (2). -/
@@ -101,8 +120,15 @@ public def IsSierpinskiCoveringData (k : ℕ) (S : Finset (ℕ × ℕ × ℕ)) :
     Set.InjOn (fun s : ℕ × ℕ × ℕ => s.2.2) (S : Set (ℕ × ℕ × ℕ)) ∧
     ∀ s ∈ S, 1 ≤ s.2.1 ∧ s.2.2.Prime ∧ s.2.2 ∣ 2 ^ s.2.1 - 1 ∧ s.2.2 ∣ k * 2 ^ s.1 + 1
 
-/-- Covering data `{(r_j, m_j, p_j)}` producing `k` as a Riesel number by the covering system
-method: as for `IsSierpinskiCoveringData`, with `p_j ∣ k·2^{r_j} - 1` (that is, `k ≡ 2^{-r_j}`).
+/-- **Riesel covering data.** Let $k$ be a natural number and let $S$ be a finite set of triples
+$(r, m, p)$ of natural numbers. Then $S$ is Riesel covering data for $k$ (data producing $k$ as a
+Riesel number by the covering system method) when every integer is congruent to $r$ modulo $m$
+for some $(r, m, p) \in S$, distinct triples in $S$ have distinct third entries $p$, and every
+$(r, m, p) \in S$ has $m \ge 1$, $p$ prime, $p \mid 2^m - 1$ and $p \mid k \cdot 2^r - 1$ (for
+$k \ge 1$ the last condition says $k \equiv 2^{-r} \pmod p$).
+
+Subtraction is in the natural numbers, so for $k = 0$ the condition $p \mid k \cdot 2^r - 1$ reads
+$p \mid 0$ and holds trivially.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Section 2, Equation (3). -/
@@ -111,22 +137,26 @@ public def IsRieselCoveringData (k : ℕ) (S : Finset (ℕ × ℕ × ℕ)) : Pro
     Set.InjOn (fun s : ℕ × ℕ × ℕ => s.2.2) (S : Set (ℕ × ℕ × ℕ)) ∧
     ∀ s ∈ S, 1 ≤ s.2.1 ∧ s.2.2.Prime ∧ s.2.2 ∣ 2 ^ s.2.1 - 1 ∧ s.2.2 ∣ k * 2 ^ s.1 - 1
 
-/-- Empty data never covers `ℤ`.
+/-- **Empty Sierpiński covering data.** For every natural number $k$, the empty set is not
+Sierpiński covering data for $k$: the empty family of residue classes does not cover $\mathbb{Z}$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Section 2. -/
 public theorem not_isSierpinskiCoveringData_empty (k : ℕ) : ¬ IsSierpinskiCoveringData k ∅ :=
   fun h => by simpa using h.1 0
 
-/-- Empty data never covers `ℤ`.
+/-- **The empty set is not Riesel covering data.** For every natural number $k$, the empty set is
+not Riesel covering data for $k$, because its residue classes do not cover $\mathbb{Z}$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Section 2. -/
 public theorem not_isRieselCoveringData_empty (k : ℕ) : ¬ IsRieselCoveringData k ∅ :=
   fun h => by simpa using h.1 0
 
-/-- **Theorem 3.2.** The covering system method cannot produce a `2`-repdigit
-`2^t - 1` (`t ≥ 1`) as a Sierpiński number.
+/-- **Theorem 3.2 (no Sierpiński $2$-repdigits from coverings).** For every natural number
+$t \ge 1$, the covering system method cannot produce the $2$-repdigit $2^t - 1$ as a
+Sierpiński number: no finite set of triples $(r_j, m_j, p_j)$ is Sierpiński covering data
+for $2^t - 1$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.2
@@ -134,8 +164,12 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.2
 public theorem_wanted not_isSierpinskiCoveringData_two_pow_sub_one {t : ℕ} (ht : 1 ≤ t)
     (S : Finset (ℕ × ℕ × ℕ)) : ¬ IsSierpinskiCoveringData (2 ^ t - 1) S
 
-/-- **Theorem 3.3.** If `k` is a Sierpiński number produced by the covering system method, then
-for every `b ≥ 2` there are infinitely many `t ≥ 1` with `k_b^{(t)}` a Sierpiński number.
+/-- **Covering-produced Sierpiński numbers give infinitely many Sierpiński repintegers.** Let $k$
+be a Sierpiński number that has Sierpiński covering data, so that $k$ is produced as a Sierpiński
+number by the covering system method. Then for every natural number $b \ge 2$ there are infinitely
+many $t \ge 1$ such that the $b$-repinteger $k_b^{(t)} = k\,(b^{\ell t} - 1)/(b^{\ell} - 1)$, where
+$\ell$ is the number of base-$b$ digits of $k$ (so $k_b^{(t)}$ is $k$ written $t$ times in base
+$b$), is a Sierpiński number.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.3
@@ -144,8 +178,12 @@ public theorem_wanted infinite_sierpinski_repintegers {k : ℕ} (hk : IsSierpins
     {S : Finset (ℕ × ℕ × ℕ)} (hS : IsSierpinskiCoveringData k S) {b : ℕ} (hb : 2 ≤ b) :
     {t : ℕ | 1 ≤ t ∧ IsSierpinskiNumber (repstring b k 0 t)}.Infinite
 
-/-- **Theorem 3.4.** If `k` is a Riesel number produced by the covering system method, then for
-every `b ≥ 2` there are infinitely many `t ≥ 1` with `k_b^{(t)}` a Riesel number.
+/-- **Covering-produced Riesel numbers give infinitely many Riesel repintegers.** Let $k$ be a
+Riesel number that has Riesel covering data, so that $k$ is produced as a Riesel number by the
+covering system method. Then for every natural number $b \ge 2$ there are infinitely many $t \ge 1$
+such that the $b$-repinteger $k_b^{(t)} = k\,(b^{\ell t} - 1)/(b^{\ell} - 1)$, where $\ell$ is the
+number of base-$b$ digits of $k$ (so $k_b^{(t)}$ is $k$ written $t$ times in base $b$), is a Riesel
+number.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.4 (stated in record
@@ -154,7 +192,10 @@ public theorem_wanted infinite_riesel_repintegers {k : ℕ} (hk : IsRieselNumber
     {S : Finset (ℕ × ℕ × ℕ)} (hS : IsRieselCoveringData k S) {b : ℕ} (hb : 2 ≤ b) :
     {t : ℕ | 1 ≤ t ∧ IsRieselNumber (repstring b k 0 t)}.Infinite
 
-/-- **Theorem 3.5.** For `t ≡ 25 (mod 56)`, `18107_2^{(t)}` is a Sierpiński number.
+/-- **Binary repintegers of 18107 that are Sierpiński numbers.** For every natural number
+$t \equiv 25 \pmod{56}$, the binary repinteger $18107_2^{(t)} = 18107\,(2^{15t} - 1)/(2^{15} - 1)$,
+whose binary expansion is that of $18107$ (fifteen binary digits) written $t$ times, is a
+Sierpiński number.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.5
@@ -162,7 +203,10 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.5
 public theorem_wanted isSierpinskiNumber_repstring_18107 {t : ℕ} (ht : t ≡ 25 [MOD 56]) :
     IsSierpinskiNumber (repstring 2 18107 0 t)
 
-/-- **Theorem 3.6.** For `t ≡ 31 (mod 56)`, `18107_2^{(t)}` is a Riesel number.
+/-- **Binary repintegers of 18107 that are Riesel numbers.** For every natural number
+$t \equiv 31 \pmod{56}$, the binary repinteger $18107_2^{(t)} = 18107\,(2^{15t} - 1)/(2^{15} - 1)$,
+whose binary expansion is that of $18107$ (fifteen binary digits) written $t$ times, is a Riesel
+number.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.6
@@ -170,8 +214,10 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.6
 public theorem_wanted isRieselNumber_repstring_18107 {t : ℕ} (ht : t ≡ 31 [MOD 56]) :
     IsRieselNumber (repstring 2 18107 0 t)
 
-/-- **Corollary 3.7.** For every `b > 78557` there are infinitely many `b`-repdigit Sierpiński
-numbers.
+/-- **Infinitely many Sierpiński repdigits in every base $b > 78557$.** Let $b > 78557$ be a
+natural number. Then there are infinitely many Sierpiński numbers of the form $k(b^t - 1)/(b - 1)$
+with $1 \le k < b$ and $t \ge 1$, that is, $b$-repdigits: the digit $k$ written $t$ times in
+base $b$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Corollary 3.7
@@ -180,8 +226,9 @@ public theorem_wanted infinite_sierpinski_repdigits {b : ℕ} (hb : 78557 < b) :
     {N : ℕ | ∃ k t : ℕ, 1 ≤ k ∧ k < b ∧ 1 ≤ t ∧ N = repstring b k 0 t ∧
       IsSierpinskiNumber N}.Infinite
 
-/-- **Corollary 3.8.** For every `b > 509203` there are infinitely many `b`-repdigit Riesel
-numbers.
+/-- **Infinitely many Riesel repdigits in every base $b > 509203$.** Let $b > 509203$ be a
+natural number. Then there are infinitely many Riesel numbers of the form $k(b^t - 1)/(b - 1)$ with
+$1 \le k < b$ and $t \ge 1$, that is, $b$-repdigits: the digit $k$ written $t$ times in base $b$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Corollary 3.8
@@ -190,8 +237,10 @@ public theorem_wanted infinite_riesel_repdigits {b : ℕ} (hb : 509203 < b) :
     {N : ℕ | ∃ k t : ℕ, 1 ≤ k ∧ k < b ∧ 1 ≤ t ∧ N = repstring b k 0 t ∧
       IsRieselNumber N}.Infinite
 
-/-- **Theorem 3.9.** If `b ≡ 87 (mod 11184810)` and `t ≡ 59 (mod 120)`, then `41_b^{(t)}` is a
-Sierpiński number.
+/-- **Repdigits with digit 41 that are Sierpiński numbers.** Let $b$ and $t$ be natural numbers
+with $b \equiv 87 \pmod{11184810}$ and $t \equiv 59 \pmod{120}$. Then the base-$b$ repdigit
+$41_b^{(t)} = 41\,(b^t - 1)/(b - 1)$ is a Sierpiński number. Since $b \ge 87 > 41$, its $t$
+base-$b$ digits all equal $41$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.9
@@ -199,7 +248,9 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.9
 public theorem_wanted isSierpinskiNumber_repstring_41 {b t : ℕ} (hb : b ≡ 87 [MOD 11184810])
     (ht : t ≡ 59 [MOD 120]) : IsSierpinskiNumber (repstring b 41 0 t)
 
-/-- **Theorem 3.10.** If `b ≡ 180 (mod 11184810)` and `t ≡ 171 (mod 240)`, then `101_b^{(t)}` is
+/-- **Riesel repdigits with digit $101$ in bases $b \equiv 180 \pmod{11184810}$.** Let $b$ and $t$
+be natural numbers with $b \equiv 180 \pmod{11184810}$ and $t \equiv 171 \pmod{240}$. Then the
+$b$-repinteger $101_b^{(t)}$, which is the repdigit $101\,(b^t - 1)/(b - 1)$ because $101 < b$, is
 a Riesel number.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
@@ -208,12 +259,16 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.10
 public theorem_wanted isRieselNumber_repstring_101 {b t : ℕ} (hb : b ≡ 180 [MOD 11184810])
     (ht : t ≡ 171 [MOD 240]) : IsRieselNumber (repstring b 101 0 t)
 
-/-- **Theorem 3.11.** For `1 ≤ j ≤ τ` let `p_j` be a primitive prime divisor of `2^{2^j} - 1`, and
-let `q ≠ p_τ` be another primitive prime divisor of `2^{2^τ} - 1`. Put `ℓ_j = 1` if
-`b ≡ 0 (mod p_j)`, `ℓ_j = p_j` if `b ≡ 1 (mod p_j)`, `ℓ_j = ord_{p_j}(b)` otherwise, and
-`L = lcm(2, ℓ_1, …, ℓ_τ)`. If `b > 2`, `q ∤ b`, and either (i) `b ≡ 1 (mod q)` and `q ∤ L`, or
-(ii) `b ≢ 1 (mod q)` and some `t ≡ 1 (mod L)` has `(b^t - 1)/(b - 1) ≡ -1 (mod q)`, then there
-are infinitely many `b`-repunit Sierpiński numbers.
+/-- **Infinitely many Sierpiński repunits from primitive divisors of $2^{2^j} - 1$.** Let $\tau$
+be a natural number. For $1 \le j \le \tau$ let $p_j$ be a primitive prime divisor of
+$2^{2^j} - 1$ in the sequence $(2^m - 1)_{m \ge 0}$, and let $q \ne p_\tau$ be a primitive prime
+divisor of $2^{2^\tau} - 1$ in the same sequence. Let $b > 2$ be a natural number with $q \nmid b$.
+For $1 \le j \le \tau$ put $\ell_j = 1$ if $p_j \mid b$, $\ell_j = p_j$ if $p_j \nmid b$ and
+$b \equiv 1 \pmod{p_j}$, and otherwise $\ell_j = \operatorname{ord}_{p_j}(b)$, the multiplicative
+order of $b$ modulo $p_j$; let $L = \operatorname{lcm}(2, \ell_1, \dots, \ell_\tau)$. Suppose that
+either (i) $b \equiv 1 \pmod q$ and $q \nmid L$, or (ii) $b \not\equiv 1 \pmod q$ and there is a
+natural number $s \equiv 1 \pmod L$ with $(b^s - 1)/(b - 1) \equiv -1 \pmod q$. Then there are
+infinitely many Sierpiński numbers among the $b$-repunits $(b^t - 1)/(b - 1)$ with $t \ge 1$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.11
@@ -232,8 +287,10 @@ public theorem_wanted infinite_sierpinski_repunits_of_primitive_divisors (τ : �
           t ≡ 1 [MOD L])) :
     {N : ℕ | ∃ t : ℕ, 1 ≤ t ∧ N = repstring b 1 0 t ∧ IsSierpinskiNumber N}.Infinite
 
-/-- **Corollary 3.12.** If `b > 2`, `b ≡ 𝔟 (mod 641)` for some `𝔟 ∈ {1, 147, 265, 378}`, and
-`b ≢ 1 (mod 5)`, there are infinitely many `b`-repunit Sierpiński numbers.
+/-- **Infinitely many Sierpiński repunits in bases $b \equiv 1, 147, 265, 378 \pmod{641}$ with
+$b \not\equiv 1 \pmod 5$.** Let $b > 2$ be a natural number with $b \equiv c \pmod{641}$ for some
+$c \in \{1, 147, 265, 378\}$ and $b \not\equiv 1 \pmod 5$. Then there are infinitely many
+Sierpiński numbers among the $b$-repunits $(b^t - 1)/(b - 1)$ with $t \ge 1$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Corollary 3.12
@@ -242,10 +299,14 @@ public theorem_wanted infinite_sierpinski_repunits_mod_641 {b : ℕ} (hb : 2 < b
     (h641 : ∃ c ∈ ({1, 147, 265, 378} : Finset ℕ), b ≡ c [MOD 641]) (h5 : ¬ b ≡ 1 [MOD 5]) :
     {N : ℕ | ∃ t : ℕ, 1 ≤ t ∧ N = repstring b 1 0 t ∧ IsSierpinskiNumber N}.Infinite
 
-/-- **Theorem 3.13.** For `1 ≤ j ≤ τ` let `p_j` be a primitive prime divisor of `2^{2^j} - 1`,
-`q ≠ p_τ` another primitive prime divisor of `2^{2^τ} - 1`, and `P = p_1 ⋯ p_τ`. If `b > 2`,
-`b ≡ 1 (mod P)`, and (i) `b ≡ 0 (mod q)`, or (ii) `b ≡ 1 (mod q)`, or (iii) `b ≢ 0, 1 (mod q)` and
-`gcd(P, ord_q(b)) = 1`, then there are infinitely many `b`-repunit Riesel numbers.
+/-- **Infinitely many Riesel repunits from primitive divisors of $2^{2^j} - 1$.** Let $\tau$ be a
+natural number. For $1 \le j \le \tau$ let $p_j$ be a primitive prime divisor of $2^{2^j} - 1$ in
+the sequence $(2^m - 1)_{m \ge 0}$, let $q \ne p_\tau$ be a primitive prime divisor of
+$2^{2^\tau} - 1$ in the same sequence, and put $P = p_1 \cdots p_\tau$. Let $b > 2$ be a natural
+number with $b \equiv 1 \pmod P$, and suppose that (i) $q \mid b$, or (ii) $b \equiv 1 \pmod q$, or
+(iii) $q \nmid b$, $b \not\equiv 1 \pmod q$ and $\gcd(P, \operatorname{ord}_q(b)) = 1$, where
+$\operatorname{ord}_q(b)$ is the multiplicative order of $b$ modulo $q$. Then there are infinitely
+many Riesel numbers among the $b$-repunits $(b^t - 1)/(b - 1)$ with $t \ge 1$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 3.13
@@ -260,8 +321,10 @@ public theorem_wanted infinite_riesel_repunits_of_primitive_divisors (τ : ℕ) 
         Nat.Coprime (∏ j ∈ Finset.Icc 1 τ, p j) (orderOf (b : ZMod q)))) :
     {N : ℕ | ∃ t : ℕ, 1 ≤ t ∧ N = repstring b 1 0 t ∧ IsRieselNumber N}.Infinite
 
-/-- **Corollary 3.14.** If `b ≡ 16518444216571 (mod 18446744073709551615)`, there are infinitely
-many `b`-repunit Riesel numbers.
+/-- **Infinitely many Riesel repunits in bases $b \equiv 16518444216571 \pmod{2^{64} - 1}$.**
+Let $b$ be a natural number with $b \equiv 16518444216571 \pmod{18446744073709551615}$, where
+$18446744073709551615 = 2^{64} - 1$. Then there are infinitely many Riesel numbers among the
+$b$-repunits $(b^t - 1)/(b - 1)$ with $t \ge 1$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Corollary 3.14
@@ -270,8 +333,10 @@ public theorem_wanted infinite_riesel_repunits_mod_two_pow_64_sub_one {b : ℕ}
     (hb : b ≡ 16518444216571 [MOD 18446744073709551615]) :
     {N : ℕ | ∃ t : ℕ, 1 ≤ t ∧ N = repstring b 1 0 t ∧ IsRieselNumber N}.Infinite
 
-/-- **Theorem 4.3.** If `t ≡ 131` or `t ≡ 1361 (mod 2730)`, then the `2`-repstring
-`659_2^{(2;t)}` is a Sierpiński number.
+/-- **Binary repstrings of 659 that are Sierpiński numbers.** For every natural number $t$ with
+$t \equiv 131 \pmod{2730}$ or $t \equiv 1361 \pmod{2730}$, the binary repstring
+$659_2^{(2;t)} = 659\,(2^{12t} - 1)/(2^{12} - 1)$ is a Sierpiński number. Its binary expansion is
+that of $659$ (ten binary digits) written $t$ times with two zeros between consecutive copies.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 4.3
@@ -279,8 +344,10 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 4.3
 public theorem_wanted isSierpinskiNumber_repstring_659 {t : ℕ}
     (ht : t ≡ 131 [MOD 2730] ∨ t ≡ 1361 [MOD 2730]) : IsSierpinskiNumber (repstring 2 659 2 t)
 
-/-- **Theorem 4.4.** If `t ≡ 1369` or `t ≡ 2599 (mod 2730)`, then the `2`-repstring
-`659_2^{(2;t)}` is a Riesel number.
+/-- **Binary repstrings of 659 that are Riesel numbers.** For every natural number $t$ with
+$t \equiv 1369 \pmod{2730}$ or $t \equiv 2599 \pmod{2730}$, the binary repstring
+$659_2^{(2;t)} = 659\,(2^{12t} - 1)/(2^{12} - 1)$ is a Riesel number. Its binary expansion is that
+of $659$ (ten binary digits) written $t$ times with two zeros between consecutive copies.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 4.4
@@ -288,10 +355,12 @@ Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 4.4
 public theorem_wanted isRieselNumber_repstring_659 {t : ℕ}
     (ht : t ≡ 1369 [MOD 2730] ∨ t ≡ 2599 [MOD 2730]) : IsRieselNumber (repstring 2 659 2 t)
 
-/-- **Theorem 4.6.** For `k, 𝔱, w ≥ 1` and `z ≥ 0`: one fixed set of covering data produces
-`k_2^{(z;t)}` as a Sierpiński number by the covering system method for every `t ≥ 1` with
-`t ≡ 𝔱 (mod w)` if and only if one fixed set of covering data produces `k_2^{(z;t')}` as a Riesel
-number for every `t' ≥ 1` with `t' ≡ -𝔱 (mod w)`.
+/-- **Theorem 4.6 (Sierpiński and Riesel repstring coverings correspond).** Let $k \ge 1$,
+$\mathfrak{t} \ge 1$, $w \ge 1$ and $z \ge 0$ be natural numbers. There is a single finite set
+of triples that is Sierpiński covering data for the $2$-repstring $k_2^{(z;t)}$ for every
+$t \ge 1$ with $t \equiv \mathfrak{t} \pmod{w}$ if and only if there is a single finite set
+of triples that is Riesel covering data for $k_2^{(z;t')}$ for every $t' \ge 1$ with
+$t' \equiv -\mathfrak{t} \pmod{w}$.
 
 Source: Bispels, Cohen, Harrington, Lowrance, Pontes, Schaumann and Wong, *On Sierpiński and
 Riesel Repdigits and Repintegers*, INTEGERS 26 (2026), Article A12, Theorem 4.6

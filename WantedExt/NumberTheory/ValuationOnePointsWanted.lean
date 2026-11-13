@@ -36,8 +36,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- For a prime `p`, `g ∈ ℤ[x]` and `0 ≤ r < p` that is not a common root of `g` and `g'`
-modulo `p`, at most one `k ∈ {0, …, p - 1}` has `ν_p(g(r + kp)) > 1`.
+/-- **At most one lift has valuation above one.** Let $p$ be a prime, $g \in \mathbb{Z}[x]$ and
+$r$ an integer with $0 \le r < p$ such that $g(r)$ and $g'(r)$ are not both divisible by $p$.
+Then at most one $k \in \{0, \dots, p - 1\}$ satisfies $p^2 \mid g(r + kp)$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Proposition 1
@@ -47,8 +48,10 @@ public theorem_wanted card_lift_padicVal_gt_one_le_one {p : ℕ} (hp : p.Prime) 
     (hroot : ¬ ((p : ℤ) ∣ g.eval (r : ℤ) ∧ (p : ℤ) ∣ (Polynomial.derivative g).eval (r : ℤ))) :
     ((Finset.range p).filter fun k : ℕ => (p : ℤ) ^ 2 ∣ g.eval ((r : ℤ) + k * p)).card ≤ 1
 
-/-- For a non-zero `g ∈ ℤ[x]` of degree `d` with non-zero discriminant, for all sufficiently large primes `p`
-at most `d` residues `0 ≤ x < p²` have `ν_p(g(x)) > 1`.
+/-- **Few residues modulo $p^2$ with valuation above one.** Let $g \in \mathbb{Z}[x]$ be a
+non-zero polynomial of degree $d$ with non-zero discriminant. Then there is a natural number $P$
+such that for every prime $p \ge P$, at most $d$ integers $x$ with $0 \le x < p^2$ satisfy
+$p^2 \mid g(x)$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Corollary 1
@@ -58,9 +61,12 @@ public theorem_wanted card_padicVal_gt_one_le_natDegree (g : Polynomial ℤ) (hg
     ∃ P : ℕ, ∀ p : ℕ, p.Prime → P ≤ p →
       ((Finset.range (p ^ 2)).filter fun x : ℕ => (p : ℤ) ^ 2 ∣ g.eval (x : ℤ)).card ≤ g.natDegree
 
-/-- For a prime `p`, `f ∈ ℤ[x, y]` and a point `(r, s)` of `C_f(𝔽_p)` with `f_x(r, s)` or
-`f_y(r, s)` non-zero modulo `p`, exactly `p(p - 1)` of the lifts `(r + kp, s + lp)` have
-`ν_p(f) = 1`.
+/-- **Lifts of a nonsingular point with valuation one.** Let $p$ be a prime, let
+$f \in \mathbb{Z}[x, y]$ have partial derivatives $f_x$ and $f_y$, and let $r, s$ be integers in
+$\{0, \dots, p - 1\}$ with $p \mid f(r, s)$ such that $f_x(r, s)$ and $f_y(r, s)$ are not both
+divisible by $p$. Then exactly $p(p - 1)$ of the pairs $(k, l)$ with $0 \le k, l < p$ satisfy
+$p \mid f(r + kp, s + lp)$ and $p^2 \nmid f(r + kp, s + lp)$, that is,
+$\nu_p(f(r + kp, s + lp)) = 1$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Proposition 2
@@ -75,11 +81,17 @@ public theorem_wanted card_lift_padicVal_eq_one {p : ℕ} (hp : p.Prime)
           ¬ (p : ℤ) ^ 2 ∣ MvPolynomial.eval ![(r : ℤ) + kl.1 * p, (s : ℤ) + kl.2 * p] f).card =
       p * (p - 1)
 
-/-- For a prime `p`, `f ∈ ℤ[x, y]` and points `(r₁, s₁)`, `(r₂, s₂)` of `C_f(𝔽_p)` whose
-gradients `(f_x, f_y)` are linearly independent modulo `p` (the first two columns of the matrix
-`A` with rows `(f_x, f_y, f/p)` at the two points), among the common lifts `(k, l) ∈ 𝔽_p²`:
-`(p - 1)²` have `ν_p = 1` at both points, `p - 1` have `ν_p > 1` at the first and `ν_p = 1` at the
-second, and exactly one has `ν_p > 1` at both.
+/-- **Common lifts of two points with independent gradients.** Let $p$ be a prime, let
+$f \in \mathbb{Z}[x, y]$ have partial derivatives $f_x$ and $f_y$, and let $(r_1, s_1)$ and
+$(r_2, s_2)$ be pairs of integers in $\{0, \dots, p - 1\}$ with $p \mid f(r_i, s_i)$ for
+$i = 1, 2$ and
+$$
+p \nmid f_x(r_1, s_1) f_y(r_2, s_2) - f_y(r_1, s_1) f_x(r_2, s_2).
+$$
+Write $F_i(k, l) = f(r_i + kp, s_i + lp)$. Among the pairs $(k, l)$ with $0 \le k, l < p$,
+exactly $(p - 1)^2$ have $p \mid F_i(k, l)$ and $p^2 \nmid F_i(k, l)$ for both $i$, exactly
+$p - 1$ have $p^2 \mid F_1(k, l)$, $p \mid F_2(k, l)$ and $p^2 \nmid F_2(k, l)$, and exactly
+one has $p^2 \mid F_1(k, l)$ and $p^2 \mid F_2(k, l)$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Proposition 3
@@ -103,11 +115,15 @@ public theorem_wanted card_common_lift_padicVal_of_gradients_independent {p : �
       ((Finset.range p ×ˢ Finset.range p).filter fun kl : ℕ × ℕ =>
           (p : ℤ) ^ 2 ∣ F₁ kl ∧ (p : ℤ) ^ 2 ∣ F₂ kl).card = 1
 
-/-- For a prime `p` and `f ∈ ℤ[x, y]` all of whose points on `C_f(𝔽_p)` are nonsingular (`f_x` or
-`f_y` non-zero modulo `p`), the number `s` of residues `0 ≤ x, y < p²` with `ν_p(f(x, y)) = 1` is
-`m p (p - 1)`, where `m = |C_f(𝔽_p)|`. The nonsingularity hypothesis is the one under which the
-paper derives this from Proposition 2; without it the statement fails (`f = x² - y²`, `p = 3`:
-`m = 5`, `s = 24 ≠ 30`).
+/-- **Number of points of valuation one modulo $p^2$.** Let $p$ be a prime and let
+$f \in \mathbb{Z}[x, y]$ have partial derivatives $f_x$ and $f_y$. Suppose that for all integers
+$r, s \in \{0, \dots, p - 1\}$ with $p \mid f(r, s)$, the integers $f_x(r, s)$ and $f_y(r, s)$
+are not both divisible by $p$. Let $m$ be the number of pairs $(r, s)$ with $0 \le r, s < p$ and
+$p \mid f(r, s)$. Then the number of pairs $(x, y)$ with $0 \le x, y < p^2$, $p \mid f(x, y)$
+and $p^2 \nmid f(x, y)$ is $m p (p - 1)$.
+
+Without the hypothesis on $f_x$ and $f_y$ the count fails: for $f = x^2 - y^2$ and $p = 3$ one
+has $m = 5$, but only $24$ pairs, not $30$, have valuation $1$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82,
@@ -123,12 +139,16 @@ public theorem_wanted card_padicVal_eq_one_mod_sq_eq {p : ℕ} (hp : p.Prime)
       ((Finset.range p ×ˢ Finset.range p).filter fun rs : ℕ × ℕ =>
           (p : ℤ) ∣ MvPolynomial.eval ![(rs.1 : ℤ), rs.2] f).card * (p * (p - 1))
 
-/-- For a prime `p`, `f ∈ ℤ[x, y]` and a singular point `(r, s)` of `C_f(𝔽_p)`
-(`f_x(r, s) ≡ f_y(r, s) ≡ 0 (mod p)`), the number of lifts `(r + kp, s + lp)`, `0 ≤ k, l < p`,
-with `ν_p(f) = 1` is `0` if `f(r, s) ≡ 0 (mod p²)` and `p²` otherwise. Corrected reading: the
-record (and the arXiv text) prints the two cases swapped; by the paper's eq. (7) every lift is
-congruent to `f(r, s)` modulo `p²`. As printed it fails for `f = x² + y² + 3`, `p = 3`,
-`(r, s) = (0, 0)`: `f(0, 0) = 3 ≢ 0 (mod 9)` and all `9` lifts have valuation `1`.
+/-- **Lifts of a singular point with valuation one.** Let $p$ be a prime, let
+$f \in \mathbb{Z}[x, y]$ have partial derivatives $f_x$ and $f_y$, and let $r, s$ be integers in
+$\{0, \dots, p - 1\}$ such that $p$ divides $f(r, s)$, $f_x(r, s)$ and $f_y(r, s)$. Then the
+number of pairs $(k, l)$ with $0 \le k, l < p$, $p \mid f(r + kp, s + lp)$ and
+$p^2 \nmid f(r + kp, s + lp)$ is $0$ if $p^2 \mid f(r, s)$, and $p^2$ otherwise.
+
+The cited statement prints the two cases swapped. By the paper's eq. (7) every lift
+$f(r + kp, s + lp)$ is congruent to $f(r, s)$ modulo $p^2$. The printed version fails for
+$f = x^2 + y^2 + 3$, $p = 3$, $(r, s) = (0, 0)$: $f(0, 0) = 3$ is not divisible by $9$, and all
+$9$ lifts have valuation $1$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82,
@@ -143,17 +163,25 @@ public theorem_wanted card_lift_padicVal_eq_one_of_singular {p : ℕ} (hp : p.Pr
           ¬ (p : ℤ) ^ 2 ∣ MvPolynomial.eval ![(r : ℤ) + kl.1 * p, (s : ℤ) + kl.2 * p] f).card =
       if (p : ℤ) ^ 2 ∣ MvPolynomial.eval ![(r : ℤ), s] f then 0 else p ^ 2
 
-/-- For a prime `p`, `f ∈ ℤ[x, y]` and two nonsingular points `(r₁, s₁)`, `(r₂, s₂)` of
-`C_f(𝔽_p)` whose gradients `(f_x, f_y)` are linearly dependent modulo `p`, let `A` be the matrix
-with rows `(f_x, f_y, f/p)` at the two points and `ρ` its rank modulo `p`. Among the common lifts
-`(k, l) ∈ 𝔽_p²`, the number with `ν_p = 1` at both points is `p(p - 1)` if `ρ = 1` and `p(p - 2)`
-if `ρ = 2`; with `ν_p > 1` at the first and `ν_p = 1` at the second, `0` if `ρ = 1` and `p` if
-`ρ = 2`; with `ν_p > 1` at both, `p` if `ρ = 1` and `0` if `ρ = 2`. Here `ρ = 1` means that all
-`2 × 2` minors of `A` vanish modulo `p`. Corrected hypothesis: the paper assumes that `f` has no
-zero modulo `p²` with `f_x ≡ f_y ≡ 0 (mod p)` and that one column is non-zero; the counts need
-both gradients non-zero (the paper's Case 2 uses it). As printed it fails for
-`f = -x² + y² - x - 1`, `p = 3`, `(r₁, s₁) = (0, 1)`, `(r₂, s₂) = (1, 0)` (gradient `0` at
-`(1, 0)`, `ρ = 2`): the counts are `(6, 3, 0)`, not `(3, 3, 0)`.
+/-- **Common lifts of two points with dependent gradients.** Let $p$ be a prime, let
+$f \in \mathbb{Z}[x, y]$ have partial derivatives $f_x$ and $f_y$, and let $(r_1, s_1)$ and
+$(r_2, s_2)$ be pairs of integers in $\{0, \dots, p - 1\}$ with $p \mid f(r_i, s_i)$ for
+$i = 1, 2$. Write $a_i = f_x(r_i, s_i)$, $b_i = f_y(r_i, s_i)$ and $c_i = f(r_i, s_i)/p$.
+Suppose that for each $i$ the integers $a_i$ and $b_i$ are not both divisible by $p$, and that
+$p \mid a_1 b_2 - b_1 a_2$. Write $F_i(k, l) = f(r_i + kp, s_i + lp)$, and among the pairs
+$(k, l)$ with $0 \le k, l < p$ let $n_1$ be the number with $p \mid F_i(k, l)$ and
+$p^2 \nmid F_i(k, l)$ for both $i$, let $n_2$ be the number with $p^2 \mid F_1(k, l)$,
+$p \mid F_2(k, l)$ and $p^2 \nmid F_2(k, l)$, and let $n_3$ be the number with
+$p^2 \mid F_1(k, l)$ and $p^2 \mid F_2(k, l)$. If $p$ divides both $a_1 c_2 - c_1 a_2$ and
+$b_1 c_2 - c_1 b_2$ (the matrix with rows $(a_i, b_i, c_i)$ has rank $1$ modulo $p$), then
+$n_1 = p(p - 1)$, $n_2 = 0$ and $n_3 = p$. Otherwise (rank $2$) $n_1 = p(p - 2)$, $n_2 = p$
+and $n_3 = 0$.
+
+The source assumes only that $f$ has no zero modulo $p^2$ at which $f_x \equiv f_y \equiv 0
+\pmod p$ and that one column is non-zero. The counts need both gradients $(a_i, b_i)$ non-zero
+modulo $p$, which the paper's Case 2 uses. Without this they fail for $f = -x^2 + y^2 - x - 1$,
+$p = 3$, $(r_1, s_1) = (0, 1)$, $(r_2, s_2) = (1, 0)$: the gradient vanishes at $(1, 0)$, the
+rank is $2$, and $(n_1, n_2, n_3) = (6, 3, 0)$ rather than $(3, 3, 0)$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82,
@@ -192,7 +220,9 @@ public theorem_wanted card_common_lift_padicVal_of_gradients_dependent {p : ℕ}
     (rankOne → n₁ = p * (p - 1) ∧ n₂ = 0 ∧ n₃ = p) ∧
       (¬ rankOne → n₁ = p * (p - 2) ∧ n₂ = p ∧ n₃ = 0)
 
-/-- The points of `C_f(𝔽_p)`: pairs `0 ≤ r, s < p` with `p ∣ f(r, s)`.
+/-- **Points of $C_f(\mathbb{F}_p)$.** For $f \in \mathbb{Z}[x, y]$ and a natural number $p$,
+$C_f(\mathbb{F}_p)$ is the set of pairs $(r, s)$ of natural numbers with $r, s < p$ such that $p$
+divides $f(r, s)$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Section 1 (definition of
@@ -203,7 +233,9 @@ public noncomputable def valuationCurvePoints (f : MvPolynomial (Fin 2) ℤ) (p 
     (Finset.range p ×ˢ Finset.range p).filter fun rs : ℕ × ℕ =>
       (p : ℤ) ∣ MvPolynomial.eval ![(rs.1 : ℤ), rs.2] f
 
-/-- `|C_f(𝔽_p)| ≤ p²`.
+/-- **$C_f(\mathbb{F}_p)$ has at most $p^2$ points.** For every $f \in \mathbb{Z}[x, y]$ and
+every natural number $p$, the set $C_f(\mathbb{F}_p)$ of pairs $(r, s)$ of natural numbers with
+$r, s < p$ such that $p$ divides $f(r, s)$ has at most $p^2$ elements.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Section 1 (definition of
@@ -215,8 +247,12 @@ public theorem valuationCurvePoints_card_le (f : MvPolynomial (Fin 2) ℤ) (p : 
   refine (Finset.card_filter_le _ _).trans ?_
   simp [Finset.card_product, sq]
 
-/-- The row `(f_x(r, s), f_y(r, s), f(r, s)/p)` modulo `p` of the paper's matrix `B_k(P)`
-(eq. (2)) at a point `(r, s)`; for points of `C_f(𝔽_p)` the division is exact.
+/-- **Valuation row of a point.** For $f \in \mathbb{Z}[x, y]$ with partial derivatives $f_x$ and
+$f_y$, a natural number $p$ and a pair $(r, s)$ of natural numbers, the valuation row at $(r, s)$
+is the vector $(f_x(r, s), f_y(r, s), q)$ reduced modulo $p$, an element of
+$(\mathbb{Z}/p\mathbb{Z})^3$, where $q$ is $f(r, s)/p$ rounded down ($q = 0$ when $p = 0$).
+These are the rows of the matrix in the paper's eq. (2); when $p$ divides $f(r, s)$, the
+division by $p$ is exact.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Section 1, eq. (2). -/
@@ -226,7 +262,11 @@ public noncomputable def valuationRow (f : MvPolynomial (Fin 2) ℤ) (p : ℕ) (
     ((MvPolynomial.eval ![(rs.1 : ℤ), rs.2] (MvPolynomial.pderiv 1 f) : ℤ) : ZMod p),
     ((MvPolynomial.eval ![(rs.1 : ℤ), rs.2] f / p : ℤ) : ZMod p)]
 
-/-- The element-wise distinct (injective) `k`-tuples of points of `C_f(𝔽_p)`.
+/-- **Distinct $k$-tuples of points of $C_f(\mathbb{F}_p)$.** For $f \in \mathbb{Z}[x, y]$ and
+natural numbers $p$ and $k$, let $C_f(\mathbb{F}_p)$ be the set of pairs $(r, s)$ of natural
+numbers with $r, s < p$ such that $p$ divides $f(r, s)$. The distinct $k$-tuples of points of
+$C_f(\mathbb{F}_p)$ are the $k$-tuples $(P_1, \dots, P_k)$ with every $P_i$ in $C_f(\mathbb{F}_p)$
+and $P_i \ne P_j$ for $i \ne j$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Section 1 (definition of
@@ -236,9 +276,13 @@ public noncomputable def valuationDistinctTuples (f : MvPolynomial (Fin 2) ℤ) 
   classical exact
     (Fintype.piFinset fun _ : Fin k => valuationCurvePoints f p).filter Function.Injective
 
-/-- `m_k(f, p)`: the number of element-wise distinct `k`-tuples `P` of points of `C_f(𝔽_p)` whose
-matrix `B_k(P)` (rows `valuationRow`) has rank `2` with its first two columns linearly
-independent (the `k × 2` submatrix has rank `2`); ranks are over `ZMod p`.
+/-- **Rank-two tuple count $m_k(f, p)$.** For $f \in \mathbb{Z}[x, y]$ and natural numbers $p$
+and $k$, let $C_f(\mathbb{F}_p)$ be the set of pairs $(r, s)$ of natural numbers with $r, s < p$
+such that $p$ divides $f(r, s)$. Then $m_k(f, p)$ is the number of $k$-tuples
+$P = (P_1, \dots, P_k)$ of pairwise distinct points of $C_f(\mathbb{F}_p)$ such that the
+$k \times 3$ matrix $B_k(P)$ over $\mathbb{Z}/p\mathbb{Z}$ whose $i$-th row is the valuation row
+at $P_i$ has rank $2$ and the $k \times 2$ submatrix of its first two columns also has
+rank $2$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Section 1 (definition of
@@ -250,7 +294,9 @@ public noncomputable def valuationRankTwoTupleCount (f : MvPolynomial (Fin 2) �
       (Matrix.of fun i j => valuationRow f p (P i) j).rank = 2 ∧
         (Matrix.of fun i (j : Fin 2) => valuationRow f p (P i) j.castSucc).rank = 2).card
 
-/-- `m_1(f, p) = 0`: a single row has rank at most `1`.
+/-- **The rank-two tuple count vanishes for $k = 1$.** For every $f \in \mathbb{Z}[x, y]$ and
+every prime $p$, the rank-two tuple count $m_1(f, p)$ is $0$: a matrix with a single row has rank
+at most $1$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Section 1 ("For `k = 1`, we
@@ -264,8 +310,12 @@ public theorem valuationRankTwoTupleCount_one (f : MvPolynomial (Fin 2) ℤ) (p 
   have := Matrix.rank_le_height (Matrix.of fun i j => valuationRow f p (P i) j)
   omega
 
-/-- `o_k(f, p)`: the number of element-wise distinct `k`-tuples `P` of points of `C_f(𝔽_p)` whose
-matrix `B_k(P)` has rank `1` with at least one of its first two columns non-zero.
+/-- **Rank-one tuple count $o_k(f, p)$.** For $f \in \mathbb{Z}[x, y]$ and natural numbers $p$
+and $k$, let $C_f(\mathbb{F}_p)$ be the set of pairs $(r, s)$ of natural numbers with $r, s < p$
+such that $p$ divides $f(r, s)$. Then $o_k(f, p)$ is the number of $k$-tuples
+$P = (P_1, \dots, P_k)$ of pairwise distinct points of $C_f(\mathbb{F}_p)$ such that the
+$k \times 3$ matrix $B_k(P)$ over $\mathbb{Z}/p\mathbb{Z}$ whose $i$-th row is the valuation row
+at $P_i$ has rank $1$ and the first two columns of $B_k(P)$ are not both zero.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Section 3 (definition of
@@ -277,8 +327,14 @@ public noncomputable def valuationRankOneTupleCount (f : MvPolynomial (Fin 2) �
       (Matrix.of fun i j => valuationRow f p (P i) j).rank = 1 ∧
         (Matrix.of fun i (j : Fin 2) => valuationRow f p (P i) j.castSucc) ≠ 0).card
 
-/-- For a tuple `P` of points, the number of `(k, l) ∈ 𝔽_p²` at which every translate
-`(r_i + kp, s_i + lp)` has `ν_p(f) > 1`; divided by `p²` it is `E[Y_{l₁} ⋯ Y_{l_k}]`.
+/-- **Common lift count.** Let $f \in \mathbb{Z}[x, y]$, let $p$ and $k$ be natural numbers and
+let $P = ((r_1, s_1), \dots, (r_k, s_k))$ be a $k$-tuple of pairs of natural numbers. The common
+lift count of $P$ is the number of pairs $(a, b)$ of natural numbers with $a, b < p$ such that
+$p^2$ divides $f(r_i + ap, s_i + bp)$ for every $i$.
+
+For a prime $p$ this says that every lift $(r_i + ap, s_i + bp)$ has $p$-adic valuation of $f$
+greater than $1$ (a zero value counts as valuation greater than $1$); divided by $p^2$, the count
+is the probability of this event for a uniformly random $(a, b) \in \mathbb{F}_p^2$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Section 3 (definition of the
@@ -289,7 +345,9 @@ public noncomputable def valuationCommonLiftCount (f : MvPolynomial (Fin 2) ℤ)
     ((Finset.range p ×ˢ Finset.range p).filter fun kl : ℕ × ℕ => ∀ i,
       (p : ℤ) ^ 2 ∣ MvPolynomial.eval ![((P i).1 : ℤ) + kl.1 * p, ((P i).2 : ℤ) + kl.2 * p] f).card
 
-/-- At most `p²` common lifts.
+/-- **The common lift count is at most $p^2$.** For every $f \in \mathbb{Z}[x, y]$, all natural
+numbers $p$ and $k$ and every $k$-tuple $P$ of pairs of natural numbers, the common lift count of
+$P$ is at most $p^2$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Section 3 (definition of the
@@ -301,8 +359,10 @@ public theorem valuationCommonLiftCount_le (f : MvPolynomial (Fin 2) ℤ) (p k :
   refine (Finset.card_filter_le _ _).trans ?_
   simp [Finset.card_product, sq]
 
-/-- The random variable `X(k, l)` of eq. (1): the number of points `(x, y)` of the square
-`{kp, …, kp + p - 1} × {lp, …, lp + p - 1}` with `ν_p(f(x, y)) > 1`.
+/-- **Count of points of high valuation in a square.** For a polynomial $f \in \mathbb{Z}[x, y]$
+and natural numbers $p$, $k$ and $l$, $X(k, l)$ is the number of points $(x, y)$ of the square
+$\{kp, \dots, kp + p - 1\} \times \{lp, \dots, lp + p - 1\}$ with $p^2 \mid f(x, y)$. For a
+prime $p$ this is the condition $\nu_p(f(x, y)) > 1$, where points with $f(x, y) = 0$ count.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Section 1, eq. (1). -/
@@ -311,7 +371,10 @@ public noncomputable def valuationSquareCount (f : MvPolynomial (Fin 2) ℤ) (p 
     ((Finset.range p ×ˢ Finset.range p).filter fun xy : ℕ × ℕ =>
       (p : ℤ) ^ 2 ∣ MvPolynomial.eval ![((k * p + xy.1 : ℕ) : ℤ), ((l * p + xy.2 : ℕ) : ℤ)] f).card
 
-/-- `X(k, l) ≤ p²`.
+/-- **Trivial bound for the square count.** For every polynomial $f \in \mathbb{Z}[x, y]$ and all
+natural numbers $p$, $k$ and $l$, the number $X(k, l)$ of points $(x, y)$ of the square
+$\{kp, \dots, kp + p - 1\} \times \{lp, \dots, lp + p - 1\}$ with $p^2 \mid f(x, y)$ is at most
+$p^2$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Section 1, eq. (1). -/
@@ -322,8 +385,9 @@ public theorem valuationSquareCount_le (f : MvPolynomial (Fin 2) ℤ) (p k l : �
   refine (Finset.card_filter_le _ _).trans ?_
   simp [Finset.card_product, sq]
 
-/-- The paper's Conjecture 1 for `f`: for every `k ≥ 2`, `m_k(f, p)/p² → 1` as `p → ∞` through
-the primes.
+/-- **Rajkumar–Shubham Conjecture 1.** For $f \in \mathbb{Z}[x, y]$, the proposition that for
+every $k \ge 2$, $m_k(f, p)/p^2 \to 1$ as $p \to \infty$ through the primes, where $m_k(f, p)$ is
+the rank-two tuple count.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Section 1, Conjecture 1,
@@ -332,11 +396,25 @@ public def ValuationConjectureOne (f : MvPolynomial (Fin 2) ℤ) : Prop :=
   ∀ k ≥ 2, Filter.Tendsto (fun p : ℕ => (valuationRankTwoTupleCount f p k : ℝ) / (p : ℝ) ^ 2)
     (Filter.atTop ⊓ Filter.principal {p : ℕ | p.Prime}) (nhds 1)
 
-/-- For a prime `p`, `f ∈ ℤ[x, y]` with no point of `C_f(𝔽_p)` at which `f_x ≡ f_y ≡ 0 (mod p)`,
-and `k ≥ 1`: `∑_{l₁ ≠ ⋯ ≠ l_k} E[Y_{l₁} ⋯ Y_{l_k}] = m_k(f, p)/p² + o_k(f, p)/p` (eq. (15)),
-the sum over element-wise distinct `k`-tuples of points and `E[⋯]` the common-lift count over
-`p²`. The hypothesis is the paper's standing assumption of Section 3 at this `p` (its proof
-uses it to rule out rank `0`).
+/-- **Sum of expectations over distinct tuples of points.** Let $p$ be a prime, let
+$f \in \mathbb{Z}[x, y]$ have partial derivatives $f_x$ and $f_y$, and let $C_f(\mathbb{F}_p)$
+be the set of pairs of integers $0 \le r, s < p$ with $p \mid f(r, s)$. Suppose that no
+$(r, s) \in C_f(\mathbb{F}_p)$ has $p \mid f_x(r, s)$ and $p \mid f_y(r, s)$, and let $k \ge 1$.
+For a $k$-tuple $P$ of points of $C_f(\mathbb{F}_p)$, let $N(P)$ be the number of pairs
+$(a, b)$ with $0 \le a, b < p$ such that $p^2 \mid f(r + ap, s + bp)$ for every point $(r, s)$
+of $P$. Then
+$$
+\sum_P \frac{N(P)}{p^2} = \frac{m_k(f, p)}{p^2} + \frac{o_k(f, p)}{p},
+$$
+where $P$ runs over the $k$-tuples of pairwise distinct points of $C_f(\mathbb{F}_p)$. Here
+$m_k(f, p)$ is the number of such $P$ whose matrix $B_k(P)$, with rows
+$(f_x(r, s), f_y(r, s), f(r, s)/p)$ modulo $p$ at the points of $P$, has rank $2$ and whose first
+two columns have rank $2$, and $o_k(f, p)$ is the number of such $P$ for which $B_k(P)$ has rank
+$1$ and its first two columns are not both zero.
+
+In the paper's notation the left side is $\sum_{l_1 \ne \dots \ne l_k} E[Y_{l_1} \cdots Y_{l_k}]$
+(eq. (15)). The hypothesis is the paper's standing assumption of Section 3 at this $p$; its
+proof uses it to rule out rank $0$.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Proposition 6, eq. (15)
@@ -351,11 +429,20 @@ public theorem_wanted sum_expectation_distinct_tuples_eq {p : ℕ} (hp : p.Prime
       (valuationRankTwoTupleCount f p k : ℝ) / (p : ℝ) ^ 2 +
         (valuationRankOneTupleCount f p k : ℝ) / p
 
-/-- For `f ∈ ℤ[x, y]` such that, for all sufficiently large primes `p`, `f`, `f_x`, `f_y` have no
-common zero modulo `p`, with `|C_f(𝔽_p)|/p → 1`, assuming Conjecture 1 for `f`: for every
-`k ≥ 1`, `∑_{l₁ ≠ ⋯ ≠ l_k} E[Y_{l₁} ⋯ Y_{l_k}] → 1` as `p → ∞` through the primes. The paper's
-proof takes `|C_f(𝔽_p)|/p → 1` from the Hasse–Weil bounds, which need an irreducibility
-hypothesis the paper does not state; it is assumed directly here.
+/-- **Sums of expectations over distinct tuples tend to one.** Let $f \in \mathbb{Z}[x, y]$ have
+partial derivatives $f_x$ and $f_y$, and for a prime $p$ let $C_f(\mathbb{F}_p)$ be the set of
+pairs of integers $0 \le r, s < p$ with $p \mid f(r, s)$. Suppose that there is a natural number
+$P_0$ such that for every prime $p \ge P_0$ and all integers $x, y$, the integers $f(x, y)$,
+$f_x(x, y)$ and $f_y(x, y)$ are not all divisible by $p$; that $|C_f(\mathbb{F}_p)|/p \to 1$ as
+$p \to \infty$ through the primes; and that Conjecture 1 holds for $f$. For a tuple $P$ of points
+of $C_f(\mathbb{F}_p)$, let $N(P)$ be the number of pairs $(a, b)$ with $0 \le a, b < p$ such that
+$p^2 \mid f(r + ap, s + bp)$ for every point $(r, s)$ of $P$. Then for every $k \ge 1$,
+$\sum_P N(P)/p^2 \to 1$ as $p \to \infty$ through the primes, where $P$ runs over the $k$-tuples
+of pairwise distinct points of $C_f(\mathbb{F}_p)$.
+
+In the paper's notation the sum is $\sum_{l_1 \ne \dots \ne l_k} E[Y_{l_1} \cdots Y_{l_k}]$.
+The paper's proof takes $|C_f(\mathbb{F}_p)|/p \to 1$ from the Hasse–Weil bounds, which need an
+irreducibility hypothesis the paper does not state; it is assumed directly here.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Corollary 5
@@ -372,15 +459,25 @@ public theorem_wanted tendsto_sum_expectation_distinct_tuples (f : MvPolynomial 
         ∑ P ∈ valuationDistinctTuples f p k, (valuationCommonLiftCount f p k P : ℝ) / (p : ℝ) ^ 2)
       (Filter.atTop ⊓ Filter.principal {p : ℕ | p.Prime}) (nhds 1)
 
-/-- **Poisson limit for points of valuation `> 1`.** For `f ∈ ℤ[x, y]` such that, for all
-sufficiently large primes `p`, `f`, `f_x`, `f_y` have no common zero modulo `p`, with
-`|C_f(𝔽_p)|/p → 1` (the Hasse–Weil input of the paper's proof, assumed directly as for
-`tendsto_sum_expectation_distinct_tuples`), assuming Conjecture 1 for `f`: the number `X(k, l)`
-of points of valuation `> 1` in a uniformly random `p × p` square converges in distribution to a
-Poisson variable with parameter `1`, i.e. for every
-`j ≥ 0`, `P(X = j) = #{(k, l) ∈ 𝔽_p² : X(k, l) = j}/p² → e^{-1}/j!` as `p → ∞` through the
-primes (for `ℕ`-valued variables, pointwise convergence of the mass functions is convergence in
-distribution).
+/-- **Poisson limit for points of valuation $> 1$.** Let $f \in \mathbb{Z}[x, y]$ have partial
+derivatives $f_x$ and $f_y$, and for a prime $p$ let $C_f(\mathbb{F}_p)$ be the set of pairs of
+integers $0 \le r, s < p$ with $p \mid f(r, s)$. Suppose that there is a natural number $P_0$
+such that for every prime $p \ge P_0$ and all integers $x, y$, the integers $f(x, y)$,
+$f_x(x, y)$ and $f_y(x, y)$ are not all divisible by $p$; that $|C_f(\mathbb{F}_p)|/p \to 1$ as
+$p \to \infty$ through the primes; and that Conjecture 1 holds for $f$. For $0 \le k, l < p$ let
+$X(k, l)$ be the number of points $(x, y)$ of the square
+$\{kp, \dots, kp + p - 1\} \times \{lp, \dots, lp + p - 1\}$ with $p^2 \mid f(x, y)$. Then for
+every $j \ge 0$,
+$$
+\frac{\#\{(k, l) : 0 \le k, l < p,\ X(k, l) = j\}}{p^2} \to \frac{e^{-1}}{j!}
+$$
+as $p \to \infty$ through the primes. That is, for $(k, l)$ uniformly random in
+$\{0, \dots, p - 1\}^2$, $X(k, l)$ converges in distribution to a Poisson variable with
+parameter $1$ (for $\mathbb{N}$-valued variables, pointwise convergence of the mass functions is
+convergence in distribution).
+
+The hypothesis $|C_f(\mathbb{F}_p)|/p \to 1$ is the Hasse–Weil input of the paper's proof,
+assumed directly, as in the companion statement about sums over distinct tuples.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a
 Polynomial in Two Variables*, INTEGERS 26 (2026), Article A82, Theorem 1

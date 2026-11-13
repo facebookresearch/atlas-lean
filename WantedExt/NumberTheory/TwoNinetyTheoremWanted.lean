@@ -57,33 +57,49 @@ open Matrix
 
 variable {R : Type*} [Ring R] {n : ℕ}
 
-/--
-Evaluate a quadratic form `Q(x) = ∑_{i,j} Q_{ij} x_i x_j` given by
-the matrix `Q` at a vector `x`.
--/
+/-- **Quadratic form of a matrix.** For a ring $R$ and an $n \times n$ matrix $M$ with entries
+in $R$, the value of the quadratic form of $M$ at a vector $x \in R^n$ is
+$x \cdot (M x) = \sum_{i,j} x_i M_{ij} x_j$, where $i$ and $j$ range over $\{0, \dots, n-1\}$.
+
+No symmetry of $M$ is assumed, and $R$ need not be commutative. -/
 def evalQ (M : Matrix (Fin n) (Fin n) R) (v : Fin n → R) : R := v ⬝ᵥ M *ᵥ v
 
-/-- A quadratic form, represented as a matrix, takes a particular value for some
-integer vector input. -/
+/-- **Natural numbers represented by a quadratic form.** For a ring $R$, an $n \times n$ matrix
+$M$ with entries in $R$ represents a natural number $m$ if there is an integer vector
+$x \in \mathbb{Z}^n$ with $\sum_{i,j} x_i M_{ij} x_j = m$, where the entries of $x$ and the
+number $m$ are viewed as elements of $R$. -/
 def Represents (M : Matrix (Fin n) (Fin n) R) (m : ℕ) : Prop :=
   ∃ v : Fin n → ℤ, evalQ M (v · : _ → R) = m
 
-/-- A quadratic form, represented as a matrix, is universal if it takes every
-positive integer value. -/
+/-- **Universal quadratic forms over a ring.** For a ring $R$, an $n \times n$ matrix $M$ with
+entries in $R$ is universal if it represents every positive integer: for every positive
+integer $m$ there is $x \in \mathbb{Z}^n$ with $\sum_{i,j} x_i M_{ij} x_j = m$ in $R$. -/
 def IsUniversal (M : Matrix (Fin n) (Fin n) R) : Prop :=
   ∀ m : ℕ, 0 < m → Represents M m
 
-/-- A quadratic form is integral if it takes only integer values on integer
-vectors. -/
+/-- **Integer-valued quadratic forms.** For a ring $R$, an $n \times n$ matrix $M$ with entries
+in $R$ is integral if its quadratic form takes integer values at integer vectors: for every
+$x \in \mathbb{Z}^n$, the value $\sum_{i,j} x_i M_{ij} x_j$ computed in $R$ lies in the image
+of $\mathbb{Z}$ in $R$. -/
 def Integral (M : Matrix (Fin n) (Fin n) R) : Prop :=
   ∀ v : Fin n → ℤ, evalQ M (v · : _ → R) ∈ Set.range ((↑) : ℤ → R)
 
-/-- The 29 critical numbers of the 290 theorem. -/
+/-- **Critical numbers of the 290 theorem.** The critical numbers of the 290 theorem form the
+set of the 29 natural numbers $1, 2, 3, 5, 6, 7, 10, 13, 14, 15, 17, 19, 21, 22, 23, 26, 29,
+30, 31, 34, 35, 37, 42, 58, 93, 110, 145, 203, 290$. -/
 def criticalNumbers : Finset ℕ :=
   {1, 2, 3, 5, 6, 7, 10, 13, 14, 15, 17, 19, 21, 22, 23, 26, 29, 30, 31,
    34, 35, 37, 42, 58, 93, 110, 145, 203, 290}
 
-/-- Source: M. Bhargava, J. Hanke, Universal quadratic forms and the 290-theorem, preprint (2011). See also https://en.wikipedia.org/wiki/15_and_290_theorems Via leanprover/lean-eval@38361be, problem `two_ninety_theorem`. -/
+/-- **The 290 theorem.** Let $n$ be a natural number and let $M$ be a real $n \times n$ matrix
+that is positive definite (symmetric, with $x^{\top} M x > 0$ for every nonzero
+$x \in \mathbb{R}^n$) and integral (for every $x \in \mathbb{Z}^n$, the value $x^{\top} M x$ is
+an integer). If $M$ represents each of the 29 critical numbers of the 290 theorem, that is,
+for each critical number $m$ there is $x \in \mathbb{Z}^n$ with $x^{\top} M x = m$, then $M$
+is universal: for every positive integer $m$ there is $x \in \mathbb{Z}^n$ with
+$x^{\top} M x = m$.
+
+Source: M. Bhargava, J. Hanke, Universal quadratic forms and the 290-theorem, preprint (2011). See also https://en.wikipedia.org/wiki/15_and_290_theorems Via leanprover/lean-eval@38361be, problem `two_ninety_theorem`. -/
 public theorem_wanted two_ninety_theorem {n : ℕ} (M : Matrix (Fin n) (Fin n) ℝ)
     (hpos : M.PosDef)
     (hIntegral : Integral M)

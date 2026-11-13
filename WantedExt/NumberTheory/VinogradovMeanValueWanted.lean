@@ -67,13 +67,22 @@ Proceedings of the London Mathematical Society. 118 (4): 942–1016. arXiv:1708.
 
 namespace NumberTheory.VinogradovMeanValue
 
-/-- The quantity J_{s,k}(X) that counts solutions of a certain system of
-Diophantine equations in a cube. -/
+/-- **The Vinogradov mean value count.** For natural numbers $s$, $k$ and $X$, $J_{s,k}(X)$ is the
+number of pairs of tuples $(x_1, \dots, x_s)$ and $(y_1, \dots, y_s)$ of integers in
+$\{1, \dots, X\}$ such that $x_1^j + \dots + x_s^j = y_1^j + \dots + y_s^j$ for every natural
+number $j \le k$, regarded as a real number. -/
 def J (s k X : ℕ) : ℝ :=
   Finset.card {(x, y) : (Fin s → Finset.Icc 1 X) × (Fin s → Finset.Icc 1 X) |
     ∀ j ≤ k, ∑ i, (x i).1 ^ j = ∑ i, (y i).1 ^ j}
 
-/-- Source: J. Bourgain, C. Demeter, and L. Guth, `Proof of the main conjecture in Vinogradov's Mean Value Theorem for degrees higher than three`, Ann. of Math. 184 (2) 2016, 633–682; T. D. Wooley, `Nested efficient congruencing and relatives of Vinogradov's mean value theorem`, Proc. London Math. Soc. 118 (4) 2019, 942–1016. Via leanprover/lean-eval@38361be, problem `vinogradov_mean_value`. -/
+/-- **Vinogradov's mean value theorem.** For all natural numbers $s$ and $k$ and every real
+$\varepsilon > 0$ there is a constant $C$ such that
+$J_{s,k}(X) \le C (X^{s + \varepsilon} + X^{2s - k(k+1)/2 + \varepsilon})$ for all sufficiently
+large natural numbers $X$, where $J_{s,k}(X)$ is the number of pairs of tuples
+$(x_1, \dots, x_s)$ and $(y_1, \dots, y_s)$ of integers in $\{1, \dots, X\}$ with
+$x_1^j + \dots + x_s^j = y_1^j + \dots + y_s^j$ for every natural number $j \le k$.
+
+Source: J. Bourgain, C. Demeter, and L. Guth, `Proof of the main conjecture in Vinogradov's Mean Value Theorem for degrees higher than three`, Ann. of Math. 184 (2) 2016, 633–682; T. D. Wooley, `Nested efficient congruencing and relatives of Vinogradov's mean value theorem`, Proc. London Math. Soc. 118 (4) 2019, 942–1016. Via leanprover/lean-eval@38361be, problem `vinogradov_mean_value`. -/
 public theorem_wanted vinogradov_mean_value (s k : ℕ) (ε : ℝ) (hε : 0 < ε) :
     J s k =O[Filter.atTop]
       fun X ↦ (X ^ (s + ε) + X ^ ((2 * s : ℝ) - k * (k + 1) / 2 + ε) : ℝ)

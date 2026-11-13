@@ -37,8 +37,10 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- `n` is an s-Zumkeller number: its proper divisors split into two nonempty
-parts with equal sums of squares (each then equal to `(σ₂(n) - n²)/2`).
+/-- **s-Zumkeller numbers.** A natural number $n$ is s-Zumkeller if its proper divisors can be
+split into two disjoint nonempty sets whose elements have equal sums of squares. Each of the two
+sums is then $(\sigma_2(n) - n^2)/2$, where $\sigma_2(n)$ is the sum of the squares of the
+positive divisors of $n$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Definition 1. -/
@@ -46,8 +48,9 @@ def IsSZumkeller (n : ℕ) : Prop :=
   ∃ A ⊆ n.properDivisors, A.Nonempty ∧ (n.properDivisors \ A).Nonempty ∧
     ∑ d ∈ A, d ^ 2 = ∑ d ∈ n.properDivisors \ A, d ^ 2
 
-/-- `n` is a unitary s-Zumkeller number: its proper unitary divisors split into
-two nonempty parts with equal sums of squares.
+/-- **Unitary s-Zumkeller numbers.** A natural number $n$ is a unitary s-Zumkeller number when
+its proper unitary divisors (the unitary divisors of $n$ other than $n$) split into two nonempty
+disjoint sets $A$ and $B$ with equal sums of squares, $\sum_{d \in A} d^2 = \sum_{d \in B} d^2$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Definition 2. -/
@@ -56,38 +59,48 @@ def IsUnitarySZumkeller (n : ℕ) : Prop :=
     ((Nat.unitaryDivisors n).erase n \ A).Nonempty ∧
     ∑ d ∈ A, d ^ 2 = ∑ d ∈ (Nat.unitaryDivisors n).erase n \ A, d ^ 2
 
-/-- `60` is s-Zumkeller: `30² + 5² + 2² + 1² = 930` is half of the sum of the
-squares of its proper divisors.
+/-- **$60$ is s-Zumkeller.** The number $60$ is s-Zumkeller: the squares of its proper divisors
+$1, 2, 5, 30$ sum to $1^2 + 2^2 + 5^2 + 30^2 = 930$, which is half of the sum of the squares of
+all proper divisors of $60$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Example 1. -/
 theorem isSZumkeller_sixty : IsSZumkeller 60 :=
   ⟨{1, 2, 5, 30}, by decide, by decide, by decide, by decide⟩
 
-/-- `6` is not s-Zumkeller (`1² + 2² + 3² = 14` admits no equal split).
+/-- **The number 6 is not s-Zumkeller.** The number $6$ is not an s-Zumkeller number: the squares of
+its proper divisors sum to $1^2 + 2^2 + 3^2 = 14$, and they admit no split into two parts with
+equal sums.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Section 1. -/
 theorem not_isSZumkeller_six : ¬ IsSZumkeller 6 := by
   unfold IsSZumkeller; decide
 
-/-- `60` is unitary s-Zumkeller: `20² + 3² + 1² = 410` is half of the sum of the
-squares of its proper unitary divisors `1, 3, 4, 5, 12, 15, 20`.
+/-- **The number 60 is unitary s-Zumkeller.** The number $60$ is a unitary s-Zumkeller number: its
+proper unitary divisors are $1, 3, 4, 5, 12, 15, 20$, and $20^2 + 3^2 + 1^2 = 410$ is half the sum
+of their squares.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Example 2. -/
 theorem isUnitarySZumkeller_sixty : IsUnitarySZumkeller 60 :=
   ⟨{1, 3, 20}, by decide, by decide, by decide, by decide⟩
 
-/-- `6` is not unitary s-Zumkeller.
+/-- **The number 6 is not unitary s-Zumkeller.** The number $6$ is not a unitary s-Zumkeller
+number.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Section 1. -/
 theorem not_isUnitarySZumkeller_six : ¬ IsUnitarySZumkeller 6 := by
   unfold IsUnitarySZumkeller; decide
 
-/-- Product formulas for `σ(n)` and `σ(n)/n`, and `σ(n)/n < ∏ p/(p-1)` for
-`n > 1`.
+/-- **Product formulas for the sum of divisors.** Let $n \ne 0$ be a natural number, let
+$\sigma(n)$ be the sum of the divisors of $n$, and for each prime $p$ dividing $n$ let $k_p$ be
+the exponent of $p$ in $n$. Then, with products over the primes $p$ dividing $n$,
+$$\sigma(n) = \prod_{p \mid n} \frac{p^{k_p + 1} - 1}{p - 1}$$
+and
+$$\frac{\sigma(n)}{n} = \prod_{p \mid n} \frac{p^{k_p + 1} - 1}{p^{k_p} (p - 1)}.$$
+If moreover $n > 1$, then $\sigma(n)/n < \prod_{p \mid n} p/(p - 1)$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Lemma 1(i) (quoting Peng and
@@ -100,8 +113,14 @@ public theorem_wanted sigma_one_prod_formulas (n : ℕ) (hn : n ≠ 0) :
           ((p : ℚ) ^ (n.factorization p + 1) - 1) / ((p : ℚ) ^ n.factorization p * (p - 1)) ∧
       (1 < n → (ArithmeticFunction.sigma 1 n : ℚ) / n < ∏ p ∈ n.primeFactors, (p : ℚ) / (p - 1))
 
-/-- Product formulas for `σ₂(n)` and `σ₂(n)/n²`, and `σ₂(n)/n² < ∏ p²/(p²-1)`
-for `n > 1`.
+/-- **Product formulas for the sum of squared divisors.** Let $n \ne 0$ be a natural number,
+let $\sigma_2(n)$ be the sum of the squares of the divisors of $n$, and for each prime $p$
+dividing $n$ let $k_p$ be the exponent of $p$ in $n$. Then, with products over the primes $p$
+dividing $n$,
+$$\sigma_2(n) = \prod_{p \mid n} \frac{p^{2(k_p + 1)} - 1}{p^2 - 1}$$
+and
+$$\frac{\sigma_2(n)}{n^2} = \prod_{p \mid n} \frac{p^{2(k_p + 1)} - 1}{p^{2k_p} (p^2 - 1)}.$$
+If moreover $n > 1$, then $\sigma_2(n)/n^2 < \prod_{p \mid n} p^2/(p^2 - 1)$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Lemma 1(ii) (quoting Peng and
@@ -116,15 +135,17 @@ public theorem_wanted sigma_two_prod_formulas (n : ℕ) (hn : n ≠ 0) :
       (1 < n → (ArithmeticFunction.sigma 2 n : ℚ) / n ^ 2 <
         ∏ p ∈ n.primeFactors, (p : ℚ) ^ 2 / (p ^ 2 - 1))
 
-/-- A positive integer with `m` distinct prime factors has `2^m` unitary
-divisors.
+/-- **Number of unitary divisors.** A positive integer $n$ with $m$ distinct prime factors has
+exactly $2^m$ unitary divisors.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Lemma 2 (quoting Bege). -/
 public theorem_wanted card_unitaryDivisors (n : ℕ) (hn : n ≠ 0) :
     (Nat.unitaryDivisors n).card = 2 ^ n.primeFactors.card
 
-/-- `σ₂*(n) = ∏ (1 + p^{2k})` over the prime powers `p^k ∥ n`.
+/-- **Sum of squares of unitary divisors.** For every positive integer $n$, the sum of the
+squares of the unitary divisors of $n$ equals $\prod_{p} \left(1 + p^{2k_p}\right)$, where $p$
+ranges over the distinct prime factors of $n$ and $k_p$ is the exponent of $p$ in $n$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Lemma 3(i) (quoting Subbarao and
@@ -133,8 +154,10 @@ public theorem_wanted sum_sq_unitaryDivisors (n : ℕ) (hn : n ≠ 0) :
     ∑ d ∈ Nat.unitaryDivisors n, d ^ 2 =
       ∏ p ∈ n.primeFactors, (1 + p ^ (2 * n.factorization p))
 
-/-- An even s-Zumkeller number `n` has `σ₂(n)` even, some odd prime with odd
-exponent, and `σ₂(n) ≥ 3n²/2`.
+/-- **Properties of even s-Zumkeller numbers.** Let $n$ be an even s-Zumkeller number and let
+$\sigma_2(n)$ be the sum of the squares of the positive divisors of $n$. Then $\sigma_2(n)$ is
+even, some odd prime $p$ divides $n$ with an odd exponent in the prime factorization of $n$, and
+$3n^2 \le 2\sigma_2(n)$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 1. -/
@@ -143,8 +166,10 @@ public theorem_wanted isSZumkeller_even_props (n : ℕ) (h : IsSZumkeller n) (he
       (∃ p ∈ n.primeFactors, Odd p ∧ Odd (n.factorization p)) ∧
       3 * n ^ 2 ≤ 2 * ArithmeticFunction.sigma 2 n
 
-/-- An even positive `n` is s-Zumkeller iff `(2σ₂(n) - 3n²)/4` is a (possibly
-empty) sum of squares of distinct proper divisors of `n` other than `n/2`.
+/-- **Criterion for even s-Zumkeller numbers.** Let $n$ be an even positive integer and let
+$\sigma_2(n)$ be the sum of the squares of the positive divisors of $n$. Then $n$ is s-Zumkeller
+if and only if there is a (possibly empty) set $S$ of proper divisors of $n$, not containing
+$n/2$, such that $4 \sum_{d \in S} d^2 = 2\sigma_2(n) - 3n^2$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 2. -/
@@ -153,66 +178,77 @@ public theorem_wanted isSZumkeller_iff_of_even (n : ℕ) (hn : 0 < n) (he : Even
       ∃ S ⊆ n.properDivisors.erase (n / 2),
         4 * (∑ d ∈ S, d ^ 2 : ℤ) = 2 * ArithmeticFunction.sigma 2 n - 3 * n ^ 2
 
-/-- An even s-Zumkeller number has at least `12` divisors.
+/-- **Even s-Zumkeller numbers have at least twelve divisors.** If $n$ is an even s-Zumkeller
+number, then $n$ has at least $12$ positive divisors.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 3. -/
 public theorem_wanted twelve_le_card_divisors_of_isSZumkeller (n : ℕ) (h : IsSZumkeller n)
     (he : Even n) : 12 ≤ n.divisors.card
 
-/-- An even s-Zumkeller number is divisible by `3`.
+/-- **Even s-Zumkeller numbers are divisible by 3.** If $n$ is an even s-Zumkeller number, then
+$3$ divides $n$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 4. -/
 public theorem_wanted three_dvd_of_isSZumkeller (n : ℕ) (h : IsSZumkeller n) (he : Even n) :
     3 ∣ n
 
-/-- An even s-Zumkeller number is divisible by `6`.
+/-- **Even s-Zumkeller numbers are divisible by 6.** Every even s-Zumkeller number is divisible
+by $6$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Corollary 1. -/
 public theorem_wanted six_dvd_of_isSZumkeller (n : ℕ) (h : IsSZumkeller n) (he : Even n) :
     6 ∣ n
 
-/-- For an s-Zumkeller number with least prime factor `p₁`,
-`2/p₁² + 1 < ∏_{p ∣ n} p²/(p² - 1)`.
+/-- **A prime-factor product bound for s-Zumkeller numbers.** Let $n$ be an s-Zumkeller number
+and let $p_1$ be its least prime factor. Then
+$$\frac{2}{p_1^2} + 1 < \prod_{p} \frac{p^2}{p^2 - 1},$$
+where the product ranges over the distinct prime factors $p$ of $n$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 5. -/
 public theorem_wanted two_div_minFac_sq_add_one_lt_prod (n : ℕ) (h : IsSZumkeller n) :
     2 / (n.minFac : ℚ) ^ 2 + 1 < ∏ p ∈ n.primeFactors, (p : ℚ) ^ 2 / (p ^ 2 - 1)
 
-/-- An even s-Zumkeller number has at least `3` distinct prime factors.
+/-- **Even s-Zumkeller numbers have at least three prime factors.** If $n$ is an even
+s-Zumkeller number, then $n$ has at least $3$ distinct prime factors.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 6(i). -/
 public theorem_wanted three_le_card_primeFactors_of_isSZumkeller_even (n : ℕ)
     (h : IsSZumkeller n) (he : Even n) : 3 ≤ n.primeFactors.card
 
-/-- An odd s-Zumkeller number divisible by `3` has at least `8` distinct prime
-factors.
+/-- **Odd s-Zumkeller numbers divisible by $3$ have at least eight prime factors.** Every odd
+s-Zumkeller number divisible by $3$ has at least $8$ distinct prime factors.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 6(ii). -/
 public theorem_wanted eight_le_card_primeFactors_of_isSZumkeller_odd (n : ℕ)
     (h : IsSZumkeller n) (ho : Odd n) (h3 : 3 ∣ n) : 8 ≤ n.primeFactors.card
 
-/-- An odd s-Zumkeller number is a perfect square.
+/-- **Odd s-Zumkeller numbers are perfect squares.** Every odd s-Zumkeller number is a perfect
+square.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 7. -/
 public theorem_wanted isSquare_of_isSZumkeller_odd (n : ℕ) (h : IsSZumkeller n) (ho : Odd n) :
     IsSquare n
 
-/-- An odd s-Zumkeller number divisible by `3` is at least
-`12442607161209225 = (3·5·7·11·13·17·19·23)²`.
+/-- **Lower bound for odd s-Zumkeller numbers divisible by 3.** Every odd s-Zumkeller number $n$
+divisible by $3$ satisfies
+$n \ge 12442607161209225 = (3 \cdot 5 \cdot 7 \cdot 11 \cdot 13 \cdot 17 \cdot 19 \cdot 23)^2$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 8. -/
 public theorem_wanted le_of_isSZumkeller_odd_three_dvd (n : ℕ) (h : IsSZumkeller n)
     (ho : Odd n) (h3 : 3 ∣ n) : 12442607161209225 ≤ n
 
-/-- For an even s-Zumkeller number, `H₂(n) = τ(n) / ∑_{d ∣ n} 1/d² ≤ 2τ(n)/3`.
+/-- **Harmonic mean of squared divisors of even s-Zumkeller numbers.** Let $n$ be an even
+s-Zumkeller number and let $\tau(n)$ be the number of positive divisors of $n$. Then
+$\tau(n) / \sum_{d \mid n} d^{-2} \le 2\tau(n)/3$, where the sum runs over the positive divisors
+$d$ of $n$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 9. -/
@@ -220,8 +256,11 @@ public theorem_wanted harmonicMeanSq_le_of_isSZumkeller (n : ℕ) (h : IsSZumkel
     (he : Even n) :
     (n.divisors.card : ℚ) / ∑ d ∈ n.divisors, 1 / (d : ℚ) ^ 2 ≤ 2 * n.divisors.card / 3
 
-/-- If `n = 2^α (2^{α+1} - 1)` with `α ≥ 1` is s-Zumkeller, then
-`H₂(n) < 2^{2α+3}/3`.
+/-- **Harmonic mean of squared divisors of s-Zumkeller numbers $2^\alpha(2^{\alpha+1}-1)$.** Let
+$\alpha \ge 1$ be an integer, let $n = 2^\alpha (2^{\alpha+1} - 1)$ and let $\tau(n)$ be the
+number of positive divisors of $n$. If $n$ is s-Zumkeller, then
+$\tau(n) / \sum_{d \mid n} d^{-2} < 2^{2\alpha+3}/3$, where the sum runs over the positive
+divisors $d$ of $n$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 10. -/
@@ -229,10 +268,14 @@ public theorem_wanted harmonicMeanSq_lt_of_isSZumkeller_mersenne (α n : ℕ) (h
     (hn : n = 2 ^ α * (2 ^ (α + 1) - 1)) (h : IsSZumkeller n) :
     (n.divisors.card : ℚ) / ∑ d ∈ n.divisors, 1 / (d : ℚ) ^ 2 < 2 ^ (2 * α + 3) / 3
 
-/-- For a unitary s-Zumkeller number `n` whose least unitary divisor exceeding
-`1` is `q` (the smallest prime-power component of `n`):
-`σ₂*(n) ≥ n²(2/q² + 1)`, hence `2/q² + 1 ≤ ∑_{d unitary} 1/d²` and
-`2/q² + 1 ≤ ∏_{p^k ∥ n} (1 + p^{2k})/p^{2k}`.
+/-- **Lower bounds for unitary s-Zumkeller numbers.** Let $n$ be a unitary s-Zumkeller
+number, let $q$ be the least unitary divisor of $n$ greater than $1$, and for each prime $p$
+dividing $n$ let $k_p$ be the exponent of $p$ in $n$. Then, with both sums over all unitary
+divisors $d$ of $n$ (including $n$ itself), $n^2 (2/q^2 + 1) \le \sum_d d^2$ and
+$2/q^2 + 1 \le \sum_d 1/d^2$. Moreover $2/q^2 + 1 \le \prod_{p \mid n} (1 + p^{2k_p})/p^{2k_p}$,
+the product running over the primes $p$ dividing $n$.
+
+The number $q$ is the smallest of the prime powers $p^{k_p}$.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 11. -/
@@ -244,9 +287,10 @@ public theorem_wanted isUnitarySZumkeller_bounds (n q : ℕ) (h : IsUnitarySZumk
         ∏ p ∈ n.primeFactors,
           (1 + ((p : ℚ) ^ n.factorization p) ^ 2) / ((p : ℚ) ^ n.factorization p) ^ 2
 
-/-- For a unitary s-Zumkeller number whose least unitary divisor exceeding `1`
-is `2`, `3` or `4`, the number of unitary divisors exceeds `2⁶`, `2²` or `2²`
-respectively.
+/-- **Unitary divisor counts of unitary s-Zumkeller numbers.** Let $n$ be a unitary s-Zumkeller
+number and let $q$ be the least unitary divisor of $n$ greater than $1$. If $q = 2$, then $n$ has
+more than $2^6$ unitary divisors; if $q = 3$ or $q = 4$, then $n$ has more than $2^2$ unitary
+divisors.
 
 Source: Jayanta Kalita and Helen K. Saikia, *A Study on Generalized Zumkeller
 Numbers*, INTEGERS 24 (2024), Article A95, Proposition 12. -/

@@ -57,19 +57,23 @@ open Function Polynomial Filter
 
 noncomputable section
 
-/-- Definition of `Eₙ(H)` as the number of monic integer polynomials `f(x) = xⁿ + a₁ xⁿ⁻¹ + … aₙ` of
-degree `n` with `|aᵢ| ≤ H` for all `i` such that the Galois group of `f` is not `Sₙ`.
+/-- **Monic integer polynomials whose Galois group is not $S_n$.** For natural numbers $n$ and
+$H$, $E_n(H)$ is the number of monic polynomials $f(x) = x^n + a_1 x^{n-1} + \dots + a_n$ of
+degree $n$ with integer coefficients and $|a_i| \le H$ for $i = 1, \dots, n$ whose Galois group
+over $\mathbb{Q}$ has order less than $n!$, that is, is not the full symmetric group $S_n$.
 -/
 def E (n H : ℕ) : ℕ :=
   {p : ℤ[X] | p.Monic ∧ p.degree = n ∧ (∀ i < n, |p.coeff i| ≤ H) ∧
     Nat.card (p.map (algebraMap ℤ ℚ)).Gal < n.factorial}.ncard
 
-/--
-Statement of Theorem 1:
+/-- **Van der Waerden's conjecture (Bhargava).** For every natural number $n \ge 3$ there is a
+constant $C$ such that $E_n(H) \le C H^{n-1}$ for all sufficiently large natural numbers $H$,
+where $E_n(H)$ is the number of monic polynomials of degree $n$ with integer coefficients, all
+non-leading coefficients of absolute value at most $H$, whose Galois group over $\mathbb{Q}$
+has order less than $n!$.
 
-`Eₙ(H) = O(Hⁿ⁻¹)` for `n ≥ 3`.
+The degree restriction is necessary: the statement is false for $n = 2$.
 
-The degree restriction is necessary: the theorem is false as stated for `n = 2`.
 Source: M. Bhargava, `Galois groups of random integer polynomials and van der Waerden's Conjecture`, Annals of Math, 201 (2) 2025. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2025-201-2-vanDerWaerdenConjecture.lean Via leanprover/lean-eval@38361be, problem `annals_van_der_waerden_conjecture`.
 -/
 public theorem_wanted theorem_1 (n : ℕ) (hn : 3 ≤ n) :
