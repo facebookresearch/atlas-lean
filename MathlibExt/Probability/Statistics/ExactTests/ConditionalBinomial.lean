@@ -27,11 +27,11 @@ pairs (McNemar). In a study the total is itself random: `D ω` informative trans
   probability, through the conditional measure `μ[|{ω | D ω = d}]`. Totals of probability zero
   are allowed and impose nothing.
 * **Null hypothesis.** Stated as a hypothesis on conditional laws: given each total `D = d` of
-  positive probability, `B ~ Bin(d, 1/2)`. For McNemar's test this conditional law is derived
-  here only in the Poissonized model (`X ~ Po(r)`, `Y ~ Po(r)` independent, `r ≥ 0`), from the
-  merged `GLM.CountData.hasLaw_cond_binomial_libraryFraction`. The conditional law in the
-  fixed-number-of-pairs multinomial model is **not** derived here; that model is covered only
-  through the hypothesis of `isValidPValue_mcnemarPValue_total_of_cond`.
+  positive probability, `B ~ Bin(d, 1/2)`. In the Poissonized McNemar model (`X ~ Po(r)`,
+  `Y ~ Po(r)` independent, `r ≥ 0`) no such hypothesis is needed: validity is the merged
+  `GLM.CountData.isValidPValue_countExactPValue` with library sizes `s₁ = s₂ = 1`. The
+  conditional law in the fixed-number-of-pairs multinomial model is **not** derived here; that
+  model is covered only through the hypothesis of `isValidPValue_mcnemarPValue_total_of_cond`.
 * **p-value.** `tdtPValue (D ω) B ω = P(Bin(D ω, 1/2) ≥ B ω)` and
   `mcnemarPValue (X ω + Y ω) X ω = P(Bin(X ω + Y ω, 1/2) ≥ X ω)`, one-sided (excess
   transmission, excess of the first discordant type).
@@ -70,45 +70,25 @@ informative transmissions (from heterozygous parents) and `B ω` the number that
 allele of interest. If, given each value `D = d` of positive probability, `B ~ Bin(d, 1/2)` (the
 null of no linkage, with the transmissions treated as independent fair coins given `d`), then
 the TDT p-value evaluated at the observed total, `ω ↦ P(Bin(D ω, 1/2) ≥ B ω)`, is valid under
-`μ`. The proof averages the fixed-`d` guarantee `isValidPValue_tdtPValue` over `D`. -/
+`μ`. This is the generic averaging lemma `isValidPValue_of_forall_cond_of_ne_zero` (over the
+values of `D`) applied to the fixed-`d` guarantee `isValidPValue_tdtPValue`. -/
 theorem isValidPValue_tdtPValue_total_of_cond [IsProbabilityMeasure μ] {D B : Ω → ℕ}
     (hDm : Measurable D)
     (hcond : ∀ d, μ {ω | D ω = d} ≠ 0 → HasLaw B Bin(d, fairCoin) (μ[|{ω | D ω = d}])) :
-    IsValidPValue μ (fun ω => tdtPValue (D ω) B ω) := by
-  intro s hs
-  set E : ℕ → Set Ω := fun d => {ω | D ω = d} with hE
-  have hEm : ∀ d, MeasurableSet (E d) := fun d => hDm (measurableSet_singleton d)
-  have hEd : Pairwise (Function.onFun Disjoint E) :=
-    fun a b hab => Set.disjoint_left.2 fun ω ha hb => hab (ha.symm.trans hb)
-  have hEu : (⋃ d, E d) = Set.univ := Set.eq_univ_of_forall fun ω => Set.mem_iUnion.2 ⟨_, rfl⟩
-  have hterm : ∀ d, μ (E d ∩ {ω | tdtPValue (D ω) B ω ≤ s}) ≤ ENNReal.ofReal s * μ (E d) := by
-    intro d
-    by_cases hd : μ (E d) = 0
-    · rw [hd, mul_zero]
-      exact (measure_mono Set.inter_subset_left).trans hd.le
-    have hset : E d ∩ {ω | tdtPValue (D ω) B ω ≤ s} = E d ∩ {ω | tdtPValue d B ω ≤ s} := by
-      ext ω
-      simp only [hE, Set.mem_inter_iff, Set.mem_ofPred_eq]
-      exact ⟨fun ⟨h₁, h₂⟩ => ⟨h₁, h₁ ▸ h₂⟩, fun ⟨h₁, h₂⟩ => ⟨h₁, h₁ ▸ h₂⟩⟩
-    rw [hset, ← cond_mul_eq_inter (hEm d)]
-    exact mul_le_mul_left (isValidPValue_tdtPValue (hcond d hd) s hs) _
-  calc μ {ω | tdtPValue (D ω) B ω ≤ s}
-      = μ (⋃ d, E d ∩ {ω | tdtPValue (D ω) B ω ≤ s}) := by
-        rw [← Set.iUnion_inter, hEu, Set.univ_inter]
-    _ ≤ ∑' d, μ (E d ∩ {ω | tdtPValue (D ω) B ω ≤ s}) := measure_iUnion_le _
-    _ ≤ ∑' d, ENNReal.ofReal s * μ (E d) := ENNReal.tsum_le_tsum hterm
-    _ = ENNReal.ofReal s := by
-        rw [ENNReal.tsum_mul_left, ← measure_iUnion hEd hEm, hEu, measure_univ, mul_one]
+    IsValidPValue μ (fun ω => tdtPValue (D ω) B ω) :=
+  isValidPValue_of_forall_cond_of_ne_zero (q := fun d => tdtPValue d B) hDm
+    (ae_of_all μ fun _ => rfl) fun d hd => isValidPValue_tdtPValue (hcond d hd)
 
 /-- **McNemar's test with a random number of discordant pairs.** Let `X ω` and `Y ω` count the
 discordant pairs of the two types. If, given each number `X + Y = N` of discordant pairs of
 positive probability, `X ~ Bin(N, 1/2)`, then the McNemar p-value at the observed number of
 discordant pairs, `ω ↦ P(Bin(X ω + Y ω, 1/2) ≥ X ω)`, is valid under `μ`.
 
-The conditional law is a hypothesis. It is derived in the Poissonized model
-(`isValidPValue_mcnemarPValue_total`); in the model with a fixed number of pairs and multinomial
-cell counts it is **not** derived here, and that model is reachable only through this
-hypothesis. -/
+The conditional law is a hypothesis. The Poissonized model does not need it:
+`isValidPValue_mcnemarPValue_total` gets validity there from
+`GLM.CountData.isValidPValue_countExactPValue`. In the model with a fixed number of pairs and
+multinomial cell counts the conditional law is **not** derived here, and that model is reachable
+only through this hypothesis. -/
 theorem isValidPValue_mcnemarPValue_total_of_cond [IsProbabilityMeasure μ] {X Y : Ω → ℕ}
     (hXm : Measurable X) (hYm : Measurable Y)
     (hcond : ∀ N, μ {ω | X ω + Y ω = N} ≠ 0 →
@@ -133,9 +113,10 @@ theorem isValidPValue_mcnemarPValue_total {X Y : Ω → ℕ} {r : ℝ≥0} (hXm 
     apply Subtype.ext
     rw [GLM.CountData.coe_libraryFraction, coe_fairCoin]
     norm_num
-  refine isValidPValue_mcnemarPValue_total_of_cond hXm hYm fun N hN => ?_
-  rw [← hfc]
-  exact GLM.CountData.hasLaw_cond_binomial_libraryFraction (by norm_num) hXm hYm
-    (by rwa [one_mul]) (by rwa [one_mul]) hXY hN
+  have hval := GLM.CountData.isValidPValue_countExactPValue (s₁ := 1) (s₂ := 1) (r := r)
+    (by norm_num) hXm hYm (by rwa [one_mul]) (by rwa [one_mul]) hXY
+  convert hval using 2 with ω
+  rw [GLM.CountData.countExactPValue, GLM.CountData.countExactTail, hfc]
+  rfl
 
 end MathlibExt.Probability.Statistics.ExactTests
