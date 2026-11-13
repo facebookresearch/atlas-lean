@@ -19,10 +19,12 @@ import Mathlib.Analysis.Calculus.Deriv.Pow
 
 The quadratic surplus `r²` (assets `r² + 1`, liabilities `1`) has matched
 value, vanishing first derivative, and positive second derivative at `r₀ = 0`,
-so the immunization theorem applies; the sign-flipped surplus `-r²` has
-matched value, vanishing first derivative, and continuity at `r₀ = 0`, yet
-no positive `δ` makes it nonnegative on `|r| < δ`, so the positive
-second-derivative hypothesis cannot be dropped.
+so the abstract surplus lemma applies; the same differentiable asset and
+liability values have matched value, matched first derivatives, and a strictly
+larger asset second derivative at `r₀ = 0`, so the Redington theorem applies;
+the sign-flipped surplus `-r²` has matched value, vanishing first derivative,
+and continuity at `r₀ = 0`, yet no positive `δ` makes it nonnegative on
+`|r| < δ`, so the positive second-derivative hypothesis cannot be dropped.
 -/
 
 @[expose] public section
@@ -73,6 +75,36 @@ theorem test_instance :
   · exact test_deriv_second
   · rw [surplus_quad_eq]
     exact (hasDerivAt_quad 0).continuousAt
+
+theorem deriv_quad_add_one_eq : deriv (fun r : ℝ => r ^ 2 + 1) = fun r => 2 * r := by
+  funext x
+  exact ((hasDerivAt_quad x).add_const 1).deriv
+
+theorem deriv_one_eq : deriv (fun _ : ℝ => (1 : ℝ)) = fun _ => 0 := by
+  funext x
+  exact deriv_const x 1
+
+/-- The Redington theorem applies to assets `r² + 1` and liabilities `1` at
+`r₀ = 0`: both are differentiable, the values and first derivatives match, and
+the asset second derivative `2` exceeds the liability second derivative `0`. -/
+theorem test_redington_instance :
+    ∃ δ > 0, ∀ r, |r - 0| < δ →
+      0 ≤ surplus (fun r : ℝ => r ^ 2 + 1) (fun _ => 1) r := by
+  refine redington_immunization ?_ ?_ ?_ ?_ ?_ ?_ ?_
+  · exact Filter.Eventually.of_forall fun x => ((hasDerivAt_quad x).add_const 1).differentiableAt
+  · exact Filter.Eventually.of_forall fun x => differentiableAt_const 1
+  · rw [deriv_quad_add_one_eq]
+    exact (hasDerivAt_id (0 : ℝ)).const_mul 2 |>.differentiableAt
+  · rw [deriv_one_eq]
+    exact differentiableAt_const 0
+  · norm_num
+  · rw [deriv_quad_add_one_eq, deriv_one_eq]
+    norm_num
+  · rw [deriv_quad_add_one_eq, deriv_one_eq, deriv_const]
+    have h2 : HasDerivAt (fun r : ℝ => 2 * r) 2 0 := by
+      simpa using (hasDerivAt_id (0 : ℝ)).const_mul (2 : ℝ)
+    rw [h2.deriv]
+    norm_num
 
 theorem surplus_neg_eq :
     surplus (fun _ : ℝ => 1) (fun r : ℝ => r ^ 2 + 1) = -(fun r : ℝ => r ^ 2) := by
