@@ -1,11 +1,15 @@
 /-
-Copyright (c) Meta Platforms, Inc. and affiliates.
-All rights reserved.
-
-This source code is licensed under the license found in the
-LICENSE file in the root directory of this source tree.
+Copyright (c) 2026 Adam Kiezun. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Adam Kiezun
 -/
-
+/-
+Backported from `facebookresearch/atlas-lean` at commit
+`18d1aa399b6ebaa8cd9c4a48795b43f6734c3785`
+(`CSLibExt/Logics/Modal/CslibTranslation.lean`),
+authored by Adam Kiezun. The source file carries the Meta Platforms
+copyright/license notice.
+-/
 module
 
 public import CSLibExt.Logics.Modal.Hilbert
@@ -32,18 +36,26 @@ The binary accessibility relation is `m.rel`, and the atom valuation is `m.v`.
   every type of worlds. These model classes retain the same reflexivity, transitivity and
   right-Euclidean conditions on the binary relation.
 
-The translation is completed to a bidirectional equivalence below
-(`KripkeModel.toModel`, `KripkeModel.ofModel_toModel`,
-`KripkeModel.toModel_ofModel`, `Formula.toProposition`,
-`satisfies_toProposition`).  The local `Formula`/`KripkeModel` of
+The translation is completed below to a bidirectional equivalence
+over nonempty world types (`KripkeModel.toModel`,
+`KripkeModel.ofModel_toModel`, `KripkeModel.toModel_ofModel`,
+`Formula.toProposition`, `satisfies_toProposition`). The scope is
+nonempty worlds only: a CSLib model can have an empty world type (its
+frame and valuation are still defined), but no `KripkeModel` exists
+over an empty type because it bundles `Nonempty World`, so the
+CSLib-to-Kripke direction needs that invariant. Satisfaction and
+validity transfer (`satisfies_toProposition`,
+`KripkeModel.valid_toProposition`) are pointwise and need no
+nonemptiness hypothesis. The local `Formula`/`KripkeModel` of
 `Kripke.lean` are retained because the Hilbert-system development
 (derivations in the `⊥`/`→`/`□` basis, canonical models, filtration in
 `Hilbert.lean`, `Canonical.lean`, `Filtration.lean`) is built over that
-concrete syntax and uses a bundled `Nonempty World` invariant, whereas
-CSLib's `Proposition`/`Model` are generic over a `PFunctor` signature
-with an `or`/`not`/`triangle` basis and possibly empty world types; the
-equivalence here shows the two presentations define the same unimodal
-semantics, so results transfer in both directions.
+concrete syntax and uses the bundled `Nonempty World` invariant,
+whereas CSLib's `Proposition`/`Model` are generic over a `PFunctor`
+signature with an `or`/`not`/`triangle` basis and possibly empty world
+types; within the nonempty scope, the equivalence shows the two
+presentations define the same unimodal semantics, so results transfer
+in both directions.
 -/
 
 namespace Cslib
@@ -105,11 +117,12 @@ def KripkeModel.toModel (k : KripkeModel World Atom) :
   toFrame := Frame.ofRelation k.rel
   v := k.valuation
 
-/-- From a Kripke model to a CSLib model and back is the identity (the
-`Nonempty World` instance, a proposition, agrees with the model's
-`nonempty_world` field by proof irrelevance). -/
-theorem KripkeModel.ofModel_toModel [Nonempty World] (k : KripkeModel World Atom) :
-    KripkeModel.ofModel (KripkeModel.toModel k) = k := by
+/-- From a Kripke model to a CSLib model and back is the identity. The
+nonemptiness witness for the return trip comes from the model's own
+bundled `nonempty_world` field, so no ambient `[Nonempty World]`
+instance is needed to use this round trip. -/
+theorem KripkeModel.ofModel_toModel (k : KripkeModel World Atom) :
+    @KripkeModel.ofModel Atom World k.nonempty_world (KripkeModel.toModel k) = k := by
   cases k with
   | mk hne rel val => rfl
 
@@ -128,12 +141,15 @@ theorem KripkeModel.toModel_ofModel [Nonempty World]
   rw [hframe]
 
 /-- Formulas in the `⊥`, `→`, `□` basis as CSLib unimodal propositions
-(`⊥ ↦ false`, `φ → ψ ↦ ¬φ ∨ ψ`, `□φ ↦ ¬◇¬φ`). -/
+(`⊥ ↦ false`, `φ → ψ ↦ Proposition.imp`, `□φ ↦ dynBox`). The CSLib
+connectives are used directly so that satisfaction goes through the
+canonical `Satisfies.imp_iff_imp` / `Satisfies.dynBox_iff_forall`
+characterizations instead of unfolding CSLib internals. -/
 def Formula.toProposition : Formula Atom → Logic.Modal.Unimodal.Proposition Atom
   | .atom p => .atom p
   | .bot => .false
-  | .imp phi psi => .or (.not (toProposition phi)) (toProposition psi)
-  | .box phi => .not (.triangle default (fun _ => .not (toProposition phi)))
+  | .imp phi psi => Logic.Modal.Proposition.imp (toProposition phi) (toProposition psi)
+  | .box phi => Logic.HasDynamicBox.dynBox default (toProposition phi)
 
 /-- The reverse translation also preserves satisfaction: a formula holds
 at a world of a Kripke model iff its translation holds there in the
@@ -147,37 +163,25 @@ theorem satisfies_toProposition (k : KripkeModel World Atom) (w : World)
   | atom p => rfl
   | bot => rfl
   | imp phi psi ih₁ ih₂ =>
-    simp only [KripkeModel.satisfies_imp, Formula.toProposition,
-      Logic.Modal.Satisfies, ih₁, ih₂]
-    constructor
-    · intro h
-      exact Classical.byCases (fun hphi => Or.inr (h hphi)) (fun hphi => Or.inl hphi)
-    · rintro (hphi | hpsi) hphi'
-      · exact False.elim (hphi hphi')
-      · exact hpsi
+    simp only [Formula.toProposition, KripkeModel.satisfies_imp]
+    refine (imp_congr (ih₁ w) (ih₂ w)).trans ?_
+    exact Logic.Modal.Satisfies.imp_iff_imp.symm
   | box phi ih =>
-    have hsem : Logic.Modal.Satisfies k.toModel w
-        (.triangle default (fun _ => .not (Formula.toProposition phi))) ↔
-        ∃ next, k.toModel.toFrame.diagonal default w next ∧
-          Logic.Modal.Satisfies k.toModel next
-            (.not (Formula.toProposition phi)) := by
-      rw [Logic.Modal.Proposition.triangle_def,
-        Logic.Modal.Proposition.unary_triangle_eq_dynDiamond]
-      exact Logic.Modal.Satisfies.dynDiamond_iff_exists
     have hdiag : ∀ a b, k.toModel.toFrame.diagonal default a b ↔ k.rel a b := by
       intro a b
       rw [← Frame.rel_iff_diagonal]
-      show (Frame.ofRelation k.rel).rel a b ↔ k.rel a b
+      change (Frame.ofRelation k.rel).rel a b ↔ k.rel a b
       rw [Frame.ofRelation_rel]
-    rw [Formula.toProposition]
-    constructor
-    · intro hbox hcon
-      obtain ⟨next, hnext, hnot⟩ := hsem.mp hcon
-      exact hnot ((ih next).mp (hbox next ((hdiag w next).mp hnext)))
-    · intro h next hnext
-      exact Classical.byContradiction fun hnot =>
-        h (hsem.mpr ⟨next, (hdiag w next).mpr hnext,
-          fun hsat => hnot ((ih next).mpr hsat)⟩)
+    have hbox : Logic.Modal.Satisfies k.toModel w
+        (Logic.HasDynamicBox.dynBox default (Formula.toProposition phi)) ↔
+        ∀ next, k.rel w next →
+          Logic.Modal.Satisfies k.toModel next (Formula.toProposition phi) := by
+      have h1 := Logic.Modal.Satisfies.dynBox_iff_forall (m := k.toModel) (w := w)
+        (a := default) (φ := Formula.toProposition phi)
+      simp only [← Logic.Modal.derivation_def, hdiag] at h1
+      exact h1
+    rw [Formula.toProposition, KripkeModel.satisfies_box]
+    exact (forall_congr' fun next => imp_congr Iff.rfl (ih next)).trans hbox.symm
 
 /-- Validity transfers to the associated CSLib model under the reverse
 translation. -/
