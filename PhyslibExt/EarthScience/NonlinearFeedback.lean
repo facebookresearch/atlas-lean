@@ -21,8 +21,10 @@ import Mathlib.Tactic.NormNum
 ## i. Overview
 
 For a scalar energy model `C*T' = F(T)` with an equilibrium `T*`
-satisfying `F(T*) = 0`, if `deriv F < 0` on a neighbourhood of `T*`,
-then `(T - T*) * F(T) < 0` for `T ≠ T*` nearby (mean value theorem),
+satisfying `F(T*) = 0`, if `F` is differentiable near `T*` and
+`deriv F < 0` on a punctured neighbourhood of `T*` (the derivative at
+`T*` itself may vanish, as for `F(T) = -(T - T*)^3`), then
+`(T - T*) * F(T) < 0` for `T ≠ T*` nearby (mean value theorem),
 and the Lyapunov function `V = (T - T*)^2/2` strictly decreases along
 solutions there: `V' = (T - T*) * F(T) / C < 0`. This is a local,
 model-conditional statement; a model bifurcation is not an empirical
@@ -52,13 +54,14 @@ namespace EarthScience
 open Set
 
 /-- Local sign condition from a negative derivative: if `F(T*) = 0`,
-`F` is differentiable, and `deriv F < 0` on a punctured neighbourhood
-`(T* - δ, T* + δ)`, then `(T - T*) * F(T) < 0` for `T ≠ T*` in it.
-Proved via the mean value theorem. -/
+`F` is differentiable on `(T* - δ, T* + δ)`, and `deriv F < 0` on the
+punctured neighbourhood `(T* - δ, T* + δ) \ {T*}`, then
+`(T - T*) * F(T) < 0` for `T ≠ T*` in it. Proved via the mean value
+theorem, whose intermediate point differs from `T*`. -/
 theorem local_sign {F : ℝ → ℝ} {Tstar δ : ℝ} (hδ : 0 < δ)
     (hF : F Tstar = 0)
     (hdiff : ∀ T ∈ Set.Ioo (Tstar - δ) (Tstar + δ), DifferentiableAt ℝ F T)
-    (hneg : ∀ T ∈ Set.Ioo (Tstar - δ) (Tstar + δ), deriv F T < 0)
+    (hneg : ∀ T ∈ Set.Ioo (Tstar - δ) (Tstar + δ), T ≠ Tstar → deriv F T < 0)
     {T : ℝ} (hT : T ∈ Set.Ioo (Tstar - δ) (Tstar + δ)) (hne : T ≠ Tstar) :
     (T - Tstar) * F T < 0 := by
   have hdiffOn : DifferentiableOn ℝ F (Set.Ioo (Tstar - δ) (Tstar + δ)) :=
@@ -86,7 +89,7 @@ theorem local_sign {F : ℝ → ℝ} {Tstar δ : ℝ} (hδ : 0 < δ)
       hdiffOn.mono hsubIoo
     obtain ⟨c, hc_mem, hc_eq⟩ := exists_deriv_eq_slope F hlt hcont hdiff'
     have hc_big : c ∈ Set.Ioo (Tstar - δ) (Tstar + δ) := hsubIoo hc_mem
-    have hnegc : deriv F c < 0 := hneg c hc_big
+    have hnegc : deriv F c < 0 := hneg c hc_big hc_mem.2.ne
     rw [hc_eq] at hnegc
     rw [hF] at hnegc
     have hdenom : 0 < Tstar - T := sub_pos.mpr hlt
@@ -119,7 +122,7 @@ theorem local_sign {F : ℝ → ℝ} {Tstar δ : ℝ} (hδ : 0 < δ)
       hdiffOn.mono hsubIoo
     obtain ⟨c, hc_mem, hc_eq⟩ := exists_deriv_eq_slope F hgt hcont hdiff'
     have hc_big : c ∈ Set.Ioo (Tstar - δ) (Tstar + δ) := hsubIoo hc_mem
-    have hnegc : deriv F c < 0 := hneg c hc_big
+    have hnegc : deriv F c < 0 := hneg c hc_big hc_mem.1.ne'
     rw [hc_eq] at hnegc
     rw [hF, sub_zero] at hnegc
     have hdenom : 0 < T - Tstar := sub_pos.mpr hgt
