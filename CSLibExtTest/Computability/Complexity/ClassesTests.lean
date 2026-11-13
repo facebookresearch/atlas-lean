@@ -10,13 +10,17 @@ module
 
 public import CSLibExt.Computability.Complexity.Classes
 public import Mathlib.Analysis.Matrix.PosDef
+public import Mathlib.Computability.Halting
 
 /-! Tests for the shared complexity-class definitions: executable circuit
 evaluation and depth, the capped oracle evaluator, the capped interactive-proof
 game, and the parity / majority decision problems, plus the quantum-circuit
 API (`RatEnc`, `qBit`, `setBits`, `basisState`, `tensorProd`, `zeroState`,
 `sqNorm`, `acceptProb`, gate application) and the bounded-fan-in invariant
-`IsFanInLeTwo` of the `NC` definition. -/
+`IsFanInLeTwo` of the `NC` definition. `AC0` is non-uniform: every language
+that depends only on the input length is in it, including an undecidable unary
+version of the halting problem. `ApproxAt` is a maximization notion: taking a
+cost as `val` lets the costlier solution pass with ratio `1`. -/
 
 namespace Cslib.Complexity.Classes
 
@@ -490,5 +494,83 @@ example : ¬ QGateWellFormed 2 (0, 5, []) := by
 example : ¬ QGateWellFormed 2 (3, 1, []) := by
   intro h
   exact absurd h.1 (by decide)
+
+/-! ### `AC0` is non-uniform -/
+
+/-- Every language that depends only on the input length is in `AC0`: one
+constant gate per length. -/
+theorem lengthOnly_mem_AC0 (h : ℕ → Bool) : (fun x : List Bool => h x.length) ∈ AC0 := by
+  refine ⟨0, 1, fun n => [ACGate.const (h n)], fun n => ⟨?_, ?_, ?_, ?_, ?_⟩⟩
+  · intro j hj a ha
+    have : j = 0 := by simpa using hj
+    subst this
+    simp [gateInputs] at ha
+  · intro g hg
+    simp at hg
+    subst hg
+    trivial
+  · simp
+  · simp [circuitDepth, circuitDepths, gateDepthOf]
+  · intro x hx
+    subst hx
+    simp [circuitEval, gateValue]
+
+open Nat.Partrec in
+/-- The unary halting language: `1^n` is accepted iff code `n` halts on `0`. -/
+noncomputable def unaryHalt (x : List Bool) : Bool := by
+  classical
+  exact decide ((Code.eval (Denumerable.ofNat Code x.length) 0).Dom)
+
+open Nat.Partrec in
+theorem unaryHalt_mem_AC0 : unaryHalt ∈ AC0 := by
+  classical
+  exact lengthOnly_mem_AC0 (fun n => decide ((Code.eval (Denumerable.ofNat Code n) 0).Dom))
+
+open Nat.Partrec in
+theorem unary_primrec : Primrec fun c : Code =>
+    (fun l : List Bool => true :: l)^[Encodable.encode c] [] :=
+  Primrec.nat_iterate Primrec.encode (Primrec.const [])
+    (Primrec.list_cons.comp (Primrec.const true) Primrec.snd).to₂
+
+theorem iterate_cons_length (n : ℕ) :
+    ((fun l : List Bool => true :: l)^[n] []).length = n := by
+  induction n with
+  | zero => rfl
+  | succ n ih => rw [Function.iterate_succ_apply']; simp [ih]
+
+/-- The unary halting language is undecidable, so `AC0` is not contained in any
+class of decidable languages, such as the log-space uniform `NCK 1`. -/
+theorem unaryHalt_not_computable :
+    ¬ ComputablePred (fun x : List Bool => unaryHalt x = true) := by
+  rintro ⟨inst, hc⟩
+  apply ComputablePred.halting_problem 0
+  refine ComputablePred.of_eq ⟨fun c => inst _, hc.comp unary_primrec.to_comp⟩ ?_
+  intro c
+  simp [unaryHalt, iterate_cons_length]
+
+/-! ### Approximation classes are maximization-only -/
+
+/-- Two feasible solutions, `[]` with value `1` and `[true]` with value `2`. -/
+noncomputable def twoSolutions : OptProblem where
+  val _ s := if s = [] then 1 else if s = [true] then 2 else 0
+  feas _ s := decide (s = [] ∨ s = [true])
+  bound := Polynomial.C 1
+  feas_len := by
+    intro x s h
+    simp at h
+    rcases h with rfl | rfl <;> simp
+  val_nonneg := by intro x s; split_ifs <;> norm_num
+  val_infeas := by
+    intro x s h
+    simp at h
+    simp [h.1, h.2]
+  feas_nonempty := fun _ => ⟨[], by simp⟩
+
+/-- Returning the larger value meets `ApproxAt` with ratio `1`: read as a cost,
+this would accept the costlier solution as optimal. -/
+example (k : ℕ) : ApproxAt twoSolutions (fun _ => [true]) k 1 := by
+  intro x s hs
+  simp [twoSolutions] at hs ⊢
+  rcases hs with rfl | rfl <;> norm_num
 
 end Cslib.Complexity.Classes

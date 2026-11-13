@@ -62,9 +62,8 @@ bad" induction on the lazy runs (`lazy_switching`): with `m` unused values left,
 answered alike by both oracles unless the random function hits one of the `N - m` used values.
 
 **Coexistence.** Wave 3 unifies this file with the monadic adversaries of
-`CSLibExt.Crypto.Framework.Monadic`, whose cost bounds (`OracleBoundedWith`, `SampleBoundedWith`)
-count oracle queries and sampling steps, not running time (a polynomial-cost class built on them is
-future work); nothing here depends on them.
+`CSLibExt.Crypto.Framework.Monadic`, whose cost class (`CSLibExt.Crypto.Framework.PolyCost`)
+bounds oracle and sampling cost, not running time; nothing here depends on them.
 `Cslib.Crypto.PRF` samples its oracles eagerly and is not migrated. The random-oracle model
 (`CSLibExt.Crypto.Framework.RandomOracle`) uses `rfStep`, `lazyRF`, `Table`, `Extends` and
 `runState` here as its lazy random oracle, together with the lemmas `runState_bind`,

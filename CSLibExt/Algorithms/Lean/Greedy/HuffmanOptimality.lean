@@ -23,6 +23,10 @@ public import Mathlib.Tactic.Abel
 The executable heap algorithm is related to the standard exchange-and-contraction
 proof through a trace of its two-minimum merges.  The auxiliary tree below erases
 symbols, which keeps the exchange argument independent of symbol equality.
+
+Competitors in this file are full binary trees with the same weighted symbols.
+`HuffmanPrefixFree.lean` extends the comparison to every binary code that is
+prefix-free on the input's symbols.
 -/
 
 @[expose] public section

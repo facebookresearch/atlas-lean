@@ -64,8 +64,8 @@ a special case of the monadic one.
 keeping the sampling steps: the shape of a black-box reduction that runs an adversary and answers
 its queries itself. `evalPMF_simulate` (a perfect simulation preserves the output distribution),
 `oracleBounded_simulate` (`q * q'` queries) and `sampleBounded_simulate` (`s + q * s'` sampling
-steps) are the generic facts from which a polynomial-cost class would show that reductions
-preserve polynomial cost. Such a class is future work; it is not part of this repository.
+steps) are the generic facts that `CSLibExt.Crypto.Framework.PolyCost` uses to show that reductions
+preserve polynomial cost.
 
 **Migration note.** The monadic games duplicate `cpaExp`, `ccaExp`, `pubCcaExp`, `macGame` and
 `sigGame` of `CSLibExt.Crypto.Framework.Games`; the `ofCoins` equalities are the migration
