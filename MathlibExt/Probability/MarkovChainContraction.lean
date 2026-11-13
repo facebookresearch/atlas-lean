@@ -46,8 +46,8 @@ noncomputable def chainDist {α : Type*} (K : α → PMF α) (x : α) : ℕ → 
   | t + 1 => (chainDist K x t).bind K
 
 /-- `toReal` of a one-step bind is the finite mixture of `toReal` masses. -/
-private theorem bind_toReal {α : Type*} [Fintype α] (K : α → PMF α) (p : PMF α)
-    (a : α) :
+private theorem bind_toReal {α β : Type*} [Fintype α] (K : α → PMF β) (p : PMF α)
+    (a : β) :
     ((p.bind K) a).toReal = ∑ x, (p x).toReal * (K x a).toReal := by
   rw [PMF.bind_apply,
     ENNReal.tsum_toReal_eq
@@ -55,7 +55,7 @@ private theorem bind_toReal {α : Type*} [Fintype α] (K : α → PMF α) (p : P
   simp only [ENNReal.toReal_mul, tsum_fintype]
 
 /-- Each kernel row sums to one in `toReal`. -/
-private theorem kernel_toReal_sum {α : Type*} [Fintype α] (K : α → PMF α)
+private theorem kernel_toReal_sum {α β : Type*} [Fintype β] (K : α → PMF β)
     (x : α) :
     ∑ a, (K x a).toReal = 1 := by
   have h := congrArg ENNReal.toReal (K x).tsum_coe
@@ -63,10 +63,13 @@ private theorem kernel_toReal_sum {α : Type*} [Fintype α] (K : α → PMF α)
     ENNReal.toReal_one] at h
   exact h
 
-/-- Data processing for one Markov step: total variation between
-the one-step distributions is at most the total variation between
-the starting distributions. -/
-theorem tvDist_bind_le {α : Type*} [Fintype α] (K : α → PMF α) (p q : PMF α) :
+/-- Data processing: pushing two distributions through the same
+kernel `K : α → PMF β` cannot increase their total variation. For
+`β = α` this is one Markov step: total variation between the
+one-step distributions is at most the total variation between the
+starting distributions. -/
+theorem tvDist_bind_le {α β : Type*} [Fintype α] [Fintype β] (K : α → PMF β)
+    (p q : PMF α) :
     tvDist (p.bind K) (q.bind K) ≤ tvDist p q := by
   unfold tvDist MathlibExt.Probability.MarkovMixing.tvDist
   apply mul_le_mul_of_nonneg_left _ (by norm_num : (0 : ℝ) ≤ 1 / 2)

@@ -1072,11 +1072,6 @@ theorem tendstoInDistribution_fmStat {R : ℕ → ℕ} (hRN : ∀ N, R N ≤ N)
   · simp [hfm]
   · simp
 
-/-- `χ²₁` has no atom at `0`. -/
-private theorem chiSquareMeasure_one_singleton_zero : chiSquareMeasure 1 {0} = 0 := by
-  rw [chiSquareMeasure, gammaMeasure, withDensity_apply _ (measurableSet_singleton 0)]
-  exact setLIntegral_measure_zero _ _ Real.volume_singleton
-
 /-- **The singular design has no `χ²₁` limit.** If every genotype is almost surely the same
 class `c` (zero score variance), the fixed-margin statistic is almost surely `0` for every `N`,
 so it converges to the Dirac mass at `0` and not to `χ²₁`: the positive-variance hypothesis of
@@ -1100,7 +1095,7 @@ theorem not_tendstoInDistribution_fmStat_of_const {R : ℕ → ℕ} (hRN : ∀ N
   have huniq := tendstoInDistribution_unique _ h hconst
   rw [hZ.map_eq, Measure.map_const, measure_univ, one_smul] at huniq
   have := congrArg (fun μ : Measure ℝ ↦ μ {0}) huniq
-  simp only [chiSquareMeasure_one_singleton_zero] at this
+  simp only [chiSquareMeasure_singleton] at this
   simp at this
 
 end Asymptotics

@@ -16,11 +16,11 @@ this file records the modeling conventions that make results in different files 
 
 Areas: `PopulationGenetics` (with `Coalescent/` and `Diffusion/`), `Phylogenetics`,
 `StatisticalGenetics`, `Epidemiology`, `Dynamics`, `CancerGenomics`, `Ecology` (structured
-population models), `Demography` (life-table quantities and Leslie-matrix demography),
-`Biophysics` (compartment and pharmacokinetic models), `Omics`
-(compositional normalization of count data). Distributions, Markov chains, statistics
-and combinatorics that are not specific to biology go under `MathlibExt/Probability/…` or
-`MathlibExt/Combinatorics/…`.
+population models), `Biophysics` (compartment and pharmacokinetic models), `Omics`
+(compositional normalization of count data), `Demography` (life-table quantities, crude and
+standardized rates over population categories, and Leslie-matrix demography). Distributions,
+Markov chains, statistics and combinatorics that are not specific to biology go under
+`MathlibExt/Probability/…` or `MathlibExt/Combinatorics/…`.
 
 Namespaces follow the path: `MathlibExt.Biology.<Area>.<Topic>` for models,
 `Cslib.Bioinformatics.<Area>.<Topic>` for algorithms, and Mathlib's own namespaces

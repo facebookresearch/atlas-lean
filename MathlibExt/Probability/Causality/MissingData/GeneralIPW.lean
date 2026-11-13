@@ -28,8 +28,9 @@ instance `s = {True}` of Mathlib's `condIndepFun_iff_condExp_inter_preimage_eq_m
 response indicator `ω ↦ ω ∈ R` and `Y`, so Mathlib's `CondIndepFun` implies it
 (`condExp_inter_preimage_ae_eq_mul_of_condIndepFun`); in particular so does
 `MissingAtRandomCondIndepFun` from `MissingData.Definitions`, with `m = σ(X)`. The remaining
-events `∅, Rᶜ, Ω` of `σ(R)` add nothing, since conditional expectation is linear (this converse
-is not formalized here).
+events `∅, Rᶜ, Ω` of `σ(R)` add nothing, since conditional expectation is linear;
+`missingAtRandomCondIndepFun_iff_forall_condExp` in `MissingData.MARBridge` uses this to prove the
+converse for `m = σ(X)`, from mean MAR for every transform of `Y`.
 
 The general inverse-weighting theorem `integral_ipw_eq_integral_of_mar_condExp` (in
 `MissingData.Identification`, an instance of `integral_ipw_treated_condExp`) assumes only *mean*
@@ -60,7 +61,11 @@ comparing their means gives `∫_A 1_R Y = ∫_A π Y = ∫_A π E[Y | m]`, whic
 ## Not covered
 
 * The converse of `condExp_inter_preimage_ae_eq_mul_of_condIndepFun` (set-wise MAR implies
-  `CondIndepFun`), and any bridge to `CondIndepFun` without a standard Borel sample space.
+  `CondIndepFun`) for a general sub-σ-algebra `m`. For `m = σ(X)`,
+  `missingAtRandomCondIndepFun_iff_forall_condExp` in `MissingData.MARBridge` proves that mean MAR
+  for every measurable transform `g ∘ Y` implies `MissingAtRandomCondIndepFun`; set-wise MAR gives
+  that hypothesis through `condExp_indicator_ae_eq_mul_of_mar` applied to `g ∘ Y`.
+* Any bridge to `CondIndepFun` without a standard Borel sample space.
 * Weak positivity (`π > 0` without a uniform lower bound), estimation of `π`, and asymptotics.
 
 ## References

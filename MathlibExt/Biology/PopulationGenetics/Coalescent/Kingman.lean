@@ -15,6 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Complex.LogBounds
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Probability.Independence.Basic
 import Mathlib.Data.Nat.Choose.Cast
+import Mathlib.Probability.Independence.Integration
 
 /-!
 # Kingman's coalescent: holding times, tree lengths, Watterson's estimator
@@ -46,6 +47,8 @@ with probability `noCoalProb M k = ∏_{i<k} (1 - i/M) = M^{(k)}/M^k` (falling f
 
 * `KingmanTimes`: the holding-time model.
 * `KingmanTimes.integral_tmrca`: `E[T_MRCA] = 2 (1 - 1/n)`.
+* `KingmanTimes.memLp_T`, `KingmanTimes.integral_T_mul_T`: each holding time is square
+  integrable, and `E[T k T k'] = (k.choose 2)⁻¹ (k'.choose 2)⁻¹ + [k = k'] (k.choose 2)⁻²`.
 * `KingmanTimes.variance_tmrca`: `Var[T_MRCA] = ∑_{k=2}^n ((k.choose 2)⁻¹)²`.
 * `KingmanTimes.integral_totalLength`: `E[L] = 2 H_{n-1}`.
 * `KingmanTimes.integral_segSites`, `KingmanTimes.watterson_unbiased`: Watterson (1975), for
@@ -143,6 +146,12 @@ theorem integrable_T {k : ℕ} (hk : k ∈ Icc 2 n) : Integrable (K.T k) μ :=
 theorem integral_T {k : ℕ} (hk : k ∈ Icc 2 n) : μ[K.T k] = ((k.choose 2 : ℕ) : ℝ)⁻¹ :=
   (K.hasLaw k hk).integral_eq_inv_of_expMeasure (choose_two_pos hk)
 
+/-- Each holding time is square integrable. -/
+theorem memLp_T {k : ℕ} (hk : k ∈ Icc 2 n) : MemLp (K.T k) 2 μ :=
+  (K.hasLaw k hk).memLp_comp (f := id)
+    ((memLp_two_iff_integrable_sq aestronglyMeasurable_id).2
+      (by simpa using integrable_pow_expMeasure (choose_two_pos hk) 2))
+
 /-- The expected time to the most recent common ancestor is `2 (1 - 1/n)`. -/
 theorem integral_tmrca (hn : 1 ≤ n) : μ[K.tmrca] = 2 * (1 - 1 / (n : ℝ)) := by
   unfold tmrca
@@ -164,10 +173,7 @@ theorem integral_totalLength : μ[K.totalLength] = 2 * (harmonic (n - 1) : ℝ) 
 `∑_{k=2}^n ((k.choose 2)⁻¹)²` (this uses independence). -/
 theorem variance_tmrca :
     Var[K.tmrca; μ] = ∑ k ∈ Icc 2 n, (((k.choose 2 : ℕ) : ℝ)⁻¹) ^ 2 := by
-  have hmem : ∀ i ∈ (univ : Finset (Icc 2 n)), MemLp (K.T i) 2 μ := fun i _ =>
-    (K.hasLaw i i.2).memLp_comp (f := id)
-      ((memLp_two_iff_integrable_sq aestronglyMeasurable_id).2
-        (by simpa using integrable_pow_expMeasure (choose_two_pos i.2) 2))
+  have hmem : ∀ i ∈ (univ : Finset (Icc 2 n)), MemLp (K.T i) 2 μ := fun i _ => K.memLp_T i.2
   have hpair : Set.Pairwise ↑(univ : Finset (Icc 2 n)) fun i j : Icc 2 n => K.T i ⟂ᵢ[μ] K.T j :=
     fun i _ j _ hij => K.indep.indepFun (i := i) (j := j) hij
   have htm : K.tmrca = ∑ i ∈ (univ : Finset (Icc 2 n)), K.T i := by
@@ -177,6 +183,28 @@ theorem variance_tmrca :
     ← sum_coe_sort (Icc 2 n) (fun k => (((k.choose 2 : ℕ) : ℝ)⁻¹) ^ 2)]
   exact sum_congr rfl fun i _ =>
     (K.hasLaw i i.2).variance_eq_of_expMeasure (choose_two_pos i.2)
+
+/-- **Second moments of the holding times**:
+`E[T k T k'] = (k.choose 2)⁻¹ (k'.choose 2)⁻¹ + [k = k'] (k.choose 2)⁻²` for `k, k' ∈ [2, n]`
+(exponential laws and independence). -/
+theorem integral_T_mul_T [IsProbabilityMeasure μ] {k k' : ℕ} (hk : k ∈ Icc 2 n)
+    (hk' : k' ∈ Icc 2 n) :
+    μ[fun ω => K.T k ω * K.T k' ω] = ((k.choose 2 : ℕ) : ℝ)⁻¹ * ((k'.choose 2 : ℕ) : ℝ)⁻¹ +
+      if k = k' then (((k.choose 2 : ℕ) : ℝ)⁻¹) ^ 2 else 0 := by
+  by_cases h : k = k'
+  · subst h
+    have hv := variance_eq_sub (K.memLp_T hk)
+    rw [(K.hasLaw k hk).variance_eq_of_expMeasure (choose_two_pos hk), K.integral_T hk] at hv
+    have hsq : (fun ω => K.T k ω * K.T k ω) = K.T k ^ 2 := by
+      funext ω
+      simp [sq]
+    simp only [hsq, ↓reduceIte]
+    linarith
+  · have hind : IndepFun (K.T k) (K.T k') μ :=
+      K.indep.indepFun (i := ⟨k, hk⟩) (j := ⟨k', hk'⟩) (fun h' => h (congrArg Subtype.val h'))
+    rw [IndepFun.integral_fun_mul_eq_mul_integral hind (K.integrable_T hk).aestronglyMeasurable
+      (K.integrable_T hk').aestronglyMeasurable, K.integral_T hk, K.integral_T hk']
+    simp [h]
 
 /-! ### Watterson's estimator -/
 

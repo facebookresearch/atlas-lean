@@ -622,30 +622,6 @@ theorem variance_tajimaNumerator [IsProbabilityMeasure μ] {m : MeasurableSpace 
   field_simp
   ring
 
-/-- `E[T k T k'] = C(k, 2)⁻¹ C(k', 2)⁻¹ + [k = k'] C(k, 2)⁻²` (independent exponential holding
-times). -/
-private theorem integral_T_mul_T [IsProbabilityMeasure μ] {k k' : ℕ} (hk : k ∈ Icc 2 n)
-    (hk' : k' ∈ Icc 2 n) :
-    μ[fun ω => K.T k ω * K.T k' ω] = ((k.choose 2 : ℕ) : ℝ)⁻¹ * ((k'.choose 2 : ℕ) : ℝ)⁻¹ +
-      if k = k' then (((k.choose 2 : ℕ) : ℝ)⁻¹) ^ 2 else 0 := by
-  by_cases h : k = k'
-  · subst h
-    have hm : MemLp (K.T k) 2 μ := (K.hasLaw k hk).memLp_comp (f := id)
-      ((memLp_two_iff_integrable_sq aestronglyMeasurable_id).2
-        (by simpa using integrable_pow_expMeasure (choose_two_pos hk) 2))
-    have hv := variance_eq_sub hm
-    rw [(K.hasLaw k hk).variance_eq_of_expMeasure (choose_two_pos hk), K.integral_T hk] at hv
-    have hsq : (fun ω => K.T k ω * K.T k ω) = K.T k ^ 2 := by
-      funext ω
-      simp [sq]
-    simp only [hsq, ↓reduceIte]
-    linarith
-  · have hind : IndepFun (K.T k) (K.T k') μ :=
-      K.indep.indepFun (i := ⟨k, hk⟩) (j := ⟨k', hk'⟩) (fun h' => h (congrArg Subtype.val h'))
-    rw [IndepFun.integral_fun_mul_eq_mul_integral hind (K.integrable_T hk).aestronglyMeasurable
-      (K.integrable_T hk').aestronglyMeasurable, K.integral_T hk, K.integral_T hk']
-    simp [h]
-
 /-- **Pair coalescence time against the total branch length**: if the coalescence time of a
 pair is `τ = ∑_{k=2}^n χ k T k`, where `χ k` indicates that the pair is still in two distinct
 lineages while there are `k` lineages, and the topology is independent of the holding times in
