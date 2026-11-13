@@ -16,9 +16,9 @@ public import MathlibExt.Probability.Distributions.LogNormal
 
 The accelerated-failure-time (AFT) model with baseline lifetime law `μ₀` and linear predictor
 `η` (for instance `η = ⟪β, x⟫` for covariates `x`) is the law of `T = exp η * T₀` with
-`T₀ ~ μ₀`, i.e. `log T = η + log T₀`: covariates stretch or shrink time by the acceleration
-factor `exp η` (`aftMeasure`). This file proves the AFT transforms, identifies the AFT laws for
-the Weibull and log-normal baselines, and separates the AFT reading from the
+`T₀ ~ μ₀`; where `T₀ > 0` this reads `log T = η + log T₀`. Covariates stretch or shrink time by
+the acceleration factor `exp η` (`aftMeasure`). This file proves the AFT transforms, identifies
+the AFT laws for the Weibull and log-normal baselines, and separates the AFT reading from the
 proportional-hazards (PH) reading.
 
 ## Main results
@@ -75,9 +75,9 @@ open scoped ENNReal NNReal
 noncomputable section
 
 /-- **The accelerated-failure-time law** with baseline `μ₀` and linear predictor `η`: the law of
-`T = exp η * T₀` for `T₀ ~ μ₀`, i.e. the pushforward of `μ₀` along `t ↦ exp η * t`. On the log
-scale this is `log T = η + log T₀`, so `η` shifts the log failure time and `exp η` is the
-acceleration factor (time ratio). -/
+`T = exp η * T₀` for `T₀ ~ μ₀`, i.e. the pushforward of `μ₀` along `t ↦ exp η * t`. Where
+`T₀ > 0`, on the log scale this is `log T = η + log T₀`, so `η` shifts the log failure time and
+`exp η` is the acceleration factor (time ratio). -/
 def aftMeasure (μ₀ : Measure ℝ) (η : ℝ) : Measure ℝ :=
   μ₀.map fun t => exp η * t
 
