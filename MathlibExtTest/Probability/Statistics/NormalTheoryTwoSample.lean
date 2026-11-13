@@ -56,6 +56,13 @@ example (δ : ℝ) : pooledVariance ![(1 : ℝ), 1] ![(1 : ℝ), 1, 1] = 0 ∧
   refine ⟨by norm_num [pooledVariance, Fin.sum_univ_succ], ?_⟩
   norm_num [twoSampleTStatistic, pooledVariance, Fin.sum_univ_succ]
 
+/-- The bridge to the canonical unbiased sample variances, checked on the same data:
+`sampleVarUnbiased x = 2`, `sampleVarUnbiased y = 4`. -/
+example : MathlibExt.Probability.FiniteProbability.sampleVarUnbiased ![(1 : ℝ), 3] /
+    MathlibExt.Probability.FiniteProbability.sampleVarUnbiased ![(2 : ℝ), 4, 6] = 1 / 2 := by
+  rw [← varianceRatio_eq]
+  norm_num [varianceRatio, Fin.sum_univ_succ]
+
 /-! ### The hypotheses are satisfiable: the canonical two-sample model -/
 
 /-- The product of the two sample laws. -/

@@ -14,6 +14,7 @@ public import MathlibExt.Probability.Quantile
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Independence.Basic
+public import MathlibExt.Probability.FiniteProbability
 import MathlibExt.Probability.Statistics.LinearModel.Inference
 import MathlibExt.Probability.Statistics.Slutsky
 import MathlibExt.Probability.CdfContinuityPoints
@@ -59,6 +60,8 @@ hypotheses; no central limit theorem or law of large numbers is proved here).
   `1 - α`.
 * `twoSample_t_test_size_eq`, `twoSample_t_one_sided_test_size_eq`: the two-sided and one-sided
   pooled `t` tests have size exactly `α`.
+* `pooledVariance_eq_sampleMean`, `varianceRatio_eq`: bridges to the canonical `sampleMean` and
+  `sampleVarUnbiased` of `MathlibExt.Probability.FiniteProbability`.
 * `hasLaw_varianceRatio_div`: `(S_X² / S_Y²) / (v₁ / v₂) ~ F(m - 1, n - 1)`;
   `hasLaw_varianceRatio`: `S_X² / S_Y² ~ F(m - 1, n - 1)` when `v₁ = v₂`.
 * `varianceRatio_test_size_eq`: the one-sided `F` test of `v₁ = v₂` has size exactly `α`.
@@ -238,8 +241,14 @@ theorem hasLaw_twoSampleTStatistic {m n : ℕ} (hm : 1 ≤ m) (hn : 1 ≤ n) (hm
 
 /-! ### Quantile facts for the `t` and `F` laws
 
-Private copies: the same facts are proved publicly in the open `NormalTheory.lean` (#1566),
-which this file does not import. -/
+TODO(#1566): after `NormalTheory.lean` (open PR #1566, not imported here) merges, replace the
+private copies `studentTMeasure_singleton'`, `studentTMeasure_Iic_neg'`,
+`cdf_studentTMeasure_neg'` and `snedecorFMeasure_singleton'` by its public
+`studentTMeasure_singleton`, `studentTMeasure_Iic_neg`, `cdf_studentTMeasure_neg` and
+`snedecorFMeasure_singleton`, and the uses of `cdf_cdfQuantile_of_noAtom` by
+`cdf_studentTMeasure_cdfQuantile` / `cdf_snedecorFMeasure_cdfQuantile`.
+`cdf_cdfQuantile_of_noAtom` itself, `measureReal_Icc_of_noAtom`, `studentT_central_mass` and
+`snedecorFMeasure_Iic_zero` have no public counterpart there and stay. -/
 
 /-- A law without atoms has a continuous cdf, so the generalized inverse is exact on `(0, 1)`. -/
 private lemma cdf_cdfQuantile_of_noAtom {ν : Measure ℝ} [IsProbabilityMeasure ν]
@@ -423,6 +432,22 @@ theorem twoSample_t_one_sided_test_size_eq {m n : ℕ} (hm : 1 ≤ m) (hn : 1 �
 noncomputable def varianceRatio {m n : ℕ} (x : Fin m → ℝ) (y : Fin n → ℝ) : ℝ :=
   ((∑ i, (x i - (∑ i', x i') / m) ^ 2) / ((m : ℝ) - 1)) /
     ((∑ j, (y j - (∑ j', y j') / n) ^ 2) / ((n : ℝ) - 1))
+
+open MathlibExt.Probability.FiniteProbability in
+/-- `pooledVariance` in terms of the canonical sample mean `sampleMean`. -/
+theorem pooledVariance_eq_sampleMean {m n : ℕ} (x : Fin m → ℝ) (y : Fin n → ℝ) :
+    pooledVariance x y =
+      (∑ i, (x i - sampleMean x) ^ 2 + ∑ j, (y j - sampleMean y) ^ 2) / ((m : ℝ) + n - 2) := by
+  rw [pooledVariance, sampleMean_eq_sum_div, sampleMean_eq_sum_div, Fintype.card_fin,
+    Fintype.card_fin]
+
+open MathlibExt.Probability.FiniteProbability in
+/-- `varianceRatio` is the ratio of the canonical unbiased sample variances
+`sampleVarUnbiased`. -/
+theorem varianceRatio_eq {m n : ℕ} (x : Fin m → ℝ) (y : Fin n → ℝ) :
+    varianceRatio x y = sampleVarUnbiased x / sampleVarUnbiased y := by
+  rw [varianceRatio, sampleVarUnbiased_eq_sum_div, sampleVarUnbiased_eq_sum_div,
+    sampleMean_eq_sum_div, sampleMean_eq_sum_div, Fintype.card_fin, Fintype.card_fin]
 
 /-- The intercept-only design (private helpers as in `LinearModel.Inference`). -/
 private def interceptDesign (n : ℕ) : Matrix (Fin n) (Fin 1) ℝ := Matrix.of fun _ _ => 1
