@@ -148,8 +148,9 @@ example : LeftRSIntegrable (fun x => if (1 / 2 : ℝ) ≤ x then (1 : ℝ) else 
     (boundedVariationOn_of_monotoneOn zero_le_one hm)
     (boundedVariationOn_of_monotoneOn zero_le_one hm)
 
-/-- A continuous integrator that is not of bounded variation is covered by the uniform-limit
-theorem; here `sin` on `[0, 1]`. -/
+/-- Existence for a continuous integrator, through `leftRSIntegrable_of_continuousOn`; here
+`sin` on `[0, 1]`. This exercises only the continuous-integrator route: `sin` is itself of
+bounded variation on `[0, 1]`. -/
 example : LeftRSIntegrable id Real.sin 0 1 :=
   leftRSIntegrable_of_continuousOn zero_le_one
     (boundedVariationOn_of_monotoneOn zero_le_one (monotone_id.monotoneOn _))
@@ -164,7 +165,9 @@ example (h : ℝ → ℝ) (hh : ∀ x ∈ Set.Icc (0 : ℝ) 1, |h x| ≤ 1) (s :
     (fun x hx => by rw [id, abs_of_nonneg hx.1]; exact hx.2)
     (isControl_self_of_monotoneOn (monotone_id.monotoneOn _)) s
 
-/-- The bound for a monotone integrator is attained by the step integrator. -/
+/-- The bound for a monotone integrator, applied to the step integrator: the integral `1 / 2` is
+at most `1 * (h 1 - h 0) = 1`. The bound is not attained here; the example only demonstrates
+it. -/
 example : |(1 / 2 : ℝ)| ≤ 1 * ((fun x => if (1 / 2 : ℝ) ≤ x then (1 : ℝ) else 0) 1 -
     (fun x => if (1 / 2 : ℝ) ≤ x then (1 : ℝ) else 0) 0) := by
   have hI : HasLeftRSIntegral id (fun x => if (1 / 2 : ℝ) ≤ x then 1 else 0) 0 1 (1 / 2) :=
