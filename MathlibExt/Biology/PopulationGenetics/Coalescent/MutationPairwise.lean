@@ -44,11 +44,13 @@ labeled history (`RankedHistory`, `Topology.lean`) and discharges those hypothes
 * **Random joining.** Under `randomJoining n`, genes `a ≠ b` are still apart after `t ≤ n - 2`
   events with probability `(n - t - 1)(n + 1) / ((n - t + 1)(n - 1))`: by double counting,
   exactly one of the `C(n - t, 2)` choices at step `t` merges them (`card_pairApart_succ`,
-  `card_pairApart_div`, `integral_pairApart_randomJoining`).
+  `card_pairApart_div`). During the epoch with `k = n - t` lineages this is
+  `pairSeparateProb n k` of `Topology.lean` (`integral_pairApart_randomJoining`).
 * **A concrete model.** With independent exponential epochs and random-joining topology
   (`kingmanGenealogyMeasure`, `kingmanTreeMutationMeasure`), `E τ_s = 1`
-  (`integral_pairCoalTime_kingmanGenealogyMeasure`), hence `E[D_s] = θ` for every pair and
-  Tajima's `E π = θ` with no remaining hypotheses (`integral_pairDiff_kingmanTreeMutationMeasure`,
+  (`integral_pairCoalTime_kingmanGenealogyMeasure`, by `sum_pairSeparateProb_div_choose`), hence
+  `E[D_s] = θ` for every pair and Tajima's `E π = θ` with no remaining hypotheses
+  (`integral_pairDiff_kingmanTreeMutationMeasure`,
   `integral_meanPairDiff_kingmanTreeMutationMeasure`).
 
 The segregating-site moments are not repeated here (see `Mutation.lean`). The law
@@ -391,7 +393,8 @@ theorem pairApart_zero (h : RankedHistory n) {a b : Fin n} (hab : a ≠ b) :
 
 /-- **Probability that two genes are still apart after `t` coalescence events** (Tajima 1983):
 under random joining, for `n ≥ 2` and `t ≤ n - 2`, it is
-`∏_{i < t} (1 - 1 / C(n - i, 2)) = (n - t - 1)(n + 1) / ((n - t + 1)(n - 1))`. -/
+`∏_{i < t} (1 - 1 / C(n - i, 2)) = (n - t - 1)(n + 1) / ((n - t + 1)(n - 1))`, which is
+`pairSeparateProb n (n - t)`; `integral_pairApart_randomJoining` states it in that form. -/
 theorem card_pairApart_div {a b : Fin n} (hab : a ≠ b) {t : ℕ} (ht : t + 2 ≤ n) :
     (#{h : RankedHistory n | PairApart h {a, b} t} : ℝ) / Fintype.card (RankedHistory n) =
       ((n : ℝ) - t - 1) * (n + 1) / (((n : ℝ) - t + 1) * (n - 1)) := by
@@ -747,23 +750,12 @@ section Model
 
 variable {n : ℕ}
 
-/-- `∑_{k=2}^m 1 / (k (k + 1)) = 1/2 - 1/(m + 1)` for `m ≥ 1`. -/
-private theorem sum_inv_mul_succ {m : ℕ} (hm : 1 ≤ m) :
-    ∑ k ∈ Icc 2 m, (1 : ℝ) / ((k : ℝ) * (k + 1)) = 1 / 2 - 1 / ((m : ℝ) + 1) := by
-  induction m, hm using Nat.le_induction with
-  | base => norm_num
-  | succ m hm ih =>
-    rw [Finset.sum_Icc_succ_top (by omega), ih]
-    push_cast
-    field_simp
-    ring
-
 /-- Under random joining, the probability that the genes of a pair `s` are apart during the epoch
-with `k` lineages is `(k - 1)(n + 1) / ((k + 1)(n - 1))`. -/
+with `k` lineages is `pairSeparateProb n k = (k - 1)(n + 1) / ((n - 1)(k + 1))`. -/
 theorem integral_pairApart_randomJoining {s : Finset (Fin n)} (hs : s ∈ samplePairs n) {k : ℕ}
     (hk : k ∈ Icc 2 n) :
     ∫ h, (if PairApart h s (n - k) then (1 : ℝ) else 0) ∂randomJoining n =
-      ((k : ℝ) - 1) * (n + 1) / (((k : ℝ) + 1) * (n - 1)) := by
+      pairSeparateProb n k := by
   obtain ⟨a, b, hab, rfl⟩ := Finset.card_eq_two.1 (Finset.mem_powersetCard.1 hs).2
   rw [Finset.mem_Icc] at hk
   have hsing : ∀ h : RankedHistory n,
@@ -772,7 +764,7 @@ theorem integral_pairApart_randomJoining {s : Finset (Fin n)} (hs : s ∈ sample
       ENNReal.toReal_natCast]
   rw [integral_fintype (Integrable.of_finite), Finset.sum_congr rfl fun h _ => by rw [hsing h],
     ← Finset.smul_sum, Finset.sum_boole, smul_eq_mul, inv_mul_eq_div,
-    card_pairApart_div hab (t := n - k) (by omega), Nat.cast_sub hk.2]
+    card_pairApart_div hab (t := n - k) (by omega), Nat.cast_sub hk.2, pairSeparateProb]
   ring_nf
 
 /-- The Kingman genealogy with topology for a sample of size `n`: independent exponential epoch
@@ -796,7 +788,7 @@ theorem measurable_pairCoalTime (s : Finset (Fin n)) :
 
 /-- **The mean coalescence time of a pair is one** (in units of `2N` generations): averaging the
 epoch lengths over the random-joining topology,
-`E τ_s = ∑_{k=2}^n C(k, 2)⁻¹ (k - 1)(n + 1) / ((k + 1)(n - 1)) = 1`. -/
+`E τ_s = ∑_{k=2}^n pairSeparateProb n k / C(k, 2) = 1` (`sum_pairSeparateProb_div_choose`). -/
 theorem integral_pairCoalTime_kingmanGenealogyMeasure (hn : 2 ≤ n) {s : Finset (Fin n)}
     (hs : s ∈ samplePairs n) :
     ∫ g, pairCoalTime g.2 s g.1 ∂kingmanGenealogyMeasure n = 1 := by
@@ -820,27 +812,10 @@ theorem integral_pairCoalTime_kingmanGenealogyMeasure (hn : 2 ≤ n) {s : Finset
   rw [Finset.sum_congr rfl fun k _ => by
     rw [hterm k, integral_prod_mul (fun t : Icc 2 n → ℝ => t k)
       (fun h : RankedHistory n => if PairApart h s (n - k) then (1 : ℝ) else 0), hT k,
-      integral_pairApart_randomJoining hs k.2]]
-  rw [Finset.sum_coe_sort (Icc 2 n) fun k : ℕ => ((k.choose 2 : ℕ) : ℝ)⁻¹ *
-    (((k : ℝ) - 1) * (n + 1) / (((k : ℝ) + 1) * (n - 1)))]
-  have hn1 : (n : ℝ) - 1 ≠ 0 := by
-    have : (2 : ℝ) ≤ n := by exact_mod_cast hn
-    linarith
-  have hsum : ∀ k ∈ Icc 2 n, ((k.choose 2 : ℕ) : ℝ)⁻¹ *
-      (((k : ℝ) - 1) * (n + 1) / (((k : ℝ) + 1) * (n - 1))) =
-      2 * ((n : ℝ) + 1) / ((n : ℝ) - 1) * (1 / ((k : ℝ) * (k + 1))) := fun k hk => by
-    rw [Finset.mem_Icc] at hk
-    have hk1 : (k : ℝ) - 1 ≠ 0 := by
-      have : (2 : ℝ) ≤ k := by exact_mod_cast hk.1
-      linarith
-    have hk0 : (k : ℝ) ≠ 0 := by
-      have : (2 : ℝ) ≤ k := by exact_mod_cast hk.1
-      linarith
-    rw [Nat.cast_choose_two]
-    field_simp
-  rw [Finset.sum_congr rfl hsum, ← Finset.mul_sum, sum_inv_mul_succ (by omega)]
-  field_simp
-  ring
+      integral_pairApart_randomJoining hs k.2, mul_comm]]
+  rw [Finset.sum_coe_sort (Icc 2 n) fun k : ℕ => pairSeparateProb n k *
+    ((k.choose 2 : ℕ) : ℝ)⁻¹]
+  exact sum_pairSeparateProb_div_choose hn
 
 /-- The marked Kingman model with topology: genealogy from `kingmanGenealogyMeasure n`, then
 independent `Po((θ/2) ℓ_b)` mutation counts on the branches. -/

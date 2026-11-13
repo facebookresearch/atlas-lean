@@ -128,9 +128,9 @@ example :
   have hs : ({0, 1} : Finset (Fin 3)) ∈ samplePairs 3 := by decide
   refine ⟨?_, ?_, by norm_num [Nat.choose]⟩
   · rw [integral_pairApart_randomJoining hs (by decide)]
-    norm_num
+    norm_num [pairSeparateProb]
   · rw [integral_pairApart_randomJoining hs (by decide)]
-    norm_num
+    norm_num [pairSeparateProb]
 
 /-- The model value `E τ = 1` for three genes. -/
 example : ∫ g, pairCoalTime g.2 {0, 1} g.1 ∂kingmanGenealogyMeasure 3 = 1 :=
