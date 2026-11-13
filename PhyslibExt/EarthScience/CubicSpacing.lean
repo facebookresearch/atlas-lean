@@ -8,14 +8,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.NormNum
 
 /-!
 # Cubic interplanar spacing formula: algebraic identities
 
-For `a > 0` and integers `h, k, l` with `h ^ 2 + k ^ 2 + l ^ 2 > 0`, this file
-proves algebraic facts about the real expression
-`a / √(h ^ 2 + k ^ 2 + l ^ 2)`.
+For real `a` and integers `h, k, l` with `h ^ 2 + k ^ 2 + l ^ 2 > 0`, this
+file proves algebraic facts about the real expression
+`a / √(h ^ 2 + k ^ 2 + l ^ 2)`; only its positivity needs `a > 0`.
 
 ## i. Overview
 
@@ -38,7 +38,7 @@ the crystallographic normalization without `2π`,
 
 - `EarthScience.div_sqrt_sumSq_sq`:
   `(a / √(h ^ 2 + k ^ 2 + l ^ 2)) ^ 2 = a ^ 2 / (h ^ 2 + k ^ 2 + l ^ 2)`.
-- `EarthScience.div_sqrt_sumSq_pos`: the expression is positive.
+- `EarthScience.div_sqrt_sumSq_pos`: the expression is positive when `a > 0`.
 - `EarthScience.div_sqrt_sumSq_100`, `div_sqrt_sumSq_110`,
   `div_sqrt_sumSq_111`: the index patterns `(1, 0, 0)`, `(1, 1, 0)`,
   `(1, 1, 1)` give `a`, `a / √2`, `a / √3`.
@@ -67,12 +67,11 @@ the crystallographic normalization without `2π`,
 
 namespace EarthScience
 
-set_option linter.unusedVariables false in
 /-- Algebraic identity:
 `(a / √(h ^ 2 + k ^ 2 + l ^ 2)) ^ 2 = a ^ 2 / (h ^ 2 + k ^ 2 + l ^ 2)` when
 `h ^ 2 + k ^ 2 + l ^ 2 > 0`. It squares the textbook cubic-spacing expression;
 it does not derive a spacing from lattice planes. -/
-theorem div_sqrt_sumSq_sq {a : ℝ} (ha : 0 < a) {h k l : ℤ}
+theorem div_sqrt_sumSq_sq {a : ℝ} {h k l : ℤ}
     (hpos : 0 < (h : ℝ) ^ 2 + (k : ℝ) ^ 2 + (l : ℝ) ^ 2) :
     (a / Real.sqrt ((h : ℝ) ^ 2 + (k : ℝ) ^ 2 + (l : ℝ) ^ 2)) ^ 2
       = a ^ 2 / ((h : ℝ) ^ 2 + (k : ℝ) ^ 2 + (l : ℝ) ^ 2) := by
@@ -85,23 +84,20 @@ theorem div_sqrt_sumSq_pos {a : ℝ} (ha : 0 < a) {h k l : ℤ}
     0 < a / Real.sqrt ((h : ℝ) ^ 2 + (k : ℝ) ^ 2 + (l : ℝ) ^ 2) := by
   exact div_pos ha (Real.sqrt_pos_of_pos hpos)
 
-set_option linter.unusedVariables false in
 /-- Index pattern `(1, 0, 0)`: `a / √(1 ^ 2 + 0 ^ 2 + 0 ^ 2) = a`. -/
-theorem div_sqrt_sumSq_100 {a : ℝ} (ha : 0 < a) :
+theorem div_sqrt_sumSq_100 {a : ℝ} :
     a / Real.sqrt ((1 : ℝ) ^ 2 + (0 : ℝ) ^ 2 + (0 : ℝ) ^ 2) = a := by
   have h : ((1 : ℝ) ^ 2 + (0 : ℝ) ^ 2 + (0 : ℝ) ^ 2) = 1 := by norm_num
   rw [h, Real.sqrt_one, div_one]
 
-set_option linter.unusedVariables false in
 /-- Index pattern `(1, 1, 0)`: `a / √(1 ^ 2 + 1 ^ 2 + 0 ^ 2) = a / √2`. -/
-theorem div_sqrt_sumSq_110 {a : ℝ} (ha : 0 < a) :
+theorem div_sqrt_sumSq_110 {a : ℝ} :
     a / Real.sqrt ((1 : ℝ) ^ 2 + (1 : ℝ) ^ 2 + (0 : ℝ) ^ 2) = a / Real.sqrt 2 := by
   have h : ((1 : ℝ) ^ 2 + (1 : ℝ) ^ 2 + (0 : ℝ) ^ 2) = 2 := by norm_num
   rw [h]
 
-set_option linter.unusedVariables false in
 /-- Index pattern `(1, 1, 1)`: `a / √(1 ^ 2 + 1 ^ 2 + 1 ^ 2) = a / √3`. -/
-theorem div_sqrt_sumSq_111 {a : ℝ} (ha : 0 < a) :
+theorem div_sqrt_sumSq_111 {a : ℝ} :
     a / Real.sqrt ((1 : ℝ) ^ 2 + (1 : ℝ) ^ 2 + (1 : ℝ) ^ 2) = a / Real.sqrt 3 := by
   have h : ((1 : ℝ) ^ 2 + (1 : ℝ) ^ 2 + (1 : ℝ) ^ 2) = 3 := by norm_num
   rw [h]

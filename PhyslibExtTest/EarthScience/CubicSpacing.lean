@@ -7,6 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Tactic.NormNum
+
 import PhyslibExt.EarthScience.CubicSpacing
 
 /-!
@@ -36,24 +38,24 @@ No new definitions or results are introduced here.
 
 /-- Numeric value: `(100)` gives `a`. -/
 example : (0.4 : ℝ) / Real.sqrt ((1 : ℝ) ^ 2 + 0 ^ 2 + 0 ^ 2) = 0.4 :=
-  EarthScience.div_sqrt_sumSq_100 (by norm_num)
+  EarthScience.div_sqrt_sumSq_100
 
 /-- Numeric value: `(110)` gives `a / √2`. -/
 example : (0.4 : ℝ) / Real.sqrt ((1 : ℝ) ^ 2 + 1 ^ 2 + 0 ^ 2)
     = 0.4 / Real.sqrt 2 :=
-  EarthScience.div_sqrt_sumSq_110 (by norm_num)
+  EarthScience.div_sqrt_sumSq_110
 
 /-- Numeric value: `(111)` gives `a / √3`. -/
 example : (0.4 : ℝ) / Real.sqrt ((1 : ℝ) ^ 2 + 1 ^ 2 + 1 ^ 2)
     = 0.4 / Real.sqrt 3 :=
-  EarthScience.div_sqrt_sumSq_111 (by norm_num)
+  EarthScience.div_sqrt_sumSq_111
 
 /-- Numeric value: `(200)` gives exactly `a / 2 = 0.4 / 2`, from the squared
 identity and positivity of both sides. -/
 example : (0.4 : ℝ) / Real.sqrt (((2 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2)
     = 0.4 / 2 := by
   have hsq := EarthScience.div_sqrt_sumSq_sq (a := 0.4) (h := 2) (k := 0) (l := 0)
-    (by norm_num) (by norm_num)
+    (by norm_num)
   have hpos := EarthScience.div_sqrt_sumSq_pos (a := 0.4) (h := 2) (k := 0) (l := 0)
     (by norm_num) (by norm_num)
   have h2 : ((0.4 : ℝ) / 2) ^ 2
