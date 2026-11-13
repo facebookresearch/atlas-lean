@@ -98,11 +98,6 @@ private theorem aux_eval_Dexp_X_pow (a : ℕ → ℂ) (h x : ℂ) (k : ℕ) :
   intro n hn
   rw [Polynomial.eval_mul, Polynomial.eval_C, Polynomial.eval_pow, Polynomial.eval_X]
 
-private theorem aux_eval_Sexp (h x : ℂ) (q : Polynomial ℂ) :
-    (Polynomial.taylor h q).eval x = q.eval (x + h) := by
-  rw [Polynomial.taylor_apply, Polynomial.eval_comp, Polynomial.eval_add, Polynomial.eval_X,
-    Polynomial.eval_C]
-
 private theorem aux_eval_Dexp_at_self (a : ℕ → ℂ) (h : ℂ) (k : ℕ) :
     (chapter5DerivativeExpansion a h (Polynomial.X ^ k : ℂ[X])).eval h =
       h ^ k * ∑ n ∈ range (k + 1), a n * ((Nat.descFactorial k n : ℕ) : ℂ) := by
@@ -142,7 +137,7 @@ private theorem aux_eval_Op_at_zero (p : ℂ) (a : ℕ → ℂ) (h : ℂ) (k : �
       Polynomial.C p * chapter5DerivativeExpansion a h (Polynomial.X ^ k : ℂ[X])).eval 0 =
       (chapter5DerivativeExpansion a h (Polynomial.X ^ k : ℂ[X])).eval h +
         p * ((chapter5DerivativeExpansion a h (Polynomial.X ^ k : ℂ[X])).eval 0) := by
-  rw [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C, aux_eval_Sexp]
+  rw [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.taylor_eval]
   simp only [zero_add]
 
 private theorem aux_eval_Dexp_one_one (a : ℕ → ℂ) (k : ℕ) :
@@ -1054,7 +1049,7 @@ private theorem aux_Op_X_pow_of_Rec (p : ℂ) (a : ℕ → ℂ) (ha : auxRec p a
       x ^ m * (p * a (m - m) * h ^ (m - m) * ↑(Nat.descFactorial m (m - m)))) = 0 := by
     intro hcon
     simp at hcon
-  rw [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C, aux_eval_Sexp,
+  rw [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.taylor_eval,
     aux_eval_Dexp_X_pow a h (x + h) m, aux_eval_Dexp_X_pow a h x m,
     Polynomial.eval_pow, Polynomial.eval_X, hLHS1, hpterm, ← Finset.sum_add_distrib,
     Finset.sum_eq_single m h0 h1]
@@ -1135,7 +1130,7 @@ private theorem aux_Op_eq_of_monomials (p : ℂ) (a : ℕ → ℂ)
     intro m x
     have hmx := congrArg (fun q : Polynomial ℂ => q.eval x) (hm h m)
     rwa [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C,
-      aux_eval_Sexp] at hmx
+      Polynomial.taylor_eval] at hmx
   have Hphi : ∀ (x : ℂ),
       (∑ m ∈ range (phi.natDegree + 1),
         phi.coeff m * ((Polynomial.X ^ m : ℂ[X]).eval x)) = phi.eval x := by
@@ -1144,7 +1139,7 @@ private theorem aux_Op_eq_of_monomials (p : ℂ) (a : ℕ → ℂ)
     exact (Polynomial.eval_eq_sum_range x).symm
   apply Polynomial.funext
   intro x
-  rw [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C, aux_eval_Sexp,
+  rw [Polynomial.eval_add, Polynomial.eval_mul, Polynomial.eval_C, Polynomial.taylor_eval,
     HD, HD, Finset.mul_sum, ← Finset.sum_add_distrib]
   trans ∑ m ∈ range (phi.natDegree + 1), phi.coeff m * ((Polynomial.X ^ m : ℂ[X]).eval x)
   · apply Finset.sum_congr rfl

@@ -20,30 +20,28 @@ open Matrix
 namespace MathlibExtTest.LinearAlgebra.Matrix.MMatrix
 
 /-- The complexification of the real scalar matrix `c • 1` is the complex scalar `c`. -/
-theorem map_smul_one (c : ℝ) :
+example (c : ℝ) :
     (c • (1 : Matrix (Fin 2) (Fin 2) ℝ)).map (algebraMap ℝ ℂ) =
-      algebraMap ℂ (Matrix (Fin 2) (Fin 2) ℂ) (c : ℂ) := by
-  ext i j
-  by_cases h : i = j <;> simp [Matrix.algebraMap_matrix_apply, h]
+      algebraMap ℂ (Matrix (Fin 2) (Fin 2) ℂ) (c : ℂ) :=
+  map_smul_one_algebraMap c
 
 /-- The spectrum of the real scalar matrix `c • 1` is `{c}`. -/
-theorem spectrum_smul_one (c : ℝ) :
-    spectrum ℂ ((c • (1 : Matrix (Fin 2) (Fin 2) ℝ)).map (algebraMap ℝ ℂ)) = {(c : ℂ)} := by
-  rw [map_smul_one, spectrum.scalar_eq]
+example (c : ℝ) :
+    spectrum ℂ ((c • (1 : Matrix (Fin 2) (Fin 2) ℝ)).map (algebraMap ℝ ℂ)) = {(c : ℂ)} :=
+  spectrum_smul_one c
 
 /-- A negative scalar matrix is Hurwitz. -/
-theorem isHurwitz_smul_one {c : ℝ} (hc : c < 0) :
-    (c • (1 : Matrix (Fin 2) (Fin 2) ℝ)).IsHurwitz := by
-  intro μ hμ
-  rw [spectrum_smul_one, Set.mem_singleton_iff] at hμ
-  simpa [hμ] using hc
+example {c : ℝ} (hc : c < 0) : (c • (1 : Matrix (Fin 2) (Fin 2) ℝ)).IsHurwitz :=
+  isHurwitz_smul_one hc
+
+/-- Boundary: over the empty index type every scalar matrix is Hurwitz (no eigenvalues), so
+`isHurwitz_smul_one` needs no `Nonempty` hypothesis. -/
+example : ((-1 : ℝ) • (1 : Matrix (Fin 0) (Fin 0) ℝ)).IsHurwitz :=
+  isHurwitz_smul_one (by norm_num)
 
 /-- **Non-vacuity witness.** For `c > 0`, `c • 1` is a nonsingular M-matrix. -/
-theorem isNonsingularMMatrix_smul_one {c : ℝ} (hc : 0 < c) :
-    (c • (1 : Matrix (Fin 2) (Fin 2) ℝ)).IsNonsingularMMatrix := by
-  refine ⟨fun i j hij => by simp [hij], ?_⟩
-  rw [← neg_smul]
-  exact isHurwitz_smul_one (by linarith)
+example {c : ℝ} (hc : 0 < c) : (c • (1 : Matrix (Fin 2) (Fin 2) ℝ)).IsNonsingularMMatrix :=
+  isNonsingularMMatrix_smul_one hc
 
 /-- Its inverse is entrywise nonnegative, and it is invertible. -/
 example : IsUnit ((2 : ℝ) • (1 : Matrix (Fin 2) (Fin 2) ℝ)) ∧

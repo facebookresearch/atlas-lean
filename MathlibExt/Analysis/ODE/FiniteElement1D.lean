@@ -368,11 +368,6 @@ theorem energy_p1 (w : ℝ → ℝ)
 
 /-! ### Weak form, stiffness matrix, Galerkin orthogonality -/
 
-/-- The derivative of a `C²` function is `C¹`. -/
-private theorem contDiff_deriv_of_contDiff_two {u : ℝ → ℝ} (hu : ContDiff ℝ 2 u) :
-    ContDiff ℝ 1 (deriv u) :=
-  (contDiff_succ_iff_deriv.mp (show ContDiff ℝ (1 + 1) u from hu)).2.2
-
 /-- Telescoping over the elements: `∑ᵢ (gᵢ₊₁ - gᵢ) = gₙ - g₀`. -/
 private theorem sum_succ_sub_castSucc (g : Fin (P.n + 1) → ℝ) :
     ∑ i : Fin P.n, (g i.succ - g i.castSucc) = g (Fin.last P.n) - g 0 := by
@@ -434,7 +429,7 @@ private theorem energy_contDiff_p1 {u : ℝ → ℝ} (hu : ContDiff ℝ 2 u)
 theorem energy_eq_integral_mul_of_contDiff {f u v : ℝ → ℝ} (hu : IsClassicalSolution f u)
     (hv : ContDiff ℝ 1 v) (hv0 : v 0 = 0) (hv1 : v 1 = 0) :
     energy u v = ∫ x in (0 : ℝ)..1, f x * v x := by
-  have hu1 := contDiff_deriv_of_contDiff_two hu.contDiff
+  have hu1 := hu.contDiff.deriv' (n := 1)
   have hibp := intervalIntegral.integral_mul_deriv_eq_deriv_mul (a := 0) (b := 1)
     (u := deriv u) (u' := deriv (deriv u)) (v := v) (v' := deriv v)
     (fun x _ => ((hu1.differentiable (by norm_num)) x).hasDerivAt)
@@ -453,7 +448,7 @@ theorem energy_eq_integral_mul_of_mem_p1Space {f u v : ℝ → ℝ} (hu : IsClas
     (hv : v ∈ p1Space P) :
     energy u v = ∫ x in (0 : ℝ)..1, f x * v x := by
   obtain ⟨d, hd0, hdl, rfl⟩ := (mem_p1Space P).mp hv
-  have hu1 := contDiff_deriv_of_contDiff_two hu.contDiff
+  have hu1 := hu.contDiff.deriv' (n := 1)
   have hle : ∀ i : Fin P.n, P.points i.castSucc ≤ P.points i.succ :=
     fun i => (P.ordered (Fin.castSucc_lt_succ ..)).le
   -- on each element, `f · p1 d = -u'' · (dᵢ + sᵢ (x - xᵢ))`
@@ -885,7 +880,7 @@ theorem integral_deriv_sq_le_of_eq_zero {g : ℝ → ℝ} {a b : ℝ} (hab : a <
     (hg : ContDiff ℝ 2 g) (ha : g a = 0) (hb : g b = 0) :
     ∫ x in a..b, deriv g x ^ 2 ≤
       ((b - a) / Real.pi) ^ 2 * ∫ x in a..b, deriv (deriv g) x ^ 2 := by
-  have hg1 := contDiff_deriv_of_contDiff_two hg
+  have hg1 := hg.deriv' (n := 1)
   have hc0 : Continuous g := hg.continuous
   have hc1 : Continuous (deriv g) := hg.continuous_deriv (by norm_num)
   have hc2 : Continuous (deriv (deriv g)) := hg1.continuous_deriv le_rfl
@@ -936,7 +931,7 @@ theorem energy_sub_interp_le {u : ℝ → ℝ} (hu : ContDiff ℝ 2 u) :
     energy (u - interp P u) (u - interp P u) ≤
       (P.mesh / Real.pi) ^ 2 * ∫ x in (0 : ℝ)..1, deriv (deriv u) x ^ 2 := by
   have hc2 : Continuous fun x => deriv (deriv u) x ^ 2 :=
-    ((contDiff_deriv_of_contDiff_two hu).continuous_deriv le_rfl).pow 2
+    ((hu.deriv' (n := 1)).continuous_deriv le_rfl).pow 2
   rw [interp, energy_sub_p1_self P hu,
     integral_eq_sum P _ fun i => hc2.intervalIntegrable _ _, Finset.mul_sum]
   refine Finset.sum_le_sum fun i _ => ?_
@@ -985,7 +980,7 @@ theorem integral_sq_sub_galerkin_le_mesh {f u : ℝ → ℝ} (hu : IsClassicalSo
       (P.mesh / Real.pi) ^ 4 * ∫ x in (0 : ℝ)..1, f x ^ 2 := by
   have hu2 := hu.contDiff
   have hcu2 : Continuous (deriv (deriv u)) :=
-    (contDiff_deriv_of_contDiff_two hu2).continuous_deriv le_rfl
+    (hu2.deriv' (n := 1)).continuous_deriv le_rfl
   have hce : Continuous fun x => (u x - interp P u x) ^ 2 :=
     (hu2.continuous.sub (continuous_p1 P _)).pow 2
   have hc2 : Continuous fun x => deriv (deriv u) x ^ 2 := hcu2.pow 2
