@@ -181,7 +181,14 @@ example (j : Fin 2) : expectation gmP (fun ω => (gmA *ᵥ gmY ω) j) = gmBeta j
 
 example : (covMatrix gmP (fun ω => gmA *ᵥ gmY ω) -
     covMatrix gmP (fun ω => olsEstimator gmDesign (gmY ω))).PosSemidef :=
-  calibration_blue_covariance gmDesign gm_hX gmP gmErr 1 gm_hp1 gm_hcov gmY gmBeta
+  calibration_covariance_minimality gmDesign gm_hX gmP gmErr 1 gm_hp1 gm_hcov gmY gmBeta
+    gm_hmodel gmA gm_hA
+
+example : (∀ j, expectation gmP (fun ω => olsEstimator gmDesign (gmY ω) j) = gmBeta j) ∧
+    (∀ j, expectation gmP (fun ω => (gmA *ᵥ gmY ω) j) = gmBeta j) ∧
+    (covMatrix gmP (fun ω => gmA *ᵥ gmY ω) -
+      covMatrix gmP (fun ω => olsEstimator gmDesign (gmY ω))).PosSemidef :=
+  calibration_blue gmDesign gm_hX gmP gmErr 1 gm_hp1 gm_hmean gm_hcov gmY gmBeta
     gm_hmodel gmA gm_hA
 
 /-!
@@ -219,9 +226,31 @@ example : inversePredictionGradient 1 2 7 = ![1 / 2, -1 / 2, -3 / 2] := by
 
 example : inversePredictionFirstOrderVariance (inversePredictionGradient 1 2 7) ipV
     = 29 / 1600 := by
-  rw [firstOrderInversePredictionVariance_gradient_diagonal 1 2 7 ipV _ _ _ ip_h00
-    ip_h11 ip_h22 ip_hoff]
+  rw [firstOrderInversePredictionVariance_gradient_diagonal 1 2 7 (by norm_num) ipV _ _ _
+    ip_h00 ip_h11 ip_h22 ip_hoff]
   norm_num
+
+/-- The slope entry of the gradient is the slope derivative at `b = 2`. -/
+example : HasDerivAt (fun t => inversePrediction 1 t 7) (-3 / 2) 2 := by
+  have h := (hasDerivAt_inversePredictionGradient 1 7 (b := 2) (by norm_num)).2.2
+  rwa [inversePredictionGradient_two, show -((7 : ℝ) - 1) / 2 ^ 2 = -3 / 2 by norm_num] at h
+
+/-- Zero-slope boundary: with `y₀ ≠ a`, inverse prediction is not differentiable in the slope
+at `b = 0`, so there is no first-order gradient to propagate; the gradient and formula lemmas
+require `b ≠ 0`. -/
+example : ¬ DifferentiableAt ℝ (fun t => inversePrediction 0 t 1) 0 := by
+  intro h
+  have hinv : (fun t => inversePrediction 0 t 1) = fun t : ℝ => t⁻¹ := by
+    funext t
+    simp [inversePrediction]
+  rw [hinv] at h
+  exact differentiableAt_inv_iff.mp h rfl
+
+/-- What the guard rules out: at `b = 0`, totalized division turns the gradient vector into
+`0`, which would propagate a meaningless zero uncertainty. -/
+example : inversePredictionGradient 0 0 1 = 0 := by
+  ext i
+  fin_cases i <;> simp [inversePredictionGradient]
 
 /-!
 
