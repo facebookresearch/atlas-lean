@@ -125,12 +125,6 @@ private theorem tendsto_stoppedProcess_to_stoppedValueAtTop {g : Ω → ℝ}
     rw [hsp, ← hk]
     rfl
 
-/-- A sum of two finite `ℝ≥0∞` numbers is finite. -/
-private theorem ennreal_add_ne_top {a b : ℝ≥0∞} (ha : a ≠ ⊤) (hb : b ≠ ⊤) :
-    a + b ≠ ⊤ := by
-  rw [ne_eq, ENNReal.add_eq_top]
-  exact fun h => h.elim ha hb
-
 omit [IsProbabilityMeasure μ] in
 /-- Each term of the predictable part of a process is integrable. -/
 private theorem integrable_predictablePart (_hsub : Submartingale f ℱ μ) (n : ℕ) :
@@ -257,7 +251,7 @@ private theorem eLpNorm_predictablePart_le_nnreal (hsub : Submartingale f ℱ μ
     eLpNorm (predictablePart f ℱ μ n) 1 μ ≤
       (((R : ℝ≥0∞) + ENNReal.ofReal |∫ ω, f 0 ω ∂μ|).toNNReal : ℝ≥0∞) := by
   rw [ENNReal.coe_toNNReal
-    (ennreal_add_ne_top ENNReal.coe_ne_top ENNReal.ofReal_ne_top)]
+    (ENNReal.add_ne_top.2 ⟨ENNReal.coe_ne_top, ENNReal.ofReal_ne_top⟩)]
   exact eLpNorm_predictablePart_le hsub hR n
 
 /-- The limit of the predictable part is integrable: its `L¹` norms are
@@ -298,7 +292,7 @@ private theorem uniformIntegrable_predictablePart (hsub : Submartingale f ℱ μ
     hle, ?_⟩
   refine ⟨((R : ℝ≥0∞) + ENNReal.ofReal |∫ ω, f 0 ω ∂μ|).toNNReal, fun n => ?_⟩
   rw [ENNReal.coe_toNNReal
-    (ennreal_add_ne_top ENNReal.coe_ne_top ENNReal.ofReal_ne_top)]
+    (ENNReal.add_ne_top.2 ⟨ENNReal.coe_ne_top, ENNReal.ofReal_ne_top⟩)]
   exact eLpNorm_predictablePart_le hsub hR n
 
 /-- The martingale part of a uniformly integrable submartingale is a
@@ -321,8 +315,8 @@ private theorem uniformIntegrable_martingalePart (hsub : Submartingale f ℱ μ)
     refine ⟨(hui.1).sub (hA_UI.1) le_rfl, ?_⟩
     refine ⟨((R : ℝ≥0∞) + ((R : ℝ≥0∞) + ENNReal.ofReal |∫ ω, f 0 ω ∂μ|)).toNNReal,
       fun n => ?_⟩
-    rw [ENNReal.coe_toNNReal (ennreal_add_ne_top ENNReal.coe_ne_top
-      (ennreal_add_ne_top ENNReal.coe_ne_top ENNReal.ofReal_ne_top))]
+    rw [ENNReal.coe_toNNReal (ENNReal.add_ne_top.2 ⟨ENNReal.coe_ne_top,
+      ENNReal.add_ne_top.2 ⟨ENNReal.coe_ne_top, ENNReal.ofReal_ne_top⟩⟩)]
     have hsub_le : eLpNorm ((f - A) n) 1 μ ≤ eLpNorm (f n) 1 μ + eLpNorm (A n) 1 μ := by
       have hEq : (f - A) n = f n + (-A n) := by
         simp only [Pi.sub_apply, sub_eq_add_neg]
