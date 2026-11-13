@@ -13,11 +13,31 @@ public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fintype.Card
 import Mathlib.Tactic.Ring
 
+/-!
+# The halving algorithm: mistake bound
+
+Online learning of a finite concept class `C : Finset (X → Bool)` in the realizable case. After
+the labeled examples `S`, the version space `versionSpace C S` is the set of concepts of `C` that
+agree with every label in `S`. On a new point `x` the halving algorithm predicts the majority label
+of the version space (`halvingPredict`): `true` exactly when more than half of the version space
+predicts `true`, so a tie is predicted `false`. A wrong prediction leaves at most half of the
+version space (`versionSpace_card_le_of_mistake`). Hence on any sequence labeled by a concept of
+`C`, the number `M` of mistakes (`halvingMistakes`) satisfies `2 ^ M ≤ |C|`, that is,
+`M ≤ log₂ |C|` (`halving_mistakes_bound`).
+
+## References
+
+* N. Littlestone, *Learning quickly when irrelevant attributes abound: a new linear-threshold
+  algorithm*, Machine Learning 2 (1988).
+* S. Shalev-Shwartz and S. Ben-David, *Understanding Machine Learning: From Theory to Algorithms*,
+  Cambridge University Press, 2014, Chapter 21.
+-/
+
 @[expose] public section
 
+namespace Cslib.MachineLearning.Halving
 
-
-variable {X : Type*} [DecidableEq X]
+variable {X : Type*}
 
 /-- The version space of a finite concept class `C` after
 seeing labeled examples `S`: concepts agreeing with every
@@ -38,7 +58,7 @@ def halvingPredict (C : Finset (X → Bool)) (S : List (X × Bool))
     (x : X) : Bool :=
   !(2 * countTrue C S x ≤ (versionSpace C S).card)
 
-private theorem versionSpace_append_singleton {X : Type*} [DecidableEq X]
+private theorem versionSpace_append_singleton {X : Type*}
     (C : Finset (X → Bool)) (S : List (X × Bool)) (x : X) (b : Bool) :
     versionSpace C (S ++ [(x, b)]) =
       (versionSpace C S).filter (fun c => c x = b) := by
@@ -55,14 +75,14 @@ private theorem versionSpace_append_singleton {X : Type*} [DecidableEq X]
     · exact hall e he
     · simpa using hxb
 
-private theorem filter_not_true_eq_filter_false {X : Type*} [DecidableEq X]
+private theorem filter_not_true_eq_filter_false {X : Type*}
     (V : Finset (X → Bool)) (x : X) :
     V.filter (fun c => ¬(c x = true)) =
       V.filter (fun c => c x = false) := by
   ext c
   simp only [Finset.mem_filter, Bool.not_eq_true]
 
-private theorem card_versionSpace_append_le {X : Type*} [DecidableEq X]
+private theorem card_versionSpace_append_le {X : Type*}
     (C : Finset (X → Bool)) (S : List (X × Bool)) (x : X) (b : Bool) :
     (versionSpace C (S ++ [(x, b)])).card ≤ (versionSpace C S).card := by
   rw [versionSpace_append_singleton]
@@ -107,7 +127,7 @@ def halvingMistakes (C : Finset (X → Bool)) :
       (if halvingPredict C seen x = b then 0 else 1) +
         halvingMistakes C (seen ++ [(x, b)]) rest
 
-private theorem halving_aux {X : Type*} [DecidableEq X]
+private theorem halving_aux {X : Type*}
     (C : Finset (X → Bool)) (c₀ : X → Bool) (_hc₀ : c₀ ∈ C)
     (seen rest : List (X × Bool))
     (hseen : ∀ e ∈ seen, c₀ e.1 = e.2)
@@ -172,3 +192,5 @@ theorem halving_mistakes_bound (C : Finset (X → Bool))
     _ ≤ 2 ^ halvingMistakes C [] S * (versionSpace C S).card :=
         Nat.mul_le_mul_left _ hpos
     _ ≤ C.card := hmain
+
+end Cslib.MachineLearning.Halving
