@@ -94,20 +94,17 @@ def memRellichBall (x : ℓ²(ℕ, 𝕜)) (M : ℝ) : Prop :=
 `ℓ²` energy is at most `M ^ 2`. -/
 def rellichBall (M : ℝ) : Set (ℓ²(ℕ, 𝕜)) := {x | memRellichBall x M}
 
-/-- The coercion of `(2 : ℝ≥0∞)` to `ℝ` is `2`. -/
-private theorem toReal_two : ((2 : ℝ≥0∞).toReal) = (2 : ℝ) := by simp
-
 theorem summable_norm_sq (x : ℓ²(ℕ, 𝕜)) :
     Summable fun n => ‖(x : ℕ → 𝕜) n‖ ^ 2 := by
   have h := (lp.memℓp x).summable (show (0 : ℝ) < (2 : ℝ≥0∞).toReal by norm_num)
-  simpa only [toReal_two, Real.rpow_two] using h
+  simpa only [ENNReal.toReal_ofNat, Real.rpow_two] using h
 
 /-- The `ℓ²` norm squared is the sum of the squared coordinate norms. -/
 theorem norm_sq_eq_tsum (x : ℓ²(ℕ, 𝕜)) :
     ‖x‖ ^ 2 = ∑' n, ‖(x : ℕ → 𝕜) n‖ ^ 2 := by
   have h := lp.norm_rpow_eq_tsum (p := (2 : ℝ≥0∞))
     (show (0 : ℝ) < (2 : ℝ≥0∞).toReal by norm_num) x
-  simpa only [toReal_two, Real.rpow_two] using h
+  simpa only [ENNReal.toReal_ofNat, Real.rpow_two] using h
 
 theorem summable_weighted {x : ℓ²(ℕ, 𝕜)} {M : ℝ} (hx : memRellichBall x M) :
     Summable fun n => rellichWeight n * ‖(x : ℕ → 𝕜) n‖ ^ 2 :=
@@ -161,7 +158,7 @@ theorem norm_sub_lpTrunc_sq_eq {x : ℓ²(ℕ, 𝕜)} (N : ℕ) :
   have h1 := lp.norm_sub_norm_compl_sub_single hp x (Finset.range N)
   have h2 := (summable_norm_sq x).sum_add_tsum_nat_add N
   have h3 := norm_sq_eq_tsum x
-  simp only [toReal_two, Real.rpow_two] at h1
+  simp only [ENNReal.toReal_ofNat, Real.rpow_two] at h1
   linarith
 
 /-- The tail estimate: the squared distance from `x` to its truncation is at

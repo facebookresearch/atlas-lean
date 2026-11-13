@@ -18,7 +18,7 @@ public import Mathlib.Analysis.Asymptotics.AsymptoticEquivalent
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Finset.Lattice.Fold
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.NumberTheory.PrimeCounting
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Filter.Basic
@@ -40,22 +40,34 @@ its disproof is the unregistered companion `disprovedVardi`. Status:
 resolved false (Sunder–Kumrawat–Cheri, Lean-verified). -/
 
 /-- The maximal prime gap below `x`. -/
-noncomputable def sup_primeGap (x : ℝ) : ℕ :=
+noncomputable def supPrimeGap (x : ℝ) : ℕ :=
   (Finset.range (Nat.primeCounting' ⌈x⌉₊)).sup primeGap
 
+/-- Deprecated alias for `supPrimeGap`. -/
+@[deprecated (since := "2026-10-21"), nolint defsWithUnderscore]
+alias sup_primeGap := supPrimeGap
+
 /-- The filter on `ℝ × ℝ` sending `x → ∞` subject to `x/2 < y < x`. -/
-abbrev snd_gt_half_fst : Filter (ℝ × ℝ) :=
+abbrev sndGtHalfFst : Filter (ℝ × ℝ) :=
   atTop.comap Prod.fst ⊓ Filter.principal {p | p.2 ∈ Set.Ioo (p.1 / 2) p.1}
 
+/-- Deprecated alias for `sndGtHalfFst`. -/
+@[deprecated (since := "2026-10-21"), nolint defsWithUnderscore]
+alias snd_gt_half_fst := sndGtHalfFst
+
 /-- The prime count in `(y, y + C·d]`, where `d` is the largest prime gap before `x`. -/
-noncomputable def primeCount_Ioc_mul_const (C : ℝ) : (ℝ × ℝ) → ℝ :=
-  fun (x, y) ↦ (Nat.primeCounting ⌊y + C * sup_primeGap x⌋₊ - Nat.primeCounting ⌊y⌋₊)
+noncomputable def primeCountIocMulConst (C : ℝ) : (ℝ × ℝ) → ℝ :=
+  fun (x, y) ↦ (Nat.primeCounting ⌊y + C * supPrimeGap x⌋₊ - Nat.primeCounting ⌊y⌋₊)
+
+/-- Deprecated alias for `primeCountIocMulConst`. -/
+@[deprecated (since := "2026-10-21"), nolint defsWithUnderscore]
+alias primeCount_Ioc_mul_const := primeCountIocMulConst
 
 /-- Vardi's prime-gap asymptotic (disproved). -/
 def vardiAsymptotic : Prop :=
   ∀ C > 1,
-    primeCount_Ioc_mul_const C ~[snd_gt_half_fst] fun (x, y) ↦
-      C * (sup_primeGap x) / Real.log y
+    primeCountIocMulConst C ~[sndGtHalfFst] fun (x, y) ↦
+      C * (supPrimeGap x) / Real.log y
 
 /-- Its disproof (companion). -/
 def disprovedVardi : Prop := ¬ vardiAsymptotic

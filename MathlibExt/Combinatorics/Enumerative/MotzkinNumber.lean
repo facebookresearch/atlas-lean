@@ -16,6 +16,7 @@ public import Mathlib.Algebra.BigOperators.Fin
 import Lean.Elab.Tactic.Omega
 import Mathlib.Algebra.BigOperators.NatAntidiagonal
 import Mathlib.Algebra.BigOperators.Ring.Finset
+import MathlibExt.Data.Nat.Choose.HockeyStickConvolution
 
 namespace MetaMathlibExt
 
@@ -98,43 +99,6 @@ section Recurrence
 
 open Finset
 
-private theorem choose_sum (n q : ℕ) :
-    (∑ a ∈ range (n + 1), a.choose q) = (n + 1).choose (q + 1) := by
-  induction n with
-  | zero =>
-    cases q with
-    | zero => simp
-    | succ q => simp [Nat.choose_eq_zero_of_lt (by omega : 1 < q + 1 + 1)]
-  | succ n ih =>
-    rw [sum_range_succ, ih]
-    cases q with
-    | zero => simp
-    | succ q =>
-      rw [Nat.choose_succ_succ (n + 1) (q + 1)]
-      exact Nat.add_comm _ _
-
-private theorem choose_convolution (n p q : ℕ) :
-    (∑ ab ∈ antidiagonal n, ab.1.choose p * ab.2.choose q) =
-      (n + 1).choose (p + q + 1) := by
-  induction n generalizing p q with
-  | zero =>
-    cases p <;> cases q <;> simp [Nat.choose_succ_succ, Nat.choose_zero_succ, ← Nat.add_assoc]
-  | succ n ih =>
-    cases p with
-    | zero =>
-      simp only [Nat.choose_zero_right, one_mul, zero_add]
-      rw [← Nat.sum_antidiagonal_swap]
-      simp only [Prod.snd_swap]
-      rw [Nat.sum_antidiagonal_eq_sum_range_succ (fun a _ => a.choose q)]
-      exact choose_sum (n + 1) q
-    | succ p =>
-      rw [Nat.sum_antidiagonal_succ]
-      simp only [Nat.choose_zero_succ, zero_mul, zero_add]
-      conv_lhs => simp only [Nat.choose_succ_succ, add_mul]
-      rw [sum_add_distrib, ih, ih]
-      simpa only [Nat.succ_eq_add_one, add_assoc, add_comm, add_left_comm] using
-        (Nat.choose_succ_succ (n + 1) (p + q + 1)).symm
-
 private theorem motzkinNumber_eq_sum (n r : ℕ) (h : n < r) :
     motzkinNumber n = ∑ k ∈ range r, n.choose (2 * k) * catalan k := by
   unfold motzkinNumber
@@ -197,7 +161,7 @@ private theorem motzkinNumber_convolution (n : ℕ) :
       intro i hi
       apply sum_congr rfl
       intro j hj
-      rw [← sum_mul, choose_convolution]
+      rw [← sum_mul, Nat.sum_antidiagonal_choose_mul_choose]
     _ = ∑ k ∈ range (n + 1), ∑ ij ∈ antidiagonal k,
         (n + 1).choose (2 * ij.1 + 2 * ij.2 + 1) *
           (catalan ij.1 * catalan ij.2) := by
