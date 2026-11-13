@@ -21,6 +21,7 @@ public import MathlibExt.Probability.Statistics.Survival.ProcessAsymptotics
 * A satisfiable instance of the J1 Nelson–Aalen theorem (all hypotheses discharged, degenerate
   data), and satisfiable instances of the Kaplan–Meier and Aalen–Johansen grid theorems.
 * The covariance theorems applied in boundary cases.
+* No support bounds on the grid: `hΛ` admits `ΔΛ = 2` with `S = -1`, and gives only `S ≠ 0`.
 -/
 
 @[expose] public section
@@ -287,6 +288,26 @@ example :
   have h1 : Iic (0 : Fin 1) = {0} := by decide
   simp only [prodIntegral, h1, Finset.prod_singleton, Pi.neg_apply, hΔ]
   norm_num
+
+/-- **The grid theorems carry no support bounds.** The hazard jump `ΔΛ 0 = 2` satisfies the
+Greenwood hypothesis `hΛ` (no jump equals `1`), yet the survival value is `S 0 = -1`: `hΛ` gives
+only `S ≠ 0`, not `S > 0`. -/
+example : (∀ i, gridIncrements (![2] : Fin 1 → ℝ) i ≠ 1) ∧
+    prodIntegral (-gridIncrements (![2] : Fin 1 → ℝ)) 0 = -1 := by
+  have hΔ : ∀ i : Fin 1, gridIncrements (![2] : Fin 1 → ℝ) i = 2 := fun i => by
+    fin_cases i
+    simp [gridIncrements_apply]
+  have h1 : Iic (0 : Fin 1) = {0} := by decide
+  refine ⟨fun i => by rw [hΔ]; norm_num, ?_⟩
+  simp only [prodIntegral, h1, Finset.prod_singleton, Pi.neg_apply, hΔ]
+  norm_num
+
+/-- What `hΛ` does give: no hazard jump equal to `1` makes every survival value nonzero. -/
+example {K : ℕ} (Λ : Fin K → ℝ) (hΛ : ∀ i, gridIncrements Λ i ≠ 1) (j : Fin K) :
+    prodIntegral (-gridIncrements Λ) j ≠ 0 :=
+  Finset.prod_ne_zero_iff.2 fun i _ => by
+    rw [Pi.neg_apply, ← sub_eq_add_neg]
+    exact sub_ne_zero.2 (hΛ i).symm
 
 /-- **Aalen–Johansen covariance with tied causes, non-degenerate instance.** One grid time,
 two causes whose limits are perfectly negatively correlated (`G₀ = W`, `G₁ = -W`, `W`

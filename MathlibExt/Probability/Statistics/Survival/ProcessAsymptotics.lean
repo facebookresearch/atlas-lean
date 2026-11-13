@@ -27,11 +27,14 @@ each estimator.
 
 ## Horizon
 
-A finite horizon `[0, τ]`, `τ > 0`, **supported** in the sense that the risk set is non-empty up
-to `τ`: for Nelson–Aalen in `D([0, τ])`, the probability of an empty risk set at some grid step of
-`(0, τ]` tends to `0` (`hsupp`); for the grid statements, the grid `1, …, K` lies inside the
-support (no hazard jump equals `1`, so `S > 0`, in the covariance theorems; positivity of the
-limiting at-risk fractions is part of the Nelson–Aalen CLT hypothesis).
+For Nelson–Aalen in `D([0, τ])`: a finite horizon `[0, τ]`, `τ > 0`, **supported** in the sense
+that the probability of an empty risk set at some grid step of `(0, τ]` tends to `0` (`hsupp`).
+
+The grid statements (Kaplan–Meier, Aalen–Johansen) are **unrestricted algebraic fixed-grid
+results**: they encode no support or survival-model bounds. Nothing requires `0 ≤ ΔΛ i < 1`,
+at-risk positivity, or `S > 0`. The Greenwood covariance theorems assume only that no hazard jump
+equals `1` (`hΛ`), so every factor `1 - ΔΛ i`, and hence `S`, is nonzero; `S` may be negative (e.g.
+`ΔΛ 0 = 2` gives `S 0 = -1`). The Aalen–Johansen theorems take arbitrary hazard increments.
 
 ## Results, topology and covariance
 
@@ -51,7 +54,7 @@ limiting at-risk fractions is part of the Nelson–Aalen CLT hypothesis).
   `√n (Y⁻¹ • M)` (`naErrorPath_eq_naMartingalePath`, from
   `nelsonAalenProcess_sub_restrictedHazard`), so the J1 limit of the martingale path (transfer
   theorem) passes to the estimator (converging together).
-* **Kaplan–Meier, fixed supported grid, uniform (sup-norm) topology**
+* **Kaplan–Meier, fixed grid (no support bounds), uniform (sup-norm) topology**
   (`tendstoInDistribution_kmGridVector`, `tendstoInDistribution_kmGridVector_greenwood`). The
   processes `j ↦ Â_{j+1}`, `j ↦ Ŝ_{j+1}` on the grid `1, …, K` live in `Fin K → ℝ` with the max
   norm, the uniform topology of the process restricted to the grid. `kmGridVector_eq_prodIntegral`
@@ -60,7 +63,7 @@ limiting at-risk fractions is part of the Nelson–Aalen CLT hypothesis).
   `-duhamelDeriv (-ΔΛ) (ΔG)`. Covariance (`covariance_naGridLimit`, `covariance_kmGridLimit`):
   if `G` has uncorrelated increments of variances `v`, then `Cov(G a, G b) = ∑_{i ≤ a ∧ b} v i` and
   the Kaplan–Meier limit has the **Greenwood covariance** `S_a S_b ∑_{i ≤ a ∧ b} v i / (1 - ΔΛ_i)²`.
-* **Aalen–Johansen (competing risks), fixed supported grid, uniform topology**
+* **Aalen–Johansen (competing risks), fixed grid (no support bounds), uniform topology**
   (`tendstoInDistribution_ajIncidence`, `tendstoInDistribution_cumulativeIncidence_grid`). The
   grid map `ajIncidence` from cause-specific hazard increments to cumulative incidences is the
   Aalen–Johansen estimator on grouped data (`cumulativeIncidence_time_eq_ajIncidence`); it is
@@ -483,7 +486,7 @@ theorem covariance_sum_uncorrelated {ι : Type*} [DecidableEq ι] (W : Ω' → �
 
 end CovarianceHelper
 
-/-! ### Nelson–Aalen and Kaplan–Meier processes on a supported grid: uniform topology -/
+/-! ### Nelson–Aalen and Kaplan–Meier processes on a fixed grid: uniform topology -/
 
 section KaplanMeierGrid
 
@@ -529,8 +532,9 @@ theorem kmGridVector_eq_prodIntegral (N Y : ℕ → Ω → ℝ) (ω : Ω) :
 variable {Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω'] {P : Measure Ω}
   {P' : Measure Ω'} [IsProbabilityMeasure P] [IsProbabilityMeasure P']
 
-/-- **Kaplan–Meier process limit on a supported grid (uniform topology).** Fix the grid
-`1, …, K` inside the supported horizon. If the Nelson–Aalen process satisfies the functional CLT
+/-- **Kaplan–Meier process limit on a fixed grid (uniform topology).** Fix the grid `1, …, K`;
+no support or survival-model bound is assumed (an unrestricted algebraic delta-method result). If
+the Nelson–Aalen process satisfies the functional CLT
 `√n (Â_n - Λ) ⇒ G` in `Fin K → ℝ` with the sup norm (`hCLT`, the explicit counting-process CLT
 hypothesis), then the Kaplan–Meier process satisfies
 `√n (Ŝ_n - S) ⇒ -duhamelDeriv (-ΔΛ) (ΔG)` with `S = prodIntegral (-ΔΛ)`; coordinatewise the
@@ -639,7 +643,7 @@ theorem covariance_kmGridLimit (Λ : Fin K → ℝ) (W : Ω' → Fin K → ℝ) 
   field_simp
 
 /-- **Kaplan–Meier and Nelson–Aalen grid limits with explicit covariance.** Under the
-Nelson–Aalen functional CLT `√n (Â_n - Λ) ⇒ G` on the supported grid (`hCLT`), with `G` the
+Nelson–Aalen functional CLT `√n (Â_n - Λ) ⇒ G` on the fixed grid (`hCLT`), with `G` the
 cumulative sum of uncorrelated increments `W` of variances `v` (the Gaussian-martingale structure
 of the limit) and no hazard jump equal to `1`:
 * `√n (Ŝ_n - S) ⇒ -duhamelDeriv (-ΔΛ) W` in `Fin K → ℝ` (uniform topology on the grid);
@@ -677,7 +681,7 @@ theorem tendstoInDistribution_kmGridVector_greenwood (N Y : ℕ → ℕ → Ω �
 
 end KaplanMeierGrid
 
-/-! ### Aalen–Johansen cumulative incidence on a supported grid: uniform topology -/
+/-! ### Aalen–Johansen cumulative incidence on a fixed grid: uniform topology -/
 
 section AalenJohansenGrid
 
@@ -773,7 +777,8 @@ theorem continuous_ajIncidence : Continuous (ajIncidence (K := K) (r := r)) :=
 variable {Ω Ω' : Type*} [MeasurableSpace Ω] [MeasurableSpace Ω'] {P : Measure Ω}
   {P' : Measure Ω'} [IsProbabilityMeasure P] [IsProbabilityMeasure P']
 
-/-- **Aalen–Johansen limit law on a supported grid (uniform topology).** If the cause-specific
+/-- **Aalen–Johansen limit law on a fixed grid (uniform topology).** No support or
+survival-model bound on `x` is assumed. If the cause-specific
 Nelson–Aalen increments satisfy `√n (x̂_n - x) ⇒ G` in `Fin K → Fin r → ℝ` with the sup norm
 (`hCLT`, the explicit counting-process CLT hypothesis), then the Aalen–Johansen
 cumulative-incidence process satisfies `√n (F̂_n - F) ⇒ ajDeriv x G`, `F = ajIncidence x`. -/
