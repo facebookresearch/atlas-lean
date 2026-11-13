@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.GraphicalModels.StructuralCausalModels
+public meta import CSLibExt.MachineLearning.GraphicalModels.StructuralCausalModels
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Tactic.FinCases
@@ -180,6 +181,12 @@ example (z : testPa 1 → Bool) (hz : z testJ0 = true) :
     ((testM.inducedBayesNet testMu).cpt 1 z).weights false = 1/3 :=
   test_cpt1 z hz
 
+/-- `inducedLaw_eq_joint` applies to noise types that are not finite: a finitely
+supported law on `ℕ` needs no `Fintype ℕ` instance. -/
+example (M : FiniteSCM Bool 1 (fun _ => ℕ)) (μ : (k : Fin 1) → StdSimplex ℝ ℕ)
+    (x : Fin 1 → Bool) : M.inducedLaw μ x = (M.inducedBayesNet μ).joint x :=
+  M.inducedLaw_eq_joint μ x
+
 example : testM.inducedLaw testMu ![true, false] = 1/12 := by
   have x0 : ![true, false] (0 : Fin 2) = true := by simp
   have x1 : ![true, false] (1 : Fin 2) = false := by simp
@@ -306,6 +313,22 @@ example : testNet.responseSCM.inducedLaw testNet.responseLaw ![true, true] = (1/
   norm_num
 
 end ResponseRealization
+
+private def chainPa {n : ℕ} (k : Fin n) : Finset (Fin k) :=
+  if h : 0 < k.val then {⟨k.val - 1, Nat.sub_lt h (by decide)⟩} else ∅
+
+private def chainModel (n : ℕ) : FiniteSCM ℕ n (fun _ => Unit) where
+  pa := chainPa
+  f k z _ := if h : 0 < k.val then
+    z ⟨⟨k.val - 1, Nat.sub_lt h (by decide)⟩, by simp [chainPa, h]⟩ + 1
+    else 1
+
+-- Exercise the compiled solver at increasing sizes, not just its equations.
+#eval show IO Unit from do
+  for n in [7, 15, 31, 63] do
+    let result := (chainModel (n + 1)).solve (fun _ => ()) (Fin.last n)
+    unless result == n + 1 do
+      throw (IO.userError s!"chain of length {n + 1}: got {result}")
 
 namespace Surgery
 
