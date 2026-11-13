@@ -15,14 +15,19 @@ public import Mathlib.Analysis.SpecialFunctions.Exponential
 # Two-sequence alignment
 
 **E-value bound, explicit cross-diagonal dependence at finite size, and a Gumbel limit
-conditional on asymptotic independence** (nonlattice scores).
+conditional on asymptotic independence** (given a one-sequence tail input, intended for the
+classical nonlattice regime with `K > 0`).
 
 Two independent iid sequences `u` (length `m`, letter law `p`) and `v` (length `n`, letter law
 `q`) over a finite alphabet are compared with a scoring matrix `s`. An **ungapped alignment** pairs
 the window `u[i, i+ℓ)` with `v[j, j+ℓ)` and scores `∑_{k<ℓ} s(u_{i+k}, v_{j+k})`; the **maximal
 segment score** `M_{m,n}` (`maxAlignScore`) is the best such score, the empty alignment scoring
-`0`. Karlin and Altschul (1990) and Dembo, Karlin and Zeitouni (1994) showed that for negative
-expected score, `P(M_{m,n} ≤ log (m n) / λ + x) → exp (-K e^{-λ x})`, where `λ` solves
+`0`. (`alignScore s u v i j ℓ` takes `ℓ` as a length bound: windows running past the end of a
+sequence are truncated, so it is the score of the alignment of length
+`min ℓ (min (|u| - i) (|v| - j))` (`alignScore_eq_min`), and the maximum over all triples is
+still the best score of a genuine alignment.) Karlin and Altschul (1990) and Dembo, Karlin and
+Zeitouni (1994) showed that for negative expected score,
+`P(M_{m,n} ≤ log (m n) / λ + x) → exp (-K e^{-λ x})`, where `λ` solves
 `E e^{λ s(A, B)} = 1` and `K` is the constant of the single-sequence theory.
 
 ## Structure, and where the dependence between diagonals enters
@@ -70,10 +75,11 @@ their entropy condition fails).
   law, negative mean, a positive score), from `Cslib.Bioinformatics.Motifs.PWM`.
 * `twoProb_maxAlignScore_le_second_order`: the explicit finite-size bounds with the pairwise
   dependence coefficient `Δ_2`.
-* `tendsto_twoProb_maxAlignScore_le`: **Gumbel limit for nonlattice scores, conditional on
+* `tendsto_twoProb_maxAlignScore_le`: **Gumbel limit, conditional on a one-sequence tail and
   asymptotic independence**: `P(M_{m,n} ≤ log (m n) / θ + x) → exp (-K e^{-θ x})` as `m, n → ∞`
   with `log n / m → 0` and `log m / n → 0`, given the one-sequence tail
-  `OneSequenceTail (pairLaw p q) (pairScore s) θ K` and `Δ_k → 0` for every `k`.
+  `OneSequenceTail (pairLaw p q) (pairScore s) θ K` and `Δ_k → 0` for every `k`. No lattice
+  hypothesis is imposed; the intended regime is the classical nonlattice one with `K > 0`.
 
 ## What is assumed
 
@@ -84,7 +90,9 @@ Two inputs are hypotheses of `tendsto_twoProb_maxAlignScore_le`, not derived her
   (Iglehart; Karlin–Dembo) tail in the uniform form the two-sequence problem needs; `GumbelTail`
   (T50) proves the fixed-`x` Gumbel limit of one sequence from a ladder input, which does not
   give this uniformity. The cap `t ≤ η L` is needed: bounded scores make `P(M_L > t) = 0` for
-  `t` beyond `L` times the largest score. It holds for nonlattice scores only.
+  `t` beyond `L` times the largest score. The definition has no nonlattice hypothesis: it is
+  meant for the nondegenerate classical regime `K > 0` of nonlattice scores, but it also holds in
+  degenerate cases, e.g. for the lattice-valued zero score with `K = 0` (test file).
 * `Δ_k → 0` for every `k`: asymptotic independence of the exceedances of distinct diagonals.
   Given the marginal limit this is equivalent to `S_k → (K e^{-θ x})^k / k!`, i.e. Poisson
   convergence in factorial-moment form, so in the limit the dependence is assumed, not derived.
@@ -97,10 +105,13 @@ hypothesis. No instance with `K ≠ 0` is constructed; that needs the renewal th
 
 ## Scope
 
-Not covered: lattice scores (integer scoring matrices), for which `P(M_{m,n} ≤ log (m n)/θ + x)`
-has no limit and only liminf/limsup bounds hold (compare `LatticeRenewalInput` in `GumbelTail`);
-the case `E s(A, B) ≥ 0`, where `M_{m,n}` grows linearly and there is no Cramér root `θ > 0`;
-gapped alignment; edge-effect corrections to `m n`.
+Not covered: the classical lattice theory (integer scoring matrices with a nondegenerate tail),
+where `P(M_{m,n} ≤ log (m n)/θ + x)` in general has no limit and only liminf/limsup bounds hold
+(compare `LatticeRenewalInput` in `GumbelTail`); `tendsto_twoProb_maxAlignScore_le` imposes no
+lattice condition and applies whenever its hypotheses hold, as for the degenerate zero score.
+Also not covered: the regime `E s(A, B) ≥ 0` with `s(A, B)` not almost surely `0`, where
+`E e^{θ s(A, B)} > 1` for every `θ > 0` (convexity), so there is no Cramér root `θ > 0`, and for
+`E s(A, B) > 0` the maximum grows linearly; gapped alignment; edge-effect corrections to `m n`.
 
 ## Implementation notes
 
@@ -162,21 +173,27 @@ def diagFrom (u v : List β) (i j : ℕ) : List ℝ := List.zipWith s (u.drop i)
 starts at `((-d)⁺, d⁺)`. -/
 def diag (u v : List β) (d : ℤ) : List ℝ := diagFrom s u v (-d).toNat d.toNat
 
-/-- The offsets `-(m - 1), …, n - 1` of the `m + n - 1` nonempty diagonals of an `m × n` grid. -/
+/-- The offsets `-(m - 1), …, n - 1` of the `m + n - 1` nonempty diagonals of an `m × n` grid
+(`m, n ≥ 1`). -/
 def offsets (m n : ℕ) : Finset ℤ := Ioo (-(m : ℤ)) n
 
 /-- The length `min (m - (-d)⁺) (n - d⁺)` of the diagonal with offset `d` in an `m × n` grid. -/
 def diagLen (m n : ℕ) (d : ℤ) : ℕ := min (m - (-d).toNat) (n - d.toNat)
 
-/-- The score `∑_{k < ℓ} s(u_{i+k}, v_{j+k})` of the **ungapped alignment** of the window of
-length `ℓ` of `u` starting at `i` with the window of length `ℓ` of `v` starting at `j` (windows
-are cut at the end of the sequences, so every triple `(i, j, ℓ)` is a valid alignment). -/
+/-- The score of the **ungapped alignment** of `u` from position `i` with `v` from position `j`,
+with **length bound** `ℓ`: `∑_{k < ℓ'} s(u_{i+k}, v_{j+k})` over the
+`ℓ' = min ℓ (min (|u| - i) (|v| - j))` pairs that exist. Windows running past the end of a
+sequence are truncated (`take`, `zipWith`), so `ℓ` bounds the alignment length rather than
+fixing it (`alignScore_eq_min`); for `i + ℓ ≤ |u|` and `j + ℓ ≤ |v|` it is the score of the two
+windows of length `ℓ`. -/
 def alignScore (u v : List β) (i j ℓ : ℕ) : ℝ :=
   (List.zipWith s ((u.drop i).take ℓ) ((v.drop j).take ℓ)).sum
 
-/-- The **maximal ungapped alignment score** of `u` and `v`: the largest score of an ungapped
-alignment of a window of `u` with a window of `v` of the same length, over all start positions
-`i ≤ |u|`, `j ≤ |v|` and lengths `ℓ ≤ |u|` (the empty alignment scores `0`). -/
+/-- The **maximal ungapped alignment score** of `u` and `v`: the largest `alignScore` over all
+start positions `i ≤ |u|`, `j ≤ |v|` and length bounds `ℓ ≤ |u|` (the empty alignment scores
+`0`). Every alignment of a window of `u` with a window of `v` of the same length occurs, and every
+triple scores such an alignment (`alignScore_eq_min`), so this is the best ungapped alignment
+score. -/
 noncomputable def maxAlignScore (u v : List β) : ℝ :=
   (range (u.length + 1) ×ˢ range (v.length + 1) ×ˢ range (u.length + 1)).sup'
     ⟨(0, 0, 0), by simp⟩ fun c => alignScore s u v c.1 c.2.1 c.2.2
@@ -192,6 +209,15 @@ theorem length_diagFrom (u v : List β) (i j : ℕ) :
 theorem length_diag (u v : List β) (d : ℤ) :
     (diag s u v d).length = diagLen u.length v.length d :=
   length_diagFrom s u v _ _
+
+/-- **Truncation.** `alignScore` only scores the `min ℓ (min (|u| - i) (|v| - j))` pairs that
+exist: with length bound `ℓ` it is the score of the alignment of that length. -/
+theorem alignScore_eq_min (u v : List β) (i j ℓ : ℕ) :
+    alignScore s u v i j ℓ = alignScore s u v i j (min ℓ (min (u.length - i) (v.length - j))) := by
+  rw [alignScore_eq, alignScore_eq, ← length_diagFrom s u v i j]
+  rcases le_total ℓ (diagFrom s u v i j).length with h | h
+  · rw [min_eq_left h]
+  · rw [min_eq_right h, List.take_of_length_le h, List.take_of_length_le le_rfl]
 
 /-- Every ungapped alignment scores at most the maximum. -/
 theorem alignScore_le_maxAlignScore (u v : List β) {i j ℓ : ℕ} (hi : i ≤ u.length)
@@ -617,7 +643,7 @@ private theorem zipWith_take_left {γ δ : Type*} (f : γ → δ → ℝ) :
 `(i, 0)`) and the diagonal with offset `j` (starting at `(0, j)`) read disjoint sets of letters
 when the first ends before column `j` and the second ends before row `i`; their score sequences
 are then independent. Diagonals that share a letter are in general dependent (see the test
-file), and this is the only source of cross-diagonal dependence. -/
+file). -/
 theorem twoProb_diag_and_diag_of_disjoint (hp : IsDist p) (hq : IsDist q) (s : β → β → ℝ)
     {m n i j : ℕ} (hi : i ≤ m) (hj : j ≤ n) (hij : diagLen m n (-i) ≤ j)
     (hji : diagLen m n j ≤ i) (A B : List ℝ → Prop) :
@@ -909,7 +935,8 @@ independent diagonals with the same marginals. `crossDep_eq_sum`: it is the sum 
 `T` of diagonals of `P(⋂_{d ∈ T} {M_d > t}) - ∏_{d ∈ T} P(M_d > t)`. It vanishes for `k ≤ 1`
 (`crossDep_zero`, `crossDep_one`), and the terms of letter-disjoint pairs vanish
 (`twoProb_diag_and_diag_of_disjoint`); the diagonals are not independent in general, so for
-`k ≥ 2` it is not zero. -/
+`k ≥ 2` nothing forces it to vanish (it does vanish for the degenerate zero score, `crossDep_s0`
+in the test file). -/
 noncomputable def crossDep (k : ℕ) : ℝ :=
   exceedMoment p q s m n t k - elemSymm (offsets m n) (exceedProb p q s m n t) k
 
@@ -1034,8 +1061,11 @@ the form the two-sequence problem needs; it is a hypothesis here, not derived.
 The cap `t ≤ η L` is necessary: scores are bounded, so `P(M_L > t) = 0` once `t` exceeds `L` times
 the largest score, and without the cap the relative-error bound would force `K = 0`. The classical
 asymptotic holds only below the slope of the walk under the tilted law, which a small `η`
-respects. The definition describes **nonlattice** scores: for scores on a lattice `hℤ` the ratio
-oscillates with the fractional part of `t / h` (compare `LatticeRenewalInput` in `GumbelTail`). -/
+respects. The definition carries no nonlattice hypothesis. It is meant for the nondegenerate
+classical regime `K > 0` of nonlattice scores: for nondegenerate scores on a lattice `hℤ` the
+classical ratio `P(M_L > t) / (L e^{-θ t})` oscillates with the fractional part of `t / h`
+(compare `LatticeRenewalInput` in `GumbelTail`). It also holds in degenerate cases: the
+lattice-valued zero score satisfies it with `K = 0` (`oneSequenceTail_s0` in the test file). -/
 def OneSequenceTail {γ : Type*} [Fintype γ] (q f : γ → ℝ) (θ K : ℝ) : Prop :=
   ∀ ε > 0, ∃ L₀ : ℕ, ∃ δ > 0, ∃ η > 0, ∀ L : ℕ, L₀ ≤ L → ∀ t : ℝ,
     (L : ℝ) * exp (-θ * t) ≤ δ → t ≤ η * L →
@@ -1219,7 +1249,8 @@ end Marginal
 
 /-- **Gumbel limit for the maximal ungapped two-sequence alignment score, conditional on
 asymptotic independence of diagonals** (Karlin and Altschul 1990; Dembo, Karlin and
-Zeitouni 1994), for nonlattice scores.
+Zeitouni 1994), given the one-sequence tail `OneSequenceTail`. No lattice hypothesis is imposed;
+the intended regime is the classical nonlattice one with `K > 0`.
 
 Two independent iid sequences of lengths `m_N, n_N → ∞`, with `log n_N / m_N → 0` and
 `log m_N / n_N → 0`, letter laws `p, q`, are scored by `s`. Let `θ > 0` be the Karlin–Altschul root

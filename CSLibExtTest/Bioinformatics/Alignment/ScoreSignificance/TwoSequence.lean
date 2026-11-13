@@ -26,7 +26,9 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
   unconditional bound `P(M ≥ t) ≤ m n φ^{-t}` holds. Non-negative expected score (not claimed):
   no root `θ > 0` exists, and for all-positive scores `M_{m,n} ≥ min m n`.
 * Non-vacuity of the Gumbel theorem: a zero score matrix with `K = 0` satisfies every hypothesis.
-  No instance with `K ≠ 0` is constructed (that needs renewal theory).
+  The zero score is lattice-valued, so `OneSequenceTail` does not exclude lattice scores; its
+  intended regime is `K > 0`. No instance with `K ≠ 0` is constructed (that needs renewal theory).
+* `alignScore` takes a length bound: windows running past the end of a sequence are truncated.
 -/
 
 namespace Cslib.Bioinformatics.Alignment.ScoreSignificance.TwoSequence
@@ -51,6 +53,18 @@ example : offsets 2 2 = {-1, 0, 1} := by decide
 example : diag sm [true, false] [true, true] (-1) = [-2] := by norm_num [diag, diagFrom, sm]
 example : diag sm [true, false] [true, true] 0 = [1, -2] := by norm_num [diag, diagFrom, sm]
 example : diag sm [true, false] [true, true] 1 = [1] := by norm_num [diag, diagFrom, sm]
+
+/-- `alignScore` takes `ℓ` as a length bound: starting at the end of `u = [T]`, the window of `u`
+is empty, so the "length-1" alignment scores no pair. -/
+example : alignScore sm [true] [false] 1 0 1 = 0 := by norm_num [alignScore]
+
+/-- The same through `alignScore_eq_min`: the bound is cut to `min 1 (min (1 - 1) (1 - 0)) = 0`. -/
+example : alignScore sm [true] [false] 1 0 1 = alignScore sm [true] [false] 1 0 0 := by
+  rw [alignScore_eq_min]
+  norm_num
+
+/-- Within both sequences the bound is the length: `alignScore sm [T, F] [T, T] 0 0 2 = 1 - 2`. -/
+example : alignScore sm [true, false] [true, true] 0 0 2 = -1 := by norm_num [alignScore, sm]
 
 /-- Enumerating all `3 × 3 × 3` alignments `(i, j, ℓ)` of `u = [T, F]`, `v = [T, T]`: the best
 score is `1` (a single match). -/
@@ -221,8 +235,9 @@ example : twoProb p₀ p₀ 100 200 (fun u v => 30 ≤ maxAlignScore sm u v) ≤
   twoProb_le_maxAlignScore_le hp₀ hp₀ sm log_goldenRatio_pos.le scoreMGF_log_goldenRatio
     100 200 (by norm_num)
 
--- Type-checks only: the Gumbel theorem applied to this model. Its hypotheses are not satisfiable
--- here: match `+1` / mismatch `-2` is a lattice score, so `OneSequenceTail` fails for every `K`.
+-- Type-checks only: the Gumbel theorem applied to this model, with the one-sequence tail as a
+-- hypothesis. Match `+1` / mismatch `-2` is a nondegenerate lattice score, outside the intended
+-- regime of `OneSequenceTail`; whether it holds here for some `K` is not decided in this file.
 example {K : ℝ} (htail : OneSequenceTail (pairLaw p₀ p₀) (pairScore sm) (log goldenRatio) K)
     {m n : ℕ → ℕ} (hm : Tendsto m atTop atTop) (hn : Tendsto n atTop atTop)
     (hnm : Tendsto (fun N => log (n N) / m N) atTop (𝓝 0))
