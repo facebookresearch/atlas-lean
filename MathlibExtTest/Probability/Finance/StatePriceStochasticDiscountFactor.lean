@@ -17,7 +17,8 @@ import Mathlib.Tactic
 # Tests for state prices and the stochastic discount factor
 
 Two states with `P = ![1/2, 1/2]`, `ψ = ![1/4, 3/4]`, `X = ![2, 4]`: the induced SDF
-is `![1/2, 3/2]` and both the state-price value and `E_P[m * X]` equal `7 / 2`.
+is `![1/2, 3/2]` and both the state-price value `expectation ψ X` and the `P`-weighted
+expectation `expectation P (m * X)` equal `7 / 2`.
 -/
 
 @[expose] public section
@@ -25,6 +26,7 @@ is `![1/2, 3/2]` and both the state-price value and `E_P[m * X]` equal `7 / 2`.
 namespace MathlibExtTest.Probability.Finance.StatePriceStochasticDiscountFactor
 
 open _root_.MathlibExt.Probability.Finance.StatePriceStochasticDiscountFactor
+open _root_.MathlibExt.Probability.FiniteProbability
 
 
 /-- Example physical probabilities `P = ![1/2, 1/2]`. -/
@@ -45,14 +47,14 @@ theorem sdf_ex_one : stochasticDiscountFactor ψex Pex 1 = 3 / 2 := by
     Matrix.cons_val_one]
   norm_num
 
-theorem price_ex_statePrice : statePriceValue ψex Xex = 7 / 2 := by
-  simp only [statePriceValue, ψex, Xex, Fin.sum_univ_two, Matrix.cons_val_zero,
+theorem price_ex_statePrice : expectation ψex Xex = 7 / 2 := by
+  simp only [expectation, ψex, Xex, Fin.sum_univ_two, Matrix.cons_val_zero,
     Matrix.cons_val_one]
   norm_num
 
 theorem price_ex_expectation :
-    physicalExpectation Pex (fun ω => stochasticDiscountFactor ψex Pex ω * Xex ω) = 7 / 2 := by
-  simp only [physicalExpectation, stochasticDiscountFactor, Pex, ψex, Xex,
+    expectation Pex (fun ω => stochasticDiscountFactor ψex Pex ω * Xex ω) = 7 / 2 := by
+  simp only [expectation, stochasticDiscountFactor, Pex, ψex, Xex,
     Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
   norm_num
 
@@ -64,5 +66,12 @@ theorem sdf_ex_pos (ω : Fin 2) : 0 < stochasticDiscountFactor ψex Pex ω := by
     intro i
     fin_cases i <;> norm_num [Pex, Matrix.cons_val_zero, Matrix.cons_val_one]
   exact stochasticDiscountFactor_pos hψ hP ω
+
+/-- The pricing identity in its stated orientation, state-price value on the left, at the
+example: `expectation ψex Xex` rewrites to the `Pex`-weighted SDF expectation. -/
+theorem price_ex_eq : expectation ψex Xex =
+    expectation Pex (fun ω => stochasticDiscountFactor ψex Pex ω * Xex ω) := by
+  refine price_eq_expectation_stochasticDiscountFactor fun i => ?_
+  fin_cases i <;> norm_num [Pex, Matrix.cons_val_zero, Matrix.cons_val_one]
 
 end MathlibExtTest.Probability.Finance.StatePriceStochasticDiscountFactor
