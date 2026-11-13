@@ -183,9 +183,8 @@ theorem hX₀_apply (β' : Fin 1 → ℝ) : (X₀ *ᵥ β') 0 = β' 0 := by
 
 /-- Integrability of a coordinate of `A *ᵥ (c + ε)`, from integrability of each
 error coordinate. The constant vector `c` is typically `X *ᵥ β`.
-(Relocated verbatim from the Muse sandbox file: the sandbox was a single file,
-so the test section could use the main file's private copy; integration splits
-the test into its own file, where the main file's private copy is invisible.) -/
+(A copy of the private helper of the same name in `BlueCovariance`, which is not
+visible from this file.) -/
 private theorem integrable_mulVec_apply {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     [IsProbabilityMeasure μ] {m k : Type*} [Fintype m] [DecidableEq m] [Fintype k]
     [DecidableEq k] {ε : Ω → m → ℝ} (hint : ∀ i, Integrable (fun ω => ε ω i) μ)

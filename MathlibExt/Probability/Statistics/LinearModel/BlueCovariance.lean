@@ -19,8 +19,9 @@ Fixed-design linear model `y = X β + ε` with `X : Matrix m k ℝ` of full colu
 `cov[ε i, ε j] = if i = j then σ² else 0`, integrable with mean zero.
 
 * The covariance of a general linear estimator `A *ᵥ y` is `σ² • (A * Aᵀ)`
-  (`covariance_mulVec_apply`), generalizing the landed `covariance_olsEstimator`
-  (the `A = olsMatrix X` case) to arbitrary `A`.
+  (`covariance_mulVec_apply`), generalizing `covariance_olsEstimator` of
+  `MathlibExt.Probability.Statistics.LinearModel.Sampling` (the `A = olsMatrix X` case) to
+  arbitrary `A`.
 * Unbiasedness for every `β` forces `A * X = 1` (`unbiased_mul_eq_one`).
 * Hence every linear unbiased estimator has covariance at least that of OLS in
   positive-semidefinite order (`blue_covariance_minimality`), by Aitken's
@@ -30,14 +31,16 @@ Fixed-design linear model `y = X β + ε` with `X : Matrix m k ℝ` of full colu
 
 * `covariance_mulVec_apply`, `unbiased_mul_eq_one`, `blue_covariance_minimality`.
 
-Provenance: the proof bodies were drafted by Muse Code from pinned statements
-and were independently checked with Codex before integration. The lane
-repaired one corrupted identifier (a hallucinated token) in the test section's
-`unfold` line, deleted an unused private `olsMatrix_eq` helper that
-shadowed the landed `Sampling.olsMatrix_eq`, and changed one `simp` to
-`simp only` (same lemma list) in `h_covB`, because the landed `@[simp]`
-`olsMatrix_eq` otherwise rewrites `olsMatrix X` before
-`covariance_mulVec_apply` can match.
+The covariance ordering is derived from Aitken's theorem
+`MathlibExt.Probability.Statistics.GeneralizedLeastSquares.aitken` at noise covariance `V = 1`,
+where the GLS matrix is the OLS matrix `olsMatrix X`.
+
+## References
+
+* C. F. Gauss, *Theoria combinationis observationum erroribus minimis obnoxiae* (1823)
+  (the Gauss–Markov theorem).
+* A. C. Aitken, *On least squares and linear combination of observations*, Proc. Roy. Soc.
+  Edinburgh 55 (1936), 42–48 (Aitken's theorem; its case `V = 1` is Gauss–Markov).
 -/
 
 @[expose] public section
@@ -96,7 +99,7 @@ private theorem integrable_mulVec_apply {Ω : Type*} [MeasurableSpace Ω] {μ : 
 
 /-- **Covariance of a general linear estimator**: if the errors are square-integrable
 with `cov[ε i, ε j] = if i = j then σ² else 0`, then for any matrix `A` the covariance
-of `A *ᵥ (X *ᵥ β + ε)` is `σ² • (A * Aᵀ)`, entrywise. This generalizes the landed
+of `A *ᵥ (X *ᵥ β + ε)` is `σ² • (A * Aᵀ)`, entrywise. This generalizes
 `covariance_olsEstimator` (the `A = olsMatrix X` case) to arbitrary `A`. No mean-zero
 hypothesis is needed: covariance is translation-invariant. -/
 theorem covariance_mulVec_apply {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
@@ -290,7 +293,7 @@ theorem blue_covariance_minimality {Ω : Type*} [MeasurableSpace Ω] {μ : Measu
         fun ω => (olsMatrix X *ᵥ (X *ᵥ β + ε ω)) b; μ])
       = σ ^ 2 • (olsMatrix X * (olsMatrix X)ᵀ) := by
     ext a b
-    -- `simp only`: the landed `@[simp] olsMatrix_eq` would rewrite `olsMatrix X`
+    -- `simp only`: the `@[simp]` lemma `olsMatrix_eq` would rewrite `olsMatrix X`
     -- before `covariance_mulVec_apply` can match, so the ambient simp set is off.
     simp only [covariance_mulVec_apply β σ hL2 hcov (olsMatrix X) a b, Matrix.smul_apply,
       smul_eq_mul, Matrix.of_apply]
