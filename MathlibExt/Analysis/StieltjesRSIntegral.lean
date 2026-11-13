@@ -32,14 +32,22 @@ regularity of `h`: for a bounded-variation integrand `f`, summation by parts giv
 `|∫ f dh| ≤ ‖h‖_∞ (2‖f‖_∞ + V(f))`. This is the estimate that makes `h ↦ ∫ f dh` Lipschitz for the
 uniform norm (`HasRSIntegral.abs_sub_le_of_abs_sub_le`) wherever the integrals exist.
 
-**Limitation for the Duhamel operator.** The integral does not exist when `f` and `h` jump on the
-same side at the same point: for `f = h = 𝟙[1, ∞)` on `[0, 2]` every partition has a refinement
-with sum `0` (left tags) and one with sum `1` (right tags), so no limit exists (see the test
-file). The Duhamel integrand `s ↦ P(A)(0, s) P(B)(s, t]` of `ContinuousProductIntegral.lean`
-jumps at the jumps of `B`, and so does `h = B - A` for a multi-jump pure-jump `B`, so this
-integral does not by itself define the Duhamel operator on that dense set: the Ψ bridge needs
-left-continuous integrands (e.g. `P(A)(0, s-)`) or a different integral. The bound on the sums
-holds regardless.
+**Limitation for the Duhamel operator.** The integral does not exist when `f` and `h` have nonzero
+jumps on the same side at the same interior point: if `a < c < b`, the left limits `f(c-)` and
+`h(c-)` exist, `f(c-) ≠ f(c)` and `h(c-) ≠ h(c)` (or the same with right limits), then moving the
+tag of the subinterval next to `c` from one end to the other changes the sum by about the product
+of the two jumps, however fine the partition. For `f = h = 𝟙[1, ∞)` on `[0, 2]` every partition
+has a refinement with sum `0` (left tags) and one with sum `1` (right tags), so no limit exists
+(see the test file). A jump seen only from outside `[a, b]` does no harm: on `[0, 1]`,
+`f = h = 𝟙[0, ∞)` are constant, every sum is `0`, and the integral exists. The Duhamel integrand
+`s ↦ P(A)(0, s) P(B)(s, t]` of `ContinuousProductIntegral.lean` jumps at the jumps of `B`, and so
+does `h = B - A` for a multi-jump pure-jump `B`, so this integral does not by itself define the
+Duhamel operator on that dense set. Making only the first factor left-continuous (`P(A)(0, s-)`)
+does not remove the obstruction: at a jump `c` of `B`, the factor `P(B)(s, t]` contains the jump
+for `s < c` but not at `s = c`, so it still jumps at `c` on the same side as `B`; with `A = 0` and a
+single jump of `B`, the left- and right-tagged sums against `h = B` differ by `(ΔB c)²`. The Ψ
+bridge needs a convention for the whole kernel (for example one whose second factor also includes
+the jump at `s`) or a different integral. The bound on the sums holds regardless.
 
 Partitions, tagged partitions and point-set refinement are the canonical ones of
 `MathlibExt.Analysis.Integration.RiemannPartition`; against `h = id` the sum is `riemannSum`
@@ -76,9 +84,10 @@ integrator) and no notion of regulated function.
 
 ## Not covered
 
-* Integrands and integrators with a common same-side jump: the refinement integral does not exist
-  there, so the Ψ bridge cannot use this integral for `s ↦ P(A)(0, s) P(B)(s, t]` against
-  pure-jump `B - A` without passing to left-continuous integrands or another integral.
+* Integrands and integrators with nonzero jumps on the same side at the same interior point of
+  `[a, b]`: the refinement integral does not exist there, so the Ψ bridge cannot use this integral
+  for `s ↦ P(A)(0, s) P(B)(s, t]` against pure-jump `B - A` without changing the convention of the
+  whole kernel (making only `P(A)(0, s)` left-continuous is not enough) or using another integral.
 
 * Integration by parts `∫ f dh + ∫ h df = f(b)h(b) - f(a)h(a)`, and existence of `∫ f dh` for a
   bounded-variation integrand against a regulated integrator without common discontinuities.
