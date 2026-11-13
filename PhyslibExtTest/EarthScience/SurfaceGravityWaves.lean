@@ -14,7 +14,7 @@ import PhyslibExt.EarthScience.SurfaceGravityWaves
 
 Concrete consumers of `PhyslibExt.EarthScience.SurfaceGravityWaves`:
 dispersion for a unit wave with `k = H = g = 1`, positivity of `ω²`,
-and the deep-water limit `tanh → 1` in the form of a numeric bound.
+and a range check `0 < tanh 5 < 1` on the finite-depth factor.
 
 ## i. Overview
 
@@ -30,7 +30,7 @@ No new definitions or results are introduced here.
 ## iii. Table of contents
 
 - A. Unit dispersion
-- B. Positivity and a deep-water bound
+- B. Positivity and a range check
 
 ## iv. References
 
@@ -69,7 +69,7 @@ example : 0 < (Real.sqrt (Real.tanh 1)) ^ 2 := by
     (Real.tanh 1) (Real.sqrt (Real.tanh 1)) (by norm_num) (by norm_num) (by norm_num)
     hT.ne' hkin hdyn
 
-/-- Deep water: the finite-depth factor `tanh 5` lies in `(0, 1)`, below
-the deep-water limit `1`. -/
+/-- Range check: the finite-depth factor `tanh (k H)` at `k H = 5` lies in
+`(0, 1)`, as it does for every positive argument. -/
 example : 0 < Real.tanh 5 ∧ Real.tanh 5 < 1 :=
   ⟨(by rw [Real.tanh_eq_sinh_div_cosh]; exact div_pos (Real.sinh_pos_iff.mpr (by norm_num)) (Real.cosh_pos _)), Real.tanh_lt_one 5⟩
