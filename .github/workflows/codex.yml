@@ -111,9 +111,12 @@ jobs:
             // payload's `author_association` under-reports private org
             // membership (Deicyde's PRs report MEMBER via REST, yet
             // their runs were skipped at the old job-level filter), so
-            // check_auth verifies the class through the API:
-            // association, repo collaborator status, or org
-            // membership, each fail-closed. Repo permission alone
+            // check_auth verifies the class through the API: the
+            // fetched PR's REST association (which reports MEMBER for
+            // private members), repo collaborator status, or org
+            // membership, each fail-closed and taken only as positive
+            // evidence (this repo-scoped token cannot see private org
+            // membership, so the org probe may add nothing). Repo permission alone
             // never authorizes: this repository is public, so
             // `getCollaboratorPermissionLevel` reports `read` for
             // every GitHub user, member or not. The job `if` no
@@ -195,9 +198,35 @@ jobs:
             let commentAuthorPermitted = false;
             let trustedRepo = "";
             let trustedSha = "";
+            // Automatic fork runs also fetch the live PR: the REST
+            // `author_association` on the fetched PR reports MEMBER
+            // for private org members, which neither the event
+            // payload nor this repo-scoped token's org-membership
+            // probe can see. The fetched head and author ids are
+            // also the values formal trust binds to below.
+            let targetPr = null;
+            if (isForkTarget) {
+              const number = context.payload.pull_request?.number;
+              if (number) {
+                try {
+                  const { data: pr } = await github.rest.pulls.get({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    pull_number: number,
+                  });
+                  targetPr = pr;
+                  trustedRepo = pr.head.repo?.full_name ?? trustedRepo;
+                  trustedSha = pr.head.sha ?? trustedSha;
+                } catch (error) {
+                  if (error.status !== 404) {
+                    throw error;
+                  }
+                }
+              }
+            }
             const observedPr =
               context.payload.pull_request ?? null;
-            if (observedPr) {
+            if (observedPr && !targetPr) {
               trustedRepo =
                 observedPr.head?.repo?.full_name ?? "";
               trustedSha = observedPr.head?.sha ?? "";
@@ -245,10 +274,12 @@ jobs:
                 }
               }
             }
+            const effectivePr =
+              targetPr ?? context.payload.pull_request ?? null;
             const trustedHeadTarget =
               isForkTarget &&
               TRUSTED_HEAD_OWNER_IDS.includes(
-                context.payload.pull_request?.head?.repo?.owner?.id
+                effectivePr?.head?.repo?.owner?.id
               );
             // Formal fork trust binds to the head owner, who
             // controls the branch content, not just the PR author:
@@ -258,10 +289,9 @@ jobs:
             // requires it).
             const forkHeadSelfOwned =
               isForkTarget &&
-              context.payload.pull_request?.head?.repo?.owner?.id !=
-                null &&
-              context.payload.pull_request?.head?.repo?.owner?.id ===
-                context.payload.pull_request?.user?.id;
+              effectivePr?.head?.repo?.owner?.id != null &&
+              effectivePr?.head?.repo?.owner?.id ===
+                effectivePr?.user?.id;
             const isFormal =
               (context.eventName === "pull_request" &&
                 context.payload.pull_request?.head?.repo?.full_name ===
@@ -275,14 +305,16 @@ jobs:
             let authorized;
             let permission = "none";
             if (isForkTarget) {
+              // Prefer the fetched PR: its REST author_association
+              // reports MEMBER for private org members. No sender
+              // fallback: `username` is the event sender, not the PR
+              // author. A missing author login (the PR user is
+              // nullable, e.g. after account deletion) fails closed
+              // in authorInFormalClass.
               const association =
+                effectivePr?.author_association ??
                 context.payload.pull_request.author_association;
-              // No sender fallback: `username` is the event sender,
-              // not the PR author. A missing author login (the PR
-              // user is nullable, e.g. after account deletion) fails
-              // closed in authorInFormalClass.
-              const authorLogin =
-                context.payload.pull_request.user?.login;
+              const authorLogin = effectivePr?.user?.login;
               authorized = await authorInFormalClass(
                 authorLogin,
                 association
