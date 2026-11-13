@@ -50,7 +50,9 @@ For both models (the Poisson statements are about the kernel `poissonLogLikKerne
   `logisticLogLik_separation_not_isMaxOn` (complete separation) and
   `poissonLogLikKernel_allZero_not_isMaxOn` (all-zero counts) have no maximizer, the first with an
   injective design (`separationDesign_mulVec_injective`).
-* `logisticDeviance` and `logisticDeviance_nonneg` for binary responses.
+* `logisticDeviance` and `logisticDeviance_nonneg` for binary responses. Outside the response
+  domain `[0, 1]` the saturated likelihood `logisticLogLikSaturated` and the deviance are
+  algebraic extensions without a likelihood or deviance meaning.
 
 ## Response laws
 
@@ -358,7 +360,10 @@ theorem logisticLogLik_separation_not_isMaxOn (β : Fin 1 → ℝ) :
 /-! ### Deviance -/
 
 /-- The saturated Bernoulli log likelihood `∑ᵢ (yᵢ log yᵢ + (1 - yᵢ) log (1 - yᵢ)) = -∑ᵢ H(yᵢ)`
-with `H = Real.binEntropy`; it is `0` for binary responses. -/
+with `H = Real.binEntropy`; it is `0` for binary responses. Its likelihood interpretation applies
+only on the response domain `[0, 1]`: for other real `y` the formula is an algebraic extension,
+not a log probability (with Lean's `log (-1) = 0`, the single response `y = 2` gives
+`2 log 2 > 0`). -/
 noncomputable def logisticLogLikSaturated (y : ι → ℝ) : ℝ :=
   -∑ i, binEntropy (y i)
 
@@ -373,7 +378,10 @@ theorem logisticLogLikSaturated_eq_zero (y : ι → ℝ) (hy : ∀ i, y i = 0 �
   simp only [logisticLogLikSaturated, neg_eq_zero]
   exact Finset.sum_eq_zero fun i _ => by rcases hy i with h | h <;> simp [h]
 
-/-- The logistic deviance `2 (ℓ_sat - ℓ(β))`. -/
+/-- The logistic deviance `2 (ℓ_sat - ℓ(β))`. Its deviance interpretation applies only on the
+response domain `[0, 1]`; for binary responses it is `-2 ℓ(β) ≥ 0` (`logisticDeviance_eq`,
+`logisticDeviance_nonneg`). For other real `y` it is an algebraic extension and can be negative
+(`y = 2` and `η = log 7` give `10 log 2 - 4 log 7 < 0`). -/
 noncomputable def logisticDeviance (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) : ℝ :=
   2 * (logisticLogLikSaturated y - logisticLogLik X o y β)
 

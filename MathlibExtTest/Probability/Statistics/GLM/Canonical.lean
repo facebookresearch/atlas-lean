@@ -160,4 +160,27 @@ example (β : Fin 2 → ℝ) : 0 ≤ logisticDeviance X₀ 0 ![1, 0] β :=
 
 example (η : ℝ) : 1 * η - log (1 + exp η) < 0 := logisticTerm_neg (Or.inr rfl) η
 
+/-- Outside `[0, 1]` the saturated formula is only an algebraic extension: `y = 2` gives
+`2 log 2 > 0`, which is not a log probability. -/
+theorem logisticLogLikSaturated_two : logisticLogLikSaturated (![2] : Fin 1 → ℝ) = 2 * log 2 := by
+  rw [logisticLogLikSaturated_eq]
+  norm_num [Real.log_neg_eq_log]
+
+/-- Outside `[0, 1]` the deviance formula can be negative: `y = 2`, `η = log 7` gives
+`2 (2 log 2 - (2 log 7 - log 8)) = 10 log 2 - 4 log 7 < 0`. -/
+example :
+    logisticDeviance (Matrix.of fun (_ : Fin 1) (_ : Fin 1) => (1 : ℝ)) 0 ![2] ![log 7] < 0 := by
+  have h7 : exp (log 7) = 7 := exp_log (by norm_num)
+  have h8 : log (1 + 7 : ℝ) = 3 * log 2 := by
+    rw [show (1 + 7 : ℝ) = 2 ^ 3 by norm_num, Real.log_pow]
+    push_cast
+    ring
+  have hlt : log ((2 : ℝ) ^ 10) < log ((7 : ℝ) ^ 4) := Real.log_lt_log (by norm_num) (by norm_num)
+  rw [Real.log_pow, Real.log_pow] at hlt
+  push_cast at hlt
+  simp only [logisticDeviance, logisticLogLikSaturated_two, logisticLogLik, linearPredictor_apply,
+    Matrix.mulVec, dotProduct, Fin.sum_univ_one, Matrix.of_apply, Matrix.cons_val_zero, one_mul,
+    Pi.zero_apply, add_zero, h7, h8]
+  linarith
+
 end MathlibExtTest.Probability.Statistics.GLM
