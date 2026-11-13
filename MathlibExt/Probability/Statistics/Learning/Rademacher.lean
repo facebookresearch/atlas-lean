@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 public import Mathlib.Basic.Real.Basic
+public import MathlibExt.Probability.LearningTheory.Rademacher
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -33,10 +34,11 @@ These are the conventions of `massart_finite_class` and `rademacher_finite_class
 The Euclidean norm used by the Massart bound is written out as `Real.sqrt (∑ i, a i ^ 2)`;
 the norm `‖a‖` of `a : Fin n → ℝ` in Mathlib is the sup norm and is not used.
 
-Reserved for the follow-up slice (stated here as the freeze, not proved in this file): the
-finite-class Massart lemma with explicit `1/n` normalization, for `A.Nonempty`,
+Main result: `empiricalRademacher_le_massart`, the finite-class Massart lemma with explicit
+`1/n` normalization, for `A.Nonempty`,
 `empiricalRademacher A ≤ A.sup' hA (fun v => Real.sqrt (∑ i, v i ^ 2)) *
   Real.sqrt (2 * Real.log A.card) / n`.
+It is obtained from `massart_finite_class` through `empiricalRademacher_eq_sum_sup'_div`.
 -/
 
 @[expose] public section
@@ -251,5 +253,15 @@ theorem empiricalRademacher_image_sign {m : ℕ} {H : Finset (Fin m → Bool)}
   rw [empiricalRademacher_eq_sum_sup'_div (hH.image _)]
   simp only [Finset.sup'_image]
   rfl
+
+/-- Massart's finite-class lemma with explicit `1/n` normalization: the empirical Rademacher
+complexity of a nonempty finite set `A` of vectors in `ℝⁿ` is at most the largest Euclidean
+norm in `A` times `√(2 log |A|)`, divided by `n`. No `0 < n` hypothesis: at `n = 0` both
+sides are `0`. -/
+theorem empiricalRademacher_le_massart {n : ℕ} {A : Finset (Fin n → ℝ)} (hA : A.Nonempty) :
+    empiricalRademacher A ≤
+      A.sup' hA (fun v => Real.sqrt (∑ i, v i ^ 2)) * Real.sqrt (2 * Real.log A.card) / n := by
+  rw [empiricalRademacher_eq_sum_sup'_div hA, mul_comm (A.sup' hA _)]
+  exact div_le_div_of_nonneg_right (massart_finite_class hA) (Nat.cast_nonneg n)
 
 end ProbabilityTheory
