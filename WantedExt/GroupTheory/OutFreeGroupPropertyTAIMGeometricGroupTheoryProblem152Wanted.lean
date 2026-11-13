@@ -18,7 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import WantedExt.GroupTheory.OnPropertyTWanted
-public import WantedExt.GroupTheory.OutFreeGroupAbelianizationAIMGeometricGroupTheoryProblem153Wanted
+public import WantedExt.GroupTheory.OutFreeGroupShared
 
 @[expose] public section
 
@@ -29,7 +29,7 @@ Source: The geometry of the outer automorphism group of a free group, AIM worksh
 J. Mangahas), Problem 3.1, https://aimath.org/WWN/outerauto/outerauto.pdf. UnsolvedMath record
 UM-20001643 (`AIM-GEOMETRIC_GROUP_THEORY-0152`), dataset ulamai/UnsolvedMath v1.8.0.
 
-`Out(F_n)` is `OutFree n` of `OutFreeGroupAbelianizationAIMGeometricGroupTheoryProblem153Wanted`:
+`Out(F_n)` is `OutFreeGroup n` of `OutFreeGroupShared`, shared with the other `Out(F_n)` entries:
 `MulAut (FreeGroup (Fin n))` modulo the normal closure of the inner automorphisms (which is the
 subgroup of inner automorphisms). Property (T) is the predicate `PropertyT` of `OnPropertyTWanted`,
 the definition of Kaluba-Kielak-Nowak (their equation (2), due to Ozawa): a finite symmetric
@@ -43,13 +43,12 @@ entry AIMGeometricGroupTheoryProblem152.
 -/
 
 open MathlibExt.GroupTheory.OnPropertyTWanted.OnPropertyT (PropertyT)
-open MathlibExt.GroupTheory.OutFreeGroupAbelianizationAIMGeometricGroupTheoryProblem153Wanted
-  (OutFree)
+open MathlibExt.GroupTheory.OutFreeGroupShared (OutFreeGroup)
 
-/-- The outer automorphism group `Out(F_n)` (`OutFree n`) has Kazhdan's property (T) (`PropertyT`,
-the Ozawa characterization used by Kaluba-Kielak-Nowak) for every `n ≥ 5`. -/
+/-- The outer automorphism group `Out(F_n)` (`OutFreeGroup n`) has Kazhdan's property (T)
+(`PropertyT`, the Ozawa characterization used by Kaluba-Kielak-Nowak) for every `n ≥ 5`. -/
 def outFreeGroupHasPropertyT : Prop :=
-  ∀ n : ℕ, 5 ≤ n → PropertyT (OutFree n)
+  ∀ n : ℕ, 5 ≤ n → PropertyT (OutFreeGroup n)
 
 /--
 Resolved true: `Out(F_n)` has Kazhdan's property (T) for every `n ≥ 5`. Kaluba-Kielak-Nowak, Theorem

@@ -32,30 +32,29 @@ Gruenberg). UnsolvedMath record UM-00700293 (`KOU-5.9`), dataset ulamai/Unsolved
 
 `d(G)` is Mathlib's `Group.rank G`, so `F = FreeGroup (Fin (Group.rank G + 1))`, and `Rᵢ = ker πᵢ`
 for the two surjections `πᵢ : F →* G`. The abelianized extension of `πᵢ` is `Rᵢ ⧸ [Rᵢ, Rᵢ] ↣ F ⧸
-[Rᵢ, Rᵢ] ↠ G`. Two extensions are taken to be isomorphic when an isomorphism `θ : F ⧸ [R₁, R₁] ≃* F
-⧸ [R₂, R₂]` covers some automorphism `γ` of `G` (it then maps `R₁ ⧸ [R₁, R₁]` onto `R₂ ⧸ [R₂, R₂]`);
-the compatibility is stated on representatives. This is the weakest standard notion; the version
-with `γ = id` is stronger and not stated here, since Linnell's paper was not available to fix the
-notion it uses.
+[Rᵢ, Rᵢ] ↠ G`. As usual for extensions of `G`, two extensions are isomorphic when an isomorphism
+`θ : F ⧸ [R₁, R₁] ≃* F ⧸ [R₂, R₂]` commutes with the projections to `G`, that is, induces the
+identity on `G` (it then maps `R₁ ⧸ [R₁, R₁]` onto `R₂ ⧸ [R₂, R₂]`); the compatibility is stated on
+representatives.
 -/
 
 /-- Kourovka 5.9 (K. W. Gruenberg): let `G` be finite and `π₁, π₂ : F → G` surjections from a free
 group of rank `d(G) + 1`, with kernels `R₁`, `R₂`. Then the abelianized extensions
 `R_i ⧸ [R_i, R_i] ↣ F ⧸ [R_i, R_i] ↠ G` are isomorphic: some isomorphism
-`θ : F ⧸ [R₁, R₁] ≃* F ⧸ [R₂, R₂]` covers an automorphism `γ` of `G`. -/
+`θ : F ⧸ [R₁, R₁] ≃* F ⧸ [R₂, R₂]` induces the identity on `G`. -/
 def abelianizedExtensionsIsomorphic : Prop :=
   ∀ (G : Type) [Group G] [Finite G] (π₁ π₂ : FreeGroup (Fin (Group.rank G + 1)) →* G),
     Function.Surjective π₁ → Function.Surjective π₂ →
-    ∃ (θ : FreeGroup (Fin (Group.rank G + 1)) ⧸ ⁅π₁.ker, π₁.ker⁆ ≃*
-        FreeGroup (Fin (Group.rank G + 1)) ⧸ ⁅π₂.ker, π₂.ker⁆) (γ : G ≃* G),
+    ∃ θ : FreeGroup (Fin (Group.rank G + 1)) ⧸ ⁅π₁.ker, π₁.ker⁆ ≃*
+        FreeGroup (Fin (Group.rank G + 1)) ⧸ ⁅π₂.ker, π₂.ker⁆,
       ∀ w₁ w₂ : FreeGroup (Fin (Group.rank G + 1)),
-        θ (QuotientGroup.mk w₁) = QuotientGroup.mk w₂ → γ (π₁ w₁) = π₂ w₂
+        θ (QuotientGroup.mk w₁) = QuotientGroup.mk w₂ → π₁ w₁ = π₂ w₂
 
 /--
 Resolved true: the Kourovka Archive answers 5.9 "Yes, they are", citing Linnell (1981): for a finite
 group `G` and two surjections from a free group of rank `d(G) + 1`, the abelianized extensions are
-isomorphic. Stated here in the weakest form, an isomorphism `F ⧸ [R₁, R₁] ≃* F ⧸ [R₂, R₂]` covering
-an automorphism of `G`, which any of the standard notions of isomorphic extensions implies. Source:
+isomorphic. Stated for isomorphism of extensions of `G`: the isomorphism
+`F ⧸ [R₁, R₁] ≃* F ⧸ [R₂, R₂]` induces the identity on `G`. Source:
 E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook,
 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 5.9 (K. W. Gruenberg);
 resolution: P. A. Linnell, Relation modules and augmentation ideals of finite groups, J. Pure Appl.
