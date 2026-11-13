@@ -25,6 +25,8 @@ Definition 1.3.1 and §3.2.2).
 
 * `BayesNet.paVal b k x`: the values of the parents of node `k` in a full assignment `x`.
 * `BayesNet.intervene b k a`: the network after the intervention `do(X_k = a)`.
+* `BayesNet.mutilateSet b W w`: the network of the intervention `do(X_W = w)` on a set `W` of
+  nodes, with the arrows into `W` removed.
 * `BayesNet.Edge`, `BayesNet.IsDescendant`, `BayesNet.IsPath`, `BayesNet.PathBlocked`,
   `BayesNet.DSeparated`: the graph of a network, paths of its skeleton, blocking and
   d-separation (Pearl 2009, Definition 1.2.3).
@@ -118,6 +120,13 @@ theorem intervene_pa_self (k : Fin n) (a : α) : (b.intervene k a).pa k = ∅ :=
 theorem intervene_pa_of_ne {j k : Fin n} (hj : j ≠ k) (a : α) :
     (b.intervene k a).pa j = b.pa j := by
   simp [intervene, hj]
+
+/-- The network of the intervention `do(X_W = w)` with the arrows into `W` removed: every node
+`j ∈ W` has no parents and the point mass at `w j` as its table. -/
+noncomputable def mutilateSet (W : Finset (Fin n)) (w : Fin n → α) : BayesNet α n where
+  pa j := if j ∈ W then ∅ else b.pa j
+  cpt j z := if h : j ∈ W then StdSimplex.single (w j) else
+    b.cpt j fun i => z ⟨i, by simp [h]⟩
 
 /-- **The truncated factorization** (Pearl 2009, eq. (3.10)): after `do(X_k = a)` the joint is
 the product of the tables of all nodes other than `k` on assignments with `x_k = a`, and `0`
