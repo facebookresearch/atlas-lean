@@ -1,4 +1,4 @@
- /-
+/-
 Copyright (c) Meta Platforms, Inc. and affiliates.
 All rights reserved.
 
@@ -21,14 +21,23 @@ import Mathlib.Tactic.NormNum
 
 In the diffusion-limited droplet model `r * r' = K*S` with constant
 `K >= 0, S` and `r > 0`, `r(t) = sqrt(r0^2 + 2*K*S*t)` has
-`r(t)^2 = r0^2 + 2*K*S*t`, `(r^2)' = 2*K*S`, and `r' = K*S / r(t)`
-when `r(t) > 0`. Curvature, solute, and ventilation effects are
-ignored; there is no zero-radius continuation.
+`r(t)^2 = r0^2 + 2*K*S*t` when `r0^2 + 2*K*S*t >= 0`,
+`(r^2)' = 2*K*S` at times with `r0^2 + 2*K*S*t > 0`, and
+`r' = K*S / r(t)` when `r(t) > 0`. Curvature, solute, and ventilation
+effects are ignored; there is no zero-radius continuation.
+
+Conventions: `S` is the ambient supersaturation over a flat water surface
+(saturation ratio minus one) as a signed fraction, so `S > 0` grows the
+droplet and `S < 0` (subsaturated air) evaporates it. `K` is the growth
+coefficient combining vapour diffusion to the droplet and conduction of the
+released latent heat away from it; it is positive for real droplets and is
+held constant (fixed temperature and pressure). Integrating `r * r' = K*S`
+from `r(0) = r0` gives the parabolic growth law `r^2 = r0^2 + 2*K*S*t`.
 
 ## ii. Key results
 
-- `EarthScience.radius_sq`: `(r(t))^2 = r0^2 + 2*K*S*t`.
-- `EarthScience.radius_sq_hasDerivAt`: `(r^2)' = 2*K*S` where the argument is positive.
+- `EarthScience.radius_sq`: `(r(t))^2 = r0^2 + 2*K*S*t` when `r0^2 + 2*K*S*t >= 0`.
+- `EarthScience.radius_sq_hasDerivAt`: `(r^2)' = 2*K*S` at `t` with `r0^2 + 2*K*S*t > 0`.
 - `EarthScience.radius_hasDerivAt`: `r' = K*S / r(t)` when `r(t) > 0`.
 - `EarthScience.no_supersaturation`: `S = 0` keeps `r = r0`.
 
@@ -38,7 +47,11 @@ ignored; there is no zero-radius continuation.
 
 ## iv. References
 
-- See the individual theorem docstrings.
+- R. R. Rogers and M. K. Yau, *A Short Course in Cloud Physics*, 3rd ed.,
+  Pergamon Press, 1989, Chapter 7 (droplet growth by condensation: the
+  diffusional growth law with `r * dr/dt` proportional to the
+  supersaturation once the curvature and solute terms are neglected, and its
+  parabolic solution `r^2 = r0^2 + 2*K*S*t` for constant supersaturation).
 -/
 
 @[expose] public section
@@ -48,7 +61,8 @@ namespace EarthScience
 
 set_option linter.unusedVariables false in
 /-- Diffusion-limited droplet growth: with `r(t) = sqrt(r0^2 + 2*K*S*t)`,
-the squared radius satisfies `r(t)^2 = r0^2 + 2*K*S*t`. -/
+the squared radius satisfies `r(t)^2 = r0^2 + 2*K*S*t` whenever
+`r0^2 + 2*K*S*t >= 0`. -/
 theorem radius_sq {r0 K S t : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K)
     (h : 0 ≤ r0 ^ 2 + 2 * K * S * t) :
     (Real.sqrt (r0 ^ 2 + 2 * K * S * t)) ^ 2 = r0 ^ 2 + 2 * K * S * t := by
@@ -56,7 +70,7 @@ theorem radius_sq {r0 K S t : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K)
 
 set_option linter.unusedVariables false in
 /-- Diffusion-limited droplet growth: the squared radius has derivative
-`2*K*S` at every `t`. -/
+`2*K*S` at every `t` with `r0^2 + 2*K*S*t > 0`. -/
 theorem radius_sq_hasDerivAt {r0 K S : ℝ} (hr0 : 0 < r0) (hK : 0 ≤ K) (t : ℝ)
     (hpos : 0 < r0 ^ 2 + 2 * K * S * t) :
     HasDerivAt (fun t => (Real.sqrt (r0 ^ 2 + 2 * K * S * t)) ^ 2) (2 * K * S) t := by
