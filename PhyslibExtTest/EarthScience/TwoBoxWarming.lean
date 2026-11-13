@@ -40,7 +40,7 @@ No new definitions or results are introduced here.
 
 /-- Equilibrium `(1, 1)`. -/
 example : (1 : ℝ) - 1 - (1 - 1) = 0 ∧ (1 : ℝ) - 1 = 0 :=
-  EarthScience.two_box_equilibrium
+  EarthScience.two_box_warming_equilibrium
 
 /-- Combined budget at `Ts = Td = 0`: `Ts' + Td' = 1 - Ts` with `Ts' = 1, Td' = 0`. -/
 example : (1 : ℝ) + 0 = 1 - 0 :=

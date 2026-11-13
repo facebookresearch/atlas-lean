@@ -34,7 +34,7 @@ re-prove or assume any unmerged "K02" theorem.
 
 ## ii. Key results
 
-- `EarthScience.two_box_equilibrium`: `(1, 1)` is an equilibrium.
+- `EarthScience.two_box_warming_equilibrium`: `(1, 1)` is an equilibrium.
 - `EarthScience.two_box_combined_budget`: `(Ts + Td)' = 1 - Ts`.
 - `EarthScience.two_box_energy_derivative`: the anomaly-energy derivative
   identity along the flow.
@@ -62,7 +62,7 @@ namespace EarthScience
 /-- Capstone (two-box model, `Cs = Cd = lam = γ = F = 1`):
 equilibrium `(Ts, Td) = (1, 1)` annihilates both right-hand sides:
 `1 - 1 - (1 - 1) = 0` and `1 - 1 = 0`. -/
-lemma two_box_equilibrium :
+lemma two_box_warming_equilibrium :
     (1 : ℝ) - 1 - (1 - 1) = 0 ∧ (1 : ℝ) - 1 = 0 := by
   constructor <;> norm_num
 
