@@ -17,13 +17,16 @@ For a smooth periodic solution of `c_t + U * c_x = D * c_xx` on
 `[0, L]` with `L > 0` and `D ≥ 0`,
 `d/dt ∫_0^L c^2 / 2 = -D * ∫_0^L c_x^2 ≤ 0`.
 
-The proof is conditional and local to the time `t` and the interval:
-`ct`, `cx`, `cxx` are the time, space, and second-space derivatives
-given by `HasDerivAt` hypotheses at `t` and at each `x ∈ [0, L]`, the
-PDE holds at `t` for each `x ∈ [0, L]`, `c t` and `cx t` are periodic
-(equal values at `0` and `L`, so both boundary terms vanish), and
-differentiation under the integral sign is a hypothesis (`hInter`).
-Nothing is assumed outside `[0, L]` or at other times. No existence
+The proof is conditional, with hypotheses indexed by the time `t` and
+the points `x ∈ [0, L]`: `ct`, `cx`, `cxx` are the time, space, and
+second-space derivatives given by `HasDerivAt` hypotheses at `t` and at
+each `x ∈ [0, L]`, the PDE holds at `t` for each `x ∈ [0, L]`, `c t` and
+`cx t` are periodic (equal values at `0` and `L`, so both boundary terms
+vanish), and differentiation under the integral sign is a hypothesis
+(`hInter`). The PDE is not assumed outside `[0, L]` or at other times.
+The derivative hypotheses are full (two-sided) derivatives, so at the
+endpoints `0` and `L` they also involve `c t` and `cx t` just outside
+`[0, L]`, and the time derivatives involve times near `t`. No existence
 result for arbitrary initial data is claimed. Energy here is squared-L2
 concentration, not thermodynamic energy.
 
@@ -46,11 +49,12 @@ set_option linter.unusedVariables false in
 `d/dt ∫_0^L c^2 / 2 = -D * ∫_0^L c_x^2`.
 `ct`, `cx`, `cxx` are the time, space, and second-space derivatives
 of `c` at time `t`, given by the `HasDerivAt` hypotheses for
-`x ∈ [0, L]`; the PDE is assumed only at `t` and for `x ∈ [0, L]`;
-`hInter` is the differentiation-under-the-integral hypothesis
-(interchange regularity); periodicity is `c t` and `cx t` taking equal
-values at `0` and `L`. This is a conditional identity, not an
-existence result. -/
+`x ∈ [0, L]` (full derivatives, so at `x = 0` and `x = L` they also
+involve values just outside `[0, L]`); the PDE is assumed only at `t`
+and for `x ∈ [0, L]`; `hInter` is the differentiation-under-the-integral
+hypothesis (interchange regularity); periodicity is `c t` and `cx t`
+taking equal values at `0` and `L`. This is a conditional identity, not
+an existence result. -/
 theorem energy_deriv {L D U : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
     (c ct cx cxx : ℝ → ℝ → ℝ) (t : ℝ)
     (hct : ∀ x ∈ Set.uIcc 0 L, HasDerivAt (fun s => c s x) (ct t x) t)

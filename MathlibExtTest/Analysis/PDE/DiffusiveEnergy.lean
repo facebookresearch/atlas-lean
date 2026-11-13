@@ -25,8 +25,8 @@ Closed checks, with every hypothesis of `energy_deriv` discharged:
   `-∫_0^{2π} (exp (-t) * cos x) ^ 2 = -π * exp (-t) ^ 2 < 0`.
 
 Also: `D = 0` conserves energy for every profile that is periodic at `t` and satisfies the
-hypotheses on `[0, L]` at `t`, and `dissipation_nonpos` is checked at `D = 0` and at the
-decaying mode.
+hypotheses indexed by `x ∈ [0, L]` at `t`, and `dissipation_nonpos` is checked at `D = 0` and
+at the decaying mode.
 -/
 
 @[expose] public section
@@ -36,7 +36,7 @@ open MeasureTheory intervalIntegral Real
 namespace MathlibExt.Analysis.PDE.DiffusiveEnergy
 
 /-- `D = 0`: the energy derivative is `0` for every profile that is periodic at `t`, with the
-derivative and PDE hypotheses only at `t` and on `[0, L]`. -/
+derivative and PDE hypotheses indexed by `x ∈ [0, L]` at `t`. -/
 example {L : ℝ} (hL : 0 < L) (c ct cx cxx : ℝ → ℝ → ℝ) (t : ℝ)
     (hct : ∀ x ∈ Set.uIcc 0 L, HasDerivAt (fun s => c s x) (ct t x) t)
     (hcx : ∀ x ∈ Set.uIcc 0 L, HasDerivAt (fun y => c t y) (cx t x) x)
@@ -68,7 +68,8 @@ open scoped Classical in
 /-- Interval-scoped data: the constant profile `c t x = a` with the time-derivative field
 `ct t x = 0` on `[0, L]` and `1` outside. The PDE `ct + U * c_x = D * c_xx` holds on `[0, L]`
 and fails outside it; `energy_deriv` needs it only on `[0, L]`, and the energy derivative is
-`0`. -/
+`0`. The profile itself is constant everywhere, so this exercises only the scoping of the PDE.
+-/
 example {L D U a : ℝ} (hL : 0 < L) (hD : 0 ≤ D) (t : ℝ) :
     HasDerivAt (fun _ : ℝ => ∫ _ in (0 : ℝ)..L, a ^ 2 / 2) 0 t := by
   have hzero : ∫ x in (0 : ℝ)..L, a * (if x ∈ Set.uIcc 0 L then (0 : ℝ) else 1) = 0 := by
