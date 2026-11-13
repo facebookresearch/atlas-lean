@@ -23,9 +23,15 @@ score and likelihood-ratio limits with the shape estimated, for i.i.d. observati
 `(xᵢ, yᵢ)` (random design, no offset).
 
 The model is a family of densities on `(κ → ℝ) × ℕ` indexed by the Euclidean parameter space
-`NBParam κ = EuclideanSpace ℝ (κ ⊕ Unit)`: `nbRegDensity (β, θ) (x, y) = NB(y; θ, exp (x ⬝ᵥ β))`,
-with respect to `(law of x) ⊗ count`. The generic theorems of `VectorInference` and
-`EstimatedInformation` are instantiated for it.
+`NBParam κ = EuclideanSpace ℝ (κ ⊕ Unit)`: `nbRegDensity (β, θ) (x, y) = NB(y; θ, exp (x ⬝ᵥ β))`.
+With respect to the reference measure `μX ⊗ count`, where `μX` is the law of the covariates,
+`lawOf (μX.prod Measure.count) nbRegDensity p` (shape `θ > 0`) is the law of random-design
+negative binomial regression: covariates of law `μX` and counts that are conditionally
+`NB(θ, exp (x ⬝ᵥ β))`. The generic theorems of `VectorInference` and `EstimatedInformation` are
+first instantiated for an arbitrary reference measure `ν`. Those are generic weighted-density
+results: for other `ν` the law `lawOf ν nbRegDensity p` need not be negative binomial. Each
+asymptotic result is then restated for negative binomial regression, `ν = μX ⊗ count` (the
+`..._randomDesign` theorems).
 
 ## Proved model facts (no hypotheses beyond `θ > 0`)
 
@@ -45,15 +51,29 @@ with respect to `(law of x) ⊗ count`. The generic theorems of `VectorInference
 
 ## Asymptotic results
 
-* `tendstoInDistribution_sqrt_smul_sub_nbJointMLE`: `√n (p̂ - p₀) → N(0, I(p₀)⁻¹)`.
-* `tendstoInDistribution_waldStatistic_nbJointMLE`, `..._obsInfo`: joint Wald statistic with an
-  estimated information (any consistent one, or the observed information at `p̂`) `→ χ²_{|κ|+1}`;
-  `tendstoInMeasure_nbRegAvgObsInfo`: consistency of that observed information.
-* `tendstoInDistribution_scoreStatistic_nbJointMLE`: Rao's statistic `→ χ²_{|κ|+1}`.
-* `tendstoInDistribution_two_mul_logLik_sub_nbJointMLE`: Wilks, simple null, `→ χ²_{|κ|+1}`.
-* `tendstoInDistribution_coefWaldStatistic_nbJointMLE` (abstract cross condition),
-  `..._randomDesign` and `..._obsInfo` (cross condition proved; observed-information block):
-  the Wald statistic for `β` alone, with `θ` estimated as a nuisance parameter, `→ χ²_{|κ|}`.
+For negative binomial regression (reference measure `μX ⊗ count`):
+
+* `tendstoInDistribution_sqrt_smul_sub_nbJointMLE_randomDesign`: `√n (p̂ - p₀) → N(0, I(p₀)⁻¹)`.
+* `tendstoInDistribution_waldStatistic_nbJointMLE_randomDesign`, `..._obsInfo_randomDesign`:
+  joint Wald statistic with an estimated information (any consistent one, or the observed
+  information at `p̂`) `→ χ²_{|κ|+1}`; `tendstoInMeasure_nbRegAvgObsInfo_randomDesign`:
+  consistency of that observed information.
+* `tendstoInDistribution_scoreStatistic_nbJointMLE_randomDesign`: Rao's statistic
+  `→ χ²_{|κ|+1}`.
+* `tendstoInDistribution_two_mul_logLik_sub_nbJointMLE_randomDesign`: Wilks, simple null,
+  `→ χ²_{|κ|+1}`.
+* `tendstoInDistribution_coefWaldStatistic_nbJointMLE_randomDesign` and
+  `tendstoInDistribution_coefWaldStatistic_nbJointMLE_obsInfo` (cross condition proved;
+  observed-information block): the Wald statistic for `β` alone, with `θ` estimated as a nuisance
+  parameter, `→ χ²_{|κ|}`.
+
+The generic weighted-density versions, for an arbitrary reference measure `ν`, are the same names
+without `_randomDesign`: `tendstoInDistribution_sqrt_smul_sub_nbJointMLE`,
+`tendstoInDistribution_waldStatistic_nbJointMLE`, `..._obsInfo`,
+`tendstoInMeasure_nbRegAvgObsInfo`, `tendstoInDistribution_scoreStatistic_nbJointMLE`,
+`tendstoInDistribution_two_mul_logLik_sub_nbJointMLE`, and
+`tendstoInDistribution_coefWaldStatistic_nbJointMLE`, which takes the vanishing cross information
+as a hypothesis.
 
 ## Hypotheses and what is not proved
 
@@ -550,9 +570,12 @@ noncomputable abbrev nbRegFisherInfo (ν : Measure ((κ → ℝ) × ℕ)) (p₀ 
     NBParam κ →L[ℝ] NBParam κ :=
   fisherInformation ν nbRegDensity p₀
 
-/-- **Asymptotic normality of the joint `(β, θ)` negative binomial MLE.** Let `(xᵢ, yᵢ)` be
-i.i.d. with law `lawOf ν nbRegDensity p₀` (covariates, and counts that are conditionally
-`NB(θ₀, exp (xᵢ ⬝ᵥ β₀))`), with true shape `θ₀ > 0`. Assume on the ball of radius
+/-- **Asymptotic normality of the joint `(β, θ)` MLE, generic weighted-density form.** Let
+`(xᵢ, yᵢ)` be i.i.d. with law `lawOf ν nbRegDensity p₀`, the law with density `nbRegDensity p₀`
+with respect to an arbitrary reference measure `ν`, with true shape `θ₀ > 0`. This is
+random-design negative binomial regression only for `ν = μX ⊗ count`
+(`tendstoInDistribution_sqrt_smul_sub_nbJointMLE_randomDesign`); for other `ν` the counts need
+not be negative binomial. Assume on the ball of radius
 `δ ∈ (0, θ₀]` about `p₀ = (β₀, θ₀)` the Lipschitz envelope
 `‖nbRegObsInfo p z - nbRegObsInfo p₀ z‖ ≤ M z ‖p - p₀‖` (integrable `M`), a square-integrable
 centered score `nbRegScore p₀`, an integrable observed information with mean the Fisher
@@ -612,7 +635,9 @@ omit [DecidableEq κ] in
 theorem finrank_nbParam : Module.finrank ℝ (NBParam κ) = Fintype.card κ + 1 := by
   simp [finrank_euclideanSpace, Fintype.card_sum]
 
-/-- **Wald's test for the joint `(β, θ)` with estimated information.** Under the hypotheses of
+/-- **Wald's test for the joint `(β, θ)` with estimated information, generic weighted-density
+form** (arbitrary reference measure `ν`; negative binomial regression is
+`tendstoInDistribution_waldStatistic_nbJointMLE_randomDesign`). Under the hypotheses of
 `tendstoInDistribution_sqrt_smul_sub_nbJointMLE`, with positive definite Fisher information, and
 for any a.e.-measurable information estimators `Î n → I(p₀)` in probability (for example the
 closed-form observed information at the estimator, `tendstoInMeasure_nbRegAvgObsInfo`), the Wald
@@ -663,8 +688,10 @@ theorem tendstoInDistribution_waldStatistic_nbJointMLE
     rw [integral_neg, h_info]
 
 omit [DecidableEq κ] in
-/-- **Rao's score test for the joint `(β, θ)` with estimated information.** For i.i.d.
-observations of the model at `p₀` (shape `θ₀ > 0`), a square-integrable centered score and a
+/-- **Rao's score test for the joint `(β, θ)` with estimated information, generic
+weighted-density form** (arbitrary reference measure `ν`; negative binomial regression is
+`tendstoInDistribution_scoreStatistic_nbJointMLE_randomDesign`). For i.i.d. observations with law
+`lawOf ν nbRegDensity p₀` (shape `θ₀ > 0`), a square-integrable centered score and a
 positive definite Fisher information, and any a.e.-measurable `Î n → I(p₀)` in probability, the
 score statistic `⟪Î n⁻¹ Sₙ, Sₙ⟫` with `Sₙ = n^{-1/2} ∑_{i<n} nbRegScore p₀ (xᵢ, yᵢ)` converges
 in distribution to `χ²` with `|κ| + 1` degrees of freedom. -/
@@ -689,7 +716,9 @@ theorem tendstoInDistribution_scoreStatistic_nbJointMLE
     (by rw [finrank_nbParam]; omega) hIhat_meas hIhat (by rwa [finrank_nbParam])
   simpa only [score_nbRegDensity_eq hp₀] using h
 
-/-- **Wilks' theorem for the joint `(β, θ)`, simple null.** Under the hypotheses of
+/-- **Wilks' theorem for the joint `(β, θ)`, simple null, generic weighted-density form**
+(arbitrary reference measure `ν`; negative binomial regression is
+`tendstoInDistribution_two_mul_logLik_sub_nbJointMLE_randomDesign`). Under the hypotheses of
 `tendstoInDistribution_waldStatistic_nbJointMLE` (without `Î`), the likelihood-ratio statistic
 `2 ∑_{i<n} (log NB(yᵢ; θ̂, e^{xᵢ ⬝ᵥ β̂}) - log NB(yᵢ; θ₀, e^{xᵢ ⬝ᵥ β₀}))`, evaluated at the
 consistent root `p̂ n = (β̂, θ̂)`, converges in distribution to `χ²` with `|κ| + 1` degrees of
@@ -740,15 +769,18 @@ theorem tendstoInDistribution_two_mul_logLik_sub_nbJointMLE
   · simp_rw [fderiv_score_nbRegDensity hp₀]
     rw [integral_neg, h_info]
 
-/-- **Wald's test for the coefficients with an estimated shape.** Under the hypotheses of
+/-- **Wald's test for the coefficients with an estimated shape, generic weighted-density form**
+(arbitrary reference measure `ν`; negative binomial regression is
+`tendstoInDistribution_coefWaldStatistic_nbJointMLE_randomDesign`). Under the hypotheses of
 `tendstoInDistribution_waldStatistic_nbJointMLE`, assume the cross information between `β` and
-`θ` vanishes, `⟪I(p₀) (0, 1), (t, 0)⟫ = 0` (proved for the model in
-`inner_nbRegFisherInfo_nbShapeVec_nbCoefIncl`). Let `B̂ n` be any a.e.-measurable estimators of
-the coefficient block `B = Πβ I(p₀) ιβ` (for example the coefficient block of a consistent
-estimator of `I(p₀)`). Then, with `θ` estimated jointly and treated as a nuisance parameter, the
-Wald statistic for `β` alone, `n ⟪B̂ n (β̂ - β₀), β̂ - β₀⟫`, converges in distribution to `χ²`
-with `|κ|` degrees of freedom. The block `B` is the information for `β` when `θ` is known, so
-estimating the shape costs no degree of freedom and does not change the reference law. -/
+`θ` vanishes, `⟪I(p₀) (0, 1), (t, 0)⟫ = 0` (proved for negative binomial regression,
+`ν = μX ⊗ count`, in `inner_nbRegFisherInfo_nbShapeVec_nbCoefIncl`). Let `B̂ n` be any
+a.e.-measurable estimators of the coefficient block `B = Πβ I(p₀) ιβ` (for example the
+coefficient block of a consistent estimator of `I(p₀)`). Then, with `θ` estimated jointly and
+treated as a nuisance parameter, the Wald statistic for `β` alone, `n ⟪B̂ n (β̂ - β₀), β̂ - β₀⟫`,
+converges in distribution to `χ²` with `|κ|` degrees of freedom. The block `B` is the
+information for `β` when `θ` is known, so estimating the shape costs no degree of freedom and
+does not change the reference law. -/
 theorem tendstoInDistribution_coefWaldStatistic_nbJointMLE
     {ν : Measure ((κ → ℝ) × ℕ)} {p₀ : NBParam κ} {δ : ℝ} (hδ : 0 < δ)
     (hδθ : δ ≤ nbParamShape p₀)
@@ -849,8 +881,10 @@ theorem tendstoInDistribution_coefWaldStatistic_nbJointMLE
     rw [← mul_assoc, Real.mul_self_sqrt (Nat.cast_nonneg n)]
   · rw [hQ.map_eq, ← hchi.map_eq]
 
-/-- **Consistency of the closed-form observed information at the estimator.** Under the envelope
-and information hypotheses of `tendstoInDistribution_sqrt_smul_sub_nbJointMLE`, for any consistent
+/-- **Consistency of the closed-form observed information at the estimator, generic
+weighted-density form** (arbitrary reference measure `ν`; negative binomial regression is
+`tendstoInMeasure_nbRegAvgObsInfo_randomDesign`). Under the envelope and information hypotheses
+of `tendstoInDistribution_sqrt_smul_sub_nbJointMLE`, for any consistent
 a.e.-measurable `p̂ n`, the averaged observed information `nbRegAvgObsInfo n (x, y) (p̂ n)`
 (the merged `n⁻¹ • nbJointObsInfo` at `(β̂, θ̂)`, `nbRegAvgObsInfo_eq_nbJointObsInfo`) converges in
 probability to the Fisher information `I(p₀)`. -/
@@ -909,9 +943,11 @@ theorem aemeasurable_nbRegAvgObsInfo {X : ℕ → Ω → (κ → ℝ) × ℕ} (h
     Finset.aemeasurable_fun_sum _ fun i _ => hi i
   simpa only [nbRegAvgObsInfo] using hs.fun_const_smul ((n : ℝ)⁻¹)
 
-/-- **Wald's test for the joint `(β, θ)` with the observed information at the estimator.** The
-corollary of `tendstoInDistribution_waldStatistic_nbJointMLE` with `Î n` the closed-form observed
-information `nbRegAvgObsInfo n (x, y) (p̂ n)` (`tendstoInMeasure_nbRegAvgObsInfo`). -/
+/-- **Wald's test for the joint `(β, θ)` with the observed information at the estimator,
+generic weighted-density form** (arbitrary reference measure `ν`; negative binomial regression is
+`tendstoInDistribution_waldStatistic_nbJointMLE_obsInfo_randomDesign`). The corollary of
+`tendstoInDistribution_waldStatistic_nbJointMLE` with `Î n` the closed-form observed information
+`nbRegAvgObsInfo n (x, y) (p̂ n)` (`tendstoInMeasure_nbRegAvgObsInfo`). -/
 theorem tendstoInDistribution_waldStatistic_nbJointMLE_obsInfo
     {ν : Measure ((κ → ℝ) × ℕ)} {p₀ : NBParam κ} {δ : ℝ} (hδ : 0 < δ)
     (hδθ : δ ≤ nbParamShape p₀)
@@ -1062,6 +1098,199 @@ section RandomDesign
 
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
+
+/-! ### Random-design negative binomial regression
+
+With covariates of law `μX`, the reference measure `μX ⊗ count` and a true shape `θ₀ > 0`, the
+observations `(xᵢ, yᵢ)` with law `lawOf (μX.prod Measure.count) nbRegDensity p₀` are
+random-design negative binomial regression data: covariates of law `μX` and counts that are
+conditionally `NB(θ₀, exp (xᵢ ⬝ᵥ β₀))`. The theorems below restate every asymptotic result of
+the file for this reference measure. -/
+
+/-- **Asymptotic normality of the joint `(β, θ)` negative binomial MLE, random design.** For
+i.i.d. `(xᵢ, yᵢ)` with covariates of law `μX` and counts conditionally `NB(θ₀, exp (xᵢ ⬝ᵥ β₀))`
+(reference measure `μX ⊗ count`), under the hypotheses of
+`tendstoInDistribution_sqrt_smul_sub_nbJointMLE`, `√n (p̂ n - p₀) → Z` in distribution for any
+`Z` with `⟪Z, t⟫ ~ N(0, ⟪I(p₀)⁻¹ t, t⟫)`. -/
+theorem tendstoInDistribution_sqrt_smul_sub_nbJointMLE_randomDesign
+    {μX : Measure (κ → ℝ)} {p₀ : NBParam κ} {δ : ℝ} (hδ : 0 < δ)
+    (hδθ : δ ≤ nbParamShape p₀)
+    {X : ℕ → Ω → (κ → ℝ) × ℕ}
+    (hX_law : ∀ i, HasLaw (X i) (lawOf (μX.prod Measure.count) nbRegDensity p₀) P)
+    (hX_indep : iIndepFun X P)
+    {M : (κ → ℝ) × ℕ → ℝ} (hM_meas : Measurable M)
+    (hM_int : Integrable M (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (hM : ∀ z, ∀ p ∈ Metric.ball p₀ δ,
+      ‖nbRegObsInfo p z - nbRegObsInfo p₀ z‖ ≤ M z * ‖p - p₀‖)
+    (hs_sq : Integrable (fun z => ‖nbRegScore p₀ z‖ ^ 2)
+      (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (hs_mean : ∫ z, nbRegScore p₀ z ∂(lawOf (μX.prod Measure.count) nbRegDensity p₀) = 0)
+    (hJ_int : Integrable (nbRegObsInfo p₀) (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (h_info : ∫ z, nbRegObsInfo p₀ z ∂(lawOf (μX.prod Measure.count) nbRegDensity p₀) =
+      nbRegFisherInfo (μX.prod Measure.count) p₀)
+    (hI : IsUnit (nbRegFisherInfo (μX.prod Measure.count) p₀))
+    {phat : ℕ → Ω → NBParam κ} (hphat_meas : ∀ n, AEMeasurable (phat n) P)
+    (hroot : Tendsto (fun n => P {ω | ∑ i ∈ range n, nbRegScore (phat n ω) (X i ω) ≠ 0})
+      atTop (𝓝 0))
+    (hcons : TendstoInMeasure P phat atTop (fun _ => p₀))
+    {Z : Ω' → NBParam κ} (hZ_meas : AEMeasurable Z P')
+    (hZ : ∀ t, HasLaw (fun ω => ⟪Z ω, t⟫)
+      (gaussianReal 0
+        (⟪Ring.inverse (nbRegFisherInfo (μX.prod Measure.count) p₀) t, t⟫).toNNReal) P') :
+    TendstoInDistribution (fun (n : ℕ) ω => √n • (phat n ω - p₀)) atTop Z (fun _ => P) P' :=
+  tendstoInDistribution_sqrt_smul_sub_nbJointMLE hδ hδθ hX_law hX_indep hM_meas hM_int hM hs_sq
+    hs_mean hJ_int h_info hI hphat_meas hroot hcons hZ_meas hZ
+
+/-- **Wald's test for the joint `(β, θ)` with estimated information, random design.** The
+negative binomial regression form (reference measure `μX ⊗ count`) of
+`tendstoInDistribution_waldStatistic_nbJointMLE`: `n ⟪Î n (p̂ n - p₀), p̂ n - p₀⟫ → χ²` with
+`|κ| + 1` degrees of freedom. -/
+theorem tendstoInDistribution_waldStatistic_nbJointMLE_randomDesign
+    {μX : Measure (κ → ℝ)} {p₀ : NBParam κ} {δ : ℝ} (hδ : 0 < δ)
+    (hδθ : δ ≤ nbParamShape p₀)
+    {X : ℕ → Ω → (κ → ℝ) × ℕ}
+    (hX_law : ∀ i, HasLaw (X i) (lawOf (μX.prod Measure.count) nbRegDensity p₀) P)
+    (hX_indep : iIndepFun X P)
+    {M : (κ → ℝ) × ℕ → ℝ} (hM_meas : Measurable M)
+    (hM_int : Integrable M (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (hM : ∀ z, ∀ p ∈ Metric.ball p₀ δ,
+      ‖nbRegObsInfo p z - nbRegObsInfo p₀ z‖ ≤ M z * ‖p - p₀‖)
+    (hs_sq : Integrable (fun z => ‖nbRegScore p₀ z‖ ^ 2)
+      (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (hs_mean : ∫ z, nbRegScore p₀ z ∂(lawOf (μX.prod Measure.count) nbRegDensity p₀) = 0)
+    (hJ_int : Integrable (nbRegObsInfo p₀) (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (h_info : ∫ z, nbRegObsInfo p₀ z ∂(lawOf (μX.prod Measure.count) nbRegDensity p₀) =
+      nbRegFisherInfo (μX.prod Measure.count) p₀)
+    (hI_pos : ∀ u, u ≠ 0 → 0 < ⟪nbRegFisherInfo (μX.prod Measure.count) p₀ u, u⟫)
+    {phat : ℕ → Ω → NBParam κ} (hphat_meas : ∀ n, AEMeasurable (phat n) P)
+    (hroot : Tendsto (fun n => P {ω | ∑ i ∈ range n, nbRegScore (phat n ω) (X i ω) ≠ 0})
+      atTop (𝓝 0))
+    (hcons : TendstoInMeasure P phat atTop (fun _ => p₀))
+    {Ihat : ℕ → Ω → NBParam κ →L[ℝ] NBParam κ} (hIhat_meas : ∀ n, AEMeasurable (Ihat n) P)
+    (hIhat : TendstoInMeasure P Ihat atTop
+      (fun _ => nbRegFisherInfo (μX.prod Measure.count) p₀))
+    {Q : Ω' → ℝ} (hQ : HasLaw Q (chiSquareMeasure (Fintype.card κ + 1)) P') :
+    TendstoInDistribution (fun (n : ℕ) ω => n * ⟪Ihat n ω (phat n ω - p₀), phat n ω - p₀⟫)
+      atTop Q (fun _ => P) P' :=
+  tendstoInDistribution_waldStatistic_nbJointMLE hδ hδθ hX_law hX_indep hM_meas hM_int hM hs_sq
+    hs_mean hJ_int h_info hI_pos hphat_meas hroot hcons hIhat_meas hIhat hQ
+
+/-- **Consistency of the closed-form observed information at the estimator, random design.**
+The negative binomial regression form (reference measure `μX ⊗ count`) of
+`tendstoInMeasure_nbRegAvgObsInfo`: `nbRegAvgObsInfo n (x, y) (p̂ n) → I(p₀)` in probability. -/
+theorem tendstoInMeasure_nbRegAvgObsInfo_randomDesign
+    {μX : Measure (κ → ℝ)} {p₀ : NBParam κ} {δ : ℝ} (hδ : 0 < δ)
+    (hδθ : δ ≤ nbParamShape p₀)
+    {X : ℕ → Ω → (κ → ℝ) × ℕ}
+    (hX_law : ∀ i, HasLaw (X i) (lawOf (μX.prod Measure.count) nbRegDensity p₀) P)
+    (hX_indep : iIndepFun X P)
+    {M : (κ → ℝ) × ℕ → ℝ} (hM_meas : Measurable M)
+    (hM_int : Integrable M (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (hM : ∀ z, ∀ p ∈ Metric.ball p₀ δ,
+      ‖nbRegObsInfo p z - nbRegObsInfo p₀ z‖ ≤ M z * ‖p - p₀‖)
+    (hJ_int : Integrable (nbRegObsInfo p₀) (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (h_info : ∫ z, nbRegObsInfo p₀ z ∂(lawOf (μX.prod Measure.count) nbRegDensity p₀) =
+      nbRegFisherInfo (μX.prod Measure.count) p₀)
+    {phat : ℕ → Ω → NBParam κ} (hphat_meas : ∀ n, AEMeasurable (phat n) P)
+    (hcons : TendstoInMeasure P phat atTop (fun _ => p₀)) :
+    TendstoInMeasure P (fun n ω => nbRegAvgObsInfo n (fun i => X i ω) (phat n ω)) atTop
+      (fun _ => nbRegFisherInfo (μX.prod Measure.count) p₀) :=
+  tendstoInMeasure_nbRegAvgObsInfo hδ hδθ hX_law hX_indep hM_meas hM_int hM hJ_int h_info
+    hphat_meas hcons
+
+/-- **Wald's test for the joint `(β, θ)` with the observed information at the estimator, random
+design.** The negative binomial regression form (reference measure `μX ⊗ count`) of
+`tendstoInDistribution_waldStatistic_nbJointMLE_obsInfo`:
+`n ⟪nbRegAvgObsInfo n (x, y) (p̂ n) (p̂ n - p₀), p̂ n - p₀⟫ → χ²` with `|κ| + 1` degrees of
+freedom. -/
+theorem tendstoInDistribution_waldStatistic_nbJointMLE_obsInfo_randomDesign
+    {μX : Measure (κ → ℝ)} {p₀ : NBParam κ} {δ : ℝ} (hδ : 0 < δ)
+    (hδθ : δ ≤ nbParamShape p₀)
+    {X : ℕ → Ω → (κ → ℝ) × ℕ}
+    (hX_law : ∀ i, HasLaw (X i) (lawOf (μX.prod Measure.count) nbRegDensity p₀) P)
+    (hX_indep : iIndepFun X P)
+    {M : (κ → ℝ) × ℕ → ℝ} (hM_meas : Measurable M)
+    (hM_int : Integrable M (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (hM : ∀ z, ∀ p ∈ Metric.ball p₀ δ,
+      ‖nbRegObsInfo p z - nbRegObsInfo p₀ z‖ ≤ M z * ‖p - p₀‖)
+    (hs_sq : Integrable (fun z => ‖nbRegScore p₀ z‖ ^ 2)
+      (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (hs_mean : ∫ z, nbRegScore p₀ z ∂(lawOf (μX.prod Measure.count) nbRegDensity p₀) = 0)
+    (hJ_int : Integrable (nbRegObsInfo p₀) (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (h_info : ∫ z, nbRegObsInfo p₀ z ∂(lawOf (μX.prod Measure.count) nbRegDensity p₀) =
+      nbRegFisherInfo (μX.prod Measure.count) p₀)
+    (hI_pos : ∀ u, u ≠ 0 → 0 < ⟪nbRegFisherInfo (μX.prod Measure.count) p₀ u, u⟫)
+    {phat : ℕ → Ω → NBParam κ} (hphat_meas : ∀ n, AEMeasurable (phat n) P)
+    (hroot : Tendsto (fun n => P {ω | ∑ i ∈ range n, nbRegScore (phat n ω) (X i ω) ≠ 0})
+      atTop (𝓝 0))
+    (hcons : TendstoInMeasure P phat atTop (fun _ => p₀))
+    {Q : Ω' → ℝ} (hQ : HasLaw Q (chiSquareMeasure (Fintype.card κ + 1)) P') :
+    TendstoInDistribution
+      (fun (n : ℕ) ω =>
+        n * ⟪nbRegAvgObsInfo n (fun i => X i ω) (phat n ω) (phat n ω - p₀), phat n ω - p₀⟫)
+      atTop Q (fun _ => P) P' :=
+  tendstoInDistribution_waldStatistic_nbJointMLE_obsInfo hδ hδθ hX_law hX_indep hM_meas hM_int
+    hM hs_sq hs_mean hJ_int h_info hI_pos hphat_meas hroot hcons hQ
+
+omit [DecidableEq κ] in
+/-- **Rao's score test for the joint `(β, θ)` with estimated information, random design.** The
+negative binomial regression form (reference measure `μX ⊗ count`) of
+`tendstoInDistribution_scoreStatistic_nbJointMLE`: the score statistic `⟪Î n⁻¹ Sₙ, Sₙ⟫`,
+`Sₙ = n^{-1/2} ∑_{i<n} nbRegScore p₀ (xᵢ, yᵢ)`, converges in distribution to `χ²` with `|κ| + 1`
+degrees of freedom. -/
+theorem tendstoInDistribution_scoreStatistic_nbJointMLE_randomDesign
+    {μX : Measure (κ → ℝ)} {p₀ : NBParam κ} (hp₀ : 0 < nbParamShape p₀)
+    {X : ℕ → Ω → (κ → ℝ) × ℕ}
+    (hX_law : ∀ i, HasLaw (X i) (lawOf (μX.prod Measure.count) nbRegDensity p₀) P)
+    (hX_indep : iIndepFun X P)
+    (hs_sq : Integrable (fun z => ‖nbRegScore p₀ z‖ ^ 2)
+      (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (hs_mean : ∫ z, nbRegScore p₀ z ∂(lawOf (μX.prod Measure.count) nbRegDensity p₀) = 0)
+    (hI_pos : ∀ u, u ≠ 0 → 0 < ⟪nbRegFisherInfo (μX.prod Measure.count) p₀ u, u⟫)
+    {Ihat : ℕ → Ω → NBParam κ →L[ℝ] NBParam κ} (hIhat_meas : ∀ n, AEMeasurable (Ihat n) P)
+    (hIhat : TendstoInMeasure P Ihat atTop
+      (fun _ => nbRegFisherInfo (μX.prod Measure.count) p₀))
+    {Q : Ω' → ℝ} (hQ : HasLaw Q (chiSquareMeasure (Fintype.card κ + 1)) P') :
+    TendstoInDistribution
+      (fun (n : ℕ) ω =>
+        ⟪Ring.inverse (Ihat n ω) ((√n)⁻¹ • ∑ i ∈ range n, nbRegScore p₀ (X i ω)),
+          (√n)⁻¹ • ∑ i ∈ range n, nbRegScore p₀ (X i ω)⟫)
+      atTop Q (fun _ => P) P' :=
+  tendstoInDistribution_scoreStatistic_nbJointMLE hp₀ hX_law hX_indep hs_sq hs_mean hI_pos
+    hIhat_meas hIhat hQ
+
+/-- **Wilks' theorem for the joint `(β, θ)`, simple null, random design.** The negative binomial
+regression form (reference measure `μX ⊗ count`) of
+`tendstoInDistribution_two_mul_logLik_sub_nbJointMLE`: the likelihood-ratio statistic at the
+consistent root `p̂ n` converges in distribution to `χ²` with `|κ| + 1` degrees of freedom. -/
+theorem tendstoInDistribution_two_mul_logLik_sub_nbJointMLE_randomDesign
+    {μX : Measure (κ → ℝ)} {p₀ : NBParam κ} {δ : ℝ} (hδ : 0 < δ)
+    (hδθ : δ ≤ nbParamShape p₀)
+    {X : ℕ → Ω → (κ → ℝ) × ℕ}
+    (hX_law : ∀ i, HasLaw (X i) (lawOf (μX.prod Measure.count) nbRegDensity p₀) P)
+    (hX_indep : iIndepFun X P)
+    {M : (κ → ℝ) × ℕ → ℝ} (hM_meas : Measurable M)
+    (hM_int : Integrable M (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (hM : ∀ z, ∀ p ∈ Metric.ball p₀ δ,
+      ‖nbRegObsInfo p z - nbRegObsInfo p₀ z‖ ≤ M z * ‖p - p₀‖)
+    (hs_sq : Integrable (fun z => ‖nbRegScore p₀ z‖ ^ 2)
+      (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (hs_mean : ∫ z, nbRegScore p₀ z ∂(lawOf (μX.prod Measure.count) nbRegDensity p₀) = 0)
+    (hJ_int : Integrable (nbRegObsInfo p₀) (lawOf (μX.prod Measure.count) nbRegDensity p₀))
+    (h_info : ∫ z, nbRegObsInfo p₀ z ∂(lawOf (μX.prod Measure.count) nbRegDensity p₀) =
+      nbRegFisherInfo (μX.prod Measure.count) p₀)
+    (hI_pos : ∀ u, u ≠ 0 → 0 < ⟪nbRegFisherInfo (μX.prod Measure.count) p₀ u, u⟫)
+    {phat : ℕ → Ω → NBParam κ} (hphat_meas : ∀ n, AEMeasurable (phat n) P)
+    (hroot : Tendsto (fun n => P {ω | ∑ i ∈ range n, nbRegScore (phat n ω) (X i ω) ≠ 0})
+      atTop (𝓝 0))
+    (hcons : TendstoInMeasure P phat atTop (fun _ => p₀))
+    {Q : Ω' → ℝ} (hQ : HasLaw Q (chiSquareMeasure (Fintype.card κ + 1)) P') :
+    TendstoInDistribution
+      (fun (n : ℕ) ω => 2 * ∑ i ∈ range n,
+        (Real.log (nbRegDensity (phat n ω) (X i ω)) - Real.log (nbRegDensity p₀ (X i ω))))
+      atTop Q (fun _ => P) P' :=
+  tendstoInDistribution_two_mul_logLik_sub_nbJointMLE hδ hδθ hX_law hX_indep hM_meas hM_int hM
+    hs_sq hs_mean hJ_int h_info hI_pos hphat_meas hroot hcons hQ
 
 /-- **Wald's test for the coefficients with an estimated shape, random design.** For i.i.d.
 `(xᵢ, yᵢ)` with covariates of law `μX` and counts conditionally `NB(θ₀, exp (xᵢ ⬝ᵥ β₀))`
