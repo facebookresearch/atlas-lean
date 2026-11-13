@@ -25,6 +25,11 @@ example : selectionGreen 0 (1 / 2) (1 / 4) = 4 / 3 := by
   rw [selectionGreen_zero ⟨by norm_num, by norm_num⟩]
   norm_num [neutralGreen]
 
+/-- The general Green kernel at genic selection is the sojourn density (here `σ = 1`). -/
+example : greenFunction (fun x => 1 * x * (1 - x)) (fun x => x * (1 - x)) (1 / 2) (1 / 4) =
+    selectionGreen 1 (1 / 2) (1 / 4) :=
+  greenFunction_eq_selectionGreen 1 (by norm_num) (by norm_num)
+
 /-- The sojourn density with selection is positive in the interior (here `σ = 1`). -/
 example : 0 < selectionGreen 1 (1 / 2) (1 / 4) := by
   unfold selectionGreen

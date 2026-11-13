@@ -94,7 +94,7 @@ jobs:
 
       - name: Build the indexed libraries
         if: steps.tag.outputs.tagged == 'false'
-        run: lake build MathlibExt CSLibExt WantedExt
+        run: lake build MathlibExt CSLibExt PhyslibExt WantedExt
 
       - name: Install Autoform
         if: steps.tag.outputs.tagged == 'false'
@@ -107,7 +107,7 @@ jobs:
 
       - name: Write the index
         if: steps.tag.outputs.tagged == 'false'
-        run: autoform library index . --lib MathlibExt --lib CSLibExt --lib WantedExt --timeout 3600
+        run: autoform library index . --lib MathlibExt --lib CSLibExt --lib PhyslibExt --lib WantedExt --timeout 3600
 
       # The index digests the pin files as they are now; the tag must carry the same bytes.
       - name: Check that only the index changed

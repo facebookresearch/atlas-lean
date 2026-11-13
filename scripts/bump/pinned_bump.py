@@ -72,28 +72,41 @@ from __future__ import annotations
 
 import argparse
 import base64
+import contextlib
 import copy
+import difflib
 import hashlib
 import json
 import os
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import tomllib
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 FINAL_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)$")
 RC_RE = re.compile(r"^v(\d+)\.(\d+)\.(\d+)-rc(\d+)$")
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 PIN_FILES = ("lean-toolchain", "lakefile.toml", "lake-manifest.json")
+# Guard code: a pin-change PR must never touch these. pinned_deps.json
+# is deliberately NOT in this list: it is data, and a same-pin PR may
+# extend it monotonically (add a dependency at the current pin) so the
+# config stays in sync with the lakefile. Monotonic extension is checked
+# separately by check_config_extension: dependencies may only be added,
+# never removed or repointed.
+# The test module is deliberately NOT in this list either: adding a
+# dependency requires updating its hardcoded fixtures in the same PR.
+# Tests are not enforcement: the guard run executes base code, and a PR
+# that weakens its own tests still faces the guard's independent pin
+# validation plus normal review.
 GUARD_FILES = (
     ".github/workflows/bump-guard.yml",
     ".github/workflows/bump-pinned-release.yml",
     "scripts/bump/pinned_bump.py",
-    "scripts/bump/pinned_deps.json",
-    "scripts/bump/test_pinned_bump.py",
 )
+CONFIG_FILE = "scripts/bump/pinned_deps.json"
 
 
 def version_key(tag: str):
@@ -141,14 +154,228 @@ def _require_explicit_rc_target(target: str, *, allow_rc: bool) -> None:
         )
 
 
+_CONFIG_KEYS = {"toolchain_repo", "deps", "doc_replacements", "pin_policy", "migration_ledgers"}
+_DEP_KEYS = {"name", "repo"}
+_DOC_REPLACEMENT_KEYS = {"path", "pattern", "replacement"}
+_PIN_POLICY_KEYS = {"path", "replacements"}
+_PIN_REPLACEMENT_KEYS = {"pattern", "replacement"}
+
+
+def _is_safe_relative_path(value: object) -> bool:
+    """A config path must stay inside the repo and be safely downloadable.
+
+    Relative, no .., non-empty, and none of ? # & \\ % or control
+    characters: those would let a PR-controlled path alter the download
+    URL's query string (selecting a different file) or smuggle encoded
+    delimiters past the destination check. A path failing this can never
+    be downloaded by the guard workflow, so the schema rejects it rather
+    than letting it merge into an entry the monotonic policy then
+    blocks removing (a permanent brick).
+    """
+    if not isinstance(value, str) or not value:
+        return False
+    if any(ord(c) < 32 or ord(c) == 127 for c in value):
+        return False
+    if any(c in value for c in "?#&\\%"):
+        return False
+    # Shell-sensitive characters: config_paths emits space-delimited
+    # paths consumed by shell word splitting. A path with a space or
+    # glob character would split/expand into the wrong downloads, so
+    # such paths are rejected here rather than transported losslessly.
+    if any(c in value for c in " \t*?[]$`\"'!;|<> (){}~"):
+        return False
+    parts = PurePosixPath(value).parts
+    return not value.startswith("/") and ".." not in parts
+
+
+def validate_config_schema(config: dict, path: Path) -> None:
+    """Validate the complete pinned_deps.json schema.
+
+    Partial validation here bricked the workflow: a malformed
+    doc_replacements entry merged into the base config made the guard
+    workflow's own `e["path"]` read raise before the guard ran, blocking
+    every subsequent PR including a repair PR. Every field the guard,
+    the bot, or the workflow reads is validated, unknown keys are
+    rejected (config is bot-executed; every key must mean something
+    the code understands), and paths must be repo-relative.
+    """
+    if not isinstance(config, dict):
+        raise ValueError(f"bad config in {path}: expected an object")
+    unknown = sorted(set(config) - _CONFIG_KEYS)
+    if unknown:
+        raise ValueError(f"bad config in {path}: unknown top-level keys {unknown}")
+    toolchain_repo = config.get("toolchain_repo")
+    if not isinstance(toolchain_repo, str) or not toolchain_repo:
+        raise ValueError(f"bad config in {path}: toolchain_repo must be a non-empty string")
+    if not isinstance(config.get("deps"), list):
+        raise ValueError(f"bad config in {path}: deps must be a list")
+    for dep in config["deps"]:
+        if not isinstance(dep, dict) or sorted(set(dep) - _DEP_KEYS):
+            raise ValueError(f"bad dep entry in {path}: {dep!r}")
+        if not isinstance(dep.get("name"), str) or not dep.get("name"):
+            raise ValueError(f"bad dep entry in {path}: {dep!r}")
+        if not isinstance(dep.get("repo"), str) or not dep.get("repo"):
+            raise ValueError(f"bad dep entry in {path}: {dep!r}")
+    for entry in config.get("doc_replacements", []):
+        if not isinstance(entry, dict) or sorted(set(entry) - _DOC_REPLACEMENT_KEYS):
+            raise ValueError(f"bad doc_replacements entry in {path}: {entry!r}")
+        for key in ("path", "pattern", "replacement"):
+            if not isinstance(entry.get(key), str):
+                raise ValueError(
+                    f"bad doc_replacements entry in {path}: {key} must be a string: {entry!r}"
+                )
+        if not entry["pattern"]:
+            raise ValueError(f"bad doc_replacements entry in {path}: empty pattern: {entry!r}")
+        if not _is_safe_relative_path(entry["path"]):
+            raise ValueError(
+                f"bad doc_replacements entry in {path}: unsafe path {entry['path']!r}"
+            )
+    pin_policy = config.get("pin_policy")
+    if pin_policy is not None:
+        if not isinstance(pin_policy, dict) or sorted(set(pin_policy) - _PIN_POLICY_KEYS):
+            raise ValueError(f"bad pin_policy in {path}: {pin_policy!r}")
+        if not _is_safe_relative_path(pin_policy.get("path")):
+            raise ValueError(f"bad pin_policy in {path}: unsafe path {pin_policy.get('path')!r}")
+        if not isinstance(pin_policy.get("replacements"), list):
+            raise ValueError(f"bad pin_policy in {path}: replacements must be a list")
+        for replacement in pin_policy["replacements"]:
+            if not isinstance(replacement, dict) or sorted(
+                set(replacement) - _PIN_REPLACEMENT_KEYS
+            ):
+                raise ValueError(f"bad pin_policy replacement in {path}: {replacement!r}")
+            for key in ("pattern", "replacement"):
+                if not isinstance(replacement.get(key), str):
+                    raise ValueError(
+                        f"bad pin_policy replacement in {path}: {key} must be a string: "
+                        f"{replacement!r}"
+                    )
+            if not replacement["pattern"]:
+                raise ValueError(
+                    f"bad pin_policy replacement in {path}: empty pattern: {replacement!r}"
+                )
+    for ledger in config.get("migration_ledgers", []):
+        if not _is_safe_relative_path(ledger):
+            raise ValueError(
+                f"bad migration ledger in {path}: unsafe path {ledger!r}"
+            )
+
+
 def load_config(root: Path) -> dict:
     path = Path(__file__).resolve().parent / "pinned_deps.json"
     with open(path, encoding="utf-8") as f:
         config = json.load(f)
-    for dep in config["deps"]:
-        if not dep.get("name") or not dep.get("repo"):
-            raise ValueError(f"bad dep entry in {path}: {dep!r}")
+    validate_config_schema(config, path)
     return config
+
+
+def load_config_file(path: Path) -> dict:
+    """Parse a pinned_deps.json at an explicit path (PR data, not code).
+
+    Used by the guard to read the PR tree's config: the PR may extend it,
+    so the base code's config alone cannot describe the PR tree.
+    """
+    with open(path, encoding="utf-8") as f:
+        config = json.load(f)
+    validate_config_schema(config, path)
+    return config
+
+
+def _mentions_dep(entry: dict, dep_name: str) -> bool:
+    text = json.dumps(entry, sort_keys=True)
+    return dep_name in text
+
+
+def _rule_identity(kind: str, path: str, entry: dict) -> tuple[str, str, str, str]:
+    """Exact identity of a replacement rule, for the repair allowance.
+
+    A removal is a repair only for the very rule the simulation showed
+    broken. Keying by regex alone would let a healthy rule that shares
+    the broken rule's pattern (same file, another file, or the other
+    rule kind) be removed with it.
+    """
+    return (kind, path, entry["pattern"], entry["replacement"])
+
+
+def check_config_extension(
+    base_config: dict, pr_config: dict,
+    allow_removed_rules: frozenset[tuple[str, str, str, str]] | None = None,
+) -> list[str]:
+    """Validate that a PR's config only extends the base config.
+
+    Allowed: adding a dependency at the current pin (name + repo), adding
+    doc/pin-policy replacements, adding migration ledgers, and removing a
+    replacement rule whose exact identity (_rule_identity) is in
+    allow_removed_rules (a rule the forward simulation shows cannot
+    apply at the next bump: keeping it bricks the bump, so removing it
+    is a repair, not a weakening).
+    Never allowed: changing the toolchain repo, repointing an existing
+    dependency at another repo, removing a dependency, or removing/
+    changing any other entry (that could silently weaken future bump
+    validation). Dependency removal has no guarded path here: it needs
+    a guard-code change with its own review first, so a same-pin PR can
+    never silently drop a pinned dependency. The removed-dep carve-outs
+    below only keep the failure message focused on the removal itself.
+    A config change in a bump PR is rejected separately by cmd_guard:
+    extension must land in a same-pin PR first.
+    """
+    problems: list[str] = []
+    allowed = allow_removed_rules or frozenset()
+    if pr_config.get("toolchain_repo") != base_config.get("toolchain_repo"):
+        problems.append(
+            "pinned_deps.json: toolchain_repo changed; the config may only gain entries"
+        )
+    base_deps = {d["name"]: d for d in base_config.get("deps", [])}
+    pr_deps = {d["name"]: d for d in pr_config.get("deps", [])}
+    if len(pr_deps) != len(pr_config.get("deps", [])):
+        problems.append("pinned_deps.json: duplicate dependency names")
+    removed_deps = set(base_deps) - set(pr_deps)
+    if removed_deps:
+        problems.append(
+            "pinned_deps.json: dependencies removed "
+            f"({sorted(removed_deps)}); the config may only gain deps, never drop one"
+        )
+    for name, dep in base_deps.items():
+        if name in pr_deps and pr_deps[name] != dep:
+            problems.append(
+                f"pinned_deps.json: pinned dep {name} changed repo; "
+                "the config may only gain new deps, never repoint one"
+            )
+    for entry in base_config.get("doc_replacements", []):
+        if entry not in pr_config.get("doc_replacements", []):
+            if _rule_identity("doc_replacements", entry["path"], entry) in allowed:
+                continue  # repair: the rule cannot apply at the next bump
+            if not any(_mentions_dep(entry, d) for d in removed_deps):
+                problems.append(
+                    "pinned_deps.json: doc_replacements entry removed or changed; "
+                    "only additions (or entries mentioning a removed dep) are allowed"
+                )
+    base_pp = base_config.get("pin_policy")
+    pr_pp = pr_config.get("pin_policy")
+    if base_pp is not None:
+        if pr_pp is None or pr_pp.get("path") != base_pp.get("path"):
+            problems.append(
+                "pinned_deps.json: pin_policy removed or repointed; only additions allowed"
+            )
+        else:
+            for replacement in base_pp.get("replacements", []):
+                if replacement not in pr_pp.get("replacements", []):
+                    if _rule_identity("pin_policy", base_pp["path"], replacement) in allowed:
+                        continue  # repair: the rule cannot apply at the next bump
+                    if not any(_mentions_dep(replacement, d) for d in removed_deps):
+                        problems.append(
+                            "pinned_deps.json: pin_policy replacement removed or changed; "
+                            "only additions (or entries mentioning a removed dep) are allowed"
+                        )
+    # migration_ledgers must be unchanged, not merely append-only:
+    # apply_pin_edits requires exactly two entries, so a third ledger
+    # passing the guard would disable all subsequent automated bumps.
+    # Adding a ledger needs the ledger consumers generalized first.
+    if pr_config.get("migration_ledgers", []) != base_config.get("migration_ledgers", []):
+        problems.append(
+            "pinned_deps.json: migration_ledgers changed; the field must stay "
+            "unchanged (apply_pin_edits supports exactly two entries)"
+        )
+    return problems
 
 
 def prepared_files(config: dict) -> list[str]:
@@ -800,7 +1027,1076 @@ def lakefile_requires(root: Path) -> list[dict]:
     requires = load_lakefile(root).get("require", [])
     if not isinstance(requires, list):
         raise ValueError("lakefile.toml [[require]] is not a list")
+    # Duplicate names must fail here, not in one caller: current_tag
+    # stores revs in a dict where the last duplicate wins, and the
+    # same-pin/config-only paths never call normalized_lakefile (the
+    # only other duplicate check). A shadowed entry (e.g. mathlib at
+    # v9.99.99 before the real v4.35.0 entry) otherwise passes the guard.
+    # Malformed entries must fail cleanly (ValueError, caught by the
+    # guard) rather than crashing later on .get (AttributeError):
+    # every [[require]] is a table with a string name.
+    for entry in requires:
+        if not isinstance(entry, dict) or not isinstance(entry.get("name"), str):
+            raise ValueError(
+                "lakefile.toml [[require]] entries must be tables with a string name"
+            )
+    names = [entry.get("name") for entry in requires if isinstance(entry, dict)]
+    dups = sorted({n for n in names if names.count(n) > 1})
+    if dups:
+        raise ValueError(f"lakefile.toml has duplicate [[require]] names: {dups}")
     return requires
+
+
+def check_lakefile_sources(
+    base: Path, pr: Path, base_config: dict, pr_config: dict, tag: str,
+) -> list[str]:
+    """Same-pin lakefile check: names and revs are not enough.
+
+    Existing requires must be unchanged except rev: scope/git/path (or
+    any other field) repointing would fetch different code on the next
+    `lake update` while names and revs still match. New requires must
+    use an explicit `git` URL equal to the configured repo. A `scope`
+    is NOT accepted for a new dependency: scope alone proves only the
+    organization, not the exact repository -- a scoped Physlib with
+    scope leanprover-community could resolve (via the package registry)
+    to a different repo than the configured one, while the
+    author-controlled manifest is made consistent with the configured
+    repo. The guard cannot resolve scoped packages exactly, so new
+    dependencies must state their repository explicitly; existing
+    scoped requires are grandfathered by the unchanged-entry check.
+    `path` (local, unpinned) or a sourceless require is rejected. The
+    bump path does not need this: normalized_lakefile compares the
+    whole document there.
+    """
+    problems: list[str] = []
+    try:
+        base_reqs = {e["name"]: e for e in lakefile_requires(base)}
+        pr_reqs = {e["name"]: e for e in lakefile_requires(pr)}
+    except ValueError as exc:
+        return [str(exc)]
+    pr_deps = {d["name"]: d for d in pr_config["deps"]}
+    for name, entry in base_reqs.items():
+        pr_entry = pr_reqs.get(name)
+        if pr_entry is None:
+            continue  # removal is caught by the require-names check
+        if dict(entry, rev=tag) != dict(pr_entry, rev=tag):
+            problems.append(
+                f"lakefile.toml require {name} changed fields other than rev "
+                f"(base {dict(entry, rev=tag)} vs PR {dict(pr_entry, rev=tag)}); "
+                "a source change needs a guard-code change with its own review"
+            )
+    for name, entry in pr_reqs.items():
+        if name in base_reqs:
+            continue
+        dep = pr_deps.get(name)
+        if dep is None:
+            continue  # caught by the require-names check
+        extra_fields = sorted(set(entry) - {"name", "git", "rev"})
+        if extra_fields:
+            problems.append(
+                f"lakefile.toml require {name} has unsupported fields {extra_fields}; "
+                "new dependencies may specify only name, git, and rev"
+            )
+        if "path" in entry:
+            problems.append(
+                f"lakefile.toml require {name} uses a local path; "
+                "path dependencies are unpinned and not allowed"
+            )
+        elif "scope" in entry:
+            problems.append(
+                f"lakefile.toml require {name} uses scope {entry['scope']!r}; "
+                "new dependencies must use an explicit git URL matching the "
+                f"configured repo {dep['repo']!r} (scope proves only the org, "
+                "not the exact repository)"
+            )
+        elif "git" in entry:
+            url = str(entry["git"]).rstrip("/").removesuffix(".git")
+            if url != f"https://github.com/{dep['repo']}":
+                problems.append(
+                    f"lakefile.toml require {name} git {entry['git']!r} != "
+                    f"configured repo {dep['repo']!r}"
+                )
+        else:
+            problems.append(
+                f"lakefile.toml require {name} has no git source; "
+                "its origin cannot be verified against the configured repo"
+            )
+    return problems
+
+
+_PLACEHOLDER_RE = re.compile(r"\{([^{}]*)\}")
+
+
+def _validate_replacement_placeholders(entry: dict, dep_names: set[str], groups: int) -> list[str]:
+    """Every {…} in a replacement must resolve at bump time.
+
+    {target} and {sha:NAME} (NAME a configured dep) are resolved by
+    apply_replacements_to_text; {gN} is resolved only for N up to the
+    pattern's group count (a larger N stays literal in the output, a
+    silent misfire). Anything else passes through literally, so it is
+    rejected: a replacement rule must mean exactly what it says.
+    """
+    problems: list[str] = []
+    for placeholder in _PLACEHOLDER_RE.findall(entry["replacement"]):
+        if placeholder == "target":
+            continue
+        if placeholder.startswith("sha:"):
+            if placeholder[4:] not in dep_names:
+                problems.append(
+                    f"replacement {entry['replacement']!r} references unknown dep "
+                    f"{placeholder[4:]!r} in {{sha:…}}"
+                )
+            continue
+        if placeholder.startswith("g") and placeholder[1:].isdigit():
+            # Canonical form only: {g01} passes the numeric check but
+            # apply_replacements_to_text substitutes exactly {g1}, so
+            # {g01} would stay literal in the output.
+            if placeholder[1:] != str(int(placeholder[1:])) or int(placeholder[1:]) > groups:
+                problems.append(
+                    f"replacement {entry['replacement']!r} references {{{placeholder}}}; "
+                    "group placeholders must be canonical ({g1}, not {g01}) "
+                    f"and within the pattern's {groups} groups"
+                )
+            continue
+        problems.append(
+            f"replacement {entry['replacement']!r} has unknown placeholder "
+            f"{{{placeholder}}}"
+        )
+    return problems
+
+
+def _forward_tag(tag: str) -> str | None:
+    """A synthetic next tag with every component changed and widened.
+
+    Chained simulations must exercise digit-width boundaries as well as
+    changed values: incrementing v4.35.0 to v5.36.1 leaves fixed-width
+    patterns untested. Multiplying each incremented component by ten
+    grows every width, including zero-valued components.
+    """
+    m = FINAL_RE.match(tag)
+    if not m:
+        return None
+    return "v" + ".".join(str((int(part) + 1) * 10) for part in m.groups())
+
+
+_LITERAL_VERSION_RE = re.compile(r"v\d+\.\d+(?:\.\d+)?")
+_LITERAL_SHA_RE = re.compile(r"[0-9a-f]{40}")
+
+
+_PATTERN_LITERAL_VERSION_RE = re.compile(r"v\d+\.\d+(?:\.\d+)?|\d+\.\d+\.\d+")
+_PATTERN_LITERAL_SHA_RE = re.compile(r"[0-9a-f]{40}")
+
+
+def _pattern_literal_stream(pattern: str) -> str:
+    """Literal characters of a regex pattern, for structural checks.
+
+    Walks the pattern emitting only characters that match literally:
+    regex operators, quantifiers, and character-class contents are
+    skipped, escaped punctuation is emitted as the punctuation, and a
+    single-character class such as [.] emits its char (so [.] cannot
+    be used to hide a literal dot). Class escapes (\\d) and
+    backreferences (\\1) are not literal. An alternation of literal
+    versions therefore still yields the literal versions in the stream,
+    while a version class yields only 'v..'.
+    """
+    out: list[str] = []
+    i, n = 0, len(pattern)
+    while i < n:
+        c = pattern[i]
+        if c == "\\" and i + 1 < n:
+            nxt = pattern[i + 1]
+            if nxt.isdigit() or nxt in "dDsSwWbB0AZzG":
+                i += 2
+                continue
+            out.append(nxt)
+            i += 2
+            continue
+        if c == "[":
+            j = i + 1
+            if j < n and pattern[j] == "^":
+                j += 1
+            k = j
+            if k < n and pattern[k] == "]":
+                k += 1
+            while k < n and pattern[k] != "]":
+                if pattern[k] == "\\":
+                    k += 1
+                k += 1
+            content = pattern[j:k] if k < n else ""
+            if len(content) == 1:
+                out.append(content)
+            elif len(content) == 2 and content[0] == "\\":
+                out.append(content[1])
+            elif len(content) == 3 and content[1] == "-" and content[0] == content[2]:
+                out.append(content[0])
+            i = (k + 1) if k < n else n
+            continue
+        if c == "{":
+            # Skip a quantifier {m,n}; a non-quantifier brace is literal.
+            j = pattern.find("}", i + 1)
+            inside = pattern[i + 1 : j] if j >= 0 else ""
+            if j >= 0 and all(ch.isdigit() or ch == "," for ch in inside) and inside:
+                i = j + 1
+                continue
+            out.append(c)
+            i += 1
+            continue
+        if c in "()|*+?^$.":
+            i += 1
+            continue
+        if c == "#" and i >= 2 and pattern[i - 2 : i] == "(?":
+            # (?#...) comment: skip to the closing paren.
+            j = pattern.find(")", i + 1)
+            i = (j + 1) if j >= 0 else n
+            continue
+        out.append(c)
+        i += 1
+    return "".join(out)
+
+
+def _validate_pattern_literals(entry: dict) -> list[str]:
+    """A pattern must not hardcode a literal version or SHA.
+
+    Chained simulation uses a fixed finite tag sequence, so an
+    alternation enumerating exactly the simulated tags
+    ((?:v4\\.35\\.0|v5\\.36\\.1|v6\\.37\\.2)) passes it but blocks the
+    first real bump to an unlisted tag. Version/SHA patterns must use
+    classes (v[0-9]+..., [0-9a-f]{40}), never literals.
+    """
+    stream = _pattern_literal_stream(entry["pattern"])
+    problems: list[str] = []
+    m = _PATTERN_LITERAL_VERSION_RE.search(stream)
+    if m:
+        problems.append(
+            f"pattern {entry['pattern']!r} contains literal version {m.group(0)!r}; "
+            "use a version class instead"
+        )
+    m = _PATTERN_LITERAL_SHA_RE.search(stream)
+    if m:
+        problems.append(
+            f"pattern {entry['pattern']!r} contains a literal SHA; "
+            "use [0-9a-f]{40} instead"
+        )
+    return problems
+
+
+_CLASS_DIGITS = set("0123456789")
+_CLASS_HEX = set("0123456789abcdefABCDEF")
+# A SHA class is generic if it covers all lowercase, all uppercase, or
+# all hex chars; anything else (e.g. [0-9], [a-f]) pins the SHA.
+_CLASS_HEX_APPROVED = frozenset([
+    frozenset("0123456789abcdef"),
+    frozenset("0123456789ABCDEF"),
+    frozenset(_CLASS_HEX),
+])
+
+# What a class escape can match: (digits, hex chars, can-match-dot).
+_CLASS_ESCAPE_SETS = {
+    "d": (_CLASS_DIGITS, _CLASS_DIGITS, False),
+    "D": (set(), set("abcdefABCDEF"), True),
+    "w": (_CLASS_DIGITS, _CLASS_HEX, False),
+    "W": (set(), set(), True),
+    "s": (set(), set(), False),
+    "S": (_CLASS_DIGITS, _CLASS_HEX, True),
+}
+
+
+def _parse_class(pattern: str, i: int):
+    """Parse a [...] class at pattern[i]; return (digits, hex, dot, end, ok).
+
+    Computes the digits, hex chars, and dot-matching ability of the
+    class. Returns ok=False for syntax this parser cannot enumerate
+    (the syntax check flags those patterns separately).
+    """
+    n = len(pattern)
+    j = i + 1
+    negated = False
+    if j < n and pattern[j] == "^":
+        negated = True
+        j += 1
+    chars: set[str] = set()
+    digits: set[str] = set()
+    hexes: set[str] = set()
+    dot = False
+
+    def read_atom(k: int):
+        """One class atom: (char-or-None, escape-or-None, next-index, ok)."""
+        if k >= n:
+            return None, None, k, False
+        if pattern[k] == "\\" and k + 1 < n:
+            esc = pattern[k + 1]
+            if esc in _CLASS_ESCAPE_SETS:
+                return None, esc, k + 2, True
+            if esc in "b":  # backspace in a class
+                return "\b", None, k + 2, True
+            if esc in "nrtfav":
+                return {"n": "\n", "r": "\r", "t": "\t", "f": "\f",
+                        "a": "\a", "v": "\v"}[esc], None, k + 2, True
+            if not esc.isalnum():
+                return esc, None, k + 2, True
+            return None, None, k, False
+        return pattern[k], None, k + 1, True
+
+    if j < n and pattern[j] == "]":  # leading ] is literal
+        chars.add("]")
+        j += 1
+    while j < n and pattern[j] != "]":
+        atom, esc, j, ok = read_atom(j)
+        if not ok:
+            return set(), set(), False, n, False
+        if esc is not None:
+            d, h, dot_esc = _CLASS_ESCAPE_SETS[esc]
+            digits |= d
+            hexes |= h
+            dot = dot or dot_esc
+            continue
+        # Possible range: <char> - <char>.
+        if j < n and pattern[j] == "-" and j + 1 < n and pattern[j + 1] != "]":
+            end_atom, end_esc, j, ok = read_atom(j + 1)
+            if not ok or end_esc is not None or end_atom is None:
+                return set(), set(), False, n, False
+            if ord(atom) > ord(end_atom) or ord(end_atom) - ord(atom) > 100000:
+                return set(), set(), False, n, False
+            for code in range(ord(atom), ord(end_atom) + 1):
+                chars.add(chr(code))
+            continue
+        chars.add(atom)
+    if j >= n:
+        return set(), set(), False, n, False
+    digits |= chars & _CLASS_DIGITS
+    hexes |= chars & _CLASS_HEX
+    dot = dot or ("." in chars)
+    if negated:
+        return _CLASS_DIGITS - digits, _CLASS_HEX - hexes, not dot, j + 1, True
+    return digits, hexes, dot, j + 1, True
+
+
+def _hex_run_pins(pattern: str) -> bool:
+    """True if a SHA-shaped run of hex atoms fixes some of its characters.
+
+    A run is a sequence of adjacent atoms that match only hex-capable,
+    non-punctuation characters (groups and anchors are transparent;
+    alternation and any other atom end it). A run is SHA-shaped if it
+    contains a generic hex atom ([0-9a-f], \\w) or is at least 40
+    characters wide. In such a run, a partial hex class ([8ac], \\d) or
+    a literal hex character pins those SHA characters: the literal
+    {40} check misses split widths such as [8ac][0-9a-f]{39}, which
+    match the simulated SHAs but fail future SHAs with other prefixes.
+    """
+    flagged = False
+    run_full = run_partial = False
+    run_min = 0
+
+    def close() -> None:
+        nonlocal flagged, run_full, run_partial, run_min
+        if run_partial and (run_full or run_min >= 40):
+            flagged = True
+        run_full = run_partial = False
+        run_min = 0
+
+    i, n = 0, len(pattern)
+    while i < n:
+        c = pattern[i]
+        if c == "\\" and i + 1 < n:
+            esc = pattern[i + 1]
+            i += 2
+            if esc in "bBAZ":
+                continue  # zero-width
+            if esc in _CLASS_ESCAPE_SETS:
+                _d, hexes, wide = _CLASS_ESCAPE_SETS[esc]
+            else:
+                hexes, wide = set(), False  # escaped punctuation, \\n, \\t, ...
+        elif c == "[":
+            _d, hexes, wide, end, ok = _parse_class(pattern, i)
+            i = end
+            if not ok:
+                close()
+                continue
+        elif c == "(":
+            i += 3 if pattern.startswith("(?:", i) else 1
+            continue
+        elif c in ")^$*+?":
+            i += 1  # group ends, anchors, and group quantifiers
+            continue
+        elif c == "|":
+            close()
+            i += 1
+            continue
+        elif c == "{" and re.match(r"\{\d+(?:,\d*)?\}", pattern[i:]):
+            i = pattern.index("}", i) + 1  # quantifier on a group
+            continue
+        elif c == ".":
+            hexes, wide = set(_CLASS_HEX), True
+            i += 1
+        else:
+            hexes, wide = {c} & _CLASS_HEX, False
+            i += 1
+        low = 1
+        quant = re.match(r"\{(\d+)(?:,\d*)?\}|[*+?]", pattern[i:])
+        if quant:
+            if quant.group(1) is not None:
+                low = int(quant.group(1))
+            elif quant.group(0) in "*?":
+                low = 0
+            i += len(quant.group(0))
+            if i < n and pattern[i] == "?":
+                i += 1  # lazy
+        if not hexes or wide:
+            close()
+            continue
+        if frozenset(hexes) in _CLASS_HEX_APPROVED:
+            run_full = True
+        else:
+            run_partial = True
+        run_min += low
+    close()
+    return flagged
+
+
+def _validate_class_pinning(pattern: str, *, sha_rule: bool = False) -> list[str]:
+    """Character classes must be generic, not finite tag encodings.
+
+    The literal-stream check discards class contents, so a class-encoded
+    tag list such as v[04]\\.[03][05]\\.[09] evades it while matching
+    exactly the simulated tags. A class that matches some but not all
+    digits pins the digit (and likewise for hex in a SHA rule or {40} pattern).
+    SHA rules reject partial hex classes even next to wildcard atoms, since
+    those can hide a tailored prefix from the hex-run check. Generic rules
+    use [0-9] / [0-9a-f]. Negated and escape classes that match all
+    digits/hex pass.
+    """
+    classes: list[tuple[set[str], set[str], bool]] = []
+    dot_atom = False
+    has_40 = False
+    i, n = 0, len(pattern)
+    while i < n:
+        c = pattern[i]
+        if c == "\\" and i + 1 < n:
+            esc = pattern[i + 1]
+            if esc in "DWS" or esc == ".":
+                dot_atom = True
+            i += 2
+            continue
+        if c == "[":
+            digits, hexes, dot, end, ok = _parse_class(pattern, i)
+            if ok:
+                classes.append((digits, hexes, dot))
+                dot_atom = dot_atom or dot
+            i = end
+            continue
+        if c == ".":
+            dot_atom = True
+            i += 1
+            continue
+        if c == "{":
+            j = pattern.find("}", i + 1)
+            inside = pattern[i + 1 : j] if j >= 0 else ""
+            if j >= 0 and (inside == "40" or inside.startswith("40,")):
+                has_40 = True
+            i = (j + 1) if j >= 0 else n
+            continue
+        i += 1
+    problems: list[str] = []
+    for digits, hexes, _dot in classes:
+        if dot_atom and digits and digits != _CLASS_DIGITS:
+            problems.append(
+                f"pattern {pattern!r} has a character class matching only "
+                f"digits {''.join(sorted(digits))!r}; use [0-9] for a generic digit"
+            )
+        if (sha_rule or has_40) and hexes and frozenset(hexes) not in _CLASS_HEX_APPROVED:
+            problems.append(
+                f"pattern {pattern!r} has a character class matching only "
+                "some hex characters in a SHA pattern; use [0-9a-f]"
+            )
+    if _hex_run_pins(pattern):
+        problems.append(
+            f"pattern {pattern!r} fixes some characters of a SHA-shaped hex run "
+            "with a partial hex class or literal hex; use [0-9a-f]{40}"
+        )
+    return problems
+
+
+def _validate_replacement_literals(entry: dict) -> list[str]:
+    """A replacement must not hardcode a version or SHA as literal text.
+
+    {target} / {sha:NAME} / {gN} placeholders are the only way to emit
+    versions and SHAs. A literal v4.35.0 or 40-hex SHA in a replacement
+    goes stale at the next bump (and, listed after the generic rules,
+    actively reverts their output to the old tag).
+    """
+    stripped = _PLACEHOLDER_RE.sub("", entry["replacement"])
+    problems: list[str] = []
+    m = _LITERAL_VERSION_RE.search(stripped)
+    if m:
+        problems.append(
+            f"replacement {entry['replacement']!r} hardcodes version {m.group(0)!r}; "
+            "use {target} instead"
+        )
+    m = _LITERAL_SHA_RE.search(stripped)
+    if m:
+        problems.append(
+            f"replacement {entry['replacement']!r} hardcodes SHA {m.group(0)!r}; "
+            "use {sha:NAME} instead"
+        )
+    return problems
+
+
+def _written_regions(original: str, current: str) -> list[tuple[int, int]]:
+    """(start, end) spans of `current` that differ from `original`."""
+    matcher = difflib.SequenceMatcher(a=original, b=current, autojunk=False)
+    return [
+        (b_start, b_end)
+        for tag, _, _, b_start, b_end in matcher.get_opcodes()
+        if tag != "equal"
+    ]
+
+
+_NORMALIZE_VERSION_RE = re.compile(r"(?<![A-Za-z0-9_])v?\d+\.\d+(?:\.\d+)?")
+_NORMALIZE_SHA_RE = re.compile(r"(?<![0-9a-f])[0-9a-f]{40}(?![0-9a-f])")
+
+
+def _normalize_versions_shas(text: str) -> str:
+    """Text with every version and SHA replaced by a placeholder.
+
+    Two texts that differ only in version/SHA values normalize equal.
+    A rule that rewrites anything else (e.g. executable code) shows
+    up as a normalize difference.
+    """
+    text = _NORMALIZE_VERSION_RE.sub("V", text)
+    text = _NORMALIZE_SHA_RE.sub("S", text)
+    return text
+
+
+def _changed_tokens_valid(
+    before: str, after: str, target: str, shas: dict[str, str],
+    entry: dict, prev_shas: dict[str, str] | None,
+) -> bool:
+    """Changed version/SHA tokens must equal the transition target / SHAs.
+
+    Normalizing values away proves only that a rule changed
+    version-shaped text. A permutation rule (v{g3}.{g2}.{g1}) passes
+    that check yet writes the wrong version at a bump, and the guard
+    derives its expected document with the same rule, so it approves
+    the incorrect result. A rule may only rewrite a token to the
+    transition target (versions) or a resolved SHA for that transition
+    (SHAs); token insertions/deletions also fail.
+
+    A changed SHA is bound to the rule's dependency: the replacement
+    must name exactly one {sha:NAME}, and the new token must be NAME's
+    SHA. Otherwise a rule rewriting the Physlib assertion with
+    {sha:mathlib} would pass, since Mathlib's SHA is a valid value.
+    prev_shas are the SHAs the tree carries before this transition
+    (None if unknown): an old token equal to one of them must be
+    NAME's, so a rule cannot rewrite another dependency's SHA. At the
+    current tag prev_shas is the transition's own SHAs, so a token
+    already at a current SHA must stay unchanged.
+    """
+    before_versions = [m.group(0) for m in _NORMALIZE_VERSION_RE.finditer(before)]
+    after_versions = [m.group(0) for m in _NORMALIZE_VERSION_RE.finditer(after)]
+    if len(before_versions) != len(after_versions):
+        return False
+    for old, new in zip(before_versions, after_versions):
+        if old != new and new != target:
+            return False
+    before_shas = [m.group(0) for m in _NORMALIZE_SHA_RE.finditer(before)]
+    after_shas = [m.group(0) for m in _NORMALIZE_SHA_RE.finditer(after)]
+    if len(before_shas) != len(after_shas):
+        return False
+    changed = [(old, new) for old, new in zip(before_shas, after_shas) if old != new]
+    if not changed:
+        return True
+    names = {
+        placeholder[4:]
+        for placeholder in _PLACEHOLDER_RE.findall(entry["replacement"])
+        if placeholder.startswith("sha:")
+    }
+    if len(names) != 1:
+        return False
+    (name,) = names
+    for old, new in changed:
+        if name not in shas or new != shas[name]:
+            return False
+        if prev_shas is not None and old in prev_shas.values() \
+                and old != prev_shas.get(name):
+            return False
+    return True
+
+
+def _rule_interferes(pattern: str, text: str, written: list[tuple[int, int]]) -> bool:
+    """True if the pattern matches text an earlier rule already wrote.
+
+    An added rule operating on an earlier rule's output can undo it
+    while every regex still matches (e.g. rewriting the generic rule's
+    forward tag back to the old tag, or scrambling version components).
+    Added rules must match original text, not earlier rules' outputs.
+    """
+    try:
+        rx = re.compile(pattern)
+    except re.error:
+        return False  # compile errors are reported elsewhere
+    for m in rx.finditer(text):
+        if m.start() == m.end():
+            # Zero-width match: the insertion point itself counts.
+            # A lookbehind anchored inside a written span (e.g. inserting
+            # "0" after the first digit of a badge) must count even
+            # though the match has no width; points at either edge of a
+            # written span are treated as inside it.
+            if any(start <= m.start() <= end for (start, end) in written):
+                return True
+        elif any(m.start() < end and start < m.end() for (start, end) in written):
+            return True
+    return False
+
+
+def _transition_shas(deps: list[dict], label: str) -> dict[str, str]:
+    """Deterministic fake SHAs for a forward simulation transition.
+
+    Each transition needs SHAs distinct from the current tag's (and
+    from other transitions'): a literal-SHA pattern matching the
+    current SHA must fail on the next transition, while class patterns
+    ([0-9a-f]{40}) still match.
+    """
+    return {
+        # 40 hex chars, like a real commit SHA: patterns match exactly
+        # 40 hex followed by a delimiter, so a 64-char digest would
+        # break every SHA rule (the 41st char is hex, not the delimiter).
+        dep["name"]: hashlib.sha256(
+            f"guard-forward-{label}-{dep['name']}".encode()
+        ).hexdigest()[:40]
+        for dep in deps
+    }
+
+
+def _failing_rules(
+    entries: list[dict], text: str,
+    transitions: list[tuple[str, dict[str, str]]], dep_names: set[str],
+    kind: str, path: str,
+) -> set[tuple[str, str, str, str]]:
+    """Identities (_rule_identity) of entries that cannot apply, across
+    chained transitions.
+
+    Covers per-entry failures (invalid regex, bad placeholders, hardcoded
+    literals) plus the first sequential-simulation failure, attributed
+    to its entry via the error message (which names the failing pattern /
+    replacement). Later entries are untested after a failure: a repair
+    PR removes one broken rule at a time, and sequential repairs converge.
+    Transitions chain: each bump applies the list to the previous bump's
+    output, so one-use patterns (literal version/SHA, consumed by their
+    own replacement) fail on the second transition.
+    """
+    failed: set[tuple[str, str, str, str]] = set()
+    for entry in entries:
+        if _static_rule_problems(entry, dep_names):
+            failed.add(_rule_identity(kind, path, entry))
+    current = text
+    # The first transition starts from the base tree's current SHAs,
+    # which are not resolved here; later ones start from the previous
+    # transition's SHAs.
+    prev_shas: dict[str, str] | None = None
+    for target, shas in transitions:
+        for entry in entries:
+            before = current
+            try:
+                current = apply_replacements_to_text(current, [entry], target, shas)
+            except (ValueError, re.error):
+                failed.add(_rule_identity(kind, path, entry))
+                break
+            if _normalize_versions_shas(before) != _normalize_versions_shas(current) \
+                    or not _changed_tokens_valid(
+                        before, current, target, shas, entry, prev_shas):
+                failed.add(_rule_identity(kind, path, entry))
+        prev_shas = shas
+    return failed
+
+
+def _resolve_shas(client: GitHub, deps: list[dict], tag: str) -> tuple[dict[str, str], list[str]]:
+    shas: dict[str, str] = {}
+    problems: list[str] = []
+    for dep in deps:
+        sha = client.tag_sha(dep["repo"], tag)
+        if sha is None:
+            problems.append(f"could not resolve tag SHA for {dep['name']} {tag}")
+        else:
+            shas[dep["name"]] = sha
+    return shas, problems
+
+
+def _validate_pattern_syntax(pattern: str) -> list[str]:
+    """Restrict rules to syntax the literal and match-span checks can inspect.
+
+    Encoded characters and backreferences can hide version literals.
+    Lookarounds read outside the match span, so overlap checks cannot
+    establish their independence from earlier replacements. Only ordinary
+    captures and noncapturing groups are supported; extended group syntax
+    (including inline flags) is rejected.
+    """
+    problems: list[str] = []
+    for token in re.finditer(r"\\[\s\S]|\(\?", pattern):
+        text = token.group()
+        if text.startswith("\\"):
+            escape = text[1]
+            if escape.isalnum() and escape not in "dDsSwWbBAZfnrtv":
+                problems.append(
+                    f"pattern {pattern!r} uses unsupported escape {text!r}; "
+                    "use literal characters or character classes"
+                )
+        elif not pattern.startswith("(?:", token.start()):
+            problems.append(
+                f"pattern {pattern!r} uses unsupported group syntax; "
+                "only captures and (?:...) groups are allowed, not lookarounds"
+            )
+    return problems
+
+
+class _RegexTimeout(TimeoutError):
+    """Regex simulation exceeded its time budget (possible ReDoS)."""
+
+
+@contextlib.contextmanager
+def _regex_timeout(seconds: float):
+    """Bound PR-controlled regex execution with SIGALRM.
+
+    Python's backtracking engine has no per-match timeout, so a
+    catastrophic pattern (e.g. (a+)+$) would otherwise occupy the
+    trusted pull_request_target runner until the workflow timeout.
+    The alarm is set only around pure regex simulation (SHAs are
+    resolved beforehand, so no network call is interrupted). On
+    platforms without setitimer, or outside the main thread, the
+    context manager is a no-op (caps still apply).
+    """
+    if seconds <= 0 or not hasattr(signal, "setitimer"):
+        yield
+        return
+
+    def handler(signum: int, frame) -> None:
+        raise _RegexTimeout(f"regex simulation exceeded {seconds}s budget")
+
+    try:
+        old_handler = signal.signal(signal.SIGALRM, handler)
+    except (ValueError, RuntimeError, OSError):
+        yield
+        return
+    signal.setitimer(signal.ITIMER_REAL, seconds)
+    try:
+        yield
+    finally:
+        signal.setitimer(signal.ITIMER_REAL, 0)
+        try:
+            signal.signal(signal.SIGALRM, old_handler)
+        except (ValueError, RuntimeError, OSError):
+            pass
+
+
+def _static_rule_problems(entry: dict, dep_names: set[str]) -> list[str]:
+    """Per-entry static checks: supported syntax, placeholders, and literals."""
+    problems: list[str] = []
+    if len(entry["pattern"]) > 1000:
+        problems.append(
+            f"replacement pattern is {len(entry['pattern'])} chars, over the 1000-char cap"
+        )
+        return problems
+    problems.extend(_validate_replacement_literals(entry))
+    try:
+        groups = re.compile(entry["pattern"]).groups
+    except re.error as exc:
+        problems.append(f"replacement pattern {entry['pattern']!r} is not a valid regex: {exc}")
+        return problems
+    problems.extend(_validate_pattern_syntax(entry["pattern"]))
+    problems.extend(_validate_replacement_placeholders(entry, dep_names, groups))
+    problems.extend(_validate_pattern_literals(entry))
+    problems.extend(_validate_class_pinning(
+        entry["pattern"], sha_rule=any(
+            placeholder.startswith("sha:")
+            for placeholder in _PLACEHOLDER_RE.findall(entry["replacement"])),
+    ))
+    return problems
+
+
+def _simulate_file_rules(
+    entries: list[dict], base_entries: list[dict], original: str,
+    transitions: list[tuple[str, dict[str, str]]], dep_names: set[str],
+    label: str,
+) -> list[str]:
+    """Validate one file's rule list across chained transitions.
+
+    Static checks run for every entry. Transitions chain: each bump
+    applies the rules to the previous bump's output, so one-use rules
+    fail on the second transition. Within a bump, rules apply one at a
+    time, in order (exactly apply_replacements_to_text's semantics):
+    before applying an ADDED rule, its pattern must not match text an
+    earlier rule already wrote -- an added rule operating on earlier
+    output can undo it while every regex still matches.
+    """
+    problems: list[str] = []
+    for entry in entries:
+        for problem in _static_rule_problems(entry, dep_names):
+            problems.append(f"{label}: {problem}")
+    if len(original) > 1_000_000:
+        problems.append(
+            f"{label}: file is {len(original)} chars, over the 1,000,000-char "
+            "rule-simulation cap; split the file or shorten the rules"
+        )
+        return problems
+    text = original
+    # The first transition is the current tag: the tree already carries
+    # its SHAs, so it is its own "previous" state (see
+    # _changed_tokens_valid).
+    prev_shas = transitions[0][1] if transitions else None
+    for target, shas in transitions:
+        bump_input = text
+        for entry in entries:
+            is_added = entry not in base_entries
+            if is_added and _rule_interferes(
+                entry["pattern"], text, _written_regions(bump_input, text)
+            ):
+                problems.append(
+                    f"{label} rule {entry['pattern']!r} matches text an earlier "
+                    f"rule already wrote at tag {target}; added rules must match "
+                    "original text, not earlier rules' outputs"
+                )
+            before = text
+            try:
+                text = apply_replacements_to_text(text, [entry], target, shas)
+            except (ValueError, re.error) as exc:
+                problems.append(f"{label} rule {entry['pattern']!r} does not apply: {exc}")
+                break
+            # Postcondition: a replacement rule may change only version
+            # and SHA literals, never other text (in particular never
+            # executable code in the pin-policy file).
+            if _normalize_versions_shas(before) != _normalize_versions_shas(text):
+                problems.append(
+                    f"{label} rule {entry['pattern']!r} changes text other than "
+                    "version/SHA literals; replacement rules may only update "
+                    "version/SHA values, content edits belong in the file itself"
+                )
+            elif not _changed_tokens_valid(before, text, target, shas, entry, prev_shas):
+                problems.append(
+                    f"{label} rule {entry['pattern']!r} changed a version/SHA "
+                    f"token to a value other than the transition target {target} "
+                    "or its own dependency's SHA; rules must rewrite tokens to "
+                    "the target and name exactly one {sha:NAME}, not rearrange them"
+                )
+        prev_shas = shas
+    return problems
+
+
+def validate_replacement_rules(
+    base_config: dict, pr_config: dict, pr: Path, tag: str, client: GitHub,
+    timeout_s: float = 10.0,
+) -> list[str]:
+    """Validate replacement rules against the PR tree, now and forward.
+
+    A rule that cannot apply bricks the next bump
+    (apply_replacements_to_text raises on an invalid regex, a zero
+    match, or an unresolved {sha:…}), and the monotonic policy then
+    blocks removing or changing it. Each affected file is simulated
+    with its full per-file rule list, in order, at the current tag AND
+    at a synthetic forward tag: current-tag-only simulation passes
+    over-specific rules (with target == the current tag, the generic
+    rules are identity transforms, so a literal `v4\\.35\\.0` rule
+    still matches; at the real next bump the generic rules rewrite
+    the text first and it finds nothing). SHAs are resolved at the
+    current tag for both simulations (SHA patterns are tag-agnostic).
+    Static failures (bad placeholders, hardcoded literals, invalid
+    regexes) are reported for every entry, added or kept.
+    """
+    problems: list[str] = []
+    dep_names = {d["name"] for d in pr_config["deps"]}
+    rule_count = len(pr_config.get("doc_replacements", [])) + len(
+        (pr_config.get("pin_policy") or {}).get("replacements", [])
+    )
+    if rule_count > 64:
+        problems.append(
+            f"replacement rules total {rule_count}, over the 64-rule cap"
+        )
+        return problems
+    shas, problems = _resolve_shas(client, pr_config["deps"], tag)
+    if problems:
+        return problems
+    # Chained transitions: current tag, then two synthetic forward tags
+    # with distinct fake SHAs per transition.
+    transitions: list[tuple[str, dict[str, str]]] = [(tag, shas)]
+    forward = _forward_tag(tag)
+    if forward is not None:
+        transitions.append((forward, _transition_shas(pr_config["deps"], "1")))
+        forward2 = _forward_tag(forward)
+        if forward2 is not None:
+            transitions.append((forward2, _transition_shas(pr_config["deps"], "2")))
+    # Per file, with only that file's entries: entries for other files
+    # must not be expected to match this one.
+    base_by_path: dict[str, list[dict]] = {}
+    for entry in base_config.get("doc_replacements", []):
+        base_by_path.setdefault(entry["path"], []).append(entry)
+    by_path: dict[str, list[dict]] = {}
+    for entry in pr_config.get("doc_replacements", []):
+        by_path.setdefault(entry["path"], []).append(entry)
+    # SHAs are resolved above, so the alarm below covers pure regex
+    # simulation only; a catastrophic PR pattern raises _RegexTimeout
+    # instead of occupying the runner until the workflow timeout.
+    # _simulate_file_rules lets it propagate: the context manager
+    # clears the timer, and the catch here turns it into a problem.
+    try:
+        with _regex_timeout(timeout_s):
+            for path in sorted(by_path):
+                file = pr / path
+                if not file.is_file():
+                    problems.append(
+                        f"doc replacements target {path!r}, which is not in the PR tree"
+                    )
+                    continue
+                problems.extend(_simulate_file_rules(
+                    by_path[path], base_by_path.get(path, []),
+                    file.read_text(encoding="utf-8"), transitions, dep_names,
+                    f"doc replacements for {path}",
+                ))
+            base_pp = base_config.get("pin_policy") or {}
+            pr_pp = pr_config.get("pin_policy") or {}
+            if pr_pp:
+                file = pr / pr_pp["path"]
+                if not file.is_file():
+                    problems.append(
+                        f"pin-policy file {pr_pp['path']!r} is not in the PR tree"
+                    )
+                else:
+                    problems.extend(_simulate_file_rules(
+                        pr_pp.get("replacements", []), base_pp.get("replacements", []),
+                        file.read_text(encoding="utf-8"), transitions, dep_names,
+                        "pin-policy replacements",
+                    ))
+    except _RegexTimeout as exc:
+        problems.append(f"replacement-rule simulation timed out: {exc}; "
+                        "a replacement pattern may be catastrophically slow")
+    return problems
+
+
+def repairable_rules(
+    base_config: dict, base: Path, tag: str, client: GitHub,
+    timeout_s: float = 10.0,
+) -> set[tuple[str, str, str, str]]:
+    """Identities (_rule_identity) of base rules demonstrably broken at
+    the next bump.
+
+    A rule the forward simulation shows cannot apply may be removed:
+    keeping it bricks the next bump, and removing it is a repair, not a
+    weakening. Only the first failing rule per file is attributed (see
+    _failing_rules); removing a rule whose exact identity is not in
+    this set stays rejected.
+
+    Eligibility is computed against the TRUSTED BASE tree, never the PR
+    tree: deriving it from PR-controlled contents would let a PR delete
+    an assertion and its rule together, then claim the rule is broken
+    against its own edited file.
+    """
+    forward = _forward_tag(tag)
+    if forward is None:
+        return set()
+    # Chained forward transitions with distinct fake SHAs, as in
+    # validation: a one-use rule fails on the second transition.
+    transitions: list[tuple[str, dict[str, str]]] = [
+        (forward, _transition_shas(base_config["deps"], "1"))
+    ]
+    forward2 = _forward_tag(forward)
+    if forward2 is not None:
+        transitions.append((forward2, _transition_shas(base_config["deps"], "2")))
+    dep_names = {d["name"] for d in base_config["deps"]}
+    repairable: set[tuple[str, str, str, str]] = set()
+    by_path: dict[str, list[dict]] = {}
+    for entry in base_config.get("doc_replacements", []):
+        by_path.setdefault(entry["path"], []).append(entry)
+    # A catastrophic base pattern raises _RegexTimeout to the guard,
+    # which fails closed; no removal is allowed without attribution.
+    # Oversize files are skipped here (validation fails the PR for
+    # them via the simulation cap).
+    with _regex_timeout(timeout_s):
+        for path, entries in by_path.items():
+            file = base / path
+            if not file.is_file():
+                continue
+            text = file.read_text(encoding="utf-8")
+            if len(text) > 1_000_000:
+                continue
+            repairable |= _failing_rules(
+                entries, text, transitions, dep_names, "doc_replacements", path
+            )
+        base_pp = base_config.get("pin_policy") or {}
+        if base_pp:
+            file = base / base_pp["path"]
+            if file.is_file():
+                text = file.read_text(encoding="utf-8")
+                if len(text) <= 1_000_000:
+                    repairable |= _failing_rules(
+                        base_pp.get("replacements", []),
+                        text, transitions, dep_names,
+                        "pin_policy", base_pp["path"],
+                    )
+    return repairable
+
+
+def config_paths_for(kind: str, base_config: dict, pr_config: dict) -> list[str]:
+    """Config-derived download paths for the guard workflow.
+
+    The workflow needs the union of base + PR doc / pin-policy paths
+    (a same-pin PR may configure new ones), ledgers base-only (the
+    guard requires them unchanged). Reads are defensive: a malformed
+    entry is skipped, never raised -- the guard itself validates the
+    schema and fails loudly, and the workflow must reach it.
+    """
+    # Paths are filtered to download-safe ones here: this reader is
+    # deliberately defensive (no schema validation), and its output
+    # feeds the workflow's downloads. An unsafe PR path is dropped, and
+    # the guard then fails closed on the missing file.
+    def policy_paths(config: dict) -> list[str]:
+        pp = config.get("pin_policy") if isinstance(config.get("pin_policy"), dict) else {}
+        p = pp.get("path")
+        return [p] if _is_safe_relative_path(p) else []
+
+    def doc_paths(config: dict) -> list[str]:
+        reps = config.get("doc_replacements")
+        reps = reps if isinstance(reps, list) else []
+        seen: list[str] = []
+        for e in reps:
+            if _is_safe_relative_path(e.get("path") if isinstance(e, dict) else None) \
+                    and e.get("path") not in seen:
+                seen.append(e.get("path"))
+        return seen
+
+    def ledger_paths(config: dict) -> list[str]:
+        led = config.get("migration_ledgers")
+        return [x for x in led if _is_safe_relative_path(x)] if isinstance(led, list) else []
+
+    if kind == "policy":
+        out = []
+        for p in policy_paths(base_config) + policy_paths(pr_config):
+            if p not in out:
+                out.append(p)
+        return out
+    if kind == "doc":
+        out = []
+        for p in doc_paths(base_config) + doc_paths(pr_config):
+            if p not in out:
+                out.append(p)
+        return out
+    if kind == "ledger":
+        return ledger_paths(base_config)
+    raise ValueError(f"unknown config-paths kind: {kind!r}")
+
+
+def cmd_config_paths(args: argparse.Namespace) -> int:
+    try:
+        base_config = load_config(Path("."))
+    except (OSError, ValueError, json.JSONDecodeError):
+        base_config = {}
+    pr_config: dict = {}
+    if args.pr_config:
+        try:
+            with open(args.pr_config, encoding="utf-8") as f:
+                pr_config = json.load(f)
+            if not isinstance(pr_config, dict):
+                pr_config = {}
+        except (OSError, ValueError, json.JSONDecodeError):
+            pr_config = {}
+    print(" ".join(config_paths_for(args.kind, base_config, pr_config)))
+    return 0
 
 
 def current_tag(root: Path, config: dict) -> str:
@@ -810,7 +2106,12 @@ def current_tag(root: Path, config: dict) -> str:
     wanted = {dep["name"] for dep in config["deps"]}
     for entry in lakefile_requires(root):
         if entry.get("name") in wanted:
-            revs[entry["name"]] = entry.get("rev")
+            rev = entry.get("rev")
+            if not isinstance(rev, str):
+                raise ValueError(
+                    f"lakefile.toml require {entry.get('name')!r} has a non-string rev: {rev!r}"
+                )
+            revs[entry["name"]] = rev
     missing = wanted - set(revs)
     if missing:
         raise ValueError(f"lakefile.toml is missing pinned deps: {sorted(missing)}")
@@ -1053,20 +2354,59 @@ def load_manifest(root: Path) -> dict:
         return json.load(f)
 
 
+def _manifest_packages(manifest: dict) -> list:
+    packages = manifest.get("packages", [])
+    if not isinstance(packages, list):
+        raise ValueError("lake-manifest.json packages must be a list")
+    for pkg in packages:
+        if not isinstance(pkg, dict) or not isinstance(pkg.get("name"), str):
+            raise ValueError(
+                "lake-manifest.json packages must be tables with a string name"
+            )
+    return packages
+
+
 def direct_entries(manifest: dict) -> dict[str, dict]:
     return {
         pkg["name"]: pkg
-        for pkg in manifest.get("packages", [])
+        for pkg in _manifest_packages(manifest)
         if not pkg.get("inherited", False)
     }
 
 
 def check_no_duplicate_packages(manifest: dict, label: str) -> list[str]:
-    names = [pkg.get("name") for pkg in manifest.get("packages", [])]
+    names = [pkg.get("name") for pkg in _manifest_packages(manifest)]
     dups = sorted({n for n in names if names.count(n) > 1})
     if dups:
         return [f"{label} has duplicate package names: {dups}"]
     return []
+
+
+_MANIFEST_ENTRY_KEYS = {
+    "configFile", "inherited", "inputRev", "manifestFile", "name",
+    "rev", "scope", "subDir", "type", "url",
+}
+
+
+def _upstream_config_files(client: GitHub, slug: str, sha: str) -> set[str] | None:
+    """Lakefiles present in the upstream repo at sha, or None if unknown.
+
+    The manifest's configFile is the dependency's own lakefile, so it
+    must be derived from the pinned upstream tree, not chosen from
+    {lakefile.lean, lakefile.toml} by the PR author. A 404 means the
+    file is absent; any other API failure is indeterminate (None),
+    and the caller fails closed.
+    """
+    found: set[str] = set()
+    for name in ("lakefile.toml", "lakefile.lean"):
+        try:
+            client.contents(slug, name, sha)
+            found.add(name)
+        except RuntimeError as exc:
+            if "404" in str(exc) or "Not Found" in str(exc):
+                continue
+            return None
+    return found
 
 
 def verify_manifest(
@@ -1092,6 +2432,11 @@ def verify_manifest(
         problems.append(
             f"direct manifest entries {sorted(direct)} != pinned deps {sorted(wanted)}"
         )
+    try:
+        reqs = {e["name"]: e for e in lakefile_requires(root)}
+    except (OSError, ValueError) as exc:
+        problems.append(f"lakefile.toml unreadable for manifest validation: {exc}")
+        return problems
     shas: dict[str, str] = {}
     for name, dep in wanted.items():
         sha = client.tag_sha(dep["repo"], target)
@@ -1106,6 +2451,55 @@ def verify_manifest(
             problems.append(f"{name}: inputRev {entry.get('inputRev')!r} != {target!r}")
         if entry.get("rev") != sha:
             problems.append(f"{name}: rev {entry.get('rev')!r} != tag SHA {sha}")
+        # These hold for every direct entry, including one the base tree
+        # does not have (a newly added dependency has no base entry to
+        # compare against, so it must be checked on its own: a new dep
+        # pointing at a fork URL or a subdirectory must fail here).
+        expected_url = f"https://github.com/{dep['repo']}"
+        if entry.get("type") != "git":
+            problems.append(f"{name}: type {entry.get('type')!r} != 'git'")
+        if entry.get("url", "").rstrip("/").removesuffix(".git") != expected_url:
+            problems.append(f"{name}: url {entry.get('url')!r} != {expected_url!r}")
+        if entry.get("subDir") is not None:
+            problems.append(f"{name}: subDir must be null")
+        if entry.get("manifestFile") != "lake-manifest.json":
+            problems.append(f"{name}: manifestFile must be lake-manifest.json")
+        # Complete entry schema: a new direct entry has no base entry
+        # to compare against, so missing/extra fields, a non-boolean
+        # inherited, a wrong name, or a scope the lakefile require does
+        # not carry would otherwise pass. Scope is the lakefile
+        # require's scope, or "" for a scope-less require (what Lake
+        # writes for a git-only require); a scope of "attacker" fails
+        # because no require carries it.
+        if set(entry) != _MANIFEST_ENTRY_KEYS:
+            problems.append(
+                f"{name}: manifest entry keys {sorted(entry)} != "
+                f"{sorted(_MANIFEST_ENTRY_KEYS)}"
+            )
+        if entry.get("inherited") is not False:
+            problems.append(f"{name}: inherited must be false")
+        if entry.get("name") != name:
+            problems.append(f"{name}: name field {entry.get('name')!r} != {name!r}")
+        req = reqs.get(name)
+        if req is None:
+            problems.append(f"{name}: no lakefile require")
+        elif entry.get("scope") != (req.get("scope") or ""):
+            problems.append(
+                f"{name}: scope {entry.get('scope')!r} != lakefile require scope "
+                f"{(req.get('scope') or '')!r} (a scope-less require means empty scope)"
+            )
+        # configFile is the dependency's own lakefile at the pinned SHA,
+        # derived from the upstream tree.
+        config_files = _upstream_config_files(client, dep["repo"], sha)
+        if config_files is None:
+            problems.append(f"{name}: could not determine upstream lakefile")
+        elif not config_files:
+            problems.append(f"{name}: no lakefile in upstream repo at {target}")
+        elif entry.get("configFile") not in config_files:
+            problems.append(
+                f"{name}: configFile {entry.get('configFile')!r} not in upstream "
+                f"lakefiles {sorted(config_files)}"
+            )
         if base_manifest is not None:
             base_entry = direct_entries(base_manifest).get(name)
             if base_entry is not None:
@@ -1118,12 +2512,6 @@ def verify_manifest(
                         f"{name}: manifest entry differs from base in {diff} "
                         "(only rev/inputRev may change)"
                     )
-        else:
-            expected_url = f"https://github.com/{dep['repo']}"
-            if entry.get("type") != "git":
-                problems.append(f"{name}: type {entry.get('type')!r} != 'git'")
-            if entry.get("url", "").rstrip("/").removesuffix(".git") != expected_url:
-                problems.append(f"{name}: url {entry.get('url')!r} != {expected_url!r}")
     # Transitive entries must be exactly the union of the deps' manifests.
     # Conflicting records for one package from different upstream manifests
     # fail instead of letting one silently win.
@@ -1737,29 +3125,210 @@ def cmd_guard(args: argparse.Namespace) -> int:
     base = Path(args.base)
     merge_base = Path(args.merge_base)
     pr = Path(args.pr)
-    config = load_config(base)
+    try:
+        base_config = load_config(base)
+    except (OSError, ValueError, json.JSONDecodeError) as exc:
+        # A malformed base config fails loudly here instead of bricking
+        # the workflow (whose config reads are defensive, so it reaches
+        # this point). Repairing it needs a branch-protection bypass:
+        # every guard run fails until the base config is fixed.
+        print(f"guard: FAIL - base {CONFIG_FILE} is malformed: {exc}")
+        return 1
     client = GitHub()
     changed = {
         line.strip() for line in Path(args.changed_files).read_text(encoding="utf-8").splitlines()
         if line.strip()
     }
-    if not (changed & set(PIN_FILES)):
-        print("guard: PASS - no pin files changed")
-        return 0
-    if changed & set(GUARD_FILES):
-        print("guard: FAIL - a pin-change PR must not touch the guard, its config, or the bump workflow")
+    # Guard-code changes are fine on their own (the running script is base
+    # code, and the change itself gets normal review), but a PR that also
+    # changes pins or config must not touch guard code: the weakened code
+    # would become the base for the next validation.
+    if changed & set(GUARD_FILES) and (changed & (set(PIN_FILES) | {CONFIG_FILE})):
+        print("guard: FAIL - a pin/config-change PR must not touch the guard code or the bump workflow")
         return 1
+    # The config is validated even when no pin file changed: otherwise a
+    # PR touching only pinned_deps.json would sail through the old
+    # pin-files-only early return and could repoint/remove a dependency
+    # or weaken a replacement unexamined. A PR tree that predates the
+    # config file (and does not touch it) is treated as base-config.
     problems: list[str] = []
+    pr_config_path = pr / CONFIG_FILE
+    if CONFIG_FILE in changed:
+        if not pr_config_path.is_file():
+            print(f"guard: FAIL - {CONFIG_FILE} was deleted")
+            return 1
+        try:
+            pr_config = load_config_file(pr_config_path)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"guard: FAIL - cannot read PR {CONFIG_FILE}: {exc}")
+            return 1
+        # Repair allowance: a base rule the forward simulation shows
+        # cannot apply at the next bump may be removed. Computed from
+        # the base tree's tag (the PR's tag is not trusted yet).
+        repairable: frozenset[tuple[str, str, str, str]] = frozenset()
+        try:
+            early_tag = current_tag(base, base_config)
+        except ValueError:
+            early_tag = None  # tag errors surface again below
+        if early_tag is not None:
+            try:
+                repairable = frozenset(
+                    repairable_rules(base_config, base, early_tag, client)
+                )
+            except _RegexTimeout as exc:
+                print(f"guard: FAIL - base replacement-rule simulation timed out: {exc}")
+                return 1
+        problems.extend(
+            check_config_extension(base_config, pr_config, repairable)
+        )
+    elif pr_config_path.is_file():
+        try:
+            pr_config = load_config_file(pr_config_path)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            print(f"guard: FAIL - cannot read PR {CONFIG_FILE}: {exc}")
+            return 1
+        if pr_config != base_config:
+            problems.append(
+                f"{CONFIG_FILE} differs from base but is not in the changed-file list; "
+                "failing closed (enumeration inconsistency)"
+            )
+    else:
+        pr_config = base_config
+    if not (changed & set(PIN_FILES)):
+        # Config-only (or unrelated) PR: still check the require-names
+        # invariant, so a config-only dependency addition without the
+        # lakefile half fails instead of silently drifting the config.
+        try:
+            base_req_names = {e.get("name") for e in lakefile_requires(base)}
+            pr_req_names = {e.get("name") for e in lakefile_requires(pr)}
+        except ValueError as exc:
+            print(f"guard: FAIL - {exc}")
+            return 1
+        if base_req_names != {d["name"] for d in base_config["deps"]}:
+            problems.append("base lakefile requires do not match base pinned_deps.json")
+        if pr_req_names != {d["name"] for d in pr_config["deps"]}:
+            problems.append(
+                "PR lakefile requires do not match PR pinned_deps.json; "
+                "extend the config in the same PR when adding a dependency"
+            )
+        # Defense in depth: the lakefile is not in the changed list here,
+        # so base and PR lakefiles should agree; a source repoint hiding
+        # behind a wrong changed list must still fail.
+        try:
+            base_tag_only = current_tag(base, base_config)
+        except ValueError as exc:
+            problems.append(str(exc))
+        else:
+            problems.extend(
+                check_lakefile_sources(base, pr, base_config, pr_config, base_tag_only)
+            )
+            # Added replacement rules must already work against the PR
+            # tree; a broken rule bricks the next bump and the monotonic
+            # policy then blocks repairing it.
+            problems.extend(
+                validate_replacement_rules(base_config, pr_config, pr, base_tag_only, client)
+            )
+        if problems:
+            print("guard: FAIL")
+            for problem in problems:
+                print(f"  - {problem}")
+            return 1
+        print("guard: PASS - no pin files changed"
+              + ("; config extension validated" if CONFIG_FILE in changed else ""))
+        return 0
+    # The lakefile's requires must match the config's deps at both ends.
+    # This is what makes a same-pin dependency addition well-defined: the
+    # PR must extend pinned_deps.json in the same PR that adds the require,
+    # so the config never drifts from the lakefile.
     try:
-        base_tag = current_tag(base, config)
-        pr_tag = current_tag(pr, config)
+        base_req_names = {e.get("name") for e in lakefile_requires(base)}
+        pr_req_names = {e.get("name") for e in lakefile_requires(pr)}
     except ValueError as exc:
         print(f"guard: FAIL - {exc}")
         return 1
+    if base_req_names != {d["name"] for d in base_config["deps"]}:
+        problems.append(
+            "base lakefile requires do not match base pinned_deps.json "
+            f"({sorted(base_req_names)} vs {sorted(d['name'] for d in base_config['deps'])})"
+        )
+    if pr_req_names != {d["name"] for d in pr_config["deps"]}:
+        problems.append(
+            "PR lakefile requires do not match PR pinned_deps.json; "
+            "extend the config in the same PR when adding a dependency "
+            f"({sorted(pr_req_names)} vs {sorted(d['name'] for d in pr_config['deps'])})"
+        )
+    try:
+        base_tag = current_tag(base, base_config)
+        pr_tag = current_tag(pr, pr_config)
+    except ValueError as exc:
+        print(f"guard: FAIL - {exc}")
+        return 1
+    if version_key(pr_tag) < version_key(base_tag):
+        problems.append(f"PR tag {pr_tag} is older than base tag {base_tag} (downgrade)")
+        print("guard: FAIL")
+        for problem in problems:
+            print(f"  - {problem}")
+        return 1
+    try:
+        base_manifest = load_manifest(base)
+    except (OSError, json.JSONDecodeError) as exc:
+        print(f"guard: FAIL - cannot read base manifest: {exc}")
+        return 1
+    if version_key(pr_tag) == version_key(base_tag):
+        # Same-pin change (e.g. adding a dependency/library at the current
+        # pin, doc edits, a restructured pin-policy file, ledger content
+        # changes). Only the pins themselves are guarded: the toolchain
+        # must still be the base toolchain, and the manifest must be
+        # exactly derived from the effective deps at the base tag.
+        # Bump-only checks are skipped: pin-policy/doc/ledger exact
+        # re-pin checks would forbid legitimate same-pin restructuring,
+        # and the pin-policy file is self-validating in CI
+        # (check_lake_surface.py fails preflight if its constants disagree
+        # with the manifest) while the ledger validator covers ledgers.
+        _ = merge_base
+        if (pr / "lean-toolchain").read_text(encoding="utf-8").strip() != (
+            base / "lean-toolchain"
+        ).read_text(encoding="utf-8").strip():
+            problems.append("same-pin change must not change lean-toolchain")
+        # Existing requires must keep their source fields (scope/git/path):
+        # names and revs alone would let a scope repoint to an attacker's
+        # fork pass.
+        problems.extend(
+            check_lakefile_sources(base, pr, base_config, pr_config, base_tag)
+        )
+        # Added replacement rules must already work against the PR tree;
+        # a broken rule bricks the next bump and the monotonic policy
+        # then blocks repairing it. Also catches doc edits in this PR
+        # that break an existing rule's match.
+        problems.extend(
+            validate_replacement_rules(base_config, pr_config, pr, base_tag, client)
+        )
+        try:
+            problems.extend(verify_manifest(client, pr, pr_config, base_tag, base_manifest))
+        except (OSError, ValueError) as exc:
+            problems.append(f"PR manifest is unreadable or malformed: {exc}")
+        if client.tag_sha(base_config["toolchain_repo"], base_tag) is None:
+            problems.append(
+                f"Lean tag {base_tag} does not exist in {base_config['toolchain_repo']}"
+            )
+        if problems:
+            print("guard: FAIL")
+            for problem in problems:
+                print(f"  - {problem}")
+            return 1
+        print(f"guard: PASS - same-pin change at {base_tag} validated")
+        return 0
+    # Bump: pr_tag > base_tag. The config must be unchanged here: an
+    # extension belongs in a same-pin PR first, so the bump validates
+    # against exactly the config it was prepared from.
+    if pr_config != base_config:
+        problems.append(
+            "pinned_deps.json changed in a bump PR; extend the config in a "
+            "same-pin PR first, then bump"
+        )
+    config = base_config
     if not is_final(pr_tag):
         problems.append(f"PR tag {pr_tag!r} is not a final release tag")
-    if version_key(pr_tag) <= version_key(base_tag):
-        problems.append(f"PR tag {pr_tag} is not newer than base tag {base_tag}")
     if (pr / "lean-toolchain").read_text(encoding="utf-8").strip() != f"leanprover/lean4:{pr_tag}":
         problems.append("lean-toolchain does not match the PR tag")
     # The complete lakefile, not just [[require]]: normalize only the pinned
@@ -1895,7 +3464,10 @@ def cmd_guard(args: argparse.Namespace) -> int:
     except (OSError, json.JSONDecodeError) as exc:
         print(f"guard: FAIL - cannot read base manifest: {exc}")
         return 1
-    problems.extend(verify_manifest(client, pr, config, pr_tag, base_manifest))
+    try:
+        problems.extend(verify_manifest(client, pr, config, pr_tag, base_manifest))
+    except (OSError, ValueError) as exc:
+        problems.append(f"PR manifest is unreadable or malformed: {exc}")
     if client.tag_sha(config["toolchain_repo"], pr_tag) is None:
         problems.append(
             f"Lean tag {pr_tag} does not exist in {config['toolchain_repo']}"
@@ -1951,6 +3523,11 @@ def main(argv: list[str] | None = None) -> int:
         help="print the PR number for a merge-group head ref")
     p_mg.add_argument("head_ref")
     p_mg.set_defaults(func=cmd_merge_group_pr)
+    p_paths = sub.add_parser(
+        "config-paths", help="print union config-derived download paths for the guard workflow")
+    p_paths.add_argument("--kind", choices=["policy", "doc", "ledger"], required=True)
+    p_paths.add_argument("--pr-config", default="")
+    p_paths.set_defaults(func=cmd_config_paths)
     p_guard = sub.add_parser("guard", help="validate a pin-change PR")
     p_guard.add_argument("--base", required=True)
     p_guard.add_argument("--merge-base", required=True)

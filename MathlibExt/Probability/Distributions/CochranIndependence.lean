@@ -38,6 +38,10 @@ Let `Z` be a standard Gaussian vector in a finite-dimensional real inner product
   sums of squares of the analysis of variance are independent.
 * For an i.i.d. sample `X₁, …, Xₙ ~ N(μ, v)`, the sample mean `X̄ ~ N(μ, v / n)` is independent
   of the residual vector `(Xᵢ - X̄)ᵢ` and hence of `(n - 1) S² = ∑ (Xᵢ - X̄)²`.
+* **Linear images**: if `Z` has independent standard normal coordinates and `A Bᵀ = 0` for
+  rectangular matrices `A`, `B`, then `A Z` and `B Z` are independent; for a family with
+  `A k (A l)ᵀ = 0` (`k ≠ l`) the images are mutually independent. If moreover `M` is symmetric
+  idempotent with `A M = 0`, then `A Z` is independent of `Zᵀ M Z`.
 
 Not covered here: the marginal laws `‖P_K Z‖² ~ χ²_{dim K}` and `Zᵀ A Z ~ χ²_{rank A}` (the
 single-projection form of Cochran's theorem, a separate development), hence
@@ -51,6 +55,9 @@ Snedecor `F` laws of the resulting ratios.
 * `iIndepFun_dotProduct_mulVec_pi_gaussianReal` (Cochran's theorem, independence part).
 * `groupMean`, `indepFun_groupMean_residual`, `indepFun_sumSqBetween_sumSqWithin`.
 * `hasLaw_sampleMean`, `indepFun_sampleMean_residual`, `indepFun_sampleMean_sumSqDev`.
+* `covariance_mulVec_pi_gaussianReal`, `indepFun_mulVec_mulVec_pi_gaussianReal`,
+  `iIndepFun_mulVec_pi_gaussianReal`, `indepFun_mulVec_mulVec_pi_gaussianReal_of_isHermitian`,
+  `indepFun_mulVec_mulVec_of_hasLaw`, `indepFun_mulVec_dotProduct_mulVec_pi_gaussianReal`.
 
 ## References
 
@@ -429,5 +436,119 @@ theorem indepFun_sampleMean_sumSqDev {n : ℕ} (μ : ℝ) (v : NNReal) :
       (Measure.pi fun _ : Fin n => gaussianReal μ v) :=
   (indepFun_sampleMean_residual μ v).comp (φ := id) (ψ := fun r => ∑ i, r i ^ 2)
     measurable_id (by fun_prop)
+
+section MatrixImage
+
+variable {ι : Type*} [Fintype ι] {m n : Type*}
+
+open Matrix
+
+/-- For a standard Gaussian vector `Z` in `ℝ^ι`, the covariance of the coordinates `(A Z)_a` and
+`(B Z)_b` of two linear images is the entry `(A Bᵀ)_{ab}`. -/
+theorem covariance_mulVec_pi_gaussianReal (A : Matrix m ι ℝ) (B : Matrix n ι ℝ) (a : m)
+    (b : n) :
+    cov[fun x : ι → ℝ => (A *ᵥ x) a, fun x => (B *ᵥ x) b;
+      Measure.pi fun _ : ι => gaussianReal 0 1] = (A * Bᵀ) a b := by
+  classical
+  simp only [Matrix.mulVec, dotProduct]
+  rw [covariance_fun_sum_fun_sum (fun c => (memLp_eval_pi 0 1 c).const_mul _)
+    (fun d => (memLp_eval_pi 0 1 d).const_mul _)]
+  simp only [covariance_const_mul_left, covariance_const_mul_right, covariance_eval_pi]
+  simp only [mul_ite, mul_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true, NNReal.coe_one,
+    mul_one, Matrix.mul_apply, Matrix.transpose_apply]
+  exact Finset.sum_congr rfl fun _ _ => mul_comm _ _
+
+/-- For a standard Gaussian vector `Z` in `ℝ^ι` and rectangular matrices `A`, `B` with
+`A Bᵀ = 0`, the linear images `A Z` and `B Z` are independent. -/
+theorem indepFun_mulVec_mulVec_pi_gaussianReal [Finite m] [Finite n] {A : Matrix m ι ℝ}
+    {B : Matrix n ι ℝ} (hAB : A * Bᵀ = 0) :
+    IndepFun (fun x : ι → ℝ => A *ᵥ x) (fun x => B *ᵥ x)
+      (Measure.pi fun _ : ι => gaussianReal 0 1) := by
+  have := Fintype.ofFinite m
+  have := Fintype.ofFinite n
+  set L : (ι → ℝ) →L[ℝ] (m → ℝ) × (n → ℝ) :=
+    (LinearMap.toContinuousLinearMap A.mulVecLin).prod
+      (LinearMap.toContinuousLinearMap B.mulVecLin)
+  have hG : HasGaussianLaw (fun x : ι → ℝ => (fun a => (A *ᵥ x) a, fun b => (B *ᵥ x) b))
+      (Measure.pi fun _ : ι => gaussianReal 0 1) := by
+    have := (hasGaussianLaw_id_pi (ι := ι) 0 1).map_fun L
+    convert this using 2 with x
+    ext <;> simp [L]
+  exact hG.indepFun_of_covariance_eval (X := fun a x => (A *ᵥ x) a)
+    (Y := fun b x => (B *ᵥ x) b) fun a b => by
+      rw [covariance_mulVec_pi_gaussianReal, hAB, Matrix.zero_apply]
+
+/-- For a standard Gaussian vector `Z` in `ℝ^ι` and a family of rectangular matrices `A k` with
+`A k (A l)ᵀ = 0` for `k ≠ l`, the linear images `A k Z` are mutually independent. -/
+theorem iIndepFun_mulVec_pi_gaussianReal {κ : Type*} [Finite κ] {m : κ → Type*}
+    [∀ k, Finite (m k)] (A : ∀ k, Matrix (m k) ι ℝ)
+    (hA : Pairwise fun k l => A k * (A l)ᵀ = 0) :
+    iIndepFun (fun k (x : ι → ℝ) => A k *ᵥ x) (Measure.pi fun _ : ι => gaussianReal 0 1) := by
+  have := Fintype.ofFinite κ
+  have : ∀ k, Fintype (m k) := fun k => Fintype.ofFinite (m k)
+  set L : (ι → ℝ) →L[ℝ] ((k : κ) → m k → ℝ) :=
+    ContinuousLinearMap.pi fun k => LinearMap.toContinuousLinearMap (A k).mulVecLin
+  have hG : HasGaussianLaw (fun x : ι → ℝ => fun k a => (A k *ᵥ x) a)
+      (Measure.pi fun _ : ι => gaussianReal 0 1) := by
+    have := (hasGaussianLaw_id_pi (ι := ι) 0 1).map_fun L
+    convert this using 2 with x
+    ext k a
+    simp [L]
+  exact hG.iIndepFun_of_covariance_eval (X := fun k a (x : ι → ℝ) => (A k *ᵥ x) a)
+    fun k l hkl a b => by
+      rw [covariance_mulVec_pi_gaussianReal, hA hkl, Matrix.zero_apply]
+
+/-- For a standard Gaussian vector `Z` in `ℝ^ι` and square matrices `H`, `M` with `M` symmetric and
+`H M = 0` (for instance complementary orthogonal projections), `H Z` and `M Z` are
+independent. -/
+theorem indepFun_mulVec_mulVec_pi_gaussianReal_of_isHermitian {H M : Matrix ι ι ℝ}
+    (hHM : H * M = 0) (hM : M.IsHermitian) :
+    IndepFun (fun x : ι → ℝ => H *ᵥ x) (fun x => M *ᵥ x)
+      (Measure.pi fun _ : ι => gaussianReal 0 1) := by
+  have hT : Mᵀ = M := by simpa [Matrix.conjTranspose_eq_transpose_of_trivial] using hM.eq
+  exact indepFun_mulVec_mulVec_pi_gaussianReal (by rw [hT, hHM])
+
+private theorem map_comp_of_hasLaw {Ω 𝓧 β : Type*} [MeasurableSpace Ω] [MeasurableSpace 𝓧]
+    [MeasurableSpace β] {μ : Measure Ω} {ν : Measure 𝓧} {Z : Ω → 𝓧} (hZ : HasLaw Z ν μ)
+    {f : 𝓧 → β} (hf : Measurable f) : μ.map (fun ω => f (Z ω)) = ν.map f := by
+  rw [← hZ.map_eq, AEMeasurable.map_map_of_aemeasurable hf.aemeasurable hZ.aemeasurable]
+  rfl
+
+/-- If `Z` has independent standard normal coordinates under `μ` and `A Bᵀ = 0`, then `A Z` and
+`B Z` are independent under `μ`. -/
+theorem indepFun_mulVec_mulVec_of_hasLaw [Finite m] [Finite n] {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} {Z : Ω → ι → ℝ} (hZ : HasLaw Z (Measure.pi fun _ : ι => gaussianReal 0 1) μ)
+    {A : Matrix m ι ℝ} {B : Matrix n ι ℝ} (hAB : A * Bᵀ = 0) :
+    IndepFun (fun ω => A *ᵥ Z ω) (fun ω => B *ᵥ Z ω) μ := by
+  have := hZ.isProbabilityMeasure
+  have hf : Measurable fun x : ι → ℝ => A *ᵥ x :=
+    (LinearMap.toContinuousLinearMap A.mulVecLin).continuous.measurable
+  have hg : Measurable fun x : ι → ℝ => B *ᵥ x :=
+    (LinearMap.toContinuousLinearMap B.mulVecLin).continuous.measurable
+  have hAZ : AEMeasurable (fun ω => A *ᵥ Z ω) μ := hf.comp_aemeasurable hZ.aemeasurable
+  have hBZ : AEMeasurable (fun ω => B *ᵥ Z ω) μ := hg.comp_aemeasurable hZ.aemeasurable
+  rw [indepFun_iff_map_prod_eq_prod_map_map hAZ hBZ]
+  rw [map_comp_of_hasLaw hZ (f := fun x => (A *ᵥ x, B *ᵥ x)) (hf.prodMk hg),
+    map_comp_of_hasLaw hZ hf, map_comp_of_hasLaw hZ hg]
+  exact (indepFun_mulVec_mulVec_pi_gaussianReal hAB).map_prod_eq_prod_map_map hf.aemeasurable
+    hg.aemeasurable
+
+/-- For a standard Gaussian vector `Z` in `ℝ^ι`, a symmetric idempotent `M` and a rectangular `A`
+with `A M = 0`, the linear form `A Z` is independent of the quadratic form `Zᵀ M Z`. -/
+theorem indepFun_mulVec_dotProduct_mulVec_pi_gaussianReal [Finite m] {A : Matrix m ι ℝ}
+    {M : Matrix ι ι ℝ} (hAM : A * M = 0) (hM : M.IsHermitian) (hMM : M * M = M) :
+    IndepFun (fun x : ι → ℝ => A *ᵥ x) (fun x => x ⬝ᵥ M *ᵥ x)
+      (Measure.pi fun _ : ι => gaussianReal 0 1) := by
+  have hT : Mᵀ = M := by simpa [Matrix.conjTranspose_eq_transpose_of_trivial] using hM.eq
+  have hq : ∀ x : ι → ℝ, x ⬝ᵥ M *ᵥ x = (M *ᵥ x) ⬝ᵥ (M *ᵥ x) := fun x => by
+    calc x ⬝ᵥ M *ᵥ x = x ⬝ᵥ (M * M) *ᵥ x := by rw [hMM]
+      _ = x ⬝ᵥ M *ᵥ (M *ᵥ x) := by rw [Matrix.mulVec_mulVec]
+      _ = (x ᵥ* M) ⬝ᵥ (M *ᵥ x) := Matrix.dotProduct_mulVec _ _ _
+      _ = (M *ᵥ x) ⬝ᵥ (M *ᵥ x) := by rw [← Matrix.mulVec_transpose, hT]
+  have h := (indepFun_mulVec_mulVec_pi_gaussianReal (B := M) (by rw [hT, hAM])).comp
+    (φ := id) (ψ := fun y : ι → ℝ => y ⬝ᵥ y) measurable_id (by fun_prop)
+  simpa [Function.comp_def, hq] using h
+
+end MatrixImage
 
 end ProbabilityTheory

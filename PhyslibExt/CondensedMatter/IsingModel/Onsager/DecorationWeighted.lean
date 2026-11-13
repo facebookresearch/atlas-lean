@@ -1,0 +1,244 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+module
+
+public import PhyslibExt.CondensedMatter.IsingModel.Onsager.DecorationSum
+public import PhyslibExt.CondensedMatter.IsingModel.Onsager.SpinWeightedAffine
+
+/-!
+
+# Edge-weighted character sums over decorated even subgraphs
+
+The edge-weighted character sum as a sum over decorated even subgraphs, and its factorization over
+cycles.
+
+## i. Overview
+
+Through the decoration bijection the edge-weighted character sum becomes a sum over even subgraphs
+of the decorated graph. The product of edge weights factors over the cycles of a decorated even
+subgraph, and so does the character when the cycles have pairwise zero homology intersection. The
+edge coefficient of `SpinWeightedAffine` is the sum over decorated subgraphs that use the external
+edge of the corresponding dart.
+
+## ii. Key results
+
+- `ons_decoratedWeightedSpinWeight` : the weight of a decorated even subgraph
+- `ons_weightedSpinCharacterSum_eq_decorated` : the character sum over decorated subgraphs
+- `ons_decoratedWeightedSpinTerm_cycle_data` : cycle factorization of each term
+
+## iii. Table of contents
+
+- A. Decorated weights
+- B. Factorization over cycles
+
+## iv. References
+
+- M. Kac and J. C. Ward, *A combinatorial solution of the two-dimensional Ising model*, Phys. Rev.
+  88 (1952) 1332-1337
+
+-/
+
+@[expose] public section
+
+namespace StatMech.Onsager
+
+open BigOperators StatMech.Ising
+
+/-! ## A. Decorated weights -/
+
+/-- The edge-weighted spin weight `χ_{a,b}(hom F) ∏_{e ∈ F} w_e` of the torus even subgraph `F`
+corresponding to a decorated even subgraph. -/
+noncomputable def ons_decoratedWeightedSpinWeight
+    (L : ℕ) [Fact (2 < L)]
+    (weight : Sym2 (ZMod L × ZMod L) → ℂ) (a b : Fin 2)
+    (D : ons_DecoratedEvenSubgraph L) : ℂ :=
+  (ons_spinCharacter a b
+      (ons_evenHomology L (ons_originalEdgesOfDecorated L D)) : ℂ) *
+    ∏ edge ∈ ons_originalEdgesOfDecorated L D, weight edge
+
+lemma ons_weightedSpinCharacterSum_eq_decorated
+    (L : ℕ) [Fact (2 < L)]
+    (weight : Sym2 (ZMod L × ZMod L) → ℂ) (a b : Fin 2) :
+    ons_weightedSpinCharacterSum L weight a b =
+      ∑ D : ons_DecoratedEvenSubgraph L,
+        ons_decoratedWeightedSpinWeight L weight a b D := by
+  unfold ons_weightedSpinCharacterSum
+  rw [← Finset.sum_coe_sort]
+  have hsum := Equiv.sum_comp (ons_decorationEquiv L)
+    (fun D : ons_DecoratedEvenSubgraph L =>
+      ons_decoratedWeightedSpinWeight L weight a b D)
+  simpa [ons_decoratedWeightedSpinWeight, ons_originalEdgesOfDecorated] using hsum
+
+lemma ons_portEdge_mem_originalEdgesOfDecorated_iff
+    (L : ℕ) [Fact (2 < L)]
+    (D : ons_DecoratedEvenSubgraph L) (e : ons_Dart L) :
+    ons_portEdge L e ∈ ons_originalEdgesOfDecorated L D ↔
+      s(e, ons_dartRev L e) ∈ D.1 := by
+  classical
+  rw [← ons_decoratedExternalEdges_image L D, Finset.mem_image]
+  constructor
+  · rintro ⟨edge, hedge, hproj⟩
+    have hdata := Finset.mem_filter.mp hedge
+    have heq : edge = s(e, ons_dartRev L e) :=
+      ons_decEdgeProjection_injective_of_external L hdata.2 ⟨e, rfl⟩ hproj
+    simpa [heq] using hdata.1
+  · intro hedge
+    refine ⟨s(e, ons_dartRev L e), ?_, ons_decEdgeProjection_external L e⟩
+    exact Finset.mem_filter.mpr ⟨hedge, ⟨e, rfl⟩⟩
+
+lemma ons_weightedSpinEdgeCoefficient_eq_decorated
+    (L : ℕ) [Fact (2 < L)]
+    (weight : Sym2 (ZMod L × ZMod L) → ℂ)
+    (a b : Fin 2) (e : ons_Dart L) :
+    ons_weightedSpinEdgeCoefficient L weight a b (ons_portEdge L e) =
+      ∑ D : ons_DecoratedEvenSubgraph L,
+        if s(e, ons_dartRev L e) ∈ D.1 then
+          ons_decoratedWeightedSpinWeight L weight a b D
+        else 0 := by
+  unfold ons_weightedSpinEdgeCoefficient
+  rw [Finset.sum_filter, ← Finset.sum_coe_sort]
+  have hsum := Equiv.sum_comp (ons_decorationEquiv L)
+    (fun D : ons_DecoratedEvenSubgraph L =>
+      if s(e, ons_dartRev L e) ∈ D.1 then
+        ons_decoratedWeightedSpinWeight L weight a b D
+      else 0)
+  rw [← hsum]
+  apply Finset.sum_congr rfl
+  intro F hF
+  have hmem :
+      s(e, ons_dartRev L e) ∈ ((ons_decorationEquiv L) F).1 ↔
+        ons_portEdge L e ∈ F.1 := by
+    rw [← ons_portEdge_mem_originalEdgesOfDecorated_iff L
+      ((ons_decorationEquiv L) F) e]
+    simp [ons_originalEdgesOfDecorated]
+  by_cases hedge : ons_portEdge L e ∈ F.1
+  · rw [ite_eq_left hedge, ite_eq_left (hmem.mpr hedge)]
+    simp [ons_decoratedWeightedSpinWeight, ons_originalEdgesOfDecorated]
+  · rw [ite_eq_right hedge, ite_eq_right (mt hmem.mp hedge)]
+
+/-! ## B. Factorization over cycles -/
+
+lemma ons_decoratedOriginalWeight_biUnion
+    {L : ℕ} [Fact (2 < L)]
+    {iota : Type} [Fintype iota] [DecidableEq iota]
+    (weight : Sym2 (ZMod L × ZMod L) → ℂ)
+    (D : ons_DecoratedEvenSubgraph L)
+    (piece : iota → Finset (Sym2 (ons_Dart L)))
+    (hcover : D.1 = Finset.univ.biUnion piece)
+    (hdisj : ((Finset.univ : Finset iota) : Set iota).PairwiseDisjoint piece) :
+    (∏ edge ∈ ons_originalEdgesOfDecorated L D, weight edge) =
+      ∏ i, ∏ edge ∈
+        (ons_decoratedExternalEdges (piece i)).image ons_decEdgeProjection,
+          weight edge := by
+  classical
+  have hcoverExt : ons_decoratedExternalEdges D.1 =
+      Finset.univ.biUnion (fun i => ons_decoratedExternalEdges (piece i)) := by
+    ext edge
+    simp only [ons_decoratedExternalEdges, Finset.mem_filter,
+      Finset.mem_biUnion, Finset.mem_univ, true_and]
+    rw [hcover]
+    simp only [Finset.mem_biUnion, Finset.mem_univ, true_and]
+    aesop
+  have hdisjProj : ((Finset.univ : Finset iota) : Set iota).PairwiseDisjoint
+      (fun i => (ons_decoratedExternalEdges (piece i)).image
+        ons_decEdgeProjection) := by
+    intro i hi j hj hij
+    change Disjoint
+      ((ons_decoratedExternalEdges (piece i)).image ons_decEdgeProjection)
+      ((ons_decoratedExternalEdges (piece j)).image ons_decEdgeProjection)
+    rw [Finset.disjoint_left]
+    intro edge hei hej
+    rcases Finset.mem_image.mp hei with ⟨di, hdi, rfl⟩
+    rcases Finset.mem_image.mp hej with ⟨dj, hdj, hproj⟩
+    have hdiData := Finset.mem_filter.mp hdi
+    have hdjData := Finset.mem_filter.mp hdj
+    have hdart : di = dj :=
+      ons_decEdgeProjection_injective_of_external L
+        hdiData.2 hdjData.2 hproj.symm
+    subst dj
+    exact (Finset.disjoint_left.mp (hdisj hi hj hij)) hdiData.1 hdjData.1
+  calc
+    (∏ edge ∈ ons_originalEdgesOfDecorated L D, weight edge) =
+        ∏ edge ∈
+          (ons_decoratedExternalEdges D.1).image ons_decEdgeProjection,
+            weight edge := by rw [ons_decoratedExternalEdges_image]
+    _ = ∏ edge ∈ Finset.univ.biUnion (fun i =>
+          (ons_decoratedExternalEdges (piece i)).image ons_decEdgeProjection),
+            weight edge := by rw [hcoverExt, Finset.biUnion_image]
+    _ = ∏ i, ∏ edge ∈
+          (ons_decoratedExternalEdges (piece i)).image ons_decEdgeProjection,
+            weight edge := by
+      simpa using Finset.prod_biUnion hdisjProj
+
+lemma ons_decoratedWeightedSpinWeight_factor_of_isotropic
+    {L : ℕ} [Fact (2 < L)]
+    {iota : Type} [Fintype iota] [DecidableEq iota]
+    (weight : Sym2 (ZMod L × ZMod L) → ℂ) (a b : Fin 2)
+    (D : ons_DecoratedEvenSubgraph L)
+    (piece : iota → Finset (Sym2 (ons_Dart L)))
+    (hcover : D.1 = Finset.univ.biUnion piece)
+    (hdisj : ((Finset.univ : Finset iota) : Set iota).PairwiseDisjoint piece)
+    (hisotropic : ∀ i j, i ≠ j →
+      ons_homologyIntersection
+        (ons_evenHomology L
+          ((ons_decoratedExternalEdges (piece i)).image ons_decEdgeProjection))
+        (ons_evenHomology L
+          ((ons_decoratedExternalEdges (piece j)).image ons_decEdgeProjection)) = 0) :
+    ons_decoratedWeightedSpinWeight L weight a b D =
+      ∏ i,
+        (ons_spinCharacter a b
+          (ons_evenHomology L
+            ((ons_decoratedExternalEdges (piece i)).image
+              ons_decEdgeProjection)) : ℂ) *
+          ∏ edge ∈
+            (ons_decoratedExternalEdges (piece i)).image ons_decEdgeProjection,
+              weight edge := by
+  let h : iota → Fin 2 × Fin 2 := fun i =>
+    ons_evenHomology L
+      ((ons_decoratedExternalEdges (piece i)).image ons_decEdgeProjection)
+  have hcharReal : ons_spinCharacter a b
+      (ons_evenHomology L (ons_originalEdgesOfDecorated L D)) =
+      ∏ i, ons_spinCharacter a b (h i) := by
+    rw [ons_originalHomology_biUnion D piece hcover hdisj]
+    exact ons_spinCharacter_sum_of_pairwise_intersection_zero
+      a b Finset.univ h (by
+        intro i _ j _ hij
+        exact hisotropic i j hij)
+  have hchar :
+      (ons_spinCharacter a b
+        (ons_evenHomology L (ons_originalEdgesOfDecorated L D)) : ℂ) =
+        ∏ i, (ons_spinCharacter a b (h i) : ℂ) := by
+    exact_mod_cast hcharReal
+  have hweight :=
+    ons_decoratedOriginalWeight_biUnion weight D piece hcover hdisj
+  rw [ons_decoratedWeightedSpinWeight, hchar, hweight,
+    Finset.prod_mul_distrib]
+
+lemma ons_decoratedWeightedSpinTerm_cycle_data
+    (L : ℕ) [Fact (2 < L)]
+    (weight : Sym2 (ZMod L × ZMod L) → ℂ)
+    (D : ons_DecoratedEvenSubgraph L) :
+    ∃ (iota : Type) (_ : Fintype iota) (_ : DecidableEq iota)
+      (base : iota → ons_Dart L)
+      (p : (i : iota) → (ons_decGraph L).Walk (base i) (base i)),
+      (∀ i, (p i).IsCycle) ∧
+      D.1 = Finset.univ.biUnion (fun i => (p i).edges.toFinset) ∧
+      ((Finset.univ : Finset iota) : Set iota).PairwiseDisjoint
+        (fun i => (p i).edges.toFinset) ∧
+      ((Finset.univ : Finset iota) : Set iota).PairwiseDisjoint
+        (fun i => (p i).toSubgraph.verts) ∧
+      (∏ edge ∈ ons_originalEdgesOfDecorated L D, weight edge) =
+        ∏ i, ∏ edge ∈ ons_walkOriginalEdges (p i), weight edge := by
+  obtain ⟨iota, hi, hdeci, base, p, hcycle, hcover, hdisj, hverts⟩ :=
+    ons_decoratedSpinTerm_cycle_decomposition L D
+  refine ⟨iota, hi, hdeci, base, p, hcycle, hcover, hdisj, hverts, ?_⟩
+  simpa only [ons_walkOriginalEdges, ons_walkExternalEdges] using
+    ons_decoratedOriginalWeight_biUnion weight D
+      (fun i => (p i).edges.toFinset) hcover hdisj
+
+end StatMech.Onsager

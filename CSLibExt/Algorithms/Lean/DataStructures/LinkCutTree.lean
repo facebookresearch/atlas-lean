@@ -402,6 +402,10 @@ where
         | some s => some s
         | none => findSubtreeList x cs
 
+/-- The first subtree rooted at `x` in a list of trees: `findSubtree x` tried on each tree in
+order. -/
+add_decl_doc findSubtree.findSubtreeList
+
 private theorem findSubtreeList_eq_some_spec {x : V} :
     ∀ {cs : List (Tree V)} {s : Tree V},
       findSubtree.findSubtreeList x cs = some s →
@@ -862,6 +866,10 @@ where
         | some c' => some (c' :: cs)
         | none => (graftAtList y newChild cs).map (c :: ·)
 
+/-- `graftAt y newChild` applied to the first tree of the list in which `y` occurs, keeping the
+other trees; `none` when `y` occurs in none of them. -/
+add_decl_doc graftAt.graftAtList
+
 private theorem graftAtList_eq_some_of_exists {y : V} {newChild : Tree V} :
     ∀ {cs : List (Tree V)}, (∃ c ∈ cs, ∃ c', graftAt y newChild c = some c') →
       ∃ cs', graftAt.graftAtList y newChild cs = some cs' := by
@@ -1253,6 +1261,7 @@ public theorem adjacent_graftAt {y a b : V} {newChild : Tree V} :
           · exact Or.inr (Or.inr (Or.inr (Or.inr (Or.inr h))))
 
 
+omit [DecidableEq V] in
 private theorem perm_rotate3 (a b c : List V) :
     ((a ++ b) ++ c).Perm ((a ++ c) ++ b) := by
   rw [List.append_assoc, List.append_assoc]
@@ -1807,6 +1816,9 @@ where
         | some c' => c' :: pruneList x cs
         | none => pruneList x cs
 
+/-- `pruneAt x` applied to each tree of a list, dropping the trees whose root is `x`. -/
+add_decl_doc pruneAt.pruneList
+
 /-- Pruning at a vertex that does not occur is the identity. -/
 public theorem pruneAt_eq_self_of_not_mem {x : V} :
     ∀ {t : Tree V}, x ∉ Tree.vertices t → pruneAt x t = some t := by
@@ -2319,6 +2331,10 @@ where
         match rootPath x c with
         | some p => some p
         | none => rootPathList x cs
+
+/-- The root path to `x` in the first tree of the list in which `x` occurs, or `none` when `x`
+occurs in none of them. -/
+add_decl_doc rootPath.rootPathList
 
 private theorem rootPathList_eq_some_spec {x : V} :
     ∀ {cs : List (Tree V)} {p : List V},

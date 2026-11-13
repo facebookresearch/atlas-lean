@@ -37,6 +37,13 @@ Each book directory under `Atlas/` contains:
   declarations, including faithfulness, proof-integrity, and code-quality
   scores.
 
+### Gap-free variant: `merely-true`
+
+[`merely-true/`](merely-true/) is a derivative of this library that keeps only
+the declarations whose entire transitive dependency cone is free of `sorry`,
+`axiom`, `opaque`, and `native_decide`. It builds on its own and is checked end
+to end by the Lean kernel. See [`merely-true/README.md`](merely-true/README.md).
+
 ## Visualizer
 
 A visualizer is provided at https://rammalahmad.github.io/atlas/. It allows

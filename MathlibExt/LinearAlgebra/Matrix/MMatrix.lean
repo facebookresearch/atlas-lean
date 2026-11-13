@@ -39,6 +39,9 @@ takes the supremum over the quasispectrum, which adds `0` and so changes nothing
   nonnegative, so is `(1 - K)⁻¹` (Neumann series; `Kⁿ → 0` by Gelfand's formula).
 * `Matrix.le_spectralRadius_of_smul_le_mulVec`: the Collatz–Wielandt lower bound: if
   `K ≥ 0`, `z ≥ 0`, `z ≠ 0` and `r z ≤ K z` with `r ≥ 0`, then `r ≤ ρ(K)`.
+* `Matrix.spectrum_smul_one`, `Matrix.isHurwitz_smul_one`, `Matrix.isNonsingularMMatrix_smul_one`:
+  a real scalar matrix `c • 1` has spectrum `{c}`; it is Hurwitz for `c < 0` and a nonsingular
+  M-matrix for `c > 0`.
 * `Matrix.IsNonsingularMMatrix.isUnit`, `Matrix.IsNonsingularMMatrix.inv_nonneg`: a
   nonsingular M-matrix is invertible and its inverse is entrywise nonnegative.
 
@@ -71,6 +74,32 @@ def IsZMatrix (A : Matrix ι ι ℝ) : Prop :=
 real part (Berman–Plemmons, Ch. 6, Theorem 2.3, condition (G20)). -/
 def IsNonsingularMMatrix (A : Matrix ι ι ℝ) : Prop :=
   A.IsZMatrix ∧ (-A).IsHurwitz
+
+/-- The complexification of the real scalar matrix `c • 1` is the complex scalar `c`. -/
+theorem map_smul_one_algebraMap (c : ℝ) :
+    (c • (1 : Matrix ι ι ℝ)).map (algebraMap ℝ ℂ) = algebraMap ℂ (Matrix ι ι ℂ) (c : ℂ) := by
+  ext i j
+  by_cases h : i = j <;> simp [Matrix.algebraMap_matrix_apply, h]
+
+/-- The complex spectrum of a real scalar matrix `c • 1` (nonempty index type) is `{c}`. -/
+theorem spectrum_smul_one [Nonempty ι] (c : ℝ) :
+    spectrum ℂ ((c • (1 : Matrix ι ι ℝ)).map (algebraMap ℝ ℂ)) = {(c : ℂ)} := by
+  rw [map_smul_one_algebraMap, spectrum.scalar_eq]
+
+/-- A negative real scalar matrix `c • 1` is Hurwitz. -/
+theorem isHurwitz_smul_one {c : ℝ} (hc : c < 0) : (c • (1 : Matrix ι ι ℝ)).IsHurwitz := by
+  intro μ hμ
+  rcases isEmpty_or_nonempty ι with hι | hι
+  · simp [spectrum.of_subsingleton] at hμ
+  · rw [spectrum_smul_one, Set.mem_singleton_iff] at hμ
+    simpa [hμ] using hc
+
+/-- A positive real scalar matrix `c • 1` is a nonsingular M-matrix. -/
+theorem isNonsingularMMatrix_smul_one {c : ℝ} (hc : 0 < c) :
+    (c • (1 : Matrix ι ι ℝ)).IsNonsingularMMatrix := by
+  refine ⟨fun i j hij => by simp [hij], ?_⟩
+  rw [← neg_smul]
+  exact isHurwitz_smul_one (by linarith)
 
 /-- If `ρ(a) < r`, then `r⁻ⁿ aⁿ → 0` (Gelfand's formula). -/
 private theorem tendsto_smul_pow_zero (a : Matrix ι ι ℂ) {r : ℝ≥0} (hr : 0 < r)

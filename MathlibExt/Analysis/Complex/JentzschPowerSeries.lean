@@ -42,12 +42,6 @@ private theorem eval_trunc_succ_mk_eq_sum (a : ℕ → ℂ) (n : ℕ) (w : ℂ) 
   intro k _
   simp [PowerSeries.coeff_mk]
 
-private theorem section_succ_sub (a : ℕ → ℂ) (m : ℕ) (w : ℂ) :
-    (∑ k ∈ Finset.range (m + 1 + 1), a k * w ^ k) - (∑ k ∈ Finset.range (m + 1), a k * w ^ k)
-      = a (m + 1) * w ^ (m + 1) := by
-  rw [Finset.sum_range_succ]
-  ring
-
 private theorem aux_geom (n : ℕ) : ∑ k ∈ Finset.range (n + 1), (4 : ℝ) ^ k ≤ 2 * 4 ^ n := by
   induction n with
   | zero => norm_num
