@@ -12,10 +12,6 @@ Author: Steven Warner
 module
 
 public import MathlibExt.SetTheory.Cardinal.LargeCardinal.Measurable
-public import Mathlib.Order.Filter.CardinalInter
-public import Mathlib.Order.Filter.Cofinite
-public import Mathlib.Order.Filter.Ultrafilter.Defs
-public import Mathlib.SetTheory.Cardinal.Aleph
 
 @[expose] public section
 

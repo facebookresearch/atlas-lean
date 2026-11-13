@@ -106,4 +106,12 @@ theorem measureReal_zTestReject {n : ℕ} (hn : 0 < n) (μ0 δ c : ℝ) {v : NNR
       = 1 - cdf (gaussianReal 0 1) (c - Real.sqrt (n : ℝ) * δ / Real.sqrt (v : ℝ))
   rw [h2, hcompl, probReal_compl_eq_one_sub measurableSet_Iic, ← cdf_eq_real, hstd]
 
+/-- Power of the one-sided z-test (`Φ` form): under true mean `μ0 + δ` the rejection set
+`zTestReject n μ0 v c` has probability `Φ(√n δ / √v - c)`. -/
+theorem measureReal_zTestReject_eq_cdf {n : ℕ} (hn : 0 < n) (μ0 δ c : ℝ) {v : NNReal}
+    (hv : v ≠ 0) :
+    (Measure.pi fun _ : Fin n => gaussianReal (μ0 + δ) v).real (zTestReject n μ0 v c)
+      = cdf (gaussianReal 0 1) (Real.sqrt (n : ℝ) * δ / Real.sqrt (v : ℝ) - c) := by
+  rw [measureReal_zTestReject hn μ0 δ c hv, ← cdf_gaussianReal_neg, neg_sub]
+
 end MathlibExt.Probability.Statistics.Experiment
