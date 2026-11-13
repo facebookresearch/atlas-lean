@@ -12,7 +12,7 @@ import Batteries.Util.ProofWanted
 public import Mathlib.Topology.Compactness.Compact
 public import Mathlib.Topology.Defs.Basic
 public import Mathlib.Topology.Metrizable.Basic
-public import Mathlib.Topology.SmallInductiveDimension
+public import Mathlib.Topology.InductiveDimension.Functions
 
 @[expose] public section
 
