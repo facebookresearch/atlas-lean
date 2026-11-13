@@ -123,7 +123,7 @@ example : ¬ ∃ w, modeOperator J₀ (1 / 4) 4 κ₀ w = Pi.single 1 ![1, 0] :=
   simp [modeMatrix, diffusionMatrix, J₀, κ₀]
   norm_num
 
-/-- The example has a Fredholm package, and every package satisfies the simple-kernel
+/-- The example has a Fredholm package, and every package satisfies the kernel and range
 hypotheses of the scalar reduction. -/
 example : ∃ pkg : FredholmPackage (modeOperator J₀ (1 / 4) 4 κ₀),
     criticalMode J₀ (1 / 4) 4 κ₀ 1 ∈ pkg.decDom.X₀ ∧

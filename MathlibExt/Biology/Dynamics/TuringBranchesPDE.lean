@@ -59,8 +59,11 @@ which constructs such a Turing map `F`:
 * `exists_hasStrictFDerivAt_lsSolution`: `W` is strictly differentiable with `∂_z W(0, p₀) = 0`.
 * `eventually_lsSolution_zero`, `eventually_lsScalar_zero`: on the trivial branch `W(0, p) = 0`
   and the reduced maps vanish.
-* `lyapunovSchmidt_scalar`: for a simple kernel `ker L = ℝ φ` and `range L = ker ψ` (index zero),
-  `F(x, p) = 0 ↔ ∃ a, x = a φ + W(a φ, p) ∧ G̃(a, p) = 0` with `G̃ = lsScalar`.
+* `lyapunovSchmidt_scalar`: for a kernel spanned by one vector, `ker L = ℝ φ`, and a functional
+  `ψ` with `range L = ker ψ` that is injective on the cokernel part,
+  `F(x, p) = 0 ↔ ∃ a, x = a φ + W(a φ, p) ∧ G̃(a, p) = 0` with `G̃ = lsScalar`. The kernel and the
+  cokernel have dimension at most one; `φ = 0` and `ψ = 0` are allowed, so the index need not be
+  zero.
 * `lyapunovSchmidt_patternBranch`: given the reduced branch theorem `hCR` and a factorization
   `G̃(a, d) = a G(a, d)` with `∂_d G(0, d₀) ≠ 0`, the full equation has exactly the trivial
   solutions and one pattern branch `x = a φ + W(a φ, β(a))`, `d = β(a)`, near `(0, d₀)`.
@@ -311,16 +314,16 @@ theorem eventually_lsSolution_zero (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     hp.1 (by simp [lsRangeMap, h0])
   exact ⟨hW, by simp [lsReduced, hW, h0]⟩
 
-/-! ### Simple kernel: reduction to a scalar equation -/
+/-! ### Kernel spanned by one vector: reduction to a scalar equation -/
 
-section SimpleKernel
+section ScalarReduction
 
 variable {φ : E} (hφ : φ ∈ pkg.decDom.X₀) (hspan : ∀ z : pkg.decDom.X₀, ∃ a : ℝ, (z : E) = a • φ)
   (ψ : Y →L[ℝ] ℝ)
 
-/-- **The scalar bifurcation function** `G̃(a, p) = ψ(F(a φ + W(a φ, p), p))` of a simple kernel
-`ker L = ℝ φ`, with `ψ` a functional whose kernel contains `range L` and which is injective on the
-cokernel part. -/
+/-- **The scalar bifurcation function** `G̃(a, p) = ψ(F(a φ + W(a φ, p), p))` for a kernel
+`ker L = ℝ φ` spanned by one vector, with `ψ` a functional whose kernel contains `range L` and
+which is injective on the cokernel part. -/
 noncomputable def lsScalar (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     (hFL : F' ∘L .inl ℝ E Λ = L) : ℝ × Λ → ℝ :=
   fun q => ψ (F (q.1 • φ + lsSolution pkg hF hFL (q.1 • ⟨φ, hφ⟩, q.2), q.2))
@@ -372,9 +375,11 @@ theorem proj_smul_add (a : ℝ) (w : pkg.decDom.X₁) :
   rw [map_add, map_smul, this, proj_coe_X₁, smul_zero, zero_add]
 
 include hspan in
-/-- **Lyapunov–Schmidt reduction to a scalar equation.** For a simple kernel `ker L = ℝ φ` and a
-functional `ψ` cutting out `range L` (so `range L` has codimension `≤ 1`), near `(0, p₀)` the
-solutions of `F(x, p) = 0` are exactly `x = a φ + W(a φ, p)` with `G̃(a, p) = 0`. -/
+/-- **Lyapunov–Schmidt reduction to a scalar equation.** For a kernel `ker L = ℝ φ` spanned by one
+vector and a functional `ψ` cutting out `range L`, near `(0, p₀)` the solutions of `F(x, p) = 0` are
+exactly `x = a φ + W(a φ, p)` with `G̃(a, p) = 0`. The kernel has dimension at most one and
+`range L` has codimension at most one; `φ = 0` and `ψ = 0` are allowed, so the index need not be
+zero. -/
 theorem lyapunovSchmidt_scalar (hF : HasStrictFDerivAt F F' ((0 : E), p₀))
     (hFL : F' ∘L .inl ℝ E Λ = L) (hF0 : F ((0 : E), p₀) = 0)
     (hψ1 : ∀ y ∈ pkg.decCodom.X₁, ψ y = 0) (hψ0 : ∀ y ∈ pkg.decCodom.X₀, ψ y = 0 → y = 0) :
@@ -416,7 +421,7 @@ theorem tendsto_kerCoord (hφ0 : φ ≠ 0) : Tendsto (kerCoord pkg hspan) (𝓝 
     simpa using this
   exact squeeze_zero_norm (fun x => (h x).le) hc
 
-end SimpleKernel
+end ScalarReduction
 
 end LyapunovSchmidt
 
@@ -430,8 +435,9 @@ variable {E Y : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace
   {F : E × ℝ → Y} {F' : E × ℝ →L[ℝ] Y} {d₀ : ℝ}
 
 /-- **Pattern branches of the full problem from the reduced branch theorem.** Let `F(x, d)` have
-the trivial branch `F(0, d) = 0` near `d₀` and a simple-kernel, index-zero linearization at
-`(0, d₀)` (Fredholm package with `ker L = ℝ φ`, `range L = ker ψ`). Assume the scalar
+the trivial branch `F(0, d) = 0` near `d₀` and a linearization at `(0, d₀)` with one-dimensional
+kernel `ker L = ℝ φ` (`φ ≠ 0`) and `range L = ker ψ` for a functional `ψ` (Fredholm package
+hypotheses as in `lyapunovSchmidt_scalar`). Assume the scalar
 bifurcation function factors as `G̃(a, d) = a G(a, d)` near `(0, d₀)` with `G` strictly
 differentiable, `G(0, d₀) = 0` and `∂_d G(0, d₀) ≠ 0`.
 
