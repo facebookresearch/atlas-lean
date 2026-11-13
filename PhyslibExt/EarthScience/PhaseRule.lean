@@ -10,7 +10,10 @@ module
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.LinearAlgebra.Dimension.RankNullity
-public import Mathlib.Tactic
+
+import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.Ring
 
 /-!
 # Gibbs phase rule: the counting identity and an abstract dimension count

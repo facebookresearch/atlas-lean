@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.PhaseRule
+import Mathlib.Tactic.NormNum
 
 /-!
 # Gibbs phase-rule checks
