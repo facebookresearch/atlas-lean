@@ -11,8 +11,9 @@ import MathlibExtTest.Geometry.Manifold.Riemannian.JacobiField
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 /-!
 # Near-miss controls N1-N3 for Jacobi fields
-Bump field that is not a Jacobi field, the unit circle with its
-covariant acceleration that is not a geodesic, and distinct times.
+Bump field that does not satisfy the Jacobi equation, the unit circle with its
+covariant acceleration that is not a geodesic, and distinct times. The zero field
+along the circle satisfies the Jacobi equation but is not a Jacobi field.
 -/
 open Bundle Manifold
 open scoped Manifold ContDiff
@@ -39,9 +40,9 @@ theorem bumpB_half_ne : bumpB (1 / 2) ≠ 0 := by
       (JacobiTests.lineU (1 / 2)).proj) h
     simpa [bumpB, ContinuousLinearEquiv.apply_symm_apply] using hc
   exact hs (smul_eq_zero.mp hC |>.resolve_right hI)
-/-- The bump is not a Jacobi field along the line. -/
+/-- The bump does not satisfy the Jacobi equation along the line. -/
 theorem not_jacobi_bump :
-    ¬ IsJacobiField 𝓘(ℝ, ℂ) JacobiTests.lineU bumpB := by
+    ¬ SatisfiesJacobiEquation 𝓘(ℝ, ℂ) JacobiTests.lineU bumpB := by
   intro hJ
   have hall := JacobiTests.noConjChar_complex JacobiTests.lineU bumpB
     JacobiTests.line_isGeodesic hJ bumpB_zero bumpB_one
@@ -101,6 +102,22 @@ theorem circle_not_geodesic :
     simp [circleC]
   rw [hexp0] at hproj
   exact one_ne_zero hproj
+/-- The zero field satisfies the Jacobi equation along the non-geodesic circle. -/
+theorem circle_zero_satisfiesJacobiEquation :
+    SatisfiesJacobiEquation 𝓘(ℝ, ℂ) circleC (fun _ => 0) := by
+  have hproj (t : ℝ) : HasDerivAt (fun s => (circleC s).proj) ((circleC t).snd) t :=
+    (hasDerivAt_iff_hasFDerivAt).mpr
+      (hasMFDerivAt_iff_hasFDerivAt.mp (circle_cov t).hasMFDerivAt_proj)
+  refine ⟨fun _ => 0, fun t => ⟨?_, ?_⟩⟩
+  · exact Manifold.hasCovariantDerivAlong_vectorSpace_of_hasDerivAt circleC _ _ t
+      (hproj t) (by simpa using hasDerivAt_const t (0 : ℂ))
+  · exact Manifold.hasCovariantDerivAlong_vectorSpace_of_hasDerivAt circleC _ _ t
+      (hproj t) (by simpa [Manifold.riemannCurvature_vectorSpace] using
+        hasDerivAt_const t (0 : ℂ))
+/-- The zero field along the circle is not a Jacobi field: the circle is not a geodesic. -/
+theorem circle_zero_not_isJacobiField :
+    ¬ IsJacobiField 𝓘(ℝ, ℂ) circleC (fun _ => 0) :=
+  fun h => circle_not_geodesic h.1
 /-- The shifted field along `lineU` vanishing at `2`. -/
 def shiftK : (s : ℝ) → TangentSpace 𝓘(ℝ, ℂ) (JacobiTests.lineU s).proj :=
   fun s => (NormedSpace.fromTangentSpace (𝕜 := ℝ)

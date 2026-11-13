@@ -27,7 +27,8 @@ Def. 3.1; Burns-Matveev, ETDS 41 (2021), Sections 4 and 7.
 * `Manifold.HasCovariantDerivAlong.unique`: determinacy of `D_t V` at `t`.
 * `Manifold.isGeodesicVelocityCurve_iff_hasCovariantDerivAlong`: a curve is a geodesic iff its
   velocity is parallel along it.
-* `Manifold.IsJacobiField I u J`: `J` is a Jacobi field along `u`.
+* `Manifold.SatisfiesJacobiEquation I u J`: `J` satisfies the Jacobi equation along `u`.
+* `Manifold.IsJacobiField I u J`: `u` is a geodesic and `J` is a Jacobi field along it.
 * `Manifold.AreConjugateAlong I u a b`: times `a` and `b` are conjugate along `u`.
 * `Manifold.HasNoConjugatePoints I M`: `M` has no conjugate points.
 * `Manifold.hasNoConjugatePoints_iff`: Burns-Matveev Section 4 characterization.
@@ -139,14 +140,15 @@ theorem isGeodesicVelocityCurve_iff_hasCovariantDerivAlong (I : ModelWithCorners
     refine ⟨fun t => (h t).hasMFDerivAt_proj, fun t W hW => ?_⟩
     simpa [inner_zero_left] using (h t).hasDerivAt_inner W hW
 
-/-- `J` is a Jacobi field along the curve with velocity curve `u`: there is `J'` with, at every
-time, `J'` the covariant derivative of `J` and `-R(J, γ')γ'` that of `J'` (Lee Ch. 10, sign
-convention of `Manifold.riemannCurvature`; do Carmo Ch. 5 Def. 2.1 uses the opposite curvature
-sign, so his `R(γ', J)γ'` is our `R(J, γ')γ'`). `J'` is `D_t J`, unique by
-`Manifold.HasCovariantDerivAlong.unique`; meant along a geodesic. The curvature caveat
-documented for `Manifold.riemannCurvature` in `MathlibExt.Geometry.Manifold.Riemannian.Curvature`
-(Mathlib's connection not yet proved smooth) applies. -/
-def IsJacobiField (I : ModelWithCorners ℝ E H) {M : Type*} [TopologicalSpace M]
+/-- `J` satisfies the Jacobi equation along the curve with velocity curve `u`: there is `J'`
+with, at every time, `J'` the covariant derivative of `J` and `-R(J, γ')γ'` that of `J'` (Lee
+Ch. 10, sign convention of `Manifold.riemannCurvature`; do Carmo Ch. 5 Def. 2.1 uses the
+opposite curvature sign, so his `R(γ', J)γ'` is our `R(J, γ')γ'`). `J'` is `D_t J`, unique by
+`Manifold.HasCovariantDerivAlong.unique`. The curve need not be a geodesic; `IsJacobiField`
+adds that requirement. The curvature caveat documented for `Manifold.riemannCurvature` in
+`MathlibExt.Geometry.Manifold.Riemannian.Curvature` (Mathlib's connection not yet proved
+smooth) applies. -/
+def SatisfiesJacobiEquation (I : ModelWithCorners ℝ E H) {M : Type*} [TopologicalSpace M]
     [ChartedSpace H M] [IsManifold I ∞ M]
     [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
     [IsContMDiffRiemannianBundle I ∞ E (fun x : M ↦ TangentSpace I x)]
@@ -156,6 +158,16 @@ def IsJacobiField (I : ModelWithCorners ℝ E H) {M : Type*} [TopologicalSpace M
     HasCovariantDerivAlong I u J J' t ∧
       HasCovariantDerivAlong I u J'
         (fun s ↦ -riemannCurvature I (u s).proj (J s) (u s).snd (u s).snd) t
+
+/-- `J` is a Jacobi field along the geodesic with velocity curve `u`: `u` is a geodesic velocity
+curve and `J` satisfies the Jacobi equation along it (Lee Ch. 10; do Carmo Ch. 5 Def. 2.1). -/
+def IsJacobiField (I : ModelWithCorners ℝ E H) {M : Type*} [TopologicalSpace M]
+    [ChartedSpace H M] [IsManifold I ∞ M]
+    [RiemannianBundle (fun x : M ↦ TangentSpace I x)]
+    [IsContMDiffRiemannianBundle I ∞ E (fun x : M ↦ TangentSpace I x)]
+    [FiniteDimensional ℝ E] (u : ℝ → TangentBundle I M)
+    (J : (s : ℝ) → TangentSpace I (u s).proj) : Prop :=
+  IsGeodesicVelocityCurve I u ∧ SatisfiesJacobiEquation I u J
 
 /-- Times `a` and `b` are conjugate along the geodesic velocity curve `u`: `u` is a geodesic,
 `a ≠ b`, and some Jacobi field vanishes at `a` and `b` but not identically (do Carmo Ch. 5
@@ -168,7 +180,7 @@ def AreConjugateAlong (I : ModelWithCorners ℝ E H) {M : Type*} [TopologicalSpa
     [FiniteDimensional ℝ E] (u : ℝ → TangentBundle I M) (a b : ℝ) : Prop :=
   IsGeodesicVelocityCurve I u ∧ a ≠ b ∧
     ∃ J : (s : ℝ) → TangentSpace I (u s).proj,
-      IsJacobiField I u J ∧ J a = 0 ∧ J b = 0 ∧ ∃ s : ℝ, J s ≠ 0
+      SatisfiesJacobiEquation I u J ∧ J a = 0 ∧ J b = 0 ∧ ∃ s : ℝ, J s ≠ 0
 
 /-- `M` has no conjugate points: no geodesic velocity curve has conjugate times. The hypothesis
 "without conjugate points" of Burns-Matveev (ETDS 41 (2021)) Section 7, characterized in
@@ -192,7 +204,7 @@ theorem hasNoConjugatePoints_iff (I : ModelWithCorners ℝ E H) (M : Type*)
     [FiniteDimensional ℝ E] :
     HasNoConjugatePoints I M ↔
       ∀ (u : ℝ → TangentBundle I M) (J : (s : ℝ) → TangentSpace I (u s).proj)
-        (a b : ℝ), IsGeodesicVelocityCurve I u → IsJacobiField I u J →
+        (a b : ℝ), IsGeodesicVelocityCurve I u → SatisfiesJacobiEquation I u J →
         a ≠ b → J a = 0 → J b = 0 → ∀ s : ℝ, J s = 0 := by
   constructor
   · intro h u J a b hgeo hJ hab ha hb s

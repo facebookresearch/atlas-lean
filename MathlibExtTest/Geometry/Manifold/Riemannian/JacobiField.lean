@@ -65,8 +65,8 @@ theorem line_hproj (t : ℝ) : HasDerivAt (fun s => (lineU s).proj)
   (hasDerivAt_iff_hasFDerivAt).mpr
     (hasMFDerivAt_iff_hasFDerivAt.mp (line_isGeodesic.hasMFDerivAt_proj t))
 
-/-- The linear field is a Jacobi field along the line. -/
-theorem line_isJacobi : IsJacobiField 𝓘(ℝ, ℂ) lineU lineJ := by
+/-- The linear field satisfies the Jacobi equation along the line. -/
+theorem line_satisfiesJacobiEquation : SatisfiesJacobiEquation 𝓘(ℝ, ℂ) lineU lineJ := by
   have hV : ∀ t : ℝ, HasDerivAt
       (fun s => NormedSpace.fromTangentSpace _ (lineJ s))
       (NormedSpace.fromTangentSpace _ (lineJ' t)) t := by
@@ -110,6 +110,10 @@ theorem line_isJacobi : IsJacobiField 𝓘(ℝ, ℂ) lineU lineJ := by
     exact Manifold.hasCovariantDerivAlong_vectorSpace_of_hasDerivAt lineU
       lineJ' (fun s => -Manifold.riemannCurvature 𝓘(ℝ, ℂ) ((lineU s).proj)
         (lineJ s) ((lineU s).snd) ((lineU s).snd)) t (line_hproj t) htarget
+
+/-- The linear field is a Jacobi field along the line geodesic. -/
+theorem line_isJacobiField : IsJacobiField 𝓘(ℝ, ℂ) lineU lineJ :=
+  ⟨line_isGeodesic, line_satisfiesJacobiEquation⟩
 
 /-- Pin for the linear field at time zero. -/
 theorem lineJ_zero : lineJ 0 =
@@ -162,8 +166,8 @@ theorem zero_hproj (t : ℝ) : HasDerivAt (fun s => (zeroU s).proj)
   (hasDerivAt_iff_hasFDerivAt).mpr
     (hasMFDerivAt_iff_hasFDerivAt.mp (zero_isGeodesic.hasMFDerivAt_proj t))
 
-/-- The linear field is a Jacobi field along the zero curve. -/
-theorem zero_isJacobi : IsJacobiField 𝓘(ℝ, ℂ) zeroU zeroJ := by
+/-- The linear field satisfies the Jacobi equation along the zero curve. -/
+theorem zero_satisfiesJacobiEquation : SatisfiesJacobiEquation 𝓘(ℝ, ℂ) zeroU zeroJ := by
   have hV : ∀ t : ℝ, HasDerivAt
       (fun s => NormedSpace.fromTangentSpace ((zeroU s).proj) (zeroJ s))
       (NormedSpace.fromTangentSpace ((zeroU t).proj) (zeroJ' t)) t := by
@@ -205,6 +209,10 @@ theorem zero_isJacobi : IsJacobiField 𝓘(ℝ, ℂ) zeroU zeroJ := by
       zeroJ' (fun s => -Manifold.riemannCurvature 𝓘(ℝ, ℂ) ((zeroU s).proj)
         (zeroJ s) ((zeroU s).snd) ((zeroU s).snd)) t (zero_hproj t) htarget
 
+/-- The linear field is a Jacobi field along the constant geodesic. -/
+theorem zero_isJacobiField : IsJacobiField 𝓘(ℝ, ℂ) zeroU zeroJ :=
+  ⟨zero_isGeodesic, zero_satisfiesJacobiEquation⟩
+
 /-- Pin for the zero-velocity field at time zero. -/
 theorem zeroJ_zero : zeroJ 0 = 0 := by
   simp [zeroJ]
@@ -231,7 +239,7 @@ public section
 /-- Burns-Matveev form of no conjugate points on the plane. -/
 theorem noConjChar_complex (u : ℝ → TangentBundle 𝓘(ℝ, ℂ) ℂ)
     (J : (s : ℝ) → TangentSpace 𝓘(ℝ, ℂ) (u s).proj) :
-    IsGeodesicVelocityCurve 𝓘(ℝ, ℂ) u → IsJacobiField 𝓘(ℝ, ℂ) u J →
+    IsGeodesicVelocityCurve 𝓘(ℝ, ℂ) u → SatisfiesJacobiEquation 𝓘(ℝ, ℂ) u J →
     J 0 = 0 → J 1 = 0 → ∀ s : ℝ, J s = 0 :=
   fun hgeo hJ ha hb => (hasNoConjugatePoints_iff 𝓘(ℝ, ℂ) ℂ).mp
     hasNoConjugatePoints_complex u J 0 1 hgeo hJ zero_ne_one ha hb
@@ -259,8 +267,8 @@ def lineL' : (s : ℝ) → TangentSpace 𝓘(ℝ, ℂ) (lineU s).proj :=
   fun s => (NormedSpace.fromTangentSpace (𝕜 := ℝ) (lineU s).proj).symm
     Complex.I
 
-/-- The shifted field is a Jacobi field along the line. -/
-theorem lineL_isJacobi : IsJacobiField 𝓘(ℝ, ℂ) lineU lineL := by
+/-- The shifted field satisfies the Jacobi equation along the line. -/
+theorem lineL_satisfiesJacobiEquation : SatisfiesJacobiEquation 𝓘(ℝ, ℂ) lineU lineL := by
   have hV : ∀ t : ℝ, HasDerivAt
       (fun s => NormedSpace.fromTangentSpace _ (lineL s)) Complex.I t := by
     intro t
@@ -295,6 +303,10 @@ theorem lineL_isJacobi : IsJacobiField 𝓘(ℝ, ℂ) lineU lineL := by
       simpa using (hV' t)
     exact Manifold.hasCovariantDerivAlong_vectorSpace_of_hasDerivAt lineU
       _ _ t (line_hproj t) htarget
+
+/-- The shifted field is a Jacobi field along the line geodesic. -/
+theorem lineL_isJacobiField : IsJacobiField 𝓘(ℝ, ℂ) lineU lineL :=
+  ⟨line_isGeodesic, lineL_satisfiesJacobiEquation⟩
 
 /-- Pin for the shifted field at time minus one. -/
 theorem lineL_neg : lineL (-1) = 0 := by
