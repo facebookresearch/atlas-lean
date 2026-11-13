@@ -13,6 +13,7 @@ public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Real
 public import Mathlib.Probability.Kernel.Basic
 public import MathlibExt.Probability.Causality.CausalIdentification
+public import MathlibExt.Probability.Statistics.SampleLaw
 
 /-!
 # Estimand identification and the two-point lower bound
@@ -90,6 +91,59 @@ theorem not_isIdentifiedBy_of_eq_of_ne {Θ X : Type*} [MeasurableSpace X]
     {P : Θ → Measure X} {τ : Θ → ℝ} {θ θ' : Θ} (hP : P θ = P θ') (hτ : τ θ ≠ τ θ') :
     ¬ IsIdentifiedBy P τ := by
   exact fun h => hτ (h θ θ' hP)
+
+/-- **Sample-law equality projects to the margin.** Two (possibly different) product laws
+for the same tuple agree on every coordinate law, hence coincide. -/
+theorem hasLaw_of_hasLaw_tuple_pi_of_mem
+    {Ω S : Type*} [MeasurableSpace Ω] [MeasurableSpace S]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {ν ν' : Measure S} [IsProbabilityMeasure ν]
+    [SigmaFinite ν']
+    {n : ℕ} (i0 : Fin n) {X : Fin n → Ω → S}
+    (h : HasLaw (fun ω i => X i ω) (Measure.pi fun _ : Fin n => ν) μ)
+    (h' : HasLaw (fun ω i => X i ω) (Measure.pi fun _ : Fin n => ν') μ) :
+    HasLaw (X i0) ν μ ∧ ν = ν' := by
+  have hPi : IsProbabilityMeasure (Measure.pi fun _ : Fin n => ν') :=
+    h'.isProbabilityMeasure_iff.mp inferInstance
+  have hPiUniv : (Measure.pi fun _ : Fin n => ν') Set.univ = 1 := hPi.measure_univ
+  have hProd : ∏ _i : Fin n, ν' Set.univ = 1 := by
+    have h := Measure.pi_univ (fun _ : Fin n => ν')
+    rw [hPiUniv] at h
+    exact h.symm
+  rw [Finset.prod_const, Finset.card_univ, Fintype.card_fin] at hProd
+  have hn0 : n ≠ 0 := ne_of_gt i0.pos
+  have hTR : (ν' Set.univ).toReal ^ n = 1 := by
+    have h2 := congrArg ENNReal.toReal hProd
+    rw [ENNReal.toReal_pow] at h2
+    simpa using h2
+  have hTR1 : (ν' Set.univ).toReal = 1 :=
+    (pow_eq_one_iff_of_nonneg ENNReal.toReal_nonneg hn0).mp hTR
+  have hUniv : ν' Set.univ = 1 := (ENNReal.toReal_eq_one_iff _).mp hTR1
+  have : IsProbabilityMeasure ν' := ⟨hUniv⟩
+  have hX := (iIndepFun_and_hasLaw_of_hasLaw_tuple_pi h).2 i0
+  have hX' := (iIndepFun_and_hasLaw_of_hasLaw_tuple_pi h').2 i0
+  have e1 := hX.map_eq
+  have e2 := hX'.map_eq
+  exact ⟨hX, e1.symm.trans e2⟩
+
+/-- **Identification lifts to the iid n-sample model.** If `τ` is identified by the
+one-observation laws, it is identified by the `n`-sample product laws, for every `n`
+with an index. -/
+theorem IsIdentifiedBy.of_n_sample
+    {Θ S : Type*} [MeasurableSpace S] (P : Θ → Measure S) (τ : Θ → ℝ)
+    [∀ θ, IsProbabilityMeasure (P θ)]
+    (h : IsIdentifiedBy P τ) {n : ℕ} (i0 : Fin n) :
+    IsIdentifiedBy (fun θ => Measure.pi fun _ : Fin n => P θ) τ := by
+  intro θ θ' h_eq
+  dsimp only at h_eq
+  have : ∀ i : Fin n, IsProbabilityMeasure (P θ) := fun _ => inferInstance
+  have : ∀ i : Fin n, IsProbabilityMeasure (P θ') := fun _ => inferInstance
+  have e1 := (measurePreserving_eval (fun _ : Fin n => P θ) i0).map_eq
+  have e2 := (measurePreserving_eval (fun _ : Fin n => P θ') i0).map_eq
+  have h_map : Measure.map (Function.eval i0) (Measure.pi fun _ : Fin n => P θ) =
+      Measure.map (Function.eval i0) (Measure.pi fun _ : Fin n => P θ') := by rw [h_eq]
+  have hP : P θ = P θ' := e1.symm.trans (h_map.trans e2)
+  exact h θ θ' hP
+
 
 /-- **Two-point bound for randomized rules.** Equal observation laws induce equal output
 laws under a fixed Markov kernel, so the deterministic disjointness argument applies on

@@ -34,12 +34,15 @@ result uses only finite-sum integral linearity, and the variance result uses
 - `MathlibExt.Probability.variance_sample_mean`: the sample mean has variance `sigma2 / n`.
 - `MathlibExt.Probability.variance_sample_mean_of_iid`: the IID case, derived from
   `variance_sample_mean` by specializing to `Fin n`.
+- `MathlibExt.Probability.variance_sample_mean_of_pairwise`: the same variance
+  formula under pairwise independence only (`IndepFun.variance_sum` needs no more).
 
 ## iii. Table of contents
 
 - A. Expectation of the sample mean
 - B. Variance of the sample mean
 - C. The IID case
+- D. Variance under pairwise independence
 
 ## iv. References
 
@@ -132,5 +135,34 @@ theorem variance_sample_mean_of_iid
     exact (Fin.sum_univ_eq_sum_range (fun i => X i ω) n).symm
   rw [hsum]
   exact hgen
+
+
+/-! ## D. Variance under pairwise independence -/
+
+/-- Pairwise independence suffices for the variance formula: `IndepFun.variance_sum`
+needs only a `Set.Pairwise` hypothesis, not full `iIndepFun`. -/
+theorem variance_sample_mean_of_pairwise {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    {ι : Type*} [Fintype ι] [Nonempty ι] {X : ι → Ω → ℝ} {sigma2 : ℝ}
+    (hLp : ∀ i, MemLp (X i) 2 μ)
+    (hIndep : Set.Pairwise (Finset.univ : Finset ι)
+      fun i j => IndepFun (X i) (X j) μ)
+    (hVar : ∀ i, ProbabilityTheory.variance (X i) μ = sigma2) :
+    ProbabilityTheory.variance (fun ω => (∑ i, X i ω) / (Fintype.card ι : ℝ)) μ
+      = sigma2 / (Fintype.card ι : ℝ) := by
+  have hpos : 0 < Fintype.card ι := Fintype.card_pos
+  have hn : (Fintype.card ι : ℝ) ≠ 0 := by exact_mod_cast ne_of_gt hpos
+  have hfun : (fun ω => (∑ i, X i ω) / (Fintype.card ι : ℝ))
+      = fun ω => (Fintype.card ι : ℝ)⁻¹ * (∑ i, X i) ω := by
+    funext ω
+    rw [Finset.sum_apply, div_eq_mul_inv]
+    ring
+  have hvar_sum : ProbabilityTheory.variance (∑ i, X i) μ
+      = ∑ i, ProbabilityTheory.variance (X i) μ :=
+    ProbabilityTheory.IndepFun.variance_sum (fun i _ => hLp i) hIndep
+  have hsum : (∑ i, ProbabilityTheory.variance (X i) μ)
+      = (Fintype.card ι : ℝ) * sigma2 := by
+    simp only [hVar, Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  rw [hfun, ProbabilityTheory.variance_const_mul, hvar_sum, hsum]
+  field_simp
 
 end MathlibExt.Probability
