@@ -9,6 +9,7 @@ module
 
 public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.Normed.Operator.Banach
+public import MathlibExt.Analysis.FunctionalAnalysis.TikhonovRegularization
 
 /-!
 # Small-noise regularization consistency under a source condition
@@ -17,7 +18,11 @@ Let `A : H →L[ℝ] K` be a bounded operator between real Hilbert spaces,
 `xdag = A† w` (the source condition, with `w : K`), `b = A xdag`, and
 `xlam` the Tikhonov solution for noisy data `bdelta` at parameter
 `lam > 0`, characterized by the normal equations
-`(A† A + lam • 1) xlam = A† bdelta`.
+`tikhonovOperator A lam xlam = A† bdelta`, where
+`TikhonovRegularization.tikhonovOperator A lam = A† ∘L A + lam • 1` is the
+normal operator of `MathlibExt.Analysis.FunctionalAnalysis.TikhonovRegularization`.
+Stating the results with that operator lets them compose directly with its
+existence, uniqueness, and minimizer theorems.
 
 This file proves the consistency bound
 `‖xlam - xdag‖ ≤ delta / (2 * sqrt lam) + sqrt lam * ‖w‖ / 2`
@@ -40,33 +45,24 @@ proved for Tikhonov solutions in
 
 open Filter Topology Real
 open scoped InnerProductSpace
+open MathlibExt.Analysis.FunctionalAnalysis.TikhonovRegularization
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.TikhonovConsistency
 
 variable {H K : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H] [CompleteSpace H]
   [NormedAddCommGroup K] [InnerProductSpace ℝ K] [CompleteSpace K]
 
-/-- Normal-equation energy bound: if `(A† A + lam • 1) x = A† z` with
+/-- Normal-equation energy bound: if `tikhonovOperator A lam x = A† z` with
 `lam > 0`, then `lam * ‖x‖^2 ≤ ‖z‖ * ‖A x‖ - ‖A x‖^2 ≤ ‖z‖^2 / 4`. -/
 theorem energy_bound (A : H →L[ℝ] K) (z : K) (x : H) {lam : ℝ} (hlam : 0 < lam)
-    (hx : (ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) x =
-      ContinuousLinearMap.adjoint A z) :
+    (hx : tikhonovOperator A lam x = ContinuousLinearMap.adjoint A z) :
     lam * ‖x‖ ^ 2 ≤ ‖z‖ * ‖A x‖ - ‖A x‖ ^ 2 ∧
       ‖z‖ * ‖A x‖ - ‖A x‖ ^ 2 ≤ ‖z‖ ^ 2 / 4 := by
   have _hlam_use : 0 < lam := hlam
-  have h_inner : ⟪((ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) x), x⟫_ℝ
+  have h_inner : ⟪tikhonovOperator A lam x, x⟫_ℝ
       = ⟪ContinuousLinearMap.adjoint A z, x⟫_ℝ := by rw [hx]
-  have h_lhs : ⟪((ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) x), x⟫_ℝ
-      = ‖A x‖ ^ 2 + lam * ‖x‖ ^ 2 := by
-    have h1 : ((ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) x)
-        = (ContinuousLinearMap.adjoint A) (A x) + lam • x := by
-      simp [add_apply, smul_apply, ContinuousLinearMap.comp_apply, one_apply_eq_self]
-    rw [h1, inner_add_left]
-    have hA : ⟪(ContinuousLinearMap.adjoint A) (A x), x⟫_ℝ = ‖A x‖ ^ 2 := by
-      rw [ContinuousLinearMap.adjoint_inner_left, real_inner_self_eq_norm_sq]
-    have hlam : ⟪lam • x, x⟫_ℝ = lam * ‖x‖ ^ 2 := by
-      rw [real_inner_smul_left, real_inner_self_eq_norm_sq]
-    rw [hA, hlam]
+  have h_lhs : ⟪tikhonovOperator A lam x, x⟫_ℝ = ‖A x‖ ^ 2 + lam * ‖x‖ ^ 2 :=
+    re_inner_tikhonovOperator_self A lam x
   have h_rhs : ⟪ContinuousLinearMap.adjoint A z, x⟫_ℝ = ⟪A x, z⟫_ℝ := by
     rw [ContinuousLinearMap.adjoint_inner_left, real_inner_comm]
   have h_eq : ‖A x‖ ^ 2 + lam * ‖x‖ ^ 2 = ⟪A x, z⟫_ℝ := by
@@ -83,8 +79,7 @@ theorem energy_bound (A : H →L[ℝ] K) (z : K) (x : H) {lam : ℝ} (hlam : 0 <
 /-- Norm bound for a normal-equation solution: `‖x‖ ≤ ‖z‖ / (2 * sqrt lam)`. -/
 theorem norm_le_of_normal_equations (A : H →L[ℝ] K) (z : K) (x : H) {lam : ℝ}
     (hlam : 0 < lam)
-    (hx : (ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) x =
-      ContinuousLinearMap.adjoint A z) :
+    (hx : tikhonovOperator A lam x = ContinuousLinearMap.adjoint A z) :
     ‖x‖ ≤ ‖z‖ / (2 * Real.sqrt lam) := by
   have h := energy_bound A z x hlam hx
   have h_comb : lam * ‖x‖ ^ 2 ≤ ‖z‖ ^ 2 / 4 := le_trans h.1 h.2
@@ -119,24 +114,22 @@ theorem consistency_bound (A : H →L[ℝ] K) (xdag : H) (w : K) (b bdelta : K)
     (xlam : H) {lam delta : ℝ} (hlam : 0 < lam) (hdelta : 0 ≤ delta)
     (hsource : xdag = ContinuousLinearMap.adjoint A w)
     (hb : b = A xdag) (hnoise : ‖bdelta - b‖ ≤ delta)
-    (hxlam : (ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) xlam =
-      ContinuousLinearMap.adjoint A bdelta) :
+    (hxlam : tikhonovOperator A lam xlam = ContinuousLinearMap.adjoint A bdelta) :
     ‖xlam - xdag‖ ≤ delta / (2 * Real.sqrt lam) + Real.sqrt lam * ‖w‖ / 2 := by
   have _hdelta_use : 0 ≤ delta := hdelta
   have hlam_nn : 0 ≤ lam := le_of_lt hlam
   have hsqrt_pos : 0 < Real.sqrt lam := Real.sqrt_pos.mpr hlam
-  have he : (ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) (xlam - xdag)
+  have he : tikhonovOperator A lam (xlam - xdag)
       = ContinuousLinearMap.adjoint A ((bdelta - b) - lam • w) := by
-    have h_expand : (ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) (xlam - xdag)
-        = (ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) xlam
-          - (ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) xdag := by
+    have h_expand : tikhonovOperator A lam (xlam - xdag)
+        = tikhonovOperator A lam xlam - tikhonovOperator A lam xdag := by
       rw [map_sub]
     rw [h_expand, hxlam]
-    have h_xdag : (ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) xdag
+    have h_xdag : tikhonovOperator A lam xdag
         = ContinuousLinearMap.adjoint A (b + lam • w) := by
-      have h1 : (ContinuousLinearMap.adjoint A ∘L A + (lam : ℝ) • (1 : H →L[ℝ] H)) xdag
-          = (ContinuousLinearMap.adjoint A) (A xdag) + lam • xdag := by
-        simp [add_apply, smul_apply, ContinuousLinearMap.comp_apply, one_apply_eq_self]
+      have h1 : tikhonovOperator A lam xdag
+          = (ContinuousLinearMap.adjoint A) (A xdag) + lam • xdag :=
+        tikhonovOperator_apply A lam xdag
       rw [h1, hsource]
       have hb' : A (ContinuousLinearMap.adjoint A w) = b := by
         rw [← hsource]
@@ -178,8 +171,8 @@ theorem convergence (A : H →L[ℝ] K) (xdag : H) (w : K) (b : K)
     (xlam : ℝ → H) (bdelta : ℝ → K)
     (hsource : xdag = ContinuousLinearMap.adjoint A w) (hb : b = A xdag)
     (h : ∀ delta : ℝ, 0 < delta →
-      (ContinuousLinearMap.adjoint A ∘L A + (delta : ℝ) • (1 : H →L[ℝ] H)) (xlam delta) =
-        ContinuousLinearMap.adjoint A (bdelta delta) ∧ ‖bdelta delta - b‖ ≤ delta) :
+      tikhonovOperator A delta (xlam delta) = ContinuousLinearMap.adjoint A (bdelta delta) ∧
+        ‖bdelta delta - b‖ ≤ delta) :
     Filter.Tendsto (fun delta : ℝ => xlam delta) (𝓝[>] 0) (𝓝 xdag) := by
   have h_bound_all : ∀ delta : ℝ, 0 < delta →
       ‖xlam delta - xdag‖ ≤ Real.sqrt delta / 2 + Real.sqrt delta * ‖w‖ / 2 := by

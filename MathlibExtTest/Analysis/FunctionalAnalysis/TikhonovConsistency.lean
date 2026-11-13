@@ -21,6 +21,7 @@ The convergence theorem is the module-level statement.
 @[expose] public section
 
 open Filter Topology Real
+open MathlibExt.Analysis.FunctionalAnalysis.TikhonovRegularization
 
 namespace MathlibExt.Analysis.FunctionalAnalysis.TikhonovConsistency
 
@@ -29,8 +30,7 @@ normal equation at `lam = 2`, and `2 * 1 ≤ 3 * 1 - 1 ≤ 9 / 4`. -/
 example :
     (2 : ℝ) * ‖(1 : ℝ)‖ ^ 2 ≤ ‖(3 : ℝ)‖ * ‖(1 : ℝ →L[ℝ] ℝ) 1‖ - ‖(1 : ℝ →L[ℝ] ℝ) 1‖ ^ 2 ∧
       ‖(3 : ℝ)‖ * ‖(1 : ℝ →L[ℝ] ℝ) 1‖ - ‖(1 : ℝ →L[ℝ] ℝ) 1‖ ^ 2 ≤ ‖(3 : ℝ)‖ ^ 2 / 4 := by
-  have hx : (ContinuousLinearMap.adjoint (1 : ℝ →L[ℝ] ℝ) ∘L (1 : ℝ →L[ℝ] ℝ) +
-      (2 : ℝ) • (1 : ℝ →L[ℝ] ℝ)) (1 : ℝ) =
+  have hx : tikhonovOperator (1 : ℝ →L[ℝ] ℝ) 2 (1 : ℝ) =
       ContinuousLinearMap.adjoint (1 : ℝ →L[ℝ] ℝ) (3 : ℝ) := by
     norm_num [ContinuousLinearMap.adjoint_one]
   exact energy_bound (1 : ℝ →L[ℝ] ℝ) 3 1 (by norm_num) hx
@@ -41,8 +41,7 @@ and the bound is `1/4 / (2 * 1/2) + (1/2) * 1 / 2 = 1/2`. -/
 example :
     ‖(1 : ℝ) - (1 : ℝ)‖ ≤ (1 / 4 : ℝ) / (2 * Real.sqrt (1 / 4)) +
       Real.sqrt (1 / 4) * ‖(1 : ℝ)‖ / 2 := by
-  have hxlam : (ContinuousLinearMap.adjoint (1 : ℝ →L[ℝ] ℝ) ∘L (1 : ℝ →L[ℝ] ℝ) +
-      ((1 / 4 : ℝ) : ℝ) • (1 : ℝ →L[ℝ] ℝ)) (1 : ℝ) =
+  have hxlam : tikhonovOperator (1 : ℝ →L[ℝ] ℝ) (1 / 4) (1 : ℝ) =
       ContinuousLinearMap.adjoint (1 : ℝ →L[ℝ] ℝ) (1 + 1 / 4 : ℝ) := by
     norm_num [ContinuousLinearMap.adjoint_one]
   have h := consistency_bound (A := (1 : ℝ →L[ℝ] ℝ)) (xdag := (1 : ℝ)) (w := (1 : ℝ))
