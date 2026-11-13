@@ -48,9 +48,13 @@ the variant recorded in its docstring:
   depth `O(log^k n)`: uniformity is a log-space computable description
   function from the unary input `replicate n true` to the bit-encoding of
   the serial circuit, `NC` is the union over `k`. Unlike `AC0`, `AC0Mod`,
-  `ACC0` and `PPoly`, these classes contain only decidable languages, so the
-  textbook inclusion `AC⁰ ⊆ NC¹`, which is about uniform classes, does not hold
-  for these definitions without adding `UniformCircuitFamily` to `AC0`.
+  `ACC0` and `PPoly`, these classes contain only decidable languages. The
+  inclusion `AC⁰ ⊆ NC¹` (replace each unbounded fan-in gate by a balanced tree
+  of fan-in-two gates) holds when both classes follow the same uniformity
+  convention, both non-uniform or both uniform. Here they do not: `AC0` is
+  non-uniform and `NCK 1` is log-space uniform, so `AC0` contains undecidable
+  languages that `NCK 1` does not, and comparing them needs matching
+  conventions, for example `UniformCircuitFamily` added to `AC0`.
 * Quantum circuits are 2-local unitary gates with rational entries
   (`QGate`, canonical in this file and reused by the Local Hamiltonian
   `QMA` file):
