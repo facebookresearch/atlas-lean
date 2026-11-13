@@ -16,8 +16,9 @@ import Mathlib.Tactic.NormNum
 
 Tests for retained-earnings value creation: a value-creating case (`P = 100` vs
 no-growth `50`), a value-destroying case (`P = 25` vs no-growth `100/3`), the
-Gordon-form substitution, and a retention parameter `b = 2` outside the
-retention-share domain, where the formula is only an algebraic extension.
+Gordon-form substitution, a retention parameter `b = 2` outside the
+retention-share domain, where the formula is only an algebraic extension, and
+negative earnings, where the dividend is negative even though `0 ≤ b ≤ 1`.
 -/
 
 @[expose] public section
@@ -78,6 +79,12 @@ example : retentionPrice 10 (1/2) (3/10) (1/5)
 -- Test 5 (outside the retention-share domain): `b = 2` makes the "dividend"
 -- `E₁ * (1 - b) = -1` negative, so the formula value `-1` is not an equity price.
 example : retentionPrice 1 2 0 1 = -1 := by
+  unfold retentionPrice
+  norm_num
+
+-- Test 6 (negative earnings): `E₁ = -1`, `b = 1 / 2` lies in the retention-share domain,
+-- yet the "dividend" `E₁ * (1 - b) = -1 / 2` is negative, so the value is not an equity price.
+example : retentionPrice (-1) (1 / 2) 0 1 = -1 / 2 := by
   unfold retentionPrice
   norm_num
 
