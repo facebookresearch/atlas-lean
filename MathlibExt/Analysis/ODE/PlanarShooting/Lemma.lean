@@ -63,10 +63,10 @@ nontrivial unstable set.
 solution segment escapes. Neither contract is used or modified here.
 
 The downstream consumer is `MathlibExt.Biology.Dynamics.FisherKPP.exists_isFront_of_le` in
-`WantedExt/Biology/Dynamics/FisherKPPWanted.lean`. Its docstring has the unstable branch enter
-the triangle `{0 ≤ U ≤ 1, -μ U ≤ U' ≤ 0}` with `μ = c / (2 D)`. This file proves only the
-quadrant property `0 < U < 1`, `U' < 0`; entry into the triangle is left to the
-trapping-region step.
+`MathlibExt/Biology/Dynamics/FisherKPPExistence.lean`. This file proves only the quadrant property
+`0 < U < 1`, `U' < 0`. Entry of the branch into the open trapping triangle
+`{U < 1, U' < 0, U' + μ U > 0}` with `μ = c / (2 D)` is proved in `PlanarShooting.InvariantRegion`
+(`eventually_mem_trappingTriangle_atBot`).
 
 ## References
 
