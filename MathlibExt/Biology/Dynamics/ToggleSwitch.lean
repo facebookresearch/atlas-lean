@@ -46,10 +46,13 @@ An equilibrium is a point of the closed positive quadrant where both right-hand 
 The Jacobian (`jacobian`, entries justified by `hasDerivAt_uDot_u` … `hasDerivAt_vDot_v`) is
 `!![-1, h₁; h₂, -1]` with `h₁ = ∂_v (α₁ / (1 + v^β)) ≤ 0` and `h₂ = ∂_u (α₂ / (1 + u^γ)) ≤ 0`.
 With the loop gain `P = h₁ h₂ ≥ 0` its complex spectrum is exactly `{-1 + √P, -1 - √P}`
-(`eigenvalues_eq`). Hence a point is linearly stable (the Jacobian is `Matrix.IsHurwitz`: all
-eigenvalues have negative real part) iff `P < 1`, a saddle (one positive, one negative
-eigenvalue) iff `P > 1`, and `0` is an eigenvalue iff `P = 1`, which is exactly tangency of the
-two nullclines (`nullclinesTangent_iff`).
+(`eigenvalues_eq`). Hence, at a point of the quadrant, the Jacobian is Hurwitz
+(`Matrix.IsHurwitz`: all eigenvalues have negative real part) iff `P < 1`, has saddle spectrum
+(one positive, one negative eigenvalue, `HasSaddleSpectrum`) iff `P > 1`, and has the eigenvalue
+`0` iff `P = 1`, which is exactly parallel nullcline directions (`nullclineTangentsParallel_iff`).
+At an equilibrium these say that the equilibrium is linearly stable, a saddle, or a point where
+the nullclines are tangent (`NullclinesTangent`, `nullclinesTangent_iff_of_isEquilibrium`); the
+Jacobian predicates themselves do not require an equilibrium.
 
 ## Equilibria, saddle-node and bistability (`β = 1`, `γ = 2`)
 
@@ -92,7 +95,7 @@ namespace MathlibExt.Biology.Dynamics.ToggleSwitch
 /-- Hill repression `α / (1 + x ^ n)`. -/
 noncomputable def hill (α : ℝ) (n : ℕ) (x : ℝ) : ℝ := α / (1 + x ^ n)
 
-/-- The derivative of `hill α n`: `-α n x^(n-1) / (1 + x^n)²`. -/
+/-- The derivative of `hill α n` on `x ≥ 0` (`hasDerivAt_hill`): `-α n x^(n-1) / (1 + x^n)²`. -/
 noncomputable def hillDeriv (α : ℝ) (n : ℕ) (x : ℝ) : ℝ :=
   -(α * n * x ^ (n - 1)) / (1 + x ^ n) ^ 2
 
@@ -110,7 +113,8 @@ def IsEquilibrium (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Prop :=
 def equilibria (α₁ α₂ : ℝ) (β γ : ℕ) : Set (ℝ × ℝ) :=
   {p | IsEquilibrium α₁ α₂ β γ p.1 p.2}
 
-/-- The Jacobian of `(uDot, vDot)` at `(u, v)`. -/
+/-- The Jacobian of `(uDot, vDot)` at a point `(u, v)` of the closed quadrant (entries justified
+by `hasDerivAt_uDot_u` … `hasDerivAt_vDot_v`); the formula is defined for all real `(u, v)`. -/
 noncomputable def jacobian (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![-1, hillDeriv α₁ β v; hillDeriv α₂ γ u, -1]
 
@@ -122,20 +126,23 @@ noncomputable def loopGain (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : ℝ :
 noncomputable def eigenvalues (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Set ℂ :=
   spectrum ℂ ((jacobian α₁ α₂ β γ u v).map (algebraMap ℝ ℂ))
 
-/-- Linear stability: the Jacobian is Hurwitz (`Matrix.IsHurwitz`), i.e. every eigenvalue has
-negative real part. -/
-def IsLinearlyStable (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Prop :=
-  (jacobian α₁ α₂ β γ u v).IsHurwitz
-
-/-- A saddle: one eigenvalue with positive and one with negative real part. -/
-def IsSaddle (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Prop :=
+/-- The Jacobian at `(u, v)` has **saddle spectrum**: one eigenvalue with positive and one with
+negative real part. At an equilibrium this makes the equilibrium a saddle; the predicate itself
+only looks at the Jacobian and does not require `(u, v)` to be an equilibrium. -/
+def HasSaddleSpectrum (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Prop :=
   (∃ μ ∈ eigenvalues α₁ α₂ β γ u v, 0 < μ.re) ∧ ∃ μ ∈ eigenvalues α₁ α₂ β γ u v, μ.re < 0
 
-/-- The nullclines are tangent at `(u, v)`: the tangent vector `(∂_v hill, 1)` of the
-`u`-nullcline `u = α₁ / (1 + v ^ β)` and the tangent vector `(1, ∂_u hill)` of the
-`v`-nullcline `v = α₂ / (1 + u ^ γ)` are parallel. -/
-def NullclinesTangent (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Prop :=
+/-- The nullcline directions at `(u, v)` are parallel: the tangent vector `(∂_v hill, 1)` of the
+`u`-nullcline `u = α₁ / (1 + v ^ β)` at height `v` and the tangent vector `(1, ∂_u hill)` of the
+`v`-nullcline `v = α₂ / (1 + u ^ γ)` at abscissa `u` are parallel. This does not require `(u, v)`
+to lie on either nullcline; `NullclinesTangent` adds that. -/
+def NullclineTangentsParallel (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Prop :=
   !![hillDeriv α₁ β v, 1; 1, hillDeriv α₂ γ u].det = 0
+
+/-- The nullclines are **tangent** at `(u, v)`: the point lies on both nullclines (`uDot = 0` and
+`vDot = 0`) and their tangent vectors there are parallel (`NullclineTangentsParallel`). -/
+def NullclinesTangent (α₁ α₂ : ℝ) (β γ : ℕ) (u v : ℝ) : Prop :=
+  uDot α₁ β u v = 0 ∧ vDot α₂ γ u v = 0 ∧ NullclineTangentsParallel α₁ α₂ β γ u v
 
 theorem hasDerivAt_hill (α : ℝ) (n : ℕ) {x : ℝ} (hx : 0 ≤ x) :
     HasDerivAt (hill α n) (hillDeriv α n x) x := by
@@ -210,8 +217,8 @@ theorem eigenvalues_eq (hα₁ : 0 ≤ α₁) (hα₂ : 0 ≤ α₂) (hu : 0 ≤
     · right; linear_combination h3
   · rintro (rfl | rfl) <;> linear_combination hs
 
-theorem isLinearlyStable_iff (hα₁ : 0 ≤ α₁) (hα₂ : 0 ≤ α₂) (hu : 0 ≤ u) (hv : 0 ≤ v) :
-    IsLinearlyStable α₁ α₂ β γ u v ↔ loopGain α₁ α₂ β γ u v < 1 := by
+theorem isHurwitz_jacobian_iff (hα₁ : 0 ≤ α₁) (hα₂ : 0 ≤ α₂) (hu : 0 ≤ u) (hv : 0 ≤ v) :
+    (jacobian α₁ α₂ β γ u v).IsHurwitz ↔ loopGain α₁ α₂ β γ u v < 1 := by
   have hP := loopGain_nonneg β γ hα₁ hα₂ hu hv
   have hs := Real.sqrt_nonneg (loopGain α₁ α₂ β γ u v)
   change (∀ μ ∈ eigenvalues α₁ α₂ β γ u v, μ.re < 0) ↔ _
@@ -224,11 +231,11 @@ theorem isLinearlyStable_iff (hα₁ : 0 ≤ α₁) (hα₂ : 0 ≤ α₂) (hu :
   · intro h
     exact ⟨by linarith [(Real.sqrt_lt' one_pos).2 (by simpa using h)], by linarith⟩
 
-theorem isSaddle_iff (hα₁ : 0 ≤ α₁) (hα₂ : 0 ≤ α₂) (hu : 0 ≤ u) (hv : 0 ≤ v) :
-    IsSaddle α₁ α₂ β γ u v ↔ 1 < loopGain α₁ α₂ β γ u v := by
+theorem hasSaddleSpectrum_iff (hα₁ : 0 ≤ α₁) (hα₂ : 0 ≤ α₂) (hu : 0 ≤ u) (hv : 0 ≤ v) :
+    HasSaddleSpectrum α₁ α₂ β γ u v ↔ 1 < loopGain α₁ α₂ β γ u v := by
   have hP := loopGain_nonneg β γ hα₁ hα₂ hu hv
   have hs := Real.sqrt_nonneg (loopGain α₁ α₂ β γ u v)
-  simp only [IsSaddle, eigenvalues_eq hα₁ hα₂ hu hv, mem_insert_iff, mem_singleton_iff,
+  simp only [HasSaddleSpectrum, eigenvalues_eq hα₁ hα₂ hu hv, mem_insert_iff, mem_singleton_iff,
     exists_eq_or_imp, exists_eq_left, Complex.ofReal_re]
   constructor
   · rintro ⟨h | h, -⟩
@@ -256,10 +263,17 @@ theorem zero_mem_eigenvalues_iff (hα₁ : 0 ≤ α₁) (hα₂ : 0 ≤ α₂) (
     rw [h, Real.sqrt_one]
     norm_num
 
-theorem nullclinesTangent_iff :
-    NullclinesTangent α₁ α₂ β γ u v ↔ loopGain α₁ α₂ β γ u v = 1 := by
-  simp only [NullclinesTangent, Matrix.det_fin_two_of, loopGain, mul_one]
+theorem nullclineTangentsParallel_iff :
+    NullclineTangentsParallel α₁ α₂ β γ u v ↔ loopGain α₁ α₂ β γ u v = 1 := by
+  simp only [NullclineTangentsParallel, Matrix.det_fin_two_of, loopGain, mul_one]
   exact sub_eq_zero
+
+/-- At an equilibrium the nullclines are tangent iff the loop gain is `1`, i.e. iff `0` is an
+eigenvalue of the Jacobian (`zero_mem_eigenvalues_iff`). -/
+theorem nullclinesTangent_iff_of_isEquilibrium (h : IsEquilibrium α₁ α₂ β γ u v) :
+    NullclinesTangent α₁ α₂ β γ u v ↔ loopGain α₁ α₂ β γ u v = 1 := by
+  rw [NullclinesTangent, ← nullclineTangentsParallel_iff]
+  exact ⟨fun h' => h'.2.2, fun h' => ⟨h.2.2.1, h.2.2.2, h'⟩⟩
 
 end Linearization
 
@@ -342,22 +356,22 @@ theorem one_sub_loopGain_mul (ha : 0 < a) (hb : 0 < b) {u v : ℝ}
   field_simp
   ring
 
-theorem isLinearlyStable_iff_cubicDeriv (ha : 0 < a) (hb : 0 < b) {u v : ℝ}
+theorem isHurwitz_jacobian_iff_cubicDeriv (ha : 0 < a) (hb : 0 < b) {u v : ℝ}
     (h : IsEquilibrium a b 1 2 u v) :
-    IsLinearlyStable a b 1 2 u v ↔ 0 < cubicDeriv a b u := by
+    (jacobian a b 1 2 u v).IsHurwitz ↔ 0 < cubicDeriv a b u := by
   have hu := pos_of_cubic_eq_zero ha hb ((isEquilibrium_iff ha hb).1 h).1
   have hc : 0 < a * (1 + u ^ 2) := by positivity
   have key := one_sub_loopGain_mul ha hb h
-  rw [isLinearlyStable_iff ha.le hb.le h.1 h.2.1, ← sub_pos,
+  rw [isHurwitz_jacobian_iff ha.le hb.le h.1 h.2.1, ← sub_pos,
     ← mul_pos_iff_of_pos_right hc, key, mul_pos_iff_of_pos_left hu]
 
-theorem isSaddle_iff_cubicDeriv (ha : 0 < a) (hb : 0 < b) {u v : ℝ}
+theorem hasSaddleSpectrum_iff_cubicDeriv (ha : 0 < a) (hb : 0 < b) {u v : ℝ}
     (h : IsEquilibrium a b 1 2 u v) :
-    IsSaddle a b 1 2 u v ↔ cubicDeriv a b u < 0 := by
+    HasSaddleSpectrum a b 1 2 u v ↔ cubicDeriv a b u < 0 := by
   have hu := pos_of_cubic_eq_zero ha hb ((isEquilibrium_iff ha hb).1 h).1
   have hc : 0 < a * (1 + u ^ 2) := by positivity
   have key := one_sub_loopGain_mul ha hb h
-  rw [isSaddle_iff ha.le hb.le h.1 h.2.1, ← sub_neg]
+  rw [hasSaddleSpectrum_iff ha.le hb.le h.1 h.2.1, ← sub_neg]
   constructor
   · intro h1
     by_contra h2
@@ -374,7 +388,7 @@ theorem nullclinesTangent_iff_cubicDeriv (ha : 0 < a) (hb : 0 < b) {u v : ℝ}
   have hu := pos_of_cubic_eq_zero ha hb ((isEquilibrium_iff ha hb).1 h).1
   have hc : 0 < a * (1 + u ^ 2) := by positivity
   have key := one_sub_loopGain_mul ha hb h
-  rw [nullclinesTangent_iff]
+  rw [nullclinesTangent_iff_of_isEquilibrium h]
   constructor
   · intro hP
     rw [hP, sub_self, zero_mul] at key
@@ -507,14 +521,15 @@ theorem ncard_equilibria_eq_two_iff (ha : 0 < a) (hb : 0 < b) :
     rw [roots_subset hc hq0 hq.symm, show a - u - (a - 2 * u) = u by ring,
       insert_eq_of_mem (by simp), ncard_pair hq]
 
-/-- Three roots `r < s < t` of the cubic: the outer equilibria are linearly stable, the middle
-one is a saddle, and these are all the equilibria. -/
+/-- Three roots `r < s < t` of the cubic: these are all the equilibria, the outer two are linearly
+stable (Hurwitz Jacobian) and the middle one is a saddle (`HasSaddleSpectrum`). -/
 theorem three_equilibria_of_lt (ha : 0 < a) (hb : 0 < b) {r s t : ℝ} (hr : cubic a b r = 0)
     (hs : cubic a b s = 0) (ht : cubic a b t = 0) (hrs : r < s) (hst : s < t) :
     equilibria a b 1 2 = {(r, b / (1 + r ^ 2)), (s, b / (1 + s ^ 2)), (t, b / (1 + t ^ 2))} ∧
       b / (1 + t ^ 2) < b / (1 + s ^ 2) ∧ b / (1 + s ^ 2) < b / (1 + r ^ 2) ∧
-      IsLinearlyStable a b 1 2 r (b / (1 + r ^ 2)) ∧ IsSaddle a b 1 2 s (b / (1 + s ^ 2)) ∧
-      IsLinearlyStable a b 1 2 t (b / (1 + t ^ 2)) := by
+      (jacobian a b 1 2 r (b / (1 + r ^ 2))).IsHurwitz ∧
+      HasSaddleSpectrum a b 1 2 s (b / (1 + s ^ 2)) ∧
+      (jacobian a b 1 2 t (b / (1 + t ^ 2))).IsHurwitz := by
   have hq : t = a - r - s := by
     have : t ∈ ({r, s, a - r - s} : Set ℝ) := by
       rw [← roots_subset hr hs hrs.ne]; exact ht
@@ -538,22 +553,24 @@ theorem three_equilibria_of_lt (ha : 0 < a) (hb : 0 < b) {r s t : ℝ} (hr : cub
     nlinarith
   · apply div_lt_div_of_pos_left hb (by positivity)
     nlinarith
-  · rw [isLinearlyStable_iff_cubicDeriv ha hb her, hDr]
+  · rw [isHurwitz_jacobian_iff_cubicDeriv ha hb her, hDr]
     nlinarith
-  · rw [isSaddle_iff_cubicDeriv ha hb hes, hDs]
+  · rw [hasSaddleSpectrum_iff_cubicDeriv ha hb hes, hDs]
     nlinarith
-  · rw [isLinearlyStable_iff_cubicDeriv ha hb het, hDt]
+  · rw [isHurwitz_jacobian_iff_cubicDeriv ha hb het, hDt]
     nlinarith
 
 /-- **Bistable regime.** With exactly three equilibria `u₁ < u₂ < u₃` (so `v₁ > v₂ > v₃`), the
-outer two are linearly stable and the middle one is a saddle (one positive eigenvalue). -/
+outer two are linearly stable (Hurwitz Jacobian) and the middle one is a saddle (one positive
+eigenvalue, `HasSaddleSpectrum`). -/
 theorem three_equilibria (ha : 0 < a) (hb : 0 < b) (h3 : (equilibria a b 1 2).ncard = 3) :
     ∃ u₁ u₂ u₃ : ℝ, u₁ < u₂ ∧ u₂ < u₃ ∧
       equilibria a b 1 2 =
         {(u₁, b / (1 + u₁ ^ 2)), (u₂, b / (1 + u₂ ^ 2)), (u₃, b / (1 + u₃ ^ 2))} ∧
       b / (1 + u₃ ^ 2) < b / (1 + u₂ ^ 2) ∧ b / (1 + u₂ ^ 2) < b / (1 + u₁ ^ 2) ∧
-      IsLinearlyStable a b 1 2 u₁ (b / (1 + u₁ ^ 2)) ∧ IsSaddle a b 1 2 u₂ (b / (1 + u₂ ^ 2)) ∧
-      IsLinearlyStable a b 1 2 u₃ (b / (1 + u₃ ^ 2)) := by
+      (jacobian a b 1 2 u₁ (b / (1 + u₁ ^ 2))).IsHurwitz ∧
+      HasSaddleSpectrum a b 1 2 u₂ (b / (1 + u₂ ^ 2)) ∧
+      (jacobian a b 1 2 u₃ (b / (1 + u₃ ^ 2))).IsHurwitz := by
   rw [ncard_equilibria ha hb] at h3
   obtain ⟨x, y, z, hxy, hxz, hyz, hS⟩ := ncard_eq_three.1 h3
   have root : ∀ w ∈ ({x, y, z} : Set ℝ), cubic a b w = 0 := by
@@ -573,11 +590,11 @@ theorem three_equilibria (ha : 0 < a) (hb : 0 < b) (h3 : (equilibria a b 1 2).nc
   · exact ⟨z, y, x, h3, h1, three_equilibria_of_lt ha hb hz hy hx h3 h1⟩
 
 /-- **Bistability threshold.** There are exactly three equilibria iff there are two distinct
-linearly stable equilibria. -/
+linearly stable equilibria (equilibria with Hurwitz Jacobian). -/
 theorem ncard_equilibria_eq_three_iff_bistable (ha : 0 < a) (hb : 0 < b) :
     (equilibria a b 1 2).ncard = 3 ↔
       ∃ u₁ v₁ u₂ v₂, IsEquilibrium a b 1 2 u₁ v₁ ∧ IsEquilibrium a b 1 2 u₂ v₂ ∧ u₁ ≠ u₂ ∧
-        IsLinearlyStable a b 1 2 u₁ v₁ ∧ IsLinearlyStable a b 1 2 u₂ v₂ := by
+        (jacobian a b 1 2 u₁ v₁).IsHurwitz ∧ (jacobian a b 1 2 u₂ v₂).IsHurwitz := by
   constructor
   · intro h3
     obtain ⟨u₁, u₂, u₃, h12, h23, hset, -, -, hs₁, -, hs₃⟩ := three_equilibria ha hb h3
@@ -585,8 +602,8 @@ theorem ncard_equilibria_eq_three_iff_bistable (ha : 0 < a) (hb : 0 < b) :
     have m₃ : (u₃, b / (1 + u₃ ^ 2)) ∈ equilibria a b 1 2 := by rw [hset]; simp
     exact ⟨u₁, _, u₃, _, m₁, m₃, (h12.trans h23).ne, hs₁, hs₃⟩
   · rintro ⟨u₁, v₁, u₂, v₂, he₁, he₂, hne, hs₁, hs₂⟩
-    rw [isLinearlyStable_iff_cubicDeriv ha hb he₁] at hs₁
-    rw [isLinearlyStable_iff_cubicDeriv ha hb he₂] at hs₂
+    rw [isHurwitz_jacobian_iff_cubicDeriv ha hb he₁] at hs₁
+    rw [isHurwitz_jacobian_iff_cubicDeriv ha hb he₂] at hs₂
     have hc₁ := ((isEquilibrium_iff ha hb).1 he₁).1
     have hc₂ := ((isEquilibrium_iff ha hb).1 he₂).1
     clear he₁ he₂
@@ -610,7 +627,8 @@ nullclines (a zero eigenvalue) that is not the cusp `3 u₀ = a`, and put `d = 3
 * For `b > 0` with `(b₀ - b) d > 0` and `|b - b₀|` small, there are two equilibria
   `u₁ < u₀ < u₂`, one on each side of `u₀`, within any prescribed distance `δ` of `u₀`.
 
-So as `b → b₀` from the second side two equilibria collide at `u₀` and then disappear. -/
+So as `b → b₀` from the second side two equilibria collide at `u₀` and then disappear. The
+theorem does not say which of the two colliding equilibria is the saddle. -/
 theorem saddleNode_collision (ha : 0 < a) {b₀ u₀ v₀ : ℝ} (hb₀ : 0 < b₀)
     (he : IsEquilibrium a b₀ 1 2 u₀ v₀) (ht : NullclinesTangent a b₀ 1 2 u₀ v₀)
     (hcusp : 3 * u₀ ≠ a) :

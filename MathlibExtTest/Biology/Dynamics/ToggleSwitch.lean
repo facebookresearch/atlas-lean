@@ -21,6 +21,9 @@ import Mathlib.LinearAlgebra.Matrix.Charpoly.Coeff
 * `a = 6`, `b = 55/4` (past the upper saddle-node): the single equilibrium `(1/2, 11)`, stable.
 * `a = 16/3`: the nullcline-tangency condition forces `u = 2, b = 25/3` (or `u = (1 + √13)/3`);
   at `b = 25/3` the equilibria are `(2, 5/3)` (tangent, eigenvalue `0`) and `(4/3, 3)`.
+* The Jacobian predicates look only at the Jacobian: at the non-equilibrium `(0, 0)` the
+  Jacobian can be Hurwitz or have saddle spectrum, and the nullcline directions can be parallel
+  without the nullclines being tangent there.
 -/
 
 open Set
@@ -105,8 +108,8 @@ theorem symmetric_eigenvalues_center :
   push_cast
   norm_num
 
-example : IsSaddle 10 10 2 2 2 2 := by
-  rw [isSaddle_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num),
+example : HasSaddleSpectrum 10 10 2 2 2 2 := by
+  rw [hasSaddleSpectrum_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num),
     symmetric_loopGain_center]
   norm_num
 
@@ -134,16 +137,16 @@ theorem symmetric_eigenvalues_side :
   push_cast
   norm_num
 
-example : IsLinearlyStable 10 10 2 2 (5 + 2 * √6) (5 - 2 * √6) := by
+example : (jacobian 10 10 2 2 (5 + 2 * √6) (5 - 2 * √6)).IsHurwitz := by
   have h5 := two_sqrt6_lt_five
-  rw [isLinearlyStable_iff (by norm_num) (by norm_num) (by positivity) (by linarith),
+  rw [isHurwitz_jacobian_iff (by norm_num) (by norm_num) (by positivity) (by linarith),
     symmetric_loopGain_side]
   norm_num
 
 /-- By the `u ↔ v` symmetry the mirror equilibrium has the same loop gain. -/
-example : IsLinearlyStable 10 10 2 2 (5 - 2 * √6) (5 + 2 * √6) := by
+example : (jacobian 10 10 2 2 (5 - 2 * √6) (5 + 2 * √6)).IsHurwitz := by
   have h5 := two_sqrt6_lt_five
-  rw [isLinearlyStable_iff (by norm_num) (by norm_num) (by linarith) (by positivity),
+  rw [isHurwitz_jacobian_iff (by norm_num) (by norm_num) (by linarith) (by positivity),
     loopGain, mul_comm, ← loopGain, symmetric_loopGain_side]
   norm_num
 
@@ -187,19 +190,20 @@ example : loopGain 6 10 1 2 1 5 = 5 / 6 := by norm_num [loopGain, hillDeriv]
 example : loopGain 6 10 1 2 2 2 = 16 / 15 := by norm_num [loopGain, hillDeriv]
 example : loopGain 6 10 1 2 3 1 = 9 / 10 := by norm_num [loopGain, hillDeriv]
 
-example :
-    IsLinearlyStable 6 10 1 2 1 5 ∧ IsSaddle 6 10 1 2 2 2 ∧ IsLinearlyStable 6 10 1 2 3 1 := by
+/-- The three equilibria are stable, saddle, stable. -/
+example : (jacobian 6 10 1 2 1 5).IsHurwitz ∧ HasSaddleSpectrum 6 10 1 2 2 2 ∧
+    (jacobian 6 10 1 2 3 1).IsHurwitz := by
   refine ⟨?_, ?_, ?_⟩
-  · rw [isLinearlyStable_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
+  · rw [isHurwitz_jacobian_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
     norm_num [loopGain, hillDeriv]
-  · rw [isSaddle_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
+  · rw [hasSaddleSpectrum_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
     norm_num [loopGain, hillDeriv]
-  · rw [isLinearlyStable_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
+  · rw [isHurwitz_jacobian_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
     norm_num [loopGain, hillDeriv]
 
 /-- The bistability theorems apply to this parameter set. -/
 example : ∃ u₁ v₁ u₂ v₂, IsEquilibrium 6 10 1 2 u₁ v₁ ∧ IsEquilibrium 6 10 1 2 u₂ v₂ ∧
-    u₁ ≠ u₂ ∧ IsLinearlyStable 6 10 1 2 u₁ v₁ ∧ IsLinearlyStable 6 10 1 2 u₂ v₂ :=
+    u₁ ≠ u₂ ∧ (jacobian 6 10 1 2 u₁ v₁).IsHurwitz ∧ (jacobian 6 10 1 2 u₂ v₂).IsHurwitz :=
   (ncard_equilibria_eq_three_iff_bistable (by norm_num) (by norm_num)).1 (by
     rw [three_example, ncard_eq_three]
     exact ⟨_, _, _, by norm_num, by norm_num, by norm_num, rfl⟩)
@@ -237,8 +241,8 @@ example : (equilibria 6 (55 / 4) 1 2).ncard = 1 := by
 
 example : loopGain 6 (55 / 4) 1 2 (1 / 2) 11 = 11 / 30 := by norm_num [loopGain, hillDeriv]
 
-example : IsLinearlyStable 6 (55 / 4) 1 2 (1 / 2) 11 := by
-  rw [isLinearlyStable_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
+example : (jacobian 6 (55 / 4) 1 2 (1 / 2) 11).IsHurwitz := by
+  rw [isHurwitz_jacobian_iff (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
   norm_num [loopGain, hillDeriv]
 
 end One
@@ -285,7 +289,8 @@ example : hillDeriv (16 / 3) 1 (5 / 3) = -3 / 4 := by norm_num [hillDeriv]
 example : hillDeriv (25 / 3) 2 2 = -4 / 3 := by norm_num [hillDeriv]
 
 theorem tangent_example : NullclinesTangent (16 / 3) (25 / 3) 1 2 2 (5 / 3) := by
-  norm_num [NullclinesTangent, Matrix.det_fin_two_of, hillDeriv]
+  norm_num [NullclinesTangent, NullclineTangentsParallel, uDot, vDot, hill, Matrix.det_fin_two_of,
+    hillDeriv]
 
 /-- A zero eigenvalue at the saddle-node point. -/
 example : (0 : ℂ) ∈ eigenvalues (16 / 3) (25 / 3) 1 2 2 (5 / 3) := by
@@ -332,5 +337,38 @@ example : ∀ δ > 0, ∃ ε > 0, ∀ b, 0 < b → |b - 25 / 3| < ε → 0 < (25
     (by norm_num [IsEquilibrium, uDot, vDot, hill]) tangent_example (by norm_num)).2
 
 end SaddleNode
+
+/-! ### The Jacobian predicates do not require an equilibrium -/
+
+section NonEquilibrium
+
+/-- At `(0, 0)` with `α₁ = α₂ = 1/2`, `β = γ = 1` the Jacobian is Hurwitz (`P = 1/4`), but the
+vector field there is `(1/2, 1/2)`, so the point is not an equilibrium. -/
+example :
+    (jacobian (1 / 2) (1 / 2) 1 1 0 0).IsHurwitz ∧ ¬ IsEquilibrium (1 / 2) (1 / 2) 1 1 0 0 := by
+  refine ⟨?_, fun h => ?_⟩
+  · rw [isHurwitz_jacobian_iff (by norm_num) (by norm_num) le_rfl le_rfl]
+    norm_num [loopGain, hillDeriv]
+  · have := h.2.2.1
+    norm_num [uDot, hill] at this
+
+/-- With `α₁ = α₂ = 2` the Jacobian at `(0, 0)` has saddle spectrum (`P = 4`), again at a point
+that is not an equilibrium. -/
+example : HasSaddleSpectrum 2 2 1 1 0 0 ∧ ¬ IsEquilibrium 2 2 1 1 0 0 := by
+  refine ⟨?_, fun h => ?_⟩
+  · rw [hasSaddleSpectrum_iff (by norm_num) (by norm_num) le_rfl le_rfl]
+    norm_num [loopGain, hillDeriv]
+  · have := h.2.2.1
+    norm_num [uDot, hill] at this
+
+/-- With `α₁ = α₂ = 1`, `β = γ = 1` the nullcline directions at `(0, 0)` are parallel (both
+slopes are `-1`), but `(0, 0)` lies on neither nullcline, so they are not tangent there. -/
+example : NullclineTangentsParallel 1 1 1 1 0 0 ∧ ¬ NullclinesTangent 1 1 1 1 0 0 := by
+  refine ⟨?_, fun h => ?_⟩
+  · norm_num [NullclineTangentsParallel, Matrix.det_fin_two_of, hillDeriv]
+  · have := h.1
+    norm_num [uDot, hill] at this
+
+end NonEquilibrium
 
 end MathlibExtTest.Biology.Dynamics.ToggleSwitch
