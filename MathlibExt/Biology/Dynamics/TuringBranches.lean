@@ -28,12 +28,14 @@ homogeneous steady state with Jacobian `J = [[f_u, f_v], [g_u, g_v]]`).
 
 **Continuum versus finite domain.** On the whole line every real wavenumber `k` is admissible and
 the unstable squared wavenumbers form the open band `(q₋, q₊)` where
-`h(q) = det (J - q D) < 0`; under Turing's criterion this is a continuum. On `[0, L]` with
+`h(q) = det (J - q D) < 0`; under Turing's criterion this is a continuum. On `[0, L]`, `0 < L`, with
 homogeneous Neumann boundary conditions the linearization only has the eigenvalues of the mode
 matrices `J - k_n² D` at the discrete wavenumbers `k_n = n π / L` (`IsNeumannEigenvalue`), each
 realized by a zero-flux Fourier mode. Hence only finitely many Neumann modes are unstable, short
 domains are stable although the continuum problem is unstable, and the band can fall into a gap
-between two consecutive `k_n²`, so instability is not monotone in `L`.
+between two consecutive `k_n²`, so instability is not monotone in `L`. The finite-domain
+predicates are total in `L ∈ ℝ` but describe a Neumann domain only for `0 < L`; the theorems that
+relate them to domain length assume `0 < L`.
 
 **Onset of a Neumann mode.** Since `h` is affine in the inhibitor diffusion `d = d_v`, an
 admissible mode (`0 < f_u k² - d_u k⁴`) is unstable iff `d` exceeds its *neutral diffusion*
@@ -130,13 +132,19 @@ Neumann boundary conditions: it is an eigenvalue of the mode matrix `J - k_n² D
 admissible Neumann wavenumber `k_n = n π / L`. Only the discrete wavenumbers `k_n` contribute;
 the continuum of wavenumbers `k ∈ ℝ` of the problem on the whole line does not. (That these are
 all eigenvalues of the PDE operator, i.e. completeness of the cosine basis, is not proved here;
-the definition records the spectrum it induces.) -/
+the definition records the spectrum it induces.)
+
+The definition is total in `L`, but only `0 < L` is a Neumann domain. With Lean's `x / 0 = 0`
+every `k_n` vanishes at `L = 0`, so the predicate then reduces to `μ` being an eigenvalue of `J`
+itself; for `L < 0` it equals the predicate for `-L`, since only `k_n²` enters. -/
 def IsNeumannEigenvalue (J : Matrix (Fin 2) (Fin 2) ℝ) (du dv L : ℝ) (μ : ℂ) : Prop :=
   ∃ n : ℕ, ∃ v : Fin 2 → ℂ, v ≠ 0 ∧
     (modeMatrix J du dv (neumannWavenumber L n)).map (↑) *ᵥ v = μ • v
 
 /-- The homogeneous steady state is *linearly unstable on `[0, L]`* (Neumann boundary
-conditions): the finite-domain linearization has an eigenvalue with positive real part. -/
+conditions): the finite-domain linearization has an eigenvalue with positive real part. This is
+meaningful only for `0 < L`: at `L = 0` it holds exactly when the mode `k = 0`, i.e. `J` itself,
+is unstable (see `IsNeumannEigenvalue`), although there is no domain. -/
 def IsNeumannUnstable (J : Matrix (Fin 2) (Fin 2) ℝ) (du dv L : ℝ) : Prop :=
   ∃ μ : ℂ, 0 < μ.re ∧ IsNeumannEigenvalue J du dv L μ
 
@@ -175,8 +183,9 @@ theorem setOf_dispersionDet_neg_eq_Ioo {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv :
   ext q
   simp only [Set.mem_ofPred_eq, Set.mem_Ioo, dispersionDet_neg_iff hdu hdv, hΔ, true_and]
 
-/-- Under Turing's criterion the unstable band is a nonempty open interval reaching positive
-squared wavenumbers. -/
+/-- For `d_u, d_v > 0` and a positive band discriminant (the displayed inequality; because
+`Real.sqrt` sends negative arguments to `0`, it does not imply `0 < det J`), the unstable band is
+a nonempty open interval reaching positive squared wavenumbers. -/
 private theorem band_facts {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv : ℝ}
     (hdu : 0 < du) (hdv : 0 < dv)
     (h : 2 * Real.sqrt (du * dv * J.det) < dv * J 0 0 + du * J 1 1) :
@@ -194,10 +203,13 @@ private theorem band_facts {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv : ℝ}
   · unfold bandUpper
     exact div_pos (by linarith) hp
 
-/-- **The continuum of unstable wavenumbers is infinite.** Under Turing's criterion (and
-stability without diffusion), infinitely many real wavenumbers `k` are unstable: every `k` with
-`k² ∈ (max q₋ 0, q₊)` is. Contrast `finite_setOf_isUnstableMode_neumannWavenumber`: on a
-finite domain only finitely many Neumann modes are unstable. -/
+/-- **The continuum of unstable wavenumbers is infinite.** If `d_u, d_v > 0`, `tr J < 0` and
+`2 √(d_u d_v det J) < d_v f_u + d_u g_v`, infinitely many real wavenumbers `k` are unstable: every
+`k` with `k² ∈ (max q₋ 0, q₊)` is. Since `Real.sqrt` sends negative arguments to `0`, these
+hypotheses do not include `0 < det J`, so they are a dispersion-band condition, not stability
+without diffusion; adding `0 < det J` gives Turing's criterion (as in `continuum_vs_neumann`).
+Contrast `finite_setOf_isUnstableMode_neumannWavenumber`: on a finite domain only finitely many
+Neumann modes are unstable. -/
 theorem setOf_isUnstableMode_infinite {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv : ℝ}
     (hdu : 0 < du) (hdv : 0 < dv) (htr : J.trace < 0)
     (h : 2 * Real.sqrt (du * dv * J.det) < dv * J 0 0 + du * J 1 1) :

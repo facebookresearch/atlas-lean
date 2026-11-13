@@ -22,7 +22,9 @@ sides of onset, the leading eigenvalue, and an explicit supercritical pitchfork
 `G(a, d) = (d - 1) - a²` exercising the branch theorems. Two regressions pin the scope of the
 documentation: on `[0, 8π]` the branch theorem's mode is neutral while another Neumann mode is
 already unstable (no exchange of stability of the homogeneous state), and for `d_u = 0` the
-onset diffusion is an infimum that no Neumann mode attains. -/
+onset diffusion is an infimum that no Neumann mode attains. Further regressions show that
+`setOf_isUnstableMode_infinite` applies to the kinetically unstable `diag(1, -2)` and that
+`IsNeumannUnstable` at `L = 0` is degenerate. -/
 
 open Matrix Filter Topology
 
@@ -147,6 +149,39 @@ example : ∃ μ : ℂ, 0 < μ.re ∧ ∃ (n : ℕ) (v : Fin 2 → ℂ), v ≠ 0
 example : ∃ L₁ : ℝ, 0 < L₁ ∧ ∀ L, 0 < L → L ≤ L₁ → ¬ IsNeumannUnstable J₀ 1 9 L :=
   exists_forall_not_isNeumannUnstable one_pos (by norm_num) (by rw [J₀_trace]; norm_num)
     (by rw [J₀_det]; norm_num)
+
+/-! ### Scope of the hypotheses and of `L`
+
+`J₁ = diag(1, -2)` has `tr J₁ = -1 < 0` but `det J₁ = -2 < 0`: its kinetics are unstable
+(eigenvalue `1`). With `d_u = 1`, `d_v = 3` it still satisfies the hypotheses of
+`setOf_isUnstableMode_infinite`, because `√(1 · 3 · (-2)) = 0` in Lean. The same `J₁` shows that
+`IsNeumannUnstable` at the degenerate length `L = 0` just records instability of `J₁` itself. -/
+
+/-- `diag(1, -2)`: negative trace, negative determinant. -/
+local notation "J₁" => !![(1 : ℝ), 0; 0, -2]
+
+/-- The mode `k = 0` of `J₁` is unstable (eigenvalue `1`): no diffusion is needed. -/
+lemma J₁_unstable_k0 : IsUnstableMode J₁ 1 3 0 := by
+  refine ⟨1, by norm_num, (exists_eigenvector_iff _ 1).2 ?_⟩
+  rw [trace_modeMatrix, det_modeMatrix, dispersionDet]
+  norm_num [Matrix.trace_fin_two, Matrix.det_fin_two]
+
+/-- **Regression: `setOf_isUnstableMode_infinite` does not assume stable kinetics.** Its
+hypotheses hold for `J₁`, which is already unstable without diffusion. -/
+example : {k : ℝ | IsUnstableMode J₁ 1 3 k}.Infinite ∧ IsUnstableMode J₁ 1 3 0 := by
+  refine ⟨setOf_isUnstableMode_infinite one_pos (by norm_num)
+    (by norm_num [Matrix.trace_fin_two]) ?_, J₁_unstable_k0⟩
+  rw [Real.sqrt_eq_zero'.2 (show (1 * 3 * (J₁).det : ℝ) ≤ 0 by norm_num [Matrix.det_fin_two])]
+  norm_num
+
+/-- **Regression: `L = 0` is degenerate.** Every Neumann wavenumber vanishes at `L = 0`, so
+`IsNeumannUnstable J₁ 1 3 0` holds although there is no domain. -/
+example : IsNeumannUnstable J₁ 1 3 0 := by
+  rw [isNeumannUnstable_iff]
+  refine ⟨1, ?_⟩
+  have h : neumannWavenumber 0 1 = 0 := by simp [neumannWavenumber]
+  rw [h]
+  exact J₁_unstable_k0
 
 /-! ### Neutral diffusion and onset -/
 
