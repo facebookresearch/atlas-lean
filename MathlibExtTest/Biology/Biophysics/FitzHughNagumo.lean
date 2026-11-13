@@ -204,7 +204,8 @@ example : ∃ v w : ℝ → ℝ, IsSolution (6 / 5) (4 / 5) (1 / 100000) 0 v w �
   obtain ⟨v, w, h, hv0, hw0⟩ := exists_isSolution (a := 6 / 5) (b := 4 / 5) (ε := 1 / 100000)
     (I := 0) (by norm_num) (by norm_num) (-3 / 2 + 1 / 2) (-3 / 8)
   have hsub := (single_pulse_response (by norm_num [IsEquilibrium, vField, wField]) h hv0 hw0
-    (T := 2) (M := 12194 / 10) fun s hs => drift_bound h (by rw [hv0]; norm_num) hw0 hs.1).1
+    (T := 2) (M := 12194 / 10) (by norm_num) fun s hs => drift_bound h (by rw [hv0]; norm_num) hw0
+      hs.1).1
     (by norm_num)
   exact ⟨v, w, h, hv0, hw0, fun t ht => by have := hsub t ht; linarith⟩
 
@@ -216,7 +217,8 @@ example : ∃ v w : ℝ → ℝ, IsSolution (6 / 5) (4 / 5) (1 / 100000) 0 v w �
   obtain ⟨v, w, h, hv0, hw0⟩ := exists_isSolution (a := 6 / 5) (b := 4 / 5) (ε := 1 / 100000)
     (I := 0) (by norm_num) (by norm_num) (-3 / 2 + 2) (-3 / 8)
   have hsup := (single_pulse_response (by norm_num [IsEquilibrium, vField, wField]) h hv0 hw0
-    (T := 2) (M := 12194 / 10) fun s hs => drift_bound h (by rw [hv0]; norm_num) hw0 hs.1).2
+    (T := 2) (M := 12194 / 10) (by norm_num) fun s hs => drift_bound h (by rw [hv0]; norm_num) hw0
+      hs.1).2
     (3 / 2) (3 / 4) (by norm_num) (fun u hu => by
       have h1 : 0 ≤ 3 / 2 - u := by linarith [hu.2]
       have h2 : 0 ≤ u ^ 2 + 3 / 2 * u - 3 / 4 := by nlinarith [hu.1]

@@ -994,8 +994,9 @@ theorem IsSolution.exists_v_ge (h : IsSolution a b ε I v w) {T α γ w₀ η m 
   have := hcon T ⟨hT, le_rfl⟩
   linarith
 
-/-- **Single-pulse response.** Let `(vr, wr)` be a rest state and let a solution start at the
-post-pulse state `(vr + δ, wr)`. Suppose `|v + a - b w| ≤ M` on `[0, T]` (for `b, ε > 0` such an
+/-- **Single-pulse response.** Let `(vr, wr)` be a rest state, let a solution start at the
+post-pulse state `(vr + δ, wr)`, and let `T ≥ 0`. Suppose `|v + a - b w| ≤ M` on `[0, T]` (for
+`b, ε > 0` such an
 `M` comes from the trapping ellipse, `abs_le_of_energy_le`), and put `η = |ε| M T`.
 
 * If the pulse is sub-threshold with margin `η`, i.e. `δ (1 - vr² - vr δ - δ²/3) + η < 0`, the
@@ -1004,7 +1005,7 @@ post-pulse state `(vr + δ, wr)`. Suppose `|v + a - b w| ≤ M` on `[0, T]` (for
   `[vr + δ, γ]` (in particular the pulse is super-threshold with margin `η`) and
   `γ - (vr + δ) ≤ (m - η) T`, the voltage fires: it reaches `γ` within `[0, T]`. -/
 theorem single_pulse_response {vr wr δ : ℝ} (hrest : IsEquilibrium a b ε I vr wr)
-    (h : IsSolution a b ε I v w) (hv0 : v 0 = vr + δ) (hw0 : w 0 = wr) {T M : ℝ}
+    (h : IsSolution a b ε I v w) (hv0 : v 0 = vr + δ) (hw0 : w 0 = wr) {T M : ℝ} (hT : 0 ≤ T)
     (hM : ∀ s ∈ Icc 0 T, |v s + a - b * w s| ≤ M) :
     (δ * (1 - vr ^ 2 - vr * δ - δ ^ 2 / 3) + |ε| * M * T < 0 →
         ∀ t ∈ Icc 0 T, v t ≤ vr + δ) ∧
@@ -1012,17 +1013,12 @@ theorem single_pulse_response {vr wr δ : ℝ} (hrest : IsEquilibrium a b ε I v
         γ - (vr + δ) ≤ (m - |ε| * M * T) * T → ∃ t ∈ Icc 0 T, γ ≤ v t) := by
   have hdrift : ∀ t ∈ Icc 0 T, |w t - wr| ≤ |ε| * M * T := by
     intro t ht
-    have hM0 : 0 ≤ M := (abs_nonneg _).trans (hM 0 ⟨le_rfl, ht.1.trans ht.2⟩)
+    have hM0 : 0 ≤ M := (abs_nonneg _).trans (hM 0 ⟨le_rfl, hT⟩)
     rw [← hw0]
     exact (h.abs_w_sub_le hM ht).trans
       (mul_le_mul_of_nonneg_left ht.2 (mul_nonneg (abs_nonneg _) hM0))
-  refine ⟨fun hsub => h.v_le_of_barrier hdrift ?_ hv0.le, fun γ m hγ hm hηm hTlen => ?_⟩
-  · rwa [vField_pulse hrest.1]
-  · by_cases hT : 0 ≤ T
-    · exact h.exists_v_ge hT hdrift hγ hm hηm hTlen hv0.ge
-    · exact absurd hηm (by
-        push Not at hT
-        have := hm (vr + δ) ⟨le_rfl, hγ⟩
-        nlinarith [mul_nonneg (sub_nonneg.2 hγ) (le_of_lt (neg_pos.2 hT))])
+  refine ⟨fun hsub => h.v_le_of_barrier hdrift ?_ hv0.le, fun γ m hγ hm hηm hTlen =>
+    h.exists_v_ge hT hdrift hγ hm hηm hTlen hv0.ge⟩
+  rwa [vField_pulse hrest.1]
 
 end MathlibExt.Biology.Biophysics.FitzHughNagumo
