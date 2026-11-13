@@ -82,13 +82,13 @@ theorem evaporation_eq_zero_iff {LE ρw Lv : ℝ} (hρ : 0 < ρw) (hLv : 0 < Lv)
 /-- Witness in scaled units: `LE = 100 W/m^2`, `rho_w = 1000 kg/m^3`, and
 `Lv = 2.5` in `MJ/kg` (`2.5 * 10^6 J/kg`) give `E = 0.04` in `10^-6 m/s`,
 that is `4 * 10^-8 m/s` (`evaporation_witness_si`). -/
-theorem evaporation_witness :
+lemma evaporation_witness :
     (100 : ℝ) / (1000 * 2.5) = 0.04 := by
   norm_num
 
 /-- The same witness in SI units: `LE = 100 W/m^2`, `rho_w = 1000 kg/m^3`,
 and `Lv = 2.5 * 10^6 J/kg` give `E = 4 * 10^-8 m/s`, about `3.5 mm/day`. -/
-theorem evaporation_witness_si :
+lemma evaporation_witness_si :
     (100 : ℝ) / (1000 * (2.5 * 10 ^ 6)) = 4 / 10 ^ 8 := by
   norm_num
 
