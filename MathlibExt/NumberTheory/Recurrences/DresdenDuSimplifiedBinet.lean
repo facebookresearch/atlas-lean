@@ -9,9 +9,11 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Ring.GeomSum
+import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 import Mathlib.Algebra.Ring.IsFormallyReal
-import Mathlib.Algebra.Ring.GeomSum
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity

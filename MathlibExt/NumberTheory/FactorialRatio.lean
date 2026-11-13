@@ -8,10 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Algebra.Divisibility.Basic
-
 public import Mathlib.Algebra.BigOperators.Group.List.Basic
 public import Mathlib.Data.Nat.Choose.Basic
+import Mathlib.Algebra.Divisibility.Basic
 
 /-!
 # Integral factorial ratios

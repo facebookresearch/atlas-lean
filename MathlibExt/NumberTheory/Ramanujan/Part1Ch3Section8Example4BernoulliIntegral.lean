@@ -11,7 +11,7 @@ module
 public import Mathlib.NumberTheory.Bernoulli
 public import MathlibExt.NumberTheory.Ramanujan.Part1Ch3Section8Example4Integrable
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.NumberTheory.BernoulliPolynomials
 
 @[expose] public section

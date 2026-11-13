@@ -8,12 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
-
 public import Mathlib.Analysis.Complex.CauchyIntegral
 public import Mathlib.Analysis.MellinTransform
 public import Mathlib.NumberTheory.AbelSummation
 public import Mathlib.NumberTheory.LSeries.SumCoeff
+import Mathlib.Analysis.Asymptotics.SpecificAsymptotics
 
 @[expose] public section
 
