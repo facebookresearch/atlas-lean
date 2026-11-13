@@ -9,25 +9,36 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
+import Mathlib.Tactic.LinearCombination
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum
 
 /-!
 # Exact Fisher rate identity
 
-With real rate `r` and inflation `pi`, the nominal rate is defined by the
-exact gross relation `1 + i = (1 + r) * (1 + pi)`. The additive form
-`i = r + pi` is only an approximation: it drops exactly the cross term
-`r * pi`. The adjacent `MathlibExt.Economics.Finance.RealNominal` assumes
-this relation to prove an NPV equality; this file proves the identity
-itself, the approximation error, and a concrete counterexample.
+The Fisher relation links a nominal rate `i`, a real rate `r` and inflation
+`π` by the exact gross relation `1 + i = (1 + r) * (1 + π)`. For an arbitrary
+`i`, the relation holds exactly when `i = r + π + r * π`, so the additive
+form `i = r + π` is only an approximation: it drops exactly the cross term
+`r * π`. The adjacent `MathlibExt.Economics.Finance.RealNominal` assumes
+this relation to prove an NPV equality.
+
+`fisherNominalRate r π` is the conversion definition `(1 + r) * (1 + π) - 1`,
+the nominal rate that the relation determines. That it satisfies the relation
+(`fisher_exact`) holds by construction and is not a separate economic claim;
+`fisher_approx_error` and `fisher_example` specialize the results to it.
 
 ## Main results
 
-* `MathlibExt.Economics.Macro.FisherRate.fisher_exact`: `1 + i = (1 + r) * (1 + pi)`.
-* `MathlibExt.Economics.Macro.FisherRate.fisher_approx_error`:
-  `i - (r + pi) = r * pi`.
-* `MathlibExt.Economics.Macro.FisherRate.fisher_example`: at `r = pi = 1/10`
+* `MathlibExt.Economics.Macro.FisherRate.fisher_relation_iff`: for any `i`,
+  `1 + i = (1 + r) * (1 + π) ↔ i = r + π + r * π`.
+* `MathlibExt.Economics.Macro.FisherRate.fisher_approx_error_of_relation`:
+  if `1 + i = (1 + r) * (1 + π)`, then `i - (r + π) = r * π`.
+* `MathlibExt.Economics.Macro.FisherRate.fisher_exact`: the conversion
+  definition satisfies the relation, by construction.
+* `MathlibExt.Economics.Macro.FisherRate.fisher_approx_error`: the same error
+  for the converted rate, derived from the relation.
+* `MathlibExt.Economics.Macro.FisherRate.fisher_example`: at `r = π = 1/10`
   the exact rate is `21/100`, not `1/5`.
 
 ## References
@@ -40,7 +51,24 @@ itself, the approximation error, and a concrete counterexample.
 
 namespace MathlibExt.Economics.Macro.FisherRate
 
-/-- The nominal rate implied by the exact Fisher relation. -/
+/-- **Fisher relation for an arbitrary nominal rate.** A nominal rate `i`
+satisfies the exact gross relation `1 + i = (1 + r) * (1 + π)` if and only if
+`i = r + π + r * π`. -/
+theorem fisher_relation_iff (i r π : ℝ) :
+    1 + i = (1 + r) * (1 + π) ↔ i = r + π + r * π := by
+  constructor <;> intro h <;> linear_combination h
+
+/-- **Approximation error for an arbitrary nominal rate.** If
+`1 + i = (1 + r) * (1 + π)`, the additive approximation `i ≈ r + π` drops
+exactly the cross term: `i - (r + π) = r * π`. -/
+theorem fisher_approx_error_of_relation {i r π : ℝ}
+    (h : 1 + i = (1 + r) * (1 + π)) : i - (r + π) = r * π := by
+  rw [(fisher_relation_iff i r π).mp h]
+  ring
+
+/-- Conversion definition: the nominal rate `(1 + r) * (1 + π) - 1` that the
+Fisher relation determines from the real rate `r` and inflation `π`
+(see `fisher_relation_iff`). -/
 noncomputable def fisherNominalRate (r π : ℝ) : ℝ :=
   (1 + r) * (1 + π) - 1
 
@@ -48,18 +76,21 @@ noncomputable def fisherNominalRate (r π : ℝ) : ℝ :=
 noncomputable def fisherGrossNominal (r π : ℝ) : ℝ :=
   (1 + r) * (1 + π)
 
-/-- **Exact Fisher identity:** `1 + i = (1 + r) * (1 + π)`. -/
+/-- **The conversion definition satisfies the Fisher relation:**
+`1 + fisherNominalRate r π = (1 + r) * (1 + π)`. This holds by construction
+of `fisherNominalRate` and is not an economic claim; for an independently
+given nominal rate, see `fisher_relation_iff`. -/
 theorem fisher_exact (r π : ℝ) :
     1 + fisherNominalRate r π = (1 + r) * (1 + π) := by
   unfold fisherNominalRate
   ring
 
-/-- **Approximation error:** the additive approximation `i ≈ r + π` drops
-exactly the cross term `r * π`. -/
+/-- **Approximation error for the converted rate:** the additive
+approximation `i ≈ r + π` drops exactly the cross term `r * π`. Derived from
+the relation via `fisher_approx_error_of_relation`. -/
 theorem fisher_approx_error (r π : ℝ) :
-    fisherNominalRate r π - (r + π) = r * π := by
-  unfold fisherNominalRate
-  ring
+    fisherNominalRate r π - (r + π) = r * π :=
+  fisher_approx_error_of_relation (fisher_exact r π)
 
 /-- **Concrete failure of the approximation.** At `r = π = 1/10` the exact
 nominal rate is `21/100`, not `1/5`, and the dropped cross term is `1/100`. -/
