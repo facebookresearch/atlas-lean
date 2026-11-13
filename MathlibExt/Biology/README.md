@@ -17,7 +17,8 @@ this file records the modeling conventions that make results in different files 
 Areas: `PopulationGenetics` (with `Coalescent/` and `Diffusion/`), `Phylogenetics`,
 `StatisticalGenetics`, `Epidemiology`, `Dynamics`, `CancerGenomics`, `Ecology` (structured
 population models), `Biophysics` (compartment and pharmacokinetic models), `Omics`
-(compositional normalization of count data). Distributions, Markov chains, statistics
+(compositional normalization of count data), `Demography` (crude and standardized rates
+over population categories). Distributions, Markov chains, statistics
 and combinatorics that are not specific to biology go under `MathlibExt/Probability/…` or
 `MathlibExt/Combinatorics/…`.
 

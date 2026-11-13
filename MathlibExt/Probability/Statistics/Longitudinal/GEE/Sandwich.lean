@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.BoundedInProbability
 public import MathlibExt.Probability.LindebergFeller
 public import Mathlib.Probability.CramerWold
 public import Mathlib.MeasureTheory.Measure.LevyConvergence
@@ -131,23 +132,9 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   {Ω Ω' : Type*} {mΩ : MeasurableSpace Ω} {mΩ' : MeasurableSpace Ω'}
   {P : Measure Ω} {P' : Measure Ω'} [IsProbabilityMeasure P] [IsProbabilityMeasure P']
 
-/-- A sequence of random vectors converging in distribution is bounded in probability: for every
-`ε > 0` there is a radius `K` with `P {K < ‖X n‖} ≤ ε` for all `n`. -/
-theorem exists_forall_measure_lt_norm_le_of_tendstoInDistribution {X : ℕ → Ω → E} {Z : Ω' → E}
-    (h : TendstoInDistribution X atTop Z (fun _ ↦ P) P') {ε : ℝ≥0∞} (hε : 0 < ε) :
-    ∃ K : ℝ, ∀ n, P {ω | K < ‖X n ω‖} ≤ ε := by
-  have hT : IsTightMeasureSet (Set.range fun n ↦ P.map (X n)) :=
-    isTightMeasureSet_of_tendsto_charFun (f := charFun (P'.map Z))
-      continuous_charFun.continuousAt fun t ↦ h.tendsto_charFun t
-  obtain ⟨K, hK⟩ :=
-    ((tendsto_measure_norm_gt_of_isTightMeasureSet hT).eventually (eventually_le_nhds hε)).exists
-  refine ⟨K, fun n ↦ ?_⟩
-  have hmeas : MeasurableSet {x : E | K < ‖x‖} := measurableSet_lt measurable_const measurable_norm
-  calc P {ω | K < ‖X n ω‖} = P.map (X n) {x | K < ‖x‖} :=
-        (Measure.map_apply_of_aemeasurable (h.forall_aemeasurable n) hmeas).symm
-    _ ≤ ⨆ μ ∈ Set.range fun n ↦ P.map (X n), μ {x | K < ‖x‖} :=
-        le_biSup (f := fun μ : Measure E ↦ μ {x | K < ‖x‖}) ⟨n, rfl⟩
-    _ ≤ ε := hK
+@[deprecated (since := "2026-11-13")]
+alias exists_forall_measure_lt_norm_le_of_tendstoInDistribution :=
+  ProbabilityTheory.exists_forall_measure_lt_norm_le_of_tendstoInDistribution
 
 omit [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E] in
 private lemma inner_inv_sqrt_smul_sum (U : ℕ → Ω → E) (t : E) (n : ℕ) (ω : Ω) :
@@ -356,8 +343,9 @@ theorem tendstoInDistribution_sqrt_smul_sub_of_linearization {U : ℕ → E → 
   intro ε hε
   rw [ENNReal.tendsto_nhds_zero]
   intro δ hδ
-  obtain ⟨K₀, hK₀⟩ := exists_forall_measure_lt_norm_le_of_tendstoInDistribution hX
-    (ENNReal.half_pos hδ.ne')
+  obtain ⟨K₀, hK₀⟩ :=
+    ProbabilityTheory.exists_forall_measure_lt_norm_le_of_tendstoInDistribution hX
+      (ENNReal.half_pos hδ.ne')
   set K := max K₀ 0
   have hK : 0 ≤ K := le_max_right _ _
   set a := ‖Ai‖

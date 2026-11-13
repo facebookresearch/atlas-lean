@@ -24,6 +24,8 @@ is a Dirac mass whose cdf jumps, so the nonzero hypothesis cannot be dropped.
 The cdf also standardizes: `cdf (gaussianReal μ v) x` is the standard normal cdf
 at `(x - μ) / √v`. The standard normal cdf is symmetric: `Φ(-x) = 1 - Φ(x)`,
 hence `Φ 0 = 1 / 2`. The cdf is strictly monotone at every nonzero variance.
+The standard normal cdf is differentiable, with derivative the standard normal
+density: `Φ' = φ`.
 -/
 
 @[expose] public section
@@ -172,5 +174,56 @@ theorem cdfQuantile_gaussianReal_pos {u : ℝ} (hu : u ∈ Set.Ioo (1 / 2) 1) :
     (cdfQuantile_le_iff (gaussianReal 0 1) hu01).mp h
   rw [cdf_gaussianReal_zero] at hle
   linarith [hu.1, hle]
+
+/-- Derivative of the standard normal cdf: `Φ' = φ`. Mathlib has no derivative of
+the Gaussian cdf; this follows from the integral representation of the cdf and the
+fundamental theorem of calculus (`intervalIntegral.integral_hasDerivAt_right`), using
+continuity of `gaussianPDFReal`. -/
+theorem hasDerivAt_stdNormal_cdf (x : ℝ) :
+    HasDerivAt (fun y => cdf (gaussianReal 0 1) y) (gaussianPDFReal 0 1 x) x := by
+  have hcont : Continuous (gaussianPDFReal 0 1) := by
+    unfold gaussianPDFReal
+    fun_prop
+  have hcdf : ∀ y : ℝ, cdf (gaussianReal 0 1) y
+      = ∫ t in Set.Iic y, gaussianPDFReal 0 1 t := by
+    intro y
+    rw [cdf_eq_real, measureReal_def]
+    rw [gaussianReal_apply_eq_integral 0 (by simp) (Set.Iic y)]
+    rw [ENNReal.toReal_ofReal]
+    apply setIntegral_nonneg measurableSet_Iic
+    intro a _
+    exact gaussianPDFReal_nonneg _ _ _
+  have hIic : ∀ y : ℝ, (∫ t in Set.Iic y, gaussianPDFReal 0 1 t)
+      = (∫ t in Set.Iic (0:ℝ), gaussianPDFReal 0 1 t)
+        + ∫ t in (0:ℝ)..y, gaussianPDFReal 0 1 t := by
+    intro y
+    have h := intervalIntegral.integral_Iic_sub_Iic
+      (f := gaussianPDFReal 0 1) (μ := volume)
+      (a := (0:ℝ)) (b := y)
+      ((integrable_gaussianPDFReal _ _).integrableOn)
+      ((integrable_gaussianPDFReal _ _).integrableOn)
+    have h' : (∫ t in Set.Iic y, gaussianPDFReal 0 1 t)
+        = (∫ t in (0:ℝ)..y, gaussianPDFReal 0 1 t)
+          + (∫ t in Set.Iic (0:ℝ), gaussianPDFReal 0 1 t) := by
+      rw [← h]; ring
+    rw [h']; ring
+  have hFTC : HasDerivAt (fun y => ∫ t in (0:ℝ)..y, gaussianPDFReal 0 1 t)
+      (gaussianPDFReal 0 1 x) x :=
+    intervalIntegral.integral_hasDerivAt_right
+      (hcont.intervalIntegrable _ _)
+      (hcont.stronglyMeasurableAtFilter _ _)
+      (hcont.continuousAt)
+  have hAdd : HasDerivAt
+      (fun y => (∫ t in Set.Iic (0:ℝ), gaussianPDFReal 0 1 t)
+        + ∫ t in (0:ℝ)..y, gaussianPDFReal 0 1 t)
+      (gaussianPDFReal 0 1 x) x :=
+    hFTC.const_add (∫ t in Set.Iic (0:ℝ), gaussianPDFReal 0 1 t)
+  have heq : (fun y => cdf (gaussianReal 0 1) y)
+      = (fun y => (∫ t in Set.Iic (0:ℝ), gaussianPDFReal 0 1 t)
+        + ∫ t in (0:ℝ)..y, gaussianPDFReal 0 1 t) := by
+    funext y
+    rw [hcdf y, hIic y]
+  rw [heq]
+  exact hAdd
 
 end ProbabilityTheory
