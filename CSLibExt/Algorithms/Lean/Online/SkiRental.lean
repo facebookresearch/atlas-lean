@@ -28,7 +28,7 @@ performance of competitive algorithms in practice*, 1998):
   `(2 - 1/B)` times the optimum on every season, `B * cost ≤ (2 B - 1) * opt`; in particular it
   is `2`-competitive (`cost_breakEven_le_two_mul`).
 * `exists_cost_ge` (**lower bound**): every deterministic strategy pays at least `(2 - 1/B)`
-  times the optimum on some season: the adversary ends the season on the day the strategy buys
+  times the optimum on some nonempty season: the adversary ends the season on the day it buys
   (or after `2 B - 1` days if it never buys).
 
 So the deterministic competitive ratio of ski rental is exactly `2 - 1/B`.
@@ -94,17 +94,17 @@ theorem cost_breakEven_le_two_mul {B : ℕ} (hB : 1 ≤ B) (d : ℕ) :
   exact Nat.le_of_mul_le_mul_left (h.trans h2) (by omega)
 
 /-- **Lower bound**: every deterministic strategy pays at least `(2 - 1/B)` times the optimum on
-some season, `(2 B - 1) * opt ≤ B * cost`. -/
+some nonempty season, `1 ≤ d` and `(2 B - 1) * opt ≤ B * cost`. -/
 theorem exists_cost_ge {B : ℕ} (hB : 1 ≤ B) (s : Strategy) :
-    ∃ d, (2 * B - 1) * opt B d ≤ B * cost B s d := by
+    ∃ d, 1 ≤ d ∧ (2 * B - 1) * opt B d ≤ B * cost B s d := by
   cases s with
   | none =>
-      refine ⟨2 * B - 1, ?_⟩
+      refine ⟨2 * B - 1, by omega, ?_⟩
       simp only [cost, opt]
       rw [min_eq_right (by omega), Nat.mul_comm]
   | some t =>
       by_cases ht : 1 ≤ t
-      · refine ⟨t, ?_⟩
+      · refine ⟨t, ht, ?_⟩
         simp only [cost, opt, ht, le_refl, and_self, ↓reduceIte]
         rcases le_total t B with htB | htB
         · rw [min_eq_left htB]
@@ -121,7 +121,7 @@ theorem exists_cost_ge {B : ℕ} (hB : 1 ≤ B) (s : Strategy) :
           rw [Nat.mul_comm]
           exact Nat.mul_le_mul_left B this
       · -- buying "on day 0" means renting forever in `cost`
-        refine ⟨2 * B - 1, ?_⟩
+        refine ⟨2 * B - 1, by omega, ?_⟩
         simp only [cost, opt, ht, false_and, ↓reduceIte]
         rw [min_eq_right (by omega), Nat.mul_comm]
 
