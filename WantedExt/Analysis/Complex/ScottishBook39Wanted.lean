@@ -25,8 +25,10 @@ The continuous functions meeting these conditions are exactly
 discontinuous functions meeting these conditions exist. The answer is yes:
 there is a discontinuous field automorphism `f` of the complex numbers, and
 `φ(x) = |f(x)|` satisfies (1), (2), (3) and is discontinuous. Condition (1)
-is read as in the addendum: `φ` is not identically `0` or `1`, since for
-`φ(x) = |f(x)|` one has `φ(0) = 0` and `φ(1) = 1`.
+is read as in the addendum: `φ` is not identically `0`, and it is not the
+trivial absolute value (`φ 0 = 0` and `φ x = 1` for `x ≠ 0`), which is
+discontinuous at `0` and meets (2) and (3). For `φ(x) = |f(x)|` one has
+`φ(2) = 2`.
 Source: H. Auerbach, Problem 39 of the Scottish Book; addendum of S. Mazur,
 10 April 1937, in the Scottish Book, via Lebesgue's theorem on the existence
 of a discontinuous automorphism of `ℂ` (Kamke); see the commentary in
@@ -34,7 +36,7 @@ R. D. Mauldin (ed.), The Scottish Book, 2nd ed. (Birkhäuser, 2015).
 -/
 theorem_wanted exists_discontinuous_subadditive_multiplicative :
     ∃ φ : ℂ → ℝ, ¬ Continuous φ ∧ (∀ x, 0 ≤ φ x) ∧
-      ¬ (∀ x, φ x = 0) ∧ ¬ (∀ x, φ x = 1) ∧
+      ¬ (∀ x, φ x = 0) ∧ ¬ (∀ x, x ≠ 0 → φ x = 1) ∧
       (∀ x y, φ (x + y) ≤ φ x + φ y) ∧ (∀ x y, φ (x * y) = φ x * φ y)
 
 end MathlibExt.Analysis.Complex.ScottishBook39Wanted
