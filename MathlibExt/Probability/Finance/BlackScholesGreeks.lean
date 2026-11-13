@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.Distributions.GaussianCdf
 public import MathlibExt.Probability.Finance.BlackScholes
 public import Mathlib.Probability.Distributions.Gaussian.Real
 
@@ -15,16 +16,14 @@ public import Mathlib.Probability.Distributions.Gaussian.Real
 # Black-Scholes delta and positive vega
 
 On `S0, K, T, σ > 0`, the Black-Scholes call price has delta `Φ(d₁)` and
-positive vega `S0 φ(d₁) √T`. This is the run's new-result gap: Mathlib has no
-derivative of the Gaussian cdf, so `Φ' = φ` is proved here from the integral
-representation of the cdf and the fundamental theorem of calculus; the density
-identity `S0 φ(d₁) = K e^{-rT} φ(d₂)` then cancels the density terms in both
-chain-rule computations.
+positive vega `S0 φ(d₁) √T`. The chain rule uses `Φ' = φ`, which is
+`ProbabilityTheory.hasDerivAt_stdNormal_cdf` in
+`MathlibExt/Probability/Distributions/GaussianCdf.lean`; the density identity
+`S0 φ(d₁) = K e^{-rT} φ(d₂)` then cancels the density terms in both chain-rule
+computations.
 
 ## Main results
 
-* `hasDerivAt_stdNormal_cdf`: the derivative of the standard normal cdf is the
-  standard normal density.
 * `blackScholes_phi_identity`: `S0 φ(d₁) = K e^{-rT} φ(d₂)`.
 * `blackScholesDelta`, `blackScholesVega`: the delta and vega.
 * `hasDerivAt_blackScholesCall_S0`: delta is the `S0`-derivative of the call price.
@@ -47,8 +46,6 @@ noncomputable def blackScholesDelta (S0 K r σ T : ℝ) : ℝ :=
 the volatility `σ`, with `φ` the standard normal density. -/
 noncomputable def blackScholesVega (S0 K r σ T : ℝ) : ℝ :=
   S0 * gaussianPDFReal 0 1 (d1 S0 K r σ T) * √T
-
-open intervalIntegral Set
 
 private theorem hasDerivAt_d1_S0 (S0 K r σ T : ℝ) (hS0 : 0 < S0) (hK : 0 < K) :
     HasDerivAt (fun S => d1 S K r σ T) ((1 / S0) / (σ * √T)) S0 := by
@@ -95,57 +92,6 @@ private theorem exists_hasDerivAt_d1_sigma (S0 K r σ T : ℝ) (hσ : 0 < σ) (h
   refine ⟨(((2 * σ) / 2 * T) * (σ * √T)
       - (log (S0 / K) + (r + σ ^ 2 / 2) * T) * √T) / (σ * √T) ^ 2, ?_⟩
   simpa [d1, Pi.div_def] using hdiv
-
-/-- Derivative of the standard normal cdf (FI17.T03, new result): `Φ' = φ`.
-Mathlib has no derivative of the Gaussian cdf; prove it in-file from the
-integral representation of the cdf and FTC (`intervalIntegral.integral_hasDerivAt_right`),
-using continuity of `gaussianPDFReal`. -/
-theorem hasDerivAt_stdNormal_cdf (x : ℝ) :
-    HasDerivAt (fun y => cdf (gaussianReal 0 1) y) (gaussianPDFReal 0 1 x) x := by
-  have hcont : Continuous (gaussianPDFReal 0 1) := by
-    unfold gaussianPDFReal
-    fun_prop
-  have hcdf : ∀ y : ℝ, cdf (gaussianReal 0 1) y
-      = ∫ t in Iic y, gaussianPDFReal 0 1 t := by
-    intro y
-    rw [cdf_eq_real, measureReal_def]
-    rw [gaussianReal_apply_eq_integral 0 (by simp) (Iic y)]
-    rw [ENNReal.toReal_ofReal]
-    apply setIntegral_nonneg measurableSet_Iic
-    intro a _
-    exact gaussianPDFReal_nonneg _ _ _
-  have hIic : ∀ y : ℝ, (∫ t in Iic y, gaussianPDFReal 0 1 t)
-      = (∫ t in Iic (0:ℝ), gaussianPDFReal 0 1 t)
-        + ∫ t in (0:ℝ)..y, gaussianPDFReal 0 1 t := by
-    intro y
-    have h := integral_Iic_sub_Iic
-      (f := gaussianPDFReal 0 1) (μ := volume)
-      (a := (0:ℝ)) (b := y)
-      ((integrable_gaussianPDFReal _ _).integrableOn)
-      ((integrable_gaussianPDFReal _ _).integrableOn)
-    have h' : (∫ t in Iic y, gaussianPDFReal 0 1 t)
-        = (∫ t in (0:ℝ)..y, gaussianPDFReal 0 1 t)
-          + (∫ t in Iic (0:ℝ), gaussianPDFReal 0 1 t) := by
-      rw [← h]; ring
-    rw [h']; ring
-  have hFTC : HasDerivAt (fun y => ∫ t in (0:ℝ)..y, gaussianPDFReal 0 1 t)
-      (gaussianPDFReal 0 1 x) x :=
-    integral_hasDerivAt_right
-      (hcont.intervalIntegrable _ _)
-      (hcont.stronglyMeasurableAtFilter _ _)
-      (hcont.continuousAt)
-  have hAdd : HasDerivAt
-      (fun y => (∫ t in Iic (0:ℝ), gaussianPDFReal 0 1 t)
-        + ∫ t in (0:ℝ)..y, gaussianPDFReal 0 1 t)
-      (gaussianPDFReal 0 1 x) x :=
-    hFTC.const_add (∫ t in Iic (0:ℝ), gaussianPDFReal 0 1 t)
-  have heq : (fun y => cdf (gaussianReal 0 1) y)
-      = (fun y => (∫ t in Iic (0:ℝ), gaussianPDFReal 0 1 t)
-        + ∫ t in (0:ℝ)..y, gaussianPDFReal 0 1 t) := by
-    funext y
-    rw [hcdf y, hIic y]
-  rw [heq]
-  exact hAdd
 
 /-- Density identity (FI17.T03): `S0 φ(d₁) = K e^{-rT} φ(d₂)`. Algebra from
 `d₁² - d₂² = 2 log (S0 / K) + 2 r T` and the explicit Gaussian density; needs
