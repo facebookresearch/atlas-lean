@@ -40,13 +40,12 @@ theorem scheffe_coverage_full_model {m k : Type*} [Fintype m] [DecidableEq m]
     (hmass : (snedecorFMeasure (Fintype.card k) (Fintype.card m - Fintype.card k)).real
       (Set.Icc 0 c) ≥ 1 - α)
     (hα : α ∈ Set.Icc (0 : ℝ) 1)
-    (hR : ∀ t : k → ℝ, MeasurableSet {y : m → ℝ | c < fStatistic X 1 t y})
     (β : k → ℝ) {ε : Ω → m → ℝ} {σ : ℝ} (hσ : 0 < σ)
     (hε : HasLaw (fun ω => σ⁻¹ • ε ω) (Measure.pi fun _ : m => gaussianReal 0 1) μ) :
     1 - α ≤ (μ.map fun ω => X *ᵥ β + ε ω).real
       {y : m → ℝ | (1 : Matrix k k ℝ) *ᵥ β ∈ confSetOfTests
         (fun t : k → ℝ => {y : m → ℝ | c < fStatistic X 1 t y}) y} := by
-  exact scheffe_coverage hX hC hr hkm c hmass hα hR β hσ hε
+  exact scheffe_coverage hX hC hr hkm c hmass hα β hσ hε
 
 /-- Boundary: at `α = 1` the coverage lower bound is vacuous (`0 ≤ real`), using only
 nonnegativity of the observation-law mass. `confSetOfTests` resolves through the
@@ -57,7 +56,6 @@ theorem scheffe_coverage_alpha_one {m k r : Type*} [Fintype m] [DecidableEq m]
     (hX : IsUnit (Xᵀ * X)) (hC : IsUnit (C * (Xᵀ * X)⁻¹ * Cᵀ)) (hr : 0 < Fintype.card r)
     (hkm : Fintype.card k < Fintype.card m)
     (c : ℝ)
-    (hR : ∀ t : r → ℝ, MeasurableSet {y : m → ℝ | c < fStatistic X C t y})
     (β : k → ℝ) {ε : Ω → m → ℝ} {σ : ℝ} (hσ : 0 < σ)
     (hε : HasLaw (fun ω => σ⁻¹ • ε ω) (Measure.pi fun _ : m => gaussianReal 0 1) μ) :
     (0 : ℝ) ≤ (μ.map fun ω => X *ᵥ β + ε ω).real
@@ -68,7 +66,14 @@ theorem scheffe_coverage_alpha_one {m k r : Type*} [Fintype m] [DecidableEq m]
     rw [sub_self]
     exact measureReal_nonneg
   have hα1 : (1 : ℝ) ∈ Set.Icc (0 : ℝ) 1 := ⟨zero_le_one, le_rfl⟩
-  have h := scheffe_coverage hX hC hr hkm c hmass1 hα1 hR β hσ hε
+  have h := scheffe_coverage hX hC hr hkm c hmass1 hα1 β hσ hε
   rwa [sub_self] at h
+
+/-- The rejection sets inverted by `scheffe_coverage` are measurable for every hypothesized
+contrast `t`, from the public `measurable_fStatistic`; no measurability hypothesis is needed. -/
+example {m k r : Type*} [Fintype m] [DecidableEq m] [Fintype k] [DecidableEq k] [Fintype r]
+    [DecidableEq r] (X : Matrix m k ℝ) (C : Matrix r k ℝ) (c : ℝ) (t : r → ℝ) :
+    MeasurableSet {y : m → ℝ | c < fStatistic X C t y} :=
+  measurableSet_lt measurable_const (measurable_fStatistic X C t)
 
 end MathlibExtTest.Probability.Statistics.LinearModel.SimultaneousConfidence

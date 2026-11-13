@@ -56,9 +56,9 @@ private theorem scheffe_aemeasurable_model {m k : Type*} [Fintype m] [Fintype k]
 /-- **Simultaneous Scheffe coverage by inverting the `F` test**: under the exact-`F`-law
 hypotheses, for a cutoff `c` whose central `F(q, n-p)` mass on `[0, c]` reaches `1 - α`,
 the non-rejected contrast set covers the true contrast with probability at least `1 - α`.
-The level input is the `F` law at the fiber hypothesis; only the cutoff mass and the
-rejection-set measurability are assumed. This is simultaneous coverage, not Scheffe's
-lemma on `L1` convergence (which lives in `MathlibExt/MeasureTheory/Function`). -/
+The level input is the `F` law at the fiber hypothesis; only the cutoff mass is assumed, and
+the rejection sets are measurable by `measurable_fStatistic`. This is simultaneous coverage,
+not Scheffe's lemma on `L1` convergence (which lives in `MathlibExt/MeasureTheory/Function`). -/
 theorem scheffe_coverage {m k r : Type*} [Fintype m] [DecidableEq m] [Fintype k]
     [DecidableEq k] [Fintype r] [DecidableEq r]
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} {X : Matrix m k ℝ} {C : Matrix r k ℝ}
@@ -68,13 +68,14 @@ theorem scheffe_coverage {m k r : Type*} [Fintype m] [DecidableEq m] [Fintype k]
     (hmass : (snedecorFMeasure (Fintype.card r) (Fintype.card m - Fintype.card k)).real
       (Set.Icc 0 c) ≥ 1 - α)
     (hα : α ∈ Set.Icc (0 : ℝ) 1)
-    (hR : ∀ t : r → ℝ, MeasurableSet {y : m → ℝ | c < fStatistic X C t y})
     (β : k → ℝ) {ε : Ω → m → ℝ} {σ : ℝ} (hσ : 0 < σ)
     (hε : HasLaw (fun ω => σ⁻¹ • ε ω) (Measure.pi fun _ : m => gaussianReal 0 1) μ) :
     1 - α ≤ (μ.map fun ω => X *ᵥ β + ε ω).real
       {y : m → ℝ | C *ᵥ β ∈ confSetOfTests
         (fun t : r → ℝ => {y : m → ℝ | c < fStatistic X C t y}) y} := by
   obtain ⟨_hα0, _hα1⟩ := hα
+  have hR : ∀ t : r → ℝ, MeasurableSet {y : m → ℝ | c < fStatistic X C t y} :=
+    fun t => measurableSet_lt measurable_const (measurable_fStatistic X C t)
   have hμ : IsProbabilityMeasure μ := hε.isProbabilityMeasure
   have hP : ∀ β' : k → ℝ, IsProbabilityMeasure (μ.map fun ω => X *ᵥ β' + ε ω) :=
     fun _ => inferInstance
