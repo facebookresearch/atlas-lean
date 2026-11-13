@@ -31,20 +31,28 @@ Compared with the formal-conjectures statement `ErdosProblems/497.lean` (equival
 explicit `o(1)` function and `DedekindNumber`; no code imported).
 -/
 
-/-- The number of antichains (for `⊆`) of subsets of an `n`-element set, i.e. the Dedekind number
-`M(n)`; the empty family and `{∅}` count. -/
+/-- **Dedekind numbers.** For a natural number $n$, the Dedekind number $M(n)$ is the number of
+antichains with respect to inclusion among the subsets of the $n$-element set
+$\{0, 1, \dots, n-1\}$, that is, of families of subsets in which no member is contained in a
+different member; the empty family and the family $\{\emptyset\}$ are counted. -/
 noncomputable def antichainCount (n : ℕ) : ℕ :=
   {F : Finset (Finset (Fin n)) | IsAntichain (· ⊆ ·) (F : Set (Finset (Fin n)))}.ncard
 
-/-- Erdős Problem 497, Kleitman's answer: the number of antichains of subsets of `[n]` is
-`2 ^ ((1 + o(1)) C(n, ⌊n / 2⌋))`, i.e. `log₂ M(n) / C(n, ⌊n / 2⌋) → 1`. -/
+/-- **Erdős Problem 497: the asymptotic statement for Dedekind numbers.** Let $M(n)$ be the
+number of antichains with respect to inclusion among the subsets of an $n$-element set (the
+Dedekind number). The statement is that $\log_2 M(n) / \binom{n}{\lfloor n/2 \rfloor} \to 1$
+as $n \to \infty$; equivalently, $M(n) = 2^{(1 + o(1)) \binom{n}{\lfloor n/2 \rfloor}}$. -/
 def antichainCountLogAsymptotic : Prop :=
   Filter.Tendsto (fun n : ℕ => Real.logb 2 (antichainCount n) / (n.choose (n / 2) : ℝ))
     Filter.atTop (nhds 1)
 
 /--
-Resolved true: Kleitman proved that the number of antichains of subsets of `[n]` is `2 ^ ((1 + o(1))
-C(n, ⌊n/2⌋))`. Source: T. F. Bloom, Erdős Problems, Problem #497, https://www.erdosproblems.com/497
+**Kleitman's theorem on Dedekind numbers.** Let $M(n)$ be the number of antichains with respect
+to inclusion among the subsets of an $n$-element set. Then
+$\log_2 M(n) / \binom{n}{\lfloor n/2 \rfloor} \to 1$ as $n \to \infty$; that is,
+$M(n) = 2^{(1 + o(1)) \binom{n}{\lfloor n/2 \rfloor}}$.
+
+Source: T. F. Bloom, Erdős Problems, Problem #497, https://www.erdosproblems.com/497
 (status SOLVED (LEAN)); resolution: D. Kleitman, On Dedekind's problem: the number of monotone
 Boolean functions, Proc. Amer. Math. Soc. (1969), 677-682, erdosproblems.com/497: resolved by
 Kleitman, the number is 2^{(1 + o(1)) C(n, ⌊n/2⌋)}, https://www.erdosproblems.com/497.

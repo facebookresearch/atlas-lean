@@ -34,15 +34,24 @@ for `π(1 - 2/(2n - 1))` (the printed value would exceed `α_{2^n}`, but `α_N` 
 values with n shifted by one; no code imported).
 -/
 
-/-- `α_N`: the supremum of the `α ∈ [0, π]` such that every set of `N` points of the plane contains
-three distinct points `x, y, z` with `∠ x y z ≥ α` (angle at `y`). -/
+/-- **Minimax angle.** For a natural number $N$, the minimax angle $\alpha_N$ is the supremum of
+the $\alpha \in [0, \pi]$ such that every set of $N$ points in the Euclidean plane contains three
+distinct points $x, y, z$ with $\angle xyz \ge \alpha$, where $\angle xyz$ is the unoriented angle
+at $y$.
+
+For $N \le 2$ no set of $N$ points has three distinct points, so the set of such $\alpha$ is empty
+and $\alpha_N$ is $0$ by the convention for the supremum of the empty set. -/
 noncomputable def minimaxAngle (N : ℕ) : ℝ :=
   sSup {α : ℝ | 0 ≤ α ∧ α ≤ Real.pi ∧ ∀ S : Finset (EuclideanSpace ℝ (Fin 2)), S.card = N →
     ∃ x ∈ S, ∃ y ∈ S, ∃ z ∈ S, x ≠ y ∧ y ≠ z ∧ x ≠ z ∧ α ≤ EuclideanGeometry.angle x y z}
 
-/-- Erdős Problem 504 (Blumenthal), Sendov's answer: `α_3 = π/3`, `α_4 = π/2`, and for `n ≥ 2`,
-`α_N = (1 - 2/(2n + 1)) π` for `2^n < N ≤ 2^n + 2^(n-2)` and `α_N = (1 - 1/(n + 1)) π` for
-`2^n + 2^(n-2) < N ≤ 2^(n+1)`. -/
+/-- **Blumenthal's minimax angle values (Erdős Problem 504).** For a natural number $N$, let
+$\alpha_N$ be the minimax angle of $N$ points in the plane: the supremum of the
+$\alpha \in [0, \pi]$ such that every set of $N$ points in the plane contains three distinct
+points $x, y, z$ with $\angle xyz \ge \alpha$ (the angle at $y$). The statement is Sendov's
+answer: $\alpha_3 = \pi/3$, $\alpha_4 = \pi/2$, and for all natural numbers $n \ge 2$ and $N$,
+if $2^n < N \le 2^n + 2^{n-2}$, then $\alpha_N = \left(1 - \frac{2}{2n + 1}\right)\pi$, and if
+$2^n + 2^{n-2} < N \le 2^{n+1}$, then $\alpha_N = \left(1 - \frac{1}{n + 1}\right)\pi$. -/
 def minimaxAngleValues : Prop :=
   minimaxAngle 3 = Real.pi / 3 ∧ minimaxAngle 4 = Real.pi / 2 ∧
     ∀ n N : ℕ, 2 ≤ n →
@@ -52,9 +61,15 @@ def minimaxAngleValues : Prop :=
         minimaxAngle N = (1 - 1 / (n + 1 : ℝ)) * Real.pi)
 
 /--
-Resolved true: Sendov determined `α_N` for all `N`: `α_N = (1 - 2/(2n + 1)) π` for `2^n < N ≤ 2^n +
-2^(n-2)` and `α_N = (1 - 1/(n + 1)) π` for `2^n + 2^(n-2) < N ≤ 2^(n+1)` (`n ≥ 2`), together with
-the classical `α_3 = π/3`, `α_4 = π/2`. Source: T. F. Bloom, Erdős Problems, Problem #504,
+**Sendov's solution of Blumenthal's minimax angle problem (Erdős Problem 504).** For a natural
+number $N$, let $\alpha_N$ be the minimax angle of $N$ points in the plane: the supremum of the
+$\alpha \in [0, \pi]$ such that every set of $N$ points in the plane contains three distinct points
+$x, y, z$ with $\angle xyz \ge \alpha$ (the angle at $y$). Then $\alpha_3 = \pi/3$,
+$\alpha_4 = \pi/2$, and for all natural numbers $n \ge 2$ and $N$: if $2^n < N \le 2^n + 2^{n-2}$,
+then $\alpha_N = \left(1 - \frac{2}{2n + 1}\right)\pi$, and if $2^n + 2^{n-2} < N \le 2^{n+1}$,
+then $\alpha_N = \left(1 - \frac{1}{n + 1}\right)\pi$.
+
+Source: T. F. Bloom, Erdős Problems, Problem #504,
 https://www.erdosproblems.com/504 (status SOLVED); resolution: Bl. Sendov, Minimax of the angles in
 a plane configuration of points, Acta Math. Hungar. 69 (1995), 27-46, main theorem, as stated in Zbl
 0853.52009: α(N) = (1 - 2/(2n+1))π for 2^n < N ≤ 2^n + 2^{n-2} and (1 - 1/(n+1))π for 2^n + 2^{n-2}

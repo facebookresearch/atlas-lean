@@ -47,54 +47,82 @@ DOI 10.4171/owr/2022/22, pp. 1165--1237;
 Dong–Mani–Zhao, Enumerating k-SAT functions, arXiv:2107.09233.
 -/
 
-/-- Clause satisfaction for a Boolean assignment: some literal `(i, b)`
-in the clause agrees with the assignment.
-Cites [OWR-10252930-018] `k`-SAT clause semantics. -/
+/-- **Satisfied clause.** Let $n \in \mathbb{N}$. A clause on $n$ variables is a finite set $C$ of
+literals $(i, b)$, where $i \in \{0, \dots, n - 1\}$ is a variable and $b \in \{\mathrm{true},
+\mathrm{false}\}$. An assignment $x : \{0, \dots, n - 1\} \to \{\mathrm{true}, \mathrm{false}\}$
+satisfies $C$ if $x_i = b$ for some literal $(i, b) \in C$.
+
+Source: [OWR-10252930-018], `k`-SAT clause semantics. -/
 def ClauseSatisfied {n : ℕ} (x : Fin n → Bool)
     (C : Finset (Fin n × Bool)) : Prop :=
   ∃ l ∈ C, x l.1 = l.2
 
-/-- A Boolean function is a `k`-SAT function on `n` variables if it is the
-conjunction of a finite set of clauses, each of size at most `k` on pairwise
-distinct variables. Cites [OWR-10252930-018] `k`-SAT functions. -/
+/-- **$k$-SAT function.** Let $k, n \in \mathbb{N}$. A Boolean function
+$f : \{\mathrm{true}, \mathrm{false}\}^n \to \{\mathrm{true}, \mathrm{false}\}$ is a $k$-SAT
+function on $n$ variables if there is a finite set $S$ of clauses on $n$ variables such that each
+clause in $S$ has at most $k$ literals, no two of them on the same variable, and for every
+assignment $x$, $f(x) = \mathrm{true}$ if and only if $x$ satisfies every clause in $S$.
+
+Source: [OWR-10252930-018], `k`-SAT functions. -/
 def IsKSATFunction (k n : ℕ) (f : (Fin n → Bool) → Bool) : Prop :=
   ∃ S : Finset (Finset (Fin n × Bool)),
     (∀ C ∈ S, C.card ≤ k ∧ ∀ l₁ ∈ C, ∀ l₂ ∈ C, l₁.1 = l₂.1 → l₁ = l₂) ∧
     ∀ x : Fin n → Bool, (f x = true ↔ ∀ C ∈ S, ClauseSatisfied x C)
 
-/-- Positive unateness in variable `i`: flipping `i` from `false` to `true`
-while fixing all other variables never flips the function from `true`
-to `false`. Cites [OWR-10252930-018] unate. -/
+/-- **Positively unate variable.** Let $f : \{\mathrm{true}, \mathrm{false}\}^n \to
+\{\mathrm{true}, \mathrm{false}\}$ be a Boolean function and $i$ one of its $n$ variables. Then
+$f$ is positively unate in $i$ if for all assignments $x$ and $y$ that agree at every variable
+other than $i$ and have $x_i = \mathrm{false}$ and $y_i = \mathrm{true}$, $f(x) = \mathrm{true}$
+implies $f(y) = \mathrm{true}$. Equivalently, switching $i$ from false to true never switches
+the value of $f$ from true to false.
+
+Source: [OWR-10252930-018], unate. -/
 def IsPositiveUnateIn {n : ℕ} (f : (Fin n → Bool) → Bool) (i : Fin n) : Prop :=
   ∀ x y : Fin n → Bool, x i = false → y i = true →
     (∀ j : Fin n, j ≠ i → x j = y j) → f x = true → f y = true
 
-/-- Negative unateness in variable `i`: flipping `i` from `false` to `true`
-while fixing all other variables never flips the function from `false`
-to `true`. Cites [OWR-10252930-018] unate. -/
+/-- **Negatively unate variable.** Let $f : \{\mathrm{true}, \mathrm{false}\}^n \to
+\{\mathrm{true}, \mathrm{false}\}$ be a Boolean function and $i$ one of its $n$ variables. Then
+$f$ is negatively unate in $i$ if for all assignments $x$ and $y$ that agree at every variable
+other than $i$ and have $x_i = \mathrm{false}$ and $y_i = \mathrm{true}$, $f(y) = \mathrm{true}$
+implies $f(x) = \mathrm{true}$. Equivalently, switching $i$ from false to true never switches
+the value of $f$ from false to true.
+
+Source: [OWR-10252930-018], unate. -/
 def IsNegativeUnateIn {n : ℕ} (f : (Fin n → Bool) → Bool) (i : Fin n) : Prop :=
   ∀ x y : Fin n → Bool, x i = false → y i = true →
     (∀ j : Fin n, j ≠ i → x j = y j) → f y = true → f x = true
 
-/-- A Boolean function is unate if every variable is either positively or
-negatively unate. Cites [OWR-10252930-018] unate. -/
+/-- **Unate Boolean function.** A Boolean function $f : \{\mathrm{true}, \mathrm{false}\}^n \to
+\{\mathrm{true}, \mathrm{false}\}$ is unate if, for every variable $i$, $f$ is positively unate
+in $i$ or negatively unate in $i$.
+
+Source: [OWR-10252930-018], unate. -/
 def IsUnate {n : ℕ} (f : (Fin n → Bool) → Bool) : Prop :=
   ∀ i : Fin n, IsPositiveUnateIn f i ∨ IsNegativeUnateIn f i
 
-/-- Number of `k`-SAT functions on `n` Boolean variables.
-Cites [OWR-10252930-018] enumeration of `k`-SAT functions. -/
+/-- **Number of $k$-SAT functions.** For natural numbers $k$ and $n$, the number of Boolean
+functions $f : \{\mathrm{true}, \mathrm{false}\}^n \to \{\mathrm{true}, \mathrm{false}\}$ that are
+$k$-SAT functions on $n$ variables.
+
+Source: [OWR-10252930-018], enumeration of `k`-SAT functions. -/
 noncomputable def countKSATFunctions (k n : ℕ) : ℕ :=
   Nat.card { f : (Fin n → Bool) → Bool // IsKSATFunction k n f }
 
-/-- Number of unate `k`-SAT functions on `n` Boolean variables.
-Cites [OWR-10252930-018] typical structure (unate). -/
+/-- **Number of unate $k$-SAT functions.** For natural numbers $k$ and $n$, the number of Boolean
+functions $f : \{\mathrm{true}, \mathrm{false}\}^n \to \{\mathrm{true}, \mathrm{false}\}$ that are
+$k$-SAT functions on $n$ variables and are unate.
+
+Source: [OWR-10252930-018], typical structure (unate). -/
 noncomputable def countUnateKSATFunctions (k n : ℕ) : ℕ :=
   Nat.card { f : (Fin n → Bool) → Bool // IsKSATFunction k n f ∧ IsUnate f }
 
-/-- For fixed `k ≥ 2`, is a `1 - o(1)` fraction of all `k`-SAT functions on
-`n` variables unate as `n → ∞`? This is the Bollobás–Brightwell–Leader
-typical-structure question for this `k`. Cites [OWR-10252930-018],
-DOI 10.4171/owr/2022/22, arXiv:2107.09233. -/
+/-- **Bollobás–Brightwell–Leader conjecture for $k$.** For a natural number $k$, the proposition
+that if $k \ge 2$, then the number of unate $k$-SAT functions on $n$ Boolean variables divided by
+the number of $k$-SAT functions on $n$ Boolean variables tends to $1$ as $n \to \infty$; that is,
+a $1 - o(1)$ fraction of the $k$-SAT functions on $n$ variables is unate.
+
+Source: [OWR-10252930-018], DOI 10.4171/owr/2022/22, arXiv:2107.09233. -/
 noncomputable def conjecture (k : ℕ) : Prop :=
   2 ≤ k →
     Filter.Tendsto
@@ -102,18 +130,23 @@ noncomputable def conjecture (k : ℕ) : Prop :=
         (countUnateKSATFunctions k n : ℝ) / (countKSATFunctions k n : ℝ))
       Filter.atTop (nhds 1)
 
-/-- The Bollobás–Brightwell–Leader conjecture for every fixed `k`: `conjecture k` for all `k`,
-i.e. for each `k ≥ 2` a `1 - o(1)` fraction of the `k`-SAT functions on `n` variables is unate
-as `n → ∞`. -/
+/-- **Bollobás–Brightwell–Leader conjecture for all $k$.** The proposition that for every natural
+number $k \ge 2$, the number of unate $k$-SAT functions on $n$ Boolean variables divided by the
+number of $k$-SAT functions on $n$ Boolean variables tends to $1$ as $n \to \infty$. -/
 def conjectureAllK : Prop :=
   ∀ k : ℕ, conjecture k
 
 /--
-Resolved true: Resolved affirmatively by Balogh, Dong, Lidický, Mani and Zhao (Nearly all k-SAT
-functions are unate, STOC 2023 and J. Eur. Math. Soc. (2026), arXiv:2209.04894, Theorem 1.1):
-for every fixed k, a 1 - o(1) fraction of k-SAT functions on n variables are unate. Their DNF
-convention with exactly k distinct variables per clause gives the same function classes as the
-CNF, at-most-k convention here (negation preserves unateness). Source: J. Balogh, D. Dong, B.
+**Nearly all $k$-SAT functions are unate.** For every natural number $k \ge 2$, the number of
+unate $k$-SAT functions on $n$ Boolean variables divided by the number of $k$-SAT functions on
+$n$ Boolean variables tends to $1$ as $n \to \infty$; that is, the Bollobás–Brightwell–Leader
+conjecture holds for every $k$.
+
+Balogh, Dong, Lidický, Mani and Zhao prove this as Theorem 1.1 of arXiv:2209.04894. They use a
+DNF convention with exactly $k$ distinct variables per clause, which gives the same counts as the
+CNF, at-most-$k$ convention here for $n \ge k$ (negation preserves unateness).
+
+Source: J. Balogh, D. Dong, B.
 Lidický, N. Mani, Y. Zhao, Nearly all k-SAT functions are unate, STOC 2023; J. Eur. Math. Soc.
 (2026), arXiv:2209.04894, https://arxiv.org/abs/2209.04894. Moved from
 `OpenConjectures/Combinatorics/BollobasBrightwellLeaderUnateDensity`.
