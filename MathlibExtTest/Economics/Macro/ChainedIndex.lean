@@ -10,8 +10,6 @@ module
 
 public import MathlibExt.Economics.Macro.ChainedIndex
 import Mathlib.Algebra.BigOperators.Fin
-import Mathlib.Data.Fintype.Basic
-import Mathlib.Data.Fin.Basic
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.NormNum
 
@@ -19,48 +17,79 @@ open MathlibExt.Economics.Macro.ChainedIndex
 /-!
 # Tests for chained-index non-additivity
 
-The one-link case is additive (chained total `150` = components `50 + 100`),
-and a zero base quantity has no quantity ratio, so no component equation is
-claimed there.
+With unchanged period-2 quantities the second link is `1` and the chained
+components (`50 + 100`) add up to the chained total `150`. The endpoint
+simplification is applied to a component of the concrete basket, and zero
+period-0 or period-1 quantities show why its nonzero hypotheses are needed.
 -/
 
 @[expose] public section
 
 namespace MathlibExtTest.Economics.Macro.ChainedIndex
 
-/-- One-link case is additive: growth 3/4, chained total 150 = components 50 + 100. -/
+/-- One-link growth of the concrete basket: `3/4`. -/
 theorem one_link_growth :
-    laspeyresVolumeGrowth ![1, 1] ![100, 100] ![50, 100] = 3 / 4 := by
+    laspeyresVolumeGrowth (![1, 1] : Fin 2 → ℚ) ![100, 100] ![50, 100] = 3 / 4 := by
   unfold laspeyresVolumeGrowth
-  simp [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+  simp [Fin.sum_univ_two]
   norm_num
 
-/-- One-link additivity: components 50 + 100 sum to the chained total 150. -/
+/-- One-link additivity: with unchanged period-2 quantities the second link is
+`1`, and the chained components `50 + 100` add up to the chained total `150`. -/
 theorem one_link_additive :
-    chainedComponentValue 100 100 50 + chainedComponentValue 100 100 100 =
-      chainedRealValue (∑ i, ![1, 1] i * ![100, 100] i)
-        (laspeyresVolumeGrowth ![1, 1] ![100, 100] ![50, 100]) := by
-  unfold chainedComponentValue chainedRealValue laspeyresVolumeGrowth
-  simp [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
+    ∑ j, chainedComponentValue (![1, 1] : Fin 2 → ℚ) ![100, 100] ![1, 4] ![50, 100]
+        ![50, 100] j =
+      chainedValueTwoLinks (![1, 1] : Fin 2 → ℚ) ![100, 100] ![1, 4] ![50, 100]
+        ![50, 100] := by
+  unfold chainedComponentValue chainedValueTwoLinks chainedRealValue chainedIndexTwoLinks
+    laspeyresVolumeGrowth
+  simp [Fin.sum_univ_two]
   norm_num
 
-/-- Explicit values: total 150, components 50 and 100. -/
+/-- Explicit values with unchanged period-2 quantities: total `150`,
+components `50` and `100`. -/
 theorem one_link_values :
-    chainedRealValue 200 (3 / 4) = 150 ∧
-      chainedComponentValue 100 100 50 = 50 ∧
-        chainedComponentValue 100 100 100 = 100 := by
+    chainedValueTwoLinks (![1, 1] : Fin 2 → ℚ) ![100, 100] ![1, 4] ![50, 100]
+        ![50, 100] = 150 ∧
+      chainedComponentValue (![1, 1] : Fin 2 → ℚ) ![100, 100] ![1, 4] ![50, 100]
+          ![50, 100] 0 = 50 ∧
+        chainedComponentValue (![1, 1] : Fin 2 → ℚ) ![100, 100] ![1, 4] ![50, 100]
+          ![50, 100] 1 = 100 := by
   refine ⟨?_, ?_, ?_⟩
-  · unfold chainedRealValue
+  · unfold chainedValueTwoLinks chainedRealValue chainedIndexTwoLinks laspeyresVolumeGrowth
+    simp [Fin.sum_univ_two]
     norm_num
-  · unfold chainedComponentValue
+  · unfold chainedComponentValue chainedValueTwoLinks chainedRealValue chainedIndexTwoLinks
+      laspeyresVolumeGrowth
     norm_num
-  · unfold chainedComponentValue
+  · unfold chainedComponentValue chainedValueTwoLinks chainedRealValue chainedIndexTwoLinks
+      laspeyresVolumeGrowth
     norm_num
 
-/-- Degenerate `q₀ = 0` check: a zero base quantity has no quantity ratio, so the
-component equation is NOT claimed there. Counterexample: LHS = 0, RHS = 50. -/
+/-- Endpoint simplification on the two-link example: component `1` has chained
+value `p₀ 1 * q₂ 1 = 200`. -/
+theorem endpoint_example :
+    chainedComponentValue (![1, 1] : Fin 2 → ℚ) ![100, 100] ![1, 4] ![50, 100]
+      ![50, 200] 1 = 200 := by
+  rw [chainedComponentValue_eq _ _ _ _ _ _ (by simp) (by simp) (by simp)]
+  simp
+
+/-- Degenerate period-0 quantity: with `q₀ = 0` the base value is `0`, so the
+chained value is `0`, not `p₀ * q₂ = 50`; the endpoint equation is not claimed. -/
 theorem degenerate_q0_zero_not_claimed :
-    chainedComponentValue (1 * 0) 0 50 ≠ 1 * 50 := by
-  unfold chainedComponentValue
+    chainedComponentValue (fun _ : Unit => (1 : ℚ)) (fun _ => 0) (fun _ => 1) (fun _ => 1)
+      (fun _ => 50) () ≠ 1 * 50 := by
+  unfold chainedComponentValue chainedValueTwoLinks chainedRealValue chainedIndexTwoLinks
+    laspeyresVolumeGrowth
+  norm_num
+
+/-- Degenerate period-1 quantity: with `p₀ = p₁ = q₀ = q₂ = 1` and `q₁ = 0`,
+both links are `0` under totalized division, so the chained value is `0`, not
+`p₀ * q₂ = 1`. -/
+theorem degenerate_q1_zero_not_claimed :
+    chainedComponentValue (fun _ : Unit => (1 : ℚ)) (fun _ => 1) (fun _ => 1) (fun _ => 0)
+      (fun _ => 1) () = 0 := by
+  unfold chainedComponentValue chainedValueTwoLinks chainedRealValue chainedIndexTwoLinks
+    laspeyresVolumeGrowth
   norm_num
 end MathlibExtTest.Economics.Macro.ChainedIndex
