@@ -42,8 +42,8 @@ Cohen–Macaulayness is expressed by the depth of `S` as a module over
 itself, at its own maximal ideal, equaling its Krull dimension.
 Mathlib's regular local ring class includes locality and Noetherianity.
 
-For the calibration application, flatness of the universal compactified
-Jacobian is already available externally from KP, Corollary 4.4. This
+For the universal compactified Jacobian, flatness is already supplied by
+Kass–Pagani, Corollary 4.4. This
 module records the general local criterion. Applying it to a further
 family requires identifying its stalk algebra maps and proving the
 displayed dimension equality for those local rings.

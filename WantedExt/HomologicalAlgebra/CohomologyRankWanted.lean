@@ -40,8 +40,7 @@ cohomological descent arguments; they assert no independence of a cohomology
 theory. No source code has been copied from the references.
 
 In the independence-of-ℓ paper these identities are proved internally.
-They are recorded here as separate proof requests, rather than external
-toolbox hypotheses for formalizing that paper's main theorems.
+They are recorded here as separate proof requests.
 -/
 
 set_option autoImplicit false
