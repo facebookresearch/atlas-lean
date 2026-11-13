@@ -794,6 +794,78 @@ lemma ols_unique_minimizer_iff {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
     rw [hb, sub_self, zero_mul, add_zero] at ha
     exact ⟨sub_eq_zero.mp (pow_eq_zero_iff two_ne_zero |>.mp ha), hb⟩
 
+/-! ### Least squares is linear in the responses -/
+
+/-- `S_xy = ∑ i, (x i - x̄) * y i`: the centred cross product is linear in `y`. -/
+theorem sxy_eq_sum_sub_mul {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
+    sxy x y = ∑ i, (x i - sampleMean x) * y i := by
+  have h : ∀ i, (x i - sampleMean x) * (y i - sampleMean y) =
+      (x i - sampleMean x) * y i - (x i - sampleMean x) * sampleMean y := fun i => by ring
+  rw [sxy]
+  simp only [h]
+  rw [Finset.sum_sub_distrib, ← Finset.sum_mul, sum_sub_sampleMean, zero_mul, sub_zero]
+
+/-- The least-squares slope of exactly affine responses `b₀ + b₁ x` is `b₁` when `S_xx ≠ 0`. -/
+theorem olsSlope_affine {ι : Type*} [Fintype ι] {x : ι → ℝ} (hx : sxy x x ≠ 0) (b₀ b₁ : ℝ) :
+    olsSlope x (fun i => b₀ + b₁ * x i) = b₁ := by
+  rw [olsSlope, eq_comm, eq_div_iff hx, sxy_eq_sum_sub_mul, sxy_eq_sum_sub_mul]
+  simp only [mul_add, Finset.sum_add_distrib, ← Finset.sum_mul, sum_sub_sampleMean, zero_mul,
+    zero_add, Finset.mul_sum]
+  exact Finset.sum_congr rfl fun i _ => by ring
+
+/-- The sample mean is affine: the mean of `b₀ + b₁ x` is `b₀ + b₁ x̄` (for nonempty index). -/
+theorem sampleMean_affine {ι : Type*} [Fintype ι] [Nonempty ι] (x : ι → ℝ) (b₀ b₁ : ℝ) :
+    sampleMean (fun i => b₀ + b₁ * x i) = b₀ + b₁ * sampleMean x := by
+  have hn : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
+  simp only [sampleMean_eq_sum_div, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const,
+    Finset.card_univ, nsmul_eq_mul]
+  field_simp
+
+/-- The least-squares intercept of exactly affine responses `b₀ + b₁ x` is `b₀` when
+`S_xx ≠ 0`. -/
+theorem olsIntercept_affine {ι : Type*} [Fintype ι] {x : ι → ℝ} (hx : sxy x x ≠ 0) (b₀ b₁ : ℝ) :
+    olsIntercept x (fun i => b₀ + b₁ * x i) = b₀ := by
+  have : Nonempty ι := by
+    by_contra h
+    rw [not_nonempty_iff] at h
+    exact hx (by simp [sxy])
+  rw [olsIntercept, olsSlope_affine hx, sampleMean_affine]
+  ring
+
+open MeasureTheory in
+/-- The least-squares slope of integrable responses is integrable. -/
+theorem integrable_olsSlope {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {ι : Type*}
+    [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ} (hY : ∀ i, Integrable (Y i) μ) :
+    Integrable (fun ω => olsSlope x fun i => Y i ω) μ := by
+  simp only [olsSlope, sxy_eq_sum_sub_mul]
+  exact (integrable_finsetSum _ fun i _ => (hY i).const_mul _).div_const _
+
+open MeasureTheory in
+/-- Expectation commutes with the least-squares slope: for integrable responses `Y i`,
+`𝔼[b̂(x, Y)] = b̂(x, 𝔼 Y)`. -/
+theorem integral_olsSlope {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} {ι : Type*}
+    [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ} (hY : ∀ i, Integrable (Y i) μ) :
+    ∫ ω, olsSlope x (fun i => Y i ω) ∂μ = olsSlope x fun i => ∫ ω, Y i ω ∂μ := by
+  simp only [olsSlope, sxy_eq_sum_sub_mul]
+  rw [integral_div, integral_finsetSum _ fun i _ => (hY i).const_mul _]
+  simp_rw [integral_const_mul]
+
+open MeasureTheory in
+/-- Expectation commutes with the least-squares intercept, for a probability measure and
+integrable responses. -/
+theorem integral_olsIntercept {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω}
+    [IsProbabilityMeasure μ] {ι : Type*} [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ}
+    (hY : ∀ i, Integrable (Y i) μ) :
+    ∫ ω, olsIntercept x (fun i => Y i ω) ∂μ = olsIntercept x fun i => ∫ ω, Y i ω ∂μ := by
+  have hm : Integrable (fun ω => sampleMean fun i => Y i ω) μ := by
+    simp only [sampleMean_eq_sum_div]
+    exact (integrable_finsetSum _ fun i _ => hY i).div_const _
+  simp only [olsIntercept]
+  rw [integral_sub hm ((integrable_olsSlope x hY).mul_const _), integral_mul_const,
+    integral_olsSlope x hY]
+  simp only [sampleMean_eq_sum_div]
+  rw [integral_div, integral_finsetSum _ fun i _ => hY i]
+
 /-! ## H. Least squares in matrix form
 
 The canonical factored form of the normal equations for a design with `Fin m` rows is

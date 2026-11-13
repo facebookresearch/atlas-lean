@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Biology.StatisticalGenetics.LDScoreInflation
 public import MathlibExt.Probability.FiniteProbability
+public import MathlibExt.Probability.ConvergenceInProbability
 public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 public import Mathlib.Probability.Moments.Variance
 
@@ -53,13 +54,13 @@ estimator, not the paper's. Results:
 * `olsH2Hat_integral_chiSqStrat` (population version): `olsH2Hat` applied to the expected statistics
   returns `h²`, with or without confounding.
 * `integral_olsH2Hat_chiSqStrat` (unbiasedness): `𝔼[ĥ²] = h²`. The least-squares slope is linear
-  in the responses (`sxy_eq_sum_sub_mul`), so expectation commutes with it
-  (`integral_olsSlope`).
+  in the responses (`FiniteProbability.sxy_eq_sum_sub_mul`), so expectation commutes with it
+  (`FiniteProbability.integral_olsSlope`).
 * `integral_olsIntercept_chiSqStrat`: the least-squares intercept is unbiased for the exact
   intercept `1 - h² + N a`, so confounding moves the intercept, not the slope.
 * `tendstoInMeasure_olsH2Hat` (consistency): along any sequence of designs and models with the
   same `h²` whose estimators have variance tending to `0`, `ĥ²` converges in probability to
-  `h²` (Chebyshev, `tendstoInMeasure_of_integral_eq_of_evariance`).
+  `h²` (Chebyshev, `ConvergenceInProbability.tendstoInMeasure_of_integral_eq_of_evariance`).
 
 ## What is assumed rather than derived
 
@@ -82,7 +83,7 @@ heteroscedasticity and LD weights; this file treats the unweighted fit.
 open MeasureTheory ProbabilityTheory Filter Topology
 open MathlibExt.Biology.StatisticalGenetics.LDScore
   MathlibExt.Biology.StatisticalGenetics.LDScoreInflation
-  MathlibExt.Probability.FiniteProbability
+  MathlibExt.Probability.FiniteProbability MathlibExt.Probability.ConvergenceInProbability
 
 namespace MathlibExt.Biology.StatisticalGenetics.LDScoreRegression
 
@@ -112,73 +113,6 @@ theorem integral_chiSqStrat_eq_paper_iff [IsProbabilityMeasure μ] (D : Model μ
     ∫ ω, chiSqStrat D X s c j ω ∂μ = 1 + N * D.h2 * ldScore X j / M + N * a ↔ D.h2 = 0 := by
   rw [integral_chiSqStrat_eq D X hN hX hβ hε s c ha]
   constructor <;> intro h <;> linarith
-
-/-! ### Least squares is linear in the responses -/
-
-/-- `S_xy = ∑ i, (x i - x̄) * y i`: the centred cross product is linear in `y`. -/
-theorem sxy_eq_sum_sub_mul {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
-    sxy x y = ∑ i, (x i - sampleMean x) * y i := by
-  have h : ∀ i, (x i - sampleMean x) * (y i - sampleMean y) =
-      (x i - sampleMean x) * y i - (x i - sampleMean x) * sampleMean y := fun i => by ring
-  rw [sxy]
-  simp only [h]
-  rw [Finset.sum_sub_distrib, ← Finset.sum_mul, sum_sub_sampleMean, zero_mul, sub_zero]
-
-/-- The least-squares slope of exactly affine responses `b₀ + b₁ x` is `b₁` when `S_xx ≠ 0`. -/
-theorem olsSlope_affine {ι : Type*} [Fintype ι] {x : ι → ℝ} (hx : sxy x x ≠ 0) (b₀ b₁ : ℝ) :
-    olsSlope x (fun i => b₀ + b₁ * x i) = b₁ := by
-  rw [olsSlope, eq_comm, eq_div_iff hx, sxy_eq_sum_sub_mul, sxy_eq_sum_sub_mul]
-  simp only [mul_add, Finset.sum_add_distrib, ← Finset.sum_mul, sum_sub_sampleMean, zero_mul,
-    zero_add, Finset.mul_sum]
-  exact Finset.sum_congr rfl fun i _ => by ring
-
-/-- The sample mean is affine: the mean of `b₀ + b₁ x` is `b₀ + b₁ x̄` (for nonempty index). -/
-theorem sampleMean_affine {ι : Type*} [Fintype ι] [Nonempty ι] (x : ι → ℝ) (b₀ b₁ : ℝ) :
-    sampleMean (fun i => b₀ + b₁ * x i) = b₀ + b₁ * sampleMean x := by
-  have hn : (Fintype.card ι : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr Fintype.card_ne_zero
-  simp only [sampleMean_eq_sum_div, Finset.sum_add_distrib, ← Finset.mul_sum, Finset.sum_const,
-    Finset.card_univ, nsmul_eq_mul]
-  field_simp
-
-/-- The least-squares intercept of exactly affine responses `b₀ + b₁ x` is `b₀` when
-`S_xx ≠ 0`. -/
-theorem olsIntercept_affine {ι : Type*} [Fintype ι] {x : ι → ℝ} (hx : sxy x x ≠ 0) (b₀ b₁ : ℝ) :
-    olsIntercept x (fun i => b₀ + b₁ * x i) = b₀ := by
-  have : Nonempty ι := by
-    by_contra h
-    rw [not_nonempty_iff] at h
-    exact hx (by simp [sxy])
-  rw [olsIntercept, olsSlope_affine hx, sampleMean_affine]
-  ring
-
-/-- The least-squares slope of integrable responses is integrable. -/
-theorem integrable_olsSlope {ι : Type*} [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ}
-    (hY : ∀ i, Integrable (Y i) μ) : Integrable (fun ω => olsSlope x fun i => Y i ω) μ := by
-  simp only [olsSlope, sxy_eq_sum_sub_mul]
-  exact (integrable_finsetSum _ fun i _ => (hY i).const_mul _).div_const _
-
-/-- Expectation commutes with the least-squares slope: for integrable responses `Y i`,
-`𝔼[b̂(x, Y)] = b̂(x, 𝔼 Y)`. -/
-theorem integral_olsSlope {ι : Type*} [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ}
-    (hY : ∀ i, Integrable (Y i) μ) :
-    ∫ ω, olsSlope x (fun i => Y i ω) ∂μ = olsSlope x fun i => ∫ ω, Y i ω ∂μ := by
-  simp only [olsSlope, sxy_eq_sum_sub_mul]
-  rw [integral_div, integral_finsetSum _ fun i _ => (hY i).const_mul _]
-  simp_rw [integral_const_mul]
-
-/-- Expectation commutes with the least-squares intercept, for a probability measure and
-integrable responses. -/
-theorem integral_olsIntercept [IsProbabilityMeasure μ] {ι : Type*} [Fintype ι] (x : ι → ℝ)
-    {Y : ι → Ω → ℝ} (hY : ∀ i, Integrable (Y i) μ) :
-    ∫ ω, olsIntercept x (fun i => Y i ω) ∂μ = olsIntercept x fun i => ∫ ω, Y i ω ∂μ := by
-  have hm : Integrable (fun ω => sampleMean fun i => Y i ω) μ := by
-    simp only [sampleMean_eq_sum_div]
-    exact (integrable_finsetSum _ fun i _ => hY i).div_const _
-  simp only [olsIntercept]
-  rw [integral_sub hm ((integrable_olsSlope x hY).mul_const _), integral_mul_const,
-    integral_olsSlope x hY]
-  simp only [sampleMean_eq_sum_div]
-  rw [integral_div, integral_finsetSum _ fun i _ => hY i]
 
 /-! ### The heritability estimator -/
 
@@ -269,32 +203,6 @@ theorem integral_olsIntercept_chiSqStrat [IsProbabilityMeasure μ] (D : Model μ
     ∫ ω, olsIntercept (ldScore X) (fun j => chiSqStrat D X s c j ω) ∂μ = 1 - D.h2 + N * a := by
   rw [integral_olsIntercept _ fun j => integrable_chiSqStrat D X s c j,
     integral_chiSqStrat_fun D X hN hX hβ hε s c ha, olsIntercept_affine hℓ]
-
-/-! ### Consistency -/
-
-/-- **Chebyshev consistency.** Estimators `T n` with constant mean `θ` and variance tending to
-`0` converge to `θ` in measure. -/
-theorem tendstoInMeasure_of_integral_eq_of_evariance {ι : Type*} {l : Filter ι}
-    {T : ι → Ω → ℝ} {θ : ℝ} (hT : ∀ n, AEStronglyMeasurable (T n) μ)
-    (hmean : ∀ n, ∫ ω, T n ω ∂μ = θ) (hvar : Tendsto (fun n => evariance (T n) μ) l (𝓝 0)) :
-    TendstoInMeasure μ T l fun _ => θ := by
-  rw [tendstoInMeasure_iff_dist]
-  intro ε hε
-  set c : NNReal := ⟨ε, hε.le⟩
-  have hc : c ≠ 0 := by
-    intro h
-    have : (c : ℝ) = 0 := by rw [h]; rfl
-    exact hε.ne' this
-  have hbound : ∀ n, μ {ω | ε ≤ dist (T n ω) θ} ≤ evariance (T n) μ / (c : ENNReal) ^ 2 := by
-    intro n
-    have h := meas_ge_le_evariance_div_sq (hT n) hc
-    rwa [hmean n] at h
-  have hlim : Tendsto (fun n => evariance (T n) μ / (c : ENNReal) ^ 2) l (𝓝 0) := by
-    have hc2 : (c : ENNReal) ^ 2 ≠ 0 := pow_ne_zero 2 (ENNReal.coe_ne_zero.mpr hc)
-    have h := ENNReal.Tendsto.div_const hvar (Or.inr hc2)
-    rwa [ENNReal.zero_div] at h
-  exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim
-    (fun _ => zero_le) hbound
 
 /-- **Consistency of the unweighted LD-score regression estimator.** Along a sequence of designs
 (sample sizes `N n`, marker counts `M n`, standardized genotype matrices `X n` with LD scores not

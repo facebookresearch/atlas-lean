@@ -179,11 +179,6 @@ example : olsH2Hat 4 3 (ldScore X) (fun j => chiSqStrat D X 0 0 j 0) ≠
     Model.pheno, D, X, walsh, Fin.sum_univ_four, Fin.sum_univ_three]
   norm_num
 
-/-- Chebyshev consistency on a constant sequence: zero variance, convergence to the mean. -/
-example (θ : ℝ) : TendstoInMeasure μ8 (fun (_ : ℕ) (_ : Fin 8) => θ) atTop fun _ => θ :=
-  tendstoInMeasure_of_integral_eq_of_evariance (fun _ => aestronglyMeasurable_const)
-    (fun _ => by simp) (by simp [evariance])
-
 #print axioms integral_chiSqStrat_eq
 #print axioms integral_olsH2Hat_chiSqStrat
 #print axioms integral_olsIntercept_chiSqStrat
