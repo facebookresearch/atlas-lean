@@ -54,6 +54,10 @@ assumptions are:
   bound and a generator eigenvalue.
 * `exists_escape_of_spectralRadius`, `exists_escape_of_spectralRadius_eq`: spectral-radius and
   dominant-eigenvalue forms of the spectral hypothesis (Gelfand's formula).
+* Reusable steps of the proof: the discrete Duhamel formula `duhamel`, the geometric bound
+  `geom_sum_le`, the radius choice `exists_escape_radius`, the map-to-flow transfer
+  `flow_escape_of_map_escape`, and Gelfand's formula as a growth bound
+  `exists_norm_pow_le_of_spectralRadius_lt`.
 
 ## Scope
 
@@ -82,7 +86,7 @@ namespace MathlibExt.Analysis.PDE.SemilinearFlow.Instability
 variable {𝕜 X : Type*} [RCLike 𝕜] [NormedAddCommGroup X] [NormedSpace 𝕜 X]
 
 /-- Discrete Duhamel formula: `yₙ - Lⁿ y₀ = ∑_{j<n} Lʲ (y_{n-1-j+1} - L y_{n-1-j})`. -/
-private theorem duhamel (L : X →L[𝕜] X) (y : ℕ → X) (n : ℕ) :
+theorem duhamel (L : X →L[𝕜] X) (y : ℕ → X) (n : ℕ) :
     y n - (L ^ n) (y 0) =
       ∑ j ∈ range n, (L ^ j) (y (n - 1 - j + 1) - L (y (n - 1 - j))) := by
   induction n with
@@ -100,7 +104,7 @@ private theorem duhamel (L : X →L[𝕜] X) (y : ℕ → X) (n : ℕ) :
     abel
 
 /-- Geometric bound `∑_{j<n} μʲ q^{n-1-j} ≤ qⁿ / (q - μ)` for `0 ≤ μ < q`. -/
-private theorem geom_sum_le {μ q : ℝ} (hμ : 0 ≤ μ) (hq : μ < q) (n : ℕ) :
+theorem geom_sum_le {μ q : ℝ} (hμ : 0 ≤ μ) (hq : μ < q) (n : ℕ) :
     ∑ j ∈ range n, μ ^ j * q ^ (n - 1 - j) ≤ q ^ n / (q - μ) := by
   have h := geom_sum₂_mul μ q n
   rw [le_div_iff₀ (sub_pos.2 hq)]
@@ -109,12 +113,12 @@ private theorem geom_sum_le {μ q : ℝ} (hμ : 0 ≤ μ) (hq : μ < q) (n : ℕ
   rw [this]
   linarith [pow_nonneg hμ n]
 
-/-- Choice of the escape radius: for `K ≥ 0`, `r > 0`, `p > 1`, `ρ > 0` there is `η > 0` with
-`η ≤ 2ρ/3` and `K (r η)^{p-1} ≤ 1/2`. -/
-private theorem exists_escape_radius {K r ρ p : ℝ} (hK : 0 ≤ K) (hr : 0 < r) (hρ : 0 < ρ)
-    (hp : 1 < p) : ∃ η, 0 < η ∧ η ≤ 2 * ρ / 3 ∧ K * (r * η) ^ (p - 1) ≤ 1 / 2 := by
-  set b : ℝ := (2 * K + 1)⁻¹ with hb
-  have hb0 : 0 < b := inv_pos.2 (by linarith)
+/-- Choice of the escape radius: for `K ≥ 0`, `r > 0`, `ρ > 0`, `p > 1` and a target constant
+`c > 0` there is `η > 0` with `η ≤ 2ρ/3` and `K (r η)^{p-1} ≤ c`. -/
+theorem exists_escape_radius {K r ρ p c : ℝ} (hK : 0 ≤ K) (hr : 0 < r) (hρ : 0 < ρ)
+    (hp : 1 < p) (hc : 0 < c) : ∃ η, 0 < η ∧ η ≤ 2 * ρ / 3 ∧ K * (r * η) ^ (p - 1) ≤ c := by
+  set b : ℝ := c * (K + 1)⁻¹ with hb
+  have hb0 : 0 < b := mul_pos hc (inv_pos.2 (by linarith))
   have hp1 : 0 < p - 1 := by linarith
   refine ⟨min (2 * ρ / 3) (b ^ (1 / (p - 1)) / r), lt_min (by positivity) (by positivity),
     min_le_left _ _, ?_⟩
@@ -125,8 +129,8 @@ private theorem exists_escape_radius {K r ρ p : ℝ} (hK : 0 ≤ K) (hr : 0 < r
           Real.rpow_le_rpow (by positivity) h1 hp1.le
       _ = b := by rw [← Real.rpow_mul hb0.le, one_div_mul_cancel hp1.ne', Real.rpow_one]
   calc K * _ ≤ K * b := mul_le_mul_of_nonneg_left h2 hK
-    _ ≤ 1 / 2 := by
-      rw [hb, ← div_eq_mul_inv, div_le_iff₀ (by linarith)]; linarith
+    _ ≤ c := by
+      rw [hb, ← div_eq_mul_inv, mul_div_assoc', div_le_iff₀ (by linarith)]; nlinarith
 
 /-- **Linearized instability of a fixed point of a map** (dominant-eigenvalue form).
 
@@ -153,7 +157,7 @@ theorem exists_escape_of_eigenvalue {G : X → X} {x₀ : X} {L : X →L[𝕜] X
     exact (norm_nonneg _).trans this
   set K := M * C * (3 / 2 : ℝ) ^ p / (q - μ) with hK
   have hK0 : 0 ≤ K := div_nonneg (by positivity) (by linarith)
-  obtain ⟨η, hη0, hηρ, hηK⟩ := exists_escape_radius hK0 hr0 hρ hp
+  obtain ⟨η, hη0, hηρ, hηK⟩ := exists_escape_radius hK0 hr0 hρ hp (by norm_num : (0 : ℝ) < 1 / 2)
   refine ⟨η / 2, by positivity, fun δ hδ => ?_⟩
   -- unit eigenvector and initial point
   have hv0 : 0 < ‖v‖ := norm_pos_iff.2 hv
@@ -253,6 +257,32 @@ theorem exists_escape_of_eigenvalue {G : X → X} {x₀ : X} {L : X →L[𝕜] X
     rw [norm_sub_rev ((L ^ Nat.find hex) (y 0)), hLpow] at h2
     linarith
 
+/-- Escape for the time-`T` map gives escape for the flow, when the flow steps by its time-`T`
+map along orbits that stay in the ball of radius `ρ`: if iterates of `Φ T` started arbitrarily
+close to `u₀` reach distance `ε` while staying in the ball before that, then so does the flow
+`Φ` at the nonnegative times `n T`. -/
+theorem flow_escape_of_map_escape {Φ : ℝ → X → X} {u₀ : X} {T ρ : ℝ} (hT : 0 ≤ T)
+    (hΦ0 : ∀ x, Φ 0 x = x)
+    (hstep : ∀ (n : ℕ) (x : X), (∀ k ≤ n, ‖Φ (k * T) x - u₀‖ ≤ ρ) →
+      Φ ((n + 1) * T) x = Φ T (Φ (n * T) x))
+    (h : ∃ ε > 0, ∀ δ > 0, ∃ x, ‖x - u₀‖ < δ ∧
+      ∃ n, (∀ k < n, ‖(Φ T)^[k] x - u₀‖ ≤ ρ) ∧ ε ≤ ‖(Φ T)^[n] x - u₀‖) :
+    ∃ ε > 0, ∀ δ > 0, ∃ x, ‖x - u₀‖ < δ ∧ ∃ t, 0 ≤ t ∧ ε ≤ ‖Φ t x - u₀‖ := by
+  obtain ⟨ε, hε, h⟩ := h
+  refine ⟨ε, hε, fun δ hδ => ?_⟩
+  obtain ⟨x, hx, n, hball, hesc⟩ := h δ hδ
+  have hiter : ∀ k ≤ n, Φ (k * T) x = (Φ T)^[k] x := by
+    intro k
+    induction k using Nat.strong_induction_on with
+    | _ k ih =>
+    intro hk
+    rcases k with _ | k
+    · simp [hΦ0]
+    · have hb : ∀ j ≤ k, ‖Φ (j * T) x - u₀‖ ≤ ρ := fun j hj =>
+        (ih j (by omega) (by omega)) ▸ hball j (by omega)
+      rw [Nat.cast_succ, hstep k x hb, ih k (by omega) (by omega), Function.iterate_succ_apply']
+  exact ⟨x, hx, n * T, by positivity, (hiter n le_rfl).symm ▸ hesc⟩
+
 /-- **Linearized instability for a flow, through its time-`T` map.**
 
 `Φ t x` is the state at time `t` of the solution starting at `x`; `u₀` is the equilibrium. The
@@ -271,21 +301,9 @@ theorem exists_escape_of_timeMap {Φ : ℝ → X → X} {u₀ : X} {T : ℝ} {L 
     (hrem : ∀ y, ‖y‖ ≤ ρ → ‖Φ T (u₀ + y) - u₀ - L y‖ ≤ C * ‖y‖ ^ p)
     (hv : v ≠ 0) (hLv : L v = ν • v) (hν : 1 < ‖ν‖)
     (hμ0 : 0 ≤ μ) (hμ : μ < ‖ν‖ ^ p) (hM : ∀ n : ℕ, ‖L ^ n‖ ≤ M * μ ^ n) :
-    ∃ ε > 0, ∀ δ > 0, ∃ x, ‖x - u₀‖ < δ ∧ ∃ t, 0 ≤ t ∧ ε ≤ ‖Φ t x - u₀‖ := by
-  obtain ⟨ε, hε, h⟩ := exists_escape_of_eigenvalue hρ hC hp hrem hv hLv hν hμ0 hμ hM
-  refine ⟨ε, hε, fun δ hδ => ?_⟩
-  obtain ⟨x, hx, n, hball, hesc⟩ := h δ hδ
-  have hiter : ∀ k ≤ n, Φ (k * T) x = (Φ T)^[k] x := by
-    intro k
-    induction k using Nat.strong_induction_on with
-    | _ k ih =>
-    intro hk
-    rcases k with _ | k
-    · simp [hΦ0]
-    · have hb : ∀ j ≤ k, ‖Φ (j * T) x - u₀‖ ≤ ρ := fun j hj =>
-        (ih j (by omega) (by omega)) ▸ hball j (by omega)
-      rw [Nat.cast_succ, hstep k x hb, ih k (by omega) (by omega), Function.iterate_succ_apply']
-  exact ⟨x, hx, n * T, by positivity, (hiter n le_rfl).symm ▸ hesc⟩
+    ∃ ε > 0, ∀ δ > 0, ∃ x, ‖x - u₀‖ < δ ∧ ∃ t, 0 ≤ t ∧ ε ≤ ‖Φ t x - u₀‖ :=
+  flow_escape_of_map_escape hT hΦ0 hstep
+    (exists_escape_of_eigenvalue hρ hC hp hrem hv hLv hν hμ0 hμ hM)
 
 /-- Lyapunov form of `exists_escape_of_timeMap`: the equilibrium `u₀` of the flow `Φ` is not
 Lyapunov stable in the norm of `X`. -/
@@ -355,7 +373,7 @@ section SpectralRadius
 variable {Y : Type*} [NormedAddCommGroup Y] [NormedSpace ℂ Y] [CompleteSpace Y]
 
 /-- Gelfand's formula as a growth bound: if `r(L) < μ` then `‖Lⁿ‖ ≤ M μⁿ` for some `M`. -/
-private theorem exists_norm_pow_le_of_spectralRadius_lt {L : Y →L[ℂ] Y} {μ : ℝ}
+theorem exists_norm_pow_le_of_spectralRadius_lt {L : Y →L[ℂ] Y} {μ : ℝ}
     (hμ : spectralRadius ℂ L < ENNReal.ofReal μ) : ∃ M, ∀ n : ℕ, ‖L ^ n‖ ≤ M * μ ^ n := by
   have hμ0 : 0 < μ := ENNReal.ofReal_pos.1 (lt_of_le_of_lt (by positivity) hμ)
   obtain ⟨N, hN⟩ := eventually_atTop.1

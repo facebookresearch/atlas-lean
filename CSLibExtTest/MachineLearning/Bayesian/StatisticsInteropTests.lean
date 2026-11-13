@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.Bayesian.StatisticsInterop
+public import MathlibExt.Probability.Distributions.BetaMoments
 
 @[expose] public section
 
@@ -118,3 +119,49 @@ example {Θ 𝓧 Ω : Type*} [Fintype Θ] [DecidableEq Θ] [Fintype 𝓧]
   simp [postWeight]
 
 end CSLibExtTest.MachineLearning.Bayesian.StatisticsInterop
+
+namespace CSLibExtTest.MachineLearning.Bayesian.StatisticsInteropBetaBinomial
+
+open MeasureTheory ProbabilityTheory
+open Cslib.MachineLearning.Bayesian
+open Cslib.MachineLearning.OptimalPredictors
+
+/-- Use case: symmetric `Beta(1, 1)` prior. The posterior mean attains minimal Bayes risk. -/
+example (n : ℕ) :
+    have _hπ1 : IsProbabilityMeasure (betaMeasure (1 : ℝ) 1) :=
+      ProbabilityTheory.isProbabilityMeasureBeta one_pos one_pos
+    ProbabilityTheory.IsBayesEstimator Cslib.MachineLearning.OptimalPredictors.sqLoss
+      (binomialKernel n)
+      (Kernel.deterministic _
+        (Cslib.MachineLearning.OptimalPredictors.measurable_posteriorMean
+          (binomialKernel n) (betaMeasure 1 1)))
+      (betaMeasure 1 1) := by
+  exact isBayesEstimator_binomial_beta_posteriorMean one_pos one_pos n
+
+/-- Boundary: with no trials the posterior is the prior, and its mean is still Bayes. -/
+example :
+    have _hπ1 : IsProbabilityMeasure (betaMeasure (1 : ℝ) 1) :=
+      ProbabilityTheory.isProbabilityMeasureBeta one_pos one_pos
+    ProbabilityTheory.IsBayesEstimator Cslib.MachineLearning.OptimalPredictors.sqLoss
+      (binomialKernel 0)
+      (Kernel.deterministic _
+        (Cslib.MachineLearning.OptimalPredictors.measurable_posteriorMean
+          (binomialKernel 0) (betaMeasure 1 1)))
+      (betaMeasure 1 1) := by
+  exact isBayesEstimator_binomial_beta_posteriorMean one_pos one_pos 0
+
+/-- Closed form: with a uniform prior and `k ≤ n` successes, the posterior mean is
+`(k + 1) / (n + 2)`. -/
+example {n k : ℕ} (hk : k ≤ n) :
+    have _hπ1 : IsProbabilityMeasure (betaMeasure (1 : ℝ) 1) :=
+      ProbabilityTheory.isProbabilityMeasureBeta one_pos one_pos
+    Cslib.MachineLearning.OptimalPredictors.posteriorMean (binomialKernel n) (betaMeasure 1 1) k
+      = ((k : ℝ) + 1) / ((n : ℝ) + 2) := by
+  have _hπ1 : IsProbabilityMeasure (betaMeasure (1 : ℝ) 1) :=
+    ProbabilityTheory.isProbabilityMeasureBeta one_pos one_pos
+  simp only [posteriorMean]
+  rw [posterior_binomialKernel_betaMeasure one_pos one_pos hk,
+    integral_id_betaMeasure (by positivity) (by positivity), Nat.cast_sub hk]
+  ring_nf
+
+end CSLibExtTest.MachineLearning.Bayesian.StatisticsInteropBetaBinomial
