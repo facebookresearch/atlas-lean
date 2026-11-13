@@ -16,7 +16,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
 /-!
-# Nonlinear feedback: local attractivity
+# Nonlinear feedback: local sign condition and quadratic energy decay
 
 ## i. Overview
 
@@ -24,16 +24,23 @@ For a scalar energy model `C*T' = F(T)` with an equilibrium `T*`
 satisfying `F(T*) = 0`, if `F` is differentiable near `T*` and
 `deriv F < 0` on a punctured neighbourhood of `T*` (the derivative at
 `T*` itself may vanish, as for `F(T) = -(T - T*)^3`), then
-`(T - T*) * F(T) < 0` for `T ≠ T*` nearby (mean value theorem),
-and the Lyapunov function `V = (T - T*)^2/2` strictly decreases along
-solutions there: `V' = (T - T*) * F(T) / C < 0`. This is a local,
+`(T - T*) * F(T) < 0` for `T ≠ T*` nearby (mean value theorem).
+
+Separately, for an arbitrary reference value `T*`, not assumed to be an
+equilibrium, at a time where a solution satisfies `(T - T*) * F(T) < 0`
+the quadratic energy `V = (T - T*)^2/2` has derivative
+`V' = (T - T*) * F(T) / C < 0`. At an equilibrium, combined with the local
+sign condition, this is the Lyapunov reading: `V' < 0` at every time the
+solution lies in the punctured neighbourhood. This is a local,
 model-conditional statement; a model bifurcation is not an empirical
 climate threshold, and discontinuous albedo needs piecewise analysis.
 
 ## ii. Key results
 
 - `EarthScience.local_sign`: negative derivative gives the local sign condition.
-- `EarthScience.lyapunov_decay`: Lyapunov decay along solutions.
+- `EarthScience.quadratic_energy_decay_about_reference`: pointwise decay of
+  `(T - T*)^2/2` about an arbitrary reference value `T*`, given the model
+  equation and the sign of `(T - T*) * F(T)` at one time.
 - `EarthScience.linear_witness`: linear attracting model satisfies the sign condition.
 - `EarthScience.unstable_witness`: linear repelling model violates it.
 
@@ -132,12 +139,18 @@ theorem local_sign {F : ℝ → ℝ} {Tstar δ : ℝ} (hδ : 0 < δ)
       · exact hneg2
     exact mul_neg_of_pos_of_neg hdenom hFT
 
-/-- Lyapunov decay at a locally attracting equilibrium: if `T` solves
-`C * T' = F(T)` (stated as `HasDerivAt T (F(T t)/C) t`) and the local
-sign condition holds at `T t ≠ Tstar`, then
-`V(t) = (T t - Tstar)^2 / 2` has derivative
-`(T t - Tstar) * F(T t) / C < 0`. -/
-theorem lyapunov_decay {F : ℝ → ℝ} {C Tstar : ℝ} (hC : 0 < C)
+/-- Pointwise quadratic-energy decay about an arbitrary reference value
+`Tstar`: if `T` solves `C * T' = F(T)` at time `t` (stated as
+`HasDerivAt T (F(T t)/C) t`) and `(T t - Tstar) * F(T t) < 0`, then the
+energy `V(s) = (T s - Tstar)^2 / 2` has derivative
+`(T t - Tstar) * F(T t) / C < 0` at `t`.
+
+`Tstar` need not be an equilibrium and no neighbourhood sign condition is
+assumed, so this alone says nothing about attraction. At an equilibrium
+(`F Tstar = 0`) where `local_sign` supplies the sign hypothesis, it gives
+the Lyapunov reading: `V` decreases at every time the solution lies in the
+punctured neighbourhood. -/
+theorem quadratic_energy_decay_about_reference {F : ℝ → ℝ} {C Tstar : ℝ} (hC : 0 < C)
     (T : ℝ → ℝ) (t : ℝ) (hne : T t ≠ Tstar)
     (hODE : HasDerivAt T (F (T t) / C) t)
     (hsign : (T t - Tstar) * F (T t) < 0) :

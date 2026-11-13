@@ -17,7 +17,8 @@ import PhyslibExt.EarthScience.NonlinearFeedback
 Concrete consumers of `PhyslibExt.EarthScience.NonlinearFeedback`:
 linear attracting and repelling models at `Tstar = 1, T = 3`, the cubic
 boundary case `F(T) = -(T - 1)^3` (derivative `0` at the equilibrium), and
-Lyapunov decay for `F(T) = -(T - 1)`, `C = 1`, `T = 3`.
+a closed energy-decay witness for `F(T) = -(T - 1)`, `C = 1`, reference
+value `1`, and `T s = 3 - 2 * s` at `t = 0`.
 
 ## i. Overview
 
@@ -74,10 +75,16 @@ example : ((3 : ℝ) / 2 - 1) * (-((3 : ℝ) / 2 - 1) ^ 3) < 0 := by
     rw [h.deriv, neg_lt_zero]
     exact mul_pos (mul_pos (by norm_num) (sq_pos_of_ne_zero (sub_ne_zero.mpr hT))) one_pos
 
-/-- Lyapunov decay as an elaboration check (hypotheses as premises). -/
-example {F : ℝ → ℝ} {C Tstar : ℝ} (hC : 0 < C) (T : ℝ → ℝ) (t : ℝ)
-    (hne : T t ≠ Tstar) (hODE : HasDerivAt T (F (T t) / C) t)
-    (hsign : (T t - Tstar) * F (T t) < 0) :
-    HasDerivAt (fun t => (T t - Tstar) ^ 2 / 2) ((T t - Tstar) * F (T t) / C) t
-    ∧ (T t - Tstar) * F (T t) / C < 0 :=
-  EarthScience.lyapunov_decay hC T t hne hODE hsign
+/-- Closed energy-decay witness: `F x = -(x - 1)`, `C = 1`, reference value `Tstar = 1`,
+`T s = 3 - 2 * s`, `t = 0`. Both premises are proved: `T' = -2 = F (T 0) / C` with `T 0 = 3`,
+and `(T 0 - 1) * F (T 0) = 2 * (-2) < 0`. The energy `(T s - 1) ^ 2 / 2` then has
+derivative `-4` at `0`. -/
+example : HasDerivAt (fun s : ℝ => (3 - 2 * s - 1) ^ 2 / 2) (-4) 0 := by
+  have hODE : HasDerivAt (fun s : ℝ => 3 - 2 * s) (-((3 - 2 * 0) - 1) / 1) 0 := by
+    convert ((hasDerivAt_id' (0 : ℝ)).const_mul 2).const_sub 3 using 1
+    norm_num
+  have hsign : ((3 - 2 * 0) - 1) * (-((3 - 2 * 0) - 1)) < (0 : ℝ) := by norm_num
+  obtain ⟨hV, -⟩ := EarthScience.quadratic_energy_decay_about_reference
+    (F := fun x : ℝ => -(x - 1)) (C := 1) (Tstar := 1) one_pos (fun s : ℝ => 3 - 2 * s) 0
+    (by norm_num) hODE hsign
+  exact hV.congr_deriv (by norm_num)
