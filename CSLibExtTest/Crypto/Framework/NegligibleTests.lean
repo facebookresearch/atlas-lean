@@ -14,8 +14,8 @@ public import CSLibExt.Crypto.Framework.Negligible
 # Tests for the closure properties of negligible functions
 
 * `NegligibleAdv.of_eventually_le` on a function that is nonzero only at `n = 0`.
-* `NegligibleAdv.const_mul` and `NegligibleAdv.mul_of_poly_bound`, with a multiplier whose sign
-  and polynomial bound both fail at `n = 0`.
+* `NegligibleAdv.const_mul` and `NegligibleAdv.mul_of_poly_bound`, with a multiplier that is
+  negative at `n = 0`.
 * The sign hypothesis of `NegligibleAdv.const_mul` is needed: the constant `-1` is negligible,
   `-1` times it is not.
 * `negligible_const_mul` and `negligible_mul_of_poly_bound` on `ℚ`, and
@@ -40,7 +40,7 @@ theorem negligibleAdv_spike : NegligibleAdv spike :=
 example : NegligibleAdv fun n => 3 * spike n :=
   negligibleAdv_spike.const_mul (by norm_num)
 
-/-- The multiplier is negative at `n = 0`, where it also exceeds `n ^ 3`. -/
+/-- The multiplier is negative at `n = 0`, so its nonnegativity holds only eventually. -/
 example : NegligibleAdv fun n => (if n = 0 then -37 else (n : ℝ) ^ 3) * spike n := by
   refine negligibleAdv_spike.mul_of_poly_bound (d := 3) ⟨1, fun n hn => ?_⟩
   simp only [show n ≠ 0 by omega, ↓reduceIte]
