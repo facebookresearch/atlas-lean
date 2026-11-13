@@ -36,6 +36,8 @@ No new definitions or results are introduced here.
 - `PhyslibExt.EarthScience.NutrientBiomass`
 -/
 
+open MathlibExt.Biology.Dynamics.MichaelisMenten (mmRate)
+
 /-- Public shape of the conservation theorem. -/
 example {N B : ℝ → ℝ} {u : ℝ → ℝ} {r : ℝ} {t : ℝ}
     (hN : HasDerivAt N (-(u (N t)) * B t + r * B t) t)
@@ -44,11 +46,18 @@ example {N B : ℝ → ℝ} {u : ℝ → ℝ} {r : ℝ} {t : ℝ}
   EarthScience.nutrient_biomass_conservation hN hB
 
 /-- Michaelis-Menten at `umax = 2, K = 1, N = 1`: uptake `1`, inside `[0, 2]`. -/
-example : 0 ≤ (2 : ℝ) * 1 / (1 + 1) ∧ (2 : ℝ) * 1 / (1 + 1) ≤ 2 :=
+example : 0 ≤ mmRate (2 : ℝ) 1 1 ∧ mmRate (2 : ℝ) 1 1 ≤ 2 :=
   EarthScience.michaelis_menten_bounds (by norm_num) (by norm_num) (by norm_num)
 
+/-- The uptake value at `umax = 2, K = 1, N = 1` is `2 * 1 / (1 + 1) = 1`. -/
+example : mmRate (2 : ℝ) 1 1 = 1 := by norm_num [mmRate]
+
+/-- The bounds hold at the endpoint `umax = 0`, where the uptake is `0`. -/
+example : 0 ≤ mmRate (0 : ℝ) 1 1 ∧ mmRate (0 : ℝ) 1 1 ≤ 0 :=
+  EarthScience.michaelis_menten_bounds le_rfl (by norm_num) (by norm_num)
+
 /-- Zero nutrient: uptake `0`. -/
-example : (2 : ℝ) * 0 / (1 + 0) = 0 := by norm_num
+example : mmRate (2 : ℝ) 1 0 = 0 := by norm_num [mmRate]
 
 /-- Public shape of the zero-nutrient boundary theorem. -/
 example {N B : ℝ → ℝ} {u : ℝ → ℝ} {r : ℝ} {t : ℝ}
