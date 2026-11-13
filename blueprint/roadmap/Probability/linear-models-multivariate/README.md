@@ -6,6 +6,7 @@ Multivariate normal theory and linear models: Gaussian maximum likelihood, Cochr
 - [Frisch–Waugh–Lovell theorem](frisch-waugh-lovell-theorem/README.md)
 - [Gaussian graphical models](gaussian-graphical-models/README.md)
 - [Generalized least squares](generalized-least-squares/README.md)
+- [Ordinary least squares](ordinary-least-squares/README.md)
 - [Principal component analysis](principal-component-analysis/README.md)
 - [Student's t and Snedecor's F distributions](student-s-t-and-snedecor-s-f-distributions/README.md)
 - [Weighted means and scatter matrices](weighted-means-and-scatter-matrices/README.md)

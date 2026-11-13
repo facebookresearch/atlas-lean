@@ -1122,3 +1122,7 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/riemannian-geometry/sphere-theorem/differentiable-sphere-theorem.md"}], "object": [{"location": {"declaration": "MathlibExt.Geometry.SphereTheoremWanted.Geometry.SphereTheorem.differentiable_sphere_theorem"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/riemannian-geometry/sphere-theorem/quarter-pinched.md"}], "object": [{"location": {"declaration": "MathlibExt.Geometry.SphereTheoremWanted.Geometry.SphereTheorem.QuarterPinched"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Geometry/riemannian-geometry/sphere-theorem/sphere-theorem.md"}], "object": [{"location": {"declaration": "MathlibExt.Geometry.SphereTheoremWanted.Geometry.SphereTheorem.sphere_theorem"}}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/not-yet-classified/rotations/angular-velocity-skew.md"}], "object": [{"location": {"declaration": "EarthScience.angular_velocity_skew"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/not-yet-classified/rotations/rotated-vector-deriv.md"}], "object": [{"location": {"declaration": "EarthScience.rotated_vector_deriv"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/not-yet-classified/README.md"}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/Geometry/not-yet-classified/rotations/README.md"}], "extensions": {"org.autoform": {"navigation": "module"}}}

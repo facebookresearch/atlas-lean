@@ -21,3 +21,4 @@ measure and optimal transport make up most of the rest.
 - [Differentiation of real functions](real-functions/README.md)
 - [Optimal transport](optimal-transport/README.md)
 - [Geometric measure theory](geometric-measure-theory/README.md)
+- [Not yet classified](not-yet-classified/README.md)

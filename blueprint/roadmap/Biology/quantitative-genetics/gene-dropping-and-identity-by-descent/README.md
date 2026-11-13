@@ -1,0 +1,18 @@
+# Gene dropping and identity by descent
+
+- [Gene Drop Space](gene-drop-space.md)
+- [Allele Weight](allele-weight.md)
+- [Gene Drop Weight](gene-drop-weight.md)
+- [Gene Drop PMF](gene-drop-pmf.md)
+- [Gene Drop Measure](gene-drop-measure.md)
+- [Integral gene Drop Measure](integral-gene-drop-measure.md)
+- [Gene Drop Allele](gene-drop-allele.md)
+- [Integral gene Drop Allele](integral-gene-drop-allele.md)
+- [Malécot's second moments under gene dropping](integral-gene-drop-allele-mul.md)
+- [Gene dropping realizes Malécot's IBD model](ibd-model.md)
+- [Ibd Model ibd](ibd-model-ibd.md)
+- [Ibd Model kinship](ibd-model-kinship.md)
+- [Ibd Model inbreeding](ibd-model-inbreeding.md)
+- [Ibd Model kinship eq kinship](ibd-model-kinship-eq-kinship.md)
+- [The GRM is unbiased under pedigree gene dropping](integral-grm-ibd-model.md)
+- [Integral grm ibd Model eq kinship](integral-grm-ibd-model-eq-kinship.md)

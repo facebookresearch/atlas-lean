@@ -50,3 +50,4 @@ mistake bound and the Freund–Schapire bound on the training error of AdaBoost.
 - [Type systems and lambda calculi](type-systems-and-lambda-calculi/README.md)
 - [Program logics and verification](program-logics-and-verification/README.md)
 - [Machine learning](machine-learning/README.md)
+- [Not yet classified](not-yet-classified/README.md)

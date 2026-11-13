@@ -1,5 +1,6 @@
 # Bruhat functions
 
+- [Lintegral mul eq of ae normalized smul](lintegral-mul-eq-of-ae-normalized-smul.md)
 - [Orbit-normalized weights give equal nonnegative integrals](lintegral-mul-eq-of-normalized-smul.md)
 - [Integrability is independent of the orbit-normalized weight](integrable-mul-iff-of-normalized-smul.md)
 - [Orbit-normalized cutoffs give equal complex integrals](integral-mul-eq-of-normalized-smul.md)

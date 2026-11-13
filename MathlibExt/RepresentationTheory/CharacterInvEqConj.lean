@@ -46,14 +46,16 @@ character-theoretic theorems from the same v1 file.
 
 namespace CharacterTheory
 
-universe u
+universe uG uV
 
 set_option linter.style.haveILetI false in
 /-- The character of a finite-dimensional complex representation of a finite
-group at `g⁻¹` is the complex conjugate of its value at `g`. -/
+group at `g⁻¹` is the complex conjugate of its value at `g`. The group and the
+representation live in independent universes, so this applies to representations
+whose carrier is not in the same universe as the group. -/
 theorem char_inv_eq_conj
-    {G : Type u} [Group G] [Fintype G]
-    {V : Type u} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
+    {G : Type uG} [Group G] [Fintype G]
+    {V : Type uV} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
     (ρ : Representation ℂ G V) (g : G) :
     ρ.character g⁻¹ = starRingEnd ℂ (ρ.character g) := by
   classical
@@ -130,8 +132,8 @@ theorem char_inv_eq_conj
 of the character of the original representation at `g`: combine
 `Representation.char_dual` with `char_inv_eq_conj`. -/
 theorem char_dual_eq_conj
-    {G : Type u} [Group G] [Fintype G]
-    {V : Type u} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
+    {G : Type uG} [Group G] [Fintype G]
+    {V : Type uV} [AddCommGroup V] [Module ℂ V] [FiniteDimensional ℂ V]
     (ρ : Representation ℂ G V) (g : G) :
     ρ.dual.character g = starRingEnd ℂ (ρ.character g) := by
   rw [Representation.char_dual, char_inv_eq_conj]

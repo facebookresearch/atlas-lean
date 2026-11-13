@@ -10,5 +10,6 @@ Boolean circuits as a model of computation, including arithmetic circuits built 
 - [Kogge–Stone adder](kogge-stone-adder/README.md)
 - [Shannon's circuit-size lower bound](shannon-s-circuit-size-lower-bound/README.md)
 - [Two's complement subtraction and overflow](two-s-complement-subtraction-and-overflow/README.md)
+- [Unbounded fan-in circuits](unbounded-fan-in-circuits/README.md)
 - [Smolensky: parity is not in AC0(mod 3)](smolensky.md)
 - [Williams: NEXP is not contained in ACC0](williams-nexp-not-in-acc0.md)

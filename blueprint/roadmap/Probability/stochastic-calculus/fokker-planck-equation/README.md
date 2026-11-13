@@ -1,5 +1,6 @@
 # Fokker–Planck equation
 
+- [Differentiation under the integral sign](integral-has-deriv-at.md)
 - [Free energy of a Fokker–Planck density](free-energy.md)
 - [Negative probability flux of the Fokker–Planck equation](neg-flux.md)
 - [No-flux solution of the gradient-drift Fokker–Planck equation](is-no-flux-solution-on.md)

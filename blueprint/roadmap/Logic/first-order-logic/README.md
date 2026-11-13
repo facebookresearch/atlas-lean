@@ -7,3 +7,4 @@ Syntax, proof calculi and semantics of first-order predicate logic, including so
 - [First-order natural deduction](first-order-natural-deduction/README.md)
 - [First-order unification](first-order-unification/README.md)
 - [Gödel's completeness theorem](g-del-s-completeness-theorem/README.md)
+- [Peano arithmetic and Robinson's Q](peano-arithmetic-and-robinson-s-q/README.md)

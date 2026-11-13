@@ -55,3 +55,4 @@ constants such as Catalan's constant; and [numerical analysis](numerical-analysi
 - [Fixed-point theory](fixed-point-theory/README.md)
 - [Numerical analysis](numerical-analysis/README.md)
 - [Approximation theory](approximation-theory/README.md)
+- [Not yet classified](not-yet-classified/README.md)

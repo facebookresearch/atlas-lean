@@ -4,3 +4,4 @@ Quantum information studies states, channels, measurement, entanglement, communi
 
 - [Quantum foundations](quantum-foundations/README.md)
 - [Quantum operations and channels](quantum-operations/README.md)
+- [Not yet classified](not-yet-classified/README.md)

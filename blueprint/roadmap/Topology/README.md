@@ -31,3 +31,4 @@ infinite-dimensional topology.
 - [Algebraic topology](algebraic-topology/README.md)
 - [Manifolds and geometric topology](manifolds-geometric-topology/README.md)
 - [Knot theory](knot-theory/README.md)
+- [Not yet classified](not-yet-classified/README.md)

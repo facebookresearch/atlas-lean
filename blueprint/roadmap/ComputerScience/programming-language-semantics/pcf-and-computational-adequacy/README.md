@@ -64,6 +64,7 @@
 - [Composition of PCF contexts](comp.md)
 - [Plugging into a composite PCF context](plug-comp.md)
 - [Associativity of PCF context composition](comp-assoc.md)
+- [Fill eq plug](fill-eq-plug.md)
 - [Contextual equivalence in PCF](ctx-equiv.md)
 - [Equal denotations are preserved by plugging into PCF contexts](denote-plug-congr.md)
 - [Equal denotations imply contextual equivalence in PCF](ctx-equiv-of-denote-eq.md)

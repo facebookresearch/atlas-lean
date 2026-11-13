@@ -21,3 +21,4 @@
 - [Adjacent vertices in a network structure](adjacent.md)
 - [V-structure in a directed graph](is-vstructure.md)
 - [Chickering's transformational characterization](refl-trans-gen-covered-reversal-of-marko.md)
+- [Score equivalence of BDe](bde-score-eq-of-markov-equivalent.md)

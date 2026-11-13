@@ -14,3 +14,5 @@ Convex functions and sets in analysis and optimization: Fenchel conjugates, pola
 - [Tikhonov regularization](tikhonov-regularization/README.md)
 - [Convexity via the tangent-plane inequality](convex-on-iff-forall-le-add-fderiv-withi.md)
 - [Karush–Kuhn–Tucker conditions for inequality constraints](karush-kuhn-tucker-inequality.md)
+- [Add fderiv sub le](add-fderiv-sub-le.md)
+- [Is Min On of karush kuhn tucker convex](is-min-on-of-karush-kuhn-tucker-convex.md)

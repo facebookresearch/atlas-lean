@@ -19,3 +19,4 @@ independent of the input $X$, that determines the output $Y$ together with $X$.
 - [Source coding](source-coding/README.md)
 - [Channel simulation](channel-simulation/README.md)
 - [Error-correcting codes](error-correcting-codes/README.md)
+- [Not yet classified](not-yet-classified/README.md)

@@ -2,7 +2,6 @@
 
 ## Measure Theory
 
-- [Convergence in distribution to a constant implies convergence in probability](tendsto-in-measure-of-tendsto-in-distrib.md)
 - [Product of a distributionally convergent and a vanishing sequence](mul-tendsto-in-measure-zero.md)
 - [Convergence to zero in probability by domination on likely events](tendsto-in-measure-zero-of-abs-le.md)
 

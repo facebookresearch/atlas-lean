@@ -11,3 +11,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/QuantumInformation/quantum-foundations/tsirelson-bound-tight.md"}], "object": [{"location": {"declaration": "MathlibExt.QuantumInformation.Finite.TsirelsonTight.tsirelson_bound_tight"}}], "id": "af_4f717c6fbe5e70f8ad0b35c4"}
 {"subject": [{"type": "generic", "uri": "../roadmap/QuantumInformation/quantum-operations/README.md"}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/QuantumInformation/quantum-operations/no-cloning-two-state.md"}], "object": [{"location": {"declaration": "MathlibExt.QuantumInformation.Finite.NoCloning.no_cloning_two_state"}}], "id": "af_a0335de8fd01be572f9cab14"}
+{"subject": [{"type": "generic", "uri": "../roadmap/QuantumInformation/not-yet-classified/shor-good-units.md"}], "object": [{"location": {"declaration": "shor_good_units"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/QuantumInformation/not-yet-classified/README.md"}]}

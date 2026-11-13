@@ -49,3 +49,4 @@
 - [Searching every augmented catalog](search-augmented.md)
 - [One augmented search position per catalog](length-search-augmented.md)
 - [Correctness of augmented search](search-augmented-eq-map-lower-bound.md)
+- [Lower Bound to List eq ret lower Bound](lower-bound-to-list-eq-ret-lower-bound.md)

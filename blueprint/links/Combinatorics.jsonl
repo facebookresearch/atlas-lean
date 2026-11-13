@@ -6203,3 +6203,5 @@
 {"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/tilings-board-placements/weighted-file-placements-on-ferrers-boards/weighted-file-number-eq-level-rook-numbe.md"}], "object": [{"location": {"declaration": "MetaMathlibExt.weightedFileNumber_eq_levelRookNumber_of_singleton"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/tilings-board-placements/weighted-file-placements-on-ferrers-boards/weighted-file-number-factorization.md"}], "object": [{"location": {"declaration": "MetaMathlibExt.weightedFileNumber_factorization"}}]}
 {"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/tilings-board-placements/weighted-file-placements-on-ferrers-boards/weighted-file-number.md"}], "object": [{"location": {"declaration": "MetaMathlibExt.weightedFileNumber"}}]}
+{"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/not-yet-classified/plotkin-bound.md"}], "object": [{"location": {"declaration": "MathlibExt.Combinatorics.Coding.Plotkin.plotkin_bound"}}], "extensions": {"org.atlas-wiki": {"from": "docstring"}}}
+{"subject": [{"type": "generic", "uri": "../roadmap/Combinatorics/not-yet-classified/README.md"}]}

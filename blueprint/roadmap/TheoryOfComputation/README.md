@@ -54,3 +54,4 @@ of Davis, Putnam, Robinson and Matiyasevich that the recursively enumerable sets
 - [Completeness for other complexity classes](completeness-other-classes/README.md)
 - [Problems solvable in polynomial time](polynomial-time-problems/README.md)
 - [Fine-grained and exponential-time complexity](fine-grained-complexity/README.md)
+- [Not yet classified](not-yet-classified/README.md)

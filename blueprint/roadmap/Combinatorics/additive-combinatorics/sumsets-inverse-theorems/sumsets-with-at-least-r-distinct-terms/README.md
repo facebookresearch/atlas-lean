@@ -1,6 +1,6 @@
 # Sumsets with at least r distinct terms
 
-- [Restricted twofold sumset of {0, 1, 2}](restricted-sumset-two-zero-one-two.md)
+- [Restricted twofold sumset of $\{0, 1, 2\}$](restricted-sumset-two-zero-one-two.md)
 - [Sums with at least $r$ distinct terms](at-least-distinct-sumset.md)
 - [Example of a sumset with at least two distinct terms](at-least-distinct-sumset-three-two-zero.md)
 - [Cauchy–Davenport theorem for $h$-fold sumsets](cauchy-davenport-nsmul.md)

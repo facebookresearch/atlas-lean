@@ -4,6 +4,7 @@
 - [LD score of a marker](ld-score.md)
 - [Standardized genotype matrix](is-standardized.md)
 - [A standardized marker has correlation one with itself](ld-corr-self.md)
+- [One le ld Score](one-le-ld-score.md)
 - [Correlations of standardized markers lie in (-1, 1)](ld-corr-sq-le-one.md)
 - [Random-effects model of LD-score regression](model.md)
 - [Nonnegativity of heritability in the LD-score model](h2-nonneg.md)

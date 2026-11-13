@@ -37,8 +37,12 @@
       "InformationTheory",
       "QuantumInformation",
       "GameTheory",
+      "Economics",
       "Biology",
-      "StatisticalMechanics"
+      "StatisticalMechanics",
+      "Physics",
+      "Chemistry",
+      "EarthScience"
     ]
   }
 }

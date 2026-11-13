@@ -5,6 +5,7 @@ Weak convergence and convergence in probability, tightness and Prokhorov's theor
 - [Continuous mapping theorem](continuous-mapping-theorem/README.md)
 - [Convergence in probability](convergence-in-probability/README.md)
 - [Helly's selection theorem](helly-s-selection-theorem/README.md)
+- [Slutsky's theorem and the delta method](slutsky-s-theorem-and-the-delta-method/README.md)
 - [Tightness of probability measures](tightness-of-probability-measures/README.md)
 - [Total variation distance](total-variation-distance/README.md)
 - [Weak convergence in the space of continuous functions](weak-convergence-in-the-space-of-continuous-func/README.md)

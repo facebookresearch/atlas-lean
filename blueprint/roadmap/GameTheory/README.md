@@ -15,5 +15,7 @@ wins. The partizan game [Snort](combinatorial-games/snort/README.md) is a second
 has a nonempty core exactly when it is balanced.
 
 - [Combinatorial game theory](combinatorial-games/README.md)
+- [Noncooperative games](noncooperative-games/README.md)
 - [Cooperative game theory](cooperative-games/README.md)
 - [Social choice theory](social-choice/README.md)
+- [Not yet classified](not-yet-classified/README.md)

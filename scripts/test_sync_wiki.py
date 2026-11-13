@@ -185,6 +185,27 @@ class LeanFacts(Vault):
         self.assertEqual(conjecture.read_text(), "# Conjecture\n\nOpen.\n\n## Depends on\n\nThis node has no prerequisites.\n")
         self.assertEqual((wiki.ROADMAP / "Algebra" / "README.md").read_text(), "# Algebra\n\n- [Order](order.md)\n")
 
+    def test_pages_taken_from_docstrings_get_their_facts(self) -> None:
+        # declarations marks its pages with OWN's "from", which names a module only for a page with no Lean name.
+        source = self.tmp / "Ext" / "Groups.lean"
+        source.parent.mkdir(parents=True)
+        source.write_text("theorem lagrange : True := trivial\ntheorem_wanted conjecture : True\n")
+        self.page("Algebra/lagrange.md", "# Lagrange's theorem\n\nIt divides.\n")
+        self.page("Algebra/conjecture.md", "# Conjecture\n\nOpen.\n")
+        self.annotate([
+            self.about("Algebra/lagrange.md", object=[{"location": {"declaration": "Ext.lagrange"}}],
+                       extensions={"org.atlas-wiki": {"from": "docstring"}}),
+            self.about("Algebra/conjecture.md",
+                       extensions={"org.atlas-wiki": {"from": "docstring", "module": "Ext.Groups", "name": "conjecture"}}),
+        ])
+        declarations = {"Ext.lagrange": SimpleNamespace(keyword="theorem", path=Path("Ext/Groups.lean"))}
+        dependencies = {"Ext.lagrange": {"module": "Ext.Groups", "statement": ["conjecture"], "proof": []},
+                        "conjecture": {"module": "Ext.Groups", "statement": [], "proof": []}}
+        counts, unlinked = sync.apply_lean_facts(SimpleNamespace(declarations=declarations), dependencies)
+        self.assertEqual((counts, unlinked), ({"articles": 2, "unresolved": 0, "edges": 1}, []))
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "lagrange.md").read_text(),
+                         "# Lagrange's theorem\n\nIt divides.\n\n## Depends on\n\n- [Conjecture](conjecture.md)\n")
+
     def test_a_declaration_the_lean_dropped_leaves_its_page_unlinked(self) -> None:
         # A Lean change that renames or deletes a declaration must not fail the wiki's build.
         self.page("Algebra/gone.md", "# Gone\n\nRemoved upstream.\n")
@@ -239,8 +260,9 @@ class Declarations(Vault):
         self.assertEqual(report["changed"], [])
         self.assertEqual(old.read_text(), "# Old, as the wiki wrote it\n\nEdited text.\n")
         self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "new.md").read_text(), "# New result\n\nA new statement.\n")
+        # In source order: the targets' order here.
         self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
-                         "# Groups\n\nProse.\n\n- [Old](old.md)\n- [Wanted](wanted.md)\n- [New result](new.md)\n")
+                         "# Groups\n\nProse.\n\n- [Old](old.md)\n- [New result](new.md)\n- [Wanted](wanted.md)\n")
         self.assertEqual((wiki.ROADMAP / "Algebra" / "README.md").read_text(),
                          "# Algebra\n\n- [Groups](groups/README.md)\n- [Lone](lone.md)\n")
         rows = {sync.subject_path(row).name: row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
@@ -263,6 +285,8 @@ class Declarations(Vault):
         sync.apply_declarations([declaration("Ext.new", "new", "New result", "**New result.** A new statement.")],
                                 SimpleNamespace(declarations={"Ext.new": None}))
         self.assertEqual((wiki.ROADMAP / "Algebra" / "new.md").read_text(), "# New result\n\nA new statement.\n")
+        # A page's first item sits a blank line below the text above it.
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "README.md").read_text(), "# Algebra\n\n- [New result](new.md)\n")
 
     def test_a_deprecated_declaration_gets_no_page(self) -> None:
         # A page the wiki dropped for a deprecated declaration must stay dropped.
@@ -277,6 +301,97 @@ class Declarations(Vault):
                    declaration("Ext.new", "new", "New", "New.")]
         index = SimpleNamespace(declarations={"Ext.old": None, "Ext.older": None, "Ext.new": None})
         self.assertEqual(sync.apply_declarations(targets, index)["added"], ["Ext.new -> Algebra/new.md"])
+
+    def test_new_pages_join_their_module_page_in_source_order(self) -> None:
+        self.page("Algebra/groups/README.md", "# Groups\n\n## Basics\n\n- [A](a.md)\n- [C](c.md)\n\n## Results\n\n- [E](e.md)\n")
+        for short in "ace":
+            self.page(f"Algebra/groups/{short}.md", f"# {short.upper()}\n")
+        self.annotate([self.about(f"Algebra/groups/{short}.md", object=[{"location": {"declaration": f"Ext.{short}"}}])
+                       for short in "ace"])
+        targets = []
+        for number, (short, section) in enumerate([("z", "Basics"), ("a", "Basics"), ("b", "Basics"), ("c", "Basics"),
+                                                   ("d", "Results"), ("e", "Results"), ("f", "Results")]):
+            target = declaration(f"Ext.{short}", short, short.upper(), f"{short}.")
+            target.idx, target.sections = number, (section, "", "")
+            targets.append(target)
+        sync.apply_declarations(targets, SimpleNamespace(declarations={f"Ext.{short}": None for short in "zabcdef"}))
+        # d opens the second section, so it goes ahead of e rather than after c.
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "groups" / "README.md").read_text(),
+                         "# Groups\n\n## Basics\n\n- [Z](z.md)\n- [A](a.md)\n- [B](b.md)\n- [C](c.md)\n\n"
+                         "## Results\n\n- [D](d.md)\n- [E](e.md)\n- [F](f.md)\n")
+
+    def test_a_new_module_joins_a_folder_where_generate_wiki_lists_it(self) -> None:
+        self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n- [Late](late.md)\n")
+        self.annotate([self.about(f"Algebra/groups/{short}.md", object=[{"location": {"declaration": f"Ext.{short}"}}])
+                       for short in ("old", "late")])
+        sylow = declaration("Ext.sylow", "sylow", "Sylow", "Sylow.", module=("Ext", "Sylow"))
+        sylow.path = wiki.ROADMAP / "Algebra" / "groups" / "sylow.md"
+        generated = {sylow.path.parent / "README.md": "# Groups\n\n- [Old](old.md)\n- [Sylow](sylow.md)\n- [Late](late.md)\n"}
+        sync.apply_declarations([sylow], SimpleNamespace(declarations={"Ext.sylow": None}), generated)
+        self.assertEqual((sylow.path.parent / "README.md").read_text(),
+                         "# Groups\n\n- [Old](old.md)\n- [Sylow](sylow.md)\n- [Late](late.md)\n")
+
+    def test_a_new_module_gets_the_folders_the_taxonomy_lays_out(self) -> None:
+        self.page("Algebra/README.md", "# Algebra\n\n- [Fields](fields/README.md)\n- [Topology](topology/README.md)\n")
+        source = self.tmp / "Ext" / "Rings.lean"
+        source.parent.mkdir(parents=True)
+        source.write_text('/-- Old. -/\n@[deprecated (since := "2026-11-11")]\ntheorem old : True := trivial\n'
+                          "/-- An ideal. -/\ntheorem ideal : True := trivial\n/-- A unit. -/\ntheorem unit : True := trivial\n")
+        sync.LINKS.mkdir(parents=True)
+        ideals = wiki.ROADMAP / "Algebra" / "rings" / "ideals"
+        targets = []
+        for short, title in (("old", "Old"), ("ideal", "Ideal"), ("unit", "Unit")):
+            target = declaration(f"Ext.{short}", short, title, f"{title}.", module=("Ext", "Rings"))
+            target.path = ideals / f"{short}.md"
+            targets.append(target)
+        generated = {
+            wiki.ROADMAP / "Algebra" / "README.md": "# Algebra\n\n- [Fields](fields/README.md)\n- [Groups](groups/README.md)\n"
+            "- [Rings](rings/README.md)\n- [Topology](topology/README.md)\n",
+            ideals.parent / "README.md": "# Rings\n\nRing theory.\n\n- [Ideals](ideals/README.md)\n",
+            ideals / "README.md": "---\nnavigation: module\n---\n\n# Ideals\n\n## Basics\n\n- [Old](old.md)\n\n"
+            "## Results\n\n- [Ideal](ideal.md)\n- [Unit](unit.md)\n",
+        }
+        index = SimpleNamespace(declarations={"Ext.old": None, "Ext.ideal": None, "Ext.unit": None})
+        report = sync.apply_declarations(targets, index, generated)
+        self.assertEqual(report["added"], ["Ext.ideal -> Algebra/rings/ideals/ideal.md", "Ext.unit -> Algebra/rings/ideals/unit.md"])
+        self.assertEqual(report["folders"], ["Algebra/rings", "Algebra/rings/ideals"])
+        self.assertEqual((ideals.parent / "README.md").read_text(), "# Rings\n\nRing theory.\n\n- [Ideals](ideals/README.md)\n")
+        # The deprecated declaration's item goes, and with it the heading above it.
+        self.assertEqual((ideals / "README.md").read_text(), "# Ideals\n\n## Results\n\n- [Ideal](ideal.md)\n- [Unit](unit.md)\n")
+        self.assertEqual((ideals / "ideal.md").read_text(), "# Ideal\n\nIdeal.\n")
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "README.md").read_text(),
+                         "# Algebra\n\n- [Fields](fields/README.md)\n- [Rings](rings/README.md)\n- [Topology](topology/README.md)\n")
+        rows = {sync.subject_path(row).relative_to(wiki.ROADMAP).as_posix(): row for row in sync.read_annotations()[sync.LINKS / "Algebra.jsonl"]}
+        self.assertEqual(rows["Algebra/rings/README.md"], {"subject": [{"type": "generic", "uri": "../roadmap/Algebra/rings/README.md"}]})
+        self.assertEqual(rows["Algebra/rings/ideals/README.md"]["extensions"], {"org.autoform": {"navigation": "module"}})
+        self.assertNotIn("Algebra/rings/ideals/old.md", rows)
+
+    def test_pages_moved_to_a_folder_without_a_page_get_the_generated_one(self) -> None:
+        self.page("Algebra/README.md", "# Algebra\n\n- [Fields](fields/README.md)\n")
+        self.page("Algebra/rings/ideals/ideal.md", "# Ideals of a ring\n")
+        self.page("Algebra/rings/ideals/old-name.md", "# Prime ideal\n")
+        self.annotate([self.about("Algebra/rings/ideals/ideal.md", object=[{"location": {"declaration": "Ext.ideal"}}]),
+                       self.about("Algebra/rings/ideals/old-name.md", object=[{"location": {"declaration": "Ext.prime"}}])])
+        ideals = wiki.ROADMAP / "Algebra" / "rings" / "ideals"
+        targets = []
+        for short, title in (("ideal", "Ideal"), ("prime", "Prime ideal"), ("unit", "Unit")):
+            target = declaration(f"Ext.{short}", short, title, f"{title}.", module=("Ext", "Rings"))
+            target.path = ideals / f"{short}.md"
+            targets.append(target)
+        generated = {
+            wiki.ROADMAP / "Algebra" / "README.md": "# Algebra\n\n- [Fields](fields/README.md)\n- [Rings](rings/README.md)\n",
+            ideals.parent / "README.md": "# Rings\n\n- [Ideals](ideals/README.md)\n",
+            ideals / "README.md": "# Ideals\n\n- [Ideal](ideal.md)\n- [Prime ideal](prime.md)\n- [Unit](unit.md)\n",
+        }
+        index = SimpleNamespace(declarations={"Ext.ideal": None, "Ext.prime": None, "Ext.unit": None})
+        report = sync.apply_declarations(targets, index, generated)
+        self.assertEqual(report["added"], ["Ext.unit -> Algebra/rings/ideals/unit.md"])
+        self.assertEqual(report["folders"], ["Algebra/rings", "Algebra/rings/ideals"])
+        # Items take their pages' titles, and the page under another name than the generated one is listed too.
+        self.assertEqual((ideals / "README.md").read_text(),
+                         "# Ideals\n\n- [Ideals of a ring](ideal.md)\n- [Unit](unit.md)\n- [Prime ideal](old-name.md)\n")
+        self.assertEqual((wiki.ROADMAP / "Algebra" / "README.md").read_text(),
+                         "# Algebra\n\n- [Fields](fields/README.md)\n- [Rings](rings/README.md)\n")
 
     def test_a_docstring_edit_is_reported_from_the_second_run(self) -> None:
         self.page("Algebra/groups/README.md", "# Groups\n\n- [Old](old.md)\n")

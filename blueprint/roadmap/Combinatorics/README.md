@@ -50,3 +50,4 @@ sums, [Catalan numbers and lattice paths](catalan-numbers-lattice-paths/README.m
 - [Probabilistic combinatorics](probabilistic-combinatorics/README.md)
 - [Boolean functions](boolean-functions/README.md)
 - [Elementary enumeration](elementary-enumeration/README.md)
+- [Not yet classified](not-yet-classified/README.md)

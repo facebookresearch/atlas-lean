@@ -1,4 +1,4 @@
-# Restricted twofold sumset of {0, 1, 2}
+# Restricted twofold sumset of $\{0, 1, 2\}$
 
 In the integers, the restricted sumset
 $2^{\wedge}\{0, 1, 2\}$, the set of sums of two distinct elements of $\{0, 1, 2\}$, equals

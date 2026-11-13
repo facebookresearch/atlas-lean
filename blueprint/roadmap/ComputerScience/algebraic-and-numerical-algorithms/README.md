@@ -5,6 +5,7 @@ Algorithms on numbers, polynomials and matrices: integer and polynomial multipli
 - [Bitvectors and Boolean lists](bitvectors-and-boolean-lists/README.md)
 - [Binary polynomial arithmetic on bitvectors](binary-polynomial-arithmetic-on-bitvectors/README.md)
 - [Fast Fourier transform](fast-fourier-transform/README.md)
+- [Fixed-width binary encodings](fixed-width-binary-encodings/README.md)
 - [Floating-point rounding](floating-point-rounding/README.md)
 - [Horner's method](horner-s-method/README.md)
 - [Karatsuba algorithm](karatsuba-algorithm/README.md)

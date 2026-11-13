@@ -50,6 +50,17 @@ scripts/check.sh
 The existing `Atlas/` developments and archived `v1/` release are not part of
 this root build. They retain their own build configuration.
 
+## Dependency explorer
+
+The [blueprint](blueprint/README.md) presents the v2 libraries as a
+mathematical reading tree and interactive dependency graph, with statements,
+Lean-source links, and prerequisites derived from compiled Lean.
+
+See [building and maintaining the explorer](docs/BLUEPRINT.md) for the local
+build, source ownership, and opt-in GitHub Pages deployment. The existing
+[fork preview](https://deicyde.github.io/atlas-lean/) demonstrates the UI;
+its content may differ from this checkout.
+
 ## About ATLAS
 
 ATLAS translates mathematical statements and proofs from undergraduate and

@@ -57,7 +57,12 @@ UNPLACED = {
 # Library -> top-level directory -> subject when the names differ. The taxonomy places
 # almost every module; these subjects hold only the modules it does not place yet.
 LIBRARIES = {
-    "MathlibExt": {"Computability": "TheoryOfComputation", "Data": "ComputerScience", "ModelTheory": "Logic"},
+    "MathlibExt": {
+        "Computability": "TheoryOfComputation",
+        "Data": "ComputerScience",
+        "ModelTheory": "Logic",
+        "Quantum": "QuantumInformation",
+    },
     "CSLibExt": {
         "Algorithms": "ComputerScience",
         "AutomatedReasoning": "Logic",
@@ -71,8 +76,17 @@ LIBRARIES = {
         "Languages": "ComputerScience",
         "Logics": "Logic",
         "MachineLearning": "ComputerScience",
+        "Privacy": "ComputerScience",
+        "Tactic": "ComputerScience",
     },
-    "PhyslibExt": {"CondensedMatter": "StatisticalMechanics", "StatisticalMechanics": "StatisticalMechanics"},
+    "PhyslibExt": {
+        "ClassicalMechanics": "Physics",
+        "CondensedMatter": "StatisticalMechanics",
+        "Electromagnetism": "Physics",
+        "Quantum": "Physics",
+        "StatisticalMechanics": "StatisticalMechanics",
+        "Units": "Physics",
+    },
     "WantedExt": {"Complexity": "TheoryOfComputation", "ModelTheory": "Logic"},
 }
 V2_DECLARATION = re.compile(

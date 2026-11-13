@@ -8,6 +8,7 @@ Convergence in law of normalized sums and their error terms: central limit theor
 - [Lacunary central limit theorem](lacunary-central-limit-theorem/README.md)
 - [Lindeberg–Feller central limit theorem](lindeberg-feller-central-limit-theorem/README.md)
 - [Local de Moivre–Laplace theorem](local-de-moivre-laplace-theorem/README.md)
+- [Multivariate central limit theorem](multivariate-central-limit-theorem/README.md)
 - [Optimal Berry–Esseen constant](optimal-berry-esseen-constant/README.md)
 - [Poisson limit theorem](poisson-limit-theorem/README.md)
 - [Converse of Poisson's theorem for urns](urn-converse-poisson.md)

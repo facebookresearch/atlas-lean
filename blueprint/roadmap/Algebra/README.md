@@ -20,3 +20,4 @@ finite-dimensional real division algebras and Jacobson's commutativity theorem.
 - [Polynomials and power series](polynomials/README.md)
 - [Zeros of polynomials](zeros-of-polynomials/README.md)
 - [Orthogonal polynomials and polynomial sequences](orthogonal-polynomials/README.md)
+- [Not yet classified](not-yet-classified/README.md)

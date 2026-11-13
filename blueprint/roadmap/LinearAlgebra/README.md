@@ -20,3 +20,4 @@ come with Hadamard's inequality and von Neumann's trace inequality.
 - [Positive definite matrices and matrix inequalities](positive-definite-matrices/README.md)
 - [Bilinear and quadratic forms](bilinear-and-quadratic-forms/README.md)
 - [Special matrices](special-matrices/README.md)
+- [Not yet classified](not-yet-classified/README.md)

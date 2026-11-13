@@ -6,6 +6,7 @@
 - [Solution of the replicator equation](is-solution.md)
 - [Rest point of the replicator equation](is-rest-point.md)
 - [Rest points in the interior are equalizers](is-rest-point-iff.md)
+- [Is Solution const](is-solution-const.md)
 
 ## Is Solution
 

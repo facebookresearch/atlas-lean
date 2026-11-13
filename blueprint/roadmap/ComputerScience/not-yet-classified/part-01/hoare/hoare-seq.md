@@ -1,0 +1,3 @@
+# Hoare seq
+
+Sequencing rule.

@@ -14,3 +14,5 @@
 - [The Ablowitz–Zeppetella front](is-front-az-wave.md)
 - [Ablowitz–Zeppetella speed exceeds the minimal front speed](two-mul-sqrt-lt-az-speed.md)
 - [Kolmogorov–Petrovsky–Piskunov: fronts exist at every speed `c ≥ 2 √(r D)`](exists-is-front-of-le.md)
+- [The minimal-speed front](exists-is-front-two-mul-sqrt.md)
+- [KPP existence, squared form](exists-is-front-of-sq-le.md)

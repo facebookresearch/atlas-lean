@@ -42,3 +42,4 @@ compatibility class.
 - [Population and evolutionary dynamics](population-dynamics/README.md)
 - [Reaction–diffusion and pattern formation](pattern-formation/README.md)
 - [Mathematical epidemiology](epidemiology/README.md)
+- [Not yet classified](not-yet-classified/README.md)

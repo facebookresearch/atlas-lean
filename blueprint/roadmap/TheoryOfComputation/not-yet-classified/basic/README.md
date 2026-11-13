@@ -1,0 +1,16 @@
+# Basic
+
+- [Cost](cost.md)
+- [Zero](zero.md)
+- [Add](add.md)
+- [Add assoc](add-assoc.md)
+- [Add comm](add-comm.md)
+- [Zero add](zero-add.md)
+- [Add zero](add-zero.md)
+- [Cost M](cost-m.md)
+- [Mk](mk.md)
+- [Value](value.md)
+- [Cost](cost-2.md)
+- [Pure](pure.md)
+- [Bind](bind.md)
+- [Charge](charge.md)

@@ -54,8 +54,8 @@
 - [Three-gene tree with a given cherry](triple-tree.md)
 - [Clusters of the three-species tree](clusters-triple.md)
 - [Three-species concordance](gene-tree-prob-triple-matching.md)
-- [Probability of the discordant three-species gene tree with cherry {0, 2}](gene-tree-prob-triple-cherry-02.md)
-- [Probability of the discordant three-species gene tree with cherry {1, 2}](gene-tree-prob-triple-cherry-12.md)
+- [Probability of the discordant three-species gene tree with cherry $\{0, 2\}$](gene-tree-prob-triple-cherry-02.md)
+- [Probability of the discordant three-species gene tree with cherry $\{1, 2\}$](gene-tree-prob-triple-cherry-12.md)
 - [No anomalous gene trees for three species](triple-no-anomaly.md)
 - [Wright–Fisher limit of the no-coalescence probability](tendsto-no-coal-prob-pow-floor-two.md)
 
