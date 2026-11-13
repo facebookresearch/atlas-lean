@@ -8,14 +8,14 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.Economics.Macroeconomics.EmploymentFlows
+import MathlibExt.Economics.Macro.EmploymentFlows
 import Mathlib.Tactic
 
-/-! # Tests for `MathlibExt.Economics.Macroeconomics.EmploymentFlows` -/
+/-! # Tests for `MathlibExt.Economics.Macro.EmploymentFlows` -/
 
-namespace MathlibExtTest.Economics.Macroeconomics.EmploymentFlows
+namespace MathlibExtTest.Economics.Macro.EmploymentFlows
 
-open MathlibExt.Economics.Macroeconomics.EmploymentFlows
+open MathlibExt.Economics.Macro.EmploymentFlows
 
 example : (1 / 10 : ℝ) = (0.03 : ℝ) / (0.03 + 0.27) := by
   have hflow : (0.03 : ℝ) * (1 - 1 / 10) = (0.27 : ℝ) * (1 / 10) := by norm_num
@@ -25,4 +25,4 @@ example : (0.03 : ℝ) * (1 - (0.03 : ℝ) / (0.03 + 0.27)) = (0.27 : ℝ) * ((0
   have h := steady_unemployment_satisfies (s := (0.03 : ℝ)) (f := (0.27 : ℝ)) (by norm_num) (by norm_num) (by norm_num)
   exact ⟨h.1, h.2.2⟩
 
-end MathlibExtTest.Economics.Macroeconomics.EmploymentFlows
+end MathlibExtTest.Economics.Macro.EmploymentFlows

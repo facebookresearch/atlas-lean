@@ -34,7 +34,7 @@ no flows every `u` is steady.
 
 @[expose] public section
 
-namespace MathlibExt.Economics.Macroeconomics.EmploymentFlows
+namespace MathlibExt.Economics.Macro.EmploymentFlows
 
 /-- **Steady-state unemployment in the two-state flow model.** The labour force is
 normalized to `1`, so employment is `1 - u` and unemployment is `u`. In each period a
@@ -67,4 +67,4 @@ theorem steady_unemployment_example :
     (0.02 : ℝ) * (1 - 1 / 20) = 0.38 * (1 / 20) := by
   norm_num
 
-end MathlibExt.Economics.Macroeconomics.EmploymentFlows
+end MathlibExt.Economics.Macro.EmploymentFlows
