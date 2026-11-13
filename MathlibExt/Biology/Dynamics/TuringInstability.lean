@@ -11,6 +11,7 @@ module
 public import MathlibExt.Biology.Dynamics.TuringPatterns
 public import MathlibExt.Analysis.PDE.SemilinearFlow.Interface
 public import MathlibExt.Analysis.PDE.SemilinearFlow.Instability
+import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Analysis.ODE.Gronwall
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
@@ -29,9 +30,12 @@ flow, via the linearized-instability theorem of
 The general escape theorems only assume `tr J < 0`; they do not assume that the kinetics are
 stable without diffusion, so they also cover steady states that are already unstable for the
 kinetics alone (e.g. a saddle, `det J < 0`). *Turing* (diffusion-driven) instability is the case
-`tr J < 0`, `0 < det J`: the homogeneous mode is then linearly stable, and the escape corollaries
+`tr J < 0`, `0 < det J`: the homogeneous mode is then linearly stable. The escape corollaries
 `turing_instability_exists_escape` and `turing_instability_exists_escape_of_mild` add this
-hypothesis and conclude that the escaping mode is a non-homogeneous one (`0 < n`).
+hypothesis and also require the linearized semigroup to act on the homogeneous mode through
+`c' = J c` (`ActsByModalODE S 0 J`), so that the stability of `J` is a property of the semigroup:
+homogeneous perturbations stay bounded (`ActsByModalODE.exists_norm_apply_le`), while the
+escaping mode is a non-homogeneous one (`0 < n`).
 
 ## Setting
 
@@ -62,6 +66,8 @@ They enter as hypotheses:
   with a real eigenvector (such instabilities do not oscillate). This is what lets the real phase
   space be used.
 * `ActsByModalODE.apply_eigen`: `S t (cos(k_n ·) v) = e^{λ t} cos(k_n ·) v` for an eigenvector `v`.
+* `ActsByModalODE.exists_norm_apply_le`: on a mode acting through a stable matrix
+  (`tr M < 0 < det M`) the orbits of `S` stay bounded (Lyapunov function).
 * `exists_norm_timeMap_sub_le`: time-map expansion from a Hölder-differentiable reaction
   (Duhamel, Lipschitz dependence on data, Grönwall).
 * `norm_nemytskii_sub_le`: the Nemytskii reaction term inherits the Hölder remainder, with
@@ -71,8 +77,9 @@ They enter as hypotheses:
 * `exists_escape_of_isUnstableMode_of_mild`: the same with the expansion derived from the
   kinetics and the mild formulation.
 * `turing_instability_exists_escape`, `turing_instability_exists_escape_of_mild`: **nonlinear
-  Turing instability**. If moreover `0 < det J`, the homogeneous mode is linearly stable, the
-  unstable mode is non-homogeneous, and the steady state is nonlinearly unstable.
+  Turing instability**. If moreover `0 < det J` and `S` acts on the constant states through
+  `c' = J c`, homogeneous perturbations stay bounded under `S`, the unstable mode is
+  non-homogeneous, and the steady state is nonlinearly unstable.
 
 ## Not covered
 
@@ -244,6 +251,85 @@ theorem ActsByModalODE.apply_eigen {L : ℝ}
       (fun s _ => by simpa [hA] using (he s).hasDerivWithinAt) (by simp [hc0])
   rw [hSc, show c t = Real.exp (r * t) • v from heq ⟨t.2, le_rfl⟩, neumannMode_smul]
 
+/-- **Bounded orbits on a stable mode.** If `S` acts on the Neumann mode `n` through the modal ODE
+of a stable matrix `M` (`tr M < 0 < det M`), the orbits of that mode stay bounded:
+`‖S t (cos(k_n ·) w)‖ ≤ C ‖w‖` for all `t ≥ 0`. The proof uses the Lyapunov function
+`V(c) = det M (c₀² + c₁²) + (M c)₀² + (M c)₁²`, which satisfies
+`V' = 2 tr M ((M c)₀² + (M c)₁²) ≤ 0` along `c' = M c` (Cayley–Hamilton). -/
+theorem ActsByModalODE.exists_norm_apply_le {L : ℝ} (hL : 0 ≤ L)
+    {S : ℝ≥0 → C(Icc (0 : ℝ) L, Fin 2 → ℝ) →L[ℝ] C(Icc (0 : ℝ) L, Fin 2 → ℝ)} {n : ℕ}
+    {M : Matrix (Fin 2) (Fin 2) ℝ} (hS : ActsByModalODE S n M) (htr : M.trace < 0)
+    (hdet : 0 < M.det) :
+    ∃ C, ∀ (w : Fin 2 → ℝ) (t : ℝ≥0), ‖S t (neumannMode L n w)‖ ≤ C * ‖w‖ := by
+  set K := |M 0 0| + |M 0 1| + |M 1 0| + |M 1 1| with hK
+  set V : (Fin 2 → ℝ) → ℝ := fun x => M.det * (x 0 ^ 2 + x 1 ^ 2) +
+    ((M 0 0 * x 0 + M 0 1 * x 1) ^ 2 + (M 1 0 * x 0 + M 1 1 * x 1) ^ 2) with hV
+  have hcoord : ∀ (x : Fin 2 → ℝ) (i : Fin 2), x i ^ 2 ≤ ‖x‖ ^ 2 := fun x i => by
+    rw [← sq_abs]
+    exact pow_le_pow_left₀ (abs_nonneg _) (norm_le_pi_norm x i) 2
+  have hnorm : ∀ x : Fin 2 → ℝ, ‖x‖ ^ 2 ≤ x 0 ^ 2 + x 1 ^ 2 := fun x => by
+    have hle : ‖x‖ ≤ Real.sqrt (x 0 ^ 2 + x 1 ^ 2) := by
+      refine (pi_norm_le_iff_of_nonneg (Real.sqrt_nonneg _)).2 fun i => ?_
+      rw [Real.norm_eq_abs]
+      refine Real.abs_le_sqrt ?_
+      fin_cases i
+      · exact le_add_of_nonneg_right (sq_nonneg _)
+      · exact le_add_of_nonneg_left (sq_nonneg _)
+    calc ‖x‖ ^ 2 ≤ Real.sqrt (x 0 ^ 2 + x 1 ^ 2) ^ 2 := pow_le_pow_left₀ (norm_nonneg _) hle 2
+      _ = x 0 ^ 2 + x 1 ^ 2 := Real.sq_sqrt (by positivity)
+  have hrow : ∀ (a b : ℝ) (x : Fin 2 → ℝ), (a * x 0 + b * x 1) ^ 2 ≤ ((|a| + |b|) * ‖x‖) ^ 2 :=
+    fun a b x => by
+      rw [← sq_abs]
+      refine pow_le_pow_left₀ (abs_nonneg _) ?_ 2
+      calc |a * x 0 + b * x 1| ≤ |a| * |x 0| + |b| * |x 1| := by
+            rw [← abs_mul, ← abs_mul]; exact abs_add_le _ _
+        _ ≤ |a| * ‖x‖ + |b| * ‖x‖ := by
+            gcongr
+            · exact norm_le_pi_norm x 0
+            · exact norm_le_pi_norm x 1
+        _ = (|a| + |b|) * ‖x‖ := by ring
+  have hVlow : ∀ x, M.det * ‖x‖ ^ 2 ≤ V x := fun x => by
+    have := mul_le_mul_of_nonneg_left (hnorm x) hdet.le
+    simp only [hV]
+    nlinarith [sq_nonneg (M 0 0 * x 0 + M 0 1 * x 1), sq_nonneg (M 1 0 * x 0 + M 1 1 * x 1)]
+  have hVup : ∀ x, V x ≤ (2 * M.det + 2 * K ^ 2) * ‖x‖ ^ 2 := fun x => by
+    have h0 := hrow (M 0 0) (M 0 1) x
+    have h1 := hrow (M 1 0) (M 1 1) x
+    have hK0 : (|M 0 0| + |M 0 1|) * ‖x‖ ≤ K * ‖x‖ :=
+      mul_le_mul_of_nonneg_right (by rw [hK]; linarith [abs_nonneg (M 1 0), abs_nonneg (M 1 1)])
+        (norm_nonneg _)
+    have hK1 : (|M 1 0| + |M 1 1|) * ‖x‖ ≤ K * ‖x‖ :=
+      mul_le_mul_of_nonneg_right (by rw [hK]; linarith [abs_nonneg (M 0 0), abs_nonneg (M 0 1)])
+        (norm_nonneg _)
+    have h0' := pow_le_pow_left₀ (by positivity) hK0 2
+    have h1' := pow_le_pow_left₀ (by positivity) hK1 2
+    have hc := mul_le_mul_of_nonneg_left (add_le_add (hcoord x 0) (hcoord x 1)) hdet.le
+    simp only [hV]
+    nlinarith
+  refine ⟨Real.sqrt ((2 * M.det + 2 * K ^ 2) / M.det), fun w t => ?_⟩
+  obtain ⟨c, hc0, hc, hSc⟩ := hS w
+  have hanti : Antitone fun s => V (c s) := by
+    refine antitone_of_hasDerivAt_nonpos (f' := fun s => 2 * M.trace *
+      ((M 0 0 * c s 0 + M 0 1 * c s 1) ^ 2 + (M 1 0 * c s 0 + M 1 1 * c s 1) ^ 2))
+      (fun s => ?_) (fun s => ?_)
+    · have h0 : HasDerivAt (fun s => c s 0) ((M *ᵥ c s) 0) s := hasDerivAt_pi.1 (hc s) 0
+      have h1 : HasDerivAt (fun s => c s 1) ((M *ᵥ c s) 1) s := hasDerivAt_pi.1 (hc s) 1
+      have h := (((h0.pow 2).add (h1.pow 2)).const_mul M.det).add
+        ((((h0.const_mul (M 0 0)).add (h1.const_mul (M 0 1))).pow 2).add
+          (((h0.const_mul (M 1 0)).add (h1.const_mul (M 1 1))).pow 2))
+      refine h.congr_deriv ?_
+      simp only [mulVec, dotProduct, Fin.sum_univ_two, Matrix.det_fin_two, Matrix.trace_fin_two,
+        Pi.add_apply]
+      ring
+    · exact mul_nonpos_of_nonpos_of_nonneg (by linarith) (by positivity)
+  have hVt : V (c t) ≤ V (c 0) := hanti t.2
+  rw [hc0] at hVt
+  rw [hSc, norm_neumannMode hL]
+  have hsq : ‖c t‖ ^ 2 ≤ (Real.sqrt ((2 * M.det + 2 * K ^ 2) / M.det) * ‖w‖) ^ 2 := by
+    rw [mul_pow, Real.sq_sqrt (by positivity), div_mul_eq_mul_div, le_div_iff₀ hdet]
+    nlinarith [hVlow (c t), hVup w]
+  exact (pow_le_pow_iff_left₀ (norm_nonneg _) (by positivity) two_ne_zero).1 hsq
+
 /-! ### Nonlinear instability from a time-map expansion -/
 
 /-- Powers of a semigroup at a fixed time: `(S T)ᵐ = S (m T)`. -/
@@ -319,16 +405,22 @@ theorem pos_of_isUnstableMode_neumannWavenumber {J : Matrix (Fin 2) (Fin 2) ℝ}
 
 The diffusion-driven case of `exists_escape_of_isUnstableMode`: the kinetics are stable without
 diffusion (`tr J < 0`, `0 < det J`, Turing's first condition), and the Neumann mode `n` on
-`[0, L]` is linearly unstable for the reaction–diffusion system (`d_u, d_v ≥ 0`). Under the
+`[0, L]` is linearly unstable for the reaction–diffusion system (`d_u, d_v ≥ 0`). Besides the
 semigroup, differentiability and flow hypotheses of `exists_escape_of_isUnstableMode`, the
-homogeneous mode is linearly stable, the unstable mode is non-homogeneous (`0 < n`), and the
-homogeneous steady state `u₀` is nonlinearly unstable: some distance `ε > 0` is reached at a
-nonnegative time from initial data arbitrarily close to `u₀`. -/
+linearized semigroup `S` acts on the homogeneous mode (the constant states, `k_0 = 0`) through the
+kinetics ODE `c' = J c` (`ActsByModalODE S 0 J`); this ties the stability of `J` to `S`.
+
+Conclusions: homogeneous perturbations stay bounded under `S`
+(`‖S t (const w)‖ ≤ C ‖w‖`), the homogeneous mode is not linearly unstable, the unstable mode is
+non-homogeneous (`0 < n`), and the homogeneous steady state `u₀` is nonlinearly unstable: some
+distance `ε > 0` is reached at a nonnegative time from initial data arbitrarily close to
+`u₀`. -/
 theorem turing_instability_exists_escape {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ} {n : ℕ}
     (htr : J.trace < 0) (hdet : 0 < J.det) (hdu : 0 ≤ du) (hdv : 0 ≤ dv) (hL : 0 ≤ L)
     (hunst : IsUnstableMode J du dv (neumannWavenumber L n))
     {S : ℝ≥0 → C(Icc (0 : ℝ) L, Fin 2 → ℝ) →L[ℝ] C(Icc (0 : ℝ) L, Fin 2 → ℝ)}
     (hS : IsC0Semigroup S) (hmode : ActsByModalODE S n (modeMatrix J du dv (neumannWavenumber L n)))
+    (hmode0 : ActsByModalODE S 0 J)
     {M ω p : ℝ} (hgrowth : ∀ t : ℝ≥0, ‖S t‖ ≤ M * Real.exp (ω * t)) (hp : 1 < p)
     (hω : ω < p * growthRate J du dv (neumannWavenumber L n))
     {Φ : ℝ → C(Icc (0 : ℝ) L, Fin 2 → ℝ) → C(Icc (0 : ℝ) L, Fin 2 → ℝ)}
@@ -337,9 +429,11 @@ theorem turing_instability_exists_escape {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv
     (hstep : ∀ (m : ℕ) (x : C(Icc (0 : ℝ) L, Fin 2 → ℝ)),
       (∀ k ≤ m, ‖Φ (k * T) x - u₀‖ ≤ ρ) → Φ ((m + 1) * T) x = Φ T (Φ (m * T) x))
     (hrem : ∀ y, ‖y‖ ≤ ρ → ‖Φ T (u₀ + y) - u₀ - S T y‖ ≤ C * ‖y‖ ^ p) :
-    ¬ IsUnstableMode J du dv 0 ∧ 0 < n ∧
+    (∃ C', ∀ (w : Fin 2 → ℝ) (t : ℝ≥0), ‖S t (neumannMode L 0 w)‖ ≤ C' * ‖w‖) ∧
+      ¬ IsUnstableMode J du dv 0 ∧ 0 < n ∧
       ∃ ε > 0, ∀ δ > 0, ∃ x, ‖x - u₀‖ < δ ∧ ∃ t, 0 ≤ t ∧ ε ≤ ‖Φ t x - u₀‖ :=
-  ⟨not_isUnstableMode_zero htr hdet du dv, pos_of_isUnstableMode_neumannWavenumber htr hdet hunst,
+  ⟨hmode0.exists_norm_apply_le hL htr hdet, not_isUnstableMode_zero htr hdet du dv,
+    pos_of_isUnstableMode_neumannWavenumber htr hdet hunst,
     exists_escape_of_isUnstableMode htr hdu hdv hL hunst hS hmode hgrowth hp hω hT hρ hC hΦ0 hstep
       hrem⟩
 
@@ -590,10 +684,12 @@ theorem exists_escape_of_isUnstableMode_of_mild {J : Matrix (Fin 2) (Fin 2) ℝ}
 
 The diffusion-driven case of `exists_escape_of_isUnstableMode_of_mild`: the kinetics are stable
 without diffusion (`tr J < 0`, `0 < det J`), and the Neumann mode `n` on `[0, L]` is linearly
-unstable for the reaction–diffusion system (`d_u, d_v ≥ 0`). Under the differentiability,
-semigroup and flow hypotheses of `exists_escape_of_isUnstableMode_of_mild`, the homogeneous mode
-is linearly stable, the unstable mode is non-homogeneous (`0 < n`), and the homogeneous steady
-state `a` is nonlinearly unstable. -/
+unstable for the reaction–diffusion system (`d_u, d_v ≥ 0`). Besides the differentiability,
+semigroup and flow hypotheses of `exists_escape_of_isUnstableMode_of_mild`, the linearized
+semigroup `S` acts on the homogeneous mode through the kinetics ODE `c' = J c`
+(`ActsByModalODE S 0 J`). Then homogeneous perturbations stay bounded under `S`, the homogeneous
+mode is not linearly unstable, the unstable mode is non-homogeneous (`0 < n`), and the
+homogeneous steady state `a` is nonlinearly unstable. -/
 theorem turing_instability_exists_escape_of_mild {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ}
     {n : ℕ} (htr : J.trace < 0) (hdet : 0 < J.det) (hdu : 0 ≤ du) (hdv : 0 ≤ dv) (hL : 0 ≤ L)
     (hunst : IsUnstableMode J du dv (neumannWavenumber L n))
@@ -606,6 +702,7 @@ theorem turing_instability_exists_escape_of_mild {J : Matrix (Fin 2) (Fin 2) ℝ
     (hS : IsC0Semigroup S) {T : ℝ≥0} (hT : 0 < T)
     (hSmild : ∀ y, IsMildSolution SA (pointwiseMatrix _ J) y T fun t => S t.toNNReal y)
     (hmode : ActsByModalODE S n (modeMatrix J du dv (neumannWavenumber L n)))
+    (hmode0 : ActsByModalODE S 0 J)
     {M ω : ℝ} (hgrowth : ∀ t : ℝ≥0, ‖S t‖ ≤ M * Real.exp (ω * t))
     (hω : ω < p * growthRate J du dv (neumannWavenumber L n))
     {Φ : ℝ → C(Icc (0 : ℝ) L, Fin 2 → ℝ) → C(Icc (0 : ℝ) L, Fin 2 → ℝ)} {ρ₀ R : ℝ}
@@ -616,10 +713,12 @@ theorem turing_instability_exists_escape_of_mild {J : Matrix (Fin 2) (Fin 2) ℝ
     (hΦ : ∀ x, ‖x - ContinuousMap.const _ a‖ ≤ ρ₀ →
       IsMildSolution SA (nemytskii f hfc) x T (fun t => Φ t x) ∧
         ∀ t ∈ Icc 0 (T : ℝ), ‖Φ t x‖ ≤ R) :
-    ¬ IsUnstableMode J du dv 0 ∧ 0 < n ∧
+    (∃ C', ∀ (w : Fin 2 → ℝ) (t : ℝ≥0), ‖S t (neumannMode L 0 w)‖ ≤ C' * ‖w‖) ∧
+      ¬ IsUnstableMode J du dv 0 ∧ 0 < n ∧
       ∃ ε > 0, ∀ δ > 0, ∃ x, ‖x - ContinuousMap.const _ a‖ < δ ∧
         ∃ t, 0 ≤ t ∧ ε ≤ ‖Φ t x - ContinuousMap.const _ a‖ :=
-  ⟨not_isUnstableMode_zero htr hdet du dv, pos_of_isUnstableMode_neumannWavenumber htr hdet hunst,
+  ⟨hmode0.exists_norm_apply_le hL htr hdet, not_isUnstableMode_zero htr hdet du dv,
+    pos_of_isUnstableMode_neumannWavenumber htr hdet hunst,
     exists_escape_of_isUnstableMode_of_mild htr hdu hdv hL hunst hfc hfL hfa hr hK hp hf hSA hSAa
       hS hT hSmild hmode hgrowth hω hρ₀ hΦ0 hstep hΦ⟩
 

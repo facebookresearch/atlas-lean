@@ -31,18 +31,16 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
   to be mild solutions of `w' = J w` (`isMildSolution_saddleSemigroup`).
 * Non-vacuity of the Turing corollaries `turing_instability_exists_escape` and
   `turing_instability_exists_escape_of_mild` on a genuinely diffusion-driven instability: the
-  activator–inhibitor Jacobian `J = [[37/4, 8], [-11, -19/2]]` has `tr J = -1/4 < 0` and
-  `det J = 1/8 > 0`, so no mode is unstable without diffusion, while with
-  `D = diag(1/4, 1/2)` the Neumann mode `n = 1` on `[0, π]` (`k = 1`) has
-  `J - D = [[9, 8], [-11, -10]]` with eigenvalues `1` and `-2`. The linearized semigroup is the
-  pointwise `e^{t (J - D)} = eᵗ P + e^{-2t} Q` (spectral projections `P`, `Q`) and the diffusion
-  semigroup the pointwise `e^{-t D}`. These are *not* the Neumann semigroups `e^{t (D Δ_N + J)}`
-  and `e^{t D Δ_N}`: they act on every mode as those act on the mode `n = 1` only. The theorems
-  constrain the semigroups on that mode (`ActsByModalODE`) and otherwise only through the
-  C₀ property, the growth bound and the mild-solution identity, which the stand-ins satisfy; the
-  spectral data (`tr J < 0 < det J`, mode `1` unstable only with diffusion) are those of a
-  genuine Turing instability. The linearized orbits are shown to be mild solutions of
-  `w' = -D w + J w` for the stand-in diffusion semigroup (`isMildSolution_turingSemigroup`).
+  kinetics Jacobian `J = [[3, 1], [-20, -6]]` has `tr J = -3 < 0` and `det J = 2 > 0` (eigenvalues
+  `-1`, `-2`), so no mode is unstable without diffusion, while with `D = diag(1, 13)` the Neumann
+  mode `n = 1` on `[0, π]` (`k = 1`) has `J - D = [[2, 1], [-20, -19]]` with eigenvalues `1` and
+  `-18`. With `P₀ f = (f(0) + f(π)) / 2` (a bounded projection onto the constants that kills
+  `cos x`), the linearized semigroup is the stand-in `S t = e^{t J} P₀ + e^{t (J - D)} (1 - P₀)`
+  and the diffusion semigroup the stand-in `P₀ + e^{-t D} (1 - P₀)`. These act on the constants
+  (mode `0`) and on the mode `1` exactly as `e^{t (D Δ_N + J)}` and `e^{t D Δ_N}` do, so `S` is
+  stable on the homogeneous mode (`ActsByModalODE S 0 J`) and unstable on mode `1`; they are
+  *not* the Neumann semigroups on the other modes. The linearized orbits are shown to be mild
+  solutions for the stand-in diffusion semigroup (`isMildSolution_turingSemigroup`).
 * Boundary case: for `L < 0` the interval `[0, L]` is empty and every Neumann mode is `0`, even
   with a nonzero amplitude, so the hypothesis `0 ≤ L` of `neumannMode_ne_zero` and
   `norm_neumannMode` cannot be dropped. -/
@@ -337,14 +335,14 @@ example : ∃ ε > 0, ∀ δ > 0, ∃ x : C(Icc (0 : ℝ) 1, Fin 2 → ℝ),
 
 /-! ### Non-vacuity of the Turing corollaries: a diffusion-driven instability -/
 
-/-- Activator–inhibitor kinetics Jacobian `J = [[37/4, 8], [-11, -19/2]]`. -/
-noncomputable abbrev turingJ : Matrix (Fin 2) (Fin 2) ℝ := !![37 / 4, 8; -11, -19 / 2]
+/-- Kinetics Jacobian `J = [[3, 1], [-20, -6]]`, with eigenvalues `-1` and `-2`. -/
+noncomputable abbrev turingJ : Matrix (Fin 2) (Fin 2) ℝ := !![3, 1; -20, -6]
 
-/-- `tr J = -1/4 < 0`. -/
+/-- `tr J = -3 < 0`. -/
 theorem trace_turingJ : turingJ.trace < 0 := by
   norm_num [Matrix.trace_fin_two]
 
-/-- `det J = 1/8 > 0`: together with `tr J < 0`, the kinetics are stable without diffusion. -/
+/-- `det J = 2 > 0`: together with `tr J < 0`, the kinetics are stable without diffusion. -/
 theorem det_turingJ : 0 < turingJ.det := by
   norm_num [Matrix.det_fin_two]
 
@@ -360,111 +358,200 @@ example (k : ℝ) : ¬ IsUnstableMode turingJ 0 0 k := by
 theorem neumannWavenumber_pi_one : neumannWavenumber Real.pi 1 = 1 := by
   simp [neumannWavenumber, Real.pi_ne_zero]
 
-/-- The mode matrix `J - k² D` at `k = 1` with `D = diag(1/4, 1/2)`. -/
-noncomputable abbrev turingM : Matrix (Fin 2) (Fin 2) ℝ := !![9, 8; -11, -10]
+/-- The mode matrix `J - k² D` at `k = 1` with `D = diag(1, 13)`; eigenvalues `1` and `-18`. -/
+noncomputable abbrev turingM : Matrix (Fin 2) (Fin 2) ℝ := !![2, 1; -20, -19]
 
 theorem modeMatrix_turingJ :
-    modeMatrix turingJ (1 / 4) (1 / 2) (neumannWavenumber Real.pi 1) = turingM := by
+    modeMatrix turingJ 1 13 (neumannWavenumber Real.pi 1) = turingM := by
   rw [neumannWavenumber_pi_one]
   ext i j
   fin_cases i <;> fin_cases j <;> norm_num [modeMatrix, diffusionMatrix]
 
-/-- The Neumann mode `1` is unstable with diffusion (`det (J - D) = -2 < 0`). -/
-theorem isUnstableMode_turingJ :
-    IsUnstableMode turingJ (1 / 4) (1 / 2) (neumannWavenumber Real.pi 1) :=
-  (turing_instability trace_turingJ det_turingJ (by norm_num) (by norm_num)
+/-- The Neumann mode `1` is unstable with diffusion (`det (J - D) = -18 < 0`). -/
+theorem isUnstableMode_turingJ : IsUnstableMode turingJ 1 13 (neumannWavenumber Real.pi 1) :=
+  (turing_instability trace_turingJ det_turingJ zero_le_one (by norm_num)
     (by rw [modeMatrix_turingJ]; norm_num [Matrix.det_fin_two])).2
 
-/-- The growth rate of the unstable mode is `1`: `(-1 + √9) / 2`. -/
-theorem growthRate_turingJ :
-    growthRate turingJ (1 / 4) (1 / 2) (neumannWavenumber Real.pi 1) = 1 := by
+/-- The growth rate of the unstable mode is `1`: `(-17 + √361) / 2`. -/
+theorem growthRate_turingJ : growthRate turingJ 1 13 (neumannWavenumber Real.pi 1) = 1 := by
   rw [growthRate, modeMatrix_turingJ]
-  have h : Real.sqrt (turingM.trace ^ 2 - 4 * turingM.det) = 3 := by
-    rw [show turingM.trace ^ 2 - 4 * turingM.det = 3 ^ 2 by
+  have h : Real.sqrt (turingM.trace ^ 2 - 4 * turingM.det) = 19 := by
+    rw [show turingM.trace ^ 2 - 4 * turingM.det = 19 ^ 2 by
       norm_num [Matrix.trace_fin_two, Matrix.det_fin_two]]
     exact Real.sqrt_sq (by norm_num)
   rw [h]
   norm_num [Matrix.trace_fin_two]
 
-/-- The spectral projection of `J - D` onto its eigenvalue `1`. -/
-noncomputable abbrev turingP : Matrix (Fin 2) (Fin 2) ℝ := !![11 / 3, 8 / 3; -11 / 3, -8 / 3]
+/-- Spectral projection of `J` onto its eigenvalue `-1`. -/
+noncomputable abbrev turingJ₁ : Matrix (Fin 2) (Fin 2) ℝ := !![5, 1; -20, -4]
 
-/-- The spectral projection of `J - D` onto its eigenvalue `-2`. -/
-noncomputable abbrev turingQ : Matrix (Fin 2) (Fin 2) ℝ := !![-8 / 3, -8 / 3; 11 / 3, 11 / 3]
+/-- Spectral projection of `J` onto its eigenvalue `-2`. -/
+noncomputable abbrev turingJ₂ : Matrix (Fin 2) (Fin 2) ℝ := !![-4, -1; 20, 5]
+
+/-- Spectral projection of `J - D` onto its eigenvalue `1`. -/
+noncomputable abbrev turingM₁ : Matrix (Fin 2) (Fin 2) ℝ :=
+  !![20 / 19, 1 / 19; -20 / 19, -1 / 19]
+
+/-- Spectral projection of `J - D` onto its eigenvalue `-18`. -/
+noncomputable abbrev turingM₂ : Matrix (Fin 2) (Fin 2) ℝ :=
+  !![-1 / 19, -1 / 19; 20 / 19, 20 / 19]
 
 /-- The phase space `C([0, π]; ℝ²)`. -/
 abbrev TuringSpace := C(Icc (0 : ℝ) Real.pi, Fin 2 → ℝ)
 
-/-- `e^{t (J - D)} = eᵗ P + e^{-2t} Q`, acting pointwise, for all real `t`. -/
+/-- The endpoint `0` of `[0, π]`. -/
+noncomputable def turingPt₀ : Icc (0 : ℝ) Real.pi := ⟨0, le_rfl, Real.pi_pos.le⟩
+
+/-- The endpoint `π` of `[0, π]`. -/
+noncomputable def turingPtπ : Icc (0 : ℝ) Real.pi := ⟨Real.pi, Real.pi_pos.le, le_rfl⟩
+
+/-- `P₀ f = (f(0) + f(π)) / 2`, as a constant function: a bounded projection onto the constants
+that commutes with pointwise matrices and kills the Neumann mode `cos x`
+(`cos 0 = 1`, `cos π = -1`). -/
+noncomputable def endpointAvg : TuringSpace →L[ℝ] TuringSpace :=
+  LinearMap.mkContinuous
+    { toFun := fun f => ContinuousMap.const _ ((1 / 2 : ℝ) • (f turingPt₀ + f turingPtπ))
+      map_add' := fun f g => by ext x i; simp; ring
+      map_smul' := fun c f => by ext x i; simp; ring } 1 fun f => by
+    refine (ContinuousMap.norm_le _ (by positivity)).2 fun x => ?_
+    simp only [LinearMap.coe_mk, AddHom.coe_mk, ContinuousMap.const_apply, one_mul]
+    rw [norm_smul, Real.norm_of_nonneg (by norm_num : (0 : ℝ) ≤ 1 / 2)]
+    have := norm_add_le (f turingPt₀) (f turingPtπ)
+    have h0 := f.norm_coe_le_norm turingPt₀
+    have h1 := f.norm_coe_le_norm turingPtπ
+    linarith
+
+theorem endpointAvg_apply (f : TuringSpace) (x : Icc (0 : ℝ) Real.pi) :
+    endpointAvg f x = (1 / 2 : ℝ) • (f turingPt₀ + f turingPtπ) :=
+  rfl
+
+/-- `J₁ P₀`. -/
+noncomputable abbrev turingA₁ : TuringSpace →L[ℝ] TuringSpace :=
+  pointwiseMatrix _ turingJ₁ ∘L endpointAvg
+
+/-- `J₂ P₀`. -/
+noncomputable abbrev turingA₂ : TuringSpace →L[ℝ] TuringSpace :=
+  pointwiseMatrix _ turingJ₂ ∘L endpointAvg
+
+/-- `M₁ (1 - P₀)`. -/
+noncomputable abbrev turingA₃ : TuringSpace →L[ℝ] TuringSpace :=
+  pointwiseMatrix _ turingM₁ ∘L (1 - endpointAvg)
+
+/-- `M₂ (1 - P₀)`. -/
+noncomputable abbrev turingA₄ : TuringSpace →L[ℝ] TuringSpace :=
+  pointwiseMatrix _ turingM₂ ∘L (1 - endpointAvg)
+
+theorem turingA₁_apply (y : TuringSpace) (x : Icc (0 : ℝ) Real.pi) :
+    turingA₁ y x = turingJ₁ *ᵥ ((1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ)) :=
+  rfl
+
+theorem turingA₂_apply (y : TuringSpace) (x : Icc (0 : ℝ) Real.pi) :
+    turingA₂ y x = turingJ₂ *ᵥ ((1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ)) :=
+  rfl
+
+theorem turingA₃_apply (y : TuringSpace) (x : Icc (0 : ℝ) Real.pi) :
+    turingA₃ y x = turingM₁ *ᵥ (y x - (1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ)) :=
+  rfl
+
+theorem turingA₄_apply (y : TuringSpace) (x : Icc (0 : ℝ) Real.pi) :
+    turingA₄ y x = turingM₂ *ᵥ (y x - (1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ)) :=
+  rfl
+
+/-- `e^{t J} P₀ + e^{t (J - D)} (1 - P₀)`, for all real `t`. -/
 noncomputable def turingOp (t : ℝ) : TuringSpace →L[ℝ] TuringSpace :=
-  Real.exp t • pointwiseMatrix _ turingP + Real.exp (-2 * t) • pointwiseMatrix _ turingQ
+  Real.exp (-1 * t) • turingA₁ + Real.exp (-2 * t) • turingA₂ + Real.exp (1 * t) • turingA₃ +
+    Real.exp (-18 * t) • turingA₄
 
 theorem turingOp_apply (t : ℝ) (y : TuringSpace) (x : Icc (0 : ℝ) Real.pi) :
-    turingOp t y x = Real.exp t • (turingP *ᵥ y x) + Real.exp (-2 * t) • (turingQ *ᵥ y x) :=
+    turingOp t y x =
+      Real.exp (-1 * t) • (turingJ₁ *ᵥ ((1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ))) +
+        Real.exp (-2 * t) • (turingJ₂ *ᵥ ((1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ))) +
+        Real.exp (1 * t) • (turingM₁ *ᵥ (y x - (1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ))) +
+        Real.exp (-18 * t) • (turingM₂ *ᵥ (y x - (1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ))) :=
   rfl
 
 theorem continuous_turingOp : Continuous turingOp := by
   unfold turingOp
   fun_prop
 
-/-- The stand-in linearized semigroup `e^{t (J - D)}` on `C([0, π]; ℝ²)`, acting pointwise. It
-agrees with `e^{t (D Δ_N + J)}` on the Neumann mode `n = 1` only. -/
+/-- The stand-in linearized semigroup `S t = e^{t J} P₀ + e^{t (J - D)} (1 - P₀)` on
+`C([0, π]; ℝ²)`. It acts on the constants (Neumann mode `0`) through `J` and on the Neumann mode
+`1` through `J - D`, as `e^{t (D Δ_N + J)}` does; it is not that semigroup on the other modes. -/
 noncomputable def turingSemigroup (t : ℝ≥0) : TuringSpace →L[ℝ] TuringSpace :=
   turingOp t
 
-/-- The growth-bound constant `‖P‖ + ‖Q‖` (operator norms on the phase space). -/
-noncomputable abbrev turingBound : ℝ :=
-  ‖pointwiseMatrix (Icc (0 : ℝ) Real.pi) turingP‖ + ‖pointwiseMatrix (Icc (0 : ℝ) Real.pi) turingQ‖
+/-- The growth-bound constant. -/
+noncomputable abbrev turingBound : ℝ := ‖turingA₁‖ + ‖turingA₂‖ + ‖turingA₃‖ + ‖turingA₄‖
 
 theorem norm_turingSemigroup_le (t : ℝ≥0) :
     ‖turingSemigroup t‖ ≤ turingBound * Real.exp (1 * t) := by
-  have h2 : Real.exp (-2 * t) ≤ Real.exp t :=
-    Real.exp_le_exp.2 (by have := t.coe_nonneg; linarith)
-  have h3 := mul_le_mul_of_nonneg_right h2 (norm_nonneg (pointwiseMatrix (Icc (0 : ℝ) Real.pi)
-    turingQ))
-  have hP := ContinuousLinearMap.opNorm_smul_le (Real.exp (t : ℝ))
-    (pointwiseMatrix (Icc (0 : ℝ) Real.pi) turingP)
-  have hQ := ContinuousLinearMap.opNorm_smul_le (Real.exp (-2 * (t : ℝ)))
-    (pointwiseMatrix (Icc (0 : ℝ) Real.pi) turingQ)
-  rw [Real.norm_of_nonneg (Real.exp_pos _).le] at hP hQ
+  have ht := t.coe_nonneg
+  have e1 : Real.exp (-1 * t) ≤ Real.exp (1 * t) := Real.exp_le_exp.2 (by linarith)
+  have e2 : Real.exp (-2 * t) ≤ Real.exp (1 * t) := Real.exp_le_exp.2 (by linarith)
+  have e4 : Real.exp (-18 * t) ≤ Real.exp (1 * t) := Real.exp_le_exp.2 (by linarith)
+  have h1 := ContinuousLinearMap.opNorm_smul_le (Real.exp (-1 * (t : ℝ))) turingA₁
+  have h2 := ContinuousLinearMap.opNorm_smul_le (Real.exp (-2 * (t : ℝ))) turingA₂
+  have h3 := ContinuousLinearMap.opNorm_smul_le (Real.exp (1 * (t : ℝ))) turingA₃
+  have h4 := ContinuousLinearMap.opNorm_smul_le (Real.exp (-18 * (t : ℝ))) turingA₄
+  rw [Real.norm_of_nonneg (Real.exp_pos _).le] at h1 h2 h3 h4
+  have f1 := mul_le_mul_of_nonneg_right e1 (norm_nonneg turingA₁)
+  have f2 := mul_le_mul_of_nonneg_right e2 (norm_nonneg turingA₂)
+  have f4 := mul_le_mul_of_nonneg_right e4 (norm_nonneg turingA₄)
+  have n1 := norm_add_le (Real.exp (-1 * (t : ℝ)) • turingA₁ + Real.exp (-2 * (t : ℝ)) • turingA₂ +
+    Real.exp (1 * (t : ℝ)) • turingA₃) (Real.exp (-18 * (t : ℝ)) • turingA₄)
+  have n2 := norm_add_le (Real.exp (-1 * (t : ℝ)) • turingA₁ + Real.exp (-2 * (t : ℝ)) • turingA₂)
+    (Real.exp (1 * (t : ℝ)) • turingA₃)
+  have n3 := norm_add_le (Real.exp (-1 * (t : ℝ)) • turingA₁) (Real.exp (-2 * (t : ℝ)) • turingA₂)
   unfold turingSemigroup turingOp
-  refine (norm_add_le (E := TuringSpace →L[ℝ] TuringSpace) _ _).trans ?_
-  rw [one_mul]
   linarith
 
 theorem isC0Semigroup_turingSemigroup : IsC0Semigroup turingSemigroup where
   map_zero := by
     ext y x i
-    fin_cases i <;> simp [turingSemigroup, turingOp_apply, dotProduct, Fin.sum_univ_two] <;>
-      ring
+    fin_cases i <;> simp [turingSemigroup, turingOp_apply, dotProduct, Fin.sum_univ_two] <;> ring
   map_add s t := by
     ext y x i
-    have h1 : Real.exp ((s : ℝ) + t) = Real.exp s * Real.exp t := Real.exp_add _ _
-    have h2 : Real.exp (-2 * ((s : ℝ) + t)) = Real.exp (-2 * s) * Real.exp (-2 * t) := by
-      rw [← Real.exp_add]; ring_nf
+    have hexp : ∀ c : ℝ, Real.exp (c * ((s : ℝ) + t)) = Real.exp (c * s) * Real.exp (c * t) :=
+      fun c => by rw [← Real.exp_add]; ring_nf
     simp only [turingSemigroup, NNReal.coe_add, ContinuousLinearMap.comp_apply, turingOp_apply,
-      h1, h2]
+      hexp]
     fin_cases i <;> simp [dotProduct, Fin.sum_univ_two] <;> ring
   continuous_apply y :=
     (continuous_turingOp.comp NNReal.continuous_coe).clm_apply continuous_const
   locally_bounded T := ⟨turingBound * Real.exp T, fun t ht =>
     (norm_turingSemigroup_le t).trans (by gcongr; simpa using ht)⟩
 
+/-- On the Neumann mode `1` the stand-in semigroup acts through `J - D` (`P₀` kills `cos x`). -/
 theorem actsByModalODE_turingSemigroup :
-    ActsByModalODE turingSemigroup 1
-      (modeMatrix turingJ (1 / 4) (1 / 2) (neumannWavenumber Real.pi 1)) := by
+    ActsByModalODE turingSemigroup 1 (modeMatrix turingJ 1 13 (neumannWavenumber Real.pi 1)) := by
   rw [modeMatrix_turingJ]
   intro w
-  refine ⟨fun t => Real.exp t • (turingP *ᵥ w) + Real.exp (-2 * t) • (turingQ *ᵥ w), ?_,
-    fun t => ?_, fun t => ?_⟩
+  refine ⟨fun t => Real.exp (1 * t) • (turingM₁ *ᵥ w) + Real.exp (-18 * t) • (turingM₂ *ᵥ w),
+    ?_, fun t => ?_, fun t => ?_⟩
   · ext i; fin_cases i <;> simp [dotProduct, Fin.sum_univ_two] <;> ring
-  · have h := ((Real.hasDerivAt_exp t).smul_const (turingP *ᵥ w)).add
-      ((((hasDerivAt_id t).const_mul (-2)).exp).smul_const (turingQ *ᵥ w))
+  · have h := ((((hasDerivAt_id t).const_mul 1).exp).smul_const (turingM₁ *ᵥ w)).add
+      ((((hasDerivAt_id t).const_mul (-18)).exp).smul_const (turingM₂ *ᵥ w))
     refine h.congr_deriv ?_
     ext i; fin_cases i <;> simp [mulVec, dotProduct, Fin.sum_univ_two] <;> ring
   · ext x i
-    fin_cases i <;> simp [turingSemigroup, turingOp_apply, dotProduct, Fin.sum_univ_two] <;>
-      ring
+    simp only [turingSemigroup, turingOp_apply, neumannMode_apply, neumannWavenumber_pi_one,
+      turingPt₀, turingPtπ]
+    fin_cases i <;> simp [dotProduct, Fin.sum_univ_two] <;> ring
+
+/-- On the constants (Neumann mode `0`) the stand-in semigroup acts through the kinetics `J`,
+which are stable: this is the hypothesis `ActsByModalODE S 0 J` of the Turing corollaries. -/
+theorem actsByModalODE_zero_turingSemigroup : ActsByModalODE turingSemigroup 0 turingJ := by
+  intro w
+  refine ⟨fun t => Real.exp (-1 * t) • (turingJ₁ *ᵥ w) + Real.exp (-2 * t) • (turingJ₂ *ᵥ w),
+    ?_, fun t => ?_, fun t => ?_⟩
+  · ext i; fin_cases i <;> simp [dotProduct, Fin.sum_univ_two] <;> ring
+  · have h := ((((hasDerivAt_id t).const_mul (-1)).exp).smul_const (turingJ₁ *ᵥ w)).add
+      ((((hasDerivAt_id t).const_mul (-2)).exp).smul_const (turingJ₂ *ᵥ w))
+    refine h.congr_deriv ?_
+    ext i; fin_cases i <;> simp [mulVec, dotProduct, Fin.sum_univ_two] <;> ring
+  · ext x i
+    simp only [turingSemigroup, turingOp_apply, neumannMode_apply]
+    fin_cases i <;> simp [neumannWavenumber, dotProduct, Fin.sum_univ_two] <;> ring
 
 theorem turingSemigroup_step (m : ℕ) (x : TuringSpace) :
     turingSemigroup (((m : ℝ) + 1) * ((1 : ℝ≥0) : ℝ)).toNNReal x =
@@ -476,15 +563,19 @@ theorem turingSemigroup_step (m : ℕ) (x : TuringSpace) :
     isC0Semigroup_turingSemigroup.map_add, ContinuousLinearMap.comp_apply]
 
 /-- **Non-vacuity of `turing_instability_exists_escape`** on a diffusion-driven instability:
-kinetics stable without diffusion (`tr J < 0 < det J`), the unstable Neumann mode `n = 1` on
-`[0, π]` with `D = diag(1/4, 1/2)` (growth rate `1`, growth bound `ω = 1 < 2 · 1`), and the
-stand-in linear flow `e^{t (J - D)}` (zero remainder). -/
-example : ¬ IsUnstableMode turingJ (1 / 4) (1 / 2) 0 ∧ 0 < 1 ∧
+kinetics stable without diffusion (`tr J < 0 < det J`), a stand-in semigroup acting on the
+constants through `J` (`actsByModalODE_zero_turingSemigroup`) and on the unstable Neumann mode
+`n = 1` of `[0, π]` with `D = diag(1, 13)` through `J - D` (growth rate `1`, growth bound
+`ω = 1 < 2 · 1`), and the stand-in linear flow `Φ t = S t` (zero remainder). -/
+example : (∃ C', ∀ (w : Fin 2 → ℝ) (t : ℝ≥0),
+      ‖turingSemigroup t (neumannMode Real.pi 0 w)‖ ≤ C' * ‖w‖) ∧
+    ¬ IsUnstableMode turingJ 1 13 0 ∧ 0 < 1 ∧
     ∃ ε > 0, ∀ δ > 0, ∃ x : TuringSpace, ‖x - 0‖ < δ ∧
       ∃ t : ℝ, 0 ≤ t ∧ ε ≤ ‖turingSemigroup t.toNNReal x - 0‖ :=
-  turing_instability_exists_escape (J := turingJ) (du := 1 / 4) (dv := 1 / 2) (L := Real.pi)
-    (n := 1) trace_turingJ det_turingJ (by norm_num) (by norm_num) Real.pi_pos.le
-    isUnstableMode_turingJ isC0Semigroup_turingSemigroup actsByModalODE_turingSemigroup
+  turing_instability_exists_escape (J := turingJ) (du := 1) (dv := 13) (L := Real.pi) (n := 1)
+    trace_turingJ det_turingJ zero_le_one (by norm_num) Real.pi_pos.le isUnstableMode_turingJ
+    isC0Semigroup_turingSemigroup actsByModalODE_turingSemigroup
+    (hmode0 := actsByModalODE_zero_turingSemigroup)
     norm_turingSemigroup_le (p := 2) (by norm_num) (by rw [growthRate_turingJ]; norm_num)
     (Φ := fun t x => turingSemigroup t.toNNReal x) (T := 1) (ρ := 1) (C := 0) one_pos one_pos
     le_rfl (fun x => by simp [isC0Semigroup_turingSemigroup.map_zero])
@@ -492,79 +583,93 @@ example : ¬ IsUnstableMode turingJ (1 / 4) (1 / 2) 0 ∧ 0 < 1 ∧
 
 /-! #### The mild formulation of the diffusion-driven example -/
 
-/-- `e^{-t D}` with `D = diag(1/4, 1/2)`, acting pointwise, for all real `t`. -/
+/-- The coordinate projection onto the first species. -/
+noncomputable abbrev turingE₀ : Matrix (Fin 2) (Fin 2) ℝ := !![1, 0; 0, 0]
+
+/-- The coordinate projection onto the second species. -/
+noncomputable abbrev turingE₁ : Matrix (Fin 2) (Fin 2) ℝ := !![0, 0; 0, 1]
+
+/-- `(1 - P₀)` followed by the projection onto the first species. -/
+noncomputable abbrev turingD₀ : TuringSpace →L[ℝ] TuringSpace :=
+  pointwiseMatrix _ (turingE₀) ∘L (1 - endpointAvg)
+
+/-- `(1 - P₀)` followed by the projection onto the second species. -/
+noncomputable abbrev turingD₁ : TuringSpace →L[ℝ] TuringSpace :=
+  pointwiseMatrix _ (turingE₁) ∘L (1 - endpointAvg)
+
+theorem turingD₀_apply (y : TuringSpace) (x : Icc (0 : ℝ) Real.pi) :
+    turingD₀ y x = turingE₀ *ᵥ (y x - (1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ)) :=
+  rfl
+
+theorem turingD₁_apply (y : TuringSpace) (x : Icc (0 : ℝ) Real.pi) :
+    turingD₁ y x = turingE₁ *ᵥ (y x - (1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ)) :=
+  rfl
+
+/-- `P₀ + e^{-t D} (1 - P₀)` with `D = diag(1, 13)`, for all real `t`. -/
 noncomputable def turingDiffOp (t : ℝ) : TuringSpace →L[ℝ] TuringSpace :=
-  Real.exp (-(1 / 4) * t) • pointwiseMatrix _ (Matrix.diagonal ![1, 0]) +
-    Real.exp (-(1 / 2) * t) • pointwiseMatrix _ (Matrix.diagonal ![0, 1])
+  endpointAvg + Real.exp (-1 * t) • turingD₀ + Real.exp (-13 * t) • turingD₁
 
 theorem turingDiffOp_apply (t : ℝ) (y : TuringSpace) (x : Icc (0 : ℝ) Real.pi) :
-    turingDiffOp t y x = Real.exp (-(1 / 4) * t) • (Matrix.diagonal ![1, 0] *ᵥ y x) +
-      Real.exp (-(1 / 2) * t) • (Matrix.diagonal ![0, 1] *ᵥ y x) :=
+    turingDiffOp t y x = (1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ) +
+      Real.exp (-1 * t) •
+        (turingE₀ *ᵥ (y x - (1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ))) +
+      Real.exp (-13 * t) •
+        (turingE₁ *ᵥ (y x - (1 / 2 : ℝ) • (y turingPt₀ + y turingPtπ))) :=
   rfl
 
 theorem continuous_turingDiffOp : Continuous turingDiffOp := by
   unfold turingDiffOp
   fun_prop
 
-/-- The stand-in diffusion semigroup `e^{-t D}`, acting pointwise. It agrees with `e^{t D Δ_N}`
-on the Neumann mode `n = 1` of `[0, π]` only (where `Δ_N = -1`). -/
+/-- The stand-in diffusion semigroup `P₀ + e^{-t D} (1 - P₀)`. It fixes the constants and acts
+on the Neumann mode `1` as `e^{t D Δ_N}` does (`Δ_N cos x = -cos x`); it is not that semigroup on
+the other modes. -/
 noncomputable def turingDiffusion (t : ℝ≥0) : TuringSpace →L[ℝ] TuringSpace :=
   turingDiffOp t
 
 theorem norm_turingDiffusion_le (t : ℝ≥0) :
-    ‖turingDiffusion t‖ ≤ ‖pointwiseMatrix (Icc (0 : ℝ) Real.pi) (Matrix.diagonal ![1, 0])‖ +
-      ‖pointwiseMatrix (Icc (0 : ℝ) Real.pi) (Matrix.diagonal ![0, 1])‖ := by
-  have h1 : Real.exp (-(1 / 4) * t) ≤ 1 :=
-    Real.exp_le_one_iff.2 (by have := t.coe_nonneg; linarith)
-  have h2 : Real.exp (-(1 / 2) * t) ≤ 1 :=
-    Real.exp_le_one_iff.2 (by have := t.coe_nonneg; linarith)
-  have hE₀ := ContinuousLinearMap.opNorm_smul_le (Real.exp (-(1 / 4) * (t : ℝ)))
-    (pointwiseMatrix (Icc (0 : ℝ) Real.pi) (Matrix.diagonal ![1, 0]))
-  have hE₁ := ContinuousLinearMap.opNorm_smul_le (Real.exp (-(1 / 2) * (t : ℝ)))
-    (pointwiseMatrix (Icc (0 : ℝ) Real.pi) (Matrix.diagonal ![0, 1]))
-  rw [Real.norm_of_nonneg (Real.exp_pos _).le] at hE₀ hE₁
-  have h3 := mul_le_of_le_one_left (norm_nonneg
-    (pointwiseMatrix (Icc (0 : ℝ) Real.pi) (Matrix.diagonal ![(1 : ℝ), 0]))) h1
-  have h4 := mul_le_of_le_one_left (norm_nonneg
-    (pointwiseMatrix (Icc (0 : ℝ) Real.pi) (Matrix.diagonal ![(0 : ℝ), 1]))) h2
+    ‖turingDiffusion t‖ ≤ ‖endpointAvg‖ + ‖turingD₀‖ + ‖turingD₁‖ := by
+  have ht := t.coe_nonneg
+  have e1 : Real.exp (-1 * t) ≤ 1 := Real.exp_le_one_iff.2 (by linarith)
+  have e2 : Real.exp (-13 * t) ≤ 1 := Real.exp_le_one_iff.2 (by linarith)
+  have h1 := ContinuousLinearMap.opNorm_smul_le (Real.exp (-1 * (t : ℝ))) turingD₀
+  have h2 := ContinuousLinearMap.opNorm_smul_le (Real.exp (-13 * (t : ℝ))) turingD₁
+  rw [Real.norm_of_nonneg (Real.exp_pos _).le] at h1 h2
+  have f1 := mul_le_of_le_one_left (norm_nonneg turingD₀) e1
+  have f2 := mul_le_of_le_one_left (norm_nonneg turingD₁) e2
+  have n1 := norm_add_le (endpointAvg + Real.exp (-1 * (t : ℝ)) • turingD₀)
+    (Real.exp (-13 * (t : ℝ)) • turingD₁)
+  have n2 := norm_add_le endpointAvg (Real.exp (-1 * (t : ℝ)) • turingD₀)
   unfold turingDiffusion turingDiffOp
-  refine (norm_add_le (E := TuringSpace →L[ℝ] TuringSpace) _ _).trans ?_
   linarith
 
 theorem isC0Semigroup_turingDiffusion : IsC0Semigroup turingDiffusion where
   map_zero := by
     ext y x i
-    fin_cases i <;> simp [turingDiffusion, turingDiffOp_apply, Matrix.mulVec_diagonal]
+    fin_cases i <;> simp [turingDiffusion, turingDiffOp_apply, Matrix.vecHead, Matrix.vecTail,
+      dotProduct, Fin.sum_univ_two]
   map_add s t := by
     ext y x i
-    have h1 : Real.exp (-(1 / 4) * ((s : ℝ) + t)) =
-        Real.exp (-(1 / 4) * s) * Real.exp (-(1 / 4) * t) := by
-      rw [← Real.exp_add]; ring_nf
-    have h2 : Real.exp (-(1 / 2) * ((s : ℝ) + t)) =
-        Real.exp (-(1 / 2) * s) * Real.exp (-(1 / 2) * t) := by
-      rw [← Real.exp_add]; ring_nf
-    simp only [turingDiffusion, NNReal.coe_add, ContinuousLinearMap.comp_apply, turingDiffOp_apply,
-      h1, h2]
-    fin_cases i <;> simp [Matrix.mulVec_diagonal] <;> ring
+    have hexp : ∀ c : ℝ, Real.exp (c * ((s : ℝ) + t)) = Real.exp (c * s) * Real.exp (c * t) :=
+      fun c => by rw [← Real.exp_add]; ring_nf
+    simp only [turingDiffusion, NNReal.coe_add, ContinuousLinearMap.comp_apply,
+      turingDiffOp_apply, hexp]
+    fin_cases i <;> simp [Matrix.vecHead, Matrix.vecTail, dotProduct, Fin.sum_univ_two] <;>
+        ring
   continuous_apply y :=
     (continuous_turingDiffOp.comp NNReal.continuous_coe).clm_apply continuous_const
   locally_bounded _ := ⟨_, fun t _ => norm_turingDiffusion_le t⟩
 
-/-- The orbits of `e^{t (J - D)}` are mild solutions of `w' = -D w + J w` for the diffusion
-semigroup `e^{-t D}`: `S t y = e^{-t D} y + ∫₀ᵗ e^{-(t - s) D} J S s y ds`. -/
+/-- The orbits of the stand-in semigroup are mild solutions of the linearized equation for the
+stand-in diffusion semigroup: `S t y = SA t y + ∫₀ᵗ SA (t - s) J S s y ds`. -/
 theorem isMildSolution_turingSemigroup (y : TuringSpace) (T : ℝ) :
     IsMildSolution turingDiffusion (pointwiseMatrix _ turingJ) y T
       fun t => turingSemigroup t.toNNReal y := by
-  have hB : ∀ s, HasDerivAt (fun s => turingOp s y) (pointwiseMatrix _ turingM (turingOp s y))
-      s := by
-    intro s
-    have h := ((Real.hasDerivAt_exp s).smul_const (pointwiseMatrix _ turingP y)).add
-      ((((hasDerivAt_id s).const_mul (-2)).exp).smul_const (pointwiseMatrix _ turingQ y))
-    refine h.congr_deriv ?_
-    ext x i
-    simp only [ContinuousMap.add_apply, ContinuousMap.smul_apply, turingOp_apply,
-      pointwiseMatrix_apply]
-    fin_cases i <;> simp [mulVec, dotProduct, Fin.sum_univ_two] <;> ring
+  have hB := fun s : ℝ =>
+    (((((hasDerivAt_id s).const_mul (-1 : ℝ)).exp.smul_const (turingA₁ y)).add
+      (((hasDerivAt_id s).const_mul (-2 : ℝ)).exp.smul_const (turingA₂ y))).add
+      (((hasDerivAt_id s).const_mul (1 : ℝ)).exp.smul_const (turingA₃ y))).add
+      (((hasDerivAt_id s).const_mul (-18 : ℝ)).exp.smul_const (turingA₄ y))
   have hcont : Continuous fun t : ℝ => turingSemigroup t.toNNReal y :=
     (isC0Semigroup_turingSemigroup.continuous_apply y).comp continuous_real_toNNReal
   refine ⟨hcont.continuousOn, fun t _ => ?_, fun t ht => ?_⟩
@@ -575,18 +680,20 @@ theorem isMildSolution_turingSemigroup (y : TuringSpace) (T : ℝ) :
     have hg : ∀ s, HasDerivAt g (turingDiffOp (t - s) (pointwiseMatrix _ turingJ (turingOp s y)))
         s := by
       intro s
-      -- `d/ds e^{-(t - s) D} v(s) = e^{-(t - s) D} (D v + (J - D) v) = e^{-(t - s) D} J v`
-      have h1 := (((hasDerivAt_id s).const_sub t).const_mul (-(1 / 4) : ℝ)).exp
-      have h2 := (((hasDerivAt_id s).const_sub t).const_mul (-(1 / 2) : ℝ)).exp
-      have hE₀ := (pointwiseMatrix (Icc (0 : ℝ) Real.pi)
-        (Matrix.diagonal ![(1 : ℝ), 0])).hasFDerivAt.comp_hasDerivAt s (hB s)
-      have hE₁ := (pointwiseMatrix (Icc (0 : ℝ) Real.pi)
-        (Matrix.diagonal ![(0 : ℝ), 1])).hasFDerivAt.comp_hasDerivAt s (hB s)
-      refine ((h1.smul hE₀).add (h2.smul hE₁)).congr_deriv ?_
+      -- `d/ds SA (t - s) = SA (t - s) D (1 - P₀)`, `d/ds S s = (J P₀ + (J - D) (1 - P₀)) S s`
+      have h1 := (((hasDerivAt_id s).const_sub t).const_mul (-1 : ℝ)).exp
+      have h2 := (((hasDerivAt_id s).const_sub t).const_mul (-13 : ℝ)).exp
+      have hP := endpointAvg.hasFDerivAt.comp_hasDerivAt s (hB s)
+      have hD₀ := turingD₀.hasFDerivAt.comp_hasDerivAt s (hB s)
+      have hD₁ := turingD₁.hasFDerivAt.comp_hasDerivAt s (hB s)
+      refine ((hP.add (h1.smul hD₀)).add (h2.smul hD₁)).congr_deriv ?_
       ext x i
-      simp only [ContinuousMap.add_apply, ContinuousMap.smul_apply, turingDiffOp_apply,
-        pointwiseMatrix_apply, Function.comp_apply, turingOp_apply]
-      fin_cases i <;> simp [mulVec, dotProduct, Fin.sum_univ_two] <;> ring
+      simp only [ContinuousMap.add_apply, ContinuousMap.smul_apply, Function.comp_apply,
+        turingDiffOp_apply, endpointAvg_apply, turingA₁_apply, turingA₂_apply,
+        turingA₃_apply, turingA₄_apply, turingD₀_apply, turingD₁_apply, pointwiseMatrix_apply,
+        turingOp_apply]
+      fin_cases i <;> simp [endpointAvg_apply, Matrix.vecHead, Matrix.vecTail, dotProduct,
+        Fin.sum_univ_two] <;> ring
     have hgc : Continuous fun s =>
         turingDiffOp (t - s) (pointwiseMatrix _ turingJ (turingOp s y)) :=
       (continuous_turingDiffOp.comp (continuous_const.sub continuous_id)).clm_apply
@@ -604,20 +711,24 @@ theorem isMildSolution_turingSemigroup (y : TuringSpace) (T : ℝ) :
       (hgc.intervalIntegrable 0 t)]
     have hgt : g t = turingOp t y := by
       ext x i
-      fin_cases i <;> simp [g, turingDiffOp_apply, Matrix.mulVec_diagonal]
+      simp only [g, sub_self, turingDiffOp_apply, turingOp_apply]
+      fin_cases i <;> simp [Matrix.vecHead, Matrix.vecTail, dotProduct, Fin.sum_univ_two]
     have hg0 : g 0 = turingDiffOp t y := by
       ext x i
       simp only [g, sub_zero, turingDiffOp_apply, turingOp_apply]
-      fin_cases i <;> simp [mulVec, dotProduct, Fin.sum_univ_two] <;> ring
+      fin_cases i <;> simp [Matrix.vecHead, Matrix.vecTail, dotProduct, Fin.sum_univ_two] <;>
+        ring
     rw [hgt, hg0]
     simp only [turingSemigroup, turingDiffusion, Real.coe_toNNReal _ ht.1]
     abel
 
 /-- **Non-vacuity of `turing_instability_exists_escape_of_mild`** on the diffusion-driven
-example: linear kinetics `f z = J z` (steady state `a = 0`, zero remainder of order `p = 2`),
-stand-in diffusion semigroup `e^{-t D}`, stand-in linearized semigroup and flow
-`e^{t (J - D)}`. -/
-example : ¬ IsUnstableMode turingJ (1 / 4) (1 / 2) 0 ∧ 0 < 1 ∧
+example: linear kinetics `f z = J z` (steady state `a = 0`, zero remainder of order `p = 2`), the
+stand-in diffusion semigroup `P₀ + e^{-t D} (1 - P₀)`, and the stand-in linearized semigroup and
+flow `e^{t J} P₀ + e^{t (J - D)} (1 - P₀)`, which acts on the constants through `J`. -/
+example : (∃ C', ∀ (w : Fin 2 → ℝ) (t : ℝ≥0),
+      ‖turingSemigroup t (neumannMode Real.pi 0 w)‖ ≤ C' * ‖w‖) ∧
+    ¬ IsUnstableMode turingJ 1 13 0 ∧ 0 < 1 ∧
     ∃ ε > 0, ∀ δ > 0, ∃ x : TuringSpace, ‖x - ContinuousMap.const _ 0‖ < δ ∧
       ∃ t : ℝ, 0 ≤ t ∧ ε ≤ ‖turingSemigroup t.toNNReal x - ContinuousMap.const _ 0‖ := by
   have hfc : Continuous fun z : Fin 2 → ℝ => turingJ *ᵥ z := by fun_prop
@@ -626,14 +737,15 @@ example : ¬ IsUnstableMode turingJ (1 / 4) (1 / 2) 0 ∧ 0 < 1 ∧
   have hN : nemytskii (K := Icc (0 : ℝ) Real.pi) (fun z => turingJ *ᵥ z) hfc =
       ⇑(pointwiseMatrix _ turingJ) := by
     funext u; ext x i; rfl
-  refine turing_instability_exists_escape_of_mild (J := turingJ) (du := 1 / 4) (dv := 1 / 2)
-    (L := Real.pi) (n := 1) trace_turingJ det_turingJ (by norm_num) (by norm_num)
+  refine turing_instability_exists_escape_of_mild (J := turingJ) (du := 1) (dv := 13)
+    (L := Real.pi) (n := 1) trace_turingJ det_turingJ zero_le_one (by norm_num)
     Real.pi_pos.le isUnstableMode_turingJ hfc (fun _ => ⟨‖A‖₊, A.lipschitzWith.lipschitzOnWith⟩)
     (a := 0) (by simp) (r := 1) (K := 0) (p := 2) one_pos le_rfl (by norm_num)
     (fun z _ => by simp) (SA := turingDiffusion) (S := turingSemigroup)
     isC0Semigroup_turingDiffusion (fun t => by ext; simp) isC0Semigroup_turingSemigroup
     (T := 1) one_pos (fun y => isMildSolution_turingSemigroup y _)
-    actsByModalODE_turingSemigroup norm_turingSemigroup_le
+    actsByModalODE_turingSemigroup (hmode0 := actsByModalODE_zero_turingSemigroup)
+    norm_turingSemigroup_le
     (by rw [growthRate_turingJ]; norm_num) (Φ := fun t x => turingSemigroup t.toNNReal x)
     (ρ₀ := 1) (R := turingBound * Real.exp 1) one_pos
     (fun x => by simp [isC0Semigroup_turingSemigroup.map_zero])
