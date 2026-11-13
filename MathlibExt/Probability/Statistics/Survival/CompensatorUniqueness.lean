@@ -45,8 +45,9 @@ For T56's `historyFiltration` these are `measurableSet_obsTime_le_history` and
 * **predictable**: `A t` is `ℱ_{t-} = ⨆_{s < t} ℱ s`-measurable (T56's notion; Mathlib's
   `IsStronglyPredictable` needs an `OrderBot` time index, which `ℝ` lacks);
 * **stopped at exit**: `A t = A (t ∧ X)` (see Scope);
-* **of finite variation**: each path has `LocallyBoundedVariationOn` on `ℝ`;
-* **normalized**: each path tends to `0` at `-∞` (the analogue of `A(0) = 0` on `[0, ∞)`).
+* **of finite variation**: almost every path has `LocallyBoundedVariationOn` on `ℝ`;
+* **normalized**: almost every path tends to `0` at `-∞` (the analogue of `A(0) = 0` on
+  `[0, ∞)`).
 
 No hypothesis is put on `N` beyond `N - A` and `N - A'` being martingales.
 
@@ -55,11 +56,11 @@ No hypothesis is put on `N` beyond `N - A` and `N - A'` being martingales.
 * `ae_forall_eq_of_isCompensator`: two such compensators of the same `N` are indistinguishable,
   `∀ᵐ ω, ∀ t, A t ω = A' t ω`.
 * `ae_forall_eq_of_isCompensator_history`: the same for T56's history filtration.
-* `ae_forall_eq_compensator`: under independent censoring, with the hazard measure `Λ` of the law
-  of `T` finite on half-lines, every such compensator equals T56's `compensator`
-  `A(t) = Λ((-∞, t ∧ X])` up to indistinguishability. Its inputs `compensator_min_obsTime`,
-  `monotone_compensator` and `tendsto_compensator_atBot` show that T56's compensator is in the
-  class; `hazardMeasure_Iic_ne_top` gives the finiteness hypothesis when `F[s, ∞) > 0`.
+* `ae_forall_eq_compensator`: under independent censoring, for any law of `T`, every such
+  compensator equals T56's `compensator` `A(t) = Λ((-∞, t ∧ X])` up to indistinguishability. Its
+  inputs `compensator_min_obsTime`, `monotone_compensator`, `tendsto_compensator_atBot` and
+  `ae_hazardMeasure_Iic_obsTime_ne_top` show that T56's compensator is in the class;
+  `hazardMeasure_Iic_ne_top` gives `Λ((-∞, s]) < ∞` when `F[s, ∞) > 0`.
 
 ## Proof
 
@@ -96,7 +97,8 @@ every exit time has `P(X ≥ X ω) > 0` (`ae_measure_Ici_ne_zero`), so `D = 0` a
   (`Mathlib/MeasureTheory/Measure/Continuity.lean`).
 * `historyFiltration`, `history_inter_or_subset`, `measurableSet_obsTime_le_history`,
   `measurable_compensator_strictPast`, `martingale_compensatedProcess`, `compensator_eq`,
-  `ae_measure_Ici_ne_zero` (`MathlibExt/Probability/Statistics/Survival/CountingProcess.lean`).
+  `ae_measure_Ici_ne_zero`, `lintegral_hazardMeasure_Iic_obsTime_lt_top`
+  (`MathlibExt/Probability/Statistics/Survival/CountingProcess.lean`).
 -/
 
 @[expose] public section
@@ -313,8 +315,9 @@ Let `ℱ` be a filtration on `ℝ` and `X` a random time such that `{X > s}` is 
 every `ℱ s`-event either contains `{X > s}` or misses it (nothing is learned before exit; for the
 censoring model these are `measurableSet_obsTime_le_history` and `history_inter_or_subset`). Let
 `A` and `A'` be two compensators of the same process `N`: both are predictable (`A t` is
-`ℱ_{t-}`-measurable), stopped at `X`, of finite variation on compact intervals and normalized by
-`A(-∞) = 0`, and both `N - A`, `N - A'` are martingales. Then `A` and `A'` are indistinguishable. -/
+`ℱ_{t-}`-measurable) and stopped at `X`, almost every path is of finite variation on compact
+intervals and tends to `0` at `-∞`, and both `N - A`, `N - A'` are martingales. Then `A` and
+`A'` are indistinguishable. -/
 theorem ae_forall_eq_of_isCompensator {ℱ : Filtration ℝ m0} {N A A' : ℝ → Ω → ℝ}
     (hX : ∀ s, MeasurableSet[ℱ s] {ω | s < X ω})
     (hpast : ∀ s (B : Set Ω), MeasurableSet[ℱ s] B →
@@ -323,10 +326,10 @@ theorem ae_forall_eq_of_isCompensator {ℱ : Filtration ℝ m0} {N A A' : ℝ �
     (hApred : ∀ t, Measurable[⨆ s < t, ℱ s] (A t))
     (hA'pred : ∀ t, Measurable[⨆ s < t, ℱ s] (A' t))
     (hAstop : ∀ t ω, A t ω = A (min t (X ω)) ω) (hA'stop : ∀ t ω, A' t ω = A' (min t (X ω)) ω)
-    (hAfv : ∀ ω, LocallyBoundedVariationOn (fun t => A t ω) univ)
-    (hA'fv : ∀ ω, LocallyBoundedVariationOn (fun t => A' t ω) univ)
-    (hAlim : ∀ ω, Tendsto (fun t => A t ω) atBot (𝓝 0))
-    (hA'lim : ∀ ω, Tendsto (fun t => A' t ω) atBot (𝓝 0)) :
+    (hAfv : ∀ᵐ ω ∂P, LocallyBoundedVariationOn (fun t => A t ω) univ)
+    (hA'fv : ∀ᵐ ω ∂P, LocallyBoundedVariationOn (fun t => A' t ω) univ)
+    (hAlim : ∀ᵐ ω ∂P, Tendsto (fun t => A t ω) atBot (𝓝 0))
+    (hA'lim : ∀ᵐ ω ∂P, Tendsto (fun t => A' t ω) atBot (𝓝 0)) :
     ∀ᵐ ω ∂P, ∀ t, A t ω = A' t ω := by
   classical
   set D : ℝ → Ω → ℝ := fun t ω => A t ω - A' t ω with hD_def
@@ -392,16 +395,16 @@ theorem ae_forall_eq_of_isCompensator {ℱ : Filtration ℝ m0} {N A A' : ℝ �
   -- Almost every exit time `u = X ω` has `P(X ≥ u) > 0`; there `d = 0` on `(-∞, u]`.
   have hae : ∀ᵐ ω ∂P, (P.map X) (Ici (X ω)) ≠ 0 :=
     ae_of_ae_map hXm.aemeasurable (ae_measure_Ici_ne_zero (P.map X))
-  filter_upwards [hae] with ω hω
+  filter_upwards [hae, hAfv, hA'fv, hAlim, hA'lim] with ω hω hfv hfv' hlim₁ hlim₂
   rw [Measure.map_apply hXm measurableSet_Ici] at hω
   have hu : 0 < P.real {ω' | X ω ≤ X ω'} := ENNReal.toReal_pos hω (measure_ne_top _ _)
-  obtain ⟨M₁, hM₁⟩ := exists_bound_Iic (hAfv ω) (hAlim ω) (X ω)
-  obtain ⟨M₂, hM₂⟩ := exists_bound_Iic (hA'fv ω) (hA'lim ω) (X ω)
+  obtain ⟨M₁, hM₁⟩ := exists_bound_Iic hfv hlim₁ (X ω)
+  obtain ⟨M₂, hM₂⟩ := exists_bound_Iic hfv' hlim₂ (X ω)
   have hbdd : ∀ w ≤ X ω, |d w| ≤ M₁ + M₂ := fun w hw => by
     rw [← hd w ω hw]
     exact (abs_sub _ _).trans (add_le_add (hM₁ w hw) (hM₂ w hw))
   have hlim : Tendsto d atBot (𝓝 0) := by
-    have h := (hAlim ω).sub (hA'lim ω)
+    have h := hlim₁.sub hlim₂
     rw [sub_zero] at h
     exact h.congr' ((eventually_le_atBot (X ω)).mono fun w hw => hd w ω hw)
   have hzero := eq_zero_of_ineq hXm hineq hlim hu hbdd
@@ -418,9 +421,9 @@ variable {T C : Ω → ℝ} (hT : Measurable T) (hC : Measurable C)
 
 include hT hC in
 /-- **Compensator uniqueness in the censoring model.** For the history filtration
-`ℱₜ = σ(N(u), Nᶜ(u) : u ≤ t)` of one subject, two predictable, stopped-at-exit, finite-variation
-compensators `A`, `A'` of the counting process `N` (normalized by `A(-∞) = 0`, with `N - A` and
-`N - A'` martingales) are indistinguishable. -/
+`ℱₜ = σ(N(u), Nᶜ(u) : u ≤ t)` of one subject, two predictable, stopped-at-exit compensators `A`,
+`A'` of the counting process `N` (almost every path of finite variation with `A(-∞) = 0`, and
+`N - A`, `N - A'` martingales) are indistinguishable. -/
 theorem ae_forall_eq_of_isCompensator_history {A A' : ℝ → Ω → ℝ}
     (hA : Martingale (fun t => countingProcess T C t - A t) (historyFiltration hT hC) P)
     (hA' : Martingale (fun t => countingProcess T C t - A' t) (historyFiltration hT hC) P)
@@ -428,10 +431,10 @@ theorem ae_forall_eq_of_isCompensator_history {A A' : ℝ → Ω → ℝ}
     (hA'pred : ∀ t, Measurable[⨆ s < t, historyFiltration hT hC s] (A' t))
     (hAstop : ∀ t ω, A t ω = A (min t (obsTime T C ω)) ω)
     (hA'stop : ∀ t ω, A' t ω = A' (min t (obsTime T C ω)) ω)
-    (hAfv : ∀ ω, LocallyBoundedVariationOn (fun t => A t ω) univ)
-    (hA'fv : ∀ ω, LocallyBoundedVariationOn (fun t => A' t ω) univ)
-    (hAlim : ∀ ω, Tendsto (fun t => A t ω) atBot (𝓝 0))
-    (hA'lim : ∀ ω, Tendsto (fun t => A' t ω) atBot (𝓝 0)) :
+    (hAfv : ∀ᵐ ω ∂P, LocallyBoundedVariationOn (fun t => A t ω) univ)
+    (hA'fv : ∀ᵐ ω ∂P, LocallyBoundedVariationOn (fun t => A' t ω) univ)
+    (hAlim : ∀ᵐ ω ∂P, Tendsto (fun t => A t ω) atBot (𝓝 0))
+    (hA'lim : ∀ᵐ ω ∂P, Tendsto (fun t => A' t ω) atBot (𝓝 0)) :
     ∀ᵐ ω ∂P, ∀ t, A t ω = A' t ω :=
   ae_forall_eq_of_isCompensator (X := obsTime T C)
     (fun s => by
@@ -445,17 +448,19 @@ theorem compensator_min_obsTime (Λ : Measure ℝ) (t : ℝ) (ω : Ω) :
     compensator T C Λ t ω = compensator T C Λ (min t (obsTime T C ω)) ω := by
   rw [compensator_eq, compensator_eq, min_assoc, min_self]
 
-/-- If the hazard measure is finite on half-lines, every compensator path is monotone. -/
-theorem monotone_compensator {Λ : Measure ℝ} (hΛ : ∀ s, Λ (Iic s) ≠ ∞) (ω : Ω) :
+/-- A compensator path with `Λ((-∞, X ω]) < ∞` is monotone. -/
+theorem monotone_compensator {Λ : Measure ℝ} {ω : Ω} (hω : Λ (Iic (obsTime T C ω)) ≠ ∞) :
     Monotone fun t => compensator T C Λ t ω := fun a b hab => by
   simp only [compensator_eq]
-  exact ENNReal.toReal_mono (hΛ _) (measure_mono (Iic_subset_Iic.2 (min_le_min_right _ hab)))
+  exact ENNReal.toReal_mono
+    (ne_top_of_le_ne_top hω (measure_mono (Iic_subset_Iic.2 (min_le_right _ _))))
+    (measure_mono (Iic_subset_Iic.2 (min_le_min_right _ hab)))
 
-/-- If the hazard measure is finite on half-lines, every compensator path tends to `0` at `-∞`. -/
-theorem tendsto_compensator_atBot {Λ : Measure ℝ} (hΛ : ∀ s, Λ (Iic s) ≠ ∞) (ω : Ω) :
+/-- A compensator path with `Λ((-∞, X ω]) < ∞` tends to `0` at `-∞`. -/
+theorem tendsto_compensator_atBot {Λ : Measure ℝ} {ω : Ω} (hω : Λ (Iic (obsTime T C ω)) ≠ ∞) :
     Tendsto (fun t => compensator T C Λ t ω) atBot (𝓝 0) := by
   have h := tendsto_measure_iInter_atBot (μ := Λ) (s := fun t : ℝ => Iic t)
-    (fun _ => measurableSet_Iic.nullMeasurableSet) (fun _ _ h => Iic_subset_Iic.2 h) ⟨0, hΛ 0⟩
+    (fun _ => measurableSet_Iic.nullMeasurableSet) (fun _ _ h => Iic_subset_Iic.2 h) ⟨_, hω⟩
   have hI : (⋂ t : ℝ, Iic t) = ∅ :=
     eq_empty_of_forall_notMem fun x hx => by
       have := mem_iInter.1 hx (x - 1)
@@ -478,24 +483,43 @@ theorem hazardMeasure_Iic_ne_top {F : Measure ℝ} [IsFiniteMeasure F] {s : ℝ}
   · refine setLIntegral_mono measurable_const fun x (hx : x ≤ s) => ?_
     exact ENNReal.inv_le_inv.2 (measure_mono (Ici_subset_Ici.2 hx))
 
+omit [IsFiniteMeasure P] in
 include hT hC in
-/-- **The model compensator is the unique one.** Under independent censoring, with the hazard
-measure `Λ` of the law of `T` finite on half-lines, every predictable, stopped-at-exit,
-finite-variation compensator `A'` of `N` with `A'(-∞) = 0` is indistinguishable from
-`A(t) = Λ((-∞, t ∧ X])`. -/
+/-- Under independent censoring, `Λ((-∞, X]) < ∞` almost surely for the hazard measure `Λ` of the
+law of `T` (from the finite mean `lintegral_hazardMeasure_Iic_obsTime_lt_top`). -/
+theorem ae_hazardMeasure_Iic_obsTime_ne_top [IsProbabilityMeasure P] (hind : IndepFun T C P) :
+    ∀ᵐ ω ∂P, hazardMeasure (P.map T) (Iic (obsTime T C ω)) ≠ ∞ := by
+  have hn : ∀ n : ℕ, ∀ᵐ ω ∂P,
+      hazardMeasure (P.map T) (Iic (n : ℝ) ∩ Iic (obsTime T C ω)) < ∞ := fun n => by
+    refine ae_lt_top' ?_ (lintegral_hazardMeasure_Iic_obsTime_lt_top hT hC hind n).ne
+    simp_rw [Iic_inter_Iic]
+    exact ((Monotone.measurable fun _ _ h => measure_mono (Iic_subset_Iic.2 h)).comp
+      (measurable_const.min (hT.min hC))).aemeasurable
+  filter_upwards [ae_all_iff.2 hn] with ω hω
+  obtain ⟨n, hn⟩ := exists_nat_ge (obsTime T C ω)
+  have := hω n
+  rw [inter_eq_right.2 (Iic_subset_Iic.2 hn)] at this
+  exact this.ne
+
+include hT hC in
+/-- **The model compensator is the unique one.** Under independent censoring, every predictable,
+stopped-at-exit compensator `A'` of `N` with almost every path of finite variation and tending to
+`0` at `-∞` is indistinguishable from `A(t) = Λ((-∞, t ∧ X])`, `Λ` the hazard measure of the law
+of `T`. No condition is put on the law of `T`. -/
 theorem ae_forall_eq_compensator [IsProbabilityMeasure P] (hind : IndepFun T C P)
-    (hΛ : ∀ s, hazardMeasure (P.map T) (Iic s) ≠ ∞) {A' : ℝ → Ω → ℝ}
+    {A' : ℝ → Ω → ℝ}
     (hA' : Martingale (fun t => countingProcess T C t - A' t) (historyFiltration hT hC) P)
     (hA'pred : ∀ t, Measurable[⨆ s < t, historyFiltration hT hC s] (A' t))
     (hA'stop : ∀ t ω, A' t ω = A' (min t (obsTime T C ω)) ω)
-    (hA'fv : ∀ ω, LocallyBoundedVariationOn (fun t => A' t ω) univ)
-    (hA'lim : ∀ ω, Tendsto (fun t => A' t ω) atBot (𝓝 0)) :
+    (hA'fv : ∀ᵐ ω ∂P, LocallyBoundedVariationOn (fun t => A' t ω) univ)
+    (hA'lim : ∀ᵐ ω ∂P, Tendsto (fun t => A' t ω) atBot (𝓝 0)) :
     ∀ᵐ ω ∂P, ∀ t, A' t ω = compensator T C (hazardMeasure (P.map T)) t ω := by
+  have hfin := ae_hazardMeasure_Iic_obsTime_ne_top hT hC hind
   have h := ae_forall_eq_of_isCompensator_history hT hC
     (martingale_compensatedProcess hT hC hind) hA'
     (measurable_compensator_strictPast hT hC _) hA'pred (compensator_min_obsTime _) hA'stop
-    (fun ω => ((monotone_compensator hΛ ω).monotoneOn univ).locallyBoundedVariationOn) hA'fv
-    (tendsto_compensator_atBot hΛ) hA'lim
+    (hfin.mono fun ω hω => ((monotone_compensator hω).monotoneOn univ).locallyBoundedVariationOn)
+    hA'fv (hfin.mono fun ω hω => tendsto_compensator_atBot hω) hA'lim
   filter_upwards [h] with ω hω t
   exact (hω t).symm
 
