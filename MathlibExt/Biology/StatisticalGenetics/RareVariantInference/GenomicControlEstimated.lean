@@ -74,11 +74,10 @@ For any random estimate `L` (mean, median, leave-one-out, ...) and one null scor
   covariances sum to `0`, so some pair of genes has strictly negative covariance as soon as one
   `T_j` is nondegenerate. `covariance_gcStatRV_eq_of_forall_eq`: with equal variances `v` and
   equal pairwise covariances `γ`, `γ = -v / (m - 1)`.
-* `not_isPRDSOn_of_separated`: a general criterion refuting `IsPRDSOn` from a separation of
-  the p-values of two genes, via `IsPRDSOn.measure_inter_mul_le`.
 * `not_isPRDSOn_tailPValue_gcStatRV_two`: for two genes the `χ²₁` p-values of the `T_j` are
   not PRDS when `{T₀ ≥ 1}` and `{T₀ < 1}` both have positive probability and the scores are
-  almost surely not all zero (these hypotheses are needed; the result is not for every law);
+  almost surely not all zero (these hypotheses are needed; the result is not for every law),
+  by the generic separation criterion `MultipleTesting.not_isPRDSOn_of_separated`;
   `not_isPRDSOn_tailPValue_gcStatRV_two_of_indep` discharges this in T38's model with
   independent scores, and `covariance_gcStatRV_two_neg` gives `Cov(T₀, T₁) < 0` there.
 
@@ -113,8 +112,8 @@ not formalized here.
 Reused, not redefined: `GenomicControl.chiSqOneTail`, `chiSqOneTail_eq_gaussianReal`,
 `chiSqOneTail_lt_of_lt`, `measure_reject_eq_chiSqOneTail`, `CommonInflationModel` (T38);
 `RareVariantInference.MultipleTesting.IsTailCalibratedFamily`, `tailPValue` (T39);
-`MultipleTesting.IsPRDSOn`, `IsPRDSOn.measure_inter_mul_le`; from Mathlib, `gaussianReal`,
-`gaussianReal_apply`, `gaussianReal_absolutelyContinuous`, `HasLaw`,
+`MultipleTesting.IsPRDSOn`, `MultipleTesting.not_isPRDSOn_of_separated` (`BenjaminiHochberg`);
+from Mathlib, `gaussianReal`, `gaussianReal_apply`, `gaussianReal_absolutelyContinuous`, `HasLaw`,
 `indepFun_iff_map_prod_eq_prod_map_map`, `Measure.prod_swap`, `variance_fun_sum`,
 `covariance_self`, `ae_eq_integral_of_variance_eq_zero`, `Real.pi_lt_d2`. A search of
 `MathlibExt` for an estimated genomic-control factor or for coupled statistics with a shared
@@ -573,62 +572,6 @@ theorem covariance_gcStatRV_eq_of_forall_eq [IsProbabilityMeasure P] {Z : Fin m 
   have := (mul_eq_zero.mp hsum).resolve_left hm0
   linarith
 
-/-- **A separation criterion that refutes PRDS.** Suppose gene `k`'s p-value is at least `u`
-(almost surely) whenever `p i ≤ s`, and below `u` whenever `s < p i ≤ t`, with both events of
-positive probability. Then the increasing set `D = {x | u ≤ x k}` has
-`P(P ∈ D | p i ≤ t) < P(P ∈ D | p i ≤ s)`, contradicting `IsPRDSOn.measure_inter_mul_le`.
-
-This lemma is generic and belongs in
-`MathlibExt/Probability/Statistics/MultipleTesting/BenjaminiHochberg.lean`; it lives here only
-because that file is outside this task's ownership, and a follow-up task will move it. -/
-theorem not_isPRDSOn_of_separated {μ : Measure Ω} [IsFiniteMeasure μ] {p : Fin m → Ω → ℝ}
-    (hp : ∀ i, Measurable (p i)) {H0 : Finset (Fin m)} {i k : Fin m} (hi : i ∈ H0)
-    {s t u : ℝ} (hst : s ≤ t) (hA : μ {ω | p i ω ≤ s} ≠ 0)
-    (hB : μ {ω | s < p i ω ∧ p i ω ≤ t} ≠ 0) (hAu : ∀ᵐ ω ∂μ, p i ω ≤ s → u ≤ p k ω)
-    (hBu : ∀ᵐ ω ∂μ, s < p i ω → p i ω ≤ t → p k ω < u) :
-    ¬ IsPRDSOn μ p H0 := by
-  intro h
-  have hD : MeasurableSet {x : Fin m → ℝ | u ≤ x k} :=
-    measurableSet_le measurable_const (measurable_pi_apply k)
-  have hup : IsUpperSet {x : Fin m → ℝ | u ≤ x k} := fun x y hxy hx => le_trans hx (hxy k)
-  have key := h.measure_inter_mul_le hp hi hD hup hst
-  have hDs : μ ({ω | (fun j => p j ω) ∈ {x : Fin m → ℝ | u ≤ x k}} ∩ {ω | p i ω ≤ s}) =
-      μ {ω | p i ω ≤ s} := by
-    refine measure_congr (Filter.eventuallyEqSet_iff.2 ?_)
-    filter_upwards [hAu] with ω hω
-    simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
-    exact ⟨fun h => h.2, fun h => ⟨hω h, h⟩⟩
-  have hDt : μ ({ω | (fun j => p j ω) ∈ {x : Fin m → ℝ | u ≤ x k}} ∩ {ω | p i ω ≤ t}) =
-      μ {ω | p i ω ≤ s} := by
-    refine measure_congr (Filter.eventuallyEqSet_iff.2 ?_)
-    filter_upwards [hAu, hBu] with ω hωA hωB
-    simp only [Set.mem_inter_iff, Set.mem_ofPred_eq]
-    refine ⟨fun h => ?_, fun h => ⟨hωA h, h.trans hst⟩⟩
-    by_contra hs
-    exact absurd h.1 (not_le.2 (hωB (not_le.1 hs) h.2))
-  have hBm : MeasurableSet {ω | s < p i ω ∧ p i ω ≤ t} :=
-    (measurableSet_lt measurable_const (hp i)).inter (measurableSet_le (hp i) measurable_const)
-  have hT : μ {ω | p i ω ≤ t} = μ {ω | p i ω ≤ s} + μ {ω | s < p i ω ∧ p i ω ≤ t} := by
-    rw [← measure_union _ hBm]
-    · congr 1
-      ext ω
-      simp only [Set.mem_union, Set.mem_ofPred_eq]
-      constructor
-      · intro h
-        by_cases hs : p i ω ≤ s
-        · exact Or.inl hs
-        · exact Or.inr ⟨not_le.1 hs, h⟩
-      · rintro (h | h)
-        · exact h.trans hst
-        · exact h.2
-    · exact Set.disjoint_left.2 fun ω h1 h2 => absurd h1 (not_le.2 h2.1)
-  rw [hDs, hDt, hT, mul_add] at key
-  have hfin : μ {ω | p i ω ≤ s} * μ {ω | p i ω ≤ s} ≠ ⊤ :=
-    ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)
-  have hzero : μ {ω | p i ω ≤ s} * μ {ω | s < p i ω ∧ p i ω ≤ t} ≤ 0 :=
-    ENNReal.le_of_add_le_add_left hfin (by simpa using key)
-  exact (mul_ne_zero hA hB) (le_antisymm hzero (zero_le))
-
 /-- With two genes the coupling is total: `T₀ + T₁ = 2` whenever some score is nonzero. -/
 theorem gcStat_two_add (z : Fin 2 → ℝ) (h : ∑ k, z k ^ 2 ≠ 0) : gcStat z 0 + gcStat z 1 = 2 := by
   have := sum_gcStat z h
@@ -656,7 +599,7 @@ theorem not_isPRDSOn_tailPValue_gcStatRV_two [IsFiniteMeasure P] {Z : Fin 2 → 
     exact absurd h (not_lt.2 (antitone_chiSqOneTailReal (not_lt.1 hle)))
   refine not_isPRDSOn_of_separated (i := 0) (k := 1) (s := G 1) (t := G 0) (u := G 1)
     (fun i => antitone_chiSqOneTailReal.measurable.comp (measurable_gcStatRV hZ i)) h0
-    (antitone_chiSqOneTailReal zero_le_one) ?_ ?_ ?_ ?_
+    ?_ ?_ ?_ ?_
   · refine fun h => hA (measure_mono_null (fun ω hω => ?_) h)
     exact antitone_chiSqOneTailReal hω
   · refine fun h => hB (measure_mono_null (fun ω hω => ?_) h)

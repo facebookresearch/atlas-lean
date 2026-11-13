@@ -204,22 +204,4 @@ example : gaussianReal 0 2 {x | 1 < x ^ 2 / 4} < chiSqOneTail 1 :=
   measure_lt_div_lt_chiSqOneTail_of_mul_le two_ne_zero HasLaw.id (L := fun _ => 4)
     (κ := 2) (by norm_num) (fun _ => by norm_num) one_pos
 
-/-! ### The PRDS separation criterion on a counter-monotone pair
-
-Two equally likely outcomes; `p₁ = 1 - p₀`. -/
-
-/-- A counter-monotone pair of p-values on `Bool`. -/
-def pBool : Fin 2 → Bool → ℝ := ![fun b => if b then 0 else 1, fun b => if b then 1 else 0]
-
-example : ¬ IsPRDSOn (Measure.dirac true + Measure.dirac false) pBool {0} := by
-  refine not_isPRDSOn_of_separated (i := 0) (k := 1) (s := 0) (t := 1) (u := 1 / 2)
-    (fun _ => measurable_of_countable _) (by simp) zero_le_one ?_ ?_
-    (ae_of_all _ fun b hb => ?_) (ae_of_all _ fun b h1 _ => ?_)
-  · have : {b | pBool 0 b ≤ 0} = {true} := by ext b; cases b <;> simp [pBool]
-    simp [this]
-  · have : {b | 0 < pBool 0 b ∧ pBool 0 b ≤ 1} = {false} := by ext b; cases b <;> simp [pBool]
-    simp [this]
-  · revert hb; cases b <;> norm_num [pBool]
-  · cases b <;> simp [pBool] at h1 ⊢
-
 end MathlibExtTest.Biology.StatisticalGenetics.RareVariantInference.GenomicControlEstimated
