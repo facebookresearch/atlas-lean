@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.VonNeumannDoubleCommutant` — vonNeumann_doubleCommutant_tfae (manifest `manifests/problems/vonNeumann_doubleCommutant_tfae.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.VonNeumannDoubleCommutant` —
+vonNeumann_doubleCommutant_tfae (manifest `manifests/problems/vonNeumann_doubleCommutant_tfae.toml`,
+rev 1, submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Analysis.VonNeumannDoubleCommutantWanted` namespace. Mathematical
-statements are unchanged. Source: J. von Neumann, Zur Algebra der Funktionaloperationen und Theorie der normalen Operatoren, Math. Ann. 102 (1930), 370-427.
+and placed the declarations in the `MathlibExt.Analysis.VonNeumannDoubleCommutantWanted` namespace.
+Mathematical
+statements are unchanged. Source: J. von Neumann, Zur Algebra der Funktionaloperationen und Theorie
+der normalen Operatoren, Math. Ann. 102 (1930), 370-427.
 -/
 module
 
@@ -59,7 +63,9 @@ The WOT and SOT live on irreducible type copies of `H →L[ℂ] H`, so each clos
 condition is stated as the closedness of the image of `S` under the canonical inclusion
 into the corresponding type copy.
 -/
-/-- Source: J. von Neumann, *Zur Algebra der Funktionaloperationen und Theorie der normalen Operatoren*, Math. Ann. 102 (1929) (double commutant theorem). Via leanprover/lean-eval@38361be, problem `vonneumann_double_commutant`. -/
+/-- Source: J. von Neumann, *Zur Algebra der Funktionaloperationen und Theorie der normalen
+Operatoren*, Math. Ann. 102 (1929) (double commutant theorem). Via leanprover/lean-eval@38361be,
+problem `vonneumann_double_commutant`. -/
 public theorem_wanted vonNeumann_doubleCommutant_tfae
     {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
     (S : StarSubalgebra ℂ (H →L[ℂ] H)) :

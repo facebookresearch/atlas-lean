@@ -16,7 +16,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.Data.Complex.Basic
+public import Mathlib.Basic.Complex.Basic
 public import Mathlib.Topology.Algebra.InfiniteSum.Basic
 public import Mathlib.Topology.MetricSpace.Basic
 
