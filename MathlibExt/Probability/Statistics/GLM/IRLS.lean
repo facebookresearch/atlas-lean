@@ -20,7 +20,9 @@ public import Mathlib.Topology.Algebra.Module.FiniteDimension
 Consider a generalized linear model with design matrix `X`, responses `y`, linear predictor
 `η = X β`, mean function `mean = b'` and variance function `weight = b''` of a natural
 exponential family with dispersion `1`. With the *canonical link* (natural parameter `θ = η`),
-the log-likelihood `ℓ(β) = ∑ᵢ (yᵢ ηᵢ - b(ηᵢ))` has
+the log-likelihood is `ℓ(β) = ∑ᵢ (yᵢ ηᵢ - b(ηᵢ))` up to the base-measure term `∑ᵢ c(yᵢ)`, which
+does not depend on `β` (for example `c(y) = -log (y!)` for the Poisson family). That term does
+not affect the derivatives, so `ℓ` has
 
 * score `∇ℓ(β) = Xᵀ (y - μ(β))`, where `μᵢ(β) = mean (X β)ᵢ`, and
 * Hessian `∇²ℓ(β) = -Xᵀ W(β) X`, where `W(β) = diag (weight (X β)ᵢ)`.
@@ -31,10 +33,13 @@ taken as explicit hypotheses (`IsCanonicalScoreHessian`). The one analytic input
 canonical link, `mean' = weight`, is shown to produce the Hessian identity from the score
 identity (`hasFDerivAt_canonicalScore`).
 
-Under these hypotheses the Newton–Raphson update `β - (∇²ℓ)⁻¹ ∇ℓ` is a weighted least-squares
-fit of the *working response* `zᵢ = ηᵢ + (yᵢ - μᵢ) / wᵢ` on `X` with weights `wᵢ`. Iterating
-it is the IRLS algorithm of Nelder and Wedderburn, and its fixed points are exactly the score
-roots.
+Under these hypotheses, at a `β` where the IRLS weights `wᵢ = weight (X β)ᵢ` are nonzero and
+the weighted Gram matrix `Xᵀ W(β) X` is invertible (`IsUnit`), the Newton–Raphson update
+`β - (∇²ℓ)⁻¹ ∇ℓ` is a weighted least-squares fit of the *working response*
+`zᵢ = ηᵢ + (yᵢ - μᵢ) / wᵢ` on `X` with weights `wᵢ`, and `β` is a fixed point of this update
+exactly when the score vanishes at `β`. Iterating the update is the IRLS algorithm of Nelder
+and Wedderburn. Without invertibility the fixed-point characterization fails in both
+directions; the tests give singular-Gram counterexamples.
 
 ## Main definitions
 
@@ -48,14 +53,18 @@ roots.
 
 ## Main results
 
-* `wlsEstimate_eq`: closed form `(Xᵀ W X)⁻¹ Xᵀ W z` of the weighted least-squares estimate.
-* `normal_eq_iff_eq_wlsEstimate`: the WLS estimate is the unique solution of the weighted
-  normal equations `Xᵀ W (z - X b) = 0`.
-* `wrss_wlsEstimate_le`: with nonnegative weights the WLS estimate minimizes the weighted
-  residual sum of squares.
-* `newtonStep_eq_irlsStep`: the Newton step equals the IRLS (weighted least-squares) step.
-* `newtonIterate_eq_irlsIterate`: Newton–Raphson and IRLS produce the same iterates.
-* `irlsStep_eq_self_iff`: `β` is a fixed point of IRLS iff the score vanishes at `β`.
+* `wlsEstimate_eq`: for nonzero weights, the closed form `(Xᵀ W X)⁻¹ Xᵀ W z` of the weighted
+  least-squares estimate.
+* `normal_eq_iff_eq_wlsEstimate`: for nonzero weights and an invertible weighted Gram matrix,
+  the WLS estimate is the unique solution of the weighted normal equations `Xᵀ W (z - X b) = 0`.
+* `wrss_wlsEstimate_le`: with nonzero, nonnegative weights and an invertible weighted Gram
+  matrix, the WLS estimate minimizes the weighted residual sum of squares.
+* `newtonStep_eq_irlsStep`: with nonzero weights and an invertible weighted Gram matrix at `β`,
+  the Newton step equals the IRLS (weighted least-squares) step.
+* `newtonIterate_eq_irlsIterate`: when those assumptions hold at every point, Newton–Raphson
+  and IRLS produce the same iterates.
+* `irlsStep_eq_self_iff`: with nonzero weights and an invertible weighted Gram matrix at `β`,
+  `β` is a fixed point of IRLS iff the score vanishes at `β`.
 * `hasFDerivAt_canonicalScore`: if `mean` has derivative `weight`, the canonical score
   `β ↦ Xᵀ (y - μ(β))` has derivative `-Xᵀ W(β) X`.
 * `IsCanonicalScoreHessian.hasFDerivAt`: under the canonical-link hypotheses and `mean' = weight`,
@@ -260,8 +269,8 @@ theorem irlsStep_eq_self_iff (β : k → ℝ) (hw : ∀ i, irlsWeights weight X 
   rw [irlsStep, eq_comm, ← normal_eq_iff_eq_wlsEstimate hw hG, mul_sub,
     weights_mul_workingResponse β hw, add_sub_cancel_left]
 
-/-- Fixed points of IRLS are exactly the zeros of the score under the canonical-link
-hypotheses. -/
+/-- Under the canonical-link hypotheses, with nonzero weights and an invertible weighted Gram
+matrix at `β`, `β` is a fixed point of IRLS iff the score vanishes at `β`. -/
 theorem irlsStep_eq_self_iff_score_eq_zero {score : (k → ℝ) → k → ℝ}
     {hess : (k → ℝ) → Matrix k k ℝ} (h : IsCanonicalScoreHessian X y mean weight score hess)
     (β : k → ℝ) (hw : ∀ i, irlsWeights weight X β i ≠ 0)
