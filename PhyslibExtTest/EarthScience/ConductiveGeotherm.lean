@@ -14,7 +14,7 @@ import PhyslibExt.EarthScience.ConductiveGeotherm
 
 Concrete consumers of `PhyslibExt.EarthScience.ConductiveGeotherm`:
 `Ts = 0`, `Tb = 1300`, `L = 100`, `k = 3`, `H = 0.02` (so `T(50) = 658.33…`,
-`T'(50) = 13 - 1/3`, `T'' = -0.02/3`), plus the zero-production boundary.
+`T'(50) = 13`, `T'' = -0.02/3`), plus the zero-production boundary.
 
 ## i. Overview
 
@@ -41,12 +41,13 @@ example : ((0 : ℝ) + ((1300 - 0) / 100 + 0.02 * 100 / (2 * 3)) * 0
       - 0.02 * 100 ^ 2 / (2 * 3)) = 1300 :=
   EarthScience.geotherm_boundary (Ts := 0) (Tb := 1300) (L := 100) (k := 3) (H := 0.02) (by norm_num) (by norm_num)
 
-/-- Numeric geotherm: first derivative at `d = 50`. -/
+/-- Numeric geotherm: first derivative `13` at `d = 50`. -/
 example : HasDerivAt
     (fun (d : ℝ) => (0 : ℝ) + ((1300 - 0) / 100 + 0.02 * 100 / (2 * 3)) * d
       - 0.02 * d ^ 2 / (2 * 3))
-    ((1300 - 0) / 100 + 0.02 * 100 / (2 * 3) - 0.02 * 50 / 3) 50 :=
-  EarthScience.geotherm_hasDerivAt (Ts := 0) (Tb := 1300) (L := 100) (k := 3) (H := 0.02) (d := 50)
+    13 50 :=
+  (EarthScience.geotherm_hasDerivAt (Ts := 0) (Tb := 1300) (L := 100) (k := 3) (H := 0.02)
+    (d := 50)).congr_deriv (by norm_num)
 
 /-- Numeric geotherm: second derivative and ODE at `d = 50`. -/
 example : HasDerivAt
