@@ -42,10 +42,12 @@ contribute little to the sums, which is how the discreteness is exploited.
   false-null p-values are arbitrary apart from measurability and independence.
 * `F_i(t) / (1 - F_i(t)) = ∞` when `F_i(t) = 1`, so the defining set of `τ_m` also requires
   `F_i(t) < 1` for every `i`; Lean's `x / 0 = 0` would otherwise accept such `t`.
-* Döhler–Durand–Roquain assume `0 ∈ 𝒜` and `F_i(0) = 0`, so `t = 0` always qualifies. Here `0` is
-  inserted into both defining sets, which changes nothing under their assumption and makes the
-  maxima total. `dbhSUCritical α F A k` is defined by the second formula for every `k`; at `k = m`
-  it equals `τ_m` (`dbhSUCritical_self`), as the first formula requires.
+* `0` is adjoined to both defining sets as a sentinel, not as a point of the support: it
+  implements the convention that the maximum of an empty candidate set is `0`, and makes the
+  maxima total. With `F_i(0) = 0` (so `0` carries no null mass and is not a support point),
+  `t = 0` satisfies both defining inequalities (`dbhSUCritical_spec`). `dbhSUCritical α F A k` is
+  defined by the second formula for every `k`; at `k = m` it equals `τ_m` (`dbhSUCritical_self`),
+  as the first formula requires.
 
 ## Main results
 
@@ -455,7 +457,8 @@ noncomputable def dbhSULastCritical (α : ℝ) (F : Fin m → ℝ → ℝ) (A : 
     (Finset.insert_nonempty _ _)
 
 /-- The `k`-th critical value `τ_k` of [DBH-SU]: the largest `t ∈ A ∪ {0}` with `t ≤ τ_m` and
-`(1/m) ∑ᵢ F i t / (1 - F i τ_m) ≤ α k / m`. At `k = m` this is `τ_m` (`dbhSUCritical_self`). -/
+`(1/m) ∑ᵢ F i t / (1 - F i τ_m) ≤ α k / m` (`0` if no `t ∈ A` qualifies). At `k = m` this is
+`τ_m` (`dbhSUCritical_self`). -/
 noncomputable def dbhSUCritical (α : ℝ) (F : Fin m → ℝ → ℝ) (A : Finset ℝ) (k : ℕ) : ℝ :=
   (insert 0 (A.filter fun t => t ≤ dbhSULastCritical α F A ∧
     (1 / m : ℝ) * ∑ i, F i t / (1 - F i (dbhSULastCritical α F A)) ≤ α * k / m)).max'

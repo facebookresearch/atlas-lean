@@ -21,7 +21,8 @@ namespace MathlibExtTest.Probability.Statistics.MultipleTesting.DiscreteBH
 
 Hypothesis `0` has an exact p-value with atoms `1/25` (mass `1/25`) and `1`; hypothesis `1` cannot
 reach significance below `1/2` (atoms `1/2` and `1`). The overall support is
-`A = {0, 1/25, 1/2, 1}`. -/
+`A = {1/25, 1/2, 1}`. Both null CDFs vanish at `0`, so `0` is not a support point; it enters the
+critical values only as the sentinel that `dbhSULastCritical` and `dbhSUCritical` adjoin. -/
 
 /-- Null CDF of hypothesis `0`: atoms at `1/25` and `1`. -/
 noncomputable def nullCDF0 (t : ℝ) : ℝ := if t < 1 / 25 then 0 else if t < 1 then 1 / 25 else 1
@@ -33,7 +34,7 @@ noncomputable def nullCDF1 (t : ℝ) : ℝ := if t < 1 / 2 then 0 else if t < 1 
 noncomputable def Fex : Fin 2 → ℝ → ℝ := ![nullCDF0, nullCDF1]
 
 /-- The overall p-value support. -/
-noncomputable def Aex : Finset ℝ := {0, 1 / 25, 1 / 2, 1}
+noncomputable def Aex : Finset ℝ := {1 / 25, 1 / 2, 1}
 
 /-- Observed p-values `(1/25, 1)`. -/
 noncomputable def pex : Fin 2 → ℝ := ![1 / 25, 1]
@@ -59,8 +60,7 @@ theorem last_eq : dbhSULastCritical (1 / 20) Fex Aex = 1 / 25 := by
     simp only [Aex, Finset.mem_insert, Finset.mem_filter, Finset.mem_singleton] at hy
     rcases hy with rfl | ⟨hy, h⟩
     · norm_num
-    · rcases hy with rfl | rfl | rfl | rfl
-      · norm_num
+    · rcases hy with rfl | rfl | rfl
       · norm_num
       · norm_num [Fex, nullCDF0, nullCDF1, Fin.sum_univ_two, Fin.forall_fin_two] at h
       · norm_num [Fex, nullCDF0, nullCDF1, Fin.sum_univ_two, Fin.forall_fin_two] at h
