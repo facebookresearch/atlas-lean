@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.Dynamics.SystemsBiology
+public import MathlibExt.Topology.Algebra.InfiniteSum.ProdPi
 public import Mathlib.Analysis.SpecialFunctions.Exponential
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Probability.IdentDistrib
@@ -66,22 +67,26 @@ Ergodic theory of regenerative processes (for a process `X` on any state space, 
 
 The ergodic theorem for complex-balanced networks:
 
-* `ergodic_of_isComplexBalanced`: for a complex-balanced `c > 0` and the stochastic chain
-  started from `π_c`, non-explosion, the forward-equation step and regeneration (the hypotheses
-  below) give positive recurrence and almost sure convergence of the time averages of every
-  bounded observable `f` to `∑ₓ π_c(x) f(x)`.
+* `ergodic_of_isComplexBalanced`: for nonnegative rate constants `κ`, a complex-balanced
+  `c > 0` and the stochastic chain started from `π_c`, non-explosion, the forward-equation step
+  and regeneration (the hypotheses below) give positive recurrence and almost sure convergence
+  of the time averages of every bounded observable `f` to `∑ₓ π_c(x) f(x)`.
 * `ergodic_of_isComplexBalanced_of_identDistrib`: the same limit from any start whose cycles
   have the stationary cycle laws.
 
 ## Hypotheses taken, not proved
 
-The repository has no countable-state continuous-time Markov chain: the chains in
-`MathlibExt.Probability.Process.ContinuousTimeMarkovChain` live on finite state spaces, while
-`ℕ^S` is infinite. The chain `X` is therefore taken as given, a jointly measurable path process
-`ℝ → Ω → (S → ℕ)`, and three standard properties of it are explicit hypotheses:
+The chains in `MathlibExt.Probability.Process.ContinuousTimeMarkovChain` live on finite state
+spaces, while `ℕ^S` is infinite; `MathlibExt.Biology.Dynamics.StochasticCRNNonExplosion` builds
+the countable-state jump–hold chain of a stochastic reaction network and proves its
+non-explosion, but not the forward-equation step or the regeneration used here. The chain `X` is
+therefore taken as given, a jointly measurable path process `ℝ → Ω → (S → ℕ)`, and three
+standard properties of it are explicit hypotheses:
 
-* `NoExplosion P X`: finite-time blow-up has probability `0`. This is the conclusion of the
-  sibling non-explosion task (Foster–Lyapunov criteria), which is not imported.
+* `NoExplosion P X`: finite-time blow-up has probability `0`. `StochasticCRNNonExplosion`
+  proves non-explosion of its chain from a Foster–Lyapunov drift bound, in the form that the jump
+  times tend to `∞`; that file is not imported, and the two formulations are not connected
+  here.
 * `htransfer`: under non-explosion, a probability solution of the stationary master equation,
   used as the initial law, is a stationary law of the chain (`π Q = 0 ⇒ π P(t) = π`; Norris
   1997, Theorem 3.5.5). For explosive chains this step fails.
@@ -142,7 +147,8 @@ theorem fire_eq_iff {r : ρ} {w x : S → ℕ} (hw : N.src r ≤ w) :
 equation `p Q = 0`) of the stochastic mass-action chain with rate constants `κ`: at every state
 `x` the probability flux out, `p x ∑_r λ_r(x)`, equals the flux in, one term
 `p w λ_r(w)` for each reaction `r` with `prod r ≤ x` from its unique predecessor
-`w = unfire N r x` (`fire_eq_iff`). -/
+`w = unfire N r x` (`fire_eq_iff`). The equation is defined for all real `κ`; it is the master
+equation of a chain when `κ ≥ 0`, as `ergodic_of_isComplexBalanced` assumes. -/
 def IsStationaryMasterSolution [Fintype S] [Fintype ρ] (κ : ρ → ℝ) (p : (S → ℕ) → ℝ) : Prop :=
   ∀ x, p x * ∑ r, propensity N κ r x =
     ∑ r ∈ univ.filter (fun r => N.prod r ≤ x), p (unfire N r x) * propensity N κ r (unfire N r x)
@@ -151,7 +157,7 @@ def IsStationaryMasterSolution [Fintype S] [Fintype ρ] (κ : ρ → ℝ) (p : (
 constants `κ`, the product-form Poisson weights `π_c(x) = ∏_s c_s^{x_s} e^{-c_s} / x_s!`
 (`poissonWeight`) solve the stationary chemical master equation at every state of `ℕ^S`.
 This is `poissonWeight_mul_sum_propensity` (Anderson, Craciun & Kurtz 2010, Theorem 4.1),
-restated as the predicate used below. -/
+restated as the predicate used below; as an algebraic identity it holds for all real `κ`. -/
 theorem isStationaryMasterSolution_poissonWeight [Fintype S] [Fintype ρ] {κ : ρ → ℝ}
     {c : S → ℝ} (h : N.IsComplexBalanced κ c) :
     IsStationaryMasterSolution N κ (poissonWeight c) :=
@@ -169,40 +175,12 @@ theorem poissonWeight_nonneg [Fintype S] {c : S → ℝ} (hc : ∀ s, 0 ≤ c s)
 
 /-! ### The product-form law is a probability law -/
 
-/-- A product of nonnegative summable families over a finite index set is summable on
-`S → ℕ`, with the product of the sums. -/
-theorem hasSum_prod_pi [Fintype S] {g : S → ℕ → ℝ} {a : S → ℝ} (hg : ∀ s n, 0 ≤ g s n)
-    (ha : ∀ s, HasSum (g s) (a s)) :
-    HasSum (fun x : S → ℕ => ∏ s, g s (x s)) (∏ s, a s) := by
-  classical
-  refine hasSum_of_isLUB_of_nonneg _ (fun x => Finset.prod_nonneg fun s _ => hg s _) ⟨?_, ?_⟩
-  · rintro _ ⟨T, rfl⟩
-    obtain ⟨K, hK⟩ : ∃ K : ℕ, ∀ x ∈ T, ∀ s, x s < K :=
-      ⟨T.sup (fun x => ∑ s, x s) + 1, fun x hx s => Nat.lt_succ_of_le
-        ((Finset.single_le_sum (fun _ _ => Nat.zero_le _) (Finset.mem_univ s)).trans
-          (Finset.le_sup (f := fun x => ∑ s, x s) hx))⟩
-    have hsub : T ⊆ Fintype.piFinset fun _ => Finset.range K := fun x hx =>
-      Fintype.mem_piFinset.2 fun s => Finset.mem_range.2 (hK x hx s)
-    calc ∑ x ∈ T, ∏ s, g s (x s)
-        ≤ ∑ x ∈ Fintype.piFinset (fun _ => Finset.range K), ∏ s, g s (x s) :=
-          Finset.sum_le_sum_of_subset_of_nonneg hsub fun x _ _ =>
-            Finset.prod_nonneg fun s _ => hg s _
-      _ = ∏ s, ∑ n ∈ Finset.range K, g s n := (Finset.prod_univ_sum _ _).symm
-      _ ≤ ∏ s, a s := Finset.prod_le_prod₀ (fun s _ => Finset.sum_nonneg fun n _ => hg s n)
-          (fun s _ => sum_le_hasSum _ (fun n _ => hg s n) (ha s))
-  · intro b hb
-    have hlim : Filter.Tendsto (fun K : ℕ => ∏ s, ∑ n ∈ Finset.range K, g s n) Filter.atTop
-        (nhds (∏ s, a s)) :=
-      tendsto_finsetProd _ fun s _ => (ha s).tendsto_sum_nat
-    refine le_of_tendsto' hlim fun K => ?_
-    rw [Finset.prod_univ_sum]
-    exact hb ⟨_, rfl⟩
-
 /-- For nonnegative means `c`, the product-form Poisson weights sum to `1` over all of `ℕ^S`:
 `π_c` is a probability law on the whole (infinite) state space. -/
 theorem hasSum_poissonWeight [Fintype S] {c : S → ℝ} (hc : ∀ s, 0 ≤ c s) :
     HasSum (poissonWeight c) 1 := by
-  have h := hasSum_prod_pi (g := fun s n => c s ^ n * Real.exp (-c s) / n.factorial)
+  have h := MetaMathlibExt.hasSum_prod_pi
+    (f := fun s n => c s ^ n * Real.exp (-c s) / n.factorial)
     (a := fun _ => 1) (fun s n => by have := hc s; positivity) fun s => by
       have h1 : HasSum (fun n : ℕ => c s ^ n / n.factorial) (Real.exp (c s)) := by
         rw [Real.exp_eq_exp_ℝ]; exact NormedSpace.expSeries_div_hasSum_exp (c s)
@@ -826,9 +804,9 @@ theorem integral_countLaw [Finite S] {p : (S → ℕ) → ℝ} (hp : ∀ x, 0 �
   rw [measureReal_def, countLaw_singleton, ENNReal.toReal_ofReal (hp x), smul_eq_mul]
 
 /-- **Non-explosion** of a path process on `ℕ^S`: almost surely, the total molecule count
-stays bounded on every finite time interval (no blow-up in finite time). This is the
-conclusion of the Foster–Lyapunov criteria of the sibling task on non-explosion of
-stochastic reaction networks, used here only as a hypothesis. -/
+stays bounded on every finite time interval (no blow-up in finite time). It is used here only
+as a hypothesis; `MathlibExt.Biology.Dynamics.StochasticCRNNonExplosion` proves non-explosion,
+in the form that the jump times tend to `∞`, for the chain it constructs. -/
 def NoExplosion [Fintype S] {Ω : Type*} {_ : MeasurableSpace Ω} (P : Measure Ω)
     (X : ℝ → Ω → (S → ℕ)) : Prop :=
   ∀ᵐ ω ∂P, ∀ t, BddAbove ((fun s => ∑ i, X s ω i) '' Set.Icc 0 t)
@@ -838,11 +816,12 @@ variable [Fintype S] [Fintype ρ] {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : M
 
 /-- **Ergodic theorem for complex-balanced stochastic reaction networks.**
 
-Let the concentrations `c > 0` be complex balanced for the rate constants `κ`, and let `X` be
-the stochastic mass-action chain of the network on `ℕ^S`, started from the product-form
+Let the concentrations `c > 0` be complex balanced for the nonnegative rate constants `κ`
+(`_hκ`, so that the propensities `propensity N κ r x` are nonnegative jump rates), and let `X`
+be the stochastic mass-action chain of the network on `ℕ^S`, started from the product-form
 Poisson law `π_c` (`hinit`). Assume
 
-* `hnonexp`: the chain does not explode (the sibling non-explosion task's conclusion);
+* `hnonexp`: the chain does not explode (`NoExplosion`);
 * `htransfer`: for this chain, non-explosion makes every probability solution of the
   stationary master equation, used as the initial law, a stationary law of the chain (the
   forward-equation step `π Q = 0 ⇒ π P(t) = π` of Norris 1997, Theorem 3.5.5, which fails for
@@ -852,13 +831,14 @@ Poisson law `π_c` (`hinit`). Assume
 
 Then the chain is positive recurrent (finite mean return time to `x₀`), and for every bounded
 observable `f` the time averages `t⁻¹ ∫₀ᵗ f (X s) ds` converge almost surely to the
-product-form mean `∑ₓ π_c(x) f(x)`.
+product-form mean `∑ₓ π_c(x) f(x)`. The proof does not use `_hκ`; it restricts the statement to
+stochastic reaction networks, whose rate constants are nonnegative.
 
 The product-form law enters through `isStationaryMasterSolution_poissonWeight` (Anderson,
 Craciun & Kurtz 2010, Theorem 4.1); positive recurrence and the limit come from
 `IsRegenerative.ergodic` (renewal–reward and the strong law of large numbers). -/
 theorem ergodic_of_isComplexBalanced {N : ComplexBalanced.ReactionNetwork S ρ} {κ : ρ → ℝ}
-    {c : S → ℝ} (hcb : N.IsComplexBalanced κ c) (hc : ∀ s, 0 < c s)
+    (_hκ : ∀ r, 0 ≤ κ r) {c : S → ℝ} (hcb : N.IsComplexBalanced κ c) (hc : ∀ s, 0 < c s)
     {X : ℝ → Ω → (S → ℕ)} (hX : Measurable (uncurry X)) (hnonexp : NoExplosion P X)
     (htransfer : NoExplosion P X → ∀ p : (S → ℕ) → ℝ, (∀ x, 0 ≤ p x) → HasSum p 1 →
       IsStationaryMasterSolution N κ p → P.map (X 0) = countLaw p →
@@ -884,10 +864,11 @@ theorem ergodic_of_isComplexBalanced {N : ComplexBalanced.ReactionNetwork S ρ} 
 from a fixed state) regenerates with cycle lengths and cycle rewards distributed as those of the
 stationary chain of `ergodic_of_isComplexBalanced` (the strong Markov property makes all
 cycles after the first entrance into `x₀` copies of one another), its time averages converge
-almost surely to the same product-form means. -/
+almost surely to the same product-form means. As there, the rate constants are nonnegative
+(`_hκ`). -/
 theorem ergodic_of_isComplexBalanced_of_identDistrib
     {N : ComplexBalanced.ReactionNetwork S ρ} {κ : ρ → ℝ}
-    {c : S → ℝ} (hcb : N.IsComplexBalanced κ c) (hc : ∀ s, 0 < c s)
+    (_hκ : ∀ r, 0 ≤ κ r) {c : S → ℝ} (hcb : N.IsComplexBalanced κ c) (hc : ∀ s, 0 < c s)
     {X : ℝ → Ω → (S → ℕ)} (hX : Measurable (uncurry X)) (hnonexp : NoExplosion P X)
     (htransfer : NoExplosion P X → ∀ p : (S → ℕ) → ℝ, (∀ x, 0 ≤ p x) → HasSum p 1 →
       IsStationaryMasterSolution N κ p → P.map (X 0) = countLaw p →

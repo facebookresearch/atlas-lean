@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.GLM.CountData.Model
+public import MathlibExt.Topology.Algebra.InfiniteSum.ProdPi
 
 /-!
 # Count-matrix model: joint normalization and joint identifiability
@@ -53,9 +54,9 @@ A sample with library size `0` carries no information
 ## Implementation notes
 
 The finite-product summation lemma (`∑_x ∏_i f i (x i) = ∏_i ∑_k f i k` for nonnegative
-summable families over a finite index type) is proved here by induction over the finite index
-type, as Mathlib has only the finite-sum version `Finset.prod_univ_sum` and the two-factor
-`HasSum.mul`.
+summable families over a finite index type) is `MetaMathlibExt.hasSum_prod_pi`
+(`MathlibExt.Topology.Algebra.InfiniteSum.ProdPi`), as Mathlib has only the finite-sum version
+`Finset.prod_univ_sum` and the two-factor `HasSum.mul`.
 -/
 
 @[expose] public section
@@ -68,40 +69,6 @@ open Finset
 
 universe u
 
-/-- A finite product of nonnegative summable families is summable over the function space, with
-sum the product of the sums. -/
-private theorem hasSum_prod_pi {κ : Type*} :
-    ∀ (ι : Type u) [Fintype ι] (f : ι → κ → ℝ) (a : ι → ℝ), (∀ i k, 0 ≤ f i k) →
-      (∀ i, HasSum (f i) (a i)) → HasSum (fun x : ι → κ => ∏ i, f i (x i)) (∏ i, a i) := by
-  refine Fintype.induction_empty_option ?_ ?_ ?_
-  · intro α β _ e ih f a hf0 hf
-    let _ : Fintype α := Fintype.ofEquiv β e.symm
-    have h := ih (fun i => f (e i)) (fun i => a (e i)) (fun i k => hf0 _ k) (fun i => hf _)
-    rw [← (e.arrowCongr (Equiv.refl κ)).symm.hasSum_iff] at h
-    rw [← Fintype.prod_equiv e (fun i => a (e i)) a (fun _ => rfl)]
-    refine h.congr_fun fun x => ?_
-    change ∏ b, f b (x b) = ∏ i, f (e i) (x (e i))
-    exact (Fintype.prod_equiv e _ _ fun _ => rfl).symm
-  · intro f a _ _
-    simp
-  · intro α _ ih f a hf0 hf
-    have hg := ih (fun i => f (some i)) (fun i => a (some i)) (fun i k => hf0 _ k)
-      (fun i => hf _)
-    have hn : ∀ i, Summable fun k => ‖f i k‖ := fun i =>
-      (hf i).summable.congr fun k => (Real.norm_of_nonneg (hf0 i k)).symm
-    have hgn : Summable fun y : α → κ => ‖∏ i, f (some i) (y i)‖ :=
-      hg.summable.congr fun y =>
-        (Real.norm_of_nonneg (prod_nonneg fun i _ => hf0 _ _)).symm
-    have hs : Summable fun z : κ × (α → κ) => f none z.1 * ∏ i, f (some i) (z.2 i) :=
-      summable_mul_of_summable_norm (f := f none) (g := fun y : α → κ => ∏ i, f (some i) (y i))
-        (hn none) hgn
-    have hmul := HasSum.mul (f := f none) (g := fun y : α → κ => ∏ i, f (some i) (y i))
-      (hf none) hg hs
-    rw [← (Equiv.piOptionEquivProd (β := fun _ : Option α => κ)).hasSum_iff] at hmul
-    rw [Fintype.prod_option]
-    refine hmul.congr_fun fun x => ?_
-    simp [Fintype.prod_option]
-
 /-- **Marginalization over one coordinate.** If every factor sums to `1`, restricting the
 coordinate `i₀` to the event `p` sums to the mass of `p` under the factor `f i₀`. -/
 private theorem hasSum_prod_pi_ite {ι : Type u} {κ : Type*} [Fintype ι] (f : ι → κ → ℝ)
@@ -109,8 +76,8 @@ private theorem hasSum_prod_pi_ite {ι : Type u} {κ : Type*} [Fintype ι] (f : 
     [DecidablePred p] {b : ℝ} (hb : HasSum (fun k => if p k then f i₀ k else 0) b) :
     HasSum (fun x : ι → κ => if p (x i₀) then ∏ i, f i (x i) else 0) b := by
   classical
-  have h := hasSum_prod_pi ι (fun i k => if i = i₀ ∧ ¬p k then 0 else f i k)
-    (fun i => if i = i₀ then b else 1)
+  have h := MetaMathlibExt.hasSum_prod_pi (f := fun i k => if i = i₀ ∧ ¬p k then 0 else f i k)
+    (a := fun i => if i = i₀ then b else 1)
     (fun i k => by split_ifs <;> simp [hf0])
     (fun i => by
       by_cases hi : i = i₀
@@ -162,14 +129,15 @@ theorem countPMF_nonneg (hM : M.Valid) (g : G) (j : J) (k : ℕ) : 0 ≤ M.count
 /-- The likelihood of the counts of one gene (a row of the count matrix) sums to `1`. -/
 private theorem hasSum_row [Fintype J] (hM : M.Valid) (g : G) :
     HasSum (fun y : J → ℕ => ∏ j, M.countPMF g j (y j)) 1 := by
-  simpa using hasSum_prod_pi J (fun j => M.countPMF g j) (fun _ => 1)
+  simpa using MetaMathlibExt.hasSum_prod_pi (f := fun j => M.countPMF g j) (a := fun _ => 1)
     (countPMF_nonneg hM g) (hasSum_countPMF hM g)
 
 /-- **Joint normalization.** On the parameter domain, the likelihood of the count matrix (the
 product of the entry masses over all genes and samples) sums to `1` over all count matrices
 `Y : G → J → ℕ`: it is a probability mass function on count matrices. -/
 theorem hasSum_likelihood [Fintype G] [Fintype J] (hM : M.Valid) : HasSum M.likelihood 1 := by
-  have h := hasSum_prod_pi G (fun g (y : J → ℕ) => ∏ j, M.countPMF g j (y j)) (fun _ => 1)
+  have h := MetaMathlibExt.hasSum_prod_pi (f := fun g (y : J → ℕ) => ∏ j, M.countPMF g j (y j))
+    (a := fun _ => 1)
     (fun g y => prod_nonneg fun j _ => countPMF_nonneg hM g j (y j)) (hasSum_row hM)
   rw [prod_const_one] at h
   exact h

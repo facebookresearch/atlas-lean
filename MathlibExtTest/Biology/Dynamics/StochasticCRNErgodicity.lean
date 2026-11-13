@@ -114,8 +114,12 @@ theorem ergodic_birthDeath {k₁ k₂ : ℝ} (hk₁ : 0 < k₁) (hk₂ : 0 < k�
       ∀ᵐ ω ∂P, Tendsto (fun t => occupation X (Set.indicator {st 0} 1) t ω / t) atTop
         (𝓝 (Real.exp (-(k₁ / k₂)))) := by
   have hc : ∀ s, 0 < cBD k₁ k₂ s := fun _ => div_pos hk₁ hk₂
-  obtain ⟨hpr, hlim⟩ := ergodic_of_isComplexBalanced (isComplexBalanced_birthDeath hk₂) hc hX
-    hnonexp htransfer hinit hreg
+  have hκ : ∀ r, 0 ≤ kBD k₁ k₂ r := fun r => by
+    fin_cases r
+    · exact hk₁.le
+    · exact hk₂.le
+  obtain ⟨hpr, hlim⟩ := ergodic_of_isComplexBalanced hκ (isComplexBalanced_birthDeath hk₂) hc
+    hX hnonexp htransfer hinit hreg
   refine ⟨hpr, ?_⟩
   have hB : ∀ x, |Set.indicator {st 0} (1 : (Unit → ℕ) → ℝ) x| ≤ 1 := fun x => by
     by_cases h : x = st 0 <;> simp [Set.indicator, h]
@@ -197,8 +201,8 @@ theorem ergodic_emptyNet (c : Empty → ℝ) :
   have hlaw : IsProbabilityMeasure (countLaw (poissonWeight c)) :=
     isProbabilityMeasure_countLaw (poissonWeight_nonneg fun s => s.elim)
       (hasSum_poissonWeight fun s => s.elim)
-  refine ergodic_of_isComplexBalanced (X := emptyChain) (P := Measure.dirac ()) hcb
-    (fun s => s.elim) measurable_const
+  refine ergodic_of_isComplexBalanced (X := emptyChain) (P := Measure.dirac ())
+    (fun r => r.elim) hcb (fun s => s.elim) measurable_const
     (ae_of_all _ fun _ t => ⟨0, by rintro _ ⟨s, -, rfl⟩; simp⟩)
     (fun _ p _ _ _ h0 _ _ => h0) measure_eq_of_subsingleton isRegenerative_emptyChain
 
