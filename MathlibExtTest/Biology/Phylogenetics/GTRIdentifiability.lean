@@ -92,9 +92,10 @@ example {π' : Fin 4 → ℝ} {s' : Matrix (Fin 4) (Fin 4) ℝ} (hp' : IsGTRPara
     π' = π₀ :=
   (eq_and_offDiag_eq_of_ctmcTransition_eq isGTRParam₀ hp' h).1.symm
 
-/-- The pair-site law is a probability distribution. -/
+/-- Total mass: the pair-site law sums to `1` for every `t`. -/
 example (t : ℝ) : ∑ i, ∑ j, gtrPairLaw π₀ s₀ t i j = 1 := sum_sum_gtrPairLaw isGTRParam₀ t
 
+/-- Nonnegativity for `t ≥ 0`; with the total mass, a probability distribution on pairs. -/
 example {t : ℝ} (ht : 0 ≤ t) : 0 ≤ gtrPairLaw π₀ s₀ t 0 3 := gtrPairLaw_nonneg isGTRParam₀ ht 0 3
 
 /-- Symmetry 3: swapping states `0 ↔ 1` relabels the pair-site law. -/

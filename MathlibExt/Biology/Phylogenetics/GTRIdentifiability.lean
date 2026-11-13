@@ -271,10 +271,12 @@ theorem eq_and_offDiag_eq_of_ctmcTransition_eq {π π' : ι → ℝ} {s s' : Mat
 
 /-! ## The pair-site law of one branch -/
 
-/-- The **pair-site law** of a GTR branch of length `t`: the joint probability
-`π i * P t i j` that a site is in state `i` at one end of the branch (drawn from the stationary
-base frequencies) and in state `j` at the other end. This is the law of an aligned site
-pattern for two taxa joined by a branch of length `t`. -/
+/-- The **pair-site law** of a GTR branch of length `t`: `π i * P t i j`. For a branch length
+`t ≥ 0` it is the joint probability that a site is in state `i` at one end of the branch (drawn
+from the stationary base frequencies) and in state `j` at the other end, that is, the law of an
+aligned site pattern for two taxa joined by a branch of length `t` (`gtrPairLaw_nonneg`,
+`sum_sum_gtrPairLaw`). The formula is defined for every real `t`, but for `t < 0` its entries
+can be negative, so it is not a probability law there. -/
 noncomputable def gtrPairLaw (π : ι → ℝ) (s : Matrix ι ι ℝ) (t : ℝ) (i j : ι) : ℝ :=
   π i * ctmcTransition (gtrRate π s) t i j
 
@@ -285,7 +287,9 @@ theorem sum_gtrPairLaw_right {π : ι → ℝ} {s : Matrix ι ι ℝ} (hp : IsGT
     (isRateMatrix_gtrRate (fun k => (hp.pos k).le) fun a b h => (hp.offDiag_pos a b h).le)
       |>.sum_ctmcTransition, mul_one]
 
-/-- The pair-site law is a probability distribution on pairs of states. -/
+/-- **Total mass.** The pair-site law sums to `1` over pairs of states, for every real `t`. This
+is only a total-mass identity: together with `gtrPairLaw_nonneg`, which needs `t ≥ 0`, it makes
+the pair-site law a probability distribution on pairs of states. -/
 theorem sum_sum_gtrPairLaw {π : ι → ℝ} {s : Matrix ι ι ℝ} (hp : IsGTRParam π s) (t : ℝ) :
     ∑ i, ∑ j, gtrPairLaw π s t i j = 1 := by
   simp only [sum_gtrPairLaw_right hp, hp.sum_eq_one]
@@ -356,8 +360,8 @@ theorem eq_of_exp_eq_of_isDetailedBalance {π : ι → ℝ} (hπ : ∀ i, 0 < π
       Matrix.one_mul, Matrix.mul_one]
   rw [← hcancel Q, hsym, hcancel]
 
-/-- The pair-site law at branch length `t` is the stationary joint law of the generator
-`gtrRate π (t • s)` at unit time. -/
+/-- The pair-site law at branch length `t` is `π i` times the unit-time transition matrix of the
+generator `gtrRate π (t • s)`. -/
 private lemma gtrPairLaw_eq_exp (π : ι → ℝ) (s : Matrix ι ι ℝ) (t : ℝ) (i j : ι) :
     gtrPairLaw π s t i j = π i * NormedSpace.exp (gtrRate π (t • s)) i j := by
   rw [gtrPairLaw, gtrRate_smul]
