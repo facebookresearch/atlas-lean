@@ -60,13 +60,14 @@ public theorem_wanted padicValRat_two_harmonicElemSymm_self_ge (n k : ℕ) (hk :
       ∑ i ∈ Finset.Icc 1 k, (-(Nat.log 2 n : ℤ) + Nat.log 2 i) =
         -(k * Nat.log 2 n : ℤ) + ((k + 1) * Nat.log 2 k - 2 * (2 ^ Nat.log 2 k - 1))
 
-/-- **Corollary 3**: for every `k ≥ 1` there is `n ≥ k` with
-`ν₂(E_k(n, n)) = ∑_{i=1}^k (-⌊log₂ n⌋ + ⌊log₂ i⌋)` (equality in Lemma 2).
+/-- **Corollary 3**: for every `k ≥ 1` there are infinitely many `n ≥ k` with
+`ν₂(E_k(n, n)) = ∑_{i=1}^k (-⌊log₂ n⌋ + ⌊log₂ i⌋)` (equality in Lemma 2), stated
+as: above every bound `m` there is such an `n`.
 
 Source: Lengyel, *On the 2-Adic Valuation of Differences of Harmonic
 Numbers*, INTEGERS 24 (2024), Article A27, Corollary 3. -/
 public theorem_wanted exists_padicValRat_two_harmonicElemSymm_self_eq (k : ℕ) (hk : 1 ≤ k) :
-    ∃ n, k ≤ n ∧ padicValRat 2 (harmonicElemSymm n n k) =
+    ∀ m, ∃ n, m ≤ n ∧ k ≤ n ∧ padicValRat 2 (harmonicElemSymm n n k) =
       ∑ i ∈ Finset.Icc 1 k, (-(Nat.log 2 n : ℤ) + Nat.log 2 i)
 
 /-- **Theorem 7**: for positive integers `a ≤ n`, `b`, and `N` with
