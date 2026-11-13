@@ -61,42 +61,58 @@ open Module Finset Filter
 
 local notation "𝔽₂" => ZMod 2
 
-/-- The vertex type of the Grassmann graph `Grₖₗ`: the `ℓ`-dimensional subspaces of `𝔽₂ᵏ`. -/
+/-- **Vertices of the Grassmann graph.** For natural numbers $k$ and $\ell$, the vertices of the
+Grassmann graph $\mathrm{Gr}(k, \ell)$ are the $\ell$-dimensional linear subspaces of
+$\mathbb{F}_2^k$. -/
 abbrev GrVertex (k ℓ : ℕ) : Type :=
   {L : Submodule 𝔽₂ (Fin k → 𝔽₂) // finrank 𝔽₂ L = ℓ}
 
-/-- The Grassmann graph `Grₖₗ`: vertices are `ℓ`-dimensional subspaces of `𝔽₂ᵏ`,
-and two subspaces are adjacent when their intersection has dimension `ℓ - 1`. -/
+/-- **Grassmann graph over $\mathbb{F}_2$.** For natural numbers $k$ and $\ell$, the Grassmann
+graph $\mathrm{Gr}(k, \ell)$ has as vertices the $\ell$-dimensional linear subspaces of
+$\mathbb{F}_2^k$, and two distinct such subspaces $L$ and $L'$ are adjacent when
+$\dim(L \cap L') = \ell - 1$. -/
 def Gr (k ℓ : ℕ) : SimpleGraph (GrVertex k ℓ) :=
   .fromRel (fun L L' ↦ finrank 𝔽₂ (L.val ⊓ L'.val :) = ℓ - 1)
 
 open Classical in
-/-- The subset of vertices `Grₖₗ[A,B] = {L | A ⊆ L ⊆ B}`, where `A, B ⊆ 𝔽₂ᵏ` are subspaces.
-See page 13 of the paper. -/
+/-- **Grassmann vertices between two subspaces.** For natural numbers $k$ and $\ell$ and linear
+subspaces $A$ and $B$ of $\mathbb{F}_2^k$, $\mathrm{Gr}(k, \ell)[A, B]$ is the finite set of
+vertices $L$ of the Grassmann graph $\mathrm{Gr}(k, \ell)$, that is of $\ell$-dimensional
+subspaces of $\mathbb{F}_2^k$, with $A \subseteq L \subseteq B$. If $A \not\subseteq B$ the set
+is empty.
+
+This is the set $\mathrm{Gr}_{k,\ell}[A, B]$ on page 13 of Khot, Minzer and Safra, Pseudorandom
+sets in Grassmann graph have near-perfect expansion. -/
 noncomputable def SubGr (k ℓ : ℕ) (A B : Submodule 𝔽₂ (Fin k → 𝔽₂)) : Finset (GrVertex k ℓ) :=
   {L | A ≤ L ∧ L ≤ B}
 
 open Classical in
-/-- Definition 1.8 from the paper: Let `G = (V,E)` be an `n`-vertex, `d`-regular graph.
-For a non-empty set of vertices `S ⊆ V` with `|S| ≤ n/2`, its (edge-)expansion is defined
-as `Φ(S) = |E(S,S̄)| / (d·|S|)`, where `E(S,S̄)` denotes the set of edges with one endpoint
-in S and the other in `S̄ = V\S`.
-In Lean, we don't require the conditions `d`-regular and `|S| ≤ n/2` for this definition.
-However, we need `S` nonempty to define the degree `d` as the degree of an arbitrary element
-of `S`. Note that this only gives the correct definition for regular graphs. -/
+/-- **Edge expansion of a vertex set.** Let $G$ be a simple graph on a finite vertex set $V$ and
+let $S \subseteq V$ be nonempty. Let $d$ be the degree in $G$ of a fixed vertex of $S$, chosen
+once for each $S$. The expansion of $S$ is the rational number
+$\Phi_G(S) = |E(S, V \setminus S)| / (d \cdot |S|)$, where $E(S, V \setminus S)$ is the set of
+edges of $G$ with one endpoint in $S$ and the other in $V \setminus S$; it is $0$ when $d = 0$.
+
+For a $d$-regular graph, $d$ is the common degree and this is Definition 1.8 of Khot, Minzer and
+Safra, which also asks that $|S| \le |V|/2$; neither regularity nor that bound is assumed here.
+-/
 noncomputable def Φ {V : Type*} [Fintype V] (G : SimpleGraph V) [DecidableRel G.Adj]
     (S : Finset V) (h : S.Nonempty) : ℚ :=
   #(G.interedges S Sᶜ) / (G.degree h.choose * #S)
 
 open Classical in
 /--
-Statement of Theorem 1.12:
+**Non-expanding sets in the Grassmann graph (Khot–Minzer–Safra).** For every real $\alpha$
+with $0 < \alpha < 1$ there are a real $\varepsilon > 0$ and a natural number $r$ such that for
+all sufficiently large natural numbers $\ell$ and, for each such $\ell$, all sufficiently large
+natural numbers $k$, the following holds. For subspaces $A$ and $B$ of $\mathbb{F}_2^k$, let
+$\mathrm{Gr}(k, \ell)[A, B]$ be the set of vertices $L$ of the Grassmann graph
+$\mathrm{Gr}(k, \ell)$ with $A \subseteq L \subseteq B$. Let $S$ be a nonempty set of at most
+half of the vertices of $\mathrm{Gr}(k, \ell)$ whose edge expansion in $\mathrm{Gr}(k, \ell)$
+satisfies $\Phi(S) \le \alpha$. Then there are subspaces $A \subseteq B$ of $\mathbb{F}_2^k$
+such that the dimension of $A$ plus the codimension $k - \dim B$ of $B$ is at most $r$ and
+$|S \cap \mathrm{Gr}(k, \ell)[A, B]| / |\mathrm{Gr}(k, \ell)[A, B]| \ge \varepsilon$.
 
-For every constant `0 < α < 1`, there exist a constant `ε > 0` and an
-integer `r ≥ 0` such that for all sufficiently large integers `ℓ` and (after fixing it)
-for all sufficiently large integers `k`, the following holds. Let `S ⊆ Grₖₗ` be such that
-`Φ(S) ≤ α`. Then there exist subspaces `A ⊆ B ⊆ 𝔽₂ᵏ` such that `dim(A) = a`, `codim(B) = b`,
-`a + b ≤ r` and `|S ∩ Grₖₗ[A,B]| / |Grₖₗ[A,B]| ≥ ε`.
 Source: S. Khot, D. Minzer, and M. Safra, `Pseudorandom sets in Grassmann graph have near-perfect expansion`, Annals of Math, 198 (1) 2023. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2023-198-1-PseudorandomGrassmann.lean Via leanprover/lean-eval@38361be, problem `annals_pseudorandom_grassmann`.
 -/
 public theorem_wanted theorem_1_12 (α : ℝ) (hα : α ∈ Set.Ioo 0 1) :

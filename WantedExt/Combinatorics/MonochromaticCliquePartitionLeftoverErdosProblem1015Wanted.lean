@@ -45,25 +45,38 @@ the page does not record. formal-conjectures has no statement of this problem.
 
 open SimpleGraph
 
-/-- A two-colouring of the edges of `K_n` is a graph `G` on `Fin n` (red edges: those of `G`,
-blue edges: those of `Gᶜ`). `IsMonochromaticCliquePacking G k P` says that `P` is a family of
-pairwise disjoint `k`-sets of vertices, each spanning a monochromatic `K_k`, that is, a
-`k`-clique of `G` or of `Gᶜ`. -/
+/-- **Monochromatic clique packings.** Let $n$ and $k$ be natural numbers, and view a simple
+graph $G$ on the vertex set $\{0, 1, \dots, n - 1\}$ as a two-colouring of the edges of the
+complete graph $K_n$: the edges of $G$ are red and the edges of its complement $G^c$ are blue.
+A finite family $P$ of sets of vertices is a monochromatic $k$-clique packing for $G$ when the
+sets in $P$ are pairwise disjoint and each of them is a $k$-clique of $G$ or a $k$-clique of
+$G^c$, that is, a set of exactly $k$ vertices spanning a monochromatic copy of $K_k$. -/
 def IsMonochromaticCliquePacking {n : ℕ} (G : SimpleGraph (Fin n)) (k : ℕ)
     (P : Finset (Finset (Fin n))) : Prop :=
   (P : Set (Finset (Fin n))).PairwiseDisjoint id ∧ ∀ S ∈ P, G.IsNClique k S ∨ Gᶜ.IsNClique k S
 
-/-- The Burr-Erdős-Spencer value `r(k, k - 1) - 1 + rem(n - r(k, k - 1) + 1, k)` of the least
-possible number of uncovered vertices, where `r(k, k - 1)` is the classical two-colour Ramsey
-number `graphRamsey k (k - 1)`. -/
+/-- **Burr–Erdős–Spencer leftover value.** For natural numbers $k$ and $n$, let $r = R(k, k - 1)$
+be the classical two-colour Ramsey number. The leftover value is
+$r - 1 + \big((n + 1 - r) \bmod k\big)$, where subtraction is truncated at $0$ (in particular
+$n + 1 - r$ is read as $0$ when $n + 1 \le r$) and $a \bmod 0 = a$.
+
+For $k \ge 2$ and large $n$, Burr, Erdős and Spencer showed that this is the least number of
+vertices that vertex-disjoint monochromatic copies of $K_k$ can be guaranteed to leave uncovered
+in every two-colouring of the edges of $K_n$. -/
 noncomputable def leftoverValue (k n : ℕ) : ℕ :=
   graphRamsey k (k - 1) - 1 + (n + 1 - graphRamsey k (k - 1)) % k
 
-/-- Erdős Problem 1015, answered by Burr, Erdős and Spencer (Theorem 6): for every `k ≥ 2` and all
-sufficiently large `n`, the least number `f(n, k)` such that every two-colouring of the edges of
-`K_n` admits vertex-disjoint monochromatic copies of `K_k` leaving at most `f(n, k)` vertices
-uncovered equals `leftoverValue k n`. Both halves are stated: every colouring admits a packing
-leaving at most that many vertices, and some colouring admits no packing leaving fewer. -/
+/-- **Erdős Problem 1015 in the Burr–Erdős–Spencer form.** This is the statement that for every
+natural number $k \ge 2$ there is $n_0$ such that for every $n \ge n_0$ the following holds. Let
+$r = R(k, k - 1)$ be the classical two-colour Ramsey number and let
+$L = r - 1 + \big((n + 1 - r) \bmod k\big)$, where $n + 1 - r$ is read as $0$ if it is negative.
+View a simple graph $G$ on $n$ vertices as a two-colouring of the edges of $K_n$, with the edges
+of $G$ red and those of its complement $G^c$ blue. Then every such colouring admits a
+monochromatic $k$-clique packing, that is, a finite family of pairwise disjoint sets of vertices,
+each a $k$-clique of $G$ or of $G^c$, leaving at most $L$ vertices uncovered; and some colouring
+admits no such packing leaving fewer than $L$ vertices uncovered. In other words, for these $n$
+the least number $f(n, k)$ such that every two-colouring of $K_n$ admits such a packing leaving at
+most $f(n, k)$ vertices uncovered equals $L$. -/
 def monochromaticCliquePartitionLeftover : Prop :=
   ∀ k : ℕ, 2 ≤ k → ∃ n₀ : ℕ, ∀ n ≥ n₀,
     (∀ G : SimpleGraph (Fin n), ∃ P, IsMonochromaticCliquePacking G k P ∧
@@ -71,10 +84,17 @@ def monochromaticCliquePartitionLeftover : Prop :=
     ∃ G : SimpleGraph (Fin n), ∀ P, IsMonochromaticCliquePacking G k P →
         leftoverValue k n ≤ n - k * P.card
 
-/--
-Resolved: Burr, Erdős and Spencer (Theorem 6) determined the least leftover for large `n`: every
-two-colouring of `K_n` has vertex-disjoint monochromatic `K_k` missing at most `r(k, k - 1) - 1 +
-rem(n - r(k, k - 1) + 1, k)` vertices, and this is attained by one colouring. Source: T. F. Bloom,
+/-- **Burr–Erdős–Spencer theorem on monochromatic clique packings.** For every natural number
+$k \ge 2$ there is $n_0$ such that for every $n \ge n_0$ the following holds. Let
+$r = R(k, k - 1)$ be the classical two-colour Ramsey number and let
+$L = r - 1 + \big((n + 1 - r) \bmod k\big)$, where $n + 1 - r$ is read as $0$ if it is negative.
+View a simple graph $G$ on $n$ vertices as a two-colouring of the edges of $K_n$, with the edges
+of $G$ red and those of its complement $G^c$ blue. Then every such colouring admits a finite
+family of pairwise disjoint sets of vertices, each a $k$-clique of $G$ or of $G^c$, that leaves at
+most $L$ vertices uncovered; and some colouring admits no such family leaving fewer than $L$
+vertices uncovered.
+
+Source: T. F. Bloom,
 Erdős Problems, Problem #1015, https://www.erdosproblems.com/1015 (status SOLVED); resolution: S.
 A. Burr, P. Erdős and J. H. Spencer, Ramsey theorems for multiple copies of graphs, Trans. Amer.
 Math. Soc. 209 (1975), 87-99, §5, Theorem 6: if k is given, then for sufficiently large n, f(n, k)

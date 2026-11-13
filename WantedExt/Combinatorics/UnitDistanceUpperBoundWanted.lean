@@ -70,13 +70,13 @@ constant-factor improvements.
 
 open scoped Classical
 
-/-- For a finite planar set `P ⊆ ℝ²`, `unitDist P` is the number of
-unordered pairs `{x, y} ⊆ P` at Euclidean distance exactly `1`.
+/-- **Number of unit-distance pairs in a planar point set.** For a finite set $P$ of points in the
+Euclidean plane $\mathbb{R}^2$, the number of unit-distance pairs of $P$ is the number of unordered
+pairs of points of $P$ at distance exactly $1$.
 
-Points are modelled as `EuclideanSpace ℝ (Fin 2)` rather than `ℝ × ℝ`
-so that `dist x y = √((x₀ - y₀)² + (x₁ - y₁)²)`; the product space
-`ℝ × ℝ` carries the sup-norm and would give the wrong notion of
-unit-distance pair. -/
+The distance is the Euclidean one, $\sqrt{(x_1 - y_1)^2 + (x_2 - y_2)^2}$ for $x = (x_1, x_2)$ and
+$y = (y_1, y_2)$, not the largest coordinate difference used by the product metric on
+$\mathbb{R} \times \mathbb{R}$. -/
 noncomputable abbrev unitDist (P : Finset (EuclideanSpace ℝ (Fin 2))) : ℕ := unitDistNum P
 
 end Combinatorics
@@ -106,7 +106,11 @@ pairs in any finite planar set is `O(n^{4/3})`: there is an absolute
 constant `C > 0` such that every finite `P ⊆ ℝ²` satisfies
 
   `unitDist P ≤ C · |P|^{4/3}`. -/
-/-- Source: J. Spencer, E. Szemerédi, W. T. Trotter Jr., *Unit distances in the Euclidean plane*, in Graph Theory and Combinatorics (Cambridge 1983), Academic Press, 1984. Short crossing-number proof: L. A. Székely, *Crossing numbers and hard Erdős problems in discrete geometry*, Combin. Probab. Comput. 6 (1997). Best constant: P. Ágoston, D. Pálvölgyi, *An improved constant factor for the unit distance problem*, Studia Sci. Math. Hungar. 59 (2022). Via leanprover/lean-eval@38361be, problem `unit_distance_upper_bound`. -/
+/-- **Spencer–Szemerédi–Trotter unit distance bound.** There is a constant $C > 0$ such that every
+finite set of $n$ points in the Euclidean plane $\mathbb{R}^2$ has at most $C n^{4/3}$ unordered
+pairs of points at distance exactly $1$.
+
+Source: J. Spencer, E. Szemerédi, W. T. Trotter Jr., *Unit distances in the Euclidean plane*, in Graph Theory and Combinatorics (Cambridge 1983), Academic Press, 1984. Short crossing-number proof: L. A. Székely, *Crossing numbers and hard Erdős problems in discrete geometry*, Combin. Probab. Comput. 6 (1997). Best constant: P. Ágoston, D. Pálvölgyi, *An improved constant factor for the unit distance problem*, Studia Sci. Math. Hungar. 59 (2022). Via leanprover/lean-eval@38361be, problem `unit_distance_upper_bound`. -/
 public theorem_wanted unit_distance_upper_bound :
     ∃ C : ℝ, 0 < C ∧
       ∀ P : Finset (EuclideanSpace ℝ (Fin 2)),

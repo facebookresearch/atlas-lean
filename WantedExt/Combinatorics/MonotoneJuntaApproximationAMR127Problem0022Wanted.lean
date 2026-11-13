@@ -38,22 +38,37 @@ degree). A `poly(d)` bound is written `(d + 2) ^ C`: every polynomial is bounded
 function of at most `k` coordinates: Mathlib's `DependsOn g J` with `|J| ≤ k`.
 -/
 
-/-- The Servedio–Tan–Verbin conjecture (O'Donnell, Problem 24): for every `ε > 0` there is a
-polynomial bound, written `(d + 2) ^ C` (every polynomial in `d ≥ 0` is at most `(d + 2) ^ C` for
-some `C`), such that every monotone `f : {0,1}ⁿ → {0,1}` is `ε`-close (disagrees on at most `ε 2ⁿ`
-inputs) to a function of at most `(deg f + 2) ^ C` coordinates: a `g` with Mathlib's `DependsOn g J`
-for a set `J` of at most that many coordinates. -/
+/-- **The Servedio–Tan–Verbin conjecture.** Order $\{0,1\}^n$ coordinatewise with $0 < 1$, and
+write $\deg f$ for the Boolean degree of a function $f : \{0,1\}^n \to \{0,1\}$. This is the
+statement that for every real $\varepsilon > 0$ there is a natural number $C$ such that for every
+$n \in \mathbb{N}$ and every monotone $f : \{0,1\}^n \to \{0,1\}$ there are a set $J$ of at most
+$(\deg f + 2)^C$ coordinates and a function $g : \{0,1\}^n \to \{0,1\}$ that depends only on the
+coordinates in $J$ such that $f(x) \ne g(x)$ for at most $\varepsilon 2^n$ points
+$x \in \{0,1\}^n$.
+
+The junta size $(\deg f + 2)^C$ expresses a polynomial bound in $\deg f$: every polynomial in
+$d \ge 0$ is at most $(d + 2)^C$ for some $C$. -/
 def servedioTanVerbinConjecture : Prop :=
   ∀ ε : ℝ, 0 < ε → ∃ C : ℕ, ∀ (n : ℕ) (f : (Fin n → Bool) → Bool), Monotone f →
     ∃ (J : Finset (Fin n)) (g : (Fin n → Bool) → Bool),
       J.card ≤ (BooleanCube.booleanDegree f + 2) ^ C ∧ DependsOn g (J : Set (Fin n)) ∧
         ((Finset.univ.filter fun x => f x ≠ g x).card : ℝ) ≤ ε * 2 ^ n
 
-/--
-Resolved false: Kane constructed, for a fixed `ε > 0` and every `d`, monotone functions of
-decision-tree depth `d` (hence degree at most `d`) that are `ε`-far from every junta on `exp(Ω(√d))`
-coordinates; since `exp(c √d)` eventually exceeds `(d + 2) ^ C`, no polynomial junta size works for
-`ε / 2`. O'Donnell's list records the conjecture as resolved in the negative by Kane. Source: R.
+/-- **The Servedio–Tan–Verbin conjecture is false.** Order $\{0,1\}^n$ coordinatewise with
+$0 < 1$, and write $\deg f$ for the Boolean degree of a function $f : \{0,1\}^n \to \{0,1\}$. It
+is not the case that for every real $\varepsilon > 0$ there is a natural number $C$ such that for
+every $n \in \mathbb{N}$ and every monotone $f : \{0,1\}^n \to \{0,1\}$ there are a set $J$ of at
+most $(\deg f + 2)^C$ coordinates and a function $g : \{0,1\}^n \to \{0,1\}$ that depends only on
+the coordinates in $J$ such that $f(x) \ne g(x)$ for at most $\varepsilon 2^n$ points
+$x \in \{0,1\}^n$.
+
+Kane constructed, for a fixed $\varepsilon > 0$, a constant $c > 0$ and every $d$, monotone
+functions of decision-tree depth $d$ (hence degree at most $d$) that are $\varepsilon$-far from
+every junta on $\exp(c \sqrt{d})$ coordinates; since $\exp(c \sqrt{d})$ eventually exceeds
+$(d + 2)^C$, no polynomial junta size works for $\varepsilon / 2$. O'Donnell's list records the
+conjecture as resolved in the negative by Kane.
+
+Source: R.
 O'Donnell, Open Problems in Analysis of Boolean Functions (2012), arXiv:1204.6447, Problem 24
 (Servedio–Tan–Verbin Conjecture); resolution: D. M. Kane, A low-depth monotone function that is not
 an approximate junta, arXiv:1206.6541 (2012); recorded as "RESOLVED (in the negative) by Daniel

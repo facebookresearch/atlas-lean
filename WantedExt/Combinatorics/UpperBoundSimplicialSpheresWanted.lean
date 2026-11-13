@@ -77,19 +77,31 @@ noncomputable section
 
 open BigOperators
 
-/-- The ambient Euclidean space for a `(d − 1)`-sphere. -/
+/-- **Euclidean space $\mathbb{R}^d$.** For a natural number $d$, the real Euclidean space
+$\mathbb{R}^d$ of dimension $d$ with its standard inner product; it is the ambient space of a
+$(d-1)$-dimensional sphere. -/
 abbrev E (d : ℕ) := EuclideanSpace ℝ (Fin d)
 
 
 
 
 
-/-- h-vector of the cyclic polytope `C(n, d)`: first half
-`choose (n − d − 1 + j) j`, second half symmetric. -/
+/-- **h-vector of the cyclic polytope.** For natural numbers $n$, $d$ and $j$, let
+$m = \min(j, d - j)$; the value is $\binom{n - d - 1 + m}{m}$, where subtraction is truncated
+at $0$. For $n \ge d + 1$ and $j \le d$ this is the entry $h_j$ of the h-vector of the cyclic
+polytope $C(n, d)$, namely $h_j = \binom{n-d-1+j}{j}$ for $j \le d/2$ and $h_j = h_{d-j}$
+otherwise. For $j > d$ the value is $1$. -/
 def cyclicH (n d j : ℕ) : ℕ :=
   Nat.choose (n - d - 1 + min j (d - j)) (min j (d - j))
 
-/-- Face number `f_k(C(n, d))`, via the inverse h-to-f transform. -/
+/-- **Face numbers of the cyclic polytope.** For natural numbers $n$, $d$ and $k$, the value is
+$$
+\sum_{j=0}^{k+1} \binom{d-j}{k+1-j} \binom{n-d-1+m_j}{m_j}, \qquad m_j = \min(j, d-j),
+$$
+where subtraction is truncated at $0$. The second binomial coefficient is the cyclic polytope
+h-vector entry $h_j$, so for $k < d$ and $n \ge d + 1$ this sum is the inverse h-to-f transform
+of the h-vector of the cyclic polytope $C(n, d)$, that is, the number of $k$-dimensional faces
+of $C(n, d)$. -/
 def cyclicPolytopeFaceCount (n d k : ℕ) : ℕ :=
   ∑ j ∈ Finset.range (k + 2),
     Nat.choose (d - j) (k + 1 - j) * cyclicH n d j
@@ -98,7 +110,18 @@ def cyclicPolytopeFaceCount (n d k : ℕ) : ℕ :=
 Every `k`-face count of a finite simplicial `(d − 1)`-sphere with `n`
 vertices is bounded above by the corresponding face count of the
 cyclic polytope `C(n, d)`. -/
-/-- Source: R.P. Stanley, 'The upper bound conjecture and Cohen–Macaulay rings', Studies in Appl. Math. 54 (1975) 135–142. Conjecture: T.S. Motzkin (1957); polytope case: P. McMullen, 'The maximum numbers of faces of a convex polytope', Mathematika 17 (1970) 179–184. §142 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `upper_bound_simplicial_spheres`. -/
+/-- **Upper bound theorem for simplicial spheres.** Let $d$, $n$ and $k$ be natural numbers
+with $k < d$, and let $X$ be a finite simplicial $(d-1)$-sphere, that is, a finite geometric
+simplicial complex in $\mathbb{R}^d$ whose underlying space is homeomorphic to the unit sphere
+of $\mathbb{R}^d$. If $X$ has $n$ vertices, then the number of $k$-dimensional faces of $X$
+(faces with $k + 1$ vertices) is at most
+$$
+\sum_{j=0}^{k+1} \binom{d-j}{k+1-j} \binom{n-d-1+m_j}{m_j}, \qquad m_j = \min(j, d-j),
+$$
+with subtraction truncated at $0$; for $n \ge d + 1$ this is the number of $k$-dimensional
+faces of the cyclic polytope $C(n, d)$.
+
+Source: R.P. Stanley, 'The upper bound conjecture and Cohen–Macaulay rings', Studies in Appl. Math. 54 (1975) 135–142. Conjecture: T.S. Motzkin (1957); polytope case: P. McMullen, 'The maximum numbers of faces of a convex polytope', Mathematika 17 (1970) 179–184. §142 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `upper_bound_simplicial_spheres`. -/
 public theorem_wanted upper_bound_theorem_simplicial_spheres
     {d n k : ℕ} (X : FiniteSimplicialSphere d)
     (_hn : faceCount X 0 = n) (_hk : k < d) :

@@ -41,32 +41,52 @@ ranks from Mathlib's `Matroid.eRk`; `w_k` is the absolute value of the coefficie
 restated; part (c) is still open (only top-heaviness is known) and is not formalized.
 -/
 
-/-- The rank `r(X)` of a set `X` in a finite matroid, as a natural number. -/
+/-- **Rank of a set in a matroid, as a natural number.** For a matroid $M$ and a set $X$, this is
+the rank $r(X)$ of $X$ in $M$, the size of a largest independent set of $M$ contained in $X$,
+taken as a natural number; it is $0$ when this rank is infinite. -/
 noncomputable def finRank {α : Type*} (M : Matroid α) (X : Set α) : ℕ :=
   (M.eRk X).toNat
 
-/-- The coefficient of `λ ^ j` in Rota's characteristic polynomial
-`χ_M(λ) = ∑_{I ⊆ E} (-1)^{|I|} λ^{r(E) - r(I)}` of a finite matroid `M` on the ground set `E`. -/
+/-- **Coefficients of the characteristic polynomial of a matroid.** Let $M$ be a finite matroid on
+the ground set $E$ with rank function $r$, and let
+$\chi_M(\lambda) = \sum_{I \subseteq E} (-1)^{|I|} \lambda^{r(E) - r(I)}$ be its characteristic
+polynomial. For a natural number $j$, this is the integer coefficient of $\lambda^j$ in
+$\chi_M$, that is, the sum of $(-1)^{|I|}$ over the subsets $I \subseteq E$ with
+$r(E) - r(I) = j$. -/
 noncomputable def charPolyCoeff {α : Type*} (M : Matroid α) [M.Finite] (j : ℕ) : ℤ :=
   ∑ I ∈ M.ground_finite.toFinset.powerset.filter
       (fun I : Finset α => finRank M M.E - finRank M (I : Set α) = j), (-1) ^ I.card
 
-/-- `w_k(M)`: the absolute value of the coefficient of `λ ^ (r - k)` in `χ_M`, where `r = r(E)` is
-the rank of `M`, and `0` for `k > r`. -/
+/-- **Absolute coefficients of the characteristic polynomial of a matroid.** Let $M$ be a finite
+matroid on the ground set $E$ with rank function $r$ and characteristic polynomial
+$\chi_M(\lambda) = \sum_{I \subseteq E} (-1)^{|I|} \lambda^{r(E) - r(I)}$. For a natural number
+$k$, $w_k(M)$ is the absolute value of the coefficient of $\lambda^{r(E) - k}$ in $\chi_M$ when
+$k \le r(E)$, and $w_k(M) = 0$ when $k > r(E)$. -/
 noncomputable def charPolyAbsCoeff {α : Type*} (M : Matroid α) [M.Finite] (k : ℕ) : ℕ :=
   if k ≤ finRank M M.E then (charPolyCoeff M (finRank M M.E - k)).natAbs else 0
 
-/-- Part (a) of Stanley's Problem 25 (Read–Hoggar–Rota–Heron–Welsh), answered: for every finite
-matroid the absolute values of the coefficients of the characteristic polynomial form a
-log-concave sequence, `w_{k-1} w_{k+1} ≤ w_k²`. -/
+/-- **Log-concavity of the characteristic polynomial of a matroid, statement.** For every finite
+matroid $M$ on a ground set $E$ with rank function $r$, let $w_k(M)$ be the absolute value of the
+coefficient of $\lambda^{r(E) - k}$ in the characteristic polynomial
+$\chi_M(\lambda) = \sum_{I \subseteq E} (-1)^{|I|} \lambda^{r(E) - r(I)}$ when $k \le r(E)$, and
+$w_k(M) = 0$ when $k > r(E)$. Then $w_{k-1}(M) \, w_{k+1}(M) \le w_k(M)^2$ for every natural
+number $k \ge 1$.
+
+This is part (a) of Stanley's Problem 25 (Read–Hoggar–Rota–Heron–Welsh). -/
 def characteristicPolynomialLogConcave : Prop :=
   ∀ (α : Type) (M : Matroid α) [M.Finite] (k : ℕ), 1 ≤ k →
     charPolyAbsCoeff M (k - 1) * charPolyAbsCoeff M (k + 1) ≤ charPolyAbsCoeff M k ^ 2
 
-/--
-Resolved true: Adiprasito, Huh and Katz proved the Heron–Rota–Welsh conjecture: for every matroid
-the absolute values `w_k` of the coefficients of the characteristic polynomial form a log-concave
-sequence (Huh had proved the case of graphs and realizable matroids in characteristic `0`). Source:
+/-- **Adiprasito–Huh–Katz theorem (Heron–Rota–Welsh conjecture).** For every finite matroid $M$
+on a ground set $E$ with rank function $r$, let $w_k(M)$ be the absolute value of the coefficient
+of $\lambda^{r(E) - k}$ in the characteristic polynomial
+$\chi_M(\lambda) = \sum_{I \subseteq E} (-1)^{|I|} \lambda^{r(E) - r(I)}$ when $k \le r(E)$, and
+$w_k(M) = 0$ when $k > r(E)$. Then $w_{k-1}(M) \, w_{k+1}(M) \le w_k(M)^2$ for every natural
+number $k \ge 1$.
+
+Huh had proved the case of graphs and realizable matroids in characteristic $0$.
+
+Source:
 R. P. Stanley, Positivity Problems and Conjectures in Algebraic Combinatorics (1999), Problem 25
 (Read–Hoggar–Welsh–Mason conjectures); resolution: K. Adiprasito, J. Huh and E. Katz, Hodge theory
 for combinatorial geometries, Ann. of Math. 188 (2018), 381-452, arXiv:1511.02888; J. Huh, Milnor
