@@ -44,7 +44,16 @@ fixed-absorption operator.
 
 ## iv. References
 
-- See the individual theorem docstrings.
+- K. N. Liou, *An Introduction to Atmospheric Radiation*, 2nd ed.,
+  Academic Press, 2002, §1.4.3 "Schwarzschild's Equation and Its
+  Solution", pp. 29-30. For a nonscattering medium, Eq. (1.4.14) is the
+  transfer equation `dI / (k ρ ds) = -I + B`, and Eq. (1.4.19) is its
+  solution `I(s₁) = I(0) exp(-τ(s₁, 0)) + ∫_0^{s₁} B exp(-τ(s₁, s)) k ρ ds`
+  with optical thickness `τ(s₁, s) = ∫_s^{s₁} k ρ` (Eq. (1.4.15)). Liou
+  notes that Eq. (1.4.19) gives the intensity once the absorption
+  coefficient along the path is known, which is the fixed-absorption
+  setting here. With `kappa = k ρ` and `j = kappa * B`, `explicit_form` is
+  Eq. (1.4.19) for a general continuous source `j`.
 -/
 
 @[expose] public section
@@ -111,7 +120,8 @@ theorem integrating_factor {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L)
 
 /-- Explicit Duhamel form: dividing the integrating-factor identity by
 `mu(L)` and using `∫ x in 0..L, kappa = ∫ x in 0..s + ∫ x in s..L`,
-`I(L) = I0*exp(-∫_0^L kappa) + ∫_0^L j(s)*exp(-∫_s^L kappa) ds`. -/
+`I(L) = I0*exp(-∫_0^L kappa) + ∫_0^L j(s)*exp(-∫_s^L kappa) ds`. This is
+the integral solution of Liou (2002), Eq. (1.4.19); see the References. -/
 theorem explicit_form {κ j I : ℝ → ℝ} {L I0 : ℝ} (hL : 0 ≤ L)
     (hκ : Continuous κ) (hj : Continuous j)
     (hODE : ∀ t : ℝ, HasDerivAt I (-κ t * I t + j t) t)
