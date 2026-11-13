@@ -11,8 +11,31 @@ module
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Nat.Basic
 
+/-!
+# Conjunctive queries and the Chandra-Merlin theorem
+
+A conjunctive query `CQ` over the variables `ℕ` has a head tuple and a body of atoms
+`(relation, argument tuple)`; a database `DB` gives each relation name a finite set of tuples over
+`ℕ`. An assignment `σ : Assign` satisfies the body of `Q` in `D` (`Satisfies`) when every body atom,
+instantiated by `σ`, is a fact of `D`.
+
+* `Contained Q Q'`: on every database, every satisfying assignment of `Q` is matched by a
+  satisfying assignment of `Q'` with the same head tuple (answer-set containment, read at the
+  level of assignments).
+* `Hom Q' Q h`: `h` maps the head of `Q'` onto the head of `Q` and every body atom of `Q'` to a
+  body atom of `Q`.
+* `canonDB Q`: the canonical database of `Q`, with one fact per body atom.
+* `contained_iff_hom`: `Q` is contained in `Q'` exactly when some homomorphism maps `Q'` to `Q`.
+
+## References
+
+* A. K. Chandra and P. M. Merlin, *Optimal implementation of conjunctive queries in relational
+  data bases*, Proceedings of the 9th Annual ACM Symposium on Theory of Computing (STOC), 1977.
+-/
+
 @[expose] public section
 
+namespace Cslib.Databases.ConjunctiveQueries
 
 /-- A conjunctive query over variables `ℕ`: a head tuple and a
 body of atoms `(relation, argument tuple)`. -/
@@ -90,3 +113,5 @@ theorem contained_iff_hom (Q Q' : CQ) :
       have hmem : ((a.2.map h).map σ) ∈ D a.1 := hσ _ (hbody a ha)
       rwa [List.map_map] at hmem
     · rw [← List.map_map, hhead]
+
+end Cslib.Databases.ConjunctiveQueries
