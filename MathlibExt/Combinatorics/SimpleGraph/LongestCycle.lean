@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Combinatorics.SimpleGraph.Paths
-public import Mathlib.Data.Nat.Find
+import Mathlib.Data.Nat.Find
 
 /-!
 # Longest cycles in simple graphs
