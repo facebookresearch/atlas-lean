@@ -30,17 +30,17 @@ example : sxy (![2, 2, 1] : Fin 3 → ℝ) ![2, 2, 1] = 2 / 3 := by
 
 /-- `ĥ²` from the definition: statistics `(5/2, 5/2, 7/4)` on LD scores `(2, 2, 1)` with
 `N = 4`, `M = 3` have slope `3/4`, so `ĥ² = (3/4) · 3 / 4 = 9/16`. -/
-example : h2Hat 4 3 ![2, 2, 1] ![5 / 2, 5 / 2, 7 / 4] = 9 / 16 := by
-  simp [h2Hat, olsSlope, sxy, sampleMean_eq_sum_div, Fin.sum_univ_three]
+example : olsH2Hat 4 3 ![2, 2, 1] ![5 / 2, 5 / 2, 7 / 4] = 9 / 16 := by
+  simp [olsH2Hat, olsSlope, sxy, sampleMean_eq_sum_div, Fin.sum_univ_three]
   norm_num
 
-/-- The same value through `h2Hat_affine`: the statistics are `1 + (4 · (9/16) / 3) ℓ`. -/
-example : h2Hat 4 3 ![2, 2, 1] (fun j => 1 + ((4 : ℕ) : ℝ) * (9 / 16) / ((3 : ℕ) : ℝ) *
+/-- The same value through `olsH2Hat_affine`: the statistics are `1 + (4 · (9/16) / 3) ℓ`. -/
+example : olsH2Hat 4 3 ![2, 2, 1] (fun j => 1 + ((4 : ℕ) : ℝ) * (9 / 16) / ((3 : ℕ) : ℝ) *
     (![2, 2, 1] : Fin 3 → ℝ) j) = 9 / 16 := by
   have hℓ : sxy (![2, 2, 1] : Fin 3 → ℝ) ![2, 2, 1] ≠ 0 := by
     simp [sxy, sampleMean_eq_sum_div, Fin.sum_univ_three]
     norm_num
-  exact h2Hat_affine (by norm_num) (by norm_num) hℓ _ _
+  exact olsH2Hat_affine (by norm_num) (by norm_num) hℓ _ _
 
 /-- The intercept from the definition is `1` for the same data. -/
 example : olsIntercept (![2, 2, 1] : Fin 3 → ℝ) ![5 / 2, 5 / 2, 7 / 4] = 1 := by
@@ -49,12 +49,12 @@ example : olsIntercept (![2, 2, 1] : Fin 3 → ℝ) ![5 / 2, 5 / 2, 7 / 4] = 1 :
 
 /-- Boundary: equal LD scores leave the slope unidentified, and `ĥ²` is the junk value `0`
 whatever the statistics. -/
-example : h2Hat 4 3 ![1, 1, 1] ![1, 5, 9] = 0 := by
-  simp [h2Hat, olsSlope, sxy, sampleMean_eq_sum_div, Fin.sum_univ_three]
+example : olsH2Hat 4 3 ![1, 1, 1] ![1, 5, 9] = 0 := by
+  simp [olsH2Hat, olsSlope, sxy, sampleMean_eq_sum_div, Fin.sum_univ_three]
   norm_num
 
 /-- Boundary: `N = 0` gives `ĥ² = 0` by `x / 0 = 0`. -/
-example (ℓ χ : Fin 3 → ℝ) : h2Hat 0 3 ℓ χ = 0 := by simp [h2Hat]
+example (ℓ χ : Fin 3 → ℝ) : olsH2Hat 0 3 ℓ χ = 0 := by simp [olsH2Hat]
 
 /-! ### A witness model with three markers
 
@@ -151,15 +151,15 @@ example : ∫ ω, chiSqStrat D X 1 ![1, 0, 0, 0] 2 ω ∂μ8 ≠
   simp [D]
 
 /-- Population consistency: `ĥ²` of the expected statistics is `h² = 3/4`. -/
-example : h2Hat 4 3 (ldScore X) (fun j => ∫ ω, chiSqStrat D X 1 ![1, 0, 0, 0] j ω ∂μ8) =
+example : olsH2Hat 4 3 (ldScore X) (fun j => ∫ ω, chiSqStrat D X 1 ![1, 0, 0, 0] j ω ∂μ8) =
     3 / 4 :=
-  h2Hat_integral_chiSqStrat D X (by norm_num) (by norm_num) isStandardized_X sxy_ldScore_X hβ hε
+  olsH2Hat_integral_chiSqStrat D X (by norm_num) (by norm_num) isStandardized_X sxy_ldScore_X hβ hε
     1 _ ha
 
 /-- Unbiasedness: `𝔼[ĥ²] = h² = 3/4` despite the confounding term. -/
-example : ∫ ω, h2Hat 4 3 (ldScore X) (fun j => chiSqStrat D X 1 ![1, 0, 0, 0] j ω) ∂μ8 =
+example : ∫ ω, olsH2Hat 4 3 (ldScore X) (fun j => chiSqStrat D X 1 ![1, 0, 0, 0] j ω) ∂μ8 =
     3 / 4 :=
-  integral_h2Hat_chiSqStrat D X (by norm_num) (by norm_num) isStandardized_X sxy_ldScore_X hβ
+  integral_olsH2Hat_chiSqStrat D X (by norm_num) (by norm_num) isStandardized_X sxy_ldScore_X hβ
     hε 1 _ ha
 
 /-- The intercept is unbiased for `1 - h² + N a = 1 - 3/4 + 4/16 = 1/2`. -/
@@ -172,10 +172,10 @@ example : ∫ ω, olsIntercept (ldScore X) (fun j => chiSqStrat D X 1 ![1, 0, 0,
 
 /-- `ĥ²` is genuinely random in the witness model: it differs between outcomes `0` and `1`
 (computed from the definitions), so unbiasedness is not a deterministic identity. -/
-example : h2Hat 4 3 (ldScore X) (fun j => chiSqStrat D X 0 0 j 0) ≠
-    h2Hat 4 3 (ldScore X) (fun j => chiSqStrat D X 0 0 j 1) := by
+example : olsH2Hat 4 3 (ldScore X) (fun j => chiSqStrat D X 0 0 j 0) ≠
+    olsH2Hat 4 3 (ldScore X) (fun j => chiSqStrat D X 0 0 j 1) := by
   rw [ldScore_X]
-  simp [h2Hat, olsSlope, sxy, sampleMean_eq_sum_div, chiSqStrat, betaHatStrat, phenoStrat,
+  simp [olsH2Hat, olsSlope, sxy, sampleMean_eq_sum_div, chiSqStrat, betaHatStrat, phenoStrat,
     Model.pheno, D, X, walsh, Fin.sum_univ_four, Fin.sum_univ_three]
   norm_num
 
@@ -185,8 +185,8 @@ example (θ : ℝ) : TendstoInMeasure μ8 (fun (_ : ℕ) (_ : Fin 8) => θ) atTo
     (fun _ => by simp) (by simp [evariance])
 
 #print axioms integral_chiSqStrat_eq
-#print axioms integral_h2Hat_chiSqStrat
+#print axioms integral_olsH2Hat_chiSqStrat
 #print axioms integral_olsIntercept_chiSqStrat
-#print axioms tendstoInMeasure_h2Hat
+#print axioms tendstoInMeasure_olsH2Hat
 
 end MathlibExtTest.Biology.StatisticalGenetics.LDScoreRegression
