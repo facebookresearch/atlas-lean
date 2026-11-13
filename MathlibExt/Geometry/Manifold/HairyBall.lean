@@ -849,13 +849,6 @@ private theorem VHair_Ft_lintegral_eq
     norm_num at hx
   exact (VHair_Ft_hasFDerivAt h hh hne t x hne_x).hasFDerivWithinAt
 
-/-- Step 4 helper: Lipschitz bound controls `‖fderiv V‖` everywhere. -/
-private theorem VHair_fderiv_bound_L
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    (V : E → E) (L : NNReal) (hlip : LipschitzWith L V) (z : E) :
-    ‖fderiv ℝ V z‖ ≤ (L : ℝ) :=
-  norm_fderiv_le_of_lipschitz ℝ hlip
-
 /-- Step 4c: the volume integral is a polynomial in `t`, by Lagrange
 interpolation at `finrank + 1` nodes. -/
 private theorem VHair_volume_poly
@@ -1246,7 +1239,7 @@ private theorem VHair_volume_eq
         + t • fderiv ℝ (VHair h) x).det := by
     intro x hx
     simp only [Set.mem_ofPred_eq] at hx
-    have hbound := VHair_fderiv_bound_L (VHair h) L hlip x
+    have hbound := norm_fderiv_le_of_lipschitz ℝ (x₀ := x) hlip
     have hM : ‖t • fderiv ℝ (VHair h) x‖ < 1 := by
       calc ‖t • fderiv ℝ (VHair h) x‖
           = |t| * ‖fderiv ℝ (VHair h) x‖ := by
