@@ -14,6 +14,7 @@ public import Mathlib.Algebra.BigOperators.Pi
 public import Mathlib.Topology.Order.Basic
 public import Mathlib.Analysis.LocallyConvex.Separation
 public import Mathlib.Analysis.Normed.Module.FiniteDimension
+public import MathlibExt.Economics.Consumer.LocalNonsatiation
 
 /-!
 # Second fundamental welfare theorem: supporting prices
@@ -74,9 +75,10 @@ def IsParetoOptimal {I L : Type*} [Fintype I] (u : I → (L → ℝ) → ℝ) (�
       ∃ i, u i (x i) < u i (y i)
 
 /-- Local nonsatiation on the consumption set (MWG Def. 3.B.3): arbitrarily close to every
-nonnegative bundle there is a nonnegative bundle with strictly higher utility. -/
-def LocallyNonsatiated {L : Type*} [Fintype L] (v : (L → ℝ) → ℝ) : Prop :=
-  ∀ z ∈ consumptionSet L, ∀ ε > 0, ∃ z' ∈ consumptionSet L, dist z' z < ε ∧ v z < v z'
+nonnegative bundle there is a nonnegative bundle with strictly higher utility. This is
+`MathlibExt.Economics.Consumer.LocallyNonsatiated` specialized to `X = consumptionSet L`. -/
+abbrev LocallyNonsatiated {L : Type*} [Fintype L] (v : (L → ℝ) → ℝ) : Prop :=
+  MathlibExt.Economics.Consumer.LocallyNonsatiated v (consumptionSet L)
 
 /-- Consumer condition of a price quasi-equilibrium with transfers (MWG Def. 16.D.1 (ii)), the
 wealth of consumer `i` being `value p (x i)`: every nonnegative bundle strictly preferred to `x i`

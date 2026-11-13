@@ -10,6 +10,7 @@ module
 
 public import CSLibExt.MachineLearning.Sampling.MonteCarlo
 public import CSLibExt.MachineLearning.Bayesian.Basic
+public import CSLibExt.MachineLearning.Bayesian.BetaBinomial
 public import MathlibExt.Probability.MonteCarloRate
 
 /-!
@@ -79,5 +80,48 @@ theorem mcEstimate_bayesPosterior_mean_variance {Θ 𝓧 Ω : Type*} [Measurable
   have := Cslib.MachineLearning.Bayesian.isProbabilityMeasure_bayesPosterior κ π hx
   exact ⟨integral_mcEstimate hg (hg2.integrable one_le_two) hθs hlaw hm,
     variance_mcEstimate hg hg2 hθs hlaw hind hm⟩
+
+end Cslib.MachineLearning.Sampling
+
+
+
+
+
+
+
+namespace Cslib.MachineLearning.Sampling
+
+open MeasureTheory ProbabilityTheory
+
+/-- **Beta-Binomial posterior Monte Carlo.** For `k ≤ n` successes, exact iid draws from the
+`Beta(a + k, b + (n - k))` posterior give an unbiased estimate of the posterior mean of a
+square-integrable `g`, with variance `Var_posterior(g) / m`. -/
+theorem betaBinomial_posteriorMC_mean_variance {n : ℕ} {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
+    {k : ℕ} (hk : k ≤ n) {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    {g : ℝ → ℝ} (hg : Measurable g)
+    (hg2 : MemLp g 2 (betaMeasure (a + k) (b + (n - k : ℕ))))
+    {θs : ℕ → Ω → ℝ} (hθs : ∀ i, Measurable (θs i))
+    (hlaw : ∀ i, μ.map (θs i) = betaMeasure (a + k) (b + (n - k : ℕ)))
+    (hind : iIndepFun θs μ) {m : ℕ} (hm : m ≠ 0) :
+    (∫ ω, mcEstimate g θs m ω ∂μ =
+        ∫ θ, g θ ∂betaMeasure (a + k) (b + (n - k : ℕ))) ∧
+      variance (mcEstimate g θs m) μ =
+        variance g (betaMeasure (a + k) (b + (n - k : ℕ))) / m := by
+  have hprob := isProbabilityMeasureBeta ha hb
+  have hc : 0 < (n.choose k : ℝ) * (beta (a + k) (b + (n - k : ℕ)) / beta a b) := by
+    have h1 := beta_pos ha hb
+    have h2 := beta_pos (α := a + k) (β := b + (n - k : ℕ)) (by positivity) (by positivity)
+    have h3 : (0 : ℝ) < n.choose k := by exact_mod_cast Nat.choose_pos hk
+    positivity
+  have hev : (Cslib.MachineLearning.Bayesian.binomialKernel n ∘ₘ betaMeasure a b) {k} ≠ 0 := by
+    rw [Cslib.MachineLearning.Bayesian.binomialKernel_comp_betaMeasure ha hb]
+    exact (ENNReal.ofReal_pos.mpr hc).ne'
+  have hpost : Cslib.MachineLearning.Bayesian.bayesPosterior
+      (Cslib.MachineLearning.Bayesian.binomialKernel n) (betaMeasure a b) k
+      = betaMeasure (a + k) (b + (n - k : ℕ)) := by
+    rw [← Cslib.MachineLearning.Bayesian.posterior_eq_bayesPosterior _ _ hev]
+    exact Cslib.MachineLearning.Bayesian.posterior_binomialKernel_betaMeasure ha hb hk
+  rw [← hpost] at hg2 hlaw ⊢
+  exact mcEstimate_bayesPosterior_mean_variance _ _ hev hg hg2 hθs hlaw hind hm
 
 end Cslib.MachineLearning.Sampling

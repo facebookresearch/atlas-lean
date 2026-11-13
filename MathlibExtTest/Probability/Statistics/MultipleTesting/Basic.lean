@@ -113,4 +113,111 @@ example (H0 R : Finset (Fin 3)) :
     0 ≤ falseDiscoveryProportion H0 R ∧ falseDiscoveryProportion H0 R ≤ 1 :=
   ⟨falseDiscoveryProportion_nonneg H0 R, falseDiscoveryProportion_le_one H0 R⟩
 
+/-- Use: outward translation by `ε ≥ 0` stays valid. -/
+example {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} {p : Ω → ℝ} (hp : IsValidPValue μ p) {ε : ℝ} (hε : 0 ≤ ε) :
+    IsValidPValue μ (fun ω => p ω + ε) := by
+  exact hp.mono_ae (Filter.Eventually.of_forall fun ω => le_add_of_nonneg_right hε)
+
+/-- Use: capping a p-value bounded above by `1` (at most `1` a.e.) at `1` stays valid. -/
+example {Ω : Type*} [MeasurableSpace Ω]
+    {μ : Measure Ω} {p : Ω → ℝ} (hp : IsValidPValue μ p) {ε : ℝ} (hε : 0 ≤ ε)
+    (hle : ∀ᵐ ω ∂μ, p ω ≤ 1) :
+    IsValidPValue μ (fun ω => min 1 (p ω + ε)) := by
+  apply hp.mono_ae
+  filter_upwards [hle] with ω hω
+  exact le_min hω (le_add_of_nonneg_right hε)
+
+/-- Use: the constant `1` function is a valid p-value under any probability law. -/
+example (μ : Measure ℝ) [IsProbabilityMeasure μ] :
+    IsValidPValue μ (fun _ => (1 : ℝ)) := by
+  intro t ht
+  by_cases h : (1 : ℝ) ≤ t
+  · have ht1 : t = 1 := le_antisymm ht.2 h
+    subst ht1
+    have hset : {ω : ℝ | (fun _ => (1 : ℝ)) ω ≤ 1} = Set.univ :=
+      Set.eq_univ_of_forall fun _ => show (1 : ℝ) ≤ 1 from le_refl 1
+    rw [hset, IsProbabilityMeasure.measure_univ, ENNReal.ofReal_one]
+  · have hset : {ω : ℝ | (fun _ => (1 : ℝ)) ω ≤ t} = ∅ :=
+      Set.eq_empty_of_forall_notMem fun _ => h
+    rw [hset, measure_empty]
+    exact zero_le
+
+/-- Negative: rounding down breaks validity (constant `1` rounded to `1 / 2` fails at `t = 3 / 4`). -/
+example (μ : Measure ℝ) [IsProbabilityMeasure μ] :
+    ¬ IsValidPValue μ (fun _ : ℝ => (1 - 1 / 2 : ℝ)) := by
+  intro hcon
+  have h34 := hcon (3 / 4 : ℝ) ⟨by norm_num, by norm_num⟩
+  have hset : {ω : ℝ | (fun _ : ℝ => (1 - 1 / 2 : ℝ)) ω ≤ 3 / 4} = Set.univ :=
+    Set.eq_univ_of_forall fun _ => show (1 - 1 / 2 : ℝ) ≤ 3 / 4 by norm_num
+  rw [hset, IsProbabilityMeasure.measure_univ] at h34
+  have hlt : ENNReal.ofReal (3 / 4 : ℝ) < 1 :=
+    ENNReal.ofReal_lt_one.mpr (by norm_num)
+  exact (not_le_of_gt hlt) h34
+
+/-! ### Shared step-up and leave-one-out helpers -/
+
+/-- `stepUpIndex` with the constant threshold `1/40`: exactly two p-values qualify, so the step-up
+index is `2` (via `numBelow_stepUpIndex`). -/
+example : stepUpIndex (fun _ => (1 / 40 : ℝ)) p3 = 2 :=
+  (numBelow_stepUpIndex monotone_const p3).symm.trans numBelow_p3
+
+/-- Boundary: a zero threshold sequence lies below every p-value, so the step-up index is `0`. -/
+example : stepUpIndex (fun _ => (0 : ℝ)) p3 = 0 := by
+  have h0 : numBelow p3 0 = 0 := by
+    rw [numBelow, Finset.card_eq_zero, Finset.filter_eq_empty_iff]
+    intro i _
+    fin_cases i <;> norm_num [p3]
+  exact (numBelow_stepUpIndex monotone_const p3).symm.trans h0
+
+/-- `stepUpIndex_le` and `stepUpIndex_le_numBelow` for an arbitrary threshold sequence. -/
+example (c : ℕ → ℝ) :
+    stepUpIndex c p3 ≤ 3 ∧ stepUpIndex c p3 ≤ numBelow p3 (c (stepUpIndex c p3)) :=
+  ⟨stepUpIndex_le c p3, stepUpIndex_le_numBelow c p3⟩
+
+/-- Replacing `p 2 = 1/2` by `0` raises the count below `1/40` from `2` to `3`, so the
+inequality `numBelow_update_le` can be strict. -/
+example : numBelow p3 (1 / 40) < numBelow (Function.update p3 2 0) (1 / 40) := by
+  have h3 : numBelow (Function.update p3 2 0) (1 / 40) = 3 := by
+    rw [numBelow, Finset.filter_true_of_mem fun i _ => by
+      fin_cases i <;> norm_num [p3, Function.update]]
+    rfl
+  rw [numBelow_p3, h3]
+  omega
+
+example : numBelow p3 (1 / 40) ≤ numBelow (Function.update p3 2 0) (1 / 40) :=
+  numBelow_update_le p3 2 (by norm_num)
+
+/-- Replacing `p 0 = 1/100 ≤ 1/40` by `0` leaves the count below `1/40` unchanged. -/
+example : numBelow (Function.update p3 0 0) (1 / 40) = 2 :=
+  (numBelow_update_eq p3 0 (by norm_num) (by norm_num [p3])).trans numBelow_p3
+
+/-- Leave-one-out (`stepUp_leave_one_out`): with threshold `1/40`, hypothesis `0` is rejected among
+`2` rejections, so the procedure on `p` with `p 0 := 0` also rejects `2`. -/
+example : stepUpIndex (fun _ => (1 / 40 : ℝ)) (Function.update p3 0 0) = 2 := by
+  have hk : stepUpIndex (fun _ => (1 / 40 : ℝ)) p3 = 2 :=
+    (numBelow_stepUpIndex monotone_const p3).symm.trans numBelow_p3
+  exact ((stepUp_leave_one_out monotone_const (fun _ => by norm_num) p3 0 2).mp
+    ⟨by norm_num [p3], hk⟩).2
+
+/-- `fdp_eq_sum` on the example above: the per-null contributions sum to `1 / 2`. -/
+example : (∑ i ∈ ({1, 2} : Finset (Fin 3)),
+    if i ∈ ({0, 1} : Finset (Fin 3)) then 1 / max (({0, 1} : Finset (Fin 3)).card : ℝ) 1
+      else 0) = 1 / 2 := by
+  rw [← fdp_eq_sum]
+  norm_num [falseDiscoveryProportion]
+
+/-- `valid_measureReal_le` for the uniform p-value on `[0, 1]`. -/
+example : (volume.restrict (Set.Icc (0 : ℝ) 1)).real {ω | id ω ≤ 1 / 2} ≤ 1 / 2 :=
+  valid_measureReal_le (isValidPValue_of_hasLaw_uniform HasLaw.id) (by norm_num) (by norm_num)
+
+/-- Measurability of the count below a threshold and of a step-up index, as functions of the
+p-value vector. -/
+example : Measurable fun x : Fin 3 → ℝ => numBelow (fun i => x i) (1 / 40) :=
+  measurable_numBelow (fun i (x : Fin 3 → ℝ) => x i) (fun i => measurable_pi_apply i) _
+
+example : Measurable fun x : Fin 3 → ℝ => stepUpIndex (fun k => (k : ℝ) / 30) x :=
+  measurable_stepUpIndex_comp (fun _ k => (k : ℝ) / 30) id (fun _ => measurable_const)
+    (fun j => measurable_pi_apply j)
+
 end MathlibExtTest.Probability.Statistics.MultipleTesting.Basic
