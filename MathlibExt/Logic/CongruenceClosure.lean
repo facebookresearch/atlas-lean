@@ -12,6 +12,7 @@ public import Mathlib.Data.Fin.Basic
 
 @[expose] public section
 
+namespace MetaMathlibExt
 
 /-- Ground terms of an uninterpreted-function signature with one
 binary function symbol and constants indexed by naturals. -/
@@ -42,11 +43,8 @@ def GTerm.eval {D : Type*} (f : ℕ → D) (op : D → D → D) : GTerm → D
 /-- Soundness of congruence closure for EUF: if two terms are
 related by the congruence closure of `E`, then they have the
 same value in every interpretation that satisfies all the
-equalities of `E`. Hence a disequality `t ≠ s` in the input is
-decided correctly: `t` and `s` are equal in all models of `E`
-iff they are in the closure (the `if` direction is this theorem;
-completeness is `CongClosure` being by definition the least such
-relation, cf. `CongClosure.least` below). -/
+equalities of `E`. The converse (completeness) and a decision
+procedure are not proved here. -/
 theorem congClosure_sound {E : GTerm → GTerm → Prop} {D : Type*}
     {f : ℕ → D} {op : D → D → D}
     (hE : ∀ t s, E t s → GTerm.eval f op t = GTerm.eval f op s)
@@ -76,3 +74,5 @@ theorem congClosure_least {E : GTerm → GTerm → Prop}
   | symm _ ih => exact hsymm ih
   | trans _ _ ih₁ ih₂ => exact htrans ih₁ ih₂
   | congr _ _ ih₁ ih₂ => exact hcongr ih₁ ih₂
+
+end MetaMathlibExt

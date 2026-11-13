@@ -12,6 +12,8 @@ public import MathlibExt.Logic.CongruenceClosure
 
 @[expose] public section
 
+open MetaMathlibExt
+
 /-- Boundary check: from `c0 = c1`, congruence gives
 `f c0 = f c1` in the closure. -/
 example : CongClosure (fun t s => t = GTerm.const 0 ∧ s = GTerm.const 1 ∨
