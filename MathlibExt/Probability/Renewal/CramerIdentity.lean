@@ -53,10 +53,9 @@ as `τ₊ ∧ n`, but using it needs the natural filtration of the scores, the m
 of `e^{θ S_n}` and `τ₊ ∧ n` as a stopping time; the stopped identity is proved directly instead,
 from fixed-time independence (`ProbabilityTheory.indep_iSup_of_disjoint` and
 `lintegral_mul_eq_lintegral_mul_lintegral_of_independent_measurableSpace`). The passage
-`n → ∞` (an unbounded stopping time) is not covered by Mathlib. The private helpers
-`walkPast`, `walkPast_le`, `measurable_scoreWalk_walkPast`, `measurableSet_ladderEvent` and
-`ladderEvent_disjoint_of_ne` are adapted from the private `ScoreLadder` helpers `past`,
-`past_le`, `measurable_scoreWalk_past`, `measurableSet_ladderEvent_past` and
+`n → ∞` (an unbounded stopping time) is not covered by Mathlib. The past σ-algebra and the
+measurability and disjointness facts for the walk and the ladder events are the `ScoreLadder`
+helpers `past`, `past_le`, `measurable_scoreWalk_past`, `measurableSet_ladderEvent_past` and
 `ladderEvent_disjoint`.
 
 ## References
@@ -81,72 +80,22 @@ variable {Ω : Type*} [MeasurableSpace Ω]
 private def notAscended (X : ℕ → Ω → ℤ) (n : ℕ) : Set Ω :=
   {ω | ∀ m ≤ n, scoreWalk X m ω ≤ 0}
 
-/-- The σ-algebra of the scores before time `n`. -/
-private noncomputable abbrev walkPast (X : ℕ → Ω → ℤ) (n : ℕ) : MeasurableSpace Ω :=
-  ⨆ i ∈ Set.Iio n, MeasurableSpace.comap (X i) (inferInstance : MeasurableSpace ℤ)
-
-private lemma walkPast_le {X : ℕ → Ω → ℤ} (hmeas : ∀ i, Measurable (X i)) (n : ℕ) :
-    walkPast X n ≤ ‹MeasurableSpace Ω› :=
-  iSup₂_le fun i _ => (hmeas i).comap_le
-
 omit [MeasurableSpace Ω] in
-private lemma measurable_scoreWalk_walkPast (X : ℕ → Ω → ℤ) {m n : ℕ} (hmn : m ≤ n) :
-    Measurable[walkPast X n] (scoreWalk X m) := by
-  refine Finset.measurable_sum _ fun i hi => ?_
-  have hi' : i ∈ Set.Iio n := by
-    rw [Finset.mem_range] at hi
-    exact Set.mem_Iio.2 (by omega)
-  exact (comap_measurable (X i)).mono
-    (le_biSup (fun i => MeasurableSpace.comap (X i) (inferInstance : MeasurableSpace ℤ)) hi')
-    le_rfl
-
-omit [MeasurableSpace Ω] in
-private lemma measurableSet_notAscended_walkPast (X : ℕ → Ω → ℤ) (n : ℕ) :
-    MeasurableSet[walkPast X n] (notAscended X n) := by
+private lemma measurableSet_notAscended_past (X : ℕ → Ω → ℤ) (n : ℕ) :
+    MeasurableSet[past X n] (notAscended X n) := by
   have h : notAscended X n = ⋂ m, ⋂ (_ : m ≤ n), scoreWalk X m ⁻¹' {z | z ≤ 0} := by
     ext ω
     simp [notAscended]
   rw [h]
   exact MeasurableSet.iInter fun m => MeasurableSet.iInter fun hm =>
-    measurable_scoreWalk_walkPast X hm (MeasurableSet.of_discrete (s := {z : ℤ | z ≤ 0}))
-
-private lemma measurable_scoreWalk {X : ℕ → Ω → ℤ} (hmeas : ∀ i, Measurable (X i)) (n : ℕ) :
-    Measurable (scoreWalk X n) :=
-  (measurable_scoreWalk_walkPast X le_rfl).mono (walkPast_le hmeas n) le_rfl
-
-private lemma measurableSet_ladderEvent {X : ℕ → Ω → ℤ} (hmeas : ∀ i, Measurable (X i))
-    (n j : ℕ) : MeasurableSet (ladderEvent X n j) := by
-  have h : ladderEvent X n j = scoreWalk X n ⁻¹' {z | 0 < z} ∩ scoreWalk X n ⁻¹' {z | z = j} ∩
-      ⋂ m, ⋂ (_ : m < n), scoreWalk X m ⁻¹' {z | z ≤ 0} := by
-    ext ω
-    simp [ladderEvent, and_assoc]
-  rw [h]
-  exact ((measurable_scoreWalk hmeas n (MeasurableSet.of_discrete)).inter
-    (measurable_scoreWalk hmeas n (MeasurableSet.of_discrete))).inter
-    (MeasurableSet.iInter fun m => MeasurableSet.iInter fun _ =>
-      measurable_scoreWalk hmeas m (MeasurableSet.of_discrete))
-
-omit [MeasurableSpace Ω] in
-private lemma ladderEvent_disjoint_of_ne (X : ℕ → Ω → ℤ) {p q : ℕ × ℕ} (hpq : p ≠ q) :
-    Disjoint (ladderEvent X p.1 p.2) (ladderEvent X q.1 q.2) := by
-  rw [Set.disjoint_left]
-  rintro ω ⟨hp1, hp2, hp3⟩ ⟨hq1, hq2, hq3⟩
-  rcases lt_trichotomy p.1 q.1 with h | h | h
-  · have := hq3 _ h
-    omega
-  · apply hpq
-    refine Prod.ext h ?_
-    rw [h] at hp2
-    omega
-  · have := hp3 _ h
-    omega
+    measurable_scoreWalk_past X hm (MeasurableSet.of_discrete (s := {z : ℤ | z ≤ 0}))
 
 /-- Fixed-time independence: a function of the scores before time `n` and a function of the
 score at time `n` integrate as a product; the second factor has the law of `X 0`. -/
 private lemma lintegral_mul_score {P : Measure Ω} {X : ℕ → Ω → ℤ}
     (hmeas : ∀ i, Measurable (X i)) (hind : iIndepFun X P)
     (hid : ∀ i, IdentDistrib (X i) (X 0) P P) (n : ℕ) {f : Ω → ℝ≥0∞}
-    (hf : Measurable[walkPast X n] f) (h : ℤ → ℝ≥0∞) :
+    (hf : Measurable[past X n] f) (h : ℤ → ℝ≥0∞) :
     ∫⁻ ω, f ω * h (X n ω) ∂P = (∫⁻ ω, f ω ∂P) * ∫⁻ ω, h (X 0 ω) ∂P := by
   have hdisj : Disjoint (Set.Iio n) ({n} : Set ℕ) := by simp
   have hindep := indep_iSup_of_disjoint (fun i => (hmeas i).comap_le) hind hdisj
@@ -156,7 +105,7 @@ private lemma lintegral_mul_score {P : Measure Ω} {X : ℕ → Ω → ℤ}
       (le_biSup (fun i => MeasurableSpace.comap (X i) (inferInstance : MeasurableSpace ℤ))
         (Set.mem_singleton n)) le_rfl)
   rw [lintegral_mul_eq_lintegral_mul_lintegral_of_independent_measurableSpace
-    (walkPast_le hmeas n) (iSup₂_le fun i _ => (hmeas i).comap_le) hindep hf hg]
+    (past_le hmeas n) (iSup₂_le fun i _ => (hmeas i).comap_le) hindep hf hg]
   congr 1
   exact ((hid n).comp (measurable_from_top (f := h))).lintegral_eq
 
@@ -174,10 +123,10 @@ private lemma ofReal_exp_scoreWalk_succ (X : ℕ → Ω → ℤ) (t : ℝ) (n : 
   ring_nf
 
 omit [MeasurableSpace Ω] in
-private lemma measurable_ofReal_exp_walkPast (X : ℕ → Ω → ℤ) (t : ℝ) (n : ℕ) :
-    Measurable[walkPast X n] fun ω => ENNReal.ofReal (Real.exp (t * scoreWalk X n ω)) :=
+private lemma measurable_ofReal_exp_past (X : ℕ → Ω → ℤ) (t : ℝ) (n : ℕ) :
+    Measurable[past X n] fun ω => ENNReal.ofReal (Real.exp (t * scoreWalk X n ω)) :=
   (measurable_from_top (f := fun z : ℤ => ENNReal.ofReal (Real.exp (t * z)))).comp
-    (measurable_scoreWalk_walkPast X le_rfl)
+    (measurable_scoreWalk_past X le_rfl)
 
 /-- `𝔼 e^{t S_n} = (𝔼 e^{t X})^n` for the i.i.d. score walk. -/
 private lemma lintegral_exp_scoreWalk {P : Measure Ω} [IsProbabilityMeasure P]
@@ -189,7 +138,7 @@ private lemma lintegral_exp_scoreWalk {P : Measure Ω} [IsProbabilityMeasure P]
   | zero => simp [scoreWalk]
   | succ n ih =>
     simp_rw [ofReal_exp_scoreWalk_succ]
-    rw [lintegral_mul_score hmeas hind hid n (measurable_ofReal_exp_walkPast X t n)
+    rw [lintegral_mul_score hmeas hind hid n (measurable_ofReal_exp_past X t n)
       (fun z : ℤ => ENNReal.ofReal (Real.exp (t * z))), ih, pow_succ]
 
 /-- The stopped identity `∑_{m ≤ n} 𝔼[e^{θ S_m}; τ₊ = m] + 𝔼[e^{θ S_n}; τ₊ > n] = 1`
@@ -202,7 +151,9 @@ private lemma stopped_identity {P : Measure Ω} [IsProbabilityMeasure P] {X : �
         P (ladderEvent X m j) * ENNReal.ofReal (Real.exp (θ * j))) +
       ∫⁻ ω in notAscended X n, ENNReal.ofReal (Real.exp (θ * scoreWalk X n ω)) ∂P = 1 := by
   have hB : ∀ n, MeasurableSet (notAscended X n) := fun n =>
-    walkPast_le hmeas n _ (measurableSet_notAscended_walkPast X n)
+    past_le hmeas n _ (measurableSet_notAscended_past X n)
+  have hLm : ∀ m j, MeasurableSet (ladderEvent X m j) := fun m j =>
+    past_le hmeas m _ (measurableSet_ladderEvent_past X m j)
   induction n with
   | zero =>
     have hL : ∀ j, ladderEvent X 0 j = ∅ := fun j => by
@@ -228,8 +179,8 @@ private lemma stopped_identity {P : Measure Ω} [IsProbabilityMeasure P] {X : �
         · simp [Set.indicator_of_notMem hω]
       rw [hpt]
       exact (lintegral_mul_score hmeas hind hid n
-        ((measurable_ofReal_exp_walkPast X θ n).indicator
-          (measurableSet_notAscended_walkPast X n))
+        ((measurable_ofReal_exp_past X θ n).indicator
+          (measurableSet_notAscended_past X n))
         (fun z : ℤ => ENNReal.ofReal (Real.exp (θ * z)))).trans (by rw [h1, mul_one])
     -- Step 2: `B n = B (n + 1) ∪ ⋃ j, {τ₊ = n + 1, S_{n+1} = j}`.
     have hsplit : notAscended X n = notAscended X (n + 1) ∪ ⋃ j : ℕ, ladderEvent X (n + 1) j := by
@@ -255,18 +206,17 @@ private lemma stopped_identity {P : Measure Ω} [IsProbabilityMeasure P] {X : �
       omega
     have hL : ∫⁻ ω in ⋃ j : ℕ, ladderEvent X (n + 1) j, e ω ∂P =
         ∑' j : ℕ, P (ladderEvent X (n + 1) j) * ENNReal.ofReal (Real.exp (θ * j)) := by
-      rw [lintegral_iUnion (fun j => measurableSet_ladderEvent hmeas (n + 1) j)
-        (fun a b hab => ladderEvent_disjoint_of_ne X (p := (n + 1, a)) (q := (n + 1, b))
+      rw [lintegral_iUnion (fun j => hLm (n + 1) j)
+        (fun a b hab => ladderEvent_disjoint X (p := (n + 1, a)) (q := (n + 1, b))
           (by simpa using hab))]
       refine tsum_congr fun j => ?_
-      rw [setLIntegral_congr_fun (measurableSet_ladderEvent hmeas (n + 1) j)
+      rw [setLIntegral_congr_fun (hLm (n + 1) j)
         (g := fun _ => ENNReal.ofReal (Real.exp (θ * j))) ?_, setLIntegral_const, mul_comm]
       rintro ω ⟨-, hj, -⟩
       simp [he, hj]
     have hrec : ∫⁻ ω in notAscended X n, e ω ∂P = ∫⁻ ω in notAscended X (n + 1), e ω ∂P +
         ∑' j : ℕ, P (ladderEvent X (n + 1) j) * ENNReal.ofReal (Real.exp (θ * j)) := by
-      rw [hsplit, lintegral_union (MeasurableSet.iUnion fun j => measurableSet_ladderEvent hmeas
-        (n + 1) j) hdisj, hL]
+      rw [hsplit, lintegral_union (MeasurableSet.iUnion fun j => hLm (n + 1) j) hdisj, hL]
     calc _ = (∑ m ∈ Finset.range (n + 1), ∑' j : ℕ,
             P (ladderEvent X m j) * ENNReal.ofReal (Real.exp (θ * j))) +
           ∫⁻ ω in notAscended X n, e ω ∂P := by
@@ -352,8 +302,8 @@ theorem hasSum_ladderLaw_mul_exp {P : Measure Ω} [IsProbabilityMeasure P] {X : 
       (ENNReal.tendsto_pow_atTop_nhds_zero_of_lt_one hρ) (fun _ => zero_le) fun n => ?_
     simp only [ha]
     rw [← lintegral_exp_scoreWalk hmeas hind hid (θ / 2) n]
-    refine (setLIntegral_mono ((measurable_ofReal_exp_walkPast X (θ / 2) n).mono
-      (walkPast_le hmeas n) le_rfl) fun ω hω => ?_).trans (setLIntegral_le_lintegral _ _)
+    refine (setLIntegral_mono ((measurable_ofReal_exp_past X (θ / 2) n).mono
+      (past_le hmeas n) le_rfl) fun ω hω => ?_).trans (setLIntegral_le_lintegral _ _)
     have hS : (scoreWalk X n ω : ℝ) ≤ 0 := by exact_mod_cast hω n le_rfl
     exact ENNReal.ofReal_le_ofReal (Real.exp_le_exp.2 (by nlinarith))
   -- The partial sums of `∑_m 𝔼[e^{θ S_m}; τ₊ = m]` tend to `1`.
@@ -372,8 +322,8 @@ theorem hasSum_ladderLaw_mul_exp {P : Measure Ω} [IsProbabilityMeasure P] {X : 
   have hT : ∑' j : ℕ, P (⋃ n, ladderEvent X n j) * ENNReal.ofReal (Real.exp (θ * j)) = 1 := by
     rw [← htsum, hc, ENNReal.tsum_comm]
     refine tsum_congr fun j => ?_
-    rw [measure_iUnion (fun a b hab => ladderEvent_disjoint_of_ne X (p := (a, j)) (q := (b, j))
-      (by simpa using hab)) (fun n => measurableSet_ladderEvent hmeas n j),
+    rw [measure_iUnion (fun a b hab => ladderEvent_disjoint X (p := (a, j)) (q := (b, j))
+      (by simpa using hab)) (fun n => past_le hmeas n _ (measurableSet_ladderEvent_past X n j)),
       ENNReal.tsum_mul_right]
   -- Back to real numbers.
   have hfin : ∀ j : ℕ, P (⋃ n, ladderEvent X n j) * ENNReal.ofReal (Real.exp (θ * j)) ≠ ⊤ :=
