@@ -27,10 +27,11 @@ open Cslib.Automata.ωAcceptor
 
 Safra's construction turns a nondeterministic Büchi automaton into a
 deterministic Rabin automaton; Piterman's refinement turns it into a
-deterministic parity automaton with `2^O(n log n)` states. The statement below
-is this state bound, made explicit through a universal constant `c` (as in
-`Cslib.BuchiComplementationWanted.buchi_complement_bounded_wanted`); it does not
-bound the priorities.
+deterministic parity automaton with `2^O(n log n)` states and `O(n)`
+priorities. The statement below is Piterman's form, with the state bound made
+explicit through a universal constant `c` (as in
+`Cslib.BuchiComplementationWanted.buchi_complement_bounded_wanted`); Piterman
+also bounds the number of priorities by `O(n)`.
 -/
 
 /-- A deterministic parity automaton: a single start state, a deterministic
@@ -66,8 +67,8 @@ end DetParity
 nondeterministic Büchi and Streett automata to deterministic parity automata",
 *Proceedings of LICS 2006*, 255-264, and "From nondeterministic Büchi and
 Streett automata to deterministic parity automata", *Logical Methods in Computer
-Science* 3 (2007) (deterministic parity automata with `2^O(n log n)`
-states). -/
+Science* 3 (2007) (deterministic parity, `2^O(n log n)` states, `O(n)`
+priorities). -/
 public theorem_wanted safra_piterman_wanted :
     ∃ c : ℕ, ∀ (n k : ℕ) (a : Buchi (Fin n) (Fin k)),
       ∃ m : ℕ, m ≤ 2 ^ (c * n * (Nat.log2 (n + 1) + 1)) ∧

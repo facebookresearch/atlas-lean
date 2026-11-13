@@ -23,14 +23,22 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.PoincareHighDimTopological` — poincare_high_dim_topological (manifest `manifests/problems/poincare_high_dim_topological.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Topology.PoincareHighDimTopological` —
+poincare_high_dim_topological (manifest `manifests/problems/poincare_high_dim_topological.toml`, rev
+1, submitter Kim Morrison, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.PoincareHighDimTopologicalWanted` namespace. Mathematical
-statements are unchanged. Source: S. Smale, Generalized Poincaré's conjecture in dimensions greater than four, Ann. of Math. 74 (1961), 391-406. Topological case: M. H. A. Newman, The engulfing theorem for topological manifolds, Ann. of Math. 84 (1966) and E. H. Connell, A topological h-cobordism theorem for n ≥ 5, Illinois J. Math. 11 (1967). Specialization of `proof_wanted ContinuousMap.HomotopyEquiv.nonempty_homeomorph_sphere` in Mathlib/Geometry/Manifold/PoincareConjecture.lean.
+and placed the declarations in the `MathlibExt.Topology.PoincareHighDimTopologicalWanted` namespace.
+Mathematical
+statements are unchanged. Source: S. Smale, Generalized Poincaré's conjecture in dimensions greater
+than four, Ann. of Math. 74 (1961), 391-406. Topological case: M. H. A. Newman, The engulfing
+theorem for topological manifolds, Ann. of Math. 84 (1966) and E. H. Connell, A topological
+h-cobordism theorem for n ≥ 5, Illinois J. Math. 11 (1967). Specialization of
+`proof_wanted ContinuousMap.HomotopyEquiv.nonempty_homeomorph_sphere` in
+Mathlib/Geometry/Manifold/PoincareConjecture.lean.
 -/
 module
 
@@ -70,7 +78,13 @@ open ContinuousMap
 (Smale 1961; topological case Newman 1966 / Connell 1967). For `n ≥ 5`,
 every Hausdorff `n`-manifold homotopy-equivalent to the standard `n`-sphere
 `𝕊ⁿ` is homeomorphic to `𝕊ⁿ`. -/
-/-- Source: S. Smale, Generalized Poincaré's conjecture in dimensions greater than four, Ann. of Math. 74 (1961), 391-406. Topological case: M. H. A. Newman, The engulfing theorem for topological manifolds, Ann. of Math. 84 (1966) and E. H. Connell, A topological h-cobordism theorem for n ≥ 5, Illinois J. Math. 11 (1967). Specialization of `proof_wanted ContinuousMap.HomotopyEquiv.nonempty_homeomorph_sphere` in Mathlib/Geometry/Manifold/PoincareConjecture.lean. Via leanprover/lean-eval@38361be, problem `poincare_high_dim_topological`. -/
+/-- Source: S. Smale, Generalized Poincaré's conjecture in dimensions greater than four, Ann. of
+Math. 74 (1961), 391-406. Topological case: M. H. A. Newman, The engulfing theorem for topological
+manifolds, Ann. of Math. 84 (1966) and E. H. Connell, A topological h-cobordism theorem for n ≥ 5,
+Illinois J. Math. 11 (1967). Specialization of
+`proof_wanted ContinuousMap.HomotopyEquiv.nonempty_homeomorph_sphere` in
+Mathlib/Geometry/Manifold/PoincareConjecture.lean. Via leanprover/lean-eval@38361be, problem
+`poincare_high_dim_topological`. -/
 public theorem_wanted poincare_high_dim_topological
     {n : ℕ} (_h5 : 5 ≤ n)
     {M : Type*} [TopologicalSpace M] [T2Space M]
