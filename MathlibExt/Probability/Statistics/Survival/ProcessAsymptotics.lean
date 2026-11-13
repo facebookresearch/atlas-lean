@@ -41,10 +41,12 @@ equals `1` (`hΛ`), so every factor `1 - ΔΛ i`, and hence `S`, is nonzero; `S`
 * **Nelson–Aalen, `D([0, τ])` with the Skorokhod J1 topology**
   (`tendstoInDistribution_naErrorPath`, `tendstoInDistribution_naErrorPath_timeChangedBrownian`).
   A counting process `N n` with at-risk process `Y n` in Aalen's multiplicative model is observed on
-  the grid of mesh `τ / K n`; `naErrorPath` is the càdlàg step path of `√n (Â_n - α_n)`
-  (`gridPath`, `naErrorPath_apply_gridTime`). The limit `Z` is whatever the hypotheses `hfdd`
-  and `htight` name. **If** `Z = B ∘ σ²` a.s. (hypothesis `hZB` of the corollary) for a Brownian
-  motion `B` and a non-decreasing variance function `σ²`, then `Cov(Z s, Z t) = σ²(min s t)` and
+  the grid of mesh `τ / K n`; `naErrorPath` is the càdlàg step path of
+  `√n (Â_n - (α_n - α_n(0)))`, centered at the hazard increment since time `0` (no
+  `α_n(0) = 0` hypothesis; `gridPath`, `naErrorPath_apply_gridTime`). The limit `Z` is whatever
+  the hypotheses `hfdd` and `htight` name. **If** `Z = B ∘ σ²` a.s. (hypothesis `hZB` of the
+  corollary) for a Brownian motion `B` and a non-decreasing variance function `σ²`, then
+  `Cov(Z s, Z t) = σ²(min s t)` and
   `Z t ~ N(0, σ²(t))` (`covariance_timeChangedBrownian`, `hasLaw_timeChangedBrownian`, from
   Mathlib's `IsPreBrownianReal.covariance_eval`). For Nelson–Aalen the classical
   identification `σ²(t) = ∫_0^t dΛ / y` is **not proved** here; it is part of the hypotheses.
@@ -70,9 +72,12 @@ equals `1` (`hΛ`), so every factor `1 - ΔΛ i`, and hence `S`, is nonzero; `S`
   Fréchet differentiable with explicit derivative `ajDeriv` (`hasFDerivAt_ajIncidence`,
   `ajDeriv_apply`). Covariance (`covariance_ajLimit`): for an arbitrary covariance matrix `Γ`
   of the cause-specific limit `G`, `Cov = ∑_p ∑_q a(j, c; p) a(j', c'; q) Γ p q` with the explicit
-  coefficients `a = ajDeriv x δ_p`. For grouped data with ties the cause-specific counts at one
-  grid time are multinomial, so `Γ (i, c) (i', e) = δ_{i i'} (x i c δ_{c e} - x i c x i e) / y i`
-  is not diagonal across causes.
+  coefficients `a = ajDeriv x δ_p`. The API does not derive any particular `Γ`: grouped data
+  alone (`CompetingRiskData` allows arbitrary counts) do not make the cause counts multinomial.
+  Under an additional i.i.d. competing-risks sampling model, not formalized here, the counts at
+  one grid time are conditionally multinomial and the classical
+  `Γ (i, c) (i', e) = δ_{i i'} (x i c δ_{c e} - x i c x i e) / y i` (limiting at-risk fraction
+  `y i`) is not diagonal across causes.
 
 ## What is assumed, and what is not claimed
 
@@ -95,9 +100,9 @@ equals `1` (`hΛ`), so every factor `1 - ΔΛ i`, and hence `S`, is nonzero; `S`
 * The Nelson–Aalen `D([0, τ])` result uses a deterministic grid of mesh `τ / K n` (Aalen's model
   on a discretized time axis), not the observed event times.
 * Gaussianity of the grid limits is not stated separately. The Kaplan–Meier covariance
-  theorems assume uncorrelated Nelson–Aalen increments (true for the all-cause grid limit); the
-  Aalen–Johansen covariance theorem takes a general covariance matrix of the cause-specific
-  limit.
+  theorems assume uncorrelated Nelson–Aalen increments (classically true for the all-cause grid
+  limit under an i.i.d. sampling model, which is not formalized here); the Aalen–Johansen
+  covariance theorem takes a general covariance matrix of the cause-specific limit.
 
 ## Source receipt (reuse search, 2026-11-12)
 
@@ -426,7 +431,8 @@ hypotheses of `tendstoInDistribution_naErrorPath` (which include the martingale-
 the limit `Z` is a continuous version of the time-changed Brownian motion `t ↦ B (σ² t)` (`hZB`,
 `σ²` non-decreasing; the Nelson–Aalen identification `σ²(t) = ∫_0^t dΛ / y` is not proved here
 and enters only through `hfdd` and `hZB`), then
-* `√n (Â_n - α_n) → Z` in distribution in `D([0, τ])` with the J1 topology;
+* `√n (Â_n - (α_n - α_n(0))) → Z` in distribution in `D([0, τ])` with the J1 topology
+  (`naErrorPath`; there is no hypothesis `α_n(0) = 0`);
 * `Cov(Z s, Z t) = σ²(min s t)` (independent increments, variance function `σ²`);
 * `Z t ~ N(0, σ²(t))`. -/
 theorem tendstoInDistribution_naErrorPath_timeChangedBrownian {τ : ℝ} (hτ : 0 < τ)
@@ -603,8 +609,10 @@ theorem neg_duhamelDeriv_apply_eq_sum (x h : Fin K → ℝ) (hx : ∀ i, 1 + x i
 
 /-- **Covariance of the Nelson–Aalen grid limit**: if the limit `G` has uncorrelated
 increments `W` with variances `v` (`G j = ∑_{i ≤ j} W i`), then `Cov(G a, G b) = ∑_{i ≤ min a b} v
-i`, the grid form of `σ²(min s t)`. For the discrete-hazard Nelson–Aalen estimator
-`v i = ΔΛ_i (1 - ΔΛ_i) / y_i` (`HasUnitJumps.predictableQuadraticVariation_martingalePart`). -/
+i`, the grid form of `σ²(min s t)`. The variances `v` are inputs. Under an additional i.i.d.
+discrete-hazard sampling model with limiting at-risk fractions `y_i`, not formalized here, the
+classical value is `v i = ΔΛ_i (1 - ΔΛ_i) / y_i` (cf.
+`HasUnitJumps.predictableQuadraticVariation_martingalePart`). -/
 theorem covariance_naGridLimit (W : Ω' → Fin K → ℝ) (v : Fin K → ℝ)
     (hW : ∀ i, MemLp (fun ω => W ω i) 2 P')
     (hcov : ∀ i i', cov[fun ω => W ω i, fun ω => W ω i'; P'] = if i = i' then v i else 0)
@@ -829,11 +837,13 @@ private lemma eq_sum_single (y : Fin K → Fin r → ℝ) :
 /-- **Covariance of the Aalen–Johansen grid limit.** For any square-integrable cause-specific
 Nelson–Aalen limit `G` with covariance matrix `Γ p q = Cov(G p, G q)`,
 `Cov((ajDeriv x G) j c, (ajDeriv x G) j' c') = ∑_p ∑_q a(j, c; p) a(j', c'; q) Γ p q`
-with the explicit coefficients `a(j, c; p) = ajDeriv x δ_p j c` (`ajDeriv_apply`). For grouped
-competing-risks data the cause-specific counts at one grid time are multinomial, giving
-`Γ (i, c) (i', e) = δ_{i i'} (x i c δ_{c e} - x i c x i e) / y i` (`y i` the limiting at-risk
-fraction): coordinates at different grid times are uncorrelated, but two causes with positive
-hazard at the same time are negatively correlated, so `Γ` is not diagonal. -/
+with the explicit coefficients `a(j, c; p) = ajDeriv x δ_p j c` (`ajDeriv_apply`). `Γ` is an
+input (`hcov`); no sampling model is assumed and no specific `Γ` is derived. Grouped data alone
+do not make the cause-specific counts multinomial. Under an additional i.i.d. competing-risks
+sampling model, not formalized here, the counts at one grid time are conditionally multinomial
+and classically `Γ (i, c) (i', e) = δ_{i i'} (x i c δ_{c e} - x i c x i e) / y i` (`y i` the
+limiting at-risk fraction): coordinates at different grid times are uncorrelated, but two causes
+with positive hazard at the same time are negatively correlated, so `Γ` is not diagonal. -/
 theorem covariance_ajLimit (x : Fin K → Fin r → ℝ) (G : Ω' → Fin K → Fin r → ℝ)
     (Γ : Fin K × Fin r → Fin K × Fin r → ℝ)
     (hG : ∀ p : Fin K × Fin r, MemLp (fun ω => G ω p.1 p.2) 2 P')
