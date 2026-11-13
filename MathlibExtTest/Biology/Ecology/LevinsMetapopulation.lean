@@ -24,6 +24,8 @@ from the definitions (derivative computed by hand, not through the theorems unde
   solution `p(t) = 1 / (1 + t)` decays algebraically.
 * `c = 1`, `e = 2` (extinction): from `p(0) = 1` the solution `p(t) = e^{-t} / (2 - e^{-t})`
   decays exponentially, `p(t) ≤ e^{-t}`.
+
+A last example records the `c = 0` boundary: `persistenceEq 0 1 = 1` is not an equilibrium.
 -/
 
 open Real Filter Set
@@ -235,5 +237,11 @@ example : traj ≠ fun _ => 1 / 2 := fun h => by
   have := congrFun h 0
   rw [traj_zero] at this
   norm_num at this
+
+/-! ### The `c = 0` boundary -/
+
+/-- At `c = 0` Lean's division gives `p* = 1`, but `1` is not an equilibrium of `p' = -p`, so the
+results about `p*` need `c ≠ 0`. -/
+example : persistenceEq 0 1 = 1 ∧ balance 0 1 1 ≠ 0 := by norm_num [persistenceEq, balance]
 
 end MathlibExtTest.Biology.Ecology.LevinsMetapopulation

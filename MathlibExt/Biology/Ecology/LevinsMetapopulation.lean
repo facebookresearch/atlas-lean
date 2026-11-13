@@ -24,16 +24,23 @@ with colonization rate `c ≥ 0`, extinction rate `e ≥ 0`, and state space `p 
 The right-hand side is `balance c e p`, and `IsSolution c e p` says that `p` solves the equation
 on `[0, ∞)`.
 
-The balance factors as `c p (p* - p)` with the **persistence equilibrium** `p* = 1 - e / c`,
-so the equilibria are `p = 0` (extinction) and `p = p*`. For `c > 0` and `e ≥ 0`, `p*` is an
-occupied state (`p* ∈ (0, 1]`) exactly when `c > e`: this is the **persistence threshold**.
-The linearizations are `f'(0) = c - e` and `f'(p*) = e - c`.
+For `c ≠ 0` the balance factors as `c p (p* - p)` with the **persistence equilibrium**
+`p* = 1 - e / c`, so the equilibria are `p = 0` (extinction) and `p = p*`. For `c > 0` and
+`e ≥ 0`, `p*` is an occupied state (`p* ∈ (0, 1]`) exactly when `c > e`: this is the
+**persistence threshold**. The linearizations are `f'(0) = c - e` and, for `c ≠ 0`,
+`f'(p*) = e - c`.
+
+At `c = 0` the balance is `-e p`: `p = 0` is the only equilibrium when `e ≠ 0`, and every state
+is one when `e = 0`. The formula `1 - e / c` means nothing there; Lean's division gives
+`persistenceEq 0 e = 1`, which is not an equilibrium unless `e = 0`. Every result below about
+`p*` has a hypothesis forcing `c ≠ 0`.
 
 ## Main results
 
-* `balance_eq_mul`, `balance_eq_zero_iff`: the factorization and the two equilibria.
+* `balance_eq_mul`, `balance_eq_zero_iff`: the factorization and the two equilibria (`c ≠ 0`).
 * `persistenceEq_mem_Ioc_iff`: the threshold, `p* ∈ (0, 1] ↔ e < c`.
-* `hasDerivAt_balance_zero`, `hasDerivAt_balance_persistenceEq`: the linearizations.
+* `hasDerivAt_balance_zero`, `hasDerivAt_balance_persistenceEq`: the linearizations (the second
+  for `c ≠ 0`).
 * `levins`, `isSolution_levins`, `exists_isSolution`: the explicit solution and global
   existence with `[0, 1]` invariant.
 * `IsSolution.eq_of_initial`, `IsSolution.eq_levins`: forward uniqueness; every solution is the
@@ -41,10 +48,10 @@ The linearizations are `f'(0) = c - e` and `f'(p*) = e - c`.
 * `extinction_isGloballyStable`: if `c ≤ e` (and `e > 0`; `e > 0` is needed: for `c = e = 0`
   every state is an equilibrium, so `0` attracts nothing else), `p = 0` is Lyapunov stable and
   attracts every solution starting in `[0, 1]`; the trajectory never exceeds `p(0)`.
-* `persistence_isGloballyStable`: if `c > e`, `p*` is Lyapunov stable and attracts every
+* `persistence_isGloballyStable`: if `0 ≤ e < c`, `p*` is Lyapunov stable and attracts every
   solution starting in `(0, 1]`; `|p(t) - p*|` is nonincreasing and decays like `e^{-(c - e) t}`
   (`abs_levins_sub_le`, `abs_levins_sub_le_exp`).
-* `not_isLyapunovStable_zero`: if `c > e`, extinction is unstable.
+* `not_isLyapunovStable_zero`: if `0 ≤ e < c`, extinction is unstable.
 * `tendsto_zero_iff_le`: for `c, e > 0`, every solution from `[0, 1]` goes extinct iff `c ≤ e`.
 
 ## Implementation
@@ -82,7 +89,9 @@ structure IsSolution (c e : ℝ) (p : ℝ → ℝ) : Prop where
   /-- The occupied fraction changes by colonization minus extinction. -/
   hasDerivAt : ∀ t, 0 ≤ t → HasDerivAt p (balance c e (p t)) t
 
-/-- The **persistence equilibrium** `p* = 1 - e / c`. -/
+/-- The **persistence equilibrium** `p* = 1 - e / c`: for `c ≠ 0`, the equilibrium besides
+`p = 0` (`balance_eq_zero_iff`). At `c = 0` it is not an equilibrium unless `e = 0`: Lean's
+division gives `persistenceEq 0 e = 1`, while `balance 0 e 1 = -e`. -/
 noncomputable def persistenceEq (c e : ℝ) : ℝ := 1 - e / c
 
 variable {c e : ℝ}
