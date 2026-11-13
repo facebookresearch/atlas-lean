@@ -72,11 +72,6 @@ namespace MathlibExt.Analysis.InnerProductSpace.AubinNitsche
 variable {H L : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H]
   [NormedAddCommGroup L] [InnerProductSpace ℝ L]
 
-/-- For real `a`, `a ≤ ‖a‖`. -/
-private theorem le_norm_self_real (a : ℝ) : a ≤ ‖a‖ := by
-  rw [Real.norm_eq_abs]
-  exact le_abs_self a
-
 /-- The transpose of a coercive bilinear form is coercive with the
 same constant, since `B.flip u u = B u u`. -/
 theorem isCoercive_flip {B : H →L[ℝ] H →L[ℝ] ℝ} (hB : IsCoercive B) :
@@ -122,7 +117,7 @@ theorem aubinNitsche_pointwise {B : H →L[ℝ] H →L[ℝ] ℝ} {J : H →L[ℝ
   calc ‖J e‖ ^ 2 = ⟪J e, J e⟫_ℝ := (real_inner_self_eq_norm_sq _).symm
     _ = B e z := (hadj e).symm
     _ = B e (z - zh) := hident
-    _ ≤ ‖B e (z - zh)‖ := le_norm_self_real _
+    _ ≤ ‖B e (z - zh)‖ := Real.le_norm_self _
     _ ≤ ‖B‖ * ‖e‖ * ‖z - zh‖ := B.le_opNorm₂ e (z - zh)
 
 /-- **Aubin–Nitsche lemma, infimum form.** With the same hypotheses,

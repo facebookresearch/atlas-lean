@@ -38,13 +38,6 @@ private theorem bender_coeff_prod (a b : ℕ → ℝ) (n : ℕ) :
   intro k hk
   rw [PowerSeries.coeff_mk, PowerSeries.coeff_mk]
 
--- Helper: truncated subtraction tends to `atTop`.
-private theorem bender_sub_tendsto_atTop (k : ℕ) : Tendsto (fun n : ℕ => n - k) atTop atTop := by
-  rw [Filter.tendsto_atTop]
-  intro b
-  rw [Filter.eventually_atTop]
-  exact ⟨b + k, fun n hn => by omega⟩
-
 -- Helper: fixed-lag coefficient ratios tend to powers of the limit.
 private theorem bender_ratio_pow (b : ℕ → ℝ) (β : ℝ)
     (hbnz : ∀ᶠ n in atTop, b n ≠ 0)
@@ -58,11 +51,11 @@ private theorem bender_ratio_pow (b : ℕ → ℝ) (β : ℝ)
     simp [hn]
   | succ k ih =>
     have hcomp : Tendsto (fun n : ℕ => b ((n - k) - 1) / b (n - k)) atTop (nhds β) :=
-      hratio.comp (bender_sub_tendsto_atTop k)
+      hratio.comp (Filter.tendsto_sub_atTop_nat k)
     have hmul := hcomp.mul ih
     rw [← pow_succ'] at hmul
     refine hmul.congr' ?_
-    filter_upwards [(bender_sub_tendsto_atTop k).eventually hbnz] with n hn
+    filter_upwards [(Filter.tendsto_sub_atTop_nat k).eventually hbnz] with n hn
     rw [Nat.sub_sub]
     rw [div_mul_div_comm]
     rw [mul_comm (b (n - k)) (b n)]

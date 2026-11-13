@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.StatisticalMechanics.RandomCluster.UniquenessFromSecant
+public import MathlibExt.Analysis.SpecialFunctions.Softplus
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 /-!
@@ -25,9 +26,10 @@ The edge parameter is reparametrized by the logistic map `fsc_logistic t = eᵗ 
 and whose left derivative is the free density of the box edge `eb`, at `q = 2`. For `t' < t`
 convexity gives `g'₊(t') ≤ g'₋(t)`, which is `fsc_secant`; feeding it into
 `fk_uniqueness_off_countable_q2_full` gives `fk_uniqueness_q2_secant_from_freeEnergyData`.
-The softplus function `log (1 + eᵗ)` is convex with derivative `fsc_logistic`, so the shape of
-`fsc_FreeEnergyData` is satisfiable (`fsc_freeEnergyData_satisfiable`); this does not establish
-`fsc_FreeEnergyData` for the random-cluster densities, which stays a hypothesis here.
+The softplus function `Real.softplus t = log (1 + eᵗ)` (MathlibExt) is convex with derivative
+`fsc_logistic`, so the shape of `fsc_FreeEnergyData` is satisfiable
+(`fsc_freeEnergyData_satisfiable`); this does not establish `fsc_FreeEnergyData` for the
+random-cluster densities, which stays a hypothesis here.
 
 ## ii. Key results
 
@@ -159,19 +161,19 @@ lemma fsc_secant (d N : ℕ) (eb : Sym2 (boxVerts d N))
 
 ## C. Softplus
 
+The softplus function `t ↦ log (1 + eᵗ)` and its convexity are the shared MathlibExt
+`Real.softplus` and `Real.convexOn_softplus`; `fsc_softplus` is an alias of `Real.softplus`.
+
 -/
 
-/-- The softplus function `t ↦ log (1 + eᵗ)`. -/
-noncomputable def fsc_softplus (t : ℝ) : ℝ := Real.log (1 + Real.exp t)
+/-- The softplus function `t ↦ log (1 + eᵗ)`, an alias of the shared MathlibExt
+`Real.softplus`. -/
+noncomputable def fsc_softplus (t : ℝ) : ℝ := Real.softplus t
 
 lemma fsc_softplus_hasDerivAt (t : ℝ) :
     HasDerivAt fsc_softplus (fsc_logistic t) t := by
-  unfold fsc_softplus fsc_logistic
-  have he : HasDerivAt (fun t => 1 + Real.exp t) (Real.exp t) t := by
-    simpa using (Real.hasDerivAt_exp t).const_add 1
-  have hpos : (1 : ℝ) + Real.exp t ≠ 0 := by positivity
-  have := he.log hpos
-  convert this using 1
+  rw [fsc_logistic_eq_sigmoid]
+  exact Real.hasDerivAt_softplus t
 
 lemma fsc_deriv_softplus : deriv fsc_softplus = fsc_logistic := by
   funext t; exact (fsc_softplus_hasDerivAt t).deriv
@@ -179,12 +181,8 @@ lemma fsc_deriv_softplus : deriv fsc_softplus = fsc_logistic := by
 lemma fsc_softplus_differentiable : Differentiable ℝ fsc_softplus :=
   fun t => (fsc_softplus_hasDerivAt t).differentiableAt
 
-lemma fsc_softplus_convexOn : ConvexOn ℝ univ fsc_softplus := by
-  apply MonotoneOn.convexOn_of_deriv convex_univ
-  · exact fsc_softplus_differentiable.continuous.continuousOn
-  · exact fsc_softplus_differentiable.differentiableOn
-  · rw [fsc_deriv_softplus, interior_univ]
-    exact fsc_logistic_strictMono.monotone.monotoneOn _
+lemma fsc_softplus_convexOn : ConvexOn ℝ univ fsc_softplus :=
+  Real.convexOn_softplus
 
 lemma fsc_softplus_pressureRightDeriv (t : ℝ) :
     pressureRightDeriv fsc_softplus t = fsc_logistic t := by

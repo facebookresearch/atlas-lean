@@ -12,8 +12,6 @@ Author: Nam Trang
 module
 
 public import MathlibExt.SetTheory.Cardinal.Cofinality.CountableSubsets
-public import Mathlib.Data.Set.Countable
-public import Mathlib.Order.CompletePartialOrder
 
 @[expose] public section
 
