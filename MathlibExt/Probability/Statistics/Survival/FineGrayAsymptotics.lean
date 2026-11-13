@@ -626,12 +626,6 @@ theorem log_fgWeightedPartialLikelihood (hG : ∀ t, 0 ≤ G t) (b : ℝ) :
 
 /-! #### No competing events: the Cox case -/
 
-private lemma filter_causeIndicator' :
-    univ.filter (fun i : Fin n => causeIndicator ε c i = true) =
-      univ.filter (fun i => ε i = some c) := by
-  ext i
-  simp [causeIndicator]
-
 /-- Without competing events the weighted sums are Cox's risk-set sums, for every `G`. -/
 theorem fgWeightedSum_of_noCompeting (hε : ∀ l, ε l = none ∨ ε l = some c) (k : ℕ) (b : ℝ)
     (i : Fin n) :
@@ -646,14 +640,14 @@ theorem fgWeightedSum_of_noCompeting (hε : ∀ l, ε l = none ∨ ε l = some c
 events, for every censoring survival `G`. -/
 theorem fgScore_eq_coxScore_of_noCompeting (hε : ∀ l, ε l = none ∨ ε l = some c) (b : ℝ) :
     fgScore X ε c G z b = coxScore X (causeIndicator ε c) z b := by
-  rw [fgScore, coxScore, filter_causeIndicator']
+  rw [fgScore, coxScore, filter_causeIndicator]
   refine sum_congr rfl fun i _ => ?_
   simp [fgMean, riskMean, fgWeightedSum_of_noCompeting X ε c z hε]
 
 /-- **No competing events**: the Fine–Gray information is the Cox information. -/
 theorem fgInformation_eq_coxInformation_of_noCompeting (hε : ∀ l, ε l = none ∨ ε l = some c)
     (b : ℝ) : fgInformation X ε c G z b = coxInformation X (causeIndicator ε c) z b := by
-  rw [fgInformation, coxInformation, filter_causeIndicator']
+  rw [fgInformation, coxInformation, filter_causeIndicator]
   refine sum_congr rfl fun i _ => ?_
   simp [fgVar, fgMean, riskVar, riskMean, fgWeightedSum_of_noCompeting X ε c z hε]
 
@@ -663,7 +657,7 @@ theorem fgLogPartialLikelihood₁_eq_of_noCompeting (hε : ∀ l, ε l = none �
     fgLogPartialLikelihood₁ X ε c G z = logPartialLikelihood₁ X (causeIndicator ε c) z := by
   funext b
   rw [fgLogPartialLikelihood₁, logPartialLikelihood₁, logPartialLikelihood,
-    filter_causeIndicator']
+    filter_causeIndicator]
   refine sum_congr rfl fun i _ => ?_
   simp [fgWeightedSum_of_noCompeting X ε c z hε, dotProduct]
 
