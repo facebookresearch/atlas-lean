@@ -43,9 +43,9 @@ implies them, and no mean-zero hypothesis is needed for the slope.
 ## Main results
 
 * `attenuationFactor`: `λ = σ_ξ² / (σ_ξ² + σ_u²)`.
-* `measurementError_population_attenuation`: for square-integrable, pairwise independent `ξ`,
-  `u`, `ε`, the population slope `cov[x, y] / Var[x]` of `y = β₀ + β ξ + ε` on `x = ξ + u` is
-  `λ β`.
+* `measurementError_population_attenuation_of_cov_eq_zero`: for square-integrable, pairwise
+  uncorrelated `ξ`, `u`, `ε`, the population slope `cov[x, y] / Var[x]` of `y = β₀ + β ξ + ε` on
+  `x = ξ + u` is `λ β`; `measurementError_population_attenuation` is the independence form.
 * `correctedSlope`: `S_xy / (S_xx - n σ²)`, and `correctedSlope_eq_olsSlope_div`.
 * `ae_tendsto_sxy_div`: for i.i.d. square-integrable pairs, `S_xy / n → cov[X, Y]` a.s.
 * `ae_tendsto_olsSlope_attenuation`, `tendstoInMeasure_olsSlope_attenuation`: the naive OLS
@@ -154,22 +154,21 @@ theorem ae_tendsto_sxy_div [IsProbabilityMeasure μ] {X Y : ℕ → Ω → ℝ}
 
 /-! ### Population attenuation identity -/
 
-set_option linter.unusedVariables false in
 /-- **Population attenuation identity**: if `X`, `e` and `ε` are square integrable and pairwise
-independent, the population least-squares slope `cov[W, Y] / Var[W]` of `Y = α + β X + ε` on the
+uncorrelated, the population least-squares slope `cov[W, Y] / Var[W]` of `Y = α + β X + ε` on the
 mismeasured regressor `W = X + e` is `λ β`, with attenuation factor
-`λ = Var[X] / (Var[X] + Var[e])`. The independence of `X` and `ε` (exogeneity) cannot be
-dropped: with `e = 0` and `ε = X` the slope is `β + 1`, not `β`.
+`λ = Var[X] / (Var[X] + Var[e])`. The hypotheses are the moment conditions of
+`ClassicalErrorsInVariables`; `measurementError_population_attenuation` is the form with
+independence hypotheses. The condition `cov[X, ε] = 0` (exogeneity) cannot be dropped: with
+`e = 0` and `ε = X` the slope is `β + 1`, not `β`.
 
 This is the population form of the attenuation result in W. A. Fuller, *Measurement Error
 Models*, Wiley (1987), Chapter 1. -/
-theorem measurementError_population_attenuation [IsProbabilityMeasure μ] {X e ε : Ω → ℝ}
-    {α β : ℝ} (hX : MemLp X 2 μ) (he : MemLp e 2 μ) (hε : MemLp ε 2 μ)
-    (hXe : IndepFun X e μ) (hXε : IndepFun X ε μ) (heε : IndepFun e ε μ)
-    (hW : variance (fun ω => X ω + e ω) μ ≠ 0) :
-    covariance (fun ω => X ω + e ω) (fun ω => α + β * X ω + ε ω) μ /
-        variance (fun ω => X ω + e ω) μ =
-      attenuationFactor (variance X μ) (variance e μ) * β := by
+theorem measurementError_population_attenuation_of_cov_eq_zero [IsProbabilityMeasure μ]
+    {X e ε : Ω → ℝ} {α β : ℝ} (hX : MemLp X 2 μ) (he : MemLp e 2 μ) (hε : MemLp ε 2 μ)
+    (hXe : cov[X, e; μ] = 0) (hXε : cov[X, ε; μ] = 0) (heε : cov[e, ε; μ] = 0) :
+    cov[fun ω => X ω + e ω, fun ω => α + β * X ω + ε ω; μ] / Var[fun ω => X ω + e ω; μ] =
+      attenuationFactor Var[X; μ] Var[e; μ] * β := by
   have hWmem : MemLp (fun ω => X ω + e ω) 2 μ := hX.add he
   have hβX : MemLp (fun ω => β * X ω) 2 μ := hX.const_mul β
   have hβXε_int : Integrable (fun ω => β * X ω + ε ω) μ := (hβX.add hε).integrable one_le_two
@@ -194,24 +193,41 @@ theorem measurementError_population_attenuation [IsProbabilityMeasure μ] {X e �
     have h := covariance_add_left (X := X) (Y := e) (Z := X) hX he hX
     have hself : covariance X X μ = variance X μ :=
       covariance_self hX.aestronglyMeasurable.aemeasurable
-    have hzero : covariance e X μ = 0 := hXe.symm.covariance_eq_zero he hX
+    have hzero : covariance e X μ = 0 := by rw [covariance_comm]; exact hXe
     rw [hself, hzero, add_zero] at h
     exact h
   have hcovWε : covariance (fun ω => X ω + e ω) ε μ = 0 := by
     have h := covariance_add_left (X := X) (Y := e) (Z := ε) hX he hε
-    have hz1 : covariance X ε μ = 0 := hXε.covariance_eq_zero hX hε
-    have hz2 : covariance e ε μ = 0 := heε.covariance_eq_zero he hε
-    rw [hz1, hz2, add_zero] at h
+    rw [hXε, heε, add_zero] at h
     exact h
-  have hVarW : variance (fun ω => X ω + e ω) μ
-      = variance X μ + variance e μ :=
-    hXe.variance_add hX he
+  have hVarW : variance (fun ω => X ω + e ω) μ = variance X μ + variance e μ := by
+    rw [← covariance_self hWmem.aemeasurable]
+    change cov[X + e, X + e; μ] = _
+    rw [covariance_add_left hX he (hX.add he), covariance_add_right hX hX he,
+      covariance_add_right he hX he, covariance_self hX.aemeasurable,
+      covariance_self he.aemeasurable, covariance_comm e X, hXe]
+    ring
   have hCov : covariance (fun ω => X ω + e ω) (fun ω => α + β * X ω + ε ω) μ
       = β * variance X μ := by
     rw [hcov0, hcov1, hcov2, hcovWX, hcovWε]
     ring
   rw [hCov, hVarW, attenuationFactor]
   ring
+
+set_option linter.unusedVariables false in
+/-- **Population attenuation identity**, independence form: if `X`, `e` and `ε` are square
+integrable and pairwise independent, then `cov[W, Y] / Var[W] = λ β` for `W = X + e` and
+`Y = α + β X + ε` (`measurementError_population_attenuation_of_cov_eq_zero`, since independent
+square-integrable variables are uncorrelated). -/
+theorem measurementError_population_attenuation [IsProbabilityMeasure μ] {X e ε : Ω → ℝ}
+    {α β : ℝ} (hX : MemLp X 2 μ) (he : MemLp e 2 μ) (hε : MemLp ε 2 μ)
+    (hXe : IndepFun X e μ) (hXε : IndepFun X ε μ) (heε : IndepFun e ε μ)
+    (hW : variance (fun ω => X ω + e ω) μ ≠ 0) :
+    covariance (fun ω => X ω + e ω) (fun ω => α + β * X ω + ε ω) μ /
+        variance (fun ω => X ω + e ω) μ =
+      attenuationFactor (variance X μ) (variance e μ) * β :=
+  measurementError_population_attenuation_of_cov_eq_zero hX he hε
+    (hXe.covariance_eq_zero hX he) (hXε.covariance_eq_zero hX hε) (heε.covariance_eq_zero he hε)
 
 /-! ### The classical errors-in-variables model -/
 

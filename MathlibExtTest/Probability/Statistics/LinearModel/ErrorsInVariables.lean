@@ -18,7 +18,8 @@ import Mathlib.Probability.Distributions.Gaussian.Real
   definitions, including the boundaries `σ_u² = 0` (no attenuation, no correction).
 * Non-vacuity of `ClassicalErrorsInVariables`: an i.i.d. Gaussian model with
   `Var ξ = Var u = 1`, built on `Measure.infinitePi`, satisfies every field and the variance
-  hypotheses; the attenuation factor of this model is `1 / 2`.
+  hypotheses; the attenuation factor of this model is `1 / 2`, and the moment form of the
+  population identity gives the population slope `β / 2` from its fields.
 * `measurementError_population_attenuation` on a concrete model: independent Gaussian
   coordinates with `Var X = 4`, `Var e = 1`, a nonconstant equation error and `β = 2` give the
   population slope `8 / 5`.
@@ -168,6 +169,17 @@ example : 0 < Var[ξ 0; P] + Var[u 0; P] ∧ Var[ξ 0; P] ≠ 0 := by
 /-- The Gaussian model has attenuation factor `1 / 2`. -/
 theorem attenuationFactor_gaussian : attenuationFactor Var[ξ 0; P] Var[u 0; P] = 1 / 2 := by
   rw [variance_ξ, variance_u]; norm_num [attenuationFactor]
+
+/-- Usage: the moment form of the population identity takes the fields of
+`ClassicalErrorsInVariables` directly; in the Gaussian model the population slope of `y` on `x`
+is `β / 2`. -/
+example (β₀ β : ℝ) :
+    cov[fun ω => ξ 0 ω + u 0 ω, fun ω => β₀ + β * ξ 0 ω + ε 0 ω; P] /
+      Var[fun ω => ξ 0 ω + u 0 ω; P] = 1 / 2 * β := by
+  have h := classicalErrorsInVariables_gaussian
+  rw [measurementError_population_attenuation_of_cov_eq_zero h.memLp_signal
+    h.memLp_measurementError h.memLp_equationError h.cov_signal_measurementError
+    h.cov_signal_equationError h.cov_measurementError_equationError, attenuationFactor_gaussian]
 
 /-- Usage: in the Gaussian model the naive slope converges almost surely to `β / 2`. -/
 example (β₀ β : ℝ) :
