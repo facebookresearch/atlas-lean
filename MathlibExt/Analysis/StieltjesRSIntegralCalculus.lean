@@ -20,16 +20,32 @@ import Mathlib.Tactic.Ring
 
 Additivity over adjacent intervals, integration by parts, and existence of `∫ₐᵇ f dh` for an
 integrand `f` of bounded variation against a regulated integrator `h` with no common
-discontinuity, for the refinement (Moore–Pollard) Riemann–Stieltjes integral `HasRSIntegral` of
-`MathlibExt.Analysis.StieltjesRSIntegral`. The results are stated for `HasRSIntegral` and
-`RSIntegrable` and use that file's sums, partition constructions, uniqueness, linearity and
-Cauchy criterion.
+discontinuity on the same side (Hildebrandt), for the refinement (Moore–Pollard) Riemann–Stieltjes
+integral `HasRSIntegral` of `MathlibExt.Analysis.StieltjesRSIntegral`. The results are stated for
+`HasRSIntegral` and `RSIntegrable` and use that file's sums, partition constructions, uniqueness,
+linearity and Cauchy criterion.
 
 **Regulated integrators.** A regulated function on `[a, b]` is stated by its defining property:
 a right limit at every point of `[a, b)` and a left limit at every point of `(a, b]`. "No common
 discontinuity" means that at every point of `[a, b]` at least one of `f`, `h` is continuous within
 `[a, b]`. The integral does not exist in general when `f` and `h` jump on the same side at the same
 point (the test file of `StieltjesRSIntegral.lean`: `f = h = 𝟙[1, ∞)` on `[0, 2]`).
+
+**One-sided condition.** "No common discontinuity on the same side" means that at every
+`x ∈ [a, b]` one of `f`, `h` is right-continuous at `x` (`ContinuousWithinAt · ([a, b] ∩ [x, ∞)) x`)
+and one of `f`, `h` is left-continuous at `x` (`ContinuousWithinAt · ([a, b] ∩ (-∞, x]) x`); the
+right condition is vacuous at `b` and the left one at `a`. It is implied by the two-sided
+condition, and it also allows a common jump on opposite sides: for `f = 𝟙(1, ∞)` (left-continuous)
+and `h = 𝟙[1, ∞)` (right-continuous) on `[0, 2]`, both jump at `1`, the two-sided condition fails,
+and `∫₀² f dh = 0` exists. In particular `∫ₐᵇ f dh` exists for left-continuous `f` of bounded
+variation against right-continuous regulated `h`.
+
+**The Duhamel bridge is not covered.** The bridge integrates the kernel
+`s ↦ P(A)(0, s) · P(B)(s, t]` against `B - A`. Even with the first factor left-continuous (a product
+over the open interval `(0, s)`), at a jump `c` of `B` the factor `P(B)(s, t]` contains the jump for
+`s < c` but not at `s = c`, so the kernel is discontinuous from the left at `c`, the same side on
+which the càdlàg integrator `B - A` jumps. Neither the two-sided condition nor the one-sided
+condition here applies (see also `StieltjesRSIntegral.lean`).
 
 ## Main results
 
@@ -39,11 +55,16 @@ point (the test file of `StieltjesRSIntegral.lean`: `f = h = 𝟙[1, ∞)` on `[
   `∫_c^b f dh` exist and add up to it.
 * `HasRSIntegral.integration_by_parts`: `∫ₐᵇ f dh = I` gives
   `∫ₐᵇ h df = f(b) h(b) - f(a) h(a) - I`.
-* `rsIntegrable_of_regulated_of_monotoneOn`: `∫ₐᵇ g dV` exists for regulated `g` and monotone `V`
-  without common discontinuities.
-* `rsIntegrable_of_regulated_of_boundedVariationOn`: the same for `V` of bounded variation.
-* `rsIntegrable_of_boundedVariationOn_of_regulated`: `∫ₐᵇ f dh` exists for `f` of bounded
-  variation and regulated `h` without common discontinuities.
+* `rsIntegrable_of_regulated_of_monotoneOn_oneSided`: `∫ₐᵇ g dV` exists for regulated `g` and
+  monotone `V` without common discontinuities on the same side.
+* `rsIntegrable_of_regulated_of_boundedVariationOn_oneSided`: the same for `V` of bounded variation.
+* `rsIntegrable_of_boundedVariationOn_of_regulated_oneSided`: `∫ₐᵇ f dh` exists for `f` of bounded
+  variation and regulated `h` without common discontinuities on the same side.
+* `rsIntegrable_of_boundedVariationOn_of_regulated_of_leftContinuous`: the case of left-continuous
+  `f` and right-continuous `h`.
+* `rsIntegrable_of_regulated_of_monotoneOn`, `rsIntegrable_of_regulated_of_boundedVariationOn`,
+  `rsIntegrable_of_boundedVariationOn_of_regulated`: the two-sided forms (no common discontinuity),
+  as corollaries.
 
 ## Proof outline
 
@@ -52,19 +73,22 @@ Partitions are cut and glued through one private construction: a monotone sequen
 with points `{sᵢ}` and the same Riemann–Stieltjes sums. Integration by parts is the termwise
 identity `h(ξ)(f(t') - f(t)) + f(t)(h(ξ) - h(t)) + f(t')(h(t') - h(ξ)) = f(t')h(t') - f(t)h(t)`
 applied to the interleaved sequence `t₀ ≤ ξ₀ ≤ t₁ ≤ ⋯ ≤ tₙ` tagged by the `tₖ`. For existence,
-a compactness argument gives a finite set `S` off which `g` oscillates by at most `ε`; around each
-point of `S` where `g` is discontinuous, `V` is continuous, and a short window there carries
-little `V`-mass. The refinement estimate then gives the Cauchy criterion `rsIntegrable_of_cauchy`.
-The bounded-variation case follows from the decomposition `f = V - (V - f)` with `V` the variation
-function, which is continuous wherever `f` is
-(`BoundedVariationOn.continuousWithinAt_variationOnFromTo_iff`), and the regulated-integrator case
-follows by integration by parts.
+a compactness argument gives a finite set `S` off which `g` oscillates by at most `ε`. At a point
+`e ∈ S` where `g` is not right-continuous, `V` is right-continuous, so the window `[e, e + ρ]`
+carries little `V`-mass; symmetrically `[e - ρ, e]` where `g` is not left-continuous. A subinterval
+of a fine partition starting at `e` is either a right window or one on which `g` stays close to
+`g e`, and likewise for one ending at `e`. The refinement estimate then gives the Cauchy criterion
+`rsIntegrable_of_cauchy`. The bounded-variation case follows from the decomposition
+`f = V - (V - f)` with `V` the variation function, which is right- (left-) continuous wherever `f`
+is (`BoundedVariationOn.continuousWithinAt_variationOnFromTo_inter_Ici`, `_inter_Iic`), and the
+regulated-integrator case follows by integration by parts.
 
 ## Not covered
 
-* The sharper one-sided condition (no common discontinuity on the same side) of Hildebrandt's
-  theorem; the hypothesis here is two-sided.
-* The Duhamel operator and the Ψ-CLM bridge.
+* Necessity of the one-sided condition in general: only the example `f = h = 𝟙[1, ∞)` on `[0, 2]`
+  (a common jump on the left, where the integral does not exist) is checked, in the test files.
+* The Duhamel operator and the Ψ-CLM bridge (whose kernel jumps on the same side as its
+  integrator, see above).
 
 ## Source receipt
 
@@ -72,18 +96,18 @@ T. M. Apostol, *Mathematical Analysis*, 2nd ed. (1974), Chapter 7: Definition 7.
 form), Theorem 7.4 (additivity: if two of `∫ₐᶜ`, `∫_c^b`, `∫ₐᵇ` exist, so does the third, with
 sum), Theorem 7.6 (integration by parts), and Theorem 7.27 (existence for a continuous integrand
 against a bounded-variation integrator) for the shape of the existence argument. Existence of the
-refinement integral for regulated functions without common discontinuities: T. H. Hildebrandt,
-"Definitions of Stieltjes integrals of the Riemann type", *Amer. Math. Monthly* 45 (1938),
-265–278. Regulated functions are uniform limits of step functions: J. Dieudonné, *Foundations of
-Modern Analysis* (1960), §7.6. Reused: from `StieltjesRSIntegral.lean`, `rsSum`, `HasRSIntegral`,
-`RSIntegrable`, `rsSum_eq_sum_range`, `Partition.pointN`, `TaggedPartition.tagN`,
+refinement integral for regulated functions without common discontinuities on the same side:
+T. H. Hildebrandt, "Definitions of Stieltjes integrals of the Riemann type", *Amer. Math. Monthly*
+45 (1938), 265–278. Regulated functions are uniform limits of step functions: J. Dieudonné,
+*Foundations of Modern Analysis* (1960), §7.6. Reused: from `StieltjesRSIntegral.lean`, `rsSum`,
+`HasRSIntegral`, `RSIntegrable`, `rsSum_eq_sum_range`, `Partition.pointN`, `TaggedPartition.tagN`,
 `Partition.ofFinset`, `Partition.common`, `Partition.leftTag`, `HasRSIntegral.unique`,
 `HasRSIntegral.sub_right` and `rsIntegrable_of_cauchy`; Mathlib's `variationOnFromTo` (monotone
-decomposition and its continuity) and `IsCompact.elim_nhds_subcover`; Atlas's `Partition`,
-`TaggedPartition` and `IsRefinement`. Proved here: everything else. The private refinement estimate
-`abs_rsSum_sub_le_sum_of_isRefinement` generalizes `abs_rsSum_sub_le_of_isRefinement` to
-per-subinterval bounds `ωₖ`, which the windowed bound in the existence proof needs; its index
-bookkeeping restates private helpers of `StieltjesRSIntegral.lean`.
+decomposition and its one-sided continuity) and `IsCompact.elim_nhds_subcover`; Atlas's
+`Partition`, `TaggedPartition` and `IsRefinement`. Proved here: everything else. The private
+refinement estimate `abs_rsSum_sub_le_sum_of_isRefinement` generalizes
+`abs_rsSum_sub_le_of_isRefinement` to per-subinterval bounds `ωₖ`, which the windowed bound in the
+existence proof needs; its index bookkeeping restates private helpers of `StieltjesRSIntegral.lean`.
 -/
 
 @[expose] public section
@@ -544,16 +568,17 @@ private theorem exists_finset_of_regulated {g : ℝ → ℝ} (hab : a ≤ b)
       exact hR x hxI y hyI hcx hxc.2 (hcx.trans_le hxy)
         (hyq.trans_le (min_le_right _ _))
 
-/-- A function continuous within a set at a point is within `κ` of its value on a closed
-neighborhood. -/
-private theorem exists_radius {F : ℝ → ℝ} {s : Set ℝ} {e κ : ℝ} (hκ : 0 < κ)
-    (hF : ContinuousWithinAt F s e) : ∃ ρ > 0, ∀ x ∈ s, |x - e| ≤ ρ → |F x - F e| ≤ κ := by
-  obtain ⟨δ, hδ, H⟩ := Metric.continuousWithinAt_iff.mp hF κ hκ
-  refine ⟨δ / 2, half_pos hδ, fun x hx hxe => ?_⟩
-  have := H hx (by rw [Real.dist_eq]; linarith)
-  rw [Real.dist_eq] at this
-  exact this.le
-
+/-- A radius `ρ > 0` such that, if `F` is continuous within `s` at `e`, then `F` is within `κ` of
+`F e` on the points of `s` at distance at most `ρ` from `e`. -/
+private theorem exists_radius (F : ℝ → ℝ) (s : Set ℝ) (e : ℝ) {κ : ℝ} (hκ : 0 < κ) :
+    ∃ ρ > 0, ContinuousWithinAt F s e → ∀ x ∈ s, |x - e| ≤ ρ → |F x - F e| ≤ κ := by
+  by_cases hF : ContinuousWithinAt F s e
+  · obtain ⟨δ, hδ, H⟩ := Metric.continuousWithinAt_iff.mp hF κ hκ
+    refine ⟨δ / 2, half_pos hδ, fun _ x hx hxe => ?_⟩
+    have := H hx (by rw [Real.dist_eq]; linarith)
+    rw [Real.dist_eq] at this
+    exact this.le
+  · exact ⟨1, one_pos, fun h => absurd h hF⟩
 end Regulated
 
 
@@ -740,16 +765,19 @@ theorem HasRSIntegral.integration_by_parts {f h : ℝ → ℝ} {I : ℝ} (hI : H
 
 /-! ### Existence for regulated integrands and integrators -/
 
-/-- **Existence against a monotone integrator.** Let `g` have a right limit at every point of
-`[a, b)` and a left limit at every point of `(a, b]` (`g` is regulated), let `V` be monotone on
-`[a, b]`, and suppose that at every point of `[a, b]` at least one of `g`, `V` is continuous
-within `[a, b]`. Then `∫ₐᵇ g dV` exists. -/
-theorem rsIntegrable_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤ b)
+/-- **Existence against a monotone integrator, one-sided form (Hildebrandt).** Let `g` have a right
+limit at every point of `[a, b)` and a left limit at every point of `(a, b]` (`g` is regulated), and
+let `V` be monotone on `[a, b]`. Suppose `g` and `V` have no common discontinuity on the same side:
+at every `x ∈ [a, b]`, one of `g`, `V` is right-continuous at `x` (within `[a, b] ∩ [x, ∞)`) and one
+of `g`, `V` is left-continuous at `x` (within `[a, b] ∩ (-∞, x]`). Then `∫ₐᵇ g dV` exists. -/
+theorem rsIntegrable_of_regulated_of_monotoneOn_oneSided {g V : ℝ → ℝ} (hab : a ≤ b)
     (hgR : ∀ x ∈ Ico a b, ∃ l, Tendsto g (𝓝[>] x) (𝓝 l))
     (hgL : ∀ x ∈ Ioc a b, ∃ l, Tendsto g (𝓝[<] x) (𝓝 l))
     (hV : MonotoneOn V (Icc a b))
-    (hcont : ∀ x ∈ Icc a b,
-      ContinuousWithinAt g (Icc a b) x ∨ ContinuousWithinAt V (Icc a b) x) :
+    (hright : ∀ x ∈ Icc a b,
+      ContinuousWithinAt g (Icc a b ∩ Ici x) x ∨ ContinuousWithinAt V (Icc a b ∩ Ici x) x)
+    (hleft : ∀ x ∈ Icc a b,
+      ContinuousWithinAt g (Icc a b ∩ Iic x) x ∨ ContinuousWithinAt V (Icc a b ∩ Iic x) x) :
     RSIntegrable g V a b := by
   classical
   refine rsIntegrable_of_cauchy fun ε hε => ?_
@@ -758,28 +786,31 @@ theorem rsIntegrable_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
   have hε₁pos : 0 < ε₁ := by positivity
   obtain ⟨S, B, hSmem, haS, hbS, hB, hosc⟩ := exists_finset_of_regulated hab hgR hgL hε₁pos
   have hB0 : 0 ≤ B := (abs_nonneg _).trans (hB a ⟨le_rfl, hab⟩)
-  set η := ε / (8 * (B + 1) * (S.card + 1)) with hη
+  set η := ε / (16 * (B + 1) * (S.card + 1)) with hη
   have hηpos : 0 < η := by positivity
+  -- one radius serving the four one-sided continuity statements at `e`
   have hρ : ∀ e, ∃ ρ > 0,
-      (ContinuousWithinAt g (Icc a b) e → ∀ x ∈ Icc a b, |x - e| ≤ ρ → |g x - g e| ≤ ε₁) ∧
-      (ContinuousWithinAt V (Icc a b) e → ∀ x ∈ Icc a b, |x - e| ≤ ρ → |V x - V e| ≤ η / 2) := by
+      (ContinuousWithinAt g (Icc a b ∩ Ici e) e →
+        ∀ x ∈ Icc a b ∩ Ici e, |x - e| ≤ ρ → |g x - g e| ≤ ε₁) ∧
+      (ContinuousWithinAt g (Icc a b ∩ Iic e) e →
+        ∀ x ∈ Icc a b ∩ Iic e, |x - e| ≤ ρ → |g x - g e| ≤ ε₁) ∧
+      (ContinuousWithinAt V (Icc a b ∩ Ici e) e →
+        ∀ x ∈ Icc a b ∩ Ici e, |x - e| ≤ ρ → |V x - V e| ≤ η) ∧
+      (ContinuousWithinAt V (Icc a b ∩ Iic e) e →
+        ∀ x ∈ Icc a b ∩ Iic e, |x - e| ≤ ρ → |V x - V e| ≤ η) := by
     intro e
-    obtain ⟨ρ₁, hρ₁, H₁⟩ : ∃ ρ > 0, ContinuousWithinAt g (Icc a b) e →
-        ∀ x ∈ Icc a b, |x - e| ≤ ρ → |g x - g e| ≤ ε₁ := by
-      by_cases hc : ContinuousWithinAt g (Icc a b) e
-      · obtain ⟨ρ, hρ, H⟩ := exists_radius hε₁pos hc
-        exact ⟨ρ, hρ, fun _ => H⟩
-      · exact ⟨1, one_pos, fun h => absurd h hc⟩
-    obtain ⟨ρ₂, hρ₂, H₂⟩ : ∃ ρ > 0, ContinuousWithinAt V (Icc a b) e →
-        ∀ x ∈ Icc a b, |x - e| ≤ ρ → |V x - V e| ≤ η / 2 := by
-      by_cases hc : ContinuousWithinAt V (Icc a b) e
-      · obtain ⟨ρ, hρ, H⟩ := exists_radius (half_pos hηpos) hc
-        exact ⟨ρ, hρ, fun _ => H⟩
-      · exact ⟨1, one_pos, fun h => absurd h hc⟩
-    exact ⟨min ρ₁ ρ₂, lt_min hρ₁ hρ₂,
-      fun hc x hx hxe => H₁ hc x hx (hxe.trans (min_le_left _ _)),
-      fun hc x hx hxe => H₂ hc x hx (hxe.trans (min_le_right _ _))⟩
-  choose ρ hρpos hρg hρV using hρ
+    obtain ⟨ρ₁, hρ₁, H₁⟩ := exists_radius g (Icc a b ∩ Ici e) e hε₁pos
+    obtain ⟨ρ₂, hρ₂, H₂⟩ := exists_radius g (Icc a b ∩ Iic e) e hε₁pos
+    obtain ⟨ρ₃, hρ₃, H₃⟩ := exists_radius V (Icc a b ∩ Ici e) e hηpos
+    obtain ⟨ρ₄, hρ₄, H₄⟩ := exists_radius V (Icc a b ∩ Iic e) e hηpos
+    have h1 : min (min ρ₁ ρ₂) (min ρ₃ ρ₄) ≤ ρ₁ := (min_le_left _ _).trans (min_le_left _ _)
+    have h2 : min (min ρ₁ ρ₂) (min ρ₃ ρ₄) ≤ ρ₂ := (min_le_left _ _).trans (min_le_right _ _)
+    have h3 : min (min ρ₁ ρ₂) (min ρ₃ ρ₄) ≤ ρ₃ := (min_le_right _ _).trans (min_le_left _ _)
+    have h4 : min (min ρ₁ ρ₂) (min ρ₃ ρ₄) ≤ ρ₄ := (min_le_right _ _).trans (min_le_right _ _)
+    exact ⟨_, lt_min (lt_min hρ₁ hρ₂) (lt_min hρ₃ hρ₄),
+      fun hc x hx hxe => H₁ hc x hx (hxe.trans h1), fun hc x hx hxe => H₂ hc x hx (hxe.trans h2),
+      fun hc x hx hxe => H₃ hc x hx (hxe.trans h3), fun hc x hx hxe => H₄ hc x hx (hxe.trans h4)⟩
+  choose ρ hρpos hρgR hρgL hρVR hρVL using hρ
   set lo : ℝ → ℝ := fun e => max a (e - ρ e) with hlo
   set hi : ℝ → ℝ := fun e => min b (e + ρ e) with hhi
   have hlo_mem : ∀ e ∈ Icc a b, lo e ∈ Icc a b := fun e he =>
@@ -804,29 +835,61 @@ theorem rsIntegrable_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
     · exact hhi_mem e (hSmem e he)
   set Q := Partition.ofFinset Qs hQsmem (Finset.mem_union_left _ (Finset.mem_union_left _ haS))
     (Finset.mem_union_left _ (Finset.mem_union_left _ hbS))
-  set SV := S.filter (fun e => ¬ ContinuousWithinAt g (Icc a b) e) with hSV
+  -- the windows: `[e, hi e]` where `g` jumps on the right, `[lo e, e]` where it jumps on the left
+  set Win : Finset (ℝ × ℝ) :=
+    (S.filter fun e => ¬ ContinuousWithinAt g (Icc a b ∩ Ici e) e).image (fun e => (e, hi e)) ∪
+      (S.filter fun e => ¬ ContinuousWithinAt g (Icc a b ∩ Iic e) e).image (fun e => (lo e, e))
+    with hWin
+  have hWin_mem : ∀ w ∈ Win, a ≤ w.1 ∧ w.1 ≤ w.2 ∧ w.2 ≤ b := by
+    intro w hw
+    simp only [hWin, Finset.mem_union, Finset.mem_image, Finset.mem_filter] at hw
+    rcases hw with ⟨e, ⟨heS, -⟩, rfl⟩ | ⟨e, ⟨heS, -⟩, rfl⟩
+    · have heI := hSmem e heS
+      exact ⟨heI.1, hle_hi e heI, (hhi_mem e heI).2⟩
+    · have heI := hSmem e heS
+      exact ⟨(hlo_mem e heI).1, hlo_le e heI, heI.2⟩
+  have hWin_V : ∀ w ∈ Win, V w.2 - V w.1 ≤ η := by
+    intro w hw
+    simp only [hWin, Finset.mem_union, Finset.mem_image, Finset.mem_filter] at hw
+    rcases hw with ⟨e, ⟨heS, hgc⟩, rfl⟩ | ⟨e, ⟨heS, hgc⟩, rfl⟩
+    · have heI := hSmem e heS
+      have := hρVR e ((hright e heI).resolve_left hgc) (hi e) ⟨hhi_mem e heI, hle_hi e heI⟩
+        (hhi_dist e heI)
+      exact (le_abs_self _).trans this
+    · have heI := hSmem e heS
+      have := hρVL e ((hleft e heI).resolve_left hgc) (lo e) ⟨hlo_mem e heI, hlo_le e heI⟩
+        (hlo_dist e heI)
+      change V e - V (lo e) ≤ η
+      linarith [neg_abs_le (V (lo e) - V e)]
+  have hWin_card : (Win.card : ℝ) ≤ 2 * S.card := by
+    have h1 := (Finset.card_union_le _ _).trans
+      (add_le_add (Finset.card_image_le (s := S.filter fun e =>
+          ¬ ContinuousWithinAt g (Icc a b ∩ Ici e) e) (f := fun e => (e, hi e)))
+        (Finset.card_image_le (s := S.filter fun e =>
+          ¬ ContinuousWithinAt g (Icc a b ∩ Iic e) e) (f := fun e => (lo e, e))))
+    have h2 := Finset.card_filter_le S fun e => ¬ ContinuousWithinAt g (Icc a b ∩ Ici e) e
+    have h3 := Finset.card_filter_le S fun e => ¬ ContinuousWithinAt g (Icc a b ∩ Iic e) e
+    rw [← hWin] at h1
+    exact_mod_cast (show Win.card ≤ 2 * S.card by omega)
   -- the clamped integrators
-  set W : ℝ → ℝ → ℝ := fun e x => V (max (lo e) (min x (hi e))) with hW
-  have hW_mono : ∀ e ∈ S, ∀ x y, x ≤ y → W e x ≤ W e y := by
-    intro e he x y hxy
-    have heI := hSmem e he
-    have hlohi : lo e ≤ hi e := (hlo_le e heI).trans (hle_hi e heI)
-    have hmem : ∀ z, max (lo e) (min z (hi e)) ∈ Icc a b := fun z =>
-      ⟨(hlo_mem e heI).1.trans (le_max_left _ _),
-        max_le (hlo_mem e heI).2 ((min_le_right _ _).trans (hhi_mem e heI).2)⟩
+  set W : ℝ × ℝ → ℝ → ℝ := fun w x => V (max w.1 (min x w.2)) with hW
+  have hW_mono : ∀ w ∈ Win, ∀ x y, x ≤ y → W w x ≤ W w y := by
+    intro w hw x y hxy
+    obtain ⟨h1, h2, h3⟩ := hWin_mem w hw
+    have hmem : ∀ z, max w.1 (min z w.2) ∈ Icc a b := fun z =>
+      ⟨h1.trans (le_max_left _ _), max_le (h2.trans h3) ((min_le_right _ _).trans h3)⟩
     exact hV (hmem x) (hmem y) (max_le_max le_rfl (min_le_min hxy le_rfl))
-  have hW_eq : ∀ e ∈ S, ∀ x, lo e ≤ x → x ≤ hi e → W e x = V x := by
-    intro e _ x h1 h2
+  have hW_eq : ∀ (w : ℝ × ℝ) (x : ℝ), w.1 ≤ x → x ≤ w.2 → W w x = V x := by
+    intro w x h1 h2
     simp only [hW, min_eq_left h2, max_eq_right h1]
-  have hW_b : ∀ e ∈ S, W e b = V (hi e) := by
-    intro e he
-    have heI := hSmem e he
-    simp only [hW, min_eq_right (hhi_mem e heI).2,
-      max_eq_right ((hlo_le e heI).trans (hle_hi e heI))]
-  have hW_a : ∀ e ∈ S, W e a = V (lo e) := by
-    intro e he
-    have heI := hSmem e he
-    simp only [hW, min_eq_left (hhi_mem e heI).1, max_eq_left (hlo_mem e heI).1]
+  have hW_b : ∀ w ∈ Win, W w b = V w.2 := by
+    intro w hw
+    obtain ⟨-, h2, h3⟩ := hWin_mem w hw
+    simp only [hW, min_eq_right h3, max_eq_right h2]
+  have hW_a : ∀ w ∈ Win, W w a = V w.1 := by
+    intro w hw
+    obtain ⟨h1, h2, h3⟩ := hWin_mem w hw
+    simp only [hW, min_eq_left (h1.trans h2), max_eq_left h1]
   -- the main estimate
   have hmain : ∀ T : TaggedPartition a b, T.toPartition.IsRefinement Q →
       ∀ R : TaggedPartition a b, R.toPartition.IsRefinement T.toPartition →
@@ -841,9 +904,9 @@ theorem rsIntegrable_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
       hQT _ (Finset.mem_union_left _ (Finset.mem_union_right _ (Finset.mem_image_of_mem _ he)))
     have hhiT : ∀ e ∈ S, hi e ∈ T.pointSet := fun e he =>
       hQT _ (Finset.mem_union_right _ (Finset.mem_image_of_mem _ he))
-    -- each subinterval of `T` is good or lies in a window around a point of `SV`
+    -- each subinterval of `T` is good or lies in a window
     have hclaim : ∀ k < T.n, (∀ x ∈ Icc (t k) (t (k + 1)), |g (T.tagN k) - g x| ≤ 2 * ε₁) ∨
-        ∃ e ∈ SV, lo e ≤ t k ∧ t (k + 1) ≤ hi e := by
+        ∃ w ∈ Win, w.1 ≤ t k ∧ t (k + 1) ≤ w.2 := by
       intro k hk
       have huv : t k < t (k + 1) := pointN_lt _ (Nat.lt_succ_self k) (by omega)
       have huI := T.toPartition.pointN_mem_Icc k
@@ -855,12 +918,12 @@ theorem rsIntegrable_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
         have hv_hi : t (k + 1) ≤ hi (t k) :=
           (le_or_ge_of_mem_pointSet T.toPartition (k := k) (hhiT _ hus)).resolve_left
             (not_le.mpr hhi_gt)
-        by_cases hgc : ContinuousWithinAt g (Icc a b) (t k)
+        by_cases hgc : ContinuousWithinAt g (Icc a b ∩ Ici (t k)) (t k)
         · left
           intro x hx
           have hd : ∀ y ∈ Icc (t k) (t (k + 1)), |g y - g (t k)| ≤ ε₁ := by
             intro y hy
-            refine hρg _ hgc y ⟨huI.1.trans hy.1, hy.2.trans hvI.2⟩ ?_
+            refine hρgR _ hgc y ⟨⟨huI.1.trans hy.1, hy.2.trans hvI.2⟩, hy.1⟩ ?_
             rw [abs_of_nonneg (by linarith [hy.1])]
             linarith [hy.2, min_le_right b (t k + ρ (t k)), hhi_dist (t k) huI]
           have h1 := hd (T.tagN k) hξ
@@ -868,19 +931,20 @@ theorem rsIntegrable_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
           calc |g (T.tagN k) - g x| = |(g (T.tagN k) - g (t k)) - (g x - g (t k))| := by ring_nf
             _ ≤ |g (T.tagN k) - g (t k)| + |g x - g (t k)| := abs_sub _ _
             _ ≤ 2 * ε₁ := by linarith
-        · exact Or.inr ⟨t k, Finset.mem_filter.mpr ⟨hus, hgc⟩, hlo_le _ huI, hv_hi⟩
+        · refine Or.inr ⟨(t k, hi (t k)), Finset.mem_union_left _ ?_, le_rfl, hv_hi⟩
+          exact Finset.mem_image_of_mem (fun e => (e, hi e)) (Finset.mem_filter.mpr ⟨hus, hgc⟩)
       by_cases hvs : t (k + 1) ∈ S
       · have hlo_lt : lo (t (k + 1)) < t (k + 1) :=
           max_lt (huI.1.trans_lt huv) (by linarith [hρpos (t (k + 1))])
         have hlo_u : lo (t (k + 1)) ≤ t k :=
           (le_or_ge_of_mem_pointSet T.toPartition (k := k) (hloT _ hvs)).resolve_right
             (not_le.mpr hlo_lt)
-        by_cases hgc : ContinuousWithinAt g (Icc a b) (t (k + 1))
+        by_cases hgc : ContinuousWithinAt g (Icc a b ∩ Iic (t (k + 1))) (t (k + 1))
         · left
           intro x hx
           have hd : ∀ y ∈ Icc (t k) (t (k + 1)), |g y - g (t (k + 1))| ≤ ε₁ := by
             intro y hy
-            refine hρg _ hgc y ⟨huI.1.trans hy.1, hy.2.trans hvI.2⟩ ?_
+            refine hρgL _ hgc y ⟨⟨huI.1.trans hy.1, hy.2.trans hvI.2⟩, hy.2⟩ ?_
             rw [abs_of_nonpos (by linarith [hy.2])]
             linarith [hy.1, le_max_right a (t (k + 1) - ρ (t (k + 1)))]
           have h1 := hd (T.tagN k) hξ
@@ -889,7 +953,8 @@ theorem rsIntegrable_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
               = |(g (T.tagN k) - g (t (k + 1))) - (g x - g (t (k + 1)))| := by ring_nf
             _ ≤ |g (T.tagN k) - g (t (k + 1))| + |g x - g (t (k + 1))| := abs_sub _ _
             _ ≤ 2 * ε₁ := by linarith
-        · exact Or.inr ⟨t (k + 1), Finset.mem_filter.mpr ⟨hvs, hgc⟩, hlo_u, hle_hi _ hvI⟩
+        · refine Or.inr ⟨(lo (t (k + 1)), t (k + 1)), Finset.mem_union_right _ ?_, hlo_u, le_rfl⟩
+          exact Finset.mem_image_of_mem (fun e => (lo e, e)) (Finset.mem_filter.mpr ⟨hvs, hgc⟩)
       · left
         have hfree : ∀ s ∈ S, s ∉ Icc (t k) (t (k + 1)) := by
           intro s hs hmem
@@ -925,67 +990,54 @@ theorem rsIntegrable_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
     have hΔ : ∀ k, 0 ≤ V (t (k + 1)) - V (t k) := fun k =>
       sub_nonneg.mpr (hV (T.toPartition.pointN_mem_Icc _) (T.toPartition.pointN_mem_Icc _)
         (T.monotone_pointN (Nat.le_succ k)))
-    have hΔW : ∀ e ∈ S, ∀ k, 0 ≤ W e (t (k + 1)) - W e (t k) := fun e he k =>
-      sub_nonneg.mpr (hW_mono e he _ _ (T.monotone_pointN (Nat.le_succ k)))
+    have hΔW : ∀ w ∈ Win, ∀ k, 0 ≤ W w (t (k + 1)) - W w (t k) := fun w hw k =>
+      sub_nonneg.mpr (hW_mono w hw _ _ (T.monotone_pointN (Nat.le_succ k)))
     have hterm : ∀ k ∈ range T.n, ω k * (V (t (k + 1)) - V (t k)) ≤
         2 * ε₁ * (V (t (k + 1)) - V (t k)) +
-          2 * B * ∑ e ∈ SV, (W e (t (k + 1)) - W e (t k)) := by
+          2 * B * ∑ w ∈ Win, (W w (t (k + 1)) - W w (t k)) := by
       intro k hk
       have hk := Finset.mem_range.mp hk
-      have hsumW : 0 ≤ ∑ e ∈ SV, (W e (t (k + 1)) - W e (t k)) :=
-        sum_nonneg fun e he => hΔW e (Finset.mem_filter.mp he).1 k
+      have hsumW : 0 ≤ ∑ w ∈ Win, (W w (t (k + 1)) - W w (t k)) :=
+        sum_nonneg fun w hw => hΔW w hw k
       simp only [hω]
       split_ifs with h
       · nlinarith [hΔ k]
-      · obtain ⟨e, he, h1, h2⟩ := (hclaim k hk).resolve_left h
-        have heS := (Finset.mem_filter.mp he).1
-        have hsingle : W e (t (k + 1)) - W e (t k) ≤ ∑ e ∈ SV, (W e (t (k + 1)) - W e (t k)) :=
-          Finset.single_le_sum (fun e he => hΔW e (Finset.mem_filter.mp he).1 k) he
-        rw [hW_eq e heS _ h1 ((T.monotone_pointN (Nat.le_succ k)).trans h2),
-          hW_eq e heS _ (h1.trans (T.monotone_pointN (Nat.le_succ k))) h2] at hsingle
+      · obtain ⟨w, hw, h1, h2⟩ := (hclaim k hk).resolve_left h
+        have hsingle : W w (t (k + 1)) - W w (t k) ≤ ∑ w ∈ Win, (W w (t (k + 1)) - W w (t k)) :=
+          Finset.single_le_sum (fun w hw => hΔW w hw k) hw
+        rw [hW_eq w _ h1 ((T.monotone_pointN (Nat.le_succ k)).trans h2),
+          hW_eq w _ (h1.trans (T.monotone_pointN (Nat.le_succ k))) h2] at hsingle
         nlinarith [hΔ k, hε₁pos]
     have htelV : ∑ k ∈ range T.n, (V (t (k + 1)) - V (t k)) = V b - V a := by
       rw [sum_range_sub (fun k => V (t k)), ht, Partition.pointN_of_le _ le_rfl,
         Partition.pointN_zero]
-    have htelW : ∀ e ∈ S, ∑ k ∈ range T.n, (W e (t (k + 1)) - W e (t k)) =
-        V (hi e) - V (lo e) := by
-      intro e he
-      rw [sum_range_sub (fun k => W e (t k)), ht, Partition.pointN_of_le _ le_rfl,
-        Partition.pointN_zero, hW_b e he, hW_a e he]
-    have hwin : ∀ e ∈ SV, V (hi e) - V (lo e) ≤ η := by
-      intro e he
-      obtain ⟨heS, hgc⟩ := Finset.mem_filter.mp he
-      have heI := hSmem e heS
-      have hVc := (hcont e heI).resolve_left hgc
-      have h1 := hρV e hVc (hi e) (hhi_mem e heI) (hhi_dist e heI)
-      have h2 := hρV e hVc (lo e) (hlo_mem e heI) (hlo_dist e heI)
-      calc V (hi e) - V (lo e) = (V (hi e) - V e) - (V (lo e) - V e) := by ring
-        _ ≤ |V (hi e) - V e| + |V (lo e) - V e| := by
-            linarith [le_abs_self (V (hi e) - V e), neg_abs_le (V (lo e) - V e)]
-        _ ≤ η := by linarith
-    have hcard : (SV.card : ℝ) ≤ S.card := by exact_mod_cast Finset.card_filter_le _ _
-    have hsumSV : ∑ e ∈ SV, (V (hi e) - V (lo e)) ≤ S.card * η := by
-      calc ∑ e ∈ SV, (V (hi e) - V (lo e)) ≤ ∑ _e ∈ SV, η := sum_le_sum hwin
-        _ = SV.card * η := by rw [sum_const, nsmul_eq_mul]
-        _ ≤ S.card * η := by gcongr
+    have htelW : ∀ w ∈ Win, ∑ k ∈ range T.n, (W w (t (k + 1)) - W w (t k)) =
+        V w.2 - V w.1 := by
+      intro w hw
+      rw [sum_range_sub (fun k => W w (t k)), ht, Partition.pointN_of_le _ le_rfl,
+        Partition.pointN_zero, hW_b w hw, hW_a w hw]
+    have hsumWin : ∑ w ∈ Win, (V w.2 - V w.1) ≤ 2 * S.card * η := by
+      calc ∑ w ∈ Win, (V w.2 - V w.1) ≤ ∑ _w ∈ Win, η := sum_le_sum hWin_V
+        _ = Win.card * η := by rw [sum_const, nsmul_eq_mul]
+        _ ≤ 2 * S.card * η := by gcongr
     have hbound : ∑ k ∈ range T.n, ω k * (V (t (k + 1)) - V (t k)) ≤
-        2 * ε₁ * (V b - V a) + 2 * B * (S.card * η) := by
+        2 * ε₁ * (V b - V a) + 2 * B * (2 * S.card * η) := by
       calc ∑ k ∈ range T.n, ω k * (V (t (k + 1)) - V (t k))
           ≤ ∑ k ∈ range T.n, (2 * ε₁ * (V (t (k + 1)) - V (t k)) +
-              2 * B * ∑ e ∈ SV, (W e (t (k + 1)) - W e (t k))) := sum_le_sum hterm
+              2 * B * ∑ w ∈ Win, (W w (t (k + 1)) - W w (t k))) := sum_le_sum hterm
         _ = 2 * ε₁ * ∑ k ∈ range T.n, (V (t (k + 1)) - V (t k)) +
-              2 * B * ∑ e ∈ SV, ∑ k ∈ range T.n, (W e (t (k + 1)) - W e (t k)) := by
+              2 * B * ∑ w ∈ Win, ∑ k ∈ range T.n, (W w (t (k + 1)) - W w (t k)) := by
             rw [sum_add_distrib, ← mul_sum, ← mul_sum, sum_comm]
-        _ = 2 * ε₁ * (V b - V a) + 2 * B * ∑ e ∈ SV, (V (hi e) - V (lo e)) := by
+        _ = 2 * ε₁ * (V b - V a) + 2 * B * ∑ w ∈ Win, (V w.2 - V w.1) := by
             rw [htelV]
             congr 2
-            exact sum_congr rfl fun e he => htelW e (Finset.mem_filter.mp he).1
-        _ ≤ 2 * ε₁ * (V b - V a) + 2 * B * (S.card * η) := by gcongr
+            exact sum_congr rfl fun w hw => htelW w hw
+        _ ≤ 2 * ε₁ * (V b - V a) + 2 * B * (2 * S.card * η) := by gcongr
     have harith1 : 2 * ε₁ * (V b - V a) ≤ ε / 4 := by
       have : ε₁ * (8 * (V b - V a + 1)) = ε := div_mul_cancel₀ _ (by positivity)
       nlinarith
-    have harith2 : 2 * B * (S.card * η) ≤ ε / 4 := by
-      have : η * (8 * (B + 1) * (S.card + 1)) = ε := div_mul_cancel₀ _ (by positivity)
+    have harith2 : 2 * B * (2 * S.card * η) ≤ ε / 4 := by
+      have : η * (16 * (B + 1) * (S.card + 1)) = ε := div_mul_cancel₀ _ (by positivity)
       have hS0 : (0 : ℝ) ≤ S.card := Nat.cast_nonneg _
       nlinarith [mul_nonneg hB0 hS0, mul_nonneg (mul_nonneg hB0 hS0) hηpos.le]
     linarith
@@ -998,6 +1050,65 @@ theorem rsIntegrable_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
     _ ≤ |rsSum g V T - rsSum g V R| + |rsSum g V T' - rsSum g V R| := abs_sub _ _
     _ ≤ ε := by linarith
 
+/-- Continuity within `[a, b]` gives both one-sided continuities. -/
+private theorem continuousWithinAt_oneSided {F : ℝ → ℝ} {x : ℝ}
+    (hF : ContinuousWithinAt F (Icc a b) x) :
+    ContinuousWithinAt F (Icc a b ∩ Ici x) x ∧ ContinuousWithinAt F (Icc a b ∩ Iic x) x :=
+  ⟨hF.mono inter_subset_left, hF.mono inter_subset_left⟩
+
+/-- **Existence against a monotone integrator.** Let `g` have a right limit at every point of
+`[a, b)` and a left limit at every point of `(a, b]` (`g` is regulated), let `V` be monotone on
+`[a, b]`, and suppose that at every point of `[a, b]` at least one of `g`, `V` is continuous
+within `[a, b]`. Then `∫ₐᵇ g dV` exists: the special case of
+`rsIntegrable_of_regulated_of_monotoneOn_oneSided` in which the same function is continuous on both
+sides. -/
+theorem rsIntegrable_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤ b)
+    (hgR : ∀ x ∈ Ico a b, ∃ l, Tendsto g (𝓝[>] x) (𝓝 l))
+    (hgL : ∀ x ∈ Ioc a b, ∃ l, Tendsto g (𝓝[<] x) (𝓝 l))
+    (hV : MonotoneOn V (Icc a b))
+    (hcont : ∀ x ∈ Icc a b,
+      ContinuousWithinAt g (Icc a b) x ∨ ContinuousWithinAt V (Icc a b) x) :
+    RSIntegrable g V a b :=
+  rsIntegrable_of_regulated_of_monotoneOn_oneSided hab hgR hgL hV
+    (fun x hx => (hcont x hx).imp (fun h => (continuousWithinAt_oneSided h).1)
+      (fun h => (continuousWithinAt_oneSided h).1))
+    (fun x hx => (hcont x hx).imp (fun h => (continuousWithinAt_oneSided h).2)
+      (fun h => (continuousWithinAt_oneSided h).2))
+
+/-- **Existence against a bounded-variation integrator, one-sided form.** Let `g` be regulated on
+`[a, b]` and let `f` have bounded variation on `[a, b]`. If `g` and `f` have no common
+discontinuity on the same side (at every point one of them is right-continuous and one of them is
+left-continuous, within `[a, b]`), then `∫ₐᵇ g df` exists. -/
+theorem rsIntegrable_of_regulated_of_boundedVariationOn_oneSided {g f : ℝ → ℝ} (hab : a ≤ b)
+    (hgR : ∀ x ∈ Ico a b, ∃ l, Tendsto g (𝓝[>] x) (𝓝 l))
+    (hgL : ∀ x ∈ Ioc a b, ∃ l, Tendsto g (𝓝[<] x) (𝓝 l))
+    (hf : BoundedVariationOn f (Icc a b))
+    (hright : ∀ x ∈ Icc a b,
+      ContinuousWithinAt g (Icc a b ∩ Ici x) x ∨ ContinuousWithinAt f (Icc a b ∩ Ici x) x)
+    (hleft : ∀ x ∈ Icc a b,
+      ContinuousWithinAt g (Icc a b ∩ Iic x) x ∨ ContinuousWithinAt f (Icc a b ∩ Iic x) x) :
+    RSIntegrable g f a b := by
+  have ha : a ∈ Icc a b := ⟨le_rfl, hab⟩
+  set V := variationOnFromTo f (Icc a b) a
+  have hVmono : MonotoneOn V (Icc a b) :=
+    variationOnFromTo.monotoneOn hf.locallyBoundedVariationOn ha
+  have hWmono : MonotoneOn (V - f) (Icc a b) :=
+    variationOnFromTo.sub_self_monotoneOn hf.locallyBoundedVariationOn ha
+  have hVR : ∀ x ∈ Icc a b, ContinuousWithinAt f (Icc a b ∩ Ici x) x →
+      ContinuousWithinAt V (Icc a b ∩ Ici x) x := fun x hx hfx =>
+    hf.continuousWithinAt_variationOnFromTo_inter_Ici ha hx hfx
+  have hVL : ∀ x ∈ Icc a b, ContinuousWithinAt f (Icc a b ∩ Iic x) x →
+      ContinuousWithinAt V (Icc a b ∩ Iic x) x := fun x hx hfx =>
+    hf.continuousWithinAt_variationOnFromTo_inter_Iic ha hx hfx
+  obtain ⟨I₁, h₁⟩ := rsIntegrable_of_regulated_of_monotoneOn_oneSided hab hgR hgL hVmono
+    (fun x hx => (hright x hx).imp id (hVR x hx)) (fun x hx => (hleft x hx).imp id (hVL x hx))
+  obtain ⟨I₂, h₂⟩ := rsIntegrable_of_regulated_of_monotoneOn_oneSided hab hgR hgL hWmono
+    (fun x hx => (hright x hx).imp id fun hfx => (hVR x hx hfx).sub hfx)
+    (fun x hx => (hleft x hx).imp id fun hfx => (hVL x hx hfx).sub hfx)
+  have h := h₁.sub_right h₂
+  rw [show V - (V - f) = f by ring] at h
+  exact h.rsIntegrable
+
 /-- **Existence against a bounded-variation integrator.** Let `g` be regulated on `[a, b]`
 (one-sided limits at every point) and let `f` have bounded variation on `[a, b]`. If at every
 point of `[a, b]` at least one of `g`, `f` is continuous within `[a, b]`, then `∫ₐᵇ g df`
@@ -1008,23 +1119,44 @@ theorem rsIntegrable_of_regulated_of_boundedVariationOn {g f : ℝ → ℝ} (hab
     (hf : BoundedVariationOn f (Icc a b))
     (hcont : ∀ x ∈ Icc a b,
       ContinuousWithinAt g (Icc a b) x ∨ ContinuousWithinAt f (Icc a b) x) :
-    RSIntegrable g f a b := by
-  have ha : a ∈ Icc a b := ⟨le_rfl, hab⟩
-  set V := variationOnFromTo f (Icc a b) a
-  have hVmono : MonotoneOn V (Icc a b) :=
-    variationOnFromTo.monotoneOn hf.locallyBoundedVariationOn ha
-  have hWmono : MonotoneOn (V - f) (Icc a b) :=
-    variationOnFromTo.sub_self_monotoneOn hf.locallyBoundedVariationOn ha
-  have hVc : ∀ x ∈ Icc a b, ContinuousWithinAt f (Icc a b) x →
-      ContinuousWithinAt V (Icc a b) x := fun x hx hfx =>
-    (hf.continuousWithinAt_variationOnFromTo_iff ha hx).mpr hfx
-  obtain ⟨I₁, h₁⟩ := rsIntegrable_of_regulated_of_monotoneOn hab hgR hgL hVmono
-    fun x hx => (hcont x hx).imp id (hVc x hx)
-  obtain ⟨I₂, h₂⟩ := rsIntegrable_of_regulated_of_monotoneOn hab hgR hgL hWmono
-    fun x hx => (hcont x hx).imp id fun hfx => (hVc x hx hfx).sub hfx
-  have h := h₁.sub_right h₂
-  rw [show V - (V - f) = f by ring] at h
-  exact h.rsIntegrable
+    RSIntegrable g f a b :=
+  rsIntegrable_of_regulated_of_boundedVariationOn_oneSided hab hgR hgL hf
+    (fun x hx => (hcont x hx).imp (fun h => (continuousWithinAt_oneSided h).1)
+      (fun h => (continuousWithinAt_oneSided h).1))
+    (fun x hx => (hcont x hx).imp (fun h => (continuousWithinAt_oneSided h).2)
+      (fun h => (continuousWithinAt_oneSided h).2))
+
+/-- **Existence for a bounded-variation integrand against a regulated integrator, one-sided form
+(Hildebrandt).** Let `f` have bounded variation on `[a, b]` and let `h` be regulated on `[a, b]`.
+Suppose `f` and `h` have no common discontinuity on the same side: at every `x ∈ [a, b]`, one of
+`f`, `h` is right-continuous at `x` within `[a, b] ∩ [x, ∞)`, and one of `f`, `h` is left-continuous
+at `x` within `[a, b] ∩ (-∞, x]`. Then `∫ₐᵇ f dh` exists. A common jump on opposite sides is
+allowed: `f = 𝟙(1, ∞)` (left-continuous) against `h = 𝟙[1, ∞)` (right-continuous) on `[0, 2]`. -/
+theorem rsIntegrable_of_boundedVariationOn_of_regulated_oneSided {f h : ℝ → ℝ} (hab : a ≤ b)
+    (hf : BoundedVariationOn f (Icc a b))
+    (hhR : ∀ x ∈ Ico a b, ∃ l, Tendsto h (𝓝[>] x) (𝓝 l))
+    (hhL : ∀ x ∈ Ioc a b, ∃ l, Tendsto h (𝓝[<] x) (𝓝 l))
+    (hright : ∀ x ∈ Icc a b,
+      ContinuousWithinAt f (Icc a b ∩ Ici x) x ∨ ContinuousWithinAt h (Icc a b ∩ Ici x) x)
+    (hleft : ∀ x ∈ Icc a b,
+      ContinuousWithinAt f (Icc a b ∩ Iic x) x ∨ ContinuousWithinAt h (Icc a b ∩ Iic x) x) :
+    RSIntegrable f h a b := by
+  obtain ⟨J, hJ⟩ := rsIntegrable_of_regulated_of_boundedVariationOn_oneSided hab hhR hhL hf
+    (fun x hx => (hright x hx).symm) (fun x hx => (hleft x hx).symm)
+  exact hJ.integration_by_parts.rsIntegrable
+
+/-- **Left-continuous integrand, right-continuous integrator.** If `f` has bounded variation and is
+left-continuous on `[a, b]`, and `h` is regulated and right-continuous on `[a, b]`, then `∫ₐᵇ f dh`
+exists, whatever jumps `f` and `h` share. -/
+theorem rsIntegrable_of_boundedVariationOn_of_regulated_of_leftContinuous {f h : ℝ → ℝ}
+    (hab : a ≤ b) (hf : BoundedVariationOn f (Icc a b))
+    (hfL : ∀ x ∈ Icc a b, ContinuousWithinAt f (Icc a b ∩ Iic x) x)
+    (hhR : ∀ x ∈ Ico a b, ∃ l, Tendsto h (𝓝[>] x) (𝓝 l))
+    (hhL : ∀ x ∈ Ioc a b, ∃ l, Tendsto h (𝓝[<] x) (𝓝 l))
+    (hhrc : ∀ x ∈ Icc a b, ContinuousWithinAt h (Icc a b ∩ Ici x) x) :
+    RSIntegrable f h a b :=
+  rsIntegrable_of_boundedVariationOn_of_regulated_oneSided hab hf hhR hhL
+    (fun x hx => Or.inr (hhrc x hx)) (fun x hx => Or.inl (hfL x hx))
 
 /-- **Existence for a bounded-variation integrand against a regulated integrator.** Let `f` have
 bounded variation on `[a, b]` and let `h` be regulated on `[a, b]` (a right limit at every point of
