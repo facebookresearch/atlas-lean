@@ -23,6 +23,15 @@ with relative vorticity `ζ`, constant Coriolis parameter `f` and depth
 `(ζ + f)' = -(ζ + f) D`, with the same divergence `D` along the
 trajectory. The quotient rule gives `q' = 0`: the two `D` terms cancel.
 
+Conventions, following Vallis (see References): `'` is the derivative
+along the parcel (the material derivative `D/Dt` of the source), `h` is the
+depth of the fluid layer,
+and `D = ∂u/∂x + ∂v/∂y` is the horizontal divergence of the velocity at the
+parcel. The hypotheses are the shallow-water mass continuity equation
+`Dh/Dt + h ∇·u = 0` and the absolute-vorticity equation
+`D(ζ + f)/Dt + (ζ + f) ∇·u = 0`, read along one trajectory. The statements
+take `f` constant, the f-plane case.
+
 ## i. Overview
 
 `q' = ((ζ + f)' h - (ζ + f) h') / h²
@@ -32,7 +41,8 @@ derivative everywhere then gives `q(s) = q(t)` for all `s, t`.
 ## ii. Key results
 
 - `EarthScience.shallow_water_potential_vorticity_hasDerivAt_zero`:
-  `q` has zero derivative.
+  `q` has zero derivative at a time `t` where `h t ≠ 0` and the continuity
+  and vorticity equations hold (hypotheses at `t` only).
 - `EarthScience.shallow_water_potential_vorticity_conserved`: `q` is
   conserved along the trajectory.
 
@@ -42,6 +52,11 @@ derivative everywhere then gives `q(s) = q(t)` for all `s, t`.
 
 ## iv. References
 
+- G. K. Vallis, *Atmospheric and Oceanic Fluid Dynamics: Fundamentals and
+  Large-Scale Circulation*, 2nd ed., Cambridge University Press (2017),
+  Chapter 3 (Shallow Water Systems and Isentropic Coordinates): the
+  shallow-water mass continuity and vorticity equations and the material
+  conservation of the shallow-water potential vorticity `(ζ + f) / h`.
 - `HasDerivAt.fun_div`, `is_const_of_deriv_eq_zero` in Mathlib.
 
 ## A. Potential-vorticity conservation
@@ -51,18 +66,18 @@ derivative everywhere then gives `q(s) = q(t)` for all `s, t`.
 
 namespace EarthScience
 
-/-- Potential vorticity along a parcel trajectory: if the depth satisfies
-`h' = -h D` (continuity with divergence `D`) and the absolute vorticity
-satisfies `(ζ + f)' = -(ζ + f) D` (vorticity equation), then the potential
-vorticity `q = (ζ + f) / h` has zero derivative. Here `f` is the constant
-Coriolis parameter and `D` is the divergence along the trajectory. -/
-theorem shallow_water_potential_vorticity_hasDerivAt_zero {f : ℝ} {ζ h D : ℝ → ℝ}
-    (hh : ∀ t, h t ≠ 0)
-    (hh' : ∀ t, HasDerivAt h (-(h t * D t)) t)
-    (hζ : ∀ t, HasDerivAt (fun τ => ζ τ + f) (-((ζ t + f) * D t)) t)
-    (t : ℝ) :
+/-- Potential vorticity along a parcel trajectory: if at time `t` the depth
+is nonzero and satisfies `h' = -h D` (continuity with divergence `D`), and the
+absolute vorticity satisfies `(ζ + f)' = -(ζ + f) D` (vorticity equation),
+then the potential vorticity `q = (ζ + f) / h` has zero derivative at `t`.
+Here `f` is the constant Coriolis parameter and `D` is the divergence along
+the trajectory; the hypotheses are needed at `t` only. -/
+theorem shallow_water_potential_vorticity_hasDerivAt_zero {f : ℝ} {ζ h D : ℝ → ℝ} {t : ℝ}
+    (hh : h t ≠ 0)
+    (hh' : HasDerivAt h (-(h t * D t)) t)
+    (hζ : HasDerivAt (fun τ => ζ τ + f) (-((ζ t + f) * D t)) t) :
     HasDerivAt (fun τ => (ζ τ + f) / h τ) 0 t := by
-  have hq := (hζ t).fun_div (hh' t) (hh t)
+  have hq := hζ.fun_div hh' hh
   have hnum : -((ζ t + f) * D t) * h t - (ζ t + f) * (-(h t * D t)) = 0 := by ring
   have hval : (-((ζ t + f) * D t) * h t - (ζ t + f) * (-(h t * D t))) / h t ^ 2 = 0 := by
     rw [hnum, zero_div]
@@ -78,7 +93,7 @@ theorem shallow_water_potential_vorticity_conserved {f : ℝ} {ζ h D : ℝ → 
     {s t : ℝ} :
     (ζ s + f) / h s = (ζ t + f) / h t := by
   have hq : ∀ t, HasDerivAt (fun τ => (ζ τ + f) / h τ) 0 t :=
-    fun t => shallow_water_potential_vorticity_hasDerivAt_zero hh hh' hζ t
+    fun x => shallow_water_potential_vorticity_hasDerivAt_zero (hh x) (hh' x) (hζ x)
   have hdiff : Differentiable ℝ (fun τ => (ζ τ + f) / h τ) :=
     fun x => (hq x).differentiableAt
   have hderiv : ∀ x, deriv (fun τ => (ζ τ + f) / h τ) x = 0 :=
