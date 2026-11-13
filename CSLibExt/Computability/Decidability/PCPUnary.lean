@@ -51,7 +51,10 @@ theorem length_bottom (s : List (Domino α)) :
     (bottom s).length = (s.map fun d ↦ d.2.length).sum :=
   List.length_flatMap
 
-/-- If every domino of `s` is at least as long on top, so is `s`. -/
+/-- **Total length of dominoes that are at least as long on top.** Write $|w|$ for the length of a
+word $w$. Let $s$ be a finite sequence of dominoes over an alphabet. If every domino $(t, b)$ in
+$s$ satisfies $|b| \le |t|$, then the concatenation of the bottom words of $s$ is no longer than
+the concatenation of the top words of $s$. -/
 theorem length_bottom_le_length_top {s : List (Domino α)}
     (h : ∀ d ∈ s, d.2.length ≤ d.1.length) : (bottom s).length ≤ (top s).length := by
   induction s with
@@ -62,7 +65,10 @@ theorem length_bottom_le_length_top {s : List (Domino α)}
     have := ih fun e he ↦ h e (List.mem_cons_of_mem _ he)
     omega
 
-/-- If every domino of a nonempty `s` is strictly longer on top, so is `s`. -/
+/-- **Total length of dominoes that are strictly longer on top.** Write $|w|$ for the length of a
+word $w$. Let $s$ be a nonempty finite sequence of dominoes over an alphabet. If every domino
+$(t, b)$ in $s$ satisfies $|b| < |t|$, then the concatenation of the bottom words of $s$ is strictly
+shorter than the concatenation of the top words of $s$. -/
 theorem length_bottom_lt_length_top {s : List (Domino α)} (hs : s ≠ [])
     (h : ∀ d ∈ s, d.2.length < d.1.length) : (bottom s).length < (top s).length := by
   obtain ⟨d, s, rfl⟩ := List.exists_cons_of_ne_nil hs
@@ -72,7 +78,9 @@ theorem length_bottom_lt_length_top {s : List (Domino α)} (hs : s ≠ [])
     (h e (List.mem_cons_of_mem _ he)).le
   omega
 
-/-- Swapping top and bottom. -/
+/-- **Swapping top and bottom.** For a finite sequence $s$ of dominoes, the swapped sequence is
+obtained from $s$ by exchanging the top and bottom word of every domino: each $(t, b)$ becomes
+$(b, t)$, and the order of the dominoes is unchanged. -/
 def swap (s : List (Domino α)) : List (Domino α) := s.map Prod.swap
 
 @[simp] theorem top_swap (s : List (Domino α)) : top (swap s) = bottom s := by
@@ -108,7 +116,10 @@ variable [Subsingleton α]
 theorem eq_of_length_eq {u v : List α} (h : u.length = v.length) : u = v :=
   List.ext_getElem h fun _ _ _ ↦ Subsingleton.elim _ _
 
-/-- **The unary PCP criterion.** -/
+/-- **The unary PCP criterion.** Let $\alpha$ be an alphabet with at most one letter, and write
+$|w|$ for the length of a word $w$. A finite list $P$ of dominoes over $\alpha$ has a PCP solution
+if and only if either some domino $(t, b)$ in $P$ has $|t| = |b|$, or some domino $(t, b)$ in $P$
+has $|t| < |b|$ and some domino $(t', b')$ in $P$ has $|b'| < |t'|$. -/
 theorem pcp_iff_of_subsingleton (P : List (Domino α)) :
     PCP P ↔ (∃ d ∈ P, d.1.length = d.2.length) ∨
       ((∃ d ∈ P, d.1.length < d.2.length) ∧ ∃ e ∈ P, e.2.length < e.1.length) := by
@@ -158,7 +169,10 @@ theorem pcp_iff_of_subsingleton (P : List (Domino α)) :
 
 /-! ### Decidability -/
 
-/-- The criterion as a Boolean. -/
+/-- **The unary PCP test.** Let $\alpha$ be an alphabet with at most one letter, and write $|w|$
+for the length of a word $w$. For a finite list $P$ of dominoes over $\alpha$, the unary test of
+$P$ is the Boolean value that is true exactly when some domino $(t, b)$ in $P$ has $|t| = |b|$, or
+some domino $(t, b)$ in $P$ has $|t| < |b|$ and some domino $(t', b')$ in $P$ has $|b'| < |t'|$. -/
 def unaryTest (P : List (Domino α)) : Bool :=
   P.any (fun d ↦ d.1.length == d.2.length) ||
     (P.any (fun d ↦ decide (d.1.length < d.2.length)) &&
@@ -170,7 +184,10 @@ theorem unaryTest_iff (P : List (Domino α)) : unaryTest P = true ↔ PCP P := b
 
 variable [Primcodable α]
 
-/-- **PCP over a one-letter alphabet is decidable.** -/
+/-- **PCP over a one-letter alphabet is decidable.** Let $\alpha$ be an alphabet with at most one
+letter whose elements have a computable encoding. Then the Post correspondence problem over
+$\alpha$ is a computable predicate: some computable function decides, for every finite list $P$
+of dominoes over $\alpha$, whether $P$ has a PCP solution. -/
 theorem computablePred_pcp_of_subsingleton : ComputablePred (PCP (α := α)) := by
   refine ComputablePred.computable_iff.mpr ⟨unaryTest, ?_, ?_⟩
   · have h1 : Primrec fun d : Domino α ↦ d.1.length == d.2.length :=
@@ -188,7 +205,10 @@ theorem computablePred_pcp_of_subsingleton : ComputablePred (PCP (α := α)) := 
   · funext P
     exact propext (unaryTest_iff P).symm
 
-/-- PCP over a one-letter alphabet is decidable by a multi-stack machine. -/
+/-- **Unary PCP is decidable by a multi-stack machine.** Let $\alpha$ be an alphabet with at most
+one letter whose elements have a computable encoding. Then the Post correspondence problem over
+$\alpha$ is decidable by a multi-stack machine: some multi-stack Turing machine decides, for every
+finite list $P$ of dominoes over $\alpha$, whether $P$ has a PCP solution. -/
 theorem tm2Decidable_pcp_of_subsingleton : TM2Decidable (PCP (α := α)) :=
   tm2Decidable_iff_computablePred.mpr computablePred_pcp_of_subsingleton
 

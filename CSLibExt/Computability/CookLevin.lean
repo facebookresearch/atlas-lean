@@ -42,35 +42,54 @@ namespace Cslib.CookLevin
 the `Cslib.CookLevin` names resolving to the same constants. -/
 export Cslib.Logic.PL (CNFClause CNF CNFSat)
 
-/-- Read a unary length prefix, returning the length and the unconsumed suffix. -/
+/-- **Reading a unary length prefix.** On a list of Booleans that begins with $k$ copies of
+$\mathrm{true}$ followed by $\mathrm{false}$, the reader returns $k$ together with the rest of
+the list after that $\mathrm{false}$. On a list containing no $\mathrm{false}$, including the
+empty list, it fails. -/
 def readUnaryLength : List Bool → Option (Nat × List Bool)
   | [] => none
   | false :: rest => some (0, rest)
   | true :: rest => (readUnaryLength rest).map fun result => (result.1 + 1, result.2)
 
-/-- Prefix-free binary code of a variable index: Mathlib's canonical
-natural-number bits wrapped in a canonical self-delimiting block. -/
+/-- **Prefix-free code of a natural number.** The code of $n \in \mathbb{N}$ is the
+self-delimiting block of the binary representation of $n$ (least significant bit first, with
+$0$ represented by the empty list): each bit $c$ is written as the two bits $\mathrm{true}, c$,
+and the block ends with a terminating $\mathrm{false}$. -/
 def encodeNatPrefix (n : Nat) : List Bool :=
   MetaMathlibExt.BitstringEncoding.delimit (Computability.encodeNat n)
 
-/-- Decode a prefix-coded natural and return its unconsumed suffix. -/
+/-- **Decoding a prefix-coded natural number.** Given a bit string $w$, writing $1$ for true and
+$0$ for false, the decoder reads one self-delimiting block $1\,b_1\,1\,b_2 \cdots 1\,b_k\,0$ from
+the front of $w$, with payload $b_1 \cdots b_k$ and remaining bits $r$. If the payload is the
+binary expansion of some natural number $n$, least significant bit first and without trailing
+zeros (empty for $n = 0$), the result is $(n, r)$. Decoding fails if $w$ does not begin with such
+a block or the payload is not of this form. -/
 def decodeNatPrefix (input : List Bool) : Option (Nat × List Bool) := do
   let (bits, rest) ← MetaMathlibExt.BitstringEncoding.undelimit input
   let n := Computability.decodeNat bits
   if Computability.encodeNat n = bits then some (n, rest) else none
 
-/-- Binary code of a literal: the prefix-free index code followed by its polarity. -/
+/-- **Binary code of a literal.** A literal $(n, b)$, with variable index $n \in \mathbb{N}$ and
+polarity $b \in \{\mathrm{false}, \mathrm{true}\}$, is encoded as the prefix-free code of $n$
+followed by the single bit $b$. -/
 def encodeLit (l : Nat × Bool) : List Bool :=
   encodeNatPrefix l.1 ++ [l.2]
 
-/-- Decode one literal and return its unconsumed suffix. -/
+/-- **Decoding a literal.** Given a bit string $w$, the decoder reads a prefix-coded natural
+number $n$ from the front of $w$ and then one more bit $b$. The result is the literal $(n, b)$,
+with variable index $n$ and polarity $b$, together with the bits left after $b$. Decoding fails if
+no prefix-coded natural number can be read or no bit follows it. -/
 def decodeLit (input : List Bool) : Option ((Nat × Bool) × List Bool) := do
   let (n, rest) ← decodeNatPrefix input
   match rest with
   | [] => none
   | polarity :: tail => some ((n, polarity), tail)
 
-/-- Decode exactly `n` literals and return the unconsumed suffix. -/
+/-- **Decoding a fixed number of literals.** For a natural number $n$ and a bit string $w$, the
+decoder reads $n$ literals one after another from the front of $w$ with the literal decoder. The
+result is the clause made of these literals, in order, together with the bits left after them;
+for $n = 0$ it is the empty clause together with $w$. Decoding fails if one of the $n$ literals
+cannot be read. -/
 def decodeLits : Nat → List Bool → Option (CNFClause × List Bool)
   | 0, input => some ([], input)
   | n + 1, input => do
@@ -78,16 +97,28 @@ def decodeLits : Nat → List Bool → Option (CNFClause × List Bool)
       let (literals, tail) ← decodeLits n rest
       some (literal :: literals, tail)
 
-/-- Binary code of a clause: its literal count followed by the encoded literals. -/
+/-- **Length-prefixed binary code of a clause.** Writing $1$ for true and $0$ for false, the code
+of a clause $C = (\ell_1, \dots, \ell_k)$ is $1^k 0$ ($k$ ones followed by a zero) followed by the
+binary codes of $\ell_1, \dots, \ell_k$ in order, where a literal $(x, b)$ with variable index $x$
+and polarity $b$ is coded by the prefix-free code of $x$ followed by the bit $b$. -/
 def encodeClause (C : CNFClause) : List Bool :=
   List.replicate C.length true ++ false :: C.flatMap encodeLit
 
-/-- Decode one clause and return its unconsumed suffix. -/
+/-- **Decoding a length-prefixed clause.** Given a bit string $w$, writing $1$ for true and $0$
+for false, the decoder reads a unary length prefix $1^n 0$ ($n$ ones followed by a zero) from the
+front of $w$, then reads exactly $n$ literals from the remaining bits with the literal decoder.
+The result is the clause made of these literals, in order, together with the bits left after
+them. Decoding fails if $w$ does not begin with such a prefix or one of the literals cannot be
+read. -/
 def decodeClause (input : List Bool) : Option (CNFClause × List Bool) := do
   let (n, rest) ← readUnaryLength input
   decodeLits n rest
 
-/-- Decode exactly `n` clauses and return the unconsumed suffix. -/
+/-- **Decoding a fixed number of clauses.** For a natural number $n$ and a bit string $w$, the
+decoder reads $n$ clauses one after another from the front of $w$ with the length-prefixed clause
+decoder. The result is the CNF formula made of these clauses, in order, together with the bits
+left after them; for $n = 0$ it is the empty formula together with $w$. Decoding fails if one of
+the $n$ clauses cannot be read. -/
 def decodeClauses : Nat → List Bool → Option (CNF × List Bool)
   | 0, input => some ([], input)
   | n + 1, input => do
@@ -95,16 +126,26 @@ def decodeClauses : Nat → List Bool → Option (CNF × List Bool)
       let (clauses, tail) ← decodeClauses n rest
       some (clause :: clauses, tail)
 
-/-- Binary code of a CNF formula: its clause count followed by the encoded clauses. -/
+/-- **Length-prefixed binary code of a CNF formula.** Writing $1$ for true and $0$ for false, the
+code of a CNF formula $\varphi = (C_1, \dots, C_m)$ is $1^m 0$ ($m$ ones followed by a zero)
+followed by the length-prefixed binary codes of the clauses $C_1, \dots, C_m$ in order. -/
 def encodeCNF (φ : CNF) : List Bool :=
   List.replicate φ.length true ++ false :: φ.flatMap encodeClause
 
-/-- Decode one CNF formula and return its unconsumed suffix. -/
+/-- **Decoding a length-prefixed CNF formula.** Given a bit string $w$, writing $1$ for true and
+$0$ for false, the decoder reads a unary length prefix $1^n 0$ ($n$ ones followed by a zero) from
+the front of $w$, then reads exactly $n$ clauses from the remaining bits with the length-prefixed
+clause decoder. The result is the CNF formula made of these clauses, in order, together with the
+bits left after them. Decoding fails if $w$ does not begin with such a prefix or one of the
+clauses cannot be read. -/
 def decodeCNFAux (input : List Bool) : Option (CNF × List Bool) := do
   let (n, rest) ← readUnaryLength input
   decodeClauses n rest
 
-/-- Decode a complete CNF formula, rejecting missing or trailing bits. -/
+/-- **Decoding a complete length-prefixed CNF formula.** Given a bit string $w$, the decoder reads
+one CNF formula $\varphi$ from the front of $w$ with the length-prefixed CNF decoder, which also
+returns the bits left after $\varphi$. The result is $\varphi$ if no bits are left; decoding fails
+if no formula can be read or if bits remain after it. -/
 def decodeCNF (input : List Bool) : Option CNF := do
   let (φ, rest) ← decodeCNFAux input
   if rest.isEmpty then some φ else none
@@ -115,8 +156,9 @@ def decodeCNF (input : List Bool) : Option CNF := do
   | zero => rfl
   | succ n ih => simp [List.replicate_succ, readUnaryLength, ih]
 
-/-- Soundness of the canonical block parser: a successful parse exhibits
-the input as a delimited block followed by the unconsumed suffix. -/
+/-- **Parsing a self-delimiting block.** For all lists of Booleans $u$, $p$ and $r$, parsing one
+self-delimiting block from the front of $u$ succeeds with payload $p$ and remainder $r$ if and
+only if $u$ is the self-delimiting block of $p$ followed by $r$. -/
 theorem undelimit_eq_some_iff (input bits rest : List Bool) :
     MetaMathlibExt.BitstringEncoding.undelimit input = some (bits, rest) ↔
       input = MetaMathlibExt.BitstringEncoding.delimit bits ++ rest := by
@@ -333,7 +375,9 @@ theorem decodeCNFAux_eq_some_iff (input : List Bool) (φ : CNF) (rest : List Boo
   · rintro rfl
     exact decodeCNFAux_encodeCNF_append φ rest
 
-/-- A complete CNF decoder succeeds exactly on the canonical encoding of its result. -/
+/-- **The CNF decoder inverts the length-prefixed CNF code.** For every bit string $w$ and every
+CNF formula $\varphi$, the complete CNF decoder returns $\varphi$ on input $w$ if and only if $w$
+is the length-prefixed binary code of $\varphi$. -/
 @[simp] theorem decodeCNF_eq_some_iff (input : List Bool) (φ : CNF) :
     decodeCNF input = some φ ↔ input = encodeCNF φ := by
   constructor
@@ -377,22 +421,27 @@ theorem encodeCNF_length (φ : CNF) :
   simp [encodeCNF, List.length_flatMap]
   omega
 
-/-- A Boolean list encodes a satisfiable CNF formula. -/
+/-- **Encodings of satisfiable CNF formulas.** A list $x$ of Booleans encodes a satisfiable CNF
+formula when $x$ is the binary code of some CNF formula $\varphi$ and $\varphi$ is
+satisfiable. -/
 def IsSATEncoded (x : List Bool) : Prop :=
   ∃ φ : CNF, encodeCNF φ = x ∧ CNFSat φ
 
-/-- SAT as a language of encoded satisfiable CNF formulas. -/
+/-- **The SAT language.** SAT is the set of lists of Booleans that encode a satisfiable CNF
+formula. -/
 def SATLang : Set (List Bool) :=
   {x | IsSATEncoded x}
 
 open Classical in
-/-- SAT as a decision problem over the canonical complexity API: accept exactly
-the bitstrings encoding a satisfiable CNF formula. -/
+/-- **SAT as a decision problem.** The SAT decision problem returns true on a list $x$ of Booleans
+when $x$ lies in the SAT language, that is, when $x$ encodes a satisfiable CNF formula, and
+false otherwise. -/
 noncomputable def satDec : MetaMathlibExt.ComplexityTheory.DecisionProblem :=
   fun x => if x ∈ SATLang then true else false
 
-/-- Polynomial-time many-one reduction between decision problems, expressed
-through the canonical `ComplexityTheory.IsPolyTime` predicate. -/
+/-- **Polynomial-time many-one reduction.** A decision problem $L_1$ reduces to a decision problem
+$L_2$ in polynomial time when there is a polynomial-time computable function $f$ from lists of
+Booleans to lists of Booleans such that $L_1(x) = L_2(f(x))$ for every list $x$ of Booleans. -/
 def PolyManyOneRed (L₁ L₂ : MetaMathlibExt.ComplexityTheory.DecisionProblem) : Prop :=
   ∃ reduce : List Bool → List Bool,
     MetaMathlibExt.ComplexityTheory.IsPolyTime reduce ∧ ∀ x, L₁ x = L₂ (reduce x)

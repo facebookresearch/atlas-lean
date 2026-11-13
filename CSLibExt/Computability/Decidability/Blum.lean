@@ -33,9 +33,11 @@ set_option autoImplicit false
 
 namespace Cslib.Decidability
 
-/-- A **Blum measure**: a cost assignment for programs satisfying Blum's
-two axioms — the cost is defined exactly when the program halts, and the
-graph of the cost function is decidable.
+/-- **Blum complexity measure.** A Blum measure $\Phi$ assigns to every program $c$ and input
+$n \in \mathbb{N}$ a partially defined cost $\Phi_c(n) \in \mathbb{N}$ satisfying Blum's two axioms:
+$\Phi_c(n)$ is defined exactly when program $c$ halts on input $n$, and the relation
+$\Phi_c(n) = m$ between $c$, $n$ and $m$ is decidable.
+
 Source: Blum, "A machine-independent theory of the complexity of recursive functions",
 *Journal of the ACM* 14 (1967), 322–336, Definition 1. -/
 structure BlumMeasure where
@@ -48,12 +50,15 @@ structure BlumMeasure where
     cost (Denumerable.ofNat Nat.Partrec.Code w.unpair.1)
       w.unpair.2.unpair.1 = Part.some w.unpair.2.unpair.2)
 
-/-- The **Blum class** of `t`: the partial functions computed by some program
-within cost `t` for all but finitely many inputs (eventual domination,
-`∀ᶠ n in atTop`). The bound is *not* required at every input: Blum's
-classes are defined up to finite exceptions, and the finite exceptions are
-essential to the gap and union theorems (a program may be slow on finitely
-many inputs without leaving the class).
+/-- **Blum complexity class.** Given a Blum measure $\Phi$ and a function $t$ from $\mathbb{N}$ to
+$\mathbb{N}$, the Blum class of $t$ consists of the partial functions $f$ from $\mathbb{N}$ to
+$\mathbb{N}$ that are computed by some program $c$ whose cost $\Phi_c(n)$ is defined and at most
+$t(n)$ for all but finitely many inputs $n$.
+
+The bound is not required at every input: Blum's classes are defined up to finite exceptions,
+and the finite exceptions are essential to the gap and union theorems (a program may be slow on
+finitely many inputs without leaving the class).
+
 Source: Blum, "A machine-independent theory of the complexity of recursive functions",
 *Journal of the ACM* 14 (1967), 322–336, Definition 2. -/
 def BlumClass (Φ : BlumMeasure) (t : ℕ → ℕ) (f : ℕ →. ℕ) : Prop :=
@@ -72,8 +77,12 @@ theorem BlumClass.mono {Φ : BlumMeasure} {t t' : ℕ → ℕ} {f : ℕ →. ℕ
   exact (hev.and h).mono (fun n ⟨⟨m, hm, hcost⟩, hle⟩ =>
     ⟨m, le_trans hm hle, hcost⟩)
 
-/-- **Eventual domination, unfolded**: membership in a Blum class means the
-cost bound holds for all inputs past some threshold.
+/-- **Blum classes via an explicit threshold.** Let $\Phi$ be a Blum measure, $t$ a function from
+$\mathbb{N}$ to $\mathbb{N}$ and $f$ a partial function from $\mathbb{N}$ to $\mathbb{N}$. Then $f$
+lies in the Blum class of $t$ with respect to $\Phi$ if and only if there are a program $c$ that
+computes $f$ and a threshold $N$ such that for every input $n \ge N$ the cost $\Phi_c(n)$ is
+defined and at most $t(n)$.
+
 Source: Blum, "A machine-independent theory of the complexity of recursive functions",
 *Journal of the ACM* 14 (1967), 322–336, Definition 2. -/
 theorem blumClass_iff (Φ : BlumMeasure) (t : ℕ → ℕ) (f : ℕ →. ℕ) :

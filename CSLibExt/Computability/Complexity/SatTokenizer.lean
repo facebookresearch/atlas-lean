@@ -33,8 +33,9 @@ namespace Cslib.Complexity.SatVerifier.Tokenizer
 open Turing MetaMathlibExt TM2Program Function Cslib.CookLevin Cslib.Logic.PL Computability
 open MetaMathlibExt.BitstringEncoding
 
-/-- Stacks: formula bits `X`, witness bits `W`, token output `T`, table output `B`, and the clause
-and literal counters `CC`, `LC`. -/
+/-- **Stacks of the SAT tokenizer.** The SAT tokenizer has six stacks: $X$ for the formula bits,
+$W$ for the witness bits, $T$ for the token output, $B$ for the table output, and the clause
+counter $\mathsf{CC}$ and the literal counter $\mathsf{LC}$. -/
 inductive K | X | W | T | B | CC | LC
   deriving DecidableEq
 
@@ -42,9 +43,14 @@ instance : Fintype K where
   elems := ⟨↑[K.X, .W, .T, .B, .CC, .LC], by decide⟩
   complete := fun k => by cases k <;> decide
 
-/-- Labels. `un c` reads a unary count onto `CC` (`c = true`) or `LC`; `cls` starts a clause and
-`lits` a literal; `nm last` reads name pairs, `last` being the last name bit read (`none`: no bit
-yet); `pol` reads the polarity and the next witness bit; `fin` checks that `X` is used up. -/
+/-- **Labels of the SAT tokenizer.** The labels of the SAT tokenizer are: $\mathsf{un}(c)$ for a
+bit $c$, which reads a unary count onto the clause counter $\mathsf{CC}$ if $c$ is true and onto
+the literal counter $\mathsf{LC}$ otherwise; $\mathsf{cls}$, which starts a clause;
+$\mathsf{lits}$, which starts a literal; $\mathsf{nm}(\ell)$, where $\ell$ is a bit or none,
+which reads the bit pairs of a name block, $\ell$ being the last name bit read (none before the
+first one); $\mathsf{pol}$, which reads the polarity and the next witness bit; $\mathsf{fin}$,
+which checks that the formula stack $X$ is used up; and the halting labels $\mathsf{acc}$ and
+$\mathsf{rej}$. -/
 inductive Lab
   | un (c : Bool)
   | cls
@@ -68,14 +74,25 @@ instance : Fintype Lab where
         | some b => cases b <;> decide
     | _ => decide
 
-/-- Whether a peeked symbol is the bit `b`. -/
+/-- **Testing whether the top symbol is a given bit.** For a bit $b$ and the result of peeking at
+a stack (a symbol, or nothing when the stack is empty), this is true exactly when the peeked
+symbol is the bit symbol carrying $b$; it is false for an empty stack and for every other
+symbol. -/
 def topIsBit (b : Bool) : Option Sym → Bool
   | some (.bit c) => c == b
   | _ => false
 
 open TM2.Stmt in
-/-- At label `self`, read a unary count from `X` onto the counter `k`, then go to `next`; reject
-at the end of `X`. -/
+/-- **Instruction for reading a unary count.** For a stack $k$ of the tokenizer and labels $s$ and
+$t$, this is the tokenizer instruction that looks at the top of the formula stack $X$. If it is
+the bit true, the instruction pops it, pushes the clause-end symbol $\mathsf{cl}$ onto $k$ and
+goes to $s$; if it is the bit false, it pops it and goes to $t$; otherwise, when $X$ is empty or
+its top is not a bit, it goes to $\mathsf{rej}$. The internal bit is set to true in the first two
+cases and to false in the last.
+
+When $k$ is not $X$ and the instruction is placed at label $s$, a run on a formula stack that
+starts with $m$ bits true followed by a bit false pops these $m + 1$ bits, pushes $m$ copies
+of $\mathsf{cl}$ onto $k$ and goes to $t$. -/
 def unary (k : K) (self next : Lab) : TM2.Stmt (fun _ : K => Sym) Lab Bool :=
   peek .X (fun _ o => topIsBit true o) <| branch id
     (pop .X (fun s _ => s) <| push k (fun _ => .cl) <| goto fun _ => self)
@@ -84,7 +101,37 @@ def unary (k : K) (self next : Lab) : TM2.Stmt (fun _ : K => Sym) Lab Bool :=
       (goto fun _ => .rej))
 
 open TM2.Stmt in
-/-- The program. -/
+/-- **The tokenizer program.** The tokenizer is a multi-stack machine with stacks $X$ (formula
+bits), $W$ (witness bits), $T$ (tokens), $B$ (table) and the unary counters $CC$, $LC$ (over the
+unit symbol $\mathsf{cl}$), and one bit of internal state. Its instruction at each label is:
+
+- $\mathsf{un}(\mathrm{true})$, $\mathsf{un}(\mathrm{false})$: read a unary count from $X$ onto
+  $CC$ and $LC$ respectively. If the top of $X$ is the bit true, pop it, push $\mathsf{cl}$ onto
+  the counter and stay; if it is the bit false, pop it and go to $\mathsf{cls}$ (from
+  $\mathsf{un}(\mathrm{true})$) or $\mathsf{lits}$ (from $\mathsf{un}(\mathrm{false})$); otherwise
+  go to $\mathsf{rej}$.
+- $\mathsf{cls}$: pop $CC$; if it was non-empty go to $\mathsf{un}(\mathrm{false})$, else go to
+  $\mathsf{fin}$.
+- $\mathsf{lits}$: pop $LC$; if it was non-empty go to $\mathsf{nm}(\mathrm{none})$, else push
+  $\mathsf{cl}$ onto $T$ and go to $\mathsf{cls}$.
+- $\mathsf{nm}(\ell)$, where $\ell$ is an optional bit: if the top of $X$ is the bit true, pop it;
+  then if the top of $X$ is a bit $s$, pop it, push the name bit $s$ onto $T$ and onto $B$ and go to
+  $\mathsf{nm}(s)$, and otherwise go to $\mathsf{rej}$. If instead the top of $X$ is the bit false,
+  pop it and go to $\mathsf{rej}$ if $\ell$ is the bit false and to $\mathsf{pol}$ otherwise. In
+  any other case go to $\mathsf{rej}$.
+- $\mathsf{pol}$: if the top of $X$ is a bit $p$, pop it and push $\mathsf{lit}(p)$ onto $T$; then
+  if $W$ is non-empty, pop its top symbol, read as a bit $s$ (false if it is not a bit), and push
+  $\mathsf{val}(s)$ onto $B$, and otherwise push $\mathsf{dead}$ onto $B$; go to $\mathsf{lits}$.
+  If the top of $X$ is not a bit, go to $\mathsf{rej}$.
+- $\mathsf{fin}$: go to $\mathsf{rej}$ if $X$ is non-empty and to $\mathsf{acc}$ if it is empty.
+- $\mathsf{acc}$, $\mathsf{rej}$: halt.
+
+Each test stores its outcome in the internal bit: whether the top of $X$ or $W$ has the stated
+form, or, for the pop of $CC$ or $LC$, whether that counter was non-empty. Popping a name bit $s$
+in $\mathsf{nm}(\ell)$, the polarity $p$ in $\mathsf{pol}$ or a witness symbol in $\mathsf{pol}$
+stores the bit read ($s$, $p$ or the witness bit $s$); the remaining pops and all pushes leave the
+internal bit unchanged. So after popping a bit of a unary count, or the closing bit false of a name
+block, the internal bit is true. -/
 def prog : Lab → TM2.Stmt (fun _ : K => Sym) Lab Bool
   | .un true => unary .CC (.un true) .cls
   | .un false => unary .LC (.un false) .lits
@@ -111,12 +158,16 @@ def prog : Lab → TM2.Stmt (fun _ : K => Sym) Lab Bool
   | .acc => halt
   | .rej => halt
 
-/-- The start label. -/
+/-- **Start label of the SAT tokenizer.** The tokenizer starts at the label $\mathrm{un}(1)$,
+which reads a unary count from the input stack $X$ onto the clause counter $CC$. -/
 def start : Lab := .un true
 
 /-! ### Stacks -/
 
-/-- The stacks, with the counters `CC`, `LC` in unary over `cl`. -/
+/-- **Tokenizer stack contents.** For symbol lists $x, w, t, b$ and natural numbers $c, \ell$, this
+assigns to the tokenizer's stacks $X$, $W$, $T$, $B$ the lists $x$, $w$, $t$, $b$, and to the
+counter stacks $CC$ and $LC$ the lists of $c$ and $\ell$ copies of the clause-end symbol
+$\mathrm{cl}$ (the counters in unary). -/
 def st (x w t b : List Sym) (cc lc : ℕ) : K → List Sym
   | .X => x
   | .W => w
@@ -159,7 +210,10 @@ variable (x w t b l : List Sym) (cc lc j : ℕ)
 
 end Upd
 
-/-- The machine reaches `rej` from `c` within `n` steps. -/
+/-- **Rejection of the SAT tokenizer within a step bound.** For a natural number $n$ and a
+configuration $c$ of the tokenizer, the tokenizer rejects from $c$ within $n$ steps when there are
+an internal bit $v$ and stacks $S$ such that it runs in at most $n$ steps from $c$ to the
+configuration with label $\mathsf{rej}$, internal bit $v$ and stacks $S$. -/
 def Rej (n : ℕ) (c : TM2.Cfg (fun _ : K => Sym) Lab Bool) : Prop :=
   ∃ v S, RunLe prog n c ⟨some .rej, v, S⟩
 
@@ -175,7 +229,11 @@ theorem Rej.headLe {k n : ℕ} {c d : TM2.Cfg (fun _ : K => Sym) Lab Bool}
     (h₁ : RunLe prog k c d) (h₂ : Rej n d) : Rej (k + n) c :=
   let ⟨v, S, h⟩ := h₂; ⟨v, S, h₁.trans h⟩
 
-/-- One step that lands on `rej`. -/
+/-- **One step to rejection.** Let $\ell$ be a label, $v$ a bit and $S$ an assignment of symbol
+stacks to the tokenizer's stacks. If executing the tokenizer's instruction at $\ell$ from internal
+bit $v$ and stacks $S$ yields a configuration with label $\mathsf{rej}$, then the tokenizer
+reaches $\mathsf{rej}$ within one step from the configuration with label $\ell$, internal bit $v$
+and stacks $S$. -/
 theorem rej_one {l : Lab} {v : Bool} {S : K → List Sym}
     (h : (TM2.stepAux (prog l) v S).l = some .rej) : Rej 1 ⟨some l, v, S⟩ := by
   rcases hs : TM2.stepAux (prog l) v S with ⟨l', v', S'⟩
@@ -185,7 +243,14 @@ theorem rej_one {l : Lab} {v : Bool} {S : K → List Sym}
 
 /-! ### Unary counts -/
 
-/-- Reading `n` ones and a zero: `n + 1` steps, adding `n` to the chosen counter. -/
+/-- **Reading a unary count.** Let $c$ be a bit, $n$ a natural number, $r$ a bit string, $w, t, b$
+symbol lists and $m, \ell$ counter values. Started at the label $\mathrm{un}(c)$ with any value
+of its Boolean variable, with $X$ holding the bits of $1^n 0 r$, with $W$, $T$, $B$ holding $w$,
+$t$, $b$, and with the counters $CC$ and $LC$ holding $m$ and $\ell$ in unary, the tokenizer
+takes exactly $n + 1$ steps to reach the configuration whose label is $\mathrm{cls}$ if $c = 1$
+and $\mathrm{lits}$ if $c = 0$, whose Boolean variable is $1$, whose stack $X$ holds the bits of
+$r$, whose stacks $W$, $T$, $B$ still hold $w$, $t$, $b$, and whose counters hold $m + n$ and
+$\ell$ if $c = 1$, and $m$ and $\ell + n$ if $c = 0$. -/
 theorem un_run (c : Bool) (rest : List Bool) (w t b : List Sym) : ∀ (n cc lc : ℕ) (v : Bool),
     Run prog (n + 1)
       ⟨some (.un c), v, st ((List.replicate n true ++ false :: rest).map .bit) w t b cc lc⟩
@@ -210,7 +275,11 @@ theorem un_run (c : Bool) (rest : List Bool) (w t b : List Sym) : ∀ (n cc lc :
           exact Run.head
             (by simp [TM2.step, prog, unary, TM2.stepAux, topIsBit, List.replicate_succ]) h
 
-/-- A unary count that never ends: rejected within `|r| + 1` steps. -/
+/-- **An unterminated unary count is rejected.** Let $r$ be a bit string on which reading a unary
+length prefix fails. For every bit $c$, symbol lists $w, t, b$, counter values $m, \ell$ and
+value of the Boolean variable, the tokenizer started at the label $\mathrm{un}(c)$ with $X$
+holding the bits of $r$, with $W$, $T$, $B$ holding $w$, $t$, $b$, and with the counters $CC$
+and $LC$ holding $m$ and $\ell$ in unary reaches the rejecting label within $|r| + 1$ steps. -/
 theorem un_fail (c : Bool) (w t b : List Sym) : ∀ (r : List Bool), readUnaryLength r = none →
     ∀ (cc lc : ℕ) (v : Bool), Rej (r.length + 1) ⟨some (.un c), v, st (r.map .bit) w t b cc lc⟩
   | [], _, cc, lc, v => rej_one (by cases c <;> simp [prog, unary, TM2.stepAux, topIsBit])
@@ -229,8 +298,11 @@ theorem un_fail (c : Bool) (w t b : List Sym) : ∀ (r : List Bool), readUnaryLe
 
 /-! ### Names -/
 
-/-- Where the name loop ends after the payload `bits`, from last bit `last`: `rej` exactly when
-the whole name is non-empty and ends in `false`. -/
+/-- **Name-loop outcome.** For an optional bit $\ell$ and a bit string $u$, the name-loop outcome
+is the tokenizer label defined by recursion on $u$: for empty $u$ it is $\mathsf{rej}$ if $\ell$ is
+the bit false and $\mathsf{pol}$ otherwise, and for $u = c\,u'$ it is the outcome for the bit $c$
+and the string $u'$. So it is $\mathsf{rej}$ exactly when the string formed by $\ell$ (if present)
+followed by $u$ is non-empty and ends in false, and $\mathsf{pol}$ otherwise. -/
 def nmEnd : Option Bool → List Bool → Lab
   | last, [] => if last = some false then .rej else .pol
   | _, c :: bits => nmEnd (some c) bits
@@ -240,7 +312,10 @@ theorem nmEnd_some (c : Bool) :
   | [] => by cases c <;> rfl
   | d :: bits => by rw [nmEnd, nmEnd_some d bits, List.getLast?_cons, Option.getD_some]
 
-/-- From the start of a name, the loop ends at `pol` exactly for a canonical name. -/
+/-- **Name-loop outcome from the start of a name.** For every bit string $u$, the name-loop
+outcome with no previous bit after $u$ is the label $\mathsf{pol}$ if $u$ is a canonical name,
+that is, encoding the natural number that $u$ decodes to gives back $u$, and the label
+$\mathsf{rej}$ otherwise. -/
 theorem nmEnd_none (bits : List Bool) :
     nmEnd none bits = if encodeNat (decodeNat bits) = bits then .pol else .rej := by
   simp only [encodeNat_decodeNat_eq_iff]
@@ -248,7 +323,14 @@ theorem nmEnd_none (bits : List Bool) :
   | nil => simp [nmEnd]
   | cons c bits => simp [nmEnd, nmEnd_some, List.getLast?_cons]
 
-/-- Reading the block `delimit bits`: `|bits| + 1` steps, pushing the name on `T` and `B`. -/
+/-- **Reading a name block.** Let $u$ and $r$ be bit strings, $\ell$ an optional bit, $v$ a bit,
+$w$, $t$, $b$ symbol stacks and $c$, $l$ natural numbers. Started at label $\mathsf{nm}(\ell)$ with
+internal bit $v$, the bits of the self-delimiting block of $u$ followed by $r$ on the formula stack
+$X$, $w$ on the witness stack $W$, $t$ on the token stack $T$, $b$ on the table stack $B$, clause
+counter $c$ and literal counter $l$, the tokenizer runs in exactly $|u| + 1$ steps to the
+configuration whose label is the name-loop outcome for $\ell$ and $u$, with internal bit true, the
+bits of $r$ on $X$, $w$ on $W$, the bits of $u$ in reverse order (last bit on top) above $t$ on $T$
+and above $b$ on $B$, and the same counters. -/
 theorem nm_run (rest : List Bool) (w : List Sym) (cc lc : ℕ) :
     ∀ (bits : List Bool) (last : Option Bool) (t b : List Sym) (v : Bool),
     Run prog (bits.length + 1)
@@ -263,7 +345,12 @@ theorem nm_run (rest : List Bool) (w : List Sym) (cc lc : ℕ) :
       exact Run.head
         (by simp [TM2.step, prog, TM2.stepAux, topIsBit, isBit, Sym.bit?, bitOf, delimit]) h
 
-/-- A block that does not close: rejected within `|r| + 1` steps. -/
+/-- **Rejecting an unterminated name block.** Let $r$ be a bit string from whose front no
+self-delimiting block can be parsed. For every optional last bit $\ell$, internal bit $v$, symbol
+stacks $w$, $t$, $b$ and natural numbers $c$, $l$, the tokenizer started at label
+$\mathsf{nm}(\ell)$ with internal bit $v$, the bits of $r$ on the formula stack $X$, $w$ on the
+witness stack $W$, $t$ on the token stack $T$, $b$ on the table stack $B$, clause counter $c$ and
+literal counter $l$ reaches the label $\mathsf{rej}$ within $|r| + 1$ steps. -/
 theorem nm_fail (w : List Sym) (cc lc : ℕ) : ∀ (r : List Bool), undelimit r = none →
     ∀ (last : Option Bool) (t b : List Sym) (v : Bool),
     Rej (r.length + 1) ⟨some (.nm last), v, st (r.map .bit) w t b cc lc⟩
@@ -280,7 +367,15 @@ theorem nm_fail (w : List Sym) (cc lc : ℕ) : ∀ (r : List Bool), undelimit r 
 
 /-! ### Literals -/
 
-/-- The polarity and the witness bit: one step. -/
+/-- **Reading a polarity.** Let $p$, $v$ be bits, $r$, $w$ bit strings, $t$, $b$ symbol stacks and
+$c$, $l$ natural numbers. Started at label $\mathsf{pol}$ with internal bit $v$, the bit $p$
+followed by the bits of $r$ on the formula stack $X$, the bits of $w$ on the witness stack $W$, $t$
+on the token stack $T$, $b$ on the table stack $B$, clause counter $c$ and literal counter $l$, the
+tokenizer moves in exactly one step to label $\mathsf{lits}$ with the bits of $r$ on $X$, the bits
+of $w$ after its first on $W$, the polarity marker $\mathsf{lit}(p)$ pushed onto $t$, and the same
+counters. If $w$ starts with the bit $w_1$, the internal bit becomes $w_1$ and the marker
+$\mathsf{val}(w_1)$ is pushed onto $b$; if $w$ is empty, the internal bit becomes false and the
+marker $\mathsf{dead}$ is pushed onto $b$. -/
 theorem pol_run (p : Bool) (rest w : List Bool) (t b : List Sym) (cc lc : ℕ) (v : Bool) :
     Run prog 1 ⟨some .pol, v, st ((p :: rest).map .bit) (w.map .bit) t b cc lc⟩
       ⟨some .lits, w.head?.getD false, st (rest.map .bit) (w.tail.map .bit) (.lit p :: t)
@@ -291,7 +386,21 @@ theorem pol_rej (w t b : List Sym) (cc lc : ℕ) (v : Bool) :
     Rej 1 ⟨some .pol, v, st [] w t b cc lc⟩ :=
   rej_one (by simp [prog, TM2.stepAux, isBit, Sym.bit?])
 
-/-- One literal, from the start of its name block to `lits`: `|encodeNat n| + 2` steps. -/
+/-- **Tokenizer run on one literal.** A configuration $\langle \ell, v \mid x, w, t, b, i, j\rangle$
+of the SAT tokenizer has label $\ell$, internal bit $v$, stacks $X$, $W$, $T$, $B$ holding $x$,
+$w$, $t$, $b$ (top first; a bit string stands for its list of bit symbols), and $i$ and $j$ marks
+on the clause and literal counters; $\mathbin{+\!\!+}$ is concatenation. Let
+$n, i, j \in \mathbb{N}$, let $p$ and $v$ be bits, $r$ and $w$ bit strings and $t$ and $b$ symbol
+lists. Let $q$ be the binary code of $n$ (Mathlib's canonical bits of $n$, least significant first,
+empty for $0$), $E$ the encoding of the literal $(n, p)$, $o$ the first bit of $w$ (none if $w$ is
+empty), $o'$ that bit with default false, and $w'$ the string $w$ with its first bit, if any,
+removed. Then the tokenizer goes in exactly $|q| + 2$ steps from
+$\langle \mathsf{nm}(\mathrm{none}), v \mid E \mathbin{+\!\!+} r, w, t, b, i, j\rangle$ to
+$\langle \mathsf{lits}, o' \mid r, w', \mathrm{rev}(\lambda) \mathbin{+\!\!+} t,
+\mathrm{rev}(\eta) \mathbin{+\!\!+} b, i, j\rangle$, where $\lambda$ is the token list of the
+literal $(n, p)$ (the bits of $q$, then the polarity marker of $p$) and $\eta$ is the symbol list
+of the table entry $(q, o)$ (the bits of $q$, then the value marker of $o$, which is dead if $o$
+is none). -/
 theorem lit_run (n : ℕ) (p : Bool) (rest w : List Bool) (t b : List Sym) (cc lc : ℕ)
     (v : Bool) :
     Run prog ((encodeNat n).length + 2)
@@ -308,7 +417,15 @@ theorem lit_run (n : ℕ) (p : Bool) (rest w : List Bool) (t b : List Sym) (cc l
   rw [e]
   simpa [litToks, entToks] using h1.trans h2
 
-/-- A literal that does not decode: rejected within `|r| + 2` steps. -/
+/-- **Tokenizer rejects an undecodable literal.** A configuration
+$\langle \ell, v \mid x, w, t, b, i, j\rangle$ of the SAT tokenizer has label $\ell$, internal bit
+$v$, stacks $X$, $W$, $T$, $B$ holding $x$, $w$, $t$, $b$ (top first; a bit string stands for its
+list of bit symbols), and $i$ and $j$ marks on the clause and literal counters. Let $r$ be a bit
+string from whose front no literal can be decoded (a literal being a self-delimited canonical
+variable code followed by a polarity bit), let $w$, $t$, $b$ be symbol lists,
+$i, j \in \mathbb{N}$ and $v$ a bit. Then from
+$\langle \mathsf{nm}(\mathrm{none}), v \mid r, w, t, b, i, j\rangle$ the tokenizer reaches the
+label $\mathsf{rej}$ within $|r| + 2$ steps. -/
 theorem lit_fail (r : List Bool) (hr : decodeLit r = none) (w t b : List Sym) (cc lc : ℕ)
     (v : Bool) : Rej (r.length + 2) ⟨some (.nm none), v, st (r.map .bit) w t b cc lc⟩ := by
   cases hu : undelimit r with
@@ -328,6 +445,11 @@ theorem lit_fail (r : List Bool) (hr : decodeLit r = none) (w t b : List Sym) (c
 
 /-! ### Clauses -/
 
+/-- **Occurrence table of a nonempty list.** Let $n$ be a natural number, $L$ a list of natural
+numbers and $w$ a list of bits. The occurrence table of the list $n$ followed by $L$, with $w$, is
+the entry whose name is the binary code of $n$ and whose value is the first bit of $w$ (no value
+if $w$ is empty), followed by the occurrence table of $L$ with $w$ minus its first bit (with the
+empty list if $w$ is empty). -/
 theorem entsOf_cons (n : ℕ) (ns : List ℕ) (w : List Bool) :
     entsOf (n :: ns) w = (encodeNat n, w.head?) :: entsOf ns w.tail := by
   cases w <;> rfl
@@ -345,8 +467,17 @@ theorem tblStk_cons (e : Ent) (es : List Ent) :
 theorem tblStk_append (es fs : List Ent) : tblStk (es ++ fs) = tblStk fs ++ tblStk es := by
   simp [tblStk]
 
-/-- The literals of a clause, from `lits` with the literal count on `LC`, ending at `cls` with the
-clause's tokens and table entries pushed. -/
+/-- **Reading the literals of a clause.** Let $C$ be a clause with literals
+$(n_1, p_1), \dots, (n_k, p_k)$, let $u$ be the concatenation of their literal codes, and let $r$,
+$w$ be bit strings, $t$, $b$ stacks of symbols, $c$ a natural number and $v$ a bit. Started at
+label $\mathsf{lits}$ with internal bit $v$, the bits of $u$ followed by $r$ on the formula stack
+$X$, the bits of $w$ on the witness stack $W$, $t$ on the token stack $T$, $b$ on the table stack
+$B$, clause counter $c$ and literal counter $k$, the tokenizer reaches within $2|u| + 1$ steps the
+configuration with label $\mathsf{cls}$, internal bit false, the bits of $r$ on $X$, the bits of
+$w$ with its first $k$ bits removed on $W$, the tokens of $C$ in reverse order (its final
+$\mathsf{cl}$ on top) above $t$ on $T$, the table stack of the entries $e_1, \dots, e_k$ above $b$
+on $B$, clause counter $c$ and literal counter $0$. Here $e_i$ pairs the binary name of $n_i$ with
+the $i$-th bit of $w$, or with no value when $w$ has fewer than $i$ bits. -/
 theorem lits_run (rest : List Bool) (cc : ℕ) :
     ∀ (C : CNFClause) (w : List Bool) (t b : List Sym) (v : Bool),
     RunLe prog (2 * (C.flatMap encodeLit).length + 1)
@@ -378,7 +509,14 @@ theorem lits_run (rest : List Bool) (cc : ℕ) :
       simp
       omega
 
-/-- Literals that do not decode: rejected within `2 |r| + 3` steps. -/
+/-- **Tokenizer rejects undecodable literals.** A configuration
+$\langle \ell, v \mid x, w, t, b, i, j\rangle$ of the SAT tokenizer has label $\ell$, internal bit
+$v$, stacks $X$, $W$, $T$, $B$ holding $x$, $w$, $t$, $b$ (top first; a bit string stands for its
+list of bit symbols), and $i$ and $j$ marks on the clause and literal counters. Let
+$c, k \in \mathbb{N}$, let $r$ and $w$ be bit strings, $t$ and $b$ symbol lists and $v$ a bit, and
+suppose that decoding $k$ literals from the front of $r$ fails. Then from
+$\langle \mathsf{lits}, v \mid r, w, t, b, c, k\rangle$ the tokenizer reaches the label
+$\mathsf{rej}$ within $2|r| + 3$ steps. -/
 theorem lits_fail (cc : ℕ) : ∀ (k : ℕ) (r w : List Bool) (t b : List Sym) (v : Bool),
     decodeLits k r = none →
     Rej (2 * r.length + 3) ⟨some .lits, v, st (r.map .bit) (w.map .bit) t b cc k⟩
@@ -401,7 +539,18 @@ theorem lits_fail (cc : ℕ) : ∀ (k : ℕ) (r w : List Bool) (t b : List Sym) 
             ((entToks (encodeNat n, w.head?)).reverse ++ b) (w.head?.getD false) hr'
           exact (Rej.head h0 (Rej.head h1 ih)).mono (by simp; omega)
 
-/-- One clause, from `cls` back to `cls`. -/
+/-- **Tokenizer run on one clause.** A configuration $\langle \ell, v \mid x, w, t, b, i, j\rangle$
+of the SAT tokenizer has label $\ell$, internal bit $v$, stacks $X$, $W$, $T$, $B$ holding $x$,
+$w$, $t$, $b$ (top first; a bit string stands for its list of bit symbols), and $i$ and $j$ marks
+on the clause and literal counters; $\mathbin{+\!\!+}$ is concatenation. Let $C$ be a clause,
+$r$ and $w$ bit strings, $t$ and $b$ symbol lists, $c \in \mathbb{N}$ and $v$ a bit. Let $E$ be
+the encoding of $C$, $N$ the list of variable indices of the literals of $C$ in order, and $w'$
+the string $w$ with its first $|C|$ bits removed (all of them if $w$ is shorter). Then the
+tokenizer goes in at most $2|E| + 1$ steps from
+$\langle \mathsf{cls}, v \mid E \mathbin{+\!\!+} r, w, t, b, c + 1, 0\rangle$ to
+$\langle \mathsf{cls}, \mathsf{false} \mid r, w', \mathrm{rev}(\tau) \mathbin{+\!\!+} t,
+\beta \mathbin{+\!\!+} b, c, 0\rangle$, where $\tau$ is the token list of $C$ and $\beta$ is the
+table stack of the occurrence table of $N$ against $w$. -/
 theorem clause_run (C : CNFClause) (rest w : List Bool) (t b : List Sym) (cc : ℕ) (v : Bool) :
     RunLe prog (2 * (encodeClause C).length + 1)
       ⟨some .cls, v, st ((encodeClause C ++ rest).map .bit) (w.map .bit) t b (cc + 1) 0⟩
@@ -422,7 +571,18 @@ theorem clause_run (C : CNFClause) (rest w : List Bool) (t b : List Sym) (cc : �
   simp [encodeClause]
   omega
 
-/-- All clauses, from `cls` with the clause count on `CC` to `fin`. -/
+/-- **Tokenizer run on all clauses.** A configuration $\langle \ell, v \mid x, w, t, b, i, j\rangle$
+of the SAT tokenizer has label $\ell$, internal bit $v$, stacks $X$, $W$, $T$, $B$ holding $x$,
+$w$, $t$, $b$ (top first; a bit string stands for its list of bit symbols), and $i$ and $j$ marks
+on the clause and literal counters; $\mathbin{+\!\!+}$ is concatenation. Let $r$ and $w$ be bit
+strings, $\varphi$ a CNF formula with $m$ clauses, $t$ and $b$ symbol lists and $v$ a bit. Let
+$E$ be the concatenation of the encodings of the clauses of $\varphi$, $N$ the list of variable
+indices of all literal occurrences of $\varphi$ in order, and $w'$ the string $w$ with its first
+$|N|$ bits removed (all of them if $w$ is shorter). Then the tokenizer goes in at most
+$2|E| + m + 1$ steps from $\langle \mathsf{cls}, v \mid E \mathbin{+\!\!+} r, w, t, b, m, 0\rangle$
+to $\langle \mathsf{fin}, \mathsf{false} \mid r, w', \mathrm{rev}(\tau) \mathbin{+\!\!+} t,
+\beta \mathbin{+\!\!+} b, 0, 0\rangle$, where $\tau$ is the token list of $\varphi$ and $\beta$ is
+the table stack of the occurrence table of $N$ against $w$. -/
 theorem clauses_run (rest : List Bool) :
     ∀ (φ : CNF) (w : List Bool) (t b : List Sym) (v : Bool),
     RunLe prog (2 * (φ.flatMap encodeClause).length + φ.length + 1)
@@ -451,7 +611,15 @@ theorem clauses_run (rest : List Bool) :
       simp
       omega
 
-/-- Clauses that do not decode: rejected within `2 |r| + n + 2` steps. -/
+/-- **Tokenizer rejects undecodable clauses.** A configuration
+$\langle \ell, v \mid x, w, t, b, i, j\rangle$ of the SAT tokenizer has label $\ell$, internal bit
+$v$, stacks $X$, $W$, $T$, $B$ holding $x$, $w$, $t$, $b$ (top first; a bit string stands for its
+list of bit symbols), and $i$ and $j$ marks on the clause and literal counters. Let
+$n \in \mathbb{N}$, let $r$ and $w$ be bit strings, $t$ and $b$ symbol lists and $v$ a bit, and
+suppose that decoding $n$ clauses (each a unary literal count followed by that many encoded
+literals) from the front of $r$ fails. Then from
+$\langle \mathsf{cls}, v \mid r, w, t, b, n, 0\rangle$ the tokenizer reaches the label
+$\mathsf{rej}$ within $2|r| + n + 2$ steps. -/
 theorem clauses_fail : ∀ (n : ℕ) (r w : List Bool) (t b : List Sym) (v : Bool),
     decodeClauses n r = none →
     Rej (2 * r.length + n + 2) ⟨some .cls, v, st (r.map .bit) (w.map .bit) t b n 0⟩
@@ -484,6 +652,11 @@ theorem clauses_fail : ∀ (n : ℕ) (r w : List Bool) (t b : List Sym) (v : Boo
 
 /-! ### The whole input -/
 
+/-- **The tokenizer accepts when the formula stack is empty.** Let $w$, $t$, $b$ be lists of
+symbols, $i, j \in \mathbb{N}$ and $v$ a bit. In exactly one step, the SAT tokenizer goes from the
+label $\mathsf{fin}$ with internal bit $v$, empty formula stack $X$, stacks $W$, $T$, $B$ holding
+$w$, $t$, $b$, and $i$ and $j$ marks on the clause and literal counters, to the label
+$\mathsf{acc}$ with internal bit false and all stacks unchanged. -/
 theorem fin_acc (w t b : List Sym) (cc lc : ℕ) (v : Bool) :
     Run prog 1 ⟨some .fin, v, st [] w t b cc lc⟩ ⟨some .acc, false, st [] w t b cc lc⟩ :=
   Run.single (by simp [prog, TM2.stepAux])
@@ -496,9 +669,15 @@ theorem st_eq {S : ∀ _ : K, List Sym} (hCC : S .CC = []) (hLC : S .LC = []) :
     S = st (S .X) (S .W) (S .T) (S .B) 0 0 := by
   funext k; cases k <;> simp [hCC, hLC]
 
-/-- **Accepting run.** On a valid encoding `x` of `φ`, the machine reaches `acc` within
-`2 |x| + 2` steps, having consumed `X` and one witness bit per literal occurrence, and pushed
-`(toks φ).reverse` on `T` and `tblStk (ents φ w)` on `B`. -/
+/-- **Accepting run of the SAT tokenizer.** Let $x$ and $w$ be bit strings such that $x$ decodes
+to the CNF formula $\varphi$, and let $S$ be contents of the tokenizer's stacks in which $X$
+holds the bits of $x$, $W$ holds the bits of $w$, and the counters $CC$ and $LC$ are empty.
+Started at the start label with stacks $S$ and any value of its Boolean variable, the tokenizer
+reaches the accepting label within $2|x| + 2$ steps, with final stacks $S'$ such that $X$, $CC$
+and $LC$ are empty, $W$ holds the bits of $w$ without their first $m$ entries, where $m$ is the
+number of literal occurrences in $\varphi$, $T$ holds the reversed token list of $\varphi$ on top
+of the original contents of $T$, and $B$ holds the table stack of the occurrence table of
+$\varphi$ and $w$ on top of the original contents of $B$. -/
 theorem run_some {x w : List Bool} {φ : CNF} (h : decodeCNF x = some φ) (v : Bool)
     (S : ∀ _ : K, List Sym) (hX : S .X = x.map Sym.bit) (hW : S .W = w.map Sym.bit)
     (hCC : S .CC = []) (hLC : S .LC = []) :
@@ -519,8 +698,11 @@ theorem run_some {x w : List Bool} {φ : CNF} (h : decodeCNF x = some φ) (v : B
   simp [encodeCNF]
   omega
 
-/-- **Rejecting run.** On an input that does not decode, the machine reaches `rej` within
-`2 |x| + 2` steps. -/
+/-- **Rejecting run.** Let $x$ and $w$ be bit strings such that $x$ does not decode as a CNF
+formula. For every bit $v$ and stacks $S$ with the bits of $x$ on the formula stack $X$, the bits
+of $w$ on the witness stack $W$, and both counter stacks $CC$ and $LC$ empty, the tokenizer
+started at its start label with internal bit $v$ and stacks $S$ reaches a configuration with label
+$\mathsf{rej}$ within $2|x| + 2$ steps. -/
 theorem run_none {x w : List Bool} (h : decodeCNF x = none) (v : Bool) (S : ∀ _ : K, List Sym)
     (hX : S .X = x.map Sym.bit) (hW : S .W = w.map Sym.bit) (hCC : S .CC = [])
     (hLC : S .LC = []) :

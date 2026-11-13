@@ -82,23 +82,36 @@ def encodeInstr : Instr → ℕ
   | .T m n => Nat.pair 2 (Nat.pair m n)
   | .J m n q => Nat.pair 3 (Nat.pair m (Nat.pair n q))
 
-/-- The tag of the code of an instruction. -/
+/-- **Tag of an instruction code.** For every URM instruction $I$, unpairing the code of $I$
+gives first component $0$ if $I$ is a zero instruction $Z\,n$, $1$ if it is a successor
+instruction $S\,n$, $2$ if it is a transfer $T\,m\,n$, and $3$ if it is a jump $J\,m\,n\,q$. -/
 theorem encodeInstr_unpair_fst (instr : Instr) :
     (encodeInstr instr).unpair.1 = match instr with
       | .Z _ => 0 | .S _ => 1 | .T _ _ => 2 | .J _ _ _ => 3 := by
   cases instr <;> simp [encodeInstr, Nat.unpair_pair]
 
-/-- The payload of the code of an instruction. -/
+/-- **Payload of an instruction code.** Write $\langle a, b \rangle$ for the pairing of natural
+numbers $a$ and $b$. For every URM instruction $I$, unpairing the code of $I$ gives second
+component $n$ if $I$ is $Z\,n$ or $S\,n$, $\langle m, n \rangle$ if $I$ is $T\,m\,n$, and
+$\langle m, \langle n, q \rangle \rangle$ if $I$ is $J\,m\,n\,q$. -/
 theorem encodeInstr_unpair_snd (instr : Instr) :
     (encodeInstr instr).unpair.2 = match instr with
       | .Z n => n | .S n => n | .T m n => Nat.pair m n
       | .J m n q => Nat.pair m (Nat.pair n q) := by
   cases instr <;> simp [encodeInstr, Nat.unpair_pair]
 
-/-- **One coded URM step.** The state is given by its program counter `pc` and its
-register list `regs` (the first `R + 1` register contents). The program is given as the list
-`codes` of instruction codes. A halted state (`pc` past the end of the program) has no
-successor; an unknown tag (which never occurs for a genuine instruction code) also has none. -/
+/-- **One coded URM step.** A coded state is a program counter $k$ together with a list $r$ of
+register contents (in use, the contents of registers $0, \dots, R$, where $R$ is the register bound
+of the program), and a program is given by the list $c$ of its instruction codes. Write $c_k$ for
+entry $k$ of $c$, and $r_j$ for entry $j$ of $r$, read as $0$ when $j$ is past the end of $r$;
+setting an entry past the end of $r$ leaves $r$ unchanged. If $k$ is at least the length of $c$,
+the state is halted and has no successor. Otherwise unpair the code $c_k$ as $(i, a)$. If
+$i = 0$, the successor is $(k + 1, r')$ where $r'$ is $r$ with entry $a$ set to $0$. If $i = 1$,
+it is $(k + 1, r')$ where $r'$ is $r$ with entry $a$ set to $r_a + 1$. If $i = 2$, unpair $a$ as
+$(m, n)$; the successor is $(k + 1, r')$ where $r'$ is $r$ with entry $n$ set to $r_m$. If
+$i = 3$, unpair $a$ as $(m, b)$ and $b$ as $(n, q)$; the successor is $(q, r)$ if $r_m = r_n$ and
+$(k + 1, r)$ otherwise. Any other tag $i$ (which never occurs for a genuine instruction code)
+gives no successor. -/
 def codedStep (codes : List ℕ) (pc : ℕ) (regs : List ℕ) : Option (ℕ × List ℕ) :=
   if pc < codes.length then
     if (codes.getD pc 0).unpair.1 = 0 then
@@ -214,24 +227,36 @@ section Coded
 
 variable (p : Program)
 
-/-- **Register bound** of a program: the sum of the maximal registers of its instructions.
-Every register an instruction of `p` can read or write is at most `R`. -/
+/-- **Register bound.** The register bound $R$ of a URM program $p$ is the sum, over the
+instructions of $p$, of the largest register index each instruction refers to. Every register
+that an instruction of $p$ can read or write is at most $R$. -/
 def regBound : ℕ := (p.map Instr.maxRegister).sum
 
-/-- The register list of a register state: the contents of registers `0, …, R`. -/
+/-- **Register list.** For a URM program $p$ with register bound $R$, the register list of a
+register state $\sigma$ is the list $(\sigma(0), \sigma(1), \dots, \sigma(R))$ of the contents of
+registers $0, \dots, R$. -/
 abbrev toRegs (σ : Regs) : List ℕ := (List.range (regBound p + 1)).map σ
 
-/-- The coded state of a machine state: the program counter and the register list. -/
+/-- **Coded machine state.** For a URM program $p$ with register bound $R$, the coded state of a
+machine state $s$ is the pair consisting of the program counter of $s$ and the register list
+$(r_0, \dots, r_R)$ of the contents of registers $0, \dots, R$ of $s$. -/
 abbrev toCoded (s : State) : ℕ × List ℕ := (s.pc, toRegs p s.regs)
 
-/-- The machine state of a coded state: registers read through `List.getD` with default `0`. -/
+/-- **Decoding a coded state.** A coded state is a pair $(c, \ell)$ of a natural number $c$ and a
+list $\ell$ of natural numbers. Its machine state has program counter $c$, and register $n$
+holds the $n$-th entry of $\ell$ (counting from $0$) when $n$ is less than the length of $\ell$,
+and $0$ otherwise. -/
 abbrev ofCoded (c : ℕ × List ℕ) : State := ⟨c.1, fun n ↦ c.2.getD n 0⟩
 
-/-- The register list has length `R + 1`. -/
+/-- **Length of the register list.** For a URM program $p$ with register bound $R$ and a register
+state $\sigma$, the register list of $\sigma$ (the contents of registers $0, \dots, R$) has length
+$R + 1$. -/
 theorem length_toRegs (σ : Regs) : (toRegs p σ).length = regBound p + 1 := by
   simp [toRegs]
 
-/-- Reading the register list returns the register contents up to `R`, and `0` beyond. -/
+/-- **Reading the register list.** Let $p$ be a URM program with register bound $R$ and
+$\sigma$ a register state. For every $n$, the entry at position $n$ of the register list of
+$\sigma$, read with default $0$, is $\sigma(n)$ if $n \le R$ and $0$ otherwise. -/
 theorem getD_toRegs (σ : Regs) (n : ℕ) :
     (toRegs p σ).getD n 0 = if n ≤ regBound p then σ n else 0 := by
   rw [toRegs, List.getD_eq_getElem?_getD, List.getElem?_map]
@@ -244,7 +269,10 @@ theorem getD_toRegs (σ : Regs) (n : ℕ) :
       List.getElem?_eq_none_iff.2 (by rw [List.length_range]; omega)
     rw [h']; simp [show ¬ n ≤ regBound p by omega]
 
-/-- Updating a register is `List.set` on the register list, for registers within the bound. -/
+/-- **Updating a register updates the register list.** Let $p$ be a URM program with register
+bound $R$, let $\sigma$ be a register state, and let $n \le R$ and $v$ be natural numbers. The
+register list of the state obtained from $\sigma$ by setting register $n$ to $v$ equals the
+register list of $\sigma$ with its entry at position $n$ replaced by $v$. -/
 theorem toRegs_update (σ : Regs) {n v : ℕ} (hn : n ≤ regBound p) :
     toRegs p (Function.update σ n v) = (toRegs p σ).set n v := by
   rw [List.ext_getElem?_iff]
@@ -280,13 +308,16 @@ theorem toRegs_update (σ : Regs) {n v : ℕ} (hn : n ≤ regBound p) :
       simp [toRegs, List.getElem?_map, e1]
     rw [lhs, rhs]
 
-/-- The maximal register of an instruction of `p` is at most the register bound. -/
+/-- **Instructions stay within the register bound.** For a URM program $p$ with register bound
+$R$ and every instruction $I$ of $p$, the largest register index referenced by $I$ is at most
+$R$. -/
 theorem maxRegister_le_regBound {instr : Instr} (h : instr ∈ p) :
     instr.maxRegister ≤ regBound p := by
   apply List.single_le_sum (fun _ _ ↦ Nat.zero_le _)
   exact List.mem_map_of_mem h
 
-/-- The register written by an instruction of `p` is at most the register bound. -/
+/-- **Written registers lie within the register bound.** Let $p$ be a URM program with register
+bound $R$. If an instruction of $p$ writes to register $n$, then $n \le R$. -/
 theorem writesTo_le_regBound {instr : Instr} {n : ℕ} (h : instr ∈ p)
     (hw : instr.writesTo = some n) : n ≤ regBound p := by
   have h1 := maxRegister_le_regBound p h
@@ -302,7 +333,9 @@ theorem writesTo_le_regBound {instr : Instr} {n : ℕ} (h : instr ∈ p)
   | J m k q =>
     simp [Instr.writesTo] at hw
 
-/-- The registers read by an instruction of `p` are at most the register bound. -/
+/-- **Registers read by a program lie within the register bound.** Let $p$ be a URM program. If
+$n$ is a register read by some instruction of $p$, then $n$ is at most the register bound of
+$p$. -/
 theorem reads_le_regBound {instr : Instr} {n : ℕ} (h : instr ∈ p)
     (hr : n ∈ instr.readsFrom) : n ≤ regBound p := by
   have h1 := maxRegister_le_regBound p h
@@ -318,8 +351,10 @@ theorem reads_le_regBound {instr : Instr} {n : ℕ} (h : instr ∈ p)
     simp [Instr.readsFrom] at hr
     rcases hr with rfl | rfl <;> simp [Instr.maxRegister] at h1 <;> omega
 
-/-- The coded state of the state coded back is the coded state, when the register list
-has length `R + 1`. -/
+/-- **Decoding and re-encoding a coded state gives it back.** Let $p$ be a URM program with
+register bound $R$, and let $c$ be a coded state: a program counter together with a list of
+register contents. If the list has length $R + 1$, then the coded state, with respect to $p$, of
+the machine state decoded from $c$ is $c$. -/
 theorem toCoded_ofCoded {c : ℕ × List ℕ} (hlen : c.2.length = regBound p + 1) :
     toCoded p (ofCoded c) = c := by
   obtain ⟨pc, regs⟩ := c
@@ -340,7 +375,8 @@ section StepAgree
 
 variable {p : Program}
 
-/-- The program counter of a state that can step is in range. -/
+/-- **A state that can step is running.** If a state $s$ of a URM program $p$ makes a step to some
+state, then the program counter of $s$ is less than the number of instructions of $p$. -/
 theorem pc_lt_of_step {s s' : State} (h : Step p s s') : s.pc < p.length := by
   cases h with
   | zero hi | succ hi | transfer hi | jump_eq hi _ | jump_ne hi _ =>
@@ -349,14 +385,19 @@ theorem pc_lt_of_step {s s' : State} (h : Step p s s') : s.pc < p.length := by
     rw [List.getElem?_eq_none_iff.2 hc] at hi
     simp at hi
 
-/-- The coded instruction at the program counter is the code of the instruction there. -/
+/-- **Instruction codes by position.** If the URM program $p$ has instruction $I$ at position
+$pc$, then the entry at position $pc$ of the list of instruction codes of $p$, read with
+default $0$, is the code of $I$. -/
 theorem getD_codes {pc : ℕ} {instr : Instr} (hi : p[pc]? = some instr) :
     (p.map encodeInstr).getD pc 0 = encodeInstr instr := by
   rw [List.getD_eq_getElem?_getD, List.getElem?_map, hi]
   rfl
 
-/-- **A machine step is a coded step**: the coded step of the coded state is the coded
-successor state. -/
+/-- **A machine step is a coded step.** Let $p$ be a URM program, let $R$ be the sum over the
+instructions of $p$ of the largest register index each one mentions, and let $s'$ be a state
+that $p$ reaches from the state $s$ in one step. Then the coded step, run on the list of codes of
+the instructions of $p$, sends the coded state of $s$ (its program counter together with the list
+of the contents of its registers $0, \dots, R$) to the coded state of $s'$. -/
 theorem codedStep_of_step {s s' : State} (h : Step p s s') :
     codedStep (p.map encodeInstr) (toCoded p s).1 (toCoded p s).2 =
       some (toCoded p s') := by
@@ -464,8 +505,10 @@ theorem codedStep_of_step {s s' : State} (h : Step p s s') :
     rw [ite_eq_right hnot0, ite_eq_right hnot1, ite_eq_right hnot2, ite_eq_left htag,
       hm', hn', hgetm, hgetn, ite_eq_right hne']
 
-/-- **A coded step is a machine step**: from a coded successor one reads off a machine
-successor with the same coded state. -/
+/-- **A coded step is a machine step.** Let $p$ be a URM program and $s$ a machine state. If one
+coded URM step, run on the list of codes of the instructions of $p$ from the coded state of $s$,
+yields $c'$, then there is a machine state $s'$ such that $p$ steps from $s$ to $s'$ in one step
+and the coded state of $s'$ is $c'$. -/
 theorem step_of_codedStep {s : State} {c' : ℕ × List ℕ}
     (h : codedStep (p.map encodeInstr) (toCoded p s).1 (toCoded p s).2 = some c') :
     ∃ s' : State, Step p s s' ∧ toCoded p s' = c' := by
@@ -574,12 +617,16 @@ end StepAgree
 
 /-! ### Predicate classes -/
 
-/-- A predicate is **URM-decidable** when a URM program computes its characteristic function
-(`Cslib.Decidability.charFun`: `1` on members, `0` elsewhere). -/
+/-- **URM-decidable predicate.** A predicate $P$ on the natural numbers is URM-decidable when
+some URM program computes its characteristic function: started on any input $n$ (register $0$
+holding $n$, all other registers $0$), the program halts, and register $0$ then holds $1$ if
+$P(n)$ holds and $0$ otherwise. -/
 def Decidable (P : ℕ → Prop) : Prop :=
   ∃ prog : Program, ∀ n, eval prog [n] = Cslib.Decidability.charFun P n
 
-/-- A predicate is **URM-recognizable** when a URM program halts exactly on its members. -/
+/-- **URM-recognizable predicates.** A predicate $P$ on the natural numbers is URM-recognizable
+when there is a URM program that, started with input $n$ in register $0$ and every other register
+$0$, halts if and only if $P(n)$ holds. -/
 def Recognizable (P : ℕ → Prop) : Prop :=
   ∃ prog : Program, ∀ n, (eval prog [n]).Dom ↔ P n
 
@@ -589,26 +636,36 @@ section Exec
 
 variable (p : Program)
 
-/-- One coded step, staying put when halted. -/
+/-- **One-step function on coded states.** Given a list of instruction codes, the one-step
+function sends a coded state $s$ to the result of one coded URM step from $s$ when that step is
+defined, and leaves $s$ unchanged when it is not (in particular when $s$ is halted). -/
 def stepFn (codes : List ℕ) : ℕ × List ℕ → ℕ × List ℕ :=
   fun s ↦ (codedStep codes s.1 s.2).getD s
 
-/-- **The one-step function is primitive recursive.** -/
+/-- **The one-step function is primitive recursive.** For every list of natural numbers, read as
+instruction codes, the function on coded states (pairs of a program counter and a register list)
+that sends a coded state to its successor under one coded step, and a coded state with no
+successor to itself, is primitive recursive. -/
 theorem primrec_stepFn (codes : List ℕ) : Primrec (stepFn codes) := by
   change Primrec fun s : ℕ × List ℕ ↦ (codedStep codes s.1 s.2).getD s
   exact Primrec₂.comp Primrec.option_getD (primrec_codedStep codes) Primrec.id
 
-/-- **Bounded execution**: `t` iterations of the one-step function. -/
+/-- **Bounded execution.** For a list of instruction codes, a number $t$ and a coded state $s$,
+bounded execution applies the one-step function for these codes $t$ times, starting from
+$s$. -/
 def execN (codes : List ℕ) (t : ℕ) (s : ℕ × List ℕ) : ℕ × List ℕ :=
   (stepFn codes)^[t] s
 
-/-- Bounded execution steps once per iteration. -/
+/-- **Bounded execution unfolds by one step.** For a list of instruction codes, a number $t$
+and a coded state $s$, bounded execution for $t + 1$ steps from $s$ is the one-step function
+applied to the result of bounded execution for $t$ steps from $s$. -/
 theorem execN_succ (codes : List ℕ) (t : ℕ) (s : ℕ × List ℕ) :
     execN codes (t + 1) s = stepFn codes (execN codes t s) :=
   Function.iterate_succ_apply' _ _ _
 
-/-- **Initial coded state** for input `x`: program counter `0`, register `0` holding `x`,
-all other registers `0`. -/
+/-- **Initial coded state.** For a URM program $p$ with register bound $R$ and an input $x$,
+the initial coded state has program counter $0$ and register list $(x, 0, \dots, 0)$ of
+length $R + 1$: register $0$ holds $x$ and registers $1, \dots, R$ hold $0$. -/
 def initCoded (x : ℕ) : ℕ × List ℕ :=
   (0, (List.range (regBound p + 1)).map fun n ↦ if n = 0 then x else 0)
 
@@ -619,13 +676,18 @@ theorem primrec_initCoded : Primrec fun x ↦ initCoded p x := by
   exact Primrec.ite (Primrec.eq.comp Primrec.snd (Primrec.const 0)) Primrec.fst
     (Primrec.const 0)
 
-/-- **Bounded execution is primitive recursive in the input and the step bound.** -/
+/-- **Bounded execution is primitive recursive in the input and the step bound.** For a URM
+program $p$, the bounded execution of $p$ for $t$ steps ($t$ iterations of the one-step
+function on the list of instruction codes of $p$), started from the initial coded state for
+input $x$, is a primitive recursive function of the pair $(x, t)$. -/
 theorem primrec_execN : Primrec fun a : ℕ × ℕ ↦
     execN (p.map encodeInstr) a.2 (initCoded p a.1) :=
   Primrec.nat_iterate Primrec.snd ((primrec_initCoded p).comp Primrec.fst)
     ((primrec_stepFn _).comp Primrec.snd)
 
-/-- The initial coded state is the coded initial machine state. -/
+/-- **The initial coded state codes the initial machine state.** For a URM program $p$ and an
+input $x$, the initial coded state for $x$ equals the coded state of the initial machine state
+with input list $[x]$. -/
 theorem initCoded_eq_toCoded (x : ℕ) : initCoded p x = toCoded p (State.init [x]) := by
   simp only [initCoded, toCoded, State.init, Regs.ofInputs, toRegs]
   congr 1
@@ -639,7 +701,11 @@ theorem initCoded_eq_toCoded (x : ℕ) : initCoded p x = toCoded p (State.init [
       List.getElem?_eq_none_iff.2 (by rw [List.length_singleton]; omega)]
     rfl
 
-/-- **Reached coded states are exactly the machine's reachable states.** -/
+/-- **Bounded execution only reaches codes of reachable states.** Let $p$ be a URM program,
+$x$ an input and $t$ a natural number. Then there is a machine state $s'$, reachable from the
+initial state with input list $[x]$ by steps of $p$, whose coded state equals the result of
+bounded execution for $t$ steps on the instruction codes of $p$ from the initial coded state
+for $x$. -/
 theorem execN_toCoded_steps (x : ℕ) (t : ℕ) :
     ∃ s' : State, Steps p (State.init [x]) s' ∧
       toCoded p s' = execN (p.map encodeInstr) t (initCoded p x) := by
@@ -662,7 +728,10 @@ theorem execN_toCoded_steps (x : ℕ) (t : ℕ) :
         (toCoded p s').2).getD (toCoded p s')
       rw [hc', Option.getD_some, hcode'']
 
-/-- **A halted coded state gives a halting machine run.** -/
+/-- **A halted coded state gives a halting machine run.** Let $p$ be a URM program, $x$ an input
+and $t$ a number. If bounded execution for $t$ steps on the instruction codes of $p$ from the
+initial coded state for $x$ reaches a program counter at least the length of the list of
+instruction codes, then $p$ halts on the input list $[x]$. -/
 theorem halts_of_execN_halted (x t : ℕ)
     (h : (execN (p.map encodeInstr) t (initCoded p x)).1 ≥ (p.map encodeInstr).length) :
     Halts p [x] := by
@@ -675,7 +744,10 @@ theorem halts_of_execN_halted (x t : ℕ)
   have hlen : (p.map encodeInstr).length = p.length := by simp
   omega
 
-/-- **Every reachable state is reached by bounded execution.** -/
+/-- **Every reachable state is reached by bounded execution.** Let $p$ be a URM program and $x$
+an input. If a machine state $s$ is reachable from the initial state with input list $[x]$ by
+steps of $p$, then for some number $t$, bounded execution for $t$ steps on the instruction codes
+of $p$ from the initial coded state for $x$ gives the coded state of $s$. -/
 theorem exists_execN_eq_of_steps (x : ℕ) {s : State}
     (hs : Steps p (State.init [x]) s) :
     ∃ t, execN (p.map encodeInstr) t (initCoded p x) = toCoded p s := by
@@ -690,7 +762,10 @@ theorem exists_execN_eq_of_steps (x : ℕ) {s : State}
     rw [codedStep_of_step hstep]
     rfl
 
-/-- **Bounded execution is stable once halted.** -/
+/-- **Bounded URM execution is stable once halted.** Let $c$ be a list of instruction codes, $s$
+a coded state and $t$ a natural number. If after $t$ steps of bounded execution of $c$ from $s$
+the program counter is at least the length of $c$, then $t + 1$ steps of bounded execution of $c$
+from $s$ give the same coded state as $t$ steps. -/
 theorem execN_succ_of_halted (codes : List ℕ) {t : ℕ} {s : ℕ × List ℕ}
     (h : codes.length ≤ (execN codes t s).1) : execN codes (t + 1) s = execN codes t s := by
   rw [execN_succ]
@@ -701,7 +776,10 @@ theorem execN_succ_of_halted (codes : List ℕ) {t : ℕ} {s : ℕ × List ℕ}
   rw [hnone]
   rfl
 
-/-- **Bounded execution stays at its halted value.** -/
+/-- **Bounded URM execution stays at its halted value.** Let $c$ be a list of instruction codes,
+$s$ a coded state, and $t_1 \le t_2$ natural numbers. If after $t_1$ steps of bounded execution
+of $c$ from $s$ the program counter is at least the length of $c$, then $t_2$ steps of bounded
+execution of $c$ from $s$ give the same coded state as $t_1$ steps. -/
 theorem execN_eq_of_le (codes : List ℕ) {s : ℕ × List ℕ} {t₁ t₂ : ℕ} (hle : t₁ ≤ t₂)
     (h : codes.length ≤ (execN codes t₁ s).1) : execN codes t₂ s = execN codes t₁ s := by
   obtain ⟨k, rfl⟩ : ∃ k, t₂ = t₁ + k := ⟨t₂ - t₁, by omega⟩
@@ -713,15 +791,22 @@ theorem execN_eq_of_le (codes : List ℕ) {s : ℕ × List ℕ} {t₁ t₂ : ℕ
     rw [show t₁ + (k + 1) = (t₁ + k) + 1 from by omega, execN_succ_of_halted codes hhalt]
     exact ih
 
-/-- **Output after `t` steps**: `none` while the program is still running, `some` of the
-contents of register `0` once it has halted. -/
+/-- **Output after a given number of steps.** For a URM program $p$, an input $x$ and a number
+$t$, run bounded execution for $t$ steps on the instruction codes of $p$ from the initial coded
+state for $x$. If the resulting program counter is less than the length of the list of
+instruction codes, the program is still running and there is no output; otherwise the output
+is the entry at position $0$ of the resulting register list, read with default $0$. -/
 def haltedOutput (x t : ℕ) : Option ℕ :=
   if (execN (p.map encodeInstr) t (initCoded p x)).1 < (p.map encodeInstr).length then
     Option.none
   else some ((execN (p.map encodeInstr) t (initCoded p x)).2.getD 0 0)
 
-/-- **The output function is computable**, hence the URM evaluation is partial recursive
-by unbounded search below. -/
+/-- **The URM output after a given number of steps is computable.** For every URM program $p$,
+the function sending an input $x$ and a step count $t$ to the output of $p$ on $x$ after $t$ steps
+(nothing while $p$ is still running, the contents of register $0$ once it has halted) is a
+computable function of the pair $(x, t)$.
+
+Unbounded search over $t$ then shows that URM evaluation is partial recursive. -/
 theorem computable₂_haltedOutput : Computable₂ (haltedOutput p) := by
   have hexec : Primrec fun a : ℕ × ℕ ↦ execN (p.map encodeInstr) a.2 (initCoded p a.1) :=
     primrec_execN p
@@ -741,8 +826,13 @@ section Main
 
 variable {f : ℕ →. ℕ}
 
-/-- **A URM-computable partial function is partial recursive**: the URM evaluation is the
-unbounded search for the first halting step of the coded execution. -/
+/-- **A URM-computable partial function is partial recursive.** Let $f$ be a partial function
+from $\mathbb{N}$ to $\mathbb{N}$. Suppose some URM program has the following property for every
+natural number $x$: started with $x$ in register $0$ and all other registers $0$, it halts
+exactly when $f(x)$ is defined, and then it holds $f(x)$ in register $0$. Then $f$ is partial
+recursive.
+
+The URM evaluation is the unbounded search for the first halting step of the coded execution. -/
 theorem partrec_of_computable (hf : URM.Computable 1 (fun inputs ↦ f (inputs 0))) :
     Partrec f := by
   obtain ⟨prog, hprog⟩ := hf
@@ -817,7 +907,9 @@ theorem partrec_of_computable (hf : URM.Computable 1 (fun inputs ↦ f (inputs 0
         exact Option.not_mem_none hy ht
   exact (Partrec.rfindOpt (computable₂_haltedOutput prog)).of_eq hmain
 
-/-- **A URM-decidable predicate is computable.** -/
+/-- **A URM-decidable predicate is computable.** If a predicate $P$ on the natural numbers is
+URM-decidable, then it is a computable predicate: its Boolean decision function, sending $n$ to
+whether $P(n)$ holds, is computable. -/
 theorem Decidable.computablePred {P : ℕ → Prop} (h : Decidable P) : ComputablePred P := by
   obtain ⟨prog, hprog⟩ := h
   refine Cslib.Decidability.computablePred_iff_partrec_charFun.mpr ?_

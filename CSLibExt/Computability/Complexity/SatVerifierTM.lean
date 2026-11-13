@@ -49,10 +49,18 @@ namespace Cslib.Complexity.SatVerifier.Machine
 open Turing Function MetaMathlibExt MetaMathlibExt.TM2Program MetaMathlibExt.TM2Embedding
   Cslib.CookLevin Cslib.Logic.PL Computability
 
-/-- The `x # w` alphabet of the input stack. -/
+/-- **Input alphabet of the SAT verifier host.** The alphabet $G$ of the host's input stack is the
+pair alphabet $\mathrm{Bool} \oplus \mathrm{Option}\ \mathrm{Bool}$ of the dense SAT verifier.
+
+In the encoding of a pair $(x, w)$, a formula bit $b$ is $\mathrm{inl}\ b$, the separator $\#$ is
+$\mathrm{inr}\ \mathrm{none}$ and a certificate bit $b$ is $\mathrm{inr}\ (\mathrm{some}\ b)$. -/
 abbrev G := Cslib.Complexity.DenseSAT.Verifier.G
 
-/-- Host stacks: input, output, and the work stacks of all components. -/
+/-- **Stacks of the SAT verifier host.** The SAT verifier host has seventeen stacks: the input
+stack, the output stack, and fifteen work stacks, namely two holding the formula bits and the
+certificate bits, two scratch stacks used to move them in phase 0, the token and table stacks,
+six further stacks of the clause-check driver, two further stacks of the tokenizer, and one
+further stack of the 3-clause filter. -/
 inductive HK | inp | out | X | W | T | B | S | A | C | V | P | F | CC | LC | X1 | W1 | U
   deriving DecidableEq
 
@@ -61,13 +69,17 @@ instance HK.instFintypeEnumFix : Fintype HK where
     by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Host alphabets: `G` on the input, `Bool` on the output, `Sym` elsewhere. -/
+/-- **Stack alphabets of the SAT verifier host.** Each stack of the SAT verifier host has an
+alphabet: the input stack has the input alphabet $G$, the output stack has alphabet
+$\mathrm{Bool}$, and every other stack has the token alphabet $\mathrm{Sym}$. -/
 @[reducible] def HΓ : HK → Type
   | .inp => G
   | .out => Bool
   | _ => Sym
 
-/-- Phase-0 labels: move `x` off the input (twice), drop the separator, move `w` (twice). -/
+/-- **Phase-0 labels of the SAT verifier host.** The five labels of phase 0 of the SAT verifier
+host: $m_1$ and $m_2$ move the formula bits $x$ off the input (in two passes), $\mathsf{sep}$
+drops the separator, and $m_3$ and $m_4$ move the witness bits $w$ (in two passes). -/
 inductive P0 | m1 | m2 | sep | m3 | m4
   deriving DecidableEq
 
@@ -75,7 +87,10 @@ instance P0.instFintypeEnumFix : Fintype P0 where
   elems := ⟨↑[P0.m1, .m2, .sep, .m3, .m4], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Host labels. -/
+/-- **Labels of the SAT verifier host.** A label of the SAT verifier host is one of the
+following: a phase-0 label; a label of the tokenizer; a label of the 3-clause filter; a label of
+the clause-check driver or of the lookup embedded in it; a cleanup label carrying an answer bit;
+or an output label carrying an answer bit. -/
 inductive HLab
   | ph (p : P0)
   | tok (l : Tokenizer.Lab)
@@ -85,7 +100,14 @@ inductive HLab
   | fin (ans : Bool)
   deriving DecidableEq
 
-/-- `HLab` as a sum type, for its `Fintype` instance. -/
+/-- **Host labels as a sum type.** Write $P_0$ for the phase-0 labels, $\Lambda_T$ for the
+tokenizer labels, $\Lambda_F$ for the labels of the clause-length filter, and $\Lambda_D$ and
+$\Lambda_L$ for the labels of the clause-check driver and of the lookup. The host labels are in
+bijection with $P_0 \sqcup \Lambda_T \sqcup \Lambda_F \sqcup (\Lambda_D \sqcup \Lambda_L) \sqcup
+\mathrm{Bool} \sqcup \mathrm{Bool}$: a phase-0 label $p$, tokenizer label, filter label, or driver
+or lookup label goes to itself in its summand, a cleanup label with answer $a$ goes to $a$ in the
+first copy of $\mathrm{Bool}$, and a final label with answer $a$ goes to $a$ in the second copy.
+The bijection gives the host labels their finiteness instance. -/
 def HLab.equiv :
     HLab ≃ P0 ⊕ Tokenizer.Lab ⊕ Karp.Filter3.Lab ⊕ (Check.DLab ⊕ Lookup.Lab) ⊕ Bool ⊕ Bool where
   toFun
@@ -103,11 +125,17 @@ instance : Fintype HLab := Fintype.ofEquiv _ HLab.equiv.symm
 
 /-! ### Embeddings of the components -/
 
-/-- Tokenizer stacks in the host. -/
+/-- **Placement of the tokenizer's stacks in the host.** The stacks of the tokenizer (the formula
+bits $X$, the witness bits $W$, the token output $T$, the table output $B$, and the clause and
+literal counters $CC$ and $LC$) are placed in the host machine by the map that sends each of them
+to the host stack of the same name. -/
 def eT : Tokenizer.K → HK
   | .X => .X | .W => .W | .T => .T | .B => .B | .CC => .CC | .LC => .LC
 
-/-- The tokenizer's stack embedding. -/
+/-- **Stack embedding of the tokenizer into the host.** Every stack of the tokenizer has alphabet
+$\mathrm{Sym}$. The tokenizer is embedded in the host machine by sending each of its stacks $X$,
+$W$, $T$, $B$, $CC$, $LC$ to the host stack of the same name (an injective map) and identifying
+the alphabet of each with that of its image, which is again $\mathrm{Sym}$, by the identity. -/
 def embT : SEmb (fun _ : Tokenizer.K => Sym) HΓ where
   e := eT
   inj a b h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
@@ -115,27 +143,46 @@ def embT : SEmb (fun _ : Tokenizer.K => Sym) HΓ where
     | .X => Equiv.refl Sym | .W => Equiv.refl Sym | .T => Equiv.refl Sym
     | .B => Equiv.refl Sym | .CC => Equiv.refl Sym | .LC => Equiv.refl Sym
 
-/-- Lookup stacks in the driver. -/
+/-- **Placement of the lookup's stacks in the clause-check driver.** The stacks of the lookup
+(the query $T$, the table $B$, the stash $S$, the scratch stacks $A$ and $C$, and the value $V$)
+are placed in the clause-check driver by the map that sends each of them to the driver stack of
+the same name. -/
 def eL : Lookup.K → Check.K
   | .T => .T | .B => .B | .S => .S | .A => .A | .C => .C | .V => .V
 
-/-- The lookup's stack embedding into the driver. -/
+/-- **Stack embedding of the lookup into the clause-check driver.** Every stack of the lookup and
+of the clause-check driver has alphabet $\mathrm{Sym}$. The lookup is embedded in the driver by
+sending each of its stacks $T$, $B$, $S$, $A$, $C$, $V$ to the driver stack of the same name (an
+injective map) and identifying the alphabets by the identity of $\mathrm{Sym}$. -/
 def embL : SEmb (fun _ : Lookup.K => Sym) (fun _ : Check.K => Sym) where
   e := eL
   inj a b h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
   ι _ := Equiv.refl Sym
 
-/-- Lookup labels in the driver: its exit returns to `DLab.ret`. -/
+/-- **Lookup labels in the clause-check driver.** The relabelling that places the lookup's labels
+among the driver's labels, whose label set consists of the driver's own labels together with the
+lookup's labels: the lookup's final label $\mathsf{done}$ goes to the driver's return label
+$\mathsf{ret}$, and every other lookup label $l$ goes to the copy of $l$ among the lookup's
+labels. -/
 def φL (l : Lookup.Lab) : Check.DLab ⊕ Lookup.Lab := if l = .done then .inl .ret else .inr l
 
-/-- The lookup sub-program of the driver. -/
+/-- **The embedded lookup program.** The lookup sub-program of the clause-check driver: at each
+lookup label $l$, it is the lookup program's statement at $l$ with every stack operation moved to
+the driver's stack of the same name (the lookup's stacks $T$, $B$, $S$, $A$, $C$, $V$) and every
+jump target relabelled by the lookup-label map, which sends $\mathsf{done}$ to the driver's
+return label $\mathsf{ret}$ and keeps every other label. -/
 def lkH (l : Lookup.Lab) : Check.Stmt Lookup.Lab := mapS embL φL (Lookup.prog l)
 
-/-- Driver stacks in the host. -/
+/-- **Driver stacks in the SAT host.** The map from the stacks of the clause-check driver into
+the host stacks sends each driver stack to the host stack of the same name. -/
 def eC : Check.K → HK
   | .T => .T | .B => .B | .S => .S | .A => .A | .C => .C | .V => .V | .P => .P | .F => .F
 
-/-- The driver's stack embedding. -/
+/-- **Stack embedding of the clause-check driver into the host.** Every stack of the clause-check
+driver has alphabet $\mathrm{Sym}$. The driver is embedded in the host machine by sending each of
+its stacks $T$, $B$, $S$, $A$, $C$, $V$, $P$, $F$ to the host stack of the same name (an injective
+map) and identifying the alphabet of each with that of its image, which is again $\mathrm{Sym}$,
+by the identity. -/
 def embC : SEmb (fun _ : Check.K => Sym) HΓ where
   e := eC
   inj a b h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
@@ -143,27 +190,43 @@ def embC : SEmb (fun _ : Check.K => Sym) HΓ where
     | .T => Equiv.refl Sym | .B => Equiv.refl Sym | .S => Equiv.refl Sym | .A => Equiv.refl Sym
     | .C => Equiv.refl Sym | .V => Equiv.refl Sym | .P => Equiv.refl Sym | .F => Equiv.refl Sym
 
-/-- Filter stacks in the host. -/
+/-- **Placement of the filter's stacks in the host.** The two stacks of the clause-length filter,
+the token stack $T$ and the side stack $U$, are placed in the host machine by the map that sends
+$T$ to the host stack $T$ and $U$ to the host stack $U$. -/
 def eF : Karp.Filter3.K → HK
   | .T => .T | .U => .U
 
-/-- The filter's stack embedding. -/
+/-- **Stack embedding of the clause-length filter into the host.** Both stacks of the
+clause-length filter have alphabet $\mathrm{Sym}$. The filter is embedded in the host machine by
+sending its stacks $T$ and $U$ to the host stacks of the same names (an injective map) and
+identifying the alphabet of each with that of its image, which is again $\mathrm{Sym}$, by the
+identity. -/
 def embF : SEmb (fun _ : Karp.Filter3.K => Sym) HΓ where
   e := eF
   inj a b h := by cases a <;> cases b <;> first | rfl | exact absurd h (by decide)
   ι k := match k with | .T => Equiv.refl Sym | .U => Equiv.refl Sym
 
-/-- Filter labels in the host: `pass` starts the driver, `fail` cleans up with `false`. -/
+/-- **Filter exits in the SAT verifier host.** The relabelling of the 3-clause filter's labels
+into the labels of the SAT verifier host sends the filter's exit label *pass* to the start label
+of the clause-check driver, its exit label *fail* to the cleanup label with answer false, and
+every other filter label $l$ to the host's copy of $l$ among its filter labels. -/
 def φF : Karp.Filter3.Lab → HLab
   | .pass => .chk (.inl .start)
   | .fail => .clean false
   | l => .flt l
 
-/-- Tokenizer labels in the host: accept starts the filter, reject cleans up with `false`. -/
+/-- **Tokenizer labels in the host machine.** The map from labels of the tokenizer to labels of
+the host SAT verifier sends the tokenizer's accepting label to the start label of the embedded
+clause-length filter, its rejecting label to the cleanup label with answer false, and every
+other label $l$ to the host label that runs the tokenizer at $l$. -/
 def φT (l : Tokenizer.Lab) : HLab :=
   if l = .acc then .flt Karp.Filter3.start else if l = .rej then .clean false else .tok l
 
-/-- Driver labels in the host: `yes`/`no` clean up with the answer. -/
+/-- **Driver labels in the SAT host.** The map from the labels of the clause-check driver (its
+own labels and those of the lookup embedded in it) to the host labels sends the driver's label
+for the answer yes to the cleanup label with answer true, its label for the answer no to the
+cleanup label with answer false, and every other label $l$ to the host label running the
+driver at $l$. -/
 def φC : Check.DLab ⊕ Lookup.Lab → HLab
   | .inl .yes => .clean true
   | .inl .no => .clean false
@@ -171,20 +234,46 @@ def φC : Check.DLab ⊕ Lookup.Lab → HLab
 
 /-! ### The host program -/
 
-/-- Read an `x` symbol of the input as a bit. -/
+/-- **Reading a formula bit in the SAT host.** The input alphabet of the SAT host consists of
+the formula bits, the separator and the witness bits. This partial map sends a formula bit $b$
+to $b$ and is undefined on the separator and on witness bits. -/
 def dX : G → Option Bool
   | .inl b => some b
   | _ => none
 
-/-- Read a `w` symbol of the input as a bit. -/
+/-- **Reading a witness bit in the SAT host.** The input alphabet of the SAT host consists of
+the formula bits, the separator and the witness bits. This partial map sends a witness bit $b$
+to $b$ and is undefined on formula bits and on the separator. -/
 def dW : G → Option Bool
   | .inr (some b) => some b
   | _ => none
 
-/-- The work stacks emptied by the cleanup. -/
+/-- **Stacks emptied by the SAT verifier's cleanup.** The cleanup loop of the host SAT verifier
+empties the list of stacks made of the input stack followed by the work stacks $X$, $W$, $T$, $B$,
+$S$, $A$, $C$, $V$, $P$, $F$, $CC$, $LC$, $X1$, $W1$, $U$, in that order: every host stack except
+the output stack. -/
 def workKs : List HK := [.inp, .X, .W, .T, .B, .S, .A, .C, .V, .P, .F, .CC, .LC, .X1, .W1, .U]
 
-/-- The host program. -/
+/-- **Program of the SAT verifier host.** For a value $c$ of the 3SAT flag, the host program
+acts at each host label as follows. Here moving a bit block from one stack to another means
+repeatedly popping the top symbol of the first stack while it is a bit and pushing it, as a bit
+token, onto the second, and continuing at the next label once the top is not a bit or the stack
+is empty.
+
+The phase-0 labels move the formula bits from the input stack onto a scratch stack, move them
+from there onto the formula stack, pop one symbol (on a pair encoding, the separator) from the
+input stack, move the certificate bits from the input stack onto a second scratch stack, and move
+them from there onto the certificate stack before going to the start label of the tokenizer. At
+a tokenizer label, a filter label or a driver label the host runs the program of the tokenizer,
+of the 3-clause filter with flag $c$, or of the clause-check driver with its embedded lookup, on
+that component's stacks embedded in the host, with the component's labels renamed to host
+labels; the tokenizer's accept exit goes to the filter's start label, the filter's pass exit to
+the driver's start label, the driver's yes exit to the cleanup label with answer true, and the
+tokenizer's reject exit, the filter's fail exit and the driver's no exit to the cleanup label
+with answer false. At the cleanup label with answer $b$ the host pops every stack other than the
+output stack once, repeats this while anything was popped, and then goes to the output label
+with answer $b$, where it pushes $b$ onto the output stack, sets its internal state to false and
+halts. -/
 def hprog (cap : Bool) : HLab → TM2.Stmt HΓ HLab Bool
   | .ph .m1 => moveB (Γ := HΓ) HK.inp HK.X1 dX Sym.bit (.ph .m1) (.ph .m2)
   | .ph .m2 => moveB (Γ := HΓ) HK.X1 HK.X Sym.bit? Sym.bit (.ph .m2) (.ph .sep)
@@ -199,7 +288,12 @@ def hprog (cap : Bool) : HLab → TM2.Stmt HΓ HLab Bool
 
 instance (k : HK) : Fintype (HΓ k) := by cases k <;> infer_instance
 
-/-- The host as a `FinTM2`: input `inp` (alphabet `G`), output `out` (alphabet `Bool`). -/
+/-- **The SAT verifier machine.** For a flag $\mathit{cap}$, the host machine is the finite
+multi-stack Turing machine whose stacks are the host stacks, with the input stack as input (its
+alphabet is that of the pair encoding: tagged formula bits, a separator and tagged witness
+bits), the output stack (alphabet the booleans) as output, the host alphabets on all stacks, the
+host labels as labels, the first phase-0 label as start label, a boolean internal state
+initially false, and the host program with flag $\mathit{cap}$ as program. -/
 def tm (cap : Bool) : FinTM2 where
   K := HK
   k₀ := .inp
@@ -215,6 +309,14 @@ variable (cap : Bool)
 
 /-! ### Phase 0: `x` and `w` onto work stacks -/
 
+/-- **Phase 0 of the SAT verifier host.** Let $c$ be a flag, $x$ and $w$ bit strings of lengths
+$m$ and $n$, $v$ an internal state, and $S$ host stacks whose input stack holds the pair encoding
+$x \# w$ and whose other stacks are all empty. Then there are an internal state $v'$ and host
+stacks $S'$ such that the host program with flag $c$ runs in exactly $2m + 2n + 5$ steps from
+the configuration at the phase-0 label $m_1$ with internal state $v$ and stacks $S$ to the
+configuration at the start label of the tokenizer with internal state $v'$ and stacks $S'$, the
+stack $X$ of $S'$ holds the bits of $x$ in order and the stack $W$ holds the bits of $w$ in
+order, each as a name-bit symbol, and every other stack of $S'$ is empty. -/
 theorem phase0_run (x w : List Bool) (v : Bool) (S : ∀ k, List (HΓ k))
     (hinp : S .inp = Cslib.Complexity.DenseSAT.Verifier.pairEncode (x, w))
     (h0 : ∀ k, k ≠ .inp → S k = []) :
@@ -271,6 +373,14 @@ theorem phase0_run (x w : List Bool) (v : Bool) (S : ∀ k, List (HΓ k))
 
 /-! ### The embeddings are faithful -/
 
+/-- **The tokenizer embeds in the SAT verifier host.** For every flag $c$, the tokenizer program
+embeds in the host program with flag $c$ along the stack embedding of the tokenizer into the host
+and the map of tokenizer labels into host labels, which sends the tokenizer's accepting label to
+the start label of the clause-length filter, its rejecting label to the cleanup label with answer
+false, and every other label $\ell$ to the host label running the tokenizer at $\ell$. That is,
+for every tokenizer label $\ell$, either the tokenizer's statement at $\ell$ is the halt
+statement, or the host program's statement at the image of $\ell$ is the tokenizer's statement
+at $\ell$ translated along this embedding and label map. -/
 theorem embeds_tok : Embeds embT φT Tokenizer.prog (hprog cap) := by
   intro l
   by_cases h1 : l = .acc
@@ -298,7 +408,14 @@ theorem embeds_chk : Embeds embC φC (Check.prog lkH Lookup.start) (hprog cap) :
     all_goals first | (right; rfl) | (left; rfl)
   · left; rfl
 
-/-- The embedded lookup meets the driver's lookup contract. -/
+/-- **The embedded lookup meets the lookup contract.** The clause-check driver, with the embedded
+lookup program as its lookup sub-program and the lookup's start label as the label it calls, meets
+the driver's lookup contract with constants $a = 8$ and $b = 4$: from the lookup's start label,
+with a reversed name block $q$ on the token stack $T$ above a rest that does not begin with a name
+bit, the table stack of an entry list $es$ on $B$, and the stacks $S$, $A$, $C$, $V$ empty, it
+reaches the driver's return label within $8m + 4$ steps, where $m$ is the length of the table
+stack, with $V$ holding the single bit of the live value of $q$ in $es$ and every other stack
+unchanged. -/
 theorem lookupSpec : Check.LookupSpec lkH Lookup.start 8 4 := by
   intro q es R hR v St hT hB hS hA hC hV
   obtain ⟨v', r⟩ := Lookup.run q es R hR v (fun k => St (eL k)) hT hB hS hA hC hV
@@ -325,13 +442,18 @@ theorem lookupSpec : Check.LookupSpec lkH Lookup.start 8 4 := by
 
 /-! ### Cleanup and output -/
 
+/-- **The cleanup stacks are distinct.** The list of stacks emptied by the cleanup of the SAT
+verifier host has no repeated entries. -/
 theorem workKs_nodup : workKs.Nodup := by decide
 
 theorem mem_workKs (k : HK) (h : k ≠ .out) : k ∈ workKs := by
   cases k <;> simp [workKs] at h ⊢
 
-/-- The cleanup empties every stack: with all stacks of length at most `m` and the output
-empty, it reaches `fin` within `m + 1` steps with every stack empty. -/
+/-- **Cleanup of the SAT host.** Let $m$ be a natural number and let $S$ assign contents to the
+host stacks so that every stack has length at most $m$ and the output stack is empty. Then for
+every flag $c$, answer bit $a$ and internal state $v$, the host program with flag $c$ goes in at
+most $m + 1$ steps from the cleanup label with answer $a$, internal state $v$ and stacks $S$ to
+the final label with answer $a$, internal state false and every stack empty. -/
 theorem clean_host (ans : Bool) (m : ℕ) (v : Bool) (S : ∀ k, List (HΓ k))
     (hl : ∀ k, (S k).length ≤ m) (ho : S .out = []) :
     RunLe (hprog cap) (m + 1) ⟨some (.clean ans), v, S⟩ ⟨some (.fin ans), false, fun _ => []⟩ := by
@@ -352,6 +474,10 @@ theorem fin_run (ans v : Bool) :
 
 /-! ### Sizes of the token and table stacks -/
 
+/-- **Name lengths in an occurrence table.** For every list $n_0, \dots, n_{k-1}$ of natural
+numbers and every list $w$ of bits, the names of the entries of the occurrence table of
+$n_0, \dots, n_{k-1}$ and $w$, in order, have the lengths of the binary codes of
+$n_0, \dots, n_{k-1}$ (Mathlib's encoding of natural numbers as bit lists). -/
 theorem entsOf_map_length (ns : List ℕ) :
     ∀ w : List Bool,
       (entsOf ns w).map (fun e => e.1.length) = ns.map fun n => (encodeNat n).length := by
@@ -386,22 +512,34 @@ theorem tblStk_ents_length_le (φ : CNF) (w : List Bool) :
 
 /-! ### The whole run -/
 
-/-- The initial host stacks on input `l`. -/
+/-- **Initial stacks of the SAT verifier host.** For a word $l$ over the input alphabet $G$, the
+initial host stacks on $l$ hold $l$ on the input stack and leave every other stack empty. -/
 def initS (l : List G) : ∀ k, List (HΓ k) := update (fun _ => []) HK.inp l
 
-/-- Tokenizer-local view of the stacks after phase 0. -/
+/-- **Tokenizer stacks after phase 0.** For bit lists $x$ and $w$, these tokenizer stack contents
+put the bits of $x$ on the formula stack $X$ and the bits of $w$ on the witness stack $W$ (each
+bit as a bit symbol), and leave every other tokenizer stack (token, table and the two counters)
+empty. -/
 def tokS (x w : List Bool) : ∀ _ : Tokenizer.K, List Sym
   | .X => x.map Sym.bit
   | .W => w.map Sym.bit
   | _ => []
 
-/-- Driver-local view of the stacks after the tokenizer accepts `φ`. -/
+/-- **Driver stacks after tokenization.** For a CNF formula $\varphi$ and a witness $w$, these
+are the contents of the clause-check driver's stacks once the tokenizer has accepted $\varphi$:
+the token stack holds the token list of $\varphi$ reversed, the table stack holds the
+table-stack encoding of the occurrence table of $\varphi$ and $w$, and every other stack is
+empty. -/
 def chkS (φ : CNF) (w : List Bool) : ∀ _ : Check.K, List Sym
   | .T => (toks φ).reverse
   | .B => tblStk (ents φ w)
   | _ => []
 
-/-- Steps before the cleanup, in terms of the input length `N`. -/
+/-- **Step budget before the cleanup.** For an input length $N$, the number
+$(2N + 5) + (2N + 2) + (2N + 2) + (N(8N + 9) + 1)$.
+
+It budgets the host steps before the cleanup: its four summands budget phase 0, the tokenizer,
+the clause-length filter and the clause-check driver. -/
 def preSteps (N : ℕ) : ℕ := (2 * N + 5) + (2 * N + 2) + (2 * N + 2) + (N * (8 * N + 9) + 1)
 
 theorem lengths_le {n : ℕ} {S S' : ∀ k, List (HΓ k)} {v v' : Bool} {l l' : HLab} (N : ℕ)
@@ -410,8 +548,12 @@ theorem lengths_le {n : ℕ} {S S' : ∀ k, List (HΓ k)} {v v' : Bool} {l l' : 
   (TM2Composition.length_iter (tm cap) k n ⟨some l, v, S⟩ ⟨some l', v', S'⟩ h).trans
     (Nat.add_le_add_right (hS k) _)
 
-/-- Clean up and halt: from any stacks of length at most `m` with an empty output, reach the
-halting configuration with output `[ans]` within `m + 2` steps. -/
+/-- **Cleanup phase of the SAT verifier host.** Fix either value of the 3SAT flag, an answer bit
+$b$, a natural number $m$, an internal state $v$, and host stacks $S$ such that every stack of $S$
+has length at most $m$ and the output stack of $S$ is empty. Then for some $n \le m + 2$, the host
+program runs in exactly $n$ steps from the configuration at the cleanup label with answer $b$,
+internal state $v$ and stacks $S$ to the halted configuration with internal state false, the
+one-symbol word $b$ on the output stack and every other stack empty. -/
 theorem finish (ans : Bool) (m : ℕ) (v : Bool) (S : ∀ k, List (HΓ k))
     (hl : ∀ k, (S k).length ≤ m) (ho : S .out = []) :
     ∃ n, n ≤ m + 2 ∧ Run (hprog cap) n ⟨some (.clean ans), v, S⟩
@@ -419,13 +561,23 @@ theorem finish (ans : Bool) (m : ℕ) (v : Bool) (S : ∀ k, List (HΓ k))
   obtain ⟨n, hn, r⟩ := clean_host cap ans m v S hl ho
   exact ⟨n + 1, by omega, r.trans (fin_run cap ans false)⟩
 
-/-- The host's answer: with `cap`, formulas with a clause of more than three literals are
-rejected. -/
+/-- **Answer of the SAT host.** For a flag $c$ and a pair $(x, w)$ of bit strings, the host's
+answer is false if $x$ does not decode to a CNF formula. If $x$ decodes to a formula $\varphi$,
+give each variable $n$ the value $w_i$ (counting from $0$), where $i$ is the first position of
+$n$ in the list of variable occurrences of $\varphi$ read clause by clause, and the value false
+if $i \ge |w|$. Then the answer is true exactly when both (a) $c$ is false or every clause of
+$\varphi$ has at most three literals, and (b) every clause of $\varphi$ contains a literal
+$(n, b)$ whose variable $n$ has value $b$. -/
 def ans (p : List Bool × List Bool) : Bool :=
   ((decodeCNF p.1).map fun φ => (!cap || Karp.is3 φ) && checkSpec φ (ents φ p.2)).getD false
 
-/-- The step bound in terms of the input length `N`: everything before the cleanup, then the
-cleanup itself (all stacks are at most `N` plus the pushes so far), then the output step. -/
+/-- **Explicit step bound of the SAT verifier machine.** For a flag $\mathit{cap}$ and an input
+length $N$, let $s(N) = (2N + 5) + (2N + 2) + (2N + 2) + (N(8N + 9) + 1)$ be the number of
+steps allowed before the cleanup, and let $p$ be the per-step push budget of the host machine
+with that flag. The total step bound is $s(N) + (N + p \cdot s(N)) + 2$.
+
+When the cleanup starts, every stack has length at most $N + p \cdot s(N)$; the cleanup and the
+output step then take at most that many steps plus $2$. -/
 noncomputable def totalSteps (N : ℕ) : ℕ :=
   preSteps N + (N + TM2Composition.pushBound (tm cap) * preSteps N) + 2
 
@@ -579,6 +731,11 @@ theorem host_run (x w : List Bool) :
 
 /-! ### The verifier is polynomial-time -/
 
+/-- **Initial configuration of the SAT verifier machine.** For every flag $c$ and every word $l$
+over the input alphabet $G$ of the host, the initial configuration of the SAT verifier machine
+with flag $c$ on $l$ (its start label, its initial internal state, $l$ on the input stack and
+every other stack empty) is the configuration at the phase-0 label $m_1$ with internal state
+false and the initial host stacks on $l$. -/
 theorem initList_tm (l : List G) : initList (tm cap) l = ⟨some (.ph .m1), false, initS l⟩ := by
   simp only [initList]
   congr 1
@@ -592,7 +749,10 @@ theorem haltList_tm (l : List Bool) :
   funext k
   cases k <;> rfl
 
-/-- The host's step bound as a polynomial in the input length. -/
+/-- **Step bound of the SAT verifier machine.** For a flag $\mathit{cap}$, let $p$ be the
+per-step push budget of the host machine with that flag (the sum over its labels of the number
+of push instructions in each label's statement). The step bound is the polynomial
+$(p + 1)(8X^2 + 15X + 10) + X + 2$ with natural-number coefficients, in the input length $X$. -/
 noncomputable def time : Polynomial ℕ :=
   Polynomial.C (TM2Composition.pushBound (tm cap) + 1) *
       (Polynomial.C 8 * Polynomial.X ^ 2 + Polynomial.C 15 * Polynomial.X + Polynomial.C 10) +
@@ -601,8 +761,14 @@ noncomputable def time : Polynomial ℕ :=
 theorem preSteps_eq (N : ℕ) : preSteps N = 8 * N ^ 2 + 15 * N + 10 := by
   simp only [preSteps]; ring_nf
 
-/-- **The `TM2` SAT verifier**: on the `x # w` input it outputs `ans cap (x, w)` within
-`time cap` steps. -/
+/-- **The `TM2` SAT verifier.** For a flag $\mathit{cap}$, the host machine with that flag computes
+the host's answer in polynomial time. For every pair $(x, w)$ of bit lists, started on the input
+$x \# w$ (the bits of $x$, a separator, then the bits of $w$), it halts with the single bit
+$\mathrm{ans}_{\mathit{cap}}(x, w)$ on its output stack and every other stack empty within $T(n)$
+steps, where $n$ is the length of $x \# w$ and $T$ is the host's polynomial step bound. Here
+$\mathrm{ans}_{\mathit{cap}}(x, w)$ is false unless $x$ decodes to a CNF formula $\varphi$; in that
+case it is true exactly when $\varphi$ passes the clause check against the table built from $w$
+and, if $\mathit{cap}$ is true, every clause of $\varphi$ has at most three literals. -/
 noncomputable def verifier :
     TM2ComputableInPolyTime Cslib.Complexity.DenseSAT.Verifier.pairEncode (fun b : Bool => [b])
       (fun p => ans cap p) where
@@ -632,12 +798,17 @@ theorem ans_false (p : List Bool × List Bool) : ans false p = (satVerifier p).r
   rw [SatVerifier.satVerifier_ret_eq]
   simp [ans]
 
-/-- The host's answer is polynomial-time, uncapped or capped. -/
+/-- **The SAT host's answer is polynomial-time.** For each value of the flag $\mathit{cap}$
+(with or without the three-literal clause filter), the host's answer, as a function from pairs
+$(x, w)$ of bit strings to Booleans, is polynomial-time computable under the canonical bitstring
+encodings. -/
 theorem isPolyTime_ans : ComplexityTheory.IsPolyTime fun p => ans cap p :=
   tm2ComputableInPolyTime_comp (f := id) (g := fun p => ans cap p)
     Cslib.Complexity.DenseSAT.Converter.computable (verifier cap)
 
-/-- **`satVerifier` is polynomial-time** in formal-math's canonical sense. -/
+/-- **The SAT verifier is polynomial-time.** The function that maps a pair $(x, w)$ of bit
+strings to the Boolean answer of the SAT verifier on $(x, w)$ (its return value, ignoring its
+declared time cost) is polynomial-time computable under the canonical bitstring encodings. -/
 theorem isPolyTime_satVerifier :
     ComplexityTheory.IsPolyTime fun xw => (satVerifier xw).ret := by
   have h : (fun xw => (satVerifier xw).ret) = fun p => ans false p :=
@@ -645,12 +816,16 @@ theorem isPolyTime_satVerifier :
   rw [h]
   exact isPolyTime_ans false
 
-/-- **SAT is in NP** (binary-index `satDec`, canonical classes). -/
+/-- **SAT is in NP.** The decision problem SAT, which accepts exactly the bit strings that encode
+a satisfiable CNF formula, belongs to the class NP.
+
+Variable indices are binary-coded in the encoding of formulas. -/
 theorem satDec_mem_NP : satDec ∈ ComplexityTheory.NP :=
   satDec_mem_NP_of_isPolyTime isPolyTime_satVerifier
 
-/-- **Cook-Levin**: `satDec` is NP-complete for formal-math's canonical `NP`; this is the
-statement of the former `theorem_wanted` `MetaMathlibExt.cook_levin_SAT_np_complete`. -/
+/-- **Cook–Levin theorem.** CNF satisfiability is NP-complete: the decision problem accepting
+exactly the bit strings that encode a satisfiable CNF formula is in NP, and every decision
+problem in NP has a polynomial-time many-one reduction to it. -/
 theorem cook_levin_SAT_np_complete :
     satDec ∈ ComplexityTheory.NP ∧
       ∀ L : ComplexityTheory.DecisionProblem,
@@ -660,12 +835,22 @@ theorem cook_levin_SAT_np_complete :
 
 /-! ### 3SAT -/
 
+/-- **Answer of the SAT host with the three-literal filter.** For all bit strings $x$ and $w$,
+the answer of the SAT host with flag true on $(x, w)$ is the conjunction of two bits. The first
+is false if the complete length-prefixed CNF decoder fails on $x$; if $x$ decodes to a CNF
+formula $\varphi$, it is true exactly when every clause of $\varphi$ has at most three literals.
+The second is the return value of the SAT verifier on $(x, w)$. -/
 theorem ans_true (x w : List Bool) :
     ans true (x, w) = (((decodeCNF x).map Karp.is3).getD false && (satVerifier (x, w)).ret) := by
   rw [SatVerifier.satVerifier_ret_eq]
   cases h : decodeCNF x <;> simp [ans, h]
 
-/-- **3SAT is in NP**: the capped host verifies it, with witnesses no longer than the input. -/
+/-- **3SAT is in NP.** The decision problem 3SAT, which accepts exactly the bit strings that
+encode a satisfiable CNF formula in which every clause has at most three literals, belongs to the
+class NP.
+
+The verifier is the SAT verifier host with the three-literal clause filter switched on, and
+witnesses no longer than the input suffice. -/
 theorem sat3Dec_mem_NP : Karp.sat3Dec ∈ ComplexityTheory.NP := by
   refine ⟨Polynomial.X, fun p => ans true p, isPolyTime_ans true, fun x => ?_⟩
   have hv := satVerifier_verifies x
