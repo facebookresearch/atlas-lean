@@ -351,8 +351,8 @@ theorem cableCurrent_charResistance_mul (hm : 0 < rm) (hi : 0 < ri) (I₀ x : �
   rw [cableCurrent, ← cosh_sub_sinh, mul_div_cancel_left₀ _ (charResistance_pos hm hi).ne']; ring
 
 /-- **Semi-infinite cable (bounded at infinity).** A steady state on `[0, ∞)` whose voltage is
-bounded has input resistance `V 0 / I 0 = r∞` and decays exponentially with length constant `λ`:
-`V x = V 0 e^{-x/λ}` and `I x = I 0 e^{-x/λ}`. -/
+bounded satisfies the input relation `V 0 = r∞ I 0` and decays exponentially with length
+constant `λ`: `V x = V 0 e^{-x/λ}` and `I x = I 0 e^{-x/λ}`. -/
 theorem IsSteadyState.eq_exp_of_bounded {V I : ℝ → ℝ} (h : IsSteadyState rm ri (Ici 0) V I)
     (hm : 0 < rm) (hi : 0 < ri) (hB : ∃ M, ∀ x, 0 ≤ x → |V x| ≤ M) :
     V 0 = charResistance rm ri * I 0 ∧ ∀ x, 0 ≤ x →
