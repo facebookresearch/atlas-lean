@@ -37,6 +37,15 @@ A two-node Bayesian network on `Bool` (`P(X_0) = 1/4`, `P(X_1 | X_0 = true) = 2/
 
 * the identity response of node `1` has weight `2/3 · 1/2 = 1/3`;
 * the realization's law of `(true, true)` is `1/6`, through `responseSCM_inducedLaw`.
+
+Surgery on the Boolean xor model above (`x_0 = u_0`, `x_1 = x_0 xor u_1`, `P(u_0) = 1/4`,
+`P(u_1) = 1/3`):
+
+* after `do(X_0 = true)` the law of `(true, false)` is `1/3` and of `(false, false)` is `0`;
+* after surgery on the set `{0}` with value `true` the law of `(true, false)` is `1/3`;
+* node `1` starts with the nonempty parent set `{0}`; after `do(X_1 = false)`, and after surgery
+  on the set `{0, 1}`, its parent set is empty and its solution is `false` at every noise value;
+* after `do(X_1 = false)` the law of `(true, false)` is `1/4`.
 -/
 
 @[expose] public section
@@ -323,5 +332,217 @@ private def chainModel (n : ℕ) : FiniteSCM ℕ n (fun _ => Unit) where
     let result := (chainModel (n + 1)).solve (fun _ => ()) (Fin.last n)
     unless result == n + 1 do
       throw (IO.userError s!"chain of length {n + 1}: got {result}")
+
+namespace Surgery
+
+open Convexity
+
+/-- A nonzero node of `Fin 2` has nonzero value. -/
+theorem val_ne_zero_of_ne_zero {k : Fin 2} (h : k ≠ 0) : k.val ≠ 0 := by
+  intro hv
+  apply h
+  rw [Fin.ext_iff]
+  simpa [Fin.val_zero] using hv
+
+/-- Parents for the xor test model: node 0 has no parents, node 1 has parent 0. -/
+def paXor : (k : Fin 2) → Finset (Fin k) := fun k =>
+  if h : k = 0 then ∅ else {⟨0, Nat.pos_of_ne_zero (val_ne_zero_of_ne_zero h)⟩}
+
+/-- Structural functions for the xor test model: node 0 copies its noise, node 1 xors the
+value of its parent with its noise. -/
+def fXor : (k : Fin 2) → (paXor k → Bool) → Bool → Bool := fun k z u =>
+  if h : k = 0 then u
+  else
+    have hk0 : k.val ≠ 0 := val_ne_zero_of_ne_zero h
+    have hmem : (⟨0, Nat.pos_of_ne_zero hk0⟩ : Fin k.val) ∈ paXor k := by
+      simp only [paXor, dite_eq_right h]
+      exact Finset.mem_singleton_self _
+    xor (z ⟨⟨0, Nat.pos_of_ne_zero hk0⟩, hmem⟩) u
+
+/-- The two-node xor test model. -/
+def M : FiniteSCM Bool 2 (fun _ => Bool) where
+  pa := paXor
+  f := fXor
+
+/-- Noise law at node 0: `true` with probability `1/4`. -/
+noncomputable def μ0 : StdSimplex ℝ Bool :=
+  StdSimplex.duple true false (s := 1 / 4) (t := 3 / 4) (by norm_num) (by norm_num)
+    (by norm_num)
+
+/-- Noise law at node 1: `true` with probability `1/3`. -/
+noncomputable def μ1 : StdSimplex ℝ Bool :=
+  StdSimplex.duple true false (s := 1 / 3) (t := 2 / 3) (by norm_num) (by norm_num)
+    (by norm_num)
+
+/-- Noise laws of the xor test model. -/
+noncomputable def μ : (k : Fin 2) → StdSimplex ℝ Bool := ![μ0, μ1]
+
+theorem μ0_true : μ0.weights true = 1 / 4 := by
+  simp [μ0, StdSimplex.weights_duple]
+
+theorem μ1_true : μ1.weights true = 1 / 3 := by
+  simp [μ1, StdSimplex.weights_duple]
+
+theorem μ_one_true : (μ 1).weights true = 1 / 3 := by
+  have hμ : μ 1 = μ1 := by simp [μ]
+  rw [hμ]
+  exact μ1_true
+
+theorem fXor_zero (z : paXor 0 → Bool) (u : Bool) : fXor 0 z u = u := by
+  simp [fXor]
+
+theorem fXor_one (g : paXor 1 → Bool) (hg : ∀ i, g i = true) (v : Bool) :
+    fXor 1 g v = xor true v := by
+  have h10 : (1 : Fin 2) ≠ 0 := by decide
+  simp only [fXor, dite_eq_right h10]
+  congr 1
+  exact hg _
+
+/-- The test assignment `![true, false]` is `true` at any index of value `0`. -/
+theorem x_castLE_zero (m : ℕ) (h : m ≤ 2) (j : Fin m) (hj : j.val = 0) :
+    (![true, false] : Fin 2 → Bool) (Fin.castLE h j) = true := by
+  have hceq : Fin.castLE h j = (0 : Fin 2) := by simp [Fin.ext_iff, Fin.val_castLE, hj]
+  rw [hceq]
+  simp
+
+/-- The node-1 push-forward factor at `false` is `1/3` whenever the parent value is `true`. -/
+theorem map1_weights (g : paXor 1 → Bool) (hg : ∀ i, g i = true) :
+    ((μ 1).map (fXor 1 g)).weights false = 1 / 3 := by
+  rw [StdSimplex.weights_map, Finsupp.mapDomain_fintype, Finsupp.coe_finsetSum,
+    Finset.sum_apply]
+  simp only [Finsupp.single_apply]
+  have hfib : ∀ v : Bool, fXor 1 g v = xor true v := fun v => fXor_one g hg v
+  simp only [hfib]
+  have hcond : ∀ v : Bool, (if xor true v = false then (μ 1).weights v else (0 : ℝ))
+      = (if v = true then (μ 1).weights v else 0) := by
+    intro v
+    cases v <;> rfl
+  simp only [hcond]
+  rw [Fintype.sum_bool]
+  simp [μ_one_true]
+
+example : (M.doNode 0 true).inducedLaw μ ![true, false] = 1 / 3 := by
+  have h10 : (1 : Fin 2) ≠ 0 := by decide
+  have hx1 : (![true, false] : Fin 2 → Bool) 1 = false := by simp
+  have hfac0 : ∀ z : ((M.inducedBayesNet μ).intervene 0 true).pa 0 → Bool,
+      (((M.inducedBayesNet μ).intervene 0 true).cpt 0 z).weights
+        ((![true, false] : Fin 2 → Bool) 0) = 1 := by
+    intro z
+    have hcpt : ((M.inducedBayesNet μ).intervene 0 true).cpt 0 z
+        = StdSimplex.single true := by
+      simp [BayesNet.intervene]
+    rw [hcpt]
+    have hx0 : (![true, false] : Fin 2 → Bool) 0 = true := by simp
+    rw [hx0]
+    simp [StdSimplex.weights_single]
+  rw [FiniteSCM.inducedLaw_doNode, BayesNet.joint_eq_prod, Fin.prod_univ_two, hfac0, hx1]
+  rw [one_mul]
+  simp only [BayesNet.intervene, dite_eq_right h10, FiniteSCM.inducedBayesNet, M]
+  refine map1_weights _ ?_
+  intro i
+  have hj0 : i.1.val = 0 := by
+    have hlt := i.1.isLt
+    simp at hlt
+    omega
+  exact x_castLE_zero _ _ _ hj0
+
+example : (M.doNode 0 true).inducedLaw μ ![false, false] = 0 := by
+  have hfac0 : ∀ z : ((M.inducedBayesNet μ).intervene 0 true).pa 0 → Bool,
+      (((M.inducedBayesNet μ).intervene 0 true).cpt 0 z).weights
+        ((![false, false] : Fin 2 → Bool) 0) = 0 := by
+    intro z
+    have hcpt : ((M.inducedBayesNet μ).intervene 0 true).cpt 0 z
+        = StdSimplex.single true := by
+      simp [BayesNet.intervene]
+    rw [hcpt]
+    have hx0 : (![false, false] : Fin 2 → Bool) 0 = false := by simp
+    rw [hx0]
+    simp [StdSimplex.weights_single]
+  rw [FiniteSCM.inducedLaw_doNode, BayesNet.joint_eq_prod, Fin.prod_univ_two, hfac0,
+    zero_mul]
+
+example : (M.doSet {0} ![true, true]).inducedLaw μ ![true, false] = 1 / 3 := by
+  have h1W : (1 : Fin 2) ∉ ({0} : Finset (Fin 2)) := by simp
+  have h0W : (0 : Fin 2) ∈ ({0} : Finset (Fin 2)) := by simp
+  have hx1 : (![true, false] : Fin 2 → Bool) 1 = false := by simp
+  have hfac0 : ∀ z : ((M.inducedBayesNet μ).mutilateSet {0} ![true, true]).pa 0 → Bool,
+      (((M.inducedBayesNet μ).mutilateSet {0} ![true, true]).cpt 0 z).weights
+        ((![true, false] : Fin 2 → Bool) 0) = 1 := by
+    intro z
+    have hcpt : ((M.inducedBayesNet μ).mutilateSet {0} ![true, true]).cpt 0 z
+        = StdSimplex.single ((![true, true] : Fin 2 → Bool) 0) := by
+      simp [BayesNet.mutilateSet, h0W]
+    rw [hcpt]
+    have hw0 : (![true, true] : Fin 2 → Bool) 0 = true := by simp
+    rw [hw0]
+    have hx0 : (![true, false] : Fin 2 → Bool) 0 = true := by simp
+    rw [hx0]
+    simp [StdSimplex.weights_single]
+  rw [FiniteSCM.inducedLaw_doSet, BayesNet.joint_eq_prod, Fin.prod_univ_two, hfac0, hx1]
+  rw [one_mul]
+  simp only [BayesNet.mutilateSet, dite_eq_right h1W, FiniteSCM.inducedBayesNet, M]
+  refine map1_weights _ ?_
+  intro i
+  have hj0 : i.1.val = 0 := by
+    have hlt := i.1.isLt
+    simp at hlt
+    omega
+  exact x_castLE_zero _ _ _ hj0
+
+/-- The node-0 push-forward factor at `true` is `1/4`: node 0 copies its noise. -/
+theorem map0_weights (g : paXor 0 → Bool) : ((μ 0).map (fXor 0 g)).weights true = 1 / 4 := by
+  have hid : fXor 0 g = id := funext fun v => fXor_zero g v
+  have hμ0 : μ 0 = μ0 := by simp [μ]
+  rw [hid, StdSimplex.map_id, hμ0, μ0_true]
+
+/-- Before surgery, node `1` has the nonempty parent set `{0}`. -/
+example : (M.pa 1).Nonempty := by
+  have h10 : (1 : Fin 2) ≠ 0 := by decide
+  simp only [M, paXor, dite_eq_right h10]
+  exact Finset.singleton_nonempty _
+
+/-- Surgery on node `1` deletes its parents. -/
+example : (M.doNode 1 false).pa 1 = ∅ := by
+  simp [FiniteSCM.doNode]
+
+/-- Surgery on a set containing node `1` deletes its parents. -/
+example : (M.doSet {0, 1} ![true, false]).pa 1 = ∅ := by
+  simp [FiniteSCM.doSet]
+
+/-- After surgery on node `1`, its solution is the intervention value at every noise value. -/
+example (u : (k : Fin 2) → Bool) : (M.doNode 1 false).solve u 1 = false := by
+  have h := (M.doNode 1 false).solve_isSolution u 1
+  rw [M.doNode_f_of_eq] at h
+  exact h
+
+/-- After surgery on a set containing node `1`, its solution is the intervention value. -/
+example (u : (k : Fin 2) → Bool) : (M.doSet {0, 1} ![true, false]).solve u 1 = false := by
+  have h1W : (1 : Fin 2) ∈ ({0, 1} : Finset (Fin 2)) := by simp
+  have h := (M.doSet {0, 1} ![true, false]).solve_isSolution u 1
+  rw [M.doSet_f_of_mem _ _ h1W] at h
+  simpa using h
+
+/-- After `do(X_1 = false)`, the law of `(true, false)` is the probability `1/4` of
+`X_0 = true`. -/
+example : (M.doNode 1 false).inducedLaw μ ![true, false] = 1 / 4 := by
+  have h01 : (0 : Fin 2) ≠ 1 := by decide
+  have hx0 : (![true, false] : Fin 2 → Bool) 0 = true := by simp
+  have hfac1 : ∀ z : ((M.inducedBayesNet μ).intervene 1 false).pa 1 → Bool,
+      (((M.inducedBayesNet μ).intervene 1 false).cpt 1 z).weights
+        ((![true, false] : Fin 2 → Bool) 1) = 1 := by
+    intro z
+    have hcpt : ((M.inducedBayesNet μ).intervene 1 false).cpt 1 z
+        = StdSimplex.single false := by
+      simp [BayesNet.intervene]
+    rw [hcpt]
+    have hx1 : (![true, false] : Fin 2 → Bool) 1 = false := by simp
+    rw [hx1]
+    simp [StdSimplex.weights_single]
+  rw [FiniteSCM.inducedLaw_doNode, BayesNet.joint_eq_prod, Fin.prod_univ_two, hfac1, mul_one,
+    hx0]
+  simp only [BayesNet.intervene, dite_eq_right h01, FiniteSCM.inducedBayesNet, M]
+  exact map0_weights _
+
+end Surgery
 
 end Cslib.MachineLearning.StructuralCausalModelsTests
