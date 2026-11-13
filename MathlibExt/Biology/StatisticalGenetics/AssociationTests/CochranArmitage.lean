@@ -356,11 +356,6 @@ theorem caStat_ae_eq_zero_of_genotype_const
     intro m _ h
     exact hi (h.1 ▸ hω m)
 
-/-- `χ²₁` has no atom at `0`. -/
-private theorem chiSquareMeasure_one_singleton_zero : chiSquareMeasure 1 {0} = 0 := by
-  rw [chiSquareMeasure, gammaMeasure, withDensity_apply _ (measurableSet_singleton 0)]
-  exact setLIntegral_measure_zero _ _ (Real.volume_singleton)
-
 /-- **The singular design has no `χ²₁` limit**: if the genotype is almost surely a single class,
 the trend statistic converges in distribution to the Dirac mass at `0`, so it does not converge
 to `χ²₁`. The positive score variance hypothesis of `tendstoInDistribution_caStat` cannot be
@@ -380,7 +375,7 @@ theorem not_tendstoInDistribution_caStat_of_genotype_const
   have huniq := tendstoInDistribution_unique _ h hconst
   rw [hZ.map_eq, Measure.map_const, measure_univ, one_smul] at huniq
   have := congrArg (fun μ : Measure ℝ ↦ μ {0}) huniq
-  simp only [chiSquareMeasure_one_singleton_zero] at this
+  simp only [chiSquareMeasure_singleton] at this
   simp at this
 
 end Test

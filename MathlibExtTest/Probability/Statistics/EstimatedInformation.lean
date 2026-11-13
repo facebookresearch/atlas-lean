@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Probability.Statistics.EstimatedInformation
 public import MathlibExtTest.Probability.Statistics.VectorInference
+import MathlibExt.Probability.BrownianQuadraticVariation
 
 /-!
 # Tests for estimated information in regular likelihood inference
@@ -258,35 +259,6 @@ theorem fderiv_score_pV_one (x : ℝ) :
     fderiv ℝ (fun t => score pV t x) 1 = (1 / 2 - x ^ 2) • (1 : ℝ →L[ℝ] ℝ) := by
   rw [fderiv_score_pV one_ne_zero]; norm_num
 
-/-- Fourth moment of `N(0, 1)` (specialization of the private
-`BrownianQuadraticVariation.gaussian_fourth`, same proof). -/
-private theorem gaussian_fourth : ∫ x : ℝ, x ^ 4 ∂gaussianReal 0 1 = 3 := by
-  change (∫ x, ((fun x : ℝ ↦ x) ^ 4) x ∂gaussianReal 0 1) = _
-  rw [← iteratedDeriv_mgf_zero (by simp), mgf_fun_id_gaussianReal]
-  simp only [zero_mul, zero_add, NNReal.coe_one, one_mul]
-  have h1 : deriv (fun t : ℝ ↦ Real.exp (t ^ 2 / 2)) = fun t ↦ t * Real.exp (t ^ 2 / 2) := by
-    ext t
-    rw [_root_.deriv_exp (by fun_prop)]
-    simp only [deriv_div_const, differentiableAt_fun_id, deriv_fun_pow, Nat.cast_ofNat,
-      Nat.add_one_sub_one, pow_one, deriv_id'', mul_one]
-    ring
-  have h2 : deriv (fun t : ℝ ↦ t * Real.exp (t ^ 2 / 2)) =
-      fun t ↦ (1 + t ^ 2) * Real.exp (t ^ 2 / 2) := by
-    ext t
-    rw [deriv_fun_mul (by fun_prop) (by fun_prop), h1]
-    simp
-    ring
-  have h3 : deriv (fun t : ℝ ↦ (1 + t ^ 2) * Real.exp (t ^ 2 / 2)) =
-      fun t ↦ (3 * t + t ^ 3) * Real.exp (t ^ 2 / 2) := by
-    ext t
-    rw [deriv_fun_mul (by fun_prop) (by fun_prop), h1]
-    simp
-    ring
-  rw [iteratedDeriv_succ, iteratedDeriv_succ, iteratedDeriv_succ, iteratedDeriv_one, h1, h2, h3]
-  rw [deriv_fun_mul (by fun_prop) (by fun_prop), h1]
-  rw [deriv_fun_add (by fun_prop) (by fun_prop)]
-  simp [deriv_fun_pow]
-
 /-- `x²` is in `L²(N(0, 1))`. -/
 private theorem memLp_sq_gaussianReal : MemLp (fun x : ℝ ↦ x ^ 2) 2 (gaussianReal 0 1) := by
   have h4 : MemLp (fun x : ℝ ↦ x) 4 (gaussianReal 0 1) := memLp_id_gaussianReal 4
@@ -318,7 +290,7 @@ private theorem integral_score_pV_sq :
   rw [he, integral_div, integral_add (f := fun x : ℝ => x ^ 4 - 2 * x ^ 2)
     (hi4.sub (hi2.const_mul 2)) (integrable_const 1),
     integral_sub (f := fun x : ℝ => x ^ 4) hi4 (hi2.const_mul 2), integral_const_mul,
-    gaussian_fourth,
+    integral_pow_four_gaussianReal,
     MathlibExtTest.Probability.Statistics.VectorInference.integral_sq_gaussianReal]
   simp; norm_num
 

@@ -15,11 +15,13 @@ import Mathlib.Tactic.NormNum
 /-!
 # European option payoffs
 
-European call and put payoffs at expiry, and the identity that call payoff
-minus put payoff equals terminal underlying minus strike.
+European call and put payoffs at expiry, the nonnegativity of the call payoff,
+and the identity that call payoff minus put payoff equals terminal underlying
+minus strike.
 
 ## Main results
 
+* `europeanCallPayoff_nonneg`: `0 ≤ max (S - K) 0`.
 * `callPayoff_sub_putPayoff`: `(S - K)⁺ - (K - S)⁺ = S - K`, from
   `posPart_sub_negPart`.
 * `callPayoff_sub_putPayoff_example`: a concrete instance.
@@ -36,6 +38,12 @@ noncomputable def europeanCallPayoff (S K : ℝ) : ℝ := max (S - K) 0
 /-- European put payoff at expiry: `max (K - S) 0`, where `S` is the terminal
 underlying price and `K` is the strike. -/
 noncomputable def europeanPutPayoff (S K : ℝ) : ℝ := max (K - S) 0
+
+/-- The European call payoff is nonnegative: the holder never has to pay at
+expiry (limited liability). -/
+theorem europeanCallPayoff_nonneg (S K : ℝ) : 0 ≤ europeanCallPayoff S K := by
+  unfold europeanCallPayoff
+  exact le_max_right _ _
 
 /-- Call payoff minus put payoff equals terminal underlying minus strike:
 `(S - K)⁺ - (K - S)⁺ = S - K`. This is `posPart_sub_negPart` once
