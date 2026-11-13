@@ -545,8 +545,8 @@ theorem measure_ateLehmannPValue_observed_le (hT : MeasurableSet T) (hX : Measur
 
 /-- **BH power in terms of the average treatment effect.** If endpoint `j` is strongly ignorable
 given `X`, BH at level `q ∈ [0, 1]` on the ATE Lehmann p-values rejects `j` with probability at
-least `(q / m) ^ exp (-(κ j * E[Y₁ j - Y₀ j]))`. For a positive effect and `κ j > 0` this is
-larger than the per-endpoint Bonferroni level `q / m`. -/
+least `(q / m) ^ exp (-(κ j * E[Y₁ j - Y₀ j]))`. For a positive effect and `κ j > 0` this is at
+least the per-endpoint Bonferroni level `q / m`, strictly larger exactly when `0 < q / m < 1`. -/
 theorem ofReal_le_measure_mem_bhRejections_ateLehmannPValue_observed (hT : MeasurableSet T)
     (hX : Measurable X) {Y₀ Y₁ : Fin m → Ω → ℝ} {c : Fin m → Fin k} {j : Fin m}
     (hY₀ : Measurable (Y₀ j)) (hY₁ : Measurable (Y₁ j)) (hY₀i : Integrable (Y₀ j) μ)
