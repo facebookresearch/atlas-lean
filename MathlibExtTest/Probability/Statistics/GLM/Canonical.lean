@@ -125,6 +125,13 @@ example : poissonLogLik X₀ 0 ![2, 0] 0 = -2 - log 2 := by
   rw [poissonLogLik_eq_kernel]
   simp [poissonLogLikKernel, linearPredictor_apply, Fin.sum_univ_two, Nat.factorial_two]
 
+/-- The same value is the log-probability of the counts `(2, 0)` under the joint law of
+independent `Poisson(exp ηᵢ)` responses at `β = 0`. -/
+example : log ((MeasureTheory.Measure.pi fun i => ProbabilityTheory.poissonMeasure
+      ⟨exp (linearPredictor X₀ 0 0 i), (exp_pos _).le⟩).real {![2, 0]}) = -2 - log 2 := by
+  rw [← poissonLogLik_eq_log_pi_poissonMeasure, poissonLogLik_eq_kernel]
+  simp [poissonLogLikKernel, linearPredictor_apply, Fin.sum_univ_two, Nat.factorial_two]
+
 /-- Uniqueness transfers from the kernel to the count likelihood. -/
 example {β₁ β₂ : Fin 2 → ℝ} (h₁ : IsMaxOn (poissonLogLik X₀ 0 ![2, 0]) Set.univ β₁)
     (h₂ : IsMaxOn (poissonLogLik X₀ 0 ![2, 0]) Set.univ β₂) : β₁ = β₂ :=

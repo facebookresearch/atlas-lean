@@ -13,7 +13,7 @@ public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
 public import Mathlib.Analysis.Convex.Function
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Order.Filter.Extr
-public import Mathlib.Probability.Distributions.Poisson.Basic
+public import MathlibExt.Probability.Statistics.PoissonLikelihood
 public import MathlibExt.Analysis.Calculus.DotProductGradient
 import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
@@ -32,7 +32,9 @@ objective here is a deterministic function of `β`.
   `sigmoid_logLik_term` is the per-observation identity
   `y log σ(η) + (1 - y) log (1 - σ(η)) = y η - log (1 + exp η)`, valid for every real `y`.
 * **Poisson with log link.** The mean is `exp ηᵢ`. For counts `y : ι → ℕ` the log likelihood
-  `poissonLogLik` is `∑ᵢ log P(Yᵢ = yᵢ)` with `Yᵢ ~ Poisson(exp ηᵢ)`. The algebraic kernel
+  `poissonLogLik` is the shared count likelihood `PoissonLikelihood.poissonLogLik` at the means
+  `exp ηᵢ`; for independent `Yᵢ ~ Poisson(exp ηᵢ)` it is the log-probability of the observed
+  counts under their joint law (`poissonLogLik_eq_log_pi_poissonMeasure`). The algebraic kernel
   `poissonLogLikKernel` is `∑ᵢ (yᵢ ηᵢ - exp ηᵢ)` for every real `y`. For counts,
   `poissonLogLik_eq_kernel` shows that the likelihood is the kernel minus the `β`-free constant
   `∑ᵢ log yᵢ!`, and `isMaxOn_poissonLogLik_iff` that both have the same maximizers.
@@ -58,9 +60,10 @@ For both models (the Poisson statements are about the kernel `poissonLogLikKerne
 
 The models are normalized: `σ(η) ∈ (0, 1)` (`unitInterval.sigmoid η`), so the Bernoulli response
 law is `ProbabilityTheory.bernoulliMeasure 1 0 (unitInterval.sigmoid η)`, and the Poisson law is
-`ProbabilityTheory.poissonMeasure ⟨exp η, (exp_pos η).le⟩`. `poissonLogLik` sums the log masses
-of the Poisson laws at the observed counts; the product measure of the responses is not
-constructed here.
+`ProbabilityTheory.poissonMeasure ⟨exp η, (exp_pos η).le⟩`. By
+`poissonLogLik_eq_log_pi_poissonMeasure`, `poissonLogLik` is the log-probability of the observed
+counts under the product (`MeasureTheory.Measure.pi`) of these Poisson laws, the joint law of
+independent responses.
 -/
 
 @[expose] public section
@@ -419,24 +422,35 @@ term `∑ᵢ log yᵢ!` (`poissonLogLik_eq_kernel`). -/
 noncomputable def poissonLogLikKernel (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) : ℝ :=
   ∑ i, (y i * linearPredictor X o β i - exp (linearPredictor X o β i))
 
-/-- **The canonical Poisson log likelihood of counts.** For natural-valued counts `y : ι → ℕ` and
-independent responses `Yᵢ ~ Poisson(exp ηᵢ(β))` (`ProbabilityTheory.poissonMeasure`), this is
-`ℓ(β) = ∑ᵢ log P(Yᵢ = yᵢ)`. -/
+/-- **The canonical Poisson log likelihood of counts.** For natural-valued counts `y : ι → ℕ`
+this is the shared Poisson count log-likelihood
+`MathlibExt.Probability.Statistics.PoissonLikelihood.poissonLogLik` at the means `exp ηᵢ(β)`.
+For independent responses `Yᵢ ~ Poisson(exp ηᵢ(β))` (`ProbabilityTheory.poissonMeasure`) it is
+the log-probability of the observed counts `y` under their joint law
+(`poissonLogLik_eq_log_pi_poissonMeasure`). -/
 noncomputable def poissonLogLik (X : Matrix ι κ ℝ) (o : ι → ℝ) (y : ι → ℕ) (β : κ → ℝ) : ℝ :=
-  ∑ i, log ((ProbabilityTheory.poissonMeasure (exp (linearPredictor X o β i)).toNNReal).real {y i})
+  PoissonLikelihood.poissonLogLik (fun i => exp (linearPredictor X o β i)) y
+
+/-- **The joint law of independent Poisson responses.** For independent responses
+`Yᵢ ~ Poisson(exp ηᵢ(β))`, the canonical Poisson log likelihood of the counts `y` is the
+log-probability of `y` under their joint law, by
+`PoissonLikelihood.log_pi_poissonMeasure_real_singleton`. -/
+theorem poissonLogLik_eq_log_pi_poissonMeasure (X : Matrix ι κ ℝ) (o : ι → ℝ) (y : ι → ℕ)
+    (β : κ → ℝ) :
+    poissonLogLik X o y β =
+      log ((MeasureTheory.Measure.pi fun i => ProbabilityTheory.poissonMeasure
+        ⟨exp (linearPredictor X o β i), (exp_pos _).le⟩).real {y}) :=
+  (PoissonLikelihood.log_pi_poissonMeasure_real_singleton
+    (fun i => ⟨exp (linearPredictor X o β i), (exp_pos _).le⟩)
+    (fun i => NNReal.coe_pos.mp (exp_pos (linearPredictor X o β i))) y).symm
 
 /-- **The Poisson likelihood of counts is the kernel minus a `β`-free constant:**
 `ℓ(β) = ∑ᵢ (yᵢ ηᵢ(β) - exp ηᵢ(β)) - ∑ᵢ log yᵢ!`. -/
 theorem poissonLogLik_eq_kernel (X : Matrix ι κ ℝ) (o : ι → ℝ) (y : ι → ℕ) (β : κ → ℝ) :
     poissonLogLik X o y β =
       poissonLogLikKernel X o (fun i => (y i : ℝ)) β - ∑ i, log ((y i).factorial : ℝ) := by
-  simp only [poissonLogLik, poissonLogLikKernel, ← Finset.sum_sub_distrib]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  have hfac : (0 : ℝ) < ((y i).factorial : ℝ) := by exact_mod_cast Nat.factorial_pos _
-  rw [ProbabilityTheory.poissonMeasure_real_singleton, Real.coe_toNNReal _ (exp_pos _).le,
-    log_div (by positivity) hfac.ne', log_mul (exp_pos _).ne' (by positivity), log_exp, log_pow,
-    log_exp]
-  ring
+  simp only [poissonLogLik, PoissonLikelihood.poissonLogLik, poissonLogLikKernel, log_exp,
+    ← Finset.sum_sub_distrib]
 
 /-- The Poisson likelihood of counts and its kernel have the same maximizers on every set, so
 `poissonLogLikKernel_maximizer_unique` and `poissonLogLikKernel_allZero_not_isMaxOn` apply to
