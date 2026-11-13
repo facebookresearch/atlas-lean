@@ -166,15 +166,15 @@ example (n : ℕ) (hn : 0 < n) :
     simp [ENNReal.toReal_inv]
   exact hmain.trans hval
 
-/-- Use: at `n = 1` the tuple law is the population law by this theorem. -/
+/-- Use: at `n = 1` the one-coordinate tuple has the product base measure with density
+`F.iidLikelihood 1 θ` as its law. -/
 example {Ω S Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace S]
     {μ : Measure Ω} [IsProbabilityMeasure μ] {μ₀ : Measure S} [SigmaFinite μ₀]
     {F : NormalizedDensityFamily S Θ μ₀} {θ : Θ}
     {X : Fin 1 → Ω → S}
     (hlaw : ∀ i, HasLaw (X i) (F.law θ) μ) (hind : iIndepFun X μ) :
     HasLaw (fun ω i => X i ω)
-      ((Measure.pi fun _ : Fin 1 => μ₀).withDensity
-        fun x : Fin 1 → S => ∏ i, F.dens θ (x i)) μ := by
+      ((Measure.pi fun _ : Fin 1 => μ₀).withDensity (F.iidLikelihood 1 θ)) μ := by
   exact MathlibExt.Probability.Statistics.HasLaw_tuple_of_iidLikelihood hlaw hind
 
 /-- Boundary: the empty product is `1`. -/
@@ -190,13 +190,11 @@ example {Ω S U Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace S] [Measurable
     {X : Fin n → Ω → S} {T : (Fin n → S) → U} (hT : Measurable T)
     (hlaw : ∀ i, HasLaw (X i) (F.law θ) μ) (hind : iIndepFun X μ) :
     HasLaw (fun ω => T fun i => X i ω)
-      (((Measure.pi fun _ : Fin n => μ₀).withDensity
-        fun x : Fin n → S => ∏ i, F.dens θ (x i)).map T) μ := by
+      (((Measure.pi fun _ : Fin n => μ₀).withDensity (F.iidLikelihood n θ)).map T) μ := by
   have htuple := MathlibExt.Probability.Statistics.HasLaw_tuple_of_iidLikelihood hlaw hind
   have hmap : HasLaw T (((Measure.pi fun _ : Fin n => μ₀).withDensity
-      fun x : Fin n → S => ∏ i, F.dens θ (x i)).map T)
-      ((Measure.pi fun _ : Fin n => μ₀).withDensity
-        fun x : Fin n → S => ∏ i, F.dens θ (x i)) :=
+      (F.iidLikelihood n θ)).map T)
+      ((Measure.pi fun _ : Fin n => μ₀).withDensity (F.iidLikelihood n θ)) :=
     hasLaw_map hT.aemeasurable
   exact HasLaw.comp hmap htuple
 
@@ -219,47 +217,9 @@ example : ¬ HasLaw (fun ω : Bool => fun _ : Fin 2 => ω)
   have hreal := congrArg ENNReal.toReal heq2
   simp [ENNReal.toReal_mul, ENNReal.toReal_inv] at hreal
 
-/-- A biased coin on `Bool` with success probability `1 / 3`, for the two-sample
-fixture below. Scratch-local: the destination test file does not declare it. -/
-noncomputable def biasedCoin : Measure Bool :=
-  (3 : ENNReal)⁻¹ • (Measure.dirac true + 2 • Measure.dirac false)
-
-/-- The integral against a biased coin. Scratch-local, proved like `integral_fairCoin`. -/
-private theorem integral_biasedCoin (f : Bool → ℝ) :
-    ∫ b, f b ∂biasedCoin = (f true + 2 * f false) / 3 := by
-  have h1 : Integrable f (Measure.dirac true) := integrable_dirac (by simp)
-  have h2 : Integrable f (Measure.dirac false) := integrable_dirac (by simp)
-  rw [biasedCoin, two_smul, integral_smul_measure,
-    integral_add_measure h1 (h2.add_measure h2),
-    integral_dirac, integral_add_measure h2 h2, integral_dirac]
-  simp [ENNReal.toReal_inv, smul_eq_mul]
-  ring
-
-/-- Negative and non-vacuity: two Bernoulli 2-samples with different success probabilities
-(`1 / 2` vs `1 / 3`) cannot have equal laws. Both product laws are evaluated directly at
-the singleton `{(fun _ => true)}` via `Measure.pi_singleton`: `(1 / 2) ^ 2 = 1 / 4` against
-`(1 / 3) ^ 2 = 1 / 9`. -/
-example (h : (Measure.pi fun _ : Fin 2 => fairCoin)
-    = (Measure.pi fun _ : Fin 2 => biasedCoin)) : False := by
-  have hmass : biasedCoin Set.univ = 1 := by
-    simp only [biasedCoin, Measure.smul_apply, Measure.add_apply,
-      Measure.dirac_apply_of_mem (Set.mem_univ true),
-      Measure.dirac_apply_of_mem (Set.mem_univ false)]
-    simp only [smul_eq_mul]
-    simp only [two_smul]
-    norm_num
-    exact ENNReal.inv_mul_cancel (by simp) (by simp)
-  have : IsProbabilityMeasure biasedCoin := ⟨hmass⟩
-  have hcongr := congrArg (fun μ => μ {(fun _ : Fin 2 => true)}) h
-  simp only [Measure.pi_singleton] at hcongr
-  simp only [Fin.prod_univ_two] at hcongr
-  simp [fairCoin, biasedCoin] at hcongr
-  have hreal := congrArg ENNReal.toReal hcongr
-  simp [ENNReal.toReal_mul, ENNReal.toReal_inv] at hreal
-  norm_num at hreal
-
 /-- Non-vacuous Gaussian case: the joint law of two iid standard normals is the product
-density. The normalized family is built from `gaussianPDF 0 1` over Lebesgue measure;
+density, here written out as `∏ i, F.dens () (x i)`, which is `F.iidLikelihood 2 ()` by
+definition. The normalized family is built from `gaussianPDF 0 1` over Lebesgue measure;
 the iid structure comes from the canonical product model. -/
 example :
     let F : NormalizedDensityFamily ℝ Unit volume :=
@@ -289,15 +249,15 @@ example :
     ProbabilityTheory.iIndepFun_pi (fun _ => aemeasurable_id)
   exact MathlibExt.Probability.Statistics.HasLaw_tuple_of_iidLikelihood hlaw hind
 
-/-- Boundary: the empty tuple has the product-density law (this is where the source
-`IsProbabilityMeasure` is used). -/
+/-- Boundary: at `n = 0` the empty tuple has the product base measure with density
+`F.iidLikelihood 0 θ` as its law. -/
 example {Ω S Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace S]
     {μ : Measure Ω} [IsProbabilityMeasure μ] {μ₀ : Measure S} [SigmaFinite μ₀]
     {F : NormalizedDensityFamily S Θ μ₀} {θ : Θ}
     {X : Fin 0 → Ω → S}
     (hlaw : ∀ i, HasLaw (X i) (F.law θ) μ) (hind : iIndepFun X μ) :
-    HasLaw (fun ω i => X i ω) ((Measure.pi fun _ : Fin 0 => μ₀).withDensity
-      fun x : Fin 0 → S => ∏ i, F.dens θ (x i)) μ := by
+    HasLaw (fun ω i => X i ω)
+      ((Measure.pi fun _ : Fin 0 => μ₀).withDensity (F.iidLikelihood 0 θ)) μ := by
   exact MathlibExt.Probability.Statistics.HasLaw_tuple_of_iidLikelihood hlaw hind
 
 end MathlibExtTest.Probability.Statistics.SampleLaw

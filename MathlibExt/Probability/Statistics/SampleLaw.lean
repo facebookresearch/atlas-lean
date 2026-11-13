@@ -12,6 +12,7 @@ public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.HasLaw
 public import Mathlib.MeasureTheory.Constructions.Pi
 public import MathlibExt.Probability.Statistics.Likelihood
+import MathlibExt.MeasureTheory.Measure.PiWithDensity
 import MathlibExt.Probability.MonteCarloRate
 
 /-!
@@ -31,6 +32,8 @@ for every `n`, including `n = 0`. The normalized empirical mean additionally req
 * `hasLaw_statistic`: the sampling distribution of a measurable statistic.
 * `integral_empiricalMean_of_common_marginals`: the empirical average has expectation
   `∫ g dν` for common marginals, with no independence hypothesis.
+* `HasLaw_tuple_of_iidLikelihood`: an i.i.d. sample from a normalized density family has, as
+  its tuple law, the product base measure with density `iidLikelihood`.
 -/
 
 @[expose] public section
@@ -84,95 +87,12 @@ end MathlibExt.Probability.Statistics
 open MeasureTheory ProbabilityTheory
 open scoped BigOperators ENNReal
 
-private theorem lintegral_const_mul_ae {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    (r : ℝ≥0∞) {f : α → ℝ≥0∞} (hf : AEMeasurable f μ) :
-    ∫⁻ a, r * f a ∂μ = r * ∫⁻ a, f a ∂μ := by
-  have h_eq : f =ᵐ[μ] AEMeasurable.mk f hf := hf.ae_eq_mk
-  have h_mul : (fun a => r * f a) =ᵐ[μ] (fun a => r * AEMeasurable.mk f hf a) :=
-    Filter.EventuallyEq.mul Filter.EventuallyEq.rfl h_eq
-  rw [lintegral_congr_ae h_mul, lintegral_const_mul r hf.measurable_mk,
-    lintegral_congr_ae h_eq]
-
-private theorem lintegral_mul_const_ae {α : Type*} [MeasurableSpace α] {μ : Measure α}
-    (r : ℝ≥0∞) {f : α → ℝ≥0∞} (hf : AEMeasurable f μ) :
-    ∫⁻ a, f a * r ∂μ = (∫⁻ a, f a ∂μ) * r := by
-  have h_eq : f =ᵐ[μ] AEMeasurable.mk f hf := hf.ae_eq_mk
-  have h_mul : (fun a => f a * r) =ᵐ[μ] (fun a => AEMeasurable.mk f hf a * r) :=
-    Filter.EventuallyEq.mul h_eq Filter.EventuallyEq.rfl
-  rw [lintegral_congr_ae h_mul, lintegral_mul_const r hf.measurable_mk,
-    lintegral_congr_ae h_eq]
-
-private theorem MeasurePreserving_lintegral_comp_ae {α β : Type*} [MeasurableSpace α]
-    [MeasurableSpace β] {μ : Measure α} {ν : Measure β} {e : α → β}
-    (he : MeasurePreserving e μ ν) {f : β → ℝ≥0∞} (hf : AEMeasurable f ν) :
-    ∫⁻ a, f (e a) ∂μ = ∫⁻ b, f b ∂ν := by
-  have h_eq : f =ᵐ[ν] AEMeasurable.mk f hf := hf.ae_eq_mk
-  have h_comp : (f ∘ e) =ᵐ[μ] (AEMeasurable.mk f hf ∘ e) :=
-    he.quasiMeasurePreserving.ae_eq_comp h_eq
-  have h1 : (fun a => f (e a)) =ᵐ[μ] (fun a => AEMeasurable.mk f hf (e a)) := h_comp
-  rw [lintegral_congr_ae h1, he.lintegral_comp hf.measurable_mk, lintegral_congr_ae h_eq]
-
-private theorem lintegral_pi_fin_prod {n : ℕ} {S : Type*} [MeasurableSpace S]
-    (μ : Fin n → Measure S) [∀ i, SigmaFinite (μ i)]
-    (f : Fin n → S → ℝ≥0∞) (hf : ∀ i, AEMeasurable (f i) (μ i)) :
-    ∫⁻ x, ∏ i, f i (x i) ∂(Measure.pi μ) = ∏ i, ∫⁻ y, f i y ∂(μ i) := by
-  induction n with
-  | zero =>
-    have h_univ : (Set.univ.pi fun _ : Fin 0 => Set.univ (α := S)) = Set.univ := by simp
-    rw [show (fun x : Fin 0 → S => ∏ i, f i (x i)) = fun _ => 1 from
-      funext fun x => Fin.prod_univ_zero _]
-    rw [lintegral_one, ← h_univ, Measure.pi_pi]
-    simp
-  | succ n ih =>
-    let i₀ : Fin (n + 1) := 0
-    let μtail : Fin n → Measure S := fun j => μ (i₀.succAbove j)
-    let ftail : Fin n → S → ℝ≥0∞ := fun j => f (i₀.succAbove j)
-    have : ∀ j, SigmaFinite (μtail j) := fun j => inferInstance
-    have hf_tail : ∀ j, AEMeasurable (ftail j) (μtail j) := fun j => hf _
-    let e := MeasurableEquiv.piFinSuccAbove (fun _ : Fin (n + 1) => S) i₀
-    have he_pres : MeasurePreserving (⇑e) (Measure.pi μ)
-        ((μ i₀).prod (Measure.pi μtail)) :=
-      measurePreserving_piFinSuccAbove μ i₀
-    have hProd_tail : AEMeasurable (fun b : Fin n → S => ∏ j, ftail j (b j))
-        (Measure.pi μtail) := by
-      have := Finset.aemeasurable_fun_prod (M := ℝ≥0∞) (μ := Measure.pi μtail)
-        (f := fun j b => ftail j (b j)) Finset.univ (fun j _ =>
-        (hf_tail j).comp_quasiMeasurePreserving
-          (Measure.quasiMeasurePreserving_eval μtail j))
-      simpa using this
-    have h1 : AEMeasurable (fun z : S × (Fin n → S) => f i₀ z.1)
-        ((μ i₀).prod (Measure.pi μtail)) :=
-      (hf i₀).comp_quasiMeasurePreserving Measure.quasiMeasurePreserving_fst
-    have h2 : AEMeasurable (fun z : S × (Fin n → S) => ∏ j, ftail j (z.2 j))
-        ((μ i₀).prod (Measure.pi μtail)) :=
-      hProd_tail.comp_quasiMeasurePreserving Measure.quasiMeasurePreserving_snd
-    let g : S × (Fin n → S) → ℝ≥0∞ := fun z => f i₀ z.1 * ∏ j, ftail j (z.2 j)
-    have hg : AEMeasurable g ((μ i₀).prod (Measure.pi μtail)) := h1.mul h2
-    have hFG : (fun x : Fin (n + 1) → S => ∏ i, f i (x i)) = (fun x => g (e x)) := by
-      funext x
-      simp only [g]
-      rw [Fin.prod_univ_succAbove (fun i => f i (x i)) i₀]
-      have he1 : (e x).1 = x i₀ := by
-        simp [e, MeasurableEquiv.piFinSuccAbove_apply]
-      have he2 : ∀ j, (e x).2 j = x (i₀.succAbove j) := fun j => by
-        simp [e, MeasurableEquiv.piFinSuccAbove_apply, Fin.removeNth_apply]
-      simp only [he1, he2, ftail]
-    rw [hFG, MeasurePreserving_lintegral_comp_ae he_pres hg, lintegral_prod g hg]
-    have hinner : ∀ a : S, (∫⁻ b, g (a, b) ∂(Measure.pi μtail))
-        = f i₀ a * ∏ j, ∫⁻ y, ftail j y ∂(μtail j) := by
-      intro a
-      have h_eq : (fun b : Fin n → S => g (a, b))
-          = (fun b => f i₀ a * ∏ j, ftail j (b j)) := rfl
-      rw [h_eq, lintegral_const_mul_ae _ hProd_tail, ih μtail ftail hf_tail]
-    simp only [hinner]
-    rw [lintegral_mul_const_ae _ (hf i₀)]
-    exact (Fin.prod_univ_succAbove (fun i => ∫⁻ y, f i y ∂(μ i)) i₀).symm
-
 namespace MathlibExt.Probability.Statistics
 
 /-- **Tuple law as a product density.** The joint law of an i.i.d. sample from a
-normalized density family is the product base measure with the `iidLikelihood` product
-as density. -/
+normalized density family is the product base measure with density `F.iidLikelihood n θ`.
+The proof reduces to `Measure.pi_withDensity` after replacing the a.e.-measurable density by a
+measurable representative. -/
 theorem HasLaw_tuple_of_iidLikelihood
     {Ω S Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace S]
     {μ : Measure Ω} [IsProbabilityMeasure μ] {μ₀ : Measure S} [SigmaFinite μ₀]
@@ -180,29 +100,28 @@ theorem HasLaw_tuple_of_iidLikelihood
     {X : Fin n → Ω → S}
     (hlaw : ∀ i, HasLaw (X i) (F.law θ) μ) (hind : iIndepFun X μ) :
     HasLaw (fun ω i => X i ω)
-      ((Measure.pi fun _ : Fin n => μ₀).withDensity
-        fun x : Fin n → S => ∏ i, F.dens θ (x i)) μ := by
+      ((Measure.pi fun _ : Fin n => μ₀).withDensity (F.iidLikelihood n θ)) μ := by
   have : IsProbabilityMeasure (F.law θ) := F.isProbabilityMeasure_law θ
-  have hPi : HasLaw (fun ω i => X i ω) (Measure.pi fun _ : Fin n => F.law θ) μ :=
-    hind.hasLaw_pi hlaw
+  set g : S → ℝ≥0∞ := AEMeasurable.mk (F.dens θ) (F.measurable θ)
+  have hg : Measurable g := (F.measurable θ).measurable_mk
+  have hdens : F.dens θ =ᵐ[μ₀] g := (F.measurable θ).ae_eq_mk
+  have hlaw_g : F.law θ = μ₀.withDensity g := withDensity_congr_ae hdens
+  have : IsProbabilityMeasure (μ₀.withDensity g) := hlaw_g ▸ F.isProbabilityMeasure_law θ
   have hEq : (Measure.pi fun _ : Fin n => F.law θ)
-      = ((Measure.pi fun _ : Fin n => μ₀).withDensity
-        fun x : Fin n → S => ∏ i, F.dens θ (x i)) := by
-    apply Measure.pi_eq
-    intro s hs
-    have hbox : MeasurableSet (Set.univ.pi fun i => s i) :=
-      MeasurableSet.pi (Set.to_countable _) (fun i _ => hs i)
-    rw [withDensity_apply _ hbox]
-    have h_restrict : (Measure.pi fun _ : Fin n => μ₀).restrict
-        (Set.univ.pi fun i => s i)
-        = Measure.pi (fun i => (μ₀).restrict (s i)) :=
-      Measure.restrict_pi_pi _ _
-    rw [h_restrict]
-    rw [lintegral_pi_fin_prod _ _ (fun i => (F.measurable θ).restrict)]
-    apply Finset.prod_congr rfl
-    intro i _
-    rw [NormalizedDensityFamily.law, withDensity_apply _ (hs i)]
+      = (Measure.pi fun _ : Fin n => μ₀).withDensity (F.iidLikelihood n θ) := by
+    calc (Measure.pi fun _ : Fin n => F.law θ)
+        = Measure.pi (fun _ : Fin n => μ₀.withDensity g) := by rw [hlaw_g]
+      _ = (Measure.pi fun _ : Fin n => μ₀).withDensity (fun x => ∏ i, g (x i)) :=
+          Measure.pi_withDensity (μ := fun _ => μ₀) (f := fun _ => g) fun _ => hg
+      _ = (Measure.pi fun _ : Fin n => μ₀).withDensity (F.iidLikelihood n θ) := by
+          refine withDensity_congr_ae ?_
+          have hcoord : ∀ i : Fin n, (fun x : Fin n → S => g (x i))
+              =ᵐ[Measure.pi fun _ : Fin n => μ₀] fun x => F.dens θ (x i) := fun i =>
+            (Measure.quasiMeasurePreserving_eval (fun _ : Fin n => μ₀) i).ae_eq_comp hdens.symm
+          filter_upwards [Filter.eventually_all.2 hcoord] with x hx
+          rw [NormalizedDensityFamily.iidLikelihood_apply]
+          exact Finset.prod_congr rfl fun i _ => hx i
   rw [← hEq]
-  exact hPi
+  exact hind.hasLaw_pi hlaw
 
 end MathlibExt.Probability.Statistics
