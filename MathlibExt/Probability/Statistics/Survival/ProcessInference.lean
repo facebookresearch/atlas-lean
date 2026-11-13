@@ -17,11 +17,12 @@ import Mathlib.MeasureTheory.Measure.Portmanteau
 # Survival inference from process-level limits
 
 Inferential corollaries of process-level survival limits. The limits themselves are
-**hypotheses** of every theorem here: each takes a scalar or finite-dimensional marginal of a
-process-level limit, as a `TendstoInDistribution` statement to a centered Gaussian limit, plus
-consistency
-(`TendstoInMeasure`) of a variance estimator, and derives coverage or size by Slutsky's
-theorem and the portmanteau theorem. The Nelson–Aalen, Kaplan–Meier and Aalen–Johansen
+**hypotheses** of every theorem here: the scalar results assume `TendstoInDistribution`
+to a centered Gaussian limit; the finite-grid result assumes convergence in distribution
+to a vector with centered Gaussian coordinate marginals, not necessarily a jointly Gaussian
+law. Together with consistency (`TendstoInMeasure`) of a variance estimator, these limits
+give coverage or size by Slutsky's theorem and the portmanteau theorem.
+The Nelson–Aalen, Kaplan–Meier and Aalen–Johansen
 process limits do not by themselves give the Cox Wald and Breslow score limits used here; those
 are separate hypotheses.
 
