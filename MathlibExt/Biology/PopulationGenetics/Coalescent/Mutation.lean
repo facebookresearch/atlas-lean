@@ -239,7 +239,7 @@ instance (n : ℕ) (θ : ℝ≥0) : IsMarkovKernel (kingmanMutationKernel n θ) 
   infer_instance
 
 /-- An exponentially distributed random variable is a.s. nonnegative. -/
-private lemma ae_nonneg_of_hasLaw_expMeasure {Ω : Type*} {mΩ : MeasurableSpace Ω}
+lemma ae_nonneg_of_hasLaw_expMeasure {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {μ : Measure Ω} {Y : Ω → ℝ} {r : ℝ} (hr : 0 < r) (hY : HasLaw Y (expMeasure r) μ) :
     ∀ᵐ ω ∂μ, 0 ≤ Y ω := by
   have := isProbabilityMeasure_expMeasure hr
