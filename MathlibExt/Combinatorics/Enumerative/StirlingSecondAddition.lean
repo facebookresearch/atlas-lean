@@ -12,7 +12,7 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.Order.Ring.Nat
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 import Mathlib.Tactic.Ring
 
 @[expose] public section

@@ -12,7 +12,7 @@ public import Mathlib.Data.Set.Function
 public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.Order.Ring.Nat
 import Mathlib.Algebra.Order.Sub.Basic
-import Mathlib.Data.Nat.SuccPred
+import Mathlib.Order.SuccPred.Nat
 
 @[expose] public section
 

@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Combinatorics.Enumerative.Stirling
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 
 namespace MetaMathlibExt
 
