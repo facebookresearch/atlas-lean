@@ -43,7 +43,7 @@ cardinals, for every matching `M'`. -/
 def IsStronglyMaximal {V : Type} (E M : Set (Finset V)) : Prop :=
   IsMatching E M ∧ ∀ M', IsMatching E M' → Cardinal.mk ↥(M' \ M) ≤ Cardinal.mk ↥(M \ M')
 
-/-- The EGRES question, with a positive answer: every hypergraph whose edges all have size at most
+/-- The refuted EGRES claim: every hypergraph whose edges all have size at most
 `k`, for some `k`, has a strongly maximal matching. -/
 def boundedEdgesStronglyMaximalMatching : Prop :=
   ∀ (V : Type) (E : Set (Finset V)) (k : ℕ), (∀ e ∈ E, e.card ≤ k) →
