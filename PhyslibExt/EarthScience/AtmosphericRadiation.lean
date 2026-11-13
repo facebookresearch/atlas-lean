@@ -1,4 +1,4 @@
- /-
+/-
 Copyright (c) Meta Platforms, Inc. and affiliates.
 All rights reserved.
 
@@ -33,8 +33,11 @@ feedback is claimed; `eps = 0` is handled without division by `eps`.
 
 - `EarthScience.atmosphere_temperature`: `Ta^4 = Ts^4 / 2` for `eps > 0`.
 - `EarthScience.surface_temperature`: balances yield `Ts^4 = Te^4 / (1 - eps/2)`.
-- `EarthScience.transparent_limit`: `eps = 0` gives `Ts^4 = Te^4`.
-- `EarthScience.opaque_witness`: `eps = 1` gives `Ts^4 = 2 * Te^4`.
+- `EarthScience.transparent_limit`: `eps = 0` gives `Ts^4 = Te^4` (equal fourth powers).
+- `EarthScience.opaque_surface_temperature`: at `eps = 1` the balances give
+  `Ts^4 = 2 * Te^4`.
+- `EarthScience.opaque_normalization`: the arithmetic step
+  `Te^4 / (1 - 1/2) = 2 * Te^4` used by the opaque case.
 
 ## iii. Table of contents
 
@@ -42,7 +45,16 @@ feedback is claimed; `eps = 0` is handled without division by `eps`.
 
 ## iv. References
 
-- See the individual theorem docstrings.
+- J. Marshall and R. A. Plumb, *Atmosphere, Ocean, and Climate Dynamics:
+  An Introductory Text*, Elsevier Academic Press (2008), Chapter 2 (The
+  global energy balance): the one-layer greenhouse model whose atmosphere
+  is transparent to solar radiation and absorbs and emits a fraction `eps`
+  of longwave radiation, with the atmosphere and top-of-atmosphere balances
+  above and `Ts^4 = Te^4 / (1 - eps/2)`.
+- D. L. Hartmann, *Global Physical Climatology*, 2nd ed., Elsevier (2016),
+  Chapter 2 (The Global Energy Balance): the effective (emission)
+  temperature `Te` and the one-layer blackbody atmosphere (`eps = 1`),
+  where `Ts^4 = 2 * Te^4`.
 -/
 
 @[expose] public section
@@ -88,8 +100,9 @@ theorem surface_temperature {eps σ Te Ts Ta : ℝ} (hσ : 0 < σ)
     rw [eq_div_iff hdenom]
     exact hTe.symm
 
-/-- Transparent limit `eps = 0`: the surface temperature equals the
-effective temperature, `Ts^4 = Te^4`. -/
+/-- Transparent limit `eps = 0`: the top-of-atmosphere balance gives equal
+fourth powers, `Ts^4 = Te^4`. Without sign hypotheses this does not give
+`Ts = Te` (`Ts = 1`, `Te = -1` also satisfy it). -/
 theorem transparent_limit {σ Te Ts Ta : ℝ} (hσ : 0 < σ)
     (htoa : σ * Te ^ 4 = (1 - (0 : ℝ)) * σ * Ts ^ 4 + (0 : ℝ) * σ * Ta ^ 4) :
     Ts ^ 4 = Te ^ 4 := by
@@ -97,12 +110,23 @@ theorem transparent_limit {σ Te Ts Ta : ℝ} (hσ : 0 < σ)
   simp only [sub_zero, one_mul, zero_mul, add_zero] at htoa
   exact (mul_left_cancel₀ hσne htoa).symm
 
-/-- Non-vacuous witness: `eps = 1` gives `Ts^4 = 2 * Te^4`. -/
-theorem opaque_witness {Te Ts : ℝ}
+/-- Arithmetic normalization only: the right side of `surface_temperature`
+at `eps = 1`, `Te^4 / (1 - 1/2)`, is `2 * Te^4`. It does not use the
+balances; `opaque_surface_temperature` is the model result. -/
+theorem opaque_normalization {Te Ts : ℝ}
     (h : Ts ^ 4 = Te ^ 4 / (1 - (1 : ℝ) / 2)) :
     Ts ^ 4 = 2 * Te ^ 4 := by
   norm_num at h
   linarith
+
+/-- Opaque limit `eps = 1`: the atmosphere balance and the
+top-of-atmosphere balance give `Ts^4 = 2 * Te^4`. This is
+`surface_temperature` at `eps = 1`. -/
+theorem opaque_surface_temperature {σ Te Ts Ta : ℝ} (hσ : 0 < σ)
+    (hatm : 2 * (1 : ℝ) * σ * Ta ^ 4 = (1 : ℝ) * σ * Ts ^ 4)
+    (htoa : σ * Te ^ 4 = (1 - (1 : ℝ)) * σ * Ts ^ 4 + (1 : ℝ) * σ * Ta ^ 4) :
+    Ts ^ 4 = 2 * Te ^ 4 :=
+  opaque_normalization (surface_temperature hσ zero_le_one le_rfl hatm htoa)
 
 
 end EarthScience
