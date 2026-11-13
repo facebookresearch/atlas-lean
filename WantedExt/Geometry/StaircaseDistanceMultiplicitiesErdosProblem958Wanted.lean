@@ -33,10 +33,16 @@ Multiplicities count unordered pairs (MathlibExt's `distanceMultiplicity`): `n -
 `C(n, 2)`, the number of unordered pairs, so 'ordered pairs' cannot be meant. Only the direction
 that Clemen, Dumitrescu and Liu refute is stated (multiplicities `n - 1, …, 1` force equally spaced
 points on a line or a circle); the converse direction is not formalized. Equally spaced points on a
-circle are consecutive points at a fixed angular step `α ≠ 0`. As in formal-conjectures the claim is
-for all large `n` (small exceptions such as `{(0, 0), (1, 0), (0, 1), (0, -1)}` exist), so its
-refutation asserts counterexamples of every large size. Compared with the formal-conjectures
-statement `ErdosProblems/958.lean` (equivalent; no code imported).
+circle are consecutive points along an arc at a fixed angular step `α ≠ 0` (`IsEquallySpacedOnArc`,
+formal-conjectures' `IsEquidistantOnCircle`); the step need not close up around the circle. This is
+the reading under which the circle case of the 'if and only if' holds: `n` equally spaced points on
+a short arc (`(n - 1) |α| ≤ π`) determine the `n - 1` chord lengths `2 r sin (j |α| / 2)`,
+`1 ≤ j < n`, with multiplicities `n - 1, …, 1`, while the vertices of a regular `n`-gon determine
+only `⌊n / 2⌋ < n - 1` distances when `n ≥ 3` (an equilateral triangle determines one), so with a
+closing step the circle case would never apply. As in formal-conjectures the claim is for all large
+`n` (small exceptions such as `{(0, 0), (1, 0), (0, 1), (0, -1)}` exist), so its refutation asserts
+counterexamples of every large size. Compared with the formal-conjectures statement
+`ErdosProblems/958.lean` (equivalent; no code imported).
 -/
 
 /-- `A` consists of `|A|` equally spaced points on a line: `a, a + v, …, a + (|A| - 1) v` with
@@ -45,9 +51,11 @@ def IsEquallySpacedOnLine (A : Finset (EuclideanSpace ℝ (Fin 2))) : Prop :=
   ∃ a v : EuclideanSpace ℝ (Fin 2), v ≠ 0 ∧
     (A : Set (EuclideanSpace ℝ (Fin 2))) = {x | ∃ i : ℕ, i < A.card ∧ x = a + (i : ℝ) • v}
 
-/-- `A` consists of `|A|` equally spaced points on a circle: the points of the circle with centre
-`c` and radius `r > 0` at the angles `θ + i α`, `0 ≤ i < |A|`, for some step `α ≠ 0`. -/
-def IsEquallySpacedOnCircle (A : Finset (EuclideanSpace ℝ (Fin 2))) : Prop :=
+/-- `A` consists of `|A|` equally spaced points along an arc of a circle: the points of the circle
+with centre `c` and radius `r > 0` at the angles `θ + i α`, `0 ≤ i < |A|`, for some step `α ≠ 0`.
+The step need not close up around the circle (see the module documentation): this is the problem's
+'equidistant points on a circle'. -/
+def IsEquallySpacedOnArc (A : Finset (EuclideanSpace ℝ (Fin 2))) : Prop :=
   ∃ (c : EuclideanSpace ℝ (Fin 2)) (r θ α : ℝ), 0 < r ∧ α ≠ 0 ∧
     (A : Set (EuclideanSpace ℝ (Fin 2))) = {x | ∃ i : ℕ, i < A.card ∧
       x = c + r • !₂[Real.cos (θ + i * α), Real.sin (θ + i * α)]}
@@ -55,18 +63,18 @@ def IsEquallySpacedOnCircle (A : Finset (EuclideanSpace ℝ (Fin 2))) : Prop :=
 /-- Erdős Problem 958 (the direction Erdős expected to fail), for all large `n`: every set `A` of
 `n` points of the plane that determines exactly `n - 1` distances, with multiplicities
 `n - 1, …, 1` (unordered pairs; `distanceSet`, `distanceMultiplicity`, MathlibExt), consists of
-equally spaced points on a line or on a circle. -/
+equally spaced points on a line or along an arc of a circle. -/
 def staircaseMultiplicitiesForceEquallySpaced : Prop :=
   ∃ N : ℕ, ∀ A : Finset (EuclideanSpace ℝ (Fin 2)), N ≤ A.card →
     (distanceSet A).card = A.card - 1 →
     (distanceSet A).image (distanceMultiplicity A) = Finset.Icc 1 (A.card - 1) →
-      IsEquallySpacedOnLine A ∨ IsEquallySpacedOnCircle A
+      IsEquallySpacedOnLine A ∨ IsEquallySpacedOnArc A
 
 /--
 Resolved false: Clemen, Dumitrescu and Liu proved that for every `n` there is a set of `n` points of
 the plane, not all collinear or cocircular, with distance multiplicities `n - 1, n - 2, …, 1`
 (equally spaced points on a short arc of a unit circle together with its centre); such a set is not
-equally spaced on a line or a circle. Source: T. F. Bloom, Erdős Problems, Problem #958,
+equally spaced on a line or along an arc. Source: T. F. Bloom, Erdős Problems, Problem #958,
 https://www.erdosproblems.com/958 (status DISPROVED (LEAN)); resolution: F. Clemen, A. Dumitrescu
 and D. Liu, On multiplicities of interpoint distances, arXiv:2505.04283 (2025), abstract, result
 (4): for every n there is a set of n points of the plane, not all collinear or cocircular, with
