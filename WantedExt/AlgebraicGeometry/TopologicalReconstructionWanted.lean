@@ -84,24 +84,44 @@ namespace AlgebraicGeometry.TopologicalReconstruction
 
 universe u
 
-/-- The structure morphism from a projective space `ℙⁿ_R` to `Spec R`. -/
+/-- **Structure morphism of a projective spectrum.** Let $R$ be a commutative ring and $A$ a
+commutative $R$-algebra graded by $R$-submodules $\mathcal{A}_0, \mathcal{A}_1, \dots$. The
+structure morphism $\operatorname{Proj} \mathcal{A} \to \operatorname{Spec} R$ is the canonical
+morphism $\operatorname{Proj} \mathcal{A} \to \operatorname{Spec} \mathcal{A}_0$ followed by the
+morphism $\operatorname{Spec} \mathcal{A}_0 \to \operatorname{Spec} R$ induced by the algebra map
+$R \to \mathcal{A}_0$.
+
+For a polynomial ring over $R$ graded by total degree, this is the structure morphism of
+projective space over $R$. -/
 noncomputable def projToSpec {R A : Type u} [CommRing R] [CommRing A] [Algebra R A]
     (𝒜 : ℕ → Submodule R A) [GradedAlgebra 𝒜] : Proj 𝒜 ⟶ Spec (.of R) :=
   Proj.toSpecZero 𝒜 ≫ Spec.map (CommRingCat.ofHom (algebraMap ..))
 
-/-- A morphism from a scheme to Spec R is projective if it factors through some
-closed immersion into ℙⁿ_R. -/
+/-- **Projective morphism to an affine scheme.** Let $R$ be a commutative ring and $X$ a scheme.
+A morphism $f : X \to \operatorname{Spec} R$ is projective if there are $n \in \mathbb{N}$ and a
+closed immersion $i$ of $X$ into $\operatorname{Proj} R[x_1, \dots, x_n]$, the polynomial ring
+graded by total degree, such that $f$ is $i$ followed by the structure morphism
+$\operatorname{Proj} R[x_1, \dots, x_n] \to \operatorname{Spec} R$. -/
 def IsProjectiveHom {X : Scheme} {R : Type*} [CommRing R] (f : X ⟶ Spec (.of R)) : Prop :=
   let := @MvPolynomial.gradedAlgebra
   ∃ (n : ℕ) (i : X ⟶ Proj (MvPolynomial.homogeneousSubmodule (Fin n) R)),
     IsClosedImmersion i ∧ f = i ≫ projToSpec _
 
-/-- A scheme X is normal if for all `x : X` the local ring O_{X,x} is a normal domain. -/
+/-- **Normal scheme.** A scheme $X$ is normal if for every point $x \in X$ the local ring
+$\mathcal{O}_{X,x}$ is an integrally closed domain. -/
 def IsNormalScheme (X : Scheme) : Prop :=
   ∀ x : X, IsDomain (X.presheaf.stalk x) ∧ IsIntegrallyClosed (X.presheaf.stalk x)
 
 /- Theorem 1.4.3 in the reference. -/
-/-- Source: János Kollár, Max Lieblich, Martin Olsson, and Will Sawin. The Zariski topology, linear systems, and algebraic varieties. Via leanprover/lean-eval@38361be, problem `kollar_lieblich_olsson_sawin`. -/
+/-- **Kollár–Lieblich–Olsson–Sawin topological reconstruction theorem.** Let $K$ and $L$ be
+fields of characteristic zero, and let $X$ and $Y$ be irreducible normal schemes with projective
+morphisms $f : X \to \operatorname{Spec} K$ and $g : Y \to \operatorname{Spec} L$. Suppose that
+the Krull dimension of the underlying topological space of $X$ is at least $4$; or it is at least
+$3$ and $K$ and $L$ are essentially of finite type over $\mathbb{Q}$; or it is at least $2$ and
+$K$ and $L$ are uncountable. Then for every homeomorphism $h : X \to Y$ there is an isomorphism
+of schemes $X \cong Y$ whose underlying map is $h$.
+
+Source: János Kollár, Max Lieblich, Martin Olsson, and Will Sawin. The Zariski topology, linear systems, and algebraic varieties. Via leanprover/lean-eval@38361be, problem `kollar_lieblich_olsson_sawin`. -/
 public theorem_wanted kollar_lieblich_olsson_sawin (X Y : Scheme.{u}) (K L : Type u)
     [Field K] [Field L] [CharZero K] [CharZero L] [IrreducibleSpace X] [IrreducibleSpace Y]
     (norm_X : IsNormalScheme X) (f : X ⟶ Spec (.of K)) (proj_f : IsProjectiveHom f)

@@ -59,14 +59,20 @@ theorem IsSupersingular.iff_pow_torsion {p : ℕ} [Fact p.Prime]
   · intro h P hP
     exact h 1 (by omega) P (by simpa using hP)
 
-/-- Trivial `p ^ r`-torsion for every positive `r` implies supersingularity. -/
+/-- **Supersingularity from trivial prime-power torsion.** Let $p$ be a prime and let $E$ be an
+elliptic curve over an algebraic closure $\overline{\mathbb{F}}_p$ of $\mathbb{Z}/p\mathbb{Z}$. If
+for every integer $r \ge 1$ the only point $P \in E(\overline{\mathbb{F}}_p)$ with $p^r P = 0$ is
+$P = 0$, then $E$ is supersingular. -/
 theorem IsSupersingular.of_pow_torsion {p : ℕ} [Fact p.Prime]
     (W : WeierstrassCurve.Affine (AlgebraicClosure (ZMod p))) [W.IsElliptic]
     (h : ∀ r : ℕ, 0 < r → ∀ P : W.Point, (p ^ r) • P = 0 → P = 0) :
     W.IsSupersingular :=
   (IsSupersingular.iff_pow_torsion W).mpr h
 
-/-- A supersingular elliptic curve has trivial `p ^ r`-torsion for every positive `r`. -/
+/-- **Supersingular curves have trivial prime-power torsion.** Let $p$ be a prime and let $E$ be a
+supersingular elliptic curve over an algebraic closure $\overline{\mathbb{F}}_p$ of
+$\mathbb{Z}/p\mathbb{Z}$. Then for every integer $r \ge 1$, every point
+$P \in E(\overline{\mathbb{F}}_p)$ with $p^r P = 0$ is $P = 0$. -/
 theorem IsSupersingular.pow_torsion {p : ℕ} [Fact p.Prime]
     (W : WeierstrassCurve.Affine (AlgebraicClosure (ZMod p))) [W.IsElliptic]
     (h : W.IsSupersingular) {r : ℕ} (hr : 0 < r)

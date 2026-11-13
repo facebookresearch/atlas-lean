@@ -60,9 +60,10 @@ open MvPolynomial
 
 variable (k : Type*) [Field k]
 
-/-- A cubic surface in `ℙ³` over `k`, presented by its defining equation: a nonzero homogeneous
-polynomial of degree `3` in the four homogeneous coordinates. The surface is the projective zero
-locus `V(defining) ⊆ ℙ³`. -/
+/-- **Cubic surface.** A cubic surface over a field $k$ is a nonzero homogeneous polynomial
+$f \in k[x_0, x_1, x_2, x_3]$ of degree $3$ in the four homogeneous coordinates of
+$\mathbb{P}^3$, its defining equation. The surface it describes is the projective zero locus
+$V(f) \subseteq \mathbb{P}^3$. -/
 @[ext]
 structure CubicSurface where
   /-- The homogeneous cubic form cutting out the surface. -/
@@ -76,29 +77,45 @@ namespace CubicSurface
 
 variable {k}
 
-/-- The defining cubic of a cubic surface has total degree exactly `3`. -/
+/-- **The defining cubic has total degree three.** The defining cubic form of a cubic surface
+over a field $k$ has total degree exactly $3$. -/
 lemma totalDegree_defining (S : CubicSurface k) : S.defining.totalDegree = 3 :=
   S.isHomogeneous.totalDegree S.defining_ne_zero
 
-/-- Each partial derivative of the defining cubic is homogeneous of degree `2`: the gradient of a
-cubic surface is quadratic. -/
+/-- **The partial derivatives of a cubic form are quadratic.** Let $S$ be a cubic surface over a
+field $k$ with defining cubic form $f \in k[x_0, x_1, x_2, x_3]$. For each $i \in \{0, 1, 2, 3\}$,
+the partial derivative $\partial f / \partial x_i$ is homogeneous of degree $2$. -/
 lemma isHomogeneous_pderiv (S : CubicSurface k) (i : Fin 4) :
     (pderiv i S.defining).IsHomogeneous 2 :=
   S.isHomogeneous.pderiv
 
-/-- A point `x` is a singular point of the affine cone over `S` when the defining cubic and all of
-its partial derivatives vanish at `x`. Over an algebraically closed field, `S` is a smooth
-projective surface exactly when its only such point is the origin. -/
+/-- **Singular point of a cubic surface.** Let $S$ be a cubic surface over a field $k$ with
+defining cubic form $f \in k[x_0, x_1, x_2, x_3]$. A point $x \in k^4$ is a singular point of the
+affine cone over $S$ when $f(x) = 0$ and $\partial f / \partial x_i$ vanishes at $x$ for every
+$i \in \{0, 1, 2, 3\}$.
+
+Over an algebraically closed field, $S$ is a smooth projective surface exactly when the origin is
+its only such point. -/
 def IsSingularPoint (S : CubicSurface k) (x : Fin 4 → k) : Prop :=
   aeval x S.defining = 0 ∧ ∀ i, aeval x (pderiv i S.defining) = 0
 
-/-- The Jacobian smoothness criterion: the coordinate origin is the only common zero of the
-defining cubic and its partial derivatives. -/
+/-- **Smooth cubic surface.** Let $k$ be an algebraically closed field and $S$ a cubic surface
+over $k$ with defining cubic form $f \in k[x_0, x_1, x_2, x_3]$. The surface $S$ is smooth when
+every point $x \in k^4$ at which $f$ and all its partial derivatives $\partial f / \partial x_i$
+vanish is the origin, that is, when the origin is the only singular point of the affine cone
+over $S$.
+
+This is the Jacobian criterion for smoothness of the projective surface
+$V(f) \subseteq \mathbb{P}^3$ cut out by $f$. -/
 def IsSmooth [IsAlgClosed k] (S : CubicSurface k) : Prop :=
   ∀ x : Fin 4 → k, S.IsSingularPoint x → x = 0
 
-/-- Euler's identity: when `3` is invertible in `k`, the vanishing of every partial derivative of
-the defining cubic at a point forces the cubic itself to vanish there. -/
+/-- **Vanishing partial derivatives force the cubic to vanish when $3 \neq 0$.** Let $S$ be a
+cubic surface over a field $k$ in which $3 \neq 0$, and let $f \in k[x_0, x_1, x_2, x_3]$ be its
+defining cubic form. If $x \in k^4$ is a point at which every partial derivative
+$\partial f / \partial x_i$ vanishes, then $f(x) = 0$.
+
+This follows from Euler's identity $\sum_i x_i \, \partial f / \partial x_i = 3 f$. -/
 lemma aeval_defining_eq_zero_of_pderiv (h3 : (3 : k) ≠ 0) (S : CubicSurface k)
     {x : Fin 4 → k} (hx : ∀ i, aeval x (pderiv i S.defining) = 0) :
     aeval x S.defining = 0 := by
@@ -111,8 +128,13 @@ lemma aeval_defining_eq_zero_of_pderiv (h3 : (3 : k) ≠ 0) (S : CubicSurface k)
   · exact absurd h h3
   · exact h
 
-/-- When `3` is invertible in `k`, a point is singular exactly when all partial derivatives of the
-defining cubic vanish there; the equation `f = 0` is then automatic (Euler's identity). -/
+/-- **Singular points via partial derivatives.** Let $S$ be a cubic surface over a field $k$ in
+which $3 \neq 0$, and let $f \in k[x_0, x_1, x_2, x_3]$ be its defining cubic form. A point
+$x \in k^4$ is a singular point of the affine cone over $S$ if and only if every partial
+derivative $\partial f / \partial x_i$ vanishes at $x$.
+
+The condition $f(x) = 0$ in the definition of a singular point is then automatic, by Euler's
+identity. -/
 lemma isSingularPoint_iff (h3 : (3 : k) ≠ 0) (S : CubicSurface k) (x : Fin 4 → k) :
     S.IsSingularPoint x ↔ ∀ i, aeval x (pderiv i S.defining) = 0 :=
   ⟨fun h => h.2, fun h => ⟨aeval_defining_eq_zero_of_pderiv h3 S h, h⟩⟩
@@ -121,8 +143,10 @@ end CubicSurface
 
 section Examples
 
-/-- The Fermat cubic surface `x₀³ + x₁³ + x₂³ + x₃³ = 0`, the standard ordinary example (smooth
-over fields of characteristic other than `3`). -/
+/-- **Fermat cubic surface.** Over a field $k$, the Fermat cubic surface is the cubic surface in
+$\mathbb{P}^3$ with defining cubic form $x_0^3 + x_1^3 + x_2^3 + x_3^3$.
+
+It is smooth when the characteristic of $k$ is not $3$. -/
 noncomputable def fermatCubicSurface : CubicSurface k where
   defining := X 0 ^ 3 + X 1 ^ 3 + X 2 ^ 3 + X 3 ^ 3
   isHomogeneous := by
@@ -134,8 +158,11 @@ noncomputable def fermatCubicSurface : CubicSurface k where
     have := congrArg (aeval (![1, 0, 0, 0] : Fin 4 → k)) h
     simp at this
 
-/-- The triple hyperplane `x₀³ = 0`, a degenerate (non-reduced) boundary example that is a cubic
-surface but is singular. -/
+/-- **Triple plane.** Over a field $k$, the triple plane is the cubic surface in $\mathbb{P}^3$
+with defining cubic form $x_0^3 \in k[x_0, x_1, x_2, x_3]$, that is, the plane $x_0 = 0$
+counted three times.
+
+It is non-reduced, and every point of the plane $x_0 = 0$ is a singular point. -/
 noncomputable def triplePlane : CubicSurface k where
   defining := X 0 ^ 3
   isHomogeneous := by simpa using (isHomogeneous_X k 0).pow 3
