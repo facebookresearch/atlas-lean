@@ -55,6 +55,10 @@ example : ftcsStep (m := 4) (3 / 4 : ℝ) altMode =
     (1 - 4 * (3 / 4 : ℝ)) • altMode :=
   ftcsStep_altMode (m := 4) (⟨2, rfl⟩ : Even 4) (3 / 4)
 
+-- The amplified-mode witness at `m = 4`, `r = 3 / 4`: the sup norm strictly grows.
+example : ‖(altMode : Fin 4 → ℝ)‖ < ‖ftcsStep (3 / 4 : ℝ) (altMode : Fin 4 → ℝ)‖ :=
+  norm_altMode_lt_norm_ftcsStep (m := 4) (by norm_num) (⟨2, rfl⟩ : Even 4) (by norm_num)
+
 -- Scalar positivity instance: decay from `x = 5` with `h = 1 / 2 ≤ 1 / 1`.
 example : (0 : ℝ) ≤ (1 - 1 * (1 / 2)) * 5 :=
   scalarEuler_nonneg (lam := 1) (h := 1 / 2) (x := 5) (by norm_num) (by norm_num)
@@ -79,5 +83,7 @@ example : ∑ i, ftcsStep (m := 3) (1 / 2 : ℝ) (![1, 2, 3] : Fin 3 → ℝ) i 
 #print axioms altMode
 #print axioms ftcsStep_altMode
 #print axioms altMode_amplification_gt_one
+#print axioms altMode_ne_zero
+#print axioms norm_altMode_lt_norm_ftcsStep
 #print axioms decay_euler_error_le
 #print axioms decay_euler_numeric_bound

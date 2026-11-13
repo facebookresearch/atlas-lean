@@ -52,7 +52,10 @@ comparison for scalar decay.
 * `ftcsStep_nonneg`, `ftcsStep_conserves_sum`: FTCS positivity for `0 ≤ r ≤ 1 / 2`
   and exact mass conservation on the periodic grid.
 * `ftcsStep_altMode`, `altMode_amplification_gt_one`: for even `m` the alternating mode
-  is scaled by `1 - 4 * r`, hence amplified (`|1 - 4 * r| > 1`) for `r > 1 / 2`.
+  is scaled by `1 - 4 * r`, and `|1 - 4 * r| > 1` for `r > 1 / 2`.
+* `altMode_ne_zero`, `norm_altMode_lt_norm_ftcsStep`: on a nonempty grid the alternating
+  mode is nonzero, so for even `m > 0` and `r > 1 / 2` one FTCS step strictly increases its
+  sup norm (the amplified-mode witness).
 * `decay_euler_error_le`, `decay_euler_numeric_bound`: certified `O(h)` comparison
   of Euler iterates against `Real.exp`, plus the `λ = 1`, `T = 1`, `h = 1 / 10`,
   `n = 10` instance with explicit constant.
@@ -218,7 +221,8 @@ exact: every grid Fourier mode is an eigenvector of the step. Only the alternati
 (`ξ h = π`, even `m`) is formalized here. A closed grid with zero-flux boundaries is a
 different operator (an endpoint spike is updated by `1 - r` there, not `1 - 2 * r`) and is
 not treated here. One FTCS step preserves nonnegativity for `0 ≤ r ≤ 1 / 2` and conserves
-the total mass; for even `m` the alternating mode is scaled by `1 - 4 * r`. -/
+the total mass; for even `m` the alternating mode is scaled by `1 - 4 * r`, and on a
+nonempty grid it is nonzero, so for `r > 1 / 2` one step strictly increases its sup norm. -/
 
 /-- One explicit FTCS diffusion step on the periodic grid `Fin m` with mesh ratio `r`:
 `u i + r * (u (i - 1) + u (i + 1) - 2 * u i)`, with the neighbours taken cyclically
@@ -278,7 +282,15 @@ private lemma altMode_finRotate_symm {m : ℕ} (heven : Even m) (i : Fin m) :
   rw [Equiv.apply_symm_apply] at h
   rw [h, neg_neg]
 
-/-- One FTCS step scales the alternating mode by `1 - 4 * r` (requires `m` even). -/
+/-- On a nonempty grid the alternating mode is nonzero: its value at `0` is `1`. -/
+lemma altMode_ne_zero {m : ℕ} (hm : 0 < m) : (altMode : Fin m → ℝ) ≠ 0 := by
+  intro h
+  have h0 := congrFun h ⟨0, hm⟩
+  simp [altMode] at h0
+
+/-- One FTCS step scales the alternating mode by `1 - 4 * r` (requires `m` even). For
+`m = 0` the identity is vacuous; the amplification witness is
+`norm_altMode_lt_norm_ftcsStep`, which requires a nonempty grid. -/
 lemma ftcsStep_altMode {m : ℕ} (heven : Even m) (r : ℝ) :
     ftcsStep r altMode = (1 - 4 * r) • (altMode : Fin m → ℝ) := by
   funext i
@@ -292,6 +304,15 @@ lemma altMode_amplification_gt_one {r : ℝ} (hr : 1 / 2 < r) : 1 < |1 - 4 * r| 
   have hneg : 1 - 4 * r < 0 := by linarith
   rw [abs_of_neg hneg]
   linarith
+
+/-- Norm growth outside the stability regime: for `r > 1 / 2`, one FTCS step strictly
+increases the sup norm of the alternating mode on a nonempty grid of even size `m`, by the
+factor `|1 - 4 * r| > 1`. -/
+lemma norm_altMode_lt_norm_ftcsStep {m : ℕ} (hm : 0 < m) (heven : Even m) {r : ℝ}
+    (hr : 1 / 2 < r) : ‖(altMode : Fin m → ℝ)‖ < ‖ftcsStep r (altMode : Fin m → ℝ)‖ := by
+  rw [ftcsStep_altMode heven, norm_smul, Real.norm_eq_abs]
+  exact lt_mul_of_one_lt_left (norm_pos_iff.mpr (altMode_ne_zero hm))
+    (altMode_amplification_gt_one hr)
 
 /-! ## D. Certified analytic-vs-numerical comparison
 
