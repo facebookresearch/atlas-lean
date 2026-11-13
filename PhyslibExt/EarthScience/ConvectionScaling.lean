@@ -17,19 +17,20 @@ public import Mathlib.Tactic.Positivity
 
 ## i. Overview
 
-For constant parameters `g, α, ΔT, H, ν, κ`, scaling the Boussinesq
-thermal momentum equations by length `H` and by the diffusion time
-`H ^ 2 / κ` yields the Rayleigh number
+For real parameters `g, α, ΔT, H, ν, κ`, the Rayleigh number of a fluid
+layer, in its kinematic-viscosity form, is
 `Ra = g * α * ΔT * H ^ 3 / (ν * κ)`. Here `α` is the thermal expansion
 coefficient (inverse Kelvin), `ν` the kinematic viscosity, `κ` the
 thermal diffusivity, `H` the layer depth, `ΔT` the temperature
-difference, and `g` gravity. The constant reference density `ρ₀`
-cancels in this ratio and does not appear.
+difference, and `g` gravity. This file takes that formula as given and
+proves algebraic facts about it. The Boussinesq equations and their
+nondimensionalization are not formalized here, so the derivation of `Ra`
+from them is not kernel-checked.
 
 ## ii. Key results
 
 - `EarthScience.rayleigh_number_factorisation`: `Ra` is the product of
-  the buoyancy scale `g * α * ΔT * H / ν` and `H ^ 2 / κ`.
+  `g * α * ΔT * H / ν` and `H ^ 2 / κ` (an algebraic identity).
 - `EarthScience.rayleigh_number_pos`: `Ra > 0` for positive parameters.
 - `EarthScience.rayleigh_number_zero_buoyancy`: `ΔT = 0` gives `Ra = 0`.
 
@@ -42,6 +43,14 @@ boundary-dependent and remains separate.
 
 ## iv. References
 
+- S. Chandrasekhar, *Hydrodynamic and Hydromagnetic Stability*, Oxford
+  University Press, 1961, Chapter II (the Rayleigh number of a fluid layer
+  heated from below, in the form `g α β d ^ 4 / (κ ν)` with temperature
+  gradient `β = ΔT / d` and depth `d = H`).
+- D. L. Turcotte and G. Schubert, *Geodynamics*, 3rd ed., Cambridge
+  University Press, 2014, Chapter 6 (thermal convection; the Rayleigh
+  number is written there with the reference density `ρ₀` and the dynamic
+  viscosity `μ = ρ₀ ν`).
 - `div_pos`, `mul_pos` in Mathlib (field / order lemmas).
 
 ## A. Rayleigh-number factorisation, positivity, and zero buoyancy
@@ -51,10 +60,10 @@ boundary-dependent and remains separate.
 
 namespace EarthScience
 
-/-- Boussinesq scaling: with length scale `H` and diffusion-time scale `H ^ 2 / κ`,
-the product of the buoyancy scale `g * α * ΔT * H / ν` and `H ^ 2 / κ`
-is the Rayleigh number `g * α * ΔT * H ^ 3 / (ν * κ)`. The constant
-reference density `ρ₀` cancels in this ratio and does not appear. -/
+/-- Algebraic factorization of the Rayleigh number: the product of
+`g * α * ΔT * H / ν` and `H ^ 2 / κ` is `g * α * ΔT * H ^ 3 / (ν * κ)`.
+This is an identity between the two expressions; it does not derive the
+Rayleigh number from the Boussinesq equations. -/
 theorem rayleigh_number_factorisation {g α ΔT H ν κ : ℝ} (hν : 0 < ν) (hκ : 0 < κ) :
     (g * α * ΔT * H / ν) * (H ^ 2 / κ) = g * α * ΔT * H ^ 3 / (ν * κ) := by
   field_simp
