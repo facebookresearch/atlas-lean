@@ -1,15 +1,11 @@
 /-
-Copyright (c) 2026 Adam Kiezun. All rights reserved.
-Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Adam Kiezun
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
 -/
-/-
-Backported from `facebookresearch/atlas-lean` at commit
-`18d1aa399b6ebaa8cd9c4a48795b43f6734c3785`
-(`CSLibExt/Logics/Modal/CslibTranslation.lean`),
-authored by Adam Kiezun. The source file carries the Meta Platforms
-copyright/license notice.
--/
+
 module
 
 public import CSLibExt.Logics.Modal.Hilbert
