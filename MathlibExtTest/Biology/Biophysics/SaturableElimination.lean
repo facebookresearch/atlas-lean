@@ -113,7 +113,8 @@ example : (∫ t in Ici 0, concentration (10 * 2 / 1) 10 0 (10 * 2) t) = 1 := by
   norm_num [bolusAUC] at this
   linarith
 
-/-- Low-dose limit of the dose-normalized AUC: `Km / Vmax = 1 / 2`. -/
+/-- Low-dose limit of the initial-concentration-normalized AUC `AUC / C₀`:
+`Km / Vmax = 1 / 2`. -/
 example : Tendsto (fun C₀ ↦ bolusAUC 2 1 C₀ / C₀) (𝓝[>] 0) (𝓝 (1 / 2)) :=
   tendsto_bolusAUC_div 2 1
 
@@ -139,7 +140,7 @@ example (c : ℝ) (hc : 0 ≤ c) : ¬ IsSolution 2 1 2 (fun _ ↦ c) :=
 example {C : ℝ → ℝ} (h : IsSolution 2 1 3 C) (h0 : C 0 = 0) : Tendsto C atTop atTop :=
   h.tendsto_atTop (by norm_num) (by norm_num) (by norm_num) (by rw [h0])
 
-/-- Dose-normalized AUC increases with dose. -/
+/-- The initial-concentration-normalized AUC `AUC / C₀` increases with `C₀`. -/
 example : bolusAUC 2 1 1 / 1 < bolusAUC 2 1 2 / 2 :=
   strictMonoOn_bolusAUC_div two_pos (by norm_num : (1 : ℝ) ∈ Ioi 0)
     (by norm_num : (2 : ℝ) ∈ Ioi 0) (by norm_num)

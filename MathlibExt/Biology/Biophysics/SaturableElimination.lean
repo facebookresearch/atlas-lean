@@ -59,9 +59,10 @@ large concentrations elimination saturates at the zero-order rate `Vmax`.
   `IsSolution.integral_Ioi_bolus`: `∫₀^∞ C = C₀ (Km + C₀ / 2) / Vmax` (`bolusAUC`).
 * Dose–AUC nonlinearity: `bolusAUC_eq_integral_linear_add` (AUC = linear AUC with clearance
   `V Vmax / Km`, plus `C₀² / (2 Vmax)`), `two_mul_bolusAUC_lt` (doubling the dose more than
-  doubles the AUC), `strictMonoOn_bolusAUC_div` (dose-normalized AUC increases),
-  `not_exists_bolusAUC_eq_mul` (AUC is not proportional to dose, unlike linear elimination),
-  `tendsto_bolusAUC_div` (low-dose limit `Km / Vmax`).
+  doubles the AUC), `strictMonoOn_bolusAUC_div` (the initial-concentration-normalized AUC
+  `AUC / C₀` increases), `not_exists_bolusAUC_eq_mul` (AUC is not proportional to dose, unlike
+  linear elimination), `tendsto_bolusAUC_div` (low-dose limit `Km / Vmax` of `AUC / C₀`).
+  These ratios divide by `C₀ = D / V`, not by the dose `D`.
 * Constant infusion: `isSolution_const_iff`, `mmRate_steadyConc`, `eq_steadyConc_of_mmRate_eq`:
   for `R < Vmax` the unique nonnegative steady state is `C∞ = R Km / (Vmax - R)` (`steadyConc`).
   `IsSolution.abs_sub_steadyConc_le`, `IsSolution.tendsto_steadyConc`: every solution converges
@@ -446,13 +447,14 @@ theorem two_mul_bolusAUC_lt (hV : 0 < Vmax) {C₀ : ℝ} (hC₀ : 0 < C₀) :
   have : 0 < C₀ ^ 2 / Vmax := by positivity
   linarith
 
-/-- The dose-normalized AUC is `(Km + C₀ / 2) / Vmax`. -/
+/-- The initial-concentration-normalized AUC `AUC / C₀` is `(Km + C₀ / 2) / Vmax`. Since
+`C₀ = D / V`, this is `V · AUC / D`, not the dose-normalized `AUC / D`. -/
 theorem bolusAUC_div {C₀ : ℝ} (hC₀ : C₀ ≠ 0) :
     bolusAUC Vmax Km C₀ / C₀ = (Km + C₀ / 2) / Vmax := by
   unfold bolusAUC
   field_simp
 
-/-- The dose-normalized AUC `AUC / C₀` is strictly increasing in the dose. -/
+/-- The initial-concentration-normalized AUC `AUC / C₀` is strictly increasing in `C₀`. -/
 theorem strictMonoOn_bolusAUC_div (hV : 0 < Vmax) :
     StrictMonoOn (fun C₀ ↦ bolusAUC Vmax Km C₀ / C₀) (Ioi 0) := by
   intro a ha b hb hab
@@ -471,8 +473,9 @@ theorem not_exists_bolusAUC_eq_mul (hV : 0 < Vmax) :
   field_simp at h1 h2
   nlinarith
 
-/-- **Low-dose limit.** As the dose tends to `0` the dose-normalized AUC tends to `Km / Vmax`,
-the value `1 / k` of the linear model with `k = Vmax / Km`. -/
+/-- **Low-dose limit.** As `C₀ → 0` the initial-concentration-normalized AUC `AUC / C₀` tends
+to `Km / Vmax`, the value `1 / k` of the linear model with `k = Vmax / Km`. Since `C₀ = D / V`,
+this ratio is `V · AUC / D`, not the dose-normalized `AUC / D`. -/
 theorem tendsto_bolusAUC_div (Vmax Km : ℝ) :
     Tendsto (fun C₀ ↦ bolusAUC Vmax Km C₀ / C₀) (𝓝[>] 0) (𝓝 (Km / Vmax)) := by
   have hc : Tendsto (fun C₀ : ℝ ↦ (Km + C₀ / 2) / Vmax) (𝓝[>] 0) (𝓝 ((Km + 0 / 2) / Vmax)) :=
