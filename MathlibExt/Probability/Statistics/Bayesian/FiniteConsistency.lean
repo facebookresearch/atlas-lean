@@ -10,13 +10,14 @@ module
 
 public import Mathlib.Probability.StrongLaw
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.Probability.WeightLaw
 
 /-!
 # Posterior consistency in a finite model
 
-`weightLaw g` is the law `∑ x, ENNReal.ofReal (g x) • δ_x` on a finite space, and
 `postWeight π f X n ω θ` is the posterior probability of `θ` after the first `n` observations in
-the finite model with prior weights `π` and likelihoods `f θ x`.
+the finite model with prior weights `π` and likelihoods `f θ x`. Observation laws are the finite
+laws `weightLaw g = ∑ x, ENNReal.ofReal (g x) • δ_x` of `MathlibExt.Probability.WeightLaw`.
 
 `ae_tendsto_postWeight_one`: with finite parameter and observation spaces, positive prior mass at
 the truth `θ₀`, strictly positive normalized likelihoods, positive Kullback–Leibler separation of
@@ -40,12 +41,9 @@ namespace MathlibExt.Probability.Statistics.Bayesian
 
 open MeasureTheory ProbabilityTheory Filter Topology
 
-/-- The law on a finite space `𝓧` with real point masses `g x`:
-`∑ x, ENNReal.ofReal (g x) • δ_x`. For `g ≥ 0` with `∑ x, g x = 1` it is a probability measure
-(`isProbabilityMeasure_weightLaw`). -/
-noncomputable def weightLaw {𝓧 : Type*} [Fintype 𝓧] [MeasurableSpace 𝓧] (g : 𝓧 → ℝ) :
-    Measure 𝓧 :=
-  ∑ x, ENNReal.ofReal (g x) • Measure.dirac x
+-- `weightLaw` and `isProbabilityMeasure_weightLaw` moved to `MathlibExt.Probability.WeightLaw`;
+-- these aliases keep their former names in this namespace.
+export MathlibExt.Probability (weightLaw isProbabilityMeasure_weightLaw)
 
 /-- Posterior probability of `θ` after the first `n` observations `X 0 ω, …, X (n - 1) ω` in the
 finite model with prior weights `π` and likelihoods `f θ x`:
@@ -54,14 +52,6 @@ noncomputable def postWeight {Θ 𝓧 Ω : Type*} [Fintype Θ] (π : Θ → ℝ)
     (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) (θ : Θ) : ℝ :=
   (π θ * ∏ i ∈ Finset.range n, f θ (X i ω)) /
     ∑ θ', π θ' * ∏ i ∈ Finset.range n, f θ' (X i ω)
-
-private lemma integral_weightLaw {𝓧 : Type*} [Fintype 𝓧] [MeasurableSpace 𝓧]
-    [MeasurableSingletonClass 𝓧] (g : 𝓧 → ℝ) (hg : ∀ x, 0 ≤ g x) (φ : 𝓧 → ℝ) :
-    ∫ x, φ x ∂(weightLaw g) = ∑ x, g x * φ x := by
-  rw [weightLaw, integral_finsetSum_measure fun x _ =>
-    (Integrable.of_finite (μ := Measure.dirac x)).smul_measure ENNReal.ofReal_ne_top]
-  refine Finset.sum_congr rfl fun x _ => ?_
-  rw [integral_smul_measure, integral_dirac, ENNReal.toReal_ofReal (hg x), smul_eq_mul]
 
 /-- Strong law for the log-likelihood ratio: likelihood-ratio products against a
 KL-separated truth `g₀` tend to `0` almost surely. -/
@@ -143,17 +133,6 @@ private lemma tendsto_postWeight_one_of_ratio {Θ 𝓧 Ω : Type*} [Fintype Θ] 
     (tendsto_finsetSum _ hother)
   rw [Finset.sum_const_zero, sub_zero] at hlim
   exact hlim.congr hsum
-
-/-- Nonnegative point masses summing to one give a probability measure. -/
-theorem isProbabilityMeasure_weightLaw {𝓧 : Type*} [Fintype 𝓧] [MeasurableSpace 𝓧]
-    [MeasurableSingletonClass 𝓧] (g : 𝓧 → ℝ) (hg_nonneg : ∀ x, 0 ≤ g x)
-    (hg_sum : ∑ x, g x = 1) :
-    IsProbabilityMeasure (weightLaw g) := by
-  constructor
-  rw [weightLaw, Measure.finsetSum_apply]
-  simp only [Measure.smul_apply, Measure.dirac_apply_of_mem (Set.mem_univ _), smul_eq_mul,
-    mul_one]
-  rw [← ENNReal.ofReal_sum_of_nonneg (fun x _ => hg_nonneg x), hg_sum, ENNReal.ofReal_one]
 
 /-- **Posterior consistency in a finite model.** Finite parameter and observation spaces, a prior
 with positive mass at the truth `θ₀`, strictly positive normalized likelihoods, positive
