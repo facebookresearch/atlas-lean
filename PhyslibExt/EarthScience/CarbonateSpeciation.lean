@@ -7,10 +7,18 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Tactic
 public import Mathlib.Topology.Order.IntermediateValue
 public import Mathlib.Analysis.Normed.Field.Basic
 public import Mathlib.Order.Monotone.Basic
+
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.FunProp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Set
+import Mathlib.Topology.Algebra.Ring.Real
 
 /-!
 # Ideal carbonate speciation and alkalinity closure
@@ -34,7 +42,8 @@ compact subinterval of `h > 0` and the intermediate value theorem.
 Uniqueness follows from strict decrease. This is the ideal
 closed-carbonate-plus-water model only: no borate, phosphate,
 salinity/activity corrections, or precipitation. All concentrations and
-equilibrium constants use one standard-concentration normalization.
+equilibrium constants are plain reals on one concentration scale, with `K1`,
+`K2`, `Kw` the matching stoichiometric constants, as in the reference below.
 
 ## ii. Key results
 
@@ -52,6 +61,22 @@ equilibrium constants use one standard-concentration normalization.
 
 ## iv. References
 
+- A. G. Dickson, C. L. Sabine and J. R. Christian (eds.), *Guide to Best
+  Practices for Ocean CO2 Measurements*, PICES Special Publication 3 (2007),
+  Chapter 2, "Solution chemistry of carbon dioxide in sea water". It defines
+  `K1 = [H+][HCO3-]/[CO2*]` and `K2 = [H+][CO3--]/[HCO3-]` (eqs. 8-9),
+  `C_T = [CO2*] + [HCO3-] + [CO3--]` (eq. 12) and `K_W = [H+][OH-]` (eq. 30),
+  and gives `[HCO3-] = C_T K1 [H+] / Z` and `[CO3--] = C_T K1 K2 / Z` with
+  `Z = [H+]^2 + K1 [H+] + K1 K2` (eqs. 39-40), hence `[CO2*] = C_T [H+]^2 / Z`,
+  and `[OH-] = K_W / [H+]` (eq. 42). The carbonate alkalinity is
+  `A_C = [HCO3-] + 2 [CO3--]` (eq. 53), the carbonate part of the total
+  alkalinity `A_T` of eq. 13, which also adds `[OH-]`, subtracts the free
+  `[H+]`, and carries borate, phosphate, silicate, sulfate, fluoride and other
+  minor terms. With `h = [H+]` and
+  `C0 = C_T`, the `A(h)` here is `A_T` restricted to the carbonate and water
+  terms. The Guide's brackets are total stoichiometric concentrations and its
+  constants the matching stoichiometric (ionic-medium) constants; activity
+  corrections are not modelled here.
 - `intermediate_value_Ioo'` in Mathlib (intermediate value theorem).
 -/
 
@@ -59,6 +84,7 @@ equilibrium constants use one standard-concentration normalization.
 
 namespace EarthScience
 
+/-! ## A. Speciation mass closure -/
 
 /-- Carbonate speciation: with `Z = h^2 + K1 * h + K1 * K2`, the three
 species concentrations `C0 * h^2 / Z`, `C0 * K1 * h / Z`,
@@ -72,6 +98,8 @@ theorem carbonate_species_sum (C0 K1 K2 h : ℝ) (hK1 : 0 < K1) (hK2 : 0 < K2)
     have hpos : (0 : ℝ) < h ^ 2 + K1 * h + K1 * K2 := by positivity
     exact ne_of_gt hpos
   field_simp
+
+/-! ## B. Alkalinity monotonicity -/
 
 /-- Alkalinity `A(h) = C0 * (K1 * h + 2 * K1 * K2) / Z + Kw / h - h` is
 strictly decreasing on `h > 0` in the ideal closed-carbonate-plus-water
@@ -121,6 +149,8 @@ theorem alkalinity_strictAntiOn (C0 K1 K2 Kw : ℝ) (hC0 : 0 ≤ C0) (hK1 : 0 < 
   change C0 * (K1 * b + 2 * K1 * K2) / (b ^ 2 + K1 * b + K1 * K2) + Kw / b - b
       < C0 * (K1 * a + 2 * K1 * K2) / (a ^ 2 + K1 * a + K1 * K2) + Kw / a - a
   linarith [hdecomp, hpos]
+
+/-! ## C. Existence and uniqueness of the root -/
 
 /-- For every real `A0` there is exactly one `h > 0` with `A(h) = A0`. -/
 theorem alkalinity_unique_root (C0 K1 K2 Kw A0 : ℝ) (hC0 : 0 ≤ C0) (hK1 : 0 < K1)
