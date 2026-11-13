@@ -240,7 +240,8 @@ example (a : ℝ) : pitchfork d₀ (a, d₀ + a ^ 2) = 0 := by
 /-- **The full chain applies to the pitchfork**: every hypothesis of
 `lyapunovSchmidt_patternBranch` except the reduced Crandall–Rabinowitz theorem `hCR` (T55's
 `exists_patternBranch`, PR #1533) is discharged, and the branch slope is
-`-∂_a G / ∂_d G = 0`. -/
+`-∂_a G / ∂_d G = 0`. `hCR` is assumed in T55's universal form, which specializes to the
+pitchfork's reduced map at the call site. -/
 example (hCR : ∀ {G : ℝ × ℝ → ℝ} {G' : ℝ × ℝ →L[ℝ] ℝ} {d₀ : ℝ},
       HasStrictFDerivAt G G' (0, d₀) → G (0, d₀) = 0 → G' (0, 1) ≠ 0 →
         ∃ φ : ℝ → ℝ, φ 0 = d₀ ∧ HasStrictDerivAt φ (-(G' (1, 0) / G' (0, 1))) 0 ∧

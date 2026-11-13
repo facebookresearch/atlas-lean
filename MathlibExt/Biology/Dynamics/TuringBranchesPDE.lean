@@ -33,8 +33,8 @@ which constructs such a Turing map `F`:
   linearization `D ∂ₓₓ + J` restricted to a **finite** cosine-mode space, which the linearization
   leaves invariant;
 * it combines the reduction with the reduced Crandall–Rabinowitz branch theorem of
-  `MathlibExt.Biology.Dynamics.TuringBranches` (T55), which enters **only** as the explicit
-  hypothesis `hCR` (the file does not import T55).
+  `MathlibExt.Biology.Dynamics.TuringBranches` (T55), which enters **only** through the explicit
+  hypothesis `hCR`, its specialization to the reduced map (the file does not import T55).
 
 ## Source receipt
 
@@ -45,7 +45,7 @@ which constructs such a Turing map `F`:
   = 0`, the finite-dimensional bifurcation equation. Here: `lyapunovSchmidt`.
 * **Bifurcation from a simple eigenvalue**: M. G. Crandall and P. H. Rabinowitz, *Bifurcation from
   simple eigenvalues*, J. Funct. Anal. 8 (1971) 321–340, Theorem 1.7; the reduced form is T55's
-  `exists_patternBranch` (PR #1533), used here only as the explicit hypothesis `hCR`.
+  `exists_patternBranch` (PR #1533), used here only through the explicit hypothesis `hCR`.
 * **Turing linearization on Neumann modes**: J. D. Murray, *Mathematical Biology II*, 3rd ed.,
   Springer (2003), ch. 2: `cos(kₙ x) v` with `kₙ = n π / ℓ` is mapped to `cos(kₙ x) (J - kₙ² D) v`.
 
@@ -64,9 +64,9 @@ which constructs such a Turing map `F`:
   `F(x, p) = 0 ↔ ∃ a, x = a φ + W(a φ, p) ∧ G̃(a, p) = 0` with `G̃ = lsScalar`. The kernel and the
   cokernel have dimension at most one; `φ = 0` and `ψ = 0` are allowed, so the index need not be
   zero.
-* `lyapunovSchmidt_patternBranch`: given the reduced branch theorem `hCR` and a factorization
-  `G̃(a, d) = a G(a, d)` with `∂_d G(0, d₀) ≠ 0`, the full equation has exactly the trivial
-  solutions and one pattern branch `x = a φ + W(a φ, β(a))`, `d = β(a)`, near `(0, d₀)`.
+* `lyapunovSchmidt_patternBranch`: given the reduced branch theorem for `G` (`hCR`) and a
+  factorization `G̃(a, d) = a G(a, d)` with `∂_d G(0, d₀) ≠ 0`, the full equation has exactly the
+  trivial solutions and one pattern branch `x = a φ + W(a φ, β(a))`, `d = β(a)`, near `(0, d₀)`.
 * `modeOperator`, `diffusion_mulVec_deriv_deriv_add`, `deriv_modeField_zero`,
   `deriv_modeField_neumann`: the Turing linearization `D ∂ₓₓ + J` acting on Neumann-mode fields
   `∑ᵢ cos(κᵢ x) wᵢ` is the block-diagonal coefficient operator `wᵢ ↦ (J - κᵢ² D) wᵢ`.
@@ -88,7 +88,7 @@ which constructs such a Turing map `F`:
 * Dividing the scalar map by the amplitude, `G̃(a, d) = a G(a, d)` with `G` strictly
   differentiable, uses `C²` regularity of `F`; it is the hypothesis `hfac`.
 * The final branch-existence statement for the Turing system with T55's theorem plugged in
-  (`hCR := @exists_patternBranch`) and `G(0, d) =` the critical eigenvalue is deferred until
+  (`hCR := exists_patternBranch`) and `G(0, d) =` the critical eigenvalue is deferred until
   PR #1533 merges.
 -/
 
@@ -441,11 +441,12 @@ hypotheses as in `lyapunovSchmidt_scalar`). Assume the scalar
 bifurcation function factors as `G̃(a, d) = a G(a, d)` near `(0, d₀)` with `G` strictly
 differentiable, `G(0, d₀) = 0` and `∂_d G(0, d₀) ≠ 0`.
 
-The reduced Crandall–Rabinowitz branch theorem for `a G(a, d) = 0` (`exists_patternBranch` of
-`MathlibExt.Biology.Dynamics.TuringBranches`, PR #1533, not yet merged) is taken as the explicit
-hypothesis `hCR`, stated verbatim. Then the full equation has a unique local pattern branch: a
-`d = β(a)` through `(0, d₀)` with slope `-∂_a G / ∂_d G` such that near `(0, d₀)` the solutions
-of `F(x, d) = 0` are exactly the trivial ones `x = 0` and the branch
+The reduced Crandall–Rabinowitz branch theorem for `a G(a, d) = 0`, specialized to this `G`, is
+the explicit hypothesis `hCR`; the universal `exists_patternBranch` of
+`MathlibExt.Biology.Dynamics.TuringBranches` (PR #1533, not yet merged) specializes to it at the
+call site (`hCR := exists_patternBranch`). Then the full equation has a unique local pattern
+branch: a `d = β(a)` through `(0, d₀)` with slope `-∂_a G / ∂_d G` such that near `(0, d₀)` the
+solutions of `F(x, d) = 0` are exactly the trivial ones `x = 0` and the branch
 `x = a φ + W(a φ, d)`, `d = β(a)`; every point of the branch solves `F = 0` for small `a`. -/
 theorem lyapunovSchmidt_patternBranch (hF : HasStrictFDerivAt F F' ((0 : E), d₀))
     (hFL : F' ∘L .inl ℝ E ℝ = L) (htriv : ∀ᶠ d in 𝓝 d₀, F ((0 : E), d) = 0)
@@ -453,11 +454,10 @@ theorem lyapunovSchmidt_patternBranch (hF : HasStrictFDerivAt F F' ((0 : E), d�
     (hspan : ∀ z : pkg.decDom.X₀, ∃ a : ℝ, (z : E) = a • φ)
     (ψ : Y →L[ℝ] ℝ) (hψ1 : ∀ y ∈ pkg.decCodom.X₁, ψ y = 0)
     (hψ0 : ∀ y ∈ pkg.decCodom.X₀, ψ y = 0 → y = 0)
-    (hCR : ∀ {G : ℝ × ℝ → ℝ} {G' : ℝ × ℝ →L[ℝ] ℝ} {d₀ : ℝ},
-      HasStrictFDerivAt G G' (0, d₀) → G (0, d₀) = 0 → G' (0, 1) ≠ 0 →
-        ∃ φ : ℝ → ℝ, φ 0 = d₀ ∧ HasStrictDerivAt φ (-(G' (1, 0) / G' (0, 1))) 0 ∧
-          ∀ᶠ p in 𝓝 ((0 : ℝ), d₀), (p.1 * G p = 0 ↔ p.1 = 0 ∨ p.2 = φ p.1))
     {G : ℝ × ℝ → ℝ} {G' : ℝ × ℝ →L[ℝ] ℝ}
+    (hCR : HasStrictFDerivAt G G' (0, d₀) → G (0, d₀) = 0 → G' (0, 1) ≠ 0 →
+      ∃ φ : ℝ → ℝ, φ 0 = d₀ ∧ HasStrictDerivAt φ (-(G' (1, 0) / G' (0, 1))) 0 ∧
+        ∀ᶠ p in 𝓝 ((0 : ℝ), d₀), (p.1 * G p = 0 ↔ p.1 = 0 ∨ p.2 = φ p.1))
     (hfac : ∀ᶠ q in 𝓝 ((0 : ℝ), d₀), lsScalar pkg hφ ψ hF hFL q = q.1 * G q)
     (hG : HasStrictFDerivAt G G' (0, d₀)) (hG0 : G (0, d₀) = 0) (htrans : G' (0, 1) ≠ 0) :
     ∃ β : ℝ → ℝ, β 0 = d₀ ∧ HasStrictDerivAt β (-(G' (1, 0) / G' (0, 1))) 0 ∧
