@@ -8,10 +8,6 @@
     {
       "name": "cslib",
       "repo": "leanprover/cslib"
-    },
-    {
-      "name": "Physlib",
-      "repo": "leanprover-community/physlib"
     }
   ],
   "migration_ledgers": [
@@ -49,10 +45,6 @@
       {
         "pattern": "(cslib\\.get\\(\"rev\"\\) != \\(\\s*\")[0-9a-f]{40}(\")",
         "replacement": "{g1}{sha:cslib}{g2}"
-      },
-      {
-        "pattern": "(physlib\\.get\\(\"rev\"\\) != \\(\\s*\")[0-9a-f]{40}(\")",
-        "replacement": "{g1}{sha:Physlib}{g2}"
       }
     ]
   }

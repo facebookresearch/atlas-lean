@@ -21,7 +21,6 @@ CONFIG = {
     "deps": [
         {"name": "mathlib", "repo": "leanprover-community/mathlib4"},
         {"name": "cslib", "repo": "leanprover/cslib"},
-        {"name": "Physlib", "repo": "leanprover-community/physlib"},
     ],
     "doc_replacements": [
         {"path": "README.md", "pattern": "Lean-v[0-9]+\\.[0-9]+\\.[0-9]+",
@@ -258,7 +257,6 @@ class SelectTests(unittest.TestCase):
                 "leanprover/lean4": ["v4.35.0", "v4.36.0"],
                 "leanprover-community/mathlib4": ["v4.35.0", "v4.36.0"],
                 "leanprover/cslib": ["v4.35.0"],  # no v4.36.0 yet
-                "leanprover-community/physlib": ["v4.35.0", "v4.36.0"],
             })
             target, _, reason = select_target(client, root, CONFIG)
             self.assertEqual(target, "")
@@ -270,7 +268,7 @@ class SelectTests(unittest.TestCase):
             write_tree(root, "v4.35.0")
             client = FakeGitHub(tags={slug: ["v4.35.0", "v4.36.0"] for slug in [
                 "leanprover/lean4", "leanprover-community/mathlib4",
-                "leanprover/cslib", "leanprover-community/physlib"]})
+                "leanprover/cslib"]})
             target, run_id, _ = select_target(client, root, CONFIG)
             self.assertEqual(target, "v4.36.0")
             self.assertEqual(run_id, 123)
@@ -301,7 +299,7 @@ class SelectTests(unittest.TestCase):
             write_tree(root, "v4.35.0")
             client = FakeGitHub(tags={slug: ["v4.35.0", "v4.36.0"] for slug in [
                 "leanprover/lean4", "leanprover-community/mathlib4",
-                "leanprover/cslib", "leanprover-community/physlib"]})
+                "leanprover/cslib"]})
             # Auto-selection with --allow-rc must not pick a final release
             # (finish would then publish it on an -rc branch).
             target, _, _ = select_target(client, root, CONFIG, allow_rc=True)
@@ -356,8 +354,8 @@ class EditTests(unittest.TestCase):
             self.assertNotIn('alt="Lean v4.35.0"', readme)
             policy = (root / real_config["pin_policy"]["path"]).read_text()
             self.assertIn('"v4.36.0"', policy)
-            for dep in real_config["deps"]:
-                self.assertIn(shas[dep["name"]], policy)
+            self.assertIn(shas["mathlib"], policy)
+            self.assertIn(shas["cslib"], policy)
             self.assertNotIn("v4.35.0", policy)
 
 
@@ -683,7 +681,7 @@ class ValidatePreparedTests(unittest.TestCase):
         client = FakeGitHub(
             tags={slug: ["v4.35.0", "v4.36.0"] for slug in [
                 "leanprover/lean4", "leanprover-community/mathlib4",
-                "leanprover/cslib", "leanprover-community/physlib"]},
+                "leanprover/cslib"]},
             upstream=upstream, module_sources=MODULE_SOURCES)
         return prepared, real_config, base_files, client
 
@@ -822,7 +820,7 @@ class ValidatePreparedGitTests(unittest.TestCase):
         client = FakeGitHub(
             tags={slug: ["v4.35.0", "v4.36.0"] for slug in [
                 "leanprover/lean4", "leanprover-community/mathlib4",
-                "leanprover/cslib", "leanprover-community/physlib"]},
+                "leanprover/cslib"]},
             upstream=upstream, module_sources=MODULE_SOURCES)
         return root, client
 
@@ -1240,7 +1238,7 @@ class ConfigTests(unittest.TestCase):
         config = load_config(Path(__file__).resolve().parent.parent.parent)
         self.assertEqual(
             [d["name"] for d in config["deps"]],
-            ["mathlib", "cslib", "Physlib"],
+            ["mathlib", "cslib"],
         )
         repo_root = Path(__file__).resolve().parent.parent.parent
         # The pinned set is stable; the tag itself moves with each bump,
