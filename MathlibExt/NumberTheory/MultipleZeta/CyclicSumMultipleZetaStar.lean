@@ -1802,19 +1802,6 @@ private lemma zetaEStar_cons_eq_zetaRS (e : ℕ) (t : List ℕ) :
 
 /-! ## Step 5d: rotation bookkeeping and `B` finiteness -/
 
-private lemma kl_len (l : ℕ) (k : Fin l → ℕ) : (List.ofFn k).length = l :=
-  List.length_ofFn
-
-private lemma kl_sum_eq (l : ℕ) (k : Fin l → ℕ) :
-    (List.ofFn k).sum = ∑ j, k j := by
-  have hlen : (List.ofFn k).length = l := List.length_ofFn
-  have h1 : (List.ofFn k).take l = List.ofFn k :=
-    List.take_of_length_le (by omega)
-  rw [← h1, List.sum_take_ofFn]
-  have hfil : (Finset.univ.filter (fun j : Fin l => j.val < l)) = Finset.univ :=
-    Finset.filter_true_of_mem (fun j _ => j.2)
-  rw [hfil]
-
 private lemma rot_len (l : ℕ) (k : Fin l → ℕ) (j : Fin l) :
     ((List.ofFn k).rotate j.val).length = l := by
   rw [List.length_rotate, List.length_ofFn]
@@ -1822,13 +1809,6 @@ private lemma rot_len (l : ℕ) (k : Fin l → ℕ) (j : Fin l) :
 private lemma rot_sum (l : ℕ) (k : Fin l → ℕ) (j : Fin l) :
     ((List.ofFn k).rotate j.val).sum = (List.ofFn k).sum :=
   (List.rotate_perm _ _).sum_eq
-
-/-- Indexing into a list tail. -/
-private lemma tail_getElem (l : List ℕ) (m : ℕ) (h1 : m < l.tail.length)
-    (h2 : m + 1 < l.length) : l.tail[m]'h1 = l[m + 1]'h2 := by
-  cases l with
-  | nil => simp at h1
-  | cons a t => rfl
 
 /-- Split off leading 1's (star version of the strict decomposition). -/
 private lemma decomp_leading_onesS (l : List ℕ) :
@@ -2058,7 +2038,7 @@ private lemma ofFn_entries_eq (l : ℕ) (hl : 0 < l) (k : Fin l → ℕ)
             = ((List.ofFn k).rotate j.val)[m + 1]'(by
               rw [hrot]
               omega) := by
-          exact tail_getElem _ m hm_lt (by rw [hrot]; omega)
+          exact List.getElem_tail hm_lt
         rw [hrot_mem]
         have hrot_get : ((List.ofFn k).rotate j.val)[m + 1]'(by
               rw [hrot]
@@ -2101,8 +2081,8 @@ theorem cyclic_sum_formula_multiple_zeta_star_values
       MultipleZeta.starValue (cyclicIndex j i) (hcyclicAdmissible j i) =
       ((∑ j : Fin l, k j : ℕ) : ℝ) *
         MultipleZeta.strictValue totalIndex htotalAdmissible := by
-  have hlen : (List.ofFn k).length = l := StarCyclic.kl_len l k
-  have hsum_nat : (List.ofFn k).sum = ∑ j, k j := StarCyclic.kl_sum_eq l k
+  have hlen : (List.ofFn k).length = l := List.length_ofFn
+  have hsum_nat : (List.ofFn k).sum = ∑ j, k j := List.sum_ofFn
   have hpos : ∀ x ∈ List.ofFn k, 1 ≤ x := by
     intro x hx
     obtain ⟨j, rfl⟩ := List.mem_ofFn.mp hx

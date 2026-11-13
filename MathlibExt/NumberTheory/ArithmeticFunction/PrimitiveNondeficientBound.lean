@@ -124,29 +124,11 @@ private lemma R_ge_two (n : ℕ) (hne : n.primeFactors.Nonempty) :
         have := hqq.two_le
         omega
 
--- Product formula for σ in ℕ
-private lemma sigma_prod_nat (n : ℕ) (hn : n ≠ 0) :
-    (∑ d ∈ Nat.divisors n, d)
-      = ∏ p ∈ n.primeFactors, (∑ k ∈ Finset.range (n.factorization p + 1), p ^ k) := by
-  have h1 : (ArithmeticFunction.sigma 1) n = ∑ d ∈ Nat.divisors n, d :=
-    ArithmeticFunction.sigma_one_apply n
-  have h2 := ArithmeticFunction.IsMultiplicative.multiplicative_factorization
-    (ArithmeticFunction.sigma (1 : ℕ) : ArithmeticFunction ℕ)
-    ArithmeticFunction.isMultiplicative_sigma hn
-  have h3 : (∑ d ∈ Nat.divisors n, d)
-      = n.factorization.prod (fun p k => (ArithmeticFunction.sigma 1) (p ^ k)) := by
-    rw [← h1]; exact h2
-  rw [h3, Nat.prod_factorization_eq_prod_primeFactors]
-  apply Finset.prod_congr rfl
-  intro p hp
-  have hpp : Nat.Prime p := (Nat.mem_primeFactors.mp hp).1
-  exact ArithmeticFunction.sigma_one_apply_prime_pow hpp
-
 -- Product formula cast to ℝ
 private lemma sigma_prod (n : ℕ) (hn : n ≠ 0) :
     ((∑ d ∈ Nat.divisors n, d : ℕ) : ℝ)
       = ∏ p ∈ n.primeFactors, (((∑ k ∈ Finset.range (n.factorization p + 1), p ^ k : ℕ)) : ℝ) := by
-  have hnat := sigma_prod_nat n hn
+  have hnat := Nat.sum_divisors hn
   calc ((∑ d ∈ Nat.divisors n, d : ℕ) : ℝ)
       = ((((∏ p ∈ n.primeFactors,
         (∑ k ∈ Finset.range (n.factorization p + 1), p ^ k) : ℕ))) : ℝ) := by

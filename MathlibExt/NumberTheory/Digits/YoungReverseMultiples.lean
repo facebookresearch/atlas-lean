@@ -46,12 +46,6 @@ private inductive IsCarryChain (g k : ℕ) : List ℕ → List ℕ → List ℕ 
       IsCarryChain g k xs ys (c₁ :: cs) →
       IsCarryChain g k (x :: xs) (y :: ys) (c₀ :: c₁ :: cs)
 
-private theorem chain_getLast_cons (a b : ℕ) (l : List ℕ) :
-    (a :: b :: l).getLast? = (b :: l).getLast? := by
-  cases l with
-  | nil => rfl
-  | cons c l => simp [List.getLast?_cons_cons]
-
 private theorem chain_balance (g k : ℕ) (xs ys cs : List ℕ)
     (h : IsCarryChain g k xs ys cs) :
     ∀ (cN : ℕ), cs.getLast? = some cN →
@@ -73,7 +67,7 @@ private theorem chain_balance (g k : ℕ) (xs ys cs : List ℕ)
     | refl =>
       simp only [Nat.ofDigits_cons, List.length_cons]
       have hlast' : (c₁ :: cs).getLast? = some cN := by
-        have hgg := chain_getLast_cons c₀' c₁ cs
+        have hgg := List.getLast?_cons_cons (a := c₀') (b := c₁) (l := cs)
         rw [← hgg]
         exact hlast
       have ih' := ih cN hlast' c₁ cs rfl
@@ -128,7 +122,7 @@ private theorem chain_append (g k : ℕ) (xs1 ys1 cs1 : List ℕ)
   | cons x y c₀' c₁ xs ys cs hstep htail ih =>
     intro xs2 ys2 mid rest h2 hlast
     have hlast' : (c₁ :: cs).getLast? = some mid := by
-      have hgg := chain_getLast_cons c₀' c₁ cs
+      have hgg := List.getLast?_cons_cons (a := c₀') (b := c₁) (l := cs)
       rw [← hgg]
       exact hlast
     have iht := ih xs2 ys2 mid rest h2 hlast'
@@ -280,7 +274,7 @@ private theorem build_match (g k : ℕ) (hg : 0 < g)
         have hlast_eq : (c₀ :: buildCarries g k xs q).getLast?
             = (buildCarries g k xs q).getLast? := by
           rw [ht]
-          exact chain_getLast_cons c₀ q t
+          exact List.getLast?_cons_cons
         rw [hlast_eq, ht] at ⊢
         rw [ht] at ih2
         exact ih2

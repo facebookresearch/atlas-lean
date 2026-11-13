@@ -50,11 +50,6 @@ private lemma auxExpand2 (N : ℕ) :
   simp [Finset.sum_range_succ]
   ring
 
-private lemma auxExpand1 (N : ℕ) :
-    ∑ i ∈ Finset.range 1, (1 : ℝ) / (((N + i : ℕ) : ℝ) + 1)
-    = 1 / ((N : ℝ) + 1) := by
-  simp
-
 private lemma auxStep (N : ℕ) :
     (2 : ℝ) / ((6 * ((N : ℝ) + 1)) ^ 3 - 6 * ((N : ℝ) + 1))
     = (1 / (6 * (N : ℝ) + 2) + 1 / (6 * (N : ℝ) + 3) + 1 / (6 * (N : ℝ) + 4)
@@ -106,7 +101,8 @@ private lemma auxKey : ∀ N : ℕ,
     have e3 := auxHR_add (3 * N) 3
     have e2 := auxHR_add (2 * N) 2
     have e1 := auxHR_add N 1
-    rw [h6, h3, h2, e6, e3, e2, e1, auxExpand6, auxExpand3, auxExpand2, auxExpand1, auxStep]
+    rw [h6, h3, h2, e6, e3, e2, e1, auxExpand6, auxExpand3, auxExpand2, Finset.sum_range_one,
+      Nat.add_zero N, auxStep]
     ring
 
 private lemma auxHReq (m : ℕ) : auxHR m = ((harmonic m : ℚ) : ℝ) := by

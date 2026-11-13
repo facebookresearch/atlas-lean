@@ -100,12 +100,6 @@ private theorem decodeBlocks_append_block (m : Nat) (R : List Bool) :
     rw [ih]
     rfl
 
-private theorem true_mem_of_getLast?_eq_true (rest : List Bool)
-    (h : rest.getLast? = some true) : true ∈ rest := by
-  obtain ⟨ys, hys⟩ := List.getLast?_eq_some_iff.mp h
-  rw [hys]
-  exact List.mem_append_right ys (by simp)
-
 private theorem encodeNatBlocks_decodeBlocks (l : List Bool)
     (h : l = [] ∨ l.getLast? = some true) :
     encodeNatBlocks (decodeBlocks l) = l := by
@@ -133,7 +127,7 @@ private theorem encodeNatBlocks_decodeBlocks (l : List Bool)
         have hr : (c :: cs) = [] ∨ (c :: cs).getLast? = some true :=
           Or.inr hlast
         have ihr := ih hr
-        have hmem : true ∈ (c :: cs) := true_mem_of_getLast?_eq_true _ hlast
+        have hmem : true ∈ (c :: cs) := List.mem_of_getLast? hlast
         have hne : decodeBlocks (c :: cs) ≠ [] :=
           decodeBlocks_ne_nil_of_mem_true _ hmem
         cases hd : decodeBlocks (c :: cs) with

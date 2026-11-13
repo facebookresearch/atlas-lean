@@ -64,13 +64,6 @@ private theorem inv_entries (A : SL(2, ℤ)) :
     rw [Matrix.SpecialLinearGroup.coe_inv, Matrix.adjugate_fin_two]
   refine ⟨?_, ?_, ?_, ?_⟩ <;> simp [h]
 
-private theorem exists_col_eq {p r : ℤ} (h : IsCoprime p r) :
-    ∃ δ : SL(2, ℤ), δ 0 0 = p ∧ δ 1 0 = r := by
-  obtain ⟨u, v, huv⟩ := h
-  refine ⟨⟨!![p, -v; r, u], ?_⟩, rfl, rfl⟩
-  rw [Matrix.det_fin_two_of]
-  linear_combination huv
-
 private theorem eq_T_zpow_of_col {M : SL(2, ℤ)} (h00 : M 0 0 = 1) (h10 : M 1 0 = 0) :
     M = ModularGroup.T ^ (M 0 1) := by
   have hdet := det_entries M
@@ -120,7 +113,7 @@ private theorem exists_conj_T_zpow_of_trace_eq_two {γ : SL(2, ℤ)}
     rw [inv_one, mul_one, one_mul]
     exact eq_T_zpow_of_col ha hc
   · obtain ⟨p, r, hpr, hfix1, hfix2⟩ := exists_isCoprime_fixed htr hc
-    obtain ⟨δ, hδ00, hδ10⟩ := exists_col_eq hpr
+    obtain ⟨δ, hδ00, hδ10⟩ := hpr.exists_SL2_col 0
     obtain ⟨hi00, hi01, hi10, hi11⟩ := inv_entries δ
     have hδdet := det_entries δ
     rw [hδ00, hδ10] at hδdet

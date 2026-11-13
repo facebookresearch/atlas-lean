@@ -44,34 +44,11 @@ public noncomputable def quadraticGaussSum5 (k : ℤ) : ℂ :=
   Finset.sum (Finset.range 5) (fun n =>
     Complex.exp (2 * (Real.pi : ℂ) * Complex.I * (k : ℂ) * (n : ℂ) ^ 2 / 5))
 
-private lemma exp_two : Complex.exp (2 * (Real.pi : ℂ) * Complex.I) = 1 := by
-  have harg :
-      2 * (Real.pi : ℂ) * Complex.I = ((2 * Real.pi : ℝ) : ℂ) * Complex.I := by
-    simp
-  rw [harg, Complex.exp_ofReal_mul_I, Real.cos_two_pi, Real.sin_two_pi]
-  simp
-
-private lemma exp_nat (m : ℕ) :
-    Complex.exp (((m : ℕ) : ℂ) * (2 * (Real.pi : ℂ) * Complex.I)) = 1 := by
-  induction m with
-  | zero =>
-    have h0 : (((0 : ℕ) : ℂ) * (2 * (Real.pi : ℂ) * Complex.I)) = 0 := by
-      simp
-    rw [h0, Complex.exp_zero]
-  | succ n ih =>
-    have hsucc :
-        (((n + 1 : ℕ) : ℂ) * (2 * (Real.pi : ℂ) * Complex.I)) =
-          (((n : ℕ) : ℂ) * (2 * (Real.pi : ℂ) * Complex.I)) +
-            (2 * (Real.pi : ℂ) * Complex.I) := by
-      simp
-      ring
-    rw [hsucc, Complex.exp_add, ih, exp_two, mul_one]
-
 private lemma exp_neg_nat (m : ℕ) :
     Complex.exp (-(((m : ℕ) : ℂ) * (2 * (Real.pi : ℂ) * Complex.I))) = 1 := by
   have hpos :
       Complex.exp (((m : ℕ) : ℂ) * (2 * (Real.pi : ℂ) * Complex.I)) = 1 :=
-    exp_nat m
+    Complex.exp_nat_mul_two_pi_mul_I m
   have hadd :
       (-(((m : ℕ) : ℂ) * (2 * (Real.pi : ℂ) * Complex.I))) +
         ((((m : ℕ) : ℂ) * (2 * (Real.pi : ℂ) * Complex.I))) = 0 := by
@@ -98,7 +75,7 @@ private lemma add_five (a : ℤ) :
       Complex.exp ((n : ℂ) ^ 2 * (2 * (Real.pi : ℂ) * Complex.I)) = 1 := by
     have h :
         Complex.exp (((n ^ 2 : ℕ) : ℂ) * (2 * (Real.pi : ℂ) * Complex.I)) = 1 :=
-      exp_nat (n ^ 2)
+      Complex.exp_nat_mul_two_pi_mul_I (n ^ 2)
     simpa [Nat.cast_pow] using h
   rw [harg, Complex.exp_add, hexp, mul_one]
 
@@ -185,7 +162,7 @@ private lemma term_nat (k n : ℕ) :
           (((k * n ^ 2) / 5 : ℕ) : ℂ) * (2 * (Real.pi : ℂ) * Complex.I) := by ring
   have hexp :
       Complex.exp ((((k * n ^ 2) / 5 : ℕ) : ℂ) * (2 * (Real.pi : ℂ) * Complex.I)) = 1 :=
-    exp_nat ((k * n ^ 2) / 5)
+    Complex.exp_nat_mul_two_pi_mul_I ((k * n ^ 2) / 5)
   unfold gaussFifthRoot
   rw [harg, Complex.exp_add, hexp, mul_one]
 

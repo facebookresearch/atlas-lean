@@ -88,24 +88,6 @@ private theorem pell_binom_closed (P : ℕ → ℤ) (h0 : P 0 = 0) (h1 : P 1 = 1
   · congr 1
     ring
 
-/-- Powers of `w` repeat with period 8. -/
-private theorem omega_pow_mod (w : ℂ) (hw8 : w ^ 8 = 1) (k : ℕ) : w ^ k = w ^ (k % 8) := by
-  conv_lhs => rw [← Nat.div_add_mod k 8]
-  rw [pow_add, pow_mul, hw8, one_pow, one_mul]
-
-/-- Powers of `w ^ 3` repeat with period 8. -/
-private theorem omega_pow3_mod (w : ℂ) (hw8 : w ^ 8 = 1) (k : ℕ) :
-    w ^ (3 * k) = w ^ ((3 * k) % 8) := by
-  have e : 3 * k = 8 * (3 * (k / 8)) + 3 * (k % 8) := by
-    have h := Nat.div_add_mod k 8
-    omega
-  have e2 : (3 * (k % 8)) % 8 = (3 * k) % 8 := by
-    have h := Nat.div_add_mod k 8
-    omega
-  conv_lhs => rw [e, pow_add, pow_mul, hw8, one_pow, one_mul]
-  rw [← e2]
-  exact omega_pow_mod w hw8 (3 * (k % 8))
-
 /-- Roots-of-unity filter for the Kronecker symbol `(k/8)`. -/
 private theorem kron_filter (s w : ℂ) (hs2 : s ^ 2 = 2) (hs0 : s ≠ 0)
     (hw : w = (1 + Complex.I) / s) (k : ℕ) :
@@ -171,7 +153,7 @@ private theorem kron_filter (s w : ℂ) (hs2 : s ^ 2 = 2) (hs0 : s ≠ 0)
       rw [mul_add, hsw3, hswinv3]
       linear_combination hs2
     exact mul_left_cancel₀ hs0 h
-  rw [omega_pow_mod w hw8 k, omega_pow3_mod w hw8 k]
+  rw [pow_eq_pow_mod k hw8, pow_eq_pow_mod (3 * k) hw8]
   have h8 : k % 8 = 0 ∨ k % 8 = 1 ∨ k % 8 = 2 ∨ k % 8 = 3 ∨
       k % 8 = 4 ∨ k % 8 = 5 ∨ k % 8 = 6 ∨ k % 8 = 7 := by omega
   rcases h8 with h | h | h | h | h | h | h | h

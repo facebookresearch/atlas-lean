@@ -444,11 +444,6 @@ private lemma E_eq_G : E = G := by
     rw [E_zero, G_zero]
   exact eq_of_fderiv_eq hfE hfG hfeq 0 h0
 
-private lemma integral_one_div_log (a b : ℝ) (ha : 0 < a) (hb : 0 < b) :
-    (∫ s in a..b, 1 / s) = Real.log (b / a) := by
-  simp only [one_div]
-  exact integral_inv_of_pos ha hb
-
 private lemma integrable_G :
     MeasureTheory.IntegrableOn (fun s : ℝ => Real.exp (-s) / s) (Set.Ioi 1) := by
   have hexp : MeasureTheory.IntegrableOn (fun s : ℝ => Real.exp (-s)) (Set.Ioi 1) := by
@@ -593,7 +588,7 @@ private lemma E_sub_log_gamma (x : ℝ) (hx : 1 ≤ x) :
           exact hne s hs
       exact hc.intervalIntegrable
   have hlog : (∫ s in (1:ℝ)..x, 1/s) = Real.log x := by
-    have h := integral_one_div_log 1 x (by norm_num) hx0
+    have h := integral_one_div_of_pos one_pos hx0
     rwa [div_one] at h
   have hCg : C0 - Real.eulerMascheroniConstant = L := by
     have h := gamma_eq

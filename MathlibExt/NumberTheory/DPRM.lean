@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Computability.RE
 public import Mathlib.NumberTheory.Dioph
+import Mathlib.Algebra.BigOperators.ModEq
 import Mathlib.Computability.Primrec.Basic
 import Mathlib.Computability.Primrec.List
 import Mathlib.Data.List.GetD
@@ -767,19 +768,6 @@ private theorem dp_prod_lt (x t : ℕ) (ht : 1 ≤ t) :
             _ ≤ t * (1 + x * t) ^ x := Nat.mul_le_mul_right _ ht
         omega
 
-/-- Pointwise congruence lifts to products. -/
-private theorem dp_modEq_prod (N x : ℕ) (f g : ℕ → ℕ)
-    (h : ∀ j ∈ Finset.range x, f j ≡ g j [MOD N]) :
-    (∏ j ∈ Finset.range x, f j) ≡ (∏ j ∈ Finset.range x, g j) [MOD N] := by
-  induction x with
-  | zero => rfl
-  | succ n ih =>
-    rw [Finset.prod_range_succ, Finset.prod_range_succ]
-    exact Nat.ModEq.mul
-      (ih fun j hj => h j (Finset.mem_range.mpr (lt_of_lt_of_le
-        (Finset.mem_range.mp hj) (Nat.le_succ n))))
-      (h n (Finset.mem_range.mpr (Nat.lt_succ_self n)))
-
 /-- Key congruence for the product trick. -/
 private theorem dp_prod_key (x t q : ℕ)
     (hq : t * q ≡ 1 [MOD dpProdN x t]) :
@@ -798,7 +786,7 @@ private theorem dp_prod_key (x t q : ℕ)
     ring
   rw [hLHS]
   unfold dpProdP
-  apply dp_modEq_prod
+  apply Nat.ModEq.prod
   intro j _
   exact Nat.ModEq.add_right _ hq
 

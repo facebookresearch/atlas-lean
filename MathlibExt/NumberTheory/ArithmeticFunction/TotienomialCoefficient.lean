@@ -26,14 +26,6 @@ namespace MetaMathlibExt
 
 /-! # Totienomial coefficients: integrality and prime factorization -/
 
-/-- Floor division is superadditive: separate divisions round down at least as much. -/
-private theorem div_add_le_div (a b d : ℕ) : a / d + b / d ≤ (a + b) / d := by
-  rcases eq_zero_or_pos d with rfl | hd
-  · simp
-  · rw [Nat.le_div_iff_mul_le hd]
-    calc (a / d + b / d) * d = a / d * d + b / d * d := by ring
-    _ ≤ a + b := Nat.add_le_add (Nat.div_mul_le_self a d) (Nat.div_mul_le_self b d)
-
 /-- The product of `1, .., K` is `K !`. -/
 private theorem prod_Icc_one_eq_factorial (K : ℕ) : ∏ i ∈ Finset.Icc 1 K, i = K.factorial := by
   induction K with
@@ -106,39 +98,6 @@ private theorem prod_primeFactors_swap (g : ℕ → ℕ) (K : ℕ) :
   intro p hp
   exact hfib p hp
 
-/-- Per-index identity: `φ i` times the primes dividing `i` equals `i` times `q - 1`
-over the same primes. -/
-private theorem totient_mul_prod_primeFactors (i : ℕ) (hi : 0 < i) :
-    i.totient * ∏ p ∈ i.primeFactors, p = i * ∏ p ∈ i.primeFactors, (p - 1) := by
-  have hne : i ≠ 0 := ne_of_gt hi
-  have htot := Nat.totient_eq_prod_factorization hne
-  have hself := Nat.prod_factorization_pow_eq_self hne
-  have bridge : ∀ gg : ℕ → ℕ → ℕ,
-      i.factorization.prod gg = ∏ p ∈ i.primeFactors, gg p (i.factorization p) := by
-    intro gg
-    calc i.factorization.prod gg
-        = ∏ a ∈ i.factorization.support, gg a (i.factorization a) := rfl
-      _ = ∏ p ∈ i.primeFactors, gg p (i.factorization p) := by
-          rw [Nat.support_factorization]
-  simp only [bridge] at htot hself
-  have mid : (∏ p ∈ i.primeFactors, (p ^ (i.factorization p - 1) * (p - 1)))
-        * ∏ p ∈ i.primeFactors, p
-      = (∏ p ∈ i.primeFactors, p ^ i.factorization p)
-        * ∏ p ∈ i.primeFactors, (p - 1) := by
-    rw [← Finset.prod_mul_distrib, ← Finset.prod_mul_distrib]
-    apply Finset.prod_congr rfl
-    intro p hp
-    have he : i.factorization p ≠ 0 := by
-      rw [← Finsupp.mem_support_iff, Nat.support_factorization]
-      exact hp
-    obtain ⟨k, hk⟩ := Nat.exists_eq_add_of_le (show 1 ≤ i.factorization p by omega)
-    have hk1 : i.factorization p - 1 = k := by omega
-    have hk2 : i.factorization p = k + 1 := by omega
-    rw [hk1, hk2, pow_succ]
-    ring
-  rw [← htot, hself] at mid
-  exact mid
-
 /-- Combined identity: the product of `φ` over `1, .., K` times prime powers
 equals `K !` times the corresponding `p - 1` powers. -/
 private theorem prod_totient_mul_pow (K : ℕ) :
@@ -146,8 +105,8 @@ private theorem prod_totient_mul_pow (K : ℕ) :
       = K.factorial * ∏ p ∈ Nat.primesLE K, (p - 1) ^ (K / p) := by
   have per : ∀ i ∈ Finset.Icc 1 K,
       i.totient * ∏ p ∈ i.primeFactors, p = i * ∏ p ∈ i.primeFactors, (p - 1) := by
-    intro i hi
-    exact totient_mul_prod_primeFactors i (Finset.mem_Icc.mp hi).1
+    intro i _
+    exact Nat.totient_mul_prod_primeFactors i
   have hcongr := Finset.prod_congr rfl per
   simp only [Finset.prod_mul_distrib, prod_primeFactors_swap] at hcongr
   rw [prod_Icc_one_eq_factorial] at hcongr
@@ -204,7 +163,7 @@ private theorem legendre_le (n m p : ℕ) (hp : Nat.Prime p) :
       ((0 : ℤ) ≤ ((((n + m) / p ^ i : ℕ)) : ℤ) - ((((n / p ^ i : ℕ))) : ℤ)
         - ((((m / p ^ i : ℕ))) : ℤ)) := by
     intro i _
-    have h : n / p ^ i + m / p ^ i ≤ (n + m) / p ^ i := div_add_le_div n m (p ^ i)
+    have h : n / p ^ i + m / p ^ i ≤ (n + m) / p ^ i := Nat.div_add_div_le_add_div
     have h1 : ((((n / p ^ i : ℕ))) : ℤ) + ((((m / p ^ i : ℕ))) : ℤ)
         ≤ ((((n + m) / p ^ i : ℕ)) : ℤ) := by exact_mod_cast h
     linarith
@@ -238,7 +197,7 @@ private theorem legendre_le (n m p : ℕ) (hp : Nat.Prime p) :
     have hcast1 : ((((n + m) / p - n / p - m / p : ℕ)) : ℤ)
         = ((((n + m) / p : ℕ)) : ℤ) - ((((n / p : ℕ))) : ℤ)
           - ((((m / p : ℕ))) : ℤ) := by
-      have hle : n / p + m / p ≤ (n + m) / p := div_add_le_div n m p
+      have hle : n / p + m / p ≤ (n + m) / p := Nat.div_add_div_le_add_div
       rw [Nat.sub_sub, Nat.cast_sub hle, Nat.cast_add, sub_sub]
     apply Int.ofNat_le.mp
     rw [hcast1, key]
@@ -307,7 +266,7 @@ theorem totienomial_integral_factorization (n m : ℕ) :
       = n / p + m / p + ((n + m) / p - n / p - m / p) := by
     intro p
     rw [Nat.sub_sub]
-    exact (Nat.add_sub_cancel' (div_add_le_div n m p)).symm
+    exact (Nat.add_sub_cancel' Nat.div_add_div_le_add_div).symm
   have hQsplit : ∏ p ∈ Nat.primesLE (n + m), (p - 1) ^ ((n + m) / p)
       = (∏ p ∈ Nat.primesLE (n + m), (p - 1) ^ (n / p)) *
         ((∏ p ∈ Nat.primesLE (n + m), (p - 1) ^ (m / p)) *

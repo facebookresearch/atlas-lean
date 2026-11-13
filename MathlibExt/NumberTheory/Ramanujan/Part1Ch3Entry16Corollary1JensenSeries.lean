@@ -477,24 +477,6 @@ private lemma finite_diff_pow (N : ℕ) (y n : ℂ) :
       omega
   exact hsingle
 
-/-- Descending factorial scaling. -/
-private lemma descFactorial_succ_mul (N j : ℕ) :
-    Nat.descFactorial (N + 1) (j + 1) = (N + 1) * Nat.descFactorial N j := by
-  induction j generalizing N with
-  | zero =>
-    simp [Nat.descFactorial]
-  | succ j ih =>
-    have h1 : Nat.descFactorial (N + 1) (j + 1 + 1)
-        = ((N + 1) - (j + 1)) * Nat.descFactorial (N + 1) (j + 1) :=
-      Nat.descFactorial_succ (N + 1) (j + 1)
-    have h2 : Nat.descFactorial N (j + 1)
-        = (N - j) * Nat.descFactorial N j :=
-      Nat.descFactorial_succ N j
-    rw [h1, ih]
-    have hsub : (N + 1) - (j + 1) = N - j := by omega
-    rw [hsub, h2]
-    ring
-
 /-- Finite Jensen sum identity. -/
 private lemma finite_jensen_sum (N : ℕ) (x y n : ℂ) :
     ∑ k ∈ Finset.range (N + 1),
@@ -621,7 +603,7 @@ private lemma finite_jensen_sum (N : ℕ) (x y n : ℂ) :
             Nat.descFactorial_succ (N + 1) j
           have h2 : Nat.descFactorial (N + 1) (j + 1)
               = (N + 1) * Nat.descFactorial N j :=
-            descFactorial_succ_mul N j
+            Nat.succ_descFactorial_succ N j
           have h3 : (N + 1 - j : ℕ) * Nat.descFactorial (N + 1) j
               = (N + 1) * Nat.descFactorial N j := by
             rw [← h1, h2]
@@ -804,15 +786,6 @@ private lemma q_lt_one (ρ : ℝ)
     have hfin := mul_lt_mul_of_pos_left hexp hn0
     rwa [mul_inv_cancel₀ (ne_of_gt hn0)] at hfin
 
-/-- Descending factorials are bounded by powers. -/
-private lemma descFactorial_le_pow (N j : ℕ) :
-    Nat.descFactorial N j ≤ N ^ j := by
-  induction j generalizing N with
-  | zero => simp
-  | succ j ih =>
-    rw [Nat.descFactorial_succ, pow_succ']
-    exact Nat.mul_le_mul (Nat.sub_le N j) (ih N)
-
 /-- The normalized descending factorial is at most one. -/
 private lemma descFactorial_div_pow_le_one (N j : ℕ) (hN : 1 ≤ N) :
     ((Nat.descFactorial N j : ℕ) : ℝ) / (N : ℝ) ^ j ≤ 1 := by
@@ -820,7 +793,7 @@ private lemma descFactorial_div_pow_le_one (N j : ℕ) (hN : 1 ≤ N) :
     apply pow_pos
     exact_mod_cast Nat.pos_of_ne_zero (by omega)
   rw [div_le_one hpos]
-  exact_mod_cast descFactorial_le_pow N j
+  exact_mod_cast Nat.descFactorial_le_pow N j
 
 /-- A binomial probability mass is at most one. -/
 private lemma binom_prob_le_one (N k : ℕ) (hN : 1 ≤ N) (hk : k ≤ N) :

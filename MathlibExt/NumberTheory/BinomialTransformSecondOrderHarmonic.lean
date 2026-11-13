@@ -656,18 +656,6 @@ private theorem Presid_eval (n : ℕ) (s : ℂ) :
     Polynomial.eval_finsetSum, Polynomial.eval_finsetSum, Polynomial.eval_X,
     Polynomial.eval_C, Finset.sum_congr rfl eQ, Finset.sum_congr rfl eR]
 
-private theorem poly_sum_natDegree_le (s : Finset ℕ) (f : ℕ → Polynomial ℂ) (b : ℕ)
-    (h : ∀ i ∈ s, (f i).natDegree ≤ b) : (∑ i ∈ s, f i).natDegree ≤ b := by
-  revert h
-  refine Finset.induction_on s ?_ ?_
-  · intro h
-    simp
-  · intro a t hat ih h
-    rw [Finset.sum_insert hat]
-    have h1 := h _ (Finset.mem_insert_self a t)
-    have h2 := ih (fun i hi => h i (Finset.mem_insert_of_mem hi))
-    exact le_trans (Polynomial.natDegree_add_le _ _) (max_le h1 h2)
-
 private theorem qdeg (n j : ℕ) : (Qpoly n j).natDegree ≤ j := by
   unfold Qpoly
   have h1 : (Polynomial.C (((-1 : ℂ) ^ (j - 1)) / (j : ℂ))
@@ -773,9 +761,9 @@ private theorem Presid_natDegree_le (n : ℕ) (_hn : 1 ≤ n) : (Presid n).natDe
       exact le_trans h (Nat.add_le_add_left (rdeg n k) 1)
     omega
   have hS1 : (∑ j ∈ Finset.Icc 1 n, Qpoly n j).natDegree ≤ n :=
-    poly_sum_natDegree_le _ _ _ hQ
+    Polynomial.natDegree_sum_le_of_forall_le _ _ hQ
   have hS2 : (∑ k ∈ Finset.Icc 1 n, Polynomial.X * Rpoly n k).natDegree ≤ n :=
-    poly_sum_natDegree_le _ _ _ hR
+    Polynomial.natDegree_sum_le_of_forall_le _ _ hR
   have eP : Presid n
       = (∑ j ∈ Finset.Icc 1 n, Qpoly n j)
         + (∑ k ∈ Finset.Icc 1 n, Polynomial.X * Rpoly n k)
