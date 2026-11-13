@@ -21,7 +21,8 @@ Rigollet's Definition 2.12 (`ℓ₁` norm, squared `ℓ₂` norm, Lasso estimato
 basic inequality
 `(1/n) ‖X(θhat - θstar)‖² + 2τ ‖θhat‖₁ ≤ (2/n) ⟨ε, X(θhat - θstar)⟩ + 2τ ‖θstar‖₁`
 for `Y = X θstar + ε`, and its transposed form with `⟨Xᵀ ε, θhat - θstar⟩`. Both hold pointwise
-in `ε`; no noise law, score event, or restricted eigenvalue condition is assumed.
+in `ε`; no noise law, score event, or restricted eigenvalue condition is assumed. Both assume
+`0 < (n : ℝ)`, since at `n = 0` the Lasso predicate degenerates under Lean's `1 / 0 = 0`.
 -/
 
 @[expose] public section
@@ -39,7 +40,13 @@ noncomputable def sqL2norm {n : ℕ} (v : Fin n → ℝ) : ℝ :=
   ∑ i, v i ^ 2
 
 /-- **Lasso estimator** (Rigollet, Definition 2.12): `θhat` minimizes the penalized criterion
-`(1/n) ‖Y - Xθ‖² + 2τ ‖θ‖₁` over all `θ`, with a positive tuning parameter `τ`. -/
+`(1/n) ‖Y - Xθ‖² + 2τ ‖θ‖₁` over all `θ`, with a positive tuning parameter `τ`.
+
+The predicate is Definition 2.12 verbatim. At `n = 0`, Lean's totalized division gives
+`1 / (n : ℝ) = 0`, so the predicate degenerates to minimality of the penalty `2τ ‖θ‖₁` and carries
+no statistical content there. Apart from `IsLassoEstimator.tau_pos`, which only reads off
+`0 < τ`, every theorem in this module that draws a conclusion from the predicate assumes
+`0 < (n : ℝ)` explicitly, so no result is claimed at `n = 0`. -/
 def IsLassoEstimator {n d : ℕ} (X : Matrix (Fin n) (Fin d) ℝ)
     (Y : Fin n → ℝ) (τ : ℝ) (θhat : Fin d → ℝ) : Prop :=
   0 < τ ∧ ∀ θ : Fin d → ℝ,
