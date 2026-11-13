@@ -15,9 +15,18 @@ public import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
+/-!
+# Open addressing: a counting bound on probe prefixes
+
+Under uniform hashing, the probe sequence of a key in an `m`-slot open-addressing
+table is a permutation of the slots, each of the `m!` permutations equally likely.
+`first_k_probes_bound` bounds the number of permutations whose first `k` probes all
+land in a set `S` of occupied slots by `m! * (|S| / m) ^ k`.
+-/
+
 @[expose] public section
 
-
+namespace Cslib.Algorithms.Lean.OpenAddressing
 
 private theorem step_count {m : ℕ} (S : Finset (Fin m)) (k : ℕ) (hk : k < m) :
     (Finset.univ.filter (fun π : Equiv.Perm (Fin m) => ∀ i : Fin m, (i : ℕ) < k + 1 → π i ∈ S)).card * m ≤
@@ -185,17 +194,21 @@ private theorem bound_gt_aux {m : ℕ} (S : Finset (Fin m)) (hm : 0 < m) (k : �
     simp only [Nat.cast_zero]
     exact hrhs_nonneg
 
-/-- Open addressing under uniform hashing: probe counts. Slots
-are `Fin m`; `S` is the set of occupied slots, of size `n`.
-A probe sequence is a permutation `π` of the slots (`π i` is the
-`i`-th probed slot). An unsuccessful search probes until the
-first free slot: `probes π` is the least `k` with `π k ∉ S`,
-counted as `k + 1` probes. The first bound: summed over all
-permutations, the number with the first `k` probes all occupied
-is `(n)_k * (m - k)! ` (falling factorial times the remaining
-permutations). Stated in real form as an inequality on the total:
-the total number of permutations whose first `k` probes all land
-in `S` is at most `m! * (n / m) ^ k`. -/
+/-- Open addressing under uniform hashing: a counting bound on probe prefixes.
+Slots are `Fin m`, and `S` is the set of occupied slots, of size `n = S.card`.
+A probe sequence is a permutation `π` of the slots (`π i` is the `i`-th probed
+slot).
+
+For `k ≤ m`, the permutations whose first `k` probes all land in `S` number
+exactly `n (n - 1) ⋯ (n - k + 1) * (m - k)!`: the falling factorial `(n)_k` times
+the orderings of the remaining `m - k` slots. When `S` is a proper subset of the
+slots, an unsuccessful search stops at the first free slot, so these are exactly
+the probe sequences on which it makes more than `k` probes. For `k > m`, every
+slot is among the first `k` probes, so the count is `m!` when `S` is the whole
+table and `0` otherwise; a full table has no free slot.
+
+The theorem states the real-valued upper bound `m! * (n / m) ^ k` on this count,
+for every `k`. -/
 theorem first_k_probes_bound {m : ℕ} (S : Finset (Fin m))
     (hm : 0 < m) (k : ℕ) :
     ((Finset.univ.filter (fun π : Equiv.Perm (Fin m) =>
@@ -206,3 +219,5 @@ theorem first_k_probes_bound {m : ℕ} (S : Finset (Fin m))
   · exact bound_le_aux S hm k hkm
   · push Not at hkm
     exact bound_gt_aux S hm k hkm
+
+end Cslib.Algorithms.Lean.OpenAddressing
