@@ -41,10 +41,15 @@ This file makes the three parts of that statement precise.
 * **Asymptotic normality conditions.** If along some asymptotic regime the scaled numerator
   satisfies a central limit theorem `r_k N_k →ᵈ N(0, σ²)` and the variance estimator is
   ratio-consistent, `r_k² V_k → σ² > 0` in probability, then `D_k →ᵈ N(0, 1)`
-  (`tendstoInDistribution_tajimaD_gaussian`, Slutsky's theorem). Neither condition can hold for a
-  single sample of fixed size `n`: if `|N| ≤ β S` (true for real data, with `β` depending on `n`)
-  then `D` is bounded (`abs_tajimaD_le`) and so is never exactly Gaussian
-  (`not_hasLaw_tajimaD_gaussianReal`). This is why Tajima fitted a beta distribution instead.
+  (`tendstoInDistribution_tajimaD_gaussian`, Slutsky's theorem). At a fixed sample size `n` the
+  two conditions cannot hold simultaneously for data obeying the real-data bound `|N| ≤ β S`
+  (with `β` depending only on `n`): together they would give `D_k →ᵈ N(0, 1)`, but the bound
+  makes `|D_k| ≤ β / √(min(e₁, e₂) / 2)` for every `k` (`abs_tajimaD_le` where `S_k ≥ 1`; Lean's
+  value `D_k = 0` where `S_k = 0`), and a limit in distribution of laws supported in one bounded
+  closed interval is supported in that interval, so it is not `N(0, 1)`. This limit argument is
+  not formalized here.
+  `not_hasLaw_tajimaD_gaussianReal` proves only the single-sample statement: under the same bound
+  the law of `D` is not exactly Gaussian. This is why Tajima fitted a beta distribution instead.
 
 ## Main results
 
@@ -57,8 +62,8 @@ This file makes the three parts of that statement precise.
 * `variance_linearization_div_sqrt`, `KingmanTimes.variance_tajimaD_linearization_eq_one`: the
   delta-method variance of `D` is `1`.
 * `tendstoInDistribution_tajimaD_gaussian`: conditions for `D_k →ᵈ N(0, 1)`.
-* `abs_tajimaD_le`, `not_hasLaw_tajimaD_gaussianReal`: for fixed `n`, `D` is bounded and not
-  Gaussian.
+* `abs_tajimaD_le`, `not_hasLaw_tajimaD_gaussianReal`: for fixed `n`, `D` is bounded and its law
+  is not exactly Gaussian.
 
 ## References
 
@@ -341,7 +346,7 @@ theorem variance_tajimaD_linearization_eq_one [IsProbabilityMeasure μ] {m : Mea
 
 end KingmanTimes
 
-/-! ### Asymptotic normality: sufficient conditions, and failure at fixed `n` -/
+/-! ### Asymptotic normality: sufficient conditions, and non-Gaussianity at fixed `n` -/
 
 /-- **Conditions for asymptotic normality of Tajima's `D`.** Along a filter `l` (an asymptotic
 regime, e.g. a growing number of independent loci), let the `k`-th data set have `n k` genes,
@@ -421,8 +426,9 @@ theorem abs_tajimaD_le {n : ℕ} (hn : 4 ≤ n) {π S β : ℝ} (hS : 1 ≤ S)
 
 /-- **`D` is not Gaussian for a fixed sample size**: for `n ≥ 4` genes, integer-valued `S` and
 `|π - S / a₁| ≤ β S` almost surely, `D` is almost surely bounded (`abs_tajimaD_le`; at `S = 0`
-it takes the junk value `0`), so its law is not `N(m, v)` for any `v ≠ 0`. Hence the conditions
-of `tendstoInDistribution_tajimaD_gaussian` require a genuine asymptotic regime. -/
+it takes the junk value `0`), so its law is not `N(m, v)` for any `v ≠ 0`. This is a statement
+about one fixed sample; it does not by itself rule out a Gaussian limit in distribution of a
+sequence of such samples (see the module docstring). -/
 theorem not_hasLaw_tajimaD_gaussianReal {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     {n : ℕ} (hn : 4 ≤ n) {π S : Ω → ℝ} {β : ℝ} (hS : ∀ᵐ ω ∂μ, S ω = 0 ∨ 1 ≤ S ω)
     (hN : ∀ᵐ ω ∂μ, |π ω - S ω / tajimaA1 n| ≤ β * S ω) (m : ℝ) {v : NNReal} (hv : v ≠ 0) :
