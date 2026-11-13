@@ -789,4 +789,111 @@ example : xorM.counterfactual 0 false xorU 0 = false :=
 
 end Consistency
 
+
+namespace PotentialOutcomes
+
+open Convexity MeasureTheory MathlibExt.Probability.Causality
+
+/-! ### Test: xor model (`α = Bool`, `n = 2`). -/
+
+noncomputable def ca04t03_xorμ0 : StdSimplex ℝ Bool where
+  weights := Finsupp.single true (1/4 : ℝ) + Finsupp.single false (3/4 : ℝ)
+  nonneg := by
+    intro x
+    cases x <;> simp [Finsupp.add_apply, Finsupp.single_apply] <;> norm_num
+  total := by
+    (simp [Finsupp.sum_add_index, Finsupp.sum_single_index]; norm_num)
+
+noncomputable def ca04t03_xorμ1 : StdSimplex ℝ Bool where
+  weights := Finsupp.single true (1/3 : ℝ) + Finsupp.single false (2/3 : ℝ)
+  nonneg := by
+    intro x
+    cases x <;> simp [Finsupp.add_apply, Finsupp.single_apply] <;> norm_num
+  total := by
+    (simp [Finsupp.sum_add_index, Finsupp.sum_single_index]; norm_num)
+
+noncomputable def ca04t03_xorμ : (k : Fin 2) → StdSimplex ℝ Bool
+  | ⟨0, _⟩ => ca04t03_xorμ0
+  | ⟨1, _⟩ => ca04t03_xorμ1
+  | ⟨n + 2, h⟩ => absurd h (by omega)
+
+noncomputable def ca04t03_xorM : FiniteSCM Bool 2 (fun _ => Bool) where
+  pa := fun _ => Finset.univ
+  f := fun k =>
+    match k with
+    | ⟨0, _⟩ => fun _ u => u
+    | ⟨1, _⟩ => fun z u =>
+        if z ⟨(⟨0, by decide⟩ : Fin 1), Finset.mem_univ _⟩ then !u else u
+    | ⟨n + 2, h⟩ => absurd h (by omega)
+
+noncomputable def ca04t03_xorG : Bool → ℝ := fun b => if b then 1 else 0
+
+/-! The noise law is registered as a probability measure, so probability APIs such as
+`integral_ipw_ate` find the instance. -/
+
+example {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)] [∀ k, MeasurableSpace (U k)]
+    (μ : (k : Fin n) → StdSimplex ℝ (U k)) : IsProbabilityMeasure (noiseMeasure μ) := by
+  infer_instance
+
+example : IsProbabilityMeasure (noiseMeasure ca04t03_xorμ) := by
+  infer_instance
+
+theorem ca04t03_xor_solve_zero (u : (k : Fin 2) → Bool) :
+    ca04t03_xorM.solve u ⟨0, by omega⟩ = u ⟨0, by omega⟩ := by
+  have h := ca04t03_xorM.solve_isSolution u ⟨0, by omega⟩
+  have h0 : ∀ (z : ca04t03_xorM.pa ⟨0, by omega⟩ → Bool) (v : Bool),
+      ca04t03_xorM.f ⟨0, by omega⟩ z v = v := fun _ _ => rfl
+  rw [h0] at h
+  exact h
+
+theorem ca04t03_xor_weights_true0 : (ca04t03_xorμ ⟨0, by omega⟩).weights true = (1/4 : ℝ) := by
+  show (Finsupp.single true (1/4 : ℝ) + Finsupp.single false (3/4 : ℝ)) true = _
+  simp [Finsupp.add_apply, Finsupp.single_apply]
+
+theorem ca04t03_xor_weights_false0 : (ca04t03_xorμ ⟨0, by omega⟩).weights false = (3/4 : ℝ) := by
+  show (Finsupp.single true (1/4 : ℝ) + Finsupp.single false (3/4 : ℝ)) false = _
+  simp [Finsupp.add_apply, Finsupp.single_apply]
+
+example : (noiseMeasure ca04t03_xorμ).real (ca04t03_xorM.treated ⟨0, by omega⟩ true) = 1/4 := by
+  classical
+  have hT : ca04t03_xorM.treated ⟨0, by omega⟩ true
+      = {u | u ⟨0, by omega⟩ = true} := by
+    ext u
+    show (ca04t03_xorM.solve u ⟨0, by omega⟩ = true) ↔ (u ⟨0, by omega⟩ = true)
+    rw [ca04t03_xor_solve_zero]
+  rw [hT, real_coord_eq ca04t03_xorμ ⟨0, by omega⟩ (fun v => v = true), Finset.sum_filter]
+  simp only [Fintype.sum_bool]
+  rw [ite_true, ite_eq_right (by decide : ¬(false = true : Prop)), add_zero]
+  rw [ca04t03_xor_weights_true0]
+
+example : ca04t03_xorM.potentialOutcome ⟨0, by omega⟩ false ⟨1, by omega⟩ ca04t03_xorG
+    ![true, true] = 1 := by
+  rfl
+
+example : ca04t03_xorM.potentialOutcome ⟨0, by omega⟩ true ⟨1, by omega⟩ ca04t03_xorG
+    ![true, true] = 0 := by
+  rfl
+
+example : StronglyIgnorable (noiseMeasure ca04t03_xorμ) (ca04t03_xorM.treated ⟨0, by omega⟩ true)
+    (fun u => (ca04t03_xorM.potentialOutcome ⟨0, by omega⟩ false ⟨1, by omega⟩ ca04t03_xorG u,
+      ca04t03_xorM.potentialOutcome ⟨0, by omega⟩ true ⟨1, by omega⟩ ca04t03_xorG u))
+    (fun _ => ()) := by
+  classical
+  apply stronglyIgnorable_of_pa_eq_empty
+  · show (Finset.univ : Finset (Fin 0)) = ∅
+    simp
+  · intro w
+    have hf : ∀ v, ca04t03_xorM.f ⟨0, by omega⟩ w v = v := fun v => rfl
+    have hmap : ((ca04t03_xorμ ⟨0, by omega⟩).map (ca04t03_xorM.f ⟨0, by omega⟩ w)).weights true
+        = (1/4 : ℝ) := by
+      rw [map_weights_eq]
+      simp only [hf]
+      simp only [Fintype.sum_bool]
+      rw [ca04t03_xor_weights_true0]
+      norm_num
+    rw [hmap]
+    norm_num
+
+end PotentialOutcomes
+
 end Cslib.MachineLearning.StructuralCausalModelsTests
