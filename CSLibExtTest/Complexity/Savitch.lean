@@ -26,7 +26,7 @@ example : reachIn (fun x y : Fin 2 => x = 0 ∧ y = 1) 0 0 1 = true := by
 /-- Soundness form at `k = 0`: acceptance gives a path of length
 at most one. -/
 example (h : reachIn (fun x y : Fin 2 => x = 0 ∧ y = 1) 0 0 1 = true) :
-    ∃ n ≤ 2 ^ 0, GPath (fun x y : Fin 2 => x = 0 ∧ y = 1) 0 1 n :=
+    ∃ n ≤ 2 ^ 0, Relation.RelatesInSteps (fun x y : Fin 2 => x = 0 ∧ y = 1) 0 1 n :=
   reachIn_sound 0 0 1 h
 
 /-- The two-edge path `0 → 1 → 2` on `Fin 3`. -/
@@ -42,8 +42,8 @@ example : reachIn twoEdge 0 0 2 = false := by
   decide
 
 /-- The explicit two-step walk `0 → 1 → 2`. -/
-theorem twoEdge_walk : GPath twoEdge 0 2 2 :=
-  .step (y := 1) (by decide) (.step (y := 0) (by decide) .refl)
+theorem twoEdge_walk : Relation.RelatesInSteps twoEdge 0 2 2 :=
+  .tail 0 1 2 1 (.single (by decide)) (by decide)
 
 /-- Completeness applied to the constructed two-step walk at `k = 1`. -/
 example : reachIn twoEdge 1 0 2 = true :=
@@ -51,12 +51,8 @@ example : reachIn twoEdge 1 0 2 = true :=
 
 /-- Soundness at the recursive level: acceptance at `k = 1` yields a walk of at most two
 steps. -/
-example : ∃ n ≤ 2 ^ 1, GPath twoEdge 0 2 n :=
+example : ∃ n ≤ 2 ^ 1, Relation.RelatesInSteps twoEdge 0 2 n :=
   reachIn_sound 1 0 2 (by decide)
-
-/-- The walk transfers to CSLib's `Relation.RelatesInSteps`. -/
-example : Relation.RelatesInSteps twoEdge 0 2 2 :=
-  gPath_iff_relatesInSteps.mp twoEdge_walk
 
 /-- Rejection at `k = 0`, read through `reachIn_iff_relatesWithinSteps`: `0` does not reach
 `2` within one step. -/
