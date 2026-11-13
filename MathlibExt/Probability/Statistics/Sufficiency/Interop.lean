@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Probability.Statistics.Sufficiency.Basic
 public import MathlibExt.Probability.Statistics.Sufficiency.Discrete
+public import MathlibExt.Probability.Statistics.Sufficiency.RaoBlackwell
 
 /-!
 # Discrete sufficiency is σ-algebra sufficiency
@@ -53,5 +54,23 @@ theorem IsSufficientPMF.isSufficient_comap {Θ X τ : Type*} [Fintype X] [Measur
   rw [PMF.toMeasure_apply_singleton _ _ MeasurableSet.of_discrete,
     withDensity_apply _ MeasurableSet.of_discrete, lintegral_singleton, Measure.count_singleton,
     mul_one, hfac]
+
+set_option linter.unusedFintypeInType false in
+/-- **Rao–Blackwell through the discrete bridge.** Composing the discrete-to-σ-algebra
+bridge with the comap Rao–Blackwell theorem gives the squared-risk split for a sufficient
+statistic of mass functions. -/
+theorem IsSufficientPMF.raoBlackwell_comap_sq
+    {Θ X τ : Type*} [Fintype X] [MeasurableSpace X] [DiscreteMeasurableSpace X]
+    [MeasurableSpace τ] [DiscreteMeasurableSpace τ]
+    {P : Θ → PMF X} {T : X → τ} (hT : IsSufficientPMF P T)
+    {W : X → ℝ} (hW : ∀ θ, MemLp W 2 (P θ).toMeasure) (tgt : Θ → ℝ) :
+    ∃ φ : τ → ℝ, Measurable φ ∧
+      ∀ θ, ∫ ω, (W ω - tgt θ) ^ 2 ∂(P θ).toMeasure =
+        ∫ ω, (φ (T ω) - tgt θ) ^ 2 ∂(P θ).toMeasure +
+        ∫ ω, (W ω - φ (T ω)) ^ 2 ∂(P θ).toMeasure := by
+  obtain ⟨φ, hφ, -, -, hpyth⟩ :=
+    raoBlackwell_comap Measurable.of_discrete hT.isSufficient_comap
+      Measurable.of_discrete hW tgt
+  exact ⟨φ, hφ, hpyth⟩
 
 end MathlibExt.Probability.Statistics.Sufficiency
