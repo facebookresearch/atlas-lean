@@ -63,7 +63,7 @@ theorem sum_children3 (α : ℝ) :
 
 /-- The root is the parent of each child. -/
 theorem isParent_root3 (i : Fin 3) : IsParent tree3 {i} Finset.univ := by
-  refine ⟨by simp [tree3], ?_, ?_⟩
+  refine ⟨by fin_cases i <;> simp [tree3], by simp [tree3], ?_, ?_⟩
   · fin_cases i <;> decide
   · unfold tree3
     fin_cases i <;> decide
@@ -108,8 +108,7 @@ theorem hierRejections_tree3_topDown (a p : Finset (Fin 3) → ℝ) (i : Fin 3) 
   rw [mem_hierRejections_iff_root root3_isRoot, mem_hierRejections_iff_parent (isParent_root3 i),
     mem_hierRejections_iff_root root3_isRoot]
   have hu : (Finset.univ : Finset (Fin 3)) ∈ tree3 := by simp [tree3]
-  have hi : ({i} : Finset (Fin 3)) ∈ tree3 := by fin_cases i <;> simp [tree3]
-  simp [hu, hi]
+  simp [hu]
 
 /-- Concrete p-values on the two-level tree. -/
 noncomputable def pv3 (C : Finset (Fin 3)) : ℝ :=
@@ -363,7 +362,7 @@ theorem meinshausenLevel_path8 (α : ℝ) :
 
 /-- `{0, 1}` is the parent of `{0}` in the deep tree. -/
 theorem isParent_pair8 : IsParent tree8 {0} {0, 1} := by
-  refine ⟨by decide, by decide, ?_⟩
+  refine ⟨by decide, by decide, by decide, ?_⟩
   unfold tree8
   decide +kernel
 

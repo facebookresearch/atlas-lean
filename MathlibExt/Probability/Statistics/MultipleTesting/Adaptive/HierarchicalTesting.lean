@@ -18,7 +18,8 @@ are indexed by `Fin m`; each node of the hierarchy is a cluster `C ⊆ Fin m` ca
 `H_C` (in Meinshausen's setting, "no variable in `C` matters", so `H_C` is a true null exactly
 when `C` is contained in the set `N` of null variables). The clusters form a *tree*: any two are
 either nested or disjoint (`IsLaminar`). The ancestors of a cluster are the clusters of the tree
-that strictly contain it; for nonempty clusters, the parent is the smallest of them (`IsParent`).
+that strictly contain it; for a nonempty node of the tree, the parent is the smallest of them
+(`IsParent`).
 (The empty cluster lies below every cluster, so its ancestors need not be nested.)
 
 ## The procedure
@@ -28,7 +29,7 @@ a node is tested only if its parent was rejected, and it is rejected if its p-va
 level. Equivalently (`hierRejections`), `C` is rejected exactly when every cluster of the tree
 containing `C` (itself and all its ancestors) has p-value at most its level.
 `mem_hierRejections_iff_parent` and `mem_hierRejections_iff_root` show that this is the top-down
-"test only if the parent rejected" procedure, and `exists_isParent` that every nonempty cluster
+"test only if the parent rejected" procedure, and `exists_isParent` that every nonempty node
 below a root has a parent.
 
 Meinshausen's level allocation is `a C = α |C| / m` (`meinshausenLevel`): a cluster gets the
@@ -105,10 +106,10 @@ disjoint. -/
 def IsLaminar (T : Finset (Finset (Fin m))) : Prop :=
   ∀ A ∈ T, ∀ B ∈ T, A ⊆ B ∨ B ⊆ A ∨ Disjoint A B
 
-/-- `D` is the parent of `C` in the tree `T`: `D` is a cluster of `T` strictly containing `C` and
-contained in every cluster of `T` strictly containing `C`. -/
+/-- `D` is the parent of the node `C` in the tree `T`: `C` and `D` are clusters of `T`, `D`
+strictly contains `C`, and `D` is contained in every cluster of `T` strictly containing `C`. -/
 def IsParent (T : Finset (Finset (Fin m))) (C D : Finset (Fin m)) : Prop :=
-  D ∈ T ∧ C ⊂ D ∧ ∀ E ∈ T, C ⊂ E → D ⊆ E
+  C ∈ T ∧ D ∈ T ∧ C ⊂ D ∧ ∀ E ∈ T, C ⊂ E → D ⊆ E
 
 /-- The clusters rejected by the hierarchical procedure on the tree `T` with levels `a` and
 observed p-values `p`: a cluster is rejected when it and every cluster of `T` containing it have
@@ -148,17 +149,15 @@ theorem hierRejections_upward_closed {T : Finset (Finset (Fin m))} {a p : Finset
   mem_hierRejections.mpr ⟨hD, fun E hE hDE => (mem_hierRejections.mp hC).2 E hE (hCD.trans hDE)⟩
 
 /-- **A node is tested only if its parent rejected.** If `D` is the parent of `C`, then `C` is
-rejected exactly when `C` is in the tree, its p-value is at most its level, and `D` is
-rejected. -/
+rejected exactly when its p-value is at most its level and `D` is rejected. -/
 theorem mem_hierRejections_iff_parent {T : Finset (Finset (Fin m))} {a p : Finset (Fin m) → ℝ}
     {C D : Finset (Fin m)} (hpar : IsParent T C D) :
-    C ∈ hierRejections T a p ↔ C ∈ T ∧ p C ≤ a C ∧ D ∈ hierRejections T a p := by
-  obtain ⟨hD, hCD, hmin⟩ := hpar
+    C ∈ hierRejections T a p ↔ p C ≤ a C ∧ D ∈ hierRejections T a p := by
+  obtain ⟨hCT, hD, hCD, hmin⟩ := hpar
   constructor
   · intro hC
-    exact ⟨(mem_hierRejections.mp hC).1, le_of_mem_hierRejections hC,
-      hierRejections_upward_closed hC hD hCD.subset⟩
-  · rintro ⟨hCT, hpC, hDR⟩
+    exact ⟨le_of_mem_hierRejections hC, hierRejections_upward_closed hC hD hCD.subset⟩
+  · rintro ⟨hpC, hDR⟩
     refine mem_hierRejections.mpr ⟨hCT, fun E hE hCE => ?_⟩
     rcases eq_or_ne C E with rfl | hne
     · exact hpC
@@ -179,10 +178,10 @@ theorem mem_hierRejections_iff_root {T : Finset (Finset (Fin m))} {a p : Finset 
     · exact hpC
     · exact absurd (Finset.ssubset_iff_subset_ne.mpr ⟨hCE, hne⟩) (hroot E hE)
 
-/-- **Every nonempty cluster with a strict superset in a tree has a parent**: the smallest
+/-- **Every nonempty node with a strict superset in a tree has a parent**: the smallest
 cluster of the tree strictly containing it. -/
 theorem exists_isParent {T : Finset (Finset (Fin m))} (hT : IsLaminar T) {C : Finset (Fin m)}
-    (hne : C.Nonempty) (hsup : ∃ E ∈ T, C ⊂ E) : ∃ D, IsParent T C D := by
+    (hC : C ∈ T) (hne : C.Nonempty) (hsup : ∃ E ∈ T, C ⊂ E) : ∃ D, IsParent T C D := by
   classical
   set S := T.filter fun E => C ⊂ E with hS
   have hSne : S.Nonempty := by
@@ -190,7 +189,7 @@ theorem exists_isParent {T : Finset (Finset (Fin m))} (hT : IsLaminar T) {C : Fi
     exact ⟨E, Finset.mem_filter.mpr ⟨hE, hCE⟩⟩
   obtain ⟨D, hDS, hDmin⟩ := S.exists_min_image Finset.card hSne
   obtain ⟨hD, hCD⟩ := Finset.mem_filter.mp hDS
-  refine ⟨D, hD, hCD, fun E hE hCE => ?_⟩
+  refine ⟨D, hC, hD, hCD, fun E hE hCE => ?_⟩
   rcases hT D hD E hE with h | h | h
   · exact h
   · have hcard := hDmin E (Finset.mem_filter.mpr ⟨hE, hCE⟩)
