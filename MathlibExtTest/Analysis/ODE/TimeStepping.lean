@@ -51,9 +51,9 @@ example : (1 - 2 * (1 / 2 : ℝ)) = 0 := by norm_num
 example : |1 - 4 * (3 / 4 : ℝ)| = 2 := by norm_num
 
 -- The FTCS witness at `m = 4`, `r = 3 / 4`: one step scales the mode by `-2`.
-example : ftcsStep (m := 4) (by norm_num) (3 / 4 : ℝ) altMode =
+example : ftcsStep (m := 4) (3 / 4 : ℝ) altMode =
     (1 - 4 * (3 / 4 : ℝ)) • altMode :=
-  ftcsStep_altMode (m := 4) (by norm_num) (⟨2, rfl⟩ : Even 4) (3 / 4)
+  ftcsStep_altMode (m := 4) (⟨2, rfl⟩ : Even 4) (3 / 4)
 
 -- Scalar positivity instance: decay from `x = 5` with `h = 1 / 2 ≤ 1 / 1`.
 example : (0 : ℝ) ≤ (1 - 1 * (1 / 2)) * 5 :=
@@ -61,9 +61,9 @@ example : (0 : ℝ) ≤ (1 - 1 * (1 / 2)) * 5 :=
     (by norm_num) (by norm_num)
 
 -- FTCS conservation instance on the 3-point periodic grid.
-example : ∑ i, ftcsStep (m := 3) (by norm_num) (1 / 2 : ℝ) (![1, 2, 3] : Fin 3 → ℝ) i =
+example : ∑ i, ftcsStep (m := 3) (1 / 2 : ℝ) (![1, 2, 3] : Fin 3 → ℝ) i =
     ∑ i, (![1, 2, 3] : Fin 3 → ℝ) i :=
-  ftcsStep_conserves_sum (m := 3) (by norm_num) (1 / 2) ![1, 2, 3]
+  ftcsStep_conserves_sum (m := 3) (1 / 2) ![1, 2, 3]
 
 #print axioms decay_local_truncation_le
 #print axioms decay_global_convergence
@@ -72,10 +72,6 @@ example : ∑ i, ftcsStep (m := 3) (by norm_num) (1 / 2 : ℝ) (![1, 2, 3] : Fin
 #print axioms eulerStep_iterate_conserves_dotProduct
 #print axioms scalarEuler_nonneg
 #print axioms scalarEuler_neg_of_large_step
-#print axioms cycNext
-#print axioms cycPrev
-#print axioms sum_cycNext_eq
-#print axioms sum_cycPrev_eq
 #print axioms ftcsStep
 #print axioms ftcsStep_conserves_sum
 #print axioms ftcsStep_convex

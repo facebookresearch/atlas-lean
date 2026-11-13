@@ -13,6 +13,7 @@ public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Algebra.Group.Even
+public import Mathlib.Logic.Equiv.Fin.Rotate
 import Mathlib.Analysis.Calculus.ContDiff.Basic
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
@@ -50,8 +51,8 @@ comparison for scalar decay.
   step-size restriction `h ≤ 1 / λ`, and fails above it (witness `x = 1`).
 * `ftcsStep_nonneg`, `ftcsStep_conserves_sum`: FTCS positivity for `0 ≤ r ≤ 1 / 2`
   and exact mass conservation on the periodic grid.
-* `ftcsStep_altMode`, `altMode_amplification_gt_one`: the alternating mode is scaled
-  by `1 - 4 * r`, hence amplified (`|1 - 4 * r| > 1`) for `r > 1 / 2`.
+* `ftcsStep_altMode`, `altMode_amplification_gt_one`: for even `m` the alternating mode
+  is scaled by `1 - 4 * r`, hence amplified (`|1 - 4 * r| > 1`) for `r > 1 / 2`.
 * `decay_euler_error_le`, `decay_euler_numeric_bound`: certified `O(h)` comparison
   of Euler iterates against `Real.exp`, plus the `λ = 1`, `T = 1`, `h = 1 / 10`,
   `n = 10` instance with explicit constant.
@@ -68,8 +69,10 @@ comparison for scalar decay.
 * E. Hairer, S. P. Nørsett and G. Wanner, Solving Ordinary Differential
   Equations I, 2nd ed., Section I.7 and Theorem I.7.3.
 * `MathlibExt.Analysis.ODE.ExplicitEuler`: landed ATLAS Euler theory reused here.
-* MAT-C2 (ATLAS roadmap): closed no-flux finite grid; FTCS monotonicity
-  `0 ≤ r ≤ 1 / 2`; high-frequency witness outside the regime.
+* R. J. LeVeque, Finite Difference Methods for Ordinary and Partial Differential
+  Equations, SIAM (2007), Sections 9.3 and 9.6: stability of the FTCS scheme for
+  `u_t = D u_xx` exactly when `k ≤ h² / (2 D)`, i.e. `r ≤ 1 / 2` with `r = D k / h²`, by
+  the method of lines and by von Neumann analysis.
 -/
 
 open scoped Matrix BigOperators
@@ -208,107 +211,44 @@ lemma scalarEuler_neg_of_large_step {lam h : ℝ} (hlam : 0 < lam) (hh : 1 / lam
 
 /-! ## C. Explicit 1D diffusion (FTCS) on a periodic grid
 
-Cyclic indices on `Fin m` (`m ≥ 3`) are fixed by `cycNext`/`cycPrev` below. One
-FTCS step preserves nonnegativity for `0 ≤ r ≤ 1 / 2` and conserves the total
-mass on the periodic (closed) grid; for even `m` the alternating mode is scaled
-by `1 - 4 * r`. -/
+The grid is the discrete circle `Fin m`: the right neighbour of `i` is `finRotate m i`
+(`i + 1`, wrapping from `m - 1` to `0`) and the left neighbour is `(finRotate m).symm i`.
+This is the periodic boundary condition, the setting in which von Neumann analysis is
+exact: every grid Fourier mode is an eigenvector of the step. Only the alternating mode
+(`ξ h = π`, even `m`) is formalized here. A closed grid with zero-flux boundaries is a
+different operator (an endpoint spike is updated by `1 - r` there, not `1 - 2 * r`) and is
+not treated here. One FTCS step preserves nonnegativity for `0 ≤ r ≤ 1 / 2` and conserves
+the total mass; for even `m` the alternating mode is scaled by `1 - 4 * r`. -/
 
-/-- Cyclic successor on `Fin m`, `(i + 1) % m`. -/
-def cycNext {m : ℕ} (hm : 3 ≤ m) : Fin m → Fin m :=
-  fun i => ⟨(i.val + 1) % m, Nat.mod_lt _ (by omega)⟩
-
-/-- Cyclic predecessor on `Fin m`, `(i + m - 1) % m`. -/
-def cycPrev {m : ℕ} (hm : 3 ≤ m) : Fin m → Fin m :=
-  fun i => ⟨(i.val + m - 1) % m, Nat.mod_lt _ (by omega)⟩
-
-private lemma cycNext_cycPrev {m : ℕ} (hm : 3 ≤ m) (i : Fin m) :
-    cycNext hm (cycPrev hm i) = i := by
-  have hlt := i.isLt
-  apply Fin.ext
-  show ((i.val + m - 1) % m + 1) % m = i.val
-  by_cases hi : i.val = 0
-  · rw [hi]
-    have hm1 : (0 + m - 1) % m = 0 + m - 1 :=
-      Nat.mod_eq_of_lt (show 0 + m - 1 < m by omega)
-    have heq : 0 + m - 1 + 1 = m := by omega
-    rw [hm1, heq, Nat.mod_self]
-  · have h1 : (i.val + m - 1) % m = i.val - 1 := by
-      have heq : i.val + m - 1 = (i.val - 1) + m := by omega
-      rw [heq, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega : i.val - 1 < m)]
-    rw [h1, Nat.sub_add_cancel (show 1 ≤ i.val by omega), Nat.mod_eq_of_lt hlt]
-
-private lemma cycPrev_cycNext {m : ℕ} (hm : 3 ≤ m) (i : Fin m) :
-    cycPrev hm (cycNext hm i) = i := by
-  have hlt := i.isLt
-  apply Fin.ext
-  show ((i.val + 1) % m + m - 1) % m = i.val
-  by_cases hi : i.val + 1 < m
-  · rw [Nat.mod_eq_of_lt hi]
-    have heq : i.val + 1 + m - 1 = i.val + m := by omega
-    rw [heq, Nat.add_mod_right, Nat.mod_eq_of_lt hlt]
-  · have hmeq : i.val + 1 = m := by omega
-    rw [hmeq, Nat.mod_self]
-    have h1 : (0 + m - 1) % m = 0 + m - 1 :=
-      Nat.mod_eq_of_lt (show 0 + m - 1 < m by omega)
-    rw [h1]
-    omega
-
-private lemma cycNext_bijective {m : ℕ} (hm : 3 ≤ m) :
-    Function.Bijective (cycNext hm) := by
-  refine ⟨?_, ?_⟩
-  · intro a b hab
-    have h := congrArg (cycPrev hm) hab
-    simpa [cycPrev_cycNext hm] using h
-  · intro b
-    exact ⟨cycPrev hm b, cycNext_cycPrev hm b⟩
-
-private lemma cycPrev_bijective {m : ℕ} (hm : 3 ≤ m) :
-    Function.Bijective (cycPrev hm) := by
-  refine ⟨?_, ?_⟩
-  · intro a b hab
-    have h := congrArg (cycNext hm) hab
-    simpa [cycNext_cycPrev hm] using h
-  · intro b
-    exact ⟨cycNext hm b, cycPrev_cycNext hm b⟩
-
-/-- Reindexing: the cyclic-successor sum equals the original sum. -/
-lemma sum_cycNext_eq {m : ℕ} (hm : 3 ≤ m) (u : Fin m → ℝ) :
-    ∑ i, u (cycNext hm i) = ∑ i, u i :=
-  (cycNext_bijective hm).sum_comp u
-
-/-- Reindexing: the cyclic-predecessor sum equals the original sum. -/
-lemma sum_cycPrev_eq {m : ℕ} (hm : 3 ≤ m) (u : Fin m → ℝ) :
-    ∑ i, u (cycPrev hm i) = ∑ i, u i :=
-  (cycPrev_bijective hm).sum_comp u
-
-/-- One explicit FTCS diffusion step on the periodic grid `Fin m` with spacing
-parameter `r`: `u i + r * (u (i - 1) + u (i + 1) - 2 * u i)` with cyclic indices. -/
-def ftcsStep {m : ℕ} (hm : 3 ≤ m) (r : ℝ) (u : Fin m → ℝ) : Fin m → ℝ :=
-  fun i => u i + r * (u (cycPrev hm i) + u (cycNext hm i) - 2 * u i)
+/-- One explicit FTCS diffusion step on the periodic grid `Fin m` with mesh ratio `r`:
+`u i + r * (u (i - 1) + u (i + 1) - 2 * u i)`, with the neighbours taken cyclically
+through `finRotate m`. -/
+def ftcsStep {m : ℕ} (r : ℝ) (u : Fin m → ℝ) : Fin m → ℝ :=
+  fun i => u i + r * (u ((finRotate m).symm i) + u (finRotate m i) - 2 * u i)
 
 /-- FTCS on a periodic grid conserves the total mass. -/
-lemma ftcsStep_conserves_sum {m : ℕ} (hm : 3 ≤ m) (r : ℝ) (u : Fin m → ℝ) :
-    ∑ i, ftcsStep hm r u i = ∑ i, u i := by
-  have hprev := sum_cycPrev_eq hm u
-  have hnext := sum_cycNext_eq hm u
-  have hsum : (∑ i, (u (cycPrev hm i) + u (cycNext hm i) - 2 * u i)) = 0 := by
+lemma ftcsStep_conserves_sum {m : ℕ} (r : ℝ) (u : Fin m → ℝ) :
+    ∑ i, ftcsStep r u i = ∑ i, u i := by
+  have hprev : ∑ i, u ((finRotate m).symm i) = ∑ i, u i := Equiv.sum_comp _ u
+  have hnext : ∑ i, u (finRotate m i) = ∑ i, u i := Equiv.sum_comp _ u
+  have hsum : (∑ i, (u ((finRotate m).symm i) + u (finRotate m i) - 2 * u i)) = 0 := by
     rw [Finset.sum_sub_distrib, Finset.sum_add_distrib, ← Finset.mul_sum, hprev, hnext]
     ring
   simp only [ftcsStep]
   rw [Finset.sum_add_distrib, ← Finset.mul_sum, hsum, mul_zero, add_zero]
 
 /-- Convex-combination form of one FTCS step. -/
-lemma ftcsStep_convex {m : ℕ} (hm : 3 ≤ m) (r : ℝ) (u : Fin m → ℝ) (i : Fin m) :
-    ftcsStep hm r u i =
-      (1 - 2 * r) * u i + r * u (cycPrev hm i) + r * u (cycNext hm i) := by
+lemma ftcsStep_convex {m : ℕ} (r : ℝ) (u : Fin m → ℝ) (i : Fin m) :
+    ftcsStep r u i =
+      (1 - 2 * r) * u i + r * u ((finRotate m).symm i) + r * u (finRotate m i) := by
   simp only [ftcsStep]
   ring
 
 /-- FTCS preserves nonnegativity for `0 ≤ r ≤ 1 / 2`. -/
-lemma ftcsStep_nonneg {m : ℕ} (hm : 3 ≤ m) {r : ℝ} (hr0 : 0 ≤ r) (hr : r ≤ 1 / 2)
-    {u : Fin m → ℝ} (hu : ∀ i, 0 ≤ u i) : ∀ i, 0 ≤ ftcsStep hm r u i := by
+lemma ftcsStep_nonneg {m : ℕ} {r : ℝ} (hr0 : 0 ≤ r) (hr : r ≤ 1 / 2)
+    {u : Fin m → ℝ} (hu : ∀ i, 0 ≤ u i) : ∀ i, 0 ≤ ftcsStep r u i := by
   intro i
-  rw [ftcsStep_convex hm]
+  rw [ftcsStep_convex]
   have h1 : (0 : ℝ) ≤ 1 - 2 * r := by linarith
   exact add_nonneg (add_nonneg (mul_nonneg h1 (hu i)) (mul_nonneg hr0 (hu _)))
     (mul_nonneg hr0 (hu _))
@@ -316,65 +256,34 @@ lemma ftcsStep_nonneg {m : ℕ} (hm : 3 ≤ m) {r : ℝ} (hr0 : 0 ≤ r) (hr : r
 /-- Alternating mode `u i = (-1) ^ i.val` on `Fin m`. -/
 def altMode {m : ℕ} : Fin m → ℝ := fun i => (-1 : ℝ) ^ i.val
 
-private lemma altMode_cycNext {m : ℕ} (hm : 3 ≤ m) (heven : Even m) (i : Fin m) :
-    altMode (cycNext hm i) = -altMode i := by
-  have hlt := i.isLt
-  have hmpow : (-1 : ℝ) ^ (m - 1) = -1 := by
-    have hm1 : m - 1 + 1 = m := Nat.sub_add_cancel (by omega : 1 ≤ m)
-    have hpow : (-1 : ℝ) ^ (m - 1) * (-1 : ℝ) = 1 := by
-      rw [← pow_succ, hm1]
-      exact heven.neg_one_pow
-    linear_combination -hpow
-  simp only [altMode]
-  by_cases hi : i.val + 1 < m
-  · have hnext : (cycNext hm i).val = i.val + 1 := by
-      show (i.val + 1) % m = i.val + 1
-      exact Nat.mod_eq_of_lt hi
-    rw [hnext, pow_succ]
-    ring
-  · have hmeq : i.val + 1 = m := by omega
-    have hnext : (cycNext hm i).val = 0 := by
-      show (i.val + 1) % m = 0
-      rw [hmeq, Nat.mod_self]
-    rw [hnext]
-    have hival : i.val = m - 1 := by omega
-    rw [hival, hmpow]
-    simp
+private lemma altMode_finRotate {m : ℕ} (heven : Even m) (i : Fin m) :
+    altMode (finRotate m i) = -altMode i := by
+  cases m with
+  | zero => exact i.elim0
+  | succ n =>
+    simp only [altMode]
+    rw [coe_finRotate]
+    split_ifs with hi
+    · have hodd : Odd n := by
+        obtain ⟨k, hk⟩ := heven
+        exact ⟨k - 1, by omega⟩
+      rw [hi, Fin.val_last, hodd.neg_one_pow]
+      norm_num
+    · rw [pow_succ]
+      ring
 
-private lemma altMode_cycPrev {m : ℕ} (hm : 3 ≤ m) (heven : Even m) (i : Fin m) :
-    altMode (cycPrev hm i) = -altMode i := by
-  have hlt := i.isLt
-  have hmpow : (-1 : ℝ) ^ (m - 1) = -1 := by
-    have hm1 : m - 1 + 1 = m := Nat.sub_add_cancel (by omega : 1 ≤ m)
-    have hpow : (-1 : ℝ) ^ (m - 1) * (-1 : ℝ) = 1 := by
-      rw [← pow_succ, hm1]
-      exact heven.neg_one_pow
-    linear_combination -hpow
-  simp only [altMode]
-  by_cases hi : i.val = 0
-  · have hprev : (cycPrev hm i).val = m - 1 := by
-      have h2 : i.val + m - 1 = m - 1 := by omega
-      show (i.val + m - 1) % m = m - 1
-      rw [h2]
-      exact Nat.mod_eq_of_lt (by omega)
-    rw [hprev, hi, hmpow]
-    simp
-  · have hi1 : 1 ≤ i.val := Nat.pos_of_ne_zero hi
-    have hprev : (cycPrev hm i).val = i.val - 1 := by
-      show (i.val + m - 1) % m = i.val - 1
-      have heq : i.val + m - 1 = (i.val - 1) + m := by omega
-      rw [heq, Nat.add_mod_right, Nat.mod_eq_of_lt (show i.val - 1 < m by omega)]
-    have hsub : i.val - 1 + 1 = i.val := Nat.sub_add_cancel hi1
-    rw [hprev]
-    conv_rhs => rw [← hsub, pow_succ]
-    ring
+private lemma altMode_finRotate_symm {m : ℕ} (heven : Even m) (i : Fin m) :
+    altMode ((finRotate m).symm i) = -altMode i := by
+  have h := altMode_finRotate heven ((finRotate m).symm i)
+  rw [Equiv.apply_symm_apply] at h
+  rw [h, neg_neg]
 
 /-- One FTCS step scales the alternating mode by `1 - 4 * r` (requires `m` even). -/
-lemma ftcsStep_altMode {m : ℕ} (hm : 3 ≤ m) (heven : Even m) (r : ℝ) :
-    ftcsStep hm r altMode = (1 - 4 * r) • altMode := by
+lemma ftcsStep_altMode {m : ℕ} (heven : Even m) (r : ℝ) :
+    ftcsStep r altMode = (1 - 4 * r) • (altMode : Fin m → ℝ) := by
   funext i
   simp only [ftcsStep, Pi.smul_apply, smul_eq_mul]
-  rw [altMode_cycPrev hm heven i, altMode_cycNext hm heven i]
+  rw [altMode_finRotate_symm heven i, altMode_finRotate heven i]
   ring
 
 /-- Outside the stability regime the alternating-mode amplification factor exceeds
