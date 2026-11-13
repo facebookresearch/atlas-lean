@@ -7,6 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
 import PhyslibExt.EarthScience.InversionNullspace
 
 set_option linter.unusedTactic false
@@ -62,6 +64,10 @@ example : Matrix.mulVec (!![1, 2; 2, 4] : Matrix (Fin 2) (Fin 2) ℝ) ![3, 0]
 /-- Missing-ray cell via the proved theorem. -/
 example : Matrix.mulVec (!![1, 0; 0, 0] : Matrix (Fin 2) (Fin 2) ℝ) ![0, 1] = 0 :=
   EarthScience.missing_ray_nullspace.1
+
+/-- Zero column without a zero row: cell 1 of `!![1, 0; 1, 0]` is invisible. -/
+example : Matrix.mulVec (!![1, 0; 1, 0] : Matrix (Fin 2) (Fin 2) ℝ) ![0, 1] = 0 :=
+  EarthScience.missing_ray_column_nullspace.1
 
 /-- Full-rank recovery: identity nullspace is trivial. -/
 example (v : Fin 2 → ℝ)
