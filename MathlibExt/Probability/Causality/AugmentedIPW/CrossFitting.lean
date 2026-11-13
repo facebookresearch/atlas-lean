@@ -91,8 +91,9 @@ Asymptotic normality:
 * Mathlib supplies the CLT (`tendstoInDistribution_inv_sqrt_mul_sum_sub`) and Slutsky's lemma
   (`tendstoInDistribution_of_tendstoInMeasure_sub`).
 * `tendstoInMeasure_crossFit_aipw_sub_oracle` is stated in the shape of the remainder hypothesis
-  `hrem` (`√n (τ̂ - τ̂*) → 0` in probability) of the T143 oracle-AIPW asymptotic-normality
-  development; see its docstring.
+  `hrem` (`√n (τ̂ - τ̂*) → 0` in probability) of
+  `AugmentedIPW.Variance.tendstoInDistribution_aipwEstimator`; its docstring lists the steps that
+  derive `hrem` from it.
 
 ## References
 
@@ -709,10 +710,10 @@ estimator with the true nuisances. Because the nuisances of each fold are fitted
 folds, the empirical process term is controlled by `tendstoInMeasure_crossFit_empirical`
 without any Donsker or entropy condition on the fitted scores.
 
-This is the remainder statement `√n (τ̂ - τ̂*) → 0` in probability that an asymptotic-normality
-argument for the oracle AIPW estimator takes as its hypothesis (`hrem` in the T143 AIPW
-asymptotic-normality development): with `G` the AIPW score at fitted nuisances and `ψ` the AIPW
-score at the true nuisances, `θ̂ₙ*` is the oracle AIPW estimator, and
+With `G` the AIPW score at fitted nuisances and `ψ` the AIPW score at the true nuisances, `θ̂ₙ*`
+is the oracle AIPW estimator, and the conclusion is the remainder hypothesis `hrem`
+(`√n (τ̂ - τ̂*) → 0` in probability) of
+`AugmentedIPW.Variance.tendstoInDistribution_aipwEstimator`;
 `tendstoInMeasure_crossFit_aipw_sub_oracle` discharges the bias condition from product rates. -/
 theorem tendstoInMeasure_crossFitEstimator_sub_oracle {W : ℕ → Ω → 𝒲}
     (hW : ∀ i, Measurable (W i)) (hindep : iIndepFun W P)
@@ -957,11 +958,18 @@ If, for each fold,
 then `√n (τ̂ₙ - τ̂ₙ*) → 0` in probability, where `τ̂ₙ` is the cross-fitted AIPW estimator and
 `τ̂ₙ* = n⁻¹ ∑_{i < n} ψ*(W i)` the oracle AIPW estimator with the true nuisances.
 
-Correspondence with T143: this is the remainder hypothesis `hrem` (`√n (τ̂ - τ̂*) → 0` in
-probability, with `τ̂*` the oracle AIPW estimator at the true nuisances) of the T143 AIPW
-asymptotic-normality development, for the cross-fitted `τ̂`. After both are merged, `hrem` is
-obtained from this theorem by identifying T143's oracle score with
-`aipwScoreOfSigma T Y e* μ₀* μ₁*` (both are `MissingOutcomes.aipwATEScore`-based). -/
+This is the remainder hypothesis `hrem` (`√n (τ̂ - τ̂*) → 0` in probability, with `τ̂*` the
+oracle AIPW estimator at the true nuisances) of
+`AugmentedIPW.Variance.tendstoInDistribution_aipwEstimator`, for the cross-fitted `τ̂`. Deriving
+`hrem` from this theorem takes three steps:
+* covariates: set `m := m𝒳.comap X` and factor the `m`-measurable fitted nuisances and the
+  conditional expectations `e*, μ₀*, μ₁*` through `X` (Doob–Dynkin), so that each is a function
+  of the covariate value;
+* per-unit nuisances: reindex by unit,
+  `eₙ n i ω := ê n (fold n i) (trainData W fold n (fold n i) ω)` (likewise for `ĝ₀, ĝ₁`), so the
+  cross-fitted estimator is the average of the AIPW scores of `W i` at `eₙ n i ω`;
+* scores: identify both scores with `MissingOutcomes.aipwATEScore`, of which `aipwScoreOfSigma`
+  is the identity-covariate instance. -/
 theorem tendstoInMeasure_crossFit_aipw_sub_oracle {W : ℕ → Ω → 𝒲} (hW : ∀ i, Measurable (W i))
     (hindep : iIndepFun W P) (hident : ∀ i, IdentDistrib (W i) (W 0) P P)
     (hν : P.map (W 0) = ν) (hm : m ≤ m𝒲) {T : Set 𝒲} (hT : MeasurableSet T)
