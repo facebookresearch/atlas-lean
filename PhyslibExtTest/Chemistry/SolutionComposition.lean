@@ -100,17 +100,24 @@ example : dilutionVolume 6 (1/2) 1 = 3 := by
 example : 1 * dilutionVolume 6 (1/2) 1 = 6 * (1/2) :=
   dilutionVolume_cross_mul (by norm_num)
 
-/-- The computed final volume achieves the target concentration `1`. -/
-example : molarity (6 * (1/2)) (dilutionVolume 6 (1/2) 1) = 1 :=
-  molarity_dilutionVolume (by norm_num)
+/-- The computed final volume is positive and achieves the target concentration `1`. -/
+example : 0 < dilutionVolume 6 (1/2) 1 ∧ molarity (6 * (1/2)) (dilutionVolume 6 (1/2) 1) = 1 :=
+  dilutionVolume_achieves_target (by norm_num) (by norm_num)
 
 /-- Boundary case with no solute (`c₁ = 0`, `V₁ = 1`, target `c₂ = 1`): the cross-multiplied
 identity still holds, but the final volume is `0` and the molarity is `0`, not the target `1`.
-`molarity_dilutionVolume` excludes this case through `c₁ * V₁ ≠ 0`. -/
+`dilutionVolume_achieves_target` excludes this case through `0 < c₁ * V₁`. -/
 example : (1:ℝ) * dilutionVolume 0 1 1 = 0 * 1 ∧ dilutionVolume 0 1 1 = 0 ∧
     molarity (0 * 1) (dilutionVolume 0 1 1) ≠ 1 := by
   refine ⟨dilutionVolume_cross_mul (by norm_num), ?_, ?_⟩ <;>
     simp only [dilutionVolume, molarity] <;> norm_num
+
+/-- Zero-target boundary case (`c₁ = V₁ = 1`, `c₂ = 0`): the computed volume is `0`, yet the
+algebraic identity still reports molarity `0`, only through Lean's `1 / 0 = 0`. A zero volume
+cannot hold the amount `1`; `dilutionVolume_achieves_target` excludes this case through
+`0 < c₂`. -/
+example : dilutionVolume 1 1 0 = 0 ∧ molarity (1 * 1) (dilutionVolume 1 1 0) = 0 :=
+  ⟨by simp [dilutionVolume], molarity_dilutionVolume_algebraic (by norm_num)⟩
 
 /-- Amount conservation gives `c₁ * V₁ = c₂ * V₂` at the stated numbers. -/
 example : (6:ℝ) * (1/2) = 1 * 3 :=
