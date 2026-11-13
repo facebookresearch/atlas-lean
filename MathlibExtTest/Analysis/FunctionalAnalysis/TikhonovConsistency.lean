@@ -33,7 +33,7 @@ example :
   have hx : tikhonovOperator (1 : ℝ →L[ℝ] ℝ) 2 (1 : ℝ) =
       ContinuousLinearMap.adjoint (1 : ℝ →L[ℝ] ℝ) (3 : ℝ) := by
     norm_num [ContinuousLinearMap.adjoint_one]
-  exact energy_bound (1 : ℝ →L[ℝ] ℝ) 3 1 (by norm_num) hx
+  exact energy_bound (1 : ℝ →L[ℝ] ℝ) 3 1 hx
 
 /-- One-dimensional consistency: `A = 1`, `w = 1`, `xdag = 1`, `b = 1`,
 `bdelta = 1 + delta`, `xlam = 1`, `lam = delta = 1/4`: the error is `0`
@@ -46,7 +46,7 @@ example :
     norm_num [ContinuousLinearMap.adjoint_one]
   have h := consistency_bound (A := (1 : ℝ →L[ℝ] ℝ)) (xdag := (1 : ℝ)) (w := (1 : ℝ))
     (b := (1 : ℝ)) (bdelta := (1 + 1 / 4 : ℝ)) (xlam := (1 : ℝ)) (lam := (1 / 4 : ℝ))
-    (delta := (1 / 4 : ℝ)) (by norm_num) (by norm_num)
+    (delta := (1 / 4 : ℝ)) (by norm_num)
     (by simp [ContinuousLinearMap.adjoint_one]) (by simp) (by norm_num) hxlam
 
   exact h

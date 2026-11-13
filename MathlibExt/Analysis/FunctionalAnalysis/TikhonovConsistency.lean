@@ -39,6 +39,19 @@ proved for Tikhonov solutions in
 - `norm_le_of_normal_equations`: `‖x‖ ≤ ‖z‖ / (2 * sqrt lam)`.
 - `consistency_bound`: the small-noise error bound.
 - `convergence`: convergence with `lam(delta) = delta`.
+
+## References
+
+* H. W. Engl, M. Hanke, and A. Neubauer, *Regularization of Inverse Problems*,
+  Kluwer, 1996, Chapter 5 (Tikhonov regularization).
+* A. Kirsch, *An Introduction to the Mathematical Theory of Inverse Problems*,
+  2nd ed., Springer, 2011, Section 2.2 (Tikhonov regularization).
+
+These give the classical error estimate for Tikhonov regularization under the
+source condition `xdag = A† w`: a data error of at most `delta / (2 * sqrt lam)`
+plus an approximation error of at most `sqrt lam * ‖w‖ / 2`, so that
+`lam ~ delta` gives the rate `O(sqrt delta)`. `consistency_bound` proves this
+estimate with these constants directly from the normal equations.
 -/
 
 @[expose] public section
@@ -52,13 +65,13 @@ namespace MathlibExt.Analysis.FunctionalAnalysis.TikhonovConsistency
 variable {H K : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H] [CompleteSpace H]
   [NormedAddCommGroup K] [InnerProductSpace ℝ K] [CompleteSpace K]
 
-/-- Normal-equation energy bound: if `tikhonovOperator A lam x = A† z` with
-`lam > 0`, then `lam * ‖x‖^2 ≤ ‖z‖ * ‖A x‖ - ‖A x‖^2 ≤ ‖z‖^2 / 4`. -/
-theorem energy_bound (A : H →L[ℝ] K) (z : K) (x : H) {lam : ℝ} (hlam : 0 < lam)
+/-- Normal-equation energy bound: for every real `lam`, if
+`tikhonovOperator A lam x = A† z`, then
+`lam * ‖x‖^2 ≤ ‖z‖ * ‖A x‖ - ‖A x‖^2 ≤ ‖z‖^2 / 4`. -/
+theorem energy_bound (A : H →L[ℝ] K) (z : K) (x : H) {lam : ℝ}
     (hx : tikhonovOperator A lam x = ContinuousLinearMap.adjoint A z) :
     lam * ‖x‖ ^ 2 ≤ ‖z‖ * ‖A x‖ - ‖A x‖ ^ 2 ∧
       ‖z‖ * ‖A x‖ - ‖A x‖ ^ 2 ≤ ‖z‖ ^ 2 / 4 := by
-  have _hlam_use : 0 < lam := hlam
   have h_inner : ⟪tikhonovOperator A lam x, x⟫_ℝ
       = ⟪ContinuousLinearMap.adjoint A z, x⟫_ℝ := by rw [hx]
   have h_lhs : ⟪tikhonovOperator A lam x, x⟫_ℝ = ‖A x‖ ^ 2 + lam * ‖x‖ ^ 2 :=
@@ -81,7 +94,7 @@ theorem norm_le_of_normal_equations (A : H →L[ℝ] K) (z : K) (x : H) {lam : �
     (hlam : 0 < lam)
     (hx : tikhonovOperator A lam x = ContinuousLinearMap.adjoint A z) :
     ‖x‖ ≤ ‖z‖ / (2 * Real.sqrt lam) := by
-  have h := energy_bound A z x hlam hx
+  have h := energy_bound A z x hx
   have h_comb : lam * ‖x‖ ^ 2 ≤ ‖z‖ ^ 2 / 4 := le_trans h.1 h.2
   have hlam_nn : 0 ≤ lam := le_of_lt hlam
   have hsqrt_pos : 0 < Real.sqrt lam := Real.sqrt_pos.mpr hlam
@@ -111,12 +124,11 @@ theorem norm_le_of_normal_equations (A : H →L[ℝ] K) (z : K) (x : H) {lam : �
 equations for `bdelta` at `lam > 0`, then
 `‖xlam - xdag‖ ≤ delta / (2 * sqrt lam) + sqrt lam * ‖w‖ / 2`. -/
 theorem consistency_bound (A : H →L[ℝ] K) (xdag : H) (w : K) (b bdelta : K)
-    (xlam : H) {lam delta : ℝ} (hlam : 0 < lam) (hdelta : 0 ≤ delta)
+    (xlam : H) {lam delta : ℝ} (hlam : 0 < lam)
     (hsource : xdag = ContinuousLinearMap.adjoint A w)
     (hb : b = A xdag) (hnoise : ‖bdelta - b‖ ≤ delta)
     (hxlam : tikhonovOperator A lam xlam = ContinuousLinearMap.adjoint A bdelta) :
     ‖xlam - xdag‖ ≤ delta / (2 * Real.sqrt lam) + Real.sqrt lam * ‖w‖ / 2 := by
-  have _hdelta_use : 0 ≤ delta := hdelta
   have hlam_nn : 0 ≤ lam := le_of_lt hlam
   have hsqrt_pos : 0 < Real.sqrt lam := Real.sqrt_pos.mpr hlam
   have he : tikhonovOperator A lam (xlam - xdag)
@@ -181,7 +193,7 @@ theorem convergence (A : H →L[ℝ] K) (xdag : H) (w : K) (b : K)
     have hx := h_pair.1
     have hnoise : ‖bdelta delta - b‖ ≤ delta := h_pair.2
     have h_cons := consistency_bound A xdag w b (bdelta delta) (xlam delta)
-      hdelta (le_of_lt hdelta) hsource hb hnoise hx
+      hdelta hsource hb hnoise hx
     have h_delta_eq : delta / (2 * Real.sqrt delta) = Real.sqrt delta / 2 := by
       have hdelta_nn : 0 ≤ delta := le_of_lt hdelta
       have hsqrt_pos : 0 < Real.sqrt delta := Real.sqrt_pos.mpr hdelta
