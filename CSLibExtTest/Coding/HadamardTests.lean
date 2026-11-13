@@ -80,7 +80,7 @@ example : encode (![1, 0] : Fin 2 → ZMod 2) ≠ encode ![0, 1] :=
 example {m : ℕ} {a b : Fin m → ZMod 2} (h : encode a = encode b) : a = b :=
   encode_injective h
 
-/-- The parameters `[2^m, m, 2^(m-1)]` on the linear-code API. -/
+/-- The parameters `[2^m, m, 2^(m-1)]` on the linear-code API, for `m ≥ 1`. -/
 example : Fintype.card (Fin 3 → ZMod 2) = 8 := card_positions 3
 
 example : Module.finrank (ZMod 2) (code 3) = 3 := finrank_code 3
