@@ -194,10 +194,10 @@ example : cov[(fun _ _ => (0 : ℝ)) 1, (fun _ _ => (0 : ℝ)) 1; piMeasure 2] =
   covariance_count_kingman_of_le_four (by norm_num) measurable_K2 comap_tau2_le law_tau2
     indep_tau2 sfsCondMoments_K2 (by simp) (by simp)
 
-/-- `integral_T_mul_T` on the witness: `E[T₂²] = 2`. -/
-example : (piMeasure 2)[K2.T 2 * K2.T 2] = 2 := by
-  rw [integral_T_mul_T K2 (by simp) (by simp)]
-  norm_num [kingmanTimeMoment, Nat.choose]
+/-- `KingmanTimes.integral_T_mul_T` on the witness: `E[T₂²] = 2`. -/
+example : (piMeasure 2)[fun ω => K2.T 2 ω * K2.T 2 ω] = 2 := by
+  rw [K2.integral_T_mul_T (by simp) (by simp)]
+  norm_num [Nat.choose]
 
 end Kingman
 

@@ -25,15 +25,16 @@ tree topology and the independent exponential holding times.
 * `SiteFrequencySpectrum.randomJoining`, `joinStep`, `sfsLength`, `exists_finset_randomJoining`
   (merged): the law of the block-size history, its transition operator and `L_i`;
 * `KingmanTimes` (merged, `Coalescent/Kingman.lean`): independent `Exp(C(k, 2))` holding times,
-  with `KingmanTimes.integral_T` and `HasLaw.variance_eq_of_expMeasure`;
+  with `KingmanTimes.integral_T`, `KingmanTimes.memLp_T` and the second moments
+  `KingmanTimes.integral_T_mul_T` (the last two moved to `Kingman.lean` by this change, from
+  private copies in `Tajima.lean`, `TajimaVariance.lean` and `SFSCovariance.lean`);
 * `SFSCovariance.memLp_sfsLength` (merged): square integrability of `L_i`;
 * `SFSFuClosedForm.fuSigma` and `covariance_count_kingman_of_fuSigma` (merged, T114): Fu's
   matrix and the SFS covariance conditional on the hypothesis `Cov(L_i, L_j) = 4 σ_{ij}`.
 
 Proved here: the two-level Markov property of random joining
-(`exists_finset_randomJoining_pair`), the second moments of the holding times
-(`integral_T_mul_T`), and the factorization of `E[L_i L_j]` through the independence of the
-topology and the holding times.
+(`exists_finset_randomJoining_pair`) and the factorization of `E[L_i L_j]` through the
+independence of the topology and the holding times.
 
 ## What is proved
 
@@ -257,28 +258,17 @@ private lemma integral_comp_randomJoining [IsProbabilityMeasure μ] {m : ℕ}
   refine Finset.sum_congr rfl fun ps _ => ?_
   rw [integral_indicator_const _ (hmeas ps), hτ_law, smul_eq_mul]
 
-private lemma memLp_T (K : KingmanTimes μ n) {k : ℕ} (hk : k ∈ Icc 2 n) : MemLp (K.T k) 2 μ :=
-  (K.hasLaw k hk).memLp_comp (f := id)
-    ((memLp_two_iff_integrable_sq aestronglyMeasurable_id).2
-      (by simpa using integrable_pow_expMeasure (KingmanTimes.choose_two_pos hk) 2))
-
-/-- **Second moments of the Kingman holding times**: `E[T_k T_l] = kingmanTimeMoment k l` for
-`2 ≤ k, l ≤ n` (exponential laws and independence). -/
-theorem integral_T_mul_T [IsProbabilityMeasure μ] (K : KingmanTimes μ n) {k l : ℕ}
-    (hk : k ∈ Icc 2 n) (hl : l ∈ Icc 2 n) :
+/-- `KingmanTimes.integral_T_mul_T` in the form used by `fuTopologyCov`:
+`E[T_k T_l] = kingmanTimeMoment k l` for `2 ≤ k, l ≤ n`. -/
+private lemma integral_T_mul_T_eq_kingmanTimeMoment [IsProbabilityMeasure μ]
+    (K : KingmanTimes μ n) {k l : ℕ} (hk : k ∈ Icc 2 n) (hl : l ∈ Icc 2 n) :
     μ[K.T k * K.T l] = kingmanTimeMoment k l := by
-  unfold kingmanTimeMoment
+  change μ[fun ω => K.T k ω * K.T l ω] = _
+  rw [K.integral_T_mul_T hk hl, kingmanTimeMoment]
   split_ifs with hkl
   · subst hkl
-    have hv := variance_eq_sub (memLp_T K hk)
-    rw [(K.hasLaw k hk).variance_eq_of_expMeasure (KingmanTimes.choose_two_pos hk),
-      K.integral_T hk] at hv
-    rw [← pow_two]
-    linarith
-  · have hind : IndepFun (K.T k) (K.T l) μ :=
-      K.indep.indepFun (i := ⟨k, hk⟩) (j := ⟨l, hl⟩) fun h => hkl (congrArg Subtype.val h)
-    rw [hind.integral_mul_eq_mul_integral (K.integrable_T hk).aestronglyMeasurable
-      (K.integrable_T hl).aestronglyMeasurable, K.integral_T hk, K.integral_T hl]
+    ring
+  · ring
 
 variable [IsProbabilityMeasure μ] {K : KingmanTimes μ n} {τ : Ω → List (List ℕ)}
 
@@ -346,13 +336,13 @@ theorem covariance_sfsLength_eq_fuTopologyCov
     have hind : IndepFun (fun ω => c k i (τ ω) * c l j (τ ω)) (fun ω => K.T k ω * K.T l ω) μ :=
       indepFun_topology_times h_indep (fun ps => c k i ps * c l j ps)
         ((measurable_pi_apply k).mul (measurable_pi_apply l))
-    have hYi : Integrable (K.T k * K.T l) μ := (memLp_T K hk).integrable_mul (memLp_T K hl)
+    have hYi : Integrable (K.T k * K.T l) μ := (K.memLp_T hk).integrable_mul (K.memLp_T hl)
     refine ⟨hind.integrable_mul hXi hYi, ?_⟩
     change μ[(fun ω => c k i (τ ω) * c l j (τ ω)) * (fun ω => K.T k ω * K.T l ω)] = _
     rw [hind.integral_mul_eq_mul_integral hXi.aestronglyMeasurable hYi.aestronglyMeasurable,
       hXe]
     change _ * μ[K.T k * K.T l] = _
-    rw [integral_T_mul_T K hk hl, blockCountMoment]
+    rw [integral_T_mul_T_eq_kingmanTimeMoment K hk hl, blockCountMoment]
     congr 1
     have hk' := mem_Icc.1 hk
     have hl' := mem_Icc.1 hl
