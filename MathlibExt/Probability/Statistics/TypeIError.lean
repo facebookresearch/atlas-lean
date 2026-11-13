@@ -19,8 +19,11 @@ rejecting when a valid (super-uniform) p-value is at most `α`, and
 rejecting when a test statistic with calibrated null law falls in a
 rejection set of null probability at most `α`. A p-value with the
 uniform law on `[0, 1]` under the null is valid, so the p-value rule
-applies to it. Concrete instances at levels `1 / 10` and `9 / 10` are
-proved as `*_example` theorems (Atlas roadmap ST02.T04).
+applies to it. The critical-value bound is stated in `ℝ≥0∞`, so an
+infinite null mass cannot read as a zero type-I error. Concrete instances
+at levels `1 / 10` and `9 / 10` are in
+`MathlibExtTest.Probability.Statistics.TypeIError` (Atlas roadmap
+ST02.T04).
 -/
 
 @[expose] public section
@@ -28,6 +31,7 @@ proved as `*_example` theorems (Atlas roadmap ST02.T04).
 namespace MathlibExt.Probability.Statistics.TypeIError
 
 open MeasureTheory ProbabilityTheory
+open scoped ENNReal
 open MathlibExt.Probability.Statistics.MultipleTesting
 
 /-- **Type-I error of a p-value rejection rule (ST02.T04).** Rejecting
@@ -45,15 +49,17 @@ theorem typeI_error_le_of_isValidPValue {Ω : Type*} [MeasurableSpace Ω]
 /-- **Type-I error of a calibrated critical-value rule (ST02.T04).** If the
 test statistic `T` has the calibrated null law `ν` under `P` and the
 rejection set `R` has `ν`-probability at most `α`, then rejecting exactly
-when `T ∈ R` has type-I error at most `α` (via `HasLaw.measureReal_eq`). -/
+when `T ∈ R` has type-I error at most `α` (via `HasLaw.measure_eq`).
+Probabilities and the level are in `ℝ≥0∞`: under `Measure.real` an
+infinite mass would read as `0`. -/
 theorem typeI_error_le_of_hasLaw {Ω X : Type*} [MeasurableSpace Ω]
     [MeasurableSpace X] {P : Measure Ω} {T : Ω → X} {ν : Measure X}
     (hT : HasLaw T ν P) {R : Set X} (hR : MeasurableSet R)
-    {α : ℝ} (hcal : ν.real R ≤ α) :
-    P.real (T ⁻¹' R) ≤ α := by
+    {α : ℝ≥0∞} (hcal : ν R ≤ α) :
+    P (T ⁻¹' R) ≤ α := by
   have hmeas : MeasurableSet {x | x ∈ R} := by simpa using hR
-  change P.real {ω | T ω ∈ R} ≤ α
-  rw [hT.measureReal_eq hmeas, Set.ofPred_mem_eq]
+  change P {ω | T ω ∈ R} ≤ α
+  rw [hT.measure_eq hmeas, Set.ofPred_mem_eq]
   exact hcal
 
 /-- **Calibrated uniform p-value rule.** A p-value with the uniform law on
@@ -65,38 +71,5 @@ theorem typeI_error_le_of_hasLaw_uniform_pValue {Ω : Type*} [MeasurableSpace Ω
     {α : ℝ} (hα : α ∈ Set.Icc (0 : ℝ) 1) :
     μ.real {ω | p ω ≤ α} ≤ α :=
   valid_measureReal_le (isValidPValue_of_hasLaw_uniform hp) hα.1 hα.2
-
-/-- Concrete test: the identity p-value under the uniform law on `[0, 1]`
-rejects with type-I error at most `1 / 10` at level `1 / 10`. -/
-theorem typeI_error_uniform_example :
-    (volume.restrict (Set.Icc (0 : ℝ) 1)).real {x : ℝ | x ≤ (1 / 10 : ℝ)} ≤
-      (1 / 10 : ℝ) := by
-  have h := typeI_error_le_of_hasLaw_uniform_pValue (p := id) HasLaw.id
-    (α := (1 / 10 : ℝ)) (by norm_num)
-  simpa using h
-
-/-- Concrete test: the critical-value rule rejecting when the statistic
-is at most `9 / 10` under the uniform law has type-I error at most
-`9 / 10` (via the calibrated set `Iic (9 / 10)`). -/
-theorem typeI_error_critical_value_example :
-    (volume.restrict (Set.Icc (0 : ℝ) 1)).real
-      ((fun x : ℝ => x) ⁻¹' Set.Iic (9 / 10 : ℝ)) ≤ (9 / 10 : ℝ) := by
-  have hset : Set.Iic (9 / 10 : ℝ) ∩ Set.Icc (0 : ℝ) 1 = Set.Icc (0 : ℝ) (9 / 10) := by
-    ext x
-    constructor
-    · intro hx
-      exact ⟨hx.2.1, hx.1⟩
-    · intro hx
-      exact ⟨hx.2, hx.1, by linarith [hx.2]⟩
-  have hcal : (volume.restrict (Set.Icc (0 : ℝ) 1)).real (Set.Iic (9 / 10 : ℝ)) ≤
-      (9 / 10 : ℝ) := by
-    have heq : (volume.restrict (Set.Icc (0 : ℝ) 1)).real (Set.Iic (9 / 10 : ℝ)) =
-        (9 / 10 : ℝ) := by
-      rw [measureReal_def, Measure.restrict_apply measurableSet_Iic, hset, Real.volume_Icc,
-        sub_zero, ENNReal.toReal_ofReal (by norm_num)]
-    exact heq.le
-  have h := typeI_error_le_of_hasLaw (T := (fun x : ℝ => x))
-    (R := Set.Iic (9 / 10 : ℝ)) HasLaw.id measurableSet_Iic (α := (9 / 10 : ℝ)) hcal
-  exact h
 
 end MathlibExt.Probability.Statistics.TypeIError
