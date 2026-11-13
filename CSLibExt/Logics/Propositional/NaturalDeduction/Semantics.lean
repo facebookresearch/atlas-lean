@@ -65,7 +65,11 @@ variable {Atom : Type u}
 
 /-! ### Truth-table evaluation -/
 
-/-- The truth-table value of a proposition under a Boolean valuation of the atoms. -/
+/-- **Truth-table evaluation.** Given a Boolean valuation $v$ of the atoms, the truth value of a
+proposition is computed recursively: an atom $x$ has value $v(x)$, $A \wedge B$ is true iff both
+$A$ and $B$ are, $A \vee B$ is true iff at least one of them is, and $A \to B$ is true iff $A$ is
+false or $B$ is true. Falsum $\bot$, when present, is itself an atom, so its value $v(\bot)$ is
+part of the valuation and need not be false. -/
 def Proposition.evalBool (v : Atom → Bool) : Proposition Atom → Bool
   | atom x => v x
   | and A B => A.evalBool v && B.evalBool v
@@ -91,7 +95,10 @@ theorem evalBool_imp : (A → B).evalBool v = (!A.evalBool v || B.evalBool v) :=
 @[simp]
 theorem evalBool_bot [Bot Atom] : (⊥ : Proposition Atom).evalBool v = v ⊥ := rfl
 
-/-- With `⊥` false, negation evaluates to Boolean negation. -/
+/-- **Truth value of a negation.** Suppose the atoms include a distinguished atom $\bot$, and let
+$v$ be a Boolean valuation of the atoms with $v(\bot) = \mathrm{false}$. Then for every proposition
+$A$, the truth-table value under $v$ of $\neg A$, defined as $A \to \bot$, is the Boolean negation
+of the truth-table value of $A$ under $v$. -/
 theorem evalBool_neg [Bot Atom] (hv : v ⊥ = false) :
     (¬A : Proposition Atom).evalBool v = !A.evalBool v := by
   change (!A.evalBool v || v ⊥) = !A.evalBool v
@@ -101,7 +108,10 @@ end Proposition
 
 /-! ### Semantic consequence -/
 
-/-- `T.BoolEntails Γ A`: every valuation making all of `T` and all of `Γ` true makes `A` true. -/
+/-- **Truth-table consequence.** Let $T$ be a theory (a set of propositions), $\Gamma$ a context
+(a finite set of propositions) and $A$ a proposition. Then $A$ is a truth-table consequence of
+$\Gamma$ in $T$ when every Boolean valuation of the atoms under which all members of $T$ and all
+members of $\Gamma$ evaluate to true also makes $A$ evaluate to true. -/
 def Theory.BoolEntails (T : Theory Atom) (Γ : Ctx Atom) (A : Proposition Atom) : Prop :=
   ∀ v : Atom → Bool, (∀ B ∈ T, B.evalBool v = true) → (∀ B ∈ Γ, B.evalBool v = true) →
     A.evalBool v = true
@@ -110,8 +120,10 @@ def Theory.BoolEntails (T : Theory Atom) (Γ : Ctx Atom) (A : Proposition Atom) 
 
 variable [DecidableEq Atom] {T : Theory Atom}
 
-/-- **Soundness** of natural deduction for truth tables: under every valuation satisfying
-the theory, the conclusion of a derivation is true whenever its context is. -/
+/-- **Soundness of natural deduction for truth tables.** Let $T$ be a theory, $\Gamma$ a context and
+$A$ a proposition. For every natural-deduction derivation of $\Gamma \vdash A$ with axioms from $T$,
+every Boolean valuation of the atoms that makes all members of $T$ and of $\Gamma$ true makes $A$
+true. -/
 theorem Theory.Derivation.boolSound {Γ : Ctx Atom} {A : Proposition Atom}
     (D : T.Derivation Γ A) : T.BoolEntails Γ A := by
   intro v hT
@@ -165,7 +177,10 @@ theorem Theory.Derivation.boolSound {Γ : Ctx Atom} {A : Proposition Atom}
     have hA := ih₂ hΓ
     simpa [hA] using himp
 
-/-- Proof-irrelevant soundness: derivability implies truth-table consequence. -/
+/-- **Truth-table soundness of derivability.** Let $T$ be a theory, $\Gamma$ a context and $A$ a
+proposition. If the sequent $\Gamma \vdash A$ is derivable in natural deduction with axioms from
+$T$, then $A$ is a truth-table consequence of $\Gamma$ in $T$: every Boolean valuation of the
+atoms that makes all members of $T$ and of $\Gamma$ true makes $A$ true. -/
 theorem DerivableIn.boolSound {Γ : Ctx Atom} {A : Proposition Atom}
     (h : DerivableIn T (Γ ⊢ A)) : T.BoolEntails Γ A :=
   h.elim fun D ↦ Theory.Derivation.boolSound D
@@ -177,39 +192,59 @@ section Classical
 variable [Bot Atom] {v : Atom → Bool}
 
 omit [DecidableEq Atom] in
-/-- Every instance of ex falso is true when `⊥` is false. -/
+/-- **Ex falso is true when falsum is false.** Suppose the atoms include a distinguished atom
+$\bot$, and let $v$ be a Boolean valuation of the atoms with $v(\bot) = \mathrm{false}$. Then every
+instance $\bot \to B$ of ex falso, that is every axiom of intuitionistic propositional logic, is
+true under $v$. -/
 theorem evalBool_of_mem_ipl (hv : v ⊥ = false) {A : Proposition Atom}
     (hA : A ∈ IPL Atom) : A.evalBool v = true := by
   obtain ⟨B, rfl⟩ := hA
   simp [hv]
 
 omit [DecidableEq Atom] in
-/-- Every instance of double-negation elimination is true when `⊥` is false. -/
+/-- **Double-negation elimination is true when falsum is false.** Suppose the atoms include a
+distinguished atom $\bot$, and let $v$ be a Boolean valuation of the atoms with
+$v(\bot) = \mathrm{false}$. Then every instance $\neg\neg B \to B$ of double-negation elimination,
+that is every axiom of classical propositional logic, is true under $v$. -/
 theorem evalBool_of_mem_cpl (hv : v ⊥ = false) {A : Proposition Atom}
     (hA : A ∈ CPL Atom) : A.evalBool v = true := by
   obtain ⟨B, rfl⟩ := hA
   change (!(!(!B.evalBool v || v ⊥) || v ⊥) || B.evalBool v) = true
   cases B.evalBool v <;> simp [hv]
 
-/-- A sequent derivable in classical logic `CPL` is a tautology, reading `⊥` as false. -/
+/-- **Classical derivability implies truth under valuations with false falsum.** Suppose the atoms
+include a distinguished atom $\bot$, and let $v$ be a Boolean valuation of the atoms with
+$v(\bot) = \mathrm{false}$. If the sequent $\Gamma \vdash A$ is derivable in classical propositional
+logic (natural deduction whose axioms are all instances $\neg\neg B \to B$ of double-negation
+elimination) and every member of $\Gamma$ is true under $v$, then $A$ is true under $v$. -/
 theorem DerivableIn.evalBool_of_cpl {Γ : Ctx Atom} {A : Proposition Atom}
     (h : DerivableIn (CPL Atom) (Γ ⊢ A)) (hv : v ⊥ = false)
     (hΓ : ∀ B ∈ Γ, B.evalBool v = true) : A.evalBool v = true :=
   DerivableIn.boolSound h v (fun _ hB ↦ evalBool_of_mem_cpl hv hB) hΓ
 
-/-- A sequent derivable in intuitionistic logic `IPL` is a tautology, reading `⊥` as false. -/
+/-- **Intuitionistic derivability implies truth under valuations with false falsum.** Suppose the
+atoms include a distinguished atom $\bot$, and let $v$ be a Boolean valuation of the atoms with
+$v(\bot) = \mathrm{false}$. If the sequent $\Gamma \vdash A$ is derivable in intuitionistic
+propositional logic (natural deduction whose axioms are all instances $\bot \to B$ of ex falso)
+and every member of $\Gamma$ is true under $v$, then $A$ is true under $v$. -/
 theorem DerivableIn.evalBool_of_ipl {Γ : Ctx Atom} {A : Proposition Atom}
     (h : DerivableIn (IPL Atom) (Γ ⊢ A)) (hv : v ⊥ = false)
     (hΓ : ∀ B ∈ Γ, B.evalBool v = true) : A.evalBool v = true :=
   DerivableIn.boolSound h v (fun _ hB ↦ evalBool_of_mem_ipl hv hB) hΓ
 
-/-- Classical logic is consistent: it does not derive falsum. -/
+/-- **Consistency of classical propositional logic.** For every type of atoms with a designated
+atom $\bot$, the proposition $\bot$ is not derivable from the empty context in natural deduction
+over the classical theory, whose axioms are all instances $\neg\neg A \to A$ of double-negation
+elimination, where $\neg A$ abbreviates $A \to \bot$. -/
 theorem not_derivableIn_cpl_bot : ¬ DerivableIn (CPL Atom) (⊥ : Proposition Atom) := by
   intro h
   have := DerivableIn.evalBool_of_cpl (v := fun _ ↦ false) h rfl (by simp)
   simp at this
 
-/-- Classical logic derives no atom. -/
+/-- **Classical logic proves no atom.** Suppose the atoms include a distinguished atom $\bot$. For
+every atom $x$, including $\bot$, the proposition $x$ is not derivable from the empty context in
+classical propositional logic (natural deduction whose axioms are all instances $\neg\neg B \to B$
+of double-negation elimination). -/
 theorem not_derivableIn_cpl_atom (x : Atom) :
     ¬ DerivableIn (CPL Atom) (atom x : Proposition Atom) := by
   intro h

@@ -44,13 +44,16 @@ namespace Cslib.Logic.FOL
 open FirstOrder FirstOrder.Language
 open Cslib.Logic.PL
 
-/-- Nullary relation symbols are the propositional atoms; there are no function symbols
-and no relation symbols of positive arity. -/
+/-- **Relation symbols of the propositional language.** For a type of atoms, the family of
+relation symbols indexed by arity that consists of one nullary relation symbol for each atom
+$a$ and has no relation symbols of positive arity. -/
 inductive PropRelations (Atom : Type u) : ℕ → Type u
   /-- The propositional atom `a`, as a nullary relation symbol. -/
   | atomRel : Atom → PropRelations Atom 0
 
-/-- The first-order language with propositional atoms as nullary relation symbols. -/
+/-- **First-order language of propositional atoms.** For a type of atoms, the first-order
+language whose relation symbols are exactly one nullary relation symbol for each atom, with
+no relation symbols of positive arity and no function symbols. -/
 def propLanguage (Atom : Type u) : FirstOrder.Language.{u, u} where
   Functions := fun _ => PEmpty
   Relations := PropRelations Atom
@@ -59,24 +62,32 @@ namespace Proposition
 
 variable {Atom : Type u}
 
-/-- Embed a proposition as a sentence: atoms become nullary relations,
-`∧`/`∨` become `⊓`/`⊔`, and `⟹` becomes `.imp`. -/
+/-- **Embedding propositions as first-order sentences.** The translation of propositions over a
+type of atoms into sentences of the first-order language of propositional atoms, defined by
+recursion: an atom $a$ becomes the atomic sentence given by the nullary relation symbol of $a$,
+and $A \wedge B$, $A \vee B$ and $A \to B$ become the conjunction, the disjunction and the
+implication of the translations of $A$ and $B$. -/
 def embed : Proposition Atom → (propLanguage Atom).Sentence
   | .atom a => (.rel (PropRelations.atomRel a) (fun i => i.elim0))
   | .and A B => (embed A) ⊓ (embed B)
   | .or A B => (embed A) ⊔ (embed B)
   | .imp A B => (embed A).imp (embed B)
 
-/-- The `Bool` structure for a valuation `v`: a nullary relation is true iff `v` makes
-its atom true. -/
+/-- **Boolean structure of a valuation.** Given a valuation $v$ assigning a Boolean to each
+atom, the Boolean structure of $v$ is the structure for the first-order language of
+propositional atoms whose domain is the set of Booleans $\{\mathrm{false}, \mathrm{true}\}$
+and in which the nullary relation symbol of an atom $a$ holds exactly when $v(a)$ is true.
+The language has no function symbols, so nothing else needs to be interpreted. -/
 @[instance_reducible]
 def boolStructure (v : Atom → Bool) : (propLanguage Atom).Structure Bool where
   funMap f _ := f.elim
   RelMap R _ := match R with
     | .atomRel a => v a = true
 
-/-- The embedding is faithful for truth-table semantics: the embedded sentence holds in
-the `Bool` structure for `v` iff the proposition evaluates to `true` under `v`. -/
+/-- **The embedding of propositions preserves truth-table semantics.** For every valuation $v$
+assigning a Boolean to each atom and every proposition $A$, the first-order sentence obtained
+by embedding $A$ is true in the Boolean structure of $v$ if and only if the truth-table value
+of $A$ under $v$ is true. -/
 theorem realize_embed_iff_evalBool (v : Atom → Bool) (A : Proposition Atom) :
     @Formula.Realize (propLanguage Atom) Bool (boolStructure v) Empty (embed A)
       (fun x => x.elim) ↔ A.evalBool v = true := by

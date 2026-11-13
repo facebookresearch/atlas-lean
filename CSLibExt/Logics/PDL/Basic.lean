@@ -39,8 +39,9 @@ namespace PDL
 
 universe u v w
 
-/-- A PDL model: an accessibility relation per atomic action, and an
-atom valuation. -/
+/-- **PDL model.** A model of propositional dynamic logic with set of worlds $W$ consists of a
+binary accessibility relation $R_a$ on $W$ for each atomic action label $a$, and a valuation that
+says which atoms are true at each world. -/
 structure Model (World : Type u) (Atom : Type v) (Label : Type w) where
   /-- One accessibility relation per atomic program label. -/
   rel : Label → World → World → Prop
@@ -48,14 +49,20 @@ structure Model (World : Type u) (Atom : Type v) (Label : Type w) where
   valuation : World → Atom → Prop
 
 mutual
-/-- Formulas of PDL: atoms, falsity, implication, and `[α]φ`. -/
+/-- **PDL formulas.** The formulas of propositional dynamic logic over a type of atoms and a type
+of atomic action labels are the atoms $p$, falsity $\bot$, implications $\varphi \to \psi$ of
+formulas, and boxes $[\alpha]\varphi$ of a program $\alpha$ and a formula $\varphi$. Formulas and
+programs are defined by simultaneous induction. -/
 inductive Formula (Atom : Type v) (Label : Type w) where
   | atom (a : Atom) : Formula Atom Label
   | bot : Formula Atom Label
   | imp (φ ψ : Formula Atom Label) : Formula Atom Label
   | box (α : Program Atom Label) (φ : Formula Atom Label) : Formula Atom Label
 
-/-- Programs of PDL: atomic actions, sequencing, choice, iteration, tests. -/
+/-- **PDL programs.** The programs of propositional dynamic logic over a type of atoms and a type
+of atomic action labels are the atomic actions $a$, sequential compositions $\alpha ; \beta$,
+nondeterministic choices $\alpha \cup \beta$, iterations $\alpha^*$, and tests $\varphi?$ of a
+formula $\varphi$. Programs and formulas are defined by simultaneous induction. -/
 inductive Program (Atom : Type v) (Label : Type w) where
   | atomic (a : Label) : Program Atom Label
   | seq (α β : Program Atom Label) : Program Atom Label
@@ -64,15 +71,20 @@ inductive Program (Atom : Type v) (Label : Type w) where
   | test (φ : Formula Atom Label) : Program Atom Label
 end
 
-/-- Possibility as the dual of necessity. -/
+/-- **Possibility in PDL.** For a program $\alpha$ and a formula $\varphi$, the formula
+$\langle\alpha\rangle\varphi$ is defined as $[\alpha](\varphi \to \bot) \to \bot$, that is, as
+$\neg[\alpha]\neg\varphi$: possibility is the dual of necessity. -/
 def Formula.dia {Atom Label : Type*} (α : Program Atom Label) (φ : Formula Atom Label) :
     Formula Atom Label :=
   .imp (.box α (.imp φ .bot)) .bot
 
 mutual
-/-- The relation a program denotes on a model. `star` is the
-reflexive-transitive closure; a test is the sub-identity on states
-satisfying the tested formula. -/
+/-- **Relation denoted by a PDL program.** In a model $M$, each program $\alpha$ denotes a binary
+relation $R_\alpha$ on worlds: an atomic action $a$ denotes its accessibility relation $R_a$;
+$(w, v) \in R_{\alpha;\beta}$ iff $(w, u) \in R_\alpha$ and $(u, v) \in R_\beta$ for some world
+$u$; $R_{\alpha \cup \beta} = R_\alpha \cup R_\beta$; $R_{\alpha^*}$ is the reflexive-transitive
+closure of $R_\alpha$; and $(w, v) \in R_{\varphi?}$ iff $w = v$ and $\varphi$ holds at $w$ in
+$M$. -/
 def ProgRel {World Atom Label : Type*} (M : Model World Atom Label) :
     Program Atom Label → World → World → Prop
   | .atomic a, w, v => M.rel a w v
@@ -81,7 +93,11 @@ def ProgRel {World Atom Label : Type*} (M : Model World Atom Label) :
   | .star α, w, v => Relation.ReflTransGen (ProgRel M α) w v
   | .test φ, w, v => w = v ∧ Sat M φ w
 
-/-- Satisfaction of a PDL formula at a world. -/
+/-- **Satisfaction of PDL formulas.** Truth of a formula at a world $w$ of a model $M$ is defined
+by recursion: an atom $p$ holds at $w$ iff the valuation of $M$ makes $p$ true at $w$; $\bot$
+holds nowhere; $\varphi \to \psi$ holds at $w$ iff $\psi$ holds at $w$ whenever $\varphi$ does;
+and $[\alpha]\varphi$ holds at $w$ iff $\varphi$ holds at every world $v$ with
+$(w, v) \in R_\alpha$, where $R_\alpha$ is the relation denoted by $\alpha$ in $M$. -/
 def Sat {World Atom Label : Type*} (M : Model World Atom Label) :
     Formula Atom Label → World → Prop
   | .atom a, w => M.valuation w a
@@ -93,7 +109,9 @@ end
 variable {World Atom Label : Type*} (M : Model World Atom Label)
   {α β : Program Atom Label} {φ ψ : Formula Atom Label} {w : World}
 
-/-- `[α;β]φ ↔ [α][β]φ`: sequencing composes the relations. -/
+/-- **Box of a sequential composition.** For every model $M$, world $w$, programs $\alpha$ and
+$\beta$, and formula $\varphi$, the formula $[\alpha;\beta]\varphi$ holds at $w$ if and only if
+$[\alpha][\beta]\varphi$ holds at $w$. -/
 theorem sat_box_seq :
     Sat M (.box (.seq α β) φ) w ↔ Sat M (.box α (.box β φ)) w := by
   constructor
@@ -103,7 +121,9 @@ theorem sat_box_seq :
     obtain ⟨u, hα, hβ⟩ := hseq
     exact h u hα v hβ
 
-/-- `[α ∪ β]φ ↔ [α]φ ∧ [β]φ`: choice is the union of the relations. -/
+/-- **Box of a choice.** For every model $M$, world $w$, programs $\alpha$ and $\beta$, and formula
+$\varphi$, the formula $[\alpha \cup \beta]\varphi$ holds at $w$ if and only if both
+$[\alpha]\varphi$ and $[\beta]\varphi$ hold at $w$. -/
 theorem sat_box_choice :
     Sat M (.box (.choice α β) φ) w ↔
       Sat M (.box α φ) w ∧ Sat M (.box β φ) w := by
@@ -114,8 +134,9 @@ theorem sat_box_choice :
     · exact hα v hα'
     · exact hβ v hβ'
 
-/-- `[α*]φ ↔ φ ∧ [α][α*]φ`: iteration unfolds to the exit case plus
-one more step. -/
+/-- **Unfolding the box of an iteration.** For every model $M$, world $w$, program $\alpha$ and
+formula $\varphi$, the formula $[\alpha^*]\varphi$ holds at $w$ if and only if $\varphi$ holds at
+$w$ and $[\alpha][\alpha^*]\varphi$ holds at $w$. -/
 theorem sat_box_star_unfold :
     Sat M (.box (.star α) φ) w ↔
       Sat M φ w ∧ Sat M (.box α (.box (.star α) φ)) w := by
@@ -133,8 +154,8 @@ theorem sat_box_star_unfold :
       | head hα hrest _ => intro _ hst; exact hst _ hα _ hrest
     exact key hrtc h0 hstep
 
-/-- `[ψ?]φ ↔ (ψ → φ)`: a test either blocks (when `ψ` fails) or leaves
-the state unchanged. -/
+/-- **Box of a test.** For every model $M$, world $w$ and formulas $\psi$ and $\varphi$, the formula
+$[\psi?]\varphi$ holds at $w$ if and only if $\varphi$ holds at $w$ whenever $\psi$ holds at $w$. -/
 theorem sat_box_test :
     Sat M (.box (.test ψ) φ) w ↔ (Sat M ψ w → Sat M φ w) := by
   constructor
@@ -143,14 +164,17 @@ theorem sat_box_test :
   · intro h v ⟨rfl, hψ⟩
     exact h hψ
 
-/-- The toggle model: one atomic action flips the state, `p` holds at
-`true`. -/
+/-- **The toggle model.** The PDL model whose worlds are the two Booleans $\mathsf{true}$ and
+$\mathsf{false}$, with a single atomic action $a$ and a single atom $p$: the action $a$ relates
+each world $s$ exactly to its negation $\lnot s$, and $p$ holds exactly at $\mathsf{true}$. -/
 def toggleModel : Model Bool Unit Unit where
   rel := fun _ s t => t = !s
   valuation := fun s _ => s = true
 
-/-- On the toggle model, `[a;a]p` fails at `false`: two flips return to
-`false`, where `p` is false. -/
+/-- **Failure of $[a;a]\,p$ in the toggle model.** In the toggle model, with atomic action $a$
+and atom $p$, the formula $[a;a]\,p$ is not satisfied at the world $\mathsf{false}$.
+
+Performing $a$ twice leads from $\mathsf{false}$ back to $\mathsf{false}$, where $p$ is false. -/
 theorem toggle_not_box_seq_atom :
     ¬ Sat toggleModel
       (.box (.seq (.atomic ()) (.atomic ())) (.atom ())) false := by

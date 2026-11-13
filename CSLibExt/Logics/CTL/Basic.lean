@@ -63,10 +63,15 @@ namespace CTL
 
 universe u
 
-/-- Formulas of computation tree logic over a type of atoms, in the
-basis `top`, negation, conjunction, `EX`, `EU`, `EG`, and `AU`.  `AU` is
-primitive rather than the classical `EU`/`EG` translation, which is
-unsound on transition systems with deadlocked states. -/
+/-- **CTL formulas.** The formulas of computation tree logic over a type $A$ of atoms are
+generated as follows: every atom $a \in A$ is a formula, $\top$ is a formula, and if $\varphi$
+and $\psi$ are formulas then so are the negation $\neg\varphi$, the conjunction
+$\varphi \land \psi$, the existential next $\mathsf{EX}\,\varphi$, the existential until
+$\mathsf{E}[\varphi\,\mathsf{U}\,\psi]$, the existential globally $\mathsf{EG}\,\varphi$ and the
+universal until $\mathsf{A}[\varphi\,\mathsf{U}\,\psi]$.
+
+The universal until is primitive rather than the classical translation through $\mathsf{EU}$
+and $\mathsf{EG}$, which is unsound on transition systems with deadlocked states. -/
 inductive Formula (Atom : Type u) : Type u where
   | atom (a : Atom) : Formula Atom
   | top : Formula Atom
@@ -81,25 +86,39 @@ namespace Formula
 
 variable {Atom : Type u}
 
-/-- Falsity, as the negation of truth. -/
+/-- **Falsity in CTL.** The CTL formula $\bot$ (falsity) is the negation $\neg\top$ of the formula
+$\top$ (truth). -/
 def bot : Formula Atom := .not .top
 
-/-- Disjunction, by De Morgan duality. -/
+/-- **CTL disjunction.** For CTL formulas $\varphi$ and $\psi$, the disjunction
+$\varphi \lor \psi$ is defined as $\neg(\neg\varphi \land \neg\psi)$. -/
 def or (φ ψ : Formula Atom) : Formula Atom :=
   .not (.and (.not φ) (.not ψ))
 
-/-- Implication, via disjunction. -/
+/-- **CTL implication.** For CTL formulas $\varphi$ and $\psi$, the implication
+$\varphi \to \psi$ is defined as the disjunction $\neg\varphi \lor \psi$. -/
 def imp (φ ψ : Formula Atom) : Formula Atom := or (.not φ) ψ
 
-/-- Bi-implication, as mutual implication. -/
+/-- **CTL bi-implication.** For CTL formulas $\varphi$ and $\psi$, the bi-implication
+$\varphi \leftrightarrow \psi$ is defined as the conjunction $(\varphi \to \psi) \land
+(\psi \to \varphi)$ of the two implications. -/
 def iff (φ ψ : Formula Atom) : Formula Atom :=
   .and (imp φ ψ) (imp ψ φ)
 
-/-- `EF φ`: some reachable state satisfies `φ`. -/
+/-- **Exists finally.** For a CTL formula $\varphi$, the formula $\mathsf{EF}\,\varphi$ is the
+existential until $\mathsf{E}[\top \mathbin{\mathsf{U}} \varphi]$ with $\top$ on the left.
+
+A state satisfies $\mathsf{EF}\,\varphi$ exactly when some state reachable from it satisfies
+$\varphi$. -/
 def existsFinally (φ : Formula Atom) : Formula Atom :=
   .existsUntil .top φ
 
-/-- `AX φ`: every successor state satisfies `φ`. -/
+/-- **The CTL operator $\mathsf{AX}$.** For a CTL formula $\varphi$, the formula
+$\mathsf{AX}\,\varphi$ ("on all next states, $\varphi$") is defined as
+$\neg\,\mathsf{EX}\,\neg\varphi$.
+
+It holds at a state exactly when every successor of that state satisfies $\varphi$, so it holds
+vacuously at a deadlocked state. -/
 def forallNext (φ : Formula Atom) : Formula Atom :=
   .not (.existsNext (.not φ))
 
@@ -108,7 +127,9 @@ def forallNext (φ : Formula Atom) : Formula Atom :=
 def forallFinally (φ : Formula Atom) : Formula Atom :=
   .forallUntil .top φ
 
-/-- `AG φ`: every reachable state satisfies `φ`. -/
+/-- **The CTL operator $\mathrm{AG}$.** For a CTL formula $\varphi$, the formula
+$\mathrm{AG}\,\varphi$ is $\neg\,\mathrm{EF}\,\neg\varphi$. It holds at a state exactly when
+every state reachable from it satisfies $\varphi$. -/
 def forallGlobally (φ : Formula Atom) : Formula Atom :=
   .not (existsFinally (.not φ))
 
@@ -118,13 +139,19 @@ variable {State Label Atom : Type*}
 variable {lts : LTS State Label}
 variable {valuation : State → Atom → Prop}
 
-/-- Satisfaction of a CTL formula at a state of a labelled transition
-system, relative to an atom valuation.  `existsUntil φ ψ` is witnessed by
-a finite run prefix ending at a `ψ`-state, with `φ` at all earlier
-states; `existsGlobally φ` is witnessed by an infinite run on which `φ`
-holds everywhere.  `forallUntil φ ψ` quantifies over maximal paths:
-every infinite run and every finite run ending at a deadlocked state
-reaches a `ψ`-state, with `φ` at all earlier states. -/
+/-- **Satisfaction of CTL formulas.** Fix a labelled transition system and a valuation saying
+which atoms hold at which states. Satisfaction of a CTL formula at a state $s$ is defined by
+recursion on the formula. An atom $a$ holds at $s$ when the valuation makes $a$ true at $s$;
+$\top$ always holds; $\neg\varphi$ holds when $\varphi$ does not; $\varphi \land \psi$ holds
+when both $\varphi$ and $\psi$ hold; $\mathsf{EX}\,\varphi$ holds when there is a transition
+from $s$, under some label, to a state satisfying $\varphi$; $\mathsf{E}[\varphi\,\mathsf{U}\,\psi]$
+holds when some finite run $s = s_0, s_1, \dots, s_k$ has $\psi$ at $s_k$ and $\varphi$ at every
+$s_j$ with $j < k$; $\mathsf{EG}\,\varphi$ holds when some infinite run $s = s_0, s_1, \dots$ has
+$\varphi$ at every state; and $\mathsf{A}[\varphi\,\mathsf{U}\,\psi]$ holds when, first, every
+infinite run $s = s_0, s_1, \dots$ has some $k$ with $\psi$ at $s_k$ and $\varphi$ at every $s_j$
+with $j < k$, and second, every finite run $s = s_0, s_1, \dots, s_k$ whose last state $s_k$ has
+no outgoing transition under any label has some $j \le k$ with $\psi$ at $s_j$ and $\varphi$ at
+every $s_i$ with $i < j$. -/
 def Satisfies (lts : LTS State Label)
     (valuation : State → Atom → Prop) (state : State) :
     Formula Atom → Prop
@@ -152,22 +179,27 @@ def Satisfies (lts : LTS State Label)
         ∃ j, j ≤ k ∧ Satisfies lts valuation (ss j) ψ ∧
           ∀ i, i < j → Satisfies lts valuation (ss i) φ)
 
-/-- The existential predecessor operator: `s` satisfies `PreExists lts Z`
-when some successor of `s` satisfies `Z`. -/
+/-- **Existential predecessor operator.** For a labelled transition system and a predicate $Z$
+on its states, a state $s$ satisfies $\mathrm{Pre}_\exists(Z)$ when some successor of $s$
+satisfies $Z$: there are a label $a$ and a state $t$ satisfying $Z$ with a transition from $s$
+to $t$ labelled $a$. -/
 def PreExists (lts : LTS State Label) (Z : State → Prop)
     (s : State) : Prop :=
   ∃ label t, lts.Tr s label t ∧ Z t
 
-/-- A transition system is serial (total) when every state has a
-successor, so there are no deadlocked states and every maximal path is
-infinite. -/
+/-- **Serial transition systems.** A labelled transition system is serial (total) when every
+state $s$ has a successor: there are a label $a$ and a state $t$ with a transition from $s$ to
+$t$ labelled $a$.
+
+A serial system has no deadlocked states, and every maximal path in it is infinite. -/
 def Serial (lts : LTS State Label) : Prop :=
   ∀ s, ∃ label t, lts.Tr s label t
 
-/-- In a serial system, every finite run extends to an infinite run
-agreeing with it up to its endpoint.  The extension iterates a chosen
-successor function from the endpoint, so it depends on
-`Classical.choice`. -/
+/-- **Finite runs extend to infinite runs in serial systems.** In a serial labelled transition
+system, if $s_0, s_1, s_2, \dots$ is a finite run of length $k$, then there is an infinite run
+$s'_0, s'_1, s'_2, \dots$ with $s'_i = s_i$ for every $i \le k$.
+
+The extension iterates a chosen successor function from $s_k$, so it uses the axiom of choice. -/
 theorem exists_omegaRun_extending_of_serial (hser : Serial lts)
     {ss : ℕ → State} {k : ℕ} (hrun : lts.FiniteRun ss k) :
     ∃ ss', (∀ i, i ≤ k → ss' i = ss i) ∧ lts.OmegaRun ss' := by
@@ -290,7 +322,10 @@ theorem iff_iff : Satisfies lts valuation s (φ.iff ψ) ↔
   rw [Formula.iff, and_iff, imp_iff, imp_iff]
   exact ⟨fun ⟨h1, h2⟩ => ⟨h1, h2⟩, fun h => ⟨h.mp, h.mpr⟩⟩
 
-/-- `EF φ` unfolds to `E[⊤ U φ]`: a finite run prefix to a `φ`-state. -/
+/-- **$\mathsf{EF}$ via finite runs.** Let $\varphi$ be a CTL formula. In a labelled transition
+system with a valuation of the atoms at its states, a state $s$ satisfies $\mathsf{EF}\,\varphi$ if
+and only if there are a sequence of states $s_0, s_1, s_2, \dots$ with $s_0 = s$ and a natural
+number $k$ such that the sequence is a finite run of length $k$ and $s_k$ satisfies $\varphi$. -/
 theorem existsFinally_iff :
     Satisfies lts valuation s φ.existsFinally ↔
       ∃ ss k, ss 0 = s ∧ lts.FiniteRun ss k ∧
@@ -302,8 +337,11 @@ theorem existsFinally_iff :
   · rintro ⟨ss, k, h0, hrun, hφ⟩
     exact ⟨ss, k, h0, hrun, hφ, fun _ _ => trivial⟩
 
-/-- The one-step expansion of `E[φ U ψ]`: either `ψ` holds now, or `φ`
-holds now and `E[φ U ψ]` holds at some successor. -/
+/-- **One-step expansion of $\mathrm{EU}$.** Let $\varphi$ and $\psi$ be CTL formulas and $s$ a
+state of a labelled transition system with a valuation of the atoms. Then $s$ satisfies
+$\mathrm{E}[\varphi \mathbin{\mathrm{U}} \psi]$ if and only if either $s$ satisfies $\psi$, or
+$s$ satisfies $\varphi$ and some successor of $s$ satisfies
+$\mathrm{E}[\varphi \mathbin{\mathrm{U}} \psi]$. -/
 theorem existsUntil_expansion :
     Satisfies lts valuation s (.existsUntil φ ψ) ↔
       Satisfies lts valuation s ψ ∨
@@ -354,7 +392,10 @@ theorem existsUntil_expansion :
             change Satisfies lts valuation (ss j) φ
             exact hφ j (by omega)
 
-/-- `EF φ` holds exactly when some reachable state satisfies `φ`. -/
+/-- **$\mathsf{EF}$ means reachability.** Let $\varphi$ be a CTL formula. In a labelled transition
+system with a valuation of the atoms at its states, a state $s$ satisfies $\mathsf{EF}\,\varphi$ if
+and only if some state $t$ reachable from $s$ by a finite, possibly empty, sequence of transitions
+satisfies $\varphi$. -/
 theorem existsFinally_iff_reachable :
     Satisfies lts valuation s φ.existsFinally ↔
       ∃ t, lts.CanReach s t ∧ Satisfies lts valuation t φ := by
@@ -369,7 +410,10 @@ theorem existsFinally_iff_reachable :
       LTS.exists_finiteRun_of_canReach hreach
     exact ⟨ss, k, h0, hrun, hk ▸ hφ⟩
 
-/-- `AG φ` holds exactly when every reachable state satisfies `φ`. -/
+/-- **$\mathrm{AG}$ holds iff every reachable state satisfies the formula.** Let $\varphi$ be a
+CTL formula and $s$ a state of a labelled transition system with a valuation of the atoms.
+Then $s$ satisfies $\mathrm{AG}\,\varphi$ if and only if every state $t$ reachable from $s$
+(through a finite sequence of transitions, possibly empty) satisfies $\varphi$. -/
 theorem forallGlobally_iff_reachable :
     Satisfies lts valuation s φ.forallGlobally ↔
       ∀ t, lts.CanReach s t → Satisfies lts valuation t φ := by
@@ -381,7 +425,10 @@ theorem forallGlobally_iff_reachable :
   · rintro h ⟨t, hreach, hnot⟩
     exact hnot (h t hreach)
 
-/-- `AX φ` holds exactly when every successor state satisfies `φ`. -/
+/-- **Characterization of $\mathsf{AX}$.** Let $s$ be a state of a labelled transition system
+with an atom valuation, and let $\varphi$ be a CTL formula. Then $s$ satisfies
+$\mathsf{AX}\,\varphi$ if and only if every state $t$ with a transition from $s$ to $t$, under
+any label, satisfies $\varphi$. -/
 theorem forallNext_iff :
     Satisfies lts valuation s φ.forallNext ↔
       ∀ label t, lts.Tr s label t → Satisfies lts valuation t φ := by
@@ -394,8 +441,12 @@ theorem forallNext_iff :
   · rintro h ⟨label, t, hstep, hnot⟩
     exact hnot (h label t hstep)
 
-/-- `AF φ` unfolds to `A[⊤ U φ]`: `φ` occurs on every infinite run and
-on every finite run ending at a deadlocked state. -/
+/-- **Maximal-path form of $\mathrm{AF}$.** Let $\varphi$ be a CTL formula and $s$ a state of a
+labelled transition system with a valuation of the atoms. Then $s$ satisfies
+$\mathrm{AF}\,\varphi$ if and only if both of the following hold: for every infinite run
+$s_0, s_1, s_2, \dots$ with $s_0 = s$ there is some $k$ such that $s_k$ satisfies $\varphi$; and
+for every finite run $s_0, s_1, s_2, \dots$ of length $k$ with $s_0 = s$ whose endpoint $s_k$
+has no outgoing transition, there is some $j \le k$ such that $s_j$ satisfies $\varphi$. -/
 theorem forallFinally_iff_omega_and_finite :
     Satisfies lts valuation s φ.forallFinally ↔
       (∀ ss, ss 0 = s → lts.OmegaRun ss →
@@ -419,9 +470,13 @@ theorem forallFinally_iff_omega_and_finite :
     · obtain ⟨j, hjk, hj⟩ := hfinite ss k h0 hrun hdead
       exact ⟨j, hjk, hj, fun _ _ => trivial⟩
 
-/-- At a deadlocked state, `A[φ U ψ]` reduces to `ψ`: the infinite-run
-condition is vacuous (an infinite run needs a step at index `0`), and
-the constant finite run of length `0` forces `ψ` at the state itself. -/
+/-- **$\mathsf{A}[\varphi\,\mathsf{U}\,\psi]$ at a deadlocked state.** Let $s$ be a state of a
+labelled transition system with an atom valuation, and suppose that $s$ is deadlocked: there is
+no transition from $s$ under any label. Then for all CTL formulas $\varphi$ and $\psi$, $s$
+satisfies $\mathsf{A}[\varphi\,\mathsf{U}\,\psi]$ if and only if $s$ satisfies $\psi$.
+
+The infinite-run condition is vacuous, since an infinite run needs a step at index $0$, and the
+constant finite run of length $0$ forces $\psi$ at $s$ itself. -/
 theorem forallUntil_deadlock
     (hdead : ∀ label t, ¬lts.Tr s label t) :
     Satisfies lts valuation s (.forallUntil φ ψ) ↔
@@ -444,7 +499,9 @@ theorem forallUntil_deadlock
       exact ⟨0, Nat.zero_le k, h0 ▸ hψ,
         fun i hi => (Nat.not_lt_zero i hi).elim⟩
 
-/-- At a deadlocked state, `AF φ` reduces to `φ`. -/
+/-- **$\mathrm{AF}$ at a deadlocked state.** Let $\varphi$ be a CTL formula and $s$ a state of a
+labelled transition system with a valuation of the atoms. If $s$ has no outgoing transition,
+then $s$ satisfies $\mathrm{AF}\,\varphi$ if and only if $s$ satisfies $\varphi$. -/
 theorem forallFinally_deadlock
     (hdead : ∀ label t, ¬lts.Tr s label t) :
     Satisfies lts valuation s φ.forallFinally ↔
@@ -452,8 +509,13 @@ theorem forallFinally_deadlock
   change Satisfies lts valuation s (.forallUntil .top φ) ↔ _
   exact forallUntil_deadlock hdead
 
-/-- On a serial system there are no finite deadlocked runs, so `AF`
-recovers its classical form `¬EG ¬φ`. -/
+/-- **On serial systems $\mathrm{AF}$ is $\neg\mathrm{EG}\,\neg$.** Let $\varphi$ be a CTL
+formula and $s$ a state of a serial labelled transition system with a valuation of the atoms.
+Then $s$ satisfies $\mathrm{AF}\,\varphi$ if and only if $s$ does not satisfy
+$\mathrm{EG}\,\neg\varphi$.
+
+A serial system has no deadlocked states, so every maximal path is infinite and $\mathrm{AF}$
+recovers its classical form. -/
 theorem forallFinally_iff_not_existsGlobally_not_of_serial
     (hser : Serial lts) :
     Satisfies lts valuation s φ.forallFinally ↔
@@ -472,12 +534,17 @@ theorem forallFinally_iff_not_existsGlobally_not_of_serial
       obtain ⟨label, t, hstep⟩ := hser (ss k)
       exact (hdead label t hstep).elim
 
-/-- On a serial system, `A[φ U ψ]` recovers its classical form: it is
-not the case that either `¬ψ` holds until `¬φ ∧ ¬ψ` holds, or `¬ψ`
-holds forever.  The forward direction extends an `EU` witness to an
-infinite run; the backward direction takes, on each infinite run, the
-least `ψ`-position and derives an `EU` witness from any earlier
-`¬φ`-position. -/
+/-- **Classical form of $\mathsf{A}[\varphi\,\mathsf{U}\,\psi]$ on serial systems.** Let $s$ be a
+state of a serial labelled transition system with an atom valuation, and let $\varphi$ and $\psi$
+be CTL formulas. Then $s$ satisfies $\mathsf{A}[\varphi\,\mathsf{U}\,\psi]$ if and only if $s$
+satisfies neither $\mathsf{E}[\neg\psi\,\mathsf{U}\,(\neg\varphi \land \neg\psi)]$ nor
+$\mathsf{EG}\,\neg\psi$. That is, no finite run from $s$ ends at a state satisfying
+$\neg\varphi \land \neg\psi$ with $\neg\psi$ at all earlier states, and no infinite run from $s$
+has $\neg\psi$ at every state.
+
+The forward direction extends an $\mathsf{EU}$ witness to an infinite run; the backward
+direction takes, on each infinite run, the least $\psi$-position and derives an $\mathsf{EU}$
+witness from any earlier $\neg\varphi$-position. -/
 theorem forallUntil_iff_classical_of_serial (hser : Serial lts) :
     Satisfies lts valuation s (.forallUntil φ ψ) ↔
       ¬(Satisfies lts valuation s
@@ -540,7 +607,11 @@ theorem forallUntil_iff_classical_of_serial (hser : Serial lts) :
       obtain ⟨label, t, hstep⟩ := hser (ss k)
       exact (hdead label t hstep).elim
 
-/-- The one-step expansion of `EF φ`. -/
+/-- **One-step expansion of $\mathsf{EF}$.** Let $\varphi$ be a CTL formula. In a labelled
+transition system with a valuation of the atoms at its states, a state $s$ satisfies
+$\mathsf{EF}\,\varphi$ if and only if $s$ satisfies $\varphi$ or $s$ satisfies
+$\mathsf{EX}\,\mathsf{EF}\,\varphi$, that is, some successor of $s$ satisfies
+$\mathsf{EF}\,\varphi$. -/
 theorem existsFinally_expansion :
     Satisfies lts valuation s φ.existsFinally ↔
       Satisfies lts valuation s φ ∨
@@ -548,9 +619,13 @@ theorem existsFinally_expansion :
   rw [Formula.existsFinally, existsUntil_expansion]
   simp only [top_iff, true_and]
 
-/-- The one-step expansion of `EG φ`: `φ` holds now and `EG φ` holds at
-some successor.  Both directions are direct manipulations of infinite
-runs; no choice is needed here. -/
+/-- **One-step expansion of $\mathsf{EG}$.** Let $\varphi$ be a CTL formula. In a labelled
+transition system with a valuation of the atoms at its states, a state $s$ satisfies
+$\mathsf{EG}\,\varphi$ if and only if $s$ satisfies $\varphi$ and $s$ satisfies
+$\mathsf{EX}\,\mathsf{EG}\,\varphi$, that is, some successor of $s$ satisfies
+$\mathsf{EG}\,\varphi$.
+
+Both directions are direct manipulations of infinite runs; no choice is needed. -/
 theorem existsGlobally_expansion :
     Satisfies lts valuation s (.existsGlobally φ) ↔
       Satisfies lts valuation s φ ∧
@@ -578,7 +653,11 @@ theorem existsGlobally_expansion :
           change Satisfies lts valuation (ss i) φ
           exact hall i
 
-/-- The functional whose least fixed point is `EF φ`. -/
+/-- **The $\mathsf{EF}$ functional.** Given a labelled transition system, a valuation of the atoms
+at its states, and a CTL formula $\varphi$, this is the map sending a set of states $Z$ to the set
+of states that satisfy $\varphi$ or have some successor in $Z$.
+
+Its least fixed point is the set of states satisfying $\mathsf{EF}\,\varphi$. -/
 def existsFinallyFun (lts : LTS State Label)
     (valuation : State → Atom → Prop) (φ : Formula Atom)
     (Z : State → Prop) : State → Prop :=
@@ -592,7 +671,10 @@ theorem existsFinallyFun_mono (lts : LTS State Label)
   · exact Or.inl h
   · exact Or.inr ⟨label, t, hstep, hle t hZ⟩
 
-/-- The `EF` functional packaged as a monotone operator. -/
+/-- **The $\mathsf{EF}$ operator.** Given a labelled transition system, a valuation of the atoms at
+its states, and a CTL formula $\varphi$, this is the monotone operator on sets of states, ordered by
+inclusion, sending a set $Z$ to the set of states that satisfy $\varphi$ or have some successor in
+$Z$. -/
 def existsFinallyOrderHom (lts : LTS State Label)
     (valuation : State → Atom → Prop) (φ : Formula Atom) :
     (State → Prop) →o (State → Prop) :=
@@ -603,7 +685,13 @@ theorem existsFinallyOrderHom_apply (φ : Formula Atom) (Z : State → Prop) :
     existsFinallyOrderHom lts valuation φ Z =
       existsFinallyFun lts valuation φ Z := rfl
 
-/-- The functional whose greatest fixed point is `EG φ`. -/
+/-- **The functional for $\mathrm{EG}$.** Given a labelled transition system, a valuation of
+the atoms and a CTL formula $\varphi$, this is the operator that sends a predicate $Z$ on states
+to the predicate holding at a state $s$ when $s$ satisfies $\varphi$ and some successor of $s$
+satisfies $Z$, that is, there are a label $a$ and a state $t$ with a transition from $s$ to $t$
+labelled $a$ such that $Z$ holds at $t$.
+
+Its greatest fixed point is the set of states satisfying $\mathrm{EG}\,\varphi$. -/
 def existsGloballyFun (lts : LTS State Label)
     (valuation : State → Atom → Prop) (φ : Formula Atom)
     (Z : State → Prop) : State → Prop :=
@@ -616,7 +704,10 @@ theorem existsGloballyFun_mono (lts : LTS State Label)
   obtain ⟨hφ, label, t, hstep, hZ⟩ := hs
   exact ⟨hφ, label, t, hstep, hle t hZ⟩
 
-/-- The `EG` functional packaged as a monotone operator. -/
+/-- **The $\mathrm{EG}$ functional as a monotone operator.** Given a labelled transition system,
+a valuation of the atoms and a CTL formula $\varphi$, this is the monotone map on predicates on
+states, ordered pointwise by implication, that sends a predicate $Z$ to the predicate holding at
+a state $s$ when $s$ satisfies $\varphi$ and some successor of $s$ satisfies $Z$. -/
 def existsGloballyOrderHom (lts : LTS State Label)
     (valuation : State → Atom → Prop) (φ : Formula Atom) :
     (State → Prop) →o (State → Prop) :=
@@ -627,10 +718,15 @@ theorem existsGloballyOrderHom_apply (φ : Formula Atom) (Z : State → Prop) :
     existsGloballyOrderHom lts valuation φ Z =
       existsGloballyFun lts valuation φ Z := rfl
 
-/-- `EF φ` is the least fixed point of `Z ↦ ⟦φ⟧ ∪ PreExists Z`.  The
-inclusion of the fixed point in `EF φ` is Park induction, using the
-one-step expansion of `EF`; the other inclusion is induction on a trace
-to a `φ`-state, unfolding the fixed point once per step. -/
+/-- **$\mathsf{EF}$ is a least fixed point.** Fix a labelled transition system, a valuation of the
+atoms at its states, and a CTL formula $\varphi$. Write $[\![\varphi]\!]$ for the set of states
+satisfying $\varphi$ and $\mathrm{Pre}_\exists(Z)$ for the set of states having some successor in a
+set of states $Z$. Then the set of states satisfying $\mathsf{EF}\,\varphi$ is the least fixed point
+of the monotone operator $Z \mapsto [\![\varphi]\!] \cup \mathrm{Pre}_\exists(Z)$ on sets of states.
+
+The fixed point is contained in $\mathsf{EF}\,\varphi$ by Park induction, using the one-step
+expansion of $\mathsf{EF}$; the converse is induction on a path to a $\varphi$-state, unfolding the
+fixed point once per step. -/
 theorem existsFinally_eq_lfp (φ : Formula Atom) :
     (fun s => Satisfies lts valuation s φ.existsFinally) =
       (existsFinallyOrderHom lts valuation φ).lfp := by
@@ -656,12 +752,16 @@ theorem existsFinally_eq_lfp (φ : Formula Atom) :
     intro s hs
     exact existsFinally_expansion.mpr hs
 
-/-- `EG φ` is the greatest fixed point of `Z ↦ ⟦φ⟧ ∩ PreExists Z`.  The
-inclusion of `EG φ` in the fixed point is coinduction (`OrderHom.le_gfp`),
-using the one-step expansion of `EG`.  The other inclusion builds an
-infinite run by iterating a chosen successor function on the subtype of
-fixed-point states; that step uses `Classical.choice`, so this theorem
-depends on the choice axiom. -/
+/-- **$\mathsf{EG}$ is a greatest fixed point.** Fix a labelled transition system, a valuation of
+the atoms at its states, and a CTL formula $\varphi$. Write $[\![\varphi]\!]$ for the set of states
+satisfying $\varphi$ and $\mathrm{Pre}_\exists(Z)$ for the set of states having some successor in a
+set of states $Z$. Then the set of states satisfying $\mathsf{EG}\,\varphi$ is the greatest fixed
+point of the monotone operator $Z \mapsto [\![\varphi]\!] \cap \mathrm{Pre}_\exists(Z)$ on sets of
+states.
+
+The inclusion of $\mathsf{EG}\,\varphi$ in the fixed point is coinduction, using the one-step
+expansion of $\mathsf{EG}$. The converse builds an infinite run by repeatedly choosing a successor
+inside the fixed point, so it uses the axiom of choice. -/
 theorem existsGlobally_eq_gfp (φ : Formula Atom) :
     (fun s => Satisfies lts valuation s (.existsGlobally φ)) =
       (existsGloballyOrderHom lts valuation φ).gfp := by

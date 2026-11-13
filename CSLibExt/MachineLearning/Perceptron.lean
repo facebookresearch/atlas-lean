@@ -53,21 +53,35 @@ open Matrix
 
 variable {ι K : Type*} [Fintype ι] [CommRing K] [LinearOrder K] [IsStrictOrderedRing K]
 
-/-- The label `±1` of a Boolean class. -/
+/-- **Sign of a Boolean label.** For a commutative ring $K$, the sign of a Boolean label $y$ is
+the element $\operatorname{sign}(y) \in K$ equal to $1$ if $y$ is true and to $-1$ if $y$ is
+false. -/
 def sign (y : Bool) : K := if y then 1 else -1
 
-/-- One perceptron step on the example `(x, y)`: if the weights `w` do not classify it strictly
-correctly, `sign y * (w ⬝ᵥ x) ≤ 0`, add `sign y • x` and count a mistake. -/
+/-- **Perceptron step.** Let $K$ be a commutative ring with a linear order, $\iota$ a finite type,
+and $v \cdot w = \sum_{i \in \iota} v_i w_i$ the dot product on $K^\iota$. One perceptron step
+takes a state $(w, m)$, made of weights $w \in K^\iota$ and a mistake count $m \in \mathbb{N}$, and
+a labelled example $(x, y)$ with $x \in K^\iota$ and $y$ a Boolean. If
+$\operatorname{sign}(y)\,(w \cdot x) \le 0$, that is, $w$ does not classify the example strictly
+correctly, the step returns $(w + \operatorname{sign}(y)\,x,\ m + 1)$ and counts a mistake;
+otherwise it returns $(w, m)$ unchanged. -/
 def step (s : (ι → K) × ℕ) (e : (ι → K) × Bool) : (ι → K) × ℕ :=
   if (sign e.2 : K) * (s.1 ⬝ᵥ e.1) ≤ 0 then (s.1 + (sign e.2 : K) • e.1, s.2 + 1) else s
 
-/-- Run the perceptron over the examples `xs` from weights `w` with `m` mistakes so far; returns
-the final weights and mistake count. -/
+/-- **Perceptron run.** Let $K$ be a commutative ring with a linear order and $\iota$ a finite type.
+The run of the perceptron over a finite list $L$ of labelled examples $(x, y)$, with
+$x \in K^\iota$ and $y$ a Boolean, from weights $w \in K^\iota$ with $m \in \mathbb{N}$ mistakes so
+far is the pair of final weights and final mistake count obtained by applying the perceptron step
+to each example of $L$ in order, starting from the state $(w, m)$. -/
 def run (w : ι → K) (m : ℕ) (xs : List ((ι → K) × Bool)) : (ι → K) × ℕ :=
   xs.foldl step (w, m)
 
-/-- Repeat passes over `xs` from `w`, for at most `n` passes, until a pass makes no mistake;
-returns the weights of that pass (`none` if every pass made a mistake). -/
+/-- **Perceptron training.** Given a finite list $D$ of labelled examples, a number $n$ of passes
+and weights $w$, training returns nothing when $n = 0$. When $n = m + 1$, it runs one perceptron
+pass over $D$ from $w$ with mistake count $0$; if that pass makes no mistake it returns $w$, and
+otherwise it trains on $D$ for $m$ passes from the weights the pass produced. So training repeats
+passes until one makes no mistake, for at most $n$ passes, and returns the weights of that pass,
+or nothing if every pass made a mistake. -/
 def train (xs : List ((ι → K) × Bool)) : ℕ → (ι → K) → Option (ι → K)
   | 0, _ => none
   | n + 1, w =>
@@ -91,7 +105,12 @@ theorem step_of_correct {w : ι → K} {m : ℕ} {e : (ι → K) × Bool}
   simp only [step, h, ↓reduceIte]
 
 omit [IsStrictOrderedRing K] in
-/-- The mistake count only shifts with its starting value. -/
+/-- **The starting mistake count only shifts the final count.** Let $K$ be a commutative ring
+with a linear order and $\iota$ a finite type, and let $L$ be a finite list of labelled examples
+$(x, y)$ with $x \in K^\iota$ and $y$ a Boolean. For all weights $w \in K^\iota$ and every natural
+number $m$, the perceptron run over $L$ from $w$ with $m$ mistakes so far ends with the same weights
+as the run from $w$ with $0$ mistakes so far, and with mistake count $m + c$, where $c$ is the final
+mistake count of the run from $w$ with $0$ mistakes so far. -/
 theorem run_eq (xs : List ((ι → K) × Bool)) :
     ∀ (w : ι → K) (m : ℕ), run w m xs = ((run w 0 xs).1, m + (run w 0 xs).2) := by
   induction xs with
@@ -110,8 +129,12 @@ theorem run_append (w : ι → K) (m : ℕ) (xs ys : List ((ι → K) × Bool)) 
   simp [run, List.foldl_append]
 
 omit [IsStrictOrderedRing K] in
-/-- A pass without mistakes leaves the weights alone, and they classify every example strictly
-correctly. -/
+/-- **A mistake-free pass classifies every example.** Let $K$ be a commutative ring with a linear
+order, $\iota$ a finite type, and $v \cdot w = \sum_{i \in \iota} v_i w_i$ the dot product on
+$K^\iota$. Let $L$ be a finite list of labelled examples $(x, y)$ with $x \in K^\iota$ and $y$ a
+Boolean, and let $w \in K^\iota$. If the perceptron run over $L$ from weights $w$ with $0$ mistakes
+so far ends with mistake count $0$, then every example $(x, y)$ in $L$ satisfies
+$0 < \operatorname{sign}(y)\,(w \cdot x)$. -/
 theorem classifies_of_run_eq_zero (xs : List ((ι → K) × Bool)) :
     ∀ w : ι → K, (run w 0 xs).2 = 0 → ∀ e ∈ xs, 0 < sign e.2 * (w ⬝ᵥ e.1) := by
   induction xs with
@@ -133,7 +156,14 @@ theorem classifies_of_run_eq_zero (xs : List ((ι → K) × Bool)) :
 
 variable {u : ι → K} {γ R : K}
 
-/-- After `k` mistakes, `u ⬝ᵥ w ≥ k γ` and `w ⬝ᵥ w ≤ k R ^ 2`. -/
+/-- **Invariant of the perceptron run.** Let $K$ be a linearly ordered commutative ring, $\iota$ a
+finite type, $v \cdot w = \sum_{i \in \iota} v_i w_i$ the dot product on $K^\iota$, $u \in K^\iota$
+and $\gamma, R \in K$. Let $L$ be a finite list of labelled examples $(x, y)$ with $x \in K^\iota$
+and $y$ a Boolean, such that every example in $L$ satisfies
+$\gamma \le \operatorname{sign}(y)\,(u \cdot x)$ and $x \cdot x \le R^2$. Let $w \in K^\iota$ and
+$m \in \mathbb{N}$ satisfy $m \gamma \le u \cdot w$ and $w \cdot w \le m R^2$, and let the
+perceptron run over $L$ from $w$ with $m$ mistakes so far end with weights $w'$ and mistake count
+$m'$. Then $m' \gamma \le u \cdot w'$ and $w' \cdot w' \le m' R^2$. -/
 theorem run_invariant (xs : List ((ι → K) × Bool))
     (hsep : ∀ e ∈ xs, γ ≤ sign e.2 * (u ⬝ᵥ e.1)) (hR : ∀ e ∈ xs, e.1 ⬝ᵥ e.1 ≤ R ^ 2) :
     ∀ (w : ι → K) (m : ℕ), (m : K) * γ ≤ u ⬝ᵥ w → w ⬝ᵥ w ≤ m * R ^ 2 →
@@ -168,9 +198,13 @@ private theorem dotProduct_sq_le (v w : ι → K) : (v ⬝ᵥ w) ^ 2 ≤ (v ⬝�
   have := Finset.sum_mul_sq_le_sq_mul_sq Finset.univ v w
   simpa [dotProduct, sq] using this
 
-/-- **Novikoff's perceptron mistake bound.** If every example has `x ⬝ᵥ x ≤ R ^ 2` and `u`
-separates them with margin `γ > 0`, the perceptron started from `0` makes `k` mistakes on any
-sequence of these examples, with `k * γ ^ 2 ≤ (u ⬝ᵥ u) * R ^ 2`. -/
+/-- **Novikoff's perceptron mistake bound.** Let $K$ be a linearly ordered commutative ring,
+$\iota$ a finite type, $v \cdot w = \sum_{i \in \iota} v_i w_i$ the dot product on $K^\iota$,
+$u \in K^\iota$, and $\gamma, R \in K$ with $\gamma > 0$. Let $L$ be a finite list of labelled
+examples $(x, y)$ with $x \in K^\iota$ and $y$ a Boolean, such that every example in $L$ satisfies
+$\gamma \le \operatorname{sign}(y)\,(u \cdot x)$ and $x \cdot x \le R^2$. If the perceptron run
+over $L$ from the zero weights with $0$ mistakes so far ends with mistake count $k$, then
+$k \gamma^2 \le (u \cdot u) R^2$. -/
 theorem mistakes_mul_sq_le (xs : List ((ι → K) × Bool))
     (hsep : ∀ e ∈ xs, γ ≤ sign e.2 * (u ⬝ᵥ e.1)) (hR : ∀ e ∈ xs, e.1 ⬝ᵥ e.1 ≤ R ^ 2)
     (hγ : 0 < γ) : ((run 0 0 xs).2 : K) * γ ^ 2 ≤ (u ⬝ᵥ u) * R ^ 2 := by
@@ -188,7 +222,14 @@ theorem mistakes_mul_sq_le (xs : List ((ι → K) × Bool))
     exact le_of_mul_le_mul_left this hk
   · rw [← hk]; simp only [zero_mul]; positivity
 
-/-- Over a field: `k ≤ (u ⬝ᵥ u) R² / γ²`, the textbook `R² / γ²` for a unit separator. -/
+/-- **Novikoff's mistake bound over an ordered field.** Let $F$ be a linearly ordered field,
+$\iota$ a finite type, $v \cdot w = \sum_{i \in \iota} v_i w_i$ the dot product on $F^\iota$,
+$u \in F^\iota$, and $\gamma, R \in F$ with $\gamma > 0$. Let $L$ be a finite list of labelled
+examples $(x, y)$ with $x \in F^\iota$ and $y$ a Boolean, such that every example in $L$ satisfies
+$\gamma \le \operatorname{sign}(y)\,(u \cdot x)$ and $x \cdot x \le R^2$. If the perceptron run
+over $L$ from the zero weights with $0$ mistakes so far ends with mistake count $k$, then
+$k \le (u \cdot u) R^2 / \gamma^2$; for a unit vector $u$ this is the textbook bound
+$R^2 / \gamma^2$. -/
 theorem mistakes_le_div {F : Type*} [Field F] [LinearOrder F] [IsStrictOrderedRing F]
     {u : ι → F} {γ R : F} (xs : List ((ι → F) × Bool))
     (hsep : ∀ e ∈ xs, γ ≤ sign e.2 * (u ⬝ᵥ e.1)) (hR : ∀ e ∈ xs, e.1 ⬝ᵥ e.1 ≤ R ^ 2)
@@ -199,7 +240,12 @@ theorem mistakes_le_div {F : Type*} [Field F] [LinearOrder F] [IsStrictOrderedRi
 /-! ## Training until a pass makes no mistake -/
 
 omit [IsStrictOrderedRing K] in
-/-- The weights `train` returns classify every example strictly correctly. -/
+/-- **Trained weights classify every example.** Let $K$ be a commutative ring with a linear order,
+$\iota$ a finite type, and $v \cdot w = \sum_{i \in \iota} v_i w_i$ the dot product on $K^\iota$.
+Let $L$ be a finite list of labelled examples $(x, y)$ with $x \in K^\iota$ and $y$ a Boolean. For
+every natural number $n$ and all weights $w, v \in K^\iota$, if training on $L$ from $w$ with at
+most $n$ passes returns $v$, then every example $(x, y)$ in $L$ satisfies
+$0 < \operatorname{sign}(y)\,(v \cdot x)$. -/
 theorem train_classifies (xs : List ((ι → K) × Bool)) :
     ∀ (n : ℕ) (w v : ι → K), train xs n w = some v → ∀ e ∈ xs, 0 < sign e.2 * (v ⬝ᵥ e.1)
   | 0, _, _, h => by simp [train] at h
@@ -210,7 +256,12 @@ theorem train_classifies (xs : List ((ι → K) × Bool)) :
       · exact train_classifies xs n _ v h
 
 omit [IsStrictOrderedRing K] in
-/-- If `n` passes all make mistakes, the run over the `n` passes makes at least `n` mistakes. -/
+/-- **Every failed training pass adds a mistake.** Let $K$ be a commutative ring with a linear
+order and $\iota$ a finite type, and let $L$ be a finite list of labelled examples $(x, y)$ with
+$x \in K^\iota$ and $y$ a Boolean. For every natural number $n$ and all weights $w \in K^\iota$, if
+training on $L$ from $w$ with at most $n$ passes returns no weights, then the perceptron run from
+$w$ with $0$ mistakes so far over the concatenation of $n$ copies of $L$ ends with a mistake count
+of at least $n$. -/
 theorem le_run_of_train_eq_none (xs : List ((ι → K) × Bool)) :
     ∀ (n : ℕ) (w : ι → K), train xs n w = none →
       n ≤ (run w 0 (List.replicate n xs).flatten).2
@@ -222,9 +273,14 @@ theorem le_run_of_train_eq_none (xs : List ((ι → K) × Bool)) :
       rw [List.replicate_succ, List.flatten_cons, run_append, run_eq]
       omega
 
-/-- **The perceptron converges.** On data of radius `R` separated by `u` with margin `γ > 0`,
-`train` with any `n` passes, `(u ⬝ᵥ u) * R ^ 2 < n * γ ^ 2`, returns weights classifying every
-example strictly correctly. -/
+/-- **The perceptron converges.** Let $K$ be a linearly ordered commutative ring, let $\iota$ be a
+finite index type, write $a \cdot b = \sum_{j \in \iota} a_j b_j$ for $a, b \in K^\iota$, and let
+the label sign $s(y)$ be $1$ if the Boolean $y$ is true and $-1$ otherwise. Let $D$ be a finite
+list of examples $(x, y)$ with $x \in K^\iota$ and $y$ a Boolean, and let $u \in K^\iota$ and
+$\gamma, R \in K$ with $\gamma > 0$ be such that every example $(x, y)$ of $D$ satisfies
+$\gamma \le s(y)\,(u \cdot x)$ and $x \cdot x \le R^2$. Then for every natural number $n$ with
+$(u \cdot u) R^2 < n \gamma^2$, perceptron training on $D$ from the zero weights with at most $n$
+passes returns some weights $v$, and $0 < s(y)\,(v \cdot x)$ for every example $(x, y)$ of $D$. -/
 theorem train_converges (xs : List ((ι → K) × Bool))
     (hsep : ∀ e ∈ xs, γ ≤ sign e.2 * (u ⬝ᵥ e.1)) (hR : ∀ e ∈ xs, e.1 ⬝ᵥ e.1 ≤ R ^ 2)
     (hγ : 0 < γ) {n : ℕ} (hn : (u ⬝ᵥ u) * R ^ 2 < n * γ ^ 2) :

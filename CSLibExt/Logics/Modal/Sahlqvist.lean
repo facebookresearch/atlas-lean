@@ -52,16 +52,25 @@ variable {Atom : Type u}
 
 mutual
 
-/-- A modal formula is positive if it is built from atoms and `⊥` using `∧`, `∨`, `□`,
-`◇`, and `⟹` with a negative antecedent. -/
+/-- **Positive modal formulas.** Positive and negative modal formulas are defined by simultaneous
+recursion: every atom is positive, $\bot$ is positive, $\varphi \to \psi$ is positive if
+$\varphi$ is negative and $\psi$ is positive, and $\Box\varphi$ is positive if $\varphi$ is
+positive.
+
+Positive formulas are closed under $\wedge$, $\vee$, $\Box$ and $\Diamond$, which are encoded
+through $\to$, $\bot$ and $\Box$. -/
 def IsPositive : Formula Atom → Prop
   | .atom _ => True
   | .bot => True
   | .imp φ ψ => IsNegative φ ∧ IsPositive ψ
   | .box φ => IsPositive φ
 
-/-- A modal formula is negative if it is built from `⊥` using `∧`, `∨`, `□`, `◇`, and `⟹`
-with a positive antecedent and a negative consequent. -/
+/-- **Negative modal formulas.** Negative and positive modal formulas are defined by simultaneous
+recursion: no atom is negative, $\bot$ is negative, $\varphi \to \psi$ is negative if $\varphi$
+is positive and $\psi$ is negative, and $\Box\varphi$ is negative if $\varphi$ is negative.
+
+Negative formulas are closed under $\wedge$, $\vee$, $\Box$ and $\Diamond$, which are encoded
+through $\to$, $\bot$ and $\Box$. -/
 def IsNegative : Formula Atom → Prop
   | .atom _ => False
   | .bot => True
@@ -70,13 +79,16 @@ def IsNegative : Formula Atom → Prop
 
 end
 
-/-- Iterated box: `boxPow 0 φ = φ`, `boxPow (k + 1) φ = □ (boxPow k φ)`. -/
+/-- **Iterated box.** For a natural number $k$ and a modal formula $\varphi$, the iterated box
+$\Box^k \varphi$ is defined by $\Box^0 \varphi = \varphi$ and
+$\Box^{k+1} \varphi = \Box\,\Box^k \varphi$. -/
 def boxPow : Nat → Formula Atom → Formula Atom
   | 0, φ => φ
   | k + 1, φ => .box (boxPow k φ)
 
-/-- A Sahlqvist antecedent is built from boxed atoms (`□^k p`) and negative formulas
-using `∧`, `∨`, and `◇`. -/
+/-- **Sahlqvist antecedents.** The Sahlqvist antecedents form the smallest class of modal
+formulas that contains every boxed atom $\Box^k p$ (an atom $p$ under $k \ge 0$ boxes) and every
+negative formula, and is closed under $\wedge$, $\vee$ and $\Diamond$. -/
 inductive IsSahlqvistAntecedent : Formula Atom → Prop
   /-- A boxed atom is a Sahlqvist antecedent. -/
   | boxedAtom (a : Atom) (k : Nat) :
@@ -102,17 +114,20 @@ def Formula.atoms : Formula Atom → Set Atom
   | .imp φ ψ => φ.atoms ∪ ψ.atoms
   | .box φ => φ.atoms
 
-/-- A modal formula is a Sahlqvist implication if it is an implication from a
-Sahlqvist antecedent to a positive formula. -/
+/-- **Sahlqvist implications.** A modal formula is a Sahlqvist implication if it is an implication
+$\alpha \to \beta$ whose antecedent $\alpha$ is a Sahlqvist antecedent and whose consequent
+$\beta$ is a positive formula. -/
 def IsSahlqvistImplication (φ : Formula Atom) : Prop :=
   ∃ α β : Formula Atom, IsSahlqvistAntecedent α ∧ IsPositive β ∧ φ = α.imp β
 
-/-- A modal formula is Sahlqvist if it is built from Sahlqvist implications using `∧`,
-`□`, and `∨` with disjoint propositional vocabularies. The disjunction side condition
-is essential: arbitrary disjunction leaves the correspondence class. `◇` at the outer
-level is not part of the closure (it belongs to the antecedent grammar). The
-bare-implication definition alone would reject e.g. a boxed Sahlqvist implication
-`□(p → □◇p)`, which is Sahlqvist. -/
+/-- **Sahlqvist formulas.** The Sahlqvist formulas form the smallest class of modal formulas that
+contains every Sahlqvist implication, is closed under $\wedge$ and $\Box$, and contains
+$\varphi \vee \psi$ whenever $\varphi$ and $\psi$ are Sahlqvist formulas with no atom in common.
+
+The side condition on disjunction is essential: arbitrary disjunction leaves the correspondence
+class. $\Diamond$ is not part of this outer closure; it belongs to the grammar of Sahlqvist
+antecedents. For example, the boxed Sahlqvist implication $\Box(p \to \Box\Diamond p)$ is a
+Sahlqvist formula. -/
 inductive IsSahlqvist : Formula Atom → Prop
   /-- A Sahlqvist implication is Sahlqvist. -/
   | impl {φ : Formula Atom} : IsSahlqvistImplication φ → IsSahlqvist φ
@@ -126,8 +141,9 @@ inductive IsSahlqvist : Formula Atom → Prop
   /-- Sahlqvist formulas are closed under boxing. -/
   | box {φ : Formula Atom} : IsSahlqvist φ → IsSahlqvist (.box φ)
 
-/-- The B axiom `p → □◇p` is Sahlqvist: its antecedent is a boxed atom (`k = 0`) and its
-consequent is positive. -/
+/-- **The B axiom is a Sahlqvist formula.** For every atom $p$, the instance $p \to \Box\Diamond p$
+of the B axiom is a Sahlqvist formula: its antecedent $p$ is a boxed atom with zero boxes and its
+consequent $\Box\Diamond p$ is positive. -/
 theorem isSahlqvist_axiomB (a : Atom) : IsSahlqvist (Formula.axiomB (.atom a)) :=
   .impl ⟨.atom a, .box (Formula.dia (.atom a)), .boxedAtom a 0,
     ⟨⟨trivial, trivial⟩, trivial⟩, rfl⟩

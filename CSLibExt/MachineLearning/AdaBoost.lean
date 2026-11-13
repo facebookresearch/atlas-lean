@@ -61,18 +61,35 @@ open Cslib.MachineLearning.Perceptron (sign)
 
 variable {m : ℕ}
 
-/-- The weighted training error of the predictions `h` under the weights `D`. -/
+/-- **Weighted training error.** For labels $y$, weights $D$ and predictions $h$ on $m$ training
+points, the weighted training error of $h$ under $D$ is $\sum_{i : h(i) \ne y(i)} D(i)$, the total
+weight of the points that $h$ misclassifies. -/
 noncomputable def err (y : Fin m → Bool) (D : Fin m → ℝ) (h : Fin m → Bool) : ℝ :=
   ∑ i, if h i = y i then 0 else D i
 
-/-- The weight `α = log ((1 - ε) / ε) / 2` of a weak hypothesis with weighted error `ε`. -/
+/-- **AdaBoost's hypothesis weight.** A weak hypothesis with weighted error
+$\varepsilon \in \mathbb{R}$ gets the weight
+$\alpha(\varepsilon) = \frac{1}{2} \log \frac{1 - \varepsilon}{\varepsilon}$. -/
 noncomputable def alpha (ε : ℝ) : ℝ := log ((1 - ε) / ε) / 2
 
-/-- The normalizer `Z = ∑ i, D i exp (-α yᵢ h(xᵢ))` of a round. -/
+/-- **Normalizer of a boosting round.** For labels $y$, weights $D$ and predictions $h$ on $m$
+training points, let $\varepsilon$ be the weighted training error of $h$ under $D$ and
+$\alpha = \alpha(\varepsilon)$ the hypothesis weight. The normalizer of the round is
+
+$$Z = \sum_i D(i) \exp(-\alpha\, y_i h_i),$$
+
+where the label $y_i$ and the prediction $h_i$ are read as $\pm 1$. -/
 noncomputable def normalizer (y : Fin m → Bool) (D : Fin m → ℝ) (h : Fin m → Bool) : ℝ :=
   ∑ i, D i * exp (-(alpha (err y D h)) * ((sign (y i) : ℝ) * sign (h i)))
 
-/-- The reweighting `D' i = D i exp (-α yᵢ h(xᵢ)) / Z`. -/
+/-- **AdaBoost reweighting.** For labels $y$, weights $D$ and predictions $h$ on $m$ training
+points, let $\varepsilon$ be the weighted training error of $h$ under $D$,
+$\alpha = \alpha(\varepsilon)$ the hypothesis weight and $Z$ the normalizer of the round. The
+reweighted weight of point $i$ is
+
+$$D'(i) = \frac{D(i) \exp(-\alpha\, y_i h_i)}{Z},$$
+
+where the label $y_i$ and the prediction $h_i$ are read as $\pm 1$. -/
 noncomputable def reweight (y : Fin m → Bool) (D : Fin m → ℝ) (h : Fin m → Bool) (i : Fin m) :
     ℝ :=
   D i * exp (-(alpha (err y D h)) * ((sign (y i) : ℝ) * sign (h i))) / normalizer y D h
@@ -81,8 +98,11 @@ theorem sign_mul_sign_eq_ite (a b : Bool) :
     (sign a : ℝ) * sign b = if b = a then 1 else -1 := by
   cases a <;> cases b <;> simp [sign]
 
-/-- **The normalizer of a round is `2 √(ε (1 - ε))`** for a distribution `D` and an error
-`ε ∈ (0, 1)`. -/
+/-- **The normalizer of a round is $2\sqrt{\varepsilon(1 - \varepsilon)}$.** Let $y$ be labels on
+$m$ training points, $D$ real weights on the points with $\sum_i D(i) = 1$, and $h$ predictions
+whose weighted training error $\varepsilon$ under $D$ satisfies $0 < \varepsilon < 1$. Then the
+normalizer of the round with weights $D$ and hypothesis $h$ equals
+$2\sqrt{\varepsilon(1 - \varepsilon)}$. -/
 theorem normalizer_eq (y : Fin m → Bool) {D : Fin m → ℝ} (hD : ∑ i, D i = 1)
     (h : Fin m → Bool) (h0 : 0 < err y D h) (h1 : err y D h < 1) :
     normalizer y D h = 2 * sqrt (err y D h * (1 - err y D h)) := by
@@ -107,8 +127,10 @@ theorem normalizer_eq (y : Fin m → Bool) {D : Fin m → ℝ} (hD : ∑ i, D i 
   field_simp
   nlinarith [h1, h2]
 
-/-- **One round's factor is at most `exp (-2 γ²)`** when the weighted error is at most
-`1 / 2 - γ`. -/
+/-- **One round's factor is at most `exp (-2 γ²)`.** For real numbers $\varepsilon$ and $\gamma$
+with $\gamma \ge 0$ and $\varepsilon \le 1/2 - \gamma$, we have
+$2\sqrt{\varepsilon (1 - \varepsilon)} \le e^{-2\gamma^2}$, where the square root of a negative
+number is taken to be $0$. -/
 theorem two_mul_sqrt_le_exp {ε γ : ℝ} (hγ : 0 ≤ γ) (hε : ε ≤ 1 / 2 - γ) :
     2 * sqrt (ε * (1 - ε)) ≤ exp (-2 * γ ^ 2) := by
   have h4 : 4 * (ε * (1 - ε)) ≤ exp (-(4 * γ ^ 2)) := by
@@ -124,26 +146,44 @@ theorem two_mul_sqrt_le_exp {ε γ : ℝ} (hγ : 0 ≤ γ) (hε : ε ≤ 1 / 2 -
 
 variable (y : Fin m → Bool) (wl : (Fin m → ℝ) → Fin m → Bool)
 
-/-- AdaBoost's weights over the training points: uniform, then reweighted after each round by
-the weak learner's hypothesis on the current weights. -/
+/-- **AdaBoost's weights.** Given labels $y$ on $m$ training points and a weak learner
+$\mathrm{wl}$, which maps weights on the points to a hypothesis's predictions on them,
+AdaBoost's weights $D_t$ on the points are defined by $D_0(i) = 1/m$ for every point $i$, and
+$D_{t+1}$ is the reweighting of $D_t$ by the hypothesis $\mathrm{wl}(D_t)$. -/
 noncomputable def dist : ℕ → Fin m → ℝ
   | 0 => fun _ => 1 / m
   | t + 1 => reweight y (dist t) (wl (dist t))
 
-/-- The weak hypothesis of round `t`. -/
+/-- **Weak hypothesis of an AdaBoost round.** The weak hypothesis $h_t$ of round $t$ is the weak
+learner's output $\mathrm{wl}(D_t)$ on the weights $D_t$ of round $t$. -/
 noncomputable def hyp (t : ℕ) : Fin m → Bool := wl (dist y wl t)
 
-/-- The weighted error of round `t`. -/
+/-- **Weighted error of an AdaBoost round.** The weighted error $\varepsilon_t$ of round $t$ is the
+weighted training error of the weak hypothesis $h_t$ of round $t$ under the weights $D_t$ of
+round $t$. -/
 noncomputable def eps (t : ℕ) : ℝ := err y (dist y wl t) (hyp y wl t)
 
-/-- The normalizer of round `t`. -/
+/-- **Normalizer of an AdaBoost round.** Run AdaBoost on training points with labels $y$, and
+read labels and predictions as $\pm 1$. The normalizer of round $t$ is
+$Z_t = \sum_i D_t(i) \exp(-\alpha_t y_i h_t(i))$, where $D_t$ are AdaBoost's weights in round
+$t$, $h_t$ is the weak hypothesis of round $t$, and $\alpha_t$ is its weight. -/
 noncomputable def zee (t : ℕ) : ℝ := normalizer y (dist y wl t) (hyp y wl t)
 
-/-- The combined score `F T i = ∑_{t < T} α_t h_t(xᵢ)`; the final classifier is its sign. -/
+/-- **AdaBoost's combined score.** After $T$ rounds, the combined score of training point $i$ is
+
+$$F_T(i) = \sum_{t < T} \alpha(\varepsilon_t)\, h_t(i),$$
+
+where $\varepsilon_t$ is the weighted error and $h_t$ the weak hypothesis of round $t$,
+$\alpha(\varepsilon) = \frac{1}{2} \log \frac{1 - \varepsilon}{\varepsilon}$ is the hypothesis
+weight, and the prediction $h_t(i)$ is read as $\pm 1$. The final classifier is the sign of
+$F_T$. -/
 noncomputable def score (T : ℕ) (i : Fin m) : ℝ :=
   ∑ t ∈ Finset.range T, alpha (eps y wl t) * sign (hyp y wl t i)
 
-/-- The training error of the final classifier (a zero score counts as an error). -/
+/-- **Training error of AdaBoost.** Let AdaBoost run on $m$ training points with labels $y$,
+read labels and predictions as $\pm 1$, and let $F_T$ be the combined score after $T$ rounds.
+The training error after $T$ rounds is the number of training points $i$ with
+$y_i F_T(i) \le 0$, divided by $m$; in particular a zero score counts as an error. -/
 noncomputable def trainErr (T : ℕ) : ℝ :=
   (∑ i, if sign (y i) * score y wl T i ≤ 0 then (1 : ℝ) else 0) / m
 
@@ -170,7 +210,14 @@ theorem sum_dist (hm : 0 < m) : ∀ t : ℕ, ∑ i, dist y wl t i = 1
       rw [← Finset.sum_div]
       exact div_self (zee_pos hm t).ne'
 
-/-- **Unrolling the weights**: `D_T(i) · m ∏_{t < T} Z_t = exp (-yᵢ F_T(xᵢ))`. -/
+/-- **Unrolling the weights.** Run AdaBoost with labels $y$ on $m > 0$ training points and a
+weak learner, and let $D_T$ be the weights on the points after $T$ rounds, $Z_t$ the normalizer
+of round $t$, and $F_T$ the combined score after $T$ rounds. Then for every $T \in \mathbb{N}$ and
+every training point $i$,
+
+$$D_T(i) \cdot m \prod_{t < T} Z_t = \exp(-y_i F_T(i)),$$
+
+where the label $y_i$ is read as $\pm 1$. -/
 theorem dist_mul_prod (hm : 0 < m) : ∀ (T : ℕ) (i : Fin m),
     dist y wl T i * (m * ∏ t ∈ Finset.range T, zee y wl t) = exp (-(sign (y i) * score y wl T i))
   | 0, i => by
@@ -185,7 +232,10 @@ theorem dist_mul_prod (hm : 0 < m) : ∀ (T : ℕ) (i : Fin m),
       simp only [dist, reweight, zee, eps, hyp] at hZ ⊢
       field_simp
 
-/-- **The training error is at most the product of the normalizers.** -/
+/-- **The training error is at most the product of the normalizers.** Let AdaBoost run on
+$m > 0$ training points with labels $y$ and an arbitrary weak learner, and write $Z_t$ for the
+normalizer of round $t$. Then for every number of rounds $T$, the training error after $T$ rounds
+is at most $\prod_{t < T} Z_t$. -/
 theorem trainErr_le_prod (hm : 0 < m) (T : ℕ) :
     trainErr y wl T ≤ ∏ t ∈ Finset.range T, zee y wl t := by
   have hmR : (0 : ℝ) < m := by exact_mod_cast hm
@@ -205,12 +255,20 @@ theorem trainErr_le_prod (hm : 0 < m) (T : ℕ) :
         rw [← Finset.sum_mul, sum_dist hm, one_mul]
         field_simp
 
-/-- The weak-learning assumption with edge `γ`: on every positive distribution over the training
-points, the weak hypothesis has weighted error in `(0, 1 / 2 - γ]`. -/
+/-- **The weak-learning assumption.** A weak learner, which maps weights on the $m$ training
+points with labels $y$ to a hypothesis on those points, has edge $\gamma$ if for every weighting
+$D$ of the training points with $D_i > 0$ for all $i$ and $\sum_i D_i = 1$, the hypothesis it
+returns on $D$ has weighted error under $D$ in the interval $(0, 1/2 - \gamma]$. -/
 def WeakLearner (y : Fin m → Bool) (wl : (Fin m → ℝ) → Fin m → Bool) (γ : ℝ) : Prop :=
   ∀ D : Fin m → ℝ, (∀ i, 0 < D i) → ∑ i, D i = 1 → 0 < err y D (wl D) ∧ err y D (wl D) ≤ 1 / 2 - γ
 
-/-- **AdaBoost's training error** (Freund and Schapire): at most `∏_t 2 √(ε_t (1 - ε_t))`. -/
+/-- **The Freund–Schapire bound on AdaBoost's training error.** Let AdaBoost run on $m > 0$
+training points with labels $y$ and a weak learner with edge $\gamma \ge 0$, that is, one that on
+every weighting $D$ of the training points with $D_i > 0$ for all $i$ and $\sum_i D_i = 1$ returns
+a hypothesis whose weighted error under $D$ lies in $(0, 1/2 - \gamma]$. Write $\varepsilon_t$ for
+the weighted error of the weak hypothesis of round $t$ under AdaBoost's weights of that round.
+Then for every number of rounds $T$, the training error after $T$ rounds is at most
+$\prod_{t < T} 2\sqrt{\varepsilon_t (1 - \varepsilon_t)}$. -/
 theorem trainErr_le_prod_sqrt (hm : 0 < m) {γ : ℝ} (hγ : 0 ≤ γ) (hwl : WeakLearner y wl γ)
     (T : ℕ) :
     trainErr y wl T ≤ ∏ t ∈ Finset.range T, 2 * sqrt (eps y wl t * (1 - eps y wl t)) := by
@@ -218,8 +276,11 @@ theorem trainErr_le_prod_sqrt (hm : 0 < m) {γ : ℝ} (hγ : 0 ≤ γ) (hwl : We
   obtain ⟨h0, h1⟩ := hwl _ (dist_pos hm t) (sum_dist hm t)
   exact normalizer_eq y (sum_dist hm t) _ h0 (lt_of_le_of_lt h1 (by linarith))
 
-/-- **AdaBoost drives the training error down exponentially**: with edge `γ` in every round, the
-training error after `T` rounds is at most `exp (-2 γ² T)`. -/
+/-- **AdaBoost drives the training error down exponentially.** Let AdaBoost run on $m > 0$
+training points with labels $y$ and a weak learner with edge $\gamma \ge 0$, that is, one that on
+every weighting $D$ of the training points with $D_i > 0$ for all $i$ and $\sum_i D_i = 1$ returns
+a hypothesis whose weighted error under $D$ lies in $(0, 1/2 - \gamma]$. Then for every number of
+rounds $T$, the training error after $T$ rounds is at most $e^{-2\gamma^2 T}$. -/
 theorem trainErr_le_exp (hm : 0 < m) {γ : ℝ} (hγ : 0 ≤ γ) (hwl : WeakLearner y wl γ) (T : ℕ) :
     trainErr y wl T ≤ exp (-2 * γ ^ 2 * T) := by
   refine (trainErr_le_prod_sqrt hm hγ hwl T).trans ?_

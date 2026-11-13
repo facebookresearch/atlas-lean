@@ -65,7 +65,9 @@ open Proposition Theory InferenceSystem Derivation
 
 variable {Atom : Type u}
 
-/-- `S` is satisfiable: some valuation with `⊥` false makes every member of `S` true. -/
+/-- **Satisfiable sets of propositions.** A set $S$ of propositions is satisfiable when some
+Boolean valuation $v$ of the atoms with $v(\bot) = \mathrm{false}$ makes every member of $S$
+true. -/
 def BoolSatisfiable [Bot Atom] (S : Set (Proposition Atom)) : Prop :=
   ∃ v : Atom → Bool, v ⊥ = false ∧ ∀ A ∈ S, A.evalBool v = true
 
@@ -76,13 +78,19 @@ theorem BoolSatisfiable.mono [Bot Atom] {S S' : Set (Proposition Atom)}
 
 variable [DecidableEq Atom] [Bot Atom] {T : Theory Atom}
 
-/-- `S` is consistent relative to `T`: no finite subset of `S` derives `⊥` from `T`. -/
+/-- **Consistency relative to a theory.** Let $T$ be a theory, that is, a set of propositions. A
+set $S$ of propositions is consistent relative to $T$ when there is no finite set
+$\Gamma \subseteq S$ such that the sequent $\Gamma \vdash \bot$ is derivable in natural deduction
+from $T$. -/
 def Theory.ConsistentWith (T : Theory Atom) (S : Set (Proposition Atom)) : Prop :=
   ∀ Γ : Ctx Atom, (Γ : Set (Proposition Atom)) ⊆ S → ¬ DerivableIn T (Γ ⊢ ⊥)
 
 /-! ### Lindenbaum's lemma -/
 
-/-- **Lindenbaum's lemma**: a set consistent relative to `T` extends to a maximal one. -/
+/-- **Lindenbaum's lemma for propositional natural deduction.** Let $T$ be a theory. Every set
+$S$ of propositions that is consistent relative to $T$ is contained in a set $M$ that is
+consistent relative to $T$ and not properly contained in any other set consistent relative to
+$T$. -/
 theorem Theory.exists_maximal_consistentWith {S : Set (Proposition Atom)}
     (hS : T.ConsistentWith S) : ∃ M, S ⊆ M ∧ Maximal T.ConsistentWith M := by
   obtain ⟨M, hSM, hM⟩ := zorn_subset_nonempty {M | T.ConsistentWith M}
@@ -99,7 +107,10 @@ namespace MaximalConsistent
 variable {M : Set (Proposition Atom)} (hM : Maximal T.ConsistentWith M)
 include hM
 
-/-- A proposition outside a maximal consistent set is refuted by a finite part of it. -/
+/-- **Propositions outside a maximal consistent set are refuted by it.** Let $T$ be a theory and
+$M$ a maximal set of propositions consistent relative to $T$. If a proposition $A$ is not in $M$,
+then there is a finite set $\Gamma \subseteq M$ such that the sequent
+$\Gamma \cup \{A\} \vdash \bot$ is derivable in natural deduction from $T$. -/
 theorem exists_refutation {A : Proposition Atom} (hA : A ∉ M) :
     ∃ Γ : Ctx Atom, (Γ : Set (Proposition Atom)) ⊆ M ∧ DerivableIn T (insert A Γ ⊢ ⊥) := by
   have hnot : ¬ T.ConsistentWith (insert A M) := fun hcons ↦
@@ -110,7 +121,10 @@ theorem exists_refutation {A : Proposition Atom} (hA : A ∉ M) :
   have hB' := Finset.mem_erase.mp hB
   exact (Set.mem_insert_iff.mp (hΔ hB'.2)).resolve_left hB'.1
 
-/-- A maximal consistent set is closed under `T`-derivability from its finite subsets. -/
+/-- **Maximal consistent sets are deductively closed in propositional natural deduction.** Let $T$
+be a theory and $M$ a maximal set of propositions consistent relative to $T$. If $\Gamma$ is a
+finite subset of $M$ and the sequent $\Gamma \vdash A$ is derivable in natural deduction from $T$,
+then $A \in M$. -/
 theorem mem_of_derivableIn {Γ : Ctx Atom} {A : Proposition Atom}
     (hΓ : (Γ : Set (Proposition Atom)) ⊆ M) (hder : DerivableIn T (Γ ⊢ A)) : A ∈ M := by
   by_contra hA
@@ -118,14 +132,18 @@ theorem mem_of_derivableIn {Γ : Ctx Atom} {A : Proposition Atom}
   exact hM.1 (Γ ∪ Δ) (by simpa [Finset.coe_union] using And.intro hΓ hΔ)
     (DerivableIn.cut hder href)
 
-/-- Every axiom of `T` belongs to a maximal `T`-consistent set. -/
+/-- **A maximal consistent set contains its theory.** Let $T$ be a theory and $M$ a maximal set of
+propositions consistent relative to $T$. Then every proposition of $T$ belongs to $M$, that is,
+$T \subseteq M$. -/
 theorem subset_theory : T ⊆ M := fun _ hA ↦
   mem_of_derivableIn hM (Γ := ∅) (by simp) ⟨ax hA⟩
 
 theorem bot_not_mem : (⊥ : Proposition Atom) ∉ M := fun h ↦
   hM.1 {⊥} (by simpa using h) ⟨ass (Finset.mem_singleton_self _)⟩
 
-/-- A maximal consistent set contains each proposition or its negation. -/
+/-- **Each proposition or its negation lies in a maximal consistent set.** Let $T$ be a theory and
+$M$ a maximal set of propositions consistent relative to $T$. Then for every proposition $A$,
+either $A \in M$ or $\neg A \in M$, where $\neg A$ is the proposition $A \to \bot$. -/
 theorem mem_or_neg_mem (A : Proposition Atom) : A ∈ M ∨ (¬A : Proposition Atom) ∈ M := by
   by_cases hA : A ∈ M
   · exact Or.inl hA
@@ -176,8 +194,12 @@ theorem imp_mem_iff [IsIntuitionistic Atom T] {A B : Proposition Atom} :
       exact mem_of_derivableIn hM (Γ := {¬A}) (by simpa using hnA)
         ⟨implI _ (IsIntuitionistic.contra A B (by simp) (by simp))⟩
 
-/-- **Truth lemma**: the membership valuation of a maximal consistent set relative to an
-intuitionistic theory makes true exactly the members of the set. -/
+/-- **Truth lemma for propositional natural deduction.** Let $T$ be an intuitionistic theory, that
+is, one that derives $\bot \to B$ for every proposition $B$. Let $M$ be a set of propositions that
+is consistent relative to $T$ and not properly contained in any other set consistent relative to
+$T$, and let $v_M$ be the valuation that makes an atom $x$ true exactly when the atomic
+proposition $x$ belongs to $M$. Then a proposition $A$ evaluates to true under $v_M$ iff
+$A \in M$. -/
 theorem evalBool_eq_true_iff [IsIntuitionistic Atom T] (A : Proposition Atom) :
     A.evalBool (fun x ↦ @decide (atom x ∈ M) (Classical.dec _)) = true ↔ A ∈ M := by
   induction A with
@@ -197,8 +219,10 @@ end MaximalConsistent
 
 /-! ### Model existence and completeness -/
 
-/-- **Model existence**: for an intuitionistic theory `T`, a set consistent relative to `T`
-is satisfiable together with `T`, by a valuation with `⊥` false. -/
+/-- **Model existence for propositional natural deduction.** Let $T$ be an intuitionistic theory,
+that is, one that derives $\bot \to B$ for every proposition $B$. If a set $S$ of propositions is
+consistent relative to $T$, then $T \cup S$ is satisfiable: some Boolean valuation $v$ of the atoms
+with $v(\bot) = \mathrm{false}$ makes every member of $T$ and every member of $S$ true. -/
 theorem Theory.ConsistentWith.boolSatisfiable [IsIntuitionistic Atom T]
     {S : Set (Proposition Atom)} (hS : T.ConsistentWith S) : BoolSatisfiable (T ∪ S) := by
   obtain ⟨M, hSM, hM⟩ := Theory.exists_maximal_consistentWith hS
@@ -209,8 +233,12 @@ theorem Theory.ConsistentWith.boolSatisfiable [IsIntuitionistic Atom T]
     · exact MaximalConsistent.subset_theory hM hA
     · exact hSM hA
 
-/-- **Strong completeness** of natural deduction for classical theories: a sequent true
-under every valuation that reads `⊥` as false and satisfies `T` is `T`-derivable. -/
+/-- **Strong completeness of classical propositional natural deduction.** Let $T$ be a classical
+theory, that is, one that derives $\neg\neg B \to B$ for every proposition $B$, where $\neg B$
+abbreviates $B \to \bot$. Let $\Gamma$ be a finite set of propositions and $A$ a proposition. If
+every Boolean valuation $v$ of the atoms with $v(\bot) = \mathrm{false}$ that makes every member of
+$T$ and every member of $\Gamma$ true also makes $A$ true, then the sequent $\Gamma \vdash A$ is
+derivable from $T$. -/
 theorem Theory.derivableIn_of_forall_evalBool [IsClassical Atom T] {Γ : Ctx Atom}
     {A : Proposition Atom}
     (h : ∀ v : Atom → Bool, v ⊥ = false → (∀ B ∈ T, B.evalBool v = true) →
@@ -226,21 +254,34 @@ theorem Theory.derivableIn_of_forall_evalBool [IsClassical Atom T] {Γ : Ctx Ato
   have := h v hv (fun B hB ↦ hsat B (Or.inl hB)) (fun B hB ↦ hsat B (Or.inr (by simp [hB])))
   simp [this] at hneg
 
-/-- Soundness and completeness for classical theories, against valuations with `⊥` false. -/
+/-- **Soundness and completeness for classical theories, with ⊥ false.** Let $T$ be a classical
+theory, that is, one that derives $\neg\neg B \to B$ for every proposition $B$, where $\neg B$
+abbreviates $B \to \bot$. For every finite set $\Gamma$ of propositions and every proposition $A$,
+the sequent $\Gamma \vdash A$ is derivable from $T$ iff every Boolean valuation $v$ of the atoms
+with $v(\bot) = \mathrm{false}$ that makes every member of $T$ and every member of $\Gamma$ true
+also makes $A$ true. -/
 theorem Theory.derivableIn_iff_forall_evalBool [IsClassical Atom T] {Γ : Ctx Atom}
     {A : Proposition Atom} :
     DerivableIn T (Γ ⊢ A) ↔ ∀ v : Atom → Bool, v ⊥ = false →
       (∀ B ∈ T, B.evalBool v = true) → (∀ B ∈ Γ, B.evalBool v = true) → A.evalBool v = true :=
   ⟨fun h v _ hT hΓ ↦ DerivableIn.boolSound h v hT hΓ, Theory.derivableIn_of_forall_evalBool⟩
 
-/-- Soundness and completeness for classical theories, against all valuations satisfying
-`T`. -/
+/-- **Soundness and completeness for classical theories.** Let $T$ be a classical theory, that is,
+one that derives $\neg\neg B \to B$ for every proposition $B$, where $\neg B$ abbreviates
+$B \to \bot$. For every finite set $\Gamma$ of propositions and every proposition $A$, the sequent
+$\Gamma \vdash A$ is derivable from $T$ iff every Boolean valuation of the atoms that makes every
+member of $T$ and every member of $\Gamma$ true also makes $A$ true.
+
+Here $\bot$ is a distinguished atom, and these valuations may make it true or false. -/
 theorem Theory.derivableIn_iff_boolEntails [IsClassical Atom T] {Γ : Ctx Atom}
     {A : Proposition Atom} : DerivableIn T (Γ ⊢ A) ↔ T.BoolEntails Γ A :=
   ⟨DerivableIn.boolSound, fun h ↦ Theory.derivableIn_of_forall_evalBool fun v _ ↦ h v⟩
 
-/-- **Completeness for truth tables**: a sequent is derivable in classical propositional
-logic `CPL` iff it is a tautology, reading `⊥` as false. -/
+/-- **Completeness for truth tables.** Let $\Gamma$ be a finite set of propositions and $A$ a
+proposition. The sequent $\Gamma \vdash A$ is derivable in classical propositional logic (natural
+deduction with every instance of $\neg\neg B \to B$ as an axiom, where $\neg B$ abbreviates
+$B \to \bot$) iff every Boolean valuation $v$ of the atoms with $v(\bot) = \mathrm{false}$ that
+makes every member of $\Gamma$ true also makes $A$ true. -/
 theorem derivableIn_cpl_iff {Γ : Ctx Atom} {A : Proposition Atom} :
     DerivableIn (CPL Atom) (Γ ⊢ A) ↔
       ∀ v : Atom → Bool, v ⊥ = false → (∀ B ∈ Γ, B.evalBool v = true) →

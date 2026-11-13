@@ -62,7 +62,9 @@ open scoped ENNReal
 
 variable {C 𝓧 : Type*}
 
-/-- The 0-1 loss of predicting `y` when the true class is `c`. -/
+/-- **The 0-1 loss.** For elements $c$ and $y$ of a type $C$ of classes, the 0-1 loss of
+predicting $y$ when the true class is $c$ is the extended nonnegative real number that equals
+$0$ if $y = c$ and $1$ if $y \ne c$. -/
 noncomputable def zeroOneLoss (c y : C) : ℝ≥0∞ :=
   ({y}ᶜ : Set C).indicator 1 c
 
@@ -80,13 +82,21 @@ theorem measurable_zeroOneLoss [Countable C] [MeasurableSingletonClass C] :
     Measurable (Function.uncurry (zeroOneLoss (C := C))) :=
   measurable_of_countable _
 
-/-- The expected 0-1 loss of predicting `y` under a law `ν` of the class is `ν {y}ᶜ`. -/
+/-- **Expected 0-1 loss of a fixed prediction.** Let $C$ be a measurable space in which every
+singleton is measurable, let $\nu$ be a measure on $C$, and let $y \in C$. Writing $\ell(c, y)$
+for the 0-1 loss of predicting $y$ when the true class is $c$, we have
+$\int \ell(c, y) \, d\nu(c) = \nu(C \setminus \{y\})$. -/
 theorem lintegral_zeroOneLoss [MeasurableSingletonClass C] (ν : Measure C) (y : C) :
     ∫⁻ c, zeroOneLoss c y ∂ν = ν {y}ᶜ :=
   lintegral_indicator_one (measurableSet_singleton y).compl
 
-/-- The expected 0-1 loss of a random prediction with law `ν` when the true class is `c` is
-`ν {c}ᶜ`. -/
+/-- **Integrating the 0-1 loss over the prediction.** Let $C$ be a measurable space with
+measurable singletons, $\nu$ a measure on $C$ and $c \in C$, and let $\ell(c, y)$ be the 0-1
+loss of predicting $y$ when the true class is $c$ ($0$ if $y = c$, $1$ otherwise). Then
+$\int_C \ell(c, y)\,\nu(dy) = \nu(C \setminus \{c\})$.
+
+When $\nu$ is the law of a random prediction, this is its expected 0-1 loss when the true class
+is $c$. -/
 theorem lintegral_zeroOneLoss_right [MeasurableSingletonClass C] (ν : Measure C) (c : C) :
     ∫⁻ y, zeroOneLoss c y ∂ν = ν {c}ᶜ := by
   simp_rw [zeroOneLoss_comm c]
@@ -96,9 +106,17 @@ theorem lintegral_zeroOneLoss_eq_one_sub [MeasurableSingletonClass C] (ν : Meas
     [IsProbabilityMeasure ν] (y : C) : ∫⁻ c, zeroOneLoss c y ∂ν = 1 - ν {y} := by
   rw [lintegral_zeroOneLoss, prob_compl_eq_one_sub (measurableSet_singleton y)]
 
-/-- The 0-1 risk of a deterministic classifier `f` is the prior average of `P c {x | f x ≠ c}`,
-the probability that `f` misclassifies an observation of class `c` when `P c` is a probability
-measure. -/
+/-- **The 0-1 risk of a deterministic classifier.** Let $C$ be a measurable space of classes with
+measurable singletons, $P$ a kernel from $C$ to the observation space $\mathcal X$, $\pi$ a
+measure on $C$, $f : \mathcal X \to C$ a measurable map, and $\ell(c, y)$ the 0-1 loss ($0$ if
+$y = c$, $1$ otherwise). Then the average 0-1 risk of the deterministic kernel
+$\delta_f : x \mapsto \delta_{f(x)}$,
+$\int_C \int_C \ell(c, y)\,(\delta_f \circ P)(c)(dy)\,\pi(dc)$ with
+$(\delta_f \circ P)(c) = \int_{\mathcal X} \delta_{f(x)}\,P(c)(dx)$, equals
+$\int_C P(c)(\{x \in \mathcal X : f(x) \ne c\})\,\pi(dc)$.
+
+When each $P(c)$ is a probability measure, $P(c)(\{x : f(x) \ne c\})$ is the probability that
+$f$ misclassifies an observation of class $c$. -/
 theorem avgRisk_zeroOneLoss_deterministic [MeasurableSingletonClass C] (P : Kernel C 𝓧)
     (π : Measure C) {f : 𝓧 → C} (hf : Measurable f) :
     avgRisk zeroOneLoss P (Kernel.deterministic f hf) π = ∫⁻ c, P c {x | f x ≠ c} ∂π := by
@@ -112,10 +130,16 @@ section Countable
 
 variable [Countable C] [MeasurableSingletonClass C] [Nonempty C]
 
-/-- `f` is a **posterior argmax classifier**: it is measurable and, for almost every
-observation `x`, the class `f x` has maximal posterior probability `P†π x {f x}`. (Countably
-many classes with measurable singletons make the posterior masses of classes meaningful, and
-give the standard Borel structure the posterior needs.) -/
+/-- **Posterior argmax classifier.** Let the set $C$ of classes be countable and nonempty with
+measurable singletons, let $P$ be a finite kernel from $C$ to the observation space $\mathcal X$
+and $\pi$ a finite measure on $C$, write $P \circ \pi$ for the marginal measure on $\mathcal X$
+and $P^\dagger_\pi$ for the posterior kernel from $\mathcal X$ to $C$. A map
+$f : \mathcal X \to C$ is a posterior argmax classifier for $P$ and $\pi$ if $f$ is measurable
+and, for $(P \circ \pi)$-almost every $x$,
+$P^\dagger_\pi(x)(\{y\}) \le P^\dagger_\pi(x)(\{f(x)\})$ for every $y \in C$.
+
+Countably many classes with measurable singletons make the posterior masses of classes
+meaningful, and give the standard Borel structure the posterior needs. -/
 structure IsPosteriorArgmax (P : Kernel C 𝓧) [IsFiniteKernel P] (π : Measure C)
     [IsFiniteMeasure π] (f : 𝓧 → C) : Prop where
   measurable : Measurable f
@@ -123,8 +147,15 @@ structure IsPosteriorArgmax (P : Kernel C 𝓧) [IsFiniteKernel P] (π : Measure
 
 variable {P : Kernel C 𝓧} [IsFiniteKernel P] {π : Measure C} [IsFiniteMeasure π] {f : 𝓧 → C}
 
-/-- A posterior argmax classifier minimizes the posterior expected 0-1 loss: it is an argmin
-estimator in the sense of Mathlib's decision theory. -/
+/-- **A posterior argmax classifier is an argmin estimator for the 0-1 loss.** Let the set $C$ of
+classes be countable and nonempty with measurable singletons, let $P$ be a finite kernel from $C$
+to the observation space $\mathcal X$ and $\pi$ a finite measure on $C$, write $P \circ \pi$ for
+the marginal measure on $\mathcal X$, $P^\dagger_\pi$ for the posterior kernel from $\mathcal X$
+to $C$, and $\ell(c, y)$ for the 0-1 loss ($0$ if $y = c$, $1$ otherwise). If
+$f : \mathcal X \to C$ is a posterior argmax classifier for $P$ and $\pi$, then $f$ is an argmin
+estimator for $\ell$: it is measurable and, for $(P \circ \pi)$-almost every $x$,
+$\int_C \ell(c, f(x))\,P^\dagger_\pi(x)(dc)$ equals
+$\inf_{y \in C} \int_C \ell(c, y)\,P^\dagger_\pi(x)(dc)$. -/
 theorem IsPosteriorArgmax.isArgminEstimator (hf : IsPosteriorArgmax P π f) :
     IsArgminEstimator zeroOneLoss P π f := by
   refine ⟨hf.measurable, ?_⟩
@@ -133,8 +164,15 @@ theorem IsPosteriorArgmax.isArgminEstimator (hf : IsPosteriorArgmax P π f) :
   rw [lintegral_zeroOneLoss_eq_one_sub, lintegral_zeroOneLoss_eq_one_sub]
   exact tsub_le_tsub_left (hx y) 1
 
-/-- Every argmin estimator of the posterior expected 0-1 loss is a posterior argmax
-classifier. -/
+/-- **Posterior argmax classifiers are exactly the argmin estimators for the 0-1 loss.** Let the
+set $C$ of classes be countable and nonempty with measurable singletons, let $P$ be a finite
+kernel from $C$ to the observation space $\mathcal X$ and $\pi$ a finite measure on $C$, write
+$P \circ \pi$ for the marginal measure on $\mathcal X$, $P^\dagger_\pi$ for the posterior kernel
+from $\mathcal X$ to $C$, and $\ell(c, y)$ for the 0-1 loss ($0$ if $y = c$, $1$ otherwise). A
+map $f : \mathcal X \to C$ is a posterior argmax classifier for $P$ and $\pi$ if and only if it
+is an argmin estimator for $\ell$: $f$ is measurable and, for $(P \circ \pi)$-almost every $x$,
+$\int_C \ell(c, f(x))\,P^\dagger_\pi(x)(dc)$ equals
+$\inf_{y \in C} \int_C \ell(c, y)\,P^\dagger_\pi(x)(dc)$. -/
 theorem isPosteriorArgmax_iff_isArgminEstimator :
     IsPosteriorArgmax P π f ↔ IsArgminEstimator zeroOneLoss P π f := by
   refine ⟨IsPosteriorArgmax.isArgminEstimator, fun h => ⟨h.measurable, ?_⟩⟩
@@ -150,8 +188,15 @@ theorem IsPosteriorArgmax.isBayesEstimator (hf : IsPosteriorArgmax P π f) :
     IsBayesEstimator zeroOneLoss P (Kernel.deterministic f hf.measurable) π :=
   hf.isArgminEstimator.isBayesEstimator measurable_zeroOneLoss
 
-/-- A posterior argmax classifier has expected 0-1 loss at most that of every classifier,
-randomized classifiers included. -/
+/-- **A posterior argmax classifier has minimal 0-1 risk.** Let the set $C$ of classes be countable
+and nonempty with measurable singletons, let $P$ be a finite kernel from $C$ to the observation
+space $\mathcal X$ and $\pi$ a finite measure on $C$, and let $\ell(c, y)$ be the 0-1 loss
+($0$ if $y = c$, $1$ otherwise). For a kernel $\kappa$ from $\mathcal X$ to $C$, its average 0-1
+risk is $\int_C \int_C \ell(c, y)\,(\kappa \circ P)(c)(dy)\,\pi(dc)$, where
+$(\kappa \circ P)(c) = \int_{\mathcal X} \kappa(x)\,P(c)(dx)$. If $f : \mathcal X \to C$ is a
+posterior argmax classifier for $P$ and $\pi$, then for every Markov kernel $\kappa$ from
+$\mathcal X$ to $C$ (a randomized classifier), the average 0-1 risk of the deterministic kernel
+$x \mapsto \delta_{f(x)}$ is at most the average 0-1 risk of $\kappa$. -/
 theorem IsPosteriorArgmax.avgRisk_le (hf : IsPosteriorArgmax P π f) (κ : Kernel 𝓧 C)
     [IsMarkovKernel κ] :
     avgRisk zeroOneLoss P (Kernel.deterministic f hf.measurable) π ≤
@@ -159,9 +204,16 @@ theorem IsPosteriorArgmax.avgRisk_le (hf : IsPosteriorArgmax P π f) (κ : Kerne
   rw [hf.isBayesEstimator]
   exact bayesRisk_le_avgRisk _ _ _ _
 
-/-- **MAP classification is Bayes optimal**: for countable observations, a classifier that
-assigns to each observation of positive evidence a maximum a posteriori class is a posterior
-argmax classifier. -/
+/-- **MAP classifiers are posterior argmax classifiers.** Let the set $C$ of classes be countable
+and nonempty with measurable singletons, let the observation space $\mathcal X$ be countable with
+measurable singletons, let $P$ be a Markov kernel from $C$ to $\mathcal X$ and $\pi$ a finite
+measure on $C$, and write $P \circ \pi$ for the marginal measure on $\mathcal X$. If
+$f : \mathcal X \to C$ assigns to every observation $x$ with $(P \circ \pi)(\{x\}) \ne 0$ a
+maximum a posteriori class for $x$ under $P$ and $\pi$, then $f$ is a posterior argmax
+classifier for $P$ and $\pi$.
+
+Since posterior argmax classifiers attain the Bayes risk for the 0-1 loss, MAP classification is
+Bayes optimal; observations of zero evidence may be classified arbitrarily. -/
 theorem isPosteriorArgmax_of_isMAP [Countable 𝓧] [MeasurableSingletonClass 𝓧] [IsMarkovKernel P]
     (hf : ∀ x, (P ∘ₘ π) {x} ≠ 0 → Bayesian.IsMAP P π x (f x)) : IsPosteriorArgmax P π f := by
   refine ⟨measurable_of_countable f, ae_iff_of_countable.mpr fun x hx => ?_⟩
@@ -173,8 +225,13 @@ section Finite
 
 variable [Finite C] [MeasurableSingletonClass C] [Nonempty C]
 
-/-- For finitely many classes, a measurable posterior argmax classifier exists. It takes, at
-each observation, the first maximizer in an enumeration of the classes. -/
+/-- **Existence of a posterior argmax classifier.** Let the set $C$ of classes be finite and
+nonempty with measurable singletons, let $P$ be a finite kernel from $C$ to the observation space
+$\mathcal X$ and $\pi$ a finite measure on $C$. Then there is a posterior argmax classifier
+$f : \mathcal X \to C$ for $P$ and $\pi$.
+
+The classifier constructed takes, at each observation, the first maximizer of the posterior
+probability in an enumeration of the classes. -/
 theorem exists_isPosteriorArgmax (P : Kernel C 𝓧) [IsFiniteKernel P] (π : Measure C)
     [IsFiniteMeasure π] : ∃ f, IsPosteriorArgmax P π f := by
   classical
@@ -202,8 +259,16 @@ theorem exists_isPosteriorArgmax (P : Kernel C 𝓧) [IsFiniteKernel P] (π : Me
   obtain ⟨y, hdec, hy⟩ := Nat.find_spec (hn x)
   simpa [g, hdec, A] using hy
 
-/-- **The Bayes risk for the 0-1 loss**: for finitely many classes it is the average, over the
-observations, of the posterior probability of error of the best guess. -/
+/-- **The Bayes risk for the 0-1 loss.** Let the set $C$ of classes be finite and nonempty with
+measurable singletons, let $P$ be a finite kernel from $C$ to the observation space $\mathcal X$
+and $\pi$ a finite measure on $C$, and let $\ell(c, y)$ be the 0-1 loss ($0$ if $y = c$, $1$
+otherwise). Write $P \circ \pi$ for the marginal measure on $\mathcal X$ and $P^\dagger_\pi$ for
+the posterior kernel from $\mathcal X$ to $C$. For a kernel $\kappa$ from $\mathcal X$ to $C$,
+write $(\kappa \circ P)(c) = \int_{\mathcal X} \kappa(x)\,P(c)(dx)$. Then the Bayes risk for the
+0-1 loss, the infimum over all Markov kernels $\kappa$ from $\mathcal X$ to $C$ of the average
+0-1 risk $\int_C \int_C \ell(c, y)\,(\kappa \circ P)(c)(dy)\,\pi(dc)$, equals
+$\int_{\mathcal X} \inf_{y \in C} P^\dagger_\pi(x)(C \setminus \{y\})\,(P \circ \pi)(dx)$: the
+average over the observations of the posterior probability of error of the best guess. -/
 theorem bayesRisk_zeroOneLoss (P : Kernel C 𝓧) [IsFiniteKernel P] (π : Measure C)
     [IsFiniteMeasure π] :
     bayesRisk zeroOneLoss P π = ∫⁻ x, ⨅ y, (P†π) x {y}ᶜ ∂(P ∘ₘ π) := by

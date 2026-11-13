@@ -58,7 +58,10 @@ variable {d K N : ℕ}
 
 /-! ## The model -/
 
-/-- Parameters of a `K`-component Gaussian mixture in `d` dimensions with full covariances. -/
+/-- **Parameters of a full-covariance Gaussian mixture.** A parameter of the $K$-component
+Gaussian mixture in $d$ dimensions with full covariances consists of, for each component
+$k < K$, a real mixing weight $\pi_k$, a mean $\mu_k \in \mathbb{R}^d$ and a real $d \times d$
+covariance matrix $\Sigma_k$, with no constraints imposed. -/
 structure Params (d K : ℕ) where
   /-- The mixing weights `π k`. -/
   weight : Fin K → ℝ
@@ -67,17 +70,26 @@ structure Params (d K : ℕ) where
   /-- The component covariances `Σ k`. -/
   cov : Fin K → Matrix (Fin d) (Fin d) ℝ
 
-/-- Valid parameters: positive weights summing to one, positive definite covariances. -/
+/-- **Validity of full-covariance Gaussian mixture parameters.** Parameters
+$(\pi_k, \mu_k, \Sigma_k)_{k<K}$ of a $K$-component Gaussian mixture in $d$ dimensions are valid
+when every weight $\pi_k$ is positive, the weights sum to one, and every covariance matrix
+$\Sigma_k$ is positive definite. -/
 structure Params.Valid (θ : Params d K) : Prop where
   weight_pos : ∀ k, 0 < θ.weight k
   weight_sum : ∑ k, θ.weight k = 1
   cov_posDef : ∀ k, (θ.cov k).PosDef
 
-/-- The valid parameters, the parameter space of EM. -/
+/-- **Valid parameters of a full-covariance Gaussian mixture.** The parameter space of EM for the
+$K$-component Gaussian mixture in $d$ dimensions with full covariances is the set of parameters
+$(\pi_k, \mu_k, \Sigma_k)_{k<K}$ that are valid: every weight $\pi_k$ is positive, the weights
+sum to one, and every covariance matrix $\Sigma_k$ is positive definite. -/
 abbrev ValidParams (d K : ℕ) := {θ : Params d K // θ.Valid}
 
-/-- The joint density `p_θ(x, k) = π k N(x | μ k, Σ k)`, with Mathlib's multivariate Gaussian
-density (`MetaMathlibExt.multivariateGaussianPDFReal`). -/
+/-- **Joint density of the full-covariance Gaussian mixture.** For valid parameters $\theta$ with
+weights $\pi_k$, means $\mu_k$ and covariances $\Sigma_k$, the joint density of a point
+$x \in \mathbb{R}^d$ and a component $k$ is
+$p_\theta(x, k) = \pi_k \, \mathcal{N}(x \mid \mu_k, \Sigma_k)$, where
+$\mathcal{N}(x \mid \mu, \Sigma)$ is the multivariate Gaussian density. -/
 noncomputable def joint (θ : ValidParams d K) (x : EuclideanSpace ℝ (Fin d)) (k : Fin K) : ℝ :=
   θ.1.weight k * multivariateGaussianPDFReal (θ.1.mean k) (θ.1.cov k) x
 
@@ -85,7 +97,13 @@ theorem joint_pos (θ : ValidParams d K) (x : EuclideanSpace ℝ (Fin d)) (k : F
     0 < joint θ x k :=
   mul_pos (θ.2.weight_pos k) (multivariateGaussianPDFReal_pos _ (θ.2.cov_posDef k) x)
 
-/-- The responsibilities `r n k = P(z = k | xₙ)` (the E-step): the posterior of the mixture. -/
+/-- **Responsibilities of the full-covariance Gaussian mixture.** For valid parameters
+$\theta = (\pi_j, \mu_j, \Sigma_j)_{j<K}$, a point $x \in \mathbb{R}^d$ and a component $k$, write
+$p_k(x) = \pi_k \, \mathcal{N}(x \mid \mu_k, \Sigma_k)$, where $\mathcal{N}(\cdot \mid \mu, \Sigma)$
+is the multivariate Gaussian density. The responsibility of $k$ for $x$ is the posterior
+probability of component $k$ given $x$ (the E-step),
+$$r_k(x) = \frac{p_k(x)}{\sum_j p_j(x)}.$$
+For data $(x_n)_{n<N}$ one writes $r_{nk} = r_k(x_n)$. -/
 noncomputable def resp (θ : ValidParams d K) (x : EuclideanSpace ℝ (Fin d)) (k : Fin K) : ℝ :=
   posterior joint θ x k
 
@@ -107,20 +125,39 @@ theorem sum_resp (θ : ValidParams d K) (x : EuclideanSpace ℝ (Fin d)) : ∑ k
 
 variable (xs : Fin N → EuclideanSpace ℝ (Fin d))
 
-/-- The effective number of points of component `k`, `N k = ∑ n, r n k`. -/
+/-- **Effective number of points of a full-covariance mixture component.** For data
+$x_1, \dots, x_N \in \mathbb{R}^d$ and valid parameters $\theta$ with responsibilities $r_{nk}$,
+the effective number of points of component $k$ is $N_k = \sum_n r_{nk}$. -/
 noncomputable def mass (θ : ValidParams d K) (k : Fin K) : ℝ := ∑ n, resp θ (xs n) k
 
-/-- The responsibility-weighted mean `μ k' = (∑ n, r n k xₙ) / N k`. -/
+/-- **Mean update of the full-covariance Gaussian mixture.** Given data $(x_n)_{n<N}$ in
+$\mathbb{R}^d$, valid parameters $\theta$ and a component $k$, let $r_{nk}$ be the
+responsibility of component $k$ for $x_n$ and let $N_k = \sum_n r_{nk}$. The mean update is the
+responsibility-weighted mean
+$$\mu_k' = \frac{1}{N_k} \sum_n r_{nk} x_n \in \mathbb{R}^d.$$
+
+When there are no data ($N = 0$), $N_k = 0$ and the convention $N_k^{-1} = 0$ makes
+$\mu_k' = 0$. -/
 noncomputable def newMean (θ : ValidParams d K) (k : Fin K) : EuclideanSpace ℝ (Fin d) :=
   weightedMean (fun n => resp θ (xs n) k) xs
 
-/-- The covariance update: the responsibility-weighted sample covariance
-`(∑ n, r n k (xₙ - μ k') (xₙ - μ k')ᵀ) / N k` about the weighted mean. -/
+/-- **Covariance update of the full-covariance Gaussian mixture.** Given data $(x_n)_{n<N}$
+in $\mathbb{R}^d$, valid parameters $\theta$ and a component $k$, let $r_{nk}$ be the
+responsibility of component $k$ for $x_n$, let $N_k = \sum_n r_{nk}$, and let $\mu_k'$ be the
+responsibility-weighted mean $N_k^{-1} \sum_n r_{nk} x_n$. The covariance update is the real
+$d \times d$ matrix
+$$\Sigma_k' = \frac{1}{N_k} \sum_n r_{nk} (x_n - \mu_k')(x_n - \mu_k')^{\top}.$$
+
+When there are no data ($N = 0$), $N_k = 0$ and the convention $N_k^{-1} = 0$ makes
+$\Sigma_k' = 0$. -/
 noncomputable def newCov (θ : ValidParams d K) (k : Fin K) : Matrix (Fin d) (Fin d) ℝ :=
   weightedScatter (fun n => resp θ (xs n) k) xs (newMean xs θ k)
 
-/-- The M-step: `π k' = N k / N`, `μ k'` the weighted mean, `Σ k'` the weighted sample
-covariance. -/
+/-- **M-step of the full-covariance Gaussian mixture.** For data
+$x_1, \dots, x_N \in \mathbb{R}^d$ and valid parameters $\theta$ with responsibilities $r_{nk}$,
+let $N_k = \sum_n r_{nk}$. The M-step parameters have weights $\pi'_k = N_k / N$, means
+$\mu'_k = N_k^{-1} \sum_n r_{nk} x_n$ and covariances
+$\Sigma'_k = N_k^{-1} \sum_n r_{nk} (x_n - \mu'_k)(x_n - \mu'_k)^{\top}$. -/
 noncomputable def mStep (θ : ValidParams d K) : Params d K where
   weight k := mass xs θ k / N
   mean := newMean xs θ
@@ -129,9 +166,12 @@ noncomputable def mStep (θ : ValidParams d K) : Params d K where
 /-! ## Data in general position -/
 
 variable {xs} in
-/-- Data in general position: at least one point, and not all contained in an affine hyperplane
-(for every nonzero direction `v`, the projections `⟪v, xₙ⟫` are not all equal). Then every
-responsibility-weighted sample covariance is positive definite (`newCov_posDef`). -/
+/-- **Data that span the space affinely.** A family $(x_n)_{n<N}$ of points of $\mathbb{R}^d$
+is in general position when it has at least one point ($N > 0$) and is not contained in an
+affine hyperplane: for every nonzero $v \in \mathbb{R}^d$ there are indices $n, n'$ with
+$\langle v, x_n \rangle \neq \langle v, x_{n'} \rangle$.
+
+On such data every responsibility-weighted sample covariance is positive definite. -/
 structure SpansAffinely (xs : Fin N → EuclideanSpace ℝ (Fin d)) : Prop where
   pos : 0 < N
   spans : ∀ v : EuclideanSpace ℝ (Fin d), v ≠ 0 → ∃ n n', ⟪v, xs n⟫ ≠ ⟪v, xs n'⟫
@@ -144,7 +184,12 @@ theorem sum_mass (θ : ValidParams d K) : ∑ k, mass xs θ k = N := by
   rw [Finset.sum_comm]
   simp [sum_resp]
 
-/-- **The covariance update is positive definite** on data in general position. -/
+/-- **The covariance update is positive definite.** Let $(x_n)_{n<N}$ be data in $\mathbb{R}^d$
+in general position: $N > 0$, and for every nonzero $v \in \mathbb{R}^d$ the values
+$\langle v, x_n \rangle$ are not all equal. Then for all valid parameters $\theta$ of the
+$K$-component full-covariance Gaussian mixture and every component $k$, the covariance update
+$\Sigma_k'$ (the responsibility-weighted sample covariance of the data about the
+responsibility-weighted mean) is positive definite. -/
 theorem newCov_posDef {xs : Fin N → EuclideanSpace ℝ (Fin d)} (hx : SpansAffinely xs)
     (θ : ValidParams d K) (k : Fin K) : (newCov xs θ k).PosDef :=
   weightedScatter_posDef (fun n => resp_pos θ (xs n) k) hx.spans _
@@ -157,19 +202,47 @@ theorem mStep_valid {xs : Fin N → EuclideanSpace ℝ (Fin d)} (hx : SpansAffin
     rw [← Finset.sum_div, sum_mass, div_self (by exact_mod_cast hx.pos.ne')]
   cov_posDef k := newCov_posDef hx θ k
 
-/-- One EM step for the full-covariance Gaussian mixture (E-step then M-step), on data in general
-position. -/
+/-- **EM step for the full-covariance Gaussian mixture.** For data
+$x_1, \dots, x_N \in \mathbb{R}^d$ in general position (at least one point, and not all in an
+affine hyperplane) and valid parameters $\theta$, the EM step returns the M-step parameters of
+$\theta$: with responsibilities $r_{nk}$ under $\theta$ and $N_k = \sum_n r_{nk}$, the new
+weights are $N_k / N$, the new means are the responsibility-weighted means and the new
+covariances are the responsibility-weighted sample covariances. General position makes these
+parameters valid. -/
 noncomputable def emStep (hx : SpansAffinely xs) (θ : ValidParams d K) : ValidParams d K :=
   ⟨mStep xs θ, mStep_valid hx θ⟩
 
 /-! ## The M-step maximizes `Q` -/
 
-/-- The component term of `Q`: `∑ n, r n k log N(xₙ | μ, S)`. -/
+/-- **Component term of the EM objective for full-covariance Gaussian mixtures.** Given points
+$x_1, \dots, x_N$ of $\mathbb{R}^d$, valid parameters $\theta$ of a $K$-component
+full-covariance Gaussian mixture, a component $k$, a mean $\mu \in \mathbb{R}^d$ and a real
+$d \times d$ matrix $S$, the component term is
+$$
+C_k(\mu, S) = \sum_n r_{nk} \log \mathcal{N}(x_n \mid \mu, S),
+$$
+where $r_{nk}$ is the responsibility of component $k$ for $x_n$ under $\theta$ and
+$\mathcal{N}(\cdot \mid \mu, S)$ is the multivariate Gaussian density with mean $\mu$ and
+covariance matrix $S$.
+
+The matrix $S$ is not required to be positive definite; the density is defined for every real
+matrix. -/
 noncomputable def compTerm (θ : ValidParams d K) (k : Fin K) (μ : EuclideanSpace ℝ (Fin d))
     (S : Matrix (Fin d) (Fin d) ℝ) : ℝ :=
   ∑ n, resp θ (xs n) k * log (multivariateGaussianPDFReal μ S (xs n))
 
-/-- `Q(θ' | θ)` splits into a weights term and one term per component. -/
+/-- **The EM objective of a full-covariance Gaussian mixture splits by component.** Let
+$x_1, \dots, x_N$ be points of $\mathbb{R}^d$, and let $\theta'$ and $\theta$ be valid parameters
+of a $K$-component full-covariance Gaussian mixture, where $\theta'$ has weights $\pi_k'$, means
+$\mu_k'$ and covariance matrices $\Sigma_k'$. Then the EM objective of the mixture's joint density
+satisfies
+$$
+Q(\theta' \mid \theta) = \sum_k \bigl(N_k \log \pi_k' + C_k(\mu_k', \Sigma_k')\bigr),
+$$
+where $r_{nk}$ is the responsibility of component $k$ for $x_n$ under $\theta$,
+$N_k = \sum_n r_{nk}$ and $C_k(\mu, S) = \sum_n r_{nk} \log \mathcal{N}(x_n \mid \mu, S)$, with
+$\mathcal{N}(\cdot \mid \mu, S)$ the multivariate Gaussian density with mean $\mu$ and covariance
+matrix $S$. -/
 theorem emQ_eq (θ' θ : ValidParams d K) :
     emQ joint xs θ' θ = ∑ k, (mass xs θ k * log (θ'.1.weight k) +
       compTerm xs θ k (θ'.1.mean k) (θ'.1.cov k)) := by
@@ -182,10 +255,15 @@ theorem emQ_eq (θ' θ : ValidParams d K) :
       log (multivariateGaussianPDFReal (θ'.1.mean k) (θ'.1.cov k) (xs n)))]
   simp only [Finset.sum_mul, resp]
 
-/-- **The mean and covariance updates maximize each component term**: over all means `μ` and
-positive definite covariances `S`, `∑ n, r n k log N(xₙ | μ, S)` is largest at the weighted mean
-and the weighted sample covariance (the log-determinant trace inequality
-`Matrix.PosDef.log_det_mul_le_trace`). -/
+/-- **The mean and covariance updates maximize each component term.** Let
+$x_1, \dots, x_N \in \mathbb{R}^d$ be data in general position (at least one point, and not all
+in an affine hyperplane), let $\theta$ be valid mixture parameters with responsibilities
+$r_{nk}$, and fix a component $k$. Write $\mathcal{N}(x \mid \mu, S)$ for the multivariate
+Gaussian density and let $\mu'_k$ and $\Sigma'_k$ be the responsibility-weighted mean and the
+responsibility-weighted sample covariance of the data for component $k$. Then for every
+$\mu \in \mathbb{R}^d$ and every positive definite $d \times d$ matrix $S$,
+$$\sum_n r_{nk} \log \mathcal{N}(x_n \mid \mu, S) \le
+\sum_n r_{nk} \log \mathcal{N}(x_n \mid \mu'_k, \Sigma'_k).$$ -/
 theorem compTerm_le {xs : Fin N → EuclideanSpace ℝ (Fin d)} (hx : SpansAffinely xs)
     (θ : ValidParams d K) (k : Fin K) (μ : EuclideanSpace ℝ (Fin d))
     {S : Matrix (Fin d) (Fin d) ℝ} (hS : S.PosDef) :
@@ -193,8 +271,13 @@ theorem compTerm_le {xs : Fin N → EuclideanSpace ℝ (Fin d)} (hx : SpansAffin
   have : Nonempty (Fin N) := ⟨⟨0, hx.pos⟩⟩
   exact sum_mul_log_multivariateGaussianPDFReal_le (fun n => resp_pos θ (xs n) k) hx.spans μ hS
 
-/-- **The weight update maximizes the weights term**: over all mixing weights,
-`∑ k, N k log π k` is largest at `π k = N k / N` (Gibbs' inequality). -/
+/-- **The weight update maximizes the weights term of the full-covariance mixture.** Let
+$(x_n)_{n<N}$ be data in $\mathbb{R}^d$ with $N > 0$, let $\theta$ be valid parameters, and let
+$N_k = \sum_n r_{nk}$, where $r_{nk}$ is the responsibility of component $k$ for $x_n$. Then for
+all real weights $w_k > 0$ with $\sum_k w_k = 1$,
+$$\sum_k N_k \log w_k \le \sum_k N_k \log \frac{N_k}{N}.$$
+
+The proof is Gibbs' inequality. -/
 theorem sum_mass_mul_log_le (hN0 : 0 < N) (θ : ValidParams d K) {w : Fin K → ℝ}
     (hw : ∀ k, 0 < w k) (hsum : ∑ k, w k = 1) :
     ∑ k, mass xs θ k * log (w k) ≤ ∑ k, mass xs θ k * log (mass xs θ k / N) := by
@@ -213,8 +296,13 @@ theorem sum_mass_mul_log_le (hN0 : 0 < N) (θ : ValidParams d K) {w : Fin K → 
     mul_nonpos_of_nonneg_of_nonpos hN.le h
   linarith
 
-/-- **The M-step maximizes `Q(· | θ)`**: no valid parameter `θ'` has a larger `Q(θ' | θ)` than the
-EM update `emStep xs hx θ`. -/
+/-- **The M-step of the full-covariance Gaussian mixture maximizes the EM objective.** Let
+$x_1, \dots, x_N \in \mathbb{R}^d$ be data in general position: $N > 0$, and for every nonzero
+$v \in \mathbb{R}^d$ the values $\langle v, x_n \rangle$ are not all equal. Let $\theta$ be valid
+parameters of a $K$-component full-covariance Gaussian mixture, and let $\theta^+$ be the result
+of the EM step applied to $\theta$. Then every valid parameter $\theta'$ satisfies
+$Q(\theta' \mid \theta) \le Q(\theta^+ \mid \theta)$, where $Q$ is the EM objective of the
+mixture's joint density. -/
 theorem emQ_le_emStep (hx : SpansAffinely xs) (θ' θ : ValidParams d K) :
     emQ joint xs θ' θ ≤ emQ joint xs (emStep xs hx θ) θ := by
   rw [emQ_eq, emQ_eq, Finset.sum_add_distrib, Finset.sum_add_distrib]
@@ -222,14 +310,22 @@ theorem emQ_le_emStep (hx : SpansAffinely xs) (θ' θ : ValidParams d K) :
     (Finset.sum_le_sum fun k _ => compTerm_le hx θ k _ (θ'.2.cov_posDef k))
 
 /-- **Each EM step for the full-covariance Gaussian mixture does not decrease the
-log-likelihood** (from the EM theorem `logLik_le_of_emQ_le`). -/
+log-likelihood.** Let $x_1, \dots, x_N \in \mathbb{R}^d$ be data in general position (at least
+one point, and not all in an affine hyperplane) and let $\theta$ be valid parameters. If
+$\theta^{+}$ is the result of one EM step from $\theta$, then $\ell(\theta) \le \ell(\theta^{+})$,
+where $\ell$ is the log-likelihood of the data under the mixture. -/
 theorem logLik_le_emStep (hx : SpansAffinely xs) (θ : ValidParams d K) :
     logLik joint xs θ ≤ logLik joint xs (emStep xs hx θ) := by
   have := nonempty_of_valid θ
   exact logLik_le_of_emQ_le (fun θ x k => joint_pos θ x k) xs (emQ_le_emStep xs hx θ θ)
 
-/-- **The log-likelihood is monotone along the EM iterates** of the full-covariance Gaussian
-mixture. -/
+/-- **The log-likelihood is monotone along the EM iterates of a full-covariance Gaussian
+mixture.** Let $x_1, \dots, x_N \in \mathbb{R}^d$ be data in general position: $N > 0$, and for
+every nonzero $v \in \mathbb{R}^d$ the values $\langle v, x_n \rangle$ are not all equal. Let
+$\theta_0$ be valid parameters of a $K$-component full-covariance Gaussian mixture, and let
+$\theta_t$ be the result of $t$ EM steps from $\theta_0$. Then $\ell(\theta_t)$ is nondecreasing
+in $t \in \mathbb{N}$, where $\ell$ is the log-likelihood of the data under the mixture's joint
+density. -/
 theorem logLik_iterate_emStep_monotone (hx : SpansAffinely xs) (θ₀ : ValidParams d K) :
     Monotone fun t => logLik joint xs ((emStep xs hx)^[t] θ₀) := by
   have := nonempty_of_valid θ₀

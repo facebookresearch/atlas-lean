@@ -111,7 +111,20 @@ abbrev GamePosition (Atom World : Type u) :=
 /-- The player to move: `true` is Verifier, `false` is Refuter. -/
 abbrev Player := Bool
 
-/-- Moves of the model-checking game. Source: C. Stirling, *Modal and Temporal
+/-- **Moves of the μ-calculus model-checking game.** Fix a Kripke model $M$ with accessibility
+relation $R$. A game position $(\varphi, w, s)$ consists of a μ-calculus formula $\varphi$ (with
+de Bruijn variables), a world $w$ and a stack $s$ of fixpoint binders, innermost first. The
+moves are exactly the following. From $(\varphi \wedge \psi, w, s)$ and from
+$(\varphi \vee \psi, w, s)$ to $(\varphi, w, s)$ and to $(\psi, w, s)$. From
+$(\Box \varphi, w, s)$ and from $(\Diamond \varphi, w, s)$ to $(\varphi, v, s)$ for every world
+$v$ with $w R v$. From $(\mu \varphi, w, s)$ to $(\varphi, w, s')$, where $s'$ is $s$ with
+$\mu \varphi$ pushed on top, and likewise from $(\nu \varphi, w, s)$ to $(\varphi, w, s'')$,
+where $s''$ is $s$ with $\nu \varphi$ pushed on top. From $(x_n, w, s)$, where $x_n$ is the
+variable with de Bruijn index $n$ and $n$ is less than the length of $s$, to $(s_n, w, t)$,
+where $s_n$ is the entry of $s$ at index $n$ (counting from $0$) and $t$ is $s$ with its first
+$n + 1$ entries removed.
+
+Source: C. Stirling, *Modal and Temporal
 Properties of Processes*, Springer 2001, Chapter 6. -/
 inductive Move (M : KripkeModel World Atom) :
     GamePosition Atom World → GamePosition Atom World → Prop
@@ -143,23 +156,30 @@ inductive Move (M : KripkeModel World Atom) :
   | var {n : ℕ} {w : World} {st : List (MuFormula Atom)} (h : n < st.length) :
       Move M ⟨.var n, w, st⟩ ⟨st.getD n .bot, w, st.drop (n + 1)⟩
 
-/-- The owner of a position: Verifier owns disjunctions, diamonds, and greatest
-fixed points; Refuter owns everything else. Source: C. Stirling, *Modal and
+/-- **Owner of a game position.** The owner of a game position $(\varphi, w, s)$ is Verifier when
+$\varphi$ is a disjunction, a diamond formula or a greatest fixed point, and Refuter for every
+other formula.
+
+Source: C. Stirling, *Modal and
 Temporal Properties of Processes*, Springer 2001, Chapter 6. -/
 def Owner : GamePosition Atom World → Player
   | ⟨.or _ _, _, _⟩ | ⟨.dia _, _, _⟩ | ⟨.nu _, _, _⟩ => true
   | _ => false
 
-/-- The priority of a position, assigned only to fixpoint-binder positions: a
-binder unfolded with `k` binders already on the stack gets priority `2 * k + 1`
-if it is a `μ`-binder and `2 * k + 2` if it is a `ν`-binder. Priorities
-strictly increase with nesting depth, so the outermost binder regenerated
-infinitely often has the least priority. This is the nesting-depth refinement
-of the alternation-depth priority assignment: same-type nesting counts toward
-the depth, which only refines the order (outer still strictly below inner) and
-keeps parity tied to the binder kind. Fixed priorities (`μ ↦ 1`, `ν ↦ 2`)
-would let an inner vacuous `ν` dominate an outer `μ` (see
-`counterexample_parityWin_false`).
+/-- **Priority of a game position.** Only fixpoint-binder positions carry a priority. For a
+formula $\varphi$, a world $w$ and a binder stack $s$ of length $k$, the position
+$(\mu X.\,\varphi, w, s)$, whose formula is the least fixpoint with body $\varphi$, has priority
+$2k+1$, the position $(\nu X.\,\varphi, w, s)$, whose formula is the greatest fixpoint with body
+$\varphi$, has priority $2k+2$, and every other position has no priority. Priorities strictly
+increase with nesting depth, so the outermost binder regenerated infinitely often has the least
+priority.
+
+This is the nesting-depth refinement of the alternation-depth priority assignment: same-type
+nesting counts toward the depth, which only refines the order (outer still strictly below inner)
+and keeps parity tied to the binder kind. Fixed priorities ($\mu \mapsto 1$, $\nu \mapsto 2$)
+under the greatest-recurring-priority rule would let an inner vacuous $\nu$ dominate an outer
+$\mu$: in $\mu X.\,\nu Y.\,X$, whose denotation is empty, Verifier would win the only play.
+
 Source: E. A. Emerson and C. S. Jutla, "Tree automata, μ-calculus and
 determinacy", *Proceedings of FOCS 1991*, 368-377; C. Stirling, *Modal and
 Temporal Properties of Processes*, Springer 2001, Chapter 6; J. A. Bradfield,
@@ -170,18 +190,26 @@ def prio : GamePosition Atom World → Option ℕ
   | ⟨.nu _, _, st⟩ => some (2 * st.length + 2)
   | _ => none
 
-/-- A position with no moves. -/
+/-- **Positions with no moves.** In a Kripke model $M$, a game position $p$ has no moves when
+there is no position $q$ such that going from $p$ to $q$ is a move of the model-checking game
+in $M$. -/
 def NoMoves (M : KripkeModel World Atom) (p : GamePosition Atom World) : Prop :=
   ∀ q, ¬ Move M p q
 
-/-- The winner of a finite play is decided by its last position (consulted only on
-positions with no moves): Verifier wins at true atoms, `⊤`, and boxes with no
-successors (Refuter is stuck); Refuter wins at false atoms, `⊥`, and diamonds
-with no successors (Verifier is stuck). A bound variable always has a move
-(`Move.var`), so the bound case is unreachable; a free variable `var n` at
-stack `st` with `n ≥ st.length` refers to the environment at index
-`n - st.length`, because each binder on the stack shifts de Bruijn indices
-by one (`extendEnv`). Source: C. Stirling, *Modal and Temporal Properties of
+/-- **Winner at a terminal position.** Let $M$ be a Kripke model and $\mathit{env}$ an environment
+assigning a predicate on worlds to every index. At a game position $(\varphi, w, st)$, where $st$
+is the stack of enclosing fixpoint binders and $|st|$ its length, Verifier wins exactly when
+$\varphi$ is an atom $a$ true at $w$, a negated atom $\neg a$ with $a$ false at $w$, $\top$, a
+box $\Box\psi$, or a variable with de Bruijn index $n \ge |st|$ such that
+$\mathit{env}(n - |st|)$ holds at $w$. At every other position (a variable with index
+$n < |st|$, $\bot$, a diamond, a conjunction, a disjunction or a fixpoint) Refuter wins.
+
+The condition is consulted only at positions with no moves: a box with no successors leaves
+Refuter stuck and a diamond with no successors leaves Verifier stuck, while a bound variable,
+a conjunction, a disjunction and a fixpoint always have a move. The environment index is
+shifted by $|st|$ because each binder on the stack shifts de Bruijn indices by one.
+
+Source: C. Stirling, *Modal and Temporal Properties of
 Processes*, Springer 2001, Chapter 6. -/
 def TerminalWin (M : KripkeModel World Atom) (env : ℕ → World → Prop) :
     GamePosition Atom World → Prop
@@ -194,20 +222,28 @@ def TerminalWin (M : KripkeModel World Atom) (env : ℕ → World → Prop) :
   | ⟨.dia _, _, _⟩ => False
   | _ => False
 
-/-- The parity condition for infinite plays: Verifier wins exactly when the
-least binder priority occurring infinitely often is even. Only binder
-positions carry a priority (`prio` is `none` elsewhere), so non-binder
-positions do not affect the outcome. The least-priority convention is what
-makes outer binders dominate: an outer binder has a smaller priority than
-any binder nested inside it. Source: E. A. Emerson and C. S. Jutla, "Tree
+/-- **Parity winning condition.** For an infinite sequence of game positions $p_0, p_1, \dots$,
+Verifier wins by the parity condition when there is an even priority $e$ such that infinitely
+many positions $p_n$ have priority $e$, and every priority $e' < e$ is the priority of only
+finitely many positions $p_n$. Equivalently, some priority occurs infinitely often and the least
+such priority is even; in particular, if no priority occurs infinitely often, Verifier does not
+win. Only fixpoint-binder positions carry a priority, so the other positions do not affect the
+outcome.
+
+The least-priority convention is what makes outer binders dominate: an outer binder has a smaller
+priority than any binder nested inside it.
+
+Source: E. A. Emerson and C. S. Jutla, "Tree
 automata, μ-calculus and determinacy", *Proceedings of FOCS 1991*, 368-377. -/
 def ParityWin (play : ℕ → GamePosition Atom World) : Prop :=
   ∃ e, Even e ∧ (∀ N, ∃ n, N ≤ n ∧ prio (play n) = some e) ∧
     ∀ e', e' < e → ∃ N, ∀ n, N ≤ n → prio (play n) ≠ some e'
 
-/-- A Verifier strategy: the chosen successor at Verifier-owned positions, together with
-the proof that the chosen successor is always a legal move whenever one exists. The
-move-respecting condition is what makes `VerifierWins` meaningful: without it, a
+/-- **Verifier strategy.** A Verifier strategy for the model-checking game on a Kripke model $M$
+is a map $\sigma$ from game positions to game positions such that, at every Verifier-owned
+position $p$ from which some move exists, there is a move from $p$ to $\sigma(p)$.
+
+The move-respecting condition is what makes Verifier's winning meaningful: without it, a
 strategy could "win" by choosing a non-move at a Verifier position, leaving no
 legal play at all. -/
 structure Strategy (M : KripkeModel World Atom) where
@@ -216,8 +252,13 @@ structure Strategy (M : KripkeModel World Atom) where
   /-- The chosen successor is a legal move whenever one exists. -/
   choose_move : ∀ p, Owner p = true → (∃ q, Move M p q) → Move M p (choose p)
 
-/-- Finite plays from `p`, by induction: a singleton, or a move (following the
-strategy at Verifier-owned positions) followed by a play from the successor. -/
+/-- **Finite plays consistent with a strategy.** Fix a Kripke model $M$ and a Verifier strategy
+$\sigma$. The finite plays from a position $p$ that follow $\sigma$ are the lists of positions
+defined inductively: the one-element list $[p]$ is such a play; and if the game has a move from
+$p$ to $q$, where $q$ is the position chosen by $\sigma$ at $p$ whenever Verifier owns $p$, then
+$p$ followed by any such play from $q$ is such a play from $p$.
+
+A play need not end at a position with no moves: every finite prefix counts. -/
 inductive PlayFrom (M : KripkeModel World Atom) (σ : Strategy M) :
     GamePosition Atom World → List (GamePosition Atom World) → Prop
   /-- The trivial play. -/
@@ -227,13 +268,19 @@ inductive PlayFrom (M : KripkeModel World Atom) (σ : Strategy M) :
       (h : Move M p q) (hσ : Owner p = true → q = σ.choose p) (hps : PlayFrom M σ q ps) :
       PlayFrom M σ p (p :: ps)
 
-/-- The last position of a play. -/
+/-- **Last position of a play.** The last position of a finite list of game positions is its
+final entry when the list is nonempty; the empty list has no last position. -/
 def playLast (ps : List (GamePosition Atom World)) : Option (GamePosition Atom World) :=
   ps.getLast?
 
-/-- σ wins from `p` (in environment `env`): every σ-consistent complete finite play
-from `p` ends in a `TerminalWin` position, and every σ-consistent infinite play
-satisfies the parity condition. -/
+/-- **Winning strategy from a position.** Let $M$ be a Kripke model, $\mathit{env}$ an environment
+assigning a predicate on worlds to every index, $\sigma$ a Verifier strategy for the
+model-checking game on $M$ and $p$ a game position. A play is consistent with $\sigma$ when each
+step is a move and, at every Verifier-owned position, goes to the position chosen by $\sigma$.
+The strategy $\sigma$ wins from $p$ in $\mathit{env}$ when every finite play from $p$ consistent
+with $\sigma$ whose last position has no moves ends in a position that is a terminal win for
+Verifier in $\mathit{env}$, and every infinite play from $p$ consistent with $\sigma$ satisfies
+the parity condition. -/
 def StrategyWins (M : KripkeModel World Atom) (env : ℕ → World → Prop)
     (σ : Strategy M) (p : GamePosition Atom World) : Prop :=
   (∀ ps : List (GamePosition Atom World), PlayFrom M σ p ps →
@@ -244,15 +291,27 @@ def StrategyWins (M : KripkeModel World Atom) (env : ℕ → World → Prop)
       (Owner (play n) = true → play (n + 1) = σ.choose (play n))) →
       ParityWin play)
 
-/-- Verifier has a winning strategy from `p` (in environment `env`). -/
+/-- **Verifier has a winning strategy.** For a Kripke model $M$, an environment $\mathit{env}$
+and a game position $p$, Verifier wins from $p$ when some Verifier strategy $\sigma$ in the
+model-checking game on $M$ wins from $p$ in environment $\mathit{env}$: every complete finite
+$\sigma$-consistent play from $p$ ends at a terminal winning position, and every infinite
+$\sigma$-consistent play from $p$ satisfies the parity condition. -/
 def VerifierWins (M : KripkeModel World Atom) (env : ℕ → World → Prop)
     (p : GamePosition Atom World) : Prop :=
   ∃ σ : Strategy M, StrategyWins M env σ p
 
 /-! ### Closed formulas and the regression for nesting-depth priorities -/
 
-/-- `ClosedAt φ d` means every free variable of `φ` is `< d`: variables bound
-by the `d` binders enclosing `φ` are `< d`. Source: C. Stirling, *Modal and
+/-- **Formulas closed at depth $d$.** Closedness of a μ-calculus formula $\varphi$ (with de Bruijn
+variables) at a depth $d \in \mathbb{N}$ is defined by recursion on $\varphi$: atoms, negated
+atoms, $\bot$ and $\top$ are closed at every depth; the variable with index $n$ is closed at
+depth $d$ exactly when $n < d$; $\varphi \wedge \psi$ and $\varphi \vee \psi$ are closed at
+depth $d$ when both $\varphi$ and $\psi$ are; $\Box\varphi$ and $\Diamond\varphi$ are closed at
+depth $d$ when $\varphi$ is; and $\mu\varphi$ and $\nu\varphi$ are closed at depth $d$ when
+$\varphi$ is closed at depth $d + 1$. Thus every free variable of $\varphi$ refers to one of $d$
+enclosing binders.
+
+Source: C. Stirling, *Modal and
 Temporal Properties of Processes*, Springer 2001, Chapter 6 (de Bruijn
 variables). -/
 def ClosedAt : MuFormula Atom → ℕ → Prop
@@ -268,11 +327,14 @@ def ClosedAt : MuFormula Atom → ℕ → Prop
   | .mu φ, d => ClosedAt φ (d + 1)
   | .nu φ, d => ClosedAt φ (d + 1)
 
-/-- A formula with no free variables. -/
+/-- **Closed formulas.** A μ-calculus formula $\varphi$ is closed when it is closed at depth $0$,
+that is, when it has no free variables. -/
 def Closed (φ : MuFormula Atom) : Prop := ClosedAt φ 0
 
-/-- Closedness is monotone in the depth: more enclosing binders can only bind
-more variables. -/
+/-- **Closedness is monotone in the depth.** Let $\varphi$ be a μ-calculus formula and let
+$d \le d'$ be natural numbers. If $\varphi$ is closed at depth $d$ (every free variable of
+$\varphi$ is less than $d$), then $\varphi$ is closed at depth $d'$: more enclosing binders can
+only bind more variables. -/
 theorem ClosedAt.mono {φ : MuFormula Atom} {d d' : ℕ} (h : d ≤ d')
     (hc : ClosedAt φ d) : ClosedAt φ d' := by
   induction φ generalizing d d' with
@@ -288,10 +350,17 @@ theorem ClosedAt.mono {φ : MuFormula Atom} {d d' : ℕ} (h : d ≤ d')
   | mu φ ih => exact ih (by omega) hc
   | nu φ ih => exact ih (by omega) hc
 
-/-- Satisfaction of a closed-at-`d` formula depends only on the environment
-below `d`: two environments agreeing below `d` give the same denotation.
-In particular, satisfaction of a `Closed` formula is independent of the
-environment. Source: D. Kozen, *Results on the propositional μ-calculus*,
+/-- **Satisfaction depends only on the environment below the closure depth.** Let $M$ be a
+Kripke model, $\varphi$ a μ-calculus formula and $d$ a natural number such that $\varphi$ is
+closed at depth $d$: every occurrence of a variable with de Bruijn index $n$ lying under $k$
+fixpoint binders of $\varphi$ satisfies $n < d + k$. If two environments $\mathit{env}$ and
+$\mathit{env}'$, each assigning a predicate on worlds to every index, agree at every index
+$n < d$, then for every world $w$, $\varphi$ is satisfied at $w$ in $M$ under $\mathit{env}$ if
+and only if it is satisfied at $w$ in $M$ under $\mathit{env}'$.
+
+In particular, satisfaction of a closed formula is independent of the environment.
+
+Source: D. Kozen, *Results on the propositional μ-calculus*,
 Theoretical Computer Science 27 (1983), 333-354. -/
 theorem sat_eq_of_closedAt (M : KripkeModel World Atom) :
     ∀ (φ : MuFormula Atom) {env env' : ℕ → World → Prop} {d : ℕ},
@@ -374,35 +443,56 @@ theorem sat_eq_of_closedAt (M : KripkeModel World Atom) :
         intro v hv
         exact (ih hagree' hclosed v).mp (hS v hv)
 
-/-- **Closed formulas are environment-independent.** -/
+/-- **Closed formulas are environment-independent.** Let $M$ be a Kripke model and $\varphi$ a
+closed μ-calculus formula, that is, one with no free variables. For any two environments
+$\mathrm{env}$ and $\mathrm{env}'$, each assigning a set of worlds to every variable index, and
+every world $w$, $\varphi$ is satisfied at $w$ in $M$ under $\mathrm{env}$ if and only if it is
+satisfied at $w$ in $M$ under $\mathrm{env}'$. -/
 theorem sat_closed (M : KripkeModel World Atom) {φ : MuFormula Atom}
     (hφ : Closed φ) (env env' : ℕ → World → Prop) (w : World) :
     sat M env φ w ↔ sat M env' φ w :=
   sat_eq_of_closedAt M φ (fun n hn => absurd hn (by omega)) hφ w
 
-/-- The one-world regression model: a single reflexive world, no atoms true. -/
+/-- **The one-world reflexive Kripke model.** The Kripke model with a single world, which is
+related to itself, and a single atom, which is false at that world. -/
 def counterexampleModel : KripkeModel Unit Unit where
   nonempty_world := ⟨Unit.unit⟩
   rel := fun _ _ => True
   valuation := fun _ _ => False
 
-/-- `μ X. ν Y. X`: the outer least fixpoint with an inner *vacuous* greatest
-fixpoint (the bound variable `Y` never occurs). Its denotation is `⊥`:
-the outer functional is the identity, and the least fixed point of the
-identity on predicates is `⊥`. -/
+/-- **A least fixpoint over a vacuous greatest fixpoint.** The μ-calculus formula
+$\mu X.\, \nu Y.\, X$ over a one-element type of atoms: a least fixpoint whose body is a greatest
+fixpoint whose body is the variable $X$ bound by the outer least fixpoint, so the variable $Y$
+bound by the inner greatest fixpoint never occurs.
+
+Its denotation is empty: the outer functional is the identity, and the least fixed point of the
+identity on predicates is the empty predicate. -/
 def counterexampleFormula : MuFormula Unit := .mu (.nu (.var 1))
 
-/-- The three positions of the unique play of the regression formula. -/
+/-- **Starting position of the regression play.** The game position consisting of the formula
+$\mu X.\,\nu Y.\,X$, the unique world of the one-world model, and the empty binder stack. -/
 def cePos0 : GamePosition Unit Unit :=
   ⟨.mu (.nu (.var 1)), Unit.unit, []⟩
-/-- The three positions of the unique play of the regression formula. -/
+/-- **Second position of the regression play.** The game position consisting of the formula
+$\nu Y.\,X$, the unique world of the one-world model, and the binder stack
+$[\mu X.\,\nu Y.\,X]$. Here $X$ is the de Bruijn variable $1$, which refers to the binder
+$\mu X$ on the stack. -/
 def cePos1 : GamePosition Unit Unit :=
   ⟨.nu (.var 1), Unit.unit, [.mu (.nu (.var 1))]⟩
-/-- The three positions of the unique play of the regression formula. -/
+/-- **Third position of the regression play.** The game position consisting of the variable $X$,
+the unique world of the one-world model, and the binder stack $[\nu Y.\,X,\ \mu X.\,\nu Y.\,X]$,
+listed innermost first. Here $X$ is the de Bruijn variable $1$, which refers to the outer binder
+$\mu X$. -/
 def cePos2 : GamePosition Unit Unit :=
   ⟨.var 1, Unit.unit, [.nu (.var 1), .mu (.nu (.var 1))]⟩
 
-/-- One step of the unique play of the regression formula. -/
+/-- **Step map of the regression play.** Let $\Phi = \mu X.\, \nu Y.\, X$ be the regression
+formula over the one-element type of atoms, and write game positions over the one-element type
+of worlds as (formula, world, stack of enclosing binders, innermost first). For every world $w$,
+the step map sends $(\Phi, w, [\,])$ to $(\nu Y.\, X, w, [\Phi])$, sends
+$(\nu Y.\, X, w, [\Phi])$ to $(X, w, [\nu Y.\, X, \Phi])$, and sends
+$(X, w, [\nu Y.\, X, \Phi])$ to $(\Phi, w, [\,])$, where $X$ is the variable bound by the
+outer $\mu$; every other game position is sent to itself. -/
 def ceNext : GamePosition Unit Unit → GamePosition Unit Unit
   | ⟨.mu (.nu (.var 1)), w, []⟩ => ⟨.nu (.var 1), w, [.mu (.nu (.var 1))]⟩
   | ⟨.nu (.var 1), w, [.mu (.nu (.var 1))]⟩ =>
@@ -411,20 +501,39 @@ def ceNext : GamePosition Unit Unit → GamePosition Unit Unit
       ⟨.mu (.nu (.var 1)), w, []⟩
   | p => p
 
-/-- The unique infinite play of the regression formula, cycling through the
-three positions. -/
+/-- **The regression play.** Write $\ast$ for the unique world, and consider the game positions
+(formula, world, binder stack listed innermost first)
+$P_0 = (\mu X.\,\nu Y.\,X,\ \ast,\ [\,])$, $P_1 = (\nu Y.\,X,\ \ast,\ [\mu X.\,\nu Y.\,X])$ and
+$P_2 = (X,\ \ast,\ [\nu Y.\,X,\ \mu X.\,\nu Y.\,X])$. Let $s$ be the step map sending $P_0$ to
+$P_1$, $P_1$ to $P_2$ and $P_2$ to $P_0$, and fixing every other position. The regression play is
+the sequence of positions $p_0 = P_0$, $p_{n+1} = s(p_n)$, which cycles through $P_0, P_1, P_2$.
+
+These are the successive positions of the model-checking game for $\mu X.\,\nu Y.\,X$ on the
+one-world model. -/
 def cePlay : ℕ → GamePosition Unit Unit
   | 0 => cePos0
   | n + 1 => ceNext (cePlay n)
 
-/-- The cycle steps through the three positions in order. -/
+/-- **Regression cycle, first step.** Let $\Phi = \mu X.\, \nu Y.\, X$ be the regression formula,
+$\ast$ the unique world, and write game positions as (formula, world, stack of enclosing
+binders, innermost first). The step map of the regression play sends the first cycle position
+$(\Phi, \ast, [\,])$ to the second cycle position $(\nu Y.\, X, \ast, [\Phi])$. -/
 theorem ceNext_cePos0 : ceNext cePos0 = cePos1 := rfl
-/-- The cycle steps through the three positions in order. -/
+/-- **Regression cycle, second step.** Let $\Phi = \mu X.\, \nu Y.\, X$ be the regression formula,
+$\ast$ the unique world, and write game positions as (formula, world, stack of enclosing
+binders, innermost first). The step map of the regression play sends the second cycle position
+$(\nu Y.\, X, \ast, [\Phi])$ to the third cycle position $(X, \ast, [\nu Y.\, X, \Phi])$, where
+$X$ is the variable bound by the outer $\mu$. -/
 theorem ceNext_cePos1 : ceNext cePos1 = cePos2 := rfl
-/-- The cycle steps through the three positions in order. -/
+/-- **Regression cycle, third step.** Let $\Phi = \mu X.\, \nu Y.\, X$ be the regression formula,
+$\ast$ the unique world, and write game positions as (formula, world, stack of enclosing
+binders, innermost first). The step map of the regression play sends the third cycle position
+$(X, \ast, [\nu Y.\, X, \Phi])$, where $X$ is the variable bound by the outer $\mu$, back to
+the first cycle position $(\Phi, \ast, [\,])$. -/
 theorem ceNext_cePos2 : ceNext cePos2 = cePos0 := rfl
 
-/-- Every position of the regression play is one of the three cycle positions. -/
+/-- **The regression play stays on the cycle.** For every $n \in \mathbb{N}$, the position at
+step $n$ of the regression play is the first, the second or the third cycle position. -/
 theorem cePlay_mem (n : ℕ) :
     cePlay n = cePos0 ∨ cePlay n = cePos1 ∨ cePlay n = cePos2 := by
   induction n with
@@ -437,7 +546,9 @@ theorem cePlay_mem (n : ℕ) :
       · exact Or.inr (Or.inr ceNext_cePos1)
       · exact Or.inl ceNext_cePos2
 
-/-- The regression play has period 3. -/
+/-- **The regression play has period three.** Number the positions of the regression play
+from $0$. For every natural number $n$, its position number $n + 3$ equals its position
+number $n$. -/
 theorem cePlay_period (n : ℕ) : cePlay (n + 3) = cePlay n := by
   induction n with
   | zero => rfl
@@ -445,7 +556,10 @@ theorem cePlay_period (n : ℕ) : cePlay (n + 3) = cePlay n := by
       show ceNext (cePlay (n + 3)) = ceNext (cePlay n)
       rw [ih]
 
-/-- Multiples of 3 land on the first cycle position. -/
+/-- **The regression play returns to its start every three steps.** Number the positions of
+the regression play of $\mu X.\,\nu Y.\,X$ from $0$. For every natural number $k$, its
+position number $3k$ is its starting position: the formula $\mu X.\,\nu Y.\,X$ at the unique
+world, with the empty binder stack. -/
 theorem cePlay_mul_three (k : ℕ) : cePlay (3 * k) = cePos0 := by
   induction k with
   | zero => rfl
@@ -453,7 +567,9 @@ theorem cePlay_mul_three (k : ℕ) : cePlay (3 * k) = cePos0 := by
       have h : 3 * (k + 1) = 3 * k + 3 := by omega
       rw [h, cePlay_period, ih]
 
-/-- The regression play follows the game moves. -/
+/-- **The regression play is a play.** For every $n \in \mathbb{N}$, in the model-checking game
+on the one-world regression model there is a move from the position at step $n$ of the
+regression play to the position at step $n + 1$. -/
 theorem cePlay_moves (n : ℕ) :
     Move counterexampleModel (cePlay n) (cePlay (n + 1)) := by
   have hsucc : cePlay (n + 1) = ceNext (cePlay n) := rfl
@@ -463,18 +579,28 @@ theorem cePlay_moves (n : ℕ) :
   · exact Move.nu
   · exact Move.var (by decide)
 
-/-- The binder priorities on the regression cycle: the outer `μ` has priority
-`1` (stack empty), the inner `ν` has priority `4` (one binder on the stack).
-Under the old fixed priorities (`μ ↦ 1`, `ν ↦ 2`) the greatest recurring
-priority would be `2` (even, Verifier wins); under the corrected least-priority
-rule the least recurring binder priority is `1` (odd, Refuter wins). -/
+/-- **Priority of the outer binder in the regression play.** The starting position of the
+regression play, consisting of the formula $\mu X.\,\nu Y.\,X$, the unique world and the empty
+binder stack, has priority $1$: a $\mu$-binder position with $k$ binders on the stack has
+priority $2k + 1$, and here $k = 0$.
+
+Under fixed priorities ($\mu \mapsto 1$, $\nu \mapsto 2$) the greatest priority recurring on this
+play would be $2$ (even, Verifier wins); with priorities increasing with nesting depth (the inner
+$\nu$ here has priority $4$) and the least-priority rule, the least binder priority recurring on
+this play is $1$ (odd, Refuter wins). -/
 theorem ce_prio0 : prio (cePos0 : GamePosition Unit Unit) = some 1 := rfl
-/-- The binder priorities on the regression cycle: the outer `μ` has priority
-`1` (stack empty), the inner `ν` has priority `4` (one binder on the stack). -/
+/-- **Priority of the inner binder in the regression play.** The second position of the
+regression play, consisting of the formula $\nu Y.\,X$, the unique world and the binder stack
+$[\mu X.\,\nu Y.\,X]$, has priority $4$: a $\nu$-binder position with $k$ binders on the stack
+has priority $2k + 2$, and here $k = 1$. -/
 theorem ce_prio1 : prio (cePos1 : GamePosition Unit Unit) = some 4 := rfl
 
-/-- **Regression (P1): the corrected parity condition declares Refuter the
-winner of the unique play of `μ X. ν Y. X`.** -/
+/-- **Verifier loses the infinite play of $\mu X.\, \nu Y.\, X$.** Consider the infinite
+sequence of positions of the model-checking game for $\mu X.\, \nu Y.\, X$ (with one-element
+types of worlds and atoms) that starts at this formula with empty binder stack and repeats three
+steps: unfold $\mu X$, unfold $\nu Y$, and follow the variable $X$ back to the formula with empty
+stack. This play does not satisfy the parity condition: it is not the case that the least binder
+priority occurring infinitely often is even. -/
 theorem counterexample_parityWin_false : ¬ ParityWin cePlay := by
   rintro ⟨e, heven, hfreq, hmin⟩
   obtain ⟨n, -, hEq⟩ := hfreq 0
@@ -494,8 +620,12 @@ theorem counterexample_parityWin_false : ¬ ParityWin cePlay := by
     rw [h, hnone] at hEq
     cases hEq
 
-/-- **Regression (P1): the formula `μ X. ν Y. X` is false** (its denotation
-is `⊥`), so the game outcome (Refuter wins) agrees with satisfaction. -/
+/-- **$\mu X.\, \nu Y.\, X$ is false in the one-world model.** In the Kripke model with a single
+world, which is related to itself, and a single atom, which is false there, under the environment
+that assigns the empty set to every variable, the formula $\mu X.\, \nu Y.\, X$ is not satisfied
+at the unique world.
+
+This agrees with the model-checking game, where Verifier loses the play of this formula. -/
 theorem counterexample_sat_false :
     ¬ sat counterexampleModel (fun _ => fun _ => False)
       counterexampleFormula Unit.unit := by
@@ -511,7 +641,12 @@ theorem counterexample_sat_false :
 
 /-! ### The fixpoint-free fragment -/
 
-/-- The fixpoint-free fragment of the μ-calculus (basic modal logic). -/
+/-- **Fixpoint-free formulas.** The fixpoint-free formulas over a type of atoms are built from
+atoms $p$, negated atoms $\neg p$, $\bot$ and $\top$ by conjunction $\varphi \land \psi$,
+disjunction $\varphi \lor \psi$, necessity $\Box\varphi$ and possibility $\Diamond\varphi$.
+
+These are the formulas of basic modal logic in negation normal form: the μ-calculus formulas with
+no fixpoint operators and no variables. -/
 inductive FixFreeFormula (Atom : Type u) : Type u where
   /-- An atom. -/
   | atom : Atom → FixFreeFormula Atom
@@ -532,7 +667,11 @@ inductive FixFreeFormula (Atom : Type u) : Type u where
 
 namespace FixFreeFormula
 
-/-- Embed the fixpoint-free fragment into the μ-calculus. -/
+/-- **Embedding of the fixpoint-free fragment into the μ-calculus.** The map from fixpoint-free
+formulas to μ-calculus formulas defined by recursion: atoms, negated atoms, $\bot$ and $\top$
+go to the same atom, negated atom, $\bot$ and $\top$, and $\varphi \wedge \psi$,
+$\varphi \vee \psi$, $\Box \varphi$ and $\Diamond \varphi$ go to the conjunction, disjunction,
+box and diamond of the images of $\varphi$ and $\psi$. -/
 def toMu : FixFreeFormula Atom → MuFormula Atom
   | .atom a => .atom a
   | .natom a => .natom a
@@ -545,8 +684,17 @@ def toMu : FixFreeFormula Atom → MuFormula Atom
 
 end FixFreeFormula
 
-/-- The backward-induction winning region for the fixpoint-free fragment: Verifier
-wins from `(toMu φ, w, [])` iff `Wins M φ w`, by recursion on `φ`. -/
+/-- **Backward-induction winning region of the fixpoint-free fragment.** Let $M$ be a Kripke
+model with accessibility relation $R$. For a fixpoint-free formula $\varphi$ and a world $w$,
+"$\varphi$ is winning at $w$" is defined by recursion on $\varphi$: an atom $a$ is winning at
+$w$ iff $a$ is true at $w$ in $M$; a negated atom $\lnot a$ iff $a$ is not true at $w$; $\bot$
+is never winning and $\top$ is always winning; $\varphi \land \psi$ is winning at $w$ iff both
+$\varphi$ and $\psi$ are; $\varphi \lor \psi$ iff $\varphi$ or $\psi$ is; $\Box \varphi$ iff
+$\varphi$ is winning at every $v$ with $w \mathrel{R} v$; and $\Diamond \varphi$ iff $\varphi$
+is winning at some $v$ with $w \mathrel{R} v$.
+
+Verifier has a winning strategy in the model-checking game from the position $(\varphi, w, [])$
+with empty stack exactly when $\varphi$ is winning at $w$. -/
 def Wins (M : KripkeModel World Atom) : FixFreeFormula Atom → World → Prop
   | .atom a, w => M.valuation w a
   | .natom a, w => ¬ M.valuation w a
@@ -557,9 +705,12 @@ def Wins (M : KripkeModel World Atom) : FixFreeFormula Atom → World → Prop
   | .box φ, w => ∀ v, M.rel w v → Wins M φ v
   | .dia φ, w => ∃ v, M.rel w v ∧ Wins M φ v
 
-/-- **Game-vs-satisfaction for the fixpoint-free fragment.** `Wins` is exactly
-satisfaction. Source: C. Stirling, *Modal and Temporal Properties of Processes*,
-Springer 2001, Chapter 6. -/
+/-- **Backward-induction winning equals satisfaction on the fixpoint-free fragment.** For every
+Kripke model $M$, environment $\mathit{env}$, fixpoint-free formula $\varphi$ and world $w$, $w$
+lies in the backward-induction winning region of $\varphi$ if and only if $w$ satisfies the
+μ-calculus embedding of $\varphi$ in $M$ under $\mathit{env}$.
+
+Source: C. Stirling, *Modal and Temporal Properties of Processes*, Springer 2001, Chapter 6. -/
 theorem wins_iff_sat (M : KripkeModel World Atom) (env : ℕ → World → Prop)
     (φ : FixFreeFormula Atom) (w : World) :
     Wins M φ w ↔ sat M env (FixFreeFormula.toMu φ) w := by
@@ -583,13 +734,23 @@ theorem wins_iff_sat (M : KripkeModel World Atom) (env : ℕ → World → Prop)
 
 /-! ### The Wins-guided strategy -/
 
-/-- The size of a μ-calculus formula. -/
+/-- **Size of a μ-calculus formula.** The size $|\varphi|$ of a μ-calculus formula $\varphi$ is
+the number of nodes of its syntax tree: an atom, a negated atom, a variable, $\bot$ and $\top$
+have size $1$; $|\varphi \wedge \psi| = |\varphi \vee \psi| = |\varphi| + |\psi| + 1$; and
+$|\Box\varphi| = |\Diamond\varphi| = |\mu\varphi| = |\nu\varphi| = |\varphi| + 1$. -/
 def MuFormula.size : MuFormula Atom → ℕ
   | .atom _ | .natom _ | .var _ | .bot | .top => 1
   | .and φ ψ | .or φ ψ => MuFormula.size φ + MuFormula.size ψ + 1
   | .box φ | .dia φ | .mu φ | .nu φ => MuFormula.size φ + 1
 
-/-- Invert `FixFreeFormula.toMu` on its image. -/
+/-- **Partial inverse of the fixpoint-free embedding.** The partial map from μ-calculus formulas
+to fixpoint-free formulas defined by recursion: an atom, a negated atom, $\bot$ and $\top$ are
+sent to the same formula; a conjunction or disjunction is sent to the conjunction or
+disjunction of the values at its two parts, and $\Box\psi$, $\Diamond\psi$ to the box or diamond
+of the value at $\psi$, whenever those values are defined; the map is undefined at variables
+and at least and greatest fixpoints, and at every formula with a part where it is undefined.
+
+It inverts the embedding of fixpoint-free formulas into μ-calculus formulas on its image. -/
 def toMuInv : MuFormula Atom → Option (FixFreeFormula Atom)
   | .atom a => some (.atom a)
   | .natom a => some (.natom a)
@@ -601,7 +762,9 @@ def toMuInv : MuFormula Atom → Option (FixFreeFormula Atom)
   | .dia φ => (toMuInv φ).map FixFreeFormula.dia
   | _ => none
 
-/-- `toMuInv` inverts `toMu`. -/
+/-- **The partial inverse recovers fixpoint-free formulas.** For every fixpoint-free formula
+$\varphi$, the partial inverse of the embedding of fixpoint-free formulas into μ-calculus
+formulas is defined at the image of $\varphi$ under the embedding, with value $\varphi$. -/
 theorem toMuInv_toMu (φ : FixFreeFormula Atom) :
     toMuInv (FixFreeFormula.toMu φ) = some φ := by
   induction φ with
@@ -614,7 +777,10 @@ theorem toMuInv_toMu (φ : FixFreeFormula Atom) :
   | box φ ih => simp [toMuInv, FixFreeFormula.toMu, ih]
   | dia φ ih => simp [toMuInv, FixFreeFormula.toMu, ih]
 
-/-- `toMu` inverts `toMuInv` on its image. -/
+/-- **The embedding inverts the partial inverse.** For every μ-calculus formula $\psi$ and every
+fixpoint-free formula $\varphi$: if the partial inverse of the embedding of fixpoint-free
+formulas into μ-calculus formulas is defined at $\psi$ with value $\varphi$, then the embedding
+sends $\varphi$ to $\psi$. -/
 theorem toMu_toMuInv {φ : FixFreeFormula Atom} {ψ : MuFormula Atom}
     (h : toMuInv ψ = some φ) : FixFreeFormula.toMu φ = ψ := by
   induction ψ generalizing φ with
@@ -681,8 +847,10 @@ theorem toMu_toMuInv {φ : FixFreeFormula Atom} {ψ : MuFormula Atom}
           subst hinj
           simp only [FixFreeFormula.toMu, ih h']
 
-/-- `toMu` is injective: the fragment embedding has no collisions. This is
-what lets the canonical fragment game recover a fragment formula from an
+/-- **The fixpoint-free embedding is injective.** The embedding of fixpoint-free formulas into
+μ-calculus formulas is injective: distinct fixpoint-free formulas have distinct images.
+
+This is what lets the canonical fragment game recover a fragment formula from an
 embedded game position. -/
 theorem FixFreeFormula.toMu_injective :
     Function.Injective (FixFreeFormula.toMu (Atom := Atom)) := by
@@ -692,13 +860,24 @@ theorem FixFreeFormula.toMu_injective :
   exact Option.some.inj h1
 
 open Classical in
-/-- The Wins-guided move at a position: at Verifier-owned fragment positions, play a
-winning move; at other Verifier-owned positions, play any legal move (or stay put
-if none exists); at Refuter-owned positions, stay put (the value is ignored there).
-The disjunction case tests `Wins` of the *left* disjunct only: if it holds, play
-left; otherwise play right (which is winning whenever the disjunction is winning).
-Testing the disjunction itself and then casing on its proof would be large
-elimination of a `Prop` into data, which Lean forbids.
+/-- **Wins-guided move.** Let $M$ be a Kripke model, and identify each fixpoint-free formula with
+its embedding into the μ-calculus. For a μ-calculus formula $\psi$, a world $w$ and a stack $s$
+of fixpoint binders, the Wins-guided move at the game position $(\psi, w, s)$ is the following
+position. If $s$ is empty and $\psi$ is a fixpoint-free disjunction $\psi_1 \lor \psi_2$, it is
+$(\psi_1, w, [])$ when $\psi_1$ is winning at $w$ (in the backward-induction winning region of
+the fixpoint-free fragment) and $(\psi_2, w, [])$ otherwise. If $s$ is empty and $\psi$ is a
+fixpoint-free formula $\Diamond \psi_1$, it is $(\psi_1, v, [])$ for a chosen successor $v$ of
+$w$ at which $\psi_1$ is winning, if one exists; otherwise $(\psi_1, v, [])$ for a chosen
+successor $v$ of $w$, if one exists; otherwise $(\psi, w, [])$. In every other case: at a
+disjunction $\varphi_1 \lor \varphi_2$ it is $(\varphi_1, w, s)$; at $\Diamond \varphi_1$ it is
+$(\varphi_1, v, s)$ for a chosen successor $v$ of $w$ if one exists, and $(\psi, w, s)$
+otherwise; at $\nu \varphi_1$ it is $(\varphi_1, w, s')$, where $s'$ is $s$ with
+$\nu \varphi_1$ pushed on top; and at every remaining formula (the positions owned by Refuter)
+it is $(\psi, w, s)$.
+
+Only the left disjunct is tested: if a fixpoint-free disjunction is winning at $w$ and its left
+disjunct is not, then its right disjunct is.
+
 Source: C. Stirling, *Modal and Temporal Properties of Processes*, Springer 2001,
 Chapter 6. -/
 noncomputable def winsMove (M : KripkeModel World Atom) (ψ : MuFormula Atom) (w : World)
@@ -731,8 +910,12 @@ noncomputable def winsMove (M : KripkeModel World Atom) (ψ : MuFormula Atom) (w
   | .nu φ₁, st => (⟨φ₁, w, .nu φ₁ :: st⟩ : GamePosition Atom World)
   | _, _ => (⟨ψ, w, st⟩ : GamePosition Atom World)
 
-/-- At a fragment disjunction with a winning strategy, `winsMove` plays a winning
-disjunct. -/
+/-- **The Wins-guided move at a disjunction.** Let $M$ be a Kripke model, $\varphi_1$ and
+$\varphi_2$ fixpoint-free formulas and $w$ a world in the backward-induction winning region of
+$\varphi_1 \vee \varphi_2$. Then for some $i \in \{1, 2\}$, $w$ lies in the backward-induction
+winning region of $\varphi_i$ and the Wins-guided move at the position made of the embedding of
+$\varphi_1 \vee \varphi_2$, the world $w$ and the empty binder stack is the position made of the
+embedding of $\varphi_i$, the world $w$ and the empty stack. -/
 theorem winsMove_or {M : KripkeModel World Atom} {φ₁ φ₂ : FixFreeFormula Atom} {w : World}
     (hW : Wins M (.or φ₁ φ₂) w) :
     (winsMove M (FixFreeFormula.toMu (.or φ₁ φ₂)) w [] =
@@ -750,8 +933,12 @@ theorem winsMove_or {M : KripkeModel World Atom} {φ₁ φ₂ : FixFreeFormula A
     | inl h => exact absurd h h₁
     | inr h₂ => exact Or.inr ⟨rfl, h₂⟩
 
-/-- At a fragment diamond with a winning strategy, `winsMove` plays a winning
-successor. -/
+/-- **The Wins-guided move at a diamond.** Let $M$ be a Kripke model, $\varphi$ a fixpoint-free
+formula and $w$ a world in the backward-induction winning region of $\Diamond \varphi$. Then
+there is a successor $v$ of $w$ in $M$ lying in the backward-induction winning region of
+$\varphi$ such that the Wins-guided move at the position made of the embedding of
+$\Diamond \varphi$, the world $w$ and the empty binder stack is the position made of the
+embedding of $\varphi$, the world $v$ and the empty stack. -/
 theorem winsMove_dia {M : KripkeModel World Atom} {φ₁ : FixFreeFormula Atom} {w : World}
     (hW : Wins M (.dia φ₁) w) :
     ∃ v, winsMove M (FixFreeFormula.toMu (.dia φ₁)) w [] =
@@ -764,8 +951,9 @@ theorem winsMove_dia {M : KripkeModel World Atom} {φ₁ : FixFreeFormula Atom} 
   simp only [FixFreeFormula.toMu, winsMove, hInv]
   rw [dite_eq_left hex]
 
-/-- `winsMove` always plays a legal move at Verifier-owned positions where one
-exists. -/
+/-- **The Wins-guided move is legal.** For a Kripke model $M$ and a game position $p$ owned by
+Verifier from which some move exists, the Wins-guided move at $p$ is a legal move of the
+model-checking game on $M$ from $p$. -/
 theorem winsMove_isMove (M : KripkeModel World Atom) (p : GamePosition Atom World)
     (hOwn : Owner p = true) (hExists : ∃ q, Move M p q) :
     Move M p (winsMove M p.1 p.2.1 p.2.2) := by
@@ -851,14 +1039,19 @@ theorem winsMove_isMove (M : KripkeModel World Atom) (p : GamePosition Atom Worl
   | atom _ | natom _ | var _ | bot | top | and _ _ | box _ | mu _ =>
       simp [Owner] at hOwn
 
-/-- The Wins-guided strategy. -/
+/-- **Wins-guided strategy.** For a Kripke model $M$, the Wins-guided strategy is the Verifier
+strategy of the model-checking game on $M$ that chooses, at each game position $(\psi, w, s)$,
+the Wins-guided move at $(\psi, w, s)$. At every Verifier-owned position that has a move, this
+choice is a legal move. -/
 noncomputable def winsStrategy (M : KripkeModel World Atom) : Strategy M where
   choose p := winsMove M p.1 p.2.1 p.2.2
   choose_move p hOwn hExists := winsMove_isMove M p hOwn hExists
 
 /-! ### Play lemmas -/
 
-/-- Plays are nonempty. -/
+/-- **Finite plays are nonempty.** Let $M$ be a Kripke model, $\sigma$ a Verifier strategy and
+$p$ a game position. Every finite play from $p$ consistent with $\sigma$ is a nonempty list of
+positions. -/
 theorem PlayFrom.ne_nil {M : KripkeModel World Atom} {σ : Strategy M}
     {p : GamePosition Atom World} {ps : List (GamePosition Atom World)}
     (h : PlayFrom M σ p ps) : ps ≠ [] := by
@@ -866,14 +1059,21 @@ theorem PlayFrom.ne_nil {M : KripkeModel World Atom} {σ : Strategy M}
   | single => simp
   | cons => simp
 
-/-- The last position of a nonempty cons is the last position of its tail. -/
+/-- **Prepending to a nonempty play keeps the last position.** For a game position $p$ and a
+nonempty list $ps$ of game positions, the list obtained by prepending $p$ to $ps$ has the same
+last position as $ps$. -/
 theorem playLast_cons {p : GamePosition Atom World} {ps : List (GamePosition Atom World)}
     (hne : ps ≠ []) : playLast (p :: ps) = playLast ps := by
   cases ps with
   | nil => exact absurd rfl hne
   | cons _ _ => rfl
 
-/-- A move from a fragment position goes to a fragment position with smaller size. -/
+/-- **Fragment moves decrease the formula size.** Let $M$ be a Kripke model, $\varphi$ a
+fixpoint-free formula and $w$ a world. Every move of the model-checking game in $M$ from the
+position $(\varphi, w, [\,])$, with $\varphi$ embedded in the μ-calculus and the empty stack, leads
+to a position $(\varphi', w', [\,])$ for some fixpoint-free formula $\varphi'$ and world $w'$,
+and the size of $\varphi'$ is strictly smaller than the size of $\varphi$ (sizes of the embedded
+μ-calculus formulas). -/
 theorem move_of_toMu {M : KripkeModel World Atom} {φ : FixFreeFormula Atom} {w : World}
     {q : GamePosition Atom World} (h : Move M ⟨FixFreeFormula.toMu φ, w, []⟩ q) :
     ∃ φ' : FixFreeFormula Atom, ∃ w' : World, q = ⟨FixFreeFormula.toMu φ', w', []⟩ ∧
@@ -902,8 +1102,11 @@ theorem move_of_toMu {M : KripkeModel World Atom} {φ : FixFreeFormula Atom} {w 
       cases h with
       | dia hrel => exact ⟨φ, _, rfl, by simp only [FixFreeFormula.toMu, MuFormula.size]; omega⟩
 
-/-- There is no infinite play from a fragment position: every move strictly
-decreases the formula size. -/
+/-- **No infinite play from a fragment position.** Let $M$ be a Kripke model, $\varphi$ a
+fixpoint-free formula and $w$ a world. There is no sequence of game positions
+$p_0, p_1, p_2, \dots$ with $p_0 = (\varphi, w, [\,])$ (the embedded formula with the empty
+stack) such that each step from $p_n$ to $p_{n+1}$ is a move of the model-checking game in $M$.
+The reason is that every move strictly decreases the formula size. -/
 theorem no_infinite_play_of_fixFree {M : KripkeModel World Atom} {φ : FixFreeFormula Atom}
     {w : World} {play : ℕ → GamePosition Atom World}
     (h0 : play 0 = ⟨FixFreeFormula.toMu φ, w, []⟩)
@@ -926,8 +1129,11 @@ theorem no_infinite_play_of_fixFree {M : KripkeModel World Atom} {φ : FixFreeFo
   obtain ⟨φ', w', hplay, hsize⟩ := key (MuFormula.size (FixFreeFormula.toMu φ) + 1)
   omega
 
-/-- Winning is preserved along one move: a strategy winning from `p` also wins from
-any successor it can reach in one step. -/
+/-- **Winning strategies stay winning along consistent moves.** Let $M$ be a Kripke model,
+$\mathit{env}$ an environment and $\sigma$ a Verifier strategy for the model-checking game on
+$M$. If $\sigma$ wins from a position $p$ in $\mathit{env}$, and $q$ is a position reachable from
+$p$ by one move that is the position chosen by $\sigma$ at $p$ whenever Verifier owns $p$, then
+$\sigma$ also wins from $q$ in $\mathit{env}$. -/
 theorem strategyWins_of_move {M : KripkeModel World Atom} {env : ℕ → World → Prop}
     {σ : Strategy M} {p q : GamePosition Atom World} (hW : StrategyWins M env σ p)
     (hmove : Move M p q) (hσ : Owner p = true → q = σ.choose p) :
@@ -1046,9 +1252,13 @@ theorem winsStrategy_wins_finite (M : KripkeModel World Atom)
   intro φ w hW ps hplay hcomplete
   exact winsStrategy_wins_finite_aux M hplay φ w rfl hW hcomplete
 
-/-- **Game-vs-satisfaction, strategy direction.** A winning fragment position has a
-winning strategy. Source: C. Stirling, *Modal and Temporal Properties of
-Processes*, Springer 2001, Chapter 6. -/
+/-- **Game-vs-satisfaction, strategy direction.** Let $M$ be a Kripke model, $\mathit{env}$ an
+environment assigning a set of worlds to each variable index, $\varphi$ a fixpoint-free formula
+and $w$ a world in the backward-induction winning region of $\varphi$. Then Verifier has a
+winning strategy, in environment $\mathit{env}$, in the model-checking game on $M$ from the
+position made of the μ-calculus embedding of $\varphi$, the world $w$ and the empty binder stack.
+
+Source: C. Stirling, *Modal and Temporal Properties of Processes*, Springer 2001, Chapter 6. -/
 theorem wins_implies_verifierWins (M : KripkeModel World Atom)
     (env : ℕ → World → Prop) (φ : FixFreeFormula Atom)
     (w : World) (hW : Wins M φ w) :
@@ -1060,7 +1270,10 @@ theorem wins_implies_verifierWins (M : KripkeModel World Atom)
     exfalso
     exact no_infinite_play_of_fixFree h0 (fun n => (hsteps n).1)
 
-/-- Inversion for disjunction moves: the successor is one of the two disjuncts. -/
+/-- **Inversion for disjunction moves.** Let $M$ be a Kripke model, $\varphi$ and $\psi$
+μ-calculus formulas, $w$ a world and $s$ a stack of fixpoint binders. If going from the game
+position $(\varphi \vee \psi, w, s)$ to a position $q$ is a move of the model-checking game in
+$M$, then $q$ is $(\varphi, w, s)$ or $(\psi, w, s)$: the world and the stack are unchanged. -/
 theorem Move.or_cases {M : KripkeModel World Atom} {φ ψ : MuFormula Atom} {w : World}
     {st : List (MuFormula Atom)} {q : GamePosition Atom World}
     (h : Move M ⟨.or φ ψ, w, st⟩ q) : q = ⟨φ, w, st⟩ ∨ q = ⟨ψ, w, st⟩ := by
@@ -1068,8 +1281,10 @@ theorem Move.or_cases {M : KripkeModel World Atom} {φ ψ : MuFormula Atom} {w :
   | orLeft => exact Or.inl rfl
   | orRight => exact Or.inr rfl
 
-/-- Inversion for diamond moves: the successor is a related world with the
-subformula. -/
+/-- **Moves from a diamond position.** In the model-checking game on a Kripke model $M$, every
+move from the position with formula $\Diamond\varphi$, world $w$ and binder stack $s$ goes to the
+position with formula $\varphi$, world $v$ and the same stack $s$, for some world $v$ accessible
+from $w$ in $M$. -/
 theorem Move.dia_cases {M : KripkeModel World Atom} {φ : MuFormula Atom} {w : World}
     {st : List (MuFormula Atom)} {q : GamePosition Atom World}
     (h : Move M ⟨.dia φ, w, st⟩ q) :
@@ -1077,9 +1292,14 @@ theorem Move.dia_cases {M : KripkeModel World Atom} {φ : MuFormula Atom} {w : W
   cases h with
   | dia hv => exact ⟨_, hv, rfl⟩
 
-/-- **Game-vs-satisfaction, converse direction.** A position with a winning
-strategy is a winning fragment position. Source: C. Stirling, *Modal and Temporal
-Properties of Processes*, Springer 2001, Chapter 6. -/
+/-- **Game-vs-satisfaction, converse direction.** Let $M$ be a Kripke model, $\mathit{env}$ an
+environment assigning a set of worlds to each variable index, $\varphi$ a fixpoint-free formula
+and $w$ a world. If Verifier has a winning strategy, in environment $\mathit{env}$, in the
+model-checking game on $M$ from the position made of the μ-calculus embedding of $\varphi$, the
+world $w$ and the empty binder stack, then $w$ lies in the backward-induction winning region of
+$\varphi$.
+
+Source: C. Stirling, *Modal and Temporal Properties of Processes*, Springer 2001, Chapter 6. -/
 theorem verifierWins_implies_wins (M : KripkeModel World Atom)
     (env : ℕ → World → Prop) (φ : FixFreeFormula Atom)
     (w : World) (hW : VerifierWins M env ⟨FixFreeFormula.toMu φ, w, []⟩) :
@@ -1174,10 +1394,13 @@ theorem verifierWins_implies_wins (M : KripkeModel World Atom)
       rw [hEq] at hSW
       exact ⟨v', hv', ih v' ⟨σ, hSW⟩⟩
 
-/-- **Game-vs-satisfaction for the fixpoint-free fragment.** The backward-induction
-winning region is exactly the set of positions from which Verifier has a winning
-strategy. Source: C. Stirling, *Modal and Temporal Properties of Processes*,
-Springer 2001, Chapter 6. -/
+/-- **Backward-induction winning equals game winning on the fixpoint-free fragment.** For every
+Kripke model $M$, environment $\mathit{env}$, fixpoint-free formula $\varphi$ and world $w$, $w$
+lies in the backward-induction winning region of $\varphi$ if and only if Verifier has a winning
+strategy, in environment $\mathit{env}$, in the model-checking game on $M$ from the position made
+of the μ-calculus embedding of $\varphi$, the world $w$ and the empty binder stack.
+
+Source: C. Stirling, *Modal and Temporal Properties of Processes*, Springer 2001, Chapter 6. -/
 theorem wins_iff_verifierWins (M : KripkeModel World Atom)
     (env : ℕ → World → Prop) (φ : FixFreeFormula Atom) (w : World) :
     Wins M φ w ↔ VerifierWins M env ⟨FixFreeFormula.toMu φ, w, []⟩ :=
@@ -1185,23 +1408,18 @@ theorem wins_iff_verifierWins (M : KripkeModel World Atom)
 
 /-! ### The fragment game as a canonical parity game -/
 
-/-- Totalized positions for the canonical fragment game: embedded fragment
-positions plus absorbing winning (`win`, Verifier wins) and losing (`lose`,
-Refuter wins) states. A `pos` position carries only a fragment formula `φ`
-and a world `w`, standing for the embedded game position
-`⟨toMu φ, w, []⟩` (empty stack). This restriction is what makes the priority
-assignment sound: the arena
-contains no fixpoint positions, so a position such as `⟨μ X. X, w, []⟩`
-(which would loop forever at priority `0` in the old untyped `pos`) is not
-a term of this type at all, and priority `0` on `pos` positions is sound
-because every fragment move strictly decreases the formula. Terminal game
-positions (no moves) move to `win` iff they are `TerminalWin`, else to
-`lose`; `win`/`lose` loop to themselves. This totalization is what lets the
-fragment game be a canonical `ParityGame` (with no dead ends, `serial`), so
-the existing `WinsFrom`/`WinningRegion` API applies. For the general
-(fixpoint) game the arena has unboundedly many stack configurations and the
-priority inversion to max-parity needs a bound on the stack (the formula
-size); that conversion is future work. -/
+/-- **Positions of the totalized fragment game.** A position of the totalized fragment game, over
+a type of atoms and a type of worlds, is either an embedded position $(\varphi, w)$ of a
+fixpoint-free formula $\varphi$ and a world $w$, standing for the model-checking game position
+$(\varphi, w, [])$ with $\varphi$ embedded as a μ-calculus formula and the empty fixpoint stack,
+or one of two absorbing states: the winning state, where Verifier has won, and the losing state,
+where Refuter has won.
+
+Since the arena contains no fixpoint positions and every move between embedded positions
+strictly decreases the formula, priority $0$ on embedded positions is sound. An embedded
+position with no moves leads to the winning state if it is a terminal win for Verifier and to
+the losing state otherwise, and both absorbing states loop to themselves, so the game has no
+dead ends and is a parity game. -/
 inductive FragPos (Atom World : Type u) where
   /-- An embedded fragment position `(φ, w)`, standing for `⟨toMu φ, w, []⟩`. -/
   | pos : FixFreeFormula Atom → World → FragPos Atom World
@@ -1210,12 +1428,16 @@ inductive FragPos (Atom World : Type u) where
   /-- Absorbing Refuter-wins state. -/
   | lose : FragPos Atom World
 
-/-- Project a game position back into the fragment arena: embedded
-fragment positions (empty stack, formula in the image of `toMu`) map to
-their `pos` position; every other game position (fixpoint formulas,
-variables, nonempty stacks) maps to `lose`, a default that is never used
-on plays staying in the arena (every move from an embedded position lands
-on an embedded position, by `move_of_toMu`). Source: C. Stirling, *Modal
+/-- **Projection of game positions onto the fragment arena.** A game position with empty binder
+stack whose formula is the μ-calculus reading of a fixpoint-free formula $\varphi$, at world $w$,
+is sent to the embedded position $(\varphi, w)$. Every other game position (one whose formula
+contains a fixpoint operator or a variable, or one with a nonempty stack) is sent to the losing
+state.
+
+The losing state is a default that is never reached on plays that stay in the arena, since every
+move from an embedded position lands on an embedded position.
+
+Source: C. Stirling, *Modal
 and Temporal Properties of Processes*, Springer 2001, Chapter 6. -/
 def fragOfGamePos : GamePosition Atom World → FragPos Atom World
   | ⟨ψ, w, []⟩ =>
@@ -1224,14 +1446,22 @@ def fragOfGamePos : GamePosition Atom World → FragPos Atom World
       | none => .lose
   | ⟨_, _, _ :: _⟩ => .lose
 
-/-- `fragOfGamePos` is the identity on embedded fragment positions. -/
+/-- **Projection of an embedded position.** For every fixpoint-free formula $\varphi$ and world
+$w$, projecting the game position with formula $\varphi$ (read as a μ-calculus formula), world $w$
+and empty binder stack onto the fragment arena gives the embedded position $(\varphi, w)$. -/
 theorem fragOfGamePos_toMu (φ : FixFreeFormula Atom) (w : World) :
     fragOfGamePos (⟨FixFreeFormula.toMu φ, w, []⟩ : GamePosition Atom World) =
       FragPos.pos φ w := by
   simp [fragOfGamePos, toMuInv_toMu]
 
-/-- Moves of the totalized fragment game, between embedded fragment positions
-only. -/
+/-- **Moves of the totalized fragment game.** Let $M$ be a Kripke model and $e$ an environment,
+and read each fixpoint-free formula $\varphi$ as a μ-calculus formula. The totalized fragment game
+of $M$ and $e$ has these moves: from an embedded position $(\varphi, w)$ to $(\varphi', w')$
+whenever the model-checking game of $M$ has a move from $(\varphi, w)$ to $(\varphi', w')$ with
+empty binder stacks; from $(\varphi, w)$ to the winning state when the game position
+$(\varphi, w)$ with empty stack has no moves and is won by Verifier in environment $e$; from
+$(\varphi, w)$ to the losing state when that game position has no moves and is not won by
+Verifier; and from each of the winning and losing states to itself. -/
 inductive FragMove (M : KripkeModel World Atom) (env : ℕ → World → Prop) :
     FragPos Atom World → FragPos Atom World → Prop
   /-- A game move between embedded fragment positions. -/
@@ -1254,9 +1484,15 @@ inductive FragMove (M : KripkeModel World Atom) (env : ℕ → World → Prop) :
   /-- The lose state loops. -/
   | lose_self : FragMove M env .lose .lose
 
-/-- Owner in the totalized game: Verifier (`even`) owns Verifier-owned game
-positions and both absorbing states (whose moves are forced); Refuter (`odd`)
-owns Refuter-owned game positions. -/
+/-- **Owners in the totalized fragment game.** In the totalized fragment game, an embedded
+position $(\varphi, w)$ of a fixpoint-free formula $\varphi$ at a world $w$ is owned by the even
+player if Verifier owns the model-checking game position $(\varphi, w, [])$ (with $\varphi$
+embedded as a μ-calculus formula and the empty fixpoint stack), and by the odd player otherwise,
+that is, when Refuter owns it. The absorbing winning and losing states are both owned by the
+even player.
+
+Verifier plays the even player; the moves at the absorbing states are forced, so their owner
+does not matter. -/
 def fragOwner : FragPos Atom World → Cslib.Games.Player
   | .pos φ w =>
       if Owner ⟨FixFreeFormula.toMu φ, w, []⟩ = true then
@@ -1265,18 +1501,31 @@ def fragOwner : FragPos Atom World → Cslib.Games.Player
   | .win => Cslib.Games.Player.even
   | .lose => Cslib.Games.Player.even
 
-/-- Priority in the totalized game: fragment positions and `win` have priority
-`0` (even); `lose` has priority `1` (odd). An infinite play staying at `win`
-is won by `even`, one staying at `lose` by `odd`. Priority `0` on `pos`
-positions is sound because the arena contains no fixpoint positions and
-every fragment move strictly decreases the formula, so no infinite
-`pos`-only play exists. -/
+/-- **Priorities in the totalized fragment game.** In the totalized fragment game, every embedded
+position $(\varphi, w)$ of a fixpoint-free formula $\varphi$ at a world $w$ has priority $0$, the
+absorbing winning state has priority $0$, and the absorbing losing state has priority $1$.
+
+So an infinite play that eventually stays at the winning state is won by the even player, and
+one that eventually stays at the losing state by the odd player. Priority $0$ on embedded
+positions is sound because the arena contains no fixpoint positions and every move between
+embedded positions strictly decreases the formula, so no infinite play visits only embedded
+positions. -/
 def fragPriority : FragPos Atom World → ℕ
   | .pos _ _ => 0
   | .win => 0
   | .lose => 1
 
-/-- The totalized fragment game as a canonical parity game. -/
+/-- **Fragment parity game.** Let $M$ be a Kripke model and $\rho$ an environment, and write
+$(\varphi, w, [])$ for the game position with formula $\varphi$, world $w$ and empty binder
+stack. The fragment game of $M$ and $\rho$ is the parity game on the totalized fragment
+positions defined as follows. An embedded position $(\varphi, w)$ moves to $(\varphi', w')$
+when $(\varphi, w, [])$ has a move to $(\varphi', w', [])$ in the model-checking game on $M$;
+if $(\varphi, w, [])$ has no moves, $(\varphi, w)$ moves to the winning state when
+$(\varphi, w, [])$ is a terminal win in $\rho$ and to the losing state otherwise; the winning
+and losing states move only to themselves. The even player owns both absorbing states and the
+embedded positions $(\varphi, w)$ such that Verifier owns $(\varphi, w, [])$; the odd player
+owns the other embedded positions. Embedded positions and the winning state have priority $0$;
+the losing state has priority $1$. -/
 noncomputable def fragmentGame (M : KripkeModel World Atom)
     (env : ℕ → World → Prop) : Cslib.Games.ParityGame (FragPos Atom World) where
   owner := fragOwner
@@ -1300,19 +1549,27 @@ noncomputable def fragmentGame (M : KripkeModel World Atom)
           · exact ⟨.win, FragMove.toWin hNo hWin⟩
           · exact ⟨.lose, FragMove.toLose hNo hWin⟩
 
-/-- A move from `win` must stay at `win`. -/
+/-- **The absorbing win state.** In the totalized fragment game on a Kripke model $M$ with
+environment $\mathit{env}$, every move from the absorbing Verifier-wins state $\mathrm{win}$
+leads back to it: if $\mathrm{win}$ moves to $v$, then $v = \mathrm{win}$. -/
 theorem FragMove.win_eq {M : KripkeModel World Atom} {env : ℕ → World → Prop}
     {v : FragPos Atom World} (h : FragMove M env .win v) : v = .win := by
   cases h with
   | win_self => rfl
 
-/-- A move from `lose` must stay at `lose`. -/
+/-- **The losing state is absorbing.** In the fragment game of a Kripke model $M$ and an
+environment $\rho$, every move from the losing state goes to the losing state. -/
 theorem FragMove.lose_eq {M : KripkeModel World Atom} {env : ℕ → World → Prop}
     {v : FragPos Atom World} (h : FragMove M env .lose v) : v = .lose := by
   cases h with
   | lose_self => rfl
 
-/-- A move from a `pos` position to a `pos` position is a game move. -/
+/-- **Fragment moves between embedded positions are game moves.** Let $M$ be a Kripke model,
+$\mathrm{env}$ an environment, $\varphi, \varphi'$ fixpoint-free formulas and $w, w'$ worlds. If
+the totalized fragment game has a move from the embedded position $(\varphi, w)$ to the embedded
+position $(\varphi', w')$, then the model-checking game has a move from $(\varphi, w, [])$ to
+$(\varphi', w', [])$, where the fixpoint-free formulas are viewed as μ-calculus formulas and
+$[]$ is the empty binder stack. -/
 theorem FragMove.pos_move_iff {M : KripkeModel World Atom}
     {env : ℕ → World → Prop} {φ φ' : FixFreeFormula Atom} {w w' : World}
     (h : FragMove M env (.pos φ w) (.pos φ' w')) :
@@ -1321,7 +1578,12 @@ theorem FragMove.pos_move_iff {M : KripkeModel World Atom}
   cases h with
   | pos_move h => exact h
 
-/-- A move from a `pos` position to `win` witnesses a terminal winning position. -/
+/-- **Moves to the winning state come from terminal winning positions.** Let $M$ be a Kripke
+model, $\mathrm{env}$ an environment, $\varphi$ a fixpoint-free formula and $w$ a world. If the
+totalized fragment game has a move from the embedded position $(\varphi, w)$ to the absorbing
+winning state, then the game position $(\varphi, w, [])$, with $\varphi$ viewed as a μ-calculus
+formula and an empty binder stack, has no moves, and Verifier wins there as a terminal position
+in the environment $\mathrm{env}$. -/
 theorem FragMove.pos_toWin {M : KripkeModel World Atom} {env : ℕ → World → Prop}
     {φ : FixFreeFormula Atom} {w : World}
     (h : FragMove M env (.pos φ w) .win) :
@@ -1330,7 +1592,12 @@ theorem FragMove.pos_toWin {M : KripkeModel World Atom} {env : ℕ → World →
   cases h with
   | toWin hNo hWin => exact ⟨hNo, hWin⟩
 
-/-- A move from a `pos` position to `lose` witnesses a terminal losing position. -/
+/-- **Moves to the losing state come from terminal losing positions.** Let $M$ be a Kripke model,
+$\mathrm{env}$ an environment, $\varphi$ a fixpoint-free formula and $w$ a world. If the
+totalized fragment game has a move from the embedded position $(\varphi, w)$ to the absorbing
+losing state, then the game position $(\varphi, w, [])$, with $\varphi$ viewed as a μ-calculus
+formula and an empty binder stack, has no moves, and Verifier does not win there as a terminal
+position in the environment $\mathrm{env}$. -/
 theorem FragMove.pos_toLose {M : KripkeModel World Atom} {env : ℕ → World → Prop}
     {φ : FixFreeFormula Atom} {w : World}
     (h : FragMove M env (.pos φ w) .lose) :
@@ -1339,7 +1606,10 @@ theorem FragMove.pos_toLose {M : KripkeModel World Atom} {env : ℕ → World �
   cases h with
   | toLose hNo hLose => exact ⟨hNo, hLose⟩
 
-/-- The owner of a `pos` position is `even` iff its game owner is Verifier. -/
+/-- **Owner of an embedded position in the totalized fragment game.** For every fixpoint-free
+formula $\varphi$ and world $w$, the even player owns the embedded position $(\varphi, w)$ of the
+totalized fragment game if and only if Verifier owns the model-checking game position
+$(\varphi, w, [])$, with $\varphi$ embedded as a μ-calculus formula and the empty fixpoint stack. -/
 theorem fragOwner_pos_eq_even {φ : FixFreeFormula Atom} {w : World} :
     fragOwner (FragPos.pos φ w : FragPos Atom World) = Cslib.Games.Player.even ↔
       Owner ⟨FixFreeFormula.toMu φ, w, []⟩ = true := by
@@ -1351,12 +1621,21 @@ theorem fragOwner_pos_eq_even {φ : FixFreeFormula Atom} {w : World} :
   · rw [ite_eq_right h]; simp [h]
 
 open Classical in
-/-- The canonical next move induced by a bespoke strategy: at a `pos` position
-with a game move, follow the bespoke strategy at Verifier-owned positions
-(projected back into the arena by `fragOfGamePos`) and an arbitrary legal
-embedded move at Refuter-owned positions; at a terminal `pos` position,
-move to the absorbing `win`/`lose` state according to `TerminalWin`;
-`win`/`lose` loop. -/
+/-- **Canonical next move induced by a bespoke strategy.** Let $M$ be a Kripke model,
+$\mathit{env}$ an environment and $\sigma$ a Verifier strategy for the model-checking game on
+$M$. Write $\langle \psi, v \rangle$ for the game position with the embedding of a
+fixpoint-free formula $\psi$, the world $v$ and the empty binder stack. The canonical next move
+is the map on positions of the fragment arena defined as follows. The absorbing states
+$\mathrm{win}$ and $\mathrm{lose}$ are sent to themselves. A fragment position $(\varphi, w)$
+such that $\langle \varphi, w \rangle$ has a move to some $\langle \varphi', w' \rangle$ is
+sent, if Verifier owns $\langle \varphi, w \rangle$, to the projection into the fragment arena
+of the position that $\sigma$ chooses there (an embedded position $\langle \varphi', w' \rangle$
+projects to $(\varphi', w')$, every other game position to $\mathrm{lose}$), and otherwise to a
+fragment position $(\varphi', w')$ chosen, by the axiom of choice, among those with a move from
+$\langle \varphi, w \rangle$ to $\langle \varphi', w' \rangle$. A fragment position
+$(\varphi, w)$ with no such move is sent to $\mathrm{win}$ if $\langle \varphi, w \rangle$
+satisfies the terminal winning condition for Verifier in environment $\mathit{env}$, and to
+$\mathrm{lose}$ otherwise. -/
 noncomputable def canonicalNext (M : KripkeModel World Atom)
     (env : ℕ → World → Prop) (σ : Strategy M) : FragPos Atom World → FragPos Atom World
   | .win => .win
@@ -1371,8 +1650,16 @@ noncomputable def canonicalNext (M : KripkeModel World Atom)
             (Classical.choose (Classical.choose_spec hExists))
       else if TerminalWin M env ⟨FixFreeFormula.toMu φ, w, []⟩ then .win else .lose
 
-/-- The canonical next move at a Verifier-owned `pos` position with a move
-follows the bespoke strategy, landing on an embedded fragment position. -/
+/-- **The canonical move follows the bespoke strategy at Verifier positions with a move.** Let
+$M$ be a Kripke model, $\mathit{env}$ an environment and $\sigma$ a Verifier strategy for the
+model-checking game on $M$. Write $\langle \psi, v \rangle$ for the game position with the
+embedding of a fixpoint-free formula $\psi$, the world $v$ and the empty binder stack. Let
+$\varphi$ be a fixpoint-free formula and $w$ a world such that Verifier owns
+$\langle \varphi, w \rangle$ and $\langle \varphi, w \rangle$ has a move to some
+$\langle \varphi'', w'' \rangle$. Then there are a fixpoint-free formula $\varphi'$ and a world
+$w'$ such that the canonical next move induced by $\sigma$ (in environment $\mathit{env}$) sends
+the fragment position $(\varphi, w)$ to the fragment position $(\varphi', w')$, and $\sigma$
+chooses $\langle \varphi', w' \rangle$ at $\langle \varphi, w \rangle$. -/
 theorem canonicalNext_pos_of_owner {M : KripkeModel World Atom}
     {env : ℕ → World → Prop} {σ : Strategy M} {φ : FixFreeFormula Atom}
     {w : World}
@@ -1461,27 +1748,50 @@ noncomputable def fragStrategy (M : KripkeModel World Atom)
             rw [hNext]
             exact FragMove.toLose hNo hWin
 
-/-- Extract the game position from a `pos` position, with default `p0` for
-`win`/`lose` (never used on plays that stay in `pos`). -/
+/-- **Game position of a fragment position.** Given a default game position $p_0$, an embedded
+fragment position $(\varphi, w)$ is sent to the game position with formula $\varphi$, world $w$
+and empty binder stack, and the absorbing winning and losing states are both sent to $p_0$.
+
+The default is never used on plays that stay among embedded positions. -/
 def fragToPos (p0 : GamePosition Atom World) : FragPos Atom World → GamePosition Atom World
   | .pos φ w => ⟨FixFreeFormula.toMu φ, w, []⟩
   | _ => p0
 
-/-- A segment of a canonical play, as a list of game positions. -/
+/-- **Segment of a fragment play as game positions.** Let $p_0$ be a game position and let
+$\pi = \pi_0 \pi_1 \pi_2 \dots$ be an infinite sequence of positions of the totalized fragment
+game. For natural numbers $s$ and $k$, the segment of $\pi$ from $s$ of length $k + 1$ is the
+list of game positions obtained from $\pi_s, \pi_{s+1}, \dots, \pi_{s+k}$, in this order, by
+sending each embedded position $(\varphi, w)$ to the game position with formula $\varphi$, world
+$w$ and empty binder stack, and each of the absorbing winning and losing states to $p_0$. -/
 def fragSegment (p0 : GamePosition Atom World) (π : ωSequence (FragPos Atom World))
     (start : ℕ) : ℕ → List (GamePosition Atom World)
   | 0 => [fragToPos p0 (π start)]
   | k + 1 => fragToPos p0 (π start) :: fragSegment p0 π (start + 1) k
 
-/-- A segment splits off its first element. -/
+/-- **Splitting off the head of a segment.** Let $p_0$ be a model-checking game position and $\pi$
+an infinite sequence of positions of the totalized fragment game. For each $i$, let $\hat\pi_i$ be
+$p_0$ if $\pi_i$ is an absorbing state; if $\pi_i$ is the embedded position $(\varphi, w)$ of a
+fixpoint-free formula $\varphi$ and a world $w$, let $\hat\pi_i$ be the game position
+$(\varphi, w, [])$, with $\varphi$ embedded as a μ-calculus formula and the empty fixpoint stack.
+For all natural numbers $s$ and $k$, the segment $[\hat\pi_s, \dots, \hat\pi_{s+k+1}]$ of $\pi$ is
+the list with head $\hat\pi_s$ followed by the segment $[\hat\pi_{s+1}, \dots, \hat\pi_{s+k+1}]$. -/
 theorem fragSegment_cons (p0 : GamePosition Atom World)
     (π : ωSequence (FragPos Atom World)) (start k : ℕ) :
     fragSegment p0 π start (k + 1) =
       fragToPos p0 (π start) :: fragSegment p0 π (start + 1) k := rfl
 
-/-- A segment of a canonical conforming play is a bespoke play from its first
-position: canonical `pos` moves are game moves, and at Verifier-owned positions
-the canonical strategy follows the bespoke strategy. -/
+/-- **Segments of canonical plays through fragment positions are bespoke plays.** Let $M$ be a
+Kripke model, $\mathit{env}$ an environment and $\sigma$ a Verifier strategy for the
+model-checking game on $M$. Write $\langle \psi, v \rangle$ for the game position with the
+embedding of a fixpoint-free formula $\psi$, the world $v$ and the empty binder stack. Let $\pi$
+be a play of the fragment game of $M$ and $\mathit{env}$ that conforms to the canonical
+positional strategy induced by $\sigma$, and let $s, k \in \mathbb{N}$. Suppose every $\pi_i$
+with $s \le i \le s + k$ is a fragment position $(\varphi_i, w_i)$, not $\mathrm{win}$ or
+$\mathrm{lose}$. Then the list
+$\langle \varphi_s, w_s \rangle, \langle \varphi_{s+1}, w_{s+1} \rangle, \dots,
+\langle \varphi_{s+k}, w_{s+k} \rangle$ is a finite play from $\langle \varphi_s, w_s \rangle$
+consistent with $\sigma$: each position has a game move to the next, and at Verifier-owned
+positions the next position is the one $\sigma$ chooses. -/
 theorem canonical_playFrom_segment {M : KripkeModel World Atom}
     {env : ℕ → World → Prop} {σ : Strategy M} {π : ωSequence (FragPos Atom World)}
     (p0 : GamePosition Atom World) (start k : ℕ)
@@ -1529,7 +1839,10 @@ theorem canonical_playFrom_segment {M : KripkeModel World Atom}
       subst hw
       exact heq.symm
 
-/-- A canonical play that hits `win` stays at `win`. -/
+/-- **Plays of the totalized fragment game stay at the winning state.** Let $M$ be a Kripke model
+and $\mathit{env}$ an environment assigning a set of worlds to each free-variable index. If
+$\pi$ is a play of the totalized fragment game of $M$ and $\mathit{env}$ and $\pi_k$ is the
+absorbing winning state, then $\pi_n$ is the winning state for every $n \ge k$. -/
 theorem fragPlay_eq_win_of_le {M : KripkeModel World Atom}
     {env : ℕ → World → Prop} {π : ωSequence (FragPos Atom World)} {k n : ℕ}
     (hplay : (fragmentGame M env).IsPlay π) (hk : π k = .win) (hn : k ≤ n) :
@@ -1541,7 +1854,10 @@ theorem fragPlay_eq_win_of_le {M : KripkeModel World Atom}
       rw [ih] at hmove
       exact FragMove.win_eq hmove
 
-/-- A canonical play that hits `lose` stays at `lose`. -/
+/-- **Plays of the totalized fragment game stay at the losing state.** Let $M$ be a Kripke model
+and $\mathit{env}$ an environment assigning a set of worlds to each free-variable index. If
+$\pi$ is a play of the totalized fragment game of $M$ and $\mathit{env}$ and $\pi_k$ is the
+absorbing losing state, then $\pi_n$ is the losing state for every $n \ge k$. -/
 theorem fragPlay_eq_lose_of_le {M : KripkeModel World Atom}
     {env : ℕ → World → Prop} {π : ωSequence (FragPos Atom World)} {k n : ℕ}
     (hplay : (fragmentGame M env).IsPlay π) (hk : π k = .lose) (hn : k ≤ n) :
@@ -1553,7 +1869,11 @@ theorem fragPlay_eq_lose_of_le {M : KripkeModel World Atom}
       rw [ih] at hmove
       exact FragMove.lose_eq hmove
 
-/-- A canonical play that is eventually always at `win` is won by `even`. -/
+/-- **Sequences that stay at the win state are won by the even player.** Let $M$ be a Kripke
+model and $\mathit{env}$ an environment for free variables. If an infinite sequence
+$\pi_0 \pi_1 \pi_2 \dots$ of positions of the totalized fragment game of $M$ and $\mathit{env}$
+has a $k_0$ such that $\pi_n$ is the absorbing winning state for all $n \ge k_0$, then $\pi$ is
+won by the even player in that game. -/
 theorem wonBy_even_of_eventually_win {M : KripkeModel World Atom}
     {env : ℕ → World → Prop} {π : ωSequence (FragPos Atom World)} {k0 : ℕ}
     (hwin : ∀ n, k0 ≤ n → π n = .win) :
@@ -1575,7 +1895,11 @@ theorem wonBy_even_of_eventually_win {M : KripkeModel World Atom}
     rw [h1] at hEq
     omega
 
-/-- A canonical play that is eventually always at `lose` is won by `odd`. -/
+/-- **Sequences that stay at the lose state are won by the odd player.** Let $M$ be a Kripke
+model and $\mathit{env}$ an environment for free variables. If an infinite sequence
+$\pi_0 \pi_1 \pi_2 \dots$ of positions of the totalized fragment game of $M$ and $\mathit{env}$
+has a $k_0$ such that $\pi_n$ is the absorbing losing state for all $n \ge k_0$, then $\pi$ is
+won by the odd player in that game. -/
 theorem wonBy_odd_of_eventually_lose {M : KripkeModel World Atom}
     {env : ℕ → World → Prop} {π : ωSequence (FragPos Atom World)} {k0 : ℕ}
     (hlose : ∀ n, k0 ≤ n → π n = .lose) :
@@ -1597,7 +1921,10 @@ theorem wonBy_odd_of_eventually_lose {M : KripkeModel World Atom}
     rw [h1] at hEq
     omega
 
-/-- Segments are nonempty. -/
+/-- **Segments are nonempty.** Let $p_0$ be a model-checking game position and $\pi$ an infinite
+sequence of positions of the totalized fragment game. For all natural numbers $s$ and $k$, the
+segment of $\pi$ from index $s$ to index $s + k$, read as a list of model-checking game positions
+with $p_0$ standing for the absorbing states, is not the empty list. -/
 theorem fragSegment_ne_nil (p0 : GamePosition Atom World)
     (π : ωSequence (FragPos Atom World)) (start k : ℕ) :
     fragSegment p0 π start k ≠ [] := by
@@ -1605,7 +1932,13 @@ theorem fragSegment_ne_nil (p0 : GamePosition Atom World)
   | zero => simp [fragSegment]
   | succ k => simp [fragSegment]
 
-/-- The last position of a segment is its final element. -/
+/-- **Last position of a segment.** Let $p_0$ be a model-checking game position and $\pi$ an
+infinite sequence of positions of the totalized fragment game. For each $i$, let $\hat\pi_i$ be
+$p_0$ if $\pi_i$ is an absorbing state; if $\pi_i$ is the embedded position $(\varphi, w)$ of a
+fixpoint-free formula $\varphi$ and a world $w$, let $\hat\pi_i$ be the game position
+$(\varphi, w, [])$, with $\varphi$ embedded as a μ-calculus formula and the empty fixpoint stack.
+For all natural numbers $s$ and $k$, the segment $[\hat\pi_s, \dots, \hat\pi_{s+k}]$ has a last
+position, and it is $\hat\pi_{s+k}$. -/
 theorem fragSegment_playLast (p0 : GamePosition Atom World)
     (π : ωSequence (FragPos Atom World)) (start k : ℕ) :
     playLast (fragSegment p0 π start k) = some (fragToPos p0 (π (start + k))) := by
@@ -1617,12 +1950,17 @@ theorem fragSegment_playLast (p0 : GamePosition Atom World)
       rw [ih (start + 1)]
       rw [show start + 1 + k = start + (k + 1) from by omega]
 
-/-- **Bespoke → canonical (fragment).** A bespoke winning strategy for a
-fragment position induces a canonical winning positional strategy: every
-canonical conforming play must hit the absorbing `win` state (it cannot hit
-`lose`, by the bespoke finite-play clause applied to the segment before the
-first `lose`; and it cannot stay in `pos` forever, since fragment moves
-strictly decrease the formula). -/
+/-- **Winning Verifier strategies transfer to the fragment game.** Let $M$ be a Kripke model,
+$\rho$ an environment, $\sigma$ a Verifier strategy of the model-checking game on $M$,
+$\varphi$ a fixpoint-free formula and $w$ a world. If $\sigma$ wins in environment $\rho$ from
+the game position with formula $\varphi$, world $w$ and empty binder stack, then the positional
+strategy of the even player induced by $\sigma$ wins from the embedded position $(\varphi, w)$
+in the fragment game of $M$ and $\rho$.
+
+Every play conforming to the induced strategy reaches the absorbing winning state: it cannot
+reach the losing state, by the finite-play clause for $\sigma$ applied to the segment before the
+first losing state, and it cannot stay among embedded positions forever, since fragment moves
+strictly decrease the formula. -/
 theorem fragment_bespoke_to_canonical {M : KripkeModel World Atom}
     {env : ℕ → World → Prop} {σ : Strategy M} {φ : FixFreeFormula Atom}
     {w : World}
@@ -1712,8 +2050,15 @@ theorem fragment_bespoke_to_canonical {M : KripkeModel World Atom}
   obtain ⟨k, hkWin⟩ := hWinExists
   exact wonBy_even_of_eventually_win (fun n hn => fragPlay_eq_win_of_le hplay hkWin hn)
 
-/-- Inversion for canonical moves: every canonical move is a game move, a
-terminal move to `win`/`lose`, or a self-loop at `win`/`lose`. -/
+/-- **Moves of the totalized fragment game, by cases.** Let $M$ be a Kripke model and $e$ an
+environment, and read each fixpoint-free formula $\varphi$ as a μ-calculus formula. Every move
+from $a$ to $b$ in the totalized fragment game of $M$ and $e$ is of one of five kinds: $a$ and $b$
+are embedded positions $(\varphi, w)$ and $(\varphi', w')$ and the model-checking game of $M$ has a
+move from $(\varphi, w)$ to $(\varphi', w')$ with empty binder stacks; or $a = (\varphi, w)$, $b$ is
+the winning state, and the game position $(\varphi, w)$ with empty stack has no moves and is won by
+Verifier in environment $e$; or $a = (\varphi, w)$, $b$ is the losing state, and that game position
+has no moves and is not won by Verifier; or $a$ and $b$ are both the winning state; or $a$ and $b$
+are both the losing state. -/
 theorem fragMove_cases {M : KripkeModel World Atom} {env : ℕ → World → Prop}
     {a b : FragPos Atom World} (h : FragMove M env a b) :
     (∃ φ w φ' w', a = .pos φ w ∧ b = .pos φ' w' ∧
@@ -1733,8 +2078,17 @@ theorem fragMove_cases {M : KripkeModel World Atom} {env : ℕ → World → Pro
   | win_self => exact Or.inr (Or.inr (Or.inr (Or.inl ⟨rfl, rfl⟩)))
   | lose_self => exact Or.inr (Or.inr (Or.inr (Or.inr ⟨rfl, rfl⟩)))
 
-/-- The canonical next move at a position with a game move, for any canonical
-strategy, is a game move (it cannot be a terminal move to `win`/`lose`). -/
+/-- **Verifier's positional strategies make a game move at Verifier positions that have one.**
+Let $M$ be a Kripke model, $\mathit{env}$ an environment, and $\sigma$ any positional strategy of
+the even player (Verifier) in the fragment game of $M$ and $\mathit{env}$. Write
+$\langle \psi, v \rangle$ for the game position with the embedding of a fixpoint-free formula
+$\psi$, the world $v$ and the empty binder stack. Let $\varphi$ be a fixpoint-free formula and
+$w$ a world such that the even player owns the fragment position $(\varphi, w)$ and, in the
+model-checking game on $M$, $\langle \varphi, w \rangle$ has a move to some
+$\langle \varphi'', w'' \rangle$. Then $\sigma$ sends $(\varphi, w)$ to a fragment position
+$(\varphi', w')$ such that $\langle \varphi, w \rangle$ has a move to
+$\langle \varphi', w' \rangle$; in particular $\sigma$ does not move to the absorbing state
+$\mathrm{win}$ or $\mathrm{lose}$. -/
 theorem canonical_next_pos {M : KripkeModel World Atom} {env : ℕ → World → Prop}
     {σ : (fragmentGame M env).PositionalStrategy Cslib.Games.Player.even}
     {φ : FixFreeFormula Atom} {w : World}
@@ -1764,22 +2118,35 @@ theorem canonical_next_pos {M : KripkeModel World Atom} {env : ℕ → World →
   · nomatch h1
   · nomatch h1
 
-/-- The lose play from a terminal losing position: stay at `pos` for one step,
-then at `lose` forever. -/
+/-- **The lose play.** For a fixpoint-free formula $\varphi$ and a world $w$, the lose play is the
+infinite sequence of positions of the fragment arena that is at the position $(\varphi, w)$ at
+time $0$ and at the absorbing losing state at every later time. It is used for terminal losing
+positions $(\varphi, w)$. -/
 def losePlay (φ : FixFreeFormula Atom) (w : World) :
     ωSequence (FragPos Atom World) :=
   ⟨fun n => if n = 0 then FragPos.pos φ w else FragPos.lose⟩
 
-/-- The lose play starts at `pos`. -/
+/-- **The lose play starts at its fragment position.** For a fixpoint-free formula $\varphi$
+and a world $w$, the lose play from $(\varphi, w)$ is at the fragment-arena position
+$(\varphi, w)$ at time $0$. -/
 theorem losePlay_zero (φ : FixFreeFormula Atom) (w : World) :
     losePlay φ w 0 = .pos φ w := rfl
-/-- The lose play is at `lose` after the first step. -/
+/-- **The lose play stays at the losing state.** For every fixpoint-free formula $\varphi$,
+world $w$ and natural number $n$, the lose play from $(\varphi, w)$ is at the losing state at
+time $n + 1$. -/
 theorem losePlay_succ (φ : FixFreeFormula Atom) (w : World) (n : ℕ) :
     losePlay φ w (n + 1) = .lose := by simp [losePlay]
 
-/-- A terminal losing position is not in the canonical winning region of
-`even`: the lose play is conforming to any `even` strategy and is won by
-`odd`. -/
+/-- **Terminal losing positions are not won by the even player.** Let $M$ be a Kripke model,
+$\mathit{env}$ an environment assigning a set of worlds to each free-variable index, $\varphi$ a
+fixpoint-free formula and $w$ a world. If the model-checking game position $(\varphi, w, [])$,
+with $\varphi$ embedded as a μ-calculus formula and the empty fixpoint stack, has no moves in $M$
+and is not a terminal win for Verifier in $M$ under $\mathit{env}$, then the embedded position
+$(\varphi, w)$ of the totalized fragment game of $M$ and $\mathit{env}$ is not in the winning
+region of the even player.
+
+The play that moves from $(\varphi, w)$ to the losing state and stays there conforms to every
+strategy of the even player and is won by the odd player. -/
 theorem fragPos_not_mem_winningRegion_of_terminal_lose {M : KripkeModel World Atom}
     {env : ℕ → World → Prop} {φ : FixFreeFormula Atom} {w : World}
     (hNo : NoMoves M ⟨FixFreeFormula.toMu φ, w, []⟩)
@@ -1844,10 +2211,15 @@ theorem fragPos_not_mem_winningRegion_of_terminal_lose {M : KripkeModel World At
   exact Cslib.Games.ParityGame.not_wonBy_and_wonBy_opponent
     Cslib.Games.Player.even (losePlay φ w) ⟨hEven, hOdd⟩
 
-/-- **Canonical → Wins (fragment).** A fragment position in the canonical
-winning region of `even` is a winning fragment position, by induction on the
-formula using the canonical `move_mem` / `next_mem` closure lemmas (so no
-strategy composition is needed). -/
+/-- **The fragment game's winning region is contained in Wins.** Let $M$ be a Kripke model,
+$\rho$ an environment, $\varphi$ a fixpoint-free formula and $w$ a world. If the embedded
+position $(\varphi, w)$ lies in the winning region of the even player in the fragment game of
+$M$ and $\rho$, then the backward-induction winning condition $\mathrm{Wins}_M(\varphi, w)$
+holds.
+
+The proof is by induction on $\varphi$, using that the winning region is closed under the
+opponent's moves and under the moves of a winning strategy, so no strategy composition is
+needed. -/
 theorem fragment_canonical_to_wins (M : KripkeModel World Atom)
     (env : ℕ → World → Prop) (φ : FixFreeFormula Atom) (w : World)
     (h : (.pos φ w : FragPos Atom World) ∈
@@ -1963,8 +2335,11 @@ theorem fragment_canonical_to_wins (M : KripkeModel World Atom)
       rw [hφ, hw] at hmem
       exact ⟨v', hv', ih v' hmem⟩
 
-/-- **Fragment game = canonical parity game.** `Wins` is exactly the canonical
-winning region of the even player in the totalized fragment game. -/
+/-- **Wins is the winning region of the fragment game.** Let $M$ be a Kripke model, $\rho$ an
+environment, $\varphi$ a fixpoint-free formula and $w$ a world. Then the backward-induction
+winning condition $\mathrm{Wins}_M(\varphi, w)$ holds if and only if the embedded position
+$(\varphi, w)$ lies in the winning region of the even player in the fragment game of $M$ and
+$\rho$. -/
 theorem fragmentWins_iff_winningRegion (M : KripkeModel World Atom)
     (env : ℕ → World → Prop) (φ : FixFreeFormula Atom) (w : World) :
     Wins M φ w ↔ (.pos φ w : FragPos Atom World) ∈

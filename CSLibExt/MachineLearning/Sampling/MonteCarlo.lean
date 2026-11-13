@@ -44,13 +44,17 @@ open scoped Topology ENNReal
 
 variable {Ω α : Type*} [MeasurableSpace Ω] [MeasurableSpace α] {μ : Measure Ω}
 
-/-- The **Monte Carlo estimate** of `E[f(X)]` from the first `n` samples `X 0, …, X (n - 1)`:
-`(1 / n) ∑ f (X i)`. -/
+/-- **Monte Carlo estimate.** Given a function $f : \alpha \to \mathbb{R}$ and samples
+$X_0, X_1, \ldots : \Omega \to \alpha$, the Monte Carlo estimate from the first $n$ samples at
+$\omega \in \Omega$ is $\frac{1}{n} \sum_{i < n} f(X_i(\omega))$, which is $0$ when $n = 0$. -/
 noncomputable def mcEstimate (f : α → ℝ) (X : ℕ → Ω → α) (n : ℕ) (ω : Ω) : ℝ :=
   (n : ℝ)⁻¹ * ∑ i ∈ range n, f (X i ω)
 
-/-- **The Monte Carlo estimator is unbiased**: if the samples have a common law `ν`, the estimate
-from `n > 0` samples has expectation `∫ f dν`. -/
+/-- **The Monte Carlo estimator is unbiased.** Let $\mu$ be a measure on $\Omega$, let $\nu$ be a
+measure on $\alpha$, and let $f : \alpha \to \mathbb{R}$ be measurable and integrable with respect
+to $\nu$. If $X_0, X_1, \ldots : \Omega \to \alpha$ are measurable and the pushforward of $\mu$
+along each $X_i$ is $\nu$, then for every $n \ne 0$ the integral with respect to $\mu$ of the
+Monte Carlo estimate $\frac{1}{n} \sum_{i < n} f(X_i)$ equals $\int f \, d\nu$. -/
 theorem integral_mcEstimate {ν : Measure α} {f : α → ℝ}
     (hf : Measurable f) (hfi : Integrable f ν) {X : ℕ → Ω → α} (hX : ∀ i, Measurable (X i))
     (hlaw : ∀ i, μ.map (X i) = ν) {n : ℕ} (hn : n ≠ 0) :
@@ -66,9 +70,12 @@ theorem integral_mcEstimate {ν : Measure α} {f : α → ℝ}
   simp only [heq, sum_const, card_range, nsmul_eq_mul]
   field_simp
 
-/-- **The Monte Carlo estimator is consistent** (strong law of large numbers): for pairwise
-independent samples with a common law `ν` and `f ∈ L¹(ν)`, the estimate converges almost surely
-to `∫ f dν`. -/
+/-- **The Monte Carlo estimator is consistent** (strong law of large numbers). Let $\mu$ be a
+measure on $\Omega$, let $\nu$ be a measure on $\alpha$, and let $f : \alpha \to \mathbb{R}$ be
+measurable and integrable with respect to $\nu$. If $X_0, X_1, \ldots : \Omega \to \alpha$ are
+measurable, pairwise independent under $\mu$, and the pushforward of $\mu$ along each $X_i$ is
+$\nu$, then for $\mu$-almost every $\omega$ the Monte Carlo estimate
+$\frac{1}{n} \sum_{i < n} f(X_i(\omega))$ converges to $\int f \, d\nu$ as $n \to \infty$. -/
 theorem tendsto_mcEstimate {ν : Measure α} {f : α → ℝ}
     (hf : Measurable f) (hfi : Integrable f ν) {X : ℕ → Ω → α} (hX : ∀ i, Measurable (X i))
     (hlaw : ∀ i, μ.map (X i) = ν) (hindep : Pairwise fun i j ↦ IndepFun (X i) (X j) μ) :
@@ -89,19 +96,33 @@ theorem tendsto_mcEstimate {ν : Measure α} {f : α → ℝ}
 
 /-! ### Importance sampling -/
 
-/-- The **importance-sampling estimate** of `∫ f dν` from samples of a proposal `ρ`, where the
-target is `ν = ρ.withDensity w`: the average of `w (X i) * f (X i)` over the first `n` samples. -/
+/-- **Importance-sampling estimate.** Given a weight $w : \alpha \to [0, \infty]$, a function
+$f : \alpha \to \mathbb{R}$ and samples $X_0, X_1, \ldots : \Omega \to \alpha$, the
+importance-sampling estimate from the first $n$ samples at $\omega \in \Omega$ is
+$\frac{1}{n} \sum_{i < n} w(X_i(\omega)) \, f(X_i(\omega))$, where an infinite weight counts as
+$0$ and the estimate is $0$ when $n = 0$. If the samples are drawn from a proposal measure
+$\rho$, it estimates $\int f \, d\nu$ for the target measure $\nu$ with density $w$ with respect to
+$\rho$. -/
 noncomputable def isEstimate (w : α → ℝ≥0∞) (f : α → ℝ) (X : ℕ → Ω → α) (n : ℕ) (ω : Ω) : ℝ :=
   mcEstimate (fun x ↦ (w x).toReal * f x) X n ω
 
-/-- The importance weight corrects the change of measure: `∫ w f dρ = ∫ f d(ρ.withDensity w)`. -/
+/-- **Change of measure for importance weights.** Let $\rho$ be a measure on $\alpha$, let
+$w : \alpha \to [0, \infty]$ be measurable with $w < \infty$ $\rho$-almost everywhere, and let
+$\nu$ be the measure with density $w$ with respect to $\rho$. Then for every function
+$f : \alpha \to \mathbb{R}$, $\int w f \, d\rho = \int f \, d\nu$. -/
 theorem integral_weight_mul {ρ : Measure α} {w : α → ℝ≥0∞} (hw : Measurable w)
     (hwt : ∀ᵐ x ∂ρ, w x < ∞) (f : α → ℝ) :
     ∫ x, (w x).toReal * f x ∂ρ = ∫ x, f x ∂(ρ.withDensity w) :=
   (integral_withDensity_eq_integral_toReal_smul hw hwt f).symm
 
-/-- **Importance sampling is unbiased**: with samples from the proposal `ρ` and target
-`ν = ρ.withDensity w`, the estimate from `n > 0` samples has expectation `∫ f dν`. -/
+/-- **Importance sampling is unbiased.** Let $\mu$ be a measure on $\Omega$, let $\rho$ be a
+measure on $\alpha$, let $w : \alpha \to [0, \infty]$ be measurable with $w < \infty$
+$\rho$-almost everywhere, and let $\nu$ be the measure with density $w$ with respect to $\rho$.
+Let $f : \alpha \to \mathbb{R}$ be measurable and integrable with respect to $\nu$. If
+$X_0, X_1, \ldots : \Omega \to \alpha$ are measurable and the pushforward of $\mu$ along each
+$X_i$ is $\rho$, then for every $n \ne 0$ the integral with respect to $\mu$ of the
+importance-sampling estimate of $f$ with weight $w$ from the first $n$ samples equals
+$\int f \, d\nu$. -/
 theorem integral_isEstimate {ρ : Measure α} {w : α → ℝ≥0∞}
     (hw : Measurable w) (hwt : ∀ᵐ x ∂ρ, w x < ∞) {f : α → ℝ} (hf : Measurable f)
     (hfi : Integrable f (ρ.withDensity w)) {X : ℕ → Ω → α} (hX : ∀ i, Measurable (X i))
@@ -111,8 +132,14 @@ theorem integral_isEstimate {ρ : Measure α} {w : α → ℝ≥0∞}
   exact integral_mcEstimate (hw.ennreal_toReal.mul hf)
     ((integrable_withDensity_iff_integrable_smul' hw hwt).mp hfi) hX hlaw hn
 
-/-- **Importance sampling is consistent**: for pairwise independent samples from `ρ`, the estimate
-converges almost surely to `∫ f d(ρ.withDensity w)`. -/
+/-- **Importance sampling is consistent.** Let $\mu$ be a measure on $\Omega$, let $\rho$ be a
+measure on $\alpha$, let $w : \alpha \to [0, \infty]$ be measurable with $w < \infty$
+$\rho$-almost everywhere, and let $\nu$ be the measure with density $w$ with respect to $\rho$.
+Let $f : \alpha \to \mathbb{R}$ be measurable and integrable with respect to $\nu$. If
+$X_0, X_1, \ldots : \Omega \to \alpha$ are measurable, pairwise independent under $\mu$, and the
+pushforward of $\mu$ along each $X_i$ is $\rho$, then for $\mu$-almost every $\omega$ the
+importance-sampling estimate of $f$ with weight $w$ from the first $n$ samples at $\omega$
+converges to $\int f \, d\nu$ as $n \to \infty$. -/
 theorem tendsto_isEstimate {ρ : Measure α} {w : α → ℝ≥0∞}
     (hw : Measurable w) (hwt : ∀ᵐ x ∂ρ, w x < ∞) {f : α → ℝ} (hf : Measurable f)
     (hfi : Integrable f (ρ.withDensity w)) {X : ℕ → Ω → α} (hX : ∀ i, Measurable (X i))

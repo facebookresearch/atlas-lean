@@ -48,7 +48,11 @@ variable {α : Type*} [Fintype α] [MeasurableSpace α] [MeasurableSingletonClas
 
 /-! ### Detailed balance on a finite state space -/
 
-/-- The Markov kernel of a transition rule `P : α → PMF α` on a finite state space. -/
+/-- **Markov kernel of a transition rule.** Let $\alpha$ be a finite state space with a measurable
+structure in which singletons are measurable. A transition rule $P$ assigning to each $x \in \alpha$
+a probability distribution $P(x, \cdot)$ on $\alpha$ gives the Markov kernel on $\alpha$ that sends
+$x$ to $P(x, \cdot)$ viewed as a probability measure, so a set $B$ gets mass
+$\sum_{y \in B} P(x, y)$. -/
 noncomputable def pmfKernel (P : α → PMF α) : Kernel α α :=
   Kernel.ofFunOfCountable fun x ↦ (P x).toMeasure
 
@@ -69,8 +73,13 @@ theorem lintegral_pmfKernel (π : PMF α) (P : α → PMF α) (A B : Set α) :
     exact Finset.sum_congr rfl fun y _ ↦ mul_comm _ _
   · simp [Set.indicator_of_notMem hx]
 
-/-- **Detailed balance implies reversibility**: if `π x P(x, y) = π y P(y, x)` for all states, the
-kernel of `P` is reversible with respect to `π` in Mathlib's sense. -/
+/-- **Detailed balance implies reversibility.** Let $\alpha$ be a finite state space with a
+measurable structure in which singletons are measurable, $\pi$ a probability distribution on
+$\alpha$ and $P$ a transition rule assigning to each $x \in \alpha$ a probability distribution
+$P(x, \cdot)$ on $\alpha$. If $\pi(x) P(x, y) = \pi(y) P(y, x)$ for all $x, y \in \alpha$, then
+the Markov kernel $\kappa$ of $P$ is reversible with respect to $\pi$, viewed as a measure: for
+all measurable sets $A$ and $B$,
+$\int_A \kappa(x, B) \, d\pi(x) = \int_B \kappa(x, A) \, d\pi(x)$. -/
 theorem isReversible_pmfKernel {π : PMF α} {P : α → PMF α}
     (h : ∀ x y, π x * P x y = π y * P y x) : (pmfKernel P).IsReversible π.toMeasure := by
   intro A B _ _
@@ -78,14 +87,22 @@ theorem isReversible_pmfKernel {π : PMF α} {P : α → PMF α}
   refine Finset.sum_congr rfl fun y _ ↦ Finset.sum_congr rfl fun x _ ↦ ?_
   by_cases hx : x ∈ A <;> by_cases hy : y ∈ B <;> simp [hx, hy, h x y]
 
-/-- Under detailed balance, `π` is invariant for the kernel (Mathlib's
-`Kernel.IsReversible.invariant`). -/
+/-- **Detailed balance implies invariance.** Let $\alpha$ be a finite state space with a measurable
+structure in which singletons are measurable, $\pi$ a probability distribution on $\alpha$ and $P$
+a transition rule assigning to each $x \in \alpha$ a probability distribution $P(x, \cdot)$ on
+$\alpha$. If $\pi(x) P(x, y) = \pi(y) P(y, x)$ for all $x, y \in \alpha$, then $\pi$, viewed as a
+measure, is invariant for the Markov kernel $\kappa$ of $P$: for every measurable set $B$,
+$\int \kappa(x, B) \, d\pi(x) = \pi(B)$. -/
 theorem invariant_pmfKernel {π : PMF α} {P : α → PMF α} (h : ∀ x y, π x * P x y = π y * P y x) :
     (pmfKernel P).Invariant π.toMeasure :=
   (isReversible_pmfKernel h).invariant
 
 omit [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α] in
-/-- Under detailed balance, one step from `π` stays at `π`: `∑ₓ π x P(x, y) = π y`. -/
+/-- **Detailed balance gives a stationary distribution.** Let $\alpha$ be a finite set, $\pi$ a
+probability distribution on $\alpha$ and $P$ a transition rule assigning to each $x \in \alpha$ a
+probability distribution $P(x, \cdot)$ on $\alpha$. If $\pi(x) P(x, y) = \pi(y) P(y, x)$ for all
+$x, y \in \alpha$, then one step of $P$ started from $\pi$ is again distributed as $\pi$: for every
+$y \in \alpha$, $\sum_{x \in \alpha} \pi(x) P(x, y) = \pi(y)$. -/
 theorem bind_eq_of_detailedBalance [Finite α] {π : PMF α} {P : α → PMF α}
     (h : ∀ x y, π x * P x y = π y * P y x) : π.bind P = π := by
   have := Fintype.ofFinite α
@@ -97,13 +114,19 @@ theorem bind_eq_of_detailedBalance [Finite α] {π : PMF α} {P : α → PMF α}
 
 /-! ### The Metropolis–Hastings algorithm -/
 
-/-- The Metropolis–Hastings acceptance probability `min(1, π y Q(y, x) / (π x Q(x, y)))` of a
-move from `x` to `y` proposed by `Q`. -/
+/-- **Metropolis–Hastings acceptance probability.** For a probability distribution $\pi$ on
+$\alpha$ and a proposal $Q$ assigning to each $x \in \alpha$ a probability distribution
+$Q(x, \cdot)$ on $\alpha$, the acceptance probability of a move from $x$ to $y$ is
+$a(x, y) = \min\bigl(1, \pi(y) Q(y, x) / (\pi(x) Q(x, y))\bigr)$, computed in $[0, \infty]$
+with $c / 0 = \infty$ for $c \ne 0$ and $0 / 0 = 0$. -/
 noncomputable def mhAccept (π : PMF α) (Q : α → PMF α) (x y : α) : ℝ≥0∞ :=
   min 1 (π y * Q y x / (π x * Q x y))
 
-/-- One **Metropolis–Hastings** step from `x` for the target `π` and proposal `Q`: propose
-`y ~ Q x`, move to `y` with probability `mhAccept π Q x y`, and otherwise stay at `x`. -/
+/-- **Metropolis–Hastings step.** For a probability distribution $\pi$ on $\alpha$ (the target)
+and a proposal $Q$ assigning to each $x \in \alpha$ a probability distribution $Q(x, \cdot)$ on
+$\alpha$, one Metropolis–Hastings step from $x$ is the distribution of the following move: draw
+$y$ from $Q(x, \cdot)$, then move to $y$ with the Metropolis–Hastings acceptance probability
+$a(x, y)$, and otherwise stay at $x$. -/
 noncomputable def mhStep (π : PMF α) (Q : α → PMF α) (x : α) : PMF α :=
   (Q x).bind fun y ↦ (coin (mhAccept π Q x y) (min_le_left _ _)).map fun b ↦ cond b y x
 
@@ -133,8 +156,14 @@ theorem mul_min_one_div {a b : ℝ≥0∞} (ha : a ≠ ∞) : a * min 1 (b / a) 
   · rw [mul_min, mul_one, ENNReal.mul_div_cancel h0 ha]
 
 omit [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α] in
-/-- **Detailed balance for Metropolis–Hastings**: `π x P(x, y) = π y P(y, x)`. Both sides are
-`min (π x Q(x, y)) (π y Q(y, x))`. -/
+/-- **Detailed balance for Metropolis–Hastings.** Let $\pi$ be a probability distribution on a
+type $\alpha$, $Q$ a proposal assigning to each $x \in \alpha$ a probability distribution
+$Q(x, \cdot)$ on $\alpha$, and $P(x, y)$ the probability that one Metropolis–Hastings step for
+target $\pi$ and proposal $Q$ moves from $x$ to $y$. Then $\pi(x) P(x, y) = \pi(y) P(y, x)$ for
+all $x, y \in \alpha$.
+
+For $x \ne y$ both sides equal $\min(\pi(x) Q(x, y), \pi(y) Q(y, x))$; no positivity or symmetry
+assumption on $\pi$ or $Q$ is needed. -/
 theorem mh_detailedBalance (π : PMF α) (Q : α → PMF α) (x y : α) :
     π x * mhStep π Q x y = π y * mhStep π Q y x := by
   rcases eq_or_ne x y with rfl | hxy
@@ -143,12 +172,24 @@ theorem mh_detailedBalance (π : PMF α) (Q : α → PMF α) (x y : α) :
     mhAccept, mul_min_one_div (ENNReal.mul_ne_top (PMF.apply_ne_top _ _) (PMF.apply_ne_top _ _)),
     mul_min_one_div (ENNReal.mul_ne_top (PMF.apply_ne_top _ _) (PMF.apply_ne_top _ _)), min_comm]
 
-/-- The Metropolis–Hastings kernel is reversible with respect to the target. -/
+/-- **The Metropolis–Hastings kernel is reversible.** Let $\alpha$ be a finite state space with a
+measurable structure in which singletons are measurable, $\pi$ a probability distribution on
+$\alpha$ and $Q$ a proposal assigning to each $x \in \alpha$ a probability distribution
+$Q(x, \cdot)$ on $\alpha$. Then the Markov kernel $\kappa$ of the Metropolis–Hastings step for
+target $\pi$ and proposal $Q$ is reversible with respect to $\pi$, viewed as a measure: for all
+measurable sets $A$ and $B$, $\int_A \kappa(x, B) \, d\pi(x) = \int_B \kappa(x, A) \, d\pi(x)$. -/
 theorem isReversible_mhKernel (π : PMF α) (Q : α → PMF α) :
     (pmfKernel (mhStep π Q)).IsReversible π.toMeasure :=
   isReversible_pmfKernel (mh_detailedBalance π Q)
 
-/-- **The target is stationary for Metropolis–Hastings.** -/
+/-- **The target is stationary for Metropolis–Hastings.** Let $\alpha$ be a finite state space
+with a measurable structure in which singletons are measurable, $\pi$ a probability distribution
+on $\alpha$ and $Q$ a proposal assigning to each $x \in \alpha$ a probability distribution
+$Q(x, \cdot)$ on $\alpha$. Then $\pi$, viewed as a measure, is invariant for the Markov kernel
+$\kappa$ of the Metropolis–Hastings step for target $\pi$ and proposal $Q$: for every measurable
+set $B$, $\int \kappa(x, B) \, d\pi(x) = \pi(B)$.
+
+No positivity or symmetry assumption on $\pi$ or $Q$ is needed. -/
 theorem invariant_mhKernel (π : PMF α) (Q : α → PMF α) :
     (pmfKernel (mhStep π Q)).Invariant π.toMeasure :=
   invariant_pmfKernel (mh_detailedBalance π Q)

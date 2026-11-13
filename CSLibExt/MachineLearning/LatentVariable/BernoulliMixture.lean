@@ -49,10 +49,14 @@ namespace Cslib.MachineLearning.LatentVariable.BernoulliMixture
 open Real
 open Cslib.MachineLearning.LatentVariable.ExpectationMaximization
 
-/-- **The weighted log-likelihood is bounded by its value at the normalized counts**: for
-nonnegative counts `c` with a positive total and any positive weights `w` summing to one,
-`∑ c log w ≤ ∑ c log (c / ∑ c)` (Gibbs' inequality). When every count is positive the normalized
-counts are themselves admissible weights, so they maximize. -/
+/-- **The weighted log-likelihood is bounded by its value at the normalized counts.** Let $Z$ be
+a finite set, let $c \colon Z \to \mathbb{R}$ be nonnegative counts with positive total
+$C = \sum_{z \in Z} c_z > 0$, and let $w \colon Z \to \mathbb{R}$ be positive weights with
+$\sum_{z \in Z} w_z = 1$. Then $\sum_{z \in Z} c_z \log w_z \le \sum_{z \in Z} c_z \log(c_z / C)$
+(Gibbs' inequality).
+
+When every count is positive the normalized counts $c_z / C$ are themselves admissible weights,
+so they maximize. -/
 theorem sum_mul_log_le_sum_mul_log_div {Z : Type*} [Fintype Z] {c w : Z → ℝ}
     (hc : ∀ z, 0 ≤ c z) (hC : 0 < ∑ z, c z) (hw : ∀ z, 0 < w z) (hsum : ∑ z, w z = 1) :
     ∑ z, c z * log (w z) ≤ ∑ z, c z * log (c z / ∑ z', c z') := by
@@ -74,8 +78,11 @@ theorem sum_mul_log_le_sum_mul_log_div {Z : Type*} [Fintype Z] {c w : Z → ℝ}
 
 variable {d K N : ℕ}
 
-/-- The product of independent Bernoulli distributions with success probabilities `p`, at the
-binary vector `x`: `∏ j, p j ^ x j (1 - p j) ^ (1 - x j)`. -/
+/-- **Product Bernoulli probability mass function.** For a vector $p \in \mathbb{R}^d$ of success
+probabilities and a binary vector $x \in \{0, 1\}^d$, the probability of $x$ under the product of
+$d$ independent Bernoulli distributions with parameters $p_1, \dots, p_d$ is
+$$\prod_{j=1}^{d} p_j^{x_j} (1 - p_j)^{1 - x_j},$$
+that is, the product over $j$ of $p_j$ when $x_j = 1$ and of $1 - p_j$ when $x_j = 0$. -/
 noncomputable def bernPMF (p : Fin d → ℝ) (x : Fin d → Bool) : ℝ :=
   ∏ j, if x j then p j else 1 - p j
 
@@ -88,32 +95,49 @@ theorem log_bernPMF {p : Fin d → ℝ} (h0 : ∀ j, 0 < p j) (h1 : ∀ j, p j <
   rw [bernPMF, log_prod fun j _ => by split_ifs <;> linarith [h0 j, h1 j]]
   exact Finset.sum_congr rfl fun j _ => by split_ifs <;> rfl
 
-/-- Parameters of a mixture of `K` products of `d` Bernoulli distributions. -/
+/-- **Parameters of a Bernoulli mixture.** The parameters of a mixture of $K$ products of $d$
+Bernoulli distributions are real mixing weights $\pi_k$ for $k < K$ and real success
+probabilities $p_{kj}$ for every component $k < K$ and coordinate $j < d$. No constraint is
+imposed on these numbers here; the admissible ones are the valid parameters. -/
 structure Params (d K : ℕ) where
   /-- The mixing weights. -/
   weight : Fin K → ℝ
   /-- The success probability of each coordinate in each component. -/
   prob : Fin K → Fin d → ℝ
 
-/-- Valid parameters: positive weights summing to one, probabilities strictly between `0`
-and `1`. -/
+/-- **Valid parameters of a Bernoulli mixture.** Parameters of a mixture of $K$ products of $d$
+Bernoulli distributions, with mixing weights $\pi_k$ and success probabilities $p_{kj}$, are valid
+when $\pi_k > 0$ for every $k < K$, $\sum_{k < K} \pi_k = 1$, and $0 < p_{kj} < 1$ for every
+$k < K$ and $j < d$. -/
 structure Params.Valid (θ : Params d K) : Prop where
   weight_pos : ∀ k, 0 < θ.weight k
   weight_sum : ∑ k, θ.weight k = 1
   prob_pos : ∀ k j, 0 < θ.prob k j
   prob_lt_one : ∀ k j, θ.prob k j < 1
 
-/-- The valid parameters, the parameter space of EM. -/
+/-- **The parameter space of a Bernoulli mixture.** The parameter space of EM for a mixture of
+$K$ products of $d$ Bernoulli distributions is the set of valid parameters: mixing weights
+$\pi_k$ and success probabilities $p_{kj}$ ($k < K$, $j < d$) with every $\pi_k > 0$,
+$\sum_{k < K} \pi_k = 1$ and every $p_{kj}$ strictly between $0$ and $1$. -/
 abbrev ValidParams (d K : ℕ) := {θ : Params d K // θ.Valid}
 
-/-- The joint `p_θ(x, k) = π k ∏ j, p k j ^ x j (1 - p k j) ^ (1 - x j)`. -/
+/-- **Joint distribution of the Bernoulli mixture.** For valid parameters $\theta$ of a mixture of
+$K$ products of $d$ Bernoulli distributions, with mixing weights $\pi_k$ and success probabilities
+$p_{kj}$, the joint probability of a binary vector $x \in \{0, 1\}^d$ and a component $k$ is
+$$p_\theta(x, k) = \pi_k \prod_{j=1}^{d} p_{kj}^{x_j} (1 - p_{kj})^{1 - x_j},$$
+that is, $\pi_k$ times the product Bernoulli probability of $x$ with parameters
+$p_{k1}, \dots, p_{kd}$. -/
 noncomputable def joint (θ : ValidParams d K) (x : Fin d → Bool) (k : Fin K) : ℝ :=
   θ.1.weight k * bernPMF (θ.1.prob k) x
 
 theorem joint_pos (θ : ValidParams d K) (x : Fin d → Bool) (k : Fin K) : 0 < joint θ x k :=
   mul_pos (θ.2.weight_pos k) (bernPMF_pos (θ.2.prob_pos k) (θ.2.prob_lt_one k) x)
 
-/-- The responsibilities `r n k = P(z = k | xₙ)` (the E-step). -/
+/-- **Responsibilities of a Bernoulli mixture.** Let $\theta$ be valid parameters of a mixture of
+$K$ products of $d$ Bernoulli distributions, and write $p_\theta(x, k)$ for the joint probability
+of a binary vector $x \in \{0,1\}^d$ and a component $k < K$ under $\theta$. The responsibility of
+$k$ for $x$ is the posterior probability $r_k(x) = p_\theta(x, k) / \sum_{k' < K} p_\theta(x, k')$.
+Computing it is the E-step of EM. -/
 noncomputable def resp (θ : ValidParams d K) (x : Fin d → Bool) (k : Fin K) : ℝ :=
   posterior joint θ x k
 
@@ -134,23 +158,43 @@ theorem sum_resp (θ : ValidParams d K) (x : Fin d → Bool) : ∑ k, resp θ x 
 
 variable (xs : Fin N → Fin d → Bool)
 
-/-- The effective number of points of component `k`. -/
+/-- **Effective number of points of a Bernoulli-mixture component.** For data
+$x_1, \dots, x_N \in \{0, 1\}^d$ and valid parameters $\theta$ of a mixture of $K$ products of $d$
+Bernoulli distributions, the effective number of points of component $k$ is
+$N_k = \sum_{n=1}^{N} r_{nk}$, where $r_{nk}$ is the posterior probability (responsibility) of
+component $k$ given $x_n$ under $\theta$. -/
 noncomputable def mass (θ : ValidParams d K) (k : Fin K) : ℝ := ∑ n, resp θ (xs n) k
 
-/-- The responsibility-weighted number of points with coordinate `j` equal to `true`. -/
+/-- **Responsibility-weighted count of ones.** For data $x_1, \dots, x_N \in \{0, 1\}^d$, valid
+parameters $\theta$ of a mixture of $K$ products of $d$ Bernoulli distributions, a component $k$
+and a coordinate $j$, this is the sum $\sum_{n \,:\, x_{nj} = 1} r_{nk}$, over the points whose
+$j$-th coordinate is $1$, of the posterior probability $r_{nk}$ of component $k$ given $x_n$
+under $\theta$. -/
 noncomputable def ones (θ : ValidParams d K) (k : Fin K) (j : Fin d) : ℝ :=
   ∑ n, if xs n j then resp θ (xs n) k else 0
 
-/-- The responsibility-weighted number of points with coordinate `j` equal to `false`. -/
+/-- **Responsibility-weighted count of zeros.** Let $\theta$ be valid parameters of a mixture of
+$K$ products of $d$ Bernoulli distributions, let $x_0, \dots, x_{N-1} \in \{0,1\}^d$ be data, and
+let $k < K$ be a component and $j < d$ a coordinate. Write $x_{nj}$ for the $j$-th coordinate of
+$x_n$ and $r_k(x_n)$ for the responsibility of component $k$ for $x_n$ under $\theta$. The
+weighted count is $\sum_{n < N,\ x_{nj} = 0} r_k(x_n)$, the sum of the responsibilities over the
+points whose $j$-th coordinate is $0$. -/
 noncomputable def zeros (θ : ValidParams d K) (k : Fin K) (j : Fin d) : ℝ :=
   ∑ n, if xs n j then 0 else resp θ (xs n) k
 
-/-- The M-step: `π k' = N k / N` and `p k j' = (∑ n, r n k xₙ j) / N k`. -/
+/-- **The M-step of the Bernoulli mixture.** Let $x_1, \dots, x_N \in \{0, 1\}^d$ be data and
+$\theta$ valid parameters of a mixture of $K$ products of $d$ Bernoulli distributions. With $r_{nk}$
+the posterior probability of component $k$ given $x_n$ under $\theta$, $N_k = \sum_n r_{nk}$ and
+$A_{kj} = \sum_n r_{nk} x_{nj}$, the M-step returns the parameters with mixing weights
+$\pi'_k = N_k / N$ and success probabilities $p'_{kj} = A_{kj} / N_k$, where a quotient by $0$ is
+read as $0$. These parameters need not be valid. -/
 noncomputable def mStep (θ : ValidParams d K) : Params d K where
   weight k := mass xs θ k / N
   prob k j := ones xs θ k j / mass xs θ k
 
-/-- Data on which the M-step is valid: at least one point, and both values in every coordinate. -/
+/-- **Rich data for a Bernoulli mixture.** Data $x_0, \dots, x_{N-1} \in \{0,1\}^d$ are rich when
+$N > 0$ and, for every coordinate $j < d$, some $x_n$ has $j$-th coordinate $1$ and some $x_m$
+has $j$-th coordinate $0$. These are the data on which the M-step yields valid parameters. -/
 structure Rich (xs : Fin N → Fin d → Bool) : Prop where
   pos : 0 < N
   both : ∀ j, (∃ n, xs n j = true) ∧ ∃ n, xs n j = false
@@ -200,14 +244,33 @@ theorem mStep_valid (hx : Rich xs) (θ : ValidParams d K) : (mStep xs θ).Valid 
     linarith [zeros_pos hx θ k j]
 
 variable (xs) in
-/-- One EM step for the Bernoulli mixture, on rich data. -/
+/-- **One EM step for the Bernoulli mixture.** Let $x_1, \dots, x_N \in \{0, 1\}^d$ be data with
+$N \ge 1$ in which every coordinate takes both values. For valid parameters $\theta$ of a mixture
+of $K$ products of $d$ Bernoulli distributions, the EM step maps $\theta$ to the parameters with
+mixing weights $\pi'_k = N_k / N$ and success probabilities $p'_{kj} = A_{kj} / N_k$, where
+$r_{nk}$ is the posterior probability of component $k$ given $x_n$ under $\theta$,
+$N_k = \sum_n r_{nk}$, and $A_{kj}$ is the sum of $r_{nk}$ over the points with $x_{nj} = 1$. On
+such data these parameters are again valid. -/
 noncomputable def emStep (hx : Rich xs) (θ : ValidParams d K) : ValidParams d K :=
   ⟨mStep xs θ, mStep_valid hx θ⟩
 
 /-! ## The M-step maximizes `Q` -/
 
 variable (xs) in
-/-- `Q(θ' | θ)` splits into a weights term and one term per component and coordinate. -/
+/-- **Decomposition of the EM objective for the Bernoulli mixture.** Let
+$x_1, \dots, x_N \in \{0, 1\}^d$ be data and let $\theta$ and $\theta'$ be valid parameters of a
+mixture of $K$ products of $d$ Bernoulli distributions (positive mixing weights summing to one and
+success probabilities in $(0, 1)$), where $\theta'$ has mixing weights $\pi'_k$ and success
+probabilities $p'_{kj}$. Write $p_\theta(x, k)$ for the joint probability of $x$ and component $k$
+under $\theta$ (the mixing weight of $k$ times the product Bernoulli probability of $x$),
+$r_{nk} = p_\theta(k \mid x_n) = p_\theta(x_n, k) / \sum_l p_\theta(x_n, l)$ for the posterior
+probability of component $k$ given $x_n$, $N_k = \sum_n r_{nk}$, and $A_{kj}$ and $B_{kj}$ for the
+sums of $r_{nk}$ over the points $x_n$ whose $j$-th coordinate $x_{nj}$ is $1$ and is $0$
+respectively. Then the EM objective
+$Q(\theta' \mid \theta) = \sum_n \sum_k r_{nk} \log p_{\theta'}(x_n, k)$ equals
+$$\sum_{k=1}^{K} \Big( N_k \log \pi'_k + \sum_{j=1}^{d} \big( A_{kj} \log p'_{kj} +
+B_{kj} \log (1 - p'_{kj}) \big) \Big).$$
+The first term depends only on the mixing weights and each remaining term on a single $p'_{kj}$. -/
 theorem emQ_eq (θ' θ : ValidParams d K) :
     emQ joint xs θ' θ = ∑ k, (mass xs θ k * log (θ'.1.weight k) +
       ∑ j, (ones xs θ k j * log (θ'.1.prob k j) + zeros xs θ k j * log (1 - θ'.1.prob k j))) := by
@@ -234,8 +297,13 @@ theorem emQ_eq (θ' θ : ValidParams d K) :
   exact congrArg _ (Finset.sum_congr rfl fun j _ => hsplit k j)
 
 variable (xs) in
-/-- **The M-step maximizes `Q(· | θ)`**: no valid parameter `θ'` has a larger `Q(θ' | θ)` than the
-EM update `emStep xs hx θ`. -/
+/-- **The M-step of the Bernoulli mixture maximizes the EM objective.** Let
+$x_1, \dots, x_N \in \{0, 1\}^d$ be rich data: $N > 0$, and for every coordinate $j < d$ some
+$x_n$ has $j$-th coordinate $1$ and some $x_m$ has $j$-th coordinate $0$. Let $\theta$ be valid
+parameters of a mixture of $K$ products of $d$ Bernoulli distributions, and let $\theta^+$ be the
+result of the EM step applied to $\theta$. Then every valid parameter $\theta'$ satisfies
+$Q(\theta' \mid \theta) \le Q(\theta^+ \mid \theta)$, where $Q$ is the EM objective of the
+mixture's joint distribution. -/
 theorem emQ_le_emStep (hx : Rich xs) (θ' θ : ValidParams d K) :
     emQ joint xs θ' θ ≤ emQ joint xs (emStep xs hx θ) θ := by
   rw [emQ_eq, emQ_eq, Finset.sum_add_distrib, Finset.sum_add_distrib]
@@ -265,14 +333,25 @@ theorem emQ_le_emStep (hx : Rich xs) (θ' θ : ValidParams d K) :
     linarith
 
 variable (xs) in
-/-- **Each EM step for the Bernoulli mixture does not decrease the log-likelihood**. -/
+/-- **Each EM step for the Bernoulli mixture does not decrease the log-likelihood.** Let
+$x_1, \dots, x_N \in \{0, 1\}^d$ be rich data: $N > 0$, and for every coordinate $j < d$ some
+$x_n$ has $j$-th coordinate $1$ and some $x_m$ has $j$-th coordinate $0$. Let $\theta$ be valid
+parameters of a mixture of $K$ products of $d$ Bernoulli distributions. Then
+$\ell(\theta) \le \ell(\theta^+)$, where $\ell$ is the log-likelihood of the data under the
+mixture's joint distribution and $\theta^+$ is the result of the EM step applied to $\theta$. -/
 theorem logLik_le_emStep (hx : Rich xs) (θ : ValidParams d K) :
     logLik joint xs θ ≤ logLik joint xs (emStep xs hx θ) := by
   have := nonempty_of_valid θ
   exact logLik_le_of_emQ_le (fun θ x k => joint_pos θ x k) xs (emQ_le_emStep xs hx θ θ)
 
 variable (xs) in
-/-- **The log-likelihood is monotone along the EM iterates** of the Bernoulli mixture. -/
+/-- **The log-likelihood is monotone along the EM iterates of a Bernoulli mixture.** Let
+$x_1, \dots, x_N \in \{0, 1\}^d$ be rich data: $N > 0$, and for every coordinate $j < d$ some
+$x_n$ has $j$-th coordinate $1$ and some $x_m$ has $j$-th coordinate $0$. Let $\theta_0$ be valid
+parameters of a mixture of $K$ products of $d$ Bernoulli distributions, and let $\theta_t$ be the
+result of $t$ EM steps from $\theta_0$. Then $\ell(\theta_t)$ is nondecreasing in
+$t \in \mathbb{N}$, where $\ell$ is the log-likelihood of the data under the mixture's joint
+distribution. -/
 theorem logLik_iterate_emStep_monotone (hx : Rich xs) (θ₀ : ValidParams d K) :
     Monotone fun t => logLik joint xs ((emStep xs hx)^[t] θ₀) := by
   have := nonempty_of_valid θ₀
