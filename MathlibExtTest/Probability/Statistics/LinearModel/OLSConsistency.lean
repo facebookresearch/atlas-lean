@@ -71,7 +71,25 @@ theorem olsSeqEstimator_const {Ω : Type*} (ω : Ω) (n : ℕ) (hn : 0 < n) :
       vec_single_one a, mul_one, vec_single_three a]
     rw [hsum3, ← mul_assoc, inv_mul_cancel₀ hn0, one_mul]
   have h1inv : (1 : Matrix (Fin 1) (Fin 1) ℝ)⁻¹ = 1 := inv_one
-  simp only [olsSeqEstimator]
-  rw [hQ, hG, h1inv, Matrix.one_mulVec]
+  rw [olsSeqEstimator_eq, hQ, hG, h1inv, Matrix.one_mulVec]
+
+/-- Bridge: `olsSeqEstimator` is the existing `olsEstimator` on the design of the first `n`
+rows and the first `n` responses, so results about `olsEstimator` apply to it. -/
+theorem olsSeqEstimator_eq_olsEstimator {Ω : Type*} (X : ℕ → Ω → (Fin 2 → ℝ))
+    (Y : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) :
+    olsSeqEstimator X Y n ω =
+      olsEstimator (Matrix.of fun (i : Fin n) a => X i ω a) (fun i : Fin n => Y i ω) :=
+  rfl
+
+/-- Bridge on the constant example: the normalized formula and `olsEstimator` on the
+one-row-per-observation design agree, so `olsEstimator` also returns `![3]`. -/
+theorem olsEstimator_const {Ω : Type*} (ω : Ω) (n : ℕ) (hn : 0 < n) :
+    olsEstimator (Matrix.of fun (_ : Fin n) (_ : Fin 1) => (1 : ℝ))
+      (fun _ : Fin n => (![1] : Fin 1 → ℝ) ⬝ᵥ (![3] : Fin 1 → ℝ) + 0) = ![3] := by
+  have h := olsSeqEstimator_const ω n hn
+  rw [olsSeqEstimator] at h
+  convert h using 2
+  ext i a
+  simp
 
 end MathlibExtTest.LinearModelOLSConsistency

@@ -11,14 +11,17 @@ module
 public import Mathlib.Probability.StrongLaw
 public import Mathlib.Analysis.Normed.Ring.Units
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+public import MathlibExt.Probability.Statistics.LinearModel.Sampling
 
 /-!
 # Consistency of OLS with i.i.d. rows (Atlas ST05.T01)
 
 Random-design model: i.i.d. rows `(xᵢ, uᵢ)` with observed responses
 `yᵢ = xᵢ ⬝ᵥ β + uᵢ`, moment exogeneity `𝔼[x₀ u₀] = 0`, and a nonsingular
-population Gram `Q = 𝔼[x₀ x₀ᵀ]`. The OLS sequence, a statistic of the
-observed regressors and responses, is `β̂ₙ = Q̂ₙ⁻¹ *ᵥ ĝₙ` with
+population Gram `Q = 𝔼[x₀ x₀ᵀ]`. The OLS sequence `β̂ₙ` is the existing
+`olsEstimator` applied to the observed design of the first `n` rows and the
+first `n` responses (`olsSeqEstimator`). In normalized Gram/score form
+(`olsSeqEstimator_eq`) it is `β̂ₙ = Q̂ₙ⁻¹ *ᵥ ĝₙ` with
 `Q̂ₙ = n⁻¹ ∑_{i<n} xᵢ xᵢᵀ` (outer products `Matrix.vecMulVec xᵢ xᵢ`) and
 `ĝₙ = n⁻¹ ∑_{i<n} yᵢ xᵢ`. Then `β̂ₙ → β` almost surely.
 
@@ -49,12 +52,51 @@ noncomputable def popGram {k : Type*} [Fintype k] {Ω : Type*} [MeasurableSpace 
     (X0 : Ω → (k → ℝ)) (μ : Measure Ω) : Matrix k k ℝ :=
   Matrix.of fun a b => ∫ ω, X0 ω a * X0 ω b ∂μ
 
-/-- The OLS estimator at sample size `n` from the observed regressors `X`
-and responses `Y`: `(n⁻¹ ∑_{i<n} xᵢ xᵢᵀ)⁻¹ *ᵥ (n⁻¹ ∑_{i<n} yᵢ xᵢ)`. -/
+/-- The OLS estimator at sample size `n`: `olsEstimator` applied to the observed design of the
+first `n` regressor rows `X 0 ω, …, X (n - 1) ω` and the first `n` responses `Y`. -/
 noncomputable def olsSeqEstimator {k : Type*} [Fintype k] [DecidableEq k]
     {Ω : Type*} (X : ℕ → Ω → (k → ℝ)) (Y : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) : k → ℝ :=
-  ((n : ℝ)⁻¹ • ∑ i ∈ Finset.range n, Matrix.vecMulVec (X i ω) (X i ω))⁻¹ *ᵥ
-    ((n : ℝ)⁻¹ • ∑ i ∈ Finset.range n, Y i ω • X i ω)
+  olsEstimator (Matrix.of fun (i : Fin n) (a : k) => X i ω a) (fun i : Fin n => Y i ω)
+
+/-- The sequential OLS estimator in normalized Gram/score form,
+`(n⁻¹ ∑_{i<n} xᵢ xᵢᵀ)⁻¹ *ᵥ (n⁻¹ ∑_{i<n} yᵢ xᵢ)`. The normalization cancels for every `n`,
+including when the sample Gram matrix is singular (both inverses are then `0`). -/
+theorem olsSeqEstimator_eq {k : Type*} [Fintype k] [DecidableEq k] {Ω : Type*}
+    (X : ℕ → Ω → (k → ℝ)) (Y : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) :
+    olsSeqEstimator X Y n ω =
+      ((n : ℝ)⁻¹ • ∑ i ∈ Finset.range n, Matrix.vecMulVec (X i ω) (X i ω))⁻¹ *ᵥ
+        ((n : ℝ)⁻¹ • ∑ i ∈ Finset.range n, Y i ω • X i ω) := by
+  set G := ∑ i ∈ Finset.range n, Matrix.vecMulVec (X i ω) (X i ω) with hGdef
+  set S := ∑ i ∈ Finset.range n, Y i ω • X i ω with hSdef
+  have hG : (Matrix.of fun (i : Fin n) (a : k) => X i ω a)ᵀ *
+      (Matrix.of fun (i : Fin n) (a : k) => X i ω a) = G := by
+    ext a b
+    rw [hGdef, Matrix.sum_apply,
+      Finset.sum_range (fun i => Matrix.vecMulVec (X i ω) (X i ω) a b)]
+    simp [Matrix.mul_apply, Matrix.vecMulVec_apply]
+  have hS : (Matrix.of fun (i : Fin n) (a : k) => X i ω a)ᵀ *ᵥ (fun i : Fin n => Y i ω) = S := by
+    ext a
+    rw [hSdef, Finset.sum_apply, Finset.sum_range (fun i => (Y i ω • X i ω) a)]
+    simp [Matrix.mulVec, dotProduct, mul_comm]
+  have hols : olsSeqEstimator X Y n ω = G⁻¹ *ᵥ S := by
+    rw [olsSeqEstimator, olsEstimator, olsMatrix_eq, ← Matrix.mulVec_mulVec, hG, hS]
+  rw [hols]
+  rcases Nat.eq_zero_or_pos n with hn | hn
+  · subst hn
+    simp [hGdef, hSdef]
+  · have hc : (n : ℝ)⁻¹ ≠ 0 := inv_ne_zero (Nat.cast_ne_zero.mpr hn.ne')
+    by_cases hGu : IsUnit G.det
+    · have hinv : ((n : ℝ)⁻¹ • G)⁻¹ = (n : ℝ) • G⁻¹ := by
+        have h := Matrix.inv_smul' G (Units.mk0 ((n : ℝ)⁻¹) hc) hGu
+        simpa [Units.smul_def] using h
+      rw [hinv, Matrix.smul_mulVec, Matrix.mulVec_smul, smul_smul,
+        mul_inv_cancel₀ (Nat.cast_ne_zero.mpr hn.ne'), one_smul]
+    · have hdet : ¬IsUnit ((n : ℝ)⁻¹ • G).det := by
+        rw [Matrix.det_smul, isUnit_iff_ne_zero]
+        rw [isUnit_iff_ne_zero, not_not] at hGu
+        simp [hGu]
+      rw [Matrix.nonsing_inv_apply_not_isUnit _ hGu,
+        Matrix.nonsing_inv_apply_not_isUnit _ hdet, Matrix.zero_mulVec, Matrix.zero_mulVec]
 
 /-- **Strong law for the sample Gram matrix**: for pairwise independent,
 identically distributed regressors `xᵢ` with integrable products of
@@ -203,6 +245,6 @@ theorem tendsto_olsSeqEstimator_ae {k : Type*} [Fintype k] [DecidableEq k]
       (fun n : ℕ => ((n : ℝ)⁻¹ • ∑ i ∈ Finset.range n, Matrix.vecMulVec (X i ω) (X i ω))⁻¹ *ᵥ
         ((n : ℝ)⁻¹ • ∑ i ∈ Finset.range n, (X i ω ⬝ᵥ β + U i ω) • X i ω))
       atTop (𝓝 β) := h.congr fun n => rfl
-  exact hfinal
+  exact hfinal.congr fun n => (olsSeqEstimator_eq X _ n ω).symm
 
 end MathlibExt.Probability.Statistics.LinearModel
