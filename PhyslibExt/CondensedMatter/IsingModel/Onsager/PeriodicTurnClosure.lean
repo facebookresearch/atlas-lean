@@ -1375,14 +1375,16 @@ lemma ons_allPeriodStates_map_direction {n : ℕ}
   intro r hr
   congr 1
 
+set_option linter.unusedVariables false in
 @[deprecated "Use `List.dropLast_take`." (since := "2026-11-12")]
 lemma ons_dropLast_take_of_pos_le {X : Type*}
-    (l : List X) (k : ℕ) (_hk : 0 < k) (hle : k ≤ l.length) :
+    (l : List X) (k : ℕ) (hk : 0 < k) (hle : k ≤ l.length) :
     (l.take k).dropLast = l.take (k - 1) :=
   List.dropLast_take hle
 
+set_option linter.unusedVariables false in
 lemma ons_periodicArcDirections_eq_slice {n : ℕ} [NeZero n]
-    (d : Fin n → Fin 4) (N : ℕ) (_hN : 1 ≤ N)
+    (d : Fin n → Fin 4) (N : ℕ) (hN : 1 ≤ N)
     (imin imax : Fin n) :
     ons_periodicArcDirections d N imin imax =
       ((ons_directionPeriods d (N + 1)).drop imin.val).take
