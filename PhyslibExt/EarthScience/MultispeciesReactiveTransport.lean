@@ -26,9 +26,11 @@ Integrate the PDE in `x`, weighted by the conservation vector `l`: the
 reaction term vanishes by `lᵀ S = 0` after swapping finite sums and
 integrals, and the flux term integrates by the fundamental theorem of
 calculus per species. No-flux is not assumed; the boundary term is the
-result. The derivative form assumes differentiation under the integral
-sign per species (`hswap`) and integrability of `c` at all times
-(`hc_all`) as explicit hypotheses.
+result. The PDE is assumed only on `[a, b]`, in a form that asserts that
+the time derivative `c_t` exists there; the fluxes are assumed
+differentiable in `x` on `[a, b]`. The derivative form assumes
+differentiation under the integral sign per species (`hswap`) and
+integrability of `c` at all times (`hc_all`) as explicit hypotheses.
 
 ## ii. Key results
 
@@ -56,29 +58,29 @@ open MeasureTheory intervalIntegral
 
 namespace EarthScience
 
-set_option linter.unusedVariables false in
 /-- Multispecies reactive-transport conservation on a one-dimensional box
 `[a, b]`, at time `t`. Species concentrations are `c t x : Fin n → ℝ`,
 fluxes `J t x : Fin n → ℝ`, the stoichiometric matrix is
 `S : Fin n → Fin m → ℝ`, and `r : (Fin n → ℝ) → Fin m → ℝ` is the reaction
-rate vector. If `c_t + ∂ₓ J = S *ᵥ r(c)` pointwise (derivatives with
-`deriv`) and `l` is a conservation vector, `∑ i, l i * S i j = 0` for every
-reaction `j`, then the integral of `l ⬝ᵥ c_t` over `[a, b]` equals minus
-the boundary flux `l ⬝ᵥ J(t, b) - l ⬝ᵥ J(t, a)`; the reaction term drops
-out. -/
+rate vector. Suppose that at every `x ∈ [a, b]` each concentration
+`c_i(·, x)` has time derivative `(S *ᵥ r(c))_i - ∂ₓ J_i` at `t` (that is,
+`c_t + ∂ₓ J = S *ᵥ r(c)` with `c_t` existing) and each flux `J_i(t, ·)` is
+differentiable at `x`. If `l` is a conservation vector,
+`∑ i, l i * S i j = 0` for every reaction `j`, then the integral of
+`l ⬝ᵥ c_t` over `[a, b]` equals minus the boundary flux
+`l ⬝ᵥ J(t, b) - l ⬝ᵥ J(t, a)`; the reaction term drops out. -/
 theorem multispecies_integrated (n m : ℕ) (c J : ℝ → ℝ → Fin n → ℝ)
     (S : Fin n → Fin m → ℝ) (r : (Fin n → ℝ) → Fin m → ℝ)
     (l : Fin n → ℝ) (a b t : ℝ)
-    (hpde : ∀ x i, deriv (fun t => c t x i) t + deriv (fun x => J t x i) x =
-      ∑ j, S i j * r (c t x) j)
+    (hpde : ∀ x ∈ Set.uIcc a b, ∀ i, HasDerivAt (fun t => c t x i)
+      ((∑ j, S i j * r (c t x) j) - deriv (fun x => J t x i) x) t)
     (hcons : ∀ j, ∑ i, l i * S i j = 0)
     (ht_int : ∀ i, IntervalIntegrable (fun x => deriv (fun t => c t x i) t)
       MeasureTheory.volume a b)
     (hx_int : ∀ i, IntervalIntegrable (fun x => deriv (fun x => J t x i) x)
       MeasureTheory.volume a b)
-    (hx_deriv : ∀ i x, HasDerivAt (fun x => J t x i) (deriv (fun x => J t x i) x) x)
-    (hr_int : ∀ i, IntervalIntegrable (fun x => ∑ j, S i j * r (c t x) j)
-      MeasureTheory.volume a b) :
+    (hx_deriv : ∀ i, ∀ x ∈ Set.uIcc a b,
+      HasDerivAt (fun x => J t x i) (deriv (fun x => J t x i) x) x) :
     (∫ x in a..b, ∑ i, l i * deriv (fun t => c t x i) t) =
       -((∑ i, l i * J t b i) - ∑ i, l i * J t a i) := by
   have ht_wint : ∀ i, IntervalIntegrable (fun x => l i * deriv (fun t => c t x i) t)
@@ -105,22 +107,19 @@ theorem multispecies_integrated (n m : ℕ) (c J : ℝ → ℝ → Fin n → ℝ
       simp only [Finset.sum_apply]
     rw [heq] at h
     exact h
-  have hpoint : ∀ x, (∑ i, l i * deriv (fun t => c t x i) t) +
+  have hpoint : ∀ x ∈ Set.uIcc a b, (∑ i, l i * deriv (fun t => c t x i) t) +
       (∑ i, l i * deriv (fun x => J t x i) x)
       = ∑ i, l i * (∑ j, S i j * r (c t x) j) := by
-    intro x
+    intro x hx
     rw [← Finset.sum_add_distrib]
     apply Finset.sum_congr rfl
     intro i _
-    rw [← mul_add, hpde x i]
+    rw [← mul_add, (hpde x hx i).deriv, sub_add_cancel]
   have hadd : (∫ x in a..b, ∑ i, l i * deriv (fun t => c t x i) t)
       + (∫ x in a..b, ∑ i, l i * deriv (fun x => J t x i) x)
       = ∫ x in a..b, ∑ i, l i * (∑ j, S i j * r (c t x) j) := by
     rw [← intervalIntegral.integral_add hA_int hB_int]
-    have hfun : (fun x => (∑ i, l i * deriv (fun t => c t x i) t) +
-        (∑ i, l i * deriv (fun x => J t x i) x))
-        = (fun x => ∑ i, l i * (∑ j, S i j * r (c t x) j)) := funext hpoint
-    rw [hfun]
+    exact intervalIntegral.integral_congr fun x hx => hpoint x hx
   have hCreac : ∀ x, (∑ i, l i * (∑ j, S i j * r (c t x) j)) = 0 := by
     intro x
     simp_rw [Finset.mul_sum]
@@ -139,8 +138,8 @@ theorem multispecies_integrated (n m : ℕ) (c J : ℝ → ℝ → Fin n → ℝ
     rw [intervalIntegral.integral_const_mul]
     congr 1
     apply intervalIntegral.integral_eq_sub_of_hasDerivAt
-    · intro x _
-      exact hx_deriv i x
+    · intro x hx
+      exact hx_deriv i x hx
     · exact hx_int i
   have hB_eq : (∫ x in a..b, ∑ i, l i * deriv (fun x => J t x i) x)
       = (∑ i, l i * J t b i) - ∑ i, l i * J t a i := by
@@ -158,16 +157,15 @@ theorem multispecies_mass_balance (n m : ℕ)
     (c J : ℝ → ℝ → Fin n → ℝ)
     (S : Fin n → Fin m → ℝ) (r : (Fin n → ℝ) → Fin m → ℝ)
     (l : Fin n → ℝ) (a b t : ℝ)
-    (hpde : ∀ x i, deriv (fun t => c t x i) t + deriv (fun x => J t x i) x =
-      ∑ j, S i j * r (c t x) j)
+    (hpde : ∀ x ∈ Set.uIcc a b, ∀ i, HasDerivAt (fun t => c t x i)
+      ((∑ j, S i j * r (c t x) j) - deriv (fun x => J t x i) x) t)
     (hcons : ∀ j, ∑ i, l i * S i j = 0)
     (ht_int : ∀ i, IntervalIntegrable (fun x => deriv (fun t => c t x i) t)
       MeasureTheory.volume a b)
     (hx_int : ∀ i, IntervalIntegrable (fun x => deriv (fun x => J t x i) x)
       MeasureTheory.volume a b)
-    (hx_deriv : ∀ i x, HasDerivAt (fun x => J t x i) (deriv (fun x => J t x i) x) x)
-    (hr_int : ∀ i, IntervalIntegrable (fun x => ∑ j, S i j * r (c t x) j)
-      MeasureTheory.volume a b)
+    (hx_deriv : ∀ i, ∀ x ∈ Set.uIcc a b,
+      HasDerivAt (fun x => J t x i) (deriv (fun x => J t x i) x) x)
     (hswap : ∀ i, HasDerivAt (fun t => ∫ x in a..b, c t x i)
       (∫ x in a..b, deriv (fun t => c t x i) t) t)
     (hc_all : ∀ t' i, IntervalIntegrable (fun x => c t' x i)
@@ -209,7 +207,7 @@ theorem multispecies_mass_balance (n m : ℕ)
     rw [intervalIntegral.integral_const_mul]
   have hint_eq : (∫ x in a..b, ∑ i, l i * deriv (fun t => c t x i) t)
       = -((∑ i, l i * J t b i) - ∑ i, l i * J t a i) :=
-    multispecies_integrated n m c J S r l a b t hpde hcons ht_int hx_int hx_deriv hr_int
+    multispecies_integrated n m c J S r l a b t hpde hcons ht_int hx_int hx_deriv
   have hfun_total : (fun t' => ∫ x in a..b, ∑ i, l i * c t' x i)
       = (fun t' => ∑ i, l i * (∫ x in a..b, c t' x i)) := funext hfun_eq
   rw [hderiv_val, hint_eq] at hderiv_sum

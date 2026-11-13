@@ -45,35 +45,33 @@ example : ∑ i : Fin 2, ![1, 1] i * (if i = 0 then (-1 : ℝ) else 1) = 0 := by
 example (n m : ℕ) (c J : ℝ → ℝ → Fin n → ℝ)
     (S : Fin n → Fin m → ℝ) (r : (Fin n → ℝ) → Fin m → ℝ)
     (l : Fin n → ℝ) (a b t : ℝ)
-    (hpde : ∀ x i, deriv (fun t => c t x i) t + deriv (fun x => J t x i) x =
-      ∑ j, S i j * r (c t x) j)
+    (hpde : ∀ x ∈ Set.uIcc a b, ∀ i, HasDerivAt (fun t => c t x i)
+      ((∑ j, S i j * r (c t x) j) - deriv (fun x => J t x i) x) t)
     (hcons : ∀ j, ∑ i, l i * S i j = 0)
     (ht_int : ∀ i, IntervalIntegrable (fun x => deriv (fun t => c t x i) t)
       MeasureTheory.volume a b)
     (hx_int : ∀ i, IntervalIntegrable (fun x => deriv (fun x => J t x i) x)
       MeasureTheory.volume a b)
-    (hx_deriv : ∀ i x, HasDerivAt (fun x => J t x i) (deriv (fun x => J t x i) x) x)
-    (hr_int : ∀ i, IntervalIntegrable (fun x => ∑ j, S i j * r (c t x) j)
-      MeasureTheory.volume a b) :
+    (hx_deriv : ∀ i, ∀ x ∈ Set.uIcc a b,
+      HasDerivAt (fun x => J t x i) (deriv (fun x => J t x i) x) x) :
     (∫ x in a..b, ∑ i, l i * deriv (fun t => c t x i) t) =
       -((∑ i, l i * J t b i) - ∑ i, l i * J t a i) :=
   EarthScience.multispecies_integrated n m c J S r l a b t hpde hcons ht_int
-    hx_int hx_deriv hr_int
+    hx_int hx_deriv
 
 /-- The public statement shape of the multispecies mass-balance theorem. -/
 example (n m : ℕ) (c J : ℝ → ℝ → Fin n → ℝ)
     (S : Fin n → Fin m → ℝ) (r : (Fin n → ℝ) → Fin m → ℝ)
     (l : Fin n → ℝ) (a b t : ℝ)
-    (hpde : ∀ x i, deriv (fun t => c t x i) t + deriv (fun x => J t x i) x =
-      ∑ j, S i j * r (c t x) j)
+    (hpde : ∀ x ∈ Set.uIcc a b, ∀ i, HasDerivAt (fun t => c t x i)
+      ((∑ j, S i j * r (c t x) j) - deriv (fun x => J t x i) x) t)
     (hcons : ∀ j, ∑ i, l i * S i j = 0)
     (ht_int : ∀ i, IntervalIntegrable (fun x => deriv (fun t => c t x i) t)
       MeasureTheory.volume a b)
     (hx_int : ∀ i, IntervalIntegrable (fun x => deriv (fun x => J t x i) x)
       MeasureTheory.volume a b)
-    (hx_deriv : ∀ i x, HasDerivAt (fun x => J t x i) (deriv (fun x => J t x i) x) x)
-    (hr_int : ∀ i, IntervalIntegrable (fun x => ∑ j, S i j * r (c t x) j)
-      MeasureTheory.volume a b)
+    (hx_deriv : ∀ i, ∀ x ∈ Set.uIcc a b,
+      HasDerivAt (fun x => J t x i) (deriv (fun x => J t x i) x) x)
     (hswap : ∀ i, HasDerivAt (fun t => ∫ x in a..b, c t x i)
       (∫ x in a..b, deriv (fun t => c t x i) t) t)
     (hc_all : ∀ t' i, IntervalIntegrable (fun x => c t' x i)
@@ -81,4 +79,4 @@ example (n m : ℕ) (c J : ℝ → ℝ → Fin n → ℝ)
     HasDerivAt (fun t => ∫ x in a..b, ∑ i, l i * c t x i)
       (-((∑ i, l i * J t b i) - ∑ i, l i * J t a i)) t :=
   EarthScience.multispecies_mass_balance n m c J S r l a b t hpde hcons ht_int
-    hx_int hx_deriv hr_int hswap hc_all
+    hx_int hx_deriv hswap hc_all
