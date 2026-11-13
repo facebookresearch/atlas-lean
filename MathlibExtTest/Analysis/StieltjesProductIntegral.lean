@@ -99,7 +99,7 @@ example (A B V W : ℝ → ℝ) (hA : IsControl A V 0 1) (hB : IsControl B W 0 1
           productIntegral B x 1 :=
   productIntegral_sub_eq_sum zero_le_one hA hB ∅
 
-/-- The forward Volterra equation for the identity integrator. -/
+/-- The refinement-sum form of the forward Volterra equation for the identity integrator. -/
 example : Tendsto (fun s => ∑ x ∈ partitionPts 0 1 s,
       productIntegral id 0 (prev (partitionPts 0 1 s) x) * (x - prev (partitionPts 0 1 s) x))
       atTop (𝓝 (productIntegral id 0 1 - 1)) :=
