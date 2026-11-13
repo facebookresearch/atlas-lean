@@ -14,6 +14,8 @@ variable {S : Type*}
 
 @[expose] public section
 
+namespace MetaMathlibExt
+
 /-- `k`-induction soundness for a transition system `step`
 with initial states `init` and bad states `bad`, over
 infinite paths: if no bad state occurs among the first `k`
@@ -71,3 +73,5 @@ theorem safe_of_k_induction {step : S → S → Prop}
   obtain ⟨p, hinit, hpath, i, hi⟩ := hreach
   rw [← hi]
   exact k_induction_sound hbase hstep p hinit hpath i
+
+end MetaMathlibExt

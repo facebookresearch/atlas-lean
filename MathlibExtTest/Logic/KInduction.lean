@@ -20,7 +20,7 @@ applies from the initial state `0`. -/
 example : ∀ p : ℕ → ℕ, p 0 = 0 → (∀ i, p (i + 1) = p i) →
     ∀ i, ¬ Odd (p i) := by
   intro p h0 hstep
-  apply k_induction_sound (step := fun a b : ℕ => b = a)
+  apply MetaMathlibExt.k_induction_sound (step := fun a b : ℕ => b = a)
     (init := fun s => s = 0) (bad := fun s => Odd s) (k := 1) _ _ p h0
     (fun i => hstep i)
   · intro q hq _ j hj
