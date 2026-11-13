@@ -91,8 +91,7 @@ central limit theorem for the Nelson–Aalen estimator (Rebolledo's theorem).
 Named theorem (the martingale case): the variance condition
 `⟨M^{(n)}⟩(t) →ᴾ σ²(t) = ∫_0^t dΛ / y` in the proof of the Nelson–Aalen central limit theorem,
 Andersen–Borgan–Gill–Keiding (1993), §IV.1 "The Nelson–Aalen estimator" (via Rebolledo's martingale
-CLT, §II.5 "Limit Theory"); the same argument in Fleming–Harrington (1991) (chapter and theorem
-numbers not checked).
+CLT, §II.5 "Limit Theory").
 
 Reused, not redefined: `stochasticIntegral`, `nelsonAalenProcess`, `restrictedHazard`,
 `aalenCompensator`, `nelsonAalenProcess_sub_restrictedHazard`,
@@ -109,7 +108,6 @@ hypothesis. New here: `naScaledProcess`, `naVarianceSum`, `gridHazard`, `gridInd
 
 * P. K. Andersen, Ø. Borgan, R. D. Gill and N. Keiding, *Statistical Models Based on Counting
   Processes*, Springer (1993), §II.5 (Rebolledo's theorem), §IV.1 (the Nelson–Aalen estimator).
-* T. R. Fleming and D. P. Harrington, *Counting Processes and Survival Analysis*, Wiley (1991).
 * R. Rebolledo, *Central limit theorems for local martingales*, Z. Wahrsch. Verw. Gebiete 51
   (1980), 269–286.
 -/
