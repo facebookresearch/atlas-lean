@@ -18,9 +18,10 @@ Concrete consumers of `PhyslibExt.EarthScience.ManufacturedResidual`.
 ## i. Overview
 
 Numeric case `x = 1.3`, `h = 0.2`: the difference quotient is `20.36`
-and the residual is `0.08 = 2 h²`. Boundary case `h = 1` and the
-symmetric case `x = 0` (where the exact second derivative vanishes and
-the quotient is exactly `2`) are also checked.
+and the residual is `0.08 = 2 h²`, which also attains the bound
+`|residual| ≤ 2 h²`. At `x = 0` the exact second derivative `12 x²`
+vanishes, so the quotient equals the residual; with `h = 3` both are
+`18 = 2 h²`.
 
 ## ii. Key results
 
@@ -28,7 +29,7 @@ No new definitions or results are introduced here.
 
 ## iii. Table of contents
 
-- A. Numeric and boundary checks
+- A. Numeric checks
 
 ## iv. References
 
@@ -45,8 +46,8 @@ example : ((1.3 + 0.2) ^ 4 - 2 * (1.3 : ℝ) ^ 4 + (1.3 - 0.2) ^ 4) / (0.2 : ℝ
     12 * (1.3 : ℝ) ^ 2 = 2 * (0.2 : ℝ) ^ 2 :=
   EarthScience.manufactured_central_second_diff_residual (by norm_num)
 
-/-- Boundary case `x = 0`: the exact derivative vanishes, the quotient is
-exactly `2 h²`, and the residual is `2 h²` for `h = 3`. -/
+/-- At `x = 0` the exact second derivative vanishes, so with `h = 3` the
+quotient and the residual are both `18 = 2 h²`. -/
 example : ((0 + 3) ^ 4 - 2 * (0 : ℝ) ^ 4 + (0 - 3) ^ 4) / (3 : ℝ) ^ 2 - 12 * (0 : ℝ) ^ 2 =
     2 * (3 : ℝ) ^ 2 :=
   EarthScience.manufactured_central_second_diff_residual (by norm_num)
