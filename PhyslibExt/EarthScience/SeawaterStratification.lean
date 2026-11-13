@@ -28,13 +28,19 @@ require a potential-density / adiabatic correction.
 
 The gradient is the derivative of the linear profile; `N^2` follows
 by algebra, and the sign classification follows from the signs of
-`g, beta, rho0`.
+`g, beta, rho0`. The algebraic identity for `N^2` holds for all real
+parameters because Lean's division is total; the physical statement
+assumes `g > 0` and `rho0 > 0`.
 
 ## ii. Key results
 
 - `EarthScience.boussinesq_density_deriv`: gradient of the linear profile.
-- `EarthScience.brunt_vaisala_from_gradient`: `N^2` from the profile's
-  actual vertical gradient `deriv (fun z => rho0 - beta * z) z`.
+- `EarthScience.neg_div_mul_deriv_linear_profile`: the unrestricted
+  algebraic identity `-(g / rho0) * deriv (fun z => rho0 - beta * z) z
+  = g * beta / rho0`.
+- `EarthScience.brunt_vaisala_from_gradient`: for `g, rho0 > 0`, `N^2`
+  from the profile's actual vertical gradient is `g * beta / rho0`, with
+  its stable, neutral, and unstable signs.
 - `EarthScience.brunt_vaisala_sq_sign_ocean`: sign classification of `N^2`.
 
 ## iii. Table of contents
@@ -67,10 +73,13 @@ theorem boussinesq_density_deriv {rho0 beta : ℝ} (z : ℝ) :
   have h := HasDerivAt.const_sub rho0 ((hasDerivAt_id' z).const_mul beta)
   rwa [mul_one] at h
 
-/-- `N^2 = -(g / rho0) * rho_z = g * beta / rho0` for the profile above,
-where `rho_z = deriv (fun z => rho0 - beta * z) z` is its vertical
-gradient at height `z` (equal to `-beta` by `boussinesq_density_deriv`). -/
-theorem brunt_vaisala_from_gradient {g beta rho0 : ℝ} (z : ℝ) :
+/-- Unrestricted algebraic identity behind the Brunt-Vaisala formula: for all
+real `g, beta, rho0` (with Lean's total division),
+`-(g / rho0) * deriv (fun z => rho0 - beta * z) z = g * beta / rho0`, since the
+profile's gradient is `-beta` by `boussinesq_density_deriv`. It is the squared
+Brunt-Vaisala frequency only in the physical domain `rho0 > 0`; see
+`brunt_vaisala_from_gradient`. -/
+lemma neg_div_mul_deriv_linear_profile {g beta rho0 : ℝ} (z : ℝ) :
     -(g / rho0) * deriv (fun z => rho0 - beta * z) z = g * beta / rho0 := by
   rw [(boussinesq_density_deriv z).deriv]
   ring
@@ -94,5 +103,18 @@ theorem brunt_vaisala_sq_sign_ocean {g beta rho0 : ℝ} (hg : 0 < g) (hrho : 0 <
     simp [hg0, hr0]
   · rw [div_neg_iff, mul_pos_iff, mul_neg_iff]
     simp [hg, hrho, hng, hnr]
+
+/-- Brunt-Vaisala frequency of the linear Boussinesq profile in the physical
+domain `g > 0`, `rho0 > 0`: the squared frequency
+`N^2 = -(g / rho0) * rho_z`, where `rho_z = deriv (fun z => rho0 - beta * z) z`
+is the profile's vertical gradient at height `z`, equals `g * beta / rho0`, and
+the stratification is stable (`N^2 > 0`), neutral (`N^2 = 0`), or unstable
+(`N^2 < 0`) exactly when `beta > 0`, `beta = 0`, or `beta < 0`. -/
+theorem brunt_vaisala_from_gradient {g beta rho0 : ℝ} (hg : 0 < g) (hrho : 0 < rho0)
+    (z : ℝ) :
+    -(g / rho0) * deriv (fun z => rho0 - beta * z) z = g * beta / rho0 ∧
+      (0 < g * beta / rho0 ↔ 0 < beta) ∧ (g * beta / rho0 = 0 ↔ beta = 0) ∧
+        (g * beta / rho0 < 0 ↔ beta < 0) :=
+  ⟨neg_div_mul_deriv_linear_profile z, brunt_vaisala_sq_sign_ocean hg hrho⟩
 
 end EarthScience

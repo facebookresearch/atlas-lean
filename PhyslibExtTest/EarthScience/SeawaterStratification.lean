@@ -49,15 +49,23 @@ example (z : ℝ) :
     HasDerivAt (fun z => (1025 : ℝ) - 0.02 * z) (-(0.02 : ℝ)) z :=
   EarthScience.boussinesq_density_deriv z
 
-/-- Public shape of the `N^2` theorem: the frequency uses the profile's derivative. -/
+/-- Public shape of the unrestricted algebraic identity. -/
 example {g beta rho0 : ℝ} (z : ℝ) :
     -(g / rho0) * deriv (fun z => rho0 - beta * z) z = g * beta / rho0 :=
-  EarthScience.brunt_vaisala_from_gradient z
+  EarthScience.neg_div_mul_deriv_linear_profile z
 
-/-- Concrete `N^2` identity from the actual gradient of the profile. -/
+/-- Public shape of the physical `N^2` theorem, which requires `g > 0` and `rho0 > 0`. -/
+example {g beta rho0 : ℝ} (hg : 0 < g) (hrho : 0 < rho0) (z : ℝ) :
+    -(g / rho0) * deriv (fun z => rho0 - beta * z) z = g * beta / rho0 ∧
+      (0 < g * beta / rho0 ↔ 0 < beta) ∧ (g * beta / rho0 = 0 ↔ beta = 0) ∧
+        (g * beta / rho0 < 0 ↔ beta < 0) :=
+  EarthScience.brunt_vaisala_from_gradient hg hrho z
+
+/-- Concrete `N^2` identity from the actual gradient of the profile, at `g = 9.81`. -/
 example (z : ℝ) :
     -((9.81 : ℝ) / 1025) * deriv (fun z => (1025 : ℝ) - 0.02 * z) z = 9.81 * 0.02 / 1025 :=
-  EarthScience.brunt_vaisala_from_gradient z
+  (EarthScience.brunt_vaisala_from_gradient (g := 9.81) (beta := 0.02) (rho0 := 1025)
+    (by norm_num) (by norm_num) z).1
 
 /-! ## B. Stability signs and boundary cases -/
 
