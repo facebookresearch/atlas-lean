@@ -51,7 +51,7 @@ private def fibSing {p m n : ℕ}
 inclusion. -/
 private theorem slice_fderiv_eq {p m n : ℕ}
     (F : EuclideanSpace ℝ (Fin p) × EuclideanSpace ℝ (Fin m) → EuclideanSpace ℝ (Fin n))
-    (hF : ContDiff ℝ ⊤ F) (a : EuclideanSpace ℝ (Fin p)) (x : EuclideanSpace ℝ (Fin m)) :
+    (hF : ContDiff ℝ (⊤ : ℕ∞) F) (a : EuclideanSpace ℝ (Fin p)) (x : EuclideanSpace ℝ (Fin m)) :
     fderiv ℝ (fun x : EuclideanSpace ℝ (Fin m) => F (a, x)) x =
       (fderiv ℝ F (a, x)).comp (ContinuousLinearMap.inr ℝ _ _) := by
   have hdiff : Differentiable ℝ F := hF.differentiable (by simp)
@@ -188,7 +188,7 @@ private theorem chartEquiv {E₁ E₂ F₁ : Type*} [NormedAddCommGroup E₁] [N
 /-- Around a point of the fibre, the parameter projection of the singular set is null. -/
 private theorem local_null_at {p m n : ℕ}
     (F : EuclideanSpace ℝ (Fin p) × EuclideanSpace ℝ (Fin m) → EuclideanSpace ℝ (Fin n))
-    (y : EuclideanSpace ℝ (Fin n)) (hF : ContDiff ℝ ⊤ F)
+    (y : EuclideanSpace ℝ (Fin n)) (hF : ContDiff ℝ (⊤ : ℕ∞) F)
     (hreg : ∀ a x, F (a, x) = y → Function.Surjective (fderiv ℝ F (a, x)))
     (z0 : EuclideanSpace ℝ (Fin p) × EuclideanSpace ℝ (Fin m)) (hz0 : F z0 = y) :
     ∃ V ∈ nhds z0, volume (Prod.fst '' (V ∩ fibSing F y)) = 0 := by
@@ -208,7 +208,7 @@ private theorem local_null_at {p m n : ℕ}
     rw [ContinuousLinearMap.ext_iff]
     intro v
     exact he v
-  have hΦsmooth : ContDiff ℝ ⊤ (fun z : EuclideanSpace ℝ (Fin p) ×
+  have hΦsmooth : ContDiff ℝ (⊤ : ℕ∞) (fun z : EuclideanSpace ℝ (Fin p) ×
       EuclideanSpace ℝ (Fin m) => (F z, P z)) :=
     hF.prodMk P.contDiff
   have hΦ'd : ∀ z, HasFDerivAt (fun z : EuclideanSpace ℝ (Fin p) ×
@@ -252,7 +252,7 @@ private theorem local_null_at {p m n : ℕ}
   set U : Set ↥K := c ⁻¹' Tgt with hUdef
   have hU : IsOpen U := hTgt.preimage hc_cont
   set g : ↥K → EuclideanSpace ℝ (Fin p) := Prod.fst ∘ Φh.symm ∘ c with hgdef
-  have hg_smooth : ContDiffOn ℝ ⊤ g U := by
+  have hg_smooth : ContDiffOn ℝ (⊤ : ℕ∞) g U := by
     intro k hk
     have hmem : (y, k) ∈ Φh.target := (hk : c k ∈ Tgt).1
     have hOmem : Φh.symm (y, k) ∈ O := (hk : c k ∈ Tgt).2
@@ -265,11 +265,11 @@ private theorem local_null_at {p m n : ℕ}
           (fderiv ℝ F (Φh.symm (y, k))).prod P := he'.trans (hfderivΦ _)
       rw [hTe]
       exact hbase
-    have hsymm : ContDiffAt ℝ ⊤ Φh.symm (y, k) :=
+    have hsymm : ContDiffAt ℝ (⊤ : ℕ∞) Φh.symm (y, k) :=
       Φh.contDiffAt_symm hmem hderivΦ hΦsmooth.contDiffAt
-    have hc_at : ContDiffAt ℝ ⊤ c k := contDiffAt_const.prodMk contDiffAt_id
-    have hcomp1 : ContDiffAt ℝ ⊤ (Φh.symm ∘ c) k := hsymm.comp k hc_at
-    have hcomp2 : ContDiffAt ℝ ⊤ (Prod.fst ∘ (Φh.symm ∘ c)) k :=
+    have hc_at : ContDiffAt ℝ (⊤ : ℕ∞) c k := contDiffAt_const.prodMk contDiffAt_id
+    have hcomp1 : ContDiffAt ℝ (⊤ : ℕ∞) (Φh.symm ∘ c) k := hsymm.comp k hc_at
+    have hcomp2 : ContDiffAt ℝ (⊤ : ℕ∞) (Prod.fst ∘ (Φh.symm ∘ c)) k :=
       contDiffAt_fst.comp k hcomp1
     exact hcomp2.contDiffWithinAt
   have hsub : Prod.fst '' (V ∩ fibSing F y) ⊆
@@ -359,7 +359,7 @@ private theorem local_null_at {p m n : ℕ}
   have hcrit_null : volume
       (g '' { k : ↥K | k ∈ U ∧ ¬ Function.Surjective (fderiv ℝ g k) }) = 0 :=
     MathlibExt.Geometry.Manifold.SardWanted.sard_euclidean_open ↥K
-      (EuclideanSpace ℝ (Fin p)) volume U hU g (hg_smooth.of_le le_top)
+      (EuclideanSpace ℝ (Fin p)) volume U hU g hg_smooth
   have hVnull : volume (Prod.fst '' (V ∩ fibSing F y)) = 0 :=
     measure_mono_null hsub hcrit_null
   exact ⟨V, hV.mem_nhds hz0V, hVnull⟩
@@ -378,7 +378,7 @@ theorem parametricSard
     {p m n : ℕ}
     (F : EuclideanSpace ℝ (Fin p) × EuclideanSpace ℝ (Fin m) → EuclideanSpace ℝ (Fin n))
     (y : EuclideanSpace ℝ (Fin n))
-    (hF : ContDiff ℝ ⊤ F)
+    (hF : ContDiff ℝ (⊤ : ℕ∞) F)
     (hreg : ∀ a x, F (a, x) = y → Function.Surjective (fderiv ℝ F (a, x))) :
     volume (badParameterSet (F := F) (y := y)) = 0 := by
   rw [badParameterSet_eq_image]
