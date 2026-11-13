@@ -47,7 +47,8 @@ public theorem_wanted card_lift_padicVal_gt_one_le_one {p : ℕ} (hp : p.Prime) 
     (hroot : ¬ ((p : ℤ) ∣ g.eval (r : ℤ) ∧ (p : ℤ) ∣ (Polynomial.derivative g).eval (r : ℤ))) :
     ((Finset.range p).filter fun k : ℕ => (p : ℤ) ^ 2 ∣ g.eval ((r : ℤ) + k * p)).card ≤ 1
 
-/-- For a non-zero `g ∈ ℤ[x]` of degree `d` with non-zero discriminant, for all sufficiently large primes `p`
+/-- For a non-zero `g ∈ ℤ[x]` of degree `d` with non-zero discriminant, for all sufficiently
+large primes `p`
 at most `d` residues `0 ≤ x < p²` have `ν_p(g(x)) > 1`.
 
 Source: Krishnan Rajkumar and Shubham, *On the Distribution of Points of Valuation 1 for a

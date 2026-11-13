@@ -228,7 +228,8 @@ public theorem triangularLogCoeff_small :
   · rw [triangularLogCoeff]
     decide +kernel
 
-/-- Composition-sum formula: `t_k(n) = ∑_{l=1}^n (k^l / l!) ∑_{(w_1, …, w_l) ∈ C(n)} b_{w_1} ⋯ b_{w_l}`,
+/-- Composition-sum formula:
+`t_k(n) = ∑_{l=1}^n (k^l / l!) ∑_{(w_1, …, w_l) ∈ C(n)} b_{w_1} ⋯ b_{w_l}`,
 with `b_n = triangularLogCoeff n` (the corrected coefficient; the printed `b_n` is false:
 `t_1(2) = 0` but the printed formula gives `1`). The sum runs over all compositions of `n`,
 grouped by length `l`.

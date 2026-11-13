@@ -22,7 +22,8 @@ F_p(n-p-1)`), the generalized Leonardo `p`-numbers
 auxiliary sequences `A_p`, `B_p` (elements of the paper's
 `H(p)`: `H(n) = H(n-1) + H(n-p) - H(n-2p-1)` on `ℤ`, with
 the initial values on `[-p, p]` given in the paper) are
-`leonardoPK`, `seqAZ`, `seqBZ` (the Fibonacci `p`-numbers are the existing `MetaMathlibExt.fibonacciP`, cast to `ℤ`). The companion
+`leonardoPK`, `seqAZ`, `seqBZ` (the Fibonacci `p`-numbers are the existing
+`MetaMathlibExt.fibonacciP`, cast to `ℤ`). The companion
 matrix `Q_p` (for `p ≥ 2`) is `companionQ`, from the
 paper's displayed examples; Theorem 9's entry formula for
 `Q_p^n` is `qPowEntry` (the paper's display of the `B`
@@ -297,7 +298,6 @@ where the paper's values at negative arguments in
 Source: "On Generalized Leonardo `p`-Numbers", Journal
 of Integer Sequences 27 (2024), Article 24.4.6,
 Theorem 13. -/
-
 theorem_wanted leonardoPK_honsberger (p k m n : ℕ)
     (hp : 1 ≤ p) (hk : 1 ≤ k) (hm : 1 ≤ m) (hn : 1 ≤ n) :
     leonardoPK p k m * leonardoPK p k (n + 1) +

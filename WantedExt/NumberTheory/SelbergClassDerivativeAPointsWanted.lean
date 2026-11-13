@@ -167,7 +167,8 @@ public theorem_wanted SelbergClassFunction.exists_no_aPoint_right (F : SelbergCl
     ∃ E₁ : ℝ, 1 ≤ E₁ ∧ ∀ s : ℂ, E₁ ≤ s.re → iteratedDeriv k F.toFun s ≠ a
 
 /-- **Lemma 2.** For `k ≥ 1` and `c > 1` there is `τ_k` such that in `Re s > c`, `|Im s| ≥ τ_k`,
-`(conj F(1 - conj s))^(k) = (d_F^k / (π^r ω)) Q^(2s-1) ∏ Γ(λ_j s + μ_j) Γ(λ_j s + 1 - λ_j - conj μ_j)
+`(conj F(1 - conj s))^(k) = (d_F^k / (π^r ω)) Q^(2s-1) ∏ Γ(λ_j s + μ_j) Γ(λ_j s + 1 -
+λ_j - conj μ_j)
 × ∏ sin π(-λ_j s + λ_j + conj μ_j) · log^k s · F(s) · (1 + O(1 / |log s|))`, the error read as
 `|LHS - M(s)| ≤ C |M(s)| / |log s|` for the main term `M(s)`.
 
