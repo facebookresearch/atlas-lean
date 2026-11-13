@@ -20,9 +20,9 @@ import Mathlib.Probability.Distributions.Gaussian.Real
   covariance at `t = 1` is computed from the Lyapunov equation and its uniqueness:
   `V(1) = (0, 0, 1/4)`.
 * The degenerate case of zero initial infectives, where the limit covariance vanishes and the
-  diffusion approximation applies with the zero fluctuation path. A constant driving path has
-  no increments, so it leaves the zero fluctuation path unchanged, and every fluctuation path
-  starts at its initial value.
+  diffusion approximation (both forms) applies with the zero fluctuation path. A constant
+  driving path has no increments, so it leaves the zero fluctuation path unchanged, and every
+  fluctuation path starts at its initial value.
 * `StochasticSIR.tendsto_measure_deviation` concludes the hypothesis of
   `tendsto_measure_norm_sub_of_deviation`.
 * A case where the CLT scaling fails: for `N = 1` the scaled fluctuation of the infectives at
@@ -123,6 +123,20 @@ theorem tendsto_fluctuation_diseaseFree {Ω : Type*} [MeasurableSpace Ω] (μ : 
       ε ≤ ‖fluctuation (fun _ (_ : Ω) _ => ((1 : ℝ), (0 : ℝ))) (fun _ => (1, 0)) N ω t -
         (0 : ℝ × ℝ)‖}) atTop (𝓝 0) :=
   tendsto_measure_fluctuation_sub (μ := μ) hβ hγ (isSolution_diseaseFree β γ)
+    (X := fun _ _ _ => ((1 : ℝ), (0 : ℝ))) (fun _ _ => measurable_const)
+    (fun δ hδ => by simp [not_le.2 hδ]) (U₀ := fun _ => 0) measurable_const
+    (fun δ hδ => by simp [fluctuation, not_le.2 hδ]) (M := fun _ _ => 0)
+    (fun _ => continuousOn_const) (fun _ => measurable_const)
+    (fun δ hδ => by simp [scaledMartingale, drift, not_le.2 hδ]) (U := fun _ _ => 0)
+    (fun _ => ⟨continuousOn_const, fun t _ => by simp⟩) hε
+
+/-- The supremum form of the diffusion approximation applies to the same data. -/
+example {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsFiniteMeasure μ] {β γ T ε : ℝ}
+    (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hε : 0 < ε) :
+    Tendsto (fun N => μ {ω | ENNReal.ofReal ε ≤ ⨆ t ∈ Icc 0 T, ENNReal.ofReal
+      ‖fluctuation (fun _ (_ : Ω) _ => ((1 : ℝ), (0 : ℝ))) (fun _ => (1, 0)) N ω t -
+        (0 : ℝ × ℝ)‖}) atTop (𝓝 0) :=
+  tendsto_measure_iSup_fluctuation_sub (μ := μ) hβ hγ (isSolution_diseaseFree β γ)
     (X := fun _ _ _ => ((1 : ℝ), (0 : ℝ))) (fun _ _ => measurable_const)
     (fun δ hδ => by simp [not_le.2 hδ]) (U₀ := fun _ => 0) measurable_const
     (fun δ hδ => by simp [fluctuation, not_le.2 hδ]) (M := fun _ _ => 0)

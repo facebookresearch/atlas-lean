@@ -55,11 +55,11 @@ controls `U_N - U` pathwise by the initial error, the martingale error `sup |M_N
 `sup |X_N - x|` (`norm_sqrt_smul_sub_sub_le`). This file proves that deterministic estimate and
 the probabilistic conclusion, taking as **explicit hypotheses**
 
-* the law of large numbers `sup_{t ≤ T} |X_N - x| → 0` in probability
+* the law of large numbers: for every `δ > 0`, `P(∃ t ∈ [0, T], |X_N(t) - x(t)| ≥ δ) → 0`
   (`StochasticSIR.tendsto_measure_deviation` proves it for the SIR chain;
   `tendsto_measure_norm_sub_of_deviation` translates its `ℓ¹` form), and
-* the martingale functional CLT in coupled (Skorokhod-representation) form:
-  `sup_{t ≤ T} |M_N - M| → 0` in probability for a process `M` with continuous paths.
+* the martingale functional CLT in coupled (Skorokhod-representation) form: for every `δ > 0`,
+  `P(∃ t ∈ [0, T], |M_N(t) - M(t)| ≥ δ) → 0`, for a process `M` with continuous paths.
 
 The proof of the convergence theorem uses no property of `M` beyond continuity of its paths and
 measurability of its marginals, so the theorem holds for whatever limit the martingale CLT
@@ -72,7 +72,10 @@ the SIR chain, and it is not used here.
 * `norm_sqrt_smul_sub_sub_le`: Kurtz's pathwise estimate for `|U_N(t) - U(t)|`.
 * `tendsto_measure_fluctuation_sub`: **the diffusion approximation.** Under the two hypotheses
   above and convergence of the initial fluctuation, for every `ε > 0`,
-  `P(sup_{t ∈ [0, T]} |√N (X_N(t) - x(t)) - U(t)| ≥ ε) → 0`.
+  `P(∃ t ∈ [0, T], |√N (X_N(t) - x(t)) - U(t)| ≥ ε) → 0`: uniform convergence in probability
+  on `[0, T]`.
+* `tendsto_measure_iSup_fluctuation_sub`: the same for the supremum event
+  `sup_{t ∈ [0, T]} |√N (X_N(t) - x(t)) - U(t)| ≥ ε`, whose supremum need not be attained.
 * `tendstoInDistribution_fluctuation`: consequently `√N (X_N(t) - x(t)) → U(t)` in
   distribution for each `t ∈ [0, T]`.
 * `tendsto_measure_norm_gt`: tightness of the limit data `(U₀, sup_{[0, T]} ‖M‖)`, used to
@@ -94,8 +97,8 @@ the SIR chain, and it is not used here.
   martingale above is not proved: it needs the Wiener integral `∫ Φ(t, s) dM(s)` for the
   two-dimensional, time-inhomogeneous equation. The Lyapunov equation is stated and its
   solutions are shown to be unique, so `V(t)` is determined by the definitions.
-* Probabilities of events involving `sup_{t ∈ [0, T]}` are outer measures; those events are
-  not assumed measurable.
+* Probabilities of events over `[0, T]` (some time at which a deviation reaches a threshold, or
+  a supremum at least a threshold) are outer measures; those events are not assumed measurable.
 
 ## References
 
@@ -612,7 +615,9 @@ noncomputable def fluctuation {Ω : Type*} (X : ℕ → Ω → ℝ → ℝ × �
 
 /-- The scaled martingale `M_N(t) = √N (X_N(t) - X_N(0) - ∫₀ᵗ F(X_N(s)) ds)`. For the SIR chain
 in its random time-change representation this is
-`Σ_ℓ ℓ N^{-1/2} (Y_ℓ(N ∫₀ᵗ λ_ℓ(X_N)) - N ∫₀ᵗ λ_ℓ(X_N))` with unit Poisson processes `Y_ℓ`. -/
+`Σ_ℓ ℓ N^{-1/2} (Y_ℓ(N ∫₀ᵗ λ_ℓ(X_N)) - N ∫₀ᵗ λ_ℓ(X_N))` with unit Poisson processes `Y_ℓ`. For a
+general family `X` it is just the process above: it is a martingale only when `X` is the scaled
+SIR chain, and no result here uses the martingale property. -/
 noncomputable def scaledMartingale {Ω : Type*} (β γ : ℝ) (X : ℕ → Ω → ℝ → ℝ × ℝ) (N : ℕ)
     (ω : Ω) (t : ℝ) : ℝ × ℝ :=
   Real.sqrt N • (X N ω t - X N ω 0 - ∫ s in (0 : ℝ)..t, drift β γ (X N ω s))
@@ -635,8 +640,8 @@ private theorem exists_rat_mem_Icc_dist_lt {T t ε : ℝ} (ht : t ∈ Icc 0 T) (
 variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 
 /-- **Tightness of the limit data.** If `U₀` is measurable and `M` has continuous paths on
-`[0, T]` and measurable marginals, then `P(‖U₀‖ > k or sup_{[0, T]} ‖M‖ > k) → 0` as `k → ∞`.
-(The supremum event is measurable: by path continuity it is a countable union over rational
+`[0, T]` and measurable marginals, then `P(‖U₀‖ > k or ‖M(t)‖ > k for some t ∈ [0, T]) → 0` as
+`k → ∞`. (The event is measurable: by path continuity it is a countable union over rational
 times.) -/
 theorem tendsto_measure_norm_gt [IsFiniteMeasure μ] {T : ℝ} {U₀ : Ω → ℝ × ℝ}
     {M : Ω → ℝ → ℝ × ℝ} (hU₀ : Measurable U₀) (hMc : ∀ ω, ContinuousOn (M ω) (Icc 0 T))
@@ -692,15 +697,17 @@ functional CLT as hypotheses.
 Let `x = (s, i)` solve the Kermack–McKendrick system in densities (`SIR.IsSolution β γ 1`), and
 let `X N ω : ℝ → ℝ × ℝ` be measurable density paths. Assume, for every `δ > 0`,
 
-* (law of large numbers) `P(sup_{t ∈ [0, T]} ‖X_N(t) - x(t)‖ ≥ δ) → 0`;
+* (law of large numbers) `P(∃ t ∈ [0, T], ‖X_N(t) - x(t)‖ ≥ δ) → 0`;
 * (initial fluctuations) `P(‖U_N(0) - U₀‖ ≥ δ) → 0`, with `U₀` measurable;
-* (martingale CLT, coupled form) `P(sup_{t ∈ [0, T]} ‖M_N(t) - M(t)‖ ≥ δ) → 0`, for a process
+* (martingale CLT, coupled form) `P(∃ t ∈ [0, T], ‖M_N(t) - M(t)‖ ≥ δ) → 0`, for a process
   `M` with continuous paths on `[0, T]` and measurable marginals;
 
 and let `U` solve the linear fluctuation equation `U(t) = U₀ + (M(t) - M(0)) + ∫₀ᵗ DF(x) U`
 pathwise.
 Then the scaled fluctuations converge to `U` uniformly on `[0, T]` in probability:
-`P(sup_{t ∈ [0, T]} ‖√N (X_N(t) - x(t)) - U(t)‖ ≥ ε) → 0` for every `ε > 0`. -/
+`P(∃ t ∈ [0, T], ‖√N (X_N(t) - x(t)) - U(t)‖ ≥ ε) → 0` for every `ε > 0`. This event contains
+the strict supremum event `sup > ε`; the non-strict supremum event `sup ≥ ε` is
+`tendsto_measure_iSup_fluctuation_sub`. -/
 theorem tendsto_measure_fluctuation_sub [IsFiniteMeasure μ] {β γ T : ℝ} (hβ : 0 ≤ β)
     (hγ : 0 ≤ γ) {s i r : ℝ → ℝ} (hode : SIR.IsSolution β γ 1 s i r)
     {X : ℕ → Ω → ℝ → ℝ × ℝ} (hX : ∀ N ω, Measurable (X N ω))
@@ -776,6 +783,45 @@ theorem tendsto_measure_fluctuation_sub [IsFiniteMeasure μ] {β γ T : ℝ} (h�
         exact measure_union_le _ _
     _ ≤ η / 2 + η / 2 := add_le_add hk hN
     _ = η := ENNReal.add_halves η
+
+/-- **Diffusion approximation, supremum form.** Under the hypotheses of
+`tendsto_measure_fluctuation_sub`, the supremum over `[0, T]` of
+`‖√N (X_N(t) - x(t)) - U(t)‖` is at least `ε` with probability tending to `0`:
+
+  `P(sup_{t ∈ [0, T]} ‖√N (X_N(t) - x(t)) - U(t)‖ ≥ ε) → 0`  as `N → ∞`.
+
+The supremum is taken in `ℝ≥0∞`, so it exists for every path, bounded or not, and need not be
+attained. The event lies inside the event of `tendsto_measure_fluctuation_sub` at threshold
+`ε / 2`; it is not assumed measurable, and `μ` is applied as an outer measure. -/
+theorem tendsto_measure_iSup_fluctuation_sub [IsFiniteMeasure μ] {β γ T : ℝ} (hβ : 0 ≤ β)
+    (hγ : 0 ≤ γ) {s i r : ℝ → ℝ} (hode : SIR.IsSolution β γ 1 s i r)
+    {X : ℕ → Ω → ℝ → ℝ × ℝ} (hX : ∀ N ω, Measurable (X N ω))
+    (hLLN : ∀ δ, 0 < δ → Tendsto (fun N => μ {ω | ∃ t ∈ Icc 0 T,
+      δ ≤ ‖X N ω t - (s t, i t)‖}) atTop (𝓝 0))
+    {U₀ : Ω → ℝ × ℝ} (hU₀ : Measurable U₀)
+    (hinit : ∀ δ, 0 < δ → Tendsto (fun N => μ {ω |
+      δ ≤ ‖fluctuation X (fun t => (s t, i t)) N ω 0 - U₀ ω‖}) atTop (𝓝 0))
+    {M : Ω → ℝ → ℝ × ℝ} (hMc : ∀ ω, ContinuousOn (M ω) (Icc 0 T))
+    (hMm : ∀ t, Measurable fun ω => M ω t)
+    (hFCLT : ∀ δ, 0 < δ → Tendsto (fun N => μ {ω | ∃ t ∈ Icc 0 T,
+      δ ≤ ‖scaledMartingale β γ X N ω t - M ω t‖}) atTop (𝓝 0))
+    {U : Ω → ℝ → ℝ × ℝ}
+    (hU : ∀ ω, IsFluctuationPath β γ T (fun t => (s t, i t)) (U₀ ω) (M ω) (U ω))
+    {ε : ℝ} (hε : 0 < ε) :
+    Tendsto (fun N => μ {ω | ENNReal.ofReal ε ≤
+      ⨆ t ∈ Icc 0 T, ENNReal.ofReal ‖fluctuation X (fun t => (s t, i t)) N ω t - U ω t‖})
+      atTop (𝓝 0) := by
+  have hε2 : 0 < ε / 2 := half_pos hε
+  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds
+    (tendsto_measure_fluctuation_sub hβ hγ hode hX hLLN hU₀ hinit hMc hMm hFCLT hU hε2)
+    (fun _ => bot_le) (fun N => measure_mono fun ω hω => ?_)
+  simp only [mem_ofPred_eq] at hω ⊢
+  have hlt : ENNReal.ofReal (ε / 2) <
+      ⨆ t ∈ Icc 0 T, ENNReal.ofReal ‖fluctuation X (fun t => (s t, i t)) N ω t - U ω t‖ :=
+    lt_of_lt_of_le ((ENNReal.ofReal_lt_ofReal_iff hε).2 (half_lt_self hε)) hω
+  obtain ⟨t, ht⟩ := lt_iSup_iff.1 hlt
+  obtain ⟨htT, hdev⟩ := lt_iSup_iff.1 ht
+  exact ⟨t, htT, ((ENNReal.ofReal_lt_ofReal_iff_of_nonneg hε2.le).1 hdev).le⟩
 
 /-- **Convergence in distribution at a fixed time.** Under the hypotheses of
 `tendsto_measure_fluctuation_sub`, and if each `X_N(t)` is a random variable, the scaled
