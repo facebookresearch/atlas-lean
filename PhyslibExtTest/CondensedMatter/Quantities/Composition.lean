@@ -11,36 +11,56 @@ module
 public import PhyslibExt.CondensedMatter.Quantities.Composition
 public import PhyslibExt.Chemistry.Amounts.MolarMassComposition
 public import PhyslibExt.Chemistry.QuantityCalculus
+import Mathlib.Analysis.SpecialFunctions.Log.Base
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # MS01 quantities: composition checks
 
 Exact compiling checks for `PhyslibExt.CondensedMatter.Quantities.Composition`:
-Arrhenius numeric instances, composition round trips through the canonical
+typed Arrhenius numeric instances, composition round trips through the canonical
 `Chemistry.Amounts` theorems, the dimension-kernel example through the canonical
 `Chemistry.QuantityCalculus.finrank_ker_mulVecLin`, and boundary/invalid-domain
 checks.
 -/
 
 open Matrix
+open Units.QuantityDimensions PhyslibExt.CondensedMatter.Quantities.Composition
+
+/-- Dimension of a first-order rate constant, `time⁻¹`, for the typed Arrhenius instances. -/
+private abbrev rateDim : Dimension ISQDimensionBase := (Dimension.single .time)⁻¹
 
 -- Arrhenius numeric instance (lemmas 1-2): A = 1, E = 2, R = 1, T = 1,
--- y_ref = 1, so y = Real.exp (-2).
-example : Real.log (Real.exp (-2) / (1:ℝ)) = -2 := by
-  have h1 := arrhenius_log (y := Real.exp (-2)) (y_ref := 1) (A := 1) (T := 1)
-    (R := 1) (E := 2) (by norm_num) (by norm_num) (Real.exp_pos _) (by norm_num)
-    (by norm_num) (by norm_num)
-  simp only [div_one, Real.log_one, mul_one] at h1
-  simp only [div_one]
-  linear_combination h1
+-- y_ref = 1 as typed quantities, so y = Real.exp (-2).
+example : logRatio (⟨Real.exp (-2)⟩ : WithDim rateDim ℝ) ⟨1⟩ (Real.exp_pos _) one_pos
+    = -2 := by
+  have h1 := arrhenius_log (y := (⟨Real.exp (-2)⟩ : WithDim rateDim ℝ)) (y_ref := ⟨1⟩)
+    (A := ⟨1⟩) (E := ⟨2⟩) (R := ⟨1⟩) (T := ⟨1⟩) one_pos one_pos (Real.exp_pos _) one_pos
+    one_pos (by rw [expScaledEnergy_val]; norm_num)
+  rw [h1, logRatio_self]
+  norm_num
 
+-- The base-10 form on the same instance, read as `Real.logb 10` on coordinates.
 example : Real.logb 10 (Real.exp (-2) / (1:ℝ)) = -2 / Real.log 10 := by
-  have h2 := arrhenius_log10 (y := Real.exp (-2)) (y_ref := 1) (A := 1) (T := 1)
-    (R := 1) (E := 2) (by norm_num) (by norm_num) (Real.exp_pos _) (by norm_num)
-    (by norm_num) (by norm_num)
-  simp only [div_one, Real.logb_one, mul_one, one_mul] at h2
-  simp only [div_one]
-  linear_combination h2
+  have h2 := arrhenius_log10 (y := (⟨Real.exp (-2)⟩ : WithDim rateDim ℝ)) (y_ref := ⟨1⟩)
+    (A := ⟨1⟩) (E := ⟨2⟩) (R := ⟨1⟩) (T := ⟨1⟩) one_pos one_pos (Real.exp_pos _) one_pos
+    one_pos (by rw [expScaledEnergy_val]; norm_num)
+  rw [logRatio_val, logRatio_val] at h2
+  simp only [div_one, Real.log_one, zero_div, mul_one, one_mul, zero_sub] at h2
+  rw [← Real.log_div_log, div_one, h2, neg_div]
+
+-- The typed identity keeps the raw-real content: wrapping arbitrary reals as typed
+-- quantities recovers the coordinate form `log (y / y_ref) = log (A / y_ref) - E / (R * T)`.
+example {y y_ref A T R E : ℝ} (hy_ref : 0 < y_ref) (hA : 0 < A) (hy : 0 < y) (hT : 0 < T)
+    (hR : 0 < R) (h : y = A * Real.exp (-E / (R * T))) :
+    Real.log (y / y_ref) = Real.log (A / y_ref) - E / (R * T) := by
+  have h1 := arrhenius_log (y := (⟨y⟩ : WithDim rateDim ℝ)) (y_ref := ⟨y_ref⟩) (A := ⟨A⟩)
+    (E := ⟨E⟩) (R := ⟨R⟩) (T := ⟨T⟩) hy_ref hA hy hT hR
+    (by rw [expScaledEnergy_val, ← neg_div]; exact h)
+  simpa only [logRatio_val] using h1
 
 -- Composition numeric instance: Fin 2 with M = ![55.85, 16.00],
 -- x = ![0.4, 0.6]; massFraction values 1117/1597 and 480/1597 by exact
@@ -115,8 +135,8 @@ example : wtPct (![55.85, 16.00] : Fin 2 → ℝ)
       norm_num
 
 -- Boundary checks: the positivity hypotheses are load-bearing. At T = 0 the
--- hypothesis `0 < T` required by `arrhenius_log`/`arrhenius_log10` is false,
--- so the lemmas do not apply (no identity at T = 0 is claimed).
+-- hypothesis `0 < T.val` required by `arrhenius_log`/`arrhenius_log10` (and by
+-- `expScaledEnergy`) is false, so the lemmas do not apply (no identity at T = 0 is claimed).
 example : ¬ (0:ℝ) < (0:ℝ) := lt_irrefl 0
 
 -- With M = 0 the mass-fraction denominator `∑ j, x j * M j` vanishes, so no
