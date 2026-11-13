@@ -42,12 +42,14 @@ TDLC version of the Higman-Neumann-Neumann embedding theorem or a counterexample
 /-- Leary and Castellano's Question 5 (Oberwolfach Report 55/2023, p. 3135): every `σ`-compact
 totally disconnected locally compact group `G` embeds, by a continuous injective homomorphism,
 into a totally disconnected locally compact group `H` that is compactly generated (generated as a
-group by a compact subset `K`). -/
+group by a compact subset `K`). The statement follows the convention that TDLC groups are
+Hausdorff: Mathlib's `LocallyCompactSpace` and `TotallyDisconnectedSpace` do not imply it, so `G`
+and `H` both carry `T2Space`. -/
 def sigmaCompactTDLCEmbedsInCompactlyGenerated : Prop :=
-  ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [LocallyCompactSpace G]
-    [TotallyDisconnectedSpace G] [SigmaCompactSpace G],
+  ∀ (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [T2Space G]
+    [LocallyCompactSpace G] [TotallyDisconnectedSpace G] [SigmaCompactSpace G],
     ∃ (H : Type) (_ : Group H) (_ : TopologicalSpace H) (_ : IsTopologicalGroup H)
-      (_ : LocallyCompactSpace H) (_ : TotallyDisconnectedSpace H),
+      (_ : T2Space H) (_ : LocallyCompactSpace H) (_ : TotallyDisconnectedSpace H),
       (∃ K : Set H, IsCompact K ∧ Subgroup.closure K = ⊤) ∧
         ∃ φ : G →* H, Continuous φ ∧ Function.Injective φ
 
