@@ -41,7 +41,8 @@ noncomputable def pex : Fin 2 → ℝ := ![1 / 25, 1]
 /-- The example satisfies the null-CDF hypotheses of the [DBH-SU] FDR theorem. -/
 theorem Fex_nonneg (i : Fin 2) (t : ℝ) : 0 ≤ Fex i t := by
   fin_cases i <;>
-    simp only [Fex, Fin.zero_eta, Fin.mk_one, Matrix.cons_val_zero, Matrix.cons_val_one, nullCDF0, nullCDF1] <;>
+    simp only [Fex, Fin.zero_eta, Fin.mk_one, Matrix.cons_val_zero, Matrix.cons_val_one,
+      nullCDF0, nullCDF1] <;>
     split_ifs <;> norm_num
 
 /-- Both null CDFs vanish at `0`. -/
