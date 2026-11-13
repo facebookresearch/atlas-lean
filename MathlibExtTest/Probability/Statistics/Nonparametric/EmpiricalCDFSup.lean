@@ -37,3 +37,47 @@ example {n : ℕ}
     MeasurableSet {ω | ∃ q : ℚ, |ProbabilityTheory.empCDF (fun i => X i ω) (q : ℝ)
       - (if (q : ℝ) < 0 then (0 : ℝ) else 1)| > eps} := by
   exact ProbabilityTheory.measurableSet_uniform_deviation X (fun r => if r < 0 then (0 : ℝ) else 1) eps hX
+
+-- Positive/use: the coupling fixes atoms (median draw maps to the atom at 0).
+example : ProbabilityTheory.cdfQuantile (Measure.dirac (0 : ℝ)) (1 / 2) = 0 := by
+  have hmem : (1 / 2 : ℝ) ∈ Set.Ioo (0 : ℝ) 1 := Set.mem_Ioo.mpr ⟨by norm_num, by norm_num⟩
+  have hset : {x : ℝ | (1 / 2 : ℝ) ≤ cdf (Measure.dirac (0 : ℝ)) x} = Set.Ici 0 := by
+    ext x
+    simp only [Set.mem_ofPred_eq, Set.mem_Ici]
+    rw [cdf_eq_real]
+    unfold Measure.real
+    rw [Measure.dirac_apply]
+    by_cases hx : (0 : ℝ) ≤ x
+    · rw [Set.indicator_of_mem (Set.mem_Iic.mpr hx), Pi.one_apply, ENNReal.toReal_one]
+      exact iff_of_true (by norm_num) hx
+    · rw [Set.indicator_of_notMem (fun h => hx (Set.mem_Iic.mp h)), ENNReal.toReal_zero]
+      exact iff_of_false (by norm_num) hx
+  unfold ProbabilityTheory.cdfQuantile
+  rw [ite_eq_left hmem, hset]
+  exact csInf_Ici
+
+-- Boundary: boundary draws map to 0 by definition, which is why hu excludes them
+-- (the exact count equality needs hle, available only inside (0,1)).
+example : ProbabilityTheory.cdfQuantile (Measure.dirac (0 : ℝ)) 0 = 0 := by
+  simp [ProbabilityTheory.cdfQuantile]
+
+-- Use (empCDF API): the reduction fires for the atomic law `dirac 0` and a two-point
+-- sample of median draws.
+example :
+    (⨆ x, |ProbabilityTheory.empCDF
+        (fun i : Fin 2 => ProbabilityTheory.cdfQuantile (Measure.dirac (0 : ℝ))
+          ((fun _ => (1 / 2 : ℝ)) i)) x - cdf (Measure.dirac (0 : ℝ)) x|) ≤
+    (⨆ v ∈ Set.Icc (0 : ℝ) 1,
+      |ProbabilityTheory.empCDF (fun _ : Fin 2 => (1 / 2 : ℝ)) v - v|) :=
+  ProbabilityTheory.ks_reduction_quantile_coupling_empCDF
+    (fun _ => Set.mem_Ioo.mpr ⟨by norm_num, by norm_num⟩)
+
+-- Boundary (smallest sample, empCDF API): a single draw, `Fin 1`.
+example :
+    (⨆ x, |ProbabilityTheory.empCDF
+        (fun i : Fin 1 => ProbabilityTheory.cdfQuantile (Measure.dirac (0 : ℝ))
+          ((fun _ => (1 / 2 : ℝ)) i)) x - cdf (Measure.dirac (0 : ℝ)) x|) ≤
+    (⨆ v ∈ Set.Icc (0 : ℝ) 1,
+      |ProbabilityTheory.empCDF (fun _ : Fin 1 => (1 / 2 : ℝ)) v - v|) :=
+  ProbabilityTheory.ks_reduction_quantile_coupling_empCDF
+    (fun _ => Set.mem_Ioo.mpr ⟨by norm_num, by norm_num⟩)

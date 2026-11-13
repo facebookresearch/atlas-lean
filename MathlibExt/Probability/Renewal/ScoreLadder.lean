@@ -747,14 +747,15 @@ noncomputable def maxTail (P : Measure Ω) (X : ℕ → Ω → ℤ) (k : ℕ) : 
   (P {ω | ∃ n, (k : ℤ) < scoreWalk X n ω}).toReal
 
 /-- The σ-algebra of the scores before time `n`. -/
-private noncomputable abbrev past (X : ℕ → Ω → ℤ) (n : ℕ) : MeasurableSpace Ω :=
+noncomputable abbrev past (X : ℕ → Ω → ℤ) (n : ℕ) : MeasurableSpace Ω :=
   ⨆ i ∈ Set.Iio n, MeasurableSpace.comap (X i) (inferInstance : MeasurableSpace ℤ)
 
 /-- The σ-algebra of the scores from time `n` on. -/
 private noncomputable abbrev future (X : ℕ → Ω → ℤ) (n : ℕ) : MeasurableSpace Ω :=
   ⨆ i ∈ Set.Ici n, MeasurableSpace.comap (X i) (inferInstance : MeasurableSpace ℤ)
 
-private lemma past_le {X : ℕ → Ω → ℤ} (hmeas : ∀ i, Measurable (X i)) (n : ℕ) :
+/-- The past σ-algebra of measurable scores is a sub-σ-algebra of the ambient one. -/
+lemma past_le {X : ℕ → Ω → ℤ} (hmeas : ∀ i, Measurable (X i)) (n : ℕ) :
     past X n ≤ ‹MeasurableSpace Ω› :=
   iSup₂_le fun i _ => (hmeas i).comap_le
 
@@ -763,7 +764,8 @@ private lemma future_le {X : ℕ → Ω → ℤ} (hmeas : ∀ i, Measurable (X i
   iSup₂_le fun i _ => (hmeas i).comap_le
 
 omit [MeasurableSpace Ω] in
-private lemma measurable_scoreWalk_past (X : ℕ → Ω → ℤ) {m n : ℕ} (hmn : m ≤ n) :
+/-- The walk at time `m ≤ n` is measurable with respect to the past of time `n`. -/
+lemma measurable_scoreWalk_past (X : ℕ → Ω → ℤ) {m n : ℕ} (hmn : m ≤ n) :
     Measurable[past X n] (scoreWalk X m) := by
   refine Finset.measurable_sum _ fun i hi => ?_
   have hi' : i ∈ Set.Iio n := by
@@ -774,7 +776,8 @@ private lemma measurable_scoreWalk_past (X : ℕ → Ω → ℤ) {m n : ℕ} (hm
     le_rfl
 
 omit [MeasurableSpace Ω] in
-private lemma measurableSet_ladderEvent_past (X : ℕ → Ω → ℤ) (n j : ℕ) :
+/-- The ladder event `{τ₊ = n, S_{τ₊} = j}` is determined by the scores before time `n`. -/
+lemma measurableSet_ladderEvent_past (X : ℕ → Ω → ℤ) (n j : ℕ) :
     MeasurableSet[past X n] (ladderEvent X n j) := by
   have h : ladderEvent X n j = {ω | 0 < scoreWalk X n ω} ∩ {ω | scoreWalk X n ω = j} ∩
       ⋂ m ∈ Finset.range n, {ω | scoreWalk X m ω ≤ 0} := by
@@ -847,7 +850,8 @@ private lemma scoreWalk_add (X : ℕ → Ω → ℤ) (n m : ℕ) (ω : Ω) :
   Finset.sum_range_add _ n m
 
 omit [MeasurableSpace Ω] in
-private lemma ladderEvent_disjoint (X : ℕ → Ω → ℤ) {p q : ℕ × ℕ} (hpq : p ≠ q) :
+/-- Ladder events with distinct `(epoch, height)` indices are disjoint. -/
+lemma ladderEvent_disjoint (X : ℕ → Ω → ℤ) {p q : ℕ × ℕ} (hpq : p ≠ q) :
     Disjoint (ladderEvent X p.1 p.2) (ladderEvent X q.1 q.2) := by
   rw [Set.disjoint_left]
   rintro ω ⟨hp1, hp2, hp3⟩ ⟨hq1, hq2, hq3⟩

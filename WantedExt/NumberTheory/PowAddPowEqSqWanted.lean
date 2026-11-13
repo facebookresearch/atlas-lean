@@ -27,27 +27,23 @@ theorem, already covered by
 `MathlibExt.NumberTheory.MihailescuWanted.mihailescu`)
 and Corollary 2 (false as extracted: its equation
 must have been flattened).
+
+Proved in `MathlibExt.NumberTheory.PowAddPowEqSq`:
+Lemma 1, case `n = 2`
+(`MetaMathlibExt.two_pow_add_one_eq_sq`).
 -/
 module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Data.Nat.GCD.Basic
 public import Mathlib.Data.Nat.Prime.Basic
+public import MathlibExt.NumberTheory.PowAddPowEqSq
 
 set_option autoImplicit false
 
 @[expose] public section
 
 namespace MathlibExt.NumberTheory.PowAddPowEqSqWanted
-
-/-- **Lemma 1**, case `n = 2`: with `y = 0`, Equation
-(1) `2^x + 1 = z^2` has the unique nonnegative
-integer solution `(x, z) = (3, 3)`.
-
-Source: Suton Tadee, "On the Diophantine Equation
-`n^x + (5p)^y = z^2`", Lemma 1. -/
-theorem_wanted two_pow_add_one_eq_sq (x z : ℕ) :
-    2 ^ x + 1 = z ^ 2 ↔ x = 3 ∧ z = 3
 
 /-- **Lemma 1**, case `n ≠ 2`: with `y = 0`,
 `(x, 0, z)` solves Equation (1) if and only if

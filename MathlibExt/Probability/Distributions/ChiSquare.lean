@@ -39,6 +39,18 @@ theorem isProbabilityMeasure_chiSquareMeasure {p : ℕ} (hp : 0 < p) :
     IsProbabilityMeasure (chiSquareMeasure p) :=
   isProbabilityMeasure_gammaMeasure (by positivity) (by norm_num)
 
+/-- **A chi-square law has no atoms**: `χ²_p {x} = 0` for every `x`, since it has a density
+with respect to Lebesgue measure. In particular `χ²₁` puts no mass at `0`, which is what
+separates it from the degenerate limit `δ₀`. -/
+theorem chiSquareMeasure_singleton (p : ℕ) (x : ℝ) : chiSquareMeasure p {x} = 0 := by
+  rw [chiSquareMeasure, gammaMeasure, withDensity_apply _ (measurableSet_singleton x)]
+  exact setLIntegral_measure_zero _ _ Real.volume_singleton
+
+/-- Chi-square laws are atomless (`chiSquareMeasure_singleton`). -/
+instance instNullSingletonClassChiSquareMeasure (p : ℕ) :
+    NullSingletonClass (chiSquareMeasure p) :=
+  ⟨chiSquareMeasure_singleton p⟩
+
 /-- MGF of the square of a standard normal variable. Promoted from the private
 Johnson–Lindenstrauss development; the formula holds for all `t` with the
 convention that both sides vanish for `t ≥ 1/2`. -/
