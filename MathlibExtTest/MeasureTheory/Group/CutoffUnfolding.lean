@@ -169,6 +169,157 @@ theorem nested_average_integrable :
         (cutoff x : ℂ)) Measure.count := by
   simp
 
+/-! The order-two subgroup `S₂ = {1, (0 1)}` fixing `2`. The observable
+depends only on `x⁻¹ 2`, so it is invariant under left multiplication by
+`S₂` but not by `⊤`. The two cutoffs are indicators of different sets of
+representatives of the cosets `S₂ * x`, and the inner integrands on either
+side of the cutoff replacement differ. -/
+
+private abbrev S₂ : Subgroup P := MulAction.stabilizer P (2 : Fin 3)
+
+/-- The cycle `0 ↦ 1 ↦ 2 ↦ 0`. -/
+private abbrev cyc : P := Equiv.swap 0 1 * Equiv.swap 1 2
+
+private abbrev startReps : Finset P := {1, cyc, Equiv.swap 0 2}
+
+private abbrev innerReps : Finset P := {1, cyc⁻¹, Equiv.swap 1 2}
+
+/-- The values `1, 2, 4` on the three cosets `S₂ * x`. -/
+def cosetObs (x : P) : ℂ := ![1, 2, 4] (x⁻¹ 2)
+
+/-- One point in each coset `S₂ * x`. -/
+def startCutoff (x : P) : ℝ := if x ∈ startReps then 1 else 0
+
+/-- Another choice of one point in each coset `S₂ * t`, as a cutoff on `⊤`. -/
+def innerCutoff (t : (⊤ : Subgroup P)) : ℝ :=
+  if (t : P) ∈ innerReps then 1 else 0
+
+theorem S₂_ne_bot_ne_top : S₂ ≠ ⊥ ∧ S₂ ≠ ⊤ := by
+  refine ⟨fun h => ?_, fun h => ?_⟩
+  · have hs : (Equiv.swap 0 1 : P) ∈ S₂ := by decide
+    rw [h, Subgroup.mem_bot] at hs
+    exact absurd hs (by decide)
+  · have hs : (Equiv.swap 1 2 : P) ∉ S₂ := by decide
+    rw [h] at hs
+    exact hs (Subgroup.mem_top _)
+
+theorem cosetObs_invariant (s : S₂) (x : P) :
+    cosetObs ((s : P) * x) = cosetObs x := by
+  have h : ∀ s ∈ S₂, ∀ x : P, (s * x)⁻¹ 2 = x⁻¹ 2 := by decide
+  rw [cosetObs, cosetObs, h s s.2 x]
+
+theorem cosetObs_not_top_invariant :
+    ¬∀ (t : (⊤ : Subgroup P)) (x : P), cosetObs ((t : P) * x) = cosetObs x := by
+  intro h
+  have h1 := h ⟨Equiv.swap 1 2, Subgroup.mem_top _⟩ 1
+  norm_num [cosetObs] at h1
+
+/-- Right multiplication by `S₂` moves the observable. -/
+theorem cosetObs_not_right_invariant :
+    ¬∀ (s : S₂) (x : P), cosetObs (x * (s : P)) = cosetObs x := by
+  intro h
+  have h1 := h ⟨Equiv.swap 0 1, by decide⟩ (Equiv.swap 0 2)
+  norm_num [cosetObs] at h1
+
+theorem cutoffs_ne : (fun t : (⊤ : Subgroup P) => startCutoff t) ≠ innerCutoff := by
+  intro h
+  have h1 := congrFun h ⟨cyc, Subgroup.mem_top _⟩
+  have hs : cyc ∈ startReps := by decide
+  have hi : cyc ∉ innerReps := by decide
+  simp only [startCutoff, innerCutoff, hs, hi, ite_true, ite_false] at h1
+  norm_num at h1
+
+/-- At `x = 1`, the inner integrands on either side of the cutoff
+replacement differ. -/
+theorem inner_integrands_ne :
+    (fun t : (⊤ : Subgroup P) =>
+      cosetObs ((t : P) * 1) * (startCutoff ((t : P) * 1) : ℂ)) ≠
+      fun t : (⊤ : Subgroup P) => cosetObs ((t : P) * 1) * (innerCutoff t : ℂ) := by
+  intro h
+  have h1 := congrFun h ⟨cyc, Subgroup.mem_top _⟩
+  have hs : cyc ∈ startReps := by decide
+  have hi : cyc ∉ innerReps := by decide
+  have ho : cyc⁻¹ 2 = 1 := by decide
+  simp only [mul_one, startCutoff, innerCutoff, hs, hi, ite_true, ite_false,
+    cosetObs, ho] at h1
+  norm_num at h1
+
+theorem startCutoff_normalized (x : P) :
+    ∫ s : S₂, startCutoff ((s : P) * x) ∂Measure.count = 1 := by
+  have hc : ∀ x : P,
+      (Finset.univ.filter fun s : S₂ => (s : P) * x ∈ startReps).card = 1 := by
+    decide
+  rw [integral_count]
+  simp only [startCutoff]
+  rw [Finset.sum_boole]
+  exact_mod_cast hc x
+
+/-- The starting cutoff is not normalized for right multiplication by `S₂`. -/
+theorem startCutoff_not_right_normalized :
+    ¬∀ x : P, ∫ s : S₂, startCutoff (x * (s : P)) ∂Measure.count = 1 := by
+  intro h
+  have hc : (Finset.univ.filter fun s : S₂ =>
+      Equiv.swap 0 2 * (s : P) ∈ startReps).card = 2 := by
+    decide
+  have h1 := h (Equiv.swap 0 2)
+  rw [integral_count] at h1
+  simp only [startCutoff] at h1
+  rw [Finset.sum_boole] at h1
+  have h2 : ((2 : ℕ) : ℝ) = 1 := hc ▸ h1
+  norm_num at h2
+
+theorem innerCutoff_normalized (t : (⊤ : Subgroup P)) :
+    ∫ s : S₂, innerCutoff (⟨(s : P), le_top (a := S₂) s.2⟩ * t)
+      ∂Measure.count = 1 := by
+  have hc : ∀ y : P,
+      (Finset.univ.filter fun s : S₂ => (s : P) * y ∈ innerReps).card = 1 := by
+    decide
+  rw [integral_count]
+  simp only [innerCutoff, Subgroup.coe_mul]
+  rw [Finset.sum_boole]
+  exact_mod_cast hc t
+
+/-- All source hypotheses hold with the nontrivial proper subgroup `S₂`,
+distinct `S₂`-normalized cutoffs, and an `S₂`-invariant observable that
+`⊤` moves. -/
+theorem nested_pair :
+    ∫ x : P, cosetObs x * (startCutoff x : ℂ) ∂Measure.count =
+      ∫ x : P, (∫ t : (⊤ : Subgroup P), cosetObs ((t : P) * x) * (innerCutoff t : ℂ)
+        ∂Measure.count) * (cutoff x : ℂ) ∂Measure.count := by
+  apply source_type (⊤ : Subgroup P) (by simp) S₂ (isClosed_discrete _) le_top
+    Measure.count Measure.count Measure.count cosetObs (measurable_of_countable _)
+    ⟨4, fun x => by unfold cosetObs; generalize x⁻¹ 2 = i; fin_cases i <;> norm_num⟩
+    cosetObs_invariant
+    startCutoff (fun x => by unfold startCutoff; split <;> norm_num)
+    (measurable_of_countable _) (HasCompactSupport.of_compactSpace _)
+    (fun x _ => startCutoff_normalized x)
+    innerCutoff (fun t => by unfold innerCutoff; split <;> norm_num)
+    (measurable_of_countable _) (HasCompactSupport.of_compactSpace _)
+    innerCutoff_normalized
+    cutoff (fun x => by unfold cutoff; split <;> norm_num)
+    (measurable_of_countable _) (HasCompactSupport.of_compactSpace _)
+    (fun x _ => top_cutoff_normalized x)
+
+theorem nested_pair_start :
+    ∫ x : P, cosetObs x * (startCutoff x : ℂ) ∂Measure.count = 7 := by
+  have hw (x : P) : cosetObs x * (startCutoff x : ℂ) =
+      if x ∈ startReps then cosetObs x else 0 := by
+    unfold startCutoff
+    split_ifs <;> simp
+  simp_rw [integral_count, hw, Fintype.sum_ite_mem]
+  rw [Finset.sum_insert (by decide), Finset.sum_insert (by decide),
+    Finset.sum_singleton]
+  have h1 : (1 : P)⁻¹ 2 = 2 := by decide
+  have h2 : cyc⁻¹ 2 = 1 := by decide
+  have h3 : (Equiv.swap 0 2 : P)⁻¹ 2 = 0 := by decide
+  simp only [cosetObs, h1, h2, h3]
+  norm_num
+
+theorem nested_pair_nonzero :
+    ∫ x : P, (∫ t : (⊤ : Subgroup P), cosetObs ((t : P) * x) * (innerCutoff t : ℂ)
+      ∂Measure.count) * (cutoff x : ℂ) ∂Measure.count = 7 := by
+  rw [← nested_pair, nested_pair_start]
+
 end PermutationExample
 
 /-- Zero observable and empty-support cutoff are admitted together, without
