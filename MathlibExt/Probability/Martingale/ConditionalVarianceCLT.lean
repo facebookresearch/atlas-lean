@@ -76,7 +76,11 @@ conclude. The finite-dimensional statements run the same cut through
   past `r n`; finite rows are extended by zeros.
 * `tendstoInDistribution_fdd_martingale_condVar` assumes the predictable quadratic variation of
   the whole row converges (`hpqvEnd`); this is automatic when the row ends at a time of the axis,
-  as on `[0,1]` with `N n t = ⌊n t⌋` and `r n = n`.
+  as on `[0,1]` with `N n t = ⌊n t⌋` and `r n = n`. The hypothesis is a proof convenience, not
+  part of the mathematics: the cut is built from the whole row because
+  `tendstoInDistribution_fdd_martingale_mcLeish` asks for `N n s ≤ r n` and quadratic-variation
+  convergence at every time `s`, not only at `s ∈ I`. Re-indexing the time axis to `I` and
+  cutting at `N n (max I)` would remove it; that is not done here.
 * The finite-dimensional theorems take the limit process `Z` as a hypothesis, specified by its
   Gaussian finite-dimensional laws; tightness and the functional CLT are T82's.
 
@@ -89,7 +93,8 @@ P. Hall and C. C. Heyde, *Martingale Limit Theory and Its Application*, Academic
 §3.2, Corollary 3.1 (the array form with `∑ E[X² 1{|X|>ε} | F] →_P 0` and
 `∑ E[X² | F] →_P η²`).
 D. L. McLeish, *Dependent central limit theorems and invariance principles*, Ann. Probab. 2
-(1974), 620–628, Theorem (2.3), the realized form this file reduces to.
+(1974), 620–628, Theorem (2.3), the realized form this file reduces to, and Corollary (3.8),
+the conditional-variance form (as named in `MathlibExt.Probability.Martingale.McLeishCLT`).
 -/
 
 @[expose] public section
@@ -581,6 +586,9 @@ private lemma tendsto_zero_of_forall_le {a : ℕ → ℝ} (h0 : ∀ n, 0 ≤ a n
 
 variable [IsFiniteMeasure μ]
 
+-- Adapted from the private `tendstoInMeasure_add` in
+-- `MathlibExt.Probability.Martingale.McLeishCLT`, with `measureReal` in place of the measure;
+-- make that lemma public and delete this copy (tracking follow-up).
 private lemma tendstoInMeasure_add' {f f' : ℕ → Ω → ℝ} {g g' : Ω → ℝ}
     (hf : TendstoInMeasure μ f atTop g) (hf' : TendstoInMeasure μ f' atTop g') :
     TendstoInMeasure μ (fun n ω => f n ω + f' n ω) atTop (fun ω => g ω + g' ω) := by
@@ -789,6 +797,9 @@ section Main
 
 variable [IsProbabilityMeasure μ]
 
+-- Adapted from the private `martingale_increment` in
+-- `MathlibExt.Probability.Martingale.McLeishCLT` (same proof, without the `Integrable`
+-- conjunct); make that lemma public and delete this copy (tracking follow-up).
 /-- Increments of a martingale `∑_{j<k} X_j` are martingale differences. -/
 private lemma martingale_increment' {F : Filtration ℕ m0} {X : ℕ → Ω → ℝ}
     (h : Martingale (fun k ω => ∑ j ∈ range k, X j ω) F μ) (k : ℕ) :
@@ -942,7 +953,11 @@ the finite-dimensional distributions of `S n` converge to those of any process `
 Gaussian finite-dimensional laws of covariance `A (min s u)`.
 
 The terminal hypothesis `hpqvEnd` is automatic when the row ends at a time of the axis
-(`r n = N n s₁`), as in `tendstoInDistribution_fdd_martingaleDifference_floor_condVar`.
+(`r n = N n s₁`), as in `tendstoInDistribution_fdd_martingaleDifference_floor_condVar`. It is a
+proof convenience, not a sharp condition: the cut is built from the predictable quadratic
+variation of the whole row because the fdd interface of McLeish's theorem wants `N n s ≤ r n`
+and the quadratic-variation limit at every `s`; cutting at `N n (max I)` after re-indexing the
+time axis to `I` would remove it.
 
 The proof is the cut of `tendstoInDistribution_martingale_condVar` (at level `|V| + 1`)
 followed by `tendstoInDistribution_fdd_martingale_mcLeish`. -/
