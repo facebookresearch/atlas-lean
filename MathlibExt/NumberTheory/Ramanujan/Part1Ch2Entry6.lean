@@ -14,7 +14,7 @@ public import Mathlib.Order.Interval.Finset.Nat
 import Mathlib.Algebra.CharP.Defs
 import Mathlib.Algebra.Order.Ring.Star
 import Mathlib.Analysis.Normed.Field.Lemmas
-import Mathlib.Data.Rat.Star
+import Mathlib.Algebra.Order.Star.Rat
 import Mathlib.GroupTheory.Finiteness
 
 @[expose] public section
@@ -410,6 +410,7 @@ set_option linter.unusedVariables false in
 Proves `Wanted` entry `ramanujan_part1_ch2_entry6`. It follows from
 `ramanujan_part1_ch2_entry6_general`; the hypothesis `hr` is unused and keeps the source's shape.
 -/
+@[nolint unusedArguments]
 theorem ramanujan_part1_ch2_entry6 (n r : ℕ) (hr : 0 < r) :
     ∑ j ∈ Finset.Icc (n + 1) (A n r), (1 : ℚ) / (j : ℚ) =
       (r : ℚ) + 2 * ∑ k ∈ Finset.range r, ((r - k : ℕ) : ℚ) *
