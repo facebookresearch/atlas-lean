@@ -10,8 +10,8 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Add
-public import Mathlib.Analysis.Calculus.Deriv.Inv
 
+import PhyslibExt.EarthScience.GravityPotential
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
@@ -20,13 +20,23 @@ import Mathlib.Tactic.Ring
 
 ## i. Overview
 
-For a uniform sphere of radius `R`, the interior potential
+For a uniform sphere of mass `M` and radius `R`, the interior potential
 `-G * M / (2 * R) * (3 - (r / R) ^ 2)` and the exterior potential
 `-G * M / r` agree at the surface `r = R`: both equal `-G * M / R`,
-and both have derivative `G * M / R ^ 2` there. Value and field
-therefore match continuously across the surface. This is the explicit
-closed-form interior/exterior solution for the uniform-density case;
-no claim is made about non-uniform density profiles.
+and both have radial derivative `G * M / R ^ 2` there. Only these
+pointwise facts at `r = R` are proved. The piecewise potential that
+joins the two formulas is not defined here, and no continuity or
+differentiability of such a joined function is claimed.
+
+Both formulas are stipulated, not derived from Poisson's equation or
+Newton's theorems. They are the closed-form potential of a homogeneous
+sphere of density `ρ` and radius `R` (Binney and Tremaine, below):
+`-2 * π * G * ρ * (R ^ 2 - r ^ 2 / 3)` for `r ≤ R` and `-G * M / r`
+for `r ≥ R`, where `M = 4 * π * ρ * R ^ 3 / 3`. Substituting this `M`
+turns the interior formula into the form used here. No claim is made
+about non-uniform density profiles. The exterior derivative is the
+point-mass result `EarthScience.hasDerivAt_pointMass_potential` at
+`r = R`.
 
 ## ii. Key results
 
@@ -39,8 +49,14 @@ no claim is made about non-uniform density profiles.
 
 ## iv. References
 
+- J. Binney and S. Tremaine, *Galactic Dynamics*, 2nd ed., Princeton
+  University Press, 2008, Chapter 2 (Potential Theory), §2.2 (Spherical
+  systems), "Potentials of some simple systems: homogeneous sphere":
+  the interior and exterior potential of a homogeneous sphere.
+- `EarthScience.hasDerivAt_pointMass_potential` in
+  `PhyslibExt.EarthScience.GravityPotential`.
 - `HasDerivAt.const_mul`, `HasDerivAt.sub`, `HasDerivAt.mul` in Mathlib.
-- `hasDerivAt_inv`, `hasDerivAt_const`, `hasDerivAt_id` in Mathlib.
+- `hasDerivAt_const`, `hasDerivAt_id` in Mathlib.
 -/
 
 @[expose] public section
@@ -49,11 +65,11 @@ namespace EarthScience
 
 /-! ## A. Surface matching -/
 
-/-- An explicit uniform-sphere solution matches at its surface `r = R`:
-the interior potential `-G*M/(2*R) * (3 - (r/R)^2)` equals `-G*M/R` at
-`r = R`, its derivative there is `G*M/R^2`, and the exterior potential
-`-G*M/r` has the same value and the same derivative at `r = R`, so value
-and field match continuously across the surface. -/
+/-- The stipulated uniform-sphere potentials agree at the surface `r = R`:
+the interior potential `-G*M/(2*R) * (3 - (r/R)^2)` equals `-G*M/R`, the
+value of the exterior potential `-G*M/r` at `r = R`, and both have
+derivative `G*M/R^2` at `r = R`. This is a statement at the single point
+`r = R`; no joined piecewise potential is defined. -/
 theorem uniform_sphere_potential_matches_at_surface
     {G M R : ℝ} (hR : 0 < R) :
     (fun r => -G * M / (2 * R) * (3 - (r / R) ^ 2)) R = -G * M / R ∧
@@ -85,15 +101,6 @@ theorem uniform_sphere_potential_matches_at_surface
       ring
     rw [hval] at h4
     exact h4
-  · have hinv : HasDerivAt (fun r : ℝ => r⁻¹) (-(R ^ 2)⁻¹) R := hasDerivAt_inv hRne
-    have h : HasDerivAt (fun r : ℝ => (-G * M) * r⁻¹) ((-G * M) * (-(R ^ 2)⁻¹)) R :=
-      hinv.const_mul (-G * M)
-    have hfun : (fun r : ℝ => -G * M / r) = (fun r : ℝ => (-G * M) * r⁻¹) := by
-      ext r
-      rw [div_eq_mul_inv]
-    have hval3 : (-G * M) * (-(R ^ 2)⁻¹) = G * M / R ^ 2 := by
-      field_simp
-    rw [hval3] at h
-    rwa [hfun]
+  · exact hasDerivAt_pointMass_potential hR
 
 end EarthScience
