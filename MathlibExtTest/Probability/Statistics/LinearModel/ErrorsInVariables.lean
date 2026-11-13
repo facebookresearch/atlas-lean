@@ -22,7 +22,8 @@ import Mathlib.Probability.Distributions.Gaussian.Real
   population identity gives the population slope `β / 2` from its fields.
 * `measurementError_population_attenuation` on a concrete model: independent Gaussian
   coordinates with `Var X = 4`, `Var e = 1`, a nonconstant equation error and `β = 2` give the
-  population slope `8 / 5`.
+  population slope `8 / 5`; by `measurementError_population_slope_of_cov_eq_zero`, `8 / 5` is the
+  unique `b` with `cov[W, Y - b W] = 0`.
 -/
 
 open MeasureTheory ProbabilityTheory Filter Topology
@@ -237,6 +238,21 @@ example : cov[fun ω : Fin 3 → ℝ => ω 0 + ω 1, fun ω => 1 + 2 * ω 0 + ω
     (e := fun ω => ω 1) (ε := fun ω => ω 2) (α := 1) (β := 2) (memLp_coord 0) (memLp_coord 1)
     (memLp_coord 2) (indepFun_coord (by decide)) (indepFun_coord (by decide))
     (indepFun_coord (by decide)) (by rw [variance_W]; norm_num)
+  rw [h, variance_coord, variance_coord]
+  norm_num [attenuationFactor, σ2]
+
+/-- The nondegenerate slope form on the same model: `8 / 5` is the unique `b` for which the
+residual `Y - b W` is uncorrelated with `W`. -/
+example (b : ℝ) :
+    cov[fun ω : Fin 3 → ℝ => ω 0 + ω 1, fun ω => 1 + 2 * ω 0 + ω 2 - b * (ω 0 + ω 1); Q] = 0 ↔
+      b = 8 / 5 := by
+  have h := measurementError_population_slope_of_cov_eq_zero (μ := Q) (X := fun ω => ω 0)
+    (e := fun ω => ω 1) (ε := fun ω => ω 2) (α := 1) (β := 2) (memLp_coord 0) (memLp_coord 1)
+    (memLp_coord 2)
+    ((indepFun_coord (by decide)).covariance_eq_zero (memLp_coord 0) (memLp_coord 1))
+    ((indepFun_coord (by decide)).covariance_eq_zero (memLp_coord 0) (memLp_coord 2))
+    ((indepFun_coord (by decide)).covariance_eq_zero (memLp_coord 1) (memLp_coord 2))
+    (by rw [variance_W]; norm_num) b
   rw [h, variance_coord, variance_coord]
   norm_num [attenuationFactor, σ2]
 
