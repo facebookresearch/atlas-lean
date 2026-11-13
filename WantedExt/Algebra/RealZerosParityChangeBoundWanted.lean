@@ -19,7 +19,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Polynomial.Basic
 public import Mathlib.Algebra.Polynomial.Degree.Defs
 public import Mathlib.Algebra.Polynomial.Eval.Defs
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Set.Card
 
 @[expose] public section
