@@ -340,8 +340,9 @@ private lemma iIndepFun_XW : iIndepFun XW PW :=
 
 /-- **`tendstoInDistribution_countMLE` is non-vacuous.** For i.i.d. counts with the three-point
 law `μW`, every count-side hypothesis (second moment, score equations at the truth,
-profile information) is discharged; only the estimator-side hypotheses `hroot`, `hcons` and the
-Gaussian `Y`, which the merged Z-estimator theorem also takes, remain. -/
+profile information) is discharged; only the estimator-side hypotheses `hθ_meas`, `hroot`,
+`hcons`, `hY_meas` and the Gaussian `Y`, which the merged Z-estimator theorem also takes,
+remain. -/
 example {θhat : ℕ → (ℕ → ℕ) → E₂} (hθ_meas : ∀ n, AEMeasurable (θhat n) PW)
     (hroot : Tendsto (fun n => PW {ω | ∑ i ∈ range n, countScore 1 (θhat n ω) (XW i ω) ≠ 0})
       atTop (𝓝 0))
