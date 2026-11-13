@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Economics.Finance.DatedCashFlow
+public import MathlibExt.Economics.Finance.CashFlowPriceStrictAnti
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.Deriv.ZPow
 public import Mathlib.Analysis.Calculus.Deriv.Add
@@ -37,11 +38,17 @@ For fixed cash flows at a common yield `r`, the price is
 * `MathlibExt.Economics.Finance.deriv_yieldPrice_eq_neg_modifiedDuration_mul`:
   `P′(r) = -Dmod(r) * P(r)`.
 * `MathlibExt.Economics.Finance.yieldPrice_eq_presentValue`: the zpow price
-  agrees with the FI01 present value, the unification bridge to
-  FI03.T02's `cashFlowPrice`.
+  agrees with the FI01 present value.
+* `MathlibExt.Economics.Finance.yieldPrice_eq_cashFlowPrice`: the zpow price is
+  FI03.T02's `cashFlowPrice` as a function of the yield, with no condition on
+  `r`, so FI03 and FI04 results apply to the same function.
+* `MathlibExt.Economics.Finance.hasDerivAt_cashFlowPrice` and
+  `MathlibExt.Economics.Finance.deriv_cashFlowPrice_eq_neg_modifiedDuration_mul`:
+  the derivative and `P′(r) = -Dmod(r) * P(r)` stated for `cashFlowPrice`.
 
-The pinned theorems assume only `-1 < r` and (for the `deriv` identity)
-`yieldPrice ≠ 0`; no sign hypothesis on the cash flows is needed. The
+The pinned theorems assume only `-1 < r` and (for the `deriv` identity) a
+nonzero price (`yieldPrice ≠ 0`, or `cashFlowPrice ≠ 0` in the `cashFlowPrice`
+form); no sign hypothesis on the cash flows is needed. The
 roadmap's "fixed positive cash flows" is the usual case giving `P > 0`.
 
 ## References
@@ -55,8 +62,9 @@ namespace MathlibExt.Economics.Finance
 
 /-- Price at a common yield `r` of the fixed cash flows `c t` at dates `t ∈ s`,
 in zpow form (source clause: "`P(r) = Σ_t c_t (1 + r)^(-t)`"). The zpow form
-is chosen so the derivative is a zpow derivative; see
-`yieldPrice_eq_presentValue` for the FI01 present-value form. -/
+is chosen so the derivative is a zpow derivative; `yieldPrice_eq_cashFlowPrice`
+identifies it with the FI03.T02 price `cashFlowPrice` (the FI01 present-value
+form). -/
 noncomputable def yieldPrice (c : ℕ → ℝ) (s : Finset ℕ) (r : ℝ) : ℝ :=
   ∑ t ∈ s, c t * (1 + r) ^ (-(t : ℤ))
 
@@ -118,5 +126,31 @@ theorem yieldPrice_eq_presentValue {c : ℕ → ℝ} {s : Finset ℕ} {r : ℝ}
   apply Finset.sum_congr rfl
   intro t ht
   rw [zpow_neg, zpow_natCast, mul_comm]
+
+/-- The zpow price is the FI03.T02 price `cashFlowPrice`, as functions of the
+yield and with no condition on `r` (`zpow_neg`, `zpow_natCast`). -/
+theorem yieldPrice_eq_cashFlowPrice (c : ℕ → ℝ) (s : Finset ℕ) :
+    yieldPrice c s = cashFlowPrice c s := by
+  funext r
+  unfold yieldPrice cashFlowPrice presentValue discountFactor
+  apply Finset.sum_congr rfl
+  intro t _
+  rw [zpow_neg, zpow_natCast, mul_comm]
+
+/-- Termwise derivative of the FI03.T02 price `cashFlowPrice` at a common yield
+above `-1` (Atlas roadmap FI04.T01). -/
+theorem hasDerivAt_cashFlowPrice {c : ℕ → ℝ} {s : Finset ℕ} {r : ℝ} (hr : -1 < r) :
+    HasDerivAt (cashFlowPrice c s)
+      (-∑ t ∈ s, (t : ℝ) * c t * (1 + r) ^ (-(t : ℤ) - 1)) r := by
+  rw [← yieldPrice_eq_cashFlowPrice]
+  exact hasDerivAt_yieldPrice hr
+
+/-- `P′(r) = -Dmod(r) * P(r)` for the FI03.T02 price `cashFlowPrice` at a nonzero
+price (Atlas roadmap FI04.T01). -/
+theorem deriv_cashFlowPrice_eq_neg_modifiedDuration_mul {c : ℕ → ℝ} {s : Finset ℕ}
+    {r : ℝ} (hr : -1 < r) (hP : cashFlowPrice c s r ≠ 0) :
+    deriv (cashFlowPrice c s) r = -modifiedDuration c s r * cashFlowPrice c s r := by
+  rw [← yieldPrice_eq_cashFlowPrice] at hP ⊢
+  exact deriv_yieldPrice_eq_neg_modifiedDuration_mul hr hP
 
 end MathlibExt.Economics.Finance
