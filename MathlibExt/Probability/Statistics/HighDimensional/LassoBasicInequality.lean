@@ -9,13 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Matrix.Mul
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # Fixed-design Lasso basic inequality
