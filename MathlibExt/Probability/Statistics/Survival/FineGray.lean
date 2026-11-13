@@ -66,8 +66,9 @@ and model it by proportional subdistribution hazards `λ*_c(t; x) = λ₀(t) exp
 The CIF link assumes `F_c` continuous on `[0, t]` and differentiable on `(0, t)`; the hazard
 is a right limit (`h → 0+`).
 The large-sample theory of the Fine–Gray estimator (consistency and asymptotic normality of the
-weighted partial-likelihood estimator, the variance estimator) and the Kaplan–Meier estimation
-of the censoring survival `G` are not formalized here.
+weighted partial-likelihood estimator, the variance estimator), the score and information of
+the weighted partial likelihood, and the Kaplan–Meier estimation of the censoring survival `G`
+are not formalized here.
 
 ## References
 
