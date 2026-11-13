@@ -18,7 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.ResiduallyFinite
-public import WantedExt.GroupTheory.LocallyNormalSecondCentreQuotientKourovka1Problem9Wanted
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -30,7 +30,7 @@ Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Pro
 Gorchakov). UnsolvedMath record UM-00700355 (`KOU-6.8`), dataset ulamai/UnsolvedMath v1.8.0.
 
 A group is locally normal when every finite subset lies in a finite normal subgroup
-(`IsLocallyNormal` of the Kourovka 1.9 entry, reused here); residually finite is Mathlib's
+(`IsLocallyNormal` of `GroupClassesShared`); residually finite is Mathlib's
 `Group.ResiduallyFinite`. The printed "at most finitely many central projections" is read as "at
 most finitely many non-central projections": all projections of the identity are central, so the
 literal reading would allow only finitely many factors and hence only finite groups, against the
@@ -45,8 +45,7 @@ and for periodic groups the two conditions agree. The product is the unrestricte
 F i` of finite groups indexed by an arbitrary type.
 -/
 
-open MathlibExt.GroupTheory.LocallyNormalSecondCentreQuotientKourovka1Problem9Wanted
-  (IsLocallyNormal)
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyNormal)
 
 /-- Kourovka 6.8 (Yu. M. Gorchakov): every residually finite locally normal group `G` embeds in a
 Cartesian product `∏ i, F i` of finite groups so that every element of `G` has only finitely many
