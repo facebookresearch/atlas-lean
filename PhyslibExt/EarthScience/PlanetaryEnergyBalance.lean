@@ -1,4 +1,4 @@
- /-
+/-
 Copyright (c) Meta Platforms, Inc. and affiliates.
 All rights reserved.
 
@@ -12,7 +12,6 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Linarith
 
 /-!
 # Planetary energy balance
@@ -27,10 +26,13 @@ surface temperature.
 
 ## ii. Key results
 
-- `EarthScience.equilibrium_exists`: a nonnegative equilibrium exists.
-- `EarthScience.equilibrium_unique`: the nonnegative equilibrium is unique.
-- `EarthScience.full_albedo`: `alpha = 1` gives `T = 0`.
-- `EarthScience.witness`: `sigma = 1, S = 4, alpha = 0` gives `T = 1`.
+- `EarthScience.planetaryEnergyBalance_equilibrium_exists`: a nonnegative
+  equilibrium exists.
+- `EarthScience.planetaryEnergyBalance_equilibrium_unique`: the nonnegative
+  equilibrium is unique.
+- `EarthScience.planetaryEnergyBalance_full_albedo`: `alpha = 1` gives `T = 0`.
+- `EarthScience.planetaryEnergyBalance_witness`: `sigma = 1, S = 4, alpha = 0`
+  gives `T = 1`.
 
 ## iii. Table of contents
 
@@ -38,7 +40,13 @@ surface temperature.
 
 ## iv. References
 
-- See the individual theorem docstrings.
+- D. L. Hartmann, *Global Physical Climatology*, 2nd ed., Elsevier (2016),
+  Chapter 2 (The Global Energy Balance), emission temperature of a planet:
+  equating absorbed solar radiation `(1 - alpha) * S / 4` with blackbody
+  emission `sigma * T^4` defines the emission temperature, where the factor
+  `4` is the ratio of the surface area of a sphere to its shadow area (a
+  disk of the same radius), and this temperature need not be the surface
+  temperature.
 -/
 
 @[expose] public section
@@ -49,7 +57,7 @@ namespace EarthScience
 set_option linter.unusedVariables false in
 /-- Planetary energy balance: an equilibrium `T >= 0` with
 `sigma * T^4 = (1 - alpha) * S / 4` exists. -/
-theorem equilibrium_exists {σ S α : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S)
+theorem planetaryEnergyBalance_equilibrium_exists {σ S α : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S)
     (hα0 : 0 ≤ α) (hα1 : α ≤ 1) :
     ∃ T : ℝ, 0 ≤ T ∧ σ * T ^ 4 = (1 - α) * S / 4 := by
   have hσne : σ ≠ 0 := ne_of_gt hσ
@@ -72,7 +80,7 @@ theorem equilibrium_exists {σ S α : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S)
   field_simp
 
 /-- Planetary energy balance: the nonnegative equilibrium is unique. -/
-theorem equilibrium_unique {σ S α T₁ T₂ : ℝ} (hσ : 0 < σ)
+theorem planetaryEnergyBalance_equilibrium_unique {σ S α T₁ T₂ : ℝ} (hσ : 0 < σ)
     (hT₁ : 0 ≤ T₁) (hT₂ : 0 ≤ T₂)
     (h₁ : σ * T₁ ^ 4 = (1 - α) * S / 4) (h₂ : σ * T₂ ^ 4 = (1 - α) * S / 4) :
     T₁ = T₂ := by
@@ -97,7 +105,7 @@ theorem equilibrium_unique {σ S α T₁ T₂ : ℝ} (hσ : 0 < σ)
 
 set_option linter.unusedVariables false in
 /-- Boundary case `alpha = 1` (zero absorption): the equilibrium is `T = 0`. -/
-theorem full_albedo {σ S : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S) {T : ℝ} (hT : 0 ≤ T)
+theorem planetaryEnergyBalance_full_albedo {σ S : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S) {T : ℝ} (hT : 0 ≤ T)
     (h : σ * T ^ 4 = (1 - (1 : ℝ)) * S / 4) :
     T = 0 := by
   have hσne : σ ≠ 0 := ne_of_gt hσ
@@ -112,7 +120,7 @@ theorem full_albedo {σ S : ℝ} (hσ : 0 < σ) (hS : 0 ≤ S) {T : ℝ} (hT : 0
   exact (pow_eq_zero_iff (show 4 ≠ 0 by norm_num)).mp h4
 
 /-- Non-vacuous witness: `sigma = 1, S = 4, alpha = 0` gives `T = 1`. -/
-theorem witness :
+theorem planetaryEnergyBalance_witness :
     ∃ T : ℝ, 0 ≤ T ∧ (1 : ℝ) * T ^ 4 = (1 - (0 : ℝ)) * 4 / 4 ∧ T = 1 := by
   exact ⟨1, by norm_num, by norm_num, rfl⟩
 
