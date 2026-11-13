@@ -40,6 +40,14 @@ noncomputable def fStatistic {m k r : Type*} [Fintype m] [DecidableEq m] [Fintyp
     (((y - X *ᵥ olsEstimator X y) ⬝ᵥ (y - X *ᵥ olsEstimator X y)) /
       ((Fintype.card m - Fintype.card k : ℕ) : ℝ))
 
+/-- For a fixed design, the `F` statistic is a measurable function of the response. -/
+theorem measurable_fStatistic {m k r : Type*} [Fintype m] [DecidableEq m] [Fintype k]
+    [DecidableEq k] [Fintype r] [DecidableEq r]
+    (X : Matrix m k ℝ) (C : Matrix r k ℝ) (c : r → ℝ) :
+    Measurable (fStatistic X C c) := by
+  unfold fStatistic olsEstimator
+  apply Measurable.div <;> apply Continuous.measurable <;> fun_prop
+
 /-- **Exact `F` law for a linear hypothesis**: in `y = X β + ε` with full-rank `X`,
 `σ > 0`, `σ⁻¹ ε` standard Gaussian, a full-row-rank `C` with `0 < q = card r`,
 `p < n`, and under `H₀ : C β = c`, the `F` statistic has Snedecor's `F` law with
