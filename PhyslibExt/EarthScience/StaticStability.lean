@@ -8,8 +8,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Ring
+
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Ring
 
 /-!
 # Static stability and parcel buoyancy

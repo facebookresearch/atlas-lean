@@ -9,6 +9,8 @@ module
 
 import PhyslibExt.EarthScience.StaticStability
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # Static-stability checks
