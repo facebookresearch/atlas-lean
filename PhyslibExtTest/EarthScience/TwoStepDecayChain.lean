@@ -23,7 +23,10 @@ daughter formulas satisfy theirs at `t = 1`.
 These are elaboration and non-vacuity checks, not new results. The boundary
 case is `t = 0`, where both daughter formulas return `D0`, and the
 repeated-rate case is checked with `l = 1/2`, where it does not coincide
-with a distinct-rate formula.
+with a distinct-rate formula. Two last checks: at equal rates the
+distinct-rate formula fails the daughter ODE (Lean's division by zero
+drops the feeding term), and the repeated-rate formula at `l = 1/2` is the
+limit of the distinct-rate formulas as `l2 → 1/2`.
 
 ## ii. Key results
 
@@ -67,3 +70,22 @@ example : HasDerivAt (chainDaughterRepeated (1 / 2) 5 2)
 the feeding term vanishes at the initial time. -/
 example : chainDaughterDistinct (3 / 10) (8 / 10) 0 2 0 = 2 :=
   (chain_initial (3 / 10) (8 / 10) 0 2).2
+
+/-- Equal rates: with `l1 = l2 = 1`, `P0 = 1`, `D0 = 0` Lean's division by
+zero makes the distinct-rate formula identically `0`, but the daughter ODE
+asks for slope `1` at `t = 0`. -/
+example : ¬ HasDerivAt (chainDaughterDistinct 1 1 1 0)
+    (1 * chainParent 1 1 0 - 1 * chainDaughterDistinct 1 1 1 0 0) 0 := by
+  have h0 : chainDaughterDistinct 1 1 1 0 = fun _ => 0 := by
+    funext t
+    simp [chainDaughterDistinct]
+  rw [h0]
+  intro h
+  have := h.unique (hasDerivAt_const (0 : ℝ) (0 : ℝ))
+  norm_num [chainParent] at this
+
+open Filter Topology in
+/-- Repeated-rate limit at `l = 1/2`, `P0 = 5`, `D0 = 2`, `t = 1`. -/
+example : Tendsto (fun l2 => chainDaughterDistinct (1 / 2) l2 5 2 1) (𝓝[≠] (1 / 2))
+    (𝓝 (chainDaughterRepeated (1 / 2) 5 2 1)) :=
+  tendsto_chainDaughterDistinct (1 / 2) 5 2 1
