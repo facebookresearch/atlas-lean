@@ -15,8 +15,9 @@ import Mathlib.Tactic.NormNum
 # Radiometric age from ratio checks
 
 Concrete consumers of `PhyslibExt.EarthScience.RadiometricAgeFromRatio`:
-a generic elaboration check, the zero-age boundary case `t = 0`, and
-nonnegativity of the recovered age.
+a generic elaboration check, the zero-age boundary case `t = 0`,
+nonnegativity of the recovered age, and the domain of the ratio
+(nonnegative for `t ≥ 0`, zero at `t = 0`).
 
 ## i. Overview
 
@@ -51,3 +52,17 @@ example {lam P0 t : ℝ} (hlam : 0 < lam) (hP0 : 0 < P0) (ht : 0 ≤ t) :
         / (P0 * Real.exp (-lam * t))) / lam := by
   rw [EarthScience.radiometric_age_from_ratio hlam hP0 ht]
   exact ht
+
+/-- Domain of the ratio: for `t ≥ 0` the daughter/parent ratio is nonnegative, not
+necessarily positive. -/
+example {lam P0 t : ℝ} (hlam : 0 < lam) (hP0 : 0 < P0) (ht : 0 ≤ t) :
+    0 ≤ (P0 - P0 * Real.exp (-lam * t)) / (P0 * Real.exp (-lam * t)) := by
+  have hE : Real.exp (-lam * t) ≤ 1 := Real.exp_le_one_iff.mpr (by nlinarith)
+  apply div_nonneg
+  · nlinarith
+  · positivity
+
+/-- At `t = 0` the daughter/parent ratio is exactly `0`. -/
+example {lam P0 : ℝ} :
+    (P0 - P0 * Real.exp (-lam * (0 : ℝ))) / (P0 * Real.exp (-lam * (0 : ℝ))) = 0 := by
+  simp
