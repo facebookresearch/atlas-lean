@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.CanningsLambda
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
 /-!
 # Tests for Cannings models converging to Λ-coalescents
@@ -84,30 +85,40 @@ lemma isFamily_perm_comp {N m : ℕ} (f : Fin N → Fin N) (ρ : Equiv.Perm (Fin
   · rintro ⟨p, hp, hq⟩
     refine ⟨ρ p, by simpa using hp, fun q hqp => hq _ fun h => hqp (by rw [← h]; simp)⟩
 
-/-- The sweepstake Cannings model. -/
+lemma sweepstakeLaw_nonneg {N m : ℕ} {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) (f : Fin N → Fin N) :
+    0 ≤ sweepstakeLaw N m ε f := by
+  have hw0 : 0 ≤ famWeight N m ε := by unfold famWeight; split_ifs <;> linarith
+  have hw1 : famWeight N m ε ≤ 1 := by unfold famWeight; split_ifs <;> linarith
+  unfold sweepstakeLaw
+  refine add_nonneg (div_nonneg (mul_nonneg (by linarith) ?_) (Nat.cast_nonneg _))
+    (div_nonneg (mul_nonneg hw0 ?_) (Nat.cast_nonneg _)) <;> split_ifs <;> norm_num
+
+lemma sum_sweepstakeLaw (N m : ℕ) (ε : ℝ) : ∑ f, sweepstakeLaw N m ε f = 1 := by
+  simp only [sweepstakeLaw, sum_add_distrib, ← sum_div, ← mul_sum, sum_boole]
+  have hI : ((injCard N : ℕ) : ℝ) ≠ 0 := by exact_mod_cast (injCard_pos N).ne'
+  rw [show (#(univ.filter fun f : Fin N → Fin N => Function.Injective f) : ℝ) = injCard N from
+    rfl, show (#(univ.filter (IsFamily (N := N) m)) : ℝ) = famCard N m from rfl,
+    mul_div_assoc, div_self hI, mul_one]
+  unfold famWeight
+  split_ifs with hF
+  · rw [mul_div_assoc, div_self (by exact_mod_cast hF.ne'), mul_one]
+    ring
+  · simp
+
+/-- The sweepstake Cannings model, its law built with `PMF.ofFintype` from `sweepstakeLaw`. -/
 def sweepstake (N m : ℕ) (ε : ℝ) (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) : CanningsModel N where
-  law := sweepstakeLaw N m ε
-  law_nonneg f := by
-    have hw0 : 0 ≤ famWeight N m ε := by unfold famWeight; split_ifs <;> linarith
-    have hw1 : famWeight N m ε ≤ 1 := by unfold famWeight; split_ifs <;> linarith
-    unfold sweepstakeLaw
-    refine add_nonneg (div_nonneg (mul_nonneg (by linarith) ?_) (Nat.cast_nonneg _))
-      (div_nonneg (mul_nonneg hw0 ?_) (Nat.cast_nonneg _)) <;> split_ifs <;> norm_num
-  sum_law := by
-    simp only [sweepstakeLaw, sum_add_distrib, ← sum_div, ← mul_sum, sum_boole]
-    have hI : ((injCard N : ℕ) : ℝ) ≠ 0 := by exact_mod_cast (injCard_pos N).ne'
-    rw [show (#(univ.filter fun f : Fin N → Fin N => Function.Injective f) : ℝ) = injCard N from
-      rfl, show (#(univ.filter (IsFamily (N := N) m)) : ℝ) = famCard N m from rfl,
-      mul_div_assoc, div_self hI, mul_one]
-    unfold famWeight
-    split_ifs with hF
-    · rw [mul_div_assoc, div_self (by exact_mod_cast hF.ne'), mul_one]
-      ring
-    · simp
+  law := PMF.ofFintype (fun f => ENNReal.ofReal (sweepstakeLaw N m ε f)) (by
+    rw [← ENNReal.ofReal_sum_of_nonneg fun f _ => sweepstakeLaw_nonneg hε0 hε1 f,
+      sum_sweepstakeLaw, ENNReal.ofReal_one])
   law_comp_perm τ f := by
-    simp only [sweepstakeLaw, isFamily_comp_perm, Equiv.injective_comp]
+    simp only [PMF.ofFintype_apply, sweepstakeLaw, isFamily_comp_perm, Equiv.injective_comp]
   law_perm_comp ρ f := by
-    simp only [sweepstakeLaw, isFamily_perm_comp, Equiv.comp_injective]
+    simp only [PMF.ofFintype_apply, sweepstakeLaw, isFamily_perm_comp, Equiv.comp_injective]
+
+/-- The real masses of the sweepstake model are `sweepstakeLaw`. -/
+lemma toReal_law_sweepstake {N m : ℕ} {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : ε ≤ 1) (f : Fin N → Fin N) :
+    ((sweepstake N m ε hε0 hε1).law f).toReal = sweepstakeLaw N m ε f :=
+  ENNReal.toReal_ofReal (sweepstakeLaw_nonneg hε0 hε1 f)
 
 /-- A family map exists when `1 ≤ m ≤ N`: children `0, …, m - 1` have parent `0`, every other
 child is its own parent. -/
@@ -164,12 +175,11 @@ theorem mergeProb_sweepstake {N m k : ℕ} {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : 
     exact_mod_cast (Nat.descFactorial_pos.2 hkN).ne'
   rw [eq_div_iff hNk, mergeProb_mul_descFactorial _ (by omega)]
   have hF : ((famCard N m : ℕ) : ℝ) ≠ 0 := by exact_mod_cast (famCard_pos (by omega) hmN).ne'
-  have hpt : ∀ f : Fin N → Fin N, (sweepstake N m ε hε0 hε1).law f *
+  have hpt : ∀ f : Fin N → Fin N, ((sweepstake N m ε hε0 hε1).law f).toReal *
       ∑ i, ((offspring f i).descFactorial k : ℝ) =
       ε * m.descFactorial k / famCard N m * if IsFamily m f then 1 else 0 := by
     intro f
-    change sweepstakeLaw N m ε f * _ = _
-    rw [sweepstakeLaw, famWeight_eq (by omega) hmN]
+    rw [toReal_law_sweepstake, sweepstakeLaw, famWeight_eq (by omega) hmN]
     by_cases hfam : IsFamily m f
     · have hinj : ¬ Function.Injective f := fun hinj => by
         obtain ⟨p, hp, -⟩ := hfam
@@ -188,9 +198,9 @@ theorem mergeProb_sweepstake {N m k : ℕ} {ε : ℝ} (hε0 : 0 ≤ ε) (hε1 : 
 /-- Two different parents with at least two offspring each are impossible in a sweepstake
 generation. -/
 lemma offspring_le_one_or {N m : ℕ} {ε : ℝ} {hε0 : 0 ≤ ε} {hε1 : ε ≤ 1}
-    {f : Fin N → Fin N} (hf : (sweepstake N m ε hε0 hε1).law f ≠ 0) {p p' : Fin N}
+    {f : Fin N → Fin N} (hf : ((sweepstake N m ε hε0 hε1).law f).toReal ≠ 0) {p p' : Fin N}
     (hpp' : p ≠ p') : offspring f p ≤ 1 ∨ offspring f p' ≤ 1 := by
-  change sweepstakeLaw N m ε f ≠ 0 at hf
+  rw [toReal_law_sweepstake] at hf
   by_cases hinj : Function.Injective f
   · exact Or.inl (offspring_le_one_of_injective hinj p)
   · by_cases hfam : IsFamily m f
@@ -206,7 +216,7 @@ theorem doubleMergeProb_sweepstake {N m : ℕ} {ε : ℝ} (hε0 : 0 ≤ ε) (hε
   unfold doubleMergeProb sampleProb
   split_ifs with h4
   · refine sum_eq_zero fun f _ => ?_
-    by_cases hf : (sweepstake N m ε hε0 hε1).law f = 0
+    by_cases hf : ((sweepstake N m ε hε0 hε1).law f).toReal = 0
     · rw [hf, zero_mul]
     rw [ite_eq_right ?_, mul_zero]
     rintro ⟨h01, h23, h02⟩

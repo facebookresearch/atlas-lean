@@ -13,6 +13,7 @@ public import MathlibExt.Biology.PopulationGenetics.Coalescent.BlockCounting
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.LambdaCoalescent
 public import Mathlib.Analysis.Normed.Algebra.MatrixExponential
 public import Mathlib.Data.Fintype.CardEmbedding
+public import Mathlib.Probability.ProbabilityMassFunction.Basic
 import Mathlib.Analysis.Matrix.Normed
 import Mathlib.Data.Nat.Choose.Sum
 
@@ -22,10 +23,10 @@ import Mathlib.Data.Nat.Choose.Sum
 A **Cannings model** (Cannings 1974) of a haploid population of constant size `N` produces each
 generation from the previous one by an exchangeable offspring vector `(ν_1, …, ν_N)`,
 `∑ ν_i = N`, independently across generations. We encode one generation as the law of its
-parent map `f : Fin N → Fin N` (`CanningsModel`), exchangeable in children and in parents; the
-offspring numbers are `ν_i = #{c | f c = i}` (`offspring`). Tracing `b` sampled lineages back one
-generation gives `b` → (number of distinct parents) lineages: the ancestral lineage count, with
-one-generation transition matrix `lineageMatrix n` on `{0, …, n}`.
+parent map `f : Fin N → Fin N`, a `PMF` (`CanningsModel`), exchangeable in children and in
+parents; the offspring numbers are `ν_i = #{c | f c = i}` (`offspring`). Tracing `b` sampled
+lineages back one generation gives `b` → (number of distinct parents) lineages: the ancestral
+lineage count, with one-generation transition matrix `lineageMatrix n` on `{0, …, n}`.
 
 The time scale is the **coalescence probability** `c_N = E[ν_1 (ν_1 - 1)] / (N - 1)`, the
 probability that two lineages share a parent (`coalProb`). Write `q_k` (`mergeProb k`) for the
@@ -106,12 +107,11 @@ The law is exchangeable in the children (relabelling the children `f ↦ f ∘ �
 parents (relabelling the parents `f ↦ σ ∘ f`). The offspring vector `ν_i = #{c | f c = i}`
 (`offspring`) is then an exchangeable vector summing to `N`, and given `ν` the children are
 assigned to parents uniformly at random; this is Cannings' model (Cannings 1974). Successive
-generations are independent copies of this law. -/
+generations are independent copies of this law. Real-valued probabilities use the masses
+`(law f).toReal`. -/
 structure CanningsModel (N : ℕ) where
-  /-- The probability `law f` that one generation has parent map `f`. -/
-  law : (Fin N → Fin N) → ℝ
-  law_nonneg : ∀ f, 0 ≤ law f
-  sum_law : ∑ f, law f = 1
+  /-- The law of one generation's parent map: `law f` is the probability of the parent map `f`. -/
+  law : PMF (Fin N → Fin N)
   /-- Exchangeability in the children. -/
   law_comp_perm : ∀ (τ : Equiv.Perm (Fin N)) (f : Fin N → Fin N), law (f ∘ τ) = law f
   /-- Exchangeability in the parents. -/
@@ -124,12 +124,19 @@ variable {N : ℕ} (M : CanningsModel N)
 /-- The number of offspring `ν_i = #{c | f c = i}` of parent `i` under the parent map `f`. -/
 def offspring (f : Fin N → Fin N) (i : Fin N) : ℕ := #{c | f c = i}
 
+/-- The real masses `(law f).toReal` of the law sum to `1`. -/
+theorem sum_toReal_law : ∑ f, (M.law f).toReal = 1 := by
+  have h : ∑ f, M.law f = 1 := by
+    rw [← tsum_fintype (L := SummationFilter.unconditional _)]
+    exact M.law.tsum_coe
+  rw [← ENNReal.toReal_sum fun f _ => M.law.apply_ne_top f, h, ENNReal.toReal_one]
+
 /-- The probability that the parents `g = f ∘ castLE` of the first `m` children satisfy the event
 `E`. By exchangeability in the children this is the probability of `E` for the parents of any
 `m` distinct children (`sum_law_comp_emb`), i.e. for a sample of `m` lineages traced back one
 generation. It is defined to be `0` when `m > N`. -/
 def sampleProb {m : ℕ} (E : (Fin m → Fin N) → Prop) [DecidablePred E] : ℝ :=
-  if h : m ≤ N then ∑ f, M.law f * if E (f ∘ Fin.castLE h) then 1 else 0 else 0
+  if h : m ≤ N then ∑ f, (M.law f).toReal * if E (f ∘ Fin.castLE h) then 1 else 0 else 0
 
 /-- The probability that `k` sampled lineages all have the same parent one generation back
 (a `k`-merger among `k` lineages); `mergeProb_mul_descFactorial` expresses it through the
@@ -162,7 +169,7 @@ theorem sampleProb_congr {m : ℕ} {E E' : (Fin m → Fin N) → Prop} [Decidabl
   · rfl
 
 theorem sampleProb_of_le {m : ℕ} (E : (Fin m → Fin N) → Prop) [DecidablePred E] (h : m ≤ N) :
-    M.sampleProb E = ∑ f, M.law f * if E (f ∘ Fin.castLE h) then 1 else 0 := by
+    M.sampleProb E = ∑ f, (M.law f).toReal * if E (f ∘ Fin.castLE h) then 1 else 0 := by
   simp [sampleProb, h]
 
 /-- Every embedding `Fin m ↪ Fin N` extends `Fin.castLE` along a permutation of `Fin N`. -/
@@ -186,7 +193,8 @@ private lemma exists_perm_comp_castLE {m : ℕ} (e : Fin m ↪ Fin N) (h : m ≤
 /-- **Exchangeability of samples.** The event `E` for the parents of the children
 `e 0, …, e (m - 1)` (any `m` distinct children) has probability `sampleProb E`. -/
 theorem sum_law_comp_emb {m : ℕ} (e : Fin m ↪ Fin N) (E : (Fin m → Fin N) → Prop)
-    [DecidablePred E] : ∑ f, M.law f * (if E (f ∘ e) then 1 else 0) = M.sampleProb E := by
+    [DecidablePred E] :
+    ∑ f, (M.law f).toReal * (if E (f ∘ e) then 1 else 0) = M.sampleProb E := by
   have hmN : m ≤ N := by simpa using Fintype.card_le_of_embedding e
   obtain ⟨τ, hτ⟩ := exists_perm_comp_castLE e hmN
   rw [sampleProb_of_le _ _ hmN]
@@ -194,7 +202,7 @@ theorem sum_law_comp_emb {m : ℕ} (e : Fin m ↪ Fin N) (E : (Fin m → Fin N) 
     funext i; simp [hτ]
   simp_rw [he]
   refine Fintype.sum_equiv (Equiv.arrowCongr τ.symm (Equiv.refl _)) _ _ fun f => ?_
-  change _ = M.law (f ∘ τ) * _
+  change _ = (M.law (f ∘ τ)).toReal * _
   rw [M.law_comp_perm τ f]
   rfl
 
@@ -210,7 +218,7 @@ theorem sampleProb_nonneg {m : ℕ} (E : (Fin m → Fin N) → Prop) [DecidableP
     0 ≤ M.sampleProb E := by
   unfold sampleProb
   split_ifs
-  · exact sum_nonneg fun f _ => mul_nonneg (M.law_nonneg f) (by split_ifs <;> norm_num)
+  · exact sum_nonneg fun f _ => mul_nonneg ENNReal.toReal_nonneg (by split_ifs <;> norm_num)
   · exact le_rfl
 
 end CanningsModel
@@ -424,7 +432,7 @@ def altMergeSum (b k : ℕ) : ℝ :=
 
 /-- Expectation of a function of the parents of the first `b` children. -/
 private def expect {b : ℕ} (hb : b ≤ N) (F : (Fin b → Fin N) → ℝ) : ℝ :=
-  ∑ f, M.law f * F (f ∘ Fin.castLE hb)
+  ∑ f, (M.law f).toReal * F (f ∘ Fin.castLE hb)
 
 private lemma sampleProb_eq_expect {b : ℕ} (hb : b ≤ N) (E : (Fin b → Fin N) → Prop)
     [DecidablePred E] : M.sampleProb E = M.expect hb fun g => if E g then 1 else 0 :=
@@ -447,7 +455,7 @@ private lemma expect_const_mul {b : ℕ} (hb : b ≤ N) (c : ℝ) (F : (Fin b �
 
 private lemma expect_mono {b : ℕ} (hb : b ≤ N) {F G : (Fin b → Fin N) → ℝ}
     (h : ∀ g, F g ≤ G g) : M.expect hb F ≤ M.expect hb G :=
-  sum_le_sum fun f _ => mul_le_mul_of_nonneg_left (h _) (M.law_nonneg f)
+  sum_le_sum fun _ _ => mul_le_mul_of_nonneg_left (h _) ENNReal.toReal_nonneg
 
 private lemma ind_nonneg (p : Prop) [Decidable p] : (0 : ℝ) ≤ if p then 1 else 0 := by
   split_ifs <;> norm_num
@@ -657,7 +665,7 @@ the parents the right side is `N E[(ν_1)_k]`, so `q_k = N E[(ν_1)_k] / (N)_k` 
 `c_N = E[ν_1 (ν_1 - 1)] / (N - 1)` (Möhle–Sagitov 2001, §2). -/
 theorem mergeProb_mul_descFactorial {k : ℕ} (hk : 1 ≤ k) :
     M.mergeProb k * N.descFactorial k =
-      ∑ f, M.law f * ∑ i, ((offspring f i).descFactorial k : ℝ) := by
+      ∑ f, (M.law f).toReal * ∑ i, ((offspring f i).descFactorial k : ℝ) := by
   classical
   have hcount : ∀ f : Fin N → Fin N,
       ((univ.filter fun e : Fin k ↪ Fin N => ∀ i j, f (e i) = f (e j)).card : ℝ) =
@@ -676,15 +684,16 @@ theorem mergeProb_mul_descFactorial {k : ℕ} (hk : 1 ≤ k) :
     rw [hfib, ← Fintype.card_subtype, Fintype.card_congr (embFiberEquiv f k p),
       Fintype.card_embedding_eq, Fintype.card_fin, Fintype.card_subtype, offspring]
   have hemb : ∀ e : Fin k ↪ Fin N,
-      ∑ f, M.law f * (if ∀ i j, (f ∘ e) i = (f ∘ e) j then 1 else 0) = M.mergeProb k :=
+      ∑ f, (M.law f).toReal * (if ∀ i j, (f ∘ e) i = (f ∘ e) j then 1 else 0) =
+        M.mergeProb k :=
     fun e => M.sum_law_comp_emb e (fun g : Fin k → Fin N => ∀ i j, g i = g j)
   calc M.mergeProb k * N.descFactorial k
       = ∑ _e : Fin k ↪ Fin N, M.mergeProb k := by
         rw [sum_const, card_univ, Fintype.card_embedding_eq, Fintype.card_fin, Fintype.card_fin,
           nsmul_eq_mul, mul_comm]
-    _ = ∑ e : Fin k ↪ Fin N, ∑ f, M.law f *
+    _ = ∑ e : Fin k ↪ Fin N, ∑ f, (M.law f).toReal *
           (if ∀ i j, (f ∘ e) i = (f ∘ e) j then 1 else 0) := sum_congr rfl fun e _ => (hemb e).symm
-    _ = ∑ f, M.law f * ((univ.filter fun e : Fin k ↪ Fin N =>
+    _ = ∑ f, (M.law f).toReal * ((univ.filter fun e : Fin k ↪ Fin N =>
           ∀ i j, f (e i) = f (e j)).card : ℝ) := by
         rw [sum_comm]
         refine sum_congr rfl fun f _ => ?_
@@ -715,7 +724,7 @@ theorem sum_lineageProb {n b : ℕ} (hbn : b ≤ n) (hbN : b ≤ N) :
     ∑ a : Fin (n + 1), M.lineageProb b a = 1 := by
   simp_rw [lineageProb, M.sampleProb_of_le _ hbN]
   rw [sum_comm]
-  refine (sum_congr rfl fun f _ => ?_).trans M.sum_law
+  refine (sum_congr rfl fun f _ => ?_).trans M.sum_toReal_law
   rw [← mul_sum, sum_boole]
   set g := f ∘ Fin.castLE hbN
   have hle : #(univ.image g) ≤ b := by
