@@ -18,12 +18,12 @@ public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.Analysis.SpecificLimits.Basic
-public import Mathlib.NumberTheory.Harmonic.EulerMascheroni
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Filter.Tendsto
 public import Mathlib.Topology.Basic
 public import Mathlib.Topology.MetricSpace.Basic
 public import Mathlib.Topology.Order.Basic
+public import MathlibExt.Analysis.SpecialFunctions.Log.AlternatingHarmonic
 
 /-!
 # Interatomic pair potentials
@@ -313,128 +313,12 @@ lemma lennardJones_second_deriv_at_min (ε σ r₀ : ℝ) (hε : 0 < ε) (hσ : 
 
 /-! ## B. One-dimensional Madelung constant -/
 
--- Even partial sums equal `H(2M) - H(M)`.
-
-private lemma madelung_partial_two_mul (M : ℕ) :
-    ∑ k ∈ Finset.range (2 * M), ((-1 : ℝ) ^ k / (k + 1)) =
-      ((harmonic (2 * M) : ℚ) : ℝ) - ((harmonic M : ℚ) : ℝ) := by
-  induction M with
-  | zero => simp
-  | succ M ih =>
-    have e1 : 2 * (M + 1) = 2 * M + 1 + 1 := by ring
-    rw [e1, Finset.sum_range_succ, Finset.sum_range_succ, ih]
-    rw [harmonic_succ, harmonic_succ, harmonic_succ]
-    have h_even : (-1 : ℝ) ^ (2 * M) = 1 := by rw [pow_mul]; norm_num
-    have h_odd : (-1 : ℝ) ^ (2 * M + 1) = -1 := by rw [pow_succ, h_even]; ring
-    rw [h_even, h_odd]
-    push_cast
-    have n1 : ((M : ℝ) + 1) ≠ 0 := by positivity
-    have n2 : ((2 : ℝ) * M + 1) ≠ 0 := by positivity
-    have n3 : ((2 : ℝ) * M + 1 + 1) ≠ 0 := by positivity
-    field_simp
-    ring
-
--- Even and odd subsequences determine the limit.
-
-private lemma tendsto_of_tendsto_even_tendsto_odd {f : ℕ → ℝ} {L : ℝ}
-    (he : Filter.Tendsto (fun M => f (2 * M)) Filter.atTop (nhds L))
-    (ho : Filter.Tendsto (fun M => f (2 * M + 1)) Filter.atTop (nhds L)) :
-    Filter.Tendsto f Filter.atTop (nhds L) := by
-  rw [Metric.tendsto_atTop] at he ho ⊢
-  intro ε hε
-  obtain ⟨M₁, hM₁⟩ := he ε hε
-  obtain ⟨M₂, hM₂⟩ := ho ε hε
-  refine ⟨2 * max M₁ M₂ + 1, fun N hN => ?_⟩
-  rcases Nat.even_or_odd N with ⟨M, rfl⟩ | ⟨M, rfl⟩
-  · have hMM : M + M = 2 * M := by ring
-    rw [hMM]
-    exact hM₁ M (by have hle := Nat.le_max_left M₁ M₂; omega)
-  · exact hM₂ M (by have hle := Nat.le_max_right M₁ M₂; omega)
-
--- Even partial sums tend to `log 2`.
-
-private lemma madelung_even :
-    Filter.Tendsto (fun M => ∑ k ∈ Finset.range (2 * M), ((-1 : ℝ) ^ k / (k + 1)))
-      Filter.atTop (nhds (Real.log 2)) := by
-  have h2M : Filter.Tendsto (fun M : ℕ => 2 * M) Filter.atTop Filter.atTop := by
-    rw [Filter.tendsto_atTop_atTop]
-    intro b
-    exact ⟨b, fun M hM => by omega⟩
-  have hA : Filter.Tendsto
-      (fun M : ℕ => ((harmonic (2 * M) : ℚ) : ℝ) - Real.log ((2 * M : ℕ) : ℝ))
-      Filter.atTop (nhds Real.eulerMascheroniConstant) :=
-    Real.tendsto_harmonic_sub_log.comp h2M
-  have hB : Filter.Tendsto (fun M : ℕ => ((harmonic M : ℚ) : ℝ) - Real.log ((M : ℕ) : ℝ))
-      Filter.atTop (nhds Real.eulerMascheroniConstant) :=
-    Real.tendsto_harmonic_sub_log
-  have hC : Filter.Tendsto (fun M : ℕ => Real.log ((2 * M : ℕ) : ℝ) - Real.log ((M : ℕ) : ℝ))
-      Filter.atTop (nhds (Real.log 2)) := by
-    have heqC : (fun M : ℕ => Real.log ((2 * M : ℕ) : ℝ) - Real.log ((M : ℕ) : ℝ)) =ᶠ[Filter.atTop]
-        (fun _ => Real.log 2) := by
-      have h1 : ∀ᶠ M in Filter.atTop, (1 : ℕ) ≤ M := Filter.eventually_ge_atTop 1
-      exact h1.mono fun M hM => by
-        dsimp only
-        have hMpos : (0 : ℝ) < (M : ℝ) := Nat.cast_pos.mpr (by omega)
-        have hM' : ((M : ℕ) : ℝ) ≠ 0 := ne_of_gt hMpos
-        have hcast : ((2 * M : ℕ) : ℝ) = 2 * (M : ℝ) := by push_cast; ring
-        rw [hcast, Real.log_mul (by norm_num) hM']
-        ring
-    rw [Filter.tendsto_congr' heqC]
-    exact tendsto_const_nhds
-  have heq : (fun M => ∑ k ∈ Finset.range (2 * M), ((-1 : ℝ) ^ k / (k + 1))) =ᶠ[Filter.atTop]
-      (fun M => (((harmonic (2 * M) : ℚ) : ℝ) - Real.log ((2 * M : ℕ) : ℝ)) -
-        (((harmonic M : ℚ) : ℝ) - Real.log ((M : ℕ) : ℝ)) +
-        (Real.log ((2 * M : ℕ) : ℝ) - Real.log ((M : ℕ) : ℝ))) := by
-    exact Filter.Eventually.of_forall fun M => by
-      dsimp only
-      rw [madelung_partial_two_mul M]
-      ring
-  rw [Filter.tendsto_congr' heq]
-  have hfin := (hA.sub hB).add hC
-  have hlim : Real.eulerMascheroniConstant - Real.eulerMascheroniConstant + Real.log 2 =
-      Real.log 2 := by ring
-  rw [hlim] at hfin
-  exact hfin
-
--- Odd partial sums tend to `log 2`.
-
-private lemma madelung_odd :
-    Filter.Tendsto (fun M => ∑ k ∈ Finset.range (2 * M + 1), ((-1 : ℝ) ^ k / (k + 1)))
-      Filter.atTop (nhds (Real.log 2)) := by
-  have h2M : Filter.Tendsto (fun M : ℕ => 2 * M) Filter.atTop Filter.atTop := by
-    rw [Filter.tendsto_atTop_atTop]
-    intro b
-    exact ⟨b, fun M hM => by omega⟩
-  have hsplit : Filter.Tendsto (fun M : ℕ => (1 : ℝ) / ((((2 * M : ℕ)) : ℝ) + 1))
-      Filter.atTop (nhds 0) := by
-    have h0 : Filter.Tendsto (fun n : ℕ => (1 : ℝ) / (((n : ℕ) : ℝ) + 1))
-        Filter.atTop (nhds 0) :=
-      tendsto_one_div_add_atTop_nhds_zero_nat
-    exact h0.comp h2M
-  have heq : (fun M => ∑ k ∈ Finset.range (2 * M + 1), ((-1 : ℝ) ^ k / (k + 1))) =ᶠ[Filter.atTop]
-      (fun M => (∑ k ∈ Finset.range (2 * M), ((-1 : ℝ) ^ k / (k + 1))) +
-        (1 : ℝ) / ((((2 * M : ℕ)) : ℝ) + 1)) := by
-    exact Filter.Eventually.of_forall fun M => by
-      dsimp only
-      rw [Finset.sum_range_succ]
-      have h_even : (-1 : ℝ) ^ (2 * M) = 1 := by rw [pow_mul]; norm_num
-      rw [h_even]
-  rw [Filter.tendsto_congr' heq]
-  have hfin := madelung_even.add hsplit
-  rw [add_zero] at hfin
-  exact hfin
-
-/-- The 1D Madelung constant `2 * log 2` as an ordered partial-sum limit. -/
-
+/-- The 1D Madelung constant `2 * log 2` as an ordered partial-sum limit: twice the
+alternating harmonic limit `Real.tendsto_sum_alternating_harmonic`. -/
 lemma madelung_one_dim :
     Filter.Tendsto (fun N : ℕ => 2 * ∑ k ∈ Finset.range N, (-1 : ℝ) ^ k / (k + 1))
-      Filter.atTop (𝓝 (2 * Real.log 2)) := by
-  have hS : Filter.Tendsto (fun N : ℕ => ∑ k ∈ Finset.range N, (-1 : ℝ) ^ k / (k + 1))
-      Filter.atTop (nhds (Real.log 2)) :=
-    tendsto_of_tendsto_even_tendsto_odd
-      (f := fun N : ℕ => ∑ k ∈ Finset.range N, (-1 : ℝ) ^ k / (k + 1))
-      madelung_even madelung_odd
-  exact hS.const_mul 2
+      Filter.atTop (𝓝 (2 * Real.log 2)) :=
+  Real.tendsto_sum_alternating_harmonic.const_mul 2
 
 /-! ## C. Bond modulus estimate -/
 
