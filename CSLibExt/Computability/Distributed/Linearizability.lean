@@ -56,15 +56,29 @@ deriving DecidableEq, Repr
 legal `(op, arg, ret)` sequences. -/
 abbrev SeqSpec := ℕ → List (ℕ × ℕ × ℕ) → Prop
 
-/-- `a` occurs before `b` in the list `L`. -/
-def Before (L : List OpRec) (a b : OpRec) : Prop :=
-  ∃ l₁ l₂ l₃, L = l₁ ++ a :: l₂ ++ b :: l₃
-
-/-- A linearization respects the real-time order: if `a`'s
-response precedes `b`'s invocation in the history, `a` comes
-first. -/
+/-- A linearization respects the real-time order: no operation
+responds before an earlier operation of `lin` is invoked. The
+condition is on positions of `lin`, not on record values, so
+repeated records are ordered occurrence by occurrence;
+`respectsRT_iff` states it with indices. -/
 def RespectsRT (lin : List OpRec) : Prop :=
-  ∀ a ∈ lin, ∀ b ∈ lin, a.hi < b.lo → Before lin a b
+  lin.Pairwise fun a b => ¬ b.hi < a.lo
+
+/-- `RespectsRT` with indices: if the operation at position `i`
+responds before the operation at position `j` is invoked, then
+`i < j`. -/
+theorem respectsRT_iff (lin : List OpRec) :
+    RespectsRT lin ↔ ∀ (i j : ℕ) (hi : i < lin.length) (hj : j < lin.length),
+      lin[i].hi < lin[j].lo → i < j := by
+  rw [RespectsRT, List.pairwise_iff_getElem]
+  constructor
+  · intro h i j hi hj hij
+    rcases lt_trichotomy i j with hlt | rfl | hgt
+    · exact hlt
+    · exact absurd (lt_trans lin[i].lo_lt_hi hij) (lt_irrefl _)
+    · exact absurd hij (h j i hj hi hgt)
+  · intro h i j hi hj hij hji
+    exact absurd (h j i hj hi hji) (Nat.lt_asymm hij)
 
 /-- The projection of a history onto one object. -/
 def proj (H : List OpRec) (o : ℕ) : List OpRec :=
@@ -92,15 +106,7 @@ theorem linearizable_project (spec : SeqSpec)
   · show List.Perm _ (proj H o)
     unfold proj
     exact hperm.filter _
-  · intro a ha b hb hlt
-    have hao : a.obj = o := of_decide_eq_true (List.mem_filter.mp ha).2
-    have hbo : b.obj = o := of_decide_eq_true (List.mem_filter.mp hb).2
-    have haL : a ∈ lin := List.mem_of_mem_filter ha
-    have hbL : b ∈ lin := List.mem_of_mem_filter hb
-    obtain ⟨l₁, l₂, l₃, rfl⟩ := hrt a haL b hbL hlt
-    exact ⟨l₁.filter (fun r => r.obj = o), l₂.filter (fun r => r.obj = o),
-      l₃.filter (fun r => r.obj = o), by
-      simp [List.filter_append, hao, hbo]⟩
+  · exact hrt.filter _
   · intro o'
     by_cases heq : o' = o
     · subst o'

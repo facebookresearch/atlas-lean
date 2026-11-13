@@ -16,6 +16,9 @@ public import CSLibExt.Computability.Distributed.Linearizability
 * **Well-formed intervals.** No operation record has its response at or before its invocation,
   so the degenerate record with `lo = hi = 0`, for which real-time order would be vacuous, cannot
   be built.
+* **Real-time order on occurrences.** `a1` responds before `b1` is invoked. The order
+  `[a1, a1, b1]` respects real time and `[a1, b1, a1]` does not: the second occurrence of `a1`
+  follows `b1`, although the first occurrence precedes it.
 * **A register.** `regSpec` is a register with initial value `0` on every object: a write
   `(0, a, _)` stores `a`, and a read `(1, _, r)` must return the stored value. The read `bad` of
   `3` from a fresh register is not linearizable, so legality is a real constraint.
@@ -42,6 +45,27 @@ example : ¬ ∃ r : OpRec, r.lo = r.hi := fun ⟨r, h⟩ => by
 example (r : OpRec) (h : r.lo = 0) : r.hi ≠ 0 := by
   have := r.lo_lt_hi
   omega
+
+/-! ### Real-time order on occurrences -/
+
+/-- An operation on object `1` during `[0, 1]`. -/
+def a1 : OpRec := ⟨1, 0, 0, 0, 0, 1, by decide⟩
+
+/-- An operation on object `1` during `[2, 3]`, after `a1` responds. -/
+def b1 : OpRec := ⟨1, 0, 0, 0, 2, 3, by decide⟩
+
+/-- Both occurrences of `a1` come before `b1`. -/
+example : RespectsRT [a1, a1, b1] := by unfold RespectsRT; decide
+
+/-- The second occurrence of `a1` follows `b1`, so real-time order fails, even though the first
+occurrence precedes `b1`. -/
+example : ¬ RespectsRT [a1, b1, a1] := by unfold RespectsRT; decide
+
+/-- The same failure through the index form `respectsRT_iff`: position `2` holds `a1`, which
+responds before `b1` at position `1` is invoked. -/
+example : ¬ ∀ (i j : ℕ) (hi : i < [a1, b1, a1].length) (hj : j < [a1, b1, a1].length),
+    [a1, b1, a1][i].hi < [a1, b1, a1][j].lo → i < j := fun h =>
+  absurd (h 2 1 (by decide) (by decide) (by decide)) (by decide)
 
 /-! ### A register specification -/
 
@@ -86,21 +110,13 @@ def hist : List OpRec := [w1, w2, r1]
 /-- The history is linearizable in its own order: each earlier operation responds before each
 later one is invoked, and every object sees a legal register sequence. -/
 theorem linearizable_hist : Linearizable regSpec hist := by
-  refine ⟨hist, List.Perm.refl _, ?_, ?_⟩
-  · intro a ha b hb hlt
-    simp only [hist, List.mem_cons, List.not_mem_nil, or_false] at ha hb
-    rcases ha with rfl | rfl | rfl <;> rcases hb with rfl | rfl | rfl
-    all_goals first
-      | exact absurd hlt (by decide)
-      | exact ⟨[], [], [r1], rfl⟩
-      | exact ⟨[], [w2], [], rfl⟩
-      | exact ⟨[w1], [], [], rfl⟩
-  · intro o
-    by_cases h1 : o = 1
-    · subst h1; decide
-    by_cases h2 : o = 2
-    · subst h2; decide
-    simp [regSpec, regOk, hist, w1, w2, r1, Ne.symm h1, Ne.symm h2]
+  refine ⟨hist, List.Perm.refl _, by unfold RespectsRT; decide, ?_⟩
+  intro o
+  by_cases h1 : o = 1
+  · subst h1; decide
+  by_cases h2 : o = 2
+  · subst h2; decide
+  simp [regSpec, regOk, hist, w1, w2, r1, Ne.symm h1, Ne.symm h2]
 
 /-- The projection onto object `1` keeps exactly its write and its read, in order. -/
 theorem proj_hist_one : proj hist 1 = [w1, r1] := by decide
@@ -129,11 +145,7 @@ private def specAll : SeqSpec := fun _ _ => True
 object 1 is too. -/
 example : Linearizable specAll (proj [⟨1, 5, 6, 7, 0, 1, by decide⟩] 1) := by
   apply linearizable_project specAll (fun _ => trivial)
-  refine ⟨[⟨1, 5, 6, 7, 0, 1, by decide⟩], List.Perm.refl _, ?_, fun _ => trivial⟩
-  intro a ha b hb h
-  simp at ha hb
-  subst ha
-  subst hb
-  exact absurd h (by decide)
+  exact ⟨[⟨1, 5, 6, 7, 0, 1, by decide⟩], List.Perm.refl _, List.pairwise_singleton _ _,
+    fun _ => trivial⟩
 
 end Cslib.Distributed.Linearizability.Tests
