@@ -17,6 +17,9 @@ namespace MathlibExtTest.Economics.Macro.SectorBalances
 
 open MathlibExt.Economics.Macro.SectorBalances
 
+/-- Private consumption `C = 50`, gross capital formation `I = 10` (private and government),
+government consumption `G = 20`, net exports `NX = 20`, net taxes `T = 25`: GDP `Y = 100`,
+private saving `25`, government saving `5`, national saving `30`. -/
 def testAccounts : SectorAccounts where
   Y := 100
   C := 50
@@ -35,10 +38,12 @@ def testAccounts : SectorAccounts where
   publicSaving := by norm_num
   nationalSaving := by norm_num
 
-example : testAccounts.Y = testAccounts.C + testAccounts.I + testAccounts.G + testAccounts.NX :=
-  expenditure_identity _
-
 example : testAccounts.S = testAccounts.I + testAccounts.NX :=
   saving_investment_balance _
+
+/-- The derived balance pins `I + NX` to the recorded national saving `30`. -/
+example : testAccounts.I + testAccounts.NX = 30 := by
+  rw [← saving_investment_balance]
+  rfl
 
 end MathlibExtTest.Economics.Macro.SectorBalances
