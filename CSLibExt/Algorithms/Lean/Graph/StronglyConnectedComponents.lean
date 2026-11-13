@@ -44,25 +44,29 @@ open DepthFirstSearch
 set_option warn.classDefReducibility false in
 attribute [local instance 5] instDecidableEqOfLawfulBEq
 
-/-- Two vertices are strongly connected when each is reachable from the other. -/
+/-- **Strongly connected vertices.** In a directed adjacency graph $G$, vertices $u$ and $v$ are
+strongly connected when $v$ is reachable from $u$ and $u$ is reachable from $v$ in $G$. -/
 public def StronglyConnected {V : Type u} (graph : DirectedAdjacency V)
     (left right : V) : Prop :=
   graph.Reachable left right ∧ graph.Reachable right left
 
-/-- Every vertex is strongly connected to itself. -/
+/-- **Strong connectivity is reflexive.** In a directed graph $G$, every vertex is strongly
+connected to itself. -/
 @[refl]
 public theorem stronglyConnected_refl {V : Type u} (graph : DirectedAdjacency V)
     (vertex : V) : StronglyConnected graph vertex vertex :=
   ⟨.refl, .refl⟩
 
-/-- Strong connectivity is symmetric. -/
+/-- **Strong connectivity is symmetric.** In a directed graph $G$, if $u$ is strongly connected to
+$v$, then $v$ is strongly connected to $u$. -/
 @[symm]
 public theorem StronglyConnected.symm {V : Type u} {graph : DirectedAdjacency V}
     {left right : V} (connected : StronglyConnected graph left right) :
     StronglyConnected graph right left :=
   ⟨connected.2, connected.1⟩
 
-/-- Strong connectivity is transitive. -/
+/-- **Strong connectivity is transitive.** In a directed graph $G$, if $u$ is strongly connected to
+$v$ and $v$ is strongly connected to $w$, then $u$ is strongly connected to $w$. -/
 @[trans]
 public theorem StronglyConnected.trans {V : Type u} {graph : DirectedAdjacency V}
     {left middle right : V}
@@ -71,20 +75,27 @@ public theorem StronglyConnected.trans {V : Type u} {graph : DirectedAdjacency V
     StronglyConnected graph left right :=
   ⟨leftMiddle.1.trans middleRight.1, middleRight.2.trans leftMiddle.2⟩
 
-/-- The equivalence relation of mutual directed reachability. -/
+/-- **Strong connectivity as an equivalence relation.** For a directed graph $G$, the relation on
+the vertices of $G$ that holds between $u$ and $v$ exactly when $u$ and $v$ are strongly connected
+in $G$, packaged as an equivalence relation. -/
 public def stronglyConnectedSetoid {V : Type u}
     (graph : DirectedAdjacency V) : Setoid V where
   r := StronglyConnected graph
   iseqv := ⟨stronglyConnected_refl graph, StronglyConnected.symm,
     StronglyConnected.trans⟩
 
-/-- Executable mutual-reachability test, implemented only through the verified DFS API. -/
+/-- **Executable mutual-reachability test.** For a directed graph $G$ and vertices $u$ and $v$, the
+test returns true exactly when $v$ occurs in the preorder of the depth-first search of $G$ from
+the single root $u$, and $u$ occurs in the preorder of the depth-first search of $G$ from the
+single root $v$. -/
 public def sameComponentB {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (graph : DirectedAdjacency V) (left right : V) : Bool :=
   decide (right ∈ (dfs graph [left]).preorder) &&
     decide (left ∈ (dfs graph [right]).preorder)
 
-/-- The executable test reflects declarative strong connectivity. -/
+/-- **The mutual-reachability test is correct.** For a directed graph $G$ and vertices $u$ and $v$,
+the executable mutual-reachability test on $u$ and $v$ returns true if and only if $u$ and $v$ are
+strongly connected in $G$. -/
 public theorem sameComponentB_eq_true {V : Type u} [BEq V] [Hashable V]
     [LawfulBEq V] (graph : DirectedAdjacency V) (left right : V) :
     sameComponentB graph left right = true ↔ StronglyConnected graph left right := by
@@ -229,8 +240,14 @@ private theorem block_eq_of_common_member {V : Type u} {blocks : List (List V)}
               vertexRight vertexLeft)
         · exact induction pairwiseFacts.2 leftTail rightTail
 
-/-- Deterministic SCC blocks.  Both block order and in-block order are inherited
-from whole-graph decreasing DFS finish order. -/
+/-- **Strongly connected components algorithm.** Let $G$ be a directed graph and let
+$v_1, \dots, v_n$ be its vertices in decreasing order of finishing time in a depth-first search of
+the whole graph that takes its roots in the vertex order of $G$. For each $i$, let $C_i$ be the
+list of those $v_j$, in increasing order of $j$, such that $v_i$ and $v_j$ are strongly connected
+(tested by two depth-first searches). The output is the list $C_1, \dots, C_n$ with repeated
+blocks removed, keeping the last occurrence of each.
+
+The result is deterministic: within a block, vertices appear in decreasing finish order. -/
 public def components {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (graph : DirectedAdjacency V) : List (List V) :=
   let vertices := decreasingFinishAll graph
@@ -241,7 +258,8 @@ private theorem components_eq_partitionFrom {V : Type u} [BEq V] [Hashable V]
     components graph = partitionFrom graph (decreasingFinishAll graph) :=
   rfl
 
-/-- Every returned component is nonempty. -/
+/-- **Computed components are nonempty.** For every directed graph $G$, each block returned by the
+strongly connected components algorithm on $G$ contains at least one vertex. -/
 public theorem components_nonempty {V : Type u} [BEq V] [Hashable V]
     [LawfulBEq V] (graph : DirectedAdjacency V) :
     ∀ block ∈ components graph, block ≠ [] :=
@@ -249,7 +267,9 @@ public theorem components_nonempty {V : Type u} [BEq V] [Hashable V]
     rw [components_eq_partitionFrom]
     exact partitionFrom_nonempty graph (decreasingFinishAll graph)
 
-/-- Every returned component contains no duplicate vertex. -/
+/-- **Computed components have no repeated vertices.** For every directed graph $G$, each block
+returned by the strongly connected components algorithm on $G$ contains no vertex more than
+once. -/
 public theorem components_nodup {V : Type u} [BEq V] [Hashable V]
     [LawfulBEq V] (graph : DirectedAdjacency V) :
     ∀ block ∈ components graph, block.Nodup :=
@@ -258,7 +278,9 @@ public theorem components_nodup {V : Type u} [BEq V] [Hashable V]
     exact partitionFrom_blocks_nodup graph (decreasingFinishAll graph)
       (decreasingFinishAll_nodup graph)
 
-/-- Distinct returned components are disjoint. -/
+/-- **Computed components are pairwise disjoint.** For every directed graph $G$, any two blocks at
+different positions of the list returned by the strongly connected components algorithm on $G$
+have no vertex in common. -/
 public theorem components_pairwise_disjoint {V : Type u} [BEq V] [Hashable V]
     [LawfulBEq V] (graph : DirectedAdjacency V) :
     (components graph).Pairwise List.Disjoint :=
@@ -266,7 +288,9 @@ public theorem components_pairwise_disjoint {V : Type u} [BEq V] [Hashable V]
     rw [components_eq_partitionFrom]
     exact partitionFrom_pairwise_disjoint graph (decreasingFinishAll graph)
 
-/-- The union of all returned components is exactly the certified carrier. -/
+/-- **The computed components cover the vertex list.** For a directed graph $G$ and a vertex
+$v$, $v$ belongs to some block of the computed strongly connected components of $G$ if and only
+if $v$ occurs in the vertex enumeration of $G$. -/
 public theorem mem_flatten_components {V : Type u} [BEq V] [Hashable V]
     [LawfulBEq V] (graph : DirectedAdjacency V) (vertex : V) :
     vertex ∈ (components graph).flatten ↔ vertex ∈ graph.vertices := by
@@ -274,7 +298,9 @@ public theorem mem_flatten_components {V : Type u} [BEq V] [Hashable V]
   exact ⟨fun _ => graph.vertices_complete vertex,
     fun _ => mem_decreasingFinishAll graph vertex⟩
 
-/-- Two vertices share a returned component exactly when they are mutually reachable. -/
+/-- **Vertices share a computed component exactly when strongly connected.** For a directed graph
+$G$ and vertices $u$ and $v$, some block of the computed strongly connected components of $G$
+contains both $u$ and $v$ if and only if $u$ and $v$ are strongly connected in $G$. -/
 public theorem share_component_iff_stronglyConnected {V : Type u} [BEq V]
     [Hashable V] [LawfulBEq V] (graph : DirectedAdjacency V) (left right : V) :
     (∃ block ∈ components graph, left ∈ block ∧ right ∈ block) ↔
@@ -289,7 +315,10 @@ public theorem share_component_iff_stronglyConnected {V : Type u} [BEq V]
     exact partitionFrom_complete graph (decreasingFinishAll graph) left right
       (mem_decreasingFinishAll graph left) (mem_decreasingFinishAll graph right) connected
 
-/-- Each returned block is the maximal mutual-reachability class of any one of its members. -/
+/-- **Each computed component is a full mutual-reachability class.** Let $G$ be a directed graph,
+let $B$ be one of the blocks returned by the strongly connected components algorithm on $G$, and
+let $m$ be a vertex of $B$. Then for every vertex $v$ of $G$, the vertices $m$ and $v$ are strongly
+connected (each is reachable from the other) if and only if $v$ lies in $B$. -/
 public theorem component_maximal {V : Type u} [BEq V] [Hashable V]
     [LawfulBEq V] (graph : DirectedAdjacency V) (block : List V)
     (blockMem : block ∈ components graph) (member : V) (memberMem : member ∈ block)
@@ -308,7 +337,12 @@ public theorem component_maximal {V : Type u} [BEq V] [Hashable V]
     exact partitionFrom_block_connected graph _ block blockMem'
       member memberMem vertex vertexMem
 
-/-- Full declarative partition contract for a list of SCC blocks. -/
+/-- **SCC partition.** A list $\mathcal{B}$ of vertex lists is an SCC partition of a directed graph
+$G$ when every block of $\mathcal{B}$ is nonempty and contains no vertex twice, blocks at different
+positions of $\mathcal{B}$ are disjoint, a vertex lies in some block exactly when it is a vertex of
+$G$, two vertices lie in a common block exactly when they are strongly connected (each is
+reachable from the other), and for every block $B$, every $m \in B$ and every vertex $v$, the
+vertices $m$ and $v$ are strongly connected exactly when $v \in B$. -/
 public structure IsSCCPartition {V : Type u} (graph : DirectedAdjacency V)
     (blocks : List (List V)) : Prop where
   /-- Every block has a vertex. -/
@@ -327,7 +361,12 @@ public structure IsSCCPartition {V : Type u} (graph : DirectedAdjacency V)
   maximal : ∀ block ∈ blocks, ∀ member ∈ block, ∀ vertex,
     StronglyConnected graph member vertex ↔ vertex ∈ block
 
-/-- The executable output satisfies the full SCC partition contract. -/
+/-- **The computed components form the SCC partition.** For every directed graph $G$, the list of
+blocks returned by the strongly connected components algorithm on $G$ is an SCC partition of $G$:
+every block is nonempty and contains no vertex twice, blocks at different positions of the list
+are disjoint, every vertex of $G$ lies in some block, two vertices lie in a common block exactly
+when they are strongly connected, and for every vertex $m$ of a block $B$ and every vertex $v$,
+the vertices $m$ and $v$ are strongly connected exactly when $v$ lies in $B$. -/
 public theorem components_isSCCPartition {V : Type u} [BEq V] [Hashable V]
     [LawfulBEq V] (graph : DirectedAdjacency V) :
     IsSCCPartition graph (components graph) where
@@ -338,21 +377,30 @@ public theorem components_isSCCPartition {V : Type u} [BEq V] [Hashable V]
   characterizes := share_component_iff_stronglyConnected graph
   maximal := component_maximal graph
 
-/-- A component reaches another when some vertex of the first reaches some vertex of the second. -/
+/-- **Reachability between components.** In a directed graph $G$, a list $S$ of vertices reaches
+a list $T$ of vertices when some vertex of $S$ reaches some vertex of $T$ by a directed path in
+$G$, possibly of length zero. -/
 public def ComponentReaches {V : Type u} (graph : DirectedAdjacency V)
     (source target : List V) : Prop :=
   ∃ sourceVertex ∈ source, ∃ targetVertex ∈ target,
     graph.Reachable sourceVertex targetVertex
 
-/-- Condensation acyclicity, stated as antisymmetry of component reachability. -/
+/-- **Acyclic condensation.** A list $\mathcal{B}$ of vertex lists of a directed graph $G$ has an
+acyclic condensation when, for all $S, T \in \mathcal{B}$, if some vertex of $S$ reaches some
+vertex of $T$ in $G$ and some vertex of $T$ reaches some vertex of $S$, then $S = T$. That is,
+reachability between the blocks is antisymmetric. -/
 public def CondensationAcyclic {V : Type u} (graph : DirectedAdjacency V)
     (blocks : List (List V)) : Prop :=
   ∀ source ∈ blocks, ∀ target ∈ blocks,
     ComponentReaches graph source target →
       ComponentReaches graph target source → source = target
 
-/-- Mutual reachability between returned components forces them to be equal;
-equivalently, the condensation relation has no nontrivial directed cycle. -/
+/-- **The condensation of the computed components is acyclic.** Let $G$ be a directed graph and
+let $S$ and $T$ be blocks returned by the strongly connected components algorithm on $G$. If some
+vertex of $S$ reaches some vertex of $T$ and some vertex of $T$ reaches some vertex of $S$, then
+$S = T$.
+
+Equivalently, the condensation relation has no nontrivial directed cycle. -/
 public theorem components_condensationAcyclic {V : Type u} [BEq V]
     [Hashable V] [LawfulBEq V] (graph : DirectedAdjacency V) :
     CondensationAcyclic graph (components graph) := by

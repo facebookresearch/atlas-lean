@@ -55,7 +55,8 @@ section SemiGlobal
 
 variable (σ : α → α → ℤ) (gap : ℤ)
 
-/-- The list maximum is nonnegative: the fold starts at `0`. -/
+/-- **The floored list maximum is nonnegative.** For every list $L$ of integers, the maximum of
+$L$ with floor $0$ (which is $0$ for the empty list) is at least $0$. -/
 theorem zero_le_listMax {xs : List ℤ} : 0 ≤ listMax xs := by
   induction xs with
   | nil => exact le_rfl
@@ -154,7 +155,11 @@ private theorem foldl_max_eq_or_mem {seed : ℤ} {xs : List ℤ} :
     · right
       exact ⟨a, List.mem_cons_of_mem _ ha, hEq⟩
 
-/-- All overlap pairs: suffix–prefix pairs in both directions. -/
+/-- **Overlap pairs.** The overlap pairs of sequences $x$ and $y$ are the pairs $(x', y')$ in
+which $x'$ is a suffix of $x$ and $y'$ is a prefix of $y$, or $x'$ is a prefix of $x$ and
+$y'$ is a suffix of $y$. Prefixes and suffixes include the empty sequence and the whole
+sequence; the pairs are listed with the suffix–prefix pairs first, and the list can contain
+repetitions. -/
 def overlapPairs (xs ys : List α) : List (List α × List α) :=
   (xs.tails.product ys.inits) ++ (xs.inits.product ys.tails)
 
@@ -163,11 +168,21 @@ theorem mem_overlapPairs {xs' ys' xs ys : List α} :
       (xs' <:+ xs ∧ ys' <+: ys) ∨ (xs' <+: xs ∧ ys' <:+ ys) := by
   simp [overlapPairs, List.mem_append, List.mem_product, List.mem_tails, List.mem_inits]
 
-/-- The best alignment of a suffix of one sequence against a prefix of the other. -/
+/-- **Overlap alignment score.** Given a substitution score $\sigma$ and a gap score $g$, the
+overlap score of sequences $s$ and $t$ is the maximum, with floor $0$, of the Needleman–Wunsch
+scores of the overlap pairs of $s$ and $t$: the pairs $(s', t')$ where $s'$ is a suffix of $s$
+and $t'$ a prefix of $t$, or $s'$ is a prefix of $s$ and $t'$ a suffix of $t$.
+
+The pair of two empty sequences is an overlap pair with score $0$, so the floor never changes
+the value: this is the best alignment score of a suffix of one sequence against a prefix of the
+other. -/
 def overlapScore (xs ys : List α) : ℤ :=
   listMax ((overlapPairs xs ys).map (fun p => nwScore σ gap p.1 p.2))
 
-/-- An overlap pair's score is at most the overlap score. -/
+/-- **Overlap-pair scores are at most the overlap score.** Let $\sigma$ be a substitution
+score and $g$ a gap score. If $(x', y')$ is an overlap pair of sequences $x$ and $y$, then the
+Needleman–Wunsch score of $x'$ against $y'$ is at most the overlap score of $x$ and $y$, both
+taken with $\sigma$ and $g$. -/
 theorem nwScore_le_overlapScore {xs' ys' xs ys : List α}
     (h : (xs', ys') ∈ overlapPairs xs ys) :
     nwScore σ gap xs' ys' ≤ overlapScore σ gap xs ys := by
@@ -175,7 +190,10 @@ theorem nwScore_le_overlapScore {xs' ys' xs ys : List α}
   apply le_listMax_of_mem'
   exact List.mem_map_of_mem h
 
-/-- A bound on all overlap-pair scores bounds the overlap score. -/
+/-- **Upper bounds for the overlap score.** Fix a substitution score $\sigma$ and a gap score
+$g$, and sequences $s$ and $t$. If an integer $b$ is at least the Needleman–Wunsch score of
+every overlap pair of $s$ and $t$ (a suffix of $s$ with a prefix of $t$, or a prefix of $s$
+with a suffix of $t$), then the overlap score of $s$ and $t$ is at most $b$. -/
 theorem overlapScore_le {xs ys : List α} {y : ℤ}
     (h : ∀ p ∈ overlapPairs xs ys, nwScore σ gap p.1 p.2 ≤ y) :
     overlapScore σ gap xs ys ≤ y := by
@@ -191,7 +209,10 @@ theorem overlapScore_le {xs ys : List α} {y : ℤ}
     rw [h00] at h0
     exact h0
 
-/-- The overlap score is attained by some overlap pair. -/
+/-- **The overlap score is attained.** Let $\sigma$ be a substitution score and $g$ a gap
+score. For all sequences $x$ and $y$ there is an overlap pair $(x', y')$ of $x$ and $y$ such
+that the Needleman–Wunsch score of $x'$ against $y'$ (with $\sigma$ and $g$) equals the
+overlap score of $x$ and $y$. -/
 theorem exists_nwScore_eq_overlapScore (xs ys : List α) :
     ∃ p ∈ overlapPairs xs ys, nwScore σ gap p.1 p.2 = overlapScore σ gap xs ys := by
   have hmem := listMax_mem'
@@ -206,11 +227,17 @@ theorem exists_nwScore_eq_overlapScore (xs ys : List α) :
     obtain ⟨p, hp, hpEq⟩ := hmem
     exact ⟨p, hp, hpEq⟩
 
-/-- The overlap score is nonnegative: the empty pair scores `0`. -/
+/-- **The overlap score is nonnegative.** For every substitution score $\sigma$, gap
+score $g$ and sequences $s$ and $t$, the overlap score of $s$ and $t$ is at least $0$.
+
+The pair of two empty sequences is an overlap pair, and its score is $0$. -/
 theorem overlapScore_nonneg (xs ys : List α) : 0 ≤ overlapScore σ gap xs ys :=
   zero_le_listMax
 
-/-- All infixes (substrings) of `ys`, as suffixes of prefixes. -/
+/-- **Infixes.** The infixes of a sequence $y$ are its contiguous substrings: the sequences
+$l$ such that $y$ is the concatenation of $s$, $l$ and $t$ for some sequences $s$ and $t$,
+including the empty sequence and $y$ itself. They are listed as the suffixes of the prefixes
+of $y$, so the list can contain repetitions. -/
 def infixes (ys : List α) : List (List α) :=
   ys.inits.flatMap (fun pre => pre.tails)
 
@@ -229,21 +256,30 @@ theorem mem_infixes {l ys : List α} : l ∈ infixes ys ↔ ∃ s t, s ++ l ++ t
     exact ⟨s ++ l, (List.mem_inits _ _).mpr ⟨t, hst⟩,
       (List.mem_tails _ _).mpr ⟨s, rfl⟩⟩
 
-/-- The best global alignment of `xs` against a substring of `ys`. A genuine
-maximum over the infix candidates, seeded by the empty infix's score (the empty
-infix is always a candidate, so the maximum is always attained). Unlike
-`overlapScore`, this is not floored at `0`: it can be negative when every
-fitting alignment scores negatively. -/
+/-- **Fitting score.** Let $\sigma$ be a substitution score and $g$ a gap score. The fitting
+score of a sequence $x$ against a sequence $y$ is the maximum, over all infixes $l$ of $y$
+(including the empty one), of the Needleman–Wunsch score of $x$ against $l$ with $\sigma$ and
+$g$: the best global alignment score of $x$ against a substring of $y$.
+
+The empty infix is always a candidate, so the maximum is attained. Unlike the overlap score,
+the fitting score is not floored at $0$: it can be negative when every fitting alignment
+scores negatively. -/
 def fittingScore (xs ys : List α) : ℤ :=
   ((infixes ys).map (fun l => nwScore σ gap xs l)).foldl max (nwScore σ gap xs [])
 
-/-- An infix's score is at most the fitting score. -/
+/-- **Infix scores are at most the fitting score.** Let $\sigma$ be a substitution score and
+$g$ a gap score. If $l$ is an infix of a sequence $y$, then for every sequence $x$ the
+Needleman–Wunsch score of $x$ against $l$ is at most the fitting score of $x$ against $y$,
+both taken with $\sigma$ and $g$. -/
 theorem nwScore_le_fittingScore {l xs ys : List α} (h : l ∈ infixes ys) :
     nwScore σ gap xs l ≤ fittingScore σ gap xs ys := by
   unfold fittingScore
   exact le_foldl_max_of_mem (List.mem_map_of_mem h)
 
-/-- A bound on all infix scores bounds the fitting score. -/
+/-- **Upper bounds on the fitting score.** Let $\sigma$ be a substitution score, $g$ a gap
+score, $x$ and $y$ sequences and $b$ an integer. If the Needleman–Wunsch score of $x$ against
+every infix of $y$ (with $\sigma$ and $g$) is at most $b$, then the fitting score of $x$
+against $y$ is at most $b$. -/
 theorem fittingScore_le {xs ys : List α} {y : ℤ}
     (h : ∀ l ∈ infixes ys, nwScore σ gap xs l ≤ y) :
     fittingScore σ gap xs ys ≤ y := by
@@ -255,7 +291,10 @@ theorem fittingScore_le {xs ys : List α} {y : ℤ}
     obtain ⟨l, hl, rfl⟩ := ha
     exact h l hl
 
-/-- The fitting score is attained by some infix. -/
+/-- **The fitting score is attained.** Let $\sigma$ be a substitution score and $g$ a gap
+score. For all sequences $x$ and $y$ there is an infix $l$ of $y$ such that the
+Needleman–Wunsch score of $x$ against $l$ (with $\sigma$ and $g$) equals the fitting score of
+$x$ against $y$. -/
 theorem exists_nwScore_eq_fittingScore (xs ys : List α) :
     ∃ l ∈ infixes ys, nwScore σ gap xs l = fittingScore σ gap xs ys := by
   have hmem := foldl_max_eq_or_mem
@@ -267,7 +306,11 @@ theorem exists_nwScore_eq_fittingScore (xs ys : List α) :
     obtain ⟨l, hl, rfl⟩ := ha
     exact ⟨l, hl, hEq.symm⟩
 
-/-- The overlap score is at most the local score: every overlap pair is an infix pair. -/
+/-- **The overlap score is at most the local score.** Let $\sigma$ be a substitution score
+and $g$ a gap score. For all sequences $x$ and $y$, the overlap score of $x$ and $y$ is at
+most the local score of $x$ and $y$, both taken with $\sigma$ and $g$.
+
+Every overlap pair is an infix pair. -/
 theorem overlapScore_le_localScore (xs ys : List α) :
     overlapScore σ gap xs ys ≤ localScore σ gap xs ys := by
   apply overlapScore_le
@@ -280,8 +323,11 @@ theorem overlapScore_le_localScore (xs ys : List α) :
   · exact nwScore_le_localScore σ gap
       (mem_infixPairs.mpr ⟨p.1, ys, h1, ⟨[], by simp⟩, ⟨[], by simp⟩, h2⟩)
 
-/-- The fitting score is at most the local score: every fitting candidate is an
-infix pair. -/
+/-- **The fitting score is at most the local score.** Let $\sigma$ be a substitution score
+and $g$ a gap score. For all sequences $x$ and $y$, the fitting score of $x$ against $y$ is at
+most the local score of $x$ and $y$, both taken with $\sigma$ and $g$.
+
+Every fitting candidate, all of $x$ against an infix of $y$, is an infix pair. -/
 theorem fittingScore_le_localScore (xs ys : List α) :
     fittingScore σ gap xs ys ≤ localScore σ gap xs ys := by
   apply fittingScore_le

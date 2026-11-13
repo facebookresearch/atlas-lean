@@ -30,17 +30,29 @@ universe u
 
 namespace Cslib.Algorithms.Lean.TimeM
 
-/-- Materialize every conjugated entry and charge its read, conjugation and write. -/
+/-- **Charged entrywise conjugation.** For a type with a star operation $z \mapsto \bar z$ and a
+vector $x = (x_0, \dots, x_{n-1})$ of length $n$ over it, this costed computation returns
+$(\bar x_0, \dots, \bar x_{n-1})$ and charges $3n$ operations: one read, one conjugation and one
+write per entry. -/
 def fftConjugate {R : Type u} [Star R] {n : Nat} (xs : Vector R n) :
     TimeM Nat (Vector R n) :=
   ⟨xs.map star, 3 * n⟩
 
-/-- Materialize every normalized entry and charge its read, multiplication and write. -/
+/-- **Charged entrywise scaling.** For a type with a multiplication, a scalar $c$ and a vector
+$x = (x_0, \dots, x_{n-1})$ of length $n$ over it, this costed computation returns
+$(c x_0, \dots, c x_{n-1})$ and charges $3n$ operations: one read, one multiplication and one
+write per entry. -/
 def fftScale {R : Type u} [Mul R] {n : Nat} (scale : R) (xs : Vector R n) :
     TimeM Nat (Vector R n) :=
   ⟨xs.map (fun x => scale * x), 3 * n⟩
 
-/-- Run the actual source inverse procedure on exactly `2^d` entries. -/
+/-- **Inverse FFT by conjugation.** Let $R$ be a field that is a star ring, with star operation
+$z \mapsto \bar z$. For a natural number $d$, an element $\omega \in R$ and a vector
+$x \in R^{2^d}$, the inverse FFT conjugates every entry of $x$, applies the radix-two FFT with
+root $\omega$, conjugates every entry of the result, and multiplies every entry by the inverse
+$(2^d)^{-1}$ of $2^d$ in $R$ (which is $0$ when $2^d = 0$ in $R$). It charges $3 \cdot 2^d$
+operations for each of the two conjugation passes and for the scaling pass, one operation for
+computing $(2^d)^{-1}$, and the cost of the FFT. -/
 def ifft {R : Type u} [Field R] [StarRing R]
     (d : Nat) (omega : R) (xs : Vector R (2 ^ d)) :
     TimeM Nat (Vector R (2 ^ d)) := do

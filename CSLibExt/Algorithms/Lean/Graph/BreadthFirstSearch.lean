@@ -492,15 +492,28 @@ private theorem step_modelMatches (g : DirectedAdjacency V) {st : State V}
               _ = (modelStep g model).queue := by
                 simp [modelStep, hmodelQueue, modelMoved]
 
-/-- Observable output of breadth-first search. -/
+/-- **Result of breadth-first search.** A breadth-first search result on a vertex type $V$
+consists of a distance function, assigning to each vertex either a natural number or none,
+and a list of vertices. They are meant to record the shortest distance from the source (none
+when the vertex is unreachable) and the vertices in first-discovery order. -/
 structure BFSResult (V : Type u) where
   /-- The shortest distance from the source, or `none` when unreachable. -/
   distance : V → Option Nat
   /-- Vertices in first-discovery order. -/
   order : List (V)
 
-/-- Kernel-reducible list model of BFS, used to check concrete results without trusting code
-generation. The executable `bfs` below remains the expected-linear-time implementation. -/
+/-- **List model of breadth-first search.** Given a finite directed graph $G$ with ordered
+adjacency lists and a source vertex $s$, the list model keeps a list of processed pairs and a
+queue of pairs $(v, d)$ of a vertex and a distance, starting with no processed pairs and the
+queue $[(s, 0)]$. It performs one round per vertex of $G$: if the queue is empty, nothing
+changes; otherwise the front pair $(u, d)$ is removed from the queue and recorded as processed,
+and then each entry $w$ of the adjacency list of $u$, from left to right, is appended to the
+queue as $(w, d + 1)$ unless $w$ already occurs in a processed or queued pair. The reported
+distance of a vertex $v$ is the distance in the first pair for $v$ in the list of processed pairs
+in processing order followed by the queue, or none if there is no such pair; the reported order
+lists the processed vertices in processing order.
+
+The model can be evaluated by kernel reduction, which is used to check concrete results. -/
 def bfsModel (g : DirectedAdjacency V) (s : V) : BFSResult V :=
   let initial : List (V × Nat) × List (V × Nat) := ([], [(s, 0)])
   let final := g.vertices.foldr (fun _ state =>
@@ -931,7 +944,18 @@ private theorem final_distance_le_walk (g : DirectedAdjacency V) (s v : V)
       have hprev : du ≤ k := ih hdu
       omega
 
-/-- Executable expected-linear-time FIFO breadth-first search from `s`. -/
+/-- **Breadth-first search.** Given a finite directed graph $G$ with ordered adjacency lists and a
+source vertex $s$, breadth-first search keeps a FIFO queue of pairs $(v, d)$ of a vertex and a
+distance and a table of discovered vertices with their distances, starting with the queue
+$[(s, 0)]$ and $s$ discovered at distance $0$. It performs one round per vertex of $G$: if the
+queue is empty, nothing changes; otherwise it dequeues the front pair $(u, d)$, records $u$ as
+processed, and scans the adjacency list of $u$ from left to right, enqueueing each entry $w$ that
+is not yet discovered as $(w, d + 1)$ and discovering it at distance $d + 1$. The result reports
+for each vertex its discovered distance, or none if it was never discovered, and lists the
+processed vertices in processing order.
+
+The table is a hash map, so the search runs in expected time linear in the number of vertices
+plus the total length of the adjacency lists. -/
 def bfs (g : DirectedAdjacency V) (s : V) : BFSResult V :=
   let initial : List (V × Nat) × (Std.Queue (V × Nat) × Std.HashMap V Nat) :=
     ([], ((Std.Queue.empty : Std.Queue (V × Nat)).enqueue (s, 0),
@@ -1005,7 +1029,10 @@ private theorem bfsModel_eq (g : DirectedAdjacency V) (s : V) :
   unfold bfsModel modelFinal modelInitial modelStep modelScan ModelState.entries
   rfl
 
-/-- The expected-linear-time executable BFS refines the kernel-reducible list model. -/
+/-- **The executable BFS agrees with the list model.** For every finite directed graph $G$ with
+ordered adjacency lists and every source vertex $s$, the result of the executable breadth-first
+search from $s$ equals the result of the list model of breadth-first search from $s$: both
+report the same distance (or none) for every vertex and the same first-discovery order. -/
 theorem bfs_eq_bfsModel (g : DirectedAdjacency V) (s : V) :
     bfs g s = bfsModel g s := by
   rw [bfs_eq, bfsModel_eq]
@@ -1022,7 +1049,11 @@ theorem bfs_eq_bfsModel (g : DirectedAdjacency V) (s : V) :
       := by rw [matchFinal.1]
   rw [distanceMatch, orderMatch]
 
-/-- Run BFS on the original `Fin n → List (Fin n)` adjacency-list interface. -/
+/-- **Breadth-first search on the vertices $0, \dots, n-1$.** Given a natural number $n$, an
+adjacency function assigning to each vertex $i < n$ an ordered list of vertices among
+$0, \dots, n-1$, and a source vertex $s < n$, this is the result of breadth-first search from $s$
+on the finite directed graph with vertex enumeration $0, 1, \dots, n-1$ and these adjacency
+lists. -/
 def bfsFin {n : Nat} (adjacency : Fin n → List (Fin n)) (source : Fin n) :
     BFSResult (Fin n) :=
   bfs
@@ -1043,7 +1074,10 @@ private theorem attachedDistances_eq {g : DirectedAdjacency V} {s : V}
   have hget := (hi.map_matches e.1 e.2).mpr he
   simp [hget]
 
-/-- A reported distance is present exactly for the reachable vertices. -/
+/-- **BFS reports a distance exactly for the reachable vertices.** For every finite directed graph
+$G$ with ordered adjacency lists and all vertices $s$ and $v$, breadth-first search from $s$
+reports some distance for $v$ (rather than none) if and only if $v$ is reachable from $s$
+in $G$. -/
 theorem distance_present_iff_reachable (g : DirectedAdjacency V) (s v : V) :
     (∃ d, (bfs g s).distance v = some d) ↔ g.Reachable s v := by
   rw [bfs_eq]
@@ -1055,7 +1089,9 @@ theorem distance_present_iff_reachable (g : DirectedAdjacency V) (s v : V) :
   · rintro ⟨d, hd⟩
     exact ⟨d, ((final_invariant g s).map_matches v d).mpr hd⟩
 
-/-- A vertex occurs in first-discovery order exactly when it is reachable. -/
+/-- **BFS lists exactly the reachable vertices.** For every finite directed graph $G$ with ordered
+adjacency lists and all vertices $s$ and $v$, the vertex $v$ occurs in the first-discovery order
+of breadth-first search from $s$ if and only if $v$ is reachable from $s$ in $G$. -/
 theorem order_mem_iff_reachable (g : DirectedAdjacency V) (s v : V) :
     v ∈ (bfs g s).order ↔ g.Reachable s v := by
   rw [bfs_eq]
@@ -1069,7 +1105,9 @@ theorem order_mem_iff_reachable (g : DirectedAdjacency V) (s v : V) :
   · rintro ⟨d, hd⟩
     exact List.mem_map_of_mem hd
 
-/-- No vertex occurs twice in first-discovery order. -/
+/-- **BFS discovers each vertex at most once.** For every finite directed graph $G$ with ordered
+adjacency lists and every vertex $s$, no vertex occurs twice in the first-discovery order of
+breadth-first search from $s$. -/
 theorem order_nodup (g : DirectedAdjacency V) (s : V) :
     (bfs g s).order.Nodup := by
   rw [bfs_eq]
@@ -1077,7 +1115,11 @@ theorem order_nodup (g : DirectedAdjacency V) (s : V) :
   rw [← final_entries_eq_orderRev]
   exact (final_invariant g s).nodup
 
-/-- A reported value is exactly an attainable walk length minimal among all walk lengths. -/
+/-- **BFS reports exactly the shortest walk length.** For every finite directed graph $G$ with
+ordered adjacency lists, all vertices $s$ and $v$, and every natural number $d$, breadth-first
+search from $s$ reports distance $d$ for $v$ if and only if there is a walk of exactly $d$ edges
+from $s$ to $v$ in $G$ and $d \le k$ for every natural number $k$ such that there is a walk of
+exactly $k$ edges from $s$ to $v$. -/
 theorem distance_eq_some_iff_shortest (g : DirectedAdjacency V) (s v : V) (d : Nat) :
     (bfs g s).distance v = some d ↔
       Walk g d s v ∧ ∀ k, Walk g k s v → d ≤ k := by
@@ -1097,14 +1139,19 @@ theorem distance_eq_some_iff_shortest (g : DirectedAdjacency V) (s v : V) (d : N
     subst dv
     exact ((final_invariant g s).map_matches v d).mpr hdv
 
-/-- The source is reported at the zero-edge distance. -/
+/-- **Breadth-first search places the source at distance zero.** For every finite directed graph
+$G$ given by ordered adjacency lists and every vertex $s$ of $G$, breadth-first search in $G$
+from $s$ reports a distance for $s$ itself, and that distance is $0$ edges. -/
 theorem source_distance (g : DirectedAdjacency V) (s : V) :
     (bfs g s).distance s = some 0 := by
   rw [bfs_eq]
   change (finalState g s).distances[s]? = some 0
   exact ((final_invariant g s).map_matches s 0).mpr (final_invariant g s).source
 
-/-- Distances attached to first-discovery order are nondecreasing. -/
+/-- **BFS discovers vertices in nondecreasing distance.** For every finite directed graph $G$ with
+ordered adjacency lists and every vertex $s$, the distances reported by breadth-first search
+from $s$, listed along its first-discovery order, form a nondecreasing sequence, where a vertex
+without a reported distance counts as $0$. -/
 theorem order_distances_nondecreasing (g : DirectedAdjacency V) (s : V) :
     (((bfs g s).order.map fun v => (bfs g s).distance v |>.getD 0).Pairwise (· ≤ ·)) := by
   rw [bfs_eq]

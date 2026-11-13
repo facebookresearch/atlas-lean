@@ -60,22 +60,36 @@ universe u
 
 variable {V : Type u} [DecidableEq V]
 
-/-- An ordered pair as an unordered edge. -/
+/-- **Unordered edge of an ordered pair.** The ordered pair $(a, b)$ of vertices, viewed as the
+unordered pair $\{a, b\}$, so that $(a, b)$ and $(b, a)$ give the same unordered edge. -/
 def usym (e : V × V) : Sym2 V := s(e.1, e.2)
 
-/-- The degree of `x` in the edge list `R` (a loop counts twice). -/
+/-- **Degree in an undirected edge list.** For a finite list $R$ of edges of an undirected
+multigraph, each given as a pair $(a, b)$, the degree of a vertex $x$ is the number of edges in
+$R$ whose first component is $x$ plus the number whose second component is $x$; parallel edges
+count separately and a loop $(x, x)$ counts twice. -/
 def udeg (R : List (V × V)) (x : V) : ℕ := (R.map Prod.fst).count x + (R.map Prod.snd).count x
 
-/-- Every degree is even, except at `v` and `t` (when `v ≠ t`). -/
+/-- **Degree parity condition for two endpoints.** For a finite list $R$ of edges of an
+undirected multigraph and vertices $v$, $t$, the condition holds when for every vertex $x$ the
+number $\deg_R(x) + [x = v] + [x = t]$ is even, where $\deg_R$ is the degree in $R$ (a loop counts
+twice) and $[P]$ is $1$ if $P$ holds and $0$ otherwise. Thus if $v \ne t$, exactly $v$ and $t$
+have odd degree, and if $v = t$, every degree is even. -/
 def EvenExcept (R : List (V × V)) (v t : V) : Prop :=
   ∀ x, (udeg R x + (if x = v then 1 else 0) + (if x = t then 1 else 0)) % 2 = 0
 
-/-- `x` is reachable from `s` through the edges of `E`, in either direction. -/
+/-- **Reachability in an undirected multigraph.** For a list $E$ of edges (ordered pairs of
+vertices), a vertex $x$ is reachable from a vertex $s$ when there are vertices
+$s = v_0, v_1, \dots, v_n = x$ with $n \ge 0$ such that for each $i < n$, $(v_i, v_{i+1})$ or
+$(v_{i+1}, v_i)$ belongs to $E$. -/
 def UReach (E : List (V × V)) (s x : V) : Prop :=
   Relation.ReflTransGen (fun a b => (a, b) ∈ E ∨ (b, a) ∈ E) s x
 
-/-- `W` is an Euler path of `E` from `s` to `t`: its steps, as unordered pairs, are exactly the
-edges of `E`, each traversed once in one direction. -/
+/-- **Euler path in an undirected multigraph.** For a finite list $E$ of edges of an undirected
+multigraph and vertices $s$, $t$, a sequence of vertices $W = (w_0, \dots, w_n)$ is an Euler path
+of $E$ from $s$ to $t$ when $w_0 = s$, $w_n = t$, and the multiset of unordered pairs
+$\{w_{i-1}, w_i\}$ for $1 \le i \le n$ equals the multiset of the edges of $E$ taken as unordered
+pairs. Thus every edge is traversed exactly once, in either direction. -/
 def IsUEulerPath (E : List (V × V)) (s t : V) (W : List V) : Prop :=
   W.head? = some s ∧ W.getLast? = some t ∧ ((walkEdges W).map usym).Perm (E.map usym)
 
@@ -85,12 +99,18 @@ instance (E : List (V × V)) (s t : V) (W : List V) : Decidable (IsUEulerPath E 
 instance [Fintype V] (R : List (V × V)) (v t : V) : Decidable (EvenExcept R v t) := by
   unfold EvenExcept; infer_instance
 
-/-- The other endpoint of the edge `e` at `v`. -/
+/-- **Other endpoint of an edge.** For an edge $e = (a, b)$ and a vertex $v$, the other endpoint
+of $e$ at $v$ is $b$ if $a = v$, and $a$ otherwise; in particular a loop $(v, v)$ gives $v$. -/
 def otherEnd (e : V × V) (v : V) : V := if e.1 = v then e.2 else e.1
 
-/-- Undirected Hierholzer recursion with fuel: from `v`, take the first remaining edge at `v`,
-remove it, recurse at its other endpoint, then continue at `v`; emit `v` when no edge is left at
-`v`. Returns the emitted vertices prepended to `acc` and the remaining edges. -/
+/-- **Undirected Hierholzer recursion.** The recursion takes a fuel $f \in \mathbb{N}$, a vertex
+$v$, a list $R$ of remaining edges and an accumulator list $A$ of vertices, and returns a list of
+vertices and a list of remaining edges. With fuel $0$ it returns $A$ and $R$ unchanged. With fuel
+$f + 1$: if no edge of $R$ has $v$ as an endpoint, it returns $v$ prepended to $A$, together with
+$R$; otherwise, with $e$ the first such edge, it removes $e$ from $R$ at a cost of one unit,
+recurses with fuel $f$ from the other endpoint of $e$ at $v$ on the shortened list with
+accumulator $A$, obtaining a vertex list $A'$ and remaining edges $R'$, and then recurses with fuel
+$f$ from $v$ on $R'$ with accumulator $A'$. -/
 def uvisit : ℕ → V → List (V × V) → List V → TimeM ℕ (List V × List (V × V))
   | 0, _, R, acc => pure (acc, R)
   | fuel + 1, v, R, acc =>
@@ -101,13 +121,21 @@ def uvisit : ℕ → V → List (V × V) → List V → TimeM ℕ (List V × Lis
           let r ← uvisit fuel (otherEnd e v) (R.erase e) acc
           uvisit fuel v r.2 r.1
 
-/-- Hierholzer's algorithm on an undirected edge list, from `s`. -/
+/-- **Undirected Hierholzer's algorithm.** Given a list $E$ of undirected edges (ordered pairs of
+vertices) and a start vertex $s$, run the undirected Hierholzer recursion from $s$ on $E$ with an
+empty accumulator and fuel $|E| + 1$, and return the list of emitted vertices; its cost is the
+cost of that recursion. -/
 def uhierholzer (E : List (V × V)) (s : V) : TimeM ℕ (List V) := do
   let r ← uvisit (E.length + 1) s E []
   pure r.1
 
 /-! ## Degrees -/
 
+/-- **Degree after removing an edge.** Let $R$ be a finite list of edges of an undirected
+multigraph, each an ordered pair of vertices, let $e = (a, b)$ be an edge in $R$, and let $x$ be a
+vertex. Then the degree of $x$ in $R$ equals the degree of $x$ in the list obtained from $R$ by
+removing the first occurrence of $e$, plus $[x = a] + [x = b]$, where $[P]$ is $1$ if $P$ holds
+and $0$ otherwise. -/
 theorem udeg_erase {R : List (V × V)} {e : V × V} (he : e ∈ R) (x : V) :
     udeg R x = udeg (R.erase e) x + (if x = e.1 then 1 else 0) + (if x = e.2 then 1 else 0) := by
   have hp := List.perm_cons_erase he
@@ -129,7 +157,9 @@ theorem udeg_pos_of_mem {R : List (V × V)} {e : V × V} (he : e ∈ R) :
   have h2 : 0 < (R.map Prod.snd).count e.2 := List.count_pos_iff.2 (List.mem_map_of_mem he)
   unfold udeg; omega
 
-/-- An edge at `v` joins `v` and its other endpoint. -/
+/-- **An edge at a vertex joins it to its other endpoint.** If an ordered pair $e = (a, b)$ of
+vertices has $a = v$ or $b = v$, then the unordered pair $\{a, b\}$ equals $\{v, w\}$, where $w$
+is the other endpoint of $e$ at $v$. -/
 theorem usym_eq_otherEnd {e : V × V} {v : V} (h : e.1 = v ∨ e.2 = v) :
     usym e = s(v, otherEnd e v) := by
   simp only [usym, otherEnd]
@@ -159,11 +189,15 @@ private theorem uvisit_some {fuel : ℕ} {v : V} {R : List (V × V)} {e : V × V
   · simp
   · simp; omega
 
-/-- The contract of `uvisit`: given more fuel than remaining edges and a remainder whose
-odd-degree vertices are exactly `v` and `t` (none when `v = t`), the call emits a walk `W` from
-`v` to `t` in front of `acc`, removes exactly its steps (as unordered pairs), leaves a remainder of
-even degrees, a sublist of `R`, in which `W`'s vertices have no edges, and costs one unit per
-removed edge. -/
+/-- **Invariant of the undirected Hierholzer recursion.** Let $R$ be a list of edges, $v$, $t$
+vertices such that exactly $v$ and $t$ have odd degree in $R$ (no vertex when $v = t$), $A$ a list
+of vertices, and $f > |R|$ a fuel bound. Run the undirected Hierholzer recursion with fuel $f$
+from $v$ on $R$ with accumulator $A$, and let $R'$ be the remaining edge list it returns and $c$
+its cost. Then there is a vertex sequence $W$ starting at $v$ and ending at $t$ such that the
+returned vertex list is $W$ followed by $A$; the edges of $R$, as unordered pairs, are a
+permutation of the consecutive pairs of $W$ followed by the edges of $R'$, all as unordered pairs;
+every vertex has even degree in $R'$; every vertex of $W$ has degree $0$ in $R'$; $R'$ is a
+sublist of $R$; and $c + |R'| = |R|$. -/
 theorem uvisit_spec : ∀ (fuel : ℕ) (v t : V) (R : List (V × V)) (acc : List V),
     R.length < fuel → EvenExcept R v t →
     ∃ W, (uvisit fuel v R acc).ret.1 = W ++ acc ∧ W.head? = some v ∧ W.getLast? = some t ∧
@@ -292,9 +326,12 @@ private theorem uhierholzer_facts (E : List (V × V)) (s t : V) (hpar : EvenExce
   exact ⟨_, by rw [hret]; exact hh, by rw [hret]; exact hl, by rw [hret]; exact hp,
     by rw [hret]; exact hstuck, hsub, by rw [htime']; exact htime⟩
 
-/-- When exactly `s` and `t` have odd degree (none when `s = t`), the result is a walk from `s`
-to `t` whose steps, as unordered pairs, are a sub-multiset of the edges: no edge is traversed
-twice. -/
+/-- **Undirected Hierholzer's algorithm returns a trail.** Let $E$ be a list of undirected edges
+and $s$, $t$ vertices such that exactly $s$ and $t$ have odd degree in $E$ (no vertex has odd
+degree when $s = t$). Then the vertex sequence $W$ returned by the undirected Hierholzer algorithm
+on $E$ from $s$ starts at $s$ and ends at $t$, and the consecutive pairs of $W$, as unordered
+pairs, form a sub-multiset of the edges of $E$ as unordered pairs: no edge is traversed more often
+than it occurs in $E$. -/
 theorem uhierholzer_trail (E : List (V × V)) (s t : V) (hpar : EvenExcept E s t) :
     (uhierholzer E s).ret.head? = some s ∧ (uhierholzer E s).ret.getLast? = some t ∧
       ∃ rest, (E.map usym).Perm ((walkEdges (uhierholzer E s).ret).map usym ++ rest) := by
@@ -331,8 +368,11 @@ private theorem mem_of_uReach {E R' : List (V × V)} {W : List V} {s : V}
         · simp only at hpos; omega
         · simp only at hpos; omega
 
-/-- **Euler paths.** If exactly `s` and `t` have odd degree (none when `s = t`) and every edge
-starts at a vertex reachable from `s`, the result is an Euler path from `s` to `t`. -/
+/-- **Undirected Hierholzer's algorithm finds Euler paths.** Let $E$ be a list of undirected edges
+(ordered pairs of vertices) and $s$, $t$ vertices such that exactly $s$ and $t$ have odd degree in
+$E$ (no vertex has odd degree when $s = t$), and suppose the first endpoint of every edge of $E$ is
+reachable from $s$ through edges of $E$. Then the vertex sequence returned by the undirected
+Hierholzer algorithm on $E$ from $s$ is an Euler path of $E$ from $s$ to $t$. -/
 theorem uhierholzer_isUEulerPath (E : List (V × V)) (s t : V) (hpar : EvenExcept E s t)
     (hreach : ∀ e ∈ E, UReach E s e.1) : IsUEulerPath E s t (uhierholzer E s).ret := by
   obtain ⟨R', hh, hl, hp, hstuck, hsub, -⟩ := uhierholzer_facts E s t hpar
@@ -348,13 +388,20 @@ theorem uhierholzer_isUEulerPath (E : List (V × V)) (s t : V) (hpar : EvenExcep
   refine ⟨hh, hl, ?_⟩
   simpa using hp.symm
 
-/-- **Euler circuits.** If every degree is even and every edge starts at a vertex reachable from
-`s`, the result is an Euler circuit from `s`. -/
+/-- **Undirected Hierholzer's algorithm finds Euler circuits.** Let $E$ be a list of undirected
+edges (ordered pairs of vertices) in which every vertex has even degree, and let $s$ be a vertex
+such that the first endpoint of every edge of $E$ is reachable from $s$ through edges of $E$. Then
+the vertex sequence returned by the undirected Hierholzer algorithm on $E$ from $s$ is an Euler
+path of $E$ from $s$ to $s$, that is, an Euler circuit at $s$. -/
 theorem uhierholzer_isUEulerCircuit (E : List (V × V)) (s : V) (hpar : ∀ x, udeg E x % 2 = 0)
     (hreach : ∀ e ∈ E, UReach E s e.1) : IsUEulerPath E s s (uhierholzer E s).ret :=
   uhierholzer_isUEulerPath E s s (fun x => by have := hpar x; split_ifs <;> omega) hreach
 
-/-- **Cost.** One unit per removed edge; when every edge is reachable, exactly `|E|`. -/
+/-- **Cost of the undirected Hierholzer algorithm.** Let $E$ be a list of undirected edges and
+$s$, $t$ vertices such that exactly $s$ and $t$ have odd degree in $E$ (no vertex has odd degree
+when $s = t$), and suppose the first endpoint of every edge of $E$ is reachable from $s$ through
+edges of $E$. Then the undirected Hierholzer algorithm on $E$ from $s$ costs exactly $|E|$, the
+number of edges of $E$, in the cost model that charges one unit per removed edge. -/
 theorem uhierholzer_time (E : List (V × V)) (s t : V) (hpar : EvenExcept E s t)
     (hreach : ∀ e ∈ E, UReach E s e.1) : (uhierholzer E s).time = E.length := by
   obtain ⟨R', hh, hl, hp, hstuck, hsub, htime⟩ := uhierholzer_facts E s t hpar
@@ -371,7 +418,9 @@ theorem uhierholzer_time (E : List (V × V)) (s t : V) (hpar : EvenExcept E s t)
 
 /-! ## The converse: degrees of an Euler path -/
 
-/-- The number of endpoints of an unordered edge equal to `x` (`2` for the loop `s(x, x)`). -/
+/-- **Multiplicity of a vertex in an unordered edge.** For a vertex $x$, this assigns to an
+unordered pair $\{a, b\}$ the number $[x = a] + [x = b]$ of its endpoints equal to $x$, where
+$[P]$ is $1$ if $P$ holds and $0$ otherwise; in particular a loop $\{x, x\}$ gives $2$. -/
 def endsAt (x : V) : Sym2 V → ℕ :=
   Sym2.lift ⟨fun a b => (if x = a then 1 else 0) + (if x = b then 1 else 0),
     fun _ _ => Nat.add_comm _ _⟩
@@ -389,13 +438,19 @@ theorem udeg_eq_sum (R : List (V × V)) (x : V) :
         @eq_comm _ e.1 x, @eq_comm _ e.2 x]
       omega
 
-/-- Degrees depend only on the edges as unordered pairs. -/
+/-- **Degrees depend only on the unordered edges.** Let $A$ and $B$ be finite lists of edges of an
+undirected multigraph such that the multiset of edges of $A$, taken as unordered pairs, equals that
+of $B$. Then every vertex has the same degree in $A$ as in $B$. -/
 theorem udeg_eq_of_perm {A B : List (V × V)} (h : (A.map usym).Perm (B.map usym)) (x : V) :
     udeg A x = udeg B x := by
   rw [udeg_eq_sum, udeg_eq_sum]
   exact (h.map _).sum_eq
 
-/-- In the steps of a walk from `s` to `t`, every degree is even except at `s` and `t`. -/
+/-- **Degrees along a walk.** Let $W = (w_0, \dots, w_n)$ be a nonempty sequence of vertices with
+$w_0 = s$ and $w_n = t$, and consider the multigraph whose edges are the consecutive pairs
+$(w_{i-1}, w_i)$ for $1 \le i \le n$. In it every vertex other than $s$ and $t$ has even degree
+(a loop counts twice); if $s \ne t$, then $s$ and $t$ have odd degree, and if $s = t$, every
+vertex has even degree. -/
 theorem evenExcept_walkEdges : ∀ (W : List V) (s t : V), W.head? = some s →
     W.getLast? = some t → EvenExcept (walkEdges W) s t
   | [], _, _, h, _, _ => by simp at h
@@ -416,17 +471,25 @@ theorem evenExcept_walkEdges : ∀ (W : List V) (s t : V), W.head? = some s →
         @eq_comm _ b x] at ih ⊢
       split_ifs at ih ⊢ <;> omega
 
-/-- An Euler path from `s` to `t` forces the degree condition: exactly `s` and `t` have odd degree
-(none when `s = t`). -/
+/-- **Degrees of an undirected Euler path.** Let $E$ be a finite list of edges of an undirected
+multigraph and let $W$ be an Euler path of $E$ from $s$ to $t$. Then every vertex other than $s$
+and $t$ has even degree in $E$ (a loop counts twice); if $s \ne t$, then $s$ and $t$ have odd
+degree, and if $s = t$, every vertex has even degree. -/
 theorem evenExcept_of_isUEulerPath {E : List (V × V)} {s t : V} {W : List V}
     (h : IsUEulerPath E s t W) : EvenExcept E s t := by
   intro x
   rw [← udeg_eq_of_perm h.2.2 x]
   exact evenExcept_walkEdges W s t h.1 h.2.1 x
 
-/-- **Euler's theorem**, algorithmic form: when every edge starts at a vertex reachable from `s`,
-an Euler path from `s` to `t` exists iff exactly `s` and `t` have odd degree (every degree is even
-when `s = t`), and then `uhierholzer E s` finds one. -/
+/-- **Euler's theorem for undirected multigraphs.** Let $E$ be a finite list of edges of an
+undirected multigraph (parallel edges and loops allowed), each given as a pair $(a, b)$, and let
+$s$, $t$ be vertices such that the first endpoint $a$ of every edge is reachable from $s$ along
+edges of $E$ traversed in either direction. Then $E$ has an Euler path from $s$ to $t$ if and only
+if, when $s \ne t$, exactly $s$ and $t$ have odd degree, and, when $s = t$, every vertex has even
+degree (a loop counts twice towards the degree).
+
+This is the algorithmic form: the proof shows that Hierholzer's algorithm started at $s$ finds
+such a path. -/
 theorem exists_isUEulerPath_iff (E : List (V × V)) (s t : V)
     (hreach : ∀ e ∈ E, UReach E s e.1) :
     (∃ W, IsUEulerPath E s t W) ↔ EvenExcept E s t :=

@@ -43,12 +43,16 @@ namespace Cslib.Algorithms.Lean
 
 namespace TopologicalSort
 
-/-- The number of incoming edges to `v` whose sources lie in `remaining`. -/
+/-- **Indegree within a vertex list.** For a finite directed graph $G$, a list $R$ of vertices and
+a vertex $v$, the indegree of $v$ within $R$ is the number of entries $u$ of $R$, counted with
+multiplicity, such that $G$ has an edge from $u$ to $v$. -/
 public def indegreeWithin {α : Type u} [DecidableEq α]
     (g : DirectedAdjacency α) (remaining : List α) (v : α) : Nat :=
   remaining.countP (fun u => g.hasEdge u v)
 
-/-- The number of graph edges entering `v`; duplicate adjacency entries count once. -/
+/-- **Indegree.** The indegree of a vertex $v$ in a finite directed graph $G$ is the number of
+vertices $u$ such that $G$ has an edge from $u$ to $v$; repeated entries in adjacency lists
+count once. -/
 public def indegree {α : Type u} [DecidableEq α]
     (g : DirectedAdjacency α) (v : α) : Nat :=
   indegreeWithin g g.vertices v
@@ -519,7 +523,10 @@ private theorem step_invariant {α : Type u} [DecidableEq α]
             subst x
             exact hinv.cross_edges u hurem p hp
 
-/-- The observable result of deterministic FIFO Kahn topological sorting. -/
+/-- **Outcome of Kahn's topological sort.** The result of Kahn's topological sorting algorithm on a
+graph with vertices of type $\alpha$ is either a success, carrying a list of vertices, or a failure,
+carrying the list of vertices processed before the queue emptied and the list of vertices that
+remain. -/
 public inductive Result (α : Type u) where
   /-- Every vertex was processed in this order. -/
   | success (order : List α)
@@ -1001,10 +1008,16 @@ private theorem implRel_after_dequeue {α : Type u} [DecidableEq α] [Hashable �
     simp [hrel.output]
   · rw [hrel.count, List.length_erase_of_mem hsource]
 
-/--
-Execute deterministic FIFO Kahn sorting. Initial-ready vertices follow `g.vertices`; vertices
-released together follow first adjacency occurrence.
--/
+/-- **Kahn's topological sort.** Run Kahn's algorithm with a first-in first-out queue on a finite
+directed graph $G$ whose vertices are enumerated as $v_1, \dots, v_n$. Initially every vertex is
+remaining, the counter of each vertex is its number of in-neighbours, and the queue holds the
+vertices with no in-neighbours in enumeration order. At each of $n$ steps, if the queue is nonempty,
+its front vertex $x$ is removed from the queue and from the remaining vertices and appended to the
+output; then each distinct out-neighbour $y$ of $x$ that is still remaining, taken in order of first
+occurrence in the adjacency list of $x$, has its counter decreased by one and joins the back of the
+queue if that counter was $1$. If no vertices remain after the $n$ steps, the result is a success
+with the output list; otherwise it is a failure with the output list as the processed vertices and
+the remaining vertices in enumeration order. -/
 public def sort {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) : Result α :=
   let advance := fun (s : List α × (α → Nat) × Std.Queue α × List α) =>
@@ -1211,7 +1224,10 @@ private theorem sortImpl_eq_sort {α : Type u} [DecidableEq α] [Hashable α]
   exact goImpl_eq_loop g g.vertices.length (initialImplState g) (initialState g)
     (initialImplState_rel g) (initialState_invariant g) rfl
 
-/-- A nonempty simple directed cycle wholly contained in `remaining`. -/
+/-- **Directed cycle within a vertex list.** Let $G$ be a finite directed graph and $R$ a list of
+vertices. A list $c = [c_1, \dots, c_k]$ of vertices is a directed cycle of $G$ in $R$ when
+$k \ge 1$, the vertices $c_1, \dots, c_k$ are pairwise distinct, $G$ has an edge from $c_i$ to
+$c_{i+1}$ for each $1 \le i < k$ and an edge from $c_k$ to $c_1$, and every $c_i$ lies in $R$. -/
 public def DirectedCycleIn {α : Type u}
     (g : DirectedAdjacency α) (remaining cycle : List α) : Prop :=
   cycle ≠ [] ∧
@@ -1222,7 +1238,11 @@ public def DirectedCycleIn {α : Type u}
     | first :: rest => g.Edge (List.getLast (first :: rest) (by simp)) first) ∧
   ∀ v ∈ cycle, v ∈ remaining
 
-/-- Exposes nonemptiness, simplicity, path edges, closing edge, and containment. -/
+/-- **Characterization of directed cycles within a vertex list.** Let $G$ be a finite directed
+graph and let $R$ and $c = [c_1, \dots, c_k]$ be lists of vertices. Then $c$ is a directed cycle
+of $G$ in $R$ if and only if $k \ge 1$, the vertices $c_1, \dots, c_k$ are pairwise distinct,
+$G$ has an edge from $c_i$ to $c_{i+1}$ for every $1 \le i < k$, $G$ has an edge from $c_k$ to
+$c_1$, and every $c_i$ lies in $R$. -/
 public theorem directedCycleIn_iff {α : Type u}
     (g : DirectedAdjacency α) (remaining cycle : List α) :
     DirectedCycleIn g remaining cycle ↔
@@ -1345,16 +1365,24 @@ private theorem exists_nodup_cycle_of_internal_predecessor {α : Type u}
   refine ⟨cycle, hcycle, hnodup, hchain, ?_, hsub⟩
   simpa [hfirst, hlast'] using hclose
 
-/-- A finite directed graph is acyclic when it contains no explicit simple directed cycle. -/
+/-- **Acyclic directed graph.** A finite directed graph $G$ is acyclic when it has no directed
+cycle, that is, no nonempty list $[c_1, \dots, c_k]$ of pairwise distinct vertices such that $G$
+has an edge from $c_i$ to $c_{i+1}$ for each $1 \le i < k$ and an edge from $c_k$ to $c_1$. -/
 public def IsAcyclic {α : Type u} (g : DirectedAdjacency α) : Prop :=
   ¬ ∃ cycle, DirectedCycleIn g g.vertices cycle
 
-/-- Acyclicity is exactly absence of the cycle witness constructed from a failed run. -/
+/-- **Acyclicity means having no directed cycle.** A finite directed graph $G$ is acyclic if and
+only if there is no directed cycle of $G$ in its vertex list, that is, no nonempty list of
+pairwise distinct vertices in which each vertex has an edge to the next and the last vertex has
+an edge to the first. -/
 public theorem isAcyclic_iff_no_directedCycle {α : Type u}
     (g : DirectedAdjacency α) :
     IsAcyclic g ↔ ¬ ∃ cycle, DirectedCycleIn g g.vertices cycle := Iff.rfl
 
-/-- A duplicate-free complete vertex list in which every directed edge points forward. -/
+/-- **Topological order.** A list $L$ of vertices of a finite directed graph $G$ is a topological
+order of $G$ when $L$ has no duplicates, a vertex lies in $L$ exactly when it lies in the vertex
+enumeration of $G$, and for every edge $u \to v$ of $G$ the first position of $u$ in $L$ is strictly
+smaller than the first position of $v$ in $L$. -/
 public def IsTopologicalOrder {α : Type u} [DecidableEq α]
     (g : DirectedAdjacency α) (order : List α) : Prop :=
   order.Nodup ∧
@@ -1388,7 +1416,8 @@ private theorem edge_idxOf_lt_of_state {α : Type u} [DecidableEq α]
     rw [List.getElem_idxOf hvi, List.getElem_idxOf hui] at hback
     simp_all
 
-/-- A successful executable result contains no duplicate vertex. -/
+/-- **A successful topological sort has no repeated vertex.** If Kahn's topological sort on a
+finite directed graph $G$ returns a success with list $L$, then $L$ has no duplicates. -/
 public theorem success_nodup {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) (order : List α)
     (h : sort g = .success order) : order.Nodup := by
@@ -1397,7 +1426,9 @@ public theorem success_nodup {α : Type u} [DecidableEq α] [Hashable α]
   cases ht with
   | success s hinv hempty => exact hinv.output_nodup
 
-/-- A successful result covers exactly the certified carrier enumeration. -/
+/-- **A successful topological sort lists every vertex.** If Kahn's topological sort on a finite
+directed graph $G$ returns a success with list $L$, then a vertex lies in $L$ if and only if it
+lies in the vertex enumeration of $G$. -/
 public theorem success_coverage {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) (order : List α)
     (h : sort g = .success order) : ∀ v, v ∈ order ↔ v ∈ g.vertices := by
@@ -1409,7 +1440,9 @@ public theorem success_coverage {α : Type u} [DecidableEq α] [Hashable α]
       rw [hinv.coverage]
       simp [hempty]
 
-/-- Every directed edge points strictly forward in a successful order. -/
+/-- **A successful topological sort points every edge forward.** If Kahn's topological sort on a
+finite directed graph $G$ returns a success with list $L$, then for every edge $u \to v$ of $G$ the
+first position of $u$ in $L$ is strictly smaller than the first position of $v$ in $L$. -/
 public theorem success_edge_forward {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) (order : List α) (h : sort g = .success order) :
     ∀ u v, g.Edge u v → order.idxOf u < order.idxOf v := by
@@ -1423,7 +1456,9 @@ public theorem success_edge_forward {α : Type u} [DecidableEq α] [Hashable α]
       · exact (hinv.coverage v).mp (g.vertices_complete v) |>.resolve_right (by simp [hempty])
       · exact (g.hasEdge_eq_true u v).2 hedge
 
-/-- Every successful result is a complete positional topological order. -/
+/-- **A successful topological sort is a topological order.** If Kahn's topological sort on a
+finite directed graph $G$ returns a success with list $L$, then $L$ is a topological
+order of $G$. -/
 public theorem success_isTopologicalOrder {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) (order : List α) (h : sort g = .success order) :
     IsTopologicalOrder g order := by
@@ -1431,7 +1466,11 @@ public theorem success_isTopologicalOrder {α : Type u} [DecidableEq α] [Hashab
   intro v
   exact success_coverage g order h v
 
-/-- Every failure returns an exact nonempty, duplicate-free partition of the carrier. -/
+/-- **A failed Kahn run splits the vertices into processed and unprocessed ones.** Let $G$ be a
+finite directed graph. If deterministic FIFO Kahn topological sorting of $G$ fails after
+processing the vertex list $P$ and leaving the vertex list $R$ unprocessed, then $R$ is nonempty,
+neither $P$ nor $R$ has repeated entries, a vertex lies in the vertex list of $G$ if and only if
+it lies in $P$ or in $R$, and no vertex lies in both $P$ and $R$. -/
 public theorem failure_remainder {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) (processed remaining : List α)
     (h : sort g = .failure processed remaining) :
@@ -1445,7 +1484,11 @@ public theorem failure_remainder {α : Type u} [DecidableEq α] [Hashable α]
       exact ⟨hne, hinv.output_nodup, hinv.remaining_nodup,
         hinv.coverage, hinv.disjoint⟩
 
-/-- Every vertex in a failure remainder has positive indegreeWithin within that exact remainder. -/
+/-- **Unprocessed vertices of a failed Kahn run have positive indegree among the unprocessed.**
+Let $G$ be a finite directed graph. If deterministic FIFO Kahn topological sorting of $G$ fails
+after processing the vertex list $P$ and leaving the vertex list $R$ unprocessed, then for every
+vertex $v$ in $R$ the indegree of $v$ within $R$, the number of entries $u$ of $R$ such that $G$
+has an edge from $u$ to $v$, is positive. -/
 public theorem failure_positive_indegree {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) (processed remaining : List α)
     (h : sort g = .failure processed remaining) :
@@ -1462,7 +1505,11 @@ public theorem failure_positive_indegree {α : Type u} [DecidableEq α] [Hashabl
       rw [hq] at hvq
       exact List.not_mem_nil hvq
 
-/-- Every failure returns a nonempty simple directed cycle inside its exact remainder. -/
+/-- **A failed Kahn run leaves a directed cycle.** Let $G$ be a finite directed graph. If
+deterministic FIFO Kahn topological sorting of $G$ fails after processing the vertex list $P$
+and leaving the vertex list $R$ unprocessed, then $G$ has a directed cycle in $R$: a nonempty
+list of pairwise distinct vertices of $R$ in which each vertex has an edge to the next and the
+last vertex has an edge to the first. -/
 public theorem failure_cycle {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) (processed remaining : List α)
     (h : sort g = .failure processed remaining) :
@@ -1482,7 +1529,8 @@ public theorem failure_cycle {α : Type u} [DecidableEq α] [Hashable α]
       hchain.imp (fun _ _ hedge => (g.hasEdge_eq_true _ _).1 hedge),
       (g.hasEdge_eq_true _ _).1 hclose, hmem⟩⟩
 
-/-- A successful executable result proves that the input graph is acyclic. -/
+/-- **Success of Kahn's algorithm implies acyclicity.** If Kahn's topological sort on a finite
+directed graph $G$ returns a success, then $G$ is acyclic. -/
 public theorem success_implies_acyclic {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) (order : List α) (h : sort g = .success order) : IsAcyclic g := by
   intro hcycle
@@ -1508,7 +1556,9 @@ public theorem success_implies_acyclic {α : Type u} [DecidableEq α] [Hashable 
           simp only [List.head_cons] at hidxclose
           omega
 
-/-- Every acyclic finite graph makes the executable Kahn traversal return success. -/
+/-- **Kahn's algorithm succeeds on acyclic graphs.** If a finite directed graph $G$, given by a
+vertex enumeration and adjacency lists, is acyclic, then deterministic FIFO Kahn topological
+sorting of $G$ returns success with some vertex order. -/
 public theorem acyclic_implies_success {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) (hacyclic : IsAcyclic g) :
     ∃ order, sort g = .success order := by
@@ -1527,7 +1577,8 @@ public theorem acyclic_implies_success {α : Type u} [DecidableEq α] [Hashable 
       exact (failure_remainder g processed remaining hsort).2.2.2.1 v |>.mpr
         (Or.inr (hmem v hv))
 
-/-- The executable algorithm succeeds exactly for acyclic input graphs. -/
+/-- **Kahn's algorithm succeeds exactly on acyclic graphs.** For every finite directed graph $G$,
+Kahn's topological sort on $G$ returns a success if and only if $G$ is acyclic. -/
 public theorem succeeds_iff_acyclic {α : Type u} [DecidableEq α] [Hashable α]
     (g : DirectedAdjacency α) :
     (∃ order, sort g = .success order) ↔ IsAcyclic g := by

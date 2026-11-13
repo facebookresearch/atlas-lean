@@ -76,7 +76,9 @@ variable {𝕜 : Type u} [Field 𝕜] [LinearOrder 𝕜] [IsStrictOrderedRing �
 
 /-! ## Non-vertical segments as graphs -/
 
-/-- The height at `x` of the line through `p` and `q` (for `p.1 ≠ q.1`). -/
+/-- **Height of a line at an abscissa.** For points $p = (p_1, p_2)$ and $q = (q_1, q_2)$ in $K^2$,
+$K$ a field, and $x \in K$, this is $p_2 + (x - p_1)(q_2 - p_2)/(q_1 - p_1)$, with division by
+zero read as $0$. When $p_1 \ne q_1$ it is the height at $x$ of the line through $p$ and $q$. -/
 def lineY (p q : 𝕜 × 𝕜) (x : 𝕜) : 𝕜 := p.2 + (x - p.1) * (q.2 - p.2) / (q.1 - p.1)
 
 omit [LinearOrder 𝕜] [IsStrictOrderedRing 𝕜] in
@@ -85,7 +87,10 @@ theorem lineY_sub (p q : 𝕜 × 𝕜) (x x' : 𝕜) :
   simp only [lineY]
   ring
 
-/-- A non-vertical segment is the graph of `lineY` over `[p.1, q.1]`. -/
+/-- **A non-vertical segment is the graph of its line.** Let $p$ and $q$ be points of the plane
+over a linearly ordered field, where a point $z$ has coordinates $(z_1, z_2)$, and suppose
+$p_1 < q_1$. A point $z$ lies on the segment from $p$ to $q$ if and only if $p_1 \le z_1 \le q_1$
+and $z_2$ is the height at abscissa $z_1$ of the line through $p$ and $q$. -/
 theorem mem_segment_iff_lineY {p q z : 𝕜 × 𝕜} (hpq : p.1 < q.1) :
     z ∈ segment 𝕜 p q ↔ p.1 ≤ z.1 ∧ z.1 ≤ q.1 ∧ z.2 = lineY p q z.1 := by
   have hd : q.1 - p.1 ≠ 0 := sub_ne_zero.2 hpq.ne'
@@ -114,8 +119,10 @@ omit [LinearOrder 𝕜] [IsStrictOrderedRing 𝕜] in
 theorem lineY_left (p q : 𝕜 × 𝕜) : lineY p q p.1 = p.2 := by simp [lineY]
 
 omit [IsStrictOrderedRing 𝕜] in
-/-- `DIRECTION(p, q, r)` is the vertical offset of `r` below the line `pq`, scaled by
-`q.1 - p.1`. -/
+/-- **DIRECTION as a scaled vertical offset.** Let $\Bbbk$ be a field with a linear order, let
+$p, q, r \in \Bbbk^2$, writing $p = (p_x, p_y)$ and likewise for $q$ and $r$, with $p_x < q_x$, and
+let $y_{pq}(x)$ be the height at $x$ of the line through $p$ and $q$. Then
+$\mathrm{DIRECTION}(p, q, r) = (q_x - p_x)\,(y_{pq}(r_x) - r_y)$. -/
 theorem direction_eq_lineY {p q : 𝕜 × 𝕜} (hpq : p.1 < q.1) (r : 𝕜 × 𝕜) :
     direction p q r = (q.1 - p.1) * (lineY p q r.1 - r.2) := by
   have hd : q.1 - p.1 ≠ 0 := sub_ne_zero.2 hpq.ne'
@@ -133,9 +140,13 @@ theorem direction_neg_iff {p q : 𝕜 × 𝕜} (hpq : p.1 < q.1) (r : 𝕜 × �
   · intro h
     exact Or.inl ⟨by linarith, by linarith⟩
 
-/-- **Crossing**: if two non-vertical segments, both spanning `[x₀, x₁]`, are ordered one way at
-`x₀` and the other way (or tied) at `x₁`, they meet at some `x ∈ (x₀, x₁]`, strictly before `x₁`
-when the order at `x₁` is strict. -/
+/-- **Crossing of two non-vertical segments.** Let $K$ be a linearly ordered field, write $z_1$ for
+the first coordinate of a point $z \in K^2$, and let $[p, q]$ and $[p', q']$ be segments in $K^2$
+with $p_1 < q_1$ and $p'_1 < q'_1$. For $t \in K$ let $y(t)$ be the height at $t$ of the line
+through $p$ and $q$, and $y'(t)$ that of the line through $p'$ and $q'$. Let $a < b$ with
+$p_1 \le a$, $p'_1 \le a$, $b \le q_1$ and $b \le q'_1$. If $y(a) < y'(a)$ and $y'(b) \le y(b)$,
+then some $z \in [p, q] \cap [p', q']$ has $a < z_1 \le b$, and $z_1 < b$ if moreover
+$y'(b) < y(b)$. -/
 theorem exists_mem_inter_of_cross {p q p' q' : 𝕜 × 𝕜} (hpq : p.1 < q.1) (hpq' : p'.1 < q'.1)
     {x₀ x₁ : 𝕜} (hx : x₀ < x₁) (hp : p.1 ≤ x₀) (hq : x₁ ≤ q.1) (hp' : p'.1 ≤ x₀)
     (hq' : x₁ ≤ q'.1) (h₀ : lineY p q x₀ < lineY p' q' x₀)
@@ -178,7 +189,10 @@ theorem exists_mem_inter_of_cross {p q p' q' : 𝕜 × 𝕜} (hpq : p.1 < q.1) (
   push Not at hcon
   nlinarith
 
-/-- The intersection of two non-vertical segments, if nonempty, has a leftmost point. -/
+/-- **Leftmost point of the intersection of two segments.** Let $K$ be a linearly ordered field,
+write $x_1$ for the first coordinate of a point $x \in K^2$, and let $[p, q]$ and $[p', q']$ be
+segments in $K^2$ with $p_1 < q_1$ and $p'_1 < q'_1$. If $[p, q] \cap [p', q']$ is nonempty, then
+it contains a point $m$ with $m_1 \le w_1$ for every $w \in [p, q] \cap [p', q']$. -/
 theorem exists_leftmost_mem_inter {p q p' q' z : 𝕜 × 𝕜} (hpq : p.1 < q.1) (hpq' : p'.1 < q'.1)
     (hz : z ∈ segment 𝕜 p q ∩ segment 𝕜 p' q') :
     ∃ m ∈ segment 𝕜 p q ∩ segment 𝕜 p' q', ∀ w ∈ segment 𝕜 p q ∩ segment 𝕜 p' q', m.1 ≤ w.1 := by
@@ -217,8 +231,12 @@ section Lists
 variable {α : Type*} {f : α → 𝕜} {y : 𝕜}
 
 omit [Field 𝕜] [IsStrictOrderedRing 𝕜] in
-/-- Inserting `i` before the first element not strictly below the height `f i` keeps a strictly
-sorted list strictly sorted, when no element ties with `f i`. -/
+/-- **Inserting into a strictly sorted list.** Let $f$ map a type $\alpha$ to a linearly ordered
+set, let $T$ be a list over $\alpha$ with $f(j) < f(k)$ whenever $j$ occurs before $k$, let
+$i \in \alpha$ be such that $f(j) \ne f(i)$ for every $j$ in $T$, and let $P$ be a predicate that
+holds for an element $j$ of $T$ exactly when $f(j) < f(i)$. Insert $i$ just before the first
+element of $T$ not satisfying $P$: the list made of the longest prefix of $T$ satisfying $P$, then
+$i$, then the rest of $T$. In this list, $f(j) < f(k)$ whenever $j$ occurs before $k$. -/
 theorem pairwise_takeWhile_append_cons_dropWhile_lt {T : List α} {i : α} (p : α → Bool)
     (hp : ∀ j ∈ T, p j = true ↔ f j < f i) (hT : T.Pairwise (fun j k => f j < f k))
     (hne : ∀ j ∈ T, f j ≠ f i) :
@@ -254,7 +272,12 @@ theorem pairwise_takeWhile_append_cons_dropWhile_lt {T : List α} {i : α} (p : 
   · exact hT.2.2 j hj k hk
 
 omit [Field 𝕜] [IsStrictOrderedRing 𝕜] in
-/-- The same for non-strictly sorted lists, without the no-tie condition. -/
+/-- **Inserting into a weakly sorted list.** Let $f$ map a type $\alpha$ to a linearly ordered
+set, let $T$ be a list over $\alpha$ with $f(j) \le f(k)$ whenever $j$ occurs before $k$, let
+$i \in \alpha$, and let $P$ be a predicate that holds for an element $j$ of $T$ exactly when
+$f(j) < f(i)$. Insert $i$ just before the first element of $T$ not satisfying $P$: the list made
+of the longest prefix of $T$ satisfying $P$, then $i$, then the rest of $T$. In this list,
+$f(j) \le f(k)$ whenever $j$ occurs before $k$. -/
 theorem pairwise_takeWhile_append_cons_dropWhile_le {T : List α} {i : α} (p : α → Bool)
     (hp : ∀ j ∈ T, p j = true ↔ f j < f i) (hT : T.Pairwise (fun j k => f j ≤ f k)) :
     (T.takeWhile p ++ i :: T.dropWhile p).Pairwise (fun j k => f j ≤ f k) := by
@@ -287,8 +310,11 @@ theorem pairwise_takeWhile_append_cons_dropWhile_le {T : List α} {i : α} (p : 
   · exact hT.2.2 j hj k hk
 
 omit [Field 𝕜] [IsStrictOrderedRing 𝕜] in
-/-- In a non-strictly sorted list where `b` is the only element at height `y`, the first element
-not strictly below `y` is `b`. -/
+/-- **First element at or above a uniquely attained height.** Let $f$ map a type to a linearly
+ordered set, let $y$ be a value, and let $T$ be a list sorted non-strictly by $f$, that is,
+$f(j) \le f(k)$ whenever $j$ occurs before $k$ in $T$. Suppose $b$ lies in $T$ with $f(b) = y$,
+and every element $c \ne b$ of $T$ has $f(c) \ne y$. Then removing from $T$ its longest prefix of
+elements $j$ with $f(j) < y$ leaves a list whose first element is $b$. -/
 theorem head?_dropWhile_eq_of_unique {T : List α} {b : α} (p : α → Bool)
     (hp : ∀ j ∈ T, p j = true ↔ f j < y) (hT : T.Pairwise (fun j k => f j ≤ f k)) (hb : b ∈ T)
     (hfb : f b = y) (huniq : ∀ c ∈ T, c ≠ b → f c ≠ y) :
@@ -327,7 +353,10 @@ theorem head?_dropWhile_eq_of_unique {T : List α} {b : α} (p : α → Bool)
     exact absurd this (not_le.2 hyc)
 
 omit [Field 𝕜] [LinearOrder 𝕜] [IsStrictOrderedRing 𝕜] in
-/-- Two distinct members of a list occur in some order, possibly with others between them. -/
+/-- **Splitting a list at two distinct members.** If $a$ and $b$ are distinct members of a list
+$T$, then there are elements $u$, $w$ with either $u = a$ and $w = b$, or $u = b$ and $w = a$, and
+lists $A$, $M$, $B$ such that $T$ is the concatenation of $A$, the element $u$, $M$, the element
+$w$ and $B$, in this order. -/
 theorem exists_append_of_mem_of_mem {T : List α} {a b : α} (ha : a ∈ T) (hb : b ∈ T)
     (hab : a ≠ b) :
     ∃ u w A M B, (u = a ∧ w = b ∨ u = b ∧ w = a) ∧ T = A ++ u :: (M ++ w :: B) := by
@@ -348,49 +377,91 @@ namespace AnySegments
 
 variable {n : ℕ} (S : Fin n → (𝕜 × 𝕜) × (𝕜 × 𝕜))
 
-/-- The left endpoint of segment `i` (the one with the smaller `x`). -/
+/-- **Left endpoint of a segment.** Let $K$ be a linearly ordered set and $S$ a family of segments
+in $K^2$, segment $i$ being given by its two endpoints $(a, b)$ in either order. The left endpoint
+of segment $i$ is $a$ if $a_1 \le b_1$ and $b$ otherwise, where $a_1$ and $b_1$ are the first
+coordinates. -/
 def left (i : Fin n) : 𝕜 × 𝕜 := if (S i).1.1 ≤ (S i).2.1 then (S i).1 else (S i).2
 
-/-- The right endpoint of segment `i`. -/
+/-- **Right endpoint of a segment.** Write $z_1$ for the abscissa of a point $z$. If segment $i$
+is given by the endpoints $u$ and $v$, in this order, its right endpoint is $v$ when
+$u_1 \le v_1$ and $u$ otherwise. -/
 def right (i : Fin n) : 𝕜 × 𝕜 := if (S i).1.1 ≤ (S i).2.1 then (S i).2 else (S i).1
 
-/-- An event of the sweep: the left (`true`) or right (`false`) endpoint of a segment. -/
+/-- **Sweep event.** For $n$ segments indexed by $0, \dots, n-1$, an event is a pair $(i, b)$ of a
+segment index $i$ and a Boolean $b$; it stands for the left endpoint of segment $i$ when $b$ is
+true and for its right endpoint when $b$ is false. -/
 abbrev Event (n : ℕ) := Fin n × Bool
 
-/-- The endpoint an event stands for. -/
+/-- **Endpoint of an event.** The point of the sweep event $(i, b)$ is the left endpoint of
+segment $i$ when $b$ is true (a left-endpoint event) and the right endpoint of segment $i$ when
+$b$ is false. -/
 def point (e : Event n) : 𝕜 × 𝕜 := if e.2 then left S e.1 else right S e.1
 
-/-- CLRS's order on endpoints: by `x`; at equal `x`, left endpoints first; then by `y`. -/
+/-- **Sweep order on endpoint events.** Let $K$ be a linearly ordered set and $S$ a family of
+segments in $K^2$, each given by its two endpoints. An endpoint event $e$ of $S$ standing for the
+point $(x, y)$ gets the key $(x, \varepsilon, y)$, compared lexicographically, where
+$\varepsilon = 0$ if $e$ is a left endpoint and $\varepsilon = 1$ if it is a right endpoint. So
+events are ordered by $x$; at equal $x$, left endpoints come first; then by $y$. This is the
+endpoint order of CLRS. -/
 def key (e : Event n) : 𝕜 ×ₗ (ℕ ×ₗ 𝕜) :=
   toLex ((point S e).1, toLex (if e.2 then 0 else 1, (point S e).2))
 
-/-- The `2n` endpoints, sorted by `key` (CLRS line 2). -/
+/-- **Sorted sweep events.** For $n$ segments, each given by its two endpoints, the left endpoint
+of a segment is its endpoint with the smaller $x$-coordinate, or its first given endpoint when
+both $x$-coordinates agree, and the right endpoint is the other one. The event list consists of
+the $2n$ events, the left and the right endpoint of each segment, sorted by the $x$-coordinate
+of the endpoint, with left endpoints before right endpoints at equal $x$, and then by the
+$y$-coordinate of the endpoint; events that tie appear in increasing order of segment index.
+This is line 2 of CLRS ANY-SEGMENTS-INTERSECT. -/
 def events : List (Event n) :=
   ((List.finRange n).map (·, true) ++ (List.finRange n).map (·, false)).mergeSort
     fun e f => decide (key S e ≤ key S f)
 
-/-- Segment `j` passes strictly below the point `q`, decided by `DIRECTION`. -/
+/-- **Segment strictly below a point.** For a segment $j$, write $l_j$ for its endpoint with the
+smaller $x$-coordinate, or for its first given endpoint when both $x$-coordinates agree, and $r_j$
+for its other endpoint. For a point $q$, segment $j$ is below $q$ when
+$\mathrm{DIRECTION}(l_j, r_j, q) < 0$.
+
+For a non-vertical segment this says that the line through $l_j$ and $r_j$ passes strictly below
+$q$ at the abscissa of $q$. -/
 def below (j : Fin n) (q : 𝕜 × 𝕜) : Bool := decide (direction (left S j) (right S j) q < 0)
 
-/-- `SEGMENTS-INTERSECT` on segments `i` and `j`. -/
+/-- **Intersection test for two input segments.** Given $n$ segments in the plane over a
+linearly ordered field, each given by its two endpoints, and indices $i, j < n$, this runs CLRS
+`SEGMENTS-INTERSECT` on the left and right endpoints of segment $i$ and the left and right
+endpoints of segment $j$. It returns that procedure's Boolean answer together with its cost in
+`DIRECTION` and `ON-SEGMENT` evaluations. -/
 def test (i j : Fin n) : TimeM ℕ Bool :=
   segmentsIntersect (left S i) (right S i) (left S j) (right S j)
 
-/-- Test segment `i` against a neighbour, if there is one. -/
+/-- **Testing a segment against an optional neighbour.** Given a segment $i$ and possibly a
+neighbour $j$, return the result of `SEGMENTS-INTERSECT` on segments $i$ and $j$, with its cost,
+when $j$ is given, and return false at no cost when there is no neighbour. -/
 def testOpt (i : Fin n) : Option (Fin n) → TimeM ℕ Bool
   | none => pure false
   | some j => test S i j
 
-/-- Test the two neighbours of a deleted segment, if both exist. -/
+/-- **Testing the neighbours of a deleted segment.** Given $n$ segments in the plane over a
+linearly ordered field and two optional segment indices $a$ and $b$ (in the sweep, the segments
+just below and just above a deleted segment, when they exist), this runs the intersection test
+of segments $a$ and $b$ when both indices are present, and otherwise returns `false` at no
+cost. -/
 def testPair : Option (Fin n) → Option (Fin n) → TimeM ℕ Bool
   | some a, some b => test S a b
   | _, _ => pure false
 
-/-- CLRS `ANY-SEGMENTS-INTERSECT`, lines 3-11, on the sorted events, with the sweep-line status
-`T` a list of segment indices from bottom to top. At a left endpoint the segment is inserted
-below the first segment not strictly below that endpoint (one `DIRECTION` per segment scanned)
-and tested against its new neighbours; at a right endpoint its two neighbours are tested against
-each other and the segment is deleted. -/
+/-- **The any-segments-intersect sweep.** CLRS `ANY-SEGMENTS-INTERSECT`, lines 3-11: the sweep
+processes a list of events with a status list $T$ of segments ordered from bottom to top, returns
+true as soon as an intersection test succeeds, and returns false once the events run out. At the
+left endpoint $p$ of segment $i$, split $T$ as $A$ followed by $B$, where $A$ is the longest
+initial part of $T$ whose segments pass strictly below $p$ by the `DIRECTION` test; this scan
+costs $\min(|A| + 1, |T|)$, one `DIRECTION` per segment scanned. Segment $i$ is tested with
+`SEGMENTS-INTERSECT` against the first segment of $B$ and then against the last segment of $A$
+(when these exist), and the sweep continues with $A$, then $i$, then $B$. At the right endpoint
+of segment $i$, with $A$ the part of $T$ before the first occurrence of $i$ and $B$ the part
+after it, the last segment of $A$ is tested against the first segment of $B$ when both exist,
+and the sweep continues with $A$ followed by $B$. -/
 def sweep : List (Event n) → List (Fin n) → TimeM ℕ Bool
   | [], _ => pure false
   | (i, true) :: es, T => do
@@ -404,7 +475,16 @@ def sweep : List (Event n) → List (Fin n) → TimeM ℕ Bool
       let b ← testPair S (T.takeWhile (· != i)).getLast? (T.dropWhile (· != i)).tail.head?
       if b then pure true else sweep es (T.takeWhile (· != i) ++ (T.dropWhile (· != i)).tail)
 
-/-- The sweep as a pure state transformer: `none` once an intersection is reported. -/
+/-- **One step of the sweep.** A step takes an event and a status list $T$ of segments, ordered
+from bottom to top, and returns a new status list, or no result when an intersection is reported.
+At the left endpoint $p$ of segment $i$, split $T$ as $A$ followed by $B$, where $A$ is the longest
+initial part of $T$ whose segments pass strictly below $p$ by the `DIRECTION` test. If
+`SEGMENTS-INTERSECT` reports that $i$ meets the first segment of $B$ or the last segment of $A$
+(when these exist), there is no result; otherwise the new status list is $A$, then $i$, then $B$.
+At the right endpoint of segment $i$, let $A$ be the part of $T$ before the first occurrence of
+$i$ and $B$ the part after it (so $A$ is all of $T$ and $B$ is empty when $i$ does not occur). If
+both the last segment of $A$ and the first segment of $B$ exist and `SEGMENTS-INTERSECT` reports
+that they meet, there is no result; otherwise the new status list is $A$ followed by $B$. -/
 def step : Event n → List (Fin n) → Option (List (Fin n))
   | (i, true), T =>
       if (testOpt S i (T.dropWhile (below S · (left S i))).head?).ret ||
@@ -415,7 +495,10 @@ def step : Event n → List (Fin n) → Option (List (Fin n))
         none
       else some (T.takeWhile (· != i) ++ (T.dropWhile (· != i)).tail)
 
-/-- Running `step` over a list of events. -/
+/-- **Running the sweep over a list of events.** Starting from a status list $T$, the sweep steps
+are applied to the events in order, each to the status list left by the previous one. The result
+is the final status list, or no result as soon as some step reports an intersection; on the empty
+list of events the result is $T$. -/
 def run : List (Event n) → List (Fin n) → Option (List (Fin n))
   | [], T => some T
   | e :: es, T => (step S e T).bind (run es)
@@ -481,7 +564,11 @@ theorem segment_left_right (i : Fin n) :
   · exact segment_symm 𝕜 _ _
 
 omit [Field 𝕜] [IsStrictOrderedRing 𝕜] in
-/-- A segment's left endpoint comes before its right endpoint. -/
+/-- **Left endpoint events precede right endpoint events.** Let $K$ be a linearly ordered set
+and $S$ a family of segments in $K^2$, each given by its two endpoints. For every segment $i$ of
+$S$, the left endpoint event of $i$ is strictly smaller than its right endpoint event in the sweep
+order on events (by $x$-coordinate, then left endpoints before right endpoints, then by
+$y$-coordinate). -/
 theorem key_left_lt_right (i : Fin n) : key S (i, true) < key S (i, false) := by
   simp only [key, point, ite_true, Bool.false_eq_true, ite_false, Prod.Lex.toLex_lt_toLex]
   rcases (left_fst_le (S := S) i).lt_or_eq with h | h
@@ -516,7 +603,10 @@ theorem key_le_of_eq_append {P Q : List (Event n)} (hE : events S = P ++ Q) {e f
   exact h.2.2 e he f hf
 
 omit [Field 𝕜] [IsStrictOrderedRing 𝕜] in
-/-- Every right endpoint processed has its left endpoint processed. -/
+/-- **A sweep prefix with a right endpoint has its left endpoint.** Let $K$ be a linearly ordered
+set and $S$ a family of $n$ segments in $K^2$, each given by its two endpoints. If the sorted sweep
+event list of $S$ is a list $P$ followed by a list $Q$, and $P$ contains the right endpoint event
+of a segment $j$, then $P$ also contains the left endpoint event of $j$. -/
 theorem left_mem_of_right_mem {P Q : List (Event n)} (hE : events S = P ++ Q) {j : Fin n}
     (hj : (j, false) ∈ P) : (j, true) ∈ P := by
   obtain ⟨P₁, P₂, rfl⟩ := List.append_of_mem hj
@@ -548,7 +638,9 @@ section Invariants
 variable {S}
 
 omit [Field 𝕜] [LinearOrder 𝕜] [IsStrictOrderedRing 𝕜] in
-/-- Splitting a list at a member. -/
+/-- **Splitting a list at the first occurrence of a member.** If $i$ occurs in a list $T$ of
+indices in $\{0, \dots, n-1\}$, then $T$ is the longest initial part of $T$ not containing $i$,
+followed by $i$, followed by the part of $T$ after the first occurrence of $i$. -/
 theorem takeWhile_append_cons_tail_dropWhile {T : List (Fin n)} {i : Fin n} (hi : i ∈ T) :
     T.takeWhile (· != i) ++ i :: (T.dropWhile (· != i)).tail = T := by
   have hsplit := List.takeWhile_append_dropWhile (p := (· != i)) (l := T)
@@ -566,8 +658,10 @@ theorem takeWhile_append_cons_tail_dropWhile {T : List (Fin n)} {i : Fin n} (hi 
     simpa using hsplit
 
 omit [IsStrictOrderedRing 𝕜] in
-/-- After processing a prefix `P` of the events, the status list holds, once each, exactly the
-segments whose left endpoint has been processed and whose right endpoint has not. -/
+/-- **The sweep status holds the active segments.** Let $P$ be an initial part of the sorted list
+of events. If running the sweep over $P$ from the empty status list reports no intersection and
+ends with status list $T$, then $T$ has no repeated entries, and a segment $j$ belongs to $T$
+exactly when the left endpoint event of $j$ is in $P$ and the right endpoint event of $j$ is not. -/
 theorem run_mem_iff {P Q : List (Event n)} (hE : events S = P ++ Q) {T : List (Fin n)}
     (hT : run S P [] = some T) : T.Nodup ∧ ∀ j, j ∈ T ↔ (j, true) ∈ P ∧ (j, false) ∉ P := by
   induction P using List.reverseRecOn generalizing Q T with
@@ -625,7 +719,10 @@ theorem run_mem_iff {P Q : List (Event n)} (hE : events S = P ++ Q) {T : List (F
         simp [hfalse]
       · simp [hji, this]
 
-/-- Segments `i` and `j` meet. -/
+/-- **Meeting segments.** Let $K$ be a field with a linear order and $S$ a family of segments in
+$K^2$, each given by its two endpoints. Segments $i$ and $j$ of $S$ meet when the closed segment
+between the endpoints of $i$ and the closed segment between the endpoints of $j$ have a point in
+common. -/
 def Meets (S : Fin n → (𝕜 × 𝕜) × (𝕜 × 𝕜)) (i j : Fin n) : Prop :=
   (segment 𝕜 (left S i) (right S i) ∩ segment 𝕜 (left S j) (right S j)).Nonempty
 
@@ -636,7 +733,9 @@ theorem meets_comm {i j : Fin n} : Meets S i j ↔ Meets S j i := by
 theorem test_ret {i j : Fin n} : (test S i j).ret = true ↔ Meets S i j :=
   segmentsIntersect_ret_eq_true_iff _ _ _ _
 
-/-- Every two neighbours on the status list have been tested and found disjoint. -/
+/-- **Neighbours on the sweep status are disjoint.** Let $P$ be an initial part of the sorted list
+of events. If running the sweep over $P$ from the empty status list reports no intersection and
+ends with status list $T$, then no two consecutive segments of $T$ meet. -/
 theorem run_isChain {P Q : List (Event n)} (hE : events S = P ++ Q) {T : List (Fin n)}
     (hT : run S P [] = some T) : T.IsChain fun j k => ¬ Meets S j k := by
   induction P using List.reverseRecOn generalizing Q T with
@@ -688,7 +787,14 @@ theorem run_isChain {P Q : List (Event n)} (hE : events S = P ++ Q) {T : List (F
         rw [meets_comm]
         simpa [testOpt, test_ret] using h₂
 
-/-- **Soundness**: when the sweep reports an intersection, two distinct segments meet. -/
+/-- **Soundness of the any-segments-intersect sweep.** Let $S$ be a family of $n$ segments in
+$K^2$, $K$ a linearly ordered field, and split the sorted list of their $2n$ endpoint events as
+$P$ followed by $Q$. If running the sweep over $P$ from the empty status list succeeds with status
+list $T$, and running it over $Q$ from $T$ reports an intersection, then there are two distinct
+indices $i \ne j$ such that segments $i$ and $j$ meet.
+
+In particular, when the sweep over all the events reports an intersection, two distinct segments
+meet. -/
 theorem exists_meets_of_run_eq_none {P Q : List (Event n)} (hE : events S = P ++ Q)
     {T : List (Fin n)} (hT : run S P [] = some T) (hQ : run S Q T = none) :
     ∃ i j, i ≠ j ∧ Meets S i j := by
@@ -756,7 +862,14 @@ variable {S} (hv : ∀ i, (left S i).1 < (right S i).1) {px : 𝕜}
     z ∈ segment 𝕜 (left S j) (right S j) → px ≤ z.1)
 include hv hmin
 
-/-- Before the leftmost intersection, the order of the status list persists from `x` to `x'`. -/
+/-- **The sweep order persists before the leftmost intersection.** Let finitely many segments in
+the plane over a linearly ordered field be given, where a point $z$ has coordinates $(z_1, z_2)$
+and segment $j$ has left endpoint $l_j$ and right endpoint $r_j$ with $(l_j)_1 < (r_j)_1$. Write
+$y_j(t)$ for the height at abscissa $t$ of the line through $l_j$ and $r_j$. Let $p_x$ be such
+that every point shared by two distinct segments has abscissa at least $p_x$, let
+$x \le x' < p_x$, and let $T$ be a list of segments such that $(l_j)_1 \le x$ and
+$x' \le (r_j)_1$ for every $j$ in $T$. If $y_j(x) < y_k(x)$ whenever $j$ occurs before $k$ in
+$T$, then $y_j(x') < y_k(x')$ whenever $j$ occurs before $k$ in $T$. -/
 theorem pairwise_lt_of_pairwise_lt {T : List (Fin n)} {x x' : 𝕜} (hxx : x ≤ x') (hx' : x' < px)
     (hact : ∀ j ∈ T, (left S j).1 ≤ x ∧ x' ≤ (right S j).1)
     (hT : T.Pairwise fun j k => lineY (left S j) (right S j) x < lineY (left S k) (right S k) x) :
@@ -771,7 +884,14 @@ theorem pairwise_lt_of_pairwise_lt {T : List (Fin n)} {x x' : 𝕜} (hxx : x ≤
     linarith [hmin j k z hne hzj hzk]
   · exact hT
 
-/-- At the leftmost intersection, the order of the status list holds non-strictly. -/
+/-- **The sweep order holds weakly at the leftmost intersection.** Let finitely many segments in
+the plane over a linearly ordered field be given, where a point $z$ has coordinates $(z_1, z_2)$
+and segment $j$ has left endpoint $l_j$ and right endpoint $r_j$ with $(l_j)_1 < (r_j)_1$. Write
+$y_j(t)$ for the height at abscissa $t$ of the line through $l_j$ and $r_j$. Let $p_x$ be such
+that every point shared by two distinct segments has abscissa at least $p_x$, let $x < p_x$, and
+let $T$ be a list of segments such that $(l_j)_1 \le x$ and $p_x \le (r_j)_1$ for every $j$ in
+$T$. If $y_j(x) < y_k(x)$ whenever $j$ occurs before $k$ in $T$, then $y_j(p_x) \le y_k(p_x)$
+whenever $j$ occurs before $k$ in $T$. -/
 theorem pairwise_le_of_pairwise_lt {T : List (Fin n)} {x : 𝕜} (hx : x < px)
     (hact : ∀ j ∈ T, (left S j).1 ≤ x ∧ px ≤ (right S j).1)
     (hT : T.Pairwise fun j k => lineY (left S j) (right S j) x < lineY (left S k) (right S k) x) :
@@ -790,8 +910,16 @@ theorem below_iff {j : Fin n} (q : 𝕜 × 𝕜) :
   simp only [below, decide_eq_true_eq]
   exact direction_neg_iff (hv j) q
 
-/-- **Phase one**: while every processed event lies left of `px`, the status list is strictly
-sorted at every `x` between the processed events and the remaining ones. -/
+/-- **Phase one: the status list is strictly sorted between the processed and remaining events.**
+Fix a number $p_x$ in the field of coordinates. Suppose no segment is vertical (each segment's
+left endpoint has smaller $x$-coordinate than its right endpoint) and every point common to two
+distinct segments has $x$-coordinate at least $p_x$. Split the sorted list of events as $P$
+followed by $Q$, where the endpoint of every event of $P$ has $x$-coordinate less than $p_x$, and
+suppose running the sweep over $P$ from the empty status list reports no intersection and ends
+with status list $T$. Let $x < p_x$ be at least the $x$-coordinate of the endpoint of every event
+of $P$ and at most that of every event of $Q$. Then whenever segment $j$ comes before segment $k$
+in $T$, the height at $x$ of the line through the endpoints of $j$ is less than that of the line
+through the endpoints of $k$. -/
 theorem run_pairwise_lt {P Q : List (Event n)} (hE : events S = P ++ Q)
     (hP : ∀ e ∈ P, (point S e).1 < px) {T : List (Fin n)} (hT : run S P [] = some T) {x : 𝕜}
     (hxP : ∀ e ∈ P, (point S e).1 ≤ x) (hxQ : ∀ e ∈ Q, x ≤ (point S e).1) (hx : x < px) :
@@ -888,7 +1016,15 @@ theorem run_pairwise_lt {P Q : List (Event n)} (hE : events S = P ++ Q)
           linarith
     exact pairwise_lt_of_pairwise_lt hv hmin (hxP e (by simp)) hx hact hstepsorted
 
-/-- After all events left of `px`, the status list is sorted (non-strictly) at `px`. -/
+/-- **The status list is weakly sorted after the events left of a vertical line.** Fix a number
+$p_x$ in the field of coordinates. Suppose no segment is vertical (each segment's left endpoint
+has smaller $x$-coordinate than its right endpoint) and every point common to two distinct
+segments has $x$-coordinate at least $p_x$. Split the sorted list of events as $P$ followed by
+$Q$, where the endpoint of every event of $P$ has $x$-coordinate less than $p_x$ and that of every
+event of $Q$ has $x$-coordinate at least $p_x$. If running the sweep over $P$ from the empty
+status list reports no intersection and ends with status list $T$, then whenever segment $j$
+comes before segment $k$ in $T$, the height at $p_x$ of the line through the endpoints of $j$ is
+at most that of the line through the endpoints of $k$. -/
 theorem run_pairwise_le_of_lt {P Q : List (Event n)} (hE : events S = P ++ Q)
     (hP : ∀ e ∈ P, (point S e).1 < px) (hQ : ∀ e ∈ Q, px ≤ (point S e).1) {T : List (Fin n)}
     (hT : run S P [] = some T) :
@@ -917,8 +1053,16 @@ theorem run_pairwise_le_of_lt {P Q : List (Event n)} (hE : events S = P ++ Q)
       · exact absurd h ((hmem j).1 hj).2
       · simpa [point] using hQ _ h
 
-/-- **Phase two**: inserting segments whose left endpoints lie on the line `x = px` keeps the
-status list sorted (non-strictly) at `px`. -/
+/-- **Phase two: inserting left endpoints on a vertical line keeps the status weakly sorted.**
+Fix a number $p_x$ in the field of coordinates. Suppose no segment is vertical (each segment's
+left endpoint has smaller $x$-coordinate than its right endpoint) and every point common to two
+distinct segments has $x$-coordinate at least $p_x$. Split the sorted list of events as $P_1$,
+then $P_2$, then $Q$, where the endpoint of every event of $P_1$ has $x$-coordinate less than
+$p_x$, every event of $P_2$ is a left endpoint with $x$-coordinate equal to $p_x$, and the
+endpoint of every event of $Q$ has $x$-coordinate at least $p_x$. If running the sweep over $P_1$
+followed by $P_2$ from the empty status list reports no intersection and ends with status list
+$T$, then whenever segment $j$ comes before segment $k$ in $T$, the height at $p_x$ of the line
+through the endpoints of $j$ is at most that of the line through the endpoints of $k$. -/
 theorem run_pairwise_le {P₁ P₂ Q : List (Event n)} (hE : events S = P₁ ++ P₂ ++ Q)
     (hP₁ : ∀ e ∈ P₁, (point S e).1 < px) (hP₂ : ∀ e ∈ P₂, e.2 = true ∧ (point S e).1 = px)
     (hQ : ∀ e ∈ Q, px ≤ (point S e).1) {T : List (Fin n)} (hT : run S (P₁ ++ P₂) [] = some T) :
@@ -959,9 +1103,16 @@ variable {S} (hv : ∀ i, (left S i).1 < (right S i).1)
     z ∈ segment 𝕜 (left S j) (right S j) → z ∉ segment 𝕜 (left S k) (right S k))
 include hv h3
 
-/-- **The leftmost intersection is inside both segments.** If no left endpoint of `a` or `b` is
-at the leftmost intersection point `p`, then `a` and `b` are neighbours on the status list just
-before the sweep line reaches `p`, so they were tested: the sweep reports an intersection. -/
+/-- **Sweep completeness when the leftmost intersection is inside both segments.** Let $n$
+segments in the plane over a linearly ordered field be given, where $z_1$ is the abscissa of a
+point $z$ and segment $i$ has left endpoint $l_i$ and right endpoint $r_i$ with
+$(l_i)_1 < (r_i)_1$, and suppose no point lies on three distinct segments. Let $a \ne b$ be
+segments that share a point $p$ such that every point shared by two distinct segments has
+abscissa at least $p_1$, and suppose $(l_a)_1 < p_1$ and $(l_b)_1 < p_1$. Then the sweep, run on
+the sorted list of endpoint events from the empty status list, reports an intersection.
+
+Just before the sweep line reaches $p$, the segments $a$ and $b$ are neighbours on the status
+list, so they were tested. -/
 theorem run_eq_none_of_lt {a b : Fin n} (hab : a ≠ b) {p : 𝕜 × 𝕜}
     (hpa : p ∈ segment 𝕜 (left S a) (right S a)) (hpb : p ∈ segment 𝕜 (left S b) (right S b))
     (hmin : ∀ i j z, i ≠ j → z ∈ segment 𝕜 (left S i) (right S i) →
@@ -1055,9 +1206,15 @@ theorem run_eq_none_of_lt {a b : Fin n} (hab : a ≠ b) {p : 𝕜 × 𝕜}
         exact this.1 (by simp [h])
       exact h3 u w c huw' (Ne.symm hcw') (Ne.symm hcu) p hpu hpw hpc
 
-/-- **The leftmost intersection is a left endpoint.** If it is the left endpoint of `a`, and
-`b`'s left endpoint is processed before `a`'s, then inserting `a` places it right next to `b`:
-the sweep reports an intersection. -/
+/-- **Sweep completeness when the leftmost intersection is a left endpoint.** Let $n$ segments in
+the plane over a linearly ordered field be given, where $z_1$ is the abscissa of a point $z$ and
+segment $i$ has left endpoint $l_i$ and right endpoint $r_i$ with $(l_i)_1 < (r_i)_1$, and
+suppose no point lies on three distinct segments. Let $a \ne b$ be segments such that $l_a$ lies
+on segment $b$ and every point shared by two distinct segments has abscissa at least $(l_a)_1$.
+If the left endpoint of $b$ comes before the left endpoint of $a$ in the sorted list of endpoint
+events, then the sweep, run on that list from the empty status list, reports an intersection.
+
+Inserting $a$ places it right next to $b$, so the two are tested. -/
 theorem run_eq_none_of_left {a b : Fin n} (hab : a ≠ b)
     (hpb : left S a ∈ segment 𝕜 (left S b) (right S b))
     (hmin : ∀ i j z, i ≠ j → z ∈ segment 𝕜 (left S i) (right S i) →
@@ -1161,7 +1318,11 @@ section Main
 variable {S} (hv : ∀ i, (left S i).1 < (right S i).1)
 include hv
 
-/-- Among all intersection points of pairs of distinct segments, one is leftmost. -/
+/-- **A leftmost intersection point.** Let $\Bbbk$ be a linearly ordered field, let
+$s_0, \dots, s_{n-1}$ be closed segments in $\Bbbk^2$, none of them vertical, and write $z_x$ for
+the $x$-coordinate of a point $z$. If some $s_i$ and $s_j$ with $i \ne j$ meet, then there are
+indices $a \ne b$ and a point $p \in s_a \cap s_b$ such that $p_x \le z_x$ for all indices
+$k \ne l$ and every point $z \in s_k \cap s_l$. -/
 theorem exists_leftmost_meet (h : ∃ i j, i ≠ j ∧ Meets S i j) :
     ∃ a b p, a ≠ b ∧ p ∈ segment 𝕜 (left S a) (right S a) ∧
       p ∈ segment 𝕜 (left S b) (right S b) ∧
@@ -1189,8 +1350,11 @@ theorem exists_leftmost_meet (h : ∃ i j, i ≠ j ∧ Meets S i j) :
     exact ⟨hij, z, hzi, hzj⟩
   exact (habmin (i, j) hijF).trans (hm₂ (i, j) hijF z ⟨hzi, hzj⟩)
 
-/-- **Completeness**: under CLRS's assumption that no three segments share a point, if two
-distinct segments meet, the sweep reports an intersection. -/
+/-- **Completeness of the segment-intersection sweep.** Let $n$ segments in the plane over a
+linearly ordered field be given, none of them vertical (the left endpoint of each has strictly
+smaller abscissa than its right endpoint), and assume, as CLRS does, that no point lies on three
+distinct segments. If two distinct segments meet, then the sweep, run on the sorted list of
+endpoint events from the empty status list, reports an intersection. -/
 theorem run_eq_none_of_meets
     (h3 : ∀ i j k, i ≠ j → j ≠ k → i ≠ k → ∀ z, z ∈ segment 𝕜 (left S i) (right S i) →
       z ∈ segment 𝕜 (left S j) (right S j) → z ∉ segment 𝕜 (left S k) (right S k))
@@ -1257,8 +1421,11 @@ omit [IsStrictOrderedRing 𝕜] in
 theorem time_testPair (o o' : Option (Fin n)) : (testPair S o o').time ≤ 8 := by
   rcases o with _ | a <;> rcases o' with _ | b <;> simp [testPair, time_test]
 
-/-- The cost charged to an event: a left endpoint costs at most `n + 16` (a scan of the status
-list and two tests), a right endpoint at most `8` (one test). -/
+/-- **Cost charged to a sweep event.** For $n$ segments, the charge of an event is $n + 16$ if it
+is the left endpoint of a segment and $8$ if it is the right endpoint of a segment.
+
+These charges bound the actual costs: a left endpoint scans at most $n$ segments of the status
+list and runs two SEGMENTS-INTERSECT tests, and a right endpoint runs one test. -/
 def eventCost (n : ℕ) : Event n → ℕ
   | (_, true) => n + 16
   | (_, false) => 8
@@ -1316,15 +1483,33 @@ end Cost
 
 end AnySegments
 
-/-- CLRS `ANY-SEGMENTS-INTERSECT` (third edition, Section 33.2): sort the `2n` endpoints and
-sweep. -/
+/-- **ANY-SEGMENTS-INTERSECT.** Let $\Bbbk$ be a linearly ordered field. Given $n$ segments
+$s_0, \dots, s_{n-1}$ in $\Bbbk^2$, each given by its two endpoints, write $l_t$, the left endpoint
+of $s_t$, for its endpoint with the smaller $x$-coordinate, or for its first given endpoint when
+both $x$-coordinates agree, and $r_t$, the right endpoint, for the other one. The procedure sorts
+the $2n$ endpoints by $x$-coordinate, left endpoints before right endpoints at equal $x$, then by
+$y$-coordinate, with remaining ties in increasing order of segment index. It then sweeps a
+vertical line across them, starting with an empty status list of segments, kept from bottom to
+top. At the left endpoint $l_i$ of $s_i$, let $P$ be the longest initial part of the status list
+consisting of segments $s_t$ with $\mathrm{DIRECTION}(l_t, r_t, l_i) < 0$. Then $s_i$ is tested
+with SEGMENTS-INTERSECT first against the segment just after $P$ and then against the last
+segment of $P$, when these exist, and is inserted directly after $P$. At the right endpoint of
+$s_i$, the segments just before and just after $s_i$ in the status list, when both exist, are
+tested against each other and $s_i$ is deleted. The procedure returns true as soon as a test
+succeeds and false after the last event. Cost counts one unit per evaluation of DIRECTION or
+ON-SEGMENT (CLRS, third edition, Section 33.2).
+
+The status is kept in a list rather than CLRS's red-black tree. -/
 def anySegmentsIntersect {n : ℕ} (S : Fin n → (𝕜 × 𝕜) × (𝕜 × 𝕜)) : TimeM ℕ Bool :=
   AnySegments.sweep S (AnySegments.events S) []
 
 open AnySegments in
-/-- **Correctness of `ANY-SEGMENTS-INTERSECT`** (CLRS Theorem 33.1): for segments none of which
-is vertical and no three of which share a point, the sweep returns `true` exactly when two
-distinct segments intersect. -/
+/-- **Correctness of ANY-SEGMENTS-INTERSECT.** Let $\Bbbk$ be a linearly ordered field and let
+$s_0, \dots, s_{n-1}$ be closed segments in $\Bbbk^2$, each given by its two endpoints in either
+order. Suppose no segment is vertical (its two endpoints have different $x$-coordinates) and no
+point lies on three segments $s_i$, $s_j$, $s_k$ with $i$, $j$, $k$ pairwise distinct. Then
+ANY-SEGMENTS-INTERSECT returns true on these segments if and only if there are indices $i \ne j$
+such that $s_i$ and $s_j$ intersect (CLRS, third edition, Theorem 33.1). -/
 theorem anySegmentsIntersect_ret_eq_true_iff {n : ℕ} (S : Fin n → (𝕜 × 𝕜) × (𝕜 × 𝕜))
     (hv : ∀ i, (S i).1.1 ≠ (S i).2.1)
     (h3 : ∀ i j k, i ≠ j → j ≠ k → i ≠ k →
@@ -1348,8 +1533,13 @@ theorem anySegmentsIntersect_ret_eq_true_iff {n : ℕ} (S : Fin n → (𝕜 × �
 
 omit [IsStrictOrderedRing 𝕜] in
 open AnySegments in
-/-- **Cost**: at most `n² + 24 n`, i.e. `O(n²)`: at most `n` `DIRECTION`s to place each segment
-in the list-based status and at most three `SEGMENTS-INTERSECT` tests per segment. -/
+/-- **Running time of ANY-SEGMENTS-INTERSECT.** Let $\Bbbk$ be a field with a linear order. For
+every $n$ segments in $\Bbbk^2$, each given by its two endpoints, ANY-SEGMENTS-INTERSECT costs at
+most $n^2 + 24n$, so it runs in time $O(n^2)$. Cost counts one unit per evaluation of DIRECTION
+or ON-SEGMENT.
+
+The bound comes from at most $n$ DIRECTION evaluations to place each segment in the list-based
+status and at most three SEGMENTS-INTERSECT tests per segment. -/
 theorem anySegmentsIntersect_time_le {n : ℕ} (S : Fin n → (𝕜 × 𝕜) × (𝕜 × 𝕜)) :
     (anySegmentsIntersect S).time ≤ n * n + 24 * n := by
   have h := sweep_time_le (S := S) (P := []) (Q := events S) rfl rfl

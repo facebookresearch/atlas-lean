@@ -47,32 +47,57 @@ universe u
 
 variable {𝕜 : Type u} [Field 𝕜] [LinearOrder 𝕜] [IsStrictOrderedRing 𝕜]
 
-/-- The cross product `p × q = x_p y_q - x_q y_p` (CLRS equation (33.1)). -/
+/-- **Cross product of plane vectors.** For $p = (x_p, y_p)$ and $q = (x_q, y_q)$ in $K^2$, where
+$K$ is a linearly ordered field, the cross product is $p \times q = x_p y_q - x_q y_p$ (CLRS
+equation (33.1)). -/
 def cross (p q : 𝕜 × 𝕜) : 𝕜 := p.1 * q.2 - q.1 * p.2
 
-/-- CLRS `DIRECTION(pᵢ, pⱼ, pₖ) = (pₖ - pᵢ) × (pⱼ - pᵢ)`: positive when `pₖ` is clockwise from
-`pⱼ` about `pᵢ`, negative when counterclockwise, zero when the three points are collinear. -/
+/-- **Direction of three points.** For points $p_i, p_j, p_k \in K^2$, where $K$ is a linearly
+ordered field, CLRS's DIRECTION$(p_i, p_j, p_k)$ is the cross product
+$(p_k - p_i) \times (p_j - p_i)$.
+
+It is positive when $p_k$ is clockwise from $p_j$ about $p_i$, negative when counterclockwise, and
+zero when the three points are collinear. -/
 def direction (pi pj pk : 𝕜 × 𝕜) : 𝕜 := cross (pk - pi) (pj - pi)
 
-/-- CLRS `ON-SEGMENT(pᵢ, pⱼ, pₖ)`: `pₖ` lies in the bounding box of `pᵢ` and `pⱼ`. -/
+/-- **The ON-SEGMENT test.** For points $p_i = (x_i, y_i)$, $p_j = (x_j, y_j)$ and
+$p_k = (x_k, y_k)$ in $K^2$, where $K$ is a linearly ordered field, CLRS's
+ON-SEGMENT$(p_i, p_j, p_k)$ is the Boolean that is true exactly when $p_k$ lies in the bounding box
+of $p_i$ and $p_j$, that is, $\min(x_i, x_j) \le x_k \le \max(x_i, x_j)$ and
+$\min(y_i, y_j) \le y_k \le \max(y_i, y_j)$. -/
 def onSegment (pi pj pk : 𝕜 × 𝕜) : Bool :=
   decide (min pi.1 pj.1 ≤ pk.1 ∧ pk.1 ≤ max pi.1 pj.1 ∧
     min pi.2 pj.2 ≤ pk.2 ∧ pk.2 ≤ max pi.2 pj.2)
 
-/-- `d` and `e` are nonzero with opposite signs. -/
+/-- **Values of opposite sign.** Two elements $d$ and $e$ of a field with a linear order straddle
+zero when $d > 0$ and $e < 0$, or $d < 0$ and $e > 0$; that is, $d$ and $e$ are nonzero with
+opposite signs. -/
 def Straddles (d e : 𝕜) : Prop := 0 < d ∧ e < 0 ∨ d < 0 ∧ 0 < e
 
 instance (d e : 𝕜) : Decidable (Straddles d e) := by unfold Straddles; infer_instance
 
-/-- One collinear-endpoint branch of `SEGMENTS-INTERSECT`: `ON-SEGMENT` runs only when the
-direction is zero. -/
+/-- **Collinear-endpoint step of SEGMENTS-INTERSECT.** Let $K$ be a linearly ordered field,
+$d \in K$ and $p_i, p_j, p_k \in K^2$. When $d = 0$, this step costs one unit and returns the value
+of ON-SEGMENT$(p_i, p_j, p_k)$; when $d \neq 0$, it costs nothing and returns false.
+
+In SEGMENTS-INTERSECT, $d$ is the direction of $p_k$ relative to $p_i$ and $p_j$. -/
 def collinearBranch (d : 𝕜) (pi pj pk : 𝕜 × 𝕜) : TimeM ℕ Bool :=
   if d = 0 then do
     ✓
     pure (onSegment pi pj pk)
   else pure false
 
-/-- CLRS `SEGMENTS-INTERSECT(p₁, p₂, p₃, p₄)`: whether segment `p₁p₂` meets segment `p₃p₄`. -/
+/-- **The SEGMENTS-INTERSECT procedure.** Let $K$ be a field with a linear order and let
+$p_1, p_2, p_3, p_4 \in K^2$. CLRS's procedure SEGMENTS-INTERSECT$(p_1, p_2, p_3, p_4)$, which
+tests whether the segments $p_1p_2$ and $p_3p_4$ meet, first computes, at a cost of $4$, the
+directions $d_1 = \mathrm{DIRECTION}(p_3, p_4, p_1)$, $d_2 = \mathrm{DIRECTION}(p_3, p_4, p_2)$,
+$d_3 = \mathrm{DIRECTION}(p_1, p_2, p_3)$ and $d_4 = \mathrm{DIRECTION}(p_1, p_2, p_4)$. If $d_1$
+and $d_2$ are nonzero with opposite signs and so are $d_3$ and $d_4$, it returns true. Otherwise
+it tries in order the cases $d_1 = 0$ with ON-SEGMENT$(p_3, p_4, p_1)$, $d_2 = 0$ with
+ON-SEGMENT$(p_3, p_4, p_2)$, $d_3 = 0$ with ON-SEGMENT$(p_1, p_2, p_3)$, and $d_4 = 0$ with
+ON-SEGMENT$(p_1, p_2, p_4)$: in each case it runs the ON-SEGMENT test, at a cost of $1$, only when
+the direction is $0$, and it returns true as soon as a test succeeds. If none succeeds it returns
+false. -/
 def segmentsIntersect (p1 p2 p3 p4 : 𝕜 × 𝕜) : TimeM ℕ Bool := do
   ✓[4]
   let d1 := direction p3 p4 p1
@@ -98,7 +123,12 @@ theorem collinearBranch_time_le (d : 𝕜) (pi pj pk : 𝕜 × 𝕜) :
   split_ifs <;> simp
 
 omit [IsStrictOrderedRing 𝕜] in
-/-- Four directions and at most four `ON-SEGMENT` tests. -/
+/-- **Running time of SEGMENTS-INTERSECT.** Let $K$ be a field with a linear order and let
+$p_1, p_2, p_3, p_4 \in K^2$. In the cost model that charges one unit per DIRECTION computation
+and one per ON-SEGMENT test, SEGMENTS-INTERSECT$(p_1, p_2, p_3, p_4)$ costs at least $4$ and at
+most $8$.
+
+The four directions are always computed, and at most four ON-SEGMENT tests run. -/
 theorem segmentsIntersect_time (p1 p2 p3 p4 : 𝕜 × 𝕜) :
     4 ≤ (segmentsIntersect p1 p2 p3 p4).time ∧ (segmentsIntersect p1 p2 p3 p4).time ≤ 8 := by
   have h1 := collinearBranch_time_le (direction p3 p4 p1) p3 p4 p1
@@ -126,7 +156,15 @@ theorem collinearBranch_ret (d : 𝕜) (pi pj pk : 𝕜 × 𝕜) :
   split_ifs with h <;> simp [h]
 
 omit [IsStrictOrderedRing 𝕜] in
-/-- The test as a Boolean formula. -/
+/-- **SEGMENTS-INTERSECT as a Boolean formula.** Let $K$ be a field with a linear order, let
+$p_1, p_2, p_3, p_4 \in K^2$, and write $d_1 = \mathrm{DIRECTION}(p_3, p_4, p_1)$,
+$d_2 = \mathrm{DIRECTION}(p_3, p_4, p_2)$, $d_3 = \mathrm{DIRECTION}(p_1, p_2, p_3)$ and
+$d_4 = \mathrm{DIRECTION}(p_1, p_2, p_4)$. The value returned by
+SEGMENTS-INTERSECT$(p_1, p_2, p_3, p_4)$ is true if and only if at least one of the following
+holds: $d_1$ and $d_2$ are nonzero with opposite signs and $d_3$ and $d_4$ are nonzero with
+opposite signs; $d_1 = 0$ and ON-SEGMENT$(p_3, p_4, p_1)$ is true; $d_2 = 0$ and
+ON-SEGMENT$(p_3, p_4, p_2)$ is true; $d_3 = 0$ and ON-SEGMENT$(p_1, p_2, p_3)$ is true; or
+$d_4 = 0$ and ON-SEGMENT$(p_1, p_2, p_4)$ is true. -/
 theorem segmentsIntersect_ret (p1 p2 p3 p4 : 𝕜 × 𝕜) :
     (segmentsIntersect p1 p2 p3 p4).ret =
       (decide (Straddles (direction p3 p4 p1) (direction p3 p4 p2) ∧
@@ -167,7 +205,9 @@ private theorem mem_segment_of_param {p q r : 𝕜 × 𝕜} (l : 𝕜) (hl0 : 0 
     r ∈ segment 𝕜 p q :=
   mem_segment_coords.2 ⟨1 - l, l, by linarith, hl0, by ring, by rw [h1]; ring, by rw [h2]; ring⟩
 
-/-- Points of a segment are in its bounding box. -/
+/-- **Points of a segment lie in its bounding box.** Let $K$ be a linearly ordered field and
+$p, q, r \in K^2$. If $r$ lies on the closed segment from $p$ to $q$, then ON-SEGMENT$(p, q, r)$ is
+true, that is, $r$ lies in the bounding box of $p$ and $q$. -/
 theorem onSegment_of_mem {p q r : 𝕜 × 𝕜} (h : r ∈ segment 𝕜 p q) : onSegment p q r = true := by
   obtain ⟨a, b, ha, hb, hab, h1, h2⟩ := mem_segment_coords.1 h
   have key : ∀ x y z : 𝕜, a * x + b * y = z → min x y ≤ z ∧ z ≤ max x y := by
@@ -185,7 +225,9 @@ theorem onSegment_of_mem {p q r : 𝕜 × 𝕜} (h : r ∈ segment 𝕜 p q) : o
   obtain ⟨hy1, hy2⟩ := key _ _ _ h2
   simp [onSegment, hx1, hx2, hy1, hy2]
 
-/-- Points of a segment are collinear with its endpoints. -/
+/-- **Points of a segment have direction zero.** Let $K$ be a linearly ordered field and
+$p, q, r \in K^2$. If $r$ lies on the closed segment from $p$ to $q$, then the direction
+$(r - p) \times (q - p)$ is zero, that is, $r$ is collinear with $p$ and $q$. -/
 theorem direction_eq_zero_of_mem {p q r : 𝕜 × 𝕜} (h : r ∈ segment 𝕜 p q) :
     direction p q r = 0 := by
   obtain ⟨a, b, ha, hb, hab, h1, h2⟩ := mem_segment_coords.1 h
@@ -193,8 +235,13 @@ theorem direction_eq_zero_of_mem {p q r : 𝕜 × 𝕜} (h : r ∈ segment 𝕜 
   simp only [direction, cross, Prod.fst_sub, Prod.snd_sub, ← h1, ← h2, ha']
   ring
 
-/-- CLRS's use of `ON-SEGMENT`: a point collinear with `p` and `q` and inside their bounding box
-lies on the segment. -/
+/-- **A collinear point in the bounding box lies on the segment.** Let $K$ be a linearly ordered
+field, write $(u_1, u_2) \times (v_1, v_2) = u_1 v_2 - v_1 u_2$ for the cross product on $K^2$, and
+let $p, q, r \in K^2$. If $r$ is collinear with $p$ and $q$, that is, the direction
+$(r - p) \times (q - p)$ is zero, and ON-SEGMENT$(p, q, r)$ is true, that is, $r$ lies in the
+bounding box of $p$ and $q$, then $r$ lies on the closed segment from $p$ to $q$.
+
+This is the fact behind CLRS's use of ON-SEGMENT. -/
 theorem mem_segment_of_direction_eq_zero {p q r : 𝕜 × 𝕜} (hd : direction p q r = 0)
     (hb : onSegment p q r = true) : r ∈ segment 𝕜 p q := by
   simp only [onSegment, decide_eq_true_eq] at hb
@@ -248,10 +295,15 @@ theorem mem_segment_of_direction_eq_zero {p q r : 𝕜 × 𝕜} (hd : direction 
 
 /-! ## Straddling -/
 
+/-- **Values of opposite sign have nonzero difference.** If $d$ and $e$ are elements of a
+linearly ordered field that straddle zero, that is, they are nonzero with opposite signs, then
+$d - e \ne 0$. -/
 theorem Straddles.sub_ne_zero {d e : 𝕜} (h : Straddles d e) : d - e ≠ 0 := by
   rcases h with ⟨hd, he⟩ | ⟨hd, he⟩ <;> intro h0 <;> linarith [sub_eq_zero.1 h0]
 
-/-- Where the sign changes between `d` and `e`: `d / (d - e) ∈ [0, 1]`. -/
+/-- **Zero-crossing parameter of values of opposite sign.** If $d$ and $e$ are elements of a
+linearly ordered field that straddle zero, that is, they are nonzero with opposite signs, then
+$0 \le d / (d - e) \le 1$. -/
 theorem Straddles.param_mem {d e : 𝕜} (h : Straddles d e) : 0 ≤ d / (d - e) ∧ d / (d - e) ≤ 1 := by
   rcases h with ⟨hd, he⟩ | ⟨hd, he⟩
   · exact ⟨div_nonneg hd.le (by linarith), (div_le_one (by linarith)).2 (by linarith)⟩
@@ -266,7 +318,9 @@ private theorem combo_pos {a b d e : 𝕜} (ha : 0 ≤ a) (hb : 0 ≤ b) (hab : 
     linarith
   · nlinarith [mul_pos ha' hd, mul_nonneg hb he.le]
 
-/-- Two nonzero values whose convex combination vanishes have opposite signs. -/
+/-- **A vanishing convex combination of nonzero values forces opposite signs.** Let $d$ and $e$ be
+nonzero elements of a linearly ordered field. If $a d + b e = 0$ for some $a, b \ge 0$ in the field
+with $a + b = 1$, then $d$ and $e$ have opposite signs. -/
 theorem straddles_of_combo {a b d e : 𝕜} (ha : 0 ≤ a) (hb : 0 ≤ b) (hab : a + b = 1)
     (hd : d ≠ 0) (he : e ≠ 0) (h : a * d + b * e = 0) : Straddles d e := by
   rcases lt_or_gt_of_ne hd with hd | hd <;> rcases lt_or_gt_of_ne he with he | he
@@ -277,7 +331,11 @@ theorem straddles_of_combo {a b d e : 𝕜} (ha : 0 ≤ a) (hb : 0 ≤ b) (hab :
   · have := combo_pos ha hb hab hd he
     linarith
 
-/-- Proper crossing: if each segment straddles the line through the other, they meet. -/
+/-- **Properly crossing segments meet.** Let $K$ be a linearly ordered field and
+$p_1, p_2, p_3, p_4 \in K^2$. Suppose the directions $(p_1 - p_3) \times (p_4 - p_3)$ and
+$(p_2 - p_3) \times (p_4 - p_3)$ are nonzero with opposite signs, and so are
+$(p_3 - p_1) \times (p_2 - p_1)$ and $(p_4 - p_1) \times (p_2 - p_1)$. Then the closed segments
+$p_1 p_2$ and $p_3 p_4$ have a common point. -/
 theorem inter_nonempty_of_straddles {p1 p2 p3 p4 : 𝕜 × 𝕜}
     (h12 : Straddles (direction p3 p4 p1) (direction p3 p4 p2))
     (h34 : Straddles (direction p1 p2 p3) (direction p1 p2 p4)) :
@@ -302,8 +360,12 @@ theorem inter_nonempty_of_straddles {p1 p2 p3 p4 : 𝕜 × 𝕜}
 
 /-! ## Completeness -/
 
-/-- Points on the line through `p` and `q ≠ p` are `p + μ (q - p)`, with `μ` given by a dot
-product. -/
+/-- **Points with direction zero lie on the line.** Let $K$ be a linearly ordered field and
+$p, q, r \in K^2$ with $p \neq q$. If $(r - p) \times (q - p) = 0$, then $r = p + \mu (q - p)$ for
+some $\mu \in K$.
+
+One can take $\mu = \frac{(r - p) \cdot (q - p)}{(q - p) \cdot (q - p)}$, a quotient of dot
+products. -/
 theorem eq_param_of_direction_eq_zero {p q r : 𝕜 × 𝕜} (hpq : p ≠ q) (hd : direction p q r = 0) :
     ∃ μ : 𝕜, r.1 = p.1 + μ * (q.1 - p.1) ∧ r.2 = p.2 + μ * (q.2 - p.2) := by
   have hN : (q.1 - p.1) ^ 2 + (q.2 - p.2) ^ 2 ≠ 0 := by
@@ -320,8 +382,11 @@ theorem eq_param_of_direction_eq_zero {p q r : 𝕜 × 𝕜} (hpq : p ≠ q) (hd
   · field_simp
     linear_combination (p.1 - q.1) * hd
 
-/-- Collinear case: if `p₁` and `p₂` lie on the line through `p₃p₄` and the segments meet, some
-endpoint lies on the other segment. -/
+/-- **Collinear case of segment intersection.** Let $K$ be a linearly ordered field and
+$p_1, p_2, p_3, p_4 \in K^2$. Suppose the directions $(p_1 - p_3) \times (p_4 - p_3)$ and
+$(p_2 - p_3) \times (p_4 - p_3)$ are both zero and the closed segments $p_1 p_2$ and $p_3 p_4$
+have a common point. Then $p_1$ or $p_2$ lies on the segment $p_3 p_4$, or $p_3$ or $p_4$ lies on
+the segment $p_1 p_2$. -/
 theorem endpoint_mem_of_collinear {p1 p2 p3 p4 z : 𝕜 × 𝕜} (h1 : direction p3 p4 p1 = 0)
     (h2 : direction p3 p4 p2 = 0) (hA : z ∈ segment 𝕜 p1 p2) (hB : z ∈ segment 𝕜 p3 p4) :
     p1 ∈ segment 𝕜 p3 p4 ∨ p2 ∈ segment 𝕜 p3 p4 ∨ p3 ∈ segment 𝕜 p1 p2 ∨
@@ -371,7 +436,13 @@ theorem endpoint_mem_of_collinear {p1 p2 p3 p4 z : 𝕜 × 𝕜} (h1 : direction
   · rw [hμ1x, hμ2x]; field_simp; ring
   · rw [hμ1y, hμ2y]; field_simp; ring
 
-/-- If the segments meet, either they cross properly or an endpoint of one lies on the other. -/
+/-- **Meeting segments cross properly or an endpoint lies on the other.** Let $K$ be a linearly
+ordered field and $p_1, p_2, p_3, p_4 \in K^2$, and suppose the closed segments $[p_1, p_2]$ and
+$[p_3, p_4]$ have a common point. Then either $\mathrm{DIRECTION}(p_3, p_4, p_1)$ and
+$\mathrm{DIRECTION}(p_3, p_4, p_2)$ are nonzero with opposite signs and
+$\mathrm{DIRECTION}(p_1, p_2, p_3)$ and $\mathrm{DIRECTION}(p_1, p_2, p_4)$ are nonzero with
+opposite signs, or $p_1 \in [p_3, p_4]$, or $p_2 \in [p_3, p_4]$, or $p_3 \in [p_1, p_2]$, or
+$p_4 \in [p_1, p_2]$. -/
 theorem straddles_or_endpoint_mem {p1 p2 p3 p4 z : 𝕜 × 𝕜} (hA : z ∈ segment 𝕜 p1 p2)
     (hB : z ∈ segment 𝕜 p3 p4) :
     (Straddles (direction p3 p4 p1) (direction p3 p4 p2) ∧
@@ -435,8 +506,11 @@ theorem straddles_or_endpoint_mem {p1 p2 p3 p4 z : 𝕜 × 𝕜} (hA : z ∈ seg
 
 /-! ## Correctness -/
 
-/-- CLRS Section 33.1: `SEGMENTS-INTERSECT(p₁, p₂, p₃, p₄)` returns `true` exactly when the
-closed segments `p₁p₂` and `p₃p₄` have a common point. -/
+/-- **Correctness of SEGMENTS-INTERSECT.** Let $K$ be a linearly ordered field and let
+$p_1, p_2, p_3, p_4 \in K^2$. The procedure SEGMENTS-INTERSECT$(p_1, p_2, p_3, p_4)$ returns true
+if and only if the closed segments $[p_1, p_2]$ and $[p_3, p_4]$ have a common point.
+
+Source: CLRS Section 33.1. -/
 theorem segmentsIntersect_ret_eq_true_iff (p1 p2 p3 p4 : 𝕜 × 𝕜) :
     (segmentsIntersect p1 p2 p3 p4).ret = true ↔
       (segment 𝕜 p1 p2 ∩ segment 𝕜 p3 p4).Nonempty := by

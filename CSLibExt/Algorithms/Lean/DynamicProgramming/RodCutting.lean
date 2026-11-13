@@ -46,29 +46,39 @@ universe u
 
 open scoped BigOperators
 
-/-- Revenue obtained by selling every positive block of a rod composition.
-The price vector's entry `i - 1` is the price of a piece of length `i`. -/
+/-- **Revenue of a rod composition.** Let $p = (p_0, \dots, p_{n-1})$ be a price vector with
+entries in an additive commutative monoid, where $p_{\ell - 1}$ is the price of a piece of length
+$\ell$. For $k \le n$ and a composition $(b_1, \dots, b_m)$ of $k$ into positive parts, its revenue
+is $p_{b_1 - 1} + \dots + p_{b_m - 1}$, the total price of its pieces. -/
 @[expose] public def compositionRevenue {α : Type u} [AddCommMonoid α] {n k : Nat}
     (prices : Vector α n) (parts : Composition k) (hk : k ≤ n) : α :=
   (parts.blocks.pmap
     (fun i (hi : 0 < i ∧ i ≤ n) => prices[i - 1]'(by omega))
     (fun i hi => ⟨parts.blocks_pos hi, (parts.blocks_le hi).trans hk⟩)).sum
 
-/-- The empty rod earns zero revenue. -/
+/-- **The empty rod earns nothing.** Let $p = (p_1, \dots, p_n)$ be prices in an additive
+commutative monoid. Every composition of $0$, namely the empty one, has revenue $0$ with respect
+to $p$. -/
 @[simp] public theorem compositionRevenue_zero {α : Type u} [AddCommMonoid α] {n : Nat}
     (prices : Vector α n) (parts : Composition 0) :
     compositionRevenue prices parts (Nat.zero_le n) = 0 := by
   have hempty : parts.blocks = [] := parts.blocks_eq_nil.mpr rfl
   simp [compositionRevenue, hempty]
 
-/-- Selling the rod without a cut earns its supplied price. -/
+/-- **Revenue of an uncut rod.** Let $p = (p_1, \dots, p_n)$ be prices in an additive commutative
+monoid, $p_i$ being the price of a piece of length $i$. For $0 < k \le n$, the revenue of the
+one-part composition $(k)$ of $k$ is $p_k$. -/
 @[simp] public theorem compositionRevenue_single {α : Type u} [AddCommMonoid α]
     {n k : Nat} (prices : Vector α n) (hk : k ≤ n) (hpos : 0 < k) :
     compositionRevenue prices (Composition.single k hpos) hk =
       prices[k - 1]'(by omega) := by
   simp [compositionRevenue, Composition.single]
 
-/-- Revenue is additive when two whole-rod compositions are concatenated. -/
+/-- **Revenue is additive under concatenation.** Let $p = (p_1, \dots, p_n)$ be prices in an
+additive commutative monoid, and define the revenue of a composition $(b_1, \dots, b_m)$ of some
+$k \le n$ to be $p_{b_1} + \dots + p_{b_m}$. If $c$ is a composition of $k$ and $d$ is a
+composition of $l$ with $k + l \le n$, then the revenue of their concatenation, a composition of
+$k + l$, is the revenue of $c$ plus the revenue of $d$. -/
 public theorem compositionRevenue_append {α : Type u} [AddCommMonoid α]
     {n k l : Nat} (prices : Vector α n) (left : Composition k) (right : Composition l)
     (hkl : k + l ≤ n) :
@@ -102,8 +112,11 @@ public theorem compositionRevenue_append {α : Type u} [AddCommMonoid α]
       let best ← scanCuts prices table (count + 1) hcount count (by omega)
       pure (table.set (count + 1) best)
 
-/-- Compute the maximum revenue by saving solutions for lengths `0, ..., n` in increasing order.
-One cost tick is charged for each evaluated positive first-piece length. -/
+/-- **Bottom-up rod cutting.** Given prices $p = (p_1, \dots, p_n)$ in an additive commutative
+monoid $\alpha$ with a linear order, $p_i$ being the price of a piece of length $i$, bottom-up rod
+cutting fills a table $r_0, \dots, r_n$ in increasing order by $r_0 = 0$ and
+$r_j = \max_{1 \le i \le j} (p_i + r_{j-i})$ for $1 \le j \le n$, and returns $r_n$. Its cost is
+the number of candidates $p_i + r_{j-i}$ it evaluates, one for each pair $1 \le i \le j \le n$. -/
 public def bottomUpCutRod {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) : TimeM Nat α := do
   let table ← fillRows prices n le_rfl
@@ -223,8 +236,15 @@ private theorem fillRows_time {α : Type u} [AddCommMonoid α] [LinearOrder α]
 
 @[expose] public section
 
-/-- The computed revenue is attained by a whole-rod composition and dominates every such revenue.
-This covers signed prices without offering an option to discard any material. -/
+/-- **Correctness of bottom-up rod cutting.** Let $\alpha$ be an additive commutative monoid with a
+linear order in which addition is monotone, and let $p = (p_1, \dots, p_n)$ be prices in $\alpha$,
+$p_i$ being the price of a piece of length $i$. The value returned by bottom-up rod cutting on $p$
+is the greatest revenue of a composition of $n$: it equals $p_{b_1} + \dots + p_{b_m}$ for some
+composition $(b_1, \dots, b_m)$ of $n$ into positive parts, and it is at least this sum for every
+such composition.
+
+Prices may be negative; every piece of the rod must be sold, so there is no option to discard
+material. -/
 theorem bottomUpCutRod_correct {α : Type u} [AddCommMonoid α] [LinearOrder α]
     [IsOrderedAddMonoid α] {n : Nat} (prices : Vector α n) :
     IsGreatest (Set.range fun parts : Composition n => compositionRevenue prices parts le_rfl)
@@ -232,31 +252,42 @@ theorem bottomUpCutRod_correct {α : Type u} [AddCommMonoid α] [LinearOrder α]
   simpa only [bottomUpCutRod, TimeM.ret_bind, TimeM.ret_pure, Vector.get_eq_getElem,
     Fin.val_last] using fillRows_optimal prices n le_rfl n le_rfl le_rfl
 
-/-- Empty input needs no candidate evaluation and earns zero. -/
+/-- **Bottom-up rod cutting on the empty rod.** For the empty price vector ($n = 0$) over an
+additive commutative monoid with a linear order, bottom-up rod cutting returns $0$ at cost $0$. -/
 @[simp] theorem bottomUpCutRod_zero {α : Type u} [AddCommMonoid α] [LinearOrder α]
     (prices : Vector α 0) : bottomUpCutRod prices = pure 0 := by
   simp [bottomUpCutRod, fillRows, Vector.get_eq_getElem]
 
-/-- The executable evaluates exactly `j` candidates in row `j`. -/
+/-- **Cost of bottom-up rod cutting as a sum over rows.** For prices $p = (p_1, \dots, p_n)$ in an
+additive commutative monoid with a linear order, the cost of bottom-up rod cutting on $p$ (the
+number of first-piece candidates it evaluates) equals $\sum_{j=0}^{n} j$.
+
+Row $j$ of the table contributes the $j$ candidates of its scan. -/
 theorem bottomUpCutRod_time_sum {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) :
     (bottomUpCutRod prices).time = ∑ j ∈ Finset.range (n + 1), j := by
   simpa [bottomUpCutRod] using fillRows_time prices n le_rfl
 
-/-- Twice the actual candidate count is `n * (n + 1)`. -/
+/-- **Twice the cost of bottom-up rod cutting.** For prices $p = (p_1, \dots, p_n)$ in an additive
+commutative monoid with a linear order, the cost $T$ of bottom-up rod cutting on $p$ (the number of
+first-piece candidates it evaluates) satisfies $2T = n(n + 1)$. -/
 theorem bottomUpCutRod_time_twice {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) :
     2 * (bottomUpCutRod prices).time = n * (n + 1) := by
   rw [bottomUpCutRod_time_sum, Nat.mul_comm 2,
     Finset.sum_range_id_mul_two, Nat.add_sub_cancel, Nat.mul_comm]
 
-/-- The actual candidate count is the triangular number, independent of all prices. -/
+/-- **Exact cost of bottom-up rod cutting.** For prices $p = (p_1, \dots, p_n)$ in an additive
+commutative monoid with a linear order, the cost of bottom-up rod cutting on $p$ (the number of
+first-piece candidates it evaluates) is the triangular number $n(n + 1)/2$, whatever the prices. -/
 theorem bottomUpCutRod_time {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) :
     (bottomUpCutRod prices).time = n * (n + 1) / 2 := by
   rw [bottomUpCutRod_time_sum, Finset.sum_range_id, Nat.add_sub_cancel, Nat.mul_comm]
 
-/-- Matching quadratic bounds in the stated candidate-evaluation cost model. -/
+/-- **Bottom-up rod cutting takes quadratic time.** For prices $p = (p_1, \dots, p_n)$ in an
+additive commutative monoid with a linear order, the cost $T$ of bottom-up rod cutting on $p$, the
+number of first-piece candidates it evaluates, satisfies $n^2 \le 2T$ and $T \le n^2$. -/
 theorem bottomUpCutRod_time_bounds {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) :
     n ^ 2 ≤ 2 * (bottomUpCutRod prices).time ∧ (bottomUpCutRod prices).time ≤ n ^ 2 := by
@@ -375,15 +406,25 @@ private lemma fillRowsWithCuts_time {α : Type u} [AddCommMonoid α] [LinearOrde
       simp [fillRowsWithCuts, fillRows, ih (by omega), scanCutsWithIndex_time,
         scanCuts_time]
 
-/-- Save all optimal revenues and the first maximizing cut at each positive length.
-The source's `r[j]` is the revenue vector's entry `j`; `s[j]` is the cut vector's
-entry `j - 1`. Ascending candidates update only on strict improvement.
-One event is charged per candidate, including the first candidate of each row. -/
+/-- **Extended bottom-up rod cutting.** Let $\alpha$ be an additive commutative monoid with a
+linear order, and let $p_1, \dots, p_n \in \alpha$ be the prices of pieces of length
+$1, \dots, n$ (the price vector's entry $i - 1$ is $p_i$). The algorithm fills a revenue table
+$r_0, \dots, r_n$ and a first-cut table $s_1, \dots, s_n$ for the lengths $j = 0, 1, \dots, n$ in
+increasing order: $r_0 = 0$, and for $j \ge 1$ it scans the candidates $p_i + r_{j-i}$ for
+$i = 1, \dots, j$ in increasing order of $i$, starting from the candidate for $i = 1$ and moving
+to a later candidate only when it is strictly larger than the current one. Then $r_j$ is the
+largest candidate and $s_j$ is the least $i$ whose candidate equals $r_j$. The result is the pair
+of tables, where $r_j$ is the revenue vector's entry $j$ and $s_j$ is the cut vector's entry
+$j - 1$, and the cost is one tick per evaluated candidate, so $j$ ticks for length $j$. -/
 public def extendedBottomUpCutRod {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) : TimeM Nat (Vector α (n + 1) × Vector Nat n) :=
   fillRowsWithCuts prices n le_rfl
 
-/-- Every saved revenue is attained by a whole-rod composition and dominates all its competitors. -/
+/-- **Saved revenues are optimal.** Let $p$ be a price vector of length $n$ with entries in a
+linearly ordered additive commutative monoid (addition is monotone), and let
+$r = (r_0, \dots, r_n)$ be the revenue table computed by the extended bottom-up rod-cutting
+algorithm. For every $j \le n$, $r_j$ is the greatest revenue of a composition of $j$: some
+composition of $j$ has revenue $r_j$, and every composition of $j$ has revenue at most $r_j$. -/
 public theorem extendedBottomUpCutRod_correct {α : Type u} [AddCommMonoid α]
     [LinearOrder α] [IsOrderedAddMonoid α] {n : Nat} (prices : Vector α n)
     (j : Nat) (hjn : j ≤ n) :
@@ -393,14 +434,19 @@ public theorem extendedBottomUpCutRod_correct {α : Type u} [AddCommMonoid α]
   rw [fillRowsWithCuts_ret]
   exact fillRows_optimal prices n le_rfl j hjn hjn
 
-/-- The final saved revenue is exactly the existing bottom-up solver's result. -/
+/-- **The extended algorithm computes the same revenue.** For every price vector of length $n$
+with entries in an additive commutative monoid carrying a linear order, the last entry $r_n$ of
+the revenue table computed by the extended bottom-up rod-cutting algorithm equals the value
+returned by the bottom-up rod-cutting algorithm. -/
 public theorem extendedBottomUpCutRod_revenue_eq {α : Type u} [AddCommMonoid α]
     [LinearOrder α] {n : Nat} (prices : Vector α n) :
     (extendedBottomUpCutRod prices).ret.1[n] = (bottomUpCutRod prices).ret := by
   simp only [extendedBottomUpCutRod, fillRowsWithCuts_ret, bottomUpCutRod,
     TimeM.ret_bind, TimeM.ret_pure, Vector.get_eq_getElem, Fin.val_last]
 
-/-- The saved tables execute exactly the triangular number of candidate events. -/
+/-- **Running time of extended bottom-up rod cutting.** Let $\alpha$ be an additive commutative
+monoid with a linear order. For every vector of $n$ prices in $\alpha$, the extended bottom-up
+rod-cutting algorithm has cost exactly $n(n+1)/2$, whatever the prices are. -/
 public theorem extendedBottomUpCutRod_time {α : Type u} [AddCommMonoid α]
     [LinearOrder α] {n : Nat} (prices : Vector α n) :
     (extendedBottomUpCutRod prices).time = n * (n + 1) / 2 := by
@@ -408,7 +454,10 @@ public theorem extendedBottomUpCutRod_time {α : Type u} [AddCommMonoid α]
   rw [fillRowsWithCuts_time]
   simpa [bottomUpCutRod] using bottomUpCutRod_time prices
 
-/-- Empty input returns its zero revenue row, no cut entries and no candidate events. -/
+/-- **Extended bottom-up rod cutting on the empty rod.** Let $\alpha$ be an additive commutative
+monoid with a linear order. On the empty price vector (rod length $0$), the extended bottom-up
+rod-cutting algorithm returns the revenue table whose single entry is $0$ together with the empty
+first-cut table, at cost $0$. -/
 @[simp] public theorem extendedBottomUpCutRod_zero {α : Type u} [AddCommMonoid α]
     [LinearOrder α] (prices : Vector α 0) :
     extendedBottomUpCutRod prices = pure (Vector.replicate 1 0, Vector.replicate 0 0) := by
@@ -482,8 +531,14 @@ private lemma fillRowsWithCuts_first {α : Type u} [AddCommMonoid α] [LinearOrd
             (by omega) h hh
       · exact hsave j hjn hpos (by omega)
 
-/-- The actual saved positive cut attains the row revenue, and every smaller first cut loses.
-The witness `i : Fin j` represents the positive piece length `i.val + 1`. -/
+/-- **The saved first cut attains the saved revenue.** Let $p = (p_0, \dots, p_{n-1})$ be a
+price vector with entries in an additive commutative monoid carrying a linear order, where
+$p_{\ell - 1}$ is the price of a piece of length $\ell$. Let $r = (r_0, \dots, r_n)$ be the
+revenue table and $s = (s_1, \dots, s_n)$ the saved first cuts computed by the extended bottom-up
+rod-cutting algorithm, with $s_j$ stored as entry $j - 1$ of the cut vector. For every $j$ with
+$0 < j \le n$, the cut $\ell = s_j$ satisfies $1 \le \ell \le j$ and
+$p_{\ell - 1} + r_{j - \ell} = r_j$, and every $\ell'$ with $1 \le \ell' < \ell$ satisfies
+$p_{\ell' - 1} + r_{j - \ell'} < r_j$. -/
 public theorem extendedBottomUpCutRod_firstCut {α : Type u} [AddCommMonoid α]
     [LinearOrder α] {n : Nat} (prices : Vector α n) (j : Nat) (hpos : 0 < j)
     (hjn : j ≤ n) :
@@ -526,9 +581,14 @@ private lemma extendedBottomUpCutRod_bounded {α : Type u} [AddCommMonoid α]
 termination_by remaining _ => remaining
 decreasing_by omega
 
-/-- Compute the saved tables once, then emit each successive saved first cut in source order.
-The returned composition sells the whole rod. In addition to candidate events,
-one event is charged per emitted positive piece; allocation and arithmetic remain free. -/
+/-- **Rod cutting with reconstruction.** Given a price vector $p$ of length $n$ with entries in an
+additive commutative monoid carrying a linear order, where entry $\ell - 1$ is the price of a
+piece of length $\ell$, first run the extended bottom-up rod-cutting algorithm to obtain the saved
+first cuts $s_1, \dots, s_n$ (with $s_j$ stored as entry $j - 1$ of its cut vector). Then,
+starting from the remaining length $L = n$, repeatedly emit a piece of length $s_L$ and replace
+$L$ by $L - s_L$ until $L = 0$. The result is the composition of $n$ formed by the emitted pieces
+in order. Its cost is the cost of the extended algorithm plus one event per emitted piece;
+allocation and arithmetic are free. -/
 public def cutRodSolution {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) : TimeM Nat (Composition n) :=
   let tables := extendedBottomUpCutRod prices
@@ -555,7 +615,10 @@ private lemma reconstructCuts_time {n : Nat} (cuts : Vector Nat n)
           simp [reconstructCuts, Composition.length, Composition.cast,
             Composition.append, Composition.single, htail, Nat.add_comm]
 
-/-- The actual cost is candidate events plus one event for every emitted piece. -/
+/-- **Cost of rod-cutting reconstruction.** Let $p$ be a price vector of length $n$ with entries
+in an additive commutative monoid carrying a linear order. The rod-cutting reconstruction charges
+exactly $n(n+1)/2 + m$ events, where $m$ is the number of pieces of the composition of $n$ it
+returns: one event per evaluated first-cut candidate and one per emitted piece. -/
 public theorem cutRodSolution_time {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) :
     (cutRodSolution prices).time = n * (n + 1) / 2 + (cutRodSolution prices).ret.length := by
@@ -593,8 +656,13 @@ private lemma reconstructCuts_blocks {n : Nat} (cuts : Vector Nat n)
                 Composition.single, Composition.sizeUpTo, List.take_succ_cons,
                 Nat.sub_add_eq] using htail
 
-/-- Each emitted block is the actual saved first cut for the remainder after earlier blocks.
-The successful optional lookup also witnesses that this saved entry is in bounds. -/
+/-- **Reconstructed pieces are the saved first cuts.** Let $p$ be a price vector of length $n$
+with entries in an additive commutative monoid carrying a linear order. Let $s$ be the vector of
+saved first cuts computed by the extended bottom-up rod-cutting algorithm, of length $n$, whose
+entry $j - 1$ is the cut saved for length $j$, and let $(b_0, \dots, b_{m-1})$ be the composition
+of $n$ returned by the rod-cutting reconstruction. For every $i < m$, the index
+$n - (b_0 + \dots + b_{i-1}) - 1$ lies within $s$ and the entry of $s$ at this index is $b_i$:
+the $i$-th piece is the first cut saved for the remaining length $n - (b_0 + \dots + b_{i-1})$. -/
 public theorem cutRodSolution_blocks {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) (i : Nat)
     (hi : i < (cutRodSolution prices).ret.length) :
@@ -644,7 +712,11 @@ private lemma reconstructCuts_revenue {α : Type u} [AddCommMonoid α] [LinearOr
             compositionRevenue_single, htail]
           simpa only [candidate, hchosen, Nat.add_sub_cancel] using hattain
 
-/-- Following tight saved cuts earns exactly the final saved revenue. -/
+/-- **Reconstruction earns the final saved revenue.** Let $p$ be a price vector of length $n$
+with entries in an additive commutative monoid carrying a linear order, and let
+$r = (r_0, \dots, r_n)$ be the revenue table computed by the extended bottom-up rod-cutting
+algorithm. The revenue of the composition of $n$ returned by the rod-cutting reconstruction
+equals $r_n$. -/
 public theorem cutRodSolution_revenue {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) :
     compositionRevenue prices (cutRodSolution prices).ret le_rfl =
@@ -657,7 +729,10 @@ public theorem cutRodSolution_revenue {α : Type u} [AddCommMonoid α] [LinearOr
     (extendedBottomUpCutRod_bounded prices) (fillRowsWithCuts_first prices n le_rfl)
     hzero n le_rfl
 
-/-- The reconstructed whole-rod composition earns a greatest possible canonical revenue. -/
+/-- **Rod-cutting reconstruction is optimal.** Let $p$ be a price vector of length $n$ with
+entries in a linearly ordered additive commutative monoid (addition is monotone). The composition
+of $n$ returned by the rod-cutting reconstruction has the greatest revenue among all compositions
+of $n$: its revenue is at least the revenue of every composition of $n$. -/
 public theorem cutRodSolution_correct {α : Type u} [AddCommMonoid α] [LinearOrder α]
     [IsOrderedAddMonoid α] {n : Nat} (prices : Vector α n) :
     IsGreatest (Set.range fun parts : Composition n => compositionRevenue prices parts le_rfl)
@@ -665,7 +740,9 @@ public theorem cutRodSolution_correct {α : Type u} [AddCommMonoid α] [LinearOr
   rw [cutRodSolution_revenue]
   exact extendedBottomUpCutRod_correct prices n le_rfl
 
-/-- The empty rod returns the empty canonical composition and charges no events. -/
+/-- **Rod-cutting reconstruction on the empty rod.** For the empty price vector (rod length
+$0$) with entries in an additive commutative monoid carrying a linear order, the rod-cutting
+reconstruction returns the empty composition of $0$ and charges no events. -/
 public theorem cutRodSolution_zero {α : Type u} [AddCommMonoid α] [LinearOrder α] :
     cutRodSolution (#v[] : Vector α 0) = pure (Composition.ones 0) := by
   apply TimeM.ext <;>

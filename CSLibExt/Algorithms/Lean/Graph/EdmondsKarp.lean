@@ -57,24 +57,36 @@ open DirectedAdjacency
 open BreadthFirstSearch
 open scoped BigOperators
 
-/-- An integral skew-flow matrix on `Fin n`. -/
+/-- **Flow.** A flow on $n$ vertices, labelled $0, \dots, n-1$, is an integer matrix: it assigns
+an integer $f(u, v)$ to each ordered pair of vertices $(u, v)$.
+
+No condition is imposed here; skew symmetry, capacity bounds and conservation are required by
+feasibility. -/
 abbrev Flow (n : Nat) := Fin n → Fin n → Int
 
-/-- Net flow leaving a vertex. -/
+/-- **Flow value.** For a flow $f$ on $n$ vertices and a vertex $s$, the value of $f$ at $s$ is
+the net flow leaving $s$, namely the integer $\sum_v f(s, v)$, where $v$ runs over all vertices. -/
 def flowValue {n : Nat} (source : Fin n) (flow : Flow n) : Int :=
   ∑ target, flow source target
 
-/-- Feasibility for the skew-symmetric integral-flow representation. -/
+/-- **Feasible flow.** Let $c$ be a capacity function assigning a natural number $c(u, v)$ to
+each ordered pair of vertices, and let $s$ and $t$ be vertices. A flow $f$ is feasible for $c$,
+$s$ and $t$ when it is skew symmetric, $f(u, v) = -f(v, u)$ for all $u$ and $v$; it respects
+the capacities, $f(u, v) \le c(u, v)$ for all $u$ and $v$; and it is conserved: for every vertex
+$v$ other than $s$ and $t$, the net flow $\sum_w f(v, w)$ leaving $v$ is $0$. -/
 def IsFeasible {n : Nat} (capacity : Fin n → Fin n → Nat)
     (source sink : Fin n) (flow : Flow n) : Prop :=
   (∀ u v, flow u v = -flow v u) ∧
   (∀ u v, flow u v ≤ (capacity u v : Int)) ∧
   ∀ v, v ≠ source → v ≠ sink → flowValue v flow = 0
 
-/-- The zero skew-flow. -/
+/-- **Zero flow.** The zero flow on the vertices $\{0, \dots, n - 1\}$ is the integer-valued matrix
+$f$ with $f(u, v) = 0$ for all vertices $u$ and $v$. -/
 def zeroFlow (n : Nat) : Flow n := fun _ _ => 0
 
-/-- The zero skew-flow is feasible for every natural capacity matrix. -/
+/-- **The zero flow is feasible.** For every capacity matrix $c$ with natural-number entries on the
+vertices $\{0, \dots, n - 1\}$ and all vertices $s$ and $t$, the zero flow is feasible for $c$ with
+source $s$ and sink $t$. -/
 theorem zeroFlow_feasible {n : Nat} (capacity : Fin n → Fin n → Nat)
     (source sink : Fin n) : IsFeasible capacity source sink (zeroFlow n) := by
   refine ⟨?_, ?_, ?_⟩
@@ -84,7 +96,12 @@ theorem zeroFlow_feasible {n : Nat} (capacity : Fin n → Fin n → Nat)
   · intro v _ _
     simp [flowValue, zeroFlow]
 
-/-- Both directed capacity bounds follow from skew symmetry. -/
+/-- **Two-sided capacity bounds for a feasible flow.** Let $c$ be a capacity matrix with
+natural-number entries on the vertices $\{0, \dots, n-1\}$, let $s$ and $t$ be vertices,
+and let $f$ be a flow that is feasible for $c$, $s$, $t$. Then for all vertices $u$ and
+$v$, we have $-c(v, u) \le f(u, v) \le c(u, v)$.
+
+The lower bound follows from skew symmetry and the upper bound on the reverse entry. -/
 theorem IsFeasible.capacity_bounds {n : Nat}
     {capacity : Fin n → Fin n → Nat} {source sink : Fin n}
     {flow : Flow n} (feasible : IsFeasible capacity source sink flow)
@@ -96,7 +113,12 @@ theorem IsFeasible.capacity_bounds {n : Nat}
     omega
   · exact feasible.2.1 u v
 
-/-- The residual graph contains exactly the ordered pairs with positive residual capacity. -/
+/-- **Residual graph.** Let $c$ be a capacity matrix assigning a natural number $c(u, v)$ to each
+ordered pair of vertices among $0, \dots, n - 1$, and let $f$ be a flow on these vertices. The
+residual graph of $c$ and $f$ is the directed adjacency graph whose vertices $0, \dots, n - 1$ are
+enumerated in increasing order and in which the adjacency list of $u$ consists of the vertices $v$
+with $f(u, v) < c(u, v)$, that is, with positive residual capacity $c(u, v) - f(u, v)$, in
+increasing order. -/
 def residualGraph {n : Nat} (capacity : Fin n → Fin n → Nat)
     (flow : Flow n) : DirectedAdjacency (Fin n) where
   vertices := List.finRange n
@@ -104,14 +126,19 @@ def residualGraph {n : Nat} (capacity : Fin n → Fin n → Nat)
   vertices_complete := List.mem_finRange
   adjacency u := (List.finRange n).filter fun v => decide (flow u v < capacity u v)
 
-/-- Residual adjacency is exactly strict slack in the directed capacity bound. -/
+/-- **Edges of the residual graph.** Let $c$ be a capacity matrix with natural-number entries and
+$f$ an integer matrix (the flow) on the vertices $0, \dots, n - 1$. For all vertices $u$ and $v$,
+the residual graph of $c$ and $f$ has an edge from $u$ to $v$ if and only if
+$f(u, v) < c(u, v)$. -/
 @[simp]
 theorem residualGraph_edge_iff {n : Nat}
     (capacity : Fin n → Fin n → Nat) (flow : Flow n) (u v : Fin n) :
     (residualGraph capacity flow).Edge u v ↔ flow u v < (capacity u v : Int) := by
   simp [residualGraph, DirectedAdjacency.Edge]
 
-/-- A duplicate-free, nonempty directed path with specified endpoints. -/
+/-- **Directed path.** In a directed graph $G$, a list $p$ of vertices is a path from $s$ to $t$
+when it is nonempty, its first entry is $s$, its last entry is $t$, every pair of consecutive
+entries $u, v$ forms a directed edge of $G$ from $u$ to $v$, and no vertex occurs twice in $p$. -/
 def IsPath {V : Type*} (graph : DirectedAdjacency V)
     (source sink : V) (path : List V) : Prop :=
   path.IsChainFromTo graph.Edge source sink ∧ path.Nodup
@@ -154,7 +181,14 @@ private theorem shortest_chain_nodup {V : Type*}
   have := minimal shorter shorterWalk
   omega
 
-/-- Reconstruct a path by following strictly decreasing distance labels. -/
+/-- **Distance-guided path reconstruction.** Let $G$ be a directed graph with ordered adjacency
+lists, $d$ a partial labelling of its vertices by natural numbers, $t$ a vertex, and $\equiv$ a
+given Boolean test on pairs of vertices (not required to be equality). The reconstruction from
+a vertex $u$ with $k$ steps left returns the one-element list $[u]$ when $k = 0$ and $u \equiv t$
+holds, and fails when $k = 0$ and $u \equiv t$ fails. When $k \ge 1$, it takes the first
+out-neighbour $w$ of $u$ in adjacency order with $d(w) = k - 1$; it fails if there is none, and
+otherwise returns $u$ followed by the reconstruction from $w$ with $k - 1$ steps left, failing
+if that fails. -/
 def pathFromDistances {V : Type*} [BEq V]
     (graph : DirectedAdjacency V) (distance : V → Option Nat) (sink : V) :
     Nat → V → Option (List V)
@@ -165,7 +199,13 @@ def pathFromDistances {V : Type*} [BEq V]
       | some next =>
           (pathFromDistances graph distance sink remaining next).map (current :: ·)
 
-/-- Successful distance-guided reconstruction produces a path of the labelled length. -/
+/-- **Soundness of distance-guided path reconstruction.** Let $G$ be a directed adjacency graph on
+a type $V$ whose Boolean test $\equiv$ on pairs of vertices holds exactly for equal vertices, let
+$d$ be a partial labelling of the vertices by natural numbers, let $t$ and $u$ be vertices, and let
+$k$ be a natural number. If the distance-guided reconstruction for $G$, $d$ and $t$ from $u$ with
+$k$ steps left succeeds and returns a list $p$, then $p$ is a walk from $u$ to $t$ in $G$ (it is
+nonempty, its first entry is $u$, its last entry is $t$, and every pair of consecutive entries is
+an edge of $G$) and $p$ has exactly $k + 1$ entries. -/
 theorem pathFromDistances_sound {V : Type*} [BEq V] [LawfulBEq V]
     (graph : DirectedAdjacency V) (distance : V → Option Nat) (sink : V)
     {remaining : Nat} {current : V} {path : List V}
@@ -249,7 +289,14 @@ private theorem pathFromDistances_present {n : Nat}
       refine ⟨current :: foundPath, ?_⟩
       simp [pathFromDistances, foundResult, foundPathResult]
 
-/-- A shortest residual path reconstructed from executable BFS distances. -/
+/-- **Shortest path via breadth-first search.** Let $G$ be a finite directed graph on the vertices
+$\{0, \dots, n - 1\}$ with ordered adjacency lists, and let $s$ be a source and $t$ a sink. Run
+breadth-first search from $t$ in the reverse graph of $G$; it labels each vertex $v$ from which $t$
+is reachable with the distance from $v$ to $t$ in $G$. If $s$ has no label, the search returns no
+path. Otherwise, starting at $s$ with label $d$, take $d$ steps, each time moving to the first
+out-neighbour (in adjacency order) whose label is one less than that of the current vertex. The
+search returns the list of visited vertices, from $s$ to the last one, if every step succeeds and
+the last vertex is $t$, and no path otherwise. -/
 def shortestPath {n : Nat} (graph : DirectedAdjacency (Fin n))
     (source sink : Fin n) : Option (List (Fin n)) :=
   let search := bfs graph.transpose sink
@@ -257,7 +304,11 @@ def shortestPath {n : Nat} (graph : DirectedAdjacency (Fin n))
   | none => none
   | some distance => pathFromDistances graph search.distance sink distance source
 
-/-- A returned shortest path is a nodup directed path with the BFS distance. -/
+/-- **Soundness of the shortest-path search.** Let $G$ be a finite directed graph on the vertices
+$\{0, \dots, n - 1\}$ and let $s$ and $t$ be vertices. If the breadth-first shortest-path search in
+$G$ from $s$ to $t$ returns a list $P$ of vertices, then $P$ is a directed path in $G$ from $s$ to
+$t$ without repeated vertices, and breadth-first search in $G$ from $s$ assigns $t$ a distance $d$
+such that $P$ has exactly $d + 1$ vertices. -/
 theorem shortestPath_sound {n : Nat} {graph : DirectedAdjacency (Fin n)}
     {source sink : Fin n} {path : List (Fin n)}
     (result : shortestPath graph source sink = some path) :
@@ -281,7 +332,10 @@ theorem shortestPath_sound {n : Nat} {graph : DirectedAdjacency (Fin n)}
     exact (distance_eq_some_iff_shortest graph source sink distance).mpr
       ⟨shortestWalk, minimal⟩
 
-/-- Residual reachability is equivalent to returning a shortest path. -/
+/-- **The shortest-path search succeeds exactly when the sink is reachable.** Let $G$ be a finite
+directed graph on the vertices $\{0, \dots, n - 1\}$ and let $s$ and $t$ be vertices. The
+breadth-first shortest-path search in $G$ from $s$ to $t$ returns some path if and only if $t$ is
+reachable from $s$ in $G$ (every vertex counts as reachable from itself). -/
 theorem shortestPath_present_iff_reachable {n : Nat}
     (graph : DirectedAdjacency (Fin n)) (source sink : Fin n) :
     (∃ path, shortestPath graph source sink = some path) ↔ graph.Reachable source sink := by
@@ -302,14 +356,19 @@ theorem shortestPath_present_iff_reachable {n : Nat}
     rw [distanceSpec]
     exact ⟨path, pathResult⟩
 
-/-- No returned path is equivalent to absence of residual reachability. -/
+/-- **The shortest-path search fails exactly when the sink is unreachable.** Let $G$ be a finite
+directed graph on the vertices $\{0, \dots, n - 1\}$ and let $s$ and $t$ be vertices. The
+breadth-first shortest-path search in $G$ from $s$ to $t$ returns no path if and only if $t$ is not
+reachable from $s$ in $G$. -/
 theorem shortestPath_eq_none_iff_not_reachable {n : Nat}
     (graph : DirectedAdjacency (Fin n)) (source sink : Fin n) :
     shortestPath graph source sink = none ↔ ¬ graph.Reachable source sink := by
   rw [← shortestPath_present_iff_reachable]
   cases shortestPath graph source sink <;> simp
 
-/-- Consecutive ordered pairs in a list. -/
+/-- **Edges of a path.** The edges of a list $v_0, v_1, \dots, v_k$ are the list of its
+consecutive ordered pairs $(v_0, v_1), (v_1, v_2), \dots, (v_{k-1}, v_k)$, in this order; the
+empty list and one-element lists have no edges. -/
 def pathEdges {V : Type*} : List V → List (V × V)
   | [] | [_] => []
   | first :: second :: rest => (first, second) :: pathEdges (second :: rest)
@@ -318,12 +377,18 @@ private theorem pathEdges_cons {V : Type*} (first second : V) (rest : List V) :
     pathEdges (first :: second :: rest) =
       (first, second) :: pathEdges (second :: rest) := rfl
 
-/-- Residual capacity of an ordered pair in the skew-flow representation. -/
+/-- **Residual capacity.** Let $c$ be a capacity matrix with natural-number entries and $f$ an
+integer matrix (the flow) on the vertices $0, \dots, n - 1$. The residual capacity of an ordered
+pair of vertices $(u, v)$ is the integer $c(u, v) - f(u, v)$. -/
 def residualAmount {n : Nat} (capacity : Fin n → Fin n → Nat)
     (flow : Flow n) (source target : Fin n) : Int :=
   (capacity source target : Int) - flow source target
 
-/-- Minimum residual capacity along a nontrivial path, and zero on shorter lists. -/
+/-- **Bottleneck of a path.** Let $c$ be a capacity matrix with natural-number entries and $f$
+an integer matrix (the flow) on the same vertices. The bottleneck of a list of vertices
+$v_0, v_1, \dots, v_k$ with $k \ge 1$ is the integer
+$\min_{i < k} \bigl(c(v_i, v_{i+1}) - f(v_i, v_{i+1})\bigr)$, the least residual capacity of a
+consecutive pair; a list with at most one vertex has bottleneck $0$. -/
 def pathBottleneck {n : Nat} (capacity : Fin n → Fin n → Nat)
     (flow : Flow n) : List (Fin n) → Int
   | [] | [_] => 0
@@ -332,20 +397,31 @@ def pathBottleneck {n : Nat} (capacity : Fin n → Fin n → Nat)
       min (residualAmount capacity flow first second)
         (pathBottleneck capacity flow (second :: third :: rest))
 
-/-- Skew unit-flow contribution of one oriented edge. -/
+/-- **Unit skew flow along an oriented edge.** For vertices $a$, $b$, $u$, $v$,
+the unit skew flow of the oriented edge $(a, b)$ at the ordered pair $(u, v)$ is the integer
+$[u = a \text{ and } v = b] - [u = b \text{ and } v = a]$, where $[P]$ is $1$ if $P$ holds
+and $0$ otherwise. -/
 def localDelta {V : Type*} [DecidableEq V]
     (first second source target : V) : Int :=
   (if source = first ∧ target = second then 1 else 0) -
     if source = second ∧ target = first then 1 else 0
 
-/-- Sum of skew unit-flow contributions along a path. -/
+/-- **Edge delta of a path.** For a list $P$ of elements of a set $V$ and elements $u, v$
+of $V$, the edge delta of $P$ at $(u, v)$ is the integer obtained as the number of
+consecutive pairs of $P$ equal to $(u, v)$ minus the number of consecutive pairs of $P$
+equal to $(v, u)$, counted with multiplicity. It is $0$ when $P$ has fewer than two
+elements. -/
 def edgeDelta {V : Type*} [DecidableEq V] : List V → V → V → Int
   | [] | [_] => fun _ _ => 0
   | first :: second :: rest => fun source target =>
       localDelta first second source target +
         edgeDelta (second :: rest) source target
 
-/-- Add `amount` along each path edge and subtract it on reverse entries. -/
+/-- **Augmenting a flow along a path.** Given an integer flow matrix $f$ on the vertices
+$\{0, \dots, n-1\}$, a list of vertices $P$ and an integer $a$, the augmentation of $f$
+along $P$ by $a$ is the matrix whose entry at $(u, v)$ is $f(u, v) + a \cdot d$, where $d$
+is the number of consecutive pairs of $P$ equal to $(u, v)$ minus the number of
+consecutive pairs of $P$ equal to $(v, u)$, counted with multiplicity. -/
 def augment {n : Nat} (flow : Flow n) (path : List (Fin n))
     (amount : Int) : Flow n :=
   fun source target => flow source target + amount * edgeDelta path source target
@@ -620,7 +696,11 @@ private theorem pathEdges_ne_nil_of_chain {V : Type*} {relation : V → V → Pr
       | nil => exact False.elim (chain.ne_nil rfl)
       | cons head tail => simp [pathEdges]
 
-/-- A residual source-to-sink path has a positive integral bottleneck. -/
+/-- **Augmenting paths have positive bottleneck.** Let $c$ be a capacity matrix with
+natural-number entries and $f$ any integer matrix (the flow) on the vertices $0, \dots, n - 1$,
+and let $s \ne t$ be vertices. If $p$ is a duplicate-free path from $s$ to $t$ in the residual
+graph of $c$ and $f$, then the bottleneck of $p$, the minimum of $c(u, v) - f(u, v)$ over
+consecutive vertices $u, v$ of $p$, is positive. -/
 theorem pathBottleneck_pos {n : Nat}
     (capacity : Fin n → Fin n → Nat) (flow : Flow n)
     {source sink : Fin n} (source_ne_sink : source ≠ sink)
@@ -642,7 +722,13 @@ private theorem sum_mul_left {n : Nat} (amount : Int) (term : Fin n → Int) :
   | @insert target targets absent induction =>
       simp [absent, induction, mul_add]
 
-/-- Augmenting within every path-edge residual bound preserves feasibility. -/
+/-- **Augmentation within residual capacities preserves feasibility.** Let $c$ be a
+capacity matrix with natural-number entries on the vertices $\{0, \dots, n-1\}$, let $s$
+and $t$ be vertices, and let $f$ be a flow that is feasible for $c$, $s$, $t$. Let
+$P = (v_0, \dots, v_k)$ be a nonempty list of pairwise distinct vertices with $v_0 = s$ and
+$v_k = t$, and let $a$ be an integer with $0 \le a$ and
+$a \le c(v_i, v_{i+1}) - f(v_i, v_{i+1})$ for every $i < k$. Then the augmentation of $f$
+along $P$ by $a$ is feasible for $c$, $s$, $t$. -/
 theorem augment_feasible {n : Nat}
     (capacity : Fin n → Fin n → Nat) (source sink : Fin n)
     (flow : Flow n) (feasible : IsFeasible capacity source sink flow)
@@ -682,7 +768,13 @@ theorem augment_feasible {n : Nat}
     change (∑ target, flow vertex target) = 0 at conservation
     simpa [vertex_ne_source, vertex_ne_sink] using conservation
 
-/-- Augmentation raises source flow value by exactly the supplied amount. -/
+/-- **Augmenting along a path changes the flow value by the amount.** Let $s \ne t$ be vertices,
+$f$ a flow, $a$ an integer, and $p$ a nonempty list of vertices whose first entry is $s$ and whose
+last entry is $t$. Then the net flow leaving $s$ under the flow obtained by augmenting $f$ along
+$p$ by $a$ equals the net flow leaving $s$ under $f$, plus $a$.
+
+No feasibility of $f$, no edge condition on consecutive entries of $p$, and no duplicate-freeness
+of $p$ is needed. -/
 theorem flowValue_augment {n : Nat} (source sink : Fin n)
     (source_ne_sink : source ≠ sink) (flow : Flow n)
     (path : List (Fin n)) (amount : Int)
@@ -692,7 +784,13 @@ theorem flowValue_augment {n : Nat} (source sink : Fin n)
   rw [Finset.sum_add_distrib, sum_mul_left, edgeDelta_sum chain]
   simp [source_ne_sink]
 
-/-- Augmenting by a residual path's bottleneck preserves feasibility. -/
+/-- **Bottleneck augmentation preserves feasibility.** Let $c$ be a capacity matrix with
+natural-number entries on the vertices $\{0, \dots, n-1\}$, let $s$ and $t$ be vertices,
+and let $f$ be a flow that is feasible for $c$, $s$, $t$. If $P$ is a path from $s$ to $t$
+in the residual graph of $f$, that is, a nonempty list of pairwise distinct vertices
+starting at $s$ and ending at $t$ whose consecutive pairs are residual edges, then the
+augmentation of $f$ along $P$ by the bottleneck of $P$ is again feasible for $c$, $s$,
+$t$. -/
 theorem augment_pathBottleneck_feasible {n : Nat}
     (capacity : Fin n → Fin n → Nat) (source sink : Fin n)
     (flow : Flow n) (feasible : IsFeasible capacity source sink flow)
@@ -711,14 +809,24 @@ theorem augment_pathBottleneck_feasible {n : Nat}
     exact pathBottleneck_le_of_mem capacity flow member
   · exact chain_true_of_chain pathSpec.1
 
-/-- Perform one bottleneck augmentation when a residual path exists. -/
+/-- **One augmenting-path step.** Let $c$ be a capacity matrix with natural-number entries on the
+vertices $\{0, \dots, n - 1\}$, let $s$ be a source and $t$ a sink, and let $f$ be a flow (an
+integer-valued matrix on pairs of vertices). Run the breadth-first shortest-path search from $s$ to
+$t$ in the residual graph of $f$ with respect to $c$. If it finds no path, the step returns $f$. If
+it returns a path $P$, let $b$ be the bottleneck of $P$, the least residual capacity
+$c(u, v) - f(u, v)$ over the edges $(u, v)$ of $P$ (and $b = 0$ if $P$ has no edges); the step
+returns $f$ augmented along $P$ by $b$, that is, $b$ is added to $f(u, v)$ and subtracted from
+$f(v, u)$ for each edge $(u, v)$ of $P$. -/
 def step {n : Nat} (capacity : Fin n → Fin n → Nat)
     (source sink : Fin n) (flow : Flow n) : Flow n :=
   match shortestPath (residualGraph capacity flow) source sink with
   | none => flow
   | some path => augment flow path (pathBottleneck capacity flow path)
 
-/-- One algorithm step either preserves flow value or strictly raises it. -/
+/-- **One augmentation step keeps or strictly raises the flow value.** Let $c$ be a capacity
+function and $s \ne t$ vertices. For every flow $f$, the flow obtained from $f$ by one step of
+bottleneck augmentation either has the same net flow leaving $s$ as $f$, or a strictly larger
+one. -/
 theorem flowValue_step {n : Nat} (capacity : Fin n → Fin n → Nat)
     (source sink : Fin n) (source_ne_sink : source ≠ sink) (flow : Flow n) :
     flowValue source (step capacity source sink flow) = flowValue source flow ∨
@@ -735,7 +843,15 @@ theorem flowValue_step {n : Nat} (capacity : Fin n → Fin n → Nat)
       (shortestPath_sound pathResult).1
     omega
 
-/-- Iterate bottleneck augmentation, stopping for equal endpoints or no residual path. -/
+/-- **Augmenting-path iteration with fuel.** Let $c$ be a capacity matrix with natural-number
+entries on the vertices $\{0, \dots, n - 1\}$, let $s$ be a source and $t$ a sink, let $k$ be a fuel
+bound and let $f$ be a flow (an integer-valued matrix on pairs of vertices). The iteration returns
+$f$ if $k = 0$ or $s = t$. Otherwise it runs the breadth-first shortest-path search from $s$ to $t$
+in the residual graph of $f$ with respect to $c$. If the search finds no path, the iteration returns
+$f$. If it returns a path $P$, let $b$ be the bottleneck of $P$, the least residual capacity
+$c(u, v) - f(u, v)$ over the edges $(u, v)$ of $P$; the iteration augments $f$ along $P$ by $b$,
+adding $b$ to $f(u, v)$ and subtracting $b$ from $f(v, u)$ for each edge $(u, v)$ of $P$, and
+continues from the augmented flow with fuel $k - 1$. -/
 def run {n : Nat} (capacity : Fin n → Fin n → Nat)
     (source sink : Fin n) : Nat → Flow n → Flow n
   | 0, flow => flow
@@ -747,7 +863,10 @@ def run {n : Nat} (capacity : Fin n → Fin n → Nat)
         | some path => run capacity source sink fuel
             (augment flow path (pathBottleneck capacity flow path))
 
-/-- Iteration never decreases source flow value when source and sink differ. -/
+/-- **The augmentation loop never decreases the flow value.** Let $c$ be a capacity function and
+$s \ne t$ vertices. For every flow $f$ and every natural number $k$, the net flow leaving $s$
+after running at most $k$ rounds of bottleneck augmentation from $f$ is at least the net flow
+leaving $s$ under $f$. -/
 theorem flowValue_le_run {n : Nat} (capacity : Fin n → Fin n → Nat)
     (source sink : Fin n) (source_ne_sink : source ≠ sink)
     (fuel : Nat) (flow : Flow n) :
@@ -774,12 +893,19 @@ theorem flowValue_le_run {n : Nat} (capacity : Fin n → Fin n → Nat)
             (augment flow path (pathBottleneck capacity flow path))
           omega
 
-/-- Total capacity leaving the source. -/
+/-- **Source capacity.** For a capacity matrix $c$ with natural-number entries on the vertices
+$\{0, \dots, n - 1\}$ and a source $s$, the source capacity is the total capacity leaving $s$,
+namely $\sum_{v} c(s, v)$, where $v$ ranges over all vertices, including $s$ itself. -/
 def sourceCapacity {n : Nat} (capacity : Fin n → Fin n → Nat)
     (source : Fin n) : Nat :=
   ∑ target, capacity source target
 
-/-- The executable bottleneck-augmentation flow, or zero when the endpoints coincide. -/
+/-- **Edmonds–Karp maximum flow.** Let $c$ be a capacity function assigning a natural number
+$c(u, v)$ to each ordered pair of vertices, and let $s$ and $t$ be vertices. If $s = t$, the
+Edmonds–Karp flow is the zero flow. Otherwise it is the result of running at most $C + 1$ rounds
+of bottleneck augmentation from the zero flow, where $C = \sum_v c(s, v)$ is the total capacity
+leaving $s$: each round looks for a shortest path from $s$ to $t$ in the residual graph, stops if
+there is none, and otherwise augments the flow along that path by its bottleneck. -/
 def edmondsKarp {n : Nat} (capacity : Fin n → Fin n → Nat)
     (source sink : Fin n) : Flow n :=
   if source = sink then zeroFlow n
@@ -813,7 +939,11 @@ private theorem run_feasible {n : Nat}
               (augment_pathBottleneck_feasible capacity source sink flow feasible path
                 (shortestPath_sound result).1)
 
-/-- The returned flow satisfies skew symmetry, capacity bounds, and conservation. -/
+/-- **The Edmonds–Karp flow is feasible.** For every capacity matrix $c$ with
+natural-number entries on the vertices $\{0, \dots, n-1\}$ and all vertices $s$ and $t$,
+the flow $f$ returned by the Edmonds–Karp algorithm on $c$, $s$, $t$ is feasible for $c$,
+$s$, $t$: it is skew-symmetric, satisfies $f(u, v) \le c(u, v)$ for all vertices $u, v$,
+and has zero net outflow at every vertex other than $s$ and $t$. -/
 theorem edmondsKarp_feasible {n : Nat}
     (capacity : Fin n → Fin n → Nat) (source sink : Fin n) :
     IsFeasible capacity source sink (edmondsKarp capacity source sink) := by
@@ -823,7 +953,11 @@ theorem edmondsKarp_feasible {n : Nat}
   · exact run_feasible capacity source sink _ _
       (zeroFlow_feasible capacity source sink)
 
-/-- The iteration stops immediately when no augmenting path exists. -/
+/-- **The iteration stops when there is no augmenting path.** Let $c$ be a capacity matrix with
+natural-number entries on the vertices $\{0, \dots, n - 1\}$, let $s$ and $t$ be vertices, and let
+$f$ be a flow (an integer-valued matrix on pairs of vertices). If the breadth-first shortest-path
+search finds no path from $s$ to $t$ in the residual graph of $f$ with respect to $c$, then for
+every fuel bound $k$, the augmenting-path iteration started at $f$ with fuel $k$ returns $f$. -/
 theorem run_eq_of_no_path {n : Nat}
     (capacity : Fin n → Fin n → Nat) (source sink : Fin n)
     (flow : Flow n)
@@ -864,7 +998,9 @@ private theorem run_value_lower_bound_of_final_path {n : Nat}
             (shortestPath_sound pathResult).1
           omega
 
-/-- Every feasible flow is bounded by total capacity leaving the source. -/
+/-- **The flow value is at most the source capacity.** Let $c$ be a capacity function, $s$ and
+$t$ vertices, and $f$ a flow that is feasible for $c$, $s$ and $t$. Then the net flow leaving $s$
+under $f$ is at most $\sum_v c(s, v)$, the total capacity leaving $s$. -/
 theorem flowValue_le_sourceCapacity {n : Nat}
     {capacity : Fin n → Fin n → Nat} {source sink : Fin n}
     {flow : Flow n} (feasible : IsFeasible capacity source sink flow) :
@@ -881,7 +1017,10 @@ theorem flowValue_le_sourceCapacity {n : Nat}
   rw [castSum]
   exact bound
 
-/-- The final residual graph has no source-to-sink path. -/
+/-- **No augmenting path remains after Edmonds–Karp.** Let $c$ be a capacity matrix with
+natural-number entries on the vertices $\{0, \dots, n-1\}$ and let $s$ and $t$ be distinct
+vertices. Then $t$ is not reachable from $s$ in the residual graph of the flow returned
+by the Edmonds–Karp algorithm on $c$, $s$, $t$. -/
 theorem edmondsKarp_no_augmenting_path {n : Nat}
     (capacity : Fin n → Fin n → Nat) {source sink : Fin n}
     (source_ne_sink : source ≠ sink) :
@@ -916,7 +1055,9 @@ theorem edmondsKarp_no_augmenting_path {n : Nat}
       rw [zeroValue, zero_add] at valueBound
       omega
 
-/-- Capacity of a directed cut in the skew-flow representation. -/
+/-- **Cut capacity.** For a capacity matrix $c$ with natural-number entries on the vertices
+$\{0, \dots, n-1\}$ and a set $S$ of vertices, the capacity of the cut $S$ is the integer
+$\sum_{u \in S} \sum_{v \notin S} c(u, v)$. -/
 def cutCapacity {n : Nat} (capacity : Fin n → Fin n → Nat)
     (cut : Finset (Fin n)) : Int :=
   ∑ u ∈ cut, ∑ v ∈ (Finset.univ : Finset (Fin n)) \ cut, (capacity u v : Int)
@@ -971,7 +1112,10 @@ private theorem cutFlow_eq {n : Nat} {source sink : Fin n}
           ∑ v ∈ (Finset.univ : Finset (Fin n)) \ cut, flow u v := by
           rw [internalZero, zero_add]
 
-/-- Weak duality for every feasible skew flow and source-sink cut. -/
+/-- **Weak max-flow min-cut duality.** Let $c$ be a capacity function, $s$ and $t$ vertices, and
+$f$ a flow that is feasible for $c$, $s$ and $t$. For every set $S$ of vertices with $s \in S$
+and $t \notin S$, the net flow leaving $s$ under $f$ is at most the capacity of the cut $S$,
+namely $\sum_{u \in S} \sum_{v \notin S} c(u, v)$. -/
 theorem flowValue_le_cutCapacity {n : Nat}
     (capacity : Fin n → Fin n → Nat) (source sink : Fin n)
     (flow : Flow n) (feasible : IsFeasible capacity source sink flow)
@@ -985,7 +1129,11 @@ theorem flowValue_le_cutCapacity {n : Nat}
   intro v _
   exact feasible.2.1 u v
 
-/-- Vertices reachable from the source in the residual graph of a flow. -/
+/-- **Residual cut.** Let $c$ be a capacity matrix assigning a natural number $c(u, v)$ to each
+ordered pair of vertices among $0, \dots, n - 1$, let $f$ be a flow on these vertices, and let $s$
+be a vertex. The residual cut of $c$, $f$ and $s$ is the set of vertices visited by breadth-first
+search from $s$ in the residual graph of $c$ and $f$, that is, the set of vertices reachable from
+$s$ in that residual graph. -/
 def residualCut {n : Nat} (capacity : Fin n → Fin n → Nat)
     (flow : Flow n) (source : Fin n) : Finset (Fin n) :=
   (bfs (residualGraph capacity flow) source).order.toFinset
@@ -1025,7 +1173,11 @@ private theorem residualCut_saturated {n : Nat}
     exact vReachable
   exact le_antisymm (feasible u v) (not_lt.mp notResidual)
 
-/-- The returned flow value equals the capacity of its residual-reachable cut. -/
+/-- **The Edmonds–Karp flow value equals its residual cut capacity.** Let $c$ be a capacity
+matrix with natural-number entries on the vertices $\{0, \dots, n-1\}$, let $s$ and $t$ be
+distinct vertices, and let $f$ be the flow returned by the Edmonds–Karp algorithm on $c$,
+$s$, $t$. Then the net flow of $f$ out of $s$ equals the capacity of the cut formed by the
+vertices reachable from $s$ in the residual graph of $f$. -/
 theorem edmondsKarp_minCut {n : Nat}
     (capacity : Fin n → Fin n → Nat) {source sink : Fin n}
     (source_ne_sink : source ≠ sink) :
@@ -1047,7 +1199,11 @@ theorem edmondsKarp_minCut {n : Nat}
   exact residualCut_saturated capacity flow source feasible.2.1 uMem
     (Finset.mem_sdiff.mp vMem).2
 
-/-- Every feasible integral flow has value at most the returned flow. -/
+/-- **Maximality of the Edmonds–Karp flow.** Let $c$ be a capacity matrix with
+natural-number entries on the vertices $\{0, \dots, n-1\}$, let $s$ and $t$ be distinct
+vertices, and let $f$ be the flow returned by the Edmonds–Karp algorithm on $c$, $s$, $t$.
+Then every integer flow $g$ that is feasible for $c$, $s$, $t$ has value at $s$ at most
+the value of $f$ at $s$, where the value of a flow at $s$ is its net flow out of $s$. -/
 theorem edmondsKarp_maximal {n : Nat}
     (capacity : Fin n → Fin n → Nat) {source sink : Fin n}
     (source_ne_sink : source ≠ sink) (candidate : Flow n)

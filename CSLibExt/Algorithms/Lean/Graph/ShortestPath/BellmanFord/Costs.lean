@@ -356,7 +356,12 @@ end Internal
 
 open Internal
 
-/-- Bellman-Ford checks every edge occurrence in all ordinary passes and the final pass. -/
+/-- **Relaxation checks of Bellman-Ford pass by pass.** For every list $E$ of weighted edges on
+$n$ vertices and every source $s$, Bellman-Ford run on $E$ from $s$ charges exactly
+$(n - 1) \cdot |E| + |E|$ relaxation checks, where $|E|$ is the length of $E$.
+
+The two terms count one check per edge occurrence in each of the $n - 1$ ordinary passes and in
+the final pass. -/
 public theorem bellmanFord_relaxationChecks {n : Nat} (edges : List (Edge n)) (source : Fin n) :
     (bellmanFord edges source).time.relaxationChecks =
       (n - 1) * edges.length + edges.length := by
@@ -364,7 +369,9 @@ public theorem bellmanFord_relaxationChecks {n : Nat} (edges : List (Edge n)) (s
   rw [runPasses_relaxationChecks, relaxEdges_relaxationChecks,
     finish_relaxationChecks, Nat.add_zero]
 
-/-- Because a source exists, the exact number of relaxation checks is `n * |edges|`. -/
+/-- **Bellman-Ford makes exactly $n \cdot |E|$ relaxation checks.** For every list $E$ of weighted
+edges on $n$ vertices and every source $s$, Bellman-Ford run on $E$ from $s$ charges exactly
+$n \cdot |E|$ relaxation checks, where $|E|$ is the length of $E$ counting repeated edges. -/
 public theorem bellmanFord_relaxationChecks_eq_mul {n : Nat} (edges : List (Edge n))
     (source : Fin n) :
     (bellmanFord edges source).time.relaxationChecks = n * edges.length := by
@@ -377,7 +384,9 @@ public theorem bellmanFord_relaxationChecks_eq_mul {n : Nat} (edges : List (Edge
       congr 1
       omega
 
-/-- Negative-cycle witness reconstruction uses at most three vertex-count passes. -/
+/-- **Bellman-Ford spends at most $3n$ witness steps.** For every list $E$ of weighted edges on
+$n$ vertices and every source $s$, Bellman-Ford run on $E$ from $s$ charges at most $3n$
+negative-cycle witness reconstruction steps. -/
 public theorem bellmanFord_cycleWitnessSteps_le {n : Nat} (edges : List (Edge n))
     (source : Fin n) :
     (bellmanFord edges source).time.cycleWitnessSteps ≤ 3 * n := by
@@ -386,7 +395,10 @@ public theorem bellmanFord_cycleWitnessSteps_le {n : Nat} (edges : List (Edge n)
   simp only [Nat.zero_add]
   exact finish_steps_le_three_mul edges source _
 
-/-- Successful runs perform no negative-cycle reconstruction steps. -/
+/-- **Bellman-Ford spends no witness steps when it returns distances.** For every list $E$ of
+weighted edges on $n$ vertices and every source $s$, if Bellman-Ford run on $E$ from $s$ returns
+distances rather than a negative cycle, then the run charges zero negative-cycle witness
+reconstruction steps. -/
 public theorem bellmanFord_cycleWitnessSteps_eq_zero {n : Nat} (edges : List (Edge n))
     (source : Fin n) (result : Distances n)
     (hRun : (bellmanFord edges source).ret = Result.distances result) :
@@ -398,7 +410,10 @@ public theorem bellmanFord_cycleWitnessSteps_eq_zero {n : Nat} (edges : List (Ed
   change (finish edges source (afterFinal edges source)).time.cycleWitnessSteps = 0
   simp [finish, final_none]
 
-/-- A returned cycle is charged one step per localization, cycle, and prefix edge. -/
+/-- **Witness cost of a returned negative cycle.** For every list $E$ of weighted edges on $n$
+vertices and every source $s$, if Bellman-Ford run on $E$ from $s$ returns a reachable negative
+cycle whose cycle has $c$ edges and whose path from $s$ to the cycle has $q$ edges, then the run
+charges exactly $n + c + q$ negative-cycle witness reconstruction steps. -/
 public theorem bellmanFord_cycleWitnessSteps_eq {n : Nat} (edges : List (Edge n))
     (source : Fin n) (witness : ReachableNegativeCycle edges source)
     (hRun : (bellmanFord edges source).ret = Result.negativeCycle witness) :
@@ -415,7 +430,10 @@ public theorem bellmanFord_cycleWitnessSteps_eq {n : Nat} (edges : List (Edge n)
     finish_steps_eq_of_negativeCycle edges source _ witness finish_returns]
   simp
 
-/-- The abstract event count is bounded by `4 * |V| * |E|`. -/
+/-- **Bellman-Ford makes at most $4 n |E|$ counted steps.** For every list $E$ of weighted edges
+on $n$ vertices and every source $s$, the total cost of Bellman-Ford run on $E$ from $s$ (its
+relaxation checks plus its negative-cycle witness reconstruction steps) is at most
+$4 \cdot n \cdot |E|$, where $|E|$ is the length of $E$. -/
 public theorem bellmanFord_total_le {n : Nat} (edges : List (Edge n)) (source : Fin n) :
     (bellmanFord edges source).time.total ≤ 4 * n * edges.length := by
   by_cases edges_nil : edges = []

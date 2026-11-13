@@ -47,7 +47,8 @@ namespace Cslib.Algorithms.Lean.Kruskal
 
 open UnionFind
 
-/-- An unchecked weighted undirected input edge. -/
+/-- **Raw input edge.** A raw edge is an undirected weighted input edge given by three natural
+numbers: two endpoints, which are not yet checked to be vertices of the graph, and a weight. -/
 public structure RawEdge where
   /-- First endpoint. -/
   source : Nat
@@ -57,13 +58,19 @@ public structure RawEdge where
   weight : Nat
 deriving DecidableEq, Repr
 
-/-- A finite weighted multigraph on `Fin n`, represented by its input edge list. -/
+/-- **Kruskal input graph.** For a natural number $n$, an input graph on the vertices
+$\{0, \dots, n-1\}$ consists of a list of raw edges, kept in input order; the same pair of
+endpoints may occur on several edges.
+
+The endpoints of a raw edge are natural numbers and are not required to be below $n$. -/
 public structure Graph (n : Nat) where
   /-- Input edges in deterministic order. -/
   rawEdges : List RawEdge
 deriving DecidableEq, Repr
 
-/-- A validated input edge, retaining its zero-based input ordinal. -/
+/-- **Weighted edge.** A weighted edge on the vertices $\{0, \dots, n-1\}$ consists of an ordinal,
+a natural number recording its zero-based position in the original input list, two endpoints in
+$\{0, \dots, n-1\}$, and a natural-number weight. -/
 public structure WeightedEdge (n : Nat) where
   /-- Zero-based position in the original input list. -/
   ordinal : Nat
@@ -75,11 +82,18 @@ public structure WeightedEdge (n : Nat) where
   weight : Nat
 deriving DecidableEq, Repr
 
-/-- Lexicographic sorting key `(weight, input ordinal)`. -/
+/-- **Sorting key of a weighted edge.** The sorting key of a weighted edge $e$ is the pair
+$(w(e), i(e)) \in \mathbb{N} \times \mathbb{N}$ of its weight $w(e)$ and its input ordinal $i(e)$,
+the zero-based position of $e$ in the original input edge list.
+
+Keys are compared lexicographically. -/
 public def WeightedEdge.key {n : Nat} (edge : WeightedEdge n) : Nat × Nat :=
   (edge.weight, edge.ordinal)
 
-/-- Lexicographic non-strict order on `(weight, input ordinal)` keys. -/
+/-- **Lexicographic order on edge keys.** For pairs of natural numbers $(w, i)$ and $(w', i')$,
+$(w, i) \preceq (w', i')$ holds when $w < w'$, or $w = w'$ and $i \le i'$. This is the
+non-strict lexicographic order on $\mathbb{N} \times \mathbb{N}$; Kruskal's algorithm applies it to
+keys (weight, input ordinal). -/
 public def KeyLE (left right : Nat × Nat) : Prop :=
   left.1 < right.1 ∨ (left.1 = right.1 ∧ left.2 ≤ right.2)
 
@@ -88,7 +102,10 @@ public instance keyLEDecidable (left right : Nat × Nat) : Decidable (KeyLE left
   unfold KeyLE
   infer_instance
 
-/-- Validate one raw edge at a supplied input ordinal. -/
+/-- **Decoding a raw edge at an ordinal.** Given natural numbers $n$ and $i$ and a raw edge
+with source $s$, target $t$ and weight $w$, decoding at ordinal $i$ returns the validated
+edge on the vertices $\{0, \dots, n-1\}$ with ordinal $i$, source $s$, target $t$ and
+weight $w$ when $s < n$ and $t < n$, and returns no edge otherwise. -/
 public def decodeAt (n ordinal : Nat) (edge : RawEdge) : Option (WeightedEdge n) :=
   if hs : edge.source < n then
     if ht : edge.target < n then
@@ -101,7 +118,11 @@ public def decodeAt (n ordinal : Nat) (edge : RawEdge) : Option (WeightedEdge n)
     else none
   else none
 
-/-- Validate a suffix whose first edge has the supplied input ordinal. -/
+/-- **Validating an edge list from a given ordinal.** Given $n$, a starting ordinal $o$ and a
+list of raw edges $e_0, e_1, \dots, e_{m-1}$, this returns, in input order, the weighted edges on
+the vertices $\{0, \dots, n-1\}$ obtained from those $e_k$ whose two endpoints are both less than
+$n$; each keeps the endpoints and weight of $e_k$ and carries the ordinal $o + k$. Edges with an
+endpoint at least $n$ are omitted, but they still count towards the ordinals of later edges. -/
 public def validEdgesFrom (n ordinal : Nat) : List RawEdge → List (WeightedEdge n)
   | [] => []
   | edge :: rest =>
@@ -109,15 +130,24 @@ public def validEdgesFrom (n ordinal : Nat) : List RawEdge → List (WeightedEdg
       | none => validEdgesFrom n (ordinal + 1) rest
       | some decoded => decoded :: validEdgesFrom n (ordinal + 1) rest
 
-/-- Validate endpoints and attach original input ordinals; malformed edges are omitted. -/
+/-- **Valid edges of an input graph.** For a graph $G$ on the vertices $\{0, \dots, n-1\}$ given
+by its list of raw edges $e_0, e_1, \dots, e_{m-1}$, the valid edges of $G$ are, in input order,
+the weighted edges obtained from those $e_k$ whose two endpoints are both less than $n$; each
+keeps the endpoints and weight of $e_k$ and carries its zero-based input ordinal $k$. Edges with an
+endpoint at least $n$ are omitted. -/
 public def validEdges {n : Nat} (graph : Graph n) : List (WeightedEdge n) :=
   validEdgesFrom n 0 graph.rawEdges
 
-/-- Merge sort by `(weight, input ordinal)`; unique keys make the order deterministic. -/
+/-- **Sorting edges by weight and input position.** Sorting a list of validated edges is merge
+sort with the comparison $(w, i) \preceq (w', i')$ if $w < w'$, or $w = w'$ and $i \le i'$, applied
+to the pairs (weight, input position) of the edges. -/
 public def sortEdges {n : Nat} (edges : List (WeightedEdge n)) : List (WeightedEdge n) :=
   List.mergeSort edges (fun left right => decide (KeyLE left.key right.key))
 
-/-- Valid edges in stable nondecreasing weight order. -/
+/-- **Valid edges in Kruskal order.** For a finite weighted multigraph $G$ on the vertices
+$\{0, \dots, n-1\}$, the ordered edges of $G$ are its valid input edges (those whose endpoints
+are both less than $n$), sorted by merge sort in lexicographic order of (weight, input position):
+by nondecreasing weight, with edges of equal weight in input order. -/
 public def orderedEdges {n : Nat} (graph : Graph n) : List (WeightedEdge n) :=
   sortEdges (validEdges graph)
 
@@ -148,13 +178,21 @@ private theorem pairwise_sortEdges {n : Nat} (edges : List (WeightedEdge n)) :
     edges
   simpa [sortEdges] using hs
 
-/-- The discrete union-find forest used before scanning any edges. -/
+/-- **Discrete parent forest.** The initial forest on the vertices $\{0, \dots, n-1\}$ is
+the parent forest in which every vertex is its own parent, so every vertex is a root, and
+whose depth certificate is $0$ at every vertex. -/
 public def initialForest (n : Nat) : Forest n where
   parent vertex := vertex
   depth _ := 0
   parent_lt _ h := False.elim (h rfl)
 
-/-- Connectivity obtained by adding a reverse-chronological list of edges. -/
+/-- **Connectivity by a newest-first edge list.** Connectivity of vertices $u$ and $v$ of
+$\{0, \dots, n-1\}$ by a list of validated edges, read newest first, is defined by recursion
+on the list. By the empty list, $u$ and $v$ are connected exactly when $u = v$. By a list
+whose first edge $e$ has source $a$ and target $b$ and whose remaining edges form the list
+$L$, the vertices $u$ and $v$ are connected when $u$ and $v$ are connected by $L$, or $u$ is
+connected to $a$ and $v$ is connected to $b$ by $L$, or $u$ is connected to $b$ and $v$ is
+connected to $a$ by $L$. -/
 public def ConnectedRev {n : Nat} : List (WeightedEdge n) → Fin n → Fin n → Prop
   | [], left, right => left = right
   | edge :: edges, left, right =>
@@ -164,37 +202,56 @@ public def ConnectedRev {n : Nat} : List (WeightedEdge n) → Fin n → Fin n �
         (ConnectedRev edges left edge.target ∧
           ConnectedRev edges right edge.source)
 
-/-- Vertices are connected when repeated endpoint-class merges identify them. -/
+/-- **Connectivity by an edge list.** Vertices $u$ and $v$ of $\{0, \dots, n-1\}$ are
+connected by a list $e_1, \dots, e_k$ of validated edges when they are connected by the
+reversed list $e_k, \dots, e_1$ in the sense of connectivity by a newest-first edge list. -/
 public def Connected {n : Nat} (edges : List (WeightedEdge n))
     (left right : Fin n) : Prop :=
   ConnectedRev edges.reverse left right
 
-/-- Reverse-chronological acyclicity invariant used by the executable scan. -/
+/-- **Acyclicity of a newest-first edge list.** A list $e_1, \dots, e_k$ of validated edges
+on the vertices $\{0, \dots, n-1\}$, read newest first, is newest-first acyclic when, for
+every $i$, the endpoints of $e_i$ are not connected by the later list $e_{i+1}, \dots, e_k$
+in the sense of connectivity by a newest-first edge list. -/
 public def AcyclicRev {n : Nat} : List (WeightedEdge n) → Prop
   | [] => True
   | edge :: edges =>
       ¬ConnectedRev edges edge.source edge.target ∧ AcyclicRev edges
 
-/-- Each edge joins two components created by the preceding edges. -/
+/-- **Acyclic edge list.** A list $e_1, \dots, e_k$ of validated edges on the vertices
+$\{0, \dots, n-1\}$ is acyclic when, for every $i$, the endpoints of $e_i$ are not connected
+by the preceding edges $e_1, \dots, e_{i-1}$, in the sense of connectivity by an edge list. -/
 public def Acyclic {n : Nat} (edges : List (WeightedEdge n)) : Prop :=
   AcyclicRev edges.reverse
 
-/-- Every valid input edge has endpoints connected by the candidate forest. -/
+/-- **Edge lists spanning a graph.** A list $L$ of validated edges spans a finite weighted
+multigraph $G$ on the vertices $\{0, \dots, n-1\}$ when, for every valid input edge of $G$ (one
+whose endpoints are both less than $n$), the two endpoints of that edge are connected using the
+edges of $L$. -/
 public def Spans {n : Nat} (graph : Graph n) (edges : List (WeightedEdge n)) : Prop :=
   ∀ edge ∈ validEdges graph, Connected edges edge.source edge.target
 
-/-- A source-contained acyclic edge list spanning every input component. -/
+/-- **Spanning forest of an input graph.** For an input graph $G$ on the vertices
+$\{0, \dots, n-1\}$, a list $F$ of validated edges is a spanning forest of $G$ when every
+edge of $F$ is a valid edge of $G$, $F$ is acyclic, and $F$ spans $G$: for every valid edge
+of $G$, its endpoints are connected by $F$. -/
 public def IsSpanningForest {n : Nat} (graph : Graph n)
     (edges : List (WeightedEdge n)) : Prop :=
   (∀ edge ∈ edges, edge ∈ validEdges graph) ∧ Acyclic edges ∧ Spans graph edges
 
-/-- A spanning forest together with the deterministic Kruskal processing order. -/
+/-- **Ordered spanning forest.** For an input graph $G$ on the vertices $\{0, \dots, n-1\}$,
+a list $e_1, \dots, e_k$ of validated edges is an ordered spanning forest of $G$ when it is a
+spanning forest of $G$ and its keys are nondecreasing: for all $i < j$, the key of $e_i$ is
+at most the key of $e_j$, where the key of an edge with weight $w$ and input ordinal $o$ is
+the pair $(w, o)$ and keys are compared lexicographically. -/
 public def IsOrderedSpanningForest {n : Nat} (graph : Graph n)
     (edges : List (WeightedEdge n)) : Prop :=
   IsSpanningForest graph edges ∧
     edges.Pairwise fun left right => KeyLE left.key right.key
 
-/-- Sum of edge weights, counting parallel edge occurrences separately. -/
+/-- **Total weight of a Kruskal edge list.** The total weight of a list of validated edges is the
+sum of the weights of its entries, each entry counted once, so parallel edges and repeated
+entries each contribute their weight. -/
 public def totalWeight {n : Nat} (edges : List (WeightedEdge n)) : Nat :=
   (edges.map WeightedEdge.weight).sum
 
@@ -218,14 +275,19 @@ private theorem connectedRev_refl {n : Nat} (edges : List (WeightedEdge n))
 
 /-! `State` and `scan` expose the executable fold so clients can inspect its final partition. -/
 
-/-- Union-find state and reverse-chronological accepted edges during a Kruskal scan. -/
+/-- **Kruskal scan state.** A state of the Kruskal scan on the vertices $\{0, \dots, n-1\}$
+consists of a union-find parent forest on these vertices, which records the current partition,
+and the list of edges accepted so far, newest first. -/
 public structure State (n : Nat) where
   /-- Current endpoint partition. -/
   forest : Forest n
   /-- Accepted edges, newest first. -/
   chosenRev : List (WeightedEdge n)
 
-/-- Process one edge, accepting it exactly when it joins two current classes. -/
+/-- **One Kruskal step.** Let $s$ be a Kruskal scan state and $e$ a validated edge with endpoints
+$u$ and $v$. If $u$ and $v$ are equivalent in the union-find forest of $s$, processing $e$ leaves
+$s$ unchanged. Otherwise $e$ is accepted: the new forest is the union of $u$ and $v$ in the forest
+of $s$, and $e$ is put at the front of the list of accepted edges. -/
 public def State.step {n : Nat} (state : State n) (edge : WeightedEdge n) : State n :=
   if Equivalent state.forest edge.source edge.target then state
   else {
@@ -233,15 +295,23 @@ public def State.step {n : Nat} (state : State n) (edge : WeightedEdge n) : Stat
     chosenRev := edge :: state.chosenRev
   }
 
-/-- Process a list of already ordered edges. -/
+/-- **Scanning a list of edges.** Starting from a Kruskal scan state $s$, scanning a list of
+validated edges $e_1, \dots, e_k$ applies one Kruskal step to each edge in list order: the scan
+of the empty list returns $s$, and the scan of $e_1, \dots, e_k$ is the scan of $e_2, \dots, e_k$
+from the state obtained by processing $e_1$ in $s$. -/
 public def scan {n : Nat} : State n → List (WeightedEdge n) → State n
   | state, [] => state
   | state, edge :: rest => scan (state.step edge) rest
 
 /--
-At every ordered scan position whose edge joins distinct current components,
-that edge has minimum stable key among all valid edges crossing the current
-union-find partition.
+**Greedy cut property of Kruskal's scan.** Let $G$ be an input graph on the vertices
+$\{0, \dots, n-1\}$, give each valid edge with weight $w$ and input ordinal $o$ the key
+$(w, o)$, and compare keys lexicographically. The graph $G$ has the greedy cut property when
+the following holds for every way of splitting the valid edges of $G$, sorted by key, into an
+initial segment, an edge $e$ and a final segment. Let $P$ be the union-find partition obtained
+by scanning the initial segment from the discrete parent forest with no accepted edges. If the
+endpoints of $e$ lie in different classes of $P$, then the key of $e$ is at most the key of
+every valid edge of $G$ whose endpoints lie in different classes of $P$.
 -/
 public def HasGreedyCutProperty {n : Nat} (graph : Graph n) : Prop :=
   ∀ before edge after,
@@ -365,7 +435,13 @@ private theorem scan_decompose {n : Nat} (state : State n)
         · exact List.cons_sublist_cons.mpr sublist
         · simpa [scan, State.step, joined, List.reverse_cons, List.append_assoc] using chosen
 
-/-- Run stable Kruskal selection and return accepted edges in processing order. -/
+/-- **Kruskal's algorithm.** For a finite weighted multigraph $G$ on the vertices
+$\{0, \dots, n-1\}$, Kruskal's algorithm starts from the partition of the vertices into
+singletons and processes the valid input edges of $G$ (those whose endpoints are both less than
+$n$) in lexicographic order of (weight, input position). An edge whose endpoints lie in different
+classes of the current partition is accepted and its two classes are merged; an edge whose
+endpoints lie in the same class is skipped. The result is the list of accepted edges in the order
+in which they were processed. -/
 public def kruskal {n : Nat} (graph : Graph n) : List (WeightedEdge n) :=
   (scan ⟨initialForest n, []⟩ (orderedEdges graph)).chosenRev.reverse
 
@@ -377,21 +453,30 @@ private theorem kruskal_sublist_ordered {n : Nat} (graph : Graph n) :
     simp only [kruskal, chosen, List.append_nil, List.reverse_reverse]
   simpa [this] using sublist
 
-/-- Every selected edge is a validated occurrence from the input list. -/
+/-- **Kruskal selects only valid input edges.** For every graph $G$ on $n$ vertices, every edge
+in the list returned by Kruskal's algorithm on $G$ is a valid edge of $G$: an input edge whose
+two endpoints are both below $n$, carrying its input ordinal. -/
 public theorem kruskal_edge_mem_valid {n : Nat} (graph : Graph n)
     {edge : WeightedEdge n} (selected : edge ∈ kruskal graph) :
     edge ∈ validEdges graph := by
   have inOrdered := (kruskal_sublist_ordered graph).mem selected
   exact (mem_sortEdges_iff edge (validEdges graph)).mp inOrdered
 
-/-- Kruskal never accepts an edge whose endpoints were already connected. -/
+/-- **Kruskal's output is acyclic.** For every graph $G$, the edge list returned by Kruskal's
+algorithm on $G$ is acyclic: each edge in it joins two vertices that are not connected by the
+edges before it in the list. -/
 public theorem kruskal_acyclic {n : Nat} (graph : Graph n) :
     Acyclic (kruskal graph) := by
   have acyclic := scan_acyclicRev (initial_invariant n) (by simp [AcyclicRev])
     (orderedEdges graph)
   simpa [Acyclic, kruskal] using acyclic
 
-/-- Kruskal connects the endpoints of every valid input edge, including in disconnected graphs. -/
+/-- **Kruskal's selected edges span the graph.** For every finite weighted multigraph $G$ on the
+vertices $\{0, \dots, n-1\}$, given by its list of input edges, and every valid input edge of $G$
+(one whose endpoints are both less than $n$), the two endpoints of that edge are connected by the
+edges that Kruskal's algorithm selects on $G$.
+
+The graph $G$ need not be connected. -/
 public theorem kruskal_spans {n : Nat} (graph : Graph n) :
     Spans graph (kruskal graph) := by
   intro edge inValid
@@ -401,12 +486,20 @@ public theorem kruskal_spans {n : Nat} (graph : Graph n) :
     (orderedEdges graph) edge inOrdered
   simpa [Connected, kruskal] using connected
 
-/-- The selected edge list is ordered by weight and then by original input ordinal. -/
+/-- **Kruskal's output is sorted by key.** For every graph $G$, if an edge $e$ comes before an
+edge $f$ in the list returned by Kruskal's algorithm on $G$, then $e$ has smaller weight than
+$f$, or the same weight as $f$ and input ordinal at most that of $f$. -/
 public theorem kruskal_pairwise_key_le {n : Nat} (graph : Graph n) :
     (kruskal graph).Pairwise fun left right => KeyLE left.key right.key := by
   exact (pairwise_sortEdges (validEdges graph)).sublist (kruskal_sublist_ordered graph)
 
-/-- Each accepted edge is a light edge for the cut induced by the current partition. -/
+/-- **Kruskal's greedy cut property.** Let $G$ be a graph and let $e_1, \dots, e_m$ be its valid
+edges sorted lexicographically by key (weight, then input ordinal). For a position $k$, let
+$P_k$ be the partition of the vertices given by the union-find forest after Kruskal's scan,
+started from the discrete forest, has processed $e_1, \dots, e_{k-1}$. If the endpoints of $e_k$
+lie in different classes of $P_k$, then for every valid edge $c$ of $G$ whose endpoints lie in
+different classes of $P_k$, the key of $e_k$ is lexicographically at most the key of $c$: either
+$e_k$ has smaller weight than $c$, or the same weight and input ordinal at most that of $c$. -/
 public theorem kruskal_greedy_cut_property {n : Nat} (graph : Graph n) :
     HasGreedyCutProperty graph := by
   intro before edge after decomposition _ candidate inValid crossing
@@ -425,7 +518,12 @@ public theorem kruskal_greedy_cut_property {n : Nat} (graph : Graph n) :
     have tailSorted := (List.pairwise_append.mp sorted).2.1
     exact (List.pairwise_cons.mp tailSorted).1 candidate inAfter
 
-/-- Each accepted edge has minimum weight among all edges crossing the current partition. -/
+/-- **Kruskal accepts light edges.** Let $G$ be a graph and let $e_1, \dots, e_m$ be its valid
+edges sorted lexicographically by key (weight, then input ordinal). For a position $k$, let
+$P_k$ be the partition of the vertices given by the union-find forest after Kruskal's scan,
+started from the discrete forest, has processed $e_1, \dots, e_{k-1}$. If the endpoints of $e_k$
+lie in different classes of $P_k$, then the weight of $e_k$ is at most the weight of every valid
+edge of $G$ whose endpoints lie in different classes of $P_k$. -/
 public theorem kruskal_light_edge {n : Nat} (graph : Graph n)
     (before : List (WeightedEdge n)) (edge : WeightedEdge n)
     (after : List (WeightedEdge n))
@@ -442,13 +540,19 @@ public theorem kruskal_light_edge {n : Nat} (graph : Graph n)
   simp only [WeightedEdge.key, KeyLE] at keyBound
   omega
 
-/-- Kruskal returns a source-contained acyclic edge list spanning every input component. -/
+/-- **Kruskal's output is a spanning forest.** For every graph $G$, the edge list returned by
+Kruskal's algorithm on $G$ is a spanning forest of $G$: every edge in it is a valid edge of $G$,
+it is acyclic, and it connects the two endpoints of every valid edge of $G$. -/
 public theorem kruskal_isSpanningForest {n : Nat} (graph : Graph n) :
     IsSpanningForest graph (kruskal graph) := by
   exact ⟨fun _ selected => kruskal_edge_mem_valid graph selected,
     kruskal_acyclic graph, kruskal_spans graph⟩
 
-/-- Kruskal returns a spanning forest in deterministic stable processing order. -/
+/-- **Kruskal's output is a sorted spanning forest.** For every graph $G$, the edge list returned
+by Kruskal's algorithm on $G$ is a spanning forest of $G$ (its edges are valid edges of $G$, it
+is acyclic, and it connects the endpoints of every valid edge of $G$), and whenever an edge $e$
+comes before an edge $f$ in it, the key (weight, input ordinal) of $e$ is lexicographically at
+most that of $f$. -/
 public theorem kruskal_isOrderedSpanningForest {n : Nat} (graph : Graph n) :
     IsOrderedSpanningForest graph (kruskal graph) :=
   ⟨kruskal_isSpanningForest graph, kruskal_pairwise_key_le graph⟩
@@ -776,9 +880,14 @@ private theorem spanningForest_contains_perm {n : Nat} (graph : Graph n)
   exact (List.subperm_of_subset (acyclicRev_nodup acceptedAcyclic) contains).antisymm
     (List.subperm_of_subset (acyclicRev_nodup acyclic) backwards)
 
-/-- With natural-number weights, Kruskal has minimum total weight among all canonical
-spanning forests, including disconnected graphs and parallel input occurrences.
-This is the cut-exchange argument of CLRS, fourth edition, §21.2. -/
+/-- **Kruskal's algorithm gives a minimum spanning forest.** Let $G$ be a graph with
+natural-number edge weights, and let $F$ be any spanning forest of $G$: a list of valid edges of
+$G$ that is acyclic and connects the endpoints of every valid edge of $G$. Then the total weight
+of the edge list returned by Kruskal's algorithm on $G$ is at most the total weight of $F$.
+
+Total weights count parallel edge occurrences separately, and $G$ need not be connected.
+
+Source: CLRS, fourth edition, §21.2, cut-exchange argument. -/
 public theorem kruskal_minimal {n : Nat} (graph : Graph n)
     (edges : List (WeightedEdge n)) (forest : IsSpanningForest graph edges) :
     totalWeight (kruskal graph) ≤ totalWeight edges := by

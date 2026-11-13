@@ -95,8 +95,13 @@ private lemma scanFirstCuts_time {α : Type u} [LinearOrder α] {j : Nat}
 termination_by j
 decreasing_by omega
 
-/-- Evaluate every first cut in increasing order, freshly recomputing every suffix.
-One cost tick is charged at every invocation, including the root and empty suffixes. -/
+/-- **Recursive CUT-ROD.** Let $\alpha$ be an additive commutative monoid with a linear order,
+and let $p_1, \dots, p_n \in \alpha$ be prices, $p_i$ being the price of a piece of length $i$.
+Recursive CUT-ROD returns $r(n)$, where $r(0) = 0$ and, for $1 \le j \le n$,
+$r(j) = \max(p_1 + r(j - 1), p_2 + r(j - 2), \dots, p_j + r(0))$. The first cuts
+$i = 1, \dots, j$ are scanned in increasing order and every $r(j - i)$ is recomputed by a fresh
+recursive call, without memoization. One cost tick is charged at every invocation, including
+the root call and every call on an empty rod. -/
 public def recursiveCutRod {α : Type u} [AddCommMonoid α] [LinearOrder α]
     {n : Nat} (prices : Vector α n) : TimeM Nat α :=
   recursiveCutRodAux prices n le_rfl
@@ -200,16 +205,24 @@ private lemma recursiveCutRodAux_time {α : Type u} [AddCommMonoid α]
               simpa only [one_add_one_eq_two, mul_one, Nat.add_comm] using
                 geom_sum_mul_add (1 : Nat) (j + 1)
 
-/-- Recursive CUT-ROD returns an attaining maximum over canonical whole-length
-compositions. Negative prices do not create a discard option. -/
+/-- **Correctness of recursive CUT-ROD.** Let $\alpha$ be an additive commutative monoid with a
+linear order for which addition is monotone, and let $p_1, \dots, p_n \in \alpha$ be prices,
+$p_i$ being the price of a piece of length $i$. The value returned by recursive CUT-ROD on these
+prices is the greatest revenue of a composition of $n$: it equals the revenue
+$p_{i_1} + \dots + p_{i_k}$ of some composition $n = i_1 + \dots + i_k$ into positive parts,
+and it is at least the revenue of every such composition.
+
+Every piece is sold: negative prices do not create an option to discard part of the rod. -/
 public theorem recursiveCutRod_correct {α : Type u} [AddCommMonoid α]
     [LinearOrder α] [IsOrderedAddMonoid α] {n : Nat} (prices : Vector α n) :
     IsGreatest (Set.range fun parts : Composition n =>
       compositionRevenue prices parts le_rfl) (recursiveCutRod prices).ret :=
   recursiveCutRodAux_correct prices n le_rfl
 
-/-- The actual nonmemoized execution enters exactly `2 ^ n` invocations,
-including the root and every empty suffix. -/
+/-- **Running time of recursive CUT-ROD.** Let $\alpha$ be an additive commutative monoid with a
+linear order, and let $p_1, \dots, p_n \in \alpha$ be prices. Recursive CUT-ROD on these prices,
+which charges one tick per invocation, makes exactly $2^n$ invocations, counting the root call
+and every call on an empty rod, whatever the prices are. -/
 public theorem recursiveCutRod_time {α : Type u} [AddCommMonoid α]
     [LinearOrder α] {n : Nat} (prices : Vector α n) :
     (recursiveCutRod prices).time = 2 ^ n :=

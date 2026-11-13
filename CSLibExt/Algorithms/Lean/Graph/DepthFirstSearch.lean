@@ -35,8 +35,11 @@ universe u
 set_option warn.classDefReducibility false in
 attribute [local instance 5] instDecidableEqOfLawfulBEq
 
-/-- The ordered, duplicate-free output of a depth-first traversal. Parent pairs
-are stored as `(child, parent)`. -/
+/-- **Depth-first traversal record.** A traversal over a vertex type $V$ consists of three lists: a
+preorder (discovery order) list of vertices, a postorder (finish order) list of vertices, and a
+list of parent pairs in $V \times V$, each stored as $(\text{child}, \text{parent})$.
+
+No condition relating the three lists is imposed by the record itself. -/
 structure Traversal (V : Type u) where
   preorder : List V
   postorder : List V
@@ -130,7 +133,14 @@ end Internal
 
 open Internal
 
-/-- Execute left-to-right depth-first search from an ordered list of roots. -/
+/-- **Left-first depth-first search.** Given a directed graph $G$ with ordered adjacency lists
+and an ordered list of roots, depth-first search processes the roots from left to right,
+skipping roots already visited. Visiting an unvisited vertex $v$ marks it visited and records its
+discovery, then processes the out-neighbours of $v$ in adjacency-list order, visiting each one
+not yet visited at that moment and recording $v$ as its parent, and finally records that $v$ has
+finished. The result is the traversal consisting of the vertices in discovery order (preorder),
+the vertices in finish order (postorder), and the (child, parent) pairs in the order the children
+were discovered. -/
 def dfs {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) : Traversal V :=
   finish (loop adj roots (initial roots))
@@ -414,15 +424,28 @@ private theorem loop_steps {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     exact ⟨Relation.ReflTransGen.head
       (Step.discover (adj := adj) (roots := roots) s parent v work hw hv) ih.1, ih.2⟩
 
-/-- A traversal conforms to left-first DFS when it is the result of the declarative
-machine relation that consumes roots from left to right and, on discovery, places
-the ordered adjacency list before the vertex's exit and all remaining work. -/
+/-- **Left-first depth-first traversals.** Let $G$ be a finite directed graph given by ordered
+adjacency lists and let $r = (r_1, \dots, r_k)$ be a list of root vertices. A traversal $T$ is a
+left-first DFS of $G$ from $r$ when some finite run of the following machine ends with an empty
+work list and with recorded preorder, postorder and (child, parent) list equal to those of $T$.
+
+The machine holds a work list of frames, each either "enter $v$ with parent $p$" (where the parent
+$p$ may be absent) or "exit $v$", a set of visited vertices, and the three recorded lists. It starts
+with the frames "enter $r_1$ with no parent", ..., "enter $r_k$ with no parent", no visited vertex
+and empty recorded lists. A step removes the first frame of the work list. For "exit $v$" it
+appends $v$ to the postorder. For "enter $v$ with parent $p$" it does nothing more if $v$ is
+visited; otherwise it marks $v$ visited, appends $v$ to the preorder, appends $(v, p)$ to the
+(child, parent) list if $p$ is present, and puts in front of the remaining work the frames
+"enter $w$ with parent $v$" for the entries $w$ of the adjacency list of $v$, in order, followed by
+"exit $v$". -/
 def IsLeftFirstDFS {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (traversal : Traversal V) : Prop :=
   ∃ final, Steps adj roots (initial roots) final ∧ final.work = [] ∧
     finish final = traversal
 
-/-- The executable traversal conforms to the ordered relational DFS specification. -/
+/-- **Executable DFS meets the left-first specification.** For every directed graph $G$ with
+ordered adjacency lists and every ordered list of roots, the traversal computed by left-first
+depth-first search of $G$ from these roots conforms to left-first DFS for $G$ and these roots. -/
 theorem dfs_is_left_first {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) :
     IsLeftFirstDFS adj roots (dfs adj roots) := by
@@ -470,7 +493,10 @@ private theorem loop_eq_of_steps {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
   | refl => rfl
   | tail h step ih => exact ih.trans (loop_eq_of_step adj roots _ _ step)
 
-/-- The ordered relational specification determines exactly the executable traversal. -/
+/-- **The left-first DFS specification determines the traversal.** Let $G$ be a directed graph
+with ordered adjacency lists, fix an ordered list of roots, and let $T$ be a traversal. If $T$
+conforms to left-first DFS for $G$ and these roots, then $T$ equals the traversal computed by
+left-first depth-first search of $G$ from these roots. -/
 theorem IsLeftFirstDFS.eq_dfs {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     {adj : DirectedAdjacency V} {roots : List V} {traversal : Traversal V}
     (h : IsLeftFirstDFS adj roots traversal) : traversal = dfs adj roots := by
@@ -509,7 +535,10 @@ private theorem final_pendingInv {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
   pendingInv_steps adj roots _ _ (loop_steps adj roots (initial roots)).1
     (pendingInv_initial adj roots)
 
-/-- Every vertex in DFS preorder is directed-reachable from a supplied root. -/
+/-- **Depth-first search discovers only reachable vertices.** Let $G$ be a finite directed graph
+given by ordered adjacency lists and let $R$ be a list of roots. Every vertex in the preorder
+(discovery order) of the depth-first search of $G$ from $R$ is reachable in $G$ from some root
+in $R$ by a directed path (possibly of length zero). -/
 theorem preorder_sound {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (v : V)
     (hv : v ∈ (dfs adj roots).preorder) :
@@ -539,7 +568,10 @@ private theorem final_edge_closed {V : Type u} [BEq V] [Hashable V] [LawfulBEq V
     rw [hempty] at hp
     simp at hp
 
-/-- Every directed-reachable vertex occurs in DFS preorder. -/
+/-- **Depth-first search discovers every reachable vertex.** Let $G$ be a finite directed graph
+given by ordered adjacency lists and let $R$ be a list of roots. If a vertex $v$ is reachable in
+$G$ from some root in $R$ by a directed path (possibly of length zero), then $v$ occurs in the
+preorder (discovery order) of the depth-first search of $G$ from $R$. -/
 theorem preorder_complete {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (v : V)
     (hv : ∃ root ∈ roots, adj.Reachable root v) :
@@ -553,14 +585,19 @@ theorem preorder_complete {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
   have hmem := (final_discoveryInv adj roots).1 v |>.mp hvisited
   simpa [dfs, finish] using hmem
 
-/-- DFS preorder enumerates exactly the vertices reachable from the roots. -/
+/-- **Depth-first search discovers exactly the reachable vertices.** Let $G$ be a finite directed
+graph and $R$ a list of root vertices. A vertex $v$ occurs in the discovery order (preorder) of
+the depth-first search of $G$ from $R$ if and only if there is a root $r$ in $R$ from which $v$
+is reachable in $G$ by a directed path of length zero or more. -/
 theorem mem_preorder_iff_reachable {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (v : V) :
     v ∈ (dfs adj roots).preorder ↔
       ∃ root ∈ roots, adj.Reachable root v :=
   ⟨preorder_sound adj roots v, preorder_complete adj roots v⟩
 
-/-- DFS discovers each reachable vertex at most once. -/
+/-- **Depth-first search discovers each vertex at most once.** For every finite directed graph $G$
+given by ordered adjacency lists and every list $R$ of roots, the preorder (discovery order) of
+the depth-first search of $G$ from $R$ contains no vertex twice. -/
 theorem preorder_nodup {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) : (dfs adj roots).preorder.Nodup := by
   simpa [dfs, finish] using (final_discoveryInv adj roots).2
@@ -573,7 +610,10 @@ private theorem final_mem_postorderRev_iff_visited {V : Type u} [BEq V] [Hashabl
   rw [(loop_steps adj roots (initial roots)).2] at h
   simpa [exitVertices] using h.symm
 
-/-- Finish order contains exactly the vertices reachable from the roots. -/
+/-- **Depth-first search finishes exactly the reachable vertices.** Let $G$ be a finite directed
+graph and $R$ a list of root vertices. A vertex $v$ occurs in the finish order (postorder) of the
+depth-first search of $G$ from $R$ if and only if there is a root $r$ in $R$ from which $v$ is
+reachable in $G$ by a directed path of length zero or more. -/
 theorem mem_postorder_iff_reachable {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (v : V) :
     v ∈ (dfs adj roots).postorder ↔
@@ -583,17 +623,23 @@ theorem mem_postorder_iff_reachable {V : Type u} [BEq V] [Hashable V] [LawfulBEq
   exact (final_mem_postorderRev_iff_visited adj roots v).trans
     ((final_discoveryInv adj roots).1 v)
 
-/-- Every discovered vertex finishes exactly once. -/
+/-- **DFS finishes each vertex at most once.** Let $G$ be a finite directed graph and $R$ a list of
+root vertices. The finish order (postorder) of the depth-first search of $G$ from $R$ contains no
+vertex twice. -/
 theorem postorder_nodup {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) : (dfs adj roots).postorder.Nodup := by
   have h := (final_finishInv adj roots).2.2.1
   simpa [dfs, finish] using h
 
-/-- `Before x y xs` means that `x` occurs strictly before `y` in `xs`. -/
+/-- **Occurring before in a list.** For elements $x$ and $y$ and a list $xs$, $x$ occurs before
+$y$ in $xs$ when there are lists $a$, $b$ and $c$ such that $xs$ is the concatenation of $a$, the
+element $x$, $b$, the element $y$ and $c$; that is, some occurrence of $x$ lies at a strictly
+earlier position than some occurrence of $y$. -/
 def Before {V : Type u} (x y : V) (xs : List V) : Prop :=
   ∃ a b c, xs = a ++ x :: b ++ y :: c
 
-/-- The parent relation represented by `(child, parent)` pairs. -/
+/-- **Parent relation of a list of pairs.** Given a list $P$ of (child, parent) pairs, $p$ is a
+parent of $c$ in $P$ when the pair $(c, p)$ occurs in $P$. -/
 def ParentRel {V : Type u} (parents : List (V × V)) (child parent : V) : Prop :=
   (child, parent) ∈ parents
 
@@ -946,19 +992,26 @@ private theorem before_reverse {V : Type u} {x y : V} {xs : List V}
   refine ⟨c.reverse, b.reverse, a.reverse, ?_⟩
   simp [List.reverse_append]
 
-/-- The actual roots of the DFS forest, in discovery order. -/
+/-- **Roots of a DFS forest.** The forest roots of a traversal $T$ are the vertices of the preorder
+of $T$ that do not occur as the child in any (child, parent) pair recorded by $T$, listed in the
+order in which they occur in the preorder. -/
 def Traversal.forestRoots {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (traversal : Traversal V) : List V :=
   let parented : Std.HashSet V := Std.HashSet.ofList (traversal.parents.map Prod.fst)
   traversal.preorder.filter fun vertex => vertex ∉ parented
 
-/-- Actual forest roots contain no duplicates. -/
+/-- **DFS forest roots are distinct.** For every finite directed graph $G$ given by ordered
+adjacency lists and every list $r$ of root vertices, the list of forest roots of the left-first
+depth-first search of $G$ from $r$ contains no vertex twice. -/
 theorem forestRoots_nodup {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) :
     (dfs adj roots).forestRoots.Nodup := by
   exact (preorder_nodup adj roots).filter _
 
-/-- An actual forest root has no recorded discovering parent. -/
+/-- **A DFS forest root has no parent.** Let $G$ be a finite directed graph given by ordered
+adjacency lists, let $r$ be a list of root vertices, and let $v$ and $p$ be vertices. If $v$ is a
+forest root of the left-first depth-first search of $G$ from $r$, then $(v, p)$ is not among the
+(child, parent) pairs recorded by that search. -/
 theorem forestRoot_has_no_parent {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (root parent : V)
     (hroot : root ∈ (dfs adj roots).forestRoots) :
@@ -969,7 +1022,9 @@ theorem forestRoot_has_no_parent {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
   intro hparent
   exact hroot'.2 parent hparent
 
-/-- Every recorded parent is an actual directed graph edge. -/
+/-- **DFS parent pairs are graph edges.** Let $G$ be a finite directed graph and $R$ a list of root
+vertices, and run depth-first search on $G$ from $R$. If the pair $(c, p)$ occurs in the list of
+(child, parent) pairs recorded by the search, then $G$ has a directed edge from $p$ to $c$. -/
 theorem parent_edge {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (child parent : V)
     (h : (child, parent) ∈ (dfs adj roots).parents) : adj.Edge parent child := by
@@ -977,13 +1032,20 @@ theorem parent_edge {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     simpa [dfs, finish] using h
   exact (final_forestInv adj roots).1 child parent hrev |>.1
 
-/-- Parent entries have no duplicate child. -/
+/-- **No vertex is recorded twice as a DFS child.** Let $G$ be a finite directed graph and $R$ a
+list of root vertices, and run depth-first search on $G$ from $R$. In the list of
+(child, parent) pairs recorded by the search, no vertex occurs as the child of more than one
+entry; that is, the list of children has no repeated entries. -/
 theorem parent_children_nodup {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) :
     ((dfs adj roots).parents.map Prod.fst).Nodup := by
   simpa [dfs, finish] using (final_forestInv adj roots).2.1
 
-/-- Every discovered vertex is either an actual root or has a unique parent. -/
+/-- **Every discovered vertex is a forest root or has a unique parent.** Let $G$ be a finite
+directed graph given by ordered adjacency lists, let $r$ be a list of root vertices, and let $v$
+be a vertex in the preorder of the left-first depth-first search of $G$ from $r$. Then $v$ is a
+forest root of that search, or there is exactly one vertex $p$ such that $(v, p)$ is among the
+(child, parent) pairs recorded by the search. -/
 theorem mem_forestRoots_or_existsUnique_parent {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (v : V)
     (hv : v ∈ (dfs adj roots).preorder) :
@@ -1004,7 +1066,10 @@ theorem mem_forestRoots_or_existsUnique_parent {V : Type u} [BEq V] [Hashable V]
   · left
     simp [Traversal.forestRoots, hv, hchild]
 
-/-- A parent is discovered before its child in preorder. -/
+/-- **In preorder, a DFS parent precedes its child.** Let $G$ be a finite directed graph and $R$ a
+list of root vertices, and run depth-first search on $G$ from $R$. If the pair $(c, p)$ occurs in
+the list of (child, parent) pairs recorded by the search, then $p$ occurs strictly before $c$ in
+the discovery order (preorder) of the search. -/
 theorem parent_before_child {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (child parent : V)
     (h : (child, parent) ∈ (dfs adj roots).parents) :
@@ -1014,7 +1079,10 @@ theorem parent_before_child {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
   have hb := (final_forestInv adj roots).1 child parent hrev |>.2.2.2
   simpa [dfs, finish] using before_reverse hb
 
-/-- A child finishes before its discovering parent. -/
+/-- **A DFS child finishes before its parent.** Let $G$ be a directed graph with ordered
+adjacency lists and fix an ordered list of roots. If $(c, p)$ is one of the (child, parent) pairs
+recorded by the left-first depth-first search of $G$ from these roots, then $c$ occurs before $p$
+in the postorder (finish order) of that search. -/
 theorem child_before_parent_postorder {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (child parent : V)
     (h : (child, parent) ∈ (dfs adj roots).parents) :
@@ -1027,26 +1095,37 @@ theorem child_before_parent_postorder {V : Type u} [BEq V] [Hashable V] [LawfulB
     simpa [Before, exitVertices, List.append_assoc] using hf
   simpa [dfs, finish] using before_reverse hf'
 
-/-- Vertices ordered from latest finish to earliest finish. -/
+/-- **Decreasing finish order.** For a directed graph $G$ with ordered adjacency lists and an
+ordered list of roots, the decreasing finish order is the reverse of the postorder of the
+left-first depth-first search of $G$ from those roots: the vertices that search visits, listed
+from the latest finished to the earliest finished. -/
 def decreasingFinish {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) : List V :=
   (dfs adj roots).postorder.reverse
 
-/-- In decreasing finish order a parent precedes every child it discovered. -/
+/-- **In decreasing finish order, a DFS parent precedes its child.** Let $G$ be a finite directed
+graph and $R$ a list of root vertices, and run depth-first search on $G$ from $R$. If the pair
+$(c, p)$ occurs in the list of (child, parent) pairs recorded by the search, then $p$ occurs
+strictly before $c$ in the decreasing finish order, the reverse of the finish order. -/
 theorem parent_before_child_decreasingFinish {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (child parent : V)
     (h : (child, parent) ∈ (dfs adj roots).parents) :
     Before parent child (decreasingFinish adj roots) := by
   exact before_reverse (child_before_parent_postorder adj roots child parent h)
 
-/-- Decreasing finish order contains exactly the rooted reachable vertices. -/
+/-- **Decreasing finish order lists exactly the vertices reachable from the roots.** Let $G$ be a
+finite directed graph given by ordered adjacency lists, let $r$ be a list of root vertices, and let
+$v$ be a vertex. Then $v$ occurs in the decreasing finish order of the left-first depth-first
+search of $G$ from $r$ if and only if $v$ is reachable in $G$ from some vertex of $r$. -/
 theorem mem_decreasingFinish_iff_reachable {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (v : V) :
     v ∈ decreasingFinish adj roots ↔
       ∃ root ∈ roots, adj.Reachable root v := by
   simpa [decreasingFinish] using mem_postorder_iff_reachable adj roots v
 
-/-- Decreasing finish order has no duplicate vertices. -/
+/-- **Decreasing finish order has no repeated vertices.** For every directed graph $G$ with
+ordered adjacency lists and every ordered list of roots, the decreasing finish order of the
+depth-first search of $G$ from those roots contains no vertex twice. -/
 theorem decreasingFinish_nodup {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) :
     (decreasingFinish adj roots).Nodup := by
@@ -1115,8 +1194,13 @@ private theorem parent_chain_reaches_forestRoot_aux {V : Type u}
             (Nat.le_refl _) with ⟨r, hr, hchain⟩
         exact ⟨r, hr, Relation.ReflTransGen.head hvp hchain⟩
 
-/-- Following recorded parents from a discovered vertex reaches an actual
-parentless root of the DFS forest. -/
+/-- **Parent chains in a DFS forest end at a forest root.** Let $G$ be a finite directed graph and
+$R$ a list of root vertices, and run depth-first search on $G$ from $R$. Say that $p$ is a recorded
+parent of $c$ when the pair $(c, p)$ occurs in the list of (child, parent) pairs recorded by the
+search, and call a discovered vertex with no recorded parent a forest root. Then for every
+vertex $v$ in the discovery order (preorder) there are $k \ge 0$ and vertices
+$v = v_0, v_1, \dots, v_k$ such that each $v_{i+1}$ is a recorded parent of $v_i$ and $v_k$ is a
+forest root. -/
 theorem parent_chain_reaches_root {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (v : V)
     (hv : v ∈ (dfs adj roots).preorder) :
@@ -1132,7 +1216,11 @@ private theorem transGen_rank_decreases {V : Type u} (rel : V → V → Prop) (r
   | single h => exact hstep _ _ h
   | tail h₁ h₂ ih => exact Nat.lt_trans (hstep _ _ h₂) ih
 
-/-- The discovering-parent relation has no directed cycle. -/
+/-- **The DFS parent relation is acyclic.** Let $G$ be a finite directed graph and $R$ a list of
+root vertices, and run depth-first search on $G$ from $R$. Say that $p$ is a recorded parent of $c$
+when the pair $(c, p)$ occurs in the list of (child, parent) pairs recorded by the search. Then
+there are no $k \ge 1$ and vertices $v_0, v_1, \dots, v_k$ with $v_k = v_0$ such that each
+$v_{i+1}$ is a recorded parent of $v_i$. -/
 theorem parent_relation_acyclic {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (v : V) :
     ¬ Relation.TransGen (ParentRel (dfs adj roots).parents) v v := by
@@ -1156,7 +1244,9 @@ private theorem reflTransGen_eq_of_no_head {V : Type u} {relation : V → V → 
       cases induction
       exact (noStep _ step).elim
 
-/-- Every actual forest root came from the supplied root schedule. -/
+/-- **DFS forest roots are scheduled roots.** Let $G$ be a finite directed graph given by ordered
+adjacency lists, let $r$ be a list of root vertices, and let $v$ be a vertex. If $v$ is a forest
+root of the left-first depth-first search of $G$ from $r$, then $v$ occurs in $r$. -/
 theorem forestRoot_mem_roots {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (roots : List V) (root : V)
     (hroot : root ∈ (dfs adj roots).forestRoots) : root ∈ roots := by
@@ -1173,19 +1263,27 @@ theorem forestRoot_mem_roots {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
   have : root = scheduled := reflTransGen_eq_of_no_head chain noStep
   rwa [this]
 
-/-- Traverse every vertex, using the graph's certified vertex order as the root schedule. -/
+/-- **Depth-first search of the whole graph.** For a directed graph $G$ with ordered adjacency
+lists, the whole-graph traversal is the left-first depth-first search of $G$ whose roots are all
+vertices of $G$, taken in the graph's fixed vertex enumeration order. -/
 def dfsAll {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) : Traversal V :=
   dfs adj adj.vertices
 
-/-- Every vertex occurs in the preorder of a whole-graph traversal. -/
+/-- **Whole-graph DFS discovers every vertex.** For every finite directed graph $G$ given by
+ordered adjacency lists and every vertex $v$ of $G$, $v$ occurs in the preorder of the whole-graph
+depth-first search of $G$, that is, the left-first depth-first search of $G$ whose roots are all
+vertices of $G$ in the graph's vertex order. -/
 theorem mem_dfsAll_preorder {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (vertex : V) :
     vertex ∈ (dfsAll adj).preorder := by
   apply preorder_complete adj adj.vertices vertex
   exact ⟨vertex, adj.vertices_complete vertex, Relation.ReflTransGen.refl⟩
 
-/-- Every vertex occurs in the postorder of a whole-graph traversal. -/
+/-- **Whole-graph DFS finishes every vertex.** For every finite directed graph $G$ given by ordered
+adjacency lists and every vertex $v$ of $G$, $v$ occurs in the postorder of the whole-graph
+depth-first search of $G$, that is, the left-first depth-first search of $G$ whose roots are all
+vertices of $G$ in the graph's vertex order. -/
 theorem mem_dfsAll_postorder {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (vertex : V) :
     vertex ∈ (dfsAll adj).postorder := by
@@ -1193,12 +1291,18 @@ theorem mem_dfsAll_postorder {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
   rw [mem_postorder_iff_reachable]
   exact ⟨vertex, adj.vertices_complete vertex, Relation.ReflTransGen.refl⟩
 
-/-- Vertices of a whole-graph traversal, ordered from latest finish to earliest finish. -/
+/-- **Whole-graph decreasing finish order.** For a directed graph $G$ with ordered adjacency
+lists, the whole-graph decreasing finish order is the decreasing finish order of the left-first
+depth-first search of $G$ whose roots are all vertices of $G$, taken in the graph's vertex
+enumeration order; its vertices are listed from the latest finished to the earliest finished. -/
 def decreasingFinishAll {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) : List V :=
   decreasingFinish adj adj.vertices
 
-/-- Every vertex occurs in whole-graph decreasing finish order. -/
+/-- **Whole-graph decreasing finish order contains every vertex.** For every finite directed graph
+$G$ given by ordered adjacency lists and every vertex $v$ of $G$, $v$ occurs in the whole-graph
+decreasing finish order of $G$, that is, the decreasing finish order of the left-first
+depth-first search of $G$ whose roots are all vertices of $G$ in the graph's vertex order. -/
 theorem mem_decreasingFinishAll {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) (vertex : V) :
     vertex ∈ decreasingFinishAll adj := by
@@ -1206,7 +1310,9 @@ theorem mem_decreasingFinishAll {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
   rw [mem_decreasingFinish_iff_reachable]
   exact ⟨vertex, adj.vertices_complete vertex, Relation.ReflTransGen.refl⟩
 
-/-- Whole-graph decreasing finish order contains no duplicate vertices. -/
+/-- **Whole-graph decreasing finish order has no repeated vertices.** For every directed graph
+$G$ with ordered adjacency lists, the whole-graph decreasing finish order of $G$ contains no
+vertex twice. -/
 theorem decreasingFinishAll_nodup {V : Type u} [BEq V] [Hashable V] [LawfulBEq V]
     (adj : DirectedAdjacency V) : (decreasingFinishAll adj).Nodup := by
   exact decreasingFinish_nodup adj adj.vertices
