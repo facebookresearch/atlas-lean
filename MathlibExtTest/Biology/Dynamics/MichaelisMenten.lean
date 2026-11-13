@@ -10,9 +10,9 @@ module
 
 import MathlibExt.Biology.Dynamics.MichaelisMenten
 
-/-! Tests for Michaelis–Menten kinetics: concrete constants and rates, the junk value at
-`k₁ = 0`, the enzyme-free solution as a non-vacuity witness of `IsSolution`, and the fast
-transient. -/
+/-! Tests for Michaelis–Menten kinetics: concrete constants and rates (including the bounds
+`0 ≤ v ≤ V_max` and their endpoint `V_max = 0`), the junk value at `k₁ = 0`, the enzyme-free
+solution as a non-vacuity witness of `IsSolution`, and the fast transient. -/
 
 open Filter Topology Real
 
@@ -30,6 +30,13 @@ example : mmRate 2 1 1 = 1 := by norm_num [mmRate]
 example : mmRate 2 1 1 = 2 / 2 := mmRate_michaelisConstant one_ne_zero
 
 example : mmRate 2 1 3 < 2 := mmRate_lt two_pos one_pos (by norm_num)
+
+example : 0 ≤ mmRate 2 1 1 ∧ mmRate 2 1 1 ≤ 2 :=
+  mmRate_nonneg_and_le zero_le_two one_pos zero_le_one
+
+/-- The endpoint `V_max = 0`, outside `mmRate_lt`: the rate is `0`, so both bounds are tight. -/
+example : 0 ≤ mmRate 0 1 1 ∧ mmRate 0 1 1 ≤ 0 :=
+  mmRate_nonneg_and_le le_rfl one_pos zero_le_one
 
 example : qssComplex 1 1 1 1 2 = 1 / 2 := by norm_num [qssComplex, michaelisConstant]
 

@@ -62,7 +62,8 @@ The last two rest on two facts about an arbitrary subspace `W` of `S → ℝ` (B
 
 Existence of a positive complex-balanced equilibrium (for weakly reversible networks of
 deficiency zero this is the theorem of Horn and Feinberg, 1972) is not proved here; it is
-recorded in `WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`. Asymptotic stability and
+`exists_pos_isComplexBalanced` in
+`MathlibExt.Biology.Dynamics.DeficiencyZero.Integration`. Asymptotic stability and
 global convergence are not covered.
 
 ## References

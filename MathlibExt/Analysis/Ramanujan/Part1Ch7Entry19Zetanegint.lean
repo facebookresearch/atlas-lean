@@ -481,10 +481,6 @@ private theorem k_ne_zero (q p : ℕ) [NeZero q] (hp : 0 < p) (hpq : p < q) : (p
   rw [ZMod.val_natCast_of_lt hpq] at hval
   omega
 
-private theorem toAddCircle_k (q p : ℕ) [NeZero q] (hpq : p < q) :
-    ZMod.toAddCircle (p : ZMod q) = ((((p : ℝ) / q : ℝ)) : UnitAddCircle) := by
-  rw [ZMod.toAddCircle_apply, ZMod.val_natCast_of_lt hpq]
-
 private theorem LFunction_sub_div (q : ℕ) [NeZero q] (Φ₁ Φ₂ : ZMod q → ℂ) (s : ℂ) :
     (ZMod.LFunction Φ₁ s - ZMod.LFunction Φ₂ s) / (2 * Complex.I)
       = ZMod.LFunction (fun j => (Φ₁ j - Φ₂ j) / (2 * Complex.I)) s := by
@@ -526,7 +522,7 @@ private theorem sinZeta_eq_LFunction (q p : ℕ) [NeZero q] (hp : 0 < p) (hpq : 
   have hk : (p : ZMod q) ≠ 0 := k_ne_zero q p hp hpq
   have hk_neg : (-(p : ZMod q)) ≠ 0 := neg_ne_zero.mpr hk
   have ha : ZMod.toAddCircle (p : ZMod q) = ((((p : ℝ) / q : ℝ)) : UnitAddCircle) :=
-    toAddCircle_k q p hpq
+    ZMod.toAddCircle_natCast p
   have ha_neg : ZMod.toAddCircle (-(p : ZMod q)) = -((((p : ℝ) / q : ℝ)) : UnitAddCircle) := by
     rw [map_neg, ha]
   have h1 : ZMod.LFunction (fun j => ZMod.stdAddChar ((p : ZMod q) * j)) s

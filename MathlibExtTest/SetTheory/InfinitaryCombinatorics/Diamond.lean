@@ -12,7 +12,6 @@ Author: Steven Warner
 module
 
 public import MathlibExt.SetTheory.InfinitaryCombinatorics.Diamond
-public import Mathlib.SetTheory.Cardinal.Aleph
 public import Mathlib.SetTheory.Cardinal.Cofinality.Club
 
 @[expose] public section

@@ -551,12 +551,6 @@ private lemma bell_recurrence_real_aux (m : ℕ) : (((m + 1).bell : ℕ) : ℝ)
     rw [Prod.swap_prod_mk, Nat.choose_symm (Nat.le_of_lt_succ (Finset.mem_range.mp hj))]
   exact_mod_cast h
 
-private lemma const_bigO_one_aux (c : ℝ) : (fun _ : ℝ => c) =O[atTop] (fun _ => (1 : ℝ)) := by
-  apply Asymptotics.IsBigOWith.isBigO
-  apply Asymptotics.IsBigOWith.of_bound (c := |c|)
-  filter_upwards with x
-  rw [Real.norm_eq_abs, norm_one, mul_one]
-
 /-- The asymptotic expansion `C(x) = ∑_{j < N} (-1)ʲ B_{j+1} / x^{j+1} + O(1 / x^{N+1})` of
 Ramanujan's factorial series as `x → ∞`, with the Bell numbers `Nat.bell`. -/
 theorem isBigO_chapter6Section13ExampleCSum_sub_sum_bell (N : ℕ) :
@@ -682,7 +676,7 @@ theorem isBigO_chapter6Section13ExampleCSum_sub_sum_bell (N : ℕ) :
             - ∑ i ∈ range (n + 1 - k), (-1 : ℝ) ^ i * ((k + i).choose k : ℝ) / x ^ (k + 1 + i))
           =O[atTop] (fun x => 1 / x ^ (n + 1 + 1)) :=
         hEk.trans (monomial_bigO_aux _ _ _ hbridge)
-      have hC := (const_bigO_one_aux ((-1 : ℝ) ^ k * d k)).mul hEkT
+      have hC := (isBigO_const_one ℝ ((-1 : ℝ) ^ k * d k) atTop).mul hEkT
       simpa using hC
     have hApart : (fun x : ℝ => Qsum x - Pnp1 x) =O[atTop] (fun x => 1 / x ^ (n + 1 + 1)) := by
       have hApartFun : (fun x : ℝ => Qsum x - Pnp1 x)
