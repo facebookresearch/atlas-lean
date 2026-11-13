@@ -162,22 +162,35 @@ lemma fsc_secant (d N : ℕ) (eb : Sym2 (boxVerts d N))
 ## C. Softplus
 
 The softplus function `t ↦ log (1 + eᵗ)` and its convexity are the shared MathlibExt
-`Real.softplus` and `Real.convexOn_softplus`.
+`Real.softplus` and `Real.convexOn_softplus`; `fsc_softplus` is an alias of `Real.softplus`.
 
 -/
 
+/-- The softplus function `t ↦ log (1 + eᵗ)`, an alias of the shared MathlibExt
+`Real.softplus`. -/
+noncomputable def fsc_softplus (t : ℝ) : ℝ := Real.softplus t
+
 lemma fsc_softplus_hasDerivAt (t : ℝ) :
-    HasDerivAt Real.softplus (fsc_logistic t) t := by
+    HasDerivAt fsc_softplus (fsc_logistic t) t := by
   rw [fsc_logistic_eq_sigmoid]
   exact Real.hasDerivAt_softplus t
 
+lemma fsc_deriv_softplus : deriv fsc_softplus = fsc_logistic := by
+  funext t; exact (fsc_softplus_hasDerivAt t).deriv
+
+lemma fsc_softplus_differentiable : Differentiable ℝ fsc_softplus :=
+  fun t => (fsc_softplus_hasDerivAt t).differentiableAt
+
+lemma fsc_softplus_convexOn : ConvexOn ℝ univ fsc_softplus :=
+  Real.convexOn_softplus
+
 lemma fsc_softplus_pressureRightDeriv (t : ℝ) :
-    pressureRightDeriv Real.softplus t = fsc_logistic t := by
+    pressureRightDeriv fsc_softplus t = fsc_logistic t := by
   unfold pressureRightDeriv
   rw [(fsc_softplus_hasDerivAt t).hasDerivWithinAt.derivWithin (uniqueDiffWithinAt_Ioi t)]
 
 lemma fsc_softplus_pressureLeftDeriv (t : ℝ) :
-    pressureLeftDeriv Real.softplus t = fsc_logistic t := by
+    pressureLeftDeriv fsc_softplus t = fsc_logistic t := by
   unfold pressureLeftDeriv
   rw [(fsc_softplus_hasDerivAt t).hasDerivWithinAt.derivWithin (uniqueDiffWithinAt_Iio t)]
 
@@ -187,7 +200,7 @@ lemma fsc_freeEnergyData_satisfiable :
     ∃ g : ℝ → ℝ, ConvexOn ℝ univ g
       ∧ (∀ t, fsc_logistic t = pressureRightDeriv g t)
       ∧ (∀ t, fsc_logistic t = pressureLeftDeriv g t) :=
-  ⟨Real.softplus, Real.convexOn_softplus,
+  ⟨fsc_softplus, fsc_softplus_convexOn,
     fun t => (fsc_softplus_pressureRightDeriv t).symm,
     fun t => (fsc_softplus_pressureLeftDeriv t).symm⟩
 
