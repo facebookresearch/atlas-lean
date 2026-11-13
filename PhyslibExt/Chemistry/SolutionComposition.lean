@@ -42,25 +42,29 @@ conversion identity. With solute mass `n * M` and solution mass `ρ * V`, the ma
 `c * M / ρ`.
 
 Dilution follows from amount conservation: if `n₁ = n₂` with `c₁ = n₁ / V₁` and `c₂ = n₂ / V₂`
-then `c₁ * V₁ = c₂ * V₂`. For a positive target `c₂` and a positive initial amount `c₁ * V₁`,
-the final volume `V₂ = c₁ * V₁ / c₂` is positive and achieves the target. Without these
-hypotheses the formula degenerates: with no solute it gives `V₂ = 0`, and with target `c₂ = 0`
-the molarity identity survives only through Lean's `x / 0 = 0`.
-In `dilution_conserved` the final volume is a separately given measured quantity, and no
-volume additivity is used anywhere.
+then `c₁ * V₁ = c₂ * V₂` (an algebraic identity, `molarity_mul_volume_eq_of_amount_eq`, which
+also covers concentrating); for a positive amount diluted to a final volume `V₂ ≥ V₁` the
+concentration stays positive and does not rise (`dilution_conserved_of_le`). For positive `c₁`,
+`V₁` and a target `0 < c₂ ≤ c₁`, the computed final volume `V₂ = c₁ * V₁ / c₂` is at least `V₁`
+and achieves the target (`dilutionVolume_dilutes`). Without these hypotheses the formula
+degenerates: with no solute it gives `V₂ = 0`, with target `c₂ = 0` the molarity identity
+survives only through Lean's `x / 0 = 0`, and with `c₂ > c₁` it concentrates instead of
+diluting. In the dilution lemmas the final volume is a separately given measured quantity, and
+no volume additivity is used anywhere.
 
 For amounts `n i ≥ 0` with `∑ i, n i > 0`, mole fractions are nonnegative and sum to `1`.
-When two solutions combine with no reaction, each mixture mole fraction is the average of the
-two mole fractions weighted by the total amounts `N₁` and `N₂`: an algebraic identity whenever
-both totals are nonzero (`moleFraction_mix`), and a convex combination, with weight
-`N₁ / (N₁ + N₂)` in `(0, 1)`, when both totals are positive (`moleFraction_mix_convex`).
-Mixture molarity is not determined by the single-solution data: two scenarios agreeing on
-`(c₁, c₂, n₁, n₂)` with different measured final volumes have different mixture molarities.
+When two solutions combine with no reaction their amounts add, and each mole fraction of the
+sum is the average of the two mole fractions weighted by the total amounts `N₁` and `N₂`: an
+algebraic identity whenever both totals are nonzero (`moleFraction_add_eq_weighted`), and a
+convex combination, with weight `N₁ / (N₁ + N₂)` in `(0, 1)`, when both totals are positive
+(`moleFraction_mix_convex`). Mixture molarity needs the measured final volume, since this module
+has no volume-additivity model: for a nonzero amount, molarity is injective in the positive
+volume (`molarity_injOn_volume`).
 
 A temperature change in a closed, nonreacting sample leaves solute amount and solvent mass
-unchanged while the solution volume may change, so molality is unchanged, while for a positive
-amount molarity changes whenever the volume does (`molarity_temp_ne`), by the inverse volume
-ratio (`molarity_temp_ratio`).
+unchanged while the solution volume may change, so molality is unchanged (`molality_congr`),
+while for a positive amount molarity changes whenever the volume does (`molarity_temp_ne`), by
+the inverse volume ratio (`molarity_div_molarity`).
 
 Parts-per-million by mass is `10^6` times the mass fraction. With solute density `ρs` and
 solution density `ρ` it is `ρs / ρ` times parts-per-million by volume
@@ -92,19 +96,24 @@ the given temperature), or any volume-additivity model.
 - `amounts_massFraction_eq_massFraction` : the family mass fraction
   `Chemistry.Amounts.massFraction M n i` is the scalar ratio of `n i * M i` over
   `∑ j, n j * M j`.
-- `dilutionVolume`, `dilution_conserved`, `dilutionVolume_cross_mul`,
-  `molarity_dilutionVolume_algebraic`, `dilutionVolume_achieves_target` : `c₁ * V₁ = c₂ * V₂`,
-  two algebraic identities for the computed final volume, and that for a positive target and a
-  positive initial amount this volume is positive and achieves the target molarity.
+- `molarity_mul_volume_eq_of_amount_eq`, `dilution_conserved_of_le` : `c₁ * V₁ = c₂ * V₂` as an
+  algebraic identity, and physical dilution (positive amount, `V₁ ≤ V₂`), where `0 < c₂ ≤ c₁`.
+- `dilutionVolume`, `dilutionVolume_cross_mul`, `molarity_dilutionVolume_algebraic`,
+  `targetVolume_achieves_molarity`, `dilutionVolume_dilutes` : the computed final volume, three
+  algebraic or generic identities for it, and physical dilution to a target `0 < c₂ ≤ c₁` from
+  positive `c₁`, `V₁`, where `V₁ ≤ V₂` and the target is achieved.
 - `Chemistry.Amounts.moleFraction_nonneg`, `Chemistry.Amounts.sum_moleFraction` : reused
   mole-fraction facts; mole fractions are nonnegative and sum to `1`.
-- `moleFraction_mix` : the algebraic mixing identity for mole fractions over
-  `Chemistry.Amounts.moleFraction`, for nonzero totals.
+- `moleFraction_add_eq_weighted` : the algebraic weighted-average identity for the mole
+  fractions of a sum of amount families over `Chemistry.Amounts.moleFraction`, for nonzero
+  totals.
 - `moleFraction_mix_convex` : for positive totals, mixture mole fractions are convex
   combinations with weight `N₁ / (N₁ + N₂)` in `(0, 1)`.
-- `mixtureMolarity_notDeterminedByComponents` : mixture molarity needs the final volume.
-- `molality_temp_invariant`, `molarity_temp_ne`, `molarity_temp_ratio` : molality is
-  temperature-invariant at fixed composition; molarity tracks the volume.
+- `molarity_injOn_volume` : for a nonzero amount, molarity is injective in the positive
+  volume, so a mixture's molarity needs its measured final volume.
+- `molality_congr`, `molarity_temp_ne`, `molarity_div_molarity` : molality depends only on the
+  amount and the solvent mass; for a positive amount, molarity changes with the volume, by the
+  inverse volume ratio.
 - `ppmByMass`, `ppmByVolume`, `ppmByMass_eq`, `massFraction_of_volumes`,
   `ppmByMass_eq_mul_ppmByVolume`, `ppmByMass_eq_ppmByVolume_iff` : parts-per-million by mass
   and by volume, related by the density ratio `ρs / ρ`.
@@ -161,7 +170,7 @@ this conversion, so it is defined here. -/
 noncomputable def molalityToMolarity (ρ M b : ℝ) : ℝ := b * ρ / (1 + b * M)
 
 /-- The conversion denominator `ρ - c * M` (solvent mass per solution volume) is positive
-exactly on the physical domain `c < ρ / M`, for `M > 0`. -/
+exactly when `c < ρ / M`, the upper bound of the physical molarity domain, for `M > 0`. -/
 lemma conversion_denom_pos_iff {ρ M c : ℝ} (hM : 0 < M) :
     0 < ρ - c * M ↔ c < ρ / M := by
   rw [sub_pos, lt_div_iff₀ hM]
@@ -293,7 +302,8 @@ the family version `n i * M i / ∑ j, n j * M j` over per-species molar masses.
 definition provides this single-solute convention. -/
 noncomputable def massFraction (mSolute mSoln : ℝ) : ℝ := mSolute / mSoln
 
-/-- With solute mass `n * M` and solution mass `ρ * V`, the mass fraction is `c * M / ρ`. -/
+/-- With solute mass `n * M` and solution mass `ρ * V`, the mass fraction is `c * M / ρ` (an
+algebraic identity, for any nonzero `V` and `ρ`). -/
 lemma massFraction_eq_molarity_mul {n M ρ V : ℝ} (hV : V ≠ 0) (hρ : ρ ≠ 0) :
     massFraction (n * M) (ρ * V) = molarity n V * M / ρ := by
   have hρV : ρ * V ≠ 0 := mul_ne_zero hρ hV
@@ -313,25 +323,41 @@ lemma amounts_massFraction_eq_massFraction {ι : Type*} [Fintype ι] (M n : ι �
 -/
 
 /-- The computed final volume `V₂ = c₁ * V₁ / c₂` for diluting from `c₁, V₁` to the target
-concentration `c₂`. It achieves the target when `c₂ > 0` and `c₁ * V₁ > 0`
-(`dilutionVolume_achieves_target`). This pins the dilution-volume convention; no Mathlib
-definition provides it (Loogle finds no `dilutionVolume`). -/
+concentration `c₂`. For positive `c₁`, `V₁` and a target `0 < c₂ ≤ c₁` it is at least `V₁` and
+achieves the target (`dilutionVolume_dilutes`). This pins the dilution-volume convention; no
+Mathlib definition provides it (Loogle finds no `dilutionVolume`). -/
 noncomputable def dilutionVolume (c₁ V₁ c₂ : ℝ) : ℝ := c₁ * V₁ / c₂
 
-/-- Dilution from amount conservation: if `n₁ = n₂` with `c₁ = n₁ / V₁` and `c₂ = n₂ / V₂`
-for positive volumes, then `c₁ * V₁ = c₂ * V₂`. `V₂` is a separately given measured final
-volume; the proof never uses `V₂ = V₁ + V_added` or any volume additivity. -/
-lemma dilution_conserved {n₁ n₂ V₁ V₂ c₁ c₂ : ℝ}
+/-- Amount conservation as an algebraic identity: if `n₁ = n₂` with `c₁ = n₁ / V₁` and
+`c₂ = n₂ / V₂` for positive volumes, then `c₁ * V₁ = c₂ * V₂`. It holds for any amounts and
+also for `V₂ < V₁` (concentrating, e.g. by evaporation), so it is not by itself a dilution
+statement; see `dilution_conserved_of_le`. `V₂` is a separately given measured final volume;
+the proof never uses `V₂ = V₁ + V_added` or any volume additivity. -/
+lemma molarity_mul_volume_eq_of_amount_eq {n₁ n₂ V₁ V₂ c₁ c₂ : ℝ}
     (hc₁ : c₁ = molarity n₁ V₁) (hc₂ : c₂ = molarity n₂ V₂) (hn : n₁ = n₂)
     (hV₁ : 0 < V₁) (hV₂ : 0 < V₂) :
     c₁ * V₁ = c₂ * V₂ := by
   simp only [hc₁, hc₂, molarity]
   rw [hn, div_mul_cancel₀ _ hV₁.ne', div_mul_cancel₀ _ hV₂.ne']
 
+/-- **Dilution**: diluting a solution of positive amount `n` from volume `V₁ > 0` to a measured
+final volume `V₂ ≥ V₁` (solvent added, amount unchanged) keeps `c₁ * V₁ = c₂ * V₂`, and the
+concentration stays positive and does not rise: `0 < c₂ ≤ c₁`. -/
+lemma dilution_conserved_of_le {n V₁ V₂ c₁ c₂ : ℝ}
+    (hc₁ : c₁ = molarity n V₁) (hc₂ : c₂ = molarity n V₂)
+    (hn : 0 < n) (hV₁ : 0 < V₁) (hV : V₁ ≤ V₂) :
+    c₁ * V₁ = c₂ * V₂ ∧ 0 < c₂ ∧ c₂ ≤ c₁ := by
+  have hV₂ : 0 < V₂ := lt_of_lt_of_le hV₁ hV
+  refine ⟨molarity_mul_volume_eq_of_amount_eq hc₁ hc₂ rfl hV₁ hV₂, ?_, ?_⟩
+  · rw [hc₂, molarity]
+    exact div_pos hn hV₂
+  · rw [hc₁, hc₂, molarity, molarity]
+    exact div_le_div_of_nonneg_left hn.le hV₁ hV
+
 /-- The cross-multiplied (algebraic) identity for the computed final volume: for `c₂ > 0` and
 arbitrary `c₁, V₁`, `V₂ = c₁ * V₁ / c₂` satisfies `c₂ * V₂ = c₁ * V₁`. This alone does not show
 that `V₂` achieves molarity `c₂`: with `c₁ * V₁ = 0` it gives `V₂ = 0`. For that, see
-`dilutionVolume_achieves_target`. -/
+`dilutionVolume_dilutes`. -/
 lemma dilutionVolume_cross_mul {c₁ V₁ c₂ : ℝ} (hc₂ : 0 < c₂) :
     c₂ * dilutionVolume c₁ V₁ c₂ = c₁ * V₁ := by
   rw [dilutionVolume, mul_comm c₂ (c₁ * V₁ / c₂), div_mul_cancel₀ _ hc₂.ne']
@@ -339,19 +365,30 @@ lemma dilutionVolume_cross_mul {c₁ V₁ c₂ : ℝ} (hc₂ : 0 < c₂) :
 /-- An algebraic identity, not a physical claim: for `c₁ * V₁ ≠ 0` and every `c₂`,
 `(c₁ * V₁) / (c₁ * V₁ / c₂) = c₂`, i.e. `molarity (c₁ * V₁) (dilutionVolume c₁ V₁ c₂) = c₂`.
 At `c₂ = 0` the computed volume is `0` and the identity holds only through Lean's `x / 0 = 0`.
-For the physical statement see `dilutionVolume_achieves_target`. -/
+For the physical statement see `dilutionVolume_dilutes`. -/
 lemma molarity_dilutionVolume_algebraic {c₁ V₁ c₂ : ℝ} (h : c₁ * V₁ ≠ 0) :
     molarity (c₁ * V₁) (dilutionVolume c₁ V₁ c₂) = c₂ := by
   rw [molarity, dilutionVolume]
   exact div_div_cancel₀ h
 
-/-- **The computed final volume achieves the target concentration**: for a positive target
-`c₂` and a positive initial amount `c₁ * V₁` (physically, positive initial concentration and
-volume), the final volume `V₂ = c₁ * V₁ / c₂` is positive and the solution of amount `c₁ * V₁`
-in it has molarity `c₂`. -/
-lemma dilutionVolume_achieves_target {c₁ V₁ c₂ : ℝ} (hc₂ : 0 < c₂) (h : 0 < c₁ * V₁) :
+/-- A generic amount-conserving target volume, not a dilution statement: for a positive target
+`c₂` and a positive amount `c₁ * V₁`, the volume `V₂ = c₁ * V₁ / c₂` is positive and the amount
+`c₁ * V₁` in it has molarity `c₂`. The hypotheses allow `c₂ > c₁` (then `V₂ < V₁`: concentrating)
+and negative `c₁`, `V₁` with a positive product; for physical dilution see
+`dilutionVolume_dilutes`. -/
+lemma targetVolume_achieves_molarity {c₁ V₁ c₂ : ℝ} (hc₂ : 0 < c₂) (h : 0 < c₁ * V₁) :
     0 < dilutionVolume c₁ V₁ c₂ ∧ molarity (c₁ * V₁) (dilutionVolume c₁ V₁ c₂) = c₂ :=
   ⟨div_pos h hc₂, molarity_dilutionVolume_algebraic h.ne'⟩
+
+/-- **Dilution to a target concentration**: for a positive initial concentration `c₁` and
+volume `V₁` and a target `0 < c₂ ≤ c₁`, the computed final volume is at least the initial volume
+(solvent is added, never removed), `V₁ ≤ V₂`, and the diluted solution has molarity `c₂`. -/
+lemma dilutionVolume_dilutes {c₁ V₁ c₂ : ℝ} (hc₁ : 0 < c₁) (hV₁ : 0 < V₁) (hc₂ : 0 < c₂)
+    (hle : c₂ ≤ c₁) :
+    V₁ ≤ dilutionVolume c₁ V₁ c₂ ∧ molarity (c₁ * V₁) (dilutionVolume c₁ V₁ c₂) = c₂ := by
+  refine ⟨?_, molarity_dilutionVolume_algebraic (mul_pos hc₁ hV₁).ne'⟩
+  rw [dilutionVolume, le_div_iff₀ hc₂, mul_comm c₁ V₁]
+  exact mul_le_mul_of_nonneg_left hle hV₁.le
 
 /-!
 
@@ -359,14 +396,14 @@ lemma dilutionVolume_achieves_target {c₁ V₁ c₂ : ℝ} (hc₂ : 0 < c₂) (
 
 -/
 
-/-- **Mixing identity** (algebraic): when two solutions with amount families `n₁, n₂` over the
-same species are combined with no reaction (amounts add), each mixture mole fraction (over
-`Chemistry.Amounts.moleFraction`) is the average of the two mole fractions weighted by the
-totals `N₁ = ∑ j, n₁ j` and `N₂ = ∑ j, n₂ j`. Only `N₁ ≠ 0` and `N₂ ≠ 0` are assumed, so this
-is not a convexity claim: totals `-1` and `2` give weights `-1` and `2`, and when
-`N₁ + N₂ = 0` both sides are `0` by Lean's division convention. For positive totals see
-`moleFraction_mix_convex`. -/
-lemma moleFraction_mix {ι : Type*} [Fintype ι] (n₁ n₂ : ι → ℝ) (i : ι)
+/-- **Weighted-average identity** (algebraic) for the mole fractions of a sum `n₁ + n₂` of
+amount families over the same species (over `Chemistry.Amounts.moleFraction`): each is the
+average of the two mole fractions weighted by the totals `N₁ = ∑ j, n₁ j` and `N₂ = ∑ j, n₂ j`.
+Only `N₁ ≠ 0` and `N₂ ≠ 0` are assumed, so this is not a physical mixing or convexity claim:
+totals `-1` and `2` give weights `-1` and `2`, and when `N₁ + N₂ = 0` both sides are `0` by
+Lean's division convention. Mixing two solutions with no reaction adds their amounts; for
+positive totals see `moleFraction_mix_convex`. -/
+lemma moleFraction_add_eq_weighted {ι : Type*} [Fintype ι] (n₁ n₂ : ι → ℝ) (i : ι)
     (h₁ : ∑ j, n₁ j ≠ 0) (h₂ : ∑ j, n₂ j ≠ 0) :
     Chemistry.Amounts.moleFraction (n₁ + n₂) i =
       ((∑ j, n₁ j) * Chemistry.Amounts.moleFraction n₁ i +
@@ -381,8 +418,9 @@ lemma moleFraction_mix {ι : Type*} [Fintype ι] (n₁ n₂ : ι → ℝ) (i : �
 
 /-- **Mixing as a convex combination**: if both solutions have positive total amounts
 `N₁ = ∑ j, n₁ j` and `N₂ = ∑ j, n₂ j`, the weight `w = N₁ / (N₁ + N₂)` lies in `(0, 1)` and each
-mixture mole fraction is `w * x₁ + (1 - w) * x₂`. With nonnegative amounts each `xₖ` is also
-nonnegative (`Chemistry.Amounts.moleFraction_nonneg`). -/
+mixture mole fraction is `w * x₁ + (1 - w) * x₂`. Only positive totals are needed, which every
+pair of physical solutions (nonnegative amounts, positive totals) has; with nonnegative amounts
+each `xₖ` is also nonnegative (`Chemistry.Amounts.moleFraction_nonneg`). -/
 lemma moleFraction_mix_convex {ι : Type*} [Fintype ι] (n₁ n₂ : ι → ℝ) (i : ι)
     (h₁ : 0 < ∑ j, n₁ j) (h₂ : 0 < ∑ j, n₂ j) :
     0 < (∑ j, n₁ j) / ((∑ j, n₁ j) + ∑ j, n₂ j) ∧
@@ -393,22 +431,19 @@ lemma moleFraction_mix_convex {ι : Type*} [Fintype ι] (n₁ n₂ : ι → ℝ)
             Chemistry.Amounts.moleFraction n₂ i := by
   have hS : 0 < (∑ j, n₁ j) + ∑ j, n₂ j := add_pos h₁ h₂
   refine ⟨div_pos h₁ hS, (div_lt_one hS).2 (lt_add_of_pos_right _ h₂), ?_⟩
-  rw [moleFraction_mix n₁ n₂ i h₁.ne' h₂.ne']
+  rw [moleFraction_add_eq_weighted n₁ n₂ i h₁.ne' h₂.ne']
   field_simp
   ring
 
-/-- Mixture molarity is not determined by the single-solution data: two scenarios agreeing on
-`(c₁, c₂, n₁, n₂)` with different measured final volumes have different mixture molarities.
-Concretely, `n₁ = n₂ = 1` with `V₁ = V₂ = 1` gives `c₁ = c₂ = 1`, while final volume `2`
-gives mixture molarity `1` and final volume `3` gives `2 / 3`. This is an existence statement
-about the two scenarios, not a claim about real mixture volumes. -/
-lemma mixtureMolarity_notDeterminedByComponents :
-    ∃ (c₁ c₂ n₁ n₂ Vₐ V₆ : ℝ),
-      c₁ = molarity n₁ 1 ∧ c₂ = molarity n₂ 1 ∧ n₁ = 1 ∧ n₂ = 1 ∧ Vₐ = 2 ∧ V₆ = 3 ∧
-        Vₐ ≠ V₆ ∧ molarity (n₁ + n₂) Vₐ = 1 ∧ molarity (n₁ + n₂) V₆ = 2 / 3 ∧
-        molarity (n₁ + n₂) Vₐ ≠ molarity (n₁ + n₂) V₆ := by
-  refine ⟨1, 1, 1, 1, 2, 3, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
-    (try simp only [molarity]) <;> norm_num
+/-- **Molarity is injective in the volume**: for a nonzero amount `n`, distinct positive volumes
+give distinct molarities. Since this module has no volume-additivity model, a mixture's molarity
+therefore needs its measured final volume; the test module gives a numerical instance. -/
+lemma molarity_injOn_volume {n : ℝ} (hn : n ≠ 0) : Set.InjOn (molarity n) (Set.Ioi 0) := by
+  intro V hV V' hV' h
+  simp only [Set.mem_Ioi] at hV hV'
+  simp only [molarity] at h
+  rw [div_eq_div_iff hV.ne' hV'.ne'] at h
+  exact (mul_left_cancel₀ hn h).symm
 
 /-!
 
@@ -416,25 +451,25 @@ lemma mixtureMolarity_notDeterminedByComponents :
 
 -/
 
-/-- Molality is unchanged by a temperature change in a closed, nonreacting sample: solute
-amount and solvent mass are unchanged, while the solution volume may change arbitrarily. -/
-lemma molality_temp_invariant {n n' mSolvent mSolvent' : ℝ}
+/-- Molality depends only on the solute amount and the solvent mass (an algebraic congruence).
+In a closed, nonreacting sample a temperature change leaves both unchanged, so molality is
+unchanged; that modeling assumption, not this lemma, carries the temperature independence. -/
+lemma molality_congr {n n' mSolvent mSolvent' : ℝ}
     (hn : n' = n) (hm : mSolvent' = mSolvent) :
     molality n' mSolvent' = molality n mSolvent := by
   rw [hn, hm]
 
 /-- Molarity changes when the volume changes: for `n > 0` and positive volumes, `V' ≠ V`
-implies different molarities. -/
+implies different molarities (`molarity_injOn_volume`). -/
 lemma molarity_temp_ne {n V V' : ℝ} (hn : 0 < n) (hV : 0 < V) (hV' : 0 < V')
-    (hVV : V' ≠ V) : molarity n V' ≠ molarity n V := by
-  simp only [molarity]
-  intro h
-  rw [div_eq_div_iff hV'.ne' hV.ne'] at h
-  have hVV' : V = V' := mul_left_cancel₀ hn.ne' h
-  exact hVV hVV'.symm
+    (hVV : V' ≠ V) : molarity n V' ≠ molarity n V := fun h =>
+  hVV (molarity_injOn_volume hn.ne' (show V' ∈ Set.Ioi (0 : ℝ) from hV')
+    (show V ∈ Set.Ioi (0 : ℝ) from hV) h)
 
-/-- Quantitative form: the molarity ratio under a volume change is the inverse volume ratio. -/
-lemma molarity_temp_ratio {n V V' : ℝ} (hn : n ≠ 0) (hV : V ≠ 0) (hV' : V' ≠ 0) :
+/-- The molarity ratio is the inverse volume ratio, an algebraic identity for nonzero `n`, `V`
+and `V'`; for a positive amount and positive volumes it is the quantitative form of
+`molarity_temp_ne`. -/
+lemma molarity_div_molarity {n V V' : ℝ} (hn : n ≠ 0) (hV : V ≠ 0) (hV' : V' ≠ 0) :
     molarity n V' / molarity n V = V / V' := by
   have hdiv : n / V ≠ 0 := div_ne_zero hn hV
   simp only [molarity]
@@ -453,8 +488,8 @@ lemma ppmByMass_eq (w : ℝ) : ppmByMass w = 10 ^ 6 * w := rfl
 
 /-- Mass fraction from volumes: with solute density `ρs` (so `mSolute = ρs * vSolute`) and
 solution density `ρ` (so `mSoln = ρ * vSoln`), the mass fraction is `(ρs / ρ)` times the
-volume fraction. Hence ppm by mass is `ρs / ρ` times ppm by volume
-(`ppmByMass_eq_mul_ppmByVolume`). -/
+volume fraction (an algebraic identity, for any nonzero `ρ` and `vSoln`). Hence ppm by mass is
+`ρs / ρ` times ppm by volume (`ppmByMass_eq_mul_ppmByVolume`). -/
 lemma massFraction_of_volumes {mSolute mSoln vSolute vSoln ρs ρ : ℝ}
     (hs : mSolute = ρs * vSolute) (h : mSoln = ρ * vSoln)
     (hρ : ρ ≠ 0) (hv : vSoln ≠ 0) :
@@ -465,8 +500,9 @@ lemma massFraction_of_volumes {mSolute mSoln vSolute vSoln ρs ρ : ℝ}
   field_simp
 
 /-- **ppm by mass versus ppm by volume**: with solute density `ρs` (`mSolute = ρs * vSolute`)
-and solution density `ρ` (`mSoln = ρ * vSoln`), ppm by mass is `ρs / ρ` times ppm by volume.
-The factor is the density ratio, not the numerical value of `ρ`. -/
+and solution density `ρ` (`mSoln = ρ * vSoln`), ppm by mass is `ρs / ρ` times ppm by volume
+(an algebraic identity, for any nonzero `ρ` and `vSoln`). The factor is the density ratio, not
+the numerical value of `ρ`. -/
 lemma ppmByMass_eq_mul_ppmByVolume {mSolute mSoln vSolute vSoln ρs ρ : ℝ}
     (hs : mSolute = ρs * vSolute) (h : mSoln = ρ * vSoln)
     (hρ : ρ ≠ 0) (hv : vSoln ≠ 0) :

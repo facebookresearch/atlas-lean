@@ -131,13 +131,28 @@ example : dilutionVolume 6 (1/2) 1 = 3 := by
 example : 1 * dilutionVolume 6 (1/2) 1 = 6 * (1/2) :=
   dilutionVolume_cross_mul (by norm_num)
 
-/-- The computed final volume is positive and achieves the target concentration `1`. -/
-example : 0 < dilutionVolume 6 (1/2) 1 ∧ molarity (6 * (1/2)) (dilutionVolume 6 (1/2) 1) = 1 :=
-  dilutionVolume_achieves_target (by norm_num) (by norm_num)
+/-- Dilution from `c₁ = 6`, `V₁ = 1/2` to the lower target `1`: the computed volume is at least
+`V₁` and achieves the target. -/
+example : (1:ℝ)/2 ≤ dilutionVolume 6 (1/2) 1 ∧
+    molarity (6 * (1/2)) (dilutionVolume 6 (1/2) 1) = 1 :=
+  dilutionVolume_dilutes (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+
+/-- The generic target-volume identity also covers concentrating: from `c₁ = V₁ = 1` to the
+higher target `c₂ = 2` the computed volume is `1/2 < V₁`, which `dilutionVolume_dilutes`
+excludes through `c₂ ≤ c₁`. -/
+example : dilutionVolume 1 1 2 = 1/2 ∧ dilutionVolume 1 1 2 < 1 ∧
+    molarity (1 * 1) (dilutionVolume 1 1 2) = 2 :=
+  ⟨by norm_num [dilutionVolume], by norm_num [dilutionVolume],
+    (targetVolume_achieves_molarity (by norm_num) (by norm_num)).2⟩
+
+/-- Unphysical inputs `c₁ = V₁ = -1` with target `1` satisfy the generic identity (positive
+product), and `dilutionVolume_dilutes` excludes them through `0 < c₁` and `0 < V₁`. -/
+example : 0 < dilutionVolume (-1) (-1) 1 ∧ molarity (-1 * -1) (dilutionVolume (-1) (-1) 1) = 1 :=
+  targetVolume_achieves_molarity (by norm_num) (by norm_num)
 
 /-- Boundary case with no solute (`c₁ = 0`, `V₁ = 1`, target `c₂ = 1`): the cross-multiplied
 identity still holds, but the final volume is `0` and the molarity is `0`, not the target `1`.
-`dilutionVolume_achieves_target` excludes this case through `0 < c₁ * V₁`. -/
+`dilutionVolume_dilutes` excludes this case through `0 < c₁`. -/
 example : (1:ℝ) * dilutionVolume 0 1 1 = 0 * 1 ∧ dilutionVolume 0 1 1 = 0 ∧
     molarity (0 * 1) (dilutionVolume 0 1 1) ≠ 1 := by
   refine ⟨dilutionVolume_cross_mul (by norm_num), ?_, ?_⟩ <;>
@@ -145,15 +160,20 @@ example : (1:ℝ) * dilutionVolume 0 1 1 = 0 * 1 ∧ dilutionVolume 0 1 1 = 0 �
 
 /-- Zero-target boundary case (`c₁ = V₁ = 1`, `c₂ = 0`): the computed volume is `0`, yet the
 algebraic identity still reports molarity `0`, only through Lean's `1 / 0 = 0`. A zero volume
-cannot hold the amount `1`; `dilutionVolume_achieves_target` excludes this case through
-`0 < c₂`. -/
+cannot hold the amount `1`; `dilutionVolume_dilutes` excludes this case through `0 < c₂`. -/
 example : dilutionVolume 1 1 0 = 0 ∧ molarity (1 * 1) (dilutionVolume 1 1 0) = 0 :=
   ⟨by simp [dilutionVolume], molarity_dilutionVolume_algebraic (by norm_num)⟩
 
 /-- Amount conservation gives `c₁ * V₁ = c₂ * V₂` at the stated numbers. -/
 example : (6:ℝ) * (1/2) = 1 * 3 :=
-  dilution_conserved (n₁ := 3) (n₂ := 3) (by simp only [molarity]; norm_num)
+  molarity_mul_volume_eq_of_amount_eq (n₁ := 3) (n₂ := 3) (by simp only [molarity]; norm_num)
     (by simp only [molarity]; norm_num) rfl (by norm_num) (by norm_num)
+
+/-- Physical dilution of the amount `3` from volume `1/2` to `3`: `c₁ * V₁ = c₂ * V₂`, and the
+concentration drops from `6` to `1`. -/
+example : (6:ℝ) * (1/2) = 1 * 3 ∧ (0:ℝ) < 1 ∧ (1:ℝ) ≤ 6 :=
+  dilution_conserved_of_le (n := 3) (by simp only [molarity]; norm_num)
+    (by simp only [molarity]; norm_num) (by norm_num) (by norm_num) (by norm_num)
 
 /-!
 
@@ -188,12 +208,13 @@ example : ∑ i, Chemistry.Amounts.moleFraction mixN1 i = 1 :=
 example (i : Fin 2) : 0 ≤ Chemistry.Amounts.moleFraction mixN1 i :=
   Chemistry.Amounts.moleFraction_nonneg mixN1_nonneg i
 
-/-- The algebraic mixing identity, for the stated amount families with totals `3` and `7`. -/
+/-- The algebraic weighted-average identity, for the stated amount families with totals `3`
+and `7`. -/
 example (i : Fin 2) : Chemistry.Amounts.moleFraction (mixN1 + mixN2) i =
     ((∑ j, mixN1 j) * Chemistry.Amounts.moleFraction mixN1 i +
       (∑ j, mixN2 j) * Chemistry.Amounts.moleFraction mixN2 i) /
       ((∑ j, mixN1 j) + (∑ j, mixN2 j)) :=
-  moleFraction_mix mixN1 mixN2 i (by rw [mixN1_sum]; norm_num)
+  moleFraction_add_eq_weighted mixN1 mixN2 i (by rw [mixN1_sum]; norm_num)
     (by rw [mixN2_sum]; norm_num)
 
 /-- With positive totals `3` and `7` the mixture is a convex combination with weight `3/10`. -/
@@ -209,20 +230,27 @@ example (i : Fin 2) : Chemistry.Amounts.moleFraction (mixN1 + mixN2) i =
 example : Chemistry.Amounts.moleFraction (mixN1 + mixN2) 0 = 2/5 := by
   norm_num [Chemistry.Amounts.moleFraction, Pi.add_apply, mixN1, mixN2, Fin.sum_univ_two]
 
-/-- Counterexample, scenario A: final volume `2` gives mixture molarity `1`. -/
+/-- Mixture molarity needs the measured final volume. With the combined amount `2`, final
+volume `2` gives mixture molarity `1`. -/
 example : molarity (1 + 1) 2 = 1 := by
   simp only [molarity]
   norm_num
 
-/-- Counterexample, scenario B: final volume `3` gives mixture molarity `2/3`. -/
+/-- The same combined amount `2` in final volume `3` gives mixture molarity `2/3`. -/
 example : molarity (1 + 1) 3 = 2/3 := by
   simp only [molarity]
   norm_num
 
-/-- The two mixture molarities differ although all single-solution data agree. -/
+/-- The two mixture molarities differ, computed directly. -/
 example : molarity (1 + 1) 2 ≠ molarity (1 + 1) 3 := by
   simp only [molarity]
   norm_num
+
+/-- The same conclusion from `molarity_injOn_volume`: distinct positive volumes give distinct
+molarities for the nonzero amount `2`. -/
+example : molarity (1 + 1) 2 ≠ molarity (1 + 1) 3 := fun h =>
+  absurd (molarity_injOn_volume (by norm_num) (show (2:ℝ) ∈ Set.Ioi 0 by norm_num)
+    (show (3:ℝ) ∈ Set.Ioi 0 by norm_num) h) (by norm_num)
 
 /-!
 
@@ -232,7 +260,7 @@ example : molarity (1 + 1) 2 ≠ molarity (1 + 1) 3 := by
 
 /-- Molality is unchanged when amount and solvent mass are unchanged. -/
 example : molality (1:ℝ) 5 = molality 1 5 :=
-  molality_temp_invariant rfl rfl
+  molality_congr rfl rfl
 
 /-- Molarity changes when the volume changes from `1` to `2`. -/
 example : molarity (1:ℝ) 2 ≠ molarity 1 1 :=
@@ -240,7 +268,7 @@ example : molarity (1:ℝ) 2 ≠ molarity 1 1 :=
 
 /-- The molarity ratio is the inverse volume ratio: `(1/2)/(1/1) = 1/2`. -/
 example : molarity (1:ℝ) 2 / molarity 1 1 = 1/2 :=
-  molarity_temp_ratio (by norm_num) (by norm_num) (by norm_num)
+  molarity_div_molarity (by norm_num) (by norm_num) (by norm_num)
 
 /-- The `M` vs `mol/kg` guard: molarity and molality differ already on small numbers. -/
 example : molarity (1:ℝ) 2 ≠ molality 1 3 := by
