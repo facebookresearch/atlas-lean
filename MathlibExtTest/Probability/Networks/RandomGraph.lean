@@ -21,7 +21,7 @@ public import Mathlib.Basic.ENNReal.Basic
 public import Mathlib.Order.Notation
 
 /-!
-# Random graph tests: 12 N05.1 + 13 N05.3 = 25
+# Random graph tests: 14 N05.1 + 13 N05.3 = 27
 
 N05.1 covers the exponential-family law on `Fin 2` with an edge
 statistic (normalizer, probabilities, `PMF`, log-likelihood, moment
