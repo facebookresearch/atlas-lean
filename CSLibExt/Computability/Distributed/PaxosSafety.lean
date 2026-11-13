@@ -11,9 +11,21 @@ module
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Fintype.Card
 
+/-!
+# Majority quorums and the Paxos proposal-safety step
+
+The safety argument of the Paxos (Synod) consensus algorithm (L. Lamport, *Paxos made
+simple*, ACM SIGACT News 32(4), 2001) rests on two facts proved here:
+
+* `majority_intersect`: any two majorities of a finite set share an element.
+* `proposal_safety_step`: if a majority accepted the proposal `(b, v)`, then a proposer at a
+  later ballot that reads a majority quorum proposes `v`, given the induction hypothesis for
+  the ballots in between. Iterating this step over ballots is the Synod safety proof.
+-/
+
 @[expose] public section
 
-
+namespace Cslib.Distributed.PaxosSafety
 
 /-- Majority quorums intersect: any two subsets of a finite set
 each containing more than half the elements share an element. -/
@@ -69,3 +81,5 @@ theorem proposal_safety_step {n : ℕ} {V : Type*}
   intro a₀ ha₀ c₀ w₀ hrep₀ hmax
   obtain ⟨hacc₀, hc₀⟩ := hrep a₀ ha₀ c₀ w₀ hrep₀
   exact hsafe a₀ ha₀ c₀ w₀ hacc₀ (le_trans hbc (hmax a haQ c w hrepa)) hc₀
+
+end Cslib.Distributed.PaxosSafety

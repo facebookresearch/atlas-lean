@@ -8,20 +8,27 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Distributed.PaxosSafety
+public import CSLibExt.Computability.Distributed.PaxosSafety
+
+/-!
+# Tests for majority quorums and the Paxos proposal-safety step
+
+* Two majorities of a 3-element set intersect.
+* A later Paxos state in which a member of the read quorum has moved past the chosen ballot.
+  Acceptors `0` and `1` (a majority of three) accepted `(1, 7)`; acceptor `1` later accepted
+  `(2, 7)`. The proposer of ballot `3` reads `Q = {1, 2}`: acceptor `1` reports `(2, 7)` and
+  acceptor `2` has accepted nothing. No member of `Q` still reports `(1, 7)`, yet the safety
+  step applies.
+-/
 
 @[expose] public section
+
+namespace Cslib.Distributed.PaxosSafety.Tests
 
 /-- Boundary check: two majorities of a 3-element set intersect. -/
 example (S T : Finset (Fin 3)) (hS : 3 < 2 * S.card)
     (hT : 3 < 2 * T.card) : (S ∩ T).Nonempty :=
   majority_intersect S T hS hT
-
-/-! A later Paxos state in which a member of the read quorum has moved past the chosen
-ballot. Acceptors `0` and `1` (a majority of three) accepted `(1, 7)`; acceptor `1` later
-accepted `(2, 7)`. The proposer of ballot `3` reads `Q = {1, 2}`: acceptor `1` reports
-`(2, 7)` and acceptor `2` has accepted nothing. No member of `Q` still reports `(1, 7)`, yet
-the safety step applies. -/
 
 /-- The acceptance history of the scenario. -/
 private def laterHistory (a : Fin 3) (c w : ℕ) : Prop :=
@@ -67,3 +74,5 @@ example :
     · rcases hacc with ⟨h, _⟩ | ⟨h, _⟩ | ⟨h, _⟩ <;> exact absurd h (by decide)
   · intro a ha c w hacc _ _
     rcases hacc with ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩ | ⟨_, _, rfl⟩ <;> rfl
+
+end Cslib.Distributed.PaxosSafety.Tests
