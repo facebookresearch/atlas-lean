@@ -15,7 +15,8 @@ import Mathlib.Tactic.Ring
 /-!
 # The Hansen--Jagannathan bound
 
-On a finite state space with physical probabilities `P`, let `m` be a stochastic discount
+On a finite state space with physical probabilities `P` (nonnegative weights summing to one, so
+states of probability zero are allowed), let `m` be a stochastic discount
 factor and `Rᵉ` an excess return priced at zero, `E_P[m * Rᵉ] = 0`. Cauchy--Schwarz applied
 to the covariance gives the Hansen--Jagannathan bound: the Sharpe ratio of the excess
 return is bounded by the SDF volatility over its mean,
@@ -51,25 +52,24 @@ the Sharpe ratio of the excess return is bounded by the SDF volatility over its 
 `|E_P[Rᵉ]| / σ(Rᵉ) ≤ σ(m) / E_P[m]`, with `σ` the square root of the variance and
 `expectation` / `variance` the canonical finite-probability ones. -/
 theorem hansenJagannathan_bound {Ω : Type*} [Fintype Ω] {P m Re : Ω → ℝ}
-    (hP : ∀ ω, 0 < P ω) (hP1 : ∑ ω, P ω = 1)
+    (hP : ∀ ω, 0 ≤ P ω) (hP1 : ∑ ω, P ω = 1)
     (hprice : expectation P (fun ω => m ω * Re ω) = 0) (hEm : 0 < expectation P m)
     (hVar : 0 < variance P Re) :
     |expectation P Re| / Real.sqrt (variance P Re)
       ≤ Real.sqrt (variance P m) / expectation P m := by
-  have hPnonneg : ∀ ω, 0 ≤ P ω := fun ω => le_of_lt (hP ω)
   have hCov := covariance_eq_sub (p := P) hP1 m Re
   rw [hprice] at hCov
   have hCov2 : (covariance P m Re) ^ 2
       = (expectation P m * expectation P Re) ^ 2 := by rw [hCov]; ring
   have hCS : (covariance P m Re) ^ 2 ≤ variance P m * variance P Re :=
-    covariance_sq_le_variance_mul_variance (p := P) (X := m) (Y := Re) hPnonneg
+    covariance_sq_le_variance_mul_variance (p := P) (X := m) (Y := Re) hP
   rw [hCov2] at hCS
   have hVm : 0 ≤ variance P m := by
     unfold variance
     change 0 ≤ (∑ x, P x * ((m x - expectation P m) ^ 2))
     apply Finset.sum_nonneg
     intro ω _
-    exact mul_nonneg (hPnonneg ω) (sq_nonneg _)
+    exact mul_nonneg (hP ω) (sq_nonneg _)
   have hsqrtRe : 0 < Real.sqrt (variance P Re) := Real.sqrt_pos.mpr hVar
   rw [div_le_div_iff₀ hsqrtRe hEm]
   have hsq : (|expectation P Re| * expectation P m) ^ 2

@@ -20,6 +20,10 @@ Equality case on two states: `P = ![1/2, 1/2]`, `m = ![9/10, 11/10]`,
 `Re = ![11/10, -9/10]`, with `E[m] = 1`, `E[Re] = 1/10`, `E[m * Re] = 0`,
 `Var(m) = 1/100`, `Var(Re) = 1`, so both sides of the bound equal `1/10`. Also a
 direct check of the covariance Cauchy--Schwarz lemma on the same example.
+
+Zero-mass boundary: adding a third state with probability `0` and arbitrary payoffs,
+`P₀ = ![1/2, 1/2, 0]`, leaves every moment and both sides of the bound unchanged, and the
+bound still applies although `P₀` is not strictly positive.
 -/
 
 @[expose] public section
@@ -87,7 +91,7 @@ theorem cs_example : (covariance P m Re) ^ 2 ≤ variance P m * variance P Re :=
 theorem hj_bound_example :
     |expectation P Re| / Real.sqrt (variance P Re)
       ≤ Real.sqrt (variance P m) / expectation P m := by
-  apply hansenJagannathan_bound hP_pos hP_sum exp_mRe
+  apply hansenJagannathan_bound (fun ω => le_of_lt (hP_pos ω)) hP_sum exp_mRe
   · rw [exp_m]; norm_num
   · rw [var_Re]; norm_num
 
@@ -97,6 +101,76 @@ theorem lhs_eq : |expectation P Re| / Real.sqrt (variance P Re) = 1 / 10 := by
 
 theorem rhs_eq : Real.sqrt (variance P m) / expectation P m = 1 / 10 := by
   rw [var_m, exp_m]
+  have hsqrt : Real.sqrt (1/100 : ℝ) = 1/10 := by
+    rw [show (1/100 : ℝ) = (1/10)^2 by norm_num, Real.sqrt_sq (by norm_num)]
+  rw [hsqrt, div_one]
+
+noncomputable def P₀ : Fin 3 → ℝ := ![1/2, 1/2, 0]
+noncomputable def m₀ : Fin 3 → ℝ := ![9/10, 11/10, 3]
+noncomputable def Re₀ : Fin 3 → ℝ := ![11/10, -9/10, 5]
+
+theorem P₀_not_pos : ¬ ∀ ω, 0 < P₀ ω := by
+  intro h
+  have h2 := h 2
+  simp [P₀] at h2
+
+theorem P₀_nonneg : ∀ ω, 0 ≤ P₀ ω := by
+  intro ω
+  fin_cases ω <;> simp [P₀]
+
+theorem P₀_sum : ∑ ω, P₀ ω = 1 := by
+  unfold P₀
+  rw [Fin.sum_univ_three]
+  simp
+  norm_num
+
+theorem exp_m₀ : expectation P₀ m₀ = 1 := by
+  unfold expectation P₀ m₀
+  rw [Fin.sum_univ_three]
+  simp
+  norm_num
+
+theorem exp_Re₀ : expectation P₀ Re₀ = 1 / 10 := by
+  unfold expectation P₀ Re₀
+  rw [Fin.sum_univ_three]
+  simp
+  norm_num
+
+theorem exp_mRe₀ : expectation P₀ (fun ω => m₀ ω * Re₀ ω) = 0 := by
+  unfold expectation P₀ m₀ Re₀
+  rw [Fin.sum_univ_three]
+  simp
+  norm_num
+
+theorem var_m₀ : variance P₀ m₀ = 1 / 100 := by
+  unfold variance
+  rw [exp_m₀]
+  unfold expectation P₀ m₀
+  rw [Fin.sum_univ_three]
+  simp
+  norm_num
+
+theorem var_Re₀ : variance P₀ Re₀ = 1 := by
+  unfold variance
+  rw [exp_Re₀]
+  unfold expectation P₀ Re₀
+  rw [Fin.sum_univ_three]
+  simp
+  norm_num
+
+theorem hj_bound_zero_mass :
+    |expectation P₀ Re₀| / Real.sqrt (variance P₀ Re₀)
+      ≤ Real.sqrt (variance P₀ m₀) / expectation P₀ m₀ := by
+  apply hansenJagannathan_bound P₀_nonneg P₀_sum exp_mRe₀
+  · rw [exp_m₀]; norm_num
+  · rw [var_Re₀]; norm_num
+
+theorem lhs_eq₀ : |expectation P₀ Re₀| / Real.sqrt (variance P₀ Re₀) = 1 / 10 := by
+  rw [exp_Re₀, var_Re₀, Real.sqrt_one]
+  norm_num
+
+theorem rhs_eq₀ : Real.sqrt (variance P₀ m₀) / expectation P₀ m₀ = 1 / 10 := by
+  rw [var_m₀, exp_m₀]
   have hsqrt : Real.sqrt (1/100 : ℝ) = 1/10 := by
     rw [show (1/100 : ℝ) = (1/10)^2 by norm_num, Real.sqrt_sq (by norm_num)]
   rw [hsqrt, div_one]
