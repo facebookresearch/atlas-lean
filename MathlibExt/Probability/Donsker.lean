@@ -19,6 +19,8 @@ import Mathlib.MeasureTheory.Measure.LevyConvergence
 import Mathlib.MeasureTheory.Measure.LevyProkhorovMetric
 import Mathlib.MeasureTheory.Measure.Prokhorov
 import Mathlib.Probability.CentralLimitTheorem
+import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
+import Mathlib.Probability.Distributions.Gaussian.IsGaussianProcess.Basic
 import Mathlib.Probability.IdentDistribIndep
 import Mathlib.Probability.Independence.CharacteristicFunction
 import Mathlib.Topology.ContinuousMap.Bounded.ArzelaAscoli
@@ -40,6 +42,11 @@ namespace MathlibExt.Probability.DonskerWanted
 
 This file proves the functional CLT: polygonal partial-sum processes converge in
 `C([0,1],ℝ)` to Brownian motion.
+
+`exists_measurable_brownianPath_gaussian` is the Brownian adapter: from `IsBrownianReal B P'` it
+builds a measurable `Zc : Ω' → C([0,1], ℝ)` equal to `B` on `[0,1]` almost surely whose finite
+linear combinations are centered Gaussian with covariance `min s t` (Billingsley, *Convergence of
+Probability Measures*, 2nd ed., Section 8, finite-dimensional distributions of Wiener measure).
 -/
 
 noncomputable section
@@ -267,6 +274,82 @@ public theorem continuousMap_measure_ext_of_finset_eval
     exact h I
   exact congrArg ProbabilityMeasure.toMeasure
     (continuousPath_measure_ext_of_finset_eval 1 μ' ν' h')
+
+/-! ### Brownian adapter: a measurable `C([0,1])` path with Gaussian linear combinations -/
+
+/-- A linear combination `∑ s, c s * B (f s)` of a pre-Brownian motion sampled at finitely many
+times is centered Gaussian with variance `∑ s, ∑ u, c s * c u * min (f s) (f u)`. -/
+private lemma isPreBrownianReal_map_linComb {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'}
+    {ι : Type*} [Fintype ι] (f : ι → ℝ≥0) (c : ι → ℝ)
+    (B : ℝ≥0 → Ω' → ℝ) (hB : IsPreBrownianReal B P') :
+    P'.map (fun ω => ∑ s, c s * B (f s) ω) =
+      gaussianReal 0 (∑ s, ∑ u, c s * c u * min (f s : ℝ) (f u)).toNNReal := by
+  have hsum := ((hB.isGaussianProcess.comp_right f).smul c).hasGaussianLaw_fun_sum
+    (I := Finset.univ)
+  have hP : IsProbabilityMeasure P' := hsum.isProbabilityMeasure
+  have hL2 : ∀ s, MemLp (fun ω => c s * B (f s) ω) 2 P' := fun s =>
+    (hB.isGaussianProcess.hasGaussianLaw_eval (f s)).memLp_two.const_mul (c s)
+  simp only [smul_eq_mul, Function.comp_apply] at hsum
+  rw [hsum.map_eq_gaussianReal, integral_finsetSum _ fun s _ => (hL2 s).integrable one_le_two,
+    variance_fun_sum hL2]
+  congr 1
+  · simp [integral_const_mul, hB.integral_eval]
+  · congr 1
+    refine Finset.sum_congr rfl fun s _ => Finset.sum_congr rfl fun u _ => ?_
+    rw [covariance_const_mul_left, covariance_const_mul_right, hB.covariance_fun_eval,
+      NNReal.coe_min]
+    ring
+
+/-- The measurable modification `AEMeasurable.mk` of `donskerBrownianPath B` agrees with it a.e.
+and has the centered Gaussian finite-dimensional laws of Brownian motion on `[0,1]`. -/
+private lemma donskerBrownianPath_mk_spec {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'}
+    (B : ℝ≥0 → Ω' → ℝ) (hB : IsBrownianReal B P') :
+    Measurable ((donskerBrownianPath_aemeasurable B hB).mk _) ∧
+      (donskerBrownianPath_aemeasurable B hB).mk _ =ᵐ[P'] donskerBrownianPath B ∧
+      ∀ (I : Finset (Set.Icc (0 : ℝ) 1)) (c : I → ℝ),
+        P'.map (fun ω => ∑ s : I, c s * (donskerBrownianPath_aemeasurable B hB).mk _ ω s) =
+          gaussianReal 0
+            (∑ s : I, ∑ u : I, c s * c u * (min (s : Set.Icc (0 : ℝ) 1) u).1).toNNReal := by
+  set hZ := donskerBrownianPath_aemeasurable B hB
+  refine ⟨hZ.measurable_mk, hZ.ae_eq_mk.symm, fun I c => ?_⟩
+  have hae : ∀ᵐ ω ∂P', ∀ t : Set.Icc (0 : ℝ) 1, hZ.mk _ ω t = B (iccToNNReal t) ω := by
+    filter_upwards [hZ.ae_eq_mk, donskerBrownianPath_ae_eq B hB] with ω h1 h2 t
+    rw [← h1, h2]
+  rw [Measure.map_congr (g := fun ω => ∑ s : I, c s * B (iccToNNReal s) ω)
+    (by filter_upwards [hae] with ω hω; simp only [hω]),
+    isPreBrownianReal_map_linComb (fun s : I => iccToNNReal s) c B hB.toIsPreBrownianReal]
+  rfl
+
+/-- **Brownian adapter.** For a Brownian motion `B` (`IsBrownianReal B P'`) there is a
+*measurable* `Zc : Ω' → C([0,1], ℝ)` that equals `t ↦ B t` on `[0,1]` almost surely and whose
+finite linear combinations `∑ s ∈ I, c s * Zc · s` are centered Gaussian with variance
+`∑ s, ∑ u, c s * c u * min s u`. These are the inputs `hZm` and `hZ` of
+`MathlibExt.Probability.Martingale.tendstoInDistribution_fdd_martingaleDifference_floor`;
+measurability also gives the `AEMeasurable Z P'` input of
+`MathlibExt.Probability.Martingale.tendstoInDistribution_arrayStepProcess`.
+
+`Zc` is a measurable modification (`AEMeasurable.mk`) of the a.s.-continuous path map
+`ω ↦ (t ↦ B t ω)`, so `Zc` agrees a.s. with a continuous version of `B` on `[0,1]`. The Gaussian
+laws come from `IsPreBrownianReal.hasLaw`
+(through `IsGaussianProcess`), closure of Gaussian laws under linear maps, and the Brownian
+covariance `cov[B s, B u] = min s u`.
+
+Source: the finite-dimensional distributions of Brownian motion (Wiener measure on `C[0,1]`)
+are centered Gaussian with covariance `min s t`, and a linear functional `∑ c s * Z s` of a
+centered Gaussian vector is centered normal with variance `∑ s, ∑ u, c s * c u * Cov(Z s, Z u)`:
+Billingsley, *Convergence of Probability Measures*, 2nd ed., Section 8 (Wiener measure). -/
+public theorem exists_measurable_brownianPath_gaussian
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'}
+    (B : ℝ≥0 → Ω' → ℝ) (hB : IsBrownianReal B P') :
+    ∃ Zc : Ω' → C(Set.Icc (0 : ℝ) 1, ℝ), Measurable Zc ∧
+      (∀ᵐ ω ∂P', ∀ t : Set.Icc (0 : ℝ) 1, Zc ω t = B (iccToNNReal t) ω) ∧
+      ∀ (I : Finset (Set.Icc (0 : ℝ) 1)) (c : I → ℝ),
+        P'.map (fun ω => ∑ s : I, c s * Zc ω s) = gaussianReal 0
+          (∑ s : I, ∑ u : I, c s * c u * (min (s : Set.Icc (0 : ℝ) 1) u).1).toNNReal := by
+  obtain ⟨hm, hae, hlaw⟩ := donskerBrownianPath_mk_spec B hB
+  refine ⟨_, hm, ?_, hlaw⟩
+  filter_upwards [hae, donskerBrownianPath_ae_eq B hB] with ω h1 h2 t
+  rw [h1, h2]
 
 private lemma second_moment
     {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}

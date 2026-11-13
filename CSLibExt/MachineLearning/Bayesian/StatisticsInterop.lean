@@ -13,6 +13,8 @@ public import CSLibExt.MachineLearning.Bayesian.DirichletMultinomial
 import Mathlib.Probability.ProductMeasure
 public import CSLibExt.MachineLearning.Bayesian.Basic
 public import MathlibExt.Probability.Statistics.Bayesian.FiniteConsistency
+public import CSLibExt.MachineLearning.Regression.OptimalPredictors
+public import CSLibExt.MachineLearning.Bayesian.BetaBinomial
 
 @[expose] public section
 
@@ -31,6 +33,14 @@ vectors, and the Dirichlet posterior of that shared object is the displayed upda
 
 The explicit finite-model posterior weights equal the `toReal` of the Bayes posterior of
 a product likelihood kernel against a counting-weighted prior. -/
+
+/-! # Beta-binomial posterior mean is Bayes
+
+In the Beta-binomial count experiment, the observation is the success count drawn from
+`binomialKernel n`. Under a `Beta(a, b)` prior, the posterior-mean rule of that count attains the
+Bayes risk under squared loss; at an observed count `k ≤ n` the posterior is
+`Beta(a + k, b + n - k)`. No transport to a trial-vector (iid Bernoulli sample-law) experiment is
+asserted. -/
 
 namespace Cslib.MachineLearning.Bayesian
 
@@ -130,5 +140,23 @@ theorem postWeight_eq_bayesPosterior {Θ 𝓧 : Type*} [Fintype Θ] [DecidableEq
   rw [ENNReal.toReal_div, ENNReal.toReal_ofReal (hterm_nonneg θ),
     ENNReal.toReal_ofReal (Finset.sum_nonneg (fun θ' _ => hterm_nonneg θ'))]
   rfl
+
+/-- Bayes optimality of the posterior mean in the Beta-binomial count experiment. The
+observation is the success count drawn from `binomialKernel n`; for a `Beta(a, b)` prior, the
+posterior-mean rule of that count attains the Bayes risk under squared loss. At an observed
+count `k` with `k ≤ n`, the posterior being integrated is the `Beta(a + k, b + n - k)` law of the
+Beta-binomial conjugacy theorem. The statement is about the count experiment only; no transport
+to the trial-vector (iid Bernoulli sample-law) experiment is asserted. -/
+theorem isBayesEstimator_binomial_beta_posteriorMean {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
+    (n : ℕ) :
+    have _hπ := ProbabilityTheory.isProbabilityMeasureBeta ha hb
+    ProbabilityTheory.IsBayesEstimator Cslib.MachineLearning.OptimalPredictors.sqLoss
+      (binomialKernel n)
+      (Kernel.deterministic _
+        (Cslib.MachineLearning.OptimalPredictors.measurable_posteriorMean
+          (binomialKernel n) (betaMeasure a b)))
+      (betaMeasure a b) := by
+  have _hπ := ProbabilityTheory.isProbabilityMeasureBeta ha hb
+  exact Cslib.MachineLearning.OptimalPredictors.isBayesEstimator_posteriorMean _ _
 
 end Cslib.MachineLearning.Bayesian
