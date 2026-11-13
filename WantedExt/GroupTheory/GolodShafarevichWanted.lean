@@ -74,23 +74,29 @@ cohomology agrees with ordinary group cohomology. These definitions follow
 
 open CategoryTheory
 
-/-- The generator rank `d(G)`: the minimal cardinality of a (topological)
-generating set of `G`. For a finite discrete group this is the ordinary minimal
-number of generators. -/
+/-- **Generator rank.** For a topological group $G$, the generator rank $d(G)$ is the least
+natural number $k$ such that some finite subset of $G$ with $k$ elements generates a dense
+subgroup of $G$, that is, a subgroup whose closure is all of $G$. If no finite subset of $G$
+generates a dense subgroup, then $d(G)$ is defined to be $0$. For a finite discrete group this is
+the ordinary minimal number of generators. -/
 noncomputable def generatorRank
     (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] : ℕ :=
   sInf {k : ℕ | ∃ S : Finset G, S.card = k ∧
     (Subgroup.closure (S : Set G)).topologicalClosure = ⊤}
 
-/-- The trivial `ZMod p`-representation of `G`, as an object of
-`TopRep (ZMod p) G`. -/
+/-- **Trivial representation on $\mathbb{Z}/p\mathbb{Z}$.** For a natural number $p$ and a
+topological group $G$, this is $\mathbb{Z}/p\mathbb{Z}$, with its discrete topology, regarded as
+a continuous representation of $G$ over $\mathbb{Z}/p\mathbb{Z}$ on which every element of $G$
+acts as the identity. -/
 noncomputable def trivialZModpRep
     (p : ℕ) (G : Type) [Group G] [TopologicalSpace G] [IsTopologicalGroup G] :
     TopRep (ZMod p) G :=
   TopRep.of (ContRepresentation.trivial (ZMod p) G (ZMod p))
 
-/-- The relation rank `r(G) = dim_{𝔽_p} H²(G; 𝔽_p)`, computed via continuous
-cohomology in degree `2` with trivial `ZMod p` coefficients. -/
+/-- **Relation rank.** For a prime $p$ and a topological group $G$, the relation rank $r(G)$
+is the dimension over $\mathbb{F}_p = \mathbb{Z}/p\mathbb{Z}$ of the continuous cohomology
+group $H^2(G, \mathbb{F}_p)$, where $G$ acts trivially on $\mathbb{F}_p$. If this space is
+infinite-dimensional, then $r(G)$ is defined to be $0$. -/
 noncomputable def relationRank
     (p : ℕ) [Fact p.Prime] (G : Type)
     [Group G] [TopologicalSpace G] [IsTopologicalGroup G] : ℕ :=
@@ -113,7 +119,12 @@ topology (`[DiscreteTopology Q] [Finite Q]`), in which setting both ranks
 agree with their abstract group-theoretic counterparts.
 
 References: NSW, Theorem 3.9.7; Serre, Chapter I, Appendix 2, Theorem 1. -/
-/-- Source: NSW (J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*, 2nd ed., Grundlehren 323, Springer 2008), Theorem 3.9.7; J.-P. Serre, *Galois Cohomology*, Chapter I, Appendix 2, Theorem 1. Lean hypothesis: https://github.com/logical-intelligence/erdos-unit-distance (Hyp_GolodShafarevichInequality). Via leanprover/lean-eval@38361be, problem `golod_shafarevich_inequality`. -/
+/-- **Golod–Shafarevich inequality.** Let $p$ be a prime and let $Q$ be a nontrivial finite
+$p$-group, viewed as a topological group with the discrete topology. Then the generator rank
+$d(Q)$ and the relation rank $r(Q)$, the dimension over $\mathbb{F}_p$ of the continuous
+cohomology group $H^2(Q, \mathbb{F}_p)$ with trivial coefficients, satisfy $d(Q)^2 < 4\, r(Q)$.
+
+Source: NSW (J. Neukirch, A. Schmidt, K. Wingberg, *Cohomology of Number Fields*, 2nd ed., Grundlehren 323, Springer 2008), Theorem 3.9.7; J.-P. Serre, *Galois Cohomology*, Chapter I, Appendix 2, Theorem 1. Lean hypothesis: https://github.com/logical-intelligence/erdos-unit-distance (Hyp_GolodShafarevichInequality). Via leanprover/lean-eval@38361be, problem `golod_shafarevich_inequality`. -/
 public theorem_wanted golod_shafarevich_inequality
     (p : ℕ) [Fact p.Prime] (Q : Type)
     [Group Q] [TopologicalSpace Q] [IsTopologicalGroup Q]

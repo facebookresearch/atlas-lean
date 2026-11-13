@@ -35,26 +35,42 @@ group structure on `Fin n` whose group is the derived subgroup of some finite gr
 `ComputablePred`. The complexity question is not formalized.
 -/
 
-/-- The multiplication table `t` (rows `t[i]`, entries `t[i][j]`, missing entries read as `0`)
-defines a group on `Fin t.length` that is integrable: some finite group `H` has derived subgroup
-`H'` isomorphic to it. Tables that are not group tables do not satisfy the predicate. -/
+/-- **Integrable group tables.** A finite list $t = (t_0, \dots, t_{n-1})$ of finite lists of
+natural numbers is an integrable group table when there is a group structure on
+$\{0, \dots, n-1\}$ such that, for all $i, j < n$, the product of $i$ and $j$ is the entry of $t_i$
+at index $j$, counting from $0$ (an entry missing from a short row is read as $0$), and some finite
+group $H$ has derived subgroup $[H, H]$ isomorphic to this group. Lists that are not the
+multiplication table of a group on $\{0, \dots, n-1\}$ do not satisfy the predicate. -/
 def IsIntegrableGroupTable (t : List (List ℕ)) : Prop :=
   ∃ inst : Group (Fin t.length),
     (∀ i j : Fin t.length, ((inst.mul i j : Fin t.length) : ℕ) = (t.getD i []).getD j 0) ∧
     letI := inst
     ∃ (H : Type) (_ : Group H) (_ : Finite H), Nonempty (commutator H ≃* Fin t.length)
 
-/-- Kourovka 21.32 (P. J. Cameron), decidability part: it is decidable, for a finite group `G`
-given by its multiplication table, whether some finite group `H` has derived subgroup isomorphic
-to `G`. -/
+/-- **Kourovka Problem 21.32 (decidability of integrability).** The statement that integrable group
+tables form a decidable set: some computable function decides, for every finite list
+$t = (t_0, \dots, t_{n-1})$ of finite lists of natural numbers, whether $t$ is an integrable group
+table, that is, whether there is a group structure on $\{0, \dots, n-1\}$ in which, for all
+$i, j < n$, the product of $i$ and $j$ is the entry of $t_i$ at index $j$, counting from $0$ (an
+entry missing from a short row is read as $0$), and which is isomorphic to the derived subgroup of
+some finite group. -/
 def integrabilityDecidable : Prop :=
   ComputablePred IsIntegrableGroupTable
 
 /--
-Resolved true: Kalithasan and Thomas (Theorem 3.3 and its Corollary) bound the order of some
-integral of an integrable finite group `G`, which makes the problem decidable; the 21st issue of the
-Kourovka Notebook marks 21.32 solved ("Yes, it is decidable, in nondeterministic quasi-polynomial
-time"). Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
+**Integrability of finite groups is decidable.** Integrable group tables form a decidable set: some
+computable function decides, for every finite list $t = (t_0, \dots, t_{n-1})$ of finite lists of
+natural numbers, whether there is a group structure on $\{0, \dots, n-1\}$ in which, for all
+$i, j < n$, the product of $i$ and $j$ is the entry of $t_i$ at index $j$, counting from $0$ (an
+entry missing from a short row is read as $0$), and which is isomorphic to the derived subgroup of
+some finite group. That is, the decidability part of Kourovka Problem 21.32 has a positive answer.
+
+Kalithasan and Thomas bound the order of some integral of an integrable finite group $G$ (their
+Theorem 3.3 and its Corollary), which makes the problem decidable; the 21st issue of the Kourovka
+Notebook marks 21.32 solved ("Yes, it is decidable, in nondeterministic quasi-polynomial time").
+The complexity bound is not formalized.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The
 Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 21.32 (P. J. Cameron); resolution:
 S. Kalithasan and V. Z. Thomas, On the decidability of the integrability of finite groups, preprint,
 arXiv:2602.18829 (2026), Theorem 3.3 (an integrable finite group G has an integral, a group with

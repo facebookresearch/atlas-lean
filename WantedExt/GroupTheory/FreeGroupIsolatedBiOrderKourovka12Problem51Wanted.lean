@@ -40,22 +40,34 @@ negative answer, which needs one rank, and what Muliarchyk proves (`Fₙ` is a f
 copies of `ℤ`).
 -/
 
-/-- `r` is a bi-invariant (strict) total order on the group `G`. -/
+/-- **Bi-invariant strict total orders on a group.** A relation $r$ on a group $G$ is a bi-invariant
+order if $r$ is a strict total order on $G$ (irreflexive, transitive and trichotomous) and
+$r(a, b)$ implies $r(cad, cbd)$ for all $a, b, c, d \in G$. -/
 def IsBiOrder {G : Type*} [Group G] (r : G → G → Prop) : Prop :=
   IsStrictTotalOrder G r ∧ ∀ a b c d : G, r a b → r (c * a * d) (c * b * d)
 
-/-- Kourovka 12.51 (S. McCleary), stated for some finite rank `n ≥ 2`: the free group `Fₙ` has a
-finite subset `S` such that exactly one bi-invariant total order of `Fₙ` makes every element of
-`S` positive (an isolated point of the space of bi-orders). -/
+/-- **Kourovka Problem 12.51 (isolated bi-orders of free groups).** The statement that for some
+natural number $n \ge 2$ there is a finite subset $S$ of the free group $F_n$ on $n$ generators
+such that exactly one bi-invariant strict total order $<$ on $F_n$ (a strict total order such that
+$a < b$ implies $cad < cbd$ for all $a, b, c, d \in F_n$) makes every element of $S$ positive, that
+is, satisfies $1 < s$ for all $s \in S$. Such an order is an isolated point of the space of
+bi-orders of $F_n$. -/
 def freeGroupHasIsolatedBiOrder : Prop :=
   ∃ n : ℕ, 2 ≤ n ∧ ∃ S : Finset (FreeGroup (Fin n)),
     ∃! r : FreeGroup (Fin n) → FreeGroup (Fin n) → Prop, IsBiOrder r ∧ ∀ s ∈ S, r 1 s
 
 /--
+**No free group of finite rank at least 2 has an isolated bi-order.** For every natural number
+$n \ge 2$ and every finite subset $S$ of the free group $F_n$ on $n$ generators, it is not the case
+that exactly one bi-invariant strict total order $<$ on $F_n$ (a strict total order such that
+$a < b$ implies $cad < cbd$ for all $a, b, c, d \in F_n$) satisfies $1 < s$ for every $s \in S$.
+
 Resolved false: the Kourovka Notebook (21st issue) marks 12.51 solved, "No, it does not". Muliarchyk
-(arXiv:2403.14779) proves that a free product of bi-ordered groups admits no isolated bi-ordering,
-so no free group `ℤ ∗ ⋯ ∗ ℤ` of finite rank `n ≥ 2` has a finite set `S` singling out one bi-order
-(see also Dovhyi and Muliarchyk, Groups Geom. Dyn. 17 (2023)). Source: E. I. Khukhro and V. D.
+(arXiv:2403.14779) proves that a free product of bi-ordered groups admits no isolated bi-ordering;
+$F_n$ is the free product of $n \ge 2$ copies of $\mathbb{Z}$ (see also Dovhyi and Muliarchyk,
+Groups Geom. Dyn. 17 (2023)).
+
+Source: E. I. Khukhro and V. D.
 Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st issue,
 arXiv:1401.0300v49 (2026), Problem 12.51 (S. McCleary); resolution: K. Muliarchyk, Free products of
 bi-orderable groups, preprint (2024), arXiv:2403.14779; S. Dovhyi and K. Muliarchyk, Groups Geom.

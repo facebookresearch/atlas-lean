@@ -69,7 +69,12 @@ Category-(b) candidate from §122 of the Knill survey (additional statement 1).
 embeds (via injective `f`) into a simple group `H`, which embeds (via injective
 `g`) into a finitely presented group `K`, then the word problem of `G` is
 solvable. -/
-/-- Source: W. W. Boone & G. Higman, *An algebraic characterization of groups with soluble word problem*, J. Austral. Math. Soc. 18 (1974). Knill, *Some fundamental theorems in mathematics*, §122. Via leanprover/lean-eval@38361be, problem `boone_higman_embedding`. -/
+/-- **Boone–Higman theorem (easy direction).** Let $\varphi \colon F_n \to G$ be a surjective
+homomorphism from the free group $F_n$ on $n$ generators onto a group $G$. If there are injective
+homomorphisms $G \to H$ and $H \to K$, where $H$ is a simple group and $K$ is a finitely presented
+group, then the word problem of $G$ with respect to $\varphi$ is solvable.
+
+Source: W. W. Boone & G. Higman, *An algebraic characterization of groups with soluble word problem*, J. Austral. Math. Soc. 18 (1974). Knill, *Some fundamental theorems in mathematics*, §122. Via leanprover/lean-eval@38361be, problem `boone_higman_embedding`. -/
 public theorem_wanted boone_higman_embedding
     {G H K : Type*} [Group G] [Group H] [Group K]
     [IsSimpleGroup H] [Group.IsFinitelyPresented K]

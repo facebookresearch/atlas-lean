@@ -33,13 +33,16 @@ Groups are finite, as in the recognition-by-spectrum problems this question belo
 many" is "for every `k`, at least `k` pairwise non-isomorphic".
 -/
 
-/-- The set of orders of elements of `G`. -/
+/-- **The spectrum of a group (Kourovka 12.84).** The spectrum of a group $G$ is the set
+$\{\operatorname{ord}(g) : g \in G\}$ of the orders of its elements, where an element of infinite
+order is counted as having order $0$. -/
 def elementOrders (G : Type*) [Group G] : Set ℕ :=
   Set.range (orderOf : G → ℕ)
 
-/-- Kourovka 12.84 (S. A. Syskin; well-known problem): if two non-isomorphic finite groups have
-the same set `Ω` of element orders, then there are infinitely many pairwise non-isomorphic finite
-groups with set of element orders `Ω` (for every `k`, at least `k` of them). -/
+/-- **Syskin's question on groups with a given spectrum (Kourovka 12.84).** The proposition that
+for every set $\Omega$ of natural numbers, if two non-isomorphic finite groups both have set of
+element orders $\Omega$, then for every natural number $k$ there are $k$ pairwise non-isomorphic
+finite groups whose set of element orders is $\Omega$; that is, infinitely many. -/
 def twoRealizationsImplyInfinitelyMany : Prop :=
   ∀ Ω : Set ℕ,
     (∃ (G H : Type) (_ : Group G) (_ : Finite G) (_ : Group H) (_ : Finite H),
@@ -48,11 +51,17 @@ def twoRealizationsImplyInfinitelyMany : Prop :=
       (∀ i, elementOrders (G i) = Ω) ∧ ∀ i j, i ≠ j → IsEmpty (G i ≃* G j)
 
 /--
-Resolved false: the Kourovka Archive answers 12.84 "No, it is not" (V. D. Mazurov, 1994): some set
-of element orders is realized by at least two, but only finitely many, pairwise non-isomorphic
-finite groups. For example, by Theorem 2.1(iii) of the survey of Grechkoseeva, Mazurov, Shi,
-Vasil'ev and Yang, the finite groups with the set of element orders of `S₆(2)` are exactly `S₆(2)`
-and `O₈⁺(2)`, which have different orders. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
+**Two isospectral finite groups do not force infinitely many.** There are a set $\Omega$ of
+natural numbers and a natural number $k$ such that two non-isomorphic finite groups have set of
+element orders $\Omega$, but there are no $k$ pairwise non-isomorphic finite groups whose set of
+element orders is $\Omega$.
+
+For example, by Theorem 2.1(iii) of the survey of Grechkoseeva, Mazurov, Shi, Vasil'ev and Yang,
+the finite groups with the set of element orders of $S_6(2)$ are exactly $S_6(2)$ and
+$O_8^+(2)$, which have different orders. The Kourovka Archive answers 12.84 "No, it is not"
+(V. D. Mazurov, 1994).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
 Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of
 Solved Problems, Problem 12.84 (well-known problem; S. A. Syskin); resolution: V. D. Mazurov,
 Algebra and Logic 33 (1994), no. 1, 49-55; M. A. Grechkoseeva, V. D. Mazurov, W. Shi, A. V. Vasil'ev

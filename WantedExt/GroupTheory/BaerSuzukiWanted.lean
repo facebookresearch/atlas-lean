@@ -45,15 +45,13 @@ namespace MathlibExt.GroupTheory.BaerSuzukiWanted
 namespace GroupTheory
 namespace Defs
 
-/-- `pCore p G` is the largest normal `p`-subgroup of `G` — the supremum of
-all normal `p`-subgroups. Classically denoted `O_p(G)`.
+/-- **The $p$-core of a group.** For a natural number $p$ and a group $G$, the $p$-core $O_p(G)$
+is the supremum, in the lattice of subgroups of $G$, of all normal subgroups $N$ of $G$ that are
+$p$-groups, that is, such that every $y \in N$ satisfies $y^{p^k} = 1$ for some $k \ge 0$.
 
-This is itself a normal `p`-subgroup of `G`, with no finiteness hypothesis
-needed: the family of normal `p`-subgroups is *directed* under `≤` (the
-join of two normal `p`-subgroups is again a normal `p`-subgroup, using
-`Subgroup.sup_normal` and `IsPGroup.to_sup_of_normal_left`), so by
-`Subgroup.mem_iSup_of_directed` every element of the supremum already lies
-in one of the summands, and therefore has `p`-power order.
+When $p$ is prime, $O_p(G)$ is itself a normal $p$-subgroup of $G$, hence the largest one, and no
+finiteness hypothesis is needed: the join of two normal $p$-subgroups is again a normal
+$p$-subgroup, so the family is directed and every element of the supremum lies in one of them.
 -/
 def pCore (p : ℕ) (G : Type*) [Group G] : Subgroup G :=
   sSup {N : Subgroup G | N.Normal ∧ IsPGroup p N}
@@ -92,7 +90,11 @@ normal `p`-subgroups of `G`.
 /- **Baer–Suzuki theorem.** An element `x` of a finite group `G` lies in
 the `p`-core `O_p(G)` iff every pair `(x, x^g)` of conjugates generates a
 `p`-group. -/
-/-- Source: R. Baer, Engelsche Elemente Noetherscher Gruppen, Math. Ann. 133 (1957), 256-270; M. Suzuki, Finite groups in which the centralizer of any element of order 2 is 2-closed, Ann. of Math. (2) 82 (1965), 191-212. Via leanprover/lean-eval@38361be, problem `baer_suzuki`. -/
+/-- **Baer–Suzuki theorem.** Let $G$ be a finite group, $p$ a prime and $x \in G$. Then $x$ lies
+in the $p$-core $O_p(G)$ of $G$ if and only if, for every $g \in G$, the subgroup of $G$ generated
+by $x$ and $g x g^{-1}$ is a $p$-group, that is, every element of it has order a power of $p$.
+
+Source: R. Baer, Engelsche Elemente Noetherscher Gruppen, Math. Ann. 133 (1957), 256-270; M. Suzuki, Finite groups in which the centralizer of any element of order 2 is 2-closed, Ann. of Math. (2) 82 (1965), 191-212. Via leanprover/lean-eval@38361be, problem `baer_suzuki`. -/
 public theorem_wanted baer_suzuki {G : Type*} [Group G] [Finite G]
     {p : ℕ} [Fact p.Prime] (x : G) :
     x ∈ pCore p G ↔

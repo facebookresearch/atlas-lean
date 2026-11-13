@@ -36,44 +36,60 @@ generate a finite subgroup; in (b) the finiteness of `⟨x, y⟩` is then automa
 prime.
 -/
 
-/-- Kourovka 11.11(a) (A. V. Borovik), case `p = 2`: in every periodic group, an element `a` any two
-of whose conjugates generate a finite `2`-subgroup lies in a normal `2`-subgroup (the Baer-Suzuki
-theorem for periodic groups). -/
+/-- **Baer–Suzuki property for periodic groups at the prime 2.** The proposition that for every
+group $G$ in which every element has finite order and every element $a \in G$ such that any two
+conjugates of $a$ generate a finite $2$-subgroup, there is a normal $2$-subgroup of $G$ containing
+$a$. Here a $2$-subgroup is a subgroup in which every element has order a power of $2$.
+
+This is the case $p = 2$ of Kourovka Problem 11.11(a) (A. V. Borovik). -/
 def baerSuzukiPeriodicTwo : Prop :=
   ∀ (G : Type) [Group G], (∀ g : G, IsOfFinOrder g) → ∀ a : G,
     (∀ x y : G, IsConj a x → IsConj a y →
       (Subgroup.closure {x, y} : Set G).Finite ∧ IsPGroup 2 (Subgroup.closure {x, y})) →
     ∃ N : Subgroup G, N.Normal ∧ IsPGroup 2 N ∧ a ∈ N
 
-/-- Kourovka 11.11(b): in every binary finite group (every two elements generate a finite subgroup),
-for every prime `p`, an element `a` any two of whose conjugates generate a `p`-subgroup lies in a
-normal `p`-subgroup. -/
+/-- **Baer–Suzuki property for binary finite groups.** The proposition that for every prime $p$,
+every group $G$ in which any two elements generate a finite subgroup, and every element $a \in G$
+such that any two conjugates of $a$ generate a $p$-subgroup, there is a normal $p$-subgroup of $G$
+containing $a$. Here a $p$-subgroup is a subgroup in which every element has order a power of $p$.
+
+This is the statement asked about in Kourovka Problem 11.11(b) (A. V. Borovik). -/
 def baerSuzukiBinaryFinite : Prop :=
   ∀ p : ℕ, p.Prime → ∀ (G : Type) [Group G], (∀ x y : G, (Subgroup.closure {x, y} : Set G).Finite) →
     ∀ a : G, (∀ x y : G, IsConj a x → IsConj a y → IsPGroup p (Subgroup.closure {x, y})) →
       ∃ N : Subgroup G, N.Normal ∧ IsPGroup p N ∧ a ∈ N
 
-/--
-Resolved false: the Kourovka Archive answers 11.11(a) "No, it does not hold for `p = 2`", citing
-Mazurov, Olshanskii and Sozutov (2015): some periodic group has an element any two of whose
-conjugates generate a finite `2`-subgroup but which lies in no normal `2`-subgroup. Source: E. I.
-Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
-issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.11 (A. V. Borovik);
-resolution: V. D. Mazurov, A. Yu. Olshanskii and A. I. Sozutov, Algebra and Logic 54, no. 2 (2015),
-161-166 (a); A. I. Sozutov, Siberian Math. J. 41, no. 3 (2000), 561-562 (b), Kourovka Archive,
-Problem 11.11.
+/-- **Failure of the Baer–Suzuki theorem for periodic groups at the prime 2.** There is a group $G$
+in which every element has finite order, together with an element $a \in G$ such that any two
+conjugates of $a$ generate a finite $2$-subgroup, but no normal $2$-subgroup of $G$ contains $a$.
+Here a $2$-subgroup is a subgroup in which every element has order a power of $2$.
+
+This answers Kourovka Problem 11.11(a) negatively for $p = 2$ (Mazurov, Olshanskii and
+Sozutov, 2015).
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.11 (A. V.
+Borovik); resolution: V. D. Mazurov, A. Yu. Olshanskii and A. I. Sozutov, Algebra and Logic 54, no.
+2 (2015), 161-166 (a); A. I. Sozutov, Siberian Math. J. 41, no. 3 (2000), 561-562 (b), Kourovka
+Archive, Problem 11.11.
 -/
 public theorem_wanted baerSuzukiPeriodicTwo_refuted : ¬ baerSuzukiPeriodicTwo
 
-/--
-Resolved true: the Kourovka Archive answers 11.11(b) Yes (Sozutov, 2000): by the Baer-Suzuki theorem
-`⟨a₁, b⟩` is a finite `p`-group for every conjugate `a₁` of `a` and every `p`-element `b`, so by
-induction every product `a₁ ⋯ aₙ` of conjugates of `a` is a `p`-element, and the normal closure of
-`a` is a normal `p`-subgroup. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in
-Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved
-Problems, Problem 11.11 (A. V. Borovik); resolution: V. D. Mazurov, A. Yu. Olshanskii and A. I.
-Sozutov, Algebra and Logic 54, no. 2 (2015), 161-166 (a); A. I. Sozutov, Siberian Math. J. 41, no. 3
-(2000), 561-562 (b), Kourovka Archive, Problem 11.11.
+/-- **Baer–Suzuki theorem for binary finite groups.** For every prime $p$, every group $G$ in
+which any two elements generate a finite subgroup, and every element $a \in G$ such that any two
+conjugates of $a$ generate a $p$-subgroup, there is a normal $p$-subgroup of $G$ containing $a$.
+Here a $p$-subgroup is a subgroup in which every element has order a power of $p$.
+
+This answers Kourovka Problem 11.11(b) affirmatively (Sozutov, 2000): by the Baer–Suzuki theorem
+for finite groups, $\langle a_1, b \rangle$ is a finite $p$-group for every conjugate $a_1$ of $a$
+and every element $b$ of $p$-power order, so by induction every product $a_1 \cdots a_n$ of
+conjugates of $a$ has $p$-power order, and the normal closure of $a$ is a normal $p$-subgroup.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka
+Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 11.11 (A. V.
+Borovik); resolution: V. D. Mazurov, A. Yu. Olshanskii and A. I. Sozutov, Algebra and Logic 54, no.
+2 (2015), 161-166 (a); A. I. Sozutov, Siberian Math. J. 41, no. 3 (2000), 561-562 (b), Kourovka
+Archive, Problem 11.11.
 -/
 public theorem_wanted baerSuzukiBinaryFinite_holds : baerSuzukiBinaryFinite
 

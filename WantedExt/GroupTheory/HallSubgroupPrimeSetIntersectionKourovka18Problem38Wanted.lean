@@ -33,28 +33,43 @@ A Hall `π`-subgroup has order whose prime divisors lie in `π` and index with n
 `π`; sets of primes are subsets of `ℕ` (non-primes in them are ignored).
 -/
 
-/-- `n` is a `π`-number: every prime divisor of `n` lies in `π`. -/
+/-- **π-numbers.** Let $\pi$ be a set of natural numbers. A natural number $n$ is a $\pi$-number
+when every prime divisor of $n$ lies in $\pi$. -/
 def IsPiNumber (π : Set ℕ) (n : ℕ) : Prop :=
   ∀ p : ℕ, p.Prime → p ∣ n → p ∈ π
 
-/-- `H` is a Hall `π`-subgroup: `|H|` is a `π`-number and `|G : H|` has no prime divisor in `π`. -/
+/-- **Hall π-subgroups.** Let $\pi$ be a set of natural numbers and let $H$ be a subgroup of a
+group $G$. Then $H$ is a Hall $\pi$-subgroup when its order $|H|$ is a $\pi$-number and no prime
+divisor of its index $|G : H|$ lies in $\pi$. -/
 def IsHallPiSubgroup {G : Type} [Group G] (π : Set ℕ) (H : Subgroup G) : Prop :=
   IsPiNumber π (Nat.card H) ∧ ∀ p : ℕ, p.Prime → p ∣ H.index → p ∉ π
 
-/-- `G ∈ E_π`: `G` has a Hall `π`-subgroup. -/
+/-- **The class $E_\pi$ of groups with a Hall π-subgroup.** Let $\pi$ be a set of natural numbers.
+A group $G$ belongs to the class $E_\pi$ when $G$ has a Hall $\pi$-subgroup. -/
 def HasHallPiSubgroup (π : Set ℕ) (G : Type) [Group G] : Prop :=
   ∃ H : Subgroup G, IsHallPiSubgroup π H
 
-/-- Kourovka 18.38 (A. V. Zavarnitsine): `E_{π₁} ∩ E_{π₂} ⊆ E_{π₁ ∩ π₂}` for all sets of primes
-`π₁`, `π₂`, that is, a finite group with a Hall `π₁`-subgroup and a Hall `π₂`-subgroup has a Hall
-`(π₁ ∩ π₂)`-subgroup. -/
+/-- **Zavarnitsine's question on Hall subgroups for intersections of prime sets.** This is the
+statement that for all sets $\pi_1$ and $\pi_2$ of natural numbers, every finite group that has a
+Hall $\pi_1$-subgroup and a Hall $\pi_2$-subgroup also has a Hall $(\pi_1 \cap \pi_2)$-subgroup;
+that is, writing $E_\pi$ for the class of finite groups with a Hall $\pi$-subgroup,
+$E_{\pi_1} \cap E_{\pi_2}$ is contained in $E_{\pi_1 \cap \pi_2}$.
+
+This is Kourovka Notebook Problem 18.38 (A. V. Zavarnitsine). -/
 def hallSubgroupForIntersectionOfPrimeSets : Prop :=
   ∀ (π₁ π₂ : Set ℕ) (G : Type) [Group G] [Finite G],
     HasHallPiSubgroup π₁ G → HasHallPiSubgroup π₂ G → HasHallPiSubgroup (π₁ ∩ π₂) G
 
-/--
-Resolved true: the Kourovka Notebook (21st issue) answers 18.38 "Yes, it does" (Buturlakin-Yang,
-2025), whose abstract states that `E_{π₁} ∩ E_{π₂}` is contained in `E_{π₁ ∩ π₂}`. Source: E. I.
+/-- **Hall subgroups exist for intersections of prime sets.** For all sets $\pi_1$ and $\pi_2$ of
+natural numbers, every finite group that has a Hall $\pi_1$-subgroup and a Hall $\pi_2$-subgroup
+also has a Hall $(\pi_1 \cap \pi_2)$-subgroup; that is, writing $E_\pi$ for the class of finite
+groups with a Hall $\pi$-subgroup, $E_{\pi_1} \cap E_{\pi_2}$ is contained in
+$E_{\pi_1 \cap \pi_2}$.
+
+This answers Kourovka Notebook Problem 18.38 (A. V. Zavarnitsine) in the affirmative; the 21st
+issue records the answer "Yes, it does" (N. Yang and A. A. Buturlakin, 2025).
+
+Source: E. I.
 Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theory: The Kourovka Notebook, 21st
 issue, arXiv:1401.0300v49 (2026), Problem 18.38 (A. V. Zavarnitsine); resolution: N. Yang and A. A.
 Buturlakin, A generalization of the Arad-Ward theorem on Hall subgroups, preprint, arXiv:2501.05865

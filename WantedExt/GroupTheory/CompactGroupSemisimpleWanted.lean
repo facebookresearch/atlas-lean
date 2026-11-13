@@ -66,7 +66,12 @@ topological group on a finite-dimensional real vector space is semisimple:
 every subrepresentation has a `G`-invariant complement, so the representation
 decomposes as a direct sum of irreducible finite-dimensional
 subrepresentations. -/
-/-- Source: H. Weyl, *Theorie der Darstellung kontinuierlicher halb-einfacher Gruppen durch lineare Transformationen* (1925–26); Peter–Weyl (1927). Knill, *Some fundamental theorems in mathematics*, §21. Via leanprover/lean-eval@38361be, problem `compact_group_semisimple`. -/
+/-- **Representations of compact groups are semisimple.** Let $G$ be a compact topological group
+and let $\rho$ be a representation of $G$ on a finite-dimensional real normed space $V$ such that
+the action map $G \times V \to V$, $(g, v) \mapsto \rho(g)(v)$, is continuous. Then $\rho$ is
+semisimple: every subrepresentation of $\rho$ has a complementary subrepresentation.
+
+Source: H. Weyl, *Theorie der Darstellung kontinuierlicher halb-einfacher Gruppen durch lineare Transformationen* (1925–26); Peter–Weyl (1927). Knill, *Some fundamental theorems in mathematics*, §21. Via leanprover/lean-eval@38361be, problem `compact_group_semisimple`. -/
 public theorem_wanted compact_group_semisimple
     {G V : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [CompactSpace G]
     [NormedAddCommGroup V] [NormedSpace ℝ V] [FiniteDimensional ℝ V]

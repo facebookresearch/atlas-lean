@@ -51,7 +51,12 @@ so there is no need to add in `0` to make the set of commuting probabilities clo
 -/
 
 /- The set of commuting probabilities of finite groups is closed. -/
-/-- Source: https://arxiv.org/abs/2201.09402 Via leanprover/lean-eval@38361be, problem `commProb_closed`. -/
+/-- **The set of commuting probabilities is closed.** Let $\Pr(G)$ denote the commuting
+probability of a group $G$: $\Pr(G) = |\{(x, y) \in G \times G : xy = yx\}| / |G|^2$ if $G$ is
+finite, and $\Pr(G) = 0$ if $G$ is infinite. Then the set $\{\Pr(G) : G \text{ a group}\}$ is a
+closed subset of $\mathbb{R}$.
+
+Source: https://arxiv.org/abs/2201.09402 Via leanprover/lean-eval@38361be, problem `commProb_closed`. -/
 public theorem_wanted commProb_closed : IsClosed ({p : ℝ | ∃ (G : Type) (hG : Group G), @commProb G hG.toMul = p})
 
 end GroupTheory

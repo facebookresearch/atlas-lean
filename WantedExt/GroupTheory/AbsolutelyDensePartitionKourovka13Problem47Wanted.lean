@@ -37,19 +37,24 @@ is Protasov's notion of an absolutely dense subset. Topologies range over Mathli
 G`.
 -/
 
-/-- Kourovka 13.47 (I. V. Protasov): every countable abelian group `G` with finitely many
-involutions can be partitioned as `G = A₁ ∪ A₂` (disjointly) so that `A₁` and `A₂` are both dense
-in every non-discrete Hausdorff group topology on `G`. -/
+/-- **Protasov's question on absolutely dense partitions (Kourovka 13.47).** The proposition that
+every countable abelian group $G$ with only finitely many elements of order $2$ can be partitioned
+into two disjoint sets $A_1$ and $A_2$ with $A_1 \cup A_2 = G$ such that $A_1$ and $A_2$ are both
+dense in every non-discrete Hausdorff group topology on $G$. -/
 def countableAbsolutelyDensePartition : Prop :=
   ∀ (G : Type) [CommGroup G], Countable G → {g : G | g ≠ 1 ∧ g ^ 2 = 1}.Finite →
     ∃ A₁ A₂ : Set G, A₁ ∪ A₂ = Set.univ ∧ Disjoint A₁ A₂ ∧
       ∀ τ : GroupTopology G, @T2Space G τ.toTopologicalSpace → τ.toTopologicalSpace ≠ ⊥ →
         @Dense G τ.toTopologicalSpace A₁ ∧ @Dense G τ.toTopologicalSpace A₂
 
-/--
-Resolved true: the Kourovka Archive answers 13.47 "Yes, it can", citing Zelenyuk: every countable
-abelian group with finitely many involutions splits into two cells that are dense in every
-non-discrete Hausdorff group topology. Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
+/-- **Kourovka Problem 13.47 has a positive answer.** Every countable abelian group $G$ with only
+finitely many elements of order $2$ can be partitioned into two disjoint sets $A_1$ and $A_2$ with
+$A_1 \cup A_2 = G$ such that $A_1$ and $A_2$ are both dense in every non-discrete Hausdorff group
+topology on $G$.
+
+The Kourovka Archive answers 13.47 "Yes, it can", citing Zelenyuk.
+
+Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved
 Problems in Group Theory: The Kourovka Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of
 Solved Problems, Problem 13.47 (I. V. Protasov); resolution: E. G. Zelenyuk, Ukrain. Math. J. 51
 (1999), no. 1, 44-50, Kourovka Archive, Problem 13.47 (answer: Yes, it can).
