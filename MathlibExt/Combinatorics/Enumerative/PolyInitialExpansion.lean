@@ -142,6 +142,7 @@ private theorem polyInitialExpansion_zero_full_range (n t : ℕ) (ht : t ≤ n)
         rw [Nat.stirlingSecond_eq_zero_of_lt (by omega : t < m)]
         simp
 
+set_option linter.unusedVariables false in
 /-- Proposition 5 expansion of the associated polynomial at index zero by
 weighted Stirling numbers of the second kind: the binomial-weighted sum of
 `a 0 (n - k)` against `x ^ k` equals the signed factorial-weighted sum of the

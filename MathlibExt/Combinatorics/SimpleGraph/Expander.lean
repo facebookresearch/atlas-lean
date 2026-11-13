@@ -11,7 +11,7 @@ module
 public import Mathlib.Combinatorics.SimpleGraph.Basic
 public import Mathlib.Data.Set.Card
 public import Mathlib.SetTheory.Cardinal.NatCard
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 
 /-!
 # `C`-expanders
@@ -54,6 +54,7 @@ theorem exists_adj_of_mem_externalNeighborSet {A : Set V} {v : V}
   h.2
 
 /-- Definition 1 from the source: `C`-expander with a real parameter `C`. -/
+@[nolint unusedArguments]
 def IsCExpander [Finite V] (C : ℝ) : Prop :=
   0 < C ∧
     (∀ A : Set V, (A.ncard : ℝ) < (Nat.card V : ℝ) / (2 * C) →
@@ -83,6 +84,7 @@ theorem IsCExpander.large_edge [Finite V] {C : ℝ} (h : G.IsCExpander C)
 
 /-- Uniform vertex expansion: every vertex set `S` with `|S| ≤ |V| / 2`
 has at least `h * |S|` neighbours outside `S`. -/
+@[nolint unusedArguments]
 def IsUniformVertexExpander [Finite V] (h : ℝ) : Prop :=
   0 < h ∧
     ∀ S : Set V, (S.ncard : ℝ) ≤ (Nat.card V : ℝ) / 2 →

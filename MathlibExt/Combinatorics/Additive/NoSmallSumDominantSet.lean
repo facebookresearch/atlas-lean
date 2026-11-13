@@ -1123,6 +1123,7 @@ theorem card_add_le_card_sub_of_card_lt_six (A : Finset ℤ) (h_card : A.card < 
   · obtain ⟨a, b, c, d, e, hab, hbc, hcd, hde, rfl⟩ := exists_sorted_of_card_eq_five A h
     exact nssd_card_five a b c d e hab hbc hcd hde
 
+set_option linter.unusedVariables false in
 /--
 A set `A` with `|A| < 6` is not sum-dominant.
 
@@ -1137,6 +1138,7 @@ The source works with sets of nonnegative integers; the hypothesis
 
 Proves `Wanted` entry `no_small_sum_dominant`.
 -/
+@[nolint unusedArguments] -- `h_nonneg` keeps the `Wanted` entry's statement
 theorem no_small_sum_dominant :
     ∀ (A : Finset ℤ) (h_nonneg : ∀ x ∈ A, 0 ≤ x) (h_card : A.card < 6),
       (A + A).card ≤ (A - A).card :=
