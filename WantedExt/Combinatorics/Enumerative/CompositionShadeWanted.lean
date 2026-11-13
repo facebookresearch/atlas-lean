@@ -31,10 +31,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The number of shaded cells of the bargraph of a composition given by its list of parts
-(columns `0, 1, …`, parts read with `List.getD _ _ 0`, so columns past the last part are
-empty): cells `(c, h)` with `h ≥ 1`, `h > x_c` and `x_j ≥ h + (c - j)` for some `j < c`.  All
-such cells satisfy `c < length + sum` and `h ≤ sum`.
+/-- **Shade of a composition.** Let $x = (x_0, x_1, \ldots, x_{k-1})$ be a finite list of
+natural numbers (the parts of a composition), drawn as a bargraph whose column $c$ has height
+$x_c$, with $x_c = 0$ for $c \ge k$. A cell $(c, h)$ with column $c \ge 0$ and height $h \ge 1$
+is shaded when $h > x_c$ and $x_j \ge h + (c - j)$ for some column $j < c$. The shade of $x$
+is the number of shaded cells.
+
+Every shaded cell satisfies $c < k + s$ and $h \le s$, where $s = x_0 + \cdots + x_{k-1}$,
+so the number of shaded cells is finite.
 
 Source: Aubrey Blecher, Arnold Knopfmacher and Michael Mays, *Shade in Compositions of
 Integers*, Journal of Integer Sequences 27 (2024), Article 24.5.6, Section 1. -/
@@ -42,27 +46,35 @@ def compositionShade (x : List ℕ) : ℕ :=
   ∑ c ∈ Finset.range (x.length + x.sum), ∑ h ∈ Finset.Icc 1 x.sum,
     if x.getD c 0 < h ∧ ∃ j < c, h + (c - j) ≤ x.getD j 0 then 1 else 0
 
-/-- The total shade `c(n)` over all compositions of `n`.
+/-- **Total shade of compositions.** For a natural number $n$, the total shade $c(n)$ is the
+sum of the shades of all compositions of $n$.
 
 Source: Aubrey Blecher, Arnold Knopfmacher and Michael Mays, *Shade in Compositions of
 Integers*, Journal of Integer Sequences 27 (2024), Article 24.5.6, Section 2. -/
 def totalCompositionShade (n : ℕ) : ℕ :=
   ∑ x : Composition n, compositionShade x.blocks
 
-/-- The one-part composition `4` has `6` shaded cells.
+/-- **Shade of the composition 4.** The one-part composition $4$ has shade $6$: its
+bargraph has $6$ shaded cells.
 
 Source: Aubrey Blecher, Arnold Knopfmacher and Michael Mays, *Shade in Compositions of
 Integers*, Journal of Integer Sequences 27 (2024), Article 24.5.6, Figure 5. -/
 theorem compositionShade_four : compositionShade [4] = 6 := by decide
 
-/-- The composition `1 + 3` has `3` shaded cells, all to the right of the bargraph.
+/-- **Shade of the composition 1 + 3.** The composition $1 + 3$ has shade $3$: its bargraph
+has $3$ shaded cells.
+
+All three shaded cells lie to the right of the bargraph.
 
 Source: Aubrey Blecher, Arnold Knopfmacher and Michael Mays, *Shade in Compositions of
 Integers*, Journal of Integer Sequences 27 (2024), Article 24.5.6, Figure 5. -/
 theorem compositionShade_one_three : compositionShade [1, 3] = 3 := by decide
 
-/-- Each composition of `n` contributes its own shade: the total shade of the compositions of
-`n` is at least the shade of any one of them; for example `c(4) ≥ 6`.
+/-- **The total shade bounds the shade of each composition.** For every natural number $n$
+and every composition $x$ of $n$, the shade of $x$ is at most the total shade $c(n)$ of the
+compositions of $n$.
+
+For example, since the composition $4$ has shade $6$, this gives $c(4) \ge 6$.
 
 Source: Aubrey Blecher, Arnold Knopfmacher and Michael Mays, *Shade in Compositions of
 Integers*, Journal of Integer Sequences 27 (2024), Article 24.5.6, Section 2. -/
@@ -71,26 +83,50 @@ theorem compositionShade_le_totalCompositionShade {n : ℕ} (x : Composition n) 
   Finset.single_le_sum (f := fun y : Composition n => compositionShade y.blocks)
     (fun _ _ => Nat.zero_le _) (Finset.mem_univ x)
 
-/-- The composition of `0` has no shade.
+/-- **Total shade of the compositions of zero.** The total shade $c(0)$ of the compositions
+of $0$ is zero: $c(0) = 0$.
+
+The only composition of $0$ is the empty one, whose bargraph has no shaded cells.
 
 Source: Aubrey Blecher, Arnold Knopfmacher and Michael Mays, *Shade in Compositions of
 Integers*, Journal of Integer Sequences 27 (2024), Article 24.5.6, Section 2. -/
 theorem totalCompositionShade_zero : totalCompositionShade 0 = 0 := by
   simp [totalCompositionShade, compositionShade]
 
-/-- Blecher, Knopfmacher and Mays, Theorem 1: the generating function
-`F(q) = ∑ c(n) qⁿ` of the total shade equals `DL(q) + DR(q)`, where `DL(q)` (shade between
-successive left-to-right maxima of the skew image) and `DR(q)` (shade to the right of the
-leftmost maximum) are the paper's displays (DL(q)) and (DR(q)).
+/-- **Generating function for the total shade of compositions.** Let $c(n)$ be the total
+shade of the compositions of $n$, and let $q$ be a real number with $0 < q < 1/4$. For natural
+numbers $i_2, i_3, s_1, s_3$ put
+$$A_{i_2, i_3, s_1, s_3} = (s_1 - s_3) \prod_{i_3 < i < i_2} (1 - q^{s_1 - i + 1}) +
+\sum_{i_3 < j < i_2} \Big( \prod_{i_3 < i < i_2, i \ne j} (1 - q^{s_1 - i + 1}) \Big)
+\frac{j(q - 1) + q^{s_1 + 1 - j} + s_1 - q(1 + s_1)}{1 - q},$$
+$$B_{i_2} = 1 + \sum_{m \ge 1} q^{-i_2 m - m(m - 1)/2} (1 - q)^{-m} q^{m(1 + 2 i_2 + m)/2},$$
+and for natural numbers $i, j, s$ put
+$$E_{i, j, s} = -1 - q^{1 - i - j + s} (-2 + i + j - s) + q^{2 - i - j + s} (-1 + i + j - s).$$
+Let
+$$D_L(q) = \sum_{i_1 \ge 1} \sum_{s_1 \ge i_1 + 2} \Big( \frac{1}{1 - q} \Big)^{i_1 - 2}
+\Big( \prod_{r=1}^{i_1 - 1} (1 - q^{s_1 - r}) \Big) q^{i_1 (i_1 - 1)/2 - i_1 s_1}
+\sum_{i_2 = i_1 + 2}^{s_1 + 1} \sum_{s_2 \ge s_1 + 1} \sum_{i_3 = i_1 + 1}^{i_2 - 1}
+\sum_{s_3 = i_3}^{s_1 - 1} q^{i_3 s_1 + s_2 + s_3 - (i_3 + i_3^2)/2}
+\Big( \frac{1}{1 - q} \Big)^{i_2 - i_3} A_{i_2, i_3, s_1, s_3} B_{i_2},$$
+$$D_R(q) = \sum_{i \ge 1} \sum_{s \ge i} \Big( \prod_{r=1}^{i-1} (1 - q^{s - r}) \Big)
+\frac{q^s}{(1 - q)^{i-1}} \Big( \binom{s - i + 1}{2} \sum_{m=0}^{s-1} \frac{q^m}{(1 - q)^m}
+\prod_{r=1}^{m} (1 - q^{s + 1 - i - r}) +
+\frac{1}{(1 - q)^2} \sum_{m=1}^{s-1} \sum_{j=1}^{m} \frac{q^m}{(1 - q)^{m-1}}
+\Big( \prod_{1 \le r \le m, r \ne j} (1 - q^{s + 1 - i - r}) \Big) E_{i, j, s} \Big).$$
+Then
+$$\sum_{n \ge 0} c(n) q^n = D_L(q) + D_R(q).$$
 
-Stated for real `0 < q < 1/4`, where all series converge absolutely; powers with possibly
-negative exponents are `zpow`.  Corrected readings: in display (DL(q)) the duplicated outer
-double sum `∑_{i₁} ∑_{s₁}` (and the left-hand side `L(x, q, u)`) is a typesetting slip; the
-display is read as `DL(q) = ∑_{i₁} ∑_{s₁} …`, which reproduces the printed expansion
-`2q⁶ + 6q⁷ + 24q⁸ + ⋯`.  In display (DR(q)) the product in the double sum over `m, j` runs over
-`r ≠ j`, as in the paper's display (R) from which it is obtained by setting `x = 1`; with the
-product over all `r` as printed, the coefficient of `q⁴` in `DR(q)` is `14` instead of the
-printed `13`, and `DL + DR` no longer matches the total shade.
+Empty sums are $0$ and empty products are $1$; all exponents are integers and may be
+negative. For $0 < q < 1/4$ all these series converge absolutely.
+
+This is Theorem 1 of the paper with two corrected readings. In the paper's display for
+$D_L(q)$ the outer double sum over $i_1, s_1$ (and the left-hand side $L(x, q, u)$) is
+duplicated, a typesetting slip; reading it once reproduces the printed expansion
+$2q^6 + 6q^7 + 24q^8 + \cdots$. In the display for $D_R(q)$ the product in the double sum
+over $m, j$ runs over $r \ne j$, as in the paper's display (R) from which it is obtained by
+setting $x = 1$; with the product over all $r$ as printed, the coefficient of $q^4$ in
+$D_R(q)$ is $14$ instead of the printed $13$, and $D_L + D_R$ no longer matches the total
+shade.
 
 Source: Aubrey Blecher, Arnold Knopfmacher and Michael Mays, *Shade in Compositions of
 Integers*, Journal of Integer Sequences 27 (2024), Article 24.5.6, Theorem 1

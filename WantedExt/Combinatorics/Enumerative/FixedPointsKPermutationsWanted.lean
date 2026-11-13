@@ -38,8 +38,9 @@ namespace MetaMathlibExt
 
 open Filter Polynomial Topology
 
-/-- The number `a(n, k, j)` of permutations of `Fin n` with exactly `k` cycles (fixed points
-counted as one-cycles) and exactly `j` fixed points.
+/-- **Permutations counted by cycles and fixed points.** For natural numbers $n$, $k$ and $j$,
+$a(n, k, j)$ is the number of permutations of $\{0, 1, \dots, n - 1\}$ with exactly $k$ cycles
+(fixed points counted as cycles of length one) and exactly $j$ fixed points.
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Proposition 3 (definition of `a(n, k, j)`). -/
@@ -47,7 +48,9 @@ public noncomputable def kPermFixedPointCount (n k j : ℕ) : ℕ :=
   Fintype.card {σ : Equiv.Perm (Fin n) //
     cycleQuotientCount σ = k ∧ Fintype.card (Function.fixedPoints σ) = j}
 
-/-- A permutation with `k` cycles has at most `k` fixed points, so `a(n, k, j) = 0` for `k < j`.
+/-- **A permutation has at most as many fixed points as cycles.** Write $a(n, k, j)$ for the number
+of permutations of an $n$-element set with exactly $k$ cycles (fixed points counted as cycles of
+length one) and exactly $j$ fixed points. If $k < j$, then $a(n, k, j) = 0$.
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Proposition 3 (range `0 ≤ j ≤ k` of `a(n, k, j)`). -/
@@ -57,7 +60,10 @@ public theorem kPermFixedPointCount_eq_zero_of_lt {n k j : ℕ} (h : k < j) :
   rw [Fintype.card_eq_zero_iff]
   exact ⟨fun ⟨σ, h1, h2⟩ => by rw [cycleQuotientCount_eq] at h1; omega⟩
 
-/-- The empty permutation has no cycles and no fixed points: `a(0, 0, 0) = 1`.
+/-- **Counting the empty permutation.** Write $a(n, k, j)$ for the number of permutations of an
+$n$-element set with exactly $k$ cycles (fixed points counted as cycles of length one) and exactly
+$j$ fixed points. Then $a(0, 0, 0) = 1$: the empty permutation is the only permutation of the
+empty set, and it has no cycles and no fixed points.
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Proposition 3 (definition of `a(n, k, j)`, value at
@@ -68,37 +74,57 @@ public theorem kPermFixedPointCount_zero_zero_zero : kPermFixedPointCount 0 0 0 
   refine ⟨⟨1, by rw [cycleQuotientCount_eq]; simp, by simp⟩,
     fun x => Subtype.ext (Subsingleton.elim _ _)⟩
 
-/-- Proposition 3 (i): `a(n, k, j) = C(n, j) d(n - j, k - j)` for `0 ≤ j ≤ k`, with
-`d(m, i) = a(m, i, 0)` the number of derangements of `[m]` with `i` cycles.
+/-- **Fixed points split off a derangement.** Write $a(n, k, j)$ for the number of permutations of
+an $n$-element set with exactly $k$ cycles (fixed points counted as cycles of length one) and
+exactly $j$ fixed points, and $d(m, i) = a(m, i, 0)$ for the number of derangements of an
+$m$-element set with $i$ cycles. For all natural numbers $n$, $k$ and $j$ with $j \le k$,
+$a(n, k, j) = \binom{n}{j} \, d(n - j, k - j)$, where $n - j$ is read as $0$ when $j > n$.
 
-The paper assumes `n ≥ k ≥ 1`; the identity is stated for all `n` and `k ≥ j`.
+The paper assumes $n \ge k \ge 1$; the identity holds for all $n$ and all $k \ge j$.
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Proposition 3 (i) (`integers-2024-A54-prop-3`). -/
 public theorem_wanted kPermFixedPointCount_eq_choose_mul_derangement {n k j : ℕ} (hjk : j ≤ k) :
     kPermFixedPointCount n k j = n.choose j * kPermFixedPointCount (n - j) (k - j) 0
 
-/-- Proposition 3 (iii): `j a(n, k, j) = n a(n - 1, k - 1, j - 1)` for `1 ≤ j ≤ k`.
+/-- **Recurrence for permutations counted by cycles and fixed points.** Write $a(n, k, j)$ for the
+number of permutations of an $n$-element set with exactly $k$ cycles (fixed points counted as
+cycles of length one) and exactly $j$ fixed points. For all natural numbers $n$, $k$ and $j$
+with $1 \le j \le k$, $j \, a(n, k, j) = n \, a(n - 1, k - 1, j - 1)$, where $n - 1$ is read as
+$0$ when $n = 0$.
 
-The paper assumes `n ≥ k ≥ 1`; the identity is stated for all `n`.
+The paper assumes $n \ge k \ge 1$; the identity holds for all $n$.
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Proposition 3 (iii) (`integers-2024-A54-prop-3`). -/
 public theorem_wanted mul_kPermFixedPointCount {n k j : ℕ} (hj : 1 ≤ j) (hjk : j ≤ k) :
     j * kPermFixedPointCount n k j = n * kPermFixedPointCount (n - 1) (k - 1) (j - 1)
 
-/-- Proposition 3 (iv): `∑_{j=0}^{k} a(n, k, j) = c(n, k)`, the unsigned Stirling number of the
-first kind.
+/-- **Stirling numbers from fixed-point counts.** For natural numbers $n$, $k$ and $j$, let
+$a(n, k, j)$ be the number of permutations of an $n$-element set with exactly $k$ cycles (fixed
+points counted as cycles of length one) and exactly $j$ fixed points. Then for all natural
+numbers $n$ and $k$,
+$$\sum_{j=0}^{k} a(n, k, j) = c(n, k),$$
+where $c(n, k)$ is the unsigned Stirling number of the first kind.
 
-The paper assumes `n ≥ k ≥ 1`; the identity is stated for all `n` and `k`.
+The paper assumes $n \ge k \ge 1$; the identity is stated for all $n$ and $k$.
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Proposition 3 (iv) (`integers-2024-A54-prop-3`). -/
 public theorem_wanted sum_kPermFixedPointCount (n k : ℕ) :
     ∑ j ∈ Finset.range (k + 1), kPermFixedPointCount n k j = Nat.stirlingFirst n k
 
-/-- Proposition 4 (mean): the mean `μ_{n,k} = n c(n - 1, k - 1) / c(n, k)` of the number of fixed
-points of a uniform `k`-permutation of `[n]`, stated with the denominator `c(n, k)` cleared.
+/-- **Total number of fixed points of permutations with a given number of cycles.** For natural
+numbers $n$, $k$ and $j$, let $a(n, k, j)$ be the number of permutations of an $n$-element set
+with exactly $k$ cycles (fixed points counted as cycles of length one) and exactly $j$ fixed
+points, and let $c(n, k)$ be the unsigned Stirling number of the first kind. Then for every
+natural number $n$ and every $k \ge 1$,
+$$\sum_{j=0}^{k} j \, a(n, k, j) = n \, c(n - 1, k - 1),$$
+where the right-hand side is read as $0$ when $n = 0$.
+
+Dividing by $c(n, k)$, the number of permutations of an $n$-element set with $k$ cycles, gives the
+mean $\mu_{n,k} = n \, c(n - 1, k - 1) / c(n, k)$ of the number of fixed points of a uniformly
+random such permutation when $n \ge k$.
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Proposition 4 (`integers-2024-A54-prop-4`). -/
@@ -106,10 +132,16 @@ public theorem_wanted sum_mul_kPermFixedPointCount {n k : ℕ} (hk : 1 ≤ k) :
     ∑ j ∈ Finset.range (k + 1), j * kPermFixedPointCount n k j =
       n * Nat.stirlingFirst (n - 1) (k - 1)
 
-/-- Proposition 4 (variance): with `μ_{n,k} = n c(n - 1, k - 1) / c(n, k)`, the variance of the
-number of fixed points of a uniform `k`-permutation of `[n]` is
-`σ²_{n,k} = μ_{n,k} (1 + μ_{n-1,k-1} - μ_{n,k})`, for `n ≥ k ≥ 2` (so that `μ_{n-1,k-1}` is
-defined).
+/-- **Variance of the number of fixed points of a permutation with a given number of cycles.**
+Write $a(n, k, j)$ for the number of permutations of an $n$-element set with exactly $k$ cycles
+(fixed points counted as cycles of length one) and exactly $j$ fixed points, $c(n, k)$ for the
+unsigned Stirling number of the first kind (the number of permutations of an $n$-element set
+with $k$ cycles), and $\mu_{n,k} = n \, c(n - 1, k - 1) / c(n, k)$. If $2 \le k \le n$, then
+$\frac{1}{c(n, k)} \sum_{j=0}^{k} j^2 \, a(n, k, j) - \mu_{n,k}^2 =
+\mu_{n,k} (1 + \mu_{n-1,k-1} - \mu_{n,k})$.
+
+Here $\mu_{n,k}$ is the mean number of fixed points of a uniformly random permutation of an
+$n$-element set with $k$ cycles, so the left side is the variance of that number.
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Proposition 4 (`integers-2024-A54-prop-4`). -/
@@ -120,9 +152,10 @@ public theorem_wanted kPermFixedPoint_variance {n k : ℕ} (hk : 2 ≤ k) (hkn :
         Nat.stirlingFirst n k - μ n k ^ 2 =
       μ n k * (1 + μ (n - 1) (k - 1) - μ n k)
 
-/-- Newton's inequalities (Theorem 1): if `p = ∑_{j=0}^{n} a_j x^j`, `n ≥ 2`, of degree `n` has
-only real zeros, then `a_j² ≥ ((j + 1) / j) ((n - j + 1) / (n - j)) a_{j-1} a_{j+1}` for
-`1 ≤ j ≤ n - 1`.
+/-- **Newton's inequalities.** Let $p(x) = \sum_{j=0}^{n} a_j x^j$ be a real polynomial of degree
+$n \ge 2$ that splits over $\mathbb{R}$, that is, all $n$ of its zeros, counted with
+multiplicity, are real. Then for every $j$ with $1 \le j \le n - 1$,
+$$a_j^2 \ge \frac{j + 1}{j} \cdot \frac{n - j + 1}{n - j} \, a_{j-1} a_{j+1}.$$
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Theorem 1 (`integers-2024-A54-thm-1`). -/
@@ -132,10 +165,14 @@ public theorem_wanted newton_inequality_of_real_roots {p : ℝ[X]} {n : ℕ} (hn
     ((j + 1 : ℝ) / j) * (((n : ℝ) - j + 1) / ((n : ℝ) - j)) *
         (p.coeff (j - 1) * p.coeff (j + 1)) ≤ p.coeff j ^ 2
 
-/-- Schur's theorem (Theorem 2): if `f = ∑ a_k x^k` and `g = ∑ c_k x^k` are real polynomials with
-only real zeros and all zeros of `g` have the same sign, then `∑_{k=0}^{d} k! a_k c_k x^k`,
-`d = min(deg f, deg g)`, has only real zeros. The paper's "one of them" is `g` by symmetry, and
-"on the same side" is read as all zeros `≤ 0` or all zeros `≥ 0`.
+/-- **Schur's composition theorem for real-rooted polynomials.** Let $f = \sum_k a_k x^k$ and
+$g = \sum_k c_k x^k$ be real polynomials that split over $\mathbb{R}$, and suppose that the zeros
+of $g$ are either all $\le 0$ or all $\ge 0$. Let $d = \min(\deg f, \deg g)$, where the zero
+polynomial is given degree $0$. Then the polynomial $\sum_{k=0}^{d} k!\, a_k c_k x^k$ also splits
+over $\mathbb{R}$.
+
+The paper asks that the zeros of one of the two polynomials lie on the same side of the origin;
+by symmetry this is taken to be $g$, and zeros at $0$ are allowed.
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Theorem 2 (Schur) (`integers-2024-A54-thm-2`). -/
@@ -146,9 +183,13 @@ public theorem_wanted schur_factorial_hadamard_real_roots {f g : ℝ[X]}
       C ((k.factorial : ℝ) * f.coeff k * g.coeff k) * X ^ k
     h.Splits
 
-/-- Theorem 3: for `n ≥ 2` the polynomial `D_n(x) = ∑_{k=1}^{n} d(n + k, k) x^(k-1)` has only real
-zeros, where `d(m, k) = a(m, k, 0)` counts derangements of `[m]` with `k` cycles. The terms with
-`k > n` vanish, so the upper summation limit `n` loses nothing.
+/-- **Real-rootedness of the derangement cycle polynomial.** Write $a(m, k, j)$ for the number of
+permutations of an $m$-element set with exactly $k$ cycles (fixed points counted as cycles of
+length one) and exactly $j$ fixed points, so that $d(m, k) = a(m, k, 0)$ is the number of
+derangements of an $m$-element set with $k$ cycles. For every $n \ge 2$, the real polynomial
+$D_n(x) = \sum_{k=1}^{n} d(n + k, k) x^{k-1}$ has only real zeros.
+
+The terms with $k > n$ vanish, so the upper summation limit $n$ loses nothing.
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Theorem 3 (`integers-2024-A54-thm-3`). -/
@@ -157,10 +198,16 @@ public theorem_wanted derangementCyclePolynomial_real_roots {n : ℕ} (hn : 2 �
       C (kPermFixedPointCount (n + k) k 0 : ℝ) * X ^ (k - 1)
     D.Splits
 
-/-- Corollary 1 (unimodality part): a positive sequence `(a_j)_{j=0}^{n}` satisfying Newton's
-inequalities has a single maximum or a plateau of two elements: it strictly increases up to some
-`m`, then strictly decreases, possibly after one equality `a_m = a_{m+1}`. The paper's "SLC"
-conclusion is not stated (the abbreviation is not defined in the extracted statement).
+/-- **Positive sequences satisfying Newton's inequalities are unimodal.** Let $n$ be a natural
+number and let $(a_j)_{j \ge 0}$ be a sequence of real numbers with $a_j > 0$ for every $j \le n$,
+such that
+$$a_j^2 \ge \frac{j + 1}{j} \cdot \frac{n - j + 1}{n - j} \, a_{j-1} a_{j+1}$$
+for every $j$ with $1 \le j \le n - 1$. Then there is an $m \le n$ such that $(a_j)$ is strictly
+increasing on $\{0, \dots, m\}$, and either $(a_j)$ is strictly decreasing on $\{m, \dots, n\}$,
+or $m < n$, $a_m = a_{m+1}$ and $(a_j)$ is strictly decreasing on $\{m + 1, \dots, n\}$.
+
+The paper's "SLC" conclusion is not stated (the abbreviation is not defined in the extracted
+statement).
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Corollary 1 (`integers-2024-A54-cor-1`). -/
@@ -173,10 +220,15 @@ public theorem_wanted unimodal_of_newton_inequalities {a : ℕ → ℝ} {n : ℕ
       (StrictAntiOn a (Set.Icc m n) ∨
         (m < n ∧ a m = a (m + 1) ∧ StrictAntiOn a (Set.Icc (m + 1) n)))
 
-/-- Corollary 2 (unimodality part): for `k ≤ n` the sequence `(a(n, k, j))_{j=0}^{k}` is unimodal
-with a peak or a plateau of two elements: it weakly increases up to its first maximizer `m`,
-weakly decreases afterwards, and only `m` and `m + 1` attain the maximum. The paper's "SLC"
-conclusion is not stated (the abbreviation is not defined in the extracted statement).
+/-- **Unimodality of fixed-point counts for permutations with a given number of cycles.** Write
+$a(n, k, j)$ for the number of permutations of an $n$-element set with exactly $k$ cycles (fixed
+points counted as cycles of length one) and exactly $j$ fixed points. If $k \le n$, then there is
+an $m \le k$ such that $j \mapsto a(n, k, j)$ is weakly increasing on $\{0, \dots, m\}$ and weakly
+decreasing on $\{m, \dots, k\}$, and every $i \le k$ with $a(n, k, i) = a(n, k, m)$ is $m$ or
+$m + 1$.
+
+The paper's "SLC" conclusion is not stated (the abbreviation is not defined in the extracted
+statement).
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Corollary 2 (`integers-2024-A54-cor-2`). -/
@@ -185,19 +237,17 @@ public theorem_wanted kPermFixedPointCount_unimodal {n k : ℕ} (hkn : k ≤ n) 
       AntitoneOn (kPermFixedPointCount n k ·) (Set.Icc m k) ∧
       ∀ i ≤ k, kPermFixedPointCount n k i = kPermFixedPointCount n k m → i = m ∨ i = m + 1
 
-/-- Theorem 5 (the quoted central limit theorem of Harper and Bender, central limit part):
-let `(Q_n)` be real polynomials whose zeros are all real and nonpositive, with
-`μ_n = Q_n'(1) / Q_n(1)` and `σ_n² = Q_n'(1) / Q_n(1) + Q_n''(1) / Q_n(1) - (Q_n'(1) / Q_n(1))²`.
-If `σ_n² → ∞`, then the coefficient distribution `j ↦ [x^j] Q_n / Q_n(1)` satisfies a central
-limit theorem: for every real `x`, the mass of `{j : (j - μ_n) / σ_n ≤ x}` tends to the
-standard normal distribution function at `x` (Mathlib `ProbabilityTheory.cdf` of
-`gaussianReal 0 1`). "Central limit theorem" is the standard notion (convergence of
-distribution functions; uniform and pointwise convergence agree since the normal distribution
-function is continuous). No nonvanishing hypothesis is needed: `σ_n² → ∞` forces
-`Q_n ≠ 0` eventually (`σ_n² = 0` for `Q_n = 0` under Lean's `x / 0 = 0`). The paper asks for
-negative zeros; zeros at `0` are also allowed here, since `Q_n = X^m R_n` only shifts the
-coefficient distribution by `m` and leaves `σ_n²` unchanged. The local limit theorem in the
-record's second sentence (under no internal zeros) is not stated.
+/-- **Central limit theorem for polynomials with nonpositive real zeros.** Let $(Q_n)_{n \ge 0}$
+be real polynomials such that every $Q_n$ has only real zeros and all of them are $\le 0$. Put
+$\mu_n = Q_n'(1) / Q_n(1)$ and $\sigma_n^2 = Q_n'(1) / Q_n(1) + Q_n''(1) / Q_n(1) - \mu_n^2$, and
+let $\sigma_n = \sqrt{\sigma_n^2}$. If $\sigma_n^2 \to \infty$ as $n \to \infty$, then for every
+real $x$, the sum of the coefficients of $X^j$ in $Q_n$ over the indices $0 \le j \le \deg Q_n$
+with $(j - \mu_n) / \sigma_n \le x$, divided by $Q_n(1)$, tends to $\Phi(x)$ as $n \to \infty$,
+where $\Phi$ is the distribution function of the standard normal distribution.
+
+The source asks for negative zeros; zeros at $0$ are also allowed here, since $Q_n = X^m R_n$ only
+shifts the coefficient distribution by $m$ and leaves $\sigma_n^2$ unchanged. The local limit
+theorem that accompanies this result in the source is not stated.
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Theorem 5 (`integers-2024-A54-thm-5`). -/
@@ -212,8 +262,10 @@ public theorem_wanted coeff_tendsto_gaussian_cdf_of_neg_real_roots (Q : ℕ → 
           (((j : ℕ) : ℝ) - μ n) / Real.sqrt (σ2 n) ≤ x, (Q n).coeff j) / (Q n).eval 1)
         atTop (𝓝 (ProbabilityTheory.cdf (ProbabilityTheory.gaussianReal 0 1) x))
 
-/-- Theorem 4: for `n ≥ k ≥ 1`, the polynomial `P(x) = ∑_{j=0}^{k} a(n, k, j) x^j` of the
-fixed-point distribution of `k`-permutations of `[n]` has only real zeros.
+/-- **Real zeros of the fixed-point polynomial.** Write $a(n, k, j)$ for the number of permutations
+of an $n$-element set with exactly $k$ cycles (fixed points counted as cycles of length one) and
+exactly $j$ fixed points. If $1 \le k \le n$, then the real polynomial
+$P(x) = \sum_{j=0}^{k} a(n, k, j) x^j$ has only real zeros.
 
 Source: Moussa Benoumhani, *The Distribution of the Number of Fixed Points in k-Permutations*,
 INTEGERS 24 (2024), Article A54, Theorem 4 (`integers-2024-A54-thm-4`). -/

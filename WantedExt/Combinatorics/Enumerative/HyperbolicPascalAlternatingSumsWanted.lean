@@ -31,11 +31,14 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- One step of the generalized hyperbolic Pascal triangle, without the two winger elements:
-for a row `v₀, v₁, …, v_m` of (type, value) pairs, consecutive entries `v_{i-1}, v_i` produce a
-type-`A` vertex (code `1`) with value `v_{i-1} + v_i`, and each interior entry `v_i`
-(`0 < i < m`) then produces its type-`B` descendants (code `2`) with its value: `q - 4` of them
-for a type-`A` vertex and `q - 3` for a type-`B` vertex. Wingers have code `0`.
+/-- **Interior step of the generalized hyperbolic Pascal triangle.** Fix $q \in \mathbb{N}$ and a
+type $R$ with an addition. A vertex is recorded as a pair $(c, x)$ of a type code $c \in \mathbb{N}$
+(code $0$ for the wingers at the ends of a row, $1$ for type $A$ and $2$ for type $B$) and a
+value $x \in R$. Given a list $v_0, v_1, \dots, v_m$ of such pairs with $m \ge 1$ and
+$v_i = (c_i, x_i)$, the interior step lists, from left to right and for $i = 1, \dots, m$, the
+type-$A$ vertex $(1, x_{i-1} + x_i)$, followed, when $i < m$, by $d_i$ copies of the type-$B$
+vertex $(2, x_i)$, where $d_i = q - 4$ if $c_i = 1$ and $d_i = q - 3$ otherwise (both differences
+truncated at $0$). A list with fewer than two entries gives the empty list.
 
 Source: Hacène Belbachir, Fella Rami, and László Szalay, *Alternating Sums in the Generalized
 Hyperbolic Pascal Triangle*, INTEGERS 24 (2024), Article A84, Section 1 (construction of the
@@ -47,10 +50,13 @@ def ghptInterior {R : Type*} [Add R] (q : ℕ) : List (ℕ × R) → List (ℕ �
       ghptInterior q (v :: w :: rest))
   | _ => []
 
-/-- Row `n ≥ 1` of the generalized hyperbolic Pascal triangle linked to `{4, q}` with leg
-sequences `α` (left) and `β` (right), as (type, value) pairs from left to right: row `1` is
-`α₁, β₁`, and row `n + 1` is `α_{n+1}`, the interior step applied to row `n`, then `β_{n+1}`.
-Row `0` (the indeterminate root `Ω`) is represented by the empty list.
+/-- **Rows of the generalized hyperbolic Pascal triangle.** Fix $q \in \mathbb{N}$, a type $R$ with
+an addition, and leg sequences $\alpha, \beta \colon \mathbb{N} \to R$ (left and right). Row $n$ of
+the generalized hyperbolic Pascal triangle linked to the mosaic $\{4, q\}$ is the list of its
+vertices from left to right, each recorded as a pair (type code, value) as in the interior step,
+with code $0$ for the wingers. Row $1$ is $(0, \alpha_1), (0, \beta_1)$, and for $n \ge 1$ row
+$n + 1$ is $(0, \alpha_{n+1})$, followed by the interior step applied to row $n$, followed by
+$(0, \beta_{n+1})$. Row $0$ (the indeterminate root $\Omega$) is represented by the empty list.
 
 Source: Hacène Belbachir, Fella Rami, and László Szalay, *Alternating Sums in the Generalized
 Hyperbolic Pascal Triangle*, INTEGERS 24 (2024), Article A84, Section 1 (construction of the
@@ -60,8 +66,10 @@ def ghptRow {R : Type*} [Add R] (q : ℕ) (α β : ℕ → R) : ℕ → List (�
   | 1 => [(0, α 1), (0, β 1)]
   | n + 2 => (0, α (n + 2)) :: (ghptInterior q (ghptRow q α β (n + 1)) ++ [(0, β (n + 2))])
 
-/-- Rows `3` and `4` of Figure 1 (`q = 5`, `αₙ = 3n`, `βₙ = 3ⁿ`): `9, 12, 6, 15, 27` and
-`12, 21, 12, 18, 6, 6, 21, 15, 42, 81`.
+/-- **Rows 3 and 4 of an example generalized hyperbolic Pascal triangle.** In the generalized
+hyperbolic Pascal triangle linked to $\{4, 5\}$ (so $q = 5$) with legs $\alpha_n = 3n$ and
+$\beta_n = 3^n$ in $\mathbb{N}$, the values of the entries of row $3$, from left to right, are
+$9, 12, 6, 15, 27$, and those of row $4$ are $12, 21, 12, 18, 6, 6, 21, 15, 42, 81$.
 
 Source: Hacène Belbachir, Fella Rami, and László Szalay, *Alternating Sums in the Generalized
 Hyperbolic Pascal Triangle*, INTEGERS 24 (2024), Article A84, Figure 1. -/
@@ -71,12 +79,17 @@ theorem ghptRow_figure_one :
         [12, 21, 12, 18, 6, 6, 21, 15, 42, 81] := by
   decide +kernel
 
-/-- **Theorem 1** (quoted from Belbachir–Rami–Szalay 2022). Let `f` satisfy
-`f_n = A_1 f_{n-1} + ⋯ + A_k f_{n-k}` and `G` satisfy
-`G_n = A_1 G_{n-1} + ⋯ + A_k G_{n-k} + w_{n-k}` for `n ≥ k`. Then for `n ≥ k`,
-`∑_{j<k} f_j G_{n+k-j} = ∑_{j<k} ∑_{i<k-j} f_{n-j} A_{j+1+i} G_{k-1-i}
-  + ∑_{j<k-1} ∑_{i=1}^{k-1-j} f_j A_i G_{n+k-j-i} + ∑_{j=0}^{n} f_{n-j} w_j`.
-The paper's `A_k ≠ 0` and `k ≥ 1` are not needed.
+/-- **Convolution identity for an inhomogeneous linear recurrence.** Let $k \in \mathbb{N}$ and let
+$A, f, G, w \colon \mathbb{N} \to \mathbb{C}$ be sequences such that, for every $m \ge k$,
+$f_m = \sum_{i=1}^{k} A_i f_{m-i}$ and $G_m = \sum_{i=1}^{k} A_i G_{m-i} + w_{m-k}$. Then for
+every $n \ge k$,
+
+$$\sum_{j=0}^{k-1} f_j G_{n+k-j} =
+\sum_{j=0}^{k-1} \sum_{i=0}^{k-1-j} f_{n-j} A_{j+1+i} G_{k-1-i} +
+\sum_{j=0}^{k-2} \sum_{i=1}^{k-1-j} f_j A_i G_{n+k-j-i} + \sum_{j=0}^{n} f_{n-j} w_j.$$
+
+The identity is quoted from Belbachir–Rami–Szalay 2022; its hypotheses $A_k \neq 0$ and
+$k \ge 1$ are not needed.
 
 Source: Hacène Belbachir, Fella Rami, and László Szalay, *Alternating Sums in the Generalized
 Hyperbolic Pascal Triangle*, INTEGERS 24 (2024), Article A84, Theorem 1
@@ -91,9 +104,16 @@ public theorem_wanted linearRecurrence_inhomogeneous_identity (k : ℕ) (A f G w
           f j * A i * G (n + k - j - i) +
         ∑ j ∈ Finset.range (n + 1), f (n - j) * w j
 
-/-- **Corollary 1.** If moreover `f_0 = ⋯ = f_{k-2} = 0` and `f_{k-1} = 1`, then
-`G_{n+1} = ∑_{j<k} ∑_{i<k-j} f_{n-j} A_{j+1+i} G_{k-1-i} + ∑_{j=0}^{n} f_{n-j} w_j`.
-Stated for `n ≥ k - 1` (the paper: `n ≥ k`, from Theorem 1).
+/-- **Explicit formula for an inhomogeneous linear recurrence.** Let $k \in \mathbb{N}$ and let
+$A, f, G, w \colon \mathbb{N} \to \mathbb{C}$ be sequences such that, for every $m \ge k$,
+$f_m = \sum_{i=1}^{k} A_i f_{m-i}$ and $G_m = \sum_{i=1}^{k} A_i G_{m-i} + w_{m-k}$. Suppose
+moreover that $f_j = 0$ for every $j < k - 1$ and $f_{k-1} = 1$. Then for every $n \ge k - 1$,
+
+$$G_{n+1} = \sum_{j=0}^{k-1} \sum_{i=0}^{k-1-j} f_{n-j} A_{j+1+i} G_{k-1-i} +
+\sum_{j=0}^{n} f_{n-j} w_j.$$
+
+For $k = 0$ the index $k - 1$ is read as $0$, so the hypotheses cannot all hold. The source
+states the formula for $n \ge k$, as a consequence of its Theorem 1.
 
 Source: Hacène Belbachir, Fella Rami, and László Szalay, *Alternating Sums in the Generalized
 Hyperbolic Pascal Triangle*, INTEGERS 24 (2024), Article A84, Corollary 1
@@ -106,10 +126,16 @@ public theorem_wanted linearRecurrence_inhomogeneous_explicit (k : ℕ) (A f G w
       ∑ j ∈ Finset.range k, ∑ i ∈ Finset.range (k - j), f (n - j) * A (j + 1 + i) * G (k - 1 - i) +
         ∑ j ∈ Finset.range (n + 1), f (n - j) * w j
 
-/-- **Corollary 2.** Weighting the entries of row `n` alternately by `v` (even positions) and `w`
-(odd positions) gives `s̃_{(v,w),n} = (ŝ_n + s̃_n)/2 · v + (ŝ_n - s̃_n)/2 · w
-= (v + w)/2 · ŝ_n + (v - w)/2 · s̃_n`, where `ŝ_n` is the row sum and `s̃_n` the alternating
-row sum. Stated for every `q` and `n` (the identity does not use the row structure).
+/-- **Weighted alternating row sums of the generalized hyperbolic Pascal triangle.** Let
+$q, n \in \mathbb{N}$, let $\alpha, \beta \colon \mathbb{N} \to \mathbb{C}$ and let
+$v, w \in \mathbb{C}$. Let $x_0, x_1, \dots, x_{\ell - 1}$ be the values of the entries of row $n$
+of the generalized hyperbolic Pascal triangle linked to $\{4, q\}$ with legs $\alpha$ and $\beta$,
+from left to right, and put $\hat s_n = \sum_i x_i$, $\tilde s_n = \sum_i (-1)^i x_i$ and
+$\tilde s_{(v,w),n} = \sum_{i \text{ even}} v x_i + \sum_{i \text{ odd}} w x_i$. Then
+$\tilde s_{(v,w),n} = \frac{\hat s_n + \tilde s_n}{2} v + \frac{\hat s_n - \tilde s_n}{2} w$ and
+$\tilde s_{(v,w),n} = \frac{v + w}{2} \hat s_n + \frac{v - w}{2} \tilde s_n$.
+
+The identities do not use the structure of the rows; they hold for every $q$ and $n$.
 
 Source: Hacène Belbachir, Fella Rami, and László Szalay, *Alternating Sums in the Generalized
 Hyperbolic Pascal Triangle*, INTEGERS 24 (2024), Article A84, Corollary 2

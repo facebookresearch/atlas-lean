@@ -34,18 +34,21 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.Enumerative.IncompleteBinomialHarmonicSumsWanted
 
-/-- Kollár's auxiliary sum `Cₙ = ∑ k ∈ [1,n], 1 / (k * 2 ^ k)`. -/
+/-- **Kollár's auxiliary sum $C_n$.** For a natural number $n$, $C_n$ is the rational number
+$C_n = \sum_{k=1}^{n} \frac{1}{k \, 2^k}$. -/
 def invPowTwoSum (n : ℕ) : ℚ :=
   ∑ k ∈ Finset.Icc 1 n, (1 : ℚ) / (k * 2 ^ k)
 
-/-- Kollár's auxiliary sum
-`Dₙ = ∑ k ∈ [1,n], (2k).choose k / ((2 * k) * 2 ^ (2 * k))`. -/
+/-- **Kollár's auxiliary sum $D_n$.** For a natural number $n$, $D_n$ is the rational number
+$D_n = \sum_{k=1}^{n} \frac{\binom{2k}{k}}{2k \cdot 2^{2k}}$. -/
 def centralBinomWeightedSum (n : ℕ) : ℚ :=
   ∑ k ∈ Finset.Icc 1 n,
     ((2 * k).choose k : ℚ) / ((2 * k : ℚ) * 2 ^ (2 * k))
 
-/-- Kollár's Lemma 1: the recursive incomplete binomial-sum
-identity for an arbitrary real sequence.
+/-- **Kollár's recursion for incomplete binomial sums.** Let $(a_k)_{k \ge 0}$ be a sequence of
+real numbers and let $m$ and $N$ be positive integers with $m \le N$. Then
+$$\sum_{k=0}^{m} \binom{N}{k} a_k =
+\sum_{k=0}^{m-1} \binom{N-1}{k} (a_k + a_{k+1}) + \binom{N-1}{m} a_m.$$
 
 Source: Richard Kollár, "Incomplete Finite Binomial Sums of
 Harmonic Numbers", Lemma 1. -/
@@ -55,7 +58,11 @@ theorem_wanted sum_range_choose_mul_eq_sum_range_choose_add
       (∑ k ∈ Finset.range m, ((N - 1).choose k : ℝ) * (a k + a (k + 1))) +
         ((N - 1).choose m : ℝ) * a m
 
-/-- The odd case of Kollár's Corollary 2.
+/-- **Kollár's recursion for incomplete binomial sums with top index $2n-1$.** Let
+$(a_k)_{k \ge 0}$ be a sequence of real numbers, let $n$ be a positive integer and let $m$ be a
+natural number with $m \le n$. Then
+$$\sum_{k=0}^{m} \binom{2n-1}{k} a_k =
+\sum_{k=0}^{m} \binom{2n-2}{k} (a_k + a_{k+1}) - \binom{2n-2}{m} a_{m+1}.$$
 
 Source: Richard Kollár, "Incomplete Finite Binomial Sums of
 Harmonic Numbers", Corollary 2, equation `Lemma7`. -/
@@ -66,7 +73,11 @@ theorem_wanted sum_range_choose_two_mul_sub_one_mul_eq
         ((2 * n - 2).choose k : ℝ) * (a k + a (k + 1))) -
         ((2 * n - 2).choose m : ℝ) * a (m + 1)
 
-/-- The even case of Kollár's Corollary 2.
+/-- **Kollár's recursion for incomplete binomial sums with top index $2n$.** Let
+$(a_k)_{k \ge 0}$ be a sequence of real numbers and let $m$ and $n$ be positive integers with
+$m \le n$. Then
+$$\sum_{k=0}^{m} \binom{2n}{k} a_k =
+\sum_{k=0}^{m-1} \binom{2n-1}{k} (a_k + a_{k+1}) + \binom{2n-1}{m} a_m.$$
 
 Source: Richard Kollár, "Incomplete Finite Binomial Sums of
 Harmonic Numbers", Corollary 2, equation `Lemma8`. -/
@@ -77,9 +88,13 @@ theorem_wanted sum_range_choose_two_mul_mul_eq
         ((2 * n - 1).choose k : ℝ) * (a k + a (k + 1))) +
         ((2 * n - 1).choose m : ℝ) * a m
 
-/-- The odd half-range case of Kollár's Theorem 3:
-`∑ i ∈ [0,n-1], (2n - 1).choose i * Hᵢ` in terms of harmonic
-numbers and the auxiliary sums `C` and `D`.
+/-- **Half-range binomial sum of harmonic numbers with top index $2n-1$.** Let $H_i$ denote
+the $i$-th harmonic number (with $H_0 = 0$), and let Kollár's auxiliary sums be
+$C_n = \sum_{k=1}^{n} \frac{1}{k \, 2^k}$ and
+$D_n = \sum_{k=1}^{n} \frac{\binom{2k}{k}}{2k \cdot 2^{2k}}$.
+For every positive integer $n$,
+$$\sum_{i=0}^{n-1} \binom{2n-1}{i} H_i =
+2^{2n-2} \left( H_{2n-1} - 2 C_{2n-1} + D_{n-1} \right).$$
 
 Source: Richard Kollár, "Incomplete Finite Binomial Sums of
 Harmonic Numbers", Theorem 3, equation `oddH`. -/
@@ -90,9 +105,13 @@ theorem_wanted sum_range_choose_two_mul_sub_one_mul_harmonic
         (harmonic (2 * n - 1) - 2 * invPowTwoSum (2 * n - 1) +
           centralBinomWeightedSum (n - 1))
 
-/-- The even half-range case of Kollár's Theorem 3:
-`∑ i ∈ [0,n], (2n).choose i * Hᵢ` in terms of harmonic numbers
-and the auxiliary sums `C` and `D`.
+/-- **Half-range binomial sum of harmonic numbers with top index $2n$.** Let $H_i$ denote
+the $i$-th harmonic number (with $H_0 = 0$), and let Kollár's auxiliary sums be
+$C_n = \sum_{k=1}^{n} \frac{1}{k \, 2^k}$ and
+$D_n = \sum_{k=1}^{n} \frac{\binom{2k}{k}}{2k \cdot 2^{2k}}$.
+For every positive integer $n$,
+$$\sum_{i=0}^{n} \binom{2n}{i} H_i =
+2^{2n-1} \left( H_{2n} - 2 C_{2n} + D_n \right) + \frac{1}{2} \binom{2n}{n} H_n.$$
 
 Source: Richard Kollár, "Incomplete Finite Binomial Sums of
 Harmonic Numbers", Theorem 3, equation `evenH`. -/

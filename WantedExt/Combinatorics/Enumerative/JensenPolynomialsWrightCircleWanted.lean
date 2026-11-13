@@ -30,9 +30,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- For every real `N > 0`,
-`∫₀^∞ (e^{-x} / (x (1 - e^{-Nx})) - 1 / (N x²) - (1/2 - 1/N) e^{-x} / x) dx
-  = log Γ(1/N) + (1/2 - 1/N) log(1/N) - (1/2) log(2π)`.
+/-- **An integral formula for $\log \Gamma(1/N)$.** For every real number $N > 0$,
+$$
+\int_0^\infty \left( \frac{e^{-x}}{x \left(1 - e^{-N x}\right)} - \frac{1}{N x^2} -
+\left( \frac{1}{2} - \frac{1}{N} \right) \frac{e^{-x}}{x} \right) dx =
+\log \Gamma\left( \frac{1}{N} \right) + \left( \frac{1}{2} - \frac{1}{N} \right) \log \frac{1}{N} -
+\frac{1}{2} \log (2\pi).
+$$
 
 Source: Jashan Bal, Fern Haraldson, Joshua Males and Ian Thompson, *Jensen Polynomials Associated
 with Wright's Circle Method: Hyperbolicity and Turán Inequalities*, INTEGERS 25 (2025),
@@ -44,9 +48,13 @@ public theorem_wanted integral_exp_div_one_sub_exp_sub_eq_log_Gamma {N : ℝ} (h
       Real.log (Real.Gamma (1 / N)) + (1 / 2 - 1 / N) * Real.log (1 / N) -
         1 / 2 * Real.log (2 * Real.pi)
 
-/-- For integers `1 ≤ k < p`, with `ζₚ = e^{2πi/p}`,
-`∑_{α=1}^{p} ζₚ^{kα} ψ(α/p) = p Log(1 - ζₚ^k)`, where `ψ` is the digamma function and `Log` the
-principal logarithm.
+/-- **A twisted sum of digamma values.** Let $p$ and $k$ be natural numbers with $1 \le k < p$,
+and let $\psi = \Gamma'/\Gamma$ be the digamma function. Then
+$$
+\sum_{\alpha=1}^{p} e^{2\pi i k \alpha / p} \, \psi\left( \frac{\alpha}{p} \right) =
+p \operatorname{Log}\left( 1 - e^{2\pi i k / p} \right),
+$$
+where $\operatorname{Log}$ is the principal branch of the complex logarithm.
 
 Source: Jashan Bal, Fern Haraldson, Joshua Males and Ian Thompson, *Jensen Polynomials Associated
 with Wright's Circle Method: Hyperbolicity and Turán Inequalities*, INTEGERS 25 (2025),
@@ -57,13 +65,21 @@ public theorem_wanted sum_exp_mul_digamma_div_eq_mul_log_one_sub {p k : ℕ} (hk
         Complex.exp (2 * Real.pi * Complex.I * k * α / p) * Complex.digamma (α / p) =
       p * Complex.log (1 - Complex.exp (2 * Real.pi * Complex.I * k / p))
 
-/-- Let `α`, `A`, `δ` be sequences of positive reals with `δ(n) → 0` (all three positive as
-printed in the quoted theorem), and let `d ≥ 1`. Suppose
-that for `0 ≤ k ≤ d`,
-`log (α(n + k) / α(n)) = A(n) k - δ(n)² k² + ∑_{j=3}^{d} g_j(n) kʲ + o(δ(n)^d)` with
-`g_j(n) = o(δ(n)ʲ)`. Then the Jensen polynomial `J_α^{d,n}` is hyperbolic for all but finitely
-many `n`. The convergence of the renormalized Jensen polynomials to Hermite polynomials is
-omitted.
+/-- **Hyperbolicity of Jensen polynomials from a log-ratio expansion.** Let $\alpha$, $A$ and
+$\delta$ be sequences of positive real numbers indexed by $n \in \mathbb{N}$ with
+$\delta(n) \to 0$, let $d \ge 1$ be an integer, and for $3 \le j \le d$ let $g_j$ be a real
+sequence with $g_j(n) = o(\delta(n)^j)$ as $n \to \infty$. Suppose that for every natural number
+$k \le d$,
+$$
+\log \frac{\alpha(n + k)}{\alpha(n)} = A(n) k - \delta(n)^2 k^2 + \sum_{j=3}^{d} g_j(n) k^j +
+o(\delta(n)^d)
+$$
+as $n \to \infty$. Then for all sufficiently large $n$ the Jensen polynomial
+$J_\alpha^{d,n}(X) = \sum_{j=0}^{d} \binom{d}{j} \alpha(n + j) X^j$ is hyperbolic: the number of
+its real roots, counted with multiplicity, equals its degree.
+
+The source also proves that suitably renormalized Jensen polynomials converge to the Hermite
+polynomials; that conclusion is not part of this statement.
 
 Source: Jashan Bal, Fern Haraldson, Joshua Males and Ian Thompson, *Jensen Polynomials Associated
 with Wright's Circle Method: Hyperbolicity and Turán Inequalities*, INTEGERS 25 (2025),
@@ -80,11 +96,19 @@ public theorem_wanted eventually_jensen_hyperbolic_of_log_ratio_expansion {α A 
       (∑ j ∈ Finset.range (d + 1), C ((d.choose j : ℝ) * α (n + j)) * X ^ j).roots.card =
         (∑ j ∈ Finset.range (d + 1), C ((d.choose j : ℝ) * α (n + j)) * X ^ j).natDegree
 
-/-- Let `r ≥ 1`, `t ≥ 1` and `H_{r,t}(q) = 1/(q^t; q^t)_∞^r = ∑ c_{r,t}(n) qⁿ`. Then
-`C_{r,t}(n) = c_{r,t}(tn)` is the number of `r`-colored partitions of `n` (independent of `t`),
-written as `∑_{n₁ + ⋯ + n_r = n} ∏ᵢ p(nᵢ)`. For each `d ≥ 1`, the Jensen polynomial
-`J_{C_{r,t}}^{d,n}` is hyperbolic for all but finitely many `n`. The Hermite-limit clause and the
-higher order Turán inequalities clause are omitted.
+/-- **Eventual hyperbolicity for colored partitions.** Let $r \ge 1$ and $d \ge 1$ be integers. For
+$m \in \mathbb{N}$ let
+$$
+C_r(m) = \sum_{m_1 + \dots + m_r = m} p(m_1) \cdots p(m_r)
+$$
+be the number of $r$-colored partitions of $m$, where the sum runs over all $r$-tuples of natural
+numbers with sum $m$ and $p$ is the partition function. Then for all sufficiently large $n$ the
+Jensen polynomial $J^{d,n}(X) = \sum_{j=0}^{d} \binom{d}{j} C_r(n + j) X^j$ is hyperbolic: the
+number of its real roots, counted with multiplicity, equals its degree.
+
+In the source, $C_r(n)$ is the coefficient of $q^{tn}$ in $1/(q^t; q^t)_\infty^r$ for any
+$t \ge 1$; the source also proves a Hermite-limit statement and higher order Turán inequalities,
+which are not part of this statement.
 
 Source: Jashan Bal, Fern Haraldson, Joshua Males and Ian Thompson, *Jensen Polynomials Associated
 with Wright's Circle Method: Hyperbolicity and Turán Inequalities*, INTEGERS 25 (2025),
@@ -100,11 +124,17 @@ public theorem_wanted eventually_jensen_hyperbolic_coloredPartitions {r : ℕ} (
             ∏ i, Fintype.card (Nat.Partition (x i)) : ℕ) : ℝ)) * X ^ j).natDegree
 
 open scoped Classical in
-/-- Let `p` be prime, `1 ≤ a < p`, and `G_{a,p}(q) = 1/(q^a; q^p)_∞ = ∑ b_{a,p}(n) qⁿ`, so
-`b_{a,p}(n)` is the number of partitions of `n` into parts `≡ a (mod p)`. For each `d ≥ 1`, the
-Jensen polynomial `J_{b_{a,p}}^{d,n}` is hyperbolic for all but finitely many `n`. The case
-`a = 0` admitted by the paper is excluded (`(1; q^p)_∞ = 0`); the asymptotic formula, the
-Hermite-limit clause and the higher order Turán inequalities clause are omitted.
+/-- **Eventual hyperbolicity for partitions into parts $\equiv a \pmod{p}$.** Let $p$ be a prime,
+let $a$ be an integer with $1 \le a < p$, and let $d \ge 1$ be an integer. For $m \in \mathbb{N}$
+let $b_{a,p}(m)$ be the number of partitions of $m$ all of whose parts are congruent to $a$
+modulo $p$. Then for all sufficiently large $n$ the Jensen polynomial
+$J^{d,n}(X) = \sum_{j=0}^{d} \binom{d}{j} b_{a,p}(n + j) X^j$ is hyperbolic: the number of its
+real roots, counted with multiplicity, equals its degree.
+
+In the source, $b_{a,p}(n)$ is the coefficient of $q^n$ in $1/(q^a; q^p)_\infty$, and the case
+$a = 0$ is also admitted there, although $(1; q^p)_\infty = 0$; the source also gives an asymptotic
+formula, a Hermite-limit statement and higher order Turán inequalities, which are not part of
+this statement.
 
 Source: Jashan Bal, Fern Haraldson, Joshua Males and Ian Thompson, *Jensen Polynomials Associated
 with Wright's Circle Method: Hyperbolicity and Turán Inequalities*, INTEGERS 25 (2025),

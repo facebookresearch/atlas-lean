@@ -23,8 +23,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- For every integer `p ≥ 0`, `∑_{n=0}^{p} n D(n) = ⌊(p + 1)!/e⌋`, where `D(n)` is the number
-of derangements of `n` objects.
+/-- **A sum rule for derangements.** For every natural number $p$,
+$\sum_{n=0}^{p} n\, D(n) = \lfloor (p + 1)!/e \rfloor$, where $D(n)$ is the number of
+derangements of $n$ objects.
 
 Source: Jean-Christophe Pain, *A Sum Rule for Derangements*, INTEGERS 25 (2025),
 Article A84, Theorem 1 (`integers-2025-A84-thm-1`). -/
