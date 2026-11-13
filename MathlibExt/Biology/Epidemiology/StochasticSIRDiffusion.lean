@@ -878,16 +878,17 @@ theorem tendsto_measure_norm_sub_of_deviation {S I R : ℕ → Ω → ℝ → �
 
 /-- `V = (V₁₁, V₁₂, V₂₂)` is the **limit covariance** of the SIR diffusion approximation around
 `x`, started from `V₀`: it solves the Lyapunov equation `V' = DF(x) V + V DF(x)ᵀ + G(x)`
-(`lyapunovField`, written out in `lyapunovField_apply`) for `t ≥ 0`, with `V(0) = V₀`. This is
-the covariance of the solution of `dU = DF(x(t)) U dt + dM` when `M` is a Gaussian martingale
-with `d⟨M⟩ = G(x(t)) dt` and `U(0)` is centered Gaussian with covariance `V₀`, independent of
-`M`; that identification is not proved in this file. -/
+(`lyapunovField`, written out in `lyapunovField_apply`) for `t ≥ 0`, with `V(0) = V₀`. The
+derivative is taken within `[0, ∞)`, so it is one-sided at `t = 0` and the values of `V` at
+negative times play no role. This is the covariance of the solution of `dU = DF(x(t)) U dt + dM`
+when `M` is a Gaussian martingale with `d⟨M⟩ = G(x(t)) dt` and `U(0)` is centered Gaussian with
+covariance `V₀`, independent of `M`; that identification is not proved in this file. -/
 structure IsLimitCovariance (β γ : ℝ) (x : ℝ → ℝ × ℝ) (V₀ : ℝ × ℝ × ℝ) (V : ℝ → ℝ × ℝ × ℝ) :
     Prop where
   /-- The initial covariance. -/
   initial : V 0 = V₀
-  /-- The Lyapunov equation. -/
-  hasDerivAt : ∀ t, 0 ≤ t → HasDerivAt V (lyapunovField β γ (x t) (V t)) t
+  /-- The Lyapunov equation on `[0, ∞)`, with a right derivative at `t = 0`. -/
+  hasDerivWithinAt : ∀ t, 0 ≤ t → HasDerivWithinAt V (lyapunovField β γ (x t) (V t)) (Ici 0) t
 
 /-- The Lyapunov field is Lipschitz in `V` with constant `2 (2 β B + γ)` when `‖p‖ ≤ B`. -/
 theorem norm_lyapunovField_sub_le {β γ B : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {p : ℝ × ℝ}
@@ -944,11 +945,13 @@ theorem IsLimitCovariance.eqOn {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
   have hB : ∀ t ∈ Icc 0 T, ‖x t‖ ≤ B := fun t ht => (hC t ht).trans (le_max_left _ _)
   have hK : 0 ≤ 2 * (2 * β * B + γ) := by positivity
   have hcont : ∀ {W : ℝ → ℝ × ℝ × ℝ}, IsLimitCovariance β γ x V₀ W → ContinuousOn W (Icc 0 T) :=
-    fun hW t ht => (hW.hasDerivAt t ht.1).continuousAt.continuousWithinAt
+    fun hW t ht => (hW.hasDerivWithinAt t ht.1).continuousWithinAt.mono Icc_subset_Ici_self
   refine ODE_solution_unique_of_mem_Icc_right (v := fun t => lyapunovField β γ (x t))
     (s := fun _ => univ) (K := Real.toNNReal (2 * (2 * β * B + γ))) (fun t ht => ?_)
-    (hcont hV) (fun t ht => (hV.hasDerivAt t ht.1).hasDerivWithinAt) (fun _ _ => mem_univ _)
-    (hcont hV') (fun t ht => (hV'.hasDerivAt t ht.1).hasDerivWithinAt) (fun _ _ => mem_univ _)
+    (hcont hV) (fun t ht => (hV.hasDerivWithinAt t ht.1).mono (Ici_subset_Ici.2 ht.1))
+    (fun _ _ => mem_univ _)
+    (hcont hV') (fun t ht => (hV'.hasDerivWithinAt t ht.1).mono (Ici_subset_Ici.2 ht.1))
+    (fun _ _ => mem_univ _)
     (hV.initial.trans hV'.initial.symm)
   refine (LipschitzWith.of_dist_le_mul fun c c' => ?_).lipschitzOnWith
   rw [Real.coe_toNNReal _ hK, dist_eq_norm, dist_eq_norm]

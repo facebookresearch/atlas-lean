@@ -22,7 +22,9 @@ import Mathlib.Probability.Distributions.Gaussian.Real
 * The degenerate case of zero initial infectives, where the limit covariance vanishes and the
   diffusion approximation (both forms) applies with the zero fluctuation path. A constant
   driving path has no increments, so it leaves the zero fluctuation path unchanged, and every
-  fluctuation path starts at its initial value.
+  fluctuation path starts at its initial value. The Lyapunov equation constrains the covariance
+  path only on `[0, ∞)`: changing it at negative times, even discontinuously, keeps it a limit
+  covariance.
 * `StochasticSIR.tendsto_measure_deviation` concludes the hypothesis of
   `tendsto_measure_norm_sub_of_deviation`.
 * A case where the CLT scaling fails: for `N = 1` the scaled fluctuation of the infectives at
@@ -67,12 +69,12 @@ noncomputable def covRemoval (t : ℝ) : ℝ × ℝ × ℝ := (0, 0, infected t 
 theorem isLimitCovariance_removal :
     IsLimitCovariance 2 (log 2) (fun t => (0, infected t)) 0 covRemoval where
   initial := by simp [covRemoval, infected_zero]
-  hasDerivAt t _ := by
+  hasDerivWithinAt t _ := by
     have hi := hasDerivAt_infected t
     have h : HasDerivAt covRemoval ((0 : ℝ), (0 : ℝ),
         -(log 2 * infected t) - ((2 : ℕ) : ℝ) * infected t ^ (2 - 1) * -(log 2 * infected t)) t :=
       (hasDerivAt_const t (0 : ℝ)).prodMk ((hasDerivAt_const t (0 : ℝ)).prodMk (hi.sub (hi.pow 2)))
-    refine h.congr_deriv ?_
+    refine (h.congr_deriv ?_).hasDerivWithinAt
     simp only [lyapunovField_apply, covRemoval, Prod.mk.injEq]
     refine ⟨by ring, by ring, by norm_num; ring⟩
 
@@ -110,8 +112,18 @@ theorem limitCovariance_diseaseFree {β γ : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ 
     {V : ℝ → ℝ × ℝ × ℝ} (hV : IsLimitCovariance β γ (fun _ => (1, 0)) 0 V) {t : ℝ}
     (ht : 0 ≤ t) : V t = 0 := by
   have h0 : IsLimitCovariance β γ (fun _ => (1, 0)) 0 (fun _ => 0) :=
-    ⟨rfl, fun t _ => by rw [lyapunovField_diseaseFree]; exact hasDerivAt_const t _⟩
+    ⟨rfl, fun t _ => by
+      rw [lyapunovField_diseaseFree]; exact (hasDerivAt_const t _).hasDerivWithinAt⟩
   exact hV.eqOn hβ hγ continuousOn_const h0 ⟨ht, le_rfl⟩
+
+/-- The Lyapunov equation constrains `V` only on `[0, ∞)`: the disease-free covariance path with
+a jump to `1` at negative times, which has no two-sided derivative at `t = 0`, is still a limit
+covariance. -/
+example (β γ : ℝ) :
+    IsLimitCovariance β γ (fun _ => (1, 0)) 0 (fun t => if 0 ≤ t then 0 else 1) := by
+  refine ⟨by simp, fun t ht => ?_⟩
+  rw [ite_eq_left ht, lyapunovField_diseaseFree]
+  exact (hasDerivWithinAt_const t (Ici 0) 0).congr_of_mem (fun u hu => ite_eq_left hu) ht
 
 /-- **Fluctuations vanish (paths).** With zero initial infectives the chain never moves, so its
 density path is constant at `(1, 0)`. All hypotheses of the diffusion approximation hold with
