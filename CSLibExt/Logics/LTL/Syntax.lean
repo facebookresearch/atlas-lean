@@ -20,9 +20,9 @@ Formulas of linear temporal logic (LTL) over a type of atoms, with primitive con
 negation, conjunction, `next`, and `until`, and the derived connectives falsity, disjunction,
 implication, bi-implication, `eventually`, `always`, and `release`.
 
-The syntax is independent of any semantics.  It is interpreted over upstream ω-words
-(`Cslib.ωSequence`) in `CSLibExt.Logics.LTL.OmegaWord`.  An interpretation over state runs
-`ℕ → State` of the local LTS core is future work.
+The syntax is independent of any semantics. It is interpreted over canonical
+CSLib ω-words (`Cslib.ωSequence`) in `CSLibExt.Logics.LTL.OmegaWord`, and over
+state runs `ℕ → State` of canonical `Cslib.LTS` in `CSLibExt.Logics.LTL.Basic`.
 -/
 
 @[expose] public section

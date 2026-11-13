@@ -18,8 +18,9 @@ public import Mathlib.Order.Filter.AtTopBot.Basic
 /-!
 # Linear temporal logic over ω-words
 
-LTL formulas (`Cslib.LTL.Formula`) are interpreted over upstream ω-words
-`w : Cslib.ωSequence Symbol` under an atom valuation `valuation : Symbol → Atom → Prop`.  Atoms
+LTL formulas (`Cslib.LTL.Formula`) are interpreted over canonical CSLib
+ω-words `w : Cslib.ωSequence Symbol` under an atom valuation
+`valuation : Symbol → Atom → Prop`. Atoms
 are read at the first letter, `next` moves to `w.tail`, and `until` quantifies over the suffixes
 `w.drop k`.  The usual alphabet `Set Atom` (letters are sets of true atoms) is the valuation
 `fun s a => a ∈ s`.
@@ -47,8 +48,10 @@ are read at the first letter, `next` moves to `w.tail`, and `until` quantifies o
 * `satisfies_map`: relabelling the letters of a word is composing the valuation.
 * Boolean structure of `language`: `language_not`, `language_and`, `language_or`.
 
-The semantics does not use the local LTS core. A run-based semantics over state sequences,
-and a proof that it agrees with this ω-word semantics, are future work.
+The ω-word semantics is independent of any transition system;
+`CSLibExt.Logics.LTL.OmegaWordBridge` proves that it agrees with
+`Cslib.LTL.Satisfies`, the state-run semantics over canonical `Cslib.LTS` in
+`CSLibExt.Logics.LTL.Basic`.
 -/
 
 @[expose] public section
