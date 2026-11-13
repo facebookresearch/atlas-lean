@@ -60,4 +60,30 @@ example : ∀ θ ∈ Set.Icc (0 : ℝ) 1,
   rw [e1, e2] at hle
   exact hle
 
+/-- Concrete test in the Atlas Bernoulli model: the density of `bernoulliFamily 4` at
+`![true, true, true, false]` and the parameter `3 / 4` is `27 / 256`. -/
+example : (MathlibExt.Probability.Statistics.Sufficiency.bernoulliFamily 4).dens
+    ⟨3 / 4, by norm_num, by norm_num⟩ (![true, true, true, false] : Fin 4 → Bool) =
+      ENNReal.ofReal (27 / 256) := by
+  have hcard : (Finset.univ.filter
+      (fun i : Fin 4 => ![true, true, true, false] i = true)).card = 3 := by
+    decide
+  rw [bernoulliFamily_dens_eq, bernoulliLikelihood_eq_pow, hcard]
+  norm_num
+
+/-- Concrete test in the Atlas Bernoulli model: for `![true, true, true, false]` the density
+is maximized exactly at the sample proportion `3 / 4`. -/
+example (p : Set.Icc (0 : ℝ) 1) :
+    IsMaxOn (fun q => (MathlibExt.Probability.Statistics.Sufficiency.bernoulliFamily 4).dens q
+      (![true, true, true, false] : Fin 4 → Bool)) Set.univ p ↔ p.1 = 3 / 4 := by
+  have hcard : (Finset.univ.filter
+      (fun i : Fin 4 => ![true, true, true, false] i = true)).card = 3 := by
+    decide
+  rw [bernoulliFamily_dens_isMaxOn_iff _ (by norm_num) (by rw [hcard]; norm_num)
+    (by rw [hcard]; norm_num), Subtype.ext_iff]
+  change p.1 = sampleProportion (![true, true, true, false] : Fin 4 → Bool) ↔ p.1 = 3 / 4
+  unfold sampleProportion
+  rw [hcard]
+  norm_num
+
 end MathlibExtTest.Probability.Statistics.BernoulliMLE

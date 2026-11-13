@@ -19,6 +19,7 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.FieldSimp
 import MathlibExt.InformationTheory.FiniteEntropy
+public import MathlibExt.Probability.Statistics.Sufficiency.BernoulliSample
 
 /-!
 # Bernoulli likelihood is maximized at the sample proportion
@@ -35,6 +36,12 @@ PMF on `Bool` against the Bernoulli(θ) PMF: the log-likelihood is
 and the equality case (`crossEntropy_eq_shannonEntropy_iff`) gives
 uniqueness. Boundary cases (all successes / no successes, `θ ∈ {0, 1}`)
 are by direct computation. (Atlas roadmap ST09.T01.)
+
+The same results hold for the Atlas Bernoulli model `Sufficiency.bernoulliFamily n`, the
+normalized density family on `Fin n → Bool` indexed by `Set.Icc (0 : ℝ) 1`: its density at
+a sample is the likelihood above (`bernoulliFamily_dens_eq`), so the sample proportion
+maximizes it (`bernoulliFamily_dens_isMaxOn`), strictly when both outcomes are present
+(`bernoulliFamily_dens_lt_of_ne`, `bernoulliFamily_dens_isMaxOn_iff`).
 -/
 
 @[expose] public section
@@ -448,5 +455,75 @@ theorem bernoulliLikelihood_lt_of_ne {n : ℕ} (x : Fin n → Bool) (hn : 0 < n)
     bernoulliLikelihood x θ < bernoulliLikelihood x (sampleProportion x) := by
   rw [bernoulliLikelihood_eq_pow x θ, bernoulliLikelihood_eq_pow x (sampleProportion x)]
   exact pow_mul_pow_lt_of_ne_at_sample hn hk0 hkn hθ hne
+
+/-! ### The Atlas Bernoulli model -/
+
+/-- The sample proportion lies in `[0, 1]`. -/
+theorem sampleProportion_mem_Icc {n : ℕ} (x : Fin n → Bool) :
+    sampleProportion x ∈ Set.Icc (0 : ℝ) 1 := by
+  have hkn : (Finset.univ.filter (fun i : Fin n => x i = true)).card ≤ n := by
+    calc (Finset.univ.filter (fun i : Fin n => x i = true)).card
+        ≤ Finset.univ.card := Finset.card_filter_le _ _
+      _ = n := by rw [Finset.card_univ, Fintype.card_fin]
+  exact ⟨div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _), div_card_le_one hkn⟩
+
+/-- The sample proportion as a parameter of `Sufficiency.bernoulliFamily`. -/
+noncomputable def sampleProportionParam {n : ℕ} (x : Fin n → Bool) : Set.Icc (0 : ℝ) 1 :=
+  ⟨sampleProportion x, sampleProportion_mem_Icc x⟩
+
+/-- **Bridge to the Bernoulli model.** The density of `Sufficiency.bernoulliFamily n` at the
+parameter `p` and the sample `x` is the likelihood `bernoulliLikelihood x p`. -/
+theorem bernoulliFamily_dens_eq {n : ℕ} (p : Set.Icc (0 : ℝ) 1) (x : Fin n → Bool) :
+    (Sufficiency.bernoulliFamily n).dens p x = ENNReal.ofReal (bernoulliLikelihood x p.1) := by
+  have hcard : (Finset.univ.filter fun i : Fin n => x i = false).card =
+      n - (Finset.univ.filter fun i : Fin n => x i = true).card := by
+    have h := Finset.card_filter_add_card_filter_not (s := (Finset.univ : Finset (Fin n)))
+      (fun i => x i = true)
+    simp only [Bool.not_eq_true, Finset.card_univ, Fintype.card_fin] at h
+    omega
+  rw [bernoulliLikelihood_eq_pow, ← hcard]
+  rfl
+
+/-- **Bernoulli MLE in the model (ST09.T01).** For a nonempty sample `x`, the density of
+`Sufficiency.bernoulliFamily n` at `x` is maximized over the parameter interval at the
+sample proportion. -/
+theorem bernoulliFamily_dens_isMaxOn {n : ℕ} (x : Fin n → Bool) (hn : 0 < n) :
+    IsMaxOn (fun p => (Sufficiency.bernoulliFamily n).dens p x) Set.univ
+      (sampleProportionParam x) :=
+  isMaxOn_univ_iff.mpr fun p => by
+    rw [bernoulliFamily_dens_eq, bernoulliFamily_dens_eq]
+    exact ENNReal.ofReal_le_ofReal (bernoulliLikelihood_le x hn p.2)
+
+/-- **Strict uniqueness in the model (ST09.T01).** When the sample contains both successes and
+failures, every parameter other than the sample proportion has strictly smaller density at the
+sample. -/
+theorem bernoulliFamily_dens_lt_of_ne {n : ℕ} (x : Fin n → Bool) (hn : 0 < n)
+    (hk0 : 0 < (Finset.univ.filter (fun i => x i = true)).card)
+    (hkn : (Finset.univ.filter (fun i => x i = true)).card < n)
+    {p : Set.Icc (0 : ℝ) 1} (hp : p ≠ sampleProportionParam x) :
+    (Sufficiency.bernoulliFamily n).dens p x <
+      (Sufficiency.bernoulliFamily n).dens (sampleProportionParam x) x := by
+  rw [bernoulliFamily_dens_eq, bernoulliFamily_dens_eq]
+  have hne : p.1 ≠ sampleProportion x := fun h => hp (Subtype.ext h)
+  have hlt := bernoulliLikelihood_lt_of_ne x hn p.2 hk0 hkn hne
+  have hnonneg : 0 ≤ bernoulliLikelihood x p.1 := by
+    obtain ⟨h0, h1⟩ := p.2
+    exact Finset.prod_nonneg fun i _ => by split_ifs <;> linarith
+  exact (ENNReal.ofReal_lt_ofReal_iff (lt_of_le_of_lt hnonneg hlt)).mpr hlt
+
+/-- When the sample contains both successes and failures, the sample proportion is the only
+maximizer of the density of `Sufficiency.bernoulliFamily n` at the sample. -/
+theorem bernoulliFamily_dens_isMaxOn_iff {n : ℕ} (x : Fin n → Bool) (hn : 0 < n)
+    (hk0 : 0 < (Finset.univ.filter (fun i => x i = true)).card)
+    (hkn : (Finset.univ.filter (fun i => x i = true)).card < n) (p : Set.Icc (0 : ℝ) 1) :
+    IsMaxOn (fun q => (Sufficiency.bernoulliFamily n).dens q x) Set.univ p ↔
+      p = sampleProportionParam x := by
+  constructor
+  · intro hmax
+    by_contra hne
+    exact absurd (isMaxOn_univ_iff.mp hmax (sampleProportionParam x))
+      (not_le.mpr (bernoulliFamily_dens_lt_of_ne x hn hk0 hkn hne))
+  · rintro rfl
+    exact bernoulliFamily_dens_isMaxOn x hn
 
 end MathlibExt.Probability.Statistics.BernoulliMLE
