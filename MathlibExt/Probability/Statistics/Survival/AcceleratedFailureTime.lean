@@ -223,11 +223,11 @@ theorem aftMeasure_logNormalMeasure (μ : ℝ) (v : ℝ≥0) (η : ℝ) :
 
 /-- **Proportional-hazards reading** with hazard ratio `c > 0`: the survival function of `μ` is
 the `c`-th power of that of `μ₀` on `[0, ∞)`, `S(t) = S₀(t)^c`. A hazard ratio is strictly
-positive; without `0 < c`, survival functions taking only the values `0` and `1` would allow any
-real `c`. Where `S₀(t) > 0` this says the cumulative hazards satisfy `H(t) = c H₀(t)`, and hence,
-where they are differentiable, the hazard rates satisfy `h(t) = c h₀(t)`. This is a statement
-about multiplying hazards at the same time `t`; the AFT reading `μ = aftMeasure μ₀ η` instead
-rescales time. -/
+positive; without `0 < c`, survival functions taking only the values `0` and `1` would allow
+every negative `c`, since `0 ^ c = 0` and `1 ^ c = 1` for `c < 0`. Where `S₀(t) > 0` this says
+the cumulative hazards satisfy `H(t) = c H₀(t)`, and hence, where they are differentiable, the
+hazard rates satisfy `h(t) = c h₀(t)`. This is a statement about multiplying hazards at the same
+time `t`; the AFT reading `μ = aftMeasure μ₀ η` instead rescales time. -/
 def HasProportionalHazards (μ₀ μ : Measure ℝ) (c : ℝ) : Prop :=
   0 < c ∧ ∀ t, 0 ≤ t → μ.real (Ioi t) = μ₀.real (Ioi t) ^ c
 
