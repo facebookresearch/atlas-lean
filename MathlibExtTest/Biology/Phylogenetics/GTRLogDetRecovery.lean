@@ -18,11 +18,13 @@ import Mathlib.Analysis.Matrix.Order
   divergence matrix, computed from the definitions.
 * Boundary case `t = 0` (a sequence compared with itself): for a diagonal divergence matrix with
   positive marginals, `normDivergence = 1`, the log-det distance is `0` and the rate estimate
-  degenerates to `0`, all computed from the definitions (not through `logDetDistance_gtr`).
+  degenerates to `0` (trace `0`, not `-1`: `trace_rateEstimate` needs a nonzero distance), all
+  computed from the definitions (not through `logDetDistance_gtr`).
   The paralinear form `logDetDistance_eq_logDet` is non-vacuous there.
 * Non-vacuity of the recovery hypotheses: the two-state equal-rates model and the K80 model on
   the nucleotides satisfy them, with traces computed from `gtrRate`; the recovered matrices are
-  stated explicitly.
+  stated explicitly. The two-state model also satisfies the hypotheses of `trace_rateEstimate`
+  for every `t ≠ 0`.
 * The consistency theorem applied to the constant divergence sequence.
 -/
 
@@ -131,6 +133,18 @@ example (t : ℝ) : logDetDistance (diagonal π₂ * ctmcTransition (gtrRate π�
   rw [logDetDistance_gtr (fun _ => by norm_num [π₂]) (fun _ _ => rfl)
     (fun _ _ _ => by norm_num [s₂]), trace_gtrRate_two]
   ring
+
+/-- **Trace normalization, two states**: for every `t ≠ 0` the two-state divergence matrix
+satisfies the hypotheses of `trace_rateEstimate`. -/
+example {t : ℝ} (ht : t ≠ 0) :
+    (rateEstimate (diagonal π₂ * ctmcTransition (gtrRate π₂ s₂) t)).trace = -1 := by
+  have hπ : ∀ i, 0 < π₂ i := fun _ => by norm_num [π₂]
+  refine trace_rateEstimate (fun i => ?_) ?_
+  · rw [baseFreq_gtr hπ (fun _ _ => rfl) (fun _ _ _ => by norm_num [s₂]) t]
+    exact hπ i
+  · rw [logDetDistance_gtr hπ (fun _ _ => rfl) (fun _ _ _ => by norm_num [s₂]),
+      trace_gtrRate_two]
+    simpa using ht
 
 /-- The K80 exchangeabilities satisfy the recovery hypotheses for `κ > 0`. -/
 theorem hky_hyps {κ : ℝ} (hκ : 0 < κ) :

@@ -44,10 +44,14 @@ For any real matrix `F` (in practice the empirical divergence matrix of two sequ
   `-log det Fₛ + ∑ i, log (baseFreq F i)` of the symmetrized divergence matrix
   (`logDetDistance_eq_logDet`);
 * `rateEstimate F = (logDetDistance F)⁻¹ • logGenerator F`, the rate matrix normalized to
-  `tr = -1`.
+  `tr = -1` when every base-frequency estimate is positive and `logDetDistance F ≠ 0`
+  (`trace_rateEstimate`). Lean totalizes the inverse, so at `logDetDistance F = 0` the estimate
+  is the zero matrix, of trace `0`.
 
 ## Main results
 
+* `trace_rateEstimate`: the trace of `rateEstimate F` is `-1` when every base-frequency
+  estimate is positive and `logDetDistance F ≠ 0`.
 * `logGenerator_gtr`, `logDetDistance_gtr`, `rateEstimate_gtr`, `baseFreq_gtr`: **exact
   recovery.** At `F = Π exp (t • Q)` with `π > 0`, symmetric `s` and nonnegative off-diagonal
   `s`, the estimator returns `logGenerator F = t • Q`, `logDetDistance F = -t * tr Q`, the base
@@ -134,8 +138,10 @@ definite this is `-log det (normDivergence F)` (`logDetDistance_eq_neg_log_det`)
 noncomputable def logDetDistance (F : Matrix ι ι ℝ) : ℝ :=
   -(cfc Real.log (normDivergence F)).trace
 
-/-- The **log-det rate estimate**: the log-det generator normalized by the log-det distance, so
-that its trace is `-1`. -/
+/-- The **log-det rate estimate**: the log-det generator divided by the log-det distance. Its
+trace is `-1` when every base-frequency estimate is positive and the log-det distance is nonzero
+(`trace_rateEstimate`); when `logDetDistance F = 0`, Lean's `0⁻¹ = 0` makes it the zero
+matrix. -/
 noncomputable def rateEstimate (F : Matrix ι ι ℝ) : Matrix ι ι ℝ :=
   (logDetDistance F)⁻¹ • logGenerator F
 
@@ -145,6 +151,20 @@ theorem isSelfAdjoint_normDivergence (F : Matrix ι ι ℝ) : IsSelfAdjoint (nor
   ext i j
   simp only [normDivergence, transpose_apply, of_apply]
   rw [add_comm (F j i), mul_comm (√(baseFreq F j))]
+
+/-- **Trace normalization of the rate estimate**: if every base-frequency estimate is positive
+and the log-det distance is nonzero, `rateEstimate F` has trace `-1`. Without the second
+hypothesis the claim fails: at `logDetDistance F = 0` the estimate is the zero matrix
+(Lean's `0⁻¹ = 0`). -/
+theorem trace_rateEstimate {F : Matrix ι ι ℝ} (hb : ∀ i, 0 < baseFreq F i)
+    (hd : logDetDistance F ≠ 0) : (rateEstimate F).trace = -1 := by
+  have hgen : (logGenerator F).trace = -logDetDistance F := by
+    rw [logDetDistance, neg_neg, trace, trace]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    have hi := (Real.sqrt_pos.2 (hb i)).ne'
+    simp only [diag_apply, logGenerator, of_apply]
+    field_simp
+  rw [rateEstimate, trace_smul, hgen, smul_eq_mul, mul_neg, inv_mul_cancel₀ hd]
 
 /-! ## The log-det distance as a log-determinant -/
 
@@ -293,7 +313,8 @@ theorem logGenerator_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i
   field_simp
 
 /-- **Exact recovery of the log-det distance**: at the true divergence matrix it is
-`-t * tr Q`, the expected number of substitutions per site scaled by the trace normalization. -/
+`-t * tr Q`, the trace-normalized branch length. This is not the expected number of
+substitutions per site, which under the stationary frequencies is `-t * ∑ i, π i * Q i i`. -/
 theorem logDetDistance_gtr (hπ : ∀ i, 0 < π i) (hsymm : ∀ i j, s i j = s j i)
     (hs : ∀ i j, i ≠ j → 0 ≤ s i j) (t : ℝ) :
     logDetDistance (diagonal π * ctmcTransition (gtrRate π s) t) = -t * (gtrRate π s).trace := by
