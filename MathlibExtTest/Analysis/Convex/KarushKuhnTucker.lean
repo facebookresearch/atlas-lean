@@ -11,6 +11,8 @@ module
 public import MathlibExt.Analysis.Convex.KarushKuhnTucker
 public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.Analysis.Convex.Mul
+public import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import Mathlib.Analysis.Calculus.ContDiff.Operations
 
 /-!
 # Tests for the inequality-only KKT conditions
@@ -210,3 +212,172 @@ example : (1 : ℝ) + 2 * 3 ≤ 16 := by
   have h4sq : (4 : ℝ) ^ 2 = 16 := by norm_num
   rw [h4, h1sq, h4sq, hfd] at h
   exact h
+
+
+open scoped Topology
+
+/-! ### Tests for the mixed-constraint KKT conditions -/
+
+-- Test 1: concrete instance on `ℝ` with an inactive inequality.
+-- `f y = y^2`, `h 0 y = y - 1`, `g 0 y = -y`, `x = 1`.
+example : ∃ (lam : Fin 1 → ℝ) (mu : Fin 1 → ℝ),
+    (∀ i, 0 ≤ lam i)
+    ∧ (∀ i, lam i * ((fun _ y : ℝ => -y) i) 1 = 0)
+    ∧ (fderiv ℝ (fun y : ℝ => y ^ 2) 1
+      + ∑ i : Fin 1, lam i • fderiv ℝ ((fun _ y : ℝ => -y) i) 1
+      + ∑ j : Fin 1, mu j • fderiv ℝ ((fun _ y : ℝ => y - 1) j) 1 = 0)
+    ∧ lam 0 = 0 ∧ mu 0 = -2 := by
+  have hf_diff : DifferentiableAt ℝ (fun y : ℝ => y ^ 2) 1 := by fun_prop
+  have hg_diff : ∀ i : Fin 1, DifferentiableAt ℝ ((fun _ y : ℝ => -y) i) 1 := by
+    intro i
+    fun_prop
+  have hh_diff : ∀ j : Fin 1, ContDiffAt ℝ 1 ((fun _ y : ℝ => y - 1) j) 1 := by
+    intro j
+    exact contDiffAt_id.sub contDiffAt_const
+  have hfeas : ∀ i : Fin 1, (fun _ y : ℝ => -y) i 1 ≤ 0 := by
+    intro i
+    change (-1 : ℝ) ≤ 0
+    norm_num
+  have heq : ∀ j : Fin 1, (fun _ y : ℝ => y - 1) j 1 = 0 := by
+    intro j
+    change (1 : ℝ) - 1 = 0
+    norm_num
+  have hmin : IsLocalMinOn (fun y : ℝ => y ^ 2)
+      {y | (∀ i : Fin 1, (fun _ y : ℝ => -y) i y ≤ 0)
+        ∧ ∀ j : Fin 1, (fun _ y : ℝ => y - 1) j y = 0} 1 := by
+    change ∀ᶠ y : ℝ in 𝓝[{y | (∀ i : Fin 1, (fun _ y : ℝ => -y) i y ≤ 0)
+        ∧ ∀ j : Fin 1, (fun _ y : ℝ => y - 1) j y = 0}] 1,
+      (fun y : ℝ => y ^ 2) 1 ≤ (fun y : ℝ => y ^ 2) y
+    filter_upwards [self_mem_nhdsWithin] with y hy
+    obtain ⟨hg, hh⟩ := hy
+    have h0 := hh 0
+    have hy1 : y = 1 := by linarith
+    rw [hy1]
+  have hLICQ : LinearIndependent ℝ (Sum.elim
+      (fun j : Fin 1 => fderiv ℝ ((fun _ y : ℝ => y - 1) j) 1)
+      (fun i : {i : Fin 1 // (fun _ y : ℝ => -y) i 1 = 0} =>
+        fderiv ℝ ((fun _ y : ℝ => -y) i.val) 1)) := by
+    -- The active set is empty.
+    have hempty : ∀ a : {i : Fin 1 // (fun _ y : ℝ => -y) i 1 = 0}, False := by
+      intro a
+      have hprop : (fun _ y : ℝ => -y) a.val (1 : ℝ) = 0 := a.property
+      norm_num at hprop
+    -- The single equality derivative is `id`, hence nonzero.
+    have hderiv : HasFDerivAt (fun y : ℝ => y - 1) (ContinuousLinearMap.id ℝ ℝ) (1 : ℝ) :=
+      HasFDerivAt.sub_const 1 (hasFDerivAt_id 1)
+    have hfderiv_id : fderiv ℝ ((fun _ y : ℝ => y - 1) 0) 1
+        = ContinuousLinearMap.id ℝ ℝ := hderiv.fderiv
+    have hne : fderiv ℝ ((fun _ y : ℝ => y - 1) 0) 1 ≠ 0 := by
+      rw [hfderiv_id]
+      intro hcon
+      have hcon1 := congrArg (fun L : ℝ →L[ℝ] ℝ => L 1) hcon
+      simp at hcon1
+    -- Independence by direct sum analysis.
+    rw [Fintype.linearIndependent_iff]
+    intro c hc
+    rw [Fintype.sum_sum_type] at hc
+    have hA0 : (∑ a : {i : Fin 1 // (fun _ y : ℝ => -y) i 1 = 0},
+        c (Sum.inr a) • fderiv ℝ ((fun _ y : ℝ => -y) a.val) 1) = 0 := by
+      apply Finset.sum_eq_zero
+      intro a _
+      exact (hempty a).elim
+    simp only [Sum.elim_inr] at hc
+    rw [hA0, add_zero] at hc
+    -- `hc` is now a singleton sum over `Fin 1`.
+    rw [Fin.sum_univ_one] at hc
+    -- From `c (inl 0) • id = 0`, get `c (inl 0) = 0`.
+    have hfd0 : (Sum.elim (fun j : Fin 1 => fderiv ℝ ((fun _ y : ℝ => y - 1) j) 1)
+        (fun i : {i : Fin 1 // (fun _ y : ℝ => -y) i 1 = 0} =>
+          fderiv ℝ ((fun _ y : ℝ => -y) i.val) 1)) (Sum.inl 0)
+        = ContinuousLinearMap.id ℝ ℝ := by
+      simp only [Sum.elim_inl]
+      exact hfderiv_id
+    rw [hfd0] at hc
+    have hc0 : c (Sum.inl 0) = 0 := by
+      have hc1 := congrArg (fun L : ℝ →L[ℝ] ℝ => L 1) hc
+      simp at hc1
+      linarith [hc1]
+    intro s
+    cases s with
+    | inl j =>
+      have hj0 : j = 0 := by fin_cases j; rfl
+      subst hj0
+      simp [hc0]
+    | inr a => exact (hempty a).elim
+  obtain ⟨lam, mu, hlam, hcompl, hstat⟩ := karush_kuhn_tucker_mixed
+    hf_diff hg_diff hh_diff hfeas heq hmin hLICQ
+  have hlam0 : lam 0 = 0 := by
+    have hc := hcompl 0
+    simp only [] at hc
+    -- `hc : lam 0 * -1 = 0`
+    linarith
+  have hmu0 : mu 0 = -2 := by
+    have hstat1 := congrArg (fun L : ℝ →L[ℝ] ℝ => L (1 : ℝ)) hstat
+    simp only [add_apply, sum_apply, smul_apply, smul_eq_mul,
+      ContinuousLinearMap.zero_apply, Fin.sum_univ_one] at hstat1
+    have hf1 : (fderiv ℝ (fun y : ℝ => y ^ 2) 1) 1 = 2 := by
+      have hfun : (fun y : ℝ => y ^ 2) = (fun y => y * y) := by
+        funext y
+        exact pow_two y
+      rw [hfun]
+      have hmul := (hasFDerivAt_id (𝕜 := ℝ) (1 : ℝ)).mul (hasFDerivAt_id (𝕜 := ℝ) (1 : ℝ))
+      have hfd : fderiv ℝ (fun y : ℝ => y * y) 1
+          = (1 : ℝ) • ContinuousLinearMap.id ℝ ℝ + (1 : ℝ) • ContinuousLinearMap.id ℝ ℝ :=
+        hmul.fderiv
+      rw [hfd]
+      simp [add_apply]
+      norm_num
+    have hg1 : (fderiv ℝ ((fun _ y : ℝ => -y) 0) 1) 1 = -1 := by
+      have hneg : HasFDerivAt (fun y : ℝ => -y) (-ContinuousLinearMap.id ℝ ℝ) (1 : ℝ) :=
+        (hasFDerivAt_id (1 : ℝ)).neg
+      have hfd : fderiv ℝ ((fun _ y : ℝ => -y) 0) 1 = -ContinuousLinearMap.id ℝ ℝ := hneg.fderiv
+      rw [hfd]
+      simp
+    have hh1 : (fderiv ℝ ((fun _ y : ℝ => y - 1) 0) 1) 1 = 1 := by
+      have hsub : HasFDerivAt (fun y : ℝ => y - 1) (ContinuousLinearMap.id ℝ ℝ) (1 : ℝ) :=
+        HasFDerivAt.sub_const 1 (hasFDerivAt_id 1)
+      have hfd : fderiv ℝ ((fun _ y : ℝ => y - 1) 0) 1 = ContinuousLinearMap.id ℝ ℝ := hsub.fderiv
+      rw [hfd]
+      simp
+    rw [hf1, hg1, hh1, hlam0] at hstat1
+    simp at hstat1
+    linarith
+  exact ⟨lam, mu, hlam, hcompl, hstat, hlam0, hmu0⟩
+
+-- Test 2: without LICQ the KKT conclusion can fail (constraint qualification probe).
+-- Minimize `f y = y` subject to `g 0 y = y^2 ≤ 0` (no equalities).
+-- `0` is the unique feasible point, hence a local min, but no `lam ≥ 0` gives stationarity.
+example : IsLocalMinOn (fun y : ℝ => y)
+      {y | (∀ i : Fin 1, (fun _ y : ℝ => y ^ 2) i y ≤ 0)
+        ∧ ∀ j : Fin 0, (fun (_ : Fin 0) (_ : ℝ) => (0 : ℝ)) j y = 0} (0 : ℝ)
+    ∧ ¬∃ lam : Fin 1 → ℝ, (∀ i, 0 ≤ lam i)
+      ∧ (fderiv ℝ (fun y : ℝ => y) 0
+        + lam 0 • fderiv ℝ ((fun _ y : ℝ => y ^ 2) 0) 0 = 0) := by
+  constructor
+  · -- `0` is the only feasible point, hence a (global, so local) minimum.
+    change ∀ᶠ y : ℝ in 𝓝[{y | (∀ i : Fin 1, (fun _ y : ℝ => y ^ 2) i y ≤ 0)
+        ∧ ∀ j : Fin 0, (fun (_ : Fin 0) (_ : ℝ) => (0 : ℝ)) j y = 0}] 0,
+      (fun y : ℝ => y) 0 ≤ (fun y : ℝ => y) y
+    filter_upwards [self_mem_nhdsWithin] with y hy
+    obtain ⟨hg, -⟩ := hy
+    have h0 := hg 0
+    have hsq : (0 : ℝ) ≤ y ^ 2 := by positivity
+    have heq : y ^ 2 = 0 := le_antisymm h0 hsq
+    have hy0 : y = 0 := sq_eq_zero_iff.mp heq
+    rw [hy0]
+  · -- No multipliers exist: `fderiv` of `y` is `id ≠ 0`, of `y^2` at `0` is `0`.
+    rintro ⟨lam, -, hstat⟩
+    have hid : fderiv ℝ (fun y : ℝ => y) 0 = ContinuousLinearMap.id ℝ ℝ :=
+      (hasFDerivAt_id (0 : ℝ)).fderiv
+    have hzero : fderiv ℝ ((fun _ y : ℝ => y ^ 2) 0) 0 = 0 := by
+      have hfun : ((fun _ y : ℝ => y ^ 2) 0) = (fun y => y * y) := by
+        funext y
+        exact pow_two y
+      rw [hfun]
+      have hmul := (hasFDerivAt_id (𝕜 := ℝ) (0 : ℝ)).mul (hasFDerivAt_id (𝕜 := ℝ) (0 : ℝ))
+      have hfd := hmul.fderiv
+      simp at hfd
+      exact hfd
+    rw [hid, hzero, smul_zero, add_zero] at hstat
+    have hcon1 := congrArg (fun L : ℝ →L[ℝ] ℝ => L 1) hstat
+    simp at hcon1
