@@ -86,13 +86,13 @@ theorem elastic_p_faster_than_s {K μ ρ : ℝ} (hρ : 0 < ρ) (hμ : 0 < μ) (h
 
 /-! ## B. Plane-wave derivatives and the wave equation -/
 
-private theorem hasDerivAt_inner_time {k ω x t : ℝ} :
+private lemma hasDerivAt_inner_time {k ω x t : ℝ} :
     HasDerivAt (fun u : ℝ => k * x - ω * u) (-ω) t := by
   have hid : HasDerivAt (fun u : ℝ => ω * u) ω t := by
     simpa using (hasDerivAt_id' t).const_mul ω
   simpa using hid.const_sub (k * x)
 
-private theorem hasDerivAt_inner_space {k ω x t : ℝ} :
+private lemma hasDerivAt_inner_space {k ω x t : ℝ} :
     HasDerivAt (fun u : ℝ => k * u - ω * t) k x := by
   have hid : HasDerivAt (fun u : ℝ => k * u) k x := by
     simpa using (hasDerivAt_id' x).const_mul k
