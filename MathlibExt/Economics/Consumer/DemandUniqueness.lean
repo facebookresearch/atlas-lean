@@ -33,19 +33,20 @@ namespace MathlibExt.Economics.Consumer
 
 open Matrix
 
-/-- Strict quasiconcavity on `s`: for distinct `x, y ∈ s` and weights `a, b > 0` with `a + b = 1`,
-`f (a • x + b • y) > min (f x) (f y)`. This is the strict version of Mathlib's `QuasiconcaveOn`
-and the utility counterpart of strictly convex preferences. -/
+/-- Strict quasiconcavity on `s`: `s` is convex and, for distinct `x, y ∈ s` and weights
+`a, b > 0` with `a + b = 1`, `f (a • x + b • y) > min (f x) (f y)`. This is the strict version
+of Mathlib's `QuasiconcaveOn` and the utility counterpart of strictly convex preferences. -/
 def StrictQuasiconcaveOn {E : Type*} [AddCommMonoid E] [SMul ℝ E] (s : Set E) (f : E → ℝ) :
     Prop :=
-  ∀ ⦃x⦄, x ∈ s → ∀ ⦃y⦄, y ∈ s → x ≠ y → ∀ ⦃a b : ℝ⦄, 0 < a → 0 < b → a + b = 1 →
+  Convex ℝ s ∧ ∀ ⦃x⦄, x ∈ s → ∀ ⦃y⦄, y ∈ s → x ≠ y → ∀ ⦃a b : ℝ⦄, 0 < a → 0 < b → a + b = 1 →
     min (f x) (f y) < f (a • x + b • y)
 
 /-- A strictly concave function is strictly quasiconcave. -/
 theorem strictQuasiconcaveOn_of_strictConcaveOn {E : Type*} [AddCommMonoid E] [SMul ℝ E]
     {s : Set E} {f : E → ℝ} (hf : StrictConcaveOn ℝ s f) : StrictQuasiconcaveOn s f := by
-  intro x hx y hy hxy a b ha hb hab
   obtain ⟨hs, hconc⟩ := hf
+  refine ⟨hs, ?_⟩
+  intro x hx y hy hxy a b ha hb hab
   have hlt : a • f x + b • f y < f (a • x + b • y) := hconc hx hy hxy ha hb hab
   have ha' : 0 ≤ a := ha.le
   have hb' : 0 ≤ b := hb.le
@@ -95,7 +96,7 @@ theorem eq_of_isMarshallianDemand {L : Type*} [Fintype L] {u : (L → ℝ) → �
   have hconv := convex_budgetSet hX p w
   have hmid : (1/2 : ℝ) • x + (1/2 : ℝ) • y ∈ budgetSet X p w :=
     hconv hxmem hymem (by norm_num) (by norm_num) (by norm_num)
-  have hlt := hu hxmem hymem hxy (by norm_num : (0:ℝ) < 1/2) (by norm_num : (0:ℝ) < 1/2)
+  have hlt := hu.2 hxmem hymem hxy (by norm_num : (0:ℝ) < 1/2) (by norm_num : (0:ℝ) < 1/2)
     (by norm_num : (1/2:ℝ) + (1/2) = 1)
   have hmin : min (u x) (u y) = u x := by simp [heq]
   rw [hmin] at hlt

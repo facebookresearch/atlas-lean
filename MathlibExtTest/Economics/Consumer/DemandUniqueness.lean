@@ -106,7 +106,7 @@ theorem linU_not_strictQuasiconcaveOn :
     intro heq
     have h0 := congrFun heq 0
     simp at h0
-  have hlt := h hmem1 hmem2 hne (by norm_num : (0:ℝ) < 1/2) (by norm_num : (0:ℝ) < 1/2)
+  have hlt := h.2 hmem1 hmem2 hne (by norm_num : (0:ℝ) < 1/2) (by norm_num : (0:ℝ) < 1/2)
     (by norm_num : (1/2:ℝ) + (1/2) = 1)
   have h1 : linU (![1, 0] : Fin 2 → ℝ) = 1 := by simp [linU]
   have h2 : linU (![0, 1] : Fin 2 → ℝ) = 1 := by simp [linU]
@@ -115,6 +115,14 @@ theorem linU_not_strictQuasiconcaveOn :
     ring
   rw [h1, h2, hmid] at hlt
   simp at hlt
+
+/-- Strict quasiconcavity requires a convex domain: the identity satisfies the strict inequality
+for the two distinct points of `{0, 2}`, but `{0, 2}` is not convex. -/
+theorem id_not_strictQuasiconcaveOn_pair : ¬ StrictQuasiconcaveOn ({0, 2} : Set ℝ) id := by
+  rintro ⟨hconv, -⟩
+  have hmid := hconv (by simp : (0 : ℝ) ∈ ({0, 2} : Set ℝ)) (by simp : (2 : ℝ) ∈ ({0, 2} : Set ℝ))
+    (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num)
+  norm_num at hmid
 
 /-- Square-root utility `√x₀ + √x₁`, strictly concave on the nonnegative orthant. -/
 noncomputable def sqrtU (x : Fin 2 → ℝ) : ℝ := Real.sqrt (x 0) + Real.sqrt (x 1)
