@@ -74,6 +74,8 @@ example (A B : Matrix (Fin 2) (Fin 0) ℚ) : (A + B).rank = 0 ∧ A.rank + B.ran
   have := rank_le_width (A + B); have := rank_le_width A; have := rank_le_width B
   omega
 
+example (A B : Matrix (Fin 2) (Fin 0) ℚ) : (A + B).rank ≤ A.rank + B.rank := rank_add_le A B
+
 -- Boundary: adding the zero matrix.
 example (A : Matrix (Fin 2) (Fin 3) ℚ) :
     (A + 0).rank ≤ A.rank + (0 : Matrix (Fin 2) (Fin 3) ℚ).rank :=
