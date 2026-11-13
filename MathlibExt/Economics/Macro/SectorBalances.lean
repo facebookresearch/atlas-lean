@@ -24,11 +24,12 @@ final consumption expenditure plus gross capital formation plus exports less imp
 (SNA 2008, §16.47). Final consumption is split between the private sector, `C`, and general
 government, `G`, so `G` is government final consumption expenditure only. Gross capital
 formation `I` covers all resident sectors, so government investment is part of `I`, not of `G`.
-Saving is disposable income less final consumption expenditure (SNA 2008, §9.26). With `T` the
-government's disposable income (taxes net of transfers), private saving is `Sp = (Y - T) - C`,
-government saving is `Sg = T - G`, and national saving is `S = Sp + Sg = Y - C - G`. Government
-investment is not consumption, so it is not subtracted from saving; it is part of the
-investment that saving finances.
+Saving is disposable income less final consumption expenditure, after the adjustment for the
+change in pension entitlements (SNA 2008, §9.26), which the pension-entitlement simplification
+below removes from the sector identities. With `T` the government's disposable income (taxes net
+of transfers), private saving is `Sp = (Y - T) - C`, government saving is `Sg = T - G`, and
+national saving is `S = Sp + Sg = Y - C - G`. Government investment is not consumption, so it is
+not subtracted from saving; it is part of the investment that saving finances.
 
 `saving_investment_balance` derives `S = I + NX` by combining all five identities: national
 saving equals gross capital formation, private and government, plus net exports.
@@ -42,20 +43,32 @@ net exports. SNA 2008 records this balance from the rest of the world's side, as
 external balance (§16.42), which has the opposite sign: under the simplification it is
 `M - X = -NX`, and the identity reads `S = I -` (current external balance).
 
+Pension-entitlement simplification: SNA 2008 derives each sector's saving after the adjustment
+for the change in pension entitlements (D.8; §9.26). The households holding the entitlements add
+it to their saving, and the units responsible for paying the pensions record the opposite
+adjustment (§9.25), so it cancels when both sides are in the same sector but not between the
+private sector and general government, for example under a government pension scheme. These
+accounts assume zero net pension-entitlement adjustment between the private and government
+sectors, so neither `Sp = (Y - T) - C` nor `Sg = T - G` has a D.8 term. Without the assumption
+the adjustment moves saving between `Sp` and `Sg` and leaves `S = Sp + Sg`, and with it
+`S = I + NX`, unchanged.
+
 ## Main results
 
 * `saving_investment_balance`: `S = I + NX`, derived from the five assumed identities under the
-  simplification above.
+  simplifications above.
 * `sectorAccounts_example`: the concrete accounts with `Y = 110` and `S = 25` satisfy the GDP
   identity (assumed) and the saving-investment balance (derived).
 
 ## References
 
 * European Commission, IMF, OECD, United Nations and World Bank,
-  *System of National Accounts 2008* (2009): Chapter 9 (The use of income accounts), §9.26,
-  saving as disposable income less final consumption expenditure; Chapter 16 (Summarizing and
-  integrating the accounts), §16.42–16.43, the consolidated current accounts and the current
-  external balance of the rest of the world, and §16.47, the expenditure measure of GDP.
+  *System of National Accounts 2008* (2009): Chapter 9 (The use of income accounts), §9.25, the
+  opposite pension-entitlement adjustment of the units paying the pensions, and §9.26, saving as
+  disposable income less final consumption expenditure after the adjustment for the change in
+  pension entitlements; Chapter 16 (Summarizing and integrating the accounts), §16.42–16.43, the
+  consolidated current accounts and the current external balance of the rest of the world, and
+  §16.47, the expenditure measure of GDP.
 -/
 
 @[expose] public section
@@ -79,14 +92,20 @@ are assumed here, not derived from transaction-level data.
 * `T` is net taxes: taxes and other current receipts of government less the current transfers
   and property income it pays to the private sector. It is government disposable income, and
   `Y - T` is private disposable income.
-* Saving is disposable income less final consumption expenditure (SNA 2008, §9.26), gross of
-  consumption of fixed capital like `I`: `Sp` is private saving, `Sg = T - G` is government
-  saving, and `S = Sp + Sg` is national saving (`Y - C - G`). Government investment is not
-  consumption, so it is not subtracted from `Sg`. `NX` is net exports.
+* Saving is disposable income less final consumption expenditure, after the pension-entitlement
+  adjustment pinned below (SNA 2008, §9.26), gross of consumption of fixed capital like `I`:
+  `Sp` is private saving, `Sg = T - G` is government saving, and `S = Sp + Sg` is national
+  saving (`Y - C - G`). Government investment is not consumption, so it is not subtracted from
+  `Sg`. `NX` is net exports.
 * Open-economy simplification: income disposal treats GDP as national disposable income, so
   net primary income and net current transfers from the rest of the world are assumed zero,
   and the current-account balance equals `NX` (SNA 2008's current external balance, recorded
   from the rest of the world's side, is `-NX`).
+* Pension-entitlement simplification: SNA 2008 derives saving after the adjustment for the
+  change in pension entitlements (D.8; §9.26), which the units paying the pensions record with
+  the opposite sign (§9.25). The accounts assume zero net pension-entitlement adjustment between
+  the private and government sectors, so `Sp` and `Sg` carry no D.8 term; such an adjustment
+  would move saving between them without changing `S`.
 * Accounting only, not a causal model: no behavioural relation between the fields is assumed.
   Transfers are inside `T`, not inside `G` or `Y`; intermediate goods are not counted in `Y`.
 -/
@@ -110,10 +129,12 @@ structure SectorAccounts where
   /-- Assumed identity, private income disposal: `Y = C + Sp + T`, so private saving is private
   disposable income `Y - T` less private final consumption `C`. This treats GDP as national
   disposable income, i.e. zero net primary income and zero net current transfers from the rest
-  of the world. -/
+  of the world, and assumes zero net pension-entitlement adjustment between the private and
+  government sectors (SNA 2008, §9.26), so `Sp` has no D.8 term. -/
   incomeDisposal : Y = C + Sp + T
   /-- Assumed identity, government saving: `Sg = T - G`, government disposable income less
-  government final consumption. -/
+  government final consumption, with no D.8 term under the same zero net pension-entitlement
+  adjustment between the private and government sectors. -/
   publicSaving : Sg = T - G
   /-- Assumed identity, national saving: `S = Sp + Sg`. -/
   nationalSaving : S = Sp + Sg
@@ -125,7 +146,9 @@ saving finances gross capital formation, private and government, plus net export
 (equivalently `S - I = NX`). This relies on the open-economy simplification pinned in
 `SectorAccounts` (zero net primary income and net current transfers from abroad); in general
 the right side is gross capital formation plus the current-account balance (the negative of
-SNA 2008's current external balance). -/
+SNA 2008's current external balance). The pension-entitlement simplification (zero net
+pension-entitlement adjustment between the private and government sectors) fixes only how `S`
+splits into `Sp` and `Sg`. -/
 theorem saving_investment_balance (a : SectorAccounts) : a.S = a.I + a.NX := by
   linarith [a.gdp, a.netExports, a.incomeDisposal, a.publicSaving, a.nationalSaving]
 
