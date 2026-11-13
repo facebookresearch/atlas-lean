@@ -37,8 +37,7 @@ recursive in the code, the input and the clock (`Code.primrec_evalSteps`).
 
 This is the interface a universal machine needs: a code type, a clocked evaluator, and its
 agreement with the machine semantics. That codes cover exactly the finite-state binary machines
-is in `MultiTape/CodeCompleteness.lean`; a universal *machine* is not built here
-(`CSLibExt/BACKLOG.md`, MT3).
+is in `MultiTape/CodeCompleteness.lean`; a universal *machine* is not built here.
 
 ## Main definitions
 
