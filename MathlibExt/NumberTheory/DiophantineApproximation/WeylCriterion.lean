@@ -570,11 +570,6 @@ private lemma wc_monomial (x : ℕ → ℝ)
     rw [havg, hint]
     exact hfour h hh
 
-/-- The real coercion to the circle is continuous. -/
-private lemma wc_coe_cont :
-    Continuous (fun t : ℝ => ((t : ℝ) : AddCircle (1 : ℝ))) :=
-  QuotientAddGroup.continuous_mk
-
 /-- Averages are bounded by the sup norm. -/
 private lemma wc_avg_le (x : ℕ → ℝ) (G : C(AddCircle (1 : ℝ), ℂ)) (N : ℕ)
     (hN : 1 ≤ N) :
@@ -644,9 +639,9 @@ private lemma wc_all_cont (x : ℕ → ℝ)
       exact tendsto_const_nhds
     · intro G1 G2 _ _ ih1 ih2
       have hcont1 : Continuous (fun t : ℝ => G1 ((t : ℝ) : AddCircle (1 : ℝ))) :=
-        G1.continuous.comp wc_coe_cont
+        G1.continuous.comp QuotientAddGroup.continuous_mk
       have hcont2 : Continuous (fun t : ℝ => G2 ((t : ℝ) : AddCircle (1 : ℝ))) :=
-        G2.continuous.comp wc_coe_cont
+        G2.continuous.comp QuotientAddGroup.continuous_mk
       have hint : (∫ t in (0 : ℝ)..1,
           (G1 + G2) ((t : ℝ) : AddCircle (1 : ℝ))) =
           (∫ t in (0 : ℝ)..1, G1 ((t : ℝ) : AddCircle (1 : ℝ))) +
@@ -734,10 +729,10 @@ private lemma wc_all_cont (x : ℕ → ℝ)
     exact wc_avg_le x (F - G) N hNge1
   have hGc : IntervalIntegrable (fun t : ℝ => G ((t : ℝ) : AddCircle (1 : ℝ)))
       MeasureTheory.volume 0 1 :=
-    (G.continuous.comp wc_coe_cont).intervalIntegrable _ _
+    (G.continuous.comp QuotientAddGroup.continuous_mk).intervalIntegrable _ _
   have hFc : IntervalIntegrable (fun t : ℝ => F ((t : ℝ) : AddCircle (1 : ℝ)))
       MeasureTheory.volume 0 1 :=
-    (F.continuous.comp wc_coe_cont).intervalIntegrable _ _
+    (F.continuous.comp QuotientAddGroup.continuous_mk).intervalIntegrable _ _
   have hintFG : ‖(∫ t in (0 : ℝ)..1, G ((t : ℝ) : AddCircle (1 : ℝ))) -
       (∫ t in (0 : ℝ)..1, F ((t : ℝ) : AddCircle (1 : ℝ)))‖ ≤ ‖F - G‖ := by
     have e : (∫ t in (0 : ℝ)..1, G ((t : ℝ) : AddCircle (1 : ℝ))) -

@@ -312,12 +312,6 @@ private lemma complex_binary_sum_root_re_lt
     have : z.re ≤ ‖z‖ := (le_abs_self z.re).trans hreznorm
     linarith
 
-private lemma norm_multiset_prod (s : Multiset ℂ) :
-    ‖s.prod‖ = (s.map norm).prod := by
-  induction s using Multiset.induction_on with
-  | empty => simp
-  | @cons x s ih => simp [ih]
-
 private lemma one_lt_multiset_prod (s : Multiset ℝ) (hs : s ≠ 0)
     (h : ∀ x ∈ s, 1 < x) : 1 < s.prod := by
   induction s using Multiset.induction_on with
@@ -333,16 +327,6 @@ private lemma one_lt_multiset_prod (s : Multiset ℝ) (hs : s ≠ 0)
         simp only [Multiset.prod_cons]
         nlinarith [mul_pos (lt_trans zero_lt_one hx) (lt_trans zero_lt_one hi)]
 
-private lemma multiset_prod_nonneg (s : Multiset ℝ) (h : ∀ x ∈ s, 0 ≤ x) :
-    0 ≤ s.prod := by
-  induction s using Multiset.induction_on with
-  | empty => simp
-  | @cons x s ih =>
-      simp only [Multiset.prod_cons]
-      exact mul_nonneg (h x (by simp)) (ih (by
-        intro y hy
-        exact h y (by simp [hy])))
-
 private lemma multiset_prod_lt_prod_of_nonempty_nonneg
     (s : Multiset ℂ) (f g : ℂ → ℝ) (hs : s ≠ 0)
     (hf : ∀ x ∈ s, 0 ≤ f x) (hfg : ∀ x ∈ s, f x < g x) :
@@ -356,7 +340,7 @@ private lemma multiset_prod_lt_prod_of_nonempty_nonneg
       · have hx0 := hf x (by simp)
         have hx := hfg x (by simp)
         have hgx : 0 < g x := lt_of_le_of_lt hx0 hx
-        have htail0 : 0 ≤ (s.map f).prod := multiset_prod_nonneg _ (by
+        have htail0 : 0 ≤ (s.map f).prod := Multiset.prod_nonneg (by
           intro y hy
           obtain ⟨z, hz, rfl⟩ := Multiset.mem_map.mp hy
           exact hf z (by simp [hz]))
@@ -420,7 +404,7 @@ private lemma isUnit_of_dvd_of_all_roots_far
     exact_mod_cast Int.one_le_abs hqlead0
   have hformula := (IsAlgClosed.splits Q).eval_eq_prod_roots (b : ℂ)
   have hnormformula := congrArg norm hformula
-  rw [norm_mul, norm_multiset_prod, Multiset.map_map] at hnormformula
+  rw [norm_mul, Multiset.norm_prod, Multiset.map_map] at hnormformula
   have hnormformula' :
       ‖Q.eval (b : ℂ)‖ = ‖Q.leadingCoeff‖ *
         (Q.roots.map fun z => ‖(b : ℂ) - z‖).prod := by
@@ -496,7 +480,7 @@ private lemma isUnit_of_dvd_of_binary_root_re_lt
   have hformula2 := (IsAlgClosed.splits Q).eval_eq_prod_roots (2 : ℂ)
   have hnorm1 := congrArg norm hformula1
   have hnorm2 := congrArg norm hformula2
-  rw [norm_mul, norm_multiset_prod, Multiset.map_map] at hnorm1 hnorm2
+  rw [norm_mul, Multiset.norm_prod, Multiset.map_map] at hnorm1 hnorm2
   have hnorm1' :
       ‖Q.eval (1 : ℂ)‖ = ‖Q.leadingCoeff‖ *
         (Q.roots.map fun z => ‖(1 : ℂ) - z‖).prod := by

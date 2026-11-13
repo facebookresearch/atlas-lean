@@ -104,9 +104,6 @@ private theorem Θ_of_ne (F G : ModularForm 𝒢 k) {c : 𝒬} (hc : c ≠ one�
     Θ F G c = quotientFunc G c := by
   rw [Θ, X_of_ne F G hc]
 
-private theorem quotientFunc_mk' (G : ModularForm 𝒢 k) (r : ℋ) :
-    quotientFunc G ((r : ℋ) : 𝒬) = (⇑G : ℍ → ℂ) ∣[k] ((r : GL (Fin 2) ℝ))⁻¹ := rfl
-
 private theorem prod_smul_eq [Fintype 𝒬] (F G : ModularForm 𝒢 k)
     (hFG : ∀ h ∈ ℋ, ((⇑F : ℍ → ℂ) ∣[k] h) * (⇑G : ℍ → ℂ) =
       (⇑F : ℍ → ℂ) * ((⇑G : ℍ → ℂ) ∣[k] h))
@@ -131,11 +128,11 @@ private theorem prod_smul_eq [Fintype 𝒬] (F G : ModularForm 𝒢 k)
       rw [X_of_ne F G hne, quotientFunc_one𝒬]
     have v2 : quotientFunc (X F G (h' • (h'⁻¹ • one𝒬 𝒢 ℋ))) (h'⁻¹ • one𝒬 𝒢 ℋ) =
         (⇑F : ℍ → ℂ) ∣[k] (h' : GL (Fin 2) ℝ) := by
-      rw [hb2, X_one, smul_one𝒬, quotientFunc_mk']
+      rw [hb2, X_one, smul_one𝒬, quotientFunc_mk]
       simp
     have w1 : Θ F G (one𝒬 𝒢 ℋ) = ⇑F := Θ_one F G
     have w2 : Θ F G (h'⁻¹ • one𝒬 𝒢 ℋ) = (⇑G : ℍ → ℂ) ∣[k] (h' : GL (Fin 2) ℝ) := by
-      rw [Θ_of_ne F G hb1, smul_one𝒬, quotientFunc_mk']
+      rw [Θ_of_ne F G hb1, smul_one𝒬, quotientFunc_mk]
       simp
     have hoff : ∀ d : 𝒬, d ≠ one𝒬 𝒢 ℋ → d ≠ h'⁻¹ • one𝒬 𝒢 ℋ →
         quotientFunc (X F G (h' • d)) d = Θ F G d := by

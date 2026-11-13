@@ -95,38 +95,6 @@ private theorem pow_sum_small (p m : ℕ) (hp : p.Prime) (hm : m < p - 1) :
       exact hsplit
     rw [hA]
     rw [ite_eq_right hm0]
-private theorem powersetCard_succ_insert {α : Type} [DecidableEq α] (a : α) (s : Finset α) (n : ℕ) (h : a ∉ s) :
-    (insert a s).powersetCard (n+1) = s.powersetCard (n+1) ∪ (s.powersetCard n).image (insert a) := by
-  ext t
-  simp only [Finset.mem_powersetCard, Finset.mem_union, Finset.mem_image]
-  constructor
-  · rintro ⟨hsub, hcard⟩
-    by_cases ha : a ∈ t
-    · right
-      refine ⟨t.erase a, ⟨?_, ?_⟩, (Finset.insert_erase ha)⟩
-      · have : t.erase a ⊆ (insert a s).erase a := Finset.erase_subset_erase _ hsub
-        rwa [Finset.erase_insert h] at this
-      · have hcard' : (t.erase a).card = t.card - 1 := Finset.card_erase_of_mem ha
-        omega
-    · left
-      refine ⟨?_, hcard⟩
-      intro x hx
-      have hx' := hsub hx
-      rw [Finset.mem_insert] at hx'
-      rcases hx' with rfl | hm
-      · exact absurd hx ha
-      · exact hm
-  · rintro (⟨hsub, hcard⟩ | ⟨u, ⟨hsubu, hcardu⟩, rfl⟩)
-    · refine ⟨?_, hcard⟩
-      exact Finset.Subset.trans hsub (Finset.subset_insert _ _)
-    · have hau : a ∉ u := fun hm => h (hsubu hm)
-      refine ⟨?_, ?_⟩
-      · intro x hx
-        rw [Finset.mem_insert] at hx
-        rcases hx with hxx | hm
-        · subst hxx; exact Finset.mem_insert_self _ _
-        · exact Finset.mem_insert_of_mem (hsubu hm)
-      · rw [Finset.card_insert_of_notMem hau, hcardu]
 private theorem powersetCard_succ_insert_disjoint {α : Type} [DecidableEq α] (a : α) (s : Finset α) (n : ℕ) (h : a ∉ s) :
     Disjoint (s.powersetCard (n+1)) ((s.powersetCard n).image (insert a)) := by
   rw [Finset.disjoint_left]
@@ -144,7 +112,7 @@ private theorem sum_powersetCard_succ_insert {M : Type} [CommSemiring M] {α : T
     (∑ t ∈ (insert a s).powersetCard (n+1), ∏ i ∈ t, f i) =
     (∑ t ∈ s.powersetCard (n+1), ∏ i ∈ t, f i) +
     f a * (∑ u ∈ s.powersetCard n, ∏ i ∈ u, f i) := by
-  rw [powersetCard_succ_insert a s n h,
+  rw [Finset.powersetCard_succ_insert h n,
     Finset.sum_union (powersetCard_succ_insert_disjoint a s n h)]
   congr 1
   have hinj : ∀ u ∈ s.powersetCard n, ∀ v ∈ s.powersetCard n, insert a u = insert a v → u = v := by

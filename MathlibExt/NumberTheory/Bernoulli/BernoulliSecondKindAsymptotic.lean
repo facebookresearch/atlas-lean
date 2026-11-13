@@ -367,9 +367,6 @@ private theorem contDiff_phi (n : WithTop ℕ∞) :
   rw [hphi]
   exact hcomp.neg
 
-private theorem phi_zero : (fun x : ℝ => x * (Real.Gamma (1 - x))⁻¹) (0 : ℝ) = 0 := by
-  simp
-
 private theorem phi_iteratedDeriv (k : ℕ) :
     iteratedDeriv (k + 1) (fun x : ℝ => x * (Real.Gamma (1 - x))⁻¹) (0 : ℝ)
       = (-1 : ℝ) ^ k * iteratedDeriv (k + 1) (fun s : ℝ => (Real.Gamma s)⁻¹) (0 : ℝ) := by
@@ -627,7 +624,7 @@ private theorem laplace_phi_log_asymptotic (β : ℕ → ℝ)
                 / ((k + 1).factorial : ℝ)) / M ^ (k + 2))
         =O[Filter.atTop] (fun M : ℝ => 1 / M ^ (m + 1 + 2)) :=
       watson_unit_interval (fun x : ℝ => x * (Real.Gamma (1 - x))⁻¹)
-        (contDiff_phi ⊤) phi_zero (m + 1)
+        (contDiff_phi ⊤) (zero_mul _) (m + 1)
     simp only [hexp3, hsumM] at hWred
     exact hWred
   have hlogtend : Filter.Tendsto (fun n : ℕ => Real.log (n : ℝ))

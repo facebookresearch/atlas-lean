@@ -29,83 +29,6 @@ private def IsHurwitz (z : Quaternion ℚ) : Prop :=
     z.re = (a : ℚ) + 1 / 2 ∧ z.imI = (b : ℚ) + 1 / 2 ∧
       z.imJ = (c : ℚ) + 1 / 2 ∧ z.imK = (d : ℚ) + 1 / 2)
 
-/-- A sum over `Fin 0` vanishes. -/
-private theorem sum_fin_zero {M : Type*} [AddCommMonoid M] (f : Fin 0 → M) :
-    ∑ i, f i = 0 :=
-  Fin.sum_univ_zero f
-
-/-- Appending one summand to a `Fin`-indexed sum. -/
-private theorem sum_snoc {M : Type*} [AddCommMonoid M] {n : ℕ}
-    (f : Fin n → M) (c : M) (P : M → Prop)
-    (hf : ∀ i, P (f i)) (hc : P c) :
-    ∃ h : Fin (n + 1) → M, (∀ j, P (h j)) ∧
-      ∑ i, h i = ∑ i, f i + c := by
-  refine ⟨Fin.snoc f c, ?_, ?_⟩
-  · intro j
-    by_cases hj : j.val < n
-    · have hj' : j = Fin.castSucc ⟨j.val, hj⟩ := by
-        ext
-        rfl
-      rw [hj', Fin.snoc_castSucc]
-      exact hf _
-    · have hjm : j.val = n := by
-        have hlt := j.isLt
-        omega
-      have hj' : j = Fin.last n := by
-        ext
-        rw [Fin.val_last]
-        exact hjm
-      rw [hj', Fin.snoc_last]
-      exact hc
-  · rw [Fin.sum_univ_castSucc]
-    simp only [Fin.snoc_castSucc, Fin.snoc_last]
-
-/-- Concatenating two `Fin`-indexed sums. -/
-private theorem sum_combine {M : Type*} [AddCommMonoid M] {m : ℕ}
-    (f : Fin m → M) {n : ℕ} (g : Fin n → M) (P : M → Prop)
-    (hf : ∀ i, P (f i)) (hg : ∀ i, P (g i)) :
-    ∃ h : Fin (m + n) → M, (∀ j, P (h j)) ∧
-      ∑ i, h i = ∑ i, f i + ∑ i, g i := by
-  induction n with
-  | zero =>
-    change ∃ h : Fin m → M, (∀ j, P (h j)) ∧
-      ∑ i, h i = ∑ i, f i + ∑ i, g i
-    refine ⟨f, hf, ?_⟩
-    have hg0 : ∑ i, g i = 0 := sum_fin_zero g
-    rw [hg0, add_zero]
-  | succ n ih =>
-    rw [show m + (n + 1) = (m + n) + 1 from by omega]
-    obtain ⟨h', hh', hsum'⟩ :=
-      ih (fun i => g i.castSucc) (fun i => hg _)
-    obtain ⟨h, hh, hsum⟩ := sum_snoc h' (g (Fin.last n)) P hh' (hg _)
-    refine ⟨h, hh, ?_⟩
-    rw [hsum, hsum', Fin.sum_univ_castSucc g, add_assoc]
-
-/-- Flattening a dependently-indexed family of `Fin`-sums into one `Fin`-sum. -/
-private theorem sum_kpiece {M : Type*} [AddCommMonoid M] {k : ℕ} :
-    ∀ {s : Fin k → ℕ} (F : ∀ a, Fin (s a) → M) (P : M → Prop),
-      (∀ a b, P (F a b)) →
-      ∃ H : Fin (∑ a, s a) → M, (∀ j, P (H j)) ∧
-        ∑ i, H i = ∑ a, ∑ b, F a b := by
-  induction k with
-  | zero =>
-    intro s F P hF
-    have hs : ∑ a, s a = 0 := sum_fin_zero s
-    rw [hs]
-    refine ⟨fun i => (Nat.not_lt_zero _ i.isLt).elim, ?_, ?_⟩
-    · intro j
-      exact (Nat.not_lt_zero _ j.isLt).elim
-    · exact (sum_fin_zero _).trans (sum_fin_zero _).symm
-  | succ k ih =>
-    intro s F P hF
-    rw [Fin.sum_univ_castSucc s]
-    obtain ⟨H', hP', hsum'⟩ :=
-      ih (fun a => F a.castSucc) P (fun a b => hF _ _)
-    obtain ⟨H, hP, hsum⟩ :=
-      sum_combine H' (fun b => F (Fin.last k) b) P hP' (fun b => hF _ _)
-    refine ⟨H, hP, ?_⟩
-    rw [hsum, hsum', Fin.sum_univ_castSucc (fun a => ∑ b, F a b)]
-
 /-- Appending one powered summand to a `Fin`-indexed family of bases. -/
 private theorem sum_snoc_pow {M : Type*} [AddCommMonoid M] [Pow M ℕ] {n : ℕ}
     (f : Fin n → M) (c : M) (P : M → Prop) (ℓ : ℕ)
@@ -157,7 +80,7 @@ private theorem sum_combine_pow {M : Type*} [AddCommMonoid M] [Pow M ℕ]
     change ∃ h : Fin m → M, (∀ j, P (h j)) ∧
       ∑ i, (h i) ^ ℓ = ∑ i, (f i) ^ ℓ + ∑ i, (g i) ^ ℓ
     refine ⟨f, hf, ?_⟩
-    have hg0 : ∑ i, (g i) ^ ℓ = 0 := sum_fin_zero _
+    have hg0 : ∑ i, (g i) ^ ℓ = 0 := Fin.sum_univ_zero _
     rw [hg0, add_zero]
   | succ n ih =>
     rw [show m + (n + 1) = (m + n) + 1 from by omega]
@@ -180,12 +103,12 @@ private theorem sum_kpiece_pow {M : Type*} [AddCommMonoid M] [Pow M ℕ]
   induction k with
   | zero =>
     intro s F P ℓ hF
-    have hs : ∑ a, s a = 0 := sum_fin_zero s
+    have hs : ∑ a, s a = 0 := Fin.sum_univ_zero s
     rw [hs]
     refine ⟨fun i => (Nat.not_lt_zero _ i.isLt).elim, ?_, ?_⟩
     · intro j
       exact (Nat.not_lt_zero _ j.isLt).elim
-    · exact (sum_fin_zero _).trans (sum_fin_zero _).symm
+    · exact (Fin.sum_univ_zero _).trans (Fin.sum_univ_zero _).symm
   | succ k ih =>
     intro s F P ℓ hF
     rw [Fin.sum_univ_castSucc s]
@@ -830,20 +753,12 @@ private theorem pow_mod3_one (u : Quaternion ℚ) (n : ℕ) (h3 : u ^ 3 = 1)
     conv_lhs => rw [← hdiv]
   rw [hexp, pow_add, pow_mul, h3, one_pow, pow_one, one_mul]
 
-private theorem pow_mod3_two (u : Quaternion ℚ) (n : ℕ) (h3 : u ^ 3 = 1)
-    (hmod : n % 3 = 2) : u ^ n = u ^ 2 := by
-  have hdiv := Nat.div_add_mod n 3
-  rw [hmod] at hdiv
-  have hexp : u ^ n = u ^ (3 * (n / 3) + 2) := by
-    conv_lhs => rw [← hdiv]
-  rw [hexp, pow_add, pow_mul, h3, one_pow, one_mul]
-
 private theorem pow_ell_twice (u : Quaternion ℚ) (ℓ : ℕ)
     (hmod : ℓ % 3 = 1 ∨ ℓ % 3 = 2) (h3 : u ^ 3 = 1) :
     (u ^ ℓ) ^ ℓ = u := by
   rcases hmod with h1 | h2
   · rw [pow_mod3_one u ℓ h3 h1, pow_mod3_one u ℓ h3 h1]
-  · rw [pow_mod3_two u ℓ h3 h2, ← pow_mul]
+  · rw [pow_eq_pow_mod ℓ h3, h2, ← pow_mul]
     have h21 : (2 * ℓ) % 3 = 1 := by omega
     exact pow_mod3_one u (2 * ℓ) h3 h21
 
@@ -926,7 +841,7 @@ private theorem hurwitz_pow_ell (u : Quaternion ℚ) (ℓ : ℕ)
   rcases hmod with h1 | h2
   · rw [pow_mod3_one u ℓ h3 h1]
     exact hu
-  · rw [pow_mod3_two u ℓ h3 h2]
+  · rw [pow_eq_pow_mod ℓ h3, h2]
     exact hu2
 
 private theorem neg_one_eq :

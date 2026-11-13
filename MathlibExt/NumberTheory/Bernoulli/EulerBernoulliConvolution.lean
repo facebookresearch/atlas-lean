@@ -18,23 +18,6 @@ namespace MetaMathlibExt
 
 open scoped BigOperators
 
-private theorem coeff_succ_X_mul (G : PowerSeries ℚ) (m : ℕ) :
-    PowerSeries.coeff (m + 1) (PowerSeries.X * G) = PowerSeries.coeff m G := by
-  rw [PowerSeries.coeff_mul]
-  refine (Finset.sum_eq_single (1, m) ?_ ?_).trans ?_
-  · intro p hp hne
-    have h1 : p.1 ≠ 1 := by
-      intro hcon
-      apply hne
-      simp at hp
-      exact Prod.ext hcon (by omega)
-    simp [PowerSeries.coeff_X, h1]
-  · intro hcon
-    exfalso
-    revert hcon
-    simp [add_comm]
-  · simp [PowerSeries.coeff_X]
-
 private theorem coeff_bernoulli_sq (k : ℕ) :
     PowerSeries.coeff (k + 1) (bernoulliPowerSeries ℚ * bernoulliPowerSeries ℚ) =
       (∑ i ∈ Finset.range (k + 1 + 1), ((k + 1).choose i : ℚ) * bernoulli i
@@ -103,8 +86,8 @@ theorem euler_bernoulli_convolution (n : ℕ) (hn : 1 ≤ n) :
       + ⇑PowerSeries.derivative (bernoulliPowerSeries ℚ)) * hBE
   have hcoeff := congrArg (PowerSeries.coeff (m + 1)) h2
   simp only [map_add] at hcoeff
-  rw [pow_two, coeff_bernoulli_sq m, coeff_succ_X_mul, coeff_succ_X_mul,
-    PowerSeries.coeff_derivative] at hcoeff
+  rw [pow_two, coeff_bernoulli_sq m, PowerSeries.coeff_succ_X_mul,
+    PowerSeries.coeff_succ_X_mul, PowerSeries.coeff_derivative] at hcoeff
   have hB0 : PowerSeries.coeff m (bernoulliPowerSeries ℚ)
       = bernoulli m / ((Nat.factorial m : ℕ) : ℚ) := by
     simp [bernoulliPowerSeries]

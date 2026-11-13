@@ -1059,10 +1059,6 @@ private theorem nat_div_eq_prod_ratios (p rho n : ℕ) (hp : Nat.Prime p)
   exact hYunit.mul_right_cancel (hcast.trans hprod.symm)
 
 -- Helper: p divides Fib rho and its multiples.
-private theorem fib_rho_dvd (p rho : ℕ) (hfib0 : Nat.fib rho % p = 0) :
-    p ∣ Nat.fib rho :=
-  Nat.dvd_of_mod_eq_zero hfib0
-
 private theorem fib_k_rho_dvd (p rho k : ℕ) (hfib0 : Nat.fib rho % p = 0) :
     p ∣ Nat.fib (k * rho) := by
   have h1 : p ∣ Nat.fib rho := Nat.dvd_of_mod_eq_zero hfib0

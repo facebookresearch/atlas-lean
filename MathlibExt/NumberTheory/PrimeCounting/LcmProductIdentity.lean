@@ -16,27 +16,13 @@ import Mathlib.RingTheory.UniqueFactorizationDomain.Finsupp
 
 namespace MetaMathlibExt
 
-private lemma div_add_le (x y d : ℕ) : x / d + y / d ≤ (x + y) / d := by
-  rcases Nat.eq_zero_or_pos d with rfl | hd
-  · simp
-  · have hx := Nat.div_add_mod x d
-    have hy := Nat.div_add_mod y d
-    have h : x + y = (x % d + y % d) + (d * (x / d) + d * (y / d)) := by omega
-    have e : d * (x / d) + d * (y / d) = (x / d + y / d) * d := by ring
-    have hdiv' : ((x % d + y % d) + (d * (x / d) + d * (y / d))) / d
-        = (x % d + y % d) / d + (x / d + y / d) := by
-      rw [e]
-      exact Nat.add_mul_div_right _ _ hd
-    rw [h, hdiv']
-    exact Nat.le_add_left _ _
-
 private lemma sum_div_le {ι : Type*} [DecidableEq ι] (s : Finset ι) (f : ι → ℕ) (d : ℕ) :
     ∑ i ∈ s, f i / d ≤ (∑ i ∈ s, f i) / d := by
   refine Finset.induction_on s ?_ ?_
   · simp
   · intro a t hat iht
     rw [Finset.sum_insert hat, Finset.sum_insert hat]
-    exact le_trans (Nat.add_le_add_left iht _) (div_add_le _ _ _)
+    exact le_trans (Nat.add_le_add_left iht _) Nat.div_add_div_le_add_div
 
 private lemma bernoulli_nat {a : ℕ} (ha : 1 ≤ a) (v : ℕ) : 1 + v * (a - 1) ≤ a ^ v := by
   induction v with
