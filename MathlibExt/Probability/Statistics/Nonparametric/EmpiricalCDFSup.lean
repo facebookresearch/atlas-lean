@@ -15,6 +15,8 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Basic
 public import Mathlib.Order.Bounds.Basic
 public import Mathlib.MeasureTheory.Order.Group.Lattice
 public import Mathlib.MeasureTheory.Function.AEMeasurableOrder
+import MathlibExt.Probability.Statistics.GlivenkoCantelli
+public import MathlibExt.Probability.Quantile
 
 @[expose] public section
 
@@ -141,5 +143,140 @@ theorem measurableSet_uniform_deviation {n : ℕ}
       ((fun ω => |empCDF (fun i => X i ω) (q : ℝ) - F (q : ℝ)|) ⁻¹' Set.Ioi eps) :=
     habs measurableSet_Ioi
   exact hIoi
+
+section KSReduction
+
+open MathlibExt.Probability.Statistics.GlivenkoCantelliWanted
+
+private theorem count_eq_coupled
+    {μ : Measure ℝ}
+    {u : ℕ → ℝ} {n : ℕ}
+    (hu : ∀ i ∈ Finset.range (n + 1), u i ∈ Set.Ioo (0 : ℝ) 1)
+    (hle : ∀ {v : ℝ}, v ∈ Set.Ioo (0 : ℝ) 1 → ∀ {x : ℝ},
+      cdfQuantile μ v ≤ x ↔ v ≤ cdf μ x)
+    (x : ℝ) :
+    empiricalCount (fun i _ => cdfQuantile μ (u i)) n () x =
+      empiricalCount (fun i _ => u i) n () (cdf μ x) := by
+  unfold empiricalCount
+  congr 1
+  apply Finset.filter_congr
+  intro i hi
+  exact hle (hu i hi)
+
+private theorem unif_dev_le_one
+    {u : ℕ → ℝ} {n : ℕ} {v : ℝ}
+    (hv : v ∈ Set.Icc (0 : ℝ) 1) :
+    |((empiricalCount (fun i _ => u i) n () v : ℝ) / ((n + 1 : ℕ) : ℝ)) - v| ≤ 1 := by
+  have hcard : empiricalCount (fun i _ => u i) n () v ≤ n + 1 := by
+    unfold empiricalCount
+    refine (Finset.card_filter_le _ _).trans ?_
+    simp [Finset.card_range]
+  have hnpos : (0 : ℕ) < n + 1 := by omega
+  have hpos : (0 : ℝ) < ((n + 1 : ℕ) : ℝ) := by exact_mod_cast hnpos
+  have hG1 : ((empiricalCount (fun i _ => u i) n () v : ℕ) : ℝ) / ((n + 1 : ℕ) : ℝ) ≤ 1 :=
+    (div_le_one hpos).mpr (Nat.cast_le.mpr hcard)
+  have hG0 : (0 : ℝ) ≤ ((empiricalCount (fun i _ => u i) n () v : ℕ) : ℝ) / ((n + 1 : ℕ) : ℝ) :=
+    div_nonneg (Nat.cast_nonneg _) hpos.le
+  obtain ⟨hv0, hv1⟩ := Set.mem_Icc.mp hv
+  rw [abs_le]
+  constructor <;> linarith
+
+/-- **Quantile-coupling distribution-free reduction.** On the good event
+(`hu`: every uniform draw lies in `(0,1)`), the empirical CDF of the coupled sample
+equals the uniform empirical CDF composed with the population CDF, pointwise in `x`
+(by `cdfQuantile_le_iff`, applied simultaneously at every `x`). Hence the KS distance is
+bounded by the uniform deviation over `[0,1]`. No continuity of the population law.
+Private count-form engine for `ks_reduction_quantile_coupling_empCDF`. -/
+private theorem ks_reduction_quantile_coupling
+    {μ : Measure ℝ} [IsProbabilityMeasure μ]
+    {u : ℕ → ℝ} {n : ℕ}
+    (hu : ∀ i ∈ Finset.range (n + 1), u i ∈ Set.Ioo (0 : ℝ) 1) :
+    (⨆ x, |((empiricalCount (fun i _ => cdfQuantile μ (u i)) n () x : ℝ) /
+      ((n + 1 : ℕ) : ℝ)) - cdf μ x|) ≤
+    (⨆ v ∈ Set.Icc (0 : ℝ) 1, |((empiricalCount (fun i _ => u i) n () v : ℝ) /
+      ((n + 1 : ℕ) : ℝ)) - v|) := by
+  have hle : ∀ {v : ℝ}, v ∈ Set.Ioo (0 : ℝ) 1 → ∀ {x : ℝ},
+      cdfQuantile μ v ≤ x ↔ v ≤ cdf μ x := fun hv => cdfQuantile_le_iff μ hv
+  have hmem : ∀ x : ℝ, cdf μ x ∈ Set.Icc (0 : ℝ) 1 := fun x =>
+    Set.mem_Icc.mpr ⟨cdf_nonneg μ x, cdf_le_one μ x⟩
+  have hbdd : BddAbove (Set.range fun v =>
+      ⨆ _ : v ∈ Set.Icc (0 : ℝ) 1,
+        |((empiricalCount (fun i _ => u i) n () v : ℝ) / ((n + 1 : ℕ) : ℝ)) - v|) := by
+    refine ⟨1, fun y hy => ?_⟩
+    obtain ⟨v, rfl⟩ := hy
+    by_cases hv : v ∈ Set.Icc (0 : ℝ) 1
+    · have : Nonempty (v ∈ Set.Icc (0 : ℝ) 1) := ⟨hv⟩
+      exact ciSup_le (fun _ => unif_dev_le_one hv)
+    · have : IsEmpty (v ∈ Set.Icc (0 : ℝ) 1) := ⟨hv⟩
+      simp only [Real.iSup_of_isEmpty]
+      exact zero_le_one
+  apply ciSup_le
+  intro x
+  have hcount := count_eq_coupled hu hle x
+  have hbdd_inner : BddAbove (Set.range fun _ : cdf μ x ∈ Set.Icc (0 : ℝ) 1 =>
+      |((empiricalCount (fun i _ => u i) n () (cdf μ x) : ℝ) / ((n + 1 : ℕ) : ℝ)) - cdf μ x|) := by
+    refine ⟨|((empiricalCount (fun i _ => u i) n () (cdf μ x) : ℝ) / ((n + 1 : ℕ) : ℝ)) - cdf μ x|,
+      fun y hy => ?_⟩
+    obtain ⟨_, rfl⟩ := hy
+    exact le_rfl
+  calc |((empiricalCount (fun i _ => cdfQuantile μ (u i)) n () x : ℝ) / ((n + 1 : ℕ) : ℝ))
+          - cdf μ x|
+        = |((empiricalCount (fun i _ => u i) n () (cdf μ x) : ℝ) / ((n + 1 : ℕ) : ℝ))
+          - cdf μ x| := by
+          rw [hcount]
+      _ ≤ ⨆ _ : cdf μ x ∈ Set.Icc (0 : ℝ) 1,
+          |((empiricalCount (fun i _ => u i) n () (cdf μ x) : ℝ) / ((n + 1 : ℕ) : ℝ)) - cdf μ x| :=
+          le_ciSup hbdd_inner (hmem x)
+      _ ≤ (⨆ v ∈ Set.Icc (0 : ℝ) 1,
+          |((empiricalCount (fun i _ => u i) n () v : ℝ) / ((n + 1 : ℕ) : ℝ)) - v|) :=
+          le_ciSup hbdd (cdf μ x)
+
+/-- **Bridge from `empCDF` to `empiricalCount`.** For any real sequence `v`, the
+empirical CDF (`/(n+1)` normalization) of its first `n + 1` terms, viewed as a
+`Fin (n + 1)` sample, equals `empiricalCount (fun i _ => v i) n () x / (n + 1)`.
+Private bridge used by `ks_reduction_quantile_coupling_empCDF`. -/
+private theorem empCDF_fin_eq_empiricalCount_div {n : ℕ} (v : ℕ → ℝ) (x : ℝ) :
+    empCDF (fun i : Fin (n + 1) => v i) x =
+      (empiricalCount (fun i _ => v i) n () x : ℝ) / ((n + 1 : ℕ) : ℝ) := by
+  classical
+  unfold empiricalCount
+  rw [empCDF_eq_sum_div, Fin.sum_univ_eq_sum_range (fun i => if v i ≤ x then (1 : ℝ) else 0),
+    Finset.card_filter, Nat.cast_sum]
+  congr 1
+  apply Finset.sum_congr rfl
+  intro i _
+  by_cases h : v i ≤ x <;> simp [h]
+
+/-- **Quantile-coupling distribution-free reduction, `empCDF` form.** For a
+`Fin (n + 1)` sample `u` of draws in `(0,1)`, the KS distance between the empirical CDF
+of the coupled sample `fun i => cdfQuantile μ (u i)` and `cdf μ` is bounded by the
+uniform deviation of `empCDF u` over `[0,1]`. No continuity of the population law.
+The proof goes through a private count-form argument. -/
+theorem ks_reduction_quantile_coupling_empCDF
+    {μ : Measure ℝ} [IsProbabilityMeasure μ]
+    {n : ℕ} {u : Fin (n + 1) → ℝ}
+    (hu : ∀ i, u i ∈ Set.Ioo (0 : ℝ) 1) :
+    (⨆ x, |empCDF (fun i => cdfQuantile μ (u i)) x - cdf μ x|) ≤
+    (⨆ v ∈ Set.Icc (0 : ℝ) 1, |empCDF u v - v|) := by
+  set w : ℕ → ℝ := fun i => if h : i < n + 1 then u ⟨i, h⟩ else 1 / 2 with hw_def
+  have hwu : ∀ i : Fin (n + 1), w i = u i := fun i => by
+    rw [hw_def]
+    exact dite_eq_left i.isLt
+  have hw : ∀ i ∈ Finset.range (n + 1), w i ∈ Set.Ioo (0 : ℝ) 1 := by
+    intro i hi
+    have hi' : i < n + 1 := Finset.mem_range.mp hi
+    rw [hw_def]
+    dsimp only
+    rw [dite_eq_left hi']
+    exact hu ⟨i, hi'⟩
+  have hL : (fun i => cdfQuantile μ (u i)) = fun i : Fin (n + 1) => cdfQuantile μ (w i) :=
+    funext fun i => by rw [hwu]
+  have hR : u = fun i : Fin (n + 1) => w i := funext fun i => (hwu i).symm
+  rw [hL, hR]
+  simp only [empCDF_fin_eq_empiricalCount_div (fun i => cdfQuantile μ (w i)),
+    empCDF_fin_eq_empiricalCount_div w]
+  exact ks_reduction_quantile_coupling hw
+
+end KSReduction
 
 end ProbabilityTheory
