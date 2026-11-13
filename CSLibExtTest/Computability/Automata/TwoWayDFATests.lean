@@ -55,6 +55,13 @@ example {State Symbol : Type*} {A : TwoWayDFA State Symbol} {q : State} {x : Sym
     (h₂ : A.toTwoWayNA.Tr q x m' q'') : (m, q') = (m', q'') :=
   A.tr_functional h₁ h₂
 
+example : (Acceptor.language (TwoWayDFA.ofDFA evenDFA).toTwoWayNA).IsRegular :=
+  TwoWayNA.language_isRegular _
+
+example {Symbol : Type*} {L : Language Symbol} (h : L.IsRegular) :
+    ∃ (S : Type) (_ : Finite S) (a : TwoWayNA S Symbol), Acceptor.language a = L :=
+  exists_twoWayNA_of_isRegular h
+
 #print axioms Cslib.Automata.TwoWayDFA.language_isRegular
 #print axioms Cslib.Automata.TwoWayDFA.language_ofDFA
 #print axioms Cslib.Automata.TwoWayDFA.exists_ofDFA_of_isRegular
