@@ -1258,7 +1258,7 @@ theorem MohleSagitov.tendsto_ancestralMatrix_pow {W : ∀ N, CanningsModel N}
     filter_upwards [hW.pairCoalescence_pos] with N hcN
     rw [Nat.cast_sub (Nat.floor_le_floor (div_le_div_of_nonneg_right hst hcN.le)), sub_mul]
   open scoped Matrix.Norms.Operator in
-  refine (NormedSpace.tendsto_one_add_smul_pow hW.pairCoalescence_pos hW.tendsto_pairCoalescence
+  refine (NormedSpace.tendsto_one_add_smul_pow hW.tendsto_pairCoalescence hW.pairCoalescence_pos
     (hW.tendsto_generator n) hm).congr' ?_
   filter_upwards [hW.pairCoalescence_pos] with N hcN
   rw [smul_smul, mul_inv_cancel₀ hcN.ne', one_smul, add_sub_cancel]

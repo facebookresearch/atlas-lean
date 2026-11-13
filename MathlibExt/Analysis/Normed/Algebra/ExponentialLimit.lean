@@ -14,21 +14,21 @@ public import Mathlib.Analysis.SpecialFunctions.Exponential
 # Compound-interest limits for the exponential in a Banach algebra
 
 The real limit `(1 + x / n) ^ n → exp x` (`Real.tendsto_one_add_div_pow_exp`) holds in every
-real Banach algebra, with perturbed bases and exponents and on a general time scale: if
-`c N → 0` with `c N > 0`, `Y N → X` and `m N * c N → t`, then
-`(1 + c N • Y N) ^ m N → exp (t • X)`; no commutativity between the `Y N` is needed. The scale
-`c M = M⁻¹` gives `(1 + M⁻¹ • Y M) ^ m M → exp (t • X)` when `m M / M → t`. The proof
-compares `(1 + c N • Y N) ^ m N` with `exp (c N • Y N) ^ m N = exp ((m N * c N) • Y N)`
-through a telescoping estimate and the derivative of `exp` at `0`. This is the form used to
-pass from discrete-time Markov chains with transition matrices `1 + c N • Q + o(c N)` to the
-continuous-time chain with rate matrix `Q`.
+real Banach algebra, with perturbed bases and exponents: if `Y M → X` and `m M / M → t`, then
+`(1 + M⁻¹ • Y M) ^ m M → exp (t • X)`; no commutativity between the `Y M` is needed. The proof
+compares `(1 + M⁻¹ • Y M) ^ m M` with `exp (M⁻¹ • Y M) ^ m M = exp ((m M / M) • Y M)` through
+a telescoping estimate and the derivative of `exp` at `0`. This is the form used to
+pass from discrete-time Markov chains with transition matrices `1 + Q / M + o(1/M)` to the
+continuous-time chain with rate matrix `Q`. The same argument allows any vanishing positive time
+scale `ε N` in place of `1 / M`: if `Y N → X` and `m N * ε N → t`, then
+`(1 + ε N • Y N) ^ m N → exp (t • X)`.
 
 ## Main results
 
 * `NormedSpace.norm_pow_sub_pow_le`: `‖a ^ m - b ^ m‖ ≤ m ‖a - b‖ max(‖a‖, ‖b‖) ^ (m - 1)`.
-* `NormedSpace.tendsto_one_add_smul_pow`: the compound-interest limit on a general time scale
-  `c N → 0⁺`.
-* `NormedSpace.tendsto_one_add_inv_smul_pow`: the scale `c M = M⁻¹`.
+* `NormedSpace.tendsto_one_add_inv_smul_pow`: the compound-interest limit.
+* `NormedSpace.tendsto_one_add_smul_pow`: the compound-interest limit with a general vanishing
+  time scale `ε N`.
 
 ## References
 
@@ -74,97 +74,175 @@ theorem norm_pow_sub_pow_le (a b : 𝔸) (m : ℕ) :
 
 variable [NormedAlgebra ℝ 𝔸] [CompleteSpace 𝔸]
 
-/-- **Compound-interest limit in a Banach algebra, general scale.** If `c N → 0` with `c N > 0`
-eventually, `Y N → X` and `m N * c N → t`, then `(1 + c N • Y N) ^ m N → exp (t • X)`. -/
-theorem tendsto_one_add_smul_pow {c : ℕ → ℝ} (hc0 : ∀ᶠ N in atTop, 0 < c N)
-    (hc : Tendsto c atTop (𝓝 0)) {Y : ℕ → 𝔸} {X : 𝔸} (hY : Tendsto Y atTop (𝓝 X))
-    {m : ℕ → ℕ} {t : ℝ} (hm : Tendsto (fun N => (m N : ℝ) * c N) atTop (𝓝 t)) :
-    Tendsto (fun N => (1 + c N • Y N) ^ m N) atTop (𝓝 (exp (t • X))) := by
-  set Z : ℕ → 𝔸 := fun N => c N • Y N with hZ
-  set g : ℕ → ℝ := fun N => ‖exp (Z N) - (1 + Z N)‖ with hg
+/-- **Compound-interest limit in a Banach algebra.** If `Y M → X` and `m M / M → t`, then
+`(1 + M⁻¹ • Y M) ^ m M → exp (t • X)` as `M → ∞`. -/
+theorem tendsto_one_add_inv_smul_pow {Y : ℕ → 𝔸} {X : 𝔸} (hY : Tendsto Y atTop (𝓝 X))
+    {m : ℕ → ℕ} {t : ℝ} (hm : Tendsto (fun M : ℕ => (m M : ℝ) / M) atTop (𝓝 t)) :
+    Tendsto (fun M : ℕ => (1 + (M : ℝ)⁻¹ • Y M) ^ m M) atTop (𝓝 (exp (t • X))) := by
+  set Z : ℕ → 𝔸 := fun M => (M : ℝ)⁻¹ • Y M with hZ
+  set g : ℕ → ℝ := fun M => ‖exp (Z M) - (1 + Z M)‖ with hg
   -- `Y` is eventually bounded by `C`.
   set C := ‖X‖ + 1 with hC
   have hC0 : 0 ≤ C := by positivity
-  have hYC : ∀ᶠ N in atTop, ‖Y N‖ ≤ C :=
+  have hYC : ∀ᶠ M in atTop, ‖Y M‖ ≤ C :=
     hY.norm.eventually (ge_mem_nhds (by linarith))
+  have hinv : Tendsto (fun M : ℕ => (M : ℝ)⁻¹) atTop (𝓝 0) :=
+    tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop
   have hZ0 : Tendsto Z atTop (𝓝 0) := by
-    simpa using hc.smul hY
-  have hZO : Z =O[atTop] c := by
+    simpa using hinv.smul hY
+  have hZO : Z =O[atTop] (fun M : ℕ => (M : ℝ)⁻¹) := by
     refine Asymptotics.IsBigO.of_bound C ?_
-    filter_upwards [hYC] with N hN
+    filter_upwards [hYC] with M hM
     rw [hZ, norm_smul, mul_comm]
-    exact mul_le_mul_of_nonneg_right hN (norm_nonneg _)
-  -- `exp z - (1 + z) = o(z)` at `0`, hence `g N / c N → 0`.
+    exact mul_le_mul_of_nonneg_right hM (norm_nonneg _)
+  -- `exp z - (1 + z) = o(z)` at `0`, hence `M * g M → 0`.
   have hexp : (fun z : 𝔸 => exp z - (1 + z)) =o[𝓝 0] (fun z => z) := by
     have h := (hasFDerivAt_exp_zero (𝕂 := ℝ) (𝔸 := 𝔸)).isLittleO
     simp only [exp_zero, sub_zero, one_apply_eq_self] at h
     refine h.congr_left fun z => ?_
     abel
-  have hgo : g =o[atTop] c :=
+  have hgo : g =o[atTop] (fun M : ℕ => (M : ℝ)⁻¹) :=
     ((hexp.comp_tendsto hZ0).trans_isBigO hZO).norm_left
-  have hgc : Tendsto (fun N => g N / c N) atTop (𝓝 0) := hgo.tendsto_div_nhds_zero
-  -- The exponential side: `exp (Z N) ^ m N = exp ((m N * c N) • Y N) → exp (t • X)`.
-  have hb : Tendsto (fun N => exp (Z N) ^ m N) atTop (𝓝 (exp (t • X))) := by
+  have hMg : Tendsto (fun M : ℕ => (M : ℝ) * g M) atTop (𝓝 0) := by
+    refine hgo.tendsto_div_nhds_zero.congr fun M => ?_
+    rw [div_inv_eq_mul, mul_comm]
+  -- The exponential side: `exp (Z M) ^ m M = exp ((m M / M) • Y M) → exp (t • X)`.
+  have hb : Tendsto (fun M => exp (Z M) ^ m M) atTop (𝓝 (exp (t • X))) := by
+    let _ : NormedAlgebra ℚ 𝔸 := NormedAlgebra.restrictScalars ℚ ℝ 𝔸
+    have h := (exp_continuous.tendsto _).comp (hm.smul hY)
+    refine h.congr fun M => ?_
+    rw [Function.comp_apply, ← exp_nsmul, ← Nat.cast_smul_eq_nsmul ℝ, hZ, smul_smul,
+      div_eq_mul_inv]
+  -- The bound `max ‖1 + Z M‖ ‖exp (Z M)‖ ^ (m M - 1) ≤ B`.
+  set B := Real.exp ((C + 1) * (t + 1)) with hB
+  have hmt : ∀ᶠ M in atTop, (m M : ℝ) / M ≤ t + 1 := hm.eventually (ge_mem_nhds (by linarith))
+  have hK : ∀ᶠ M in atTop, max ‖1 + Z M‖ ‖exp (Z M)‖ ^ (m M - 1) ≤ B := by
+    filter_upwards [hYC, hmt, hMg.eventually (ge_mem_nhds one_pos), eventually_gt_atTop 0]
+      with M hYM hmM hgM hM0
+    have hM : (0 : ℝ) < M := by exact_mod_cast hM0
+    have hZM : ‖Z M‖ ≤ C / M := by
+      rw [hZ, norm_smul, norm_inv, Real.norm_natCast, inv_mul_eq_div]
+      exact div_le_div_of_nonneg_right hYM hM.le
+    have hgM' : g M ≤ 1 / M := by rw [le_div_iff₀ hM]; linarith
+    have h1 : ‖1 + Z M‖ ≤ 1 + ‖Z M‖ := (norm_add_le _ _).trans (by rw [norm_one])
+    have h2 : ‖exp (Z M)‖ ≤ 1 + ‖Z M‖ + g M := by
+      have := norm_add_le (exp (Z M) - (1 + Z M)) (1 + Z M)
+      rw [sub_add_cancel] at this
+      linarith
+    have hKle : max ‖1 + Z M‖ ‖exp (Z M)‖ ≤ 1 + (C + 1) / M := by
+      have : 1 + ‖Z M‖ + g M ≤ 1 + (C + 1) / M := by rw [add_div]; linarith
+      exact max_le (by linarith [(norm_nonneg (exp (Z M) - (1 + Z M)))]) (h2.trans this)
+    calc max ‖1 + Z M‖ ‖exp (Z M)‖ ^ (m M - 1) ≤ (1 + (C + 1) / M) ^ (m M - 1) :=
+          pow_le_pow_left₀ (le_max_of_le_left (norm_nonneg _)) hKle _
+      _ ≤ (1 + (C + 1) / M) ^ m M :=
+          pow_le_pow_right₀ (by have : 0 ≤ (C + 1) / M := by positivity
+                                linarith) (Nat.sub_le _ _)
+      _ ≤ Real.exp ((C + 1) / M) ^ m M := by
+          gcongr
+          linarith [Real.add_one_le_exp ((C + 1) / M)]
+      _ = Real.exp ((C + 1) * ((m M : ℝ) / M)) := by
+          rw [← Real.exp_nat_mul]; congr 1; ring
+      _ ≤ B := Real.exp_le_exp.2 (mul_le_mul_of_nonneg_left hmM (by linarith))
+  -- The difference tends to `0`.
+  have hdiff : Tendsto (fun M => (1 + Z M) ^ m M - exp (Z M) ^ m M) atTop (𝓝 0) := by
+    rw [tendsto_zero_iff_norm_tendsto_zero]
+    have hlim : Tendsto (fun M : ℕ => (m M : ℝ) / M * ((M : ℝ) * g M) * B) atTop
+        (𝓝 (t * 0 * B)) := (hm.mul hMg).mul_const B
+    rw [mul_zero, zero_mul] at hlim
+    refine squeeze_zero' (Eventually.of_forall fun _ => norm_nonneg _) ?_ hlim
+    filter_upwards [hK, eventually_gt_atTop 0] with M hKM hM0
+    have hM : (0 : ℝ) < M := by exact_mod_cast hM0
+    calc ‖(1 + Z M) ^ m M - exp (Z M) ^ m M‖
+        ≤ m M * ‖(1 + Z M) - exp (Z M)‖ * max ‖1 + Z M‖ ‖exp (Z M)‖ ^ (m M - 1) :=
+          norm_pow_sub_pow_le _ _ _
+      _ ≤ m M * g M * B := by
+          rw [norm_sub_rev]
+          exact mul_le_mul_of_nonneg_left hKM (by positivity)
+      _ = (m M : ℝ) / M * ((M : ℝ) * g M) * B := by field_simp
+  simpa using hb.add hdiff
+
+/-- **Compound-interest limit with time scale `ε`.** If `ε N → 0` with `ε N > 0` eventually,
+`Y N → X` and `m N * ε N → t`, then `(1 + ε N • Y N) ^ m N → exp (t • X)`. This is
+`NormedSpace.tendsto_one_add_inv_smul_pow` with the time scale `1 / M` replaced by an arbitrary
+vanishing scale (for a Cannings model, the pair-coalescence probability `c_N`). -/
+theorem tendsto_one_add_smul_pow {ε : ℕ → ℝ} (hε : Tendsto ε atTop (𝓝 0))
+    (hεpos : ∀ᶠ N in atTop, 0 < ε N) {Y : ℕ → 𝔸} {X : 𝔸} (hY : Tendsto Y atTop (𝓝 X))
+    {m : ℕ → ℕ} {t : ℝ} (hm : Tendsto (fun N => (m N : ℝ) * ε N) atTop (𝓝 t)) :
+    Tendsto (fun N => (1 + ε N • Y N) ^ m N) atTop (𝓝 (exp (t • X))) := by
+  set Z : ℕ → 𝔸 := fun N => ε N • Y N with hZ
+  set g : ℕ → ℝ := fun N => ‖exp (Z N) - (1 + Z N)‖ with hg
+  set C := ‖X‖ + 1 with hC
+  have hC0 : 0 ≤ C := by positivity
+  have hYC : ∀ᶠ N in atTop, ‖Y N‖ ≤ C :=
+    hY.norm.eventually (ge_mem_nhds (by linarith))
+  have hZ0 : Tendsto Z atTop (𝓝 0) := by
+    simpa using hε.smul hY
+  have hZO : Z =O[atTop] ε := by
+    refine Asymptotics.IsBigO.of_bound C ?_
+    filter_upwards [hYC] with N hN
+    rw [hZ, norm_smul, mul_comm]
+    exact mul_le_mul_of_nonneg_right hN (norm_nonneg _)
+  have hexp : (fun z : 𝔸 => exp z - (1 + z)) =o[𝓝 0] (fun z => z) := by
+    have h := (hasFDerivAt_exp_zero (𝕂 := ℝ) (𝔸 := 𝔸)).isLittleO
+    simp only [exp_zero, sub_zero, one_apply_eq_self] at h
+    refine h.congr_left fun z => ?_
+    abel
+  have hgo : g =o[atTop] ε :=
+    ((hexp.comp_tendsto hZ0).trans_isBigO hZO).norm_left
+  have hMg : Tendsto (fun N => g N / ε N) atTop (𝓝 0) := hgo.tendsto_div_nhds_zero
+  have hb : Tendsto (fun N => exp (Z N) ^ m N) atTop
+      (𝓝 (exp (t • X))) := by
     let _ : NormedAlgebra ℚ 𝔸 := NormedAlgebra.restrictScalars ℚ ℝ 𝔸
     have h := (exp_continuous.tendsto _).comp (hm.smul hY)
     refine h.congr fun N => ?_
     rw [Function.comp_apply, ← exp_nsmul, ← Nat.cast_smul_eq_nsmul ℝ, hZ, smul_smul]
-  -- The bound `max ‖1 + Z N‖ ‖exp (Z N)‖ ^ (m N - 1) ≤ B`.
   set B := Real.exp ((C + 1) * (t + 1)) with hB
-  have hmt : ∀ᶠ N in atTop, (m N : ℝ) * c N ≤ t + 1 := hm.eventually (ge_mem_nhds (by linarith))
-  have hK : ∀ᶠ N in atTop, max ‖1 + Z N‖ ‖exp (Z N)‖ ^ (m N - 1) ≤ B := by
-    filter_upwards [hYC, hmt, hgc.eventually (ge_mem_nhds one_pos), hc0]
-      with N hYN hmN hgN hcN
-    have hZN : ‖Z N‖ ≤ C * c N := by
-      rw [hZ, norm_smul, Real.norm_of_nonneg hcN.le, mul_comm]
-      exact mul_le_mul_of_nonneg_right hYN hcN.le
-    have hgN' : g N ≤ c N := by rwa [div_le_one hcN] at hgN
+  have hmt : ∀ᶠ N in atTop, (m N : ℝ) * ε N ≤ t + 1 := hm.eventually (ge_mem_nhds (by linarith))
+  have hK : ∀ᶠ N in atTop,
+      max ‖1 + Z N‖ ‖exp (Z N)‖ ^ (m N - 1) ≤ B := by
+    filter_upwards [hYC, hmt, hMg.eventually (ge_mem_nhds one_pos), hεpos]
+      with N hYN hmN hgN hεN
+    have hZN : ‖Z N‖ ≤ C * ε N := by
+      rw [hZ, norm_smul, Real.norm_of_nonneg hεN.le, mul_comm]
+      exact mul_le_mul_of_nonneg_right hYN hεN.le
+    have hgN' : g N ≤ ε N := by rwa [div_le_iff₀ hεN, one_mul] at hgN
     have h1 : ‖1 + Z N‖ ≤ 1 + ‖Z N‖ := (norm_add_le _ _).trans (by rw [norm_one])
     have h2 : ‖exp (Z N)‖ ≤ 1 + ‖Z N‖ + g N := by
       have := norm_add_le (exp (Z N) - (1 + Z N)) (1 + Z N)
       rw [sub_add_cancel] at this
       linarith
-    have hKle : max ‖1 + Z N‖ ‖exp (Z N)‖ ≤ 1 + (C + 1) * c N := by
-      have : 1 + ‖Z N‖ + g N ≤ 1 + (C + 1) * c N := by nlinarith
-      exact max_le (by linarith [norm_nonneg (exp (Z N) - (1 + Z N))]) (h2.trans this)
-    have hc1 : 0 ≤ (C + 1) * c N := by positivity
+    have hKle : max ‖1 + Z N‖ ‖exp (Z N)‖ ≤ 1 + (C + 1) * ε N := by
+      have : 1 + ‖Z N‖ + g N ≤ 1 + (C + 1) * ε N := by nlinarith
+      exact max_le (by nlinarith [norm_nonneg (exp (Z N) - (1 + Z N))])
+        (h2.trans this)
+    have hpos : 0 ≤ (C + 1) * ε N := by positivity
     calc max ‖1 + Z N‖ ‖exp (Z N)‖ ^ (m N - 1)
-        ≤ (1 + (C + 1) * c N) ^ (m N - 1) :=
+        ≤ (1 + (C + 1) * ε N) ^ (m N - 1) :=
           pow_le_pow_left₀ (le_max_of_le_left (norm_nonneg _)) hKle _
-      _ ≤ (1 + (C + 1) * c N) ^ m N :=
+      _ ≤ (1 + (C + 1) * ε N) ^ m N :=
           pow_le_pow_right₀ (by linarith) (Nat.sub_le _ _)
-      _ ≤ Real.exp ((C + 1) * c N) ^ m N := by
+      _ ≤ Real.exp ((C + 1) * ε N) ^ m N := by
           gcongr
-          linarith [Real.add_one_le_exp ((C + 1) * c N)]
-      _ = Real.exp ((C + 1) * ((m N : ℝ) * c N)) := by
+          linarith [Real.add_one_le_exp ((C + 1) * ε N)]
+      _ = Real.exp ((C + 1) * ((m N : ℝ) * ε N)) := by
           rw [← Real.exp_nat_mul]; congr 1; ring
       _ ≤ B := Real.exp_le_exp.2 (mul_le_mul_of_nonneg_left hmN (by linarith))
-  -- The difference tends to `0`.
-  have hdiff : Tendsto (fun N => (1 + Z N) ^ m N - exp (Z N) ^ m N) atTop (𝓝 0) := by
+  have hdiff : Tendsto (fun N => (1 + Z N) ^ m N - exp (Z N) ^ m N) atTop
+      (𝓝 0) := by
     rw [tendsto_zero_iff_norm_tendsto_zero]
-    have hlim : Tendsto (fun N => (m N : ℝ) * c N * (g N / c N) * B) atTop (𝓝 (t * 0 * B)) :=
-      (hm.mul hgc).mul_const B
+    have hlim : Tendsto (fun N => (m N : ℝ) * ε N * (g N / ε N) * B) atTop
+        (𝓝 (t * 0 * B)) := (hm.mul hMg).mul_const B
     rw [mul_zero, zero_mul] at hlim
     refine squeeze_zero' (Eventually.of_forall fun _ => norm_nonneg _) ?_ hlim
-    filter_upwards [hK, hc0] with N hKN hcN
+    filter_upwards [hK, hεpos] with N hKN hεN
     calc ‖(1 + Z N) ^ m N - exp (Z N) ^ m N‖
-        ≤ m N * ‖(1 + Z N) - exp (Z N)‖ * max ‖1 + Z N‖ ‖exp (Z N)‖ ^ (m N - 1) :=
+        ≤ m N * ‖(1 + Z N) - exp (Z N)‖ *
+            max ‖1 + Z N‖ ‖exp (Z N)‖ ^ (m N - 1) :=
           norm_pow_sub_pow_le _ _ _
       _ ≤ m N * g N * B := by
           rw [norm_sub_rev]
           exact mul_le_mul_of_nonneg_left hKN (by positivity)
-      _ = (m N : ℝ) * c N * (g N / c N) * B := by field_simp
+      _ = (m N : ℝ) * ε N * (g N / ε N) * B := by field_simp
   simpa using hb.add hdiff
-
-/-- **Compound-interest limit in a Banach algebra.** If `Y M → X` and `m M / M → t`, then
-`(1 + M⁻¹ • Y M) ^ m M → exp (t • X)` as `M → ∞`: the scale `c M = M⁻¹` of
-`tendsto_one_add_smul_pow`. -/
-theorem tendsto_one_add_inv_smul_pow {Y : ℕ → 𝔸} {X : 𝔸} (hY : Tendsto Y atTop (𝓝 X))
-    {m : ℕ → ℕ} {t : ℝ} (hm : Tendsto (fun M : ℕ => (m M : ℝ) / M) atTop (𝓝 t)) :
-    Tendsto (fun M : ℕ => (1 + (M : ℝ)⁻¹ • Y M) ^ m M) atTop (𝓝 (exp (t • X))) :=
-  tendsto_one_add_smul_pow (c := fun M : ℕ => (M : ℝ)⁻¹)
-    ((eventually_gt_atTop 0).mono fun _ hM => inv_pos.2 (Nat.cast_pos.2 hM))
-    (tendsto_inv_atTop_zero.comp tendsto_natCast_atTop_atTop) hY
-    (by simpa only [div_eq_mul_inv] using hm)
 
 end NormedSpace

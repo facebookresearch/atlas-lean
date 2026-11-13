@@ -24,11 +24,12 @@ decomposition of Lemmas 2.1 and 2.2 and the congruence
 of Theorem 1.3 were verified on exact examples
 (e.g. `Φ₇`, whose square composition factors).
 
-Not stated (see the source audit table): Lemmas 2.4
-and 2.5, which use factor notation `g₁, g₂` and the
-transform `u^e` set up only in the paper body, and the
-root-theoretic equivalents in Theorem 1.2 (only its
-polynomial reducibility equivalence is stated).
+Lemmas 4 and 5 are stated from the journal PDF, with
+the setup of `g₁, g₂` (Section 3) as hypotheses and
+the reciprocal `ũ(x) = x^{deg u} u(1/x)` as
+`Polynomial.reverse`. Not stated: the root-theoretic
+equivalents in Theorem 1.2 (only its polynomial
+reducibility equivalence is stated).
 -/
 module
 
@@ -224,5 +225,52 @@ theorem_wanted not_irreducible_comp_four_iff (f : ℤ[X])
     (h01 : IsZeroOnePoly f) (hirr : Irreducible f) (hf0 : f.coeff 0 = 1)
     (hdeg : 0 < f.natDegree) :
     ¬ Irreducible (f.comp (X ^ 4)) ↔ ¬ Irreducible (f.comp (X ^ 2))
+
+/-- **Lemma 4**: in the setting of Section 3, let
+`f(x^2) = g(x) g(-x)` with
+`g(x) = g_e(x^2) + x^ℓ g_o(x^2)`, `ℓ` odd and `g_e, g_o`
+reciprocal, and let `{g₁, g₂} = {g_e, g_o}` with
+`deg g₁` odd. If `g₂(1) ≡ 0 (mod 4)` then
+`f(-1) ≡ 0 (mod 16)`. The paper also assumes
+`f(1) ≡ ±4 (mod 16)` and that `f` is an irreducible
+reciprocal `0,1`-polynomial; the proof does not use
+these, and they are dropped.
+
+Source: Pradipto Banerjee and Amit Kundu, "On an
+Irreducibility Question Concerning Palindromic
+Non-cyclotomic 0,1-Polynomials", INTEGERS 24 (2024),
+Article A71, Lemma 4. -/
+theorem_wanted eval_neg_one_modEq_zero_sixteen (f g ge go g₁ g₂ : ℤ[X]) (ℓ : ℕ)
+    (hfg : f.comp (X ^ 2) = g * g.comp (-X))
+    (hg : g = ge.comp (X ^ 2) + X ^ ℓ * go.comp (X ^ 2)) (hℓ : Odd ℓ)
+    (hge : IsReciprocalPoly ge) (hgo : IsReciprocalPoly go)
+    (h12 : (g₁ = ge ∧ g₂ = go) ∨ (g₁ = go ∧ g₂ = ge)) (hodd : Odd g₁.natDegree)
+    (h4 : g₂.eval 1 ≡ 0 [ZMOD 4]) :
+    f.eval (-1) ≡ 0 [ZMOD 16]
+
+/-- **Lemma 5** (corrected reading of the parity
+clause): let `h(x) ∈ ℤ[x]` be reciprocal of degree
+`n > 0` and `d = ⌊n/2⌋`. There are unique `u(x) ∈ ℤ[x]`
+with `deg u < n/2` and integers `M > n/2` and `a` with
+`h(x) = x^M ũ(x) + a x^d + u(x)`, where
+`ũ(x) = x^{deg u} u(1/x)` (`Polynomial.reverse`); `a = 0`
+if `n` is odd; and `a = 0` if `h(1)` is even and `h` is
+a `0,1`-polynomial. Over `ℤ[x]` the parity clause fails:
+`h = x^2 + 2x + 1` has `u = 1`, `M = 2`, `a = 2` with
+`h(1) = 4`; the paper applies it only to
+`0,1`-polynomials. "Reciprocal" is `h̃ = h` (the plus
+sign), which the proof's symmetric coefficients use.
+
+Source: Pradipto Banerjee and Amit Kundu, "On an
+Irreducibility Question Concerning Palindromic
+Non-cyclotomic 0,1-Polynomials", INTEGERS 24 (2024),
+Article A71, Lemma 5. -/
+theorem_wanted existsUnique_reciprocal_split (h : ℤ[X]) (hrec : IsReciprocalPoly h)
+    (hn : 0 < h.natDegree) :
+    let P : ℤ[X] × ℕ × ℤ → Prop := fun t =>
+      2 * t.1.natDegree < h.natDegree ∧ h.natDegree < 2 * t.2.1 ∧
+        h = X ^ t.2.1 * t.1.reverse + C t.2.2 * X ^ (h.natDegree / 2) + t.1
+    (∃! t, P t) ∧ (∀ t, P t → Odd h.natDegree → t.2.2 = 0) ∧
+      (∀ t, P t → IsZeroOnePoly h → Even (h.eval 1) → t.2.2 = 0)
 
 end MathlibExt.Algebra.PalindromicZeroOneWanted
