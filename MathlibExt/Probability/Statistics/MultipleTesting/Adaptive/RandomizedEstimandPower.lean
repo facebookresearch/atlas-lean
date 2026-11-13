@@ -25,11 +25,11 @@ family that satisfies both hypotheses and computes its power.
 independent; endpoint `j` belongs to cluster `c j`, and endpoints of one cluster share their
 noise. Endpoint `j` reports the Lehmann p-value
 `p j = max (U (c j)) 0 ^ θ j` with `θ j = exp (κ j * ipwContrast μ T X (Y j))`
-(`ateLehmannPValue`). The scale `κ j > 0` plays the role of `√n / σ j`. When the observed IPW
-contrast vanishes, `θ j = 1` and `p j` is the uniform noise; when it is positive, `θ j > 1` and
-`p j` has the Beta(`1 / θ j`, 1) law, Lehmann's alternative `P(p j ≤ t) = t ^ (1 / θ j)`. The
-exponent depends only on the observed-data law, so the family is calibrated for the
-observed-data null without causal assumptions, and identification
+(`ateLehmannPValue`). The scale `κ j` plays the role of `√n / σ j`. When the observed IPW
+contrast vanishes, `θ j = 1` and `p j` is the uniform noise; when it is positive and `κ j > 0`,
+`θ j > 1` and `p j` has the Beta(`1 / θ j`, 1) law, Lehmann's alternative
+`P(p j ≤ t) = t ^ (1 / θ j)`. The exponent depends only on the observed-data law, so the family
+is calibrated for the observed-data null without causal assumptions, and identification
 (`ipwContrast_observed_eq_integral`) rewrites `θ j` in terms of the ATE `E[Y₁ j - Y₀ j]`.
 
 This is a model of a p-value family (signal through the observed-data law, randomness through
@@ -68,7 +68,7 @@ the cluster noises), not a test computed from a sample: the noises are not tied 
   power), `tendsto_measure_mem_holmRejections_lehmannPValue`,
   `tendsto_measure_mem_bhRejections_lehmannPValue` and
   `tendsto_measure_mem_bhRejections_ateLehmannPValue` (power tends to `1` as the scale grows,
-  for a positive observed contrast).
+  for a positive observed contrast and `κ j > 0`).
 
 ## Not covered
 
@@ -456,8 +456,8 @@ theorem tendsto_measure_mem_holmRejections_lehmannPValue {ι : Type*} {l : Filte
 /-! ### The Lehmann family for zero-ATE endpoints -/
 
 /-- The **ATE Lehmann exponents** with scales `κ`: endpoint `j` gets
-`θ j = exp (κ j * ipwContrast μ T X (Y j))`. The scale `κ j > 0` plays the role of
-`√n / σ j` in a Wald statistic; the exponent is `1` exactly when the observed IPW contrast
+`θ j = exp (κ j * ipwContrast μ T X (Y j))`. The scale `κ j` plays the role of `√n / σ j` in a
+Wald statistic. For `κ j > 0` the exponent is `1` exactly when the observed IPW contrast
 vanishes, and exceeds `1` when it is positive. It depends on the observed-data law only. -/
 noncomputable def ateLehmannExponent (μ : Measure Ω) (T : Set Ω) (X : Ω → 𝒳)
     (Y : Fin m → Ω → ℝ) (κ : Fin m → ℝ) : Fin m → ℝ :=
@@ -466,8 +466,8 @@ noncomputable def ateLehmannExponent (μ : Measure Ω) (T : Set Ω) (X : Ω → 
 /-- The **ATE Lehmann p-values**: the clustered Lehmann p-values (`lehmannPValue`) with null
 noise `U`, clusters `c` and the ATE Lehmann exponents. Endpoint `j` reports
 `max (U (c j)) 0 ^ exp (κ j * ipwContrast μ T X (Y j))`: the null p-value of its cluster when
-the observed IPW contrast vanishes, a stochastically smaller one when it is positive (a
-one-sided test against a positive effect), and a larger one when it is negative. -/
+the observed IPW contrast vanishes; for `κ j > 0`, a stochastically smaller one when it is
+positive (a one-sided test against a positive effect) and a larger one when it is negative. -/
 noncomputable def ateLehmannPValue (μ : Measure Ω) (T : Set Ω) (X : Ω → 𝒳)
     (Y : Fin m → Ω → ℝ) (κ : Fin m → ℝ) (U : Fin k → Ω → ℝ) (c : Fin m → Fin k) :
     Fin m → Ω → ℝ :=
