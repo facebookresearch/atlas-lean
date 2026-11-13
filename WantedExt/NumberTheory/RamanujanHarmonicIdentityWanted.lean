@@ -49,8 +49,13 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.RamanujanHarmonicIdentityWanted
 
-/-- **Corollary 1**: for `2 ≤ k ≤ n`, the shifted
-binomial-harmonic convolution with upper summation limit `n + 1`.
+/-- **Shifted binomial–harmonic convolution (Alzer–Kwong, Corollary 1).** For natural numbers $k$
+and $n$ with $2 \le k \le n$,
+$$
+\sum_{\nu=1}^{n+1} \Bigl(\binom{n+k-\nu-1}{n} - \binom{n+k-\nu-1}{k-2}\Bigr) H_\nu =
+\binom{n+k}{k-1} (H_k - H_{n+1}) - \frac{1}{n+1} \binom{n+k}{k},
+$$
+where $H_m = \sum_{j=1}^{m} 1/j$ is the $m$-th harmonic number.
 
 Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
 Combinatorial Identity Involving Harmonic Numbers",
@@ -64,8 +69,13 @@ theorem_wanted sum_choose_sub_choose_mul_harmonic_succ_eq
           (harmonic k - harmonic (n + 1)) -
         (1 / ((n : ℚ) + 1)) * (Nat.choose (n + k) k : ℚ)
 
-/-- **Corollary 2**: for `1 ≤ k ≤ n - 1`, the companion shifted
-binomial-harmonic convolution.
+/-- **Shifted binomial–harmonic convolution (Alzer–Kwong, Corollary 2).** For natural numbers $k$
+and $n$ with $1 \le k \le n - 1$,
+$$
+\sum_{\nu=1}^{n} \Bigl(\binom{n+k-\nu-1}{n-2} - \binom{n+k-\nu-1}{k}\Bigr) H_\nu =
+\binom{n+k}{k+1} (H_k - H_n) + \frac{1}{k+1} \binom{n+k+1}{k+1},
+$$
+where $H_m = \sum_{j=1}^{m} 1/j$ is the $m$-th harmonic number.
 
 Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
 Combinatorial Identity Involving Harmonic Numbers",
@@ -78,10 +88,11 @@ theorem_wanted sum_choose_sub_choose_mul_harmonic_eq_add
       (Nat.choose (n + k) (k + 1) : ℚ) * (harmonic k - harmonic n) +
         (1 / ((k : ℚ) + 1)) * (Nat.choose (n + k + 1) (k + 1) : ℚ)
 
-/-- **Lemma 1**: Ramanujan's generalized-binomial sine series.
-For real `a`, `N ≥ 0`, and `|θ| ≤ π / 2`, the series
-`∑' ν, (N choose ν) * sin((a + 2ν)θ)` converges to
-`2^N * cos(θ)^N * sin((a + N)θ)`, with real powers.
+/-- **Ramanujan's binomial sine series.** Let $a$, $N$ and $\theta$ be real numbers with
+$N \ge 0$ and $|\theta| \le \pi / 2$. Then the series
+$\sum_{\nu=0}^{\infty} \binom{N}{\nu} \sin((a + 2\nu)\theta)$ converges unconditionally to
+$2^N (\cos \theta)^N \sin((a + N)\theta)$. Here $\binom{N}{\nu} = N(N-1)\cdots(N-\nu+1)/\nu!$
+is the generalized binomial coefficient, and $2^N$ and $(\cos \theta)^N$ are real powers.
 
 Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
 Combinatorial Identity Involving Harmonic Numbers",
@@ -92,8 +103,11 @@ theorem_wanted hasSum_ringChoose_mul_sin
       (fun ν : ℕ => Ring.choose N ν * Real.sin ((a + 2 * (ν : ℝ)) * θ))
       ((2 : ℝ) ^ N * (Real.cos θ) ^ N * Real.sin ((a + N) * θ))
 
-/-- **Lemma 3**: the Rung-Obaid finite trigonometric identity used
-in the trigonometric proof of Theorem 1.
+/-- **The Rung-Obaid trigonometric identity.** Let $k$ and $n$ be natural numbers with
+$1 \le k \le n$, and let $\theta$ be a real number. Then
+
+$$\sum_{\nu=1}^{n} 2^\nu \left( \binom{n+k-\nu-1}{k-1} - \binom{n+k-\nu-1}{n-1} \right)
+\cos^\nu \theta \, \sin(\nu\theta) = 2^{n+k} \cos^{n+k} \theta \, \sin((n-k)\theta).$$
 
 Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
 Combinatorial Identity Involving Harmonic Numbers",
@@ -108,10 +122,12 @@ theorem_wanted sum_two_pow_choose_sub_mul_cos_pow_sin
       (2 : ℝ) ^ (n + k) * Real.cos θ ^ (n + k) *
         Real.sin (((n : ℝ) - (k : ℝ)) * θ)
 
-/-- **Lemma 4**: Gould's reciprocal generalized-binomial identity.
-For real `x` different from `0, 1, …, N`,
-`∑_{ν=0}^{N} (-1)^ν / (x - ν) * (N choose ν)` equals
-`(-1)^N / ((x - N) * (x choose N))`.
+/-- **Gould's reciprocal binomial identity (Alzer–Kwong, Lemma 4).** Let $N$ be a natural number
+and $x$ a real number with $x \ne \nu$ for every $\nu \in \{0, 1, \dots, N\}$. Then
+$$
+\sum_{\nu=0}^{N} \frac{(-1)^\nu}{x - \nu} \binom{N}{\nu} = \frac{(-1)^N}{(x - N) \binom{x}{N}},
+$$
+where $\binom{x}{N} = x(x-1)\cdots(x-N+1)/N!$ is the generalized binomial coefficient.
 
 Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
 Combinatorial Identity Involving Harmonic Numbers",
@@ -124,10 +140,14 @@ theorem_wanted sum_neg_one_pow_div_mul_choose_eq
           (Nat.choose N ν : ℝ) =
       (-1 : ℝ) ^ N / ((x - (N : ℝ)) * Ring.choose x N)
 
-/-- **Theorem 8**: uniqueness of the harmonic sequence for the
-diagonal case `k = n - 1` of Theorem 1.  If a complex sequence `K`
-satisfies the displayed identity for every `n ≥ 2`, then `K` is a
-constant complex multiple of the harmonic numbers.
+/-- **Uniqueness of the harmonic solution of the diagonal Ramanujan identity.** Let
+$K : \mathbb{N} \to \mathbb{C}$ be a sequence such that for every integer $n \ge 2$
+$$
+\sum_{\nu=2}^{n} \Bigl(\binom{2n-\nu-2}{n-1} - \binom{2n-\nu-2}{n-2}\Bigr) K(\nu) =
+\binom{2n-1}{n-1} \bigl(K(n-1) - K(n)\bigr).
+$$
+Then there is a constant $\lambda \in \mathbb{C}$ such that $K(r) = \lambda H_r$ for every integer
+$r \ge 1$, where $H_r = \sum_{j=1}^{r} 1/j$ is the $r$-th harmonic number.
 
 Source: Horst Alzer and Man Kam Kwong, "Ramanujan and a
 Combinatorial Identity Involving Harmonic Numbers",

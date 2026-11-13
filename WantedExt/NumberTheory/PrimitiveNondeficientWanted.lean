@@ -50,34 +50,38 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.PrimitiveNondeficientWanted
 
-/-- Zelinsky's *non-deficient*: a positive integer with
-`σ(n) ≥ 2n`. (Positivity is part of the notion: with
-`Nat.divisors 0 = ∅` the bare divisor-sum inequality would make
-`0` vacuously non-deficient.) -/
+/-- **Non-deficient number.** A natural number $n$ is non-deficient when $n \ne 0$ and
+$\sigma(n) \ge 2n$, where $\sigma(n)$ is the sum of the positive divisors of $n$.
+
+Positivity is part of the notion: $0$ has no divisors in this convention, so the inequality
+alone would make $0$ non-deficient. -/
 def IsNondeficient (n : ℕ) : Prop :=
   n ≠ 0 ∧ 2 * n ≤ ∑ d ∈ Nat.divisors n, d
 
-/-- Zelinsky's *primitive non-deficient*: non-deficient, with every
-proper divisor deficient. -/
+/-- **Primitive non-deficient number.** A natural number $n$ is primitive non-deficient when it
+is non-deficient and every proper divisor $m$ of $n$ (a divisor with $m < n$) is deficient, that
+is, $\sigma(m) < 2m$, where $\sigma(m)$ is the sum of the positive divisors of $m$. -/
 def IsPrimitiveNondeficient (n : ℕ) : Prop :=
   IsNondeficient n ∧
     ∀ m ∈ Nat.divisors n, m < n → ∑ d ∈ Nat.divisors m, d < 2 * m
 
-/-- The paper's abundancy `h(n) = σ(n)/n`, in `ℚ`. The paper
-defines `h` for positive `n`; at `n = 0` this returns `0` by
-`ℚ`-division totalization, and every use below assumes `0 < n`. -/
+/-- **Abundancy index.** For a natural number $n$, the abundancy index is the rational number
+$h(n) = \sigma(n)/n$, where $\sigma(n)$ is the sum of the positive divisors of $n$.
+
+At $n = 0$ this gives $h(0) = 0$, since division by zero is $0$ in $\mathbb{Q}$; the abundancy
+index is only meaningful for positive $n$. -/
 noncomputable def abundancyIndex (n : ℕ) : ℚ :=
   ((∑ d ∈ Nat.divisors n, d : ℕ) : ℚ) / (n : ℚ)
 
-/-- The paper's `H(n) = ∏_{p ∣ n} p/(p-1)`, in `ℚ`. The paper
-defines `H` for positive `n`; at `n = 0` the empty product makes
-this `1`, and every use below assumes `n ≠ 0`. -/
+/-- **Product of $p/(p-1)$ over the prime factors.** For a natural number $n$, let
+$H(n) = \prod_p p/(p-1)$ in $\mathbb{Q}$, the product over the distinct primes $p$ dividing $n$.
+For $n = 0$ the product is empty ($0$ is taken to have no prime factors), so $H(0) = 1$. -/
 noncomputable def abundancySup (n : ℕ) : ℚ :=
   ∏ p ∈ n.primeFactors, (p : ℚ) / ((p : ℚ) - 1)
 
-/-- **Lemma** (classification for `k = 2`, even case): for an odd
-prime `p`, `2^a * p` is primitive non-deficient iff
-`2^a < p ≤ 2^(a+1) - 1`.
+/-- **Even primitive non-deficient numbers with two prime factors.** Let $p$ be an odd prime and
+$a$ a natural number. Then $2^a p$ is primitive non-deficient if and only if
+$2^a < p \le 2^{a+1} - 1$.
 
 Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
 Always Have a Small Component?", Lemma
@@ -88,8 +92,9 @@ theorem_wanted isPrimitiveNondeficient_two_pow_mul_prime_iff
     IsPrimitiveNondeficient (2 ^ a * p) ↔
       2 ^ a < p ∧ p ≤ 2 ^ (a + 1) - 1
 
-/-- **Lemma** (classification for `k = 2`, odd case): all odd
-numbers with exactly two distinct prime divisors are deficient.
+/-- **Odd numbers with two prime factors are deficient.** If $n$ is an odd natural number with
+exactly two distinct prime divisors, then $\sigma(n) < 2n$, where $\sigma(n)$ is the sum of the
+positive divisors of $n$.
 
 Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
 Always Have a Small Component?", Lemma
@@ -99,10 +104,10 @@ theorem_wanted deficient_of_odd_card_primeFactors_eq_two
     (n : ℕ) (hno : Odd n) (hk : n.primeFactors.card = 2) :
     ∑ d ∈ Nat.divisors n, d < 2 * n
 
-/-- **Lemma**: an odd primitive non-deficient number with `k = 3`
-or `k = 4` distinct prime factors has a prime factor `p` with
-`p^(a+1) < 2R`, where `a` is the exponent of `p` and `R` the
-radical.
+/-- **Small component for odd primitive non-deficient numbers with three or four prime factors.**
+Let $n$ be an odd primitive non-deficient number with exactly $3$ or exactly $4$ distinct prime
+factors, and let $R$ be the product of the distinct prime factors of $n$. Then some prime factor
+$p$ of $n$ satisfies $p^{a+1} < 2R$, where $a$ is the exponent of $p$ in $n$.
 
 Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
 Always Have a Small Component?", Lemma
@@ -113,9 +118,9 @@ theorem_wanted exists_pow_factorization_add_one_lt_two_mul_radical
     ∃ p ∈ n.primeFactors,
       p ^ (n.factorization p + 1) < 2 * ∏ q ∈ n.primeFactors, q
 
-/-- **Lemma** (Grün): if `n` is non-deficient with least prime
-factor `p₁` and `k` distinct prime factors, then
-`(3/2) p₁ - 2 < k`, and if `p₁ ≥ 5` then `p₁ + 2 ≤ k`.
+/-- **Grün's bound for non-deficient numbers.** Let $n$ be a non-deficient number with $k$
+distinct prime factors, the least of which is $p_1$. Then $\tfrac{3}{2} p_1 - 2 < k$, and if
+$p_1 \ge 5$ then $p_1 + 2 \le k$.
 
 Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
 Always Have a Small Component?", Lemma (label `Grun`). -/
@@ -126,8 +131,11 @@ theorem_wanted grun_bounds_of_isNondeficient
     (3 : ℚ) / 2 * (p₁ : ℚ) - 2 < (n.primeFactors.card : ℚ) ∧
       (5 ≤ p₁ → p₁ + 2 ≤ n.primeFactors.card)
 
-/-- **Proposition**: if `n` is an even primitive non-deficient
-number and `2^a` exactly divides `n`, then `2^(a+1) < R`.
+/-- **The power of 2 in an even primitive non-deficient number is below its radical.** Let $n$
+be an even primitive non-deficient number, that is, a positive integer with $\sigma(n) \ge 2n$
+all of whose proper divisors $m$ satisfy $\sigma(m) < 2m$, where $\sigma$ is the sum of divisors.
+If $2^a$ is the largest power of $2$ dividing $n$ and $R$ is the product of the distinct primes
+dividing $n$, then $2^{a+1} < R$.
 
 Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
 Always Have a Small Component?", Proposition
@@ -137,8 +145,8 @@ theorem_wanted two_pow_factorization_add_one_lt_radical
     (hn : IsPrimitiveNondeficient n) :
     2 ^ (n.factorization 2 + 1) < ∏ q ∈ n.primeFactors, q
 
-/-- **Lemma**: for real `k ≥ 2` and `0 < m < 1/(k(k+1))`,
-`1/(1 - km) < 1 + (k+1)m`.
+/-- **Zelinsky's reciprocal bound.** For real numbers $k$ and $m$ with $k \ge 2$ and
+$0 < m < 1/(k(k+1))$, we have $1/(1 - km) < 1 + (k+1)m$.
 
 Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
 Always Have a Small Component?", Lemma (label `KMlemma`). -/
@@ -147,8 +155,10 @@ theorem_wanted one_div_one_sub_mul_lt_add
     (hm : m < 1 / (k * (k + 1))) :
     1 / (1 - k * m) < 1 + (k + 1) * m
 
-/-- **Lemma**: if `p^a` exactly divides the positive integer `n`,
-then `h(n)/h(n/p) ≤ 1 + 1/p^a`.
+/-- **Abundancy ratio at an exactly dividing prime power.** Let $n$ be a positive integer, $p$ a
+prime and $a \ge 1$ an integer such that $p^a$ exactly divides $n$ (that is, $p^a \mid n$ and
+$p^{a+1} \nmid n$). Then $h(n)/h(n/p) \le 1 + 1/p^a$, where $h(m) = \sigma(m)/m$ is the abundancy
+index and $\sigma(m)$ is the sum of the positive divisors of $m$.
 
 Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
 Always Have a Small Component?", Lemma (label `correctedPAlemma`). -/
@@ -158,12 +168,12 @@ theorem_wanted abundancyIndex_div_le
     abundancyIndex n / abundancyIndex (n / p) ≤
       1 + 1 / (p : ℚ) ^ a
 
-/-- **Lemma** (generalized Puchta): let `n` be primitive
-non-deficient with least prime factor `p₁` and `k` distinct prime
-factors, `(p₁, k) ≠ (3, 3)`, and suppose `H(n) ≥ 2 + α` for some
-`0 < α < 1`. Then some prime factor `p` satisfies
-`p^(a+1) < max (2(k+2+p₁)/α) (k(k+1))`, where `a` is the exponent
-of `p`.
+/-- **Generalized Puchta lemma.** Let $n$ be a primitive non-deficient number with $k$ distinct
+prime factors, the least of which is $p_1$, and suppose that $(p_1, k) \ne (3, 3)$. Let $\alpha$
+be a rational number with $0 < \alpha < 1$ such that $H(n) \ge 2 + \alpha$, where
+$H(n) = \prod_p p/(p-1)$ is the product over the distinct primes $p$ dividing $n$. Then some
+prime factor $p$ of $n$ satisfies $p^{a+1} < \max\bigl(2(k + 2 + p_1)/\alpha,\ k(k+1)\bigr)$,
+where $a$ is the exponent of $p$ in $n$.
 
 Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
 Always Have a Small Component?", Lemma
@@ -182,12 +192,13 @@ theorem_wanted exists_pow_factorization_add_one_lt_max
           ((n.primeFactors.card : ℚ) *
             ((n.primeFactors.card : ℚ) + 1))
 
-/-- **Proposition** (dichotomy): if `n` is an odd primitive
-non-deficient number with least prime factor `p₁`, greatest prime
-factor `p_k`, `k` distinct prime factors, and radical `R`, then
-either `p_k < √R` or some prime factor `p` satisfies
-`p^(a+1) < (k + 2 + p₁)(p_k - 1)`, where `a` is the exponent
-of `p`.
+/-- **Dichotomy for odd primitive non-deficient numbers.** Let $n$ be an odd primitive
+non-deficient number, that is, a positive integer with $\sigma(n) \ge 2n$ all of whose proper
+divisors $m$ satisfy $\sigma(m) < 2m$, where $\sigma$ is the sum of divisors. Let $k$ be the
+number of distinct prime factors of $n$, let $p_1$ and $p_k$ be its least and greatest prime
+factors, and let $R$ be the product of the distinct primes dividing $n$. Then either
+$p_k < \sqrt{R}$, or some prime $p$ dividing $n$ satisfies $p^{a+1} < (k + 2 + p_1)(p_k - 1)$,
+where $a$ is the exponent of $p$ in $n$.
 
 Source: Joshua Zelinsky, "Must a Primitive Non-Deficient Number
 Always Have a Small Component?", Proposition

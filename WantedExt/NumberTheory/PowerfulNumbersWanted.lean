@@ -39,7 +39,8 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.PowerfulNumbersWanted
 
-/-- **Lemma 1**: the difference of two integer squares is never `2`.
+/-- **Two is not a difference of two squares.** For all integers $a$ and $b$,
+$a^2 - b^2 \neq 2$.
 
 Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
 Lemma 1. -/
@@ -47,9 +48,8 @@ theorem_wanted int_sq_sub_int_sq_ne_two
     (a b : ℤ) :
     a ^ 2 - b ^ 2 ≠ 2
 
-/-- **Lemma 2**: if `x ≡ 1 (mod 3)`, then `3` exactly divides
-`x^2 + x + 1`, in the sense `3 ∣ x^2 + x + 1` but
-`¬ 9 ∣ x^2 + x + 1`.
+/-- **Exact divisibility of $x^2 + x + 1$ by $3$.** If $x$ is an integer with
+$x \equiv 1 \pmod 3$, then $3$ divides $x^2 + x + 1$ but $9$ does not.
 
 Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
 Lemma 2. -/
@@ -57,9 +57,8 @@ theorem_wanted three_exact_dvd_sq_add_self_add_one
     (x : ℤ) (hx : x % 3 = 1) :
     3 ∣ x ^ 2 + x + 1 ∧ ¬ 9 ∣ x ^ 2 + x + 1
 
-/-- **Lemma 3**: if `x ≡ 2 (mod 3)`, then `3` exactly divides
-`x^2 - x + 1`, in the sense `3 ∣ x^2 - x + 1` but
-`¬ 9 ∣ x^2 - x + 1`.
+/-- **Exact divisibility of $x^2 - x + 1$ by $3$.** If $x$ is an integer with
+$x \equiv 2 \pmod 3$, then $3$ divides $x^2 - x + 1$ but $9$ does not.
 
 Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
 Lemma 3. -/
@@ -67,9 +66,10 @@ theorem_wanted three_exact_dvd_sq_sub_self_add_one
     (x : ℤ) (hx : x % 3 = 2) :
     3 ∣ x ^ 2 - x + 1 ∧ ¬ 9 ∣ x ^ 2 - x + 1
 
-/-- **Lemma 4**: a nonzero-`x` integer point on
-`y^2 = a*x^4 + c*x^2 + e` yields an integer point with nonzero
-`X`-coordinate on `Y^2 = X^3 + c*X^2 + a*e*X`.
+/-- **Integer points on a quartic give integer points on a cubic.** Let $a$, $c$ and $e$ be
+integers with $a \neq 0$. If there are integers $x \neq 0$ and $y$ with
+$y^2 = a x^4 + c x^2 + e$, then there are integers $X \neq 0$ and $Y$ with
+$Y^2 = X^3 + c X^2 + a e X$.
 
 Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
 Lemma 4. -/
@@ -78,11 +78,12 @@ theorem_wanted exists_int_point_elliptic_of_exists_int_point_quartic
     (h : ∃ x y : ℤ, x ≠ 0 ∧ y ^ 2 = a * x ^ 4 + c * x ^ 2 + e) :
     ∃ X Y : ℤ, X ≠ 0 ∧ Y ^ 2 = X ^ 3 + c * X ^ 2 + a * e * X
 
-/-- **Lemma 5**: the positive integer solutions of
-`x^2 - 3*y^2 = 1` are exactly the coordinates of
-`(2 + √3)^k` for `k ≥ 1`.  The coordinates begin
-`(x₁, y₁) = (2, 1)` and `(x₂, y₂) = (7, 4)` and satisfy the
-second-order recursion `uₖ₊₂ = 4*uₖ₊₁ - uₖ`.
+/-- **Positive solutions of $x^2 - 3y^2 = 1$.** For integers $x$ and $y$, we have $x > 0$,
+$y > 0$ and $x^2 - 3y^2 = 1$ if and only if $x + y\sqrt{3} = (2 + \sqrt{3})^k$ in
+$\mathbb{Z}[\sqrt{3}]$ for some natural number $k \ge 1$. Writing
+$(2 + \sqrt{3})^k = u_k + v_k \sqrt{3}$ for $k \ge 0$, we have $(u_1, v_1) = (2, 1)$,
+$(u_2, v_2) = (7, 4)$, and $u_{k+2} = 4u_{k+1} - u_k$ and $v_{k+2} = 4v_{k+1} - v_k$ for
+every $k \ge 0$.
 
 Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
 Lemma 5. -/
@@ -101,11 +102,12 @@ theorem_wanted pell_three_eq_one_positive_solutions_iff_and_recurrence :
               4 * ((⟨2, 1⟩ : ℤ√3) ^ (k + 1)).im -
                 ((⟨2, 1⟩ : ℤ√3) ^ k).im)
 
-/-- **Lemma 6**: the positive integer solutions of
-`x^2 - 3*y^2 = -2` are exactly the coordinates of
-`(1 + √3)(2 + √3)^k` for `k ≥ 0`.  In this zero-based indexing,
-the first two coordinate pairs are `(1, 1)` and `(5, 3)`, and both
-coordinates satisfy `uₖ₊₂ = 4*uₖ₊₁ - uₖ`.
+/-- **Positive solutions of $x^2 - 3y^2 = -2$.** For integers $x$ and $y$, we have $x > 0$,
+$y > 0$ and $x^2 - 3y^2 = -2$ if and only if $x + y\sqrt{3} = (1 + \sqrt{3})(2 + \sqrt{3})^k$
+in $\mathbb{Z}[\sqrt{3}]$ for some integer $k \ge 0$. Writing
+$(1 + \sqrt{3})(2 + \sqrt{3})^k = u_k + v_k \sqrt{3}$ for $k \ge 0$, we have
+$(u_0, v_0) = (1, 1)$, $(u_1, v_1) = (5, 3)$, and $u_{k+2} = 4u_{k+1} - u_k$ and
+$v_{k+2} = 4v_{k+1} - v_k$ for every $k \ge 0$.
 
 Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
 Lemma 6. -/
@@ -126,8 +128,8 @@ theorem_wanted pell_three_eq_neg_two_positive_solutions_iff_and_recurrence :
               4 * ((⟨1, 1⟩ : ℤ√3) * (⟨2, 1⟩ : ℤ√3) ^ (k + 1)).im -
                 ((⟨1, 1⟩ : ℤ√3) * (⟨2, 1⟩ : ℤ√3) ^ k).im)
 
-/-- **Theorem 1**: there are no primes `p, q` and positive integers
-`x, y, z` with `x^3 - 1 = p^3*y^2` and `x^3 + 1 = q^3*z^2`.
+/-- **No cube whose neighbours are prime cubes times squares.** There are no primes $p$, $q$
+and positive integers $x$, $y$, $z$ with $x^3 - 1 = p^3 y^2$ and $x^3 + 1 = q^3 z^2$.
 
 Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
 Theorem 1. -/
@@ -137,9 +139,8 @@ theorem_wanted not_exists_prime_cube_square_neighbors_of_cube :
         (x : ℤ) ^ 3 - 1 = (p : ℤ) ^ 3 * (y : ℤ) ^ 2 ∧
           (x : ℤ) ^ 3 + 1 = (q : ℤ) ^ 3 * (z : ℤ) ^ 2
 
-/-- **Corollary 1**: the equation
-`64*x^6 - 1 = p^3*q^3*y^2` has no solution with integers `x, y`
-and primes `p, q`.
+/-- **No integer solutions of $64x^6 - 1 = p^3 q^3 y^2$ with $p$, $q$ prime.** There are no
+integers $x$, $y$ and primes $p$, $q$ with $64 x^6 - 1 = p^3 q^3 y^2$.
 
 Source: Tsz Ho Chan, "A Note on Three Consecutive Powerful Numbers",
 Corollary 1. -/

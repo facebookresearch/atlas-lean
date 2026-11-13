@@ -72,7 +72,13 @@ squarefree integer and let `(x, y)` be a positive solution of Pell's equation
 `x² − d y² = 1`. Then the ratio `x / y` is one of the convergents of the
 regular continued fraction of `√d`: there is an index `n` with
 `(GenContFract.of √d).convs n = x / y`. -/
-/-- Source: J.-L. Lagrange (1770). Listed as §84 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `pell_solution_convergent`. -/
+/-- **Solutions of Pell's equation are continued-fraction convergents.** Let $d$ be a positive
+squarefree integer and let $x$ and $y$ be positive integers with $x^2 - d y^2 = 1$. Then $x / y$
+is a convergent of the regular continued fraction expansion of $\sqrt{d}$: there is a natural
+number $n$ such that the $n$-th convergent of $\sqrt{d}$ (counting from the $0$-th) equals
+$x / y$.
+
+Source: J.-L. Lagrange (1770). Listed as §84 in O. Knill, Some Fundamental Theorems in Mathematics (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `pell_solution_convergent`. -/
 public theorem_wanted pell_solution_is_convergent
     (d : ℤ) (_hd : Squarefree d) (_hd0 : 0 < d)
     (x y : ℤ) (_hx : 0 < x) (_hy : 0 < y)

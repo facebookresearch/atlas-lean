@@ -29,24 +29,47 @@ namespace WantedExt.NumberTheory.Polymath8b
 
 open Filter MathlibExt.NumberTheory.PrimeDistribution
 
-/-- Domination with every fixed positive subpower loss.
+/-- **Subpower bound.** For functions $f, g : \mathbb{R} \to \mathbb{R}$, $f$ is bounded by $g$ up
+to subpower losses if for every real $\delta > 0$ we have $f(x) = O(x^{\delta} g(x))$ as
+$x \to \infty$.
+
 Source: Polymath8b, arXiv:1407.4897v4, Definition 1.6. -/
 def SubpowerBound (f g : ℝ → ℝ) : Prop :=
   ∀ δ : ℝ, 0 < δ → Asymptotics.IsBigO atTop f (fun x ↦ x ^ δ * g x)
 
-/-- Support in the source dyadic interval, with no extra zero coefficient.
+/-- **Support in a dyadic interval.** A finitely supported sequence
+$\alpha : \mathbb{N} \to \mathbb{R}$ is supported in the dyadic interval at scale
+$N \in \mathbb{R}$ if every $n$ with $\alpha(n) \ne 0$ satisfies $n \ge 1$ and $N \le n \le 2N$.
+
 Source: Polymath8b v4, Claim 2.6. -/
 def DyadicSupport (α : ℕ →₀ ℝ) (N : ℝ) : Prop :=
   ∀ n ∈ α.support, 1 ≤ n ∧ N ≤ (n : ℝ) ∧ (n : ℝ) ≤ 2 * N
 
-/-- The pointwise divisor/logarithm estimate has constants fixed in both `x` and `n`.
+/-- **Divisor–logarithm bound for a family of sequences.** A family $(\alpha_x)_{x \in \mathbb{R}}$
+of finitely supported sequences $\alpha_x : \mathbb{N} \to \mathbb{R}$ satisfies the
+divisor–logarithm bound if there are a real number $C > 0$ and natural numbers $k$ and $l$ such
+that for all sufficiently large real $x$ and all integers $n \ge 1$,
+$$|\alpha_x(n)| \le C \, \tau(n)^k (\log x)^l,$$
+where $\tau(n)$ is the number of positive divisors of $n$. The constants $C$, $k$ and $l$ depend
+neither on $x$ nor on $n$.
+
 Source: Polymath8b v4, Claim 2.6, TeX label `ab-div`. -/
 def DivisorLogBound (α : ℝ → ℕ →₀ ℝ) : Prop :=
   ∃ C : ℝ, ∃ k l : ℕ, 0 < C ∧ ∀ᶠ x : ℝ in atTop,
     ∀ n : ℕ, 1 ≤ n → |α x n| ≤
       C * (n.divisors.card : ℝ) ^ k * Real.log x ^ l
 
-/-- A uniform Siegel-Walfisz bound after the actual coprimality mask.
+/-- **Siegel–Walfisz hypothesis for a family of sequences.** Let $(\beta_x)_{x \in \mathbb{R}}$
+be a family of finitely supported sequences $\beta_x : \mathbb{N} \to \mathbb{R}$ and let
+$M : \mathbb{R} \to \mathbb{R}$. The family satisfies the Siegel–Walfisz hypothesis at scale $M$
+if for every real $A \ge 1$ there are a real number $C > 0$ and a natural number $k$ such that,
+for all sufficiently large real $x$ and all natural numbers $q \ge 1$, $r \ge 1$ and $a$ with
+$\gcd(a, q) = 1$,
+$$|\Delta(\beta_x^{(r)}; a \bmod q)| \le C \, \tau(qr)^k \, M(x) / (\log x)^A.$$
+Here $\beta_x^{(r)}$ is the sequence equal to $\beta_x(n)$ when $\gcd(n, r) = 1$ and to $0$
+otherwise, $\Delta(\cdot\,; a \bmod q)$ is the discrepancy in the residue class of $a$ modulo $q$,
+and $\tau(m)$ is the number of positive divisors of $m$.
+
 Source: Polymath8b v4, Claim 2.6, TeX label `sig` and its uniformity footnote. -/
 def SiegelWalfisz (β : ℝ → ℕ →₀ ℝ) (M : ℝ → ℝ) : Prop :=
   ∀ A : ℝ, 1 ≤ A → ∃ C : ℝ, ∃ k : ℕ, 0 < C ∧
@@ -54,14 +77,40 @@ def SiegelWalfisz (β : ℝ → ℕ →₀ ℝ) (M : ℝ → ℝ) : Prop :=
       |discrepancy ((β x).filter (fun n ↦ Nat.Coprime n r)) ⟨q, h1q⟩ a| ≤
         C * ((q * r).divisors.card : ℝ) ^ k * M x / Real.log x ^ A
 
-/-- Dyadic von Mangoldt discrepancy at a fixed distribution level.
+/-- **Elliott–Halberstam estimate at level $\theta$.** For a real number $\theta$, the
+Elliott–Halberstam estimate at level $\theta$ is the following statement. Let
+$Q : \mathbb{R} \to \mathbb{N}$ be such that $Q(x) = O(x^{\delta} x^{\theta})$ as $x \to \infty$
+for every real $\delta > 0$, and let $A \ge 1$ be real. Then there is a real number $C > 0$ such
+that for all sufficiently large real $x$, the averaged discrepancy of $\Lambda_x$ up to $Q(x)$ is
+at most $C x / (\log x)^A$. Here $\Lambda_x$ is the sequence equal to the von Mangoldt function
+$\Lambda(n)$ for integers $n \ge 1$ with $x \le n \le 2x$ and to $0$ otherwise, and the averaged
+discrepancy of a sequence $\alpha$ up to $Q$ is $\sum_{q=1}^{Q} \Delta^*(\alpha; q)$, where
+$\Delta^*(\alpha; q)$ is the largest absolute value of the discrepancy of $\alpha$ in a residue
+class modulo $q$ coprime to $q$.
+
 Source: Polymath8b v4, Claim 2.2. -/
 def ElliottHalberstamAt (θ : ℝ) : Prop :=
   ∀ Q : ℝ → ℕ, SubpowerBound (fun x ↦ (Q x : ℝ)) (fun x ↦ x ^ θ) →
     ∀ A : ℝ, 1 ≤ A → ∃ C : ℝ, 0 < C ∧ ∀ᶠ x : ℝ in atTop,
       averagedDiscrepancy (dyadicVonMangoldt x) (Q x) ≤ C * x / Real.log x ^ A
 
-/-- The generalized distribution estimate for real finite sequence families.
+/-- **Generalized Elliott–Halberstam estimate at level $\theta$.** For a real number $\theta$,
+the generalized Elliott–Halberstam estimate at level $\theta$ is the following statement. Let
+$\varepsilon > 0$ be real, let $N, M : \mathbb{R} \to \mathbb{R}$, and let
+$(\alpha_x)_{x \in \mathbb{R}}$ and $(\beta_x)_{x \in \mathbb{R}}$ be families of finitely
+supported sequences $\mathbb{N} \to \mathbb{R}$. Assume that for all sufficiently large real $x$
+we have $N(x) > 0$ and $M(x) > 0$, $\alpha_x$ is supported in the dyadic interval at scale
+$N(x)$ and $\beta_x$ is supported in the dyadic interval at scale $M(x)$; that for every real
+$\delta > 0$, as $x \to \infty$, $x^{\varepsilon} = O(x^{\delta} N(x))$,
+$N(x) = O(x^{\delta} x^{1 - \varepsilon})$, $x^{\varepsilon} = O(x^{\delta} M(x))$ and
+$M(x) = O(x^{\delta} x^{1 - \varepsilon})$; that $N(x) M(x) = O(x)$ and $x = O(N(x) M(x))$ as
+$x \to \infty$; that both families satisfy the divisor–logarithm bound; and that
+$(\beta_x)$ satisfies the Siegel–Walfisz hypothesis at scale $M$. Let
+$Q : \mathbb{R} \to \mathbb{N}$ be such that $Q(x) = O(x^{\delta} x^{\theta})$ as $x \to \infty$
+for every real $\delta > 0$, and let $A \ge 1$ be real. Then there is a real number $C > 0$ such
+that for all sufficiently large real $x$, the averaged discrepancy of the multiplicative
+convolution $\alpha_x \star \beta_x$ up to $Q(x)$ is at most $C x / (\log x)^A$.
+
 Source: Polymath8b v4, Claim 2.6, TeX labels `ab-div`, `sig`, and `qq-gen`. -/
 def GeneralizedElliottHalberstamAt (θ : ℝ) : Prop :=
   ∀ ε : ℝ, 0 < ε → ∀ N M : ℝ → ℝ, ∀ α β : ℝ → ℕ →₀ ℝ,
@@ -77,12 +126,17 @@ def GeneralizedElliottHalberstamAt (θ : ℝ) : Prop :=
       ∀ A : ℝ, 1 ≤ A → ∃ C : ℝ, 0 < C ∧ ∀ᶠ x : ℝ in atTop,
         averagedDiscrepancy (convolution (α x) (β x)) (Q x) ≤ C * x / Real.log x ^ A
 
-/-- The complete dyadic EH assumption below its excluded endpoint one.
+/-- **Elliott–Halberstam conjecture (dyadic form).** The Elliott–Halberstam estimate at level
+$\theta$ holds for every real number $\theta$ with $0 < \theta < 1$.
+
 Source: Polymath8b v4, Theorems 1.1 and 1.3 and Claim 2.2. -/
 def ElliottHalberstam : Prop :=
   ∀ θ : ℝ, 0 < θ → θ < 1 → ElliottHalberstamAt θ
 
-/-- The complete dyadic GEH assumption below its excluded endpoint one.
+/-- **Generalized Elliott–Halberstam conjecture (dyadic form).** The generalized
+Elliott–Halberstam estimate at level $\theta$ holds for every real number $\theta$ with
+$0 < \theta < 1$.
+
 Source: Polymath8b v4, Theorem 1.4 and Claim 2.6. -/
 def GeneralizedElliottHalberstam : Prop :=
   ∀ θ : ℝ, 0 < θ → θ < 1 → GeneralizedElliottHalberstamAt θ

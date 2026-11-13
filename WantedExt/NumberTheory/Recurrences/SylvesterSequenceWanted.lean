@@ -40,13 +40,15 @@ set_option autoImplicit false
 
 namespace MathlibExt.NumberTheory.Recurrences.SylvesterSequenceWanted
 
-/-- The classical Sylvester sequence `2, 3, 7, 43, …`, as the
-parameter-`1` case of MathlibExt's generalized Sylvester sequence. -/
+/-- **Sylvester numbers.** The Sylvester numbers $S_0, S_1, S_2, \dots$ are the natural numbers
+given by $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$ for $n \ge 0$, so the sequence begins
+$2, 3, 7, 43, 1807, \dots$. It is the generalized Sylvester sequence with parameter $1$. -/
 abbrev sylvesterNumber (n : ℕ) : ℕ :=
   Nat.generalizedSylvester 1 n
 
-/-- **Proposition 1, divisibility**: for positive `k` and `m n ≥ k`,
-`(S_k - 1)^2` divides `S_n - S_m` over `ℤ`.
+/-- **Divisibility of differences of Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
+sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For all natural numbers $k$, $m$ and $n$
+with $k \ge 1$, $m \ge k$ and $n \ge k$, the integer $(S_k - 1)^2$ divides $S_n - S_m$.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, divisibility (4). -/
 theorem_wanted sylvester_sub_dvd
@@ -54,31 +56,33 @@ theorem_wanted sylvester_sub_dvd
     ((sylvesterNumber k : ℤ) - 1) ^ 2 ∣
       (sylvesterNumber n : ℤ) - (sylvesterNumber m : ℤ)
 
-/-- **Proposition 1, congruence (5)**: `S_n ≡ 3 (mod 4)` for `n ≥ 1`.
+/-- **Sylvester numbers modulo 4.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
+$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 1$, $S_n \equiv 3 \pmod 4$.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (5). -/
 theorem_wanted sylvester_modEq_three_mod_four
     (n : ℕ) (hn : 1 ≤ n) :
     sylvesterNumber n % 4 = 3
 
-/-- **Proposition 1, congruence (6)**: `S_n ≡ 7 (mod 36)` for
-`n ≥ 2`.
+/-- **Sylvester numbers modulo 36.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
+$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 2$, $S_n \equiv 7 \pmod{36}$.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (6). -/
 theorem_wanted sylvester_modEq_seven_mod_thirty_six
     (n : ℕ) (hn : 2 ≤ n) :
     sylvesterNumber n % 36 = 7
 
-/-- **Proposition 1, congruence (7)**: `S_n ≡ 43 (mod 1764)` for
-`n ≥ 3`.
+/-- **Sylvester numbers modulo 1764.** Let $(S_n)_{n \ge 0}$ be the Sylvester sequence,
+$S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 3$, $S_n \equiv 43 \pmod{1764}$.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 1, congruence (7). -/
 theorem_wanted sylvester_modEq_forty_three_mod_1764
     (n : ℕ) (hn : 3 ≤ n) :
     sylvesterNumber n % 1764 = 43
 
-/-- **Proposition 2, divisibility**: for positive `k` and `n ≥ k`,
-`S_k^2 + 1` divides `S_n - (-1)^(n-k) S_k` over `ℤ`.
+/-- **Alternating divisibility for Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
+sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For all natural numbers $k$ and $n$ with
+$1 \le k \le n$, the integer $S_k^2 + 1$ divides the integer $S_n - (-1)^{n-k} S_k$.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, divisibility (8). -/
 theorem_wanted sylvester_sq_add_one_dvd_sub
@@ -87,64 +91,71 @@ theorem_wanted sylvester_sq_add_one_dvd_sub
       (sylvesterNumber n : ℤ) -
         (-1 : ℤ) ^ (n - k) * (sylvesterNumber k : ℤ)
 
-/-- **Proposition 2, congruence (9), even indices**:
-`S_{2i} ≡ 7 (mod 10)` for `i ≥ 1`.
+/-- **Sylvester numbers of even index modulo 10.** Let $(S_n)_{n \ge 0}$ be the Sylvester
+sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $i \ge 1$,
+$S_{2i} \equiv 7 \pmod{10}$.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, congruence (9), even indices. -/
 theorem_wanted sylvester_even_index_mod_ten
     (i : ℕ) (hi : 1 ≤ i) :
     sylvesterNumber (2 * i) % 10 = 7
 
-/-- **Proposition 2, congruence (9), odd indices**:
-`S_{2i+1} ≡ 3 (mod 10)` for `i ≥ 1`.
+/-- **Sylvester numbers of odd index modulo 10.** Let $(S_n)_{n \ge 0}$ be the Sylvester
+sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $i \ge 1$,
+$S_{2i+1} \equiv 3 \pmod{10}$.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 2, congruence (9), odd indices. -/
 theorem_wanted sylvester_odd_index_mod_ten
     (i : ℕ) (hi : 1 ≤ i) :
     sylvesterNumber (2 * i + 1) % 10 = 3
 
-/-- **Corollary 1(a)**: the Mersenne values `2^r - 1` (`r ≥ 1`) hit
-by the Sylvester sequence are exactly `3` and `7`.
+/-- **Mersenne numbers in the Sylvester sequence.** Let $(S_n)_{n \ge 0}$ be the Sylvester
+sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. The natural numbers $x$ such that $x = S_n$
+for some $n$ and $x = 2^r - 1$ for some $r \ge 1$ are exactly $3$ and $7$.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(a). -/
 theorem_wanted mersenne_sylvester_values_eq :
     {x : ℕ | ∃ n r : ℕ, 1 ≤ r ∧ x = sylvesterNumber n ∧
       x = 2 ^ r - 1} = {3, 7}
 
-/-- **Corollary 1(b)**: the triangular values hit by the Sylvester
-sequence are exactly `3`.  Triangular is encoded without division by
-`2 * x = m * (m + 1)` for positive `m`.
+/-- **The only triangular Sylvester number is $3$.** Let $S_n$ denote the $n$-th Sylvester
+number. A natural number $x$ equals $S_n$ for some $n$ and satisfies $2x = m(m + 1)$ for some
+natural number $m \ge 1$ if and only if $x = 3$.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(b). -/
 theorem_wanted triangular_sylvester_values_eq :
     {x : ℕ | ∃ n m : ℕ, 1 ≤ m ∧ x = sylvesterNumber n ∧
       2 * x = m * (m + 1)} = {3}
 
-/-- **Corollary 1(c)**: no Sylvester number is a perfect number.
+/-- **No Sylvester number is perfect.** For every natural number $n$, the $n$-th Sylvester number
+$S_n$ is not a perfect number.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(c). -/
 theorem_wanted sylvester_not_perfect
     (n : ℕ) :
     ¬ (sylvesterNumber n).Perfect
 
-/-- **Corollary 1(d)**: every Sylvester number after `S₀ = 2` has a
-prime divisor congruent to `3` modulo `4`.
+/-- **Prime divisors congruent to 3 modulo 4 of Sylvester numbers.** Let $(S_n)_{n \ge 0}$ be the
+Sylvester sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n \ge 1$, $S_n$ has a
+prime divisor $p$ with $p \equiv 3 \pmod 4$.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Corollary 1(d). -/
 theorem_wanted sylvester_exists_prime_divisor_mod_four_eq_three
     (n : ℕ) (hn : 1 ≤ n) :
     ∃ p : ℕ, p.Prime ∧ p ∣ sylvesterNumber n ∧ p % 4 = 3
 
-/-- **Proposition 3(a)**: no Sylvester number is a perfect power
-`a^m` with `a ≥ 2` and `m ≥ 2`.
+/-- **Sylvester numbers are not perfect powers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
+sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n$ there are no natural numbers
+$a \ge 2$ and $m \ge 2$ with $S_n = a^m$.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 3(a). -/
 theorem_wanted sylvester_not_perfect_power
     (n : ℕ) :
     ¬ ∃ a m : ℕ, 2 ≤ a ∧ 2 ≤ m ∧ sylvesterNumber n = a ^ m
 
-/-- **Proposition 3(b)**: apart from `S₁` and `S₂`, no Sylvester
-number has the form `a^m ± 1` with `a ≥ 2` and `m ≥ 2`.
+/-- **Sylvester numbers next to perfect powers.** Let $(S_n)_{n \ge 0}$ be the Sylvester
+sequence, $S_0 = 2$ and $S_{n+1} = S_n^2 - S_n + 1$. For every $n$ other than $1$ and $2$ there
+are no natural numbers $a \ge 2$ and $m \ge 2$ with $S_n = a^m + 1$ or $S_n = a^m - 1$.
 
 Source: Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Proposition 3(b). -/
 theorem_wanted sylvester_ne_pow_add_or_sub_one
@@ -153,9 +164,9 @@ theorem_wanted sylvester_ne_pow_add_or_sub_one
       ((sylvesterNumber n : ℤ) = (a : ℤ) ^ m + 1 ∨
         (sylvesterNumber n : ℤ) = (a : ℤ) ^ m - 1)
 
-/-- **Theorem 1, `C = 3`** (Luca--Tengely--Togbé, quoted by Naciri):
-the positive coprime solutions of `x² + 3 = 4yⁿ` with `n ≥ 3` are
-exactly `x = y = 1` (any `n ≥ 3`) and `(n, x, y) = (3, 37, 7)`.
+/-- **Coprime solutions of $x^2 + 3 = 4y^n$.** For natural numbers $n$, $x$ and $y$, the
+conditions $n \ge 3$, $x \ge 1$, $y \ge 1$, $\gcd(x, y) = 1$ and $x^2 + 3 = 4y^n$ hold if and only
+if $n \ge 3$ and either $x = y = 1$ or $(n, x, y) = (3, 37, 7)$ (Luca–Tengely–Togbé).
 
 Source: F. Luca, Sz. Tengely, and A. Togbé, "On the Diophantine equation x² + C = 4yⁿ", Theorem 1.1, as quoted in Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Theorem 1, equation with C = 3. -/
 theorem_wanted lebesgue_nagell_three_solutions_iff
@@ -164,9 +175,9 @@ theorem_wanted lebesgue_nagell_three_solutions_iff
         x ^ 2 + 3 = 4 * y ^ n) ↔
       (3 ≤ n ∧ ((x = 1 ∧ y = 1) ∨ (n = 3 ∧ x = 37 ∧ y = 7)))
 
-/-- **Theorem 1, `C = 7`** (Luca--Tengely--Togbé, quoted by Naciri):
-the positive coprime solutions of `x² + 7 = 4yⁿ` with `n ≥ 3` are
-exactly `(n, x, y) = (3, 5, 2)`, `(5, 11, 2)`, and `(13, 181, 2)`.
+/-- **Coprime solutions of $x^2 + 7 = 4y^n$.** For natural numbers $n$, $x$ and $y$, the
+conditions $n \ge 3$, $x \ge 1$, $y \ge 1$, $\gcd(x, y) = 1$ and $x^2 + 7 = 4y^n$ hold if and only
+if $(n, x, y)$ is $(3, 5, 2)$, $(5, 11, 2)$ or $(13, 181, 2)$ (Luca–Tengely–Togbé).
 
 Source: F. Luca, Sz. Tengely, and A. Togbé, "On the Diophantine equation x² + C = 4yⁿ", Theorem 1.1, as quoted in Abderrahim Makki Naciri, "A Note on Sylvester's Sequence", Theorem 1, equation with C = 7. -/
 theorem_wanted lebesgue_nagell_seven_solutions_iff
