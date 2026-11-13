@@ -17,9 +17,35 @@ public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Fintype.Card
 
+/-!
+# Profit scaling for 0/1 knapsack
+
+Items are indexed by `Fin n`, with natural weights `w`, profits `p` and a
+capacity `W`; `optVal w p W` is the largest total profit of a set of items of
+total weight at most `W`.
+
+`knapsack_scaling_loss` is the rounding step of the knapsack FPTAS. For a
+scaling factor `K ≥ 1`, each profit is rounded down to `p i / K`
+(natural-number division, i.e. `⌊p i / K⌋`), and `S` is a feasible set that is
+optimal for the rounded profits. Since `K * (p i / K) ≤ p i < K * (p i / K) + K`,
+rounding loses less than `K` per item, hence at most `n * K` on any set of
+items; the theorem states the additive bound
+`optVal w p W ≤ ∑ i ∈ S, p i + n * K`, whose constant is `n * K` for the number
+`n` of items. The FPTAS chooses `K = ε P / n` for the largest profit `P` to
+turn this into a factor `1 - ε`; that choice (which needs a real-valued `K`)
+and the dynamic program solving the rounded instance are not formalized here.
+
+## References
+
+* V. V. Vazirani, *Approximation Algorithms*, Springer, 2001, Chapter 8
+  (Knapsack), Section 8.2: the FPTAS for knapsack, which rounds profits down
+  to `⌊profit / K⌋` and bounds the rounding loss by `n K`.
+* D. P. Williamson and D. B. Shmoys, *The Design of Approximation
+  Algorithms*, Cambridge University Press, 2011, Section 3.1 (The knapsack
+  problem).
+-/
+
 @[expose] public section
-
-
 
 /-- Knapsack value: items are indexed by `Fin n`, with weights
 `w` and profits `p`; `optVal w p W` is the maximum total profit

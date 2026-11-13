@@ -9,16 +9,84 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Algorithms.Knapsack
+public import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.NormNum
 
 @[expose] public section
 
-/-- Boundary check: with one item of weight 1 and profit 5,
-capacity 1, scaling factor 1, the theorem yields a feasible set
-within `1 * 1` of the optimum. -/
-example : ∃ S : Finset (Fin 1), (∑ i ∈ S, ((fun _ => 1) : Fin 1 → ℕ) i) ≤ 1 ∧
-    optVal ((fun _ => 1) : Fin 1 → ℕ) ((fun _ => 5) : Fin 1 → ℕ) 1 ≤
-      (∑ i ∈ S, ((fun _ => 5) : Fin 1 → ℕ) i) + 1 := by
-  obtain ⟨S, hW, -, hloss⟩ :=
-    knapsack_scaling_loss ((fun _ => 1) : Fin 1 → ℕ) ((fun _ => 5) : Fin 1 → ℕ) 1 1 (by norm_num)
-  exact ⟨S, hW, hloss⟩
+/-!
+# Tests for knapsack profit scaling
+
+`optVal` is evaluated by unfolding its definition on a two-item instance at
+three capacities. `knapsack_scaling_loss` is then applied with `K = 2` and
+`K = 3`, keeping all three conclusions: at `K = 2` the rounded profits single
+out the true optimum, and at `K = 3` rounding creates a tie, so a set that is
+optimal for the rounded profits can lose true profit, within `n * K`.
+-/
+
+namespace MathlibExtTest.Algorithms.Knapsack
+
+/-- Weights of the two-item instance. -/
+def w₂ : Fin 2 → ℕ := ![1, 1]
+
+/-- Profits of the two-item instance. -/
+def p₂ : Fin 2 → ℕ := ![10, 9]
+
+/-- Profits that rounding by `K = 3` makes equal (`5 / 3 = 4 / 3 = 1`). -/
+def q₂ : Fin 2 → ℕ := ![5, 4]
+
+/-- Capacity `0`: only the empty set is feasible. -/
+example : optVal w₂ p₂ 0 = 0 := by decide +kernel
+
+/-- Capacity `1`: one item fits, and the better one has profit `10`. -/
+example : optVal w₂ p₂ 1 = 10 := by decide +kernel
+
+/-- Capacity `2`: both items fit. -/
+example : optVal w₂ p₂ 2 = 19 := by decide +kernel
+
+/-- At `K = 2` the rounded profits are `5` and `4`, so `{0}` is the only
+feasible set that is optimal for them. -/
+theorem eq_singleton_zero_of_scaled_opt (S : Finset (Fin 2))
+    (hS : (∑ i ∈ S, w₂ i) ≤ 1)
+    (hopt : ∀ T : Finset (Fin 2), (∑ i ∈ T, w₂ i) ≤ 1 →
+      ∑ i ∈ T, p₂ i / 2 ≤ ∑ i ∈ S, p₂ i / 2) :
+    S = {0} := by
+  revert S
+  decide +kernel
+
+/-- `knapsack_scaling_loss` at `K = 2`, with all three conclusions: the set it
+provides is feasible, optimal for the rounded profits, and within `2 * 2` of
+the optimum. -/
+example : ∃ S : Finset (Fin 2), (∑ i ∈ S, w₂ i) ≤ 1 ∧
+    (∀ T : Finset (Fin 2), (∑ i ∈ T, w₂ i) ≤ 1 →
+      ∑ i ∈ T, p₂ i / 2 ≤ ∑ i ∈ S, p₂ i / 2) ∧
+    optVal w₂ p₂ 1 ≤ (∑ i ∈ S, p₂ i) + 2 * 2 :=
+  knapsack_scaling_loss w₂ p₂ 1 2 (by norm_num)
+
+/-- At `K = 2` the set provided by `knapsack_scaling_loss` is forced to be
+`{0}`, whose true profit is the optimum. -/
+example : ∃ S : Finset (Fin 2), S = {0} ∧ optVal w₂ p₂ 1 = ∑ i ∈ S, p₂ i := by
+  obtain ⟨S, hS, hopt, -⟩ := knapsack_scaling_loss w₂ p₂ 1 2 (by norm_num)
+  exact ⟨S, eq_singleton_zero_of_scaled_opt S hS hopt, by
+    rw [eq_singleton_zero_of_scaled_opt S hS hopt]
+    decide +kernel⟩
+
+/-- At `K = 3` both rounded profits are `1`: the set `{1}` is feasible and
+optimal for the rounded profits, yet its true profit `4` is below
+`optVal w₂ q₂ 1 = 5`, within the loss bound `2 * 3`. So the theorem cannot
+promise exact optimality. -/
+example : (∑ i ∈ ({1} : Finset (Fin 2)), w₂ i) ≤ 1 ∧
+    (∀ T : Finset (Fin 2), (∑ i ∈ T, w₂ i) ≤ 1 →
+      ∑ i ∈ T, q₂ i / 3 ≤ ∑ i ∈ ({1} : Finset (Fin 2)), q₂ i / 3) ∧
+    (∑ i ∈ ({1} : Finset (Fin 2)), q₂ i) < optVal w₂ q₂ 1 ∧
+    optVal w₂ q₂ 1 ≤ (∑ i ∈ ({1} : Finset (Fin 2)), q₂ i) + 2 * 3 := by
+  decide +kernel
+
+/-- `knapsack_scaling_loss` at `K = 3` on the tied profits. -/
+example : ∃ S : Finset (Fin 2), (∑ i ∈ S, w₂ i) ≤ 1 ∧
+    (∀ T : Finset (Fin 2), (∑ i ∈ T, w₂ i) ≤ 1 →
+      ∑ i ∈ T, q₂ i / 3 ≤ ∑ i ∈ S, q₂ i / 3) ∧
+    optVal w₂ q₂ 1 ≤ (∑ i ∈ S, q₂ i) + 2 * 3 :=
+  knapsack_scaling_loss w₂ q₂ 1 3 (by norm_num)
+
+end MathlibExtTest.Algorithms.Knapsack
