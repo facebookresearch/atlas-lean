@@ -14,15 +14,14 @@ import PhyslibExt.EarthScience.TwoBoxWarming
 
 Concrete consumers of `PhyslibExt.EarthScience.TwoBoxWarming`:
 equilibrium `(1, 1)`, the combined budget and energy identities at
-`Ts = Td = 0` (where `Ts' = 1, Td' = 0, E = 1, E' = -1`), and
-`E 0 = 1`.
+`Ts = Td = 0` (where `Ts' = 1, Td' = 0, E = 1, E' = -1`),
+`E 0 = 1`, and the exponential energy bound for an abstract solution.
 
 ## i. Overview
 
 These are elaboration and non-vacuity checks, not new results. The
-exponential bound is not instantiated here: no closed-form solution
-is introduced in the tests; the bound lemma itself is the checked
-statement.
+exponential bound is applied through the public API to an arbitrary
+solution of the two-box ODE; no closed-form solution is introduced.
 
 ## ii. Key results
 
@@ -32,6 +31,7 @@ No new definitions or results are introduced here.
 
 - A. Equilibrium, budget, energy
 - B. Initial energy
+- C. Exponential energy bound
 
 ## iv. References
 
@@ -61,3 +61,12 @@ example : (0 - 1 : ℝ) * 1 + (0 - 1) * 0
 
 /-- Initial energy `E 0 = 1` at `Ts = Td = 0`. -/
 example : ((0 - 1 : ℝ) ^ 2 + (0 - 1 : ℝ) ^ 2) / 2 = 1 := by norm_num
+
+/-- Exponential energy bound for any solution of the two-box ODE from
+`Ts 0 = Td 0 = 0`, at any `t ≥ 0`. -/
+example {Ts Td : ℝ → ℝ}
+    (hODE : ∀ t : ℝ, HasDerivAt Ts (1 - Ts t - (Ts t - Td t)) t ∧
+      HasDerivAt Td (Ts t - Td t) t)
+    (hTs0 : Ts 0 = 0) (hTd0 : Td 0 = 0) (t : ℝ) (ht : 0 ≤ t) :
+    ((Ts t - 1) ^ 2 + (Td t - 1) ^ 2) / 2 ≤ Real.exp (-(2 / 3) * t) :=
+  EarthScience.two_box_energy_bound hODE hTs0 hTd0 t ht

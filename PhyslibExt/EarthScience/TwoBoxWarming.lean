@@ -10,13 +10,11 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Mul
-public import Mathlib.Analysis.Calculus.Deriv.MeanValue
-public import Mathlib.Analysis.Calculus.MeanValue
-public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Ring
+import MathlibExt.Analysis.ODE.LyapunovStability
 
 /-!
 # Capstone: planetary energy and two-box warming
@@ -28,9 +26,10 @@ The ODE, stated directly in the lemmas below, is
 `Ts' = 1 - Ts - (Ts - Td)`, `Td' = Ts - Td`. Equilibrium observations
 `T = 1, F = 1` identify `lam = 1` only under this model. This is a
 nondimensional teaching example; synthetic agreement does not validate
-a climate model. This capstone is proved self-contained from Mathlib
-primitives; it does not depend on any sibling development and does not
-re-prove or assume any unmerged "K02" theorem.
+a climate model. The exponential bound applies the existing estimate
+`le_exp_mul_of_hasDerivWithinAt_Ici` to the anomaly energy; the capstone
+does not depend on any sibling development and does not re-prove or
+assume any "K02" (`ClimateFeedback`) theorem.
 
 ## ii. Key results
 
@@ -49,7 +48,7 @@ re-prove or assume any unmerged "K02" theorem.
 
 ## iv. References
 
-- `antitoneOn_of_deriv_nonpos`, `HasDerivAt.exp`, `Real.exp_add` in Mathlib.
+- `le_exp_mul_of_hasDerivWithinAt_Ici` in `MathlibExt.Analysis.ODE.LyapunovStability`.
 
 ## A. Equilibrium, budget, energy identity and inequality
 -/
@@ -99,125 +98,34 @@ lemma two_box_energy_differential_inequality {Ts Td Ts' Td' : ℝ}
 /-- Exponential energy bound: if `Ts, Td` satisfy the two-box ODE at
 every `t` and start at `Ts 0 = Td 0 = 0` (so `E 0 = 1`), then for
 `t ≥ 0`, `E t ≤ exp (-(2 / 3) * t)`, i.e.
-`E t ≤ E 0 * exp (-(2 / 3) * t)`. -/
+`E t ≤ E 0 * exp (-(2 / 3) * t)`. This is
+`le_exp_mul_of_hasDerivWithinAt_Ici` with `u = E` and `a = 2 / 3`. -/
 lemma two_box_energy_bound {Ts Td : ℝ → ℝ}
     (hODE : ∀ t : ℝ, HasDerivAt Ts (1 - Ts t - (Ts t - Td t)) t ∧
       HasDerivAt Td (Ts t - Td t) t)
     (hTs0 : Ts 0 = 0) (hTd0 : Td 0 = 0) :
     ∀ t : ℝ, 0 ≤ t →
       ((Ts t - 1) ^ 2 + (Td t - 1) ^ 2) / 2 ≤ Real.exp (-(2 / 3) * t) := by
-  have hE : ∀ t : ℝ, HasDerivAt
-      (fun t => ((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-      (((1 - Ts t - (Ts t - Td t)) * (Ts t - 1)
-        + (Ts t - 1) * (1 - Ts t - (Ts t - Td t))
-        + ((Ts t - Td t) * (Td t - 1) + (Td t - 1) * (Ts t - Td t))) / 2) t := by
-    intro t
-    have hTs1 : HasDerivAt (fun t => Ts t - 1) (1 - Ts t - (Ts t - Td t)) t :=
-      (hODE t).1.sub_const 1
-    have hTd1 : HasDerivAt (fun t => Td t - 1) (Ts t - Td t) t :=
-      (hODE t).2.sub_const 1
-    exact ((hTs1.mul hTs1).add (hTd1.mul hTd1)).div_const 2
-  have hexp : ∀ t : ℝ, HasDerivAt (fun t => Real.exp ((2 / 3) * t))
-      (Real.exp ((2 / 3) * t) * ((2 / 3) * 1)) t := by
-    intro t
-    exact (HasDerivAt.const_mul (2 / 3 : ℝ) (hasDerivAt_id' t)).exp
-  have hφ : ∀ t : ℝ, HasDerivAt
-      (fun t => (((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-        * Real.exp ((2 / 3) * t))
-      ((((1 - Ts t - (Ts t - Td t)) * (Ts t - 1)
-        + (Ts t - 1) * (1 - Ts t - (Ts t - Td t))
-        + ((Ts t - Td t) * (Td t - 1) + (Td t - 1) * (Ts t - Td t))) / 2)
-        * Real.exp ((2 / 3) * t)
-        + (((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-          * (Real.exp ((2 / 3) * t) * ((2 / 3) * 1))) t := by
-    intro t
-    exact (hE t).mul (hexp t)
-  have hnonpos : ∀ t : ℝ, 0 ≤ t →
-      ((((1 - Ts t - (Ts t - Td t)) * (Ts t - 1)
-        + (Ts t - 1) * (1 - Ts t - (Ts t - Td t))
-        + ((Ts t - Td t) * (Td t - 1) + (Td t - 1) * (Ts t - Td t))) / 2)
-        * Real.exp ((2 / 3) * t)
-        + (((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-          * (Real.exp ((2 / 3) * t) * ((2 / 3) * 1))) ≤ 0 := by
+  have hE : ∀ t : ℝ, 0 ≤ t → HasDerivWithinAt
+      (fun t => ((Ts t - 1) ^ 2 + (Td t - 1) ^ 2) / 2)
+      ((Ts t - 1) * (1 - Ts t - (Ts t - Td t)) + (Td t - 1) * (Ts t - Td t))
+      (Set.Ici 0) t := by
     intro t _
-    have h4 := two_box_energy_differential_inequality (Ts := Ts t) (Td := Td t)
-      (Ts' := 1 - Ts t - (Ts t - Td t)) (Td' := Ts t - Td t) rfl rfl
-    have hK : 0 < Real.exp ((2 / 3) * t) := Real.exp_pos _
-    have hfactor : ((((1 - Ts t - (Ts t - Td t)) * (Ts t - 1)
-          + (Ts t - 1) * (1 - Ts t - (Ts t - Td t))
-          + ((Ts t - Td t) * (Td t - 1) + (Td t - 1) * (Ts t - Td t))) / 2)
-          * Real.exp ((2 / 3) * t)
-          + (((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-            * (Real.exp ((2 / 3) * t) * ((2 / 3) * 1)))
-        = (((((1 - Ts t - (Ts t - Td t)) * (Ts t - 1)
-          + (Ts t - 1) * (1 - Ts t - (Ts t - Td t))
-          + ((Ts t - Td t) * (Td t - 1) + (Td t - 1) * (Ts t - Td t))) / 2)
-          + (2 / 3) * (((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2))
-          * Real.exp ((2 / 3) * t)) := by
+    have hTs1 := (hODE t).1.sub_const 1
+    have hTd1 := (hODE t).2.sub_const 1
+    convert (((hTs1.mul hTs1).add (hTd1.mul hTd1)).div_const 2).hasDerivWithinAt using 1
+    · funext s
+      simp only [Pi.add_apply, Pi.mul_apply]
       ring
-    rw [hfactor]
-    refine mul_nonpos_of_nonpos_of_nonneg ?_ hK.le
-    have heq1 : (((1 - Ts t - (Ts t - Td t)) * (Ts t - 1)
-          + (Ts t - 1) * (1 - Ts t - (Ts t - Td t))
-          + ((Ts t - Td t) * (Td t - 1) + (Td t - 1) * (Ts t - Td t))) / 2)
-        = (Ts t - 1) * (1 - Ts t - (Ts t - Td t))
-          + (Td t - 1) * (Ts t - Td t) := by
-      ring
-    have heq2 : (((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-        = ((Ts t - 1) ^ 2 + (Td t - 1) ^ 2) / 2 := by
-      ring
-    linarith [h4, heq1, heq2]
-  have hcont : ContinuousOn
-      (fun t => (((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-        * Real.exp ((2 / 3) * t)) (Set.Ici 0) := by
-    intro x _
-    exact (hφ x).continuousAt.continuousWithinAt
-  have hdiff : DifferentiableOn ℝ
-      (fun t => (((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-        * Real.exp ((2 / 3) * t)) (interior (Set.Ici 0)) := by
-    intro x _
-    exact (hφ x).differentiableAt.differentiableWithinAt
-  have hderiv_nonpos : ∀ x ∈ interior (Set.Ici 0),
-      deriv (fun t => (((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-        * Real.exp ((2 / 3) * t)) x ≤ 0 := by
-    intro x hx
-    rw [interior_Ici] at hx
-    rw [(hφ x).deriv]
-    exact hnonpos x (le_of_lt (Set.mem_Ioi.mp hx))
-  have hmono : AntitoneOn
-      (fun t => (((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-        * Real.exp ((2 / 3) * t)) (Set.Ici 0) :=
-    antitoneOn_of_deriv_nonpos (convex_Ici 0) hcont hdiff hderiv_nonpos
+    · ring
   intro t ht
-  have hle : ((((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-        * Real.exp ((2 / 3) * t))
-      ≤ ((((Ts 0 - 1) * (Ts 0 - 1) + (Td 0 - 1) * (Td 0 - 1)) / 2)
-        * Real.exp ((2 / 3) * 0)) :=
-    hmono (Set.mem_Ici.mpr le_rfl) (Set.mem_Ici.mpr ht) ht
-  have hφ0 : ((((Ts 0 - 1) * (Ts 0 - 1) + (Td 0 - 1) * (Td 0 - 1)) / 2)
-      * Real.exp ((2 / 3) * 0)) = 1 := by
-    rw [hTs0, hTd0, mul_zero, Real.exp_zero, mul_one]
-    norm_num
-  rw [hφ0] at hle
-  have hK2 : 0 < Real.exp (-(2 / 3) * t) := Real.exp_pos _
-  have hexp_add : Real.exp ((2 / 3) * t) * Real.exp (-(2 / 3) * t) = 1 := by
-    rw [← Real.exp_add]
-    have harg : (2 / 3 : ℝ) * t + (-(2 / 3)) * t = 0 := by ring
-    rw [harg, Real.exp_zero]
-  have hsplit : (((Ts t - 1) ^ 2 + (Td t - 1) ^ 2) / 2 : ℝ)
-      = (((((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-        * Real.exp ((2 / 3) * t)) * Real.exp (-(2 / 3) * t)) := by
-    calc (((Ts t - 1) ^ 2 + (Td t - 1) ^ 2) / 2 : ℝ)
-        = (((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2) := by ring
-      _ = (((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-          * (Real.exp ((2 / 3) * t) * Real.exp (-(2 / 3) * t)) := by
-          rw [hexp_add, mul_one]
-      _ = (((((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-        * Real.exp ((2 / 3) * t)) * Real.exp (-(2 / 3) * t)) := by ring
-  rw [hsplit]
-  calc (((((Ts t - 1) * (Ts t - 1) + (Td t - 1) * (Td t - 1)) / 2)
-      * Real.exp ((2 / 3) * t)) * Real.exp (-(2 / 3) * t) : ℝ)
-      ≤ 1 * Real.exp (-(2 / 3) * t) := mul_le_mul_of_nonneg_right hle hK2.le
-    _ = Real.exp (-(2 / 3) * t) := one_mul _
+  calc ((Ts t - 1) ^ 2 + (Td t - 1) ^ 2) / 2
+      ≤ Real.exp (-(2 / 3) * t) * (((Ts 0 - 1) ^ 2 + (Td 0 - 1) ^ 2) / 2) :=
+        le_exp_mul_of_hasDerivWithinAt_Ici hE
+          (fun s _ => two_box_energy_differential_inequality (Ts := Ts s) (Td := Td s)
+            (Ts' := 1 - Ts s - (Ts s - Td s)) (Td' := Ts s - Td s) rfl rfl) ht
+    _ = Real.exp (-(2 / 3) * t) := by
+        rw [hTs0, hTd0]
+        norm_num
 
 end EarthScience
