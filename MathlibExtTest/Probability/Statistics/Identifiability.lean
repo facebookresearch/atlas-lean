@@ -366,4 +366,71 @@ example :
   rw [h1, h0]
   norm_num
 
+
+/-- Positive: at `n = 1` the projection is the whole observation. -/
+example {Ω S : Type*} [MeasurableSpace Ω] [MeasurableSpace S]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {ν ν' : Measure S} [IsProbabilityMeasure ν]
+    [SigmaFinite ν']
+    {X : Fin 1 → Ω → S} (i0 : Fin 1)
+    (h : HasLaw (fun ω i => X i ω) (Measure.pi fun _ : Fin 1 => ν) μ)
+    (h' : HasLaw (fun ω i => X i ω) (Measure.pi fun _ : Fin 1 => ν') μ) :
+    HasLaw (X i0) ν μ ∧ ν = ν' := by
+  exact hasLaw_of_hasLaw_tuple_pi_of_mem i0 h h'
+
+/-- Boundary: `Fin 0` is empty, so there is no index and no projection claim. -/
+example : IsEmpty (Fin 0) := by
+  exact inferInstance
+
+/-- Negative: equal 2-sample laws with different estimand values refute identification of
+the 2-sample family. -/
+example {P : Bool → Measure Bool} [∀ b, IsProbabilityMeasure (P b)] (τ : Bool → ℝ)
+    (h : (Measure.pi fun _ : Fin 2 => P true) = (Measure.pi fun _ : Fin 2 => P false))
+    (hne : τ true ≠ τ false) :
+    ¬ IsIdentifiedBy (fun b => Measure.pi fun _ : Fin 2 => P b) τ := by
+  exact not_isIdentifiedBy_of_eq_of_ne h hne
+
+/-- Positive: identification by the one-observation laws lifts to the `n`-sample product
+laws whenever an index exists. -/
+example {Θ S : Type*} [MeasurableSpace S] (P : Θ → Measure S) (τ : Θ → ℝ)
+    [∀ θ, IsProbabilityMeasure (P θ)] {n : ℕ} (h : IsIdentifiedBy P τ) (i0 : Fin n) :
+    IsIdentifiedBy (fun θ => Measure.pi fun _ : Fin n => P θ) τ := by
+  exact h.of_n_sample P τ i0
+
+
+/-- A biased coin on `Bool` with success probability `1 / 3`. Scratch-local, like
+`fairCoin` above. -/
+noncomputable def biasedCoin : Measure Bool :=
+  (3 : ENNReal)⁻¹ • (Measure.dirac true + 2 • Measure.dirac false)
+
+/-- Negative and non-vacuity: two Bernoulli 2-samples with different success probabilities
+(`1 / 2` vs `1 / 3`) cannot have equal laws. The assumed equality plus the named
+projection theorem forces the marginals equal, but they differ at `{true}`. -/
+example (h : (Measure.pi fun _ : Fin 2 => fairCoin)
+    = (Measure.pi fun _ : Fin 2 => biasedCoin)) : False := by
+  have hProb : IsProbabilityMeasure biasedCoin := by
+    constructor
+    simp only [biasedCoin, two_nsmul, ← two_mul, Measure.smul_apply, Measure.add_apply,
+      Measure.dirac_apply_of_mem (Set.mem_univ true), Measure.dirac_apply_of_mem (Set.mem_univ false),
+      smul_eq_mul]
+    have h3 : (3 : ENNReal) ≠ 0 := by simp
+    have h3t : (3 : ENNReal) ≠ ⊤ := ENNReal.ofNat_ne_top
+    have h12 : (1 + 2 * 1 : ENNReal) = 3 := by norm_num
+    rw [h12]
+    exact ENNReal.inv_mul_cancel h3 h3t
+  have h1 : HasLaw (fun ω : Fin 2 → Bool => ω) (Measure.pi fun _ : Fin 2 => fairCoin)
+      (Measure.pi fun _ : Fin 2 => fairCoin) := HasLaw.id
+  have h2 : HasLaw (fun ω : Fin 2 → Bool => ω) (Measure.pi fun _ : Fin 2 => biasedCoin)
+      (Measure.pi fun _ : Fin 2 => fairCoin) := by
+    rw [← h]
+    exact HasLaw.id
+  have hEq := (hasLaw_of_hasLaw_tuple_pi_of_mem (n := 2) 0 h1 h2).2
+  have hTrue := congrArg (fun μ : Measure Bool => μ {true}) hEq
+  simp only [fairCoin, biasedCoin, two_nsmul, Measure.smul_apply, Measure.add_apply,
+    Measure.dirac_apply_of_mem (show true ∈ ({true} : Set Bool) from by simp),
+    Measure.dirac_apply' false (show MeasurableSet ({true} : Set Bool) from MeasurableSet.of_discrete),
+    Set.indicator_of_notMem (show false ∉ ({true} : Set Bool) from by simp),
+    smul_eq_mul, add_zero, mul_one] at hTrue
+  have hReal := congrArg ENNReal.toReal hTrue
+  simp at hReal
+
 end MathlibExtTest.Probability.Statistics.Identifiability

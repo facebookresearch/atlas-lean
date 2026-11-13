@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Economics.Consumer.TwoGood
+public import MathlibExt.Economics.Consumer.ExpenditureFunction
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 import Mathlib.Algebra.BigOperators.Fin
 /-!
@@ -22,7 +23,8 @@ welfare gain).
 ## Main definitions
 
 * `indirectUtility u X p w`: `v(p, w) = sup {u x | x ∈ B(p, w)}`.
-* `expenditure u X p ū`: `e(p, ū) = inf {p ⬝ᵥ x | x ∈ X, ū ≤ u x}`.
+* `expenditure u X p ū`: `e(p, ū) = inf {p ⬝ᵥ x | x ∈ X, ū ≤ u x}`, re-exported from the
+  canonical `MathlibExt.Economics.ExpenditureFunction.expenditure`.
 * `compensatingVariation u X p₀ p₁ w`: `e(p⁰, u⁰) - e(p¹, u⁰)`.
 
 ## Main results
@@ -34,10 +36,10 @@ welfare gain).
 * `expenditure_min`, `indirectUtility_min`, `compensatingVariation_min`: the exact worked
   example for the perfect-complements utility `min x₀ x₁`.
 
-`indirectUtility` and `expenditure` have the shapes of the consumer-duality interface under
-review in Atlas (`Economics.Consumer`, roadmap EC04.T02), whose
-`expenditure_indirectUtility_eq` supplies the duality hypothesis under local nonsatiation and
-attainment; unifying the definitions is future work.
+`expenditure` is the same constant as the consumer-duality `Economics.Consumer.expenditure`
+(roadmap EC04.T02), whose `expenditure_indirectUtility_eq` supplies the duality hypothesis under
+local nonsatiation and attainment. `indirectUtility` has the shape of
+`Economics.Consumer.indirectUtility`; unifying that definition is future work.
 
 Atlas roadmap target EC09.T01.
 
@@ -60,12 +62,8 @@ noncomputable def indirectUtility {ι : Type*} [Fintype ι] (u : (ι → ℝ) �
     (X : Set (ι → ℝ)) (p : ι → ℝ) (w : ℝ) : ℝ :=
   sSup (u '' budgetSet X p w)
 
-/-- The expenditure function `e(p, ū) = inf {p ⬝ᵥ x | x ∈ X, ū ≤ u x}`: the least cost of
-reaching utility at least `ū`. As a real infimum it is meaningful only when the target is
-feasible and costs are bounded below. -/
-noncomputable def expenditure {ι : Type*} [Fintype ι] (u : (ι → ℝ) → ℝ)
-    (X : Set (ι → ℝ)) (p : ι → ℝ) (ubar : ℝ) : ℝ :=
-  sInf ((fun x => p ⬝ᵥ x) '' {x | x ∈ X ∧ ubar ≤ u x})
+-- Preserve the welfare spelling while sharing the canonical expenditure declaration.
+export MathlibExt.Economics.ExpenditureFunction (expenditure)
 
 /-- The compensating variation of a price change `p⁰ → p¹` at wealth `w`, with the frozen
 sign `CV = e(p⁰, u⁰) - e(p¹, u⁰)` at the fixed baseline utility `u⁰ = v(p⁰, w)`: the wealth

@@ -73,6 +73,55 @@ example : ¬ IsUnit ((constraintMatrix (fun _ : Fin 3 => (5 : ℝ)))ᵀ *
   rw [isUnit_gram_iff hS]
   simp
 
+-- Frontier variance (FI06.T03): `A = 5`, `B = 3`, `C = 3`, `A C - B² = 6`.
+example : quadForm (1 : Matrix (Fin 3) (Fin 3) ℝ)
+    (minVariancePortfolio (1 : Matrix (Fin 3) (Fin 3) ℝ) ![0, 1, 2] 1) = 1 / 3 := by
+  have hA : (![0, 1, 2] : Fin 3 → ℝ) ⬝ᵥ
+      ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ ![0, 1, 2]) = 5 := by
+    rw [inv_one, Matrix.one_mulVec]
+    norm_num [dotProduct, Fin.sum_univ_three]
+  have hB : (1 : Fin 3 → ℝ) ⬝ᵥ
+      ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ ![0, 1, 2]) = 3 := by
+    rw [inv_one, Matrix.one_mulVec]
+    norm_num [dotProduct, Fin.sum_univ_three]
+  have hC : (1 : Fin 3 → ℝ) ⬝ᵥ ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ 1) = 3 := by
+    rw [inv_one, Matrix.one_mulVec]
+    norm_num [dotProduct, Fin.sum_univ_three]
+  have hD : 0 < ((![0, 1, 2] : Fin 3 → ℝ) ⬝ᵥ
+      ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ ![0, 1, 2])) *
+      ((1 : Fin 3 → ℝ) ⬝ᵥ ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ 1)) -
+      ((1 : Fin 3 → ℝ) ⬝ᵥ ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ ![0, 1, 2])) ^ 2 := by
+    rw [hA, hB, hC]
+    norm_num
+  have hmain := portfolioVariance_minVariancePortfolio
+    (S := (1 : Matrix (Fin 3) (Fin 3) ℝ)) Matrix.PosDef.one ![0, 1, 2] 1 hD
+  rw [hmain, hA, hB, hC]
+  norm_num
+
+example : quadForm (1 : Matrix (Fin 3) (Fin 3) ℝ)
+    (minVariancePortfolio (1 : Matrix (Fin 3) (Fin 3) ℝ) ![0, 1, 2] 2) = 5 / 6 := by
+  have hA : (![0, 1, 2] : Fin 3 → ℝ) ⬝ᵥ
+      ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ ![0, 1, 2]) = 5 := by
+    rw [inv_one, Matrix.one_mulVec]
+    norm_num [dotProduct, Fin.sum_univ_three]
+  have hB : (1 : Fin 3 → ℝ) ⬝ᵥ
+      ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ ![0, 1, 2]) = 3 := by
+    rw [inv_one, Matrix.one_mulVec]
+    norm_num [dotProduct, Fin.sum_univ_three]
+  have hC : (1 : Fin 3 → ℝ) ⬝ᵥ ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ 1) = 3 := by
+    rw [inv_one, Matrix.one_mulVec]
+    norm_num [dotProduct, Fin.sum_univ_three]
+  have hD : 0 < ((![0, 1, 2] : Fin 3 → ℝ) ⬝ᵥ
+      ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ ![0, 1, 2])) *
+      ((1 : Fin 3 → ℝ) ⬝ᵥ ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ 1)) -
+      ((1 : Fin 3 → ℝ) ⬝ᵥ ((1 : Matrix (Fin 3) (Fin 3) ℝ)⁻¹ *ᵥ ![0, 1, 2])) ^ 2 := by
+    rw [hA, hB, hC]
+    norm_num
+  have hmain := portfolioVariance_minVariancePortfolio
+    (S := (1 : Matrix (Fin 3) (Fin 3) ℝ)) Matrix.PosDef.one ![0, 1, 2] 2 hD
+  rw [hmain, hA, hB, hC]
+  norm_num
+
 -- The existence API does not ask callers for a decidable equality instance.
 example {ι : Type*} [Fintype ι] {S : Matrix ι ι ℝ} (hS : S.PosDef)
     {μ : ι → ℝ} (hμ : ∃ i j, μ i ≠ μ j) (m : ℝ) :
