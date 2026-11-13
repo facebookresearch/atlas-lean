@@ -8,9 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.Analysis.SpecialFunctions.Exponential
 public import Mathlib.Order.Monotone.Basic
-import Mathlib.Tactic.NormNum
 
 /-!
 # Concordia parametrization: injective on nonnegative time
