@@ -24,7 +24,8 @@ Capital accumulates as `K' = s * Y + (1 - δ) * K`, while labor and labor-augmen
 grow by the factors `1 + n` and `1 + g` per period. For capital per effective worker `k` and
 output per effective worker `f k`, the law of motion is therefore
 `(1 + n) * (1 + g) * k' = s * f k + (1 - δ) * k`. A steady state at saving rate `s` is a `k`
-with `k' = k` (`IsSteadyState`); it is feasible when `0 ≤ s ≤ 1` (`IsFeasibleSteadyState`).
+with `k' = k` (`IsSteadyState`); it is feasible when `0 ≤ k`, `0 ≤ f k`, and `0 ≤ s ≤ 1`, so
+that consumption and investment are nonnegative (`IsFeasibleSteadyState`).
 
 At a steady state, consumption per effective worker `(1 - s) * f k` equals the objective
 `goldenConsumption f δ n g k = f k - (δ + n + g + n * g) * k`
@@ -80,9 +81,18 @@ labor and technology growing by the factors `1 + n` and `1 + g` per period, the 
 def IsSteadyState (f : ℝ → ℝ) (s δ n g k : ℝ) : Prop :=
   (1 + n) * (1 + g) * k = s * f k + (1 - δ) * k
 
-/-- A feasible steady state: the saving rate `s` lies in `[0, 1]` and keeps `k` fixed. -/
-def IsFeasibleSteadyState (f : ℝ → ℝ) (s δ n g k : ℝ) : Prop :=
-  s ∈ Set.Icc (0 : ℝ) 1 ∧ IsSteadyState f s δ n g k
+/-- A feasible steady state: capital per effective worker and output are nonnegative, the
+saving rate `s` lies in `[0, 1]` (so consumption `(1 - s) * f k` and investment `s * f k` are
+nonnegative), and `s` keeps `k` fixed. -/
+structure IsFeasibleSteadyState (f : ℝ → ℝ) (s δ n g k : ℝ) : Prop where
+  /-- Capital per effective worker is nonnegative. -/
+  capital_nonneg : 0 ≤ k
+  /-- Output per effective worker is nonnegative. -/
+  output_nonneg : 0 ≤ f k
+  /-- The saving rate lies in `[0, 1]`. -/
+  rate_mem : s ∈ Set.Icc (0 : ℝ) 1
+  /-- The saving rate keeps `k` fixed. -/
+  steady : IsSteadyState f s δ n g k
 
 /-- The break-even rate in the consumption function equals the expanded
 discrete factor minus one plus depreciation. -/
@@ -135,7 +145,7 @@ theorem goldenRule_condition {f : ℝ → ℝ} {s₀ δ n g k : ℝ}
     deriv f k = δ + n + g + n * g := by
   refine deriv_eq_breakEven_of_isLocalMax hdiff ?_
   filter_upwards [hint, hmax] with x ⟨s, hs⟩ hx
-  rw [← consumption_eq_goldenConsumption hs.2, ← consumption_eq_goldenConsumption hk.2]
+  rw [← consumption_eq_goldenConsumption hs.steady, ← consumption_eq_goldenConsumption hk.steady]
   exact hx s hs
 
 /-- **Concrete first-order point.** For `f(k) = -k ^ 2 + 10 * k`, `δ = n = 1 / 10`, `g = 0`,

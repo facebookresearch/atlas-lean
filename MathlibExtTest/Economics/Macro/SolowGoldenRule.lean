@@ -80,18 +80,20 @@ theorem goldenConsumption_example_value :
   unfold goldenConsumption
   norm_num
 
-/-- The example point `k = 49 / 10` is a feasible steady state: the saving rate `98 / 2499`
-lies in `[0, 1]` and sustains it. -/
+/-- The example point `k = 49 / 10` is a feasible steady state: capital and output
+`2499 / 100` are nonnegative, and the saving rate `98 / 2499` lies in `[0, 1]` and sustains
+it. -/
 theorem goldenRule_example_feasible :
     IsFeasibleSteadyState (fun k : ℝ => -k ^ 2 + 10 * k) (98 / 2499) (1 / 10) (1 / 10) 0
       (49 / 10) := by
-  refine ⟨⟨by norm_num, by norm_num⟩, ?_⟩
+  refine ⟨by norm_num, by norm_num, ⟨by norm_num, by norm_num⟩, ?_⟩
   unfold IsSteadyState
   norm_num
 
 /-- `goldenRule_condition` applies to the quadratic example: every capital stock `x ∈ (1, 9)`
-is a feasible steady state with saving rate `1 / (5 * (10 - x))`, steady-state consumption is
-maximal at `k = 49 / 10`, and the condition gives `deriv f (49 / 10) = 1 / 5`. -/
+is a feasible steady state (positive capital and output) with saving rate
+`1 / (5 * (10 - x))`, steady-state consumption is maximal at `k = 49 / 10`, and the condition
+gives `deriv f (49 / 10) = 1 / 5`. -/
 theorem goldenRule_feasible_example :
     deriv (fun k : ℝ => -k ^ 2 + 10 * k) (49 / 10) = 1 / 5 := by
   have hpow : HasDerivAt (fun k : ℝ => k ^ 2) (2 * (49 / 10)) (49 / 10) := by
@@ -106,7 +108,7 @@ theorem goldenRule_feasible_example :
       (by norm_num : (49 / 10 : ℝ) < 9)] with x hx
     obtain ⟨hx1, hx9⟩ := hx
     have hpos : 0 < 5 * (10 - x) := by linarith
-    refine ⟨1 / (5 * (10 - x)), ⟨⟨by positivity, ?_⟩, ?_⟩⟩
+    refine ⟨1 / (5 * (10 - x)), ⟨by linarith, by nlinarith, ⟨by positivity, ?_⟩, ?_⟩⟩
     · rw [div_le_one hpos]
       linarith
     · unfold IsSteadyState
@@ -117,8 +119,8 @@ theorem goldenRule_feasible_example :
       (fun k : ℝ => -k ^ 2 + 10 * k) s (1 / 10) (1 / 10) 0 x →
       (1 - s) * (-x ^ 2 + 10 * x) ≤ (1 - 98 / 2499) * (-(49 / 10) ^ 2 + 10 * (49 / 10)) := by
     refine Filter.Eventually.of_forall fun x s hs => ?_
-    have h1 := consumption_eq_goldenConsumption hs.2
-    have h2 := consumption_eq_goldenConsumption goldenRule_example_feasible.2
+    have h1 := consumption_eq_goldenConsumption hs.steady
+    have h2 := consumption_eq_goldenConsumption goldenRule_example_feasible.steady
     simp only [goldenConsumption] at h1 h2
     nlinarith [sq_nonneg (x - 49 / 10)]
   have h := goldenRule_condition hdiff goldenRule_example_feasible hint hmax
