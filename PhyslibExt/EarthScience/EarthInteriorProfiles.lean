@@ -47,6 +47,14 @@ excluded from the gravity form.
 
 ## iv. References
 
+- L. H. Adams, E. D. Williamson, *Density distribution in the Earth*, J. Washington Acad.
+  Sci. 13 (1923), 413–428: the density gradient of a chemically homogeneous layer under
+  adiabatic self-compression and hydrostatic equilibrium, computed from the seismic
+  velocities. In the notation here, hydrostatic equilibrium is `dp = -ρ * g` (`h_hydro`);
+  adiabatic compression of a homogeneous layer is `dp = φ * drho` (`h_const`), that is
+  `dp / dρ = K_S / ρ = φ` with `K_S` the adiabatic bulk modulus; and
+  `φ = α ^ 2 - 4 / 3 * β ^ 2` in terms of the P- and S-wave speeds `α` and `β`. Together
+  they give `dρ / dr = -ρ * g / φ` (`density_gradient_adams_williamson`).
 - `HasDerivAt.const_mul`, `hasDerivAt_pow` in Mathlib.
 
 ## A. Adams-Williamson relation and sign
