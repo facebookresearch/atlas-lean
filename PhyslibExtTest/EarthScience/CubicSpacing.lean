@@ -10,10 +10,11 @@ module
 import PhyslibExt.EarthScience.CubicSpacing
 
 /-!
-# Cubic spacing checks
+# Cubic spacing formula checks
 
-Concrete consumers of `PhyslibExt.EarthScience.CubicSpacing`:
-`a = 0.4`, planes `(100)`, `(110)`, `(111)`, plus the `(200)` plane.
+Concrete consumers of `PhyslibExt.EarthScience.CubicSpacing`: the expression
+`a / √(h ^ 2 + k ^ 2 + l ^ 2)` at `a = 0.4` for the index patterns `(100)`,
+`(110)`, `(111)`, and `(200)`.
 
 ## i. Overview
 
@@ -25,35 +26,42 @@ No new definitions or results are introduced here.
 
 ## iii. Table of contents
 
-- A. Numeric spacing
-- B. Higher-order plane
+- A. Numeric values
+- B. Index pattern `(200)`
 
 ## iv. References
 
 - `PhyslibExt.EarthScience.CubicSpacing`
 -/
 
-/-- Numeric spacing: `(100)` gives `d = a`. -/
+/-- Numeric value: `(100)` gives `a`. -/
 example : (0.4 : ℝ) / Real.sqrt ((1 : ℝ) ^ 2 + 0 ^ 2 + 0 ^ 2) = 0.4 :=
-  EarthScience.cubic_spacing_100 (by norm_num)
+  EarthScience.div_sqrt_sumSq_100 (by norm_num)
 
-/-- Numeric spacing: `(110)` gives `d = a / √2`. -/
+/-- Numeric value: `(110)` gives `a / √2`. -/
 example : (0.4 : ℝ) / Real.sqrt ((1 : ℝ) ^ 2 + 1 ^ 2 + 0 ^ 2)
     = 0.4 / Real.sqrt 2 :=
-  EarthScience.cubic_spacing_110 (by norm_num)
+  EarthScience.div_sqrt_sumSq_110 (by norm_num)
 
-/-- Numeric spacing: `(111)` gives `d = a / √3`. -/
+/-- Numeric value: `(111)` gives `a / √3`. -/
 example : (0.4 : ℝ) / Real.sqrt ((1 : ℝ) ^ 2 + 1 ^ 2 + 1 ^ 2)
     = 0.4 / Real.sqrt 3 :=
-  EarthScience.cubic_spacing_111 (by norm_num)
+  EarthScience.div_sqrt_sumSq_111 (by norm_num)
 
-/-- Numeric spacing: `(200)` gives `d = a / 2`, via the squared formula. -/
-example : ((0.4 : ℝ) / Real.sqrt (((2 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2)) ^ 2
-    = 0.4 ^ 2 / (((2 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2) :=
-  EarthScience.cubic_spacing_sq (a := 0.4) (h := 2) (k := 0) (l := 0)
+/-- Numeric value: `(200)` gives exactly `a / 2 = 0.4 / 2`, from the squared
+identity and positivity of both sides. -/
+example : (0.4 : ℝ) / Real.sqrt (((2 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2)
+    = 0.4 / 2 := by
+  have hsq := EarthScience.div_sqrt_sumSq_sq (a := 0.4) (h := 2) (k := 0) (l := 0)
     (by norm_num) (by norm_num)
+  have hpos := EarthScience.div_sqrt_sumSq_pos (a := 0.4) (h := 2) (k := 0) (l := 0)
+    (by norm_num) (by norm_num)
+  have h2 : ((0.4 : ℝ) / 2) ^ 2
+      = 0.4 ^ 2 / (((2 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2 + ((0 : ℤ) : ℝ) ^ 2) := by
+    norm_num
+  exact (pow_left_inj₀ hpos.le (by norm_num) two_ne_zero).mp (hsq.trans h2.symm)
 
-/-- Spacing positivity for `(111)`. -/
+/-- Positivity for `(111)`. -/
 example : 0 < (0.4 : ℝ) / Real.sqrt (((1 : ℤ) : ℝ) ^ 2 + ((1 : ℤ) : ℝ) ^ 2 + ((1 : ℤ) : ℝ) ^ 2) :=
-  EarthScience.cubic_spacing_pos (a := 0.4) (h := 1) (k := 1) (l := 1)
+  EarthScience.div_sqrt_sumSq_pos (a := 0.4) (h := 1) (k := 1) (l := 1)
     (by norm_num) (by norm_num)
