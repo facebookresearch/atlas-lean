@@ -55,38 +55,47 @@ teorth/optimizationproblems commit
 `2c1968cd520b60f1cf3cf50749f7285e800e4e15`.
 -/
 
-/-- A family of local Langlands exponents, indexed by an arbitrary type
-of local components. The two fields record the pointwise range
-`0 ≤ m ≤ 1/2`; the upper bound is the Jacquet--Shalika range for genuine
-cuspidal data. The index type is part of the data, so this is an
-exponent-of-a-family construction rather than a purported fixed `δ₂`. -/
+/-- **Family of local exponents.** A local-exponent family indexed by a type $\iota$ is a function
+$m : \iota \to \mathbb{R}$, the local Langlands exponents, with $0 \le m(i) \le 1/2$ for every
+$i \in \iota$.
+
+The upper bound $1/2$ is the Jacquet--Shalika range for genuine cuspidal data. The index type is
+part of the data, so the exponent of such a family is a construction attached to the family, not
+a definition of the fixed Ramanujan exponent $\delta_2$ of $\mathrm{GL}_2$. -/
 structure LocalExponentFamily (ι : Type*) where
   exponent : ι → ℝ
   exponent_nonneg : ∀ i, 0 ≤ exponent i
   exponent_le_half : ∀ i, exponent i ≤ 1 / 2
 
-/-- The set of exponents occurring in a family, with `0` adjoined. The
-adjoined zero makes the supremum the correct value for an empty family
-and for the tempered case. -/
+/-- **Exponent set of a local-exponent family.** For a local-exponent family $F$ indexed by a type
+$\iota$, with local exponents $m(i)$ for $i \in \iota$, the exponent set of $F$ is the set of real
+numbers $\{0\} \cup \{m(i) : i \in \iota\}$.
+
+The adjoined $0$ makes the supremum of this set the correct value when $\iota$ is empty and in the
+tempered case, where every local exponent is $0$. -/
 def exponentSet {ι : Type*} (F : LocalExponentFamily ι) : Set ℝ :=
   {0} ∪ Set.range F.exponent
 
-/-- The Ramanujan exponent of an explicitly supplied local-exponent
-family: the supremum of its local exponents. For the eventual genuine
-family of cuspidal local components this will be catalogue constant
-`δ₂`; for other families the name records the construction, not an
-identification. -/
+/-- **Ramanujan exponent of a local-exponent family.** The Ramanujan exponent of a local-exponent
+family $F$ with local exponents $m(i)$, $i \in \iota$, is the supremum of the set
+$\{0\} \cup \{m(i) : i \in \iota\}$. It is the supremum of the local exponents when $\iota$ is
+nonempty, and $0$ when $\iota$ is empty.
+
+For the eventual genuine family of cuspidal local components of $\mathrm{GL}_2$ this will be the
+Ramanujan exponent $\delta_2$; for other families it is only the supremum of the given
+exponents. -/
 noncomputable def ramanujanExponentOf {ι : Type*}
     (F : LocalExponentFamily ι) : ℝ :=
   sSup (exponentSet F)
 
-/-- Hypothesis `H₂(δ)` for one explicit family: every local exponent is
-at most `δ`. -/
+/-- **Admissibility of an exponent for a local-exponent family.** A local-exponent family $F$ is
+admissible at a real number $\delta$ (Hypothesis $H_2(\delta)$ for $F$) when every local exponent
+$m_i$ of $F$ ($i \in \iota$) is at most $\delta$. -/
 def IsAdmissible {ι : Type*} (F : LocalExponentFamily ι) (δ : ℝ) : Prop :=
   ∀ i, F.exponent i ≤ δ
 
-/-- The Generalized Ramanujan conclusion for one explicit family: every
-local exponent is zero. -/
+/-- **Generalized Ramanujan conjecture for a family.** A local-exponent family $F$ satisfies the
+Generalized Ramanujan conclusion when every local exponent $m_i$ of $F$ ($i \in \iota$) is zero. -/
 def GeneralizedRamanujanFor {ι : Type*}
     (F : LocalExponentFamily ι) : Prop :=
   ∀ i, F.exponent i = 0
@@ -113,20 +122,24 @@ theorem ramanujanExponentOf_le_half {ι : Type*}
   · norm_num
   · exact F.exponent_le_half i
 
-/-- Every local exponent is bounded by the family's Ramanujan exponent. -/
+/-- **Local exponents are bounded by the Ramanujan exponent.** For every local-exponent family $F$
+and every index $i$, the local exponent $m_i$ of $F$ at $i$ is at most the Ramanujan exponent of
+$F$. -/
 theorem exponent_le_ramanujanExponentOf {ι : Type*}
     (F : LocalExponentFamily ι) (i : ι) :
     F.exponent i ≤ ramanujanExponentOf F :=
   le_csSup (exponentSet_bddAbove F) (Or.inr ⟨i, rfl⟩)
 
-/-- The family's Ramanujan exponent is itself admissible. -/
+/-- **The Ramanujan exponent is admissible.** For every local-exponent family $F$, $F$ is admissible
+at its Ramanujan exponent: every local exponent of $F$ is at most the Ramanujan exponent of $F$. -/
 theorem isAdmissible_ramanujanExponentOf {ι : Type*}
     (F : LocalExponentFamily ι) :
     IsAdmissible F (ramanujanExponentOf F) :=
   fun i => exponent_le_ramanujanExponentOf F i
 
-/-- Every admissible nonnegative exponent bounds the family's Ramanujan
-exponent. -/
+/-- **Admissible exponents bound the Ramanujan exponent.** Let $F$ be a local-exponent family and
+let $\delta \ge 0$ be a real number. If $\delta$ is admissible for $F$, that is, every local
+exponent of $F$ is at most $\delta$, then the Ramanujan exponent of $F$ is at most $\delta$. -/
 theorem ramanujanExponentOf_le_of_isAdmissible {ι : Type*}
     (F : LocalExponentFamily ι) {δ : ℝ} (hδ : 0 ≤ δ)
     (h : IsAdmissible F δ) : ramanujanExponentOf F ≤ δ := by
@@ -135,15 +148,18 @@ theorem ramanujanExponentOf_le_of_isAdmissible {ι : Type*}
   · exact hδ
   · exact h i
 
-/-- For nonnegative `δ`, admissibility is exactly the bound by the
-family's Ramanujan exponent. -/
+/-- **Admissibility is a bound by the Ramanujan exponent.** For every local-exponent family $F$ and
+every real $\delta \ge 0$, $F$ is admissible at $\delta$ if and only if the Ramanujan exponent of
+$F$ is at most $\delta$. -/
 theorem isAdmissible_iff_ramanujanExponentOf_le {ι : Type*}
     (F : LocalExponentFamily ι) {δ : ℝ} (hδ : 0 ≤ δ) :
     IsAdmissible F δ ↔ ramanujanExponentOf F ≤ δ :=
   ⟨ramanujanExponentOf_le_of_isAdmissible F hδ,
     fun h i => (exponent_le_ramanujanExponentOf F i).trans h⟩
 
-/-- The exponent of a family vanishes exactly in the tempered case. -/
+/-- **The Ramanujan exponent vanishes exactly in the tempered case.** For every local-exponent
+family $F$, the Ramanujan exponent of $F$ is $0$ if and only if $F$ satisfies the generalized
+Ramanujan conclusion, that is, every local exponent of $F$ is $0$. -/
 theorem ramanujanExponentOf_eq_zero_iff {ι : Type*}
     (F : LocalExponentFamily ι) :
     ramanujanExponentOf F = 0 ↔ GeneralizedRamanujanFor F := by
@@ -158,12 +174,17 @@ theorem ramanujanExponentOf_eq_zero_iff {ι : Type*}
     intro i
     rw [h i]
 
-/-- The admissible nonnegative exponents for a family. -/
+/-- **Admissible exponents of a local-exponent family.** For a local-exponent family $F$ with
+local exponents $m_i$ ($i \in \iota$), the set of admissible exponents of $F$ is the set of real
+numbers $\delta \ge 0$ such that $F$ is admissible at $\delta$, that is, $m_i \le \delta$ for
+every index $i$. -/
 def admissibleExponents {ι : Type*} (F : LocalExponentFamily ι) : Set ℝ :=
   {δ | 0 ≤ δ ∧ IsAdmissible F δ}
 
-/-- The supremum definition agrees with the infimum-of-admissible
-exponents formulation of Hypothesis `H₂(δ)`. -/
+/-- **The Ramanujan exponent is the infimum of the admissible exponents.** For every
+local-exponent family $F$, the Ramanujan exponent of $F$ equals the infimum of the admissible
+exponents of $F$, that is, of the set of real numbers $\delta \ge 0$ such that every local
+exponent of $F$ is at most $\delta$. -/
 theorem ramanujanExponentOf_eq_sInf_admissibleExponents {ι : Type*}
     (F : LocalExponentFamily ι) :
     ramanujanExponentOf F = sInf (admissibleExponents F) := by
@@ -177,15 +198,18 @@ theorem ramanujanExponentOf_eq_sInf_admissibleExponents {ι : Type*}
     · exact ⟨zero_le_ramanujanExponentOf F,
         isAdmissible_ramanujanExponentOf F⟩
 
-/-- A pair of complex numbers is in arithmetic Satake normalization with
-local exponent `t` at residue cardinality `N` when `|αβ| = 1` and the two
-magnitudes are `N^t` and `N^{-t}`. -/
+/-- **Satake pairs with a given local exponent.** For real numbers $N$ and $t$, a pair
+$(\alpha, \beta)$ of complex numbers is in arithmetic Satake normalization with local exponent $t$
+at residue cardinality $N$ when $|\alpha\beta| = 1$, $|\alpha| = N^t$ and $|\beta| = N^{-t}$. -/
 def IsSatakePair (N t : ℝ) (α β : ℂ) : Prop :=
   ‖α * β‖ = 1 ∧ ‖α‖ = N ^ t ∧ ‖β‖ = N ^ (-t)
 
-/-- The Hecke eigenvalue bound forced by one Satake pair. The catalogue
-also records the sharper expression `N^δ + N^{-δ}`; the bound proved
-here is its displayed consequence `2N^δ`. -/
+/-- **Hecke bound from a Satake pair.** Let $N \ge 1$ and $t, \delta$ be real numbers with
+$0 \le t \le \delta$. If complex numbers $\alpha, \beta$ form a Satake pair with local exponent
+$t$ at residue cardinality $N$, then $|\alpha + \beta| \le 2 N^\delta$.
+
+The catalogue also records the sharper expression $N^\delta + N^{-\delta}$; the bound proved here
+is its displayed consequence $2N^\delta$. -/
 theorem hecke_norm_le_two_mul_rpow_of_isSatakePair {N t δ : ℝ}
     {α β : ℂ} (hN : 1 ≤ N) (ht0 : 0 ≤ t) (ht : t ≤ δ)
     (h : IsSatakePair N t α β) : ‖α + β‖ ≤ 2 * N ^ δ := by
@@ -198,8 +222,10 @@ theorem hecke_norm_le_two_mul_rpow_of_isSatakePair {N t δ : ℝ}
         (Real.rpow_le_rpow_of_exponent_le hN (by linarith))
     _ = 2 * N ^ δ := by ring
 
-/-- The Satake Hecke bound at an actual finite place, with
-`N = N(v)` supplied by the residue norm. -/
+/-- **Hecke bound from a Satake pair at a finite place.** Let $K$ be a number field, $v$ a finite
+place of $K$ with residue norm $N(v)$, and $t, \delta$ real numbers with $0 \le t \le \delta$. If
+complex numbers $\alpha, \beta$ form a Satake pair with local exponent $t$ at residue cardinality
+$N(v)$, then $|\alpha + \beta| \le 2 N(v)^\delta$. -/
 theorem hecke_norm_le_two_mul_residueNorm_rpow_of_isSatakePair
     {K : Type*} [Field K] [NumberField K]
     (v : NumberField.FinitePlace K) {t δ : ℝ}
@@ -209,21 +235,29 @@ theorem hecke_norm_le_two_mul_residueNorm_rpow_of_isSatakePair
   hecke_norm_le_two_mul_rpow_of_isSatakePair
     v.one_le_residueNorm ht0 ht h
 
-/-- An exceptional-eigenvalue witness in the Selberg provider: a
-congruence subgroup and an eigenvalue in `(0, 1/4)`. Morally, these are
-archimedean local components over `ℚ`; the identification with genuine
-cuspidal automorphic local components is part of the Selberg provider's
-recorded model scope. -/
+/-- **Exceptional Selberg eigenvalue witnesses.** The type of pairs $(\Gamma, \lambda)$ where
+$\Gamma$ is a congruence subgroup of $\mathrm{SL}_2(\mathbb{Z})$ and $\lambda$ is a real
+eigenvalue of the hyperbolic Laplacian on $L^2(\Gamma \backslash \mathbb{H})$ with
+$0 < \lambda < 1/4$.
+
+Morally, these pairs index archimedean local components over $\mathbb{Q}$; their
+identification with genuine cuspidal automorphic local components is a modelling assumption
+and is not formalized here. -/
 def SelbergWitness : Type :=
   {x : Subgroup SL(2, ℤ) × ℝ // IsCongruenceSubgroup x.1 ∧
     IsEigenvalue x.1 x.2 ∧ 0 < x.2 ∧ x.2 < 1 / 4}
 
-/-- The archimedean local exponent forced by an exceptional eigenvalue:
-if `λ = 1/4 - θ²`, this is `θ = √(1/4 - λ)`. -/
+/-- **Selberg gap of an exceptional eigenvalue.** For an exceptional-eigenvalue witness, a
+congruence subgroup $\Gamma$ of $\mathrm{SL}_2(\mathbb{Z})$ with a Laplace eigenvalue
+$\lambda \in (0, 1/4)$, the Selberg gap is $\sqrt{1/4 - \lambda}$: the archimedean local exponent
+$\theta$ forced by $\lambda$, written as $\lambda = 1/4 - \theta^2$. -/
 noncomputable def selbergGap (w : SelbergWitness) : ℝ :=
   Real.sqrt (1 / 4 - w.1.2)
 
-/-- The canonical family of Selberg archimedean exponents. -/
+/-- **Selberg family of archimedean exponents.** The Selberg family is the local-exponent family
+indexed by the exceptional-eigenvalue witnesses, the pairs $(\Gamma, \lambda)$ of a congruence
+subgroup $\Gamma$ of $\mathrm{SL}_2(\mathbb{Z})$ and a Laplace eigenvalue $\lambda \in (0, 1/4)$
+of $\Gamma$, whose local exponent at $(\Gamma, \lambda)$ is $\sqrt{1/4 - \lambda}$. -/
 noncomputable def selbergFamily : LocalExponentFamily SelbergWitness where
   exponent := selbergGap
   exponent_nonneg := fun w => Real.sqrt_nonneg _
@@ -232,11 +266,14 @@ noncomputable def selbergFamily : LocalExponentFamily SelbergWitness where
     apply le_half_of_mem_exceptionalGaps
     exact Or.inr ⟨w.1.2, w.2.2.1, w.2.2.2.1, w.2.2.2.2, rfl⟩
 
-/-- A local-exponent family dominates the Selberg archimedean slice when
-every exceptional-eigenvalue gap occurs as one of its local exponents.
-This is the precise anchor needed for the comparison with Selberg's
-constant; it is a hypothesis on a proposed genuine family, not a
-definition of one. -/
+/-- **Families dominating the Selberg exceptional spectrum.** A local-exponent family $F$ with
+local exponents $m_i$ ($i \in \iota$) dominates the Selberg archimedean slice when, for every
+congruence subgroup $\Gamma$ of $\mathrm{SL}_2(\mathbb{Z})$ and every eigenvalue $\lambda$ of the
+hyperbolic Laplacian on $L^2(\Gamma \backslash \mathbb{H})$ with $0 < \lambda < 1/4$, there is an
+index $i$ with $m_i = \sqrt{1/4 - \lambda}$.
+
+This is the precise anchor needed for the comparison with Selberg's constant; it is a hypothesis
+on a proposed genuine family, not a definition of one. -/
 def DominatesSelberg {ι : Type*} (F : LocalExponentFamily ι) : Prop :=
   ∀ w : SelbergWitness, ∃ i, selbergGap w = F.exponent i
 
@@ -244,8 +281,11 @@ theorem dominatesSelberg_selbergFamily :
     DominatesSelberg selbergFamily :=
   fun w => ⟨w, rfl⟩
 
-/-- An exceptional eigenvalue bounds every Selberg-dominating family's
-exponent from below. -/
+/-- **Exceptional eigenvalues bound Selberg-dominating exponents from below.** Let $F$ be a
+local-exponent family that dominates the Selberg archimedean slice. If $\Gamma$ is a congruence
+subgroup of $\mathrm{SL}_2(\mathbb{Z})$ and $\lambda$ is a real eigenvalue of the hyperbolic
+Laplacian on $L^2(\Gamma \backslash \mathbb{H})$ with $0 < \lambda < 1/4$, then
+$\sqrt{1/4 - \lambda}$ is at most the Ramanujan exponent of $F$. -/
 theorem sqrt_le_ramanujanExponentOf_of_dominatesSelberg {ι : Type*}
     (F : LocalExponentFamily ι) (hdom : DominatesSelberg F)
     {Γ : Subgroup SL(2, ℤ)} (hΓ : IsCongruenceSubgroup Γ) {lam : ℝ}
@@ -256,9 +296,14 @@ theorem sqrt_le_ramanujanExponentOf_of_dominatesSelberg {ι : Type*}
     Real.sqrt (1 / 4 - lam) = F.exponent i := hi
     _ ≤ ramanujanExponentOf F := exponent_le_ramanujanExponentOf F i
 
-/-- Selberg's constant is at most the exponent of every
-Selberg-dominating family. For the genuine cuspidal family this is the
-archimedean comparison `C₆₁ ≤ δ₂`; it is not an equality of constants. -/
+/-- **Selberg's constant is at most every dominating family's exponent.** Let $F$ be a
+local-exponent family that dominates the Selberg archimedean slice, that is, for every
+congruence subgroup $\Gamma$ of $\mathrm{SL}_2(\mathbb{Z})$ and every Laplace eigenvalue
+$\lambda \in (0, 1/4)$ of $\Gamma$, the gap $\sqrt{1/4 - \lambda}$ is one of the local exponents
+of $F$. Then Selberg's constant is at most the Ramanujan exponent of $F$.
+
+For the genuine cuspidal family this is the archimedean comparison of Selberg's constant with the
+Ramanujan exponent $\delta_2$; it is not an equality of constants. -/
 theorem selbergConstant_le_of_dominatesSelberg {ι : Type*}
     (F : LocalExponentFamily ι) (hdom : DominatesSelberg F) :
     selbergConstant ≤ ramanujanExponentOf F := by
@@ -271,9 +316,12 @@ theorem selbergConstant_le_of_dominatesSelberg {ι : Type*}
   · exact sqrt_le_ramanujanExponentOf_of_dominatesSelberg
       F hdom hΓ hlam hpos hlt
 
-/-- The canonical Selberg family's exponent is exactly Selberg's
-constant. This identifies the currently anchored archimedean slice; it
-does not identify that slice with the full Ramanujan exponent. -/
+/-- **The Selberg family's exponent is Selberg's constant.** The Ramanujan exponent of the
+canonical Selberg family of archimedean exponents is exactly Selberg's congruence spectral-gap
+constant.
+
+This identifies the currently anchored archimedean slice; it does not identify that slice with
+the full Ramanujan exponent. -/
 theorem ramanujanExponentOf_selbergFamily :
     ramanujanExponentOf selbergFamily = selbergConstant := by
   apply le_antisymm

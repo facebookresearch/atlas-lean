@@ -45,29 +45,39 @@ teorth/optimizationproblems commit
 `e8cf799325ae9277676e972b38d2f719a4de22883cf513ed2c8074b61fc0aae4`.
 -/
 
-/-- The conjugates of `α : ℂ`, counted with multiplicity: the roots in
-`ℂ` of its rational minimal polynomial. -/
+/-- **Conjugates.** The conjugates of a complex number $\alpha$ are the roots in $\mathbb{C}$ of
+its minimal polynomial over $\mathbb{Q}$, counted with multiplicity. If $\alpha$ is
+transcendental, its minimal polynomial is taken to be $0$ and it has no conjugates. -/
 noncomputable def conjugates (α : ℂ) : Multiset ℂ :=
   (minpoly ℚ α).aroots ℂ
 
-/-- The degree of `α`: the degree of its rational minimal polynomial
-(`0` for transcendental `α`, by totalization). -/
+/-- **Degree of a complex number.** The degree of a complex number $\alpha$ is the degree of its
+minimal polynomial over $\mathbb{Q}$. If $\alpha$ is transcendental, its minimal polynomial is
+taken to be $0$, so its degree is $0$. -/
 noncomputable def degree (α : ℂ) : ℕ :=
   (minpoly ℚ α).natDegree
 
-/-- The trace of `α`: the sum of its conjugates. -/
+/-- **Trace as the sum of conjugates.** For $\alpha \in \mathbb{C}$, the trace of $\alpha$ is
+the sum of its conjugates, that is, of the roots in $\mathbb{C}$ of the minimal polynomial of
+$\alpha$ over $\mathbb{Q}$, counted with multiplicity. For transcendental $\alpha$ there are no
+conjugates and the trace is $0$. -/
 noncomputable def trace (α : ℂ) : ℂ :=
   (conjugates α).sum
 
-/-- The absolute trace (trace-to-degree ratio) of `α`, as a real number:
-the real part of the trace divided by the degree. For algebraic `α` the
-trace is real, and for totally positive `α` this is the mean of the
-conjugates. -/
+/-- **Absolute trace.** The absolute trace of a complex number $\alpha$ is the real number
+obtained by dividing the real part of the trace of $\alpha$ by the degree of $\alpha$. If
+$\alpha$ is transcendental, its trace and its degree are both $0$, and its absolute trace is
+taken to be $0$.
+
+For algebraic $\alpha$ the trace is real, and for a totally positive algebraic integer $\alpha$
+the absolute trace is the mean of the conjugates of $\alpha$. -/
 noncomputable def absoluteTrace (α : ℂ) : ℝ :=
   (trace α).re / degree α
 
-/-- `α` is a totally positive algebraic integer: it is integral over `ℤ`
-and every conjugate is a strictly positive real number. -/
+/-- **Totally positive algebraic integers.** A complex number $\alpha$ is a totally positive
+algebraic integer when it is integral over $\mathbb{Z}$ and every conjugate of $\alpha$ (every
+root in $\mathbb{C}$ of its minimal polynomial over $\mathbb{Q}$) is a strictly positive real
+number. -/
 def IsTotallyPositive (α : ℂ) : Prop :=
   IsIntegral ℤ α ∧ ∀ β ∈ conjugates α, β.im = 0 ∧ 0 < β.re
 
@@ -108,8 +118,9 @@ private theorem multiset_sum_pos_of_nonempty {s : Multiset ℝ}
       simp only [Multiset.sum_cons]
       linarith
 
-/-- The trace of a totally positive algebraic integer is a strictly
-positive real number. -/
+/-- **The trace of a totally positive algebraic integer has positive real part.** If
+$\alpha \in \mathbb{C}$ is a totally positive algebraic integer, then the real part of the trace
+of $\alpha$ is strictly positive. -/
 theorem trace_pos_re {α : ℂ} (hα : IsTotallyPositive α) :
     0 < (trace α).re := by
   rw [trace, re_multiset_sum]
@@ -125,8 +136,8 @@ theorem trace_pos_re {α : ℂ} (hα : IsTotallyPositive α) :
     obtain ⟨β, hβ, rfl⟩ := Multiset.mem_map.mp hx
     exact (hα.2 β hβ).2
 
-/-- The trace of a totally positive algebraic integer has zero imaginary
-part. -/
+/-- **The trace of a totally positive algebraic integer is real.** If $\alpha \in \mathbb{C}$ is
+a totally positive algebraic integer, then the imaginary part of the trace of $\alpha$ is $0$. -/
 theorem trace_im_eq_zero {α : ℂ} (hα : IsTotallyPositive α) :
     (trace α).im = 0 := by
   have : (trace α).im = ((conjugates α).map Complex.im).sum := by
@@ -140,13 +151,14 @@ theorem trace_im_eq_zero {α : ℂ} (hα : IsTotallyPositive α) :
   obtain ⟨β, hβ, rfl⟩ := Multiset.mem_map.mp hx
   exact (hα.2 β hβ).1
 
-/-- The absolute trace of a totally positive algebraic integer is
-strictly positive. -/
+/-- **Positivity of the absolute trace.** If a complex number $\alpha$ is a totally positive
+algebraic integer, then the absolute trace of $\alpha$ is strictly positive. -/
 theorem absoluteTrace_pos {α : ℂ} (hα : IsTotallyPositive α) :
     0 < absoluteTrace α :=
   div_pos (trace_pos_re hα) (by exact_mod_cast degree_pos_of_isIntegral_int hα.1)
 
-/-- The minimal polynomial of `1` in `X - C 1` form. -/
+/-- **Minimal polynomial of one.** The minimal polynomial of $1 \in \mathbb{C}$ over $\mathbb{Q}$
+is $X - 1$. -/
 theorem minpoly_rat_one_eq : minpoly ℚ (1 : ℂ) = Polynomial.X - Polynomial.C (1 : ℚ) := by
   rw [minpoly.one]
   simp
@@ -158,8 +170,8 @@ theorem conjugates_one : conjugates (1 : ℂ) = {1} := by
 theorem degree_one : degree (1 : ℂ) = 1 := by
   rw [degree, minpoly_rat_one_eq, Polynomial.natDegree_X_sub_C]
 
-/-- `1` is a totally positive algebraic integer, with absolute trace
-`1`. -/
+/-- **One is a totally positive algebraic integer.** The complex number $1$ is a totally
+positive algebraic integer. -/
 theorem isTotallyPositive_one : IsTotallyPositive (1 : ℂ) := by
   refine ⟨isIntegral_one, ?_⟩
   intro β hβ
@@ -172,17 +184,19 @@ theorem absoluteTrace_one : absoluteTrace (1 : ℂ) = 1 := by
   rw [absoluteTrace, trace, conjugates_one, degree_one]
   simp
 
-/-- A real number `ρ` is admissible when it is nonnegative and all but
-finitely many totally positive algebraic integers have absolute trace at
-least `ρ`. -/
+/-- **Admissible trace bounds.** A real number $\rho$ is admissible when $\rho \ge 0$ and only
+finitely many totally positive algebraic integers $\alpha \in \mathbb{C}$ have absolute trace
+less than $\rho$. -/
 def IsAdmissible (ρ : ℝ) : Prop :=
   0 ≤ ρ ∧ {α : ℂ | IsTotallyPositive α ∧ absoluteTrace α < ρ}.Finite
 
-/-- The **Schur--Siegel--Smyth trace constant** `C₈₆`: the supremum of
-the admissible bounds, as an extended real. The extended-real value
-supplies bottom for an empty admissible set and top for an unbounded
-one; finiteness is the content of the catalogue upper bounds, recorded
-in the wanted file. -/
+/-- **Schur–Siegel–Smyth trace constant.** The Schur–Siegel–Smyth trace constant $C_{86}$ is
+the supremum, taken in the extended reals, of the admissible real bounds: the real numbers
+$\rho \ge 0$ such that only finitely many complex numbers that are totally positive algebraic
+integers have absolute trace less than $\rho$.
+
+The extended-real value is $-\infty$ for an empty admissible set and $+\infty$ for an unbounded
+one; finiteness is the content of the known upper bounds. -/
 noncomputable def schurSiegelSmythConstant : EReal :=
   sSup {x : EReal | ∃ ρ : ℝ, IsAdmissible ρ ∧ x = ρ}
 
@@ -201,13 +215,16 @@ theorem IsAdmissible.mono {ρ ρ' : ℝ} (hρ : IsAdmissible ρ) (hle : ρ' ≤ 
   intro α hα
   exact ⟨hα.1, lt_of_lt_of_le hα.2 hle⟩
 
-/-- Every admissible real bound is below the extended-real constant. -/
+/-- **Admissible bounds lie below the Schur–Siegel–Smyth constant.** Let $C_{86}$ be the
+Schur–Siegel–Smyth trace constant, an extended real number. Every admissible real number $\rho$
+satisfies $\rho \le C_{86}$ in the extended reals. -/
 theorem coe_le_schurSiegelSmythConstant {ρ : ℝ} (hρ : IsAdmissible ρ) :
     (ρ : EReal) ≤ schurSiegelSmythConstant :=
   le_sSup ⟨ρ, hρ, rfl⟩
 
-/-- An upper bound on the supremum is exactly an upper bound on all
-admissible coefficients. -/
+/-- **Upper bounds for the Schur–Siegel–Smyth constant.** For every extended real number $b$, the
+Schur–Siegel–Smyth trace constant is at most $b$ if and only if every admissible real number
+$c$ satisfies $c \le b$. -/
 theorem schurSiegelSmythConstant_le_iff {b : EReal} :
     schurSiegelSmythConstant ≤ b ↔
       ∀ c : ℝ, IsAdmissible c → (c : EReal) ≤ b := by

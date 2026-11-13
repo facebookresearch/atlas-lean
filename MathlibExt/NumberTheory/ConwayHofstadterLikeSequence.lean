@@ -22,16 +22,22 @@ This file formalizes the `k`-sequences introduced by John A. Pelesko in
 
 namespace MetaMathlibExt
 
-/-- The one-based residue convention used in Pelesko's recurrence: a zero residue modulo `m`
-is represented by `m` itself. -/
+/-- **One-based residue.** For natural numbers $a$ and $m$, the one-based residue of $a$ modulo
+$m$ is $a \bmod m$ if this is nonzero, and $m$ if $a \bmod m = 0$ (here $a \bmod 0 = a$). This is
+the residue convention used in Pelesko's recurrence. -/
 def conwayHofstadterResidue (a m : ℕ) : ℕ :=
   if a % m = 0 then m else a % m
 
-/-- A Conway–Hofstadter-like sequence of order `k`.
+/-- **Conway–Hofstadter-like sequence.** Let $k$ be a natural number. A sequence
+$c : \mathbb{N} \to \mathbb{N}$ is a Conway–Hofstadter-like sequence of order $k$ when
+$c(1) = c(2) = 1$ and, for every $n \ge 3$,
 
-For `n ≥ 3`, the two recursive indices add to `n`. The helper
-`conwayHofstadterResidue` implements the source's explicit convention that residue zero modulo
-`n - 1` is written as `n - 1`, rather than as zero. -/
+$$c(n) = c(i_n) + c(n - i_n),$$
+
+where $i_n$ is the one-based residue of $k \, c(n-1)$ modulo $n - 1$: it equals
+$k \, c(n-1) \bmod (n-1)$ when this is nonzero, and $n - 1$ otherwise.
+
+The value $c(0)$ is not constrained. -/
 def IsConwayHofstadterLikeSequence (k : ℕ) (c : ℕ → ℕ) : Prop :=
   c 1 = 1 ∧ c 2 = 1 ∧ ∀ n : ℕ, 3 ≤ n →
     let i := conwayHofstadterResidue (k * c (n - 1)) (n - 1)

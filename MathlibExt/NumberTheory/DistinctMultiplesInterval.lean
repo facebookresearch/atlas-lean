@@ -27,8 +27,10 @@ INTEGERS 26 (2026), Article A7, and by the Erdős Problem 711 entry in `OpenConj
 
 namespace MetaMathlibExt
 
-/-- The interval `(m, m + L]` contains distinct multiples of `1, …, n`: an injective family
-`a : Fin n → ℕ` with `m < a i ≤ m + L` and `(i + 1) ∣ a i` for each zero-based index `i`.
+/-- **Distinct multiples of $1, \dots, n$ in an interval.** For natural numbers $n$, $m$ and $L$,
+the interval $(m, m + L]$ contains distinct multiples of $1, \dots, n$ when there are pairwise
+distinct natural numbers $a_1, \dots, a_n$ with $m < a_i \le m + L$ and $i \mid a_i$ for every
+$1 \le i \le n$.
 
 Source: Wouter van Doorn, *On the Length of an Interval That Contains Distinct Multiples of the
 First n Positive Integers*, INTEGERS 26 (2026), Article A7, Section 1 (definition of
@@ -37,8 +39,11 @@ def HasDistinctMultiplesInInterval (n m L : ℕ) : Prop :=
   ∃ a : Fin n → ℕ, Function.Injective a ∧
     ∀ i : Fin n, m < a i ∧ a i ≤ m + L ∧ (i.val + 1) ∣ a i
 
-/-- `f(n, m)`, the least `L` such that `(m, m + L]` contains distinct multiples of
-`1, …, n`.
+/-- **Least interval length containing distinct multiples.** For natural numbers $n$ and $m$,
+$f(n, m)$ is the least natural number $L$ such that the interval $(m, m + L]$ contains distinct
+multiples of $1, \dots, n$.
+
+Such an $L$ always exists, so the least one is well defined.
 
 Source: Wouter van Doorn, *On the Length of an Interval That Contains Distinct Multiples of the
 First n Positive Integers*, INTEGERS 26 (2026), Article A7, Section 1 (definition of
@@ -46,7 +51,9 @@ First n Positive Integers*, INTEGERS 26 (2026), Article A7, Section 1 (definitio
 noncomputable def distinctMultiplesIntervalLength (n m : ℕ) : ℕ :=
   sInf {L | HasDistinctMultiplesInInterval n m L}
 
-/-- Lengthening the interval preserves the property.
+/-- **Lengthening the interval preserves distinct multiples.** For natural numbers $n$, $m$, $L$
+and $L'$ with $L \le L'$, if the interval $(m, m + L]$ contains distinct multiples of
+$1, \dots, n$, then so does the interval $(m, m + L']$.
 
 Source: Wouter van Doorn, *On the Length of an Interval That Contains Distinct Multiples of the
 First n Positive Integers*, INTEGERS 26 (2026), Article A7, Section 1 (definition of
@@ -56,7 +63,11 @@ theorem HasDistinctMultiplesInInterval.mono {n m L L' : ℕ} (hLL' : L ≤ L')
   obtain ⟨a, ha, hb⟩ := h
   exact ⟨a, ha, fun i => ⟨(hb i).1, le_trans (hb i).2.1 (by omega), (hb i).2.2⟩⟩
 
-/-- Some interval length works: `a_i = i (m + 1)` lies in `(m, m + n (m + 1)]`.
+/-- **Some interval contains distinct multiples.** For all natural numbers $n$ and $m$ there is a
+natural number $L$ such that the interval $(m, m + L]$ contains distinct multiples of
+$1, \dots, n$.
+
+For example, $L = n(m + 1)$ works, with $a_i = i(m + 1)$ for $1 \le i \le n$.
 
 Source: Wouter van Doorn, *On the Length of an Interval That Contains Distinct Multiples of the
 First n Positive Integers*, INTEGERS 26 (2026), Article A7, Section 1 (definition of
@@ -71,7 +82,10 @@ theorem exists_hasDistinctMultiplesInInterval (n m : ℕ) :
     nlinarith
   · exact dvd_mul_right _ _
 
-/-- `f(n, m)` is itself an admissible length.
+/-- **The least interval length is admissible.** For natural numbers $n$ and $m$, let $f(n, m)$
+be the least natural number $L$ such that the interval $(m, m + L]$ contains distinct multiples
+of $1, \dots, n$. Then the interval $(m, m + f(n, m)]$ contains distinct multiples of
+$1, \dots, n$.
 
 Source: Wouter van Doorn, *On the Length of an Interval That Contains Distinct Multiples of the
 First n Positive Integers*, INTEGERS 26 (2026), Article A7, Section 1 (definition of
@@ -80,8 +94,10 @@ theorem hasDistinctMultiplesInInterval_distinctMultiplesIntervalLength (n m : �
     HasDistinctMultiplesInInterval n m (distinctMultiplesIntervalLength n m) :=
   Nat.sInf_mem (exists_hasDistinctMultiplesInInterval n m)
 
-/-- `f(n, m)` is the least admissible length: `f(n, m) ≤ L` iff `(m, m + L]` contains
-distinct multiples of `1, …, n`.
+/-- **Characterization of the least interval length.** For natural numbers $n$ and $m$, let
+$f(n, m)$ be the least natural number $K$ such that the interval $(m, m + K]$ contains distinct
+multiples of $1, \dots, n$. Then for every natural number $L$, $f(n, m) \le L$ if and only if
+the interval $(m, m + L]$ contains distinct multiples of $1, \dots, n$.
 
 Source: Wouter van Doorn, *On the Length of an Interval That Contains Distinct Multiples of the
 First n Positive Integers*, INTEGERS 26 (2026), Article A7, Section 1 (definition of
@@ -91,8 +107,10 @@ theorem distinctMultiplesIntervalLength_le_iff {n m L : ℕ} :
   ⟨fun h => (hasDistinctMultiplesInInterval_distinctMultiplesIntervalLength n m).mono h,
     fun h => Nat.sInf_le h⟩
 
-/-- `f(1, m) = 1`: the interval `(m, m + 1]` contains the multiple `m + 1` of `1`, and the
-empty interval `(m, m]` contains nothing.
+/-- **The least interval length for $n = 1$.** For natural numbers $n$ and $m$, let $f(n, m)$ be
+the least natural number $L$ such that the interval $(m, m + L]$ contains distinct multiples of
+$1, \dots, n$. Then $f(1, m) = 1$ for every natural number $m$: the interval $(m, m + 1]$
+contains the multiple $m + 1$ of $1$, and the empty interval $(m, m]$ contains nothing.
 
 Source: Wouter van Doorn, *On the Length of an Interval That Contains Distinct Multiples of the
 First n Positive Integers*, INTEGERS 26 (2026), Article A7, Section 1 (definition of

@@ -540,10 +540,17 @@ private lemma residual_sum (s : ℂ) (n : ℕ) :
   exact residual_term s n k hk1 hkn
 
 /--
-Alternating binomial transform of the squared harmonic numbers `H_k ^ 2`: the
-closed form in `H_n` plus a residual single sum. The generalized binomial
-coefficients `C(s+n,k)` and `C(s+n-1,n)` are rendered via `descPochhammer`, and
-`hs` encodes the source condition `s ∈ ℂ ∖ ℤ⁻`.
+**Alternating binomial transform of the squared harmonic numbers.** For a complex number
+$z$ and $k \in \mathbb{N}$ write $\binom{z}{k} = z(z-1)\cdots(z-k+1)/k!$ (the empty product
+being $1$), and let $H_k = 1 + \frac{1}{2} + \cdots + \frac{1}{k}$ be the $k$-th harmonic number.
+Let $s$ be a complex number that is not a negative integer, and let $n \ge 1$. Then
+
+$$
+\sum_{k=1}^{n} (-1)^k \binom{s+n}{k} H_k^2 =
+(-1)^n \binom{s+n-1}{n} \left(H_n^2 + \frac{2 H_n}{s+n} + \frac{2}{(s+n)^2}\right) +
+\frac{H_n}{s+n} - \frac{2}{(s+n)^2} -
+\frac{s}{s+n} \sum_{k=1}^{n} \frac{(-1)^k \binom{s+k-1}{k-1}}{k^2 \binom{n}{k}}.
+$$
 
 Source: Necdet Batır, "Finite Binomial Sum Identities with Harmonic Numbers,"
 Journal of Integer Sequences 24 (2021), Article 21.4.3, Theorem 7 (label

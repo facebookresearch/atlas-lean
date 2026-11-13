@@ -19,9 +19,12 @@ public import Mathlib.FieldTheory.Minpoly.Basic
 
 namespace MetaMathlibExt
 
-/-- The real cyclotomic polynomial: the minimal polynomial over `ℤ` of the canonical
-root trace `ζ + ζ⁻¹`, where `ζ = Complex.exp (2 * π * I / n)`. Totalized for all `n`;
-later mathematical claims about this polynomial require `n > 2`.
+/-- **Real cyclotomic polynomial.** For a natural number $n$, the real cyclotomic polynomial
+$\psi_n \in \mathbb{Z}[X]$ is the minimal polynomial over $\mathbb{Z}$ of the complex number
+$\zeta + \zeta^{-1}$, where $\zeta = e^{2\pi i/n}$; for $n \ge 1$ this number is $2\cos(2\pi/n)$.
+
+The definition covers every $n$ (for $n = 0$ the exponent $2\pi i/n$ is read as $0$, so
+$\zeta = 1$), but results about $\psi_n$ assume $n > 2$.
 
 Source: Pinthira Tangsupphathawat and Vichian Laohakosol, "Minimal Polynomials of
 Algebraic Cosine Values at Rational Multiples of π", Journal of Integer Sequences 19

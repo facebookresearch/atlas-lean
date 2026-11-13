@@ -188,8 +188,18 @@ private theorem fraenkelAux_keycount (q M m : ℕ) (a n : Fin q → ℕ)
   rw [hfilter_eq, hc_eq, hN]
   exact fraenkelAux_sum_residue (a i) (n i) (ci * t) m hpos hai
 
-/-- Fraenkel's exact `M`-cover Bernoulli recurrence for any number `q` of residue classes; the
-source's `2 ≤ q` is not needed. -/
+/-- **Fraenkel's Bernoulli recurrence for exact covers by any number of classes.** Let $q$, $M$
+and $m \ge 1$ be natural numbers, and for $i = 1, \dots, q$ let $n_i$ be a positive integer and
+$a_i$ an integer with $0 \le a_i < n_i$. Suppose the residue classes $a_i \bmod n_i$, counted
+with repetition, form an exact $M$-cover of $\mathbb{Z}$: every integer $k$ satisfies
+$k \equiv a_i \pmod{n_i}$ for exactly $M$ indices $i$. Then
+$$
+B_m \Big(M - \sum_{i=1}^{q} n_i^{m-1}\Big) =
+\sum_{i=1}^{q} n_i^{m-1} \sum_{s=0}^{m-1} \binom{m}{s} B_s \Big(\frac{a_i}{n_i}\Big)^{m-s},
+$$
+where $B_s$ is the $s$-th Bernoulli number, with the convention $B_1 = -\frac{1}{2}$.
+
+The source assumes $q \ge 2$; the identity holds without that assumption. -/
 theorem fraenkel_exact_M_cover_bernoulli_recurrence_general
     (q M m : ℕ) (a n : Fin q → ℕ) (hm : 1 ≤ m)
     (hn : ∀ i, 0 < n i) (ha : ∀ i, a i < n i)
@@ -468,7 +478,21 @@ theorem fraenkel_exact_M_cover_bernoulli_recurrence_general
 
 
 set_option linter.unusedVariables false in
-/-- Fraenkel exact `M`-cover Bernoulli recurrence (normalized indexed form).
+/-- **Fraenkel's Bernoulli recurrence for exact covers.** Let $q \ge 2$, $m \ge 1$ and $M$ be
+natural numbers, and for $i = 1, \dots, q$ let $n_i$ be a positive integer and $a_i$ an integer
+with $0 \le a_i < n_i$. Suppose the residue classes $a_i \bmod n_i$, counted with repetition,
+form an exact $M$-cover of $\mathbb{Z}$: every integer $k$ satisfies $k \equiv a_i \pmod{n_i}$
+for exactly $M$ indices $i$. Then
+$$
+B_m \Big(M - \sum_{i=1}^{q} n_i^{m-1}\Big) =
+\sum_{i=1}^{q} n_i^{m-1} \sum_{s=0}^{m-1} \binom{m}{s} B_s \Big(\frac{a_i}{n_i}\Big)^{m-s},
+$$
+where $B_s$ is the $s$-th Bernoulli number, with the convention $B_1 = -\frac{1}{2}$.
+
+Only this direction of the source's equation (23) is stated; the converse, Beebee's variant with
+a parameter $x$, and Porubsky's weighted variant are not.
+
+Proves `Wanted` entry `fraenkel_exact_M_cover_bernoulli_recurrence`.
 
 Source: Yevgenya Movshovich, "Raabe's Identity and Covering Systems,"
 Journal of Integer Sequences 23 (2020), Article 20.2.8,
@@ -477,23 +501,6 @@ Equation (23); exact source span: lines 228–241; full live TeX source-file SHA
 `24b31e07198371d27b492f46b2d747aa49e9a49323696d6b4a9c18deab8ff593`;
 exact newline-terminated equation/context span SHA-256
 `1c95008be9bbbc150a494df7eef936abd3ee277ab9bd32ff1f67b0b0f4b76526`.
-
-Uses the source convention `B₁ = -1/2`, matching Mathlib's `bernoulli : ℕ → ℚ`
-from `Mathlib.NumberTheory.Bernoulli`. The auxiliary polynomial
-`bhat_m(t) = ∑_{s=0}^{m-1} B_s * choose(m,s) * t^(m-s)` is inlined as the
-`Finset.range m` sum on the right-hand side.
-
-The normalized indexed exact `M`-cover hypotheses are `q ≥ 2`, `m ≥ 1`,
-`n i > 0`, `a i < n i`, with repeated residue classes preserved by indexing
-with `Fin q`. The exact-cover hypothesis is encoded with the repository API
-`Int.indexedCoverMultiplicity` (moduli `n`, residues `(a i : ℤ)`), asserting
-multiplicity `M` for every `k : ℤ`.
-
-Scope: this file states only equation (23) in the direction above. It does not
-add the iff converse, the Beebee `x`-parameter variant, or the Porubsky
-weighted variant.
-
-Proves `Wanted` entry `fraenkel_exact_M_cover_bernoulli_recurrence`.
 -/
 theorem fraenkel_exact_M_cover_bernoulli_recurrence
     (q M m : ℕ) (a n : Fin q → ℕ)

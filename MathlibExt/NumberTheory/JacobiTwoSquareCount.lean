@@ -57,10 +57,17 @@ open GaussianInt (gaussianInt_prime_one_add_I gaussianInt_two_eq gaussianInt_spl
 
 @[expose] public section
 
-/-- The divisor sum of `χ`. -/
+/-- **Divisor sum of the character modulo 4.** For a natural number $n$, this is the integer
+$\sum_{d \mid n} \chi_4(d)$, the sum over the positive divisors $d$ of $n$ of the nonprincipal
+Dirichlet character $\chi_4$ modulo 4, which takes the value $0$ at even $d$, $1$ at
+$d \equiv 1 \pmod 4$ and $-1$ at $d \equiv 3 \pmod 4$. For $n = 0$ there are no divisors and the
+sum is $0$. -/
 public noncomputable def divChiSum (n : ℕ) : ℤ := ∑ d ∈ Nat.divisors n, ZMod.χ₄ d
 
-/-- Divisor sums of a completely multiplicative function are multiplicative. -/
+/-- **The divisor sum of $\chi_4$ is multiplicative.** Let $\chi_4$ be the nonprincipal Dirichlet
+character modulo 4 and, for a natural number $n$, write $S(n) = \sum_{d \mid n} \chi_4(d)$ for
+the sum over the positive divisors $d$ of $n$ (so $S(0) = 0$). If $m$ and $n$ are coprime natural
+numbers, then $S(mn) = S(m)\,S(n)$. -/
 public theorem divChiSum_mul_of_coprime {m n : ℕ} (h : Nat.Coprime m n) :
     divChiSum (m * n) = divChiSum m * divChiSum n := by
   have himg : Nat.divisors (m * n) = (Nat.divisors m ×ˢ Nat.divisors n).image
@@ -76,11 +83,14 @@ public theorem divChiSum_mul_of_coprime {m n : ℕ} (h : Nat.Coprime m n) :
   intro b _
   simpa using ZMod.χ₄.map_mul (a : ZMod 4) (b : ZMod 4)
 
-/-- `divChiSum 1 = 1`. -/
+/-- **The divisor sum of $\chi_4$ at one.** For the nonprincipal Dirichlet character $\chi_4$
+modulo 4, the sum $\sum_{d \mid 1} \chi_4(d)$ over the divisors of $1$ equals $1$. -/
 public theorem divChiSum_one : divChiSum 1 = 1 := by
   simp [divChiSum]
 
-/-- On powers of 2 only the divisor 1 contributes. -/
+/-- **The divisor sum of $\chi_4$ at powers of two.** Let $\chi_4$ be the nonprincipal Dirichlet
+character modulo 4. For every natural number $e$, $\sum_{d \mid 2^e} \chi_4(d) = 1$: only the
+divisor $1$ contributes. -/
 public theorem divChiSum_prime_pow_two (e : ℕ) : divChiSum (2 ^ e) = 1 := by
   rw [divChiSum, Nat.divisors_prime_pow Nat.prime_two, Finset.sum_map, Function.Embedding.coeFn_mk]
   rw [Finset.sum_eq_single 0]
@@ -100,7 +110,9 @@ private theorem pow_mod_four_eq_one_of {p j : ℕ} (h : p % 4 = 1) :
   rw [Nat.pow_mod, h]
   simp
 
-/-- On `p ^ e` with `p ≡ 1 mod 4`, every divisor contributes 1. -/
+/-- **The divisor sum of $\chi_4$ at powers of a prime $p \equiv 1 \pmod 4$.** Let $\chi_4$ be
+the nonprincipal Dirichlet character modulo 4. If $p$ is a prime with $p \equiv 1 \pmod 4$ and
+$e$ is a natural number, then $\sum_{d \mid p^e} \chi_4(d) = e + 1$. -/
 public theorem divChiSum_prime_pow_split {p e : ℕ} (hp : p.Prime)
     (h : p % 4 = 1) : divChiSum (p ^ e) = ((e + 1 : ℕ) : ℤ) := by
   have hpodd : Odd p := hp.odd_of_ne_two (by omega)
@@ -133,8 +145,10 @@ private theorem sum_neg_one_pow_range (f : ℕ) :
   rw [neg_one_geom_sum]
   by_cases hf : Even f <;> simp [hf, Nat.even_add_one]
 
-/-- On `q ^ f` with `q ≡ 3 mod 4`, the divisor sum is 1 for even `f`
-and 0 for odd `f`. -/
+/-- **The divisor sum of $\chi_4$ at powers of a prime $q \equiv 3 \pmod 4$.** Let $\chi_4$ be
+the nonprincipal Dirichlet character modulo 4. If $q$ is a prime with $q \equiv 3 \pmod 4$ and
+$f$ is a natural number, then $\sum_{d \mid q^f} \chi_4(d)$ equals $1$ when $f$ is even and $0$
+when $f$ is odd. -/
 public theorem divChiSum_prime_pow_inert {q f : ℕ} (hp : q.Prime)
     (h : q % 4 = 3) : divChiSum (q ^ f) = if Even f then 1 else 0 := by
   have hqodd : Odd q := hp.odd_of_ne_two (by omega)
@@ -217,8 +231,10 @@ private theorem jacobi_two_square_count {n : ℕ} (hn : n ≠ 0) :
     divChiSum_mul_of_coprime (fun hp _ => by exact_mod_cast repCount_prime_pow hp) hn
   exact_mod_cast h
 
-/-- Integer pairs representing `j` as a sum of two squares correspond to
-Gaussian integers of norm `j`. -/
+/-- **Sums of two squares as Gaussian norms.** For a natural number $j$, the map
+$(a, b) \mapsto a + bi$ is a bijection from the set of integer pairs $(a, b)$ with
+$a^2 + b^2 = j$ to the set of Gaussian integers $z$ with norm $N(z) = j$; its inverse sends $z$
+to the pair of its real and imaginary parts. -/
 public def pairEquivGaussianNormFiber (j : ℕ) :
     {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 = (j : ℤ)} ≃
       {z : ℤ[i] // (Zsqrtd.norm z).natAbs = j} where
@@ -242,11 +258,9 @@ noncomputable instance pairSquareFintype (j : ℕ) :
     Fintype {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 = (j : ℤ)} :=
   Fintype.ofEquiv _ (pairEquivGaussianNormFiber j).symm
 
-/-- The canonical two-square representation number
-(`SumSquares.representationNumber 2 j`, ordered signed representations
-by `Fin 2 → ℤ` vectors) counts the same representations as the
-Gaussian-norm fiber: expanding `dotProduct` over `Fin 2` and using
-`Fin 2 → ℤ ≃ ℤ × ℤ` identifies both counts. -/
+/-- **Two-square representation numbers count integer pairs.** For every natural number $j$,
+the representation number $r_2(j)$ equals the number of pairs $(a, b)$ of integers with
+$a^2 + b^2 = j$. -/
 public theorem representationNumber_two_eq (j : ℕ) :
     SumSquares.representationNumber 2 j =
       Fintype.card {p : ℤ × ℤ // p.1 ^ 2 + p.2 ^ 2 = (j : ℤ)} := by
@@ -267,11 +281,12 @@ public theorem representationNumber_two_eq (j : ℕ) :
   unfold SumSquares.representationNumber
   rw [← Nat.card_coe_set_eq, Nat.card_congr e, Nat.card_eq_fintype_card]
 
-/-- Jacobi's two-square theorem, stated with the canonical
-representation number: the number of ordered signed representations
-of `j ≥ 1` as a sum of two squares equals four times the divisor sum
-of `ZMod.χ₄`. Proved by bridging `SumSquares.representationNumber 2 j`
-to the Gaussian-norm fiber count. -/
+/-- **Jacobi's two-square theorem.** Let $\chi_4$ be the nonprincipal Dirichlet character modulo
+$4$, so $\chi_4(d)$ is $0$ for even $d$, $1$ for $d \equiv 1 \pmod 4$ and $-1$ for
+$d \equiv 3 \pmod 4$. For every natural number $j \ge 1$, the representation number $r_2(j)$,
+the number of integer pairs $(x_1, x_2)$ with $x_1^2 + x_2^2 = j$ counted with order and signs,
+satisfies $r_2(j) = 4 \sum_{d \mid j} \chi_4(d)$, where $d$ runs over the positive divisors
+of $j$. -/
 public theorem representationNumber_two_jacobi_count (j : ℕ) (hj : 1 ≤ j) :
     (SumSquares.representationNumber 2 j : ℤ) =
       4 * ∑ d ∈ j.divisors, ZMod.χ₄ d := by

@@ -78,8 +78,9 @@ private theorem uniqueSubgroupOfIndex (G : Type*) [Group G] [Finite G] [IsCyclic
 
 namespace CyclotomicField
 
-/-- For prime `p` and `s ∣ p - 1`, there is a unique intermediate field of
-`CyclotomicField p ℚ` whose degree over `ℚ` is `s`. -/
+/-- **Unique subfield of each degree in the $p$-th cyclotomic field.** Let $p$ be a prime and let
+$s$ be a natural number dividing $p - 1$. Then the $p$-th cyclotomic field $\mathbb{Q}(\zeta_p)$
+has exactly one intermediate field $K$ over $\mathbb{Q}$ with $[K : \mathbb{Q}] = s$. -/
 theorem existsUnique_intermediateField_finrank (p s : ℕ) (hp : p.Prime)
     (hs : s ∣ p - 1) :
     ∃! K : IntermediateField ℚ (CyclotomicField p ℚ), Module.finrank ℚ K = s := by
@@ -110,7 +111,9 @@ theorem existsUnique_intermediateField_finrank (p s : ℕ) (hp : p.Prime)
     have hfix : K.fixingSubgroup = H := hunique K.fixingSubgroup hKindex
     rw [← IsGalois.fixedField_fixingSubgroup K, hfix]
 
-/-- The unique degree-`s` intermediate field of the `p`-th cyclotomic field. -/
+/-- **The degree-$s$ subfield of the $p$-th cyclotomic field.** For a prime $p$ and a natural
+number $s$ dividing $p - 1$, this is the unique intermediate field $K$ of the $p$-th cyclotomic
+field $\mathbb{Q}(\zeta_p)$ over $\mathbb{Q}$ with $[K : \mathbb{Q}] = s$. -/
 noncomputable def intermediateFieldOfFinrank (p s : ℕ) (hp : p.Prime) (hs : s ∣ p - 1) :
     IntermediateField ℚ (CyclotomicField p ℚ) :=
   (existsUnique_intermediateField_finrank p s hp hs).choose
@@ -120,8 +123,10 @@ theorem finrank_intermediateFieldOfFinrank (p s : ℕ) (hp : p.Prime) (hs : s �
     Module.finrank ℚ (intermediateFieldOfFinrank p s hp hs) = s :=
   (existsUnique_intermediateField_finrank p s hp hs).choose_spec.1
 
-/-- An intermediate field is the canonical degree-`s` field exactly when it has degree `s` over
-`ℚ`. -/
+/-- **Characterization of the degree-$s$ subfield of the $p$-th cyclotomic field.** Let $p$ be a
+prime, let $s$ be a natural number dividing $p - 1$, and let $K$ be an intermediate field of the
+$p$-th cyclotomic field $\mathbb{Q}(\zeta_p)$ over $\mathbb{Q}$. Then $K$ is the degree-$s$
+subfield of $\mathbb{Q}(\zeta_p)$ if and only if $[K : \mathbb{Q}] = s$. -/
 theorem eq_intermediateFieldOfFinrank_iff (p s : ℕ) (hp : p.Prime) (hs : s ∣ p - 1)
     (K : IntermediateField ℚ (CyclotomicField p ℚ)) :
     K = intermediateFieldOfFinrank p s hp hs ↔ Module.finrank ℚ K = s := by
@@ -132,8 +137,12 @@ theorem eq_intermediateFieldOfFinrank_iff (p s : ℕ) (hp : p.Prime) (hs : s ∣
     exact (existsUnique_intermediateField_finrank p s hp hs).unique hK
       (finrank_intermediateFieldOfFinrank p s hp hs)
 
-/-- Two cyclotomic intermediate fields of `CyclotomicField m ℚ` whose conductors have least
-common multiple `m` generate the whole field. -/
+/-- **Two cyclotomic subfields whose levels have lcm $m$ generate the $m$-th cyclotomic field.**
+Let $n_0$, $n_1$ and $m$ be natural numbers with $n_0, n_1 \neq 0$ and
+$\operatorname{lcm}(n_0, n_1) = m$. Let $E_0$ and $E_1$ be intermediate fields of the $m$-th
+cyclotomic field $\mathbb{Q}(\zeta_m)$ over $\mathbb{Q}$ such that $E_0$ is generated over
+$\mathbb{Q}$ by a primitive $n_0$-th root of unity and $E_1$ by a primitive $n_1$-th root of
+unity. Then the compositum of $E_0$ and $E_1$ is all of $\mathbb{Q}(\zeta_m)$. -/
 theorem sup_eq_top_of_lcm_eq (n₀ n₁ m : ℕ) [NeZero n₀] [NeZero n₁]
     (E₀ E₁ : IntermediateField ℚ (CyclotomicField m ℚ))
     [IsCyclotomicExtension {n₀} ℚ E₀] [IsCyclotomicExtension {n₁} ℚ E₁]
@@ -151,8 +160,12 @@ theorem sup_eq_top_of_lcm_eq (n₀ n₁ m : ℕ) [NeZero n₀] [NeZero n₁]
   exact @IntermediateField.isCyclotomicExtension_eq {m} ℚ _ _ _ _ (E₀ ⊔ E₁) ⊤
     h_sup_cyc h_top_cyc
 
-/-- If `E₀ < F`, then `F` meets `E₁` nontrivially, provided `E₀` and `E₁` are cyclotomic
-intermediate fields whose conductors have least common multiple `m`. -/
+/-- **A field strictly above one cyclotomic subfield meets the other.** Let $n_0$, $n_1$ and $m$
+be natural numbers with $n_0, n_1 \neq 0$ and $\operatorname{lcm}(n_0, n_1) = m$. Let $E_0$ and
+$E_1$ be intermediate fields of the $m$-th cyclotomic field $\mathbb{Q}(\zeta_m)$ over
+$\mathbb{Q}$ such that $E_0$ is generated over $\mathbb{Q}$ by a primitive $n_0$-th root of unity
+and $E_1$ by a primitive $n_1$-th root of unity. If $F$ is an intermediate field of
+$\mathbb{Q}(\zeta_m)$ with $E_0 \subsetneq F$, then $F \cap E_1 \neq \mathbb{Q}$. -/
 theorem inf_ne_bot_of_lt_of_lcm_eq (n₀ n₁ m : ℕ) [NeZero n₀] [NeZero n₁]
     (E₀ E₁ : IntermediateField ℚ (CyclotomicField m ℚ))
     [IsCyclotomicExtension {n₀} ℚ E₀] [IsCyclotomicExtension {n₁} ℚ E₁]

@@ -16,45 +16,60 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Exponential generating function of the Bernoulli numbers of the
-second kind: `t / log (1 + t) = ∑ₙ Bₙ^* * t ^ n / n!`, written as the
-inverse of the unit series `log (1 + t) / t = ∑ₙ (-1) ^ n * t ^ n / (n + 1)`
-(the logarithm itself is not a unit, having zero constant coefficient). -/
+/-- **Generating function of the Bernoulli numbers of the second kind.** Let $G(t)$ be the
+inverse, in the ring $\mathbb{Q}[[t]]$ of formal power series, of the series
+$\sum_{n \ge 0} \frac{(-1)^n}{n + 1} t^n$, which is invertible because its constant
+coefficient is $1$.
+
+Analytically this series is $\log(1 + t) / t$, so $G(t) = t / \log(1 + t)$; the logarithm
+itself is not invertible, having zero constant coefficient. -/
 public noncomputable def bernoulliSecondPowerSeries : PowerSeries ℚ :=
   (PowerSeries.mk fun n => (-1 : ℚ) ^ n / (n + 1))⁻¹
 
-/-- Bernoulli number of the second kind `Bₙ^*`: `n!` times coefficient
-`n` of `bernoulliSecondPowerSeries`, i.e. the
-exponential-generating-function normalization of
-`t / log (1 + t) = ∑ₙ Bₙ^* * t ^ n / n!` (Roman's normalization;
-`B₀^* = 1`, `B₁^* = 1 / 2`, `B₂^* = -1 / 6`). -/
+/-- **Bernoulli numbers of the second kind.** For a natural number $n$, the Bernoulli number of
+the second kind $B_n^*$ is the rational number $n!$ times the coefficient of $t^n$ in
+$G(t) \in \mathbb{Q}[[t]]$, the inverse of the formal power series
+$\sum_{k \ge 0} \frac{(-1)^k}{k + 1} t^k$. Thus $G(t) = \sum_{n \ge 0} B_n^* t^n / n!$.
+
+Analytically $G(t) = t / \log(1 + t)$; this is Roman's normalization, with $B_0^* = 1$,
+$B_1^* = 1/2$ and $B_2^* = -1/6$. -/
 public noncomputable def bernoulliSecond (n : ℕ) : ℚ :=
   (n.factorial : ℚ) * (PowerSeries.coeff n) bernoulliSecondPowerSeries
 
-/-- Interface restatement of `bernoulliSecondPowerSeries`. -/
+/-- **Generating function of the Bernoulli numbers of the second kind as an inverse.** The
+generating function $G(t)$ of the Bernoulli numbers of the second kind equals the inverse, in
+the ring $\mathbb{Q}[[t]]$ of formal power series, of the series
+$\sum_{n \ge 0} \frac{(-1)^n}{n + 1} t^n$. -/
 public theorem bernoulliSecondPowerSeries_eq :
     bernoulliSecondPowerSeries =
       (PowerSeries.mk fun n => (-1 : ℚ) ^ n / (n + 1))⁻¹ :=
   rfl
 
-/-- Interface restatement of `bernoulliSecond`. -/
+/-- **Bernoulli numbers of the second kind as scaled coefficients.** For every natural number
+$n$, the Bernoulli number of the second kind $B_n^*$ equals $n!$ times the coefficient of $t^n$
+in the generating function $G(t) \in \mathbb{Q}[[t]]$ of the Bernoulli numbers of the second
+kind. -/
 public theorem bernoulliSecond_eq (n : ℕ) :
     bernoulliSecond n =
       (n.factorial : ℚ) * (PowerSeries.coeff n) bernoulliSecondPowerSeries :=
   rfl
 
-/-- The defining EGF identity: `bernoulliSecondPowerSeries` times the
-unit series `∑ₙ (-1) ^ n * t ^ n / (n + 1)` (which is `log (1 + t) / t`)
-equals `1`. -/
+/-- **Defining identity of the generating function of the Bernoulli numbers of the second
+kind.** In the ring $\mathbb{Q}[[t]]$ of formal power series, the generating function $G(t)$ of
+the Bernoulli numbers of the second kind satisfies
+$G(t) \cdot \sum_{n \ge 0} \frac{(-1)^n}{n + 1} t^n = 1$.
+
+Analytically, $\sum_{n \ge 0} \frac{(-1)^n}{n + 1} t^n = \log(1 + t) / t$. -/
 public theorem bernoulliSecondPowerSeries_mul_mk :
     bernoulliSecondPowerSeries *
         (PowerSeries.mk fun n => (-1 : ℚ) ^ n / (n + 1)) = 1 :=
   PowerSeries.inv_mul_cancel _ (by simp)
 
-/-- Characteristic coefficient identity for
-`bernoulliSecondPowerSeries`, from `bernoulliSecondPowerSeries_mul_mk`:
-the Cauchy product of its coefficients with `(-1) ^ n / (n + 1)` is the
-Kronecker delta at `0`. -/
+/-- **Coefficient identity for the generating function of the Bernoulli numbers of the second
+kind.** Let $g_i$ be the coefficient of $t^i$ in the generating function $G(t) \in \mathbb{Q}[[t]]$
+of the Bernoulli numbers of the second kind. For every natural number $n$, the sum of
+$g_i \cdot (-1)^j / (j + 1)$ over all pairs $(i, j)$ of natural numbers with $i + j = n$ equals
+$1$ if $n = 0$ and $0$ if $n \ge 1$. -/
 public theorem sum_antidiagonal_bernoulliSecondPowerSeries_coeff (n : ℕ) :
     (∑ x ∈ Finset.antidiagonal n,
       (PowerSeries.coeff x.1) bernoulliSecondPowerSeries *
@@ -63,10 +78,9 @@ public theorem sum_antidiagonal_bernoulliSecondPowerSeries_coeff (n : ℕ) :
   rw [PowerSeries.coeff_mul] at h
   simpa [PowerSeries.coeff_mk, PowerSeries.coeff_one] using h
 
-/-- Coefficient recurrence for `bernoulliSecond` at positive indices,
-from `sum_antidiagonal_bernoulliSecondPowerSeries_coeff` with the
-`k = n` term isolated:
-`Bₙ^* / n! = -∑_{k < n} (Bₖ^* / k!) * ((-1) ^ (n - k) / (n - k + 1))`. -/
+/-- **Recurrence for the Bernoulli numbers of the second kind.** For every natural number
+$n \ge 1$, the Bernoulli numbers of the second kind $B_k^*$ satisfy
+$B_n^* / n! = -\sum_{k=0}^{n-1} (B_k^* / k!) \cdot (-1)^{n-k} / (n - k + 1)$. -/
 public theorem bernoulliSecond_div_factorial_eq (n : ℕ) (hn : 1 ≤ n) :
     bernoulliSecond n / (n.factorial : ℚ) =
       -∑ k ∈ Finset.range n, (bernoulliSecond k / (k.factorial : ℚ)) *

@@ -40,24 +40,30 @@ The canonical `ramanujanTheta` therefore requires an explicit summability witnes
 
 namespace MetaMathlibExt
 
-/-- The summand `a ^ (n * (n + 1) / 2) * b ^ (n * (n - 1) / 2)` in Ramanujan's
-general theta function `f(a,b) = ∑' n, a ^ (n(n+1)/2) b ^ (n(n-1)/2)`.
+/-- **Summand of Ramanujan's general theta function.** For complex numbers $a$, $b$ and an
+integer $n$, this is the term $a^{n(n+1)/2} b^{n(n-1)/2}$ of index $n$ in Ramanujan's general
+theta function $f(a,b) = \sum_{k \in \mathbb{Z}} a^{k(k+1)/2} b^{k(k-1)/2}$.
 
-Both integer quotients are nonnegative triangular numbers (`n(n+1)/2 ≥ 0` and
-`n(n-1)/2 ≥ 0` for `n : ℤ`), so the `ℤ`-division followed by `toNat` is exact and yields the
-mathematical exponent in `ℕ`. Source: the common definition in arXiv:2305.14988,
+Both exponents $n(n+1)/2$ and $n(n-1)/2$ are nonnegative integers for every integer $n$, so
+the term is a product of ordinary powers with natural-number exponents.
+
+Source: the common definition in arXiv:2305.14988,
 arXiv:2309.06689, arXiv:2312.15513, arXiv:2502.17312, and arXiv:2607.26471. -/
 noncomputable def ramanujanThetaTerm (a b : ℂ) (n : ℤ) : ℂ :=
   a ^ (n * (n + 1) / 2).toNat * b ^ (n * (n - 1) / 2).toNat
 
-/-- Raw Ramanujan theta sum in multiplicative coordinates.
+/-- **Raw Ramanujan theta sum.** For complex numbers $a$ and $b$, the raw Ramanujan theta sum is
+$\sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ when this series is summable, and $0$
+otherwise.
 
-This is Mathlib's total `tsum`; it equals `0` when the summand family is not summable.
-Use `ramanujanTheta`, which requires convergence evidence, unless that fallback is intended. -/
+The value $0$ for a non-summable series is a convention. Ramanujan's general theta function,
+which requires the series to be summable, is the intended object. -/
 noncomputable def ramanujanThetaRaw (a b : ℂ) : ℂ :=
   ∑' n : ℤ, ramanujanThetaTerm a b n
 
-/-- Ramanujan's general theta function, restricted to summable parameters. -/
+/-- **Ramanujan's general theta function.** For complex numbers $a$ and $b$ such that the series
+$\sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ is summable, Ramanujan's general theta
+function is its sum $f(a,b) = \sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$. -/
 noncomputable def ramanujanTheta (a b : ℂ)
     (_h : Summable (ramanujanThetaTerm a b)) : ℂ :=
   ramanujanThetaRaw a b
@@ -112,7 +118,9 @@ theorem ramanujanTheta_symm (a b : ℂ) (h : Summable (ramanujanThetaTerm a b)) 
       ramanujanTheta b a ((ramanujanTheta_summable_symm a b).mp h) := by
   simpa [ramanujanTheta] using ramanujanThetaRaw_symm a b
 
-/-- At `(a, b) = (1, 1)`, every term is one, so the bilateral series diverges. -/
+/-- **Ramanujan's theta series diverges at $a = b = 1$.** The series
+$\sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$ of Ramanujan's general theta function is
+not summable at $a = b = 1$, since every one of its terms equals $1$. -/
 theorem not_summable_ramanujanThetaTerm_one_one :
     ¬Summable (ramanujanThetaTerm 1 1) := by
   intro h
@@ -120,7 +128,10 @@ theorem not_summable_ramanujanThetaTerm_one_one :
     simpa [ramanujanThetaTerm] using h.norm
   exact @not_finite ℤ inferInstance (Finite.of_summable_const zero_lt_one hnorm)
 
-/-- The raw `tsum` takes its fallback value at the divergent parameters `(1, 1)`. -/
+/-- **The raw Ramanujan theta sum vanishes at $a = b = 1$.** The raw Ramanujan theta sum
+$\sum_{n \in \mathbb{Z}} a^{n(n+1)/2} b^{n(n-1)/2}$, which is assigned the value $0$ whenever
+the series is not summable, equals $0$ at $a = b = 1$, because there every term equals $1$ and
+the series is not summable. -/
 theorem ramanujanThetaRaw_one_one : ramanujanThetaRaw 1 1 = 0 := by
   exact tsum_eq_zero_of_not_summable not_summable_ramanujanThetaTerm_one_one
 

@@ -63,26 +63,39 @@ open Filter Asymptotics MeasureTheory Topology Set Complex
 
 noncomputable section
 
-/-- One-based partial sums of `f`. -/
+/-- **Partial sums of a coefficient sequence.** For $f : \mathbb{N} \to \mathbb{C}$ and
+$n \in \mathbb{N}$, the one-based partial sum is $A(n) = \sum_{k=1}^{n} f(k)$; in particular
+$A(0) = 0$ and the value $f(0)$ is never used. -/
 def abelPartialSum (f : ℕ → ℂ) (n : ℕ) : ℂ :=
   ∑ k ∈ Finset.Icc 1 n, f k
 
-/-- The summatory step function `t ↦ A(⌊t⌋₊)` on `ℝ`. -/
+/-- **Summatory step function.** For $f : \mathbb{N} \to \mathbb{C}$ with partial sums
+$A(n) = \sum_{k=1}^{n} f(k)$, the summatory step function of $f$ is the function
+$S : \mathbb{R} \to \mathbb{C}$ with $S(t) = A(\lfloor t \rfloor)$ for $t \ge 0$ and $S(t) = 0$
+for $t < 0$. Equivalently, $S(t) = \sum_{1 \le k \le t} f(k)$ for every real $t$. -/
 def abelSummatory (f : ℕ → ℂ) (t : ℝ) : ℂ :=
   abelPartialSum f ⌊t⌋₊
 
-/-- The Abel continuation `F_f(s) = s * ∫ x in Ioi 1, A(⌊x⌋) * x^(-s-1)`,
-in the exact conventions of `LSeries_eq_mul_integral`. -/
+/-- **Abel continuation of a Dirichlet series.** For $f : \mathbb{N} \to \mathbb{C}$ with partial
+sums $A(n) = \sum_{k=1}^{n} f(k)$, the Abel continuation of $f$ is the function
+$F_f : \mathbb{C} \to \mathbb{C}$ given by
+$$F_f(s) = s \int_1^\infty A(\lfloor t \rfloor)\, t^{-s-1}\, dt,$$
+where the integral is taken to be $0$ when the integrand is not integrable on $(1, \infty)$. -/
 def abelContinuation (f : ℕ → ℂ) (s : ℂ) : ℂ :=
   s * ∫ t : ℝ in Set.Ioi (1 : ℝ), abelSummatory f t * (t : ℂ) ^ (-(s + 1))
 
-/-- The summatory function vanishes below `1`. -/
+/-- **The summatory step function vanishes below one.** For $f : \mathbb{N} \to \mathbb{C}$, the
+summatory step function $S(t) = \sum_{1 \le k \le t} f(k)$ satisfies $S(t) = 0$ for every real
+$t < 1$. -/
 theorem abelSummatory_eq_zero_of_lt_one (f : ℕ → ℂ) {t : ℝ} (ht : t < 1) :
     abelSummatory f t = 0 := by
   have hfloor : ⌊t⌋₊ = 0 := Nat.floor_eq_zero.mpr ht
   simp [abelSummatory, abelPartialSum, hfloor]
 
-/-- The summatory function is locally integrable on `Ioi 0`. -/
+/-- **Local integrability of the summatory function.** For every $f : \mathbb{N} \to \mathbb{C}$,
+the summatory step function $t \mapsto \sum_{k=1}^{\lfloor t \rfloor} f(k)$ on $\mathbb{R}$ is
+locally integrable on the open half-line $(0, \infty)$: every $t > 0$ has a neighbourhood
+within $(0, \infty)$ on which this function is Lebesgue integrable. -/
 theorem locallyIntegrableOn_abelSummatory (f : ℕ → ℂ) :
     LocallyIntegrableOn (abelSummatory f) (Set.Ioi (0 : ℝ)) := by
   have h : LocallyIntegrableOn (fun t : ℝ => (1 : ℂ) * ∑ k ∈ Finset.Icc 1 ⌊t⌋₊, f k)
@@ -92,11 +105,13 @@ theorem locallyIntegrableOn_abelSummatory (f : ℕ → ℂ) :
   filter_upwards with t
   simp [abelSummatory, abelPartialSum]
 
-/-- Under `A(n) = O(n ^ σ)` for arbitrary real `σ`, the summatory function
-is `O(t ^ σ)` at infinity. The floor comparison goes through
-`Asymptotics.isEquivalent_nat_floor.rpow` applied to the symmetric
-equivalence, so the nonnegativity hypothesis falls on real casts of
-naturals (always true) rather than on `σ`. -/
+/-- **Growth of the summatory step function.** Let $f : \mathbb{N} \to \mathbb{C}$ have partial
+sums $A(n) = \sum_{k=1}^{n} f(k)$ and summatory step function
+$S(t) = \sum_{1 \le k \le t} f(k)$, and let $\sigma$ be any real number with
+$A(n) = O(n^\sigma)$ as $n \to \infty$. Then $S(t) = O(t^\sigma)$ as $t \to \infty$ through the
+reals.
+
+No sign condition on $\sigma$ is needed. -/
 theorem isBigO_abelSummatory_atTop (f : ℕ → ℂ) {σ : ℝ}
     (hO : (fun n => abelPartialSum f n) =O[atTop]
       fun n => ((n : ℝ) ^ σ : ℝ)) :
@@ -110,15 +125,25 @@ theorem isBigO_abelSummatory_atTop (f : ℕ → ℂ) {σ : ℝ}
       (Pi.le_def.mpr fun _ => Nat.cast_nonneg _)).symm.isBigO
   exact h1.trans h2
 
-/-- The summatory function is eventually zero near `0`, hence `O` of anything. -/
+/-- **The summatory step function is negligible near zero.** Let $f : \mathbb{N} \to \mathbb{C}$
+have summatory step function $S(t) = \sum_{1 \le k \le t} f(k)$. For every real $b$,
+$S(t) = O(t^{-b})$ as $t \to 0^+$.
+
+This holds because $S$ vanishes on $(0, 1)$. -/
 theorem isBigO_abelSummatory_nhdsGT_zero (f : ℕ → ℂ) (b : ℝ) :
     (abelSummatory f) =O[𝓝[>] (0 : ℝ)] fun t : ℝ => (t ^ (-b) : ℝ) := by
   refine Filter.EventuallyEq.trans_isBigO ?_ (Asymptotics.isBigO_zero _ _)
   filter_upwards [Ioo_mem_nhdsGT zero_lt_one] with t ht
   simp [abelSummatory_eq_zero_of_lt_one f ht.2]
 
-/-- The Abel integral equals `s` times the Mellin transform at `-s`.
-This is the bridge that transfers Mellin holomorphy to the continuation. -/
+/-- **The Abel continuation as a Mellin transform.** Let $f : \mathbb{N} \to \mathbb{C}$ have
+partial sums $A(n) = \sum_{k=1}^{n} f(k)$ and summatory step function
+$S(t) = \sum_{1 \le k \le t} f(k)$ for real $t$, and let $\sigma$ be a real number with
+$A(n) = O(n^\sigma)$ as $n \to \infty$. Then for every $s \in \mathbb{C}$ with
+$\operatorname{Re} s > \sigma$, the Abel continuation satisfies $F_f(s) = s\,\mathcal{M}S(-s)$,
+where $\mathcal{M}S(z) = \int_0^\infty t^{z-1} S(t)\,dt$ is the Mellin transform of $S$.
+
+This identity transfers holomorphy of the Mellin transform to the continuation. -/
 theorem abelContinuation_eq_mul_mellin (f : ℕ → ℂ) {σ : ℝ} {s : ℂ}
     (hs : σ < s.re)
     (hO : (fun n => abelPartialSum f n) =O[atTop] fun n => ((n : ℝ) ^ σ : ℝ)) :
@@ -156,9 +181,12 @@ theorem abelContinuation_eq_mul_mellin (f : ℕ → ℂ) {σ : ℝ} {s : ℂ}
   refine congrArg (s * ·) (setIntegral_congr_fun measurableSet_Ioi fun t _ => ?_)
   rw [smul_eq_mul, mul_comm, show (-s - 1 : ℂ) = (-(s + 1)) by ring]
 
-/-- Pointwise complex differentiability of the Abel continuation on `σ < s.re`
-for arbitrary real `σ`. The Mellin transform provides holomorphy at `-s`;
-precompose with negation and multiply by `s`. -/
+/-- **Complex differentiability of the Abel continuation.** Let $f : \mathbb{N} \to \mathbb{C}$
+have partial sums $A(n) = \sum_{k=1}^{n} f(k)$, and let $\sigma$ be a real number with
+$A(n) = O(n^\sigma)$ as $n \to \infty$. Then the Abel continuation $F_f$ of $f$ is complex
+differentiable at every $s \in \mathbb{C}$ with $\operatorname{Re} s > \sigma$.
+
+The proof uses holomorphy of the Mellin transform of the summatory step function at $-s$. -/
 theorem differentiableAt_abelContinuation (f : ℕ → ℂ) {σ : ℝ}
     {s : ℂ} (hs : σ < s.re)
     (hO : (fun n => abelPartialSum f n) =O[atTop] fun n => ((n : ℝ) ^ σ : ℝ)) :
@@ -187,8 +215,10 @@ theorem differentiableAt_abelContinuation (f : ℕ → ℂ) {σ : ℝ}
     exact (abelContinuation_eq_mul_mellin f hs' hO).symm
   exact hmul.congr_of_eventuallyEq hev.symm
 
-/-- The Abel continuation is analytic on the half-plane `σ < s.re`,
-for arbitrary real `σ`. -/
+/-- **Analyticity of the Abel continuation.** Let $f : \mathbb{N} \to \mathbb{C}$ have partial sums
+$A(n) = \sum_{k=1}^{n} f(k)$, and let $\sigma$ be a real number with $A(n) = O(n^\sigma)$ as
+$n \to \infty$. Then the Abel continuation $F_f$ of $f$ is analytic on the half-plane
+$\{s \in \mathbb{C} : \operatorname{Re} s > \sigma\}$. -/
 theorem analyticOn_abelContinuation (f : ℕ → ℂ) {σ : ℝ}
     (hO : (fun n => abelPartialSum f n) =O[atTop] fun n => ((n : ℝ) ^ σ : ℝ)) :
     AnalyticOn ℂ (abelContinuation f) {s | σ < s.re} := by
@@ -197,10 +227,15 @@ theorem analyticOn_abelContinuation (f : ℕ → ℂ) {σ : ℝ}
   intro s hs
   exact (differentiableAt_abelContinuation f hs hO).differentiableWithinAt
 
-/-- Agreement with `LSeries f s` at summable points. The hypothesis `0 ≤ σ`
-is required only here, because the public `LSeries_eq_mul_integral` API
-requires it; no claim is made about `LSeries f` itself where it is
-nonsummable (there it is `0` by definition). -/
+/-- **Abel continuation agrees with the Dirichlet series.** Let $f : \mathbb{N} \to \mathbb{C}$
+have partial sums $A(n) = \sum_{k=1}^{n} f(k)$, let $\sigma \ge 0$ be a real number with
+$A(n) = O(n^\sigma)$ as $n \to \infty$, and let $s$ be a complex number with
+$\operatorname{Re} s > \sigma$ at which the Dirichlet series $\sum_{n \ge 1} f(n) n^{-s}$
+converges absolutely. Then the Abel continuation $F_f$ of $f$ satisfies
+$F_f(s) = \sum_{n=1}^{\infty} f(n) n^{-s}$.
+
+The hypothesis $\sigma \ge 0$ is inherited from the integral representation of the Dirichlet
+series used in the proof. -/
 theorem abelContinuation_eq_LSeries (f : ℕ → ℂ) {σ : ℝ} (hσ : 0 ≤ σ) {s : ℂ}
     (hs : σ < s.re) (hS : LSeriesSummable f s)
     (hO : (fun n => abelPartialSum f n) =O[atTop] fun n => ((n : ℝ) ^ σ : ℝ)) :
@@ -208,12 +243,13 @@ theorem abelContinuation_eq_LSeries (f : ℕ → ℂ) {σ : ℝ} (hσ : 0 ≤ σ
   simp only [abelContinuation, abelSummatory, abelPartialSum]
   exact (LSeries_eq_mul_integral f hσ hs hS hO).symm
 
-/-- Ordered Dirichlet partial sums converge to the Abel continuation under
-the growth hypothesis and `σ < s.re` alone, for arbitrary real `σ`: no
-summability is assumed. The proof applies public Abel summation
-(`tendsto_sum_mul_atTop_nhds_one_sub_integral₀`) to the zero-padded
-coefficients `c n = if n = 0 then 0 else f n`, whose partial sums agree
-with `abelPartialSum f`, with weight `x ↦ (x : ℂ) ^ (-s)`. -/
+/-- **Abel continuation as the limit of Dirichlet partial sums.** Let
+$f : \mathbb{N} \to \mathbb{C}$ with partial sums $A(n) = \sum_{k=1}^{n} f(k)$, let $\sigma$ be a
+real number and let $s$ be a complex number with $\sigma < \operatorname{Re} s$. If
+$A(n) = O(n^\sigma)$ as $n \to \infty$, then the partial sums $\sum_{n=1}^{N} f(n) n^{-s}$ converge,
+as $N \to \infty$, to the Abel continuation $F_f(s)$ of $f$ at $s$.
+
+No summability of the Dirichlet series is assumed: the convergence may be conditional. -/
 theorem tendsto_abelContinuation_Icc (f : ℕ → ℂ) {σ : ℝ} {s : ℂ}
     (hs : σ < s.re)
     (hO : (fun n => abelPartialSum f n) =O[atTop]

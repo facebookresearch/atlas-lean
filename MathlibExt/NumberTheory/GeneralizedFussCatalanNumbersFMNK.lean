@@ -25,21 +25,28 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The generalized Fuss–Catalan number `F_m(n, k)`:
-`k * Nat.choose (m * n + k) n / (m * n + k)`.
+/-- **Generalized Fuss–Catalan number.** For natural numbers $m$, $n$ and $k$, the generalized
+Fuss–Catalan number $F_m(n, k)$ is the quotient of $k \binom{mn + k}{n}$ by $mn + k$ in
+natural-number division, rounded down, with division by $0$ giving $0$.
 
-The source considers `m ≥ 2` and `n, k ≥ 1`. The definition is totalized over natural numbers.
+The source considers $m \ge 2$ and $n, k \ge 1$. The definition is totalized over natural numbers.
 -/
 def generalizedFussCatalanNumber (m n k : ℕ) : ℕ :=
   k * Nat.choose (m * n + k) n / (m * n + k)
 
-/-- The defining equation for `generalizedFussCatalanNumber`. -/
+/-- **Formula for the generalized Fuss–Catalan number.** For all natural numbers $m$, $n$ and $k$,
+the generalized Fuss–Catalan number $F_m(n, k)$ equals the quotient of $k \binom{mn + k}{n}$ by
+$mn + k$ in natural-number division, rounded down, with division by $0$ giving $0$. -/
 theorem generalizedFussCatalanNumber_eq (m n k : ℕ) :
     generalizedFussCatalanNumber m n k =
       k * Nat.choose (m * n + k) n / (m * n + k) :=
   rfl
 
-/-- The specialization `F_m(1, k) = k`, corresponding to case (c) of the source theorem. -/
+/-- **Generalized Fuss–Catalan numbers at $n = 1$.** For all natural numbers $m$ and $k$, the
+generalized Fuss–Catalan number $F_m(1, k)$ equals $k$.
+
+Source: <https://cs.uwaterloo.ca/journals/JIS/VOL21/He/he61.tex>, case (c) of the source theorem.
+-/
 theorem generalizedFussCatalanNumber_one (m k : ℕ) :
     generalizedFussCatalanNumber m 1 k = k := by
   unfold generalizedFussCatalanNumber

@@ -77,7 +77,10 @@ private theorem genocchiPowerSeries_eq_bernoulli :
         simp only [nsmul_eq_mul, Nat.cast_ofNat]
         ring
 
-/-- The Genocchi numbers in terms of the Bernoulli numbers: `G n = 2 * (1 - 2 ^ n) * B n`. -/
+/-- **Genocchi numbers in terms of Bernoulli numbers.** For every natural number $n$, the Genocchi
+number $G_n$, defined by $\frac{2x}{e^x + 1} = \sum_{m \ge 0} G_m \frac{x^m}{m!}$, satisfies
+$G_n = 2(1 - 2^n) B_n$, where $B_n$ is the $n$-th Bernoulli number with the convention
+$B_1 = -\tfrac{1}{2}$. -/
 theorem genocchiNumber_eq_bernoulli (n : ℕ) :
     genocchiNumber n = 2 * (1 - (2 : ℚ) ^ n) * bernoulli n := by
   have hf : (n.factorial : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero n)
@@ -87,7 +90,10 @@ theorem genocchiNumber_eq_bernoulli (n : ℕ) :
     Algebra.algebraMap_self, RingHom.id_apply]
   field_simp
 
-/-- The Bernoulli-formula representation `genocchiNumberViaBernoulli` is `genocchiNumber`. -/
+/-- **The two definitions of the Genocchi numbers agree.** For every natural number $n$, the
+rational number $2(1 - 2^n) B_n$, where $B_n$ is the $n$-th Bernoulli number with the convention
+$B_1 = -\tfrac{1}{2}$, equals the Genocchi number $G_n$ defined by the exponential generating
+function $\frac{2x}{e^x + 1} = \sum_{m \ge 0} G_m \frac{x^m}{m!}$. -/
 theorem genocchiNumberViaBernoulli_eq_genocchiNumber (n : ℕ) :
     genocchiNumberViaBernoulli n = genocchiNumber n :=
   (genocchiNumber_eq_bernoulli n).symm

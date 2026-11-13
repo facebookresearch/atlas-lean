@@ -439,10 +439,12 @@ private theorem trinomial (n l i : ℕ) (h : l + i ≤ n) :
   exact mul_left_cancel₀ hD hDD
 
 /--
-Abel-type identity relating a binomial sum with Bernoulli polynomials to a
-single Bernoulli polynomial value. This is the first of the source's two
-Abel-Bernoulli sums; the integer power `(↑l - 1 : ℤ)` renders `(x + l)^{l-1}`
-including the `l = 0` reciprocal case.
+**Abel–Bernoulli sum.** Let $B_k(t)$ denote the $k$-th Bernoulli polynomial. For every natural
+number $n$ and all complex numbers $x$ and $y$ with $x \neq 0$,
+$$\sum_{l=0}^{n} \binom{n}{l} (x + l)^{l-1} B_{n-l}(y + n - l) = \frac{1}{x} B_n(y + x + n),$$
+where $(x + l)^{l-1}$ is an integer power, so the term $l = 0$ contains the factor $x^{-1}$.
+
+This is the first of the source's two Abel–Bernoulli sums.
 
 Source: Claudio de J. Pita Ruiz V., "Carlitz-Type and Other Bernoulli
 Identities," Journal of Integer Sequences 19 (2016), Article 16.1.8,

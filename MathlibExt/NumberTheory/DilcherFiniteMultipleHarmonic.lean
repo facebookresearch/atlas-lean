@@ -319,10 +319,14 @@ private lemma dilcher_main (N : ℕ) : ∀ (m : ℕ), dilcherLHS m (N + 1) = dil
     | succ r ihr =>
       rw [dilcherLHS_succ, dilcherRHS_succ, ihK, ihr]
 
-/-- Dilcher's finite multiple harmonic identity for all `m` (including `m = 0`) and `0 < n`:
-`∑_{k=1}^n (-1)^(k-1) C(n, k) / k ^ m` equals the sum of `(j₁ ⋯ j_m)⁻¹` over
-`1 ≤ j₁ ≤ ⋯ ≤ j_m ≤ n`. `dilcher_finite_multiple_harmonic_identity` is the source-shaped
-form. -/
+/-- **Dilcher's finite multiple harmonic identity for every exponent.** For every natural number
+$m$ (including $m = 0$) and every positive integer $n$,
+$$
+\sum_{k=1}^{n} \frac{(-1)^{k-1} \binom{n}{k}}{k^m}
+= \sum_{1 \le j_1 \le \cdots \le j_m \le n} \frac{1}{j_1 \cdots j_m},
+$$
+where the right side sums over all weakly increasing tuples $(j_1, \ldots, j_m)$ of integers
+between $1$ and $n$; for $m = 0$ there is only the empty tuple, whose term is $1$. -/
 theorem dilcher_finite_multiple_harmonic_identity_general (m n : ℕ) (hn : 0 < n) :
     (∑ k ∈ Finset.Icc 1 n,
       ((n.choose k : ℚ) * (-1 : ℚ) ^ (k - 1)) / (k : ℚ) ^ m) =
@@ -333,7 +337,13 @@ theorem dilcher_finite_multiple_harmonic_identity_general (m n : ℕ) (hn : 0 < 
   exact dilcher_main N m
 
 set_option linter.unusedVariables false in
-/-- Dilcher's finite multiple harmonic identity (Boyadzhiev (2009), equation (26)).
+/-- **Dilcher's finite multiple harmonic identity.** For all positive integers $m$ and $n$,
+$$
+\sum_{k=1}^{n} \frac{(-1)^{k-1} \binom{n}{k}}{k^m}
+= \sum_{1 \le j_1 \le \cdots \le j_m \le n} \frac{1}{j_1 \cdots j_m},
+$$
+where the right side sums over all weakly increasing tuples $(j_1, \ldots, j_m)$ of integers
+between $1$ and $n$.
 
 Source: Khristo N. Boyadzhiev, "Harmonic Number Identities Via Euler's Transform",
 Journal of Integer Sequences 12 (2009), Article 09.6.1,
@@ -342,13 +352,6 @@ controlling statement equation (26), lines 323–331. Boyadzhiev attributes the
 identity to Karl Dilcher, "Some q-series identities related to divisor functions",
 Discrete Mathematics 145 (1995), 83–93, DOI 10.1016/0012-365X(95)00092-B
 (the JIS bibliography prints "divisor factors").
-
-The right side sums over weakly increasing index tuples `1 ≤ j₁ ≤ ⋯ ≤ j_m ≤ n`;
-these are represented as monotone functions `js : Fin m → Fin n`, where the shift
-`(js i).val + 1` encodes the source indices `1` through `n`.
-It follows from `dilcher_finite_multiple_harmonic_identity_general`; the hypothesis `hm` is
-unused and keeps the source's shape.
-Proves `Wanted` entry `dilcher_finite_multiple_harmonic_identity`.
 -/
 theorem dilcher_finite_multiple_harmonic_identity (m n : ℕ)
     (hm : 0 < m) (hn : 0 < n) :

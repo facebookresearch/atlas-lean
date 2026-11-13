@@ -1260,8 +1260,10 @@ private theorem lw_false_of_data {K : IntermediateField ℚ ℂ}
   exact lw_arith_core (fun x : ↥S => w (x : K)) (fun x : ↥S => (((x : K)) : ℂ))
     d hd h1 h2 h3 h4'
 
-/-- The universe-polymorphic form of `lindemann_weierstrass`,
-without a decidable-equality assumption. -/
+/-- **Lindemann–Weierstrass theorem (universe-polymorphic form).** Let $\iota$ be a finite index
+set, let $\alpha_i$ ($i \in \iota$) be pairwise distinct complex numbers that are algebraic over
+$\mathbb{Q}$, and let $\beta_i$ ($i \in \iota$) be complex numbers that are algebraic over
+$\mathbb{Q}$ and not all zero. Then $\sum_{i \in \iota} \beta_i e^{\alpha_i} \neq 0$. -/
 public theorem lindemann_weierstrass' :
     ∀ {ι : Type*} [Fintype ι] (α : ι → ℂ),
       Function.Injective α → (∀ i, IsAlgebraic ℚ (α i)) →
@@ -1280,12 +1282,16 @@ public theorem lindemann_weierstrass' :
   · exact hsum
 
 /--
-If `α : ι → ℂ` is injective over a `Fintype ι` with `∀ i, IsAlgebraic ℚ (α i)`, then for any
-algebraic coefficients `β : ι → ℂ` not all zero, `∑ i, β i * Complex.exp (α i) ≠ 0`. Source: F.
-von Lindemann 1882 and K. Weierstrass, Zu Lindemann's Abhandlung Über die Ludolph'sche Zahl, 1885;
-textbook in Baker, Transcendental Number Theory
+**Lindemann–Weierstrass theorem.** Let $\iota$ be a finite index set, let $\alpha_i$
+($i \in \iota$) be pairwise distinct complex numbers that are algebraic over $\mathbb{Q}$, and let
+$\beta_i$ ($i \in \iota$) be complex numbers that are algebraic over $\mathbb{Q}$ and not all
+zero. Then $\sum_{i \in \iota} \beta_i e^{\alpha_i} \neq 0$.
 
 Proves `Wanted` entry `lindemann_weierstrass`.
+
+Source: F.
+von Lindemann 1882 and K. Weierstrass, Zu Lindemann's Abhandlung Über die Ludolph'sche Zahl, 1885;
+textbook in Baker, Transcendental Number Theory
 -/
 public theorem lindemann_weierstrass :
     ∀ {ι : Type} [Fintype ι] [DecidableEq ι] (α : ι → ℂ),

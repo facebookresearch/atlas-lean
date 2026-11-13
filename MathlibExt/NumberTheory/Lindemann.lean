@@ -1484,12 +1484,14 @@ private theorem hl_lindemann_core (ι : Type*) [Fintype ι]
   linarith
 
 /--
-If `α : ℂ` is nonzero and algebraic over `ℚ`, then `Complex.exp α` is transcendental over `ℚ`.
+**Hermite–Lindemann theorem.** If $\alpha$ is a nonzero complex number that is algebraic over
+$\mathbb{Q}$, then $e^{\alpha}$ is transcendental over $\mathbb{Q}$.
+
+Proves `Wanted` entry `hermite_lindemann`.
+
 Source: C. Hermite, Sur la fonction exponentielle, C. R. Acad. Sci. Paris 77 (1873) for e; F. von
 Lindemann, Über die Zahl π, Math. Ann. 20 (1882) 213–225 extension to π; textbook in Baker,
 Transcendental Number Theory
-
-Proves `Wanted` entry `hermite_lindemann`.
 -/
 theorem hermite_lindemann :
     ∀ (α : ℂ), α ≠ 0 → IsAlgebraic ℚ α → Transcendental ℚ (Complex.exp α) := by
