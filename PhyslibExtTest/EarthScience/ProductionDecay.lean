@@ -25,10 +25,16 @@ bounds are deferred by the production module and are not checked here.
 
 No new definitions or results are introduced here.
 
-## iii. References
+## iii. Table of contents
+
+- A. Production-decay checks
+
+## iv. References
 
 - `PhyslibExt.EarthScience.ProductionDecay`
 -/
+
+/-! ## A. Production-decay checks -/
 
 /-- Numeric production-decay ODE with `P = 4`, `λ = 2`, `N0 = 1`. -/
 example (t : ℝ) : HasDerivAt

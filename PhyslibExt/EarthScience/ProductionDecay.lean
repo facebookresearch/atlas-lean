@@ -41,7 +41,11 @@ Multi-clock and repeated-rate Bateman limits remain later tasks.
   function satisfies `N' = P - λ*N`.
 - `EarthScience.production_decay_initial`: `N(0) = N0`.
 
-## iii. References
+## iii. Table of contents
+
+- A. Production-decay identities
+
+## iv. References
 
 - D. Lal, Cosmic ray labeling of erosion surfaces: in situ nuclide production
   rates and erosion models, Earth Planet. Sci. Lett. 104 (1991) 424–439: the
@@ -58,6 +62,8 @@ Multi-clock and repeated-rate Bateman limits remain later tasks.
 @[expose] public section
 
 namespace EarthScience
+
+/-! ## A. Production-decay identities -/
 
 /-- Production-decay (exposure-age) model: for decay constant `λ > 0` and
 every real `P`, `N0` and `t`,
