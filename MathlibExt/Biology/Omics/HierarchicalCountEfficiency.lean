@@ -99,7 +99,10 @@ increment and the closed form `log_marginalLik_eq` from `HierarchicalCountMLE`; 
 `momRate`, `sampleMean`, `sampleVar`, `eq_mom_of_moment_equations` and `tendsto_mom_of_tendsto`
 from `HierarchicalCount`; the strong law is Mathlib's `strong_law_ae`. No Godambe/estimating-
 function information inequality existed; `VectorInference.cramerRao` is the unbiased-estimator
-bound, a different statement. The 2×2 operators are `Matrix.toEuclideanCLM`.
+bound, a different statement. `inner_inverse_le_integral_inner_sq` is general (any measure, any
+real inner product space) and is a candidate for promotion to `MathlibExt/Probability/Statistics`;
+it lives here only because this task owns this file. The 2×2 operators are
+`Matrix.toEuclideanCLM`.
 
 ## References
 
@@ -613,6 +616,29 @@ private lemma integrable_norm_countScore_sq {σ : ℝ} (hσ : 0 ≤ σ) {θ₀ :
   change ‖countScore σ θ₀ k‖ ^ 2 ≤ 2 * A ^ 2 + 2 * B ^ 2 * (k : ℝ) ^ 2
   nlinarith [sq_nonneg (A - B * k)]
 
+/-- The rate component of the score equations at the truth forces the marginal mean: if
+`E[countScore σ θ₀ K] = 0` then `E K = σ a / b`, since `a/b - (a + E K)/(b + σ) = 0`. -/
+theorem integral_natCast_of_integral_countScore {σ : ℝ} (hσ : 0 ≤ σ) {θ₀ : E₂} (ha : 0 < θ₀ 0)
+    (hb : 0 < θ₀ 1) {μX : Measure ℕ} [IsProbabilityMeasure μX]
+    (hk : Integrable (fun k : ℕ => (k : ℝ)) μX) (hscore : ∫ k, countScore σ θ₀ k ∂μX = 0) :
+    ∫ k, (k : ℝ) ∂μX = σ * θ₀ 0 / θ₀ 1 := by
+  have hB : 0 < θ₀ 1 + σ := by linarith
+  have hint : Integrable (countScore σ θ₀) μX :=
+    integrable_nat_of_norm_le hk (norm_countScore_le hσ ha hb)
+  have h1 := congrArg (EuclideanSpace.proj (𝕜 := ℝ) (1 : Fin 2)) hscore
+  rw [← (EuclideanSpace.proj (𝕜 := ℝ) (1 : Fin 2)).integral_comp_comm hint, map_zero] at h1
+  have hlin : Integrable (fun k : ℕ => (θ₀ 0 + k) / (θ₀ 1 + σ)) μX :=
+    ((integrable_const _).add hk).div_const _
+  have e : ∀ k, EuclideanSpace.proj (𝕜 := ℝ) (1 : Fin 2) (countScore σ θ₀ k) =
+      θ₀ 0 / θ₀ 1 - (θ₀ 0 + k) / (θ₀ 1 + σ) := fun k => rfl
+  simp_rw [e] at h1
+  rw [integral_sub (integrable_const _) hlin, integral_div (f := fun k : ℕ => θ₀ 0 + (k : ℝ)),
+    integral_add (integrable_const _) hk] at h1
+  simp only [integral_const, probReal_univ, one_smul] at h1
+  field_simp at h1
+  field_simp
+  linarith
+
 private lemma ball_coord_ge {θ₀ θ : E₂} (hθ : θ ∈ Metric.ball θ₀ (min (θ₀ 0) (θ₀ 1) / 2)) :
     min (θ₀ 0) (θ₀ 1) / 2 ≤ θ 0 ∧ min (θ₀ 0) (θ₀ 1) / 2 ≤ θ 1 := by
   rw [Metric.mem_ball, dist_eq_norm] at hθ
@@ -625,10 +651,10 @@ private lemma ball_coord_ge {θ₀ θ : E₂} (hθ : θ ∈ Metric.ball θ₀ (m
   constructor <;> linarith
 
 /-- **Asymptotic normality of the joint count MLE.** Let `X₀, X₁, …` be i.i.d. counts with law
-`μX` on `ℕ`, with finite second moment and mean equal to the marginal mean `σ a / b` of the
-Gamma–Poisson hierarchy at the true hyperparameter `θ₀ = (a, b)`, `a, b, σ > 0`. Assume the
+`μX` on `ℕ` with finite second moment, and let `θ₀ = (a, b)`, `a, b, σ > 0`. Assume the
 **score equations at the truth** `E[countScore σ θ₀ K] = 0` (Fisher consistency of the shape and
-rate equations of `HierarchicalCountMLE`) and the profile-information condition
+rate equations of `HierarchicalCountMLE`; the rate equation forces the marginal mean
+`E K = σ a / b`, `integral_natCast_of_integral_countScore`) and the profile-information condition
 `τ = E[∑_{j<K} 1 / (a + j)²] > σ / (a (b + σ))`, which makes the Fisher information
 `I = countFisherInfo a b σ τ` invertible. Let `θhat n` be a consistent sequence of roots of the
 joint score equations `∑_{i<n} countScore σ θ (X i) = 0`, i.e. of
@@ -644,7 +670,6 @@ theorem tendstoInDistribution_countMLE {Ω Ω' : Type*} [MeasurableSpace Ω] [Me
     {σ : ℝ} (hσ : 0 < σ) {θ₀ : E₂} (ha : 0 < θ₀ 0) (hb : 0 < θ₀ 1)
     {μX : Measure ℕ} {X : ℕ → Ω → ℕ} (hX_law : ∀ i, HasLaw (X i) μX P)
     (hX_indep : iIndepFun X P) (hk2 : Integrable (fun k : ℕ => (k : ℝ) ^ 2) μX)
-    (hmean : ∫ k, (k : ℝ) ∂μX = σ * θ₀ 0 / θ₀ 1)
     (hscore : ∫ k, countScore σ θ₀ k ∂μX = 0)
     (hτ : σ / (θ₀ 0 * (θ₀ 1 + σ)) < ∫ k, trigammaIncrement (θ₀ 0) k ∂μX)
     {θhat : ℕ → Ω → E₂} (hθ_meas : ∀ n, AEMeasurable (θhat n) P)
@@ -660,6 +685,7 @@ theorem tendstoInDistribution_countMLE {Ω Ω' : Type*} [MeasurableSpace Ω] [Me
       (fun _ => P) P' := by
   have : IsProbabilityMeasure μX := (hX_law 0).isProbabilityMeasure_iff.1 inferInstance
   have hk := integrable_natCast_of_sq hk2
+  have hmean := integral_natCast_of_integral_countScore hσ.le ha hb hk hscore
   set c := min (θ₀ 0) (θ₀ 1) / 2 with hc_def
   have hc : 0 < c := by positivity
   have hc0 : c ≤ θ₀ 0 := by have := min_le_left (θ₀ 0) (θ₀ 1); linarith
@@ -706,7 +732,6 @@ theorem tendstoInDistribution_countMLE_of_info {Ω Ω' : Type*} [MeasurableSpace
     [IsProbabilityMeasure P'] {σ : ℝ} (hσ : 0 < σ) {θ₀ : E₂} (ha : 0 < θ₀ 0) (hb : 0 < θ₀ 1)
     {μX : Measure ℕ} {X : ℕ → Ω → ℕ} (hX_law : ∀ i, HasLaw (X i) μX P)
     (hX_indep : iIndepFun X P) (hk2 : Integrable (fun k : ℕ => (k : ℝ) ^ 2) μX)
-    (hmean : ∫ k, (k : ℝ) ∂μX = σ * θ₀ 0 / θ₀ 1)
     (hscore : ∫ k, countScore σ θ₀ k ∂μX = 0)
     (hτ : σ / (θ₀ 0 * (θ₀ 1 + σ)) < ∫ k, trigammaIncrement (θ₀ 0) k ∂μX)
     (hinfo : ∀ t, ∫ k, ⟪countScore σ θ₀ k, t⟫ ^ 2 ∂μX =
@@ -723,7 +748,7 @@ theorem tendstoInDistribution_countMLE_of_info {Ω Ω' : Type*} [MeasurableSpace
       (fun ω => Ring.inverse
         (countFisherInfo (θ₀ 0) (θ₀ 1) σ (∫ k, trigammaIncrement (θ₀ 0) k ∂μX)) (Y ω))
       (fun _ => P) P' :=
-  tendstoInDistribution_countMLE hσ ha hb hX_law hX_indep hk2 hmean hscore hτ hθ_meas hroot hcons
+  tendstoInDistribution_countMLE hσ ha hb hX_law hX_indep hk2 hscore hτ hθ_meas hroot hcons
     hY_meas fun t => by rw [hinfo]; exact hY t
 
 /-! ### The method-of-moments estimator as a Z-estimator -/

@@ -13,6 +13,8 @@ public import MathlibExt.Biology.Omics.HierarchicalCountEfficiency
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.Probability.Independence.InfinitePi
 
+import Mathlib.Analysis.Complex.ExponentialBounds
+
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory Real Filter Topology Finset Function
@@ -248,6 +250,111 @@ example {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMea
       (fun ω => -Ring.inverse (momJacobian 1 1 1) (Y ω)) (fun _ => P) P' :=
   tendstoInDistribution_mom one_pos one_pos one_pos hasLaw_X iIndepFun_X (integrable_μX _)
     mean_μX sq_μX hY_meas hY
+
+/-! ### A count law satisfying the hypotheses of `tendstoInDistribution_countMLE`
+
+At `a = b = σ = 1`, the three-point law `p₀ δ₀ + p₁ δ₁ + p₃ δ₃` with `p₃ = 6 (1 - log 2) / 7`,
+`p₁ = 1 - 3 p₃`, `p₀ = 2 p₃` has `E K = 1` and `E[∑_{j<K} 1/(1+j)] = log 2`, so both score
+equations hold at `(1, 1)`, and `τ = 1 - (59/42)(1 - log 2) ≈ 0.569 > 1/2`, so the
+profile-information condition holds too. (Witness due to the T118 reviewer.) -/
+
+/-- The weight of `3`. -/
+noncomputable def pW3 : ℝ := 6 * (1 - log 2) / 7
+/-- The weight of `1`. -/
+noncomputable def pW1 : ℝ := 1 - 3 * pW3
+/-- The weight of `0`. -/
+noncomputable def pW0 : ℝ := 1 - pW1 - pW3
+
+private lemma hlog : 0.6931471803 < log 2 ∧ log 2 < 0.6931471808 :=
+  ⟨Real.log_two_gt_d9, Real.log_two_lt_d9⟩
+
+private lemma pW3_pos : 0 < pW3 := by have := hlog; unfold pW3; linarith
+private lemma pW1_pos : 0 < pW1 := by have := hlog; unfold pW1 pW3; linarith
+private lemma pW0_pos : 0 < pW0 := by have := hlog; unfold pW0 pW1 pW3; linarith
+
+/-- The three-point count law. -/
+noncomputable def μW : Measure ℕ :=
+  ENNReal.ofReal pW0 • Measure.dirac 0 + ENNReal.ofReal pW1 • Measure.dirac 1 +
+    ENNReal.ofReal pW3 • Measure.dirac 3
+
+private lemma integrable_μW {E : Type*} [NormedAddCommGroup E] (F : ℕ → E) :
+    Integrable F μW := by
+  unfold μW
+  refine ((Integrable.smul_measure ?_ ENNReal.ofReal_ne_top).add_measure
+    (Integrable.smul_measure ?_ ENNReal.ofReal_ne_top)).add_measure
+    (Integrable.smul_measure ?_ ENNReal.ofReal_ne_top) <;>
+  exact integrable_dirac enorm_lt_top
+
+private lemma integral_μW {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    (F : ℕ → E) : ∫ k, F k ∂μW = pW0 • F 0 + pW1 • F 1 + pW3 • F 3 := by
+  have i := fun c (k : ℕ) => (integrable_dirac (a := k) (f := F) enorm_lt_top).smul_measure
+    (c := ENNReal.ofReal c) ENNReal.ofReal_ne_top
+  unfold μW
+  rw [integral_add_measure ((i _ _).add_measure (i _ _)) (i _ _),
+    integral_add_measure (i _ _) (i _ _), integral_smul_measure, integral_smul_measure,
+    integral_smul_measure, integral_dirac, integral_dirac, integral_dirac,
+    ENNReal.toReal_ofReal pW0_pos.le, ENNReal.toReal_ofReal pW1_pos.le,
+    ENNReal.toReal_ofReal pW3_pos.le]
+
+instance : IsProbabilityMeasure μW := ⟨by
+  unfold μW
+  simp only [Measure.add_apply, Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  rw [← ENNReal.ofReal_add pW0_pos.le pW1_pos.le,
+    ← ENNReal.ofReal_add (by linarith [pW0_pos, pW1_pos]) pW3_pos.le]
+  simp only [pW0]; ring_nf; simp⟩
+
+/-- The score equations hold at `(1, 1)`: the shape component is
+`p₁ + p₃ (1 + 1/2 + 1/3) - log 2 = 0` and the rate component is `1 - (1 + E K)/2 = 0`. -/
+private lemma integral_countScore_μW : ∫ k, countScore 1 !₂[1, 1] k ∂μW = 0 := by
+  rw [integral_μW]
+  ext i
+  fin_cases i
+  · simp [countScore, digammaIncrement, sum_range_succ, pW0, pW1, pW3]
+    norm_num; ring_nf
+  · simp [countScore, pW0, pW1]; norm_num; ring
+
+/-- The profile-information condition `τ > 1/2` holds: `τ = p₁ + p₃ (49/36) ≈ 0.569`. -/
+private lemma profile_μW : 1 / ((!₂[1, 1] : E₂) 0 * ((!₂[1, 1] : E₂) 1 + 1)) <
+    ∫ k, trigammaIncrement ((!₂[1, 1] : E₂) 0) k ∂μW := by
+  rw [integral_μW]
+  have := hlog
+  simp [trigammaIncrement, sum_range_succ, pW1, pW3]
+  norm_num
+  linarith
+
+/-- Independently of the theorems, the mean is `p₁ + 3 p₃ = 1 = σ a / b`. -/
+example : ∫ k, (k : ℝ) ∂μW = 1 := by
+  rw [integral_μW]; simp [pW1]; ring
+
+/-- I.i.d. counts with law `μW`. -/
+noncomputable abbrev PW : Measure (ℕ → ℕ) := Measure.infinitePi (fun _ : ℕ => μW)
+
+/-- The `i`-th count. -/
+def XW (i : ℕ) (ω : ℕ → ℕ) : ℕ := ω i
+
+private lemma hasLaw_XW (i : ℕ) : HasLaw (XW i) μW PW :=
+  (measurePreserving_eval_infinitePi (μ := fun _ : ℕ => μW) i).hasLaw
+
+private lemma iIndepFun_XW : iIndepFun XW PW :=
+  iIndepFun_infinitePi (P := fun _ : ℕ => μW) (X := fun _ => id) (fun _ => measurable_id)
+
+/-- **`tendstoInDistribution_countMLE` is non-vacuous.** For i.i.d. counts with the three-point
+law `μW`, every count-side hypothesis (second moment, score equations at the truth,
+profile information) is discharged; only the estimator-side hypotheses `hroot`, `hcons` and the
+Gaussian `Y`, which the merged Z-estimator theorem also takes, remain. -/
+example {θhat : ℕ → (ℕ → ℕ) → E₂} (hθ_meas : ∀ n, AEMeasurable (θhat n) PW)
+    (hroot : Tendsto (fun n => PW {ω | ∑ i ∈ range n, countScore 1 (θhat n ω) (XW i ω) ≠ 0})
+      atTop (𝓝 0))
+    (hcons : TendstoInMeasure PW θhat atTop (fun _ => !₂[1, 1]))
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
+    {Y : Ω' → E₂} (hY_meas : AEMeasurable Y P')
+    (hY : ∀ t, HasLaw (fun ω => ⟪Y ω, t⟫)
+      (gaussianReal 0 (∫ k, ⟪countScore 1 !₂[1, 1] k, t⟫ ^ 2 ∂μW).toNNReal) P') :
+    TendstoInDistribution (fun (n : ℕ) ω => √n • (θhat n ω - !₂[1, 1])) atTop
+      (fun ω => Ring.inverse (countFisherInfo ((!₂[1, 1] : E₂) 0) ((!₂[1, 1] : E₂) 1) 1
+        (∫ k, trigammaIncrement ((!₂[1, 1] : E₂) 0) k ∂μW)) (Y ω)) (fun _ => PW) P' :=
+  tendstoInDistribution_countMLE one_pos (by simp) (by simp) hasLaw_XW iIndepFun_XW
+    (integrable_μW _) integral_countScore_μW profile_μW hθ_meas hroot hcons hY_meas hY
 
 /-! ### Godambe's information inequality -/
 
