@@ -27,7 +27,8 @@ covariates `x ∈ ℝᵖ` satisfies `log T = ⟪β, x⟫ + σ ε`, with regressi
 `T = exp ⟪β, x⟫ · T₀` with `T₀ = exp (σ ε)`: covariates rescale time. The law of `log T` is
 `logLinearLaw μ₀ ⟪β, x⟫ σ`. Under independent right censoring by `C` one observes
 `Y = min (log T) (log C)` and `δ = 1[T ≤ C]`, with law `obsLaw`; ties count as events, as in
-`MathlibExt.Probability.Statistics.Censoring`.
+`MathlibExt.Probability.Statistics.Censoring`. The discrete-grid analogue of `obsLaw` is
+`MathlibExt.Probability.Statistics.Censoring.censoredObsLaw` (in `IdentifiableHorizon`).
 
 ## Main results
 
@@ -48,7 +49,8 @@ covariates `x ∈ ℝᵖ` satisfies `log T = ⟪β, x⟫ + σ ε`, with regressi
   `U_β = σ⁻¹ ∑ᵢ r(zᵢ, δᵢ) xᵢ` is the gradient of `ℓ(·, σ)` (`hasFDerivAt_logLik`,
   `hasGradientAt_logLik`) and the scale score `U_σ = σ⁻¹ ∑ᵢ (zᵢ rᵢ - δᵢ)` is `∂ℓ/∂σ`
   (`hasDerivAt_logLik_scale`). A regular local maximizer solves the score equations
-  (`score_eq_zero_of_isLocalMax`, `scaleScore_eq_zero_of_isLocalMax`).
+  (`score_eq_zero_of_isLocalMax`, `scaleScore_eq_zero_of_isLocalMax`), and a regular joint
+  local maximizer in `(β, σ)` solves both (`score_eq_zero_and_scaleScore_eq_zero`).
 * **Identifiability.** If the error survival is strictly decreasing and each censoring law is a
   nonzero finite measure free of the parameters, the observed-data law of one subject determines
   `(⟪β, x⟫, σ)` (`eq_of_obsLaw_eq`). With a full-column-rank design the observed-data laws of all
@@ -366,6 +368,18 @@ theorem scaleScore_eq_zero_of_isLocalMax {f₀ f₀' S₀ : ℝ → ℝ} (y : Fi
     (hmax : IsLocalMax (fun s => logLik f₀ S₀ y δ x s β) σ) :
     scaleScore f₀ f₀' S₀ y δ x σ β = 0 :=
   hmax.hasDerivAt_eq_zero (hasDerivAt_logLik_scale y δ x hσ β h)
+
+/-- **Joint score equations.** A regular joint local maximizer `(β̂, σ̂)`, `σ̂ > 0`, of the
+censored log-likelihood solves `U_β = 0` and `U_σ = 0`. -/
+theorem score_eq_zero_and_scaleScore_eq_zero {f₀ f₀' S₀ : ℝ → ℝ} (y : Fin n → ℝ)
+    (δ : Fin n → Bool) (x : Fin n → Fin p → ℝ) {σ : ℝ} (hσ : 0 < σ) (β : Fin p → ℝ)
+    (h : ∀ i, RegularAt f₀ f₀' S₀ ((y i - β ⬝ᵥ x i) / σ) (δ i))
+    (hmax : IsLocalMax (fun q : (Fin p → ℝ) × ℝ => logLik f₀ S₀ y δ x q.2 q.1) (β, σ)) :
+    score f₀ f₀' S₀ y δ x σ β = 0 ∧ scaleScore f₀ f₀' S₀ y δ x σ β = 0 :=
+  ⟨score_eq_zero_of_isLocalMax y δ x σ β h
+      (hmax.comp_continuous (g := fun b => (b, σ)) (by fun_prop)),
+    scaleScore_eq_zero_of_isLocalMax y δ x hσ β h
+      (hmax.comp_continuous (g := fun s => (β, s)) (by fun_prop))⟩
 
 /-! ### The likelihood factors of the observed-data law -/
 

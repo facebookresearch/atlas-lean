@@ -105,6 +105,12 @@ theorem logLik_ex : logLik evDensity evSurvival yEx δEx xEx 1 0 = -2 := by
   simp [logLik, logLikContrib, Fin.sum_univ_two, yEx, δEx, evDensity, evSurvival]
   norm_num
 
+/-- `log_likelihood` on the example: `log (e⁻¹ e⁻¹) = -2`, matching `logLik_ex`. -/
+example : log (likelihood evDensity evSurvival yEx δEx xEx 1 0) = -2 := by
+  rw [log_likelihood _ _ _ _ _ one_pos _ fun i => by
+    fin_cases i <;> simp [likContrib, yEx, δEx, evDensity, evSurvival, (exp_pos _).ne'],
+    logLik_ex]
+
 /-- The regression score there is `1`: residual `0` for the failure, hazard `1` for the censored
 observation. -/
 theorem score_ex : score evDensity evDensityDeriv evSurvival yEx δEx xEx 1 0 = ![1] := by
@@ -124,6 +130,16 @@ example : HasFDerivAt (logLik evDensity evSurvival yEx δEx xEx 1)
     (Real.dotL ![1]) 0 := by
   rw [← score_ex]
   exact hasFDerivAt_logLik yEx δEx xEx 1 0 fun i => regularAt_ev _ _
+
+/-- The joint score equations apply to the example: `(β, σ) = (0, 1)` is not a joint local
+maximizer, since its scale score is `-1`. -/
+example : ¬ IsLocalMax (fun q : (Fin 1 → ℝ) × ℝ =>
+    logLik evDensity evSurvival yEx δEx xEx q.2 q.1) (0, 1) := by
+  intro h
+  have := (score_eq_zero_and_scaleScore_eq_zero (f₀' := evDensityDeriv) yEx δEx xEx one_pos 0
+    (fun i => regularAt_ev _ _) h).2
+  rw [scaleScore_ex] at this
+  norm_num at this
 
 /-- Since the score is nonzero, `β = 0` is not a local maximizer of the log-likelihood. -/
 example : ¬ IsLocalMax (logLik evDensity evSurvival yEx δEx xEx 1) 0 := by
@@ -171,6 +187,21 @@ theorem obsLaw_rankDeficient (μ₀ μC : Measure ℝ) (σ : ℝ) :
       obsLaw (logLinearLaw μ₀ (![0, 1] ⬝ᵥ xDef 0) σ) μC := by
   congr 2
   simp [xDef, dotProduct, Fin.sum_univ_two]
+
+/-- `identifiable_iff` on the rank-deficient design: `β` is not identified (log-normal AFT,
+censoring at `log C = 0`, `σ = 1`). -/
+example : ¬ ∀ β β' : Fin 2 → ℝ, (∀ i, obsLaw (logLinearLaw (gaussianReal 0 1) (β ⬝ᵥ xDef i) 1)
+      (Measure.dirac 0) = obsLaw (logLinearLaw (gaussianReal 0 1) (β' ⬝ᵥ xDef i) 1)
+      (Measure.dirac 0)) → β = β' := by
+  rw [identifiable_iff (gaussianReal 0 1) strictAnti_survival_gaussian xDef
+    (fun _ => Measure.dirac 0) (fun _ => Measure.dirac_ne_zero) one_pos]
+  intro h
+  have := @h ![1, 0] ![0, 1] (by
+    ext i
+    fin_cases i
+    simp [Matrix.mulVec, xDef, dotProduct, Fin.sum_univ_two])
+  have h0 := congrFun this 0
+  simp at h0
 
 /-- Hence (`identifiable_iff`) the rank-deficient design is not injective, confirmed directly. -/
 example : ¬ Function.Injective (Matrix.of xDef).mulVec := by
