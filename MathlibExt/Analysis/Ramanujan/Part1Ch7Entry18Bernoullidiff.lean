@@ -56,7 +56,6 @@ def chapter7Entry18Right (r : ℂ) : ℂ :=
   Complex.cpow ((Real.pi / 2 : ℝ) : ℂ) r * chapter7EulerStar r /
     Complex.Gamma r
 
-private lemma betaStdAddChar0 : ZMod.stdAddChar (0 : ZMod 4) = 1 := by simp
 private lemma betaStdAddChar1 : ZMod.stdAddChar (1 : ZMod 4) = Complex.I := by
   have h : (1 : ZMod 4) = ((1 : ℤ) : ZMod 4) := by simp
   rw [h, ZMod.stdAddChar_coe]
@@ -94,7 +93,7 @@ private lemma betaDft : ZMod.dft chapter7BetaCharacter =
   funext k
   rcases h4 k with rfl | rfl | rfl | rfl <;> rw [red]
   · rw [show (-((1 : ZMod 4) * 0) : ZMod 4) = 0 from by decide,
-      show (-((3 : ZMod 4) * 0) : ZMod 4) = 0 from by decide, betaStdAddChar0, betaChar0]
+      show (-((3 : ZMod 4) * 0) : ZMod 4) = 0 from by decide, AddChar.map_zero_eq_one, betaChar0]
     ring
   · rw [show (-((1 : ZMod 4) * 1) : ZMod 4) = 3 from by decide,
       show (-((3 : ZMod 4) * 1) : ZMod 4) = 1 from by decide, betaStdAddChar3,

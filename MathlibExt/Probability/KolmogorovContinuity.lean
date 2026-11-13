@@ -190,15 +190,6 @@ private lemma approxPt_eq_of_dyadic {q : ℝ} {a : ℤ} {n : ℕ} (hq : q = a / 
 
 /-! ### Telescoping -/
 
-/-- Telescoping sum over an interval of naturals. -/
-private lemma sum_Ico_sub (g : ℕ → ℝ) {m N : ℕ} (h : m ≤ N) :
-    ∑ k ∈ Finset.Ico m N, (g (k + 1) - g k) = g N - g m := by
-  induction N, h using Nat.le_induction with
-  | base => simp
-  | succ n hn ih =>
-      rw [Finset.sum_Ico_succ_top hn, ih]
-      ring
-
 /-- One grid step at level `m` from `a / 2^m` to `b / 2^m` can be
 decomposed into `b - a` adjacent steps. -/
 private lemma gridPath_bound {f : ℝ → ℝ} {γ D : ℝ}
@@ -211,7 +202,7 @@ private lemma gridPath_bound {f : ℝ → ℝ} {γ D : ℝ}
   have htel : f ((b : ℝ) / (2 : ℝ) ^ m) - f ((a : ℝ) / (2 : ℝ) ^ m)
       = ∑ k ∈ Finset.Ico a b,
         (f (((k + 1 : ℕ) : ℝ) / (2 : ℝ) ^ m) - f ((k : ℝ) / (2 : ℝ) ^ m)) := by
-    have h := sum_Ico_sub (fun k => f ((k : ℝ) / (2 : ℝ) ^ m)) hab
+    have h := Finset.sum_Ico_sub (fun k => f ((k : ℝ) / (2 : ℝ) ^ m)) hab
     rw [← h]
   rw [htel]
   calc |∑ k ∈ Finset.Ico a b,
@@ -316,7 +307,7 @@ private lemma tail_bound {f : ℝ → ℝ} {γ D : ℝ} (hγ : 0 < γ) (hD : 0 <
   have hA : approxPt q N = q := approxPt_eq_of_dyadic hqeq hNn
   have htel : f q - f (approxPt q m)
       = ∑ k ∈ Finset.Ico m N, (f (approxPt q (k + 1)) - f (approxPt q k)) := by
-    have h := sum_Ico_sub (fun k => f (approxPt q k)) hNm
+    have h := Finset.sum_Ico_sub (fun k => f (approxPt q k)) hNm
     rw [hA] at h
     exact h.symm
   have hρ0 : (0:ℝ) ≤ (2 : ℝ) ^ (-γ) := (Real.rpow_pos_of_pos (by norm_num) _).le
