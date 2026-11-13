@@ -13,8 +13,9 @@ import PhyslibExt.EarthScience.EarthInteriorProfiles
 # Earth-interior profile checks
 
 Concrete consumers of `PhyslibExt.EarthScience.EarthInteriorProfiles`:
-`ρ = 5000, g = 10, φ = 10^8` gives `dρ / dr = -1 / 2000`, and the
-uniform-density shell derivative at `ρ = 3000`.
+`ρ = 5000, g = 10, φ = 10^8` gives `dρ / dr = -1 / 2000`, the gravity
+form at the positive radius `r = 2`, and the uniform-density shell
+derivative at `ρ = 3000`.
 
 ## i. Overview
 
@@ -39,6 +40,12 @@ example : (-1 / 2000 : ℝ) = -5000 * 10 / 100000000 :=
   EarthScience.density_gradient_adams_williamson (ρ := 5000) (g := 10)
     (φ := 100000000) (dp := -50000) (drho := -1 / 2000)
     (by norm_num) (by norm_num) (by norm_num)
+
+/-- Gravity form at the positive radius `r = 2`: `G = 1, m = 4` give `g = 1`, so
+`ρ = 2, φ = 4` give `dρ / dr = -1 / 2`. -/
+example : (-1 / 2 : ℝ) = -2 * (1 * 4 / 2 ^ 2) / 4 :=
+  EarthScience.density_gradient_with_gravity (G := 1) (m := 4) (r := 2) (ρ := 2) (φ := 4)
+    (dp := -2) (drho := -1 / 2) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
 
 /-- The numeric gradient is negative. -/
 example : (-1 / 2000 : ℝ) < 0 :=

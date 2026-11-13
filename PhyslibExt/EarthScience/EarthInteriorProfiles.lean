@@ -69,7 +69,7 @@ theorem density_gradient_adams_williamson {ρ g φ dp drho : ℝ} (hφ : φ ≠ 
 
 /-- The same relation with gravity written out as `g = G * m / r ^ 2`,
 for `r > 0` (the `r = 0` centre limit is excluded). -/
-theorem density_gradient_with_gravity {G m r ρ φ dp drho : ℝ} (hφ : φ ≠ 0)
+theorem density_gradient_with_gravity {G m r ρ φ dp drho : ℝ} (_hr : 0 < r) (hφ : φ ≠ 0)
     (h_hydro : dp = -ρ * (G * m / r ^ 2)) (h_const : dp = φ * drho) :
     drho = -ρ * (G * m / r ^ 2) / φ := by
   have h : φ * drho = -ρ * (G * m / r ^ 2) := h_const.symm.trans h_hydro
