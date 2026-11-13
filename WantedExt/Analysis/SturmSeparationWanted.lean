@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.ODE.SturmSeparation` — sturm_separation (manifest `manifests/problems/sturm_separation.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Analysis.ODE.SturmSeparation` —
+sturm_separation (manifest `manifests/problems/sturm_separation.toml`, rev 1, submitter Kim
+Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Analysis.SturmSeparationWanted` namespace. Mathematical
-statements are unchanged. Source: C. Sturm, Mémoire sur les équations différentielles linéaires du second ordre, 1836.
+and placed the declarations in the `MathlibExt.Analysis.SturmSeparationWanted` namespace.
+Mathematical
+statements are unchanged. Source: C. Sturm, Mémoire sur les équations différentielles linéaires
+du second ordre, 1836.
 -/
 module
 
@@ -66,7 +70,8 @@ interval `J` containing `[a, b]` of the linear homogeneous ODE `y'' + p y' + q y
 with `p, q` continuous on `J`, and their Wronskian is nonzero at some point of `J`. If
 `a < b ∈ J` are consecutive zeros of `y₁` (i.e. `y₁ a = y₁ b = 0` and `y₁ x ≠ 0` on
 `(a, b)`), then `y₂` has exactly one zero in `(a, b)`. -/
-/-- Source: C. Sturm, Mémoire sur les équations différentielles linéaires du second ordre, 1836. Via leanprover/lean-eval@38361be, problem `sturm_separation`. -/
+/-- Source: C. Sturm, Mémoire sur les équations différentielles linéaires du second ordre, 1836.
+Via leanprover/lean-eval@38361be, problem `sturm_separation`. -/
 public theorem_wanted sturm_separation
     (p q y₁ y₂ : ℝ → ℝ) (a b : ℝ) (hab : a < b)
     (J : Set ℝ) (hJ_open : IsOpen J) (hJ_conn : IsPreconnected J)
