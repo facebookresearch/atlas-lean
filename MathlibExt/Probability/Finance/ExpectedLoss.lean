@@ -50,11 +50,13 @@ noncomputable def conditionalExpectedLoss {Ω : Type*} [MeasurableSpace Ω] (μ 
     (D : Set Ω) (EAD LGD : Ω → ℝ) : ℝ :=
   ∫ ω, EAD ω * LGD ω ∂(ProbabilityTheory.cond μ D)
 
-/-- Expected-loss decomposition (FI16.T03): expected loss equals the probability
-of default times the expected exposure-times-loss-given-default conditional on
-default. The side condition `μ D ≠ 0` is needed for the conditional measure to
-be defined by scaling the restriction; on `μ D = 0` the left side is `0` while
-the conditional expectation is not pinned by this statement. -/
+/-- Expected-loss decomposition (FI16.T03): expected loss equals the
+probability of default times the expected exposure-times-loss-given-default
+conditional on default. `ProbabilityTheory.cond μ D` is always defined as the
+`(μ D)⁻¹`-scaled restriction, even if `μ D = 0`. The nonzero hypothesis is
+required for probability normalization and ordinary conditional-expectation
+semantics; for a measurable zero event the conditional measure is zero and
+this theorem retains the nonzero hypothesis. -/
 theorem expectedLoss_eq_defaultProbability_mul_conditionalExpectedLoss
     {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ]
     {D : Set Ω} (hD : MeasurableSet D) (hμD : μ D ≠ 0)
