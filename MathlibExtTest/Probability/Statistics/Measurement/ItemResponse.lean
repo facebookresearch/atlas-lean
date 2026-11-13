@@ -32,12 +32,17 @@ claimed.
 
 D06.3 Graded-response model (Weeks 2010, (2), (3)): telescoping sums with
 no hypotheses, nonnegativity under `0 ≤ a` with ordered thresholds,
-positivity under strict versions, zero-slope and one-category edge cases.
+positivity under strict versions, zero-slope and one-category edge cases,
+and the two-category law equal to the single-item 2PL law.
+
+Model links: the Rasch law is the 2PL law with unit discriminations.
 
 References:
 
 * Mair and Hatzinger (2007), extended Rasch modeling.
-* Weeks (2010), Equations (2), (3), (7), (8a), (8b).
+* J. P. Weeks, *plink: An R package for linking mixed-format tests using
+  IRT-based methods*, Journal of Statistical Software 35(12) (2010),
+  DOI 10.18637/jss.v035.i12, Section 2, Equations (2), (3), (7), (8a), (8b).
 * Rizopoulos, JSS v017 i05, DOI 10.18637/jss.v017.i05.
 -/
 
@@ -235,11 +240,34 @@ theorem test_graded_m0_sum (a θ : ℝ) (b : Fin 0 → ℝ) :
     ∑ j : Fin 1, gradedProb a b θ j.val = 1 :=
   gradedProb_sum a b θ
 
-/-- With `m = 1` (two categories), graded masses still telescope; the
-two-category law matches a single-item 2PL shape. -/
+/-- With `m = 1` (two categories), graded masses still telescope. -/
 theorem test_graded_m1_sum (a θ : ℝ) (b : Fin 1 → ℝ) :
     ∑ j : Fin 2, gradedProb a b θ j.val = 1 :=
   gradedProb_sum a b θ
+
+/-- With `m = 1` (two categories), the graded-response law is the single-item
+2PL law: category `1` carries the 2PL success mass and category `0` the
+failure mass. -/
+theorem test_graded_m1_eq_twoPL (a θ : ℝ) (ha : 0 ≤ a) (b : Fin 1 → ℝ) :
+    gradedResponsePMF a b θ ha (Subsingleton.monotone b) 1 =
+        twoPLPMF (fun _ : Fin 1 => a) (fun _ => b 0) θ (fun _ => true) ∧
+      gradedResponsePMF a b θ ha (Subsingleton.monotone b) 0 =
+        twoPLPMF (fun _ : Fin 1 => a) (fun _ => b 0) θ (fun _ => false) := by
+  have h1 : gradedCumulative a b θ 1 = Real.sigmoid (a * (θ - b 0)) :=
+    gradedCumulative_succ a b θ 0 (by norm_num)
+  have h2 : gradedCumulative a b θ 2 = 0 := gradedCumulative_beyond a b θ 2 (by norm_num)
+  refine ⟨?_, ?_⟩
+  · rw [gradedResponsePMF_apply, twoPLPMF_apply, Fin.prod_univ_one]
+    simp [gradedProb, h1, h2]
+  · rw [gradedResponsePMF_apply, twoPLPMF_apply, Fin.prod_univ_one]
+    simp [gradedProb, gradedCumulative_zero, h1]
+
+/-- The Rasch law is the 2PL law with unit discriminations, via
+`raschPMF_eq_twoPLPMF_one`. -/
+theorem test_rasch_eq_twoPL_one (θ : ℝ) (x : Fin 2 → Bool) :
+    raschPMF (fun i : Fin 2 => (i.val : ℝ)) θ x =
+      twoPLPMF (fun _ => 1) (fun i : Fin 2 => (i.val : ℝ)) θ x := by
+  rw [raschPMF_eq_twoPLPMF_one]
 
 end
 

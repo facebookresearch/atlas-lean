@@ -38,13 +38,23 @@ D06.3 Graded-response model. Cumulative probabilities follow Weeks 2010,
 down by one relative to Weeks. Sums telescope to one. Nonnegativity needs
 `0 ≤ a` with ordered thresholds; positivity needs strict versions.
 
+Logistic metric: every model here uses the scaling constant `D = 1`.
+Weeks (2010) writes the logistic argument as `D * a * (θ - b)`, in (1) for
+the dichotomous models and in (2) for the graded model; the common choice
+`D = 1.7` approximates the normal ogive and gives different probabilities
+for the same parameters. The `D`-scaled model with discriminations `a` is the
+model here with discriminations `D * a`.
+
 We do not claim identification of the 2PL parameters from the law.
 Identification is addressed only within affine maps.
 
 References:
 
 * Mair and Hatzinger (2007), extended Rasch modeling.
-* Weeks (2010), Equations (2), (3), (7), (8a), (8b).
+* J. P. Weeks, *plink: An R package for linking mixed-format tests using
+  IRT-based methods*, Journal of Statistical Software 35(12) (2010),
+  DOI 10.18637/jss.v035.i12, Section 2, Equations (1), (2), (3), (7), (8a),
+  (8b).
 * Rizopoulos, JSS v017 i05, DOI 10.18637/jss.v017.i05.
 -/
 
@@ -107,7 +117,9 @@ theorem raschPMF_apply {ι : Type*} [Fintype ι] [DecidableEq ι]
       else ENNReal.ofReal (1 - Real.sigmoid (θ - b i))) := by
   exact rfl
 
-/-- Two-parameter logistic model with discriminations `a` and difficulties `b`. -/
+/-- Two-parameter logistic model with discriminations `a` and difficulties `b`,
+in the logistic metric `D = 1` (Weeks 2010, (1), with no lower asymptote and
+`D = 1`). -/
 noncomputable def twoPLPMF {ι : Type*} [Fintype ι] [DecidableEq ι]
     (a b : ι → ℝ) (θ : ℝ) : PMF (ι → Bool) :=
   localIndepPMF (fun i => Real.sigmoid (a i * (θ - b i)))
@@ -322,7 +334,9 @@ theorem affine_eq_of_anchor {ι : Type*} (a b : ι → ℝ) (k : ι)
   rw [hA1, one_mul] at hdb
   exact (add_eq_left).mp hdb
 
-/-- Graded-response cumulative probability (Weeks 2010, (2)). -/
+/-- Graded-response cumulative probability (Weeks 2010, (2)) in the logistic
+metric `D = 1`: the argument is `a * (θ - b)` where Weeks has
+`D * a * (θ - b)`. -/
 noncomputable def gradedCumulative (a : ℝ) {m : ℕ} (b : Fin m → ℝ)
     (θ : ℝ) (j : ℕ) : ℝ :=
   if _ : j = 0 then 1
