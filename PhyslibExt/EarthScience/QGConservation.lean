@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic.LinearCombination
+public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.Ring
 
 /-!
@@ -73,8 +73,8 @@ streamfunction is formalized.
   equations (potential vorticity `Delta psi + beta * y - psi / Ld^2`
   advected by the geostrophic flow), and §5.6, the energetics of
   quasi-geostrophy (energy and enstrophy conservation).
-- `ring` / `linear_combination` in Mathlib (all identities are
-  polynomial identities).
+- `ring` / `field_simp` in Mathlib (all identities are polynomial
+  identities once the denominators `Ld^2` are cleared).
 -/
 
 @[expose] public section
@@ -119,7 +119,8 @@ theorem energy_flux_divergence {psi psi_x psi_y psi_t psi_xt psi_yt psi_xx psi_y
         psi_t * ((psi_xx + psi_yy) - psi / Ld ^ 2) := by
   ring
 
-/-- Energy-density rate in conservation form: with
+/-- Energy-density rate in conservation form: for a nonzero deformation
+radius `Ld`, with
 `e_t = psi_x * psi_xt + psi_y * psi_yt + psi * psi_t / Ld^2` the time
 derivative of the energy density `0.5 * (|grad psi|^2 + psi^2 / Ld^2)`,
 `div (psi * grad psi_t) = (psi_x * psi_xt + psi * psi_xxt) +
@@ -128,12 +129,13 @@ derivative of the energy density `0.5 * (|grad psi|^2 + psi^2 / Ld^2)`,
 `q = Delta psi - psi / Ld^2 + beta * y` (`beta * y` does not depend on
 time), one has `e_t = div (psi * grad psi_t) - psi * q_t`. -/
 theorem energy_density_rate_eq
-    {psi psi_x psi_y psi_t psi_xt psi_yt psi_xxt psi_yyt Ld q_t : ℝ}
+    {psi psi_x psi_y psi_t psi_xt psi_yt psi_xxt psi_yyt Ld q_t : ℝ} (hLd : Ld ≠ 0)
     (hqt : q_t = (psi_xxt + psi_yyt) - psi_t / Ld ^ 2) :
     psi_x * psi_xt + psi_y * psi_yt + psi * psi_t / Ld ^ 2 =
       ((psi_x * psi_xt + psi * psi_xxt) + (psi_y * psi_yt + psi * psi_yyt)) -
         psi * q_t := by
   rw [hqt]
+  field_simp
   ring
 
 /-- `psi * J(psi, q)` is a divergence: with `q_xy` the mixed partial of
@@ -147,8 +149,9 @@ theorem psi_mul_jacobian_eq_div {psi psi_x psi_y q_x q_y q_xy : ℝ} :
       psi * (psi_x * q_y - psi_y * q_x) := by
   ring
 
-/-- **Energy conservation identity.** With `e_t` and
-`q_t = (psi_xxt + psi_yyt) - psi_t / Ld^2` as in `energy_density_rate_eq`,
+/-- **Energy conservation identity.** For a nonzero deformation radius
+`Ld`, with `e_t` and `q_t = (psi_xxt + psi_yyt) - psi_t / Ld^2` as in
+`energy_density_rate_eq`,
 and the QG equation `q_t = -J(psi, q)`, the energy density satisfies
 `e_t = div G` for
 `G = (psi * psi_xt + psi^2 / 2 * q_y, psi * psi_yt - psi^2 / 2 * q_x)`,
@@ -158,13 +161,14 @@ partial of `q`). On the walls `psi = 0`, so `G_y = 0` there; with
 divergence theorem, which is energy conservation. -/
 theorem energy_flux_divergence_of_qg
     {psi psi_x psi_y psi_t psi_xt psi_yt psi_xxt psi_yyt Ld q_t q_x q_y q_xy : ℝ}
-    (hqt : q_t = (psi_xxt + psi_yyt) - psi_t / Ld ^ 2)
+    (hLd : Ld ≠ 0) (hqt : q_t = (psi_xxt + psi_yyt) - psi_t / Ld ^ 2)
     (hqg : q_t = -(psi_x * q_y - psi_y * q_x)) :
     psi_x * psi_xt + psi_y * psi_yt + psi * psi_t / Ld ^ 2 =
       ((psi_x * psi_xt + psi * psi_xxt) + (psi * psi_x * q_y + psi ^ 2 / 2 * q_xy)) +
         ((psi_y * psi_yt + psi * psi_yyt) +
           (-(psi * psi_y * q_x) - psi ^ 2 / 2 * q_xy)) := by
-  linear_combination psi * hqt - psi * hqg
+  rw [energy_density_rate_eq hLd hqt, hqg]
+  ring
 
 /-- Zero `x`-derivatives give a zero Jacobian: `psi_x = 0` and `q_x = 0`
 give `J(psi, q) = psi_x * q_y - psi_y * q_x = 0`, so the QG advection

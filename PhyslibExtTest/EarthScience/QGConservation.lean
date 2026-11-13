@@ -61,12 +61,12 @@ example {psi psi_x psi_y psi_t psi_xt psi_yt psi_xx psi_yy Ld : ℝ} (hLd : Ld �
   EarthScience.energy_flux_divergence hLd
 
 /-- Public shape of `e_t = div (psi * grad psi_t) - psi * q_t`. -/
-example {psi psi_x psi_y psi_t psi_xt psi_yt psi_xxt psi_yyt Ld q_t : ℝ}
+example {psi psi_x psi_y psi_t psi_xt psi_yt psi_xxt psi_yyt Ld q_t : ℝ} (hLd : Ld ≠ 0)
     (hqt : q_t = (psi_xxt + psi_yyt) - psi_t / Ld ^ 2) :
     psi_x * psi_xt + psi_y * psi_yt + psi * psi_t / Ld ^ 2 =
       ((psi_x * psi_xt + psi * psi_xxt) + (psi_y * psi_yt + psi * psi_yyt)) -
         psi * q_t :=
-  EarthScience.energy_density_rate_eq hqt
+  EarthScience.energy_density_rate_eq hLd hqt
 
 /-- Public shape of `psi * J(psi, q) = div (psi^2 / 2 * q_y, -psi^2 / 2 * q_x)`. -/
 example {psi psi_x psi_y q_x q_y q_xy : ℝ} :
@@ -77,13 +77,13 @@ example {psi psi_x psi_y q_x q_y q_xy : ℝ} :
 
 /-- Public shape of the QG energy conservation identity `e_t = div G`. -/
 example {psi psi_x psi_y psi_t psi_xt psi_yt psi_xxt psi_yyt Ld q_t q_x q_y q_xy : ℝ}
-    (hqt : q_t = (psi_xxt + psi_yyt) - psi_t / Ld ^ 2)
+    (hLd : Ld ≠ 0) (hqt : q_t = (psi_xxt + psi_yyt) - psi_t / Ld ^ 2)
     (hqg : q_t = -(psi_x * q_y - psi_y * q_x)) :
     psi_x * psi_xt + psi_y * psi_yt + psi * psi_t / Ld ^ 2 =
       ((psi_x * psi_xt + psi * psi_xxt) + (psi * psi_x * q_y + psi ^ 2 / 2 * q_xy)) +
         ((psi_y * psi_yt + psi * psi_yyt) +
           (-(psi * psi_y * q_x) - psi ^ 2 / 2 * q_xy)) :=
-  EarthScience.energy_flux_divergence_of_qg hqt hqg
+  EarthScience.energy_flux_divergence_of_qg hLd hqt hqg
 
 /-- Non-vacuity of the QG energy identity: `psi = psi_x = q_y = psi_t = Ld = 1`,
 every other partial `0`, and `q_t = -1` satisfy both hypotheses. -/
@@ -93,7 +93,7 @@ example :
         ((0 * 0 + 1 * 0) + (-(1 * 0 * 0) - 1 ^ 2 / 2 * 0)) :=
   EarthScience.energy_flux_divergence_of_qg (psi := 1) (psi_x := 1) (psi_y := 0)
     (psi_t := 1) (psi_xt := 0) (psi_yt := 0) (psi_xxt := 0) (psi_yyt := 0) (Ld := 1)
-    (q_t := -1) (q_x := 0) (q_y := 1) (q_xy := 0) (by norm_num) (by norm_num)
+    (q_t := -1) (q_x := 0) (q_y := 1) (q_xy := 0) (by norm_num) (by norm_num) (by norm_num)
 
 /-- Zero `x`-derivatives: `psi_x = 0, q_x = 0` gives `J(psi, q) = 0`. -/
 example {psi_y q_y : ℝ} :
