@@ -8,40 +8,32 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Causality.MissingData.Definitions
-public import MathlibExt.Probability.Causality.MissingData.Identification
+public import MathlibExt.Probability.Causality.MissingData.GeneralIPW
 public import Mathlib.Probability.Independence.Integration
 public import Mathlib.Probability.Kernel.Condexp
 
 /-!
-# MAR as conditional independence and MAR in conditional-mean form
+# MAR as conditional independence: the product rule and the converse of mean MAR
 
 `MissingAtRandomCondIndepFun μ R X hX Y` states missing at random (Rubin 1976) as Mathlib's
 conditional independence `R ⊥ Y | σ(X)` of the response `ω ↦ ω ∈ R` and the outcome, on a standard
-Borel sample space with a finite measure. The general inverse-weighting theorem
-`integral_ipw_treated_condExp`, and its missing-data instance
-`integral_ipw_eq_integral_of_mar_condExp`, instead assume the *mean form*
-`μ[R.indicator Y | m] =ᵐ μ[R.indicator 1 | m] * μ[Y | m]` for a sub-σ-algebra `m`. This file proves
-that the first implies the second, characterizes conditional independence by the mean form for
-all transforms of the outcome, and shows that the mean form for the outcome alone is weaker.
+Borel sample space with a finite measure. `MissingData.GeneralIPW` derives from it the *mean form*
+`μ[R.indicator Y | m] =ᵐ μ[R.indicator 1 | m] * μ[Y | m]` that the inverse-weighting theorems
+assume (`condExp_inter_preimage_ae_eq_mul_of_condIndepFun`, then
+`condExp_indicator_ae_eq_mul_of_mar`). This file proves the product rule for conditionally
+independent real random variables and the converse: the mean form for every transform of the
+outcome implies MAR.
 
 ## Main results
 
 * `condExp_mul_of_condIndepFun`: if `f ⊥ g | m` for real `f`, `g` with `f`, `g`, `f g` integrable,
   then `E[f g | m] = E[f | m] E[g | m]`. Proved through `condExpKernel`: conditional independence
   makes `f` and `g` independent under almost every conditional law.
-* `condExp_indicator_comp_of_condIndepFun`: for any sub-σ-algebra `m`, `R ⊥ Y | m` gives
-  `E[1_R g(Y) | m] = P(R | m) E[g(Y) | m]` for every measurable `g` with `g ∘ Y` integrable.
-* `MissingAtRandomCondIndepFun.condExp_indicator_comp`: its instance `m = σ(X)`, and
-  `MissingAtRandomCondIndepFun.condExp_indicator_mul` for a real integrable outcome (`g = id`),
-  which is exactly the hypothesis `hMAR` / `hign` of the inverse-weighting theorems for `σ(X)`.
 * `missingAtRandomCondIndepFun_iff_forall_condExp`: MAR holds iff the mean form holds for every
-  measurable `g : 𝒴 → ℝ` with `g ∘ Y` integrable (indicators `g = 1_t` suffice).
-* `condExp_indicator_mul_of_condIndepDiscrete`: the discrete-covariate MAR condition
-  `CondIndepDiscrete μ R Y X` gives the mean form for `σ(X)`.
-* `MissingAtRandomCondIndepFun.integral_ipw_eq_integral`: under MAR and strong positivity
-  `P(R | σ(X)) ≥ ε > 0`, `E[1_R Y / P(R | σ(X))] = E[Y]`, by
-  `integral_ipw_eq_integral_of_mar_condExp`.
+  measurable `g : 𝒴 → ℝ` with `g ∘ Y` integrable. The forward direction is the `GeneralIPW`
+  bridge applied to `g ∘ Y`. The converse uses only indicators `g = 1_t`, that is the set-wise
+  form `P(R ∩ {Y ∈ t} | σ(X)) = P(R | σ(X)) P(Y ∈ t | σ(X))`, and gets the other events
+  `∅, Rᶜ, Ω` of `σ(R)` by linearity of conditional expectation.
 
 The test file shows that the mean form for `Y` alone does not imply MAR: a two-coin outcome
 uncorrelated with, but not independent of, the response.
@@ -49,13 +41,8 @@ uncorrelated with, but not independent of, the response.
 ## Not covered
 
 All results keep the standard Borel sample space and finite measure that Mathlib's `CondIndepFun`
-requires; conditional independence on a general measurable space is not defined in Mathlib.
-`condExp_indicator_mul_of_condIndepDiscrete` never mentions `CondIndepFun` in its statement; it
-assumes a standard Borel sample space only because its proof goes through `CondIndepFun`
-(`missingAtRandomCondIndepFun_iff_condIndepDiscrete`), not because the discrete statement needs
-it.
-The propensity-weighted mean `ipwMean` of the discrete development is not equated here with the
-conditional-expectation weighted mean.
+requires; conditional independence on a general measurable space is not defined in Mathlib. The
+converse is proved for the covariate σ-algebra `σ(X)` only, not for a general sub-σ-algebra.
 
 ## References
 
@@ -69,7 +56,6 @@ conditional-expectation weighted mean.
 namespace MathlibExt.Probability.Causality.MissingData
 
 open MeasureTheory ProbabilityTheory
-open MathlibExt.Probability.Causality (CondIndepDiscrete)
 
 variable {Ω 𝒳 𝒴 : Type*} {m mΩ : MeasurableSpace Ω} {μ : Measure Ω}
 
@@ -95,107 +81,18 @@ theorem condExp_mul_of_condIndepFun [StandardBorelSpace Ω] [IsFiniteMeasure μ]
   rw [h1, Pi.mul_apply, h2, h3]
   exact h4.integral_mul_eq_mul_integral hf.aestronglyMeasurable hg.aestronglyMeasurable
 
-/-! ### MAR implies MAR in conditional-mean form -/
+/-! ### MAR is mean MAR for every transform of the outcome -/
 
 section MAR
 
 variable [m𝒳 : MeasurableSpace 𝒳] [MeasurableSpace 𝒴]
 
-omit [MeasurableSpace 𝒴] in
-private lemma measurable_mem_set' {R : Set Ω} (hR : MeasurableSet R) :
-    Measurable (· ∈ R : Ω → Prop) :=
-  measurableSet_setOfPred.1 hR
-
-omit [MeasurableSpace 𝒴] in
-/-- The response indicator `1_R` as a function of the `Prop`-valued response `ω ↦ ω ∈ R`. -/
-private lemma indicator_one_eq_comp (R : Set Ω) :
-    R.indicator (1 : Ω → ℝ) = (fun p : Prop => by classical exact if p then (1 : ℝ) else 0) ∘
-      (· ∈ R) := by
-  classical
-  funext ω
-  by_cases h : ω ∈ R <;> simp [h]
-
-/-- **Conditional independence of the response gives the mean form, for any σ-algebra.** If the
-response `ω ↦ ω ∈ R` is conditionally independent of the outcome `Y` given a sub-σ-algebra `m`
-(Mathlib's `CondIndepFun`), then for every measurable `g : 𝒴 → ℝ` with `g ∘ Y` integrable,
-`E[1_R g(Y) | m] = P(R | m) E[g(Y) | m]` almost everywhere. -/
-theorem condExp_indicator_comp_of_condIndepFun [StandardBorelSpace Ω] [IsFiniteMeasure μ]
-    (hm : m ≤ mΩ) {R : Set Ω} {Y : Ω → 𝒴} (h : CondIndepFun m hm (· ∈ R) Y μ)
-    (hR : MeasurableSet R) (hY : Measurable Y) {g : 𝒴 → ℝ} (hg : Measurable g)
-    (hgY : Integrable (g ∘ Y) μ) :
-    μ[R.indicator (g ∘ Y) | m] =ᵐ[μ] fun ω => μ[R.indicator 1 | m] ω * μ[g ∘ Y | m] ω := by
-  have hφ : Measurable (fun p : Prop => by classical exact if p then (1 : ℝ) else 0) :=
-    .of_discrete
-  have hCI : CondIndepFun m hm (R.indicator (1 : Ω → ℝ)) (g ∘ Y) μ := by
-    rw [indicator_one_eq_comp]
-    exact CondIndepFun.comp h hφ hg
-  have hRi : Integrable (R.indicator (1 : Ω → ℝ)) μ := (integrable_const (1 : ℝ)).indicator hR
-  have hmul : R.indicator (g ∘ Y) = R.indicator (1 : Ω → ℝ) * (g ∘ Y) := by
-    funext ω
-    by_cases hω : ω ∈ R <;> simp [hω]
-  rw [hmul]
-  refine condExp_mul_of_condIndepFun hm (measurable_const.indicator hR) (hg.comp hY) hCI hRi hgY ?_
-  rw [← hmul]
-  exact hgY.indicator hR
-
-/-- **MAR gives mean MAR for every transform of the outcome.** If the response `R` is
-conditionally independent of the outcome `Y` given `σ(X)` (`MissingAtRandomCondIndepFun`), then
-for every measurable `g : 𝒴 → ℝ` with `g ∘ Y` integrable,
-`E[1_R g(Y) | σ(X)] = P(R | σ(X)) E[g(Y) | σ(X)]` almost everywhere. The instance
-`m = σ(X)` of `condExp_indicator_comp_of_condIndepFun`. -/
-theorem MissingAtRandomCondIndepFun.condExp_indicator_comp [StandardBorelSpace Ω]
-    [IsFiniteMeasure μ] {R : Set Ω} {X : Ω → 𝒳} {hX : Measurable X} {Y : Ω → 𝒴}
-    (h : MissingAtRandomCondIndepFun μ R X hX Y) (hR : MeasurableSet R) (hY : Measurable Y)
-    {g : 𝒴 → ℝ} (hg : Measurable g) (hgY : Integrable (g ∘ Y) μ) :
-    μ[R.indicator (g ∘ Y) | m𝒳.comap X] =ᵐ[μ]
-      fun ω => μ[R.indicator 1 | m𝒳.comap X] ω * μ[g ∘ Y | m𝒳.comap X] ω :=
-  condExp_indicator_comp_of_condIndepFun hX.comap_le h hR hY hg hgY
-
-/-- **MAR gives the mean-MAR hypothesis of inverse weighting.** For a real integrable outcome,
-`MissingAtRandomCondIndepFun` implies `E[1_R Y | σ(X)] = P(R | σ(X)) E[Y | σ(X)]` almost
-everywhere: the hypothesis `hMAR` of `integral_ipw_eq_integral_of_mar_condExp` and `hign` of
-`integral_ipw_treated_condExp`, for the σ-algebra `m = σ(X)`. -/
-theorem MissingAtRandomCondIndepFun.condExp_indicator_mul [StandardBorelSpace Ω]
-    [IsFiniteMeasure μ] {R : Set Ω} {X : Ω → 𝒳} {hX : Measurable X} {Y : Ω → ℝ}
-    (h : MissingAtRandomCondIndepFun μ R X hX Y) (hR : MeasurableSet R) (hY : Measurable Y)
-    (hYi : Integrable Y μ) :
-    μ[R.indicator Y | m𝒳.comap X] =ᵐ[μ]
-      fun ω => μ[R.indicator 1 | m𝒳.comap X] ω * μ[Y | m𝒳.comap X] ω :=
-  h.condExp_indicator_comp hR hY measurable_id hYi
-
-/-- **Discrete MAR gives the mean form.** For a countably valued covariate with measurable
-singletons on a standard Borel sample space, the discrete conditional independence
-`CondIndepDiscrete μ R Y X` (equivalently `MissingOutcomes.MissingAtRandom μ R Y X`) implies
-`E[1_R Y | σ(X)] = P(R | σ(X)) E[Y | σ(X)]` almost everywhere, through
-`missingAtRandomCondIndepFun_iff_condIndepDiscrete`. -/
-theorem condExp_indicator_mul_of_condIndepDiscrete [StandardBorelSpace Ω] [IsFiniteMeasure μ]
-    [Countable 𝒳] [MeasurableSingletonClass 𝒳] {R : Set Ω} {X : Ω → 𝒳} {Y : Ω → ℝ}
-    (h : CondIndepDiscrete μ R Y X) (hR : MeasurableSet R) (hX : Measurable X)
-    (hY : Measurable Y) (hYi : Integrable Y μ) :
-    μ[R.indicator Y | m𝒳.comap X] =ᵐ[μ]
-      fun ω => μ[R.indicator 1 | m𝒳.comap X] ω * μ[Y | m𝒳.comap X] ω :=
-  ((missingAtRandomCondIndepFun_iff_condIndepDiscrete hR hX hY).2 h).condExp_indicator_mul hR hY
-    hYi
-
-omit [MeasurableSpace 𝒴] in
-/-- A set of propositions pulls back under `ω ↦ ω ∈ R` to `∅`, `R`, `Rᶜ` or everything. -/
-private lemma preimage_mem_cases' (R : Set Ω) (s : Set Prop) :
-    (· ∈ R) ⁻¹' s = ∅ ∨ (· ∈ R) ⁻¹' s = R ∨ (· ∈ R) ⁻¹' s = Rᶜ ∨
-      (· ∈ R) ⁻¹' s = Set.univ := by
-  by_cases h1 : True ∈ s <;> by_cases h2 : False ∈ s
-  · refine Or.inr (Or.inr (Or.inr ?_))
-    ext ω; by_cases h : ω ∈ R <;> simp [h, h1, h2]
-  · refine Or.inr (Or.inl ?_)
-    ext ω; by_cases h : ω ∈ R <;> simp [h, h1, h2]
-  · refine Or.inr (Or.inr (Or.inl ?_))
-    ext ω; by_cases h : ω ∈ R <;> simp [h, h1, h2]
-  · refine Or.inl ?_
-    ext ω; by_cases h : ω ∈ R <;> simp [h, h1, h2]
-
 /-- **MAR is mean MAR for all transforms of the outcome.** On a standard Borel sample space with a
 finite measure, `MissingAtRandomCondIndepFun μ R X hX Y` holds iff for every measurable
 `g : 𝒴 → ℝ` with `g ∘ Y` integrable, `E[1_R g(Y) | σ(X)] = P(R | σ(X)) E[g(Y) | σ(X)]` almost
-everywhere. The reverse direction uses only indicators `g = 1_t`. -/
+everywhere. The forward direction is `condExp_inter_preimage_ae_eq_mul_of_condIndepFun` followed
+by `condExp_indicator_ae_eq_mul_of_mar`, applied to `g ∘ Y`. The reverse direction uses only
+indicators `g = 1_t`. -/
 theorem missingAtRandomCondIndepFun_iff_forall_condExp [StandardBorelSpace Ω]
     [IsFiniteMeasure μ] {R : Set Ω} {X : Ω → 𝒳} (hX : Measurable X) {Y : Ω → 𝒴}
     (hR : MeasurableSet R) (hY : Measurable Y) :
@@ -203,10 +100,12 @@ theorem missingAtRandomCondIndepFun_iff_forall_condExp [StandardBorelSpace Ω]
       ∀ g : 𝒴 → ℝ, Measurable g → Integrable (g ∘ Y) μ →
         μ[R.indicator (g ∘ Y) | m𝒳.comap X] =ᵐ[μ]
           fun ω => μ[R.indicator 1 | m𝒳.comap X] ω * μ[g ∘ Y | m𝒳.comap X] ω := by
-  refine ⟨fun h g hg hgY => h.condExp_indicator_comp hR hY hg hgY, fun H => ?_⟩
   have hm : m𝒳.comap X ≤ mΩ := hX.comap_le
+  refine ⟨fun h g hg hgY => condExp_indicator_ae_eq_mul_of_mar hm hR (hg.comp hY) hgY
+    (condExp_inter_preimage_ae_eq_mul_of_condIndepFun hm hR (hg.comp hY)
+      (CondIndepFun.comp (φ := id) (ψ := g) h measurable_id hg)), fun H => ?_⟩
   rw [MissingAtRandomCondIndepFun,
-    condIndepFun_iff_condExp_inter_preimage_eq_mul (measurable_mem_set' hR) hY]
+    condIndepFun_iff_condExp_inter_preimage_eq_mul (measurable_mem_set hR) hY]
   intro s t _ ht
   have hYt : MeasurableSet (Y ⁻¹' t) := hY ht
   have hcomp : t.indicator (1 : 𝒴 → ℝ) ∘ Y = (Y ⁻¹' t).indicator 1 := by
@@ -215,7 +114,7 @@ theorem missingAtRandomCondIndepFun_iff_forall_condExp [StandardBorelSpace Ω]
     (by rw [hcomp]; exact (integrable_const (1 : ℝ)).indicator hYt)
   rw [hcomp, Set.indicator_indicator] at key
   have hone : μ[(fun _ => (1 : ℝ)) | m𝒳.comap X] = fun _ => 1 := condExp_const hm 1
-  rcases preimage_mem_cases' R s with hs | hs | hs | hs <;> rw [hs]
+  rcases preimage_mem_cases R s with hs | hs | hs | hs <;> rw [hs]
   · simp only [Set.empty_inter, Set.indicator_empty]
     exact Filter.EventuallyEq.rfl.trans (ae_of_all _ fun ω => by simp)
   · exact key
@@ -243,21 +142,6 @@ theorem missingAtRandomCondIndepFun_iff_forall_condExp [StandardBorelSpace Ω]
     ring
   · simp only [Set.univ_inter, Set.indicator_univ]
     exact ae_of_all _ fun ω => by simp [hone]
-
-/-- **Inverse weighting under MAR.** For a real integrable outcome that is missing at random
-given `X` (`MissingAtRandomCondIndepFun`, standard Borel sample space) and strong response
-positivity `P(R | σ(X)) ≥ ε > 0`, the inverse-response-weighted mean of the respondents'
-outcomes identifies `E[Y]`. This is `integral_ipw_eq_integral_of_mar_condExp` at `m = σ(X)`, with
-its mean-MAR hypothesis `hMAR` discharged by `MissingAtRandomCondIndepFun.condExp_indicator_mul`.
--/
-theorem MissingAtRandomCondIndepFun.integral_ipw_eq_integral [StandardBorelSpace Ω]
-    [IsProbabilityMeasure μ] {R : Set Ω} {X : Ω → 𝒳} {hX : Measurable X} {Y : Ω → ℝ}
-    (h : MissingAtRandomCondIndepFun μ R X hX Y) (hR : MeasurableSet R) (hY : Measurable Y)
-    (hYi : Integrable Y μ) {ε : ℝ} (hε : 0 < ε)
-    (hpos : ∀ᵐ ω ∂μ, ε ≤ μ[R.indicator 1 | m𝒳.comap X] ω) :
-    ∫ ω, R.indicator (fun ω => Y ω / μ[R.indicator 1 | m𝒳.comap X] ω) ω ∂μ = ∫ ω, Y ω ∂μ :=
-  integral_ipw_eq_integral_of_mar_condExp hX.comap_le hR hYi (h.condExp_indicator_mul hR hY hYi)
-    hε hpos
 
 end MAR
 
