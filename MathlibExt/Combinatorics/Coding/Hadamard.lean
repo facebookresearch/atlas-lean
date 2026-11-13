@@ -10,11 +10,12 @@ module
 
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.ZMod.Basic
+public import Mathlib.InformationTheory.Hamming
 import Mathlib.Tactic.Ring
 
 @[expose] public section
 
-
+namespace MathlibExt.Combinatorics.Coding.Hadamard
 
 /-- The dot product of two binary vectors. -/
 def dot {m : ℕ} (a r : Fin m → ZMod 2) : ZMod 2 :=
@@ -78,7 +79,8 @@ private theorem dot_basis {m : ℕ} (a : Fin m → ZMod 2) (i : Fin m) :
 
 /-- Every nonzero Hadamard codeword has weight exactly half
 the block length: `dot a r = 1` for exactly `2 ^ (m - 1)` of
-the `2 ^ m` vectors `r`. -/
+the `2 ^ m` vectors `r`. See `hammingNorm_hadCode` for the
+same count as the Hamming norm of `hadCode a`. -/
 theorem hadWeight {m : ℕ} (a : Fin m → ZMod 2) (ha : a ≠ 0) :
     (Finset.univ.filter (fun r => dot a r = 1)).card =
       2 ^ (m - 1) := by
@@ -136,11 +138,22 @@ theorem hadWeight {m : ℕ} (a : Fin m → ZMod 2) (ha : a ≠ 0) :
   rw [huniv, pow_succ] at hsum
   omega
 
-/-- The Hadamard code has minimum distance `2 ^ (m - 1)`:
-distinct codewords differ in exactly that many positions. -/
+/-- `hadWeight` in Mathlib's Hamming vocabulary: a nonzero
+Hadamard codeword has Hamming norm `2 ^ (m - 1)`. -/
+theorem hammingNorm_hadCode {m : ℕ} (a : Fin m → ZMod 2) (ha : a ≠ 0) :
+    hammingNorm (hadCode a) = 2 ^ (m - 1) := by
+  rw [hammingNorm, ← hadWeight a ha]
+  congr 1
+  apply Finset.filter_congr
+  intro r _
+  exact (by decide : ∀ x : ZMod 2, x ≠ 0 ↔ x = 1) (dot a r)
+
+/-- Distinct Hadamard codewords are at Hamming distance
+exactly `2 ^ (m - 1)`. For `m = 0` there is only one
+codeword, so the hypothesis `a ≠ b` cannot hold and the
+statement is vacuous. -/
 theorem hadDist {m : ℕ} (a b : Fin m → ZMod 2) (hab : a ≠ b) :
-    (Finset.univ.filter (fun r => dot a r ≠ dot b r)).card =
-      2 ^ (m - 1) := by
+    hammingDist (hadCode a) (hadCode b) = 2 ^ (m - 1) := by
   have hab0 : a + b ≠ 0 := by
     intro hcon
     apply hab
@@ -149,15 +162,12 @@ theorem hadDist {m : ℕ} (a b : Fin m → ZMod 2) (hab : a ≠ b) :
       have h := congrFun hcon i
       simpa using h
     exact (by decide : ∀ x y : ZMod 2, x + y = 0 → x = y) (a i) (b i) hi
-  have hfeq : Finset.univ.filter (fun r : Fin m → ZMod 2 => dot a r ≠ dot b r)
-      = Finset.univ.filter (fun r => dot (a + b) r = 1) := by
-    apply Finset.filter_congr
-    intro r _
-    show (dot a r ≠ dot b r) ↔ (dot (a + b) r = 1)
-    rw [dot_add_left]
-    exact (by decide : ∀ u v : ZMod 2, (u ≠ v) ↔ (u + v = 1)) (dot a r) (dot b r)
-  rw [hfeq]
-  exact hadWeight (a + b) hab0
+  rw [hammingDist, ← hadWeight (a + b) hab0]
+  congr 1
+  apply Finset.filter_congr
+  intro r _
+  rw [dot_add_left]
+  exact (by decide : ∀ u v : ZMod 2, (u ≠ v) ↔ (u + v = 1)) (dot a r) (dot b r)
 
 /-- The Hadamard encoding is injective (its dimension is
 `m`). -/
@@ -169,3 +179,5 @@ theorem hadCode_injective {m : ℕ} :
   simp only [hadCode] at h
   rw [dot_basis, dot_basis] at h
   exact h
+
+end MathlibExt.Combinatorics.Coding.Hadamard
