@@ -10,11 +10,11 @@ module
 
 import MathlibExt.Biology.Biophysics.CableTimeDependent
 
-/-! Tests for the time-dependent sealed-end cable: mode values, a mode norm computed with
-Mathlib's `integral_cos_sq`, decay rates at sample parameters, a hand-checked solution witnessing
-that `IsCableSolution`, `SealedEnds` and the hypotheses of `modeCoeff_eq_mul_exp` are
-satisfiable, a summable coefficient sequence for the infinite expansion, and boundary cases
-(`ℓ = 0`, `t = 0`, no nonuniform modes). -/
+/-! Tests for the time-dependent sealed-end cable: mode values, a mode self-inner-product
+(squared norm) computed with Mathlib's `integral_cos_sq`, decay rates at sample parameters, a
+hand-checked solution witnessing that `IsCableSolution`, `SealedEnds` and the hypotheses of
+`modeCoeff_eq_mul_exp` are satisfiable, a summable coefficient sequence for the infinite
+expansion, and boundary cases (`ℓ = 0`, `t = 0`, no nonuniform modes). -/
 
 open Real Set Filter Topology intervalIntegral
 
@@ -36,8 +36,8 @@ example : cosMode 2 1 1 = 0 := by
   simp only [cosMode, Nat.cast_one, one_mul, mul_one]
   exact cos_pi_div_two
 
-/-- Mode norm on `[0, π]` computed with Mathlib's `integral_cos_sq`, independently of
-`integral_cosMode_mul_cosMode`: `∫₀^π cos² = π / 2`. -/
+/-- Mode self-inner-product (squared `L²` norm) on `[0, π]` computed with Mathlib's
+`integral_cos_sq`, independently of `integral_cosMode_mul_cosMode`: `∫₀^π cos² = π / 2`. -/
 example : ∫ x in (0 : ℝ)..π, cosMode π 1 x * cosMode π 1 x = π / 2 := by
   have h : (fun x => cosMode π 1 x * cosMode π 1 x) = fun x => cos x ^ 2 := by
     funext x; simp [cosMode, pi_ne_zero, sq]
@@ -70,7 +70,7 @@ example : decayRate 5 3 7 0 = 1 / 5 := by simp [decayRate]
 example : π / √(decayRate 1 1 π 1 / decayRate 1 1 π 0 - 1) = π / 1 := by
   simp [decayRate, pi_ne_zero]
 
-/-- Boundary `ℓ = 0`: every mode decays at the membrane rate, so `decayRate_strictMono`
+/-- Boundary `ℓ = 0`: every mode has the membrane rate `1 / τ`, so `decayRate_strictMono`
 genuinely needs `ℓ ≠ 0`. -/
 example (τ L : ℝ) (n : ℕ) : decayRate τ 0 L n = 1 / τ := by simp [decayRate]
 

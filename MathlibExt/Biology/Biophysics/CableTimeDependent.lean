@@ -33,31 +33,35 @@ solution at the times of `T`.
 * Modes. The sealed-end modes `cosMode L n x = cos (n π x / L)` satisfy
   `(cosMode L n)'' = -(n π / L)² cosMode L n` (`deriv_deriv_cosMode`), have zero slope at both
   ends (`deriv_cosMode_zero`, `deriv_cosMode_length`) and are orthogonal on `[0, L]` with
-  norms `L` (`n = 0`) and `L / 2` (`n ≥ 1`) (`integral_cosMode_mul_cosMode`).
-* Decay rates. Mode `n` decays at `k_n = (1 + ℓ² (n π / L)²) / τ` (`decayRate`):
-  `k_0 = 1 / τ` (`decayRate_zero`), `1 / τ ≤ k_n` (`one_div_le_decayRate`), `k_n` strictly
-  increasing for `ℓ, L ≠ 0` (`decayRate_strictMono`), Rall's ratio
-  `k_n / k_0 = 1 + (n π ℓ / L)²` (`decayRate_div_decayRate_zero`), and Rall's
-  electrotonic-length formula `L / ℓ = π / √(k₁ / k₀ - 1)`
-  (`div_eq_pi_div_sqrt_decayRate`).
+  self-inner-products `∫₀ᴸ cos (n π x / L)² dx` equal to `L` (`n = 0`) and `L / 2` (`n ≥ 1`),
+  the squared `L²` norms when `L > 0` (`integral_cosMode_mul_cosMode`).
+* Rates. Mode `n` evolves as `e^{-k_n t}` with `k_n = (1 + ℓ² (n π / L)²) / τ` (`decayRate`),
+  and `k_0 = 1 / τ` (`decayRate_zero`). For `τ > 0` these are decay rates: `1 / τ ≤ k_n`
+  (`one_div_le_decayRate`) and `k_n` is strictly increasing for `ℓ, L ≠ 0`
+  (`decayRate_strictMono`). For `τ ≠ 0`: Rall's ratio `k_n / k_0 = 1 + (n π ℓ / L)²`
+  (`decayRate_div_decayRate_zero`) and Rall's electrotonic-length formula
+  `L / ℓ = π / √(k₁ / k₀ - 1)` (`div_eq_pi_div_sqrt_decayRate`).
 * Finite expansion `cableSum`: `∑_{n ∈ s} a n e^{-k_n t} cos (n π x / L)` solves the equation
   at all times (`isCableSolution_cableSum`) with sealed ends (`sealedEnds_cableSum`); its
-  coefficients decay mode by mode (`integral_cableSum_mul_cosMode`); it obeys the bound
+  `n`-th coefficient is `a n e^{-k_n t}` times the mode's self-inner-product
+  (`integral_cableSum_mul_cosMode`); for `τ > 0` it obeys the bound
   `e^{-t/τ} ∑ |a n|`, uniform in `x` (`abs_cableSum_le`), and tends to `0` at every position
   (`tendsto_cableSum`); without the uniform mode the bound improves to rate `k₁`
   (`abs_cableSum_le_of_zero_notMem`), and equalizes: `e^{t/τ} V t x → a₀`
   (`tendsto_exp_mul_cableSum`).
-* Infinite expansion `cableSeries` with `∑ |a n| < ∞` and `ℓ ≠ 0`: termwise differentiable
-  for `t > 0`, solves the equation on `t > 0` (`isCableSolution_cableSeries`) with sealed ends
-  (`sealedEnds_cableSeries`), initial profile `∑ a n cos (n π x / L)`
+* Infinite expansion `cableSeries` with `τ > 0`, `∑ |a n| < ∞` and `ℓ ≠ 0`: termwise
+  differentiable for `t > 0`, solves the equation on `t > 0` (`isCableSolution_cableSeries`) with
+  sealed ends (`sealedEnds_cableSeries`), initial profile `∑ a n cos (n π x / L)`
   (`cableSeries_time_zero`), the bound `e^{-t/τ} ∑ |a n|`, uniform in `x`
   (`abs_cableSeries_le`), convergence to `0` at every position (`tendsto_cableSeries`) and
   mode-by-mode coefficients `a n e^{-k_n t}` (`integral_cableSeries_mul_cosMode`).
 * Arbitrary sealed solutions (`modeCoeff_eq_mul_exp`): for every classical sealed solution on an
   open preconnected time set `T` with `∂ₜV` jointly continuous and `∂ₓ²V` continuous in `x`,
-  each cosine coefficient `c_n(t) = ∫₀ᴸ V t x cos (n π x / L) dx` (`modeCoeff`) satisfies
-  `c_n(t) = c_n(t₀) e^{-k_n (t - t₀)}`. Hence `c_n → 0` (`tendsto_modeCoeff`), and the total
-  potential `∫₀ᴸ V t` decays at exactly `1 / τ` (`integral_eq_mul_exp`).
+  each cosine coefficient `c_n(t) = ∫₀ᴸ V t x cos (n π x / L) dx` (`modeCoeff`) obeys the
+  exponential evolution law `c_n(t) = c_n(t₀) e^{-k_n (t - t₀)}`, and the total potential obeys
+  `∫₀ᴸ V t = (∫₀ᴸ V t₀) e^{-(t - t₀) / τ}` (`integral_eq_mul_exp`). These need only `τ ≠ 0`, so
+  they include growth when `τ < 0`. For `τ > 0` they are decay laws: `c_n → 0`
+  (`tendsto_modeCoeff`), and the total potential decays at exactly the membrane rate `1 / τ`.
 * Steady state, minimally restated. `sealedSteady ℓ L x = cosh ((L - x) / ℓ)` solves
   `ℓ² W'' = W` (`sealedSteady_steady`), is sealed at `L`, and has slope `-sinh (L / ℓ) / ℓ` at
   `0`. The charging transient `chargingSum` (steady profile plus a finite expansion) solves the
@@ -68,7 +72,8 @@ solution at the times of `T`.
 ## Scope
 
 * Completeness of the cosine system is not formalized, so a sealed solution is not identified
-  with its expansion; `modeCoeff_eq_mul_exp` gives the decay of every coefficient instead.
+  with its expansion; `modeCoeff_eq_mul_exp` gives the exponential evolution of every
+  coefficient instead.
 * The infinite expansion assumes absolutely summable coefficients (not merely square-summable
   ones), and its continuity at `t = 0` is not stated.
 * `modeCoeff_eq_mul_exp` needs `t, t₀` in the open set `T`, so the initial time itself is
@@ -191,13 +196,14 @@ theorem integral_cosMode_mul_cosMode {L : ℝ} (hL : L ≠ 0) (m n : ℕ) :
 
 /-! ### Decay rates -/
 
-/-- Decay rate of the `n`-th sealed-end mode of the cable equation `τ V_t = ℓ² V_xx - V` on
-`[0, L]`: `k_n = (1 + ℓ² (n π / L)²) / τ`, the reciprocal of Rall's `n`-th equalizing time
-constant. -/
+/-- Rate of the `n`-th sealed-end mode of the cable equation `τ V_t = ℓ² V_xx - V` on
+`[0, L]`: the mode evolves as `e^{-k_n t}` with `k_n = (1 + ℓ² (n π / L)²) / τ`, the reciprocal of
+Rall's `n`-th equalizing time constant. It is a decay rate (`0 < k_n`, `decayRate_pos`) when
+`τ > 0`. -/
 noncomputable def decayRate (τ ℓ L : ℝ) (n : ℕ) : ℝ :=
   (1 + ℓ ^ 2 * (n * π / L) ^ 2) / τ
 
-/-- The uniform mode decays at the membrane rate `1 / τ`. -/
+/-- The uniform mode's rate is the membrane rate `1 / τ`. -/
 theorem decayRate_zero (τ ℓ L : ℝ) : decayRate τ ℓ L 0 = 1 / τ := by simp [decayRate]
 
 /-- No mode decays more slowly than the membrane rate: `1 / τ ≤ k_n`. -/
@@ -233,7 +239,8 @@ theorem decayRate_div_decayRate_zero {τ : ℝ} (hτ : τ ≠ 0) (ℓ L : ℝ) (
   field_simp
 
 /-- Rall's electrotonic-length formula: the cable length in units of the length constant is
-recovered from the two slowest decay rates, `L / ℓ = π / √(k₁ / k₀ - 1)`. -/
+recovered from the rates `k₀` and `k₁` (the two slowest decay rates when `τ > 0`),
+`L / ℓ = π / √(k₁ / k₀ - 1)`. -/
 theorem div_eq_pi_div_sqrt_decayRate {τ ℓ L : ℝ} (hτ : τ ≠ 0) (hℓ : 0 < ℓ) (hL : 0 < L) :
     L / ℓ = π / √(decayRate τ ℓ L 1 / decayRate τ ℓ L 0 - 1) := by
   rw [decayRate_div_decayRate_zero hτ, add_sub_cancel_left, Nat.cast_one, one_mul,
@@ -431,9 +438,9 @@ theorem tendsto_exp_mul_cableSum {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠
   rw [hsplit]
   simpa using hrest.const_add (a 0)
 
-/-- Mode-by-mode decay of the expansion coefficients: the `n`-th cosine coefficient of the
-finite expansion at time `t` is `a n e^{-k_n t}` times the mode norm (`L` for `n = 0`,
-`L / 2` otherwise). -/
+/-- Mode-by-mode coefficients of the finite expansion: the `n`-th cosine coefficient at time
+`t` is `a n e^{-k_n t}` times the mode's self-inner-product `∫₀ᴸ cos (n π x / L)² dx` (`L` for
+`n = 0`, `L / 2` otherwise). -/
 theorem integral_cableSum_mul_cosMode {L : ℝ} (hL : L ≠ 0) (τ ℓ : ℝ) (s : Finset ℕ)
     (a : ℕ → ℝ) (t : ℝ) (n : ℕ) :
     ∫ x in (0 : ℝ)..L, cableSum τ ℓ L s a t x * cosMode L n x =
@@ -551,11 +558,13 @@ theorem hasDerivAt_modeCoeff {L : ℝ} (hL : 0 < L) {T : Set ℝ} (hT : IsOpen T
     exact (hdiff s (hball (Metric.ball_subset_ball (half_le_self hε.le) hs)) x
       (hIoc hx)).hasDerivAt.mul_const _
 
-/-- **Mode-by-mode decay of an arbitrary sealed solution.** Let `V` be a classical solution of
-`τ ∂ₜV = ℓ² ∂ₓ²V - V` on `[0, L]` with sealed ends, at the times of an open interval-like
-(open, preconnected) set `T`, with `∂ₜV` jointly continuous on `T × [0, L]` and `∂ₓ²V`
-continuous in `x`. Then every cosine coefficient decays at exactly its rate `k_n`:
-`c_n(t) = c_n(t₀) e^{-k_n (t - t₀)}` for `t, t₀ ∈ T`. -/
+/-- **Mode-by-mode exponential evolution of an arbitrary sealed solution.** Let `V` be a
+classical solution of `τ ∂ₜV = ℓ² ∂ₓ²V - V` (`τ ≠ 0`) on `[0, L]` with sealed ends, at the times
+of an open interval-like (open, preconnected) set `T`, with `∂ₜV` jointly continuous on
+`T × [0, L]` and `∂ₓ²V` continuous in `x`. Then every cosine coefficient evolves exactly as
+`c_n(t) = c_n(t₀) e^{-k_n (t - t₀)}` for `t, t₀ ∈ T`. This is decay at rate `k_n > 0` when
+`τ > 0` (`tendsto_modeCoeff`); for `τ < 0`, `k_0 = 1 / τ < 0` and a nonzero uniform coefficient
+grows. -/
 theorem modeCoeff_eq_mul_exp {τ ℓ L : ℝ} (hτ : τ ≠ 0) (hL : 0 < L) {T : Set ℝ}
     (hT : IsOpen T) (hT' : IsPreconnected T) {V : ℝ → ℝ → ℝ}
     (hV : IsCableSolution τ ℓ L T V) (hsealed : SealedEnds L T V)
@@ -823,7 +832,8 @@ theorem sealedEnds_cableSeries {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0
   simp [deriv_cosMode_zero, deriv_cosMode_length hL]
 
 /-- Coefficients of the infinite expansion: for `t ≥ 0`, its `n`-th cosine coefficient is
-`a n e^{-k_n t}` times the mode norm (`L` for `n = 0`, `L / 2` otherwise). -/
+`a n e^{-k_n t}` times the mode's self-inner-product `∫₀ᴸ cos (n π x / L)² dx` (`L` for `n = 0`,
+`L / 2` otherwise). -/
 theorem integral_cableSeries_mul_cosMode {τ L : ℝ} (hτ : 0 < τ) (hL : L ≠ 0) (ℓ : ℝ)
     {a : ℕ → ℝ} (ha : Summable fun n => |a n|) {t : ℝ} (ht : 0 ≤ t) (m : ℕ) :
     ∫ x in (0 : ℝ)..L, cableSeries τ ℓ L a t x * cosMode L m x =
@@ -865,9 +875,9 @@ theorem integral_cableSeries_mul_cosMode {τ L : ℝ} (hτ : 0 < τ) (hL : L ≠
   rw [← hsum.tsum_eq, tsum_eq_single m (fun n hn => by simp [Ne.symm hn])]
   simp
 
-/-! ### Consequences of mode-by-mode decay -/
+/-! ### Consequences of the exponential evolution law -/
 
-/-- Every cosine coefficient of a sealed solution on `t > 0` decays to `0`. -/
+/-- For `τ > 0`, every cosine coefficient of a sealed solution on `t > 0` decays to `0`. -/
 theorem tendsto_modeCoeff {τ ℓ L : ℝ} (hτ : 0 < τ) (hL : 0 < L) {V : ℝ → ℝ → ℝ}
     (hV : IsCableSolution τ ℓ L (Ioi 0) V) (hsealed : SealedEnds L (Ioi 0) V)
     (hVt : ContinuousOn (fun p : ℝ × ℝ => deriv (fun s => V s p.2) p.1) (Ioi 0 ×ˢ Icc 0 L))
@@ -884,8 +894,9 @@ theorem tendsto_modeCoeff {τ ℓ L : ℝ} (hτ : 0 < τ) (hL : 0 < L) {V : ℝ 
     (tendsto_atTop_add_const_right _ (-1) tendsto_id).const_mul_atTop_of_neg (by linarith)
   simpa using (tendsto_exp_atBot.comp this).const_mul (modeCoeff L V n 1)
 
-/-- The total (integrated) potential of a sealed solution decays at exactly the membrane rate:
-`∫₀ᴸ V t = (∫₀ᴸ V t₀) e^{-(t - t₀)/τ}`. -/
+/-- Exponential evolution of the total (integrated) potential of a sealed solution:
+`∫₀ᴸ V t = (∫₀ᴸ V t₀) e^{-(t - t₀)/τ}` for `τ ≠ 0`. For `τ > 0` this is decay at exactly the
+membrane rate `1 / τ`; for `τ < 0` it is growth. -/
 theorem integral_eq_mul_exp {τ ℓ L : ℝ} (hτ : τ ≠ 0) (hL : 0 < L) {T : Set ℝ}
     (hT : IsOpen T) (hT' : IsPreconnected T) {V : ℝ → ℝ → ℝ}
     (hV : IsCableSolution τ ℓ L T V) (hsealed : SealedEnds L T V)
@@ -945,8 +956,8 @@ theorem deriv_sealedSteady_zero (ℓ L : ℝ) :
   simp [deriv_sealedSteady]
 
 /-- Charging transient `V t x = c cosh ((L - x)/ℓ) + ∑_{n ∈ s} a n e^{-k_n t} cos (n π x / L)`:
-steady response to a constant injected current at `x = 0` plus a decaying sealed-end
-expansion. -/
+steady response to a constant injected current at `x = 0` plus a sealed-end expansion, which
+decays when `τ > 0` (`tendsto_chargingSum`). -/
 noncomputable def chargingSum (τ ℓ L c : ℝ) (s : Finset ℕ) (a : ℕ → ℝ) (t x : ℝ) : ℝ :=
   c * sealedSteady ℓ L x + cableSum τ ℓ L s a t x
 
