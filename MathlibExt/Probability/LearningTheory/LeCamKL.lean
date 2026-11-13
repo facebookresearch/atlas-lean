@@ -327,6 +327,8 @@ private theorem binary_pinsker (r s : ℝ) (hr0 : 0 ≤ r) (hr1 : r ≤ 1)
 /-- Le Cam's bound in KL form: for two distributions on a finite
 type, any test's two error probabilities sum to at least
 `1 - √(KL / 2)` (Pinsker applied to Le Cam's two-point bound).
+The decision `δ a = true` chooses `q`, and `δ a = false` chooses `p`,
+so the error sum is `p[δ = true] + q[δ = false]`.
 Assumes `q` dominates `p` pointwise, so `klDiv` is finite and
 its real value is the KL sum. -/
 theorem lecam_kl {α : Type*} [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]

@@ -63,7 +63,7 @@ example :
   exact h
 
 /-- Nonconstant test: point mass at `0` against uniform input, with
-the test choosing `p` only at the other atom `1`. Its error sum is
+the test choosing `q` only at the other atom `1`. Its error sum is
 `p 1 + q 0 = 0 + 1 / 2 = 1 / 2`, so Le Cam's bound reads
 `1 - √(log 2 / 2) ≤ 1 / 2`. -/
 example :
