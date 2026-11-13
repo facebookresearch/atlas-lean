@@ -121,11 +121,11 @@ example : (testA 1 * testF' (1, 0)) * testK 1 / testY 1 = 1 / 3 := by
   have hA0 : testA 1 ≠ 0 := by rw [testA_1]; exact one_ne_zero
   have hF0 : testF (testK 1, testL 1) ≠ 0 := by
     rw [testK_1, testL_1, testF_12]; norm_num
-  have h := competitiveShare_capital_eq_elasticity (F := testF) hY hA0 hF0
+  have h := competitiveShare_capital_eq_elasticity hY testF_hasFDeriv hA0 hF0
   have hcap : capitalElasticity testF (testK 1) (testL 1) = 1 / 3 := by
     rw [testK_1, testL_1]
     exact testcap
-  rw [testF_hasFDeriv.fderiv, hcap] at h
+  rw [hcap] at h
   exact h
 
 example : (testA 1 * testF' (0, 1)) * testL 1 / testY 1 = 2 / 3 := by
@@ -133,11 +133,11 @@ example : (testA 1 * testF' (0, 1)) * testL 1 / testY 1 = 2 / 3 := by
   have hA0 : testA 1 ≠ 0 := by rw [testA_1]; exact one_ne_zero
   have hF0 : testF (testK 1, testL 1) ≠ 0 := by
     rw [testK_1, testL_1, testF_12]; norm_num
-  have h := competitiveShare_labour_eq_elasticity (F := testF) hY hA0 hF0
+  have h := competitiveShare_labour_eq_elasticity hY testF_hasFDeriv hA0 hF0
   have hlab : labourElasticity testF (testK 1) (testL 1) = 2 / 3 := by
     rw [testK_1, testL_1]
     exact testlab
-  rw [testF_hasFDeriv.fderiv, hlab] at h
+  rw [hlab] at h
   exact h
 
 example : (testA 1 * testF' (1, 0)) * testK 1 / testY 1 +

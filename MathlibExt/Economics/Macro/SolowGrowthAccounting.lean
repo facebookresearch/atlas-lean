@@ -131,32 +131,32 @@ theorem growthAccounting {F : ℝ × ℝ → ℝ} {F' : ℝ × ℝ →L[ℝ] ℝ
   field_simp
   try ring
 
-/-- **Capital share = capital elasticity under competitive pricing.** If capital
-is paid its marginal product, the capital price is `A * F_K` with
-`F_K = fderiv ℝ F (K, L) (1, 0)` (this is an explicit expression in the
+/-- **Capital share = capital elasticity under competitive pricing.** Let `F'` be
+the derivative of `F` at `(K, L)`. If capital is paid its marginal product, the
+capital price is `A * F' (1, 0)` (this is an explicit expression in the
 statement, NOT a proved claim about markets), then the capital income share
 `(price * K) / Y` equals the capital elasticity. -/
-theorem competitiveShare_capital_eq_elasticity {F : ℝ × ℝ → ℝ} {A K L Y : ℝ}
-    (hY : Y = A * F (K, L))
+theorem competitiveShare_capital_eq_elasticity {F : ℝ × ℝ → ℝ}
+    {F' : ℝ × ℝ →L[ℝ] ℝ} {A K L Y : ℝ}
+    (hY : Y = A * F (K, L)) (hF : HasFDerivAt F F' (K, L))
     (hA0 : A ≠ 0) (hF0 : F (K, L) ≠ 0) :
-    (A * fderiv ℝ F (K, L) (1, 0)) * K / Y = capitalElasticity F K L := by
+    (A * F' (1, 0)) * K / Y = capitalElasticity F K L := by
   have hden : A * F (K, L) ≠ 0 := mul_ne_zero hA0 hF0
-  rw [hY]
-  unfold capitalElasticity
+  rw [hY, capitalElasticity_eq_of_hasFDerivAt hF]
   field_simp
   try ring
 
-/-- **Labour share = labour elasticity under competitive pricing.** If labour is
-paid its marginal product, the wage is `A * F_L` with
-`F_L = fderiv ℝ F (K, L) (0, 1)` (explicit expression, NOT a proved claim), then
-the labour income share equals the labour elasticity. -/
-theorem competitiveShare_labour_eq_elasticity {F : ℝ × ℝ → ℝ} {A K L Y : ℝ}
-    (hY : Y = A * F (K, L))
+/-- **Labour share = labour elasticity under competitive pricing.** Let `F'` be
+the derivative of `F` at `(K, L)`. If labour is paid its marginal product, the
+wage is `A * F' (0, 1)` (explicit expression, NOT a proved claim), then the
+labour income share equals the labour elasticity. -/
+theorem competitiveShare_labour_eq_elasticity {F : ℝ × ℝ → ℝ}
+    {F' : ℝ × ℝ →L[ℝ] ℝ} {A K L Y : ℝ}
+    (hY : Y = A * F (K, L)) (hF : HasFDerivAt F F' (K, L))
     (hA0 : A ≠ 0) (hF0 : F (K, L) ≠ 0) :
-    (A * fderiv ℝ F (K, L) (0, 1)) * L / Y = labourElasticity F K L := by
+    (A * F' (0, 1)) * L / Y = labourElasticity F K L := by
   have hden : A * F (K, L) ≠ 0 := mul_ne_zero hA0 hF0
-  rw [hY]
-  unfold labourElasticity
+  rw [hY, labourElasticity_eq_of_hasFDerivAt hF]
   field_simp
   try ring
 
@@ -165,7 +165,10 @@ equal to the marginal products `A * F_K` and `A * F_L`) AND the pointwise Euler
 identity `hEuler : F (K, L) = K * F_K + L * F_L` at `(K, L)` (an explicit
 hypothesis, NOT proved here), the two factor shares sum to 1. Constant returns
 imply `hEuler`, but the pointwise identity is strictly weaker: `F (K, L) = K ^ 2 + 1`
-satisfies it at `(1, 1)` without having constant returns. -/
+satisfies it at `(1, 1)` without having constant returns. No separate
+differentiability hypothesis is needed: if `F` were not differentiable at
+`(K, L)`, `fderiv` would be `0` and `hEuler` would force `F (K, L) = 0`,
+contradicting `hF0`. -/
 theorem competitiveShares_sum_eq_one {F : ℝ × ℝ → ℝ} {A K L Y : ℝ}
     (hY : Y = A * F (K, L))
     (hEuler : F (K, L) = K * fderiv ℝ F (K, L) (1, 0) + L * fderiv ℝ F (K, L) (0, 1))
