@@ -19,9 +19,10 @@ Witnesses are built from the definitions, not from the theorems under test:
 
 * `Vmax = 2`, `Km = 1`, `R = 1` has the equilibrium `c = 1` (`mmRate 2 1 1 = 1`).
 * The constant `1` solves that equation (the equilibrium case).
-* `belowSol`, a non-constant solution with `belowSol 0 = 0 < 1 = c`, from the merged global
-  Picard theorem `ode_global_exists_of_global_lipschitz` applied to the field clamped at
-  `C = 0`, plus a direct barrier showing it stays nonnegative.
+* `belowSol` and `aboveSol`, non-constant solutions with `belowSol 0 = 0 < 1 = c` and
+  `aboveSol 0 = 2 > c`, from the merged global Picard theorem
+  `ode_global_exists_of_global_lipschitz` applied to the field clamped at `C = 0`, plus a direct
+  barrier showing they stay nonnegative.
 * `crit t = √(1 + 4 t) - 1` solves the critical equation `C' = 2 - mmRate 2 1 C` (`R = Vmax = 2`),
   checked by differentiating the square root directly. -/
 
@@ -95,6 +96,23 @@ lemma clampedField_continuous : Continuous (Function.uncurry clampedField) := by
       have := le_max_right p.2 0
       positivity)
 
+/-- Direct barrier at `0` for any solution of the clamped equation starting at `D 0 ≥ 0`:
+below `0` the clamped field equals `1 > 0`. -/
+lemma nonneg_of_clamped {D : ℝ → ℝ} (hD : ∀ t, HasDerivAt D (clampedField t (D t)) t)
+    (h0 : 0 ≤ D 0) {t : ℝ} (ht : 0 ≤ t) : 0 ≤ D t := by
+  have key : ∀ ε, 0 < ε → -D t ≤ ε := fun ε hε ↦
+    image_le_of_deriv_right_lt_deriv_boundary (f := fun s ↦ -D s)
+      (f' := fun s ↦ -clampedField s (D s)) (a := 0) (b := t) (B := fun _ ↦ ε)
+      (B' := fun _ ↦ 0) (fun x _ ↦ (hD x).fun_neg.continuousAt.continuousWithinAt)
+      (fun x _ ↦ (hD x).fun_neg.hasDerivWithinAt) (by linarith)
+      (fun x ↦ hasDerivAt_const x _)
+      (fun x _ hx ↦ by
+        have : max (D x) 0 = 0 := max_eq_right (by linarith)
+        simp [clampedField, this, mmRate])
+      ⟨ht, le_rfl⟩
+  have := le_of_forall_pos_le_add fun ε hε ↦ (show -D t ≤ 0 + ε by simpa using key ε hε)
+  linarith
+
 /-- The global solution of the clamped equation with `belowSol 0 = 0`. -/
 noncomputable def belowSol : ℝ → ℝ :=
   (MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz
@@ -108,20 +126,8 @@ lemma hasDerivAt_belowSol (t : ℝ) : HasDerivAt belowSol (clampedField t (below
   (MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz
     clampedField 0 0 2 clampedField_continuous clampedField_lipschitz).exists.choose_spec.2 t
 
-/-- Direct barrier at `0`: below `0` the clamped field equals `1 > 0`. -/
-lemma belowSol_nonneg {t : ℝ} (ht : 0 ≤ t) : 0 ≤ belowSol t := by
-  have key : ∀ ε, 0 < ε → -belowSol t ≤ ε := fun ε hε ↦
-    image_le_of_deriv_right_lt_deriv_boundary (f := fun s ↦ -belowSol s)
-      (f' := fun s ↦ -clampedField s (belowSol s)) (a := 0) (b := t) (B := fun _ ↦ ε)
-      (B' := fun _ ↦ 0) (fun x _ ↦ (hasDerivAt_belowSol x).fun_neg.continuousAt.continuousWithinAt)
-      (fun x _ ↦ (hasDerivAt_belowSol x).fun_neg.hasDerivWithinAt) (by simp [belowSol_zero, hε.le])
-      (fun x ↦ hasDerivAt_const x _)
-      (fun x _ hx ↦ by
-        have : max (belowSol x) 0 = 0 := max_eq_right (by linarith)
-        simp [clampedField, this, mmRate])
-      ⟨ht, le_rfl⟩
-  have := le_of_forall_pos_le_add fun ε hε ↦ (show -belowSol t ≤ 0 + ε by simpa using key ε hε)
-  linarith
+lemma belowSol_nonneg {t : ℝ} (ht : 0 ≤ t) : 0 ≤ belowSol t :=
+  nonneg_of_clamped hasDerivAt_belowSol (by simp [belowSol_zero]) ht
 
 /-- `belowSol` solves the unclamped equation `C' = 1 - mmRate 2 1 C` on `[0, ∞)`. -/
 lemma belowSol_solves : ∀ t : ℝ, 0 ≤ t → HasDerivAt belowSol (1 - mmRate 2 1 (belowSol t)) t :=
@@ -148,6 +154,76 @@ example {t : ℝ} (ht : 0 ≤ t) : exp (-t) ≤ 1 - belowSol t := by
     (by norm_num [mmRate]) (by simp [belowSol_zero]) (by simp [belowSol_zero]) ht
   have h : -((2 - 1) / (1 + belowSol 0)) * t = -t := by rw [belowSol_zero]; ring
   rwa [h, belowSol_zero, _root_.sub_zero, one_mul] at this
+
+/-- Invariance of the region below the equilibrium, on `belowSol`. -/
+example {t : ℝ} (ht : 0 ≤ t) : belowSol t ≤ 1 :=
+  le_of_initial_le belowSol_solves two_pos one_pos zero_le_one (by norm_num [mmRate])
+    (by simp [belowSol_zero]) ht
+
+/-- `belowSol` never drops below its initial value. -/
+example {t : ℝ} (ht : 0 ≤ t) : belowSol 0 ≤ belowSol t :=
+  initial_le_of_initial_le belowSol_solves two_pos one_pos zero_le_one (by norm_num [mmRate])
+    (by simp [belowSol_zero]) (by simp [belowSol_zero]) ht
+
+/-! ### A non-constant solution above the equilibrium -/
+
+/-- The global solution of the clamped equation with `aboveSol 0 = 2`. -/
+noncomputable def aboveSol : ℝ → ℝ :=
+  (MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz
+    clampedField 0 2 2 clampedField_continuous clampedField_lipschitz).exists.choose
+
+lemma aboveSol_zero : aboveSol 0 = 2 :=
+  (MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz
+    clampedField 0 2 2 clampedField_continuous clampedField_lipschitz).exists.choose_spec.1
+
+lemma hasDerivAt_aboveSol (t : ℝ) : HasDerivAt aboveSol (clampedField t (aboveSol t)) t :=
+  (MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz
+    clampedField 0 2 2 clampedField_continuous clampedField_lipschitz).exists.choose_spec.2 t
+
+/-- `aboveSol` solves the unclamped equation `C' = 1 - mmRate 2 1 C` on `[0, ∞)`. -/
+lemma aboveSol_solves : ∀ t : ℝ, 0 ≤ t → HasDerivAt aboveSol (1 - mmRate 2 1 (aboveSol t)) t :=
+    fun t ht ↦ by
+    simpa [clampedField, max_eq_left (nonneg_of_clamped hasDerivAt_aboveSol
+      (by norm_num [aboveSol_zero]) ht)] using hasDerivAt_aboveSol t
+
+/-- `aboveSol` is non-constant: its derivative at `0` is `1 - 4/3 = -1/3`, from the field. -/
+example : HasDerivAt aboveSol (-1 / 3) 0 := by
+  have h := aboveSol_solves 0 le_rfl
+  rw [aboveSol_zero] at h
+  convert h using 1
+  norm_num [mmRate]
+
+/-- Invariance of the region above the equilibrium. -/
+example {t : ℝ} (ht : 0 ≤ t) : 1 ≤ aboveSol t :=
+  le_of_le_initial aboveSol_solves two_pos one_pos zero_le_one (by norm_num [mmRate])
+    (by norm_num [aboveSol_zero]) ht
+
+/-- `aboveSol` never exceeds its initial value. -/
+example {t : ℝ} (ht : 0 ≤ t) : aboveSol t ≤ aboveSol 0 :=
+  le_initial_of_le_initial aboveSol_solves two_pos one_pos zero_le_one (by norm_num [mmRate])
+    (by norm_num [aboveSol_zero]) ht
+
+/-- Monotone approach from above. -/
+example : AntitoneOn aboveSol (Ici 0) :=
+  antitoneOn_of_le_initial aboveSol_solves two_pos one_pos zero_le_one (by norm_num [mmRate])
+    (by norm_num [aboveSol_zero])
+
+/-- Strictly monotone approach from above. -/
+example : StrictAntiOn aboveSol (Ici 0) :=
+  strictAntiOn_of_lt_initial aboveSol_solves two_pos one_pos zero_le_one (by norm_num [mmRate])
+    (by norm_num [aboveSol_zero])
+
+/-- The equilibrium `1` is never reached from above. -/
+example {t : ℝ} (ht : 0 ≤ t) : 1 < aboveSol t :=
+  lt_of_lt_initial aboveSol_solves two_pos one_pos zero_le_one (by norm_num [mmRate])
+    (by norm_num [aboveSol_zero]) ht
+
+/-- Explicit gap from above: `aboveSol t - 1 ≥ e^{-t/2}` (`λ = (2 - 1)/(1 + 1) = 1/2`). -/
+example {t : ℝ} (ht : 0 ≤ t) : exp (-(t / 2)) ≤ aboveSol t - 1 := by
+  have := mul_exp_le_sub_of_le_initial aboveSol_solves two_pos one_pos zero_le_one
+    (by norm_num [mmRate]) (by norm_num [aboveSol_zero]) ht
+  have h : -(((2 : ℝ) - 1) / (1 + 1)) * t = -(t / 2) := by ring
+  rwa [h, aboveSol_zero, show (2 : ℝ) - 1 = 1 by norm_num, one_mul] at this
 
 /-! ### The critical rate `R = Vmax = 2`, `Km = 1`, `C(0) = 0` -/
 
@@ -180,6 +256,16 @@ example : crit 2 = 2 := by
   have : √(9 : ℝ) = 3 := by
     rw [show (9 : ℝ) = 3 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   norm_num [crit, this]
+
+/-- At the critical rate the solution never drops below its initial value. -/
+example {t : ℝ} (ht : 0 ≤ t) : crit 0 ≤ crit t :=
+  initial_le_critical crit_solves two_pos one_pos (by simp [crit]) ht
+
+/-- The closed form instantiated on `crit`, cross-checked against the definition of `crit`. -/
+example {t : ℝ} (ht : 0 ≤ t) :
+    crit t = √((1 + crit 0) ^ 2 + 2 * 2 * 1 * t) - 1 ∧
+      √((1 + crit 0) ^ 2 + 2 * 2 * 1 * t) - 1 = √(1 + 4 * t) - 1 :=
+  ⟨eq_sqrt_critical crit_solves two_pos one_pos (by simp [crit]) ht, by norm_num [crit]⟩
 
 example : StrictMonoOn crit (Ici 0) :=
   strictMonoOn_critical crit_solves two_pos one_pos (by simp [crit])
