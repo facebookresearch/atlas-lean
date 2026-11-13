@@ -828,6 +828,16 @@ noncomputable def ca04t03_xorM : FiniteSCM Bool 2 (fun _ => Bool) where
 
 noncomputable def ca04t03_xorG : Bool → ℝ := fun b => if b then 1 else 0
 
+/-! The noise law is registered as a probability measure, so probability APIs such as
+`integral_ipw_ate` find the instance. -/
+
+example {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)] [∀ k, MeasurableSpace (U k)]
+    (μ : (k : Fin n) → StdSimplex ℝ (U k)) : IsProbabilityMeasure (noiseMeasure μ) := by
+  infer_instance
+
+example : IsProbabilityMeasure (noiseMeasure ca04t03_xorμ) := by
+  infer_instance
+
 theorem ca04t03_xor_solve_zero (u : (k : Fin 2) → Bool) :
     ca04t03_xorM.solve u ⟨0, by omega⟩ = u ⟨0, by omega⟩ := by
   have h := ca04t03_xorM.solve_isSolution u ⟨0, by omega⟩

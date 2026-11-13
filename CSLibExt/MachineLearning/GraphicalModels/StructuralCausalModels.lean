@@ -325,6 +325,8 @@ noncomputable def inducedBayesNet {α : Type*} {n : ℕ} {U : Fin n → Type*}
   pa := M.pa
   cpt k z := (μ k).map (M.f k z)
 
+/-- The push-forward weights of a noise law under the structural function of node `t` at
+parent values `w`, as a sum over all noise values of a finite noise type. -/
 theorem map_weights_eq {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     [DecidableEq α] (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (t : Fin n) (w : M.pa t → α) (a₁ : α) :
@@ -955,16 +957,39 @@ def potentialOutcome {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM
     (a : α) (y : Fin n) (g : α → ℝ) (u : (k : Fin n) → U k) : ℝ :=
   g (M.counterfactual t a u y)
 
+/-- The product noise weights are nonnegative. -/
 theorem noiseWeight_nonneg {n : ℕ} {U : Fin n → Type*} (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (u : (k : Fin n) → U k) : 0 ≤ noiseWeight μ u := by
   unfold noiseWeight
   exact Finset.prod_nonneg fun k _ => (μ k).nonneg _
 
-theorem noise_measSet {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+/-- For finite noise types, the product noise weights sum to `1` over all noise values. -/
+private theorem sum_univ_noiseWeight_eq_one {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+    (μ : (k : Fin n) → StdSimplex ℝ (U k)) : ∑ u, noiseWeight μ u = 1 := by
+  have h : ∏ k, ∑ v, (μ k).weights v
+      = ∑ u : (k : Fin n) → U k, ∏ k, (μ k).weights (u k) :=
+    Fintype.prod_sum _
+  unfold noiseWeight
+  rw [← h]
+  simp only [StdSimplex.total_of_fintype, Finset.prod_const_one]
+
+/-- The noise law is a probability measure: the product noise weights sum to `1`. -/
+instance isProbabilityMeasure_noiseMeasure {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+    [∀ k, MeasurableSpace (U k)] (μ : (k : Fin n) → StdSimplex ℝ (U k)) :
+    IsProbabilityMeasure (noiseMeasure μ) := by
+  refine ⟨?_⟩
+  unfold noiseMeasure
+  rw [Measure.finsetSum_apply]
+  simp only [Measure.smul_apply, measure_univ, smul_eq_mul, mul_one]
+  rw [← ENNReal.ofReal_sum_of_nonneg (fun u _ => noiseWeight_nonneg μ u),
+    sum_univ_noiseWeight_eq_one, ENNReal.ofReal_one]
+
+private theorem noise_measSet {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
     (s : Set ((k : Fin n) → U k)) : MeasurableSet s :=
   (Set.toFinite s).measurableSet
 
+/-- The noise law of a set of noise values is the sum of their product noise weights. -/
 theorem noiseMeasure_apply_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (s : Set ((k : Fin n) → U k))
@@ -997,6 +1022,8 @@ theorem noiseMeasure_apply_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U
   rw [hsum, Finset.sum_filter]
   exact Finset.sum_congr rfl fun u _ => hterm u
 
+/-- The real-valued noise law of a set of noise values is the sum of their product noise
+weights. -/
 theorem noiseMeasure_real_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (s : Set ((k : Fin n) → U k))
@@ -1007,13 +1034,13 @@ theorem noiseMeasure_real_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U 
     ENNReal.toReal_sum (fun u _ => ENNReal.ofReal_ne_top)]
   exact Finset.sum_congr rfl fun u _ => ENNReal.toReal_ofReal (noiseWeight_nonneg μ u)
 
-theorem noiseMeasure_real_univ_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+private theorem noiseMeasure_real_univ_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) : (noiseMeasure μ).real Set.univ = 1 := by
   classical
-  rw [noiseMeasure_real_eq]; simpa using sum_noiseWeight_eq_one μ
+  rw [noiseMeasure_real_eq]; simpa using sum_univ_noiseWeight_eq_one μ
 
-theorem noiseMeasure_lt_top {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+private theorem noiseMeasure_lt_top {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (s : Set ((k : Fin n) → U k)) :
     noiseMeasure μ s < ⊤ := by
@@ -1021,7 +1048,7 @@ theorem noiseMeasure_lt_top {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k
   rw [noiseMeasure_apply_eq, ← ENNReal.ofReal_sum_of_nonneg (fun u _ => noiseWeight_nonneg μ u)]
   exact ENNReal.ofReal_lt_top
 
-theorem noiseMeasure_real_ne_zero {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+private theorem noiseMeasure_real_ne_zero {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (s : Set ((k : Fin n) → U k))
     (h : noiseMeasure μ s ≠ 0) : (noiseMeasure μ).real s ≠ 0 := by
@@ -1029,17 +1056,18 @@ theorem noiseMeasure_real_ne_zero {n : ℕ} {U : Fin n → Type*} [∀ k, Fintyp
   have htop : noiseMeasure μ s ≠ ⊤ := ne_of_lt (noiseMeasure_lt_top μ s)
   rw [ENNReal.toReal_ne_zero]; exact ⟨h, htop⟩
 
-noncomputable def restWeight {n : ℕ} {U : Fin n → Type*} (μ : (k : Fin n) → StdSimplex ℝ (U k))
+private noncomputable def restWeight {n : ℕ} {U : Fin n → Type*}
+    (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (t : Fin n) (u : (k : Fin n) → U k) : ℝ :=
   ∏ k ∈ Finset.univ.erase t, (μ k).weights (u k)
 
-theorem noiseWeight_split {n : ℕ} {U : Fin n → Type*} (μ : (k : Fin n) → StdSimplex ℝ (U k))
+private theorem noiseWeight_split {n : ℕ} {U : Fin n → Type*} (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (t : Fin n) (u : (k : Fin n) → U k) :
     noiseWeight μ u = (μ t).weights (u t) * restWeight μ t u := by
   unfold noiseWeight restWeight
   exact (Finset.prod_erase_mul _ _ (Finset.mem_univ t)).symm.trans (mul_comm _ _)
 
-theorem paVal_update_congr {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
+private theorem paVal_update_congr {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
     (t : Fin n) (u : (k : Fin n) → U k) (v : U t) :
     M.paVal t (M.solve (Function.update u t v)) = M.paVal t (M.solve u) := by
   have hS : ∀ k ∈ {k : Fin n | k.val < t.val}, ∀ j ∈ M.pa k,
@@ -1063,7 +1091,7 @@ theorem paVal_update_congr {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : Fin
     rw [Fin.val_castLE]
     exact j.1.2)
 
-theorem doNode_solve_update {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
+private theorem doNode_solve_update {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
     (t : Fin n) (a : α) (u : (k : Fin n) → U k) (v : U t) :
     (M.doNode t a).solve (Function.update u t v) = (M.doNode t a).solve u := by
   symm
@@ -1077,7 +1105,7 @@ theorem doNode_solve_update {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : Fi
   · have hsol := (M.doNode t a).solve_isSolution u j
     rw [hsol, Function.update_of_ne hjk v u]
 
-theorem treated_inter_fiber {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
+private theorem treated_inter_fiber {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
     (t : Fin n) (a₁ : α) (w : M.pa t → α) :
     M.treated t a₁ ∩ (fun u => M.paVal t (M.solve u)) ⁻¹' {w}
       = {u | M.f t w (u t) = a₁} ∩ (fun u => M.paVal t (M.solve u)) ⁻¹' {w} := by
@@ -1100,7 +1128,7 @@ theorem treated_inter_fiber {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : Fi
     rw [hsol, hw]
     exact hf'
 
-theorem fiber_sum_update_congr {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+private theorem fiber_sum_update_congr {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (t : Fin n)
     {E : Set ((k : Fin n) → U k)}
     (hE : ∀ u v, Function.update u t v ∈ E ↔ u ∈ E)
@@ -1145,7 +1173,7 @@ theorem fiber_sum_update_congr {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (
     show (μ k).weights (u k) = (μ k).weights (Function.update u t v₀ k)
     rw [Function.update_of_ne hkne v₀ u]
 
-theorem real_coord_inter {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+private theorem real_coord_inter {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (t : Fin n) (P : U t → Prop) [DecidablePred P]
     {E : Set ((k : Fin n) → U k)}
@@ -1284,6 +1312,8 @@ theorem real_coord_inter {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
       simp only [Finset.filter_empty, Finset.sum_empty]
     rw [hWP, zero_mul]
 
+/-- The law of the noise coordinate at node `t`: the noise law of the noise values whose
+coordinate at `t` satisfies `P` is the `μ t`-mass of `P`. -/
 theorem real_coord_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (t : Fin n) (P : U t → Prop) [DecidablePred P] :
@@ -1294,7 +1324,7 @@ theorem real_coord_eq {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
   rw [Set.inter_univ, noiseMeasure_real_univ_eq, mul_one] at h
   exact h
 
-theorem factor_real_inter {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
+private theorem factor_real_inter {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
     [∀ k, MeasurableSpace (U k)] [∀ k, MeasurableSingletonClass (U k)]
     (μ : (k : Fin n) → StdSimplex ℝ (U k)) (t : Fin n) (P : U t → Prop) [DecidablePred P]
     {E : Set ((k : Fin n) → U k)}
@@ -1304,14 +1334,14 @@ theorem factor_real_inter {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
   classical
   rw [real_coord_inter μ t P hE, real_coord_eq μ t P]
 
-theorem indep_paValFib {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
+private theorem indep_paValFib {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
     (t : Fin n) (w : M.pa t → α) :
     ∀ u v, Function.update u t v ∈ (fun u => M.paVal t (M.solve u)) ⁻¹' {w}
       ↔ u ∈ (fun u => M.paVal t (M.solve u)) ⁻¹' {w} := by
   intro u v
   simp only [Set.mem_preimage, Set.mem_singleton_iff, paVal_update_congr M t u v]
 
-theorem indep_potOutFib {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
+private theorem indep_potOutFib {α : Type*} {n : ℕ} {U : Fin n → Type*} (M : FiniteSCM α n U)
     (t y : Fin n) (a₀ a₁ : α) (g : α → ℝ) (B : Set (ℝ × ℝ)) :
     ∀ u v, Function.update u t v
         ∈ (fun u => (M.potentialOutcome t a₀ y g u, M.potentialOutcome t a₁ y g u)) ⁻¹' B
