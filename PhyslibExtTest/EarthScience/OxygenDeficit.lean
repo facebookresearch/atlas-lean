@@ -15,7 +15,7 @@ import PhyslibExt.EarthScience.OxygenDeficit
 Concrete consumers of `PhyslibExt.EarthScience.OxygenDeficit`: the
 witness `ka = 2`, `kd = 1`, `L0 = 1`, `D0 = 0` giving
 `D(t) = exp(-t) - exp(-2*t)`, the equal-rate branch, and the
-zero-demand boundary.
+zero-demand boundary of the unequal-rate theorem.
 
 ## i. Overview
 
@@ -47,11 +47,13 @@ example (t : ℝ) : HasDerivAt (fun t : ℝ => (0 + 1 * 1 * t) * Real.exp (-1 * 
       1 * ((0 + 1 * 1 * t) * Real.exp (-1 * t))) t :=
   EarthScience.oxygen_deficit_equalRate_hasDerivAt 1 1 0 t (by norm_num)
 
-/-- Boundary case `L0 = 0`: no demand, the deficit decays as `D0*exp(-ka*t)`. -/
-example (ka D0 t : ℝ) :
-    HasDerivAt (fun t : ℝ => D0 * Real.exp (-ka * t))
-      (-ka * (D0 * Real.exp (-ka * t))) t :=
-  EarthScience.bod_decay_hasDerivAt ka D0 t
+/-- Boundary case `L0 = 0` of the unequal-rate theorem, at `ka = 2`, `kd = 1`:
+no demand, so the deficit decays as `D0*exp(-ka*t)`. -/
+example (D0 t : ℝ) :
+    HasDerivAt (fun t : ℝ => D0 * Real.exp (-2 * t))
+      (-2 * (D0 * Real.exp (-2 * t))) t := by
+  simpa using EarthScience.oxygen_deficit_hasDerivAt 2 1 0 D0 t (by norm_num)
+    (by norm_num) (by norm_num)
 
 /-- BOD decay: `L(t) = 3*exp(-t)` solves `L' = -L`. -/
 example (t : ℝ) : HasDerivAt (fun t : ℝ => 3 * Real.exp (-1 * t))

@@ -16,12 +16,14 @@ import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 /-!
 # Streeter-Phelps river oxygen deficit
 
+Closed-form Streeter-Phelps solutions for BOD decay and the river oxygen deficit.
+
+## i. Overview
+
 `L` is the oxygen demand and `D` the oxygen deficit, in the same
 concentration unit, with rates inverse time. `L' = -kd*L` and
 `D' = kd*L - ka*D` have the closed-form solutions below, with a separate
 proved branch for equal rates.
-
-## i. Overview
 
 Fixed temperature/saturation and plug-flow travel time; no
 photosynthesis or sediment demand unless explicitly added. The
@@ -37,14 +39,33 @@ limit argument and not excluded permanently.
 - `EarthScience.oxygen_deficit_equalRate_hasDerivAt`: the equal-rate
   deficit solution solves `D' = k*L - k*D`.
 
-## iii. References
+## iii. Table of contents
 
+- A. BOD decay
+- B. Oxygen deficit, unequal rates
+- C. Oxygen deficit, equal rates
+
+## iv. References
+
+- H. W. Streeter and E. B. Phelps, *A Study of the Pollution and Natural
+  Purification of the Ohio River. III. Factors Concerned in the Phenomena of
+  Oxidation and Reaeration*, Public Health Bulletin No. 146, U.S. Public Health
+  Service, Washington, 1925: the source of the model. Deoxygenation is
+  first order in the remaining demand and reaeration is proportional to the
+  deficit, so `D' = kd*L - ka*D` with `L' = -kd*L`, whose unequal-rate solution
+  is the sag curve `D(t) = kd*L0*(exp(-kd*t) - exp(-ka*t))/(ka - kd) +
+  D0*exp(-ka*t)`. Its deoxygenation and reaeration rate constants appear here
+  as the natural-exponential rates `kd` and `ka`. The equal-rate branch solves
+  the same equation at `ka = kd`, where the unequal-rate formula divides by
+  zero.
 - `Real.hasDerivAt_exp` in `Mathlib/Analysis/SpecialFunctions/ExpDeriv.lean`.
 -/
 
 @[expose] public section
 
 namespace EarthScience
+
+/-! ## A. BOD decay -/
 
 /-- Streeter-Phelps BOD: with `L' = -kd*L`, `L(t) = L0*exp(-kd*t)` solves it. -/
 theorem bod_decay_hasDerivAt (kd L0 t : ℝ) :
@@ -58,6 +79,8 @@ theorem bod_decay_hasDerivAt (kd L0 t : ℝ) :
       (L0 * (Real.exp (-kd * t) * (-kd * 1))) t := hexp.const_mul L0
   convert hmul using 1
   ring
+
+/-! ## B. Oxygen deficit, unequal rates -/
 
 set_option linter.unusedVariables false in
 /-- Streeter-Phelps oxygen deficit, unequal rates (`ka ≠ kd`):
@@ -100,6 +123,8 @@ theorem oxygen_deficit_hasDerivAt (ka kd L0 D0 t : ℝ)
   convert hsum using 1
   field_simp
   ring
+
+/-! ## C. Oxygen deficit, equal rates -/
 
 set_option linter.unusedVariables false in
 /-- Streeter-Phelps oxygen deficit, equal rates (`ka = kd = k`):
