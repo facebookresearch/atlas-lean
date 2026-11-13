@@ -33,6 +33,15 @@ the same spending path, and the same interest rate.
 
 ## References
 
+* S. D. Williamson, *Macroeconomics*, 5th ed., Pearson, Chapter 9 (A Two-Period Model: The
+  Consumption-Savings Decision and Credit Markets): the government's period budget constraints
+  `G = T + B` and `G' + (1 + r) * B = T'`, the government present-value budget constraint, the
+  consumer's lifetime wealth `y - t + (y' - t') / (1 + r)`, and the Ricardian equivalence
+  theorem, with lump-sum taxes and borrowing and lending at the same rate.
+* D. Romer, *Advanced Macroeconomics*, 5th ed., McGraw-Hill, Chapter 13 (Budget Deficits and
+  Fiscal Policy), Sections 13.1 (The Government Budget Constraint) and 13.2 (Ricardian
+  Equivalence).
+
 Atlas roadmap target MA07.T04.
 -/
 
