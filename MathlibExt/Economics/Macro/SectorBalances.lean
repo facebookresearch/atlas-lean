@@ -35,10 +35,12 @@ saving equals gross capital formation, private and government, plus net exports.
 
 Open-economy simplification: income disposal `Y = C + Sp + T` treats GDP as national
 disposable income, so these accounts assume zero net primary income and zero net current
-transfers from the rest of the world. Under that assumption the current external balance equals
-net exports. Without it, national saving equals gross capital formation plus the current
-external balance, which adds the income flows with the rest of the world to net exports
-(SNA 2008, §16.42).
+transfers from the rest of the world. Under that assumption the economy's current-account
+balance equals net exports. Without it, national saving equals gross capital formation plus the
+current-account balance, which adds net primary income and net current transfers from abroad to
+net exports. SNA 2008 records this balance from the rest of the world's side, as the current
+external balance (§16.42), which has the opposite sign: under the simplification it is
+`M - X = -NX`, and the identity reads `S = I -` (current external balance).
 
 ## Main results
 
@@ -53,7 +55,7 @@ external balance, which adds the income flows with the rest of the world to net 
   *System of National Accounts 2008* (2009): Chapter 9 (The use of income accounts), §9.26,
   saving as disposable income less final consumption expenditure; Chapter 16 (Summarizing and
   integrating the accounts), §16.42–16.43, the consolidated current accounts and the current
-  external balance, and §16.47, the expenditure measure of GDP.
+  external balance of the rest of the world, and §16.47, the expenditure measure of GDP.
 -/
 
 @[expose] public section
@@ -83,7 +85,8 @@ are assumed here, not derived from transaction-level data.
   consumption, so it is not subtracted from `Sg`. `NX` is net exports.
 * Open-economy simplification: income disposal treats GDP as national disposable income, so
   net primary income and net current transfers from the rest of the world are assumed zero,
-  and the current external balance equals `NX`.
+  and the current-account balance equals `NX` (SNA 2008's current external balance, recorded
+  from the rest of the world's side, is `-NX`).
 * Accounting only, not a causal model: no behavioural relation between the fields is assumed.
   Transfers are inside `T`, not inside `G` or `Y`; intermediate goods are not counted in `Y`.
 -/
@@ -121,7 +124,8 @@ expenditure, net exports, private income disposal (`Y = C + Sp + T`), government
 saving finances gross capital formation, private and government, plus net exports
 (equivalently `S - I = NX`). This relies on the open-economy simplification pinned in
 `SectorAccounts` (zero net primary income and net current transfers from abroad); in general
-the right side is gross capital formation plus the current external balance. -/
+the right side is gross capital formation plus the current-account balance (the negative of
+SNA 2008's current external balance). -/
 theorem saving_investment_balance (a : SectorAccounts) : a.S = a.I + a.NX := by
   linarith [a.gdp, a.netExports, a.incomeDisposal, a.publicSaving, a.nationalSaving]
 
