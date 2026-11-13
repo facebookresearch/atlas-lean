@@ -15,7 +15,7 @@ import Mathlib.Algebra.Order.GroupWithZero.Basic
 import Mathlib.Analysis.CStarAlgebra.Classes
 import Mathlib.Analysis.Complex.Polynomial.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.Summable
-import Mathlib.Data.Int.Star
+import Mathlib.Algebra.Order.Star.Int
 import Mathlib.FieldTheory.IsAlgClosed.Basic
 import Mathlib.Tactic.IntervalCases
 import Mathlib.Tactic.Positivity

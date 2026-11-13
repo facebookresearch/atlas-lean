@@ -15,7 +15,7 @@ Lebesgue function and Lagrange interpolant built from it.
 module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.LinearAlgebra.Lagrange
 
 @[expose] public section

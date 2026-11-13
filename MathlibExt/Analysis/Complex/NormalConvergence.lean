@@ -8,10 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Analysis.Calculus.UniformLimitsDeriv
-
 public import MathlibExt.Analysis.Normed.Series.NormalConvergence
 public import Mathlib.Analysis.Complex.LocallyUniformLimit
+import Mathlib.Analysis.Calculus.UniformLimitsDeriv
 
 import Mathlib.Analysis.Complex.Liouville
 import Mathlib.Tactic.Linarith

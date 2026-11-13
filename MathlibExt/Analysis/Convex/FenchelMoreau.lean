@@ -15,7 +15,7 @@ public import Mathlib.Analysis.LocallyConvex.WithSeminorms
 public import Mathlib.Analysis.LocallyConvex.Separation
 public import Mathlib.Analysis.Normed.Operator.ContinuousLinearMap
 public import Mathlib.Analysis.Convex.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Topology.Basic
 public import Mathlib.Topology.Constructions
 

@@ -8,10 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import Mathlib.Analysis.Calculus.Deriv.Pow
-
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.Analysis.Calculus.Deriv.Pow
 
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.ArctanDeriv
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
