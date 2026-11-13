@@ -13,26 +13,33 @@ public import Mathlib.MeasureTheory.Measure.Stieltjes
 public import MathlibExt.Probability.Statistics.Survival.StochasticIntegral
 
 /-!
-# Variance identification for the Nelson–Aalen martingale
+# Conditional square sums of the scaled Nelson–Aalen process
 
-The martingale central limit theorem for the Nelson–Aalen estimator (Rebolledo's theorem) needs the
-predictable variation of the scaled martingale `√n (Â - Λ*)` to converge in probability to a
-deterministic variance function. This file proves that input:
+For the scaled Nelson–Aalen process `√n (Â - Λ*)`, this file proves that its conditional square
+sums `∑_{i < k} E[(Δ √n (Â - Λ*))² | ℱ_i]` (`predictableQuadraticVariation`) at time `t` satisfy
 
-`⟨√n (Â - Λ*)⟩(t) → ∫_{(0, t]} dΛ / y` in probability,
+`∑ E[(Δ √n (Â - Λ*))² | ℱ] → ∫_{(0, t]} dΛ / y` in probability,
 
 where `y` is the limiting at-risk fraction, from the T45 stochastic-integral representation
-`Â - Λ* = Y⁻¹ • M` (`nelsonAalenProcess_sub_restrictedHazard`) and a law of large numbers for
-`Y / n`.
+`Â - Λ* = Y⁻¹ • M` (`nelsonAalenProcess_sub_restrictedHazard`), a law of large numbers for
+`Y / n`, and the conditional second moment `E[(ΔM)² | ℱ] = Y ΔΛ (1 - ΔΛ)` of `M = N - ∫ Y dα`.
+
+These are results about arbitrary conditional square sums: `N` is any real process, and `M` is not
+assumed to be a martingale, so the second-moment hypothesis does not make the sums variances. When
+`M` is a martingale, `martingale_nelsonAalenProcess_sub` makes `Â - Λ*`, hence `√n (Â - Λ*)`, a
+martingale; the hypothesis is then the binomial conditional variance, and the sums are the
+predictable variation `⟨√n (Â - Λ*)⟩`, whose convergence is the variance condition of the martingale
+central limit theorem for the Nelson–Aalen estimator (Rebolledo's theorem).
 
 ## Main results
 
-* `predictableQuadraticVariation_naScaledMartingale` (exact, per `n`): in Aalen's model with the
-  binomial conditional variance `E[(ΔM)² | ℱ] = Y ΔΛ (1 - ΔΛ)`,
-  `⟨√n (Â - Λ*)⟩_k = n ∑_{i < k} Y_{i+1}⁻¹ ΔΛ_{i+1} (1 - ΔΛ_{i+1})` a.e. (`naVarianceSum`). Proof:
-  `⟨H • M⟩ = H² • ⟨M⟩` (`predictableQuadraticVariation_stochasticIntegral`).
-* `condExp_sq_increment_of_hasUnitJumps`: the binomial conditional variance is *derived* for a
-  single subject (unit jumps, `Y ∈ {0, 1}`) from T45's `⟨N - A⟩ = ∑ ΔA (1 - ΔA)`.
+* `predictableQuadraticVariation_naScaledProcess` (exact, per `n`): under the conditional second
+  moment `E[(ΔM)² | ℱ] = Y ΔΛ (1 - ΔΛ)`, the conditional square sum of `√n (Â - Λ*)` up to step `k`
+  is `n ∑_{i < k} Y_{i+1}⁻¹ ΔΛ_{i+1} (1 - ΔΛ_{i+1})` a.e. (`naVarianceSum`). Proof:
+  the square-sum identity for `H • M` (`predictableQuadraticVariation_stochasticIntegral`).
+* `condExp_sq_increment_of_hasUnitJumps`: for a single subject (unit jumps, `Y ∈ {0, 1}`) whose
+  `N - ∫ Y dα` is a martingale, the second-moment hypothesis is *derived*, as the binomial
+  conditional variance, from T45's `⟨N - A⟩ = ∑ ΔA (1 - ΔA)`.
 * `abs_naVarianceSum_sub_le`, `tendstoInMeasure_naVarianceSum` (law of large numbers): if
   `Y / n → ȳ ≥ ε > 0` uniformly over the grid in probability and the hazard increments are
   uniformly small, the variance sums converge in probability to the limit of the
@@ -41,17 +48,18 @@ where `y` is the limiting at-risk fraction, from the T45 stochastic-integral rep
   continuous and `≥ ε > 0` on `[0, τ]`, the right-endpoint sums on the grid of mesh `τ / K n`
   converge to `∫_{(0, t]} (y s)⁻¹ dΛ(s)`; `eventually_gridHazard_increment_le` gives the mesh
   condition.
-* `tendstoInMeasure_predictableQuadraticVariation_naScaledMartingale` (array form, grid limit as a
-  hypothesis) and **`tendstoInMeasure_predictableQuadraticVariation_naScaledMartingale_integral`**
-  (the identification `⟨√n (Â - Λ*)⟩(t) → ∫_0^t dΛ / y`, grid limit proved).
+* `tendstoInMeasure_predictableQuadraticVariation_naScaledProcess` (array form, grid limit as a
+  hypothesis) and **`tendstoInMeasure_predictableQuadraticVariation_naScaledProcess_integral`**
+  (the conditional square sums of `√n (Â - Λ*)` at `t` converge to `∫_0^t dΛ / y`, grid limit
+  proved).
 
 ## Boundary cases
 
-* **Hazard jumps.** On a grid the variance carries the factor `1 - ΔΛ`
+* **Hazard jumps.** On a grid the square sum carries the factor `1 - ΔΛ`
   (`⟨M⟩ = ∫ (1 - ΔΛ) dΛ` for one subject); it disappears in the limit only because `Λ` is
   continuous, through the mesh condition. With a discrete hazard the limit is not `∫ dΛ / y`.
 * **Vanishing risk.** Steps with `Y = 0` contribute `0` (totalized inverse, the indicator
-  `J = 1{Y ≠ 0}`), which is why the martingale is `Â - Λ*` with the restricted hazard `Λ*`. The
+  `J = 1{Y ≠ 0}`), which is why the process is `Â - Λ*` with the restricted hazard `Λ*`. The
   LLN hypothesis with `ȳ ≥ ε > 0` makes such steps asymptotically negligible: on the LLN event
   `Y ≥ n ε / 2 > 0`.
 * **Support.** `y ≥ ε > 0` on `[0, τ]` is the supported-horizon condition; without it `∫ dΛ / y`
@@ -61,24 +69,30 @@ where `y` is the limiting at-risk fraction, from the T45 stochastic-integral rep
 
 * **Time is discrete**, as in T45: a deterministic grid of mesh `τ / K n → 0` and a deterministic
   cumulative hazard. The continuous-time Doob–Meyer compensator is not used.
-* **The conditional variance of the counting increments is a hypothesis** (`hcv`, binomial: the
-  `Y` subjects at risk fail independently with probability `ΔΛ`). It is derived here only for a
-  single subject (`condExp_sq_increment_of_hasUnitJumps`); for `n` subjects it needs conditional
-  independence, not formalized.
+* **The martingale property is not assumed.** `hcv` fixes the conditional second moments of the
+  increments of `M = N - ∫ Y dα`, not their conditional means, and `N` is an arbitrary real
+  process (not assumed to be a counting process), so for general `N` the sums are not variances.
+  The test module applies the headline theorem to deterministic increments that are not a
+  martingale.
+* **The conditional second moment of the increments is a hypothesis** (`hcv`, binomial form: for a
+  martingale `M` it says that the `Y` subjects at risk fail independently with probability `ΔΛ`).
+  It is derived here only for a single subject (`condExp_sq_increment_of_hasUnitJumps`); for `n`
+  subjects it needs conditional independence, not formalized.
 * **The law of large numbers for `Y / n` is a hypothesis** (`hLLN`, uniform over the grid points up
   to `t`); its Glivenko–Cantelli proof from i.i.d. censored data is not given here.
-* **The martingale CLT itself is not proved.** This file supplies the kind of variance condition
-  that `hQV` of `MathlibExt.Probability.Martingale.MartingaleTightness` assumes, but not in that
-  form: `hQV` uses the grid `⌊n t⌋` on `[0, 1]` with limit `t`, so a time change normalizing `σ²`
-  to `t` would be needed. The T57 Nelson–Aalen process limit (PR #1536, not imported) assumes the
-  identification as part of `hfdd`.
+* **The martingale CLT itself is not proved.** For a martingale `M`, this file supplies the kind of
+  variance condition that `hQV` of `MathlibExt.Probability.Martingale.MartingaleTightness` assumes,
+  but not in that form: `hQV` uses the grid `⌊n t⌋` on `[0, 1]` with limit `t`, so a time change
+  normalizing `σ²` to `t` would be needed. The T57 Nelson–Aalen process limit (PR #1536, not
+  imported) assumes the identification as part of `hfdd`.
 
 ## Source receipt (reuse search, 2026-11-12)
 
-Named theorem: the variance condition `⟨M^{(n)}⟩(t) →ᴾ σ²(t) = ∫_0^t dΛ / y` in the proof of the
-Nelson–Aalen central limit theorem, Andersen–Borgan–Gill–Keiding (1993), §IV.1 "The
-Nelson–Aalen estimator" (via Rebolledo's martingale CLT, §II.5 "Limit Theory"); the same argument
-in Fleming–Harrington (1991) (chapter and theorem numbers not checked).
+Named theorem (the martingale case): the variance condition
+`⟨M^{(n)}⟩(t) →ᴾ σ²(t) = ∫_0^t dΛ / y` in the proof of the Nelson–Aalen central limit theorem,
+Andersen–Borgan–Gill–Keiding (1993), §IV.1 "The Nelson–Aalen estimator" (via Rebolledo's martingale
+CLT, §II.5 "Limit Theory"); the same argument in Fleming–Harrington (1991) (chapter and theorem
+numbers not checked).
 
 Reused, not redefined: `stochasticIntegral`, `nelsonAalenProcess`, `restrictedHazard`,
 `aalenCompensator`, `nelsonAalenProcess_sub_restrictedHazard`,
@@ -89,7 +103,7 @@ Reused, not redefined: `stochasticIntegral`, `nelsonAalenProcess`, `restrictedHa
 `TendstoInMeasure`, `StieltjesFunction.measure`, `intervalIntegral.sum_integral_adjacent_intervals`,
 `IsCompact.uniformContinuousOn_of_continuous`. No existing Mathlib/MathlibExt/CSLibExt/WantedExt
 declaration states this identification; T57's `ProcessAsymptotics` (unmerged) takes it as a
-hypothesis. New here: `naScaledMartingale`, `naVarianceSum`, `gridHazard`, `gridIndex`.
+hypothesis. New here: `naScaledProcess`, `naVarianceSum`, `gridHazard`, `gridIndex`.
 
 ## References
 
@@ -111,25 +125,28 @@ open MathlibExt.Probability.Statistics.CountingProcess
 
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} {ℱ : Filtration ℕ m0}
 
-/-! ### The predictable variation of the scaled Nelson–Aalen martingale -/
+/-! ### Conditional square sums of the scaled Nelson–Aalen process -/
 
-/-- The **scaled Nelson–Aalen martingale** `√n (Â - Λ*)`, with `Â = nelsonAalenProcess N Y` and
-`Λ* = restrictedHazard Y α` the cumulative hazard restricted to the risk set. -/
-noncomputable def naScaledMartingale (n : ℕ) (N Y : ℕ → Ω → ℝ) (α : ℕ → ℝ) (k : ℕ) (ω : Ω) : ℝ :=
+/-- The **scaled Nelson–Aalen process** `√n (Â - Λ*)`, with `Â = nelsonAalenProcess N Y` and
+`Λ* = restrictedHazard Y α` the cumulative hazard restricted to the risk set. It is a martingale
+when `N - ∫ Y dα` is one (`martingale_nelsonAalenProcess_sub`); nothing in this file assumes
+that. -/
+noncomputable def naScaledProcess (n : ℕ) (N Y : ℕ → Ω → ℝ) (α : ℕ → ℝ) (k : ℕ) (ω : Ω) : ℝ :=
   Real.sqrt n * (nelsonAalenProcess N Y k ω - restrictedHazard Y α k ω)
 
-/-- The closed form `n ∑_{i < k} Y_{i+1}⁻¹ Δα_{i+1} (1 - Δα_{i+1})` of the predictable variation of
-`√n (Â - Λ*)` in the binomial (grouped-data) Aalen model; `Y⁻¹` is the totalized inverse, so steps
-with an empty risk set contribute `0` (the indicator `J = 1{Y ≠ 0}`). -/
+/-- The closed form `n ∑_{i < k} Y_{i+1}⁻¹ Δα_{i+1} (1 - Δα_{i+1})` of the conditional square sum of
+`√n (Â - Λ*)` under the binomial second-moment hypothesis (for a martingale, the binomial
+grouped-data variance); `Y⁻¹` is the totalized inverse, so steps with an empty risk set contribute
+`0` (the indicator `J = 1{Y ≠ 0}`). -/
 noncomputable def naVarianceSum (n : ℕ) (Y : ℕ → Ω → ℝ) (α : ℕ → ℝ) (k : ℕ) (ω : Ω) : ℝ :=
   ∑ i ∈ range k, (n : ℝ) * (Y (i + 1) ω)⁻¹ * (α (i + 1) - α i) * (1 - (α (i + 1) - α i))
 
 /-- The T45 representation, scaled: `√n (Â - Λ*) = (√n Y⁻¹) • M` with `M = N - ∫ Y dα`. -/
-theorem naScaledMartingale_eq_stochasticIntegral (n : ℕ) (N Y : ℕ → Ω → ℝ) (α : ℕ → ℝ) :
-    naScaledMartingale n N Y α = stochasticIntegral (fun k ω => Real.sqrt n * (Y k ω)⁻¹)
+theorem naScaledProcess_eq_stochasticIntegral (n : ℕ) (N Y : ℕ → Ω → ℝ) (α : ℕ → ℝ) :
+    naScaledProcess n N Y α = stochasticIntegral (fun k ω => Real.sqrt n * (Y k ω)⁻¹)
       (fun k ω => N k ω - aalenCompensator Y α k ω) := by
   funext k ω
-  rw [naScaledMartingale, nelsonAalenProcess_sub_restrictedHazard]
+  rw [naScaledProcess, nelsonAalenProcess_sub_restrictedHazard]
   simp only [stochasticIntegral, mul_sum]
   exact sum_congr rfl fun _ _ => by ring
 
@@ -138,14 +155,16 @@ private lemma sq_inv_mul_self (y : ℝ) : (y⁻¹) ^ 2 * y = y⁻¹ := by
   · simp [h]
   · field_simp
 
-/-- **Predictable variation of the Nelson–Aalen martingale** (exact, on the grid). In Aalen's
-model with compensated martingale `M = N - ∫ Y dα`, suppose the increments have the binomial
-conditional variance `E[(ΔM_{k+1})² | ℱ_k] = Y_{k+1} Δα_{k+1} (1 - Δα_{k+1})` (each of the
-`Y_{k+1}` subjects at risk fails independently with probability `Δα_{k+1}`). Then
-`⟨√n (Â - Λ*)⟩_k = n ∑_{i < k} Y_{i+1}⁻¹ Δα_{i+1} (1 - Δα_{i+1})` a.e., the grid form of
-`⟨√n (Â - Λ*)⟩(t) = ∫_0^t n J / Y dΛ`. The proof is `⟨H • M⟩ = H² • ⟨M⟩`
+/-- **Conditional square sum of the scaled Nelson–Aalen process** (exact, on the grid). For
+`M = N - ∫ Y dα` with an arbitrary real process `N`, suppose the increments have the conditional
+second moment `E[(ΔM_{k+1})² | ℱ_k] = Y_{k+1} Δα_{k+1} (1 - Δα_{k+1})`. Then the conditional
+square sum `∑_{i < k} E[(Δ √n (Â - Λ*))² | ℱ_i]` (`predictableQuadraticVariation`) equals
+`n ∑_{i < k} Y_{i+1}⁻¹ Δα_{i+1} (1 - Δα_{i+1})` a.e. The martingale property of `M` is not
+assumed; for a martingale `M` (binomial variance: each of the `Y_{k+1}` subjects at risk fails
+independently with probability `Δα_{k+1}`) this is `⟨√n (Â - Λ*)⟩_k`, the grid form of
+`∫_0^t n J / Y dΛ`. The proof is the square-sum identity for `H • M`
 (`predictableQuadraticVariation_stochasticIntegral`) applied to the T45 representation. -/
-theorem predictableQuadraticVariation_naScaledMartingale {n : ℕ} {N Y : ℕ → Ω → ℝ} {α : ℕ → ℝ}
+theorem predictableQuadraticVariation_naScaledProcess {n : ℕ} {N Y : ℕ → Ω → ℝ} {α : ℕ → ℝ}
     (hY : IsStronglyPredictable ℱ Y) (hY1 : ∀ k ω, Y k ω = 0 ∨ 1 ≤ Y k ω)
     (hsq : ∀ k, Integrable (fun ω => ((N (k + 1) ω - aalenCompensator Y α (k + 1) ω) -
       (N k ω - aalenCompensator Y α k ω)) ^ 2) μ)
@@ -153,7 +172,7 @@ theorem predictableQuadraticVariation_naScaledMartingale {n : ℕ} {N Y : ℕ �
       (N k ω - aalenCompensator Y α k ω)) ^ 2 | ℱ k] =ᵐ[μ]
         fun ω => Y (k + 1) ω * (α (k + 1) - α k) * (1 - (α (k + 1) - α k)))
     (k : ℕ) :
-    predictableQuadraticVariation μ ℱ (naScaledMartingale n N Y α) k =ᵐ[μ]
+    predictableQuadraticVariation μ ℱ (naScaledProcess n N Y α) k =ᵐ[μ]
       naVarianceSum n Y α k := by
   have hYi := isStronglyPredictable_inv hY
   have hH : IsStronglyPredictable ℱ fun k ω => Real.sqrt n * (Y k ω)⁻¹ :=
@@ -175,7 +194,7 @@ theorem predictableQuadraticVariation_naScaledMartingale {n : ℕ} {N Y : ℕ �
   have h := predictableQuadraticVariation_stochasticIntegral (μ := μ)
     (H := fun k ω => Real.sqrt n * (Y k ω)⁻¹)
     (M := fun k ω => N k ω - aalenCompensator Y α k ω) hH hint hsq k
-  rw [naScaledMartingale_eq_stochasticIntegral]
+  rw [naScaledProcess_eq_stochasticIntegral]
   filter_upwards [h, ae_all_iff.2 hcv] with ω h1 h2
   rw [h1]
   simp only [stochasticIntegral, naVarianceSum]
@@ -191,7 +210,7 @@ indicator `Y ∈ {0, 1}`, then `E[(ΔM_{k+1})² | ℱ_k] = Y_{k+1} Δα_{k+1} (1
 `M = N - ∫ Y dα`. Derived from the T45 identity `⟨N - A⟩ = ∑ ΔA (1 - ΔA)`
 (`HasUnitJumps.predictableQuadraticVariation_martingalePart`) and the compensator identification
 `predictablePart_eq_aalenCompensator`; it shows the hypothesis `hcv` of
-`predictableQuadraticVariation_naScaledMartingale` is met by a genuine model. -/
+`predictableQuadraticVariation_naScaledProcess` is met by a genuine model. -/
 theorem condExp_sq_increment_of_hasUnitJumps [IsFiniteMeasure μ] {N Y : ℕ → Ω → ℝ} {α : ℕ → ℝ}
     (hN : HasUnitJumps N) (hadapt : StronglyAdapted ℱ N) (hint : ∀ n, Integrable (N n) μ)
     (hM : Martingale (fun n ω => N n ω - aalenCompensator Y α n ω) ℱ μ)
@@ -329,13 +348,14 @@ theorem tendstoInMeasure_naVarianceSum {Y : ℕ → ℕ → Ω → ℝ} {α ybar
   have := abs_sub_le (naVarianceSum n (Y n) (α n) (k n) ω)
     (∑ i ∈ range (k n), (α n (i + 1) - α n i) / ybar n (i + 1)) σsq
   linarith
-/-- **Variance identification for the Nelson–Aalen martingale** (grid form). For each `n`, let
-`N n`, `Y n` follow Aalen's model on a grid with filtration `ℱ n`, at-risk values in `{0} ∪ [1, ∞)`
-and the binomial conditional variance of `predictableQuadraticVariation_naScaledMartingale`. Under
-the uniform LLN for `Y n / n`, the mesh condition and the grid limit of
-`tendstoInMeasure_naVarianceSum`, the predictable variation of the scaled Nelson–Aalen martingale
-`√n (Â - Λ*)` at step `k n` converges in probability to `σ²`. -/
-theorem tendstoInMeasure_predictableQuadraticVariation_naScaledMartingale
+/-- **Conditional square sums of the scaled Nelson–Aalen process** (grid form). For each `n`, let
+`N n` be a real process and `Y n` a predictable at-risk process with values in `{0} ∪ [1, ∞)`, on a
+grid with filtration `ℱ n`, with the conditional second moment of
+`predictableQuadraticVariation_naScaledProcess`; no martingale property is assumed. Under the
+uniform LLN for `Y n / n`, the mesh condition and the grid limit of
+`tendstoInMeasure_naVarianceSum`, the conditional square sums of `√n (Â - Λ*)` up to step `k n`
+converge in probability to `σ²`. -/
+theorem tendstoInMeasure_predictableQuadraticVariation_naScaledProcess
     {ℱ : ℕ → Filtration ℕ m0} {N Y : ℕ → ℕ → Ω → ℝ} {α ybar : ℕ → ℕ → ℝ} {k : ℕ → ℕ}
     {ε L σsq : ℝ} (hε : 0 < ε)
     (hY : ∀ n, IsStronglyPredictable (ℱ n) (Y n)) (hY1 : ∀ n j ω, Y n j ω = 0 ∨ 1 ≤ Y n j ω)
@@ -353,9 +373,9 @@ theorem tendstoInMeasure_predictableQuadraticVariation_naScaledMartingale
     (hgrid : Tendsto (fun n => ∑ i ∈ range (k n), (α n (i + 1) - α n i) / ybar n (i + 1)) atTop
       (𝓝 σsq)) :
     TendstoInMeasure μ (fun n => predictableQuadraticVariation μ (ℱ n)
-      (naScaledMartingale n (N n) (Y n) (α n)) (k n)) atTop (fun _ => σsq) :=
+      (naScaledProcess n (N n) (Y n) (α n)) (k n)) atTop (fun _ => σsq) :=
   (tendstoInMeasure_naVarianceSum hε hinc hmesh hL hyb hLLN hgrid).congr_left fun n =>
-    (predictableQuadraticVariation_naScaledMartingale (hY n) (hY1 n) (hsq n) (hcv n) (k n)).symm
+    (predictableQuadraticVariation_naScaledProcess (hY n) (hY1 n) (hsq n) (hcv n) (k n)).symm
 /-! ### The grid limit: Riemann–Stieltjes sums of `dΛ / y` -/
 
 /-- The cumulative hazard `Λ` sampled on the uniform grid of mesh `h`: `i ↦ Λ (i h)`. -/
@@ -565,20 +585,22 @@ theorem eventually_gridHazard_increment_le (Λ : StieltjesFunction ℝ) (hΛ : C
   rw [gridHazard, gridHazard]
   exact (le_abs_self _).trans this.le
 
-/-- **Martingale-CLT variance identification for the Nelson–Aalen estimator**:
-`⟨√n (Â - Λ*)⟩(t) → ∫_0^t dΛ / y` in probability.
+/-- **Conditional square sums of `√n (Â - Λ*)` converge to `∫_0^t dΛ / y`** in probability.
 
 Setting: a continuous cumulative hazard `Λ` (a continuous `StieltjesFunction`), a horizon `τ > 0`
-and a time `t ∈ [0, τ]`; for each `n` a grid of mesh `h_n = τ / K n` (`K n → ∞`) on which the
-counting process `N n` and the predictable at-risk process `Y n` (values in `{0} ∪ [1, ∞)`) follow
-Aalen's model with hazard increments `ΔΛ` (`gridHazard`) and the binomial conditional variance
-`E[(ΔM)² | ℱ] = Y ΔΛ (1 - ΔΛ)`. The limiting at-risk fraction `y` is continuous on `[0, τ]` and
-bounded below by `ε > 0` (the horizon is supported), and the **law of large numbers**
-`sup_{grid points ≤ t} |Y n / n - y| → 0` holds in probability. Then the predictable variation of
-the scaled Nelson–Aalen martingale at the grid point `⌊t / h_n⌋ h_n` converges in probability to
-`∫_{(0, t]} (y s)⁻¹ dΛ(s)`, the variance function of the Gaussian-martingale limit
+and a time `t ∈ [0, τ]`; for each `n` a grid of mesh `h_n = τ / K n` (`K n → ∞`) carrying a real
+process `N n` and a predictable at-risk process `Y n` (values in `{0} ∪ [1, ∞)`), with hazard
+increments `ΔΛ` (`gridHazard`) and the conditional second moment `E[(ΔM)² | ℱ] = Y ΔΛ (1 - ΔΛ)` of
+`M = N n - ∫ Y n dΛ`. Neither that `N n` is a counting process nor that `M` is a martingale is
+assumed. The limiting at-risk fraction `y` is continuous on `[0, τ]` and bounded below by `ε > 0`
+(the horizon is supported), and the **law of large numbers**
+`sup_{grid points ≤ t} |Y n / n - y| → 0` holds in probability. Then the conditional square sums
+`∑ E[(Δ √n (Â - Λ*))² | ℱ]` up to the grid point `⌊t / h_n⌋ h_n` converge in probability to
+`∫_{(0, t]} (y s)⁻¹ dΛ(s)`. If `M` is a martingale (`martingale_nelsonAalenProcess_sub` then makes
+`√n (Â - Λ*)` one), these sums are the predictable variations `⟨√n (Â - Λ*)⟩` and the limit is the
+variance function of the Gaussian-martingale limit
 (Andersen–Borgan–Gill–Keiding, §IV.1). -/
-theorem tendstoInMeasure_predictableQuadraticVariation_naScaledMartingale_integral
+theorem tendstoInMeasure_predictableQuadraticVariation_naScaledProcess_integral
     {ℱ : ℕ → Filtration ℕ m0} {N Y : ℕ → ℕ → Ω → ℝ} (Λ : StieltjesFunction ℝ)
     (hΛ : Continuous Λ) {y : ℝ → ℝ} {τ t ε : ℝ} (hτ : 0 < τ) (ht : t ∈ Set.Icc 0 τ)
     (hε : 0 < ε) (hy : ContinuousOn y (Set.Icc 0 τ)) (hyε : ∀ s ∈ Set.Icc 0 τ, ε ≤ y s)
@@ -595,7 +617,7 @@ theorem tendstoInMeasure_predictableQuadraticVariation_naScaledMartingale_integr
     (hLLN : ∀ δ, 0 < δ → Tendsto (fun n => μ {ω | ∃ i < gridIndex t (τ / K n),
       δ < |Y n (i + 1) ω / n - y (((i + 1 : ℕ) : ℝ) * (τ / K n))|}) atTop (𝓝 0)) :
     TendstoInMeasure μ (fun n => predictableQuadraticVariation μ (ℱ n)
-      (naScaledMartingale n (N n) (Y n) (gridHazard Λ (τ / K n))) (gridIndex t (τ / K n)))
+      (naScaledProcess n (N n) (Y n) (gridHazard Λ (τ / K n))) (gridIndex t (τ / K n)))
       atTop (fun _ => ∫ s in Set.Ioc 0 t, (y s)⁻¹ ∂Λ.measure) := by
   have hgridI : ∀ n, ∀ i < gridIndex t (τ / K n), ((i + 1 : ℕ) : ℝ) * (τ / K n) ∈ Set.Icc 0 τ := by
     intro n i hi
@@ -605,7 +627,7 @@ theorem tendstoInMeasure_predictableQuadraticVariation_naScaledMartingale_integr
       refine ⟨by positivity, ?_⟩
       exact (mul_le_mul_of_nonneg_right (Nat.cast_le.2 hi) hh.le).trans
         ((gridIndex_mul_le ht.1 hh).trans ht.2)
-  refine tendstoInMeasure_predictableQuadraticVariation_naScaledMartingale (L := Λ τ - Λ 0)
+  refine tendstoInMeasure_predictableQuadraticVariation_naScaledProcess (L := Λ τ - Λ 0)
     (ybar := fun n i => y ((i : ℝ) * (τ / K n))) hε hY hY1 hsq hcv ?_
     (eventually_gridHazard_increment_le Λ hΛ hτ ht hK) ?_ (fun n i hi => hyε _ (hgridI n i hi))
     hLLN (tendsto_gridSum_integral Λ hΛ hτ ht hε hy hyε hK)

@@ -37,20 +37,20 @@ example (ω : Ω) : naVarianceSum 2 (fun _ _ => (2 : ℝ)) (fun i => (i : ℝ) /
 example (n k : ℕ) (α : ℕ → ℝ) (ω : Ω) : naVarianceSum n (fun _ _ => (0 : ℝ)) α k ω = 0 := by
   simp [naVarianceSum]
 
-/-! ### The scaled Nelson–Aalen martingale -/
+/-! ### The scaled Nelson–Aalen process -/
 
 /-- One subject, one death in the first step, hazard increment `1/2`, `n = 4`:
 `√4 (Â₁ - Λ*₁) = 2 (1 - 1/2) = 1`. -/
-example (ω : Ω) : naScaledMartingale 4 (fun k _ => if k = 0 then 0 else 1) (fun _ _ => 1)
+example (ω : Ω) : naScaledProcess 4 (fun k _ => if k = 0 then 0 else 1) (fun _ _ => 1)
     (fun i => (i : ℝ) / 2) 1 ω = 1 := by
   have h4 : Real.sqrt 4 = 2 := by
     rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
-  simp [naScaledMartingale, nelsonAalenProcess, restrictedHazard, stochasticIntegral, h4]
+  simp [naScaledProcess, nelsonAalenProcess, restrictedHazard, stochasticIntegral, h4]
   norm_num
 
-/-- The scaled martingale starts at `0`. -/
-example (n : ℕ) (N Y : ℕ → Ω → ℝ) (α : ℕ → ℝ) (ω : Ω) : naScaledMartingale n N Y α 0 ω = 0 := by
-  simp [naScaledMartingale, nelsonAalenProcess, restrictedHazard]
+/-- The scaled process starts at `0`. -/
+example (n : ℕ) (N Y : ℕ → Ω → ℝ) (α : ℕ → ℝ) (ω : Ω) : naScaledProcess n N Y α 0 ω = 0 := by
+  simp [naScaledProcess, nelsonAalenProcess, restrictedHazard]
 
 /-! ### The grid -/
 
@@ -92,14 +92,14 @@ example {t : ℝ} (ht : t ∈ Set.Icc 0 1) : ∀ᶠ n : ℕ in atTop, ∀ i < gr
 /-! ### The headline theorem on explicit models -/
 
 /-- **Zero-hazard boundary.** With `Λ ≡ 0`, no events and `n` subjects always at risk, the
-predictable variation is identically `0` and the headline limit `∫ dΛ / y` is `0`. This is a
+conditional square sum is identically `0` and the headline limit `∫ dΛ / y` is `0`. This is a
 boundary case only; the non-degenerate instance is below. -/
 example [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m0) {t : ℝ} (ht : t ∈ Set.Icc 0 1) :
     TendstoInMeasure μ (fun n => predictableQuadraticVariation μ ℱ
-      (naScaledMartingale n (fun _ _ => 0) (fun _ _ => (n : ℝ))
+      (naScaledProcess n (fun _ _ => 0) (fun _ _ => (n : ℝ))
         (gridHazard (StieltjesFunction.const ℝ 0) (1 / (n : ℕ)))) (gridIndex t (1 / (n : ℕ))))
       atTop (fun _ => 0) := by
-  have h := tendstoInMeasure_predictableQuadraticVariation_naScaledMartingale_integral
+  have h := tendstoInMeasure_predictableQuadraticVariation_naScaledProcess_integral
     (μ := μ) (ℱ := fun _ => ℱ) (N := fun _ _ _ => 0) (Y := fun n _ _ => (n : ℝ))
     (StieltjesFunction.const ℝ 0) continuous_const (y := fun _ => 1) one_pos ht one_pos
     continuousOn_const (fun _ _ => le_rfl) tendsto_id
@@ -142,7 +142,8 @@ private lemma dd_mem (n j : ℕ) : 0 ≤ (n : ℝ) * dd n j * (1 - dd n j) := by
 private noncomputable def MM (n j : ℕ) : ℝ :=
   ∑ i ∈ range j, Real.sqrt ((n : ℝ) * dd n i * (1 - dd n i))
 
-/-- The counting-process slot: `MM` plus the Aalen compensator of `Y ≡ n` under `Λ(s) = s`. -/
+/-- The `N` slot (not a counting process): `MM` plus the Aalen compensator of `Y ≡ n` under
+`Λ(s) = s`. -/
 private noncomputable def NN (n j : ℕ) (ω : Ω) : ℝ :=
   MM n j + aalenCompensator (fun _ _ => (n : ℝ)) (gridHazard StieltjesFunction.id (1 / (n : ℕ))) j ω
 
@@ -162,10 +163,11 @@ example (n : ℕ) (hn : 0 < n) (ω : Ω) :
 
 /-- **Non-degenerate instance of the headline theorem**: unit hazard rate `Λ(s) = s`, `y ≡ 1`,
 `t = 1`, `Y ≡ n`, increments with the binomial second moment; the limit is `∫_{(0,1]} ds = 1`.
-(The increments are deterministic, not a martingale; the headline theorem does not assume one.) -/
+The increments are deterministic and not a martingale: the headline theorem is a statement about
+conditional square sums and does not assume one. -/
 example [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m0) :
     TendstoInMeasure μ (fun n => predictableQuadraticVariation μ ℱ
-      (naScaledMartingale n (NN n) (fun _ _ => (n : ℝ))
+      (naScaledProcess n (NN n) (fun _ _ => (n : ℝ))
         (gridHazard StieltjesFunction.id (1 / (n : ℕ)))) (gridIndex 1 (1 / (n : ℕ))))
       atTop (fun _ => 1) := by
   have hinc : ∀ n j, (fun ω : Ω => ((NN n (j + 1) ω - aalenCompensator (fun _ _ => (n : ℝ))
@@ -176,7 +178,7 @@ example [IsProbabilityMeasure μ] (ℱ : Filtration ℕ m0) :
     intro n j; funext ω
     simp only [NN, add_sub_cancel_right, MM, sum_range_succ, add_sub_cancel_left]
     exact Real.sq_sqrt (dd_mem n j)
-  have h := tendstoInMeasure_predictableQuadraticVariation_naScaledMartingale_integral
+  have h := tendstoInMeasure_predictableQuadraticVariation_naScaledProcess_integral
     (μ := μ) (ℱ := fun _ => ℱ) (N := fun n => NN n) (Y := fun n _ _ => (n : ℝ))
     StieltjesFunction.id continuous_id (y := fun _ => 1) one_pos
     (t := 1) ⟨zero_le_one, le_rfl⟩ one_pos
