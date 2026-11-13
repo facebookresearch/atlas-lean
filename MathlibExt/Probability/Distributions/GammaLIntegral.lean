@@ -25,6 +25,10 @@ statement:
   from `integral_rpow_gammaMeasure`.
 * `ProbabilityTheory.lintegral_rpow_mul_exp_neg_mul_Ioi`: `∫₀^∞ x^{a-1} e^{-r x} dx = Γ(a) / r^a`,
   from `Real.integral_rpow_mul_exp_neg_mul_Ioi`.
+
+It also records the linear substitution `∫⁻ z, F z = σ ∫⁻ t, F (σ t)` for `σ > 0`
+(`ProbabilityTheory.lintegral_comp_mul_left_of_pos`), shared by the Student `t` and Snedecor `F`
+ratio laws.
 -/
 
 open MeasureTheory Set Real
@@ -87,6 +91,14 @@ theorem lintegral_rpow_mul_exp_neg_mul_Ioi {a r : ℝ} (ha : 0 < a) (hr : 0 < r)
           positivity),
     Real.integral_rpow_mul_exp_neg_mul_Ioi ha hr, div_rpow zero_le_one hr.le, one_rpow]
   ring_nf
+
+/-- Linear substitution `z = σ t` for a lower Lebesgue integral on `ℝ`, `σ > 0`. -/
+lemma lintegral_comp_mul_left_of_pos {σ : ℝ} (hσ : 0 < σ) (F : ℝ → ℝ≥0∞) :
+    ∫⁻ z, F z = ENNReal.ofReal σ * ∫⁻ t, F (σ * t) := by
+  conv_lhs => rw [← Real.smul_map_volume_mul_left hσ.ne']
+  rw [lintegral_smul_measure, abs_of_pos hσ, smul_eq_mul]
+  congr 1
+  exact lintegral_map_equiv F (Homeomorph.mulLeft₀ σ hσ.ne').toMeasurableEquiv
 
 end
 

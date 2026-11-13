@@ -10,6 +10,7 @@ module
 
 public import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 public import Mathlib.Analysis.Normed.Group.Real
+public import Mathlib.Probability.Moments.Variance
 
 @[expose] public section
 
@@ -36,6 +37,9 @@ converging to `Y` almost everywhere.
 - `convergence_in_probability_iff_subsequential_ae_convergence`: the book's
   theorem (Lecture 9, "Convergence in probability subsequential a.s.
   convergence").
+- `tendstoInMeasure_of_integral_eq_of_evariance`: Chebyshev consistency, random
+  variables with a common mean `θ` and variances tending to `0` converge in
+  probability to `θ`.
 -/
 
 /-- **Convergence in measure in the textbook `ε`-formulation.**
@@ -98,6 +102,32 @@ theorem convergence_in_probability_iff_subsequential_ae_convergence
         ∀ᵐ ω ∂μ, Tendsto (fun k => X (ns (ns' k)) ω) atTop (𝓝 (Y ω))) := by
   rw [← tendstoInMeasure_iff_tendsto_measure_abs_sub]
   exact exists_seq_tendstoInMeasure_atTop_iff hX
+
+open ProbabilityTheory in
+/-- **Chebyshev consistency.** Estimators `T n` with constant mean `θ` and variance tending to
+`0` converge to `θ` in measure. -/
+theorem tendstoInMeasure_of_integral_eq_of_evariance {Ω : Type*} {m : MeasurableSpace Ω}
+    {μ : Measure Ω} {ι : Type*} {l : Filter ι} {T : ι → Ω → ℝ} {θ : ℝ}
+    (hT : ∀ n, AEStronglyMeasurable (T n) μ)
+    (hmean : ∀ n, ∫ ω, T n ω ∂μ = θ) (hvar : Tendsto (fun n => evariance (T n) μ) l (𝓝 0)) :
+    TendstoInMeasure μ T l fun _ => θ := by
+  rw [tendstoInMeasure_iff_dist]
+  intro ε hε
+  set c : NNReal := ⟨ε, hε.le⟩
+  have hc : c ≠ 0 := by
+    intro h
+    have : (c : ℝ) = 0 := by rw [h]; rfl
+    exact hε.ne' this
+  have hbound : ∀ n, μ {ω | ε ≤ dist (T n ω) θ} ≤ evariance (T n) μ / (c : ENNReal) ^ 2 := by
+    intro n
+    have h := meas_ge_le_evariance_div_sq (hT n) hc
+    rwa [hmean n] at h
+  have hlim : Tendsto (fun n => evariance (T n) μ / (c : ENNReal) ^ 2) l (𝓝 0) := by
+    have hc2 : (c : ENNReal) ^ 2 ≠ 0 := pow_ne_zero 2 (ENNReal.coe_ne_zero.mpr hc)
+    have h := ENNReal.Tendsto.div_const hvar (Or.inr hc2)
+    rwa [ENNReal.zero_div] at h
+  exact tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim
+    (fun _ => zero_le) hbound
 
 end MathlibExt.Probability.ConvergenceInProbability
 

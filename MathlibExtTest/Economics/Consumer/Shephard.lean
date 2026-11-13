@@ -344,6 +344,12 @@ theorem shephard_conclusion : ∀ v : Fin 2 → ℝ,
   rw [dotProduct_expand]
   simp
 
+-- The canonical homogeneity API applies directly through the consumer spelling.
+example (p : Fin 2 → ℝ) (ubar : ℝ) {t : ℝ} (ht : 0 ≤ t) :
+    expenditure u X (t • p) ubar =
+      t * MathlibExt.Economics.ExpenditureFunction.expenditure u X p ubar := by
+  exact MathlibExt.Economics.ExpenditureFunction.expenditure_smul u X p ubar ht
+
 end MathlibExtTest.Economics.Consumer.Shephard.Expenditure
 
 /-! The same Leontief example through the canonical gradient form: the derivative of the
