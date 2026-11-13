@@ -730,7 +730,8 @@ private theorem seg_mono_le {X : Type*} [Finite X]
     exact pref_refl R hR _
   · exact (seg_strict_mono R hR hI B W hbounds hstrict a' a ha0' ha1' ha0 ha1 hlt).1
 
-private theorem expectedUtility_single_gen {X : Type*} [Fintype X] (u : X → ℝ) (x : X) :
+/-- Expected utility of a point mass is the utility of that outcome. -/
+theorem expectedUtility_single {X : Type*} [Fintype X] (u : X → ℝ) (x : X) :
     expectedUtility u (StdSimplex.single x) = u x := by
   unfold expectedUtility
   rw [StdSimplex.weights_single]
@@ -836,14 +837,14 @@ theorem exists_isExpectedUtilityRepresentation {X : Type*} [Fintype X]
           = expectedUtility (fun x => γ (StdSimplex.single x)) p := by
         apply simplex_strong_induction
         · intro x
-          simp only [expectedUtility_single_gen]
+          simp only [expectedUtility_single]
         · intro x q α h0 h1 ih
           have haffx := haff (StdSimplex.single x) q α h0.le h1.le
           have heux := expectedUtility_mix (fun x => γ (StdSimplex.single x)) α
             h0.le h1.le (StdSimplex.single x) q
           have hu : ∀ y, (fun x => γ (StdSimplex.single x)) y
               = γ (StdSimplex.single y) := fun y => rfl
-          rw [haffx, heux, expectedUtility_single_gen, ih, ← hu]
+          rw [haffx, heux, expectedUtility_single, ih, ← hu]
       intro p q
       rw [hγrep p q, hγeq p, hγeq q]
 
