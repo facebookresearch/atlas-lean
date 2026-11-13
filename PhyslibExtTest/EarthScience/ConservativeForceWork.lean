@@ -45,27 +45,32 @@ No new definitions or results are introduced here.
 example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [CompleteSpace E]
     {a b : ℝ} {U : E → ℝ} {g F : E → E} {γ γ' : ℝ → E}
     (hF : ∀ x, F x = -g x)
-    (hgrad : ∀ x, HasFDerivAt U (InnerProductSpace.toDual ℝ E (g x)) x)
+    (hgrad : ∀ x, HasGradientAt U (g x) x)
     (hγ : ∀ t ∈ Set.uIcc a b, HasDerivAt γ (γ' t) t)
     (hInt : IntervalIntegrable (fun t => inner ℝ (F (γ t)) (γ' t)) volume a b) :
     ∫ t in a..b, inner ℝ (F (γ t)) (γ' t) = -(U (γ b) - U (γ a)) :=
   EarthScience.conservative_force_work_eq_potential_decrease hF hgrad hγ hInt
+
+/-- Public shape of the general form: no completeness assumption. -/
+example {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
+    {a b : ℝ} {U : E → ℝ} {g F : E → E} {γ γ' : ℝ → E}
+    (hF : ∀ x, F x = -g x)
+    (hgrad : ∀ x, HasFDerivAt U (innerSL ℝ (g x)) x)
+    (hγ : ∀ t ∈ Set.uIcc a b, HasDerivAt γ (γ' t) t)
+    (hInt : IntervalIntegrable (fun t => inner ℝ (F (γ t)) (γ' t)) volume a b) :
+    ∫ t in a..b, inner ℝ (F (γ t)) (γ' t) = -(U (γ b) - U (γ a)) :=
+  EarthScience.conservative_force_work_eq_potential_decrease_of_hasFDerivAt hF hgrad hγ hInt
 
 set_option linter.unusedVariables false in
 /-- Linear potential `U x = 3 * x`, constant force `-3`, path `γ t = 2 * t`:
 the work integral is `-6`, the potential decrease is `-6`. -/
 example : ∫ t in (0 : ℝ)..1, inner ℝ ((-3 : ℝ)) (2 : ℝ) = -6 := by
   have hF : ∀ x : ℝ, (fun _ : ℝ => (-3 : ℝ)) x = -(fun _ : ℝ => (3 : ℝ)) x := fun _ => rfl
-  have hgrad : ∀ x : ℝ, HasFDerivAt (fun x : ℝ => 3 * x)
-      (InnerProductSpace.toDual ℝ ℝ ((fun _ : ℝ => (3 : ℝ)) x)) x := by
+  have hgrad : ∀ x : ℝ, HasGradientAt (fun x : ℝ => 3 * x) ((fun _ : ℝ => (3 : ℝ)) x) x := by
     intro x
     have h1 : HasDerivAt (fun x : ℝ => 3 * x) 3 x := by
       simpa using (hasDerivAt_id x).const_mul (3 : ℝ)
-    have h2 := h1.hasFDerivAt
-    convert h2 using 1
-    apply ContinuousLinearMap.ext
-    intro y
-    simp [InnerProductSpace.toDual_apply_apply]
+    exact h1.hasGradientAt'
   have hγ : ∀ t ∈ Set.uIcc (0 : ℝ) 1,
       HasDerivAt (fun t : ℝ => 2 * t) ((fun _ : ℝ => (2 : ℝ)) t) t := by
     intro t _
