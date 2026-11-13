@@ -28,7 +28,8 @@ counterpart of the grid statement `Censoring.censoredObsLaw_indepLaw_eq_iff` in
 * `censoredObsLaw F G`: the observed-data law, the image of `F ⊗ G` under `censoredObsMap`.
 * `observableSet G = {s | G[s, ∞) ≠ 0}`: the times `s` at which a subject failing at `s` can be
   observed to fail. It is a down-set (`observableSet_downward`): `(-∞, τ]` or `(-∞, τ)` for the
-  right end `τ` of the support of `G`, all of `ℝ` if the support is unbounded above.
+  right end `τ` of the support of `G`, all of `ℝ` if the support is unbounded above, and `∅`
+  when `G = 0`.
 
 ## Main results
 
@@ -74,7 +75,8 @@ continuous time) are not treated here. Times are on `ℝ`; nonnegativity of `T` 
   Sci. USA 72 (1975), 20–22 (identifiability of the marginal law under independent censoring).
 * P. K. Andersen, Ø. Borgan, R. D. Gill and N. Keiding, *Statistical Models Based on Counting
   Processes*, Springer (1993), Section III.2.2 (independent censoring; the hazard is identified
-  on `{s : P(X ≥ s) > 0}`).
+  on `{s : P(X ≥ s) > 0}`). That set is `observableSet G ∩ {s | F[s, ∞) ≠ 0}`; it differs from
+  `observableSet G` only where `F[s, ∞) = 0`, which does not affect the hazard.
 * J. D. Kalbfleisch and R. L. Prentice, *The Statistical Analysis of Failure Time Data*, 2nd ed.,
   Wiley (2002), Section 1.2 (identifiability under independent censoring) and Section 3.2.
 -/

@@ -119,7 +119,7 @@ instance : IsFiniteMeasure unifCens :=
   isFiniteMeasure_restrict.2 (by simp)
 
 /-- Boundary: for a continuous censoring law on `[0, 1]`, `G[1, ∞) = 0`, so `h = 1` fails the
-hypothesis of the identification theorems, while every `h < 1` satisfies it. -/
+hypothesis of the identification theorems, while `h = 1 / 2` satisfies it. -/
 example : unifCens (Ici 1) = 0 ∧ unifCens (Ici (1 / 2)) ≠ 0 := by
   constructor
   · rw [unifCens, Measure.restrict_apply measurableSet_Ici]
