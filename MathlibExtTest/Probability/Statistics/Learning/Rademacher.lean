@@ -8,6 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.BigOperators.Fin
+public import Mathlib.Data.Fin.Tuple.Basic
+public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Fintype.BigOperators
 public import MathlibExt.Probability.Statistics.Learning.Rademacher
 
 /-! # Tests for `MathlibExt.Probability.Statistics.Learning.Rademacher` -/

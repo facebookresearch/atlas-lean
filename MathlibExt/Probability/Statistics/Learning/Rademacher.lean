@@ -8,13 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Data.Fin.Tuple.Basic
-public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Data.Fintype.BigOperators
-public import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Linarith
 
 /-!
 # Empirical Rademacher complexity of a finite set of vectors (frozen convention)
