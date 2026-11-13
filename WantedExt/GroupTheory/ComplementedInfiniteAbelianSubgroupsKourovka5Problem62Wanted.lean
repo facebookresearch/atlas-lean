@@ -17,7 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Complement
-public import WantedExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -30,10 +30,10 @@ Chernikov). UnsolvedMath record UM-00700341 (`KOU-5.62`), dataset ulamai/Unsolve
 
 A subgroup `A` is complementable when some subgroup `K` satisfies `A ∩ K = 1` and `A K = G`
 (Mathlib's `Subgroup.IsComplement'`); 'all of them' refers to the infinite abelian subgroups.
-Locally finite is `IsLocallyFinite` of the Kourovka 1.23 module.
+Locally finite is `IsLocallyFinite` of `GroupClassesShared`.
 -/
 
-open MathlibExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted (IsLocallyFinite)
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 
 /-- Kourovka 5.62 (S. N. Chernikov): a group that has infinite abelian subgroups, all of which are
 complemented (`A ∩ K = 1`, `A K = G` for some subgroup `K`), is locally finite. -/

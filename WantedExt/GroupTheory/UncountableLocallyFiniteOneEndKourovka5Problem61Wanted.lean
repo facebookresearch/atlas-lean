@@ -17,7 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Basic.Countable.Defs
-public import WantedExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -28,7 +28,7 @@ Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theor
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 5.61 (B.
 Hartley). UnsolvedMath record UM-00700340 (`KOU-5.61`), dataset ulamai/UnsolvedMath v1.8.0.
 
-Locally finite is `IsLocallyFinite` of the Kourovka 1.23 module (every finitely generated subgroup
+Locally finite is `IsLocallyFinite` of `GroupClassesShared` (every finitely generated subgroup
 is finite). Ends of an arbitrary group are counted with almost invariant subsets (Specker,
 Stallings): `e(G)` is the dimension over `𝔽₂` of the `G`-invariant part of `P(G) ⧸ F(G)` (all
 subsets modulo finite subsets, under right translation), so an infinite group has exactly one end
@@ -36,7 +36,7 @@ when every almost invariant subset `A` (`A ∆ A g` finite for every `g`) is fin
 target uses `A g⁻¹ = (· * g) ⁻¹' A`, which ranges over the same translates.
 -/
 
-open MathlibExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted (IsLocallyFinite)
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 
 /-- Kourovka 5.61 (B. Hartley): every uncountable locally finite group has exactly one end: every
 almost invariant subset `A` (`A ∆ A g⁻¹` finite for every `g`) is finite or has finite

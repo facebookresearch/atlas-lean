@@ -22,6 +22,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.PGroup
 public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -40,9 +41,7 @@ not hold vacuously with `H = 1`: every infinite simple locally finite group cont
 the existence of Kegel covers and the Feit-Thompson theorem).
 -/
 
-/-- `G` is locally finite: every finitely generated subgroup is finite. -/
-def IsLocallyFinite (G : Type*) [Group G] : Prop :=
-  ∀ S : Finset G, (Subgroup.closure (S : Set G) : Set G).Finite
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 
 /-- `G` is a Chernikov group: it has an abelian subgroup of finite index satisfying the minimal
 condition on subgroups (equivalently, a finite extension of a direct product of finitely many

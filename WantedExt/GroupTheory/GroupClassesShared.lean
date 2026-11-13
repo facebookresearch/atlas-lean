@@ -15,8 +15,8 @@ generalized quaternion groups (Problems 4.75, 7.15). Mathlib and MathlibExt have
 invariant subgroups, which describe varieties of groups through their laws (Problems 6.14-6.17,
 7.24, 8.18, 8.22, 8.26), use `IsFullyInvariant` of the Kourovka 3.53 entry; conjugacy separable
 groups (Problems 8.69, 8.70, 8.71, 9.2) use `IsConjugacySeparable` of `KourovkaNotebookShared`.
-Locally normal groups (Problems 6.8, 6.9) use `IsLocallyNormal` below; Mathlib and MathlibExt have
-no such predicate either (checked 2026-11-13).
+Locally finite groups use `IsLocallyFinite` below and locally normal groups (Problems 6.8, 6.9)
+use `IsLocallyNormal`; Mathlib and MathlibExt have neither predicate (checked 2026-11-13).
 -/
 
 module
@@ -34,6 +34,10 @@ namespace MathlibExt.GroupTheory.GroupClassesShared
 `2 ^ (k + 2) ≥ 8`) for some `k ≥ 1`. -/
 def IsGeneralizedQuaternion (P : Type*) [Group P] : Prop :=
   ∃ k : ℕ, 1 ≤ k ∧ Nonempty (P ≃* QuaternionGroup (2 ^ k))
+
+/-- `G` is locally finite: every finitely generated subgroup is finite. -/
+def IsLocallyFinite (G : Type*) [Group G] : Prop :=
+  ∀ s : Finset G, Finite (Subgroup.closure (s : Set G))
 
 /-- `G` is locally normal: every finite subset lies in a finite normal subgroup. -/
 def IsLocallyNormal (G : Type*) [Group G] : Prop :=

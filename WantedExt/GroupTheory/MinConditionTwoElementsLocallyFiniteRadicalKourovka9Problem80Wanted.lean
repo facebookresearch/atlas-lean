@@ -17,7 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Group.Nat.Defs
-public import WantedExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -30,13 +30,13 @@ Shunkov). UnsolvedMath record UM-00700613 (`KOU-9.80`), dataset ulamai/UnsolvedM
 
 The minimum condition is on subgroups. The minimum condition on subgroups is `WellFoundedLT
 (Subgroup G)`: every non-empty set of subgroups has a minimal member. A `2`-element has order a
-power of `2`. Locally finite is the 1.23 entry's `IsLocallyFinite`: every finite subset generates a
-finite subgroup, i.e. every finitely generated subgroup is finite. The locally finite radical is the
-largest locally finite normal subgroup, which contains every locally finite normal subgroup, so
-lying in it means lying in some locally finite normal subgroup.
+power of `2`. Locally finite is `IsLocallyFinite` of `GroupClassesShared`: every finite subset
+generates a finite subgroup, i.e. every finitely generated subgroup is finite. The locally finite
+radical is the largest locally finite normal subgroup, which contains every locally finite normal
+subgroup, so lying in it means lying in some locally finite normal subgroup.
 -/
 
-open MathlibExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 
 /-- Kourovka 9.80 (V. P. Shunkov): in a group with the minimum condition on subgroups every
 `2`-element (element of `2`-power order) lies in the locally finite radical, i.e. in some locally

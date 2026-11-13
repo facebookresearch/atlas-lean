@@ -32,12 +32,9 @@ Kontorovich). UnsolvedMath record UM-00700054 (`KOU-1.63`), dataset ulamai/Unsol
 
 A subgroup `H` is isolated if `xⁿ ∈ H` with `n ≥ 1` implies `x ∈ H`; dense means the only isolated
 subgroups are `1` and `G`. Locally cyclic means every finitely generated subgroup is cyclic, and
-torsion-free means no element other than `1` has finite order.
+torsion-free is Mathlib's `IsMulTorsionFree` (for a group: no element other than `1` has finite
+order, `isMulTorsionFree_iff_not_isOfFinOrder`).
 -/
-
-/-- `G` is torsion-free: no element other than `1` has finite order. -/
-def IsTorsionFreeGroup (G : Type) [Group G] : Prop :=
-  ∀ g : G, g ≠ 1 → ¬ IsOfFinOrder g
 
 /-- The subgroup `H` is isolated: `xⁿ ∈ H` with `n ≥ 1` implies `x ∈ H`. -/
 def IsIsolated {G : Type} [Group G] (H : Subgroup G) : Prop :=
@@ -54,12 +51,12 @@ def IsLocallyCyclic (G : Type) [Group G] : Prop :=
 /-- Kourovka 1.63(a) (P. G. Kontorovich): there is a dense torsion-free group that is not locally
 cyclic. -/
 def existsDenseTorsionFreeNotLocallyCyclic : Prop :=
-  ∃ (G : Type) (_ : Group G), IsTorsionFreeGroup G ∧ IsDense G ∧ ¬ IsLocallyCyclic G
+  ∃ (G : Type) (_ : Group G), IsMulTorsionFree G ∧ IsDense G ∧ ¬ IsLocallyCyclic G
 
 /-- Kourovka 1.63(b) (P. G. Kontorovich): a torsion-free group in which any two nontrivial elements
 `x`, `y` satisfy `x ^ k = y ^ l` for some nonzero integers `k`, `l` is abelian. -/
 def commensurablePowersImpliesAbelian : Prop :=
-  ∀ (G : Type) [Group G], IsTorsionFreeGroup G →
+  ∀ (G : Type) [Group G], IsMulTorsionFree G →
     (∀ x y : G, x ≠ 1 → y ≠ 1 → ∃ k l : ℤ, k ≠ 0 ∧ l ≠ 0 ∧ x ^ k = y ^ l) →
       ∀ a b : G, a * b = b * a
 

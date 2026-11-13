@@ -21,7 +21,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.GroupTheory.Solvable
 public import WantedExt.GroupTheory.EngelElementLengthPolynomialKourovka11Problem88Wanted
-public import WantedExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -34,12 +34,12 @@ Razmyslov). UnsolvedMath record UM-00700583 (`KOU-9.50`), dataset ulamai/Unsolve
 
 A group is `4`-Engel if `[x, y, y, y, y] = 1` for all `x, y`, with left-normed commutators and `[u,
 v] = u⁻¹ v⁻¹ u v` (`engelComm` of the 11.88 entry). "Without elements of order `2` and `5`" means no
-element has order `2` or `5`. Locally finite is the 1.23 entry's `IsLocallyFinite`: every finite
-subset generates a finite subgroup, i.e. every finitely generated subgroup is finite. One target per
-part.
+element has order `2` or `5`. Locally finite is `IsLocallyFinite` of `GroupClassesShared`: every
+finite subset generates a finite subgroup, i.e. every finitely generated subgroup is finite. One
+target per part.
 -/
 
-open MathlibExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 open MathlibExt.GroupTheory.EngelElementLengthPolynomialKourovka11Problem88Wanted
 
 /-- `G` is an `n`-Engel group: `[x, y; n] = 1` for all `x, y ∈ G`, with the left-normed Engel

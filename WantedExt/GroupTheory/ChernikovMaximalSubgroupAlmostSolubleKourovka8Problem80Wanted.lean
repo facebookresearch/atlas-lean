@@ -18,7 +18,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Solvable
 public import WantedExt.GroupTheory.ChernikovSubgroupLatticeDimensionKourovka11Problem116Wanted
-public import WantedExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -29,14 +29,14 @@ Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theor
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 8.80 (B.
 Hartley). UnsolvedMath record UM-00700528 (`KOU-8.80`), dataset ulamai/UnsolvedMath v1.8.0.
 
-Locally finite is the 1.23 entry's `IsLocallyFinite`: every finite subset generates a finite
+Locally finite is `IsLocallyFinite` of `GroupClassesShared`: every finite subset generates a finite
 subgroup, i.e. every finitely generated subgroup is finite. A maximal subgroup is a coatom of the
 subgroup lattice. A Chernikov group is the 11.116 entry's `IsChernikov`: a normal subgroup of finite
 index isomorphic to a direct product of finitely many quasicyclic groups. Almost soluble means
 having a soluble subgroup of finite index.
 -/
 
-open MathlibExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 open MathlibExt.GroupTheory.ChernikovSubgroupLatticeDimensionKourovka11Problem116Wanted
 
 /-- Kourovka 8.80 (B. Hartley): a locally finite group with a maximal subgroup that is a Chernikov

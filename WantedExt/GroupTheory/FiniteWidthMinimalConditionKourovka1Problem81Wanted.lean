@@ -21,6 +21,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Index
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -44,9 +45,7 @@ def HasFiniteWidth (G : Type*) [Group G] : Prop :=
   ∃ m : ℕ, ∀ S : Finset G, ∃ T ⊆ S, T.card ≤ m ∧
     Subgroup.closure (T : Set G) = Subgroup.closure (S : Set G)
 
-/-- `G` is locally finite: every finitely generated subgroup is finite. -/
-def IsLocallyFinite (G : Type*) [Group G] : Prop :=
-  ∀ S : Finset G, (Subgroup.closure (S : Set G) : Set G).Finite
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 
 /-- `G` is a Chernikov group: it has an abelian subgroup of finite index satisfying the minimal
 condition on subgroups. An abelian group with the minimal condition is a direct product of finitely

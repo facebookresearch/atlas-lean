@@ -18,7 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.PGroup
-public import WantedExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -29,14 +29,14 @@ Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theor
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 9.3 (V. V.
 Belyaev). UnsolvedMath record UM-00700538 (`KOU-9.3`), dataset ulamai/UnsolvedMath v1.8.0.
 
-Locally finite is the 1.23 entry's `IsLocallyFinite`: every finite subset generates a finite
+Locally finite is `IsLocallyFinite` of `GroupClassesShared`: every finite subset generates a finite
 subgroup, i.e. every finitely generated subgroup is finite. The Sylow `p`-subgroups of a locally
 finite group are its maximal `p`-subgroups, and every `p`-subgroup lies in one (Zorn), so "all Sylow
 subgroups are finite" is stated as "every `p`-subgroup is finite" for every prime `p`. `G` is taken
 non-trivial: the trivial group meets the hypotheses and has no non-trivial normal subgroup.
 -/
 
-open MathlibExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 
 /-- Kourovka 9.3 (V. V. Belyaev): a non-trivial countable locally finite group `G` with no proper
 subgroup isomorphic to `G` and all of whose Sylow subgroups are finite (equivalently, every

@@ -22,8 +22,8 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.PGroup
 public import WantedExt.GroupTheory.CentralizerDimensionSocleQuotientKourovka19Problem101Wanted
+public import WantedExt.GroupTheory.GroupClassesShared
 public import WantedExt.GroupTheory.InvolutionCentralizerPSLTwoKourovka18Problem59Wanted
-public import WantedExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted
 
 @[expose] public section
 
@@ -39,7 +39,7 @@ with no precise target. The minimum condition for `2`-subgroups is stated as the
 condition on `2`-subgroups (equivalent). Almost locally soluble: a locally soluble subgroup of
 finite index (finitely generated subgroups soluble). A locally finite field has all finitely
 generated subfields finite. Locally finite groups, locally soluble subgroups and locally finite
-fields are `IsLocallyFinite` of the Kourovka 1.23 entry, `IsLocallySoluble` of the Kourovka 19.101
+fields are `IsLocallyFinite` of `GroupClassesShared`, `IsLocallySoluble` of the Kourovka 19.101
 entry and `IsLocallyFiniteField` of the Kourovka 18.59 entry, reused here; odd characteristic is
 `ringChar F ≠ 2` (a locally finite field has prime characteristic). `PSL₂(F)` is Mathlib's
 `Matrix.ProjectiveSpecialLinearGroup (Fin 2) F`.
@@ -49,7 +49,7 @@ open MathlibExt.GroupTheory.CentralizerDimensionSocleQuotientKourovka19Problem10
   (IsLocallySoluble)
 open MathlibExt.GroupTheory.InvolutionCentralizerPSLTwoKourovka18Problem59Wanted
   (IsLocallyFiniteField)
-open MathlibExt.GroupTheory.LocallyFiniteSimpleFiniteRankKourovka1Problem23Wanted (IsLocallyFinite)
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 
 /-- Kourovka 5.19(a) (O. H. Kegel): an infinite locally finite simple group `G` satisfying the
 minimum condition for `2`-subgroups (no strictly descending infinite chain of `2`-subgroups), in
