@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
+import MathlibExt.Algebra.AffineRecurrence
 import Mathlib.Tactic.Ring
 
 @[expose] public section
@@ -63,18 +64,17 @@ theorem phillips_natural_rate {π πe u : ℕ → ℝ} {κ uₙ : ℝ}
 
 /-- **Accelerationist form (MA06.T03).** If the unemployment gap is constant,
 `u (t + 1) - uₙ = g` for every `t`, then inflation falls (or rises) linearly:
-`π t = π 0 - t * (κ * g)`. -/
+`π t = π 0 - t * (κ * g)`. Inflation is then a unit-root affine recurrence, so this is
+`MathlibExt.AffineRecurrence.IsAffineRecurrence.eq_add_nsmul_of_one` with intercept `-(κ * g)`. -/
 theorem phillips_acceleration {π πe u : ℕ → ℝ} {κ uₙ g : ℝ}
     (hexp : AdaptiveExpectations πe π) (hpc : IsPhillipsCurve π πe u κ uₙ)
     (hgap : ∀ t, u (t + 1) - uₙ = g) : ∀ t, π t = π 0 - (t : ℝ) * (κ * g) := by
-  intro t
-  induction t with
-  | zero => simp
-  | succ n ih =>
-    have hrec := phillips_recurrence hexp hpc n
-    rw [hgap n] at hrec
-    rw [hrec, ih]
-    push_cast
+  have hrec : MathlibExt.AffineRecurrence.IsAffineRecurrence 1 (-(κ * g)) π := by
+    intro n
+    rw [phillips_recurrence hexp hpc n, hgap n]
     ring
+  intro t
+  rw [hrec.eq_add_nsmul_of_one t]
+  ring
 
 end MathlibExt.Economics.Macro.PhillipsCurve
