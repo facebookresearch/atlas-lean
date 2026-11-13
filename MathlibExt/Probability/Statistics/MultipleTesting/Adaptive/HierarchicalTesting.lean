@@ -75,9 +75,11 @@ For Meinshausen's levels this sum is `α |⋃ D| / m ≤ α |N| / m`
 
 The adaptive Storey-BH procedure (`MultipleTesting.Adaptive.StoreyBH`) controls the *false
 discovery rate* and needs independence of each null p-value from the rest. Hierarchical testing
-controls the stronger *family-wise error rate* and needs no independence; it gains power over
-Bonferroni on the leaves by spending the level `α |C| / m` on coarse clusters first, so large
-clusters are tested at nearly the full level `α`.
+controls the stronger *family-wise error rate* and needs no independence. Its levels grow with
+cluster size: a coarse cluster `C` is tested at `α |C| / m`, nearly the full level `α` for large
+clusters, which is where it can detect signal that per-variable tests miss. A single-variable
+leaf gets `α / m`, the Bonferroni cutoff, and is tested only after every ancestor rejects, so its
+leaf rejections are a subset of Bonferroni's: the gain is at coarse resolution, not at the leaves.
 
 ## Not covered
 
