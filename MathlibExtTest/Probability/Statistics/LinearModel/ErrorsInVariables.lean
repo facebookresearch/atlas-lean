@@ -18,7 +18,12 @@ import Mathlib.Probability.Distributions.Gaussian.Real
   definitions, including the boundaries `σ_u² = 0` (no attenuation, no correction).
 * Non-vacuity of `ClassicalErrorsInVariables`: an i.i.d. Gaussian model with
   `Var ξ = Var u = 1`, built on `Measure.infinitePi`, satisfies every field and the variance
-  hypotheses; the attenuation factor of this model is `1 / 2`.
+  hypotheses; the attenuation factor of this model is `1 / 2`, and the moment form of the
+  population identity gives the population slope `β / 2` from its fields.
+* `measurementError_population_attenuation` on a concrete model: independent Gaussian
+  coordinates with `Var X = 4`, `Var e = 1`, a nonconstant equation error and `β = 2` give the
+  population slope `8 / 5`; by `measurementError_population_slope_of_cov_eq_zero`, `8 / 5` is the
+  unique `b` with `cov[W, Y - b W] = 0`.
 -/
 
 open MeasureTheory ProbabilityTheory Filter Topology
@@ -166,6 +171,17 @@ example : 0 < Var[ξ 0; P] + Var[u 0; P] ∧ Var[ξ 0; P] ≠ 0 := by
 theorem attenuationFactor_gaussian : attenuationFactor Var[ξ 0; P] Var[u 0; P] = 1 / 2 := by
   rw [variance_ξ, variance_u]; norm_num [attenuationFactor]
 
+/-- Usage: the moment form of the population identity takes the fields of
+`ClassicalErrorsInVariables` directly; in the Gaussian model the population slope of `y` on `x`
+is `β / 2`. -/
+example (β₀ β : ℝ) :
+    cov[fun ω => ξ 0 ω + u 0 ω, fun ω => β₀ + β * ξ 0 ω + ε 0 ω; P] /
+      Var[fun ω => ξ 0 ω + u 0 ω; P] = 1 / 2 * β := by
+  have h := classicalErrorsInVariables_gaussian
+  rw [measurementError_population_attenuation_of_cov_eq_zero h.memLp_signal
+    h.memLp_measurementError h.memLp_equationError h.cov_signal_measurementError
+    h.cov_signal_equationError h.cov_measurementError_equationError, attenuationFactor_gaussian]
+
 /-- Usage: in the Gaussian model the naive slope converges almost surely to `β / 2`. -/
 example (β₀ β : ℝ) :
     ∀ᵐ ω ∂P, Tendsto (fun n : ℕ => olsSlope (fun i : Fin n => ξ i ω + u i ω)
@@ -181,5 +197,63 @@ example (β₀ β : ℝ) :
   have h := classicalErrorsInVariables_gaussian.ae_tendsto_correctedSlope β₀ β
     (by rw [variance_ξ]; norm_num)
   rwa [variance_u] at h
+
+/-! ### Population attenuation on a concrete Gaussian model -/
+
+/-- Variances of the coordinates `(X, e, ε)` of the population model. -/
+noncomputable abbrev σ2 : Fin 3 → NNReal := ![4, 1, 1]
+
+/-- Law of `(X, e, ε)`: independent centered normals with variances `4`, `1` and `1`. -/
+noncomputable abbrev Q : Measure (Fin 3 → ℝ) := Measure.pi fun i => gaussianReal 0 (σ2 i)
+
+theorem memLp_coord (i : Fin 3) : MemLp (fun ω : Fin 3 → ℝ => ω i) 2 Q :=
+  (memLp_id_gaussianReal 2).comp_measurePreserving (measurePreserving_eval _ i)
+
+theorem indepFun_coord {i j : Fin 3} (hij : i ≠ j) :
+    IndepFun (fun ω : Fin 3 → ℝ => ω i) (fun ω => ω j) Q :=
+  (iIndepFun_pi (μ := fun i => gaussianReal 0 (σ2 i))
+    (X := fun (_ : Fin 3) (x : ℝ) => x) (fun _ => aemeasurable_id)).indepFun hij
+
+theorem variance_coord (i : Fin 3) : Var[fun ω : Fin 3 → ℝ => ω i; Q] = σ2 i := by
+  have h := variance_map (μ := Q) (X := id) (Y := fun ω => ω i) aemeasurable_id
+    (measurable_pi_apply i).aemeasurable
+  rw [(measurePreserving_eval _ i).map_eq, variance_id_gaussianReal] at h
+  exact h.symm
+
+/-- The observed regressor `W = X + e` has variance `4 + 1 = 5`. -/
+theorem variance_W : Var[fun ω : Fin 3 → ℝ => ω 0 + ω 1; Q] = 5 := by
+  have h := (indepFun_coord (i := 0) (j := 1) (by decide)).variance_add (memLp_coord 0)
+    (memLp_coord 1)
+  rw [show (fun ω : Fin 3 → ℝ => ω 0 + ω 1) = (fun ω => ω 0) + (fun ω => ω 1) from rfl, h,
+    variance_coord, variance_coord]
+  norm_num [σ2]
+
+/-- Non-degenerate population attenuation: `X`, `e` and the equation error `ε` are nonconstant
+and independent, `Var X = 4` differs from `Var e = 1`, and `β = 2` differs from its reciprocal.
+The slope of `Y = 1 + 2 X + ε` on `W = X + e` is `λ β = (4 / 5) · 2 = 8 / 5`, strictly between
+`0` and `β`; the reverse slope `cov[W, Y] / Var[Y]` is `8 / 17`. -/
+example : cov[fun ω : Fin 3 → ℝ => ω 0 + ω 1, fun ω => 1 + 2 * ω 0 + ω 2; Q] /
+    Var[fun ω : Fin 3 → ℝ => ω 0 + ω 1; Q] = 8 / 5 := by
+  have h := measurementError_population_attenuation (μ := Q) (X := fun ω => ω 0)
+    (e := fun ω => ω 1) (ε := fun ω => ω 2) (α := 1) (β := 2) (memLp_coord 0) (memLp_coord 1)
+    (memLp_coord 2) (indepFun_coord (by decide)) (indepFun_coord (by decide))
+    (indepFun_coord (by decide))
+  rw [h, variance_coord, variance_coord]
+  norm_num [attenuationFactor, σ2]
+
+/-- The nondegenerate slope form on the same model: `8 / 5` is the unique `b` for which the
+residual `Y - b W` is uncorrelated with `W`. -/
+example (b : ℝ) :
+    cov[fun ω : Fin 3 → ℝ => ω 0 + ω 1, fun ω => 1 + 2 * ω 0 + ω 2 - b * (ω 0 + ω 1); Q] = 0 ↔
+      b = 8 / 5 := by
+  have h := measurementError_population_slope_of_cov_eq_zero (μ := Q) (X := fun ω => ω 0)
+    (e := fun ω => ω 1) (ε := fun ω => ω 2) (α := 1) (β := 2) (memLp_coord 0) (memLp_coord 1)
+    (memLp_coord 2)
+    ((indepFun_coord (by decide)).covariance_eq_zero (memLp_coord 0) (memLp_coord 1))
+    ((indepFun_coord (by decide)).covariance_eq_zero (memLp_coord 0) (memLp_coord 2))
+    ((indepFun_coord (by decide)).covariance_eq_zero (memLp_coord 1) (memLp_coord 2))
+    (by rw [variance_W]; norm_num) b
+  rw [h, variance_coord, variance_coord]
+  norm_num [attenuationFactor, σ2]
 
 end MathlibExtTest.ErrorsInVariables
