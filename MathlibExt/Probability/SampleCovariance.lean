@@ -7,22 +7,23 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Algebra.Order.Star.Real
-public import Mathlib.LinearAlgebra.Matrix.PosDef
-public import Mathlib.LinearAlgebra.Matrix.Rank
 public import Mathlib.Probability.Independence.Integration
 public import Mathlib.Probability.Moments.Covariance
+public import MathlibExt.Probability.Statistics.PCA
 
 /-!
-# Ensemble covariance foundations
+# Unbiasedness of the sample covariance
 
-For a data matrix `X : Matrix (Fin N) (Fin d) ℝ` whose rows are
-observations, the unbiased sample covariance is
-`S = (N - 1)⁻¹ (center X)ᵀ (center X)`. This file proves `S` is
-positive semidefinite, has rank at most `min d (N - 1)` for `N ≥ 2`
-(the centered rows sum to zero, so one row direction is lost), and has
-expectation equal to the population covariance `Σ` for independent
-identically distributed square-integrable samples.
+For random sample vectors `X i : Ω → (Fin d → ℝ)`, `i : Fin N`, stacked as the rows of a data
+matrix, the unbiased sample covariance `MathlibExt.Probability.Statistics.PCA.sampleCov`,
+`S = (N - 1)⁻¹ (center X)ᵀ (center X)`, has expectation `Σ` entrywise when `N ≥ 2` and the
+samples are square-integrable, pairwise independent, and share the mean `m` and the covariance
+matrix `Σ`. These hypotheses are weaker than i.i.d. sampling: only the first two moments are
+common, and independence is pairwise rather than mutual.
+
+The deterministic facts come from the existing API: `PCA.sampleCov_posSemidef` (`S` is positive
+semidefinite) and `MathlibExt.Biology.Omics.CovarianceBridge.rank_sampleCov_le`
+(`rank S ≤ N - 1`, so `rank S ≤ min d (N - 1)` with `Matrix.rank_le_width`).
 
 No filtering-consistency or nonlinear Gaussianity conclusion is drawn:
 these are the covariance foundations on which ensemble methods build,
@@ -30,130 +31,24 @@ not a convergence theorem for any filter.
 
 ## Key results
 
-- `SampleCov_posSemidef`: `S` is positive semidefinite.
-- `SampleCov_rank_le`: `rank S ≤ min d (N - 1)` for `N ≥ 2`.
-- `SampleCov_expectation`: `E[S] = Σ` entrywise, for i.i.d.
-  square-integrable samples with common mean and covariance.
+- `sampleCov_expectation`: `E[S] = Σ` entrywise, for pairwise-independent square-integrable
+  samples with common mean and covariance.
 -/
 
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory Matrix
+open MathlibExt.Probability.Statistics.PCA (colMean sampleCov sampleCov_apply)
 
 namespace MathlibExt.Probability.SampleCovariance
 
-/-- Column mean of a data matrix (rows are observations). -/
-noncomputable def ColMean {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) (j : Fin d) : ℝ :=
-  (∑ i, X i j) / N
-
-/-- Centered data matrix. -/
-noncomputable def Center {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) :
-    Matrix (Fin N) (Fin d) ℝ :=
-  Matrix.of fun i j => X i j - ColMean X j
-
-/-- Unbiased sample covariance `(N - 1)⁻¹ (center X)ᵀ (center X)`. -/
-noncomputable def SampleCov {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) :
-    Matrix (Fin d) (Fin d) ℝ :=
-  ((N : ℝ) - 1)⁻¹ • ((Center X)ᵀ * Center X)
-
-/-- Entries of the sample covariance matrix. -/
-theorem SampleCov_apply {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) (j k : Fin d) :
-    SampleCov X j k =
-      ((N : ℝ) - 1)⁻¹ * ∑ i, (X i j - ColMean X j) * (X i k - ColMean X k) := by
-  simp [SampleCov, Center, Matrix.mul_apply, Finset.mul_sum]
-
-/-- Sample covariance of any data matrix is positive semidefinite. -/
-theorem SampleCov_posSemidef {N d : ℕ} (X : Matrix (Fin N) (Fin d) ℝ) :
-    (SampleCov X).PosSemidef := by
-  unfold SampleCov
-  by_cases hN0 : N = 0
-  · subst hN0
-    have hZero : ((Center X)ᵀ * Center X) = 0 := by
-      ext i j
-      simp [Matrix.mul_apply]
-    rw [hZero, smul_zero]
-    exact Matrix.PosSemidef.zero
-  · have hNpos : 1 ≤ N := Nat.one_le_iff_ne_zero.mpr hN0
-    have hNreal : (1 : ℝ) ≤ (N : ℝ) := by exact_mod_cast hNpos
-    have hNonneg : 0 ≤ ((N : ℝ) - 1)⁻¹ := by
-      apply inv_nonneg.mpr
-      linarith
-    have hPSD : ((Center X)ᵀ * Center X).PosSemidef := by
-      have h := Matrix.posSemidef_conjTranspose_mul_self (Center X)
-      rwa [Matrix.conjTranspose_eq_transpose_of_trivial] at h
-    exact hPSD.smul hNonneg
-
-theorem Center_col_sum {N d : ℕ} (hN : N ≠ 0) (X : Matrix (Fin N) (Fin d) ℝ)
-    (j : Fin d) : ∑ i, Center X i j = 0 := by
-  simp only [Center, ColMean, Matrix.of_apply]
-  have hNr : (N : ℝ) ≠ 0 := by exact_mod_cast hN
-  have hSum : (∑ _i : Fin N, ((∑ i, X i j) / (N : ℝ))) = ∑ i, X i j := by
-    rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin]
-    rw [nsmul_eq_mul]
-    field_simp
-  rw [Finset.sum_sub_distrib]
-  rw [hSum]
-  exact sub_self _
-
-theorem Center_transpose_mulVec_ones {N d : ℕ} (hN : N ≠ 0)
-    (X : Matrix (Fin N) (Fin d) ℝ) :
-    (Center X)ᵀ *ᵥ (fun _ => (1 : ℝ)) = 0 := by
-  ext j
-  rw [Matrix.mulVec_apply_eq_sum]
-  simp only [Matrix.transpose_apply, mul_one]
-  exact Center_col_sum hN X j
-
-/-- Rank bound: the sample covariance has rank at most `min d (N - 1)`
-for `N ≥ 2` (centered rows sum to zero, so one row direction is lost). -/
-theorem SampleCov_rank_le {N d : ℕ} (hN : 2 ≤ N) (X : Matrix (Fin N) (Fin d) ℝ) :
-    (SampleCov X).rank ≤ min d (N - 1) := by
-  unfold SampleCov
-  have hN0 : N ≠ 0 := by omega
-  have hNm1 : ((N : ℝ) - 1) ≠ 0 := by
-    have hNr : (2 : ℝ) ≤ (N : ℝ) := by exact_mod_cast hN
-    linarith
-  have hc_ne : ((N : ℝ) - 1)⁻¹ ≠ 0 := inv_ne_zero hNm1
-  have hc_mem : ((N : ℝ) - 1)⁻¹ ∈ nonZeroDivisors ℝ :=
-    (mem_nonZeroDivisors_iff_ne_zero).mpr hc_ne
-  rw [Matrix.rank_smul_of_mem_nonZeroDivisors _ hc_mem]
-  rw [Matrix.rank_transpose_mul_self]
-  apply le_min
-  · exact Matrix.rank_le_width _
-  · have hRankEq : (Center X).rank = ((Center X)ᵀ).rank := by
-      rw [Matrix.rank_transpose]
-    rw [hRankEq]
-    have hKer : (fun _ => (1 : ℝ)) ∈ LinearMap.ker ((Center X)ᵀ).mulVecLin := by
-      rw [LinearMap.mem_ker, Matrix.mulVecLin_apply]
-      exact Center_transpose_mulVec_ones hN0 X
-    have hOnesNe : (fun _ => (1 : ℝ) : Fin N → ℝ) ≠ 0 := by
-      have hInh : Inhabited (Fin N) := ⟨⟨0, by omega⟩⟩
-      intro h
-      have := congrFun h (default : Fin N)
-      simp at this
-    have hNontriv : Nontrivial ↥(LinearMap.ker ((Center X)ᵀ).mulVecLin) := by
-      refine ⟨⟨_, hKer⟩, 0, ?_⟩
-      intro hEq
-      apply hOnesNe
-      have := congrArg Subtype.val hEq
-      simpa using this
-    have hPos : 0 < Module.finrank ℝ ↥(LinearMap.ker ((Center X)ᵀ).mulVecLin) :=
-      (Module.finrank_pos_iff).mpr hNontriv
-    have hAdd := LinearMap.finrank_range_add_finrank_ker ((Center X)ᵀ).mulVecLin
-    have hFin : Module.finrank ℝ (Fin N → ℝ) = N := by
-      rw [Module.finrank_pi]
-      simp
-    rw [hFin] at hAdd
-    have hRankDef : ((Center X)ᵀ).rank =
-        Module.finrank ℝ ↥(LinearMap.range ((Center X)ᵀ).mulVecLin) := rfl
-    omega
-
-theorem SampleCov_entry {N d : ℕ} {Ω : Type*} (X : Fin N → Ω → (Fin d → ℝ))
+/-- Entries of the sample covariance of the data matrix whose rows are the samples at `ω`. -/
+theorem sampleCov_entry {N d : ℕ} {Ω : Type*} (X : Fin N → Ω → (Fin d → ℝ))
     (ω : Ω) (j k : Fin d) :
-    SampleCov (Matrix.of fun i j' => X i ω j') j k =
+    sampleCov (Matrix.of fun i j' => X i ω j') j k =
     ((N : ℝ) - 1)⁻¹ * ∑ i, ((X i ω j - (∑ l, X l ω j) / (N : ℝ)) *
       (X i ω k - (∑ l, X l ω k) / (N : ℝ))) := by
-  simp [SampleCov, Center, ColMean, Matrix.smul_apply, Matrix.mul_apply,
-    Matrix.transpose_apply, smul_eq_mul, Matrix.of_apply]
+  simp [sampleCov_apply, colMean]
 
 theorem sum_centered_mul_eq {N : ℕ} (hN0 : (N : ℝ) ≠ 0) (a b : Fin N → ℝ) :
     ∑ i, ((a i - (∑ l, a l) / (N : ℝ)) * (b i - (∑ l, b l) / (N : ℝ))) =
@@ -260,13 +155,11 @@ theorem integrable_cross_aux {N d : ℕ} {Ω : Type*} {mΩ : MeasurableSpace Ω}
     have hMul := hInd.integrable_mul (hInt i j) (hInt l k)
     exact hMul
 
-/-- Unbiasedness, entrywise: for independent identically distributed
-square-integrable samples in `Fin d` with common mean `m` and common
-covariance matrix `Σ` (entrywise covariance of coordinates), the
-expectation of the sample covariance is `Σ`. Independence is stated
-as pairwise independence of the sample vectors; identical distribution
-is the `∀ i` mean/covariance hypotheses. -/
-theorem SampleCov_expectation {N d : ℕ} (hN : 2 ≤ N)
+/-- Unbiasedness, entrywise: for `N ≥ 2` square-integrable sample vectors in `Fin d → ℝ` that
+are pairwise independent and share the mean `m` and the coordinate covariance matrix `Σ`, the
+expectation of the sample covariance is `Σ`. The samples need not be identically distributed or
+mutually independent. -/
+theorem sampleCov_expectation {N d : ℕ} (hN : 2 ≤ N)
     {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
     {X : Fin N → Ω → (Fin d → ℝ)} {m : Fin d → ℝ} {Sig : Matrix (Fin d) (Fin d) ℝ}
     (hMean : ∀ i j, ∫ ω, X i ω j ∂μ = m j)
@@ -274,20 +167,18 @@ theorem SampleCov_expectation {N d : ℕ} (hN : 2 ≤ N)
     (hIndep : ∀ i j, i ≠ j → IndepFun (X i) (X j) μ)
     (hInt : ∀ i j, Integrable (fun ω => X i ω j) μ)
     (hInt2 : ∀ i j k, Integrable (fun ω => (X i ω j) * (X i ω k)) μ)
-    (hIntMean : ∀ i j k, Integrable (fun ω => (X i ω j - m j) * (X i ω k - m k)) μ)
     (j k : Fin d) :
-    ∫ ω, SampleCov (Matrix.of fun i j' => X i ω j') j k ∂μ = Sig j k := by
-  have _hUse := hIntMean
+    ∫ ω, sampleCov (Matrix.of fun i j' => X i ω j') j k ∂μ = Sig j k := by
   have hN0' : N ≠ 0 := by omega
   have hN0 : (N : ℝ) ≠ 0 := by exact_mod_cast hN0'
   have hNm1 : ((N : ℝ) - 1) ≠ 0 := by
     have hNr : (2 : ℝ) ≤ (N : ℝ) := by exact_mod_cast hN
     linarith
-  have hPoint : ∀ ω : Ω, SampleCov (Matrix.of fun i j' => X i ω j') j k =
+  have hPoint : ∀ ω : Ω, sampleCov (Matrix.of fun i j' => X i ω j') j k =
       ((N : ℝ) - 1)⁻¹ * ((∑ i, (X i ω j) * (X i ω k)) -
         (N : ℝ) * (((∑ l, X l ω j) / (N : ℝ)) * ((∑ l, X l ω k) / (N : ℝ)))) := by
     intro ω
-    rw [SampleCov_entry]
+    rw [sampleCov_entry]
     congr 1
     exact sum_centered_mul_eq hN0 _ _
   simp only [hPoint]
@@ -384,6 +275,5 @@ theorem SampleCov_expectation {N d : ℕ} (hN : 2 ≤ N)
           (N : ℝ) * (((∑ l, X l ω j) / (N : ℝ)) * ((∑ l, X l ω k) / (N : ℝ)))) ∂μ)
       = ((N : ℝ) - 1)⁻¹ * (((N : ℝ) - 1) * (Sig j k)) := by rw [hS_eq]
     _ = Sig j k := by field_simp
-
 
 end MathlibExt.Probability.SampleCovariance
