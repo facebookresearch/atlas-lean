@@ -27,12 +27,21 @@ wavenumber (`WaveConventions.wavenumber`, physics convention). So
 radians.
 
 Conventions: `lam` is the wavelength in vacuum, not inside the slab.
-`δ` is a signed relative phase: it is positive when mode 1 is the slow
-mode (`n₁ > n₂`) and changes sign when the two modes are swapped. The
+`δ` is a signed relative phase. In the physical domain (`h > 0`,
+`lam > 0`) it is positive exactly when mode 1 is the slow mode
+(`n₁ > n₂`), and it changes sign when the two modes are swapped. The
 nonnegative retardance (slow minus fast) is `|δ|`, which equals `δ`
-when `n₂ ≤ n₁` (for `h ≥ 0`, `lam > 0`). No absorption, dispersion, or
-full indicatrix derivation is claimed. Degenerate axes are not unique;
-that is out of scope.
+when `n₂ ≤ n₁`, `h ≥ 0` and `lam > 0`.
+
+Domain: `phaseRetardation` is defined for all real arguments, but it is
+the physical retardation only for `h ≥ 0` and `lam > 0`. Elsewhere it is
+only an algebraic extension of the formula with no physical meaning:
+Lean's division is total, so `lam = 0` gives `δ = 0`, and a negative `h`
+or `lam` reverses the sign. The results below are identities of that
+extension; they hold for all real arguments, in particular in the
+physical domain. No absorption, dispersion, or full indicatrix
+derivation is claimed. Degenerate axes are not unique; that is out of
+scope.
 
 ## ii. Key results
 
@@ -65,8 +74,11 @@ namespace EarthScience
 
 /-- Signed phase retardation of mode 1 relative to mode 2 for a lossless
 two-mode slab: `δ = k₀ * (n₁ - n₂) * h`, where `k₀ = 2 * π / lam` is the
-vacuum wavenumber, `lam` the vacuum wavelength and `h` the thickness.
-`δ` is in radians and is positive when mode 1 is the slow mode. -/
+vacuum wavenumber, `lam` the vacuum wavelength and `h` the thickness,
+with `δ` in radians. It is the physical retardation only for `h ≥ 0` and
+`lam > 0`, where `δ` is positive exactly when `h > 0` and mode 1 is the
+slow mode (`n₁ > n₂`). For other real arguments it is only an algebraic
+extension of the formula. -/
 noncomputable def phaseRetardation (n₁ n₂ h lam : ℝ) : ℝ :=
   PhyslibExt.ClassicalMechanics.WaveEquation.WaveConventions.wavenumber lam * (n₁ - n₂) * h
 
