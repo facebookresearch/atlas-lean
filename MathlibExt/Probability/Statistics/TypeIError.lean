@@ -34,11 +34,10 @@ open MathlibExt.Probability.Statistics.MultipleTesting
 exactly when `p ≤ α`, with `p` a valid p-value under the null law `μ`,
 has type-I error at most `α`: the type-I error is `μ.real {p ≤ α}`.
 This is the type-I-error framing of `valid_measureReal_le`, cited
-verbatim here; its proof is not redone. The `IsFiniteMeasure` binder
-is retained verbatim from the frozen pinned statement (the comparator
-requires an exact statement match); the proof does not use it. -/
+verbatim here; its proof is not redone. No finiteness assumption on `μ`
+is needed. -/
 theorem typeI_error_le_of_isValidPValue {Ω : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} [IsFiniteMeasure μ] {p : Ω → ℝ}
+    {μ : Measure Ω} {p : Ω → ℝ}
     (hvalid : IsValidPValue μ p) {α : ℝ} (hα : α ∈ Set.Icc (0 : ℝ) 1) :
     μ.real {ω | p ω ≤ α} ≤ α :=
   valid_measureReal_le hvalid hα.1 hα.2
@@ -61,20 +60,17 @@ theorem typeI_error_le_of_hasLaw {Ω X : Type*} [MeasurableSpace Ω]
 `[0, 1]` under the null is valid, so rejecting when `p ≤ α` has type-I
 error at most `α`. -/
 theorem typeI_error_le_of_hasLaw_uniform_pValue {Ω : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} [IsFiniteMeasure μ] {p : Ω → ℝ}
+    {μ : Measure Ω} {p : Ω → ℝ}
     (hp : HasLaw p (volume.restrict (Set.Icc (0 : ℝ) 1)) μ)
     {α : ℝ} (hα : α ∈ Set.Icc (0 : ℝ) 1) :
-    μ.real {ω | p ω ≤ α} ≤ α := by
-  exact typeI_error_le_of_isValidPValue (isValidPValue_of_hasLaw_uniform hp) hα
+    μ.real {ω | p ω ≤ α} ≤ α :=
+  valid_measureReal_le (isValidPValue_of_hasLaw_uniform hp) hα.1 hα.2
 
 /-- Concrete test: the identity p-value under the uniform law on `[0, 1]`
 rejects with type-I error at most `1 / 10` at level `1 / 10`. -/
 theorem typeI_error_uniform_example :
     (volume.restrict (Set.Icc (0 : ℝ) 1)).real {x : ℝ | x ≤ (1 / 10 : ℝ)} ≤
       (1 / 10 : ℝ) := by
-  have : IsFiniteMeasure (volume.restrict (Set.Icc (0 : ℝ) 1)) := by
-    constructor
-    simp [Real.volume_Icc]
   have h := typeI_error_le_of_hasLaw_uniform_pValue (p := id) HasLaw.id
     (α := (1 / 10 : ℝ)) (by norm_num)
   simpa using h
