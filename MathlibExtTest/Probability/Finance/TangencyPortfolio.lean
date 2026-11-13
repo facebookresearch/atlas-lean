@@ -48,9 +48,10 @@ theorem ex_sharpeRatio_tangency_eq :
       ((1 : Fin 2 → ℝ) ⬝ᵥ ((1 : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ *ᵥ 1)) := by
     rw [hA, hC]
     norm_num
-  have hq : ((![1, 3] - (0 : ℝ) • (1 : Fin 2 → ℝ)) ⬝ᵥ
-      ((1 : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ *ᵥ (![1, 3] - (0 : ℝ) • (1 : Fin 2 → ℝ)))) = 10 := by
-    simp
+  have hq : MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence.quadForm
+      (1 : Matrix (Fin 2) (Fin 2) ℝ)⁻¹
+      (![1, 3] - (0 : ℝ) • (1 : Fin 2 → ℝ)) = 10 := by
+    simp [MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence.quadForm]
     norm_num [dotProduct, Fin.sum_univ_two]
   have hth := sharpeRatio_tangencyPortfolio hS ![1, 3] hr
   rw [hq] at hth
@@ -86,5 +87,21 @@ theorem ex_boundary :
     fin_cases i <;> simp [Pi.sub_apply, Pi.smul_apply, smul_eq_mul] <;> norm_num
   rw [hz]
   simp [Fin.sum_univ_two]
+
+/-- Above the GMV return `2`, the tangency portfolio minimizes Sharpe. -/
+theorem ex_negative_branch :
+    sharpeRatio (1 : Matrix (Fin 2) (Fin 2) ℝ) ![1, 3] 4
+      (tangencyPortfolio 1 ![1, 3] 4) ≤ -1 := by
+  have hr : ((1 : Fin 2 → ℝ) ⬝ᵥ ((1 : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ *ᵥ ![1, 3])) /
+      ((1 : Fin 2 → ℝ) ⬝ᵥ ((1 : Matrix (Fin 2) (Fin 2) ℝ)⁻¹ *ᵥ 1)) < (4 : ℝ) := by
+    norm_num [inv_one, one_mulVec, dotProduct, Fin.sum_univ_two]
+  have hw : (∑ i, (![0, 1] : Fin 2 → ℝ) i) = 1 := by
+    norm_num [Fin.sum_univ_two]
+  have h := sharpeRatio_tangencyPortfolio_le_of_lt
+    (S := (1 : Matrix (Fin 2) (Fin 2) ℝ)) Matrix.PosDef.one ![1, 3] hr hw
+  have hcomp : sharpeRatio (1 : Matrix (Fin 2) (Fin 2) ℝ) ![1, 3] 4 ![0, 1] = -1 := by
+    norm_num [sharpeRatio, MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence.quadForm,
+      one_mulVec, dotProduct, Fin.sum_univ_two]
+  simpa only [hcomp] using h
 
 end MathlibExtTest.TangencyPortfolio

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.LinearAlgebra.Matrix.PosDef
+public import MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Algebra.Order.Star.Real
@@ -48,12 +49,13 @@ it normalizes to the fully invested tangency portfolio `z / (1ᵀ z)`. Its orien
 namespace MathlibExt.Probability.Finance.TangencyPortfolio
 
 open Matrix
+open MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence (quadForm)
 
 /-- The Sharpe ratio `(μᵀ w - r) / √(wᵀ S w)` of the portfolio `w`, for expected asset returns
 `μ`, covariance matrix `S` and risk-free return `r`. -/
 noncomputable def sharpeRatio {ι : Type*} [Fintype ι] (S : Matrix ι ι ℝ) (μ : ι → ℝ) (r : ℝ)
     (w : ι → ℝ) : ℝ :=
-  (μ ⬝ᵥ w - r) / Real.sqrt (w ⬝ᵥ (S *ᵥ w))
+  (μ ⬝ᵥ w - r) / Real.sqrt (quadForm S w)
 
 /-- The unnormalized tangency direction `z = S⁻¹ (μ - r 1)`. -/
 noncomputable def tangencyDirection {ι : Type*} [Fintype ι] [DecidableEq ι]
@@ -160,7 +162,8 @@ theorem sharpeRatio_tangencyPortfolio {ι : Type*} [Fintype ι] [DecidableEq ι]
     {S : Matrix ι ι ℝ} (hS : S.PosDef) (μ : ι → ℝ) {r : ℝ}
     (hr : r < ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ μ)) / ((1 : ι → ℝ) ⬝ᵥ (S⁻¹ *ᵥ 1))) :
     sharpeRatio S μ r (tangencyPortfolio S μ r) =
-      Real.sqrt ((μ - r • (1 : ι → ℝ)) ⬝ᵥ (S⁻¹ *ᵥ (μ - r • (1 : ι → ℝ)))) := by
+      Real.sqrt (quadForm S⁻¹ (μ - r • (1 : ι → ℝ))) := by
+  unfold quadForm
   -- s > 0
   have hs : 0 < ∑ i, tangencyDirection S μ r i :=
     (sum_tangencyDirection_pos_iff hS μ r).mpr hr
@@ -199,7 +202,7 @@ theorem sharpeRatio_tangencyPortfolio {ι : Type*} [Fintype ι] [DecidableEq ι]
     rw [hze]
     field_simp
   -- combine
-  unfold sharpeRatio
+  unfold sharpeRatio quadForm
   rw [hnum, hden]
   -- (q/s) / √(q/s²) = √q
   have hqnn : 0 ≤ e ⬝ᵥ (S⁻¹ *ᵥ e) := le_of_lt hq
@@ -286,7 +289,7 @@ theorem sharpeRatio_le_sharpeRatio_tangencyPortfolio {ι : Type*} [Fintype ι] [
   set e : ι → ℝ := μ - r • (1 : ι → ℝ) with he_def
   have hexcess : μ ⬝ᵥ w - r = e ⬝ᵥ w := by
     rw [he_def]; exact excess_eq_of_sum_one μ w r hw
-  unfold sharpeRatio
+  unfold sharpeRatio quadForm
   rw [hexcess]
   -- goal: (e⬝w)/√(w⬝Sw) ≤ √q
   rw [div_le_iff₀ hsqrtb]
@@ -362,7 +365,7 @@ private theorem sharpeRatio_tangencyPortfolio_neg {ι : Type*} [Fintype ι] [Dec
       rw [hz, dotProduct_comm]
     rw [hze]
     field_simp
-  unfold sharpeRatio
+  unfold sharpeRatio quadForm
   rw [hnum, hden]
   have hqnn : 0 ≤ e ⬝ᵥ (S⁻¹ *ᵥ e) := le_of_lt hq
   have habs : |s| = -s := abs_of_neg hs
@@ -402,7 +405,7 @@ theorem sharpeRatio_tangencyPortfolio_le_of_lt {ι : Type*} [Fintype ι] [Decida
   set e : ι → ℝ := μ - r • (1 : ι → ℝ) with he_def
   have hexcess : μ ⬝ᵥ w - r = e ⬝ᵥ w := by
     rw [he_def]; exact excess_eq_of_sum_one μ w r hw
-  unfold sharpeRatio
+  unfold sharpeRatio quadForm
   rw [hexcess]
   -- goal: -√q ≤ (e⬝w)/√b
   rw [le_div_iff₀ hsqrtb]
