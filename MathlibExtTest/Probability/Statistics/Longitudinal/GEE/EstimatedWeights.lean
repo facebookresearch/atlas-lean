@@ -17,7 +17,9 @@ public import MathlibExtTest.Probability.Statistics.Longitudinal.GEE.Sandwich
 * **Finite-sample bias (boundary).** On a two-point space with `Y ∈ {0, 2}`, `E[Y] = 1`, and the
   residual-linear weight `L α r = (1 + α²)⁻¹ r`, the fixed weight `L 0` gives an unbiased score
   (`integral_fixed_weight`), but the plug-in `α̂ = Y` gives `E[L α̂ (Y - 1)] = -2 / 5 ≠ 0`
-  (`integral_estimated_weight`): unbiasedness with estimated weights holds only asymptotically.
+  (`integral_estimated_weight`): with estimated weights the score is biased in finite samples,
+  and the main results give only first-order score equivalence and asymptotic centering of the
+  normalized score, not convergence of its expectation.
 * Smoke tests of `hasFDerivAt_apply_residual` and `integral_nuisanceDeriv_eq_zero` (on the
   two-point space), `tendstoInMeasure_of_sqrt_smul_sub_bounded`, `sqrt_smul_sub_bounded_prodMk`
   and `sqrt_smul_sub_bounded_of_lipschitz_plugin`.
@@ -87,8 +89,9 @@ theorem integral_fixed_weight : ∫ ω, Lb 0 (Yb ω - 1) ∂Pb = 0 := by
 
 /-- **The estimated-weight score is biased in finite samples.** With the working parameter
 estimated from the response, `α̂ = Y`, the score `L α̂ (Y - 1)` has mean `-2 / 5 ≠ 0`, although
-the mean model is correct: `E[U(β₀; α̂(Y))] = 0` fails, which is why Liang and Zeger recover
-unbiasedness only asymptotically. -/
+the mean model is correct: `E[U(β₀; α̂(Y))] = 0` fails. Liang and Zeger's Theorem 2 makes a
+first-order statement instead: the plug-in changes the normalized score by `o_p(1)`, so the score
+is asymptotically centered. -/
 theorem integral_estimated_weight : ∫ ω, Lb (Yb ω) (Yb ω - 1) ∂Pb = -2 / 5 := by
   rw [integral_Pb]
   norm_num [Lb, Yb]

@@ -20,8 +20,13 @@ computed from the responses of all clusters. The weights then depend on `Y`, so 
 fixed-weight unbiasedness of `Unbiasedness.lean` (`integral_geeEstFun_eq_zero`) and the
 independent-cluster sandwich CLT of `Sandwich.lean` do not apply directly: the
 estimated-weight cluster scores are no longer independent, and `E[U(β₀; α̂(Y))] = 0` can fail
-in finite samples (see the tests). Liang and Zeger (1986, Theorem 2) show that unbiasedness and
-the sandwich covariance are recovered asymptotically. This file proves that recovery.
+in finite samples (see the tests). Liang and Zeger (1986, Theorem 2 and its proof) show that a
+`√n`-consistent plug-in changes the normalized score only by `o_p(1)` (first-order score
+equivalence), so the estimated-weight score is asymptotically centered, with the fixed-weight
+Gaussian limit, and the estimator keeps the fixed-weight sandwich covariance. This file proves
+these first-order results. It claims nothing about the expectation of the estimated-weight score:
+convergence in probability or in distribution does not give convergence of expectations without
+uniform integrability or moment bounds.
 
 Throughout, `U i β θ ω ∈ E` is the score of cluster `i` at regression parameter `β ∈ E` (a
 finite-dimensional real inner product space) and nuisance parameter `θ ∈ F` (a real normed space;
@@ -32,8 +37,8 @@ not be the true correlation.
 
 ## Main results
 
-* `tendstoInMeasure_inv_sqrt_smul_sum_sub_of_hasFDerivAt` (**asymptotic unbiasedness
-  recovered**): if the scores are differentiable in `θ` near `θ₀`, the averaged nuisance
+* `tendstoInMeasure_inv_sqrt_smul_sum_sub_of_hasFDerivAt` (**first-order score
+  equivalence**): if the scores are differentiable in `θ` near `θ₀`, the averaged nuisance
   derivative `n⁻¹ • ∑_{i<n} ∂U i β₀ θ/∂θ` tends to `0` uniformly near `θ₀` in probability, and
   `√n • (θhat n - θ₀)` is bounded in probability, then
   `(√n)⁻¹ • ∑ U i β₀ (θhat n) - (√n)⁻¹ • ∑ U i β₀ θ₀ → 0` in probability.
@@ -363,13 +368,14 @@ theorem tendstoInMeasure_inv_sqrt_smul_sum_sub_of_hasFDerivAt {U : ℕ → E →
     exact this.not_ge hω
   · exact ((measure_union_le _ _).trans (add_le_add (hK₀ n) hn')).trans_eq (ENNReal.add_halves ρ)
 
-/-- **Central limit theorem for the estimated-weight score** (asymptotic unbiasedness
-recovered). Under the hypotheses of `tendstoInMeasure_inv_sqrt_smul_sum_sub_of_hasFDerivAt` on
+/-- **Central limit theorem for the estimated-weight score** (asymptotic centering). Under the
+hypotheses of `tendstoInMeasure_inv_sqrt_smul_sum_sub_of_hasFDerivAt` on
 the nuisance, and the cluster CLT hypotheses of
 `tendstoInDistribution_inv_sqrt_smul_sum_of_lindeberg` for the scores `U k β₀ θ₀` at the
 limiting nuisance value `θ₀`, the estimated-weight score `(√n)⁻¹ • ∑_{i<n} U i β₀ (θhat n)`
 converges in distribution to the same centered limit `Y` as with the nuisance known. In finite
-samples the estimated-weight score need not have mean zero (see the tests); its limit does. -/
+samples the estimated-weight score need not have mean zero (see the tests); only its limit in
+distribution is centered, and nothing is claimed about the limit of its expectation. -/
 theorem tendstoInDistribution_inv_sqrt_smul_sum_estimatedWeights {U : ℕ → E → F → Ω → E}
     {DθU : ℕ → F → Ω → F →L[ℝ] E} {β₀ : E} {θ₀ : F} {δ : ℝ} (hδ : 0 < δ)
     (hdiff : ∀ i ω, ∀ θ ∈ Metric.ball θ₀ δ, HasFDerivAt (fun a ↦ U i β₀ a ω) (DθU i θ ω) θ)
