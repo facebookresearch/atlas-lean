@@ -18,8 +18,9 @@ import Mathlib.Tactic.NormNum
 namespace MathlibExtTest.Economics.Finance.ModiglianiMiller
 
 open MathlibExt.Economics.Finance.ModiglianiMiller
+open MathlibExt.Probability.Finance.OptionPayoffs (europeanCallPayoff)
 
-example : statePriceValue (![0.4, 0.5] : Fin 2 → ℝ)
+example : weightedValue (![0.4, 0.5] : Fin 2 → ℝ)
     (fun ω => debtPayoff ((![100, 40] : Fin 2 → ℝ) ω) 50) = 40 := by
   have hψ0 : ((![0.4, 0.5] : Fin 2 → ℝ) 0) = 0.4 := by simp
   have hψ1 : ((![0.4, 0.5] : Fin 2 → ℝ) 1) = 0.5 := by simp
@@ -33,40 +34,40 @@ example : statePriceValue (![0.4, 0.5] : Fin 2 → ℝ)
     show min (40 : ℝ) 50 = 40
     have hle : (40 : ℝ) ≤ 50 := by norm_num
     rw [min_eq_left hle]
-  simp only [statePriceValue, Fin.sum_univ_two, hψ0, hψ1, hV0, hV1, hD0, hD1]
+  simp only [weightedValue, Fin.sum_univ_two, hψ0, hψ1, hV0, hV1, hD0, hD1]
   norm_num
 
-example : statePriceValue (![0.4, 0.5] : Fin 2 → ℝ)
-    (fun ω => equityPayoff ((![100, 40] : Fin 2 → ℝ) ω) 50) = 20 := by
+example : weightedValue (![0.4, 0.5] : Fin 2 → ℝ)
+    (fun ω => europeanCallPayoff ((![100, 40] : Fin 2 → ℝ) ω) 50) = 20 := by
   have hψ0 : ((![0.4, 0.5] : Fin 2 → ℝ) 0) = 0.4 := by simp
   have hψ1 : ((![0.4, 0.5] : Fin 2 → ℝ) 1) = 0.5 := by simp
   have hV0 : ((![100, 40] : Fin 2 → ℝ) 0) = 100 := by simp
   have hV1 : ((![100, 40] : Fin 2 → ℝ) 1) = 40 := by simp
-  have hE0 : equityPayoff 100 50 = 50 := by
+  have hE0 : europeanCallPayoff 100 50 = 50 := by
     show max ((100 : ℝ) - 50) 0 = 50
     have hle : (0 : ℝ) ≤ 100 - 50 := by norm_num
     rw [max_eq_left hle]
     norm_num
-  have hE1 : equityPayoff 40 50 = 0 := by
+  have hE1 : europeanCallPayoff 40 50 = 0 := by
     show max ((40 : ℝ) - 50) 0 = 0
     have hle : (40 : ℝ) - 50 ≤ 0 := by norm_num
     rw [max_eq_right hle]
-  simp only [statePriceValue, Fin.sum_univ_two, hψ0, hψ1, hV0, hV1, hE0, hE1]
+  simp only [weightedValue, Fin.sum_univ_two, hψ0, hψ1, hV0, hV1, hE0, hE1]
   norm_num
 
-example : statePriceValue (![0.4, 0.5] : Fin 2 → ℝ)
+example : weightedValue (![0.4, 0.5] : Fin 2 → ℝ)
       (fun ω => debtPayoff ((![100, 40] : Fin 2 → ℝ) ω) 50) +
-      statePriceValue (![0.4, 0.5] : Fin 2 → ℝ)
-        (fun ω => equityPayoff ((![100, 40] : Fin 2 → ℝ) ω) 50) =
-      statePriceValue (![0.4, 0.5] : Fin 2 → ℝ) (![100, 40] : Fin 2 → ℝ) ∧
-    statePriceValue (![0.4, 0.5] : Fin 2 → ℝ) (![100, 40] : Fin 2 → ℝ) = 60 := by
+      weightedValue (![0.4, 0.5] : Fin 2 → ℝ)
+        (fun ω => europeanCallPayoff ((![100, 40] : Fin 2 → ℝ) ω) 50) =
+      weightedValue (![0.4, 0.5] : Fin 2 → ℝ) (![100, 40] : Fin 2 → ℝ) ∧
+    weightedValue (![0.4, 0.5] : Fin 2 → ℝ) (![100, 40] : Fin 2 → ℝ) = 60 := by
   constructor
   · exact modiglianiMiller_value _ _ _
   · have hψ0 : ((![0.4, 0.5] : Fin 2 → ℝ) 0) = 0.4 := by simp
     have hψ1 : ((![0.4, 0.5] : Fin 2 → ℝ) 1) = 0.5 := by simp
     have hV0 : ((![100, 40] : Fin 2 → ℝ) 0) = 100 := by simp
     have hV1 : ((![100, 40] : Fin 2 → ℝ) 1) = 40 := by simp
-    simp only [statePriceValue, Fin.sum_univ_two, hψ0, hψ1, hV0, hV1]
+    simp only [weightedValue, Fin.sum_univ_two, hψ0, hψ1, hV0, hV1]
     norm_num
 
 end MathlibExtTest.Economics.Finance.ModiglianiMiller
