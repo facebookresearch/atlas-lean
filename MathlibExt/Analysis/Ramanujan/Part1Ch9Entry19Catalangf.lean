@@ -1043,18 +1043,6 @@ private theorem chap9D_eq_central {x : ℝ} (hx0 : 0 ≤ x) (hx : x ≤ Real.pi 
   unfold chap9D
   rw [tsum_central_split_aux hx0 hx, tsum_tan_eq_chap9T]
 
-private theorem cos_mem_Icc_neg_one_one {x : ℝ} (hx0 : 0 ≤ x) (hx : x ≤ Real.pi / 4) :
-    Real.cos x ∈ Set.Icc (-1 : ℝ) 1 := by
-  have hcos_pos := le_of_lt (cos_pos_aux hx0 hx)
-  have hcos_le := Real.cos_le_one x
-  constructor <;> linarith
-
-private theorem sin_mem_Icc_neg_one_one {x : ℝ} (hx0 : 0 ≤ x) (hx : x ≤ Real.pi / 4) :
-    Real.sin x ∈ Set.Icc (-1 : ℝ) 1 := by
-  have hsin_nn := sin_nonneg_aux hx0 hx
-  have hsin_le := Real.sin_le_one x
-  constructor <;> linarith
-
 private theorem tan_mem_Icc_neg_one_one {x : ℝ} (hx0 : 0 ≤ x) (hx : x ≤ Real.pi / 4) :
     Real.tan x ∈ Set.Icc (-1 : ℝ) 1 := by
   have htan_nn := tan_nonneg_aux hx0 hx
@@ -1065,7 +1053,7 @@ private theorem continuousOn_S_cos :
     ContinuousOn (fun x : ℝ => ∑' k : ℕ, chap9S (Real.cos x) k)
       (Set.Icc 0 (Real.pi / 4)) := by
   have hcomp := continuousOn_chap9S_tsum_aux.comp Real.continuous_cos.continuousOn
-    (fun x hx => cos_mem_Icc_neg_one_one (Set.mem_Icc.mp hx).1 (Set.mem_Icc.mp hx).2)
+    (fun x (_ : x ∈ Set.Icc 0 (Real.pi / 4)) => Real.cos_mem_Icc x)
   have hEq : (fun u : ℝ => ∑' k : ℕ, chap9S u k) ∘ Real.cos
       = (fun x : ℝ => ∑' k : ℕ, chap9S (Real.cos x) k) := rfl
   rwa [hEq] at hcomp
@@ -1074,7 +1062,7 @@ private theorem continuousOn_S_sin :
     ContinuousOn (fun x : ℝ => ∑' k : ℕ, chap9S (Real.sin x) k)
       (Set.Icc 0 (Real.pi / 4)) := by
   have hcomp := continuousOn_chap9S_tsum_aux.comp Real.continuous_sin.continuousOn
-    (fun x hx => sin_mem_Icc_neg_one_one (Set.mem_Icc.mp hx).1 (Set.mem_Icc.mp hx).2)
+    (fun x (_ : x ∈ Set.Icc 0 (Real.pi / 4)) => Real.sin_mem_Icc x)
   have hEq : (fun u : ℝ => ∑' k : ℕ, chap9S u k) ∘ Real.sin
       = (fun x : ℝ => ∑' k : ℕ, chap9S (Real.sin x) k) := rfl
   rwa [hEq] at hcomp
@@ -1419,18 +1407,10 @@ private theorem hasDerivAt_chap9f {θ : ℝ} (h0 : 0 < θ) (h1 : θ < Real.pi / 
   rw [hval] at hsub
   exact hsub
 
-private theorem sin_mem_Icc_pi_half {θ : ℝ} (h0 : 0 ≤ θ) (h1 : θ ≤ Real.pi / 2) :
-    Real.sin θ ∈ Set.Icc (-1 : ℝ) 1 := by
-  have hpi : 0 < Real.pi := Real.pi_pos
-  have hnn : 0 ≤ Real.sin θ :=
-    Real.sin_nonneg_of_nonneg_of_le_pi h0 (by linarith)
-  have hle : Real.sin θ ≤ 1 := Real.sin_le_one θ
-  constructor <;> linarith
-
 private theorem continuousOn_chap9E :
     ContinuousOn chap9E (Set.Icc 0 (Real.pi / 2)) := by
   have hcomp := continuousOn_chap9S_tsum_aux.comp Real.continuous_sin.continuousOn
-    (fun θ hθ => sin_mem_Icc_pi_half (Set.mem_Icc.mp hθ).1 (Set.mem_Icc.mp hθ).2)
+    (fun θ (_ : θ ∈ Set.Icc 0 (Real.pi / 2)) => Real.sin_mem_Icc θ)
   have hEq : (fun u : ℝ => ∑' k : ℕ, chap9S u k) ∘ Real.sin = chap9E := rfl
   rwa [hEq] at hcomp
 
