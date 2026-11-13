@@ -23,33 +23,30 @@ price 50 sits strictly above the tangent line value 0).
 
 namespace MathlibExtTest.Economics.Finance.DurationConvexity
 
+open _root_.MathlibExt.Economics.Finance
 open _root_.MathlibExt.Economics.Finance.DurationConvexity
 
 theorem test_price :
-    bondPrice (fun t => if t = 1 then (100 : ℝ) else 0) {1} 1 = 50 := by
-  simp only [bondPrice, Finset.sum_singleton, ite_true, Nat.cast_one]
-  rw [zpow_neg, zpow_one]
-  norm_num
+    presentValue (discountFactor 1) {1} (fun t => if t = 1 then (100 : ℝ) else 0) = 50 := by
+  norm_num [presentValue, discountFactor]
 
 theorem test_deriv :
-    deriv (bondPrice (fun t => if t = 1 then (100 : ℝ) else 0) {1}) 0 = -100 := by
-  have h : HasDerivAt (bondPrice (fun t => if t = 1 then (100 : ℝ) else 0) {1}) _ 0 :=
-    hasDerivAt_bondPrice (by norm_num)
-  rw [h.deriv]
-  simp only [Finset.sum_singleton, ite_true, Nat.cast_one, add_zero,
-    one_zpow, mul_one]
-  norm_num
+    deriv (fun r => presentValue (discountFactor r) {1}
+      (fun t => if t = 1 then (100 : ℝ) else 0)) 0 = -100 := by
+  rw [(hasDerivAt_presentValue_discountFactor (by norm_num : (-1 : ℝ) < 0)).deriv]
+  norm_num [presentValue, discountFactor]
 
 theorem test_tangent :
-    bondPrice (fun t => if t = 1 then (100 : ℝ) else 0) {1} 1 ≥
-      bondPrice (fun t => if t = 1 then (100 : ℝ) else 0) {1} 0 +
-        deriv (bondPrice (fun t => if t = 1 then (100 : ℝ) else 0) {1}) 0 * (1 - 0) := by
+    presentValue (discountFactor 1) {1} (fun t => if t = 1 then (100 : ℝ) else 0) ≥
+      presentValue (discountFactor 0) {1} (fun t => if t = 1 then (100 : ℝ) else 0) +
+        deriv (fun r => presentValue (discountFactor r) {1}
+          (fun t => if t = 1 then (100 : ℝ) else 0)) 0 * (1 - 0) := by
   have hc : ∀ t ∈ ({1} : Finset ℕ), 0 ≤ (if t = 1 then (100 : ℝ) else 0) := by
     intro t ht
     simp only [Finset.mem_singleton] at ht
     subst ht
     simp only [ite_true]
     norm_num
-  exact bondPrice_ge_tangent hc (by norm_num) (by norm_num)
+  exact presentValue_discountFactor_ge_tangent hc (by norm_num) (by norm_num)
 
 end MathlibExtTest.Economics.Finance.DurationConvexity

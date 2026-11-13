@@ -8,9 +8,9 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Economics.Finance.DatedCashFlow
 public import Mathlib.Analysis.Convex.Function
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Analysis.Convex.Mul
 import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.Calculus.Deriv.Add
@@ -22,18 +22,20 @@ import Mathlib.LinearAlgebra.AffineSpace.Slope
 /-!
 # Duration, convexity, and the tangent-line approximation
 
-For fixed nonnegative cash flows, the bond price
-`bondPrice c s r = ∑ t ∈ s, c t * (1 + r) ^ (-t)` is convex in the yield on
-`(-1, ∞)` and differentiable there, so it lies above its tangent line at any
-base yield (`bondPrice_ge_tangent`). The tangent slope is
-`deriv (bondPrice c s) r₀`; once the FI04.T01 identity is unified with this
-file, the slope reads `-Dmod(r₀) * P(r₀)` for the modified duration.
+For fixed nonnegative cash flows `c` paid at the dates `s`, the constant-rate
+present value `presentValue (discountFactor r) s c = ∑ t ∈ s, ((1 + r) ^ t)⁻¹ * c t`
+of `MathlibExt.Economics.Finance.DatedCashFlow` is convex in the yield `r` on
+`(-1, ∞)` and differentiable there, so it lies above its tangent line at any base
+yield (`presentValue_discountFactor_ge_tangent`). The tangent slope is
+`-presentValue (discountFactor r₀) s (fun t => t * c t) / (1 + r₀)`
+(`hasDerivAt_presentValue_discountFactor`); divided by minus the price it is the
+modified duration, so the tangent line is the first-order duration approximation.
 
 ## Main results
 
-* `MathlibExt.Economics.Finance.DurationConvexity.convexOn_bondPrice`
-* `MathlibExt.Economics.Finance.DurationConvexity.hasDerivAt_bondPrice`
-* `MathlibExt.Economics.Finance.DurationConvexity.bondPrice_ge_tangent`
+* `MathlibExt.Economics.Finance.DurationConvexity.convexOn_presentValue_discountFactor`
+* `MathlibExt.Economics.Finance.DurationConvexity.hasDerivAt_presentValue_discountFactor`
+* `MathlibExt.Economics.Finance.DurationConvexity.presentValue_discountFactor_ge_tangent`
 
 ## References
 
@@ -45,10 +47,15 @@ syllabus (duration and convexity). Atlas roadmap target FI04.T02.
 
 namespace MathlibExt.Economics.Finance.DurationConvexity
 
-/-- Price at yield `r` of the fixed cash flows `c t` paid at dates `t ∈ s`:
-`∑ t ∈ s, c t * (1 + r) ^ (-t)`. Meaningful for `r > -1`. -/
-noncomputable def bondPrice (c : ℕ → ℝ) (s : Finset ℕ) (r : ℝ) : ℝ :=
-  ∑ t ∈ s, c t * (1 + r) ^ (-(t : ℤ))
+/-- The constant-rate present value in negative-power form:
+`((1 + r) ^ t)⁻¹ * c t = c t * (1 + r) ^ (-t)`. -/
+private theorem presentValue_discountFactor_eq_zpow (c : ℕ → ℝ) (s : Finset ℕ) :
+    (fun r => presentValue (discountFactor r) s c) =
+      fun r => ∑ t ∈ s, c t * (1 + r) ^ (-(t : ℤ)) := by
+  funext r
+  unfold presentValue discountFactor
+  refine Finset.sum_congr rfl fun t _ => ?_
+  rw [zpow_neg, zpow_natCast, mul_comm]
 
 /-- The affine shift `r ↦ 1 + r`. -/
 private def shift1 : ℝ →ᵃ[ℝ] ℝ where
@@ -88,50 +95,59 @@ private theorem hasDerivAt_term (c : ℕ → ℝ) (t : ℕ) (r₀ : ℝ) (hr₀ 
     HasDerivAt.comp r₀ houter hinner
   exact HasDerivAt.const_mul (c t) hcomp
 
-/-- The bond price is differentiable at any yield above `-1`. -/
-theorem hasDerivAt_bondPrice {c : ℕ → ℝ} {s : Finset ℕ} {r₀ : ℝ} (hr₀ : -1 < r₀) :
-    HasDerivAt (bondPrice c s)
-      (∑ t ∈ s, c t * (↑(-(t : ℤ)) * (1 + r₀) ^ (-(t : ℤ) - 1) * 1)) r₀ := by
-  have hterm : ∀ t ∈ s, HasDerivAt (fun r => c t * (1 + r) ^ (-(t : ℤ)))
-      (c t * (↑(-(t : ℤ)) * (1 + r₀) ^ (-(t : ℤ) - 1) * 1)) r₀ :=
-    fun t _ => hasDerivAt_term c t r₀ hr₀
-  exact HasDerivAt.fun_sum hterm
+/-- The constant-rate present value is differentiable in the yield at any `r₀ > -1`,
+with derivative `-presentValue (discountFactor r₀) s (fun t => t * c t) / (1 + r₀)`. -/
+theorem hasDerivAt_presentValue_discountFactor {c : ℕ → ℝ} {s : Finset ℕ} {r₀ : ℝ}
+    (hr₀ : -1 < r₀) :
+    HasDerivAt (fun r => presentValue (discountFactor r) s c)
+      (-presentValue (discountFactor r₀) s (fun t => (t : ℝ) * c t) / (1 + r₀)) r₀ := by
+  have hne : (1 : ℝ) + r₀ ≠ 0 := ne_of_gt (by linarith)
+  rw [presentValue_discountFactor_eq_zpow c s]
+  refine (HasDerivAt.fun_sum fun t _ => hasDerivAt_term c t r₀ hr₀).congr_deriv ?_
+  simp only [presentValue, discountFactor]
+  rw [neg_div, div_eq_mul_inv, Finset.sum_mul, ← Finset.sum_neg_distrib]
+  refine Finset.sum_congr rfl fun t _ => ?_
+  have hexp : -(t : ℤ) - 1 = -((t + 1 : ℕ) : ℤ) := by push_cast; ring
+  rw [hexp, zpow_neg, zpow_natCast, pow_succ]
+  push_cast
+  field_simp
 
-/-- The bond price is convex in the yield on `(-1, ∞)` when all cash flows are
-nonnegative. -/
-theorem convexOn_bondPrice {c : ℕ → ℝ} {s : Finset ℕ} (hc : ∀ t ∈ s, 0 ≤ c t) :
-    ConvexOn ℝ (Set.Ioi (-1)) (bondPrice c s) := by
+/-- The constant-rate present value is convex in the yield on `(-1, ∞)` when all cash
+flows are nonnegative. -/
+theorem convexOn_presentValue_discountFactor {c : ℕ → ℝ} {s : Finset ℕ}
+    (hc : ∀ t ∈ s, 0 ≤ c t) :
+    ConvexOn ℝ (Set.Ioi (-1)) (fun r => presentValue (discountFactor r) s c) := by
+  rw [presentValue_discountFactor_eq_zpow c s]
   revert hc
   refine Finset.induction_on s ?_ ?_
   · intro _
-    have hempty : bondPrice c ∅ = fun _ => (0 : ℝ) := by
-      funext r
-      simp only [bondPrice, Finset.sum_empty]
-    rw [hempty]
+    simp only [Finset.sum_empty]
     exact convexOn_const 0 (convex_Ioi _)
   · intro a s has ih hc
-    have hc'a : 0 ≤ c a := hc a (Finset.mem_insert_self a s)
-    have hcs : ∀ t ∈ s, 0 ≤ c t := fun t ht => hc t (Finset.mem_insert_of_mem ht)
     have h1 : ConvexOn ℝ (Set.Ioi (-1)) (fun r => c a * (1 + r) ^ (-(a : ℤ))) :=
-      convexOn_term c a hc'a
-    have h2 : ConvexOn ℝ (Set.Ioi (-1)) (bondPrice c s) := ih hcs
-    have hsum : bondPrice c (insert a s)
-        = (fun r => c a * (1 + r) ^ (-(a : ℤ))) + bondPrice c s := by
+      convexOn_term c a (hc a (Finset.mem_insert_self a s))
+    have h2 := ih fun t ht => hc t (Finset.mem_insert_of_mem ht)
+    have hsum : (fun r => ∑ t ∈ insert a s, c t * (1 + r) ^ (-(t : ℤ)))
+        = (fun r => c a * (1 + r) ^ (-(a : ℤ))) +
+          fun r => ∑ t ∈ s, c t * (1 + r) ^ (-(t : ℤ)) := by
       funext r
-      simp only [bondPrice, Finset.sum_insert has, Pi.add_apply]
+      simp only [Finset.sum_insert has, Pi.add_apply]
     rw [hsum]
     exact h1.add h2
 
 /-- **Convexity beats the tangent-line duration approximation.** At any two yields
-above `-1`, the true price lies above the tangent line at `r₀` (whose slope is
-`deriv (bondPrice c s) r₀`; once FI04.T01 is unified with this file, the slope
-reads `-Dmod(r₀) * P(r₀)` for the modified duration). -/
-theorem bondPrice_ge_tangent {c : ℕ → ℝ} {s : Finset ℕ} (hc : ∀ t ∈ s, 0 ≤ c t)
-    {r₀ r : ℝ} (hr₀ : -1 < r₀) (hr : -1 < r) :
-    bondPrice c s r ≥ bondPrice c s r₀ + deriv (bondPrice c s) r₀ * (r - r₀) := by
-  have hconv : ConvexOn ℝ (Set.Ioi (-1)) (bondPrice c s) := convexOn_bondPrice hc
-  have hderiv : HasDerivAt (bondPrice c s) _ r₀ := hasDerivAt_bondPrice hr₀
-  rw [hderiv.deriv]
+above `-1`, the constant-rate present value of nonnegative cash flows lies above its
+tangent line at `r₀`, whose slope is computed in
+`hasDerivAt_presentValue_discountFactor`. -/
+theorem presentValue_discountFactor_ge_tangent {c : ℕ → ℝ} {s : Finset ℕ}
+    (hc : ∀ t ∈ s, 0 ≤ c t) {r₀ r : ℝ} (hr₀ : -1 < r₀) (hr : -1 < r) :
+    presentValue (discountFactor r) s c ≥
+      presentValue (discountFactor r₀) s c +
+        deriv (fun x => presentValue (discountFactor x) s c) r₀ * (r - r₀) := by
+  have hconv := convexOn_presentValue_discountFactor hc
+  have hderiv : HasDerivAt (fun x => presentValue (discountFactor x) s c)
+      (deriv (fun x => presentValue (discountFactor x) s c) r₀) r₀ :=
+    (hasDerivAt_presentValue_discountFactor hr₀).differentiableAt.hasDerivAt
   have hmem0 : r₀ ∈ Set.Ioi (-1 : ℝ) := Set.mem_Ioi.mpr hr₀
   have hmem : r ∈ Set.Ioi (-1 : ℝ) := Set.mem_Ioi.mpr hr
   rcases lt_trichotomy r r₀ with hlt | heq | hgt
