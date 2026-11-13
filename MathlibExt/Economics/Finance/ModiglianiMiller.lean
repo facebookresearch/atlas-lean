@@ -38,8 +38,8 @@ values the payoffs are the total algebraic extensions `min V F` and
 
 * `MathlibExt.Economics.Finance.ModiglianiMiller.debtPayoff_add_europeanCallPayoff`:
   debt plus equity reconstructs the firm.
-* `MathlibExt.Economics.Finance.ModiglianiMiller.lawOfOnePrice`: equal payoffs
-  have equal weighted value.
+* `MathlibExt.Economics.Finance.ModiglianiMiller.weightedValue_congr`: equal
+  payoffs have equal weighted value.
 * `MathlibExt.Economics.Finance.ModiglianiMiller.modiglianiMiller_value`:
   Modigliani–Miller I.
 
@@ -80,11 +80,9 @@ theorem debtPayoff_add_europeanCallPayoff (V F : ℝ) :
   unfold debtPayoff europeanCallPayoff
   rw [hmax, ← add_sub_assoc, min_add_max, add_sub_cancel_right]
 
-/-- Equal payoffs in every state have equal weighted value, for any weights `ψ`. This is the
-pricing step of the law of one price and needs no positivity of `ψ`; the portfolio form under
-no arbitrage is
-`MathlibExt.Probability.Finance.LawOfOnePrice.law_of_one_price_of_no_arbitrage`. -/
-theorem lawOfOnePrice {Ω : Type*} [Fintype Ω] (ψ : Ω → ℝ) {X Y : Ω → ℝ}
+/-- Congruence of `weightedValue`: payoffs that agree in every state have equal weighted value,
+for any weights `ψ`. -/
+theorem weightedValue_congr {Ω : Type*} [Fintype Ω] (ψ : Ω → ℝ) {X Y : Ω → ℝ}
     (h : ∀ ω, X ω = Y ω) : weightedValue ψ X = weightedValue ψ Y := by
   unfold weightedValue
   apply Finset.sum_congr rfl
@@ -113,6 +111,6 @@ theorem modiglianiMiller_value {Ω : Type*} [Fintype Ω] (ψ : Ω → ℝ) (V : 
       ψ ω * (debtPayoff (V ω) F + europeanCallPayoff (V ω) F)
     rw [mul_add]
   rw [hadd]
-  exact lawOfOnePrice ψ (fun ω => debtPayoff_add_europeanCallPayoff (V ω) F)
+  exact weightedValue_congr ψ (fun ω => debtPayoff_add_europeanCallPayoff (V ω) F)
 
 end MathlibExt.Economics.Finance.ModiglianiMiller
