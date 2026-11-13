@@ -617,4 +617,175 @@ theorem T6_equivFails :
   have h10 : ¬((1 : ℝ≥0∞) ≤ 0) := not_le_of_gt zero_lt_one
   exact h10 (h.mp hle)
 
+/-! ### Regression tests for admissibility and nondegenerate coefficients -/
+
+open MathlibExt.Probability.Causality.MissingData
+
+private theorem univ_product {Θ Ψ : Type*} :
+    (Set.univ : Set (Θ × Ψ)) =
+      (Prod.fst '' (Set.univ : Set (Θ × Ψ))) ×ˢ
+        (Prod.snd '' (Set.univ : Set (Θ × Ψ))) := by
+  ext ⟨θ, ψ⟩
+  exact ⟨fun _ => ⟨⟨(θ, ψ), Set.mem_univ _, rfl⟩,
+    ⟨(θ, ψ), Set.mem_univ _, rfl⟩⟩, fun _ => Set.mem_univ _⟩
+
+/-- Only `true` is admissible; the response at `false` depends on hidden `y`. -/
+private noncomputable def restrictedResponse (ψ y : Bool) : PMF Bool :=
+  if ψ then gT5 ψ y else PMF.pure y
+
+private def restrictedSpace : Set (Bool × Bool) := Set.univ ×ˢ {true}
+
+private theorem restrictedSpace_product :
+    restrictedSpace = (Prod.fst '' restrictedSpace) ×ˢ
+      (Prod.snd '' restrictedSpace) := by
+  ext ⟨θ, ψ⟩
+  simp [restrictedSpace]
+
+private theorem restricted_mar :
+    ∀ ψ ∈ Prod.snd '' restrictedSpace, ∀ y y' : Bool,
+      restrictedResponse ψ y false = restrictedResponse ψ y' false := by
+  intro ψ hψ y y'
+  have : ψ = true := by simpa [restrictedSpace] using hψ
+  subst ψ
+  rfl
+
+-- Requiring MAR at the inadmissible parameter would reject this model.
+example : ¬ ∀ ψ y y' : Bool,
+    restrictedResponse ψ y false = restrictedResponse ψ y' false := by
+  intro h
+  have heq := h false false true
+  simp [restrictedResponse, PMF.pure_apply] at heq
+
+-- All data are hidden. Both on-domain and off-domain ψ use the repaired API.
+example (θ ψ : Bool) :
+    restrictedSpace.indicator
+      (fun p : Bool × Bool => ∑' y, {_y : Bool | () = ()}.indicator
+        (fun y => Fpoint.dens p.1 y * restrictedResponse p.2 y false) y)
+      (θ, ψ) =
+    (Prod.snd '' restrictedSpace).indicator
+      (fun ψ => restrictedResponse ψ true false) ψ *
+      (Prod.fst '' restrictedSpace).indicator
+        (fun θ => ∑' y, {_y : Bool | () = ()}.indicator
+          (fun y => Fpoint.dens θ y) y) θ := by
+  exact likelihood_factorization Fpoint restrictedResponse (fun _ _ => ())
+    true false restrictedSpace (fun ψ hψ y y' _ _ =>
+      restricted_mar ψ hψ y y') restrictedSpace_product θ ψ
+
+-- The admissible fixed-ψ factor is exactly one half, not just order-preserving.
+example :
+    let c := restrictedResponse true true false
+    0 < c ∧ c ≤ 1 ∧ ∀ θ,
+      restrictedSpace.indicator
+        (fun p : Bool × Bool => ∑' y, {_y : Bool | () = ()}.indicator
+          (fun y => Fpoint.dens p.1 y * restrictedResponse p.2 y false) y)
+        (θ, true) =
+      c * (Prod.fst '' restrictedSpace).indicator
+        (fun θ => ∑' y, {_y : Bool | () = ()}.indicator
+          (fun y => Fpoint.dens θ y) y) θ := by
+  exact likelihood_proportional_of_realizedMAR Fpoint restrictedResponse
+    (fun _ _ => ()) true false restrictedSpace
+    (fun ψ hψ y y' _ _ => restricted_mar ψ hψ y y')
+    restrictedSpace_product true (by simp [restrictedSpace])
+    (by simp [restrictedResponse, gT5])
+
+-- The same restricted model has a positive, finite supremum coefficient.
+example :
+    let c := ⨆ ψ ∈ Prod.snd '' restrictedSpace,
+      restrictedResponse ψ true false
+    0 < c ∧ c ≤ 1 ∧ ∀ θ ∈ Prod.fst '' restrictedSpace,
+      (⨆ ψ, restrictedSpace.indicator
+        (fun p : Bool × Bool => ∑' y, {_y : Bool | () = ()}.indicator
+          (fun y => Fpoint.dens p.1 y * restrictedResponse p.2 y false) y)
+        (θ, ψ)) =
+      c * (∑' y, {_y : Bool | () = ()}.indicator
+        (fun y => Fpoint.dens θ y) y) := by
+  exact iSup_likelihood_proportional_of_realizedMAR Fpoint restrictedResponse
+    (fun _ _ => ()) true false restrictedSpace
+    (fun ψ hψ y y' _ _ => restricted_mar ψ hψ y y')
+    restrictedSpace_product
+    ⟨true, by simp [restrictedSpace], by simp [restrictedResponse, gT5]⟩
+
+-- Distinct L2 values (1 and 0) are scaled by the same nonunit coefficient.
+example (θ : Bool) :
+    Set.univ.indicator
+      (fun p : Bool × Bool => ∑' y,
+        {y | obsOne y true = obsOne true true}.indicator
+          (fun y => Fpoint.dens p.1 y * gT5 p.2 y true) y) (θ, true) =
+      2⁻¹ * (if true = θ then 1 else 0) := by
+  have h := (likelihood_proportional_of_realizedMAR Fpoint gT5 obsOne
+    true true Set.univ (fun ψ _ => T1_marHolds gT5 ψ) univ_product
+    true (by simp) (by simp [gT5])).2.2 θ
+  have hθ : θ ∈ Prod.fst '' (Set.univ : Set (Bool × Bool)) :=
+    ⟨(θ, true), Set.mem_univ _, rfl⟩
+  rw [Set.indicator_of_mem hθ, T1_likelihood] at h
+  convert h using 1
+  simp [gT5, Fpoint]
+
+-- The old order API remains a corollary with a usable public signature.
+example (θ₁ θ₂ : Bool) :
+    Set.univ.indicator
+      (fun p : Bool × Bool => ∑' y,
+        {y | obsOne y true = obsOne true true}.indicator
+          (fun y => Fpoint.dens p.1 y * gT5 p.2 y true) y) (θ₁, true) ≤
+    Set.univ.indicator
+      (fun p : Bool × Bool => ∑' y,
+        {y | obsOne y true = obsOne true true}.indicator
+          (fun y => Fpoint.dens p.1 y * gT5 p.2 y true) y) (θ₂, true) ↔
+    Fpoint.dens θ₁ true ≤ Fpoint.dens θ₂ true := by
+  simpa only [T1_likelihood] using
+    likelihood_le_iff_of_realizedMAR Fpoint gT5 obsOne true true Set.univ
+      (fun ψ _ => T1_marHolds gT5 ψ) univ_product true (by simp)
+      (by simp [gT5]) θ₁ θ₂ (by simp) (by simp)
+
+-- Empty S imposes no MAR obligations and every joint likelihood is zero.
+example (g : Bool → Bool → PMF Bool) (θ ψ : Bool) :
+    (∅ : Set (Bool × Bool)).indicator
+      (fun p : Bool × Bool => ∑' y, {_y : Bool | () = ()}.indicator
+        (fun y => Fpoint.dens p.1 y * g p.2 y false) y) (θ, ψ) = 0 := by
+  have h := likelihood_factorization Fpoint g (fun _ _ => ()) true false
+    ∅ (by simp) (by simp) θ ψ
+  exact h.trans (by simp)
+
+-- With a restricted θ domain, the off-domain joint value is also zero.
+example (θ ψ : Bool) :
+    ({true} ×ˢ {true} : Set (Bool × Bool)).indicator
+      (fun p : Bool × Bool => ∑' y,
+        {y | obsOne y true = obsOne true true}.indicator
+          (fun y => Fpoint.dens p.1 y * gT5 p.2 y true) y) (θ, ψ) =
+    ({true} : Set Bool).indicator (fun ψ => gT5 ψ true true) ψ *
+      ({true} : Set Bool).indicator
+        (fun θ => ∑' y, {y | obsOne y true = obsOne true true}.indicator
+          (fun y => Fpoint.dens θ y) y) θ := by
+  simpa using likelihood_factorization Fpoint gT5 obsOne true true
+    ({true} ×ˢ {true}) (fun ψ _ => T1_marHolds gT5 ψ) (by simp) θ ψ
+
+-- Zero-mass T6 admits only the zero-allowed profile result, not ignorability.
+example (θ : Bool) :
+    (⨆ ψ : Unit, Set.univ.indicator
+      (fun p : Bool × Unit => ∑' y,
+        {y | obsOne y true = obsOne true true}.indicator
+          (fun y => Fpoint.dens p.1 y * gT6 p.2 y true) y) (θ, ψ)) = 0 := by
+  have h := iSup_likelihood_eq_mul Fpoint gT6 obsOne true true Set.univ
+    (fun ψ _ => T6_marHolds ψ) univ_product θ (by simp)
+  exact h.trans (by simp [gT6, PMF.pure_apply])
+
+example : ¬ ∃ ψ ∈ Prod.snd '' (Set.univ : Set (Bool × Unit)),
+    0 < gT6 ψ true true := by
+  simp [gT6, PMF.pure_apply]
+
+-- M is arbitrary and has no MeasurableSpace instance.
+example {M : Type*} (m₀ : M) :
+    let g : Unit → Bool → PMF M := fun _ _ => PMF.pure m₀
+    let c := g () true m₀
+    0 < c ∧ c ≤ 1 ∧ ∀ θ,
+      Set.univ.indicator
+        (fun p : Bool × Unit => ∑' y, {_y : Bool | () = ()}.indicator
+          (fun y => Fpoint.dens p.1 y * g p.2 y m₀) y) (θ, ()) =
+        c * (Prod.fst '' (Set.univ : Set (Bool × Unit))).indicator
+          (fun θ => ∑' y, {_y : Bool | () = ()}.indicator
+            (fun y => Fpoint.dens θ y) y) θ := by
+  exact likelihood_proportional_of_realizedMAR Fpoint
+    (fun _ _ => PMF.pure m₀) (fun _ _ => ()) true m₀ Set.univ
+    (by intros; rfl) univ_product () (by simp) (by simp)
+
 end MathlibExtTest.Probability.Causality.MissingData.ObservedLikelihood
