@@ -679,8 +679,8 @@ theorem solve_doNode_of_ancestral {α : Type*} {n : ℕ} {U : Fin n → Type*}
 /-- **Surgery commutes with the do-operator**: under independent noises, the law of the model
 after `do(X_k = a)` is the joint of the induced Bayesian network after the intervention
 `do(X_k = a)`. -/
-theorem inducedLaw_doNode {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
-    [DecidableEq α] [Nonempty α] (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+theorem inducedLaw_doNode {α : Type*} {n : ℕ} {U : Fin n → Type*} [Nonempty α]
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (k : Fin n) (a : α) (x : Fin n → α) :
     (M.doNode k a).inducedLaw μ x = ((M.inducedBayesNet μ).intervene k a).joint x := by
   rw [(M.doNode k a).inducedLaw_eq_joint μ x,
@@ -695,8 +695,8 @@ theorem inducedLaw_doNode {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, F
       M.inducedBayesNet_intervene_cpt_of_ne μ k a hjk]
 
 /-- Surgery on a set of nodes commutes with the do-operator for that set. -/
-theorem inducedLaw_doSet {α : Type*} {n : ℕ} {U : Fin n → Type*} [∀ k, Fintype (U k)]
-    [DecidableEq α] [Nonempty α] (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
+theorem inducedLaw_doSet {α : Type*} {n : ℕ} {U : Fin n → Type*} [Nonempty α]
+    (M : FiniteSCM α n U) (μ : (k : Fin n) → StdSimplex ℝ (U k))
     (W : Finset (Fin n)) (w x : Fin n → α) :
     (M.doSet W w).inducedLaw μ x = ((M.inducedBayesNet μ).mutilateSet W w).joint x := by
   rw [(M.doSet W w).inducedLaw_eq_joint μ x,
