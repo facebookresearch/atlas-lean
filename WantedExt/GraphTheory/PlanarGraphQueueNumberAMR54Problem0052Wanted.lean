@@ -36,12 +36,13 @@ in the problem and in Dujmović et al., §1.
 -/
 
 /-- `G` has a `k`-queue layout: a linear order of the vertices (`ord` injective) and an assignment
-of the edges to `k` queues such that no two edges in the same queue are nested, where `x y` is
-nested inside `v w` if `v < x < y < w`. -/
+`q` of the edges (only the edges, so an edgeless graph has a `0`-queue layout) to `k` queues such
+that no two edges in the same queue are nested, where `x y` is nested inside `v w` if
+`v < x < y < w`. -/
 def HasQueueLayout {V : Type} (G : SimpleGraph V) (k : ℕ) : Prop :=
-  ∃ (ord : V → ℕ) (q : Sym2 V → Fin k), Function.Injective ord ∧
-    ∀ v w x y, G.Adj v w → G.Adj x y → ord v < ord x → ord x < ord y → ord y < ord w →
-      q s(v, w) ≠ q s(x, y)
+  ∃ (ord : V → ℕ) (q : G.edgeSet → Fin k), Function.Injective ord ∧
+    ∀ v w x y (hvw : G.Adj v w) (hxy : G.Adj x y), ord v < ord x → ord x < ord y →
+      ord y < ord w → q ⟨s(v, w), G.mem_edgeSet.mpr hvw⟩ ≠ q ⟨s(x, y), G.mem_edgeSet.mpr hxy⟩
 
 /-- The Heath-Leighton-Rosenberg conjecture: planar graphs have bounded queue-number, that is, some
 `Q` bounds the queue-number of every finite planar graph. -/
