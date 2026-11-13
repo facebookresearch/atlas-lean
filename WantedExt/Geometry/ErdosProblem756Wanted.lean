@@ -15,7 +15,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Analysis.Asymptotics.Defs
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Data.Finset.Prod
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Filter.AtTopBot.Basic
 public import Mathlib.Order.Lattice.Nat
 public import MathlibExt.Geometry.Metric

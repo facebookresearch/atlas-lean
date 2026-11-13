@@ -23,14 +23,18 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Geometry.HopfUmlaufsatz` — hopf_umlaufsatz (manifest `manifests/problems/hopf_umlaufsatz.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Geometry.HopfUmlaufsatz` —
+hopf_umlaufsatz (manifest `manifests/problems/hopf_umlaufsatz.toml`, rev 1, submitter Kim Morrison,
+status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Geometry.HopfUmlaufsatzWanted` namespace. Mathematical
-statements are unchanged. Source: H. Hopf, *Über die Drehung der Tangenten...*, Compositio Math. 2 (1935). Knill, §170.
+and placed the declarations in the `MathlibExt.Geometry.HopfUmlaufsatzWanted` namespace.
+Mathematical
+statements are unchanged. Source: H. Hopf, *Über die Drehung der Tangenten...*, Compositio Math. 2
+(1935). Knill, §170.
 -/
 module
 
@@ -92,7 +96,8 @@ noncomputable def totalCurvature (α : ℝ → ℝ) : ℝ :=
 
 /- **Hopf Umlaufsatz.** A positively oriented simple closed unit-speed plane
 curve has total signed curvature `2π`. -/
-/-- Source: H. Hopf, *Über die Drehung der Tangenten...*, Compositio Math. 2 (1935). Knill, §170. Via leanprover/lean-eval@38361be, problem `hopf_umlaufsatz`. -/
+/-- Source: H. Hopf, *Über die Drehung der Tangenten...*, Compositio Math. 2 (1935). Knill, §170.
+Via leanprover/lean-eval@38361be, problem `hopf_umlaufsatz`. -/
 public theorem_wanted hopf_umlaufsatz
     {r : ℝ → Plane} {α : ℝ → ℝ}
     (_hr : IsPositiveSimpleClosedUnitSpeedCurve r)

@@ -23,14 +23,22 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Geometry.ParallelPostulate` — parallel_postulate_independent (manifest `manifests/problems/parallel_postulate_independent.toml`, rev 1, submitter Kim Morrison, status archived) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.Geometry.ParallelPostulate` —
+parallel_postulate_independent (manifest `manifests/problems/parallel_postulate_independent.toml`,
+rev 1, submitter Kim Morrison, status archived) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Geometry.ParallelPostulateWanted` namespace. Mathematical
-statements are unchanged. Source: Independence of Euclid's parallel postulate; the hyperbolic-plane models are due to E. Beltrami (1868) and F. Klein (1871). Tarski's axiomatization: W. Schwabhäuser, W. Szmielew, A. Tarski, Metamathematische Methoden in der Geometrie, Springer (1983). Formalized in HOL Light by John Harrison and in Isabelle by Tim Makarios (T.J.M. Makarios, A Mechanical Verification of the Independence of Tarski's Euclidean Axiom, MSc thesis, Victoria University of Wellington, 2012; Isabelle/AFP entry Tarskis_Geometry).
+and placed the declarations in the `MathlibExt.Geometry.ParallelPostulateWanted` namespace.
+Mathematical
+statements are unchanged. Source: Independence of Euclid's parallel postulate; the hyperbolic-plane
+models are due to E. Beltrami (1868) and F. Klein (1871). Tarski's axiomatization: W. Schwabhäuser,
+W. Szmielew, A. Tarski, Metamathematische Methoden in der Geometrie, Springer (1983). Formalized in
+HOL Light by John Harrison and in Isabelle by Tim Makarios (T.J.M. Makarios, A Mechanical
+Verification of the Independence of Tarski's Euclidean Axiom, MSc thesis, Victoria University of
+Wellington, 2012; Isabelle/AFP entry Tarskis_Geometry).
 -/
 module
 
@@ -125,7 +133,13 @@ axiom `A10` is logically independent of Tarski's absolute axioms `A1`–`A9`
 and `A11`: there is a model of the absolute axioms in which the parallel
 postulate holds (the real coordinate plane) and one in which it fails (the
 Klein–Beltrami disk, or any other hyperbolic-plane model). -/
-/-- Source: Independence of Euclid's parallel postulate; the hyperbolic-plane models are due to E. Beltrami (1868) and F. Klein (1871). Tarski's axiomatization: W. Schwabhäuser, W. Szmielew, A. Tarski, Metamathematische Methoden in der Geometrie, Springer (1983). Formalized in HOL Light by John Harrison and in Isabelle by Tim Makarios (T.J.M. Makarios, A Mechanical Verification of the Independence of Tarski's Euclidean Axiom, MSc thesis, Victoria University of Wellington, 2012; Isabelle/AFP entry Tarskis_Geometry). Via leanprover/lean-eval@38361be, problem `parallel_postulate_independent`. -/
+/-- Source: Independence of Euclid's parallel postulate; the hyperbolic-plane models are due to E.
+Beltrami (1868) and F. Klein (1871). Tarski's axiomatization: W. Schwabhäuser, W. Szmielew, A.
+Tarski, Metamathematische Methoden in der Geometrie, Springer (1983). Formalized in HOL Light by
+John Harrison and in Isabelle by Tim Makarios (T.J.M. Makarios, A Mechanical Verification of the
+Independence of Tarski's Euclidean Axiom, MSc thesis, Victoria University of Wellington, 2012;
+Isabelle/AFP entry Tarskis_Geometry). Via leanprover/lean-eval@38361be, problem
+`parallel_postulate_independent`. -/
 public theorem_wanted parallel_postulate_independent :
     (∃ (M : Type) (T : TarskiAbsolute M), Euclidean M T) ∧
     (∃ (M : Type) (T : TarskiAbsolute M), ¬ Euclidean M T)
