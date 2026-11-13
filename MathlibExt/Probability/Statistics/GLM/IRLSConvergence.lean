@@ -32,11 +32,13 @@ iteration by the classical contraction argument, with the score `U` and its deri
 hypotheses.
 
 The model-specific identities (the canonical score `Xᵀ (y - μ(β))`, the Hessian `-Xᵀ W X`, and
-`newtonStep = irlsStep`) are not restated here; they live in the GLM files
-`GLM/Canonical.lean` and `GLM/IRLS.lean`. Instead, the iteration map `T` is arbitrary and enters
-only through the Newton equations `H z (T z - z) = -U z` near the root (for IRLS, the weighted
-normal equations), which the IRLS step satisfies whenever its weighted Gram matrix is
-invertible.
+`newtonStep = irlsStep`) are not restated here; they are the subject of the GLM files
+`GLM/Canonical.lean` and `GLM/IRLS.lean`, which are open pull requests (#1126, #1555) and are not
+imported. Instead, the iteration map `T` is arbitrary and enters only through the Newton
+equations `H z (T z - z) = -U z` near the root (for IRLS, the weighted normal equations). Once
+#1555 merges, its IRLS step should satisfy these equations when the IRLS weights are nonzero and
+the weighted Gram matrix is invertible, after transporting its `Matrix` statement on `k → ℝ` to
+`E →L[ℝ] E`; that link is not proved here.
 
 ## Source receipt
 
@@ -62,20 +64,22 @@ invertible.
 * Dennis–Schnabel work in `ℝⁿ` with an induced operator norm. Here `E` is any real normed space
   and `‖·‖` on `E →L[ℝ] E` is the operator norm; finite dimension is used only in
   `exists_newton_map`.
-* The Newton step is given, as in the book, by the linear system `J(x) (x⁺ - x) = -F(x)`, not by
-  a formula with an inverse; only the inverse of `J(x*)` is used, as a left inverse with a norm
-  bound.
+* Theorem 5.2.1 writes the step as `x_{k+1} = x_k - J(x_k)⁻¹ F(x_k)`. Here it is the linear
+  system `J(x) (x⁺ - x) = -F(x)`, which agrees with that formula whenever `J(x)` is invertible
+  (as it is on `ball b ε` in finite dimension, see `exists_newton_map`). Only the inverse of
+  `J(x*)` is used, as a left inverse with a norm bound.
 * Instead of `ε = min(r, 1/(2βγ))` we allow any `ε ≤ r` with `2 β γ ε ≤ 1`. This contains the
   book's choice and avoids `1 / 0 = 0` when `γ = 0` (e.g. the Gaussian linear model).
-* The book also states the linear rate `‖x_{k+1} - x*‖ ≤ ½ ‖x_k - x*‖`; it is included.
+* The per-step linear rate `‖x_{k+1} - x*‖ ≤ ½ ‖x_k - x*‖` and its cumulative form
+  `‖x_k - x*‖ ≤ (1/2)^k ‖x₀ - x*‖` are both conclusions.
 
 ## Main results
 
 * `norm_sub_sub_fderiv_le`: quadratic Taylor remainder under a Lipschitz derivative.
 * `norm_le_two_mul_norm_apply`: the perturbation bound.
 * `newton_step_error_le`: one Newton step squares the error, `‖z' - b‖ ≤ M L ‖z - b‖²`.
-* `newton_local_convergence`: iterates stay in `ball b ε`, the error at least halves each step,
-  is squared up to the factor `M L`, and the iterates converge to the root `b`.
+* `newton_local_convergence`: iterates stay in `ball b ε`, the error is squared up to the factor
+  `M L` and at least halves at each step, and the iterates converge to the root `b`.
 * `exists_newton_map`: in finite dimension the Newton system is solvable on `ball b ε`.
 * `eq_of_score_eq_zero`: the root is the only score zero in `ball b ε`.
 * `fisherScoring_local_convergence`: the same convergence statement for the Fisher-scoring /
@@ -240,6 +244,7 @@ iterates `T^[n] β₀`
 
 * stay in `ball b ε`,
 * satisfy the quadratic bound `‖T^[n+1] β₀ - b‖ ≤ M L ‖T^[n] β₀ - b‖²`,
+* satisfy the per-step bound `‖T^[n+1] β₀ - b‖ ≤ 1/2 ‖T^[n] β₀ - b‖`,
 * satisfy the linear bound `‖T^[n] β₀ - b‖ ≤ (1/2)^n ‖β₀ - b‖`, and
 * converge to `b`.
 
@@ -253,6 +258,7 @@ theorem newton_local_convergence {U : E → E} {H : E → E →L[ℝ] E} {H₀in
     (hεr : ε ≤ r) (hMLε : 2 * M * L * ε ≤ 1) (hβ₀ : β₀ ∈ ball b ε) :
     (∀ n, T^[n] β₀ ∈ ball b ε) ∧
       (∀ n, ‖T^[n + 1] β₀ - b‖ ≤ M * L * ‖T^[n] β₀ - b‖ ^ 2) ∧
+      (∀ n, ‖T^[n + 1] β₀ - b‖ ≤ 1 / 2 * ‖T^[n] β₀ - b‖) ∧
       (∀ n, ‖T^[n] β₀ - b‖ ≤ (1 / 2) ^ n * ‖β₀ - b‖) ∧
       Tendsto (fun n => T^[n] β₀) atTop (𝓝 b) := by
   have step := fun z (hz : z ∈ ball b ε) =>
@@ -277,7 +283,11 @@ theorem newton_local_convergence {U : E → E} {H : E → E →L[ℝ] E} {H₀in
         calc ‖T (T^[n] β₀) - b‖ ≤ 1 / 2 * ‖T^[n] β₀ - b‖ := (step _ (hmem n)).2.1
           _ ≤ 1 / 2 * ((1 / 2) ^ n * ‖β₀ - b‖) := by gcongr
           _ = (1 / 2) ^ (n + 1) * ‖β₀ - b‖ := by ring
-  refine ⟨hmem, hquad, hlin, ?_⟩
+  have hhalf : ∀ n, ‖T^[n + 1] β₀ - b‖ ≤ 1 / 2 * ‖T^[n] β₀ - b‖ := by
+    intro n
+    rw [Function.iterate_succ_apply']
+    exact (step _ (hmem n)).2.1
+  refine ⟨hmem, hquad, hhalf, hlin, ?_⟩
   rw [tendsto_iff_norm_sub_tendsto_zero]
   have hlim : Tendsto (fun n : ℕ => (1 / 2 : ℝ) ^ n * ‖β₀ - b‖) atTop (𝓝 0) := by
     simpa using (tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num : (0 : ℝ) ≤ 1 / 2)
@@ -352,8 +362,8 @@ equations `I x (T x - x) = U x` (for IRLS: the weighted normal equations
 `L`-Lipschitz on `ball b r`, and let `I₀inv` be a left inverse of `I b` with `‖I₀inv‖ ≤ M`. If
 `ε ≤ r`, `2 M L ε ≤ 1` and `T` solves the Fisher-scoring equations on `ball b ε`, then from every
 `β₀ ∈ ball b ε` the iterates stay in `ball b ε`, satisfy
-`‖T^[n+1] β₀ - b‖ ≤ M L ‖T^[n] β₀ - b‖²` and `‖T^[n] β₀ - b‖ ≤ (1/2)^n ‖β₀ - b‖`, and converge
-to `b`. -/
+`‖T^[n+1] β₀ - b‖ ≤ M L ‖T^[n] β₀ - b‖²`, `‖T^[n+1] β₀ - b‖ ≤ 1/2 ‖T^[n] β₀ - b‖` and
+`‖T^[n] β₀ - b‖ ≤ (1/2)^n ‖β₀ - b‖`, and converge to `b`. -/
 theorem fisherScoring_local_convergence {U : E → E} {I : E → E →L[ℝ] E} {I₀inv : E →L[ℝ] E}
     {T : E → E} {b β₀ : E} {r ε M L : ℝ} (hb : U b = 0)
     (hU : ∀ x ∈ ball b r, HasFDerivAt U (-I x) x)
@@ -363,6 +373,7 @@ theorem fisherScoring_local_convergence {U : E → E} {I : E → E →L[ℝ] E} 
     (hεr : ε ≤ r) (hMLε : 2 * M * L * ε ≤ 1) (hβ₀ : β₀ ∈ ball b ε) :
     (∀ n, T^[n] β₀ ∈ ball b ε) ∧
       (∀ n, ‖T^[n + 1] β₀ - b‖ ≤ M * L * ‖T^[n] β₀ - b‖ ^ 2) ∧
+      (∀ n, ‖T^[n + 1] β₀ - b‖ ≤ 1 / 2 * ‖T^[n] β₀ - b‖) ∧
       (∀ n, ‖T^[n] β₀ - b‖ ≤ (1 / 2) ^ n * ‖β₀ - b‖) ∧
       Tendsto (fun n => T^[n] β₀) atTop (𝓝 b) := by
   refine newton_local_convergence (H := fun x => -I x) (H₀inv := -I₀inv) hb hU

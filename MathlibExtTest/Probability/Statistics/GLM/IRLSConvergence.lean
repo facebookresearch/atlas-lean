@@ -49,10 +49,40 @@ example :
     rw [norm_mul]
     norm_num
 
--- The perturbation bound needs `M δ ≤ 1/2`: with `A₀ = id`, `A = 0`, `M = δ = 1`, the
+-- The threshold `M δ ≤ 1/2` in the perturbation bound is exact. With `A₀ = A₀inv = id`,
+-- `A = (1 - δ) • id` and `M = 1`, every other hypothesis holds, and for `1/2 < δ < 3/2` the
 -- conclusion `‖v‖ ≤ 2 M ‖A v‖` fails at `v = 1`.
-example : ¬ (‖(1 : ℝ)‖ ≤ 2 * 1 * ‖(0 : ℝ →L[ℝ] ℝ) 1‖) := by
-  simp
+example (δ : ℝ) (h1 : 1 / 2 < δ) (h2 : δ < 3 / 2) :
+    (∀ v : ℝ, ContinuousLinearMap.id ℝ ℝ (ContinuousLinearMap.id ℝ ℝ v) = v) ∧
+      ‖ContinuousLinearMap.id ℝ ℝ‖ ≤ 1 ∧
+      ‖ContinuousLinearMap.id ℝ ℝ - (1 - δ) • ContinuousLinearMap.id ℝ ℝ‖ ≤ δ ∧
+      ¬ (‖(1 : ℝ)‖ ≤ 2 * 1 * ‖((1 - δ) • ContinuousLinearMap.id ℝ ℝ) 1‖) := by
+  refine ⟨fun v => rfl, ContinuousLinearMap.norm_id_le, ?_, ?_⟩
+  · have h : ContinuousLinearMap.id ℝ ℝ - (1 - δ) • ContinuousLinearMap.id ℝ ℝ =
+        δ • ContinuousLinearMap.id ℝ ℝ := by
+      ext
+      simp
+    rw [h]
+    refine (norm_smul_id_le δ).trans (le_of_eq ?_)
+    rw [Real.norm_eq_abs, abs_of_pos (by linarith)]
+  · intro h
+    have h' : 1 ≤ 2 * |1 - δ| := by simpa using h
+    have : |1 - δ| < 1 / 2 := abs_lt.2 ⟨by linarith, by linarith⟩
+    linarith
+
+-- At the threshold `δ = 1/2` the bound applies, and it holds with equality.
+example (v : ℝ) :
+    ‖v‖ ≤ 2 * 1 * ‖((1 - 1 / 2 : ℝ) • ContinuousLinearMap.id ℝ ℝ) v‖ := by
+  refine norm_le_two_mul_norm_apply (A₀ := ContinuousLinearMap.id ℝ ℝ)
+    (A₀inv := ContinuousLinearMap.id ℝ ℝ) (δ := 1 / 2) (fun _ => rfl)
+    ContinuousLinearMap.norm_id_le ?_ (by norm_num) v
+  have h : ContinuousLinearMap.id ℝ ℝ - (1 - 1 / 2 : ℝ) • ContinuousLinearMap.id ℝ ℝ =
+      (1 / 2 : ℝ) • ContinuousLinearMap.id ℝ ℝ := by
+    ext
+    norm_num
+  rw [h]
+  refine (norm_smul_id_le _).trans (le_of_eq ?_)
+  norm_num
 
 /-! ### Gaussian linear model: Fisher scoring reaches the root in one step
 
@@ -68,6 +98,23 @@ example (a y β : ℝ) (ha : a ≠ 0) : β + a * (y - a * β) / a ^ 2 = y / a :=
 example (a y : ℝ) (ha : a ≠ 0) : a * (y - a * (y / a)) = 0 := by
   field_simp
   ring
+
+-- Non-vacuity at `L = 0`: `fisherScoring_local_convergence` applies with `ε = r` for any `r`.
+example (a y : ℝ) (ha : a ≠ 0) (β₀ : ℝ) (r : ℝ) (hβ₀ : β₀ ∈ ball (y / a) r) :
+    Tendsto (fun n => (fun _ : ℝ => y / a)^[n] β₀) atTop (𝓝 (y / a)) := by
+  have h := fisherScoring_local_convergence (U := fun β : ℝ => a * (y - a * β))
+    (I := fun _ => (a ^ 2) • ContinuousLinearMap.id ℝ ℝ)
+    (I₀inv := (a ^ 2)⁻¹ • ContinuousLinearMap.id ℝ ℝ) (T := fun _ => y / a)
+    (r := r) (ε := r) (M := ‖(a ^ 2)⁻¹ • ContinuousLinearMap.id ℝ ℝ‖) (L := 0)
+    (by field_simp; ring)
+    (fun x _ => by
+      have := ((hasDerivAt_id x).const_mul (a ^ 2)).const_sub (a * y)
+      convert this.hasFDerivAt using 1
+      · funext t; simp; ring
+      · ext; simp)
+    (fun x _ y _ => by simp) (fun v => by simp [ha]) le_rfl
+    (fun x _ => by simp; field_simp) le_rfl (by simp) hβ₀
+  exact h.2.2.2.2
 
 /-! ### A nonlinear score: `U β = -β - β² / 2`, `I β = β + 1`
 
@@ -141,7 +188,7 @@ example (β₀ : ℝ) (hβ₀ : β₀ ∈ ball (0 : ℝ) (1 / 2)) :
     (by norm_num [scoreEx]) (fun x _ => hasFDerivAt_scoreEx x)
     (fun x _ y _ => infoEx_lipschitz x y) (fun v => by simp [infoEx])
     ContinuousLinearMap.norm_id_le stepEx_spec le_rfl (by norm_num) hβ₀
-  exact ⟨h.2.1, h.2.2.2⟩
+  exact ⟨h.2.1, h.2.2.2.2⟩
 
 -- The root `0` is the only score zero in `ball 0 (1/2)`; the other zero `-2` lies outside.
 example : scoreEx (-2) = 0 ∧ (-2 : ℝ) ∉ ball (0 : ℝ) (1 / 2) := by
@@ -173,3 +220,4 @@ example : ∃ T : ℝ → ℝ, ∀ x ∈ ball (0 : ℝ) (1 / 2),
 #print axioms eq_of_score_eq_zero
 #print axioms norm_sub_sub_fderiv_le
 #print axioms newton_step_error_le
+#print axioms norm_le_two_mul_norm_apply
