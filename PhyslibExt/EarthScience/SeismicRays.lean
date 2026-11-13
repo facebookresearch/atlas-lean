@@ -13,9 +13,8 @@ public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
 
 /-!
 # Seismic rays: travel times and Snell's law
@@ -32,7 +31,7 @@ at depth `b`, interface distance `D`, and interior refraction point `x` is
 (`T'(x) = 0`) gives Snell's law with `sin θ₁ = x / √(a² + x²)` and
 `sin θ₂ = (D - x) / √(b² + (D - x)²)`, angles from the normal, planar
 interface, positive speeds. High-frequency ray model stipulated;
-critical/reflected branches are separately handled. The equal-speed
+critical and reflected branches are not modeled here. The equal-speed
 corollary needs a nonzero common speed `v ≠ 0`.
 
 ## ii. Key results
@@ -49,6 +48,12 @@ corollary needs a nonzero common speed `v ≠ 0`.
 
 ## iv. References
 
+- R. P. Feynman, R. B. Leighton, M. Sands, *The Feynman Lectures on Physics*, Vol. I,
+  Addison-Wesley, 1963, Chapter 26 (§26-3: Snell's law from the least travel time of a
+  ray crossing an interface, angles measured from the normal; §26-5: the stationary-time
+  form of Fermat's principle).
+- P. M. Shearer, *Introduction to Seismology*, 2nd ed., Cambridge University Press,
+  2009, Chapter 4 (ray theory and travel times; Snell's law for seismic rays).
 - `HasDerivAt.sqrt`, `HasDerivAt.unique` in Mathlib.
 
 ## A. Straight-segment travel time

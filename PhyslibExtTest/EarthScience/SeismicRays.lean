@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.SeismicRays
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # Seismic ray checks
@@ -48,14 +50,24 @@ example : (5 : ℝ) / Real.sqrt (3 ^ 2 + 5 ^ 2)
     (by norm_num)
   norm_num
 
-/-- Symmetric refraction via stationarity: the midpoint Snell conclusion
-follows from a stationarity hypothesis. -/
-example (hstat : HasDerivAt
-    (fun x => Real.sqrt ((3 : ℝ) ^ 2 + x ^ 2) / 2
-      + Real.sqrt ((3 : ℝ) ^ 2 + (10 - x) ^ 2) / 2) 0 5) :
-    5 / (2 * Real.sqrt ((3 : ℝ) ^ 2 + 5 ^ 2))
-      = (10 - 5) / (2 * Real.sqrt ((3 : ℝ) ^ 2 + (10 - 5) ^ 2)) :=
-  EarthScience.snell_from_stationary (a := 3) (b := 3) (D := 10) (v₁ := 2) (v₂ := 2)
+/-- Symmetric refraction via stationarity: the travel time
+`√(3² + x²) / 2 + √(3² + (10 - x)²) / 2` has derivative `0` at the midpoint `x = 5`
+(constructed here, not assumed), so `snell_from_stationary` gives the midpoint
+Snell conclusion. -/
+example : 5 / (2 * Real.sqrt ((3 : ℝ) ^ 2 + 5 ^ 2))
+      = (10 - 5) / (2 * Real.sqrt ((3 : ℝ) ^ 2 + (10 - 5) ^ 2)) := by
+  have h1 : (3 : ℝ) ^ 2 + 5 ^ 2 ≠ 0 := by norm_num
+  have h2 : (3 : ℝ) ^ 2 + (10 - 5) ^ 2 ≠ 0 := by norm_num
+  have hd1 := (((hasDerivAt_pow 2 (5 : ℝ)).const_add ((3 : ℝ) ^ 2)).sqrt h1).div_const 2
+  have hDx : HasDerivAt (fun x : ℝ => 10 - x) (-1) 5 := (hasDerivAt_id' 5).const_sub 10
+  have hd2 := (((hDx.fun_pow 2).const_add ((3 : ℝ) ^ 2)).sqrt h2).div_const 2
+  have hstat : HasDerivAt
+      (fun x => Real.sqrt ((3 : ℝ) ^ 2 + x ^ 2) / 2
+        + Real.sqrt ((3 : ℝ) ^ 2 + (10 - x) ^ 2) / 2) 0 5 := by
+    convert hd1.fun_add hd2 using 1
+    norm_num
+    ring
+  exact EarthScience.snell_from_stationary (a := 3) (b := 3) (D := 10) (v₁ := 2) (v₂ := 2)
     (x := 5) (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) hstat
 
