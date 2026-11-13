@@ -248,18 +248,14 @@ theorem measurementError_population_slope_of_cov_eq_zero [IsProbabilityMeasure �
     ring
   rw [hres, mul_eq_zero, or_iff_left hW, sub_eq_zero, eq_comm]
 
-set_option linter.unusedVariables false in
 /-- **Population attenuation identity**, independence form: if `X`, `e` and `ε` are square
 integrable and pairwise independent, then `cov[W, Y] / Var[W] = λ β` for `W = X + e` and
 `Y = α + β X + ε` (`measurementError_population_attenuation_of_cov_eq_zero`, since independent
-square-integrable variables are uncorrelated). The hypothesis `hW` is contract-required: it is
-what makes the ratio the population least-squares slope
-(`measurementError_population_slope_of_cov_eq_zero`), although the ratio identity holds without
-it. -/
+square-integrable variables are uncorrelated). Like that theorem, this is an identity of totalized
+ratios; `measurementError_population_slope_of_cov_eq_zero` gives the slope when `Var[W] ≠ 0`. -/
 theorem measurementError_population_attenuation [IsProbabilityMeasure μ] {X e ε : Ω → ℝ}
     {α β : ℝ} (hX : MemLp X 2 μ) (he : MemLp e 2 μ) (hε : MemLp ε 2 μ)
-    (hXe : IndepFun X e μ) (hXε : IndepFun X ε μ) (heε : IndepFun e ε μ)
-    (hW : variance (fun ω => X ω + e ω) μ ≠ 0) :
+    (hXe : IndepFun X e μ) (hXε : IndepFun X ε μ) (heε : IndepFun e ε μ) :
     covariance (fun ω => X ω + e ω) (fun ω => α + β * X ω + ε ω) μ /
         variance (fun ω => X ω + e ω) μ =
       attenuationFactor (variance X μ) (variance e μ) * β :=

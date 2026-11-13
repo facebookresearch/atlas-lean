@@ -237,7 +237,7 @@ example : cov[fun ω : Fin 3 → ℝ => ω 0 + ω 1, fun ω => 1 + 2 * ω 0 + ω
   have h := measurementError_population_attenuation (μ := Q) (X := fun ω => ω 0)
     (e := fun ω => ω 1) (ε := fun ω => ω 2) (α := 1) (β := 2) (memLp_coord 0) (memLp_coord 1)
     (memLp_coord 2) (indepFun_coord (by decide)) (indepFun_coord (by decide))
-    (indepFun_coord (by decide)) (by rw [variance_W]; norm_num)
+    (indepFun_coord (by decide))
   rw [h, variance_coord, variance_coord]
   norm_num [attenuationFactor, σ2]
 
