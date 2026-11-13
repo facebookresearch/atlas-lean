@@ -25,10 +25,12 @@ claims below were checked numerically (all reverse
 divisors below `2 * 10^6`, and `P*` for the divisors
 of `99` against all multiples below `3 * 10^5`).
 
-Not stated (see the source audit table): Theorem 2
-(the block structure of non-basic quotient-9 reverse
-divisors) and Lemma 3, whose digit-block notation
-`S_r` is defined only in the paper body.
+Lemma 3 uses the paper's Notation 1: `S_r = 10 9^r 89`
+(the basic quotient-9 reverse divisor `11 (10^{r+2} - 1)`).
+Not stated (see the source audit table): Theorem 2 (the
+block structure of non-basic quotient-9 reverse
+divisors), whose printed form is not symmetric and
+admits non-reverse-divisors such as `1089 0 1089 1089`.
 -/
 module
 
@@ -280,5 +282,36 @@ theorem_wanted exists_dvd_reverseDigits_mul (n : ℕ)
     (h : Nat.Coprime n 10 ∨ Nat.reverseDigits 10 n = n ∨
       IsReverseDivisor n) :
     ∃ k₀ : ℕ, 1 ≤ k₀ ∧ n ∣ Nat.reverseDigits 10 (k₀ * n)
+
+/-- **Lemma 3**: a non-basic reverse divisor `n` with
+quotient `9` begins and ends with the same block
+`S_r = 10 9^r 89 = 11 (10^{r+2} - 1)`; if `r = 0`, then
+`(11 n)*` begins with `97` and ends with `11`, and if
+`r ≥ 1`, then `((10^{r+1} + 1) n)*` (the multiplier
+`1 0^r 1`) begins with `98 9^{r-1} 8 = 99·10^r - 2` and
+ends with `0^r 11`.
+
+Source: Mohamed Ayad and Rachid Bouchenna, "Which
+Integer Divides the Reverse of Any of Its Multiples?",
+INTEGERS 25 (2025), Article A37, Lemma 3 (`integers-2025-A37-lem-3`). "Non-basic
+reverse divisor" is read with quotient `9`, as in the
+paper's use of the lemma (proof of Proposition 4); for
+quotient `4` the literal claim fails (`21782178` does
+not begin with any `S_r`). "Begins with the digit
+string `p`" is `x = p·10^t + m` with `m < 10^t`; "ends
+with" is a remainder modulo a power of `10`. -/
+theorem_wanted reverseDivisor_nine_nonbasic_blocks (n : ℕ)
+    (h9 : Nat.reverseDigits 10 n = 9 * n) (hpos : 0 < n)
+    (hnb : ∀ r : ℕ, n ≠ 11 * (10 ^ (r + 2) - 1)) :
+    (∃ r : ℕ, (∃ t m : ℕ, m < 10 ^ t ∧ n = (11 * (10 ^ (r + 2) - 1)) * 10 ^ t + m) ∧
+        n % 10 ^ (r + 4) = 11 * (10 ^ (r + 2) - 1)) ∧
+      ∀ r : ℕ, (∃ t m : ℕ, m < 10 ^ t ∧ n = (11 * (10 ^ (r + 2) - 1)) * 10 ^ t + m) →
+        n % 10 ^ (r + 4) = 11 * (10 ^ (r + 2) - 1) →
+        (r = 0 → (∃ t m : ℕ, m < 10 ^ t ∧ Nat.reverseDigits 10 (11 * n) = 97 * 10 ^ t + m) ∧
+            Nat.reverseDigits 10 (11 * n) % 100 = 11) ∧
+        (1 ≤ r → (∃ t m : ℕ,
+            m < 10 ^ t ∧ Nat.reverseDigits 10 ((10 ^ (r + 1) + 1) * n) =
+            (99 * 10 ^ r - 2) * 10 ^ t + m) ∧
+            Nat.reverseDigits 10 ((10 ^ (r + 1) + 1) * n) % 10 ^ (r + 2) = 11)
 
 end MathlibExt.NumberTheory.Digits.ReverseDivisorWanted

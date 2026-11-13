@@ -23,10 +23,11 @@ for `n ≤ 8`, the primality criterion for `n ≤ 12`,
 and `s (a n) = Nat.fib (n - 1)` for `n ≤ 15` (the
 paper's `F_n` is `Nat.fib (n - 1)`).
 
-Not stated (see the source audit table): Lemmas 5
-and 6 and Corollary 11, which quantify over the
-paper's integer pair tree and second component tree,
-neither defined in the extracted statements.
+Lemmas 5 and 6 are stated for the integer pair tree
+(`integerPairTree`, a
+`TripSternTree`). Corollary 11 is not stated: with
+the paper's convention `F_1 = 0`, `F_2 = 1` it is false
+(see the source audit table).
 -/
 module
 
@@ -37,6 +38,7 @@ public import Mathlib.Data.Nat.Prime.Basic
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.NumberTheory.Divisors
 public import MathlibExt.NumberTheory.Composite
+public import MathlibExt.NumberTheory.TripSternTree
 
 set_option autoImplicit false
 
@@ -137,5 +139,58 @@ Source: Anton Shakov, "A 2-Regular Sequence That
 Counts The Divisors of `n^2 + 1`", Corollary 10. -/
 theorem_wanted fib_sq_add_one_composite (k : ℕ) (hk : 4 ≤ k) :
     Nat.IsComposite (Nat.fib k ^ 2 + 1)
+
+
+/-- The integer pair tree as a `TripSternTree (ℚ × ℚ)`: the
+root is `(1, 0)` and each pair `(d, m)` has children
+`L(d, m) = (d, m + d)` (a `false` edge) and
+`R(d, m) = (((m + d)^2 + 1)/d, m + (m^2 + 1)/d)` (a `true`
+edge). Nodes are computed over `ℚ` (the paper's maps involve
+division); `integerPairTree.nodeAtPath w` reads the path `w`
+from the root.
+
+Source: Anton Shakov, "A 2-Regular Sequence That
+Counts The Divisors of `n^2 + 1`", Journal of Integer
+Sequences 28 (2025), Article 25.6.2, Section 3. -/
+def integerPairTree : MetaMathlibExt.TripSternTree (ℚ × ℚ) where
+  seed := (1, 0)
+  leftTransition p := (p.1, p.2 + p.1)
+  rightTransition p := (((p.2 + p.1) ^ 2 + 1) / p.1, p.2 + (p.2 ^ 2 + 1) / p.1)
+
+/-- The four pairs on row `2` of the tree, left to right:
+`(1, 2), (5, 3), (2, 3), (5, 2)`.
+
+Source: Anton Shakov, "A 2-Regular Sequence That
+Counts The Divisors of `n^2 + 1`", Journal of Integer
+Sequences 28 (2025), Article 25.6.2, Section 3, Figure 1. -/
+theorem integerPairTree_nodeAtPath_row_two :
+    integerPairTree.nodeAtPath [false, false] = (1, 2) ∧
+      integerPairTree.nodeAtPath [false, true] = (5, 3) ∧
+      integerPairTree.nodeAtPath [true, false] = (2, 3) ∧
+      integerPairTree.nodeAtPath [true, true] = (5, 2) := by
+  norm_num [integerPairTree, MetaMathlibExt.TripSternTree.nodeAtPath]
+
+/-- **Lemma 5**: every pair `(d, m)` on the integer pair
+tree consists of integers with `d ≥ 1`, `m ≥ 0` and
+`d ∣ m^2 + 1`.
+
+Source: Anton Shakov, "A 2-Regular Sequence That
+Counts The Divisors of `n^2 + 1`", Journal of Integer
+Sequences 28 (2025), Article 25.6.2, Lemma 5 (`jis-2025-25.6.2-lem-5`). -/
+theorem_wanted integerPairTree_nodeAtPath_dvd (w : List Bool) :
+    ∃ d m : ℕ, integerPairTree.nodeAtPath w = ((d : ℚ), (m : ℚ)) ∧
+      1 ≤ d ∧ d ∣ m ^ 2 + 1
+
+/-- **Lemma 6**: if `d ≥ 1`, `m ≥ 0` and `d ∣ m^2 + 1`,
+then `(d, m)` appears on the integer pair tree exactly once
+(at exactly one path).
+
+Source: Anton Shakov, "A 2-Regular Sequence That
+Counts The Divisors of `n^2 + 1`", Journal of Integer
+Sequences 28 (2025), Article 25.6.2, Lemma 6 (`jis-2025-25.6.2-lem-6`). -/
+theorem_wanted existsUnique_integerPairTree_nodeAtPath (d m : ℕ)
+    (hd : 1 ≤ d) (hdvd : d ∣ m ^ 2 + 1) :
+    ∃! w : List Bool,
+      integerPairTree.nodeAtPath w = ((d : ℚ), (m : ℚ))
 
 end MathlibExt.NumberTheory.ShakovTwoRegularWanted
