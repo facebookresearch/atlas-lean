@@ -43,6 +43,9 @@ implies them, and no mean-zero hypothesis is needed for the slope.
 ## Main results
 
 * `attenuationFactor`: `λ = σ_ξ² / (σ_ξ² + σ_u²)`.
+* `measurementError_population_attenuation`: for square-integrable, pairwise independent `ξ`,
+  `u`, `ε`, the population slope `cov[x, y] / Var[x]` of `y = β₀ + β ξ + ε` on `x = ξ + u` is
+  `λ β`.
 * `correctedSlope`: `S_xy / (S_xx - n σ²)`, and `correctedSlope_eq_olsSlope_div`.
 * `ae_tendsto_sxy_div`: for i.i.d. square-integrable pairs, `S_xy / n → cov[X, Y]` a.s.
 * `ae_tendsto_olsSlope_attenuation`, `tendstoInMeasure_olsSlope_attenuation`: the naive OLS
@@ -148,6 +151,67 @@ theorem ae_tendsto_sxy_div [IsProbabilityMeasure μ] {X Y : ℕ → Ω → ℝ}
   rw [covariance_eq_sub hX hY]
   exact (hxy.sub (hx.mul hy)).congr
     fun n => (sxy_div_eq (fun i => X i ω) (fun i => Y i ω) n).symm
+
+/-! ### Population attenuation identity -/
+
+set_option linter.unusedVariables false in
+/-- **Population attenuation identity**: if `X`, `e` and `ε` are square integrable and pairwise
+independent, the population least-squares slope `cov[W, Y] / Var[W]` of `Y = α + β X + ε` on the
+mismeasured regressor `W = X + e` is `λ β`, with attenuation factor
+`λ = Var[X] / (Var[X] + Var[e])`. The independence of `X` and `ε` (exogeneity) cannot be
+dropped: with `e = 0` and `ε = X` the slope is `β + 1`, not `β`.
+
+This is the population form of the attenuation result in W. A. Fuller, *Measurement Error
+Models*, Wiley (1987), Chapter 1. -/
+theorem measurementError_population_attenuation [IsProbabilityMeasure μ] {X e ε : Ω → ℝ}
+    {α β : ℝ} (hX : MemLp X 2 μ) (he : MemLp e 2 μ) (hε : MemLp ε 2 μ)
+    (hXe : IndepFun X e μ) (hXε : IndepFun X ε μ) (heε : IndepFun e ε μ)
+    (hW : variance (fun ω => X ω + e ω) μ ≠ 0) :
+    covariance (fun ω => X ω + e ω) (fun ω => α + β * X ω + ε ω) μ /
+        variance (fun ω => X ω + e ω) μ =
+      attenuationFactor (variance X μ) (variance e μ) * β := by
+  have hWmem : MemLp (fun ω => X ω + e ω) 2 μ := hX.add he
+  have hβX : MemLp (fun ω => β * X ω) 2 μ := hX.const_mul β
+  have hβXε_int : Integrable (fun ω => β * X ω + ε ω) μ := (hβX.add hε).integrable one_le_two
+  have hα : (fun ω => α + β * X ω + ε ω) = fun ω => α + (β * X ω + ε ω) := by
+    funext ω; ring
+  have hcov0 : covariance (fun ω => X ω + e ω) (fun ω => α + β * X ω + ε ω) μ
+      = covariance (fun ω => X ω + e ω) (fun ω => β * X ω + ε ω) μ := by
+    rw [hα]
+    exact covariance_const_add_right hβXε_int α
+  have hcov1 : covariance (fun ω => X ω + e ω) (fun ω => β * X ω + ε ω) μ
+      = covariance (fun ω => X ω + e ω) (fun ω => β * X ω) μ
+        + covariance (fun ω => X ω + e ω) ε μ :=
+    covariance_add_right (X := fun ω => X ω + e ω) (Y := fun ω => β * X ω)
+      (Z := ε) hWmem hβX hε
+  have hsmuleq : (fun ω => β * X ω) = β • X := by
+    funext ω; exact (smul_eq_mul β (X ω)).symm
+  have hcov2 : covariance (fun ω => X ω + e ω) (fun ω => β * X ω) μ
+      = β * covariance (fun ω => X ω + e ω) X μ := by
+    rw [hsmuleq]
+    exact covariance_smul_right β
+  have hcovWX : covariance (fun ω => X ω + e ω) X μ = variance X μ := by
+    have h := covariance_add_left (X := X) (Y := e) (Z := X) hX he hX
+    have hself : covariance X X μ = variance X μ :=
+      covariance_self hX.aestronglyMeasurable.aemeasurable
+    have hzero : covariance e X μ = 0 := hXe.symm.covariance_eq_zero he hX
+    rw [hself, hzero, add_zero] at h
+    exact h
+  have hcovWε : covariance (fun ω => X ω + e ω) ε μ = 0 := by
+    have h := covariance_add_left (X := X) (Y := e) (Z := ε) hX he hε
+    have hz1 : covariance X ε μ = 0 := hXε.covariance_eq_zero hX hε
+    have hz2 : covariance e ε μ = 0 := heε.covariance_eq_zero he hε
+    rw [hz1, hz2, add_zero] at h
+    exact h
+  have hVarW : variance (fun ω => X ω + e ω) μ
+      = variance X μ + variance e μ :=
+    hXe.variance_add hX he
+  have hCov : covariance (fun ω => X ω + e ω) (fun ω => α + β * X ω + ε ω) μ
+      = β * variance X μ := by
+    rw [hcov0, hcov1, hcov2, hcovWX, hcovWε]
+    ring
+  rw [hCov, hVarW, attenuationFactor]
+  ring
 
 /-! ### The classical errors-in-variables model -/
 
