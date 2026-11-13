@@ -18,26 +18,34 @@ open Finset
 /-!
 # Spherical cell area weights
 
-For a latitude partition `phi` of `[-pi/2, pi/2]` with `n` latitude bands
-and `m` longitude cells, the cell area for band `i` and longitude cell
-`j` is `R^2 (sin phi_{i+1} - sin phi_i) (2 pi / m)`. Summing over `i`
-telescopes to `sin(pi/2) - sin(-pi/2) = 2`, and summing over the `m`
-longitude cells gives `2 pi`, so the total is the sphere area
-`4 pi R^2`. The same weights integrate a constant `C` to
-`C * 4 pi R^2`: the weights integrate a constant to the correct total
-area.
+A latitude partition `phi 0 < phi 1 < ... < phi n` of `[-pi/2, pi/2]` (`phi 0 = -pi/2`,
+`phi n = pi/2`) and `m` longitude cells cut the sphere of radius `R` into cells; the cell in band
+`i` and longitude cell `j` has area `R^2 (sin phi_{i+1} - sin phi_i) (2 pi / m)`. These areas are
+nonnegative and sum to the sphere area `4 pi R^2`: summing over `i` telescopes to
+`sin(pi/2) - sin(-pi/2) = 2`, and summing over the `m` longitude cells gives `2 pi`.
+
+The telescoping identity itself uses only the endpoints. For an arbitrary endpoint sequence
+(`phi 0 = -pi/2`, `phi n = pi/2`, no ordering) the summands are signed weights, not areas, and
+can be negative, but they still sum to `4 pi R^2` and integrate a constant `C` to
+`C * 4 pi R^2`; these are the signed-weight lemmas below. The ordering hypothesis
+`StrictMono phi` makes the summands nonnegative cell areas.
 
 ## i. Overview
 
 The inner sum over longitude cells is constant in `j`, giving a factor
-`m`. The latitude sum telescopes. The constant-integration theorem
-factors `C` out of the double sum and uses the first theorem.
+`m`. The latitude sum telescopes. The constant-integration lemma
+factors `C` out of the double sum and uses the sum lemma. For a
+partition, every latitude lies in `[-pi/2, pi/2]`, where `sin` is
+strictly increasing, so each band weight is nonnegative.
 
 ## ii. Key results
 
-- `EarthScience.spherical_cell_area_sum`: cell areas sum to `4 pi R^2`.
-- `EarthScience.spherical_cell_area_integrates_constant`: weighted sum
-  of a constant is `C * 4 pi R^2`.
+- `EarthScience.signed_band_weight_sum`: for any endpoint sequence, the
+  signed weights sum to `4 pi R^2`.
+- `EarthScience.signed_band_weight_sum_mul_const`: the signed weights
+  integrate a constant `C` to `C * 4 pi R^2`.
+- `EarthScience.spherical_cell_area_sum`: for a latitude partition, the
+  cell areas are nonnegative and sum to `4 pi R^2`.
 
 ## iii. Table of contents
 
@@ -46,7 +54,8 @@ factors `C` out of the double sum and uses the first theorem.
 ## iv. References
 
 - `Finset.sum_const`, `Finset.card_univ` in Mathlib.
-- `Real.sin_pi_div_two`, `Real.sin_neg` in Mathlib.
+- `Real.sin_pi_div_two`, `Real.sin_neg`,
+  `Real.sin_lt_sin_of_lt_of_le_pi_div_two` in Mathlib.
 
 ## A. Spherical cell area weights
 -/
@@ -77,10 +86,12 @@ private theorem telescope_sum_sub : ∀ (n : ℕ) (s : Fin (n + 1) → ℝ),
       ring
 
 set_option linter.unusedVariables false in
-/-- Spherical cell area weights: for a latitude partition `φ` of
-`[-π/2, π/2]` with `m` longitude cells, the sum of the cell areas
-`R² (sin φ_{i+1} - sin φ_i) (2π / m)` is the total sphere area `4π R²`. -/
-theorem spherical_cell_area_sum {n m : ℕ} (hm : m ≠ 0)
+/-- Signed band weights: for any endpoint sequence `φ` with `φ 0 = -π/2` and
+`φ n = π/2` (no ordering is assumed, so a summand need not be an area and
+can be negative) and `m ≠ 0` longitude cells, the weights
+`R² (sin φ_{i+1} - sin φ_i) (2π / m)` sum to `4π R²`. See
+`spherical_cell_area_sum` for latitude partitions. -/
+lemma signed_band_weight_sum {n m : ℕ} (hm : m ≠ 0)
     (φ : Fin (n + 1) → ℝ) (h0 : φ 0 = -(Real.pi / 2))
     (hlast : φ (Fin.last n) = Real.pi / 2) {R : ℝ} :
     ∑ i : Fin n, ∑ j : Fin m,
@@ -113,9 +124,10 @@ theorem spherical_cell_area_sum {n m : ℕ} (hm : m ≠ 0)
   ring
 
 set_option linter.unusedVariables false in
-/-- Spherical cell area weights integrate a constant `C` to `C` times the
-total sphere area. -/
-theorem spherical_cell_area_integrates_constant {n m : ℕ} (hm : m ≠ 0)
+/-- The signed band weights of an endpoint sequence (as in
+`signed_band_weight_sum`, no ordering assumed) integrate a constant `C`
+to `C * 4π R²`. -/
+lemma signed_band_weight_sum_mul_const {n m : ℕ} (hm : m ≠ 0)
     (φ : Fin (n + 1) → ℝ) (h0 : φ 0 = -(Real.pi / 2))
     (hlast : φ (Fin.last n) = Real.pi / 2) {R C : ℝ} :
     ∑ i : Fin n, ∑ j : Fin m,
@@ -124,7 +136,7 @@ theorem spherical_cell_area_integrates_constant {n m : ℕ} (hm : m ≠ 0)
   have hbase : ∑ i : Fin n, ∑ j : Fin m,
       R ^ 2 * (Real.sin (φ i.succ) - Real.sin (φ i.castSucc)) * (2 * Real.pi / m)
       = 4 * Real.pi * R ^ 2 :=
-    spherical_cell_area_sum hm φ h0 hlast
+    signed_band_weight_sum hm φ h0 hlast
   calc ∑ i : Fin n, ∑ j : Fin m,
           (R ^ 2 * (Real.sin (φ i.succ) - Real.sin (φ i.castSucc)) * (2 * Real.pi / m)) * C
       = (∑ i : Fin n, ∑ j : Fin m,
@@ -134,5 +146,30 @@ theorem spherical_cell_area_integrates_constant {n m : ℕ} (hm : m ≠ 0)
         intro i _
         rw [Finset.sum_mul]
     _ = C * (4 * Real.pi * R ^ 2) := by rw [hbase]; ring
+
+set_option linter.unusedVariables false in
+/-- Spherical cell areas: for a latitude partition `φ` of `[-π/2, π/2]`
+(strictly increasing, `φ 0 = -π/2`, `φ n = π/2`) and `m ≠ 0` longitude
+cells, every cell area `R² (sin φ_{i+1} - sin φ_i) (2π / m)` is nonnegative
+and the cell areas sum to the sphere area `4π R²`. -/
+theorem spherical_cell_area_sum {n m : ℕ} (hm : m ≠ 0)
+    (φ : Fin (n + 1) → ℝ) (hφ : StrictMono φ) (h0 : φ 0 = -(Real.pi / 2))
+    (hlast : φ (Fin.last n) = Real.pi / 2) {R : ℝ} :
+    (∀ i : Fin n,
+        0 ≤ R ^ 2 * (Real.sin (φ i.succ) - Real.sin (φ i.castSucc)) * (2 * Real.pi / m)) ∧
+      ∑ i : Fin n, ∑ j : Fin m,
+          R ^ 2 * (Real.sin (φ i.succ) - Real.sin (φ i.castSucc)) * (2 * Real.pi / m)
+        = 4 * Real.pi * R ^ 2 := by
+  refine ⟨fun i => ?_, signed_band_weight_sum hm φ h0 hlast⟩
+  have hlo : -(Real.pi / 2) ≤ φ i.castSucc := by
+    rw [← h0]
+    exact hφ.monotone (Fin.zero_le _)
+  have hhi : φ i.succ ≤ Real.pi / 2 := by
+    rw [← hlast]
+    exact hφ.monotone (Fin.le_last _)
+  have hsin : Real.sin (φ i.castSucc) < Real.sin (φ i.succ) :=
+    Real.sin_lt_sin_of_lt_of_le_pi_div_two hlo hhi (hφ Fin.castSucc_lt_succ)
+  have hm' : (0 : ℝ) ≤ 2 * Real.pi / m := div_nonneg (by positivity) (Nat.cast_nonneg m)
+  exact mul_nonneg (mul_nonneg (sq_nonneg R) (sub_nonneg.2 hsin.le)) hm'
 
 end EarthScience
