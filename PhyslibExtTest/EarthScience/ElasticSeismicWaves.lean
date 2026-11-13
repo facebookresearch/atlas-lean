@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.ElasticSeismicWaves
+import Mathlib.Tactic.NormNum
 
 /-!
 # Elastic seismic wave checks
@@ -59,6 +60,16 @@ example : HasDerivAt (fun t => Real.cos (2 * (0 : ℝ) - 6 * t))
 example : HasDerivAt (fun t => 6 * Real.sin (2 * (0 : ℝ) - 6 * t))
     (-(6 : ℝ) ^ 2 * Real.cos (2 * 0 - 6 * (0 : ℝ))) 0 :=
   EarthScience.hasDerivAt_planeWave_time2
+
+/-- Plane wave: first space derivative at `k = 2`, `ω = 6`, `x = 0`, `t = 0`. -/
+example : HasDerivAt (fun x => Real.cos (2 * x - 6 * (0 : ℝ)))
+    (-2 * Real.sin (2 * 0 - 6 * (0 : ℝ))) 0 :=
+  EarthScience.hasDerivAt_planeWave_space
+
+/-- Plane wave: second space derivative at `k = 2`, `ω = 6`, `x = 0`, `t = 0`. -/
+example : HasDerivAt (fun x => -2 * Real.sin (2 * x - 6 * (0 : ℝ)))
+    (-(2 : ℝ) ^ 2 * Real.cos (2 * 0 - 6 * (0 : ℝ))) 0 :=
+  EarthScience.hasDerivAt_planeWave_space2
 
 /-- Dispersion `6 ^ 2 = 3 ^ 2 * 2 ^ 2` gives the wave equation on
 second-derivative values. -/

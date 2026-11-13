@@ -12,8 +12,8 @@ public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # Elastic seismic waves: P- and S-wave speeds and the plane wave
@@ -52,6 +52,12 @@ flux coefficients are separately scoped.
 
 ## iv. References
 
+- P. M. Shearer, *Introduction to Seismology*, 2nd ed., Cambridge University Press,
+  2009, Chapter 3 (the seismic wave equation: squared P- and S-wave speeds of a
+  homogeneous isotropic linear elastic solid, in Lamé form `(λ + 2 * μ) / ρ` and `μ / ρ`;
+  `K = λ + 2 * μ / 3` gives the form used here).
+- L. D. Landau, E. M. Lifshitz, *Theory of Elasticity*, 3rd ed., Pergamon, 1986, §22
+  (elastic waves in isotropic bodies: longitudinal and transverse waves).
 - `Real.sq_sqrt`, `Real.sqrt_lt_sqrt` in Mathlib.
 - `HasDerivAt.cos` / `HasDerivAt.sin` in Mathlib.
 
