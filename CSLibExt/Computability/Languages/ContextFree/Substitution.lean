@@ -52,36 +52,70 @@ noncomputable section
 
 variable (g : ContextFreeGrammar T) (e : T → EncodedCFG T')
 
-/-- A numbering of the letters of `g`: the position in `grammarTerminals g`. -/
+/-- **Letter numbering for the substitution grammar.** For a context-free grammar $g$ and a
+letter $a$, the number of $a$ is the position (counted from $0$) of the first occurrence of $a$
+in the list of terminals occurring in the productions of $g$, or the length of that list when $a$
+does not occur in it. -/
 def code (a : T) : ℕ :=
   (grammarTerminals g).idxOf a
 
-/-- The letter with a given number. -/
+/-- **Letter decoding for the substitution grammar.** For a context-free grammar $g$ and a natural
+number $k$, the letter with number $k$ is the entry at position $k$ (counted from $0$) of the list
+of terminals occurring in the productions of $g$; there is no such letter when $k$ is at least the
+length of that list. -/
 def decode (k : ℕ) : Option T :=
   (grammarTerminals g)[k]?
 
 theorem decode_code {a : T} (ha : a ∈ grammarTerminals g) : decode g (code g a) = some a :=
   List.getElem?_idxOf ha
 
-/-- Replace a terminal `a` by the start symbol of the grammar for `s a`. -/
+/-- **Substituting the symbols of a grammar.** Let $g$ be a context-free grammar over $T$ with
+nonterminals $N_g$, and let $e$ assign to each letter $a \in T$ an encoded grammar $e(a)$ over
+$T'$. Each symbol of $g$ becomes a nonterminal in $N_g \sqcup (\mathbb{N} \times \mathbb{N})$: a
+nonterminal $B$ of $g$ becomes $B$ in the left part, and a terminal $a$ becomes the pair $(k, n)$,
+where $k$ is the number of $a$ (the position, counted from $0$, of the first occurrence of $a$ in
+the list of terminals occurring in the productions of $g$, or the length of that list when $a$
+does not occur in it) and $n$ is the start nonterminal of $e(a)$. -/
 def substSymbol : Symbol T g.NT → Symbol T' (g.NT ⊕ (ℕ × ℕ))
   | .terminal a => .nonterminal (.inr (code g a, (e a).start))
   | .nonterminal B => .nonterminal (.inl B)
 
-/-- A production of `g` with its terminals replaced. -/
+/-- **Main production of the substitution grammar.** Let $g$ be a context-free grammar over $T$
+with nonterminals $N_g$, and let $e$ assign to each letter $a \in T$ an encoded grammar $e(a)$
+over $T'$. A production $A \to \alpha$ over $T$ with nonterminals in $N_g$ gives the production
+$A \to \alpha'$ over $T'$ with nonterminals in $N_g \sqcup (\mathbb{N} \times \mathbb{N})$, where
+$A$ is taken in the left part and $\alpha'$ is obtained from $\alpha$ by replacing each
+nonterminal $B$ by $B$ in the left part and each terminal $a$ by the nonterminal $(k, n)$; here
+$k$ is the number of $a$ (the position, counted from $0$, of the first occurrence of $a$ in the
+list of terminals occurring in the productions of $g$, or the length of that list when $a$ does
+not occur in it) and $n$ is the start nonterminal of $e(a)$. -/
 def mainRule (r : ContextFreeRule T g.NT) : ContextFreeRule T' (g.NT ⊕ (ℕ × ℕ)) :=
   ⟨.inl r.input, r.output.map (substSymbol g e)⟩
 
-/-- A production of the grammar for letter `a`, on the nonterminals tagged by its number. -/
+/-- **Letter productions of the substitution grammar.** Let $g$ be a context-free grammar over
+$T$ with nonterminals $N_g$, let $a \in T$ have number $k$ (the position, counted from $0$, of the
+first occurrence of $a$ in the list of terminals occurring in the productions of $g$, or the
+length of that list when $a$ does not occur in it), and let $n \to w$ be a production over $T'$
+whose nonterminals are natural numbers. It gives the production $(k, n) \to w'$ with
+nonterminals in $N_g \sqcup (\mathbb{N} \times \mathbb{N})$, where $w'$ keeps the terminals of $w$
+and replaces each nonterminal $m$ by $(k, m)$. -/
 def subRule (a : T) (r : ContextFreeRule T' ℕ) : ContextFreeRule T' (g.NT ⊕ (ℕ × ℕ)) :=
   mapRule (fun n => .inr (code g a, n)) r
 
-/-- The productions of the substitution grammar. -/
+/-- **Productions of the substitution grammar.** Let $g$ be a context-free grammar over $T$, and
+let $e$ assign to each letter $a \in T$ an encoded grammar $e(a)$ over $T'$. The productions of
+the substitution grammar are the main productions obtained from the productions of $g$, together
+with, for each terminal $a$ occurring in a production of $g$, the letter productions for $a$
+obtained from the productions of $e(a)$. -/
 def rules : Finset (ContextFreeRule T' (g.NT ⊕ (ℕ × ℕ))) :=
   g.rules.image (mainRule g e) ∪
     (grammarTerminals g).toFinset.biUnion fun a => (e a).toCFG.rules.image (subRule g a)
 
-/-- The grammar of the substitution. -/
+/-- **The substitution grammar.** Let $g$ be a context-free grammar over $T$ with nonterminals
+$N_g$ and start symbol $S$, and let $e$ assign to each letter $a \in T$ an encoded grammar $e(a)$
+over $T'$. The substitution grammar is the context-free grammar over $T'$ with nonterminals
+$N_g \sqcup (\mathbb{N} \times \mathbb{N})$, start symbol $S$ taken in the left part, and the
+productions of the substitution grammar for $g$ and $e$. -/
 abbrev grammar : ContextFreeGrammar T' where
   NT := g.NT ⊕ (ℕ × ℕ)
   initial := .inl g.initial
@@ -104,8 +138,15 @@ theorem subRule_mem {a : T} (ha : a ∈ grammarTerminals g) {r : ContextFreeRule
 
 variable (s : T → Language T')
 
-/-- The intended languages: the substitution image of what a nonterminal of `g` generates, and
-what the grammar for a letter generates from a nonterminal. -/
+/-- **Intended languages of the substitution grammar.** Let $g$ be a context-free grammar over
+$T$ with nonterminals $N_g$, let $e$ assign to each letter $a \in T$ an encoded grammar $e(a)$
+over $T'$, and let $s$ assign to each letter $a \in T$ a language $s(a)$ over $T'$. Each element
+of $N_g \sqcup (\mathbb{N} \times \mathbb{N})$, the nonterminals of the substitution grammar, is
+assigned a language over $T'$. A nonterminal $B \in N_g$ is assigned the substitution of $s$
+into the language generated by $g$ from $B$. A pair $(k, n)$ is assigned, when $k$ is less than
+the length of the list of terminals occurring in the productions of $g$ and $a$ is the entry at
+position $k$ of that list (counted from $0$), the language generated from the nonterminal $n$ by
+the grammar that $e(a)$ denotes, and the empty language otherwise. -/
 def val : g.NT ⊕ (ℕ × ℕ) → Language T'
   | .inl B => substitution (languageFrom g B) s
   | .inr (k, n) =>
@@ -150,6 +191,10 @@ theorem isValuation (he : ∀ a, (e a).language = s a) :
 
 /-! ### Completeness -/
 
+/-- **Derivations keep the terminals among those of the grammar.** Let $g$ be a context-free
+grammar and let the sentential form $u$ derive $v$ in $g$ in zero or more steps. If every terminal
+occurring in $u$ occurs in some production of $g$, then every terminal occurring in $v$ occurs in
+some production of $g$. -/
 theorem mem_grammarTerminals_of_derives {u v : List (Symbol T g.NT)} (h : g.Derives u v)
     (hu : ∀ a, Symbol.terminal a ∈ u → a ∈ grammarTerminals g) :
     ∀ a, Symbol.terminal a ∈ v → a ∈ grammarTerminals g := by

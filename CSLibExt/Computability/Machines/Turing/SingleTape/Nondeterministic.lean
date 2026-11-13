@@ -281,9 +281,12 @@ section Accepts
 
 variable {State Symbol : Type*} [DecidableEq Symbol] (m : SingleTapeNTM State Symbol)
 
-/-- **Acceptance as a label list**: `m` accepts `xs` iff some list of labels applies to the
-input tape `BiTape.mk₁ xs` (no read fails) and leads the automaton from a start state to an
-accepting state. -/
+/-- **Acceptance as a label list.** A single-tape nondeterministic Turing machine $m$ accepts a
+word $x$ if and only if there is a list $\mu$ of transition labels (read a symbol, write a symbol,
+move, skip) such that applying the labels of $\mu$ in order to the input tape of $x$ (the tape
+holding $x$ from the head cell rightward, every other cell blank) never fails, that is, every read
+label finds its symbol in the cell under the head, and $\mu$ leads the automaton of $m$ from some
+start state to some accepting state. -/
 theorem accepts_iff_exists_labels {xs : List Symbol} :
     Acceptor.Accepts m xs ↔ ∃ μs : List (TrLabel Symbol),
       (μs.foldl applyToTape (some (BiTape.mk₁ xs))).isSome ∧
@@ -297,10 +300,15 @@ theorem accepts_iff_exists_labels {xs : List Symbol} :
     obtain ⟨t, ht⟩ := Option.isSome_iff_exists.mp hsome
     exact ⟨s, hs, ⟨s', t⟩, hs', mYields_mTr.mpr ⟨μs, hmtr, ht⟩⟩
 
-/-- **Acceptance is closed under extension on the right** (a defect of the pinned definition):
-`TrLabel.read` cannot read a blank cell, so every cell that an accepting run on `xs` reads holds a
-symbol of `xs` or one the run wrote, and the same run accepts `xs ++ ys`. Fixed upstream by
-leanprover/cslib#1039. -/
+/-- **Acceptance is closed under extension on the right.** If a single-tape nondeterministic
+Turing machine $m$ accepts a word $x$ over its tape alphabet, then $m$ accepts $xy$ for every word
+$y$ over that alphabet.
+
+This is a defect of CSLib's definition of these machines: a transition can only test the cell
+under the head for a symbol, never for a blank, so every cell that an accepting run on $x$ reads
+holds a letter of $x$ or one the run wrote, and the same run accepts $xy$.
+
+Source: defect of the pinned CSLib definition, fixed upstream by leanprover/cslib#1039. -/
 theorem accepts_append {xs : List Symbol} (ys : List Symbol) (h : Acceptor.Accepts m xs) :
     Acceptor.Accepts m (xs ++ ys) := by
   obtain ⟨μs, hsome, hst⟩ := (accepts_iff_exists_labels m).mp h
@@ -308,15 +316,24 @@ theorem accepts_append {xs : List Symbol} (ys : List Symbol) (h : Acceptor.Accep
   obtain ⟨u', hu', -⟩ := foldl_applyToTape_extends μs (tapeExtends_mk₁_append xs ys) hu
   exact (accepts_iff_exists_labels m).mpr ⟨μs, by rw [hu']; rfl, hst⟩
 
-/-- A machine that accepts the empty word accepts every word (a defect of the pinned definition,
-see `accepts_append`). -/
+/-- **An NTM that accepts the empty word accepts every word.** If a single-tape nondeterministic
+Turing machine $m$ accepts the empty word, then $m$ accepts every word over its tape alphabet.
+
+This is a special case of acceptance being closed under extension on the right, a defect of
+CSLib's definition of these machines. -/
 theorem accepts_of_accepts_nil (xs : List Symbol) (h : Acceptor.Accepts m []) :
     Acceptor.Accepts m xs :=
   m.accepts_append xs h
 
-/-- **No NTM accepts exactly the binary code of `0`**, on any copy `ι` of the input bits: the
-code `encodeNat 0` is the empty word, and a machine that accepts it accepts the code of `1`
-(`accepts_of_accepts_nil`). -/
+/-- **No NTM accepts exactly the binary code of $0$.** Let $m$ be a single-tape nondeterministic
+Turing machine with tape alphabet $\Sigma$, and let $\iota$ be any map from the bits to $\Sigma$.
+For a natural number $n$, write $w_n$ for the word over $\Sigma$ obtained by applying $\iota$
+letter by letter to the little-endian binary code of $n$, in which $0$ is coded by the empty word.
+Then it is not the case that, for every natural number $n$, $m$ accepts $w_n$ if and only if
+$n = 0$.
+
+The word $w_0$ is empty, and a machine that accepts the empty word accepts every word, in
+particular $w_1$. -/
 theorem not_forall_accepts_encodeNat_iff_eq_zero (ι : Bool → Symbol) :
     ¬∀ n : ℕ, Acceptor.Accepts m ((encodeNat n).map ι) ↔ n = 0 := fun h ↦
   one_ne_zero ((h 1).mp (m.accepts_of_accepts_nil _ ((h 0).mpr rfl)))
@@ -382,14 +399,25 @@ section Recognizable
 variable {State : Type*} {Symbol : Type} [DecidableEq Symbol] [Finite State] [Finite Symbol]
   [Primcodable Symbol] (m : SingleTapeNTM State Symbol)
 
-/-- **A deterministic single-tape machine recognizes what an NTM accepts** (Sipser,
-Theorem 3.16), for finite state and tape alphabets, on input words. -/
+/-- **Deterministic machines recognize NTM acceptance.** Let $m$ be a single-tape nondeterministic
+Turing machine with a finite set of states and a finite tape alphabet $\Sigma$ that has decidable
+equality and a primitive recursive encoding. Then the predicate on words over $\Sigma$ that holds
+at a word exactly when $m$ accepts it is recognizable by a single-tape deterministic Turing
+machine.
+
+Source: Sipser, Theorem 3.16. -/
 theorem singleTapeRecognizable_accepts :
     SingleTapeRecognizable fun xs : List Symbol ↦ Acceptor.Accepts m xs :=
   singleTapeRecognizable_iff_rePred.mpr m.rePred_accepts
 
-/-- **A deterministic single-tape machine recognizes what an NTM accepts** (Sipser,
-Theorem 3.16), on the image of any computable input map. -/
+/-- **Deterministic machines recognize NTM acceptance along a computable map.** Let $m$ be a
+single-tape nondeterministic Turing machine with a finite set of states and a finite tape alphabet
+$\Sigma$ that has decidable equality and a primitive recursive encoding. Let $\alpha$ be a
+primitively encodable type and $f$ a computable map from $\alpha$ to words over $\Sigma$. Then the
+predicate on $\alpha$ that holds at $a$ exactly when $m$ accepts $f(a)$ is recognizable by a
+single-tape deterministic Turing machine.
+
+Source: Sipser, Theorem 3.16. -/
 theorem singleTapeRecognizable_accepts_comp {α : Type*} [Primcodable α] {f : α → List Symbol}
     (hf : Computable f) : SingleTapeRecognizable fun a ↦ Acceptor.Accepts m (f a) :=
   singleTapeRecognizable_iff_rePred.mpr (Partrec.comp m.rePred_accepts hf)
@@ -398,15 +426,24 @@ end Recognizable
 
 variable {α : Type*} [Primcodable α] {p : α → Prop}
 
-/-- `p` is **recognizable by a single-tape nondeterministic machine** (CSLib's `SingleTapeNTM`),
-with the input convention of `SingleTapeRecognizable`: for finite state and tape alphabets and an
-injective copy `ι` of the input bits, some NTM accepts the input word
-`(encodeNat (encode a)).map ι` exactly when `p a`.
+/-- **Predicates recognizable by a single-tape nondeterministic machine.** Let $\alpha$ be a type
+with a primitive recursive encoding into $\mathbb{N}$. A predicate $p$ on $\alpha$ is recognizable
+by a single-tape nondeterministic machine when there are a finite set of states, a finite tape
+alphabet $\Sigma$ with decidable equality, an injective map $\iota$ from the bits $\{0, 1\}$ to
+$\Sigma$ and a single-tape nondeterministic Turing machine $M$ with these states over $\Sigma$
+such that for every $a \in \alpha$, $M$ accepts the input word obtained by writing the binary
+encoding of the code of $a$ in $\mathbb{N}$ letter by letter through $\iota$ if and only if
+$p(a)$ holds. Here $M$ accepts a word when some run of $M$ from one of its start states on the
+tape holding the word, with the head on its first symbol, reaches an accepting state.
 
-On the pinned CSLib definition a machine cannot read a blank cell, so acceptance is closed under
-extension on the right (`SingleTapeNTM.accepts_append`) and this class is strictly smaller than
-`SingleTapeRecognizable` (`exists_singleTapeDecidable_not_singleTapeNTMRecognizable`); the
-upstream PR leanprover/cslib#1039 lets machines read and write blank cells. -/
+In this model a machine cannot test whether a cell is blank, so a machine that accepts a word
+accepts every extension of the word on the right. Every such predicate is recognizable by a
+single-tape deterministic machine, but not conversely: the predicate $n = 0$ on $\mathbb{N}$ is
+decidable by a single-tape deterministic machine and is not recognizable by a single-tape
+nondeterministic machine.
+
+Source: the pinned CSLib definition of nondeterministic machines; the upstream PR
+leanprover/cslib#1039 lets machines read and write blank cells. -/
 def SingleTapeNTMRecognizable (p : α → Prop) : Prop :=
   ∃ (State Symbol : Type) (_ : Fintype State) (_ : Fintype Symbol) (_ : DecidableEq Symbol)
     (ι : Bool → Symbol), Function.Injective ι ∧ ∃ m : SingleTapeNTM State Symbol,
@@ -424,17 +461,26 @@ theorem SingleTapeNTMRecognizable.singleTapeRecognizable (h : SingleTapeNTMRecog
     Partrec.comp m.rePred_accepts hin
   exact singleTapeRecognizable_iff_rePred.mpr (this.of_eq hm)
 
-/-- **No single-tape NTM recognizes `n = 0`** on the pinned definition: the code of `0` is the
-empty word, and an NTM that accepts the empty word accepts every word
-(`SingleTapeNTM.not_forall_accepts_encodeNat_iff_eq_zero`). -/
+/-- **No single-tape NTM recognizes $n = 0$.** The predicate $n = 0$ on the natural numbers is not
+recognizable by any single-tape nondeterministic Turing machine.
+
+The binary code of $0$ is the empty word, and a single-tape nondeterministic machine that accepts
+the empty word accepts every word.
+
+Source: defect of the pinned CSLib definition, fixed upstream by leanprover/cslib#1039. -/
 theorem not_singleTapeNTMRecognizable_eq_zero :
     ¬SingleTapeNTMRecognizable fun n : ℕ ↦ n = 0 := by
   rintro ⟨State, Symbol, _, _, _, ι, -, m, hm⟩
   exact m.not_forall_accepts_encodeNat_iff_eq_zero ι hm
 
-/-- **Pinned NTMs cannot simulate deterministic machines**: `n = 0` is decidable by a
-deterministic single-tape machine but recognized by no single-tape NTM, so the NTM half of
-Sipser's Corollary 3.18 fails on the pinned definition. Fixed upstream by
+/-- **A decidable predicate that no single-tape NTM recognizes.** There is a predicate $p$ on the
+natural numbers that is decidable by a single-tape deterministic Turing machine but is not
+recognizable by any single-tape nondeterministic Turing machine.
+
+The predicate $n = 0$ is such a predicate.
+
+Source: Sipser, Corollary 3.18, whose half "every Turing-recognizable language is recognized by a
+nondeterministic machine" fails on the pinned CSLib definition; fixed upstream by
 leanprover/cslib#1039. -/
 theorem exists_singleTapeDecidable_not_singleTapeNTMRecognizable :
     ∃ p : ℕ → Prop, SingleTapeDecidable p ∧ ¬SingleTapeNTMRecognizable p := by

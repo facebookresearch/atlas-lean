@@ -42,9 +42,13 @@ attribute [local instance] Classical.propDecidable
 
 variable {T : Type*} {σ : Type} {Γ : Type} {M : PDA T σ Γ} {T₀ : Finset T}
 
-/-- The form of triple nonterminals for a stack `γs` read along a state
-sequence `ss` of length `γs.length + 1`: consecutive states bracket each
-stack symbol. -/
+/-- **Chain of triple nonterminals.** Write $(p, \gamma, q)$ for the nonterminal symbol given by
+states $p, q$ and a stack symbol $\gamma$ (the nonterminals of the triple grammar are these
+triples and one extra initial nonterminal). The chain form of a list $\gamma_1 \cdots \gamma_k$
+of stack symbols along a nonempty list $s_0, s_1, \dots, s_m$ of states is the word
+$(s_0, \gamma_1, s_1)(s_1, \gamma_2, s_2) \cdots (s_{j-1}, \gamma_j, s_j)$ with $j = \min(k, m)$:
+consecutive states bracket each stack symbol. Along the empty list of states the chain form is
+the empty word. In the intended use $m = k$, so every stack symbol is bracketed. -/
 def chainForm : List Γ → List σ → List (Symbol T (Option (σ × Γ × σ)))
   | [], _ => []
   | _ :: _, [] => []
@@ -60,7 +64,8 @@ theorem chainForm_cons_cons {γ : Γ} {γs : List Γ} {p q : σ} {ss : List σ} 
       Symbol.nonterminal (some (p, γ, q)) :: @chainForm T σ Γ γs (q :: ss) :=
   rfl
 
-/-- Every symbol of a chain form is a nonterminal. -/
+/-- **Chain forms consist of nonterminals.** For every list of stack symbols and every list of
+states, every symbol of their chain form is a nonterminal. -/
 theorem nonterminal_of_mem_chainForm {s : Symbol T (Option (σ × Γ × σ))}
     {γs : List Γ} {ss : List σ} (hs : s ∈ chainForm γs ss) :
     ∃ A, s = Symbol.nonterminal A := by
@@ -127,7 +132,10 @@ private theorem chainForm_append_split :
 
 variable [Fintype σ] [Fintype Γ]
 
-/-- All lists of states of a given length, as a finset. -/
+/-- **Lists of states of a given length.** For a finite set $\sigma$ of states and a natural
+number $n$, this is the finite set of all lists of length $n$ with entries in $\sigma$. It is
+built recursively: for $n = 0$ it contains only the empty list, and for $n + 1$ it consists of
+the lists obtained by putting a state $p \in \sigma$ in front of a list from the set for $n$. -/
 noncomputable def stateLists : ℕ → Finset (List σ)
   | 0 => {[]}
   | n + 1 => (Finset.univ ×ˢ stateLists n).image fun x => x.1 :: x.2
@@ -149,14 +157,23 @@ theorem mem_stateLists {n : ℕ} {ss : List σ} :
       | cons p ss' =>
         exact ⟨(p, ss'), by simpa using h, rfl⟩
 
-/-- The terminal prefix contributed by an optional input letter. -/
+/-- **Terminal word of an optional input letter.** As a word of grammar symbols (terminals and
+triple nonterminals), an input that is a letter $a$ contributes the one-symbol word consisting of
+the terminal $a$, and the empty input $\varepsilon$ contributes the empty word. -/
 def optTerms (opt : Option T) : List (Symbol T (Option (σ × Γ × σ))) :=
   opt.toList.map Symbol.terminal
 
-/-- The production for one transition popping `γ` in state `p`, moving to
-state `r` and pushing `εs`, with `ss` the states after `r` bracketing the
-pushed symbols; the last of these states is the target state of the
-triple. -/
+/-- **Production of the triple grammar for a transition.** Let $p$ and $r$ be states, $\gamma$ a
+stack symbol, $a$ an optional input letter, $\varepsilon_1 \cdots \varepsilon_k$ a list of stack
+symbols and $s_1, \dots, s_m$ a list of states. Write $s_0 = r$ and let $q = s_m$ be the last
+state of the list $s_0, s_1, \dots, s_m$ (so $q = r$ when $m = 0$). The production has
+left-hand side the nonterminal $(p, \gamma, q)$, and its right-hand side is the letter $a$
+(nothing if $a$ is absent) followed by the nonterminals $(s_{i-1}, \varepsilon_i, s_i)$ for
+$i = 1, \dots, \min(k, m)$ in order.
+
+It encodes a transition that in state $p$, reading $a$ (or no letter), pops $\gamma$, moves to
+state $r$ and pushes $\varepsilon_1 \cdots \varepsilon_k$; the triple grammar uses it with
+$m = k$. -/
 def stepRule (p : σ) (γ : Γ) (opt : Option T) (r : σ) (εs : List Γ)
     (ss : List σ) : ContextFreeRule T (Option (σ × Γ × σ)) :=
   ⟨some (p, γ, (r :: ss).getLast (List.cons_ne_nil r ss)),
@@ -174,10 +191,22 @@ theorem stepRule_output {p : σ} {γ : Γ} {opt : Option T} {r : σ}
     (stepRule p γ opt r εs ss).output =
       optTerms opt ++ chainForm εs (r :: ss) := rfl
 
-/-- The triple grammar of a pushdown automaton: nonterminals `none` (the
-initial one) and `some (p, γ, q)`, deriving the words that pop `γ` while
-going from state `p` to state `q`. Transitions are only used for letters
-in `T₀` (plus `ε`-transitions). -/
+/-- **Triple grammar of a pushdown automaton.** Let $M$ be a pushdown automaton over the alphabet
+$T$ with a finite set $\sigma$ of states, a finite stack alphabet $\Gamma$, start state $q_0$
+and initial stack symbol $Z_0$, and let $T_0$ be a finite set of letters. The triple grammar of
+$M$ and $T_0$ is the context-free grammar over $T$ whose nonterminals are an initial
+nonterminal $S$ and the triples $(p, \gamma, q)$ with $p, q \in \sigma$ and $\gamma \in \Gamma$.
+Its productions are the start productions $S \to (q_0, Z_0, q)$ for every state $q$, and the
+transition productions: for every state $p$, stack symbol $\gamma$, input $a$ that is
+$\varepsilon$ or a letter of $T_0$, transition of $M$ from $p$ on $a$ popping $\gamma$ that
+moves to a state $r$ and pushes $\gamma_1 \cdots \gamma_k$, and all states $s_1, \dots, s_k$,
+writing $s_0 = r$, the production
+$$(p, \gamma, s_k) \to a\,(s_0, \gamma_1, s_1)(s_1, \gamma_2, s_2) \cdots (s_{k-1}, \gamma_k, s_k)$$
+where $a$ is omitted when it is $\varepsilon$ (for $k = 0$ this is $(p, \gamma, r) \to a$).
+
+The nonterminal $(p, \gamma, q)$ is meant to derive the words that take $M$ from state $p$ with
+stack $\gamma$ to state $q$ with empty stack; transitions on letters outside $T_0$ are not
+used. -/
 noncomputable def pdaGrammar (M : PDA T σ Γ) (T₀ : Finset T) :
     ContextFreeGrammar T where
   NT := Option (σ × Γ × σ)
@@ -203,7 +232,10 @@ theorem pdaGrammar_rules :
               (stateLists y.2.length).image fun ss =>
                 stepRule p γ opt y.1 y.2 ss) := rfl
 
-/-- The start productions are present. -/
+/-- **Start productions of the triple grammar.** Let $M$ be a pushdown automaton with a finite
+set of states, a finite stack alphabet, start state $q_0$ and initial stack symbol $Z_0$, and let
+$T_0$ be a finite set of input letters. For every state $q$, the triple grammar of $M$ and $T_0$
+contains the production $S \to (q_0, Z_0, q)$, where $S$ is its initial nonterminal. -/
 theorem mem_rules_start {q : σ} :
     (⟨none, [Symbol.nonterminal (some (M.start, M.startStack, q))]⟩ :
         ContextFreeRule T (Option (σ × Γ × σ))) ∈
@@ -211,7 +243,14 @@ theorem mem_rules_start {q : σ} :
   refine Finset.mem_union_left _ ?_
   exact Finset.mem_image.mpr ⟨q, Finset.mem_univ q, rfl⟩
 
-/-- The transition productions are present. -/
+/-- **Transition productions of the triple grammar.** Let $M$ be a pushdown automaton with a
+finite set of states and a finite stack alphabet, and let $T_0$ be a finite set of input
+letters. Let $a$ be either $\varepsilon$ or a letter in $T_0$, and suppose that $M$ has a
+transition from state $p$ on $a$ popping the stack symbol $\gamma$ that moves to state $r$ and
+pushes $\gamma_1 \cdots \gamma_k$. Then for all states $s_1, \dots, s_k$, writing $s_0 = r$,
+the triple grammar of $M$ and $T_0$ contains the production
+$$(p, \gamma, s_k) \to a\,(s_0, \gamma_1, s_1)(s_1, \gamma_2, s_2) \cdots (s_{k-1}, \gamma_k, s_k)$$
+where $a$ is omitted when it is $\varepsilon$. -/
 theorem mem_rules_step {p : σ} {γ : Γ} {opt : Option T} {r : σ}
     {εs : List Γ} {ss : List σ}
     (hopt : opt = none ∨ ∃ a ∈ T₀, opt = some a)
@@ -230,8 +269,17 @@ theorem mem_rules_step {p : σ} {γ : Γ} {opt : Option T} {r : σ}
   refine Finset.mem_biUnion.mpr ⟨(r, εs), hstep, ?_⟩
   exact Finset.mem_image.mpr ⟨ss, mem_stateLists.mpr hss, rfl⟩
 
-/-- Every production of the triple grammar is a start production or comes
-from a transition. -/
+/-- **Productions of the triple grammar.** Let $M$ be a pushdown automaton with a finite set of
+states, a finite stack alphabet, start state $q_0$ and initial stack symbol $Z_0$, and let $T_0$
+be a finite set of input letters. Every production of the triple grammar of $M$ and $T_0$ is of
+one of two kinds. Either it is a start production $S \to (q_0, Z_0, q)$ for some state $q$,
+where $S$ is the initial nonterminal; or there are states $p$ and $r$, a stack symbol $\gamma$,
+an input $a$ that is a letter or $\varepsilon$, a transition of $M$ from $p$ on $a$ popping
+$\gamma$ that moves to $r$ and pushes $\gamma_1 \cdots \gamma_k$, and states
+$s_1, \dots, s_k$ such that, writing $s_0 = r$, the production is
+$$(p, \gamma, s_k) \to a\,(s_0, \gamma_1, s_1)(s_1, \gamma_2, s_2) \cdots (s_{k-1}, \gamma_k, s_k)$$
+where $a$ is omitted when it is $\varepsilon$ (for $k = 0$ the production is
+$(p, \gamma, r) \to a$). -/
 theorem cases_of_mem_rules {r : ContextFreeRule T (Option (σ × Γ × σ))}
     (hr : r ∈ (pdaGrammar M T₀).rules) :
     (∃ q : σ, r = ⟨none,
@@ -509,7 +557,11 @@ private theorem exists_of_yields_single {A : (pdaGrammar M T₀).NT}
     cases hrest
     exact ⟨_, hr, rfl, by simpa using hout⟩
 
-/-- The triple grammar generates exactly the language accepted by `M`. -/
+/-- **The triple grammar generates the accepted language.** Let $M$ be a pushdown automaton with
+a finite set of states and a finite stack alphabet, and let $T_0$ be a finite set of input
+letters such that $M$ has no transition, from any state and popping any stack symbol, that
+consumes a letter outside $T_0$. Then the language generated by the triple grammar of $M$ and
+$T_0$ equals the language accepted by $M$ by empty stack. -/
 theorem PDA.pdaGrammar_language
     (hT : ∀ (p : σ) (a : T) (γ : Γ), a ∉ T₀ → M.step p (some a) γ = ∅) :
     (pdaGrammar M T₀).language = M.accepts := by
@@ -533,8 +585,11 @@ theorem PDA.pdaGrammar_language
     exact yields_of_rule mem_rules_start (yields_triple_of_derives hT hder)
 
 omit [Fintype σ] [Fintype Γ] in
-/-- Languages accepted by finite pushdown automata (with transitions
-consuming letters from a finite set) are context-free. -/
+/-- **Finite pushdown automata accept context-free languages.** Let $M$ be a pushdown automaton
+with a finite set of states and a finite stack alphabet, and suppose that there is a finite set
+$T_0$ of input letters such that $M$ has no transition, from any state and popping any stack
+symbol, that consumes a letter outside $T_0$. Then the language accepted by $M$ by empty stack
+is context-free. -/
 theorem PDA.isContextFree_accepts [Finite σ] [Finite Γ]
     (hT : ∀ (p : σ) (a : T) (γ : Γ), a ∉ T₀ → M.step p (some a) γ = ∅) :
     M.accepts.IsContextFree := by
@@ -542,9 +597,13 @@ theorem PDA.isContextFree_accepts [Finite σ] [Finite Γ]
   have : Fintype Γ := Fintype.ofFinite Γ
   exact ⟨pdaGrammar M T₀, PDA.pdaGrammar_language hT⟩
 
-/-- Over an alphabet in `Type`, the context-free languages are exactly
-the languages accepted by empty stack by finite pushdown automata whose
-transitions consume letters from a finite set. -/
+/-- **Context-free languages are exactly the languages of finite pushdown automata.** A language
+$L$ over an alphabet $T$ is context-free if and only if there are a pushdown automaton $M$ over
+$T$ with a finite set of states and a finite stack alphabet, and a finite set $T_0$ of input
+letters such that $M$ has no transition, from any state and popping any stack symbol, that
+consumes a letter outside $T_0$, for which the language accepted by $M$ by empty stack is $L$.
+
+Here the alphabet, the states and the stack alphabet are types in the lowest universe. -/
 theorem isContextFree_iff_exists_pda_accepts {T : Type} {L : Language T} :
     L.IsContextFree ↔ ∃ (σ Γ : Type) (_ : Fintype σ) (_ : Fintype Γ)
       (M : PDA T σ Γ),

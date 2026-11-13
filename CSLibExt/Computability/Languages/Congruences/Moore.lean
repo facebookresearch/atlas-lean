@@ -51,8 +51,11 @@ variable {α σ : Type*} [Fintype α] [Fintype σ] [DecidableEq σ] (M : DFA α 
 
 /-! ## State equivalence by refinement -/
 
-/-- One round of Moore's refinement: keep the pairs whose states agree on acceptance and whose
-successors on every letter are in `E`. -/
+/-- **Moore refinement step.** Let $M$ be a DFA with state set $S$ and transition function
+$\delta$. One round of Moore's refinement sends a set $E \subseteq S \times S$ of pairs of
+states to the set of pairs $(p, q) \in S \times S$ such that $p$ is accepting if and only if
+$q$ is accepting and, for every letter $a$, the pair $(\delta(p, a), \delta(q, a))$ lies in
+$E$. -/
 def mooreStep (E : Finset (σ × σ)) : Finset (σ × σ) :=
   Finset.univ.filter fun p =>
     (p.1 ∈ M.accept ↔ p.2 ∈ M.accept) ∧ ∀ a, (M.step p.1 a, M.step p.2 a) ∈ E
@@ -61,16 +64,22 @@ theorem mooreStep_mono : Monotone M.mooreStep := fun E F h p hp => by
   simp only [mooreStep, Finset.mem_filter, Finset.mem_univ, true_and] at hp ⊢
   exact ⟨hp.1, fun a => h (hp.2 a)⟩
 
-/-- Moore refinement from `E` until a round changes nothing, for at most `n` rounds; each round
-evaluates `mooreStep` once. -/
+/-- **Stopping Moore iteration.** Let $M$ be a DFA over a finite alphabet with finitely many
+states, and write $R$ for one round of Moore's refinement. For a set $E$ of pairs of states of
+$M$ and a budget $n \in \mathbb{N}$, the stopping Moore iteration is defined by recursion on $n$:
+with budget $0$ it returns $E$; with budget $n + 1$ it returns $E$ if $R(E) = E$, and otherwise
+the stopping Moore iteration from $R(E)$ with budget $n$. -/
 def mooreIter : ℕ → Finset (σ × σ) → Finset (σ × σ)
   | 0, E => E
   | n + 1, E =>
       let next := M.mooreStep E
       if next = E then E else mooreIter n next
 
-/-- The stopping iteration returns an iterate of `mooreStep`, which is a fixed point if it
-stopped early. -/
+/-- **Output of the stopping Moore iteration.** Let $M$ be a DFA over a finite alphabet with
+finitely many states, and write $R$ for one round of Moore's refinement. For every
+$n \in \mathbb{N}$ and every set $E$ of pairs of states of $M$, there is $k \le n$ such that the
+stopping Moore iteration from $E$ with budget $n$ returns $R^k(E)$, and if $k < n$ then $R^k(E)$
+is a fixed point of $R$, that is, $R(R^k(E)) = R^k(E)$. -/
 theorem mooreIter_spec :
     ∀ (n : ℕ) (E : Finset (σ × σ)), ∃ k ≤ n, M.mooreIter n E = M.mooreStep^[k] E ∧
       (k < n → M.mooreStep (M.mooreStep^[k] E) = M.mooreStep^[k] E)
@@ -84,8 +93,9 @@ theorem mooreIter_spec :
         · rw [Function.iterate_succ_apply]
           exact hfix (by omega)
 
-/-- Moore's state equivalence: the refinement iterated from all pairs until it stabilizes, at
-most `|σ × σ|` rounds. -/
+/-- **Moore's relation.** For a DFA $M$ over a finite alphabet with finite set of states $Q$,
+Moore's relation is the set of pairs of states obtained from $Q \times Q$ by repeating rounds of
+Moore's refinement until a round changes nothing, for at most $|Q \times Q|$ rounds. -/
 def mooreRel : Finset (σ × σ) :=
   M.mooreIter (Fintype.card (σ × σ)) Finset.univ
 
@@ -97,7 +107,9 @@ theorem mooreStep_mooreRel : M.mooreStep M.mooreRel = M.mooreRel := by
   · obtain rfl : k = Fintype.card (σ × σ) := le_antisymm hk hge
     exact Finset.gfpFin_fixed M.mooreStep_mono
 
-/-- Every post-fixed point of the refinement is contained in Moore's relation. -/
+/-- **Moore's relation contains every post-fixed point.** Let $M$ be a DFA. If a set $Z$ of
+pairs of states of $M$ is contained in its image under one round of Moore's refinement, then
+$Z$ is contained in Moore's relation of $M$. -/
 theorem subset_mooreRel {Z : Finset (σ × σ)} (hZ : Z ⊆ M.mooreStep Z) : Z ⊆ M.mooreRel := by
   obtain ⟨k, -, heq, -⟩ := M.mooreIter_spec (Fintype.card (σ × σ)) Finset.univ
   rw [mooreRel, heq]
@@ -114,7 +126,10 @@ theorem mem_mooreRel_unfold {p q : σ} :
   conv_lhs => rw [← M.mooreStep_mooreRel]
   simp [mooreStep]
 
-/-- **Correctness of the refinement**: Moore's relation is equality of continuation languages. -/
+/-- **Correctness of Moore's refinement.** For a DFA $M$ over a finite alphabet with finitely
+many states, two states $p$ and $q$ of $M$ are related by Moore's relation if and only if they
+have the same continuation language: for every word $w$, $M$ started at $p$ accepts $w$ exactly
+when $M$ started at $q$ accepts $w$. -/
 theorem mem_mooreRel_iff {p q : σ} :
     (p, q) ∈ M.mooreRel ↔ M.acceptsFrom p = M.acceptsFrom q := by
   classical
@@ -148,7 +163,9 @@ theorem mem_mooreRel_iff {p q : σ} :
 
 /-! ## The quotient automaton -/
 
-/-- Moore's relation on reachable states, as a setoid. -/
+/-- **Moore equivalence on reachable states.** For a DFA $M$, two reachable states $p$ and $q$
+of $M$ are related when the pair $(p, q)$ lies in Moore's relation of $M$; this relation is an
+equivalence relation on the reachable states of $M$. -/
 def mooreSetoid : Setoid {s // s ∈ M.reachable} where
   r p q := (p.1, q.1) ∈ M.mooreRel
   iseqv :=
@@ -160,7 +177,9 @@ instance decidableMooreSetoidRel (p q : {s // s ∈ M.reachable}) :
     Decidable (@HasEquiv.Equiv _ (@instHasEquivOfSetoid _ M.mooreSetoid) p q) :=
   inferInstanceAs (Decidable ((p.1, q.1) ∈ M.mooreRel))
 
-/-- The states of Moore's minimal automaton: classes of reachable states. -/
+/-- **States of Moore's automaton.** For a DFA $M$, these are the equivalence classes of the
+reachable states of $M$ under Moore equivalence, that is, under Moore's relation of $M$
+restricted to reachable states. They are the states of Moore's minimal automaton. -/
 def MooreState : Type _ :=
   Quotient M.mooreSetoid
 
@@ -170,7 +189,10 @@ instance : DecidableEq M.MooreState :=
 instance : Fintype M.MooreState :=
   @Quotient.fintype _ _ M.mooreSetoid (M.decidableMooreSetoidRel)
 
-/-- The class of a reachable state. -/
+/-- **Moore class of a reachable state.** Let $M$ be a DFA over a finite alphabet with finitely
+many states. For a reachable state $s$ of $M$, its Moore class is the equivalence class of $s$
+among the reachable states of $M$ under Moore's relation; it is a state of Moore's minimal
+automaton of $M$. -/
 def mooreClass (s : {s // s ∈ M.reachable}) : M.MooreState :=
   Quotient.mk M.mooreSetoid s
 
@@ -178,7 +200,14 @@ theorem mooreClass_eq_iff {p q : {s // s ∈ M.reachable}} :
     M.mooreClass p = M.mooreClass q ↔ M.acceptsFrom p.1 = M.acceptsFrom q.1 :=
   Quotient.eq.trans M.mem_mooreRel_iff
 
-/-- **Moore's minimal automaton.** -/
+/-- **Moore's minimal automaton.** For a DFA $M$ over a finite alphabet with finitely many states,
+Moore's minimal automaton of $M$ has as states the classes of reachable states of $M$ under
+Moore's relation. Its start state is the class of the start state of $M$; reading a letter $a$
+sends the class of a reachable state $s$ to the class of the state that $M$ reaches from $s$ on
+$a$; and the class of $s$ is accepting exactly when $s$ is an accepting state of $M$.
+
+These do not depend on the chosen member $s$, because Moore-related states agree on acceptance
+and their successors on each letter are again Moore-related. -/
 def mooreDFA : DFA α M.MooreState where
   step c a := Quotient.lift (fun p => M.mooreClass ⟨M.step p.1 a, M.step_mem_reachable p.2 a⟩)
     (fun _ _ h => (M.mooreClass_eq_iff).2
@@ -211,7 +240,9 @@ theorem mooreDFA_eval (w : List α) :
       congr 2
       exact (M.eval_append_singleton w a).symm
 
-/-- Moore's automaton accepts the language of `M`. -/
+/-- **Moore's automaton accepts the same language.** For a DFA $M$ over a finite alphabet with
+finitely many states, Moore's minimal automaton of $M$ accepts exactly the language accepted by
+$M$. -/
 theorem mooreDFA_accepts : M.mooreDFA.accepts = M.accepts := by
   ext w
   rw [mem_accepts, mooreDFA_eval, mooreClass_mem_accept, mem_accepts]
@@ -220,7 +251,11 @@ theorem mooreDFA_accepts : M.mooreDFA.accepts = M.accepts := by
 
 open Cslib.Language
 
-/-- A class of reachable states determines a reachable continuation language. -/
+/-- **Continuation language of a Moore class.** Let $M$ be a DFA over a finite alphabet with
+finitely many states. Each state of Moore's minimal automaton of $M$, a class of reachable states
+of $M$, is sent to the continuation language of any member $s$, the set of words that $M$
+accepts when started at $s$; this is a reachable residual language of $M$. It does not depend on
+the choice of $s$, because Moore-related states have the same continuation language. -/
 def mooreResidual (c : M.MooreState) : reachableResiduals M :=
   Quotient.lift (fun p : {s // s ∈ M.reachable} => (⟨M.acceptsFrom p.1, by
       obtain ⟨w, hw⟩ := M.mem_reachable_iff.1 p.2
@@ -240,7 +275,10 @@ theorem mooreResidual_bijective : Function.Bijective M.mooreResidual := by
   · rintro ⟨L, w, rfl⟩
     exact ⟨M.mooreClass ⟨M.eval w, M.mem_reachable_iff.2 ⟨w, rfl⟩⟩, rfl⟩
 
-/-- The classes of Moore's automaton are the reachable continuation languages. -/
+/-- **Moore classes are the reachable residuals.** Let $M$ be a DFA over a finite alphabet with
+finitely many states. The states of Moore's minimal automaton of $M$ are in bijection with the
+reachable residual languages of $M$: the bijection sends the class of a reachable state $s$ to
+the continuation language of $s$, the set of words that $M$ accepts when started at $s$. -/
 noncomputable def mooreEquiv : M.MooreState ≃ reachableResiduals M :=
   Equiv.ofBijective _ M.mooreResidual_bijective
 
@@ -254,8 +292,10 @@ private theorem dfa_ext {τ : Type*} {A B : DFA α τ} (h₁ : A.step = B.step) 
   cases h₃
   rfl
 
-/-- **Moore's automaton is the minimal automaton.** Renaming its classes to the continuation
-languages they determine gives exactly `Cslib.Language.minimizedDFA M`. -/
+/-- **Moore's automaton is the minimal automaton.** Let $M$ be a DFA. Renaming each state of
+Moore's minimal automaton of $M$, a class of reachable states, to the continuation language
+accepted from its members turns Moore's automaton into exactly the minimized DFA of $M$, whose
+states are the reachable continuation languages of $M$. -/
 theorem reindex_mooreDFA : DFA.reindex M.mooreEquiv M.mooreDFA = minimizedDFA M := by
   have hsurj : ∀ q : reachableResiduals M, ∃ p : {s // s ∈ M.reachable},
       M.mooreEquiv (M.mooreClass p) = q := fun q => by
@@ -284,7 +324,9 @@ theorem reindex_mooreDFA : DFA.reindex M.mooreEquiv M.mooreDFA = minimizedDFA M 
     change _ ↔ [] ∈ M.acceptsFrom p.1
     rw [mem_acceptsFrom, evalFrom_nil]
 
-/-- Moore's automaton has one state per Nerode class of the language. -/
+/-- **Moore's automaton has one state per Nerode class.** For a DFA $M$ over a finite alphabet
+with finitely many states, Moore's minimal automaton of $M$ has exactly as many states as there
+are Nerode classes of the language accepted by $M$. -/
 theorem card_mooreState [Fintype (NerodeClass M.accepts)] :
     Fintype.card M.MooreState = Fintype.card (NerodeClass M.accepts) :=
   Fintype.card_congr (M.mooreEquiv.trans (nerodeClassEquivMinimizedState M).symm)

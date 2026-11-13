@@ -78,18 +78,24 @@ section HaltsWithin
 
 variable {Γ Λ : Type*} [Inhabited Γ] [Inhabited Λ]
 
-/-- `HaltsWithin M l T`: started on `l`, the `TM0` machine `M` reaches a configuration without a
-successor after at most `T` steps. -/
+/-- **Bounded halting of a single-tape machine.** A single-tape Turing machine $M$ halts within
+$T$ steps on a word $l$ when, started in its initial state with $l$ on the tape and the head on
+the first letter of $l$ (on a blank if $l$ is empty), it reaches after some $j \le T$ steps a
+configuration that has no successor. -/
 def HaltsWithin (M : TM0.Machine Γ Λ) (l : List Γ) (T : ℕ) : Prop :=
   ∃ j ≤ T, ∃ d, (flip bind (TM0.step M))^[j] (some (TM0.init l)) = some d ∧ TM0.step M d = none
 
-/-- `HaltsWithin` is monotone in the number of steps. -/
+/-- **Halting within a bound is monotone in the bound.** For a single-tape Turing machine $M$,
+a list $l$ of symbols and numbers $T \le T'$, if $M$ started on $l$ halts within $T$ steps,
+then $M$ started on $l$ halts within $T'$ steps. -/
 theorem HaltsWithin.mono {M : TM0.Machine Γ Λ} {l : List Γ} {T T' : ℕ} (h : HaltsWithin M l T)
     (hT : T ≤ T') : HaltsWithin M l T' := by
   obtain ⟨j, hj, d, hd⟩ := h
   exact ⟨j, hj.trans hT, d, hd⟩
 
-/-- A `TM0` machine halts iff it halts within some number of steps. -/
+/-- **Halting is halting within some number of steps.** For a single-tape Turing machine $M$ and
+an input word $l$, the evaluation of $M$ on $l$ is defined (that is, $M$ halts on $l$) if and only
+if there is $T \in \mathbb{N}$ such that $M$ halts on $l$ within $T$ steps. -/
 theorem dom_eval_iff_exists_haltsWithin (M : TM0.Machine Γ Λ) (l : List Γ) :
     (TM0.eval M l).Dom ↔ ∃ T, HaltsWithin M l T := by
   rw [TM0.eval, Part.map_Dom, MetaMathlibExt.TM2Recursive.dom_eval_iff_exists_iterate]
@@ -99,29 +105,38 @@ end HaltsWithin
 
 /-! ### Codes -/
 
-/-- A code for a single-tape machine with states and symbols in `ℕ`: row `q`, column `a` of
-`table` is `none` (halt) or `some (q', s)` (enter `q'` and do the action coded by `s`, see
-`decodeStmt`). Missing rows and columns halt. -/
+/-- **Codes for single-tape machines.** A code is a transition table: a finite list of rows, row
+$q$ belonging to the state $q \in \mathbb{N}$, each a finite list of entries, entry $a$ of a row
+belonging to the symbol $a \in \mathbb{N}$. The entry in row $q$ and column $a$ is either empty,
+meaning that the machine halts, or a pair $(q', s)$ of natural numbers, meaning that the machine
+enters the state $q'$ and does the action coded by $s$: $0$ moves left, $1$ moves right and
+$b + 2$ writes $b$. A state or symbol outside the table halts the machine. -/
 structure Code where
   /-- The transition table, indexed by state, then by symbol. -/
   table : List (List (Option (ℕ × ℕ)))
   deriving DecidableEq
 
-/-- Decode an action: `0` moves left, `1` moves right, `a + 2` writes `a`. -/
+/-- **Decoding an action.** A natural number codes a statement of a single-tape Turing machine
+with symbols in $\mathbb{N}$: $0$ moves the head left, $1$ moves the head right, and $a + 2$ writes
+the symbol $a$. -/
 def decodeStmt : ℕ → TM0.Stmt ℕ
   | 0 => .move .left
   | 1 => .move .right
   | a + 2 => .write a
 
-/-- The symbol of an input bit: `false` is `1` and `true` is `2`; `0` is the blank. -/
+/-- **Symbol of an input bit.** The tape symbol of a bit $b$ is $1$ if $b$ is false and $2$ if $b$
+is true; the symbol $0$ is the blank. -/
 def bitSym (b : Bool) : ℕ := cond b 2 1
 
-/-- The input word of the bits `x`. -/
+/-- **Input word of a list of bits.** The input word of a list of bits $x$ is the list of natural
+numbers obtained from $x$ by replacing each bit by its symbol: $1$ for false and $2$ for true. -/
 def input (x : List Bool) : List ℕ := x.map bitSym
 
 namespace Code
 
-/-- Codes are their tables. -/
+/-- **Single-tape codes as tables.** Codes for single-tape machines correspond bijectively to
+transition tables, that is, to lists of rows, each a list of entries that are either empty or a
+pair of natural numbers: a code corresponds to its table. -/
 def equivTable : Code ≃ List (List (Option (ℕ × ℕ))) where
   toFun := table
   invFun := mk
@@ -131,14 +146,23 @@ def equivTable : Code ≃ List (List (Option (ℕ × ℕ))) where
 /-- Codes are coded as their tables. -/
 instance : Primcodable Code := Primcodable.ofEquiv _ equivTable
 
-/-- The entry of the table at state `q` and symbol `a`, `none` outside the table. -/
+/-- **Table lookup of a code.** For a code $c$ and numbers $q$ and $a$, the lookup of $c$ at
+state $q$ and symbol $a$ is the entry in row $q$, column $a$ of the table of $c$: either a pair
+$(q', s)$ of a next state and an action code, or no entry (halt). It is no entry when the
+table has no row $q$ or that row has no column $a$. -/
 def lookup (c : Code) (q a : ℕ) : Option (ℕ × ℕ) := (c.table[q]?.bind fun row ↦ row[a]?).join
 
-/-- The `TM0` machine of a code. -/
+/-- **The machine of a single-tape code.** The machine of a code $c$ is the single-tape Turing
+machine with states and symbols in $\mathbb{N}$ that, in state $q$ reading symbol $a$, halts if
+the table lookup of $c$ at state $q$ and symbol $a$ has no entry, and otherwise, if the entry is
+$(q', s)$, enters state $q'$ and does the action coded by $s$: $0$ moves left, $1$ moves right
+and $a' + 2$ writes $a'$. -/
 def machine (c : Code) : TM0.Machine ℕ ℕ := fun q a ↦
   (c.lookup q a).map fun e ↦ (e.1, decodeStmt e.2)
 
-/-- The states of a code: the initial state `0` and every state its table enters. -/
+/-- **States of a single-tape code.** The set of states of a code $c$ is the finite set of natural
+numbers consisting of the initial state $0$ and every state $q'$ such that some entry of the
+table of $c$ is a pair $(q', s)$. -/
 def states (c : Code) : Finset ℕ :=
   insert 0 (c.table.flatten.filterMap fun o ↦ o.map Prod.fst).toFinset
 
@@ -156,8 +180,10 @@ theorem supports_machine (c : Code) : TM0.Supports c.machine ↑c.states := by
 
 /-! ### Explicit configurations -/
 
-/-- A configuration of the simulation: the state, the cells left of the head (nearest first),
-the cell under the head, and the cells right of the head (nearest first). -/
+/-- **Explicit configurations.** A configuration of the simulation consists of a state
+$q \in \mathbb{N}$, the list of the cells left of the head (nearest first), the symbol in the cell
+under the head, and the list of the cells right of the head (nearest first); states and symbols
+are natural numbers. -/
 structure Cfg where
   /-- The state. -/
   q : ℕ
@@ -169,7 +195,10 @@ structure Cfg where
   right : List ℕ
   deriving DecidableEq
 
-/-- Configurations are tuples. -/
+/-- **Configurations as tuples.** Configurations correspond bijectively to tuples in
+$\mathbb{N} \times \mathrm{List}(\mathbb{N}) \times \mathbb{N} \times \mathrm{List}(\mathbb{N})$:
+a configuration corresponds to the tuple of its state, its cells left of the head, its cell under
+the head and its cells right of the head. -/
 def Cfg.equivProd : Cfg ≃ ℕ × List ℕ × ℕ × List ℕ where
   toFun k := (k.q, k.left, k.head, k.right)
   invFun p := ⟨p.1, p.2.1, p.2.2.1, p.2.2.2⟩
@@ -179,40 +208,66 @@ def Cfg.equivProd : Cfg ≃ ℕ × List ℕ × ℕ × List ℕ where
 /-- Configurations are coded as tuples. -/
 instance : Primcodable Cfg := Primcodable.ofEquiv _ Cfg.equivProd
 
-/-- The Mathlib configuration of an explicit configuration: lists are read with blanks beyond
-their ends. -/
+/-- **TM0 configuration of a simulation configuration.** The TM0 configuration of a configuration
+$k$ of the simulation has the state of $k$, the cell under the head of $k$ as its head cell, and
+as the halves of its tape left and right of the head the cells of $k$ left and right of the head,
+nearest first, followed by infinitely many blanks. -/
 def Cfg.toTM0 (k : Cfg) : TM0.Cfg ℕ ℕ := ⟨k.q, ⟨k.head, ListBlank.mk k.left, ListBlank.mk k.right⟩⟩
 
-/-- Enter the state `q'` and do the action coded by `s` (see `decodeStmt`). -/
+/-- **Acting on a configuration.** Let $k$ be a configuration with left cells $L$ (nearest
+first), head cell $h$ and right cells $R$ (nearest first), let $q'$ be a state and let $s$ be an
+action code. Acting on $k$ with $q'$ and $s$ gives a configuration with state $q'$, as follows.
+For $s = 0$ (move left), its head cell is the first entry of $L$, or the blank $0$ if $L$ is
+empty, its left cells are $L$ without its first entry, and its right cells are $h$ followed by
+$R$. For $s = 1$ (move right), its head cell is the first entry of $R$, or $0$ if $R$ is empty,
+its right cells are $R$ without its first entry, and its left cells are $h$ followed by $L$. For
+$s = a + 2$ (write $a$), its head cell is $a$ and its left and right cells are $L$ and $R$. -/
 def Cfg.act (k : Cfg) (q' : ℕ) : ℕ → Cfg
   | 0 => ⟨q', k.left.tail, k.left.headI, k.head :: k.right⟩
   | 1 => ⟨q', k.head :: k.left, k.right.headI, k.right.tail⟩
   | a + 2 => ⟨q', k.left, a, k.right⟩
 
-/-- The output of a configuration: the tape from the head rightwards, without trailing blanks. -/
+/-- **Output of a configuration.** The output of a configuration $k$ is the list consisting of the
+symbol under the head of $k$ followed by the cells right of the head (nearest first), with all
+trailing blanks $0$ removed. -/
 def Cfg.output (k : Cfg) : List ℕ := (k.head :: k.right).rdropWhile (· == 0)
 
-/-- The initial configuration on the bits `x`. -/
+/-- **Initial configuration of the code simulation.** The initial configuration of the
+simulation on a list of bits $x$ has state $0$, an empty list of cells left of the head, the
+head on the first symbol of the input word of $x$ (the blank $0$ if $x$ is empty), and the
+remaining symbols of the input word, in order, right of the head. -/
 def init (x : List Bool) : Cfg := ⟨0, [], (input x).headI, (input x).tail⟩
 
-/-- One step of the simulation, `none` if the machine halts. -/
+/-- **One step of a code.** For a code $c$ and a configuration $k$ of the simulation, look up the
+table entry of $c$ at the state of $k$ and the symbol under the head of $k$. If there is no entry,
+the step is undefined (the machine halts); if the entry is $(q', s)$, the step is the
+configuration obtained from $k$ by entering the state $q'$ and doing the action coded by $s$. -/
 def step (c : Code) (k : Cfg) : Option Cfg := (c.lookup k.q k.head).map fun e ↦ k.act e.1 e.2
 
-/-- One step of the simulation, or no change once the machine has halted. -/
+/-- **One step of a code, or stay when halted.** For a code $c$ and a configuration $k$ of the
+simulation, the configuration after one step of $c$ from $k$ if that step is defined, and $k$
+itself if $c$ halts at $k$. -/
 def stepOrStay (c : Code) (k : Cfg) : Cfg := (c.step k).getD k
 
-/-- The configuration after `T` steps on the bits `x`, or the halting configuration if the
-machine halts earlier. -/
+/-- **Clocked configuration of a code.** For a code $c$, a list of bits $x$ and $T \in \mathbb{N}$,
+the configuration of $c$ on $x$ after $T$ steps is obtained from the initial configuration on $x$
+by applying $T$ times the step of $c$, where a step leaves a halted configuration unchanged. It is
+the configuration after $T$ steps, or the halting configuration if the machine halts earlier. -/
 def cfgAfter (c : Code) (x : List Bool) (T : ℕ) : Cfg := c.stepOrStay^[T] (init x)
 
-/-- **The clocked evaluator.** Run the code `c` on the bits `x` for at most `T` steps: the output
-if it halts within `T` steps, `none` otherwise. -/
+/-- **The clocked evaluator.** Given a code $c$, a list of bits $x$ and a clock $T \in \mathbb{N}$,
+run the simulation of $c$ on $x$ for at most $T$ steps. If it halts within $T$ steps, the result
+is the output of the halting configuration: the tape from the head rightwards, with trailing
+blanks dropped. Otherwise there is no result. -/
 def evalSteps (c : Code) (x : List Bool) (T : ℕ) : Option (List ℕ) :=
   (c.step (c.cfgAfter x T)).elim (some (c.cfgAfter x T).output) fun _ ↦ none
 
 /-! ### Agreement with Mathlib's semantics -/
 
-/-- An explicit step reads as a step of the decoded machine. -/
+/-- **Explicit steps agree with the decoded machine.** For every code $c$ and every configuration
+$k$ of the simulation, the decoded TM0 machine of $c$ halts at the TM0 configuration of $k$
+exactly when the step of $c$ from $k$ is undefined, and otherwise its step from the TM0
+configuration of $k$ is the TM0 configuration of the step of $c$ from $k$. -/
 theorem step_toTM0 (c : Code) (k : Cfg) :
     TM0.step c.machine k.toTM0 = (c.step k).map Cfg.toTM0 := by
   simp only [TM0.step, Cfg.toTM0, machine, step, Option.map_map]
@@ -222,7 +277,9 @@ theorem step_toTM0 (c : Code) (k : Cfg) :
     simp [decodeStmt, Cfg.act, Cfg.toTM0, Tape.move, Tape.write, ListBlank.head_mk,
       ListBlank.tail_mk, ListBlank.cons_mk]
 
-/-- The initial configuration reads as Mathlib's. -/
+/-- **The explicit initial configuration is the machine's.** For a list of bits $x$, the initial
+configuration of the simulation on $x$, read as a configuration of a single-tape machine, is the
+initial configuration of a single-tape machine on the input word of $x$. -/
 theorem init_toTM0 (x : List Bool) : (init x).toTM0 = TM0.init (input x) := by
   cases h : input x with
   | nil => simp [init, Cfg.toTM0, TM0.init, Tape.mk₁, Tape.mk₂, Tape.mk', h]
@@ -260,7 +317,10 @@ private theorem mk_rdropWhile (l : List ℕ) :
       exact (ListBlank.cons_head_tail (ListBlank.mk [])).symm
     · rw [← ListBlank.cons_mk, ← ListBlank.cons_mk, ih]
 
-/-- The output of a configuration reads as Mathlib's output. -/
+/-- **The output of a configuration as a Mathlib half-tape.** For every explicit configuration
+$k$, the half-tape of the Mathlib configuration of $k$ from the head rightwards (the cell under
+the head followed by the cells to its right) is the output of $k$, read with blanks beyond its
+end. -/
 theorem right₀_toTM0 (k : Cfg) : k.toTM0.Tape.right₀ = ListBlank.mk k.output := by
   rw [Cfg.output, mk_rdropWhile]
   rfl
@@ -302,14 +362,22 @@ private theorem iterate_inv {α : Type*} {f : α → Option α} (P : α → Prop
     | none => rw [hfa, MetaMathlibExt.TM2Recursive.iterate_none_eq] at h; cases h
     | some a' => rw [hfa] at h; exact ih a' d (hP a a' hfa ha) h
 
-/-- The iterates of the decoded machine are those of the explicit simulation. -/
+/-- **Iterated steps of the decoded machine.** Let $c$ be a code, $n \in \mathbb{N}$ and $k$
+an explicit configuration. Run the machine of $c$ for $n$ steps from the Mathlib configuration
+of $k$, and run the explicit simulation of $c$ for $n$ steps from $k$, where a run that reaches
+a configuration without a successor before completing $n$ steps has no result. Then the first
+run has a result exactly when the second does, and its result is the Mathlib configuration of
+the result of the second. -/
 theorem iterate_step_toTM0 (c : Code) (n : ℕ) (k : Cfg) :
     (flip bind (TM0.step c.machine))^[n] (some k.toTM0) =
       ((flip bind c.step)^[n] (some k)).map Cfg.toTM0 :=
   iterate_map Cfg.toTM0 (fun _ ↦ True) (fun _ _ _ _ ↦ trivial)
     (fun k _ ↦ step_toTM0 c k) n k trivial
 
-/-- `c.machine` halts on `x` within `T` steps iff the explicit simulation does. -/
+/-- **Bounded halting of a decoded machine through its simulation.** For a code $c$, a list of
+bits $x$ and $T \in \mathbb{N}$, the decoded machine of $c$ halts within $T$ steps on the input
+word of $x$ if and only if the explicit simulation of $c$, started from the initial configuration
+on $x$, reaches after some $j \le T$ steps a configuration that has no successor step. -/
 theorem haltsWithin_machine_iff (c : Code) (x : List Bool) (T : ℕ) :
     HaltsWithin c.machine (input x) T ↔
       ∃ j ≤ T, ∃ k, (flip bind c.step)^[j] (some (init x)) = some k ∧ c.step k = none := by
@@ -346,14 +414,19 @@ private theorem cfgAfter_spec (c : Code) (x : List Bool) (n : ℕ) :
       rw [Function.iterate_succ_apply', hjk, hk]
       exact hs
 
-/-- `evalSteps` is defined iff the clocked configuration has halted. -/
+/-- **Definedness of the clocked evaluator.** For a code $c$, a list of bits $x$ and a clock
+$T \in \mathbb{N}$, the clocked evaluator of $c$ on $x$ with clock $T$ returns a value if and
+only if the simulation of $c$ has no step from the configuration after $T$ clocked steps on $x$
+(the configuration after $T$ steps, or the halting configuration if the machine halts
+earlier). -/
 theorem isSome_evalSteps_iff_step_eq_none (c : Code) (x : List Bool) (T : ℕ) :
     (c.evalSteps x T).isSome ↔ c.step (c.cfgAfter x T) = none := by
   unfold evalSteps
   cases c.step (c.cfgAfter x T) <;> simp
 
-/-- **Clocked halting.** `evalSteps c x T` is defined iff `c.machine` halts on the input of `x`
-within `T` steps. -/
+/-- **Clocked halting.** For a code $c$, a list of bits $x$ and a clock $T \in \mathbb{N}$,
+the clocked evaluator of $c$ on $x$ with clock $T$ returns a value if and only if the machine
+of $c$, started on the input word of $x$, halts within $T$ steps. -/
 theorem isSome_evalSteps_iff (c : Code) (x : List Bool) (T : ℕ) :
     (c.evalSteps x T).isSome ↔ HaltsWithin c.machine (input x) T := by
   rw [isSome_evalSteps_iff_step_eq_none, haltsWithin_machine_iff]
@@ -371,13 +444,19 @@ theorem isSome_evalSteps_iff (c : Code) (x : List Bool) (T : ℕ) :
         exact hs
     · exact hor
 
-/-- The value of `evalSteps`, when defined, is the output of the clocked configuration. -/
+/-- **Characterization of clocked results.** For a code $c$, a list of bits $x$, a clock
+$T \in \mathbb{N}$ and a list $l$ of natural numbers, the clocked evaluator returns $l$ on $c$,
+$x$ and $T$ if and only if the configuration of $c$ after $T$ clocked steps on $x$ has no
+successor step and its output is $l$. -/
 theorem evalSteps_eq_some_iff_output (c : Code) (x : List Bool) (T : ℕ) (l : List ℕ) :
     c.evalSteps x T = some l ↔ c.step (c.cfgAfter x T) = none ∧ (c.cfgAfter x T).output = l := by
   unfold evalSteps
   cases c.step (c.cfgAfter x T) <;> simp
 
-/-- **Monotonicity.** A result within `T` steps is the result for every larger clock. -/
+/-- **Monotonicity of the single-tape clocked evaluator.** Let $c$ be a code for a single-tape
+machine, $x$ a list of bits, $l$ a list of natural numbers and $T \le T'$ natural numbers. If the
+clocked evaluator returns $l$ on $c$ and $x$ with clock $T$, then it also returns $l$ with clock
+$T'$. -/
 theorem evalSteps_mono {c : Code} {x : List Bool} {T T' : ℕ} {l : List ℕ}
     (h : c.evalSteps x T = some l) (hT : T ≤ T') : c.evalSteps x T' = some l := by
   rw [evalSteps_eq_some_iff_output] at h ⊢
@@ -391,8 +470,11 @@ theorem evalSteps_mono {c : Code} {x : List Bool} {T T' : ℕ} {l : List ℕ}
   rw [hk]
   exact ⟨hs, hl⟩
 
-/-- **Agreement with `TM0.eval`.** A result of `evalSteps` is the value of the decoded machine
-on the input. -/
+/-- **Clocked results agree with the machine's semantics.** Let $c$ be a code, $x$ a list of
+bits, $T$ a natural number and $l$ a list of natural numbers. If the clocked evaluator, running
+$c$ on $x$ for at most $T$ steps, returns $l$, then the decoded machine of $c$, started on the
+input word of $x$, halts, and the tape from its head rightwards in the halting configuration is
+$l$ followed by blanks. -/
 theorem eval_eq_some_of_evalSteps_eq_some {c : Code} {x : List Bool} {T : ℕ} {l : List ℕ}
     (h : c.evalSteps x T = some l) :
     TM0.eval c.machine (input x) = Part.some (ListBlank.mk l) := by
@@ -410,8 +492,9 @@ theorem eval_eq_some_of_evalSteps_eq_some {c : Code} {x : List Bool} {T : ℕ} {
   rw [TM0.eval, Part.eq_some_iff, ← right₀_toTM0]
   exact Part.mem_map _ hmem
 
-/-- **Unclocked halting.** The decoded machine halts on the input of `x` iff some clock
-suffices. -/
+/-- **Unclocked halting.** For a code $c$ and a list of bits $x$, the machine decoded from $c$ halts
+on the input word of $x$ if and only if there is a clock $T \in \mathbb{N}$ for which the clocked
+evaluator of $c$ on $x$ with clock $T$ returns a result. -/
 theorem dom_eval_iff_exists_isSome_evalSteps (c : Code) (x : List Bool) :
     (TM0.eval c.machine (input x)).Dom ↔ ∃ T, (c.evalSteps x T).isSome := by
   simp only [dom_eval_iff_exists_haltsWithin, isSome_evalSteps_iff]
@@ -438,12 +521,20 @@ private theorem right₀_map {Γ' : Type*} [Inhabited Γ'] (f : PointedMap Γ Γ
     (T.map f).right₀ = T.right₀.map f := by
   simp [Tape.right₀, Tape.map, ListBlank.map_cons]
 
-/-- **Universality of codes**, for machines that read bit inputs. Every `TM0` machine with a
-finite alphabet, a finite set of states supporting it (`TM0.Supports`), and two distinct non-blank
-input symbols `ι false`, `ι true` has a code. (So the alphabet has at least three symbols; a
-machine over a smaller alphabet cannot read a bit input.) The code simulates it step for step after
-an injective relabelling `f` of the symbols, which sends the input symbols `ι b` to `bitSym b`: it
-has the same results up to `f` and halts within the same number of steps. -/
+/-- **Universality of codes**, for machines that read bit inputs. Let $M$ be a single-tape
+Turing machine with a finite alphabet $\Gamma$ and a finite set of states that contains the
+initial state and is closed under the transitions of $M$, and let $\iota$ be an injective map
+from the bits to $\Gamma$ whose values are not the blank. Then there are a code $c$ and an
+injective map $f$ from $\Gamma$ to the natural numbers, sending the blank to $0$ and each
+$\iota(b)$ to the symbol of the bit $b$, such that for every word $l$ over $\Gamma$, writing
+$f(l)$ for the word obtained by applying $f$ to each letter: the decoded machine of $c$ halts on
+$f(l)$ exactly when $M$ halts on $l$, and its result (the tape from the head rightwards when it
+halts) is then the result of $M$ on $l$ with $f$ applied to each cell; and for every
+$T \in \mathbb{N}$, the decoded machine of $c$ halts within $T$ steps on $f(l)$ if and only if
+$M$ halts within $T$ steps on $l$.
+
+(So the alphabet has at least three symbols; a machine over a smaller alphabet cannot read a bit
+input.) -/
 theorem exists_code [Finite Γ] (M : TM0.Machine Γ Λ) {S : Set Λ} (hS : TM0.Supports M S)
     (hSf : S.Finite) (ι : Bool → Γ) (hι : Function.Injective ι) (hι0 : ∀ b, ι b ≠ default) :
     ∃ (c : Code) (f : PointedMap Γ ℕ), Function.Injective f ∧ (∀ b, f (ι b) = bitSym b) ∧
@@ -627,8 +718,8 @@ private theorem primrec_output : Primrec Cfg.output := by
   exact (Primrec.list_foldr hl (Primrec.const []) hf).of_eq fun k ↦ by
     rw [Cfg.output, rdropWhile_eq_foldr]
 
-/-- **Computability.** The clocked evaluator is primitive recursive in the code, the input and
-the clock. -/
+/-- **The clocked evaluator is primitive recursive.** The clocked evaluator is primitive
+recursive in the code, the input and the clock. -/
 theorem primrec_evalSteps :
     Primrec fun p : Code × List Bool × ℕ ↦ p.1.evalSteps p.2.1 p.2.2 := by
   have hstay : Primrec₂ fun (p : Code × List Bool × ℕ) (k : Cfg) ↦ p.1.stepOrStay k :=

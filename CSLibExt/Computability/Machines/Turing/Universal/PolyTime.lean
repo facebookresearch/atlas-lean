@@ -53,7 +53,12 @@ namespace Cslib.Turing.Universal.Clocked
 open _root_.Turing Function MetaMathlibExt MetaMathlibExt.TM2Program MetaMathlibExt.TM2Embedding
   Cslib.Complexity.Host
 
-/-- The clocked universal machine as a host component. -/
+/-- **The clocked universal machine as a host component.** The component machine whose stacks
+are the fifteen stacks of the clocked universal machine, each holding bits, whose labels and
+program are those of the clocked universal machine, and whose list of stacks is, in order: the
+state $Q$, the next state $N$, the action $A$, the head cell $H$, the cells left ($L$) and right
+($R$) of the head, the code $C$, the scan buffer $B$, the scratch counters $T$, $U$, $V$, the
+clock $\mathit{Ck}$, the encoded input $X$, the parse buffer $P$ and the output $O$. -/
 abbrev univComp : Comp where
   K := K
   Γ := Γ
@@ -80,7 +85,10 @@ private theorem sum_map_add_three (l : List ℕ) :
   | nil => simp
   | cons a l ih => simp only [List.map_cons, List.sum_cons, List.length_cons, ih]; ring
 
-/-- **The step bound is quadratic** in the length of the input bits. -/
+/-- **The step bound of the clocked universal machine is quadratic.** For every code $c$, list
+of bits $x$ and clock $T \in \mathbb{N}$, the step bound of the whole clocked universal machine
+on $(c, x, T)$ is at most $18 (n + 1)^2$, where $n$ is the length of the input encoding of
+$(c, x, T)$. -/
 theorem univTime_le (c : Code) (x : List Bool) (T : ℕ) :
     univTime c x T ≤ 18 * ((encIn c x T).length + 1) ^ 2 := by
   set n := (encIn c x T).length
@@ -110,13 +118,24 @@ theorem univTime_le (c : Code) (x : List Bool) (T : ℕ) :
   simp only [univTime, parseTime, hclock, sum_map_add_three, length_cells]
   nlinarith
 
-/-- The polynomial step bound of the component. -/
+/-- **Step bound polynomial of the clocked universal machine.** The polynomial
+$18 (X + 1)^2$ with natural-number coefficients, used as the step bound of the clocked
+universal machine as a host component. -/
 noncomputable def univPoly : Polynomial ℕ := Polynomial.C 18 * (Polynomial.X + 1) ^ 2
 
-/-- **The clocked universal function is polynomial-time computable.** A `FinTM2` reads
-`encIn c x T` and writes `encOut (c.evalSteps x T)`, in time quadratic in the length of the
-input: the component takes at most `univPoly n = 18 (n + 1) ^ 2` steps, and the reduction host
-keeps the degree. -/
+/-- **The clocked universal function is polynomial-time computable.** There are a multi-stack
+Turing machine with finitely many stacks, labels and internal states, whose input and output
+alphabets are in bijection with the bits, and a polynomial $p$ with natural-number coefficients,
+such that for every code $c$, list of bits $x$ and clock $T \in \mathbb{N}$ the following holds.
+Let $n$ be the length of the input encoding of $(c, x, T)$. Started at its main label in its
+initial internal state, with the input encoding of $(c, x, T)$ on its input stack and every other
+stack empty, the machine halts within $p(n)$ steps, with its internal state again the initial
+one, the output encoding of the result of the clocked evaluator on $c$, $x$ and $T$ on its output
+stack, and every other stack empty; both encodings are translated letter by letter through the
+inverses of the bijections.
+
+In the proof, $p$ has degree $2$: the clocked universal machine itself takes at most
+$18 (n + 1)^2$ steps, and running it as a component of the reduction host keeps the degree. -/
 theorem nonempty_univPolyTime :
     Nonempty (TM2ComputableInPolyTime (fun a : Code × List Bool × ℕ ↦ encIn a.1 a.2.1 a.2.2)
       encOut (fun a ↦ a.1.evalSteps a.2.1 a.2.2)) :=

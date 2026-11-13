@@ -94,9 +94,16 @@ private theorem length_of_readUnaryLength_eq_some {x : List Bool} {n : ℕ} {r :
   simp [cell]
   omega
 
-/-- The cell-by-cell check of a code stack, the way the reformatting machine does it: read the
-key `(q, a)` of the next entry, check that it is at least `(pq, pa)`, skip the cells of `q'` and
-`s`, and go on from `(q, a + 1)`. -/
+/-- **Cell-by-cell check of a code stack.** The check of a bit list $x$ from a key $(p_q, p_a)$
+of natural numbers is defined as follows. The empty list passes. Otherwise, calling the cell of a
+number $n$ the $n$ bits $\mathrm{true}$ followed by one bit $\mathrm{false}$, read four cells off
+the front of $x$, those of $q$, $a$, $q'$ and $s$ in this order, leaving the rest $r$. The check
+fails if one of these cells cannot be read because what remains contains no bit
+$\mathrm{false}$, or if the key $(q, a)$ is lexicographically below $(p_q, p_a)$, that is,
+unless $p_q < q$, or $p_q = q$ and $p_a \le a$. Otherwise its result is the check of $r$ from
+the key $(q, a + 1)$.
+
+The reformatting machine checks its input this way. -/
 def chkFrom (pq pa : ℕ) (x : List Bool) : Bool :=
   match x with
   | [] => true
@@ -137,7 +144,13 @@ private theorem readUnaryLength_cell_append (n : ℕ) (r : List Bool) :
     readUnaryLength (cell n ++ r) = some (n, r) :=
   readUnaryLength_eq_some_iff_cell.2 rfl
 
-/-- **The cell-by-cell check recognizes code stacks.** -/
+/-- **The cell-by-cell check recognizes code stacks.** For all natural numbers $p_q, p_a$ and
+every bit list $x$, the cell-by-cell check of $x$ from the key $(p_q, p_a)$ succeeds if and only
+if there is a list of $m \ge 0$ entries $(q_1, a_1, q'_1, s_1), \dots, (q_m, a_m, q'_m, s_m)$ of
+natural numbers such that $x$ is the concatenation of the cells of
+$q_1, a_1, q'_1, s_1, \dots, q_m, a_m, q'_m, s_m$, in this order, and the keys $(q_i, a_i)$
+strictly increase in lexicographic order, starting at $(p_q, p_a)$ or above. Here the cell of a
+number $n$ is $n$ bits $\mathrm{true}$ followed by one bit $\mathrm{false}$. -/
 theorem chkFrom_iff (pq pa : ℕ) (x : List Bool) :
     chkFrom pq pa x = true ↔ ∃ es, x = cells (entryNums es) ∧ keysAscendFrom pq pa es = true := by
   induction h : x.length using Nat.strong_induction_on generalizing x pq pa with
@@ -386,7 +399,8 @@ namespace Check
 
 open Function MetaMathlibExt.TM2Program
 
-/-- The stacks of the checking machine. -/
+/-- **Stacks of the checking machine.** The checking machine has twelve stacks, named
+$X, Y, W, V, Q, A, P_Q, P_A, T_1, T_2, J, O$. -/
 inductive K | X | Y | W | V | Q | A | PQ | PA | T1 | T2 | J | O
   deriving DecidableEq
 
@@ -395,7 +409,9 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.X, .Y, .W, .V, .Q, .A, .PQ, .PA, .T1, .T2, .J, .O], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- The labels of the checking machine. -/
+/-- **Labels of the checking machine.** The labels of the checking machine: 23 labels without
+arguments and four families of labels indexed by the outcome of a comparison ($<$, $=$ or $>$),
+35 distinct labels in all. -/
 inductive Lab
   | dupP | dupQ | cpy | lp | rq0 | rq1 | ra0 | ra1
   | cq | cqR (o : Ordering) | cqRB (o : Ordering) | ca | caR (o : Ordering) | caRB (o : Ordering)
@@ -413,21 +429,42 @@ instance Lab.instFintypeEnumFix : Fintype Lab where
     all_goals (try cases ‹Ordering›)
     all_goals decide
 
-/-- Every stack holds bits. -/
+/-- **Stack alphabet of the layout machine.** Every stack of the layout machine holds bits: the
+alphabet of each stack is the type of Booleans. -/
 abbrev Γ : K → Type := fun _ => Bool
 
-/-- Where the comparison of the states leads. -/
+/-- **Branch after comparing states.** The label the checking machine goes to after comparing the
+bound $p$ for the state (the state of the previous key, or $0$ at the first entry) with the
+state $q$ of the current key: if $p < q$, the label $\mathsf{sk0}$, where it starts skipping the
+rest of the entry; if $p = q$, the label $\mathsf{ca}$, where it compares the symbols; if
+$p > q$, the label $\mathsf{bad}$, where it rejects. -/
 def outQ : Ordering → Lab
   | .lt => .sk0
   | .eq => .ca
   | .gt => .bad
 
-/-- Where the comparison of the symbols leads. -/
+/-- **Branch after comparing symbols.** The label the checking machine goes to after comparing
+the bound $p$ for the symbol with the symbol $a$ of the current key: if $p > a$, the label
+$\mathsf{bad}$, where it rejects; if $p < a$ or $p = a$, the label $\mathsf{sk0}$, where it starts
+skipping the rest of the entry. -/
 def outA : Ordering → Lab
   | .gt => .bad
   | _ => .sk0
 
-/-- The program. -/
+/-- **Program of the checking machine.** Writing $1$ for true and $0$ for false, this is the
+program of a multi-stack machine whose stacks $X, Y, W, V, Q, A, P_Q, P_A, T_1, T_2, J, O$ all
+hold bits. To read a cell from $V$ onto a stack $S$ means to pop the leading $1$s of $V$, pushing
+a $1$ on $S$ for each, and then to pop the $0$ that follows; if $V$ is empty at that point, the
+machine rejects. From its first label the program pops the bits of $X$ one at a time, pushing
+each onto both $Y$ and $W$, and then pops the bits of $W$ one at a time onto $V$. Then it loops.
+If $V$ is empty, it pops the bits of $Y$ one at a time onto $O$, pushes a $1$ on $O$ and halts.
+Otherwise it reads a cell from $V$ onto $Q$ and then one onto $A$. With $p_Q$, $q$, $p_A$, $a$
+the numbers of bits on $P_Q$, $Q$, $P_A$, $A$, it compares $p_Q$ with $q$ and, if they are
+equal, $p_A$ with $a$, afterwards pushing back as many $1$s as it popped from each. If
+$p_Q > q$, or $p_Q = q$ and $p_A > a$, it rejects; otherwise it reads two more cells from $V$
+onto $J$, empties $P_Q$ and $P_A$, moves $Q$ onto $P_Q$ and $A$ onto $P_A$ (pushing a $1$ for
+each bit popped), pushes one more $1$ on $P_A$ and loops again. Rejecting pushes a single $0$ on
+$O$ and halts. -/
 def prog : Lab → TM2.Stmt Γ Lab Bool
   | .dupP => .peek .X (fun _ o ↦ o.isSome) (.branch id (.goto fun _ ↦ .dupQ) (.goto fun _ ↦ .cpy))
   | .dupQ => .pop .X (fun _ o ↦ o.getD false) (.branch id
@@ -680,12 +717,15 @@ private theorem dup_run : ∀ (x : List Bool) (v : Bool) (S : ∀ k, List (Γ k)
     · rw [hW]; simp [hS₁]
     · rw [hk k h1 h2 h3]; simp [hS₁, update_of_ne h1, update_of_ne h2, update_of_ne h3]
 
-/-- The checking machine's answer: `true` followed by the input if the input is accepted,
-`[false]` otherwise. -/
+/-- **Answer of the checking machine.** For a bit list $x$, the answer is the list $x$ with
+the bit $\mathrm{true}$ put in front if the cell-by-cell check of $x$ from the key $(0, 0)$
+succeeds, and the one-bit list $[\mathrm{false}]$ otherwise. -/
 def answer (x : List Bool) : List Bool := if chkFrom 0 0 x then true :: x else [false]
 
-/-- **The checking run.** From the bits `x` on `X`, the machine stops at `done` with
-`answer x` on `O` within `33 (|x| + 1) ^ 2` steps. -/
+/-- **The checking run.** For every bit list $x$, the checking machine, started at the label
+$\mathsf{dupP}$ with internal state false, with $x$ on its input stack $X$ and every other stack
+empty, reaches the label $\mathsf{done}$ within $33(|x| + 1)^2$ steps, with some internal state
+and stacks in which the output stack $O$ holds the answer of the checking machine on $x$. -/
 theorem run (x : List Bool) :
     ∃ v S', RunLe prog (33 * (x.length + 1) ^ 2)
       ⟨some .dupP, false, update (fun _ ↦ []) .X x⟩ ⟨some .done, v, S'⟩ ∧ S' .O = answer x := by
@@ -727,7 +767,10 @@ theorem run (x : List Bool) :
       nlinarith
     · simp [answer, hc, hO]
 
-/-- The checking machine as a host component. -/
+/-- **The checking machine as a host component.** The component machine with the twelve stacks
+$X, Y, W, V, Q, A, P_Q, P_A, T_1, T_2, J, O$ of the checking machine, each holding bits, with
+the labels and the program of the checking machine, and with its stacks listed in the order
+$X, Y, W, V, Q, A, P_Q, P_A, T_1, T_2, J, O$. -/
 abbrev comp : Complexity.Host.Comp where
   K := K
   Γ := Γ
@@ -738,7 +781,9 @@ abbrev comp : Complexity.Host.Comp where
   ks_nodup := by decide
   mem_ks k := by cases k <;> decide
 
-/-- **Checking in polynomial time.** A `FinTM2` writes `answer x` from the bits `x`. -/
+/-- **The checking machine in polynomial time.** A finite multi-stack Turing machine with a
+polynomial time bound that computes the checking answer: given a bit list $x$ as its input, it
+halts within the bound, evaluated at $|x|$, with the checking answer on $x$ as its output. -/
 noncomputable def polyTime :
     TM2ComputableInPolyTime (fun l : List Bool ↦ l) (fun l : List Bool ↦ l) answer :=
   Complexity.Host.reduction (c := comp) (cX := .X) (cO := .O) (gX := id) (start := .dupP)
@@ -756,7 +801,8 @@ namespace Layout
 
 open Function MetaMathlibExt.TM2Program
 
-/-- The stacks of the layout machine. -/
+/-- **Stacks of the layout machine.** The layout machine has twelve stacks, named
+$X, Z, P, P_2, U, N, A_2, B_2, D, C, T, O$. -/
 inductive K | X | Z | P | P2 | U | N | A2 | B2 | D | C | T | O
   deriving DecidableEq
 
@@ -765,7 +811,10 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.X, .Z, .P, .P2, .U, .N, .A2, .B2, .D, .C, .T, .O], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- The labels of the layout machine. -/
+/-- **Labels of the layout machine.** The layout machine has 17 labels, named $\mathsf{s0}$,
+$\mathsf{mvZ}$, $\mathsf{cp0}$, $\mathsf{cp1}$, $\mathsf{lo0}$, $\mathsf{lo1}$, $\mathsf{lo2}$,
+$\mathsf{lo3}$, $\mathsf{lo4}$, $\mathsf{mh}$, $\mathsf{mb}$, $\mathsf{mk}$, $\mathsf{mr}$,
+$\mathsf{lo5}$, $\mathsf{lo6}$, $\mathsf{bad}$ and $\mathsf{done}$. -/
 inductive Lab
   | s0 | mvZ | cp0 | cp1 | lo0 | lo1 | lo2 | lo3 | lo4 | mh | mb | mk | mr | lo5 | lo6 | bad | done
   deriving DecidableEq
@@ -776,11 +825,23 @@ instance Lab.instFintypeEnumFix : Fintype Lab where
     .lo6, .bad, .done], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- Every stack holds bits. -/
+/-- **Stack symbols of the layout machine.** Every stack of the layout machine holds bits: the
+alphabet of each of its stacks is the type of Booleans. -/
 abbrev Γ : K → Type := fun _ => Bool
 
-/-- The program: on `true :: x`, write `cell (|x| ^ 2 + 1) ++ cells (input x) ++ false :: x.reverse`
-on `O`; otherwise write `[false, true, true, false, false]`. -/
+/-- **Program of the layout machine.** Writing $1$ for true and $0$ for false, this is the
+program of a multi-stack machine whose stacks $X, Z, P, P_2, U, N, A_2, B_2, D, C, T, O$ all hold
+bits. To move a stack $S$ onto a stack $S'$ means to pop the bits of $S$ one at a time, pushing
+each onto $S'$, until $S$ is empty; to transfer $S$ to some stacks means to pop $S$ until it is
+empty, pushing a $1$ on each of these stacks for every bit popped. From the label $\mathsf{s0}$
+the program pops $X$. If $X$ was empty or the popped bit is $0$, it pushes $0, 0, 1, 1, 0$ on $O$
+in this order and halts. Otherwise it moves $X$ onto $Z$, and then, as long as $Z$ is nonempty,
+it pops a bit $b$ from $Z$, pushes $b$ on $U$ and a $1$ on $N$, and pushes $0, 1, 1$ on $P$ in
+this order if $b = 1$ and $0, 1$ if $b = 0$. Then it moves $U$ onto $O$, pushes a $0$ on $O$,
+moves $P$ onto $P_2$ and then $P_2$ onto $O$, and transfers $N$ to $A_2$ and $B_2$. Then it
+loops: it pops $A_2$; if a bit was popped, it pushes a $1$ on $D$, transfers $B_2$ to $C$ and
+$T$, transfers $T$ to $B_2$ and loops again; if $A_2$ was empty, it transfers $D$ to $A_2$.
+Finally it pushes $0, 1$ on $O$ in this order, transfers $C$ to $O$ and halts. -/
 def prog : Lab → TM2.Stmt Γ Lab Bool
   | .s0 => .pop .X (fun _ o ↦ o == some true)
       (.branch id (.goto fun _ ↦ .mvZ) (.goto fun _ ↦ .bad))
@@ -846,13 +907,21 @@ private theorem length_cells_input_le (x : List Bool) :
       List.length_cons] at ih ⊢
     omega
 
-/-- The layout function. -/
+/-- **The layout function.** Write $\mathrm{cell}(n)$ for the bit list of $n$ bits
+$\mathrm{true}$ followed by one bit $\mathrm{false}$. On a bit list $\mathrm{true} :: x$, the
+layout function returns $\mathrm{cell}(|x|^2 + 1)$, then the cells $\mathrm{cell}(s)$ of the
+symbols $s$ of the input word of $x$ (the symbol $2$ for each bit $\mathrm{true}$ and $1$ for
+each bit $\mathrm{false}$), then the bit $\mathrm{false}$, then the reverse of $x$. On every other
+bit list, that is, the empty list or a list starting with $\mathrm{false}$, it returns the list
+$[\mathrm{false}, \mathrm{true}, \mathrm{true}, \mathrm{false}, \mathrm{false}]$. -/
 def layout : List Bool → List Bool
   | true :: x => cell (x.length ^ 2 + 1) ++ (cells (input x) ++ (false :: x.reverse))
   | _ => [false, true, true, false, false]
 
-/-- **The layout run.** From the bits `y` on `X`, the machine stops at `done` with `layout y` on
-`O` within `18 (|y| + 1) ^ 2` steps. -/
+/-- **The layout run.** For every bit list $y$, the layout machine, started at the label
+$\mathsf{s0}$ with internal state false, with $y$ on its input stack $X$ and every other stack
+empty, reaches the label $\mathsf{done}$ within $18(|y| + 1)^2$ steps, with some internal state
+and stacks in which the output stack $O$ holds the layout of $y$. -/
 theorem run (y : List Bool) :
     ∃ v S', RunLe prog (18 * (y.length + 1) ^ 2)
       ⟨some .s0, false, update (fun _ ↦ []) .X y⟩ ⟨some .done, v, S'⟩ ∧ S' .O = layout y := by
@@ -958,13 +1027,18 @@ end Layout
 
 /-! ### The upper bound for `n ↦ n ^ 2 + 1` -/
 
-/-- The cell-by-cell check from `(0, 0)` agrees with `decodeCodeCells`. -/
+/-- **The cell-by-cell check agrees with code-stack decoding.** For every bit list $x$, the
+cell-by-cell check of $x$ from the key $(0, 0)$ succeeds if and only if the decoding of $x$ as a
+code stack returns a code. -/
 theorem chkFrom_zero (x : List Bool) : chkFrom 0 0 x = (decodeCodeCells x).isSome := by
   rw [Bool.eq_iff_iff, chkFrom_iff, isSome_decodeCodeCells_iff_entries]
 
 namespace Layout
 
-/-- The layout machine as a host component. -/
+/-- **The layout machine as a host component.** The component machine with the twelve stacks
+$X, Z, P, P_2, U, N, A_2, B_2, D, C, T, O$ of the layout machine, each holding bits, with the
+labels and the program of the layout machine, and with its stacks listed in the order
+$X, Z, P, P_2, U, N, A_2, B_2, D, C, T, O$. -/
 abbrev comp : Complexity.Host.Comp where
   K := K
   Γ := Γ
@@ -975,7 +1049,10 @@ abbrev comp : Complexity.Host.Comp where
   ks_nodup := by decide
   mem_ks k := by cases k <;> decide
 
-/-- **The layout in polynomial time.** A `FinTM2` writes `layout y` from the bits `y`. -/
+/-- **The layout in polynomial time.** A finite multi-stack Turing machine, whose input and
+output alphabets are identified with the bits, together with a polynomial time bound, that
+computes the layout function: given a bit list $y$ as its input, it halts within the bound,
+evaluated at $|y|$, with the layout of $y$ as its output. -/
 noncomputable def polyTime :
     TM2ComputableInPolyTime (fun l : List Bool ↦ l) (fun l : List Bool ↦ l) layout :=
   Complexity.Host.reduction (c := comp) (cX := .X) (cO := .O) (gX := id) (start := .s0)
@@ -987,8 +1064,10 @@ noncomputable def polyTime :
 
 end Layout
 
-/-- The checking machine and then the layout machine write the universal machine's input for
-`diag (fun n ↦ n ^ 2 + 1)`. -/
+/-- **Layout after checking gives the universal machine's input.** For every bit list $x$, let
+$(c, y, T)$ be the universal machine's argument for the diagonal language of $f(n) = n^2 + 1$ on
+$x$. Then the layout function applied to the checking machine's answer on $x$ equals the input
+bit list of the clocked universal machine for the code $c$, the input $y$ and the clock $T$. -/
 theorem layout_answer (x : List Bool) :
     Layout.layout (Check.answer x) =
       encIn (diagArg (fun n ↦ n ^ 2 + 1) x).1 (diagArg (fun n ↦ n ^ 2 + 1) x).2.1
@@ -996,9 +1075,13 @@ theorem layout_answer (x : List Bool) :
   rw [encIn_diagArg, ← chkFrom_zero]
   by_cases h : chkFrom 0 0 x = true <;> simp [Check.answer, Layout.layout, h]
 
-/-- **The reformatting machine for `n ↦ n ^ 2 + 1`.** A polynomial-time `FinTM2` writes the
-universal machine's input `encIn` of `diagArg (fun n ↦ n ^ 2 + 1) x` from the bits `x`: the
-checking machine, then the layout machine. -/
+/-- **The reformatting machine for $n \mapsto n^2 + 1$.** Let $f(n) = n^2 + 1$. This is a
+finite multi-stack Turing machine whose input and output alphabets are identified with the bits,
+together with a polynomial $p$, such that for every bit list $x$, started with $x$ on its input
+stack it halts within $p(|x|)$ steps with output the clocked universal machine's input bits for
+the universal machine's argument $(c, w, T)$ for the diagonal language of $f$ at $x$: the clock
+$T$ as a cell, the cells of the input symbols of $w$, a blank cell and the code stack of $c$
+reversed. It runs the checking machine and then the layout machine. -/
 noncomputable def reformat :
     TM2ComputableInPolyTime (fun x : List Bool ↦ x)
       (fun a : Code × List Bool × ℕ ↦ encIn a.1 a.2.1 a.2.2) (diagArg (fun n ↦ n ^ 2 + 1)) :=
@@ -1012,30 +1095,42 @@ noncomputable def reformat :
 
 end Diag
 
-/-- **The upper bound on raw bits.** A `FinTM2` decides `diag (fun n ↦ n ^ 2 + 1)` in polynomial
-time, reading the input bits and writing the answer bit. -/
+/-- **Deciding the diagonal language on raw bits in polynomial time.** Let $D$ be the diagonal
+language for the time bound $f(n) = n^2 + 1$. There is a finite multi-stack Turing machine that,
+given a bit list $x$ as its input, halts within a number of steps polynomial in $|x|$ with the
+single bit $D(x)$ as its output. -/
 theorem nonempty_diag_sq_add_one_polyTime :
     Nonempty (TM2ComputableInPolyTime (fun x : List Bool ↦ x) (fun b : Bool ↦ [b])
       (diag (fun n ↦ n ^ 2 + 1))) :=
   nonempty_diag_polyTime Diag.reformat
 
-/-- **The diagonal language is in `P`.** The raw-bit decider composed with the decoder of the
-canonical encoding of bit lists (`Cslib.Complexity.DenseSAT.DecodeBits.computable`), as in
-`Cslib.Complexity.Host.isPolyTime_decider`. -/
+/-- **The quadratic diagonal language is in P.** The diagonal language for the time bound
+$f(n) = n^2 + 1$, the set of bit lists $x$ that encode a code which does not halt on $x$ within
+$|x|^2 + 1$ steps with the answer $\mathrm{true}$, is in the class P of decision problems
+decidable in polynomial time.
+
+The decider decodes the canonical encoding of bit lists and then runs a polynomial-time decider
+on the raw bits. -/
 theorem diag_sq_add_one_mem_P : diag (fun n ↦ n ^ 2 + 1) ∈ P := by
   obtain ⟨D⟩ := nonempty_diag_sq_add_one_polyTime
   obtain ⟨h⟩ := MetaMathlibExt.tm2ComputableInPolyTime_comp
     Cslib.Complexity.DenseSAT.DecodeBits.computable D
   exact ⟨⟨h.toTM2ComputableAux, h.time, h.outputsFun⟩⟩
 
-/-- **Diagonalization across models.** Some decision problem in `P` is decided by no code within
-`n ^ 2 + 1` steps: `diag (fun n ↦ n ^ 2 + 1)`. The class `CodeTime (fun n ↦ n ^ 2 + 1)` is not
-empty (`const_false_mem_codeTime`). -/
+/-- **Diagonalization across models.** There is a decision problem in the class P that no code
+decides within $n^2 + 1$ steps: no code halts on every input $x$ within $|x|^2 + 1$ steps with
+the answer for $x$ as its output.
+
+The diagonal language for the time bound $n \mapsto n^2 + 1$ is such a problem. The class of
+problems that codes decide within $n^2 + 1$ steps is not empty: it contains the problem whose
+answer is always $\mathrm{false}$. -/
 theorem exists_mem_P_not_mem_codeTime_sq_add_one :
     ∃ L ∈ P, L ∉ CodeTime (fun n ↦ n ^ 2 + 1) :=
   ⟨diag (fun n ↦ n ^ 2 + 1), diag_sq_add_one_mem_P, diag_not_mem_codeTime _⟩
 
-/-- **`P ⊄ CodeTime (n ↦ n ^ 2 + 1)`.** -/
+/-- **Polynomial time is not contained in code time $n^2 + 1$.** Some decision problem in
+$\mathsf{P}$ is decided by no code within $n^2 + 1$ steps on every input of length $n$; that is,
+$\mathsf{P}$ is not a subset of the class $\mathrm{CodeTime}(n \mapsto n^2 + 1)$. -/
 theorem not_P_subset_codeTime_sq_add_one : ¬ P ⊆ CodeTime (fun n ↦ n ^ 2 + 1) := fun h ↦
   diag_not_mem_codeTime _ (h diag_sq_add_one_mem_P)
 

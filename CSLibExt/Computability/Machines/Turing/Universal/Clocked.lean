@@ -77,16 +77,20 @@ namespace Cslib.Turing.Universal.Clocked
 
 open _root_.Turing Function MetaMathlibExt.TM2Program
 
-/-- A number as a cell of a stack: that many units (`true`), then a marker (`false`). -/
+/-- **The cell of a number.** The cell of a natural number $n$ is the list of bits consisting of
+$n$ copies of the bit true (units) followed by one bit false (a marker). -/
 def cell (n : ℕ) : List Bool := cnt true n ++ [false]
 
-/-- A list of numbers as consecutive cells, the first on top. -/
+/-- **The cells of a list of numbers.** The cells of a list $(n_1, \ldots, n_m)$ of natural numbers
+are the concatenation of the cells of $n_1, \ldots, n_m$ in this order, so that the cell of $n_1$
+comes first (on top of a stack). -/
 def cells (l : List ℕ) : List Bool := l.flatMap cell
 
-/-- The stacks: the state `Q`, the next state `N`, the action `A`, the head cell `H` (counters
-of units), the cells left (`L`) and right (`R`) of the head, the code `C`, the scan buffer `B`,
-the scratch counters `T`, `U`, `V`, the clock `Ck`, and the parsing stacks: the encoded input
-`X`, the parse buffer `P` and the output `O`. -/
+/-- **Stacks of the clocked universal machine.** The clocked universal machine has fifteen
+stacks: the state $Q$, the next state $N$, the action $A$ and the head cell $H$ (these four hold
+counters of units), the cells left ($L$) and right ($R$) of the head, the code $C$, the scan
+buffer $B$, the scratch counters $T$, $U$, $V$, the clock $\mathrm{Ck}$, and the parsing stacks:
+the encoded input $X$, the parse buffer $P$ and the output $O$. -/
 inductive K | Q | N | A | H | L | R | C | B | T | U | V | Ck | X | P | O
   deriving DecidableEq
 
@@ -95,11 +99,14 @@ instance K.instFintypeEnumFix : Fintype K where
   elems := ⟨↑[K.Q, .N, .A, .H, .L, .R, .C, .B, .T, .U, .V, .Ck, .X, .P, .O], by decide⟩
   complete := fun x => by cases x <;> decide
 
-/-- The labels: the tape update (`act*`, `wr*`, `mvL*`, `mvR*`), the clock tick `fin`, the scan
-(`sc0`, `rq*`, `cq*`, `sq*` for the state; `ra*`, `ca*`, `sa*` for the head cell; `sk*` to skip
-the rest of an entry; `rd*` to read a match), the restores `rs` and `nf`, the exits `hlt` and
-`tmo`, the parse of the encoded input (`pc*`, `px*`, `pk0`), and the output phase (`o1`–`o6`,
-`done`). -/
+/-- **Labels of the clocked universal machine.** The labels of the program of the clocked
+universal machine: the tape update (`act0`–`act3`, `wr0`, `wr1`, `mvL0`–`mvL3`, `mvR0`–`mvR3`)
+and the clock tick `fin`; the scan, which starts at `sc0` and has labels for the state
+(`rq0`–`rq2`; `cqA o` and `cqB o` for each comparison outcome `o`; `sq0 m` and `sq1 m` for each
+bit `m`), for the head cell (`ra0`–`ra2`; `caA o`, `caB o`; `sa0 m`, `sa1 m`), for skipping the
+rest of an entry (`sk3a`, `sk3b`, `sk2a`, `sk2b`, `sk1a`, `sk1b`) and for reading a match
+(`rd0`–`rd7`); the restores `rs` and `nf`; the exits `hlt` and `tmo`; the parse of the encoded
+input (`pc0`, `pc1`, `px0`–`px6`, `pk0`); and the output phase (`o1`–`o6`, `done`). -/
 inductive Lab
   | act0 | act1 | act2 | act3 | wr0 | wr1 | mvL0 | mvL1 | mvL2 | mvL3 | mvR0 | mvR1 | mvR2 | mvR3
   | fin
@@ -128,23 +135,61 @@ instance Lab.instFintypeEnumFix : Fintype Lab where
     all_goals (try cases ‹Bool›)
     all_goals decide
 
-/-- Every stack holds bits. -/
+/-- **Stack alphabet of the clocked universal machine.** Every stack $k$ of the clocked universal
+machine holds bits: its alphabet is $\Gamma(k) = \mathrm{Bool}$. -/
 abbrev Γ : K → Type := fun _ => Bool
 
-/-- Read a unit as the bit `true`; a marker ends a block. -/
+/-- **Decoding units.** The unit decoder sends the bit true (a unit) to the bit true, and sends
+the bit false (a marker) to no bit, which ends a block. -/
 def dU (b : Bool) : Option Bool := if b then some true else none
 
-/-- Move the marker on top of `C` onto `B`, then go to `next`. -/
+/-- **Moving a marker onto the scan buffer.** For a label $\ell$, this instruction pops the top
+symbol of the code stack $C$ and discards it (doing nothing if $C$ is empty), pushes a marker (the
+bit false) onto the scan buffer $B$, and goes to $\ell$; the state bit is unchanged. -/
 def mark (next : Lab) : TM2.Stmt Γ Lab Bool :=
   .pop .C (fun v _ ↦ v) (.push .B (fun _ ↦ false) (.goto fun _ ↦ next))
 
-/-- The program. The tape update: `act0`, `act1` replace the state by `N`; `act2`, `act3` branch
-on the action: `0` moves left (`mvL*`), `1` moves right (`mvR*`), `a + 2` writes `a` (`wr*`). A
-move pushes the head cell onto the stack it moves away from, then pops the next cell of the other
-stack into `H` (an empty stack reads as a blank cell). The scan: `sc0` stops at `nf` on an empty
-`C`; otherwise the first number of the entry goes to `T` and is compared with `Q`, then saved on
-`B`, and likewise the second with `H`; a mismatch skips the rest of the entry onto `B`, a match
-copies the last two numbers to `N` and `A`. `rs` and `nf` move `B` back onto `C`. -/
+/-- **The clocked universal program.** The program of the clocked universal machine gives an
+instruction for every label. Numbers sit on stacks as counters of units (the bit true), and a cell
+is a counter followed by a marker (the bit false).
+
+Tape update. $\mathsf{act0}$ empties $Q$ and $\mathsf{act1}$ moves the counter $N$ onto $Q$.
+$\mathsf{act2}$ pops $A$ and goes to $\mathsf{mvL0}$ if $A$ was empty, else to $\mathsf{act3}$,
+which pops $A$ and goes to $\mathsf{mvR0}$ if $A$ was empty, else to $\mathsf{wr0}$; so the action
+$0$ moves left, $1$ moves right and $a + 2$ writes $a$. $\mathsf{wr0}$ empties $H$ and
+$\mathsf{wr1}$ moves the counter $A$ onto $H$. A left move ($\mathsf{mvL0}$ to $\mathsf{mvL3}$)
+pushes a marker on $R$, moves the units of $H$ onto $R$, moves the units on top of $L$ onto $H$
+and pops one more symbol of $L$; a right move ($\mathsf{mvR0}$ to $\mathsf{mvR3}$) does the same
+with $L$ and $R$ exchanged. Writes and moves end at $\mathsf{fin}$, which pops the clock $Ck$ and
+goes to $\mathsf{tmo}$ if it was empty, else to $\mathsf{sc0}$.
+
+Scan. $\mathsf{sc0}$ goes to $\mathsf{nf}$ if $C$ is empty, else to $\mathsf{rq0}$. Then
+$\mathsf{rq0}$, $\mathsf{rq1}$ move the units on top of $C$ onto $T$ and pop the next symbol of
+$C$; $\mathsf{rq2}$ compares $T$ with $Q$ unit by unit, parking the popped units on $U$ and $V$;
+$\mathsf{cqA}$, $\mathsf{cqB}$ move $U$ back onto $T$ and $V$ back onto $Q$; $\mathsf{sq0}$,
+$\mathsf{sq1}$ move $T$ onto $B$, push a marker on $B$, and go to $\mathsf{ra0}$ if the two
+counters were equal, else to $\mathsf{sk3a}$. The labels $\mathsf{ra0}$ to $\mathsf{sa1}$ do the
+same with $H$ in place of $Q$, and go to $\mathsf{rd0}$ on equality, else to $\mathsf{sk2a}$.
+From $\mathsf{sk3a}$, $\mathsf{sk2a}$ or $\mathsf{sk1a}$ the program moves three, two or one
+further cells of $C$ onto $B$ (the units, then the next symbol replaced by a marker) and returns
+to $\mathsf{sc0}$. The labels $\mathsf{rd0}$ to $\mathsf{rd3}$ move the units on top of $C$ onto
+both $N$ and $B$, pop the next symbol of $C$ and push a marker on $B$; $\mathsf{rd4}$ to
+$\mathsf{rd7}$ do the same with $A$ in place of $N$ and go to $\mathsf{rs}$. Finally
+$\mathsf{rs}$ and $\mathsf{nf}$ move all of $B$ back onto $C$, one symbol at a time, and go to
+$\mathsf{act0}$ and $\mathsf{hlt}$ respectively.
+
+Parse. $\mathsf{pc0}$, $\mathsf{pc1}$ move the units on top of $X$ onto $Ck$ and pop the next
+symbol of $X$. Then, while the top of $X$ is a unit, $\mathsf{px0}$ to $\mathsf{px2}$ move the
+units on top of $X$ onto $P$, pop the next symbol of $X$ and push a marker on $P$; otherwise
+$\mathsf{px3}$ pops $X$, $\mathsf{px4}$ moves all of $P$ onto $R$, $\mathsf{px5}$, $\mathsf{px6}$
+move the units on top of $R$ onto $H$ and pop the next symbol of $R$, and $\mathsf{pk0}$ moves all
+of $X$ onto $C$ and goes to $\mathsf{sc0}$.
+
+Exits. $\mathsf{tmo}$ pushes a marker on $O$ and goes to $\mathsf{done}$. $\mathsf{hlt}$ pushes a
+marker on $R$, $\mathsf{o1}$ moves the units of $H$ onto $R$, $\mathsf{o2}$ moves all of $R$ onto
+$P$, $\mathsf{o3}$ pops the markers on top of $P$, $\mathsf{o4}$ pushes one marker on $P$ unless
+$P$ is empty, $\mathsf{o5}$ moves all of $P$ onto $O$, and $\mathsf{o6}$ pushes a unit on $O$ and
+goes to $\mathsf{done}$, where the program halts. -/
 def prog : Lab → TM2.Stmt Γ Lab Bool
   | .act0 => xfer .Q [] .act0 .act1
   | .act1 => xfer .N [⟨.Q, true⟩] .act1 .act2
@@ -216,14 +261,19 @@ def prog : Lab → TM2.Stmt Γ Lab Bool
 
 /-! ### The code as a list of keyed entries -/
 
-/-- The entries of a code: `(q, a, q', s)` for every table position `(q, a)` holding
-`some (q', s)`, row by row. -/
+/-- **Entries of a code.** For a code $c$, the list of quadruples $(q, a, q', s)$, one for each
+state $q$ and symbol $a$ inside the table of $c$ whose table entry is a transition $(q', s)$
+(enter the state $q'$ and do the action coded by $s$); halting positions are skipped. The
+quadruples are listed row by row, by increasing $q$, and within a row by increasing $a$. -/
 def entries (c : Code) : List (ℕ × ℕ × ℕ × ℕ) :=
   (List.range c.table.length).flatMap fun q ↦
     (List.range (c.table.getD q []).length).filterMap fun a ↦
       (c.lookup q a).map fun e ↦ (q, a, e.1, e.2)
 
-/-- The answer of the first entry with key `(q, a)`, the way the machine scans for it. -/
+/-- **Looking up a key in a list of entries.** For natural numbers $q$ and $a$ and a list of
+quadruples $(q_i, a_i, q'_i, s_i)$ of natural numbers, the result is the pair $(q'_i, s_i)$ of
+the first quadruple in the list with $q_i = q$ and $a_i = a$, and no result if no quadruple has
+the key $(q, a)$. This is the order in which the machine scans the code stack. -/
 def findEntry (q a : ℕ) : List (ℕ × ℕ × ℕ × ℕ) → Option (ℕ × ℕ)
   | [] => none
   | e :: es => if e.1 = q ∧ e.2.1 = a then some (e.2.2.1, e.2.2.2) else findEntry q a es
@@ -268,7 +318,10 @@ private theorem pairwise_entries (c : Code) :
     simp only [ne_eq, Prod.mk.injEq, not_and]
     omega
 
-/-- The scan finds the table entry. -/
+/-- **Scanning the entries finds the table entry.** For every code $c$ and all natural numbers
+$q$ and $a$, looking up the key $(q, a)$ in the entries of $c$ gives the entry of the table of
+$c$ at state $q$ and symbol $a$: the pair $(q', s)$ if that position holds the transition
+$(q', s)$, and no result if it halts, including every position outside the table. -/
 theorem findEntry_entries (c : Code) (q a : ℕ) : findEntry q a (entries c) = c.lookup q a := by
   have key : ∀ es : List (ℕ × ℕ × ℕ × ℕ),
       es.Pairwise (fun e e' ↦ (e.1, e.2.1) ≠ (e'.1, e'.2.1)) →
@@ -296,15 +349,24 @@ theorem findEntry_entries (c : Code) (q a : ℕ) : findEntry q a (entries c) = c
         · exact h'
   exact key _ (pairwise_entries c) fun q' s ↦ mem_entries
 
-/-- The numbers of the entries, four per entry. -/
+/-- **Numbers of a list of entries.** For a list of quadruples of natural numbers, the list of
+natural numbers obtained by replacing each quadruple $(q, a, q', s)$ by the four numbers
+$q, a, q', s$ in this order, keeping the order of the quadruples. -/
 def entryNums (es : List (ℕ × ℕ × ℕ × ℕ)) : List ℕ :=
   es.flatMap fun e ↦ [e.1, e.2.1, e.2.2.1, e.2.2.2]
 
-/-- The code stack: the cells of the numbers of the entries of the code. -/
+/-- **The code stack.** The code stack of a code $c$ is the list of bits formed by the cells of the
+numbers $q, a, q', s$ of every entry $(q, a, q', s)$ of $c$ (a table position $(q, a)$ holding the
+transition $(q', s)$), with the entries ordered by $q$ and then by $a$, and the four numbers of an
+entry in the order $q, a, q', s$. -/
 def codeCells (c : Code) : List Bool := cells (entryNums (entries c))
 
-/-- The stacks holding the code `c`, the clock `t`, the configuration `k`, the next state `q'` and
-the action `s`. -/
+/-- **The stacks of a simulated configuration.** For a code $c$, a natural number $t$ (the clock),
+a configuration $k$ and natural numbers $q'$ and $s$, the stacks of $c$, $t$ and $k$ with next
+state $q'$ and action $s$ hold, as counters of units (the bit true): the state of $k$ on $Q$, $q'$
+on $N$, $s$ on $A$, the head symbol of $k$ on $H$ and $t$ on $Ck$. The stacks $L$ and $R$ hold the
+cells of the symbols left and right of the head, nearest first, $C$ holds the code stack of $c$,
+and every other stack is empty. -/
 def stk (c : Code) (t : ℕ) (k : Code.Cfg) (q' s : ℕ) : ∀ j, List (Γ j)
   | .Q => cnt true k.q
   | .N => cnt true q'
@@ -316,7 +378,10 @@ def stk (c : Code) (t : ℕ) (k : Code.Cfg) (q' s : ℕ) : ∀ j, List (Γ j)
   | .Ck => cnt true t
   | _ => []
 
-/-- The step bound of the tape update. -/
+/-- **Step bound of the tape update.** For a configuration $k$ with state $q$, head cell $h$,
+cells $\ell$ left of the head and cells $r$ right of the head (nearest first), a next state $q'$
+and an action $s$, the step bound of the tape update is $q + q' + s + h + \ell_0 + r_0 + 8$, where
+$\ell_0$ and $r_0$ are the first entries of $\ell$ and $r$, taken to be $0$ for an empty list. -/
 def actTime (k : Code.Cfg) (q' s : ℕ) : ℕ :=
   k.q + q' + s + k.head + k.left.headI + k.right.headI + 8
 
@@ -485,9 +550,14 @@ private theorem update_stk_A (c : Code) (t : ℕ) (k : Code.Cfg) (s n : ℕ) :
   funext j
   cases j <;> rfl
 
-/-- **The tape update.** From the stacks of the configuration `k`, the next state `q'` and the
-action `s`, the component reaches `fin` with the stacks of `k.act q' s` (and empty `N`, `A`)
-within `actTime k q' s` steps. -/
+/-- **The tape update.** Let $c$ be a code, $k$ a configuration and $t$, $q'$, $s$ natural
+numbers. Started at the label $\mathsf{act0}$, with any value of its internal variable, on the
+stacks holding the code $c$, the clock $t$ and the configuration $k$, with $q'$ on the next-state
+stack, $s$ on the action stack and all other stacks empty, the program of the clocked universal
+machine reaches the label $\mathsf{fin}$, with some value of its internal variable, on the stacks
+holding $c$, $t$ and the configuration obtained from $k$ by entering the state $q'$ and doing the
+action coded by $s$, with the next-state, action and all other stacks empty. It does so in at
+most as many steps as the step bound of the tape update for $k$, $q'$ and $s$. -/
 theorem act_run (c : Code) (t : ℕ) (k : Code.Cfg) (q' s : ℕ) (v : Bool) :
     ∃ v', RunLe prog (actTime k q' s) ⟨some .act0, v, stk c t k q' s⟩
       ⟨some .fin, v', stk c t (k.act q' s) 0 0⟩ := by
@@ -660,7 +730,8 @@ private theorem cmpA_run (m a : ℕ) (v : Bool) (S : ∀ j, List (Γ j)) (hT : S
   simp only [Nat.compare_eq_eq] at h
   exact h
 
-/-- The cost of scanning past one entry. -/
+/-- **Cost of scanning past one entry.** The step budget for scanning past an entry
+$(q, a, q', s)$ of the code stack is $5q + 5a + 2q' + 2s + 30$. -/
 def entryCost (e : ℕ × ℕ × ℕ × ℕ) : ℕ := 5 * e.1 + 5 * e.2.1 + 2 * e.2.2.1 + 2 * e.2.2.2 + 30
 
 /-- The cells of the entries, the first entry first. -/
@@ -845,8 +916,10 @@ private theorem le_length_of_mem {q a q' s : ℕ} : ∀ {es : List (ℕ × ℕ �
     · have := le_length_of_mem h
       omega
 
-/-- The step bound: linear in the length of the code stack, the state, and the head cell and its
-two neighbours. -/
+/-- **Step bound of one simulated step.** For a code $c$ and a configuration $k$ with state $q$,
+head cell $h$, nearest left cell $l$ and nearest right cell $r$ (each read as the blank $0$ when
+there is no such cell), let $|C|$ be the length of the code stack of $c$. The step bound of $c$
+at $k$ is $10|C| + q + h + l + r + 10$. -/
 def stepTime (c : Code) (k : Code.Cfg) : ℕ :=
   10 * (codeCells c).length + k.q + k.head + k.left.headI + k.right.headI + 10
 
@@ -864,9 +937,12 @@ private theorem scan_stk (c : Code) (t : ℕ) (k : Code.Cfg) (v : Bool) :
   exact ⟨v', S', hr.mono (by have := sum_entryCost_le (entries c); simp only [codeCells]; omega),
     by simpa [stk] using hinv, hN, hA, hfr⟩
 
-/-- **One simulated step, running case.** If the code `c` has a transition from `k` to `k'`,
-the component goes from the stacks of `k` at `sc0` to the stacks of `k'` at `fin` within
-`stepTime c k` steps. -/
+/-- **One simulated step, running case.** Let $c$ be a code, $k$ and $k'$ configurations such that
+one step of $c$ from $k$ gives $k'$, $t$ a natural number, $v$ a bit, and $b$ the step bound of
+$c$ at $k$. Started at the label $\mathsf{sc0}$ with state bit $v$ and the stacks of the code $c$,
+the clock $t$ and the configuration $k$ with next state and action $0$, the clocked universal
+program reaches the label $\mathsf{fin}$ within $b$ steps, with some state bit and the stacks of
+$c$, $t$ and $k'$ with next state and action $0$. -/
 theorem step_run_of_step_eq_some {c : Code} {k k' : Code.Cfg} (h : c.step k = some k') (t : ℕ)
     (v : Bool) :
     ∃ v', RunLe prog (stepTime c k) ⟨some .sc0, v, stk c t k 0 0⟩
@@ -894,8 +970,12 @@ theorem step_run_of_step_eq_some {c : Code} {k k' : Code.Cfg} (h : c.step k = so
   simp only [stepTime, actTime, codeCells] at hB hqs ⊢
   omega
 
-/-- **One simulated step, halting case.** If the code `c` halts at `k`, the component goes from
-the stacks of `k` at `sc0` back to the same stacks at `hlt` within `stepTime c k` steps. -/
+/-- **One simulated step, halting case.** Let $c$ be a code, $k$ a configuration at which $c$ halts
+(one step of $c$ from $k$ gives nothing), $t$ a natural number, $v$ a bit, and $b$ the step bound
+of $c$ at $k$. Started at the label $\mathsf{sc0}$ with state bit $v$ and the stacks of the code
+$c$, the clock $t$ and the configuration $k$ with next state and action $0$, the clocked universal
+program reaches the label $\mathsf{hlt}$ within $b$ steps, with some state bit and the same
+stacks. -/
 theorem step_run_of_step_eq_none {c : Code} {k : Code.Cfg} (h : c.step k = none) (t : ℕ)
     (v : Bool) :
     ∃ v', RunLe prog (stepTime c k) ⟨some .sc0, v, stk c t k 0 0⟩
@@ -923,7 +1003,8 @@ theorem step_run_of_step_eq_none {c : Code} {k : Code.Cfg} (h : c.step k = none)
 
 /-! ### The clocked loop -/
 
-/-- All numbers of a configuration, its state and its cells, are at most `M`. -/
+/-- **Configurations bounded by $M$.** A configuration $k$ is bounded by a natural number $M$
+when its state, its head cell and every cell left and right of the head are at most $M$. -/
 def Bounded (M : ℕ) (k : Code.Cfg) : Prop :=
   k.q ≤ M ∧ k.head ≤ M ∧ (∀ a ∈ k.left, a ≤ M) ∧ ∀ a ∈ k.right, a ≤ M
 
@@ -963,8 +1044,10 @@ private theorem bounded_init (x : List Bool) {M : ℕ} (hM : 2 ≤ M) : Bounded 
   exact ⟨Nat.zero_le _, headI_le hin, by simp [Code.init],
     fun a ha ↦ hin a (List.mem_of_mem_tail ha)⟩
 
-/-- The cost of one round of the loop (a simulated step and a clock tick) on configurations whose
-numbers are at most `M`. -/
+/-- **Step bound of the clocked loop.** For a code $c$ and a number $M$, the loop step time is
+$10\ell + 4M + 11$, where $\ell$ is the length of the code stack of $c$. It serves as the cost
+bound of one round of the loop (a simulated step and a clock tick) on configurations whose numbers
+are at most $M$. -/
 def loopStepTime (c : Code) (M : ℕ) : ℕ := 10 * (codeCells c).length + 4 * M + 11
 
 /-- The step bound under `Bounded M`. -/
@@ -981,10 +1064,16 @@ private theorem iterate_stepOrStay_of_step_eq_none {c : Code} {k : Code.Cfg} (h 
     (n : ℕ) : c.stepOrStay^[n] k = k :=
   Function.iterate_fixed (by rw [Code.stepOrStay, h, Option.getD_none]) n
 
-/-- **The clocked loop.** From `sc0` with the configuration `k` and the clock `t`, if the
-configuration after `t` clocked steps has halted, the machine stops at `hlt` with its stacks
-(and some clock left); otherwise it stops at `tmo` with the stacks of the next configuration and
-an empty clock. It takes at most `t + 1` rounds. -/
+/-- **The clocked loop.** Let $c$ be a code, let $M$ be at least the length of the code stack of
+$c$, let $k$ be a configuration whose state and cells are all at most $M$, let $t$ be a natural
+number and $v$ a bit, and let $k_t$ be the result of $t$ steps of $c$ from $k$, where a halted
+configuration stays put. Start the program of the clocked universal machine at label `sc0` with
+variable $v$ and the stacks of $c$, the clock $t$ and $k$ (next state and action $0$). If $k_t$
+has halted, then within $(t + 1) \cdot L(c, M)$ steps, where $L(c, M)$ is the loop step time,
+the program reaches label `hlt` with some variable and the stacks of $c$, some clock $t'$ and
+$k_t$ (next state and action $0$). If instead $c$ steps $k_t$ to $k''$, then within the same
+number of steps it reaches label `tmo` with some variable and the stacks of $c$, the clock $0$
+and $k''$ (next state and action $0$). -/
 theorem loop_run {c : Code} {M : ℕ} (hM : (codeCells c).length ≤ M) :
     ∀ (t : ℕ) (k : Code.Cfg), Bounded M k → ∀ v : Bool,
       (c.step (c.stepOrStay^[t] k) = none →
@@ -1045,14 +1134,25 @@ theorem loop_run {c : Code} {M : ℕ} (hM : (codeCells c).length ≤ M) :
       · obtain ⟨v', hr'⟩ := ih₂ k'' h'
         exact ⟨v', ((hr.trans (h₂.le le_rfl)).trans hr').mono hB⟩
 
-/-- The step bound of the clocked machine on the clock `T`. -/
+/-- **Step bound of the clocked simulation.** For a code $c$ and a clock $T$, let $|C|$ be the
+length of the code stack of $c$. The step bound of the clocked simulation on the clock $T$ is
+$T + 1$ times the cost of one round of the loop on configurations whose numbers are at most
+$|C| + 2$, that is, $(T + 1)(14|C| + 19)$. -/
 def clockTime (c : Code) (T : ℕ) : ℕ := (T + 1) * loopStepTime c ((codeCells c).length + 2)
 
-/-- **The clocked universal machine on stacks.** Started at `sc0` with the code stack of `c`,
-the initial configuration on the bits `x` and the clock `T`: if `c.evalSteps x T` is defined, the
-machine stops at `hlt` holding the halting configuration `c.cfgAfter x T` (whose `output` is the
-value of `evalSteps`); otherwise it stops at `tmo`. Either way within `clockTime c T` steps, which
-is `O((T + 1) · (|codeCells c| + 1))`. -/
+/-- **The clocked universal machine on stacks.** Let $c$ be a code, $x$ a list of bits and $T$ a
+natural number, and let $|C|$ be the length of the code stack of $c$. Start the program of the
+clocked universal machine at the label $\mathsf{sc0}$, with any value of its internal variable,
+on the stacks holding the code $c$, the clock $T$ and the initial configuration on $x$, all other
+stacks empty. If the clocked evaluation of $c$ on $x$ for $T$ steps is defined, the machine
+reaches the label $\mathsf{hlt}$ on the stacks holding $c$, some clock $t'$ and the configuration
+of $c$ after $T$ steps on $x$; otherwise it reaches the label $\mathsf{tmo}$ on the stacks holding
+$c$, the clock $0$ and some configuration. In both cases the internal variable ends with some
+value, all other stacks are empty, and the run takes at most $(T + 1)(14|C| + 19)$ steps, the
+step bound of the clocked machine on the clock $T$.
+
+When the clocked evaluation is defined, its value is the output of the configuration of $c$ after
+$T$ steps on $x$. -/
 theorem clocked_run (c : Code) (x : List Bool) (T : ℕ) (v : Bool) :
     ((c.evalSteps x T).isSome → ∃ v' t', RunLe prog (clockTime c T)
       ⟨some .sc0, v, stk c T (Code.init x) 0 0⟩ ⟨some .hlt, v', stk c t' (c.cfgAfter x T) 0 0⟩) ∧
@@ -1171,18 +1271,28 @@ private theorem xloop_run : ∀ (l : List ℕ), (∀ n ∈ l, 1 ≤ n) → ∀ (
     simp only [List.map_cons, List.sum_cons]
     omega
 
-/-- The input bits of the clocked machine: the clock as a cell, the cells of the input symbols,
-a blank cell, and the code stack reversed. -/
+/-- **Input encoding of the clocked universal machine.** For a code $c$, a list of bits $x$ and a
+clock $T$, the input of the clocked universal machine is the list of bits formed by the cell of
+$T$, then the cells of the input word of $x$, then the cell of $0$ (a blank cell, the single bit
+false), then the code stack of $c$ in reverse order. -/
 def encIn (c : Code) (x : List Bool) (T : ℕ) : List Bool :=
   cell T ++ (cells (input x) ++ (false :: (codeCells c).reverse))
 
-/-- The cost of reading the input. -/
+/-- **Cost of reading the input.** For a code $c$, a list of bits $x$ and a natural number $T$, let
+$w_1, \dots, w_n$ be the input word of $x$ (false as the symbol $1$, true as $2$), with $w_1$ read
+as $0$ when $x$ is empty, let $S_j = \sum_{i=1}^{n} (w_i + j)$, and let $m$ be the length of the
+code stack of $c$. The cost of reading the input is
+$T + 2 + (S_3 + 2) + (S_1 + 1) + (w_1 + 2) + (m + 1)$. -/
 def parseTime (c : Code) (x : List Bool) (T : ℕ) : ℕ :=
   T + 2 + (((input x).map (· + 3)).sum + 2) + ((cells (input x)).length + 1) +
     ((input x).headI + 2) + ((codeCells c).length + 1)
 
-/-- **Reading the input.** From `encIn c x T` on `X`, the machine reaches `sc0` with the stacks of
-the code `c`, the clock `T` and the initial configuration on `x`. -/
+/-- **Reading the input.** Let $c$ be a code, $x$ a list of bits and $T$ a natural number, and let
+$p$ be the cost of reading the input of $c$, $x$ and $T$. Started at the label $\mathsf{pc0}$ with
+state bit false, the input encoding of $c$, $x$ and $T$ on the stack $X$ and every other stack
+empty, the clocked universal program reaches the label $\mathsf{sc0}$ in exactly $p$ steps, with
+some state bit and the stacks of the code $c$, the clock $T$ and the initial configuration on $x$,
+with next state and action $0$. -/
 theorem parse_run (c : Code) (x : List Bool) (T : ℕ) :
     ∃ v', Run prog (parseTime c x T) ⟨some .pc0, false, update (fun _ ↦ []) .X (encIn c x T)⟩
       ⟨some .sc0, v', stk c T (Code.init x) 0 0⟩ := by
@@ -1259,13 +1369,21 @@ private theorem trim_cells (l : List ℕ) :
     · rw [List.rdropWhile_concat_neg _ _ (a + 1) (by simp), hc]
       simp [cnt_succ]
 
-/-- The output bits: `false` for a timeout, otherwise `true` and the cells of the output. -/
+/-- **Output encoding of the clocked universal machine.** The output bits of an optional list of
+numbers: no result (a timeout) is encoded as the single bit false, and a result $l$ is encoded as
+the bit true followed by the cells of $l$, where a number $n$ is written as $n$ bits true followed
+by one bit false. -/
 def encOut : Option (List ℕ) → List Bool
   | none => [false]
   | some l => true :: cells l
 
-/-- **Writing the output.** From `hlt` with the stacks of `k`, the machine reaches `done` with
-`true` and the cells of `k.output` on `O`. -/
+/-- **Writing the output.** Let $c$ be a code, $t$ a natural number, $k$ a configuration and $v$ a
+bit, and let $N$ be the length of the cells of the head symbol of $k$ followed by the symbols to
+its right (a symbol $a$ takes $a + 1$ bits). Started at the label $\mathsf{hlt}$ with state bit $v$
+and the stacks of the code $c$, the clock $t$ and the configuration $k$ with next state and action
+$0$, the clocked universal program reaches the label $\mathsf{done}$ within $4N + 8$ steps, with
+some state bit and stacks in which the output stack $O$ holds the encoding of the output of $k$:
+the bit true followed by the cells of the output of $k$. -/
 theorem out_run (c : Code) (t : ℕ) (k : Code.Cfg) (v : Bool) :
     ∃ v' S', RunLe prog (4 * (cells (k.head :: k.right)).length + 8) ⟨some .hlt, v, stk c t k 0 0⟩
       ⟨some .done, v', S'⟩ ∧ S' .O = encOut (some k.output) := by
@@ -1311,7 +1429,11 @@ theorem out_run (c : Code) (t : ℕ) (k : Code.Cfg) (v : Bool) :
   · have hO : S5 .O = [] := by simp [S5, S4, S3, S2, S1, S0, addU, stk]
     simp only [S6, update_self, h5P, hO, List.reverse_reverse, List.append_nil, encOut]
 
-/-- **Writing a timeout.** From `tmo`, the machine reaches `done` with `false` on `O`. -/
+/-- **Writing a timeout.** Let $c$ be a code, $t$ a natural number, $k$ a configuration and $v$ a
+bit. Started at the label $\mathsf{tmo}$ with state bit $v$ and the stacks of the code $c$, the
+clock $t$ and the configuration $k$ with next state and action $0$, the clocked universal program
+reaches the label $\mathsf{done}$ in exactly one step, with the same state bit and the same stacks
+except that the output stack $O$ holds the timeout encoding, the single bit false. -/
 theorem tmo_run (c : Code) (t : ℕ) (k : Code.Cfg) (v : Bool) :
     Run prog 1 ⟨some .tmo, v, stk c t k 0 0⟩
       ⟨some .done, v, update (stk c t k 0 0) .O (encOut none)⟩ :=
@@ -1358,13 +1480,26 @@ private theorem length_cells_le {M : ℕ} : ∀ {l : List ℕ}, (∀ a ∈ l, a 
     rw [Nat.succ_mul]
     omega
 
-/-- The step bound of the whole machine on `(c, x, T)`: reading the input, the clocked loop and
-writing the output. -/
+/-- **Step bound of the clocked universal machine.** For a code $c$, a list of bits $x$ and a
+natural number $T$, the step bound of the whole machine on $(c, x, T)$ is the sum of three terms:
+the cost of reading the input on $(c, x, T)$, the step bound of the clocked simulation on the
+clock $T$, and the output bound $4\,(|x| + T + 1)\,(|C| + 3) + 8$, where $|x|$ is the length of
+$x$ and $|C|$ is the length of the code stack of $c$. -/
 def univTime (c : Code) (x : List Bool) (T : ℕ) : ℕ :=
   parseTime c x T + clockTime c T + (4 * ((x.length + T + 1) * ((codeCells c).length + 3)) + 8)
 
-/-- **The whole machine.** From `encIn c x T` on `X`, the machine reaches `done` with
-`encOut (c.evalSteps x T)` on `O` within `univTime c x T` steps. -/
+/-- **Correctness and running time of the clocked universal machine.** Let $c$ be a code, $x$ a
+list of bits and $T$ a natural number. Start the clocked universal stack program at the label
+$\mathrm{pc0}$ with internal bit $\mathrm{false}$, with every stack empty except $X$, which holds
+the input encoding of $(c, x, T)$: the cell of $T$, the cells of the input symbols of $x$ (the
+symbol $1$ for $\mathrm{false}$ and $2$ for $\mathrm{true}$), the bit $\mathrm{false}$, and the
+code stack of $c$ reversed, where the cell of a number $n$ is $n$ bits $\mathrm{true}$ followed
+by the bit $\mathrm{false}$. Then within at most $N(c, x, T)$ steps, where $N$ is the step bound
+of the whole machine, the program reaches the label $\mathrm{done}$ (with some internal bit and
+some stack contents) with the output encoding of the clocked evaluation of $c$ on $x$ with clock
+$T$ on the stack $O$: the single bit $\mathrm{false}$ if the coded machine does not halt within
+$T$ steps, and otherwise the bit $\mathrm{true}$ followed by the cells of its output, the tape
+from the head rightwards without trailing blanks. -/
 theorem univ_run (c : Code) (x : List Bool) (T : ℕ) :
     ∃ v' S', RunLe prog (univTime c x T) ⟨some .pc0, false, update (fun _ ↦ []) .X (encIn c x T)⟩
       ⟨some .done, v', S'⟩ ∧ S' .O = encOut (c.evalSteps x T) := by

@@ -36,7 +36,11 @@ universe u v w
 
 variable {Symbol : Type u} {State : Type v} {State' : Type w}
 
-/-- A morphism of deterministic automata preserves the start state, transitions, and acceptance. -/
+/-- **Morphisms of DFAs.** Let $M$ and $N$ be DFAs over the same alphabet with transition
+functions $\delta_M$ and $\delta_N$. A morphism from $M$ to $N$ is a map $f$ from the states of
+$M$ to the states of $N$ that sends the start state of $M$ to the start state of $N$, satisfies
+$f(\delta_M(q, a)) = \delta_N(f(q), a)$ for every state $q$ of $M$ and every symbol $a$, and
+such that each state $q$ of $M$ is accepting if and only if $f(q)$ is accepting in $N$. -/
 structure DFAHom (M : DFA Symbol State) (N : DFA Symbol State') where
   toFun : State → State'
   map_start : toFun M.start = N.start
@@ -55,7 +59,9 @@ theorem DFAHom.ext {M : DFA Symbol State} {N : DFA Symbol State'}
   simp only [mk.injEq]
   exact funext h
 
-/-- A DFA morphism commutes with evaluation from every state. -/
+/-- **DFA morphisms commute with evaluation from a state.** If $f$ is a morphism from a DFA $M$
+to a DFA $N$, then for every state $q$ of $M$ and every word $x$, running $N$ on $x$ from $f(q)$
+ends in the image under $f$ of the state reached by running $M$ on $x$ from $q$. -/
 theorem DFAHom.map_evalFrom {M : DFA Symbol State} {N : DFA Symbol State'}
     (f : DFAHom M N) (q : State) (x : List Symbol) :
     f (M.evalFrom q x) = N.evalFrom (f q) x := by
@@ -65,25 +71,31 @@ theorem DFAHom.map_evalFrom {M : DFA Symbol State} {N : DFA Symbol State'}
       rw [DFA.evalFrom_cons, DFA.evalFrom_cons, ← f.map_step]
       exact ih (M.step q a)
 
-/-- A DFA morphism commutes with evaluation from the start state. -/
+/-- **DFA morphisms commute with evaluation.** If $f$ is a morphism from a DFA $M$ to a DFA $N$,
+then for every word $x$, the state that $N$ reaches on input $x$ from its start state is the
+image under $f$ of the state that $M$ reaches on input $x$ from its start state. -/
 theorem DFAHom.map_eval {M : DFA Symbol State} {N : DFA Symbol State'}
     (f : DFAHom M N) (x : List Symbol) : f (M.eval x) = N.eval x := by
   simp only [DFA.eval, f.map_evalFrom, f.map_start]
 
-/-- A DFA morphism preserves the accepted language. -/
+/-- **DFA morphisms preserve the accepted language.** If $f$ is a morphism from a DFA $M$ to a DFA
+$N$ over the same alphabet, then $M$ and $N$ accept the same language. -/
 theorem DFAHom.accepts_eq {M : DFA Symbol State} {N : DFA Symbol State'}
     (f : DFAHom M N) : M.accepts = N.accepts := by
   ext x
   simpa only [DFA.mem_accepts, f.map_eval] using f.mem_accept_iff (M.eval x)
 
-/-- The identity morphism. -/
+/-- **Identity DFA morphism.** For every DFA $M$, the identity map on the states of $M$ is a DFA
+morphism from $M$ to itself. -/
 def DFAHom.refl (M : DFA Symbol State) : DFAHom M M where
   toFun := id
   map_start := rfl
   map_step := fun _ _ ↦ rfl
   mem_accept_iff := fun _ ↦ Iff.rfl
 
-/-- Composition of DFA morphisms. -/
+/-- **Composition of DFA morphisms.** If $f$ is a DFA morphism from $M$ to $N$ and $g$ is a DFA
+morphism from $N$ to $P$, where $M$, $N$, $P$ are DFAs over the same alphabet, then the composite
+of $g$ and $f$ is the DFA morphism from $M$ to $P$ whose state map is $g \circ f$. -/
 def DFAHom.comp {State'' : Type*} {M : DFA Symbol State} {N : DFA Symbol State'}
     {P : DFA Symbol State''} (g : DFAHom N P) (f : DFAHom M N) : DFAHom M P where
   toFun := g ∘ f
@@ -91,12 +103,18 @@ def DFAHom.comp {State'' : Type*} {M : DFA Symbol State} {N : DFA Symbol State'}
   map_step := by intro q a; rw [Function.comp_apply, f.map_step, g.map_step, Function.comp_apply]
   mem_accept_iff := fun q ↦ (f.mem_accept_iff q).trans (g.mem_accept_iff (f q))
 
-/-- An automaton is state-separated when distinct states have distinct continuation languages. -/
+/-- **State-separated DFA.** A DFA $M$ is state-separated when any two equivalent states of $M$
+are equal: if $p \ne q$, then the languages of words accepted by $M$ starting from $p$ and from
+$q$ are different. -/
 def StateSeparated (M : DFA Symbol State) : Prop :=
   ∀ ⦃p q⦄, StateEquivalent M p q → p = q
 
-/-- The canonical map from an accessible DFA to the residual-language DFA of its accepted
-language. -/
+/-- **The canonical residual map.** Let $M$ be an accessible DFA accepting the language $L$. The
+residual-language DFA of $L$ has as states the left quotients $x^{-1}L = \{y \mid xy \in L\}$
+for words $x$, start state $L$, transitions $K \mapsto a^{-1}K$ on a symbol $a$, and a state $K$
+is accepting when it contains the empty word. The canonical residual map is the DFA morphism from
+$M$ to this DFA that sends each state $q$ of $M$ to its continuation language, the set of words
+$z$ such that running $M$ from $q$ on $z$ ends in an accepting state. -/
 noncomputable def canonicalResidualHom (M : DFA Symbol State) (hacc : Accessible M) :
     DFAHom M M.accepts.toDFA where
   toFun q := by
@@ -121,8 +139,9 @@ theorem canonicalResidualHom_val (M : DFA Symbol State) (hacc : Accessible M) (q
     (canonicalResidualHom M hacc q).val = M.acceptsFrom q :=
   rfl
 
-/-- The canonical quotient map is onto: every residual state is represented by a reachable source
-state. -/
+/-- **The canonical residual map is surjective.** For an accessible DFA $M$, every state of the
+residual-language DFA of the language accepted by $M$ is the image of some state of $M$ under
+the canonical residual map. -/
 theorem canonicalResidualHom_surjective (M : DFA Symbol State) (hacc : Accessible M) :
     Function.Surjective (canonicalResidualHom M hacc) := by
   intro r
@@ -131,8 +150,10 @@ theorem canonicalResidualHom_surjective (M : DFA Symbol State) (hacc : Accessibl
   rw [canonicalResidualHom_val, ← Language.leftQuotient_accepts_apply]
   exact hx
 
-/-- The canonical quotient map is injective exactly when the source has no observationally
-equivalent duplicate states. -/
+/-- **Injectivity of the canonical residual map.** For an accessible DFA $M$, the canonical
+residual map from $M$ to the residual-language DFA of its accepted language is injective if and
+only if $M$ is state-separated, that is, any two states of $M$ with the same continuation
+language are equal. -/
 theorem canonicalResidualHom_injective_iff (M : DFA Symbol State) (hacc : Accessible M) :
     Function.Injective (canonicalResidualHom M hacc) ↔ StateSeparated M := by
   constructor
@@ -144,14 +165,19 @@ theorem canonicalResidualHom_injective_iff (M : DFA Symbol State) (hacc : Access
     apply hsep
     exact Subtype.ext_iff.mp hpq
 
-/-- An accessible, state-separated automaton has exactly the canonical residual state space. -/
+/-- **States of an accessible, state-separated DFA correspond to residuals.** Let $M$ be a DFA
+that is accessible and state-separated, and let $L$ be the language it accepts. The map sending
+each state $q$ of $M$ to the language of words accepted by $M$ starting from $q$ is a bijection
+from the states of $M$ onto the set of left quotients $\{z : xz \in L\}$ of $L$ by words $x$. -/
 noncomputable def stateEquivResidualsOfSeparated (M : DFA Symbol State) (hacc : Accessible M)
     (hsep : StateSeparated M) : State ≃ Set.range M.accepts.leftQuotient :=
   Equiv.ofBijective (canonicalResidualHom M hacc)
     ⟨(canonicalResidualHom_injective_iff M hacc).mpr hsep,
       canonicalResidualHom_surjective M hacc⟩
 
-/-- Accessibility makes the canonical residual map the unique DFA morphism to the residual DFA. -/
+/-- **Uniqueness of the canonical residual map.** For an accessible DFA $M$ accepting the
+language $L$, every DFA morphism from $M$ to the residual-language DFA of $L$ equals the
+canonical residual map. -/
 theorem canonicalResidualHom_unique (M : DFA Symbol State) (hacc : Accessible M)
     (f : DFAHom M M.accepts.toDFA) : f = canonicalResidualHom M hacc := by
   ext q
