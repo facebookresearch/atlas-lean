@@ -22,7 +22,11 @@ import MathlibExt.Biology.Dynamics.TuringPatterns
   `[0, 1]` with Neumann boundary conditions no admissible wavenumber `k_n = n π` is unstable:
   no Neumann Fourier mode `cos(n π x)` is unstable, so no such mode can supply the eigenvalue
   hypothesis of the instability theorems. (That the linearized operator has no other unstable
-  eigenvalue would need completeness of the Neumann modes, not formalized here.) -/
+  eigenvalue would need completeness of the Neumann modes, not formalized here.)
+* Public proof steps used from outside `Instability`: `duhamel` on an exact orbit and on a
+  forced orbit, `geom_sum_le` (sharp at `μ = 0`), `exists_escape_radius` with the constant
+  `1/4` and the failure at `c = 0`, `flow_escape_of_map_escape` for the flow `2ᵗ x`, and
+  `exists_norm_pow_le_of_spectralRadius_lt` for a nilpotent operator of norm at least `10`. -/
 
 namespace MathlibExtTest.Analysis.PDE.SemilinearFlow.Instability
 
@@ -118,5 +122,94 @@ example : IsUnstableMode (schnakenbergJacobian (1 / 10) (9 / 10)) 1 9 (Real.sqrt
   norm_num [schnakenbergJacobian] at hs ⊢
   rw [div_le_iff₀ (by norm_num)]
   nlinarith
+
+/-! ### Public proof steps, used from outside `Instability` -/
+
+/-- `duhamel` on an exact orbit of `L`: every remainder term vanishes, so `yₙ = Lⁿ y₀`. -/
+example {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] (L : X →L[ℝ] X) (y : ℕ → X)
+    (hy : ∀ k, y (k + 1) = L (y k)) (n : ℕ) : y n = (L ^ n) (y 0) := by
+  have h := duhamel L y n
+  simp only [hy, sub_self, map_zero, Finset.sum_const_zero] at h
+  exact sub_eq_zero.1 h
+
+/-- `duhamel` with a nonzero remainder: for the forced orbit `yₖ₊₁ = L yₖ + e`, the deviation
+from the linear orbit is `∑_{j<n} Lʲ e`. -/
+example {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X] (L : X →L[ℝ] X) (y : ℕ → X)
+    (e : X) (hy : ∀ k, y (k + 1) = L (y k) + e) (n : ℕ) :
+    y n - (L ^ n) (y 0) = ∑ j ∈ Finset.range n, (L ^ j) e := by
+  rw [duhamel L y n]
+  simp only [hy, add_sub_cancel_left]
+
+/-- `geom_sum_le` is sharp at the boundary `μ = 0`: the sum is `q^{n-1}`, which equals
+`qⁿ / q`. Here `q = 2`, `n = 3`: both sides are `4`. -/
+example : ∑ j ∈ Finset.range 3, (0 : ℝ) ^ j * 2 ^ (3 - 1 - j) = 4 ∧
+    (2 : ℝ) ^ 3 / (2 - 0) = 4 ∧
+    ∑ j ∈ Finset.range 3, (0 : ℝ) ^ j * 2 ^ (3 - 1 - j) ≤ 2 ^ 3 / (2 - 0) :=
+  ⟨by norm_num [Finset.sum_range_succ], by norm_num, geom_sum_le le_rfl two_pos 3⟩
+
+/-- `geom_sum_le` with `μ = 1`, `q = 2`, `n = 3`: `4 + 2 + 1 = 7 ≤ 8`. -/
+example : ∑ j ∈ Finset.range 3, (1 : ℝ) ^ j * 2 ^ (3 - 1 - j) = 7 ∧
+    ∑ j ∈ Finset.range 3, (1 : ℝ) ^ j * 2 ^ (3 - 1 - j) ≤ 2 ^ 3 / (2 - 1) :=
+  ⟨by norm_num [Finset.sum_range_succ], geom_sum_le zero_le_one one_lt_two 3⟩
+
+/-- `exists_escape_radius` with the constant `c = 1/4` (the choice made in the general
+instability proof), for arbitrary `K ≥ 0`, `r > 0`, `ρ > 0`, `p > 1`. -/
+example {K r ρ p : ℝ} (hK : 0 ≤ K) (hr : 0 < r) (hρ : 0 < ρ) (hp : 1 < p) :
+    ∃ η, 0 < η ∧ η ≤ 2 * ρ / 3 ∧ K * (r * η) ^ (p - 1) ≤ 1 / 4 :=
+  exists_escape_radius hK hr hρ hp (by norm_num)
+
+/-- The hypothesis `0 < c` of `exists_escape_radius` cannot be dropped: with `c = 0`, `K = 1`
+no radius exists. -/
+example : ¬ ∃ η : ℝ, 0 < η ∧ η ≤ 2 * 1 / 3 ∧ (1 : ℝ) * (1 * η) ^ ((2 : ℝ) - 1) ≤ 0 := by
+  rintro ⟨η, hη0, -, h⟩
+  norm_num at h
+  linarith
+
+/-- The flow `Φ t x = 2ᵗ x` on `ℝ`. -/
+noncomputable def powFlow (t : ℝ) (x : ℝ) : ℝ := (2 : ℝ) ^ t * x
+
+/-- `flow_escape_of_map_escape`: the time-`1` map of `powFlow` is `L₂`, so map escape from
+`exists_escape_of_eigenvalue` (zero remainder) transfers to escape of the flow. -/
+example : ∃ ε > 0, ∀ δ > 0, ∃ x : ℝ, ‖x - 0‖ < δ ∧ ∃ t, 0 ≤ t ∧ ε ≤ ‖powFlow t x - 0‖ := by
+  have h1 : ∀ x, powFlow 1 x = L₂ x := fun x => by rw [powFlow, Real.rpow_one, L₂_apply]
+  refine flow_escape_of_map_escape (T := 1) (ρ := 1) zero_le_one
+    (fun x => by rw [powFlow, Real.rpow_zero, one_mul]) (fun n x _ => ?_) ?_
+  · rw [powFlow, powFlow, powFlow, mul_one, mul_one, Real.rpow_one,
+      Real.rpow_add two_pos, Real.rpow_one, ← mul_assoc, mul_comm _ (2 : ℝ)]
+  · refine exists_escape_of_eigenvalue (L := L₂) (ν := (2 : ℝ)) (v := 1) (p := 2) (M := 1)
+      (μ := 2) one_pos le_rfl one_lt_two (fun y _ => ?_) one_ne_zero ?_ ?_ zero_le_two ?_
+      norm_L₂_pow_le
+    · rw [zero_add, h1, sub_zero, sub_self, norm_zero, zero_mul]
+    · rw [L₂_apply, smul_eq_mul]
+    · rw [Real.norm_two]; exact one_lt_two
+    · rw [Real.norm_two, Real.rpow_two]; norm_num
+
+/-- A nilpotent operator on `ℂ × ℂ` with large norm: `N (a, b) = (10 b, 0)`. -/
+noncomputable def nil₁₀ : ℂ × ℂ →L[ℂ] ℂ × ℂ :=
+  (10 : ℂ) • (ContinuousLinearMap.inl ℂ ℂ ℂ).comp (ContinuousLinearMap.snd ℂ ℂ ℂ)
+
+theorem nil₁₀_apply (x : ℂ × ℂ) : nil₁₀ x = (10 * x.2, 0) := by
+  simp [nil₁₀]
+
+theorem nil₁₀_sq : nil₁₀ ^ 2 = 0 := by
+  ext <;> simp [pow_two, nil₁₀_apply]
+
+theorem spectralRadius_nil₁₀ : spectralRadius ℂ nil₁₀ = 0 := by
+  have h := spectrum.spectralRadius_pow_le' (𝕜 := ℂ) nil₁₀ 2
+  rw [nil₁₀_sq, spectrum.spectralRadius_zero, nonpos_iff_eq_zero] at h
+  exact (pow_eq_zero_iff two_ne_zero).1 h
+
+theorem ten_le_norm_nil₁₀ : 10 ≤ ‖nil₁₀‖ := by
+  have h := nil₁₀.le_opNorm (0, 1)
+  rw [nil₁₀_apply] at h
+  simpa [Prod.norm_def] using h
+
+/-- `exists_norm_pow_le_of_spectralRadius_lt` gives decay at rate `1/2` for an operator of norm
+at least `10`: the growth bound comes from the spectral radius `0`, not from `‖N‖`. -/
+example : 1 / 2 < ‖nil₁₀‖ ∧ ∃ M, ∀ n : ℕ, ‖nil₁₀ ^ n‖ ≤ M * (1 / 2 : ℝ) ^ n := by
+  refine ⟨lt_of_lt_of_le (by norm_num) ten_le_norm_nil₁₀,
+    exists_norm_pow_le_of_spectralRadius_lt ?_⟩
+  rw [spectralRadius_nil₁₀]
+  exact ENNReal.ofReal_pos.2 (by norm_num)
 
 end MathlibExtTest.Analysis.PDE.SemilinearFlow.Instability
