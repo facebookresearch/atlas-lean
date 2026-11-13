@@ -31,10 +31,12 @@ fixed-absorption operator.
 
 ## ii. Key results
 
-- `EarthScience.integrating_factor`: `mu(L)*I(L) = I0 + ∫ mu*j`, `mu(s) = exp(∫_0^s kappa)`.
-- `EarthScience.explicit_form`: the Duhamel form for `I(L)`.
-- `EarthScience.finite_basis`: affine observation operator in the basis coefficients.
-- `EarthScience.witness`: `kappa = 1, j = 0, I0 = 1` gives `I(L) = exp(-L)`.
+- `EarthScience.RadiativeTransfer.integrating_factor`: `mu(L)*I(L) = I0 + ∫ mu*j`,
+  `mu(s) = exp(∫_0^s kappa)`.
+- `EarthScience.RadiativeTransfer.explicit_form`: the Duhamel form for `I(L)`.
+- `EarthScience.RadiativeTransfer.finite_basis`: affine observation operator in the basis
+  coefficients.
+- `EarthScience.RadiativeTransfer.witness`: `kappa = 1, j = 0, I0 = 1` gives `I(L) = exp(-L)`.
 
 ## iii. Table of contents
 
@@ -47,7 +49,7 @@ fixed-absorption operator.
 
 @[expose] public section
 
-namespace EarthScience
+namespace EarthScience.RadiativeTransfer
 
 
 open MeasureTheory Set intervalIntegral
@@ -229,4 +231,4 @@ theorem witness {I : ℝ → ℝ} {L : ℝ} (hL : 0 ≤ L)
 
 
 
-end EarthScience
+end EarthScience.RadiativeTransfer
