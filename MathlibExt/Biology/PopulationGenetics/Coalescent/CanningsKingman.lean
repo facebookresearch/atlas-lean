@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Biology.PopulationGenetics.Coalescent.Cannings
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.PartitionCoalescent
 public import MathlibExt.Analysis.Normed.Algebra.ExponentialLimit
 public import Mathlib.Data.Fintype.CardEmbedding
@@ -19,12 +20,14 @@ public import Mathlib.Logic.Equiv.Fintype
 A **Cannings model** (Cannings 1974) with population size `N` is a neutral haploid model with
 non-overlapping generations: in each generation the `N` parents have offspring numbers
 `(ν_1, …, ν_N)`, `∑ ν_j = N`, with an exchangeable joint law, independently across
-generations. We encode one generation by the random parent map `f : Fin N → Fin N` (child `c`
-descends from parent `f c`, so `ν_j = offspring f j = #{c | f c = j}`) with a law invariant
-under relabeling the parents (exchangeable offspring numbers, `expect_offspring_comp_perm`)
-and under relabeling the children (children are listed in uniformly random order, so any set of
+generations. One generation is the model `Cannings.CanningsModel` of `Cannings.lean`, shared with
+the Λ-coalescent limit `CanningsLambda`: a `PMF` law on the random parent map `f : Fin N → Fin N`
+(child `c` descends from parent `f c`, so `ν_j = offspring f j = #{c | f c = j}`), invariant
+under relabeling the parents (exchangeable offspring numbers, `expect_offspring_comp_perm`) and
+under relabeling the children (children are listed in uniformly random order, so any set of
 distinct children may serve as the sample). Labeling the children of an exchangeable offspring
-vector uniformly at random gives such a law.
+vector uniformly at random gives such a law. Expectations use the masses `(law f).toReal`
+(`CanningsModel.expect`).
 
 **The Möhle–Sagitov conditions** (`MohleSagitov`). Let
 `c_N = E[ν₁ (ν₁ - 1)] / (N - 1)` (`CanningsModel.pairCoalescence`), the probability that two
@@ -71,8 +74,9 @@ entry of `exp ((t_{i+1} - t_i) • Q)`.
 
 ## Main results
 
-* `CanningsModel`, `CanningsModel.expect_offspring_comp_perm`, `sum_offspring`: the model and its
-  exchangeable offspring numbers.
+* `CanningsModel.expect`, `CanningsModel.expect_offspring_comp_perm`,
+  `CanningsModel.sum_offspring`: expectations under the shared model, and its exchangeable
+  offspring numbers.
 * `CanningsModel.expect_pair`, `CanningsModel.expect_triple`, `CanningsModel.expect_double_le`:
   coalescence probabilities in terms of offspring factorial moments.
 * `MohleSagitov`: the Möhle–Sagitov conditions; `MohleSagitov.tendsto_multiple`: triple and
@@ -100,29 +104,12 @@ entry of `exp ((t_{i+1} - t_i) • Q)`.
 
 open Finset Filter Topology Matrix
 
-namespace MathlibExt.Biology.PopulationGenetics.Coalescent.CanningsKingman
+/-! ### Expectations under a Cannings model
 
-/-! ### The Cannings model -/
+The model is `Cannings.CanningsModel` (`Cannings.lean`). Its expectation layer is stated in the
+namespace of the shared model, so that it applies by dot notation to every `CanningsModel`. -/
 
-/-- A **Cannings model** with population size `N`, in one generation: the law of the random
-parent map `f : Fin N → Fin N` (child `c` of the new generation descends from parent `f c` of
-the previous one). The offspring number of parent `j` is `offspring f j = #{c | f c = j}`.
-The law is invariant under relabeling the parents (`law_perm_comp`: the offspring numbers
-are exchangeable) and under relabeling the children (`law_comp_perm`: children are labeled in
-uniformly random order, so a sample of distinct children may be taken to be any fixed set of
-children). -/
-structure CanningsModel (N : ℕ) where
-  /-- The probability of each parent map. -/
-  law : (Fin N → Fin N) → ℝ
-  law_nonneg : ∀ f, 0 ≤ law f
-  sum_law : ∑ f, law f = 1
-  /-- Exchangeability of the children. -/
-  law_comp_perm : ∀ (σ : Equiv.Perm (Fin N)) (f : Fin N → Fin N), law (f ∘ σ) = law f
-  /-- Exchangeability of the parents (exchangeable offspring numbers). -/
-  law_perm_comp : ∀ (σ : Equiv.Perm (Fin N)) (f : Fin N → Fin N), law (σ ∘ f) = law f
-
-/-- The number of offspring of parent `j` under the parent map `f`. -/
-def offspring {N : ℕ} (f : Fin N → Fin N) (j : Fin N) : ℕ := #{c | f c = j}
+namespace MathlibExt.Biology.PopulationGenetics.Coalescent.Cannings.CanningsModel
 
 /-- The offspring numbers add up to the population size. -/
 theorem sum_offspring {N : ℕ} (f : Fin N → Fin N) : ∑ j, offspring f j = N := by
@@ -130,12 +117,10 @@ theorem sum_offspring {N : ℕ} (f : Fin N → Fin N) : ∑ j, offspring f j = N
   rw [← card_eq_sum_card_fiberwise (f := f) (s := univ) (t := univ) (fun _ _ => mem_univ _)]
   simp
 
-namespace CanningsModel
-
 variable {N : ℕ} (W : CanningsModel N)
 
-/-- Expectation of a real function of the parent map. -/
-def expect (F : (Fin N → Fin N) → ℝ) : ℝ := ∑ f, W.law f * F f
+/-- Expectation of a real function of the parent map, with the masses `(law f).toReal`. -/
+def expect (F : (Fin N → Fin N) → ℝ) : ℝ := ∑ f, (W.law f).toReal * F f
 
 /-- The `m`-th factorial moment `E[(ν)_m] = E[ν (ν - 1) ⋯ (ν - m + 1)]` of the offspring number
 of a parent, averaged over the parents (by exchangeability every parent has the same law,
@@ -160,7 +145,7 @@ theorem expect_const_mul (a : ℝ) (F : (Fin N → Fin N) → ℝ) :
   simp [expect, mul_sum, mul_left_comm]
 
 theorem expect_const (a : ℝ) : W.expect (fun _ => a) = a := by
-  simp [expect, ← sum_mul, W.sum_law]
+  simp [expect, ← sum_mul, W.sum_toReal_law]
 
 theorem expect_sum {ι : Type*} (s : Finset ι) (F : ι → (Fin N → Fin N) → ℝ) :
     W.expect (fun f => ∑ i ∈ s, F i f) = ∑ i ∈ s, W.expect (F i) := by
@@ -169,7 +154,7 @@ theorem expect_sum {ι : Type*} (s : Finset ι) (F : ι → (Fin N → Fin N) �
 
 theorem expect_mono {F G : (Fin N → Fin N) → ℝ} (h : ∀ f, F f ≤ G f) :
     W.expect F ≤ W.expect G :=
-  sum_le_sum fun f _ => mul_le_mul_of_nonneg_left (h f) (W.law_nonneg f)
+  sum_le_sum fun f _ => mul_le_mul_of_nonneg_left (h f) ENNReal.toReal_nonneg
 
 theorem expect_nonneg {F : (Fin N → Fin N) → ℝ} (h : ∀ f, 0 ≤ F f) : 0 ≤ W.expect F := by
   simpa [expect] using W.expect_mono (F := fun _ => 0) h
@@ -332,6 +317,17 @@ theorem expect_pair {a b : Fin N} (hab : a ≠ b) :
   have hN0 : (N : ℝ) ≠ 0 := by positivity
   apply mul_left_cancel₀ hN0
   linear_combination h
+
+/-- The pair-coalescence probability `c_N` is the shared model's coalescence probability
+`coalProb` (two sampled lineages have the same parent), so the time scale of this file is the one
+of `CanningsLambda`. -/
+theorem coalProb_eq_pairCoalescence (hN : 2 ≤ N) : W.coalProb = W.pairCoalescence := by
+  rw [← W.expect_pair (a := Fin.castLE hN 0) (b := Fin.castLE hN 1)
+    (fun h => by simpa using congrArg Fin.val h), coalProb, mergeProb, sampleProb_of_le _ _ hN]
+  refine sum_congr rfl fun f _ => ?_
+  congr 1
+  refine if_congr ⟨fun h => h 0 1, fun h i j => ?_⟩ rfl rfl
+  fin_cases i <;> fin_cases j <;> simp [h]
 
 /-! ### Triple and simultaneous coalescences -/
 
@@ -534,7 +530,11 @@ theorem tripleCoalescence_nonneg : 0 ≤ W.tripleCoalescence :=
 theorem doubleBound_nonneg : 0 ≤ W.doubleBound :=
   div_nonneg (W.expect_nonneg fun _ => sq_nonneg _) (by positivity)
 
-end CanningsModel
+end MathlibExt.Biology.PopulationGenetics.Coalescent.Cannings.CanningsModel
+
+namespace MathlibExt.Biology.PopulationGenetics.Coalescent.CanningsKingman
+
+open Cannings
 
 /-! ### The Möhle–Sagitov conditions -/
 
@@ -857,9 +857,38 @@ theorem sum_ancestralMatrix (W : CanningsModel N) (ξ : SamplePartition n) :
     exact W.expect_const 1
   · simp
 
-namespace CanningsModel
+/-! ### One-generation transition probabilities -/
 
-variable (W : CanningsModel N)
+theorem collCount_cast {b : ℕ} (φ : Fin b → Fin N) :
+    (collCount φ : ℝ) = ∑ p ∈ lineagePairs b, if φ p.1 = φ p.2 then (1 : ℝ) else 0 := by
+  rw [collCount, sum_boole]
+
+theorem sum_sum_ne {b : ℕ} (φ : Fin b → Fin N) :
+    (∑ p ∈ lineagePairs b, ∑ q ∈ lineagePairs b,
+        if p ≠ q then (if φ p.1 = φ p.2 then (1 : ℝ) else 0) * (if φ q.1 = φ q.2 then 1 else 0)
+        else 0) = (collCount φ : ℝ) ^ 2 - collCount φ := by
+  set S := lineagePairs b
+  set a : Fin b × Fin b → ℝ := fun p => if φ p.1 = φ p.2 then 1 else 0 with ha_def
+  have ha : ∀ p, a p * a p = a p := by
+    intro p
+    simp only [ha_def]
+    split_ifs <;> norm_num
+  have h1 : ∀ p ∈ S, (∑ q ∈ S, if p ≠ q then a p * a q else 0) = (∑ q ∈ S, a p * a q) - a p := by
+    intro p hp
+    have hsplit : ∀ q, (if p ≠ q then a p * a q else 0) =
+        a p * a q - (if p = q then a p * a q else 0) := by
+      intro q
+      by_cases hpq : p = q <;> simp [hpq]
+    rw [sum_congr rfl fun q _ => hsplit q, sum_sub_distrib, sum_ite_eq, ite_eq_left hp, ha]
+  rw [sum_congr rfl h1, sum_sub_distrib, ← sum_mul_sum, collCount_cast, sq]
+
+end MathlibExt.Biology.PopulationGenetics.Coalescent.CanningsKingman
+
+namespace MathlibExt.Biology.PopulationGenetics.Coalescent.Cannings.CanningsModel
+
+open CanningsKingman
+
+variable {N : ℕ} (W : CanningsModel N)
 
 /-- Three distinct children with a common parent: bound by `tripleCoalescence`. -/
 theorem expect_le_triple {Q : (Fin N → Fin N) → Prop} [DecidablePred Q] {x y z : Fin N}
@@ -938,37 +967,6 @@ theorem expect_two_pairs_le {b : ℕ} {e : Fin b → Fin N} (he : Function.Injec
       (hne hp.ne) (hne h1) (hne h2) (hne h3) (hne h4) (hne hq.ne)
     linarith
 
-end CanningsModel
-
-/-! ### One-generation transition probabilities -/
-
-theorem collCount_cast {b : ℕ} (φ : Fin b → Fin N) :
-    (collCount φ : ℝ) = ∑ p ∈ lineagePairs b, if φ p.1 = φ p.2 then (1 : ℝ) else 0 := by
-  rw [collCount, sum_boole]
-
-theorem sum_sum_ne {b : ℕ} (φ : Fin b → Fin N) :
-    (∑ p ∈ lineagePairs b, ∑ q ∈ lineagePairs b,
-        if p ≠ q then (if φ p.1 = φ p.2 then (1 : ℝ) else 0) * (if φ q.1 = φ q.2 then 1 else 0)
-        else 0) = (collCount φ : ℝ) ^ 2 - collCount φ := by
-  set S := lineagePairs b
-  set a : Fin b × Fin b → ℝ := fun p => if φ p.1 = φ p.2 then 1 else 0 with ha_def
-  have ha : ∀ p, a p * a p = a p := by
-    intro p
-    simp only [ha_def]
-    split_ifs <;> norm_num
-  have h1 : ∀ p ∈ S, (∑ q ∈ S, if p ≠ q then a p * a q else 0) = (∑ q ∈ S, a p * a q) - a p := by
-    intro p hp
-    have hsplit : ∀ q, (if p ≠ q then a p * a q else 0) =
-        a p * a q - (if p = q then a p * a q else 0) := by
-      intro q
-      by_cases hpq : p = q <;> simp [hpq]
-    rw [sum_congr rfl fun q _ => hsplit q, sum_sub_distrib, sum_ite_eq, ite_eq_left hp, ha]
-  rw [sum_congr rfl h1, sum_sub_distrib, ← sum_mul_sum, collCount_cast, sq]
-
-namespace CanningsModel
-
-variable (W : CanningsModel N)
-
 /-- Expected number of coalescing pairs among `b` lineages: `(b.choose 2) c_N`. -/
 theorem expect_collCount {b : ℕ} (h : b ≤ N) :
     W.expect (fun f => (collCount (f ∘ Fin.castLE h) : ℝ)) =
@@ -1011,7 +1009,13 @@ theorem expect_collCount_sq_le {b : ℕ} (h : b ≤ N) :
         simp
     _ = _ := by rw [sum_const, nsmul_eq_mul]; ring
 
-end CanningsModel
+end MathlibExt.Biology.PopulationGenetics.Coalescent.Cannings.CanningsModel
+
+namespace MathlibExt.Biology.PopulationGenetics.Coalescent.CanningsKingman
+
+open Cannings PartitionCoalescent
+
+variable {n N : ℕ}
 
 section Entries
 

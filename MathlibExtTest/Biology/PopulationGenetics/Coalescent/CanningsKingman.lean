@@ -9,9 +9,13 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.CanningsKingman
+public import Mathlib.Probability.ProbabilityMassFunction.Constructions
 
 /-!
 # Tests for Cannings genealogies and Kingman's coalescent
+
+The test models are instances of the shared `Cannings.CanningsModel`, built from real masses by
+`ofReal` (a `PMF.ofFintype` law).
 
 * **Wright–Fisher** (every child picks its parent uniformly and independently, `wf N`): the
   coalescence probabilities are computed by counting parent maps, giving `c_N = 1 / N` (the
@@ -36,17 +40,37 @@ open Finset Filter Topology
 namespace MathlibExtTest.Biology.PopulationGenetics.Coalescent.CanningsKingman
 
 open MathlibExt.Biology.PopulationGenetics.Coalescent
+open MathlibExt.Biology.PopulationGenetics.Coalescent.Cannings
+open MathlibExt.Biology.PopulationGenetics.Coalescent.Cannings.CanningsModel
 open MathlibExt.Biology.PopulationGenetics.Coalescent.CanningsKingman
 open MathlibExt.Biology.PopulationGenetics.Coalescent.PartitionCoalescent
 
 variable {N : ℕ}
 
+/-- A Cannings model from real masses: nonnegative, summing to `1`, and unchanged by relabeling
+the children and the parents. Its law is `PMF.ofFintype` of the masses. -/
+noncomputable def ofReal (w : (Fin N → Fin N) → ℝ) (hw0 : ∀ f, 0 ≤ w f) (hw1 : ∑ f, w f = 1)
+    (hc : ∀ (σ : Equiv.Perm (Fin N)) f, w (f ∘ σ) = w f)
+    (hp : ∀ (σ : Equiv.Perm (Fin N)) f, w (σ ∘ f) = w f) : CanningsModel N where
+  law := PMF.ofFintype (fun f => ENNReal.ofReal (w f)) (by
+    rw [← ENNReal.ofReal_sum_of_nonneg fun f _ => hw0 f, hw1, ENNReal.ofReal_one])
+  law_comp_perm σ f := by simp only [PMF.ofFintype_apply, hc]
+  law_perm_comp σ f := by simp only [PMF.ofFintype_apply, hp]
+
+/-- The real masses of `ofReal w` are `w`. -/
+@[simp]
+theorem toReal_law_ofReal (w : (Fin N → Fin N) → ℝ) (hw0 : ∀ f, 0 ≤ w f) (hw1 : ∑ f, w f = 1)
+    (hc : ∀ (σ : Equiv.Perm (Fin N)) f, w (f ∘ σ) = w f)
+    (hp : ∀ (σ : Equiv.Perm (Fin N)) f, w (σ ∘ f) = w f) (f : Fin N → Fin N) :
+    ((ofReal w hw0 hw1 hc hp).law f).toReal = w f :=
+  ENNReal.toReal_ofReal (hw0 f)
+
 /-- Expectations only see the support of the law. -/
 theorem expect_congr_support (W : CanningsModel N) {F G : (Fin N → Fin N) → ℝ}
-    (h : ∀ f, W.law f ≠ 0 → F f = G f) : W.expect F = W.expect G := by
+    (h : ∀ f, (W.law f).toReal ≠ 0 → F f = G f) : W.expect F = W.expect G := by
   unfold CanningsModel.expect
   refine sum_congr rfl fun f _ => ?_
-  by_cases hf : W.law f = 0
+  by_cases hf : (W.law f).toReal = 0
   · simp [hf]
   · rw [h f hf]
 
@@ -54,17 +78,13 @@ theorem expect_congr_support (W : CanningsModel N) {F G : (Fin N → Fin N) → 
 
 /-- The Wright–Fisher model: every child picks its parent uniformly and independently, so every
 parent map has probability `N ^ (-N)`. -/
-noncomputable def wf (N : ℕ) : CanningsModel N where
-  law _ := ((N : ℝ) ^ N)⁻¹
-  law_nonneg _ := by positivity
-  sum_law := by
+noncomputable def wf (N : ℕ) : CanningsModel N :=
+  ofReal (fun _ => ((N : ℝ) ^ N)⁻¹) (fun _ => by positivity) (by
     rw [sum_const, card_univ, Fintype.card_fun, Fintype.card_fin, nsmul_eq_mul]
     push_cast
     rcases Nat.eq_zero_or_pos N with rfl | hN
     · simp
-    · exact mul_inv_cancel₀ (by positivity)
-  law_comp_perm _ _ := rfl
-  law_perm_comp _ _ := rfl
+    · exact mul_inv_cancel₀ (by positivity)) (fun _ _ => rfl) (fun _ _ => rfl)
 
 /-- Counting parent maps: `N ^ (N - m)` maps give `m + 1` given distinct children a common
 parent. -/
@@ -121,7 +141,7 @@ theorem wf_expect_allEq {m : ℕ} {g : Fin (m + 1) → Fin N} (hg : Function.Inj
     (wf N).expect (fun f => if ∀ i, f (g i) = f (g 0) then 1 else 0) = ((N : ℝ) ^ m)⁻¹ := by
   have hmN : m + 1 ≤ N := by simpa using Fintype.card_le_of_injective g hg
   have hN : (N : ℝ) ≠ 0 := by exact_mod_cast (by omega : N ≠ 0)
-  simp only [CanningsModel.expect, wf]
+  simp only [CanningsModel.expect, wf, toReal_law_ofReal]
   rw [← mul_sum, sum_allEq_wf hg]
   have hpow : (N : ℝ) ^ N = (N : ℝ) ^ (N - m) * (N : ℝ) ^ m := by
     rw [← pow_add, Nat.sub_add_cancel (by omega)]
@@ -149,6 +169,11 @@ example (hN : 2 ≤ N) : (wf N).pairCoalescence = 1 - noCoalProb N 2 := by
   have hN' : (N : ℝ) ≠ 0 := by exact_mod_cast (by omega : N ≠ 0)
   rw [wf_pairCoalescence hN]
   simp [noCoalProb, prod_range_succ]
+
+/-- The coalescence probability `coalProb` of the shared model, as used by `CanningsLambda`, is
+the same `1 / N`. -/
+example (hN : 2 ≤ N) : (wf N).coalProb = (N : ℝ)⁻¹ := by
+  rw [coalProb_eq_pairCoalescence _ hN, wf_pairCoalescence hN]
 
 /-- Wright–Fisher: three distinct children have a common parent with probability `1 / N²`. -/
 theorem wf_tripleCoalescence (hN : 3 ≤ N) : (wf N).tripleCoalescence = ((N : ℝ) ^ 2)⁻¹ := by
@@ -239,20 +264,6 @@ example (n : ℕ) (t : Fin 1 → ℝ) (x : Fin 1 → SamplePartition n) :
 number. -/
 def natPairCount (f : Fin N → Fin N) : ℕ := ∑ j, (offspring f j).descFactorial 2
 
-theorem offspring_comp_perm (σ : Equiv.Perm (Fin N)) (f : Fin N → Fin N) (j : Fin N) :
-    offspring (f ∘ σ) j = offspring f j := by
-  simp only [offspring]
-  refine card_bij (fun c _ => σ c) (by simp) (fun _ _ _ _ h => σ.injective h) ?_
-  intro c hc
-  exact ⟨σ.symm c, by simpa using hc, by simp⟩
-
-theorem offspring_perm_comp (σ : Equiv.Perm (Fin N)) (f : Fin N → Fin N) (j : Fin N) :
-    offspring (σ ∘ f) j = offspring f (σ.symm j) := by
-  simp only [offspring, Function.comp_apply]
-  congr 1
-  ext c
-  simp [Equiv.eq_symm_apply]
-
 theorem natPairCount_comp_perm (σ : Equiv.Perm (Fin N)) (f : Fin N → Fin N) :
     natPairCount (f ∘ σ) = natPairCount f := by
   simp [natPairCount, offspring_comp_perm]
@@ -301,15 +312,16 @@ theorem natPairCount_moranMap (hN : 2 ≤ N) : natPairCount (moranMap hN) = 2 :=
 /-- The Moran model (`N ≥ 2`): uniform over the parent maps in which exactly one ordered pair
 of children, i.e. one unordered pair, shares a parent; equivalently one parent has two offspring,
 one parent none, and all others one, with the children labeled uniformly at random. -/
-noncomputable def moran (N : ℕ) (hN : 2 ≤ N) : CanningsModel N where
-  law f := if natPairCount f = 2 then (#{f : Fin N → Fin N | natPairCount f = 2} : ℝ)⁻¹ else 0
-  law_nonneg f := by split_ifs <;> positivity
-  sum_law := by
-    rw [← sum_filter, sum_const, nsmul_eq_mul]
-    refine mul_inv_cancel₀ ?_
-    exact_mod_cast (card_pos.2 ⟨moranMap hN, by simp [natPairCount_moranMap hN]⟩).ne'
-  law_comp_perm σ f := by simp only [natPairCount_comp_perm]
-  law_perm_comp σ f := by simp only [natPairCount_perm_comp]
+noncomputable def moran (N : ℕ) (hN : 2 ≤ N) : CanningsModel N :=
+  ofReal (fun f => if natPairCount f = 2 then (#{f : Fin N → Fin N | natPairCount f = 2} : ℝ)⁻¹
+      else 0)
+    (fun f => by split_ifs <;> positivity)
+    (by
+      rw [← sum_filter, sum_const, nsmul_eq_mul]
+      refine mul_inv_cancel₀ ?_
+      exact_mod_cast (card_pos.2 ⟨moranMap hN, by simp [natPairCount_moranMap hN]⟩).ne')
+    (fun σ f => by simp only [natPairCount_comp_perm])
+    (fun σ f => by simp only [natPairCount_perm_comp])
 
 theorem moran_pairCount (hN : 2 ≤ N) :
     (moran N hN).expect CanningsModel.pairCount = 2 := by
@@ -397,31 +409,31 @@ theorem moran_mohleSagitov : MohleSagitov moranSeq where
 /-! ### A model violating the conditions: total sweeps -/
 
 /-- Total sweep: the whole generation descends from a single parent, chosen uniformly. -/
-noncomputable def sweep (N : ℕ) : CanningsModel N where
-  law f := if ∀ a b, f a = f b then
-    (#{f : Fin N → Fin N | ∀ a b, f a = f b} : ℝ)⁻¹ else 0
-  law_nonneg f := by split_ifs <;> positivity
-  sum_law := by
-    rw [← sum_filter, sum_const, nsmul_eq_mul]
-    refine mul_inv_cancel₀ ?_
-    have hex : ∃ f : Fin N → Fin N, ∀ a b, f a = f b := by
-      rcases N with _ | N
-      · exact ⟨id, fun a => a.elim0⟩
-      · exact ⟨fun _ => 0, fun _ _ => rfl⟩
-    obtain ⟨f₀, hf₀⟩ := hex
-    exact_mod_cast (card_pos.2 ⟨f₀, mem_filter.2 ⟨mem_univ _, hf₀⟩⟩).ne'
-  law_comp_perm σ f := by
-    have : (∀ a b, (f ∘ σ) a = (f ∘ σ) b) ↔ ∀ a b, f a = f b := by
-      constructor
-      · intro h a b
-        simpa using h (σ.symm a) (σ.symm b)
-      · intro h a b
-        exact h _ _
-    simp only [this]
-  law_perm_comp σ f := by
-    have : (∀ a b, (σ ∘ f) a = (σ ∘ f) b) ↔ ∀ a b, f a = f b := by
-      simp [σ.injective.eq_iff]
-    simp only [this]
+noncomputable def sweep (N : ℕ) : CanningsModel N :=
+  ofReal (fun f => if ∀ a b, f a = f b then (#{f : Fin N → Fin N | ∀ a b, f a = f b} : ℝ)⁻¹
+      else 0)
+    (fun f => by split_ifs <;> positivity)
+    (by
+      rw [← sum_filter, sum_const, nsmul_eq_mul]
+      refine mul_inv_cancel₀ ?_
+      have hex : ∃ f : Fin N → Fin N, ∀ a b, f a = f b := by
+        rcases N with _ | N
+        · exact ⟨id, fun a => a.elim0⟩
+        · exact ⟨fun _ => 0, fun _ _ => rfl⟩
+      obtain ⟨f₀, hf₀⟩ := hex
+      exact_mod_cast (card_pos.2 ⟨f₀, mem_filter.2 ⟨mem_univ _, hf₀⟩⟩).ne')
+    (fun σ f => by
+      have : (∀ a b, (f ∘ σ) a = (f ∘ σ) b) ↔ ∀ a b, f a = f b := by
+        constructor
+        · intro h a b
+          simpa using h (σ.symm a) (σ.symm b)
+        · intro h a b
+          exact h _ _
+      simp only [this])
+    (fun σ f => by
+      have : (∀ a b, (σ ∘ f) a = (σ ∘ f) b) ↔ ∀ a b, f a = f b := by
+        simp [σ.injective.eq_iff]
+      simp only [this])
 
 /-- Under a total sweep every sample of children has a common parent. -/
 theorem sweep_expect_allEq {m : ℕ} (g : Fin (m + 1) → Fin N) :
@@ -435,18 +447,19 @@ theorem sweep_expect_allEq {m : ℕ} (g : Fin (m + 1) → Fin N) :
 
 /-- Mixing two Cannings models with weights `1 - p` and `p`. -/
 noncomputable def mix (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (W₁ W₂ : CanningsModel N) :
-    CanningsModel N where
-  law f := (1 - p) * W₁.law f + p * W₂.law f
-  law_nonneg f := add_nonneg (mul_nonneg (by linarith) (W₁.law_nonneg f))
-    (mul_nonneg hp0 (W₂.law_nonneg f))
-  sum_law := by rw [sum_add_distrib, ← mul_sum, ← mul_sum, W₁.sum_law, W₂.sum_law]; ring
-  law_comp_perm σ f := by rw [W₁.law_comp_perm, W₂.law_comp_perm]
-  law_perm_comp σ f := by rw [W₁.law_perm_comp, W₂.law_perm_comp]
+    CanningsModel N :=
+  ofReal (fun f => (1 - p) * (W₁.law f).toReal + p * (W₂.law f).toReal)
+    (fun f => add_nonneg (mul_nonneg (by linarith) ENNReal.toReal_nonneg)
+      (mul_nonneg hp0 ENNReal.toReal_nonneg))
+    (by rw [sum_add_distrib, ← mul_sum, ← mul_sum, W₁.sum_toReal_law, W₂.sum_toReal_law]; ring)
+    (fun σ f => by simp only [W₁.law_comp_perm, W₂.law_comp_perm])
+    (fun σ f => by simp only [W₁.law_perm_comp, W₂.law_perm_comp])
 
 theorem expect_mix (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (W₁ W₂ : CanningsModel N)
     (F : (Fin N → Fin N) → ℝ) :
     (mix p hp0 hp1 W₁ W₂).expect F = (1 - p) * W₁.expect F + p * W₂.expect F := by
-  simp only [CanningsModel.expect, mix, add_mul, sum_add_distrib, mul_sum, mul_assoc]
+  simp only [CanningsModel.expect, mix, toReal_law_ofReal, add_mul, sum_add_distrib, mul_sum,
+    mul_assoc]
 
 /-- With probability `1 / N` a total sweep, otherwise a Wright–Fisher generation. -/
 noncomputable def sweepMix (N : ℕ) : CanningsModel N :=
