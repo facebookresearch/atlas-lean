@@ -9,7 +9,8 @@ module
 
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.Order.Field.Basic
-public import Mathlib.Tactic.Linarith
+
+import Mathlib.Tactic.Linarith
 
 /-!
 # Remote sensing and radiometric inversion
