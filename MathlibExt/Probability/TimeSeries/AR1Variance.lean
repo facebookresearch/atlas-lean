@@ -14,8 +14,8 @@ public import Mathlib.Probability.Independence.Basic
 /-!
 # Stationary AR(1) variance
 
-If `X = ρ * Y + ε` with `Y` independent of `ε`, all square-integrable, and
-`Var Y = Var X` (stationarity), then `Var X = Var ε / (1 - ρ²)`. The proof is
+If `X = ρ * Y + ε` with `Y` independent of `ε`, `Y` and `ε` square-integrable,
+and `Var Y = Var X` (stationarity), then `Var X = Var ε / (1 - ρ²)`. The proof is
 `ProbabilityTheory.IndepFun.variance_add` plus `variance_const_mul`, followed
 by solving the linear equation `V = ρ² V + σ²`.
 
@@ -38,12 +38,11 @@ open MeasureTheory ProbabilityTheory
 
 namespace MathlibExt.Probability.TimeSeries.AR1Variance
 
-set_option linter.unusedVariables false in
-/-- If `X = ρ * Y + ε` with `Y` independent of `ε`, all square-integrable, and
-`Var Y = Var X` (stationarity), then `Var X = Var ε / (1 - ρ²)`. -/
+/-- If `X = ρ * Y + ε` with `Y` independent of `ε`, `Y` and `ε` square-integrable,
+and `Var Y = Var X` (stationarity), then `Var X = Var ε / (1 - ρ²)`. -/
 theorem stationaryAR1_variance {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     [IsProbabilityMeasure μ] {ρ : ℝ} {X Y ε : Ω → ℝ} (hρ : ρ ^ 2 ≠ 1)
-    (hX : MemLp X 2 μ) (hY : MemLp Y 2 μ) (hε : MemLp ε 2 μ)
+    (hY : MemLp Y 2 μ) (hε : MemLp ε 2 μ)
     (hrec : X = fun ω => ρ * Y ω + ε ω) (hstat : variance Y μ = variance X μ)
     (hindep : IndepFun Y ε μ) :
     variance X μ = variance ε μ / (1 - ρ ^ 2) := by
@@ -65,12 +64,12 @@ theorem stationaryAR1_variance {Ω : Type*} [MeasurableSpace Ω] {μ : Measure �
 variance `4`. -/
 theorem stationaryAR1_variance_example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     [IsProbabilityMeasure μ] {X Y ε : Ω → ℝ}
-    (hX : MemLp X 2 μ) (hY : MemLp Y 2 μ) (hε : MemLp ε 2 μ)
+    (hY : MemLp Y 2 μ) (hε : MemLp ε 2 μ)
     (hrec : X = fun ω => (1 / 2 : ℝ) * Y ω + ε ω) (hstat : variance Y μ = variance X μ)
     (hindep : IndepFun Y ε μ) (hεvar : variance ε μ = 3) :
     variance X μ = 4 := by
   have hρ : ((1 / 2 : ℝ)) ^ 2 ≠ 1 := by norm_num
-  have h := stationaryAR1_variance hρ hX hY hε hrec hstat hindep
+  have h := stationaryAR1_variance hρ hY hε hrec hstat hindep
   rw [hεvar] at h
   norm_num at h
   exact h

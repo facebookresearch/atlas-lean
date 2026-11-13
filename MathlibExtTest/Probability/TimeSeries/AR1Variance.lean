@@ -30,13 +30,13 @@ open MathlibExt.Probability.TimeSeries.AR1Variance
 /-- Test: main theorem with `ρ = 1 / 2`, innovation variance `3`, gives `4`. -/
 example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {X Y ε : Ω → ℝ}
-    (hX : MemLp X 2 μ) (hY : MemLp Y 2 μ) (hε : MemLp ε 2 μ)
+    (hY : MemLp Y 2 μ) (hε : MemLp ε 2 μ)
     (hrec : X = fun ω => (1 / 2 : ℝ) * Y ω + ε ω)
     (hstat : variance Y μ = variance X μ)
     (hindep : IndepFun Y ε μ) (hεvar : variance ε μ = 3) :
     variance X μ = 4 := by
   have hρ : ((1 / 2 : ℝ)) ^ 2 ≠ 1 := by norm_num
-  have h := stationaryAR1_variance (ρ := (1 / 2 : ℝ)) hρ hX hY hε hrec hstat hindep
+  have h := stationaryAR1_variance (ρ := (1 / 2 : ℝ)) hρ hY hε hrec hstat hindep
   rw [hεvar] at h
   norm_num at h
   exact h
@@ -44,12 +44,12 @@ example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasur
 /-- Test: numeric instance theorem applied with exact values. -/
 example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {X Y ε : Ω → ℝ}
-    (hX : MemLp X 2 μ) (hY : MemLp Y 2 μ) (hε : MemLp ε 2 μ)
+    (hY : MemLp Y 2 μ) (hε : MemLp ε 2 μ)
     (hrec : X = fun ω => (1 / 2 : ℝ) * Y ω + ε ω)
     (hstat : variance Y μ = variance X μ)
     (hindep : IndepFun Y ε μ) (hεvar : variance ε μ = 3) :
     variance X μ = 4 :=
-  stationaryAR1_variance_example hX hY hε hrec hstat hindep hεvar
+  stationaryAR1_variance_example hY hε hrec hstat hindep hεvar
 
 /-- Satisfiability: the degenerate instance `X = Y = ε = 0`, `ρ = 0`
 satisfies `hrec`, `hstat`, `hindep`. -/
