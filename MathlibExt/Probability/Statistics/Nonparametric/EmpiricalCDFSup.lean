@@ -15,7 +15,7 @@ public import Mathlib.MeasureTheory.MeasurableSpace.Basic
 public import Mathlib.Order.Bounds.Basic
 public import Mathlib.MeasureTheory.Order.Group.Lattice
 public import Mathlib.MeasureTheory.Function.AEMeasurableOrder
-public import MathlibExt.Probability.Statistics.GlivenkoCantelli
+import MathlibExt.Probability.Statistics.GlivenkoCantelli
 public import MathlibExt.Probability.Quantile
 
 @[expose] public section
@@ -185,8 +185,9 @@ private theorem unif_dev_le_one
 (`hu`: every uniform draw lies in `(0,1)`), the empirical CDF of the coupled sample
 equals the uniform empirical CDF composed with the population CDF, pointwise in `x`
 (by `cdfQuantile_le_iff`, applied simultaneously at every `x`). Hence the KS distance is
-bounded by the uniform deviation over `[0,1]`. No continuity of the population law. -/
-theorem ks_reduction_quantile_coupling
+bounded by the uniform deviation over `[0,1]`. No continuity of the population law.
+Private count-form engine for `ks_reduction_quantile_coupling_empCDF`. -/
+private theorem ks_reduction_quantile_coupling
     {μ : Measure ℝ} [IsProbabilityMeasure μ]
     {u : ℕ → ℝ} {n : ℕ}
     (hu : ∀ i ∈ Finset.range (n + 1), u i ∈ Set.Ioo (0 : ℝ) 1) :
@@ -232,8 +233,9 @@ theorem ks_reduction_quantile_coupling
 
 /-- **Bridge from `empCDF` to `empiricalCount`.** For any real sequence `v`, the
 empirical CDF (`/(n+1)` normalization) of its first `n + 1` terms, viewed as a
-`Fin (n + 1)` sample, equals `empiricalCount (fun i _ => v i) n () x / (n + 1)`. -/
-theorem empCDF_fin_eq_empiricalCount_div {n : ℕ} (v : ℕ → ℝ) (x : ℝ) :
+`Fin (n + 1)` sample, equals `empiricalCount (fun i _ => v i) n () x / (n + 1)`.
+Private bridge used by `ks_reduction_quantile_coupling_empCDF`. -/
+private theorem empCDF_fin_eq_empiricalCount_div {n : ℕ} (v : ℕ → ℝ) (x : ℝ) :
     empCDF (fun i : Fin (n + 1) => v i) x =
       (empiricalCount (fun i _ => v i) n () x : ℝ) / ((n + 1 : ℕ) : ℝ) := by
   classical
@@ -245,12 +247,11 @@ theorem empCDF_fin_eq_empiricalCount_div {n : ℕ} (v : ℕ → ℝ) (x : ℝ) :
   intro i _
   by_cases h : v i ≤ x <;> simp [h]
 
-/-- **Quantile-coupling reduction, `empCDF` form.** This is the `empCDF`-API form of
-`ks_reduction_quantile_coupling`: for a `Fin (n + 1)` sample `u` of draws in `(0,1)`,
-the KS distance between the empirical CDF of the coupled sample
-`fun i => cdfQuantile μ (u i)` and `cdf μ` is bounded by the uniform deviation of
-`empCDF u` over `[0,1]`. Proved from the sequence form through
-`empCDF_fin_eq_empiricalCount_div`. -/
+/-- **Quantile-coupling distribution-free reduction, `empCDF` form.** For a
+`Fin (n + 1)` sample `u` of draws in `(0,1)`, the KS distance between the empirical CDF
+of the coupled sample `fun i => cdfQuantile μ (u i)` and `cdf μ` is bounded by the
+uniform deviation of `empCDF u` over `[0,1]`. No continuity of the population law.
+The proof goes through a private count-form argument. -/
 theorem ks_reduction_quantile_coupling_empCDF
     {μ : Measure ℝ} [IsProbabilityMeasure μ]
     {n : ℕ} {u : Fin (n + 1) → ℝ}

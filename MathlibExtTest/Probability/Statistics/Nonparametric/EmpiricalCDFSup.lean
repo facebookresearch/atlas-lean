@@ -81,22 +81,3 @@ example :
       |ProbabilityTheory.empCDF (fun _ : Fin 1 => (1 / 2 : ℝ)) v - v|) :=
   ProbabilityTheory.ks_reduction_quantile_coupling_empCDF
     (fun _ => Set.mem_Ioo.mpr ⟨by norm_num, by norm_num⟩)
-
--- Use (sequence form): the original theorem on the constant median sequence.
-example :
-    (⨆ x, |((MathlibExt.Probability.Statistics.GlivenkoCantelliWanted.empiricalCount
-        (fun i _ => ProbabilityTheory.cdfQuantile (Measure.dirac (0 : ℝ))
-          ((fun _ : ℕ => (1 / 2 : ℝ)) i)) 1 () x : ℝ) / ((1 + 1 : ℕ) : ℝ))
-        - cdf (Measure.dirac (0 : ℝ)) x|) ≤
-    (⨆ v ∈ Set.Icc (0 : ℝ) 1,
-      |((MathlibExt.Probability.Statistics.GlivenkoCantelliWanted.empiricalCount
-        (fun i _ => (fun _ : ℕ => (1 / 2 : ℝ)) i) 1 () v : ℝ) / ((1 + 1 : ℕ) : ℝ)) - v|) :=
-  ProbabilityTheory.ks_reduction_quantile_coupling
-    (fun _ _ => Set.mem_Ioo.mpr ⟨by norm_num, by norm_num⟩)
-
--- Bridge: `empCDF` of a `Fin (n+1)` prefix is the `empiricalCount` ratio.
-example (x : ℝ) :
-    ProbabilityTheory.empCDF (fun i : Fin 3 => ((i : ℕ) : ℝ)) x =
-      (MathlibExt.Probability.Statistics.GlivenkoCantelliWanted.empiricalCount
-        (fun i _ => ((i : ℕ) : ℝ)) 2 () x : ℝ) / ((2 + 1 : ℕ) : ℝ) :=
-  ProbabilityTheory.empCDF_fin_eq_empiricalCount_div (fun i : ℕ => (i : ℝ)) x
