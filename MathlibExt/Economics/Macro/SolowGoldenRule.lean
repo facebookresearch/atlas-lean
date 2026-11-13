@@ -11,46 +11,78 @@ module
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.Analysis.Calculus.LocalExtr.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Add
-public import Mathlib.Analysis.Calculus.Deriv.Mul
-public import Mathlib.Analysis.Calculus.Deriv.Pow
 
 /-!
-# Golden-rule condition
+# Golden-rule condition for the discrete Solow model
 
-At a steady state the saving rate needed to sustain capital `k` is
-`s(k) = (D - 1 + delta) * k / f(k)` with `D = (1 + n) * (1 + g)`, so
-steady-state consumption per effective worker is
-`c(k) = f(k) - (D - 1 + delta) * k`. Since `D - 1 = n + g + n * g`, the
-exact discrete break-even rate is `delta + n + g + n * g`, not the
-first-order approximation `delta + n + g`. The condition is Fermat applied
-to steady-state consumption: it cites `IsLocalMax.deriv_eq_zero` and does
-not reprove it.
+Capital accumulates as `K' = s * Y + (1 - δ) * K`, while labor and labor-augmenting technology
+grow by the factors `1 + n` and `1 + g` per period. For capital per effective worker `k` and
+output per effective worker `f k`, the law of motion is therefore
+`(1 + n) * (1 + g) * k' = s * f k + (1 - δ) * k`. A steady state at saving rate `s` is a `k`
+with `k' = k` (`IsSteadyState`); it is feasible when `0 ≤ s ≤ 1` (`IsFeasibleSteadyState`).
+
+At a steady state, consumption per effective worker `(1 - s) * f k` equals the objective
+`goldenConsumption f δ n g k = f k - (δ + n + g + n * g) * k`
+(`consumption_eq_goldenConsumption`), since `(1 + n) * (1 + g) - 1 = n + g + n * g`. The golden
+rule maximizes steady-state consumption over feasible steady states; at an interior optimum the
+marginal product equals the exact discrete break-even rate `δ + n + g + n * g`, not the
+first-order approximation `δ + n + g`. The proof applies Fermat's theorem
+(`IsLocalMax.deriv_eq_zero`, cited, not reproved) to the objective.
 
 ## Main results
 
-* `MathlibExt.Economics.Macro.SolowGoldenRule.goldenRule_condition`: at an
-  interior local maximum of steady-state consumption, the marginal product
-  equals the exact discrete break-even rate.
-* `MathlibExt.Economics.Macro.SolowGoldenRule.goldenConsumption_breakEven`:
-  the break-even rate in expanded discrete-factor form.
-* `MathlibExt.Economics.Macro.SolowGoldenRule.goldenRule_example`: the
-  concrete quadratic example at `k = 49/10`.
+* `consumption_eq_goldenConsumption`: steady-state consumption equals the objective.
+* `goldenRule_condition`: at a feasible steady state whose consumption is maximal among nearby
+  feasible steady states, with every nearby capital stock a feasible steady state and `f`
+  differentiable, `deriv f k = δ + n + g + n * g`.
+* `deriv_eq_breakEven_of_isLocalMax`: the unconstrained first-order condition for a local
+  maximum of the objective over all real `k`, with no steady-state or feasibility hypothesis.
+* `goldenConsumption_breakEven`: the break-even rate in expanded discrete-factor form.
+* `goldenRule_example`: the quadratic example at `k = 49/10`, an unconstrained local maximum of
+  the objective.
 
 ## References
+
+* R. M. Solow, A contribution to the theory of economic growth, *Quarterly Journal of
+  Economics* 70(1) (1956), 65–94.
+* E. S. Phelps, The golden rule of accumulation: a fable for growthmen, *American Economic
+  Review* 51(4) (1961), 638–643.
+* P. B. Sørensen and H. J. Whitta-Jacobsen, *Introducing Advanced Macroeconomics: Growth and
+  Business Cycles*, 3rd ed., Oxford University Press (2022), Chapter 3 (the basic Solow model
+  in discrete time and the golden-rule saving rate) and Chapter 5 (the Solow model with
+  technological progress).
 
 Atlas roadmap target MA03.T03.
 -/
 
 @[expose] public section
 
+open scoped Topology
+
 namespace MathlibExt.Economics.Macro.SolowGoldenRule
 
-/-- Steady-state consumption per effective worker as a function of the
-capital stock, at the saving rate that sustains that stock. -/
+/-- The steady-state consumption objective `f k - (δ + n + g + n * g) * k` on capital per
+effective worker `k`. It is defined for every `k`; at a steady state with saving rate `s` it
+equals consumption per effective worker `(1 - s) * f k`
+(`consumption_eq_goldenConsumption`). -/
 noncomputable def goldenConsumption (f : ℝ → ℝ) (δ n g : ℝ) (k : ℝ) : ℝ :=
   f k - (δ + n + g + n * g) * k
+
+/-- The discrete Solow steady-state equation: with saving rate `s`, depreciation rate `δ`, and
+labor and technology growing by the factors `1 + n` and `1 + g` per period, the law of motion
+`(1 + n) * (1 + g) * k' = s * f k + (1 - δ) * k` keeps capital per effective worker at
+`k' = k`. -/
+def IsSteadyState (f : ℝ → ℝ) (s δ n g k : ℝ) : Prop :=
+  (1 + n) * (1 + g) * k = s * f k + (1 - δ) * k
+
+/-- A feasible steady state: the saving rate `s` lies in `[0, 1]` and keeps `k` fixed. -/
+def IsFeasibleSteadyState (f : ℝ → ℝ) (s δ n g k : ℝ) : Prop :=
+  s ∈ Set.Icc (0 : ℝ) 1 ∧ IsSteadyState f s δ n g k
 
 /-- The break-even rate in the consumption function equals the expanded
 discrete factor minus one plus depreciation. -/
@@ -60,11 +92,21 @@ theorem goldenConsumption_breakEven (f : ℝ → ℝ) (δ n g k : ℝ) :
   unfold goldenConsumption
   ring
 
-/-- **Golden rule (Fermat).** At an interior local maximum of steady-state
-consumption, with `f` differentiable there, the marginal product equals the
-exact discrete break-even rate. This cites `IsLocalMax.deriv_eq_zero`; it
-does not reprove Fermat. -/
-theorem goldenRule_condition {f : ℝ → ℝ} {δ n g k : ℝ}
+/-- At a steady state with saving rate `s`, consumption per effective worker `(1 - s) * f k`
+equals the objective `goldenConsumption f δ n g k`. -/
+theorem consumption_eq_goldenConsumption {f : ℝ → ℝ} {s δ n g k : ℝ}
+    (h : IsSteadyState f s δ n g k) :
+    (1 - s) * f k = goldenConsumption f δ n g k := by
+  unfold IsSteadyState at h
+  unfold goldenConsumption
+  linear_combination h
+
+/-- **Unconstrained first-order condition (Fermat).** At a local maximum of the objective
+`goldenConsumption f δ n g` over all real `k`, with `f` differentiable there, the marginal
+product equals the exact discrete break-even rate. No steady-state or feasibility hypothesis is
+made; `goldenRule_condition` is the golden rule over feasible steady states. This cites
+`IsLocalMax.deriv_eq_zero`; it does not reprove Fermat. -/
+theorem deriv_eq_breakEven_of_isLocalMax {f : ℝ → ℝ} {δ n g k : ℝ}
     (hdiff : DifferentiableAt ℝ f k)
     (hmax : IsLocalMax (goldenConsumption f δ n g) k) :
     deriv f k = δ + n + g + n * g := by
@@ -79,9 +121,26 @@ theorem goldenRule_condition {f : ℝ → ℝ} {δ n g k : ℝ}
   rw [hfg, hsub] at hzero
   linarith
 
-/-- **Concrete golden-rule point.** For `f(k) = -k ^ 2 + 10 * k`,
-`δ = n = 1 / 10`, `g = 0`, the point `k = 49 / 10` is a local maximum of
-steady-state consumption and `deriv f (49 / 10) = 1 / 5 = δ + n + g + n * g`. -/
+/-- **Golden rule.** Let `k` be a feasible steady state with saving rate `s₀` whose consumption
+`(1 - s₀) * f k` is at least the consumption `(1 - s) * f x` of every feasible steady state
+`(s, x)` with `x` near `k`. If every capital stock near `k` is a feasible steady state for some
+saving rate (an interior optimum) and `f` is differentiable at `k`, then the marginal product
+equals the exact discrete break-even rate `δ + n + g + n * g`. -/
+theorem goldenRule_condition {f : ℝ → ℝ} {s₀ δ n g k : ℝ}
+    (hdiff : DifferentiableAt ℝ f k)
+    (hk : IsFeasibleSteadyState f s₀ δ n g k)
+    (hint : ∀ᶠ x in 𝓝 k, ∃ s, IsFeasibleSteadyState f s δ n g x)
+    (hmax : ∀ᶠ x in 𝓝 k, ∀ s, IsFeasibleSteadyState f s δ n g x →
+      (1 - s) * f x ≤ (1 - s₀) * f k) :
+    deriv f k = δ + n + g + n * g := by
+  refine deriv_eq_breakEven_of_isLocalMax hdiff ?_
+  filter_upwards [hint, hmax] with x ⟨s, hs⟩ hx
+  rw [← consumption_eq_goldenConsumption hs.2, ← consumption_eq_goldenConsumption hk.2]
+  exact hx s hs
+
+/-- **Concrete first-order point.** For `f(k) = -k ^ 2 + 10 * k`, `δ = n = 1 / 10`, `g = 0`,
+the point `k = 49 / 10` is a local maximum of the objective `goldenConsumption` over all real
+`k`, and `deriv f (49 / 10) = 1 / 5 = δ + n + g + n * g`. -/
 theorem goldenRule_example :
     IsLocalMax (goldenConsumption (fun k : ℝ => -k ^ 2 + 10 * k) (1 / 10) (1 / 10) 0)
         (49 / 10) ∧
