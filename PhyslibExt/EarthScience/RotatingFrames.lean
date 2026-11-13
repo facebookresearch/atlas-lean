@@ -10,9 +10,8 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Prod
 public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Mul
+public import Mathlib.LinearAlgebra.CrossProduct
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-import Mathlib.Tactic.Ring
 import Mathlib.Tactic.FinCases
 
 /-!
@@ -22,63 +21,56 @@ For constant angular velocity `Ω` in `ℝ³`, the Coriolis acceleration
 `2 Ω × v` is perpendicular to the velocity `v`, so a rotating frame does
 no work through the Coriolis term. Differentiating `Ω × r(t)` for
 constant `Ω` gives `Ω × r'(t)`, the transport law that the rotating
-acceleration terms are derived from. The f-plane Coriolis parameter is
-`f = 2 Ω sin φ`.
+acceleration terms are derived from.
 
 ## i. Overview
 
-The cross product is written in components,
-`Ω × v = (Ω₁v₂ - Ω₂v₁, Ω₂v₀ - Ω₀v₂, Ω₀v₁ - Ω₁v₀)`. The dot product
-`v ⬝ᵥ (2 Ω × v)` vanishes by direct expansion. The transport law is
-proved componentwise. The f-plane parameter vanishes at the equator,
-is odd in latitude, and equals `2 Ω` at the pole. Variable `Ω` would
-need a separate Euler-acceleration term and is not treated here.
+The cross product is Mathlib's `crossProduct`, written `Ω ⨯₃ v`, with
+`Ω ⨯₃ v = (Ω₁v₂ - Ω₂v₁, Ω₂v₀ - Ω₀v₂, Ω₀v₁ - Ω₁v₀)` (`cross_apply`). The
+dot product `v ⬝ᵥ (2 • (Ω ⨯₃ v))` vanishes because `v ⬝ᵥ (Ω ⨯₃ v) = 0`
+(`dot_cross_self`). The transport law is proved componentwise. Variable `Ω`
+would need a separate Euler-acceleration term and is not treated here.
 
 ## ii. Key results
 
-- `EarthScience.dot_coriolis_eq_zero`: `v ⬝ᵥ (2 Ω × v) = 0`.
-- `EarthScience.hasDerivAt_cross_const`: the derivative of `Ω × r(t)` is
-  `Ω × r'(t)`.
-- `EarthScience.coriolis_parameter_values`: f-plane values at the
-  equator, under sign flip, and at the pole.
+- `EarthScience.dot_coriolis_eq_zero`: `v ⬝ᵥ (2 • (Ω ⨯₃ v)) = 0`.
+- `EarthScience.hasDerivAt_cross_const`: the derivative of `Ω ⨯₃ r t` is
+  `Ω ⨯₃ r'`.
 
 ## iii. Table of contents
 
-- A. Coriolis perpendicularity, transport, and the f-plane
+- A. Coriolis perpendicularity and transport
 
 ## iv. References
 
+- `crossProduct`, `cross_apply` and `dot_cross_self` in
+  `Mathlib/LinearAlgebra/CrossProduct.lean` (Mathlib).
 - `hasDerivAt_pi` in `Mathlib/Analysis/Calculus/Deriv/Prod.lean`
   (Mathlib).
 
-## A. Coriolis perpendicularity, transport, and the f-plane
+## A. Coriolis perpendicularity and transport
 -/
 
 @[expose] public section
 
 namespace EarthScience
 
+open Matrix
+
 /-- The Coriolis acceleration `2 Ω × v` is perpendicular to the velocity `v`:
-`v ⬝ᵥ (2 Ω × v) = 0`. The cross product is written in components,
-`Ω × v = (Ω₁v₂ - Ω₂v₁, Ω₂v₀ - Ω₀v₂, Ω₀v₁ - Ω₁v₀)`. -/
+`v ⬝ᵥ (2 • (Ω ⨯₃ v)) = 0`. -/
 theorem dot_coriolis_eq_zero (Ω v : Fin 3 → ℝ) :
-    v ⬝ᵥ (2 • ![Ω 1 * v 2 - Ω 2 * v 1, Ω 2 * v 0 - Ω 0 * v 2,
-      Ω 0 * v 1 - Ω 1 * v 0]) = 0 := by
-  simp only [dotProduct, Fin.sum_univ_three, Pi.smul_apply,
-    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
-    Matrix.head_cons, Matrix.tail_cons]
-  ring
+    v ⬝ᵥ (2 • (Ω ⨯₃ v)) = 0 := by
+  rw [dotProduct_smul, dot_cross_self, smul_zero]
 
 /-- Transport of a cross product with constant `Ω`: differentiating
-`Ω × r t` componentwise gives `Ω × r'`, where `r'` is the componentwise
-derivative of `r` at `t`. -/
+`Ω ⨯₃ r t` gives `Ω ⨯₃ r'`, where `r'` is the componentwise derivative of `r`
+at `t`. -/
 theorem hasDerivAt_cross_const (Ω : Fin 3 → ℝ) (r : ℝ → Fin 3 → ℝ)
     (r' : Fin 3 → ℝ) (t : ℝ)
     (h : ∀ i, HasDerivAt (fun t => r t i) (r' i) t) :
-    HasDerivAt (fun t => ![Ω 1 * r t 2 - Ω 2 * r t 1, Ω 2 * r t 0 - Ω 0 * r t 2,
-      Ω 0 * r t 1 - Ω 1 * r t 0])
-      ![Ω 1 * r' 2 - Ω 2 * r' 1, Ω 2 * r' 0 - Ω 0 * r' 2,
-        Ω 0 * r' 1 - Ω 1 * r' 0] t := by
+    HasDerivAt (fun t => Ω ⨯₃ r t) (Ω ⨯₃ r') t := by
+  simp only [cross_apply]
   rw [hasDerivAt_pi]
   intro i
   fin_cases i
@@ -91,16 +83,5 @@ theorem hasDerivAt_cross_const (Ω : Fin 3 → ℝ) (r : ℝ → Fin 3 → ℝ)
   · simp only []
     exact HasDerivAt.sub (HasDerivAt.const_mul (Ω 0) (h 1))
       (HasDerivAt.const_mul (Ω 1) (h 0))
-
-/-- The f-plane Coriolis parameter `f = 2 Ω sin φ` vanishes at the equator
-and is odd in latitude. -/
-theorem coriolis_parameter_values (Ω φ : ℝ) :
-    2 * Ω * Real.sin 0 = 0 ∧
-      2 * Ω * Real.sin (-φ) = -(2 * Ω * Real.sin φ) ∧
-      2 * Ω * Real.sin (Real.pi / 2) = 2 * Ω := by
-  refine ⟨?_, ?_, ?_⟩
-  · simp
-  · rw [Real.sin_neg]; ring
-  · rw [Real.sin_pi_div_two]; ring
 
 end EarthScience
