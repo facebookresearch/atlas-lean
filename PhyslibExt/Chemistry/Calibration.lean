@@ -20,13 +20,13 @@ public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.PosDef
+public import PhyslibExt.Chemistry.Uncertainty.Propagation
 
 /-!
 # Analytical calibration: regression, figures of merit and inverse prediction
 
-Calibration lines from standard data: ordinary least squares as a thin specialization of MF06,
-Gauss-Markov unbiasedness and BLUE, first-order inverse-prediction uncertainty, standard addition
-and internal standards.
+Gauss-Markov unbiasedness and BLUE for calibration lines, first-order inverse-prediction
+uncertainty, standard addition and internal standards.
 
 ## i. Overview
 
@@ -39,39 +39,42 @@ linearity; `R²` is not defined or used here. Concentrations and responses are r
 consistent choice of units, the convention of `Chemistry.Amounts`, which needs no import here
 since no mole or mass concept is used.
 
-Section A specializes the MF06 least-squares API
-(`MathlibExt.Probability.FiniteProbability`): `calibrationSlope` and `calibrationIntercept` are
-pure aliases of `olsSlope` and `olsIntercept`, and the unique-minimizer, residual-sum and
-residual-orthogonality statements are the MF06 lemmas `ols_unique_minimizer_iff`, `sum_resid_ols`
-and `sum_mul_resid_ols`, applied, not re-derived. Section B proves Gauss-Markov unbiasedness in
-the finite-expectation form of MF06 (the integral form is
+The calibration line is the MF06 least-squares line of `MathlibExt.Probability.FiniteProbability`,
+used directly: its slope and intercept are `olsSlope x y` and `olsIntercept x y`, they are the
+unique minimizer of the residual sum of squares iff `Sxx > 0` (`ols_unique_minimizer_iff`), and
+the residuals sum to zero and are orthogonal to `x` (`sum_resid_ols`, `sum_mul_resid_ols`). This
+module adds no second name for any of them.
+
+Section A proves Gauss-Markov unbiasedness in the finite-expectation form of MF06, for errors
+with a finite distribution (the integral form is
 `MathlibExt.Probability.Statistics.LinearModel.integral_olsEstimator_apply`, a different API),
 covariance minimality of OLS among linear estimators by reusing
 `MathlibExt.Probability.Statistics.GaussMarkov.gaussMarkov_covariance_minimality`, bridged from
 its unit-noise form by scaling with `σ ^ 2`, and BLUE, which adds mean-zero errors to combine
-the two. Section C defines inverse prediction `x₀ = (y₀ - a) / b` for a nonzero slope `b` and
-proves its first-order (GUM-style, CHEM-S6) uncertainty propagation, labelled as a
-linearization and never exact for the nonlinear map `(y₀, a, b) ↦ x₀`. Section D
-proves standard addition and internal-standard drift cancellation.
+the two. Section B defines inverse prediction `x₀ = (y₀ - a) / b`, proves the Fréchet derivative
+of the three-input map `(y₀, a, b) ↦ x₀` for a nonzero slope `b`, and specializes the first-order
+(GUM-style, CHEM-S6) law of propagation
+`Chemistry.Uncertainty.measurementFunction_linearizedVariance_firstOrder` to that map, for random
+inputs with finite second moments on a probability space. The result is the variance of the
+linearization, never exact for the nonlinear map. Section C proves standard addition and
+internal-standard drift cancellation.
 
 ## ii. Key results
 
-- `calibration_unique_minimizer_iff`: the calibration slope and intercept are the unique
-  minimizer of the residual sum of squares iff `Sxx > 0` (MF06, applied).
-- `calibration_sum_resid`, `calibration_sum_mul_resid`: calibration residuals sum to zero and
-  are orthogonal to `x` (MF06, applied).
 - `expectation_olsEstimator_calibration`: the OLS estimators are unbiased in the
   finite-expectation sense.
 - `calibration_covariance_minimality`: OLS has the smallest covariance among linear estimators
   `A *ᵥ y` with `A * X = 1`; no mean condition on the errors, so not BLUE by itself.
-- `calibration_blue`: under mean-zero errors, OLS and every such estimator are unbiased and OLS
-  has the smaller covariance (Gauss-Markov BLUE).
-- `variance_firstOrderInversePrediction`: the variance of the linearized inverse-prediction map
-  is the gradient-covariance sandwich.
+- `calibration_blue`: for a finite error distribution with mean-zero errors, OLS and every such
+  estimator are unbiased and OLS has the smaller covariance (Gauss-Markov BLUE).
 - `hasDerivAt_inversePredictionGradient`: for `b ≠ 0`, the gradient entries are the partial
   derivatives of inverse prediction.
-- `firstOrderInversePredictionVariance_gradient_diagonal`: the explicit uncorrelated-inputs
-  formula for `b ≠ 0`, including the response term `u(y₀) ^ 2 / b ^ 2`.
+- `hasFDerivAt_inversePredictionMap`: for `b ≠ 0`, the three-input inverse-prediction map has a
+  Fréchet derivative whose coefficients are the gradient entries.
+- `inversePrediction_linearizedVariance_firstOrder`: the variance of the first-order
+  linearization of inverse prediction is the gradient-covariance sandwich.
+- `inversePrediction_linearizedVariance_firstOrder_uncorrelated`: the explicit
+  uncorrelated-inputs formula, including the response term `u(y₀) ^ 2 / b ^ 2`.
 - `standardAdditionUnknown_eq`: the unknown is intercept over slope under zero-blank linear
   response.
 - `internalStandardRatio_commonDrift`: a common multiplicative drift factor cancels in the
@@ -79,20 +82,21 @@ proves standard addition and internal-standard drift cancellation.
 
 ## iii. Table of contents
 
-- A. Calibration slope, intercept and residuals (MF06 specialization)
-- B. Gauss-Markov unbiasedness and BLUE
-- C. Inverse prediction and first-order uncertainty
-- D. Standard addition and internal standard
+- A. Gauss-Markov unbiasedness and BLUE
+- B. Inverse prediction and first-order uncertainty
+- C. Standard addition and internal standard
 
 ## iv. References
 
-- ATLAS MF06 planning anchors CHEM-S6 (JCGM 100:2008, _Guide to the Expression of Uncertainty
+- ATLAS CH24 planning anchors CHEM-S6 (JCGM 100:2008, _Guide to the Expression of Uncertainty
   in Measurement_) and CHEM-S1 (OpenStax _Chemistry 2e_). No other textbook source is used.
-- `MathlibExt.Probability.FiniteProbability` (MF06 least-squares API).
+- `MathlibExt.Probability.FiniteProbability` (MF06 least-squares and finite-expectation API).
 - `MathlibExt.Probability.Statistics.GaussMarkov.gaussMarkov_covariance_minimality`.
 - `MathlibExt.Probability.Statistics.LinearModel.Sampling` (`olsMatrix`, `olsEstimator`).
+- `Chemistry.Uncertainty.measurementFunction_linearizedVariance_firstOrder` and its uncorrelated
+  specialization (first-order law of propagation of uncertainty).
 
-## A. Calibration slope, intercept and residuals (MF06 specialization)
+## A. Gauss-Markov unbiasedness and BLUE
 -/
 
 @[expose] public section
@@ -101,51 +105,6 @@ open Matrix MathlibExt.Probability.FiniteProbability
   MathlibExt.Probability.Statistics.LinearModel MathlibExt.Probability.Statistics.GaussMarkov
 
 namespace Chemistry.Calibration
-
-/-- The calibration slope of responses `y` on standard concentrations `x` (CH24.1). This is a
-pure alias of the MF06 least-squares slope `olsSlope`; there is no second OLS implementation.
-`calibrationSlope_eq` records the alias. -/
-noncomputable def calibrationSlope {ι : Type*} [Fintype ι] (x y : ι → ℝ) : ℝ :=
-  olsSlope x y
-
-/-- The calibration intercept of responses `y` on standard concentrations `x` (CH24.1). This is
-a pure alias of the MF06 least-squares intercept `olsIntercept`; `calibrationIntercept_eq`
-records the alias. -/
-noncomputable def calibrationIntercept {ι : Type*} [Fintype ι] (x y : ι → ℝ) : ℝ :=
-  olsIntercept x y
-
-/-- `calibrationSlope` is the MF06 slope. -/
-lemma calibrationSlope_eq {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
-    calibrationSlope x y = olsSlope x y :=
-  rfl
-
-/-- `calibrationIntercept` is the MF06 intercept. -/
-lemma calibrationIntercept_eq {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
-    calibrationIntercept x y = olsIntercept x y :=
-  rfl
-
-/-- **Calibration line.** The calibration intercept and slope minimize the residual sum of
-squares, and every minimizer equals them, if and only if `0 < Sxx` (CH24.1). This is the MF06
-lemma `ols_unique_minimizer_iff`, applied. -/
-lemma calibration_unique_minimizer_iff {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
-    (∀ a b, rssLine x y (calibrationIntercept x y) (calibrationSlope x y) ≤ rssLine x y a b ∧
-      (rssLine x y a b ≤ rssLine x y (calibrationIntercept x y) (calibrationSlope x y) →
-        a = calibrationIntercept x y ∧ b = calibrationSlope x y)) ↔ 0 < sxy x x :=
-  ols_unique_minimizer_iff x y
-
-/-- The calibration residuals sum to zero: orthogonality to the constant vector (CH24.2). This
-is the MF06 lemma `sum_resid_ols`, applied. -/
-lemma calibration_sum_resid {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
-    ∑ i, (y i - (calibrationIntercept x y + calibrationSlope x y * x i)) = 0 :=
-  sum_resid_ols x y
-
-/-- The calibration residuals are orthogonal to the standard concentrations `x` (CH24.2). This
-is the MF06 lemma `sum_mul_resid_ols`, applied. -/
-lemma calibration_sum_mul_resid {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
-    ∑ i, x i * (y i - (calibrationIntercept x y + calibrationSlope x y * x i)) = 0 :=
-  sum_mul_resid_ols x y
-
-/-! ## B. Gauss-Markov unbiasedness and BLUE -/
 
 /-- Expectation of an affine map of mean-zero errors: with `∑ ω, p ω = 1` and
 `E[ε i] = 0` for every coordinate, `E[c j + (M *ᵥ ε) j] = c j`. Both unbiasedness proofs
@@ -162,13 +121,17 @@ lemma expectation_const_add_mulVec {m : ℕ} {κ : Type*} {α : Type*} [Fintype 
 
 /-- **Unbiasedness of OLS** (CH24.3a). Under the Gauss-Markov model hypotheses, stated
 explicitly: fixed design `X` with `IsUnit (Xᵀ * X)` (error-free `x`, including an intercept
-column where the design has one), the model equation `y ω = X *ᵥ β + ε ω`, and mean-zero
-errors `E[ε i] = 0` in the MF06 finite-expectation sense, the OLS estimators satisfy
-`E[β̂ j] = β j` for the true coefficient vector `β`, componentwise. The integral form of this
-fact is `integral_olsEstimator_apply`; this finite form is proved here. -/
+column where the design has one), errors with a finite distribution `p` (`0 ≤ p ω` and
+`∑ ω, p ω = 1`), the model equation `y ω = X *ᵥ β + ε ω`, and mean-zero errors `E[ε i] = 0` in
+the MF06 finite-expectation sense, the OLS estimators satisfy `E[β̂ j] = β j` for the true
+coefficient vector `β`, componentwise. The proof uses only `∑ ω, p ω = 1`. The hypothesis
+`0 ≤ p ω` is still needed for the statement to be unbiasedness: MF06 defines a finite
+distribution by both conditions, and for signed weights `expectation p` is not the mean under
+any probability distribution. The integral form of this fact is `integral_olsEstimator_apply`;
+this finite form is proved here. -/
 lemma expectation_olsEstimator_calibration {m n : ℕ} (X : Matrix (Fin m) (Fin n) ℝ)
     (hX : IsUnit (Xᵀ * X)) {α : Type*} [Fintype α] (p : α → ℝ) (ε : α → Fin m → ℝ)
-    (y : α → Fin m → ℝ) (β : Fin n → ℝ)
+    (y : α → Fin m → ℝ) (β : Fin n → ℝ) (_hp0 : ∀ ω, 0 ≤ p ω)
     (hp1 : ∑ ω, p ω = 1) (hmean : ∀ i, expectation p (fun ω => ε ω i) = 0)
     (hmodel : ∀ ω, y ω = X *ᵥ β + ε ω) (j : Fin n) :
     expectation p (fun ω => olsEstimator X (y ω) j) = β j := by
@@ -181,10 +144,12 @@ lemma expectation_olsEstimator_calibration {m n : ℕ} (X : Matrix (Fin m) (Fin 
 
 /-- **Unbiasedness of a linear estimator** (CH24.3a). Any estimator `β̃ ω = A *ᵥ y ω` whose
 matrix satisfies the unbiasedness condition `A * X = 1` has `E[β̃ j] = β j` under the same
-model hypotheses. -/
+model hypotheses, including a finite error distribution `p` (`0 ≤ p ω` and `∑ ω, p ω = 1`). As
+in `expectation_olsEstimator_calibration`, the proof uses only `∑ ω, p ω = 1`, and `0 ≤ p ω` is
+what makes `expectation p` the mean under a probability distribution. -/
 lemma expectation_linearUnbiased_calibration {m n : ℕ} (X : Matrix (Fin m) (Fin n) ℝ)
     {α : Type*} [Fintype α] (p : α → ℝ) (ε : α → Fin m → ℝ)
-    (y : α → Fin m → ℝ) (β : Fin n → ℝ)
+    (y : α → Fin m → ℝ) (β : Fin n → ℝ) (_hp0 : ∀ ω, 0 ≤ p ω)
     (hp1 : ∑ ω, p ω = 1) (hmean : ∀ i, expectation p (fun ω => ε ω i) = 0)
     (hmodel : ∀ ω, y ω = X *ᵥ β + ε ω)
     (A : Matrix (Fin n) (Fin m) ℝ) (hA : A * X = 1) (j : Fin n) :
@@ -221,7 +186,8 @@ errors `covMatrix p ε = σ ^ 2 • 1` in finite matrix form, any linear estimat
 `β̃ ω = A *ᵥ y ω` with `A * X = 1` has covariance at least that of OLS: the difference of the
 covariance matrices is positive semidefinite. No mean condition on `ε` is assumed, so this is
 covariance minimality only: without `E[ε] = 0` neither estimator need be unbiased. BLUE is
-`calibration_blue`, which adds mean-zero errors. The covariance-minimality step is
+`calibration_blue`, which adds mean-zero errors and a finite error distribution (`0 ≤ p`). The
+comparison itself is algebraic and uses only `∑ ω, p ω = 1`. The covariance-minimality step is
 `gaussMarkov_covariance_minimality`, reused; the bridge from its unit-noise form is the exact
 scaling by `σ ^ 2`. -/
 theorem calibration_covariance_minimality {m n : ℕ} (X : Matrix (Fin m) (Fin n) ℝ)
@@ -246,15 +212,19 @@ theorem calibration_covariance_minimality {m n : ℕ} (X : Matrix (Fin m) (Fin n
   exact hpsd.smul (sq_nonneg σ)
 
 /-- **Gauss-Markov: OLS is BLUE** (CH24.3b). Under the Gauss-Markov model hypotheses, stated
-explicitly: fixed design `X` with `IsUnit (Xᵀ * X)`, the model equation `y ω = X *ᵥ β + ε ω`,
-mean-zero errors `E[ε i] = 0` in the MF06 finite-expectation sense, and homoscedastic
-uncorrelated errors `covMatrix p ε = σ ^ 2 • 1`: OLS is unbiased, every linear estimator
-`β̃ ω = A *ᵥ y ω` with `A * X = 1` is unbiased, and the covariance of `β̃` exceeds that of OLS
-by a positive semidefinite matrix. This combines `expectation_olsEstimator_calibration`,
+explicitly: fixed design `X` with `IsUnit (Xᵀ * X)`, errors with a finite distribution `p`
+(`0 ≤ p ω` and `∑ ω, p ω = 1`), the model equation `y ω = X *ᵥ β + ε ω`, mean-zero errors
+`E[ε i] = 0` in the MF06 finite-expectation sense, and homoscedastic uncorrelated errors
+`covMatrix p ε = σ ^ 2 • 1`: OLS is unbiased, every linear estimator `β̃ ω = A *ᵥ y ω` with
+`A * X = 1` is unbiased, and the covariance of `β̃` exceeds that of OLS by a positive
+semidefinite matrix. The hypothesis `0 ≤ p ω` makes `p` a probability distribution, without
+which "unbiased" and "best" have no probabilistic meaning; it is threaded to the two
+unbiasedness lemmas. This combines `expectation_olsEstimator_calibration`,
 `expectation_linearUnbiased_calibration` and `calibration_covariance_minimality`. -/
 theorem calibration_blue {m n : ℕ} (X : Matrix (Fin m) (Fin n) ℝ)
     (hX : IsUnit (Xᵀ * X)) {α : Type*} [Fintype α] (p : α → ℝ) (ε : α → Fin m → ℝ)
-    (σ : ℝ) (hp1 : ∑ ω, p ω = 1) (hmean : ∀ i, expectation p (fun ω => ε ω i) = 0)
+    (σ : ℝ) (hp0 : ∀ ω, 0 ≤ p ω) (hp1 : ∑ ω, p ω = 1)
+    (hmean : ∀ i, expectation p (fun ω => ε ω i) = 0)
     (hcov : covMatrix p ε = σ ^ 2 • 1)
     (y : α → Fin m → ℝ) (β : Fin n → ℝ) (hmodel : ∀ ω, y ω = X *ᵥ β + ε ω)
     (A : Matrix (Fin n) (Fin m) ℝ) (hA : A * X = 1) :
@@ -262,11 +232,11 @@ theorem calibration_blue {m n : ℕ} (X : Matrix (Fin m) (Fin n) ℝ)
       (∀ j, expectation p (fun ω => (A *ᵥ y ω) j) = β j) ∧
       (covMatrix p (fun ω => A *ᵥ y ω) -
         covMatrix p (fun ω => olsEstimator X (y ω))).PosSemidef :=
-  ⟨expectation_olsEstimator_calibration X hX p ε y β hp1 hmean hmodel,
-    expectation_linearUnbiased_calibration X p ε y β hp1 hmean hmodel A hA,
+  ⟨expectation_olsEstimator_calibration X hX p ε y β hp0 hp1 hmean hmodel,
+    expectation_linearUnbiased_calibration X p ε y β hp0 hp1 hmean hmodel A hA,
     calibration_covariance_minimality X hX p ε σ hp1 hcov y β hmodel A hA⟩
 
-/-! ## C. Inverse prediction and first-order uncertainty -/
+/-! ## B. Inverse prediction and first-order uncertainty -/
 
 /-- Inverse prediction from a fitted line (CH24.4): given fitted intercept `a`, fitted slope
 `b` and a new response `y₀`, the predicted concentration is `x₀ = (y₀ - a) / b`. No Mathlib
@@ -285,12 +255,14 @@ lemma inversePrediction_mul (a b y₀ : ℝ) (hb : b ≠ 0) :
   ring
 
 /-- The gradient of inverse prediction with respect to `(y₀, a, b)` (CH24.4): the partial
-derivatives `1 / b`, `-1 / b` and `-(y₀ - a) / b ^ 2`, proved for `b ≠ 0` in
-`hasDerivAt_inversePredictionGradient`. At `b = 0` inverse prediction is undefined and the
-slope derivative does not exist; Lean's totalized division makes all three entries `0` there,
-which is not a gradient, so every lemma that treats this vector as the gradient requires
-`b ≠ 0`. This is an explicit `3`-vector for the finite-sum sandwich, not Mathlib's
-inner-product-space gradient, whose Hilbert-space setup the sandwich does not need. -/
+derivatives `1 / b`, `-1 / b` and `-(y₀ - a) / b ^ 2`. For `b ≠ 0` they are the derivatives of
+the one-variable slices (`hasDerivAt_inversePredictionGradient`) and the coefficients of the
+Fréchet derivative of the three-input map (`hasFDerivAt_inversePredictionMap`). At `b = 0`
+inverse prediction is undefined and the slope derivative does not exist; Lean's totalized
+division makes all three entries `0` there, which is not a gradient, so every lemma that treats
+this vector as the gradient requires `b ≠ 0`. This is an explicit `3`-vector of sensitivity
+coefficients, not Mathlib's inner-product-space gradient, whose Hilbert-space setup the
+first-order law does not need. -/
 noncomputable def inversePredictionGradient (a b y₀ : ℝ) : Fin 3 → ℝ :=
   ![1 / b, -1 / b, -(y₀ - a) / b ^ 2]
 
@@ -341,53 +313,96 @@ lemma hasDerivAt_inversePredictionGradient (a y₀ : ℝ) {b : ℝ} (hb : b ≠ 
   exact ⟨hasDerivAt_inversePrediction_response a b y₀,
     hasDerivAt_inversePrediction_intercept a b y₀, hasDerivAt_inversePrediction_slope a y₀ hb⟩
 
-/-- First-order propagated variance of inverse prediction (CH24.4): the gradient-covariance
-sandwich `∑ i, ∑ j, c i * c j * V i j` for coefficients `c` and input covariance matrix `V`.
-This is a GUM-style (CHEM-S6) linearization, never exact for the nonlinear map
-`(y₀, a, b) ↦ x₀`. No GUM propagation API exists on ATLAS `main` (CH02 is not merged), so the
-sandwich is stated and proved here from MF06 bilinearity. -/
-noncomputable def inversePredictionFirstOrderVariance (c : Fin 3 → ℝ)
-    (V : Matrix (Fin 3) (Fin 3) ℝ) : ℝ :=
-  ∑ i, ∑ j, c i * c j * V i j
+/-- Inverse prediction as a function of its three inputs `v = (y₀, a, b)`, indexed `0`, `1`, `2`
+in the order of `inversePredictionGradient`: `inversePredictionMap v = (v 0 - v 1) / v 2`. This
+is the measurement function to which the first-order law of propagation applies. -/
+noncomputable def inversePredictionMap (v : Fin 3 → ℝ) : ℝ :=
+  inversePrediction (v 1) (v 2) (v 0)
 
-/-- The variance of the linearized inverse-prediction map is exactly the first-order sandwich
-(CH24.4): for random inputs `X` with `∑ ω, p ω = 1`, the affine map
-`K + ∑ i, c i * X i` has finite variance `∑ i, ∑ j, c i * c j * Cov(X i, X j)`, by the MF06
-bilinearity lemma `covariance_sum_mul_sum`. Exact for the linearization; the nonlinear map's
-true variance is only approximated by it. -/
-lemma variance_firstOrderInversePrediction {α : Type*} [Fintype α] (p : α → ℝ)
-    (X : α → Fin 3 → ℝ) (c : Fin 3 → ℝ) (K : ℝ) (hp1 : ∑ ω, p ω = 1) :
-    variance p (fun ω => K + ∑ i, c i * X ω i) =
-      inversePredictionFirstOrderVariance c (covMatrix p X) := by
-  have h1 : (fun ω => K + ∑ i, c i * X ω i) =
-      (fun ω => 1 * (∑ i, c i * X ω i) + K) := by
-    funext ω
-    ring
-  rw [h1, variance_affine hp1 _ 1 K, one_pow, one_mul, ← covariance_self,
-    covariance_sum_mul_sum]
-  simp only [inversePredictionFirstOrderVariance, covMatrix_apply]
-
-/-- Explicit first-order formula for uncorrelated inputs (CH24.4): for a nonzero slope `b`,
-with the proven gradient and a diagonal input covariance matrix (`V i i` the input variances,
-off-diagonals zero), the linearized variance is
-`(u2y + u2a) / b ^ 2 + (y₀ - a) ^ 2 / b ^ 4 * u2b`, including the response-uncertainty term
-`u(y₀) ^ 2 / b ^ 2`. The algebra does not use `b ≠ 0`; the hypothesis restricts the formula to
-slopes where the gradient exists, so a zero-slope calibration gets no uncertainty from it. -/
-lemma firstOrderInversePredictionVariance_gradient_diagonal (a b y₀ : ℝ) (_hb : b ≠ 0)
-    (V : Matrix (Fin 3) (Fin 3) ℝ) (u2y u2a u2b : ℝ)
-    (h00 : V 0 0 = u2y) (h11 : V 1 1 = u2a) (h22 : V 2 2 = u2b)
-    (hoff : ∀ i j, i ≠ j → V i j = 0) :
-    inversePredictionFirstOrderVariance (inversePredictionGradient a b y₀) V =
-      (u2y + u2a) / b ^ 2 + (y₀ - a) ^ 2 / b ^ 4 * u2b := by
-  simp only [inversePredictionFirstOrderVariance, Fin.sum_univ_three,
-    inversePredictionGradient_zero, inversePredictionGradient_one,
-    inversePredictionGradient_two]
-  rw [hoff 0 1 (by decide), hoff 0 2 (by decide), hoff 1 0 (by decide),
-    hoff 1 2 (by decide), hoff 2 0 (by decide), hoff 2 1 (by decide),
-    h00, h11, h22]
+/-- **Fréchet derivative of inverse prediction** (CH24.4). For a nonzero slope `b`, the
+three-input map `inversePredictionMap` has Fréchet derivative `h ↦ ∑ i, gᵢ * h i` at the input
+estimate `(y₀, a, b)`, where `g = inversePredictionGradient a b y₀`. This is the multivariate
+statement; `hasDerivAt_inversePredictionGradient` gives only the one-variable slices. At `b = 0`
+inverse prediction is undefined and the map is not differentiable. -/
+lemma hasFDerivAt_inversePredictionMap (a y₀ : ℝ) {b : ℝ} (hb : b ≠ 0) :
+    HasFDerivAt inversePredictionMap
+      (∑ i, inversePredictionGradient a b y₀ i •
+        (ContinuousLinearMap.proj i : (Fin 3 → ℝ) →L[ℝ] ℝ)) ![y₀, a, b] := by
+  have hnum : HasFDerivAt (fun v : Fin 3 → ℝ => v 0 - v 1)
+      ((ContinuousLinearMap.proj 0 : (Fin 3 → ℝ) →L[ℝ] ℝ) - ContinuousLinearMap.proj 1)
+      ![y₀, a, b] :=
+    (hasFDerivAt_apply 0 _).sub (hasFDerivAt_apply 1 _)
+  have hden : HasFDerivAt (fun v : Fin 3 → ℝ => (v 2)⁻¹)
+      ((-(b ^ 2)⁻¹) • (ContinuousLinearMap.proj 2 : (Fin 3 → ℝ) →L[ℝ] ℝ)) ![y₀, a, b] :=
+    (hasDerivAt_inv hb).comp_hasFDerivAt (f := fun v : Fin 3 → ℝ => v 2) ![y₀, a, b]
+      (hasFDerivAt_apply 2 _)
+  have hmap : inversePredictionMap = fun v : Fin 3 → ℝ => (v 0 - v 1) * (v 2)⁻¹ := by
+    funext v
+    simp only [inversePredictionMap, inversePrediction, div_eq_mul_inv]
+  rw [hmap]
+  convert hnum.fun_mul hden using 1
+  refine ContinuousLinearMap.ext fun h => ?_
+  simp [Fin.sum_univ_three, inversePredictionGradient]
+  field_simp
   ring
 
-/-! ## D. Standard addition and internal standard -/
+/-- The sensitivity coefficients of inverse prediction: for `b ≠ 0`, the partial derivative of
+`inversePredictionMap` at `(y₀, a, b)` along the `i`-th input is the gradient entry
+`inversePredictionGradient a b y₀ i`. -/
+lemma fderiv_inversePredictionMap_single (a y₀ : ℝ) {b : ℝ} (hb : b ≠ 0) (i : Fin 3) :
+    fderiv ℝ inversePredictionMap ![y₀, a, b] (Pi.single i 1) =
+      inversePredictionGradient a b y₀ i := by
+  rw [(hasFDerivAt_inversePredictionMap a y₀ hb).fderiv]
+  simp [Pi.single_apply]
+
+section FirstOrderUncertainty
+
+open MeasureTheory
+open scoped ProbabilityTheory
+
+/-- **First-order uncertainty of inverse prediction** (CH24.4). For a nonzero slope `b`, let the
+inputs `(y₀, a, b)` be random variables `X 0`, `X 1`, `X 2` with finite second moments on a
+probability space, with estimate `![y₀, a, b]`. The first-order linearization of
+`inversePredictionMap` at the estimate, built from its Fréchet derivative, has variance
+`∑ i, ∑ j, gᵢ * gⱼ * cov[X i, X j]`, where `g = inversePredictionGradient a b y₀`. This is
+`Chemistry.Uncertainty.measurementFunction_linearizedVariance_firstOrder` applied to
+`hasFDerivAt_inversePredictionMap`. It is a GUM-style (CHEM-S6) linearization: exact for the
+linearization, never for the nonlinear map `(y₀, a, b) ↦ x₀`. -/
+lemma inversePrediction_linearizedVariance_firstOrder {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {μ : Measure Ω} [IsProbabilityMeasure μ] (a y₀ : ℝ) {b : ℝ} (hb : b ≠ 0)
+    (X : Fin 3 → Ω → ℝ) (hX : ∀ i, MemLp (X i) 2 μ) :
+    Var[fun ω => inversePredictionMap ![y₀, a, b] +
+        fderiv ℝ inversePredictionMap ![y₀, a, b] (fun i => X i ω - ![y₀, a, b] i); μ] =
+      ∑ i, ∑ j, inversePredictionGradient a b y₀ i * inversePredictionGradient a b y₀ j *
+        cov[X i, X j; μ] := by
+  rw [Chemistry.Uncertainty.measurementFunction_linearizedVariance_firstOrder
+    (hasFDerivAt_inversePredictionMap a y₀ hb).differentiableAt.hasFDerivAt X hX]
+  simp only [fderiv_inversePredictionMap_single a y₀ hb]
+
+/-- **First-order uncertainty of inverse prediction, uncorrelated inputs** (CH24.4). For a
+nonzero slope `b` and random inputs `X 0`, `X 1`, `X 2` for `(y₀, a, b)` that are pairwise
+uncorrelated, with standard uncertainties `u 0`, `u 1`, `u 2` (`Var[X i] = u i ^ 2`), the
+variance of the first-order linearization of `inversePredictionMap` at `(y₀, a, b)` is
+`(u 0 ^ 2 + u 1 ^ 2) / b ^ 2 + (y₀ - a) ^ 2 / b ^ 4 * u 2 ^ 2`, including the
+response-uncertainty term `u(y₀) ^ 2 / b ^ 2`. This is
+`Chemistry.Uncertainty.measurementFunction_linearizedVariance_firstOrder_uncorrelated` with the
+sensitivity coefficients of `fderiv_inversePredictionMap_single`. -/
+lemma inversePrediction_linearizedVariance_firstOrder_uncorrelated {Ω : Type*}
+    {mΩ : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ] (a y₀ : ℝ) {b : ℝ}
+    (hb : b ≠ 0) (X : Fin 3 → Ω → ℝ) (hX : ∀ i, MemLp (X i) 2 μ) (u : Fin 3 → ℝ)
+    (hu : ∀ i, Var[X i; μ] = u i ^ 2) (hcov : ∀ i j, i ≠ j → cov[X i, X j; μ] = 0) :
+    Var[fun ω => inversePredictionMap ![y₀, a, b] +
+        fderiv ℝ inversePredictionMap ![y₀, a, b] (fun i => X i ω - ![y₀, a, b] i); μ] =
+      (u 0 ^ 2 + u 1 ^ 2) / b ^ 2 + (y₀ - a) ^ 2 / b ^ 4 * u 2 ^ 2 := by
+  rw [Chemistry.Uncertainty.measurementFunction_linearizedVariance_firstOrder_uncorrelated
+    (hasFDerivAt_inversePredictionMap a y₀ hb).differentiableAt.hasFDerivAt X hX u hu hcov]
+  simp only [Fin.sum_univ_three, fderiv_inversePredictionMap_single a y₀ hb,
+    inversePredictionGradient_zero, inversePredictionGradient_one, inversePredictionGradient_two]
+  field_simp
+
+end FirstOrderUncertainty
+
+/-! ## C. Standard addition and internal standard -/
 
 /-- Standard-addition unknown from a fitted line (CH24.5a): given the fitted intercept and
 slope of the response-versus-added-concentration line, the unknown concentration is

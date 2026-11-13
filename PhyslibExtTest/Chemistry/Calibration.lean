@@ -36,34 +36,33 @@ noncomputable def stdX : Fin 4 → ℝ :=
 noncomputable def stdY : Fin 4 → ℝ :=
   ![1, 3, 4, 6]
 
-example : calibrationSlope stdX stdY = 8 / 5 := by
-  simp only [calibrationSlope, olsSlope, sxy, sampleMean_eq_sum_div, Fin.sum_univ_four]
+example : olsSlope stdX stdY = 8 / 5 := by
+  simp only [olsSlope, sxy, sampleMean_eq_sum_div, Fin.sum_univ_four]
   norm_num [stdX, stdY]
 
-example : calibrationIntercept stdX stdY = 11 / 10 := by
-  simp only [calibrationIntercept, olsIntercept, olsSlope, sxy,
-    sampleMean_eq_sum_div, Fin.sum_univ_four]
+example : olsIntercept stdX stdY = 11 / 10 := by
+  simp only [olsIntercept, olsSlope, sxy, sampleMean_eq_sum_div, Fin.sum_univ_four]
   norm_num [stdX, stdY]
 
 example : 0 < sxy stdX stdX := by
   simp only [sxy, sampleMean_eq_sum_div, Fin.sum_univ_four]
   norm_num [stdX]
 
-example (a b : ℝ) : rssLine stdX stdY (calibrationIntercept stdX stdY)
-    (calibrationSlope stdX stdY) ≤ rssLine stdX stdY a b := by
+example (a b : ℝ) : rssLine stdX stdY (olsIntercept stdX stdY)
+    (olsSlope stdX stdY) ≤ rssLine stdX stdY a b := by
   have hsxx : 0 < sxy stdX stdX := by
     simp only [sxy, sampleMean_eq_sum_div, Fin.sum_univ_four]
     norm_num [stdX]
-  exact ((calibration_unique_minimizer_iff stdX stdY).mpr hsxx a b).1
+  exact ((ols_unique_minimizer_iff stdX stdY).mpr hsxx a b).1
 
 example (a b : ℝ)
-    (hle : rssLine stdX stdY a b ≤ rssLine stdX stdY (calibrationIntercept stdX stdY)
-      (calibrationSlope stdX stdY)) :
-    a = calibrationIntercept stdX stdY ∧ b = calibrationSlope stdX stdY := by
+    (hle : rssLine stdX stdY a b ≤ rssLine stdX stdY (olsIntercept stdX stdY)
+      (olsSlope stdX stdY)) :
+    a = olsIntercept stdX stdY ∧ b = olsSlope stdX stdY := by
   have hsxx : 0 < sxy stdX stdX := by
     simp only [sxy, sampleMean_eq_sum_div, Fin.sum_univ_four]
     norm_num [stdX]
-  exact ((calibration_unique_minimizer_iff stdX stdY).mpr hsxx a b).2 hle
+  exact ((ols_unique_minimizer_iff stdX stdY).mpr hsxx a b).2 hle
 
 example : ∑ i, (stdY i - (11 / 10 + (8 / 5) * stdX i)) = 0 := by
   simp only [Fin.sum_univ_four]
@@ -73,13 +72,11 @@ example : ∑ i, stdX i * (stdY i - (11 / 10 + (8 / 5) * stdX i)) = 0 := by
   simp only [Fin.sum_univ_four]
   norm_num [stdX, stdY]
 
-example : ∑ i, (stdY i - (calibrationIntercept stdX stdY +
-    calibrationSlope stdX stdY * stdX i)) = 0 :=
-  calibration_sum_resid stdX stdY
+example : ∑ i, (stdY i - (olsIntercept stdX stdY + olsSlope stdX stdY * stdX i)) = 0 :=
+  sum_resid_ols stdX stdY
 
-example : ∑ i, stdX i * (stdY i - (calibrationIntercept stdX stdY +
-    calibrationSlope stdX stdY * stdX i)) = 0 :=
-  calibration_sum_mul_resid stdX stdY
+example : ∑ i, stdX i * (stdY i - (olsIntercept stdX stdY + olsSlope stdX stdY * stdX i)) = 0 :=
+  sum_mul_resid_ols stdX stdY
 
 /-!
 
@@ -122,6 +119,9 @@ noncomputable def gmE0 : Fin 3 → ℝ :=
 lemma gm_sxx : 0 < sxy gmX gmX := by
   simp only [sxy, sampleMean_eq_sum_div, Fin.sum_univ_three]
   norm_num [gmX]
+
+lemma gm_hp0 : ∀ ω, 0 ≤ gmP ω := fun _ => by
+  norm_num [gmP]
 
 lemma gm_hp1 : ∑ ω, gmP ω = 1 := by
   simp only [gmP, Fin.sum_univ_four]
@@ -172,11 +172,11 @@ lemma gm_A_ne_ols : gmA ≠ olsMatrix gmDesign := by
 
 example (j : Fin 2) :
     expectation gmP (fun ω => olsEstimator gmDesign (gmY ω) j) = gmBeta j :=
-  expectation_olsEstimator_calibration gmDesign gm_hX gmP gmErr gmY gmBeta gm_hp1
+  expectation_olsEstimator_calibration gmDesign gm_hX gmP gmErr gmY gmBeta gm_hp0 gm_hp1
     gm_hmean gm_hmodel j
 
 example (j : Fin 2) : expectation gmP (fun ω => (gmA *ᵥ gmY ω) j) = gmBeta j :=
-  expectation_linearUnbiased_calibration gmDesign gmP gmErr gmY gmBeta gm_hp1
+  expectation_linearUnbiased_calibration gmDesign gmP gmErr gmY gmBeta gm_hp0 gm_hp1
     gm_hmean gm_hmodel gmA gm_hA j
 
 example : (covMatrix gmP (fun ω => gmA *ᵥ gmY ω) -
@@ -188,7 +188,7 @@ example : (∀ j, expectation gmP (fun ω => olsEstimator gmDesign (gmY ω) j) =
     (∀ j, expectation gmP (fun ω => (gmA *ᵥ gmY ω) j) = gmBeta j) ∧
     (covMatrix gmP (fun ω => gmA *ᵥ gmY ω) -
       covMatrix gmP (fun ω => olsEstimator gmDesign (gmY ω))).PosSemidef :=
-  calibration_blue gmDesign gm_hX gmP gmErr 1 gm_hp1 gm_hmean gm_hcov gmY gmBeta
+  calibration_blue gmDesign gm_hX gmP gmErr 1 gm_hp0 gm_hp1 gm_hmean gm_hcov gmY gmBeta
     gm_hmodel gmA gm_hA
 
 /-!
@@ -196,23 +196,6 @@ example : (∀ j, expectation gmP (fun ω => olsEstimator gmDesign (gmY ω) j) =
 ## C. Inverse prediction
 
 -/
-
-/-- Diagonal input covariance: response, intercept and slope variances. -/
-noncomputable def ipV : Matrix (Fin 3) (Fin 3) ℝ :=
-  ![![1 / 25, 0, 0], ![0, 1 / 100, 0], ![0, 0, 1 / 400]]
-
-lemma ip_h00 : ipV 0 0 = 1 / 25 := by
-  simp [ipV]
-
-lemma ip_h11 : ipV 1 1 = 1 / 100 := by
-  simp [ipV]
-
-lemma ip_h22 : ipV 2 2 = 1 / 400 := by
-  simp [ipV]
-
-lemma ip_hoff : ∀ i j, i ≠ j → ipV i j = 0 := by
-  intro i j hij
-  fin_cases i <;> fin_cases j <;> simp_all [ipV]
 
 example : inversePrediction 1 2 7 = 3 := by
   norm_num [inversePrediction]
@@ -224,16 +207,36 @@ example : inversePredictionGradient 1 2 7 = ![1 / 2, -1 / 2, -3 / 2] := by
   ext i
   fin_cases i <;> simp [inversePredictionGradient]; norm_num
 
-example : inversePredictionFirstOrderVariance (inversePredictionGradient 1 2 7) ipV
-    = 29 / 1600 := by
-  rw [firstOrderInversePredictionVariance_gradient_diagonal 1 2 7 (by norm_num) ipV _ _ _
-    ip_h00 ip_h11 ip_h22 ip_hoff]
-  norm_num
+/-- The three-input map at `(y₀, a, b) = (7, 1, 2)` is the inverse prediction `3`. -/
+example : inversePredictionMap ![7, 1, 2] = 3 := by
+  norm_num [inversePredictionMap, inversePrediction]
 
 /-- The slope entry of the gradient is the slope derivative at `b = 2`. -/
 example : HasDerivAt (fun t => inversePrediction 1 t 7) (-3 / 2) 2 := by
   have h := (hasDerivAt_inversePredictionGradient 1 7 (b := 2) (by norm_num)).2.2
   rwa [inversePredictionGradient_two, show -((7 : ℝ) - 1) / 2 ^ 2 = -3 / 2 by norm_num] at h
+
+/-- The same coefficient as a partial derivative of the three-input map, from its Fréchet
+derivative. -/
+example : fderiv ℝ inversePredictionMap ![7, 1, 2] (Pi.single 2 1) = -3 / 2 := by
+  rw [fderiv_inversePredictionMap_single 1 7 (b := 2) (by norm_num),
+    inversePredictionGradient_two]
+  norm_num
+
+/-- First-order uncertainty of `x₀ = 3` at `(y₀, a, b) = (7, 1, 2)` for uncorrelated inputs with
+standard uncertainties `1 / 5`, `1 / 10` and `1 / 20`: the linearized variance is
+`(1 / 25 + 1 / 100) / 4 + 36 / 16 * 1 / 400 = 29 / 1600`. -/
+example {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : MeasureTheory.Measure Ω}
+    [MeasureTheory.IsProbabilityMeasure μ] (X : Fin 3 → Ω → ℝ)
+    (hX : ∀ i, MeasureTheory.MemLp (X i) 2 μ)
+    (hu : ∀ i, ProbabilityTheory.variance (X i) μ = ![1 / 5, 1 / 10, 1 / 20] i ^ 2)
+    (hcov : ∀ i j, i ≠ j → ProbabilityTheory.covariance (X i) (X j) μ = 0) :
+    ProbabilityTheory.variance (fun ω => inversePredictionMap ![7, 1, 2] +
+      fderiv ℝ inversePredictionMap ![7, 1, 2] (fun i => X i ω - ![7, 1, 2] i)) μ =
+      29 / 1600 := by
+  rw [inversePrediction_linearizedVariance_firstOrder_uncorrelated 1 7 (b := 2) (by norm_num) X
+    hX _ hu hcov]
+  norm_num
 
 /-- Zero-slope boundary: with `y₀ ≠ a`, inverse prediction is not differentiable in the slope
 at `b = 0`, so there is no first-order gradient to propagate; the gradient and formula lemmas
@@ -245,6 +248,24 @@ example : ¬ DifferentiableAt ℝ (fun t => inversePrediction 0 t 1) 0 := by
     simp [inversePrediction]
   rw [hinv] at h
   exact differentiableAt_inv_iff.mp h rfl
+
+/-- Zero-slope boundary for the three-input map: at `(y₀, a, b) = (1, 0, 0)` it has no Fréchet
+derivative, so `hasFDerivAt_inversePredictionMap` and the first-order uncertainty lemmas need
+`b ≠ 0`. -/
+example : ¬ DifferentiableAt ℝ inversePredictionMap ![1, 0, 0] := by
+  intro h
+  have hline : DifferentiableAt ℝ (fun t : ℝ => ![1, 0, 0] + t • (![0, 0, 1] : Fin 3 → ℝ)) 0 :=
+    (differentiableAt_const _).add (differentiableAt_id.smul_const _)
+  have h' : DifferentiableAt ℝ inversePredictionMap
+      ((fun t : ℝ => ![1, 0, 0] + t • (![0, 0, 1] : Fin 3 → ℝ)) 0) := by
+    simpa using h
+  have hcomp := h'.comp (0 : ℝ) hline
+  have hinv : (inversePredictionMap ∘ fun t : ℝ => ![1, 0, 0] + t • (![0, 0, 1] : Fin 3 → ℝ)) =
+      fun t : ℝ => t⁻¹ := by
+    funext t
+    simp [inversePredictionMap, inversePrediction]
+  rw [hinv] at hcomp
+  exact differentiableAt_inv_iff.mp hcomp rfl
 
 /-- What the guard rules out: at `b = 0`, totalized division turns the gradient vector into
 `0`, which would propagate a meaningless zero uncertainty. -/
