@@ -6,12 +6,6 @@ This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
 -/
 
-/-
-Ported from fairinternal/formal-math at `d42524e2f9c7007fe8cf94a2d60d2cc9916991d6`, where it was
-introduced by fairinternal/formal-math#3813. Original formalization by Adam Kiezun (@akiezun),
-with the proof found by a metacode agent (internal agent identity).
--/
-
 module
 
 public import Mathlib.Order.Partition.Finpartition
@@ -1041,6 +1035,8 @@ the Möbius Number of the Odd Partition Poset", Journal of Integer Sequences
 21 (2018), Article 18.9.6, Theorem [Stanley] (label main), lines 122–131,
 https://cs.uwaterloo.ca/journals/JIS/VOL21/Monks/monks12.tex
 (first stated as known by Stanley; proved by Sundaram and by Wachs).
+
+Proves `Wanted` entry `oddPartitionPoset_mobiusNumber`.
 -/
 theorem oddPartitionPoset_mobiusNumber (n : ℕ) (hn : 0 < n) :
   let S : Type := { P : Finpartition (Finset.univ : Finset (Fin n)) //
