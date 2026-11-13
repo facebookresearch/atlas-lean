@@ -67,12 +67,6 @@ example : (∫ x in (0:ℝ)..1, deriv (fun t => t - x) 5) =
         = fun _ => (0 : ℝ) := funext h_xx
     rw [hfun]
     exact intervalIntegrable_const
-  have ht_int : IntervalIntegrable (fun x => deriv (fun t : ℝ => t - x) 5)
-      MeasureTheory.volume 0 1 := by
-    have hfun : (fun x : ℝ => deriv (fun t : ℝ => t - x) 5) = fun _ => (1 : ℝ) :=
-      funext h_t
-    rw [hfun]
-    exact intervalIntegrable_const
   have hx_int : IntervalIntegrable (fun x => deriv (fun x : ℝ => (5 : ℝ) - x) x)
       MeasureTheory.volume 0 1 := by
     have hfun : (fun x : ℝ => deriv (fun x : ℝ => (5 : ℝ) - x) x) = fun _ => (-1 : ℝ) :=
@@ -94,22 +88,21 @@ example : (∫ x in (0:ℝ)..1, deriv (fun t => t - x) 5) =
     rw [h_x]
     exact (hasDerivAt_id x).const_sub 5
   exact EarthScience.integrated_advection_diffusion_reaction (fun t x => t - x) 1 2 0 0 1 5
-    hpde hxx_int ht_int hx_int hc_int hxx_deriv hx_deriv
+    (fun x _ => hpde x) hxx_int hx_int hc_int (fun x _ => hxx_deriv x) (fun x _ => hx_deriv x)
 
 /-- The public statement shape of the mass-balance theorem. -/
 example (c : ℝ → ℝ → ℝ) (U D k a b t : ℝ)
-    (hpde : ∀ x, deriv (fun t => c t x) t + U * deriv (fun x => c t x) x =
-      D * deriv (fun x => deriv (fun x' => c t x') x) x - k * c t x)
+    (hpde : ∀ x ∈ Set.uIcc a b,
+      deriv (fun t => c t x) t + U * deriv (fun x => c t x) x =
+        D * deriv (fun x => deriv (fun x' => c t x') x) x - k * c t x)
     (hxx_int : IntervalIntegrable
       (fun x => deriv (fun x => deriv (fun x' => c t x') x) x) MeasureTheory.volume a b)
-    (ht_int : IntervalIntegrable (fun x => deriv (fun t => c t x) t)
-      MeasureTheory.volume a b)
     (hx_int : IntervalIntegrable (fun x => deriv (fun x => c t x) x)
       MeasureTheory.volume a b)
     (hc_int : IntervalIntegrable (fun x => c t x) MeasureTheory.volume a b)
-    (hxx_deriv : ∀ x, HasDerivAt (fun x => deriv (fun x' => c t x') x)
+    (hxx_deriv : ∀ x ∈ Set.uIcc a b, HasDerivAt (fun x => deriv (fun x' => c t x') x)
       (deriv (fun x => deriv (fun x' => c t x') x) x) x)
-    (hx_deriv : ∀ x, HasDerivAt (fun x => c t x)
+    (hx_deriv : ∀ x ∈ Set.uIcc a b, HasDerivAt (fun x => c t x)
       (deriv (fun x => c t x) x) x)
     (hswap : HasDerivAt (fun t => ∫ x in a..b, c t x)
       (∫ x in a..b, deriv (fun t => c t x) t) t) :
@@ -117,4 +110,4 @@ example (c : ℝ → ℝ → ℝ) (U D k a b t : ℝ)
       ((U * c t a - D * deriv (fun x => c t x) a) -
         (U * c t b - D * deriv (fun x => c t x) b) - k * ∫ x in a..b, c t x) t :=
   EarthScience.mass_balance_advection_diffusion_reaction c U D k a b t hpde hxx_int
-    ht_int hx_int hc_int hxx_deriv hx_deriv hswap
+    hx_int hc_int hxx_deriv hx_deriv hswap
