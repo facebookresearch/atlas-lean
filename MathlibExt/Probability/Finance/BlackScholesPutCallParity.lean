@@ -10,6 +10,7 @@ module
 
 public import MathlibExt.Probability.Finance.BlackScholes
 public import Mathlib.Probability.Distributions.Gaussian.Real
+import MathlibExt.Probability.Distributions.GaussianCdf
 
 /-!
 # Black-Scholes put-call parity and static bounds
@@ -231,56 +232,13 @@ private theorem blackScholesCall_nonneg {S0 K r σ T : ℝ} (hS0 : 0 < S0) (hK :
   rw [hid]
   exact mul_nonneg hexp.le hP
 
-/-- Symmetry of the standard normal cdf (FI17.T02 helper): `Φ(-x) = 1 - Φ(x)`.
-Proved in-file from Gaussian symmetry; not reproving any cited kernel. -/
-theorem stdNormal_cdf_neg (x : ℝ) :
-    cdf (gaussianReal 0 1) (-x) = 1 - cdf (gaussianReal 0 1) x := by
-  have hnull : NullSingletonClass (gaussianReal 0 1) :=
-    nullSingletonClass_gaussianReal (μ := (0 : ℝ)) (v := (1 : NNReal)) one_ne_zero
-  have hsymm : (gaussianReal 0 1).map (fun x ↦ -x) = gaussianReal 0 1 := by
-    simpa using gaussianReal_map_neg (μ := (0 : ℝ)) (v := (1 : NNReal))
-  have hmeas : Measurable (fun x : ℝ ↦ -x) := by fun_prop
-  have hmap : (gaussianReal 0 1) (Set.Iic (-x)) = (gaussianReal 0 1) (Set.Ici x) := by
-    conv_lhs => rw [← hsymm]
-    rw [Measure.map_apply hmeas measurableSet_Iic]
-    congr 1
-    ext y
-    simp only [Set.mem_preimage, Set.mem_Iic, Set.mem_Ici]
-    exact neg_le_neg_iff
-  have hinter : (gaussianReal 0 1) (Set.Iic x ∩ Set.Ici x) = 0 := by
-    rw [Set.inter_comm, Set.Ici_inter_Iic, Set.Icc_self]
-    exact hnull.measure_singleton x
-  have hIci : MeasurableSet (Set.Ici x) := measurableSet_Ici
-  have hadd : (gaussianReal 0 1) (Set.Iic x) + (gaussianReal 0 1) (Set.Ici x) = 1 := by
-    have h := measure_union_add_inter₀ (μ := gaussianReal 0 1) (Set.Iic x)
-      hIci.nullMeasurableSet
-    rw [Set.Iic_union_Ici, measure_univ, hinter, add_zero] at h
-    exact h.symm
-  have hfin1 : (gaussianReal 0 1) (Set.Iic x) ≠ ⊤ := by
-    refine ne_top_of_le_ne_top (b := 1) ?_ ?_
-    · simp
-    · calc (gaussianReal 0 1) (Set.Iic x) ≤ (gaussianReal 0 1) Set.univ :=
-            measure_mono (Set.subset_univ _)
-        _ = 1 := measure_univ
-  have hfin2 : (gaussianReal 0 1) (Set.Ici x) ≠ ⊤ := by
-    refine ne_top_of_le_ne_top (b := 1) ?_ ?_
-    · simp
-    · calc (gaussianReal 0 1) (Set.Ici x) ≤ (gaussianReal 0 1) Set.univ :=
-            measure_mono (Set.subset_univ _)
-        _ = 1 := measure_univ
-  rw [cdf_eq_real, cdf_eq_real, measureReal_def, measureReal_def, hmap]
-  have h2 : ((gaussianReal 0 1) (Set.Iic x)).toReal
-      + ((gaussianReal 0 1) (Set.Ici x)).toReal = 1 := by
-    rw [← ENNReal.toReal_add hfin1 hfin2, hadd, ENNReal.toReal_one]
-  linarith
-
 /-- Put-call parity (FI17.T02): `C - P = S0 - K e^{-rT}`. Pure algebra from the
-symmetry lemma; no positivity hypothesis is needed. -/
+symmetry `cdf_gaussianReal_neg`; no positivity hypothesis is needed. -/
 theorem blackScholes_putCallParity (S0 K r σ T : ℝ) :
     blackScholesCall S0 K r σ T - blackScholesPut S0 K r σ T =
       S0 - K * exp (-(r * T)) := by
   unfold blackScholesCall blackScholesPut
-  rw [stdNormal_cdf_neg, stdNormal_cdf_neg]
+  rw [cdf_gaussianReal_neg, cdf_gaussianReal_neg]
   ring
 
 /-- Static bounds for the call (FI17.T02): `max (S0 - K e^{-rT}) 0 ≤ C ≤ S0`.
