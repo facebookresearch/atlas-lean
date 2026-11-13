@@ -32,9 +32,12 @@ definite `A V Aᵀ`, `remlLogLik_eq` expands it to
 The criterion depends on the choice of `A`, but only through an additive constant. If
 `B = Q A` with `Q` invertible, then `remlLogLik B V y = remlLogLik A V y - log |det Q|`
 (`remlLogLik_mul_left`). So the argmax sets over `θ` (`isMaxOn_remlLogLik_mul_left_iff`) and
-the scores (`fderiv_remlLogLik_mul_left`) agree. Any two error contrasts of the same design are
-related this way (`exists_eq_mul_of_isErrorContrast`), so the REML estimator does not depend on
-which error contrast is used.
+the scores (`fderiv_remlLogLik_mul_left`) agree. If the design has full column rank
+(`IsUnit (Xᵀ * X)`), any two of its error contrasts are related this way
+(`exists_eq_mul_of_isErrorContrast`), so the REML estimator does not depend on which error
+contrast is used. `IsErrorContrast` does not require full column rank, and without it the
+conclusion fails: for `X = 0 : Matrix (Fin 2) (Fin 1) ℝ`, both `!![1, 0]` and `!![0, 1]` are
+error contrasts, but neither is a multiple of the other.
 
 Singular covariances are excluded by hypothesis, not totalized. Every result about the criterion
 assumes `A V Aᵀ` positive definite, directly or through `V θ` positive definite and `A` of full
@@ -51,8 +54,8 @@ row rank. On a singular `A V Aᵀ`, `remlLogLik` is the junk value
 * `remlLogLik_mul_left`: `ℓ_{QA} = ℓ_A - log |det Q|`.
 * `isMaxOn_remlLogLik_mul_left_iff`, `fderiv_remlLogLik_mul_left`: argmax sets and scores do
   not depend on the contrast basis.
-* `exists_eq_mul_of_isErrorContrast`: two error contrasts of a full-rank design differ by an
-  invertible `Q`.
+* `exists_eq_mul_of_isErrorContrast`: two error contrasts of a design with invertible `Xᵀ X`
+  differ by an invertible `Q`.
 
 ## References
 

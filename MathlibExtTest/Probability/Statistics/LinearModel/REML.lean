@@ -76,6 +76,31 @@ theorem det_Q₀ : Q₀.det = 1 / 3 := by
 example : ∃ Q : Matrix (Fin 2) (Fin 2) ℝ, IsUnit Q.det ∧ B₀ = Q * A₀ :=
   exists_eq_mul_of_isErrorContrast isUnit_gram_X₀ isErrorContrast_A₀ isErrorContrast_B₀
 
+theorem isErrorContrast_zero_design_left :
+    IsErrorContrast (0 : Matrix (Fin 2) (Fin 1) ℝ) !![(1 : ℝ), 0] where
+  mul_eq_zero := Matrix.mul_zero _
+  isUnit_mul_transpose := by
+    rw [Matrix.isUnit_iff_isUnit_det, Matrix.det_unique]
+    simp [Matrix.mul_apply]
+  card_add_card := by simp
+
+theorem isErrorContrast_zero_design_right :
+    IsErrorContrast (0 : Matrix (Fin 2) (Fin 1) ℝ) !![(0 : ℝ), 1] where
+  mul_eq_zero := Matrix.mul_zero _
+  isUnit_mul_transpose := by
+    rw [Matrix.isUnit_iff_isUnit_det, Matrix.det_unique]
+    simp [Matrix.mul_apply]
+  card_add_card := by simp
+
+/-- **Full column rank is necessary for uniqueness.** For the zero design, whose `Xᵀ X = 0` is
+not invertible, the two coordinate rows are both error contrasts
+(`isErrorContrast_zero_design_left`, `isErrorContrast_zero_design_right`), but neither is a
+multiple of the other. -/
+example : ¬ ∃ Q : Matrix (Fin 1) (Fin 1) ℝ, !![(0 : ℝ), 1] = Q * !![(1 : ℝ), 0] := by
+  rintro ⟨Q, hQ⟩
+  have h := congrFun (congrFun hQ 0) 1
+  simp [Matrix.mul_apply] at h
+
 /-- **Fixture, general covariance**: centering and differencing give REML criteria that differ by
 exactly `log 3`, for every positive definite `V` and every `y`. -/
 theorem remlLogLik_B₀ {V : Matrix (Fin 3) (Fin 3) ℝ} (hV : V.PosDef) (y : Fin 3 → ℝ) :
