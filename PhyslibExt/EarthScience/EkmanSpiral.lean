@@ -106,7 +106,7 @@ noncomputable def ekmanSpiralUSecond (a : ℝ) : ℝ → ℝ :=
 noncomputable def ekmanSpiralVSecond (a : ℝ) : ℝ → ℝ :=
   fun ζ => 2 * a ^ 2 * Real.exp (-a * ζ) * Real.cos (a * ζ)
 
-theorem ekman_spiral_hasDerivAt_u (a ζ : ℝ) :
+lemma ekman_spiral_hasDerivAt_u (a ζ : ℝ) :
     HasDerivAt (ekmanSpiralU a) (ekmanSpiralUPrime a ζ) ζ := by
   have hlin1 : HasDerivAt (fun ζ : ℝ => -a * ζ) (-a) ζ := by
     have h := (hasDerivAt_id (x := ζ)).const_mul (-a)
@@ -121,7 +121,7 @@ theorem ekman_spiral_hasDerivAt_u (a ζ : ℝ) :
   convert h using 1
   ring
 
-theorem ekman_spiral_hasDerivAt_v (a ζ : ℝ) :
+lemma ekman_spiral_hasDerivAt_v (a ζ : ℝ) :
     HasDerivAt (ekmanSpiralV a) (ekmanSpiralVPrime a ζ) ζ := by
   have hlin1 : HasDerivAt (fun ζ : ℝ => -a * ζ) (-a) ζ := by
     have h := (hasDerivAt_id (x := ζ)).const_mul (-a)
@@ -136,7 +136,7 @@ theorem ekman_spiral_hasDerivAt_v (a ζ : ℝ) :
   convert h using 1
   ring
 
-theorem ekman_spiral_hasDerivAt_uPrime (a ζ : ℝ) :
+lemma ekman_spiral_hasDerivAt_uPrime (a ζ : ℝ) :
     HasDerivAt (ekmanSpiralUPrime a) (ekmanSpiralUSecond a ζ) ζ := by
   have hlin1 : HasDerivAt (fun ζ : ℝ => -a * ζ) (-a) ζ := by
     have h := (hasDerivAt_id (x := ζ)).const_mul (-a)
@@ -153,7 +153,7 @@ theorem ekman_spiral_hasDerivAt_uPrime (a ζ : ℝ) :
   convert h using 1
   ring
 
-theorem ekman_spiral_hasDerivAt_vPrime (a ζ : ℝ) :
+lemma ekman_spiral_hasDerivAt_vPrime (a ζ : ℝ) :
     HasDerivAt (ekmanSpiralVPrime a) (ekmanSpiralVSecond a ζ) ζ := by
   have hlin1 : HasDerivAt (fun ζ : ℝ => -a * ζ) (-a) ζ := by
     have h := (hasDerivAt_id (x := ζ)).const_mul (-a)
@@ -170,7 +170,7 @@ theorem ekman_spiral_hasDerivAt_vPrime (a ζ : ℝ) :
   convert h using 1
   ring
 
-/-- Ekman ODEs in depth coordinates, with `2 * ν * a² = f` (i.e. `a² = f / (2ν)`):
+/-- Ekman ODEs in depth coordinates, given `2 * ν * a² = f`:
 `ν * u'' = -f * v` and `ν * v'' = f * u`, the sign convention of `EkmanLayers`. -/
 theorem ekman_spiral_ode (a ν f ζ : ℝ) (h : 2 * ν * a ^ 2 = f) :
     ν * deriv (fun ζ => deriv (ekmanSpiralU a) ζ) ζ = -f * ekmanSpiralV a ζ ∧
@@ -204,7 +204,7 @@ theorem ekman_spiral_boundary (a : ℝ) :
       neg_zero, zero_sub, mul_neg]
 
 /-- Helper: the exponential envelope `exp(-a * ζ)` tends to `0` as `ζ → ∞`. -/
-private theorem ekman_exp_decay (a : ℝ) (ha : 0 < a) :
+private lemma ekman_exp_decay (a : ℝ) (ha : 0 < a) :
     Filter.Tendsto (fun ζ : ℝ => Real.exp (-a * ζ)) Filter.atTop (nhds 0) := by
   have hid : Filter.Tendsto (fun ζ : ℝ => ζ) Filter.atTop Filter.atTop :=
     Filter.tendsto_id
