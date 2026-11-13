@@ -16,7 +16,7 @@ import Mathlib.Analysis.ODE.Gronwall
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
-# Nonlinear Turing instability from an unstable Neumann eigenmode
+# Nonlinear instability from an unstable Neumann eigenmode, and nonlinear Turing instability
 
 `MathlibExt.Biology.Dynamics.TuringPatterns` proves the *linear* theory of diffusion-driven
 instability for `u_t = D u_xx + f(u)`: the dispersion relation, the unstable band, and the
@@ -26,6 +26,13 @@ mode makes the homogeneous steady state nonlinearly (Lyapunov) unstable for the 
 flow, via the linearized-instability theorem of
 `MathlibExt.Analysis.PDE.SemilinearFlow.Instability`.
 
+The general escape theorems only assume `tr J < 0`; they do not assume that the kinetics are
+stable without diffusion, so they also cover steady states that are already unstable for the
+kinetics alone (e.g. a saddle, `det J < 0`). *Turing* (diffusion-driven) instability is the case
+`tr J < 0`, `0 < det J`: the homogeneous mode is then linearly stable, and the escape corollaries
+`turing_instability_exists_escape` and `turing_instability_exists_escape_of_mild` add this
+hypothesis and conclude that the escaping mode is a non-homogeneous one (`0 < n`).
+
 ## Setting
 
 The phase space is `C([0, L]; ℝ²)` with the sup norm, the frozen space of the PDE-01 interface
@@ -34,7 +41,8 @@ Neither the Neumann heat semigroup nor the local flow of the Turing system is co
 They enter as hypotheses:
 
 * **spectral input**: `IsUnstableMode J d_u d_v k_n`, as proved in `TuringPatterns` (e.g. by
-  `isUnstableMode_neumannWavenumber_iff`), in the Turing regime `tr J < 0`, `d_u, d_v ≥ 0`;
+  `isUnstableMode_neumannWavenumber_iff`), with `tr J < 0` and `d_u, d_v ≥ 0` (for the Turing
+  corollaries also `0 < det J`, stability without diffusion);
 * **semigroup**: the linearized semigroup `S` acts on the Neumann mode through the modal ODE
   `c' = (J - k_n² D) c` (`ActsByModalODE`, which is what `Δ_N cos(k_n x) = -k_n² cos(k_n x)`
   gives), and has a growth bound `‖S t‖ ≤ M e^{ω t}` with `ω < p λ`. Here `λ` is the growth rate
@@ -49,18 +57,22 @@ They enter as hypotheses:
 
 ## Main results
 
-* `exists_growthRate_of_isUnstableMode`: in the Turing regime an unstable mode has a *real*
-  positive growth rate `growthRate J d_u d_v k` with a real eigenvector (Turing instabilities
-  do not oscillate). This is what lets the real phase space be used.
+* `exists_growthRate_of_isUnstableMode`: if `tr J < 0` and `d_u, d_v ≥ 0` (in particular in
+  the Turing regime), an unstable mode has a *real* positive growth rate `growthRate J d_u d_v k`
+  with a real eigenvector (such instabilities do not oscillate). This is what lets the real phase
+  space be used.
 * `ActsByModalODE.apply_eigen`: `S t (cos(k_n ·) v) = e^{λ t} cos(k_n ·) v` for an eigenvector `v`.
 * `exists_norm_timeMap_sub_le`: time-map expansion from a Hölder-differentiable reaction
   (Duhamel, Lipschitz dependence on data, Grönwall).
 * `norm_nemytskii_sub_le`: the Nemytskii reaction term inherits the Hölder remainder, with
   derivative `pointwiseMatrix J`.
 * `exists_escape_of_isUnstableMode`: nonlinear instability from an unstable Neumann mode, given
-  the time-map expansion.
+  the time-map expansion (no stability-without-diffusion assumption).
 * `exists_escape_of_isUnstableMode_of_mild`: the same with the expansion derived from the
   kinetics and the mild formulation.
+* `turing_instability_exists_escape`, `turing_instability_exists_escape_of_mild`: **nonlinear
+  Turing instability**. If moreover `0 < det J`, the homogeneous mode is linearly stable, the
+  unstable mode is non-homogeneous, and the steady state is nonlinearly unstable.
 
 ## Not covered
 
@@ -90,14 +102,15 @@ namespace MathlibExt.Biology.Dynamics.TuringInstability
 open MathlibExt.Biology.Dynamics.TuringPatterns
 open MathlibExt.Analysis.PDE.SemilinearFlow
 
-/-! ### The real growth rate of a Turing-unstable mode -/
+/-! ### The real growth rate of an unstable mode -/
 
 /-- The **growth rate** of the Fourier mode of wavenumber `k`: the larger root
 `λ = (τ + √(τ² - 4 δ)) / 2` of the characteristic polynomial `λ² - τ λ + δ` of the mode matrix
-`J - k² D`, where `τ = tr (J - k² D)` and `δ = det (J - k² D)`. When `δ < 0` (the Turing case)
-it is a positive real eigenvalue of `J - k² D` (`exists_mulVec_eq_growthRate_smul`,
-`growthRate_pos`). It is a root whenever `τ² - 4 δ ≥ 0` (`growthRate_sq_sub`); for a negative
-discriminant `Real.sqrt` truncates to `0` and the value is only the common real part `τ / 2`. -/
+`J - k² D`, where `τ = tr (J - k² D)` and `δ = det (J - k² D)`. When `δ < 0` (which is what an
+unstable mode has when `tr J < 0`) it is a positive real eigenvalue of `J - k² D`
+(`exists_mulVec_eq_growthRate_smul`, `growthRate_pos`). It is a root whenever `τ² - 4 δ ≥ 0`
+(`growthRate_sq_sub`); for a negative discriminant `Real.sqrt` truncates to `0` and the value is
+only the common real part `τ / 2`. -/
 noncomputable def growthRate (J : Matrix (Fin 2) (Fin 2) ℝ) (du dv k : ℝ) : ℝ :=
   ((modeMatrix J du dv k).trace +
     Real.sqrt ((modeMatrix J du dv k).trace ^ 2 - 4 * (modeMatrix J du dv k).det)) / 2
@@ -143,9 +156,10 @@ theorem exists_mulVec_eq_growthRate_smul {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv
   simpa [Matrix.sub_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec, sub_eq_zero, eq_comm]
     using hMv
 
-/-- **Turing instabilities are real.** In the Turing regime (`tr J < 0`, `d_u, d_v ≥ 0`), an
-unstable mode has determinant `det (J - k² D) < 0`, so its growth rate is a positive real
-eigenvalue of `J - k² D` with a real eigenvector: the unstable mode grows without oscillating. -/
+/-- **Unstable modes are real when `tr J < 0`.** If `tr J < 0` and `d_u, d_v ≥ 0` (which
+includes the Turing regime, where also `0 < det J`), an unstable mode has determinant
+`det (J - k² D) < 0`, so its growth rate is a positive real eigenvalue of `J - k² D` with a real
+eigenvector: the unstable mode grows without oscillating. -/
 theorem exists_growthRate_of_isUnstableMode {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv k : ℝ}
     (htr : J.trace < 0) (hdu : 0 ≤ du) (hdv : 0 ≤ dv) (hk : IsUnstableMode J du dv k) :
     0 < growthRate J du dv k ∧
@@ -241,7 +255,7 @@ private theorem pow_eq_nsmul {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ
   | succ m ih =>
     rw [pow_succ, ih, Nat.cast_succ, add_one_mul, hS.map_add, ContinuousLinearMap.mul_def]
 
-/-- **Nonlinear Turing instability, time-map form.**
+/-- **Nonlinear instability from an unstable Neumann mode, time-map form.**
 
 Let `J` be the Jacobian of the kinetics at a homogeneous steady state `u₀` with `tr J < 0`,
 `d_u, d_v ≥ 0`, and let the Neumann mode `n` on `[0, L]` be linearly unstable
@@ -259,7 +273,11 @@ space is `C([0, L]; ℝ²)` with the sup norm. Assume:
   the ball.
 
 Then `u₀` is nonlinearly unstable: some distance `ε > 0` is reached at a nonnegative time from
-initial data arbitrarily close to `u₀`. -/
+initial data arbitrarily close to `u₀`.
+
+Stability without diffusion (`0 < det J`) is not assumed, so this is not by itself a Turing
+instability: it also applies when the kinetics alone are unstable. The diffusion-driven case is
+`turing_instability_exists_escape`. -/
 theorem exists_escape_of_isUnstableMode {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ} {n : ℕ}
     (htr : J.trace < 0) (hdu : 0 ≤ du) (hdv : 0 ≤ dv) (hL : 0 ≤ L)
     (hunst : IsUnstableMode J du dv (neumannWavenumber L n))
@@ -288,6 +306,42 @@ theorem exists_escape_of_isUnstableMode {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv 
     rw [pow_eq_nsmul hS, ← Real.exp_nat_mul]
     refine (hgrowth _).trans_eq ?_
     push_cast; ring_nf
+
+/-- An unstable Neumann mode of kinetics that are stable without diffusion (`tr J < 0`,
+`0 < det J`) is non-homogeneous: `n ≠ 0`, since mode `0` is the homogeneous mode `k_0 = 0`. -/
+theorem pos_of_isUnstableMode_neumannWavenumber {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ}
+    {n : ℕ} (htr : J.trace < 0) (hdet : 0 < J.det)
+    (hunst : IsUnstableMode J du dv (neumannWavenumber L n)) : 0 < n := by
+  refine Nat.pos_of_ne_zero fun hn => not_isUnstableMode_zero htr hdet du dv ?_
+  simpa [hn, neumannWavenumber] using hunst
+
+/-- **Nonlinear Turing instability, time-map form.**
+
+The diffusion-driven case of `exists_escape_of_isUnstableMode`: the kinetics are stable without
+diffusion (`tr J < 0`, `0 < det J`, Turing's first condition), and the Neumann mode `n` on
+`[0, L]` is linearly unstable for the reaction–diffusion system (`d_u, d_v ≥ 0`). Under the
+semigroup, differentiability and flow hypotheses of `exists_escape_of_isUnstableMode`, the
+homogeneous mode is linearly stable, the unstable mode is non-homogeneous (`0 < n`), and the
+homogeneous steady state `u₀` is nonlinearly unstable: some distance `ε > 0` is reached at a
+nonnegative time from initial data arbitrarily close to `u₀`. -/
+theorem turing_instability_exists_escape {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ} {n : ℕ}
+    (htr : J.trace < 0) (hdet : 0 < J.det) (hdu : 0 ≤ du) (hdv : 0 ≤ dv) (hL : 0 ≤ L)
+    (hunst : IsUnstableMode J du dv (neumannWavenumber L n))
+    {S : ℝ≥0 → C(Icc (0 : ℝ) L, Fin 2 → ℝ) →L[ℝ] C(Icc (0 : ℝ) L, Fin 2 → ℝ)}
+    (hS : IsC0Semigroup S) (hmode : ActsByModalODE S n (modeMatrix J du dv (neumannWavenumber L n)))
+    {M ω p : ℝ} (hgrowth : ∀ t : ℝ≥0, ‖S t‖ ≤ M * Real.exp (ω * t)) (hp : 1 < p)
+    (hω : ω < p * growthRate J du dv (neumannWavenumber L n))
+    {Φ : ℝ → C(Icc (0 : ℝ) L, Fin 2 → ℝ) → C(Icc (0 : ℝ) L, Fin 2 → ℝ)}
+    {u₀ : C(Icc (0 : ℝ) L, Fin 2 → ℝ)} {T : ℝ≥0} {ρ C : ℝ} (hT : 0 < T) (hρ : 0 < ρ) (hC : 0 ≤ C)
+    (hΦ0 : ∀ x, Φ 0 x = x)
+    (hstep : ∀ (m : ℕ) (x : C(Icc (0 : ℝ) L, Fin 2 → ℝ)),
+      (∀ k ≤ m, ‖Φ (k * T) x - u₀‖ ≤ ρ) → Φ ((m + 1) * T) x = Φ T (Φ (m * T) x))
+    (hrem : ∀ y, ‖y‖ ≤ ρ → ‖Φ T (u₀ + y) - u₀ - S T y‖ ≤ C * ‖y‖ ^ p) :
+    ¬ IsUnstableMode J du dv 0 ∧ 0 < n ∧
+      ∃ ε > 0, ∀ δ > 0, ∃ x, ‖x - u₀‖ < δ ∧ ∃ t, 0 ≤ t ∧ ε ≤ ‖Φ t x - u₀‖ :=
+  ⟨not_isUnstableMode_zero htr hdet du dv, pos_of_isUnstableMode_neumannWavenumber htr hdet hunst,
+    exists_escape_of_isUnstableMode htr hdu hdv hL hunst hS hmode hgrowth hp hω hT hρ hC hΦ0 hstep
+      hrem⟩
 
 /-! ### The time-map expansion from a differentiable reaction -/
 
@@ -473,16 +527,18 @@ theorem norm_nemytskii_sub_le {K : Type*} [TopologicalSpace K] [CompactSpace K]
     _ ≤ C * ‖y‖ ^ p :=
       mul_le_mul_of_nonneg_left (Real.rpow_le_rpow (norm_nonneg _) hyx hp) hC
 
-/-! ### Nonlinear Turing instability in the PDE-01 mild formulation -/
+/-! ### Nonlinear instability in the PDE-01 mild formulation -/
 
-/-- **Nonlinear Turing instability (mild formulation).**
+/-- **Nonlinear instability from an unstable Neumann mode (mild formulation).**
 
 The two-species system `u_t = D u_xx + f(u)` on `[0, L]` with Neumann boundary conditions, in
 the phase space `C([0, L]; ℝ²)` (sup norm) of PDE-01, at a homogeneous steady state `a`
 (`f a = 0`). Hypotheses:
 
 * **spectral input** (from `TuringPatterns`): `tr J < 0`, `d_u, d_v ≥ 0`, and the Neumann
-  mode `n` is linearly unstable, `IsUnstableMode J d_u d_v k_n`;
+  mode `n` is linearly unstable, `IsUnstableMode J d_u d_v k_n` (stability without diffusion,
+  `0 < det J`, is not assumed; see `turing_instability_exists_escape_of_mild` for the Turing
+  case);
 * **differentiability**: the kinetics are Lipschitz on bounded sets and have Jacobian `J` at `a`
   with a Hölder remainder `‖f (a + z) - f a - J z‖ ≤ K ‖z‖ᵖ` (`‖z‖ ≤ r`, `p > 1`; e.g. `f` of
   class `C²` with `p = 2`);
@@ -529,5 +585,42 @@ theorem exists_escape_of_isUnstableMode_of_mild {J : Matrix (Fin 2) (Fin 2) ℝ}
     (lt_min hρ hρ₀) hC hΦ0 (fun m x hx => hstep m x fun k hk => (hx k hk).trans (min_le_right _ _))
     (fun y hy => ?_)
   simpa using hrem y (hy.trans (min_le_left _ _))
+
+/-- **Nonlinear Turing instability (mild formulation).**
+
+The diffusion-driven case of `exists_escape_of_isUnstableMode_of_mild`: the kinetics are stable
+without diffusion (`tr J < 0`, `0 < det J`), and the Neumann mode `n` on `[0, L]` is linearly
+unstable for the reaction–diffusion system (`d_u, d_v ≥ 0`). Under the differentiability,
+semigroup and flow hypotheses of `exists_escape_of_isUnstableMode_of_mild`, the homogeneous mode
+is linearly stable, the unstable mode is non-homogeneous (`0 < n`), and the homogeneous steady
+state `a` is nonlinearly unstable. -/
+theorem turing_instability_exists_escape_of_mild {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv L : ℝ}
+    {n : ℕ} (htr : J.trace < 0) (hdet : 0 < J.det) (hdu : 0 ≤ du) (hdv : 0 ≤ dv) (hL : 0 ≤ L)
+    (hunst : IsUnstableMode J du dv (neumannWavenumber L n))
+    {f : (Fin 2 → ℝ) → Fin 2 → ℝ} (hfc : Continuous f)
+    (hfL : ∀ R : ℝ, ∃ L : ℝ≥0, LipschitzOnWith L f (Metric.closedBall 0 R))
+    {a : Fin 2 → ℝ} (hfa : f a = 0) {r K p : ℝ} (hr : 0 < r) (hK : 0 ≤ K) (hp : 1 < p)
+    (hf : ∀ z, ‖z‖ ≤ r → ‖f (a + z) - f a - J *ᵥ z‖ ≤ K * ‖z‖ ^ p)
+    {SA S : ℝ≥0 → C(Icc (0 : ℝ) L, Fin 2 → ℝ) →L[ℝ] C(Icc (0 : ℝ) L, Fin 2 → ℝ)}
+    (hSA : IsC0Semigroup SA) (hSAa : ∀ t, SA t (ContinuousMap.const _ a) = ContinuousMap.const _ a)
+    (hS : IsC0Semigroup S) {T : ℝ≥0} (hT : 0 < T)
+    (hSmild : ∀ y, IsMildSolution SA (pointwiseMatrix _ J) y T fun t => S t.toNNReal y)
+    (hmode : ActsByModalODE S n (modeMatrix J du dv (neumannWavenumber L n)))
+    {M ω : ℝ} (hgrowth : ∀ t : ℝ≥0, ‖S t‖ ≤ M * Real.exp (ω * t))
+    (hω : ω < p * growthRate J du dv (neumannWavenumber L n))
+    {Φ : ℝ → C(Icc (0 : ℝ) L, Fin 2 → ℝ) → C(Icc (0 : ℝ) L, Fin 2 → ℝ)} {ρ₀ R : ℝ}
+    (hρ₀ : 0 < ρ₀) (hΦ0 : ∀ x, Φ 0 x = x)
+    (hstep : ∀ (m : ℕ) (x : C(Icc (0 : ℝ) L, Fin 2 → ℝ)),
+      (∀ k ≤ m, ‖Φ (k * T) x - ContinuousMap.const _ a‖ ≤ ρ₀) →
+        Φ ((m + 1) * T) x = Φ T (Φ (m * T) x))
+    (hΦ : ∀ x, ‖x - ContinuousMap.const _ a‖ ≤ ρ₀ →
+      IsMildSolution SA (nemytskii f hfc) x T (fun t => Φ t x) ∧
+        ∀ t ∈ Icc 0 (T : ℝ), ‖Φ t x‖ ≤ R) :
+    ¬ IsUnstableMode J du dv 0 ∧ 0 < n ∧
+      ∃ ε > 0, ∀ δ > 0, ∃ x, ‖x - ContinuousMap.const _ a‖ < δ ∧
+        ∃ t, 0 ≤ t ∧ ε ≤ ‖Φ t x - ContinuousMap.const _ a‖ :=
+  ⟨not_isUnstableMode_zero htr hdet du dv, pos_of_isUnstableMode_neumannWavenumber htr hdet hunst,
+    exists_escape_of_isUnstableMode_of_mild htr hdu hdv hL hunst hfc hfL hfa hr hK hp hf hSA hSAa
+      hS hT hSmild hmode hgrowth hω hρ₀ hΦ0 hstep hΦ⟩
 
 end MathlibExt.Biology.Dynamics.TuringInstability
