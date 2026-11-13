@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import PhyslibExt.EarthScience.FirstOrderKinetics
 import PhyslibExt.EarthScience.Reactors
 
 /-!
@@ -14,7 +15,8 @@ import PhyslibExt.EarthScience.Reactors
 
 Concrete consumers of `PhyslibExt.EarthScience.Reactors`: the
 witness `V = Q = k = cin = 1`, `c0 = 0` giving `cstar = 1/2`, the
-`k = 0` conservative-throughflow case, and a plug-flow parcel.
+`k = 0` conservative-throughflow case, and the plug-flow parcel ODE
+supplied by `EarthScience.firstOrder_decay_hasDerivAt`.
 
 ## i. Overview
 
@@ -28,6 +30,7 @@ No new definitions or results are introduced here.
 ## iii. References
 
 - `PhyslibExt.EarthScience.Reactors`
+- `PhyslibExt.EarthScience.FirstOrderKinetics`
 -/
 
 /-- Witness: with `V = Q = k = cin = 1`, `cstar = 1/2`. -/
@@ -51,7 +54,9 @@ example (V Q cin : ℝ) (hV : 0 < V) (hQ : 0 < Q) :
     (Q / V) * (cin - Q * cin / (Q + 0 * V)) - 0 * (Q * cin / (Q + 0 * V)) = 0 :=
   EarthScience.cstr_steady_state V Q 0 cin hV hQ le_rfl
 
-/-- Plug-flow parcel: `cin = 1`, `k = 1` gives outlet `exp(-1)` at `τ = 1`. -/
+/-- Plug-flow parcel ODE only: with `cin = 1`, `k = 1`, the parcel
+concentration `exp(-s)` satisfies `c' = -k*c` at every `s`, by the existing
+first-order decay theorem. No outlet value is checked. -/
 example (s : ℝ) : HasDerivAt (fun s : ℝ => 1 * Real.exp (-1 * s))
     (-1 * (1 * Real.exp (-1 * s))) s :=
-  EarthScience.plugFlow_hasDerivAt 1 1 s
+  EarthScience.firstOrder_decay_hasDerivAt 1 1 s
