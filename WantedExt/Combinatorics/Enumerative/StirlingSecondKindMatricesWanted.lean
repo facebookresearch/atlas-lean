@@ -34,8 +34,9 @@ namespace MetaMathlibExt
 
 open MathlibExt.Combinatorics.Enumerative.StirlingMatrixWanted
 
-/-- The shifted Stirling matrix `S^[m](n)` with entries `S(i + m, j)`,
-`1 ≤ i, j ≤ n`.
+/-- **Shifted Stirling matrix of the second kind.** For natural numbers $m$ and $n$, the shifted
+Stirling matrix $S^{[m]}(n)$ is the $n \times n$ matrix over $\mathbb{Q}$ whose $(i, j)$ entry is
+the Stirling number of the second kind $S(i + m, j)$, for $1 \le i, j \le n$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -43,7 +44,11 @@ INTEGERS 25 (2025), Article A27, Section 1 (definition of `S^[m](n)`). -/
 public def stirlingSecondShiftMatrix (m n : ℕ) : Matrix (Fin n) (Fin n) ℚ :=
   Matrix.of fun a b => (Nat.stirlingSecond (a.val + 1 + m) (b.val + 1) : ℚ)
 
-/-- `S^[0](n) = S(n)`.
+/-- **Shift zero gives the Stirling matrix of the second kind.** For every natural number $n$, the
+shifted Stirling matrix $S^{[0]}(n)$, the $n \times n$ rational matrix with entries $S(i + 0, j)$
+for $1 \le i, j \le n$, equals the Stirling matrix of the second kind $S(n)$, the $n \times n$
+rational matrix with entries $S(i, j)$; here $S(i, j)$ denotes the Stirling numbers of the
+second kind.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -53,7 +58,10 @@ public theorem stirlingSecondShiftMatrix_zero (n : ℕ) :
   ext a b
   simp [stirlingSecondShiftMatrix, stirlingMatrix2]
 
-/-- The first column of `S^[m](n)` is all ones: `S(i + m, 1) = 1`.
+/-- **First column of a shifted Stirling matrix.** Let $m$ and $n$ be natural numbers with $n > 0$,
+and let $S^{[m]}(n)$ be the $n \times n$ rational matrix with entries $S(i + m, j)$ for
+$1 \le i, j \le n$, where $S(i, j)$ denotes the Stirling numbers of the second kind. Every entry
+of the first column of $S^{[m]}(n)$ equals $1$: $S(i + m, 1) = 1$ for $1 \le i \le n$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -64,8 +72,10 @@ public theorem stirlingSecondShiftMatrix_apply_zero_right {m n : ℕ} (a : Fin n
   rw [show a.val + 1 + m = (a.val + m) + 1 by omega, Nat.stirlingSecond_one_right]
   simp
 
-/-- The Stirling matrix of the first kind `s(n)` with entries `s(i, j)`
-(zero above the diagonal).
+/-- **Stirling matrix of the first kind.** For a natural number $n$, the Stirling matrix of the
+first kind $s(n)$ is the $n \times n$ matrix with rational entries $s(n)_{i,j} = s(i, j)$ for
+$1 \le i, j \le n$, where $s(i, j)$ is the signed Stirling number of the first kind. Its
+entries above the diagonal are zero, since $s(i, j) = 0$ for $j > i$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -73,7 +83,9 @@ INTEGERS 25 (2025), Article A27, Section 1 (definition of `s(n)`). -/
 public def stirlingFirstMatrix (n : ℕ) : Matrix (Fin n) (Fin n) ℚ :=
   Matrix.of fun a b => (signedStirlingFirst (a.val + 1) (b.val + 1) : ℚ)
 
-/-- The diagonal of `s(n)` is all ones.
+/-- **Diagonal of the Stirling matrix of the first kind.** For every natural number $n$, every
+diagonal entry of the Stirling matrix of the first kind $s(n)$ equals $1$, that is,
+$s(n)_{i,i} = 1$ for $1 \le i \le n$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -82,8 +94,9 @@ public theorem stirlingFirstMatrix_apply_self {n : ℕ} (a : Fin n) :
     stirlingFirstMatrix n a a = 1 := by
   simp [stirlingFirstMatrix, signedStirlingFirst, Nat.stirlingFirst_self]
 
-/-- The upper bidiagonal matrix `V(n)`: `V_{i,i} = i`, `V_{i,i+1} = 1`, zero
-elsewhere.
+/-- **Upper bidiagonal matrix V(n).** For a natural number $n$, $V(n)$ is the $n \times n$
+matrix over $\mathbb{Q}$, with rows and columns indexed by $1, \dots, n$, whose entries are
+$V_{i,i} = i$ on the diagonal, $V_{i,i+1} = 1$ just above the diagonal, and $0$ elsewhere.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -92,7 +105,10 @@ public def stirlingVMatrix (n : ℕ) : Matrix (Fin n) (Fin n) ℚ :=
   Matrix.of fun a b =>
     if b = a then (a.val + 1 : ℚ) else if b.val = a.val + 1 then 1 else 0
 
-/-- `V(n)_{i,i} = i`.
+/-- **Diagonal entries of the bidiagonal matrix V(n).** For every natural number $n$, let $V(n)$ be
+the $n \times n$ rational upper bidiagonal matrix with $V(n)_{i,i} = i$, $V(n)_{i,i+1} = 1$ and
+all other entries $0$, indices running over $1, \dots, n$. Then $V(n)_{i,i} = i$ for every
+$1 \le i \le n$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -101,8 +117,9 @@ public theorem stirlingVMatrix_apply_self {n : ℕ} (a : Fin n) :
     stirlingVMatrix n a a = a.val + 1 := by
   simp [stirlingVMatrix]
 
-/-- The upper triangular matrix `Ṽ(n)` with `Ṽ_{i,j} = (-1)^{j-i} (i-1)! / j!`
-for `j ≥ i`, zero otherwise.
+/-- **Upper triangular matrix Ṽ(n).** For a natural number $n$, $\tilde V(n)$ is the
+$n \times n$ matrix over $\mathbb{Q}$, with rows and columns indexed by $1, \dots, n$, whose
+$(i, j)$ entry is $(-1)^{j-i} (i-1)!/j!$ if $i \le j$ and $0$ if $i > j$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -113,7 +130,10 @@ public def stirlingVTildeMatrix (n : ℕ) : Matrix (Fin n) (Fin n) ℚ :=
       (-1 : ℚ) ^ (b.val - a.val) * (a.val.factorial : ℚ) / ((b.val + 1).factorial : ℚ)
     else 0
 
-/-- `Ṽ(n)_{i,i} = 1 / i`.
+/-- **Diagonal entries of the matrix Ṽ(n).** For a natural number $n$, let $\tilde V(n)$ be the
+$n \times n$ upper triangular matrix over $\mathbb{Q}$, with rows and columns indexed by
+$1, \dots, n$, whose $(i, j)$ entry is $(-1)^{j-i} (i-1)!/j!$ if $i \le j$ and $0$ if $i > j$.
+Then for every $i$ with $1 \le i \le n$, the $(i, i)$ entry of $\tilde V(n)$ is $1/i$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -127,7 +147,9 @@ public theorem stirlingVTildeMatrix_apply_self {n : ℕ} (a : Fin n) :
   push_cast
   ring
 
-/-- The matrix `E(n)` with `E_{i,j} = (j + 1)^{i-1}`.
+/-- **Shifted Vandermonde matrix.** For a natural number $n$, the shifted Vandermonde matrix
+$E(n)$ is the $n \times n$ matrix with rational entries $E(n)_{i,j} = (j + 1)^{i-1}$ for
+$1 \le i, j \le n$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -135,7 +157,9 @@ INTEGERS 25 (2025), Article A27, Section 2 (definition of `E(n)`). -/
 public def shiftedVandermondeMatrix (n : ℕ) : Matrix (Fin n) (Fin n) ℚ :=
   Matrix.of fun a b => ((b.val + 2 : ℕ) : ℚ) ^ a.val
 
-/-- The first row of `E(n)` is all ones.
+/-- **First row of the shifted Vandermonde matrix.** For every natural number $n \ge 1$, every
+entry in the first row of the shifted Vandermonde matrix $E(n)$ equals $1$, that is,
+$E(n)_{1,j} = 1$ for $1 \le j \le n$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -144,9 +168,11 @@ public theorem shiftedVandermondeMatrix_apply_zero_left {n : ℕ} (h : 0 < n) (b
     shiftedVandermondeMatrix n ⟨0, h⟩ b = 1 := by
   simp [shiftedVandermondeMatrix]
 
-/-- The strictly upper triangular matrix `Q^[N](n)` with
-`Q^[N]_{i,j} = (-1)^{j-i+1} i^{N-1} / ((i-1)! (j-i-1)!)` for `j ≥ i + 1`, zero
-otherwise.
+/-- **Strictly upper triangular matrix $Q^{[N]}(n)$.** For natural numbers $N$ and $n$,
+$Q^{[N]}(n)$ is the $n \times n$ matrix with rational entries
+$$Q^{[N]}(n)_{i,j} = \frac{(-1)^{j-i+1}\, i^{N-1}}{(i-1)!\,(j-i-1)!} \quad (1 \le i < j \le n)$$
+and $Q^{[N]}(n)_{i,j} = 0$ for $1 \le j \le i \le n$. Here $N - 1$ is truncated subtraction,
+so $Q^{[0]}(n) = Q^{[1]}(n)$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -158,7 +184,11 @@ public def stirlingQMatrix (N n : ℕ) : Matrix (Fin n) (Fin n) ℚ :=
         ((a.val.factorial : ℚ) * ((b.val - a.val - 1).factorial : ℚ))
     else 0
 
-/-- `Q^[N](n)` vanishes on and below the diagonal.
+/-- **Vanishing of $Q^{[N]}(n)$ on and below the diagonal.** For natural numbers $N$ and $n$, let
+$Q^{[N]}(n)$ be the $n \times n$ rational matrix with
+$Q^{[N]}(n)_{i,j} = (-1)^{j-i+1} i^{N-1} / ((i-1)!\,(j-i-1)!)$ for $1 \le i < j \le n$ and $0$
+otherwise, where $N - 1$ is truncated subtraction. Then $Q^{[N]}(n)_{i,j} = 0$ for all indices
+$1 \le j \le i \le n$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -170,7 +200,11 @@ public theorem stirlingQMatrix_apply_of_le {N n : ℕ} {a b : Fin n} (h : b ≤ 
     omega
   simp only [stirlingQMatrix, Matrix.of_apply, this, ↓reduceIte]
 
-/-- Lemma 1: `V(n)⁻¹ = Ṽ(n)`.
+/-- **Explicit inverse of the bidiagonal matrix V(n).** For every natural number $n$, let $V(n)$ be
+the $n \times n$ rational upper bidiagonal matrix with $V(n)_{i,i} = i$, $V(n)_{i,i+1} = 1$ and
+all other entries $0$, and let $\tilde V(n)$ be the upper triangular matrix with
+$\tilde V(n)_{i,j} = (-1)^{j-i} (i-1)!/j!$ for $j \ge i$ and $\tilde V(n)_{i,j} = 0$ for $j < i$,
+all indices running over $1, \dots, n$. Then $V(n)^{-1} = \tilde V(n)$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -178,7 +212,13 @@ INTEGERS 25 (2025), Article A27, Lemma 1 (`integers-2025-A27-lem-1`). -/
 public theorem_wanted stirlingVMatrix_inv (n : ℕ) :
     (stirlingVMatrix n)⁻¹ = stirlingVTildeMatrix n
 
-/-- Lemma 2: `Q^[N+1](n) = Q^[N](n) (V(n) - I_n)` for `N ≥ 1`.
+/-- **Recurrence for $Q^{[N]}(n)$ in $N$.** For natural numbers $n$ and $N$ with $N \ge 1$, let
+$V(n)$ be the $n \times n$ upper bidiagonal matrix with $V(n)_{i,i} = i$, $V(n)_{i,i+1} = 1$
+and all other entries $0$, let $I_n$ be the $n \times n$ identity matrix, and for $M \ge 1$ let
+$Q^{[M]}(n)$ be the $n \times n$ matrix with
+$Q^{[M]}(n)_{i,j} = (-1)^{j-i+1} i^{M-1} / ((i-1)!\,(j-i-1)!)$ for $j \ge i + 1$ and $0$
+otherwise. Then, as matrices over $\mathbb{Q}$,
+$$Q^{[N+1]}(n) = Q^{[N]}(n)\,(V(n) - I_n).$$
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -186,7 +226,13 @@ INTEGERS 25 (2025), Article A27, Lemma 2 (`integers-2025-A27-lem-2`). -/
 public theorem_wanted stirlingQMatrix_succ {N : ℕ} (hN : 0 < N) (n : ℕ) :
     stirlingQMatrix (N + 1) n = stirlingQMatrix N n * (stirlingVMatrix n - 1)
 
-/-- Corollary 1: `Q^[N](n) = Q^[1](n) (V(n) - I_n)^{N-1}` for `N ≥ 1`.
+/-- **Factorization of $Q^{[N]}(n)$ through $Q^{[1]}(n)$.** For natural numbers $n$ and $N$ with
+$N \ge 1$, let $V(n)$ be the $n \times n$ upper bidiagonal matrix with $V(n)_{i,i} = i$,
+$V(n)_{i,i+1} = 1$ and all other entries $0$, let $I_n$ be the $n \times n$ identity matrix,
+and for $M \ge 1$ let $Q^{[M]}(n)$ be the $n \times n$ matrix with
+$Q^{[M]}(n)_{i,j} = (-1)^{j-i+1} i^{M-1} / ((i-1)!\,(j-i-1)!)$ for $j \ge i + 1$ and $0$
+otherwise. Then, as matrices over $\mathbb{Q}$,
+$$Q^{[N]}(n) = Q^{[1]}(n)\,(V(n) - I_n)^{N-1}.$$
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -194,7 +240,15 @@ INTEGERS 25 (2025), Article A27, Corollary 1 (`integers-2025-A27-cor-1`). -/
 public theorem_wanted stirlingQMatrix_eq_one_mul_pow {N : ℕ} (hN : 0 < N) (n : ℕ) :
     stirlingQMatrix N n = stirlingQMatrix 1 n * (stirlingVMatrix n - 1) ^ (N - 1)
 
-/-- Lemma 3: `S(n) (V(n) - I_n) = E(n) Q^[1](n)`.
+/-- **Stirling matrix of the second kind times $V(n) - I_n$.** Let $n$ be a natural number. Let
+$S(n)$ be the $n \times n$ Stirling matrix of the second kind, with entries the Stirling numbers
+of the second kind $S(i, j)$ for $1 \le i, j \le n$; let $V(n)$ be the $n \times n$ upper
+bidiagonal matrix with $V(n)_{i,i} = i$, $V(n)_{i,i+1} = 1$ and all other entries $0$; let
+$I_n$ be the identity matrix, $E(n)$ the shifted Vandermonde matrix with
+$E(n)_{i,j} = (j + 1)^{i-1}$, and $Q^{[1]}(n)$ the matrix with
+$Q^{[1]}(n)_{i,j} = (-1)^{j-i+1} / ((i-1)!\,(j-i-1)!)$ for $j \ge i + 1$ and $0$ otherwise.
+Then, as matrices over $\mathbb{Q}$,
+$$S(n)\,(V(n) - I_n) = E(n)\,Q^{[1]}(n).$$
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -203,7 +257,15 @@ public theorem_wanted stirlingMatrix2_mul_sub_one (n : ℕ) :
     stirlingMatrix2 n * (stirlingVMatrix n - 1) =
       shiftedVandermondeMatrix n * stirlingQMatrix 1 n
 
-/-- Theorem 1: `S(n) (V(n) - I_n)^N = E(n) Q^[N](n)` for `N ≥ 1`.
+/-- **Stirling matrix of the second kind times powers of $V(n) - I_n$.** Let $n$ and $N$ be
+natural numbers with $N \ge 1$. Let $S(n)$ be the $n \times n$ Stirling matrix of the second
+kind, with entries the Stirling numbers of the second kind $S(i, j)$ for $1 \le i, j \le n$; let
+$V(n)$ be the $n \times n$ upper bidiagonal matrix with $V(n)_{i,i} = i$, $V(n)_{i,i+1} = 1$
+and all other entries $0$; let $I_n$ be the identity matrix, $E(n)$ the shifted Vandermonde
+matrix with $E(n)_{i,j} = (j + 1)^{i-1}$, and $Q^{[N]}(n)$ the matrix with
+$Q^{[N]}(n)_{i,j} = (-1)^{j-i+1} i^{N-1} / ((i-1)!\,(j-i-1)!)$ for $j \ge i + 1$ and $0$
+otherwise. Then, as matrices over $\mathbb{Q}$,
+$$S(n)\,(V(n) - I_n)^N = E(n)\,Q^{[N]}(n).$$
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -212,9 +274,14 @@ public theorem_wanted stirlingMatrix2_mul_sub_one_pow {N : ℕ} (hN : 0 < N) (n 
     stirlingMatrix2 n * (stirlingVMatrix n - 1) ^ N =
       shiftedVandermondeMatrix n * stirlingQMatrix N n
 
-/-- Theorem 2: `S^[m](n) = S(n) V(n)^m`, and
-`det S^[m](n) = det_{1 ≤ i, j ≤ n} [S(i + m, j)] = ∏_{i=1}^{n} i^m = n!^m`. The paper takes
-`m, n ≥ 1`; `m = 0` and `n = 0` also hold and are included.
+/-- **Factorization and determinant of shifted Stirling matrices.** For natural numbers $m$ and
+$n$, let $S(n)$ and $S^{[m]}(n)$ be the $n \times n$ rational matrices with entries $S(i, j)$ and
+$S(i + m, j)$, where $S(i, j)$ denotes the Stirling numbers of the second kind, and let $V(n)$ be
+the upper bidiagonal matrix with $V(n)_{i,i} = i$, $V(n)_{i,i+1} = 1$ and all other entries $0$,
+all indices running over $1, \dots, n$. Then $S^{[m]}(n) = S(n)\, V(n)^m$ and
+$\det S^{[m]}(n) = (n!)^m$.
+
+The paper assumes $m, n \ge 1$; the cases $m = 0$ and $n = 0$ hold as well.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -223,8 +290,12 @@ public theorem_wanted stirlingSecondShiftMatrix_eq_mul_pow (m n : ℕ) :
     stirlingSecondShiftMatrix m n = stirlingMatrix2 n * stirlingVMatrix n ^ m ∧
       (stirlingSecondShiftMatrix m n).det = (n.factorial : ℚ) ^ m
 
-/-- Corollary 2: `S^[m+1](n) = S^[m](n) V(n)`, hence
-`det S^[m+1](n) = n! det S^[m](n)`.
+/-- **Recurrence for shifted Stirling matrices.** For natural numbers $m$ and $n$, let $S^{[m]}(n)$
+be the $n \times n$ rational matrix with entries $S(i + m, j)$, where $S(i, j)$ denotes the
+Stirling numbers of the second kind, and let $V(n)$ be the upper bidiagonal matrix with
+$V(n)_{i,i} = i$, $V(n)_{i,i+1} = 1$ and all other entries $0$, all indices running over
+$1, \dots, n$. Then $S^{[m+1]}(n) = S^{[m]}(n)\, V(n)$ and
+$\det S^{[m+1]}(n) = n! \cdot \det S^{[m]}(n)$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -234,7 +305,12 @@ public theorem_wanted stirlingSecondShiftMatrix_succ (m n : ℕ) :
       (stirlingSecondShiftMatrix (m + 1) n).det =
         (n.factorial : ℚ) * (stirlingSecondShiftMatrix m n).det
 
-/-- Corollary 3: `S^[m₁+m₂](n) = S^[m₁](n) s(n) S^[m₂](n)`.
+/-- **Composition of shifted Stirling matrices.** For natural numbers $m$ and $n$, let $S^{[m]}(n)$
+be the $n \times n$ rational matrix with entries $S(i + m, j)$ for $1 \le i, j \le n$, where
+$S(i, j)$ denotes the Stirling numbers of the second kind, and let $s(n)$ be the $n \times n$
+rational matrix with entries the signed Stirling numbers of the first kind $s(i, j)$ for
+$1 \le i, j \le n$. Then for all natural numbers $m_1$, $m_2$ and $n$,
+$S^{[m_1 + m_2]}(n) = S^{[m_1]}(n)\, s(n)\, S^{[m_2]}(n)$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -243,8 +319,14 @@ public theorem_wanted stirlingSecondShiftMatrix_add (m₁ m₂ n : ℕ) :
     stirlingSecondShiftMatrix (m₁ + m₂) n =
       stirlingSecondShiftMatrix m₁ n * stirlingFirstMatrix n * stirlingSecondShiftMatrix m₂ n
 
-/-- Theorem 3: `S^[m](n)⁻¹ = Ṽ(n)^m s(n)`. The paper takes `m ≥ 1`; the case
-`m = 0` (`S(n)⁻¹ = s(n)`) also holds and is included.
+/-- **Inverse of a shifted Stirling matrix.** For natural numbers $m$ and $n$, let $S^{[m]}(n)$ be
+the $n \times n$ rational matrix with entries $S(i + m, j)$, where $S(i, j)$ denotes the Stirling
+numbers of the second kind; let $s(n)$ be the matrix with entries the signed Stirling numbers of
+the first kind $s(i, j)$; and let $\tilde V(n)$ be the upper triangular matrix with
+$\tilde V(n)_{i,j} = (-1)^{j-i} (i-1)!/j!$ for $j \ge i$ and $\tilde V(n)_{i,j} = 0$ for $j < i$,
+all indices running over $1, \dots, n$. Then $S^{[m]}(n)^{-1} = \tilde V(n)^m\, s(n)$.
+
+The paper assumes $m \ge 1$; the case $m = 0$, which reads $S^{[0]}(n)^{-1} = s(n)$, holds as well.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -252,9 +334,12 @@ INTEGERS 25 (2025), Article A27, Theorem 3 (`integers-2025-A27-thm-3`). -/
 public theorem_wanted stirlingSecondShiftMatrix_inv (m n : ℕ) :
     (stirlingSecondShiftMatrix m n)⁻¹ = stirlingVTildeMatrix n ^ m * stirlingFirstMatrix n
 
-/-- Theorem 4: for `i ≥ j ≥ 1`, `∑_{l=1}^{i} s(i, l) S(l + m, j)` is `i^m` if
-`i = j` and `0` if `i > j`. The paper takes `m ≥ 1`; `m = 0` also holds and is
-included.
+/-- **Shifted orthogonality of Stirling numbers.** Write $s(n, k)$ for the signed Stirling
+numbers of the first kind and $S(n, k)$ for the Stirling numbers of the second kind. For all
+natural numbers $i$, $j$, $m$ with $1 \le j \le i$, the integer
+$\sum_{l=1}^{i} s(i, l)\, S(l + m, j)$ equals $i^m$ if $i = j$ and $0$ if $i > j$.
+
+The case $m = 0$ is included, although the source assumes $m \ge 1$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -264,9 +349,11 @@ public theorem_wanted sum_signedStirlingFirst_mul_stirlingSecond_add {i j : ℕ}
     ∑ l ∈ Finset.Icc 1 i, signedStirlingFirst i l * (Nat.stirlingSecond (l + m) j : ℤ) =
       if i = j then (i : ℤ) ^ m else 0
 
-/-- Theorem 5: for `i, j, N ≥ 1`,
-`∑_{l=0}^{N} (-1)^{N-l} C(N, l) S(i + l, j) =
-∑_{k=1}^{j-1} (-1)^{j-k+1} k^{N-1} (k + 1)^{i-1} / ((k - 1)! (j - k - 1)!)`.
+/-- **Alternating binomial sums of shifted Stirling numbers of the second kind.** Write
+$S(n, k)$ for the Stirling numbers of the second kind. For all natural numbers $i, j, N \ge 1$,
+the following identity holds in the rational numbers:
+$$\sum_{l=0}^{N} (-1)^{N-l} \binom{N}{l} S(i+l, j) =
+\sum_{k=1}^{j-1} \frac{(-1)^{j-k+1} k^{N-1} (k+1)^{i-1}}{(k-1)!\,(j-k-1)!}.$$
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -279,8 +366,11 @@ public theorem_wanted sum_choose_stirlingSecond_eq {i j N : ℕ} (hi : 1 ≤ i) 
         (-1 : ℚ) ^ (j - k + 1) * (k : ℚ) ^ (N - 1) * ((k + 1 : ℕ) : ℚ) ^ (i - 1) /
           (((k - 1).factorial : ℚ) * ((j - k - 1).factorial : ℚ))
 
-/-- Corollary 4: for `i, j ≥ 1`,
-`S(i + 1, j) - S(i, j) = ∑_{k=1}^{j-1} (-1)^{j-k+1} (k + 1)^{i-1} / ((k - 1)! (j - k - 1)!)`.
+/-- **Difference of consecutive Stirling numbers of the second kind.** For natural numbers
+$i \ge 1$ and $j \ge 1$, the Stirling numbers of the second kind $S(i, j)$ satisfy, in $\mathbb{Q}$,
+$$
+S(i + 1, j) - S(i, j) = \sum_{k=1}^{j-1} \frac{(-1)^{j-k+1} (k + 1)^{i-1}}{(k - 1)!\,(j - k - 1)!}.
+$$
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -291,10 +381,15 @@ public theorem_wanted stirlingSecond_succ_sub_eq_sum {i j : ℕ} (hi : 1 ≤ i) 
         (-1 : ℚ) ^ (j - k + 1) * ((k + 1 : ℕ) : ℚ) ^ (i - 1) /
           (((k - 1).factorial : ℚ) * ((j - k - 1).factorial : ℚ))
 
-/-- Theorem 6: for `n ≥ max {i, j}`,
-`∑_{k₁=1}^{n} ∑_{k₂=k₁}^{n} (-1)^{k₂-k₁} (k₁ - 1)! / k₂! · S(i + 1, k₁) s(k₂, j) = δ_{i,j}`.
-The hypothesis `i ≥ 1` (the paper's indices are positive) is needed: for
-`i = j = 0` the left side is `0`; `j ≥ 1` is not needed.
+/-- **Double-sum Kronecker delta identity for Stirling numbers.** Write $S(n, k)$ for the Stirling
+numbers of the second kind and $s(n, k)$ for the signed Stirling numbers of the first kind. For
+all natural numbers $i, j, n$ with $i \ge 1$, $n \ge i$ and $n \ge j$, in the rational numbers,
+$$\sum_{k_1=1}^{n} \sum_{k_2=k_1}^{n} (-1)^{k_2-k_1} \frac{(k_1-1)!}{k_2!}\,
+S(i+1, k_1)\, s(k_2, j) = \delta_{i,j},$$
+where $\delta_{i,j}$ is $1$ if $i = j$ and $0$ otherwise.
+
+The hypothesis $i \ge 1$ cannot be dropped: for $i = j = 0$ the left side is $0$. The source's
+hypothesis $j \ge 1$ is not needed.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -306,10 +401,12 @@ public theorem_wanted sum_sum_stirlingSecond_signedStirlingFirst_eq_ite {i j n :
           (Nat.stirlingSecond (i + 1) k₁ : ℚ) * (signedStirlingFirst k₂ j : ℚ) =
       if i = j then 1 else 0
 
-/-- Theorem 7: for `i ≥ 1`,
-`∑_{k=1}^{min {i+1, j}} (-1)^{j-k} (k - 1)! / j! · S(i + 1, k)` is `S(i, j)` if
-`i ≥ j` and `0` otherwise. The paper also assumes `j ≥ 1`; the case `j = 0`
-holds (both sides vanish) and is included.
+/-- **Stirling numbers of the second kind from the next row.** Write $S(n, k)$ for the Stirling
+numbers of the second kind. For all natural numbers $i \ge 1$ and $j$, the rational number
+$$\sum_{k=1}^{\min(i+1, j)} (-1)^{j-k} \frac{(k-1)!}{j!} S(i+1, k)$$
+equals $S(i, j)$ if $j \le i$ and $0$ if $j > i$.
+
+The case $j = 0$, where both sides vanish, is included although the source assumes $j \ge 1$.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,
@@ -320,10 +417,14 @@ public theorem_wanted sum_stirlingSecond_succ_eq_ite {i j : ℕ} (hi : 1 ≤ i) 
           (Nat.stirlingSecond (i + 1) k : ℚ) =
       if j ≤ i then (Nat.stirlingSecond i j : ℚ) else 0
 
-/-- Theorem 8: for `n ≥ max {i, j}` and `m₁, m₂ ≥ 0`,
-`∑_{k₁=1}^{n} ∑_{k₂=1}^{k₁} S(i + m₁, k₁) s(k₁, k₂) S(k₂ + m₂, j) = S(i + m₁ + m₂, j)`.
-The shifts `m₁, m₂` are those of Corollary 3 (the statement leaves them
-unquantified); `i ≥ 1` is kept, `j ≥ 1` is not needed.
+/-- **Double-sum shift identity for Stirling numbers.** Write $S(n, k)$ for the Stirling numbers
+of the second kind and $s(n, k)$ for the signed Stirling numbers of the first kind. For all
+natural numbers $i, j, n, m_1, m_2$ with $i \ge 1$, $n \ge i$ and $n \ge j$,
+$$\sum_{k_1=1}^{n} \sum_{k_2=1}^{k_1} S(i+m_1, k_1)\, s(k_1, k_2)\, S(k_2+m_2, j) =
+S(i+m_1+m_2, j).$$
+
+The source leaves the shifts $m_1, m_2$ unquantified; here they are arbitrary natural numbers,
+as in Corollary 3 of the source, and the source's hypothesis $j \ge 1$ is not needed.
 
 Source: M. Bahrami-Taghanaki, A. R. Moghaddamfar, Navid Salehy and Nima Salehy,
 *On Matrices Whose Entries Are Stirling Numbers of the Second Kind (I)*,

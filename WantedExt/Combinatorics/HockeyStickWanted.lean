@@ -35,9 +35,10 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.HockeyStickWanted
 
-/-- **Corollary 15**:
-`∑_{i=0}^k C(2i + n, i)
-  = ∑_{i=0}^{⌊k/2⌋} (-1)^i C(2k + 1 + n - i, k - 2i)`.
+/-- **Generalized hockey stick identity of Lynch and Weselcouch.** For all natural numbers
+$n$ and $k$,
+$$\sum_{i=0}^{k} \binom{2i + n}{i} =
+\sum_{i=0}^{\lfloor k/2 \rfloor} (-1)^i \binom{2k + 1 + n - i}{k - 2i}.$$
 
 Source: Molly Lynch and Michael Weselcouch, "A
 Generalized Hockey Stick Theorem", Corollary 15. -/

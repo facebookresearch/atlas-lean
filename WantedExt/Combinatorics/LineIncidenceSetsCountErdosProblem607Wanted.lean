@@ -34,24 +34,37 @@ The lines determined by `P` are the lines `line[ℝ, p, q]` through two distinct
 -/
 
 open Classical in
-/-- `A(P)`: the set of the numbers `|ℓ ∩ P|` over the lines `ℓ` determined by `P` (the lines
-through at least two points of `P`). -/
+/-- **Line-incidence set of a finite planar point set.** For a finite set
+$P \subseteq \mathbb{R}^2$, $A(P)$ is the set of the numbers $|\ell \cap P|$ over the lines $\ell$
+determined by $P$, that is, the lines through at least two distinct points of $P$. -/
 noncomputable def lineIncidenceSet (P : Finset (ℝ × ℝ)) : Finset ℕ :=
   P.offDiag.image fun pq => (P.filter fun r => r ∈ line[ℝ, pq.1, pq.2]).card
 
 open Classical in
-/-- `F(n)`: the number of distinct sets `A(P)` over all `n`-point sets `P ⊆ ℝ²` (every `A(P)` is a
-subset of `{0, …, n}`). -/
+/-- **Number of line-incidence sets.** For a finite set $P \subseteq \mathbb{R}^2$, let $A(P)$ be
+the set of the numbers $|\ell \cap P|$ over the lines $\ell$ through at least two distinct points
+of $P$. For a natural number $n$, $F(n)$ is the number of distinct sets $A(P)$ over all $n$-point
+sets $P \subseteq \mathbb{R}^2$. Every such $A(P)$ is a subset of $\{0, \dots, n\}$. -/
 noncomputable def lineIncidenceSetCount (n : ℕ) : ℕ :=
   ((Finset.range (n + 1)).powerset.filter fun A =>
     ∃ P : Finset (ℝ × ℝ), P.card = n ∧ lineIncidenceSet P = A).card
 
-/-- Erdős Problem 607: `F(n) ≤ exp(O(√n))`. -/
+/-- **Erdős Problem 607: subexponentially many line-incidence sets.** For a finite set
+$P \subseteq \mathbb{R}^2$, let $A(P)$ be the set of the numbers $|\ell \cap P|$ over the lines
+$\ell$ through at least two distinct points of $P$, and let $F(n)$ be the number of distinct sets
+$A(P)$ over all $n$-point sets $P \subseteq \mathbb{R}^2$. This is the statement that there is a
+real constant $C$ such that $F(n) \le e^{C\sqrt{n}}$ for every natural number $n$, that is,
+$F(n) \le \exp(O(\sqrt{n}))$. -/
 def lineIncidenceSetCountSubexponential : Prop :=
   ∃ C : ℝ, ∀ n : ℕ, (lineIncidenceSetCount n : ℝ) ≤ Real.exp (C * Real.sqrt n)
 
 /--
-Resolved true: erdosproblems.com/607 records that Szemerédi and Trotter proved `F(n) ≤ exp(O(√n))`.
+**Szemerédi–Trotter bound for line-incidence sets (Erdős Problem 607).** For a finite set
+$P \subseteq \mathbb{R}^2$, let $A(P)$ be the set of the numbers $|\ell \cap P|$ over the lines
+$\ell$ through at least two distinct points of $P$, and let $F(n)$ be the number of distinct sets
+$A(P)$ over all $n$-point sets $P \subseteq \mathbb{R}^2$. There is a real constant $C$ such that
+$F(n) \le e^{C\sqrt{n}}$ for every natural number $n$.
+
 Source: T. F. Bloom, Erdős Problems, Problem #607, https://www.erdosproblems.com/607 (status
 PROVED); resolution: E. Szemerédi and W. T. Trotter, Extremal problems in discrete geometry,
 Combinatorica 3 (1983), 381-392, erdosproblems.com/607: proved by Szemerédi and Trotter [SzTr83],

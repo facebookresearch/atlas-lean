@@ -26,9 +26,15 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The number of occurrences of an `r × s` rectangle (height `r`, width `s`) in the bargraph of
-the word `w`: pairs `(i, y)` (0-indexed column, row) such that columns `i, …, i + s - 1` exist and
-all have height at least `y + r`.
+/-- **Number of $r \times s$ rectangles in a bargraph.** Let $w = w_0 w_1 \cdots w_{m-1}$ be a word
+of natural numbers, drawn as a bargraph whose column $i$ has height $w_i$. The number of
+occurrences of an $r \times s$ rectangle (height $r$, width $s$) in $w$ is the number of pairs
+$(i, y)$ of natural numbers with $i < m$, $i + s \le m$ and $y \le w_0 + \cdots + w_{m-1}$ such
+that $y + r \le w_{i+j}$ for every $j < s$.
+
+Here $(i, y)$ is the rectangle whose lower left cell is in column $i$ and row $y$, both counted
+from $0$. For $s \ge 1$ the conditions $i < m$ and $y \le w_0 + \cdots + w_{m-1}$ follow from the
+others; for $s = 0$ the count is $m(w_0 + \cdots + w_{m-1} + 1)$.
 
 Source: Sela Fried and Toufik Mansour, *Counting Rectangles of Size r × s in Nondecreasing and
 Smirnov Words*, Journal of Integer Sequences 27 (2024),
@@ -37,7 +43,8 @@ def rectangleCapacity (r s : ℕ) (w : List ℕ) : ℕ :=
   ((Finset.range w.length ×ˢ Finset.range (w.sum + 1)).filter fun p =>
     p.1 + s ≤ w.length ∧ ∀ j < s, p.2 + r ≤ w.getD (p.1 + j) 0).card
 
-/-- Characteristic value: the word `345134` contains four `3 × 2` rectangles.
+/-- **Example: $3 \times 2$ rectangles in the word $345134$.** The bargraph of the word $345134$
+contains exactly four rectangles of height $3$ and width $2$.
 
 Source: Sela Fried and Toufik Mansour, *Counting Rectangles of Size r × s in Nondecreasing and
 Smirnov Words*, Journal of Integer Sequences 27 (2024),
@@ -45,8 +52,10 @@ Article 24.8.4, Figure 2. -/
 theorem rectangleCapacity_example : rectangleCapacity 3 2 [3, 4, 5, 1, 3, 4] = 4 := by
   decide
 
-/-- The total number of `r × s` rectangles over all nondecreasing words of length `n` over `[k]`
-(the set `W^↗_{n,k}`); a word is a monotone map `Fin n → Fin k`, letter `i` read as `i + 1`.
+/-- **Total number of $r \times s$ rectangles in nondecreasing words.** For natural numbers $k$,
+$r$, $s$ and $n$, this is the sum, over all nondecreasing words $w_1 \le w_2 \le \cdots \le w_n$ of
+length $n$ over the alphabet $[k] = \{1, \dots, k\}$ (the set $W^{\nearrow}_{n,k}$), of the number
+of $r \times s$ rectangles in the bargraph of $w$.
 
 Source: Sela Fried and Toufik Mansour, *Counting Rectangles of Size r × s in Nondecreasing and
 Smirnov Words*, Journal of Integer Sequences 27 (2024),
@@ -55,8 +64,10 @@ def nondecreasingRectangleTotal (k r s n : ℕ) : ℕ :=
   ∑ w ∈ (Finset.univ : Finset (Fin n → Fin k)).filter (fun w => Monotone w),
     rectangleCapacity r s (List.ofFn fun i => (w i : ℕ) + 1)
 
-/-- Characteristic values: over `[2]` the nondecreasing words of length `2` are `11, 12, 22`,
-containing `1 + 1 + 2 = 4` rectangles of size `1 × 2`.
+/-- **Example: $1 \times 2$ rectangles in nondecreasing words of length $2$.** The nondecreasing
+words of length $2$ over $[2] = \{1, 2\}$ are $11$, $12$ and $22$, which contain $1$, $1$ and $2$
+rectangles of size $1 \times 2$ respectively, so the total number of $1 \times 2$ rectangles over
+all nondecreasing words of length $2$ over $[2]$ is $4$.
 
 Source: Sela Fried and Toufik Mansour, *Counting Rectangles of Size r × s in Nondecreasing and
 Smirnov Words*, Journal of Integer Sequences 27 (2024),
@@ -64,11 +75,20 @@ Article 24.8.4, Corollary 2. -/
 theorem nondecreasingRectangleTotal_two_one_two_two : nondecreasingRectangleTotal 2 1 2 2 = 4 := by
   decide
 
-/-- The total number `f_k(n)` of `1 × s` rectangles over `W^↗_{n,k}` has generating function
-`x^s ∑_{i=0}^{k-1} (-1)^i C(i+s-2, i) C(k+s, s+i+1) x^i / (1 - x)^{k+1}`; hence for `n ≥ s`,
-`f_k(n) = ∑_{i=0}^{min(k-1, n-s)} (-1)^i C(i+s-2, i) C(k+s, s+i+1) C(n-s-i+k, k)`. The generating
-function is stated after multiplying by `(1 - X)^{k+1}`; `C(i+s-2, i)` uses truncated subtraction,
-which agrees with the paper's value at `s = 1` (`C(-1, 0) = 1`, `C(i-1, i) = 0`).
+/-- **Generating function for $1 \times s$ rectangles in nondecreasing words.** Let $k \ge 1$ and
+$s \ge 1$, and let $f_k(n)$ be the total number of $1 \times s$ rectangles over all nondecreasing
+words of length $n$ over $[k] = \{1, \dots, k\}$. Then, as formal power series over $\mathbb{Z}$,
+$$
+\Big(\sum_{n \ge 0} f_k(n)\, x^n\Big) (1 - x)^{k+1} =
+x^s \sum_{i=0}^{k-1} (-1)^i \binom{i+s-2}{i} \binom{k+s}{s+i+1} x^i,
+$$
+and for every $n \ge s$,
+$$
+f_k(n) = \sum_{i=0}^{\min(k-1,\, n-s)} (-1)^i \binom{i+s-2}{i} \binom{k+s}{s+i+1}
+\binom{n-s-i+k}{k}.
+$$
+
+For $s = 1$ the factor $\binom{i+s-2}{i} = \binom{i-1}{i}$ is $1$ at $i = 0$ and $0$ for $i \ge 1$.
 
 Source: Sela Fried and Toufik Mansour, *Counting Rectangles of Size r × s in Nondecreasing and
 Smirnov Words*, Journal of Integer Sequences 27 (2024),
@@ -84,11 +104,21 @@ public theorem_wanted nondecreasingRectangleTotal_one_by_s (k s : ℕ) (hk : 1 �
         (-1 : ℤ) ^ i * ((i + s - 2).choose i * (k + s).choose (s + i + 1) *
           (n - s - i + k).choose k : ℕ)
 
-/-- The total number `g_k(n)` of `r × s` rectangles over `W^↗_{n,k}` has generating function
-`x^s ∑_{i=0}^{k-r+1} (-1)^i C(i+s-2, i) C(k-r+1+s, s+i+1) x^i / (1 - x)^{k+1}`; hence for `n ≥ s`,
-`g_k(n) = ∑_{i=0}^{min(k-r+1, n-s)} (-1)^i C(i+s-2, i) C(k-r+1+s, s+i+1) C(n-s-i+k, k)`.
-`k - r + 1` is the truncated `k + 1 - r` (for `k < r - 1` both sides vanish); the generating
-function is stated after multiplying by `(1 - X)^{k+1}`.
+/-- **Generating function for $r \times s$ rectangles in nondecreasing words.** Let $k \ge 1$,
+$r \ge 1$ and $s \ge 1$, let $g_k(n)$ be the total number of $r \times s$ rectangles over all
+nondecreasing words of length $n$ over $[k] = \{1, \dots, k\}$, and let $m = \max(k + 1 - r, 0)$.
+Then, as formal power series over $\mathbb{Z}$,
+$$
+\Big(\sum_{n \ge 0} g_k(n)\, x^n\Big) (1 - x)^{k+1} =
+x^s \sum_{0 \le i \le k+1-r} (-1)^i \binom{i+s-2}{i} \binom{m+s}{s+i+1} x^i,
+$$
+where the sum is empty when $r \ge k + 2$, and for every $n \ge s$,
+$$
+g_k(n) = \sum_{i=0}^{\min(m,\, n-s)} (-1)^i \binom{i+s-2}{i} \binom{m+s}{s+i+1}
+\binom{n-s-i+k}{k}.
+$$
+
+For $s = 1$ the factor $\binom{i+s-2}{i} = \binom{i-1}{i}$ is $1$ at $i = 0$ and $0$ for $i \ge 1$.
 
 Source: Sela Fried and Toufik Mansour, *Counting Rectangles of Size r × s in Nondecreasing and
 Smirnov Words*, Journal of Integer Sequences 27 (2024),

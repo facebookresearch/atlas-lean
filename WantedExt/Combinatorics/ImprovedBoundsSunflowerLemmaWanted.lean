@@ -53,13 +53,22 @@ namespace Set
 
 variable {X : Type*}
 
-/-- A `r`-sunflower is a finite collection of `r` sets so that the intersection of each pair is
-equal to the intersection of all of them. See Definition 1.1. -/
+/-- **Sunflower.** Let $r \in \mathbb{N}$ and let $S$ be a family of subsets of a type $X$. Then
+$S$ is an $r$-sunflower if $S$ has exactly $r$ members (its cardinality is taken to be $0$ when
+$S$ is infinite) and any two distinct members $A \ne B$ of $S$ satisfy $A \cap B = \bigcap S$,
+the intersection of all members of $S$.
+
+Source: R. Alweiss, S. Lovett, K. Wu, and J. Zhang, *Improved bounds for the sunflower lemma*,
+Annals of Math 194 (3), 2021, Definition 1.1. -/
 def IsSunflower (r : ℕ) (S : Set (Set X)) : Prop :=
   S.ncard = r ∧ S.Pairwise (fun A B ↦ A ∩ B = ⋂₀ S)
 
-/-- The condition that `ℱ` is a `w`-set system, namely that each element has size at most `w`
-(see second sentence of the introduction). -/
+/-- **Bounded-size set systems.** Let $w \in \mathbb{N}$ and let $\mathcal{F}$ be a family of
+subsets of a type $X$. Then $\mathcal{F}$ is a $w$-set system if every member $A \in \mathcal{F}$
+has at most $w$ elements, where the size of an infinite set is taken to be $0$.
+
+Source: R. Alweiss, S. Lovett, K. Wu, and J. Zhang, *Improved bounds for the sunflower lemma*,
+Annals of Math 194 (3), 2021, second sentence of the introduction. -/
 def IsSystem (w : ℕ) (ℱ : Set (Set X)) : Prop := ∀ A ∈ ℱ, A.ncard ≤ w
 
 end Set
@@ -68,23 +77,36 @@ namespace ImprovedBoundsSunflowerLemma
 
 open Real
 
-/-- The lower bound from Theorem 1.4. We follow the convention of the authors and use the
-logarithm in base 1.9; see the paragraph directly after Theorem 1.4. -/
+/-- **Sunflower lower bound.** For natural numbers $r$ and $w$ and a real number $C$, the lower
+bound is the real number
+$$\left(C\, r^3 \log_{1.9} w \, \log_{1.9}(\log_{1.9} w)\right)^w,$$
+where $\log_{1.9} x = \ln x / \ln 1.9$, with the convention $\ln 0 = 0$.
+
+Following the authors, logarithms are taken to base $1.9$; see the paragraph directly after
+Theorem 1.4 of Alweiss, Lovett, Wu, and Zhang, *Improved bounds for the sunflower lemma*. -/
 noncomputable def lowerBound (r : ℕ) (C : ℝ) (w : ℕ) : ℝ :=
   (C * r ^ 3 * logb 1.9 w * logb 1.9 (logb 1.9 w)) ^ w
 
 /- The absolute constant `C` in Theorem 1.4. Although not explicitly stated in the paper,
 the constant `C` doesn't depend on `r`. -/
-/-- Source: R. Alweiss, S. Lovett, K. Wu, and J. Zhang, `Improved bounds for the sunflower lemma`, Annals of Math, 194 (3) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-3-ImprovedBoundsSunflowerLemma.lean Via leanprover/lean-eval@38361be, problem `annals_improved_bounds_sunflower_lemma`. -/
+/-- **Sunflower constant.** An unspecified real number $C$, the absolute constant in the
+Alweiss–Lovett–Wu–Zhang sunflower bound (Theorem 1.4); it does not depend on $r$ or $w$.
+
+Source: R. Alweiss, S. Lovett, K. Wu, and J. Zhang, `Improved bounds for the sunflower lemma`, Annals of Math, 194 (3) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-3-ImprovedBoundsSunflowerLemma.lean Via leanprover/lean-eval@38361be, problem `annals_improved_bounds_sunflower_lemma`. -/
 public def_wanted C : ℝ
 
 /--
-Statement of Theorem 1.4 (Main theorem, sunflowers):
+**Alweiss–Lovett–Wu–Zhang sunflower bound.** Let $C$ be the sunflower constant, a real number
+not depending on $r$ or $w$. Let $r \ge 3$ and $w \ge 2$ be natural numbers, let $X$ be a finite
+type, and let $\mathcal{F}$ be a $w$-set system of subsets of $X$, that is, every member of
+$\mathcal{F}$ has at most $w$ elements. If $\mathcal{F}$ has at least
+$$\left(C\, r^3 \log_{1.9} w \, \log_{1.9}(\log_{1.9} w)\right)^w$$
+members, then some subfamily $S \subseteq \mathcal{F}$ is an $r$-sunflower: $S$ has exactly $r$
+members and any two distinct members of $S$ intersect in $\bigcap S$.
 
-Let `r ≥ 3`. For some constant `C`, any `w`-set system `F` of size
-`|F| ≥ (C * r ^ 3 * log w * log log w) ^ w` contains an `r`-sunflower.
+This is Theorem 1.4 (main theorem, sunflowers); logarithms are to base $1.9$, as in the paper.
+We require $w \ge 2$, as the paper assumes $\log \log w > 0$.
 
-Note: We require `w ≥ 2`, as the paper assumes `log log w > 0`.
 Source: R. Alweiss, S. Lovett, K. Wu, and J. Zhang, `Improved bounds for the sunflower lemma`, Annals of Math, 194 (3) 2021. Statement taken from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2021-194-3-ImprovedBoundsSunflowerLemma.lean Via leanprover/lean-eval@38361be, problem `annals_improved_bounds_sunflower_lemma`.
 -/
 public theorem_wanted theorem_1_4 (r : ℕ) (hr : r ≥ 3) (X : Type*) [Finite X] (ℱ : Set (Set X)) (w : ℕ)

@@ -46,10 +46,12 @@ open scoped Classical
 
 @[expose] public section
 
-/-- The concatenation `W₀ · W₁ ⋯` of Boolean functions on `n` variables, as a function on
-`n + k` variables: the last `k` variables give the binary index `∑ⱼ yⱼ 2^j` into the word `W`,
-and the selected function is applied to the first `n` variables (out-of-range indices read
-`false`).
+/-- **Concatenation of a list of Boolean functions.** Let $n$ and $k$ be natural numbers and let
+$W = (W_0, W_1, \dots, W_{m-1})$ be a finite list of Boolean functions on $n$ variables. The
+concatenation $W_0 \cdot W_1 \cdots W_{m-1}$ on $n + k$ variables is the Boolean function that
+sends $(x_0, \dots, x_{n-1}, y_0, \dots, y_{k-1})$ to $W_i(x_0, \dots, x_{n-1})$, where
+$i = \sum_{j < k} y_j 2^j$ is the number whose binary digits are the last $k$ variables (true
+counted as $1$ and false as $0$), and to false when $i \ge m$.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, the concatenation
@@ -59,7 +61,10 @@ public def booleanCubeConcat (n k : ℕ) (W : List ((Fin n → Bool) → Bool)) 
   fun x => (W.getD (∑ j : Fin k, if x (Fin.natAdd n j) then 2 ^ (j : ℕ) else 0) fun _ => false)
     fun i => x (Fin.castAdd k i)
 
-/-- On the all-`false` input the concatenation reads the first word entry at all-`false`.
+/-- **Concatenation at the all-false input.** For natural numbers $n$ and $k$ and a finite list
+$W = (W_0, \dots, W_{m-1})$ of Boolean functions on $n$ variables, the concatenation of $W$ on
+$n + k$ variables takes the value $W_0(\mathrm{false}, \dots, \mathrm{false})$ at the all-false
+input when $W$ is nonempty, and the value false when $W$ is empty.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, the concatenation
@@ -68,8 +73,11 @@ public theorem booleanCubeConcat_false (n k : ℕ) (W : List ((Fin n → Bool) �
     booleanCubeConcat n k W (fun _ => false) = W.getD 0 (fun _ => false) (fun _ => false) := by
   simp [booleanCubeConcat]
 
-/-- **Lemma 1.** The poset `D_{n+k}` is isomorphic to the poset `D_n^{B^k}` of monotone
-functions from `B^k` to `D_n`.
+/-- **Currying monotone Boolean functions (Lemma 1).** For a natural number $m$, let $D_m$ be the
+poset of monotone Boolean functions $\{0,1\}^m \to \{0,1\}$, where $0 < 1$, inputs are ordered
+coordinatewise and functions are ordered pointwise. Then for all natural numbers $n$ and $k$,
+$D_{n+k}$ is order-isomorphic to the poset of monotone maps $\{0,1\}^k \to D_n$, ordered
+pointwise.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Lemma 1
@@ -78,11 +86,12 @@ public theorem_wanted monotoneBooleanFunction_orderIso_curry (n k : ℕ) :
     Nonempty (((Fin (n + k) → Bool) →o Bool) ≃o
       ((Fin k → Bool) →o ((Fin n → Bool) →o Bool)))
 
-/-- **Lemma 2 (parts 2-4).** For `f, g ∈ D_n`: if `f ≤ g` then `g* ≤ f*`;
-`(f | g)* = f* & g*`; `(f & g)* = f* | g*`.
+/-- **Duality reverses order and exchanges joins and meets.** Let $f$ and $g$ be monotone
+Boolean functions on $n$ variables, ordered pointwise, with duals $f^*$ and $g^*$. If $f \le g$
+then $g^* \le f^*$. Moreover $(f \lor g)^* = f^* \land g^*$ and $(f \land g)^* = f^* \lor g^*$,
+where $\lor$ and $\land$ are pointwise disjunction and conjunction.
 
-Part 1 (`f** = f`) is `MetaMathlibExt.booleanFunctionDual_dual`, already proved for every
-Boolean function, and is not restated.
+Part 1 of the paper's lemma, $f^{**} = f$, holds for every Boolean function.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Lemma 2
@@ -93,8 +102,11 @@ public theorem_wanted booleanFunctionDual_antitone_sup_inf (n : ℕ)
       booleanFunctionDual n (f ⊔ g) = booleanFunctionDual n f ⊓ booleanFunctionDual n g ∧
       booleanFunctionDual n (f ⊓ g) = booleanFunctionDual n f ⊔ booleanFunctionDual n g
 
-/-- **Lemma 5.** For every `f : Bⁿ → B` and permutation `π`: `f ∘ π` is monotone if `f` is;
-if `f ∈ D_n` then `f* ∘ π = (f ∘ π)*`; if `f ∈ Λ_n` then every `g ∈ [f]` is in `Λ_n`.
+/-- **Permuting variables preserves monotonicity, duals and self-duality.** Let $f$ be a Boolean
+function on $n$ variables, let $\pi$ be a permutation of the $n$ coordinates, and let $f^\pi$
+be the function $x \mapsto f(x \circ \pi)$. If $f$ is monotone, then $f^\pi$ is monotone and
+$(f^*)^\pi = (f^\pi)^*$, where $f^*$ is the dual of $f$. If $f$ is self-dual monotone, then so
+is $f^\pi$.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Lemma 5
@@ -106,8 +118,16 @@ public theorem_wanted booleanFunction_perm_monotone_dual_selfDual (n : ℕ)
         (fun x => booleanFunctionDual n f (x ∘ π)) = booleanFunctionDual n fun x => f (x ∘ π)) ∧
       (IsSelfDualMonotone n f → IsSelfDualMonotone n fun x => f (x ∘ π))
 
-/-- **Theorem 6.** For `n ≥ 0`, `λ_{n+1} = |{b ∈ D_n | b ≤ b*}|`, and
-`λ_{n+1} = ∑_{b ∈ R_n, b ≤ b*} γ(b)`.
+/-- **Counting self-dual monotone functions on $n + 1$ variables.** For every $n \ge 0$, the
+number of self-dual monotone Boolean functions on $n + 1$ variables equals the number of
+monotone Boolean functions $b$ on $n$ variables with $b \le b^*$, where $b^*$ is the dual of $b$
+and functions are ordered pointwise. Moreover, for a permutation $\pi$ of the $n$ coordinates
+write $b^\pi$ for the function $x \mapsto b(x \circ \pi)$, and let $R$ be any finite set of
+monotone Boolean functions on $n$ variables such that for every monotone $f$ there is exactly
+one $b \in R$ with $f = b^\pi$ for some permutation $\pi$. Then the number of self-dual
+monotone Boolean functions on $n + 1$ variables equals $\sum_{b \in R,\ b \le b^*} \gamma(b)$,
+where $\gamma(b)$ is the number of distinct functions $b^\pi$ as $\pi$ ranges over all
+permutations.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Theorem 6
@@ -123,7 +143,9 @@ public theorem_wanted card_selfDualMonotone_succ (n : ℕ) :
             Nat.card {g : (Fin n → Bool) → Bool //
               ∃ π : Equiv.Perm (Fin n), g = fun x => b (x ∘ π)}
 
-/-- **Corollary 7.** For `n ≥ 0`, `λ_{n+1} ≤ d_n`.
+/-- **Upper bound for self-dual monotone functions on $n + 1$ variables.** For every $n \ge 0$,
+the number of self-dual monotone Boolean functions on $n + 1$ variables is at most the number
+of monotone Boolean functions on $n$ variables.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Corollary 7
@@ -132,12 +154,18 @@ public theorem_wanted card_selfDualMonotone_succ_le (n : ℕ) :
     Nat.card {f : (Fin (n + 1) → Bool) → Bool // IsSelfDualMonotone (n + 1) f} ≤
       Nat.card {f : (Fin n → Bool) → Bool // Monotone f}
 
-/-- **Lemma 8.** For `b ∈ D_n`: `b ≤ b*` only if `ℓ(b) ≤ 2^{n-1}`; if `ℓ(b) = 2^{n-1}` and
-`b ≤ b*` then `b = b*`; if `b` is self-dual then `ℓ(b) = 2^{n-1}`; `ℓ(b*) = 2ⁿ - ℓ(b)`, hence
-`|{f ∈ D_n | ℓ(f) < 2^{n-1}}| = |{f ∈ D_n | ℓ(f) > 2^{n-1}}|`.
+/-- **Weights of monotone Boolean functions and their duals (Lemma 8).** Order $\{0,1\}$ by
+$0 < 1$, inputs in $\{0,1\}^n$ coordinatewise and Boolean functions on $\{0,1\}^n$ pointwise. For
+such a function $f$, let $f^*(x) = \lnot f(\bar x)$ be its dual, where $\bar x$ is the
+coordinatewise complement of $x$, and let $\ell(f)$ be the number of $x \in \{0,1\}^n$ with
+$f(x) = 1$. Let $b$ be a monotone Boolean function on $\{0,1\}^n$. Then: if $b \le b^*$, then
+$2\ell(b) \le 2^n$; if $2\ell(b) = 2^n$ and $b \le b^*$, then $b = b^*$; if $b = b^*$, then
+$2\ell(b) = 2^n$; and $\ell(b^*) = 2^n - \ell(b)$. Moreover, the number of monotone Boolean
+functions $f$ on $\{0,1\}^n$ with $2\ell(f) < 2^n$ equals the number of those with
+$2\ell(f) > 2^n$.
 
-Comparisons with `2^{n-1}` are written as comparisons of `2 ℓ` with `2ⁿ` (so `n = 0` is
-included).
+For $n \ge 1$ the comparisons of $2\ell$ with $2^n$ are the paper's comparisons of $\ell$ with
+$2^{n-1}$; written this way the statement also covers $n = 0$.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Lemma 8
@@ -153,12 +181,21 @@ public theorem_wanted monotoneBooleanFunction_weight_dual (n : ℕ) (b : (Fin n 
         Nat.card {f : (Fin n → Bool) → Bool //
           Monotone f ∧ 2 ^ n < 2 * Nat.card {x // f x = true}}
 
-/-- **Theorem 9.** For `n ≥ 1`,
-`λ_{n+1} = λ_n + ∑_{b ∈ R_n, ℓ(b) < 2^{n-1}, b ≤ b*} γ(b)` and
-`λ_{n+1} ≤ λ_n + (d_n - λ_n) / 2 = (d_n + λ_n) / 2`.
+/-- **Recursion for self-dual monotone functions from $n$ to $n + 1$ variables.** Let $n \ge 1$,
+let $\lambda_m$ be the number of self-dual monotone Boolean functions on $m$ variables, and let
+$d_n$ be the number of monotone Boolean functions on $n$ variables. For a Boolean function $b$
+on $n$ variables let $b^*$ be its dual and $\ell(b)$ the number of inputs at which $b$ is true,
+order functions pointwise, and for a permutation $\pi$ of the $n$ coordinates write $b^\pi$ for
+the function $x \mapsto b(x \circ \pi)$. Let $R$ be any finite set of monotone Boolean
+functions on $n$ variables such that for every monotone $f$ there is exactly one $b \in R$ with
+$f = b^\pi$ for some permutation $\pi$, and let $\gamma(b)$ be the number of distinct functions
+$b^\pi$ as $\pi$ ranges over all permutations. Then
+$$
+\lambda_{n+1} = \lambda_n + \sum_{b \in R,\ \ell(b) < 2^{n-1},\ b \le b^*} \gamma(b),
+$$
+and $2 \lambda_{n+1} \le d_n + \lambda_n$.
 
-Stated for `n ≥ 1` (for `n = 0`, `2^{n-1}` is not an integer); the bound is stated as
-`2 λ_{n+1} ≤ d_n + λ_n`; `ℓ(b) < 2^{n-1}` is `2 ℓ(b) < 2ⁿ`.
+The bound is the paper's $\lambda_{n+1} \le (d_n + \lambda_n) / 2$ with the division cleared.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Theorem 9
@@ -177,9 +214,17 @@ public theorem_wanted card_selfDualMonotone_succ_eq_add (n : ℕ) (hn : 1 ≤ n)
         Nat.card {f : (Fin n → Bool) → Bool // Monotone f} +
           Nat.card {f : (Fin n → Bool) → Bool // IsSelfDualMonotone n f}
 
-/-- **Theorem 10.** For `n ≥ 0`, `λ_{n+2}` is the number of pairs `b, d ∈ D_n` with
-`d ≥ b | b*`: `λ_{n+2} = ∑_{b ∈ D_n} re(b | b*, ⊤)`, and
-`λ_{n+2} = ∑_{b ∈ R_n} γ(b) re(b | b*, ⊤)`.
+/-- **Counting self-dual monotone functions on $n + 2$ variables.** Let $n \ge 0$ and let
+$\lambda_{n+2}$ be the number of self-dual monotone Boolean functions on $n + 2$ variables. For
+a monotone Boolean function $b$ on $n$ variables let $r(b)$ be the number of monotone Boolean
+functions $z$ on $n$ variables with $b \lor b^* \le z$, where $b^*$ is the dual of $b$, $\lor$
+is pointwise disjunction and functions are ordered pointwise. Then $\lambda_{n+2}$ is the sum
+of $r(b)$ over all monotone Boolean functions $b$ on $n$ variables. Moreover, for a permutation
+$\pi$ of the $n$ coordinates write $b^\pi$ for the function $x \mapsto b(x \circ \pi)$, and let
+$R$ be any finite set of monotone Boolean functions on $n$ variables such that for every
+monotone $f$ there is exactly one $b \in R$ with $f = b^\pi$ for some permutation $\pi$. Then
+$\lambda_{n+2} = \sum_{b \in R} \gamma(b) \, r(b)$, where $\gamma(b)$ is the number of distinct
+functions $b^\pi$ as $\pi$ ranges over all permutations.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Theorem 10
@@ -196,7 +241,12 @@ public theorem_wanted card_selfDualMonotone_add_two (n : ℕ) :
               ∃ π : Equiv.Perm (Fin n), g = fun x => b (x ∘ π)} *
             Nat.card {z : (Fin n → Bool) → Bool // Monotone z ∧ b ⊔ booleanFunctionDual n b ≤ z}
 
-/-- **Corollary 11.** For `n ≥ 0`, `λ_{n+2} ≥ d_n`.
+/-- **Dedekind numbers bound self-dual counts from below (Corollary 11).** For a natural number
+$n$, let $d_n$ be the number of monotone Boolean functions $\{0,1\}^n \to \{0,1\}$ (for the
+coordinatewise order with $0 < 1$) and let $\lambda_{n+2}$ be the number of self-dual monotone
+Boolean functions $\{0,1\}^{n+2} \to \{0,1\}$, that is, monotone functions $f$ with
+$f(\bar x) = \lnot f(x)$ for every $x$, where $\bar x$ is the coordinatewise complement of $x$.
+Then $d_n \le \lambda_{n+2}$.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Corollary 11
@@ -205,11 +255,22 @@ public theorem_wanted le_card_selfDualMonotone_add_two (n : ℕ) :
     Nat.card {f : (Fin n → Bool) → Bool // Monotone f} ≤
       Nat.card {f : (Fin (n + 2) → Bool) → Bool // IsSelfDualMonotone (n + 2) f}
 
-/-- **Theorem 12.** For `a, b, c ∈ D_n`, `h ∈ D_n` with `h ≥ a|b|c|a*|b*|c*`, and
-`d, e, f, g ∈ D_n` with `a|b|c ≤ d ≤ h`, `a|b*|c* ≤ e ≤ h`, `b|a*|c* ≤ f ≤ h`,
-`c|a*|b* ≤ g ≤ h`, the concatenation
-`h*·g*·f*·a·e*·b·c·d·d*·c*·b*·e·a*·f·g·h` is a self-dual function in `D_{n+4}`; and every
-self-dual function in `D_{n+4}` is of this form.
+/-- **Self-dual monotone functions on $n+4$ variables as concatenations (Theorem 12).** Order
+$\{0,1\}$ by $0 < 1$, inputs coordinatewise and Boolean functions pointwise, with $\vee$ the
+pointwise maximum. Let $D_n$ be the set of monotone Boolean functions on $\{0,1\}^n$, and let
+$f^*(x) = \lnot f(\bar x)$ be the dual of $f$, where $\bar x$ is the coordinatewise complement of
+$x$; a Boolean function $F$ is self-dual monotone if it is monotone and $F^* = F$. The
+concatenation $W_0 \cdot W_1 \cdots W_{15}$ of Boolean functions on $\{0,1\}^n$ is the Boolean
+function on $\{0,1\}^{n+4}$ sending $(x, y_0, y_1, y_2, y_3)$, with $x \in \{0,1\}^n$, to
+$W_i(x)$, where $i = y_0 + 2y_1 + 4y_2 + 8y_3$. Let $a, b, c, d, e, f, g, h \in D_n$ satisfy
+$a \vee b \vee c \vee a^* \vee b^* \vee c^* \le h$, $a \vee b \vee c \le d \le h$,
+$a \vee b^* \vee c^* \le e \le h$, $b \vee a^* \vee c^* \le f \le h$ and
+$c \vee a^* \vee b^* \le g \le h$. Then the concatenation
+$$h^* \cdot g^* \cdot f^* \cdot a \cdot e^* \cdot b \cdot c \cdot d \cdot
+d^* \cdot c^* \cdot b^* \cdot e \cdot a^* \cdot f \cdot g \cdot h$$
+is a self-dual monotone Boolean function on $\{0,1\}^{n+4}$. Conversely, every self-dual
+monotone Boolean function on $\{0,1\}^{n+4}$ equals this concatenation for some
+$a, b, c, d, e, f, g, h \in D_n$ satisfying these inequalities.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Theorem 12
@@ -243,8 +304,16 @@ public theorem_wanted selfDualMonotone_add_four_iff_concat (n : ℕ) :
             booleanFunctionDual n e, b, c, d, booleanFunctionDual n d, booleanFunctionDual n c,
             booleanFunctionDual n b, e, booleanFunctionDual n a, f, g, h]
 
-/-- **Theorem 13.** `λ_{n+4} = ∑_{a,b,c ∈ D_n} ∑_{h ∈ D_n, h ≥ a|b|c|a*|b*|c*}
-re(a|b|c, h) re(a|b*|c*, h) re(b|a*|c*, h) re(c|a*|b*, h)`.
+/-- **Counting self-dual monotone functions on $n + 4$ variables.** Let $D_n$ be the set of
+monotone Boolean functions on $n$ variables, ordered pointwise, with $\lor$ the pointwise
+disjunction and $f^*$ the dual of $f$. For $x, h \in D_n$ let $\mathrm{re}(x, h)$ be the number
+of $z \in D_n$ with $x \le z \le h$. Then the number of self-dual monotone Boolean functions on
+$n + 4$ variables equals
+$$
+\sum_{a, b, c \in D_n} \ \sum_{h \in D_n,\ h \ge a \lor b \lor c \lor a^* \lor b^* \lor c^*}
+\mathrm{re}(a \lor b \lor c, h) \, \mathrm{re}(a \lor b^* \lor c^*, h) \,
+\mathrm{re}(b \lor a^* \lor c^*, h) \, \mathrm{re}(c \lor a^* \lor b^*, h).
+$$
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Theorem 13
@@ -265,10 +334,22 @@ public theorem_wanted card_selfDualMonotone_add_four (n : ℕ) :
         Nat.card {z : (Fin n → Bool) → Bool // Monotone z ∧
           c ⊔ booleanFunctionDual n a ⊔ booleanFunctionDual n b ≤ z ∧ z ≤ h}
 
-/-- **Theorem 14.** For `h ∈ D_n` with `h ≥ h*`, `a, b, c ∈ D_n` with `h* ≤ a, b, c ≤ h`, and
-`d, e, f, g ∈ D_n` with `a|b|c ≤ d ≤ h`, `a|b*|c* ≤ e ≤ h`, `b|a*|c* ≤ f ≤ h`,
-`c|a*|b* ≤ g ≤ h`, the concatenation `h*·g*·f*·a·e*·b·c·d·d*·c*·b*·e·a*·f·g·h` is a
-self-dual function in `D_{n+4}`; and every self-dual function in `D_{n+4}` is of this form.
+/-- **Self-dual monotone functions on $n+4$ variables, interval form (Theorem 14).** Order
+$\{0,1\}$ by $0 < 1$, inputs coordinatewise and Boolean functions pointwise, with $\vee$ the
+pointwise maximum. Let $D_n$ be the set of monotone Boolean functions on $\{0,1\}^n$, and let
+$f^*(x) = \lnot f(\bar x)$ be the dual of $f$, where $\bar x$ is the coordinatewise complement of
+$x$; a Boolean function $F$ is self-dual monotone if it is monotone and $F^* = F$. The
+concatenation $W_0 \cdot W_1 \cdots W_{15}$ of Boolean functions on $\{0,1\}^n$ is the Boolean
+function on $\{0,1\}^{n+4}$ sending $(x, y_0, y_1, y_2, y_3)$, with $x \in \{0,1\}^n$, to
+$W_i(x)$, where $i = y_0 + 2y_1 + 4y_2 + 8y_3$. Let $a, b, c, d, e, f, g, h \in D_n$ satisfy
+$h^* \le h$, $h^* \le a \le h$, $h^* \le b \le h$, $h^* \le c \le h$,
+$a \vee b \vee c \le d \le h$, $a \vee b^* \vee c^* \le e \le h$,
+$b \vee a^* \vee c^* \le f \le h$ and $c \vee a^* \vee b^* \le g \le h$. Then the concatenation
+$$h^* \cdot g^* \cdot f^* \cdot a \cdot e^* \cdot b \cdot c \cdot d \cdot
+d^* \cdot c^* \cdot b^* \cdot e \cdot a^* \cdot f \cdot g \cdot h$$
+is a self-dual monotone Boolean function on $\{0,1\}^{n+4}$. Conversely, every self-dual
+monotone Boolean function on $\{0,1\}^{n+4}$ equals this concatenation for some
+$a, b, c, d, e, f, g, h \in D_n$ satisfying these inequalities.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Theorem 14
@@ -304,12 +385,14 @@ public theorem_wanted selfDualMonotone_add_four_iff_concat_of_dual_le (n : ℕ) 
             booleanFunctionDual n e, b, c, d, booleanFunctionDual n d, booleanFunctionDual n c,
             booleanFunctionDual n b, e, booleanFunctionDual n a, f, g, h]
 
-/-- **Lemma 3 (L2).** For `n ≥ 1`, if `𝒰 ⊆ 𝒫(X)` is a maximal linked system then for every
-`A ⊆ X` exactly one of `A` and `Aᶜ` lies in `𝒰`.
+/-- **Maximal intersecting families split complementary pairs (Lemma 3, L2).** Let $n \ge 1$ and
+let $\mathcal U$ be a maximal intersecting family of subsets of $X = \{0, \dots, n-1\}$: any two
+members of $\mathcal U$, not necessarily distinct, have nonempty intersection, and no family of
+subsets of $X$ strictly containing $\mathcal U$ has this property. Then for every
+$A \subseteq X$, $A \in \mathcal U$ if and only if $X \setminus A \notin \mathcal U$.
 
-Part (L1), that a maximal linked system is an upset, is Mathlib's
-`Set.Intersecting.isUpperSet` and is not restated. The hypothesis `n ≥ 1` is needed: for
-`n = 0` the empty family is the mls and contains neither `∅` nor `∅ᶜ = ∅`.
+The hypothesis $n \ge 1$ is needed: for $n = 0$ the empty family is the maximal intersecting
+family, and it contains neither $\emptyset$ nor its complement $\emptyset$.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Lemma 3
@@ -318,10 +401,16 @@ public theorem_wanted maximal_intersecting_mem_iff_compl_notMem {n : ℕ} (hn : 
     {U : Set (Finset (Fin n))} (hU : Maximal Set.Intersecting U) (A : Finset (Fin n)) :
     A ∈ U ↔ Aᶜ ∉ U
 
-/-- **Lemma 4.** If a family `𝒰 ⊆ 𝒫(X)` is an upset (L1) and for every `A ⊆ X` exactly one of
-`A` and `Aᶜ` lies in `𝒰` (L2), then `𝒰` is a maximal linked system.
+/-- **A criterion for maximal intersecting families (Lemma 4).** Let $n$ be a natural number and
+let $\mathcal U$ be a family of subsets of $X = \{0, \dots, n-1\}$ such that $\mathcal U$ is an
+upper set (if $A \in \mathcal U$ and $A \subseteq B \subseteq X$ then $B \in \mathcal U$) and,
+for every $A \subseteq X$, $A \in \mathcal U$ if and only if $X \setminus A \notin \mathcal U$.
+Then $\mathcal U$ is a maximal intersecting family: any two members of $\mathcal U$, not
+necessarily distinct, have nonempty intersection, and no family of subsets of $X$ strictly
+containing $\mathcal U$ has this property.
 
-The paper's hypothesis `n ≥ 1` is dropped: for `n = 0`, `∅ᶜ = ∅` and (L2) cannot hold.
+The paper's hypothesis $n \ge 1$ is not needed: for $n = 0$ the complement of $\emptyset$ is
+$\emptyset$, so no family satisfies the second condition.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Lemma 4
@@ -330,11 +419,15 @@ public theorem_wanted maximal_intersecting_of_isUpperSet_of_mem_iff_compl_notMem
     {U : Set (Finset (Fin n))} (h₁ : IsUpperSet U) (h₂ : ∀ A : Finset (Fin n), A ∈ U ↔ Aᶜ ∉ U) :
     Maximal Set.Intersecting U
 
-/-- **Lemma 15.** If `π`, acting on `{1, …, n}`, is a product of disjoint cycles of even
-length (every point has even orbit length under `π`), then `Φ(π, Λ_n) = ∅`: no self-dual
-monotone function is fixed by `π`.
+/-- **Permutations with only even cycles fix no self-dual monotone function (Lemma 15).** Let
+$\pi$ be a permutation of $\{0, \dots, n-1\}$ all of whose cycles have even length, that is,
+every point has an orbit of even size under $\pi$. Let $f : \{0,1\}^n \to \{0,1\}$ be self-dual
+monotone, that is, monotone for the coordinatewise order with $0 < 1$ and such that
+$f(\bar x) = \lnot f(x)$ for every $x$, where $\bar x$ is the coordinatewise complement of $x$.
+Then $f$ is not fixed by $\pi$: the function $x \mapsto f(x \circ \pi)$, where
+$(x \circ \pi)_i = x_{\pi(i)}$, differs from $f$.
 
-The paper's hypothesis that `n` is even is dropped: it follows from the cycle condition.
+The paper also assumes that $n$ is even; this follows from the condition on the cycles.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Lemma 15
@@ -344,10 +437,17 @@ public theorem_wanted selfDualMonotone_not_fixed_of_even_minimalPeriod {n : ℕ}
     (f : (Fin n → Bool) → Bool) (hf : IsSelfDualMonotone n f) :
     (fun x => f (x ∘ π)) ≠ f
 
-/-- **Corollary 16.** `Φ(π, Λ_8) = ∅` for `π` each of `(12345678)`, `(12)(345678)`,
-`(1234)(5678)`, `(12)(34)(5678)` and `(12)(34)(56)(78)`.
+/-- **Permutations of eight variables fixing no self-dual monotone function (Corollary 16).**
+Let $\pi$ be one of the permutations $(0\,1\,2\,3\,4\,5\,6\,7)$, $(0\,1)(2\,3\,4\,5\,6\,7)$,
+$(0\,1\,2\,3)(4\,5\,6\,7)$, $(0\,1)(2\,3)(4\,5\,6\,7)$ and $(0\,1)(2\,3)(4\,5)(6\,7)$ of
+$\{0, \dots, 7\}$, in cycle notation. Let $f : \{0,1\}^8 \to \{0,1\}$ be self-dual monotone,
+that is, monotone for the coordinatewise order with $0 < 1$ and such that
+$f(\bar x) = \lnot f(x)$ for every $x$, where $\bar x$ is the coordinatewise complement of $x$.
+Then $f$ is not fixed by $\pi$: the function $x \mapsto f(x \circ \pi)$, where
+$(x \circ \pi)_i = x_{\pi(i)}$, differs from $f$.
 
-Points `1, …, 8` are `0, …, 7` in `Fin 8`.
+In the paper the points are numbered $1, \dots, 8$, so these permutations are $(12345678)$,
+$(12)(345678)$, $(1234)(5678)$, $(12)(34)(5678)$ and $(12)(34)(56)(78)$.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Corollary 16
@@ -359,7 +459,9 @@ public theorem_wanted selfDualMonotone_eight_not_fixed (π : Equiv.Perm (Fin 8))
     (f : (Fin 8 → Bool) → Bool) (hf : IsSelfDualMonotone 8 f) :
     (fun x => f (x ∘ π)) ≠ f
 
-/-- **Lemma 17.** For odd `n` and every `π ∈ S_n`, `Φ(π, Λ_n) ≠ ∅`.
+/-- **For odd $n$, every permutation fixes a self-dual monotone function.** Let $n$ be odd and
+let $\pi$ be a permutation of the $n$ coordinates. Then there is a self-dual monotone Boolean
+function $f$ on $n$ variables with $f(x \circ \pi) = f(x)$ for every input $x$.
 
 Source: Bartłomiej Pawelski and Andrzej Szepietowski, *Counting Self-Dual Monotone Boolean
 Functions*, Journal of Integer Sequences 28 (2025), Article 25.6.5, Lemma 17

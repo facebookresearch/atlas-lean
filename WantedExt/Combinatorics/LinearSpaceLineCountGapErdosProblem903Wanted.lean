@@ -37,23 +37,31 @@ general, one can ask what the possible values of `t` are' is commentary and is n
 with the formal-conjectures statement `ErdosProblems/903.lean` (equivalent; no code imported).
 -/
 
-/-- A family `A₁, …, A_t` of subsets of `{1, …, v}` (here `Fin v`) is a `2`-design (pairwise
-balanced design, linear space): every block has at least two points and every pair of distinct
-points lies in exactly one block. -/
+/-- **Linear spaces (2-designs).** A family $A_1, \dots, A_t$ of subsets of $\{1, \dots, v\}$ is a
+$2$-design (also called a pairwise balanced design or a linear space) when every block $A_i$ has
+at least two points and every pair of distinct points of $\{1, \dots, v\}$ lies in exactly one
+block. -/
 def IsTwoDesign {v t : ℕ} (A : Fin t → Finset (Fin v)) : Prop :=
   (∀ i, 2 ≤ (A i).card) ∧ ∀ x y : Fin v, x ≠ y → ∃! i, x ∈ A i ∧ y ∈ A i
 
-/-- Erdős Problem 903: if `p` is a prime power, `n = p² + p + 1` and `A₁, …, A_t` is a `2`-design on
-`{1, …, n}` with more than `n` blocks, then it has at least `n + p` blocks. -/
+/-- **Erdős Problem 903: line counts just above a projective plane.** This is the statement that
+for every prime power $p$, with $n = p^2 + p + 1$, every $2$-design $A_1, \dots, A_t$ on
+$\{1, \dots, n\}$ with more than $n$ blocks has at least $n + p$ blocks. Here a $2$-design is a
+family of subsets in which every block has at least two points and every pair of distinct points
+lies in exactly one block. -/
 def lineCountGapAboveProjectivePlane : Prop :=
   ∀ p : ℕ, IsPrimePow p → ∀ (t : ℕ) (A : Fin t → Finset (Fin (p ^ 2 + p + 1))),
     IsTwoDesign A → p ^ 2 + p + 1 < t → p ^ 2 + p + 1 + p ≤ t
 
 /--
-Resolved true: Erdős, Fowler, Sós and Wilson (Theorem 2) proved that a `2`-design on `n = p² + p +
-1` points (every block of size at least two, every pair of points in exactly one block) has no
-number of blocks `b` with `n < b < n + p`, for every `p`; erdosproblems.com/903 lists the problem as
-proved. Source: T. F. Bloom, Erdős Problems, Problem #903, https://www.erdosproblems.com/903 (status
+**Erdős–Fowler–Sós–Wilson gap above a projective plane (Erdős Problem 903).** Let $p$ be a prime
+power and $n = p^2 + p + 1$. Let $A_1, \dots, A_t$ be a $2$-design on $\{1, \dots, n\}$: every
+block $A_i$ has at least two points and every pair of distinct points lies in exactly one block.
+If $t > n$, then $t \ge n + p$.
+
+Erdős, Fowler, Sós and Wilson prove this for every natural number $p$, not only prime powers.
+
+Source: T. F. Bloom, Erdős Problems, Problem #903, https://www.erdosproblems.com/903 (status
 PROVED); resolution: P. Erdős, J. C. Fowler, V. T. Sós and R. M. Wilson, On 2-designs, J. Combin.
 Theory Ser. A 38 (1985), 131-142, Theorem 2: for v = p² + p + 1 (p not necessarily a prime power)
 there is no 2-design with v points and b lines when p² + p + 1 < b < p² + 2p + 1, where a 2-design

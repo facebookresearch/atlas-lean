@@ -34,7 +34,17 @@ checked against erdosproblems.com/750. The Mycielskian helpers
 variant is not ported. The upstream `answer(True)` is dropped. Status:
 proved; the cited formal proof is unconditional (it proves the Stiebitz theorem it uses). -/
 
-/-- Infinite-chromatic graphs meet every prescribed independence-density bound. -/
+/-- **Erdős Problem 750.** The statement that the following three assertions all hold.
+(i) For every function
+$f : \mathbb{N} \to \mathbb{R}_{\ge 0}$ with $f(m) \to \infty$ as $m \to \infty$ there is a
+simple graph $G$ with infinite chromatic number such that for every $m > 0$, every set $S$ of
+exactly $m$ vertices of $G$ contains an independent set $I$ of $G$ with $|I| \ge m/2 - f(m)$.
+(ii) For every real $\varepsilon > 0$ there is a simple graph $G$ with infinite chromatic number
+such that for every $m > 0$, every set of exactly $m$ vertices of $G$ contains an independent
+set of $G$ with at least $m/2 - \varepsilon m$ elements. (iii) For every real $c > 1/4$ there
+is a simple graph $G$ with infinite chromatic number such that for every $m > 0$, every set of
+exactly $m$ vertices of $G$ contains an independent set of $G$ with at least $m/2 - cm$
+elements. -/
 def conjecture : Prop :=
   (∀ f : ℕ → ℝ≥0, atTop.Tendsto f atTop →
     ∃ (V : Type) (G : SimpleGraph V),
@@ -51,8 +61,18 @@ def conjecture : Prop :=
         ∃ I ⊆ S, G.IsIndepSet I ∧ (m : ℝ) / 2 - c * m ≤ I.ncard)
 
 /--
-Resolved true: Proved and formalized in Lean unconditionally: the cited development proves the
-Stiebitz theorem it uses. Source: plby/lean-proofs, src/latest/ErdosProblems/Erdos750.lean
+**Erdős Problem 750 is true.** The following three statements hold. (i) For every function
+$f : \mathbb{N} \to \mathbb{R}_{\ge 0}$ with $f(m) \to \infty$ as $m \to \infty$ there is a
+simple graph $G$ with infinite chromatic number such that for every $m > 0$, every set $S$ of
+exactly $m$ vertices of $G$ contains an independent set $I$ of $G$ with $|I| \ge m/2 - f(m)$.
+(ii) For every real $\varepsilon > 0$ there is a simple graph $G$ with infinite chromatic number
+such that for every $m > 0$, every set of exactly $m$ vertices of $G$ contains an independent
+set of $G$ with at least $m/2 - \varepsilon m$ elements. (iii) For every real $c > 1/4$ there
+is a simple graph $G$ with infinite chromatic number such that for every $m > 0$, every set of
+exactly $m$ vertices of $G$ contains an independent set of $G$ with at least $m/2 - cm$
+elements.
+
+Source: plby/lean-proofs, src/latest/ErdosProblems/Erdos750.lean
 (theorem erdos_750_independence), pinned revision 8822f7ddef30fadbd92e1c6ab4ed897af356af5e,
 https://github.com/plby/lean-proofs/blob/8822f7ddef30fadbd92e1c6ab4ed897af356af5e/src/latest/ErdosProblems/Erdos750.lean#L41.
 Moved from `OpenConjectures/Combinatorics/ErdosProblem750`.

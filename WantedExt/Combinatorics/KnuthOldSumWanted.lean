@@ -39,14 +39,16 @@ set_option autoImplicit false
 
 namespace MathlibExt.Combinatorics.KnuthOldSumWanted
 
-/-- The weight `(2^m + 1)·2^{m-1} = (4^m + 2^m)/2` in Knuth's old
-sum; by Lemma 1 below it counts the words of length `m` over a
-four-letter alphabet with an even number of `a`'s. -/
+/-- **Weight in Knuth's old sum.** For a natural number $m$, the weight $w(m)$ is the rational
+number $(4^m + 2^m)/2$, which equals $(2^m + 1) 2^{m-1}$.
+
+It is the number of words of length $m$ over a four-letter alphabet in which a fixed letter
+occurs an even number of times. -/
 def knuthOldSumWeight (m : ℕ) : ℚ := ((4 : ℚ) ^ m + (2 : ℚ) ^ m) / 2
 
-/-- **Lemma 1**: the number of words of length `n` over the
-alphabet `{a, b, c, d}` (here `Fin 4`, with `0` playing the role
-of `a`) containing an even number of `a`'s is `(4^n + 2^n)/2`.
+/-- **Counting words with an even number of $a$'s.** For every natural number $n$, the number of
+words of length $n$ over the four-letter alphabet $\{a, b, c, d\}$ in which the letter $a$ occurs
+an even number of times is $(4^n + 2^n)/2$.
 
 Source: Akalu Tefera and Aklilu Zeleke, "Combinatorial Identities
 Inspired by Knuth's Old Sum", Lemma 1. -/
@@ -55,11 +57,14 @@ theorem_wanted card_evenACount_words (n : ℕ) :
       Even (Finset.univ.filter (fun i => w i = 0)).card} =
         (4 ^ n + 2 ^ n) / 2
 
-/-- **Theorem 1**: for nonnegative integers `n` and `j`, with
-`N = n + 2j + 1`,
-`Σ_{k=0}^n C(N, n-k)·(2^{n-k}+1)·2^{n-k-1}·(-1)^k
-= C(N, n)·Σ_{k=0}^n [C(n, k)/C(2j+1+k, 2j+1)]·(2^{n-k}+1)·2^{n-k-1}·(-1)^k`
-(Equation (1), with the weight in the form `(4^m + 2^m)/2`).
+/-- **Tefera–Zeleke identity with binomial quotients.** Let $n$ and $j$ be natural numbers, let
+$N = n + 2j + 1$, and let $w(m) = (4^m + 2^m)/2$ be the weight in Knuth's old sum. Then, in the
+rational numbers,
+$$\sum_{k=0}^{n} \binom{N}{n-k} w(n-k) (-1)^k
+= \binom{N}{n} \sum_{k=0}^{n} \frac{\binom{n}{k}}{\binom{2j+1+k}{2j+1}} w(n-k) (-1)^k.$$
+
+This is Equation (1) of the paper, whose weight $(2^m + 1) 2^{m-1}$ is written here as
+$(4^m + 2^m)/2$.
 
 Source: Akalu Tefera and Aklilu Zeleke, "Combinatorial Identities
 Inspired by Knuth's Old Sum", Theorem 1. -/
@@ -73,11 +78,14 @@ theorem_wanted knuthOldSum_eq_mul_sum_div (n j : ℕ) :
             (Nat.choose (2 * j + 1 + k) (2 * j + 1) : ℚ)) *
             knuthOldSumWeight (n - k) * (-1 : ℚ) ^ k
 
-/-- **Theorem 2**: for nonnegative integers `n` and `j`, with
-`N = n + 2j + 1`,
-`Σ_{k=0}^n C(N, n-k)·(2^{n-k}+1)·2^{n-k-1}·(-1)^k
-= Σ_{k=0}^n C(2j+k, k)·2^{k-1}·(1 + 2^k·3^{n-k})`
-(Equation (2), with both weights in division-by-`2` form).
+/-- **Tefera–Zeleke identity with powers of $2$, $3$ and $4$.** Let $n$ and $j$ be natural numbers,
+let $N = n + 2j + 1$, and let $w(m) = (4^m + 2^m)/2$ be the weight in Knuth's old sum. Then, in the
+rational numbers,
+$$\sum_{k=0}^{n} \binom{N}{n-k} w(n-k) (-1)^k
+= \sum_{k=0}^{n} \binom{2j+k}{k} \frac{2^k + 4^k 3^{n-k}}{2}.$$
+
+This is Equation (2) of the paper, which prints the weight as $(2^m + 1) 2^{m-1}$ and the terms
+on the right as $\binom{2j+k}{k} 2^{k-1} (1 + 2^k 3^{n-k})$.
 
 Source: Akalu Tefera and Aklilu Zeleke, "Combinatorial Identities
 Inspired by Knuth's Old Sum", Theorem 2. -/

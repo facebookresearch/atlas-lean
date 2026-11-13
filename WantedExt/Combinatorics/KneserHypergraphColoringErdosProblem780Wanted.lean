@@ -36,8 +36,10 @@ statement. Compared with the formal-conjectures statement `ErdosProblems/780.lea
 code imported).
 -/
 
-/-- Erdős Problem 780: if `n ≥ k r + (t - 1)(k - 1)`, every coloring of the `r`-subsets of an
-`n`-set with `t` colors has a color class containing `k` pairwise disjoint `r`-subsets. -/
+/-- **Erdős's Kneser hypergraph problem.** The statement that for all natural numbers
+$n, k, r, t$ with $r \ge 1$, $t \ge 1$ and $n \ge kr + (t - 1)(k - 1)$, every coloring of the
+$r$-element subsets of $\{0, \dots, n - 1\}$ with $t$ colors has a color class containing $k$
+pairwise disjoint $r$-element subsets. -/
 def kneserHypergraphColoring : Prop :=
   ∀ n k r t : ℕ, 1 ≤ r → 1 ≤ t → k * r + (t - 1) * (k - 1) ≤ n →
     ∀ c : Finset (Fin n) → Fin t, ∃ (i : Fin t) (E : Finset (Finset (Fin n))),
@@ -45,9 +47,16 @@ def kneserHypergraphColoring : Prop :=
         (E : Set (Finset (Fin n))).PairwiseDisjoint id
 
 /--
-Resolved true: Alon, Frankl and Lovász proved it for all positive `n, k, r, t` (Theorem 1.1; the
-case `k = 2` is Lovász's proof of Kneser's conjecture), and the bound on `n` is sharp;
-erdosproblems.com/780 lists the problem as proved. Source: T. F. Bloom, Erdős Problems, Problem
+**Alon–Frankl–Lovász theorem on Kneser hypergraphs.** For all natural numbers $n, k, r, t$ with
+$r \ge 1$, $t \ge 1$ and $n \ge kr + (t - 1)(k - 1)$, every coloring of the $r$-element subsets
+of $\{0, \dots, n - 1\}$ with $t$ colors has a color class containing $k$ pairwise disjoint
+$r$-element subsets.
+
+Alon, Frankl and Lovász proved this for all positive $n, k, r, t$ (Theorem 1.1; the case $k = 2$
+is Lovász's proof of Kneser's conjecture), and the bound on $n$ is sharp; erdosproblems.com/780
+lists the problem as proved.
+
+Source: T. F. Bloom, Erdős Problems, Problem
 #780, https://www.erdosproblems.com/780 (status PROVED); resolution: N. Alon, P. Frankl and L.
 Lovász, The chromatic number of Kneser hypergraphs, Trans. Amer. Math. Soc. 298 (1986), 359-370,
 Theorem 1.1: for positive integers n, k, r, t with n ≥ kr + (t - 1)(k - 1), if the r-subsets of an
