@@ -18,6 +18,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.OrderOfElement
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -29,21 +30,12 @@ Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Pro
 Bludov). UnsolvedMath record UM-00700929 (`KOU-13.11`), dataset ulamai/UnsolvedMath v1.8.0.
 
 Polycyclic means a finite subnormal series with cyclic factors and almost polycyclic means a
-polycyclic subgroup of finite index, as in the resolving paper. Torsion-free means no nontrivial
-element of finite order. Generation is implied by the bijectivity of `k ↦ a₁^k₁ ⋯ aₙ^kₙ`.
+polycyclic subgroup of finite index, as in the resolving paper (`IsPolycyclic` and
+`IsAlmostPolycyclic` of `GroupClassesShared`). Torsion-free means no nontrivial element of finite
+order. Generation is implied by the bijectivity of `k ↦ a₁^k₁ ⋯ aₙ^kₙ`.
 -/
 
-/-- `G` is polycyclic: it has a finite subnormal series `1 = H₀ ≤ H₁ ≤ ⋯ ≤ Hₙ = G`, each `Hᵢ`
-normal in `Hᵢ₊₁`, with cyclic factors `Hᵢ₊₁ / Hᵢ`. -/
-def IsPolycyclic (G : Type*) [Group G] : Prop :=
-  ∃ (n : ℕ) (H : Fin (n + 1) → Subgroup G), H 0 = ⊥ ∧ H (Fin.last n) = ⊤ ∧
-    ∀ i : Fin n, H i.castSucc ≤ H i.succ ∧
-      ∃ _ : ((H i.castSucc).subgroupOf (H i.succ)).Normal,
-        IsCyclic (H i.succ ⧸ (H i.castSucc).subgroupOf (H i.succ))
-
-/-- `G` is almost (virtually) polycyclic: some subgroup of finite index is polycyclic. -/
-def IsAlmostPolycyclic (G : Type*) [Group G] : Prop :=
-  ∃ H : Subgroup G, H.FiniteIndex ∧ IsPolycyclic H
+open MathlibExt.GroupTheory.GroupClassesShared (IsAlmostPolycyclic)
 
 /-- `G` has generators `a₀, …, aₙ₋₁` such that every element of `G` is `a₀ ^ k₀ ⋯ aₙ₋₁ ^ kₙ₋₁`
 for exactly one `(k₀, …, kₙ₋₁) ∈ ℤⁿ`. -/

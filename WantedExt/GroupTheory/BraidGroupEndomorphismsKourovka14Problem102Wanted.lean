@@ -19,7 +19,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.OrderOfElement
-public import Mathlib.GroupTheory.PresentedGroup
+public import WantedExt.GroupTheory.BraidGroupShared
 
 @[expose] public section
 
@@ -31,24 +31,13 @@ Notebook, 21st issue, arXiv:1401.0300v49 (2026), Problem 14.102 (V. Lin; V. Shpi
 the Archive of Solved Problems. UnsolvedMath record UM-00701086 (`KOU-14.102`), dataset
 ulamai/UnsolvedMath v1.8.0.
 
-`Bₙ` is given by Artin's presentation, as in `BraidConjugacyProblemKourovka1Problem11Wanted`. (a) is
-stated for some `n > 4` and refuted, so the refutation covers every `n > 4`; a non-cyclic image is
-automatically non-trivial. (b) and (c) are stated for every `n > 4`. A proper quotient is `Bₙ / N`
-with `N ≠ 1`; torsion-free means no nontrivial element of finite order.
+`Bₙ` is `BraidGroup n` of `BraidGroupShared` (Artin's presentation, as the Artin group of type
+`A_{n-1}`). (a) is stated for some `n > 4` and refuted, so the refutation covers every `n > 4`; a
+non-cyclic image is automatically non-trivial. (b) and (c) are stated for every `n > 4`. A proper
+quotient is `Bₙ / N` with `N ≠ 1`; torsion-free means no nontrivial element of finite order.
 -/
 
-open FreeGroup
-
-/-- Artin's relators for the braid group on `n` strands, in the free group on the generators
-`σ₀, …, σ_{n-2}` (indexed by `Fin (n - 1)`): `σᵢ σⱼ = σⱼ σᵢ` when `j ≥ i + 2`, and
-`σᵢ σᵢ₊₁ σᵢ = σᵢ₊₁ σᵢ σᵢ₊₁`. -/
-def braidRelators (n : ℕ) : Set (FreeGroup (Fin (n - 1))) :=
-  {r | ∃ i j : Fin (n - 1),
-    (i.val + 2 ≤ j.val ∧ r = of i * of j * (of i)⁻¹ * (of j)⁻¹) ∨
-    (i.val + 1 = j.val ∧ r = of i * of j * of i * (of j * of i * of j)⁻¹)}
-
-/-- The braid group `Bₙ` on `n` strands, by Artin's presentation. -/
-abbrev BraidGroup (n : ℕ) : Type := PresentedGroup (braidRelators n)
+open MathlibExt.GroupTheory.BraidGroupShared (BraidGroup)
 
 /-- Kourovka 14.102(a) (V. Lin; V. Shpilrain): for some `n > 4`, `Bₙ` has a non-injective
 endomorphism with non-cyclic (in particular nontrivial) image. -/

@@ -19,6 +19,7 @@ module
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Finiteness
 public import Mathlib.GroupTheory.Nilpotent
+public import WantedExt.GroupTheory.GroupClassesShared
 public import WantedExt.GroupTheory.KourovkaNotebookShared
 
 @[expose] public section
@@ -30,17 +31,14 @@ Source: E. I. Khukhro and V. D. Mazurov (eds.), Unsolved Problems in Group Theor
 Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Problem 1.84 (A. L.
 Shmel'kin). UnsolvedMath record UM-00700073 (`KOU-1.84`), dataset ulamai/UnsolvedMath v1.8.0.
 
-Polycyclic means soluble with every subgroup finitely generated (Hirsch's characterization).
-Residually a finite `p`-group means that every element `≠ 1` lies outside a normal subgroup of
-`p`-power index. The prime `p` is universally quantified, so the refutation says that the
-equivalence fails for some prime and some polycyclic group.
+Polycyclic is `IsPolycyclic` of `GroupClassesShared`: a finite subnormal series with cyclic factors
+(by Hirsch's theorem, equivalently soluble with every subgroup finitely generated). Residually a
+finite `p`-group means that every element `≠ 1` lies outside a normal subgroup of `p`-power index.
+The prime `p` is universally quantified, so the refutation says that the equivalence fails for some
+prime and some polycyclic group.
 -/
 
-/-- `G` is polycyclic: soluble with every subgroup finitely generated (Hirsch's characterization
-of the groups with a subnormal series with cyclic factors). -/
-def IsPolycyclic (G : Type*) [Group G] : Prop :=
-  Group.IsSolvable G ∧ ∀ H : Subgroup G, H.FG
-
+open MathlibExt.GroupTheory.GroupClassesShared (IsPolycyclic)
 open MathlibExt.GroupTheory.KourovkaNotebookShared (IsResiduallyFiniteP)
 
 /-- `G` has a torsion-free nilpotent normal subgroup whose index is a power of `p`. -/

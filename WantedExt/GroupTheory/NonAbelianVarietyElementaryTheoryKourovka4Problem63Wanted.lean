@@ -17,8 +17,9 @@ whose elementary theory is decidable?
 module
 
 public import Batteries.Util.ProofWanted
+public import Mathlib.Computability.RE
 public import WantedExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21Wanted
-public import WantedExt.GroupTheory.FreeGroupElementaryTheoryDecidableKourovka1Problem29Wanted
+public import WantedExt.GroupTheory.PrenexSentenceShared
 
 @[expose] public section
 
@@ -33,17 +34,17 @@ Laws and varieties are `SatisfiesLaws` of the Kourovka 11.21 entry, reused here:
 `FreeGroup ℕ`, the variety defined by a set `W` of laws consists of the groups in which every law of
 `W` holds, and every variety arises this way. The elementary theory of a variety is the set of
 first-order sentences of the language of groups true in all of its groups. Sentences are the codes
-`PrenexSentence` of the Kourovka 1.29 entry, reused here: a quantifier prefix binding `x₀, x₁, …` in
-order and a matrix in conjunctive normal form over literals `w = 1` and `w ≠ 1` (words coded as
-lists of letters); variables not bound by the prefix are read as `1`. This loses nothing: every
-first-order sentence of the language of groups is effectively equivalent in all groups to such a
-code (an atomic formula `s = t` is equivalent to `s t⁻¹ = 1`) and every code is a sentence, so
-decidability does not depend on the coding. Groups are taken in `Type`; a sentence failing in some
-group of the variety fails in a countable elementary subgroup, which lies in the variety.
+`PrenexSentence` of `PrenexSentenceShared` (shared with the Kourovka 1.29 and 16.71 entries): a
+quantifier prefix binding `x₀, x₁, …` in order and a matrix in conjunctive normal form over literals
+`w = 1` and `w ≠ 1` (words coded as lists of letters); variables not bound by the prefix are read as
+`1`. This loses nothing: every first-order sentence of the language of groups is effectively
+equivalent in all groups to such a code (an atomic formula `s = t` is equivalent to `s t⁻¹ = 1`) and
+every code is a sentence, so decidability does not depend on the coding. Groups are taken in `Type`;
+a sentence failing in some group of the variety fails in a countable elementary subgroup, which lies
+in the variety.
 -/
 
-open MathlibExt.GroupTheory.FreeGroupElementaryTheoryDecidableKourovka1Problem29Wanted
-  (PrenexSentence PrenexSentence.HoldsIn)
+open MathlibExt.GroupTheory.PrenexSentenceShared (PrenexSentence PrenexSentence.HoldsIn)
 open MathlibExt.GroupTheory.FormationVarietyPGroupsKourovka11Problem21Wanted (SatisfiesLaws)
 
 /-- The elementary theory of the variety defined by the laws `W`: the sentences that hold in every

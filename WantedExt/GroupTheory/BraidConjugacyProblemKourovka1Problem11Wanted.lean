@@ -17,7 +17,7 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.Computability.RE
-public import Mathlib.GroupTheory.PresentedGroup
+public import WantedExt.GroupTheory.BraidGroupShared
 
 @[expose] public section
 
@@ -29,29 +29,19 @@ Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Pro
 M. D. Greendlinger). UnsolvedMath record UM-00700009 (`KOU-1.11`), dataset ulamai/UnsolvedMath
 v1.8.0.
 
-`Bₙ` is given by Artin's presentation on `σ₁, …, σₙ₋₁`. Solvability of the conjugacy problem is
-`ComputablePred` on pairs of braid words `List (Fin (n - 1) × Bool)`, the encoding used for word
-problems elsewhere in `WantedExt` (`NovikovBooneWanted`). The range `n > 4` follows the problem;
-Garside's algorithm covers all `n`.
+`Bₙ` is `BraidGroup n` of `BraidGroupShared`, the Artin group of type `A_{n-1}`, i.e. Artin's
+presentation on `σ₁, …, σₙ₋₁`. Solvability of the conjugacy problem is `ComputablePred` on pairs of
+braid words `List (Fin (n - 1) × Bool)`, the encoding used for word problems elsewhere in
+`WantedExt` (`NovikovBooneWanted`). The range `n > 4` follows the problem; Garside's algorithm
+covers all `n`.
 -/
 
-open FreeGroup
-
-/-- Artin's relators for the braid group on `n` strands, in the free group on the generators
-`σ₀, …, σ_{n-2}` (indexed by `Fin (n - 1)`): `σᵢ σⱼ = σⱼ σᵢ` when `j ≥ i + 2`, and
-`σᵢ σᵢ₊₁ σᵢ = σᵢ₊₁ σᵢ σᵢ₊₁`. -/
-def braidRelators (n : ℕ) : Set (FreeGroup (Fin (n - 1))) :=
-  {r | ∃ i j : Fin (n - 1),
-    (i.val + 2 ≤ j.val ∧ r = of i * of j * (of i)⁻¹ * (of j)⁻¹) ∨
-    (i.val + 1 = j.val ∧ r = of i * of j * of i * (of j * of i * of j)⁻¹)}
-
-/-- The braid group `Bₙ` on `n` strands, by Artin's presentation. -/
-abbrev BraidGroup (n : ℕ) : Type := PresentedGroup (braidRelators n)
+open MathlibExt.GroupTheory.BraidGroupShared (BraidGroup)
 
 /-- The braid word `w` (a list of letters `(i, b)`: `σᵢ` if `b`, `σᵢ⁻¹` otherwise) as an element
 of `Bₙ`. -/
 def braidOfWord (n : ℕ) (w : List (Fin (n - 1) × Bool)) : BraidGroup n :=
-  PresentedGroup.mk (braidRelators n) (FreeGroup.mk w)
+  FreeGroup.lift (CoxeterMatrix.ArtinGroup.of (CoxeterMatrix.A (n - 1))) (FreeGroup.mk w)
 
 /-- Kourovka 1.11 (E. Artin): for every `n > 4` the conjugacy problem in `Bₙ` is solvable: the
 predicate "the braid words `u` and `v` represent conjugate elements of `Bₙ`" is computable. -/

@@ -17,7 +17,6 @@ module
 
 public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Solvable
-public import WantedExt.GroupTheory.ChernikovSubgroupLatticeDimensionKourovka11Problem116Wanted
 public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
@@ -31,16 +30,16 @@ Hartley). UnsolvedMath record UM-00700528 (`KOU-8.80`), dataset ulamai/UnsolvedM
 
 Locally finite is `IsLocallyFinite` of `GroupClassesShared`: every finite subset generates a finite
 subgroup, i.e. every finitely generated subgroup is finite. A maximal subgroup is a coatom of the
-subgroup lattice. A Chernikov group is the 11.116 entry's `IsChernikov`: a normal subgroup of finite
-index isomorphic to a direct product of finitely many quasicyclic groups. Almost soluble means
-having a soluble subgroup of finite index.
+subgroup lattice. A Chernikov group is `IsChernikov` of `GroupClassesShared`: an abelian subgroup of
+finite index with the minimal condition on subgroups (equivalently, a finite extension of a direct
+product of finitely many quasicyclic groups). Almost soluble means having a soluble subgroup of
+finite index.
 -/
 
-open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
-open MathlibExt.GroupTheory.ChernikovSubgroupLatticeDimensionKourovka11Problem116Wanted
+open MathlibExt.GroupTheory.GroupClassesShared (IsChernikov IsLocallyFinite)
 
 /-- Kourovka 8.80 (B. Hartley): a locally finite group with a maximal subgroup that is a Chernikov
-group (`IsChernikov`, from the 11.116 entry) is almost soluble (has a soluble subgroup of finite
+group (`IsChernikov`, from `GroupClassesShared`) is almost soluble (has a soluble subgroup of finite
 index). -/
 def chernikovMaximalAlmostSoluble : Prop :=
   ∀ (G : Type) [Group G], IsLocallyFinite G → ∀ M : Subgroup G, IsCoatom M → IsChernikov M →

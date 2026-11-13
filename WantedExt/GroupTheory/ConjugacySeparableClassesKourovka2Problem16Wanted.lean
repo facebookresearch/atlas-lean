@@ -22,6 +22,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Finiteness
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import WantedExt.GroupTheory.FreeSolubleNormalClosureConjugacyKourovka1Problem89Wanted
+public import WantedExt.GroupTheory.GroupClassesShared
 public import WantedExt.GroupTheory.KourovkaNotebookShared
 
 @[expose] public section
@@ -34,28 +35,19 @@ Notebook, 21st issue, arXiv:1401.0300v49 (2026), Archive of Solved Problems, Pro
 Kargapolov). UnsolvedMath record UM-00700092 (`KOU-2.16`), dataset ulamai/UnsolvedMath v1.8.0.
 
 Conjugacy separable: elements whose images are conjugate in every finite quotient `G / N` (`N`
-normal of finite index, written as `g x g⁻¹ y⁻¹ ∈ N` for some `g`) are conjugate in `G`. Polycyclic:
-a series `1 = G₀ ⊴ ⋯ ⊴ G_n = G` with cyclic factors, written with generators `g₀, …, g_{n-1}` whose
-initial segments generate the terms. (b) is stated for free soluble groups `F_r / F_r^{(l)}` of
-finite rank `r` and every derived length `l`. (c) is `GLₙ(ℤ)` for every `n`; (d) finitely generated
-subgroups of `GLₙ(K)` over a field `K : Type`; (e) finitely generated groups with `derivedSeries G 2
-= ⊥`. `IsConjugacySeparable` is the shared definition in
-`WantedExt/GroupTheory/KourovkaNotebookShared.lean`; `FreeSolubleGroup` is that of the Kourovka 1.89
-entry, reused here.
+normal of finite index, written as `g x g⁻¹ y⁻¹ ∈ N` for some `g`) are conjugate in `G`. Polycyclic
+is `IsPolycyclic` of `GroupClassesShared`: a finite subnormal series with cyclic factors. (b) is
+stated for free soluble groups `F_r / F_r^{(l)}` of finite rank `r` and every derived length `l`.
+(c) is `GLₙ(ℤ)` for every `n`; (d) finitely generated subgroups of `GLₙ(K)` over a field `K : Type`;
+(e) finitely generated groups with `derivedSeries G 2 = ⊥`. `IsConjugacySeparable` is the shared
+definition in `WantedExt/GroupTheory/KourovkaNotebookShared.lean`; `FreeSolubleGroup` is that of the
+Kourovka 1.89 entry, reused here.
 -/
 
 open MathlibExt.GroupTheory.KourovkaNotebookShared
+open MathlibExt.GroupTheory.GroupClassesShared (IsPolycyclic)
 open MathlibExt.GroupTheory.FreeSolubleNormalClosureConjugacyKourovka1Problem89Wanted
   (FreeSolubleGroup)
-
-/-- `G` is polycyclic: for some elements `g₀, …, g_{n-1}` of `G`, each `Gᵢ = ⟨g_j : j < i⟩` is
-normal in `Gᵢ₊₁` (`i < n`) and `G_n = G`, so `1 = G₀ ⊴ G₁ ⊴ ⋯ ⊴ G_n = G` is a series with cyclic
-factors `Gᵢ₊₁ / Gᵢ = ⟨Gᵢ, gᵢ⟩ / Gᵢ`. -/
-def IsPolycyclic (G : Type*) [Group G] : Prop :=
-  ∃ (n : ℕ) (g : Fin n → G), (∀ i : ℕ, i < n →
-      ((Subgroup.closure (g '' {j | j.val < i})).subgroupOf
-        (Subgroup.closure (g '' {j | j.val < i + 1}))).Normal) ∧
-    Subgroup.closure (Set.range g) = ⊤
 
 /-- Kourovka 2.16(a) (M. I. Kargapolov): every polycyclic group is conjugacy separable. -/
 def polycyclicConjugacySeparable : Prop :=
