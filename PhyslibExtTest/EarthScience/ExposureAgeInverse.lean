@@ -9,6 +9,7 @@ module
 
 import Mathlib.Tactic.NormNum
 import PhyslibExt.EarthScience.ExposureAgeInverse
+import PhyslibExt.EarthScience.ProductionDecay
 
 /-!
 # Exposure-age-inverse checks
@@ -16,7 +17,9 @@ import PhyslibExt.EarthScience.ExposureAgeInverse
 Concrete consumers of `PhyslibExt.EarthScience.ExposureAgeInverse`: with
 `P = 10`, `lam = 1/2`, `N0 = 0`, the inventory at `t = 0` is `0`, it
 increases with time, stays below the saturation value `20`, and the age
-inverse recovers both the inventory and the time.
+inverse recovers both the inventory and the time. The inventory is also
+checked against `PhyslibExt.EarthScience.ProductionDecay`: it solves
+`N' = P - lam * N` and starts at `N0`.
 
 ## i. Overview
 
@@ -32,6 +35,7 @@ No new definitions or results are introduced here.
 ## iii. References
 
 - `PhyslibExt.EarthScience.ExposureAgeInverse`
+- `PhyslibExt.EarthScience.ProductionDecay`
 -/
 
 open EarthScience
@@ -76,3 +80,14 @@ example : exposureInventory 10 (1 / 2) 0 1 < 20 := by
   have h2 := exposure_inventory_le_saturation (P := 10) (lam := 1 / 2) (N0 := 0)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num) 2 (by norm_num)
   linarith
+
+/-- The inventory is the production-decay solution of
+`PhyslibExt.EarthScience.ProductionDecay`: it solves `N' = P - lam * N`. -/
+example (P lam N0 t : ℝ) (hlam : 0 < lam) :
+    HasDerivAt (exposureInventory P lam N0) (P - lam * exposureInventory P lam N0 t) t :=
+  production_decay_hasDerivAt P lam N0 t hlam
+
+/-- The inventory starts at the inherited inventory `N0`
+(`production_decay_initial`). -/
+example (P lam N0 : ℝ) : exposureInventory P lam N0 0 = N0 :=
+  production_decay_initial P lam N0

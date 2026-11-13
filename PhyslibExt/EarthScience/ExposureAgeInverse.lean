@@ -23,6 +23,14 @@ inventory
 rises toward the saturation value `P / lam` when it starts below it, and
 the exposure age inverts it at `N0 = 0`.
 
+This is the production-decay model of
+`PhyslibExt.EarthScience.ProductionDecay` (constant production, no
+erosion or burial), where `EarthScience.production_decay_hasDerivAt` and
+`EarthScience.production_decay_initial` show that this inventory solves
+`N' = P - lam * N` with `N(0) = N0`. Its zero-inheritance inverse is the
+single-nuclide exposure age of Lal (1991) and Vermeesch (2007). The
+physical domain is `P > 0`, `lam > 0`, `N0 ≥ 0` and `t ≥ 0`.
+
 ## i. Overview
 
 Rewriting the inventory as `P / lam + (N0 - P / lam) * exp (-lam * t)`
@@ -47,6 +55,18 @@ taking the age of the inventory at time `t` returns `t`.
 
 ## iii. References
 
+- D. Lal, Cosmic ray labeling of erosion surfaces: in situ nuclide production
+  rates and erosion models, Earth Planet. Sci. Lett. 104 (1991) 424–439: the
+  in situ build-up of a radionuclide under constant production and decay, the
+  basis of exposure dating.
+- P. Vermeesch, CosmoCalc: An Excel add-in for cosmogenic nuclide calculations,
+  Geochem. Geophys. Geosyst. 8 (2007) Q08003: the single-nuclide exposure age
+  under zero erosion and burial, the inverse of `N = (P/λ)*(1-exp(-λ*t))`, i.e.
+  this model with `N0 = 0`.
+- `EarthScience.production_decay_hasDerivAt` and
+  `EarthScience.production_decay_initial` in
+  `PhyslibExt.EarthScience.ProductionDecay`: the same inventory solves
+  `N' = P - lam * N` with `N(0) = N0`.
 - `Real.exp_le_exp_of_le`, `Real.exp_lt_exp` for monotonicity of the
   exponential.
 - `Real.exp_log`, `Real.log_exp` for the logarithmic inverse.
@@ -69,7 +89,7 @@ noncomputable def exposureAge (P lam N : ℝ) : ℝ :=
 
 /-- The inventory in saturation form:
 `P / lam + (N0 - P / lam) * exp (-lam * t)`. -/
-private theorem exposureInventory_eq (P lam N0 t : ℝ) :
+private lemma exposureInventory_eq (P lam N0 t : ℝ) :
     exposureInventory P lam N0 t = P / lam + (N0 - P / lam) * Real.exp (-lam * t) := by
   unfold exposureInventory
   ring
