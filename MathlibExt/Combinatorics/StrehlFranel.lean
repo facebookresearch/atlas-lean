@@ -118,9 +118,11 @@ private theorem inner_sum (n j : ℕ) (hj : j ≤ n) :
   rw [hss]
   ring
 
-/-- Strehl's binomial identity for Franel numbers: for every `n`, the sum of
-`C(n, k) ^ 2 * C(2 * k, n)` over `k = 0..n` equals the sum of `C(n, k) ^ 3`
-(the Franel numbers).
+/-- **Strehl's identity for the Franel numbers.** For every natural number $n$,
+
+$$\sum_{k=0}^{n} \binom{n}{k}^2 \binom{2k}{n} = \sum_{k=0}^{n} \binom{n}{k}^3,$$
+
+where the right-hand side is the $n$-th Franel number.
 
 Source: Sela Fried, *Proofs of Ten Conjectures From the OEIS*, Journal of
 Integer Sequences 29 (2026), Article 26.1.8, equation `1est`, lines 110–114,

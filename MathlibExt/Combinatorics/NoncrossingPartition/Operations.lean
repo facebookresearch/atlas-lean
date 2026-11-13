@@ -30,7 +30,8 @@ open Finpartition Finset
 
 namespace NoncrossingPartition
 
-/-- The discrete partition `⊥` of `Fin n` is noncrossing for every `n`. -/
+/-- **The discrete partition is noncrossing.** For every natural number $n$, the discrete
+partition of $\{0, \dots, n-1\}$, whose blocks are the singletons, is noncrossing. -/
 theorem isNoncrossing_bot (n : ℕ) : IsNoncrossing (⊥ : SetPartition n) := by
   intro hcross
   obtain ⟨a, b, c, d, hab, hbc, _hcd, heq_ac, _heq_bd, _hne⟩ := hcross
@@ -63,7 +64,8 @@ theorem isNoncrossing_bot (n : ℕ) : IsNoncrossing (⊥ : SetPartition n) := by
     have h_b_lt_a : b < a := h_a_eq_c.symm ▸ hbc
     exact (ne_of_lt (lt_trans hab h_b_lt_a)) rfl
 
-/-- The indiscrete partition `⊤` of `Fin n` is noncrossing for every `n`. -/
+/-- **The indiscrete partition is noncrossing.** For every natural number $n$, the indiscrete
+partition of $\{0, \dots, n-1\}$, the coarsest partition of this set, is noncrossing. -/
 theorem isNoncrossing_top (n : ℕ) : IsNoncrossing (⊤ : SetPartition n) := by
   intro hcross
   obtain ⟨a, b, _c, _d, _hab, _hbc, _hcd, _heq_ac, heq_bd, hne⟩ := hcross
@@ -87,11 +89,15 @@ theorem isNoncrossing_top (n : ℕ) : IsNoncrossing (⊤ : SetPartition n) := by
       mem_singleton.mp (h_sub h_part_b_mem)
     exact hne (by rw [h_a_eq, h_b_eq])
 
-/-- Discrete noncrossing partition of `Fin n` (singletons), bundled. -/
+/-- **Discrete noncrossing partition.** For a natural number $n$, the discrete noncrossing
+partition of $\{0, \dots, n-1\}$ is the finest partition of this set, whose blocks are the
+singletons $\{a\}$ for $a \in \{0, \dots, n-1\}$; it is noncrossing. -/
 def discrete (n : ℕ) : NoncrossingPartition n :=
   ⟨⊥, isNoncrossing_bot n⟩
 
-/-- Indiscrete noncrossing partition of `Fin n` (one block), bundled. -/
+/-- **The indiscrete noncrossing partition.** For a natural number $n$, the indiscrete noncrossing
+partition of $\{0, \dots, n-1\}$ is the coarsest partition of this set: its only block is the whole
+set when $n > 0$, and it has no blocks when $n = 0$. It is noncrossing. -/
 def indiscrete (n : ℕ) : NoncrossingPartition n :=
   ⟨⊤, isNoncrossing_top n⟩
 
@@ -117,7 +123,9 @@ instance (n : ℕ) : OrderTop (NoncrossingPartition n) where
     change P.val ≤ (⊤ : SetPartition n)
     exact le_top
 
-/-- Blocks of the discrete partition are singletons. -/
+/-- **The block of a point in the discrete noncrossing partition.** For every natural number
+$n$ and every $a \in \{0, \dots, n-1\}$, the block containing $a$ in the discrete noncrossing
+partition of $\{0, \dots, n-1\}$ is the singleton $\{a\}$. -/
 @[simp]
 theorem block_discrete (n : ℕ) (a : Fin n) : block (discrete n) a = {a} := by
   by_cases hn : n = 0
@@ -129,8 +137,11 @@ theorem block_discrete (n : ℕ) (a : Fin n) : block (discrete n) a = {a} := by
       exact ⟨a, ha_mem, rfl⟩
     exact (⊥ : SetPartition n).part_eq_of_mem h_parts (mem_singleton_self a)
 
-/-- Blocks of the indiscrete partition are `univ` (for any `a : Fin n`);
-vacuous when `n = 0`. -/
+/-- **The block of a point in the indiscrete noncrossing partition.** For every natural number
+$n$ and every $a \in \{0, \dots, n-1\}$, the block containing $a$ in the indiscrete noncrossing
+partition of $\{0, \dots, n-1\}$ is the whole set $\{0, \dots, n-1\}$.
+
+For $n = 0$ there is no such $a$, so the statement is vacuous. -/
 @[simp]
 theorem block_indiscrete (n : ℕ) (a : Fin n) : block (indiscrete n) a = Finset.univ := by
   by_cases hn : n = 0
@@ -141,24 +152,31 @@ theorem block_indiscrete (n : ℕ) (a : Fin n) : block (indiscrete n) a = Finset
       ((⊤ : SetPartition n).part_mem).mpr ha_mem
     exact mem_singleton.mp (parts_top_subset (Finset.univ : Finset (Fin n)) h_part_mem)
 
-/-- Discrete parts are the singleton image of `univ`. -/
+/-- **The discrete noncrossing partition consists of the singletons.** For every natural number
+$n$, the set of blocks of the discrete noncrossing partition of $\{0, \dots, n-1\}$ is exactly
+the set of singletons $\{a\}$ with $a \in \{0, \dots, n-1\}$. -/
 @[simp]
 theorem discrete_parts (n : ℕ) :
     (discrete n).val.parts =
       (Finset.univ : Finset (Fin n)).map ⟨singleton, singleton_injective⟩ :=
   rfl
 
-/-- Indiscrete parts are empty at arity zero. -/
+/-- **The indiscrete partition of the empty set has no blocks.** For $n = 0$, the set of blocks
+of the indiscrete noncrossing partition of $\{0, \dots, n-1\}$, the empty set, is empty. -/
 @[simp]
 theorem indiscrete_parts_zero : (indiscrete 0).val.parts = ∅ := by
   rfl
 
-/-- Discrete parts are empty at arity zero. -/
+/-- **The discrete partition of the empty set has no blocks.** For $n = 0$, the discrete
+noncrossing partition of the empty set $\{0, \dots, n-1\}$ has no blocks: its set of blocks is
+empty. -/
 @[simp]
 theorem discrete_parts_zero : (discrete 0).val.parts = ∅ := by
   rfl
 
-/-- Indiscrete parts are `{univ}` when `0 < n`. -/
+/-- **The indiscrete partition of a nonempty set has a single block.** For a natural number $n$
+with $0 < n$, the set of blocks of the indiscrete noncrossing partition of $\{0, \dots, n-1\}$ is
+$\{\{0, \dots, n-1\}\}$: its only block is the whole set. -/
 theorem indiscrete_parts_pos {n : ℕ} (hn : 0 < n) :
     (indiscrete n).val.parts = {Finset.univ} := by
   have h0 : (⟨0, hn⟩ : Fin n) ∈ (Finset.univ : Finset (Fin n)) := mem_univ _
@@ -172,7 +190,9 @@ theorem indiscrete_parts_pos {n : ℕ} (hn : 0 < n) :
     _ = (Finpartition.indiscrete h_not_bot).parts := by rw [h_top]
     _ = {Finset.univ} := rfl
 
-/-- Equality to discrete is determined by `val = ⊥`. -/
+/-- **Characterization of the discrete noncrossing partition.** Let $n$ be a natural number. A
+noncrossing partition $P$ of $\{0, \dots, n-1\}$ equals the discrete noncrossing partition if
+and only if $P$, viewed as a set partition, is the finest partition of $\{0, \dots, n-1\}$. -/
 theorem eq_discrete_iff_val_eq_bot {n : ℕ} {P : NoncrossingPartition n} :
     P = discrete n ↔ P.val = ⊥ := by
   constructor
@@ -181,7 +201,10 @@ theorem eq_discrete_iff_val_eq_bot {n : ℕ} {P : NoncrossingPartition n} :
   · intro h
     exact ext h
 
-/-- Equality to indiscrete is determined by `val = ⊤`. -/
+/-- **Characterization of the indiscrete noncrossing partition.** Let $n$ be a natural number.
+A noncrossing partition $P$ of $\{0, \dots, n-1\}$ equals the indiscrete noncrossing partition
+if and only if $P$, viewed as a set partition, is the coarsest partition of
+$\{0, \dots, n-1\}$. -/
 theorem eq_indiscrete_iff_val_eq_top {n : ℕ} {P : NoncrossingPartition n} :
     P = indiscrete n ↔ P.val = ⊤ := by
   constructor
@@ -190,7 +213,10 @@ theorem eq_indiscrete_iff_val_eq_top {n : ℕ} {P : NoncrossingPartition n} :
   · intro h
     exact ext h
 
-/-- A partition whose every block is `univ` is indiscrete. -/
+/-- **A partition whose blocks are all the whole set is indiscrete.** Let $n$ be a natural number
+and let $P$ be a noncrossing partition of $\{0, \dots, n-1\}$. If for every
+$a \in \{0, \dots, n-1\}$ the block of $P$ containing $a$ is the whole set $\{0, \dots, n-1\}$,
+then $P$ is the indiscrete noncrossing partition. -/
 theorem eq_indiscrete_of_forall_block_eq_univ {n : ℕ} (P : NoncrossingPartition n)
     (h : ∀ a : Fin n, block P a = Finset.univ) : P = indiscrete n := by
   rw [eq_indiscrete_iff_val_eq_top]
@@ -221,16 +247,20 @@ instance : Unique (NoncrossingPartition 0) where
       Finpartition.ext (by rw [hP, indiscrete_parts_zero])
     exact ext hEq
 
-/-- Every noncrossing partition of `Fin 0` equals the indiscrete one. -/
+/-- **The empty set has a unique noncrossing partition.** For $n = 0$, every noncrossing partition
+of $\{0, \dots, n-1\}$, the empty set, equals the indiscrete noncrossing partition of this set. -/
 theorem eq_indiscrete_zero (P : NoncrossingPartition 0) : P = indiscrete 0 :=
   Subsingleton.elim P (indiscrete 0)
 
-/-- At arity zero discrete and indiscrete coincide. -/
+/-- **Discrete and indiscrete partitions agree on the empty set.** For $n = 0$, the discrete and
+the indiscrete noncrossing partitions of the empty set $\{0, \dots, n-1\}$ are equal. -/
 @[simp]
 theorem discrete_zero_eq_indiscrete_zero : discrete 0 = indiscrete 0 :=
   eq_indiscrete_zero (discrete 0)
 
-/-- At arity zero every partition is discrete. -/
+/-- **The only noncrossing partition of the empty set is the discrete one.** For $n = 0$, every
+noncrossing partition of the empty set $\{0, \dots, n-1\}$ equals the discrete noncrossing
+partition. -/
 theorem eq_discrete_zero (P : NoncrossingPartition 0) : P = discrete 0 := by
   rw [discrete_zero_eq_indiscrete_zero]
   exact eq_indiscrete_zero P

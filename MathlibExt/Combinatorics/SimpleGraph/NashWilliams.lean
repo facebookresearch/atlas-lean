@@ -22,7 +22,10 @@ namespace MathlibExt.Combinatorics.SimpleGraph.NashWilliamsWanted
 # Nash–Williams arboricity
 -/
 
-/-- Edge-coloring whose color classes are forests (acyclic). -/
+/-- **Arboricity colorings.** Let $G$ be a simple graph and $k$ a natural number. A labeling of the
+edges of $G$ with labels in $\{0, 1, \dots, k - 1\}$ is an arboricity coloring when, for each
+label $i$, the graph on the vertices of $G$ whose edges are the edges of $G$ labeled $i$ is
+acyclic, that is, a forest. -/
 def IsArboricityColoring {V : Type*} {G : SimpleGraph V} {k : ℕ}
     (C : G.EdgeLabeling (Fin k)) : Prop :=
   ∀ i : Fin k, (C.labelGraph i).IsAcyclic
@@ -876,11 +879,15 @@ private theorem nw_exists_isArboricityColoring {V : Type*} [Finite V]
     exact hc i
 
 /--
-Nash–Williams arboricity: a finite graph's edges can be partitioned into `k` forests iff every
-nonempty `U` spans at most `k * (|U| - 1)` edges.
-Source: C. St. J. A. Nash-Williams, J. London Math. Soc. 39 (1964), DOI 10.1112/jlms/s1-39.1.12.
+**Nash–Williams arboricity theorem.** Let $G$ be a simple graph on a finite vertex set $V$ and let
+$k$ be a natural number. Then $G$ has an arboricity coloring with $k$ labels, that is, its edges
+can be labeled with $k$ labels so that the edges of each label form a forest, if and only if for
+every nonempty set $U \subseteq V$, the number of edges of $G$ with both endpoints in $U$ is at
+most $k(|U| - 1)$.
 
 Proves `Wanted` entry `nash_williams_arboricity`.
+
+Source: C. St. J. A. Nash-Williams, J. London Math. Soc. 39 (1964), DOI 10.1112/jlms/s1-39.1.12.
 -/
 theorem nash_williams_arboricity
     {V : Type*} [Fintype V] [DecidableEq V]

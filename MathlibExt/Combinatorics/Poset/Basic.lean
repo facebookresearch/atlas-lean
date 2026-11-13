@@ -66,12 +66,14 @@ the zero element, then so is f⋅ g. If L is empty, the
 zero element is the only element of A(L,R).
 -/
 
-/-- Let L be a lattice, that is, a partially ordered set in which any s,t∈ L have a least upper
-bound and a greatest lower bound s∧ t, called their meet, and let R be a commutative semiring with
-zero 0 and identity 1. The Möbius algebra A(L,R) is the set of functions f: L→ R with f(s)≠ 0 for
-only finitely many s∈ L.
-
-The full informal statement is in the module documentation directly above.
+/-- **Möbius algebra product.** Let $L$ be a lattice with meet $\wedge$ and let $R$ be a
+commutative semiring. The Möbius algebra $A(L, R)$ is the set of functions $f \colon L \to R$ with
+$f(s) \neq 0$ for only finitely many $s \in L$. The product of $f, g \in A(L, R)$ is the function
+$f \cdot g \in A(L, R)$ given by
+$$(f \cdot g)(u) = \sum_{s \wedge t = u} f(s)\, g(t) \qquad (u \in L),$$
+the sum taken over all pairs $(s, t) \in L \times L$ with $f(s) \neq 0$, $g(t) \neq 0$ and
+$s \wedge t = u$. Equivalently, identifying each $s \in L$ with the function that is $1$ at $s$
+and $0$ elsewhere, it is the bilinear extension of $s \cdot t = s \wedge t$.
 -/
 noncomputable def moebiusAlgebraMul {L R : Type*} [Lattice L]
     [CommSemiring R] (f g : L →₀ R) : L →₀ R :=
@@ -111,12 +113,16 @@ i∈ℤ_{≥ 0}, α_P({i}) is the number of
 t∈ P with ρ(t)=i when there is at least one such t.
 -/
 
-/-- Let P be a finite partially ordered set. For s,t∈ P, the element t covers s if s<t and there is
-no u∈ P with s<u<t, and t is minimal if there is no u∈ P with u<t. Let ρ: P→ℤ_{≥ 0} be a function
-with ρ(s)<ρ(t) whenever s<t, with ρ(t)=ρ(s)+1 whenever t covers s, and with ρ(t)=0 whenever t is
-minimal.
-
-The full informal statement is in the module documentation directly above.
+/-- **Flag $f$-vector.** Let $P$ be a finite partially ordered set with a grade function
+$\rho \colon P \to \mathbb{Z}_{\ge 0}$, that is, $\rho(s) < \rho(t)$ whenever $s < t$,
+$\rho(t) = \rho(s) + 1$ whenever $t$ covers $s$ (that is, $s < t$ and no $u \in P$ satisfies
+$s < u < t$), and $\rho(t) = 0$ whenever $t$ is minimal. For a finite set
+$S \subseteq \mathbb{Z}_{\ge 0}$, let $P_S = \{t \in P : \rho(t) \in S\}$. The flag $f$-vector of
+$P$ is the function $\alpha_P$ on finite sets $S \subseteq \mathbb{Z}_{\ge 0}$ such that
+$\alpha_P(S)$ is the number of maximal chains in $P_S$, that is, of subsets $C \subseteq P_S$ any
+two elements of which are comparable and such that every element of $P_S \setminus C$ is
+incomparable with some element of $C$. In particular $\alpha_P(\emptyset) = 1$, the empty chain
+being the only maximal chain in the empty poset.
 -/
 def flagFVector (P : Type*) [PartialOrder P] [Fintype P]
     [DecidableEq P] [DecidableLE P] [GradeMinOrder ℕ P]
@@ -130,22 +136,16 @@ def flagFVector (P : Type*) [PartialOrder P] [Fintype P]
 -- Combinatorics 487: Flag h-Vector
 
 
-/-- Let P be a finite partially ordered set. For s,t∈ P, the
-element t covers s if s<t and there is no u∈ P with
-s<u<t, and t is minimal if there is no u∈ P with u<t.
-Let ρ: P→ℤ_{≥ 0} be a function with
-ρ(s)<ρ(t) whenever s<t, with ρ(t)=ρ(s)+1
-whenever t covers s, and with ρ(t)=0 whenever t is
-minimal, and let α_P be the flag f-vector of P with
-respect to ρ. The flag h-vector of P is the integer-valued
-function β_P on finite sets S⊆ℤ_{≥ 0}
-given by
-
-  β_P(S)=∑_{T⊆ S}(-1)^{|S∖ T|}α_P(T),
-
-where the sum runs over all subsets T of S and
-|S∖ T| is the number of elements of S∖ T. In
-particular, β_P(∅)=α_P(∅)=1.
+/-- **Flag $h$-vector.** Let $P$ be a finite partially ordered set with a grade function
+$\rho \colon P \to \mathbb{Z}_{\ge 0}$, that is, $\rho(s) < \rho(t)$ whenever $s < t$,
+$\rho(t) = \rho(s) + 1$ whenever $t$ covers $s$, and $\rho(t) = 0$ whenever $t$ is minimal. Let
+$\alpha_P$ be the flag $f$-vector of $P$ with respect to $\rho$: for a finite set
+$T \subseteq \mathbb{Z}_{\ge 0}$, $\alpha_P(T)$ is the number of maximal chains in the subposet
+$\{t \in P : \rho(t) \in T\}$. The flag $h$-vector of $P$ is the integer-valued function $\beta_P$
+on finite sets $S \subseteq \mathbb{Z}_{\ge 0}$ given by
+$$\beta_P(S) = \sum_{T \subseteq S} (-1)^{|S \setminus T|} \alpha_P(T),$$
+where the sum runs over all subsets $T$ of $S$ and $|S \setminus T|$ is the number of elements of
+$S \setminus T$. In particular, $\beta_P(\emptyset) = \alpha_P(\emptyset) = 1$.
 -/
 def flagHVector (P : Type*) [PartialOrder P] [Fintype P]
     [DecidableEq P] [DecidableLE P] [GradeMinOrder ℕ P]
@@ -155,23 +155,17 @@ def flagHVector (P : Type*) [PartialOrder P] [Fintype P]
 -- Combinatorics 488: Hyperplane Arrangement
 
 
-/-- Let K be a field and let V be a finite-dimensional vector
-space over K. An affine subspace of V is either the empty set
-or a set v+W={v+w:w∈ W} with v∈ V and W a linear
-subspace of V. For a nonempty affine subspace the linear
-subspace W is determined, and its dimension is called the
-dimension of the affine subspace. Let E be an affine subspace
-of V. An affine hyperplane of E is a nonempty affine subspace
-H of V with H⊆ E, so that E is nonempty as well,
-and with dim H=dim E-1. A hyperplane arrangement in E is a
-finite set 𝒜 of affine hyperplanes of E. For
-n∈ℤ_{≥ 0}, when V=Kⁿ and E=V, the affine
-hyperplanes of E are the sets {v∈ Kⁿ:α⋅ v=a}
-with α∈ Kⁿ nonzero and a∈ K, where
-α⋅ v=α₁v₁+⋯+αₙvₙ for
-α=(α₁,…,αₙ) and v=(v₁,…,vₙ). The
-empty set is a hyperplane arrangement in every E, and it is the
-only one when E is empty or dim E=0.
+/-- **Hyperplane arrangement.** Let $K$ be a field, let $V$ be a finite-dimensional vector space
+over $K$, and let $E$ be an affine subspace of $V$, possibly empty. The dimension of a nonempty
+affine subspace $v + W$, with $v \in V$ and $W$ a linear subspace of $V$, is $\dim W$. An affine
+hyperplane of $E$ is a nonempty affine subspace $H$ of $V$ with $H \subseteq E$ and
+$\dim H + 1 = \dim E$. A set $\mathcal{A}$ of affine subspaces of $V$ is a hyperplane arrangement
+in $E$ if $\mathcal{A}$ is finite and every element of $\mathcal{A}$ is an affine hyperplane of $E$.
+
+For $n \in \mathbb{Z}_{\ge 0}$, $V = K^n$ and $E = V$, the affine hyperplanes of $E$ are the sets
+$\{v \in K^n : \alpha_1 v_1 + \cdots + \alpha_n v_n = a\}$
+with $(\alpha_1, \ldots, \alpha_n) \in K^n$ nonzero and $a \in K$. The empty set is a hyperplane
+arrangement in every $E$, and it is the only one when $E$ is empty or $\dim E = 0$.
 -/
 def IsHyperplaneArrangement {K V : Type*} [Field K]
     [AddCommGroup V] [Module K V] [FiniteDimensional K V]

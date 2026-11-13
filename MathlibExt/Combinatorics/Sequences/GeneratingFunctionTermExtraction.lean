@@ -30,11 +30,14 @@ namespace MetaMathlibExt
 -/
 
 /--
-A sequence term is recovered from its generating function via
-`t N = floor (c ^ (N^2) * f (c ^ -N)) mod c ^ N` under the growth and convergence
-hypotheses (convergence stated as summability of the series at `c ^ -N`).
+**Recovering a sequence term from its generating function.** Let $t_0, t_1, t_2, \dots$ be
+natural numbers and let $c$, $m$, $N$ be natural numbers with $c \ge 2$ and $2 \le m \le N$.
+Suppose that the real series $\sum_{k \ge 0} t_k \, (c^{-N})^k$ is summable and that
+$t_j < c^{j-2}$ for every $j \ge m$. Then
 
-Provenance: M. Prunescu and J. M. Shunia, "On Modular Representations of
+$$t_N = \Bigl\lfloor c^{N^2} \sum_{k \ge 0} t_k \, (c^{-N})^k \Bigr\rfloor \bmod c^N.$$
+
+Source: M. Prunescu and J. M. Shunia, "On Modular Representations of
 C-Recursive Integer Sequences", Journal of Integer Sequences 28 (2025),
 Article 25.5.3, Theorem `ThmExtraction1`, source lines 169–173,
 <https://cs.uwaterloo.ca/journals/JIS/VOL28/Prunescu/prunescu3.tex>.

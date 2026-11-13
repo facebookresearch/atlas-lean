@@ -1144,10 +1144,12 @@ private theorem aug_exists_subgraphOfFinset_iff {V : Type*} (G : SimpleGraph V)
 section
 namespace MetaMathlibExt
 
-/-- **Berge's lemma**, canonical form: in a finite simple graph, a matching
-subgraph `M` is maximum (`ncard`-maximal among `IsMatching` subgraphs) if and
-only if there is no `M`-augmenting path, i.e. no alternating `G`-walk with both
-endpoints outside `M.verts`. -/
+/-- **Berge's lemma for matching subgraphs.** Let $G$ be a simple graph on a finite vertex set and
+let $M$ be a matching subgraph of $G$, so that every vertex of $M$ is incident to exactly one
+edge of $M$. Then $M$ has the maximum number of edges among all matching subgraphs of $G$ if and
+only if there is no $M$-augmenting path: a path in $G$ of positive length between two distinct
+vertices $u$ and $v$, neither of which is a vertex of $M$, whose consecutive edges alternate
+between edges of $M$ and edges not in $M$. -/
 theorem berge_general {V : Type*} [Finite V] (G : SimpleGraph V)
     (M : G.Subgraph) (hM : M.IsMatching) :
     (∀ M' : G.Subgraph, M'.IsMatching → M'.edgeSet.ncard ≤ M.edgeSet.ncard) ↔
@@ -1197,13 +1199,17 @@ theorem berge_general {V : Type*} [Finite V] (G : SimpleGraph V)
   exact finset_iff
 
 set_option linter.unusedFintypeInType false in
-/-- **Berge's lemma** (statement `berge-s1` at
-https://en.wikipedia.org/wiki/Berge%27s_theorem): in a finite simple graph,
-a matching `M` is maximum (card-maximal among matchings) if and only if there
-is no `M`-augmenting path, i.e. no alternating path with both endpoints
-`M`-exposed.
+/-- **Berge's lemma.** Let $G$ be a simple graph on a finite vertex set and let $M$ be a matching
+of $G$, that is, a finite set of edges of $G$ no two distinct members of which share a vertex.
+Then $M$ has maximum cardinality among all matchings of $G$ if and only if there is no
+$M$-augmenting path: a path in $G$ of positive length between two distinct vertices $u$ and $v$,
+neither of which lies on an edge of $M$, whose consecutive edges alternate between edges of $M$
+and edges not in $M$.
 
 Proves `Wanted` entry `Berge`.
+
+Source: Wikipedia, Berge's theorem, statement `berge-s1`,
+https://en.wikipedia.org/wiki/Berge%27s_theorem.
 -/
 theorem Berge :
     ∀ {V : Type*} [Fintype V] (G : SimpleGraph V)

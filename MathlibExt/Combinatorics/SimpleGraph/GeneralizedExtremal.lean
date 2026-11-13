@@ -33,17 +33,14 @@ generally without that hypothesis.
 
 namespace SimpleGraph
 
-/-- Generalized Turán number `ex(n, T, H)`: the maximum possible number of
-copies of pattern `T` in an `H`-free host graph on `n` vertices. `G.copyCount T`
-counts copies of pattern `T` in host `G`, and `H.Free G` states that `G` is
-`H`-free. The intended domain from the source is patterns `T` and `H` with no
-isolated vertices; the definition itself does not require this.
+/-- **Generalized Turán number.** Let $n$ be a natural number and let $T$ and $H$ be simple graphs,
+where $T$ has finitely many vertices. A copy of a graph in a graph $G$ is a subgraph of $G$
+isomorphic to it, and $G$ is $H$-free if it contains no copy of $H$. The generalized Turán number
+$\mathrm{ex}(n, T, H)$ is the largest number of copies of $T$ in an $H$-free simple graph on the
+vertex set $\{0, 1, \dots, n-1\}$, and is $0$ if there is no such graph.
 
-The total definition follows Mathlib's `Finset.sup` convention used by
-`SimpleGraph.extremalNumber`: it is the supremum of `G.copyCount T` over the
-filtered family `Finset.univ.filter (fun G : SimpleGraph (Fin n) => H.Free G)`.
-As with `Finset.sup` over `ℕ`, the value is `0` when the filtered family is
-empty. -/
+The source considers graphs $T$ and $H$ without isolated vertices; the definition does not require
+this. -/
 public noncomputable def generalizedExtremalNumber (n : ℕ)
     {α β : Type*} [Fintype α]
     (T : SimpleGraph α) (H : SimpleGraph β) : ℕ := by
@@ -52,9 +49,11 @@ public noncomputable def generalizedExtremalNumber (n : ℕ)
     (fun G => G.copyCount T)
 
 open Classical in
-/-- The generalized Turán number unfolds to the exact filtered `Finset.sup`
-expression: the supremum of `G.copyCount T` over all `H`-free hosts on
-`Fin n`. -/
+/-- **The generalized Turán number as a supremum.** Let $n$ be a natural number and let $T$ and $H$
+be simple graphs, where $T$ has finitely many vertices. Then the generalized Turán number
+$\mathrm{ex}(n, T, H)$ is the supremum in $\mathbb{N}$, with the supremum of the empty family taken
+to be $0$, of the number of copies of $T$ in $G$ over all simple graphs $G$ on the vertex set
+$\{0, 1, \dots, n-1\}$ that contain no copy of $H$ (a subgraph isomorphic to $H$). -/
 public theorem generalizedExtremalNumber_eq_sup (n : ℕ)
     {α β : Type*} [Fintype α]
     (T : SimpleGraph α) (H : SimpleGraph β) :
@@ -65,8 +64,10 @@ public theorem generalizedExtremalNumber_eq_sup (n : ℕ)
   unfold generalizedExtremalNumber
   rfl
 
-/-- Every `H`-free host graph `G` on `Fin n` has at most the generalized Turán
-number of copies of `T`: `G.copyCount T ≤ generalizedExtremalNumber n T H`. -/
+/-- **The generalized Turán number is an upper bound.** Let $n$ be a natural number and let $T$ and
+$H$ be simple graphs, where $T$ has finitely many vertices. If $G$ is a simple graph on the vertex
+set $\{0, 1, \dots, n-1\}$ that contains no copy of $H$ (a subgraph isomorphic to $H$), then the
+number of copies of $T$ in $G$ is at most the generalized Turán number $\mathrm{ex}(n, T, H)$. -/
 public theorem copyCount_le_generalizedExtremalNumber (n : ℕ)
     {α β : Type*} [Fintype α]
     (T : SimpleGraph α) (H : SimpleGraph β)
@@ -78,8 +79,11 @@ public theorem copyCount_le_generalizedExtremalNumber (n : ℕ)
     (f := fun G => G.copyCount T) (b := G)
   exact Finset.mem_filter.mpr ⟨Finset.mem_univ _, hG⟩
 
-/-- Upper-bound characterization: the generalized Turán number is at most `m`
-if and only if every `H`-free host has at most `m` copies of `T`. -/
+/-- **Upper bounds for the generalized Turán number.** Let $n$ and $m$ be natural numbers and let
+$T$ and $H$ be simple graphs, where $T$ has finitely many vertices. Then the generalized Turán
+number $\mathrm{ex}(n, T, H)$ is at most $m$ if and only if every simple graph on the vertex set
+$\{0, 1, \dots, n-1\}$ that contains no copy of $H$ (a subgraph isomorphic to $H$) has at most $m$
+copies of $T$. -/
 public theorem generalizedExtremalNumber_le_iff (n : ℕ)
     {α β : Type*} [Fintype α]
     (T : SimpleGraph α) (H : SimpleGraph β)
@@ -95,8 +99,11 @@ public theorem generalizedExtremalNumber_le_iff (n : ℕ)
   · intro h b hb
     exact h b (Finset.mem_filter.mp hb).2
 
-/-- Attainment: when at least one `H`-free host graph on `Fin n` exists, some
-`H`-free host attains the generalized Turán number. -/
+/-- **The generalized Turán number is attained.** Let $n$ be a natural number and let $T$ and $H$
+be simple graphs, where $T$ has finitely many vertices. If some simple graph on the vertex set
+$\{0, 1, \dots, n-1\}$ contains no copy of $H$ (a subgraph isomorphic to $H$), then some such graph
+$G$ has exactly $\mathrm{ex}(n, T, H)$ copies of $T$, where $\mathrm{ex}(n, T, H)$ is the
+generalized Turán number. -/
 public theorem exists_free_copyCount_eq_generalizedExtremalNumber (n : ℕ)
     {α β : Type*} [Fintype α]
     (T : SimpleGraph α) (H : SimpleGraph β)

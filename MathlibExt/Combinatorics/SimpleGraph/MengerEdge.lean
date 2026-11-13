@@ -21,12 +21,17 @@ Proves the edge version of Menger's theorem for finite simple graphs: the maximu
 pairwise edge-disjoint `s-t` paths equals the minimum size of an `s-t` edge cut.
 -/
 
-/-- Family `paths` of `s-t` paths is edge-disjoint when distinct paths share no edge. -/
+/-- **Edge-disjoint paths.** Let $G$ be a simple graph with vertices $s$ and $t$. A family
+$P_0, \dots, P_{n-1}$ of paths from $s$ to $t$ in $G$ is edge-disjoint when, for all indices
+$i \ne j$, no edge of $P_i$ is an edge of $P_j$. -/
 def IsEdgeDisjointSTPaths {V : Type*} {G : SimpleGraph V}
     {s t : V} {n : ℕ} (paths : Fin n → G.Path s t) : Prop :=
   ∀ i j, i ≠ j → ∀ e : Sym2 V, e ∈ (paths i).val.edges → e ∉ (paths j).val.edges
 
-/-- `C` is an `s-t` edge cut when `C ⊆ G.edgeSet` and deleting `C` disconnects `s` from `t`. -/
+/-- **Edge cuts separating two vertices.** Let $G$ be a simple graph on a finite vertex set and let
+$s$ and $t$ be vertices of $G$. A finite set $C$ of unordered pairs of vertices is an $s$-$t$ edge
+cut when every element of $C$ is an edge of $G$ and $t$ is not reachable from $s$ in the graph
+obtained from $G$ by deleting the edges in $C$. -/
 def IsSTEdgeCut {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (s t : V) (C : Finset (Sym2 V)) : Prop :=
@@ -1296,11 +1301,17 @@ private theorem augment {V : Type*} [Finite V]
   exact ⟨paths', hdisj'⟩
 
 /--
-The maximum number of edge-disjoint s-t paths equals the minimum size of an s-t cut.
-Source: K. Menger, Zur allgemeinen Kurventheorie, Fund. Math. 10 (1927), 96-115, DOI
-10.4064/FM-10-1-96-115.
+**Menger's theorem for edge cuts and edge-disjoint paths.** Let $G$ be a simple graph on a finite
+vertex set and let $s$ and $t$ be distinct vertices of $G$. Then there is a natural number $k$ such
+that there exist $k$ edge-disjoint paths from $s$ to $t$ and an $s$-$t$ edge cut with exactly $k$
+edges, every family of edge-disjoint paths from $s$ to $t$ has at most $k$ members, and every
+$s$-$t$ edge cut has at least $k$ edges. In words, the maximum number of edge-disjoint paths from
+$s$ to $t$ equals the minimum size of an $s$-$t$ edge cut.
 
 Proves `Wanted` entry `menger_edge_max_min`.
+
+Source: K. Menger, Zur allgemeinen Kurventheorie, Fund. Math. 10 (1927), 96-115, DOI
+10.4064/FM-10-1-96-115.
 -/
 theorem menger_edge_max_min
     {V : Type*} [Fintype V] [DecidableEq V]

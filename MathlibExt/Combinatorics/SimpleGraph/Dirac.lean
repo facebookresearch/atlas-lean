@@ -519,12 +519,14 @@ private theorem dirac_spanning {V : Type*} [Fintype V]
   omega
 
 /--
-Dirac's theorem: a finite simple graph with at least 3 vertices whose minimum degree is at least
-half the number of vertices is Hamiltonian.
-Source: G. A. Dirac, Some Theorems on Abstract Graphs, Proc. London Math. Soc. s3-2 (1952), 69–81,
-DOI 10.1112/plms/s3-2.1.69.
+**Dirac's theorem.** Let $G$ be a finite simple graph with $n \ge 3$ vertices in which every
+vertex has degree at least $n/2$. Then $G$ is Hamiltonian, that is, it has a cycle that visits
+every vertex exactly once.
 
 Proves `Wanted` entry `dirac`.
+
+Source: G. A. Dirac, Some Theorems on Abstract Graphs, Proc. London Math. Soc. s3-2 (1952), 69–81,
+DOI 10.1112/plms/s3-2.1.69.
 -/
 theorem dirac {V : Type*} [Fintype V] [DecidableEq V]
     (G : SimpleGraph V) [DecidableRel G.Adj]

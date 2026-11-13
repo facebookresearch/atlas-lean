@@ -44,14 +44,19 @@ with unbounded clique size is `∞` rather than 0.
 noncomputable
 def ecliqueNum (G : SimpleGraph V) : ℕ∞ := ⨆ (s : Finset V) (_ : G.IsClique s), #s
 
-/-- The set of sizes of the inclusion-maximal finite cliques of `G` among finite
-cliques. An infinite maximal clique is not represented. -/
+/-- **Sizes of maximal cliques.** For a simple graph $G$, this is the set of natural numbers $k$
+such that some finite clique of $G$ with exactly $k$ vertices is maximal under inclusion among
+the finite cliques of $G$, that is, no finite clique of $G$ strictly contains it.
+
+An infinite maximal clique of $G$ contributes no size to this set. -/
 def maximalCliqueSizes (G : SimpleGraph V) : Set ℕ :=
   { k | ∃ S : Finset V, Maximal (fun T : Finset V => G.IsClique (T : Set V)) S ∧ S.card = k }
 
 open scoped Classical in
-/-- The triangles of `G` containing the edge `uv`, that is, the `3`-cliques of `G` whose vertex
-set contains both endpoints of `uv`. -/
+/-- **Triangles containing an edge.** For a simple graph $G$ on a finite vertex set and an edge
+$uv$ of $G$, this is the finite set of triangles of $G$ that contain the edge $uv$, where a
+triangle is the vertex set of a $3$-clique of $G$; that is, the $3$-cliques of $G$ containing
+both $u$ and $v$. -/
 noncomputable def trianglesContaining {α : Type*} [Fintype α] (G : SimpleGraph α)
     (uv : G.edgeSet) : Finset (Finset α) :=
   (G.cliqueFinset 3).filter (fun t ↦ uv.1.toFinset ⊆ t)

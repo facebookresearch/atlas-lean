@@ -21,8 +21,10 @@ public import MathlibExt.Combinatorics.SimpleGraph.Domination
 
 namespace SimpleGraph
 
-/-- The rook graph on `Fin n × Fin m`: distinct cells are adjacent
-when they share a row or a column. -/
+/-- **Rook graph.** For natural numbers $n$ and $m$, the rook graph on the $n \times m$ board is the
+simple graph whose vertices are the cells $(i, j)$ with $0 \le i < n$ and $0 \le j < m$, in which
+two cells are adjacent if and only if they are distinct and lie in the same row (same $i$) or the
+same column (same $j$). -/
 def rookGraph (n m : ℕ) : SimpleGraph (Fin n × Fin m) where
   Adj x y := x ≠ y ∧ (x.1 = y.1 ∨ x.2 = y.2)
   symm := ⟨by
@@ -38,8 +40,9 @@ theorem rookGraph_adj {n m : ℕ} {x y : Fin n × Fin m} :
     (rookGraph n m).Adj x y ↔ x ≠ y ∧ (x.1 = y.1 ∨ x.2 = y.2) :=
   Iff.rfl
 
-/-- A finset of cells dominates the rook graph exactly when every
-cell shares its row or its column with a cell of the finset. -/
+/-- **Dominating sets of the rook graph.** For natural numbers $n$ and $m$, a finite set $S$ of
+cells of the $n \times m$ board dominates the rook graph on that board if and only if for every
+cell $(i, j)$, some cell of $S$ lies in row $i$ or some cell of $S$ lies in column $j$. -/
 theorem rookGraph_isDominating_iff {n m : ℕ}
     {s : Finset (Fin n × Fin m)} :
     (rookGraph n m).IsDominating ↑s ↔

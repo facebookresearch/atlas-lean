@@ -29,11 +29,16 @@ namespace MathlibExt.Combinatorics.SimpleGraph.PerfectGraphWanted
 # Perfect graphs
 -/
 
-/-- Finite graph where every induced subgraph has `chromaticNumber = cliqueNum`. -/
+/-- **Perfect graph.** A finite simple graph $G$ is perfect if, for every set $S$ of its
+vertices, the induced subgraph $G[S]$ has chromatic number equal to its clique number, the
+largest size of a clique in $G[S]$. -/
 def IsPerfect {V : Type*} [Fintype V] (G : SimpleGraph V) : Prop :=
   ∀ (s : Set V), (G.induce s).chromaticNumber = ((G.induce s).cliqueNum : ℕ∞)
 
-/-- Gasparian's condition (P): every finset satisfies `card s ≤ alpha * omega`. -/
+/-- **Gasparian's condition (P).** A finite simple graph $G$ satisfies condition (P) if, for
+every set $S$ of its vertices, the induced subgraph $G[S]$, with independence number
+$\alpha(G[S])$ and clique number $\omega(G[S])$, satisfies
+$|S| \le \alpha(G[S]) \cdot \omega(G[S])$. -/
 def PerfIneq {V : Type*} [Fintype V] (G : SimpleGraph V) : Prop :=
   ∀ s : Finset V, s.card ≤ (G.induce (↑s : Set V)).indepNum * (G.induce (↑s : Set V)).cliqueNum
 
@@ -156,9 +161,13 @@ private lemma cliqueNum_mono_finset {V : Type*} [Finite V] (G : SimpleGraph V)
   rw [Finset.card_map] at hle
   omega
 
-/-- Step 1 (perfect implies P): an omega-coloring has independent color
-classes of size at most alpha. Every perfect graph satisfies the `alpha * omega`
-bound on every induced finset. -/
+/-- **Perfect graphs satisfy condition (P).** Every finite perfect graph $G$ satisfies
+Gasparian's condition (P): for every set $S$ of its vertices, the induced subgraph $G[S]$,
+with independence number $\alpha(G[S])$ and clique number $\omega(G[S])$, satisfies
+$|S| \le \alpha(G[S]) \cdot \omega(G[S])$.
+
+Indeed, $G[S]$ has a coloring with $\omega(G[S])$ colors, and each color class is an
+independent set, so it has at most $\alpha(G[S])$ vertices. -/
 theorem perfect_implies_ineq {V : Type*} [Fintype V]
     (G : SimpleGraph V) (hG : IsPerfect G) : PerfIneq G := by
   classical
@@ -953,9 +962,8 @@ private lemma ineq_implies_perfect {V : Type*} [Fintype V]
   exact le_antisymm hge hle
 
 /--
-Weak perfect graph theorem without decidable equality: `G` perfect iff `Gᶜ` perfect.
-General version of `lovasz_weak_perfect_graph`; the `DecidableEq` instance needed by
-the internal finset argument is obtained locally via `classical`.
+**Weak perfect graph theorem.** A finite simple graph $G$ is perfect if and only if its
+complement $\overline{G}$ is perfect.
 -/
 theorem lovasz_weak_perfect_graph_general
     {V : Type*} [Fintype V]
@@ -973,11 +981,13 @@ theorem lovasz_weak_perfect_graph_general
 
 set_option linter.unusedDecidableInType false in
 /--
-Weak perfect graph theorem: `G` perfect iff `Gᶜ` perfect.
-Source: L. Lovasz, "Normal hypergraphs and the perfect graph conjecture", Discrete Math. 2 (1972),
-253-267, DOI 10.1016/0012-365X(72)90006-4.
+**Lovász's weak perfect graph theorem.** A finite simple graph $G$ is perfect if and only if
+its complement $\overline{G}$ is perfect.
 
 Proves `Wanted` entry `lovasz_weak_perfect_graph`.
+
+Source: L. Lovasz, "Normal hypergraphs and the perfect graph conjecture", Discrete Math. 2 (1972),
+253-267, DOI 10.1016/0012-365X(72)90006-4.
 -/
 theorem lovasz_weak_perfect_graph
     {V : Type*} [Fintype V] [DecidableEq V]

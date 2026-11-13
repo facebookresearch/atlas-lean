@@ -177,8 +177,11 @@ private lemma schnirelmannCount_add_lower {A B : Set ℕ} [DecidablePred (· ∈
             add_le_add (add_le_add hind hdensity) le_rfl
           _ ≤ schnirelmannCount (A + B) n := hgrowth'
 
-/-- Schnirelmann's sumset inequality: the density of `A + B` is at least
-`σ(A) + σ(B) - σ(A) * σ(B)` when both sets contain zero. -/
+/-- **Schnirelmann's inequality.** For a set $A$ of natural numbers, let
+$\sigma(A) = \inf_{n \ge 1} |A \cap \{1, \dots, n\}| / n$ be its Schnirelmann density. If $A$
+and $B$ are sets of natural numbers that both contain $0$, then their sumset
+$A + B = \{a + b : a \in A,\ b \in B\}$ satisfies
+$\sigma(A) + \sigma(B) - \sigma(A)\sigma(B) \le \sigma(A + B)$. -/
 theorem _root_.schnirelmannDensity_add_lower_bound {A B : Set ℕ}
     [DecidablePred (· ∈ A)] [DecidablePred (· ∈ B)] [DecidablePred (· ∈ A + B)]
     (hA : 0 ∈ A) (hB : 0 ∈ B) :
@@ -276,8 +279,13 @@ private lemma schnirelmannSumset_density_compl_le {A : Set ℕ} [DecidablePred (
           mul_le_mul_of_nonneg_right ih hnonneg
         _ = (1 - schnirelmannDensity A) ^ (h + 1) := (pow_succ _ _).symm
 
-/-- A set containing zero and having positive Schnirelmann density is an additive basis of finite
-order, as in Lemma 1 of Tim Jameson's notes on Linnik's proof of the Waring-Hilbert theorem. -/
+/-- **Schnirelmann's basis theorem.** Let $A$ be a set of natural numbers with $0 \in A$ whose
+Schnirelmann density $\sigma(A) = \inf_{n \ge 1} |A \cap \{1, \dots, n\}| / n$ is positive.
+Then $A$ is an additive basis of finite order: there is a natural number $h$ such that every
+natural number $n$ can be written as $n = a_1 + \dots + a_h$ with $a_1, \dots, a_h \in A$,
+repetitions allowed.
+
+Source: Lemma 1 of Tim Jameson's notes on Linnik's proof of the Waring-Hilbert theorem. -/
 theorem _root_.exists_additive_basis_of_pos_schnirelmannDensity {A : Set ℕ}
     [DecidablePred (· ∈ A)] (hA : 0 ∈ A) (hσ : 0 < schnirelmannDensity A) :
     ∃ h : ℕ, ∀ n : ℕ, ∃ x : Fin h → ℕ,

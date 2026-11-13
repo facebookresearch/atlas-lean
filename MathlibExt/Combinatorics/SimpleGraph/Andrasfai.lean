@@ -39,8 +39,10 @@ namespace MetaMathlibExt
 def andrasfaiConnectionSet (k : ℕ) : Finset (ZMod (3 * k + 2)) :=
   {x | x.val % 3 = 1}
 
-/-- The Andrásfai graph is the Cayley graph X(G,C) where G = ℤ₃ₖ₊₂ for some non-negative integer k
-and C is the subset of G consisting of the elements congruent to 1  (mod 3).
+/-- **Andrásfai graph.** For a natural number $k$, the Andrásfai graph is the Cayley graph of
+the cyclic group $\mathbb{Z}/(3k+2)\mathbb{Z}$ whose connection set $C$ consists of the residues
+whose representative in $\{0, 1, \dots, 3k+1\}$ is congruent to $1$ modulo $3$: two distinct
+residues $x$ and $y$ are adjacent when $y - x \in C$ or $x - y \in C$.
 -/
 def andrasfaiGraph (k : ℕ) : SimpleGraph (ZMod (3 * k + 2)) :=
   SimpleGraph.addCayley (andrasfaiConnectionSet k)
