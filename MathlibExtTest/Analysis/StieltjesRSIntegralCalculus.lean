@@ -13,21 +13,7 @@ import Mathlib.Tactic
 
 namespace MetaMathlibExt.StieltjesRSIntegralCalculusTest
 
-open Set Filter Topology MathlibExt.Analysis.Integration MathlibExt.Analysis.Integration.RSCalculus
-
-/-! ### The hypothesis `hRS` is satisfiable -/
-
-/-- The refinement Riemann–Stieltjes integral written out: the definition of `HasRSIntegral` in
-`StieltjesRSIntegral.lean` with `rsSum` unfolded. -/
-def RSRef (f h : ℝ → ℝ) (a b I : ℝ) : Prop :=
-  ∀ ε > 0, ∃ P : Partition a b, ∀ T : TaggedPartition a b, T.toPartition.IsRefinement P →
-    |∑ i : Fin T.n, f (T.tags i) * (h (T.points i.succ) - h (T.points i.castSucc)) - I| < ε
-
-/-- `RSRef` satisfies the hypothesis `hRS` of the calculus file by definition. -/
-theorem rsRef_iff (f h : ℝ → ℝ) (a b I : ℝ) : RSRef f h a b I ↔
-    ∀ ε > 0, ∃ P : Partition a b, ∀ T : TaggedPartition a b, T.toPartition.IsRefinement P →
-      |∑ i : Fin T.n, f (T.tags i) * (h (T.points i.succ) - h (T.points i.castSucc)) - I| < ε :=
-  Iff.rfl
+open Set Filter Topology MathlibExt.Analysis.Integration
 
 /-! ### Integrals computed from the definition -/
 
@@ -42,28 +28,36 @@ def unitPart {a b : ℝ} (hab : a < b) : Partition a b where
   last := rfl
 
 /-- From the definition: `∫ₐᵇ c dx = c (b - a)`, since the subinterval lengths telescope. -/
-theorem rsRef_const_id (c : ℝ) {a b : ℝ} (hab : a < b) : RSRef (fun _ => c) id a b (c * (b - a)) :=
+theorem hasRSIntegral_const_id (c : ℝ) {a b : ℝ} (hab : a < b) :
+    HasRSIntegral (fun _ => c) id a b (c * (b - a)) :=
   fun ε hε => ⟨unitPart hab, fun T _ => by
-    simp only [id, ← Finset.mul_sum, T.sum_sub_eq, sub_self, abs_zero]
+    simp only [rsSum, id, ← Finset.mul_sum, T.sum_sub_eq, sub_self, abs_zero]
     exact hε⟩
 
 /-- From the definition: against a constant integrator every sum vanishes. -/
-theorem rsRef_id_const (c : ℝ) {a b : ℝ} (hab : a < b) : RSRef id (fun _ => c) a b 0 :=
-  fun ε hε => ⟨unitPart hab, fun T _ => by simpa using hε⟩
+theorem hasRSIntegral_id_const (c : ℝ) {a b : ℝ} (hab : a < b) :
+    HasRSIntegral id (fun _ => c) a b 0 :=
+  fun ε hε => ⟨unitPart hab, fun T _ => by simpa [rsSum] using hε⟩
 
 /-! ### Integration by parts against definition-level values -/
 
 /-- Integration by parts turns `∫₀¹ c dx = c` into `∫₀¹ x d(c) = c·1 - c·0 - c`, and the
 definition gives `∫₀¹ x d(c) = 0`: the two values agree. -/
-example (c : ℝ) : c * id 1 - c * id 0 - c * (1 - 0) = 0 := by
-  have h := hasRS_integration_by_parts RSRef rsRef_iff (rsRef_const_id c zero_lt_one)
-  exact eq_of_hasRS RSRef rsRef_iff h (rsRef_id_const c zero_lt_one)
+example (c : ℝ) : c * id 1 - c * id 0 - c * (1 - 0) = 0 :=
+  (hasRSIntegral_const_id c zero_lt_one).integration_by_parts.unique
+    (hasRSIntegral_id_const c zero_lt_one)
 
 /-- Integration by parts applied twice returns the original value. -/
-example (c : ℝ) : RSRef (fun _ => c) id 0 1 (c * (1 - 0)) := by
-  have h := hasRS_integration_by_parts RSRef rsRef_iff
-    (hasRS_integration_by_parts RSRef rsRef_iff (rsRef_const_id c zero_lt_one))
+example (c : ℝ) : HasRSIntegral (fun _ => c) id 0 1 (c * (1 - 0)) := by
+  have h := (hasRSIntegral_const_id c zero_lt_one).integration_by_parts.integration_by_parts
   convert h using 1
+  simp
+
+/-- The same through `rsIntegral`: `∫₀¹ x d(c) = c·1 - c·0 - ∫₀¹ c dx`. -/
+example (c : ℝ) :
+    rsIntegral id (fun _ => c) 0 1 = c * 1 - c * 0 - rsIntegral (fun _ => c) id 0 1 := by
+  rw [(hasRSIntegral_const_id c zero_lt_one).integration_by_parts.rsIntegral_eq,
+    (hasRSIntegral_const_id c zero_lt_one).rsIntegral_eq]
   simp
 
 /-! ### Additivity against definition-level values -/
@@ -71,18 +65,23 @@ example (c : ℝ) : RSRef (fun _ => c) id 0 1 (c * (1 - 0)) := by
 /-- Gluing `∫₀¹ c dx = c` and `∫₁² c dx = c` gives `2c`, which is the definition-level value
 `∫₀² c dx = c (2 - 0)`. -/
 example (c : ℝ) : c * (1 - 0) + c * (2 - 1) = c * (2 - 0) :=
-  eq_of_hasRS RSRef rsRef_iff
-    (hasRS_add_adjacent RSRef rsRef_iff (rsRef_const_id c zero_lt_one)
-      (rsRef_const_id c one_lt_two))
-    (rsRef_const_id c two_pos)
+  ((hasRSIntegral_const_id c zero_lt_one).add_adjacent
+    (hasRSIntegral_const_id c one_lt_two)).unique (hasRSIntegral_const_id c two_pos)
 
 /-- Splitting `∫₀² c dx` at `1` gives pieces equal to the definition-level values. -/
-example (c : ℝ) : ∃ I₁ I₂, RSRef (fun _ => c) id 0 1 I₁ ∧ RSRef (fun _ => c) id 1 2 I₂ ∧
-    I₁ = c * (1 - 0) ∧ I₂ = c * (2 - 1) := by
+example (c : ℝ) : ∃ I₁ I₂, HasRSIntegral (fun _ => c) id 0 1 I₁ ∧
+    HasRSIntegral (fun _ => c) id 1 2 I₂ ∧ I₁ = c * (1 - 0) ∧ I₂ = c * (2 - 1) := by
   obtain ⟨I₁, I₂, h₁, h₂, -⟩ :=
-    exists_hasRS_split RSRef rsRef_iff (rsRef_const_id c two_pos) zero_le_one one_le_two
-  exact ⟨I₁, I₂, h₁, h₂, eq_of_hasRS RSRef rsRef_iff h₁ (rsRef_const_id c zero_lt_one),
-    eq_of_hasRS RSRef rsRef_iff h₂ (rsRef_const_id c one_lt_two)⟩
+    (hasRSIntegral_const_id c two_pos).exists_split zero_le_one one_le_two
+  exact ⟨I₁, I₂, h₁, h₂, h₁.unique (hasRSIntegral_const_id c zero_lt_one),
+    h₂.unique (hasRSIntegral_const_id c one_lt_two)⟩
+
+/-- Restriction to a subinterval, for a constant integrand against an arbitrary integrator
+(`hasRSIntegral_const` of `StieltjesRSIntegral.lean`). -/
+example (h : ℝ → ℝ) : RSIntegrable (fun _ => (1 : ℝ)) h 0 1 ∧
+    RSIntegrable (fun _ => (1 : ℝ)) h 1 2 :=
+  ⟨(hasRSIntegral_const 1 h zero_le_two).rsIntegrable_left zero_le_one one_le_two,
+    (hasRSIntegral_const 1 h zero_le_two).rsIntegrable_right zero_le_one one_le_two⟩
 
 /-! ### Existence: the hypotheses hold for a pure-jump integrator -/
 
@@ -124,16 +123,16 @@ theorem not_continuousWithinAt_jump : ¬ ContinuousWithinAt jump (Icc 0 2) 1 := 
 
 /-- Existence of `∫₀² x d(jump)`: `x ↦ x` has bounded variation and is continuous, and `jump` is
 regulated. -/
-example : ∃ I, RSRef id jump 0 2 I :=
-  exists_hasRS_of_boundedVariationOn_of_regulated RSRef rsRef_iff zero_le_two
+example : RSIntegrable id jump 0 2 :=
+  rsIntegrable_of_boundedVariationOn_of_regulated zero_le_two
     (monotoneOn_id.boundedVariationOn (C := 2) fun x hx => by
       rw [id, abs_of_nonneg hx.1]; exact hx.2)
     (fun x _ => jump_rightLim x) (fun x _ => jump_leftLim x)
     (fun _ _ => Or.inl continuous_id.continuousWithinAt)
 
 /-- Existence of `∫₀² jump dx`, the regulated integrand against a monotone integrator. -/
-example : ∃ I, RSRef jump id 0 2 I :=
-  exists_hasRS_of_regulated_of_monotoneOn RSRef rsRef_iff zero_le_two
+example : RSIntegrable jump id 0 2 :=
+  rsIntegrable_of_regulated_of_monotoneOn zero_le_two
     (fun x _ => jump_rightLim x) (fun x _ => jump_leftLim x) monotoneOn_id
     (fun _ _ => Or.inr continuous_id.continuousWithinAt)
 

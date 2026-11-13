@@ -8,8 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Analysis.Integration.RiemannPartition
-public import Mathlib.Topology.EMetricSpace.BoundedVariation
+public import MathlibExt.Analysis.StieltjesRSIntegral
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Topology.EMetricSpace.VariationOnFromTo
 import Mathlib.Topology.Order.Compact
@@ -21,37 +20,30 @@ import Mathlib.Tactic.Ring
 
 Additivity over adjacent intervals, integration by parts, and existence of `∫ₐᵇ f dh` for an
 integrand `f` of bounded variation against a regulated integrator `h` with no common
-discontinuity, for the refinement (Moore–Pollard) Riemann–Stieltjes integral.
-
-**The integral is a hypothesis.** The integral is defined in `StieltjesRSIntegral.lean` (T125),
-which is not imported here. Every result takes a predicate
-`HasRS : (ℝ → ℝ) → (ℝ → ℝ) → ℝ → ℝ → ℝ → Prop` together with the hypothesis `hRS` stating that
-`HasRS f h a b I` holds exactly when for every `ε > 0` there is a partition `P` of `[a, b]` such
-that every tagged partition refining `P` has Riemann–Stieltjes sum
-`∑ₖ f(ξₖ) (h(xₖ₊₁) - h(xₖ))` within `ε` of `I`. This is T125's definition of
-`HasRSIntegral f h a b I` with `rsSum` unfolded, so the results apply to it with
-`HasRS := HasRSIntegral` and `hRS := fun _ _ _ _ _ => Iff.rfl`. Partitions, tagged partitions and
-point-set refinement are the canonical ones of `MathlibExt.Analysis.Integration.RiemannPartition`.
+discontinuity, for the refinement (Moore–Pollard) Riemann–Stieltjes integral `HasRSIntegral` of
+`MathlibExt.Analysis.StieltjesRSIntegral`. The results are stated for `HasRSIntegral` and
+`RSIntegrable` and use that file's sums, partition constructions, uniqueness, linearity and
+Cauchy criterion.
 
 **Regulated integrators.** A regulated function on `[a, b]` is stated by its defining property:
 a right limit at every point of `[a, b)` and a left limit at every point of `(a, b]`. "No common
 discontinuity" means that at every point of `[a, b]` at least one of `f`, `h` is continuous within
 `[a, b]`. The integral does not exist in general when `f` and `h` jump on the same side at the same
-point (T125's test file: `f = h = 𝟙[1, ∞)` on `[0, 2]`).
+point (the test file of `StieltjesRSIntegral.lean`: `f = h = 𝟙[1, ∞)` on `[0, 2]`).
 
 ## Main results
 
-* `hasRS_add_adjacent`: `∫ₐᶜ f dh = I` and `∫_c^b f dh = J` give `∫ₐᵇ f dh = I + J`.
-* `exists_hasRS_left`, `exists_hasRS_right`, `exists_hasRS_split`: if `∫ₐᵇ f dh` exists and
-  `a ≤ c ≤ b`, then `∫ₐᶜ f dh` and `∫_c^b f dh` exist and add up to it.
-* `hasRS_integration_by_parts`: `∫ₐᵇ f dh = I` gives `∫ₐᵇ h df = f(b) h(b) - f(a) h(a) - I`.
-* `exists_hasRS_of_regulated_of_monotoneOn`: `∫ₐᵇ g dV` exists for regulated `g` and monotone `V`
+* `HasRSIntegral.add_adjacent`: `∫ₐᶜ f dh = I` and `∫_c^b f dh = J` give `∫ₐᵇ f dh = I + J`.
+* `HasRSIntegral.rsIntegrable_left`, `HasRSIntegral.rsIntegrable_right`,
+  `HasRSIntegral.exists_split`: if `∫ₐᵇ f dh` exists and `a ≤ c ≤ b`, then `∫ₐᶜ f dh` and
+  `∫_c^b f dh` exist and add up to it.
+* `HasRSIntegral.integration_by_parts`: `∫ₐᵇ f dh = I` gives
+  `∫ₐᵇ h df = f(b) h(b) - f(a) h(a) - I`.
+* `rsIntegrable_of_regulated_of_monotoneOn`: `∫ₐᵇ g dV` exists for regulated `g` and monotone `V`
   without common discontinuities.
-* `exists_hasRS_of_regulated_of_boundedVariationOn`: the same for `V` of bounded variation.
-* `exists_hasRS_of_boundedVariationOn_of_regulated`: `∫ₐᵇ f dh` exists for `f` of bounded
+* `rsIntegrable_of_regulated_of_boundedVariationOn`: the same for `V` of bounded variation.
+* `rsIntegrable_of_boundedVariationOn_of_regulated`: `∫ₐᵇ f dh` exists for `f` of bounded
   variation and regulated `h` without common discontinuities.
-* Supporting results: uniqueness `eq_of_hasRS`, the Cauchy criterion `exists_hasRS_of_cauchy`, and
-  linearity in the integrator `hasRS_sub_right`.
 
 ## Proof outline
 
@@ -62,10 +54,11 @@ identity `h(ξ)(f(t') - f(t)) + f(t)(h(ξ) - h(t)) + f(t')(h(t') - h(ξ)) = f(t'
 applied to the interleaved sequence `t₀ ≤ ξ₀ ≤ t₁ ≤ ⋯ ≤ tₙ` tagged by the `tₖ`. For existence,
 a compactness argument gives a finite set `S` off which `g` oscillates by at most `ε`; around each
 point of `S` where `g` is discontinuous, `V` is continuous, and a short window there carries
-little `V`-mass. The refinement estimate then gives the Cauchy criterion. The bounded-variation
-case follows from the decomposition `f = V - (V - f)` with `V` the variation function, which is
-continuous wherever `f` is (`BoundedVariationOn.continuousWithinAt_variationOnFromTo_iff`), and
-the regulated-integrator case follows by integration by parts.
+little `V`-mass. The refinement estimate then gives the Cauchy criterion `rsIntegrable_of_cauchy`.
+The bounded-variation case follows from the decomposition `f = V - (V - f)` with `V` the variation
+function, which is continuous wherever `f` is
+(`BoundedVariationOn.continuousWithinAt_variationOnFromTo_iff`), and the regulated-integrator case
+follows by integration by parts.
 
 ## Not covered
 
@@ -82,184 +75,56 @@ against a bounded-variation integrator) for the shape of the existence argument.
 refinement integral for regulated functions without common discontinuities: T. H. Hildebrandt,
 "Definitions of Stieltjes integrals of the Riemann type", *Amer. Math. Monthly* 45 (1938),
 265–278. Regulated functions are uniform limits of step functions: J. Dieudonné, *Foundations of
-Modern Analysis* (1960), §7.6. Reused: Mathlib's `variationOnFromTo` (monotone decomposition and
-its continuity) and `IsCompact.elim_nhds_subcover`; Atlas's `Partition`, `TaggedPartition` and
-`IsRefinement`. Proved here: everything else. The private partition helpers (`ptN`, `tgN`,
-`ofFinset`, `common`, `leftTag`, `exists_index_of_isRefinement`), the Cauchy criterion and
-uniqueness restate T125's counterparts, because T125's file may not be imported; they can be
-replaced by T125's declarations once it merges. The refinement estimate
-`abs_sum_sub_le_of_isRefinement` generalizes T125's `abs_rsSum_sub_le_of_isRefinement` to
-per-subinterval bounds `ωₖ` (T125's lemma takes one uniform `ω`, and the windowed bound in the
-existence proof needs the per-subinterval form); on merge, generalize T125's lemma or keep this
-one.
+Modern Analysis* (1960), §7.6. Reused: from `StieltjesRSIntegral.lean`, `rsSum`, `HasRSIntegral`,
+`RSIntegrable`, `rsSum_eq_sum_range`, `Partition.pointN`, `TaggedPartition.tagN`,
+`Partition.ofFinset`, `Partition.common`, `Partition.leftTag`, `HasRSIntegral.unique`,
+`HasRSIntegral.sub_right` and `rsIntegrable_of_cauchy`; Mathlib's `variationOnFromTo` (monotone
+decomposition and its continuity) and `IsCompact.elim_nhds_subcover`; Atlas's `Partition`,
+`TaggedPartition` and `IsRefinement`. Proved here: everything else. The private refinement estimate
+`abs_rsSum_sub_le_sum_of_isRefinement` generalizes `abs_rsSum_sub_le_of_isRefinement` to
+per-subinterval bounds `ωₖ`, which the windowed bound in the existence proof needs; its index
+bookkeeping restates private helpers of `StieltjesRSIntegral.lean`.
 -/
 
 @[expose] public section
 
-namespace MathlibExt.Analysis.Integration.RSCalculus
+namespace MathlibExt.Analysis.Integration
 
 open Finset Set Filter Topology
-open MathlibExt.Analysis.Integration
 
-/-- The Riemann–Stieltjes sum `∑ₖ f(ξₖ) (h(xₖ₊₁) - h(xₖ))` of a tagged partition `T`, written out
-(this is `rsSum f h T` of `StieltjesRSIntegral.lean`, unfolded). -/
-local notation "RS[" f ", " h ", " T "]" =>
-  ∑ i : Fin (Partition.n (TaggedPartition.toPartition T)), f (TaggedPartition.tags T i) *
-    (h (Partition.points (TaggedPartition.toPartition T) (Fin.succ i)) -
-      h (Partition.points (TaggedPartition.toPartition T) (Fin.castSucc i)))
-
-/-! ### `ℕ`-indexed points and tags -/
+/-! ### Partitions: points, cutting and gluing -/
 
 section Partitions
 
 variable {a b c : ℝ}
 
-/-- The points of a partition extended to `ℕ`, constant equal to `b` past the last index. -/
-private noncomputable def ptN (P : Partition a b) (i : ℕ) : ℝ :=
-  if hi : i ≤ P.n then P.points ⟨i, Nat.lt_succ_of_le hi⟩ else b
-
-/-- The tags of a tagged partition extended to `ℕ`, constant equal to `b` past the last index. -/
-private noncomputable def tgN (T : TaggedPartition a b) (i : ℕ) : ℝ :=
-  if hi : i < T.n then T.tags ⟨i, hi⟩ else b
-
-private theorem ptN_zero (P : Partition a b) : ptN P 0 = a := by
-  simp only [ptN, Nat.zero_le, dite_true]
-  exact P.first
-
-private theorem ptN_of_le (P : Partition a b) {i : ℕ} (hi : P.n ≤ i) : ptN P i = b := by
-  unfold ptN
-  split_ifs with h
-  · have : i = P.n := le_antisymm h hi
-    subst this
-    exact P.last
-  · rfl
-
-private theorem ptN_fin (P : Partition a b) (i : Fin (P.n + 1)) : ptN P i = P.points i := by
-  simp [ptN, Nat.le_of_lt_succ i.isLt]
-
-private theorem tgN_fin (T : TaggedPartition a b) (i : Fin T.n) : tgN T i = T.tags i := by
-  simp [tgN, i.isLt]
-
-private theorem monotone_ptN (P : Partition a b) : Monotone (ptN P) := by
-  intro i j hij
-  unfold ptN
-  split_ifs with hi hj hj
-  · exact P.ordered.monotone (Fin.mk_le_mk.mpr hij)
-  · have := P.ordered.monotone (Fin.le_last ⟨i, Nat.lt_succ_of_le hi⟩)
-    rwa [P.last] at this
-  · omega
-  · rfl
-
-private theorem ptN_lt (P : Partition a b) {i j : ℕ} (hij : i < j) (hj : j ≤ P.n) :
-    ptN P i < ptN P j := by
+private theorem pointN_lt (P : Partition a b) {i j : ℕ} (hij : i < j) (hj : j ≤ P.n) :
+    P.pointN i < P.pointN j := by
   have h := P.ordered (show (⟨i, by omega⟩ : Fin (P.n + 1)) < ⟨j, by omega⟩ from
     Fin.mk_lt_mk.mpr hij)
-  rw [← ptN_fin, ← ptN_fin] at h
+  rw [← P.pointN_fin, ← P.pointN_fin] at h
   exact h
-
-private theorem ptN_mem_Icc (P : Partition a b) (i : ℕ) : ptN P i ∈ Icc a b := by
-  refine ⟨?_, ?_⟩
-  · calc a = ptN P 0 := (ptN_zero P).symm
-      _ ≤ ptN P i := monotone_ptN P (Nat.zero_le i)
-  · calc ptN P i ≤ ptN P (max i P.n) := monotone_ptN P (le_max_left _ _)
-      _ = b := ptN_of_le P (le_max_right _ _)
-
-private theorem tgN_mem (T : TaggedPartition a b) {i : ℕ} (hi : i < T.n) :
-    ptN T.toPartition i ≤ tgN T i ∧ tgN T i ≤ ptN T.toPartition (i + 1) := by
-  have h := T.tag_mem ⟨i, hi⟩
-  have h1 := ptN_fin T.toPartition (⟨i, hi⟩ : Fin T.n).castSucc
-  have h2 := ptN_fin T.toPartition (⟨i, hi⟩ : Fin T.n).succ
-  simp only [Fin.val_castSucc, Fin.val_succ] at h1 h2
-  rw [h1, h2, tgN_fin T ⟨i, hi⟩]
-  exact h
-
-private theorem tgN_mem_Icc (T : TaggedPartition a b) {i : ℕ} (hi : i < T.n) :
-    tgN T i ∈ Icc a b :=
-  ⟨(ptN_mem_Icc _ i).1.trans (tgN_mem T hi).1, (tgN_mem T hi).2.trans (ptN_mem_Icc _ _).2⟩
-
-/-- The Riemann–Stieltjes sum of a tagged partition, in `ℕ`-indexed form. -/
-private theorem sum_eq_sum_range (f h : ℝ → ℝ) (T : TaggedPartition a b) :
-    ∑ i : Fin T.n, f (T.tags i) * (h (T.points i.succ) - h (T.points i.castSucc)) =
-      ∑ i ∈ range T.n, f (tgN T i) * (h (ptN T.toPartition (i + 1)) - h (ptN T.toPartition i)) := by
-  rw [← Fin.sum_univ_eq_sum_range]
-  refine sum_congr rfl fun i _ => ?_
-  have h1 := ptN_fin T.toPartition i.castSucc
-  have h2 := ptN_fin T.toPartition i.succ
-  simp only [Fin.val_castSucc, Fin.val_succ] at h1 h2
-  rw [tgN_fin, h1, h2]
 
 private theorem mem_pointSet_iff (P : Partition a b) {x : ℝ} :
-    x ∈ P.pointSet ↔ ∃ i ≤ P.n, ptN P i = x := by
+    x ∈ P.pointSet ↔ ∃ i ≤ P.n, P.pointN i = x := by
   constructor
   · rintro ⟨i, rfl⟩
-    exact ⟨i, Nat.le_of_lt_succ i.isLt, ptN_fin P i⟩
+    exact ⟨i, Nat.le_of_lt_succ i.isLt, P.pointN_fin i⟩
   · rintro ⟨i, hi, rfl⟩
-    exact ⟨⟨i, Nat.lt_succ_of_le hi⟩, (ptN_fin P ⟨i, Nat.lt_succ_of_le hi⟩).symm⟩
+    exact ⟨⟨i, Nat.lt_succ_of_le hi⟩, (P.pointN_fin ⟨i, Nat.lt_succ_of_le hi⟩).symm⟩
 
 private theorem mem_Icc_of_mem_pointSet (P : Partition a b) {x : ℝ} (hx : x ∈ P.pointSet) :
     x ∈ Icc a b := by
-  obtain ⟨i, -, rfl⟩ := (mem_pointSet_iff P).mp hx
-  exact ptN_mem_Icc P i
+  obtain ⟨i, rfl⟩ := hx
+  exact P.points_mem_Icc i
 
 /-- No point of a partition lies strictly inside one of its subintervals. -/
 private theorem le_or_ge_of_mem_pointSet (P : Partition a b) {k : ℕ} {x : ℝ}
-    (hx : x ∈ P.pointSet) : x ≤ ptN P k ∨ ptN P (k + 1) ≤ x := by
+    (hx : x ∈ P.pointSet) : x ≤ P.pointN k ∨ P.pointN (k + 1) ≤ x := by
   obtain ⟨i, -, rfl⟩ := (mem_pointSet_iff P).mp hx
   rcases le_or_gt i k with hik | hik
-  · exact Or.inl (monotone_ptN P hik)
-  · exact Or.inr (monotone_ptN P hik)
-
-/-! ### Partition constructions -/
-
-/-- The partition of `[a, b]` whose points are the elements of a finite set `S ⊆ [a, b]`
-containing `a` and `b`. -/
-private noncomputable def ofFinset (S : Finset ℝ) (hS : ∀ x ∈ S, x ∈ Icc a b) (ha : a ∈ S)
-    (hb : b ∈ S) : Partition a b where
-  n := S.card - 1
-  points := S.orderEmbOfFin (Nat.succ_pred_eq_of_pos (Finset.card_pos.mpr ⟨a, ha⟩)).symm
-  ordered := (S.orderEmbOfFin _).strictMono
-  first := by
-    have hpos : 0 < S.card - 1 + 1 := Nat.succ_pos _
-    rw [show (0 : Fin (S.card - 1 + 1)) = ⟨0, hpos⟩ from rfl, Finset.orderEmbOfFin_zero _ hpos]
-    exact le_antisymm (Finset.min'_le S a ha) (Finset.le_min' _ _ _ fun x hx => (hS x hx).1)
-  last := by
-    have hpos : 0 < S.card - 1 + 1 := Nat.succ_pos _
-    rw [show Fin.last (S.card - 1) = ⟨S.card - 1 + 1 - 1, by omega⟩ from Fin.ext (by simp),
-      Finset.orderEmbOfFin_last _ hpos]
-    exact le_antisymm (Finset.max'_le _ _ _ fun x hx => (hS x hx).2) (Finset.le_max' S b hb)
-
-private theorem pointSet_ofFinset (S : Finset ℝ) (hS : ∀ x ∈ S, x ∈ Icc a b) (ha : a ∈ S)
-    (hb : b ∈ S) : (ofFinset S hS ha hb).pointSet = S := by
-  simp only [Partition.pointSet, ofFinset]
-  exact Finset.range_orderEmbOfFin _ _
-
-/-- The common refinement of two partitions: the union of their points. -/
-private noncomputable def common (P Q : Partition a b) : Partition a b :=
-  ofFinset (Finset.image P.points univ ∪ Finset.image Q.points univ)
-    (by
-      intro x hx
-      rcases Finset.mem_union.mp hx with hx | hx <;>
-      · obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hx
-        exact mem_Icc_of_mem_pointSet _ ⟨i, rfl⟩)
-    (Finset.mem_union_left _ (Finset.mem_image.mpr ⟨0, mem_univ _, P.first⟩))
-    (Finset.mem_union_left _ (Finset.mem_image.mpr ⟨Fin.last P.n, mem_univ _, P.last⟩))
-
-private theorem common_isRefinement_left (P Q : Partition a b) : (common P Q).IsRefinement P := by
-  rintro x ⟨i, rfl⟩
-  rw [common, pointSet_ofFinset]
-  exact Finset.mem_coe.mpr (Finset.mem_union_left _ (Finset.mem_image_of_mem _ (mem_univ _)))
-
-private theorem common_isRefinement_right (P Q : Partition a b) :
-    (common P Q).IsRefinement Q := by
-  rintro x ⟨i, rfl⟩
-  rw [common, pointSet_ofFinset]
-  exact Finset.mem_coe.mpr (Finset.mem_union_right _ (Finset.mem_image_of_mem _ (mem_univ _)))
-
-/-- The left-endpoint tagging of a partition. -/
-private def leftTag (P : Partition a b) : TaggedPartition a b where
-  toPartition := P
-  tags i := P.points i.castSucc
-  tag_mem _ := ⟨le_rfl, P.ordered.monotone Fin.castSucc_lt_succ.le⟩
+  · exact Or.inl (P.monotone_pointN hik)
+  · exact Or.inr (P.monotone_pointN hik)
 
 /-- The partition of `[a, a]` with no subintervals. -/
 private def trivialPart (a : ℝ) : TaggedPartition a a where
@@ -310,7 +175,8 @@ private def append (T : TaggedPartition a c) (hcb : c < b) (τ : ℝ) (hτ : c �
       exact T.tag_mem j
 
 private theorem append_sum (T : TaggedPartition a c) (hcb : c < b) (τ : ℝ) (hτ : c ≤ τ ∧ τ ≤ b)
-    (f h : ℝ → ℝ) : RS[f, h, append T hcb τ hτ] = RS[f, h, T] + f τ * (h b - h c) := by
+    (f h : ℝ → ℝ) : rsSum f h (append T hcb τ hτ) = rsSum f h T + f τ * (h b - h c) := by
+  unfold rsSum
   change ∑ i : Fin (T.n + 1), f (Fin.lastCases τ T.tags i) *
     (h (Fin.lastCases (motive := fun _ => ℝ) b T.points i.succ) -
       h (Fin.lastCases (motive := fun _ => ℝ) b T.points i.castSucc)) = _
@@ -338,13 +204,13 @@ subintervals contribute nothing. -/
 private theorem exists_of_seq (N : ℕ) : ∀ {b : ℝ} (s τ : ℕ → ℝ), s 0 = a → s N = b →
     (∀ i < N, s i ≤ τ i ∧ τ i ≤ s (i + 1)) →
     ∃ T : TaggedPartition a b, (∀ x, x ∈ T.pointSet ↔ ∃ i ≤ N, s i = x) ∧ ∀ f h : ℝ → ℝ,
-      RS[f, h, T] = ∑ i ∈ range N, f (τ i) * (h (s (i + 1)) - h (s i)) := by
+      rsSum f h T = ∑ i ∈ range N, f (τ i) * (h (s (i + 1)) - h (s i)) := by
   induction N with
   | zero =>
     intro b s τ h0 hN _
     have hab : a = b := h0.symm.trans hN
     subst hab
-    refine ⟨trivialPart a, fun x => ?_, fun f h => by simp [trivialPart]⟩
+    refine ⟨trivialPart a, fun x => ?_, fun f h => by simp [rsSum, trivialPart]⟩
     simp only [Partition.pointSet, trivialPart, Set.mem_range, Nat.le_zero, exists_eq_left, h0]
     exact ⟨fun ⟨_, h⟩ => h, fun h => ⟨0, h⟩⟩
   | succ N ih =>
@@ -373,36 +239,37 @@ private theorem exists_of_seq (N : ℕ) : ∀ {b : ℝ} (s τ : ℕ → ℝ), s 
           rcases Nat.lt_or_eq_of_le hi with hi | rfl
           · exact ⟨i, by omega, rfl⟩
           · exact ⟨N, le_rfl, heq⟩
-      · change RS[f, h, T0] = _
+      · change rsSum f h T0 = _
         rw [hT0sum, sum_range_succ, ← heq, sub_self, mul_zero, add_zero]
 
 /-- **Gluing.** Tagged partitions of `[a, c]` and `[c, b]` glue to a tagged partition of `[a, b]`
 with the union of the points and the sum of the Riemann–Stieltjes sums. -/
 private theorem exists_glue (T₁ : TaggedPartition a c) (T₂ : TaggedPartition c b) :
     ∃ T : TaggedPartition a b, (∀ x, x ∈ T.pointSet ↔ x ∈ T₁.pointSet ∨ x ∈ T₂.pointSet) ∧
-      ∀ f h : ℝ → ℝ, RS[f, h, T] = RS[f, h, T₁] + RS[f, h, T₂] := by
+      ∀ f h : ℝ → ℝ, rsSum f h T = rsSum f h T₁ + rsSum f h T₂ := by
   set n₁ := T₁.n
   set n₂ := T₂.n
-  set s : ℕ → ℝ := fun i => if i ≤ n₁ then ptN T₁.toPartition i else ptN T₂.toPartition (i - n₁)
-  set τ : ℕ → ℝ := fun i => if i < n₁ then tgN T₁ i else tgN T₂ (i - n₁)
-  have hs₁ : ∀ i ≤ n₁, s i = ptN T₁.toPartition i := fun i hi => by simp [s, hi]
-  have hs₂ : ∀ i, n₁ ≤ i → s i = ptN T₂.toPartition (i - n₁) := by
+  set s : ℕ → ℝ := fun i =>
+    if i ≤ n₁ then T₁.toPartition.pointN i else T₂.toPartition.pointN (i - n₁)
+  set τ : ℕ → ℝ := fun i => if i < n₁ then T₁.tagN i else T₂.tagN (i - n₁)
+  have hs₁ : ∀ i ≤ n₁, s i = T₁.toPartition.pointN i := fun i hi => by simp [s, hi]
+  have hs₂ : ∀ i, n₁ ≤ i → s i = T₂.toPartition.pointN (i - n₁) := by
     intro i hi
     rcases hi.lt_or_eq with hi | rfl
     · simp [s, not_le.mpr hi]
-    · rw [hs₁ _ le_rfl, Nat.sub_self, ptN_zero, ptN_of_le _ le_rfl]
-  have hτ₁ : ∀ i < n₁, τ i = tgN T₁ i := fun i hi => by simp [τ, hi]
-  have hτ₂ : ∀ i, n₁ ≤ i → τ i = tgN T₂ (i - n₁) := fun i hi => by simp [τ, not_lt.mpr hi]
-  have h0 : s 0 = a := by rw [hs₁ 0 (Nat.zero_le _), ptN_zero]
+    · rw [hs₁ _ le_rfl, Nat.sub_self, Partition.pointN_zero, Partition.pointN_of_le _ le_rfl]
+  have hτ₁ : ∀ i < n₁, τ i = T₁.tagN i := fun i hi => by simp [τ, hi]
+  have hτ₂ : ∀ i, n₁ ≤ i → τ i = T₂.tagN (i - n₁) := fun i hi => by simp [τ, not_lt.mpr hi]
+  have h0 : s 0 = a := by rw [hs₁ 0 (Nat.zero_le _), Partition.pointN_zero]
   have hN : s (n₁ + n₂) = b := by
-    rw [hs₂ _ (Nat.le_add_right _ _), Nat.add_sub_cancel_left, ptN_of_le _ le_rfl]
+    rw [hs₂ _ (Nat.le_add_right _ _), Nat.add_sub_cancel_left, Partition.pointN_of_le _ le_rfl]
   have htag : ∀ i < n₁ + n₂, s i ≤ τ i ∧ τ i ≤ s (i + 1) := by
     intro i hi
     rcases lt_or_ge i n₁ with h | h
     · rw [hs₁ i h.le, hs₁ (i + 1) h, hτ₁ i h]
-      exact tgN_mem T₁ h
+      exact T₁.tagN_mem h
     · rw [hs₂ i h, hs₂ (i + 1) (by omega), hτ₂ i h, show i + 1 - n₁ = i - n₁ + 1 by omega]
-      exact tgN_mem T₂ (by omega)
+      exact T₂.tagN_mem (by omega)
   obtain ⟨T, hTset, hTsum⟩ := exists_of_seq (n₁ + n₂) s τ h0 hN htag
   refine ⟨T, fun x => ?_, fun f h => ?_⟩
   · rw [hTset, mem_pointSet_iff, mem_pointSet_iff]
@@ -414,7 +281,7 @@ private theorem exists_glue (T₁ : TaggedPartition a c) (T₂ : TaggedPartition
     · rintro (⟨i, hi, rfl⟩ | ⟨i, hi, rfl⟩)
       · exact ⟨i, by omega, hs₁ i hi⟩
       · exact ⟨n₁ + i, by omega, by rw [hs₂ _ (Nat.le_add_right _ _), Nat.add_sub_cancel_left]⟩
-  · rw [hTsum, sum_range_add, sum_eq_sum_range, sum_eq_sum_range]
+  · rw [hTsum, sum_range_add, rsSum_eq_sum_range, rsSum_eq_sum_range]
     congr 1
     · refine sum_congr rfl fun i hi => ?_
       have hi := Finset.mem_range.mp hi
@@ -425,37 +292,38 @@ private theorem exists_glue (T₁ : TaggedPartition a c) (T₂ : TaggedPartition
 
 /-- **Splitting.** A tagged partition of `[a, b]` splits at any of its points into tagged partitions
 of the two subintervals. -/
-private theorem exists_split (T : TaggedPartition a b) {m : ℕ} (hm : m ≤ T.n) :
-    ∃ (T₁ : TaggedPartition a (ptN T.toPartition m))
-      (T₂ : TaggedPartition (ptN T.toPartition m) b),
-      (∀ x, x ∈ T₁.pointSet ↔ x ∈ T.pointSet ∧ x ≤ ptN T.toPartition m) ∧
-      (∀ x, x ∈ T₂.pointSet ↔ x ∈ T.pointSet ∧ ptN T.toPartition m ≤ x) ∧
-      ∀ f h : ℝ → ℝ, RS[f, h, T] = RS[f, h, T₁] + RS[f, h, T₂] := by
-  set p := ptN T.toPartition
-  obtain ⟨T₁, h1set, h1sum⟩ := exists_of_seq m p (tgN T) (ptN_zero _) rfl
-    (fun i hi => tgN_mem T (by omega))
+private theorem exists_split_at (T : TaggedPartition a b) {m : ℕ} (hm : m ≤ T.n) :
+    ∃ (T₁ : TaggedPartition a (T.toPartition.pointN m))
+      (T₂ : TaggedPartition (T.toPartition.pointN m) b),
+      (∀ x, x ∈ T₁.pointSet ↔ x ∈ T.pointSet ∧ x ≤ T.toPartition.pointN m) ∧
+      (∀ x, x ∈ T₂.pointSet ↔ x ∈ T.pointSet ∧ T.toPartition.pointN m ≤ x) ∧
+      ∀ f h : ℝ → ℝ, rsSum f h T = rsSum f h T₁ + rsSum f h T₂ := by
+  set p := T.toPartition.pointN
+  obtain ⟨T₁, h1set, h1sum⟩ := exists_of_seq m p T.tagN T.toPartition.pointN_zero rfl
+    (fun i hi => T.tagN_mem (by omega))
   obtain ⟨T₂, h2set, h2sum⟩ := exists_of_seq (a := p m) (b := b) (T.n - m) (fun i => p (m + i))
-    (fun i => tgN T (m + i)) (by simp) (by rw [Nat.add_sub_cancel' hm]; exact ptN_of_le _ le_rfl)
-    (fun i hi => by rw [← add_assoc]; exact tgN_mem T (by omega))
+    (fun i => T.tagN (m + i)) (by simp)
+    (by rw [Nat.add_sub_cancel' hm]; exact Partition.pointN_of_le _ le_rfl)
+    (fun i hi => by rw [← add_assoc]; exact T.tagN_mem (by omega))
   refine ⟨T₁, T₂, fun x => ?_, fun x => ?_, fun f h => ?_⟩
   · rw [h1set, mem_pointSet_iff]
     constructor
     · rintro ⟨i, hi, rfl⟩
-      exact ⟨⟨i, by omega, rfl⟩, monotone_ptN _ hi⟩
+      exact ⟨⟨i, by omega, rfl⟩, Partition.monotone_pointN _ hi⟩
     · rintro ⟨⟨i, hi, rfl⟩, hle⟩
       refine ⟨i, ?_, rfl⟩
       by_contra hmi
-      exact absurd hle (not_le.mpr (ptN_lt _ (by omega) hi))
+      exact absurd hle (not_le.mpr (pointN_lt _ (by omega) hi))
   · rw [h2set, mem_pointSet_iff]
     constructor
     · rintro ⟨i, hi, rfl⟩
-      exact ⟨⟨m + i, by omega, rfl⟩, monotone_ptN _ (Nat.le_add_right _ _)⟩
+      exact ⟨⟨m + i, by omega, rfl⟩, Partition.monotone_pointN _ (Nat.le_add_right _ _)⟩
     · rintro ⟨⟨i, hi, rfl⟩, hle⟩
       have hmi : m ≤ i := by
         by_contra hmi
-        exact absurd hle (not_le.mpr (ptN_lt _ (by omega) (by omega)))
+        exact absurd hle (not_le.mpr (pointN_lt _ (by omega) (by omega)))
       exact ⟨i - m, by omega, by rw [Nat.add_sub_cancel' hmi]⟩
-  · rw [h1sum, h2sum, sum_eq_sum_range, ← Nat.add_sub_cancel' hm, sum_range_add]
+  · rw [h1sum, h2sum, rsSum_eq_sum_range, ← Nat.add_sub_cancel' hm, sum_range_add]
     simp only [Nat.add_sub_cancel' hm, add_assoc, p]
 
 end Partitions
@@ -475,28 +343,23 @@ section Refinement
 
 variable {a b : ℝ}
 
-private theorem le_of_ptN_le (P : Partition a b) {i j : ℕ} (hi : i ≤ P.n)
-    (hij : ptN P i ≤ ptN P j) : i ≤ j := by
-  by_contra hlt
-  exact absurd hij (not_le.mpr (ptN_lt P (by omega) hi))
-
 /-- The positions of the points of `P` among the points of a refinement `Q`. -/
 private theorem exists_index_of_isRefinement {P Q : Partition a b} (href : Q.IsRefinement P) :
-    ∃ ψ : ℕ → ℕ, Monotone ψ ∧ ψ 0 = 0 ∧ ψ P.n = Q.n ∧ ∀ k, ptN Q (ψ k) = ptN P k := by
-  have hex : ∀ k : ℕ, ∃ j : ℕ, j ≤ Q.n ∧ ptN Q j = ptN P k := by
+    ∃ ψ : ℕ → ℕ, Monotone ψ ∧ ψ 0 = 0 ∧ ψ P.n = Q.n ∧ ∀ k, Q.pointN (ψ k) = P.pointN k := by
+  have hex : ∀ k : ℕ, ∃ j : ℕ, j ≤ Q.n ∧ Q.pointN j = P.pointN k := by
     intro k
     rcases le_or_gt k P.n with hk | hk
     · obtain ⟨j, hj⟩ := href ⟨⟨k, Nat.lt_succ_of_le hk⟩, rfl⟩
       refine ⟨j, Nat.le_of_lt_succ j.isLt, ?_⟩
-      rw [ptN_fin, hj, ← ptN_fin]
-    · exact ⟨Q.n, le_rfl, by rw [ptN_of_le Q le_rfl, ptN_of_le P hk.le]⟩
+      rw [Q.pointN_fin, hj, ← P.pointN_fin]
+    · exact ⟨Q.n, le_rfl, by rw [Q.pointN_of_le le_rfl, P.pointN_of_le hk.le]⟩
   choose ψ hψle hψ using hex
-  refine ⟨ψ, fun k k' hkk' => le_of_ptN_le Q (hψle k) ?_, ?_, ?_, hψ⟩
-  · rw [hψ, hψ]; exact monotone_ptN P hkk'
-  · exact Nat.le_zero.mp (le_of_ptN_le Q (hψle 0)
-      (by rw [hψ, ptN_zero, ptN_zero]))
-  · refine le_antisymm (hψle _) (le_of_ptN_le Q le_rfl ?_)
-    rw [hψ, ptN_of_le P le_rfl, ptN_of_le Q le_rfl]
+  refine ⟨ψ, fun k k' hkk' => Q.le_of_pointN_le (hψle k) (hψle k') ?_, ?_, ?_, hψ⟩
+  · rw [hψ, hψ]; exact P.monotone_pointN hkk'
+  · exact Nat.le_zero.mp (Q.le_of_pointN_le (hψle 0) (Nat.zero_le _)
+      (by rw [hψ, P.pointN_zero, Q.pointN_zero]))
+  · refine le_antisymm (hψle _) (Q.le_of_pointN_le le_rfl (hψle _) ?_)
+    rw [hψ, P.pointN_of_le le_rfl, Q.pointN_of_le le_rfl]
 
 private theorem sum_range_eq_sum_sum_Ico (G : ℕ → ℝ) {ψ : ℕ → ℕ} (hψ : Monotone ψ)
     (h0 : ψ 0 = 0) (m : ℕ) :
@@ -512,50 +375,50 @@ private theorem sum_Ico_sub_eq (g : ℕ → ℝ) {m n : ℕ} (hmn : m ≤ n) :
 /-- **Refinement estimate.** Let `V` be monotone on `[a, b]` and let `R` refine the tagged partition
 `T`. If `|g (ξₖ) - g x| ≤ ωₖ` whenever `x` lies in the `k`-th subinterval of `T` (with tag `ξₖ`),
 then the Riemann–Stieltjes sums over `T` and `R` differ by at most `∑ₖ ωₖ (V(xₖ₊₁) - V(xₖ))`. -/
-private theorem abs_sum_sub_le_of_isRefinement {g V : ℝ → ℝ} (hV : MonotoneOn V (Icc a b))
+private theorem abs_rsSum_sub_le_sum_of_isRefinement {g V : ℝ → ℝ} (hV : MonotoneOn V (Icc a b))
     (T R : TaggedPartition a b) (href : R.toPartition.IsRefinement T.toPartition) (ω : ℕ → ℝ)
-    (hω : ∀ k < T.n, ∀ x ∈ Icc (ptN T.toPartition k) (ptN T.toPartition (k + 1)),
-      |g (tgN T k) - g x| ≤ ω k) :
-    |RS[g, V, T] - RS[g, V, R]| ≤
-      ∑ k ∈ range T.n, ω k * (V (ptN T.toPartition (k + 1)) - V (ptN T.toPartition k)) := by
+    (hω : ∀ k < T.n, ∀ x ∈ Icc (T.pointN k) (T.pointN (k + 1)), |g (T.tagN k) - g x| ≤ ω k) :
+    |rsSum g V T - rsSum g V R| ≤
+      ∑ k ∈ range T.n, ω k * (V (T.pointN (k + 1)) - V (T.pointN k)) := by
   obtain ⟨ψ, hψ, hψ0, hψn, hψpt⟩ := exists_index_of_isRefinement href
-  set Δ : ℕ → ℝ := fun j => V (ptN R.toPartition (j + 1)) - V (ptN R.toPartition j)
+  set Δ : ℕ → ℝ := fun j => V (R.pointN (j + 1)) - V (R.pointN j)
   have hΔ : ∀ j, 0 ≤ Δ j := fun j =>
-    sub_nonneg.mpr (hV (ptN_mem_Icc _ _) (ptN_mem_Icc _ _) (monotone_ptN _ (Nat.le_succ j)))
-  have hblock : ∀ k, V (ptN T.toPartition (k + 1)) - V (ptN T.toPartition k) =
+    sub_nonneg.mpr (hV (R.toPartition.pointN_mem_Icc _) (R.toPartition.pointN_mem_Icc _)
+      (R.monotone_pointN (Nat.le_succ j)))
+  have hblock : ∀ k, V (T.pointN (k + 1)) - V (T.pointN k) =
       ∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), Δ j := by
     intro k
-    rw [sum_Ico_sub_eq (fun j => V (ptN R.toPartition j)) (hψ (Nat.le_succ k)), hψpt, hψpt]
-  have hR : RS[g, V, R] =
-      ∑ k ∈ range T.n, ∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), g (tgN R j) * Δ j := by
-    rw [sum_eq_sum_range, ← hψn, sum_range_eq_sum_sum_Ico _ hψ hψ0]
-  have hT : RS[g, V, T] =
-      ∑ k ∈ range T.n, ∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), g (tgN T k) * Δ j := by
-    rw [sum_eq_sum_range]
+    rw [sum_Ico_sub_eq (fun j => V (R.pointN j)) (hψ (Nat.le_succ k)), hψpt, hψpt]
+  have hR : rsSum g V R =
+      ∑ k ∈ range T.n, ∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), g (R.tagN j) * Δ j := by
+    rw [rsSum_eq_sum_range, ← hψn, sum_range_eq_sum_sum_Ico _ hψ hψ0]
+  have hT : rsSum g V T =
+      ∑ k ∈ range T.n, ∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), g (T.tagN k) * Δ j := by
+    rw [rsSum_eq_sum_range]
     refine sum_congr rfl fun k _ => ?_
     rw [hblock, mul_sum]
   have htag : ∀ k ∈ range T.n, ∀ j ∈ Finset.Ico (ψ k) (ψ (k + 1)),
-      tgN R j ∈ Icc (ptN T.toPartition k) (ptN T.toPartition (k + 1)) := by
+      R.tagN j ∈ Icc (T.pointN k) (T.pointN (k + 1)) := by
     intro k hk j hj
     rw [Finset.mem_range] at hk
     rw [Finset.mem_Ico] at hj
     have hjn : j < R.n := by
       have := hψ (show k + 1 ≤ T.n by omega); rw [hψn] at this; omega
-    obtain ⟨h1, h2⟩ := tgN_mem R hjn
+    obtain ⟨h1, h2⟩ := R.tagN_mem hjn
     rw [← hψpt, ← hψpt]
-    exact ⟨(monotone_ptN _ hj.1).trans h1, h2.trans (monotone_ptN _ hj.2)⟩
+    exact ⟨(R.monotone_pointN hj.1).trans h1, h2.trans (R.monotone_pointN hj.2)⟩
   rw [hT, hR, ← sum_sub_distrib]
-  calc |∑ k ∈ range T.n, (∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), g (tgN T k) * Δ j -
-          ∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), g (tgN R j) * Δ j)|
-      ≤ ∑ k ∈ range T.n, |∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), g (tgN T k) * Δ j -
-          ∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), g (tgN R j) * Δ j| := abs_sum_le_sum_abs _ _
+  calc |∑ k ∈ range T.n, (∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), g (T.tagN k) * Δ j -
+          ∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), g (R.tagN j) * Δ j)|
+      ≤ ∑ k ∈ range T.n, |∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), g (T.tagN k) * Δ j -
+          ∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), g (R.tagN j) * Δ j| := abs_sum_le_sum_abs _ _
     _ ≤ ∑ k ∈ range T.n, ∑ j ∈ Finset.Ico (ψ k) (ψ (k + 1)), ω k * Δ j := by
         refine sum_le_sum fun k hk => ?_
         rw [← sum_sub_distrib]
         refine (abs_sum_le_sum_abs _ _).trans (sum_le_sum fun j hj => ?_)
         rw [← sub_mul, abs_mul, abs_of_nonneg (hΔ j)]
         exact mul_le_mul_of_nonneg_right (hω k (Finset.mem_range.mp hk) _ (htag k hk j hj)) (hΔ j)
-    _ = ∑ k ∈ range T.n, ω k * (V (ptN T.toPartition (k + 1)) - V (ptN T.toPartition k)) := by
+    _ = ∑ k ∈ range T.n, ω k * (V (T.pointN (k + 1)) - V (T.pointN k)) := by
         refine sum_congr rfl fun k _ => ?_
         rw [← mul_sum, ← hblock]
 
@@ -693,153 +556,70 @@ private theorem exists_radius {F : ℝ → ℝ} {s : Set ℝ} {e κ : ℝ} (hκ 
 
 end Regulated
 
-/-! ### The integral, taken as a hypothesis -/
-
-section Integral
-
-variable (HasRS : (ℝ → ℝ) → (ℝ → ℝ) → ℝ → ℝ → ℝ → Prop)
-  (hRS : ∀ (f h : ℝ → ℝ) (a b I : ℝ), HasRS f h a b I ↔
-    ∀ ε > 0, ∃ P : Partition a b, ∀ T : TaggedPartition a b, T.toPartition.IsRefinement P →
-      |RS[f, h, T] - I| < ε)
-include hRS
-
-variable {a b c : ℝ}
-
-/-- The Riemann–Stieltjes integral is unique. -/
-theorem eq_of_hasRS {f h : ℝ → ℝ} {I J : ℝ} (hI : HasRS f h a b I) (hJ : HasRS f h a b J) :
-    I = J := by
-  rw [hRS] at hI hJ
-  refine eq_of_abs_sub_le_all fun ε hε => ?_
-  obtain ⟨P, hP⟩ := hI (ε / 2) (by linarith)
-  obtain ⟨Q, hQ⟩ := hJ (ε / 2) (by linarith)
-  have h1 := hP (leftTag (common P Q)) (common_isRefinement_left P Q)
-  have h2 := hQ (leftTag (common P Q)) (common_isRefinement_right P Q)
-  calc |I - J| = |(RS[f, h, leftTag (common P Q)] - J) - (RS[f, h, leftTag (common P Q)] - I)| := by
-        ring_nf
-    _ ≤ |RS[f, h, leftTag (common P Q)] - J| + |RS[f, h, leftTag (common P Q)] - I| := abs_sub _ _
-    _ ≤ ε := by linarith
-
-/-- **Cauchy criterion.** If for every `ε > 0` there is a partition `P` such that any two tagged
-refinements of `P` have Riemann–Stieltjes sums within `ε`, then the integral exists. -/
-theorem exists_hasRS_of_cauchy {f h : ℝ → ℝ}
-    (hC : ∀ ε > 0, ∃ P : Partition a b, ∀ T T' : TaggedPartition a b,
-      T.toPartition.IsRefinement P → T'.toPartition.IsRefinement P →
-        |RS[f, h, T] - RS[f, h, T']| ≤ ε) :
-    ∃ I, HasRS f h a b I := by
-  choose P hP using fun n : ℕ => hC (1 / (n + 1)) (by positivity)
-  let Q : ℕ → Partition a b := fun n => Nat.rec (P 0) (fun k Qk => common Qk (P (k + 1))) n
-  have hQP : ∀ n, (Q n).IsRefinement (P n) := by
-    intro n
-    cases n with
-    | zero => exact subset_rfl
-    | succ k => exact common_isRefinement_right _ _
-  have hQmono : ∀ n m, n ≤ m → (Q m).IsRefinement (Q n) := by
-    intro n m hnm
-    induction m, hnm using Nat.le_induction with
-    | base => exact subset_rfl
-    | succ m _ ih => exact Set.Subset.trans ih (common_isRefinement_left (Q m) (P (m + 1)))
-  set s : ℕ → ℝ := fun n => RS[f, h, leftTag (Q n)]
-  have hs : ∀ n m, n ≤ m → |s m - s n| ≤ 1 / (n + 1) := fun n m hnm =>
-    hP n _ _ (Set.Subset.trans (hQP n) (hQmono n m hnm)) (hQP n)
-  have hcauchy : CauchySeq s := by
-    refine Metric.cauchySeq_iff'.mpr fun ε hε => ?_
-    obtain ⟨N, hN⟩ := exists_nat_one_div_lt hε
-    exact ⟨N, fun n hn => by rw [Real.dist_eq]; exact (hs N n hn).trans_lt hN⟩
-  obtain ⟨I, hI⟩ := cauchySeq_tendsto_of_complete hcauchy
-  have hsI : ∀ n, |s n - I| ≤ 1 / (n + 1) := by
-    intro n
-    have hlim : Tendsto (fun m => |s m - s n|) atTop (𝓝 |I - s n|) := (hI.sub_const _).abs
-    rw [abs_sub_comm]
-    exact le_of_tendsto hlim (eventually_atTop.mpr ⟨n, fun m hm => hs n m hm⟩)
-  refine ⟨I, (hRS f h a b I).mpr fun ε hε => ?_⟩
-  obtain ⟨N, hN⟩ := exists_nat_one_div_lt (half_pos hε)
-  refine ⟨P N, fun T hT => ?_⟩
-  have h1 := hP N T (leftTag (Q N)) hT (hQP N)
-  have h2 := hsI N
-  calc |RS[f, h, T] - I| = |(RS[f, h, T] - s N) + (s N - I)| := by ring_nf
-    _ ≤ |RS[f, h, T] - s N| + |s N - I| := abs_add_le _ _
-    _ < ε := by linarith
-
-/-- Linearity in the integrator: `∫ f d(g - h) = ∫ f dg - ∫ f dh`. -/
-theorem hasRS_sub_right {f g h : ℝ → ℝ} {I J : ℝ} (hg : HasRS f g a b I)
-    (hh : HasRS f h a b J) : HasRS f (g - h) a b (I - J) := by
-  rw [hRS] at hg hh ⊢
-  intro ε hε
-  obtain ⟨P, hP⟩ := hg (ε / 2) (by linarith)
-  obtain ⟨Q, hQ⟩ := hh (ε / 2) (by linarith)
-  refine ⟨common P Q, fun T hT => ?_⟩
-  have h1 := hP T (Set.Subset.trans (common_isRefinement_left P Q) hT)
-  have h2 := hQ T (Set.Subset.trans (common_isRefinement_right P Q) hT)
-  have hsum : RS[f, g - h, T] = RS[f, g, T] - RS[f, h, T] := by
-    simp only [Pi.sub_apply, ← sum_sub_distrib]
-    exact sum_congr rfl fun i _ => by ring
-  rw [hsum]
-  calc |RS[f, g, T] - RS[f, h, T] - (I - J)| = |(RS[f, g, T] - I) - (RS[f, h, T] - J)| := by
-        ring_nf
-    _ ≤ |RS[f, g, T] - I| + |RS[f, h, T] - J| := abs_sub _ _
-    _ < ε := by linarith
 
 /-! ### Additivity over adjacent intervals -/
 
+section Integral
+
+variable {a b c : ℝ}
+
 /-- **Additivity over adjacent intervals.** If `∫ₐᶜ f dh = I` and `∫_c^b f dh = J`, then
 `∫ₐᵇ f dh = I + J`. -/
-theorem hasRS_add_adjacent {f h : ℝ → ℝ} {I J : ℝ} (hI : HasRS f h a c I)
-    (hJ : HasRS f h c b J) : HasRS f h a b (I + J) := by
-  rw [hRS] at hI hJ ⊢
+theorem HasRSIntegral.add_adjacent {f h : ℝ → ℝ} {I J : ℝ} (hI : HasRSIntegral f h a c I)
+    (hJ : HasRSIntegral f h c b J) : HasRSIntegral f h a b (I + J) := by
   intro ε hε
   obtain ⟨P₁, hP₁⟩ := hI (ε / 2) (by linarith)
   obtain ⟨P₂, hP₂⟩ := hJ (ε / 2) (by linarith)
-  obtain ⟨G, hGset, -⟩ := exists_glue (leftTag P₁) (leftTag P₂)
+  obtain ⟨G, hGset, -⟩ := exists_glue P₁.leftTag P₂.leftTag
   refine ⟨G.toPartition, fun T hT => ?_⟩
   have hc : c ∈ T.pointSet := hT ((hGset c).mpr (Or.inr ⟨0, P₂.first⟩))
   obtain ⟨m, hm, hmc⟩ := (mem_pointSet_iff _).mp hc
   subst hmc
-  obtain ⟨T₁, T₂, h1set, h2set, hsum⟩ := exists_split T hm
+  obtain ⟨T₁, T₂, h1set, h2set, hsum⟩ := exists_split_at T hm
   have h1 := hP₁ T₁ fun x hx =>
     (h1set x).mpr ⟨hT ((hGset x).mpr (Or.inl hx)), (mem_Icc_of_mem_pointSet P₁ hx).2⟩
   have h2 := hP₂ T₂ fun x hx =>
     (h2set x).mpr ⟨hT ((hGset x).mpr (Or.inr hx)), (mem_Icc_of_mem_pointSet P₂ hx).1⟩
   rw [hsum]
-  calc |RS[f, h, T₁] + RS[f, h, T₂] - (I + J)| = |(RS[f, h, T₁] - I) + (RS[f, h, T₂] - J)| := by
-        ring_nf
-    _ ≤ |RS[f, h, T₁] - I| + |RS[f, h, T₂] - J| := abs_add_le _ _
+  calc |rsSum f h T₁ + rsSum f h T₂ - (I + J)|
+      = |(rsSum f h T₁ - I) + (rsSum f h T₂ - J)| := by ring_nf
+    _ ≤ |rsSum f h T₁ - I| + |rsSum f h T₂ - J| := abs_add_le _ _
     _ < ε := by linarith
 
 /-- The partition points of `P` that are `≤ c`, together with `c`: a partition of `[a, c]`. -/
 private noncomputable def restrictLeft (P : Partition a b) (hac : a ≤ c) : Partition a c :=
-  ofFinset (insert c ((Finset.image P.points Finset.univ).filter (· ≤ c)))
+  Partition.ofFinset (insert c ((Finset.image P.points Finset.univ).filter (· ≤ c)))
     (by
       intro x hx
       rcases Finset.mem_insert.mp hx with rfl | hx
       · exact ⟨hac, le_rfl⟩
       · obtain ⟨hx, hxc⟩ := Finset.mem_filter.mp hx
         obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hx
-        exact ⟨(mem_Icc_of_mem_pointSet P ⟨i, rfl⟩).1, hxc⟩)
+        exact ⟨(P.points_mem_Icc i).1, hxc⟩)
     (Finset.mem_insert_of_mem (Finset.mem_filter.mpr
       ⟨Finset.mem_image.mpr ⟨0, mem_univ _, P.first⟩, hac⟩))
     (Finset.mem_insert_self _ _)
 
 /-- The partition points of `P` that are `≥ c`, together with `c`: a partition of `[c, b]`. -/
 private noncomputable def restrictRight (P : Partition a b) (hcb : c ≤ b) : Partition c b :=
-  ofFinset (insert c ((Finset.image P.points Finset.univ).filter (c ≤ ·)))
+  Partition.ofFinset (insert c ((Finset.image P.points Finset.univ).filter (c ≤ ·)))
     (by
       intro x hx
       rcases Finset.mem_insert.mp hx with rfl | hx
       · exact ⟨le_rfl, hcb⟩
       · obtain ⟨hx, hxc⟩ := Finset.mem_filter.mp hx
         obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp hx
-        exact ⟨hxc, (mem_Icc_of_mem_pointSet P ⟨i, rfl⟩).2⟩)
+        exact ⟨hxc, (P.points_mem_Icc i).2⟩)
     (Finset.mem_insert_self _ _)
     (Finset.mem_insert_of_mem (Finset.mem_filter.mpr
       ⟨Finset.mem_image.mpr ⟨Fin.last _, mem_univ _, P.last⟩, hcb⟩))
 
-omit hRS in
 /-- Every point of `P` is a point of `restrictLeft P` or of `restrictRight P`. -/
 private theorem mem_restrict (P : Partition a b) (hac : a ≤ c) (hcb : c ≤ b) {x : ℝ}
     (hx : x ∈ P.pointSet) :
     x ∈ (restrictLeft P hac).pointSet ∨ x ∈ (restrictRight (a := a) P hcb).pointSet := by
   obtain ⟨i, rfl⟩ := hx
-  rw [restrictLeft, restrictRight, pointSet_ofFinset, pointSet_ofFinset]
+  rw [restrictLeft, restrictRight, Partition.pointSet_ofFinset, Partition.pointSet_ofFinset]
   rcases le_total (P.points i) c with h | h
   · exact Or.inl (Finset.mem_coe.mpr (Finset.mem_insert_of_mem (Finset.mem_filter.mpr
       ⟨Finset.mem_image_of_mem _ (mem_univ _), h⟩)))
@@ -848,14 +628,13 @@ private theorem mem_restrict (P : Partition a b) (hac : a ≤ c) (hcb : c ≤ b)
 
 /-- **Restriction to a left subinterval.** If `∫ₐᵇ f dh` exists and `a ≤ c ≤ b`, then
 `∫ₐᶜ f dh` exists. -/
-theorem exists_hasRS_left {f h : ℝ → ℝ} {I : ℝ} (hI : HasRS f h a b I) (hac : a ≤ c)
-    (hcb : c ≤ b) : ∃ I₁, HasRS f h a c I₁ := by
-  rw [hRS] at hI
-  refine exists_hasRS_of_cauchy HasRS hRS fun ε hε => ?_
+theorem HasRSIntegral.rsIntegrable_left {f h : ℝ → ℝ} {I : ℝ} (hI : HasRSIntegral f h a b I)
+    (hac : a ≤ c) (hcb : c ≤ b) : RSIntegrable f h a c := by
+  refine rsIntegrable_of_cauchy fun ε hε => ?_
   obtain ⟨P, hP⟩ := hI (ε / 2) (by linarith)
   refine ⟨restrictLeft P hac, fun T T' hT hT' => ?_⟩
-  obtain ⟨G, hGset, hGsum⟩ := exists_glue T (leftTag (restrictRight (a := a) P hcb))
-  obtain ⟨G', hG'set, hG'sum⟩ := exists_glue T' (leftTag (restrictRight (a := a) P hcb))
+  obtain ⟨G, hGset, hGsum⟩ := exists_glue T (restrictRight (a := a) P hcb).leftTag
+  obtain ⟨G', hG'set, hG'sum⟩ := exists_glue T' (restrictRight (a := a) P hcb).leftTag
   have h1 := hP G fun x hx => by
     rcases mem_restrict P hac hcb hx with h | h
     · exact (hGset x).mpr (Or.inl (hT h))
@@ -865,22 +644,21 @@ theorem exists_hasRS_left {f h : ℝ → ℝ} {I : ℝ} (hI : HasRS f h a b I) (
     · exact (hG'set x).mpr (Or.inl (hT' h))
     · exact (hG'set x).mpr (Or.inr h)
   rw [hGsum, hG'sum] at *
-  calc |RS[f, h, T] - RS[f, h, T']|
-      = |(RS[f, h, T] + RS[f, h, leftTag (restrictRight (a := a) P hcb)] - I) -
-          (RS[f, h, T'] + RS[f, h, leftTag (restrictRight (a := a) P hcb)] - I)| := by ring_nf
+  calc |rsSum f h T - rsSum f h T'|
+      = |(rsSum f h T + rsSum f h (restrictRight (a := a) P hcb).leftTag - I) -
+          (rsSum f h T' + rsSum f h (restrictRight (a := a) P hcb).leftTag - I)| := by ring_nf
     _ ≤ _ := abs_sub _ _
     _ ≤ ε := by linarith
 
 /-- **Restriction to a right subinterval.** If `∫ₐᵇ f dh` exists and `a ≤ c ≤ b`, then
 `∫_c^b f dh` exists. -/
-theorem exists_hasRS_right {f h : ℝ → ℝ} {I : ℝ} (hI : HasRS f h a b I) (hac : a ≤ c)
-    (hcb : c ≤ b) : ∃ I₂, HasRS f h c b I₂ := by
-  rw [hRS] at hI
-  refine exists_hasRS_of_cauchy HasRS hRS fun ε hε => ?_
+theorem HasRSIntegral.rsIntegrable_right {f h : ℝ → ℝ} {I : ℝ} (hI : HasRSIntegral f h a b I)
+    (hac : a ≤ c) (hcb : c ≤ b) : RSIntegrable f h c b := by
+  refine rsIntegrable_of_cauchy fun ε hε => ?_
   obtain ⟨P, hP⟩ := hI (ε / 2) (by linarith)
   refine ⟨restrictRight P hcb, fun T T' hT hT' => ?_⟩
-  obtain ⟨G, hGset, hGsum⟩ := exists_glue (leftTag (restrictLeft (b := b) P hac)) T
-  obtain ⟨G', hG'set, hG'sum⟩ := exists_glue (leftTag (restrictLeft (b := b) P hac)) T'
+  obtain ⟨G, hGset, hGsum⟩ := exists_glue (restrictLeft (b := b) P hac).leftTag T
+  obtain ⟨G', hG'set, hG'sum⟩ := exists_glue (restrictLeft (b := b) P hac).leftTag T'
   have h1 := hP G fun x hx => by
     rcases mem_restrict P hac hcb hx with h | h
     · exact (hGset x).mpr (Or.inl h)
@@ -890,33 +668,33 @@ theorem exists_hasRS_right {f h : ℝ → ℝ} {I : ℝ} (hI : HasRS f h a b I) 
     · exact (hG'set x).mpr (Or.inl h)
     · exact (hG'set x).mpr (Or.inr (hT' h))
   rw [hGsum, hG'sum] at *
-  calc |RS[f, h, T] - RS[f, h, T']|
-      = |(RS[f, h, leftTag (restrictLeft (b := b) P hac)] + RS[f, h, T] - I) -
-          (RS[f, h, leftTag (restrictLeft (b := b) P hac)] + RS[f, h, T'] - I)| := by ring_nf
+  calc |rsSum f h T - rsSum f h T'|
+      = |(rsSum f h (restrictLeft (b := b) P hac).leftTag + rsSum f h T - I) -
+          (rsSum f h (restrictLeft (b := b) P hac).leftTag + rsSum f h T' - I)| := by ring_nf
     _ ≤ _ := abs_sub _ _
     _ ≤ ε := by linarith
 
 /-- **Additivity over adjacent intervals (Apostol, Theorem 7.4).** If `∫ₐᵇ f dh = I` and
 `a ≤ c ≤ b`, then both `∫ₐᶜ f dh` and `∫_c^b f dh` exist and add up to `I`. -/
-theorem exists_hasRS_split {f h : ℝ → ℝ} {I : ℝ} (hI : HasRS f h a b I) (hac : a ≤ c)
-    (hcb : c ≤ b) : ∃ I₁ I₂, HasRS f h a c I₁ ∧ HasRS f h c b I₂ ∧ I = I₁ + I₂ := by
-  obtain ⟨I₁, h₁⟩ := exists_hasRS_left HasRS hRS hI hac hcb
-  obtain ⟨I₂, h₂⟩ := exists_hasRS_right HasRS hRS hI hac hcb
-  exact ⟨I₁, I₂, h₁, h₂, eq_of_hasRS HasRS hRS hI (hasRS_add_adjacent HasRS hRS h₁ h₂)⟩
+theorem HasRSIntegral.exists_split {f h : ℝ → ℝ} {I : ℝ} (hI : HasRSIntegral f h a b I)
+    (hac : a ≤ c) (hcb : c ≤ b) :
+    ∃ I₁ I₂, HasRSIntegral f h a c I₁ ∧ HasRSIntegral f h c b I₂ ∧ I = I₁ + I₂ := by
+  obtain ⟨I₁, h₁⟩ := hI.rsIntegrable_left hac hcb
+  obtain ⟨I₂, h₂⟩ := hI.rsIntegrable_right hac hcb
+  exact ⟨I₁, I₂, h₁, h₂, hI.unique (h₁.add_adjacent h₂)⟩
 
 /-! ### Integration by parts -/
 
 /-- **Integration by parts (Apostol, Theorem 7.6).** If `∫ₐᵇ f dh = I`, then `∫ₐᵇ h df` exists and
 equals `f(b) h(b) - f(a) h(a) - I`. -/
-theorem hasRS_integration_by_parts {f h : ℝ → ℝ} {I : ℝ} (hI : HasRS f h a b I) :
-    HasRS h f a b (f b * h b - f a * h a - I) := by
-  rw [hRS] at hI ⊢
+theorem HasRSIntegral.integration_by_parts {f h : ℝ → ℝ} {I : ℝ} (hI : HasRSIntegral f h a b I) :
+    HasRSIntegral h f a b (f b * h b - f a * h a - I) := by
   intro ε hε
   obtain ⟨P, hP⟩ := hI ε hε
   refine ⟨P, fun T hT => ?_⟩
   set n := T.n
-  set t := ptN T.toPartition with ht
-  set ξ := tgN T with hξ
+  set t := T.toPartition.pointN with ht
+  set ξ := T.tagN with hξ
   set s : ℕ → ℝ := fun i => if i % 2 = 0 then t (i / 2) else ξ (i / 2) with hs
   set τ : ℕ → ℝ := fun i => if i % 2 = 0 then t (i / 2) else t (i / 2 + 1) with hτ
   have hse : ∀ k, s (2 * k) = t k := fun k => by
@@ -931,32 +709,33 @@ theorem hasRS_integration_by_parts {f h : ℝ → ℝ} {I : ℝ} (hI : HasRS f h
       show (2 * k + 1) / 2 = k by omega]
   have hss : ∀ k, s (2 * k + 1 + 1) = t (k + 1) := fun k => by
     rw [show 2 * k + 1 + 1 = 2 * (k + 1) by ring, hse]
-  have h0 : s 0 = a := by rw [show (0 : ℕ) = 2 * 0 from rfl, hse, ht, ptN_zero]
-  have hN : s (2 * n) = b := by rw [hse, ht, ptN_of_le _ le_rfl]
+  have h0 : s 0 = a := by rw [show (0 : ℕ) = 2 * 0 from rfl, hse, ht, Partition.pointN_zero]
+  have hN : s (2 * n) = b := by rw [hse, ht, Partition.pointN_of_le _ le_rfl]
   have htag : ∀ i < 2 * n, s i ≤ τ i ∧ τ i ≤ s (i + 1) := by
     intro i hi
     obtain ⟨k, rfl | rfl⟩ := Nat.even_or_odd' i
     · rw [hse, hτe, hso]
-      exact ⟨le_rfl, (tgN_mem T (by omega)).1⟩
+      exact ⟨le_rfl, (T.tagN_mem (by omega)).1⟩
     · rw [hso, hτo, hss]
-      exact ⟨(tgN_mem T (by omega)).2, le_rfl⟩
+      exact ⟨(T.tagN_mem (by omega)).2, le_rfl⟩
   obtain ⟨T', hT'set, hT'sum⟩ := exists_of_seq (2 * n) s τ h0 hN htag
   have href : T'.toPartition.IsRefinement P := by
     intro x hx
     obtain ⟨k, hk, rfl⟩ := (mem_pointSet_iff _).mp (hT hx)
     exact (hT'set _).mpr ⟨2 * k, by omega, hse k⟩
   have key := hP T' href
-  have hparts : RS[h, f, T] = f b * h b - f a * h a - RS[f, h, T'] := by
-    rw [hT'sum, sum_range_two_mul, sum_eq_sum_range]
+  have hparts : rsSum h f T = f b * h b - f a * h a - rsSum f h T' := by
+    rw [hT'sum, sum_range_two_mul, rsSum_eq_sum_range]
     have htel : ∑ k ∈ range n, (f (t (k + 1)) * h (t (k + 1)) - f (t k) * h (t k)) =
         f b * h b - f a * h a := by
-      rw [sum_range_sub (fun k => f (t k) * h (t k)), ht, ptN_of_le _ le_rfl, ptN_zero]
+      rw [sum_range_sub (fun k => f (t k) * h (t k)), ht, Partition.pointN_of_le _ le_rfl,
+        Partition.pointN_zero]
     rw [← htel, eq_sub_iff_add_eq, ← sum_add_distrib]
     refine sum_congr rfl fun k _ => ?_
     rw [hτe, hτo, hso, hse, hss]
     ring
-  rw [hparts, show f b * h b - f a * h a - RS[f, h, T'] - (f b * h b - f a * h a - I) =
-    -(RS[f, h, T'] - I) by ring, abs_neg]
+  rw [hparts, show f b * h b - f a * h a - rsSum f h T' - (f b * h b - f a * h a - I) =
+    -(rsSum f h T' - I) by ring, abs_neg]
   exact key
 
 /-! ### Existence for regulated integrands and integrators -/
@@ -965,15 +744,15 @@ theorem hasRS_integration_by_parts {f h : ℝ → ℝ} {I : ℝ} (hI : HasRS f h
 `[a, b)` and a left limit at every point of `(a, b]` (`g` is regulated), let `V` be monotone on
 `[a, b]`, and suppose that at every point of `[a, b]` at least one of `g`, `V` is continuous
 within `[a, b]`. Then `∫ₐᵇ g dV` exists. -/
-theorem exists_hasRS_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤ b)
+theorem rsIntegrable_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤ b)
     (hgR : ∀ x ∈ Ico a b, ∃ l, Tendsto g (𝓝[>] x) (𝓝 l))
     (hgL : ∀ x ∈ Ioc a b, ∃ l, Tendsto g (𝓝[<] x) (𝓝 l))
     (hV : MonotoneOn V (Icc a b))
     (hcont : ∀ x ∈ Icc a b,
       ContinuousWithinAt g (Icc a b) x ∨ ContinuousWithinAt V (Icc a b) x) :
-    ∃ I, HasRS g V a b I := by
+    RSIntegrable g V a b := by
   classical
-  refine exists_hasRS_of_cauchy HasRS hRS fun ε hε => ?_
+  refine rsIntegrable_of_cauchy fun ε hε => ?_
   have hVab : 0 ≤ V b - V a := sub_nonneg.mpr (hV ⟨le_rfl, hab⟩ ⟨hab, le_rfl⟩ hab)
   set ε₁ := ε / (8 * (V b - V a + 1)) with hε₁
   have hε₁pos : 0 < ε₁ := by positivity
@@ -1023,7 +802,7 @@ theorem exists_hasRS_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
     · exact hSmem x hx
     · exact hlo_mem e (hSmem e he)
     · exact hhi_mem e (hSmem e he)
-  set Q := ofFinset Qs hQsmem (Finset.mem_union_left _ (Finset.mem_union_left _ haS))
+  set Q := Partition.ofFinset Qs hQsmem (Finset.mem_union_left _ (Finset.mem_union_left _ haS))
     (Finset.mem_union_left _ (Finset.mem_union_left _ hbS))
   set SV := S.filter (fun e => ¬ ContinuousWithinAt g (Icc a b) e) with hSV
   -- the clamped integrators
@@ -1051,11 +830,11 @@ theorem exists_hasRS_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
   -- the main estimate
   have hmain : ∀ T : TaggedPartition a b, T.toPartition.IsRefinement Q →
       ∀ R : TaggedPartition a b, R.toPartition.IsRefinement T.toPartition →
-        |RS[g, V, T] - RS[g, V, R]| ≤ ε / 2 := by
+        |rsSum g V T - rsSum g V R| ≤ ε / 2 := by
     intro T hTQ R hRT
-    set t := ptN T.toPartition with ht
+    set t := T.toPartition.pointN with ht
     have hQT : ∀ x ∈ Qs, x ∈ T.pointSet := fun x hx =>
-      hTQ (by rw [pointSet_ofFinset]; exact Finset.mem_coe.mpr hx)
+      hTQ (by rw [Partition.pointSet_ofFinset]; exact Finset.mem_coe.mpr hx)
     have hST : ∀ e ∈ S, e ∈ T.pointSet := fun e he =>
       hQT e (Finset.mem_union_left _ (Finset.mem_union_left _ he))
     have hloT : ∀ e ∈ S, lo e ∈ T.pointSet := fun e he =>
@@ -1063,13 +842,13 @@ theorem exists_hasRS_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
     have hhiT : ∀ e ∈ S, hi e ∈ T.pointSet := fun e he =>
       hQT _ (Finset.mem_union_right _ (Finset.mem_image_of_mem _ he))
     -- each subinterval of `T` is good or lies in a window around a point of `SV`
-    have hclaim : ∀ k < T.n, (∀ x ∈ Icc (t k) (t (k + 1)), |g (tgN T k) - g x| ≤ 2 * ε₁) ∨
+    have hclaim : ∀ k < T.n, (∀ x ∈ Icc (t k) (t (k + 1)), |g (T.tagN k) - g x| ≤ 2 * ε₁) ∨
         ∃ e ∈ SV, lo e ≤ t k ∧ t (k + 1) ≤ hi e := by
       intro k hk
-      have huv : t k < t (k + 1) := ptN_lt _ (Nat.lt_succ_self k) (by omega)
-      have huI := ptN_mem_Icc T.toPartition k
-      have hvI := ptN_mem_Icc T.toPartition (k + 1)
-      have hξ := tgN_mem T hk
+      have huv : t k < t (k + 1) := pointN_lt _ (Nat.lt_succ_self k) (by omega)
+      have huI := T.toPartition.pointN_mem_Icc k
+      have hvI := T.toPartition.pointN_mem_Icc (k + 1)
+      have hξ := T.tagN_mem hk
       by_cases hus : t k ∈ S
       · have hhi_gt : t k < hi (t k) :=
           lt_min (huv.trans_le hvI.2) (by linarith [hρpos (t k)])
@@ -1084,10 +863,10 @@ theorem exists_hasRS_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
             refine hρg _ hgc y ⟨huI.1.trans hy.1, hy.2.trans hvI.2⟩ ?_
             rw [abs_of_nonneg (by linarith [hy.1])]
             linarith [hy.2, min_le_right b (t k + ρ (t k)), hhi_dist (t k) huI]
-          have h1 := hd (tgN T k) hξ
+          have h1 := hd (T.tagN k) hξ
           have h2 := hd x hx
-          calc |g (tgN T k) - g x| = |(g (tgN T k) - g (t k)) - (g x - g (t k))| := by ring_nf
-            _ ≤ |g (tgN T k) - g (t k)| + |g x - g (t k)| := abs_sub _ _
+          calc |g (T.tagN k) - g x| = |(g (T.tagN k) - g (t k)) - (g x - g (t k))| := by ring_nf
+            _ ≤ |g (T.tagN k) - g (t k)| + |g x - g (t k)| := abs_sub _ _
             _ ≤ 2 * ε₁ := by linarith
         · exact Or.inr ⟨t k, Finset.mem_filter.mpr ⟨hus, hgc⟩, hlo_le _ huI, hv_hi⟩
       by_cases hvs : t (k + 1) ∈ S
@@ -1104,11 +883,11 @@ theorem exists_hasRS_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
             refine hρg _ hgc y ⟨huI.1.trans hy.1, hy.2.trans hvI.2⟩ ?_
             rw [abs_of_nonpos (by linarith [hy.2])]
             linarith [hy.1, le_max_right a (t (k + 1) - ρ (t (k + 1)))]
-          have h1 := hd (tgN T k) hξ
+          have h1 := hd (T.tagN k) hξ
           have h2 := hd x hx
-          calc |g (tgN T k) - g x|
-              = |(g (tgN T k) - g (t (k + 1))) - (g x - g (t (k + 1)))| := by ring_nf
-            _ ≤ |g (tgN T k) - g (t (k + 1))| + |g x - g (t (k + 1))| := abs_sub _ _
+          calc |g (T.tagN k) - g x|
+              = |(g (T.tagN k) - g (t (k + 1))) - (g x - g (t (k + 1)))| := by ring_nf
+            _ ≤ |g (T.tagN k) - g (t (k + 1))| + |g x - g (t (k + 1))| := abs_sub _ _
             _ ≤ 2 * ε₁ := by linarith
         · exact Or.inr ⟨t (k + 1), Finset.mem_filter.mpr ⟨hvs, hgc⟩, hlo_u, hle_hi _ hvI⟩
       · left
@@ -1126,26 +905,28 @@ theorem exists_hasRS_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
             |g y - g z| ≤ ε₁ := fun y z hy hz hyz =>
           hosc y z (huI.1.trans hy.1) hyz (hz.2.trans hvI.2)
             (fun s hs hmem => hfree s hs ⟨hy.1.trans hmem.1, hmem.2.trans hz.2⟩)
-        rcases le_total (tgN T k) x with h | h
+        rcases le_total (T.tagN k) x with h | h
         · linarith [hsub _ _ hξ hx h]
         · rw [abs_sub_comm]; linarith [hsub _ _ hx hξ h]
     set ω : ℕ → ℝ := fun k =>
-      if ∀ x ∈ Icc (t k) (t (k + 1)), |g (tgN T k) - g x| ≤ 2 * ε₁ then 2 * ε₁ else 2 * B
+      if ∀ x ∈ Icc (t k) (t (k + 1)), |g (T.tagN k) - g x| ≤ 2 * ε₁ then 2 * ε₁ else 2 * B
       with hω
-    have hωb : ∀ k < T.n, ∀ x ∈ Icc (t k) (t (k + 1)), |g (tgN T k) - g x| ≤ ω k := by
+    have hωb : ∀ k < T.n, ∀ x ∈ Icc (t k) (t (k + 1)), |g (T.tagN k) - g x| ≤ ω k := by
       intro k hk x hx
       simp only [hω]
       split_ifs with h
       · exact h x hx
       · have hxI : x ∈ Icc a b :=
-          ⟨(ptN_mem_Icc _ k).1.trans hx.1, hx.2.trans (ptN_mem_Icc _ (k + 1)).2⟩
-        calc |g (tgN T k) - g x| ≤ |g (tgN T k)| + |g x| := abs_sub _ _
-          _ ≤ 2 * B := by linarith [hB _ (tgN_mem_Icc T hk), hB x hxI]
-    have hest := abs_sum_sub_le_of_isRefinement hV T R hRT ω hωb
+          ⟨(T.toPartition.pointN_mem_Icc k).1.trans hx.1,
+            hx.2.trans (T.toPartition.pointN_mem_Icc (k + 1)).2⟩
+        calc |g (T.tagN k) - g x| ≤ |g (T.tagN k)| + |g x| := abs_sub _ _
+          _ ≤ 2 * B := by linarith [hB _ (T.tagN_mem_Icc k), hB x hxI]
+    have hest := abs_rsSum_sub_le_sum_of_isRefinement hV T R hRT ω hωb
     have hΔ : ∀ k, 0 ≤ V (t (k + 1)) - V (t k) := fun k =>
-      sub_nonneg.mpr (hV (ptN_mem_Icc _ _) (ptN_mem_Icc _ _) (monotone_ptN _ (Nat.le_succ k)))
+      sub_nonneg.mpr (hV (T.toPartition.pointN_mem_Icc _) (T.toPartition.pointN_mem_Icc _)
+        (T.monotone_pointN (Nat.le_succ k)))
     have hΔW : ∀ e ∈ S, ∀ k, 0 ≤ W e (t (k + 1)) - W e (t k) := fun e he k =>
-      sub_nonneg.mpr (hW_mono e he _ _ (monotone_ptN _ (Nat.le_succ k)))
+      sub_nonneg.mpr (hW_mono e he _ _ (T.monotone_pointN (Nat.le_succ k)))
     have hterm : ∀ k ∈ range T.n, ω k * (V (t (k + 1)) - V (t k)) ≤
         2 * ε₁ * (V (t (k + 1)) - V (t k)) +
           2 * B * ∑ e ∈ SV, (W e (t (k + 1)) - W e (t k)) := by
@@ -1160,16 +941,17 @@ theorem exists_hasRS_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
         have heS := (Finset.mem_filter.mp he).1
         have hsingle : W e (t (k + 1)) - W e (t k) ≤ ∑ e ∈ SV, (W e (t (k + 1)) - W e (t k)) :=
           Finset.single_le_sum (fun e he => hΔW e (Finset.mem_filter.mp he).1 k) he
-        rw [hW_eq e heS _ h1 ((monotone_ptN _ (Nat.le_succ k)).trans h2),
-          hW_eq e heS _ (h1.trans (monotone_ptN _ (Nat.le_succ k))) h2] at hsingle
+        rw [hW_eq e heS _ h1 ((T.monotone_pointN (Nat.le_succ k)).trans h2),
+          hW_eq e heS _ (h1.trans (T.monotone_pointN (Nat.le_succ k))) h2] at hsingle
         nlinarith [hΔ k, hε₁pos]
     have htelV : ∑ k ∈ range T.n, (V (t (k + 1)) - V (t k)) = V b - V a := by
-      rw [sum_range_sub (fun k => V (t k)), ht, ptN_of_le _ le_rfl, ptN_zero]
+      rw [sum_range_sub (fun k => V (t k)), ht, Partition.pointN_of_le _ le_rfl,
+        Partition.pointN_zero]
     have htelW : ∀ e ∈ S, ∑ k ∈ range T.n, (W e (t (k + 1)) - W e (t k)) =
         V (hi e) - V (lo e) := by
       intro e he
-      rw [sum_range_sub (fun k => W e (t k)), ht, ptN_of_le _ le_rfl, ptN_zero, hW_b e he,
-        hW_a e he]
+      rw [sum_range_sub (fun k => W e (t k)), ht, Partition.pointN_of_le _ le_rfl,
+        Partition.pointN_zero, hW_b e he, hW_a e he]
     have hwin : ∀ e ∈ SV, V (hi e) - V (lo e) ≤ η := by
       intro e he
       obtain ⟨heS, hgc⟩ := Finset.mem_filter.mp he
@@ -1208,25 +990,25 @@ theorem exists_hasRS_of_regulated_of_monotoneOn {g V : ℝ → ℝ} (hab : a ≤
       nlinarith [mul_nonneg hB0 hS0, mul_nonneg (mul_nonneg hB0 hS0) hηpos.le]
     linarith
   refine ⟨Q, fun T T' hT hT' => ?_⟩
-  set R := leftTag (common T.toPartition T'.toPartition)
-  have h1 := hmain T hT R (common_isRefinement_left _ _)
-  have h2 := hmain T' hT' R (common_isRefinement_right _ _)
-  calc |RS[g, V, T] - RS[g, V, T']|
-      = |(RS[g, V, T] - RS[g, V, R]) - (RS[g, V, T'] - RS[g, V, R])| := by ring_nf
-    _ ≤ |RS[g, V, T] - RS[g, V, R]| + |RS[g, V, T'] - RS[g, V, R]| := abs_sub _ _
+  set R := (T.toPartition.common T'.toPartition).leftTag
+  have h1 := hmain T hT R (Partition.common_isRefinement_left _ _)
+  have h2 := hmain T' hT' R (Partition.common_isRefinement_right _ _)
+  calc |rsSum g V T - rsSum g V T'|
+      = |(rsSum g V T - rsSum g V R) - (rsSum g V T' - rsSum g V R)| := by ring_nf
+    _ ≤ |rsSum g V T - rsSum g V R| + |rsSum g V T' - rsSum g V R| := abs_sub _ _
     _ ≤ ε := by linarith
 
 /-- **Existence against a bounded-variation integrator.** Let `g` be regulated on `[a, b]`
 (one-sided limits at every point) and let `f` have bounded variation on `[a, b]`. If at every
 point of `[a, b]` at least one of `g`, `f` is continuous within `[a, b]`, then `∫ₐᵇ g df`
 exists. -/
-theorem exists_hasRS_of_regulated_of_boundedVariationOn {g f : ℝ → ℝ} (hab : a ≤ b)
+theorem rsIntegrable_of_regulated_of_boundedVariationOn {g f : ℝ → ℝ} (hab : a ≤ b)
     (hgR : ∀ x ∈ Ico a b, ∃ l, Tendsto g (𝓝[>] x) (𝓝 l))
     (hgL : ∀ x ∈ Ioc a b, ∃ l, Tendsto g (𝓝[<] x) (𝓝 l))
     (hf : BoundedVariationOn f (Icc a b))
     (hcont : ∀ x ∈ Icc a b,
       ContinuousWithinAt g (Icc a b) x ∨ ContinuousWithinAt f (Icc a b) x) :
-    ∃ I, HasRS g f a b I := by
+    RSIntegrable g f a b := by
   have ha : a ∈ Icc a b := ⟨le_rfl, hab⟩
   set V := variationOnFromTo f (Icc a b) a
   have hVmono : MonotoneOn V (Icc a b) :=
@@ -1236,30 +1018,30 @@ theorem exists_hasRS_of_regulated_of_boundedVariationOn {g f : ℝ → ℝ} (hab
   have hVc : ∀ x ∈ Icc a b, ContinuousWithinAt f (Icc a b) x →
       ContinuousWithinAt V (Icc a b) x := fun x hx hfx =>
     (hf.continuousWithinAt_variationOnFromTo_iff ha hx).mpr hfx
-  obtain ⟨I₁, h₁⟩ := exists_hasRS_of_regulated_of_monotoneOn HasRS hRS hab hgR hgL hVmono
+  obtain ⟨I₁, h₁⟩ := rsIntegrable_of_regulated_of_monotoneOn hab hgR hgL hVmono
     fun x hx => (hcont x hx).imp id (hVc x hx)
-  obtain ⟨I₂, h₂⟩ := exists_hasRS_of_regulated_of_monotoneOn HasRS hRS hab hgR hgL hWmono
+  obtain ⟨I₂, h₂⟩ := rsIntegrable_of_regulated_of_monotoneOn hab hgR hgL hWmono
     fun x hx => (hcont x hx).imp id fun hfx => (hVc x hx hfx).sub hfx
-  have h := hasRS_sub_right HasRS hRS h₁ h₂
+  have h := h₁.sub_right h₂
   rw [show V - (V - f) = f by ring] at h
-  exact ⟨I₁ - I₂, h⟩
+  exact h.rsIntegrable
 
 /-- **Existence for a bounded-variation integrand against a regulated integrator.** Let `f` have
 bounded variation on `[a, b]` and let `h` be regulated on `[a, b]` (a right limit at every point of
 `[a, b)`, a left limit at every point of `(a, b]`). If `f` and `h` have no common discontinuity in
 `[a, b]` (at every point at least one of them is continuous within `[a, b]`), then `∫ₐᵇ f dh`
 exists. -/
-theorem exists_hasRS_of_boundedVariationOn_of_regulated {f h : ℝ → ℝ} (hab : a ≤ b)
+theorem rsIntegrable_of_boundedVariationOn_of_regulated {f h : ℝ → ℝ} (hab : a ≤ b)
     (hf : BoundedVariationOn f (Icc a b))
     (hhR : ∀ x ∈ Ico a b, ∃ l, Tendsto h (𝓝[>] x) (𝓝 l))
     (hhL : ∀ x ∈ Ioc a b, ∃ l, Tendsto h (𝓝[<] x) (𝓝 l))
     (hcont : ∀ x ∈ Icc a b,
       ContinuousWithinAt f (Icc a b) x ∨ ContinuousWithinAt h (Icc a b) x) :
-    ∃ I, HasRS f h a b I := by
-  obtain ⟨J, hJ⟩ := exists_hasRS_of_regulated_of_boundedVariationOn HasRS hRS hab hhR hhL hf
+    RSIntegrable f h a b := by
+  obtain ⟨J, hJ⟩ := rsIntegrable_of_regulated_of_boundedVariationOn hab hhR hhL hf
     fun x hx => (hcont x hx).symm
-  exact ⟨_, hasRS_integration_by_parts HasRS hRS hJ⟩
+  exact hJ.integration_by_parts.rsIntegrable
 
 end Integral
 
-end MathlibExt.Analysis.Integration.RSCalculus
+end MathlibExt.Analysis.Integration
