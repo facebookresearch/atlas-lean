@@ -88,7 +88,7 @@ theorem gnss_directional_derivative (x₀ s d : EuclideanSpace ℝ (Fin 3)) (b�
 It asserts no Jacobian or derivative. Only for `x₀ ≠ s` is this row the pseudorange Jacobian
 row, by `gnss_directional_derivative`. At `x₀ = s` both sides equal `db` because `‖0‖⁻¹ = 0`,
 while the range term `‖t • d‖ = |t| * ‖d‖` is not differentiable at `0` for `d ≠ 0`. -/
-theorem gnss_row_dot_algebraic_identity (x₀ s d : EuclideanSpace ℝ (Fin 3)) (db : ℝ) :
+lemma gnss_row_dot_algebraic_identity (x₀ s d : EuclideanSpace ℝ (Fin 3)) (db : ℝ) :
     ⟪‖x₀ - s‖⁻¹ • (x₀ - s), d⟫_ℝ + 1 * db = ⟪x₀ - s, d⟫_ℝ / ‖x₀ - s‖ + db := by
   rw [real_inner_smul_left]
   ring
