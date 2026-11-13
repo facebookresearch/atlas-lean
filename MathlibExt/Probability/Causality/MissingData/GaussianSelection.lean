@@ -15,6 +15,7 @@ public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Moments.Covariance
 public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Probability.ConditionalProbability
+import MathlibExt.Probability.Distributions.GaussianCdf
 import Mathlib.MeasureTheory.Integral.IntegralEqImproper
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Probability.Independence.Integration
@@ -57,110 +58,10 @@ namespace MathlibExt.Probability.Causality.MissingData
 open MeasureTheory ProbabilityTheory
 open scoped ENNReal NNReal Topology
 
-private theorem pdf_pos (x : ℝ) :
-    0 < gaussianPDFReal 0 1 x := by
-  have hdef := gaussianPDFReal_def (μ := (0 : ℝ)) (v := (1 : ℝ≥0))
-  have h1 : gaussianPDFReal 0 1 x
-      = (√(2 * Real.pi * (1 : ℝ)))⁻¹
-        * Real.exp (-(x - 0) ^ 2 / (2 * (1 : ℝ))) := by
-    have h2 := congrFun hdef x
-    simpa using h2
-  rw [h1]
-  positivity
-
 private theorem cdf_gaussian_pos (c : ℝ) :
     0 < cdf (gaussianReal 0 1) c := by
-  rw [cdf_eq_real (gaussianReal 0 1) c]
-  have hIoo : MeasurableSet (Set.Ioo (c - 1) c) := by simp
-  have hsub : Set.Ioo (c - 1) c ⊆ Set.Iic c := by
-    intro x hx
-    simp only [Set.mem_Ioo, Set.mem_Iic] at hx ⊢
-    exact le_of_lt hx.2
-  have hvol : 0 < volume (Set.Ioo (c - 1) c) := by
-    have hlt : c - 1 < c := by linarith
-    exact (Measure.measure_Ioo_pos _).mpr hlt
-  have hcont : Continuous (gaussianPDFReal 0 1) := by
-    have hdef := gaussianPDFReal_def (μ := (0 : ℝ)) (v := (1 : ℝ≥0))
-    rw [hdef]
-    continuity
-  have hcompact : IsCompact (Set.Icc (c - 1) c) := isCompact_Icc
-  have hcontOn : ContinuousOn (gaussianPDFReal 0 1)
-      (Set.Icc (c - 1) c) :=
-    hcont.continuousOn
-  have hint_Icc : IntegrableOn (gaussianPDFReal 0 1)
-      (Set.Icc (c - 1) c) volume := by
-    exact ContinuousOn.integrableOn_Icc hcontOn
-  have hsub2 : Set.Ioo (c - 1) c ⊆ Set.Icc (c - 1) c := by
-    intro x hx
-    simp only [Set.mem_Ioo, Set.mem_Icc] at hx ⊢
-    exact ⟨le_of_lt hx.1, le_of_lt hx.2⟩
-  have hint_Ioo : IntegrableOn (gaussianPDFReal 0 1)
-      (Set.Ioo (c - 1) c) volume := by
-    exact IntegrableOn.mono_set hint_Icc hsub2
-  have hpos_mem : ∀ x ∈ Set.Ioo (c - 1) c,
-      0 < gaussianPDFReal 0 1 x := by
-    intro x _
-    exact pdf_pos x
-  have hvol_ne : volume (Set.Ioo (c - 1) c) ≠ 0 :=
-    ne_of_gt hvol
-  have hint_pos : 0 < ∫ x in Set.Ioo (c - 1) c,
-      gaussianPDFReal 0 1 x ∂volume := by
-    have hnn : 0 ≤ᵐ[volume.restrict (Set.Ioo (c - 1) c)]
-        (gaussianPDFReal 0 1) := by
-      filter_upwards with x
-      exact le_of_lt (pdf_pos x)
-    have hiff := MeasureTheory.setIntegral_pos_iff_support_of_nonneg_ae
-      hnn hint_Ioo
-    have hsupp : Function.support (gaussianPDFReal 0 1)
-        = Set.univ := by
-      ext x
-      simp only [Function.mem_support, Set.mem_univ, iff_true]
-      exact ne_of_gt (pdf_pos x)
-    rw [hsupp, Set.univ_inter] at hiff
-    exact hiff.mpr hvol
-  have hreal_eq : (gaussianReal 0 1).real (Set.Ioo (c - 1) c)
-      = ∫ x in Set.Ioo (c - 1) c, (1 : ℝ) ∂gaussianReal 0 1 := by
-    have h1 : ∫ x, (Set.Ioo (c - 1) c).indicator
-        (fun _ => (1 : ℝ)) x ∂gaussianReal 0 1
-        = (gaussianReal 0 1).real (Set.Ioo (c - 1) c) := by
-      rw [integral_indicator hIoo, integral_const,
-        MeasureTheory.measureReal_restrict_apply_univ, smul_eq_mul,
-        mul_one]
-    rw [integral_indicator hIoo] at h1
-    exact h1.symm
-  have hdens : ∫ x in Set.Ioo (c - 1) c, (1 : ℝ) ∂gaussianReal 0 1
-      = ∫ x in Set.Ioo (c - 1) c,
-        gaussianPDFReal 0 1 x ∂volume := by
-    rw [← integral_indicator hIoo]
-    have hv : (1 : ℝ≥0) ≠ 0 := one_ne_zero
-    have heq : ∫ x, (Set.Ioo (c - 1) c).indicator
-        (fun _ => (1 : ℝ)) x ∂gaussianReal 0 1
-        = ∫ x, gaussianPDFReal 0 1 x •
-          (Set.Ioo (c - 1) c).indicator (fun _ => (1 : ℝ)) x
-          ∂volume :=
-      integral_gaussianReal_eq_integral_smul hv
-    rw [heq]
-    have hfun : (fun x : ℝ => gaussianPDFReal 0 1 x •
-        (Set.Ioo (c - 1) c).indicator (fun _ => (1 : ℝ)) x)
-        = (Set.Ioo (c - 1) c).indicator (gaussianPDFReal 0 1) := by
-      funext x
-      by_cases hx : x ∈ Set.Ioo (c - 1) c
-      · simp [hx, smul_eq_mul]
-      · simp [hx]
-    rw [hfun, integral_indicator hIoo]
-  have hIoo_pos : 0 < (gaussianReal 0 1).real
-      (Set.Ioo (c - 1) c) := by
-    rw [hreal_eq, hdens]
-    exact hint_pos
-  have hle : (gaussianReal 0 1).real (Set.Ioo (c - 1) c)
-      ≤ (gaussianReal 0 1).real (Set.Iic c) := by
-    have hmono : (gaussianReal 0 1) (Set.Ioo (c - 1) c)
-        ≤ (gaussianReal 0 1) (Set.Iic c) :=
-      measure_mono hsub
-    have hfin : (gaussianReal 0 1) (Set.Iic c) ≠ ∞ :=
-      measure_ne_top _ _
-    exact ENNReal.toReal_mono hfin hmono
-  exact lt_of_lt_of_le hIoo_pos hle
+  exact (cdf_nonneg (gaussianReal 0 1) (c - 1)).trans_lt
+    (strictMono_cdf_gaussianReal 0 one_ne_zero (by linarith : c - 1 < c))
 
 private theorem pdf_even (c : ℝ) :
     gaussianPDFReal 0 1 (-c) = gaussianPDFReal 0 1 c := by
@@ -263,7 +164,8 @@ private theorem integral_Ioi_mul_pdf (c : ℝ) :
     have hfun : (fun x : ℝ => (gaussianPDF 0 1 x).toReal • id x)
         = (fun x : ℝ => x * gaussianPDFReal 0 1 x) := by
       funext x
-      have hnn : 0 ≤ gaussianPDFReal 0 1 x := le_of_lt (pdf_pos x)
+      have hnn : 0 ≤ gaussianPDFReal 0 1 x :=
+        (gaussianPDFReal_pos 0 1 x one_ne_zero).le
       have htr : (gaussianPDF 0 1 x).toReal
           = gaussianPDFReal 0 1 x :=
         ENNReal.toReal_ofReal hnn
@@ -353,7 +255,7 @@ noncomputable def inverseMillsRatio (c : ℝ) : ℝ :=
 theorem inverseMillsRatio_pos (c : ℝ) :
     0 < inverseMillsRatio c := by
   unfold inverseMillsRatio
-  apply div_pos (pdf_pos c)
+  apply div_pos (gaussianPDFReal_pos 0 1 c one_ne_zero)
   exact cdf_gaussian_pos c
 
 /-- The probit selection probability equals the Gaussian cdf. -/
@@ -580,7 +482,7 @@ theorem variance_outcomeError {Ω : Type*} [MeasurableSpace Ω]
   ring
 
 /-- Heckman's equation (2) with the first display: the selected-sample
-mean equals `m + σ₁₂ * λ(c)`. See `covariance_outcomeError` and
+mean equals `m + σ₁₂ * λ(c)`. See `covariance_outcomeError_selectionError` and
 `variance_outcomeError` for the covariance interpretation of `σ₁₂`
 and `σ₁₁`; no validity hypothesis is needed for this identity. -/
 theorem integral_cond_selected_outcome_eq {Ω : Type*}

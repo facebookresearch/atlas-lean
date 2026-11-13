@@ -15,6 +15,7 @@ public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Probability.ConditionalProbability
+import MathlibExt.Probability.Distributions.GaussianCdf
 
 /-! # Gaussian selection tests: boundary behavior of the Mills correction
 
@@ -154,110 +155,7 @@ theorem T4_selection_pos {Ω : Type*} [MeasurableSpace Ω]
 /-- T5: the standard normal cdf at zero equals one half. -/
 theorem T5_cdf_zero_eq_half :
     cdf (gaussianReal 0 1) 0 = 1 / 2 := by
-  have hIic : MeasurableSet (Set.Iic (0 : ℝ)) := by simp
-  have hIoi : MeasurableSet (Set.Ioi (0 : ℝ)) := by simp
-  have hIio : MeasurableSet (Set.Iio (0 : ℝ)) := by simp
-  have hdisj : Disjoint (Set.Iic (0 : ℝ)) (Set.Ioi (0 : ℝ)) := by
-    rw [Set.disjoint_left]
-    intro x hx1 hx2
-    simp only [Set.mem_Iic, Set.mem_Ioi] at hx1 hx2
-    linarith
-  have hunion : Set.Iic (0 : ℝ) ∪ Set.Ioi (0 : ℝ) = Set.univ := by
-    ext x
-    simp only [Set.mem_union, Set.mem_Iic, Set.mem_Ioi,
-      Set.mem_univ]
-    exact iff_true_intro (le_or_gt x 0)
-  have huniv : (gaussianReal 0 1) Set.univ = 1 := by
-    exact measure_univ
-  have hsplit : (gaussianReal 0 1) Set.univ
-      = (gaussianReal 0 1) (Set.Iic 0)
-        + (gaussianReal 0 1) (Set.Ioi 0) := by
-    rw [← hunion]
-    exact measure_union hdisj hIoi
-  have hneg : AEMeasurable (fun x : ℝ => -x)
-      (gaussianReal 0 1) := by measurability
-  have hpre : (fun x : ℝ => -x) ⁻¹' Set.Ioi (0 : ℝ)
-      = Set.Iio (0 : ℝ) := by
-    ext x
-    simp only [Set.mem_preimage, Set.mem_Ioi, Set.mem_Iio]
-    constructor
-    · intro h
-      linarith
-    · intro h
-      linarith
-  have hmap : Measure.map (fun x : ℝ => -x)
-        (gaussianReal 0 1) (Set.Ioi 0)
-      = (gaussianReal 0 1) ((fun x : ℝ => -x) ⁻¹' Set.Ioi 0) :=
-    MeasureTheory.Measure.map_apply_of_aemeasurable hneg hIoi
-  rw [hpre] at hmap
-  have hsym : Measure.map (fun x : ℝ => -x)
-        (gaussianReal 0 1) = gaussianReal (-0) 1 :=
-    gaussianReal_map_neg
-  simp only [neg_zero] at hsym
-  rw [hsym] at hmap
-  have hIio_eq : (gaussianReal 0 1) (Set.Iio (0 : ℝ))
-      = (gaussianReal 0 1) (Set.Ioi (0 : ℝ)) := hmap.symm
-  have hvol0 : volume ({0} : Set ℝ) = 0 := by simp
-  have habs := gaussianReal_absolutelyContinuous
-    (μ := (0 : ℝ)) (v := (1 : ℝ≥0)) one_ne_zero
-  have hnull : gaussianReal 0 1 {0} = 0 := habs hvol0
-  have hdecomp : Set.Iic (0 : ℝ)
-      = Set.Iio (0 : ℝ) ∪ {0} := by
-    ext x
-    simp only [Set.mem_Iic, Set.mem_union, Set.mem_Iio,
-      Set.mem_singleton_iff]
-    constructor
-    · intro h
-      by_cases heq : x = 0
-      · exact Or.inr heq
-      · exact Or.inl (lt_of_le_of_ne h heq)
-    · intro h
-      cases h with
-      | inl hlt => exact le_of_lt hlt
-      | inr heq => rw [heq]
-  have hdisj2 : Disjoint (Set.Iio (0 : ℝ)) ({0} : Set ℝ) := by
-    rw [Set.disjoint_left]
-    intro x hx1 hx2
-    simp only [Set.mem_Iio, Set.mem_singleton_iff] at hx1 hx2
-    linarith
-  have hsing : MeasurableSet ({0} : Set ℝ) := by simp
-  have hIic_eq : (gaussianReal 0 1) (Set.Iic (0 : ℝ))
-      = (gaussianReal 0 1) (Set.Iio (0 : ℝ)) := by
-    rw [hdecomp]
-    have h2 : (gaussianReal 0 1) (Set.Iio 0 ∪ {0})
-        = (gaussianReal 0 1) (Set.Iio 0)
-          + (gaussianReal 0 1) ({0} : Set ℝ) := by
-      exact measure_union hdisj2 hsing
-    rw [h2, hnull, add_zero]
-  have hcdf : cdf (gaussianReal 0 1) 0
-      = (gaussianReal 0 1).real (Set.Iic 0) :=
-    cdf_eq_real (gaussianReal 0 1) 0
-  rw [hcdf]
-  rw [huniv] at hsplit
-  have hfin1 : (gaussianReal 0 1) (Set.Iic 0) ≠ ∞ := by
-    exact measure_ne_top _ _
-  have hfin2 : (gaussianReal 0 1) (Set.Ioi 0) ≠ ∞ := by
-    exact measure_ne_top _ _
-  have hreal_add : ((1 : ℝ≥0∞)).toReal
-      = ((gaussianReal 0 1) (Set.Iic 0)
-        + (gaussianReal 0 1) (Set.Ioi 0)).toReal := by
-    rw [← hsplit]
-  rw [ENNReal.toReal_add hfin1 hfin2] at hreal_add
-  simp only [ENNReal.toReal_one] at hreal_add
-  have h_eq_real : (gaussianReal 0 1).real (Set.Ioi 0)
-      = (gaussianReal 0 1).real (Set.Iic 0) := by
-    have h3 : (gaussianReal 0 1) (Set.Ioi 0)
-        = (gaussianReal 0 1) (Set.Iic 0) := by
-      rw [← hIio_eq, ← hIic_eq]
-    exact congrArg ENNReal.toReal h3
-  simp only [← MeasureTheory.measureReal_def] at hreal_add
-  rw [h_eq_real] at hreal_add
-  have h2eq : (1 : ℝ)
-      = (gaussianReal 0 1).real (Set.Iic 0)
-        + (gaussianReal 0 1).real (Set.Iic 0) := hreal_add
-  have hhalf : (gaussianReal 0 1).real (Set.Iic 0) = 1 / 2 := by
-    linarith
-  exact hhalf
+  exact cdf_gaussianReal_zero
 
 /-- T5: the Mills ratio at zero equals twice the density at zero. -/
 theorem T5_mills_zero_eq :
