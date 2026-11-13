@@ -28,9 +28,9 @@ and `0 < alpha < 1`, the reduced-form Solow map is
 convergence on the invariant interval between the starting point and the
 steady state, not by a contraction argument: `phi'(k) -> infinity` as
 `k -> 0+`, so no global contraction constant exists. The map is the
-per-effective-worker law of `MathlibExt.Economics.Macro.SolowLaw` with
-Cobb-Douglas production (see `solowMap_eq_law`); this file is self-contained
-and does not import that file.
+per-effective-worker law `k' = (s * f(k) + (1 - delta) * k) / D`, written out
+explicitly for Cobb-Douglas production (`solowMap_eq_law`, an algebraic
+identity).
 
 ## Main results
 
@@ -109,8 +109,9 @@ theorem solow_rpow_sub_one_eq {a b α : ℝ} (ha : 0 < a) (_hb₁ : b < 1)
   rw [eq_div_iff (ne_of_gt ha)]
   linear_combination h2
 
-/-- The reduced-form map is the per-effective-worker law of MA03.T01 with
-Cobb-Douglas production `f(k) = A * k ^ α`. -/
+/-- The reduced-form map agrees with the per-effective-worker law
+`k' = (s * f(k) + (1 - δ) * k) / D`, written out for Cobb-Douglas production
+`f(k) = A * k ^ α`. This is an algebraic identity in the explicit formula. -/
 theorem solowMap_eq_law {s δ D A α k : ℝ} (hD : D ≠ 0) :
     (s * (A * k ^ α) + (1 - δ) * k) / D =
       solowMap (s * A / D) ((1 - δ) / D) α k := by
