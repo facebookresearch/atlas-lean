@@ -19,6 +19,36 @@ import Mathlib.Tactic.Linarith
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
+/-! # No free lunch: averaging over targets on a finite domain
+
+A learner `L` maps a labelled sample to a hypothesis `X → Bool`. Fix `m` distinct sample points
+`x` in a finite domain `X`; `sampleOf x f` labels them with the target `f`, and
+`errCount x f h` counts the points outside the sample where `h` disagrees with `f`. This is
+the finite-domain core of roadmap package ML-05 of the Atlas TCS canon roadmap.
+
+* `nfl_average`: summed over all `2 ^ card X` targets, the learner trained on `sampleOf x f`
+  errs on exactly half of the (target, unseen point) pairs. This is the averaging step in the
+  proof of the No-Free-Lunch theorem below: the targets are paired so that the two targets of a
+  pair differ only at one unseen point `v`, the learner sees the same sample for both, and so it
+  errs at `v` on exactly one of them.
+* `nfl_tail`: if `card X = 2 * m`, then for at least a `1/7` fraction of the targets the learner
+  errs on more than a `1/8` fraction of the domain outside its sample.
+
+The No-Free-Lunch theorem (Theorem 5.1 in the source) uses the same constants on a different
+probability space. There the learner is given `m < |X| / 2` training points, the proof works on
+a `2m`-point subset `C` of the domain, the target is a fixed worst case, the sample is drawn
+i.i.d. from the uniform distribution on `C` labelled by that target, and the conclusion is that
+the true error is at least `1/8` with probability at least `1/7` over the sample. Here the domain
+plays the role of `C`, the `m` sample points are fixed and distinct, the probability is over a
+uniformly random target, and the error counts only unseen points, divided by `2m`, which is at
+most the true error under the uniform distribution on `X`. The threshold `1/8` is strict here,
+a smaller event than the theorem's `≥ 1/8`, so the bound on the number of targets is slightly
+stronger.
+
+Source: Shalev-Shwartz and Ben-David, Understanding Machine Learning (2014), Section 5.1,
+Theorem 5.1 (No-Free-Lunch) and its proof.
+-/
+
 variable {X : Type*} [Fintype X] [DecidableEq X] {m : ℕ}
 
 @[expose] public section
