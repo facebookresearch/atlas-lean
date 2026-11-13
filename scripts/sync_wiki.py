@@ -217,7 +217,7 @@ def lean_facts_for(name: str | None, own: dict | None, index, sorry) -> tuple[st
         if keyword in wiki.DEFINITION_DECLARATIONS:
             return keyword, None if has_sorry else "formalized"
         return keyword, "stated" if has_sorry else "formalized"
-    if own:
+    if own and "module" in own and "name" in own:
         source = wiki.ROOT / Path(*own["module"].split(".")).with_suffix(".lean")
         if source.is_file():
             for line in source.read_text().splitlines():
@@ -340,7 +340,7 @@ def annotation_key(annotation: dict) -> str | None:
     if name:
         return name
     own = annotation.get("extensions", {}).get(OWN)
-    return f"{own['module']}:{own['name']}" if own else None
+    return f"{own['module']}:{own['name']}" if own and "module" in own and "name" in own else None
 
 
 def digest(text: str) -> str:

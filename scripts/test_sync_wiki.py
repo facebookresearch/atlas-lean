@@ -133,6 +133,29 @@ class Seed(Vault):
 
 
 class LeanFacts(Vault):
+    def test_unlinked_docstring_provenance_stays_editorial(self) -> None:
+        page = self.page("Algebra/unlinked.md", "# Unlinked\n\nKeep the edited statement.\n")
+        annotation = self.about("Algebra/unlinked.md", id="af_unlinked",
+                                extensions={sync.OWN: {"from": "docstring"}})
+        self.annotate([annotation])
+        index = SimpleNamespace(declarations={})
+        for _ in range(2):
+            counts, unlinked = sync.apply_lean_facts(index, {})
+            self.assertEqual(counts, {"articles": 0, "unresolved": 1, "edges": 0})
+            self.assertEqual(unlinked, [])
+            self.assertEqual(page.read_text(), "# Unlinked\n\nKeep the edited statement.\n")
+        row = sync.read_annotations()[sync.LINKS / "Algebra.jsonl"][0]
+        self.assertEqual(row, annotation)
+        self.assertIsNone(sync.annotation_key(row))
+
+    def test_incomplete_private_target_metadata_has_no_source_key(self) -> None:
+        for own in ({"from": "docstring"}, {"module": "Ext.Groups"}, {"name": "missing"}):
+            with self.subTest(own=own):
+                self.assertEqual(sync.lean_facts_for(None, own,
+                                                   SimpleNamespace(declarations={}),
+                                                   lambda _: False), (None, None))
+                self.assertIsNone(sync.annotation_key({"extensions": {sync.OWN: own}}))
+
     def test_kinds_statuses_and_dependencies(self) -> None:
         source = self.tmp / "Ext" / "Groups.lean"
         source.parent.mkdir(parents=True)
