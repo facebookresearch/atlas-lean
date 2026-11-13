@@ -117,7 +117,8 @@ example : kmMartingaleIntegral T₀ C₀ S₀ Λ₀ 3 2 = -(exp 1 - 1) := by
       simp [kmIntegrand, kaplanMeierOneLeft, atRiskProcess, hs, h2, S₀, exp_neg]
     · simp [kmIntegrand, kaplanMeierOneLeft, atRiskProcess, hs]
   rw [kmMartingaleIntegral, hN, Measure.restrict_zero, integral_zero_measure, hf,
-    setIntegral_indicator measurableSet_Iic, Ioc_inter_Iic, min_eq_right (by norm_num : (1 : ℝ) ≤ 3),
+    setIntegral_indicator measurableSet_Iic, Ioc_inter_Iic,
+    min_eq_right (by norm_num : (1 : ℝ) ≤ 3),
     Λ₀_restrict_Ioc, ← intervalIntegral.integral_of_le zero_le_one, integral_exp, exp_zero]
   ring
 
