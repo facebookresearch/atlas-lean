@@ -11,14 +11,16 @@ public import Mathlib.Analysis.Complex.Trigonometric
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 
 /-!
-# Surface gravity waves and wave energetics
+# Surface gravity waves: dispersion from the surface conditions
 
-A specified linear irrotational finite-depth wave ansatz satisfies the
-dispersion relation `ω^2 = g k tanh (k H)`. The linearized free-surface
-conditions give a kinematic relation `ω a = k tanh (kH) b` and a dynamic
+The assumed linearized free-surface conditions of a finite-depth surface
+gravity wave imply the dispersion relation `ω^2 = g k tanh (k H)`. The
+conditions are a kinematic relation `ω a = k tanh (kH) b` and a dynamic
 relation `ω b = g a` between the surface amplitude `a` and the
 velocity-potential amplitude `b`; eliminating `a` and `b` gives the
-dispersion relation.
+dispersion relation. No wave ansatz, governing equation, or derivation of
+the surface conditions is formalized; the results take the two conditions as
+hypotheses.
 
 ## i. Overview
 
@@ -38,6 +40,21 @@ here; phase speed `ω / k` is distinct from group speed.
 
 ## iv. References
 
+- R. G. Dean and R. A. Dalrymple, *Water Wave Mechanics for Engineers and
+  Scientists*, Advanced Series on Ocean Engineering, Vol. 2, World Scientific
+  (1991), Chapter 3 (Small-Amplitude Water Wave Theory Formulation and
+  Solution), Section 3.4: the linearized kinematic and dynamic free-surface
+  conditions for a progressive wave over a horizontal bottom, and the
+  dispersion relation `σ² = g k tanh (k h)`.
+  Notation map: their `σ`, `k`, `h` are `ω`, `k`, `H` here, and their wave
+  height `H` is `2 a`. The two conditions are the coefficient equations of
+  `η = a cos (k x - ω t)` and
+  `φ = b cosh (k (z + H)) / cosh (k H) * sin (k x - ω t)` (still water at
+  `z = 0`, flat bottom at `z = -H`, velocity `∇φ`): the kinematic condition
+  `∂η/∂t = ∂φ/∂z` and the dynamic condition `∂φ/∂t + g η = 0`, both
+  linearized at `z = 0`. Dean and Dalrymple take the velocity to be `-∇φ`,
+  so their potential is `-φ`; their solution has `b = g a / ω`, which is
+  `(H / 2) (g / σ)` in their notation.
 - `Real.tanh_eq_sinh_div_cosh` in
   `Mathlib/Analysis/Complex/Trigonometric.lean`
   (Mathlib).
