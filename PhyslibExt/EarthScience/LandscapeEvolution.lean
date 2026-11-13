@@ -30,7 +30,6 @@ no claim about real landscapes is made.
 - `EarthScience.hillslope_profile_boundary`: the profile meets `z(±L) = 0`.
 - `EarthScience.hillslope_profile_hasDerivAt`: `z'(x) = -U * x / D`.
 - `EarthScience.hillslope_profile_steady`: `z''(x) = -U / D` and `U + D * z'' = 0`.
-- `EarthScience.hillslope_profile_witness`: `U = 2, D = 1, L = 3` gives `z(0) = 9`.
 
 ## iii. Table of contents
 
@@ -114,10 +113,5 @@ theorem hillslope_profile_steady {D L U : ℝ} (hD : 0 < D) (hL : 0 < L) (hU : 0
   rw [hsecond]
   field_simp
   ring
-
-/-- Non-vacuous witness: `U = 2, D = 1, L = 3` gives `z(0) = 9`. -/
-theorem hillslope_profile_witness :
-    (2 : ℝ) * ((3 : ℝ) ^ 2 - (0 : ℝ) ^ 2) / (2 * 1) = 9 := by
-  norm_num
 
 end EarthScience

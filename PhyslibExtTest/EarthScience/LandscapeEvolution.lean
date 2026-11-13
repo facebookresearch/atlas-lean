@@ -41,8 +41,7 @@ example : (2 : ℝ) * ((3 : ℝ) ^ 2 - (3 : ℝ) ^ 2) / (2 * 1) = 0 ∧
   EarthScience.hillslope_profile_boundary (by norm_num) (by norm_num) (by norm_num)
 
 /-- Numeric profile at `x = 0`: `z(0) = 9`. -/
-example : (2 : ℝ) * ((3 : ℝ) ^ 2 - (0 : ℝ) ^ 2) / (2 * 1) = 9 :=
-  EarthScience.hillslope_profile_witness
+example : (2 : ℝ) * ((3 : ℝ) ^ 2 - (0 : ℝ) ^ 2) / (2 * 1) = 9 := by norm_num
 
 /-- Numeric profile at `x = 1`: `z(1) = 8`. -/
 example : (2 : ℝ) * ((3 : ℝ) ^ 2 - (1 : ℝ) ^ 2) / (2 * 1) = 8 := by norm_num
