@@ -23,13 +23,19 @@ limitations under the License.
 
 Attribution and modification notice (Apache License 2.0, Section 4):
 taken from leanprover/lean-eval at commit
-38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.KnotTheory.Quadrisecant` — smooth_knot_has_quadrisecant (manifest `manifests/problems/smooth_knot_has_quadrisecant.toml`, rev 1, submitter Kim Morrison, status active) —
+38361be884302c7edce1908c4aef8296eb2cb27e, module `LeanEval.KnotTheory.Quadrisecant` —
+smooth_knot_has_quadrisecant (manifest `manifests/problems/smooth_knot_has_quadrisecant.toml`, rev
+1, submitter Kim Morrison, status active) —
 distributed under the Apache License, Version 2.0. lean-eval ships no
 `NOTICE` file. Changes made: converted each `@[eval_problem]` theorem
 into a Batteries `theorem_wanted` (data/instance holes into
 `def_wanted`), replaced `EvalTools.Markers` with
 `Batteries.Util.ProofWanted`, inlined any `LeanEval` helper modules,
-and placed the declarations in the `MathlibExt.Topology.QuadrisecantWanted` namespace. The theorem is restated over the shared knot type `MathlibExt.Topology.ConwayKnotShared.KnotTheory.Knot` (the upstream curve predicate repeats that type's fields), with only the quadrisecant/unknot predicates defined here. Mathematical statements are unchanged otherwise. Source: E. Pannwitz (1933); G. Kuperberg, *Quadrisecants of knots and links*, J. Knot Theory Ramif. 3 (1994). Knill, §161.
+and placed the declarations in the `MathlibExt.Topology.QuadrisecantWanted` namespace. The theorem
+is restated over the shared knot type `MathlibExt.Topology.ConwayKnotShared.KnotTheory.Knot` (the
+upstream curve predicate repeats that type's fields), with only the quadrisecant/unknot predicates
+defined here. Mathematical statements are unchanged otherwise. Source: E. Pannwitz (1933); G.
+Kuperberg, *Quadrisecants of knots and links*, J. Knot Theory Ramif. 3 (1994). Knill, §161.
 -/
 module
 
@@ -78,7 +84,9 @@ def HasQuadrisecant (K : Knot) : Prop :=
 
 /- **Quadrisecant theorem** (Pannwitz–Kuperberg). Every smooth nontrivial knot
 has a quadrisecant. -/
-/-- Source: E. Pannwitz (1933); G. Kuperberg, *Quadrisecants of knots and links*, J. Knot Theory Ramif. 3 (1994). Knill, §161. Via leanprover/lean-eval@38361be, problem `smooth_knot_has_quadrisecant`. -/
+/-- Source: E. Pannwitz (1933); G. Kuperberg, *Quadrisecants of knots and links*, J. Knot Theory
+Ramif. 3 (1994). Knill, §161. Via leanprover/lean-eval@38361be, problem
+`smooth_knot_has_quadrisecant`. -/
 public theorem_wanted smooth_knot_has_quadrisecant
     (K : Knot) (_hnontrivial : ¬ IsUnknotted K) :
     HasQuadrisecant K
