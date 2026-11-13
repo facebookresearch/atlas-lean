@@ -17,12 +17,14 @@ For a smooth periodic solution of `c_t + U * c_x = D * c_xx` on
 `[0, L]` with `L > 0` and `D ≥ 0`,
 `d/dt ∫_0^L c^2 / 2 = -D * ∫_0^L c_x^2 ≤ 0`.
 
-The proof is conditional: `ct`, `cx`, `cxx` are the time, space, and
-second-space derivatives given by `HasDerivAt` hypotheses, the PDE
-holds pointwise, `c` and `cx` are periodic (equal values at `0` and
-`L`, so both boundary terms vanish), and differentiation under the
-integral sign is a hypothesis (`hInter`). No existence result for
-arbitrary initial data is claimed. Energy here is squared-L2
+The proof is conditional and local to the time `t` and the interval:
+`ct`, `cx`, `cxx` are the time, space, and second-space derivatives
+given by `HasDerivAt` hypotheses at `t` and at each `x ∈ [0, L]`, the
+PDE holds at `t` for each `x ∈ [0, L]`, `c t` and `cx t` are periodic
+(equal values at `0` and `L`, so both boundary terms vanish), and
+differentiation under the integral sign is a hypothesis (`hInter`).
+Nothing is assumed outside `[0, L]` or at other times. No existence
+result for arbitrary initial data is claimed. Energy here is squared-L2
 concentration, not thermodynamic energy.
 
 ## Key results
@@ -43,18 +45,19 @@ set_option linter.unusedVariables false in
 `c_t + U * c_x = D * c_xx` on `[0, L]`,
 `d/dt ∫_0^L c^2 / 2 = -D * ∫_0^L c_x^2`.
 `ct`, `cx`, `cxx` are the time, space, and second-space derivatives
-of `c`, given by the `HasDerivAt` hypotheses; `hInter` is the
-differentiation-under-the-integral hypothesis (interchange
-regularity); periodicity is `c` and `cx` taking equal values at
-`0` and `L`. This is a conditional identity, not an existence
-result. -/
+of `c` at time `t`, given by the `HasDerivAt` hypotheses for
+`x ∈ [0, L]`; the PDE is assumed only at `t` and for `x ∈ [0, L]`;
+`hInter` is the differentiation-under-the-integral hypothesis
+(interchange regularity); periodicity is `c t` and `cx t` taking equal
+values at `0` and `L`. This is a conditional identity, not an
+existence result. -/
 theorem energy_deriv {L D U : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
     (c ct cx cxx : ℝ → ℝ → ℝ) (t : ℝ)
-    (hct : ∀ t x, HasDerivAt (fun s => c s x) (ct t x) t)
-    (hcx : ∀ t x, HasDerivAt (fun y => c t y) (cx t x) x)
-    (hcxx : ∀ t x, HasDerivAt (fun y => cx t y) (cxx t x) x)
-    (hPDE : ∀ t x, ct t x + U * cx t x = D * cxx t x)
-    (hper_c : ∀ t, c t 0 = c t L) (hper_cx : ∀ t, cx t 0 = cx t L)
+    (hct : ∀ x ∈ Set.uIcc 0 L, HasDerivAt (fun s => c s x) (ct t x) t)
+    (hcx : ∀ x ∈ Set.uIcc 0 L, HasDerivAt (fun y => c t y) (cx t x) x)
+    (hcxx : ∀ x ∈ Set.uIcc 0 L, HasDerivAt (fun y => cx t y) (cxx t x) x)
+    (hPDE : ∀ x ∈ Set.uIcc 0 L, ct t x + U * cx t x = D * cxx t x)
+    (hper_c : c t 0 = c t L) (hper_cx : cx t 0 = cx t L)
     (hInter : HasDerivAt (fun t => ∫ x in (0 : ℝ)..L, (c t x) ^ 2 / 2)
       (∫ x in (0 : ℝ)..L, c t x * ct t x) t)
     (hInt_cxx : IntervalIntegrable (fun x => c t x * cxx t x) volume 0 L)
@@ -64,16 +67,16 @@ theorem energy_deriv {L D U : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
       (-D * ∫ x in (0 : ℝ)..L, (cx t x) ^ 2) t := by
   have hmul : ∀ x ∈ Set.uIcc (0 : ℝ) L,
       HasDerivAt (fun y => c t y * cx t y) ((cx t x) ^ 2 + c t x * cxx t x) x := by
-    intro x _
-    have h := (hcx t x).fun_mul (hcxx t x)
+    intro x hx
+    have h := (hcx x hx).fun_mul (hcxx x hx)
     have hval : (cx t x) ^ 2 + c t x * cxx t x
         = cx t x * cx t x + c t x * cxx t x := by ring
     rw [hval]
     exact h
   have hsq : ∀ x ∈ Set.uIcc (0 : ℝ) L,
       HasDerivAt (fun y => (c t y) ^ 2 / 2) (c t x * cx t x) x := by
-    intro x _
-    have h := ((hcx t x).fun_mul (hcx t x)).div_const 2
+    intro x hx
+    have h := ((hcx x hx).fun_mul (hcx x hx)).div_const 2
     have hval : c t x * cx t x = (cx t x * c t x + c t x * cx t x) / 2 := by ring
     simp only [pow_two]
     rw [hval]
@@ -84,7 +87,7 @@ theorem energy_deriv {L D U : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
       = c t L * cx t L - c t 0 * cx t 0 :=
     integral_eq_sub_of_hasDerivAt hmul hInt_sum
   have hbc1 : c t L * cx t L - c t 0 * cx t 0 = 0 := by
-    rw [hper_c t, hper_cx t, sub_self]
+    rw [hper_c, hper_cx, sub_self]
   have hadd1 : ∫ x in (0 : ℝ)..L, ((cx t x) ^ 2 + c t x * cxx t x)
       = (∫ x in (0 : ℝ)..L, (cx t x) ^ 2) + ∫ x in (0 : ℝ)..L, c t x * cxx t x :=
     integral_add hInt_cx2 hInt_cxx
@@ -98,16 +101,14 @@ theorem energy_deriv {L D U : ℝ} (hL : 0 < L) (hD : 0 ≤ D)
       = (c t L) ^ 2 / 2 - (c t 0) ^ 2 / 2 :=
     integral_eq_sub_of_hasDerivAt hsq hInt_ccx
   have hbc2 : (c t L) ^ 2 / 2 - (c t 0) ^ 2 / 2 = 0 := by
-    rw [hper_c t, sub_self]
+    rw [hper_c, sub_self]
   have hccx_zero : ∫ x in (0 : ℝ)..L, c t x * cx t x = 0 := by
     rw [hFTC2, hbc2]
   have hcongr : ∫ x in (0 : ℝ)..L, c t x * ct t x
       = ∫ x in (0 : ℝ)..L, ((-U) * (c t x * cx t x) + D * (c t x * cxx t x)) := by
-    apply integral_congr_ae_restrict
-    refine Filter.Eventually.of_forall (fun x => ?_)
-    change c t x * ct t x = (-U) * (c t x * cx t x) + D * (c t x * cxx t x)
+    refine intervalIntegral.integral_congr fun x hx => ?_
     have hct_eq : ct t x = D * cxx t x - U * cx t x := by
-      linear_combination hPDE t x
+      linear_combination hPDE x hx
     rw [hct_eq]
     ring
   have hIntA : IntervalIntegrable (fun x => (-U) * (c t x * cx t x)) volume 0 L :=
