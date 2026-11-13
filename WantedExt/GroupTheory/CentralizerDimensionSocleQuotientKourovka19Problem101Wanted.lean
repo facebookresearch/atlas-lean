@@ -22,6 +22,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.GroupTheory.Index
 public import Mathlib.GroupTheory.Solvable
 public import Mathlib.Order.CompletePartialOrder
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -40,9 +41,7 @@ with `S ≤ A` and `[A, A] ≤ S`; its index is `|G : A|`, required finite (Math
 infinite index).
 -/
 
-/-- `G` is locally finite: every finitely generated subgroup is finite. -/
-def IsLocallyFinite (G : Type) [Group G] : Prop :=
-  ∀ s : Finset G, Finite (Subgroup.closure (s : Set G))
+open MathlibExt.GroupTheory.GroupClassesShared (IsLocallyFinite)
 
 /-- `H` is locally soluble: every finitely generated subgroup of `H` is soluble. -/
 def IsLocallySoluble {G : Type} [Group G] (H : Subgroup G) : Prop :=

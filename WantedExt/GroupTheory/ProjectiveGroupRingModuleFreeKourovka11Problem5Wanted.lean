@@ -20,6 +20,7 @@ public import Batteries.Util.ProofWanted
 public import Mathlib.Algebra.Module.Projective
 public import Mathlib.GroupTheory.OrderOfElement
 public import Mathlib.RingTheory.Finiteness.Defs
+public import WantedExt.GroupTheory.GroupClassesShared
 
 @[expose] public section
 
@@ -32,24 +33,14 @@ UM-00700698 (`KOU-11.5`), dataset ulamai/UnsolvedMath v1.8.0.
 
 The statement is the literal one, over an arbitrary commutative ring `k`, which is what the Notebook
 asks and what its accepted answer refutes. Almost polycyclic means polycyclic-by-finite (a
-polycyclic subgroup of finite index); torsion-free means no nontrivial element of finite order. The
-group ring `kG` is `MonoidAlgebra k G`, and two independent elements are a `kG`-linearly independent
-pair. The refutation uses a coefficient ring that is not a field, `𝔽₂ × 𝔽₂` (it has nontrivial
-idempotents), and the trivial group; the question for field coefficients is not settled by it.
+polycyclic subgroup of finite index; `IsAlmostPolycyclic` of `GroupClassesShared`); torsion-free
+means no nontrivial element of finite order. The group ring `kG` is `MonoidAlgebra k G`, and two
+independent elements are a `kG`-linearly independent pair. The refutation uses a coefficient ring
+that is not a field, `𝔽₂ × 𝔽₂` (it has nontrivial idempotents), and the trivial group; the question
+for field coefficients is not settled by it.
 -/
 
-/-- `G` is polycyclic: it has a finite subnormal series `1 = H₀ ≤ H₁ ≤ ⋯ ≤ Hₙ = G`, each `Hᵢ`
-normal in `Hᵢ₊₁`, with cyclic factors `Hᵢ₊₁ / Hᵢ`. -/
-def IsPolycyclic (G : Type*) [Group G] : Prop :=
-  ∃ (n : ℕ) (H : Fin (n + 1) → Subgroup G), H 0 = ⊥ ∧ H (Fin.last n) = ⊤ ∧
-    ∀ i : Fin n, H i.castSucc ≤ H i.succ ∧
-      ∃ _ : ((H i.castSucc).subgroupOf (H i.succ)).Normal,
-        IsCyclic (H i.succ ⧸ (H i.castSucc).subgroupOf (H i.succ))
-
-/-- `G` is almost polycyclic (polycyclic-by-finite): some subgroup of finite index is
-polycyclic. -/
-def IsAlmostPolycyclic (G : Type*) [Group G] : Prop :=
-  ∃ H : Subgroup G, H.FiniteIndex ∧ IsPolycyclic H
+open MathlibExt.GroupTheory.GroupClassesShared (IsAlmostPolycyclic)
 
 /-- Kourovka 11.5 (V. A. Artamonov): if `k` is a commutative ring, `G` a torsion-free almost
 polycyclic group and `P` a finitely generated projective `kG`-module containing two elements that

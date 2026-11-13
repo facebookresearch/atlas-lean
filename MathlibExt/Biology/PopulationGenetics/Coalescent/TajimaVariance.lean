@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.Tajima
+public import MathlibExt.Biology.PopulationGenetics.Coalescent.Topology
 public import Mathlib.Probability.Moments.Covariance
 import Mathlib.Probability.Independence.Integration
 import Mathlib.Data.Nat.Choose.Cast
@@ -53,8 +54,8 @@ The genealogy enters through the following properties of Kingman's coalescent, w
   `{j, k}` is the symmetric difference of the pairs); for disjoint pairs `E ℓ = 2/3`;
 * `E[τ s L] = 2 a₁ + (n + 2) / n`. `integral_pairTime_mul_totalLength` derives this from the
   representation `τ s = ∑_k 1[s separate while k lineages] T k` with the classical
-  probability `(k - 1) (n + 1) / ((n - 1) (k + 1))` that a given pair is still separate when
-  there are `k` lineages, under independence of topology and holding times.
+  probability `pairSeparateProb n k = (k - 1) (n + 1) / ((n - 1) (k + 1))` that a given pair is
+  still separate when there are `k` lineages, under independence of topology and holding times.
 
 The constants `4/3`, `11/9`, `2/3` follow by conditioning on the ranked topology of three or
 four genes (equally likely ranked histories, independent holding times `Exp(C(k, 2))`).
@@ -458,27 +459,9 @@ private theorem memLp_meanPairDiff {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ :
     MemLp (meanPairDiff n D) 2 μ :=
   (memLp_finsetSum (samplePairs n) hD2).const_mul _
 
-/-! ### The probability that a pair is still separate -/
+/-! ### A weighted sum of pair-separation probabilities
 
-/-- The probability `(k - 1) (n + 1) / ((n - 1) (k + 1))` that a given pair of a sample of
-size `n` is still in two distinct lineages while the genealogy has `k` lineages
-(`2 ≤ k ≤ n`, `n ≥ 2`; at `n = 1` the definition divides by zero and returns `0`). -/
-def pairSeparateProb (n k : ℕ) : ℝ :=
-  ((k : ℝ) - 1) * ((n : ℝ) + 1) / (((n : ℝ) - 1) * ((k : ℝ) + 1))
-
-/-- `∑_{k=2}^n 1 / (k (k + 1)) = 1/2 - 1/(n + 1)`. -/
-private theorem sum_recip_mul_succ (n : ℕ) (hn : 2 ≤ n) :
-    ∑ k ∈ Icc 2 n, 1 / ((k : ℝ) * ((k : ℝ) + 1)) =
-      1 / 2 - 1 / ((n : ℝ) + 1) := by
-  induction n, hn using Nat.le_induction with
-  | base => norm_num
-  | succ n hn ih =>
-    rw [sum_Icc_succ_top (Nat.le_trans hn (Nat.le_succ n)), ih]
-    norm_num only [Nat.cast_add, Nat.cast_one]
-    have h1 : (n : ℝ) + 1 ≠ 0 := by positivity
-    have h2 : (n : ℝ) + 1 + 1 ≠ 0 := by positivity
-    field_simp [h1, h2]
-    ring
+`pairSeparateProb` and `sum_pairSeparateProb_div_choose` are in `Topology.lean`. -/
 
 /-- `∑_{k=2}^n 1 / ((k - 1) k (k + 1)) = 1/4 - 1/(2 n (n + 1))`. -/
 private theorem sum_recip_pred_mul_succ (n : ℕ) (hn : 2 ≤ n) :
@@ -495,31 +478,6 @@ private theorem sum_recip_pred_mul_succ (n : ℕ) (hn : 2 ≤ n) :
     have h2 : (n : ℝ) + 1 + 1 ≠ 0 := by positivity
     field_simp [h0, h1, h2]
     ring
-
-/-- `∑_{k=2}^n p_k / C(k, 2) = 1`: the mean coalescence time of a pair is `1`. -/
-theorem sum_pairSeparateProb_div_choose {n : ℕ} (hn : 2 ≤ n) :
-    ∑ k ∈ Icc 2 n, pairSeparateProb n k * ((k.choose 2 : ℕ) : ℝ)⁻¹ = 1 := by
-  have hn' : (2 : ℝ) ≤ n := by exact_mod_cast hn
-  have hn1 : (n : ℝ) - 1 ≠ 0 := by linarith
-  have hn2 : (n : ℝ) + 1 ≠ 0 := by positivity
-  calc
-    _ = ∑ k ∈ Icc 2 n,
-        (2 * ((n : ℝ) + 1) / ((n : ℝ) - 1)) *
-          (1 / ((k : ℝ) * ((k : ℝ) + 1))) := by
-      apply sum_congr rfl
-      intro k hk
-      have hk' : (2 : ℝ) ≤ k := by exact_mod_cast (mem_Icc.mp hk).1
-      have hk0 : (k : ℝ) ≠ 0 := by linarith
-      have hk1 : (k : ℝ) - 1 ≠ 0 := by linarith
-      have hk2 : (k : ℝ) + 1 ≠ 0 := by positivity
-      rw [pairSeparateProb, Nat.cast_choose_two]
-      field_simp [hn1, hk0, hk1, hk2]
-    _ = (2 * ((n : ℝ) + 1) / ((n : ℝ) - 1)) *
-        (1 / 2 - 1 / ((n : ℝ) + 1)) := by
-      rw [← mul_sum, sum_recip_mul_succ n hn]
-    _ = 1 := by
-      field_simp [hn1, hn2]
-      ring
 
 /-- `∑_{k=2}^n k p_k / C(k, 2)² = (n + 2) / n`. -/
 theorem sum_mul_pairSeparateProb_div_choose_sq {n : ℕ} (hn : 2 ≤ n) :

@@ -198,6 +198,8 @@ section mgsyz_FreeDecomposition
 
 variable (K : Type u) [Field K] {n : ℕ} {ι : Type u}
 
+/-- `K` acts on `ι →₀ MvPolynomial (Fin n) K` through `MvPolynomial.C`. -/
+@[nolint defsWithUnderscore]
 local instance : Module K (ι →₀ MvPolynomial (Fin n) K) :=
   Module.compHom _ (MvPolynomial.C : K →+* MvPolynomial (Fin n) K)
 
@@ -1269,6 +1271,7 @@ private noncomputable def mgsyz_multigradedResolution
 
 end mgsyz_Stages
 
+set_option linter.unusedVariables false in
 /-- Existence of a finite multigraded free resolution over `MvPolynomial`.
 
 Direct source: Hoffman–Wang,

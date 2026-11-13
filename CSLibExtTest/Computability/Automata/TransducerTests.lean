@@ -72,6 +72,71 @@ example : (SequentialTransducer.comp idSeq idSeq).Translates [true] [true] := by
 example : (SequentialTransducer.preimage idSeq (1 : Language Bool)).IsRegular :=
   SequentialTransducer.isRegular_preimage idSeq Cslib.Language.IsRegular.one
 
+universe u v w
+
+example {State : Type u} {In Out : Type v}
+    (S : SequentialTransducer State In Out) (xs : List In) (ys : List Out) :
+    Transducer.Translates S xs ys ↔ S.Translates xs ys :=
+  SequentialTransducer.translates_iff S xs ys
+
+example {State : Type u} {In : Type v} {Out : Type w}
+    (S : SequentialTransducer State In Out) :
+    S.Translates [] (S.initOut ++ S.finalOut S.start) ↔ S.start ∈ S.accept := by
+  simp only [SequentialTransducer.Translates, SequentialTransducer.runState_nil,
+    SequentialTransducer.runOut_nil, List.append_nil, and_true]
+
+/-- A sequential transducer erasing its input and emitting initial and final markers. -/
+def framedSeq : SequentialTransducer Unit Bool Bool where
+  step _ _ := ((), [])
+  start := ()
+  accept := Set.univ
+  initOut := [true]
+  finalOut _ := [false]
+
+example : Transducer.Translates framedSeq [] [true, false] :=
+  ⟨Set.mem_univ _, rfl⟩
+
+example : Transducer.Translates framedSeq [false] [true, false] :=
+  ⟨Set.mem_univ _, rfl⟩
+
+example : ¬ Transducer.Translates
+    (show SequentialTransducer Unit Bool Bool from { idSeq with accept := ∅ }) [] [] := by
+  rintro ⟨h, _⟩
+  exact h
+
+example : Transducer.Translates idSeq [] [] :=
+  ⟨Set.mem_univ _, rfl⟩
+
+example : Transducer.Translates idMealy [true, false] [true, false] := by
+  rw [MealyMachine.translates_iff]
+  rfl
+
+example : ¬ Transducer.Translates idMealy [true] [false] := by
+  rw [MealyMachine.translates_iff]
+  decide
+
+example : Transducer.Translates stateMoore [] [false] := by
+  rw [MooreMachine.translates_iff]
+  rfl
+
+example : ¬ Transducer.Translates stateMoore [] [] := by
+  rw [MooreMachine.translates_iff]
+  decide
+
+example {State : Type u} {In Out : Type v} (M : MealyMachine State In Out)
+    (xs : List In) (ys : List Out) :
+    Transducer.Translates M xs ys ↔ M.transduce xs = ys :=
+  MealyMachine.translates_iff M xs ys
+
+example {State : Type u} {In Out : Type v} (M : MooreMachine State In Out)
+    (xs : List In) (ys : List Out) :
+    Transducer.Translates M xs ys ↔ M.transduce xs = ys :=
+  MooreMachine.translates_iff M xs ys
+
+#print axioms Cslib.Automata.SequentialTransducer.translates_iff
+#print axioms Cslib.Automata.MealyMachine.translates_iff
+#print axioms Cslib.Automata.MooreMachine.translates_iff
+
 #print axioms Cslib.Automata.SequentialTransducer.translates_comp_iff
 #print axioms Cslib.Automata.SequentialTransducer.isRegular_preimage
 #print axioms Cslib.Automata.MealyMachine.translates_toSequential_iff
