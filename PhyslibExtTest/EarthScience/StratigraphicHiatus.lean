@@ -35,9 +35,9 @@ No new definitions or results are introduced here.
 
 open EarthScience
 
-/-- Below the hiatus: with `v = 2`, depth `4` has age `2`. -/
+/-- Above (shallower than) the hiatus: with `v = 2`, depth `4` has age `2`. -/
 example : hiatusAge 2 10 3 4 = 2 := by
-  rw [hiatus_age_below (by norm_num)]
+  rw [hiatus_age_above (by norm_num)]
   norm_num
 
 /-- At the hiatus: with `v = 2`, `h = 10`, `g = 3`, the age at depth `10` is `8`. -/
@@ -53,7 +53,7 @@ example : hiatusAge 2 10 3 10 - 10 / 2 = 3 := by
 /-- Straddling pair: depths `4` and `12` differ in age by `7`, more than the
 constant-accumulation difference `(12 - 4) / 2 = 4`. -/
 example : hiatusAge 2 10 3 12 - hiatusAge 2 10 3 4 = 7 := by
-  rw [hiatus_age_straddle (by norm_num) (by norm_num) (by norm_num) (by norm_num)]
+  rw [hiatus_age_straddle (by norm_num) (by norm_num)]
   norm_num
 
 /-- No negative rate: the deeper of the straddling pair is strictly older. -/
