@@ -18,9 +18,8 @@ Concrete consumers of `PhyslibExt.EarthScience.GlobalMeanSolarInput`.
 
 Concrete case `S₀ = 1361`, `R = 6371000`: the global mean is `340.25`.
 Boundary cases: `R = 0` is excluded from the division theorem, so the
-reassociation identity (which holds at `R = 0`) and the mean-times-area
-identity (which holds at `R = 0`) are checked there instead; `S₀ = 0`
-gives mean `0`.
+mean-times-area identity (which holds at `R = 0`) is checked there
+instead; `S₀ = 0` gives mean `0`.
 
 ## ii. Key results
 
@@ -39,11 +38,6 @@ No new definitions or results are introduced here.
 example : ((1361 : ℝ) * (Real.pi * (6371000 : ℝ) ^ 2)) /
     (4 * Real.pi * (6371000 : ℝ) ^ 2) = 1361 / 4 :=
   EarthScience.global_mean_solar_input_eq (by norm_num)
-
-/-- Boundary case `R = 0`: the reassociation identity holds (both sides
-`0`). -/
-example : 4 * Real.pi * (0 : ℝ) ^ 2 = 4 * (Real.pi * (0 : ℝ) ^ 2) :=
-  EarthScience.four_mul_pi_mul_sq_assoc
 
 /-- Boundary case `R = 0`: mean times area recovers intercepted power
 (both `0`). -/

@@ -21,20 +21,17 @@ standard disk-area formula `π R²` the total intercepted power is
 standard sphere-area formula `4π R²` gives the global mean solar input
 `S₀ / 4`. Physically the factor of four comes from disk/sphere geometry
 rather than from the atmosphere; this file takes both area formulas as
-given and proves only algebraic identities between them. It does not
+given and proves only algebraic identities involving them. It does not
 derive either area from a measure.
 
 ## i. Overview
 
-The expression `4π R²` is `4 · (π R²)` by reassociation. Dividing the
-intercepted power by `4π R²` cancels `π R²` (for `R ≠ 0`) and leaves
-`S₀ / 4`; multiplying the mean by `4π R²` recovers the intercepted
-power.
+Dividing the intercepted power by `4π R²` cancels `π R²` (for `R ≠ 0`)
+and leaves `S₀ / 4`; multiplying the mean by `4π R²` recovers the
+intercepted power.
 
 ## ii. Key results
 
-- `EarthScience.four_mul_pi_mul_sq_assoc`: the algebraic identity
-  `4 * π * R ^ 2 = 4 * (π * R ^ 2)` (no area is derived).
 - `EarthScience.global_mean_solar_input_eq`: the global mean is `S₀ / 4`.
 - `EarthScience.global_mean_solar_input_times_area`: mean times `4π R²`
   is the intercepted power.
@@ -53,14 +50,6 @@ power.
 @[expose] public section
 
 namespace EarthScience
-
-/-- Algebraic identity (reassociation): `4 * π * R ^ 2 = 4 * (π * R ^ 2)`.
-Read with the standard formulas `4π R²` for the area of a sphere and `π R²`
-for the area of its cross-sectional disk, it restates the first formula as
-four times the second; the formulas themselves are assumed, not derived. -/
-lemma four_mul_pi_mul_sq_assoc {R : ℝ} :
-    4 * Real.pi * R ^ 2 = 4 * (Real.pi * R ^ 2) := by
-  ring
 
 /-- Global mean solar input: total intercepted power `S₀ π R²` spread over
 the sphere area `4π R²` is `S₀ / 4`. -/
