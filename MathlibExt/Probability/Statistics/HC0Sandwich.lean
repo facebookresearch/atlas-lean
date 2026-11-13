@@ -25,11 +25,13 @@ public import Mathlib.MeasureTheory.Order.Group.Lattice
 # HC0 (Eicker-Huber-White) sandwich estimator consistency
 
 The HC0 meat `Ω̂_n = n⁻¹ ∑_{i<n} û_i² * (x_i x_iᵀ)` with OLS residuals
-`û_i = u_i - x_i ⬝ᵥ (β̂_n - β)`, and the sandwich `Q̂_n⁻¹ Ω̂_n Q̂_n⁻¹`.
+`û_i = u_i - x_i ⬝ᵥ (β̂_n - β)`, and the sandwich `Q̂_n⁻¹ Ω̂_n Q̂_n⁻ᵀ`. The right factor is
+the transpose of the bread inverse, as in a covariance sandwich; for a symmetric bread such
+as the OLS Gram matrix it is the inverse itself.
 
 CONDITIONAL RESULT: this file assumes a.s. consistency of the OLS estimator
-(`β̂_n → β`, hypothesis `hβ`) and bread / bread-inverse convergence
-(`hQ`, `hQinv`). It does not prove them. An unconditional result requires
+(`β̂_n → β`, hypothesis `hβ`) and bread-inverse convergence (`hQinv`). It does not
+prove them. An unconditional result requires
 ST05.T01 (OLS consistency); discharge glue (ST05.T01 plus exogeneity
 identifying the projection coefficient with `β`) can be added after
 ST05.T01 merges.
@@ -56,6 +58,7 @@ is stated.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory
+open scoped Matrix
 
 namespace MathlibExt.Probability.Statistics.HC0Sandwich
 
@@ -325,47 +328,45 @@ theorem hc0Meat_tendsto_ae {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq 
   rw [zero_add] at hfin
   exact hfin.congr (fun n => sub_add_cancel _ _)
 
-/-- A.s. consistency of the HC0 sandwich `Q̂_n⁻¹ Ω̂_n Q̂_n⁻¹`, entrywise, from
-entrywise a.s. convergence of the bread, its inverse, and the meat. -/
+/-- A.s. consistency of the HC0 sandwich `Q̂_n⁻¹ Ω̂_n Q̂_n⁻ᵀ`, entrywise, from entrywise
+a.s. convergence of the bread inverse and the meat. The right factor is the transpose of
+the bread inverse, so no symmetry of the bread is assumed. -/
 theorem hc0Sandwich_tendsto_ae {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq ι]
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     {Qhat : ℕ → Ω → Matrix ι ι ℝ} {Q Ωm : Matrix ι ι ℝ}
     {meat : ℕ → Ω → Matrix ι ι ℝ}
-    (hQ : ∀ a b : ι, ∀ᵐ ω ∂μ, Filter.Tendsto (fun n : ℕ => (Qhat n ω) a b)
-      Filter.atTop (nhds (Q a b)))
     (hQinv : ∀ a b : ι, ∀ᵐ ω ∂μ, Filter.Tendsto (fun n : ℕ => ((Qhat n ω)⁻¹) a b)
       Filter.atTop (nhds (Q⁻¹ a b)))
     (hMeat : ∀ a b : ι, ∀ᵐ ω ∂μ, Filter.Tendsto (fun n : ℕ => (meat n ω) a b)
       Filter.atTop (nhds (Ωm a b)))
     (a b : ι) :
     ∀ᵐ ω ∂μ, Filter.Tendsto
-      (fun n : ℕ => ((Qhat n ω)⁻¹ * meat n ω * (Qhat n ω)⁻¹) a b)
-      Filter.atTop (nhds ((Q⁻¹ * Ωm * Q⁻¹) a b)) := by
-  have _ := hQ
+      (fun n : ℕ => ((Qhat n ω)⁻¹ * meat n ω * ((Qhat n ω)⁻¹)ᵀ) a b)
+      Filter.atTop (nhds ((Q⁻¹ * Ωm * (Q⁻¹)ᵀ) a b)) := by
   have h1 : ∀ᵐ ω ∂μ, ∀ c : ι, Filter.Tendsto (fun n : ℕ => ((Qhat n ω)⁻¹) a c)
       Filter.atTop (nhds ((Q⁻¹) a c)) :=
     ae_all_iff.mpr (fun c => hQinv a c)
   have h2 : ∀ᵐ ω ∂μ, ∀ d c : ι, Filter.Tendsto (fun n : ℕ => (meat n ω) d c)
       Filter.atTop (nhds (Ωm d c)) :=
     ae_all_iff.mpr (fun d => ae_all_iff.mpr (fun c => hMeat d c))
-  have h3 : ∀ᵐ ω ∂μ, ∀ c : ι, Filter.Tendsto (fun n : ℕ => ((Qhat n ω)⁻¹) c b)
-      Filter.atTop (nhds ((Q⁻¹) c b)) :=
-    ae_all_iff.mpr (fun c => hQinv c b)
+  have h3 : ∀ᵐ ω ∂μ, ∀ c : ι, Filter.Tendsto (fun n : ℕ => ((Qhat n ω)⁻¹) b c)
+      Filter.atTop (nhds ((Q⁻¹) b c)) :=
+    ae_all_iff.mpr (fun c => hQinv b c)
   filter_upwards [h1, h2, h3] with ω h1 h2 h3
   have hinner : ∀ c : ι, Filter.Tendsto
       (fun n : ℕ => (∑ d : ι, ((Qhat n ω)⁻¹) a d * (meat n ω) d c)
-        * ((Qhat n ω)⁻¹) c b)
+        * ((Qhat n ω)⁻¹) b c)
       Filter.atTop
-      (nhds ((∑ d : ι, (Q⁻¹) a d * Ωm d c) * (Q⁻¹) c b)) := by
+      (nhds ((∑ d : ι, (Q⁻¹) a d * Ωm d c) * (Q⁻¹) b c)) := by
     intro c
     exact (tendsto_finsetSum Finset.univ (fun d _ => (h1 d).mul (h2 d c))).mul
       (h3 c)
   have houter : Filter.Tendsto
       (fun n : ℕ => ∑ c : ι, (∑ d : ι, ((Qhat n ω)⁻¹) a d * (meat n ω) d c)
-        * ((Qhat n ω)⁻¹) c b)
+        * ((Qhat n ω)⁻¹) b c)
       Filter.atTop
-      (nhds (∑ c : ι, (∑ d : ι, (Q⁻¹) a d * Ωm d c) * (Q⁻¹) c b)) :=
+      (nhds (∑ c : ι, (∑ d : ι, (Q⁻¹) a d * Ωm d c) * (Q⁻¹) b c)) :=
     tendsto_finsetSum Finset.univ (fun c _ => hinner c)
-  simpa only [Matrix.mul_apply] using houter
+  simpa only [Matrix.mul_apply, Matrix.transpose_apply] using houter
 
 end MathlibExt.Probability.Statistics.HC0Sandwich
