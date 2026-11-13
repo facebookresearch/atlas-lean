@@ -760,4 +760,76 @@ example : StronglyIgnorable (noiseMeasure ca04t03_xorμ) (ca04t03_xorM.treated �
 
 end PotentialOutcomes
 
+
+namespace Backdoor
+
+open Convexity MeasureTheory MathlibExt.Probability.Causality
+
+/-! ### CA05.T04 tests: three-node confounded model on `Bool`. -/
+
+/-- Test model `Z → T → Y`, `Z → Y` on `Bool`: node `0` is the confounder, node `1` the
+treatment, node `2` the outcome. Parents: `pa 0 = ∅`, `pa 1 = {0}`, `pa 2 = {0, 1}`
+(`univ` of `Fin 1` is `{0}`). -/
+def ca05t04_testSCM : FiniteSCM Bool 3 (fun _ => Bool) where
+  pa := fun k => if k.val = 0 then ∅ else Finset.univ
+  f := fun _ _ u => u
+
+/-- Test noise laws: point mass on `true`. -/
+noncomputable def ca05t04_testMu : (k : Fin 3) → StdSimplex ℝ Bool := fun _ => StdSimplex.single true
+
+theorem ca05t04_test_hdesc : ∀ z ∈ ({0} : Finset (Fin 3)),
+    ¬ (ca05t04_testSCM.inducedBayesNet ca05t04_testMu).IsDescendant 1 z := by
+  intro z hz
+  simp only [Finset.mem_singleton] at hz
+  subst hz
+  intro h
+  have hle := desc_val_le_aux (ca05t04_testSCM.inducedBayesNet ca05t04_testMu) h
+  exact absurd hle (by decide)
+
+theorem ca05t04_test_hblock : ∀ p, (ca05t04_testSCM.inducedBayesNet ca05t04_testMu).IsPath 1 2 p →
+    (∃ h : 1 < p.length, (ca05t04_testSCM.inducedBayesNet ca05t04_testMu).Edge p[1] 1) →
+      (ca05t04_testSCM.inducedBayesNet ca05t04_testMu).PathBlocked
+        (↑({0} : Finset (Fin 3)) : Set (Fin 3)) p := by
+  intro p hp hex
+  obtain ⟨hnd, hchain, hhead, hlast⟩ := hp
+  obtain ⟨hlen1, hedge⟩ := hex
+  have hlen0 : 0 < p.length := by omega
+  have h0 : p[0] = 1 := by
+    rw [List.head?_eq_getElem?] at hhead
+    rw [List.getElem?_eq_getElem hlen0] at hhead
+    simpa using hhead
+  have h1 : p[1] = 0 := by
+    obtain ⟨hlt, -⟩ := hedge
+    have hv1 : (1 : Fin 3).val = 1 := rfl
+    have hv0 : p[1].val = 0 := by omega
+    exact Fin.ext hv0
+  have h1' : p[0 + 1] = (0 : Fin 3) := h1
+  by_cases hlen2 : p.length = 2
+  · have hlen1' : p.length - 1 = 1 := by omega
+    rw [List.getLast?_eq_getElem?, hlen1', List.getElem?_eq_getElem hlen1] at hlast
+    have h12 : p[1] = 2 := by simpa using hlast
+    rw [h1] at h12
+    exact absurd h12 (by decide)
+  · have hib : 0 + 2 < p.length := by omega
+    refine ⟨0, hib, Or.inr ⟨?_, ?_⟩⟩
+    · intro hcon
+      obtain ⟨e10, -⟩ := hcon
+      obtain ⟨hlt10, -⟩ := e10
+      rw [h0, h1'] at hlt10
+      exact absurd hlt10 (by decide)
+    · rw [h1']
+      simp
+
+/-- Test instance of `condIndepDiscrete_of_backdoor` on the confounded model. -/
+example : CondIndepDiscrete (noiseMeasure ca05t04_testMu) (ca05t04_testSCM.treated 1 true)
+    (ca05t04_testSCM.potentialOutcome 1 true 2 (fun b => if b then (1 : ℝ) else 0))
+    (fun u (i : ({0} : Finset (Fin 3))) => ca05t04_testSCM.solve u i) := by
+  letI : MeasurableSpace Bool := ⊤
+  haveI : MeasurableSingletonClass Bool := ⟨fun _ => trivial⟩
+  exact condIndepDiscrete_of_backdoor ca05t04_testSCM ca05t04_testMu 1 2 true true
+    (fun b => if b then (1 : ℝ) else 0) {0} ca05t04_test_hdesc ca05t04_test_hblock
+
+
+end Backdoor
+
 end Cslib.MachineLearning.StructuralCausalModelsTests
