@@ -29,11 +29,12 @@ open PowerSeries
 `m_n(α)` the multinomial coefficient of `(α_1, …, α_n)`, are written below as sums over
 the compositions of `n` of the product of `a` over the parts, which is the same number. -/
 
-/-- Generating function form of Trudi's formula: for the `n × n` Toeplitz–Hessenberg
-matrices `A_n = (a_{i-j+1})` (`a_0` on the superdiagonal, zeros above it), with
-`f(x) = ∑_{n ≥ 1} det(A_n) x^n`, `g(x) = ∑_{i ≥ 1} a_i x^i` and `a_0 ≠ 0`,
-`f(x) = -(1/a_0) g(-a_0 x) / (1 + (1/a_0) g(-a_0 x))`, stated in the cleared form
-`f (1 + h) = -h` with `h(x) = (1/a_0) g(-a_0 x)`.
+/-- **Trudi's formula as a generating function.** Let $K$ be a field and $a_0, a_1, a_2, \dots$
+a sequence in $K$ with $a_0 \ne 0$. For $n \ge 1$ let $A_n$ be the $n \times n$
+Toeplitz–Hessenberg matrix whose $(i, j)$ entry is $a_{i-j+1}$ if $j \le i + 1$ and $0$
+otherwise. In the ring of formal power series over $K$, let $f(x) = \sum_{n \ge 1} \det(A_n) x^n$,
+$g(x) = \sum_{i \ge 1} a_i x^i$ and $h(x) = a_0^{-1} g(-a_0 x)$. Then $f(x)(1 + h(x)) = -h(x)$,
+that is, $f(x) = -h(x)/(1 + h(x))$.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Lemma 2. -/
@@ -47,10 +48,14 @@ public theorem_wanted toeplitzHessenberg_det_generatingFunction {K : Type*} [Fie
     -(PowerSeries.C (a 0)⁻¹ *
         PowerSeries.rescale (-a 0) (PowerSeries.mk fun i => if i = 0 then 0 else a i))
 
-/-- For the Toeplitz–Hessenberg determinants `u_n = det(U_n)` with `a_0 = a` and
-`a_i = (bi + c) d^i` (`i ≥ 1`), the generating function `u(x) = ∑_{n ≥ 1} u_n x^n` equals
-`dx(b + c + acdx) / (1 + d(2a - b - c)x + ad^2(a - c)x^2)`, stated in the cleared form
-(the denominator has constant term `1`).
+/-- **Generating function of Toeplitz–Hessenberg determinants with entries $(bk + c)d^k$.** Let
+$R$ be a commutative ring and $a, b, c, d \in R$. Put $t_0 = a$ and $t_k = (bk + c) d^k$ for
+$k \ge 1$, and for $n \ge 1$ let $u_n$ be the determinant of the $n \times n$ matrix whose
+$(i, j)$ entry is $t_{i-j+1}$ if $j \le i + 1$ and $0$ otherwise. Then the formal power series
+$u(x) = \sum_{n \ge 1} u_n x^n$ over $R$ satisfies
+$$u(x) \bigl(1 + d(2a - b - c) x + a d^2 (a - c) x^2\bigr) = d x (b + c + a c d x).$$
+Since the second factor on the left has constant term $1$, this says
+$u(x) = dx(b + c + acdx)/(1 + d(2a - b - c)x + ad^2(a - c)x^2)$.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Lemma 3. -/
@@ -66,13 +71,16 @@ public theorem_wanted toeplitzHessenberg_det_linear_mul_pow_generatingFunction
         PowerSeries.C (a * d ^ 2 * (a - c)) * X ^ 2) =
     PowerSeries.C d * X * (PowerSeries.C (b + c) + PowerSeries.C (a * c * d) * X)
 
-/-- Multinomial-sum formulas for `F_{2n}`, `F_{3n-1}` and `P_{n-1}` (`n ≥ 1`):
-`F_{2n} = ∑ m_n(s) 1^{s_1} 2^{s_2} ⋯ n^{s_n}`,
-`F_{3n-1} = 2^{n-1} ∑ m_n(s) (1/1)^{s_1} (3/2)^{s_2} ⋯ ((2n-1)/2^{n-1})^{s_n}`, and
-`P_{n-1} = 2^{n-1} ∑_{2s_1 + 3s_2 + ⋯ + ns_{n-1} = n} m_{n-1}(s) (1/2)^{s_1} (2/4)^{s_2}
-⋯ ((n-1)/2^{n-1})^{s_{n-1}}`, the last written as a composition sum with weight
-`(j-1)/2^{j-1}` for a part `j` (which vanishes on parts `1`). `P` is the Pell sequence
-`pellNumber`.
+/-- **Composition-sum formulas for $F_{2n}$, $F_{3n-1}$ and $P_{n-1}$.** Let $F_k$ be the
+Fibonacci numbers and $P_k$ the Pell numbers. For every $n \ge 1$, with each sum running over all
+compositions $(c_1, \dots, c_r)$ of $n$ (tuples of positive integers with
+$c_1 + \dots + c_r = n$),
+$F_{2n} = \sum \prod_{i=1}^{r} c_i$,
+$F_{3n-1} = 2^{n-1} \sum \prod_{i=1}^{r} \frac{2 c_i - 1}{2^{c_i - 1}}$ and
+$P_{n-1} = 2^{n-1} \sum \prod_{i=1}^{r} \frac{c_i - 1}{2^{c_i - 1}}$.
+
+In the last sum only compositions with no part equal to $1$ contribute; the source writes it as
+a multinomial sum over $2s_1 + 3s_2 + \dots + n s_{n-1} = n$.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Proposition 1. -/
@@ -86,8 +94,11 @@ public theorem_wanted fib_pell_composition_sums (n : ℕ) (hn : 1 ≤ n) :
         ∑ c : Composition n, ∏ i : Fin c.length,
           ((c.blocksFun i : ℚ) - 1) / 2 ^ (c.blocksFun i - 1)
 
-/-- For `n ≥ 1`, `∑ m_n(α) 1^{α_1} 3^{α_2} ⋯ ((n+1) 2^{n-2})^{α_n}` equals
-`5^{(n-1)/2} F_{n+1}` for odd `n` and `5^{(n-2)/2} L_{n+1}` for even `n`.
+/-- **A composition sum with weights $(c_i + 1) 2^{c_i - 2}$ in terms of Fibonacci and Lucas
+numbers.** Let $F_k$ be the Fibonacci numbers and $L_k$ the Lucas numbers. For every $n \ge 1$,
+the sum of $\prod_{i=1}^{r} (c_i + 1) 2^{c_i - 2}$ over all compositions $(c_1, \dots, c_r)$ of
+$n$ (tuples of positive integers with $c_1 + \dots + c_r = n$) equals $5^{(n-1)/2} F_{n+1}$ if $n$
+is odd and $5^{(n-2)/2} L_{n+1}$ if $n$ is even.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Corollary 1, equation (8). -/
@@ -97,13 +108,18 @@ public theorem_wanted composition_sum_succ_mul_two_zpow (n : ℕ) (hn : 1 ≤ n)
       if Odd n then 5 ^ ((n - 1) / 2) * (Nat.fib (n + 1) : ℚ)
       else 5 ^ ((n - 2) / 2) * (lucasNumber (n + 1) : ℚ)
 
-/-- Multinomial-sum formulas, for `n ≥ 1`:
-`∑ m_n(α) ∏ ((-1)^{i-1}(i+2))^{α_i} = F_{n+3}`,
-`∑ m_n(α) ∏ ((-1)^{i-1}(4i+2))^{α_i} = 2F_{3n+1}`,
-`∑ m_n(α) ∏ ((-2)^{i-1}(2i+3))^{α_i} = J_{n+3}`,
-`∑ m_n(α) ∏ (i 2^{i-1})^{α_i} = J_{2n}`, and `∑ m_n(α) ∏ (4i)^{α_i} = 2P_{2n}`, with
-`J = lucasU (1, -2)` (Jacobsthal) and `P = pellNumber` (Pell). Identity (14) is not
-formalized (its weights are garbled in the extraction).
+/-- **Composition-sum formulas for $F_{n+3}$, $F_{3n+1}$ and Jacobsthal and Pell numbers.** Let
+$F_k$ be the Fibonacci numbers, $P_k$ the Pell numbers and $J_k$ the Jacobsthal numbers, that is,
+the Lucas sequence $U(1, -2)$, with $J_0 = 0$, $J_1 = 1$ and $J_{k+2} = J_{k+1} + 2 J_k$. For
+every $n \ge 1$, with each sum running over all compositions $(c_1, \dots, c_r)$ of $n$ (tuples
+of positive integers with $c_1 + \dots + c_r = n$),
+$\sum \prod_{i=1}^{r} (-1)^{c_i - 1} (c_i + 2) = F_{n+3}$,
+$\sum \prod_{i=1}^{r} (-1)^{c_i - 1} (4 c_i + 2) = 2 F_{3n+1}$,
+$\sum \prod_{i=1}^{r} (-2)^{c_i - 1} (2 c_i + 3) = J_{n+3}$,
+$\sum \prod_{i=1}^{r} c_i 2^{c_i - 1} = J_{2n}$ and
+$\sum \prod_{i=1}^{r} 4 c_i = 2 P_{2n}$.
+
+Identity (14) of the source is not included.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Corollary 3, equations (13) and
@@ -122,13 +138,17 @@ public theorem_wanted fib_jacobsthal_pell_composition_sums (n : ℕ) (hn : 1 ≤
       ∑ c : Composition n, ∏ i : Fin c.length, 4 * (c.blocksFun i : ℚ) =
           2 * (pellNumber (2 * n) : ℚ)
 
-/-- Among the Fibonacci subsequences `k_n = F_{ℓn+m}` (`ℓ ≥ 1`, `m ≥ 0`), only `F_{n+3}` and
-`F_{2n}` are good: there are constants `a, b, c, d` with `k_n = u_n(a, b, c, d)` for all
-`n ≥ 1`, where `u_n(a, b, c, d)` is the `n × n` Toeplitz–Hessenberg determinant with
-`a_0 = a` and `a_i = (bi + c) d^i` of Lemma 3
-(`toeplitzHessenberg_det_linear_mul_pow_generatingFunction`).
-"Good" is the paper's definition (a Horadam sequence `v_n` is good if `v_n = u_n(a, b, c, d)`
-for all `n ≥ 1` for some constants), taken over `ℂ`.
+/-- **Fibonacci subsequences $F_{\ell n + m}$ that are Toeplitz–Hessenberg determinants.** For
+complex numbers $a, b, c, d$ and $n \ge 1$, let $u_n(a, b, c, d)$ be the determinant of the
+$n \times n$ matrix whose entry in row $i$ and column $j$ is $a$ if $j = i + 1$, is
+$(bp + c) d^p$ with $p = i - j + 1$ if $j \le i$, and is $0$ if $j > i + 1$. Let $F_k$ be the
+Fibonacci numbers and let $\ell \ge 1$ and $m \ge 0$ be integers. There are complex numbers
+$a, b, c, d$ with $F_{\ell n + m} = u_n(a, b, c, d)$ for every $n \ge 1$ if and only if
+$(\ell, m) = (1, 3)$ or $(\ell, m) = (2, 0)$, that is, exactly for the sequences $F_{n+3}$ and
+$F_{2n}$.
+
+In the source's terms, $F_{n+3}$ and $F_{2n}$ are the only good sequences among the
+$F_{\ell n + m}$.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Proposition 2
@@ -143,14 +163,17 @@ public theorem_wanted fib_mul_add_eq_toeplitzHessenberg_det_iff (ℓ m : ℕ) (h
           else 0)) ↔
       (ℓ = 1 ∧ m = 3) ∨ (ℓ = 2 ∧ m = 0)
 
-/-- Multinomial-sum formulas with `√2` weights, for `n ≥ 1`:
-`∑_{β* = n} m_{n-1}(β) 1^{β_1} (2√2)^{β_2} ⋯ ((n-1)√(2^{n-2}))^{β_{n-1}}` equals `√2 P_{n-1}`
-for odd `n` and `Q_{n-1}/2` for even `n` (identity (10), the sum over
-`2β_1 + 3β_2 + ⋯ + nβ_{n-1} = n`, written as a composition sum of `n` with weight
-`(j-1)√2^{j-2}` for a part `j`, which vanishes on parts `1`), and
-`∑ m_n(α) (√2)^{α_1} (3/2)^{α_2} ⋯ ((n+1)/√(2^n))^{α_n}` equals `P_{n+1}/√2` for odd `n` and
-`Q_{n+1}/4` for even `n` (identity (11)). `P` is `pellNumber` and `Q` is the Pell–Lucas
-sequence `pellLucas` (`Q_0 = Q_1 = 2`).
+/-- **Pell and Pell–Lucas numbers as composition sums with $\sqrt 2$ weights.** Let $P_n$ be the
+Pell numbers and $Q_n$ the Pell–Lucas numbers ($Q_0 = Q_1 = 2$, $Q_{k+2} = 2Q_{k+1} + Q_k$). For
+every $n \ge 1$, with $c$ running over the compositions of $n$ (ordered tuples of positive
+integers with sum $n$) and the products running over the parts $j$ of $c$, the real number
+$$\sum_c \prod_{j \in c} (j - 1) (\sqrt 2)^{j-2}$$
+equals $\sqrt 2\, P_{n-1}$ for odd $n$ and $Q_{n-1}/2$ for even $n$ (identity (10)), and
+$$\sum_c \prod_{j \in c} \frac{j + 1}{(\sqrt 2)^j}$$
+equals $P_{n+1}/\sqrt 2$ for odd $n$ and $Q_{n+1}/4$ for even $n$ (identity (11)).
+
+In the source both are multinomial sums; the weight of the first vanishes on parts $1$, so its
+sum runs over the compositions of $n$ without parts $1$.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Corollary 2 (`integers-2025-A97-cor-2`). -/
@@ -164,22 +187,29 @@ public theorem_wanted pell_pellLucas_composition_sums_sqrt_two (n : ℕ) (hn : 1
       (if Odd n then (pellNumber (n + 1) : ℝ) / Real.sqrt 2
         else (pellLucas (n + 1) : ℝ) / 4)
 
-/-- Toeplitz–Hessenberg determinants with Oresme entries `O_k = k/2^k`, for `n ≥ 1`, where
-`det(a_0; a_1, …, a_n)` is the determinant of the `n × n` matrix with `a_0` on the
-superdiagonal and `a_{i-j+1}` on and below the diagonal:
-(19) `det(-2; O_2, …, O_{n+1}) = 5^{(n-1)/2} F_{n+1}/2^n` (odd `n`), `5^{(n-2)/2} L_{n+1}/2^n`
-(even `n`); (20) `det(-4; O_0, …, O_{n-1}) = 2^{(n+1)/2} P_{n-1}` (odd `n`),
-`2^{(n-2)/2} Q_{n-1}` (even `n`); (21) `det(-1/2; O_2, …, O_{n+1}) = 2^{-(3n+1)/2} P_{n+1}` (odd
-`n`), `2^{-(3n+4)/2} Q_{n+1}` (even `n`); (22) `det(1/4; O_3, …, O_{n+2}) = 2^{-3n} F_{n+3}`;
-(23) `det(-1/8; O_4, …, O_{n+3}) = 2^{-(3n+2)} F_{2n+4}`;
-(24) `det(1/4; O_3, O_5, …, O_{2n+1}) = 2^{-(4n-1)} F_{3n+1}`;
-(25) `det(1/4; O_5, O_7, …, O_{2n+3}) = 2^{-5n} J_{n+3}`;
-(26) `det(-2; O_1, …, O_n) = 2^{-n} J_{2n}`;
-(27) `det(-1/4; O_1, …, O_n) = 2^{-(3n-1)} P_{2n}`. The exponents of (20) are typeset
-`2^{(n+1/2)}` and `2^{(n-2/2)}` in the paper; they are read as `2^{(n+1)/2}` and `2^{(n-2)/2}`
-(the literal `2^{n+1/2}` is irrational while the determinant is rational: for `n = 3` the
-determinant is `8 = 2^2 P_2`). Negative powers of `2` are written as divisions.
-`J = lucasU (1, -2)` (Jacobsthal), `P = pellNumber`, `Q = pellLucas`.
+/-- **Toeplitz–Hessenberg determinants with Oresme entries.** For numbers $a_0, a_1, \dots, a_n$,
+let $\det(a_0; a_1, \dots, a_n)$ be the determinant of the $n \times n$ matrix whose $(i, j)$
+entry is $a_{i-j+1}$ if $j \le i + 1$ and $0$ otherwise, so that $a_0$ fills the superdiagonal.
+Let $O_k = k/2^k$ be the Oresme numbers, $F_n$ the Fibonacci numbers, $L_n$ the Lucas numbers,
+$P_n$ the Pell numbers, $Q_n$ the Pell–Lucas numbers ($Q_0 = Q_1 = 2$) and $J_n$ the Jacobsthal
+numbers, the Lucas sequence $U(1, -2)$ ($J_0 = 0$, $J_1 = 1$, $J_{k+2} = J_{k+1} + 2J_k$). Then
+for every $n \ge 1$ the following hold in $\mathbb{Q}$:
+(19) $\det(-2; O_2, \dots, O_{n+1})$ equals $5^{(n-1)/2} F_{n+1}/2^n$ for odd $n$ and
+$5^{(n-2)/2} L_{n+1}/2^n$ for even $n$;
+(20) $\det(-4; O_0, \dots, O_{n-1})$ equals $2^{(n+1)/2} P_{n-1}$ for odd $n$ and
+$2^{(n-2)/2} Q_{n-1}$ for even $n$;
+(21) $\det(-1/2; O_2, \dots, O_{n+1})$ equals $P_{n+1}/2^{(3n+1)/2}$ for odd $n$ and
+$Q_{n+1}/2^{(3n+4)/2}$ for even $n$;
+(22) $\det(1/4; O_3, \dots, O_{n+2}) = F_{n+3}/2^{3n}$;
+(23) $\det(-1/8; O_4, \dots, O_{n+3}) = F_{2n+4}/2^{3n+2}$;
+(24) $\det(1/4; O_3, O_5, \dots, O_{2n+1}) = F_{3n+1}/2^{4n-1}$;
+(25) $\det(1/4; O_5, O_7, \dots, O_{2n+3}) = J_{n+3}/2^{5n}$;
+(26) $\det(-2; O_1, \dots, O_n) = J_{2n}/2^n$;
+(27) $\det(-1/4; O_1, \dots, O_n) = P_{2n}/2^{3n-1}$.
+
+The exponents of (20) are typeset $2^{(n+1/2)}$ and $2^{(n-2/2)}$ in the source; they are read as
+$2^{(n+1)/2}$ and $2^{(n-2)/2}$, since the literal $2^{n+1/2}$ is irrational while the
+determinant is rational (for $n = 3$ the determinant is $8 = 2^2 P_2$).
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Corollary 4 (`integers-2025-A97-cor-4`). -/
@@ -226,11 +256,17 @@ public theorem_wanted oresme_toeplitzHessenberg_det_formulas (n : ℕ) (hn : 1 �
           (((i : ℕ) + 1 - (j : ℕ) : ℕ) : ℚ) / 2 ^ ((i : ℕ) + 1 - (j : ℕ))) else 0) =
       (pellNumber (2 * n) : ℚ) / 2 ^ (3 * n - 1)
 
-/-- Horadam sequences as composition sums: if `p, q, r, s ∈ ℂ` satisfy
-`(q - r)^2 = 4s(p - 1) ≠ 0` and `v_n = r v_{n-1} + s v_{n-2}` with `v_0 = p`, `v_1 = q`, then
-for `n ≥ 1`, `v_n = ∑_α ((r-q)/2)^{n-|α|} m_n(α) ∏_i ((q + 2ps/(r-q)) i - 2ps/(r-q))^{α_i}`,
-written as a sum over the compositions of `n` (identity (12)). The converse part of the
-theorem is `horadam_composition_sum_recurrence`.
+/-- **Horadam sequences as composition sums.** Let $p, q, r, s$ be complex numbers with
+$(q - r)^2 = 4s(p - 1)$ and $4s(p - 1) \ne 0$, and let $(v_k)_{k \ge 0}$ be the complex sequence
+with $v_0 = p$, $v_1 = q$ and $v_{k+2} = r v_{k+1} + s v_k$ for every $k \ge 0$. Put
+$e = 2ps/(r - q)$. Then for every $n \ge 1$,
+$$v_n = \sum_c \bigl((r - q)/2\bigr)^{n - \ell(c)} \prod_{j \in c} \bigl((q + e) j - e\bigr),$$
+where $c$ runs over the compositions of $n$ (ordered tuples of positive integers with sum $n$),
+$\ell(c)$ is the number of parts of $c$ and the product runs over the parts $j$ of $c$.
+
+In the source this is identity (12), a sum over $\alpha$ with
+$\alpha_1 + 2\alpha_2 + \dots + n\alpha_n = n$ weighted by multinomial coefficients, which is the
+same number.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Theorem 1 (`integers-2025-A97-thm-1`). -/
@@ -242,9 +278,13 @@ public theorem_wanted horadam_eq_composition_sum (p q r s : ℂ)
       ∏ i : Fin c.length,
         ((q + 2 * p * s / (r - q)) * (c.blocksFun i : ℂ) - 2 * p * s / (r - q))
 
-/-- Converse part of Theorem 1: if `(q - r)^2 = 4s(p - 1) ≠ 0`, the sequence `w_n` defined for
-`n ≥ 1` by the composition sum of identity (12) satisfies `w_n = r w_{n-1} + s w_{n-2}` for
-`n ≥ 3`.
+/-- **Horadam composition sums satisfy the Horadam recurrence.** Let $p, q, r, s$ be complex
+numbers with $(q - r)^2 = 4s(p - 1)$ and $4s(p - 1) \ne 0$, put $e = 2ps/(r - q)$, and for every
+natural number $m$ let
+$$w_m = \sum_c \bigl((r - q)/2\bigr)^{m - \ell(c)} \prod_{j \in c} \bigl((q + e) j - e\bigr),$$
+where $c$ runs over the compositions of $m$ (ordered tuples of positive integers with sum $m$),
+$\ell(c)$ is the number of parts of $c$ and the product runs over the parts $j$ of $c$. Then
+$w_n = r w_{n-1} + s w_{n-2}$ for every $n \ge 3$.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Theorem 1 (`integers-2025-A97-thm-1`). -/
@@ -260,12 +300,16 @@ public theorem_wanted horadam_composition_sum_recurrence (p q r s : ℂ)
         ∏ i : Fin c.length,
           ((q + 2 * p * s / (r - q)) * (c.blocksFun i : ℂ) - 2 * p * s / (r - q))
 
-/-- Translates of a Gibonacci sequence `G` (`G_0 = y`, `G_1 = z` non-negative integers, not
-both zero) as composition sums: for `m ≥ 3`, `n ≥ 1` and `D` either square root of
-`(-1)^m (y^2 + yz - z^2)` (the two roots give the paper's two sign choices),
-`G_{n+m} = (G_{m+2} + G_m + 2D)^{n-1} / (G_{m+1}^{n-2} (G_m + D)^n)
-  · ∑_α (-(G_m + D)^2/(G_{m+2} + G_m + 2D))^{n-|α|} m_n(α) ∏_i (Di + G_m)^{α_i}`
-(identity (28)). The uniqueness part is `gibonacci_mul_add_eq_toeplitzHessenberg_det_iff`.
+/-- **Translates of a Gibonacci sequence as composition sums.** Let $y$ and $z$ be non-negative
+integers, not both zero, and let $(G_k)$ be the Gibonacci sequence with $G_0 = y$ and $G_1 = z$.
+Let $m \ge 3$ and $n \ge 1$, and let $D$ be a complex number with
+$D^2 = (-1)^m (y^2 + yz - z^2)$. Then
+$$G_{n+m} = \frac{(G_{m+2} + G_m + 2D)^{n-1}}{G_{m+1}^{n-2} (G_m + D)^n} \sum_c
+\left(-\frac{(G_m + D)^2}{G_{m+2} + G_m + 2D}\right)^{n-r} \prod_{i=1}^{r} (D c_i + G_m),$$
+where the sum runs over all compositions $c = (c_1, \dots, c_r)$ of $n$ (tuples of positive
+integers with $c_1 + \dots + c_r = n$) and $r$ is the number of parts of $c$.
+
+The two square roots $D$ give the two sign choices of identity (28) of the source.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Theorem 2 (`integers-2025-A97-thm-2`). -/
@@ -282,13 +326,18 @@ public theorem_wanted gibonacci_add_eq_composition_sum (y z : ℤ) (hy : 0 ≤ y
             (n - c.length) *
         ∏ i : Fin c.length, (D * (c.blocksFun i : ℂ) + gibonacciNumber y z m)
 
-/-- Uniqueness in Theorem 2: for a Gibonacci sequence `G` as in
-`gibonacci_add_eq_composition_sum`, `m ≥ 3` and a constant `k ≠ 0`, there are constants
-`a, b, c, d` with `k G_{n+m} = u_n(a, b, c, d)` for all `n ≥ 1` (the `n × n` Toeplitz–Hessenberg
-determinant with `a_0 = a` and `a_i = (bi + c) d^i`) if and only if
-`k = (G_{m+2} + G_m + 2D)/G_{m+1}^2` for a square root `D` of `(-1)^m (y^2 + yz - z^2)`, so there
-are exactly the two identities (28). The hypothesis `k ≠ 0` excludes the trivial `k = 0`, which
-is `u_n(a, b, c, 0) = 0`.
+/-- **Multiples of a shifted Gibonacci sequence that are Toeplitz–Hessenberg determinants.** Let
+$y$ and $z$ be non-negative integers, not both zero, and let $(G_k)$ be the Gibonacci sequence
+with $G_0 = y$ and $G_1 = z$. For complex numbers $a, b, c, d$ and $n \ge 1$, let
+$u_n(a, b, c, d)$ be the determinant of the $n \times n$ matrix whose entry in row $i$ and column
+$j$ is $a$ if $j = i + 1$, is $(bp + c) d^p$ with $p = i - j + 1$ if $j \le i$, and is $0$ if
+$j > i + 1$. Let $m \ge 3$ and let $k$ be a nonzero complex number. There are complex numbers
+$a, b, c, d$ with $k G_{n+m} = u_n(a, b, c, d)$ for every $n \ge 1$ if and only if there is a
+complex number $D$ with $D^2 = (-1)^m (y^2 + yz - z^2)$ and
+$k = (G_{m+2} + G_m + 2D) / G_{m+1}^2$.
+
+This is the uniqueness part of Theorem 2 of the source. The case $k = 0$ is excluded: there any
+$a, b, c$ with $d = 0$ work trivially, since $u_n(a, b, c, 0) = 0$.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Theorem 2 (`integers-2025-A97-thm-2`). -/
@@ -305,15 +354,20 @@ public theorem_wanted gibonacci_mul_add_eq_toeplitzHessenberg_det_iff (y z : ℤ
         k = ((gibonacciNumber y z (m + 2) : ℂ) + gibonacciNumber y z m + 2 * D) /
           (gibonacciNumber y z (m + 1) : ℂ) ^ 2
 
-/-- Modular subsequences of a Gibonacci sequence `G` (`G_0 = y`, `G_1 = z` non-negative
-integers, not both zero) as composition sums: for `ℓ ≥ 1`, `m ≥ 0`, `n ≥ 1` and `E` either square
-root of `(-1)^ℓ G_ℓ (G_ℓ - L_ℓ y) + y^2` (`m` even) or `(-1)^ℓ G_{ℓ+1} (G_{ℓ+1} - L_ℓ z) + z^2`
-(`m` odd),
-`G_{ℓn+m} = (L_ℓ G_{ℓ+m} - 2(-1)^ℓ G_m + 2E)^{n-1} / (G_{ℓ+m}^{n-2} ((-1)^{ℓ+1} G_m + E)^n)
-  · ∑_α (-((-1)^{ℓ+1} G_m + E)^2/(L_ℓ G_{ℓ+m} - 2(-1)^ℓ G_m + 2E))^{n-|α|} m_n(α)
-    ∏_i (Ei - (-1)^ℓ G_m)^{α_i}`
-(identity (35)), provided `m ≥ ℓ + 2` or `G_{ℓ+m} ((-1)^{ℓ+1} G_m + E) ≠ 0` (the paper's
-sufficient condition for `0 ≤ m ≤ ℓ + 1`).
+/-- **Subsequences $G_{\ell n + m}$ of a Gibonacci sequence as composition sums.** Let $y$ and $z$
+be non-negative integers, not both zero, let $(G_k)$ be the Gibonacci sequence with $G_0 = y$
+and $G_1 = z$, and let $L_k$ be the Lucas numbers. Let $\ell \ge 1$, $m \ge 0$ and $n \ge 1$, and
+let $E$ be a complex number with $E^2 = (-1)^\ell G_\ell (G_\ell - L_\ell y) + y^2$ if $m$ is
+even and $E^2 = (-1)^\ell G_{\ell+1} (G_{\ell+1} - L_\ell z) + z^2$ if $m$ is odd. Write
+$A = L_\ell G_{\ell+m} - 2(-1)^\ell G_m + 2E$ and $B = (-1)^{\ell+1} G_m + E$, and assume that
+$m \ge \ell + 2$ or $G_{\ell+m} B \ne 0$. Then
+$$G_{\ell n + m} = \frac{A^{n-1}}{G_{\ell+m}^{n-2} B^n} \sum_c \left(-\frac{B^2}{A}\right)^{n-r}
+\prod_{i=1}^{r} (E c_i - (-1)^\ell G_m),$$
+where the sum runs over all compositions $c = (c_1, \dots, c_r)$ of $n$ (tuples of positive
+integers with $c_1 + \dots + c_r = n$) and $r$ is the number of parts of $c$.
+
+This is identity (35) of the source; for $0 \le m \le \ell + 1$ the condition $G_{\ell+m} B \ne 0$
+is the source's sufficient condition.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Theorem 3 (`integers-2025-A97-thm-3`). -/
@@ -340,16 +394,20 @@ public theorem_wanted gibonacci_mul_add_eq_composition_sum (y z : ℤ) (hy : 0 �
         ∏ i : Fin c.length,
           (E * (c.blocksFun i : ℂ) - (-1) ^ ℓ * gibonacciNumber y z m)
 
-/-- Fibonacci and Lucas translates as composition sums: for `m ≥ 0` and `n ≥ 1`, with `lam` a
-square root of `(-1)^{m+1}` (`± i` for even `m`, `± 1` for odd `m`; only `lam = 1` when
-`m = 1`),
-`F_{n+m} = (L_{m+1} + 2 lam)^{n-1} / (F_{m+1}^{n-2} (F_m + lam)^n)
-  · ∑_α (-(F_m + lam)^2/(L_{m+1} + 2 lam))^{n-|α|} m_n(α) ∏_j (lam j + F_m)^{α_j}` (30), and with
-`rho` a square root of `5(-1)^m`,
-`L_{n+m} = (L_{m+2} + L_m + 2 rho)^{n-1} / (L_{m+1}^{n-2} (L_m + rho)^n)
-  · ∑_α (-(L_m + rho)^2/(L_{m+2} + L_m + 2 rho))^{n-|α|} m_n(α) ∏_j (rho j + L_m)^{α_j}` (31).
-The companion identity of (13) is `fib_add_three_companion_composition_sum`; the discussion of
-good sequences and rational `k` after the corollary is not formalized.
+/-- **Fibonacci and Lucas translates as composition sums.** Let $F_k$ be the Fibonacci numbers and
+$L_k$ the Lucas numbers, let $m \ge 0$ and $n \ge 1$, and write $\sum_c$ for the sum over all
+compositions $c = (c_1, \dots, c_r)$ of $n$ (tuples of positive integers with
+$c_1 + \dots + c_r = n$), where $r$ is the number of parts of $c$. For every complex number
+$\lambda$ with $\lambda^2 = (-1)^{m+1}$, and with $\lambda = 1$ if $m = 1$,
+$$F_{n+m} = \frac{(L_{m+1} + 2\lambda)^{n-1}}{F_{m+1}^{n-2} (F_m + \lambda)^n} \sum_c
+\left(-\frac{(F_m + \lambda)^2}{L_{m+1} + 2\lambda}\right)^{n-r}
+\prod_{j=1}^{r} (\lambda c_j + F_m),$$
+and for every complex number $\rho$ with $\rho^2 = 5 (-1)^m$,
+$$L_{n+m} = \frac{(L_{m+2} + L_m + 2\rho)^{n-1}}{L_{m+1}^{n-2} (L_m + \rho)^n} \sum_c
+\left(-\frac{(L_m + \rho)^2}{L_{m+2} + L_m + 2\rho}\right)^{n-r}
+\prod_{j=1}^{r} (\rho c_j + L_m).$$
+
+These are identities (30) and (31) of the source.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Corollary 5 (`integers-2025-A97-cor-5`). -/
@@ -371,8 +429,14 @@ public theorem_wanted fib_lucas_add_eq_composition_sum (m n : ℕ) (hn : 1 ≤ n
             ((lucasNumber (m + 2) : ℂ) + lucasNumber m + 2 * rho)) ^ (n - c.length) *
           ∏ j : Fin c.length, (rho * (c.blocksFun j : ℂ) + lucasNumber m))
 
-/-- The companion of identity (13) (minus sign for `lam` in (30) with `m = 3`): for `n ≥ 1`,
-`(5/9) F_{n+3} = (-1/3)^n ∑_α m_n(α) ∏_i (5i - 10)^{α_i}`.
+/-- **Companion composition-sum formula for $F_{n+3}$.** Let $F_k$ be the Fibonacci numbers. For
+every $n \ge 1$,
+$$\frac{5}{9} F_{n+3} = \left(-\frac{1}{3}\right)^n \sum \prod_{i=1}^{r} (5 c_i - 10),$$
+where the sum runs over all compositions $(c_1, \dots, c_r)$ of $n$ (tuples of positive integers
+with $c_1 + \dots + c_r = n$).
+
+This is the companion of identity (13) of the source: identity (30) with $m = 3$ and the square
+root $\lambda = -1$.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Corollary 5 (`integers-2025-A97-cor-5`). -/
@@ -380,14 +444,18 @@ public theorem_wanted fib_add_three_companion_composition_sum (n : ℕ) (hn : 1 
     5 / 9 * (Nat.fib (n + 3) : ℚ) =
       (-1 / 3) ^ n * ∑ c : Composition n, ∏ i : Fin c.length, (5 * (c.blocksFun i : ℚ) - 10)
 
-/-- Gibonacci half-sequences as composition sums: for `G` with `G_0 = y`, `G_1 = z`
-non-negative integers, not both zero, `m ≥ 0`, `n ≥ 1` and `F` a square root of
-`(-1)^{m+1} (y^2 + yz - z^2)`,
-`G_{2n+m} = (G_{m+3} + G_{m+1} + 2F)^{n-1} / (G_{m+2}^{n-2} (-G_m + F)^n)
-  · ∑_α (-(-G_m + F)^2/(G_{m+3} + G_{m+1} + 2F))^{n-|α|} m_n(α) ∏_i (Fi - G_m)^{α_i}` (43),
-for both roots when `m ≥ 4`; for `m ≤ 3` the hypothesis `F ≠ G_m` excludes exactly the paper's
-cases (i) `m = 0, 2y = z`, (ii) `m = 1, y = z`, (iii) `m = 2, y = 0`, (iv) `m = 3, z = 0` with the
-positive root (there the positive root equals `G_m`, and only the negative choice is valid).
+/-- **Gibonacci subsequences $G_{2n+m}$ as composition sums.** Let $y$ and $z$ be non-negative
+integers, not both zero, and let $(G_k)$ be the Gibonacci sequence with $G_0 = y$ and $G_1 = z$.
+Let $m \ge 0$ and $n \ge 1$, and let $F$ be a complex number with
+$F^2 = (-1)^{m+1} (y^2 + yz - z^2)$ such that $m \ge 4$ or $F \ne G_m$. Then
+$$G_{2n+m} = \frac{(G_{m+3} + G_{m+1} + 2F)^{n-1}}{G_{m+2}^{n-2} (F - G_m)^n} \sum_c
+\left(-\frac{(F - G_m)^2}{G_{m+3} + G_{m+1} + 2F}\right)^{n-r} \prod_{i=1}^{r} (F c_i - G_m),$$
+where the sum runs over all compositions $c = (c_1, \dots, c_r)$ of $n$ (tuples of positive
+integers with $c_1 + \dots + c_r = n$) and $r$ is the number of parts of $c$.
+
+This is identity (43) of the source. For $m \le 3$ the condition $F \ne G_m$ excludes exactly
+the source's cases (i) $m = 0$, $z = 2y$, (ii) $m = 1$, $y = z$, (iii) $m = 2$, $y = 0$ and
+(iv) $m = 3$, $z = 0$, each with the positive root, which there equals $G_m$.
 
 Source: Taras Goy and Mark Shattuck, *Determinantal Representations of Some Classical
 Recurrent Sequences*, INTEGERS 25 (2025), Article A97, Corollary 6 (`integers-2025-A97-cor-6`). -/

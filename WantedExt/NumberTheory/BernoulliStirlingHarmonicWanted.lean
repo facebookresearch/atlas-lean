@@ -21,13 +21,15 @@ namespace MetaMathlibExt
 open MathlibExt.NumberTheory.EulerPolynomialFormulasWanted
 
 /--
-`polyBernoulliPoly n p x` is the poly-Bernoulli polynomial obtained by
-multiplying the exponential generating function for `polyBernoulli` by
-`exp (x t)`: its `i`th summand is `choose n i * polyBernoulli i p * x^(n-i)`.
-Thus it is the coefficient form of
-`Li_p(1-exp(-t))/(1-exp(-t)) * exp(x t)`; this finite-sum definition replaces
-the paper's generating-function presentation, but has the same normalization
-at `x = 0`.
+**Poly-Bernoulli polynomials.** For a natural number $n$, an integer $k$ and a rational number
+$x$, the poly-Bernoulli polynomial of degree $n$ and order $k$ at $x$ is the rational number
+$$B_n^{(k)}(x) = \sum_{i=0}^{n} \binom{n}{i} B_i^{(k)} x^{n-i},$$
+where $B_i^{(k)}$ are the poly-Bernoulli numbers.
+
+These are the coefficients of the generating function
+$\frac{\mathrm{Li}_k(1-e^{-t})}{1-e^{-t}} e^{xt} = \sum_{n \ge 0} B_n^{(k)}(x) \frac{t^n}{n!}$,
+which is how the source defines them.
+
 Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
 Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, definition of
 poly-Bernoulli polynomials before Corollary 3.
@@ -37,9 +39,10 @@ public def polyBernoulliPoly (n : ℕ) (p : ℤ) (x : ℚ) : ℚ :=
     (n.choose i : ℚ) * polyBernoulli i p * x ^ (n - i)
 
 /--
-At `x = 0`, the poly-Bernoulli polynomial of degree `n` is the poly-Bernoulli
-number of index `n` and the same integer order `p`; this proves the
-normalization stated with the generating function, with no deviation.
+**Poly-Bernoulli polynomials at zero.** For every natural number $n$ and every integer $k$, the
+poly-Bernoulli polynomial of degree $n$ and order $k$ evaluated at $0$ equals the
+poly-Bernoulli number of index $n$ and order $k$: $B_n^{(k)}(0) = B_n^{(k)}$.
+
 Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
 Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, definition of
 poly-Bernoulli polynomials before Corollary 3.
@@ -59,9 +62,9 @@ public theorem polyBernoulliPoly_zero (n : ℕ) (p : ℤ) :
   simp
 
 /--
-The degree-zero poly-Bernoulli polynomial equals `1` for every integer order
-`p` and every rational argument `x`; this is the constant term of the stated
-generating function, with no deviation.
+**Poly-Bernoulli polynomials of degree zero.** For every integer $k$ and every rational number
+$x$, the poly-Bernoulli polynomial of degree $0$ and order $k$ satisfies $B_0^{(k)}(x) = 1$.
+
 Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
 Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, definition of
 poly-Bernoulli polynomials before Corollary 3.
@@ -71,13 +74,20 @@ public theorem polyBernoulliPoly_zero_index (p : ℤ) (x : ℚ) :
   simp [polyBernoulliPoly, polyBernoulli]
 
 /--
-For natural indices `j < n`, the alternating sum from `k = j` through `n` of
-the second-kind Stirling number `{n brace k}`, the unsigned first-kind
-Stirling number `[k brack j]`, and `H_k` equals
-`(choose n j - 1) * B_(n-j)/(n-j)`. Here `B` is Mathlib's `bernoulli`, so
-`B_1 = -1/2`. The hypothesis `j < n` is the stated deviation: the diagonal `n = j`, where the
-paper reads the right-hand side in the limiting sense (both sides are then `H_j`), is
-not stated.
+**Bernoulli numbers from Stirling and harmonic numbers.** Let $j < n$ be natural numbers. Write
+${n \brace k}$ for the Stirling numbers of the second kind, ${k \brack j}$ for the unsigned
+Stirling numbers of the first kind (the number of permutations of $k$ elements with exactly $j$
+cycles), $H_k = \sum_{i=1}^{k} 1/i$ for the harmonic numbers (so $H_0 = 0$), and $B_m$ for the
+Bernoulli numbers, normalized so that $B_1 = -1/2$. Then, in the rational numbers,
+
+$$
+\sum_{k=j}^{n} (-1)^{k-j} {n \brace k} {k \brack j} H_k
+= \left(\binom{n}{j} - 1\right) \frac{B_{n-j}}{n-j}.
+$$
+
+The paper also covers the diagonal case $n = j$, reading the right-hand side as a limit (both
+sides are then $H_j$); that case is not included here.
+
 Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
 Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Theorem 1,
 equation (5).
@@ -89,11 +99,12 @@ public theorem_wanted sum_stirling_harmonic_eq_bernoulli (n j : ℕ) (hjn : j < 
       ((n.choose j : ℚ) - 1) * bernoulli (n - j) / (n - j : ℚ)
 
 /--
-For positive natural numbers `n` and `m`, the sum from `j = 1` through `n` of
-`(choose n j - 1) * (B_j/j) * m^(n-j)` equals
-`m^n * (H_m-H_n)` minus the sum from `j = 1` through `m` of `(m-j)^n/j`.
-All powers, divisions, Bernoulli numbers, and harmonic numbers are in `ℚ`;
-this is a direct formalization with no mathematical deviation.
+**A Bernoulli–harmonic power-sum identity.** Let $B_j$ denote the Bernoulli numbers with
+$B_1 = -\tfrac12$, and let $H_m = \sum_{i=1}^{m} 1/i$ denote the harmonic numbers. For all
+positive integers $n$ and $m$,
+$$\sum_{j=1}^{n} \left(\binom{n}{j} - 1\right) \frac{B_j}{j} m^{n-j} =
+m^n (H_m - H_n) - \sum_{j=1}^{m} \frac{(m-j)^n}{j}.$$
+
 Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
 Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 1,
 equation (11).
@@ -106,10 +117,10 @@ public theorem_wanted sum_bernoulli_harmonic_power_identity (n m : ℕ)
         ∑ j ∈ Finset.Icc 1 m, ((m - j : ℕ) : ℚ) ^ n / (j : ℚ)
 
 /--
-For positive natural `n`, the sum from `j = 1` through `n` of
-`(choose n j + 1) * (B_j/j) * (1-2^j)` equals `1`. Bernoulli numbers use
-Mathlib's convention `B_1 = -1/2`, and all arithmetic is in `ℚ`; there is no
-mathematical deviation from equation (14).
+**A weighted Bernoulli sum with factors $1 - 2^j$.** Let $B_j$ denote the Bernoulli numbers
+with $B_1 = -\tfrac12$. For every positive integer $n$,
+$$\sum_{j=1}^{n} \left(\binom{n}{j} + 1\right) \frac{B_j}{j} \left(1 - 2^j\right) = 1.$$
+
 Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
 Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 2,
 equation (14).
@@ -120,11 +131,12 @@ public theorem_wanted sum_bernoulli_one_sub_two_pow (n : ℕ) (hn : 0 < n) :
         (1 - (2 : ℚ) ^ j)) = 1
 
 /--
-For natural `n >= 2`, the sum `B_0 + ... + B_n` equals the order-two
-poly-Bernoulli polynomial at `1`, plus `B_n`, minus the order-two
-poly-Bernoulli number, minus `1`. The polynomial is represented by its finite
-coefficient sum rather than by a generating function; this is the only
-representational deviation.
+**Sums of Bernoulli numbers via poly-Bernoulli polynomials.** Let $B_j$ denote the Bernoulli
+numbers with $B_1 = -\tfrac12$, let $B_n^{(2)}$ denote the poly-Bernoulli numbers of order $2$,
+and let $B_n^{(2)}(x)$ denote the poly-Bernoulli polynomials of order $2$. For every natural
+number $n \ge 2$,
+$$\sum_{j=0}^{n} B_j = B_n^{(2)}(1) + B_n - B_n^{(2)} - 1.$$
+
 Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
 Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 3.
 -/
@@ -133,10 +145,11 @@ public theorem_wanted sum_bernoulli_eq_polyBernoulli (n : ℕ) (hn : 2 ≤ n) :
       polyBernoulliPoly n 2 1 + bernoulli n - polyBernoulli n 2 - 1
 
 /--
-For an odd prime `p`, the rational sum `sum_{j=0}^p p * B_j` has denominator
-not divisible by `p`, and its image under `ratResidue p` equals that of `-1`.
-The explicit denominator clause and residue equality replace the paper's
-rational congruence notation; `hp2` states oddness as `p != 2`.
+**The congruence $\sum_{j=0}^{p} pB_j \equiv -1 \pmod p$.** Let $B_j$ denote the Bernoulli
+numbers with $B_1 = -\tfrac12$. For every odd prime $p$, the rational number
+$S = \sum_{j=0}^{p} p B_j$ has denominator not divisible by $p$, and its residue modulo $p$ (its
+numerator times the inverse of its denominator in $\mathbb{Z}/p\mathbb{Z}$) equals $-1$.
+
 Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
 Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 4,
 equation (23).
@@ -148,9 +161,11 @@ public theorem_wanted sum_prime_mul_bernoulli_mod_prime (p : ℕ)
         ratResidue p (-1)
 
 /--
-For a prime `p >= 5`, the rational sum `B_0 + ... + B_(p-3)` has denominator not divisible
-by `p`, and its residue equals that of `-1`. The denominator clause and
-`ratResidue` equality are the formal replacement for rational congruence.
+**The congruence $\sum_{j=0}^{p-3} B_j \equiv -1 \pmod p$.** Let $B_j$ denote the Bernoulli
+numbers with $B_1 = -\tfrac12$. For every prime $p \ge 5$, the rational number
+$S = B_0 + B_1 + \dots + B_{p-3}$ has denominator not divisible by $p$, and its residue modulo
+$p$ (its numerator times the inverse of its denominator in $\mathbb{Z}/p\mathbb{Z}$) equals $-1$.
+
 Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
 Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 4,
 equation (24).
@@ -162,11 +177,14 @@ public theorem_wanted sum_bernoulli_to_prime_sub_three_mod_prime (p : ℕ)
         ratResidue p (-1)
 
 /--
-For an odd prime `p`, the rational sum `E_0(0) + ... + E_p(0)` has denominator
-not divisible by `p`, and its residue equals that of `3/2`. The source's Euler number
-`E_n = E_n(0)` is the value at `0` of the existing Euler polynomial `eulerPoly n`
-(generating function `2 e^{xt}/(e^t + 1)`, values `1, -1/2, 0, 1/4`); the explicit
-denominator clause and residue equality replace the paper's congruence notation.
+**The congruence $\sum_{j=0}^{p} E_j(0) \equiv 3/2 \pmod p$.** Let $E_j(x)$ denote the Euler
+polynomials. For every odd prime $p$, the rational number $S = E_0(0) + E_1(0) + \dots + E_p(0)$
+has denominator not divisible by $p$, and its residue modulo $p$ (its numerator times the
+inverse of its denominator in $\mathbb{Z}/p\mathbb{Z}$) equals $3 \cdot 2^{-1}$.
+
+The values $E_j(0)$ are the Euler numbers of the source; they come from the generating function
+$2e^{xt}/(e^t + 1)$ and begin $1, -\tfrac12, 0, \tfrac14$.
+
 Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
 Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 4,
 equation (25).
@@ -178,11 +196,12 @@ public theorem_wanted sum_euler_eval_zero_mod_prime (p : ℕ)
         ratResidue p (3 / 2)
 
 /--
-For an odd prime `p`, the rational number
-`p * sum_{j=0}^p B_j/(p-j+1)` has denominator not divisible by `p`, and its
-residue equals that of `-1`. Natural subtraction occurs only for `j <= p` in
-the range; the denominator clause and residue equality replace rational
-congruence notation.
+**The congruence $p\sum_{j=0}^{p} B_j/(p-j+1) \equiv -1 \pmod p$.** Let $B_j$ denote the
+Bernoulli numbers with $B_1 = -\tfrac12$. For every odd prime $p$, the rational number
+$$S = p \sum_{j=0}^{p} \frac{B_j}{p-j+1}$$
+has denominator not divisible by $p$, and its residue modulo $p$ (its numerator times the
+inverse of its denominator in $\mathbb{Z}/p\mathbb{Z}$) equals $-1$.
+
 Source: Levent Kargın and Merve Mutluer, *A New Expression for the Bernoulli
 Numbers and Its Applications*, INTEGERS 26 (2026), Article A120, Corollary 4,
 equation (26).

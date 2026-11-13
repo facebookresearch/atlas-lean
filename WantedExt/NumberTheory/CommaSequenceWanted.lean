@@ -15,12 +15,11 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- Comma sequences with arbitrary positive initial values terminate in every
-base from 3 through 633 inclusive.
+/-- **Comma sequences terminate in bases 3 to 633.** For every base $b$ with $3 \le b \le 633$
+and every positive integer $v$, the comma sequence in base $b$ starting at $v$ terminates, that
+is, there is no infinite comma sequence in base $b$ starting at $v$.
 
-This is statement `commaSequence_terminates_of_base_le_633` from lines 134–137 of
-Dougherty, *Comma Sequences*, JIS 28, with the sequence semantics defined in
-`MathlibExt.NumberTheory.CommaSequence`. -/
+Source: Dougherty, *Comma Sequences*, JIS 28, lines 134–137. -/
 public theorem_wanted commaSequence_terminates_of_base_le_633
     (b v : ℕ) (hb1 : 3 ≤ b) (hb2 : b ≤ 633) (hv : 0 < v) :
     IsCommaTerminating b v

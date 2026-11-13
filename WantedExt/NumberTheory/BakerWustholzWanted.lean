@@ -71,14 +71,21 @@ open Complex
 
 namespace BakerWustholz
 
-/-- The Baker–Wüstholz constant
-`C(n, d) = 18 · (n + 1)! · n^{n+1} · (32 d)^{n+2} · log (2nd)`. -/
+/-- **The Baker–Wüstholz constant.** For natural numbers $n$ and $d$, the Baker–Wüstholz constant
+is the real number
+$C(n, d) = 18 \cdot (n + 1)! \cdot n^{n+1} \cdot (32 d)^{n+2} \cdot \log(2nd)$. -/
 noncomputable def C (n d : ℕ) : ℝ :=
   18 * (n + 1).factorial * (n : ℝ) ^ (n + 1) *
     (32 * (d : ℝ)) ^ (n + 2) * Real.log (2 * n * d)
 
-/-- The modified height `h'(α) = max(h(α), |log φ(α)| / d, 1 / d)` where
-`h(α) := logHeight₁ α / d` is the normalized logarithmic Weil height. -/
+/-- **Modified height.** Let $K$ be a number field of degree $d = [K : \mathbb{Q}]$ and let
+$\varphi : K \to \mathbb{C}$ be a ring homomorphism. For $\alpha \in K$, the modified height of
+$\alpha$ with respect to $\varphi$ is
+$$h'(\alpha) = \max\left(h(\alpha), \frac{|\log \varphi(\alpha)|}{d}, \frac{1}{d}\right),$$
+where $\log$ is the principal branch of the complex logarithm (with $\log 0 = 0$) and $h(\alpha)$
+is the absolute logarithmic Weil height of $\alpha$: $\frac{1}{d}$ times the sum of
+$\log \max(1, |\alpha|_v)$ over the places $v$ of $K$, with the absolute values normalized so that
+the product formula holds and each complex place counted twice. -/
 noncomputable def modifiedHeight
     {K : Type*} [Field K] [NumberField K] (φ : K →+* ℂ) (α : K) : ℝ :=
   let d : ℝ := Module.finrank ℚ K
@@ -102,7 +109,17 @@ where `C(n, d)` is `BakerWustholz.C n d` and `h'(α)` is
 `BakerWustholz.modifiedHeight φ α`. The `max(log B, 1/d)` factor (rather
 than bare `log B`) is the standard Baker–Wüstholz formulation; it avoids
 spuriously sharpening the bound at `d = 1`, `B = 2`. -/
-/-- Source: A. Baker, G. Wüstholz, Logarithmic forms and group varieties, J. reine angew. Math. 442 (1993), 19-62. Via leanprover/lean-eval@38361be, problem `bakerWustholz_linearForms_logs`. -/
+/-- **Baker–Wüstholz theorem on linear forms in logarithms.** Let $n \ge 1$, let $K$ be a number
+field of degree $d = [K : \mathbb{Q}]$, let $\varphi : K \to \mathbb{C}$ be a ring homomorphism,
+and let $\alpha_1, \dots, \alpha_n$ be nonzero elements of $K$. Let $b_1, \dots, b_n$ be integers
+and let $B \ge 2$ be a natural number with $|b_i| \le B$ for every $i$. With $\log$ the principal
+branch of the complex logarithm, suppose that $\Lambda = \sum_{i=1}^n b_i \log \varphi(\alpha_i)$
+is nonzero. Then
+$$\log |\Lambda| \ge -C(n, d) \max\left(\log B, \frac{1}{d}\right) \prod_{i=1}^n h'(\alpha_i),$$
+where $C(n, d)$ is the Baker–Wüstholz constant and $h'$ is the modified height with respect to
+$\varphi$.
+
+Source: A. Baker, G. Wüstholz, Logarithmic forms and group varieties, J. reine angew. Math. 442 (1993), 19-62. Via leanprover/lean-eval@38361be, problem `bakerWustholz_linearForms_logs`. -/
 public theorem_wanted bakerWustholz_linearForms_logs
     {n : ℕ} (hn : 0 < n)
     {K : Type*} [Field K] [NumberField K] (φ : K →+* ℂ)

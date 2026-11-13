@@ -64,8 +64,9 @@ open Filter
 
 /- The number of primes `p ≤ n` in the residue class `a mod 4`. -/
 
-/-- The set of `n` for which there are strictly more primes `≡ 3 mod 4`
-than primes `≡ 1 mod 4` in `{2, 3, …, n}`. -/
+/-- **The set where primes $\equiv 3 \pmod 4$ lead.** This is the set of natural numbers $n$
+for which the number of primes $p \le n$ with $p \equiv 3 \pmod 4$ is strictly greater than the
+number of primes $p \le n$ with $p \equiv 1 \pmod 4$. -/
 def chebyshevLead : Set ℕ :=
   {n : ℕ | Nat.primeCountingMod n 4 1 < Nat.primeCountingMod n 4 3}
 
@@ -73,7 +74,13 @@ def chebyshevLead : Set ℕ :=
 (Hardy–Littlewood 1914, unconditional). The difference `π₃(n) − π₁(n)`
 changes sign infinitely often: both
 `{n : π₃(n) > π₁(n)}` and `{n : π₁(n) > π₃(n)}` are infinite. -/
-/-- Source: G.H. Hardy and J.E. Littlewood, 'Contributions to the theory of the Riemann zeta-function and the theory of the distribution of primes', Acta Math. 41 (1916) 119–196 (announced 1914). Chebyshev's original observation: P. Chebyshev, letter to M. Fuss, 1853, in *Œuvres de P.L. Tchebychef*, vol. I (Saint Petersburg, 1899). Listed as §106 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `chebyshev_sign_change`. -/
+/-- **Hardy–Littlewood sign changes in the prime race modulo 4.** There are infinitely many
+natural numbers $n$ for which the primes $p \le n$ with $p \equiv 3 \pmod 4$ strictly outnumber
+the primes $p \le n$ with $p \equiv 1 \pmod 4$, and infinitely many natural numbers $n$ for which
+the primes $p \le n$ with $p \equiv 1 \pmod 4$ strictly outnumber the primes $p \le n$ with
+$p \equiv 3 \pmod 4$.
+
+Source: G.H. Hardy and J.E. Littlewood, 'Contributions to the theory of the Riemann zeta-function and the theory of the distribution of primes', Acta Math. 41 (1916) 119–196 (announced 1914). Chebyshev's original observation: P. Chebyshev, letter to M. Fuss, 1853, in *Œuvres de P.L. Tchebychef*, vol. I (Saint Petersburg, 1899). Listed as §106 in O. Knill, *Some Fundamental Theorems in Mathematics* (https://people.math.harvard.edu/~knill/graphgeometry/papers/fundamental.pdf). Via leanprover/lean-eval@38361be, problem `chebyshev_sign_change`. -/
 public theorem_wanted chebyshev_sign_change :
     chebyshevLead.Infinite ∧
     {n : ℕ | Nat.primeCountingMod n 4 3 < Nat.primeCountingMod n 4 1}.Infinite

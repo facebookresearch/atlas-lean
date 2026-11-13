@@ -15,8 +15,13 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- `IsCompleteYoungGraph g k m`: the Young graph `Y(g, k)` is complete on
-`m` nodes. Source: L. H. Kendrick, "Young Graphs: 1089 et al.", Journal of
+/-- **Complete Young graphs.** For natural numbers $g$, $k$ and $m$, the Young graph $Y(g, k)$ of
+the $k$-reverse multiples in base $g$ is complete on $m$ nodes: the nodes other than its
+distinguished starting node form the complete directed graph on $m$ nodes, so $Y(g, k)$ has
+$m + 1$ nodes in all; the node $[0, 0]$ is one of these $m$ nodes, and the starting node has an
+edge to every node except $[0, 0]$.
+
+Source: L. H. Kendrick, "Young Graphs: 1089 et al.", Journal of
 Integer Sequences 18 (2015), stable source URL
 `https://cs.uwaterloo.ca/journals/JIS/VOL18/Kendrick/ken1.tex`
 (frozen source SHA-256
@@ -31,7 +36,13 @@ is one of the `m` non-start nodes, and the starting node connects to every
 node except `[0, 0]`. -/
 public def_wanted IsCompleteYoungGraph (g k m : Nat) : Prop
 
-/-- Sloane complete Young graph characterization: Corollary at lines 574-576
+/-- **Characterization of complete Young graphs.** Let $g$, $k$ and $m$ be natural numbers with
+$2 \le k < g$ and $m \ge 2$. Then the Young graph $Y(g, k)$ is complete on $m$ nodes if and only
+if
+
+$$\left\lfloor \frac{\gcd(g - k,\, k^2 - 1)}{k + 1} \right\rfloor = m - 1.$$
+
+Source: Corollary at lines 574-576
 (quotation span SHA-256
 `a7c50f9bea3cb4b958aecdbee7b56879d930178eae594729d8e54e36b7767395`)
 of L. H. Kendrick, "Young Graphs: 1089 et al.", Journal of Integer
@@ -39,15 +50,13 @@ Sequences 18 (2015), stable source URL
 `https://cs.uwaterloo.ca/journals/JIS/VOL18/Kendrick/ken1.tex`
 (frozen source SHA-256
 `28568ffc708329fe2de23639f32fd9f7a24a772a043deb40f9098c0f82e465c2`,
-stable source ID `jis_grounded_3014355e4f55ef0bb856bf6f`):
-under `2 ≤ k < g`, `Y(g, k)` is complete on `m` nodes iff
-`⌊gcd(g - k, k ^ 2 - 1) / (k + 1)⌋ = m - 1`. In the source's `K_m`
+stable source ID `jis_grounded_3014355e4f55ef0bb856bf6f`).
+In the source's `K_m`
 convention, the nodes other than the distinguished starting node form the
 complete directed graph on `m` nodes, so the Young graph has `m + 1` total
 nodes including that distinguished start; `[0, 0]` is one of the `m`
 non-start nodes. Natural-number division represents the source floor
 because all quantities are nonnegative and the denominator is positive.
-
 The hypothesis is `2 ≤ m`, not `1 ≤ m`. The corollary rests on Theorem
 `thm:completegraph`, whose proof starts "Since $s_1$ exists", so it needs
 `m - 1 ≥ 1`. For `m = 1` the class `K_1` contains no Young graph: every Young

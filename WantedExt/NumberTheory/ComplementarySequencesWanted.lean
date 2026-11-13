@@ -34,16 +34,21 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- The `n`-th (`1`-indexed) positive integer that is not a value `f m` with `m ≥ 1`, i.e. the
-paper's `f_P(n)` for the complementary sequence of `f = f_{¬P}`. At `n = 0` it agrees with
-`n = 1` (junk value of the `1`-indexing).
+/-- **The $n$-th non-value of a sequence.** For $f : \mathbb{N} \to \mathbb{N}$ and $n \ge 1$, the
+$n$-th non-value of $f$ is the $n$-th smallest positive integer that is not of the form $f(m)$
+with $m \ge 1$, or $0$ if fewer than $n$ such integers exist. At $n = 0$ it takes the same value
+as at $n = 1$.
+
+In the paper's notation, where $f = f_{\neg P}$ lists the positive integers without a property
+$P$, the $n$-th non-value of $f$ is $f_P(n)$, the $n$-th term of the complementary sequence.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Section 1 (definition of `f_P`). -/
 public noncomputable def nthNonValue (f : ℕ → ℕ) (n : ℕ) : ℕ :=
   Nat.nth (fun x => 0 < x ∧ ∀ m, 1 ≤ m → f m ≠ x) (n - 1)
 
-/-- Characteristic value: the first positive non-square is `2`.
+/-- **The first non-square.** The smallest positive integer that is not the square of a positive
+integer is $2$; that is, the first non-value of $m \mapsto m^2$ is $2$.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Section 1 (the non-squares). -/
@@ -62,7 +67,8 @@ public theorem nthNonValue_sq_one : nthNonValue (fun m => m ^ 2) 1 = 2 := by
   rw [hc] at this
   simpa [nthNonValue] using this
 
-/-- Characteristic value: the second positive non-square is `3`.
+/-- **The second non-square.** The second smallest positive integer that is not the square of a
+positive integer is $3$; that is, the second non-value of $m \mapsto m^2$ is $3$.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Section 1 (the non-squares). -/
@@ -87,10 +93,14 @@ public theorem nthNonValue_sq_two : nthNonValue (fun m => m ^ 2) 2 = 3 := by
   rw [hc] at this
   simpa [nthNonValue] using this
 
-/-- Two steps of the Lambek–Moser iteration suffice: if `f(m + 1) - f(m) ≥ m` for all
-`m ≥ 1` (and `f(1) ≥ 1`, so that `f` lists positive integers), then
-`f_P(n) = n + C(n + C(n))`, where `C(x) = #{m ≥ 1 : f m ≤ x}` is the counting function of
-the values of `f`. Under the hypotheses `f m ≥ m`, so only `m ≤ x` can contribute to `C(x)`.
+/-- **Complementary sequences in two Lambek–Moser steps.** Let $f : \mathbb{N} \to \mathbb{N}$
+satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$, let $C(x)$ be the number of
+$m$ with $1 \le m \le x$ and $f(m) \le x$, and for $n \ge 1$ let $f_P(n)$ be the $n$-th positive
+integer that is not a value $f(m)$ with $m \ge 1$. Then $f_P(n) = n + C(n + C(n))$ for every
+$n \ge 1$.
+
+Under the hypotheses, $f(m) \ge m$ for all $m \ge 1$, so $C(x)$ is the number of all $m \ge 1$
+with $f(m) \le x$, the counting function of the values of $f$.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 1. -/
@@ -99,9 +109,12 @@ public theorem_wanted nthNonValue_eq_two_step (f : ℕ → ℕ) (hf1 : 1 ≤ f 1
     let C : ℕ → ℕ := fun x => ((Finset.Icc 1 x).filter (fun m => f m ≤ x)).card
     nthNonValue f n = n + C (n + C n)
 
-/-- One evaluation of the counting function suffices: under the hypotheses of
-`nthNonValue_eq_two_step`, `f_P(n) = n + C(n) + 1` if `n + C(n) ≥ f(C(n) + 1)` and
-`f_P(n) = n + C(n)` otherwise.
+/-- **Complementary sequences from one evaluation of the counting function.** Let
+$f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all
+$m \ge 1$, let $C(x)$ be the number of $m$ with $1 \le m \le x$ and $f(m) \le x$, and for
+$n \ge 1$ let $f_P(n)$ be the $n$-th positive integer that is not a value $f(m)$ with $m \ge 1$.
+Then for every $n \ge 1$, $f_P(n) = n + C(n) + 1$ if $f(C(n) + 1) \le n + C(n)$, and
+$f_P(n) = n + C(n)$ otherwise.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 2. -/
@@ -110,11 +123,17 @@ public theorem_wanted nthNonValue_eq_one_step (f : ℕ → ℕ) (hf1 : 1 ≤ f 1
     let C : ℕ → ℕ := fun x => ((Finset.Icc 1 x).filter (fun m => f m ≤ x)).card
     nthNonValue f n = if f (C n + 1) ≤ n + C n then n + C n + 1 else n + C n
 
-/-- Interleaving functions: let `f` satisfy the hypotheses of `nthNonValue_eq_one_step`, let
-`α : ℕ → ℝ` interleave `f` (`f(m - 1) ≤ α(m) ≤ f(m)` for `m ≥ 2`), and let `h(n) ≥ 1` with
-`α(h(n)) ≤ n < α(h(n) + 1)` (for increasing `α` with `α(1) = 1` this is the paper's
-`h(n) = max {m ≥ 1 : α(m) ≤ n}`). Then `f_P(n)` is `n + h(n) + 1` if `n + h(n) ≥ f(h(n) + 1)`,
-`n + h(n) - 1` if `n + h(n) ≤ f(h(n))`, and `n + h(n)` otherwise.
+/-- **Complementary sequences from an interleaving function.** Let
+$f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$,
+and for $n \ge 1$ let $f_P(n)$ be the $n$-th positive integer that is not a value $f(m)$ with
+$m \ge 1$. Let $\alpha : \mathbb{N} \to \mathbb{R}$ satisfy $f(m - 1) \le \alpha(m) \le f(m)$ for
+all $m \ge 2$, and let $h : \mathbb{N} \to \mathbb{N}$ satisfy $h(n) \ge 1$ and
+$\alpha(h(n)) \le n < \alpha(h(n) + 1)$ for all $n \ge 1$.
+Then for every $n \ge 1$, $f_P(n) = n + h(n) + 1$ if $f(h(n) + 1) \le n + h(n)$; otherwise
+$f_P(n) = n + h(n) - 1$ if $n + h(n) \le f(h(n))$, and $f_P(n) = n + h(n)$ if not.
+
+For increasing $\alpha$ with $\alpha(1) = 1$, the paper's choice of $h(n)$ as the largest
+$m \ge 1$ with $\alpha(m) \le n$ satisfies the hypothesis on $h$.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 3. -/
@@ -127,9 +146,14 @@ public theorem_wanted nthNonValue_eq_interleave (f : ℕ → ℕ) (hf1 : 1 ≤ f
       else if n + h n ≤ f (h n) then n + h n - 1
       else n + h n
 
-/-- Under the hypotheses of `nthNonValue_eq_interleave`, if moreover `f(m) - α(m) < m` for all
-`m ≥ 1`, the middle case never occurs: `f_P(n) = n + h(n) + 1` if `n + h(n) ≥ f(h(n) + 1)` and
-`f_P(n) = n + h(n)` otherwise.
+/-- **Interleaving formula when $f(m) - \alpha(m) < m$.** Let
+$f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$,
+and for $n \ge 1$ let $f_P(n)$ be the $n$-th positive integer that is not a value $f(m)$ with
+$m \ge 1$. Let $\alpha : \mathbb{N} \to \mathbb{R}$ satisfy $f(m - 1) \le \alpha(m) \le f(m)$ for
+all $m \ge 2$, and let $h : \mathbb{N} \to \mathbb{N}$ satisfy $h(n) \ge 1$ and
+$\alpha(h(n)) \le n < \alpha(h(n) + 1)$ for all $n \ge 1$.
+Suppose moreover that $f(m) - \alpha(m) < m$ for all $m \ge 1$. Then for every $n \ge 1$,
+$f_P(n) = n + h(n) + 1$ if $f(h(n) + 1) \le n + h(n)$, and $f_P(n) = n + h(n)$ otherwise.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Corollary 1. -/
@@ -140,9 +164,14 @@ public theorem_wanted nthNonValue_eq_interleave_of_sub_lt (f : ℕ → ℕ) (hf1
     (hclose : ∀ m : ℕ, 1 ≤ m → (f m : ℝ) - α m < m) (n : ℕ) (hn : 1 ≤ n) :
     nthNonValue f n = if f (h n + 1) ≤ n + h n then n + h n + 1 else n + h n
 
-/-- Under the hypotheses of `nthNonValue_eq_interleave`, if moreover `f(m) - α(m) ≥ m` for all
-`m > 1`, the first case never occurs: `f_P(n) = n + h(n)` if `n + h(n) > f(h(n))` and
-`f_P(n) = n + h(n) - 1` otherwise.
+/-- **Interleaving formula when $f(m) - \alpha(m) \ge m$.** Let
+$f : \mathbb{N} \to \mathbb{N}$ satisfy $f(1) \ge 1$ and $f(m + 1) \ge f(m) + m$ for all $m \ge 1$,
+and for $n \ge 1$ let $f_P(n)$ be the $n$-th positive integer that is not a value $f(m)$ with
+$m \ge 1$. Let $\alpha : \mathbb{N} \to \mathbb{R}$ satisfy $f(m - 1) \le \alpha(m) \le f(m)$ for
+all $m \ge 2$, and let $h : \mathbb{N} \to \mathbb{N}$ satisfy $h(n) \ge 1$ and
+$\alpha(h(n)) \le n < \alpha(h(n) + 1)$ for all $n \ge 1$.
+Suppose moreover that $f(m) - \alpha(m) \ge m$ for all $m \ge 2$. Then for every $n \ge 1$,
+$f_P(n) = n + h(n)$ if $f(h(n)) < n + h(n)$, and $f_P(n) = n + h(n) - 1$ otherwise.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Corollary 2. -/
@@ -153,23 +182,27 @@ public theorem_wanted nthNonValue_eq_interleave_of_le_sub (f : ℕ → ℕ) (hf1
     (hfar : ∀ m : ℕ, 2 ≤ m → (m : ℝ) ≤ f m - α m) (n : ℕ) (hn : 1 ≤ n) :
     nthNonValue f n = if f (h n) < n + h n then n + h n else n + h n - 1
 
-/-- The `n`-th non-triangular number is `n + ⌊√(2n) + 1/2⌋`.
+/-- **Formula for the $n$-th non-triangular number.** For every integer $n \ge 1$, the $n$-th
+smallest positive integer that is not a triangular number $j(j+1)/2$ with $j \ge 1$ is
+$n + \lfloor \sqrt{2n} + 1/2 \rfloor$.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Corollary 3. -/
 public theorem_wanted nthNonValue_triangular_eq_round (n : ℕ) (hn : 1 ≤ n) :
     nthNonValue (fun j => j * (j + 1) / 2) n = n + ⌊Real.sqrt (2 * n) + 1 / 2⌋₊
 
-/-- The `n`-th non-square number is `n + ⌊√n + 1/2⌋`.
+/-- **Formula for the non-square numbers.** For every integer $n \ge 1$, the $n$-th positive
+integer that is not a perfect square is $n + \lfloor \sqrt{n} + 1/2 \rfloor$.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Corollary 3. -/
 public theorem_wanted nthNonValue_sq_eq_round (n : ℕ) (hn : 1 ≤ n) :
     nthNonValue (fun j => j ^ 2) n = n + ⌊Real.sqrt n + 1 / 2⌋₊
 
-/-- The `n`-th non-`k`-gonal number (`k ≥ 3`, `k`-gonal numbers
-`T(k, j) = (k - 2) j (j - 1) / 2 + j`, `j ≥ 1`): with `s = ⌊√(2n / (k - 2))⌋`, it is `n + s + 1`
-if `2n > (k - 2) s (s + 1)` and `n + s` otherwise.
+/-- **Formula for the non-polygonal numbers.** Let $k \ge 3$, and for $j \ge 1$ let
+$T(k, j) = (k - 2) j (j - 1)/2 + j$ be the $k$-gonal numbers. For every integer $n \ge 1$, put
+$s = \lfloor \sqrt{2n/(k - 2)} \rfloor$. Then the $n$-th positive integer that is not of the form
+$T(k, j)$ with $j \ge 1$ equals $n + s + 1$ if $(k - 2) s (s + 1) < 2n$, and $n + s$ otherwise.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 4, Equation (3). -/
@@ -178,7 +211,10 @@ public theorem_wanted nthNonValue_polygonal (k : ℕ) (hk : 3 ≤ k) (n : ℕ) (
     nthNonValue (fun j => (k - 2) * j * (j - 1) / 2 + j) n =
       if (k - 2) * s * (s + 1) < 2 * n then n + s + 1 else n + s
 
-/-- For `3 ≤ k ≤ 10` the `n`-th non-`k`-gonal number is `n + ⌊√(2n / (k - 2)) + 1/2⌋`.
+/-- **Rounding formula for the non-$k$-gonal numbers, $3 \le k \le 10$.** Let $3 \le k \le 10$;
+the $k$-gonal numbers are $(k - 2) j (j - 1)/2 + j$ for $j \ge 1$. For every $n \ge 1$, the $n$-th
+positive integer that is not a $k$-gonal number equals
+$n + \lfloor \sqrt{2n/(k - 2)} + 1/2 \rfloor$.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 4 (last sentence). -/
@@ -187,9 +223,11 @@ public theorem_wanted nthNonValue_polygonal_eq_round (k : ℕ) (hk : 3 ≤ k) (h
     nthNonValue (fun j => (k - 2) * j * (j - 1) / 2 + j) n =
       n + ⌊Real.sqrt (2 * n / ((k : ℝ) - 2)) + 1 / 2⌋₊
 
-/-- Shifted form: for `k ≥ 3` and real `r` with `-1 ≤ r ≤ k - 4`, with
-`s = ⌊√((2n + r) / (k - 2))⌋`, the `n`-th non-`k`-gonal number is `n + s + 1` if
-`2n > (k - 2) s (s + 1)` and `n + s` otherwise.
+/-- **Shifted formula for the non-polygonal numbers.** Let $k \ge 3$, let $r$ be a real number
+with $-1 \le r \le k - 4$, and for $j \ge 1$ let $T(k, j) = (k - 2) j (j - 1)/2 + j$ be the
+$k$-gonal numbers. For every integer $n \ge 1$, put $s = \lfloor \sqrt{(2n + r)/(k - 2)} \rfloor$.
+Then the $n$-th positive integer that is not of the form $T(k, j)$ with $j \ge 1$ equals
+$n + s + 1$ if $(k - 2) s (s + 1) < 2n$, and $n + s$ otherwise.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 5, Equation (4). -/
@@ -199,8 +237,12 @@ public theorem_wanted nthNonValue_polygonal_shift (k : ℕ) (hk : 3 ≤ k) (r : 
     nthNonValue (fun j => (k - 2) * j * (j - 1) / 2 + j) n =
       if (k - 2) * s * (s + 1) < 2 * n then n + s + 1 else n + s
 
-/-- For every `k ≥ 3` the `n`-th non-`k`-gonal number is
-`n + ⌊√((2n - 2 + ⌊(k + 1)/4⌋) / (k - 2)) + 1/2⌋` (the choice `r = ⌊(k + 1)/4⌋ - 2`).
+/-- **Rounding formula for the non-$k$-gonal numbers, every $k \ge 3$.** Let $k \ge 3$; the
+$k$-gonal numbers are $(k - 2) j (j - 1)/2 + j$ for $j \ge 1$. For every $n \ge 1$, the $n$-th
+positive integer that is not a $k$-gonal number equals
+$n + \lfloor \sqrt{(2n - 2 + \lfloor (k + 1)/4 \rfloor)/(k - 2)} + 1/2 \rfloor$.
+
+This corresponds to the shift $r = \lfloor (k + 1)/4 \rfloor - 2$ in the source.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 5 (last sentence). -/
@@ -209,8 +251,10 @@ public theorem_wanted nthNonValue_polygonal_eq_round_shift (k : ℕ) (hk : 3 ≤
     nthNonValue (fun j => (k - 2) * j * (j - 1) / 2 + j) n =
       n + ⌊Real.sqrt ((2 * n - 2 + ((k + 1) / 4 : ℕ)) / ((k : ℝ) - 2)) + 1 / 2⌋₊
 
-/-- The `n`-th non-second-pentagonal number (second pentagonal numbers `(3j² + j)/2`, `j ≥ 1`):
-with `s = ⌊√(2n/3)⌋`, it is `n + s + 1` if `2n ≥ s(3s + 5) + 4` and `n + s` otherwise.
+/-- **Formula for the non-second-pentagonal numbers.** For every integer $n \ge 1$, put
+$s = \lfloor \sqrt{2n/3} \rfloor$. Then the $n$-th positive integer that is not a second
+pentagonal number $(3j^2 + j)/2$ with $j \ge 1$ equals $n + s + 1$ if $s (3s + 5) + 4 \le 2n$, and
+$n + s$ otherwise.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 6. -/
@@ -219,10 +263,11 @@ public theorem_wanted nthNonValue_secondPentagonal (n : ℕ) (hn : 1 ≤ n) :
     nthNonValue (fun j => (3 * j ^ 2 + j) / 2) n =
       if s * (3 * s + 5) + 4 ≤ 2 * n then n + s + 1 else n + s
 
-/-- The `n`-th non-second-`k`-gonal number for `k > 5` (second `k`-gonal numbers
-`((k - 2) j² + (k - 4) j)/2`, `j ≥ 1`): with `s = ⌊√(2n / (k - 2))⌋`, it is `n + s` if
-`2n > (k - 2) s (s + 1) - 4s` and `n + s - 1` otherwise. The condition is written with `4s`
-moved to the left side.
+/-- **Formula for the non-second-polygonal numbers.** Let $k > 5$, and for $j \ge 1$ let
+$S(k, j) = ((k - 2) j^2 + (k - 4) j)/2$ be the second $k$-gonal numbers. For every integer
+$n \ge 1$, put $s = \lfloor \sqrt{2n/(k - 2)} \rfloor$. Then the $n$-th positive integer that is
+not of the form $S(k, j)$ with $j \ge 1$ equals $n + s$ if $(k - 2) s (s + 1) < 2n + 4s$, and
+$n + s - 1$ otherwise.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 7, Equation (5). -/
@@ -231,9 +276,10 @@ public theorem_wanted nthNonValue_secondPolygonal (k : ℕ) (hk : 5 < k) (n : �
     nthNonValue (fun j => ((k - 2) * j ^ 2 + (k - 4) * j) / 2) n =
       if (k - 2) * s * (s + 1) < 2 * n + 4 * s then n + s else n + s - 1
 
-/-- The `n`-th nonnegative non-centered-`k`-gonal number (`k ≥ 3`; centered `k`-gonal numbers
-`k j (j + 1)/2 + 1`, `j ≥ 0`; the count starts at `0`, so the value at `n = 1` is `0`): with
-`s = ⌊√(2n / k)⌋`, it is `n + s` if `2(n + s - 1) > k s (s + 1)` and `n + s - 1` otherwise.
+/-- **Non-centered polygonal numbers.** Let $k \ge 3$; the centered $k$-gonal numbers are
+$k j (j + 1)/2 + 1$ for $j \ge 0$. For $n \ge 1$ let $a(n)$ be the $n$-th nonnegative integer that
+is not a centered $k$-gonal number (so $a(1) = 0$), and let $s = \lfloor \sqrt{2n/k} \rfloor$.
+Then $a(n) = n + s$ if $k s (s + 1) < 2(n + s - 1)$, and $a(n) = n + s - 1$ otherwise.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 8. -/
@@ -242,10 +288,12 @@ public theorem_wanted nth_nonCenteredPolygonal (k : ℕ) (hk : 3 ≤ k) (n : ℕ
     Nat.nth (fun x => ∀ j, k * j * (j + 1) / 2 + 1 ≠ x) (n - 1) =
       if k * s * (s + 1) < 2 * (n + s - 1) then n + s else n + s - 1
 
-/-- The `n`-th non-`k`-gonal-pyramidal number for `3 ≤ k ≤ 8` (pyramidal numbers
-`j (j + 1)((k - 2) j - (k - 5))/6`, `j ≥ 1`): with `s = ⌊∛(6n / (k - 2))⌋`, it is `n + s + 1` if
-`6n ≥ s³(k - 2) + 3s²(k - 1) + s(2k - 1) + 6`, `n + s - 1` if
-`6n ≤ s(s - 1)(s(k - 2) + k + 1)`, and `n + s` otherwise.
+/-- **Formula for the non-pyramidal numbers.** Let $3 \le k \le 8$, and for $j \ge 1$ let
+$P(k, j) = j (j + 1) ((k - 2) j - (k - 5))/6$ be the $k$-gonal pyramidal numbers. For every
+integer $n \ge 1$, put $s = \lfloor \sqrt[3]{6n/(k - 2)} \rfloor$. Then the $n$-th positive
+integer that is not of the form $P(k, j)$ with $j \ge 1$ equals $n + s + 1$ if
+$6n \ge s^3 (k - 2) + 3 s^2 (k - 1) + s (2k - 1) + 6$; otherwise it equals $n + s - 1$ if
+$6n \le s (s - 1) (s (k - 2) + k + 1)$, and $n + s$ if not.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 9, Equation (6). -/
@@ -257,8 +305,11 @@ public theorem_wanted nthNonValue_pyramidal (k : ℕ) (hk : 3 ≤ k) (hk' : k �
       else if 6 * n ≤ s * (s - 1) * (s * (k - 2) + k + 1) then n + s - 1
       else n + s
 
-/-- For `3 ≤ k ≤ 5` the `n`-th non-`k`-gonal-pyramidal number is, with `s = ⌊∛(6n / (k - 2))⌋`,
-`n + s - 1` if `6n ≤ s(s - 1)(s(k - 2) + k + 1)` and `n + s` otherwise.
+/-- **Two-case formula for the non-pyramidal numbers when $k \le 5$.** Let $3 \le k \le 5$, and
+for $j \ge 1$ let $P(k, j) = j (j + 1) ((k - 2) j - (k - 5))/6$ be the $k$-gonal pyramidal
+numbers. For every integer $n \ge 1$, put $s = \lfloor \sqrt[3]{6n/(k - 2)} \rfloor$. Then the
+$n$-th positive integer that is not of the form $P(k, j)$ with $j \ge 1$ equals $n + s - 1$ if
+$6n \le s (s - 1) (s (k - 2) + k + 1)$, and $n + s$ otherwise.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Corollary 4, Equation (7). -/
@@ -268,8 +319,14 @@ public theorem_wanted nthNonValue_pyramidal_two_case (k : ℕ) (hk : 3 ≤ k) (h
     nthNonValue (fun j => j * (j + 1) * ((k - 2) * j + 5 - k) / 6) n =
       if 6 * n ≤ s * (s - 1) * (s * (k - 2) + k + 1) then n + s - 1 else n + s
 
-/-- Equation (7) of Corollary 4 (the two-case formula of `nthNonValue_pyramidal_two_case`)
-holds for all `3 ≤ k ≤ 8`, as the paper reports after checking small `n`.
+/-- **Two-case formula for the non-pyramidal numbers when $k \le 8$.** Let $3 \le k \le 8$, and
+for $j \ge 1$ let $P(k, j) = j (j + 1) ((k - 2) j - (k - 5))/6$ be the $k$-gonal pyramidal
+numbers. For every integer $n \ge 1$, put $s = \lfloor \sqrt[3]{6n/(k - 2)} \rfloor$. Then the
+$n$-th positive integer that is not of the form $P(k, j)$ with $j \ge 1$ equals $n + s - 1$ if
+$6n \le s (s - 1) (s (k - 2) + k + 1)$, and $n + s$ otherwise.
+
+This extends Equation (7) of Corollary 4 from $k \le 5$ to $k \le 8$; the paper reports it after
+checking small values of $n$.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, remark after Corollary 4. -/
@@ -279,8 +336,10 @@ public theorem_wanted nthNonValue_pyramidal_two_case_le_eight (k : ℕ) (hk : 3 
     nthNonValue (fun j => j * (j + 1) * ((k - 2) * j + 5 - k) / 6) n =
       if 6 * n ≤ s * (s - 1) * (s * (k - 2) + k + 1) then n + s - 1 else n + s
 
-/-- The `n`-th non-sum-of-`k`-th-powers for `k > 1` (values `∑_{i=1}^j i^k`, `j ≥ 1`): with
-`h = ⌊((k + 1) n)^{1/(k+1)}⌋`, it is `n + h - [n ≤ ∑_{i=1}^h (i^k - 1)]`.
+/-- **Integers missed by the sums $1^k + \dots + j^k$.** Let $k > 1$ and $n \ge 1$ be integers,
+and let $h = \lfloor ((k+1)n)^{1/(k+1)} \rfloor$. Then the $n$-th smallest positive integer that
+is not of the form $\sum_{i=1}^{j} i^k$ with $j \ge 1$ is $n + h - 1$ if
+$n \le \sum_{i=1}^{h} (i^k - 1)$, and $n + h$ otherwise.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 10 (third equivalent form). -/
@@ -289,8 +348,10 @@ public theorem_wanted nthNonValue_sumPow (k : ℕ) (hk : 1 < k) (n : ℕ) (hn : 
     nthNonValue (fun j => ∑ i ∈ Finset.Icc 1 j, i ^ k) n =
       if n ≤ ∑ i ∈ Finset.Icc 1 h, (i ^ k - 1) then n + h - 1 else n + h
 
-/-- The `n`-th positive integer not of the form `m + ∑_{i=1}^m i^k` (`m ≥ 1`, `k > 1`): with
-`h = ⌊((k + 1) n)^{1/(k+1)}⌋`, it is `n + h - [n ≤ ∑_{i=1}^h i^k]`.
+/-- **Integers not of the form $m + 1^k + \cdots + m^k$.** Let $k > 1$. For $n \ge 1$ let $a(n)$
+be the $n$-th positive integer that is not of the form $m + \sum_{i=1}^m i^k$ with $m \ge 1$, and
+let $h = \lfloor ((k + 1) n)^{1/(k+1)} \rfloor$. Then $a(n) = n + h - 1$ if
+$n \le \sum_{i=1}^h i^k$, and $a(n) = n + h$ otherwise.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 11 (third equivalent form). -/
@@ -299,10 +360,13 @@ public theorem_wanted nthNonValue_add_sumPow (k : ℕ) (hk : 1 < k) (n : ℕ) (h
     nthNonValue (fun j => j + ∑ i ∈ Finset.Icc 1 j, i ^ k) n =
       if n ≤ ∑ i ∈ Finset.Icc 1 h, i ^ k then n + h - 1 else n + h
 
-/-- The rising factorial `n^(k̄) = n (n + 1) ⋯ (n + k - 1)` satisfies
-`(n + ⌊k/2⌋ - 1)^k ≤ n^(k̄) ≤ (n + ⌊k/2⌋)^k` for `n ≥ r`, where
-`r = ⌊(k² - 4k + 6)/4⌋` for even `k` and `r = ⌊(k² - 6k + 11)/4⌋` for odd `k` (both numerators
-are positive, written with the subtraction last).
+/-- **Rising factorial between consecutive $k$-th powers.** Let $k$ and $n$ be natural numbers,
+write $n^{\overline{k}} = n (n + 1) \cdots (n + k - 1)$ for the rising factorial, and let
+$r = \lfloor (k^2 - 4k + 6)/4 \rfloor$ if $k$ is even and $r = \lfloor (k^2 - 6k + 11)/4 \rfloor$
+if $k$ is odd. If $n \ge r$, then
+$(n + \lfloor k/2 \rfloor - 1)^k \le n^{\overline{k}} \le (n + \lfloor k/2 \rfloor)^k$.
+
+Both numerators are positive: $k^2 - 4k + 6 = (k - 2)^2 + 2$ and $k^2 - 6k + 11 = (k - 3)^2 + 2$.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Lemma 1, Equation (8). -/
@@ -310,10 +374,12 @@ public theorem_wanted ascFactorial_bounds_half (k n : ℕ)
     (hn : (if Even k then (k ^ 2 + 6 - 4 * k) / 4 else (k ^ 2 + 11 - 6 * k) / 4) ≤ n) :
     (n + k / 2 - 1) ^ k ≤ n.ascFactorial k ∧ n.ascFactorial k ≤ (n + k / 2) ^ k
 
-/-- The `n`-th non-`k`-simplex number for `1 < k ≤ 5`, `k = 7` or `k = 9` (simplex numbers
-`binom(j + k - 1, k)`, `j ≥ 1`): with `R = ⌊(k! n)^{1/k}⌋` and `t = n + R - ⌊k/2⌋`, it is `t + 2`
-if `t + 1 ≥ binom(R + ⌈k/2⌉ + 1, k)`, `t` if `t < binom(R + ⌈k/2⌉, k)`, and `t + 1` otherwise
-(computed in `ℤ`).
+/-- **Formula for the non-simplex numbers.** Let $k$ satisfy $1 < k \le 5$, $k = 7$ or $k = 9$.
+For every integer $n \ge 1$, put $R = \lfloor (k!\, n)^{1/k} \rfloor$ and let
+$t = n + R - \lfloor k/2 \rfloor$, an integer. Then the $n$-th positive integer that is not a
+$k$-simplex number $\binom{j + k - 1}{k}$ with $j \ge 1$ equals $t + 2$ if
+$\binom{R + \lceil k/2 \rceil + 1}{k} \le t + 1$; otherwise it equals $t$ if
+$t < \binom{R + \lceil k/2 \rceil}{k}$, and $t + 1$ if not.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Theorem 12, Equation (9). -/
@@ -326,7 +392,12 @@ public theorem_wanted nthNonValue_simplex (k : ℕ) (hk : 1 < k ∧ k ≤ 5 ∨ 
       else if t < ((R + (k + 1) / 2).choose k : ℤ) then t
       else t + 1
 
-/-- Equation (9) of Theorem 12 (`nthNonValue_simplex`) holds for all `1 < k ≤ 15`.
+/-- **Formula for the non-simplex numbers when $k \le 15$.** Let $1 < k \le 15$. For every
+integer $n \ge 1$, put $R = \lfloor (k!\, n)^{1/k} \rfloor$ and let
+$t = n + R - \lfloor k/2 \rfloor$, an integer. Then the $n$-th positive integer that is not a
+$k$-simplex number $\binom{j + k - 1}{k}$ with $j \ge 1$ equals $t + 2$ if
+$\binom{R + \lceil k/2 \rceil + 1}{k} \le t + 1$; otherwise it equals $t$ if
+$t < \binom{R + \lceil k/2 \rceil}{k}$, and $t + 1$ if not.
 
 Source: Chai Wah Wu, *Algorithms for Complementary Sequences*, INTEGERS 25 (2025),
 Article A95, Corollary 5. -/

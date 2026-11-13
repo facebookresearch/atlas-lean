@@ -27,9 +27,12 @@ constant term `ct[f]` is `f.coeff 0`. Kohen's array `a^n_k = coef_{-k}[P^n]` is
 `Fintype.piFinset fun _ => Finset.Icc (-m) m`. Definitions follow Kohen's arXiv
 version (arXiv:2503.21988v1, Sections 1, 2 and 5), which matches the journal records. -/
 
-/-- Kohen's operator `Λ_k`: keep the terms whose exponents are all multiples of `k` and
-substitute `x_j^k ↦ x_j`, so `coef_j[Λ_k f] = coef_{k j}[f]`. For `k = 0` it is set to `0`
-(the paper uses only positive `k`).
+/-- **Cartier operator $\Lambda_k$ on Laurent polynomials.** Let $R$ be a semiring and $f$ a
+Laurent polynomial in $r$ variables with coefficients in $R$. For a natural number $k > 0$,
+$\Lambda_k f$ keeps the terms of $f$ whose exponents are all multiples of $k$ and substitutes
+$x_s^k \mapsto x_s$ for each variable, so that the coefficient of $x^j$ in $\Lambda_k f$ is the
+coefficient of $x^{kj}$ in $f$ for every $j \in \mathbb{Z}^r$. For $k = 0$ it is set to
+$\Lambda_0 f = 0$ (the paper uses only positive $k$).
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -40,7 +43,10 @@ public noncomputable def laurentCartier {R : Type*} [Semiring R] {r : ℕ} (k : 
     .ofCoeff (Finsupp.comapDomain (fun j => k • j) f.coeff
       (fun _ _ _ _ h => smul_right_injective (Fin r → ℤ) hk h))
 
-/-- The coefficient of `x^j` in `Λ_k f` is the coefficient of `x^{k j}` in `f`.
+/-- **Coefficients of Kohen's operator $\Lambda_k$.** Let $R$ be a semiring and let $r$ and
+$k \ne 0$ be natural numbers. For every Laurent polynomial $f$ in $r$ variables with coefficients
+in $R$ and every $j \in \mathbb{Z}^r$, the coefficient of $x^j$ in $\Lambda_k f$ is the
+coefficient of $x^{kj}$ in $f$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -50,9 +56,12 @@ public theorem coeff_laurentCartier {R : Type*} [Semiring R] {r k : ℕ} (hk : k
     (laurentCartier k f).coeff j = f.coeff (k • j) := by
   simp [laurentCartier, hk]
 
-/-- Kohen's degree of a Laurent polynomial: the largest absolute value of any exponent of any
-single variable occurring in it (`0` for the zero polynomial), e.g.
-`deg(5x^{-3}y^{-2} + 2xy^{-1}) = 3`.
+/-- **Degree of a Laurent polynomial.** Let $R$ be a semiring and let $f$ be a Laurent polynomial
+in $r$ variables $x_1, \dots, x_r$ with coefficients in $R$. Kohen's degree $\deg f$ of $f$ is the
+largest absolute value $|j_i|$ of a single exponent, taken over all $i$ and all exponent vectors
+$j \in \mathbb{Z}^r$ whose monomial $x^j$ has nonzero coefficient in $f$, and is $0$ if there is
+no such exponent (in particular for the zero polynomial). For example, over $\mathbb{Z}$ in two
+variables $x, y$ one has $\deg(5x^{-3}y^{-2} + 2xy^{-1}) = 3$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -61,7 +70,12 @@ public def laurentDeg {R : Type*} [Semiring R] {r : ℕ}
     (f : AddMonoidAlgebra R (Fin r → ℤ)) : ℕ :=
   f.coeff.support.sup fun j => Finset.univ.sup fun i => (j i).natAbs
 
-/-- `deg f ≤ m` exactly when every exponent occurring in `f` lies in `[-m, m]^r`.
+/-- **Exponent criterion for the degree of a Laurent polynomial.** Let $R$ be a semiring, let
+$r$ and $m$ be natural numbers, and let $f$ be a Laurent polynomial in $r$ variables
+$x_1, \dots, x_r$ with coefficients in $R$. Then Kohen's degree of $f$ (the largest absolute
+value of a single exponent occurring in $f$, or $0$ if there is none) is at most $m$ if and only
+if every exponent vector $j \in \mathbb{Z}^r$ whose monomial $x^j$ has nonzero coefficient in
+$f$ satisfies $|j_i| \le m$ for every $i$, that is, lies in $[-m, m]^r$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -71,7 +85,9 @@ public theorem laurentDeg_le_iff {R : Type*} [Semiring R] {r : ℕ}
     laurentDeg f ≤ m ↔ ∀ j ∈ f.coeff.support, ∀ i, (j i).natAbs ≤ m := by
   simp [laurentDeg, Finset.sup_le_iff]
 
-/-- The factor of `s` of length `ℓ` starting at position `i` also occurs at position `i'`.
+/-- **Occurrence of a sequence factor at a position.** Let $s = (s_n)_{n \ge 0}$ be a sequence and
+let $i$, $\ell$ and $i'$ be natural numbers. The factor of $s$ of length $\ell$ starting at
+position $i$ occurs at position $i'$ when $s_{i'+t} = s_{i+t}$ for every natural number $t < \ell$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -79,7 +95,9 @@ Definition 1. -/
 public def SeqFactorOccursAt {α : Type*} (s : ℕ → α) (i ℓ i' : ℕ) : Prop :=
   ∀ t < ℓ, s (i' + t) = s (i + t)
 
-/-- A sequence is recurrent if every occurrence of a factor is followed by a later occurrence.
+/-- **Recurrent sequence.** A sequence $s : \mathbb{N} \to \alpha$ is recurrent if every
+occurrence of a factor is followed by a later occurrence: for all $i, \ell \in \mathbb{N}$ there
+is $j > 0$ such that $s(i + j + t) = s(i + t)$ for every $t < \ell$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -87,8 +105,11 @@ definition before Proposition 19. -/
 public def IsRecurrentSeq {α : Type*} (s : ℕ → α) : Prop :=
   ∀ i ℓ : ℕ, ∃ j, 0 < j ∧ SeqFactorOccursAt s i ℓ (i + j)
 
-/-- A sequence is uniformly recurrent if for every factor `w` there is a constant `C_w` such
-that every occurrence of `w` is followed by another occurrence at distance at most `C_w`.
+/-- **Uniformly recurrent sequence.** A sequence $s : \mathbb{N} \to \alpha$ is uniformly
+recurrent if for every factor $w$ there is a constant $C_w$ such that every occurrence of $w$ is
+followed by another occurrence at distance at most $C_w$: for all $i, \ell \in \mathbb{N}$ there
+is $C \in \mathbb{N}$ such that for every $i'$ with $s(i' + t) = s(i + t)$ for all $t < \ell$,
+there is $j$ with $0 < j \le C$ and $s(i' + j + t) = s(i + t)$ for all $t < \ell$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -97,8 +118,12 @@ public def IsUniformlyRecurrentSeq {α : Type*} (s : ℕ → α) : Prop :=
   ∀ i ℓ : ℕ, ∃ C, ∀ i', SeqFactorOccursAt s i ℓ i' →
     ∃ j, 0 < j ∧ j ≤ C ∧ SeqFactorOccursAt s i ℓ (i' + j)
 
-/-- A sequence is linearly recurrent if the return constant `C_w` of every nonempty factor `w`
-can be taken to be a fixed multiple of the length of `w`.
+/-- **Linearly recurrent sequence.** A sequence $s = (s_n)_{n \in \mathbb{N}}$ with values in a
+set $\alpha$ is linearly recurrent if there is $K \in \mathbb{N}$ such that for all
+$i, i' \in \mathbb{N}$ and $\ell \ge 1$ with $s_{i'+t} = s_{i+t}$ for all $t < \ell$, there is $j$
+with $0 < j \le K \ell$ and $s_{i'+j+t} = s_{i+t}$ for all $t < \ell$. That is, each occurrence
+of a nonempty factor of length $\ell$ is followed by another occurrence starting at most
+$K \ell$ positions later.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -107,7 +132,8 @@ public def IsLinearlyRecurrentSeq {α : Type*} (s : ℕ → α) : Prop :=
   ∃ K : ℕ, ∀ i ℓ : ℕ, 0 < ℓ → ∀ i', SeqFactorOccursAt s i ℓ i' →
     ∃ j, 0 < j ∧ j ≤ K * ℓ ∧ SeqFactorOccursAt s i ℓ (i' + j)
 
-/-- Linear recurrence implies uniform recurrence.
+/-- **Linearly recurrent sequences are uniformly recurrent.** Every linearly recurrent sequence
+$s : \mathbb{N} \to \alpha$, with values in any type $\alpha$, is uniformly recurrent.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -120,7 +146,8 @@ public theorem IsLinearlyRecurrentSeq.isUniformlyRecurrentSeq {α : Type*} {s : 
   · exact ⟨1, fun _ _ => ⟨1, one_pos, le_rfl, fun t ht => absurd ht (Nat.not_lt_zero t)⟩⟩
   · exact ⟨K * ℓ, fun i' hi' => hK i ℓ hℓ i' hi'⟩
 
-/-- Uniform recurrence implies recurrence.
+/-- **Uniformly recurrent sequences are recurrent.** Every uniformly recurrent sequence
+$s : \mathbb{N} \to \alpha$, with values in any type $\alpha$, is recurrent.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -132,7 +159,8 @@ public theorem IsUniformlyRecurrentSeq.isRecurrentSeq {α : Type*} {s : ℕ → 
   obtain ⟨j, hj, -, hocc⟩ := hC i fun _ _ => rfl
   exact ⟨j, hj, hocc⟩
 
-/-- A constant sequence is linearly recurrent.
+/-- **Constant sequences are linearly recurrent.** For every set $\alpha$ and every $c \in \alpha$,
+the constant sequence $n \mapsto c$ on $\mathbb{N}$ is linearly recurrent.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -143,9 +171,15 @@ public theorem isLinearlyRecurrentSeq_const {α : Type*} (c : α) :
 
 /-! ### Section 2: the Rowland–Zeilberger congruence and the degree bound -/
 
-/-- Rowland–Zeilberger congruence: `ct[P^{pn+k} Q] ≡ ct[P^n Λ_p(P^k Q)] (mod p)`.
-Stated for natural `n` and `k` (the paper writes "integers"; negative powers of a general
-Laurent polynomial are undefined).
+/-- **Rowland–Zeilberger congruence.** Let $p$ be a prime and let $P$ and $Q$ be Laurent
+polynomials in $r$ variables with integer coefficients. Write $\operatorname{ct}[F]$ for the
+constant term of a Laurent polynomial $F$ and $\Lambda_p$ for Kohen's operator, which keeps the
+terms whose exponents are all divisible by $p$ and replaces $x^{pj}$ by $x^j$. Then for all
+natural numbers $n$ and $k$,
+$\operatorname{ct}[P^{pn+k} Q] \equiv \operatorname{ct}[P^n \Lambda_p(P^k Q)] \pmod{p}$.
+
+The exponents $n$ and $k$ are natural numbers; the paper writes "integers", but negative powers
+of a general Laurent polynomial are undefined.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -154,8 +188,13 @@ public theorem_wanted constantTerm_pow_mul_modEq_laurentCartier {r p : ℕ} (hp 
     (P Q : AddMonoidAlgebra ℤ (Fin r → ℤ)) (n k : ℕ) :
     (P ^ (p * n + k) * Q).coeff 0 ≡ (P ^ n * laurentCartier p (P ^ k * Q)).coeff 0 [ZMOD p]
 
-/-- Degree bound for the Rowland–Zeilberger states: iterating `Q ↦ Λ_p(P^k Q)` with digits
-`k < p` never raises the degree above `m = max(deg P - 1, deg Q)`.
+/-- **Degree bound for the Rowland–Zeilberger states.** Let $p$ be a prime and let $P$ and $Q$
+be Laurent polynomials in $r$ variables with integer coefficients. Write $\deg F$ for the largest
+absolute value of an exponent of a variable occurring in $F$, and $\Lambda_p$ for the operator
+that keeps the terms whose exponents are all multiples of $p$ and substitutes $x_s^p \mapsto x_s$.
+For every finite list $k_1, \dots, k_n$ of natural numbers with each $k_t < p$, starting from $Q$
+and applying $R \mapsto \Lambda_p(P^{k_t} R)$ for $t = 1, \dots, n$ in turn gives a Laurent
+polynomial of degree at most $\max(\deg P - 1, \deg Q)$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -167,9 +206,16 @@ public theorem_wanted laurentDeg_foldl_laurentCartier_le {r p : ℕ} (hp : p.Pri
 
 /-! ### Section 3: the linear representation mod `p` -/
 
-/-- Bookkeeping identity: for a digit `k < p` and `i ∈ T = [-m, m]^r` with
-`m ≥ deg P - 1`, `Λ_p(P^k x^i) = ∑_{j ∈ T} a^k_{i - p j} x^j`, where
-`a^k_{i-pj} = coef_{pj-i}[P^k]`.
+/-- **Cartier operator applied to a power times a monomial.** Let $p$ be a prime and $P$ a
+Laurent polynomial in $r$ variables with integer coefficients. Write $\mathrm{coef}_e[F]$ for the
+coefficient of $x^e$ in a Laurent polynomial $F$, $\deg F$ for the largest absolute value of an
+exponent of a variable occurring in $F$, and $\Lambda_p$ for the Cartier operator with
+$\mathrm{coef}_j[\Lambda_p F] = \mathrm{coef}_{pj}[F]$. Let $m \in \mathbb{N}$ with
+$\deg P \le m + 1$, put $T = [-m, m]^r \subset \mathbb{Z}^r$, and let $k < p$ be a natural
+number and $i \in T$. Then
+$\Lambda_p(P^k x^i) = \sum_{j \in T} \mathrm{coef}_{pj - i}[P^k] \, x^j$.
+
+In Kohen's notation $\mathrm{coef}_{pj - i}[P^k]$ is $a^k_{i - pj}$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -182,9 +228,17 @@ public theorem_wanted laurentCartier_pow_mul_single_eq_sum {r p : ℕ} (hp : p.P
       ∑ j ∈ Fintype.piFinset (fun _ : Fin r => Finset.Icc (-(m : ℤ)) m),
         AddMonoidAlgebra.single j ((P ^ k).coeff (p • j - i))
 
-/-- The linear representation step `γ(k) · V(n) = V(pn + k)` over `𝔽_p`, entrywise: with
-`γ(k) = (a^k_{i-pj})_{i,j ∈ T}` and `V(n) = (a^n_i)_{i ∈ T}`, for `m ≥ deg P - 1`, a digit
-`k < p` and `i ∈ T`, `a^{pn+k}_i ≡ ∑_{j ∈ T} a^k_{i-pj} a^n_j (mod p)`.
+/-- **Kohen's linear representation step modulo $p$.** Let $p$ be a prime, let $P$ be a Laurent
+polynomial in $r$ variables with integer coefficients, and write $\deg P$ for the largest absolute
+value of an exponent of a single variable in a monomial occurring in $P$ ($0$ if $P = 0$). Let $m$
+be a natural number with $\deg P \le m + 1$. Write $T = [-m, m]^r \subseteq \mathbb{Z}^r$ and
+$[x^e]F$ for the coefficient of $x^e$ in a Laurent polynomial $F$. Then for every natural number
+$k < p$, every natural number $n$ and every $i \in T$,
+$$[x^{-i}]P^{pn+k} \equiv \sum_{j \in T} [x^{pj - i}]P^k \cdot [x^{-j}]P^n \pmod{p}.$$
+
+With Kohen's $a^n_i = [x^{-i}]P^n$, $\gamma(k) = (a^k_{i-pj})_{i,j \in T}$ and
+$V(n) = (a^n_i)_{i \in T}$, this is the entrywise form of $\gamma(k) V(n) = V(pn + k)$ over
+$\mathbb{F}_p$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -197,8 +251,11 @@ public theorem_wanted coeff_pow_modEq_sum_gamma_mul_V {r p : ℕ} (hp : p.Prime)
       ∑ j ∈ Fintype.piFinset (fun _ : Fin r => Finset.Icc (-(m : ℤ)) m),
         (P ^ k).coeff (p • j - i) * (P ^ n).coeff (-j) [ZMOD p]
 
-/-- Eventually `γ(0)^{s'} = e_{C,C}` over `𝔽_p`, where `γ(0)_{i,j} = a^0_{i-pj} = [i = p j]`
-on `T = [-m, m]^r` and `C` is the index of the constant monomial.
+/-- **Powers of $\gamma(0)$ modulo $p$ stabilize at a matrix unit.** Let $p$ be a prime, let
+$r, m \ge 0$ be natural numbers, let $T = \{-m, \dots, m\}^r \subseteq \mathbb{Z}^r$, and let
+$\gamma(0)$ be the $T \times T$ matrix over $\mathbb{Z}/p\mathbb{Z}$ whose $(i, j)$ entry is $1$
+if $i = p j$ and $0$ otherwise. Then there is $s \in \mathbb{N}$ such that for every $s' \ge s$,
+$\gamma(0)^{s'}$ is the matrix whose $(0, 0)$ entry is $1$ and whose other entries are $0$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -211,8 +268,13 @@ public theorem_wanted exists_gammaZero_pow_eq_single {p : ℕ} (hp : p.Prime) (r
 
 /-! ### Section 4: classification mod `p` -/
 
-/-- Whether `p` divides some `ct[P^n]` can be decided on a prefix whose length depends only on
-`p`, the number of variables and a bound on `deg P`.
+/-- **Divisibility of constant terms of powers is decided on a bounded prefix.** Let $p$ be a
+prime, let $r$ and $d$ be natural numbers, and write $\operatorname{ct}[F]$ for the constant term
+of a Laurent polynomial $F$ and $\deg F$ for the largest absolute value of an exponent of a single
+variable in a monomial occurring in $F$ ($0$ if $F = 0$). There is a natural number $B$ such that
+for every Laurent polynomial $P$ in $r$ variables with integer coefficients and $\deg P \le d$, if
+$p$ divides $\operatorname{ct}[P^n]$ for some natural number $n$, then $p$ divides
+$\operatorname{ct}[P^{n_0}]$ for some natural number $n_0 < B$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -221,9 +283,15 @@ public theorem_wanted exists_bound_constantTerm_pow_dvd {p : ℕ} (hp : p.Prime)
     ∃ B : ℕ, ∀ P : AddMonoidAlgebra ℤ (Fin r → ℤ), laurentDeg P ≤ d →
       (∃ n, (p : ℤ) ∣ (P ^ n).coeff 0) → ∃ n₀ < B, (p : ℤ) ∣ (P ^ n₀).coeff 0
 
-/-- If `p ∣ ct[P^n]` for some `n`, then for every `Q` the zeros of `ct[P^n Q] mod p` have
-density `1`, there are arbitrarily long runs of zeros, and the sequence is either identically
-`0` or not uniformly recurrent.
+/-- **Density-one zeros of constant terms modulo $p$.** Let $p$ be a prime, let $P$ be a Laurent
+polynomial in $r$ variables with integer coefficients, write $\operatorname{ct}[F]$ for the
+constant term of a Laurent polynomial $F$, and suppose that $p$ divides $\operatorname{ct}[P^n]$
+for some natural number $n$. Then for every Laurent polynomial $Q$ in $r$ variables with integer
+coefficients, the set of natural numbers $n$ with $p \mid \operatorname{ct}[P^n Q]$ has natural
+density $1$; for every natural number $L$ there is a natural number $i$ such that
+$p \mid \operatorname{ct}[P^{i+t} Q]$ for all $t < L$; and either
+$p \mid \operatorname{ct}[P^n Q]$ for every $n$, or the sequence of residues
+$\operatorname{ct}[P^n Q] \bmod p$ in $\mathbb{Z}/p\mathbb{Z}$ is not uniformly recurrent.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -236,10 +304,17 @@ public theorem_wanted constantTerm_zero_density_mod_prime {r p : ℕ} (hp : p.Pr
       ((∀ n, (p : ℤ) ∣ (P ^ n * Q).coeff 0) ∨
         ¬ IsUniformlyRecurrentSeq fun n => ((P ^ n * Q).coeff 0 : ZMod p))
 
-/-- There is `t₀` such that for every `n` with `p ∤ ct[P^n]`, the block
-`σ^{t₀}(V(n)) = V(p^{t₀} n) ⋯ V(p^{t₀} n + p^{t₀} - 1)` contains `V(0)`; stated with
-`V(n) = (a^n_i mod p)_{i ∈ T}` on `T = [-m, m]^r` for any `m ≥ deg P - 1`, and
-`V(0)` the indicator of the constant monomial.
+/-- **Return to the initial coefficient vector modulo $p$.** Let $p$ be a prime, let
+$m \in \mathbb{N}$, and let $P$ be a Laurent polynomial with integer coefficients in variables
+$x_1, \dots, x_r$ with $\deg P \le m + 1$, where $\deg P$ is the largest absolute value of an
+exponent of a single variable in a monomial occurring in $P$ (and $0$ if $P = 0$). Let
+$T = \{-m, \dots, m\}^r$. Then there is $t_0 \in \mathbb{N}$ such that for every $n \in \mathbb{N}$
+for which $p$ does not divide the constant term of $P^n$, there is $j < p^{t_0}$ such that for
+every $i \in T$ the coefficient of $x^{-i}$ in $P^{p^{t_0} n + j}$ is congruent modulo $p$ to $1$
+if $i = 0$ and to $0$ otherwise.
+
+Equivalently, writing $V(n)$ for the vector of coefficients of $x^{-i}$ in $P^n$, $i \in T$,
+reduced modulo $p$, the block $V(p^{t_0} n), \dots, V(p^{t_0} n + p^{t_0} - 1)$ contains $V(0)$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -250,8 +325,12 @@ public theorem_wanted exists_sigma_pow_V_contains_V_zero {r p : ℕ} (hp : p.Pri
       ∀ i ∈ Fintype.piFinset (fun _ : Fin r => Finset.Icc (-(m : ℤ)) m),
         (P ^ (p ^ t₀ * n + j)).coeff (-i) ≡ if i = 0 then 1 else 0 [ZMOD p]
 
-/-- Main theorem mod `p`: if `ct[P^n Q] mod p` is not identically `0`, it is linearly
-recurrent if and only if `p ∤ ct[P^n]` for all `n`; otherwise its zeros have density `1`.
+/-- **Linear recurrence of constant terms modulo $p$.** Let $p$ be a prime and let $P, Q$ be
+Laurent polynomials with integer coefficients in $r$ variables; write $\operatorname{ct}[f]$ for
+the constant term of $f$. Suppose $p \nmid \operatorname{ct}[P^n Q]$ for some $n \in \mathbb{N}$.
+Then the sequence $u_n = \operatorname{ct}[P^n Q] \bmod p$ is linearly recurrent if and only if
+$p \nmid \operatorname{ct}[P^n]$ for all $n \in \mathbb{N}$, and if $u$ is not linearly recurrent,
+then the set of $n$ with $p \mid \operatorname{ct}[P^n Q]$ has natural density $1$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -264,9 +343,16 @@ public theorem_wanted isLinearlyRecurrentSeq_constantTerm_mod_prime_iff {r p : �
       (¬ IsLinearlyRecurrentSeq (fun n => ((P ^ n * Q).coeff 0 : ZMod p)) →
         ({n : ℕ | (p : ℤ) ∣ (P ^ n * Q).coeff 0} : Set ℕ).HasDensity 1)
 
-/-- Combinations mod `p`: for `b_n = F(ct[P^{n+k_1} Q_1] mod p, …, ct[P^{n+k_ℓ} Q_ℓ] mod p)`
-not constantly `F(0, …, 0)`, `b` is linearly recurrent if and only if `p ∤ ct[P^n]` for all `n`,
-and if `p ∣ ct[P^n]` for some `n` then `F(0, …, 0)` has frequency `1` in `b`.
+/-- **Linear recurrence of combinations of constant terms modulo $p$.** Let $p$ be a prime, let
+$P, Q_1, \dots, Q_\ell$ be Laurent polynomials with integer coefficients in $r$ variables, let
+$k_1, \dots, k_\ell \in \mathbb{N}$, and let $F \colon (\mathbb{Z}/p\mathbb{Z})^\ell \to X$ be a
+map to a set $X$. Write $\operatorname{ct}[f]$ for the constant term of $f$ and, for
+$n \in \mathbb{N}$, let
+$b_n = F(\operatorname{ct}[P^{n+k_1} Q_1] \bmod p, \dots,
+\operatorname{ct}[P^{n+k_\ell} Q_\ell] \bmod p)$.
+Suppose $b_n \ne F(0, \dots, 0)$ for some $n$. Then $(b_n)$ is linearly recurrent if and only if
+$p \nmid \operatorname{ct}[P^n]$ for all $n \in \mathbb{N}$, and if $p \mid \operatorname{ct}[P^n]$
+for some $n$, then the set of $n$ with $b_n = F(0, \dots, 0)$ has natural density $1$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -281,7 +367,11 @@ public theorem_wanted isLinearlyRecurrentSeq_combination_mod_prime_iff {r p ℓ 
         ({n : ℕ | F (fun i => ((P ^ (n + k i) * Q i).coeff 0 : ZMod p)) = F 0} :
           Set ℕ).HasDensity 1)
 
-/-- If `p ∤ ct[P^{n₀}]` for some `n₀ > 0`, then `ct[P^n Q] mod p` is recurrent.
+/-- **Recurrence of constant-term sequences modulo a prime.** Let $p$ be a prime and let $P$ and
+$Q$ be Laurent polynomials in $r$ variables with integer coefficients; write $\mathrm{ct}[F]$ for
+the constant term of a Laurent polynomial $F$. If $p \nmid \mathrm{ct}[P^{n_0}]$ for some
+$n_0 > 0$, then the sequence of residues $(\mathrm{ct}[P^n Q] \bmod p)_{n \ge 0}$ in
+$\mathbb{Z}/p\mathbb{Z}$ is recurrent.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -297,8 +387,15 @@ public theorem_wanted isRecurrentSeq_constantTerm_mod_prime {r p : ℕ} (hp : p.
 coefficientwise; the substitution `x ↦ x^q` is `AddMonoidAlgebra.mapDomain (q • ·)`. The paper
 takes `ℓ` as large as possible; the statements below hold for every such pair `(ℓ, P̃)`. -/
 
-/-- `p` divides some `ct[P^n]` if and only if it divides some `ct[P̃^n]`, and the same index
-works in the forward direction.
+/-- **Divisibility of constant terms of powers of $P$ and $\tilde P$.** Let $p$ be a prime, let
+$a \ge 1$ and $\ell$ be natural numbers, and let $P$ and $\tilde P$ be Laurent polynomials in $r$
+variables with integer coefficients such that $P^{p^{a-1}} \equiv \tilde P(x^{p^\ell}) \pmod{p^a}$
+coefficientwise, where $\tilde P(x^q)$ is obtained from $\tilde P$ by replacing each monomial
+$x^e$ with $x^{qe}$. Write $\operatorname{ct}[F]$ for the constant term of a Laurent polynomial
+$F$. Then $p$ divides $\operatorname{ct}[P^{n_0}]$ for some natural number $n_0$ if and only if
+$p$ divides $\operatorname{ct}[\tilde P^{n_1}]$ for some natural number $n_1$; moreover, for every
+natural number $n_0$ with $p \mid \operatorname{ct}[P^{n_0}]$, also
+$p \mid \operatorname{ct}[\tilde P^{n_0}]$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -310,8 +407,18 @@ public theorem_wanted exists_constantTerm_pow_dvd_iff_tilde {r p a ℓ : ℕ} (h
     ((∃ n₀, (p : ℤ) ∣ (P ^ n₀).coeff 0) ↔ ∃ n₁, (p : ℤ) ∣ (Pt ^ n₁).coeff 0) ∧
       ∀ n₀, (p : ℤ) ∣ (P ^ n₀).coeff 0 → (p : ℤ) ∣ (Pt ^ n₀).coeff 0
 
-/-- Conversion to `P̃`: `ct[P^{p^{a-1} n + k} Q] ≡ ct[P̃^n Λ_{p^ℓ}(P^k Q)] (mod p^a)`, for all
-natural `k` (the paper restricts to `k < p^{a-1}`).
+/-- **Passing from $P$ to $\tilde P$ modulo $p^a$.** Let $p$ be a prime, let $a \ge 1$ and $\ell$
+be natural numbers, and let $P$ and $\tilde P$ be Laurent polynomials in $r$ variables with
+integer coefficients such that $P^{p^{a-1}} \equiv \tilde P(x^{p^\ell}) \pmod{p^a}$
+coefficientwise, where $\tilde P(x^q)$ is obtained from $\tilde P$ by replacing each monomial
+$x^e$ with $x^{qe}$. Write $\operatorname{ct}[F]$ for the constant term of a Laurent polynomial
+$F$ and $\Lambda_q$ for Kohen's operator, which keeps the terms whose exponents are all divisible
+by $q$ and replaces $x^{qj}$ by $x^j$. Then for every Laurent polynomial $Q$ in $r$ variables
+with integer coefficients and all natural numbers $n$ and $k$,
+$\operatorname{ct}[P^{p^{a-1} n + k} Q] \equiv
+\operatorname{ct}[\tilde P^n \Lambda_{p^\ell}(P^k Q)] \pmod{p^a}$.
+
+The statement holds for every natural number $k$; the paper restricts to $k < p^{a-1}$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -324,9 +431,18 @@ public theorem_wanted constantTerm_pow_mul_modEq_tilde {r p a ℓ : ℕ} (hp : p
     (P ^ (p ^ (a - 1) * n + k) * Q).coeff 0 ≡
       (Pt ^ n * laurentCartier (p ^ ℓ) (P ^ k * Q)).coeff 0 [ZMOD (p : ℤ) ^ a]
 
-/-- Rowland–Zeilberger congruence mod `p^a` for `P̃` with `P̃(x)^p ≡ P̃(x^p) (mod p^a)`:
-`ct[P̃^{pn+k} Q] ≡ ct[P̃^n Λ_p(P̃^k Q)] (mod p^a)`, for all natural `k` (the paper states
-`k ∈ 𝔽_p`).
+/-- **Rowland–Zeilberger congruence modulo $p^a$.** Let $p$ be a prime, let $a$ be a natural
+number, and let $\tilde P$ be a Laurent polynomial in $r$ variables with integer coefficients
+such that $\tilde P^p \equiv \tilde P(x^p) \pmod{p^a}$ coefficientwise, where $\tilde P(x^p)$
+is obtained from $\tilde P$ by replacing each monomial $x^e$ with $x^{pe}$. Write
+$\operatorname{ct}[F]$ for the constant term of a Laurent polynomial $F$ and $\Lambda_p$ for
+Kohen's operator, which keeps the terms whose exponents are all divisible by $p$ and replaces
+$x^{pj}$ by $x^j$. Then for every Laurent polynomial $Q$ in $r$ variables with integer
+coefficients and all natural numbers $n$ and $k$,
+$\operatorname{ct}[\tilde P^{pn+k} Q] \equiv
+\operatorname{ct}[\tilde P^n \Lambda_p(\tilde P^k Q)] \pmod{p^a}$.
+
+The statement holds for every natural number $k$; the paper states it for $k \in \mathbb{F}_p$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -339,9 +455,14 @@ public theorem_wanted constantTerm_tilde_pow_mul_modEq_laurentCartier {r p a : �
     (Pt ^ (p * n + k) * Q).coeff 0 ≡ (Pt ^ n * laurentCartier p (Pt ^ k * Q)).coeff 0
       [ZMOD (p : ℤ) ^ a]
 
-/-- Degree bound mod `p^a`: for Laurent polynomials `P̃` and `Q₀` over `ℤ/p^aℤ`, iterating
-`Q ↦ Λ_p(P̃^k Q)` with digits `k < p` never raises the degree above
-`max(deg P̃ - 1, deg Q₀)`.
+/-- **Degree bound for the Rowland–Zeilberger states mod $p^a$.** Let $p$ be a prime, let $a$
+be a natural number, and let $\tilde P$ and $Q_0$ be Laurent polynomials in $r$ variables with
+coefficients in $\mathbb{Z}/p^a\mathbb{Z}$. Write $\deg F$ for the largest absolute value of an
+exponent of a variable occurring in $F$, and $\Lambda_p$ for the operator that keeps the terms
+whose exponents are all multiples of $p$ and substitutes $x_s^p \mapsto x_s$. For every finite
+list $k_1, \dots, k_n$ of natural numbers with each $k_t < p$, starting from $Q_0$ and applying
+$Q \mapsto \Lambda_p(\tilde P^{k_t} Q)$ for $t = 1, \dots, n$ in turn gives a Laurent polynomial
+of degree at most $\max(\deg \tilde P - 1, \deg Q_0)$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -352,8 +473,22 @@ public theorem_wanted laurentDeg_foldl_laurentCartier_le_zmod {r p a : ℕ} (hp 
     laurentDeg (ks.foldl (fun R k => laurentCartier p (Pt ^ k * R)) Q₀) ≤
       max (laurentDeg Pt - 1) (laurentDeg Q₀)
 
-/-- The step `γ̃(k) · Ṽ(n) = Ṽ(pn + k)` over `ℤ/p^aℤ`, entrywise, for `P̃` with
-`P̃(x)^p ≡ P̃(x^p) (mod p^a)`, `m ≥ deg P̃ - 1`, a digit `k < p` and `i ∈ [-m, m]^r`.
+/-- **Kohen's linear representation step modulo $p^a$.** Let $p$ be a prime, let $a$ be a natural
+number, and let $\tilde P$ be a Laurent polynomial in $r$ variables with integer coefficients such
+that $\tilde P^p \equiv \tilde P(x^p) \pmod{p^a}$ coefficientwise, where $\tilde P(x^p)$ is
+obtained from $\tilde P$ by replacing each monomial $x^e$ with $x^{pe}$. Write $\deg \tilde P$ for
+the largest absolute value of an exponent of a single variable in a monomial occurring in
+$\tilde P$ ($0$ if $\tilde P = 0$). Let $m$ be a natural number with $\deg \tilde P \le m + 1$,
+and write $T = [-m, m]^r \subseteq \mathbb{Z}^r$ and $[x^e]F$ for the coefficient of $x^e$ in a
+Laurent polynomial $F$. Then for every natural number $k < p$, every natural number $n$ and every
+$i \in T$,
+$$
+[x^{-i}]\tilde P^{pn+k} \equiv
+\sum_{j \in T} [x^{pj - i}]\tilde P^k \cdot [x^{-j}]\tilde P^n \pmod{p^a}.
+$$
+
+This is the entrywise form of Kohen's step $\tilde\gamma(k) \tilde V(n) = \tilde V(pn + k)$ over
+$\mathbb{Z}/p^a\mathbb{Z}$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -368,8 +503,15 @@ public theorem_wanted coeff_tilde_pow_modEq_sum_gamma_mul_V {r p a : ℕ} (hp : 
       ∑ j ∈ Fintype.piFinset (fun _ : Fin r => Finset.Icc (-(m : ℤ)) m),
         (Pt ^ k).coeff (p • j - i) * (Pt ^ n).coeff (-j) [ZMOD (p : ℤ) ^ a]
 
-/-- Eventually `γ̃(0)^{s'} = e_{C,C}` over `ℤ/p^aℤ` (the printed `γ̃(0)^s` is read as
-`γ̃(0)^{s'}`, as in Lemma 11).
+/-- **Powers of $\tilde\gamma(0)$ modulo $p^a$ stabilize at a matrix unit.** Let $p$ be a prime,
+let $a \ge 1$, $r$ and $m$ be natural numbers, let $T = \{-m, \dots, m\}^r \subseteq \mathbb{Z}^r$,
+and let $\tilde\gamma(0)$ be the $T \times T$ matrix over $\mathbb{Z}/p^a\mathbb{Z}$ whose
+$(i, j)$ entry is $1$ if $i = p j$ and $0$ otherwise. Then there is $s \in \mathbb{N}$ such that for
+every $s' \ge s$, $\tilde\gamma(0)^{s'}$ is the matrix whose $(0, 0)$ entry is $1$ and whose other
+entries are $0$.
+
+Kohen's Lemma 30 prints $\tilde\gamma(0)^s$; as in Lemma 11, it is read for every exponent
+$s' \ge s$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -381,8 +523,14 @@ public theorem_wanted exists_gammaZero_pow_eq_single_zmod {p : ℕ} (hp : p.Prim
         if (i : Fin r → ℤ) = p • (j : Fin r → ℤ) then (1 : ZMod (p ^ a)) else 0) ^ s' =
         Matrix.single ⟨0, by simp⟩ ⟨0, by simp⟩ 1
 
-/-- If `P̃(x)^p ≡ P̃(x^p) (mod p^a)` and `p ∣ ct[P̃^{n₀}]` for some `n₀`, then for every `Q`
-the zeros of `ct[P̃^n Q] mod p^a` have density `1`.
+/-- **Density-one zeros of constant terms modulo $p^a$.** Let $p$ be a prime, let $a$ be a natural
+number, and let $\tilde P$ be a Laurent polynomial in $r$ variables with integer coefficients such
+that $\tilde P^p \equiv \tilde P(x^p) \pmod{p^a}$ coefficientwise, where $\tilde P(x^p)$ is
+obtained from $\tilde P$ by replacing each monomial $x^e$ with $x^{pe}$. Write
+$\operatorname{ct}[F]$ for the constant term of a Laurent polynomial $F$, and suppose that $p$
+divides $\operatorname{ct}[\tilde P^{n_0}]$ for some natural number $n_0$. Then for every
+Laurent polynomial $Q$ in $r$ variables with integer coefficients, the set of natural numbers $n$
+such that $p^a$ divides $\operatorname{ct}[\tilde P^n Q]$ has natural density $1$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -394,9 +542,20 @@ public theorem_wanted constantTerm_tilde_zero_density {r p a : ℕ} (hp : p.Prim
     (h : ∃ n₀, (p : ℤ) ∣ (Pt ^ n₀).coeff 0) (Q : AddMonoidAlgebra ℤ (Fin r → ℤ)) :
     ({n : ℕ | (p : ℤ) ^ a ∣ (Pt ^ n * Q).coeff 0} : Set ℕ).HasDensity 1
 
-/-- Analogue of Proposition 15 mod `p^a`: for `P̃` with `P̃(x)^p ≡ P̃(x^p) (mod p^a)` and any
-`m ≥ deg P̃ - 1` there is `t₀` such that for every `n` with `p ∤ ct[P̃^n]` some
-`Ṽ(p^{t₀} n + j)`, `j < p^{t₀}`, equals `Ṽ(0)` mod `p^a`.
+/-- **Return to the initial coefficient vector modulo $p^a$.** Let $p$ be a prime, let
+$a, m \in \mathbb{N}$, and let $\tilde P$ be a Laurent polynomial with integer coefficients in
+variables $x_1, \dots, x_r$ such that for every $j \in \mathbb{Z}^r$ the coefficients of $x^j$ in
+$\tilde P(x_1, \dots, x_r)^p$ and in $\tilde P(x_1^p, \dots, x_r^p)$ are congruent modulo $p^a$.
+Suppose $\deg \tilde P \le m + 1$, where $\deg \tilde P$ is the largest absolute value of an
+exponent of a single variable in a monomial occurring in $\tilde P$ (and $0$ if $\tilde P = 0$),
+and let $T = \{-m, \dots, m\}^r$. Then there is $t_0 \in \mathbb{N}$ such that for every
+$n \in \mathbb{N}$ for which $p$ does not divide the constant term of $\tilde P^n$, there is
+$j < p^{t_0}$ such that for every $i \in T$ the coefficient of $x^{-i}$ in
+$\tilde P^{p^{t_0} n + j}$ is congruent modulo $p^a$ to $1$ if $i = 0$ and to $0$ otherwise.
+
+Equivalently, writing $\tilde V(n)$ for the vector of coefficients of $x^{-i}$ in $\tilde P^n$,
+$i \in T$, reduced modulo $p^a$, some $\tilde V(p^{t_0} n + j)$ with $j < p^{t_0}$ equals
+$\tilde V(0)$. This is the analogue modulo $p^a$ of Proposition 15.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -410,9 +569,16 @@ public theorem_wanted exists_sigma_pow_V_contains_V_zero_tilde {r p a : ℕ} (hp
       ∀ i ∈ Fintype.piFinset (fun _ : Fin r => Finset.Icc (-(m : ℤ)) m),
         (Pt ^ (p ^ t₀ * n + j)).coeff (-i) ≡ if i = 0 then 1 else 0 [ZMOD (p : ℤ) ^ a]
 
-/-- Main theorem mod `p^a`: if `ct[P^n Q] mod p^a` is not identically `0`, it is linearly
-recurrent if and only if `p ∤ ct[P^n]` for all `n` (independently of `Q` and `a`); otherwise
-its zeros have density `1`.
+/-- **Linear recurrence of constant terms modulo $p^a$.** Let $p$ be a prime, let $a \ge 1$, and
+let $P, Q$ be Laurent polynomials with integer coefficients in $r$ variables; write
+$\operatorname{ct}[f]$ for the constant term of $f$. Suppose $p^a \nmid \operatorname{ct}[P^n Q]$
+for some $n \in \mathbb{N}$. Then the sequence $u_n = \operatorname{ct}[P^n Q] \bmod p^a$ is
+linearly recurrent if and only if $p \nmid \operatorname{ct}[P^n]$ for all $n \in \mathbb{N}$, and
+if $u$ is not linearly recurrent, then the set of $n$ with $p^a \mid \operatorname{ct}[P^n Q]$ has
+natural density $1$.
+
+In particular, as long as $u$ is not identically $0$, whether it is linearly recurrent does not
+depend on $Q$ or $a$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -425,10 +591,16 @@ public theorem_wanted isLinearlyRecurrentSeq_constantTerm_mod_primePow_iff {r p 
       (¬ IsLinearlyRecurrentSeq (fun n => ((P ^ n * Q).coeff 0 : ZMod (p ^ a))) →
         ({n : ℕ | (p : ℤ) ^ a ∣ (P ^ n * Q).coeff 0} : Set ℕ).HasDensity 1)
 
-/-- Combinations mod `p^a`: for
-`b_n = F(ct[P^{n+k_1} Q_1] mod p^a, …, ct[P^{n+k_ℓ} Q_ℓ] mod p^a)` not constantly
-`F(0, …, 0)`, `b` is linearly recurrent if and only if `p ∤ ct[P^n]` for all `n`, and if
-`p ∣ ct[P^n]` for some `n` then `F(0, …, 0)` has frequency `1` in `b`.
+/-- **Linear recurrence of combinations of constant terms modulo $p^a$.** Let $p$ be a prime,
+let $a \ge 1$, let $P, Q_1, \dots, Q_\ell$ be Laurent polynomials with integer coefficients in
+$r$ variables, let $k_1, \dots, k_\ell \in \mathbb{N}$, and let
+$F \colon (\mathbb{Z}/p^a\mathbb{Z})^\ell \to X$ be a map to a set $X$. Write
+$\operatorname{ct}[f]$ for the constant term of $f$ and, for $n \in \mathbb{N}$, let
+$b_n = F(\operatorname{ct}[P^{n+k_1} Q_1] \bmod p^a, \dots,
+\operatorname{ct}[P^{n+k_\ell} Q_\ell] \bmod p^a)$. Suppose $b_n \ne F(0, \dots, 0)$ for some $n$.
+Then $(b_n)$ is linearly recurrent if and only if $p \nmid \operatorname{ct}[P^n]$ for all
+$n \in \mathbb{N}$, and if $p \mid \operatorname{ct}[P^n]$ for some $n$, then the set of $n$ with
+$b_n = F(0, \dots, 0)$ has natural density $1$.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,
@@ -445,7 +617,11 @@ public theorem_wanted isLinearlyRecurrentSeq_combination_mod_primePow_iff {r p a
         ({n : ℕ | F (fun i => ((P ^ (n + k i) * Q i).coeff 0 : ZMod (p ^ a))) = F 0} :
           Set ℕ).HasDensity 1)
 
-/-- If `ct[P^{n₀}] mod p ≠ 0` for some `n₀ > 0`, then `ct[P^n Q] mod p^a` is recurrent.
+/-- **Recurrence of constant-term sequences modulo a prime power.** Let $p$ be a prime, let
+$a \ge 1$, and let $P$ and $Q$ be Laurent polynomials in $r$ variables with integer coefficients;
+write $\mathrm{ct}[F]$ for the constant term of a Laurent polynomial $F$. If
+$p \nmid \mathrm{ct}[P^{n_0}]$ for some $n_0 > 0$, then the sequence of residues
+$(\mathrm{ct}[P^n Q] \bmod p^a)_{n \ge 0}$ in $\mathbb{Z}/p^a\mathbb{Z}$ is recurrent.
 
 Source: Nadav Kohen, *A Linear Representation for Constant Term Sequences mod p^a with
 Applications to Uniform Recurrence*, Journal of Integer Sequences 29 (2026), Article 26.4.2,

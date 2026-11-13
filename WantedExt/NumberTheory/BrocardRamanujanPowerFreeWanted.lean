@@ -43,8 +43,9 @@ namespace MetaMathlibExt
 
 @[expose] public section
 
-/-- For every `k ≥ 2`, the Brocard-Ramanujan equation `n! + 1 = x ^ 2` has only
-finitely many solutions `(n, x)` with `x - 1` or `x + 1` a `k`-free number.
+/-- **Brocard–Ramanujan solutions with $x - 1$ or $x + 1$ power-free are finite.** For every
+natural number $k \ge 2$, there are only finitely many pairs of natural numbers $(n, x)$ with
+$n! + 1 = x^2$ such that $x - 1$ or $x + 1$ is $k$-free.
 
 Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
 Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 1(i), first
@@ -53,8 +54,9 @@ public theorem_wanted brocardRamanujan_powerFree_finite (k : ℕ) (hk : 2 ≤ k)
     {p : ℕ × ℕ | p.1 ! + 1 = p.2 ^ 2 ∧
       ((p.2 - 1).IsPowerFree k ∨ (p.2 + 1).IsPowerFree k)}.Finite
 
-/-- The only solutions `(n, x)` of `n! + 1 = x ^ 2` with `x - 1` or `x + 1` a
-`7`-free number are among `(4, 5)`, `(5, 11)` and `(7, 71)`.
+/-- **Brocard–Ramanujan solutions with $x - 1$ or $x + 1$ seven-free.** If natural numbers $n$
+and $x$ satisfy $n! + 1 = x^2$ and $x - 1$ or $x + 1$ is $7$-free, then $(n, x)$ is one of
+$(4, 5)$, $(5, 11)$ and $(7, 71)$.
 
 Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
 Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 1(i),
@@ -64,9 +66,10 @@ public theorem_wanted brocardRamanujan_sevenFree_subset :
       ((p.2 - 1).IsPowerFree 7 ∨ (p.2 + 1).IsPowerFree 7)} ⊆
       {(4, 5), (5, 11), (7, 71)}
 
-/-- For every `l ≥ 2`, the Brocard-Ramanujan equation `n! + 1 = x ^ 2` has only
-finitely many solutions `(n, x)` with `x - 1` or `x + 1` having fewer than `l`
-distinct prime divisors.
+/-- **Brocard–Ramanujan solutions with $x - 1$ or $x + 1$ having few prime factors are finite.**
+For every natural number $l \ge 2$, there are only finitely many pairs of natural numbers
+$(n, x)$ with $n! + 1 = x^2$ such that $x - 1$ or $x + 1$ has fewer than $l$ distinct prime
+divisors.
 
 Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
 Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 1(ii), first
@@ -75,8 +78,9 @@ public theorem_wanted brocardRamanujan_fewPrimeFactors_finite (l : ℕ) (hl : 2 
     {p : ℕ × ℕ | p.1 ! + 1 = p.2 ^ 2 ∧
       ((p.2 - 1).primeFactors.card < l ∨ (p.2 + 1).primeFactors.card < l)}.Finite
 
-/-- The only solution `(n, x)` of `n! + 1 = x ^ 2` with `x - 1` or `x + 1` a prime
-power is `(4, 5)`.
+/-- **Brocard–Ramanujan solutions with $x - 1$ or $x + 1$ a prime power.** If natural numbers
+$n$ and $x$ satisfy $n! + 1 = x^2$ and $x - 1$ or $x + 1$ is a prime power, then
+$(n, x) = (4, 5)$.
 
 Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
 Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 1(ii),
@@ -85,9 +89,9 @@ public theorem_wanted brocardRamanujan_primePow_subset :
     {p : ℕ × ℕ | p.1 ! + 1 = p.2 ^ 2 ∧ (IsPrimePow (p.2 - 1) ∨ IsPrimePow (p.2 + 1))} ⊆
       {(4, 5)}
 
-/-- Lemma 1: if a positive integer `x` divides `n!` (`n ≥ 1`), then
-`x ≤ exp (3 n K(x) / 2)`, where `K(x)` is the largest exponent in the prime factorization
-of `x` (`K(1) = 0`), written `x.primeFactors.sup x.factorization`.
+/-- **Divisors of a factorial bounded by their largest prime exponent.** Let $n \ge 1$ and let
+$x$ be a positive integer dividing $n!$. Write $K(x)$ for the largest exponent in the prime
+factorization of $x$, with $K(1) = 0$. Then $x \le \exp(3 n K(x) / 2)$.
 
 Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
 Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Lemma 1 (`integers-2025-A71-lem-1`). -/
@@ -95,9 +99,10 @@ public theorem_wanted le_exp_of_dvd_factorial {n x : ℕ} (hn : 0 < n) (hx : 0 <
     (hdvd : x ∣ n !) :
     (x : ℝ) ≤ Real.exp (3 * n * (x.primeFactors.sup x.factorization : ℕ) / 2)
 
-/-- Lemma 2: if a positive integer `x` divides `n!` (`n ≥ 1`), then for every positive
-integer `a`, `x ≤ n^(n/a) (a ω(x) + 1)^(n ω(x))`, where `ω(x)` is the number of distinct
-prime divisors of `x`.
+/-- **Divisors of a factorial bounded by their number of prime factors.** Let $n \ge 1$ and let
+$x$ be a positive integer dividing $n!$, and write $\omega(x)$ for the number of distinct prime
+divisors of $x$. Then for every positive integer $a$,
+$x \le n^{n/a} (a \, \omega(x) + 1)^{n \, \omega(x)}$, where $n^{n/a}$ is a real power.
 
 Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
 Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Lemma 2 (`integers-2025-A71-lem-2`). -/
@@ -106,13 +111,16 @@ public theorem_wanted le_rpow_mul_pow_of_dvd_factorial {n x : ℕ} (hn : 0 < n) 
     (x : ℝ) ≤ (n : ℝ) ^ ((n : ℝ) / a) *
       ((a * x.primeFactors.card + 1 : ℕ) : ℝ) ^ (n * x.primeFactors.card)
 
-/-- Theorem 2: for `k, l ≥ 2`, `m ≥ 1` and a polynomial `P ∈ ℤ[X_1, …, X_m]`, the
-Brocard-Ramanujan equation `n! + 1 = x²` has only finitely many integer solutions `(n, x)`
-with `x = x_1 ⋯ x_m P(x_1, …, x_m) ± 1` for some `x_1, …, x_m ∈ F_k P_l`. As in the paper, `x`
-ranges over `ℤ` (unlike Theorem 1, the sign of `x` matters here, since negation does not preserve
-the shape `x_1 ⋯ x_m P(x_1, …, x_m) ± 1`). Here
-`F_k P_l = {y z}` with `y` a `k`-free positive integer (`K(y) < k`, `Nat.IsPowerFree`) and
-`z` a positive integer with fewer than `l` distinct prime divisors.
+/-- **Finitely many Brocard–Ramanujan solutions of polynomial shape.** Let $k \ge 2$, $l \ge 2$
+and $m \ge 1$ be natural numbers and let $P \in \mathbb{Z}[X_1, \ldots, X_m]$. Write
+$F_k P_l$ for the set of products $y z$ of a $k$-free number $y$ and a positive integer $z$
+with fewer than $l$ distinct prime divisors. Then there are only finitely many pairs $(n, x)$
+of a natural number $n$ and an integer $x$ such that $n! + 1 = x^2$ and
+$x = x_1 \cdots x_m P(x_1, \ldots, x_m) + 1$ or $x = x_1 \cdots x_m P(x_1, \ldots, x_m) - 1$
+for some $x_1, \ldots, x_m \in F_k P_l$.
+
+Here $x$ ranges over the integers, since negating $x$ does not preserve the shape
+$x_1 \cdots x_m P(x_1, \ldots, x_m) \pm 1$.
 
 Source: Abderrahim Makki Naciri, *On the Brocard-Ramanujan Equation with 7-Free
 Integers and Prime Powers*, INTEGERS 25 (2025), Article A71, Theorem 2 (`integers-2025-A71-thm-2`). -/
