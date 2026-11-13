@@ -34,16 +34,26 @@ namespace Cslib.Algorithms.Lean
 namespace BinarySearchTree
 
 /--
-Splice two trees end to end, keeping every key of the first tree before every
-key of the second in the inorder traversal. `ordered_join` gives the side
-condition under which the splice of two ordered trees stays ordered.
+**Join of two binary trees.** The join of the empty tree and a tree $R$ is $R$. The join of a tree
+with root key $k$, left subtree $L_1$ and right subtree $L_2$ and a tree $R$ is the tree with root
+key $k$, left subtree $L_1$ and right subtree the join of $L_2$ and $R$. Thus, when the first tree
+is nonempty, $R$ becomes the right subtree of its rightmost node.
+
+In the inorder traversal of the join, every key of the first tree comes before every key of the
+second tree.
 -/
 public def join {α : Type u} : BinaryTree α → BinaryTree α → BinaryTree α
   | .nil, right => right
   | .node key leftLeft leftRight, right =>
       .node key leftLeft (join leftRight right)
 
-/-- Delete a key, splicing the subtrees of a deleted node together with `join`. -/
+/--
+**Deletion from a binary search tree.** Let $x$ be a key of a linearly ordered type. Deleting $x$
+from the empty tree gives the empty tree. Deleting $x$ from a tree with root key $k$, left subtree
+$L$ and right subtree $R$ gives the tree with root key $k$, left subtree $L$ with $x$ deleted and
+right subtree $R$ if $x < k$; the tree with root key $k$, left subtree $L$ and right subtree $R$
+with $x$ deleted if $k < x$; and the join of $L$ and $R$ otherwise, that is, if $x = k$.
+-/
 public def delete {α : Type u} [LinearOrder α] (x : α) :
     BinaryTree α → BinaryTree α
   | .nil => .nil
@@ -61,7 +71,10 @@ public def delete {α : Type u} [LinearOrder α] (x : α) :
     x ∈ BinaryTree.node key left right ↔ x ∈ left ∨ x = key ∨ x ∈ right :=
   Iff.rfl
 
-/-- A key is in a splice exactly when it is in one of the two parts. -/
+/--
+**Membership in a join.** For binary trees $L$ and $R$, a key $x$ occurs in the join of $L$ and
+$R$ if and only if $x$ occurs in $L$ or $x$ occurs in $R$.
+-/
 public theorem mem_join {α : Type u} {x : α} {left right : BinaryTree α} :
     x ∈ join left right ↔ x ∈ left ∨ x ∈ right := by
   induction left with
@@ -80,7 +93,10 @@ public theorem mem_join {α : Type u} {x : α} {left right : BinaryTree α} :
       · exact Or.inr (Or.inr (Or.inl hx))
       · exact Or.inr (Or.inr (Or.inr hx))
 
-/-- The inorder traversal of a splice appends the two traversals. -/
+/--
+**Inorder traversal of a join.** For binary trees $L$ and $R$, the inorder traversal of the join
+of $L$ and $R$ is the inorder traversal of $L$ followed by the inorder traversal of $R$.
+-/
 public theorem inorder_join {α : Type u} {left right : BinaryTree α} :
     inorder (join left right) = inorder left ++ inorder right := by
   induction left with
@@ -98,8 +114,9 @@ private theorem all_join {α : Type u} {p : α → Prop} {left right : BinaryTre
   · exact (all_iff_forall_mem.mp hRight) x hx
 
 /--
-Splicing two ordered trees stays ordered when every key of the left tree is
-smaller than every key of the right tree.
+**Joining separated ordered trees.** Let $L$ and $R$ be ordered binary search trees over a type
+with a relation $<$. If $a < b$ for every key $a$ of $L$ and every key $b$ of $R$, then the join
+of $L$ and $R$ is ordered.
 -/
 public theorem ordered_join {α : Type u} [LT α] {left right : BinaryTree α}
     (hLeft : Ordered left) (hRight : Ordered right)
@@ -141,7 +158,11 @@ private theorem mem_of_mem_delete {α : Type u} [LinearOrder α] {x y : α}
         · exact Or.inl hy
         · exact Or.inr (Or.inr hy)
 
-/-- Deletion keeps every key other than the deleted one, ordered or not. -/
+/--
+**Deletion keeps the other keys.** Let $t$ be a binary tree over a linearly ordered type, not
+necessarily ordered, and let $x$ and $y$ be keys with $y \ne x$. If $y$ occurs in $t$, then $y$
+occurs in the tree obtained by deleting $x$ from $t$.
+-/
 public theorem mem_delete_of_mem {α : Type u} [LinearOrder α] {x y : α}
     {tree : BinaryTree α} (hy : y ∈ tree) (hxy : y ≠ x) :
     y ∈ delete x tree := by
@@ -169,7 +190,10 @@ public theorem mem_delete_of_mem {α : Type u} [LinearOrder α] {x y : α}
         · exact absurd (hy.trans hxEq.symm) hxy
         · exact Or.inr hy
 
-/-- The deleted key is absent after deletion from an ordered tree. -/
+/--
+**The deleted key is gone.** If $t$ is an ordered binary search tree over a linearly ordered type
+and $x$ is a key, then $x$ does not occur in the tree obtained by deleting $x$ from $t$.
+-/
 public theorem not_mem_delete_self {α : Type u} [LinearOrder α] {x : α}
     {tree : BinaryTree α} (hTree : Ordered tree) : x ∉ delete x tree := by
   induction tree with
@@ -196,7 +220,11 @@ public theorem not_mem_delete_self {α : Type u} [LinearOrder α] {x : α}
         · exact lt_irrefl key ((all_iff_forall_mem.mp hAllLeft) key hx)
         · exact lt_irrefl key ((all_iff_forall_mem.mp hAllRight) key hx)
 
-/-- Deletion from an ordered tree removes exactly the deleted key. -/
+/--
+**Membership after deletion.** If $t$ is an ordered binary search tree over a linearly ordered
+type, then for all keys $x$ and $y$, the key $y$ occurs in the tree obtained by deleting $x$ from
+$t$ if and only if $y$ occurs in $t$ and $y \ne x$.
+-/
 public theorem mem_delete {α : Type u} [LinearOrder α] {x y : α}
     {tree : BinaryTree α} (hTree : Ordered tree) :
     y ∈ delete x tree ↔ y ∈ tree ∧ y ≠ x := by
@@ -213,7 +241,11 @@ private theorem all_delete {α : Type u} [LinearOrder α] {p : α → Prop} {x :
   all_iff_forall_mem.mpr
     (fun y hy => (all_iff_forall_mem.mp hTree) y (mem_of_mem_delete hy))
 
-/-- Deletion preserves the strict search-tree invariant. -/
+/--
+**Deletion preserves the search-tree order.** If $t$ is an ordered binary search tree over a
+linearly ordered type, then for every key $x$ the tree obtained by deleting $x$ from $t$ is
+ordered.
+-/
 public theorem ordered_delete {α : Type u} [LinearOrder α] {x : α}
     {tree : BinaryTree α} (hTree : Ordered tree) :
     Ordered (delete x tree) := by
@@ -249,7 +281,12 @@ private theorem erase_append_of_not_mem_right {α : Type u} [LinearOrder α]
   · rw [List.erase_append, ite_eq_right hxLeft, List.erase_of_not_mem hx,
       List.erase_of_not_mem hxLeft]
 
-/-- Deleting a key erases it from the inorder traversal of an ordered tree. -/
+/--
+**Inorder traversal after deletion.** If $t$ is an ordered binary search tree over a linearly
+ordered type and $x$ is a key, then the inorder traversal of the tree obtained by deleting $x$
+from $t$ is the inorder traversal of $t$ with the first occurrence of $x$ removed (and is the
+inorder traversal of $t$ itself if $x$ does not occur in it).
+-/
 public theorem inorder_delete {α : Type u} [LinearOrder α] {x : α}
     {tree : BinaryTree α} (hTree : Ordered tree) :
     inorder (delete x tree) = (inorder tree).erase x := by

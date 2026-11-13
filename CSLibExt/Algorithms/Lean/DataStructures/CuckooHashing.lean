@@ -52,8 +52,13 @@ namespace Cslib.Algorithms.Lean
 universe u v
 
 /--
-A cuckoo hash table with two tables of `m` slots and hash functions `h1` and `h2`. No
-expected constant-time bound is claimed because the model supplies neither a probability
+**Cuckoo hash table.** Given a type $K$ of keys, a type $V$ of values, a number $m$ of slots,
+and two hash functions $h_1, h_2 : K \to \{0, \dots, m - 1\}$, a cuckoo hash table consists of
+two tables, each a vector of $m$ slots; every slot is either empty or holds a key–value pair
+$(k, v)$ with $k \in K$ and $v \in V$. The structure itself does not require a pair $(k, v)$ to
+sit at slot $h_1(k)$ of the first table or at slot $h_2(k)$ of the second.
+
+No expected constant-time bound is claimed because the model supplies neither a probability
 distribution nor an independence assumption about the hashes.
 -/
 public structure CuckooHashing (K : Type u) (V : Type v) (m : Nat)
@@ -69,14 +74,18 @@ variable {K : Type u} {V : Type v} {m : Nat} {h1 h2 : K → Fin m}
 
 variable [DecidableEq K]
 
-/-- The empty table, with every slot of both tables vacant. -/
+/-- **Empty cuckoo hash table.** The empty cuckoo hash table has every slot of both tables
+vacant. -/
 public def empty : CuckooHashing K V m h1 h2 :=
   ⟨Vector.replicate m none, Vector.replicate m none⟩
 
 /--
-The placement invariant: an entry in the first table sits at `h1` of its key, and an entry
-in the second table sits at `h2` of its key. This is what lets `lookup` check only two
-slots.
+**Placement invariant of a cuckoo hash table.** A cuckoo hash table with hash functions
+$h_1, h_2$ satisfies the placement invariant when every pair $(k, v)$ in slot $i$ of the first
+table has $i = h_1(k)$, and every pair $(k, v)$ in slot $i$ of the second table has
+$i = h_2(k)$.
+
+This is what lets lookup check only two slots.
 -/
 public def Valid (table : CuckooHashing K V m h1 h2) : Prop :=
   (∀ (i : Fin m) (key : K) (value : V),
@@ -84,12 +93,21 @@ public def Valid (table : CuckooHashing K V m h1 h2) : Prop :=
     ∀ (i : Fin m) (key : K) (value : V),
       table.table2.get i = some (key, value) → i = h2 key
 
-/-- The binding `key ↦ value` is held in some slot of either table. -/
+/--
+**Binding stored in a cuckoo hash table.** A key $k$ is stored with value $v$ in a cuckoo hash
+table when the pair $(k, v)$ occupies some slot of the first table or some slot of the second
+table.
+-/
 public def Stored (table : CuckooHashing K V m h1 h2) (key : K) (value : V) : Prop :=
   (∃ i : Fin m, table.table1.get i = some (key, value)) ∨
     ∃ i : Fin m, table.table2.get i = some (key, value)
 
-/-- Each key is stored with at most one value (duplicate copies of a pair are allowed). -/
+/--
+**Key determinism of a cuckoo hash table.** A cuckoo hash table is key-deterministic when each
+key is stored with at most one value: for every key $k$ and values $v_1, v_2$, if the bindings
+$k \mapsto v_1$ and $k \mapsto v_2$ are both stored in the table, then $v_1 = v_2$. Duplicate
+copies of the same pair are allowed.
+-/
 public def KeyDet (table : CuckooHashing K V m h1 h2) : Prop :=
   ∀ (key : K) (v₁ v₂ : V), Stored table key v₁ → Stored table key v₂ → v₁ = v₂
 
@@ -193,7 +211,11 @@ private theorem valid_update2 (table : CuckooHashing K V m h1 h2) (key : K) (val
     · rw [get_set_ne table.table2 (h2 key) i (some (key, value)) same] at occupied
       exact valid.2 i otherKey otherValue occupied
 
-/-- The empty table satisfies the placement invariant. -/
+/--
+**The empty cuckoo hash table satisfies the placement invariant.** For any hash functions
+$h_1, h_2$ into $m$ slots, the empty cuckoo hash table, with every slot of both tables vacant,
+satisfies the placement invariant.
+-/
 public theorem valid_empty : Valid (empty : CuckooHashing K V m h1 h2) := by
   constructor
   · intro i _ _ occupied
@@ -207,7 +229,8 @@ public theorem valid_empty : Valid (empty : CuckooHashing K V m h1 h2) := by
     rw [vacant] at occupied
     simp at occupied
 
-/-- No key is stored with two values in the empty table, vacuously. -/
+/-- **The empty cuckoo hash table is key-deterministic.** No key is stored with two different
+values in the empty cuckoo hash table, vacuously. -/
 public theorem keyDet_empty : KeyDet (empty : CuckooHashing K V m h1 h2) := by
   intro _ _ _ stored _
   rcases stored with ⟨i, hi⟩ | ⟨i, hi⟩
@@ -221,9 +244,13 @@ public theorem keyDet_empty : KeyDet (empty : CuckooHashing K V m h1 h2) := by
     simp at hi
 
 /--
-The eviction loop: place `cur` in the first table (if `first`) or the second table at its
-hash slot, evicting any occupant to its other table in turn. Returns `none` when the fuel
-runs out.
+**Cuckoo eviction loop.** The eviction loop takes a cuckoo hash table with hash functions $h_1$
+and $h_2$, a key–value pair $(k, v)$, a choice of the first or second table, and a natural
+number as fuel, and either returns a table or fails. With fuel $0$ it fails. With fuel $n + 1$
+and the first table chosen, it writes $(k, v)$ into slot $h_1(k)$ of the first table; if that
+slot was empty it returns the resulting table, and otherwise it repeats on the resulting table
+with the evicted pair, the second table and fuel $n$. With the second table chosen it does the
+same at slot $h_2(k)$ of the second table and continues with the first table.
 -/
 def insertAux (table : CuckooHashing K V m h1 h2) (cur : K × V) (first : Bool) :
     Nat → Option (CuckooHashing K V m h1 h2)
@@ -461,7 +488,10 @@ private theorem valid_insertAux (table : CuckooHashing K V m h1 h2) (cur : K × 
               exact ih _ _ _ _ hrec (valid_update2 table ck cv valid)
 
 /--
-Looks up a key in its two possible slots: `table1[h1 key]` first, then `table2[h2 key]`.
+**Cuckoo hash table lookup.** For a cuckoo hash table $T$ with hash functions $h_1$ and $h_2$ and a
+key $k$, the lookup of $k$ in $T$ returns $v$ if slot $h_1(k)$ of the first table holds a pair
+$(k, v)$; otherwise it returns $v$ if slot $h_2(k)$ of the second table holds a pair $(k, v)$;
+otherwise it returns nothing. No other slot is examined.
 -/
 public def lookup (table : CuckooHashing K V m h1 h2) (key : K) : Option V :=
   match table.table1.get (h1 key) with
@@ -476,7 +506,8 @@ public def lookup (table : CuckooHashing K V m h1 h2) (key : K) : Option V :=
       | some (k₂, v₂) => if k₂ = key then some v₂ else none
       | none => none
 
-/-- Looking up any key in the empty table returns `none`. -/
+/-- **Lookup in the empty cuckoo hash table.** Looking up any key in the empty cuckoo hash table
+finds no value. -/
 @[simp]
 public theorem lookup_empty (key : K) :
     lookup (empty : CuckooHashing K V m h1 h2) key = none := by
@@ -486,15 +517,21 @@ public theorem lookup_empty (key : K) :
     get_replicate _
   simp [lookup, e1, e2]
 
-/-- A binding in the first table at its hash slot is found by `lookup` with its value. -/
+/--
+**Cuckoo lookup finds a key in its first-table slot.** Let $T$ be a cuckoo hash table with hash
+functions $h_1$ and $h_2$, let $k$ be a key and $v$ a value. If slot $h_1(k)$ of the first table of
+$T$ holds the pair $(k, v)$, then looking up $k$ in $T$ returns $v$.
+-/
 public theorem lookup_eq_some_of_table1 (table : CuckooHashing K V m h1 h2) (key : K)
     (value : V) (atSlot : table.table1.get (h1 key) = some (key, value)) :
     lookup table key = some value := by
   simp [lookup, atSlot]
 
 /--
-A binding in the second table at its hash slot is found by `lookup` with its value when
-the first slot does not hold the key.
+**Cuckoo lookup finds a key in its second-table slot.** Let $T$ be a cuckoo hash table with hash
+functions $h_1$ and $h_2$, let $k$ be a key and $v$ a value. If slot $h_2(k)$ of the second table
+of $T$ holds the pair $(k, v)$ and slot $h_1(k)$ of the first table of $T$ holds no pair whose key
+is $k$, then looking up $k$ in $T$ returns $v$.
 -/
 public theorem lookup_eq_some_of_table2 (table : CuckooHashing K V m h1 h2) (key : K)
     (value : V) (atSlot : table.table2.get (h2 key) = some (key, value))
@@ -509,7 +546,11 @@ public theorem lookup_eq_some_of_table2 (table : CuckooHashing K V m h1 h2) (key
           (notFirst v₁)
       · simp [lookup, first, atSlot, same]
 
-/-- Lookup is sound: a found value is stored in one of the two tables. -/
+/--
+**Soundness of cuckoo lookup.** Let $T$ be a cuckoo hash table with hash functions $h_1$ and $h_2$,
+let $k$ be a key and $v$ a value. If looking up $k$ in $T$ returns $v$, then the binding
+$k \mapsto v$ is stored in some slot of the first or the second table of $T$.
+-/
 public theorem lookup_sound (table : CuckooHashing K V m h1 h2) (key : K) (value : V)
     (found : lookup table key = some value) : Stored table key value := by
   cases first : table.table1.get (h1 key) with
@@ -552,9 +593,13 @@ private theorem stored_at_hash (table : CuckooHashing K V m h1 h2) (valid : Vali
     exact Or.inr hi
 
 /--
-Lookup is complete under `Valid` in the weak sense: a stored key is found. The found value
-may differ from the given one if the key is stored with two values; see
-`lookup_eq_some_of_stored` for the value-exact form under `KeyDet`.
+**Cuckoo lookup finds every stored key.** Let $T$ be a cuckoo hash table with hash functions $h_1$
+and $h_2$ that satisfies the placement invariant, and let $k$ be a key and $v$ a value. If the
+binding $k \mapsto v$ is stored in some slot of either table of $T$, then looking up $k$ in $T$
+returns some value.
+
+The returned value may differ from $v$ when $k$ is stored with two different values; when $T$
+stores each key with at most one value, it is $v$.
 -/
 public theorem lookup_isSome_of_stored (table : CuckooHashing K V m h1 h2)
     (valid : Valid table) (key : K) (value : V) (stored : Stored table key value) :
@@ -584,7 +629,9 @@ public theorem lookup_isSome_of_stored (table : CuckooHashing K V m h1 h2)
           rw [lookup_eq_some_of_table2 table key value atSecond notFirst]
           rfl
 
-/-- Under `Valid` and `KeyDet`, a stored binding is found by `lookup` with its value. -/
+/-- **Cuckoo lookup finds every stored binding.** Let $T$ be a cuckoo hash table that satisfies
+the placement invariant and is key-deterministic. For every key $k$ and value $v$, if the
+binding $k \mapsto v$ is stored in $T$, then looking up $k$ in $T$ returns $v$. -/
 public theorem lookup_eq_some_of_stored (table : CuckooHashing K V m h1 h2)
     (valid : Valid table) (det : KeyDet table) (key : K) (value : V)
     (stored : Stored table key value) :
@@ -612,13 +659,19 @@ public theorem lookup_eq_some_of_stored (table : CuckooHashing K V m h1 h2)
             exact same hv.1
           exact lookup_eq_some_of_table2 table key value atSecond notFirst
 
-/-- Under `Valid` and `KeyDet`, lookup agrees exactly with `Stored`. -/
+/-- **Cuckoo lookup finds exactly the stored bindings.** Let $T$ be a cuckoo hash table that
+satisfies the placement invariant and is key-deterministic. For every key $k$ and value $v$,
+looking up $k$ in $T$ returns $v$ if and only if the binding $k \mapsto v$ is stored in $T$. -/
 public theorem lookup_eq_some_iff_stored (table : CuckooHashing K V m h1 h2)
     (valid : Valid table) (det : KeyDet table) (key : K) (value : V) :
     lookup table key = some value ↔ Stored table key value :=
   ⟨lookup_sound table key value, lookup_eq_some_of_stored table valid det key value⟩
 
-/-- Whether a slot holds a binding for `key`. -/
+/--
+**Slot holds a key.** A slot of a cuckoo hash table is either empty or holds a pair $(k, v)$ of a
+key and a value. For a slot $s$ and a key $k'$, this test is true when $s$ holds a pair whose key
+is $k'$, and false when $s$ is empty or holds a pair with a different key.
+-/
 def slotHasKey (slot : Option (K × V)) (key : K) : Bool :=
   match slot with
   | some pair => decide (pair.1 = key)
@@ -639,11 +692,14 @@ private theorem slotHasKey_iff {slot : Option (K × V)} {key : K} :
         exact (Prod.mk.inj (Option.some.inj h)).1
 
 /--
-Inserts a binding or replaces the existing binding for the key. An existing binding in
-either of the key's slots is overwritten in place; a replacement in the first table also
-clears a duplicate copy of the key in its second slot, so no stale competing value
-remains. Otherwise the eviction loop runs with the given fuel. Returns `none` when the
-loop exhausts its fuel, which models the rehash trigger of the classical algorithm.
+**Cuckoo hash insertion.** Inserting a key $k$ with value $v$ into a cuckoo hash table with hash
+functions $h_1$ and $h_2$, with fuel $n$, either returns a table or fails. If slot $h_1(k)$ of
+the first table holds a binding for $k$, that slot is overwritten with $(k, v)$, and slot
+$h_2(k)$ of the second table is cleared if it also holds a binding for $k$, so no stale
+competing value remains. Otherwise, if slot $h_2(k)$ of the second table holds a binding for
+$k$, that slot is overwritten with $(k, v)$. Otherwise the eviction loop runs on $(k, v)$,
+starting with the first table, with fuel $n$, and its result is returned. Failure, when the
+loop exhausts its fuel, models the rehash trigger of the classical algorithm.
 -/
 public def insert (table : CuckooHashing K V m h1 h2) (key : K) (value : V) (fuel : Nat) :
     Option (CuckooHashing K V m h1 h2) :=
@@ -733,7 +789,12 @@ private theorem stored_replace2_elim (table : CuckooHashing K V m h1 h2)
         exact absurd (valid.2 i _ _ hi).symm same
       · exact Or.inr ⟨Or.inr ⟨i, hi⟩, hother⟩
 
-/-- A successfully inserted binding is stored in the resulting table. -/
+/--
+**Cuckoo insertion stores the inserted binding.** Let $T$ be a cuckoo hash table with hash
+functions $h_1$ and $h_2$. If inserting (or replacing) the binding $k \mapsto v$ in $T$ with fuel
+$f$ succeeds and returns the table $T'$, then the binding $k \mapsto v$ is stored in some slot of
+either table of $T'$.
+-/
 public theorem stored_insert (table : CuckooHashing K V m h1 h2) (key : K) (value : V)
     (fuel : Nat) (updated : CuckooHashing K V m h1 h2)
     (inserted : insert table key value fuel = some updated) :
@@ -769,7 +830,12 @@ public theorem stored_insert (table : CuckooHashing K V m h1 h2) (key : K) (valu
         simpa [insert, hasFirst, hasSecond] using inserted
       exact (stored_insertAux table (key, value) true fuel updated hAux).1
 
-/-- A successful insertion or replacement preserves the placement invariant. -/
+/--
+**Cuckoo insertion preserves the placement invariant.** Let $T$ be a cuckoo hash table that
+satisfies the placement invariant. If inserting the binding $k \mapsto v$ into $T$ (which
+replaces an existing binding for $k$ in place) with some fuel bound succeeds and returns the
+table $T'$, then $T'$ satisfies the placement invariant.
+-/
 public theorem valid_insert (table : CuckooHashing K V m h1 h2) (key : K) (value : V)
     (fuel : Nat) (updated : CuckooHashing K V m h1 h2)
     (inserted : insert table key value fuel = some updated) (valid : Valid table) :
@@ -809,8 +875,10 @@ public theorem valid_insert (table : CuckooHashing K V m h1 h2) (key : K) (value
         simpa [insert, hasFirst, hasSecond] using inserted
       exact valid_insertAux table (key, value) true fuel updated hAux valid
 
-/-- A successful insertion or replacement preserves key determinism: replacement leaves no
-stale copy of the key with a different value in the other slot. -/
+/-- **Cuckoo insertion preserves key determinism.** Let $T$ be a cuckoo hash table that
+satisfies the placement invariant and is key-deterministic. If inserting a key $k$ with value
+$v$ into $T$ with some fuel succeeds with result $T'$, then $T'$ is key-deterministic. In
+particular, replacement leaves no stale copy of $k$ with a different value in the other slot. -/
 public theorem keyDet_insert (table : CuckooHashing K V m h1 h2) (key : K) (value : V)
     (fuel : Nat) (updated : CuckooHashing K V m h1 h2)
     (inserted : insert table key value fuel = some updated)
@@ -884,9 +952,10 @@ public theorem keyDet_insert (table : CuckooHashing K V m h1 h2) (key : K) (valu
           rw [e₁, e₂]
 
 /--
-Looking up a successfully inserted key returns the inserted value, for tables satisfying
-`Valid` and `KeyDet`. The inserted pair sits in one of the key's two slots in the result
-(`stored_insert`), and the two invariants rule out a competing value in the other slot.
+**Cuckoo lookup returns an inserted value.** Let $T$ be a cuckoo hash table with hash functions
+$h_1$ and $h_2$ that satisfies the placement invariant and stores each key with at most one value.
+If inserting (or replacing) the binding $k \mapsto v$ in $T$ with fuel $f$ succeeds and returns the
+table $T'$, then looking up $k$ in $T'$ returns $v$.
 -/
 public theorem lookup_insert (table : CuckooHashing K V m h1 h2) (valid : Valid table)
     (det : KeyDet table) (key : K) (value : V) (fuel : Nat)
@@ -954,11 +1023,11 @@ public theorem lookup_insert (table : CuckooHashing K V m h1 h2) (valid : Valid 
         key value (stored_insertAux table (key, value) true fuel updated hAux).1
 
 /--
-A successful insertion or replacement preserves exactly the bindings of
-every other key: for `other ≠ key`, a binding is stored after the operation
-if and only if it was stored before. The forward direction covers both
-replacement paths and the eviction loop; the backward direction rules out
-new unrelated bindings.
+**Cuckoo insertion preserves the bindings of other keys.** Let $T$ be a cuckoo hash table with hash
+functions $h_1$ and $h_2$ that satisfies the placement invariant. Suppose inserting (or replacing)
+the binding $k \mapsto v$ in $T$ with fuel $f$ succeeds and returns the table $T'$. Then for every
+key $k' \ne k$ and every value $v'$, the binding $k' \mapsto v'$ is stored in $T'$ if and only if
+it is stored in $T$.
 -/
 public theorem stored_insert_iff_of_ne (table : CuckooHashing K V m h1 h2)
     (valid : Valid table) (key : K) (value : V) (fuel : Nat)
@@ -1047,8 +1116,11 @@ public theorem stored_insert_iff_of_ne (table : CuckooHashing K V m h1 h2)
           other otherValue stored
 
 /--
-A successful insertion or replacement does not change the lookup result for
-any other key, the cuckoo analogue of `HashTable.lookup_insert_of_ne`.
+**Cuckoo insertion leaves lookups of other keys unchanged.** Let $T$ be a cuckoo hash table with
+hash functions $h_1$ and $h_2$ that satisfies the placement invariant and stores each key with at
+most one value. If inserting (or replacing) the binding $k \mapsto v$ in $T$ with fuel $f$ succeeds
+and returns the table $T'$, then for every key $k' \ne k$, looking up $k'$ in $T'$ gives the same
+result as looking up $k'$ in $T$: either both return nothing or both return the same value.
 -/
 public theorem lookup_insert_of_ne (table : CuckooHashing K V m h1 h2)
     (valid : Valid table) (det : KeyDet table) (key : K) (value : V)

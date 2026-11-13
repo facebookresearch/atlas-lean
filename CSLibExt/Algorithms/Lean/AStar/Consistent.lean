@@ -60,37 +60,67 @@ open Cslib.Algorithms.Lean.DirectedAdjacency
 
 variable {n : ℕ} (graph : DirectedAdjacency (Fin n)) (weight : Fin n → Fin n → ℕ) (h : Fin n → ℕ)
 
-/-- A consistent (monotone) heuristic: `h u ≤ weight u v + h v` on every edge. -/
+/-- **Consistent heuristic.** Let $G$ be a directed graph on the vertices $\{0, \dots, n-1\}$ and
+let $w$ assign a natural number $w(u, v)$ to each pair of vertices. A heuristic $h$ assigning a
+natural number to each vertex is consistent (monotone) if $h(u) \le w(u, v) + h(v)$ for every
+edge $u \to v$ of $G$. -/
 def Consistent : Prop := ∀ u v, graph.Edge u v → h u ≤ weight u v + h v
 
-/-- An admissible heuristic for `goal`: it never overestimates the weight of a path to `goal`. -/
+/-- **Admissible heuristic.** For a directed graph $G$ with natural edge weights $w$, a heuristic
+$h$ with natural values is admissible for a goal vertex $t$ when it never overestimates the weight
+of a path to $t$: $h(v) \le d$ for every vertex $v$ and every weight $d$ of a path in $G$ from $v$
+to $t$. -/
 def Admissible (goal : Fin n) : Prop :=
   ∀ v d, HasPathWeight graph weight v goal d → h v ≤ d
 
-/-- The reduced weight of an edge, `weight u v + h v - h u`. -/
+/-- **Reduced weight.** Let $w$ assign a natural number $w(u, v)$ to each pair of vertices and let
+$h$ assign a natural number to each vertex. The reduced weight of the pair $(u, v)$ is the
+natural number $w(u, v) + h(v) - h(u)$, computed with truncated subtraction, so it is $0$ when
+$h(u) > w(u, v) + h(v)$. -/
 def reducedWeight (u v : Fin n) : ℕ := weight u v + h v - h u
 
-/-- The output of A*: the underlying search (keys `f - h source` and predecessor pointers) and
-the path weights `g`, with `none` for infinity. -/
+/-- **Output of A-star search.** An A* result on $n$ vertices consists of a Dijkstra result on $n$
+vertices (the underlying search, with its source, final keys and predecessor pointers) and a
+vector that assigns to each vertex $v$ a value $g(v) \in \mathbb{N} \cup \{\infty\}$. In the
+output of A* from a source $s$ with a consistent heuristic $h$, the underlying search runs on the
+reduced weights, its keys are $f(v) - h(s)$ where $f = g + h$, and $g(v)$ is the least weight of
+a path from $s$ to $v$, with $\infty$ when there is none. -/
 structure AStarResult (n : ℕ) where
   /-- The search on reduced weights: its distances are the keys `f v - h source`. -/
   search : DijkstraResult n
   /-- The best path weight `g v` from the source. -/
   g : Vector (Option ℕ) n
 
-/-- Follow predecessors from `v` back to the source. -/
+/-- **Path recovered from an A-star result.** Given an A* result $r$ on $n$ vertices and a vertex
+$v$, follow the predecessor pointers of the underlying Dijkstra search backward from $v$, at most
+$n$ times, until the source is reached, and return the visited vertices in order from the source
+to $v$. There is no result if a vertex without a predecessor is met before the source, or if the
+source is not reached within $n$ steps. -/
 def AStarResult.pathTo? (r : AStarResult n) (v : Fin n) : Option (List (Fin n)) :=
   r.search.pathTo? v
 
-/-- A* from `source` with heuristic `h`: Dijkstra on the reduced weights, whose keys are A*'s
-`f = g + h` shifted by `h source`, with the keys converted back to path weights `g`. -/
+/-- **A\* search.** Given a directed graph $G$ on the vertices $\{0, \dots, n-1\}$ with natural
+edge weights $w$, a heuristic $h$ with natural values and a source vertex $s$, A* runs Dijkstra's
+algorithm from $s$ on the reduced weights $w(u, v) + h(v) - h(u)$ at Dijkstra's cost, and returns
+Dijkstra's result (its distances $g'$ and predecessor pointers) together with the path weights
+$g(v) = g'(v) + h(s) - h(v)$, where both subtractions are truncated at $0$ and $g(v)$ is infinite
+when $g'(v)$ is.
+
+For a consistent heuristic, Dijkstra's distances on the reduced weights are A*'s values
+$f = g + h$ shifted by $h(s)$. -/
 def aStar (source : Fin n) : TimeM DijkstraCost (AStarResult n) := do
   let r ← dijkstra graph (reducedWeight weight h) source
   pure ⟨r, Vector.ofFn fun v => (r.distance.get v).map (· + h source - h v)⟩
 
 variable {graph weight h}
 
-/-- Along a path, the reduced weight is the weight plus `h` of the end minus `h` of the start. -/
+/-- **Reduced weights telescope along paths.** Let $G$ be a directed graph on the vertices
+$\{0, \dots, n-1\}$ with natural edge weights $w$, let $h$ be a consistent heuristic with natural
+values, and let $w_h(x, y) = w(x, y) + h(y) - h(x)$ be the reduced weight, with the subtraction
+truncated at $0$. For all vertices $u$ and $v$ and every nonempty list of vertices
+$v_0, v_1, \dots, v_k$ with $v_0 = u$, $v_k = v$ and an edge of $G$ from each $v_i$ to $v_{i+1}$,
+the sum of $w_h(v_i, v_{i+1})$ over $i < k$, plus $h(u)$, equals the sum of $w(v_i, v_{i+1})$
+over $i < k$, plus $h(v)$. -/
 theorem pathWeight_reducedWeight (hc : Consistent graph weight h) :
     ∀ (path : List (Fin n)) (u v : Fin n), path.IsChainFromTo graph.Edge u v →
       pathWeight (reducedWeight weight h) path + h u = pathWeight weight path + h v
@@ -128,8 +158,13 @@ theorem aStar_distance_get (v : Fin n) :
     w).map (· + h source - h w))[v.1] = _
   rw [Vector.getElem_ofFn]
 
-/-- **The final keys are A*'s `f`-values shifted by `h source`**: Dijkstra's final key `g'` on the
-reduced weights satisfies `g v + h v = g' v + h source`. -/
+/-- **The final keys of A\*.** Let $G$ be a directed graph on the vertices $\{0, \dots, n-1\}$ with
+natural edge weights $w$, let $h$ be a consistent heuristic with natural values and let $s$ be a
+source vertex. If the path weight $g(v)$ that A* from $s$ returns for a vertex $v$ is finite, then
+the distance $g'(v)$ that Dijkstra's algorithm from $s$ computes for $v$ on the reduced weights
+$w(x, y) + h(y) - h(x)$ (subtraction truncated at $0$) is finite as well, and
+$g(v) + h(v) = g'(v) + h(s)$; that is, the key $g'(v)$ is A*'s value $f(v) = g(v) + h(v)$ shifted
+down by $h(s)$. -/
 theorem aStar_key (hc : Consistent graph weight h) {v : Fin n} {g : ℕ}
     (hv : (aStar graph weight h source).ret.g.get v = some g) :
     ∃ g', (dijkstra graph (reducedWeight weight h) source).ret.distance.get v = some g' ∧
@@ -143,7 +178,10 @@ theorem aStar_key (hc : Consistent graph weight h) {v : Fin n} {g : ℕ}
       have := pathWeight_reducedWeight hc path source v hp
       exact ⟨g', rfl, by omega⟩
 
-/-- A finite `g v` is the weight of a path from the source to `v`. -/
+/-- **A\*'s finite path weights are realized by paths.** Let $G$ be a directed graph on the vertices
+$\{0, \dots, n-1\}$ with natural edge weights $w$, let $h$ be a consistent heuristic with natural
+values and let $s$ be a source vertex. If the path weight $g(v)$ that A* from $s$ returns for a
+vertex $v$ is finite, then some path in $G$ from $s$ to $v$ has weight exactly $g(v)$. -/
 theorem aStar_distance_realized (hc : Consistent graph weight h) {v : Fin n} {g : ℕ}
     (hv : (aStar graph weight h source).ret.g.get v = some g) :
     HasPathWeight graph weight source v g := by
@@ -156,7 +194,10 @@ theorem aStar_distance_realized (hc : Consistent graph weight h) {v : Fin n} {g 
       have := pathWeight_reducedWeight hc path source v hp
       exact ⟨path, hp, by omega⟩
 
-/-- **A* is optimal**: no path from the source to `v` is lighter than a finite `g v`. -/
+/-- **A\* with a consistent heuristic is optimal.** Let $G$ be a directed graph on the vertices
+$\{0, \dots, n-1\}$ with natural edge weights $w$, let $h$ be a consistent heuristic with natural
+values and let $s$ be a source vertex. If the path weight $g(v)$ that A* from $s$ returns for a
+vertex $v$ is finite, then $g(v) \le d$ for every weight $d$ of a path in $G$ from $s$ to $v$. -/
 theorem aStar_distance_minimal (hc : Consistent graph weight h) {v : Fin n} {g d : ℕ}
     (hv : (aStar graph weight h source).ret.g.get v = some g)
     (hpath : HasPathWeight graph weight source v d) : g ≤ d := by
@@ -170,7 +211,10 @@ theorem aStar_distance_minimal (hc : Consistent graph weight h) {v : Fin n} {g d
       have := pathWeight_reducedWeight hc path source v hp
       omega
 
-/-- `g v` is infinite exactly when `v` is unreachable from the source. -/
+/-- **A\* leaves exactly the unreachable vertices at infinity.** Let $G$ be a directed graph on the
+vertices $\{0, \dots, n-1\}$ with natural edge weights $w$, let $h$ be any heuristic with natural
+values and let $s$ be a source vertex. The path weight $g(v)$ that A* from $s$ returns for a vertex
+$v$ is infinite if and only if $v$ is not reachable from $s$ in $G$. -/
 theorem aStar_distance_eq_none_iff (v : Fin n) :
     (aStar graph weight h source).ret.g.get v = none ↔
       ¬graph.Reachable source v := by
@@ -182,7 +226,13 @@ theorem aStar_pathTo?_eq (v : Fin n) :
       (dijkstra graph (reducedWeight weight h) source).ret.pathTo? v := by
   simp only [aStar, TimeM.ret_bind, TimeM.ret_pure, AStarResult.pathTo?]
 
-/-- Following predecessors gives a simple path from the source of weight `g v`: an optimal path. -/
+/-- **A\*'s predecessor paths are simple and realize its path weights.** Let $G$ be a directed graph
+on the vertices $\{0, \dots, n-1\}$ with natural edge weights $w$, let $h$ be a consistent heuristic
+with natural values and let $s$ be a source vertex. If following the predecessor pointers that A*
+from $s$ returns, back from a vertex $v$, yields the vertex list $p$ (listed from $s$ to $v$), then
+the path weight $g(v)$ that A* returns for $v$ is finite, $p$ starts at $s$ and ends at $v$,
+$G$ has an edge from each vertex of $p$ to the next one, no vertex occurs twice in $p$, and the
+weight of $p$ (the sum of $w$ over its consecutive pairs) equals $g(v)$. -/
 theorem aStar_pathTo?_spec (hc : Consistent graph weight h) (v : Fin n) (path : List (Fin n))
     (hpath : (aStar graph weight h source).ret.pathTo? v = some path) :
     ∃ g, (aStar graph weight h source).ret.g.get v = some g ∧
@@ -200,7 +250,11 @@ theorem aStar_pathTo?_spec (hc : Consistent graph weight h) (v : Fin n) (path : 
   congr 1
   omega
 
-/-- Each predecessor edge `u → v` satisfies `g v = g u + weight u v`. -/
+/-- **A\*'s predecessor edges are tight.** Let $G$ be a directed graph on the vertices
+$\{0, \dots, n-1\}$ with natural edge weights $w$, let $h$ be a consistent heuristic with natural
+values and let $s$ be a source vertex. If A* from $s$ records $u$ as the predecessor of a vertex
+$v$, then $G$ has an edge from $u$ to $v$, the path weights $g(u)$ and $g(v)$ that A* returns are
+both finite, and $g(v) = g(u) + w(u, v)$. -/
 theorem aStar_predecessor_spec (hc : Consistent graph weight h) (v u : Fin n)
     (hpred : (aStar graph weight h source).ret.search.predecessor.get v = some u) :
     graph.Edge u v ∧ ∃ gu gv,
@@ -219,7 +273,12 @@ theorem aStar_predecessor_spec (hc : Consistent graph weight h) (v u : Fin n)
   · simp only [reducedWeight] at heq
     omega
 
-/-- **Cost**: Dijkstra's dense cost, `n * n` selection scans plus every adjacency entry. -/
+/-- **Cost of A\*.** Let $G$ be a directed graph on the vertices $\{0, \dots, n-1\}$ with natural
+edge weights $w$, let $h$ be any heuristic with natural values and let $s$ be a source vertex. In
+Dijkstra's dense cost model, which counts the vertex entries inspected by minimum selection and
+the adjacency entries inspected by relaxation, A* from $s$ charges exactly $n^2 + m$ events in
+total, where $m$ is the number of entries in the adjacency lists of $G$, counting duplicates and
+self-loops. -/
 theorem aStar_time :
     (aStar graph weight h source).time.total = n * n + adjacencyEntryCount graph := by
   have := dijkstra_time graph (reducedWeight weight h) source
