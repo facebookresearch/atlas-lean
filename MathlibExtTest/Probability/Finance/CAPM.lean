@@ -80,7 +80,7 @@ example : ((![1, 3] : Fin 2 → ℝ) 1 - 0)
         norm_num
       rw [sub_zero, hsqrt10, hfrac, div_eq_iff h10ne]
       exact (Real.mul_self_sqrt h10nn).symm
-    unfold sharpeRatio
+    unfold sharpeRatio MathlibExt.LinearAlgebra.Matrix.QuadraticFormCongruence.quadForm
     rw [one_mulVec, one_mulVec, hmuw, hmuvM, hwMvM, hrhs, sub_zero, hwww]
     by_cases hnum : w 0 + 3 * w 1 ≤ 0
     · have hsqrtQ : (0 : ℝ) < Real.sqrt ((w 0) ^ 2 + (w 1) ^ 2) := by
