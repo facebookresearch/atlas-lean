@@ -52,8 +52,13 @@ namespace Cslib.Automata
 
 variable {State State₁ State₂ In Mid Out σ : Type*}
 
-/-- A sequential transducer: deterministic transitions emitting output words, plus
-initial and final outputs. -/
+/-- **Sequential transducer.** A sequential transducer with states in a type $Q$, input letters in
+a type $\Sigma$ and output letters in a type $\Gamma$ consists of a transition function assigning
+to each state $q \in Q$ and input letter $a \in \Sigma$ a successor state in $Q$ and an output
+word over $\Gamma$, a start state in $Q$, a set of accepting states $F \subseteq Q$, an initial
+output word over $\Gamma$, and, for each state in $Q$, a final output word over $\Gamma$.
+
+No finiteness is assumed of $Q$, $\Sigma$ or $\Gamma$. -/
 structure SequentialTransducer (State In Out : Type*) where
   /-- On input letter `a` in state `q`, the successor state and the emitted output word. -/
   step : State → In → State × List Out
@@ -68,8 +73,10 @@ structure SequentialTransducer (State In Out : Type*) where
 
 namespace SequentialTransducer
 
-/-- The run of a sequential transducer from `q` on `xs`: the final state and the
-concatenated output word (excluding initial and final outputs). -/
+/-- **Run of a sequential transducer.** The run of a sequential transducer $S$ from a state $q$
+on an input word $a_1 \cdots a_n$ is the pair $(q_n, w_1 w_2 \cdots w_n)$, where $q_0 = q$ and,
+for each $1 \le i \le n$, $S$ moves from $q_{i-1}$ on $a_i$ to $q_i$ emitting the word $w_i$.
+The initial output and the final outputs of $S$ are not included. -/
 def runFrom (S : SequentialTransducer State In Out) (q : State) : List In → State × List Out
   | [] => (q, [])
   | a :: xs =>
@@ -77,11 +84,17 @@ def runFrom (S : SequentialTransducer State In Out) (q : State) : List In → St
       let (q'', w') := S.runFrom q' xs
       (q'', w ++ w')
 
-/-- The final state of the run from `q` on `xs`. -/
+/-- **Final state of a sequential transducer run.** For a sequential transducer $S$, a state $q$
+and an input word $w$, the final state of the run of $S$ from $q$ on $w$ is obtained by starting
+in $q$, reading the letters of $w$ in order, moving at each letter to the successor state given
+by the transition function of $S$, and taking the state reached at the end. -/
 def runState (S : SequentialTransducer State In Out) (q : State) (xs : List In) : State :=
   (S.runFrom q xs).1
 
-/-- The output word of the run from `q` on `xs`. -/
+/-- **Output word of a sequential transducer run.** For a sequential transducer $S$, a state $q$
+and an input word $x$, the output word of the run from $q$ on $x$ is the concatenation of the
+output words that $S$ emits on the successive letters of $x$, starting in $q$ and moving to the
+successor state after each letter; the initial and final outputs are not included. -/
 def runOut (S : SequentialTransducer State In Out) (q : State) (xs : List In) : List Out :=
   (S.runFrom q xs).2
 
@@ -97,15 +110,19 @@ theorem runFrom_cons (S : SequentialTransducer State In Out) (q : State) (a : In
       (q'', w ++ w') :=
   rfl
 
-/-- The final state after reading `a :: xs` is the final state after reading `xs`
-from the successor of `q` on `a`. -/
+/-- **Final state of a sequential transducer run on a nonempty word.** Let $S$ be a sequential
+transducer, $q$ a state, $a$ an input letter and $w$ an input word, and let $q'$ be the successor
+state of $q$ on $a$ under the transition function of $S$. Then the final state of the run of $S$
+from $q$ on the word $aw$ equals the final state of the run of $S$ from $q'$ on $w$. -/
 theorem runState_cons (S : SequentialTransducer State In Out) (q : State) (a : In)
     (xs : List In) :
     S.runState q (a :: xs) = S.runState (S.step q a).1 xs :=
   rfl
 
-/-- The output on reading `a :: xs` is the output of the first step followed by the
-output on `xs` from the successor state. -/
+/-- **Output of a sequential transducer on a nonempty word.** Let $S$ be a sequential
+transducer, $q$ a state, $a$ an input letter and $x$ an input word, and let $q'$ and $w$ be the
+successor state and the output word of $S$ in state $q$ on letter $a$. The output word of the
+run of $S$ from $q$ on $ax$ is $w$ followed by the output word of the run from $q'$ on $x$. -/
 theorem runOut_cons (S : SequentialTransducer State In Out) (q : State) (a : In)
     (xs : List In) :
     S.runOut q (a :: xs) = (S.step q a).2 ++ S.runOut (S.step q a).1 xs :=
@@ -119,7 +136,9 @@ theorem runOut_nil (S : SequentialTransducer State In Out) (q : State) :
     S.runOut q [] = [] :=
   rfl
 
-/-- Running on `xs ++ ys` is running on `xs` and then on `ys` from the reached state. -/
+/-- **Final state of a sequential transducer on a concatenation.** For a sequential transducer
+$S$, a state $q$ and input words $x$ and $y$, the final state of the run of $S$ from $q$ on $xy$
+is the final state of the run on $y$ from the final state of the run from $q$ on $x$. -/
 theorem runState_append (S : SequentialTransducer State In Out) (xs ys : List In)
     (q : State) :
     S.runState q (xs ++ ys) = S.runState (S.runState q xs) ys := by
@@ -128,8 +147,10 @@ theorem runState_append (S : SequentialTransducer State In Out) (xs ys : List In
   | cons a xs ih =>
       simp only [List.cons_append, runState_cons, ih]
 
-/-- The output on `xs ++ ys` is the output on `xs` followed by the output on `ys`
-from the reached state. -/
+/-- **Output of a sequential transducer on a concatenation.** For a sequential transducer $S$,
+a state $q$ and input words $x$ and $y$, the output word of the run of $S$ from $q$ on $xy$ is
+the output word of the run from $q$ on $x$ followed by the output word of the run on $y$ from
+the final state of the run from $q$ on $x$. -/
 theorem runOut_append (S : SequentialTransducer State In Out) (xs ys : List In)
     (q : State) :
     S.runOut q (xs ++ ys) =
@@ -139,8 +160,10 @@ theorem runOut_append (S : SequentialTransducer State In Out) (xs ys : List In)
   | cons a xs ih =>
       simp only [List.cons_append, runOut_cons, runState_cons, ih, List.append_assoc]
 
-/-- `S` translates `xs` to `ys` when the run from the start state ends in an accepting
-state and the initial, per-letter, and final outputs concatenate to `ys`. -/
+/-- **Translation by a sequential transducer.** A sequential transducer $S$ translates an input
+word $x$ to an output word $y$ when the run of $S$ on $x$ from its start state ends in an
+accepting state $q$ and $y$ is the concatenation of the initial output of $S$, the output words
+emitted by the transitions along the run, and the final output of $S$ at $q$. -/
 def Translates (S : SequentialTransducer State In Out) (xs : List In)
     (ys : List Out) : Prop :=
   S.runState S.start xs ∈ S.accept ∧
@@ -151,9 +174,23 @@ def Translates (S : SequentialTransducer State In Out) (xs : List In)
 -- same universe, while `SequentialTransducer` is universe-polymorphic. Use
 -- `SequentialTransducer.Translates` directly.
 
-/-- The composition of two sequential transducers: run the first, feed its output
-(including the initial output, which is fed through the second transducer before any
-input is read) through the second. -/
+/-- **Composition of sequential transducers.** Let $S_1$ be a sequential transducer from $I$ to
+$M$ with start state $s_1$, initial output $\iota_1$ and final output map $\phi_1$, and let $S_2$
+be one from $M$ to $O$ with start state $s_2$, initial output $\iota_2$ and final output map
+$\phi_2$. For a transducer $S$, a state $q$ and a word $w$, write $\delta_S(q, w)$ for the state
+$S$ reaches by reading $w$ from $q$ and $\lambda_S(q, w)$ for the concatenation of the words it
+emits along the way. The composition of $S_1$ and $S_2$ is the sequential transducer from $I$ to
+$O$ whose states are the pairs $(q_1, q_2)$ of a state of $S_1$ and a state of $S_2$, where:
+reading a letter $a$ in state $(q_1, q_2)$, if $S_1$ reading $a$ in $q_1$ moves to $q_1'$ and
+emits $w$, the composition moves to $(q_1', \delta_{S_2}(q_2, w))$ and emits
+$\lambda_{S_2}(q_2, w)$; the start state is $(s_1, \delta_{S_2}(s_2, \iota_1))$; the initial
+output is $\iota_2$ followed by $\lambda_{S_2}(s_2, \iota_1)$; a state $(q_1, q_2)$ is accepting
+when $q_1$ is accepting for $S_1$ and $\delta_{S_2}(q_2, \phi_1(q_1))$ is accepting for $S_2$; and
+the final output at $(q_1, q_2)$ is $\lambda_{S_2}(q_2, \phi_1(q_1))$ followed by
+$\phi_2(\delta_{S_2}(q_2, \phi_1(q_1)))$.
+
+In words: run $S_1$ and feed its output, including its initial output (fed through $S_2$ before
+any input is read) and its final output, through $S_2$. -/
 def comp (S₁ : SequentialTransducer State₁ In Mid)
     (S₂ : SequentialTransducer State₂ Mid Out) :
     SequentialTransducer (State₁ × State₂) In Out where
@@ -168,7 +205,12 @@ def comp (S₁ : SequentialTransducer State₁ In Mid)
   finalOut := fun (q₁, q₂) =>
     S₂.runOut q₂ (S₁.finalOut q₁) ++ S₂.finalOut (S₂.runState q₂ (S₁.finalOut q₁))
 
-/-- The successor state of the composition on one letter. -/
+/-- **One step of a composite transducer: the successor state.** Let $S_1$ be a sequential
+transducer from $I$ to $M$, $S_2$ one from $M$ to $O$, and $C$ their composition. Let $q_1$ be a
+state of $S_1$, $q_2$ a state of $S_2$ and $a \in I$ a letter, and suppose that $S_1$, reading
+$a$ in state $q_1$, moves to $q_1'$ and emits the word $w$. Then $C$, reading $a$ in state
+$(q_1, q_2)$, moves to $(q_1', q_2')$, where $q_2'$ is the state $S_2$ reaches by reading $w$
+from $q_2$. -/
 theorem comp_step_fst (S₁ : SequentialTransducer State₁ In Mid)
     (S₂ : SequentialTransducer State₂ Mid Out) (q₁ : State₁) (q₂ : State₂)
     (a : In) :
@@ -176,15 +218,24 @@ theorem comp_step_fst (S₁ : SequentialTransducer State₁ In Mid)
       ((S₁.step q₁ a).1, S₂.runState q₂ (S₁.step q₁ a).2) :=
   rfl
 
-/-- The output of the composition on one letter. -/
+/-- **One step of a composite transducer: the output.** Let $S_1$ be a sequential transducer from
+$I$ to $M$, $S_2$ one from $M$ to $O$, and $C$ their composition. Let $q_1$ be a state of $S_1$,
+$q_2$ a state of $S_2$ and $a \in I$ a letter, and let $w$ be the word $S_1$ emits when it reads
+$a$ in state $q_1$. Then the word $C$ emits when it reads $a$ in state $(q_1, q_2)$ is the
+concatenation of the words $S_2$ emits while reading $w$ from $q_2$. -/
 theorem comp_step_snd (S₁ : SequentialTransducer State₁ In Mid)
     (S₂ : SequentialTransducer State₂ Mid Out) (q₁ : State₁) (q₂ : State₂)
     (a : In) :
     ((comp S₁ S₂).step (q₁, q₂) a).2 = S₂.runOut q₂ (S₁.step q₁ a).2 :=
   rfl
 
-/-- The state reached by the composition is the pair of the states reached by the
-two transducers, the second one fed the first one's output. -/
+/-- **States reached by a composite sequential transducer.** Let $S_1$ be a sequential transducer
+from $I$ to $M$, $S_2$ one from $M$ to $O$, and $C$ their composition. For a transducer $S$, a
+state $q$ and a word $w$, write $\delta_S(q, w)$ for the state $S$ reaches by reading $w$ from
+$q$ and $\lambda_S(q, w)$ for the concatenation of the words it emits along the way (without
+initial or final output). Then for all states $q_1$ of $S_1$ and $q_2$ of $S_2$ and every word
+$x$ over $I$,
+$\delta_C((q_1, q_2), x) = (\delta_{S_1}(q_1, x), \delta_{S_2}(q_2, \lambda_{S_1}(q_1, x)))$. -/
 theorem comp_runState (S₁ : SequentialTransducer State₁ In Mid)
     (S₂ : SequentialTransducer State₂ Mid Out) (xs : List In) (q₁ : State₁)
     (q₂ : State₂) :
@@ -197,8 +248,12 @@ theorem comp_runState (S₁ : SequentialTransducer State₁ In Mid)
         SequentialTransducer.runState_cons, SequentialTransducer.runOut_cons,
         SequentialTransducer.runState_append]
 
-/-- The output of the composition is the second transducer's output on the first
-transducer's output. -/
+/-- **Output of a composite sequential transducer.** Let $S_1$ be a sequential transducer from
+$I$ to $M$, $S_2$ one from $M$ to $O$, and $C$ their composition. For a transducer $S$, a state
+$q$ and a word $w$, write $\lambda_S(q, w)$ for the concatenation of the words $S$ emits while
+reading $w$ from $q$ (without initial or final output). Then for all states $q_1$ of $S_1$ and
+$q_2$ of $S_2$ and every word $x$ over $I$,
+$\lambda_C((q_1, q_2), x) = \lambda_{S_2}(q_2, \lambda_{S_1}(q_1, x))$. -/
 theorem comp_runOut (S₁ : SequentialTransducer State₁ In Mid)
     (S₂ : SequentialTransducer State₂ Mid Out) (xs : List In) (q₁ : State₁)
     (q₂ : State₂) :
@@ -209,8 +264,14 @@ theorem comp_runOut (S₁ : SequentialTransducer State₁ In Mid)
       rw [SequentialTransducer.runOut_cons, comp_step_fst, comp_step_snd, ih,
         SequentialTransducer.runOut_cons, SequentialTransducer.runOut_append]
 
-/-- The second transducer's state after the first transducer's whole output
-(including its initial and final outputs). -/
+/-- **State of the second transducer after the first one's whole output.** Let $S_1$ be a
+sequential transducer from $I$ to $M$ and $S_2$ one from $M$ to $O$, with start states $s_1$ and
+$s_2$. For a transducer $S$, a state $q$ and a word $w$, write $\delta_S(q, w)$ for the state $S$
+reaches by reading $w$ from $q$ and $\lambda_S(q, w)$ for the concatenation of the words it emits
+along the way (without initial or final output); juxtaposition of words is concatenation. For a
+word $x$ over $I$, let $\iota$ be the initial output of $S_1$, let $u = \lambda_{S_1}(s_1, x)$,
+and let $f$ be the final output of $S_1$ at $\delta_{S_1}(s_1, x)$. Then
+$\delta_{S_2}(s_2, \iota u f) = \delta_{S_2}(\delta_{S_2}(\delta_{S_2}(s_2, \iota), u), f)$. -/
 theorem comp_runState_initOut (S₁ : SequentialTransducer State₁ In Mid)
     (S₂ : SequentialTransducer State₂ Mid Out) (xs : List In) :
     S₂.runState S₂.start
@@ -220,7 +281,16 @@ theorem comp_runState_initOut (S₁ : SequentialTransducer State₁ In Mid)
         (S₁.runOut S₁.start xs)) (S₁.finalOut (S₁.runState S₁.start xs)) := by
   rw [List.append_assoc, runState_append, runState_append]
 
-/-- The second transducer's output on the first transducer's whole output. -/
+/-- **Output of the second transducer on the first one's whole output.** Let $S_1$ be a
+sequential transducer from $I$ to $M$ and $S_2$ one from $M$ to $O$, with start states $s_1$ and
+$s_2$. For a transducer $S$, a state $q$ and a word $w$, write $\delta_S(q, w)$ for the state $S$
+reaches by reading $w$ from $q$ and $\lambda_S(q, w)$ for the concatenation of the words it emits
+along the way (without initial or final output); juxtaposition of words is concatenation. For a
+word $x$ over $I$, let $\iota$ be the initial output of $S_1$, let $u = \lambda_{S_1}(s_1, x)$,
+let $f$ be the final output of $S_1$ at $\delta_{S_1}(s_1, x)$, and let
+$r = \delta_{S_2}(s_2, \iota)$. Then
+$\lambda_{S_2}(s_2, \iota u f) = \lambda_{S_2}(s_2, \iota) \, \lambda_{S_2}(r, u) \,
+\lambda_{S_2}(\delta_{S_2}(r, u), f)$. -/
 theorem comp_runOut_initOut (S₁ : SequentialTransducer State₁ In Mid)
     (S₂ : SequentialTransducer State₂ Mid Out) (xs : List In) :
     S₂.runOut S₂.start
@@ -232,8 +302,14 @@ theorem comp_runOut_initOut (S₁ : SequentialTransducer State₁ In Mid)
             (S₁.runOut S₁.start xs)) (S₁.finalOut (S₁.runState S₁.start xs)) := by
   rw [List.append_assoc, runOut_append, runOut_append, ← List.append_assoc]
 
-/-- The total output of the composition, in terms of the second transducer's run on
-the first transducer's whole output. -/
+/-- **Total output of a composite sequential transducer.** Let $S_1$ be a sequential transducer
+from $I$ to $M$, $S_2$ one from $M$ to $O$, and $C$ their composition. For a sequential
+transducer $S$ with start state $s$, initial output $\iota$ and final output map $\phi$, and a
+word $x$, let $\delta_S(s, x)$ be the state $S$ reaches by reading $x$ from $s$ and
+$\lambda_S(s, x)$ the concatenation of the words it emits along the way, and call the
+concatenation $\iota \, \lambda_S(s, x) \, \phi(\delta_S(s, x))$ the whole output of $S$ on $x$
+(acceptance plays no role). Then for every word $x$ over $I$, the whole output of $C$ on $x$
+equals the whole output of $S_2$ on the whole output of $S_1$ on $x$. -/
 theorem comp_output_eq (S₁ : SequentialTransducer State₁ In Mid)
     (S₂ : SequentialTransducer State₂ Mid Out) (xs : List In) :
     (comp S₁ S₂).initOut ++ (comp S₁ S₂).runOut (comp S₁ S₂).start xs ++
@@ -254,9 +330,11 @@ theorem comp_output_eq (S₁ : SequentialTransducer State₁ In Mid)
   rw [comp_runState_initOut, comp_runOut_initOut]
   simp only [List.append_assoc]
 
-/-- **Composition of sequential transducers**: the composition translates `xs` to `ys`
-exactly when some intermediate word `zs` is translated by the first transducer and
-then by the second. -/
+/-- **Translations of a composite sequential transducer.** Let $S_1$ be a sequential transducer
+from an alphabet $A$ to an alphabet $B$, and $S_2$ one from $B$ to an alphabet $C$. For every word
+$x$ over $A$ and every word $y$ over $C$, the composition of $S_1$ and $S_2$ translates $x$ to $y$
+if and only if there is a word $z$ over $B$ such that $S_1$ translates $x$ to $z$ and $S_2$
+translates $z$ to $y$. -/
 theorem translates_comp_iff (S₁ : SequentialTransducer State₁ In Mid)
     (S₂ : SequentialTransducer State₂ Mid Out) (xs : List In) (ys : List Out) :
     (comp S₁ S₂).Translates xs ys ↔
@@ -287,14 +365,22 @@ theorem translates_comp_iff (S₁ : SequentialTransducer State₁ In Mid)
       exact ⟨hacc₁, hacc₂⟩
     · exact (comp_output_eq S₁ S₂ xs).trans hout₂
 
-/-- The preimage of a language under a sequential transducer: the inputs whose
-(output) translation lands in the language. -/
+/-- **Preimage of a language under a sequential transducer.** Let $S$ be a sequential transducer
+with input alphabet $\Sigma$ and output alphabet $\Gamma$, and let $L$ be a language over
+$\Gamma$. The preimage of $L$ under $S$ is the language over $\Sigma$ consisting of the words $x$
+for which there is a word $y \in L$ such that $S$ translates $x$ to $y$. -/
 def preimage (S : SequentialTransducer State In Out) (L : Language Out) : Language In :=
   {xs | ∃ ys ∈ L, S.Translates xs ys}
 
-/-- The product DFA of a sequential transducer `S` with a DFA `M` for the output
-language: it feeds `S`'s output words through `M`, starting `M` in the state reached
-on `S`'s initial output. -/
+/-- **Product DFA of a sequential transducer and a DFA.** Let $S$ be a sequential transducer
+with state type $Q$, input alphabet $\Sigma$ and output alphabet $\Gamma$, and let $M$ be a DFA
+over $\Gamma$ with state type $P$. The product DFA of $S$ and $M$ is the DFA over $\Sigma$ with
+state type $Q \times P$ defined as follows. In state $(q, r)$ on a letter $a$, if $S$ moves from
+$q$ to $q'$ emitting the word $w$, it moves to $(q', r')$, where $r'$ is the state $M$ reaches
+from $r$ on $w$. Its start state is $(q_0, r_0)$, where $q_0$ is the start state of $S$ and
+$r_0$ is the state $M$ reaches from its start state on the initial output of $S$. A state
+$(q, r)$ is accepting when $q$ is an accepting state of $S$ and the state $M$ reaches from $r$
+on the final output of $S$ at $q$ is an accepting state of $M$. -/
 def preimageDFA (S : SequentialTransducer State In Out) (M : DFA Out σ) :
     DFA In (State × σ) where
   step := fun (q, r) a =>
@@ -304,8 +390,11 @@ def preimageDFA (S : SequentialTransducer State In Out) (M : DFA Out σ) :
   accept := {p : State × σ | p.1 ∈ S.accept ∧
     M.evalFrom p.2 (S.finalOut p.1) ∈ M.accept}
 
-/-- Evaluation in the product DFA: the transducer state and the DFA state reached
-on the output word. -/
+/-- **Runs of the product DFA.** Let $S$ be a sequential transducer and $M$ a DFA over the
+output alphabet of $S$. For every input word $x$, state $q$ of $S$ and state $r$ of $M$, the
+product DFA of $S$ and $M$, started in $(q, r)$ and run on $x$, ends in the state $(q', r')$,
+where $q'$ is the final state of the run of $S$ from $q$ on $x$ and $r'$ is the state that $M$
+reaches from $r$ on the output word of that run. -/
 theorem preimageDFA_evalFrom (S : SequentialTransducer State In Out) (M : DFA Out σ)
     (xs : List In) (q : State) (r : σ) :
     (S.preimageDFA M).evalFrom (q, r) xs =
@@ -318,7 +407,10 @@ theorem preimageDFA_evalFrom (S : SequentialTransducer State In Out) (M : DFA Ou
         _
       rw [ih, runState_cons, runOut_cons, ← DFA.evalFrom_of_append]
 
-/-- The product DFA accepts exactly the preimage. -/
+/-- **The product DFA recognizes the preimage.** Let $S$ be a sequential transducer with output
+alphabet $\Gamma$ and let $M$ be a DFA over $\Gamma$. The language accepted by the product DFA
+of $S$ and $M$ equals the preimage under $S$ of the language accepted by $M$, that is, the set
+of input words that $S$ translates to some word accepted by $M$. -/
 theorem preimageDFA_accepts (S : SequentialTransducer State In Out) (M : DFA Out σ) :
     (S.preimageDFA M).accepts = S.preimage (M.accepts) := by
   apply Language.ext
@@ -364,10 +456,13 @@ theorem preimageDFA_accepts (S : SequentialTransducer State In Out) (M : DFA Out
     rw [← h1, hout]
     exact (DFA.mem_accepts M).mp hys
 
-/-- **Inverse sequential transduction preserves regular languages**: if `L` is regular,
-then the set of inputs whose translation under `S` lands in `L` is regular. The proof
-is the product of `S` with a DFA for `L`, started in the DFA state reached on `S`'s
-initial output. -/
+/-- **Inverse sequential transduction preserves regular languages.** Let $S$ be a sequential
+transducer with finitely many states, input alphabet $I$ and output alphabet $O$, and let $L$ be
+a regular language over $O$. Then the preimage of $L$ under $S$, the set of words over $I$ that
+$S$ translates to some word of $L$, is regular.
+
+The proof is the product of $S$ with a DFA for $L$, started in the DFA state reached on the
+initial output of $S$. -/
 theorem isRegular_preimage [Finite State] (S : SequentialTransducer State In Out)
     {L : Language Out} (hL : L.IsRegular) : (S.preimage L).IsRegular := by
   let _ : Fintype State := Fintype.ofFinite State
@@ -378,8 +473,10 @@ theorem isRegular_preimage [Finite State] (S : SequentialTransducer State In Out
 
 end SequentialTransducer
 
-/-- A Mealy machine: the output of a transition depends on the state and the input
-letter. -/
+/-- **Mealy machine.** A Mealy machine with state set $Q$, input alphabet $I$ and output
+alphabet $O$ consists of a start state in $Q$ and a transition function that, given a state
+$q \in Q$ and an input letter $a \in I$, returns a successor state in $Q$ and a single output
+letter in $O$; thus the output of a transition depends on the state and the input letter. -/
 structure MealyMachine (State In Out : Type*) where
   /-- The transition function: successor state and output letter. -/
   step : State → In → State × Out
@@ -388,7 +485,9 @@ structure MealyMachine (State In Out : Type*) where
 
 namespace MealyMachine
 
-/-- The run of a Mealy machine from `q` on `xs`: the final state and the output word. -/
+/-- **Run of a Mealy machine.** The run of a Mealy machine $M$ from a state $q$ on an input
+word $a_1 \cdots a_n$ is the pair $(q_n, o_1 \cdots o_n)$, where $q_0 = q$ and, for each
+$1 \le i \le n$, $M$ moves from $q_{i-1}$ on $a_i$ to $q_i$ emitting the output letter $o_i$. -/
 def runFrom (M : MealyMachine State In Out) (q : State) :
     List In → State × List Out
   | [] => (q, [])
@@ -397,32 +496,48 @@ def runFrom (M : MealyMachine State In Out) (q : State) :
       let (q'', w) := M.runFrom q' xs
       (q'', o :: w)
 
-/-- The final state of the run from `q` on `xs`. -/
+/-- **Final state of a Mealy machine run.** For a Mealy machine $M$, a state $q$ and an input
+word $x$, the final state of the run from $q$ on $x$ is the state reached by starting in $q$
+and moving, on each successive letter of $x$, to the successor state given by the transition
+function of $M$; on the empty word it is $q$. -/
 def runState (M : MealyMachine State In Out) (q : State) (xs : List In) : State :=
   (M.runFrom q xs).1
 
-/-- The output word of the run from `q` on `xs`. -/
+/-- **Output word of a Mealy machine run.** For a Mealy machine $M$, a state $q$ and an input
+word $x$, the output word of $M$ from $q$ on $x$ is the second component of the run of $M$ from
+$q$ on $x$: the word of output letters emitted along that run, one per input letter. -/
 def runOut (M : MealyMachine State In Out) (q : State) (xs : List In) : List Out :=
   (M.runFrom q xs).2
 
-/-- The final state after reading `a :: xs`. -/
+/-- **Final state of a Mealy machine on a nonempty word.** Let $M$ be a Mealy machine, $q$ a
+state, $a$ an input letter and $x$ an input word, and let $q'$ be the successor state of $M$ in
+state $q$ on letter $a$. The final state of the run of $M$ from $q$ on $ax$ is the final state of
+the run from $q'$ on $x$. -/
 theorem runState_cons (M : MealyMachine State In Out) (q : State) (a : In)
     (xs : List In) :
     M.runState q (a :: xs) = M.runState (M.step q a).1 xs :=
   rfl
 
-/-- The output on reading `a :: xs`. -/
+/-- **Output of a Mealy machine on a nonempty word.** Let $M$ be a Mealy machine, $q$ a state,
+$a$ an input letter and $x$ an input word, and let $q'$ and $o$ be the successor state and the
+output letter of $M$ in state $q$ on letter $a$. The output word of the run of $M$ from $q$ on
+$ax$ is $o$ followed by the output word of the run from $q'$ on $x$. -/
 theorem runOut_cons (M : MealyMachine State In Out) (q : State) (a : In)
     (xs : List In) :
     M.runOut q (a :: xs) = (M.step q a).2 :: M.runOut (M.step q a).1 xs :=
   rfl
 
-/-- The transduction of a Mealy machine: the output word on `xs` from the start state. -/
+/-- **Transduction of a Mealy machine.** Let $M$ be a Mealy machine with start state $q_0$. On
+an input word $a_1 a_2 \cdots a_n$, for each $i$ let $q_i$ and $b_i$ be the state that $M$ moves
+to and the letter that it outputs when it reads $a_i$ in state $q_{i-1}$. The transduction of
+$M$ on this word is the output word $b_1 b_2 \cdots b_n$. -/
 def transduce (M : MealyMachine State In Out) (xs : List In) : List Out :=
   (M.runFrom M.start xs).2
 
-/-- A Mealy machine as a sequential transducer: each transition emits its single
-output letter, every state accepts, and the initial and final outputs are empty. -/
+/-- **Mealy machine as a sequential transducer.** The sequential transducer of a Mealy machine
+$M$ has the states and the start state of $M$; on an input letter $a$ in a state $q$ it moves
+to the state that $M$ moves to and emits the one-letter word consisting of the letter that $M$
+outputs on this transition. Every state accepts, and the initial and final outputs are empty. -/
 def toSequential (M : MealyMachine State In Out) : SequentialTransducer State In Out where
   step q a := let (q', o) := M.step q a; (q', [o])
   start := M.start
@@ -430,8 +545,10 @@ def toSequential (M : MealyMachine State In Out) : SequentialTransducer State In
   initOut := []
   finalOut := fun _ => []
 
-/-- The sequential rendering of a Mealy machine has the same final states as the
-Mealy machine. -/
+/-- **The sequential transducer of a Mealy machine has the same final states.** For a Mealy
+machine $M$, a state $q$ and an input word $w$, the final state of the run from $q$ on $w$ of the
+sequential transducer associated with $M$ equals the final state of the run of $M$ from $q$ on
+$w$. -/
 theorem seq_runState_eq (M : MealyMachine State In Out) (xs : List In) (q : State) :
     (M.toSequential).runState q xs = M.runState q xs := by
   induction xs generalizing q with
@@ -441,8 +558,10 @@ theorem seq_runState_eq (M : MealyMachine State In Out) (xs : List In) (q : Stat
       change (M.toSequential).runState (M.step q a).1 xs = M.runState (M.step q a).1 xs
       exact ih _
 
-/-- The sequential rendering of a Mealy machine has the same output words as the
-Mealy machine. -/
+/-- **The sequential transducer of a Mealy machine has the same run outputs.** For a Mealy
+machine $M$, a state $q$ and an input word $w$, the output word of the run from $q$ on $w$ of the
+sequential transducer associated with $M$ (excluding its initial and final outputs) equals the
+output word of the run of $M$ from $q$ on $w$. -/
 theorem seq_runOut_eq (M : MealyMachine State In Out) (xs : List In) (q : State) :
     (M.toSequential).runOut q xs = M.runOut q xs := by
   induction xs generalizing q with
@@ -454,22 +573,29 @@ theorem seq_runOut_eq (M : MealyMachine State In Out) (xs : List In) (q : State)
       rw [ih]
       rfl
 
-/-- A Mealy machine and its sequential rendering translate the same words. -/
+/-- **Every state of the sequential transducer of a Mealy machine is accepting.** For a Mealy
+machine $M$, the set of accepting states of the sequential transducer associated with $M$ is the
+set of all states. -/
 theorem toSequential_accept (M : MealyMachine State In Out) :
     (M.toSequential).accept = Set.univ :=
   rfl
 
-/-- The initial output of the sequential rendering of a Mealy machine is empty. -/
+/-- **Initial output of the sequential transducer of a Mealy machine.** For every Mealy machine
+$M$, the initial output of the sequential transducer of $M$ is the empty word. -/
 theorem toSequential_initOut (M : MealyMachine State In Out) :
     (M.toSequential).initOut = [] :=
   rfl
 
-/-- The final outputs of the sequential rendering of a Mealy machine are empty. -/
+/-- **Final outputs of the sequential transducer of a Mealy machine.** For every Mealy machine
+$M$ and every state $q$, the final output of the sequential transducer of $M$ at $q$ is the
+empty word. -/
 theorem toSequential_finalOut (M : MealyMachine State In Out) (q : State) :
     (M.toSequential).finalOut q = [] :=
   rfl
 
-/-- A Mealy machine and its sequential rendering translate the same words. -/
+/-- **The sequential transducer of a Mealy machine computes its transduction.** For every Mealy
+machine $M$, input word $x$ and output word $y$, the sequential transducer of $M$ translates $x$
+to $y$ if and only if the transduction of $M$ on $x$ is $y$. -/
 theorem translates_toSequential_iff (M : MealyMachine State In Out) (xs : List In)
     (ys : List Out) :
     (M.toSequential).Translates xs ys ↔ M.transduce xs = ys := by
@@ -481,7 +607,10 @@ theorem translates_toSequential_iff (M : MealyMachine State In Out) (xs : List I
 
 end MealyMachine
 
-/-- A Moore machine: the output depends only on the state. -/
+/-- **Moore machine.** A Moore machine with state type $Q$, input alphabet $\Sigma$ and output
+alphabet $\Gamma$ consists of a transition function, assigning to each state $q$ and input
+letter $a$ a successor state $\delta(q, a) \in Q$, an output function $\lambda : Q \to \Gamma$,
+and a start state $q_0 \in Q$. The output depends only on the state. -/
 structure MooreMachine (State In Out : Type*) where
   /-- The transition function: successor state on an input letter. -/
   step : State → In → State
@@ -492,8 +621,11 @@ structure MooreMachine (State In Out : Type*) where
 
 namespace MooreMachine
 
-/-- The run of a Moore machine from `q` on `xs`: the final state and the output word,
-which includes the output of the starting state. -/
+/-- **Run of a Moore machine.** The run of a Moore machine $M$ with output function $\lambda$
+from a state $q$ on an input word $a_1 \cdots a_n$ is the pair
+$(q_n, \lambda(q_0) \lambda(q_1) \cdots \lambda(q_n))$, where $q_0 = q$ and, for each
+$1 \le i \le n$, $q_i$ is the successor of $q_{i-1}$ on $a_i$. The output word has $n + 1$
+letters and begins with the output of the starting state. -/
 def runFrom (M : MooreMachine State In Out) (q : State) :
     List In → State × List Out
   | [] => (q, [M.out q])
@@ -502,33 +634,50 @@ def runFrom (M : MooreMachine State In Out) (q : State) :
       let (q'', w) := M.runFrom q' xs
       (q'', M.out q :: w)
 
-/-- The final state of the run from `q` on `xs`. -/
+/-- **Final state of a Moore machine run.** For a Moore machine $M$, a state $q$ and an input
+word $x$, the final state of the run from $q$ on $x$ is the state reached by starting in $q$
+and moving, on each successive letter of $x$, to the successor state given by the transition
+function of $M$; on the empty word it is $q$. -/
 def runState (M : MooreMachine State In Out) (q : State) (xs : List In) : State :=
   (M.runFrom q xs).1
 
-/-- The output word of the run from `q` on `xs`. -/
+/-- **Output word of a Moore machine run.** For a Moore machine $M$, a state $q$ and an input
+word $x$, the output word of $M$ from $q$ on $x$ is the second component of the run of $M$ from
+$q$ on $x$: the outputs of the states visited along that run, starting with the output of $q$;
+it has one more letter than $x$. -/
 def runOut (M : MooreMachine State In Out) (q : State) (xs : List In) : List Out :=
   (M.runFrom q xs).2
 
-/-- The final state after reading `a :: xs`. -/
+/-- **Final state of a Moore machine run on a nonempty word.** For a Moore machine $M$ with
+transition function $\delta$, a state $q$, an input letter $a$ and an input word $w$, the final
+state of the run of $M$ from $q$ on the word $aw$ equals the final state of the run of $M$ from
+$\delta(q, a)$ on $w$. -/
 theorem runState_cons (M : MooreMachine State In Out) (q : State) (a : In)
     (xs : List In) :
     M.runState q (a :: xs) = M.runState (M.step q a) xs :=
   rfl
 
-/-- The output on reading `a :: xs`. -/
+/-- **Output of a Moore machine on a nonempty word.** Let $M$ be a Moore machine, $q$ a state,
+$a$ an input letter and $x$ an input word, and let $q'$ be the successor state of $M$ in state
+$q$ on letter $a$. The output word of the run of $M$ from $q$ on $ax$ is the output of $q$
+followed by the output word of the run from $q'$ on $x$. -/
 theorem runOut_cons (M : MooreMachine State In Out) (q : State) (a : In)
     (xs : List In) :
     M.runOut q (a :: xs) = M.out q :: M.runOut (M.step q a) xs :=
   rfl
 
-/-- The transduction of a Moore machine: the output word on `xs` from the start state. -/
+/-- **Transduction of a Moore machine.** Let $M$ be a Moore machine with start state $q_0$, and
+write $o(q)$ for the output of a state $q$. On an input word $a_1 a_2 \cdots a_n$, let $q_i$ be
+the state that $M$ moves to from $q_{i-1}$ on $a_i$. The transduction of $M$ on this word is the
+output word $o(q_0)\, o(q_1) \cdots o(q_n)$, of length $n + 1$. -/
 def transduce (M : MooreMachine State In Out) (xs : List In) : List Out :=
   (M.runFrom M.start xs).2
 
-/-- A Moore machine as a sequential transducer: each transition emits the output of
-its target state, the initial output is the output of the start state, every state
-accepts, and the final outputs are empty. -/
+/-- **The sequential transducer of a Moore machine.** Let $M$ be a Moore machine with transition
+function $\delta$, output function $\lambda$ and start state $q_0$. Its sequential transducer has
+the same states and the start state $q_0$; reading a letter $a$ in state $q$ it moves to
+$\delta(q, a)$ and emits the one-letter word $\lambda(\delta(q, a))$; every state is accepting;
+the initial output is the one-letter word $\lambda(q_0)$; and every final output is empty. -/
 def toSequential (M : MooreMachine State In Out) : SequentialTransducer State In Out where
   step q a := (M.step q a, [M.out (M.step q a)])
   start := M.start
@@ -536,8 +685,9 @@ def toSequential (M : MooreMachine State In Out) : SequentialTransducer State In
   initOut := [M.out M.start]
   finalOut := fun _ => []
 
-/-- The output of a Moore machine from `q` is the output of `q` followed by the
-output of its sequential rendering. -/
+/-- **Moore machine output via its sequential rendering.** For a Moore machine $M$, a state $q$
+and an input word $x$, the output word of the run of $M$ from $q$ on $x$ is the output of $q$
+followed by the output word of the run of the sequential rendering of $M$ from $q$ on $x$. -/
 theorem runOut_eq_cons (M : MooreMachine State In Out) (xs : List In) (q : State) :
     M.runOut q xs = M.out q :: (M.toSequential).runOut q xs := by
   induction xs generalizing q with
@@ -549,23 +699,30 @@ theorem runOut_eq_cons (M : MooreMachine State In Out) (xs : List In) (q : State
       rw [ih]
       rfl
 
-/-- A Moore machine and its sequential rendering translate the same words. -/
+/-- **Every state of the sequential transducer of a Moore machine is accepting.** For a Moore
+machine $M$, the set of accepting states of the sequential transducer associated with $M$ is the
+set of all states. -/
 theorem toSequential_accept (M : MooreMachine State In Out) :
     (M.toSequential).accept = Set.univ :=
   rfl
 
-/-- The initial output of the sequential rendering of a Moore machine is the output
-of the start state. -/
+/-- **Initial output of the sequential transducer of a Moore machine.** For every Moore machine
+$M$, the initial output of the sequential transducer of $M$ is the one-letter word consisting of
+the output of the start state of $M$. -/
 theorem toSequential_initOut (M : MooreMachine State In Out) :
     (M.toSequential).initOut = [M.out M.start] :=
   rfl
 
-/-- The final outputs of the sequential rendering of a Moore machine are empty. -/
+/-- **Final outputs of the sequential transducer of a Moore machine.** For a Moore machine $M$
+and every state $q$, the final output word at $q$ of the sequential transducer associated with
+$M$ is empty. -/
 theorem toSequential_finalOut (M : MooreMachine State In Out) (q : State) :
     (M.toSequential).finalOut q = [] :=
   rfl
 
-/-- A Moore machine and its sequential rendering translate the same words. -/
+/-- **The sequential transducer of a Moore machine computes its transduction.** For every Moore
+machine $M$, input word $x$ and output word $y$, the sequential transducer of $M$ translates $x$
+to $y$ if and only if the transduction of $M$ on $x$ is $y$. -/
 theorem translates_toSequential_iff (M : MooreMachine State In Out) (xs : List In)
     (ys : List Out) :
     (M.toSequential).Translates xs ys ↔ M.transduce xs = ys := by
