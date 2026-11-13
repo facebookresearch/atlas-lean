@@ -365,4 +365,56 @@ example {θ : ℝ} (hθ : 0 < θ) :
     ¬ HasSum (fun k : ℕ => twoPoint k * Real.exp (θ * k)) 1 :=
   not_hasSum_exp_mul_of_hasSum_one hθ (by simp [twoPoint]) twoPoint_nonneg twoPoint_hasSum
 
+/-! ### The public fixed-time helpers, used from outside `ScoreLadder` -/
+
+open MeasureTheory in
+/-- The ladder-law step of the ladder Cramér identity, through the public helpers: the event
+`{τ₊ < ∞, S_{τ₊} = j}` is a disjoint union over ladder epochs, so its mass is a series. -/
+example {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) {X : ℕ → Ω → ℤ}
+    (hmeas : ∀ i, Measurable (X i)) (j : ℕ) :
+    P (⋃ n, ladderEvent X n j) = ∑' n, P (ladderEvent X n j) :=
+  measure_iUnion
+    (fun a b hab => ladderEvent_disjoint X (p := (a, j)) (q := (b, j)) (by simpa using hab))
+    fun n => past_le hmeas n _ (measurableSet_ladderEvent_past X n j)
+
+/-- Ambient measurability of the walk from its past-measurability. -/
+example {Ω : Type*} [MeasurableSpace Ω] {X : ℕ → Ω → ℤ} (hmeas : ∀ i, Measurable (X i))
+    (n : ℕ) : Measurable (scoreWalk X n) :=
+  (measurable_scoreWalk_past X le_rfl).mono (past_le hmeas n) le_rfl
+
+/-- The past of time `0` is the trivial σ-algebra. -/
+lemma past_zero {Ω : Type*} (X : ℕ → Ω → ℤ) : past X 0 = ⊥ := by
+  simp [past]
+
+open MeasureTheory in
+/-- Boundary: for the coordinate walk on `ℤ^ℕ`, `S 1 = X 0` is not measurable for the past of
+time `0`, so the hypothesis `m ≤ n` of `measurable_scoreWalk_past` cannot be dropped. -/
+example : ¬ Measurable[past (fun i (ω : ℕ → ℤ) => ω i) 0]
+    (scoreWalk (fun i (ω : ℕ → ℤ) => ω i) 1) := by
+  intro h
+  have hs := h (MeasurableSet.of_discrete (s := ({0} : Set ℤ)))
+  rw [past_zero, MeasurableSpace.measurableSet_bot_iff] at hs
+  rcases hs with hs | hs
+  · have h0 : (fun _ => (0 : ℤ)) ∈ scoreWalk (fun i (ω : ℕ → ℤ) => ω i) 1 ⁻¹' {0} := by
+      simp [scoreWalk]
+    rw [hs] at h0
+    exact h0
+  · have h1 : (fun _ => (1 : ℤ)) ∈ scoreWalk (fun i (ω : ℕ → ℤ) => ω i) 1 ⁻¹' {0} := by
+      rw [hs]
+      trivial
+    simp [scoreWalk] at h1
+
+/-- Non-vacuity of the ladder events: the all-ones path has first ladder epoch `1` and height
+`1`; by `ladderEvent_disjoint` it is not in the event for epoch `2`, height `2`, even though its
+walk reaches `S 2 = 2`. -/
+example : (fun _ => (1 : ℤ)) ∈ ladderEvent (fun i (ω : ℕ → ℤ) => ω i) 1 1 ∧
+    scoreWalk (fun i (ω : ℕ → ℤ) => ω i) 2 (fun _ => 1) = 2 ∧
+    (fun _ => (1 : ℤ)) ∉ ladderEvent (fun i (ω : ℕ → ℤ) => ω i) 2 2 := by
+  have h1 : (fun _ => (1 : ℤ)) ∈ ladderEvent (fun i (ω : ℕ → ℤ) => ω i) 1 1 := by
+    refine ⟨by simp [scoreWalk], by simp [scoreWalk], fun m hm => ?_⟩
+    obtain rfl : m = 0 := by omega
+    simp [scoreWalk]
+  refine ⟨h1, by simp [scoreWalk], Set.disjoint_left.1 ?_ h1⟩
+  exact ladderEvent_disjoint _ (p := (1, 1)) (q := (2, 2)) (by simp)
+
 end MathlibExtTest.Probability.Renewal.ScoreLadder

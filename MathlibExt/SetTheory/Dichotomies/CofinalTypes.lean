@@ -12,8 +12,6 @@ Author: Nam Trang
 module
 
 public import Mathlib.Data.Set.Image
-public import Mathlib.Order.CompleteBooleanAlgebra
-public import Mathlib.Order.CompletePartialOrder
 
 @[expose] public section
 
