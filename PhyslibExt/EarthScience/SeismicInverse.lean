@@ -20,12 +20,15 @@ public import Mathlib.Tactic.Ring
 
 ## i. Overview
 
-Exact rational synthetic two-cell model; perturbations small enough
-to retain positive slowness; no full-wave or real-data correctness
-claim. Lengths in one length unit, slowness in time / length.
+Exact rational synthetic two-cell model; no full-wave or real-data
+correctness claim. Lengths in one length unit, slowness in time / length.
 `A = [[1, 1], [1, 2]]`, slowness `s = [1 / 2, 1 / 4]`; travel times
 are `[3 / 4, 1]` and full-rank inversion recovers `s`; retaining only
-row `[1, 1]` admits null direction `[1, -1]`. This capstone is proved
+row `[1, 1]` admits null direction `[1, -1]`. The perturbations
+`s + t • [1, -1]` with `t ≠ 0` and `-1 / 2 < t < 1 / 4` retain positive
+slowness, so the single row cannot distinguish two physically admissible
+positive-slowness models. All results are synthetic computations for this
+chosen model, hence stated as lemmas. This capstone is proved
 self-contained from Mathlib primitives; it does not depend on any
 sibling development.
 
@@ -38,6 +41,9 @@ sibling development.
   and `[1, -1] ≠ 0`.
 - `EarthScience.single_row_ambiguity`: the single row cannot
   distinguish `s` from `s + t * [1, -1]`.
+- `EarthScience.single_row_positive_ambiguity`: for `t ≠ 0` with
+  `-1 / 2 < t < 1 / 4`, `s + t * [1, -1]` is a distinct positive-slowness
+  model with the same single-row travel time.
 
 ## iii. Table of contents
 
@@ -59,7 +65,7 @@ namespace EarthScience
 /-- Capstone (synthetic seismic inverse problem): with
 `A = [[1, 1], [1, 2]]` and slowness `s = [1 / 2, 1 / 4]`, the travel
 times `A *ᵥ s` are `[3 / 4, 1]`. -/
-theorem travel_times_value :
+lemma travel_times_value :
     Matrix.mulVec (!![1, 1; 1, 2] : Matrix (Fin 2) (Fin 2) ℚ)
         (![1 / 2, 1 / 4] : Fin 2 → ℚ)
       = ![3 / 4, 1] := by
@@ -68,7 +74,7 @@ theorem travel_times_value :
 
 /-- Full-rank inversion recovers `s`: if `A *ᵥ x = [3 / 4, 1]` then
 `x = [1 / 2, 1 / 4]`. -/
-theorem inversion_recovers_slowness {x : Fin 2 → ℚ}
+lemma inversion_recovers_slowness {x : Fin 2 → ℚ}
     (h : Matrix.mulVec (!![1, 1; 1, 2] : Matrix (Fin 2) (Fin 2) ℚ) x
       = ![3 / 4, 1]) :
     x = ![1 / 2, 1 / 4] := by
@@ -85,7 +91,7 @@ theorem inversion_recovers_slowness {x : Fin 2 → ℚ}
 
 /-- Null direction of the single retained row `[1, 1]`:
 `[1, 1] ⬝ᵥ [1, -1] = 0` and `[1, -1] ≠ 0`. -/
-theorem single_row_null_direction :
+lemma single_row_null_direction :
     (![1, 1] : Fin 2 → ℚ) ⬝ᵥ (![1, -1] : Fin 2 → ℚ) = (0 : ℚ) ∧
       (![1, -1] : Fin 2 → ℚ) ≠ 0 := by
   constructor
@@ -98,11 +104,31 @@ theorem single_row_null_direction :
 `s + t * [1, -1]`: for every `t`,
 `[1, 1] ⬝ᵥ ([1 / 2, 1 / 4] + t • ![1, -1])
 = [1, 1] ⬝ᵥ [1 / 2, 1 / 4]`. -/
-theorem single_row_ambiguity {t : ℚ} :
+lemma single_row_ambiguity {t : ℚ} :
     (![1, 1] : Fin 2 → ℚ) ⬝ᵥ
         ((![1 / 2, 1 / 4] : Fin 2 → ℚ) + t • (![1, -1] : Fin 2 → ℚ))
       = (![1, 1] : Fin 2 → ℚ) ⬝ᵥ (![1 / 2, 1 / 4] : Fin 2 → ℚ) := by
   rw [dotProduct_add, dotProduct_smul, single_row_null_direction.1,
     smul_zero, add_zero]
+
+/-- Positive-slowness ambiguity: for every nonzero `t` with
+`-1 / 2 < t < 1 / 4`, the perturbed model
+`[1 / 2, 1 / 4] + t • ![1, -1] = [1 / 2 + t, 1 / 4 - t]` has positive
+slowness in both cells, differs from `s = [1 / 2, 1 / 4]`, and gives the
+same travel time as `s` on the single retained row `[1, 1]`. -/
+lemma single_row_positive_ambiguity {t : ℚ} (ht : t ≠ 0) (hlo : -1 / 2 < t)
+    (hhi : t < 1 / 4) :
+    (∀ i, 0 < ((![1 / 2, 1 / 4] : Fin 2 → ℚ) + t • (![1, -1] : Fin 2 → ℚ)) i) ∧
+      (![1 / 2, 1 / 4] : Fin 2 → ℚ) + t • (![1, -1] : Fin 2 → ℚ)
+        ≠ (![1 / 2, 1 / 4] : Fin 2 → ℚ) ∧
+      (![1, 1] : Fin 2 → ℚ) ⬝ᵥ
+          ((![1 / 2, 1 / 4] : Fin 2 → ℚ) + t • (![1, -1] : Fin 2 → ℚ))
+        = (![1, 1] : Fin 2 → ℚ) ⬝ᵥ (![1 / 2, 1 / 4] : Fin 2 → ℚ) := by
+  refine ⟨?_, ?_, single_row_ambiguity⟩
+  · intro i
+    fin_cases i <;> simp <;> linarith
+  · intro h
+    apply ht
+    simpa using congrFun h 0
 
 end EarthScience

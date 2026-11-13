@@ -14,10 +14,12 @@ import PhyslibExt.EarthScience.SeismicInverse
 
 Concrete consumers of `PhyslibExt.EarthScience.SeismicInverse`:
 travel times `[3 / 4, 1]`, inversion recovering `[1 / 2, 1 / 4]`,
-the null direction, the single-row ambiguity at `t = 2` (where
-`s + 2 * [1, -1] = [5 / 2, -7 / 4]` still gives row dot `3 / 4`),
-and the missing-receiver analogue (row `[1, 0]` alone cannot
-distinguish `s` from `s + [0, 1]`).
+the null direction, the algebraic single-row ambiguity at `t = 2` (where
+`s + 2 * [1, -1] = [5 / 2, -7 / 4]` still gives row dot `3 / 4`, but has
+a negative component), the positive-slowness ambiguity at `t = 1 / 8`
+(where `s + (1 / 8) * [1, -1] = [5 / 8, 1 / 8]`), and the
+missing-receiver analogue (row `[1, 0]` alone cannot distinguish `s`
+from `s + [0, 1]`).
 
 ## i. Overview
 
@@ -57,6 +59,24 @@ example : (![1, 1] : Fin 2 → ℚ) ⬝ᵥ
       ((![1 / 2, 1 / 4] : Fin 2 → ℚ) + (2 : ℚ) • (![1, -1] : Fin 2 → ℚ))
     = (![1, 1] : Fin 2 → ℚ) ⬝ᵥ (![1 / 2, 1 / 4] : Fin 2 → ℚ) :=
   EarthScience.single_row_ambiguity (t := 2)
+
+/-- Positive-slowness ambiguity at `t = 1 / 8`: the distinct model
+`[5 / 8, 1 / 8]` has positive slowness and the same single-row travel
+time `3 / 4` as `s`. -/
+example :
+    (∀ i, 0 < ((![1 / 2, 1 / 4] : Fin 2 → ℚ) + (1 / 8 : ℚ) • (![1, -1] : Fin 2 → ℚ)) i) ∧
+      (![1 / 2, 1 / 4] : Fin 2 → ℚ) + (1 / 8 : ℚ) • (![1, -1] : Fin 2 → ℚ)
+        ≠ (![1 / 2, 1 / 4] : Fin 2 → ℚ) ∧
+      (![1, 1] : Fin 2 → ℚ) ⬝ᵥ
+          ((![1 / 2, 1 / 4] : Fin 2 → ℚ) + (1 / 8 : ℚ) • (![1, -1] : Fin 2 → ℚ))
+        = (![1, 1] : Fin 2 → ℚ) ⬝ᵥ (![1 / 2, 1 / 4] : Fin 2 → ℚ) :=
+  EarthScience.single_row_positive_ambiguity (by norm_num) (by norm_num) (by norm_num)
+
+/-- The `t = 1 / 8` perturbation is the explicit model `[5 / 8, 1 / 8]`. -/
+example : (![1 / 2, 1 / 4] : Fin 2 → ℚ) + (1 / 8 : ℚ) • (![1, -1] : Fin 2 → ℚ)
+    = ![5 / 8, 1 / 8] := by
+  ext i
+  fin_cases i <;> simp <;> norm_num
 
 /-- Missing-receiver analogue: row `[1, 0]` alone cannot distinguish
 `s` from `s + [0, 1]`: both give `1 / 2`. -/
