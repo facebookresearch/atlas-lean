@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.BoundedInProbability
 public import MathlibExt.Probability.LindebergFeller
 public import Mathlib.Probability.CramerWold
 public import Mathlib.MeasureTheory.Measure.LevyConvergence
@@ -57,6 +58,8 @@ sandwich `A⁻¹ B A⁻ᵀ`.
   normality, `√n (βhat n - β₀) → N(0, A⁻¹ B A⁻ᵀ)`, with sensitivity nonsingularity `IsUnit A`
   as an explicit hypothesis; `tendstoInDistribution_sqrt_smul_sub_sandwich_of_hasFDerivAt` is
   the version from differentiable scores.
+  `tendstoInDistribution_inv_sqrt_smul_sum_sandwich` is its cluster-CLT step, the convergence
+  `-A⁻¹ (√n)⁻¹ ∑ U k β₀ → N(0, A⁻¹ B A⁻ᵀ)` for the transformed scores, without `IsUnit A`.
 * (c) `ProbabilityTheory.GEE.tendstoInMeasure_sandwichCovariance`: consistent bread and meat
   estimators give a consistent sandwich, for invertible `A`.
   `tendstoInMeasure_empirical_sandwichCovariance` applies it to the plug-in bread
@@ -129,23 +132,9 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
   {Ω Ω' : Type*} {mΩ : MeasurableSpace Ω} {mΩ' : MeasurableSpace Ω'}
   {P : Measure Ω} {P' : Measure Ω'} [IsProbabilityMeasure P] [IsProbabilityMeasure P']
 
-/-- A sequence of random vectors converging in distribution is bounded in probability: for every
-`ε > 0` there is a radius `K` with `P {K < ‖X n‖} ≤ ε` for all `n`. -/
-theorem exists_forall_measure_lt_norm_le_of_tendstoInDistribution {X : ℕ → Ω → E} {Z : Ω' → E}
-    (h : TendstoInDistribution X atTop Z (fun _ ↦ P) P') {ε : ℝ≥0∞} (hε : 0 < ε) :
-    ∃ K : ℝ, ∀ n, P {ω | K < ‖X n ω‖} ≤ ε := by
-  have hT : IsTightMeasureSet (Set.range fun n ↦ P.map (X n)) :=
-    isTightMeasureSet_of_tendsto_charFun (f := charFun (P'.map Z))
-      continuous_charFun.continuousAt fun t ↦ h.tendsto_charFun t
-  obtain ⟨K, hK⟩ :=
-    ((tendsto_measure_norm_gt_of_isTightMeasureSet hT).eventually (eventually_le_nhds hε)).exists
-  refine ⟨K, fun n ↦ ?_⟩
-  have hmeas : MeasurableSet {x : E | K < ‖x‖} := measurableSet_lt measurable_const measurable_norm
-  calc P {ω | K < ‖X n ω‖} = P.map (X n) {x | K < ‖x‖} :=
-        (Measure.map_apply_of_aemeasurable (h.forall_aemeasurable n) hmeas).symm
-    _ ≤ ⨆ μ ∈ Set.range fun n ↦ P.map (X n), μ {x | K < ‖x‖} :=
-        le_biSup (f := fun μ : Measure E ↦ μ {x | K < ‖x‖}) ⟨n, rfl⟩
-    _ ≤ ε := hK
+@[deprecated (since := "2026-11-13")]
+alias exists_forall_measure_lt_norm_le_of_tendstoInDistribution :=
+  ProbabilityTheory.exists_forall_measure_lt_norm_le_of_tendstoInDistribution
 
 omit [MeasurableSpace E] [BorelSpace E] [FiniteDimensional ℝ E] in
 private lemma inner_inv_sqrt_smul_sum (U : ℕ → Ω → E) (t : E) (n : ℕ) (ω : Ω) :
@@ -354,8 +343,9 @@ theorem tendstoInDistribution_sqrt_smul_sub_of_linearization {U : ℕ → E → 
   intro ε hε
   rw [ENNReal.tendsto_nhds_zero]
   intro δ hδ
-  obtain ⟨K₀, hK₀⟩ := exists_forall_measure_lt_norm_le_of_tendstoInDistribution hX
-    (ENNReal.half_pos hδ.ne')
+  obtain ⟨K₀, hK₀⟩ :=
+    ProbabilityTheory.exists_forall_measure_lt_norm_le_of_tendstoInDistribution hX
+      (ENNReal.half_pos hδ.ne')
   set K := max K₀ 0
   have hK : 0 ≤ K := le_max_right _ _
   set a := ‖Ai‖
@@ -505,6 +495,59 @@ theorem inner_sandwichCovariance_apply (A B : E →L[ℝ] E) (t : E) :
     ContinuousLinearMap.comp_apply]
   rw [← ContinuousLinearMap.adjoint_inner_right, inner_symmetrizedMeat_apply]
 
+omit [MeasurableSpace E] [BorelSpace E] in
+/-- The sandwich of a singular bread vanishes: `Ring.inverse 0 = 0`. -/
+theorem sandwichCovariance_zero_left (B : E →L[ℝ] E) : sandwichCovariance 0 B = 0 := by
+  rw [sandwichCovariance, Ring.inverse_zero, zero_mul, zero_mul]
+
+/-- **Cluster CLT for the transformed scores with sandwich covariance.**
+
+Under the cluster hypotheses of `tendstoInDistribution_sqrt_smul_sub_sandwich` at `β₀`
+(measurable, independent, unbiased, square-integrable scores whose averaged projected variances
+converge to `⟪B t, t⟫`, and the projected cluster Lindeberg condition), the normalized cluster
+sums of the transformed scores `-A⁻¹ U k β₀` converge in distribution to every `W` whose
+projections `⟪W, t⟫` are centered Gaussians with variance `⟪A⁻¹ B A⁻ᵀ t, t⟫`, i.e.
+`W ∼ N(0, sandwichCovariance A B)`. Here `A⁻¹` is `Ring.inverse A`; invertibility of `A` is not
+needed (for a singular `A` the sums vanish and `W = 0` almost surely). The projection of
+`-A⁻¹ U k β₀` on `t` is the projection of `U k β₀` on `-A⁻ᵀ t`, so this is
+`tendstoInDistribution_inv_sqrt_smul_sum_of_lindeberg` applied to the transformed scores. -/
+theorem tendstoInDistribution_inv_sqrt_smul_sum_sandwich {U : ℕ → E → Ω → E} {β₀ : E}
+    {A B : E →L[ℝ] E}
+    (hmeas : ∀ k, Measurable (U k β₀)) (hindep : iIndepFun (fun k ↦ U k β₀) P)
+    (hmean : ∀ k, ∫ ω, U k β₀ ω ∂P = 0) (hL2 : ∀ k, MemLp (U k β₀) 2 P)
+    (hvar : ∀ t, Tendsto (fun n : ℕ ↦ (n : ℝ)⁻¹ * ∑ k ∈ range n, ∫ ω, ⟪U k β₀ ω, t⟫ ^ 2 ∂P)
+      atTop (𝓝 ⟪B t, t⟫))
+    (hL : ∀ t, LindebergConditionTriangular (fun n k ω ↦ (√n)⁻¹ * ⟪U k β₀ ω, t⟫) P)
+    {W : Ω' → E} (hW : AEMeasurable W P')
+    (hWlaw : ∀ t, HasLaw (fun ω ↦ ⟪W ω, t⟫)
+      (gaussianReal 0 (⟪sandwichCovariance A B t, t⟫).toNNReal) P') :
+    TendstoInDistribution
+      (fun (n : ℕ) ω ↦ (√n)⁻¹ • ∑ k ∈ range n, -Ring.inverse A (U k β₀ ω)) atTop W
+      (fun _ ↦ P) P' := by
+  set Ai := Ring.inverse A with hAi_def
+  set s : E → E := fun t ↦ -ContinuousLinearMap.adjoint Ai t with hs_def
+  set V : ℕ → Ω → E := fun k ω ↦ -Ai (U k β₀ ω) with hV_def
+  change TendstoInDistribution (fun (n : ℕ) ω ↦ (√n)⁻¹ • ∑ k ∈ range n, V k ω) atTop W
+    (fun _ ↦ P) P'
+  have hVinner : ∀ k ω t, ⟪V k ω, t⟫ = ⟪U k β₀ ω, s t⟫ := by
+    intro k ω t
+    simp only [hV_def, hs_def, inner_neg_left, inner_neg_right,
+      ContinuousLinearMap.adjoint_inner_right]
+  have hq : ∀ t, ⟪B (s t), s t⟫ = ⟪sandwichCovariance A B t, t⟫ := by
+    intro t
+    simp only [hs_def, map_neg, inner_neg_neg, inner_sandwichCovariance_apply, hAi_def]
+  refine tendstoInDistribution_inv_sqrt_smul_sum_of_lindeberg hW hWlaw
+    (fun k ↦ (Ai.continuous.measurable.comp (hmeas k)).neg)
+    (hindep.comp (fun _ x ↦ -Ai x) fun _ ↦ Ai.continuous.measurable.neg)
+    (fun k ↦ ?_) (fun k ↦ ((hL2 k).continuousLinearMap_comp Ai).neg) (fun t ↦ ?_)
+    (fun t ↦ ?_)
+  · simp only [hV_def, integral_neg, Ai.integral_comp_comm ((hL2 k).integrable one_le_two),
+      hmean k, map_zero, neg_zero]
+  · simp_rw [hVinner, ← hq]
+    exact hvar (s t)
+  · simp_rw [hVinner]
+    exact hL (s t)
+
 /-- **Asymptotic normality of a GEE estimator with sandwich covariance.**
 
 Let `U k β ω` be independent cluster scores. At the true parameter `β₀` assume the cluster
@@ -536,32 +579,10 @@ theorem tendstoInDistribution_sqrt_smul_sub_sandwich {U : ℕ → E → Ω → E
     (hWlaw : ∀ t, HasLaw (fun ω ↦ ⟪W ω, t⟫)
       (gaussianReal 0 (⟪sandwichCovariance A B t, t⟫).toNNReal) P') :
     TendstoInDistribution (fun (n : ℕ) ω ↦ √n • (βhat n ω - β₀)) atTop W (fun _ ↦ P) P' := by
-  set Ai := Ring.inverse A with hAi_def
-  set s : E → E := fun t ↦ -ContinuousLinearMap.adjoint Ai t with hs_def
-  set V : ℕ → Ω → E := fun k ω ↦ -Ai (U k β₀ ω) with hV_def
-  have hVinner : ∀ k ω t, ⟪V k ω, t⟫ = ⟪U k β₀ ω, s t⟫ := by
-    intro k ω t
-    simp only [hV_def, hs_def, inner_neg_left, inner_neg_right,
-      ContinuousLinearMap.adjoint_inner_right]
-  have hq : ∀ t, ⟪B (s t), s t⟫ = ⟪sandwichCovariance A B t, t⟫ := by
-    intro t
-    simp only [hs_def, map_neg, inner_neg_neg, inner_sandwichCovariance_apply, hAi_def]
-  have hCLT : TendstoInDistribution (fun (n : ℕ) ω ↦ (√n)⁻¹ • ∑ k ∈ range n, V k ω) atTop W
-      (fun _ ↦ P) P' := by
-    refine tendstoInDistribution_inv_sqrt_smul_sum_of_lindeberg hW hWlaw
-      (fun k ↦ (Ai.continuous.measurable.comp (hmeas k)).neg)
-      (hindep.comp (fun _ x ↦ -Ai x) fun _ ↦ Ai.continuous.measurable.neg)
-      (fun k ↦ ?_) (fun k ↦ ((hL2 k).continuousLinearMap_comp Ai).neg) (fun t ↦ ?_)
-      (fun t ↦ ?_)
-    · simp only [hV_def, integral_neg, Ai.integral_comp_comm ((hL2 k).integrable one_le_two),
-        hmean k, map_zero, neg_zero]
-    · simp_rw [hVinner, ← hq]
-      exact hvar (s t)
-    · simp_rw [hVinner]
-      exact hL (s t)
   refine tendstoInDistribution_sqrt_smul_sub_of_linearization hA ?_ hβ hroot hlin
-  refine hCLT.congr (fun n ↦ ae_of_all _ fun ω ↦ ?_) (ae_of_all _ fun _ ↦ rfl)
-  simp only [hV_def, map_smul, map_sum, smul_neg, Finset.sum_neg_distrib, ← hAi_def]
+  refine (tendstoInDistribution_inv_sqrt_smul_sum_sandwich hmeas hindep hmean hL2 hvar hL hW
+    hWlaw).congr (fun n ↦ ae_of_all _ fun ω ↦ ?_) (ae_of_all _ fun _ ↦ rfl)
+  simp only [map_smul, map_sum, smul_neg, Finset.sum_neg_distrib]
 
 /-! ### Plug-in consistency, bread, meat and sandwich -/
 

@@ -30,6 +30,17 @@ import Mathlib.Analysis.Normed.Module.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.Calculus.Deriv.AffineMap
+import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import Mathlib.Analysis.Calculus.ContDiff.Defs
+import Mathlib.Analysis.Calculus.ContDiff.Operations
+import Mathlib.Analysis.Calculus.ContDiff.RCLike
+import Mathlib.Analysis.Calculus.FDeriv.Add
+import Mathlib.Analysis.Calculus.FDeriv.Mul
+import Mathlib.Analysis.Calculus.FDeriv.Pi
+import Mathlib.Analysis.Calculus.Implicit
+import Mathlib.Analysis.Normed.Module.FiniteDimension
+import Mathlib.Basic.Real.Basic
+import Mathlib.LinearAlgebra.Dual.Lemmas
 
 @[expose] public section
 
@@ -550,5 +561,513 @@ theorem isMinOn_of_karush_kuhn_tucker_convex {E : Type*} [NormedAddCommGroup E]
     have h := add_le_add_left hD (f x)
     simpa using h
   exact le_trans h2 hf_le
+
+end MathlibExt.Analysis.Convex.KarushKuhnTucker
+
+
+/-! ### Mixed-constraint KKT under LICQ -/
+
+namespace MathlibExt.Analysis.Convex.KarushKuhnTucker
+
+/--
+Mixed-constraint Karush–Kuhn–Tucker necessary conditions under LICQ.
+Minimize `f` subject to finitely many inequality constraints `g i y ≤ 0` and equality
+constraints `h j y = 0` on a finite-dimensional real normed space. If `x` is feasible, is a
+local minimum of `f` on the feasible set, `f` and every `g i` are differentiable at `x`, every
+`h j` is `C¹` at `x`, and the derivatives of all equality constraints together with the
+derivatives of the active inequality constraints are linearly independent (LICQ), then there
+are inequality multipliers `lam ≥ 0` with complementary slackness and free equality multipliers
+`mu` such that `fderiv f x + ∑ i, lam i • fderiv (g i) x + ∑ j, mu j • fderiv (h j) x = 0`.
+
+Source: J. Nocedal and S. J. Wright, *Numerical Optimization*, 2nd ed., Springer, 2006,
+Chapter 12 (first-order necessary conditions under LICQ). Sign conventions: both statements
+minimize `f`. The book writes inequality constraints as `cᵢ(y) ≥ 0` and its Lagrangian as
+`f - ∑ λᵢ cᵢ`; taking `cᵢ = -g i` for the inequalities and `cⱼ = h j` for the equalities, its
+multipliers are `lam i` on the inequalities and `-mu j` on the equalities. Regularity: the book
+works in `ℝⁿ` and assumes `f` and every constraint continuously differentiable. Here `E` is any
+finite-dimensional real normed space, `f` and the `g i` need only be differentiable at `x`, and
+only the `h j` must be `C¹` near `x` (`ContDiffAt ℝ 1`), for the implicit-function step.
+-/
+theorem karush_kuhn_tucker_mixed {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [FiniteDimensional ℝ E] {m p : ℕ} {f : E → ℝ} {g : Fin m → E → ℝ}
+    {h : Fin p → E → ℝ} {x : E}
+    (hf_diff : DifferentiableAt ℝ f x)
+    (hg_diff : ∀ i, DifferentiableAt ℝ (g i) x)
+    (hh_diff : ∀ j, ContDiffAt ℝ 1 (h j) x)
+    (hfeas : ∀ i, g i x ≤ 0)
+    (heq : ∀ j, h j x = 0)
+    (hmin : IsLocalMinOn f {y | (∀ i, g i y ≤ 0) ∧ ∀ j, h j y = 0} x)
+    (hLICQ : LinearIndependent ℝ
+      (Sum.elim (fun j : Fin p => fderiv ℝ (h j) x)
+        (fun i : {i : Fin m // g i x = 0} => fderiv ℝ (g i.val) x))) :
+    ∃ (lam : Fin m → ℝ) (mu : Fin p → ℝ), (∀ i, 0 ≤ lam i) ∧ (∀ i, lam i * g i x = 0) ∧
+      fderiv ℝ f x + ∑ i : Fin m, lam i • fderiv ℝ (g i) x +
+        ∑ j : Fin p, mu j • fderiv ℝ (h j) x = 0 := by
+  classical
+  -- Active inequality set and equality-derivative map.
+  set A : Type := { i : Fin m // g i x = 0 } with hA_def
+  set H : E →L[ℝ] (Fin p → ℝ) := ContinuousLinearMap.pi (fun j => fderiv ℝ (h j) x) with hH_def
+  -- Pointwise action of `H` (proved without rewriting `H` itself, so `ker` types stay put).
+  have hH_apply : ∀ (v : E) (j : Fin p), H v j = (fderiv ℝ (h j) x) v := by
+    intro v j
+    simp [hH_def]
+  -- LICQ implies the equality derivatives alone are independent.
+  have hindep_h : LinearIndependent ℝ (fun j : Fin p => fderiv ℝ (h j) x) := by
+    have hcomp := hLICQ.comp _ Sum.inl_injective
+    simpa [Function.comp] using hcomp
+  -- The nonlinear equality map is strictly differentiable with derivative `H`.
+  have hH_strict : HasStrictFDerivAt (fun y j => h j y) H x := by
+    have hcomp : ∀ j : Fin p, HasStrictFDerivAt (fun y => h j y) (fderiv ℝ (h j) x) x := by
+      intro j
+      exact ContDiffAt.hasStrictFDerivAt (hh_diff j) one_ne_zero
+    have hpi := hasStrictFDerivAt_pi.mpr hcomp
+    simpa [hH_def] using hpi
+  -- `H` is surjective: otherwise a nonzero functional vanishes on its range,
+  -- giving a nontrivial relation among the independent equality derivatives.
+  have hH_surj : (↑H : E →ₗ[ℝ] (Fin p → ℝ)).range = ⊤ := by
+    by_contra hne
+    have hAnn_ne : (LinearMap.range (↑H : E →ₗ[ℝ] (Fin p → ℝ))).dualAnnihilator ≠ ⊥ := by
+      intro hbot
+      apply hne
+      rw [← Submodule.dualAnnihilator_eq_bot_iff]
+      exact hbot
+    obtain ⟨φ, hφ_mem, hφ_ne⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hAnn_ne
+    have hφ_vanish : ∀ v : E, φ ((↑H : E →ₗ[ℝ] (Fin p → ℝ)) v) = 0 := by
+      intro v
+      exact (Submodule.mem_dualAnnihilator _).mp hφ_mem _ (LinearMap.mem_range_self _ _)
+    -- Expand `φ` on the standard basis to get coefficients.
+    set θ : Fin p → ℝ := fun j => φ (Pi.single j (1 : ℝ)) with hθ_def
+    have hexpand : ∀ v : Fin p → ℝ, v = ∑ j, v j • Pi.single j (1 : ℝ) := by
+      intro v
+      symm
+      trans ∑ j, Pi.single j (v j)
+      · apply Finset.sum_congr rfl
+        intro j _
+        rw [← Pi.single_smul, smul_eq_mul, mul_one]
+      · exact Finset.univ_sum_single v
+    have hφ_expand : ∀ v : Fin p → ℝ, φ v = ∑ j, v j * θ j := by
+      intro v
+      conv_lhs => rw [hexpand v, map_sum]
+      apply Finset.sum_congr rfl
+      intro j _
+      rw [map_smul, smul_eq_mul, hθ_def]
+    have hθ_relation : ∑ j, θ j • (fderiv ℝ (h j) x) = 0 := by
+      ext v
+      have e1 : (∑ j, θ j • (fderiv ℝ (h j) x)) v
+          = ∑ j, θ j * (fderiv ℝ (h j) x) v := by
+        rw [sum_apply]
+        apply Finset.sum_congr rfl
+        intro j _
+        rw [smul_apply, smul_eq_mul]
+      have e2 : (∑ j, θ j * (fderiv ℝ (h j) x) v) = 0 := by
+        have hz := hφ_vanish v
+        rw [hφ_expand] at hz
+        rw [← hz]
+        apply Finset.sum_congr rfl
+        intro j _
+        have hj : ((↑H : E →ₗ[ℝ] (Fin p → ℝ)) v) j = (fderiv ℝ (h j) x) v := by
+          change H v j = _
+          rw [hH_apply]
+        rw [hj, mul_comm]
+      change (∑ j, θ j • fderiv ℝ (h j) x) v = (0 : E →L[ℝ] ℝ) v
+      rw [e1]
+      have hzero : (0 : E →L[ℝ] ℝ) v = 0 := rfl
+      rw [hzero]
+      exact e2
+    -- The relation forces `θ = 0` by independence.
+    have hθ_zero : θ = 0 := by
+      have hiff := Fintype.linearIndependent_iff (R := ℝ) (v := fun j : Fin p => fderiv ℝ (h j) x)
+      have h0 := (hiff.mp hindep_h) _ hθ_relation
+      funext j
+      exact h0 j
+    -- `θ = 0` forces `φ = 0`, contradiction.
+    have hφ_zero : φ = 0 := by
+      apply LinearMap.ext
+      intro v
+      have h := hφ_expand v
+      rw [hθ_zero] at h
+      simpa using h
+    exact hφ_ne hφ_zero
+  -- Kernel of `H` and the family of restricted functionals for Gordan.
+  set K : Submodule ℝ E := LinearMap.ker (↑H : E →ₗ[ℝ] (Fin p → ℝ)) with hK_def
+  set fam : Option A → (↥K →L[ℝ] ℝ) := fun o =>
+    match o with
+    | none => (fderiv ℝ f x).comp K.subtypeL
+    | some a => (fderiv ℝ (g a.val) x).comp K.subtypeL
+    with hfam_def
+  have hfam_none : ∀ z : ↥K, (fam none) z = (fderiv ℝ f x) (z : E) := fun z => rfl
+  have hfam_some : ∀ (a : A) (z : ↥K), (fam (some a)) z = (fderiv ℝ (g a.val) x) (z : E) :=
+    fun a z => rfl
+  -- The nonlinear equality map vanishes at `x`.
+  have hHnl_zero : (fun y j => h j y) x = 0 := by
+    funext j
+    exact heq j
+  -- Beta-reduced form, for rewriting inside instantiated lemma statements.
+  have hHnl_zero_fun : (fun j => h j x) = 0 := hHnl_zero
+  -- Linearized claim: there is no feasible descent direction.
+  -- Given `d` with `H d = 0`, `f' d < 0`, `g'_A d < 0`, the implicit function
+  -- theorem yields a feasible curve through `x` with velocity `d`, along which
+  -- `f` strictly decreases, contradicting local minimality.
+  have hnodesc : ¬∃ d : E, (∀ j, (fderiv ℝ (h j) x) d = 0)
+      ∧ (fderiv ℝ f x) d < 0 ∧ (∀ a : A, (fderiv ℝ (g a.val) x) d < 0) := by
+    rintro ⟨d, hd_eq, hd_f, hd_g⟩
+    -- `d` lies in the kernel of `H`.
+    have hd_mem : d ∈ K := by
+      rw [hK_def, LinearMap.mem_ker]
+      change H d = 0
+      funext j
+      rw [hH_apply]
+      exact hd_eq j
+    -- Direction in the kernel.
+    set dK : ↥K := ⟨d, hd_mem⟩ with hdK_def
+    -- Feasible curve: value coordinate `0`, kernel coordinate `t • dK`.
+    set γ : ℝ → E :=
+      fun t => hH_strict.implicitFunction (fun y j => h j y) H hH_surj 0 (t • dK) with hγ_def
+    -- `γ 0 = x`.
+    have hγ_zero : γ 0 = x := by
+      have himg := hH_strict.implicitFunction_apply_image (f := fun y j => h j y) (f' := H) hH_surj
+      rw [hHnl_zero_fun] at himg
+      simp only [hγ_def, zero_smul]
+      exact himg
+    -- `γ` stays in the equality fiber near `0`.
+    have hγ_fiber : ∀ᶠ t : ℝ in 𝓝 (0 : ℝ), (fun y j => h j y) (γ t) = 0 := by
+      have hev0 := hH_strict.map_implicitFunction_eq (f := fun y j => h j y) (f' := H) hH_surj
+      rw [hHnl_zero_fun] at hev0
+      have h2 : Filter.Tendsto (fun t : ℝ => t • dK) (𝓝 (0 : ℝ)) (𝓝 (0 : ↥K)) := by
+        have h := (continuousAt_id (x := (0 : ℝ))).tendsto.smul_const dK
+        simpa using h
+      have htend : Filter.Tendsto (fun t : ℝ => ((0 : Fin p → ℝ), t • dK)) (𝓝 (0 : ℝ))
+          (𝓝 ((0 : Fin p → ℝ), (0 : ↥K))) :=
+        tendsto_const_nhds.prodMk_nhds h2
+      have h := htend.eventually hev0
+      simpa [hγ_def] using h
+    -- `γ` has velocity `d` at `0`.
+    have hγ_deriv : HasDerivAt γ d 0 := by
+      have hderiv : HasStrictFDerivAt
+          (hH_strict.implicitFunction (fun y j => h j y) H hH_surj 0) K.subtypeL 0 := by
+        have h := hH_strict.to_implicitFunction (f := fun y j => h j y) (f' := H) hH_surj
+        rwa [hHnl_zero_fun] at h
+      have hsmul : HasDerivAt (fun t : ℝ => t • dK) dK 0 := by
+        simpa using (hasDerivAt_id (0 : ℝ)).smul_const dK
+      have hcomp := hderiv.hasFDerivAt.comp_hasDerivAt_of_eq 0 hsmul
+        (by simp : (0 : ↥K) = (fun t : ℝ => t • dK) 0)
+      -- the derivative of `g 0` at `0` is the inclusion, sending `dK` to `d`
+      simpa [hγ_def, Function.comp_def, Submodule.subtypeL_apply, hdK_def] using hcomp
+    -- From here the descent direction contradicts minimality (see below).
+    -- Continuity of `γ` at `0` and limit `x`.
+    have hγ_cont : ContinuousAt γ 0 := hγ_deriv.continuousAt
+    have hγ_tendsto : Filter.Tendsto γ (𝓝 (0 : ℝ)) (𝓝 x) := by
+      simpa [hγ_zero] using hγ_cont.tendsto
+    -- Derivatives of the compositions `f ∘ γ` and `g ∘ γ` at `0`.
+    have hf_comp : HasDerivAt (fun t => f (γ t)) ((fderiv ℝ f x) d) 0 :=
+      hf_diff.hasFDerivAt.comp_hasDerivAt_of_eq 0 hγ_deriv hγ_zero.symm
+    have hg_comp : ∀ a : A, HasDerivAt (fun t => g a.val (γ t)) ((fderiv ℝ (g a.val) x) d) 0 := by
+      intro a
+      exact (hg_diff a.val).hasFDerivAt.comp_hasDerivAt_of_eq 0 hγ_deriv hγ_zero.symm
+    -- Slope of `f ∘ γ` tends to a negative value, so `f (γ t) < f x` for small `t > 0`.
+    have hIoi_sub : Set.Ioi (0 : ℝ) ⊆ {0}ᶜ := fun t ht => ne_of_gt ht
+    have hslope_f : Filter.Tendsto
+        (fun t => t⁻¹ • ((fun t => f (γ t)) (0 + t) - (fun t => f (γ t)) 0))
+        (𝓝[>] (0 : ℝ)) (𝓝 ((fderiv ℝ f x) d)) :=
+      hf_comp.tendsto_slope_zero.mono_left (nhdsWithin_mono 0 hIoi_sub)
+    have hev_f : ∀ᶠ t : ℝ in 𝓝[>] (0 : ℝ), f (γ t) < f x := by
+      have hneg : Set.Iio (0 : ℝ) ∈ 𝓝 ((fderiv ℝ f x) d) := Iio_mem_nhds hd_f
+      have hev := hslope_f.eventually hneg
+      filter_upwards [hev, self_mem_nhdsWithin] with t ht_slope ht_pos
+      simp only [zero_add] at ht_slope
+      have ht0 : (0 : ℝ) < t := ht_pos
+      rw [hγ_zero, smul_eq_mul] at ht_slope
+      have ht_inv : (0 : ℝ) < t⁻¹ := inv_pos.mpr ht0
+      have hsub : f (γ t) - f x < 0 := by
+        have h := mul_neg_iff.mp ht_slope
+        rcases h with ⟨-, hlt⟩ | ⟨hlt, -⟩
+        · exact hlt
+        · exact absurd hlt (not_lt_of_gt ht_inv)
+      linarith
+    -- Likewise each active `g` becomes strictly negative for small `t > 0`.
+    have hev_g : ∀ a : A, ∀ᶠ t : ℝ in 𝓝[>] (0 : ℝ), g a.val (γ t) < 0 := by
+      intro a
+      have hs' : Filter.Tendsto
+          (fun t => t⁻¹ • ((fun t => g a.val (γ t)) (0 + t) - (fun t => g a.val (γ t)) 0))
+          (𝓝[>] (0 : ℝ)) (𝓝 ((fderiv ℝ (g a.val) x) d)) :=
+        (hg_comp a).tendsto_slope_zero.mono_left (nhdsWithin_mono 0 hIoi_sub)
+      have hneg : Set.Iio (0 : ℝ) ∈ 𝓝 ((fderiv ℝ (g a.val) x) d) := Iio_mem_nhds (hd_g a)
+      have hev := hs'.eventually hneg
+      filter_upwards [hev, self_mem_nhdsWithin] with t ht_slope ht_pos
+      simp only [zero_add] at ht_slope
+      have ht0 : (0 : ℝ) < t := ht_pos
+      have ha0 : g a.val x = 0 := a.property
+      rw [hγ_zero, smul_eq_mul] at ht_slope
+      have ht_inv : (0 : ℝ) < t⁻¹ := inv_pos.mpr ht0
+      have hsub : g a.val (γ t) - g a.val x < 0 := by
+        have h := mul_neg_iff.mp ht_slope
+        rcases h with ⟨-, hlt⟩ | ⟨hlt, -⟩
+        · exact hlt
+        · exact absurd hlt (not_lt_of_gt ht_inv)
+      linarith
+    -- Inactive inequalities stay negative by continuity.
+    have hev_inact : ∀ᶠ t : ℝ in 𝓝 (0 : ℝ), ∀ i : Fin m, g i x < 0 → g i (γ t) < 0 := by
+      have h2 : ∀ i : Fin m, ∀ᶠ t : ℝ in 𝓝 (0 : ℝ), g i x < 0 → g i (γ t) < 0 := by
+        intro i
+        by_cases hi : g i x < 0
+        · have hgc : ContinuousAt (g i) (γ 0) := by
+            rw [hγ_zero]
+            exact (hg_diff i).continuousAt
+          have hcont_i : Filter.Tendsto (fun t => g i (γ t)) (𝓝 (0 : ℝ)) (𝓝 (g i x)) := by
+            have h := (hgc.comp hγ_cont).tendsto
+            simpa [Function.comp_def, hγ_zero] using h
+          have hmem : Set.Iio (0 : ℝ) ∈ 𝓝 (g i x) := Iio_mem_nhds hi
+          have h := hcont_i.eventually hmem
+          filter_upwards [h] with t ht _
+          exact ht
+        · exact Filter.Eventually.of_forall fun t hcon => (hi hcon).elim
+      exact Filter.eventually_all.mpr h2
+    -- Hence `γ t` is feasible for small `t > 0`.
+    have hγ_mem : ∀ᶠ t : ℝ in 𝓝[>] (0 : ℝ),
+        (∀ i, g i (γ t) ≤ 0) ∧ ∀ j, h j (γ t) = 0 := by
+      have h1 : ∀ᶠ t : ℝ in 𝓝[>] (0 : ℝ), ∀ a : A, g a.val (γ t) < 0 :=
+        Filter.eventually_all.mpr hev_g
+      have h2 : ∀ᶠ t : ℝ in 𝓝[>] (0 : ℝ), ∀ i : Fin m, g i x < 0 → g i (γ t) < 0 :=
+        hev_inact.filter_mono nhdsWithin_le_nhds
+      have h3 : ∀ᶠ t : ℝ in 𝓝[>] (0 : ℝ), (fun y j => h j y) (γ t) = 0 :=
+        hγ_fiber.filter_mono nhdsWithin_le_nhds
+      filter_upwards [h1, h2, h3] with t ht1 ht2 ht3
+      refine ⟨?_, fun j => ?_⟩
+      · intro i
+        by_cases hi : g i x = 0
+        · have := ht1 ⟨i, hi⟩
+          exact le_of_lt this
+        · have hlt : g i x < 0 := lt_of_le_of_ne (hfeas i) hi
+          exact le_of_lt (ht2 i hlt)
+      · have := congrFun ht3 j
+        simpa using this
+    -- So `γ` tends to `x` within the feasible set (from the right).
+    have hγ_nhdsWithin : Filter.Tendsto γ (𝓝[>] (0 : ℝ))
+        (𝓝[{y | (∀ i, g i y ≤ 0) ∧ ∀ j, h j y = 0}] x) := by
+      rw [tendsto_nhdsWithin_iff]
+      refine ⟨hγ_tendsto.mono_left nhdsWithin_le_nhds, ?_⟩
+      filter_upwards [hγ_mem] with t ht
+      exact ht
+    -- Composing the local min with `γ` gives a one-sided local min at `0`.
+    have hmin_comp : IsMinFilter (fun t => f (γ t)) (𝓝[>] (0 : ℝ)) 0 := by
+      have hmin' : IsMinFilter f (𝓝[{y | (∀ i, g i y ≤ 0) ∧ ∀ j, h j y = 0}] x) (γ 0) := by
+        rw [hγ_zero]
+        exact hmin
+      exact hmin'.comp_tendsto hγ_nhdsWithin
+    -- But `f (γ t) < f (γ 0)` eventually, contradiction.
+    have hcontra : ∀ᶠ t : ℝ in 𝓝[>] (0 : ℝ), f (γ t) < (fun t => f (γ t)) 0 := by
+      simpa [hγ_zero] using hev_f
+    have hle : ∀ᶠ t : ℝ in 𝓝[>] (0 : ℝ), (fun t => f (γ t)) 0 ≤ f (γ t) := hmin_comp
+    obtain ⟨t, hlt, hge⟩ := (hcontra.and hle).exists
+    exact absurd hge (not_le_of_gt hlt)
+  -- Apply Gordan's alternative on the kernel.
+  obtain hdescent | ⟨q, hq_nonneg, hq_ne, hq_sum⟩ := gordan fam
+  · -- A descent direction in the kernel lifts to `E`, contradicting `hnodesc`.
+    obtain ⟨z, hz⟩ := hdescent
+    refine False.elim (hnodesc ⟨(z : E), ?_, ?_, ?_⟩)
+    · intro j
+      have hmemK : (z : E) ∈ LinearMap.ker (↑H : E →ₗ[ℝ] (Fin p → ℝ)) := z.property
+      rw [LinearMap.mem_ker] at hmemK
+      -- Take the `j`-th component without rewriting `H` itself (motive safety).
+      have h0 : H (z : E) = 0 := hmemK
+      have h1 : H (z : E) j = (0 : Fin p → ℝ) j := by rw [h0]
+      rw [hH_apply] at h1
+      simpa using h1
+    · have h := hz none
+      rw [hfam_none] at h
+      exact h
+    · intro a
+      have h := hz (some a)
+      rw [hfam_some] at h
+      exact h
+  · -- Nontrivial nonnegative multipliers on the kernel; extend by the equalities.
+    -- Combined functional on `E` (objective plus active inequalities).
+    set L0 : E →L[ℝ] ℝ := (q none) • (fderiv ℝ f x)
+      + ∑ a : A, (q (some a)) • (fderiv ℝ (g a.val) x) with hL0_def
+    -- `L0` vanishes on `K` by the Gordan relation.
+    have hL0_vanish : ∀ z : ↥K, L0 (z : E) = 0 := by
+      intro z
+      have hsum := congrArg (fun L : ↥K →L[ℝ] ℝ => L z) hq_sum
+      rw [sum_apply] at hsum
+      have hzero : (0 : ↥K →L[ℝ] ℝ) z = 0 := rfl
+      rw [hzero, Fintype.sum_option] at hsum
+      simp only [smul_apply, smul_eq_mul, hfam_none, hfam_some] at hsum
+      have hL0_apply : L0 (z : E)
+          = q none * (fderiv ℝ f x) (z : E)
+            + ∑ a : A, q (some a) * (fderiv ℝ (g a.val) x) (z : E) := by
+        simp [hL0_def, add_apply, sum_apply, smul_apply, smul_eq_mul]
+      rw [hL0_apply]
+      exact hsum
+    -- Hence `ker H ≤ ker L0`.
+    have hker_le : LinearMap.ker (↑H : E →ₗ[ℝ] (Fin p → ℝ)) ≤ LinearMap.ker (L0.toLinearMap) := by
+      intro v hv
+      rw [LinearMap.mem_ker] at hv ⊢
+      have hvK : v ∈ K := LinearMap.mem_ker.mpr hv
+      exact hL0_vanish ⟨v, hvK⟩
+    -- Rewrite `ker H` as an `iInf` of kernels for the Mathlib span lemma.
+    have hker_eq : LinearMap.ker (↑H : E →ₗ[ℝ] (Fin p → ℝ))
+        = ⨅ j, LinearMap.ker ((fderiv ℝ (h j) x).toLinearMap) := by
+      have hcoe : (↑H : E →ₗ[ℝ] (Fin p → ℝ))
+          = LinearMap.pi (fun j => ((fderiv ℝ (h j) x).toLinearMap)) := by
+        ext v j
+        change H v j = (LinearMap.pi (fun j => ((fderiv ℝ (h j) x).toLinearMap))) v j
+        rw [hH_apply, LinearMap.pi_apply]
+        rfl
+      rw [hcoe, LinearMap.ker_pi]
+    have hiInf_le : (⨅ j, LinearMap.ker ((fderiv ℝ (h j) x).toLinearMap))
+        ≤ LinearMap.ker (L0.toLinearMap) := by
+      rw [← hker_eq]
+      exact hker_le
+    -- Mathlib: vanishing on the joint kernel puts `L0` in the span; get `mu0`.
+    have hmem := mem_span_of_iInf_ker_le_ker hiInf_le
+    obtain ⟨mu0, hmu0⟩ := (Submodule.mem_span_range_iff_exists_fun ℝ).mp hmem
+    -- Lift the linear relation to continuous linear maps.
+    have hL0_eq : L0 = ∑ j, mu0 j • (fderiv ℝ (h j) x) := by
+      ext v
+      have h := congrArg (fun L : E →ₗ[ℝ] ℝ => L v) hmu0
+      simpa [sum_apply, smul_eq_mul] using h.symm
+    -- Stationarity at `q none`-scale, with free equality multipliers `mu' = -mu0`.
+    set mu' : Fin p → ℝ := fun j => -mu0 j with hmu'_def
+    have hstat0 : ((q none) • (fderiv ℝ f x) + (∑ a : A, (q (some a)) • (fderiv ℝ (g a.val) x)))
+        + (∑ j, mu' j • (fderiv ℝ (h j) x)) = 0 := by
+      have hL0_def' : L0 = (q none) • (fderiv ℝ f x)
+          + ∑ a : A, (q (some a)) • (fderiv ℝ (g a.val) x) := rfl
+      have hsum_neg : (∑ j, mu' j • (fderiv ℝ (h j) x))
+          = -(∑ j, mu0 j • (fderiv ℝ (h j) x)) := by
+        rw [← Finset.sum_neg_distrib]
+        apply Finset.sum_congr rfl
+        intro j _
+        simp [hmu'_def, neg_smul]
+      rw [← hL0_def', hL0_eq, hsum_neg, add_neg_cancel]
+    -- LICQ in terms of `A`.
+    have hLICQ_A : LinearIndependent ℝ (Sum.elim (fun j : Fin p => fderiv ℝ (h j) x)
+        (fun a : A => fderiv ℝ (g a.val) x)) := hLICQ
+    -- `q none ≠ 0`: else all multipliers vanish, contradicting `q ≠ 0`.
+    have hq_none_ne : q none ≠ 0 := by
+      intro h0
+      have hrel : (∑ a : A, (q (some a)) • (fderiv ℝ (g a.val) x))
+          + (∑ j, mu' j • (fderiv ℝ (h j) x)) = 0 := by
+        simpa [h0] using hstat0
+      set c : (Fin p ⊕ A) → ℝ := Sum.elim mu' (fun a => q (some a)) with hc_def
+      have hsum_eq : ∑ s : (Fin p ⊕ A), c s • (Sum.elim (fun j : Fin p => fderiv ℝ (h j) x)
+          (fun a : A => fderiv ℝ (g a.val) x) s) = 0 := by
+        rw [Fintype.sum_sum_type]
+        simp only [hc_def, Sum.elim_inl, Sum.elim_inr]
+        rw [add_comm]
+        exact hrel
+      have hc_zero : c = 0 := by
+        have hiff := Fintype.linearIndependent_iff (R := ℝ)
+          (v := Sum.elim (fun j : Fin p => fderiv ℝ (h j) x)
+            (fun a : A => fderiv ℝ (g a.val) x))
+        have h0 := (hiff.mp hLICQ_A) _ hsum_eq
+        funext s
+        exact h0 s
+      have hq_some : ∀ a, q (some a) = 0 := by
+        intro a
+        have hcongr := congrFun hc_zero (Sum.inr a)
+        simpa [hc_def] using hcongr
+      have hq_eq_zero : q = 0 := by
+        funext o
+        cases o with
+        | none => exact h0
+        | some a => exact hq_some a
+      exact hq_ne hq_eq_zero
+    have hq_pos : 0 < q none := lt_of_le_of_ne (hq_nonneg none) (Ne.symm hq_none_ne)
+    -- Normalized stationarity over the active set.
+    have hstatA : fderiv ℝ f x
+        + (∑ a : A, (q (some a) / q none) • (fderiv ℝ (g a.val) x))
+        + (∑ j, (mu' j / q none) • (fderiv ℝ (h j) x)) = 0 := by
+      have hsmul : ((q none)⁻¹ : ℝ) • ((((q none) • (fderiv ℝ f x)
+          + (∑ a : A, (q (some a)) • (fderiv ℝ (g a.val) x)))
+          + (∑ j, mu' j • (fderiv ℝ (h j) x)))) = 0 := by
+        rw [hstat0, smul_zero]
+      simp only [smul_add, Finset.smul_sum, smul_smul] at hsmul
+      have hcoeff_f : ((q none)⁻¹ * q none) • (fderiv ℝ f x) = fderiv ℝ f x := by
+        rw [inv_mul_cancel₀ hq_none_ne, one_smul]
+      have hcoeff_g : ∀ a : A, (((q none)⁻¹ * q (some a)) • (fderiv ℝ (g a.val) x))
+          = ((q (some a) / q none) • (fderiv ℝ (g a.val) x)) := by
+        intro a
+        rw [div_eq_mul_inv, mul_comm]
+      have hcoeff_h : ∀ j, (((q none)⁻¹ * mu' j) • (fderiv ℝ (h j) x))
+          = ((mu' j / q none) • (fderiv ℝ (h j) x)) := by
+        intro j
+        rw [div_eq_mul_inv, mul_comm]
+      simp only [hcoeff_f, hcoeff_g, hcoeff_h] at hsmul
+      -- `hsmul` now matches the goal up to association; close by linear combination shape
+      have hassoc : ((fderiv ℝ f x + (∑ a : A, (q (some a) / q none) • (fderiv ℝ (g a.val) x)))
+          + (∑ j, (mu' j / q none) • (fderiv ℝ (h j) x)))
+          = (fderiv ℝ f x + (∑ a : A, (q (some a) / q none) • (fderiv ℝ (g a.val) x))
+            + (∑ j, (mu' j / q none) • (fderiv ℝ (h j) x))) := rfl
+      rw [← hassoc]
+      exact hsmul
+    -- Extend the inequality multipliers by zero to inactive constraints.
+    set lam : Fin m → ℝ := fun i => if hi : g i x = 0 then (q (some ⟨i, hi⟩) / q none) else 0
+      with hlam_def
+    set muF : Fin p → ℝ := fun j => mu' j / q none with hmuF_def
+    refine ⟨lam, muF, ?_, ?_, ?_⟩
+    · -- Nonnegativity.
+      intro i
+      by_cases hi : g i x = 0
+      · have hlam_i : lam i = q (some ⟨i, hi⟩) / q none := by simp [hlam_def, hi]
+        rw [hlam_i]
+        exact div_nonneg (hq_nonneg _) (le_of_lt hq_pos)
+      · have hlam_i : lam i = 0 := by simp [hlam_def, hi]
+        rw [hlam_i]
+    · -- Complementary slackness.
+      intro i
+      by_cases hi : g i x = 0
+      · have hlam_i : lam i = q (some ⟨i, hi⟩) / q none := by simp [hlam_def, hi]
+        rw [hlam_i, hi, mul_zero]
+      · have hlam_i : lam i = 0 := by simp [hlam_def, hi]
+        rw [hlam_i, zero_mul]
+    · -- Stationarity: the `Fin m` sum reduces to the active sum.
+      have hsum_eq : (∑ i : Fin m, lam i • (fderiv ℝ (g i) x))
+          = ∑ a : A, (q (some a) / q none) • (fderiv ℝ (g a.val) x) := by
+        -- First reduce `univ` to the active filter, then biject with `A`.
+        set s : Finset (Fin m) := Finset.filter (fun i => g i x = 0) Finset.univ with hs_def
+        have hsub : s ⊆ Finset.univ := Finset.filter_subset _ _
+        have hvanish : ∀ i ∈ Finset.univ, i ∉ s → lam i • (fderiv ℝ (g i) x) = 0 := by
+          intro i _ hi
+          have hne : ¬ g i x = 0 := by
+            intro hcon
+            apply hi
+            rw [hs_def, Finset.mem_filter]
+            exact ⟨Finset.mem_univ i, hcon⟩
+          have hlam0 : lam i = 0 := by simp [hlam_def, hne]
+          rw [hlam0, zero_smul]
+        have hsub_eq : (∑ i ∈ s, lam i • (fderiv ℝ (g i) x))
+            = ∑ i ∈ Finset.univ, lam i • (fderiv ℝ (g i) x) :=
+          Finset.sum_subset hsub hvanish
+        have hbij : (∑ a ∈ Finset.univ, (q (some a) / q none) • (fderiv ℝ (g a.val) x))
+            = ∑ i ∈ s, lam i • (fderiv ℝ (g i) x) := by
+          apply Finset.sum_bij (fun a _ => (a.val : Fin m))
+          · -- lands in `s`
+            intro a _
+            rw [hs_def, Finset.mem_filter]
+            exact ⟨Finset.mem_univ _, a.property⟩
+          · -- injective
+            intro a₁ _ a₂ _ h12
+            exact Subtype.ext h12
+          · -- surjective onto `s`
+            intro b hb
+            rw [hs_def, Finset.mem_filter] at hb
+            exact ⟨⟨b, hb.2⟩, Finset.mem_univ _, rfl⟩
+          · -- values agree
+            intro a _
+            have hlam_a : lam a.val = q (some a) / q none := by
+              have ha : g a.val x = 0 := a.property
+              simp [hlam_def, ha]
+            rw [hlam_a]
+        -- Combine: `univ Fin m = s = univ A` (as sums).
+        have huniv_eq : (∑ i : Fin m, lam i • (fderiv ℝ (g i) x))
+            = ∑ i ∈ s, lam i • (fderiv ℝ (g i) x) := by
+          rw [← hsub_eq]
+        have hA_eq : (∑ i ∈ s, lam i • (fderiv ℝ (g i) x))
+            = ∑ a : A, (q (some a) / q none) • (fderiv ℝ (g a.val) x) := by
+          rw [← hbij]
+        rw [huniv_eq, hA_eq]
+      rw [hsum_eq]
+      -- Goal now matches `hstatA` up to `muF` unfolding (definitional).
+      simpa [hmuF_def] using hstatA
 
 end MathlibExt.Analysis.Convex.KarushKuhnTucker

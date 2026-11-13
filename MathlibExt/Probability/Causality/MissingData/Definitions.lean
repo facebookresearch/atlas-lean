@@ -59,9 +59,13 @@ inverse-response weighting) and nonidentification counterexamples; covariates th
 missing; monotone or longitudinal missingness patterns.
 
 `MissingAtRandomCondIndepFun` assumes a standard Borel sample space (inherited from Mathlib's
-`CondIndepFun`) and is not bridged to the general conditional-expectation form
-`μ[R.indicator Y | m] =ᵐ μ[R.indicator 1 | m] * μ[Y | m]` for an arbitrary sub-σ-algebra `m`,
-the hypothesis of the general inverse-weighting theorem `integral_ipw_treated_condExp`.
+`CondIndepFun`). Its conditional-expectation consequences are proved in
+`MissingData.GeneralIPW`, not here: `condExp_inter_preimage_ae_eq_mul_of_condIndepFun` gives the
+set-wise form `P(R ∩ {Y ∈ S} | m) = P(R | m) P(Y ∈ S | m)` for `CondIndepFun` given any
+sub-σ-algebra `m` (for `MissingAtRandomCondIndepFun`, `m = σ(X)`), and
+`condExp_indicator_ae_eq_mul_of_mar` turns it into the mean form
+`μ[R.indicator Y | m] =ᵐ μ[R.indicator 1 | m] * μ[Y | m]`, the hypothesis of the general
+inverse-weighting theorem `integral_ipw_treated_condExp`.
 
 ## References
 
@@ -143,7 +147,9 @@ def MissingAtRandomCondIndepFun [StandardBorelSpace Ω] (μ : Measure Ω) [IsFin
 /-! ### MCAR through the response event -/
 
 omit [MeasurableSpace 𝒴] in
-private lemma measurable_mem_set {R : Set Ω} (hR : MeasurableSet R) :
+/-- The response indicator `ω ↦ ω ∈ R` of a measurable event is a measurable `Prop`-valued
+random variable. -/
+lemma measurable_mem_set {R : Set Ω} (hR : MeasurableSet R) :
     Measurable (· ∈ R : Ω → Prop) :=
   measurableSet_setOfPred.1 hR
 
@@ -153,7 +159,7 @@ private lemma preimage_mem_true (R : Set Ω) : (· ∈ R) ⁻¹' {True} = R := b
 
 omit [MeasurableSpace 𝒴] in
 /-- A set of propositions pulls back under `ω ↦ ω ∈ R` to `∅`, `R`, `Rᶜ` or everything. -/
-private lemma preimage_mem_cases (R : Set Ω) (s : Set Prop) :
+lemma preimage_mem_cases (R : Set Ω) (s : Set Prop) :
     (· ∈ R) ⁻¹' s = ∅ ∨ (· ∈ R) ⁻¹' s = R ∨ (· ∈ R) ⁻¹' s = Rᶜ ∨
       (· ∈ R) ⁻¹' s = Set.univ := by
   by_cases h1 : True ∈ s <;> by_cases h2 : False ∈ s

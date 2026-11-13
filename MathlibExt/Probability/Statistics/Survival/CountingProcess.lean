@@ -515,7 +515,7 @@ theorem strictPast_le_history (t : ℝ) :
 
 /-- The σ-algebra of sets that either contain `E` or miss it. -/
 @[instance_reducible]
-private def trivialOn (E : Set Ω) : MeasurableSpace Ω where
+def trivialOn (E : Set Ω) : MeasurableSpace Ω where
   MeasurableSet' A := A ∩ E = ∅ ∨ E ⊆ A
   measurableSet_empty := Or.inl (empty_inter E)
   measurableSet_compl A hA := by
