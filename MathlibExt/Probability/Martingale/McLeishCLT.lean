@@ -89,9 +89,12 @@ applies the one-dimensional theorem to the weighted arrays `a n k X n k`,
 * T82 assumes the predictable quadratic variation `∑ E[ξ n j² | 𝓕 n j] → t`, while
   `tendstoInDistribution_fdd_martingaleDifference_floor` also asks for the realized
   `∑ ξ n j² → t` (`hRQV`). `tendstoInDistribution_fdd_martingaleDifference_floor_condVar` in
-  `MathlibExt.Probability.Martingale.ConditionalVarianceCLT` drops `hRQV`. One gap remains in
-  both: T82 assumes `AEMeasurable Zc`, while these theorems need `Measurable Zc` for the limit
-  `Zc : Ω' → C([0,1])`.
+  `MathlibExt.Probability.Martingale.ConditionalVarianceCLT` drops `hRQV`. Two inputs that T82
+  does not assume remain hypotheses of both: `hZm`, measurability of the limit
+  `Zc : Ω' → C([0,1])` (T82 assumes only `AEMeasurable Zc`), and `hZ`, that `Zc` has the
+  centered Gaussian finite-dimensional laws of Brownian motion (covariance `min s u`). T82 takes
+  an arbitrary a.e.-measurable `Zc` together with `hT81`, so supplying `hT81` from these
+  theorems also needs a proof that the chosen limit has these Brownian laws.
 
 ## Public helpers
 
@@ -99,9 +102,7 @@ Public for reuse in other martingale files: `martingale_increment` (increments o
 are martingale differences), `tendstoInMeasure_add` (convergence in probability is additive),
 and `sum_range_cut_le` (the pointwise bound behind a predictable cut: terms kept while the
 running sum stays `≤ K` add up to at most `K`).
-`MathlibExt.Probability.Martingale.ConditionalVarianceCLT` still carries private copies
-(`martingale_increment'`, `tendstoInMeasure_add'`, `sum_cut_le`), whose deletion is a tracked
-follow-up.
+`MathlibExt.Probability.Martingale.ConditionalVarianceCLT` uses all three.
 
 ## Sources
 
