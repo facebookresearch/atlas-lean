@@ -11,20 +11,45 @@ module
 public import Mathlib.Data.List.Basic
 public import Mathlib.Data.Nat.Basic
 
+/-!
+# Linearizability and the projection direction of locality
+
+A concurrent history is a list of completed operations (`OpRec`), each with the positions of its
+invocation and response in the global event order. It is linearizable against a sequential
+specification when some permutation of its operations respects the real-time order and is legal
+for every object (`Linearizable`). `linearizable_project` proves the projection direction of
+Herlihy and Wing's locality: the projection of a linearizable history onto one object is
+linearizable, provided the empty sequence is legal for every object.
+
+## References
+
+* M. P. Herlihy and J. M. Wing, *Linearizability: a correctness condition for concurrent
+  objects*, ACM Transactions on Programming Languages and Systems 12(3) (1990), 463–492.
+-/
+
 @[expose] public section
 
+namespace Cslib.Distributed.Linearizability
 
 /-- One completed operation in a concurrent history: object,
 operation, argument, return value, and the positions `lo < hi`
 of its invocation and response in the global event order
 (positions are abstract; only their order matters). -/
 structure OpRec where
+  /-- The object the operation acts on. -/
   obj : ℕ
+  /-- The operation. -/
   op : ℕ
+  /-- The argument. -/
   arg : ℕ
+  /-- The return value. -/
   ret : ℕ
+  /-- The position of the invocation. -/
   lo : ℕ
+  /-- The position of the response. -/
   hi : ℕ
+  /-- The invocation precedes the response. -/
+  lo_lt_hi : lo < hi
 deriving DecidableEq, Repr
 
 /-- A sequential specification: for each object, the set of
@@ -100,3 +125,4 @@ theorem linearizable_project (spec : SeqSpec)
       rw [hempty]
       simpa using hspec o'
 
+end Cslib.Distributed.Linearizability
