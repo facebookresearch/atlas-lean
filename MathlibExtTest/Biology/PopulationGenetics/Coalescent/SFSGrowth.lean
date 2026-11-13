@@ -22,7 +22,9 @@ satisfiability of the strict-monotonicity hypotheses, and a non-vacuity witness 
 growth spectrum theorems: sample size `2`, the product model of the Kingman holding times and
 the constant topology from the `SiteFrequencySpectrum` tests, `ρ = 1`, and `ξ i` equal to its
 conditional mean. On the witness `E ξ₁` is computed once directly from the definitions and
-once through `integral_sfs_growth`; the two agree, and the result is `θ c₂ < θ`.
+once through `integral_sfs_growth`; the two agree, and the result is `θ c₂ < θ`. A `θ = 0`
+version of the witness satisfies `sfsCondMoments_growth` and exercises
+`covariance_count_growth`.
 -/
 
 @[expose] public section
@@ -35,6 +37,7 @@ open MathlibExt.Biology.PopulationGenetics.Coalescent
 open MathlibExt.Biology.PopulationGenetics.Coalescent.SiteFrequencySpectrum
 open MathlibExt.Biology.PopulationGenetics.Coalescent.VariableSFS
 open MathlibExt.Biology.PopulationGenetics.Coalescent.SFSGrowth
+open MathlibExt.Biology.PopulationGenetics.Coalescent.SFSCovariance
 open MathlibExtTest.Biology.PopulationGenetics.Coalescent.SiteFrequencySpectrum
 
 /-! ### The intensity and the time change, from the definitions -/
@@ -173,11 +176,29 @@ example (θ : ℝ) : (piMeasure 2)[xiG θ 1] = θ * firstCoalMean (expGrowthSize
   norm_num [variableSFS, sfsKernel]
   ring
 
-/-- The strict bound on the witness's epoch: `0 < E T^1_2 < 1 = 1 / C(2,2)`. -/
+/-- The strict bound on the witness's epoch: `E T^1_2 < 1 = 1 / C(2,2)`. -/
 example : (piMeasure 2)[growthTimes K2 1 2] < 1 := by
   have h := integral_growthTimes_lt (K := K2) one_pos measurable_K2
     (show 2 ∈ Icc 2 2 from mem_Icc.2 ⟨le_rfl, le_rfl⟩)
   simpa using h
+
+/-- **Non-vacuity of `sfsCondMoments_growth`**: on the witness with `θ = 0` and zero counts,
+every moment hypothesis holds. -/
+lemma sfsCondMoments_growth_K2 : SFSCondMoments (piMeasure 2) (MeasurableSpace.comap tau2 ⊤ ⊔
+    MeasurableSpace.comap (fun ω k => growthTimes K2 1 k ω) MeasurableSpace.pi) 0
+    (fun _ _ => 0) (fun i ω => sfsLength 2 i (tau2 ω) (fun k => growthTimes K2 1 k ω)) :=
+  sfsCondMoments_growth zero_le_one measurable_K2 comap_tau2_le law_tau2
+    (fun _ => memLp_const 0) (fun _ => by simp) (fun _ _ => by simp)
+
+/-- **Non-vacuity of `covariance_count_growth`**: on the `θ = 0` witness its right-hand side
+is `0`, matching the covariance of the zero counts computed directly. -/
+example : (if (1 : ℕ) = 1 then variableSFS 0 2 (fun k => (piMeasure 2)[growthTimes K2 1 k]) 1
+      else 0) + (0 / 2 : ℝ) ^ 2 *
+      cov[fun ω => sfsLength 2 1 (tau2 ω) (fun k => growthTimes K2 1 k ω),
+        fun ω => sfsLength 2 1 (tau2 ω) (fun k => growthTimes K2 1 k ω); piMeasure 2] = 0 := by
+  rw [← covariance_count_growth zero_le_one measurable_K2 comap_tau2_le law_tau2 indep_tau2
+    sfsCondMoments_growth_K2 le_rfl (by norm_num) 1]
+  simp [covariance]
 
 end Witness
 
