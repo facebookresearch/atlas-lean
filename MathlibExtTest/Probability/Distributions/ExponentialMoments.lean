@@ -14,7 +14,8 @@ public import MathlibExt.Probability.Distributions.ExponentialMoments
 # Tests for moments of the exponential distribution
 
 Concrete instances: mean, second moment and variance at rate `2`, the third moment at rate `1`,
-the mean of a random variable with law `Exp 3`, and the integrability statements.
+the mean of a random variable with law `Exp 3`, the integrability statements, and competing
+clocks at rates `(1, 1)` and `(1, 3)`.
 -/
 
 @[expose] public section
@@ -54,6 +55,18 @@ example : ∫ x, x ^ 3 ∂(expMeasure 1) = 6 := by
 /-- A random variable with law `Exp 3` has mean `1/3`. -/
 example {X : Ω → ℝ} (hX : HasLaw X (expMeasure 3) μ) : μ[X] = 1 / 3 := by
   rw [hX.integral_eq_inv_of_expMeasure (by norm_num)]
+  norm_num
+
+/-- Competing clocks of equal rate ring first with probability `1/2`. -/
+example : ((expMeasure 1).prod (expMeasure 1)).real {p : ℝ × ℝ | p.1 < p.2} = 1 / 2 := by
+  rw [prod_expMeasure_real_lt one_pos one_pos]
+  norm_num
+
+/-- Independent clocks `X ~ Exp 1` and `Y ~ Exp 3`: `X` rings first with probability `1/4`. -/
+example [IsProbabilityMeasure μ] {X Y : Ω → ℝ} (hX : HasLaw X (expMeasure 1) μ)
+    (hY : HasLaw Y (expMeasure 3) μ) (hXY : IndepFun X Y μ) :
+    μ.real {ω | X ω < Y ω} = 1 / 4 := by
+  rw [measureReal_lt_of_hasLaw_expMeasure one_pos (by norm_num) hX hY hXY]
   norm_num
 
 end MathlibExtTest.Probability.Distributions.ExponentialMoments

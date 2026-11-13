@@ -13,6 +13,7 @@ public import Mathlib.Algebra.Squarefree.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.NumberTheory.NumberField.ClassNumber
 public import Mathlib.NumberTheory.Pell
+public import MathlibExt.NumberTheory.GeneralPellBisectors
 
 namespace MetaMathlibExt
 
@@ -372,17 +373,6 @@ Rational Slopes*, INTEGERS 24 (2024), Article A111, Theorem 11(d) (`integers-202
 public theorem_wanted negPellG_dvd_iff (d : ℕ) (hd : 1 < d)
     (hneg : ∃ x y : ℤ, x ^ 2 - d * y ^ 2 = -1) (m n : ℕ) (hn : 0 < n) (hnm : n ≤ m) :
     negPellG d n ∣ negPellG d m ↔ n ∣ m
-
-/-- If `d ≡ 1 (mod 4)` and `z ≡ 2 (mod 4)`, then `|x² - d y²| = z` has no integral solutions.
-
-The source's `z > 1` is not needed. The second sentence of part (a) (on `S(d)` and `l_2`) is not
-formalized.
-
-Source: Takashi Hirotsu, *General Pell's Equations and Angle Bisectors between Planar Lines with
-Rational Slopes*, INTEGERS 24 (2024), Article A111, Lemma 1(a), first sentence
-(`integers-2024-A111-lem-1`). -/
-public theorem_wanted abs_sq_sub_mul_sq_ne_of_two_mod_four (d z : ℤ) (hd : d % 4 = 1)
-    (hz : z % 4 = 2) (x y : ℤ) : |x ^ 2 - d * y ^ 2| ≠ z
 
 /-- If `d ≡ 1 (mod 8)` and `z ≡ 4 (mod 8)`, then every integral solution of `|x² - d y²| = z` is a
 pair of even integers.

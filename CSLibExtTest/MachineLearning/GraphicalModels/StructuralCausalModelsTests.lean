@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.MachineLearning.GraphicalModels.StructuralCausalModels
+public meta import CSLibExt.MachineLearning.GraphicalModels.StructuralCausalModels
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import Mathlib.Tactic.FinCases
@@ -41,7 +42,10 @@ Surgery on the Boolean xor model above (`x_0 = u_0`, `x_1 = x_0 xor u_1`, `P(u_0
 `P(u_1) = 1/3`):
 
 * after `do(X_0 = true)` the law of `(true, false)` is `1/3` and of `(false, false)` is `0`;
-* after surgery on the set `{0}` with value `true` the law of `(true, false)` is `1/3`.
+* after surgery on the set `{0}` with value `true` the law of `(true, false)` is `1/3`;
+* node `1` starts with the nonempty parent set `{0}`; after `do(X_1 = false)`, and after surgery
+  on the set `{0, 1}`, its parent set is empty and its solution is `false` at every noise value;
+* after `do(X_1 = false)` the law of `(true, false)` is `1/4`.
 
 Counterfactuals in the same xor model, with evidence `X_1 = false` and `do(X_0 = false)`:
 
@@ -187,6 +191,12 @@ example (z : testPa 1 → Bool) (hz : z testJ0 = true) :
     ((testM.inducedBayesNet testMu).cpt 1 z).weights false = 1/3 :=
   test_cpt1 z hz
 
+/-- `inducedLaw_eq_joint` applies to noise types that are not finite: a finitely
+supported law on `ℕ` needs no `Fintype ℕ` instance. -/
+example (M : FiniteSCM Bool 1 (fun _ => ℕ)) (μ : (k : Fin 1) → StdSimplex ℝ ℕ)
+    (x : Fin 1 → Bool) : M.inducedLaw μ x = (M.inducedBayesNet μ).joint x :=
+  M.inducedLaw_eq_joint μ x
+
 example : testM.inducedLaw testMu ![true, false] = 1/12 := by
   have x0 : ![true, false] (0 : Fin 2) = true := by simp
   have x1 : ![true, false] (1 : Fin 2) = false := by simp
@@ -313,6 +323,22 @@ example : testNet.responseSCM.inducedLaw testNet.responseLaw ![true, true] = (1/
   norm_num
 
 end ResponseRealization
+
+private def chainPa {n : ℕ} (k : Fin n) : Finset (Fin k) :=
+  if h : 0 < k.val then {⟨k.val - 1, Nat.sub_lt h (by decide)⟩} else ∅
+
+private def chainModel (n : ℕ) : FiniteSCM ℕ n (fun _ => Unit) where
+  pa := chainPa
+  f k z _ := if h : 0 < k.val then
+    z ⟨⟨k.val - 1, Nat.sub_lt h (by decide)⟩, by simp [chainPa, h]⟩ + 1
+    else 1
+
+-- Exercise the compiled solver at increasing sizes, not just its equations.
+#eval show IO Unit from do
+  for n in [7, 15, 31, 63] do
+    let result := (chainModel (n + 1)).solve (fun _ => ()) (Fin.last n)
+    unless result == n + 1 do
+      throw (IO.userError s!"chain of length {n + 1}: got {result}")
 
 namespace Surgery
 
@@ -469,6 +495,60 @@ example : (M.doSet {0} ![true, true]).inducedLaw μ ![true, false] = 1 / 3 := by
     simp at hlt
     omega
   exact x_castLE_zero _ _ _ hj0
+
+/-- The node-0 push-forward factor at `true` is `1/4`: node 0 copies its noise. -/
+theorem map0_weights (g : paXor 0 → Bool) : ((μ 0).map (fXor 0 g)).weights true = 1 / 4 := by
+  have hid : fXor 0 g = id := funext fun v => fXor_zero g v
+  have hμ0 : μ 0 = μ0 := by simp [μ]
+  rw [hid, StdSimplex.map_id, hμ0, μ0_true]
+
+/-- Before surgery, node `1` has the nonempty parent set `{0}`. -/
+example : (M.pa 1).Nonempty := by
+  have h10 : (1 : Fin 2) ≠ 0 := by decide
+  simp only [M, paXor, dite_eq_right h10]
+  exact Finset.singleton_nonempty _
+
+/-- Surgery on node `1` deletes its parents. -/
+example : (M.doNode 1 false).pa 1 = ∅ := by
+  simp [FiniteSCM.doNode]
+
+/-- Surgery on a set containing node `1` deletes its parents. -/
+example : (M.doSet {0, 1} ![true, false]).pa 1 = ∅ := by
+  simp [FiniteSCM.doSet]
+
+/-- After surgery on node `1`, its solution is the intervention value at every noise value. -/
+example (u : (k : Fin 2) → Bool) : (M.doNode 1 false).solve u 1 = false := by
+  have h := (M.doNode 1 false).solve_isSolution u 1
+  rw [M.doNode_f_of_eq] at h
+  exact h
+
+/-- After surgery on a set containing node `1`, its solution is the intervention value. -/
+example (u : (k : Fin 2) → Bool) : (M.doSet {0, 1} ![true, false]).solve u 1 = false := by
+  have h1W : (1 : Fin 2) ∈ ({0, 1} : Finset (Fin 2)) := by simp
+  have h := (M.doSet {0, 1} ![true, false]).solve_isSolution u 1
+  rw [M.doSet_f_of_mem _ _ h1W] at h
+  simpa using h
+
+/-- After `do(X_1 = false)`, the law of `(true, false)` is the probability `1/4` of
+`X_0 = true`. -/
+example : (M.doNode 1 false).inducedLaw μ ![true, false] = 1 / 4 := by
+  have h01 : (0 : Fin 2) ≠ 1 := by decide
+  have hx0 : (![true, false] : Fin 2 → Bool) 0 = true := by simp
+  have hfac1 : ∀ z : ((M.inducedBayesNet μ).intervene 1 false).pa 1 → Bool,
+      (((M.inducedBayesNet μ).intervene 1 false).cpt 1 z).weights
+        ((![true, false] : Fin 2 → Bool) 1) = 1 := by
+    intro z
+    have hcpt : ((M.inducedBayesNet μ).intervene 1 false).cpt 1 z
+        = StdSimplex.single false := by
+      simp [BayesNet.intervene]
+    rw [hcpt]
+    have hx1 : (![true, false] : Fin 2 → Bool) 1 = false := by simp
+    rw [hx1]
+    simp [StdSimplex.weights_single]
+  rw [FiniteSCM.inducedLaw_doNode, BayesNet.joint_eq_prod, Fin.prod_univ_two, hfac1, mul_one,
+    hx0]
+  simp only [BayesNet.intervene, dite_eq_right h01, FiniteSCM.inducedBayesNet, M]
+  exact map0_weights _
 
 end Surgery
 
