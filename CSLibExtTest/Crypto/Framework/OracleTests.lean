@@ -21,6 +21,9 @@ public import Mathlib.Data.ZMod.Basic
   `run_congr` and `run_bind` are the framework's declarations, not copies.
 * `evalPMF` against a deterministic oracle is the point mass at the run; a randomized oracle's
   transcripts respect the query bound.
+* `evalLog_pure_comp` computes `twice`'s transcript against a deterministic oracle.
+* `isQueryBoundedWith_mono`: `twice` leaves one query of a budget of `3` (but not of `2`), and the
+  two-phase bound lifts to budget `5`.
 * `runStateful` answers the `i`-th query with a counter-indexed oracle and records the transcript
   in query order; `queryAt` reads the `j`-th query.
 -/
@@ -71,6 +74,21 @@ example : ∀ p ∈
     (evalLog (fun _ : ZMod 5 => Cslib.Probability.PMF.uniformOfFintype (ZMod 5)) twice).support,
     p.2.length ≤ 2 :=
   length_le_of_mem_support_evalLog _ (q := 2) fun _ _ => trivial
+
+/-- `evalLog_pure_comp` gives the transcript from the deterministic run and its queries. -/
+example : evalLog (fun x : ZMod 5 => PMF.pure (x + 1)) twice = PMF.pure (2, [(0, 1), (1, 2)]) := by
+  rw [evalLog_pure_comp]
+  rfl
+
+/-- `twice` makes two queries out of a budget of `3`, leaving one for the next phase. -/
+theorem twice_withOne : IsQueryBoundedWith (fun _ j => 1 ≤ j) 3 twice := fun _ _ => le_rfl
+
+/-- With a budget of `2`, no query is left for the next phase. -/
+example : ¬ IsQueryBoundedWith (fun _ j => 1 ≤ j) 2 twice := fun h =>
+  Nat.not_succ_le_zero 0 (h 0 0)
+
+example : IsQueryBoundedWith (fun _ j => 1 ≤ j) 5 twice :=
+  isQueryBoundedWith_mono (fun _ _ _ hj h => le_trans h hj) (by norm_num) twice_withOne
 
 /-! ### Stateful oracle runs (`OracleComp.runStateful`) -/
 
