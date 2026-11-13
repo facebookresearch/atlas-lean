@@ -858,7 +858,19 @@ theorem counterfactualProb_true {α : Type*} [Fintype α] {n : ℕ} {U : Fin n �
   rw [sum_filter_counterfactual_fiber M μ k a F]
   refine Finset.sum_congr rfl fun x _ => ?_
   rw [← M.inducedLaw_doNode μ k a x]
-  rfl
+  unfold inducedLaw
+  rw [Finset.sum_filter]
+  symm
+  refine (Fintype.sum_subset fun u hu => ?_).trans (Finset.sum_congr rfl fun u _ => ?_)
+  · rw [Fintype.mem_piFinset]
+    intro j
+    by_contra hj
+    apply hu
+    have hw : noiseWeight μ u = 0 := by
+      unfold noiseWeight
+      exact Finset.prod_eq_zero (Finset.mem_univ j) (Finsupp.notMem_support_iff.mp hj)
+    simp [hw]
+  · by_cases h : (M.doNode k a).solve u = x <;> simp [h, counterfactual]
 
 end FiniteSCM
 
