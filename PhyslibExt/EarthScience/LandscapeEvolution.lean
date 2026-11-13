@@ -39,6 +39,17 @@ no claim about real landscapes is made.
 
 ## iv. References
 
+- J. J. Roering, J. W. Kirchner and W. E. Dietrich, "Evidence for nonlinear,
+  diffusive sediment transport on hillslopes and implications for landscape
+  morphology", *Water Resources Research* 35(3) (1999), 853–870, Section 1
+  (Introduction), equations (1)–(3), p. 854: linear diffusion (sediment flux
+  `-K_lin ∇z` with a constant diffusivity `K_lin`), mass balance with rock
+  uplift at a constant rate `C₀`, and at steady state the constant curvature
+  `∇²z = -(ρr / ρs) C₀ / K_lin` between divides and channels, i.e. a parabolic
+  profile. In one dimension this is `z_t = U + D * z_xx` with `D = K_lin` and
+  `U = (ρr / ρs) C₀` (rock-to-sediment bulk density ratio times the uplift
+  rate); here the channels hold base level `z = 0` at `x = ±L` and the divide
+  is at `x = 0`.
 - `HasDerivAt.const_mul` / `sub` / `div_const`, `hasDerivAt_pow`, `iteratedDeriv_succ` in Mathlib.
 -/
 
