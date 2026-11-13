@@ -34,18 +34,19 @@ shape left free (a nuisance parameter), and the profile likelihood for the shape
   `nbSection_maximizer_unique`: under an injective design a section maximizer is unique (it is a
   maximizer of the fixed-shape likelihood, `nbLogLik_maximizer_unique`).
   `nbGradient_eq_zero_of_isMaxOn_section`: it solves the fixed-shape score equation.
-* `isMaxOn_nbProfileLogLik_of_isMaxOn` and `isMaxOn_nbJointLogLik_of_isMaxOn_profile`: `(β̂, θ̂)`
-  maximizes the joint likelihood over `θ > 0` iff `θ̂` maximizes the profile and `β̂` maximizes
-  the `θ̂`-section.
+* `isMaxOn_nbProfileLogLik_of_isMaxOn` and `isMaxOn_nbJointLogLik_of_isMaxOn_profile`: for
+  `θ̂ > 0`, `(β̂, θ̂)` maximizes the joint likelihood over `θ > 0` iff `θ̂` maximizes the profile
+  and `β̂` maximizes the `θ̂`-section.
 * `hasDerivAt_nbProfileLogLik` (envelope theorem): along a differentiable path of section
   maximizers, the profile score is the shape score at the section maximizer.
 
 ## Composite likelihood-ratio statistic (deterministic)
 
 * `nbCompositeLRStat X o y p̂ β₀ θ̃ = 2 (ℓ(p̂) - ℓ(β₀, θ̃))`. `nbCompositeLRStat_nonneg`: it is
-  `≥ 0` when `p̂` is a joint maximizer. `nbCompositeLRStat_eq_profile`: it equals
-  `2 (ℓ_prof(θ̂) - ℓ(β₀, θ̃))`. `nbCompositeLRStat_eq_sub`: it is the full simple-null statistic
-  minus the restricted simple-null statistic.
+  `≥ 0` when `ℓ(p̂)` dominates `ℓ` on `θ > 0`, for instance at a joint maximizer.
+  `nbCompositeLRStat_eq_profile`: it equals `2 (ℓ_prof(θ̂) - ℓ(β₀, θ̃))`.
+  `nbCompositeLRStat_eq_sub`: it is the full simple-null statistic minus the restricted
+  simple-null statistic.
 * `sumElim_dotProduct_fromBlocks_mulVec`, `nbJointFisherInfo_inv_quadForm`: with a block-diagonal
   information `[[A, 0], [0, D]]` the full score quadratic form splits as
   `Tᵀ A⁻¹ T + U² / D` (coefficient score `T`, shape score `U`). For `nbJointFisherInfo` the
@@ -277,13 +278,15 @@ theorem isMaxOn_nbProfileLogLik_of_isMaxOn (X : Matrix ι κ ℝ) (o : ι → �
   exact ciSup_le fun b => h ⟨Set.mem_univ b, hθ'⟩
 
 /-- **Profile maximizer gives a joint maximizer.** If `θ̂ > 0` maximizes the profile over
-`θ > 0` and `β̂` maximizes the `θ̂`-section, then `(β̂, θ̂)` maximizes the joint log-likelihood
-over `θ > 0`. -/
+`θ > 0` and `β̂` maximizes the `θ̂`-section, then `(β̂, θ̂)` lies in the joint parameter set
+`Set.univ ×ˢ Set.Ioi 0` and maximizes the joint log-likelihood over it. -/
 theorem isMaxOn_nbJointLogLik_of_isMaxOn_profile (X : Matrix ι κ ℝ) (o : ι → ℝ) (y : ι → ℕ)
-    {βhat : κ → ℝ} {θhat : ℝ}
+    {βhat : κ → ℝ} {θhat : ℝ} (hθhat : 0 < θhat)
     (hprof : IsMaxOn (nbProfileLogLik X o y) (Set.Ioi 0) θhat)
     (hsec : IsMaxOn (fun b => nbJointLogLik X o y (b, θhat)) Set.univ βhat) :
-    IsMaxOn (nbJointLogLik X o y) (Set.univ ×ˢ Set.Ioi 0) (βhat, θhat) := by
+    (βhat, θhat) ∈ Set.univ ×ˢ Set.Ioi 0 ∧
+      IsMaxOn (nbJointLogLik X o y) (Set.univ ×ˢ Set.Ioi 0) (βhat, θhat) := by
+  refine ⟨⟨Set.mem_univ _, hθhat⟩, ?_⟩
   rintro ⟨b, θ⟩ ⟨-, hθ⟩
   have h1 := nbJointLogLik_le_nbProfileLogLik X o y (hθ : 0 < θ) b
   have h2 : nbProfileLogLik X o y θ ≤ nbProfileLogLik X o y θhat := hprof hθ
@@ -319,8 +322,9 @@ noncomputable def nbCompositeLRStat (X : Matrix ι κ ℝ) (o : ι → ℝ) (y :
     (phat : (κ → ℝ) × ℝ) (β₀ : κ → ℝ) (θtil : ℝ) : ℝ :=
   2 * (nbJointLogLik X o y phat - nbRestrictedLogLik X o y β₀ θtil)
 
-/-- The composite likelihood-ratio statistic is nonnegative when `p̂` maximizes the joint
-log-likelihood over `θ > 0` and `θ̃ > 0`. -/
+/-- The composite likelihood-ratio statistic is nonnegative when `ℓ(p̂)` dominates the joint
+log-likelihood over `θ > 0`, as at a joint maximizer, and `θ̃ > 0`. Feasibility of `p̂` is not
+needed: the proof only compares `ℓ(p̂)` with `ℓ(β₀, θ̃)`, and `(β₀, θ̃)` is feasible. -/
 theorem nbCompositeLRStat_nonneg (X : Matrix ι κ ℝ) (o : ι → ℝ) (y : ι → ℕ)
     {phat : (κ → ℝ) × ℝ} (h : IsMaxOn (nbJointLogLik X o y) (Set.univ ×ˢ Set.Ioi 0) phat)
     (β₀ : κ → ℝ) {θtil : ℝ} (hθ : 0 < θtil) : 0 ≤ nbCompositeLRStat X o y phat β₀ θtil := by
