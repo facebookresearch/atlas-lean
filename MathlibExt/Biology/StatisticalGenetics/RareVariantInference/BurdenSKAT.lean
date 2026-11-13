@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Analysis.WeightedChiSquare
 public import MathlibExt.Biology.StatisticalGenetics.BOLTLMM
 public import MathlibExt.Biology.StatisticalGenetics.KinshipIBD
 public import MathlibExt.Probability.Statistics.GeneralizedLeastSquares
@@ -127,16 +128,7 @@ section WeightedChiSq
 
 variable {k : Type*} [Fintype k]
 
-/-- The weighted chi-square law `∑ⱼ λⱼ ξⱼ²` with `ξ₁, …, ξₖ` independent standard normal. -/
-noncomputable def weightedChiSq (lam : k → ℝ) : Measure ℝ :=
-  (Measure.pi fun _ : k => gaussianReal 0 1).map fun ξ => ∑ j, lam j * ξ j ^ 2
-
-instance (lam : k → ℝ) : IsProbabilityMeasure (weightedChiSq lam) :=
-  by unfold weightedChiSq; infer_instance
-
-/-- With all weights zero the weighted chi-square law is the point mass at `0`. -/
-theorem weightedChiSq_zero : weightedChiSq (0 : k → ℝ) = Measure.dirac 0 := by
-  simp [weightedChiSq]
+export MathlibExt.Analysis.WeightedChiSquare (weightedChiSq weightedChiSq_zero)
 
 /-- **Quadratic forms of a standard Gaussian vector** (spectral form): if `b` is an orthonormal
 eigenbasis of `A` with eigenvalues `lam`, then `⟪Z, A Z⟫` has the weighted chi-square law with
