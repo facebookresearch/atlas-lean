@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Ring
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Ring
 
 /-!
 # Pointwise buoyancy and Boussinesq parcel models
@@ -26,16 +26,17 @@ correction.
 ## i. Overview
 
 The buoyancy acceleration is the density contrast divided by the
-reference density, times `-g`. The oscillator theorem converts a
-buoyancy-law derivative hypothesis for the parcel velocity into the
-form `zeta'' = -(g * beta / rho0) * zeta`.
+reference density, times `-g`. The oscillator theorem takes the parcel
+velocity `v` with `zeta' = v` near `t` and the buoyancy law for `v'` at
+`t`, and concludes `zeta'' t = -(g * beta / rho0) * zeta t`, where
+`zeta''` is the derivative of `deriv zeta`.
 
 ## ii. Key results
 
 - `EarthScience.boussinesq_buoyancy_accel`: buoyancy acceleration formula.
 - `EarthScience.brunt_vaisala_sq_pos`: `N^2 > 0` for stable stratification.
-- `EarthScience.boussinesq_parcel_oscillator`: velocity derivative in
-  oscillator form.
+- `EarthScience.boussinesq_parcel_oscillator`: the displacement satisfies
+  `zeta'' = -(g * beta / rho0) * zeta`.
 
 ## iii. Table of contents
 
@@ -44,6 +45,15 @@ form `zeta'' = -(g * beta / rho0) * zeta`.
 
 ## iv. References
 
+- G. K. Vallis, *Atmospheric and Oceanic Fluid Dynamics: Fundamentals and
+  Large-Scale Circulation*, 2nd ed., Cambridge University Press (2017),
+  Chapter 2: the Boussinesq approximation, and static stability by the
+  parcel method, with buoyancy frequency `N^2 = -(g / rho0) * d rho / dz`
+  for `z` upward.
+- B. Cushman-Roisin and J.-M. Beckers, *Introduction to Geophysical Fluid
+  Dynamics: Physical and Numerical Aspects*, 2nd ed., Academic Press
+  (2011), Chapter 11: a vertically displaced parcel in a stratified fluid
+  oscillates with `N^2 = -(g / rho0) * d rho / dz`.
 - `div_pos` / `mul_pos` in Mathlib (positivity of division/products).
 -/
 
@@ -70,16 +80,18 @@ theorem brunt_vaisala_sq_pos {g beta rho0 : ℝ} (hg : 0 < g) (hbeta : 0 < beta)
 
 /-! ## B. Parcel oscillator -/
 
-/-- If the parcel velocity `v` (derivative of displacement `zeta`) has
-derivative equal to the buoyancy acceleration from the density contrast,
-then it satisfies the oscillator form `zeta'' = -(g * beta / rho0) * zeta`. -/
+/-- Parcel oscillator: if `v` is the parcel velocity, `zeta' = v` near
+`t` (`hzeta`), and the acceleration `v'` at `t` is the buoyancy
+acceleration from the density contrast (`hbuoy`), then the displacement
+satisfies the oscillator equation `zeta'' t = -(g * beta / rho0) * zeta t`,
+where `zeta''` is the derivative of `deriv zeta`. -/
 theorem boussinesq_parcel_oscillator {zeta v : ℝ → ℝ} {t : ℝ} {g beta rho0 : ℝ}
-    (hrho : rho0 ≠ 0)
+    (hrho : rho0 ≠ 0) (hzeta : ∀ᶠ s in nhds t, HasDerivAt zeta (v s) s)
     (hbuoy : HasDerivAt v (-g * (rho0 - (rho0 - beta * zeta t)) / rho0) t) :
-    HasDerivAt v (-(g * beta / rho0) * zeta t) t := by
+    HasDerivAt (deriv zeta) (-(g * beta / rho0) * zeta t) t := by
   have h : -g * (rho0 - (rho0 - beta * zeta t)) / rho0
       = -(g * beta / rho0) * zeta t := boussinesq_buoyancy_accel hrho
   rw [h] at hbuoy
-  exact hbuoy
+  exact hbuoy.congr_of_eventuallyEq (hzeta.mono fun s hs => hs.deriv)
 
 end EarthScience

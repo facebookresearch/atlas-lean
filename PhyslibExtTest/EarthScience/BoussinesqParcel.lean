@@ -8,14 +8,15 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.BoussinesqParcel
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 
 /-!
 # Boussinesq parcel checks
 
 Concrete consumers of `PhyslibExt.EarthScience.BoussinesqParcel`:
 the buoyancy formula at `g = 9.81, beta = 0.02, rho0 = 1025, zeta = 10`,
-the stable/unstable sign boundary, and the oscillator form for a
-linear-displacement parcel.
+the stable/unstable sign boundary, and the oscillator equation for the
+oscillating parcel `zeta s = cos (N * s)` with `N^2 = g * beta / rho0`.
 
 ## i. Overview
 
@@ -57,8 +58,28 @@ example {g rho0 zeta : ℝ} (hrho : rho0 ≠ 0) :
   rw [EarthScience.boussinesq_buoyancy_accel hrho]
   simp
 
-/-- Oscillator form for a parcel whose velocity obeys the buoyancy law. -/
+/-- Oscillator equation for a parcel with `zeta' = v` whose velocity obeys
+the buoyancy law. -/
 example {zeta v : ℝ → ℝ} {t : ℝ} {g beta rho0 : ℝ} (hrho : rho0 ≠ 0)
+    (hzeta : ∀ s, HasDerivAt zeta (v s) s)
     (hbuoy : HasDerivAt v (-g * (rho0 - (rho0 - beta * zeta t)) / rho0) t) :
-    HasDerivAt v (-(g * beta / rho0) * zeta t) t :=
-  EarthScience.boussinesq_parcel_oscillator hrho hbuoy
+    HasDerivAt (deriv zeta) (-(g * beta / rho0) * zeta t) t :=
+  EarthScience.boussinesq_parcel_oscillator hrho (Filter.Eventually.of_forall hzeta) hbuoy
+
+/-- Non-vacuity: for `N^2 = g * beta / rho0`, the parcel
+`zeta s = cos (N * s)` with velocity `v s = -(N * sin (N * s))` meets
+both hypotheses, so its displacement solves `zeta'' = -N^2 * zeta`. -/
+example {g beta rho0 N t : ℝ} (hrho : rho0 ≠ 0) (hN : N ^ 2 = g * beta / rho0) :
+    HasDerivAt (deriv fun s => Real.cos (N * s))
+      (-(g * beta / rho0) * Real.cos (N * t)) t := by
+  refine EarthScience.boussinesq_parcel_oscillator (v := fun s => -(N * Real.sin (N * s)))
+    hrho (Filter.Eventually.of_forall fun s => ?_) ?_
+  · convert ((hasDerivAt_id' (x := s)).const_mul N).cos using 1
+    ring
+  · convert (((hasDerivAt_id' (x := t)).const_mul N).sin.const_mul N).neg using 1
+    have hN' : N * (Real.cos (N * t) * (N * 1)) = g * beta / rho0 * Real.cos (N * t) := by
+      rw [← hN]
+      ring
+    rw [hN']
+    field_simp
+    ring
