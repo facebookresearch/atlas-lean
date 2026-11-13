@@ -16,7 +16,9 @@ import MathlibExt.Probability.Statistics.Survival.AcceleratedFailureTime
 Probability instance, scaling law, a concrete Weibull survival value under acceleration, the
 log-normal parameter map, the hazard transform on an exponential baseline, the quantile transform,
 and both sides of the PH-versus-AFT distinction: the Weibull AFT law has a PH reading with an
-explicit hazard ratio, the log-normal AFT law has none.
+explicit hazard ratio, the log-normal AFT law has none. Boundary probes: zero baseline survival
+cannot discharge the hazard hypothesis, and a negative hazard ratio is no PH reading even where
+`S = S₀ ^ c` holds pointwise.
 -/
 
 open MeasureTheory ProbabilityTheory Real Set Filter
@@ -65,10 +67,21 @@ with predictor `η` has hazard `exp (-η)` at `t = 1`. -/
 example (η : ℝ) :
     HasDerivAt (fun s => -log ((aftMeasure (weibullMeasure 1 1) η).real (Ioi s)))
       (exp (-η) * 1) 1 := by
-  refine hasDerivAt_neg_log_aftMeasure_real_Ioi _ η 1 1 ?_
+  refine (hasDerivAt_neg_log_aftMeasure_real_Ioi _ η 1 1 ?_ ?_).2
+  · rw [weibullMeasure_real_Ioi one_pos one_pos (mul_pos (exp_pos (-η)) one_pos).le]
+    exact exp_pos _
   refine (hasDerivAt_id _).congr_of_eventuallyEq ?_
   filter_upwards [Ioi_mem_nhds (mul_pos (exp_pos (-η)) one_pos)] with s hs
   rw [neg_log_weibullMeasure_real_Ioi one_pos one_pos (le_of_lt hs), div_one, rpow_one, id]
+
+/-- Zero survival is rejected: past the end of the support of the Dirac baseline at `0`, the
+positivity hypothesis of the hazard and cumulative-hazard transforms cannot be met, so Lean's
+`Real.log 0 = 0` is never reported as a hazard. -/
+example (η t : ℝ) (ht : 0 < t) : ¬ 0 < (Measure.dirac (0 : ℝ)).real (Ioi (exp (-η) * t)) := by
+  have h0 : (0 : ℝ) ∉ Ioi (exp (-η) * t) := fun h =>
+    (mul_pos (exp_pos (-η)) ht).not_gt (mem_Ioi.mp h)
+  rw [measureReal_def, Measure.dirac_apply' _ measurableSet_Ioi, indicator_of_notMem h0]
+  simp
 
 /-- Quantile transform: the baseline distribution function at `q` equals the AFT distribution
 function at `exp η * q`. -/
@@ -88,6 +101,18 @@ example : HasProportionalHazards (weibullMeasure 2 1) (aftMeasure (weibullMeasur
       ring
     rw [this, exp_log (by norm_num)]
   rwa [e] at h
+
+/-- For the Dirac law at `1`, survival takes only the values `0` and `1` on `[0, ∞)`, so
+`S = S ^ (-1)` holds pointwise. -/
+example : ∀ t : ℝ, 0 ≤ t →
+    (Measure.dirac (1 : ℝ)).real (Ioi t) = (Measure.dirac (1 : ℝ)).real (Ioi t) ^ (-1 : ℝ) := by
+  intro t _
+  rw [rpow_neg_one, measureReal_def, Measure.dirac_apply' _ measurableSet_Ioi]
+  by_cases h : (1 : ℝ) ∈ Ioi t <;> simp [h]
+
+/-- A negative hazard ratio is rejected despite the pointwise identity above. -/
+example : ¬ HasProportionalHazards (Measure.dirac (1 : ℝ)) (Measure.dirac 1) (-1) :=
+  fun h => absurd h.1 (by norm_num)
 
 /-- Weibull cumulative hazard under acceleration: `H(t | η) = exp (-k η) H₀(t)` at `t = 1`. -/
 example (η : ℝ) :

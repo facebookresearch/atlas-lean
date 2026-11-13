@@ -29,16 +29,16 @@ proportional-hazards (PH) reading.
   `aftMeasure_real_Ioi`), distribution function (`aftMeasure_Iic`, `aftMeasure_real_Iic`),
   cumulative hazard `H(t | η) = H₀(exp (-η) t)` (`neg_log_aftMeasure_real_Ioi`), hazard rate
   `h(t | η) = exp (-η) h₀(exp (-η) t)` as a derivative of the cumulative hazard
-  (`hasDerivAt_neg_log_aftMeasure_real_Ioi`), and level-`p` points: if
-  `F₀(q) = p` then `F(exp η * q | η) = p`, so level-`p` points scale by `exp η`
+  (`hasDerivAt_neg_log_aftMeasure_real_Ioi`), both where `S₀(exp (-η) t) > 0`, and level-`p`
+  points: if `F₀(q) = p` then `F(exp η * q | η) = p`, so level-`p` points scale by `exp η`
   (`aftMeasure_real_Iic_exp_mul`; no generalized inverse is constructed).
 * Parameter mapping: Weibull shape `k`, scale `l` goes to shape `k`, scale `exp η * l`
   (`aftMeasure_weibullMeasure`); log-normal `LN(μ, v)` goes to `LN(μ + η, v)`
   (`aftMeasure_logNormalMeasure`).
-* PH versus AFT. `HasProportionalHazards μ₀ μ c` is the PH reading `S = S₀^c` on `[0, ∞)`,
-  which multiplies hazards at a fixed time rather than rescaling time.
-  `hasProportionalHazards_aftMeasure_iff` says an AFT law has a PH reading iff
-  `S₀(exp (-η) t) = S₀(t)^c`.
+* PH versus AFT. `HasProportionalHazards μ₀ μ c` is the PH reading `S = S₀^c` on `[0, ∞)`
+  with hazard ratio `c > 0`, which multiplies hazards at a fixed time rather than rescaling
+  time. `hasProportionalHazards_aftMeasure_iff` says an AFT law has a PH reading iff `c > 0`
+  and `S₀(exp (-η) t) = S₀(t)^c`.
   - **Weibull admits both readings**: `hasProportionalHazards_aftMeasure_weibullMeasure`, the
     AFT law with time ratio `exp η` is PH with hazard ratio `exp (-k η)`; equivalently
     (`neg_log_aftMeasure_weibullMeasure_real_Ioi`) `H(t | η) = exp (-k η) H₀(t)`. The PH
@@ -51,7 +51,9 @@ proportional-hazards (PH) reading.
     rules out.
 
 The hazard *rate* is handled through derivatives of the cumulative hazard `-log S`, so no
-density or regularity assumption beyond the stated differentiability hypothesis is needed.
+density or regularity assumption beyond the stated differentiability hypothesis is needed. Both
+hazard transforms assume positive baseline survival at the rescaled point: past the end of the
+support the cumulative hazard is `+∞`, while Lean's `Real.log 0 = 0` would report `0`.
 
 ## References
 
@@ -133,23 +135,34 @@ theorem aftMeasure_real_Iic (μ₀ : Measure ℝ) (η t : ℝ) :
   rw [aftMeasure, map_measureReal_apply (measurable_exp_mul η) measurableSet_Iic,
     preimage_exp_mul_Iic]
 
-/-- **AFT cumulative-hazard transform**: `H(t | η) = H₀(exp (-η) * t)`, with the cumulative hazard
-`H = -log S`. -/
-theorem neg_log_aftMeasure_real_Ioi (μ₀ : Measure ℝ) (η t : ℝ) :
-    -log ((aftMeasure μ₀ η).real (Ioi t)) = -log (μ₀.real (Ioi (exp (-η) * t))) := by
+/-- **AFT cumulative-hazard transform**: where the baseline survival at the rescaled point is
+positive, so is the AFT survival at `t`, and `H(t | η) = H₀(exp (-η) * t)` with the cumulative
+hazard `H = -log S`. Positivity excludes points past the end of the support, where `H = +∞` but
+Lean's `Real.log 0 = 0`. -/
+theorem neg_log_aftMeasure_real_Ioi (μ₀ : Measure ℝ) (η t : ℝ)
+    (hS : 0 < μ₀.real (Ioi (exp (-η) * t))) :
+    0 < (aftMeasure μ₀ η).real (Ioi t) ∧
+      -log ((aftMeasure μ₀ η).real (Ioi t)) = -log (μ₀.real (Ioi (exp (-η) * t))) := by
   rw [aftMeasure_real_Ioi]
+  exact ⟨hS, rfl⟩
 
-/-- **AFT hazard transform**: if the baseline cumulative hazard `H₀ = -log S₀` has derivative
-`h₀` (the baseline hazard rate) at `exp (-η) * t`, then the cumulative hazard of the AFT law has
-derivative `exp (-η) * h₀` at `t`: `h(t | η) = exp (-η) h₀(exp (-η) t)`. Time is rescaled inside
-the hazard and the hazard is multiplied by the inverse acceleration factor. -/
+/-- **AFT hazard transform**: if the baseline survival is positive at `exp (-η) * t` and the
+baseline cumulative hazard `H₀ = -log S₀` has derivative `h₀` (the baseline hazard rate) there,
+then the AFT survival is positive at `t` and the cumulative hazard of the AFT law has derivative
+`exp (-η) * h₀` at `t`: `h(t | η) = exp (-η) h₀(exp (-η) t)`. Time is rescaled inside the hazard
+and the hazard is multiplied by the inverse acceleration factor. Positivity excludes points past
+the end of the support, where Lean's `Real.log 0 = 0` would make a zero derivative look like a
+hazard. -/
 theorem hasDerivAt_neg_log_aftMeasure_real_Ioi (μ₀ : Measure ℝ) (η t h₀ : ℝ)
+    (hS : 0 < μ₀.real (Ioi (exp (-η) * t)))
     (h : HasDerivAt (fun s => -log (μ₀.real (Ioi s))) h₀ (exp (-η) * t)) :
-    HasDerivAt (fun s => -log ((aftMeasure μ₀ η).real (Ioi s))) (exp (-η) * h₀) t := by
+    0 < (aftMeasure μ₀ η).real (Ioi t) ∧
+      HasDerivAt (fun s => -log ((aftMeasure μ₀ η).real (Ioi s))) (exp (-η) * h₀) t := by
+  refine ⟨(neg_log_aftMeasure_real_Ioi μ₀ η t hS).1, ?_⟩
   have hlin : HasDerivAt (fun s : ℝ => exp (-η) * s) (exp (-η)) t := by
     simpa using (hasDerivAt_id t).const_mul (exp (-η))
   have := h.comp t hlin
-  simp only [neg_log_aftMeasure_real_Ioi]
+  simp only [aftMeasure_real_Ioi]
   convert this using 1
   · rfl
   · ring
@@ -208,20 +221,22 @@ theorem aftMeasure_logNormalMeasure (μ : ℝ) (v : ℝ≥0) (η : ℝ) :
 
 /-! ### Proportional hazards versus accelerated failure time -/
 
-/-- **Proportional-hazards reading** with hazard ratio `c`: the survival function of `μ` is the
-`c`-th power of that of `μ₀` on `[0, ∞)`, `S(t) = S₀(t)^c`. Where `S₀(t) > 0` this says the
-cumulative hazards satisfy `H(t) = c H₀(t)`, and hence, where they are differentiable, the hazard
-rates satisfy `h(t) = c h₀(t)`. This is a statement about multiplying hazards at the same time
-`t`; the AFT reading `μ = aftMeasure μ₀ η` instead rescales time. -/
+/-- **Proportional-hazards reading** with hazard ratio `c > 0`: the survival function of `μ` is
+the `c`-th power of that of `μ₀` on `[0, ∞)`, `S(t) = S₀(t)^c`. A hazard ratio is strictly
+positive; without `0 < c`, survival functions taking only the values `0` and `1` would allow any
+real `c`. Where `S₀(t) > 0` this says the cumulative hazards satisfy `H(t) = c H₀(t)`, and hence,
+where they are differentiable, the hazard rates satisfy `h(t) = c h₀(t)`. This is a statement
+about multiplying hazards at the same time `t`; the AFT reading `μ = aftMeasure μ₀ η` instead
+rescales time. -/
 def HasProportionalHazards (μ₀ μ : Measure ℝ) (c : ℝ) : Prop :=
-  ∀ t, 0 ≤ t → μ.real (Ioi t) = μ₀.real (Ioi t) ^ c
+  0 < c ∧ ∀ t, 0 ≤ t → μ.real (Ioi t) = μ₀.real (Ioi t) ^ c
 
 /-- **When an AFT law is also a PH law**: the AFT law with predictor `η` has the PH reading with
-hazard ratio `c` iff the baseline survival function satisfies `S₀(exp (-η) t) = S₀(t)^c` on
-`[0, ∞)`. -/
+hazard ratio `c` iff `c > 0` and the baseline survival function satisfies
+`S₀(exp (-η) t) = S₀(t)^c` on `[0, ∞)`. -/
 theorem hasProportionalHazards_aftMeasure_iff (μ₀ : Measure ℝ) (η c : ℝ) :
     HasProportionalHazards μ₀ (aftMeasure μ₀ η) c ↔
-      ∀ t, 0 ≤ t → μ₀.real (Ioi (exp (-η) * t)) = μ₀.real (Ioi t) ^ c := by
+      0 < c ∧ ∀ t, 0 ≤ t → μ₀.real (Ioi (exp (-η) * t)) = μ₀.real (Ioi t) ^ c := by
   simp only [HasProportionalHazards, aftMeasure_real_Ioi]
 
 /-- **The Weibull AFT law admits both readings.** With Weibull baseline of shape `k`, the AFT law
@@ -231,7 +246,7 @@ theorem hasProportionalHazards_aftMeasure_weibullMeasure {k l : ℝ} (hk : 0 < k
     HasProportionalHazards (weibullMeasure k l) (aftMeasure (weibullMeasure k l) η)
       (exp (-(k * η))) := by
   rw [hasProportionalHazards_aftMeasure_iff]
-  intro t ht
+  refine ⟨exp_pos _, fun t ht => ?_⟩
   have hη : 0 ≤ exp (-η) := (exp_pos _).le
   rw [weibullMeasure_real_Ioi hk hl (mul_nonneg hη ht), weibullMeasure_real_Ioi hk hl ht,
     ← exp_mul, mul_div_assoc, mul_rpow hη (div_nonneg ht hl.le), ← exp_mul]
@@ -244,7 +259,7 @@ theorem neg_log_aftMeasure_weibullMeasure_real_Ioi {k l t : ℝ} (hk : 0 < k) (h
     (ht : 0 ≤ t) (η : ℝ) :
     -log ((aftMeasure (weibullMeasure k l) η).real (Ioi t)) =
       exp (-(k * η)) * -log ((weibullMeasure k l).real (Ioi t)) := by
-  rw [hasProportionalHazards_aftMeasure_weibullMeasure hk hl η t ht,
+  rw [(hasProportionalHazards_aftMeasure_weibullMeasure hk hl η).2 t ht,
     log_rpow (by rw [weibullMeasure_real_Ioi hk hl ht]; exact exp_pos _)]
   ring
 
@@ -362,20 +377,13 @@ theorem not_hasProportionalHazards_aftMeasure_logNormalMeasure (μ : ℝ) {v : �
     ¬ HasProportionalHazards (logNormalMeasure μ v) (aftMeasure (logNormalMeasure μ v) η) c := by
   intro hPH
   rw [hasProportionalHazards_aftMeasure_iff] at hPH
+  obtain ⟨hc, hPH⟩ := hPH
   set q : ℝ → ℝ := fun x => (gaussianReal μ v).real (Ioi x) with hq_def
   have hq : ∀ x, q (x - η) = q x ^ c := by
     intro x
     have := hPH (exp x) (exp_pos x).le
     rwa [← exp_add, logNormalMeasure_real_Ioi _ _ (exp_pos _),
       logNormalMeasure_real_Ioi _ _ (exp_pos _), log_exp, log_exp, neg_add_eq_sub] at this
-  have hc : 0 < c := by
-    by_contra hc
-    push Not at hc
-    have h1 : 1 ≤ q μ ^ c := one_le_rpow_of_pos_of_le_one_of_nonpos
-      (gaussianReal_real_Ioi_pos μ hv μ) (gaussianReal_real_Ioi_lt_one μ hv μ).le hc
-    have h2 := gaussianReal_real_Ioi_lt_one μ hv (μ - η)
-    change q (μ - η) < 1 at h2
-    linarith [hq μ]
   rcases lt_or_gt_of_ne hη with hneg | hpos
   · refine gaussianReal_real_Ioi_not_selfSimilar μ hv (neg_pos.mpr hneg) (inv_pos.mpr hc)
       fun x => ?_
