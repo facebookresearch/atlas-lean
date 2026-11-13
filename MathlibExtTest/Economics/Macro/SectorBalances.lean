@@ -8,14 +8,14 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-import MathlibExt.Economics.Macroeconomics.SectorBalances
+import MathlibExt.Economics.Macro.SectorBalances
 import Mathlib.Tactic
 
-/-! # Tests for `MathlibExt.Economics.Macroeconomics.SectorBalances` -/
+/-! # Tests for `MathlibExt.Economics.Macro.SectorBalances` -/
 
-namespace MathlibExtTest.Economics.Macroeconomics.SectorBalances
+namespace MathlibExtTest.Economics.Macro.SectorBalances
 
-open MathlibExt.Economics.Macroeconomics.SectorBalances
+open MathlibExt.Economics.Macro.SectorBalances
 
 def testAccounts : SectorAccounts where
   Y := 100
@@ -37,4 +37,4 @@ example : testAccounts.S = testAccounts.I + testAccounts.NX :=
   saving_investment_balance _ (by norm_num [testAccounts]) (by norm_num [testAccounts])
     (by norm_num [testAccounts]) (by norm_num [testAccounts]) (by norm_num [testAccounts])
 
-end MathlibExtTest.Economics.Macroeconomics.SectorBalances
+end MathlibExtTest.Economics.Macro.SectorBalances

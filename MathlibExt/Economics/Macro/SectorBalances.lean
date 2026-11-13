@@ -35,7 +35,7 @@ national saving finances domestic investment plus net exports.
 
 @[expose] public section
 
-namespace MathlibExt.Economics.Macroeconomics.SectorBalances
+namespace MathlibExt.Economics.Macro.SectorBalances
 
 /-- Sector accounts for one period, in nominal terms, under the conventions pinned below.
 
@@ -108,4 +108,4 @@ theorem sectorAccounts_example :
       (by norm_num [exampleAccounts]) (by norm_num [exampleAccounts])
       (by norm_num [exampleAccounts]) (by norm_num [exampleAccounts])
 
-end MathlibExt.Economics.Macroeconomics.SectorBalances
+end MathlibExt.Economics.Macro.SectorBalances
