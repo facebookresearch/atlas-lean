@@ -35,9 +35,11 @@ def IsShorOutput (N d : ℕ) : Prop :=
   (1 < d ∧ d < N ∧ d ∣ N) ∨ (d = 0 ∧ Nat.Prime N)
 
 /-- Decidability of `IsShorOutput`, for the measurement-outcome case split in
-`shor_factoring` below. -/
-noncomputable instance (N d : ℕ) : Decidable (IsShorOutput N d) :=
-  Classical.propDecidable _
+`shor_factoring` below. It is computable, inherited from the decidability of `<`, `∣`, `=` and
+`Nat.Prime` on `ℕ`. -/
+instance (N d : ℕ) : Decidable (IsShorOutput N d) := by
+  unfold IsShorOutput
+  infer_instance
 
 /--
 Shor's factoring theorem: there is a polynomial-time quantum algorithm that
