@@ -38,16 +38,18 @@ nonpreemptive schedule whose total late work `∑_j V_j` is at most `K`, where t
 `V_j = min(p_j, max(0, C_j - d_j))` of job `j` completing at time `C_j` is the amount of its
 processing performed after its due date?
 
-This is the decision version of `1||ΣV_j` (Potts and Van Wassenhove 1992, who prove the
-nonpreemptive problem NP-hard and give a pseudo-polynomial algorithm, so it is NP-complete in
-the ordinary sense). A nonpreemptive schedule is a one-processor schedule `σ` of start times as
-in Garey and Johnson's [SS1] (`IsOneProcessorSchedule` from
-`SequencingToMinimizeWeightedTardinessWanted`: one-to-one, and a job starting later than
-another starts no earlier than the other's completion); job `j` completes at
-`C_j = σ(j) + p_j`. Idle time is allowed, which does not change the question because late
-work does not decrease when completion times grow. Processing times, due dates and `K` are
-arbitrary nonnegative integers, so every decoded instance is well formed. Jobs are `Fin n`,
-one per listed pair `(p_j, d_j)`. Binary encoding of all numbers.
+This is the decision version of `1||ΣV_j`. Potts and Van Wassenhove (1992) prove the
+nonpreemptive problem NP-hard (and give a pseudo-polynomial algorithm). Membership in NP holds
+because the start times themselves are a certificate of polynomial bit length: moving jobs
+earlier never increases late work, so some optimal schedule starts every job by
+`n + ∑_j p_j`, and its total late work is checked with binary arithmetic. A nonpreemptive
+schedule is a one-processor schedule `σ` of start times as in Garey and Johnson's [SS1]
+(`IsOneProcessorSchedule` from `SequencingToMinimizeWeightedTardinessWanted`: one-to-one, and a
+job starting later than another starts no earlier than the other's completion); job `j`
+completes at `C_j = σ(j) + p_j`. Idle time is allowed, which does not change the question
+because late work does not decrease when completion times grow. Processing times, due dates
+and `K` are arbitrary nonnegative integers, so every decoded instance is well formed. Jobs are
+`Fin n`, one per listed pair `(p_j, d_j)`. Binary encoding of all numbers.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings are no-instances.
