@@ -20,12 +20,14 @@ import MathlibExt.Biology.Dynamics.StochasticCRNRegeneration
   no molecules, `e^{-k₁/k₂}`, from every initial state and from the Poisson initial law. The
   Laplace form of the forward-equation transfer and the path non-explosion are instantiated too.
 * The pure-birth network `∅ → A` satisfies the drift bound `L V ≤ k` for `V(x) = x`
-  (`generator_pureBirth_le`, so it is non-explosive by `StochasticCRNNonExplosion`) and every state
-  is reachable from `0`, but it is not complex balanced for any `c`, so no ergodicity is claimed.
-* For the autocatalytic network `2A → 3A` (which explodes; this is a remark, not proved here: the
-  mean holding times `1 / (k x (x - 1))` are summable), no `c > 0` is complex balanced, and no
-  function `V ≥ ∑_s x_s` satisfies a drift bound `L V ≤ a V + b` (such a `V` would be bounded on
-  `{x ≥ 2}`), so neither non-explosion nor ergodicity is claimed. -/
+  (`generator_pureBirth_le`), so it is non-explosive by `StochasticCRNNonExplosion`
+  (`ae_tendsto_jumpTime_pureBirth`), and every state is reachable from `0`, but it is not complex
+  balanced for any `c`, so no ergodicity is claimed.
+* For the autocatalytic network `2A → 3A`, no `c > 0` is complex balanced, and no function
+  `V ≥ ∑_s x_s` satisfies a drift bound `L V ≤ a V + b` (such a `V` would be bounded on
+  `{x ≥ 2}`), so neither non-explosion nor ergodicity is claimed. Started from `x ≥ 2` the chain
+  explodes (a remark, not proved here: the mean holding times `1 / (k x (x - 1))`, `x ≥ 2`, are
+  summable). From `x ≤ 1` no reaction can fire, so explosion is claimed only from `x ≥ 2`. -/
 
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped NNReal ENNReal
@@ -242,6 +244,14 @@ theorem generator_pureBirth_le {k : ℝ} (hk : 0 ≤ k) (x : Unit → ℕ) :
   rw [hp, hb, hx]
   linarith
 
+/-- The pure-birth chain does not explode: from every initial state its jump times tend to `∞`
+almost surely, by the drift bound `generator_pureBirth_le` and `StochasticCRNNonExplosion`. -/
+theorem ae_tendsto_jumpTime_pureBirth {k : ℝ} (hk : 0 < k) (x : Unit → ℕ) :
+    ∀ᵐ ω ∂(massAction pureBirth (fun _ => k) fun _ => hk.le).inputMeasure,
+      Tendsto ((massAction pureBirth (fun _ => k) fun _ => hk.le).jumpTime x ω) atTop atTop :=
+  StochasticCRN.ae_tendsto_jumpTime_atTop_of_coercive _ countV le_rfl hk.le
+    (generator_pureBirth_le hk.le) (fun x => by simp [countV]) x
+
 /-- Every state of `∅ → A` is reached from the empty state (so reachability is not what fails). -/
 theorem reach_pureBirth {k : ℝ} (hk : 0 < k) (y : Unit → ℕ) :
     Relation.ReflTransGen
@@ -255,7 +265,7 @@ theorem reach_pureBirth {k : ℝ} (hk : 0 < k) (y : Unit → ℕ) :
     funext u
     simp [fire, pureBirth, st]
 
-/-! ### Autocatalysis `2A → 3A`: explosive, so no claim -/
+/-! ### Autocatalysis `2A → 3A`: explosive from `x ≥ 2`, so no claim -/
 
 /-- The autocatalytic network `2A → 3A`. -/
 def autocat : ReactionNetwork Unit Unit where
@@ -293,7 +303,8 @@ theorem generator_autocat (k : ℝ) (hk : 0 ≤ k) (V : (Unit → ℕ) → ℝ) 
 `x ≥ 2` the bound `V(x + 1) ≤ V(x) (1 + (a + b) / (k x (x - 1)))` and `∑ 1 / (x (x - 1)) < ∞` make
 `V` bounded on `{x ≥ 2}`, contradicting `V(x) ≥ x`. So the non-explosion criterion of
 `StochasticCRNNonExplosion`, and hence `ergodic_of_isComplexBalanced_of_reachable`, does not
-apply (the chain does explode: the mean holding times `1 / (k x (x - 1))` are summable). -/
+apply. Started from `x ≥ 2` the chain does explode (a remark, not proved here: the mean holding
+times `1 / (k x (x - 1))`, `x ≥ 2`, are summable); from `x ≤ 1` no reaction can fire. -/
 theorem not_drift_autocat {k : ℝ} (hk : 0 < k) (V : (Unit → ℕ) → ℝ≥0) {a b : ℝ} (ha : 0 ≤ a)
     (hb : 0 ≤ b) :
     ¬ ((∀ x, (massAction autocat (fun _ => k) fun _ => hk.le).generator
