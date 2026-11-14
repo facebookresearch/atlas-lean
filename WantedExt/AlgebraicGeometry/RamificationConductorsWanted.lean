@@ -1,0 +1,55 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import Batteries.Util.ProofWanted
+public import MathlibExt.NumberTheory.FiniteRamificationConductors
+
+@[expose] public noncomputable section
+
+/-!
+# Higher-rank finite-image Artin and Swan integrality
+
+Authors: Jean-Pierre Serre.
+Source: Corps Locaux, Chapter VI, §2, Artin characters and conductors;
+https://doi.org/10.1007/978-1-4757-5673-9.
+
+The local fields, valuation ring, decomposition group, lower groups,
+representation and invariant subspaces are actual Mathlib objects.
+The only supplied bound is the actual equation G_N=1. Its existence and
+generic lower/upper/Hasse--Arf theory are existing public toolbox; the
+completed sum-independence laws do not ask for them again.
+The request is arbitrary finite-dimensional Q_ell representation
+integrality, beyond the verified one-dimensional abelian formula.
+-/
+
+namespace WantedExt.AlgebraicGeometry.RamificationConductors
+
+open ValuativeRel
+open MathlibExt.NumberTheory.FiniteRamificationConductors
+
+universe u v w
+
+/-- Serre's higher-rank conductor integrality, with the actual finite
+ramification support and the standard omission of i=0 in the Swan term. -/
+public theorem_wanted finiteImage_artin_swan_integral
+    (K : Type u) [Field K] [ValuativeRel K] [TopologicalSpace K]
+    [IsNonarchimedeanLocalField K]
+    (L : Type v) [Field L] [ValuativeRel L] [TopologicalSpace L]
+    [IsNonarchimedeanLocalField L] [Algebra K L] [ValuativeExtension K L]
+    [Module.Finite K L] [IsGalois K L]
+    (p ell : ℕ) [Fact p.Prime] [Fact ell.Prime]
+    [CharP (IsLocalRing.ResidueField (integerRing L)) p] (ellNeResidueCharacteristic : ell ≠ p)
+    (V : Type w) [AddCommGroup V] [Module ℚ_[ell] V] [Module.Finite ℚ_[ell] V]
+    (ρ : Representation ℚ_[ell] (DecompositionGroup K L) V)
+    (N : ℕ) (finiteRamification : lowerGroup K L N = ⊥) :
+    (∃ a : ℕ, artinConductor K L ell V ρ N = a) ∧
+      ∃ s : ℕ, swanConductor K L ell V ρ N = s
+
+end WantedExt.AlgebraicGeometry.RamificationConductors
