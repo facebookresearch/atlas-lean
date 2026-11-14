@@ -23,7 +23,7 @@ public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Walks.Basic
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
 
 @[expose] public section
 
