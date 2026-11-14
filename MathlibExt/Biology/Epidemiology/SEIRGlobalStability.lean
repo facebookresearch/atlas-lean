@@ -18,7 +18,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
-# Global stability of the SEIR endemic and disease-free equilibria via Lyapunov functions
+# Stability of the SEIR endemic and disease-free equilibria via Lyapunov functions
 
 The closed SEIR model of `MathlibExt.Biology.Epidemiology.SEIR` has no endemic equilibrium
 (every solution has `E, I → 0`). An endemic state needs a supply of susceptibles, so we add
@@ -77,7 +77,10 @@ Positivity is no longer given by a log barrier in `E, I`; instead `E e^{(μ + σ
 `I e^{(μ + γ) t}` are nondecreasing while `S, E, I > 0` (`IsSolution.pos_of_R0_le_one`). The
 invariance step gives `S → N`, then `S' → 0` (so `β S I / N → 0`), then Barbalat for
 `σ E + (μ + σ) I` gives `I → 0` (this covers `R₀ = 1`, where the `I` term of `V̇₀` vanishes),
-then `E → 0`.
+then `E → 0`. Every disease-free result assumes `S(0), E(0), I(0) > 0`: stability and
+attractivity are proved relative to the open positive orthant. Initial states on its boundary,
+including the disease-free equilibrium itself, are not covered, so this is not global
+asymptotic stability on the nonnegative orthant.
 
 **Removed class.** `R' = γ I - μ R` is linear relaxation at rate `μ`, so `I → I∞` gives
 `R → γ I∞ / μ` (`IsSolution.tendsto_removed`); likewise `S + E + I + R → N`.
@@ -99,9 +102,9 @@ then `E → 0`.
   `R → γ I∞ / μ`, `S + E + I + R → N`, and `R → R* = γ I* / μ` (`endemicR`) for `R₀ > 1`.
 * `dfeLyapunov`, `dfeLyapunovDeriv`, `dfeLyapunovDeriv_le`, `IsSolution.pos_of_R0_le_one`,
   `IsSolution.tendsto_diseaseFree`, `IsSolution.tendsto_removed_diseaseFree`,
-  `diseaseFree_lyapunovStable`, `diseaseFree_globallyAsymptoticallyStable`: for `R₀ ≤ 1`, the
-  disease-free equilibrium `(N, 0, 0)` is Lyapunov stable and attracts every solution starting
-  in the open positive orthant, and `R → 0`.
+  `diseaseFree_lyapunovStable_of_pos`, `diseaseFree_lyapunovStable_and_attractive_of_pos`: for
+  `R₀ ≤ 1`, the disease-free equilibrium `(N, 0, 0)` is Lyapunov stable relative to the open
+  positive orthant and attracts every solution starting in it, and then `R → 0`.
 
 * `exists_isSolution`, `exists_isSolution_of_nonneg`: forward-global existence for nonnegative
   initial data, with nonnegative compartments and total `≤ max N (S₀ + E₀ + I₀ + R₀)`, so the
@@ -1031,7 +1034,8 @@ private theorem tendsto_zero_of_hasDerivAt_relax {u f : ℝ → ℝ} {μ : ℝ} 
   filter_upwards [this] with t ht
   linarith
 
-/-- Removed level `R* = γ I* / μ` at the endemic equilibrium. -/
+/-- Removed level `R* = γ I* / μ` at the endemic equilibrium. Meaningful for `μ > 0`, which
+every theorem using it assumes (at `μ = 0` Lean's division returns `0`). -/
 noncomputable def endemicR (β σ γ μ N : ℝ) : ℝ := γ * endemicI β σ γ μ N / μ
 
 namespace IsSolution
@@ -1071,13 +1075,16 @@ end IsSolution
 /-! ### The disease-free equilibrium when `R₀ ≤ 1` -/
 
 /-- The **Lyapunov function of the disease-free equilibrium** `(N, 0, 0)`:
-`V₀(S, E, I) = g(N, S) + E + ((μ + σ) / σ) I`, `g` the Volterra function. -/
+`V₀(S, E, I) = g(N, S) + E + ((μ + σ) / σ) I`, `g` the Volterra function. Meaningful for
+`S > 0`, `N > 0` and `σ > 0`, which every theorem about it assumes; outside that domain Lean's
+`log` and division return junk values. -/
 noncomputable def dfeLyapunov (σ μ N S E I : ℝ) : ℝ :=
   volterra N S + E + (μ + σ) / σ * I
 
 /-- The derivative of `dfeLyapunov` along the vector field
 (`IsSolution.hasDerivAt_dfeLyapunov`): `V̇₀ = -μ (S - N)² / S + (β - (μ + σ) (μ + γ) / σ) I`.
-The coefficient of `I` is `((μ + σ) (μ + γ) / σ) (R₀ - 1)`. -/
+The coefficient of `I` is `((μ + σ) (μ + γ) / σ) (R₀ - 1)`. Meaningful for `S > 0` and
+`σ > 0`, where it is the derivative; at `S = 0` or `σ = 0` Lean's division returns `0`. -/
 noncomputable def dfeLyapunovDeriv (β σ γ μ N S I : ℝ) : ℝ :=
   -(μ * (S - N) ^ 2 / S) + (β - (μ + σ) * (μ + γ) / σ) * I
 
@@ -1246,9 +1253,9 @@ theorem dfeLyapunov_le_initial {t : ℝ} (ht : 0 ≤ t) :
   h.dfeLyapunov_le_of_pos_on hσ hγ hμ hN hR ht fun _ hs =>
     h.pos_of_R0_le_one hβ hσ hγ hμ hN hR hS0 hE0 hI0 hs.1
 
-/-- **Global attractivity of the disease-free equilibrium.** If `β ≥ 0`, `σ > 0`, `γ ≥ 0`,
-`μ > 0`, `N > 0` and `R₀ = β σ / ((μ + σ) (μ + γ)) ≤ 1`, every solution starting in the open
-positive orthant converges to `(N, 0, 0)`.
+/-- **Attractivity of the disease-free equilibrium from the open positive orthant.** If `β ≥ 0`,
+`σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ = β σ / ((μ + σ) (μ + γ)) ≤ 1`, every solution with
+`S(0), E(0), I(0) > 0` converges to `(N, 0, 0)`. Boundary initial states are not covered.
 
 `V̇₀ ≤ -μ (S - N)² / S` and `V₀` converges, so `S → N` (Barbalat). Barbalat for `S` gives
 `S' → 0`, i.e. `β S I / N → 0`. `L = σ E + (μ + σ) I = σ (V₀ - g(N, S))` converges, so
@@ -1427,10 +1434,12 @@ section DiseaseFreeStability
 
 variable {β σ γ μ N : ℝ}
 
-/-- **Lyapunov stability of the disease-free equilibrium** for `R₀ ≤ 1`: for every `ε > 0`
-there is `δ > 0` such that every solution starting in the open positive orthant within
-distance `δ` of `(N, 0, 0)` stays within distance `ε` of it for all `t ≥ 0`. -/
-theorem diseaseFree_lyapunovStable (hβ : 0 ≤ β) (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ)
+/-- **Lyapunov stability of the disease-free equilibrium relative to the open positive orthant**
+for `R₀ ≤ 1`: for every `ε > 0` there is `δ > 0` such that every solution starting in the open
+positive orthant within distance `δ` of `(N, 0, 0)` stays within distance `ε` of it for all
+`t ≥ 0`. Initial states on the boundary of the orthant, including `(N, 0, 0)` itself, are not
+covered. -/
+theorem diseaseFree_lyapunovStable_of_pos (hβ : 0 ≤ β) (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ)
     (hN : 0 < N) (hR : R0 β σ γ μ ≤ 1) :
     ∀ ε > 0, ∃ δ > 0, ∀ S E I R : ℝ → ℝ, IsSolution β σ γ μ N S E I R → 0 < S 0 → 0 < E 0 →
       0 < I 0 → dist (S 0, E 0, I 0) (N, 0, 0) < δ →
@@ -1466,19 +1475,21 @@ theorem diseaseFree_lyapunovStable (hβ : 0 ≤ β) (hσ : 0 < σ) (hγ : 0 ≤ 
     abs_of_pos h2, abs_of_pos h3, max_lt_iff, max_lt_iff]
   exact ⟨abs_lt_of_sq_lt_sq hS hε.le, by linarith, by linarith⟩
 
-/-- **Global asymptotic stability of the SEIR disease-free equilibrium.** If `β ≥ 0`, `σ > 0`,
-`γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ = β σ / ((μ + σ) (μ + γ)) ≤ 1`, the disease-free
-equilibrium `(N, 0, 0)` is Lyapunov stable and attracts every solution starting in the open
-positive orthant `S, E, I > 0`; both facts are proved from the Lyapunov function
-`dfeLyapunov`. -/
-theorem diseaseFree_globallyAsymptoticallyStable (hβ : 0 ≤ β) (hσ : 0 < σ) (hγ : 0 ≤ γ)
+/-- **Stability and attractivity of the SEIR disease-free equilibrium from the open positive
+orthant.** If `β ≥ 0`, `σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and
+`R₀ = β σ / ((μ + σ) (μ + γ)) ≤ 1`, the disease-free equilibrium `(N, 0, 0)` is Lyapunov stable
+relative to the open positive orthant `S, E, I > 0` and attracts every solution starting in it;
+both facts are proved from the Lyapunov function `dfeLyapunov`. Both quantify only over initial
+states with `S(0), E(0), I(0) > 0`; boundary initial states, including the equilibrium itself,
+are not covered, so this is not global asymptotic stability on the nonnegative orthant. -/
+theorem diseaseFree_lyapunovStable_and_attractive_of_pos (hβ : 0 ≤ β) (hσ : 0 < σ) (hγ : 0 ≤ γ)
     (hμ : 0 < μ) (hN : 0 < N) (hR : R0 β σ γ μ ≤ 1) :
     (∀ ε > 0, ∃ δ > 0, ∀ S E I R : ℝ → ℝ, IsSolution β σ γ μ N S E I R → 0 < S 0 → 0 < E 0 →
       0 < I 0 → dist (S 0, E 0, I 0) (N, 0, 0) < δ →
       ∀ t, 0 ≤ t → dist (S t, E t, I t) (N, 0, 0) < ε) ∧
     (∀ S E I R : ℝ → ℝ, IsSolution β σ γ μ N S E I R → 0 < S 0 → 0 < E 0 → 0 < I 0 →
       Tendsto (fun t => (S t, E t, I t)) atTop (𝓝 (N, 0, 0))) :=
-  ⟨diseaseFree_lyapunovStable hβ hσ hγ hμ hN hR, fun _ _ _ _ h hS0 hE0 hI0 =>
+  ⟨diseaseFree_lyapunovStable_of_pos hβ hσ hγ hμ hN hR, fun _ _ _ _ h hS0 hE0 hI0 =>
     h.tendsto_diseaseFree hβ hσ hγ hμ hN hR hS0 hE0 hI0⟩
 
 end DiseaseFreeStability

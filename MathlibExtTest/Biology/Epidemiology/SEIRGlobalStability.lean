@@ -276,7 +276,7 @@ theorem hR_zero : R0 0 1 1 1 ≤ 1 := by norm_num [R0]
 example : (1 + exp (-0) : ℝ) = 2 ∧ exp (-(2 * 0)) = (1 : ℝ) ∧ ((0 : ℝ) + 1) * exp (-(2 * 0)) = 1 :=
   by norm_num
 
-/-- **Global attractivity on the explicit trajectory**: `(S, E, I) → (1, 0, 0)`. -/
+/-- **Attractivity on the explicit trajectory**: `(S, E, I) → (1, 0, 0)`. -/
 theorem explicit_tendsto :
     Tendsto (fun t => (1 + exp (-t), exp (-(2 * t)), (t + 1) * exp (-(2 * t)))) atTop
       (𝓝 ((1 : ℝ), (0 : ℝ), (0 : ℝ))) :=
@@ -301,13 +301,15 @@ example : ∃ δ > 0, dist ((1 + exp (-0) : ℝ), exp (-(2 * 0) : ℝ), ((0 : �
     ∀ t, 0 ≤ t → dist (1 + exp (-t), exp (-(2 * t)), (t + 1) * exp (-(2 * t)))
       ((1 : ℝ), (0 : ℝ), (0 : ℝ)) < 1 := by
   obtain ⟨δ, hδ, hst⟩ :=
-    diseaseFree_lyapunovStable le_rfl one_pos zero_le_one one_pos one_pos hR_zero 1 one_pos
+    diseaseFree_lyapunovStable_of_pos le_rfl one_pos zero_le_one one_pos one_pos hR_zero 1
+      one_pos
   exact ⟨δ, hδ, hst _ _ _ _ isSolution_explicit (by positivity) (by positivity) (by positivity)⟩
 
-/-- The global asymptotic stability theorem, attractivity half, on the explicit trajectory. -/
+/-- The positive-orthant stability-and-attractivity theorem, attractivity half, on the explicit
+trajectory. -/
 example : Tendsto (fun t => (1 + exp (-t), exp (-(2 * t)), (t + 1) * exp (-(2 * t)))) atTop
     (𝓝 ((1 : ℝ), (0 : ℝ), (0 : ℝ))) :=
-  (diseaseFree_globallyAsymptoticallyStable le_rfl one_pos zero_le_one one_pos one_pos
+  (diseaseFree_lyapunovStable_and_attractive_of_pos le_rfl one_pos zero_le_one one_pos one_pos
     hR_zero).2 _ _ _ _ isSolution_explicit (by positivity) (by positivity) (by positivity)
 
 /-! ### `R₀ > 1`: disease-free stability is not claimed -/
