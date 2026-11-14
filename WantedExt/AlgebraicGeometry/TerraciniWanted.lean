@@ -36,10 +36,9 @@ namespace WantedExt.AlgebraicGeometry.TerraciniWanted
 
 open MathlibExt.AlgebraicGeometry.AffineTangent
 
-variable {k : Type*} [Field k] [IsAlgClosed k] [CharZero k] {n : ℕ}
-
 /-- Terracini for actual addition and polynomial Zariski tangent modules. -/
-theorem_wanted terracini (X Y : Set (Fin n → k))
+theorem_wanted terracini {k : Type*} [Field k] [IsAlgClosed k] [CharZero k] {n : ℕ}
+    (X Y : Set (Fin n → k))
     (hX : X = algebraicClosure X) (hY : Y = algebraicClosure Y)
     (hneX : X.Nonempty) (hneY : Y.Nonempty)
     (hprimeX : (vanishingIdeal X).IsPrime)
