@@ -10,12 +10,11 @@ module
 import PhyslibExt.EarthScience.MeanRecurrenceTime
 
 /-!
-# Mean-recurrence-time checks
+# Checks for the geometric-series identities behind the return period
 
-Concrete consumers of `PhyslibExt.EarthScience.MeanRecurrenceTime`:
-a fair-coin exceedance (`p = 1 / 2`) recurs every `2` years on average,
-the 100-year flood recurs every `100` years on average, and the boundary
-`p = 1` (exceedance every year) recurs every `1` year.
+Concrete instances of `PhyslibExt.EarthScience.MeanRecurrenceTime`: the
+weighted series is `2` at `p = 1 / 2`, `100` at `p = 0.01` and `1` at the
+boundary `p = 1`, and the geometric series is `4` at `p = 1 / 4`.
 
 ## i. Overview
 
@@ -27,7 +26,7 @@ No new definitions or results are introduced here.
 
 ## iii. Table of contents
 
-- A. Concrete recurrence times
+- A. Concrete values
 - B. Boundary
 
 ## iv. References
@@ -35,30 +34,30 @@ No new definitions or results are introduced here.
 - `PhyslibExt.EarthScience.MeanRecurrenceTime`
 -/
 
-/-- `p = 1 / 2`: mean recurrence time is `2` years. -/
+/-- `p = 1 / 2`: the weighted series is `2`. -/
 example :
     ∑' n : ℕ, ((n : ℝ) + 1) * ((0.5 : ℝ) * (1 - 0.5) ^ n) = 2 := by
-  have h := EarthScience.mean_recurrence_time_eq_inv_exceedance_prob
+  have h := EarthScience.weighted_geometric_tsum_eq_inv
     (p := (0.5 : ℝ)) (by norm_num) (by norm_num)
   rw [show (1 : ℝ) / 0.5 = 2 by norm_num] at h
   exact h
 
-/-- `p = 0.01`: the 100-year flood has mean recurrence time `100` years. -/
+/-- `p = 0.01`: the weighted series is `100`. -/
 example :
     ∑' n : ℕ, ((n : ℝ) + 1) * ((0.01 : ℝ) * (1 - 0.01) ^ n) = 100 :=
-  EarthScience.mean_recurrence_hundred_year
+  EarthScience.weighted_geometric_tsum_one_hundredth
 
-/-- Survival sum at `p = 1 / 4`: `∑' n, (3 / 4) ^ n = 4`. -/
+/-- Geometric series at `p = 1 / 4`: `∑' n, (3 / 4) ^ n = 4`. -/
 example : ∑' n : ℕ, (1 - (0.25 : ℝ)) ^ n = 4 := by
-  have h := EarthScience.mean_recurrence_survival_sum
+  have h := EarthScience.geometric_tsum_one_sub_eq_inv
     (p := (0.25 : ℝ)) (by norm_num) (by norm_num)
   rw [show (1 : ℝ) / 0.25 = 4 by norm_num] at h
   exact h
 
-/-- Boundary `p = 1`: exceedance every year, mean recurrence time `1` year. -/
+/-- Boundary `p = 1`: only the `n = 0` term is nonzero, and the weighted series is `1`. -/
 example :
     ∑' n : ℕ, ((n : ℝ) + 1) * ((1 : ℝ) * (1 - 1) ^ n) = 1 := by
-  have h := EarthScience.mean_recurrence_time_eq_inv_exceedance_prob
+  have h := EarthScience.weighted_geometric_tsum_eq_inv
     (p := (1 : ℝ)) (by norm_num) (by norm_num)
   rw [show (1 : ℝ) / 1 = 1 by norm_num] at h
   exact h

@@ -11,47 +11,49 @@ public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Analysis.SpecificLimits.Normed
 
 /-!
-# Mean recurrence time: the return period `T = 1 / p`
+# Geometric-series identities behind the return period `T = 1 / p`
 
-If each year independently exceeds a flood level with annual exceedance
-probability `p`, the first exceedance year `W` is 1-indexed with
-`P(W = n + 1) = p * (1 - p) ^ n`. Its expectation is `1 / p`: the return
-period `T = 1 / p` is this mean recurrence time. It is a mean, not a
-schedule: a 100-year flood is not guaranteed once per century, and serial
-dependence would break the geometric waiting-time law.
+For `0 < p ≤ 1`, the series `∑' n, (n + 1) * (p * (1 - p) ^ n)` and
+`∑' n, (1 - p) ^ n` both equal `1 / p`. This module proves these two
+real-series identities and nothing more.
 
 ## i. Overview
 
-Two routes to the same value: the expectation sum over the
-first-exceedance distribution, and the survival-function sum
-`E[W] = ∑' n, P(W > n)` with `P(W > n) = (1 - p) ^ n` (the no-exceedance
-probability of `PhyslibExt.EarthScience.FloodFrequency`).
+Context, not formalized here: in the textbook flood-frequency model each year
+exceeds a level independently with annual probability `p`, the first
+exceedance year `W` has `P(W = n + 1) = p * (1 - p) ^ n` and
+`P(W > n) = (1 - p) ^ n`, and the return period `T = 1 / p` is the mean
+`E[W]`, computed by either series above. This module contains no probability
+space, yearly events, independence hypothesis, random variable `W` or
+expectation, and it does not use `PhyslibExt.EarthScience.FloodFrequency`;
+the statements below are identities about real numbers `p ∈ (0, 1]` only.
 
 ## ii. Key results
 
-- `EarthScience.mean_recurrence_time_eq_inv_exceedance_prob`: the
-  expectation of the first exceedance year is `1 / p`.
-- `EarthScience.mean_recurrence_survival_sum`: the survival sum is `1 / p`.
-- `EarthScience.mean_recurrence_hundred_year`: the 100-year flood
-  (`p = 0.01`) has mean recurrence time `100` years.
+- `EarthScience.weighted_geometric_tsum_eq_inv`:
+  `∑' n, (n + 1) * (p * (1 - p) ^ n) = 1 / p`.
+- `EarthScience.geometric_tsum_one_sub_eq_inv`: `∑' n, (1 - p) ^ n = 1 / p`,
+  the instance `r = 1 - p` of Mathlib's `tsum_geometric_of_lt_one`.
+- `EarthScience.weighted_geometric_tsum_one_hundredth`: at `p = 0.01` the
+  weighted series is `100`.
 
 ## iii. Table of contents
 
-- A. Mean recurrence time
+- A. The two series
 
 ## iv. References
 
 - `tsum_geometric_of_lt_one`, `tsum_coe_mul_geometric_of_norm_lt_one`
   (Mathlib).
 
-## A. Mean recurrence time
+## A. The two series
 -/
 
 @[expose] public section
 
 namespace EarthScience
 
-/-- No-exceedance geometric sum used by both mean-recurrence theorems. -/
+/-- The geometric sum `∑' n, (1 - p) ^ n = 1 / p`, used by both public theorems. -/
 private theorem survival_sum_aux {p : ℝ} (hp0 : 0 < p) (hp1 : p ≤ 1) :
     ∑' n : ℕ, (1 - p) ^ n = 1 / p := by
   have h0 : (0 : ℝ) ≤ 1 - p := by linarith
@@ -61,11 +63,11 @@ private theorem survival_sum_aux {p : ℝ} (hp0 : 0 < p) (hp1 : p ≤ 1) :
   rw [hrw, ← one_div] at h
   exact h
 
-/-- Mean recurrence time: if each year independently exceeds with probability `p`,
-the first exceedance year `W` (1-indexed) has `P(W = n + 1) = p * (1 - p) ^ n`,
-so `E[W] = ∑' n, (n + 1) * (p * (1 - p) ^ n)`. The claim is that this equals
-`1 / p`: the return period `T = 1 / p` is the mean recurrence time, not a schedule. -/
-theorem mean_recurrence_time_eq_inv_exceedance_prob {p : ℝ} (hp0 : 0 < p) (hp1 : p ≤ 1) :
+/-- The weighted geometric series `∑' n, (n + 1) * (p * (1 - p) ^ n)` equals `1 / p` for
+`0 < p ≤ 1`. This is a real-series identity: no random variable or expectation appears. In the
+flood-frequency model described in the module docstring (not formalized here), the left side is
+the mean of the first exceedance year. -/
+theorem weighted_geometric_tsum_eq_inv {p : ℝ} (hp0 : 0 < p) (hp1 : p ≤ 1) :
     ∑' n : ℕ, ((n : ℝ) + 1) * (p * (1 - p) ^ n) = 1 / p := by
   have h0 : (0 : ℝ) ≤ 1 - p := by linarith
   have h1 : (1 : ℝ) - p < 1 := by linarith
@@ -88,16 +90,16 @@ theorem mean_recurrence_time_eq_inv_exceedance_prob {p : ℝ} (hp0 : 0 < p) (hp1
   field_simp
   ring
 
-/-- Survival-function form of the same fact: `P(W > n) = (1 - p) ^ n` is the
-parent module's no-exceedance probability, and `E[W] = ∑' n, P(W > n)`. -/
-theorem mean_recurrence_survival_sum {p : ℝ} (hp0 : 0 < p) (hp1 : p ≤ 1) :
+/-- The geometric series `∑' n, (1 - p) ^ n` equals `1 / p` for `0 < p ≤ 1`: Mathlib's
+`tsum_geometric_of_lt_one` at `r = 1 - p`, with the limit written as `1 / p`. -/
+theorem geometric_tsum_one_sub_eq_inv {p : ℝ} (hp0 : 0 < p) (hp1 : p ≤ 1) :
     ∑' n : ℕ, (1 - p) ^ n = 1 / p := by
   exact survival_sum_aux hp0 hp1
 
-/-- The 100-year flood: `p = 0.01` has mean recurrence time `100` years. -/
-theorem mean_recurrence_hundred_year :
+/-- At `p = 0.01` the weighted geometric series is `100`. -/
+theorem weighted_geometric_tsum_one_hundredth :
     ∑' n : ℕ, ((n : ℝ) + 1) * ((0.01 : ℝ) * (1 - 0.01) ^ n) = 100 := by
-  have h := mean_recurrence_time_eq_inv_exceedance_prob (p := (0.01 : ℝ)) (by norm_num) (by norm_num)
+  have h := weighted_geometric_tsum_eq_inv (p := (0.01 : ℝ)) (by norm_num) (by norm_num)
   have h100 : (1 : ℝ) / 0.01 = 100 := by norm_num
   rw [h100] at h
   exact h
