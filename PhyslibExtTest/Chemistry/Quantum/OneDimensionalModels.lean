@@ -26,7 +26,8 @@ open Chemistry.Quantum.OneDimensionalModels
 /-- Box eigen-equation numeric check (`n = 1`, `L = m = ħ = 1`, `x = 1/4`). -/
 example : -(1 ^ 2 / (2 * 1)) * deriv (deriv (boxFunction 1 1)) (1 / 4)
     = boxEnergy 1 1 1 1 * boxFunction 1 1 (1 / 4) :=
-  box_eigen_equation 1 1 1 1 (1 / 4) (by norm_num) (by norm_num) (by norm_num)
+  box_eigen_equation 1 1 1 1 (by norm_num) (by norm_num) (by norm_num) (1 / 4)
+    ⟨by norm_num, by norm_num⟩
 
 /-- Box energy value pin: `E_1 = π^2 / 2` for `L = m = ħ = 1`. -/
 example : boxEnergy 1 1 1 1 = Real.pi ^ 2 / 2 := by

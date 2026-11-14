@@ -24,6 +24,7 @@ import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Complex.RealDeriv
+import Mathlib.Analysis.Distribution.SchwartzSpace.Deriv
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
@@ -34,8 +35,8 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 # One-dimensional model systems with explicit domains
 
 Particle in a box, low-lying harmonic-oscillator states, the ladder
-commutator as a pointwise identity for Schwartz functions, box moments, and
-a free-electron polyene absorption model.
+commutator on the Schwartz carrier, box moments, and a free-electron polyene
+absorption model.
 
 ## i. Overview
 
@@ -43,8 +44,8 @@ This module formalizes the ATLAS CH37 one-dimensional-model-systems pilot:
 the particle in a box (eigenfunctions, eigen-equation, Dirichlet boundary
 conditions, orthonormality), the harmonic oscillator (low-lying eigenstates
 and eigen-equations in `ħ = m = ω = 1` units), the ladder commutator
-`a a† - a† a = 1` as a pointwise identity of differential expressions for
-Schwartz functions, box position moments, and a free-electron estimate of
+`a a† - a† a = 1` for the ladder operators on the Schwartz carrier, box
+position moments, and a free-electron estimate of
 polyene absorption wavelengths.
 
 Conventions used consistently throughout: box functions are real-valued
@@ -63,13 +64,18 @@ proof (see the deferrals below).
 
 ## ii. Key results
 
-* `box_eigen_equation`: pointwise eigen-equation for the box states.
+* `box_eigen_equation`: pointwise eigen-equation for the box states on the
+  interior `(0, L)`; `box_free_eigen_equation` is the identity of their sine
+  extension on all of `ℝ`, a free differential-expression lemma.
 * `box_orthonormality`: orthonormality of the box states on `(0, L)`.
 * `box_mem_BoxC2Dirichlet`: box states lie in `BoxC2Dirichlet L` (real `C²`
   functions vanishing at `0` and `L`; not the Sobolev domain `H² ∩ H¹₀`).
 * `osc_eigen_0/1/2`: oscillator eigen-equations for `v ∈ {0, 1, 2}`.
-* `ladder_commutator_pointwise_schwartz`: `annFun (creFun f) - creFun (annFun f) = f`
-  pointwise for Schwartz `f`, a formal identity of the differential expressions.
+* `annFun_mem_schwartzCarrier`, `creFun_mem_schwartzCarrier`: the ladder
+  operators map the Schwartz carrier to itself.
+* `annihilation_creation_commutator`: `a (a† f) - a† (a f) = f` for the
+  `OperatorWithDomain` records on the Schwartz carrier;
+  `ladder_commutator_pointwise_schwartz` is the underlying pointwise identity.
 * `box_moment_x`, `box_moment_x2`: `⟨x⟩` and `⟨x^2⟩` for box states.
 * `polyene_wavelength_closed_form`: closed form of the model wavelength.
 
@@ -98,8 +104,9 @@ proof (see the deferrals below).
 * Pinned Physlib `Physlib/QuantumMechanics/HarmonicOscillator/LadderOperators.lean`:
   the ladder operators of the `d`-dimensional oscillator as continuous linear
   maps on Schwartz space, with the operator commutator
-  `QuantumMechanics.HarmonicOscillator.lowering_commutation_raising`. The
-  pointwise identity of this module is not that operator statement.
+  `QuantumMechanics.HarmonicOscillator.lowering_commutation_raising`. This
+  module's records are the one-dimensional `ħ = m = ω = 1` operators on
+  functions `ℝ → ℂ` in the MF10 `OperatorWithDomain` form.
 * Pinned Physlib `Physlib/QuantumMechanics/Operators/OneDimension/Unbounded.lean`
   (domain-embedding operator pattern).
 * MF10 `PhyslibExt.Quantum.FiniteState` (ATLAS main): `OperatorWithDomain`
@@ -110,7 +117,9 @@ proof (see the deferrals below).
 
 `boxFunction n L` is the `n`-th box eigenfunction and `boxEnergy n L m ħ`
 is `n^2 h^2 / (8 m L^2)` with `h = 2πħ`. We prove the equivalent form
-`n^2 π^2 ħ^2 / (2 m L^2)`, the pointwise eigen-equation (two `deriv`s),
+`n^2 π^2 ħ^2 / (2 m L^2)`, the pointwise eigen-equation on the interior
+`(0, L)` (two `deriv`s; on all of `ℝ` it is an identity of the sine extension,
+`box_free_eigen_equation`),
 Dirichlet boundary values, orthonormality on `(0, L)` by product-to-sum
 plus cosine interval integrals, and membership in the smooth Dirichlet
 carrier `BoxC2Dirichlet L`.
@@ -138,13 +147,15 @@ units with the sign convention `a f = (x·f + f')/√2`,
 `annFun (creFun f) x - creFun (annFun f) x = f x` for every `f` in the
 Schwartz carrier (`SchwartzCarrier`, Mathlib `SchwartzMap`); and the box
 moments `⟨x⟩ = L/2`, `⟨x^2⟩ = L^2 (1/3 - 1/(2n^2π^2))` by `sin^2`
-interval integrals. The identity is a formal one between differential
-expressions: it composes the total functions `annFun` and `creFun`, not the
-records `annihilation` and `creation`. Closure of the Schwartz carrier under
-`annFun`/`creFun` is not proved, so those records, whose domain is the
-Schwartz carrier, cannot be composed, and no operator commutator on Schwartz
-space is claimed here (Physlib's `lowering_commutation_raising` is such a
-statement; see section iv).
+interval integrals. `annFun` and `creFun` map the Schwartz carrier to itself
+(`annFun_mem_schwartzCarrier`, `creFun_mem_schwartzCarrier`, through Mathlib's
+`SchwartzMap.smulLeftCLM` and `SchwartzMap.derivCLM`), so the
+`OperatorWithDomain` records `annihilation` and `creation`, whose domain is
+the Schwartz carrier, compose, and `annihilation_creation_commutator` is the
+commutator `a (a† f) - a† (a f) = f` for the records. Physlib's
+`lowering_commutation_raising` is the `d`-dimensional statement for its
+ladder operators as continuous linear maps on Schwartz space, with general
+constants (see section iv).
 
 ## D. Polyene model
 
@@ -285,9 +296,12 @@ private lemma box_deriv_second (n : ℕ) (L : ℝ) (x : ℝ) :
   have h := h0.deriv
   exact h.trans (by ring)
 
-/-- Pointwise eigen-equation for the box states: with `H = -(ħ^2/2m) d^2/dx^2`,
-`H ψ_n = E_n ψ_n` (uses `deriv` twice; Mathlib `HasDerivAt.deriv`). -/
-lemma box_eigen_equation (n : ℕ) (L m ħ x : ℝ) (hn : 1 ≤ n) (hL : 0 < L)
+/-- Free differential-expression identity: the sine extension `boxFunction n L` of the `n`-th
+box state to all of `ℝ` satisfies `-(ħ^2/2m) ψ'' = E_n ψ` at every real `x` (uses `deriv`
+twice; Mathlib `HasDerivAt.deriv`). Outside `[0, L]` this is a property of the extension, not
+of the box Hamiltonian, whose states vanish there; `box_eigen_equation` is the eigen-equation
+on the interior. -/
+lemma box_free_eigen_equation (n : ℕ) (L m ħ x : ℝ) (hn : 1 ≤ n) (hL : 0 < L)
     (hm : 0 < m) :
     -(ħ ^ 2 / (2 * m)) * (deriv (deriv (boxFunction n L)) x)
       = boxEnergy n L m ħ * boxFunction n L x := by
@@ -297,6 +311,13 @@ lemma box_eigen_equation (n : ℕ) (L m ħ x : ℝ) (hn : 1 ≤ n) (hL : 0 < L)
   rw [hpt]
   unfold boxEnergy
   ring
+
+/-- Pointwise eigen-equation for the box states on the interior `(0, L)`, where the box
+Hamiltonian is the free kinetic expression `H = -(ħ^2/2m) d^2/dx^2`: `H ψ_n = E_n ψ_n`. -/
+lemma box_eigen_equation (n : ℕ) (L m ħ : ℝ) (hn : 1 ≤ n) (hL : 0 < L) (hm : 0 < m) :
+    ∀ x ∈ Set.Ioo 0 L, -(ħ ^ 2 / (2 * m)) * (deriv (deriv (boxFunction n L)) x)
+      = boxEnergy n L m ħ * boxFunction n L x :=
+  fun x _ => box_free_eigen_equation n L m ħ x hn hL hm
 
 /-- Dirichlet boundary at `0` (uses `Real.sin` of `0`). -/
 lemma box_dirichlet_zero (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
@@ -1454,10 +1475,9 @@ lemma ladder_commutator_pointwise_of_hasDerivAt (f : ℝ → ℂ) (df ddf : ℂ)
 
 /-- Pointwise ladder identity for Schwartz functions:
 `annFun (creFun f) x - creFun (annFun f) x = f x` for every `f` in `SchwartzCarrier` (Mathlib
-`SchwartzMap.smooth`, `ContDiff.deriv`). This is a formal identity of the differential
-expressions `annFun` and `creFun`, not a commutator of the records `annihilation` and
-`creation`: closure of the Schwartz carrier under `annFun`/`creFun` is not proved, so those
-records cannot be composed. -/
+`SchwartzMap.smooth`, `ContDiff.deriv`). This is the identity of the differential
+expressions `annFun` and `creFun`; `annihilation_creation_commutator` states it for the
+records `annihilation` and `creation`. -/
 lemma ladder_commutator_pointwise_schwartz (f : ℝ → ℂ) (hf : f ∈ SchwartzCarrier)
     (x : ℝ) :
     annFun (creFun f) x - creFun (annFun f) x = f x := by
@@ -1473,20 +1493,56 @@ lemma ladder_commutator_pointwise_schwartz (f : ℝ → ℂ) (hf : f ∈ Schwart
       (by decide)).hasDerivAt
   exact ladder_commutator_pointwise_of_hasDerivAt _ _ _ x hf1 hf2
 
+/-- The annihilation function maps the Schwartz carrier to itself:
+`annFun s = (√2)⁻¹ • (x • s + s')` is a Schwartz map (Mathlib `SchwartzMap.smulLeftCLM`,
+`SchwartzMap.derivCLM`). -/
+theorem annFun_mem_schwartzCarrier {f : ℝ → ℂ} (hf : f ∈ SchwartzCarrier) :
+    annFun f ∈ SchwartzCarrier := by
+  obtain ⟨s, rfl⟩ := hf
+  have hg : (fun x : ℝ => (x : ℂ)).HasTemperateGrowth := by fun_prop
+  refine ⟨((Real.sqrt 2 : ℝ) : ℂ)⁻¹ • (SchwartzMap.smulLeftCLM ℂ (fun x : ℝ => (x : ℂ)) s
+    + SchwartzMap.derivCLM ℂ ℂ s), ?_⟩
+  funext x
+  simp only [smul_apply, add_apply, SchwartzMap.smulLeftCLM_apply_apply hg,
+    SchwartzMap.derivCLM_apply, smul_eq_mul, annFun]
+  rw [div_eq_inv_mul]
+
+/-- The creation function maps the Schwartz carrier to itself:
+`creFun s = (√2)⁻¹ • (x • s - s')` is a Schwartz map. -/
+theorem creFun_mem_schwartzCarrier {f : ℝ → ℂ} (hf : f ∈ SchwartzCarrier) :
+    creFun f ∈ SchwartzCarrier := by
+  obtain ⟨s, rfl⟩ := hf
+  have hg : (fun x : ℝ => (x : ℂ)).HasTemperateGrowth := by fun_prop
+  refine ⟨((Real.sqrt 2 : ℝ) : ℂ)⁻¹ • (SchwartzMap.smulLeftCLM ℂ (fun x : ℝ => (x : ℂ)) s
+    - SchwartzMap.derivCLM ℂ ℂ s), ?_⟩
+  funext x
+  simp only [smul_apply, sub_apply, SchwartzMap.smulLeftCLM_apply_apply hg,
+    SchwartzMap.derivCLM_apply, smul_eq_mul, creFun]
+  rw [div_eq_inv_mul]
+
 /-- Annihilation operator as an `OperatorWithDomain` record (MF10
 `PhyslibExt.Quantum.FiniteState` pattern; domain is the Schwartz
-carrier). Its values are not proved to lie in the Schwartz carrier, so it
-does not compose with `creation`; the ladder identity of this module is stated
-for `annFun`/`creFun` (`ladder_commutator_pointwise_schwartz`). -/
+carrier). Its values lie in the Schwartz carrier (`annFun_mem_schwartzCarrier`),
+so it composes with `creation` (`annihilation_creation_commutator`). -/
 noncomputable def annihilation : Quantum.FiniteState.OperatorWithDomain where
   domain := SchwartzCarrier
   op f x := annFun (f : ℝ → ℂ) x
 
 /-- Creation operator as an `OperatorWithDomain` record (same MF10
-pattern and the same caveat as `annihilation`). -/
+pattern as `annihilation`; its values lie in the Schwartz carrier by
+`creFun_mem_schwartzCarrier`). -/
 noncomputable def creation : Quantum.FiniteState.OperatorWithDomain where
   domain := SchwartzCarrier
   op f x := creFun (f : ℝ → ℂ) x
+
+/-- **Ladder commutator for the records**: `a (a† f) - a† (a f) = f` for every `f` in the
+Schwartz carrier, composing `annihilation` and `creation` through the closure lemmas
+(`ħ = m = ω = 1`). -/
+theorem annihilation_creation_commutator (f : SchwartzCarrier) :
+    annihilation.op ⟨creation.op f, creFun_mem_schwartzCarrier f.2⟩
+      - creation.op ⟨annihilation.op f, annFun_mem_schwartzCarrier f.2⟩ = (f : ℝ → ℂ) := by
+  funext x
+  exact ladder_commutator_pointwise_schwartz f f.2 x
 
 /-- Box position mean `⟨x⟩ = L / 2`, via `x * sin^2 = (x/L) - (x/L) cos 2θ`
 and interval integrals (the `x * cos` integral vanishes by FTC). -/
