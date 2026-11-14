@@ -54,9 +54,13 @@ intersection and non-intersection and keeps every segment non-degenerate. Segmen
 vertices may coincide.
 
 Kratochvíl and Matoušek (1989) state that recognizing `k`-DIR graphs is NP-complete for every
-`k ≥ 2`; the proof for 2-DIR graphs is given in Kratochvíl (1994). Membership in NP follows from
-the rank argument above: a representation with coordinates in `{0, …, 2|V|}` is a polynomial
-certificate.
+`k ≥ 2`; the proof for 2-DIR graphs is given in Kratochvíl (1994). Membership in NP holds for
+this encoding, where the vertex count is a binary number: isolated vertices can always be added to
+a representation of the other vertices as pairwise disjoint horizontal segments at new heights
+above all other segments, so `G` is 2-DIR exactly when its vertices incident to an edge (at most
+twice the length of the edge list) are; a certificate is a representation of those vertices, and
+by the rank argument above its coordinates can be taken at most four times the length of the edge
+list.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
