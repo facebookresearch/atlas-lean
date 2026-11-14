@@ -64,10 +64,9 @@ These are the Framework's hash-function games: `HashFamily`, `CollisionFinder`, 
 and the games live in the namespace `Cslib.Crypto.Framework` next to the scheme games of
 `CSLibExt.Crypto.Framework.Games`, and the asymptotic notions are instances of
 `Framework.AsymptoticallySecure`. Hash commitments
-(`CSLibExt.Crypto.Protocols.Commitment.HashCommitment`) prove binding against their own local
-collision game; `CSLibExt.Crypto.Protocols.Commitment.HashCommitmentFramework` identifies that
-game with `collGame` and restates the binding bound with `collAdvantage`
-(`HashCommitment.bindingAdvantage_le`).
+(`CSLibExt.Crypto.Protocols.Commitment.HashCommitment`) prove binding directly against the
+Framework games: `HashCommitment.bindingAdvantage_le` bounds the binding advantage by
+`Framework.collAdvantage` of the reduction collision finder in `Framework.collGame`.
 The older unkeyed compression-collision game `Cslib.Crypto.MerkleDamgard.compressionCollisionGame`
 predates the framework; its predicate `MerkleDamgard.IsCollision` has the same definition as
 `IsCollision`, but its adversary has uniform coins and an optional output, and the two games are
