@@ -47,44 +47,6 @@ namespace Cslib.Algorithms.Lean
 
 universe u v
 
-/-- Every element of a list with one index removed already occurs in the list. -/
-private theorem mem_eraseIdx_subset {β : Type v} {l : List β} {i : Nat} {x : β}
-    (h : x ∈ l.eraseIdx i) : x ∈ l := by
-  induction l generalizing i with
-  | nil => exact h
-  | cons a l ih =>
-      cases i with
-      | zero => exact List.mem_cons_of_mem a h
-      | succ i =>
-          have herase : (a :: l).eraseIdx (i + 1) = a :: l.eraseIdx i := rfl
-          rw [herase, List.mem_cons] at h
-          rcases h with rfl | h
-          · exact List.mem_cons_self
-          · exact List.mem_cons_of_mem a (ih h)
-
-/-- Every element of a list with one index replaced is the replacement or already
-occurs in the list. -/
-private theorem mem_set_cases {β : Type v} {l : List β} {i : Nat} {y x : β}
-    (h : x ∈ l.set i y) : x = y ∨ x ∈ l := by
-  induction l generalizing i with
-  | nil => exact Or.inr h
-  | cons a l ih =>
-      cases i with
-      | zero =>
-          have hx : x ∈ y :: l := h
-          rw [List.mem_cons] at hx
-          rcases hx with rfl | hx
-          · exact Or.inl rfl
-          · exact Or.inr (List.mem_cons_of_mem a hx)
-      | succ i =>
-          have hset : (a :: l).set (i + 1) y = a :: l.set i y := rfl
-          rw [hset, List.mem_cons] at h
-          rcases h with rfl | h
-          · exact Or.inr List.mem_cons_self
-          · rcases ih h with rfl | h
-            · exact Or.inl rfl
-            · exact Or.inr (List.mem_cons_of_mem a h)
-
 /-- The sum of mapped multisets splits off the contribution of one index. -/
 private theorem sum_map_eraseIdx {α : Type u} {β : Type v} (f : β → Multiset α)
     {l : List β} {i : Nat} {x : β} (h : l[i]? = some x) :
@@ -357,7 +319,7 @@ public theorem cutAt_remainder_valid [LE α] {p : List Nat} {t sub t' : Fibonacc
                         Prod.mk.injEq] at h
                       obtain ⟨rfl, rfl⟩ := h
                       refine Valid.node (fun c hc =>
-                        hv.child_valid (mem_eraseIdx_subset hc)) rfl ?_
+                        hv.child_valid (List.mem_of_mem_eraseIdx hc)) rfl ?_
                       intro v hv_mem
                       exact hv.root_le (hElem.symm ▸
                         Multiset.mem_add.mpr (Or.inl hv_mem))
@@ -368,7 +330,7 @@ public theorem cutAt_remainder_valid [LE α] {p : List Nat} {t sub t' : Fibonacc
                       have hchild'Valid : Valid child' := ih hchildValid hcut
                       refine Valid.node ?_ rfl ?_
                       · intro c hc
-                        rcases mem_set_cases hc with rfl | hc
+                        rcases (List.mem_or_eq_of_mem_set hc).symm with rfl | hc
                         · exact hchild'Valid
                         · exact hv.child_valid hc
                       · intro v hv_mem
@@ -445,14 +407,14 @@ public theorem cutTreeAt_valid [LE α] {trees : List (FibonacciTree α)} {i : Na
           | none =>
               simp only [cutTreeAt, htree, hcut, Option.some.injEq, Prod.mk.injEq] at h
               obtain ⟨rfl, rfl⟩ := h
-              exact ⟨hsubValid, fun c hc => hv c (mem_eraseIdx_subset hc)⟩
+              exact ⟨hsubValid, fun c hc => hv c (List.mem_of_mem_eraseIdx hc)⟩
           | some t' =>
               simp only [cutTreeAt, htree, hcut, Option.some.injEq, Prod.mk.injEq] at h
               obtain ⟨rfl, rfl⟩ := h
               have ht'Valid : t'.Valid :=
                 FibonacciTree.cutAt_remainder_valid htValid hcut
               refine ⟨hsubValid, fun c hc => ?_⟩
-              rcases mem_set_cases hc with rfl | hc
+              rcases (List.mem_or_eq_of_mem_set hc).symm with rfl | hc
               · exact ht'Valid
               · exact hv c hc
 

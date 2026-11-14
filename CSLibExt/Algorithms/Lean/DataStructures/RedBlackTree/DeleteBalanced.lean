@@ -862,11 +862,6 @@ private theorem erase_cons_tail_of_ne {α : Type u} [LinearOrder α] {a b : α}
     {l : List α} (h : b ≠ a) : (b :: l).erase a = b :: l.erase a :=
   List.erase_cons_tail (fun hb => h (beq_iff_eq.mp hb))
 
-private theorem erase_append_of_not_mem_left {α : Type u} [LinearOrder α]
-    {x : α} {left right : List α} (hx : x ∉ left) :
-    (left ++ right).erase x = left ++ right.erase x := by
-  rw [List.erase_append, ite_eq_right hx]
-
 private theorem erase_append_of_not_mem_right {α : Type u} [LinearOrder α]
     {x : α} {left right : List α} (hx : x ∉ right) :
     (left ++ right).erase x = left.erase x ++ right := by
@@ -974,7 +969,7 @@ private theorem del_spec {α : Type u} [LinearOrder α] (tree : Tree α) :
             redOk_balRight hRedL ihRed (fun hc => ⟨hColL hc, ihCol (hColR hc)⟩),
             fun hroot => colorBB_balRight_ne_red hroot⟩
           · rw [inorder_balRight, ihIn, inorder_node,
-              erase_append_of_not_mem_left hxL,
+              List.erase_append_right _ hxL,
               erase_cons_tail_of_ne (ne_of_lt hgt)]
           · cases color with
             | red =>
@@ -1031,7 +1026,7 @@ private theorem del_spec {α : Type u} [LinearOrder α] (tree : Tree α) :
                       rw [hdelEq]
                       refine ⟨?_, hBalL, rfl, hRedL, fun hroot => ?_⟩
                       · rw [inorderBB_regular, hnode, inorder_empty,
-                          erase_append_of_not_mem_left hkL]
+                          List.erase_append_right _ hkL]
                         simp [List.erase_cons_head]
                       · simp [colorOf] at hroot
                   | black =>
@@ -1046,7 +1041,7 @@ private theorem del_spec {α : Type u} [LinearOrder α] (tree : Tree α) :
                       refine ⟨?_, balancedBB_incrBlack hBalL, ?_,
                         redOkBB_incrBlack hRedL, fun _ => colorBB_incrBlack_ne_red⟩
                       · rw [inorderBB_incrBlack, hnode, inorder_empty,
-                          erase_append_of_not_mem_left hkL]
+                          List.erase_append_right _ hkL]
                         simp [List.erase_cons_head]
                       · have e : blackHeight
                             (.node .black (.node cl ll lk lr) key .empty) =
@@ -1081,7 +1076,7 @@ private theorem del_spec {α : Type u} [LinearOrder α] (tree : Tree α) :
                       (fun hc => ⟨hColL hc, ihCol (hColR hc)⟩),
                     fun hroot => colorBB_balRight_ne_red hroot⟩
                   · rw [inorder_balRight, ihIn, hnode,
-                      erase_append_of_not_mem_left hkL, List.erase_cons_head,
+                      List.erase_append_right _ hkL, List.erase_cons_head,
                       hrest, List.erase_cons_head]
                   · cases color with
                     | red =>
@@ -1124,7 +1119,7 @@ private theorem inorderBB_del {α : Type u} [LinearOrder α] (tree : Tree α) :
             intro hx
             exact lt_asymm hgt ((all_iff_forall_mem.mp hAllL) x hx)
           rw [hdelEq, inorder_balRight, ihR hOrdR x, inorder_node,
-            erase_append_of_not_mem_left hxL,
+            List.erase_append_right _ hxL,
             erase_cons_tail_of_ne (ne_of_lt hgt)]
         · have hxEq : key = x :=
             (le_antisymm (le_of_not_gt hgt) (le_of_not_gt hlt)).symm
@@ -1161,7 +1156,7 @@ private theorem inorderBB_del {α : Type u} [LinearOrder α] (tree : Tree α) :
                             inorder (.empty : Tree α) :=
                         inorder_node _ _ _
                       rw [hdelEq, inorderBB_regular, hnode, inorder_empty,
-                        erase_append_of_not_mem_left hkL]
+                        List.erase_append_right _ hkL]
                       simp [List.erase_cons_head]
                   | black =>
                       have hdelEq : del key (.node .black (.node cl ll lk lr) key .empty) =
@@ -1172,7 +1167,7 @@ private theorem inorderBB_del {α : Type u} [LinearOrder α] (tree : Tree α) :
                             inorder (.empty : Tree α) :=
                         inorder_node _ _ _
                       rw [hdelEq, inorderBB_incrBlack, hnode, inorder_empty,
-                        erase_append_of_not_mem_left hkL]
+                        List.erase_append_right _ hkL]
                       simp [List.erase_cons_head]
               | node cr rl rk rr =>
                   obtain ⟨s, hs⟩ : ∃ s, minKey (.node cr rl rk rr : Tree α) = some s := by
@@ -1193,7 +1188,7 @@ private theorem inorderBB_del {α : Type u} [LinearOrder α] (tree : Tree α) :
                         inorder (.node cr rl rk rr) :=
                     inorder_node _ _ _
                   rw [hdelEq, inorder_balRight, ihR hOrdR s, hnode,
-                    erase_append_of_not_mem_left hkL, List.erase_cons_head,
+                    List.erase_append_right _ hkL, List.erase_cons_head,
                     hrest, List.erase_cons_head]
 
 private theorem ordered_of_pairwise_inorder_bal {α : Type u} [LinearOrder α]

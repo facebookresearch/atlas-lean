@@ -617,11 +617,6 @@ private theorem list_erase_cons_tail_of_ne [LinearOrder α] {a b : α} {l : List
     (h : b ≠ a) : (b :: l).erase a = b :: l.erase a :=
   List.erase_cons_tail (fun hb => h (beq_iff_eq.mp hb))
 
-private theorem list_erase_append_of_not_mem_left [LinearOrder α] {x : α}
-    {left right : List α} (hx : x ∉ left) :
-    (left ++ right).erase x = left ++ right.erase x := by
-  rw [List.erase_append, ite_eq_right hx]
-
 private theorem list_erase_append_of_not_mem_right [LinearOrder α] {x : α}
     {left right : List α} (hx : x ∉ right) :
     (left ++ right).erase x = left.erase x ++ right := by
@@ -657,7 +652,7 @@ public theorem inorder_erase [LinearOrder α] {x : α} {tree : Tree α}
           exact lt_asymm hXRight ((all_iff_forall_mem.mp hAllL) x hx)
         simp only [erase, hXLeft, ite_false, hXRight, ite_true, inorder_balance,
           inorder_node, ihRight hOrdR]
-        rw [list_erase_append_of_not_mem_left hxLeft,
+        rw [List.erase_append_right _ hxLeft,
           list_erase_cons_tail_of_ne (ne_of_lt hXRight)]
       · have hxEq : x = key := le_antisymm (le_of_not_gt hXRight) (le_of_not_gt hXLeft)
         subst x
@@ -677,11 +672,11 @@ public theorem inorder_erase [LinearOrder α] {x : α} {tree : Tree α}
           | empty =>
             rw [erase_node_eq_right_empty hXLeft hXRight, hOuter]
             simp only [inorder_empty]
-            rw [list_erase_append_of_not_mem_left hKeyLeft, List.erase_cons_head,
+            rw [List.erase_append_right _ hKeyLeft, List.erase_cons_head,
               List.append_nil]
           | node cachedRight rightLeft rightKey rightRight =>
             rw [erase_node_eq_both_node hXLeft hXRight, inorder_balance, hOuter,
-              list_erase_append_of_not_mem_left hKeyLeft, List.erase_cons_head,
+              List.erase_append_right _ hKeyLeft, List.erase_cons_head,
               inorder_eq_minD_cons_eraseMin (default := key)
                 (tree := (.node cachedRight rightLeft rightKey rightRight : Tree α))
                 (by simp)]

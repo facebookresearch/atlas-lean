@@ -829,11 +829,6 @@ private theorem erase_cons_tail_of_ne {a b : α} [LinearOrder α]
     {l : List α} (h : b ≠ a) : (b :: l).erase a = b :: l.erase a :=
   List.erase_cons_tail (fun hb => h (beq_iff_eq.mp hb))
 
-private theorem erase_append_of_not_mem_left [LinearOrder α] {x : α}
-    {left right : List α} (hx : x ∉ left) :
-    (left ++ right).erase x = left ++ right.erase x := by
-  rw [List.erase_append, ite_eq_right hx]
-
 private theorem erase_append_of_not_mem_right [LinearOrder α] {x : α}
     {left right : List α} (hx : x ∉ right) :
     (left ++ right).erase x = left.erase x ++ right := by
@@ -1376,7 +1371,7 @@ private theorem delList_spec [LinearOrder α] {t h : Nat} (ht : 2 ≤ t)
                                 exact hspec.2
                             · simp only [flatten_node_pair]
                               rw [hspec.1,
-                                erase_append_of_not_mem_left hxChild,
+                                List.erase_append_right _ hxChild,
                                 erase_cons_tail_of_ne (ne_of_lt hgt)]
                           · have hkLastEq : keyCount last = t - 1 := by omega
                             by_cases hSib : t ≤ keyCount child
@@ -1444,10 +1439,10 @@ private theorem delList_spec [LinearOrder α] {t h : Nat} (ht : 2 ≤ t)
                                     sep' :: (flatten r').erase x =
                                     (flatten child ++ key :: flatten last).erase x := by
                                   rw [← hbFlat,
-                                    erase_append_of_not_mem_left hxNotL',
+                                    List.erase_append_right _ hxNotL',
                                     erase_cons_tail_of_ne hsepNe]
                                 rw [step1,
-                                  erase_append_of_not_mem_left hxChild,
+                                  List.erase_append_right _ hxChild,
                                   erase_cons_tail_of_ne (ne_of_lt hgt)]
                             · have hkChildEq : keyCount child = t - 1 := by omega
                               have e : delList delChild t x (key :: [])
@@ -1517,7 +1512,7 @@ private theorem delList_spec [LinearOrder α] {t h : Nat} (ht : 2 ≤ t)
                         · exact hvChild
                         · exact hqValid c hc
                       · simp only [flatten_node_cons]
-                        rw [hqFlat, erase_append_of_not_mem_left hxChild,
+                        rw [hqFlat, List.erase_append_right _ hxChild,
                           erase_cons_tail_of_ne (ne_of_lt hgt)]
             · have hxEq : key = x :=
                 (le_antisymm (le_of_not_gt hgt) (le_of_not_gt h1)).symm
@@ -1572,7 +1567,7 @@ private theorem delList_spec [LinearOrder α] {t h : Nat} (ht : 2 ≤ t)
                         (by simp)
                       exact lt_irrefl pp hltpp
                     have hEraseP : (flatten child).erase pp = init := by
-                      rw [hsplitEq, erase_append_of_not_mem_left hpNotInit]
+                      rw [hsplitEq, List.erase_append_right _ hpNotInit]
                       simp [List.erase_cons_head]
                     rw [e] at hp
                     subst hp
@@ -1590,7 +1585,7 @@ private theorem delList_spec [LinearOrder α] {t h : Nat} (ht : 2 ≤ t)
                         · exact hvR
                         · exact hvRest c hc
                     · rw [flatten_node_cons, hT rchild, hspec.1, hEraseP,
-                        hflatOrig, erase_append_of_not_mem_left hkeyNotLeft,
+                        hflatOrig, List.erase_append_right _ hkeyNotLeft,
                         List.erase_cons_head, hsplitEq]
                       simp [List.append_assoc]
                   · have hkcEq : keyCount child = t - 1 := by omega
@@ -1622,7 +1617,7 @@ private theorem delList_spec [LinearOrder α] {t h : Nat} (ht : 2 ≤ t)
                           · exact hvRest c hc
                       · rw [flatten_node_cons, hT (delChild s rchild),
                           hspec.1, hEraseS, hflatOrig,
-                          erase_append_of_not_mem_left hkeyNotLeft,
+                          List.erase_append_right _ hkeyNotLeft,
                           List.erase_cons_head, hfr, List.cons_append]
                     · have hkREq : keyCount rchild = t - 1 := by omega
                       have e : delList delChild t key (key :: keys)
@@ -1656,9 +1651,9 @@ private theorem delList_spec [LinearOrder α] {t h : Nat} (ht : 2 ≤ t)
                         · exact hvRest c hc
                       · rw [hT (delChild key (merge key child rchild)),
                           hspec.1, hfMerge,
-                          erase_append_of_not_mem_left hkeyNotLeft,
+                          List.erase_append_right _ hkeyNotLeft,
                           List.erase_cons_head, hflatOrig,
-                          erase_append_of_not_mem_left hkeyNotLeft,
+                          List.erase_append_right _ hkeyNotLeft,
                           List.erase_cons_head]
                         simp [List.append_assoc]
 

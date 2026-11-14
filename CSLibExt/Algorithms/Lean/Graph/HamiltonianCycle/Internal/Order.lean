@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import all CSLibExt.Algorithms.Lean.Graph.HamiltonianCycle.Internal.Accept
-import Mathlib.Data.List.OfFn
+import Mathlib.Data.List.FinRange
 import Mathlib.Data.List.Forall2
 import Mathlib.Data.List.Nodup
 
@@ -34,15 +34,6 @@ lemma aligned_indices (y : Array Bool) (m w : Nat) (us : List (Fin m))
   have hi := h.get (i := i.val) (by simpa only [List.length_ofFn] using i.isLt)
     (by rw [hl]; exact i.isLt)
   simpa using hi
-
-lemma ofFn_nodup_of_injective {α : Type} (m : Nat) (f : Fin m → α)
-    (hf : Function.Injective f) : (List.ofFn f).Nodup := by
-  rw [List.nodup_iff_injective_get]
-  intro i j hij
-  rw [List.get_ofFn, List.get_ofFn] at hij
-  have heq := hf hij
-  have hv : i.val = j.val := congrArg (fun k : Fin m => k.val) heq
-  exact Fin.ext hv
 
 lemma aligned_indices_of_get (y : Array Bool) (m w : Nat) (us : List (Fin m))
     (hl : us.length = m)
@@ -150,7 +141,7 @@ lemma sourceLoop_accept_of_order (x y : Array Bool) (m w : Nat) (hm : 0 < m)
     apply aligned_indices_of_get y m w _ List.length_ofFn
     intro i
     simpa only [List.getElem_ofFn] using hd i
-  exact ⟨List.ofFn f, halign, ofFn_nodup_of_injective m f hf,
+  exact ⟨List.ofFn f, halign, List.nodup_ofFn_ofInjective hf,
     ofFn_chain_of_cycle_edges m hm f he, ofFn_closing_of_cycle_edges m hm f he⟩
 
 lemma sourceLoop_accept_order_iff (x y : Array Bool) (m w : Nat) (hm : 0 < m)

@@ -228,20 +228,11 @@ private lemma prefixTable_get_fst {pattern : List α} {table : Array.PrefixTable
       have h := congrArg (fun xs : List α => xs[q]?) hsymbols
       rw [List.getElem?_eq_getElem hqMap, List.getElem?_eq_getElem hqPattern] at h
       exact Option.some.inj h
-private lemma take_add_one_of_lt (pattern : List α) {k : Nat} (hk : k < pattern.length) :
-    pattern.take (k + 1) = pattern.take k ++ [pattern[k]] := by
-  rw [List.take_add_one, List.getElem?_eq_getElem hk]
-  simp
-private lemma suffix_append_singleton {xs ys : List α} (h : xs.IsSuffix ys) (x : α) :
-    (xs ++ [x]).IsSuffix (ys ++ [x]) := by
-  rw [List.suffix_iff_exists_append_eq] at h ⊢
-  obtain ⟨head, rfl⟩ := h
-  exact ⟨head, by simp only [List.append_assoc]⟩
 private lemma suffix_take_add_one_iff {pattern consumed : List α} {x : α} {k : Nat}
     (hk : k < pattern.length) :
     (pattern.take (k + 1)).IsSuffix (consumed ++ [x]) ↔
       (pattern.take k).IsSuffix consumed ∧ pattern[k] = x := by
-  rw [take_add_one_of_lt pattern hk, List.suffix_iff_exists_append_eq]
+  rw [List.take_succ_eq_append_getElem hk, List.suffix_iff_exists_append_eq]
   constructor
   · rintro ⟨head, h⟩
     rw [← List.append_assoc, List.append_singleton_inj] at h
@@ -273,8 +264,8 @@ private lemma step_spec_aux [BEq α] [LawfulBEq α]
         · simp only [heq, ite_true]
           have hx : x = pattern[state] := (beq_iff_eq.mp heq).trans hentry
           constructor
-          · rw [take_add_one_of_lt pattern (by omega), ← hx]
-            exact suffix_append_singleton hsuffix x
+          · rw [List.take_succ_eq_append_getElem (by omega), ← hx]
+            exact List.suffix_append_self_iff.2 hsuffix
           · intro k hk hsuffix'
             exact hupper k hk hsuffix'
         · simp only [heq, Bool.false_eq_true, ↓reduceIte]

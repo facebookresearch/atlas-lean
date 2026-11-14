@@ -819,30 +819,10 @@ private theorem final_modelMatches (g : DirectedAdjacency V) (s : V) :
   rw [← natFold_modelStep_eq_foldr]
   exact run_modelMatches g s g.vertices.length
 
-private theorem nodup_length_le_of_subset {α : Type u} {xs ys : List α}
-    (hn : xs.Nodup) (hsub : ∀ x, x ∈ xs → x ∈ ys) : xs.length ≤ ys.length := by
-  induction xs generalizing ys with
-  | nil => simp
-  | cons a rest ih =>
-      have ha : a ∈ ys := hsub a (by simp)
-      obtain ⟨left, right, rfl⟩ := List.append_of_mem ha
-      have hn' := List.nodup_cons.mp hn
-      have hrest : ∀ x, x ∈ rest → x ∈ left ++ right := by
-        intro x hx
-        have hm := hsub x (by simp [hx])
-        simp only [List.mem_append, List.mem_cons] at hm ⊢
-        rcases hm with hm | rfl | hm
-        · exact Or.inl hm
-        · exact False.elim (hn'.1 hx)
-        · exact Or.inr hm
-      have hle := ih hn'.2 hrest
-      simp only [List.length_cons, List.length_append] at hle ⊢
-      omega
-
 omit [BEq V] [Hashable V] [LawfulBEq V] in
 private theorem nodup_length_le_vertices (g : DirectedAdjacency V)
     {xs : List V} (hn : xs.Nodup) : xs.length ≤ g.vertices.length :=
-  nodup_length_le_of_subset hn fun vertex _ => g.vertices_complete vertex
+  hn.length_le_of_subset (List.subset_def.2 fun {vertex} _ => g.vertices_complete vertex)
 
 private theorem final_queue_empty (g : DirectedAdjacency V) (s : V) :
     Queue.contents (finalState g s).queue = [] := by

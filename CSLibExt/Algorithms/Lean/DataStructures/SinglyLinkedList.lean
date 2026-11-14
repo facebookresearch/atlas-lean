@@ -116,15 +116,6 @@ private lemma vector_get_set {α : Type u} {n : Nat}
   rw [Vector.getElem_set]
   simp only [Fin.ext_iff]
 
-private lemma map_insertIdx {α β : Type*} (f : α → β) (l : List α) (i : Nat) (a : α) :
-    (l.insertIdx i a).map f = (l.map f).insertIdx i (f a) := by
-  induction l generalizing i with
-  | nil => cases i <;> rfl
-  | cons b t ih =>
-    cases i with
-    | zero => rfl
-    | succ i => exact congrArg (List.cons (f b)) (ih (i := i))
-
 private lemma map_eraseIdx {α β : Type*} (f : α → β) (l : List α) (i : Nat) :
     (l.eraseIdx i).map f = (l.map f).eraseIdx i := by
   induction l generalizing i with
@@ -435,7 +426,7 @@ theorem insertAfter_contents {α : Type u} {capacity : Nat}
   rw [hmap]
   show (ids.insertIdx (k + 1) x).map (fun i => (store.get i).map Node.payload) =
     (contents store ids).insertIdx (k + 1) (some ((store.get x).get hx).payload)
-  rw [map_insertIdx]
+  rw [List.map_insertIdx]
   show (ids.map (fun i => (store.get i).map Node.payload)).insertIdx (k + 1)
       ((store.get x).map Node.payload) = _
   rw [hpayload]
