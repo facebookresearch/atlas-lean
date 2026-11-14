@@ -22,10 +22,17 @@ def IsPerfectSet (s : Set ℝ) : Prop :=
 
 /-- Ulam's Problem 17.1 from the Scottish Book: for every continuous `f` on
 `[0, 1]`, do there exist a perfect set `C` in `[0, 1]` and an analytic
-function `φ` with `f x = φ x` for every `x ∈ C`? The claim is stated for
-`C ^ ∞` functions, which is the case refuted by Zahorski's construction. -/
+function `φ` with `f x = φ x` for every `x ∈ C`? -/
 def ScottishBookProblem17Point1Claim : Prop :=
-  ∀ (f : ℝ → ℝ), ContDiff ℝ ⊤ f →
+  ∀ (f : ℝ → ℝ), ContinuousOn f (Set.Icc (0 : ℝ) 1) →
+    ∃ (C : Set ℝ) (φ : ℝ → ℝ), IsPerfectSet C ∧ C ⊆ Set.Icc (0 : ℝ) 1 ∧
+      AnalyticOn ℝ φ (Set.Icc (0 : ℝ) 1) ∧ ∀ x ∈ C, f x = φ x
+
+/-- The claim of Problem 17.1 for `C ^ ∞` functions on `ℝ`, the case refuted by
+Zahorski's construction. The smoothness order is `(⊤ : ℕ∞)`; a bare `⊤` would
+mean analytic. -/
+def ScottishBookProblem17Point1SmoothClaim : Prop :=
+  ∀ (f : ℝ → ℝ), ContDiff ℝ (⊤ : ℕ∞) f →
     ∃ (C : Set ℝ) (φ : ℝ → ℝ), IsPerfectSet C ∧ C ⊆ Set.Icc (0 : ℝ) 1 ∧
       AnalyticOn ℝ φ (Set.Icc (0 : ℝ) 1) ∧ ∀ x ∈ C, f x = φ x
 
@@ -40,5 +47,9 @@ variable reelle admettant les derivees de tous les ordres", Fund. Math. 34
 (arXiv:2603.27867) confirms the negative solution.
 -/
 theorem_wanted continuousFunctionPerfectAnalytic_refuted : ¬ ScottishBookProblem17Point1Claim
+
+/-- Zahorski's stronger answer: the claim fails already for `C ^ ∞` functions.
+Source: Z. Zahorski, Fund. Math. 34 (1947), 183-245, as above. -/
+theorem_wanted smoothFunctionPerfectAnalytic_refuted : ¬ ScottishBookProblem17Point1SmoothClaim
 
 end MathlibExt.Analysis.ScottishBook17Point1Wanted
