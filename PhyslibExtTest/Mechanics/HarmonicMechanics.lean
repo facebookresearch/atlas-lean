@@ -9,20 +9,21 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Mechanics.HarmonicMechanics
-public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Algebra.BigOperators.Pi
-public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
+
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Algebra.BigOperators.Pi
+import Mathlib.Analysis.Real.Sqrt
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
-# Checks for classical balance laws, harmonic mechanics, continuum bookkeeping
+# Checks for classical balance laws and harmonic mechanics
 
 Exact compiling checks for `PhyslibExt.Mechanics.HarmonicMechanics`:
-oscillator frequency and constant energy, force/moment balance examples, the
-fixed-end two-mass chain with normal modes, continuum traction/strain
-conversion, and `#print axioms` for every public lemma.
+oscillator frequency, energy derivative and conservation along the explicit
+solution, force/moment balance examples, the fixed-end two-mass chain with
+normal modes, and `#print axioms` for every public lemma.
 -/
 
 @[expose] public section
@@ -83,6 +84,39 @@ is `0`. -/
 example (m k : ℝ) : oscillatorEnergy m k 0 0 = 0 := by
   unfold oscillatorEnergy
   ring
+
+/-- `ω = 2` is `Real.sqrt (k / m)` for `m = 1`, `k = 4`. -/
+private lemma two_eq_sqrt : (2 : ℝ) = Real.sqrt ((4 : ℝ) / 1) := by
+  have h4 : (4 : ℝ) / 1 = 2 ^ 2 := by norm_num
+  rw [h4]
+  exact (Real.sqrt_sq (by norm_num)).symm
+
+/-- Energy derivative at `t = 0` along the explicit solution (`m = 1`, `k = 4`, `A = 1`),
+from the derivative hypotheses at `t = 0` alone. -/
+example : HasDerivAt (fun t => oscillatorEnergy 1 4 (1 * Real.cos (2 * t))
+    (-1 * 2 * Real.sin (2 * t))) 0 0 :=
+  hasDerivAt_oscillatorEnergy 1 4 (fun t => 1 * Real.cos (2 * t))
+    (fun t => -1 * 2 * Real.sin (2 * t)) 0 one_ne_zero
+    (oscillator_explicit_solution 1 4 1 2 0 zero_lt_one (by norm_num) two_eq_sqrt).1
+    (oscillator_explicit_solution 1 4 1 2 0 zero_lt_one (by norm_num) two_eq_sqrt).2.1
+
+/-- Energy conservation along the explicit solution (`m = 1`, `k = 4`, `A = 1`): its derivative
+hypotheses hold at every time, so the energy at `t = 0` equals the energy at `t = 1`. -/
+example : oscillatorEnergy 1 4 (1 * Real.cos (2 * 0)) (-1 * 2 * Real.sin (2 * 0)) =
+    oscillatorEnergy 1 4 (1 * Real.cos (2 * 1)) (-1 * 2 * Real.sin (2 * 1)) :=
+  oscillatorEnergy_const 1 4 (fun t => 1 * Real.cos (2 * t))
+    (fun t => -1 * 2 * Real.sin (2 * t)) one_ne_zero
+    (fun t => (oscillator_explicit_solution 1 4 1 2 t zero_lt_one (by norm_num)
+      two_eq_sqrt).1)
+    (fun t => (oscillator_explicit_solution 1 4 1 2 t zero_lt_one (by norm_num)
+      two_eq_sqrt).2.1) 0 1
+
+/-- Newton's equation is needed for conservation: `x t = t`, `v t = 1` has `x' = v` at every
+time, but with `m = k = 1` its energy is `1 / 2` at `t = 0` and `1` at `t = 1`. -/
+example : (∀ t, HasDerivAt (fun t : ℝ => t) ((fun _ : ℝ => (1 : ℝ)) t) t) ∧
+    oscillatorEnergy 1 1 ((fun t : ℝ => t) 0) ((fun _ : ℝ => (1 : ℝ)) 0) ≠
+      oscillatorEnergy 1 1 ((fun t : ℝ => t) 1) ((fun _ : ℝ => (1 : ℝ)) 1) :=
+  ⟨fun t => hasDerivAt_id' t, by norm_num [oscillatorEnergy]⟩
 
 /-! ## Balance checks: 3-force equilibrium, pairs, and non-equilibrium. -/
 
@@ -302,7 +336,8 @@ example : stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ
     show (-1 : ℝ) * 1 + 1 * 1 = 0
     norm_num
 
-/-- Free-network countermodel: `K ≠ 0`, so `K` is not positive definite. -/
+/-- The free-network stiffness matrix is not `0`, so its zero mode `(1, 1)` is not
+the trivial case `K = 0`. -/
 example : stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ)
     (0 : Fin 2 → ℝ) ≠ 0 := by
   rw [chain_stiffness_free]
@@ -310,70 +345,10 @@ example : stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ
   have h00 := congrFun (congrFun hcon 0) 0
   simp at h00
 
-/-! ## Continuum checks: hydrostatic traction, faces, strain conversion. -/
-
-/-- Test displacement gradient: `H 0 1 = 1 / 2`, `H 1 0 = 0`, else `0`. -/
-private noncomputable def strainH : Matrix (Fin 3) (Fin 3) ℝ :=
-  ![![(0 : ℝ), 1 / 2, 0], ![0, 0, 0], ![0, 0, 0]]
-
-/-- Hydrostatic tension: `σ = 2 • I`, `n = ![0, 0, 1]` gives
-`![0, 0, 2]`. -/
-example : traction ((2 : ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ))
-    (![0, 0, 1] : Fin 3 → ℝ) = ![0, 0, 2] := by
-  have h := traction_hydrostatic (show (0 : ℝ) < 2 by norm_num)
-    (![0, 0, 1] : Fin 3 → ℝ)
-  rw [h]
-  funext i
-  fin_cases i
-  · show (2 : ℝ) * 0 = 0
-    norm_num
-  · show (2 : ℝ) * 0 = 0
-    norm_num
-  · show (2 : ℝ) * 1 = 2
-    norm_num
-
-/-- Opposite-face check: traction on `-n` is `![0, 0, -2]`. -/
-example : traction ((2 : ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ))
-    (-(![0, 0, 1] : Fin 3 → ℝ)) = ![0, 0, (-2)] := by
-  have hrec := traction_reciprocity ((2 : ℝ) • 1) (![0, 0, 1] : Fin 3 → ℝ)
-  have hhyd := traction_hydrostatic (show (0 : ℝ) < 2 by norm_num)
-    (![0, 0, 1] : Fin 3 → ℝ)
-  rw [hrec, hhyd]
-  funext i
-  fin_cases i
-  · show (-((2 : ℝ) * 0)) = 0
-    norm_num
-  · show (-((2 : ℝ) * 0)) = 0
-    norm_num
-  · show (-((2 : ℝ) * 1)) = (-2)
-    norm_num
-
-/-- Tensor shear conversion: `(infStrain H) 0 1 = 1 / 4`. -/
-example : infStrain strainH 0 1 = 1 / 4 := by
-  rw [infStrain_offdiag _ 0 1 (show (0 : Fin 3) ≠ 1 by decide)]
-  show (((1 / 2 : ℝ)) + 0) / 2 = 1 / 4
-  norm_num
-
-/-- Engineering shear conversion: `engShear H 0 1 = 1 / 2`. -/
-example : engShear strainH 0 1 = 1 / 2 := by
-  rw [engShear_eq _ 0 1 (show (0 : Fin 3) ≠ 1 by decide)]
-  show ((1 / 2 : ℝ)) + 0 = 1 / 2
-  norm_num
-
-/-- Diagonal strain agrees with `H` on the explicit example. -/
-example : infStrain strainH 0 0 = strainH 0 0 := by
-  rw [infStrain_diag]
-
-/-- Countermodel: asymmetric `H` shows tensor shear differs from
-`H 0 1`. -/
-example : infStrain strainH 0 1 ≠ strainH 0 1 := by
-  rw [infStrain_offdiag _ 0 1 (show (0 : Fin 3) ≠ 1 by decide)]
-  show (((1 / 2 : ℝ)) + 0) / 2 ≠ (1 / 2 : ℝ)
-  norm_num
-
 /-! ## Axiom audits for every public lemma. -/
 
-#print axioms PhyslibExt.Mechanics.HarmonicMechanics.oscillatorEnergy_conserved
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.hasDerivAt_oscillatorEnergy
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.oscillatorEnergy_const
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.oscillator_explicit_solution
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.isEquilibrated_iff
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.sum_pairwise_antisymmetric_eq_zero
@@ -391,13 +366,5 @@ example : infStrain strainH 0 1 ≠ strainH 0 1 := by
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.stiffnessMatrix_fixedEnds_rowNonzero
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.innerProductM_eq_zero_of_ne
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.rayleigh_nonneg
-#print axioms PhyslibExt.Mechanics.HarmonicMechanics.det_volume_pos
-#print axioms PhyslibExt.Mechanics.HarmonicMechanics.det_composition
-#print axioms PhyslibExt.Mechanics.HarmonicMechanics.traction_hydrostatic
-#print axioms PhyslibExt.Mechanics.HarmonicMechanics.traction_reciprocity
-#print axioms PhyslibExt.Mechanics.HarmonicMechanics.infStrain_symmetric
-#print axioms PhyslibExt.Mechanics.HarmonicMechanics.infStrain_diag
-#print axioms PhyslibExt.Mechanics.HarmonicMechanics.infStrain_offdiag
-#print axioms PhyslibExt.Mechanics.HarmonicMechanics.engShear_eq
 
 end PhyslibExtTest.Mechanics.HarmonicMechanics

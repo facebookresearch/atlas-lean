@@ -8,71 +8,67 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
-public import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
-public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
-public import Mathlib.Algebra.BigOperators.Ring.Finset
-public import Mathlib.Algebra.Group.Basic
-public import Mathlib.Algebra.Group.DivInvMonoid
-public import Mathlib.Algebra.GroupWithZero.Defs
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Mathlib.Algebra.Order.Ring.Unbundled.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Mul
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
-public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.Defs
-public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
-public import Mathlib.Logic.Equiv.Prod
-public import Mathlib.Logic.Function.Basic
-public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Tactic.NormNum
-public import Mathlib.Tactic.Ring
+
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
+import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Group.Basic
+import Mathlib.Algebra.Group.DivInvMonoid
+import Mathlib.Algebra.GroupWithZero.Defs
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.Order.Ring.Unbundled.Basic
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.Data.Fintype.BigOperators
+import Mathlib.Logic.Equiv.Prod
+import Mathlib.Logic.Function.Basic
+import Mathlib.Tactic.FieldSimp
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
-# Classical balance laws, harmonic mechanics, and continuum bookkeeping
+# Classical balance laws and harmonic mechanics
 
-Finite spring networks, normal-mode identities, force/moment balance, and
-continuum bookkeeping for classical harmonic mechanics, self-contained
-against Mathlib only.
+Oscillator energy, force and moment balance, and finite spring networks with stiffness matrices
+and normal modes.
 
 ## i. Overview
 
-This module develops the finite-system layer of classical mechanics around
-harmonic force laws: conservation of oscillator energy along solutions of
-Newton's equation plus the explicit cosine/sine solution, resultant-force /
-2D-scalar-moment / discrete-work balances, finite spring networks with
-stiffness matrices and mass-orthogonal normal modes, and continuum
-bookkeeping (volume change, tension-positive traction, infinitesimal strain
-with the engineering shear conversion).
+Section A treats the one-dimensional oscillator with real-valued position `x` and velocity `v`,
+`x' = v`, `v' = -(k / m) * x`: the energy `(1 / 2) * m * v ^ 2 + (1 / 2) * k * x ^ 2` has
+derivative `0` along a solution, so it takes the same value at any two times, and the cosine
+solution carries the energy `(1 / 2) * k * A ^ 2`. Only first-order derivative hypotheses and
+`m ≠ 0` are assumed. The same conservation law is stated for smooth trajectories in
+`EuclideanSpace ℝ (Fin 1)` with `m, k > 0` in Physlib
+(`ClassicalMechanics.HarmonicOscillator.energy_conservation_of_equationOfMotion'`), and for unit
+mass with velocity `deriv x` in `EarthScience.oscillator_energy_const`.
 
-Reuse-verified against Mathlib / ATLAS main: this module imports no next-50
-prerequisite module.
+Section B covers resultant forces, action-reaction cancellation, 2D scalar moments, and discrete
+work. Section C covers finite spring networks: energy, stiffness matrix, zero modes,
+mass-orthogonal normal modes, and nonnegative generalized eigenvalues.
 
-The pinned Physlib 1D harmonic-oscillator file
-(ClassicalMechanics/HarmonicOscillator/Basic.lean, R12) is the upstream
-canonical 1D oscillator API; this module does not introduce a second
-1D-oscillator data definition and instead proves the finite-system layer
-that file does not cover.
-
-Model boundary (fixed): Newtonian/continuum balance and harmonic force laws
-are named model assumptions carried as explicit hypotheses; conservation and
-explicit-solution results are proved within them. Constitutive laws (for
-example Hooke's law) are NOT assumed anywhere in this module.
+Newton's equation, the balance conditions, and the linear spring law are model assumptions,
+carried as explicit hypotheses or definitions. Continuum stress and strain are in
+`PhyslibExt.CondensedMatter.Elasticity.StressStrain`.
 
 ## ii. Key results
 
-* `oscillatorEnergy_conserved`: energy is constant along oscillator
-  solutions.
-* `oscillator_explicit_solution`: the cosine/sine pair solves Newton's
-  equation with constant energy `(1 / 2) * k * A ^ 2`.
+* `hasDerivAt_oscillatorEnergy`: the oscillator energy has derivative `0` at each time of a
+  solution.
+* `oscillatorEnergy_const`: energy conservation, the energy is the same at any two times.
+* `oscillator_explicit_solution`: the cosine/sine pair solves Newton's equation with energy
+  `(1 / 2) * k * A ^ 2`.
 * `sum_pairwise_antisymmetric_eq_zero`: action-reaction cancellation for
   real-valued pair forces.
 * `moment2D_add`, `central_pair_moment_eq_zero`: 2D moment linearity and the
@@ -86,26 +82,17 @@ example Hooke's law) are NOT assumed anywhere in this module.
   free (`w = 0`) case; `stiffnessMatrix_fixedEnds_rowNonzero` for fixed ends.
 * `innerProductM_eq_zero_of_ne`: distinct normal modes are mass-orthogonal.
 * `rayleigh_nonneg`: Rayleigh quotient nonnegativity for spring stiffness.
-* `det_volume_pos`, `det_composition`: volume-change bookkeeping.
-* `traction_hydrostatic`, `traction_reciprocity`: tension-positive traction.
-* `infStrain_symmetric`, `infStrain_diag`, `infStrain_offdiag`,
-  `engShear_eq`: infinitesimal strain and the factor-of-2 engineering
-  convention.
 
 ## iii. Table of contents
 
 * A. Harmonic oscillator energy, conservation, and explicit solution.
 * B. Resultant force, action-reaction, 2D moment, and discrete work.
 * C. Finite spring networks, stiffness matrices, and normal modes.
-* D. Continuum bookkeeping: volume, traction, and strain conversion.
 
 ## iv. References
 
-* Pinned Physlib ClassicalMechanics/HarmonicOscillator/Basic.lean (R12):
-  canonical 1D oscillator data, equation of motion, energy interface.
-* MIT OCW 3.032 Mechanical Behavior of Materials, Fall 2007, syllabus
-  (MAT-S04): chapter-level curriculum anchor for stress/strain and
-  mechanical behaviour.
+* Physlib, `ClassicalMechanics/HarmonicOscillator/Basic.lean`: the harmonic oscillator with
+  trajectories in `EuclideanSpace ℝ (Fin 1)`, its equation of motion, and energy conservation.
 -/
 
 @[expose] public section
@@ -121,21 +108,21 @@ namespace PhyslibExt.Mechanics.HarmonicMechanics
 noncomputable def oscillatorEnergy (m k x v : ℝ) : ℝ :=
   (1 / 2) * m * v ^ 2 + (1 / 2) * k * x ^ 2
 
-/-- Energy conservation (MC): along any solution of Newton's equation in
-divided form `v' = -(k / m) * x` with `x' = v` (MOD), the oscillator energy
-has zero time derivative, hence is constant. -/
-lemma oscillatorEnergy_conserved (m k : ℝ) (x v : ℝ → ℝ) (t : ℝ)
+/-- Energy derivative (MC): if at time `t` the position has derivative `v t` and the velocity
+has derivative `-(k / m) * x t` (Newton's equation in divided form, MOD), then the oscillator
+energy has derivative `0` at `t`. `oscillatorEnergy_const` turns this into conservation. -/
+lemma hasDerivAt_oscillatorEnergy (m k : ℝ) (x v : ℝ → ℝ) (t : ℝ)
     (hm : m ≠ 0)
-    (hx : ∀ t, HasDerivAt x (v t) t)
-    (hv : ∀ t, HasDerivAt v (-(k / m) * x t) t) :
+    (hx : HasDerivAt x (v t) t)
+    (hv : HasDerivAt v (-(k / m) * x t) t) :
     HasDerivAt (fun t => oscillatorEnergy m k (x t) (v t)) 0 t := by
   unfold oscillatorEnergy
   have hv2 : HasDerivAt (v * v)
       ((-(k / m) * x t) * v t + v t * (-(k / m) * x t)) t :=
-    (hv t).mul (hv t)
+    hv.mul hv
   have hx2 : HasDerivAt (x * x)
       (v t * x t + x t * v t) t :=
-    (hx t).mul (hx t)
+    hx.mul hx
   have hsum := (hv2.const_mul ((1 / 2) * m)).add (hx2.const_mul ((1 / 2) * k))
   have hder : ((1 / 2) * m) * ((-(k / m) * x t) * v t + v t * (-(k / m) * x t)) +
       ((1 / 2) * k) * (v t * x t + x t * v t) = 0 := by
@@ -148,6 +135,17 @@ lemma oscillatorEnergy_conserved (m k : ℝ) (x v : ℝ → ℝ) (t : ℝ)
     simp only [Pi.add_apply, Pi.mul_apply, ← pow_two]
   rw [hfg, hder] at hsum
   exact hsum
+
+/-- Energy conservation (MC): along a solution of `x' = v`, `v' = -(k / m) * x` at all times
+(MOD), the oscillator energy takes the same value at any two times. -/
+lemma oscillatorEnergy_const (m k : ℝ) (x v : ℝ → ℝ) (hm : m ≠ 0)
+    (hx : ∀ t, HasDerivAt x (v t) t)
+    (hv : ∀ t, HasDerivAt v (-(k / m) * x t) t) (t₁ t₂ : ℝ) :
+    oscillatorEnergy m k (x t₁) (v t₁) = oscillatorEnergy m k (x t₂) (v t₂) := by
+  have hE : ∀ t, HasDerivAt (fun t => oscillatorEnergy m k (x t) (v t)) 0 t :=
+    fun t => hasDerivAt_oscillatorEnergy m k x v t hm (hx t) (hv t)
+  exact is_const_of_deriv_eq_zero (fun t => (hE t).differentiableAt) (fun t => (hE t).deriv)
+    t₁ t₂
 
 /-- Explicit solution (MC): for positive mass and stiffness, with
 `ω = Real.sqrt (k / m)`, the cosine/sine pair satisfies Newton's divided
@@ -458,8 +456,8 @@ lemma stiffnessMatrix_mulVec_one {ι : Type*} [Fintype ι] [DecidableEq ι]
   ring
 
 /-- Rigid-translation zero mode (MC, free network only): with `w = 0` the
-all-ones vector is in the kernel. Stiffness is positive definite only after
-removing rigid translations; `K` itself is NOT claimed positive definite. -/
+all-ones vector is in the kernel, so the stiffness matrix of a free network is
+not positive definite. -/
 lemma stiffnessMatrix_free_zeroMode {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (hkii : ∀ i, k i i = 0) :
     stiffnessMatrix k 0 *ᵥ (fun _ => (1 : ℝ)) = 0 := by
@@ -494,7 +492,8 @@ lemma stiffnessMatrix_fixedEnds_rowNonzero {ι : Type*} [Fintype ι]
   rw [h]
   exact ne_of_gt hw
 
-/-- Mass-weighted inner product (DEF) for positive masses. -/
+/-- Mass-weighted bilinear form (DEF) `∑ i, m i * v i * w i`; an inner product
+when every mass is positive. -/
 noncomputable def innerProductM {ι : Type*} [Fintype ι] (m : ι → ℝ)
     (v w : ι → ℝ) : ℝ :=
   ∑ i, m i * v i * w i
@@ -613,91 +612,5 @@ lemma rayleigh_nonneg {ι : Type*} [Fintype ι] [DecidableEq ι]
   have hnn2 : (0 : ℝ) ≤ 2 * springEnergy k w v := by linarith
   rw [h2] at hnn2
   exact nonneg_of_mul_nonneg_left hnn2 hIP_pos
-
-/-! ## D. Continuum bookkeeping: volume, traction, and strain conversion. -/
-
-/-- Volume positivity (MC): with an orientation-preserving deformation
-gradient (`F.det > 0`, the orientation hypothesis on the reference vs
-current configuration), any positive reference volume element stays
-positive. -/
-lemma det_volume_pos {F : Matrix (Fin 3) (Fin 3) ℝ} {V0 : ℝ}
-    (hJ : 0 < F.det) (hV : 0 < V0) :
-    0 < F.det * V0 :=
-  mul_pos hJ hV
-
-/-- Volume-change rule (MC): the determinant of a composition of deformation
-gradients is the product of the determinants. -/
-lemma det_composition {F G : Matrix (Fin 3) (Fin 3) ℝ} :
-    (F * G).det = F.det * G.det :=
-  Matrix.det_mul F G
-
-/-- Cauchy traction (DEF): the traction on a plane with normal `n` is
-`σ *ᵥ n`, under the tension-positive sign convention. -/
-noncomputable def traction (σ : Matrix (Fin 3) (Fin 3) ℝ)
-    (n : Fin 3 → ℝ) : Fin 3 → ℝ :=
-  σ *ᵥ n
-
-/-- Hydrostatic tension (MC): under a tensile stress `σ = s • I` with
-`s > 0`, the traction on any normal `n` is `s • n` (outward traction on an
-outward normal). The positivity hypothesis records the tension-positive
-convention. -/
-lemma traction_hydrostatic {s : ℝ} (_hs : 0 < s) (n : Fin 3 → ℝ) :
-    traction (s • (1 : Matrix (Fin 3) (Fin 3) ℝ)) n = s • n := by
-  unfold traction
-  rw [Matrix.smul_mulVec, Matrix.one_mulVec]
-
-/-- Traction reciprocity (MC, opposite face): flipping the normal flips the
-traction. -/
-lemma traction_reciprocity (σ : Matrix (Fin 3) (Fin 3) ℝ) (n : Fin 3 → ℝ) :
-    traction σ (-n) = -traction σ n := by
-  unfold traction
-  exact Matrix.mulVec_neg _ _
-
-/-- Infinitesimal strain (DEF): the symmetric part of the displacement
-gradient. Only infinitesimal strain is defined; there is no finite strain or
-geometric nonlinearity in this module. -/
-noncomputable def infStrain (H : Matrix (Fin 3) (Fin 3) ℝ) :
-    Matrix (Fin 3) (Fin 3) ℝ :=
-  (1 / 2 : ℝ) • (H + Hᵀ)
-
-/-- Infinitesimal strain is symmetric (MC). -/
-lemma infStrain_symmetric (H : Matrix (Fin 3) (Fin 3) ℝ) :
-    (infStrain H)ᵀ = infStrain H := by
-  apply Matrix.ext
-  intro i j
-  simp only [infStrain, Matrix.transpose_apply, Matrix.smul_apply,
-    Matrix.add_apply, smul_eq_mul]
-  ring
-
-/-- Diagonal entries of infinitesimal strain agree with `H` (MC). -/
-lemma infStrain_diag (H : Matrix (Fin 3) (Fin 3) ℝ) (i : Fin 3) :
-    infStrain H i i = H i i := by
-  simp only [infStrain, Matrix.smul_apply, Matrix.add_apply,
-    Matrix.transpose_apply, smul_eq_mul]
-  ring
-
-/-- Off-diagonal entries of infinitesimal strain (MC): the symmetrized
-average. The `i ≠ j` hypothesis is carried though the formula is uniform. -/
-lemma infStrain_offdiag (H : Matrix (Fin 3) (Fin 3) ℝ) (i j : Fin 3)
-    (_h : i ≠ j) :
-    infStrain H i j = (H i j + H j i) / 2 := by
-  simp only [infStrain, Matrix.smul_apply, Matrix.add_apply,
-    Matrix.transpose_apply, smul_eq_mul]
-  ring
-
-/-- Engineering shear strain (DEF): twice the tensor shear, defined only
-off-diagonal (factor-of-2 Voigt/engineering convention). The diagonal is not
-used. -/
-noncomputable def engShear (H : Matrix (Fin 3) (Fin 3) ℝ) (i j : Fin 3) :
-    ℝ :=
-  2 * infStrain H i j
-
-/-- Engineering vs tensor shear conversion (MC): off-diagonal, engineering
-shear is the sum of the displacement-gradient cross terms. -/
-lemma engShear_eq (H : Matrix (Fin 3) (Fin 3) ℝ) (i j : Fin 3) (h : i ≠ j) :
-    engShear H i j = H i j + H j i := by
-  unfold engShear
-  rw [infStrain_offdiag H i j h]
-  ring
 
 end PhyslibExt.Mechanics.HarmonicMechanics
