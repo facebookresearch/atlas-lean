@@ -16,6 +16,8 @@ public import CSLibExtTest.Bioinformatics.Alignment.ScoreSignificance.ExpFixture
 
 * Values of `gumbelPValue` and `gumbelLevel`: positivity, the bound `≤ 1`, the rejection region
   and `exp (-K e^{-θ x_α}) = 1 - α` at `α = 1 / 2`.
+* The Gumbel distribution function and level as the shared `gumbelCDF` and `gumbelQuantile` at
+  concrete parameters, and `exp (-K e^{-θ x_α}) = 1 - α` recovered from the shared inverse lemma.
 * A nontrivial instance of the generic calibration theorems `tendsto_real_gumbelPValue_le` and
   `eventually_real_gumbelPValue_le_le`: `Mₙ` the maximum of `n + 1` i.i.d. `Exp(1)` variables
   (a `LadderInput` with one excursion per step, `θ = K = 1`). The p-value
@@ -50,6 +52,27 @@ example (s : ℝ) :
 
 example : Real.exp (-(1 * Real.exp (-(1 * gumbelLevel 1 1 (1 / 2))))) = 1 / 2 := by
   rw [exp_neg_mul_exp_gumbelLevel one_pos one_pos (by norm_num) (by norm_num)]; norm_num
+
+/-! ### The Gumbel level through the shared Gumbel API -/
+
+/-- With `K = e` and `θ = 1`, the distribution function `exp (-K e^{-θ x})` is the shared
+`gumbelCDF` with location `1` and scale `1`. -/
+example (x : ℝ) : Real.exp (-(Real.exp 1 * Real.exp (-(1 * x)))) = gumbelCDF 1 1 x := by
+  simpa using exp_neg_mul_exp_eq_gumbelCDF (Real.exp_pos 1) one_pos x
+
+/-- With `K = e` and `θ = 1`, the Gumbel level at `α = 1 - e⁻¹` is the shared quantile at `e⁻¹`,
+which is the location `1`. -/
+example : gumbelLevel (Real.exp 1) 1 (1 - Real.exp (-1)) = 1 := by
+  rw [gumbelLevel_eq_gumbelQuantile (Real.exp_pos 1)
+    (sub_pos.2 (Real.exp_lt_one_iff.2 (by norm_num))) (sub_lt_self 1 (Real.exp_pos (-1)))]
+  simp [gumbelQuantile]
+
+/-- `exp_neg_mul_exp_gumbelLevel` at `K = 2`, `θ = 3`, `α = 1 / 20`, obtained from the shared
+inverse lemma `gumbelCDF_gumbelQuantile` through the two bridges. -/
+example : Real.exp (-(2 * Real.exp (-(3 * gumbelLevel 2 3 (1 / 20))))) = 1 - 1 / 20 := by
+  rw [exp_neg_mul_exp_eq_gumbelCDF two_pos three_pos,
+    gumbelLevel_eq_gumbelQuantile two_pos (by norm_num) (by norm_num)]
+  exact gumbelCDF_gumbelQuantile (by norm_num) (by norm_num) (by norm_num)
 
 /-! ### A nontrivial instance: maxima of i.i.d. exponential variables -/
 
