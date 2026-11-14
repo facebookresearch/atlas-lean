@@ -50,22 +50,27 @@ doi:10.1017/S0305004100041657). `totalGraph` builds it on
 "Bipartite" is Mathlib's `SimpleGraph.IsBipartite` (2-colorable), and "is the total graph of"
 means isomorphic to it (Mathlib's `SimpleGraph.Iso`).
 
-Hardness: Yannakakis and Gavril prove EDGE DOMINATING SET NP-complete on bipartite graphs of
-maximum degree 3 and derive, as a corollary, that MINIMUM MAXIMAL MATCHING is NP-complete
+Hardness: Yannakakis and Gavril prove EDGE DOMINATING SET NP-complete on bipartite graphs of maximum
+degree 3 and derive, as a corollary, that MINIMUM MAXIMAL MATCHING is NP-complete
 (`MinimumMaximalMatchingBipartiteDegreeThreeWanted`); their abstract records "an observed
-relationship between edge dominating sets and independent sets in total graphs". The
-relationship is `α(T(H)) = |V(H)| - μ(H)`, with `μ(H)` the minimum size of a maximal matching
-of `H`. If `M` is a maximal matching, the vertices it leaves uncovered are pairwise
-non-adjacent, so they form, together with `M`, an independent set of `T(H)` of size
-`|V(H)| - |M|`. Conversely, an independent set of `T(H)` is a set `S` of vertices and a matching
-`M` with no vertex of `S` covered by `M` and no edge of `H` inside `S`; extend `M` to a maximal
-matching `M'`; the edges of `M'` outside `M` are disjoint, avoid the vertices covered by `M`,
-and each has an endpoint outside `S`, so `|S| ≤ |V(H)| - 2 |M| - |M' - M|`, that is,
-`|S| + |M| ≤ |V(H)| - |M'|`.
-So `H` has a maximal matching of size at most `J` iff `T(H)` has an independent set of size
-`|V(H)| - J` or more, and `T(H)` is computed in polynomial time. Membership in NP: the
-certificate is `V'` together with a bipartite `H`, its 2-colouring and the isomorphism, all of
-size polynomial in `|V|`.
+relationship between edge dominating sets and independent sets in total graphs". The relationship is
+`α(T(H)) = |V(H)| - μ(H)`, with `μ(H)` the minimum size of a maximal matching of `H`. If `M` is a
+maximal matching, the vertices it leaves uncovered are pairwise non-adjacent, so they form, together
+with `M`, an independent set of `T(H)` of size `|V(H)| - |M|`. Conversely, an independent set of
+`T(H)` is a set `S` of vertices and a matching `M` with no vertex of `S` covered by `M` and no edge
+of `H` inside `S`; extend `M` to a maximal matching `M'`; the edges of `M'` outside `M` are
+disjoint, avoid the vertices covered by `M`, and each has an endpoint outside `S`, so
+`|S| ≤ |V(H)| - 2 |M| - |M' - M|`, that is, `|S| + |M| ≤ |V(H)| - |M'|`. So `H` has a maximal
+matching of size at most `J` iff `T(H)` has an independent set of size `|V(H)| - J` or more, and
+`T(H)` is computed in polynomial time. Membership in NP: `n` is binary, so the certificate covers
+only the non-isolated vertices of `G`, at most `2 |E|` of them. An edge of `H` is adjacent in `T(H)`
+to its two endpoints, so the isolated vertices of `T(H)` are exactly the isolated vertices of `H`,
+and the subgraph of `T(H)` induced by its non-isolated vertices is `T` of `H` without its isolated
+vertices; adding isolated vertices to `H` adds them to `T(H)` and keeps `H` bipartite. Hence `G` is
+the total graph of a bipartite graph iff the subgraph induced by its non-isolated vertices is. The
+certificate is a bipartite `H` for that subgraph, a 2-colouring, the isomorphism, and the part `S`
+of `V'` among the non-isolated vertices, checked against `|S| + (n - c) ≥ K` with `c` the number of
+non-isolated vertices (isolated vertices can always join an independent set).
 
 The instance, the graph and the question follow
 `WantedExt.Complexity.NPComplete.TriangleFreeIndependentSetWanted`: a vertex count `n`
