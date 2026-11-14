@@ -19,8 +19,8 @@ module
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.CookLevin
-public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import MathlibExt.Computability.Complexity
+public import WantedExt.Complexity.NPComplete.DominatingSetSplitGraphsWanted
 public import WantedExt.Complexity.NPComplete.MaxCutWanted
 
 @[expose] public section
@@ -28,6 +28,7 @@ public import WantedExt.Complexity.NPComplete.MaxCutWanted
 namespace MetaMathlibExt.Complexity.NPComplete.MaxCutSplitGraphs
 
 open MetaMathlibExt.Complexity.NPComplete.MaxCut (MaxCutInstance MaxCutFeasible)
+open MetaMathlibExt.Complexity.NPComplete.DominatingSetSplitGraphs (IsSplitGraph)
 
 /-!
 # MAX CUT on split graphs is NP-complete
@@ -40,9 +41,11 @@ Jansen show it NP-complete for split graphs (hence for chordal graphs).
 
 The instance, the simple-edge-list conditions, and the question are those of MAXIMUM CUT
 (`WantedExt.Complexity.NPComplete.MaxCutWanted`, whose question counts edges), reused here as
-in `SimpleMaxCutDegreeThreeWanted`. The restriction is `IsSplitGraph` of
-`Cslib.Complexity.Karp.edgeGraph`, with Mathlib's `SimpleGraph.IsClique` and
-`SimpleGraph.IsIndepSet`; either part may be empty.
+in `SimpleMaxCutDegreeThreeWanted`. The restriction is the repository's split-graph predicate
+`DominatingSetSplitGraphs.IsSplitGraph` (from `DominatingSetSplitGraphsWanted`: some finite set of
+vertices is a clique and its complement an independent set, with Mathlib's
+`SimpleGraph.IsClique` and `SimpleGraph.IsIndepSet`; either part may be empty) applied to
+`Cslib.Complexity.Karp.edgeGraph`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -58,11 +61,6 @@ reduction from every language in `NP`
 /-- An instance: the vertex count `n`, the edge list, and the bound `K`; this is the MAXIMUM
 CUT instance type. -/
 abbrev MaxCutSplitGraphsInstance := MaxCutInstance
-
-/-- `G` is a split graph: some set `C` of vertices is a clique and its complement is an
-independent set. -/
-def IsSplitGraph {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ C : Set (Fin n), G.IsClique C ∧ G.IsIndepSet Cᶜ
 
 /-- Well-formedness of an instance: a well-formed MAXIMUM CUT instance (a simple edge list on
 the vertices `0, ..., n - 1`) whose graph is a split graph, and `0 < K`. -/
