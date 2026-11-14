@@ -46,10 +46,14 @@ by itself when it has no neighbor, as `K ≥ 1`).
 
 `K` is fixed, not part of the input: the decision problem is `allKSimplicialRecognitionDec k`,
 and the theorem holds for every `k ≥ 3`. The graph is given by an edge list on `Fin n`. A
-partition of the neighborhood of `v` into at most `k` cliques is a labeling `c : Fin n → Fin k`
-(the parts are the label classes inside the neighborhood, some possibly empty) such that two
-distinct neighbors of `v` with the same label are adjacent (`IsAllKSimplicial`); labels of
-non-neighbors of `v` are irrelevant.
+partition of the neighborhood of `v` into at most `k` cliques is a labeling `c` of the
+neighbors of `v` (the subtype `{a // G.Adj v a}`) by `Fin k` (the parts are the label classes,
+some possibly empty) such that two distinct neighbors with the same label are adjacent
+(`IsAllKSimplicial`); an empty neighborhood has the empty labeling for every `k`, including
+`k = 0`. Membership in NP, although the vertex count `n` is written in binary: isolated vertices
+have empty neighborhoods and impose no condition, so the labelings of the neighborhoods of the at
+most `2|E|` non-isolated vertices are a certificate of size polynomial in the length of the edge
+list.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -75,11 +79,11 @@ def WellFormed (i : AllKSimplicialRecognitionInstance) : Prop :=
   i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
 
 /-- `G` is all-`k`-simplicial: for every vertex `v`, the neighborhood of `v` is partitioned into
-at most `k` cliques, given by a labeling `c` with `k` labels in which any two distinct neighbors
-of `v` with the same label are adjacent. -/
+at most `k` cliques, given by a labeling `c` of the neighbors of `v` with `k` labels in which any
+two distinct neighbors with the same label are adjacent. -/
 def IsAllKSimplicial {n : ℕ} (k : ℕ) (G : SimpleGraph (Fin n)) : Prop :=
-  ∀ v : Fin n, ∃ c : Fin n → Fin k, ∀ a b : Fin n, G.Adj v a → G.Adj v b → a ≠ b →
-    c a = c b → G.Adj a b
+  ∀ v : Fin n, ∃ c : {a : Fin n // G.Adj v a} → Fin k, ∀ a b : {a : Fin n // G.Adj v a},
+    a ≠ b → c a = c b → G.Adj a b
 
 /-- The graph of the instance is all-`k`-simplicial. -/
 def AllKSimplicialRecognitionFeasible (k : ℕ) (i : AllKSimplicialRecognitionInstance) : Prop :=
