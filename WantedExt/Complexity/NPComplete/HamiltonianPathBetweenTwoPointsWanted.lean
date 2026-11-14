@@ -50,9 +50,9 @@ given is the proved HAMPATH of `CSLibExt.Computability.Complexity.Karp.HamPath`.
 The graph is a vertex count `n` (vertices `Fin n`) with an edge list, as in HAMILTONIAN PATH
 (`HamiltonianPathUndirectedWanted`), whose well-formedness is reused for that part
 (`HamiltonianPathUndirected.WellFormed`: `0 < n` and a simple edge list). The two specified
-vertices are below `n` and distinct ("two vertices"; with `u = v` a Hamiltonian path from `u`
-to `u` exists only for `n = 1`). A Hamiltonian path from `u` to `v` is a walk from `u` to `v`
-in Mathlib's sense that visits every vertex exactly once (`SimpleGraph.Walk.IsHamiltonian`).
+vertices are below `n`; they need not be distinct (for `u = v` a Hamiltonian path from `u` to
+`u` exists only when `n = 1`). A Hamiltonian path from `u` to `v` is a walk from `u` to `v` in
+Mathlib's sense that visits every vertex exactly once (`SimpleGraph.Walk.IsHamiltonian`).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -75,10 +75,9 @@ def Graph (i : HamiltonianPathBetweenTwoPointsInstance) : SimpleGraph (Fin i.1) 
 
 /-- Well-formedness of an instance: the vertex count and edge list form a well-formed
 HAMILTONIAN PATH instance (`0 < n`, no duplicate edges in either orientation, no self-loops,
-endpoints in range), and `u` and `v` are distinct vertices below `n`. -/
+endpoints in range), and `u` and `v` are vertices below `n`. -/
 def WellFormed (i : HamiltonianPathBetweenTwoPointsInstance) : Prop :=
-  HamiltonianPathUndirected.WellFormed (i.1, i.2.1) ∧
-    i.2.2.1 < i.1 ∧ i.2.2.2 < i.1 ∧ i.2.2.1 ≠ i.2.2.2
+  HamiltonianPathUndirected.WellFormed (i.1, i.2.1) ∧ i.2.2.1 < i.1 ∧ i.2.2.2 < i.1
 
 /-- Some walk from `u` to `v` visits every vertex exactly once. -/
 def HamiltonianPathBetweenTwoPointsFeasible (i : HamiltonianPathBetweenTwoPointsInstance) :
