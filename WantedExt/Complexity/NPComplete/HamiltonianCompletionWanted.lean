@@ -45,6 +45,12 @@ The superset `E'` is a simple graph `H ≥ G` on the same vertices, `|E' - E|` i
 `SimpleGraph.IsHamiltonian` holds vacuously on one vertex, so the existence of a Hamiltonian
 cycle is stated directly; it fails on fewer than three vertices.
 
+The vertex set is given explicitly as the list `[0, 1, ..., n - 1]`, as in Garey and Johnson's
+standard graph encoding (a vertex list and an edge list), so an instance's encoding has length at
+least `|V|`. With `n` given only in binary, an edgeless graph with `K = |V|` would be a
+yes-instance of `O(log |V|)` bits whose natural certificate (the added edges) is exponentially
+longer, a succinct variant that the cited results do not cover.
+
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
 bitstrings decoding to malformed instances, are no-instances.
@@ -56,24 +62,27 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
-abbrev HamiltonianCompletionInstance := ℕ × List (ℕ × ℕ) × ℕ
+/-- An instance: vertex list (well-formed when it is `[0, 1, ..., n - 1]`; vertices `Fin n`),
+edge list, bound `K`. -/
+abbrev HamiltonianCompletionInstance := List ℕ × List (ℕ × ℕ) × ℕ
 
 /-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : HamiltonianCompletionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
+def Graph (i : HamiltonianCompletionInstance) : SimpleGraph (Fin i.1.length) :=
+  Cslib.Complexity.Karp.edgeGraph i.1.length i.2.1
 
-/-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), and
-`0 < K ≤ |V|`. -/
+/-- Well-formedness of an instance: the vertex list is `[0, 1, ..., n - 1]` with `n` its length,
+the edge list describes a simple graph on `Fin n` (no duplicate edges in either orientation, no
+self-loops, endpoints in range), and `0 < K ≤ |V| = n`. -/
 def WellFormed (i : HamiltonianCompletionInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
+  i.1 = List.range i.1.length ∧
+    (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1.length ∧ e.2 < i.1.length ∧ e.1 ≠ e.2 ∧
+      (e.2, e.1) ∉ i.2.1) ∧
+    0 < i.2.2 ∧ i.2.2 ≤ i.1.length
 
 /-- Some simple graph `H ≥ G` on the same vertices has at most `K` edges outside `G` and a
 Hamiltonian cycle. -/
 def HamiltonianCompletionFeasible (i : HamiltonianCompletionInstance) : Prop :=
-  ∃ H : SimpleGraph (Fin i.1), Graph i ≤ H ∧
+  ∃ H : SimpleGraph (Fin i.1.length), Graph i ≤ H ∧
     (H.edgeSet \ (Graph i).edgeSet).ncard ≤ i.2.2 ∧
     ∃ v, ∃ p : H.Walk v v, p.IsHamiltonianCycle
 
