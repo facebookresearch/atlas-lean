@@ -42,10 +42,12 @@ The players are `0, …, n - 1` and player `p`'s actions are `0, …, |Act(p)| -
 given by `|Act(p)|`, the list of its neighbours, and its table: a list of cells, each a combined
 strategy of `p` and its neighbours (the actions of `p` and of its neighbours, in the order
 `p, Neigh(p)`) together with `p`'s utility for it; every combined strategy has exactly one cell.
-Utilities are natural numbers: comparisons inside one player's table, which are all that a
-pure Nash equilibrium depends on, are preserved by scaling a finite table of rationals to
-integers and adding a constant. The game is a `MathlibExt.GameTheory.StrategicGame` with these
-payoffs, and the question is `StrategicGame.IsNash`.
+Utilities are natural numbers. This loses no generality for real utilities: a pure Nash
+equilibrium depends only on comparisons between entries of one player's table, and replacing
+each entry of a finite table by its rank among the table's distinct values (equal payoffs get
+equal ranks) preserves every such comparison. The game is a
+`MathlibExt.GameTheory.StrategicGame` with these payoffs, and the question is
+`StrategicGame.IsNash`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
