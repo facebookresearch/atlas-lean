@@ -23,6 +23,7 @@ public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.Digraph.Basic
+public import Mathlib.Combinatorics.Digraph.Orientation
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.Data.Set.Card
 public import WantedExt.Complexity.NPComplete.TransitiveSubgraphWanted
@@ -50,8 +51,9 @@ The instance type, the digraph, `TransitiveSubgraph.WellFormed` (a loopless, dup
 list on `Fin n` and `0 < K ≤ |A|`), the subdigraph `H ≤ G`, its arc count and transitivity are
 as in TRANSITIVE SUBGRAPH. `G' = (V, A')` keeps every vertex, as in Garey and Johnson's question
 and in Yannakakis's edge-deletion problems. Connectivity of the digraph is weak connectivity:
-the underlying undirected graph `SimpleGraph.fromRel H.Adj` (an edge `{u, v}` for each arc
-`u → v` with `u ≠ v`) is connected (Mathlib's `SimpleGraph.Connected`). Strong connectivity
+the underlying undirected graph `H.toSimpleGraphInclusive` (Mathlib's orientation-forgetting
+map: an edge `{u, v}` whenever `u ≠ v` and `u → v` or `v → u` is an arc) is connected (Mathlib's
+`SimpleGraph.Connected`). Strong connectivity
 cannot be meant: in a transitive digraph every directed path `u → ⋯ → v` gives an arc `u → v`,
 so a strongly connected transitive `G'` with two vertices would contain arcs `u → v` and
 `v → u`, hence the loop `u → u`, which `A` does not contain. A connected `(V, A')` has
@@ -75,7 +77,7 @@ def ConnectedTransitiveSubgraphFeasible (i : TransitiveSubgraph.TransitiveSubgra
     Prop :=
   ∃ H : Digraph (Fin i.1), H ≤ TransitiveSubgraph.Graph i ∧
     i.2.2 ≤ {a : Fin i.1 × Fin i.1 | H.Adj a.1 a.2}.ncard ∧ IsTrans (Fin i.1) H.Adj ∧
-      (SimpleGraph.fromRel H.Adj).Connected
+      H.toSimpleGraphInclusive.Connected
 
 open Classical in
 /-- CONNECTED TRANSITIVE SUBGRAPH as a decision problem over bitstrings. -/
