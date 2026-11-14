@@ -7,15 +7,18 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Pow.Complex
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
+public import Mathlib.NumberTheory.DirichletCharacter.Basic
 
 /-!
 # Divisor sums with a complex exponent
 
-This file defines the complex-exponent divisor sum as a complex-valued arithmetic function.
+This file defines the complex-exponent divisor sum as a complex-valued arithmetic function, and
+its twist by a Dirichlet character.
 
 ## Main definitions
 
 * `ArithmeticFunction.sigmaR`
+* `DirichletCharacter.sigmaR`: the twisted divisor sum `σ_{s,χ}(n) = ∑_{d ∣ n} χ d * d ^ s`
 
 ## Main statements
 
@@ -23,6 +26,7 @@ This file defines the complex-exponent divisor sum as a complex-valued arithmeti
 * `ArithmeticFunction.sigmaR_apply_one`
 * `ArithmeticFunction.sigmaR_zero_apply`
 * `ArithmeticFunction.sigmaR_natCast_apply`
+* `DirichletCharacter.sigmaR_modOne`: the twist by the character modulo `1` is the untwisted sum
 
 ## References
 
@@ -65,3 +69,32 @@ theorem sigmaR_natCast_apply (k n : ℕ) :
   simp [sigmaR_apply, sigma_apply, Complex.cpow_natCast]
 
 end ArithmeticFunction
+
+namespace DirichletCharacter
+
+variable {q : ℕ}
+
+/-- The divisor sum twisted by a Dirichlet character, `σ_{s,χ}(n) = ∑_{d ∣ n} χ d * d ^ s`. -/
+noncomputable def sigmaR (χ : DirichletCharacter ℂ q) (s : ℂ) : ArithmeticFunction ℂ where
+  toFun n := ∑ d ∈ n.divisors, χ d * (d : ℂ) ^ s
+  map_zero' := by simp
+
+/-- The defining finite divisor-sum formula for `DirichletCharacter.sigmaR`. -/
+theorem sigmaR_apply (χ : DirichletCharacter ℂ q) {s : ℂ} {n : ℕ} :
+    χ.sigmaR s n = ∑ d ∈ n.divisors, χ d * (d : ℂ) ^ s :=
+  rfl
+
+/-- Every twisted divisor sum takes the value one at one. -/
+@[simp]
+theorem sigmaR_apply_one (χ : DirichletCharacter ℂ q) (s : ℂ) : χ.sigmaR s 1 = 1 := by
+  simp [sigmaR_apply]
+
+/-- Twisting by the (trivial) Dirichlet character modulo `1` does nothing. -/
+theorem sigmaR_modOne (χ : DirichletCharacter ℂ 1) (s : ℂ) :
+    χ.sigmaR s = ArithmeticFunction.sigmaR s := by
+  ext n
+  simp only [sigmaR_apply, ArithmeticFunction.sigmaR_apply]
+  refine Finset.sum_congr rfl fun d _ ↦ ?_
+  rw [Subsingleton.elim (d : ZMod 1) 1, map_one, one_mul]
+
+end DirichletCharacter
