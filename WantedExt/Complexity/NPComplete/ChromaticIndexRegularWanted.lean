@@ -41,8 +41,9 @@ namespace MetaMathlibExt.Complexity.NPComplete.ChromaticIndexRegular
 Fix an integer `k ≥ 3`. An instance is a `k`-regular graph `G = (V, E)`: a finite simple
 graph in which every vertex has degree exactly `k`. The question is whether the edges of `G`
 can be colored with `k` colors so that edges sharing an endpoint get different colors, i.e.
-whether the chromatic index of `G` is `k` (it is at least `k` when `G` has a vertex, and at
-most `k + 1` by Vizing's theorem). This is `k`-EDGE COLOURING restricted to `k`-regular graphs:
+whether the chromatic index of `G` is at most `k`; for a graph with at least one vertex this
+means exactly `k` (`k` edges meet at every vertex), and by Vizing's theorem the alternative is
+`k + 1`. This is `k`-EDGE COLOURING restricted to `k`-regular graphs:
 Holyer (1981) proved it NP-complete for `k = 3`, and Leven and Galil (1983) for every `k ≥ 4`;
 Galby, Lima, Paulusma and Ries (2019, Theorem 2) state both together: "For `k ≥ 3`,
 `k`-Edge Colouring is NP-complete even for `k`-regular graphs." The case `k = 3` is
