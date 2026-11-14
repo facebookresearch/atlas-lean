@@ -25,7 +25,8 @@ function is studied; no path-space construction of the chain is made here.
 
 The algebraic statements (`ctmcTransition_zero`, `ctmcTransition_add`, the Kolmogorov
 equations, uniformization) hold for every real matrix `Q` and every real `t`. Stochasticity
-needs `Q` to be a rate matrix, and nonnegativity also needs `t ≥ 0`.
+needs `Q` to be a rate matrix, and nonnegativity also needs `t ≥ 0`. Positivity of every entry
+needs positive off-diagonal rates and `t > 0`.
 
 ## Main definitions
 
@@ -40,7 +41,12 @@ needs `Q` to be a rate matrix, and nonnegativity also needs `t ≥ 0`.
 * `ctmcTransition_eq_exp_smul_uniformized`: **uniformization**,
   `P t = e^{-c t} • exp (t • (Q + c • 1))`.
 * `IsRateMatrix.sum_ctmcTransition`: the rows of `P t` sum to `1` for every `t`.
+* `ctmcTransition_nonneg_of_nonneg`, `one_add_le_ctmcTransition_of_nonneg`: for `A` with
+  nonnegative entries and `t ≥ 0`, `exp (t • A)` is entrywise nonnegative and dominates
+  `1 + t • A` entrywise; both come from the nonnegative terms of the exponential series.
 * `IsRateMatrix.ctmcTransition_nonneg`: the entries of `P t` are nonnegative for `t ≥ 0`.
+* `IsRateMatrix.ctmcTransition_pos`: with positive off-diagonal rates, every entry of `P t` is
+  positive for `t > 0`.
 * `IsRateMatrix.ctmcTransition_mem_rowStochastic`: `P t` is row-stochastic for `t ≥ 0`.
 
 ## References
@@ -116,9 +122,12 @@ theorem ctmcTransition_eq_exp_smul_uniformized (c t : ℝ) :
   rw [hsplit, Matrix.exp_add_of_commute _ _ ((Commute.one_left _).smul_left _),
     hexp, smul_mul_assoc, one_mul]
 
-/-- If `A` has nonnegative entries, so does `exp (t • A)` for `t ≥ 0`. -/
-theorem ctmcTransition_nonneg_of_nonneg {A : Matrix ι ι ℝ} (hA : ∀ i j, 0 ≤ A i j) {t : ℝ}
-    (ht : 0 ≤ t) (i j : ι) : 0 ≤ ctmcTransition A t i j := by
+/-- For `A` with nonnegative entries and `t ≥ 0`, the `(i, j)` entries of the terms of the
+exponential series of `t • A` are nonnegative and sum to `ctmcTransition A t i j`. -/
+private theorem nonneg_and_hasSum_ctmcTransition_apply {A : Matrix ι ι ℝ}
+    (hA : ∀ i j, 0 ≤ A i j) {t : ℝ} (ht : 0 ≤ t) (i j : ι) :
+    (∀ n, 0 ≤ ((n.factorial : ℝ)⁻¹ • (t • A) ^ n) i j) ∧
+      HasSum (fun n => ((n.factorial : ℝ)⁻¹ • (t • A) ^ n) i j) (ctmcTransition A t i j) := by
   let := Matrix.linftyOpNormedRing (n := ι) (α := ℝ)
   let := Matrix.linftyOpNormedAlgebra (R := ℝ) (n := ι) (α := ℝ)
   have hp (n : ℕ) : ∀ i j, 0 ≤ ((t • A) ^ n) i j := by
@@ -131,10 +140,23 @@ theorem ctmcTransition_nonneg_of_nonneg {A : Matrix ι ι ℝ} (hA : ∀ i j, 0 
       intro i j
       rw [pow_succ, Matrix.mul_apply]
       exact Finset.sum_nonneg fun k _ => mul_nonneg (hn i k) (mul_nonneg ht (hA k j))
-  have hij := Pi.hasSum.mp (Pi.hasSum.mp (exp_series_hasSum_exp' (𝕂 := ℝ) (t • A)) i) j
-  refine hij.nonneg fun n => ?_
+  refine ⟨fun n => ?_, Pi.hasSum.mp (Pi.hasSum.mp (exp_series_hasSum_exp' (𝕂 := ℝ) (t • A)) i) j⟩
   simp only [Matrix.smul_apply, smul_eq_mul]
   exact mul_nonneg (inv_nonneg.mpr (Nat.cast_nonneg _)) (hp n i j)
+
+/-- If `A` has nonnegative entries, so does `exp (t • A)` for `t ≥ 0`. -/
+theorem ctmcTransition_nonneg_of_nonneg {A : Matrix ι ι ℝ} (hA : ∀ i j, 0 ≤ A i j) {t : ℝ}
+    (ht : 0 ≤ t) (i j : ι) : 0 ≤ ctmcTransition A t i j := by
+  obtain ⟨hnn, hsum⟩ := nonneg_and_hasSum_ctmcTransition_apply hA ht i j
+  exact hsum.nonneg hnn
+
+/-- For a matrix `A` with nonnegative entries and `t ≥ 0`, `exp (t • A)` dominates the first two
+terms of its series entrywise: `1 i j + t * A i j ≤ exp (t • A) i j`. -/
+theorem one_add_le_ctmcTransition_of_nonneg {A : Matrix ι ι ℝ} (hA : ∀ i j, 0 ≤ A i j) {t : ℝ}
+    (ht : 0 ≤ t) (i j : ι) : (1 : Matrix ι ι ℝ) i j + t * A i j ≤ ctmcTransition A t i j := by
+  obtain ⟨hnn, hsum⟩ := nonneg_and_hasSum_ctmcTransition_apply hA ht i j
+  exact le_of_eq_of_le (by simp [Finset.sum_range_succ])
+    (sum_le_hasSum (Finset.range 2) (fun n _ => hnn n) hsum)
 
 /-- If `Q` annihilates the constant vector `1`, then `P t` fixes it: `P t *ᵥ 1 = 1`. -/
 theorem ctmcTransition_mulVec_one {Q : Matrix ι ι ℝ} (hQ : Q *ᵥ 1 = 0) (t : ℝ) :
@@ -173,6 +195,23 @@ theorem ctmcTransition_nonneg (hQ : IsRateMatrix Q) {t : ℝ} (ht : 0 ≤ t) (i 
   obtain ⟨c, -, hc⟩ := hQ.exists_add_smul_one_nonneg
   rw [ctmcTransition_eq_exp_smul_uniformized Q c t]
   exact mul_nonneg (Real.exp_pos _).le (ctmcTransition_nonneg_of_nonneg hc ht i j)
+
+/-- **Positivity of the transition function**: if `Q` is a rate matrix with positive
+off-diagonal rates, every entry of `P t = exp (t • Q)` is positive for `t > 0`. -/
+theorem ctmcTransition_pos (hQ : IsRateMatrix Q) (hoff : ∀ i j, i ≠ j → 0 < Q i j) {t : ℝ}
+    (ht : 0 < t) (i j : ι) : 0 < ctmcTransition Q t i j := by
+  obtain ⟨c, -, hc⟩ := hQ.exists_add_smul_one_nonneg
+  rw [ctmcTransition_eq_exp_smul_uniformized Q c t, Matrix.smul_apply, smul_eq_mul]
+  refine mul_pos (Real.exp_pos _)
+    (lt_of_lt_of_le ?_ (one_add_le_ctmcTransition_of_nonneg hc ht.le i j))
+  by_cases h : i = j
+  · subst h
+    rw [one_apply_eq]
+    have := mul_nonneg ht.le (hc i i)
+    linarith
+  · have hQc : (Q + c • (1 : Matrix ι ι ℝ)) i j = Q i j := by simp [one_apply_ne h]
+    rw [one_apply_ne h, zero_add, hQc]
+    exact mul_pos ht (hoff i j h)
 
 /-- The transition function of a rate matrix is row-stochastic for `t ≥ 0` (Norris 1997,
 Theorem 2.1.2). -/
