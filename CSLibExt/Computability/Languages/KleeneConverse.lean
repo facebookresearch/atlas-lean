@@ -13,10 +13,7 @@ module
 
 public import Cslib.Computability.Languages.RegularLanguage
 public import Mathlib.Algebra.BigOperators.Fin
-public import Mathlib.Computability.DFA
-public import Mathlib.Computability.Language
-public import Mathlib.Computability.RegularExpressions
-public import Mathlib.Data.Fin.Basic
+import CSLibExt.Computability.Automata.DA.MathlibDFA
 
 /-!
 # Kleene's theorem, converse direction: regular languages are denoted by regular expressions
@@ -30,12 +27,19 @@ last state with Arden's lemma (`Language.self_eq_mul_add_iff`, which requires `[
 true since every `A q j` is a union of singletons) leaves a smaller system of the same shape,
 and induction on the number of states shows every `X q` is denoted by a regular expression.
 
+Clients use pinned CSLib's `DA.FinAcc`, `NA.FinAcc`, and `IsRegular.iff_dfa` interfaces.
+The Mathlib DFA below is the internal proof substrate, connected by the existing `toDFA`
+language-preserving bridge. The local language-equation proof supplies the automaton-to-regex
+direction missing from CSLib v4.35.0; no automaton or regex representation is redefined.
+
 The finiteness of the alphabet is essential: over an infinite alphabet the language of all
 one-letter words is regular but no regular expression denotes it (`exists_regular_not_regex`),
 since a regular expression mentions only finitely many letters.
 
 ## Main results
 
+* `KleeneConverse.exists_regex_of_da`, `KleeneConverse.exists_regex_of_na`: the regex for
+  a pinned CSLib finite-word acceptor, through the existing language-preserving bridges.
 * `Cslib.Language.IsRegular.exists_regex`: Kleene's theorem, converse direction.
 * `Cslib.Language.isRegular_iff_exists_regex`: Kleene's theorem, both directions.
 * `Cslib.Language.exists_regular_not_regex`: sharpness of the finite-alphabet hypothesis.
@@ -349,6 +353,21 @@ theorem exists_regex_of_dfa {σ : Type*} [Finite σ] [Finite α] (M : DFA α σ)
   obtain ⟨r, hr⟩ := exists_regex_of_dfa_fin (M.reindex (Fintype.equivFin σ))
   exact ⟨r, by rw [hr, DFA.accepts_reindex]⟩
 
+/-- A pinned CSLib deterministic finite-word automaton has a matching regular expression.
+The existing `toDFA` bridge preserves its accepted language. -/
+theorem exists_regex_of_da {State : Type*} [Finite State] [Finite α]
+    (M : Automata.DA.FinAcc State α) :
+    ∃ r : RegularExpression α, r.matches' = Automata.Acceptor.language M := by
+  simpa only [Automata.DA.FinAcc.language_toDFA] using exists_regex_of_dfa M.toDFA
+
+/-- A pinned CSLib nondeterministic finite-word automaton has a matching regular expression.
+This uses upstream's language-preserving subset construction. -/
+theorem exists_regex_of_na {State : Type*} [Finite State] [Finite α]
+    (M : Automata.NA.FinAcc State α) :
+    ∃ r : RegularExpression α, r.matches' = Automata.Acceptor.language M := by
+  simpa only [Automata.NA.FinAcc.toDAFinAcc_language_eq] using
+    exists_regex_of_da M.toDAFinAcc
+
 /-- The letters occurring in a regular expression. -/
 def regexLetters [DecidableEq α] : RegularExpression α → Finset α
   | .zero => ∅
@@ -454,9 +473,8 @@ by a regular expression. Source: M. Sipser, *Introduction to the Theory of Compu
 ed., Theorem 1.54. -/
 theorem IsRegular.exists_regex {α : Type*} [Finite α] {L : Language α} (hL : L.IsRegular) :
     ∃ r : RegularExpression α, r.matches' = L := by
-  classical
-  obtain ⟨σ, _, M, rfl⟩ := hL
-  exact KleeneConverse.exists_regex_of_dfa M
+  obtain ⟨State, _, M, rfl⟩ := IsRegular.iff_dfa.mp hL
+  exact KleeneConverse.exists_regex_of_da M
 
 /-- **Kleene's theorem** (Sipser, 3rd ed., Theorem 1.54): over a finite alphabet, a language
 is regular if and only if it is denoted by a regular expression. Source: M. Sipser,
@@ -473,8 +491,10 @@ theorem exists_regular_not_regex {α : Type*} [Infinite α] :
     ∃ L : Language α, L.IsRegular ∧ ∀ r : RegularExpression α, r.matches' ≠ L := by
   classical
   refine ⟨{w | w.length = 1}, ?_, ?_⟩
-  · exact ⟨Fin 3, inferInstance, (KleeneConverse.singletonDFA : DFA α (Fin 3)),
-      KleeneConverse.singletonDFA_accepts⟩
+  · apply IsRegular.iff_dfa.mpr
+    exact ⟨Fin 3, inferInstance,
+      Automata.DA.FinAcc.ofDFA (KleeneConverse.singletonDFA : DFA α (Fin 3)),
+      by simpa only [Automata.DA.FinAcc.accepts_ofDFA] using KleeneConverse.singletonDFA_accepts⟩
   · intro r hr
     obtain ⟨a, _, ha⟩ := Set.Infinite.exists_notMem_finset Set.infinite_univ
       (KleeneConverse.regexLetters r)
