@@ -39,8 +39,8 @@ an assignment of a tile `f(i, j) ∈ T` to each ordered pair `(i, j)`, `1 ≤ i,
 (2) if `f(i, j) = ⟨a, b, c, d⟩` and `f(i, j + 1) = ⟨a', b', c', d'⟩` then `c = a'`?
 
 So `i` counts columns left to right and `j` counts rows top to bottom; tiles are not rotated,
-and a tile may be used any number of times. Positions are indexed from `0` here. Colors are
-`0, ..., |C| - 1`.
+and a tile may be used any number of times. Positions are indexed from `0` here. The color set
+`C` is listed explicitly, so `N ≤ |C|` bounds the side length by the input length.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -53,16 +53,16 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number of colors `|C|`, the tile list `T` (a tile `(a, b, c, d)` is
-top, right, bottom, left), and the side length `N`. -/
-abbrev SquareTilingInstance := ℕ × List (ℕ × ℕ × ℕ × ℕ) × ℕ
+/-- An instance: the color list `C`, the tile list `T` (a tile `(a, b, c, d)` is top, right,
+bottom, left), and the side length `N`. -/
+abbrev SquareTilingInstance := List ℕ × List (ℕ × ℕ × ℕ × ℕ) × ℕ
 
-/-- Well-formedness of an instance: `T` lists distinct tiles, every tile color is one of the
-`|C|` colors, and `0 < N ≤ |C|`. -/
+/-- Well-formedness of an instance: `C` lists distinct colors, `T` lists distinct tiles, every
+tile color is in `C`, and `0 < N ≤ |C|`. -/
 def WellFormed (i : SquareTilingInstance) : Prop :=
-  i.2.1.Nodup ∧
-    (∀ t ∈ i.2.1, t.1 < i.1 ∧ t.2.1 < i.1 ∧ t.2.2.1 < i.1 ∧ t.2.2.2 < i.1) ∧
-    0 < i.2.2 ∧ i.2.2 ≤ i.1
+  i.1.Nodup ∧ i.2.1.Nodup ∧
+    (∀ t ∈ i.2.1, t.1 ∈ i.1 ∧ t.2.1 ∈ i.1 ∧ t.2.2.1 ∈ i.1 ∧ t.2.2.2 ∈ i.1) ∧
+    0 < i.2.2 ∧ i.2.2 ≤ i.1.length
 
 /-- An `N × N` tiling: every position `(x, y)` with `x, y < N` gets a tile of `T`; the right
 color of `f x y` equals the left color of `f (x + 1) y`, and the bottom color of `f x y`
