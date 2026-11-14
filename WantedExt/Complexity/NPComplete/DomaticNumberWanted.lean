@@ -26,6 +26,7 @@ public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
+public import MathlibExt.Combinatorics.SimpleGraph.Domination
 
 @[expose] public section
 
@@ -40,7 +41,7 @@ number of `G` at least `K`, i.e. can `V` be partitioned into `k ≥ K` disjoint 
 adjacent to a vertex of `Vᵢ`)?
 
 The partition is given by the map `c : V → Fin k` sending each vertex to the index of its
-block, so `Vⱼ = c⁻¹(j)`.
+block, so `Vⱼ = c⁻¹(j)`; "dominating set" is `SimpleGraph.IsDominating`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -70,8 +71,7 @@ def WellFormed (i : DomaticNumberInstance) : Prop :=
 /-- The domatic number is at least `K`: for some `k ≥ K` there is a partition of the vertices
 into blocks `c⁻¹(j)`, `j : Fin k`, each of which dominates the graph. -/
 def DomaticNumberFeasible (i : DomaticNumberInstance) : Prop :=
-  ∃ k, i.2.2 ≤ k ∧ ∃ c : Fin i.1 → Fin k,
-    ∀ j : Fin k, ∀ v : Fin i.1, c v = j ∨ ∃ u, c u = j ∧ (Graph i).Adj u v
+  ∃ k, i.2.2 ≤ k ∧ ∃ c : Fin i.1 → Fin k, ∀ j : Fin k, (Graph i).IsDominating {v | c v = j}
 
 open Classical in
 /-- DOMATIC NUMBER as a decision problem over bitstrings. -/
