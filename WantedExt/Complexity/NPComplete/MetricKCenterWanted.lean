@@ -38,21 +38,21 @@ QUESTION: is there a `k`-center set, i.e. a subset `C ⊆ V` with `|C| = k`, suc
 `max_{v ∈ V} min_{c ∈ C} d(v, c) ≤ B`?
 
 This is the decision version of MINIMUM K-CENTER from the Crescenzi-Kann compendium ([ND54]).
-Its NP-hardness is the vertex p-center result of Kariv and Hakimi (shortest-path distances of a
-network satisfy the triangle inequality).
+Its NP-hardness is the vertex p-center result of Kariv and Hakimi (the shortest-path distances
+of a connected network with positive edge lengths form a metric).
 
 The module restricts the generalized, nonmetric k-center problem
 `WantedExt.Complexity.NPComplete.KCenterWanted` (whose docstring names the metric problem as its
-special case) and reuses its instance, its `WellFormed` and its feasibility condition
-unchanged. The instance `(d, k, B)` is the distance matrix, one row per vertex, the number of
-centers and the radius. `WellFormed` adds the metric conditions: the matrix is square, its
-diagonal is zero (the distance from a vertex to itself; the complete graph has no loops), it is
-symmetric (the graph is undirected) and it satisfies the triangle inequality; and the bounds
-`0 < k ≤ |V|` and `0 < B`. With rows and columns both indexed by `V`, the parent's condition (at
-most `k` distinct centers and an assignment of every vertex to a center within distance `B`)
-says that some `C ⊆ V` with `|C| ≤ k` has `min_{c ∈ C} d(v, c) ≤ B` for every `v`; since
-`k ≤ |V|` and adding centers never increases a distance to the nearest center, this is the same
-as `|C| = k`.
+special case): it reuses the parent's instance and feasibility condition unchanged and extends
+the parent's `WellFormed`. The instance `(d, k, B)` is the distance matrix, one row per vertex,
+the number of centers and the radius. `WellFormed` adds the metric conditions: the matrix is
+square, `d(u, v) = 0` exactly when `u = v` (the distance from a vertex to itself is zero; the
+complete graph has no loops), it is symmetric (the graph is undirected) and it satisfies the
+triangle inequality; and the bounds `0 < k ≤ |V|` and `0 < B`. With rows and columns both
+indexed by `V`, the parent's condition (at most `k` distinct centers and an assignment of every
+vertex to a center within distance `B`) says that some `C ⊆ V` with `|C| ≤ k` has
+`min_{c ∈ C} d(v, c) ≤ B` for every `v`; since `k ≤ |V|` and adding centers never increases a
+distance to the nearest center, this is the same as `|C| = k`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -68,11 +68,11 @@ reduction from every language in `NP`
 /-- The distance `d(u, v)`: entry `v` of row `u` of the matrix. -/
 def distance (i : KCenterInstance) (u v : ℕ) : ℕ := (i.1.getD u []).getD v 0
 
-/-- Well-formedness of an instance: the parent's condition, a square matrix with zero diagonal
-that is symmetric and satisfies the triangle inequality, `0 < k ≤ |V|`, and `0 < B`. -/
+/-- Well-formedness of an instance: the parent's condition, a square matrix that is a metric
+(zero exactly on the diagonal, symmetric, triangle inequality), `0 < k ≤ |V|`, and `0 < B`. -/
 def WellFormed (i : KCenterInstance) : Prop :=
   KCenter.WellFormed i ∧ (∀ row ∈ i.1, row.length = i.1.length) ∧
-    (∀ u < i.1.length, distance i u u = 0) ∧
+    (∀ u < i.1.length, ∀ v < i.1.length, distance i u v = 0 ↔ u = v) ∧
     (∀ u < i.1.length, ∀ v < i.1.length, distance i u v = distance i v u) ∧
     (∀ u < i.1.length, ∀ v < i.1.length, ∀ w < i.1.length,
       distance i u w ≤ distance i u v + distance i v w) ∧
