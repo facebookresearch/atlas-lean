@@ -13,7 +13,7 @@ public import MathlibExt.Analysis.PDE.SemilinearFlow.Interface
 public import MathlibExt.Analysis.PDE.SemilinearFlow.Instability
 import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.ODE.ExistUnique
-import Mathlib.Analysis.ODE.Gronwall
+import MathlibExt.Analysis.ODE.GronwallIntegral
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
@@ -439,35 +439,6 @@ theorem turing_instability_exists_escape {J : Matrix (Fin 2) (Fin 2) ℝ} {du dv
 
 /-! ### The time-map expansion from a differentiable reaction -/
 
-/-- **Integral Grönwall inequality.** A continuous `ψ ≥ 0` with
-`ψ t ≤ a + K ∫₀ᵗ ψ` on `[0, T]` (`K ≥ 0`) satisfies `ψ t ≤ a exp (K t)` there. (Same statement
-as the private helper of `MathlibExt.Analysis.PDE.SemilinearFlow.Interface`.) -/
-private theorem le_mul_exp_of_le_add_mul_integral {ψ : ℝ → ℝ} (hψ : Continuous ψ)
-    (hψ0 : ∀ t, 0 ≤ ψ t) {a K T : ℝ} (hK : 0 ≤ K)
-    (h : ∀ t ∈ Icc 0 T, ψ t ≤ a + K * ∫ s in (0 : ℝ)..t, ψ s) :
-    ∀ t ∈ Icc 0 T, ψ t ≤ a * Real.exp (K * t) := by
-  set Ψ : ℝ → ℝ := fun t => ∫ s in (0 : ℝ)..t, ψ s with hΨ_def
-  have hd : ∀ t, HasDerivAt Ψ (ψ t) t := fun t => (hψ.integral_hasStrictDerivAt 0 t).hasDerivAt
-  have hΨ0 : ∀ t ∈ Icc 0 T, 0 ≤ Ψ t := fun t ht =>
-    intervalIntegral.integral_nonneg ht.1 fun s _ => hψ0 s
-  have hG := norm_le_gronwallBound_of_norm_deriv_right_le (f := Ψ) (f' := ψ) (δ := 0) (K := K)
-    (ε := a) (a := 0) (b := T) (fun t _ => (hd t).continuousAt.continuousWithinAt)
-    (fun t _ => (hd t).hasDerivWithinAt) (by simp [Ψ]) (fun t ht => by
-      rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (hψ0 t),
-        abs_of_nonneg (hΨ0 t ⟨ht.1, ht.2.le⟩)]
-      linarith [h t ⟨ht.1, ht.2.le⟩])
-  intro t ht
-  have h1 := hG t ht
-  rw [Real.norm_eq_abs, abs_of_nonneg (hΨ0 t ht), sub_zero] at h1
-  have h2 : ψ t ≤ a + K * gronwallBound 0 K a t :=
-    (h t ht).trans (by linarith [mul_le_mul_of_nonneg_left h1 hK])
-  rcases eq_or_ne K 0 with rfl | hK0
-  · simpa using h2
-  · rw [gronwallBound_of_K_ne_0 hK0] at h2
-    have : a + K * (0 * Real.exp (K * t) + a / K * (Real.exp (K * t) - 1)) =
-        a * Real.exp (K * t) := by field_simp; ring
-    linarith
-
 /-- **Time-map expansion from a Hölder-differentiable reaction** (the differentiability input
 of linearized instability, in the PDE-01 mild formulation).
 
@@ -580,8 +551,8 @@ theorem exists_norm_timeMap_sub_le {X : Type*} [NormedAddCommGroup X] [NormedSpa
     have : t * (Ms * c) ≤ Ms * c * T := by
       rw [mul_comm]; exact mul_le_mul_of_nonneg_left ht.2 (by positivity)
     linarith
-  have hG := le_mul_exp_of_le_add_mul_integral hψc (fun t => norm_nonneg _) hb hineq T
-    ⟨hT, le_rfl⟩
+  have hG := MathlibExt.Analysis.ODE.le_mul_exp_of_le_add_integral hb
+    hψc.integrableOn_Icc (fun t _ => norm_nonneg _) hineq T ⟨hT, le_rfl⟩
   rw [hψe T ⟨hT, le_rfl⟩] at hG
   calc ‖Φ T (u₀ + y) - u₀ - S T.toNNReal y‖ = ‖e T‖ := rfl
     _ ≤ Ms * c * T * Real.exp (b * T) := hG
