@@ -9,43 +9,104 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Matrix.Spectrum
+public import Mathlib.Analysis.CStarAlgebra.Matrix
+public import Mathlib.Analysis.InnerProductSpace.Rayleigh
 public import Mathlib.LinearAlgebra.Matrix.Notation
-public import Mathlib.LinearAlgebra.Matrix.Determinant.Misc
 public import Mathlib.Combinatorics.SimpleGraph.LapMatrix
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Algebra.Ring.Parity
-public import Mathlib.Tactic
+
+import Mathlib.LinearAlgebra.Matrix.Determinant.Misc
+import Mathlib.Tactic
 
 /-!
 # CH39: Variational method, perturbation theory and Hückel MO theory
 
-Reuse-verified exception: this module depends ONLY on pinned Mathlib at main
-(in particular `Matrix.IsHermitian.eigenvalues`, `SimpleGraph.adjMatrix`,
-real trigonometry) and on no CH36/MF03/MF10 file.
+Rayleigh-quotient bounds, perturbation residuals, closed-form Hückel modes on paths and cycles,
+cycle pairing and level counts, and the two-orbital LCAO secular determinant, for real matrices.
 
-Model boundary: Hückel parameters α, β are empirical (one-electron
-approximation, MOD); all spectra and inequalities are MC. Beta < 0 sign
-convention. Hückel energies are not total energies. Infinite-dimensional
-variational principle needs form domains (deferred, not claimed).
+## i. Overview
 
-CH39.1: The general Cauchy interlacing theorem (all principal submatrices,
-all orders) is NOT proved; the pinned `cauchyInterlacing_oneDim` is its
-one-dimensional case (diagonal entries lie between the extreme eigenvalues),
-proved from the Rayleigh bounds.
+This module is the finite-matrix layer of ATLAS roadmap module CH39. It depends only on pinned
+Mathlib (`Matrix.IsHermitian.eigenvalues`, `SimpleGraph.adjMatrix`, `SimpleGraph.pathGraph`,
+`SimpleGraph.cycleGraph`, real trigonometry) and on no other ATLAS module.
 
-CH39.2: The eigenvector-curve existence theorem is NOT proved; the pinned
-statements are the coefficient identities.
+- **Variational bounds.** For a real symmetric `H`, the Rayleigh quotient of a nonzero vector lies
+  between the smallest and the largest eigenvalue, and its one-dimensional case of Cauchy
+  interlacing follows: every diagonal entry lies between the extreme eigenvalues. A generalized
+  eigenvalue `H c = E • (S *ᵥ c)` with `S` positive definite and `c ≠ 0` equals the generalized
+  Rayleigh quotient of `c`. The general Cauchy interlacing theorem (all principal submatrices)
+  and the infinite-dimensional variational principle, which needs form domains, are not proved.
+- **Perturbation residuals.** For `diagonal d + t • H₁` with `d 0 - d j ≠ 0` for `j ≠ 0`, the
+  first-order coefficients `pertE1`, `pertV1` make the eigen-equation residual exactly `t ^ 2`
+  times a fixed vector. For `diagonal d + t • H₁ + t ^ 2 • H₂` with `H₁` symmetric, the
+  second-order energy `pertE2` makes the `e₀`-component of the residual `t ^ 3` times an explicit
+  remainder. Only these coefficient identities are proved; the existence of eigenvalue and
+  eigenvector curves `E(t)`, `v(t)` is not.
+- **Hückel modes.** With `huckelMatrix α β G = α • 1 + β • Adj(G)`, the path sine modes
+  (`1 ≤ k ≤ n`) and the cycle cosine modes are nonzero eigenvectors with the energies
+  `α + 2 β cos (k π / (n + 1))` and `α + 2 β cos (2 π k / N)`, and the path energies are pairwise
+  distinct when `β ≠ 0`. For the cycle sine modes only the action identity is stated, since the
+  sine vector vanishes at `k = 0`. Cycles are stated for `N = n + 3 ≥ 3` vertices.
+- **Pairing and counts.** On an even cycle, a nonzero eigenvector with energy `E` flips under
+  `alternatingFlip` to a nonzero eigenvector with energy `2 α - E`. Among the `N` closed-form
+  cycle energies `α + 2 β cos (2 π k / N)`, indexed by `k = 0, …, N - 1`, exactly `2 m + 1` lie
+  below `α` when `N = 4 m + 2` and `β < 0`, and exactly two equal `α` when `N = 4 m` and `β ≠ 0`.
+  These count the closed-form list by index. Whether that list is the whole spectrum with
+  multiplicity (completeness of the cosine and sine modes) is not proved, so no statement about
+  bonding levels, filled orbitals, closed shells or aromaticity is made.
+- **LCAO.** The `2 × 2` secular determinant `det (H - E • !![1, S; S, 1])` for
+  `H = !![α, β; β, α]` and overlap `S` factors, with roots `(α + β) / (1 + S)` and
+  `(α - β) / (1 - S)`.
 
-CH39.3: The pinned eigenvector theorems certify that the listed numbers ARE
-eigenvalues (with explicit eigenvectors); the full "these are ALL the
-eigenvalues" completeness is the standard dimension argument from the n
-distinct path eigenvalues / the orthogonal cos+sin families and is NOT
-separately formalized.
+The Hückel parameters `α` and `β` are empirical one-electron parameters, with the sign
+convention `β < 0` in the counting statement; Hückel energies are not total energies.
 
-CH39.4: Physical reading (Aufbau): 2 electrons per orbital, spin-paired.
-No aromaticity criterion is claimed.
+## ii. Key results
+
+- `rayleighQuotient_ge_eigenvalues_min`, `rayleighQuotient_le_eigenvalues_max`: the Rayleigh
+  bounds; `cauchyInterlacing_oneDim`: diagonal entries lie between the extreme eigenvalues;
+  `rayleighQuotient_eq_toEuclideanCLM_rayleighQuotient`: the bridge to Mathlib's
+  `ContinuousLinearMap.rayleighQuotient`.
+- `generalizedEigenvalue_eq_ratio`: a generalized eigenvalue is its generalized Rayleigh quotient.
+- `firstOrder_residual`, `secondOrder_projected_residual`: perturbation residuals.
+- `huckel_path_eigenvector`, `huckel_path_sineMode_ne_zero`, `huckel_path_eigenvalues_distinct`:
+  the path modes.
+- `huckel_cycle_eigenvector_cos`, `huckel_cycle_cosMode_ne_zero`: the cycle cosine modes.
+- `huckel_cycle_pairing`: energy pairing `E ↦ 2 α - E` on even cycles.
+- `huckel_cycle_closedForm_count_lt_alpha_4m2`, `huckel_cycle_closedForm_count_eq_alpha_4m`:
+  counts of the closed-form cycle energies.
+- `lcao_det`, `lcao_energies_are_roots`: the two-orbital LCAO secular determinant.
+
+## iii. Table of contents
+
+- A. Definitions
+- B. Rayleigh quotients and variational bounds
+- C. Perturbation residuals
+- D. Hückel modes on paths and cycles
+- E. Pairing on even cycles
+- F. Counting the closed-form cycle energies
+- G. The two-orbital LCAO secular determinant
+
+## iv. References
+
+- R. A. Horn and C. R. Johnson, *Matrix Analysis*, 2nd ed., Cambridge University Press,
+  Chapter 4 (Rayleigh quotients, Cauchy interlacing).
+- J. J. Sakurai and J. Napolitano, *Modern Quantum Mechanics*, 2nd ed., Chapter 5
+  (time-independent perturbation theory).
+- E. Hückel, *Quantentheoretische Beiträge zum Benzolproblem I. Die Elektronenkonfiguration des
+  Benzols und verwandter Verbindungen*, Z. Phys. 70 (1931), 204–286.
+- C. A. Coulson and G. S. Rushbrooke, *Note on the method of molecular orbitals*, Proc.
+  Cambridge Philos. Soc. 36 (1940), 193–200 (pairing of energies in alternant systems).
+- A. Streitwieser, *Molecular Orbital Theory for Organic Chemists*, Wiley, 1961 (Hückel energies
+  of linear and cyclic polyenes).
+- Mathlib: `Matrix.IsHermitian.eigenvectorBasis`, `Matrix.IsHermitian.mulVec_eigenvectorBasis`,
+  `ContinuousLinearMap.rayleighQuotient`, `Matrix.toEuclideanCLM`, `SimpleGraph.adjMatrix`,
+  `SimpleGraph.pathGraph_adj`, `SimpleGraph.cycleGraph_adj`.
+
+## A. Definitions
 -/
 
 @[expose] public section
@@ -83,7 +144,10 @@ noncomputable def pertE2 {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 H2 : Matrix (Fin n) (Fin n) ℝ) : ℝ :=
   H2 0 0 + ∑ j ∈ Finset.univ.erase 0, (H1 j 0) ^ 2 / (d 0 - d j)
 
-/-- Second-order eigenvector correction (zero 0-component). -/
+/-- Second-order eigenvector coefficient (zero `0`-component), the Rayleigh–Schrödinger formula
+in intermediate normalization. In `secondOrder_projected_residual` it enters only the `t ^ 3`
+remainder of the `e₀`-component; the tests check the full second-order residual on a `3 × 3`
+example. -/
 noncomputable def pertV2 {n : ℕ} [NeZero n] (d : Fin n → ℝ)
     (H1 H2 : Matrix (Fin n) (Fin n) ℝ) : Fin n → ℝ :=
   fun j => if j = 0 then 0 else
@@ -93,6 +157,24 @@ noncomputable def pertV2 {n : ℕ} [NeZero n] (d : Fin n → ℝ)
 /-- Alternating-sign flip: `(flip v) j = (-1) ^ j.val * v j`. -/
 noncomputable def alternatingFlip {N : ℕ} (v : Fin N → ℝ) : Fin N → ℝ :=
   fun j => (-1 : ℝ) ^ j.val * v j
+
+/-! ## B. Rayleigh quotients and variational bounds -/
+
+/-- Bridge to Mathlib: `rayleighQuotient H x` is Mathlib's `ContinuousLinearMap.rayleighQuotient`
+of the operator `Matrix.toEuclideanCLM H` at `WithLp.toLp 2 x`. -/
+lemma rayleighQuotient_eq_toEuclideanCLM_rayleighQuotient {n : ℕ}
+    (H : Matrix (Fin n) (Fin n) ℝ) (x : Fin n → ℝ) :
+    rayleighQuotient H x =
+      (Matrix.toEuclideanCLM (𝕜 := ℝ) H).rayleighQuotient (WithLp.toLp 2 x) := by
+  rw [ContinuousLinearMap.rayleighQuotient, ContinuousLinearMap.reApplyInnerSelf_apply,
+    rayleighQuotient]
+  have h1 : x ⬝ᵥ H *ᵥ x = RCLike.re
+      (inner ℝ ((Matrix.toEuclideanCLM (𝕜 := ℝ) H) (WithLp.toLp 2 x)) (WithLp.toLp 2 x)) := by
+    simp [Matrix.toEuclideanCLM_toLp, EuclideanSpace.inner_eq_star_dotProduct]
+  have h2 : x ⬝ᵥ x = ‖WithLp.toLp 2 x‖ ^ 2 := by
+    rw [← real_inner_self_eq_norm_sq, EuclideanSpace.inner_eq_star_dotProduct, WithLp.ofLp_toLp,
+      star_trivial]
+  rw [h1, h2]
 
 /-- Eigenvector-basis vectors as plain functions. -/
 private noncomputable def rqBasisVec {n : ℕ} {H : Matrix (Fin n) (Fin n) ℝ}
@@ -245,8 +327,8 @@ theorem cauchyInterlacing_oneDim {n : ℕ} (hn : 0 < n)
   · rw [← hRQ]
     exact rayleighQuotient_le_eigenvalues_max hn hH hx
 
-/-- A generalized eigenvalue equals its generalized Rayleigh quotient: in
-particular it is real. `S` positive definite, `H c = E • (S *ᵥ c)`, `c ≠ 0`. -/
+/-- A generalized eigenvalue equals its generalized Rayleigh quotient: for `S` positive
+definite, `H *ᵥ c = E • (S *ᵥ c)` and `c ≠ 0` give `E = (c ⬝ᵥ H *ᵥ c) / (c ⬝ᵥ S *ᵥ c)`. -/
 theorem generalizedEigenvalue_eq_ratio {n : ℕ}
     {H S : Matrix (Fin n) (Fin n) ℝ} (hH : H.IsHermitian) (hS : S.IsHermitian)
     (hSpos : ∀ x : Fin n → ℝ, x ≠ 0 → 0 < x ⬝ᵥ S *ᵥ x)
@@ -259,6 +341,8 @@ theorem generalizedEigenvalue_eq_ratio {n : ℕ}
   simp at hcongr
   field_simp
   linarith
+
+/-! ## C. Perturbation residuals -/
 
 /-- First-order perturbation: with `v(t) = e₀ + t • pertV1` and
 `E(t) = d 0 + t * pertE1`, the residual of `(diagonal d + t • H1)` is `O(t ^ 2)`. -/
@@ -334,6 +418,8 @@ theorem secondOrder_projected_residual {n : ℕ} [NeZero n] (d : Fin n → ℝ)
   rw [hE2]
   ring
 
+/-! ## D. Hückel modes on paths and cycles -/
+
 /-- Hückel action, pointwise: `(H *ᵥ v) j = α * v j + β * ∑ neighbors`. -/
 private lemma huckelMatrix_mulVec_apply {n : ℕ} (α β : ℝ) (G : SimpleGraph (Fin n))
     [DecidableRel G.Adj] (v : Fin n → ℝ) (j : Fin n) :
@@ -351,8 +437,8 @@ private lemma huckelMatrix_mulVec_apply {n : ℕ} (α β : ℝ) (G : SimpleGraph
   rw [Matrix.add_mulVec, Matrix.smul_mulVec, Matrix.smul_mulVec, Matrix.one_mulVec,
     Pi.add_apply, Pi.smul_apply, Pi.smul_apply, smul_eq_mul, smul_eq_mul, hadj]
 
-/-- Hückel path eigenvector: the sine vector with wavenumber `k` has eigenvalue
-`α + 2 * β * cos (k * π / (n + 1))`. -/
+/-- Hückel path eigenvector: for `1 ≤ k ≤ n`, the sine mode with wavenumber `k` has eigenvalue
+`α + 2 * β * cos (k * π / (n + 1))`; it is nonzero by `huckel_path_sineMode_ne_zero`. -/
 theorem huckel_path_eigenvector {n : ℕ} (hn : 0 < n) (α β : ℝ) {k : ℕ}
     (hk1 : 1 ≤ k) (hkn : k ≤ n) :
     huckelMatrix α β (SimpleGraph.pathGraph n) *ᵥ
@@ -527,6 +613,32 @@ theorem huckel_path_eigenvector {n : ℕ} (hn : 0 < n) (α β : ℝ) {k : ℕ}
         Real.sin_sub, Real.sin_add]
       ring
 
+/-- The path sine mode with `1 ≤ k ≤ n` is nonzero: its entry at the first vertex is
+`sin (k * π / (n + 1)) > 0`. -/
+lemma huckel_path_sineMode_ne_zero {n : ℕ} (hn : 0 < n) {k : ℕ} (hk1 : 1 ≤ k) (hkn : k ≤ n) :
+    (fun j : Fin n => Real.sin ((k * (j.val + 1) : ℕ) * Real.pi / (n + 1))) ≠ 0 := by
+  intro h
+  have h0 := congrFun h ⟨0, hn⟩
+  have hn1 : (0 : ℝ) < (n : ℝ) + 1 := by positivity
+  have hk : (1 : ℝ) ≤ k := by exact_mod_cast hk1
+  have hkn' : (k : ℝ) < (n : ℝ) + 1 := by
+    have : (k : ℝ) ≤ n := by exact_mod_cast hkn
+    linarith
+  have harg : (((k * ((⟨0, hn⟩ : Fin n).val + 1) : ℕ) : ℝ) * Real.pi / (n + 1)) =
+      (k : ℝ) * Real.pi / (n + 1) := by
+    push_cast
+    ring
+  have hpos : 0 < Real.sin ((k : ℝ) * Real.pi / (n + 1)) := by
+    apply Real.sin_pos_of_pos_of_lt_pi
+    · have := Real.pi_pos
+      positivity
+    · rw [div_lt_iff₀ hn1]
+      have := Real.pi_pos
+      nlinarith
+  simp only [Pi.zero_apply] at h0
+  rw [harg] at h0
+  linarith
+
 /-- The path Hückel eigenvalues for distinct `k` are distinct (for `β ≠ 0`). -/
 theorem huckel_path_eigenvalues_distinct {n : ℕ} (hn : 0 < n) (α : ℝ) {β : ℝ} (hβ : β ≠ 0)
     {k l : ℕ} (hk1 : 1 ≤ k) (hkn : k ≤ n) (hl1 : 1 ≤ l) (hln : l ≤ n)
@@ -566,7 +678,19 @@ theorem huckel_path_eigenvalues_distinct {n : ℕ} (hn : 0 < n) (α : ℝ) {β :
     exact mul_right_cancel₀ (ne_of_gt hπ) hmul2
   exact hkl (Nat.cast_injective hkl')
 
-/-- Hückel cycle eigenvector (cosine family). -/
+/-- The cycle cosine mode is nonzero: its entry at vertex `0` is `cos 0 = 1`. -/
+lemma huckel_cycle_cosMode_ne_zero {n : ℕ} (k : ℕ) :
+    (fun j : Fin (n + 3) => Real.cos (2 * Real.pi * k * j.val / (n + 3))) ≠ 0 := by
+  have : NeZero (n + 3) := ⟨by omega⟩
+  intro h
+  have h0 := congrFun h 0
+  simp only [Pi.zero_apply, Fin.val_zero, Nat.cast_zero, mul_zero, zero_div,
+    Real.cos_zero] at h0
+  exact one_ne_zero h0
+
+/-- Hückel cycle eigenvector (cosine family): on the cycle with `N = n + 3` vertices, the cosine
+mode with wavenumber `k` has eigenvalue `α + 2 * β * cos (2 * π * k / N)`; it is nonzero by
+`huckel_cycle_cosMode_ne_zero`. -/
 theorem huckel_cycle_eigenvector_cos {n : ℕ} (α β : ℝ) (k : ℕ) :
     huckelMatrix α β (SimpleGraph.cycleGraph (n + 3)) *ᵥ
       (fun j : Fin (n + 3) => Real.cos (2 * Real.pi * k * j.val / (n + 3))) =
@@ -698,8 +822,10 @@ theorem huckel_cycle_eigenvector_cos {n : ℕ} (α β : ℝ) (k : ℕ) :
       rw [hvj j, hm1, hp1, Real.cos_sub, Real.cos_add]
       ring
 
-/-- Hückel cycle eigenvector (sine family). -/
-theorem huckel_cycle_eigenvector_sin {n : ℕ} (α β : ℝ) (k : ℕ) :
+/-- Action of the cycle Hückel matrix on the sine mode with wavenumber `k`: it is multiplied by
+`α + 2 * β * cos (2 * π * k / N)`. This is an action identity, not an eigenvector statement: the
+sine vector can vanish (it is identically zero at `k = 0`), and then the identity is trivial. -/
+lemma huckel_cycle_sinMode_mulVec {n : ℕ} (α β : ℝ) (k : ℕ) :
     huckelMatrix α β (SimpleGraph.cycleGraph (n + 3)) *ᵥ
       (fun j : Fin (n + 3) => Real.sin (2 * Real.pi * k * j.val / (n + 3))) =
       (α + 2 * β * Real.cos (2 * Real.pi * k / (n + 3))) •
@@ -837,9 +963,22 @@ theorem huckel_cycle_eigenvector_sin {n : ℕ} (α β : ℝ) (k : ℕ) :
       rw [hvj j, hm1, hp1, Real.sin_sub, Real.sin_add]
       ring
 
+/-! ## E. Pairing on even cycles -/
+
+/-- `alternatingFlip` only changes signs, so it maps nonzero vectors to nonzero vectors. -/
+lemma alternatingFlip_ne_zero {N : ℕ} {v : Fin N → ℝ} (hv : v ≠ 0) : alternatingFlip v ≠ 0 := by
+  intro h
+  apply hv
+  funext j
+  have hj := congrFun h j
+  simp only [alternatingFlip, Pi.zero_apply] at hj
+  rcases mul_eq_zero.mp hj with h0 | h0
+  · exact absurd h0 (pow_ne_zero _ (by norm_num))
+  · exact h0
+
 /-- Bipartite flip: on an even cycle, adjacency anticommutes with the
 alternating-sign flip. -/
-theorem cycleAdjacency_flip {n : ℕ} (hN : Even (n + 3)) (v : Fin (n + 3) → ℝ) :
+lemma cycleAdjacency_flip {n : ℕ} (hN : Even (n + 3)) (v : Fin (n + 3) → ℝ) :
     (SimpleGraph.cycleGraph (n + 3)).adjMatrix ℝ *ᵥ alternatingFlip v =
       -alternatingFlip ((SimpleGraph.cycleGraph (n + 3)).adjMatrix ℝ *ᵥ v) := by
   haveI : NeZero (n + 3) := ⟨by omega⟩
@@ -935,8 +1074,10 @@ theorem cycleAdjacency_flip {n : ℕ} (hN : Even (n + 3)) (v : Fin (n + 3) → �
   rw [hp1, hm1]
   ring
 
-/-- Bipartite pairing of Hückel spectra: eigenvalue `E` pairs with `2 * α - E`. -/
-theorem huckel_cycle_pairing {n : ℕ} (hN : Even (n + 3)) (α β : ℝ)
+/-- On an even cycle, the eigen-equation `H v = E v` gives `H (flip v) = (2 * α - E) (flip v)`.
+This action identity holds for every `v`, including `v = 0`; the eigenvalue pairing, with
+nonzero vectors, is `huckel_cycle_pairing`. -/
+lemma huckel_cycle_flip_mulVec {n : ℕ} (hN : Even (n + 3)) (α β : ℝ)
     {v : Fin (n + 3) → ℝ} {E : ℝ}
     (hEv : huckelMatrix α β (SimpleGraph.cycleGraph (n + 3)) *ᵥ v = E • v) :
     huckelMatrix α β (SimpleGraph.cycleGraph (n + 3)) *ᵥ alternatingFlip v =
@@ -979,6 +1120,19 @@ theorem huckel_cycle_pairing {n : ℕ} (hN : Even (n + 3)) (α β : ℝ)
   congr 1
   ring
 
+/-- **Pairing of Hückel energies on even cycles** (Coulson–Rushbrooke): if `v ≠ 0` is an
+eigenvector of the cycle Hückel matrix with eigenvalue `E`, then `alternatingFlip v` is a nonzero
+eigenvector with eigenvalue `2 * α - E`. -/
+theorem huckel_cycle_pairing {n : ℕ} (hN : Even (n + 3)) (α β : ℝ)
+    {v : Fin (n + 3) → ℝ} {E : ℝ} (hv : v ≠ 0)
+    (hEv : huckelMatrix α β (SimpleGraph.cycleGraph (n + 3)) *ᵥ v = E • v) :
+    alternatingFlip v ≠ 0 ∧
+      huckelMatrix α β (SimpleGraph.cycleGraph (n + 3)) *ᵥ alternatingFlip v =
+        (2 * α - E) • alternatingFlip v :=
+  ⟨alternatingFlip_ne_zero hv, huckel_cycle_flip_mulVec hN α β hEv⟩
+
+/-! ## F. Counting the closed-form cycle energies -/
+
 /-- Filtered card over `Fin N` equals the filtered card over `range N`. -/
 private lemma filter_univ_fin_card_eq (N : ℕ) (p : ℕ → Prop) [DecidablePred p] :
     (Finset.univ.filter (fun k : Fin N => p k.val)).card =
@@ -988,7 +1142,7 @@ private lemma filter_univ_fin_card_eq (N : ℕ) (p : ℕ → Prop) [DecidablePre
   exact Fin.sum_univ_eq_sum_range (fun j => if p j then (1 : ℕ) else 0) N
 
 /-- Counting: for `N = 4m + 2`, exactly `2m + 1` values of `k` have `cos > 0`. -/
-theorem cycle_cos_pos_count_4m2 (m : ℕ) :
+lemma cycle_cos_pos_count_4m2 (m : ℕ) :
     (Finset.univ.filter (fun k : Fin (4 * m + 2) =>
       0 < Real.cos (2 * Real.pi * k.val / (4 * m + 2)))).card = 2 * m + 1 := by
   have hπ : (0 : ℝ) < Real.pi := Real.pi_pos
@@ -1108,7 +1262,7 @@ private lemma cos_eq_zero_of_mem_Icc (x : ℝ) (hx0 : 0 ≤ x) (hx2 : x ≤ 2 * 
     linarith
 
 /-- Counting: for `N = 4m`, `m ≥ 1`, exactly `2` values of `k` have `cos = 0`. -/
-theorem cycle_cos_zero_count_4m {m : ℕ} (hm : 0 < m) :
+lemma cycle_cos_zero_count_4m {m : ℕ} (hm : 0 < m) :
     (Finset.univ.filter (fun k : Fin (4 * m) =>
       Real.cos (2 * Real.pi * k.val / (4 * m)) = 0)).card = 2 := by
   have hπ : (0 : ℝ) < Real.pi := Real.pi_pos
@@ -1194,10 +1348,12 @@ theorem cycle_cos_zero_count_4m {m : ℕ} (hm : 0 < m) :
   have hmul : m = 3 * m := congrArg Fin.val hcon
   omega
 
-/-- For `N = 4m + 2` and `β < 0`, exactly `2m + 1 = N / 2` Hückel levels lie
-strictly below `α`: the closed shell (spin-paired Aufbau filling of `N`
-electrons uses exactly these orbitals), with a gap to the next level. -/
-theorem huckel_bonding_count_4m2 (m : ℕ) (α : ℝ) {β : ℝ} (hβ : β < 0) :
+/-- Count of the closed-form cycle energies below `α`: for `N = 4m + 2` and `β < 0`, exactly
+`2m + 1` of the indices `k = 0, …, N - 1` give `α + 2 * β * cos (2 * π * k / N) < α`. This counts
+the closed-form list by index; it does not identify that list with the spectrum of
+`huckelMatrix α β (cycleGraph N)` with multiplicity, so it is not a statement about bonding
+levels or orbital filling. -/
+theorem huckel_cycle_closedForm_count_lt_alpha_4m2 (m : ℕ) (α : ℝ) {β : ℝ} (hβ : β < 0) :
     (Finset.univ.filter (fun k : Fin (4 * m + 2) =>
       α + 2 * β * Real.cos (2 * Real.pi * k.val / (4 * m + 2)) < α)).card =
       2 * m + 1 := by
@@ -1231,9 +1387,11 @@ theorem huckel_bonding_count_4m2 (m : ℕ) (α : ℝ) {β : ℝ} (hβ : β < 0) 
   rw [hset]
   exact cycle_cos_pos_count_4m2 m
 
-/-- For `N = 4m`, `m ≥ 1`, exactly `2` Hückel levels equal `α`: the Fermi-level
-degeneracy of the `4m` case, made explicit. -/
-theorem huckel_degenerate_count_4m {m : ℕ} (hm : 0 < m) (α β : ℝ) (hβ : β ≠ 0) :
+/-- Count of the closed-form cycle energies equal to `α`: for `N = 4m` with `m ≥ 1` and
+`β ≠ 0`, exactly `2` of the indices `k = 0, …, N - 1` give `α + 2 * β * cos (2 * π * k / N) = α`.
+This counts the closed-form list by index; it does not identify that list with the spectrum of
+`huckelMatrix α β (cycleGraph N)` with multiplicity. -/
+theorem huckel_cycle_closedForm_count_eq_alpha_4m {m : ℕ} (hm : 0 < m) (α β : ℝ) (hβ : β ≠ 0) :
     (Finset.univ.filter (fun k : Fin (4 * m) =>
       α + 2 * β * Real.cos (2 * Real.pi * k.val / (4 * m)) = α)).card = 2 := by
   have hiff : ∀ k : Fin (4 * m),
@@ -1259,6 +1417,8 @@ theorem huckel_degenerate_count_4m {m : ℕ} (hm : 0 < m) (α β : ℝ) (hβ : �
     exact hiff k
   rw [hset]
   exact cycle_cos_zero_count_4m hm
+
+/-! ## G. The two-orbital LCAO secular determinant -/
 
 /-- 2×2 LCAO secular determinant factorization. `H = !![α, β; β, α]`,
 overlap `Smat = !![1, S; S, 1]`. -/
