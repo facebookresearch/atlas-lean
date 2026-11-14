@@ -138,7 +138,7 @@ example (cv R V : ℝ) (hcv : 0 < cv) (hV : 0 < V) :
 /-- Isothermal case: with `T₂ = T₁` only the volume term survives. -/
 example (R V1 V2 : ℝ) :
     idealGasEntropyChange 1 2 R 300 V1 300 V2 = 1 * R * Real.log (V2 / V1) :=
-  idealGasEntropyChange_isothermal (by norm_num) rfl
+  idealGasEntropyChange_isothermal rfl
 
 /-- Sign reversal at `300 → 600` against `600 → 300`. -/
 example (R cv V : ℝ) (hV : 0 < V) :
@@ -344,6 +344,13 @@ assume positive temperatures and volumes. -/
 example : idealGasEntropyChange 1 1 1 0 1 300 1 = 0 := by
   unfold idealGasEntropyChange
   simp
+
+/-- (e) Outside the domain: `idealGasEntropyChange_isothermal` only rewrites the formula and
+needs no temperature hypothesis. At `T₁ = T₂ = 0`, Lean's `0 / 0 = 0` and `Real.log 0 = 0` make
+the temperature term vanish, so the rewrite applies there too. -/
+example (R V1 V2 : ℝ) :
+    idealGasEntropyChange 1 2 R 0 V1 0 V2 = 1 * R * Real.log (V2 / V1) :=
+  idealGasEntropyChange_isothermal rfl
 
 /-- (e) Outside the domain: a constant heat capacity `Cp = 1` down to `0 K` makes
 `Cp t / t = 1 / t`, which is not interval integrable on `0..1` (`∫₀¹ dt / t` diverges). -/

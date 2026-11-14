@@ -286,20 +286,28 @@ lemma idealGasEntropyChange_add {n cv R T1 V1 T2 V2 T3 V3 : ℝ}
     Real.log_div hT3.ne' hT1.ne', Real.log_div hV3.ne' hV1.ne']
   ring
 
-/-- Isothermal case: if `T₂ = T₁` then `ΔS = n * R * log (V₂ / V₁)`. -/
-lemma idealGasEntropyChange_isothermal {n cv R T1 V1 T2 V2 : ℝ}
-    (hT1 : 0 < T1) (hT : T2 = T1) :
+/-- Isothermal case: if `T₂ = T₁` then `ΔS = n * R * log (V₂ / V₁)`, for every real `T₁`. The
+temperature term vanishes: `T₁ / T₁ = 1` for `T₁ ≠ 0`, and at `T₁ = 0` Lean's `0 / 0 = 0` and
+`Real.log 0 = 0`. -/
+lemma idealGasEntropyChange_isothermal {n cv R T1 V1 T2 V2 : ℝ} (hT : T2 = T1) :
     idealGasEntropyChange n cv R T1 V1 T2 V2 = n * R * Real.log (V2 / V1) := by
   unfold idealGasEntropyChange
-  rw [hT, div_self hT1.ne', Real.log_one]
-  ring
+  rw [hT]
+  rcases eq_or_ne T1 0 with hT1 | hT1
+  · rw [hT1, div_zero, Real.log_zero]
+    ring
+  · rw [div_self hT1, Real.log_one]
+    ring
 
-/-- Isothermal expansion increases entropy: if `T₂ = T₁` and `V₁ < V₂` then `0 < ΔS`. -/
+/-- Isothermal expansion increases entropy: if `T₂ = T₁` and `V₁ < V₂` then `0 < ΔS`. The
+temperature term vanishes for every `T₁` (`idealGasEntropyChange_isothermal`), so the proof needs
+no temperature hypothesis; `0 < T₁` keeps the lemma at physical states, as for the other lemmas
+that read `ΔS` physically. -/
 lemma idealGasEntropyChange_isothermal_pos {n cv R T1 V1 T2 V2 : ℝ}
-    (hn : 0 < n) (hR : 0 < R) (hT1 : 0 < T1) (hV1 : 0 < V1)
+    (hn : 0 < n) (hR : 0 < R) (_hT1 : 0 < T1) (hV1 : 0 < V1)
     (hT : T2 = T1) (hexp : V1 < V2) :
     0 < idealGasEntropyChange n cv R T1 V1 T2 V2 := by
-  rw [idealGasEntropyChange_isothermal hT1 hT]
+  rw [idealGasEntropyChange_isothermal hT]
   exact mul_pos (mul_pos hn hR) (Real.log_pos ((one_lt_div hV1).mpr hexp))
 
 /-- Reversible-adiabatic case: for positive temperatures and volumes, if
