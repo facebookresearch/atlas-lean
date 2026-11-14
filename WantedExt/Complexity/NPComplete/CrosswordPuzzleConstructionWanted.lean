@@ -38,10 +38,11 @@ corresponding to the `1`'s of `A`, that is, if `E` is the set of pairs `(i, j)` 
 `A i j = 0`, is there an assignment `f : E → Σ` such that the letters assigned to any maximal
 horizontal or vertical contiguous sequence of members of `E` form, in order, a word of `W`?
 
-Letters are natural numbers. A run that is maximal is bounded on each side by a `1` of `A` or
-by the border of the square. Following the source literally, a maximal run of a single square
-is also a run, so it must spell a one-letter word of `W`. Words may be used any number of
-times. Vertical runs are read top to bottom and horizontal runs left to right.
+Letters are natural numbers. A run that is maximal is bounded on each side by a `1` of `A`
+(a blank square) or by the border of the square. Following the source literally, a maximal
+run of a single square is also a run, so it must spell a one-letter word of `W`. Words may be
+used any number of times. Vertical runs are read top to bottom and horizontal runs left to
+right.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -63,9 +64,10 @@ abbrev CrosswordPuzzleConstructionInstance := List (List ℕ) × ℕ × List (Li
 def WellFormed (i : CrosswordPuzzleConstructionInstance) : Prop :=
   i.1.Nodup ∧ i.2.2.length = i.2.1 ∧ ∀ row ∈ i.2.2, row.length = i.2.1
 
-/-- Square `(r, c)` (row `r`, column `c`) is in `E`: it lies in the matrix and its entry is
-`0`. Squares outside the matrix count as `1`'s, so they end runs at the border. -/
-def Blank (i : CrosswordPuzzleConstructionInstance) (r c : ℕ) : Prop :=
+/-- Square `(r, c)` (row `r`, column `c`) is in `E`, a square to be filled with a letter: it
+lies in the matrix and its entry is `0`. Squares outside the matrix count as `1`'s (blank
+squares of the puzzle), so they end runs at the border. -/
+def Fillable (i : CrosswordPuzzleConstructionInstance) (r c : ℕ) : Prop :=
   (i.2.2.getD r []).getD c true = false
 
 /-- A filling `f` of the squares such that every maximal horizontal run of squares of `E`
@@ -73,11 +75,11 @@ def Blank (i : CrosswordPuzzleConstructionInstance) (r c : ℕ) : Prop :=
 `a, ..., b - 1`) spells, in order, a word of `W`. -/
 def CrosswordPuzzleConstructionFeasible (i : CrosswordPuzzleConstructionInstance) : Prop :=
   ∃ f : ℕ → ℕ → ℕ,
-    (∀ r a b, a < b → (∀ c, a ≤ c → c < b → Blank i r c) →
-      (a = 0 ∨ ¬ Blank i r (a - 1)) → ¬ Blank i r b →
+    (∀ r a b, a < b → (∀ c, a ≤ c → c < b → Fillable i r c) →
+      (a = 0 ∨ ¬ Fillable i r (a - 1)) → ¬ Fillable i r b →
         (List.range' a (b - a)).map (fun c => f r c) ∈ i.1) ∧
-    (∀ c a b, a < b → (∀ r, a ≤ r → r < b → Blank i r c) →
-      (a = 0 ∨ ¬ Blank i (a - 1) c) → ¬ Blank i b c →
+    (∀ c a b, a < b → (∀ r, a ≤ r → r < b → Fillable i r c) →
+      (a = 0 ∨ ¬ Fillable i (a - 1) c) → ¬ Fillable i b c →
         (List.range' a (b - a)).map (fun r => f r c) ∈ i.1)
 
 open Classical in
