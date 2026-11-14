@@ -50,6 +50,13 @@ example (x : Fin 6 → ℝ) (hx : ∀ j, 0 ≤ x j) (h : vectorField 2 2 1 x = 0
   eq_const_of_vectorField_eq_zero (by norm_num) (by norm_num) one_ne_zero zero_le_one
     (by norm_num [eqRate]) hx h
 
+/-- The hypothesis `p ≥ 0` of `eq_const_of_vectorField_eq_zero` is needed: for `n = 1`, `β = 1`,
+the negative level `p = -2` gives `α = eqRate 1 (-2) = 2`, and both `(-2, …, -2)` and the
+nonnegative state `(1, …, 1)` are equilibria, computed from the definitions. -/
+example : eqRate 1 (-2) = 2 ∧ vectorField 1 2 1 (fun _ => -2) = 0 ∧
+    vectorField 1 2 1 (fun _ => 1) = 0 := by
+  refine ⟨by norm_num [eqRate], ?_, ?_⟩ <;> funext k <;> fin_cases k <;> norm_num [vectorField]
+
 /-- The Jacobian at `(1, …, 1)` (`n = 2`, `α = 2`, `β = 1`, loop gain `1`). -/
 example : LinearMap.toMatrix' (fderiv ℝ (vectorField 2 (eqRate 2 1) 1) (fun _ => 1) :
     (Fin 6 → ℝ) →ₗ[ℝ] Fin 6 → ℝ) =

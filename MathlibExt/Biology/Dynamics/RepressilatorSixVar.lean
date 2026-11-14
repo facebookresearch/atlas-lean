@@ -39,9 +39,11 @@ coefficient of Elowitz and Leibler's standard regime; this file proves its Hopf 
 linear stability boundary and, under the same Hopf-theorem hypothesis as T196, periodic
 orbits.
 
-**Symmetric equilibrium.** With `α = eqRate n p = p (1 + pⁿ)` (T196's parametrization by the
-equilibrium level `p`), the constant state `x = (p, …, p)` is an equilibrium; for `n ≥ 1`,
-`β ≠ 0` it is the only one in the closed nonnegative orthant.
+**Symmetric equilibrium.** With an equilibrium level `p ≥ 0` and `α = eqRate n p = p (1 + pⁿ)`
+(T196's parametrization by the equilibrium level), the constant state `x = (p, …, p)` is an
+equilibrium; for `n ≥ 1`, `β ≠ 0` it is the only one in the closed nonnegative orthant. The
+hypothesis `p ≥ 0` is needed: for `n = 1`, `β = 1` and `p = -2`, `α = eqRate 1 (-2) = 2` and
+`(-2, …, -2)` is an equilibrium, but so is the nonnegative state `(1, …, 1)`.
 
 **Linearization.** At the symmetric equilibrium the Jacobian is the block matrix
 `[[-I, -a P], [β I, -β I]]`, with `P` the cyclic shift and `a = gain n p = n pⁿ / (1 + pⁿ)` the
@@ -157,8 +159,10 @@ theorem vectorField_const_eq_zero_iff {n : ℕ} {α β p : ℝ} (hp : 0 ≤ p) :
     funext k
     fin_cases k <;> simp [vectorField, he]
 
-/-- For `n ≥ 1`, `α > 0`, `β ≠ 0`, the symmetric equilibrium is the only equilibrium of (EL) in
-the closed nonnegative orthant. -/
+/-- For `n ≥ 1`, `α > 0`, `β ≠ 0` and an equilibrium level `p ≥ 0` with `α = p (1 + pⁿ)`, the
+symmetric equilibrium `(p, …, p)` is the only equilibrium of (EL) in the closed nonnegative
+orthant. Without `p ≥ 0` this fails: for `n = 1`, `p = -2`, `α = 2`, the nonnegative state
+`(1, …, 1)` is also an equilibrium. -/
 theorem eq_const_of_vectorField_eq_zero {n : ℕ} (hn : 0 < n) {α β p : ℝ} (hα : 0 < α)
     (hβ : β ≠ 0) (hp : 0 ≤ p) (hpα : eqRate n p = α) {x : Fin 6 → ℝ} (hx : ∀ j, 0 ≤ x j)
     (h : vectorField n α β x = 0) : x = fun _ => p := by
@@ -213,7 +217,8 @@ theorem eq_const_of_vectorField_eq_zero {n : ℕ} (hn : 0 < n) {α β p : ℝ} (
 noncomputable def jacobianCLM (a β : ℝ) : (Fin 6 → ℝ) →L[ℝ] Fin 6 → ℝ :=
   LinearMap.toContinuousLinearMap (Matrix.toLin' (jacobian a β))
 
-/-- Derivative of an mRNA row `x ↦ p (1 + pⁿ) / (1 + x jⁿ) - x i` at the symmetric state. -/
+/-- Derivative of an mRNA row `x ↦ p (1 + pⁿ) / (1 + x jⁿ) - x i` at the symmetric state, for
+`p ≥ 0`. -/
 lemma hasFDerivAt_mRow (n : ℕ) {p : ℝ} (hp : 0 ≤ p) (i j : Fin 6) :
     HasFDerivAt (fun x : Fin 6 → ℝ => eqRate n p / (1 + x j ^ n) - x i)
       ((-gain n p) • ContinuousLinearMap.proj (R := ℝ) (φ := fun _ : Fin 6 => ℝ) j -
@@ -230,8 +235,8 @@ lemma hasFDerivAt_pRow (β : ℝ) (i j : Fin 6) (x₀ : Fin 6 → ℝ) :
   ((hasFDerivAt_apply (𝕜 := ℝ) (F' := fun _ : Fin 6 => ℝ) j x₀).sub
     (hasFDerivAt_apply (𝕜 := ℝ) (F' := fun _ : Fin 6 => ℝ) i x₀)).const_mul (-β)
 
-/-- **Linearization at the symmetric equilibrium.** With `α = p (1 + pⁿ)`, the derivative of
-the field at `(p, …, p)` is `jacobian (gain n p) β`. -/
+/-- **Linearization at the symmetric equilibrium.** With `p ≥ 0` and `α = p (1 + pⁿ)`, the
+derivative of the field at `(p, …, p)` is `jacobian (gain n p) β`. -/
 theorem hasFDerivAt_vectorField (n : ℕ) (β : ℝ) {p : ℝ} (hp : 0 ≤ p) :
     HasFDerivAt (vectorField n (eqRate n p) β) (jacobianCLM (gain n p) β) (fun _ => p) := by
   rw [hasFDerivAt_pi']
@@ -262,7 +267,8 @@ theorem hasFDerivAt_vectorField (n : ℕ) (β : ℝ) {p : ℝ} (hp : 0 ≤ p) :
     simp [jacobianCLM, jacobian, Matrix.toLin'_apply, dotProduct, Fin.sum_univ_succ]
     ring
 
-/-- The matrix of the linearization at the symmetric equilibrium is `jacobian (gain n p) β`. -/
+/-- The matrix of the linearization at the symmetric equilibrium `(p, …, p)`, `p ≥ 0`, with
+`α = p (1 + pⁿ)` is `jacobian (gain n p) β`. -/
 theorem toMatrix'_fderiv_vectorField (n : ℕ) (β : ℝ) {p : ℝ} (hp : 0 ≤ p) :
     LinearMap.toMatrix' (fderiv ℝ (vectorField n (eqRate n p) β) (fun _ => p) :
       (Fin 6 → ℝ) →ₗ[ℝ] Fin 6 → ℝ) = jacobian (gain n p) β := by
@@ -656,7 +662,7 @@ theorem hopfEigenvalue_hopf {n : ℕ} {β μ : ℝ} (hβ : 0 < β) (hH : IsHopf 
   rw [show disc n β μ = hopfRoot (gain n μ) β ^ 2 from (hopfRoot_sq hβ hH).symm, hw]
   apply Complex.ext <;> simp [hopfRoot]
 
-/-- The derivative of the loop gain, `a'(μ) = n² μⁿ⁻¹ / (1 + μⁿ)²` (T196). -/
+/-- The derivative of the loop gain, `a'(μ) = n² μⁿ⁻¹ / (1 + μⁿ)²`, for `μ ≥ 0` (T196). -/
 noncomputable def gainDeriv (n : ℕ) (μ : ℝ) : ℝ := n ^ 2 * μ ^ (n - 1) / (1 + μ ^ n) ^ 2
 
 /-- The crossing speed `λ'(μ) = a'(μ) β c / w` at a Hopf level. -/
@@ -735,16 +741,16 @@ theorem re_hopfSpeed_pos {n : ℕ} (hn : 0 < n) {β μ : ℝ} (hβ : 0 < β) (h�
 
 /-! ### Linear stability statements at the symmetric equilibrium -/
 
-/-- **Linear stability** at the symmetric equilibrium `(p, …, p)` with `α = p (1 + pⁿ)`, inside
-the Elowitz–Leibler boundary. -/
+/-- **Linear stability** at the symmetric equilibrium `(p, …, p)`, `p ≥ 0`, with `α = p (1 + pⁿ)`
+and `β > 0`, inside the Elowitz–Leibler boundary. -/
 theorem re_neg_of_isRoot_linCharpoly {n : ℕ} {β p : ℝ} (hβ : 0 < β) (hp : 0 ≤ p)
     (h : 3 * gain n p ^ 2 * β < (4 - 2 * gain n p) * (1 + β) ^ 2) {z : ℂ}
     (hz : (linCharpoly (vectorField n (eqRate n p) β) (fun _ => p)).IsRoot z) : z.re < 0 := by
   rw [linCharpoly_vectorField n β hp] at hz
   exact re_neg_of_isRoot (gain_nonneg n hp) hβ h hz
 
-/-- **Linear instability** at the symmetric equilibrium, outside the Elowitz–Leibler
-boundary. -/
+/-- **Linear instability** at the symmetric equilibrium `(p, …, p)`, `p ≥ 0`, with
+`α = p (1 + pⁿ)` and `β > 0`, outside the Elowitz–Leibler boundary. -/
 theorem exists_re_pos_of_isRoot_linCharpoly {n : ℕ} {β p : ℝ} (hβ : 0 < β) (hp : 0 ≤ p)
     (h : (4 - 2 * gain n p) * (1 + β) ^ 2 < 3 * gain n p ^ 2 * β) :
     ∃ z, (linCharpoly (vectorField n (eqRate n p) β) (fun _ => p)).IsRoot z ∧ 0 < z.re := by
