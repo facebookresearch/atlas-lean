@@ -79,7 +79,9 @@ adjust the corresponding prod call site to the reported signature.
 
 /-! ## Prod API resolution -/
 
+#check @ReactorVolume
 #check @extentRate
+#check @volume_mul_extentRate
 #check @concOfExtent
 #check @concOfExtent_zero
 #check @hasDerivAt_concOfExtent
@@ -120,6 +122,8 @@ adjust the corresponding prod call site to the reported signature.
 #check @secondOrderABSolA_zero
 #check @secondOrderABSolB_zero
 #check @secondOrderAB_denom_ne
+#check @secondOrderABSolA_pos
+#check @secondOrderABSolB_pos
 #check @hasDerivAt_secondOrderABSolA
 #check @hasDerivAt_secondOrderABSolB
 #check @secondOrderABSol_conserved
@@ -213,14 +217,30 @@ example : depletionTime 4 2 = 4 / 2 := rfl
 
 /-- Regression: an extent trajectory that does not start at `0` (`ξ ≡ 1`, `V = ν = 1`) still gives
 initial concentration `c₀`. -/
-example (c₀ : ℝ) : concOfExtent c₀ 1 1 (fun _ => 1) 0 = c₀ := concOfExtent_zero c₀ 1 1 _
+example (c₀ : ℝ) : concOfExtent c₀ 1 ⟨1, one_pos⟩ (fun _ => 1) 0 = c₀ :=
+  concOfExtent_zero c₀ 1 ⟨1, one_pos⟩ _
 
-example (c₀ t : ℝ) : concOfExtent c₀ 1 1 (fun s => 1 + s) t = c₀ + t := by
+example (c₀ t : ℝ) : concOfExtent c₀ 1 ⟨1, one_pos⟩ (fun s => 1 + s) t = c₀ + t := by
   simp [concOfExtent]
+
+/-- Regression: a reactor volume is positive, so the zero volume of the old interface (where
+Lean's division gave a zero rate) cannot be passed. -/
+example (V : ReactorVolume) : (V : ℝ) ≠ 0 := V.2.ne'
+
+/-- `ξ(t) = 3t` in a reactor of volume `2` has extent rate `v = 3/2`, and `V v = dξ/dt = 3`. -/
+example (t : ℝ) : extentRate ⟨2, two_pos⟩ (fun s => 3 * s) t = 3 / 2 := by
+  have h : deriv (fun s : ℝ => 3 * s) t = 3 := by simp
+  simp only [extentRate, h]
+  norm_num
+
+example (t : ℝ) : ((⟨2, two_pos⟩ : ReactorVolume) : ℝ) * extentRate ⟨2, two_pos⟩ (fun s => 3 * s) t
+    = deriv (fun s : ℝ => 3 * s) t :=
+  volume_mul_extentRate _ _ t
 
 /-- Extent-based first-order kinetics feeds the integrated law: with `A s = c(s)` for
 `c = concOfExtent A0 (-1) V ξ` and `v = k[A]` on `t ≥ 0`, `A` is the first-order solution. -/
-example (A ξ : ℝ → ℝ) (A0 k V t : ℝ) (hA : ∀ s, A s = concOfExtent A0 (-1) V ξ s)
+example (A ξ : ℝ → ℝ) (A0 k : ℝ) (V : ReactorVolume) (t : ℝ)
+    (hA : ∀ s, A s = concOfExtent A0 (-1) V ξ s)
     (hξ : ∀ s, DifferentiableAt ℝ ξ s) (hrate : ∀ s, 0 ≤ s → extentRate V ξ s = k * A s)
     (ht : 0 ≤ t) : A t = firstOrderSol A0 k t :=
   firstOrderSol_unique A0 k A (fun s hs => rateLaw_first_ode A ξ A0 k V s hA (hξ s) (hrate s hs))
@@ -275,11 +295,10 @@ example (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0) (ht : 0 ≤ t) :
     (fun s hs => secondOrderABEqualSol_pos A0 k s hk hA0 hs)
     (secondOrderABEqualSol_zero A0 k) (secondOrderABEqualSol_zero A0 k) t ht
 
+/-- The explicit unequal-amount solution satisfies every hypothesis of `secondOrderABSol_unique`;
+its positivity is proved (`secondOrderABSolA_pos`, `secondOrderABSolB_pos`), not assumed. -/
 example (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0) (hk : 0 < k)
-    (hΔ : B0 - A0 ≠ 0)
-    (hposA : ∀ s : ℝ, 0 ≤ s → 0 < secondOrderABSolA A0 B0 k s)
-    (hposB : ∀ s : ℝ, 0 ≤ s → 0 < secondOrderABSolB A0 B0 k s)
-    (ht : 0 ≤ t) :
+    (hΔ : B0 - A0 ≠ 0) (ht : 0 ≤ t) :
     secondOrderABSolA A0 B0 k t = secondOrderABSolA A0 B0 k t :=
   secondOrderABSol_unique A0 B0 k (secondOrderABSolA A0 B0 k)
     (secondOrderABSolB A0 B0 k) hA0 hB0 hk hΔ
@@ -289,8 +308,40 @@ example (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0) (hk : 0 < k)
       simpa [secondOrderABSolB] using hA)
     (fun s hs => hasDerivAt_secondOrderABSolB A0 B0 k s
       (secondOrderAB_denom_ne A0 B0 k s hA0 hB0 hk hΔ hs))
-    hposA hposB
+    (fun s hs => secondOrderABSolA_pos A0 B0 k s hA0 hk hΔ hs)
+    (fun s hs => secondOrderABSolB_pos A0 B0 k s hA0 hB0 hk hΔ hs)
     (secondOrderABSolA_zero A0 B0 k hΔ) (secondOrderABSolB_zero A0 B0 k hΔ) t ht
+
+/-- Both denominator-sign branches: `[B]₀ > [A]₀` (`[A]₀ = 1`, `[B]₀ = 2`) and `[B]₀ < [A]₀`
+(`[A]₀ = 2`, `[B]₀ = 1`), with `k = 1`. -/
+example (t : ℝ) (ht : 0 ≤ t) :
+    0 < secondOrderABSolA 1 2 1 t ∧ 0 < secondOrderABSolB 1 2 1 t :=
+  ⟨secondOrderABSolA_pos 1 2 1 t one_pos one_pos (by norm_num) ht,
+    secondOrderABSolB_pos 1 2 1 t one_pos two_pos one_pos (by norm_num) ht⟩
+
+example (t : ℝ) (ht : 0 ≤ t) :
+    0 < secondOrderABSolA 2 1 1 t ∧ 0 < secondOrderABSolB 2 1 1 t :=
+  ⟨secondOrderABSolA_pos 2 1 1 t two_pos one_pos (by norm_num) ht,
+    secondOrderABSolB_pos 2 1 1 t two_pos one_pos one_pos (by norm_num) ht⟩
+
+/-- At `t = 1` in the `[B]₀ < [A]₀` branch: `[A](1) = 2e / (2e - 1)` and `[B](1) = 1 / (2e - 1)`,
+both positive, and `[B](1) - [A](1) = -1 = [B]₀ - [A]₀`. -/
+example : secondOrderABSolA 2 1 1 1 = 2 * Real.exp 1 / (2 * Real.exp 1 - 1) ∧
+    secondOrderABSolB 2 1 1 1 = 1 / (2 * Real.exp 1 - 1) := by
+  have hE : (1:ℝ) < Real.exp 1 := by
+    have := Real.add_one_lt_exp (x := 1) one_ne_zero
+    linarith
+  have hD : 2 * Real.exp 1 - 1 ≠ 0 := by linarith
+  have hD' : 1 - 2 * Real.exp 1 ≠ 0 := by linarith
+  constructor
+  · simp only [secondOrderABSolA]
+    norm_num
+    field_simp
+    ring
+  · simp only [secondOrderABSolB, secondOrderABSolA]
+    norm_num
+    field_simp
+    ring
 
 /-! ## Axiom audits -/
 
@@ -299,6 +350,9 @@ example (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0) (hk : 0 < k)
 #print axioms secondOrderGen_unique
 #print axioms secondOrderAASol_unique
 #print axioms secondOrderABSol_unique
+#print axioms secondOrderABSolA_pos
+#print axioms secondOrderABSolB_pos
+#print axioms volume_mul_extentRate
 #print axioms secondOrderABEqualSol_unique
 #print axioms halfLife_indep_iff_first_order
 #print axioms pfo_error_bound

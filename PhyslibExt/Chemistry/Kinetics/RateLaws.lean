@@ -27,7 +27,9 @@ scalar rate group and a pseudo-first-order error bound.
 
 The rate of a reaction is the extent rate `v = (1 / V) dξ/dt`, and at constant volume each
 concentration is `c = c₀ + ν (ξ - ξ(0)) / V`, so it changes as `dc/dt = ν v` with its
-stoichiometric number `ν` and starts at `c₀`. The rate laws `v = k`,
+stoichiometric number `ν` and starts at `c₀`. The volume is a `ReactorVolume`, a real `V > 0`:
+the domain restriction is part of the type, so a zero volume (where Lean's division would give a
+zero rate and a constant concentration) cannot be passed. The rate laws `v = k`,
 `v = k[A]`, `v = k[A]²` (for `2A → P`, `ν_A = -2`) and `v = k[A][B]` (for `A + B → P`) are model
 inputs; their integrated solutions, uniqueness on `t ≥ 0` and half-lives are proved.
 
@@ -45,16 +47,25 @@ on `k`, `t` and `[A]₀`. It is real arithmetic only: no dimensions or units are
 The pseudo-first-order bounds compare `[A]` for `A + B → P` with `[A]₀ exp(-k[B]₀t)`, explicitly
 in `r = [A]₀ / [B]₀ < 1`.
 
+Several closed forms divide by a parameter: `depletionTime` by `k`, `halfLife` by `k` and `[A]₀`,
+`rateGroup` at order `0` by `[A]₀`, `pfoRatio` by `[B]₀`, and `secondOrderABSolA` by a quantity
+that vanishes when `[A]₀ = [B]₀`. Each docstring states the domain on which the formula is
+meaningful. The results that interpret these quantities (depletion, half-lives, recovering `k`,
+the `A + B` solution, the pseudo-first-order bounds) assume that domain; only algebraic identities
+that hold for every input, such as `rateGroup_zero`, omit it.
+
 ## ii. Key results
 
-- `hasDerivAt_concOfExtent`, `concOfExtent_zero` : `dc/dt = ν v` under the extent-rate
-  convention, with initial concentration `c₀`.
+- `hasDerivAt_concOfExtent`, `concOfExtent_zero`, `volume_mul_extentRate` : `dc/dt = ν v` under
+  the extent-rate convention in a reactor of volume `V > 0`, with initial concentration `c₀`; the
+  rate determines `dξ/dt = V v`.
 - `zeroOrderSol_unique`, `zeroOrderConc_before`, `zeroOrderConc_after` : the zero-order law and
   depletion.
 - `firstOrderSol_eq_amount`, `firstOrderSol_unique`, `firstOrderSol_halfLife` : the first-order
   law.
 - `secondOrderAASol_unique`, `secondOrderABSol_unique`, `secondOrderABEqualSol_unique` : the
-  second-order laws.
+  second-order laws; `secondOrderABSolA_pos`, `secondOrderABSolB_pos` : the explicit unequal-amount
+  solution stays positive, so it satisfies every hypothesis of `secondOrderABSol_unique`.
 - `halfLife_correct`, `halfLife_indep_iff_first_order` : model-specific half-lives; among the
   models of `RateModel`, the half-life is independent of `[A]₀` exactly at order `1`.
 - `pfo_error_bound`, `pfo_error_div_initial_bound` : pseudo-first-order error bounds.
@@ -86,36 +97,51 @@ namespace Chemistry.Kinetics
 
 /-! ## A. Extent-rate convention -/
 
-/-- Extent rate `v = (1 / V) dξ/dt`: the single rate convention used here. -/
-noncomputable def extentRate (V : ℝ) (ξ : ℝ → ℝ) (t : ℝ) : ℝ := (1 / V) * deriv ξ t
+/-- A reactor volume: a real number `V > 0`. The extent-rate convention divides by `V`, so the
+positivity is part of the type. With `V = 0` Lean's division would turn every extent trajectory
+into a zero rate and a constant concentration instead of an undefined model. -/
+abbrev ReactorVolume : Type := {V : ℝ // 0 < V}
 
-/-- Concentration from extent at constant volume, measured from the state at time `0`:
+/-- Extent rate `v = (1 / V) dξ/dt` in a reactor of volume `V > 0`: the single rate convention
+used here. -/
+noncomputable def extentRate (V : ReactorVolume) (ξ : ℝ → ℝ) (t : ℝ) : ℝ :=
+  (1 / (V : ℝ)) * deriv ξ t
+
+/-- The extent rate determines the extent velocity: `V v = dξ/dt` (this uses `V ≠ 0`). -/
+lemma volume_mul_extentRate (V : ReactorVolume) (ξ : ℝ → ℝ) (t : ℝ) :
+    (V : ℝ) * extentRate V ξ t = deriv ξ t := by
+  have hV : (V : ℝ) ≠ 0 := V.2.ne'
+  unfold extentRate
+  field_simp
+
+/-- Concentration from extent at constant volume `V > 0`, measured from the state at time `0`:
 `c = c₀ + ν (ξ - ξ(0)) / V`, so `c₀` is the initial concentration for every extent trajectory
 `ξ` (`concOfExtent_zero`). -/
-noncomputable def concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ) : ℝ :=
-  c₀ + ν * (ξ t - ξ 0) / V
+noncomputable def concOfExtent (c₀ ν : ℝ) (V : ReactorVolume) (ξ : ℝ → ℝ) (t : ℝ) : ℝ :=
+  c₀ + ν * (ξ t - ξ 0) / (V : ℝ)
 
 /-- The concentration from extent starts at `c₀`. -/
-lemma concOfExtent_zero (c₀ ν V : ℝ) (ξ : ℝ → ℝ) : concOfExtent c₀ ν V ξ 0 = c₀ := by
+lemma concOfExtent_zero (c₀ ν : ℝ) (V : ReactorVolume) (ξ : ℝ → ℝ) :
+    concOfExtent c₀ ν V ξ 0 = c₀ := by
   simp [concOfExtent]
 
 /-- Concentration rate from the extent rate: `dc/dt = ν v`. -/
-lemma hasDerivAt_concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ)
+lemma hasDerivAt_concOfExtent (c₀ ν : ℝ) (V : ReactorVolume) (ξ : ℝ → ℝ) (t : ℝ)
     (hξ : DifferentiableAt ℝ ξ t) :
     HasDerivAt (concOfExtent c₀ ν V ξ) (ν * extentRate V ξ t) t := by
-  have h := (((hξ.hasDerivAt.sub_const (ξ 0)).const_mul ν).div_const V).const_add c₀
+  have h := (((hξ.hasDerivAt.sub_const (ξ 0)).const_mul ν).div_const (V : ℝ)).const_add c₀
   unfold concOfExtent extentRate
   convert h using 1
   ring
 
 /-- `deriv` form of `hasDerivAt_concOfExtent`. -/
-lemma deriv_concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ)
+lemma deriv_concOfExtent (c₀ ν : ℝ) (V : ReactorVolume) (ξ : ℝ → ℝ) (t : ℝ)
     (hξ : DifferentiableAt ℝ ξ t) :
     deriv (concOfExtent c₀ ν V ξ) t = ν * extentRate V ξ t :=
   (hasDerivAt_concOfExtent c₀ ν V ξ t hξ).deriv
 
 /-- Zero-order ODE from the convention: `v = k`, `ν = -1`. -/
-lemma rateLaw_zero_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
+lemma rateLaw_zero_ode (A ξ : ℝ → ℝ) (A0 k : ℝ) (V : ReactorVolume) (t : ℝ)
     (hA : ∀ s, A s = concOfExtent A0 (-1) V ξ s)
     (hξ : DifferentiableAt ℝ ξ t)
     (hrate : extentRate V ξ t = k) :
@@ -129,7 +155,7 @@ lemma rateLaw_zero_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
   exact hbase
 
 /-- First-order ODE from the convention: `v = k[A]`, `ν = -1`. -/
-lemma rateLaw_first_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
+lemma rateLaw_first_ode (A ξ : ℝ → ℝ) (A0 k : ℝ) (V : ReactorVolume) (t : ℝ)
     (hA : ∀ s, A s = concOfExtent A0 (-1) V ξ s)
     (hξ : DifferentiableAt ℝ ξ t)
     (hrate : extentRate V ξ t = k * A t) :
@@ -143,7 +169,7 @@ lemma rateLaw_first_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
   exact hbase
 
 /-- Second-order `2A → P` ODE: `v = k[A]²`, `ν = -2`. -/
-lemma rateLaw_secondAA_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
+lemma rateLaw_secondAA_ode (A ξ : ℝ → ℝ) (A0 k : ℝ) (V : ReactorVolume) (t : ℝ)
     (hA : ∀ s, A s = concOfExtent A0 (-2) V ξ s)
     (hξ : DifferentiableAt ℝ ξ t)
     (hrate : extentRate V ξ t = k * (A t) ^ 2) :
@@ -157,7 +183,7 @@ lemma rateLaw_secondAA_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
   exact hbase
 
 /-- Second-order `A + B` ODEs: `v = k[A][B]`, `ν = -1` for both. -/
-lemma rateLaw_secondAB_ode (A B ξ : ℝ → ℝ) (A0 B0 k V t : ℝ)
+lemma rateLaw_secondAB_ode (A B ξ : ℝ → ℝ) (A0 B0 k : ℝ) (V : ReactorVolume) (t : ℝ)
     (hA : ∀ s, A s = concOfExtent A0 (-1) V ξ s)
     (hB : ∀ s, B s = concOfExtent B0 (-1) V ξ s)
     (hξ : DifferentiableAt ℝ ξ t)
@@ -239,7 +265,8 @@ theorem zeroOrderSol_unique (A0 k : ℝ) (g : ℝ → ℝ)
 lemma zeroOrderSol_zero (A0 k : ℝ) : zeroOrderSol A0 k 0 = A0 := by
   simp [zeroOrderSol]
 
-/-- Zero-order depletion time `[A]₀ / k`. -/
+/-- Zero-order depletion time `[A]₀ / k`, meaningful for `k > 0`, which the depletion lemmas
+assume (at `k = 0` Lean's division returns `0`). -/
 noncomputable def depletionTime (A0 k : ℝ) : ℝ := A0 / k
 
 /-- Physical zero-order concentration, piecewise at depletion. -/
@@ -484,7 +511,9 @@ lemma secondOrderAASol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k)
 
 /-! ## E. Order 2: `A + B → P` -/
 
-/-- `A + B` integrated law for `[A]`, unequal initial amounts. -/
+/-- `A + B` integrated law for `[A]`, unequal initial amounts: valid for `[A]₀ ≠ [B]₀`, which the
+solution lemmas below assume (`B0 - A0 ≠ 0`). At `[A]₀ = [B]₀` numerator and denominator vanish
+and Lean's division returns `0`; that case is `secondOrderABEqualSol`. -/
 noncomputable def secondOrderABSolA (A0 B0 k : ℝ) (t : ℝ) : ℝ :=
   A0 * (B0 - A0) * Real.exp (-k * (B0 - A0) * t)
     / (B0 - A0 * Real.exp (-k * (B0 - A0) * t))
@@ -530,6 +559,51 @@ lemma secondOrderAB_denom_ne (A0 B0 k t : ℝ) (hA0 : 0 < A0) (_hB0 : 0 < B0)
     have hle := mul_le_mul_of_nonneg_left hE1 (le_of_lt hA0)
     have hMpos : (0:ℝ) < B0 - A0 * Real.exp (-k * (B0 - A0) * t) := by linarith
     exact ne_of_gt hMpos
+
+/-- The `A + B` solution for `[A]` stays positive for `t ≥ 0` when `[A]₀ > 0` and the initial
+amounts differ: numerator and denominator both have the sign of `[B]₀ - [A]₀`. -/
+lemma secondOrderABSolA_pos (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hk : 0 < k)
+    (hΔ : B0 - A0 ≠ 0) (ht : 0 ≤ t) : 0 < secondOrderABSolA A0 B0 k t := by
+  unfold secondOrderABSolA
+  have hEpos : 0 < Real.exp (-k * (B0 - A0) * t) := Real.exp_pos _
+  rcases lt_or_gt_of_ne hΔ with hneg | hpos
+  · -- `[B]₀ < [A]₀`: the exponential is at least `1`, and both parts are negative.
+    have hx : (0:ℝ) ≤ -k * (B0 - A0) * t :=
+      mul_nonneg (mul_nonneg_of_nonpos_of_nonpos (by linarith) hneg.le) ht
+    have hE1 : 1 ≤ Real.exp (-k * (B0 - A0) * t) := Real.one_le_exp hx
+    apply div_pos_of_neg_of_neg
+    · exact mul_neg_of_neg_of_pos (mul_neg_of_pos_of_neg hA0 hneg) hEpos
+    · nlinarith
+  · -- `[A]₀ < [B]₀`: the exponential is at most `1`, and both parts are positive.
+    have hx : -k * (B0 - A0) * t ≤ 0 := by
+      have : (0:ℝ) ≤ k * (B0 - A0) * t := by positivity
+      linarith
+    have hE1 : Real.exp (-k * (B0 - A0) * t) ≤ 1 := Real.exp_le_one_iff.mpr hx
+    apply div_pos
+    · exact mul_pos (mul_pos hA0 hpos) hEpos
+    · nlinarith
+
+/-- The `A + B` solution for `[B]` stays positive for `t ≥ 0` under the same hypotheses: it equals
+`([B]₀ - [A]₀) [B]₀ / ([B]₀ - [A]₀ exp(-k([B]₀ - [A]₀)t))`, a quotient of two terms with the sign
+of `[B]₀ - [A]₀`. -/
+lemma secondOrderABSolB_pos (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0) (hk : 0 < k)
+    (hΔ : B0 - A0 ≠ 0) (ht : 0 ≤ t) : 0 < secondOrderABSolB A0 B0 k t := by
+  rcases lt_or_gt_of_ne hΔ with hneg | hpos
+  · have hM := secondOrderAB_denom_ne A0 B0 k t hA0 hB0 hk hΔ ht
+    have hx : (0:ℝ) ≤ -k * (B0 - A0) * t :=
+      mul_nonneg (mul_nonneg_of_nonpos_of_nonpos (by linarith) hneg.le) ht
+    have hE1 : 1 ≤ Real.exp (-k * (B0 - A0) * t) := Real.one_le_exp hx
+    have key : secondOrderABSolB A0 B0 k t
+        = (B0 - A0) * B0 / (B0 - A0 * Real.exp (-k * (B0 - A0) * t)) := by
+      unfold secondOrderABSolB secondOrderABSolA
+      rw [div_add' _ _ _ hM, div_left_inj' hM]
+      ring
+    rw [key]
+    apply div_pos_of_neg_of_neg
+    · exact mul_neg_of_neg_of_pos hneg hB0
+    · nlinarith
+  · rw [secondOrderABSolB]
+    exact add_pos (secondOrderABSolA_pos A0 B0 k t hA0 hk hΔ ht) hpos
 
 /-- The `A + B` solution for `[A]` satisfies the system ODE. -/
 lemma hasDerivAt_secondOrderABSolA (A0 B0 k t : ℝ)
@@ -798,7 +872,10 @@ noncomputable def RateModel.sol : RateModel → ℝ → ℝ → ℝ → ℝ
   | .secondOrderAA => secondOrderAASol
   | .secondOrderABEqual => secondOrderABEqualSol
 
-/-- Half-life of each model: `[A]₀ / (2k)`, `ln 2 / k`, `1 / (2k[A]₀)` and `1 / (k[A]₀)`. -/
+/-- Half-life of each model: `[A]₀ / (2k)`, `ln 2 / k`, `1 / (2k[A]₀)` and `1 / (k[A]₀)`.
+Meaningful for `k > 0` and `[A]₀ > 0`, which `halfLife_correct` and
+`halfLife_indep_iff_first_order` assume; outside that domain Lean's division returns junk
+values. -/
 noncomputable def halfLife : RateModel → ℝ → ℝ → ℝ
   | .zeroOrder, k, A0 => A0 / (2 * k)
   | .firstOrder, k, _ => Real.log 2 / k
@@ -842,7 +919,8 @@ theorem halfLife_indep_iff_first_order (m : RateModel) (k : ℝ) (hk : 0 < k) :
 /-- The scalar `k * t * [A]₀ ^ (n - 1)` through which the integrated laws of order `n` depend on
 `k`, `t` and `[A]₀` (`zeroOrderSol_rateGroup`, `firstOrderSol_rateGroup`,
 `secondOrderAASol_rateGroup`). This is a normalization identity in real arithmetic: no dimensions
-or units are formalized here. -/
+or units are formalized here. At order `0` it divides by `[A]₀`, so it is meaningful for
+`[A]₀ > 0` (as `k_of_rateGroup` assumes). -/
 noncomputable def rateGroup (n : ℕ) (k t A0 : ℝ) : ℝ := k * t * A0 ^ ((n:ℤ) - 1)
 
 /-- The order-0 rate group is `kt / [A]₀`. -/
@@ -908,7 +986,7 @@ lemma hasDerivAt_pfoSol (A0 B0 k t : ℝ) :
     HasDerivAt (pfoSol A0 B0 k) (-(pfoRateConst B0 k) * pfoSol A0 B0 k t) t :=
   hasDerivAt_firstOrderSol A0 (k * B0) t
 
-/-- Excess ratio `r = [A]₀ / [B]₀`. -/
+/-- Excess ratio `r = [A]₀ / [B]₀`, meaningful for `[B]₀ > 0`, which the bounds below assume. -/
 noncomputable def pfoRatio (A0 B0 : ℝ) : ℝ := A0 / B0
 
 /-- Pseudo-first-order error bound, explicit in `r = [A]₀ / [B]₀ < 1`:
