@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.Omics.HierarchicalCountMLE
+public import MathlibExt.Biology.Omics.HierarchicalCountMLEUniqueness
 
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
@@ -50,6 +50,18 @@ The model is the intercept-only negative binomial regression with offsets `log s
   it is T86's `M < V` (`overdispersed_const_iff`). The proof uses the profile: `b̂` is continuous,
   the profile is positive near `a = 0`, and by `sq_mul_shapeScore_le` and `tendsto_div_rateRoot`
   `a² · profile(a)` is at most a term tending to `(∑ᵢ kᵢ - ∑ᵢ (kᵢ - sᵢ μ̂)²) / 2 < 0` as `a → ∞`.
+* Uniqueness at a common size factor, under the condition above:
+  `existsUnique_score_root_const_varying` (exactly one positive root of the joint score
+  equations), `profileShapeScoreVarying_eq_zero_unique_const`, and
+  `existsUnique_isMaxOn_logMarginalLik_const_varying` (exactly one joint MLE). These restate the
+  Levin–Reeds theorem of `HierarchicalCountMLEUniqueness` (T173) in this file's terms, through
+  `overdispersed_const_iff` and `profileShapeScoreVarying_const`.
+* Heterogeneous size factors, roots from sign changes: `exists_score_root_of_mem_uIcc` (a sign
+  change of the profile on `[a₁, a₂]` gives a root there) and `exists_two_score_roots` (two sign
+  changes give two roots with different shapes). The tests apply it to size factors
+  `(1000, 1/100, 100)` and counts `(12, 1, 6)`, which satisfy `∑ᵢ (kᵢ - sᵢ μ̂)² > ∑ᵢ kᵢ`: there
+  the joint score equations have two positive roots. So uniqueness of the root does not extend
+  from a common size factor to heterogeneous ones.
 * Consistency, with i.i.d. pairs `(Sᵢ, Kᵢ)` of a positive size factor and a count:
   `ae_tendsto_rateRoot` (strong consistency of `b̂ₙ(a)` for the population rate root);
   `popRateScoreLog_eq_zero_of_condMean` (the true `(a₀, b₀)` solve the population rate equation
@@ -67,13 +79,25 @@ The model is the intercept-only negative binomial regression with offsets `log s
   heterogeneous condition is the Dean–Lawless (1989) overdispersion score numerator
   `∑ᵢ ((kᵢ - μ̂ᵢ)² - kᵢ)` at the Poisson fit `μ̂ᵢ = sᵢ μ̂`. No published existence theorem in
   exactly this form was found; the statement is proved here, not transcribed.
+* Uniqueness at a common size factor: Levin and Reeds (1977), Theorem 2, proved in
+  `HierarchicalCountMLEUniqueness`; also Aragón, Eberly and Eberly (1992).
+* Non-uniqueness at heterogeneous size factors: found by a numerical search, not from the
+  literature. The profile shape score was evaluated on a 600-point log grid of shapes in
+  `[10⁻³, 10⁷]` for 19,036 random overdispersed samples (2 to 10 cells, size factors from `10⁻²`
+  to `10³`); five had three sign changes, among them `s = (1000, 1/100, 100)`,
+  `k = (12, 1, 6)`, and the others one. Samples that fail the condition and still have two roots
+  also occur (for example `s = (100, 1)`, `k = (2, 1)`, also in the tests). The sign changes in
+  the tests are proved from the definitions, with exact rational rate roots.
 * Consistency: Cramér (1946), consistent root of the likelihood equations.
 
 ## Not proved here
 
-* Uniqueness of the solution of the joint score equations, that it maximizes the likelihood, and
-  the converse (no finite solution when `∑ᵢ (kᵢ - sᵢ μ̂)² ≤ ∑ᵢ kᵢ`). T86 proves none of these,
-  even at a common size factor; it has only conditional uniqueness at a fixed shape or rate.
+* At heterogeneous size factors: uniqueness of the joint MLE (the tests show the score root is
+  not unique, but not whether the two local maxima can tie), that a root of the score
+  equations maximizes the likelihood, and any converse for `∑ᵢ (kᵢ - sᵢ μ̂)² ≤ ∑ᵢ kᵢ`. The
+  common-size-factor converse (no root, no MLE) fails here: the tests give a sample at size
+  factors `(100, 1)` that violates the condition and still has two roots. A sufficient
+  condition for uniqueness at heterogeneous size factors is not proved.
 * The sign hypothesis of `ae_eventually_exists_score_root_varying` is assumed: deriving it for
   negative binomial counts needs the identity `E[∑_{j<K} 1 / (a₀ + j) ∣ S] = log (1 + S / b₀)`,
   which T86 also leaves unproved. The conditional-mean hypothesis of
@@ -83,10 +107,11 @@ The model is the intercept-only negative binomial regression with offsets `log s
 
 ## Implementation notes
 
-Reuse (search of `MathlibExt`, `CSLibExt`, `WantedExt` and Mathlib on 2026-11-12 for size factor,
-offset, negative binomial MLE, overdispersion, implicit root continuity): the definitions and
-conditional results come from `HierarchicalCountMLE`, which is merged (#1623) and imported, not
-edited. `MathlibExt.Probability.Statistics.GLM.NegativeBinomialDispersion` and
+Uniqueness at a common size factor is imported from `HierarchicalCountMLEUniqueness` (T173), not
+reproved. Reuse (search of `MathlibExt`, `CSLibExt`, `WantedExt` and Mathlib on 2026-11-12 for
+size factor, offset, negative binomial MLE, overdispersion, implicit root continuity): the
+definitions and conditional results come from `HierarchicalCountMLE`, which is merged (#1623) and
+imported, not edited. `MathlibExt.Probability.Statistics.GLM.NegativeBinomialDispersion` and
 `GLM.CountData.Model` treat negative binomial regression with offsets in the (shape, mean)
 parametrization with consistency hypotheses assumed abstractly, and prove no existence theorem.
 The third-order bound on `digammaIncrement` is `HierarchicalCountMLE`'s public
@@ -105,6 +130,8 @@ from strict monotonicity of `b ↦ b · ∂ℓ/∂b`; no Mathlib lemma packages 
 * H. Cramér, *Mathematical Methods of Statistics*, Princeton University Press, 1946.
 * C. Dean and J. F. Lawless, *Tests for detecting overdispersion in Poisson regression models*,
   J. Amer. Statist. Assoc. 84 (1989), 467–472.
+* B. Levin and J. Reeds, *Compound multinomial likelihood functions are unimodal: proof of a
+  conjecture of I. J. Good*, Ann. Statist. 5 (1977), 79–87.
 * J. F. Lawless, *Negative binomial and mixed Poisson regression*, Canad. J. Statist. 15 (1987),
   209–225.
 * C. N. Morris, *Parametric empirical Bayes inference: theory and applications*, J. Amer.
@@ -527,8 +554,10 @@ private lemma exists_profileShapeScoreVarying_pos [Nonempty ι] {s : ι → ℝ}
 `μ̂ = (∑ᵢ kᵢ) / (∑ᵢ sᵢ)` be the pooled Poisson rate and `sᵢ μ̂` the fitted Poisson means. If the
 Pearson-type excess `∑ᵢ (kᵢ - sᵢ μ̂)² > ∑ᵢ kᵢ` holds (residual sum of squares above the summed
 Poisson variances; at a common size factor this is `M < V`, see `overdispersed_const_iff`), then
-the joint score equations have a solution `(â, b̂)` with `â, b̂ > 0`. Uniqueness, and that the
-solution maximizes the likelihood, are not proved. -/
+the joint score equations have a solution `(â, b̂)` with `â, b̂ > 0`. At a common size factor it
+is unique (`existsUnique_score_root_const_varying`); at heterogeneous size factors it need not be
+(`exists_two_score_roots` and the tests). That a solution maximizes the likelihood is not proved
+here. -/
 theorem exists_score_root_of_overdispersed_varying [Nonempty ι] {s : ι → ℝ}
     (hs : ∀ i, 0 < s i) {k : ι → ℕ}
     (hQ : ∑ i, (k i : ℝ) < ∑ i, ((k i : ℝ) - s i * pooledMean s k) ^ 2) :
@@ -564,6 +593,93 @@ theorem overdispersed_const_iff {σ : ℝ} [Nonempty ι] (hσ : 0 < σ) (k : ι 
     rw [e, hA, countVar]; field_simp; ring
   simp only [hM, hB, hA]
   exact mul_lt_mul_iff_right₀ hn
+
+/-! ### Uniqueness at a common size factor -/
+
+private lemma countMean_pos_of_overdispersed [Nonempty ι] {σ : ℝ} {k : ι → ℕ}
+    (hQ : ∑ i, (k i : ℝ) < ∑ i, ((k i : ℝ) - σ * pooledMean (fun _ => σ) k) ^ 2) :
+    0 < countMean k := by
+  obtain ⟨i₀, hi₀⟩ := sum_counts_pos_of_overdispersed (s := fun _ => σ) hQ
+  rw [countMean]
+  refine div_pos (sum_pos' (fun i _ => (k i).cast_nonneg) ⟨i₀, mem_univ _, ?_⟩) ?_
+  · exact_mod_cast hi₀
+  · exact_mod_cast Fintype.card_pos
+
+/-- **Uniqueness of the joint score root at a common size factor** (Levin and Reeds 1977,
+Theorem 2, proved in `HierarchicalCountMLEUniqueness` as `existsUnique_score_root`). At `s ≡ σ > 0`
+and under the overdispersion condition of `exists_score_root_of_overdispersed_varying`, the joint
+score equations have exactly one positive solution. -/
+theorem existsUnique_score_root_const_varying [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι → ℕ}
+    (hQ : ∑ i, (k i : ℝ) < ∑ i, ((k i : ℝ) - σ * pooledMean (fun _ => σ) k) ^ 2) :
+    ∃! p : ℝ × ℝ, 0 < p.1 ∧ 0 < p.2 ∧ shapeScore p.1 p.2 (fun _ => σ) k = 0 ∧
+      rateScore p.1 p.2 (fun _ => σ) k = 0 :=
+  existsUnique_score_root hσ (countMean_pos_of_overdispersed hQ)
+    ((overdispersed_const_iff hσ k).1 hQ)
+
+/-- **The profile shape score has at most one positive zero at a common size factor**, under the
+overdispersion condition (Levin and Reeds 1977, via `profileShapeScore_eq_zero_unique`). -/
+theorem profileShapeScoreVarying_eq_zero_unique_const [Nonempty ι] {σ : ℝ} (hσ : 0 < σ)
+    {k : ι → ℕ} (hQ : ∑ i, (k i : ℝ) < ∑ i, ((k i : ℝ) - σ * pooledMean (fun _ => σ) k) ^ 2)
+    {a a' : ℝ} (ha : 0 < a) (ha' : 0 < a') (h : profileShapeScoreVarying a (fun _ => σ) k = 0)
+    (h' : profileShapeScoreVarying a' (fun _ => σ) k = 0) : a = a' := by
+  have hM := countMean_pos_of_overdispersed hQ
+  rw [profileShapeScoreVarying_const ha hσ hM] at h
+  rw [profileShapeScoreVarying_const ha' hσ hM] at h'
+  exact profileShapeScore_eq_zero_unique ((overdispersed_const_iff hσ k).1 hQ) ha ha' h h'
+
+/-- **Existence and uniqueness of the joint MLE at a common size factor** (Levin and Reeds 1977,
+via `existsUnique_isMaxOn_logMarginalLik`), under the overdispersion condition of
+`exists_score_root_of_overdispersed_varying`: `ℓ` has exactly one maximizer over `(0, ∞)²`. -/
+theorem existsUnique_isMaxOn_logMarginalLik_const_varying [Nonempty ι] {σ : ℝ} (hσ : 0 < σ)
+    {k : ι → ℕ} (hQ : ∑ i, (k i : ℝ) < ∑ i, ((k i : ℝ) - σ * pooledMean (fun _ => σ) k) ^ 2) :
+    ∃! p : ℝ × ℝ, 0 < p.1 ∧ 0 < p.2 ∧ ∀ q : ℝ × ℝ, 0 < q.1 → 0 < q.2 →
+      logMarginalLik q.1 q.2 (fun _ => σ) k ≤ logMarginalLik p.1 p.2 (fun _ => σ) k :=
+  existsUnique_isMaxOn_logMarginalLik hσ (countMean_pos_of_overdispersed hQ)
+    ((overdispersed_const_iff hσ k).1 hQ)
+
+/-! ### Heterogeneous size factors: score roots from sign changes of the profile -/
+
+/-- **A root of the joint score equations from a sign change of the profile.** If `0` lies
+between the profile shape scores at `0 < a₁ ≤ a₂`, then some `a ∈ [a₁, a₂]` with its rate root
+`b̂(a) > 0` solves both score equations. -/
+theorem exists_score_root_of_mem_uIcc [Nonempty ι] {s : ι → ℝ} (hs : ∀ i, 0 < s i)
+    {k : ι → ℕ} (hk : ∃ i, 0 < k i) {a₁ a₂ : ℝ} (ha₁ : 0 < a₁) (h12 : a₁ ≤ a₂)
+    (h0 : (0 : ℝ) ∈ Set.uIcc (profileShapeScoreVarying a₁ s k) (profileShapeScoreVarying a₂ s k)) :
+    ∃ a ∈ Set.Icc a₁ a₂, 0 < rateRoot a s k ∧ shapeScore a (rateRoot a s k) s k = 0 ∧
+      rateScore a (rateRoot a s k) s k = 0 := by
+  have hcont : ContinuousOn (fun a => profileShapeScoreVarying a s k) (Set.uIcc a₁ a₂) := by
+    rw [Set.uIcc_of_le h12]
+    exact (continuousOn_profileShapeScoreVarying hs hk).mono fun x hx =>
+      (lt_of_lt_of_le ha₁ hx.1 : 0 < x)
+  obtain ⟨a, ha, hPa⟩ := intermediate_value_uIcc hcont h0
+  rw [Set.uIcc_of_le h12] at ha
+  obtain ⟨hb, hr⟩ := rateRoot_spec (lt_of_lt_of_le ha₁ ha.1) hs hk
+  exact ⟨a, ha, hb, hPa, hr⟩
+
+/-- **Two sign changes of the profile give two roots.** If `0` lies between the profile shape
+scores at `a₁` and `a₂` and between those at `a₂` and `a₃`, with `0 < a₁ < a₂ < a₃`, and the
+profile does not vanish at `a₂`, the joint score equations have two positive solutions with
+different shapes. The tests exhibit such samples at heterogeneous size factors, one of them
+satisfying the overdispersion condition of `exists_score_root_of_overdispersed_varying`; so
+`existsUnique_score_root_const_varying` does not extend to heterogeneous size factors. -/
+theorem exists_two_score_roots [Nonempty ι] {s : ι → ℝ} (hs : ∀ i, 0 < s i) {k : ι → ℕ}
+    (hk : ∃ i, 0 < k i) {a₁ a₂ a₃ : ℝ} (ha₁ : 0 < a₁) (h12 : a₁ < a₂) (h23 : a₂ < a₃)
+    (h₁₂ : (0 : ℝ) ∈
+      Set.uIcc (profileShapeScoreVarying a₁ s k) (profileShapeScoreVarying a₂ s k))
+    (h₂₃ : (0 : ℝ) ∈
+      Set.uIcc (profileShapeScoreVarying a₂ s k) (profileShapeScoreVarying a₃ s k))
+    (h₂ : profileShapeScoreVarying a₂ s k ≠ 0) :
+    ∃ a b a' b', 0 < a ∧ 0 < b ∧ 0 < a' ∧ 0 < b' ∧ a < a' ∧
+      shapeScore a b s k = 0 ∧ rateScore a b s k = 0 ∧
+      shapeScore a' b' s k = 0 ∧ rateScore a' b' s k = 0 := by
+  obtain ⟨a, ha, hb, hs₁, hr₁⟩ := exists_score_root_of_mem_uIcc hs hk ha₁ h12.le h₁₂
+  obtain ⟨a', ha', hb', hs₂, hr₂⟩ :=
+    exists_score_root_of_mem_uIcc hs hk (ha₁.trans h12) h23.le h₂₃
+  have hne : a ≠ a₂ := by
+    rintro rfl
+    exact h₂ hs₁
+  exact ⟨a, _, a', _, lt_of_lt_of_le ha₁ ha.1, hb, lt_of_lt_of_le (ha₁.trans h12) ha'.1, hb',
+    lt_of_lt_of_le (lt_of_le_of_ne ha.2 hne) ha'.1, hs₁, hr₁, hs₂, hr₂⟩
 
 /-! ### Consistency with random size factors -/
 
