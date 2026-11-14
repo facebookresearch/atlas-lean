@@ -14,7 +14,6 @@ public import MathlibExt.LinearAlgebra.Matrix.PerronFrobenius
 public import MathlibExt.Analysis.ODE.InvariantRegions
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Analysis.Calculus.Deriv.Prod
-import Mathlib.Algebra.Group.Pi.Units
 import Mathlib.Analysis.Calculus.ContDiff.RCLike
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.LinearAlgebra.Matrix.Charpoly.Eigs
@@ -45,15 +44,19 @@ patch areas `A` and a dispersal kernel `f`, so `diag(e)⁻¹ C = (c / e) M` with
 `M_ij = A_i A_j f(d_ij)`, and `R₀ = (c / e) λ_M`, where `λ_M = ρ(M)` is their metapopulation
 capacity; `R₀ > 1` is their persistence condition `λ_M > e / c`. It is the threshold:
 
-* `R₀ < 1`: the empty landscape is globally exponentially stable. Every solution starting in the
-  box `[0, 1]^ι` satisfies `p_i(t) ≤ M e^{-κ t}` with `κ, M` independent of the solution
-  (`exists_exp_bound_of_lt_one`, `tendsto_zero_of_lt_one`). No connectivity is needed.
+* `R₀ < 1`: uniform exponential extinction of global solutions. Every solution on `[0, ∞)`
+  starting in the box `[0, 1]^ι` satisfies `p_i(t) ≤ M e^{-κ t}` with `κ, M` independent of the
+  solution (`exists_exp_bound_of_lt_one`), so it tends to the empty landscape
+  (`tendsto_zero_of_lt_one`). The bound does not scale with the initial state, so this is a
+  uniform attraction statement, not Lyapunov stability, and the existence of solutions is not
+  proved here. No connectivity is needed.
 * `R₀ > 1` and `C` irreducible (the colonization graph is strongly connected): the
   metapopulation is uniformly weakly persistent. Every solution starting in the box with some
   patch occupied has `limsup_t max_i p_i(t) ≥ 1 - 1/R₀` (`exists_lt_of_one_lt`); in particular
-  it does not go extinct (`not_tendsto_zero_of_one_lt`). Irreducibility is needed: with two
-  disconnected patches, only one of which can sustain a population, a landscape in which only
-  the other patch is occupied goes extinct although `R₀ > 1` (see the tests).
+  it does not go extinct (`not_tendsto_zero_of_one_lt`). Irreducibility is needed: with a
+  connected pair of patches that can sustain a population and a third, isolated patch that
+  cannot, the landscape in which only the isolated patch is occupied goes extinct although
+  `R₀ > 1` (see the tests).
 
 The case `R₀ = 1` is not decided here.
 
@@ -61,8 +64,10 @@ For a colonization matrix with constant row sums `c` and a common extinction rat
 uniform state `p_i = q` evolves by the well-mixed Levins equation with colonization rate `c`
 (`isSolution_uniform`), and `persistenceNumber C ε = c / ε` (`persistenceNumber_of_rowSum`). So
 the threshold `R₀ > 1` becomes `c > ε` of the well-mixed model, and the bound `1 - 1/R₀` is the
-well-mixed persistence equilibrium `p* = 1 - ε / c`, which the uniform solution approaches from
-below: the persistence bound is sharp.
+well-mixed persistence equilibrium `p* = 1 - ε / c`. The tests check a uniform trajectory that
+starts below `p*` (`c = 2`, `ε = 1`, `p(0) = 1/4`): it stays below `1 - 1/R₀` and tends to it, so
+the persistence bound cannot be raised. The direction of approach depends on the initial state;
+only this trajectory is checked.
 
 ## Main results
 
@@ -71,8 +76,8 @@ below: the persistence bound is sharp.
   is Hurwitz iff `R₀ < 1` and has an eigenvalue with positive real part iff `R₀ > 1`
   (from `MathlibExt.Biology.Epidemiology.NextGenerationMatrix`).
 * `IsSolution.mem_Icc`: the box `[0, 1]^ι` is forward invariant.
-* `exists_exp_bound_of_lt_one`, `tendsto_zero_of_lt_one`: global exponential extinction for
-  `R₀ < 1`.
+* `exists_exp_bound_of_lt_one`, `tendsto_zero_of_lt_one`: uniform exponential extinction of
+  solutions starting in the box, for `R₀ < 1`.
 * `exists_lt_of_one_lt`, `not_tendsto_zero_of_one_lt`: uniform weak persistence for `R₀ > 1`
   and irreducible `C`.
 * `isSolution_uniform`, `persistenceNumber_of_rowSum`: the bridge to the well-mixed model.
@@ -149,31 +154,6 @@ theorem field_eq_sub_mulVec (C : Matrix ι ι ℝ) (e p : ι → ℝ) :
   funext i
   simp only [field, sub_mulVec, Pi.sub_apply, mulVec_diagonal]
   ring
-
-/-- A positive diagonal matrix is a nonsingular M-matrix. -/
-theorem isNonsingularMMatrix_diagonal (he : ∀ i, 0 < e i) : (diagonal e).IsNonsingularMMatrix := by
-  refine ⟨fun i j hij => by simp [diagonal_apply_ne _ hij], fun μ hμ => ?_⟩
-  by_contra hre
-  push Not at hre
-  rw [spectrum.mem_iff] at hμ
-  apply hμ
-  have hM : algebraMap ℂ (Matrix ι ι ℂ) μ - (-diagonal e).map (algebraMap ℝ ℂ) =
-      diagonal fun i => μ + (e i : ℂ) := by
-    ext i j
-    by_cases h : i = j
-    · subst h; simp [algebraMap_matrix_apply]
-    · simp [algebraMap_matrix_apply, h]
-  rw [hM, isUnit_diagonal]
-  refine Pi.isUnit_iff.2 fun i => isUnit_iff_ne_zero.2 fun h0 => ?_
-  have := congrArg Complex.re h0
-  simp only [Complex.add_re, Complex.ofReal_re, Complex.zero_re] at this
-  linarith [he i]
-
-/-- A real matrix is Hurwitz iff its transpose is. -/
-theorem isHurwitz_transpose {A : Matrix ι ι ℝ} (hA : A.IsHurwitz) : Aᵀ.IsHurwitz := by
-  intro μ hμ
-  rw [transpose_map, spectrum_transpose] at hμ
-  exact hA μ hμ
 
 /-- **Linear threshold, stability half.** For `C ≥ 0` and `e > 0`, the linearization
 `C - diag e` at the empty landscape is Hurwitz iff `R₀ < 1`. -/
@@ -297,9 +277,10 @@ private theorem mul_exp_le_of_hasDerivAt {g g' : ℝ → ℝ} {a t₀ : ℝ}
 
 /-! ### Extinction below the threshold -/
 
-/-- **Global exponential extinction.** For `C ≥ 0`, `e > 0` and `R₀ < 1` there are `κ > 0` and
-`M` such that every solution starting in `[0, 1]^ι` satisfies `p_i(t) ≤ M e^{-κ t}` for all
-`t ≥ 0` and all patches `i`. -/
+/-- **Uniform exponential extinction.** For `C ≥ 0`, `e > 0` and `R₀ < 1` there are `κ > 0` and
+`M` such that every solution on `[0, ∞)` starting in `[0, 1]^ι` satisfies `p_i(t) ≤ M e^{-κ t}`
+for all `t ≥ 0` and all patches `i`. The bound is the same for every such solution; it does not
+scale with the initial state. -/
 theorem exists_exp_bound_of_lt_one (hC : ∀ i j, 0 ≤ C i j) (he : ∀ i, 0 < e i)
     (hR : persistenceNumber C e < 1) :
     ∃ κ > 0, ∃ M : ℝ, ∀ p : ℝ → ι → ℝ, IsSolution C e p → (∀ i, p 0 i ∈ Icc 0 1) →
@@ -312,7 +293,7 @@ theorem exists_exp_bound_of_lt_one (hC : ∀ i j, 0 ≤ C i j) (he : ∀ i, 0 < 
     · have hneg : -B = (C - diagonal e)ᵀ := by
         simp [B, transpose_sub, diagonal_transpose]
       rw [hneg]
-      exact isHurwitz_transpose hH
+      exact isHurwitz_transpose_iff.2 hH
   set w : ι → ℝ := B⁻¹ *ᵥ fun _ => 1 with hw_def
   have hw0 : ∀ i, 0 ≤ w i := fun i => by
     simp only [hw_def, mulVec, dotProduct]
