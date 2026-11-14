@@ -106,7 +106,12 @@ private theorem eval₂_bernoulli_one (n : ℕ) (hn : n ≠ 1) :
     ← bernoulli_eq_bernoulli'_of_ne_one hn]
   rfl
 
-/-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7, Entry 8.
+/-- **Bernoulli-number expansion of a Bernoulli-polynomial difference.** For every positive
+integer $r$ and every $x \in \mathbb{C}$, $\frac{B_{r+1}(x + 1) - B_{r+1}(1)}{r + 1}$ equals
+$\frac{1}{r + 1} \sum_{k=0}^{r} \binom{r+1}{k} B_k\, x^{r+1-k} + x^r$, where $B_{r+1}(x)$ is the
+Bernoulli polynomial and $B_k$ are the Bernoulli numbers with $B_1 = -\tfrac12$.
+
+Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7, Entry 8.
 Proves `Wanted` entry `ramanujan_part1_ch7_entry8`.
 -/
 theorem ramanujan_part1_ch7_entry8 (r : ℕ) (hr : 0 < r) (x : ℂ) :
