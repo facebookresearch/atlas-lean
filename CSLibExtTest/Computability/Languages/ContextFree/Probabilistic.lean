@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Computability.Languages.ContextFree.Probabilistic
+import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
+import Mathlib.Tactic.NormNum
 
 @[expose] public section
 
@@ -35,7 +37,7 @@ theorem test_chiGeman_main_five :
     chiGemanS (2 / 3) (1 / 3) 5 ≤ 1 / 2 :=
   chiGeman_main_half 5
 
-/-- Missing mass at depth five. -/
+/-- Uncaptured mass at cutoff five. -/
 theorem test_chiGeman_missing_five :
     1 / 2 ≤ 1 - chiGemanS (2 / 3) (1 / 3) 5 :=
   chiGeman_missing_mass 5
@@ -51,20 +53,26 @@ theorem test_chiGeman_mono_three :
     chiGemanS (2 / 3) (1 / 3) 3 ≤ chiGemanS (2 / 3) (1 / 3) 4 :=
   chiGemanS_mono _ _ (by norm_num) (by norm_num) 3
 
-/-- Tightness at `p = 1 / 2`. -/
-theorem test_chiGeman_tight_half_ten :
+/-- Upper bound at `p = 1 / 2`. -/
+theorem test_chiGemanS_half_le_one_ten :
     chiGemanS (1 / 2) (1 / 2) 10 ≤ 1 :=
-  chiGeman_tight_half 10
+  chiGemanS_half_le_one 10
 
-/-- Tightness at `p = 1 / 3`. -/
-theorem test_chiGeman_tight_third_ten :
+/-- Upper bound at `p = 1 / 3`. -/
+theorem test_chiGemanS_third_le_one_ten :
     chiGemanS (1 / 3) (2 / 3) 10 ≤ 1 :=
-  chiGeman_tight_third 10
+  chiGemanS_third_le_one 10
 
-/-- The local weights sum to one. -/
-theorem test_chiGeman_weights_sum :
-    (2 / 3 : ℝ) + 1 / 3 = 1 :=
-  chiGeman_weights_sum
+/-- Tightness at `p = 1 / 2`: the cutoff sums eventually exceed `9 / 10`,
+unlike the `p = 2 / 3` sums, which stay at most `1 / 2`. -/
+theorem test_chiGemanS_half_eventually :
+    ∀ᶠ h in Filter.atTop, 9 / 10 < chiGemanS (1 / 2) (1 / 2) h :=
+  tendsto_chiGemanS_half.eventually (lt_mem_nhds (by norm_num))
+
+/-- Tightness at `p = 1 / 3`: the cutoff sums eventually exceed `9 / 10`. -/
+theorem test_chiGemanS_third_eventually :
+    ∀ᶠ h in Filter.atTop, 9 / 10 < chiGemanS (1 / 3) (2 / 3) h :=
+  tendsto_chiGemanS_third.eventually (lt_mem_nhds (by norm_num))
 
 /-- The Chi-Geman weights are normalized on the example grammar. -/
 theorem test_cgWeightFun_normalized :
@@ -122,7 +130,8 @@ theorem test_amb_two_trees_le :
       inside Unit ambG cgWeightFun 3 ambG.initial [(), (), ()] :=
   amb_two_trees_le cgWeightFun cgWeightFun_normalized.1
 
-/-- Depth five already sums every derivation of the three-letter word. -/
+/-- Depth five sums the same valid trees as depth three for the three-letter
+word. -/
 theorem test_inside_stable :
     inside Unit ambG cgWeightFun 5 ambG.initial [(), (), ()] =
       inside Unit ambG cgWeightFun 3 ambG.initial [(), (), ()] :=

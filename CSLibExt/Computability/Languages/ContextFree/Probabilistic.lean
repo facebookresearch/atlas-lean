@@ -10,14 +10,18 @@ module
 
 public import CSLibExt.Computability.Languages.ContextFree.CYK
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
-public import Mathlib.Algebra.BigOperators.Ring.Finset
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Data.Finset.Defs
 public import Mathlib.Data.Finset.Prod
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.Ring
+public import Mathlib.Topology.Algebra.Ring.Real
+
+import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Topology.MetricSpace.Pseudo.Lemmas
+import Mathlib.Topology.Order.MonotoneConvergence
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # Probabilistic context-free grammars: the inside recurrence
@@ -25,24 +29,32 @@ public import Mathlib.Tactic.Ring
 For a fixed finite grammar with bounded derivation depth, normalized rule
 choices and the inside recurrence as a sum of derivation weights (Collins,
 "The Inside-Outside Algorithm", Section 3), plus the Chi-Geman tightness
-counterexample (Chi and Geman, 1998, p. 300).
+counterexample (Chi and Geman, 1998).
 
 A PCFG is a context-free grammar with rule weights `q r >= 0` normalized per
 nonterminal: the weights of the rules with input `A` sum to `1` (the source's
 `psi(r) = q(r)`). Mathlib's `Derives` is `Prop`-valued, so derivation weights
 need a derivation-tree datatype: `PDerivTree` has one leaf per terminal rule
-and one binary node per binary rule. `inside d A w` is the CYK-shaped sum
-recurrence, and it equals the sum of weights of valid trees of depth at most
-`d` with yield `w` rooted at `A`. A CNF tree for a word of length `m` has depth
-at most `m`, so depth `d >= |w|` already sums every derivation of `w`.
-Grammar termination and total mass over unbounded strings need a separate
-consistency theorem, which is not claimed here.
+`A -> a` and one binary node per binary rule `A -> B C`. Rules of any other
+shape (unit rules `A -> B`, longer or empty bodies) have no trees and add
+nothing to `inside`. `inside d A w` is the CYK-shaped sum recurrence, and it
+equals the sum of weights of valid trees of depth at most `d` with yield `w`
+rooted at `A`. A `PDerivTree` for a word of length `m` has depth at most `m`,
+so depth `d >= |w|` already sums the weights of all valid `PDerivTree`s for
+`w`. Valid trees give grammar derivations (`tree_yields_of_mem`), but the
+converse is not proved: nothing here shows that every derivation of a general
+grammar is represented by a `PDerivTree`. Grammar termination and total mass
+over unbounded strings need a separate consistency theorem, which is not
+claimed here.
 
 The same file carries the Chi-Geman counterexample: the one-nonterminal
 grammar `A -> A A` (weight `p = 2 / 3`) and `A -> a` (`q = 1 / 3`) is
-normalized per nonterminal, yet the total weight `S h` of finite trees of
-depth at most `h` stays below `1 / 2` for all `h`, so the infinite-derivation
-event has weight at least `1 / 2`.
+normalized per nonterminal, yet the total weight `S (h + 1)` of the trees of
+depth at most `h` is at most `1 / 2` for every `h`, so the mass left
+uncaptured at every depth cutoff is at least `1 / 2`. No probability space on
+derivations is constructed, so this uncaptured mass is not identified with
+the probability of an infinite derivation. For `p = 1 / 2` and `p = 1 / 3`
+the cutoff sums do tend to `1`.
 
 ## Main definitions
 
@@ -60,8 +72,11 @@ event has weight at least `1 / 2`.
   of derivation weights.
 * `Cslib.Language.mem_treesUpTo_iff`: membership unfolds to validity,
   depth, yield and root.
-* `Cslib.Language.inside_stable`: depth `d >= |w|` sums every derivation.
+* `Cslib.Language.inside_stable`: depth `d >= |w|` sums every valid
+  `PDerivTree` for `w`.
 * `Cslib.Language.chiGeman_main_half`: the Chi-Geman bound `S h <= 1 / 2`.
+* `Cslib.Language.tendsto_chiGemanS_half`, `Cslib.Language.tendsto_chiGemanS_third`:
+  the tight boundary cases `p = 1 / 2` and `p = 1 / 3`, where `S h -> 1`.
 -/
 
 @[expose] public section
@@ -130,7 +145,7 @@ def IsRuleWeight (T : Type*) (g : ContextFreeGrammar T)
   ∀ r ∈ g.rules, 0 ≤ q r
 
 /-- A PCFG is normalized when weights are nonnegative and sum to one per
-nonterminal (Chi and Geman, Eq. (1)). -/
+nonterminal (Chi and Geman, 1998). -/
 def IsNormalized (T : Type*) (g : ContextFreeGrammar T)
     [DecidableEq g.NT] (q : ContextFreeRule T g.NT → ℝ) : Prop :=
   IsRuleWeight T g q ∧
@@ -683,7 +698,9 @@ theorem treesUpTo_stable (T : Type*) (g : ContextFreeGrammar T)
     exact ⟨hV, by omega, hy, hroot⟩
 
 /-- The inside recurrence stabilizes once `d >= |w|`: depth `|w|` already
-sums every derivation of `w`. -/
+sums the weights of every valid `PDerivTree` for `w`. Only terminal rules
+`A -> a` and binary rules `A -> B C` have trees; rules of other shapes add
+nothing to `inside`. -/
 theorem inside_stable (T : Type*) (g : ContextFreeGrammar T)
     [DecidableEq T] [DecidableEq g.NT] (q : ContextFreeRule T g.NT → ℝ)
     (d : ℕ) (A : g.NT) (w : List T) (hd : w.length ≤ d) :
@@ -825,8 +842,9 @@ theorem amb_two_trees_le (q : ContextFreeRule Unit ambG.NT → ℝ)
 /-- A constant-one weight function on the two-rule grammar. -/
 def badWeightFun : ContextFreeRule Unit ambG.NT → ℝ := fun _ => 1
 
-/-- Boundary: violated normalization still satisfies the recurrence
-identity, with per-nonterminal total two instead of one. -/
+/-- Boundary: the constant-one weights have per-nonterminal total two instead
+of one. `inside_eq_treeSum` still applies to them, since it assumes no
+normalization. -/
 theorem badWeight_sum :
     ∑ r ∈ ambG.rules.filter (fun r => r.input = ambG.initial), badWeightFun r = 2 := by
   have hF : ambG.rules.filter (fun r => r.input = ambG.initial) = ambG.rules := by
@@ -858,6 +876,8 @@ theorem ambG_cnf : IsChomskyNormalForm ambG := by
     rcases hr with rfl | rfl <;> simp
 
 /-! ## The Chi-Geman counterexample -/
+
+open Filter Topology
 
 /-- One-nonterminal derivation trees: branching (`node`) expands each `A`
 by one rule, termination is finiteness of the tree itself. -/
@@ -1097,30 +1117,61 @@ theorem chiGemanS_mono (p q : ℝ) (hp : 0 ≤ p) (hq : 0 ≤ q) (n : ℕ) :
       rw [chiGemanS_link p q (n + 1), chiGemanS_link p q n]
       exact cgTotal_mono p q hp hq n
 
-/-- Main bound (Chi and Geman, p. 300): for `p = 2 / 3` the total weight of
-finite trees stays below `1 / 2`, since `1 / 3 + (2 / 3) * (1 / 2)^2 = 1 / 2`. -/
+/-- The cutoff sums converge to their supremum `L`, a fixed point of
+`x ↦ q + p * x ^ 2` that lies below every post-fixed point `b`. -/
+private theorem exists_tendsto_chiGemanS_fixedPoint (p q b : ℝ) (hp : 0 ≤ p)
+    (hq : 0 ≤ q) (hb : q + p * b ^ 2 ≤ b) :
+    ∃ L, L ≤ b ∧ L = q + p * L ^ 2 ∧ Tendsto (chiGemanS p q) atTop (𝓝 L) := by
+  have hmono : Monotone (chiGemanS p q) :=
+    monotone_nat_of_le_succ (chiGemanS_mono p q hp hq)
+  have hbdd : BddAbove (Set.range (chiGemanS p q)) := by
+    refine ⟨b, ?_⟩
+    rintro _ ⟨n, rfl⟩
+    exact chiGemanS_le_bound p q b hp hq hb n
+  have hT : Tendsto (chiGemanS p q) atTop (𝓝 (⨆ n, chiGemanS p q n)) :=
+    tendsto_atTop_ciSup hmono hbdd
+  refine ⟨⨆ n, chiGemanS p q n,
+    ciSup_le fun n => chiGemanS_le_bound p q b hp hq hb n, ?_, hT⟩
+  have h1 : Tendsto (fun n => chiGemanS p q (n + 1)) atTop
+      (𝓝 (⨆ n, chiGemanS p q n)) := (tendsto_add_atTop_iff_nat 1).2 hT
+  have h2 : Tendsto (fun n => chiGemanS p q (n + 1 + 1)) atTop
+      (𝓝 (⨆ n, chiGemanS p q n)) := (tendsto_add_atTop_iff_nat 1).2 h1
+  have h3 : Tendsto (fun n => q + p * chiGemanS p q (n + 1) ^ 2) atTop
+      (𝓝 (q + p * (⨆ n, chiGemanS p q n) ^ 2)) :=
+    tendsto_const_nhds.add (tendsto_const_nhds.mul (h1.pow 2))
+  have heq : (fun n => chiGemanS p q (n + 1 + 1)) =
+      fun n => q + p * chiGemanS p q (n + 1) ^ 2 :=
+    funext fun n => chiGemanS_succ_succ p q n
+  rw [heq] at h2
+  exact tendsto_nhds_unique h2 h3
+
+/-- Main bound (Chi and Geman, 1998): for `p = 2 / 3` every cutoff sum `S h`
+is at most `1 / 2` (`S (h + 1)` is the total weight of the trees of depth at
+most `h`, `chiGemanS_link`), since `1 / 3 + (2 / 3) * (1 / 2)^2 = 1 / 2`. -/
 theorem chiGeman_main_half (h : ℕ) :
     chiGemanS (2 / 3) (1 / 3) h ≤ 1 / 2 := by
   apply chiGemanS_le_bound _ _ _ (by norm_num) (by norm_num) ?_ h
   norm_num
 
-/-- Missing mass: the infinite-derivation event has weight at least half. -/
+/-- Uncaptured mass at cutoff `h`: `1 - S h >= 1 / 2`. This bounds the weight
+missing from each finite cutoff sum; it is not identified with the probability
+of an infinite derivation, since no probability space on derivations is
+constructed here. -/
 theorem chiGeman_missing_mass (h : ℕ) :
     1 / 2 ≤ 1 - chiGemanS (2 / 3) (1 / 3) h := by
   have hle := chiGeman_main_half h
   linarith
 
-/-- The local rule weights sum to one. -/
-theorem chiGeman_weights_sum : (2 / 3 : ℝ) + 1 / 3 = 1 := by norm_num
-
-/-- Boundary `p = 1 / 2`: the constant sequence at one is tight. -/
-theorem chiGeman_tight_half (h : ℕ) :
+/-- Boundary `p = 1 / 2`: the cutoff sums stay at most one. This is an upper
+bound only; their limit is `tendsto_chiGemanS_half`. -/
+theorem chiGemanS_half_le_one (h : ℕ) :
     chiGemanS (1 / 2) (1 / 2) h ≤ 1 := by
   apply chiGemanS_le_bound _ _ _ (by norm_num) (by norm_num) ?_ h
   norm_num
 
-/-- Boundary `p = 1 / 3`: the constant sequence at one is tight. -/
-theorem chiGeman_tight_third (h : ℕ) :
+/-- Boundary `p = 1 / 3`: the cutoff sums stay at most one. This is an upper
+bound only; their limit is `tendsto_chiGemanS_third`. -/
+theorem chiGemanS_third_le_one (h : ℕ) :
     chiGemanS (1 / 3) (2 / 3) h ≤ 1 := by
   apply chiGemanS_le_bound _ _ _ (by norm_num) (by norm_num) ?_ h
   norm_num
@@ -1134,7 +1185,7 @@ theorem chiGeman_unique_half (x : ℝ) (h : x = 1 / 2 + (1 / 2) * x ^ 2) :
     exact pow_ne_zero 2 hne h2
   linarith
 
-/-- Boundary `p = 1 / 3`: the fixed points are one and two. -/
+/-- Boundary `p = 1 / 3`: every fixed point is one or two. -/
 theorem chiGeman_fixed_third (x : ℝ) (h : x = 2 / 3 + (1 / 3) * x ^ 2) :
     x = 1 ∨ x = 2 := by
   have h2 : (x - 1) * (x - 2) = 0 := by linarith [h]
@@ -1143,6 +1194,23 @@ theorem chiGeman_fixed_third (x : ℝ) (h : x = 2 / 3 + (1 / 3) * x ^ 2) :
     linarith
   · right
     linarith
+
+/-- Boundary `p = 1 / 2` (tight case): the cutoff sums tend to one. -/
+theorem tendsto_chiGemanS_half :
+    Tendsto (chiGemanS (1 / 2) (1 / 2)) atTop (𝓝 1) := by
+  obtain ⟨L, -, hL, hT⟩ := exists_tendsto_chiGemanS_fixedPoint (1 / 2) (1 / 2) 1
+    (by norm_num) (by norm_num) (by norm_num)
+  rwa [chiGeman_unique_half L hL] at hT
+
+/-- Boundary `p = 1 / 3` (tight case): the cutoff sums tend to one, the smaller
+of the two fixed points of `x ↦ 2 / 3 + (1 / 3) * x ^ 2`. -/
+theorem tendsto_chiGemanS_third :
+    Tendsto (chiGemanS (1 / 3) (2 / 3)) atTop (𝓝 1) := by
+  obtain ⟨L, hL1, hL, hT⟩ := exists_tendsto_chiGemanS_fixedPoint (1 / 3) (2 / 3) 1
+    (by norm_num) (by norm_num) (by norm_num)
+  rcases chiGeman_fixed_third L hL with h | h
+  · rwa [h] at hT
+  · linarith
 
 /-- The first nontrivial value: `S 2 = q`. -/
 theorem chiGemanS_two : chiGemanS (2 / 3) (1 / 3) 2 = 1 / 3 := by
