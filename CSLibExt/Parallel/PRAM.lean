@@ -12,7 +12,28 @@ public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Finset.Max
 public import Mathlib.Data.Fintype.Basic
 
+/-!
+# PRAM steps: memory-access legality and pointer jumping
+
+One synchronous step of a PRAM with `p` processors on shared memory `ℕ → α`. `stepCRCW` is a
+total step function: a written cell takes the value of its least-index writer (the Priority CRCW
+rule) and an unwritten cell is unchanged. `EREW`, `CREW` and `CommonLegal` are the
+exclusive-read exclusive-write, concurrent-read exclusive-write and CRCW-Common legality
+conditions; on a CREW- or Common-legal step every writer's value is the stored one
+(`stepCRCW_of_crew`, `stepCRCW_of_common`). `pointerJumpStep` is one round of pointer jumping,
+and `pointerJump_apply` computes its effect.
+
+## References
+
+- S. Fortune and J. Wyllie, "Parallelism in random access machines", Proc. 10th ACM Symposium
+  on Theory of Computing (1978), 114–118 (the PRAM model).
+- J. C. Wyllie, *The Complexity of Parallel Computations*, PhD thesis, Cornell University, 1979
+  (pointer jumping).
+-/
+
 @[expose] public section
+
+namespace Cslib.Parallel.PRAM
 
 open Finset
 
@@ -133,21 +154,27 @@ def pointerJumpStep (ptr : ℕ → ℕ) (n : ℕ) : PramProg ℕ n where
   compute _ v := v
   writeAddr i := some i
 
+/-- The pointer-jumping step is CREW-legal: processor `i` is
+the only writer of cell `i`. -/
+theorem pointerJumpStep_crew (ptr : ℕ → ℕ) (n : ℕ) :
+    CREW (pointerJumpStep ptr n) := by
+  intro i j hij
+  right
+  simp only [pointerJumpStep, Option.some_inj, Fin.ext_iff] at hij ⊢
+  exact hij
+
 /-- One pointer-jumping round under the CRCW step: cell `i`
 takes the value of the cell its pointer names, i.e. the new
-memory is `ptr ∘ ptr` on cells below `n` and unchanged above.
-The step is CREW (each cell has exactly one writer), so this
-is also the CREW reading of the round. -/
+memory is `ptr ∘ ptr` on cells below `n` and unchanged from
+`n` on, where no processor writes. The step is CREW-legal
+(`pointerJumpStep_crew`), so this is also the CREW reading of
+the round. -/
 theorem pointerJump_apply (ptr : ℕ → ℕ) (n : ℕ) :
     ∀ a, stepCRCW ptr (pointerJumpStep ptr n) a =
       if a < n then ptr (ptr a) else ptr a := by
   intro a
   by_cases ha : a < n
-  · have hcrew : CREW (pointerJumpStep ptr n) := by
-      intro i j hij
-      right
-      simp only [pointerJumpStep, Option.some_inj, Fin.ext_iff] at hij ⊢
-      exact hij
+  · have hcrew : CREW (pointerJumpStep ptr n) := pointerJumpStep_crew ptr n
     have hi : (pointerJumpStep ptr n).writeAddr ⟨a, ha⟩ = some a := rfl
     have hstep := stepCRCW_of_crew ptr hcrew hi
     rw [hstep]
@@ -162,3 +189,5 @@ theorem pointerJump_apply (ptr : ℕ → ℕ) (n : ℕ) :
       omega
     rw [stepCRCW_of_no_writer _ hno]
     simp [ha]
+
+end Cslib.Parallel.PRAM
