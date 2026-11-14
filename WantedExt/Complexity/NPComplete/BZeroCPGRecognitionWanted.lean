@@ -46,9 +46,12 @@ The graph is given by an edge list on `Fin n`. The class is the predicate
 horizontal or vertical grid segment from `A v` to `B v` (two distinct points of `ℤ × ℤ` sharing a
 coordinate, the closed real segment between them), distinct segments have disjoint interiors, and
 two distinct vertices are adjacent exactly when their segments share a grid point that is an
-endpoint of at least one of them. The representation is the certificate and is not part of the
-input; it has polynomial size after replacing the coordinates by their ranks, which preserves
-every condition, so the problem is in NP.
+endpoint of at least one of them. The representation is not part of the input. Membership in NP,
+although the vertex count `n` is written in binary: a graph is `B_0`-CPG exactly when its
+subgraph induced by the non-isolated vertices is (an isolated vertex gets a short segment far from
+all others), there are at most `2|E|` non-isolated vertices, and a representation of that subgraph
+with every coordinate replaced by its rank (which preserves every condition) is a certificate of
+size polynomial in the length of the edge list.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
