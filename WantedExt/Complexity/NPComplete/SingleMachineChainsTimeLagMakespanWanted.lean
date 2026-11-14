@@ -45,6 +45,14 @@ successor; jobs in no chain are unconstrained. Jobs are not preempted; a schedul
 a start time `S j ≥ 0`, and two jobs never overlap: one completes before the other starts. Numbers
 are in binary; Brucker and Knust list the problem as NP-hard in the strong sense.
 
+In Brucker and Knust's notation the lag annotation distinguishes three cases: `(l)` is one lag
+`l` shared by all precedence pairs, `(l_ij)` allows a different lag on each pair, and `(1)` is the
+unit lag. Their table for single machine problems with non-negative time lags lists
+`1|chains(l)|Cmax` (Wikum et al. 1994) as minimal NP-hard next to `1|chains(l_ij); p_i = 1|Cmax`
+(Yu 1996) and `1|prec(l); p_i = 1|Cmax` (Leung et al. 1984), and lists `1|chains(l); p_i = p|Cmax`
+and `1|prec(1)|Cmax` as polynomially solvable; the problem here is the common-lag case `(l)`, as in
+the campaign record.
+
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
 bitstrings decoding to malformed instances, are no-instances.
