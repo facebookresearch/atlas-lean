@@ -17,8 +17,9 @@ module
 
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
+public import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Basic.Real.Basic
-public import Mathlib.Logic.Relation
+public import Mathlib.Combinatorics.Quiver.Arborescence
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 
@@ -42,17 +43,23 @@ polynomial size" (proof of Theorem 2.8), and membership in NP follows from the H
 Rao, Sadayappan, Hwang and Shor (an optimal RSA uses only the grid lines through the points).
 
 The tree is given by its list `T` of directed edges `(a, b)` from `a` to `b`, with endpoints
-anywhere in `ℝ × ℝ` (Steiner points are arbitrary). `IsRSA P T` says:
+anywhere in `ℝ × ℝ` (Steiner points are arbitrary). Its vertices are the origin and the endpoints
+of the edges (`vertices`), and `edgeQuiver T` is the quiver on them with an arrow `a ⟶ b` exactly
+when `(a, b)` is an edge. `IsRSA P T` says:
 * every edge is a horizontal segment oriented from left to right or a vertical segment oriented
-  from bottom to top (`IsRectilinearEdge`);
-* no edge is listed twice, and no two edges end at the same point (every vertex has at most one
-  incoming edge);
-* the origin reaches the start of every edge, and every point of `P`, along edges.
-These say that `T` is a directed tree rooted at the origin containing `P`: every vertex other
-than the origin is reached from the origin, so it has exactly one incoming edge, and an edge
-strictly increases `x + y`, so there is no directed cycle and no edge enters the origin. Each
-root-to-point path is then monotone, hence a shortest rectilinear path. The total edge length is
-the sum over the edges of `(b.x - a.x) + (b.y - a.y)`, the length of the segment.
+  from bottom to top (`IsRectilinearEdge`), and no edge is listed twice;
+* distinct edges, as closed segments of the plane, meet only in points that are endpoints of
+  both (`NonCrossing`), so the union of the segments is drawn without crossings, overlaps, or a
+  vertex inside another edge;
+* the quiver is a directed rooted tree rooted at the origin, in Mathlib's sense
+  (`Quiver.Arborescence`: a unique path from the root to every vertex);
+* every point of `P` is a vertex.
+So `T` is a directed Steiner tree rooted at the origin, containing `P`, drawn in the plane with
+horizontal and vertical segments oriented to the right or upward; its vertices include every
+branch point and every point of `P` (a drawn tree is subdivided there, which changes neither the
+drawing nor the length). Each root-to-point path is monotone, hence a shortest rectilinear path.
+The total edge length is the sum over the edges of `(b.x - a.x) + (b.y - a.y)`, the length of
+the segment.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -79,16 +86,33 @@ segment oriented to the right or upward it is the Euclidean length of the segmen
 def edgeLength (e : (ℝ × ℝ) × (ℝ × ℝ)) : ℝ :=
   (e.2.1 - e.1.1) + (e.2.2 - e.1.2)
 
-/-- `a` reaches `b` along the edges of `T`. -/
-def Reaches (T : List ((ℝ × ℝ) × (ℝ × ℝ))) (a b : ℝ × ℝ) : Prop :=
-  Relation.ReflTransGen (fun u v => (u, v) ∈ T) a b
+/-- The vertices of the edge list `T`: the origin and the endpoints of the edges. -/
+def vertices (T : List ((ℝ × ℝ) × (ℝ × ℝ))) : Set (ℝ × ℝ) :=
+  {z | z = (0, 0) ∨ ∃ e ∈ T, z = e.1 ∨ z = e.2}
+
+/-- The quiver of `T` on its vertices: an arrow `a ⟶ b` exactly when `(a, b)` is an edge. -/
+@[instance_reducible]
+def edgeQuiver (T : List ((ℝ × ℝ) × (ℝ × ℝ))) : Quiver (vertices T) where
+  Hom a b := PLift (((a : ℝ × ℝ), (b : ℝ × ℝ)) ∈ T)
+
+/-- The origin as a vertex of `T`. -/
+def origin (T : List ((ℝ × ℝ) × (ℝ × ℝ))) : vertices T :=
+  ⟨(0, 0), Or.inl rfl⟩
+
+/-- Distinct edges of `T`, as closed segments of the plane, meet only in points that are
+endpoints of both. -/
+def NonCrossing (T : List ((ℝ × ℝ) × (ℝ × ℝ))) : Prop :=
+  ∀ e ∈ T, ∀ e' ∈ T, e ≠ e' →
+    segment ℝ e.1 e.2 ∩ segment ℝ e'.1 e'.2 ⊆ ({e.1, e.2} : Set (ℝ × ℝ)) ∩ {e'.1, e'.2}
 
 /-- The edge list `T` is a rectilinear Steiner arborescence for the points `P`: rectilinear
-edges oriented right or up, no edge listed twice, at most one edge into each point, and the
-origin reaches the start of every edge and every point of `P`. -/
+edges oriented right or up, listed once each and drawn without crossings, forming a directed
+tree rooted at the origin (`Quiver.Arborescence` of `edgeQuiver T` with root the origin) whose
+vertices include every point of `P`. -/
 def IsRSA (P : List (ℕ × ℕ)) (T : List ((ℝ × ℝ) × (ℝ × ℝ))) : Prop :=
-  (∀ e ∈ T, IsRectilinearEdge e) ∧ T.Nodup ∧ (∀ e ∈ T, ∀ e' ∈ T, e.2 = e'.2 → e = e') ∧
-    (∀ e ∈ T, Reaches T (0, 0) e.1) ∧ ∀ p ∈ P, Reaches T (0, 0) ((p.1 : ℝ), (p.2 : ℝ))
+  (∀ e ∈ T, IsRectilinearEdge e) ∧ T.Nodup ∧ NonCrossing T ∧
+    (∃ A : @Quiver.Arborescence (vertices T) (edgeQuiver T), A.root = origin T) ∧
+    ∀ p ∈ P, ((p.1 : ℝ), (p.2 : ℝ)) ∈ vertices T
 
 /-- Well-formedness of an instance: `k` is positive. -/
 def WellFormed (i : RectilinearSteinerArborescenceInstance) : Prop :=
