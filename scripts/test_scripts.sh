@@ -353,6 +353,7 @@ grep -q 'check_copyright.py --all' "$REPO_ROOT/scripts/check.sh" ||
   fail "preflight does not check every file's copyright header"
 
 python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_quality_eval.py -v
+python3 -m unittest discover -s "$REPO_ROOT/scripts" -p test_formal_math_sync.py -v
 python3 "$REPO_ROOT/scripts/bump/test_pinned_bump.py"
 
 echo "ok [scripts]: repository policy regression tests passed."

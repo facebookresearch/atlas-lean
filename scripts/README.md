@@ -23,3 +23,7 @@ see [`blueprint/migrations/README.md`](../blueprint/migrations/README.md).
 For the reproducible, opt-in Tau Ceti quality evaluation of maintained Atlas
 libraries, see [`QUALITY_EVAL.md`](QUALITY_EVAL.md). Its deterministic tests run
 in preflight; model inference is never launched by repository CI.
+
+For the Formal-Math sync manifest, its offline checker (report-only in
+preflight) and the refresh script, see
+[`provenance/README.md`](../provenance/README.md).

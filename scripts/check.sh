@@ -62,6 +62,13 @@ if [[ "$scope" == all || "$scope" == preflight ]]; then
   run_check "maintenance script regressions" scripts/test_scripts.sh
   run_check "library policy" scripts/check_health.sh
   run_check "copyright headers" python3 scripts/check_copyright.py --all
+  # Report-only by maintainer decision (#157): a blocking gate would fail every open PR that edits
+  # a synced file until it records a divergence. FORMAL_MATH_SYNC_STRICT=1 makes it blocking.
+  if [[ "${FORMAL_MATH_SYNC_STRICT:-0}" == 1 ]]; then
+    run_check "formal-math sync manifest (strict)" python3 scripts/check_formal_math_sync.py --strict
+  else
+    run_check "formal-math sync manifest (report-only)" python3 scripts/check_formal_math_sync.py
+  fi
 fi
 
 if [[ "$scope" == all || "$scope" == build ]]; then
