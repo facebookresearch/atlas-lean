@@ -15,18 +15,20 @@ import Mathlib.Topology.Order.IntermediateValue
 /-!
 # Hodgkin–Huxley with a constant applied current: the equilibrium branch and its loss of stability
 
-`HodgkinHuxley.lean` (T199) proves global existence, boundedness and the stability of the squid
-resting state for `I = 0`. This file adds the applied current `I` as a parameter
-(`squidI I`, the squid parameters with current `I`) and follows the equilibrium branch.
+`HodgkinHuxley.lean` proves global existence, boundedness and the stability of the squid resting
+state for `I = 0` (T199), and that the squid steady-state current `steadyCurrent squid` is
+strictly increasing on `[-12, 115]` mV (T256). This file adds the applied current `I` as a
+parameter (`squidI I`, the squid parameters with current `I`) and follows the equilibrium branch.
 
 ## The branch
 
 Every equilibrium of `squidI I` is `eqPoint V = (V, m∞(V), h∞(V), n∞(V))` for a voltage `V` with
-`I∞(V) = I`, where `I∞ = Iss` is the steady-state current–voltage relation
-(`field_squidI_eq_zero_iff`). So `V ↦ (I∞(V), eqPoint V)` parametrizes all equilibria of all
-currents; `V = 0` is T199's resting state (`Iss_zero`, `eqPoint_zero`), and every current has at
-least one equilibrium (`exists_equilibrium`). The current does not enter the Jacobian, which along
-the branch is the arrowhead matrix `(arrowAt V).mat` (`jac_eqPoint`).
+`I∞(V) = I`, where `I∞ = Iss` abbreviates the steady-state current–voltage relation
+`steadyCurrent squid` (`field_squidI_eq_zero_iff`). So `V ↦ (I∞(V), eqPoint V)` parametrizes all
+equilibria of all currents; `V = 0` is T199's resting state (`steadyCurrent_squid_zero`,
+`eqPoint_zero`), and every current has at least one equilibrium (`exists_equilibrium`). The
+current does not enter the Jacobian, which along the branch is the arrowhead matrix
+`(arrowAt V).mat` (`jac_eqPoint`).
 
 ## Main results
 
@@ -47,42 +49,48 @@ the branch is the arrowhead matrix `(arrowAt V).mat` (`jac_eqPoint`).
   (`I∞(15) ≈ 62` µA/cm² in floating point) `coef₂ < 0` and `Δ₃ < 0` while `coef₃, coef₄ > 0`.
 * `coef₄_eq_deriv_Iss`, `zero_mem_spectrum_jac_iff`: `coef₄ = k₁ k₂ k₃ · I∞'(V)`, so `0` is an
   eigenvalue on the branch exactly at critical points of the I–V curve (folds).
-* `exists_hopf_or_fold`: **main theorem.** There is `V* ∈ (0, 15)` mV such that, at the
-  equilibrium `eqPoint V*` of the current `I* = I∞(V*)`, either the spectral Hopf conditions hold
-  and every branch equilibrium with `V ∈ [0, V*)` has a Hurwitz Jacobian (hence is exponentially
-  stable, `eqPoint_exponentially_stable`), or `0` is an eigenvalue (`I∞'(V*) = 0`).
+* `exists_hopf_or_fold`: there is `V* ∈ (0, 15)` mV such that, at the equilibrium `eqPoint V*`
+  of the current `I* = I∞(V*)`, either the spectral Hopf conditions hold and every branch
+  equilibrium with `V ∈ [0, V*)` has a Hurwitz Jacobian, or `0` is an eigenvalue
+  (`I∞'(V*) = 0`). The fold alternative says nothing about the branch below `V*`.
 * `exists_hopf_of_deriv_Iss_pos`: if `I∞' > 0` on `[0, 15]`, the fold case is excluded and the
   Hopf point sits at a current `I* ∈ (0, I∞(15))`.
+* `exists_hopf`: **main theorem.** T256's `steadyCurrentDeriv_squid_pos` gives `I∞' > 0` on
+  `[0, 15]`, so there is `V* ∈ (0, 15)` mV with Hurwitz Jacobians along the branch for
+  `V ∈ [0, V*)` and the spectral Hopf conditions at `V*`, at a current `I* ∈ (0, I∞(15))`: the
+  branch first stops being Hurwitz at a Hopf point, not at a fold.
+* `eqPoint_globalSolution_decay`: at a branch point with a Hurwitz Jacobian, solutions defined on
+  all of `[0, ∞)` that start nearby decay exponentially to it. This is the conditional form of
+  linearized stability: it does not assert that such solutions exist.
 
 ## Scope: what is weakened or deferred
 
 The task asks for the Hopf bifurcation in `I` (rest → periodic firing). Proved here are the
-equilibrium branch, Routh–Hurwitz stability up to `V*`, and the spectral Hopf conditions at `V*`.
-Deferred, exactly:
+equilibrium branch, Hurwitz Jacobians along it up to `V*`, and the spectral Hopf conditions at
+`V*` (`exists_hopf`). Deferred, exactly:
 
-1. **The fold alternative is not excluded unconditionally.** Excluding it needs `I∞' > 0` on
-   `[0, 15]` mV (monotonicity of the steady-state I–V curve, the subject of T256);
-   `exists_hopf_of_deriv_Iss_pos` takes it as a hypothesis.
-2. **`V*` is not located.** It comes from the intermediate value theorem on `[0, 15]`.
+1. **`V*` is not located.** It comes from the intermediate value theorem on `[0, 15]`.
    Floating-point evaluation of these definitions puts the first zero of `Δ₃` near `V ≈ 5.3` mV,
-   `I ≈ 9.8` µA/cm², consistent with the literature; none of these numbers is proved.
-3. **Transversality is not proved.** The sign of `d Re λ / d I` at `I*` is not controlled, since
-   `V*` is only known to be the first zero of `Δ₃` on `[0, 15]`.
-4. **No periodic orbits.** Mathlib has no Hopf bifurcation theorem, and the Hopf point of the
-   squid model is subcritical, so the orbits born there are unstable; repetitive firing (the
-   stable large-amplitude limit cycle) is not addressed. The second Hopf point
-   (`I ≈ 154` µA/cm²) is not treated.
-5. Stability is stated along the branch segment `V ∈ [0, V*)`; uniqueness of the equilibrium for
-   those currents is not shown.
+   `I ≈ 9.8` µA/cm², consistent with Rinzel and Miller (1980); none of these numbers is proved.
+2. **Transversality is not proved.** The sign of `d Re λ / d I` at `I*` is not controlled, since
+   `V*` is only characterized as the first voltage where the branch Jacobian stops being Hurwitz.
+3. **No periodic orbits.** Mathlib has no Hopf bifurcation theorem. Rinzel and Miller (1980)
+   compute that the squid Hopf point is subcritical, so the orbits born there are unstable;
+   repetitive firing (the stable large-amplitude limit cycle) is not addressed. The second Hopf
+   point (`I ≈ 154` µA/cm²) is not treated.
+4. **Stability is linear.** Along the branch segment `V ∈ [0, V*)` the Jacobian is Hurwitz;
+   `eqPoint_globalSolution_decay` adds decay of global solutions near such a point but not their
+   existence, and uniqueness of the equilibrium for those currents is not shown.
 
 ## Source receipt (reuse search, 2026-11-14)
 
-Reused from ATLAS: T199's `HodgkinHuxley` (rates, `field`, `field_eq_zero_iff`, `jac`,
-`hasFDerivAt_field`, rate values at `V = 0`), `Matrix.IsHurwitz` and
-`LinearizedStability.globalSolution_decay_of_hasFDerivAt`. ATLAS has only the planar Routh–Hurwitz
-criterion (`PlanarStability`); Mathlib has none. Reused from Mathlib: `Matrix.det_succ_row_zero`,
-`Matrix.det_fin_three`, `Matrix.isUnit_iff_isUnit_det`, `Real.exp_bound`,
-`intermediate_value_Icc'`, `IsClosed.csInf_mem`, `strictMonoOn_of_deriv_pos`.
+Reused from ATLAS: `HodgkinHuxley` (T199: rates, `field`, `field_eq_zero_iff`, `jac`,
+`hasFDerivAt_field`, rate values at `V = 0`; T256: `mInf`, `hInf`, `nInf`, `steadyCurrent`,
+`hasDerivAt_steady`, `hasDerivAt_steadyCurrent`, `steadyCurrentDeriv_squid_pos`),
+`Matrix.IsHurwitz` and `LinearizedStability.globalSolution_decay_of_hasFDerivAt`. ATLAS has only
+the planar Routh–Hurwitz criterion (`PlanarStability`); Mathlib has none. Reused from Mathlib:
+`Matrix.det_succ_row_zero`, `Matrix.det_fin_three`, `Matrix.isUnit_iff_isUnit_det`,
+`Real.exp_bound`, `intermediate_value_Icc'`, `IsClosed.csInf_mem`, `strictMonoOn_of_deriv_pos`.
 
 ## References
 
@@ -414,17 +422,6 @@ theorem squidI_zero : squidI 0 = squid := rfl
 theorem ionic_squidI (I : ℝ) : ionic (squidI I) = ionic squid := rfl
 theorem jac_squidI (I : ℝ) : jac (squidI I) = jac squid := rfl
 
-/-- Steady-state sodium activation `m∞(V)`. -/
-noncomputable def mInf (V : ℝ) : ℝ := steady alphaM betaM V
-/-- Steady-state sodium inactivation `h∞(V)`. -/
-noncomputable def hInf (V : ℝ) : ℝ := steady alphaH betaH V
-/-- Steady-state potassium activation `n∞(V)`. -/
-noncomputable def nInf (V : ℝ) : ℝ := steady alphaN betaN V
-
-theorem mInf_mem (V : ℝ) : mInf V ∈ Ioo 0 1 := steady_mem_Ioo (alphaM_pos V) (betaM_pos V)
-theorem hInf_mem (V : ℝ) : hInf V ∈ Ioo 0 1 := steady_mem_Ioo (alphaH_pos V) (betaH_pos V)
-theorem nInf_mem (V : ℝ) : nInf V ∈ Ioo 0 1 := steady_mem_Ioo (alphaN_pos V) (betaN_pos V)
-
 theorem continuous_mInf : Continuous mInf :=
   contDiff_alphaM.continuous.div (contDiff_alphaM.continuous.add contDiff_betaM.continuous)
     fun V => (add_pos (alphaM_pos V) (betaM_pos V)).ne'
@@ -440,20 +437,11 @@ noncomputable def eqPoint (V : ℝ) : Fin 4 → ℝ := ![V, mInf V, hInf V, nInf
 
 theorem eqPoint_zero : eqPoint 0 = rest := rfl
 
-/-- The steady-state current–voltage relation `I∞(V) = ionic(V, m∞, h∞, n∞)`. -/
-noncomputable def Iss (V : ℝ) : ℝ := ionic squid V (mInf V) (hInf V) (nInf V)
+/-- The squid steady-state current–voltage relation `I∞ = steadyCurrent squid`. -/
+noncomputable abbrev Iss : ℝ → ℝ := steadyCurrent squid
 
-theorem Iss_zero : Iss 0 = 0 := by
-  have h := field_squid_rest
-  rw [field_eq_zero_iff squid_valid] at h
-  exact h.2.2.2
-
-theorem continuous_Iss : Continuous Iss := by
-  have hm := continuous_mInf
-  have hh := continuous_hInf
-  have hn := continuous_nInf
-  unfold Iss ionic
-  fun_prop
+theorem continuous_Iss : Continuous Iss :=
+  continuous_iff_continuousAt.2 fun V => (hasDerivAt_steadyCurrent squid V).continuousAt
 
 /-- **Equilibria for constant current `I`.** `x` is an equilibrium of the squid system with
 current `I` iff it is the branch point over its own voltage and `I∞(V) = I`. -/
@@ -480,29 +468,29 @@ theorem field_eqPoint (V : ℝ) : field (squidI (Iss V)) (eqPoint V) = 0 :=
 
 /-- Below `EK = -12` the steady-state current is at most the leak current. -/
 private theorem Iss_le_leak {V : ℝ} (hV : V ≤ -12) : Iss V ≤ 3 / 10 * (V - squidEL) := by
-  have hm := mInf_mem V
-  have hh := hInf_mem V
-  have hn := nInf_mem V
+  have hm := mInf_mem_Ioo V
+  have hh := hInf_mem_Ioo V
+  have hn := nInf_mem_Ioo V
   have h1 : 0 ≤ 120 * mInf V ^ 3 * hInf V := by
     have := pow_pos hm.1 3; have := hh.1; positivity
   have h2 : 0 ≤ 36 * nInf V ^ 4 := by have := pow_pos hn.1 4; positivity
   have t1 : 120 * mInf V ^ 3 * hInf V * (V - 115) ≤ 0 :=
     mul_nonpos_of_nonneg_of_nonpos h1 (by linarith)
   have t2 : 36 * nInf V ^ 4 * (V - -12) ≤ 0 := mul_nonpos_of_nonneg_of_nonpos h2 (by linarith)
-  simp only [Iss, ionic, squid]
+  simp only [Iss, steadyCurrent, ionic, squid]
   linarith
 
 /-- Above `ENa = 115` the steady-state current is at least the leak current. -/
 private theorem leak_le_Iss {V : ℝ} (hV : 115 ≤ V) : 3 / 10 * (V - squidEL) ≤ Iss V := by
-  have hm := mInf_mem V
-  have hh := hInf_mem V
-  have hn := nInf_mem V
+  have hm := mInf_mem_Ioo V
+  have hh := hInf_mem_Ioo V
+  have hn := nInf_mem_Ioo V
   have h1 : 0 ≤ 120 * mInf V ^ 3 * hInf V := by
     have := pow_pos hm.1 3; have := hh.1; positivity
   have h2 : 0 ≤ 36 * nInf V ^ 4 := by have := pow_pos hn.1 4; positivity
   have t1 : 0 ≤ 120 * mInf V ^ 3 * hInf V * (V - 115) := mul_nonneg h1 (by linarith)
   have t2 : 0 ≤ 36 * nInf V ^ 4 * (V - -12) := mul_nonneg h2 (by linarith)
-  simp only [Iss, ionic, squid]
+  simp only [Iss, steadyCurrent, ionic, squid]
   linarith
 
 /-- **Existence of an equilibrium for every applied current.** -/
@@ -544,9 +532,9 @@ theorem arrowAt_k₂_pos (V : ℝ) : 0 < (arrowAt V).k₂ := add_pos (alphaH_pos
 theorem arrowAt_k₃_pos (V : ℝ) : 0 < (arrowAt V).k₃ := add_pos (alphaN_pos V) (betaN_pos V)
 
 theorem arrowAt_coef₁_pos (V : ℝ) : 0 < (arrowAt V).coef₁ := by
-  have hm := mInf_mem V
-  have hh := hInf_mem V
-  have hn := nInf_mem V
+  have hm := mInf_mem_Ioo V
+  have hh := hInf_mem_Ioo V
+  have hn := nInf_mem_Ioo V
   have h1 : 0 ≤ 120 * mInf V ^ 3 * hInf V := by
     have := pow_pos hm.1 3; have := hh.1; positivity
   have h2 : 0 ≤ 36 * nInf V ^ 4 := by have := pow_pos hn.1 4; positivity
@@ -716,7 +704,7 @@ private theorem exp_three_eq : exp 3 = exp 1 * exp 1 * exp 1 := by
 
 set_option maxHeartbeats 2000000 in
 -- The interval-arithmetic chain discharges a few hundred `norm_num`/`linarith` goals.
-/-- At `V = 15` mV: `coef₂ < 0` (so the equilibrium is not Hurwitz), `coef₃, coef₄ > 0`. -/
+/-- At `V = 15` mV: `coef₂ < 0` and `coef₃, coef₄ > 0`. -/
 theorem arrowAt_15_signs :
     (arrowAt 15).coef₂ < 0 ∧ 0 < (arrowAt 15).coef₃ ∧ 0 < (arrowAt 15).coef₄ := by
   have he : (67957 / 25000 : ℝ) ≤ exp 1 ∧ exp 1 ≤ (271829 / 100000 : ℝ) :=
@@ -1349,14 +1337,15 @@ theorem arrowAt_0_signs :
   exact ⟨by linarith [ha3.1], by linarith [ha4.1], by linarith [hH.1]⟩
 
 
-/-! ## H. Loss of stability along the branch: a Hopf point or a fold -/
+/-! ## H. A Hopf point or a fold along the branch -/
 
-/-- **First loss of stability along the branch (coefficient form).** Between `V = 0` (rest,
+/-- **A Hopf point or a fold along the branch (coefficient form).** Between `V = 0` (rest,
 `I = 0`) and `V = 15` mV there is a branch voltage `V*` where either
 
 * (Hopf) `Δ₃ = 0` with `coef₃, coef₄ > 0`, and for every `W ∈ [0, V*)` the Routh–Hurwitz
-  conditions `coef₃, coef₄, Δ₃ > 0` hold; or
-* (fold) `coef₄ = 0`, i.e. `0` is an eigenvalue. -/
+  conditions `coef₃, coef₄, Δ₃ > 0` hold, so `V*` is where they first fail; or
+* (fold) `coef₄ = 0`, i.e. `0` is an eigenvalue. This alternative says nothing about `[0, V*)`,
+  where the Routh–Hurwitz conditions may already have failed. -/
 theorem exists_hopf_or_fold_coef :
     ∃ V ∈ Ioo (0 : ℝ) 15,
       ((arrowAt V).hdet = 0 ∧ 0 < (arrowAt V).coef₃ ∧ 0 < (arrowAt V).coef₄ ∧
@@ -1435,9 +1424,12 @@ theorem exists_hopf_or_fold_coef :
       · exact h
     exact ⟨U, ⟨hU0, hU15⟩, Or.inr hUz'⟩
 
-/-- A Hurwitz Jacobian on the branch gives local exponential stability of the branch
-equilibrium for the corresponding current `I = I∞(V)`. -/
-theorem eqPoint_exponentially_stable {V : ℝ} (h : (jac squid (eqPoint V)).IsHurwitz) :
+/-- **Conditional decay at a branch point with a Hurwitz Jacobian.** For the current
+`I = I∞(V)` there are `δ, K, α > 0` such that every solution of the squid system on `[0, ∞)`
+starting within `δ` of `eqPoint V` satisfies `‖x t - eqPoint V‖ ≤ K e^{-α t} ‖x 0 - eqPoint V‖`.
+Like `LinearizedStability.globalSolution_decay_of_hasFDerivAt`, which it specializes, this does
+not assert that such solutions exist, so it is not by itself local exponential stability. -/
+theorem eqPoint_globalSolution_decay {V : ℝ} (h : (jac squid (eqPoint V)).IsHurwitz) :
     ∃ δ K α : ℝ, 0 < δ ∧ 0 < K ∧ 0 < α ∧ ∀ x : ℝ → Fin 4 → ℝ,
       IsSolution (squidI (Iss V)) x → ‖x 0 - eqPoint V‖ < δ →
         ∀ t, 0 ≤ t → ‖x t - eqPoint V‖ ≤ K * exp (-(α * t)) * ‖x 0 - eqPoint V‖ :=
@@ -1452,15 +1444,18 @@ theorem hdet_eq_zero_of_imaginary_eigenvalue {V ω : ℝ} (hω : ω ≠ 0)
   rw [jac_eqPoint] at h
   exact (arrowAt V).hdet_eq_zero_of_mem_spectrum hω h
 
-/-- **Stability is lost along the equilibrium branch through a Hopf point or a fold.** There is
-a branch voltage `V* ∈ (0, 15)` mV, with applied current `I* = I∞(V*)` and equilibrium
-`eqPoint V*` of the squid system with current `I*`, such that either
+/-- **A Hopf point or a fold on the equilibrium branch.** There is a branch voltage
+`V* ∈ (0, 15)` mV, with applied current `I* = I∞(V*)` and equilibrium `eqPoint V*` of the squid
+system with current `I*`, such that either
 
 * (Hopf) the Jacobian there satisfies the spectral Hopf conditions `IsHopf ω` (a simple pair
   `± i ω`, `ω > 0`, and every other eigenvalue in the open left half-plane), and for every
-  `W ∈ [0, V*)` the branch equilibrium with current `I∞(W)` has a Hurwitz Jacobian, hence is
-  exponentially stable (`eqPoint_exponentially_stable`); or
-* (fold) `0` is an eigenvalue of the Jacobian at `eqPoint V*`. -/
+  `W ∈ [0, V*)` the branch equilibrium with current `I∞(W)` has a Hurwitz Jacobian, so `V*` is
+  the first branch voltage in `[0, 15]` where the Jacobian stops being Hurwitz; or
+* (fold) `0` is an eigenvalue of the Jacobian at `eqPoint V*`; this alternative says nothing about
+  the branch below `V*`.
+
+`exists_hopf` shows that the Hopf alternative holds. -/
 theorem exists_hopf_or_fold :
     ∃ V ∈ Ioo (0 : ℝ) 15, field (squidI (Iss V)) (eqPoint V) = 0 ∧
       (((∃ ω, (arrowAt V).IsHopf ω) ∧ jac squid (eqPoint V) = (arrowAt V).mat ∧
@@ -1481,28 +1476,28 @@ theorem exists_hopf_or_fold :
 
 /-! ## I. The fold alternative is a critical point of the steady-state I–V curve -/
 
-theorem hasDerivAt_steady {α β : ℝ → ℝ} (hα : ContDiff ℝ 1 α) (hβ : ContDiff ℝ 1 β)
-    (hpos : ∀ V, 0 < α V + β V) (V : ℝ) :
+/-- `HodgkinHuxley.hasDerivAt_steady` in the form of the Jacobian entries:
+`y∞' = (α' (1 - y∞) - β' y∞) / (α + β)`. -/
+private theorem hasDerivAt_steady_jac {α β : ℝ → ℝ} (hα : ContDiff ℝ 1 α)
+    (hβ : ContDiff ℝ 1 β) (hα0 : ∀ V, 0 < α V) (hβ0 : ∀ V, 0 < β V) (V : ℝ) :
     HasDerivAt (steady α β)
       ((deriv α V * (1 - steady α β V) - deriv β V * steady α β V) / (α V + β V)) V := by
-  have ha := (hα.differentiable one_ne_zero V).hasDerivAt
-  have hb := (hβ.differentiable one_ne_zero V).hasDerivAt
-  have hne := (hpos V).ne'
-  refine (ha.div (ha.add hb) hne).congr_deriv ?_
-  simp only [steady, Pi.add_apply]
+  have ha := (hα0 V).ne'
+  have hb := (hβ0 V).ne'
+  have hs := (add_pos (hα0 V) (hβ0 V)).ne'
+  refine (hasDerivAt_steady (hα.differentiable one_ne_zero V).hasDerivAt
+    (hβ.differentiable one_ne_zero V).hasDerivAt (hα0 V) (hβ0 V)).congr_deriv ?_
+  simp only [steady]
   field_simp
   ring
 
-/-- `I∞'(V) = k₁ k₂ k₃ … `: the constant coefficient of the characteristic quartic on the branch
-is `k₁ k₂ k₃ · I∞'(V)`. So `0` is an eigenvalue at `eqPoint V` iff `I∞'(V) = 0`. -/
+/-- The constant coefficient of the characteristic quartic on the branch is
+`coef₄ = k₁ k₂ k₃ · I∞'(V)`. So `0` is an eigenvalue at `eqPoint V` iff `I∞'(V) = 0`. -/
 theorem coef₄_eq_deriv_Iss (V : ℝ) :
     (arrowAt V).coef₄ = (arrowAt V).k₁ * (arrowAt V).k₂ * (arrowAt V).k₃ * deriv Iss V := by
-  have hm := hasDerivAt_steady contDiff_alphaM contDiff_betaM
-    (fun W => add_pos (alphaM_pos W) (betaM_pos W)) V
-  have hh := hasDerivAt_steady contDiff_alphaH contDiff_betaH
-    (fun W => add_pos (alphaH_pos W) (betaH_pos W)) V
-  have hn := hasDerivAt_steady contDiff_alphaN contDiff_betaN
-    (fun W => add_pos (alphaN_pos W) (betaN_pos W)) V
+  have hm := hasDerivAt_steady_jac contDiff_alphaM contDiff_betaM alphaM_pos betaM_pos V
+  have hh := hasDerivAt_steady_jac contDiff_alphaH contDiff_betaH alphaH_pos betaH_pos V
+  have hn := hasDerivAt_steady_jac contDiff_alphaN contDiff_betaN alphaN_pos betaN_pos V
   have h : HasDerivAt Iss _ V :=
     (((((hm.pow 3).const_mul 120).mul hh).mul ((hasDerivAt_id' V).sub_const 115)).add
       (((hn.pow 4).const_mul 36).mul ((hasDerivAt_id' V).sub_const (-12)))).add
@@ -1544,10 +1539,24 @@ theorem exists_hopf_of_deriv_Iss_pos (hmono : ∀ V ∈ Icc (0 : ℝ) 15, 0 < de
       hmono x (interior_subset hx)
   have hI : Iss V ∈ Ioo 0 (Iss 15) := by
     refine ⟨?_, hsm ⟨hV.1.le, hV.2.le⟩ ⟨by norm_num, by norm_num⟩ hV.2⟩
-    rw [← Iss_zero]
+    rw [← steadyCurrent_squid_zero]
     exact hsm ⟨le_rfl, by norm_num⟩ ⟨hV.1.le, hV.2.le⟩ hV.1
   rcases hcase with ⟨hH, -, hW⟩ | h0
   · exact ⟨V, hV, hI, heq, hH, hW⟩
   · exact absurd ((zero_mem_spectrum_jac_iff V).1 h0) (hmono V ⟨hV.1.le, hV.2.le⟩).ne'
+
+/-- **The squid branch first stops being Hurwitz at a Hopf point.** T256's
+`steadyCurrentDeriv_squid_pos` gives `I∞' > 0` on `[-12, 115]` mV, which is the hypothesis of
+`exists_hopf_of_deriv_Iss_pos`. So there is `V* ∈ (0, 15)` mV such that the branch equilibria for
+the currents `I∞(W)`, `W ∈ [0, V*)`, have Hurwitz Jacobians and the equilibrium for
+`I* = I∞(V*) ∈ (0, I∞(15))` satisfies the spectral Hopf conditions; in particular `0` is not an
+eigenvalue there, so `V*` is not a fold. -/
+theorem exists_hopf :
+    ∃ V ∈ Ioo (0 : ℝ) 15, Iss V ∈ Ioo 0 (Iss 15) ∧ field (squidI (Iss V)) (eqPoint V) = 0 ∧
+      (∃ ω, (arrowAt V).IsHopf ω) ∧ ∀ W ∈ Ico 0 V, (jac squid (eqPoint W)).IsHurwitz :=
+  exists_hopf_of_deriv_Iss_pos fun V hV => by
+    change 0 < deriv (steadyCurrent squid) V
+    rw [(hasDerivAt_steadyCurrent squid V).deriv]
+    exact steadyCurrentDeriv_squid_pos ⟨by linarith [hV.1], by linarith [hV.2]⟩
 
 end MathlibExt.Biology.Biophysics.HodgkinHuxleyCurrent

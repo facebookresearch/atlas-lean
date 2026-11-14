@@ -37,7 +37,7 @@ example : squidI 0 = squid := rfl
 
 /-- `I∞(0) = 0`, by unfolding the leak reversal potential. -/
 example : Iss 0 = 0 := by
-  simp only [Iss, ionic, squid, squidEL, mInf, hInf, nInf, mRest, hRest, nRest]
+  simp only [Iss, steadyCurrent, ionic, squid, squidEL, mInf, hInf, nInf, mRest, hRest, nRest]
   ring
 
 /-- The branch point at `V = 15` mV is an equilibrium for the current `I∞(15)`, evaluated
@@ -48,7 +48,7 @@ example : field (squidI (Iss 15)) (eqPoint 15) = 0 := by
   have hn := add_pos (alphaN_pos 15) (betaN_pos 15)
   funext i
   fin_cases i
-  · simp [field, eqPoint, squidI, Iss, squid, ionic]
+  · simp [field, eqPoint, squidI, Iss, steadyCurrent, squid, ionic]
   · simp only [field, eqPoint, gate, mInf, steady]
     simp
     field_simp
