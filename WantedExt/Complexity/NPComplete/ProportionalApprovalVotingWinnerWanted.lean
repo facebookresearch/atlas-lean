@@ -30,13 +30,24 @@ namespace MetaMathlibExt.Complexity.NPComplete.ProportionalApprovalVotingWinner
 /-!
 # PROPORTIONAL APPROVAL VOTING WINNER DETERMINATION is NP-complete
 
+This is the score-threshold decision version of PAV winner determination.
+
 INSTANCE: a set `C` of `m` candidates, approval ballots `A₁, …, Aₙ ⊆ C` (one per agent), a
-committee size `k ≤ m`, and a rational bound `s`.
+committee size `k` with `1 ≤ k ≤ m`, and a nonnegative rational bound `s`.
 QUESTION: is there a committee `W ⊆ C` with `|W| = k` whose PAV score
 `PAV(W) = ∑ᵢ r(|W ∩ Aᵢ|)` is at least `s`, where `r(p) = 1 + 1/2 + ⋯ + 1/p`?
 
+The source defines PAV winner determination (PAV–WD) as computing a winning set of size `k`
+(a maximizer of `PAV`, with lexicographic tie-breaking). Its NP-hardness proof (the reduction
+of Theorem 2, from INDEPENDENT SET, which gives Corollary 1) shows that the constructed
+instance "has a winning set of size k = t scoring a total approval of at least s = deg(G)·t if
+and only if G has an independent set of size t", which is NP-hardness of the threshold question
+stated here; membership in NP is immediate (a committee is the certificate).
+
 The candidates are `0, …, m - 1`, a ballot is the list of the candidates it approves (without
-repetition), and `s = p / q` with `q > 0`. The weight `r(p)` is Mathlib's `harmonic p`.
+repetition), and `s = p / q` with `q > 0` (a negative bound would be met by every committee;
+the source's bound `deg(G)·t` is a positive integer). The weight `r(p)` is Mathlib's
+`harmonic p`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -49,18 +60,18 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number `m` of candidates, the ballots, the committee size `k`, and the bound
-`s` as (numerator, denominator). -/
+/-- An instance: the number `m` of candidates, the ballots, the committee size `k`, and the
+nonnegative bound `s` as (numerator, denominator). -/
 abbrev ProportionalApprovalVotingWinnerInstance := ℕ × List (List ℕ) × ℕ × ℕ × ℕ
 
 /-- The PAV score of the committee `W`: each agent contributes `harmonic |W ∩ Aᵢ|`. -/
 def pavScore (i : ProportionalApprovalVotingWinnerInstance) (W : Finset (Fin i.1)) : ℚ :=
   (i.2.1.map fun A => harmonic (W.filter fun c : Fin i.1 => (c : ℕ) ∈ A).card).sum
 
-/-- Well-formedness of an instance: every ballot lists distinct candidates, `k ≤ m`, and the
-denominator of `s` is positive. -/
+/-- Well-formedness of an instance: every ballot lists distinct candidates, `1 ≤ k ≤ m`, and
+the denominator of `s` is positive. -/
 def WellFormed (i : ProportionalApprovalVotingWinnerInstance) : Prop :=
-  (∀ A ∈ i.2.1, A.Nodup ∧ ∀ c ∈ A, c < i.1) ∧ i.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2.2
+  (∀ A ∈ i.2.1, A.Nodup ∧ ∀ c ∈ A, c < i.1) ∧ 0 < i.2.2.1 ∧ i.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2.2
 
 /-- Some committee of `k` candidates has PAV score at least `s`. -/
 def ProportionalApprovalVotingWinnerFeasible (i : ProportionalApprovalVotingWinnerInstance) :
