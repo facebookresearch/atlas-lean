@@ -13,6 +13,7 @@ import MathlibExt.Biology.Epidemiology.StochasticSIRKurtz
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Probability.Distributions.Gaussian.Real
+import Mathlib.Probability.Moments.Variance
 
 /-! Tests for the SIR diffusion approximation.
 
@@ -28,10 +29,19 @@ import Mathlib.Probability.Distributions.Gaussian.Real
 * `StochasticSIR.tendsto_measure_deviation` concludes the hypothesis of
   `tendsto_measure_norm_sub_of_deviation`.
 * A case where the CLT scaling fails: for `N = 1` the scaled fluctuation of the infectives at
-  `t = 1` lives on the two points `±1/2`, so its law is not the Gaussian limit law. -/
+  `t = 1` lives on the two points `±1/2`, so its law is not the Gaussian limit law.
+* The Gaussian limit in the concrete parameter set: for Gaussian driving data with the
+  martingale covariance `quadCov`, `U(1)` is centered Gaussian with covariance
+  `V(1) = (0, 0, 1/4)`, and its infective coordinate has law `N(0, 1/4)`.
+* A fully discharged instance of the Gaussian limit: a standard Gaussian initial infective
+  fluctuation, no driving noise, `β = γ = 1` around the disease-free state, where
+  `U(2)` is Gaussian with covariance `(4, -2, 1)`, the solution of the Lyapunov equation.
+* Without Gaussian driving data the Gaussian conclusion fails: a Rademacher initial value gives a
+  fluctuation path whose second moments match the limit covariance but whose law is not
+  Gaussian. -/
 
 open MeasureTheory ProbabilityTheory Real Set Filter
-open scoped Topology NNReal ENNReal
+open scoped Topology NNReal ENNReal ProbabilityTheory
 
 namespace MathlibExtTest.Biology.Epidemiology.StochasticSIRDiffusion
 
@@ -228,5 +238,179 @@ theorem clt_fails_at_one {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
         gaussianReal 0 (1 / 4) := by
   refine ⟨by rw [limitCovariance_one isLimitCovariance_removal], ?_⟩
   exact map_fluctuation_ne_gaussianReal μ X hX hmeas (by norm_num)
+
+/-! ### The Gaussian limit -/
+
+theorem gaussianLimit_removal {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [MeasurableSpace C(Icc (0 : ℝ) 1, ℝ × ℝ)] [BorelSpace C(Icc (0 : ℝ) 1, ℝ × ℝ)]
+    {U₀ : Ω → ℝ × ℝ} {M : Ω → ℝ → ℝ × ℝ} {Z : Ω → (ℝ × ℝ) × C(Icc (0 : ℝ) 1, ℝ × ℝ)}
+    (hZ : HasGaussianLaw Z P) (hZU₀ : ∀ ω, (Z ω).1 = U₀ ω)
+    (hZM : ∀ ω (s : Icc (0 : ℝ) 1), (Z ω).2 s = M ω s)
+    (hmean₀ : ∫ ω, U₀ ω ∂P = 0) (hmeanM : ∀ s ∈ Icc (0 : ℝ) 1, ∫ ω, (M ω s - M ω 0) ∂P = 0)
+    (hcov₀ : ∀ a b, ∫ ω, dot a (U₀ ω) * dot b (U₀ ω) ∂P = quadForm 0 a b)
+    (hcross : ∀ a b, ∀ s ∈ Icc (0 : ℝ) 1, ∫ ω, dot a (U₀ ω) * dot b (M ω s - M ω 0) ∂P = 0)
+    (hcovM : ∀ a b, ∀ s ∈ Icc (0 : ℝ) 1, ∀ r ∈ Icc (0 : ℝ) 1,
+      ∫ ω, dot a (M ω s - M ω 0) * dot b (M ω r - M ω 0) ∂P =
+        quadForm (quadCov 2 (log 2) (fun t => (0, infected t)) (min s r)) a b)
+    {U : Ω → ℝ → ℝ × ℝ}
+    (hU : ∀ ω, IsFluctuationPath 2 (log 2) 1 (fun t => (0, infected t)) (U₀ ω) (M ω) (U ω)) :
+    HasGaussianLaw (fun ω => U ω 1) P ∧
+      cov[fun ω => (U ω 1).1, fun ω => (U ω 1).1; P] = 0 ∧
+      cov[fun ω => (U ω 1).1, fun ω => (U ω 1).2; P] = 0 ∧
+      cov[fun ω => (U ω 1).2, fun ω => (U ω 1).2; P] = 1 / 4 ∧
+      P.map (fun ω => (U ω 1).2) = gaussianReal 0 (1 / 4) := by
+  have hxc : ContinuousOn (fun t => ((0 : ℝ), infected t)) (Icc 0 1) :=
+    (continuous_const.prodMk (continuous_iff_continuousAt.2 fun t =>
+      (hasDerivAt_infected t).continuousAt)).continuousOn
+  have hβ : (0 : ℝ) ≤ 2 := by norm_num
+  have hγ : 0 ≤ log 2 := log_nonneg (by norm_num)
+  have ht : (1 : ℝ) ∈ Icc (0 : ℝ) 1 := ⟨zero_le_one, le_rfl⟩
+  have hV1 : covRemoval 1 = (0, 0, 1 / 4) := limitCovariance_one isLimitCovariance_removal
+  obtain ⟨hG, hmean, -⟩ := hasGaussianLaw_isFluctuationPath hβ hγ hxc isLimitCovariance_removal
+    hZ hZU₀ hZM hmean₀ hmeanM hcov₀ hcross hcovM hU ht
+  obtain ⟨c11, c12, c22⟩ := covariance_isFluctuationPath hβ hγ hxc isLimitCovariance_removal
+    hZ hZU₀ hZM hmean₀ hmeanM hcov₀ hcross hcovM hU ht
+  rw [hV1] at c11 c12 c22
+  refine ⟨hG, c11, c12, c22, ?_⟩
+  have h2 : HasGaussianLaw (fun ω => (U ω 1).2) P :=
+    hG.map_fun (ContinuousLinearMap.snd ℝ ℝ ℝ)
+  have hm2 : ∫ ω, (U ω 1).2 ∂P = 0 := by
+    have := (ContinuousLinearMap.snd ℝ ℝ ℝ).integral_comp_comm hG.integrable
+    simp only [ContinuousLinearMap.coe_snd', hmean, Prod.snd_zero] at this
+    exact this
+  rw [h2.map_eq_gaussianReal, hm2, ← covariance_self h2.aemeasurable, c22]
+  congr 1
+  rw [Real.toNNReal_div' (by norm_num)]
+  norm_num
+
+/-! A concrete, fully discharged instance. -/
+
+/-- The limit covariance around the disease-free state for `β = γ = 1` from `V₀ = diag(0, 1)`:
+`V(t) = (t², -t, 1)`. -/
+noncomputable def covShear (t : ℝ) : ℝ × ℝ × ℝ := (t ^ 2, -t, 1)
+
+theorem isLimitCovariance_shear :
+    IsLimitCovariance 1 1 (fun _ => (1, 0)) (0, 0, 1) covShear where
+  initial := by simp [covShear]
+  hasDerivWithinAt t _ := by
+    have h : HasDerivAt covShear (((2 : ℕ) : ℝ) * t ^ (2 - 1), -1, 0) t :=
+      (hasDerivAt_pow 2 t).prodMk ((hasDerivAt_id t).neg.prodMk (hasDerivAt_const t (1 : ℝ)))
+    refine (h.congr_deriv ?_).hasDerivWithinAt
+    simp only [lyapunovField_apply, covShear, Prod.mk.injEq]
+    refine ⟨by norm_num, by ring, by ring⟩
+
+theorem gaussianLimit_shear [MeasurableSpace C(Icc (0 : ℝ) 2, ℝ × ℝ)]
+    [BorelSpace C(Icc (0 : ℝ) 2, ℝ × ℝ)] {U : ℝ → ℝ → ℝ × ℝ}
+    (hU : ∀ ω, IsFluctuationPath 1 1 2 (fun _ => (1, 0)) (0, ω) (fun _ => 0) (U ω)) :
+    HasGaussianLaw (fun ω => U ω 2) (gaussianReal 0 1) ∧
+      cov[fun ω => (U ω 2).1, fun ω => (U ω 2).1; gaussianReal 0 1] = 4 ∧
+      cov[fun ω => (U ω 2).1, fun ω => (U ω 2).2; gaussianReal 0 1] = -2 ∧
+      cov[fun ω => (U ω 2).2, fun ω => (U ω 2).2; gaussianReal 0 1] = 1 := by
+  set L : ℝ →L[ℝ] (ℝ × ℝ) × C(Icc (0 : ℝ) 2, ℝ × ℝ) :=
+    (ContinuousLinearMap.inl ℝ (ℝ × ℝ) C(Icc (0 : ℝ) 2, ℝ × ℝ)).comp
+      (ContinuousLinearMap.inr ℝ ℝ ℝ)
+  have hZ : HasGaussianLaw (fun ω : ℝ => L ω) (gaussianReal 0 1) :=
+    (IsGaussian.hasGaussianLaw_id (μ := gaussianReal 0 1)).map_fun L
+  have hint : Integrable (fun ω : ℝ => ω) (gaussianReal 0 1) :=
+    (memLp_id_gaussianReal 1).integrable le_rfl
+  have hsq : ∫ ω, ω ^ 2 ∂gaussianReal 0 1 = 1 := by
+    have := variance_of_integral_eq_zero (μ := gaussianReal 0 1) (X := fun ω => ω)
+      aemeasurable_id' integral_id_gaussianReal
+    rw [variance_fun_id_gaussianReal] at this
+    exact_mod_cast this.symm
+  have hquad : ∀ s, quadCov 1 1 (fun _ => ((1 : ℝ), (0 : ℝ))) s = 0 := fun s => by
+    simp [quadCov, diffusionMatrix]
+  have ht : (2 : ℝ) ∈ Icc (0 : ℝ) 2 := ⟨by norm_num, le_rfl⟩
+  have hV2 : covShear 2 = (4, -2, 1) := by norm_num [covShear]
+  have key := fun hb => covariance_isFluctuationPath (β := 1) (γ := 1) zero_le_one zero_le_one
+    continuousOn_const isLimitCovariance_shear hZ (U₀ := fun ω => (0, ω)) (M := fun _ _ => 0)
+    (fun ω => rfl) (fun ω s => rfl)
+    (by rw [integral_pair (integrable_const _) hint, integral_id_gaussianReal]; simp)
+    (fun s _ => by simp) hb (fun a b s _ => by simp [dot])
+    (fun a b s _ r _ => by simp [dot, hquad, quadForm, symmApply]) hU ht
+  have hcov₀ : ∀ a b, ∫ ω, dot a (0, ω) * dot b (0, ω) ∂gaussianReal 0 1 =
+      quadForm (0, 0, 1) a b := fun a b => by
+    have : (fun ω : ℝ => dot a (0, ω) * dot b (0, ω)) = fun ω => (a.2 * b.2) * ω ^ 2 := by
+      funext ω; simp only [dot]; ring
+    rw [this, integral_const_mul, hsq]
+    simp only [quadForm, dot, symmApply]; ring
+  obtain ⟨c11, c12, c22⟩ := key hcov₀
+  rw [hV2] at c11 c12 c22
+  refine ⟨?_, c11, c12, c22⟩
+  exact (hasGaussianLaw_isFluctuationPath (β := 1) (γ := 1) zero_le_one zero_le_one
+    continuousOn_const isLimitCovariance_shear hZ (U₀ := fun ω => (0, ω)) (M := fun _ _ => 0)
+    (fun ω => rfl) (fun ω s => rfl)
+    (by rw [integral_pair (integrable_const _) hint, integral_id_gaussianReal]; simp)
+    (fun s _ => by simp) hcov₀ (fun a b s _ => by simp [dot])
+    (fun a b s _ r _ => by simp [dot, hquad, quadForm, symmApply]) hU ht).1
+
+/-- The hypothesis on `U` in `gaussianLimit_shear` is satisfiable. -/
+example : ∃ U : ℝ → ℝ → ℝ × ℝ,
+    ∀ ω, IsFluctuationPath 1 1 2 (fun _ => (1, 0)) (0, ω) (fun _ => 0) (U ω) :=
+  ⟨fun ω => Classical.choose (exists_isFluctuationPath (β := 1) (γ := 1) (T := 2) zero_le_one
+      zero_le_one continuousOn_const (0, ω) (m := fun _ => 0) continuousOn_const),
+    fun ω => Classical.choose_spec (exists_isFluctuationPath (β := 1) (γ := 1) (T := 2) zero_le_one
+      zero_le_one continuousOn_const (0, ω) (m := fun _ => 0) continuousOn_const)⟩
+
+
+/-! ### Without Gaussian driving data the limit is not Gaussian -/
+
+/-- A Rademacher initial value: `U₀ = (±1, 0)`. -/
+def rademacher (b : Bool) : ℝ × ℝ := (if b then 1 else -1, 0)
+
+/-- A fair coin on `Bool`. -/
+noncomputable def coinFlip : Measure Bool :=
+  (2⁻¹ : ℝ≥0∞) • (Measure.dirac true + Measure.dirac false)
+
+/-- With `β = γ = 0` around the disease-free state and no driving noise, the fluctuation path is
+constant at its initial value. -/
+theorem isFluctuationPath_rademacher (T : ℝ) (b : Bool) :
+    IsFluctuationPath 0 0 T (fun _ => (1, 0)) (rademacher b) (fun _ => 0)
+      (fun _ => rademacher b) :=
+  ⟨continuousOn_const, fun t _ => by simp [jacobian]⟩
+
+/-- **The Gaussian hypothesis cannot be dropped.** With the Rademacher initial value, no driving
+noise, `β = γ = 0` and the disease-free state, the fluctuation path is `U(t) = U₀`. Its second
+moments are those of the limit covariance `V ≡ diag(1, 0)` (which solves the Lyapunov equation
+here), but `U(t)` is not Gaussian. `hasGaussianLaw_isFluctuationPath` does not apply because the
+driving data `(U₀, 0)` is not Gaussian; the integration-by-parts representation of `U(t)` still
+holds pathwise, and the second-moment computation alone does not give Gaussianity. -/
+theorem not_hasGaussianLaw_rademacher (t : ℝ) :
+    (∀ a b, ∫ ω, dot a (rademacher ω) * dot b (rademacher ω) ∂coinFlip = quadForm (1, 0, 0) a b) ∧
+      IsLimitCovariance 0 0 (fun _ => (1, 0)) (1, 0, 0) (fun _ => (1, 0, 0)) ∧
+      ¬ HasGaussianLaw (fun ω => (fun _ : ℝ => rademacher ω) t) coinFlip := by
+  refine ⟨fun a b => ?_, ⟨rfl, fun s _ => ?_⟩, fun h => ?_⟩
+  · rw [coinFlip, integral_smul_measure, integral_add_measure (Integrable.of_finite)
+      (Integrable.of_finite), integral_dirac, integral_dirac]
+    simp only [rademacher, dot, quadForm, symmApply, ite_true, Bool.false_eq_true, ite_false]
+    norm_num
+    ring
+  · have : lyapunovField 0 0 ((1 : ℝ), (0 : ℝ)) ((1 : ℝ), (0 : ℝ), (0 : ℝ)) = 0 := by
+      simp [lyapunovField_apply]
+    rw [this]
+    exact (hasDerivWithinAt_const s _ _)
+  · have h1 : HasGaussianLaw (fun ω => (rademacher ω).1) coinFlip :=
+      h.map_fun (ContinuousLinearMap.fst ℝ ℝ ℝ)
+    have hpre : (fun ω => (rademacher ω).1) ⁻¹' {1} = {true} := by
+      ext b; cases b <;> norm_num [rademacher]
+    have hX : coinFlip.map (fun ω => (rademacher ω).1) {1} = 2⁻¹ := by
+      rw [Measure.map_apply (measurable_of_countable _) (measurableSet_singleton 1), hpre]
+      simp [coinFlip]
+    rw [h1.map_eq_gaussianReal] at hX
+    generalize coinFlip[fun ω => (rademacher ω).1] = m at hX
+    generalize Var[fun ω => (rademacher ω).1; coinFlip].toNNReal = v at hX
+    by_cases hv : v = 0
+    · subst hv
+      rw [gaussianReal_zero_var] at hX
+      by_cases hm : m = 1
+      · subst hm
+        rw [Measure.dirac_apply_of_mem (Set.mem_singleton 1)] at hX
+        exact absurd hX.symm (by simp)
+      · rw [Measure.dirac_apply' _ (measurableSet_singleton 1),
+          Set.indicator_of_notMem (by simpa using hm)] at hX
+        exact absurd hX.symm (by simp)
+    · have := nullSingletonClass_gaussianReal (μ := m) hv
+      rw [measure_singleton] at hX
+      exact absurd hX.symm (by simp)
 
 end MathlibExtTest.Biology.Epidemiology.StochasticSIRDiffusion

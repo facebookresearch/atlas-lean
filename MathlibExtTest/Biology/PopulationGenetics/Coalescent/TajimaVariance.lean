@@ -76,6 +76,11 @@ example : ∑ k ∈ Icc 2 4, ((k : ℕ) : ℝ) * pairSeparateProb 4 k * (((k.cho
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
 
+/-- `memLp_meanPairDiff` from outside its file: if every pair carries the same square-integrable
+count `f`, then `π` is square integrable. -/
+example {n : ℕ} {f : Ω → ℝ} (hf : MemLp f 2 μ) : MemLp (meanPairDiff n fun _ => f) 2 μ :=
+  memLp_meanPairDiff fun _ _ => hf
+
 /-- A sample of three: `Var π = (2/3) θ + (5/9) θ²` under the hypotheses of
 `variance_meanPairDiff`. -/
 example [IsProbabilityMeasure μ] {m : MeasurableSpace Ω} (hm : m ≤ mΩ)

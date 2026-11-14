@@ -518,7 +518,8 @@ theorem fgRiskSet_eq_riskSet_fgTime {i : Fin n} (hi : ε i = some c) :
 /-- The cause-`c` event indicator `δᵢ = (εᵢ = c)`. -/
 def causeIndicator (i : Fin n) : Bool := decide (ε i = some c)
 
-private lemma filter_causeIndicator :
+/-- The cause-`c` events selected by `causeIndicator` are the indices with `εᵢ = c`. -/
+lemma filter_causeIndicator :
     Finset.univ.filter (fun i : Fin n => causeIndicator ε c i = true) =
       Finset.univ.filter (fun i => ε i = some c) := by
   ext i

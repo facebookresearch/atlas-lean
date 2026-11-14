@@ -130,7 +130,7 @@ section Gamma
 private lemma poissonMixtureReal_gammaMeasure_eq {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (k : ℕ) :
     poissonMixtureReal (gammaMeasure a b) k =
       (ascPochhammer ℝ k).eval a * b ^ a / (b + 1) ^ (a + k) / k ! := by
-  have h := integral_pow_mul_exp_neg_mul_gammaMeasure ha hb zero_le_one k
+  have h := integral_pow_mul_exp_neg_mul_gammaMeasure (c := 1) ha hb (by linarith) k
   simp only [one_mul] at h
   rw [poissonMixtureReal, ← h, ← integral_div]
   refine integral_congr_ae (ae_of_all _ fun r => ?_)
@@ -259,7 +259,7 @@ theorem posterior_predictive_gammaPoisson {a b : ℝ} (ha : 0 < a) (hb : 0 < b) 
   have hak : 0 < a + k := by positivity
   have hnum : ∫ r, exp (-r) * r ^ k / k ! * (exp (-r) * r ^ j / j !) ∂gammaMeasure a b =
       (ascPochhammer ℝ (k + j)).eval a * b ^ a / (b + 2) ^ (a + (k + j : ℕ)) / (k ! * j !) := by
-    have h := integral_pow_mul_exp_neg_mul_gammaMeasure ha hb zero_le_two (k + j)
+    have h := integral_pow_mul_exp_neg_mul_gammaMeasure (c := 2) ha hb (by linarith) (k + j)
     rw [← h, ← integral_div]
     refine integral_congr_ae (ae_of_all _ fun r => ?_)
     simp only

@@ -2075,8 +2075,46 @@ private theorem ac_good_window (m : ℕ) :
         linarith [h2K]
       linarith [hbig, key, hsmall, hlt]
 
+-- Transfer window cube-freeness to a finite word while the word function is a parameter.
+private theorem ac_window_admissible (ω : ℕ → Fin 3) (B n : ℕ)
+    (W : List (Fin 3)) (hW : W = List.ofFn (fun k : Fin n => ω (B + k)))
+    (hω : ∀ (i ℓ : ℕ), 1 ≤ ℓ →
+      ¬ (∀ a : Fin 3, ac_cnt ω a i (i + ℓ) =
+          ac_cnt ω a (i + ℓ) (i + 2 * ℓ) ∧
+        ac_cnt ω a (i + ℓ) (i + 2 * ℓ) =
+          ac_cnt ω a (i + 2 * ℓ) (i + 3 * ℓ))) :
+    W.length = n ∧
+      ¬ ∃ p x y z t : List (Fin 3), W = p ++ x ++ y ++ z ++ t ∧
+        x ≠ [] ∧ y ≠ [] ∧ z ≠ [] ∧
+        ∀ a : Fin 3, x.count a = y.count a ∧ y.count a = z.count a := by
+  constructor
+  · rw [hW, List.length_ofFn]
+  · rintro ⟨p, x, y, z, t, hfac, hx, hy, hz, heq⟩
+    have hbr := ac_list_factor_bridge (ω := ω) (B := B) (n := n) (W := W)
+      hW p x y z t hfac hx hy hz (fun a => (heq a).1) (fun a => (heq a).2)
+    obtain ⟨hℓ, hyl, hzl, hcounts⟩ := hbr
+    apply hω (B + p.length) x.length hℓ
+    intro a
+    obtain ⟨e1, e2⟩ := hcounts a
+    rw [hyl] at e1
+    rw [hyl, hzl] at e2
+    refine ⟨?_, ?_⟩
+    · have j1 : B + (p.length + x.length) = B + p.length + x.length := by omega
+      have j2 : B + p.length + x.length + x.length =
+          B + p.length + 2 * x.length := by omega
+      rw [j1, j2] at e1
+      exact e1
+    · have k1 : B + (p.length + x.length) = B + p.length + x.length := by omega
+      have k2 : B + p.length + x.length + x.length =
+          B + p.length + 2 * x.length := by omega
+      have k3 : B + ((p.length + x.length) + x.length) =
+          B + p.length + 2 * x.length := by omega
+      have k4 : B + p.length + 2 * x.length + x.length =
+          B + p.length + 3 * x.length := by omega
+      rw [k1, k2, k3, k4] at e2
+      exact e2
+
 -- 2^(#ones) lower bound on the ncard.
-set_option maxHeartbeats 1000000 in
 private theorem ac_ncard_lower (n s : ℕ) :
     2 ^ ((Finset.Ico s (s + n / 6)).filter (fun q => ac_delta q = 1)).card ≤
       Set.ncard {w : List (Fin 3) | w.length = n ∧
@@ -2139,41 +2177,9 @@ private theorem ac_ncard_lower (n s : ℕ) :
           x ≠ [] ∧ y ≠ [] ∧ z ≠ [] ∧
           ∀ a : Fin 3, x.count a = y.count a ∧ y.count a = z.count a} := by
     intro S _
-    constructor
-    · have hlen : (F S).length = n := List.length_ofFn
-      exact hlen
-    · rintro ⟨p, x, y, z, t, hfac, hx, hy, hz, heq⟩
-      have hfac' : List.ofFn (fun k : Fin n =>
-          ac_omega (fun q => decide (q ∈ S)) (6 * s + (k : ℕ))) =
-          p ++ x ++ y ++ z ++ t := hfac
-      have hbr := ac_list_factor_bridge (ac_omega fun q => decide (q ∈ S)) (6 * s) n
-        (List.ofFn fun k : Fin n => ac_omega (fun q => decide (q ∈ S)) (6 * s + ↑k))
-        rfl p x y z t hfac' hx hy hz (fun a => (heq a).1) (fun a => (heq a).2)
-      obtain ⟨hℓ, hyl, hzl, hcounts⟩ := hbr
-      have hcon := ac_omega_cubeFree (fun q => decide (q ∈ S))
-        (6 * s + p.length) x.length hℓ
-      apply hcon
-      intro a
-      obtain ⟨e1, e2⟩ := hcounts a
-      rw [hyl] at e1
-      rw [hyl, hzl] at e2
-      refine ⟨?_, ?_⟩
-      · have j1 : 6 * s + (p.length + x.length) =
-            6 * s + p.length + x.length := by omega
-        have j2 : 6 * s + p.length + x.length + x.length =
-            6 * s + p.length + 2 * x.length := by omega
-        rw [j1, j2] at e1
-        exact e1
-      · have k1 : 6 * s + (p.length + x.length) =
-            6 * s + p.length + x.length := by omega
-        have k2 : 6 * s + p.length + x.length + x.length =
-            6 * s + p.length + 2 * x.length := by omega
-        have k3 : 6 * s + ((p.length + x.length) + x.length) =
-            6 * s + p.length + 2 * x.length := by omega
-        have k4 : 6 * s + p.length + 2 * x.length + x.length =
-            6 * s + p.length + 3 * x.length := by omega
-        rw [k1, k2, k3, k4] at e2
-        exact e2
+    exact ac_window_admissible (ω := ac_omega (fun q => decide (q ∈ S)))
+      (B := 6 * s) (n := n) (W := F S) rfl
+      (fun i ℓ hℓ => ac_omega_cubeFree (fun q => decide (q ∈ S)) i ℓ hℓ)
   have hinj : Set.InjOn F (↑(Q.powerset) : Set (Finset ℕ)) := by
     intro S hS T hT hST
     have hSQ : S ⊆ Q := Finset.mem_powerset.mp (Finset.mem_coe.mp hS)

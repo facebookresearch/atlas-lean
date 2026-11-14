@@ -22,7 +22,7 @@ rate) of the hierarchy `kᵢ ∣ λᵢ ~ Po(sᵢ λᵢ)`, `λᵢ ~ Gamma(a, b)` 
 score `profileShapeScore a k = ∑ᵢ ∑_{j<kᵢ} 1 / (a + j) - n log (1 + M / a)`
 (`score_eq_zero_iff_const`), and shows a root exists under overdispersion `0 < M < V`
 (`exists_score_root_of_overdispersed`). This file proves that root unique and that it is the
-unique joint MLE.
+unique joint MLE, and conversely that no joint MLE exists when `0 < M` and `V ≤ M`.
 
 ## Source
 
@@ -43,6 +43,15 @@ What is proved here, at a common size factor `σ > 0` and `0 < M < V`:
 * `logMarginalLik_lt_of_score_root`: that root is the strict global maximizer of `ℓ` on `(0, ∞)²`;
 * `existsUnique_isMaxOn_logMarginalLik`: `ℓ` has exactly one maximizer on `(0, ∞)²` (the joint
   MLE exists and is unique), and `score_eq_zero_of_isMaxOn`: it solves the score equations.
+
+Conversely, at a common size factor `σ > 0` and `0 < M`, `V ≤ M` (the "only if" half of
+Theorem 2):
+
+* `smoothedDiscrepancy_nonneg`: `H ≥ 0` on `[0, ∞)`, and `profileShapeScore_pos_of_le`: the
+  profile shape score is positive at every `a > 0`, so `score_ne_zero_of_le`: the joint score
+  equations have no positive root;
+* `strictMonoOn_logMarginalLik_rateRoot`: `ℓ` strictly increases along `a ↦ (a, σ a / M)`;
+* `not_exists_isMaxOn_logMarginalLik`: `ℓ` has no maximizer on `(0, ∞)²`.
 
 The score equations themselves (T86) are the merged file's `hasDerivAt_logMarginalLik_shape`,
 `hasDerivAt_logMarginalLik_rate` and `score_eq_zero_iff_const`; none are taken as hypotheses.
@@ -65,10 +74,16 @@ one-sign-change case is done directly: with `u*` the sign-change point of `H`, t
 `((a + u*) / (a + u))³` decreases in `a` where `H ≥ 0` and increases where `H ≤ 0`, so
 `a ↦ (a + u*)³ · profileShapeScore a k` is strictly decreasing (strict from `H(T) < 0`).
 
+For the converse, when `V ≤ M` a negative value of `H` would persist to `H(T) = n (M - V) / 2 ≥ 0`,
+so `H ≥ 0`; near `0`, `H(u) ≥ u - n u² / 2 > 0` (some count is positive, as `0 < M`), so the
+transform above is positive at every `a > 0`.
+
 ## Not proved here
 
-* The converse half of Theorem 2 (no finite maximizer when `V ≤ M`); the tests show the
-  profile shape score positive at a sample with `V = M` but no theorem claims it.
+* The all-zero sample `M = 0`, which also has `V ≤ M`: the converse here assumes `0 < M`, since
+  the rate root `σ a / M` is undefined at `M = 0`.
+* The limit of `ℓ` as `a → ∞` (the Poisson fit), and any statement that `ℓ` is maximized or
+  bounded in that limit; the converse only shows that no finite point maximizes `ℓ`.
 * Heterogeneous size factors. The reduction to one profile equation uses a common size factor;
   with distinct `sᵢ` the rate root is no longer `s̄ a / M` (tests), and uniqueness is not claimed.
 * Levin and Reeds's Theorem 1 (compound multinomial) and Theorem 3 (Poisson mixtures), and their
@@ -811,5 +826,127 @@ theorem score_eq_zero_of_isMaxOn [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι
     simp only [Prod.mk.injEq] at h; obtain ⟨rfl, rfl⟩ := h; exact hc ⟨hs, hr⟩
   exact absurd (hmax (a', b') ha' hb')
     (not_le.2 (logMarginalLik_lt_of_score_root hσ hM hMV ha' hb' ⟨hs, hr⟩ ha hb hne))
+
+/-! ### The converse: no finite MLE when `0 < M` and `V ≤ M` -/
+
+/-- **`H ≥ 0` without overdispersion.** If `V ≤ M`, Levin and Reeds's `H` is nonnegative on
+`[0, ∞)`: a negative value would persist (`smoothedDiscrepancy_neg_of_le`) up to the terminal
+value `n (M - V) / 2 ≥ 0` (`smoothedDiscrepancy_eq_of_ge`). -/
+theorem smoothedDiscrepancy_nonneg [Nonempty ι] {k : ι → ℕ} (hVM : countVar k ≤ countMean k)
+    {u : ℝ} (hu : 0 ≤ u) : 0 ≤ smoothedDiscrepancy k u := by
+  by_contra hneg
+  push Not at hneg
+  set T : ℝ := max u (countMean k + ∑ i, (k i : ℝ))
+  have hs : 0 ≤ ∑ i, (k i : ℝ) := sum_nonneg fun _ _ => by positivity
+  have hTk : ∀ i, (k i : ℝ) ≤ T := fun i => by
+    have := single_le_sum (f := fun i => (k i : ℝ)) (fun _ _ => by positivity) (mem_univ i)
+    have := countMean_nonneg k
+    exact le_max_of_le_right (by linarith)
+  have hT := smoothedDiscrepancy_neg_of_le hu hneg (le_max_left _ _ : u ≤ T)
+  rw [smoothedDiscrepancy_eq_of_ge (le_max_of_le_right (by linarith)) hTk] at hT
+  have hn : (0 : ℝ) < Fintype.card ι := by exact_mod_cast Fintype.card_pos
+  linarith [mul_nonneg hn.le (sub_nonneg.2 hVM)]
+
+/-- Just right of `0`, `H(u) ≥ u - n u² / 2 > 0` once some count is positive. -/
+private lemma smoothedDiscrepancy_pos_of_small [Nonempty ι] {k : ι → ℕ} (hM : 0 < countMean k)
+    {u : ℝ} (hu : 0 < u) (huM : u ≤ countMean k) (hun : Fintype.card ι * u < 1) :
+    0 < smoothedDiscrepancy k u := by
+  obtain ⟨i₀, hi₀⟩ : ∃ i, 1 ≤ k i := by
+    by_contra h
+    push Not at h
+    have : countMean k = 0 := by simp [countMean, fun i => Nat.lt_one_iff.1 (h i)]
+    linarith
+  have h1 := le_rampSum hi₀ u
+  norm_num at h1
+  have h2 := single_le_sum (f := fun i => rampSum (k i) u) (fun i _ => rampSum_nonneg _ _)
+    (mem_univ i₀)
+  rw [smoothedDiscrepancy_eq_of_le huM]
+  linarith [mul_lt_mul_of_pos_right hun hu]
+
+/-- **The profile shape score is positive when `0 < M` and `V ≤ M`** (Levin and Reeds 1977,
+Theorem 2, converse half). In `profileShapeScore_eq_integral` the boundary term is `≥ 0` by
+`smoothedDiscrepancy_nonneg`, and `H > 0` just right of `0` makes the integral positive. -/
+theorem profileShapeScore_pos_of_le [Nonempty ι] {k : ι → ℕ} (hM : 0 < countMean k)
+    (hVM : countVar k ≤ countMean k) {a : ℝ} (ha : 0 < a) : 0 < profileShapeScore a k := by
+  set T : ℝ := countMean k + ∑ i, (k i : ℝ)
+  have hs : 0 ≤ ∑ i, (k i : ℝ) := sum_nonneg fun _ _ => by positivity
+  have hTM : countMean k ≤ T := by linarith
+  have hTk : ∀ i, (k i : ℝ) ≤ T := fun i => by
+    have := single_le_sum (f := fun i => (k i : ℝ)) (fun _ _ => by positivity) (mem_univ i)
+    linarith
+  have hn : (0 : ℝ) < Fintype.card ι := by exact_mod_cast Fintype.card_pos
+  set ε : ℝ := min (countMean k) (1 / (2 * Fintype.card ι))
+  have hε : 0 < ε := lt_min hM (by positivity)
+  have hεM : ε ≤ countMean k := min_le_left _ _
+  have hεn : Fintype.card ι * ε ≤ 1 / 2 :=
+    calc (Fintype.card ι : ℝ) * ε ≤ Fintype.card ι * (1 / (2 * Fintype.card ι)) :=
+          mul_le_mul_of_nonneg_left (min_le_right _ _) hn.le
+      _ = 1 / 2 := by field_simp
+  have hc := continuous_smoothedDiscrepancy k
+  have hint := intervalIntegrable_div_cube hc ha hε.le
+  have hpos : 0 < ∫ u in (0 : ℝ)..ε, smoothedDiscrepancy k u / (a + u) ^ 3 :=
+    intervalIntegral.intervalIntegral_pos_of_pos_on hint (fun u hu => div_pos
+      (smoothedDiscrepancy_pos_of_small hM hu.1 (hu.2.le.trans hεM)
+        (by linarith [mul_lt_mul_of_pos_left hu.2 hn]))
+      (by have := hu.1; positivity)) hε
+  have hrest : 0 ≤ ∫ u in ε..T, smoothedDiscrepancy k u / (a + u) ^ 3 :=
+    intervalIntegral.integral_nonneg (hεM.trans hTM) fun u hu => by
+      have hu0 : 0 ≤ u := hε.le.trans hu.1
+      exact div_nonneg (smoothedDiscrepancy_nonneg hVM hu0) (by positivity)
+  rw [profileShapeScore_eq_integral ha hTM hTk,
+    ← intervalIntegral.integral_add_adjacent_intervals hint
+      (intervalIntegrable_div_cube' hc ha hε.le (hεM.trans hTM))]
+  have := div_nonneg (smoothedDiscrepancy_nonneg hVM (hM.le.trans hTM))
+    (sq_nonneg (a + T))
+  linarith
+
+/-- **Without overdispersion the joint score equations have no positive root.** At a common size
+factor `σ > 0` and a sample with `0 < M` and `V ≤ M`, no `(a, b) ∈ (0, ∞)²` solves both score
+equations. -/
+theorem score_ne_zero_of_le [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι → ℕ}
+    (hM : 0 < countMean k) (hVM : countVar k ≤ countMean k) {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
+    ¬ (shapeScore a b (fun _ => σ) k = 0 ∧ rateScore a b (fun _ => σ) k = 0) := fun h =>
+  (profileShapeScore_pos_of_le hM hVM ha).ne' ((score_eq_zero_iff_const ha hb hσ hM).1 h).2
+
+/-- **The likelihood increases along the rate root when `0 < M` and `V ≤ M`.** At a common size
+factor `σ > 0`, `ℓ` strictly increases along the explicit path `a ↦ (a, σ a / M)`, so `ℓ` has no
+finite maximizer along this path. -/
+theorem strictMonoOn_logMarginalLik_rateRoot [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι → ℕ}
+    (hM : 0 < countMean k) (hVM : countVar k ≤ countMean k) :
+    StrictMonoOn (fun a => logMarginalLik a (σ * a / countMean k) (fun _ => σ) k) (Ioi 0) := by
+  have hP : StrictMonoOn (fun x => profileLogLik x k) (Ioi 0) :=
+    strictMonoOn_of_deriv_pos (convex_Ioi 0)
+      (fun x hx => (hasDerivAt_profileLogLik hx hM.le).continuousAt.continuousWithinAt)
+      fun x hx => by
+        rw [interior_Ioi] at hx
+        rw [(hasDerivAt_profileLogLik hx hM.le).deriv]
+        exact profileShapeScore_pos_of_le hM hVM hx
+  intro a ha a' ha' h
+  dsimp only
+  rw [logMarginalLik_rateRoot hσ ha hM, logMarginalLik_rateRoot hσ ha' hM]
+  linarith [hP ha ha' h]
+
+/-- **No finite joint MLE when `V ≤ M`** (Levin and Reeds 1977, Theorem 2, converse half: the
+maximum occurs at a finite shape only if `M < V`). At a common size factor `σ > 0` and a sample
+with `0 < M` and `V ≤ M`, the log marginal likelihood has no maximizer on `(0, ∞)²`: every
+`(a, b)` is beaten by `(a + 1, σ (a + 1) / M)`. -/
+theorem not_exists_isMaxOn_logMarginalLik [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι → ℕ}
+    (hM : 0 < countMean k) (hVM : countVar k ≤ countMean k) :
+    ¬ ∃ p : ℝ × ℝ, 0 < p.1 ∧ 0 < p.2 ∧ ∀ q : ℝ × ℝ, 0 < q.1 → 0 < q.2 →
+      logMarginalLik q.1 q.2 (fun _ => σ) k ≤ logMarginalLik p.1 p.2 (fun _ => σ) k := by
+  rintro ⟨⟨a, b⟩, ha, hb, hmax⟩
+  dsimp only at ha hb hmax
+  have h1 : logMarginalLik a b (fun _ => σ) k ≤
+      logMarginalLik a (σ * a / countMean k) (fun _ => σ) k := by
+    by_cases hbe : b = σ * a / countMean k
+    · rw [hbe]
+    · exact (logMarginalLik_lt_of_rateScore_eq_zero ha (by positivity) hb hbe (fun _ => hσ)
+        (rateScore_const_eq_zero ha hσ hM)).le
+  have ha1 : (0 : ℝ) < a + 1 := by linarith
+  have h2 := strictMonoOn_logMarginalLik_rateRoot hσ hM hVM (mem_Ioi.2 ha) (mem_Ioi.2 ha1)
+    (lt_add_one a)
+  have h3 := hmax (a + 1, σ * (a + 1) / countMean k) ha1 (by dsimp only; positivity)
+  dsimp only at h2 h3
+  linarith
 
 end MathlibExt.Biology.Omics.HierarchicalCount

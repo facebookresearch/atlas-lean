@@ -706,9 +706,7 @@ theorem sum_sum_tajimaNumWeight_mul_fuSigma {n : ℕ} (hn : 2 ≤ n) :
     ∑ i ∈ Ico 1 n, ∑ j ∈ Ico 1 n, tajimaNumWeight n i * tajimaNumWeight n j * fuSigma n i j =
       tajimaC2 n := by
   set p : ℕ → ℝ := fun i => ((n : ℝ) - i) / (n.choose 2 : ℝ) * i with hp
-  have ha : tajimaA1 n ≠ 0 := by
-    rw [tajimaA1_eq_harmonic]
-    exact_mod_cast (harmonic_pos (by omega)).ne'
+  have ha := (tajimaA1_pos hn).ne'
   have hn0 : (n : ℝ) ≠ 0 := by positivity
   have hX : ∑ i ∈ Ico 1 n, ∑ j ∈ Ico 1 n, p i * fuSigma n i j = ((n : ℝ) + 2) / (2 * n) :=
     sum_sum_piWeight_mul_fuSigma hn
@@ -824,9 +822,7 @@ theorem variance_watterson_kingman_of_fuSigma (hn : 2 ≤ n) (hT : ∀ k, Measur
         fun ω => sfsLength n j (τ ω) (fun k => K.T k ω); μ] = 4 * fuSigma n i j) :
     Var[fun ω => (∑ i ∈ Ico 1 n, ξ i ω) / tajimaA1 n; μ] =
       θ / tajimaA1 n + θ ^ 2 * tajimaA2 n / tajimaA1 n ^ 2 := by
-  have ha : tajimaA1 n ≠ 0 := by
-    rw [tajimaA1_eq_harmonic]
-    exact_mod_cast (harmonic_pos (by omega)).ne'
+  have ha := (tajimaA1_pos hn).ne'
   rw [variance_watterson_kingman hn hT hτ hτ_law h_indep h,
     variance_sum_sfsLength_one_of_fuSigma hτ hτ_law hσ]
   field_simp

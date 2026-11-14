@@ -15,11 +15,14 @@ public import Mathlib.Data.Nat.Basic
 # Order-statistic tree deletion tests
 
 Executable examples cover empty and absent-key deletion, leaf and two-child/root
-merging, repaired subtree-size caches, and rank/select behavior after deletion,
+merging, repaired subtree-size caches, rank/select behavior after deletion, and
+the cache-erasure bridges to `BinarySearchTree.join` and `BinarySearchTree.delete`,
 through the public executable and correctness API.
 -/
 
 set_option autoImplicit false
+
+universe u
 
 @[expose] public section
 
@@ -113,6 +116,68 @@ example : inorder (merge leftPart (BinaryTree.nil : OrderStatisticTree.Tree Nat)
   decide
 example : select (merge leftPart rightPart) 4 = some 6 := by decide
 
+-- Erasing caches turns `merge` into `BinarySearchTree.join` and `delete` into
+-- `BinarySearchTree.delete`, also for unseparated merges, absent keys, and stale caches.
+example : erase (merge leftPart rightPart) =
+    BinarySearchTree.join (erase leftPart) (erase rightPart) := by
+  decide
+example : erase (merge rightPart leftPart) =
+    BinarySearchTree.join (erase rightPart) (erase leftPart) := by
+  decide
+example : erase (delete 4 balanced) = BinarySearchTree.delete 4 (erase balanced) := by
+  decide
+example : erase (delete 1 balanced) = BinarySearchTree.delete 1 (erase balanced) := by
+  decide
+example : erase (delete 8 balanced) = BinarySearchTree.delete 8 (erase balanced) := by
+  decide
+example : erase (delete 9 badCache) = BinarySearchTree.delete 9 (erase badCache) := by
+  decide
+example : erase (delete 1 (BinaryTree.nil : OrderStatisticTree.Tree Nat)) =
+    BinarySearchTree.delete 1 (erase (BinaryTree.nil : OrderStatisticTree.Tree Nat)) := by
+  decide
+
+-- Cache erasure agrees with BST deletion even without ordering or correct caches.
+private def irregular : OrderStatisticTree.Tree Nat :=
+  .node ⟨5, 99⟩ (.node ⟨8, 0⟩ .nil .nil) (.node ⟨5, 42⟩ .nil .nil)
+
+example : erase (delete 3 irregular) = BinarySearchTree.delete 3 (erase irregular) := by
+  decide
+example : erase (delete 7 irregular) = BinarySearchTree.delete 7 (erase irregular) := by
+  decide
+example : erase (delete 5 irregular) = BinarySearchTree.delete 5 (erase irregular) := by
+  decide
+example : erase (merge irregular irregular) =
+    BinarySearchTree.join (erase irregular) (erase irregular) := by
+  decide
+
+-- The bridges hold for arbitrary trees in any universe, with no ordering or cache hypothesis.
+example {α : Type u} (left right : OrderStatisticTree.Tree α) :
+    erase (merge left right) = BinarySearchTree.join (erase left) (erase right) :=
+  erase_merge left right
+example {α : Type u} [LinearOrder α] (key : α) (tree : OrderStatisticTree.Tree α) :
+    erase (delete key tree) = BinarySearchTree.delete key (erase tree) :=
+  erase_delete key tree
+
+-- Through `erase_delete`, `BinarySearchTree` deletion results apply to this tree: other
+-- keys survive deletion even without `Ordered`, and an ordered tree's traversal has the
+-- `List.erase` form.
+example {key y : Nat} {tree : OrderStatisticTree.Tree Nat} (hy : y ∈ tree) (hne : y ≠ key) :
+    y ∈ delete key tree := by
+  change y ∈ erase (delete key tree)
+  rw [erase_delete]
+  exact BinarySearchTree.mem_delete_of_mem hy hne
+example {key : Nat} {tree : OrderStatisticTree.Tree Nat} (h : Ordered tree) :
+    inorder (delete key tree) = (inorder tree).erase key := by
+  change BinarySearchTree.inorder (erase (delete key tree)) = _
+  rw [erase_delete]
+  exact BinarySearchTree.inorder_delete h
+
+-- The existing filter specification is universe-polymorphic and needs ordering only.
+example {α : Type u} [LinearOrder α] {key : α} {tree : OrderStatisticTree.Tree α}
+    (hTree : Ordered tree) :
+    inorder (delete key tree) = (inorder tree).filter (· ≠ key) :=
+  inorder_delete hTree
+
 -- Public theorem API on abstract trees.
 example {key : Nat} {tree : OrderStatisticTree.Tree Nat} (h : CacheCorrect tree) :
     CacheCorrect (delete key tree) :=
@@ -136,6 +201,10 @@ example {left right : OrderStatisticTree.Tree Nat}
     (hLeft : CacheCorrect left) (hRight : CacheCorrect right) :
     CacheCorrect (merge left right) :=
   cacheCorrect_merge hLeft hRight
+example {left right : OrderStatisticTree.Tree Nat} (hLeft : Ordered left)
+    (hRight : Ordered right) (hSeparated : ∀ x ∈ left, ∀ y ∈ right, x < y) :
+    Ordered (merge left right) :=
+  ordered_merge hLeft hRight hSeparated
 example {left right : OrderStatisticTree.Tree Nat} :
     inorder (merge left right) = inorder left ++ inorder right :=
   inorder_merge
@@ -157,6 +226,8 @@ example {key : Nat} {tree : OrderStatisticTree.Tree Nat}
 #check OrderStatisticTree.delete
 #check cacheCorrect_merge
 #check cacheCorrect_delete
+#check erase_merge
+#check erase_delete
 #check ordered_merge
 #check ordered_delete
 #check inorder_merge
@@ -171,6 +242,8 @@ example {key : Nat} {tree : OrderStatisticTree.Tree Nat}
 
 #print axioms cacheCorrect_merge
 #print axioms cacheCorrect_delete
+#print axioms erase_merge
+#print axioms erase_delete
 #print axioms ordered_merge
 #print axioms ordered_delete
 #print axioms inorder_merge
