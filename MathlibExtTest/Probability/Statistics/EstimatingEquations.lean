@@ -12,6 +12,7 @@ public import MathlibExt.Probability.Statistics.EstimatingEquations
 public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Probability.StrongLaw
 public import Mathlib.Probability.Distributions.Gaussian.Real
+import MathlibExt.Probability.Statistics.VectorInference
 
 /-!
 # Tests for general estimating equations: cluster sandwich and asymptotic linearity
@@ -137,33 +138,28 @@ theorem integral_sq_gaussianReal_one :
     integral_id_gaussianReal] at h
   simpa using h
 
-/-- The cluster second moment at `θ₀ = 0`: `⟪B s, s⟫ = s * s`. -/
-theorem inner_clusterSecondMoment_clusterEE (s : ℝ) :
-    ⟪clusterSecondMoment (clusterEE 0) (gaussianReal 0 1) s, s⟫ =
+/-- The second-moment operator of the cluster score at `θ₀ = 0`:
+`⟪B s, s⟫ = s * s`. -/
+theorem inner_covarianceOperator_clusterEE (s : ℝ) :
+    ⟪covarianceOperator ((gaussianReal 0 1).map (clusterEE 0)) s, s⟫ =
       s * s := by
-  have hMemLp : MemLp (clusterEE 0) 2 (gaussianReal 0 1) := by
-    have h : (clusterEE 0 : ℝ → ℝ) = id := by
-      funext x
-      show (0 : ℝ) + x = x
-      exact zero_add x
-    rw [h]
-    exact memLp_id_gaussianReal' 2 (by simp)
-  rw [inner_clusterSecondMoment_apply hMemLp s s]
-  have e : (fun x : ℝ => ⟪clusterEE 0 x, s⟫ * ⟪clusterEE 0 x, s⟫) =
-      fun x => (s * s) * x ^ 2 := by
+  have h : (clusterEE 0 : ℝ → ℝ) = id := by
     funext x
-    show ⟪clusterEE 0 x, s⟫ * ⟪clusterEE 0 x, s⟫ = _
-    rw [show clusterEE 0 x = 0 + x from rfl, RCLike.inner_apply,
-      conj_trivial]
+    show (0 : ℝ) + x = x
+    exact zero_add x
+  rw [h, Measure.map_id,
+    covarianceOperator_inner (memLp_id_gaussianReal' 2 (by simp)) s s]
+  have e : (fun x : ℝ => ⟪s, x⟫ * ⟪s, x⟫) = fun x => (s * s) * x ^ 2 := by
+    funext x
+    rw [RCLike.inner_apply, conj_trivial]
     ring
   rw [e, integral_const_mul, integral_sq_gaussianReal_one, mul_one]
 
 /-- The sandwich quadratic form at `θ₀ = 0`: `⟪A⁻¹ B A⁻ᵀ t, t⟫ = t * t`. -/
-theorem inner_clusterSandwich_clusterEE (t : ℝ) :
-    ⟪clusterSandwich
-      (Ring.inverse (∫ x : ℝ, fderiv ℝ (fun t : ℝ => clusterEE t x) 0
-        ∂(gaussianReal 0 1)))
-      (clusterSecondMoment (clusterEE 0) (gaussianReal 0 1)) t, t⟫ =
+theorem inner_sandwichCovariance_clusterEE (t : ℝ) :
+    ⟪GEE.sandwichCovariance
+      (∫ x : ℝ, fderiv ℝ (fun t : ℝ => clusterEE t x) 0 ∂(gaussianReal 0 1))
+      (covarianceOperator ((gaussianReal 0 1).map (clusterEE 0))) t, t⟫ =
       t * t := by
   have hK : Ring.inverse
       (∫ x : ℝ, fderiv ℝ (fun t : ℝ => clusterEE t x) 0
@@ -174,9 +170,9 @@ theorem inner_clusterSandwich_clusterEE (t : ℝ) :
       funext fun x => fderiv_clusterEE x 0
     rw [e, integral_fderiv_clusterEE]
     exact inverse_id_clm
-  rw [inner_clusterSandwich_self, hK, adjoint_id_clm]
+  rw [GEE.inner_sandwichCovariance_apply, hK, adjoint_id_clm]
   simp only [ContinuousLinearMap.id_apply]
-  exact inner_clusterSecondMoment_clusterEE t
+  exact inner_covarianceOperator_clusterEE t
 
 /-- The negated sample mean solves the cluster equation for every `n`. -/
 theorem sum_clusterEE_negMean (n : ℕ) (ω : ℕ → ℝ) :
@@ -260,13 +256,12 @@ theorem tendstoInDistribution_sqrt_mean_of_clusterEE :
     (measurable_clusterMean n).neg.aemeasurable
   have hZ : ∀ t : ℝ, HasLaw (fun z : ℝ => ⟪id z, t⟫)
       (gaussianReal 0
-        (⟪clusterSandwich
-          (Ring.inverse (∫ x : ℝ, fderiv ℝ (fun t : ℝ => clusterEE t x) 0
-            ∂(gaussianReal 0 1)))
-          (clusterSecondMoment (clusterEE 0) (gaussianReal 0 1)) t,
+        (⟪GEE.sandwichCovariance
+          (∫ x : ℝ, fderiv ℝ (fun t : ℝ => clusterEE t x) 0 ∂(gaussianReal 0 1))
+          (covarianceOperator ((gaussianReal 0 1).map (clusterEE 0))) t,
           t⟫).toNNReal) (gaussianReal 0 1) := by
     intro t
-    rw [inner_clusterSandwich_clusterEE t]
+    rw [inner_sandwichCovariance_clusterEE t]
     have e : (fun z : ℝ => ⟪id z, t⟫) = fun z => z * t := by
       funext z
       show ⟪z, t⟫ = z * t

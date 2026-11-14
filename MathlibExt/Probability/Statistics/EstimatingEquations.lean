@@ -8,12 +8,12 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Statistics.VectorInference
-public import MathlibExt.Probability.Statistics.MultivariateCLT
+public import MathlibExt.Probability.Statistics.Longitudinal.GEE.Sandwich
+public import Mathlib.Probability.Moments.CovarianceBilin
+public import Mathlib.Probability.Distributions.Gaussian.Real
+public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
+import MathlibExt.Probability.Statistics.VectorInference
 import Mathlib.Probability.CentralLimitTheorem
-import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
-import Mathlib.Probability.Distributions.Gaussian.Real
-import Mathlib.Analysis.InnerProductSpace.Adjoint
 
 /-!
 # General estimating equations: cluster sandwich and asymptotic linearity
@@ -27,19 +27,26 @@ For IID independent **clusters** (the cluster is the IID unit; no independence i
 *within* a cluster since the estimating function consumes the whole cluster at once), a
 consistent root of a finite-dimensional estimating equation with nonsingular limiting
 Jacobian `A = E Dψ θ₀` and a finite-variance cluster score has asymptotic covariance
-`A⁻¹ B A⁻ᵀ`, where `B = E ψ θ₀ ψ θ₀ᵀ` is the cluster second moment
-(`clusterSecondMoment`). The cluster asymptotic regime is `n → ∞` clusters; cluster sizes
-may grow or be heterogeneous as long as each cluster contributes one IID summand.
+`A⁻¹ B A⁻ᵀ`, where `B = E ψ θ₀ ψ θ₀ᵀ` is the second-moment operator of the cluster score:
+Mathlib's (uncentered) `covarianceOperator (μC.map (ψ θ₀))`, which is also the covariance
+of the score because `E ψ θ₀ = 0`.
+
+The asymptotic regime is `n → ∞` clusters drawn IID from one fixed cluster law `μC`.
+Cluster sizes and within-cluster structure may vary at random, but only as variation drawn
+from that fixed law; cluster sizes or laws that change with `n` or differ between clusters
+are not covered. Independent, non-identically distributed clusters are treated in
+`Longitudinal/GEE/Sandwich.lean` (vector parameter) and triangular arrays of clusters in
+`Longitudinal/GEE/NonlinearTriangular.lean` (scalar parameter).
 
 The proof reuses the vector Z-estimator theorem
 `VectorInference.tendstoInDistribution_sqrt_smul_sub_of_estimatingEquation` (applied with
 the cluster as the IID unit), whose own proof runs through the multivariate CLT
 (`tendstoInDistribution_inv_sqrt_smul_sum_sub`), a vector Taylor step with a Lipschitz
 uniform remainder (`norm_sub_sub_fderiv_le`, `norm_avg_add_avg_apply_le`), and Slutsky's
-theorem (`tendstoInDistribution_of_tendstoInMeasure_sub`). The sandwich form `A⁻¹ B A⁻ᵀ`
-(`clusterSandwich`, stated for `K = A⁻¹` as `K B Kᵀ`) is then read off the limit law by
-`hasLaw_inner_clusterSandwich`. The statistics session owns the GEE sandwich slot in
-`VectorInference`; nothing here duplicates that setup.
+theorem (`tendstoInDistribution_of_tendstoInMeasure_sub`). Its limit `-A⁻¹ Y` is then
+identified with `N(0, A⁻¹ B A⁻ᵀ)` through the repository's sandwich operator
+`ProbabilityTheory.GEE.sandwichCovariance A B` and its quadratic form
+`ProbabilityTheory.GEE.inner_sandwichCovariance_apply`.
 
 ## S16.3: asymptotically linear estimators
 
@@ -55,14 +62,9 @@ remainder bound is a separate obligation and is assumed here, not proved.
 
 ## Main statements
 
-* `clusterSecondMoment`, `inner_clusterSecondMoment_apply`: the cluster second moment
-  operator `B` and its quadratic form `⟪B u, v⟫ = E ⟪ψ, u⟫ ⟪ψ, v⟫`.
-* `clusterSandwich`, `inner_clusterSandwich_self`: the sandwich operator `K B Kᵀ` and
-  `⟪K B Kᵀ t, t⟫ = ⟪B (Kᵀ t), Kᵀ t⟫`.
-* `hasLaw_inner_clusterSandwich`: the projection law of `-K Y` when `Y` has covariance
-  `B`, i.e. `N(0, ⟪K B Kᵀ t, t⟫)`.
 * `tendstoInDistribution_sqrt_smul_sub_of_clusterEstimatingEquation`: the cluster
-  sandwich theorem, `√n (θ̂ₙ - θ₀) ⇒ Z` with `⟪Z, t⟫ ~ N(0, ⟪A⁻¹ B A⁻ᵀ t, t⟫)`.
+  sandwich theorem, `√n (θ̂ₙ - θ₀) ⇒ Z` with `⟪Z, t⟫ ~ N(0, ⟪A⁻¹ B A⁻ᵀ t, t⟫)`, where
+  `A⁻¹ B A⁻ᵀ = sandwichCovariance A B` and `B = covarianceOperator (μC.map (ψ θ₀))`.
 * `IsInfluenceFunction`: `φ ∈ L²` with mean zero.
 * `tendstoInDistribution_of_asymptoticallyLinear` (scalar),
   `tendstoInDistribution_of_asymptoticallyLinear_vector` (vector): normal limits for
@@ -77,114 +79,6 @@ open MeasureTheory ProbabilityTheory Filter Topology
 open scoped RealInnerProductSpace
 open MathlibExt.Probability.Statistics.VectorInference
 
-/-! ### The cluster second moment operator -/
-
-/-- The **cluster second-moment operator** `B = E[ψ₀ ψ₀ᵀ]` of a cluster score
-`ψ₀ : 𝓒 → E`: the Bochner integral of the rank-one operators
-`InnerProductSpace.rankOne ℝ (ψ₀ x) (ψ₀ x)`. If the score is not square integrable the
-integral takes its junk value `0`. -/
-noncomputable def clusterSecondMoment
-    {𝓒 : Type*} [MeasurableSpace 𝓒]
-    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    (ψ₀ : 𝓒 → E) (μC : Measure 𝓒) : E →L[ℝ] E :=
-  ∫ x, InnerProductSpace.rankOne ℝ (ψ₀ x) (ψ₀ x) ∂μC
-
-/-- Rank-one self-maps are continuous (mirrors the Fisher-information setup, for a general
-cluster score rather than a log-density gradient). -/
-private theorem continuous_rankOne_self_cluster
-    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] :
-    Continuous fun s : E => InnerProductSpace.rankOne ℝ s s := by
-  have e : (fun s : E => InnerProductSpace.rankOne ℝ s s) =
-      fun s => ContinuousLinearMap.smulRightL ℝ E E (innerSL ℝ s) s := by
-    funext s; ext v; simp
-  rw [e]
-  exact (ContinuousLinearMap.smulRightL ℝ E E).continuous₂.comp
-    ((innerSL ℝ).continuous.prodMk continuous_id)
-
-/-- A square-integrable cluster score has an integrable rank-one second moment. -/
-private theorem integrable_rankOne_cluster
-    {𝓒 : Type*} [MeasurableSpace 𝓒]
-    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    {μ : Measure 𝓒} {s : 𝓒 → E} (hs : MemLp s 2 μ) :
-    Integrable
-      (fun x => InnerProductSpace.rankOne ℝ (s x) (s x)) μ := by
-  refine Integrable.mono' (hs.integrable_norm_pow two_ne_zero)
-    (continuous_rankOne_self_cluster.comp_aestronglyMeasurable
-      hs.aestronglyMeasurable)
-    (Eventually.of_forall fun x => ?_)
-  rw [InnerProductSpace.norm_rankOne, sq]
-
-/-- The bilinear form of a rank-one second moment is the expected product of projections. -/
-private theorem inner_integral_rankOne_cluster
-    {𝓒 : Type*} [MeasurableSpace 𝓒]
-    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    [FiniteDimensional ℝ E]
-    {μ : Measure 𝓒} {s : 𝓒 → E}
-    (h : Integrable
-      (fun x => InnerProductSpace.rankOne ℝ (s x) (s x)) μ)
-    (u v : E) :
-    ⟪(∫ x, InnerProductSpace.rankOne ℝ (s x) (s x) ∂μ) u, v⟫ =
-      ∫ x, ⟪s x, u⟫ * ⟪s x, v⟫ ∂μ := by
-  rw [ContinuousLinearMap.integral_apply h, real_inner_comm,
-    ← integral_inner (h.apply_continuousLinearMap u)]
-  congr 1; funext x
-  rw [InnerProductSpace.rankOne_apply, real_inner_smul_right,
-    real_inner_comm (s x) v]
-
-/-- The quadratic form of the cluster second moment: for a square-integrable cluster
-score, `⟪B u, v⟫ = E[⟪ψ₀, u⟫ ⟪ψ₀, v⟫]`. -/
-theorem inner_clusterSecondMoment_apply
-    {𝓒 : Type*} [MeasurableSpace 𝓒]
-    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    [FiniteDimensional ℝ E]
-    {ψ₀ : 𝓒 → E} {μC : Measure 𝓒}
-    (hs : MemLp ψ₀ 2 μC) (u v : E) :
-    ⟪clusterSecondMoment ψ₀ μC u, v⟫ =
-      ∫ x, ⟪ψ₀ x, u⟫ * ⟪ψ₀ x, v⟫ ∂μC :=
-  inner_integral_rankOne_cluster (integrable_rankOne_cluster hs) u v
-
-/-! ### The sandwich operator -/
-
-/-- The **sandwich covariance operator** `K B Kᵀ`: with `K = A⁻¹` (the inverse limiting
-Jacobian) and `B` the cluster second moment, this is `A⁻¹ B A⁻ᵀ`. -/
-noncomputable def clusterSandwich
-    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    [FiniteDimensional ℝ E]
-    (K B : E →L[ℝ] E) : E →L[ℝ] E :=
-  K ∘L B ∘L ContinuousLinearMap.adjoint K
-
-/-- The quadratic form of the sandwich: `⟪K B Kᵀ t, t⟫ = ⟪B (Kᵀ t), Kᵀ t⟫`. -/
-theorem inner_clusterSandwich_self
-    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    [FiniteDimensional ℝ E]
-    (K B : E →L[ℝ] E) (t : E) :
-    ⟪clusterSandwich K B t, t⟫ =
-      ⟪B (ContinuousLinearMap.adjoint K t),
-        ContinuousLinearMap.adjoint K t⟫ := by
-  simp only [clusterSandwich, ContinuousLinearMap.comp_apply]
-  exact (ContinuousLinearMap.adjoint_inner_right K _ _).symm
-
-/-- **Projection law of the sandwich limit.** If every projection `⟪Y, s⟫` is
-`N(0, ⟪B s, s⟫)`, then `⟪-K Y, t⟫` is `N(0, ⟪K B Kᵀ t, t⟫)`. -/
-theorem hasLaw_inner_clusterSandwich
-    {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
-    [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
-    {Y : Ω → E} {B K : E →L[ℝ] E}
-    (hY : ∀ s : E, HasLaw (fun ω => ⟪Y ω, s⟫)
-      (gaussianReal 0 (⟪B s, s⟫).toNNReal) P)
-    (t : E) :
-    HasLaw (fun ω => ⟪-(K (Y ω)), t⟫)
-      (gaussianReal 0 (⟪clusterSandwich K B t, t⟫).toNNReal) P := by
-  have e : (fun ω => ⟪-(K (Y ω)), t⟫) =
-      -((fun ω => ⟪Y ω, ContinuousLinearMap.adjoint K t⟫)) := by
-    funext ω
-    simp only [Pi.neg_apply]
-    rw [inner_neg_left, ContinuousLinearMap.adjoint_inner_right]
-  rw [e, inner_clusterSandwich_self]
-  have h := gaussianReal_neg (hY (ContinuousLinearMap.adjoint K t))
-  simpa using h
-
 /-! ### The cluster sandwich theorem (S16.1) -/
 
 /-- **Asymptotic normality of a consistent root of a cluster estimating equation**
@@ -197,7 +91,10 @@ Assume `E ψ θ₀ = 0` with finite second moment, `Dψ θ₀` strongly measurab
 integrable, and the limiting Jacobian `A = E Dψ θ₀` **nonsingular**. Let `θhat n` solve
 `∑_{i<n} ψ θ (X i) = 0` with probability tending to one and converge to `θ₀` in
 probability. Then `√n (θhat n - θ₀) ⇒ Z` in distribution, where
-`⟪Z, t⟫ ~ N(0, ⟪A⁻¹ B A⁻ᵀ t, t⟫)` with `B` the cluster second moment. -/
+`⟪Z, t⟫ ~ N(0, ⟪A⁻¹ B A⁻ᵀ t, t⟫)`, with the sandwich `A⁻¹ B A⁻ᵀ = sandwichCovariance A B`
+and `B = covarianceOperator (μC.map (ψ θ₀))` the second-moment operator of the cluster
+score. All clusters share the law `μC`; cluster laws that vary between clusters or with `n`
+are not covered. -/
 theorem tendstoInDistribution_sqrt_smul_sub_of_clusterEstimatingEquation
     {𝓒 : Type*} [MeasurableSpace 𝓒]
     {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
@@ -232,9 +129,8 @@ theorem tendstoInDistribution_sqrt_smul_sub_of_clusterEstimatingEquation
     {Z : Ω' → E} (hZ_meas : AEMeasurable Z P')
     (hZ : ∀ t, HasLaw (fun ω => ⟪Z ω, t⟫)
       (gaussianReal 0
-        (⟪clusterSandwich
-          (Ring.inverse (∫ x, fderiv ℝ (fun t => ψ t x) θ₀ ∂μC))
-          (clusterSecondMoment (ψ θ₀) μC) t, t⟫).toNNReal) P') :
+        (⟪GEE.sandwichCovariance (∫ x, fderiv ℝ (fun t => ψ t x) θ₀ ∂μC)
+          (covarianceOperator (μC.map (ψ θ₀))) t, t⟫).toNNReal) P') :
     TendstoInDistribution (fun (n : ℕ) ω => √n • (θhat n ω - θ₀))
       atTop Z (fun _ => P) P' := by
   have hProb : IsProbabilityMeasure μC :=
@@ -278,21 +174,35 @@ theorem tendstoInDistribution_sqrt_smul_sub_of_clusterEstimatingEquation
       hX_law hX_indep hδ hψ_diff hM_meas hM_int hM hψ_meas hψ_sq
       hψ_mean hψ'_meas hψ'_int hA hθ_meas hroot hcons
       G.continuous.aemeasurable hG'
-  have hBt : ∀ s : E, ⟪clusterSecondMoment (ψ θ₀) μC s, s⟫ =
+  have hB : ∀ s : E, ⟪covarianceOperator (μC.map (ψ θ₀)) s, s⟫ =
       ∫ x, ⟪ψ θ₀ x, s⟫ ^ 2 ∂μC := fun s => by
-    rw [inner_clusterSecondMoment_apply hMemLp s s]
+    have hμ : MemLp id 2 (μC.map (ψ θ₀)) :=
+      (memLp_map_measure_iff aestronglyMeasurable_id
+        hψ_meas.aemeasurable).2 hMemLp
+    have hcont : Continuous fun z : E => ⟪s, z⟫ * ⟪s, z⟫ :=
+      (continuous_const.inner continuous_id).mul
+        (continuous_const.inner continuous_id)
+    rw [covarianceOperator_inner hμ s s,
+      integral_map hψ_meas.aemeasurable hcont.aestronglyMeasurable]
     congr 1
     funext x
-    rw [sq]
+    rw [real_inner_comm (ψ θ₀ x) s, sq]
   have hGZ : ∀ t : E, HasLaw
       (fun ω => ⟪(-Ring.inverse
         (∫ x, fderiv ℝ (fun t => ψ t x) θ₀ ∂μC) (G ω)), t⟫)
       (gaussianReal 0
-        (⟪clusterSandwich
-          (Ring.inverse (∫ x, fderiv ℝ (fun t => ψ t x) θ₀ ∂μC))
-          (clusterSecondMoment (ψ θ₀) μC) t, t⟫).toNNReal)
-      (stdGaussian E) := fun t =>
-    hasLaw_inner_clusterSandwich (fun s => by rw [hBt s]; exact hG' s) t
+        (⟪GEE.sandwichCovariance (∫ x, fderiv ℝ (fun t => ψ t x) θ₀ ∂μC)
+          (covarianceOperator (μC.map (ψ θ₀))) t, t⟫).toNNReal)
+      (stdGaussian E) := fun t => by
+    have e : (fun ω => ⟪(-Ring.inverse
+        (∫ x, fderiv ℝ (fun t => ψ t x) θ₀ ∂μC) (G ω)), t⟫) =
+        -(fun ω => ⟪G ω, ContinuousLinearMap.adjoint
+          (Ring.inverse (∫ x, fderiv ℝ (fun t => ψ t x) θ₀ ∂μC)) t⟫) := by
+      funext ω
+      simp only [Pi.neg_apply]
+      rw [inner_neg_left, ContinuousLinearMap.adjoint_inner_right]
+    rw [e, GEE.inner_sandwichCovariance_apply, hB]
+    simpa using gaussianReal_neg (hG' _)
   refine hlim.of_map_eq hZ_meas (map_eq_of_forall_map_inner ?_ hZ_meas
     fun t => ?_)
   · exact ((-Ring.inverse
