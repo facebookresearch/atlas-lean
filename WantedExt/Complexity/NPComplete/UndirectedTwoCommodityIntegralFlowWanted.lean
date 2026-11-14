@@ -35,13 +35,9 @@ namespace MetaMathlibExt.Complexity.NPComplete.UndirectedTwoCommodityIntegralFlo
 
 INSTANCE: a graph `G = (V, E)`, specified vertices `s₁`, `s₂`, `t₁`, `t₂`, a capacity
 `c(e) ∈ ℤ⁺` for each `e ∈ E`, and requirements `R₁, R₂ ∈ ℤ⁺`. QUESTION: are there two flow
-functions `f₁, f₂ : {(u, v), (v, u) : {u, v} ∈ E} → ℤ₀⁺` such that, for each `{u, v} ∈ E`, each
-`fᵢ` uses at most one direction (`fᵢ(u, v) = 0` or `fᵢ(v, u) = 0`) and
-`max (f₁(u, v), f₁(v, u)) + max (f₂(u, v), f₂(v, u)) ≤ c({u, v})`, each `fᵢ` is conserved at
-every vertex other than `sᵢ` and `tᵢ`, and the net flow of `fᵢ` into `tᵢ` is at least `Rᵢ`, for
-`i = 1, 2`? When each `fᵢ` uses one direction per edge, `max (fᵢ(u, v), fᵢ(v, u))` equals
-`fᵢ(u, v) + fᵢ(v, u)`, so the capacity condition is
-`f₁(u, v) + f₁(v, u) + f₂(u, v) + f₂(v, u) ≤ c({u, v})`.
+functions `f₁, f₂ : {(u, v), (v, u) : {u, v} ∈ E} → ℤ₀⁺` such that, for each `{u, v} ∈ E`,
+`f₁(u, v) + f₁(v, u) + f₂(u, v) + f₂(v, u) ≤ c({u, v})`, each `fᵢ` is conserved at every vertex
+other than `sᵢ` and `tᵢ`, and the net flow of `fᵢ` into `tᵢ` is at least `Rᵢ`, for `i = 1, 2`?
 
 The vertices are `0, ..., n - 1`. Each edge is a record `(u, v, c)`: the edge `{u, v}` with
 capacity `c`; there are no self-loops and at most one record per unordered pair. Commodity `i`
@@ -50,7 +46,7 @@ nonnegative) on ordered pairs. Each commodity's flow is checked with `IsFeasible
 `MathlibExt.Combinatorics.Graph.MaxFlowMinCut` against the symmetric capacity `capacity`
 (`c({u, v})` on both orientations of an edge, `0` elsewhere), so it vanishes off the two
 orientations of the edges and is conserved at every vertex other than its own source and sink.
-The per-edge conditions and the requirement on the net flow into `tᵢ` are stated directly.
+The joint capacity condition and the requirement on the net flow into `tᵢ` are stated directly.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -107,14 +103,13 @@ def CommodityFlow (i : UndirectedTwoCommodityIntegralFlowInstance) (st : ℕ × 
       (st.2.2 : ℝ) ≤ (∑ u, (f u ⟨st.2.1, ht⟩ : ℝ)) - ∑ w, (f ⟨st.2.1, ht⟩ w : ℝ)
 
 /-- There are integral flows `f₁` for commodity 1 and `f₂` for commodity 2 such that, on each
-edge `{u, v}`, each flow uses at most one direction and the larger directions of the two flows
-add up to at most `c({u, v})`. -/
+edge `{u, v}`, the flows of both commodities in both directions add up to at most
+`c({u, v})`. -/
 def UndirectedTwoCommodityIntegralFlowFeasible
     (i : UndirectedTwoCommodityIntegralFlowInstance) : Prop :=
   ∃ f₁ f₂ : Fin i.1 → Fin i.1 → ℕ,
     (∀ u v, (Graph i).Adj u v →
-      (f₁ u v = 0 ∨ f₁ v u = 0) ∧ (f₂ u v = 0 ∨ f₂ v u = 0) ∧
-        max (f₁ u v) (f₁ v u) + max (f₂ u v) (f₂ v u) ≤ capacity i u v) ∧
+      f₁ u v + f₁ v u + f₂ u v + f₂ v u ≤ capacity i u v) ∧
       CommodityFlow i i.2.2.1 f₁ ∧ CommodityFlow i i.2.2.2 f₂
 
 open Classical in
