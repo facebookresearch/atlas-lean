@@ -18,7 +18,7 @@ than 5 edges" [Garey, Johnson and Tarjan, 1976a];
 M. R. Garey, D. S. Johnson and R. E. Tarjan, "The planar Hamiltonian circuit problem is
 NP-complete", SIAM Journal on Computing 5 (1976), 704-714, doi:10.1137/0205049;
 ISGCI, *Information System on Graph Classes and their Inclusions*, class `gc_1100` (cubic),
-problem Hamiltonian path: NP-complete (Picouleau 1994).
+problem Hamiltonian path: NP-complete.
 -/
 module
 
@@ -50,9 +50,7 @@ Mathlib's `SimpleGraph.IsRegularOfDegree 3`.
 
 Garey and Johnson record HAMILTONIAN PATH as NP-complete for planar, cubic, 3-connected graphs
 ([GT39], comment, from [GT37] and Garey, Johnson and Tarjan); those are cubic graphs, so the
-restriction to cubic graphs is NP-complete as well. (ISGCI's reference for this class, Picouleau
-(1994), covers `k`-regular graphs for fixed `k > 3`; the cubic case rests on Garey, Johnson and
-Tarjan.)
+restriction to cubic graphs is NP-complete as well.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
