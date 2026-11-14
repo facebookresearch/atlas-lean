@@ -11,6 +11,7 @@ module
 public import MathlibExt.Biology.Omics.HierarchicalCountMLEVarying
 
 import Mathlib.Analysis.Complex.ExponentialBounds
+import MathlibExt.Biology.Omics.HierarchicalCountMLEUniqueness
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.Probability.Independence.InfinitePi
 
@@ -88,6 +89,257 @@ example : ¬ (∑ i, ((![1, 10] i : ℕ) : ℝ) < ∑ i, (((![1, 10] i : ℕ) : 
 example : ∑ i, ((![0, 0, 3] i : ℕ) : ℝ) < ∑ i, (((![0, 0, 3] i : ℕ) : ℝ) -
     (fun _ : Fin 3 => (1 : ℝ)) i * pooledMean (fun _ : Fin 3 => (1 : ℝ)) ![0, 0, 3]) ^ 2 :=
   (overdispersed_const_iff one_pos _).2 (by norm_num [countMean, countVar, Fin.sum_univ_three])
+
+/-! ### Uniqueness at a common size factor -/
+
+/-- **Uniqueness, common size factor.** Size factor `2`, counts `(0, 0, 3)`: pooled rate
+`μ̂ = 3 / 6`, fitted means `1`, residual sum of squares `1 + 1 + 4 = 6 > 3 = ∑ kᵢ`, computed from
+the definition of `pooledMean`. The joint score equations have exactly one positive root. -/
+example : ∃! p : ℝ × ℝ, 0 < p.1 ∧ 0 < p.2 ∧
+    shapeScore p.1 p.2 (fun _ : Fin 3 => (2 : ℝ)) ![0, 0, 3] = 0 ∧
+    rateScore p.1 p.2 (fun _ : Fin 3 => (2 : ℝ)) ![0, 0, 3] = 0 :=
+  existsUnique_score_root_const_varying two_pos (by norm_num [pooledMean, Fin.sum_univ_three])
+
+/-- The same sample has exactly one joint MLE over `(0, ∞)²`. -/
+example : ∃! p : ℝ × ℝ, 0 < p.1 ∧ 0 < p.2 ∧ ∀ q : ℝ × ℝ, 0 < q.1 → 0 < q.2 →
+    logMarginalLik q.1 q.2 (fun _ : Fin 3 => (2 : ℝ)) ![0, 0, 3] ≤
+      logMarginalLik p.1 p.2 (fun _ : Fin 3 => (2 : ℝ)) ![0, 0, 3] :=
+  existsUnique_isMaxOn_logMarginalLik_const_varying two_pos
+    (by norm_num [pooledMean, Fin.sum_univ_three])
+
+/-- **Boundary: equality in the overdispersion condition.** Size factor `1`, counts `(0, 2)`:
+`μ̂ = 1`, residual sum of squares `1 + 1 = 2 = ∑ kᵢ`, so the strict condition fails (this is
+`V = M = 1`), and then no positive root exists at all (`score_ne_zero_of_le`). -/
+example : ¬ (∑ i, ((![0, 2] i : ℕ) : ℝ) < ∑ i, (((![0, 2] i : ℕ) : ℝ) -
+      1 * pooledMean (fun _ : Fin 2 => (1 : ℝ)) ![0, 2]) ^ 2) ∧
+    ∀ a b : ℝ, 0 < a → 0 < b →
+      ¬ (shapeScore a b (fun _ : Fin 2 => (1 : ℝ)) ![0, 2] = 0 ∧
+        rateScore a b (fun _ : Fin 2 => (1 : ℝ)) ![0, 2] = 0) := by
+  refine ⟨by norm_num [pooledMean, Fin.sum_univ_two], fun a b ha hb => ?_⟩
+  exact score_ne_zero_of_le one_pos (by norm_num [countMean, Fin.sum_univ_two])
+    (by norm_num [countVar, countMean, Fin.sum_univ_two]) ha hb
+
+/-! ### Heterogeneous size factors: two roots of the score equations -/
+
+namespace TwoRoots
+
+/-- Size factors `(100, 1)`. -/
+abbrev s₀ : Fin 2 → ℝ := ![100, 1]
+
+/-- Counts `(2, 1)`. -/
+abbrev k₀ : Fin 2 → ℕ := ![2, 1]
+
+private lemma hs₀ : ∀ i, 0 < s₀ i := fun i => by fin_cases i <;> norm_num
+
+private lemma shapeScore_eq (a b : ℝ) :
+    shapeScore a b s₀ k₀ = 2 * a⁻¹ + (a + 1)⁻¹ + 2 * log b - log (b + 100) - log (b + 1) := by
+  simp [shapeScore, digammaIncrement, Fin.sum_univ_two, sum_range_succ, s₀, k₀]
+  ring
+
+/-- The rate score equation `-3 b² + (101 a - 102) b + 200 a = 0` (times `b (b + 100) (b + 1)`)
+has the positive root `b = 1` at `a = 15/43`, from the definition. -/
+private lemma rateRoot₁ : rateRoot (15 / 43) s₀ k₀ = 1 :=
+  rateRoot_eq (by norm_num) one_pos hs₀ (by norm_num [rateScore, Fin.sum_univ_two, s₀, k₀])
+
+/-- The rate root at `a = 12/11` is `10`. -/
+private lemma rateRoot₂ : rateRoot (12 / 11) s₀ k₀ = 10 :=
+  rateRoot_eq (by norm_num) (by norm_num) hs₀ (by norm_num [rateScore, Fin.sum_univ_two, s₀, k₀])
+
+/-- The rate root at `a = 402/103` is `100`. -/
+private lemma rateRoot₃ : rateRoot (402 / 103) s₀ k₀ = 100 :=
+  rateRoot_eq (by norm_num) (by norm_num) hs₀ (by norm_num [rateScore, Fin.sum_univ_two, s₀, k₀])
+
+/-- At `a = 15/43` the profile is `86/15 + 43/58 - log 202 > 0` (`log 101 < 5`). -/
+private lemma profile₁_pos : 0 < profileShapeScoreVarying (15 / 43) s₀ k₀ := by
+  rw [profileShapeScoreVarying, rateRoot₁, shapeScore_eq]
+  have h101 : log 101 < 5 := by
+    rw [log_lt_iff_lt_exp (by norm_num)]
+    have : (101 : ℝ) < exp 1 ^ 5 :=
+      lt_trans (by norm_num) (pow_lt_pow_left₀ exp_one_gt_d9 (by norm_num) (by norm_num))
+    rwa [← exp_nat_mul, show ((5 : ℕ) : ℝ) * 1 = 5 by norm_num] at this
+  have h2 := log_two_lt_d9
+  norm_num
+  linarith
+
+/-- At `a = 12/11` the profile is `319/138 - log (121/10) < 0` (`e⁷ < (121/10)³`). -/
+private lemma profile₂_neg : profileShapeScoreVarying (12 / 11) s₀ k₀ < 0 := by
+  rw [profileShapeScoreVarying, rateRoot₂, shapeScore_eq]
+  have e110 : log 110 = log 10 + log 11 := by
+    rw [← log_mul (by norm_num) (by norm_num)]; norm_num
+  have hlog : 7 / 3 < 2 * log 11 - log 10 := by
+    have e : 2 * log 11 - log 10 = log (121 / 10) := by
+      rw [log_div (by norm_num) (by norm_num), show (121 : ℝ) = 11 ^ 2 by norm_num, log_pow]
+      push_cast; ring
+    rw [e, lt_log_iff_exp_lt (by norm_num)]
+    have h7 : exp (7 / 3) ^ 3 = exp 1 ^ 7 := by rw [← exp_nat_mul, ← exp_nat_mul]; norm_num
+    have : exp (7 / 3) ^ 3 < (121 / 10 : ℝ) ^ 3 := by
+      rw [h7]
+      exact lt_trans (pow_lt_pow_left₀ exp_one_lt_d9 (exp_pos 1).le (by norm_num)) (by norm_num)
+    exact lt_of_pow_lt_pow_left₀ 3 (by norm_num) this
+  norm_num
+  linarith
+
+/-- At `a = 402/103` the profile is `103/201 + 103/505 - log (101/50) > 0`
+(`log 2 + 1/100 < 0.7032 < 0.7164`). -/
+private lemma profile₃_pos : 0 < profileShapeScoreVarying (402 / 103) s₀ k₀ := by
+  rw [profileShapeScoreVarying, rateRoot₃, shapeScore_eq]
+  have e200 : log 200 = log 2 + log 100 := by
+    rw [← log_mul (by norm_num) (by norm_num)]; norm_num
+  have e101 : log 101 = log 100 + log (101 / 100) := by
+    rw [← log_mul (by norm_num) (by norm_num)]; norm_num
+  have h1 : log (101 / 100 : ℝ) ≤ 101 / 100 - 1 := log_le_sub_one_of_pos (by norm_num)
+  have h2 := log_two_lt_d9
+  norm_num
+  linarith
+
+/-- **Heterogeneous size factors: two roots of the joint score equations.** Size factors
+`(100, 1)`, counts `(2, 1)`. The profile shape score is positive at `a = 15/43`, negative at
+`12/11` and positive at `402/103` (all from the definitions, with the rate roots `1, 10, 100`
+checked exactly), so the joint score equations have two positive solutions with different
+shapes. Numerically they are `(a, b) ≈ (0.550, 2.09)` and `(2.08, 39.5)`. -/
+theorem two_score_roots : ∃ a b a' b', 0 < a ∧ 0 < b ∧ 0 < a' ∧ 0 < b' ∧ a < a' ∧
+    shapeScore a b s₀ k₀ = 0 ∧ rateScore a b s₀ k₀ = 0 ∧
+    shapeScore a' b' s₀ k₀ = 0 ∧ rateScore a' b' s₀ k₀ = 0 :=
+  exists_two_score_roots hs₀ ⟨0, by simp [k₀]⟩ (by norm_num) (by norm_num) (by norm_num)
+    (Set.mem_uIcc.2 (Or.inr ⟨profile₂_neg.le, profile₁_pos.le⟩))
+    (Set.mem_uIcc.2 (Or.inl ⟨profile₂_neg.le, profile₃_pos.le⟩)) profile₂_neg.ne
+
+/-- Hence the conclusion of `existsUnique_score_root_const_varying` fails at these
+heterogeneous size factors. -/
+example : ¬ ∃! p : ℝ × ℝ, 0 < p.1 ∧ 0 < p.2 ∧ shapeScore p.1 p.2 s₀ k₀ = 0 ∧
+    rateScore p.1 p.2 s₀ k₀ = 0 := by
+  rintro ⟨p, _, huniq⟩
+  obtain ⟨a, b, a', b', ha, hb, ha', hb', hlt, h1, h2, h3, h4⟩ := two_score_roots
+  have e := (huniq (a, b) ⟨ha, hb, h1, h2⟩).trans (huniq (a', b') ⟨ha', hb', h3, h4⟩).symm
+  exact hlt.ne (Prod.mk.inj e).1
+
+/-- **The overdispersion condition fails for this sample** (from the definitions): `μ̂ = 3/101`,
+residuals `∓98/101`, residual sum of squares `19208/10201 < 3 = ∑ kᵢ`. So the sample says nothing
+about uniqueness under the condition; at a common size factor the same failure would rule out any
+root (`score_ne_zero_of_le`). -/
+example : ¬ (∑ i, (k₀ i : ℝ) < ∑ i, ((k₀ i : ℝ) - s₀ i * pooledMean s₀ k₀) ^ 2) := by
+  norm_num [pooledMean, Fin.sum_univ_two, s₀, k₀]
+
+end TwoRoots
+
+/-! ### Heterogeneous size factors: two roots under the overdispersion condition -/
+
+namespace TwoRootsOverdispersed
+
+/-- Size factors `(1000, 1/100, 100)`. -/
+noncomputable abbrev s₁ : Fin 3 → ℝ := ![1000, 1 / 100, 100]
+
+/-- Counts `(12, 1, 6)`. -/
+abbrev k₁ : Fin 3 → ℕ := ![12, 1, 6]
+
+private lemma hs₁ : ∀ i, 0 < s₁ i := fun i => by fin_cases i <;> norm_num
+
+private lemma shapeScore_eq (a b : ℝ) :
+    shapeScore a b s₁ k₁ = digammaIncrement a 12 + digammaIncrement a 1 + digammaIncrement a 6 -
+      (log (b + 1000) + log (b + 1 / 100) + log (b + 100) - 3 * log b) := by
+  simp [shapeScore, Fin.sum_univ_three, s₁, k₁]
+  ring
+
+private lemma log_sum_eq {b : ℝ} (hb : 0 < b) :
+    log (b + 1000) + log (b + 1 / 100) + log (b + 100) - 3 * log b =
+      log ((b + 1000) * (b + 1 / 100) * (b + 100) / b ^ 3) := by
+  rw [log_div (by positivity) (by positivity), log_mul (by positivity) (by positivity),
+    log_mul (by positivity) (by positivity), log_pow]
+  push_cast
+  ring
+
+/-- `log x < p / q` from `x^q < 2.7182818283^p ≤ e^p`. -/
+private lemma log_lt_div_of_pow_lt {x : ℝ} (hx : 0 < x) {p q : ℕ} (hq : 0 < q)
+    (h : x ^ q < 2.7182818283 ^ p) : log x < p / q := by
+  rw [lt_div_iff₀ (by exact_mod_cast hq), mul_comm, ← log_pow,
+    log_lt_iff_lt_exp (pow_pos hx q)]
+  calc x ^ q < 2.7182818283 ^ p := h
+    _ ≤ exp 1 ^ p := pow_le_pow_left₀ (by norm_num) exp_one_gt_d9.le p
+    _ = exp p := by rw [← exp_nat_mul, mul_one]
+
+/-- `p / q < log x` from `e^p ≤ 2.7182818286^p < x^q`. -/
+private lemma div_lt_log_of_lt_pow {x : ℝ} (hx : 0 < x) {p q : ℕ} (hq : 0 < q)
+    (h : 2.7182818286 ^ p < x ^ q) : (p : ℝ) / q < log x := by
+  rw [div_lt_iff₀ (by exact_mod_cast hq), mul_comm, ← log_pow,
+    lt_log_iff_exp_lt (pow_pos hx q)]
+  calc exp p = exp 1 ^ p := by rw [← exp_nat_mul, mul_one]
+    _ ≤ 2.7182818286 ^ p := pow_le_pow_left₀ (exp_pos 1).le exp_one_lt_d9.le p
+    _ < x ^ q := h
+
+/-- The rate score is linear in the shape, so every rate `b` is the rate root of one shape; at
+`b = 4` the shape is `3339418/5129301`, checked from the definition. -/
+private lemma rateRoot₁ : rateRoot (3339418 / 5129301) s₁ k₁ = 4 :=
+  rateRoot_eq (by norm_num) (by norm_num) hs₁
+    (by norm_num [rateScore, Fin.sum_univ_three, s₁, k₁])
+
+/-- The rate root at the shape `168158/192111` is `10`. -/
+private lemma rateRoot₂ : rateRoot (168158 / 192111) s₁ k₁ = 10 :=
+  rateRoot_eq (by norm_num) (by norm_num) hs₁
+    (by norm_num [rateScore, Fin.sum_univ_three, s₁, k₁])
+
+/-- The rate root at the shape `1120090/310053` is `100`. -/
+private lemma rateRoot₃ : rateRoot (1120090 / 310053) s₁ k₁ = 100 :=
+  rateRoot_eq (by norm_num) (by norm_num) hs₁
+    (by norm_num [rateScore, Fin.sum_univ_three, s₁, k₁])
+
+/-- At `b = 4` the profile is `8.585… - log (1004 · 401/100 · 104 / 64) < 8.59 - 26/3 < 0`. -/
+private lemma profile₁_neg : profileShapeScoreVarying (3339418 / 5129301) s₁ k₁ < 0 := by
+  rw [profileShapeScoreVarying, rateRoot₁, shapeScore_eq, log_sum_eq (by norm_num)]
+  have h := div_lt_log_of_lt_pow (x := (4 + 1000) * (4 + 1 / 100) * (4 + 100) / 4 ^ 3)
+    (by norm_num) (p := 26) (q := 3) (by norm_num) (by norm_num)
+  generalize log ((4 + 1000) * (4 + 1 / 100) * (4 + 100) / 4 ^ 3) = L at h ⊢
+  norm_num [digammaIncrement, sum_range_succ] at h ⊢
+  linarith
+
+/-- At `b = 10` the profile is `7.118… - log (1010 · 1001/100 · 110 / 1000) > 7.11 - 106/15 > 0`. -/
+private lemma profile₂_pos : 0 < profileShapeScoreVarying (168158 / 192111) s₁ k₁ := by
+  rw [profileShapeScoreVarying, rateRoot₂, shapeScore_eq, log_sum_eq (by norm_num)]
+  have h := log_lt_div_of_pow_lt (x := (10 + 1000) * (10 + 1 / 100) * (10 + 100) / 10 ^ 3)
+    (by norm_num) (p := 106) (q := 15) (by norm_num) (by norm_num)
+  generalize log ((10 + 1000) * (10 + 1 / 100) * (10 + 100) / 10 ^ 3) = L at h ⊢
+  norm_num [digammaIncrement, sum_range_succ] at h ⊢
+  linarith
+
+/-- At `b = 100` the profile is `2.923… - log (1100 · 10001/100 · 200 / 10⁶) < 2.93 - 3 < 0`. -/
+private lemma profile₃_neg : profileShapeScoreVarying (1120090 / 310053) s₁ k₁ < 0 := by
+  rw [profileShapeScoreVarying, rateRoot₃, shapeScore_eq, log_sum_eq (by norm_num)]
+  have h := div_lt_log_of_lt_pow (x := (100 + 1000) * (100 + 1 / 100) * (100 + 100) / 100 ^ 3)
+    (by norm_num) (p := 3) (q := 1) (by norm_num) (by norm_num)
+  generalize log ((100 + 1000) * (100 + 1 / 100) * (100 + 100) / 100 ^ 3) = L at h ⊢
+  norm_num [digammaIncrement, sum_range_succ] at h ⊢
+  linarith
+
+/-- **The overdispersion condition holds** (from the definitions): `μ̂ = 19 / 1100.01`, and the
+residual sum of squares exceeds `∑ kᵢ = 19` (by about `28`). -/
+theorem overdispersed : ∑ i, (k₁ i : ℝ) < ∑ i, ((k₁ i : ℝ) - s₁ i * pooledMean s₁ k₁) ^ 2 := by
+  norm_num [pooledMean, Fin.sum_univ_three, s₁, k₁]
+
+/-- **Heterogeneous size factors: two roots under the overdispersion condition.** Size factors
+`(1000, 1/100, 100)`, counts `(12, 1, 6)`. The profile shape score is negative at the shape with
+rate root `4`, positive at the one with rate root `10` and negative at the one with rate root
+`100`, so the joint score equations have two positive solutions with different shapes, although
+the hypothesis of `exists_score_root_of_overdispersed_varying` holds. Numerically the profile
+vanishes near `a ≈ 0.175, 0.723, 1.385`. Where the likelihood attains its maximum, and whether the
+joint MLE is unique, is not decided here. -/
+theorem two_score_roots : ∃ a b a' b', 0 < a ∧ 0 < b ∧ 0 < a' ∧ 0 < b' ∧ a < a' ∧
+    shapeScore a b s₁ k₁ = 0 ∧ rateScore a b s₁ k₁ = 0 ∧
+    shapeScore a' b' s₁ k₁ = 0 ∧ rateScore a' b' s₁ k₁ = 0 :=
+  exists_two_score_roots hs₁ ⟨0, by simp [k₁]⟩ (by norm_num) (by norm_num) (by norm_num)
+    (Set.mem_uIcc.2 (Or.inl ⟨profile₁_neg.le, profile₂_pos.le⟩))
+    (Set.mem_uIcc.2 (Or.inr ⟨profile₃_neg.le, profile₂_pos.le⟩)) profile₂_pos.ne'
+
+/-- Hence the conclusion of `existsUnique_score_root_const_varying` fails at these heterogeneous
+size factors, under its hypothesis. -/
+example : (∑ i, (k₁ i : ℝ) < ∑ i, ((k₁ i : ℝ) - s₁ i * pooledMean s₁ k₁) ^ 2) ∧
+    ¬ ∃! p : ℝ × ℝ, 0 < p.1 ∧ 0 < p.2 ∧ shapeScore p.1 p.2 s₁ k₁ = 0 ∧
+      rateScore p.1 p.2 s₁ k₁ = 0 := by
+  refine ⟨overdispersed, ?_⟩
+  rintro ⟨p, _, huniq⟩
+  obtain ⟨a, b, a', b', ha, hb, ha', hb', hlt, h1, h2, h3, h4⟩ := two_score_roots
+  have e := (huniq (a, b) ⟨ha, hb, h1, h2⟩).trans (huniq (a', b') ⟨ha', hb', h3, h4⟩).symm
+  exact hlt.ne (Prod.mk.inj e).1
+
+end TwoRootsOverdispersed
 
 /-! ### Consistency: a degenerate model -/
 

@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.Omics.HierarchicalCountExposures
+public import MathlibExt.Biology.Omics.HierarchicalCountPooled
 public import Mathlib.Probability.Independence.InfinitePi
 
 @[expose] public section
@@ -17,6 +18,7 @@ open MeasureTheory ProbabilityTheory Real Filter Topology
 open scoped Nat NNReal
 open MathlibExt.Biology.Omics.HierarchicalCount
 open MathlibExt.Biology.Omics.HierarchicalCountExposures
+open MathlibExt.Biology.Omics.HierarchicalCountPooled
 
 namespace MathlibExtTest.Biology.Omics.HierarchicalCountExposures
 
@@ -42,7 +44,20 @@ example (r : ℝ) :
   norm_num
   ring
 
-/-! ### Pooled conjugacy -/
+/-! ### Pooled conjugacy
+
+Pooled conjugacy with exposures is `HierarchicalCountPooled.pooledPosterior_eq_gammaPDFReal`;
+`pooledLik` and `pooledMarginalLik` unfold to the product of one-cell likelihoods and its integral
+against the prior, so the product form below follows by `exact`. -/
+
+/-- The product-form statement of pooled conjugacy with exposures, for an arbitrary finite set of
+cells, is `HierarchicalCountPooled.pooledPosterior_eq_gammaPDFReal` up to unfolding. -/
+example {ι : Type*} [Fintype ι] {a b : ℝ} (ha : 0 < a) (hb : 0 < b) {s : ι → ℝ}
+    (hs : ∀ i, 0 < s i) (k : ι → ℕ) (r : ℝ) :
+    (∏ i, poissonExposureLik (s i) (k i) r) * gammaPDFReal a b r /
+        (∫ x, ∏ i, poissonExposureLik (s i) (k i) x ∂gammaMeasure a b) =
+      gammaPDFReal (a + (∑ i, k i : ℕ)) (b + ∑ i, s i) r :=
+  pooledPosterior_eq_gammaPDFReal ha hb hs k r
 
 /-- Conjugacy at concrete different exposures: prior `Gamma(3, 1)`, cells with exposures `1, 2`
 and counts `0, 4` give the posterior `Gamma(7, 4)`. -/
@@ -50,8 +65,8 @@ example (r : ℝ) :
     (∏ i : Fin 2, poissonExposureLik (![1, 2] i) (![0, 4] i) r) * gammaPDFReal 3 1 r /
         (∫ x, ∏ i : Fin 2, poissonExposureLik (![1, 2] i) (![0, 4] i) x ∂gammaMeasure 3 1) =
       gammaPDFReal 7 4 r := by
-  rw [pooledPosterior_eq_gammaPDFReal (by norm_num) (by norm_num)
-    (fun i => by fin_cases i <;> norm_num)]
+  refine (pooledPosterior_eq_gammaPDFReal (s := ![1, 2]) (k := ![0, 4]) (by norm_num)
+    (by norm_num) (fun i => by fin_cases i <;> norm_num) r).trans ?_
   simp only [Fin.sum_univ_two, Matrix.cons_val_zero, Matrix.cons_val_one]
   norm_num
 
@@ -61,15 +76,16 @@ example {a b s : ℝ} (ha : 0 < a) (hb : 0 < b) (hs : 0 < s) (k : ℕ) (r : ℝ)
     (∏ _i : Unit, poissonExposureLik s k r) * gammaPDFReal a b r /
         (∫ x, ∏ _i : Unit, poissonExposureLik s k x ∂gammaMeasure a b) =
       poissonExposureLik s k r * gammaPDFReal a b r / marginalLik a b s k := by
-  rw [pooledPosterior_eq_gammaPDFReal (s := fun _ => s) (k := fun _ => k) ha hb (fun _ => hs),
-    posterior_eq_gammaPDFReal ha hb hs]
+  refine (pooledPosterior_eq_gammaPDFReal (s := fun _ : Unit => s) (k := fun _ => k) ha hb
+    (fun _ => hs) r).trans ?_
+  rw [posterior_eq_gammaPDFReal ha hb hs]
   simp
 
 /-- With no cells the pooled posterior is the prior `Gamma(a, b)`. -/
 example {a b : ℝ} (ha : 0 < a) (hb : 0 < b) (s : Empty → ℝ) (k : Empty → ℕ) (r : ℝ) :
     (∏ i, poissonExposureLik (s i) (k i) r) * gammaPDFReal a b r /
         (∫ x, ∏ i, poissonExposureLik (s i) (k i) x ∂gammaMeasure a b) = gammaPDFReal a b r := by
-  simpa using pooledPosterior_eq_gammaPDFReal ha hb (s := s) (fun i => i.elim) k r
+  exact (pooledPosterior_eq_gammaPDFReal ha hb (s := s) (fun i => i.elim) k r).trans (by simp)
 
 /-! ### Deterministic consistency -/
 

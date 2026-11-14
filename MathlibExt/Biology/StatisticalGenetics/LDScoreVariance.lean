@@ -27,16 +27,15 @@ least-squares slope of the association statistics `χ²_j` of `M` markers on the
   contiguous LD blocks, which is the block-dependence model below).
 * Built on (merged): `LDScore.Model`, `LDScore.ldScore` (`LDScore.lean`);
   `LDScoreInflation.chiSqStrat` (`LDScoreInflation.lean`); `FiniteProbability.olsSlope`,
-  `sxy`, `sampleMean`, `sum_sub_sampleMean` (`FiniteProbability.lean`); Mathlib's
-  `covariance_fun_sum_fun_sum`, `covariance_self`, `IndepFun.covariance_eq_zero`.
+  `sxy`, `sampleMean`, `sum_sub_sampleMean`, `sxy_eq_sum_sub_mul` (`FiniteProbability.lean`);
+  Mathlib's `covariance_fun_sum_fun_sum`, `covariance_self`, `IndepFun.covariance_eq_zero`.
 * Taken as a hypothesis (open PR, T147, `LDScoreRegression.lean`, not imported): the estimator
   `h2Hat N M ℓ χ = olsSlope ℓ χ * M / N`. Every statement here takes a random variable `est`
   together with `hest : ∀ ω, est ω = olsSlope ℓ (fun j => χ j ω) * M / N`; once T147 is merged,
   `est := fun ω => h2Hat N M ℓ fun j => χ j ω` and `hest := fun _ => rfl`. The evariance limit
   `tendsto_evariance_h2Hat_chiSqStrat` is then exactly the `hvar` hypothesis of T147's
   consistency theorem `tendstoInMeasure_h2Hat`.
-* Proved here: everything else. The helper `sxy_eq_sum_sub_mul'` restates T147's
-  `sxy_eq_sum_sub_mul` (private, to avoid a public duplicate before T147 is merged).
+* Proved here: everything else.
 
 ## Why a model extension is needed
 
@@ -154,20 +153,11 @@ theorem variance_fun_sum_mul_le [IsFiniteMeasure μ] {ι : Type*} [Fintype ι] (
 
 /-! ### The least-squares slope as a linear combination -/
 
-/-- `S_xy = ∑ i, (x i - x̄) * y i`. Restates T147's `sxy_eq_sum_sub_mul` (open PR). -/
-private theorem sxy_eq_sum_sub_mul' {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
-    sxy x y = ∑ i, (x i - sampleMean x) * y i := by
-  have h : ∀ i, (x i - sampleMean x) * (y i - sampleMean y) =
-      (x i - sampleMean x) * y i - (x i - sampleMean x) * sampleMean y := fun i => by ring
-  rw [sxy]
-  simp only [h]
-  rw [sum_sub_distrib, ← sum_mul, sum_sub_sampleMean, zero_mul, sub_zero]
-
 /-- The least-squares slope is the linear combination
 `b̂ = ∑ j, ((x j - x̄) / S_xx) * y j` of the responses. -/
 theorem olsSlope_eq_sum {ι : Type*} [Fintype ι] (x y : ι → ℝ) :
     olsSlope x y = ∑ j, (x j - sampleMean x) / sxy x x * y j := by
-  rw [olsSlope, sxy_eq_sum_sub_mul', sum_div]
+  rw [olsSlope, sxy_eq_sum_sub_mul, sum_div]
   exact sum_congr rfl fun j _ => by ring
 
 /-- The squared weights of the least-squares slope sum to `1 / S_xx` (both sides are `0` when

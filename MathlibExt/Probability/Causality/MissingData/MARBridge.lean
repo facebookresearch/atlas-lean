@@ -17,12 +17,21 @@ public import Mathlib.Probability.Kernel.Condexp
 
 `MissingAtRandomCondIndepFun μ R X hX Y` states missing at random (Rubin 1976) as Mathlib's
 conditional independence `R ⊥ Y | σ(X)` of the response `ω ↦ ω ∈ R` and the outcome, on a standard
-Borel sample space with a finite measure. `MissingData.GeneralIPW` derives from it the *mean form*
-`μ[R.indicator Y | m] =ᵐ μ[R.indicator 1 | m] * μ[Y | m]` that the inverse-weighting theorems
-assume (`condExp_inter_preimage_ae_eq_mul_of_condIndepFun`, then
-`condExp_indicator_ae_eq_mul_of_mar`). This file proves the product rule for conditionally
-independent real random variables and the converse: the mean form for every transform of the
-outcome implies MAR.
+Borel sample space with a finite measure. `MissingData.GeneralIPW` derives from it two forms, and
+the inverse-weighting theorems assume different ones:
+
+* the *set-wise form* `P(R ∩ {Y ∈ S} | σ(X)) = P(R | σ(X)) P(Y ∈ S | σ(X))` for every measurable
+  `S` (`condExp_inter_preimage_ae_eq_mul_of_condIndepFun`), the hypothesis `hMAR` of
+  `integral_ipw_eq_integral_of_mar_sigma` in `MissingData.GeneralIPW`;
+* the *mean form* `μ[R.indicator Y | m] =ᵐ μ[R.indicator 1 | m] * μ[Y | m]`, obtained from the
+  set-wise form by `condExp_indicator_ae_eq_mul_of_mar`, the hypothesis `hMAR` of
+  `integral_ipw_eq_integral_of_mar_condExp` in `MissingData.Identification`.
+
+The mean form is the weaker statement and does not discharge the set-wise `hMAR` (the test file
+has an outcome with the mean form but not MAR). This file proves the product rule for
+conditionally independent real random variables, the converse (the mean form for every transform
+of the outcome implies MAR), and, for a countably valued covariate, both forms from the discrete
+conditional independence `CondIndepDiscrete μ R Y X` on any sample space.
 
 ## Main results
 
@@ -34,15 +43,28 @@ outcome implies MAR.
   bridge applied to `g ∘ Y`. The converse uses only indicators `g = 1_t`, that is the set-wise
   form `P(R ∩ {Y ∈ t} | σ(X)) = P(R | σ(X)) P(Y ∈ t | σ(X))`, and gets the other events
   `∅, Rᶜ, Ω` of `σ(R)` by linearity of conditional expectation.
+* `condExp_inter_preimage_ae_eq_mul_of_condIndepDiscrete`: for a countably valued `X` with
+  measurable singletons and a finite measure, `CondIndepDiscrete μ R Y X` gives the set-wise form,
+  with no standard Borel assumption. Each conditional probability given `σ(X)` is a propensity at
+  `X ω` (`condExp_indicator_comap_ae_eq`), so the set-wise form is checked value by value.
+* `condExp_indicator_mul_of_condIndepDiscrete`: on the same domain, `CondIndepDiscrete μ R Y X`
+  gives the mean form for an integrable real outcome, through the set-wise form and
+  `condExp_indicator_ae_eq_mul_of_mar`. On a standard Borel space it also follows from
+  `missingAtRandomCondIndepFun_iff_condIndepDiscrete`; this proof does not use that bridge.
 
 The test file shows that the mean form for `Y` alone does not imply MAR: a two-coin outcome
-uncorrelated with, but not independent of, the response.
+uncorrelated with, but not independent of, the response. It also applies the discrete results on
+a sample space that is not standard Borel, and gives a missing-not-at-random law on that space
+where `CondIndepDiscrete` and the set-wise form both fail.
 
 ## Not covered
 
-All results keep the standard Borel sample space and finite measure that Mathlib's `CondIndepFun`
-requires; conditional independence on a general measurable space is not defined in Mathlib. The
-converse is proved for the covariate σ-algebra `σ(X)` only, not for a general sub-σ-algebra.
+The results about `CondIndepFun` and `MissingAtRandomCondIndepFun` keep the standard Borel sample
+space and finite measure that Mathlib's `CondIndepFun` requires; conditional independence on a
+general measurable space is not defined in Mathlib. The discrete results drop the standard Borel
+assumption only for a countably valued covariate with measurable singletons; a covariate with
+uncountably many values on a sample space that is not standard Borel is not covered. The converse
+is proved for the covariate σ-algebra `σ(X)` only, not for a general sub-σ-algebra.
 
 ## References
 
@@ -142,6 +164,55 @@ theorem missingAtRandomCondIndepFun_iff_forall_condExp [StandardBorelSpace Ω]
     ring
   · simp only [Set.univ_inter, Set.indicator_univ]
     exact ae_of_all _ fun ω => by simp [hone]
+
+/-! ### Discrete MAR without a standard Borel sample space -/
+
+omit m𝒳 [MeasurableSpace 𝒴] in
+/-- For a countably valued `X`, almost every `ω` has `P(X = X ω) ≠ 0`. -/
+private lemma ae_measure_preimage_singleton_ne_zero [Countable 𝒳] {X : Ω → 𝒳} :
+    ∀ᵐ ω ∂μ, μ (X ⁻¹' {X ω}) ≠ 0 := by
+  have hsub : {ω | ¬μ (X ⁻¹' {X ω}) ≠ 0} ⊆ ⋃ x : {x : 𝒳 // μ (X ⁻¹' {x}) = 0}, X ⁻¹' {x.1} :=
+    fun ω hω => Set.mem_iUnion.2 ⟨⟨X ω, not_not.1 hω⟩, rfl⟩
+  exact ae_iff.2 (measure_mono_null hsub (measure_iUnion_null fun x => x.2))
+
+/-- **Discrete MAR gives set-wise MAR given `σ(X)`, on any sample space.** For a countably valued
+covariate `X` with measurable singletons and a finite measure, the discrete conditional
+independence `CondIndepDiscrete μ R Y X` implies
+`P(R ∩ {Y ∈ S} | σ(X)) = P(R | σ(X)) P(Y ∈ S | σ(X))` almost everywhere for every measurable `S`.
+No standard Borel assumption: each conditional probability is the propensity at `X ω`
+(`condExp_indicator_comap_ae_eq`), and at a value of positive probability the propensity product
+rule is `CondIndepDiscrete`. For a real outcome this is the set-wise hypothesis `hMAR` of
+`condExp_indicator_ae_eq_mul_of_mar` and `integral_ipw_eq_integral_of_mar_sigma`. -/
+theorem condExp_inter_preimage_ae_eq_mul_of_condIndepDiscrete [IsFiniteMeasure μ] [Countable 𝒳]
+    [MeasurableSingletonClass 𝒳] {R : Set Ω} {X : Ω → 𝒳} {Y : Ω → 𝒴}
+    (h : CondIndepDiscrete μ R Y X) (hR : MeasurableSet R) (hX : Measurable X)
+    (hY : Measurable Y) :
+    ∀ S, MeasurableSet S →
+      (μ⟦R ∩ Y ⁻¹' S | m𝒳.comap X⟧) =ᵐ[μ] (μ⟦R | m𝒳.comap X⟧) * (μ⟦Y ⁻¹' S | m𝒳.comap X⟧) := by
+  intro S hS
+  filter_upwards [condExp_indicator_comap_ae_eq (μ := μ) hX (hR.inter (hY hS)),
+    condExp_indicator_comap_ae_eq (μ := μ) hX hR, condExp_indicator_comap_ae_eq (μ := μ) hX (hY hS),
+    ae_measure_preimage_singleton_ne_zero (μ := μ) (X := X)] with ω h1 h2 h3 hω
+  rw [h1, Pi.mul_apply, h2, h3]
+  have hx : μ.real (X ⁻¹' {X ω}) ≠ 0 := (measureReal_eq_zero_iff).not.2 hω
+  rw [propensity, propensity, propensity, div_mul_div_comm,
+    div_eq_div_iff hx (mul_ne_zero hx hx), ← mul_assoc, mul_left_inj' hx]
+  exact h S hS (X ω)
+
+/-- **Discrete MAR gives mean MAR, on any sample space.** For a countably valued covariate `X`
+with measurable singletons, a finite measure and an integrable real outcome,
+`CondIndepDiscrete μ R Y X` implies `E[1_R Y | σ(X)] = P(R | σ(X)) E[Y | σ(X)]` almost everywhere:
+the mean-form hypothesis `hMAR` of `integral_ipw_eq_integral_of_mar_condExp`. Proved by
+`condExp_inter_preimage_ae_eq_mul_of_condIndepDiscrete` and
+`condExp_indicator_ae_eq_mul_of_mar`, with no standard Borel assumption. -/
+theorem condExp_indicator_mul_of_condIndepDiscrete [IsFiniteMeasure μ] [Countable 𝒳]
+    [MeasurableSingletonClass 𝒳] {R : Set Ω} {X : Ω → 𝒳} {Y : Ω → ℝ}
+    (h : CondIndepDiscrete μ R Y X) (hR : MeasurableSet R) (hX : Measurable X)
+    (hY : Measurable Y) (hYi : Integrable Y μ) :
+    μ[R.indicator Y | m𝒳.comap X] =ᵐ[μ]
+      fun ω => μ[R.indicator 1 | m𝒳.comap X] ω * μ[Y | m𝒳.comap X] ω :=
+  condExp_indicator_ae_eq_mul_of_mar hX.comap_le hR hY hYi
+    (condExp_inter_preimage_ae_eq_mul_of_condIndepDiscrete h hR hX hY)
 
 end MAR
 

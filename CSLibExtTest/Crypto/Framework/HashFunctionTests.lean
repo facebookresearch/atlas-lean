@@ -8,14 +8,13 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import CSLibExt.Crypto.Protocols.Commitment.HashCommitmentFramework
+public import CSLibExt.Crypto.Protocols.Commitment.HashCommitment
 public import Mathlib.Tactic.NormNum
 
 /-!
 # Tests for the Framework hash-function games
 
-Toy computations for `CSLibExt.Crypto.Framework.HashFunction` and for the hash-commitment bridge
-`CSLibExt.Crypto.Protocols.Commitment.HashCommitmentFramework`.
+Toy computations for `CSLibExt.Crypto.Framework.HashFunction` and for the hash-commitment binding bound.
 
 * **Injective hash.** `succHash` (`x ↦ x + 1` on `ZMod 5`) is injective, so every collision
   finder has advantage `0` (`collAdvantage_eq_zero_of_injective`); computed directly, the finder
@@ -26,11 +25,9 @@ Toy computations for `CSLibExt.Crypto.Framework.HashFunction` and for the hash-c
 * **Target collision resistance.** `tcrAdv` commits to `0` before it sees the key and then answers
   `1`. Its collision finder `tcrToColl tcrAdv` is `pairFinder`, so its target-collision advantage
   against `keyedHash` is `1/2` (`tcrAdvantage_eq_collAdvantage`).
-* **Hash-commitment bridge.** For the commitment `H (r, m) = r + m` on `ZMod 5`, the binding
+* **Hash-commitment binding.** For the commitment `H (r, m) = r + m` on `ZMod 5`, the binding
   adversary `openTwice`, which opens `3` as `(2, 1)` and as `(1, 2)`, always wins. Through
-  `bindingAdvantage_le_framework_collAdvantage`, its reduction is a Framework collision finder with
-  advantage `1`, and `framework_collAdvantage_toCollisionFinder` gives the same value in the local
-  collision game of `HashCommitment`.
+  `bindingAdvantage_le`, its reduction is a Framework collision finder with advantage `1`.
 -/
 
 @[expose] public section
@@ -96,9 +93,9 @@ theorem tcrToColl_tcrAdv : tcrToColl tcrAdv = pairFinder := rfl
 theorem tcrAdvantage_keyedHash_tcrAdv : tcrAdvantage keyedHash tcrAdv = 1 / 2 := by
   rw [tcrAdvantage_eq_collAdvantage, tcrToColl_tcrAdv, collAdvantage_keyedHash_pairFinder]
 
-/-! ### The hash-commitment bridge -/
+/-! ### Hash-commitment binding -/
 
-section Bridge
+section Binding
 
 open Cslib.Crypto.Protocols.Commitment
 
@@ -118,22 +115,16 @@ theorem bindingAdvantage_openTwice :
   · rfl
   · exact (hw (by decide)).elim
 
-/-- Through the bridge, the reduction of `openTwice` is a Framework collision finder against
+/-- The reduction of `openTwice` is a Framework collision finder against
 `⟨PMF.pure (), addHash⟩` with advantage `1`. -/
 theorem framework_collAdvantage_reduction_openTwice :
-    collAdvantage ⟨PMF.pure (), addHash⟩ (HashCommitment.reduction openTwice).toCollisionFinder =
+    collAdvantage ⟨PMF.pure (), addHash⟩ (HashCommitment.reduction openTwice) =
       1 :=
   le_antisymm (winProb_le_one _)
     (bindingAdvantage_openTwice ▸
-      HashCommitment.bindingAdvantage_le_framework_collAdvantage _ addHash openTwice)
+      HashCommitment.bindingAdvantage_le ⟨PMF.pure (), addHash⟩ openTwice)
 
-/-- The bridge equality gives the same value in the local collision game. -/
-example :
-    HashCommitment.collAdvantage (PMF.pure ()) addHash (HashCommitment.reduction openTwice) =
-      1 := by
-  rw [← HashCommitment.framework_collAdvantage_toCollisionFinder,
-    framework_collAdvantage_reduction_openTwice]
 
-end Bridge
+end Binding
 
 end Cslib.Crypto.FrameworkTests.HashFunction
