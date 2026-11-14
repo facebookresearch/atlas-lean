@@ -63,10 +63,10 @@ clue `(r, c, t)` sits in cell `(r, c)` and has kind `t`: `0` for `+`, `1` for `-
 `|`. -/
 abbrev TatamibariInstance := ℕ × ℕ × List (ℕ × ℕ × ℕ)
 
-/-- Well-formedness of an instance: every clue lies in the grid and has one of the three kinds,
-and no cell holds two clues. -/
+/-- Well-formedness of an instance: the grid has at least one row and one column, every clue
+lies in the grid and has one of the three kinds, and no cell holds two clues. -/
 def WellFormed (i : TatamibariInstance) : Prop :=
-  (∀ t ∈ i.2.2, t.1 < i.1 ∧ t.2.1 < i.2.1 ∧ t.2.2 < 3) ∧
+  0 < i.1 ∧ 0 < i.2.1 ∧ (∀ t ∈ i.2.2, t.1 < i.1 ∧ t.2.1 < i.2.1 ∧ t.2.2 < 3) ∧
     (i.2.2.map fun t => (t.1, t.2.1)).Nodup
 
 /-- A grid-aligned rectangle `(r, c, h, w)` (top-left cell `(r, c)`, height `h`, width `w`)
