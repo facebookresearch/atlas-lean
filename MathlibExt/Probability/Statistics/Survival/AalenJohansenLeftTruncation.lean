@@ -36,11 +36,14 @@ A subject entering exactly at `tⱼ` is not in the risk set at `tⱼ`. These cou
 **Aalen–Johansen estimator** `P̂(s, t) = ∏_{s < tⱼ ≤ t} (I + ΔΛ̂(tⱼ))` is the untruncated
 estimator of that file evaluated on the delayed-entry risk sets (`transitionMatrix`).
 
-Unlike the untruncated case, a state can have nobody at risk at a grid time strictly inside the
-follow-up. The Nelson–Aalen jumps out of such a state are totalized to `0`, so the estimator keeps
-the state's row equal to the identity row there (`transitionMatrix_apply_of_atRisk_eq_zero`): the
-data identify no transition intensity out of that state, and the identity row is a convention, not
-an estimate.
+A state can have nobody at risk at a grid time even without truncation (an absorbing state
+always does). What delayed entry adds is an empty overall risk set in the middle of follow-up:
+without truncation the total number under observation is non-increasing in `j`, but with delayed
+entry it can drop to `0` at a grid time between two times where somebody is at risk. The
+Nelson–Aalen jumps out of a state with an empty risk set are totalized to `0`, so the estimator
+keeps the state's row equal to the identity row there
+(`transitionMatrix_apply_of_atRisk_eq_zero`): the data identify no transition intensity out of
+that state, and the identity row is a convention, not an estimate.
 
 ## Main results
 
