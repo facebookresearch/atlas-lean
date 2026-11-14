@@ -39,8 +39,9 @@ A drawing places each vertex at a point of `ℝ × ℝ`, injectively, and draws 
 closed straight-line segment between its endpoints (MathlibExt's `SimpleGraph.Segment`). It is
 rectilinear when every edge is horizontal or vertical (its endpoints share the first or the
 second coordinate), and it has no crossing when two different edges meet only at common
-endpoints. The crossing condition is the one of MathlibExt's straight-line planarity predicate
-`SimpleGraph.IsPlanar`, so a rectilinear planar graph is planar. Every rectilinear planar graph
+endpoints and no vertex lies on an edge except at the edge's own endpoints. The edge-crossing
+condition is the one of MathlibExt's straight-line planarity predicate `SimpleGraph.IsPlanar`,
+so a rectilinear planar graph is planar. Every rectilinear planar graph
 has maximum degree at most `4`: two edges leaving a vertex in the same of the four axis
 directions overlap.
 
@@ -70,14 +71,16 @@ def WellFormed (i : RectilinearPlanarityInstance) : Prop :=
   i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
 
 /-- `f` is a rectilinear planar drawing of `G`: `f` is injective, every edge is a horizontal or
-vertical segment, and two different edges meet only at common endpoints. -/
+vertical segment, two different edges meet only at common endpoints, and no vertex lies on an
+edge other than at its own endpoints. -/
 def IsRectilinearDrawing {V : Type*} (G : SimpleGraph V) (f : V → ℝ × ℝ) : Prop :=
   Function.Injective f ∧
     (∀ ⦃v w⦄, G.Adj v w → (f v).1 = (f w).1 ∨ (f v).2 = (f w).2) ∧
-    ∀ ⦃v w x y⦄, G.Adj v w → G.Adj x y →
+    (∀ ⦃v w x y⦄, G.Adj v w → G.Adj x y →
       ({v, w} : Set V) ≠ {x, y} →
       SimpleGraph.Segment (f v) (f w) ∩ SimpleGraph.Segment (f x) (f y) ⊆
-        ({f v, f w} : Set (ℝ × ℝ)) ∩ {f x, f y}
+        ({f v, f w} : Set (ℝ × ℝ)) ∩ {f x, f y}) ∧
+    ∀ ⦃v w⦄ u, G.Adj v w → f u ∈ SimpleGraph.Segment (f v) (f w) → u = v ∨ u = w
 
 /-- The graph has a rectilinear planar drawing. -/
 def RectilinearPlanarityFeasible (i : RectilinearPlanarityInstance) : Prop :=
