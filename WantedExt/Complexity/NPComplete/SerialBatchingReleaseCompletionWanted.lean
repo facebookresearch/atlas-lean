@@ -33,10 +33,15 @@ namespace MetaMathlibExt.Complexity.NPComplete.SerialBatchingReleaseCompletion
 /-!
 # SERIAL-BATCHING TOTAL COMPLETION TIME WITH RELEASE DATES (1|s-batch;r_i|ΣC_i) is NP-complete
 
-INSTANCE: jobs `1, …, n` with processing times `p_j` and release dates `r_j` (natural numbers), a
-setup time `s`, and a bound `K`.
+INSTANCE: jobs `1, …, n` with positive processing times `p_j` and release dates `r_j` (natural
+numbers), a positive setup time `s`, and a positive bound `K`.
 QUESTION: is there a serial-batching schedule on one machine in which no job starts before its
 release date and whose total completion time `∑_j C_j` is at most `K`?
+
+Processing times and the bound are positive, as in the classical problem `1|r_j|ΣC_j` whose
+NP-hardness the Brucker-Knust entry cites (the repository's
+`TotalCompletionTimeWithReleaseTimesWanted` states it with the same conditions); this is the
+positive-processing-time variant, and zero-length jobs are not instances.
 
 Serial batching (Baptiste and Jouglet 2001; Brucker and Knust's class `s-batch`): the jobs are
 partitioned into batches processed one after another on the machine; a constant setup time `s`
