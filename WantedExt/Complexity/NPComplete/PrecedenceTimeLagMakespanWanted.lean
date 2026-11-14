@@ -57,7 +57,10 @@ giving the closure loses nothing. Schedules are one-processor schedules in Garey
 sense ([SS1], reused from `SequencingToMinimizeWeightedTardinessWanted` as
 `IsOneProcessorSchedule`: one-to-one start times `σ : J → ℤ₀⁺` such that a job starting later
 starts no earlier than the completion of the other). With integer lags and unit processing
-times, integer start times lose no generality. Binary encoding of all numbers.
+times, integer start times lose no generality. The jobs are listed explicitly, one processing
+time per job, each required to be `1` (the convention of `PrecedenceConstrainedSchedulingWanted`
+and `ChainsTimeLagsUnitMakespanWanted`, which list unit lengths), so the input length grows with
+the number of jobs. Binary encoding of all numbers.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -70,21 +73,22 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number of jobs `n`, the pairs `(i, j)` with `i → j`, the time lag `l` and
-the bound `K`. -/
-abbrev PrecedenceTimeLagMakespanInstance := ℕ × List (ℕ × ℕ) × ℕ × ℕ
+/-- An instance: the processing times `[p_1, …, p_n]` of the jobs (all `1`), the pairs `(i, j)`
+with `i → j`, the time lag `l` and the bound `K`. -/
+abbrev PrecedenceTimeLagMakespanInstance := List ℕ × List (ℕ × ℕ) × ℕ × ℕ
 
-/-- The jobs of the instance, `Fin n`. -/
-abbrev Job (i : PrecedenceTimeLagMakespanInstance) : Type := Fin i.1
+/-- The jobs of the instance, `Fin n` for `n` listed jobs. -/
+abbrev Job (i : PrecedenceTimeLagMakespanInstance) : Type := Fin i.1.length
 
 /-- The precedence relation: `j → j'` when the pair `(j, j')` is listed. -/
 def Prec (i : PrecedenceTimeLagMakespanInstance) (j j' : Job i) : Prop :=
   ((j : ℕ), (j' : ℕ)) ∈ i.2.1
 
-/-- Well-formedness of an instance: every listed pair names two jobs, and the listed pairs
-form a strict partial order. -/
+/-- Well-formedness of an instance: every processing time is `1`, every listed pair names two
+jobs, and the listed pairs form a strict partial order. -/
 def WellFormed (i : PrecedenceTimeLagMakespanInstance) : Prop :=
-  (∀ p ∈ i.2.1, p.1 < i.1 ∧ p.2 < i.1) ∧ IsStrictOrder (Job i) (Prec i)
+  (∀ p ∈ i.1, p = 1) ∧ (∀ p ∈ i.2.1, p.1 < i.1.length ∧ p.2 < i.1.length) ∧
+    IsStrictOrder (Job i) (Prec i)
 
 /-- Some one-processor schedule `σ` of the unit-time jobs (start times `σ j`, completion
 times `σ j + 1`) satisfies every time lag (`j → j'` implies `σ j + 1 + l ≤ σ j'`) and has
