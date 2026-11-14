@@ -155,7 +155,8 @@ theorem tendsto_traj : Tendsto traj atTop (𝓝 (1 / 2)) := by
   rw [sub_zero] at h2
   exact h2
 
-/-- The direct limit is the computed equilibrium; for `m = 0` the same rates go extinct. -/
+/-- The direct limit is the computed equilibrium. (For `m = 0` the same rates go extinct: see the
+`propagule_rain_persistence` example below.) -/
 example : Tendsto traj atTop (𝓝 (immigrationEq 1 1 (1 / 2))) := by
   rw [immigrationEq_one_one]; exact tendsto_traj
 
