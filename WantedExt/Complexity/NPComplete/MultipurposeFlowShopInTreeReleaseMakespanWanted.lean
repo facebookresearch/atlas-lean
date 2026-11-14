@@ -58,7 +58,9 @@ successor of `i` when `i → k` and no job `c` has `i → c → k`. Release date
 (Section 1.2: "a release date `r_i`, on which the first operation of `J_i` becomes available for
 processing"); no operation of job `i` starts before `r_i`, which by the stage order is the same
 as its first operation not starting before `r_i`. The jobs are `Fin n` for `n` listed release
-dates. Binary encoding of all numbers (the problem is NP-complete in the strong sense).
+dates. Every stage machine set must be nonempty: an operation "has to be processed by one
+machine in the set" (Brucker, Chapter 10). Binary encoding of all numbers (the problem is
+NP-complete in the strong sense).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -93,11 +95,13 @@ def ImmediateSuccessor (i : MultipurposeFlowShopInTreeReleaseMakespanInstance) (
     Prop :=
   Prec i.2.2.2.1 j k ∧ ∀ c, ¬ (Prec i.2.2.2.1 j c ∧ Prec i.2.2.2.1 c k)
 
-/-- Well-formedness of an instance: the machine environment is well formed, the listed pairs
-describe a precedence relation on the jobs, and it is an in-tree (every job has at most one
-immediate successor). -/
+/-- Well-formedness of an instance: the machine environment is well formed and every stage
+machine set is nonempty (each operation is processed by one machine of its set), the listed
+pairs describe a precedence relation on the jobs, and it is an in-tree (every job has at most
+one immediate successor). -/
 def WellFormed (i : MultipurposeFlowShopInTreeReleaseMakespanInstance) : Prop :=
-  StagesWellFormed i.1 i.2.1 ∧ PrecedenceWellFormed i.2.2.1.length i.2.2.2.1 ∧
+  StagesWellFormed i.1 i.2.1 ∧ (∀ M ∈ i.2.1, M ≠ []) ∧
+    PrecedenceWellFormed i.2.2.1.length i.2.2.2.1 ∧
     ∀ j a b, ImmediateSuccessor i j a → ImmediateSuccessor i j b → a = b
 
 /-- Some MPM flow-shop schedule of the unit-time jobs obeys the precedence constraints, starts
