@@ -83,10 +83,10 @@ def IsKey {n : ℕ} (F : Finset (Cslib.Databases.FD (Fin n))) (R R' : Finset (Fi
   R' ⊆ R ∧ Cslib.Databases.Derives F ⟨R', R⟩ ∧ ∀ R'' ⊂ R', ¬ Cslib.Databases.Derives F ⟨R'', R⟩
 
 /-- Well-formedness of an instance: every dependency is a pair of subsets of `A`, `R ⊆ A`,
-and every member of `K` is a key for `⟨R, F⟩`. -/
+and every member of `K` is a subset of `A` that is a key for `⟨R, F⟩`. -/
 def WellFormed (i : AdditionalKeyInstance) : Prop :=
   (∀ p ∈ i.2.1, (∀ a ∈ p.1, a < i.1) ∧ ∀ a ∈ p.2, a < i.1) ∧ (∀ a ∈ i.2.2.1, a < i.1) ∧
-    ∀ k ∈ i.2.2.2, IsKey (deps i.1 i.2.1) (attrs i.1 i.2.2.1) (attrs i.1 k)
+    ∀ k ∈ i.2.2.2, (∀ a ∈ k, a < i.1) ∧ IsKey (deps i.1 i.2.1) (attrs i.1 i.2.2.1) (attrs i.1 k)
 
 /-- Some `R' ⊆ R` outside `K` has `(R', R) ∈ F*`, and no proper subset `R'' ⊂ R'` has
 `(R'', R) ∈ F*`. -/
