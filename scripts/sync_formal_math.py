@@ -9,10 +9,10 @@ and its first-parent history); it never fetches, so internal automation fetches 
 commit first. Classifies every `.lean` file under the ATLAS root libraries, writes the manifest,
 and prints a sync report: added, removed, changed, and diverged rows.
 
-Fails closed, writing nothing, when a file newly diverges from Formal-Math without a rationale
-and backport status. Give them with `--rationales`, a JSON object mapping each path to
-{"rationale": "...", "backport": "..."}; rows already diverged in the current manifest keep
-theirs. Output is deterministic for a fixed ATLAS tree and upstream commit.
+Fails closed, writing neither manifest nor report, when a file newly diverges from Formal-Math
+without a rationale and backport status. Give them with `--rationales`, a JSON object mapping each
+path to {"rationale": "...", "backport": "..."}. A row already diverged in the current manifest keeps
+its explanation only while its published and upstream hashes are unchanged. Output is deterministic for a fixed ATLAS tree and upstream commit.
 """
 from __future__ import annotations
 
@@ -173,7 +173,10 @@ def build(atlas: Path, repo: Path, commit: str, repository: str, previous: dict,
             row.update(classify(text, up_text, history.get(path, []), oid, blobs))
             if row["disposition"] == "diverged":
                 old = old_rows.get(path, {})
-                source = rationales.get(path) if path in rationales else old if old.get("disposition") == "diverged" else {}
+                # A recorded explanation covers only the exact difference it was written for.
+                same = old.get("disposition") == "diverged" and all(
+                    old.get(k) == row[k] for k in ("published_sha256", "upstream_sha256"))
+                source = rationales.get(path) if path in rationales else old if same else {}
                 if explained(source):
                     row["rationale"], row["backport"] = source["rationale"], source["backport"]
                 else:
@@ -243,8 +246,6 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit("sync: --rationales must be a JSON object mapping paths to {rationale, backport}")
     manifest, unexplained = build(a.atlas, a.formal_math, commit, a.repository, previous, rationales)
     text = report(previous, manifest)
-    if a.report:
-        a.report.write_text(text + "\n", encoding="utf-8")
     print(text)
     if unexplained:
         print(f"FAIL [formal-math-sync]: {len(unexplained)} new divergence(s) without a rationale and "
@@ -252,6 +253,8 @@ def main(argv: list[str] | None = None) -> int:
         for path in unexplained:
             print(f"  {path}", file=sys.stderr)
         return 1
+    if a.report:
+        a.report.write_text(text + "\n", encoding="utf-8")
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(dump_manifest(manifest), encoding="utf-8")
     print(f"wrote {manifest_path} ({manifest['total']} rows)")

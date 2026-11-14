@@ -268,10 +268,12 @@ class SyncTest(unittest.TestCase):
         return code, out.getvalue(), err.getvalue()
 
     def test_fails_closed_then_classifies_and_verifies(self) -> None:
-        code, _, err = self.sync()
+        report_path = self.atlas.parent / "report.md"
+        code, _, err = self.sync("--report", str(report_path))
         self.assertEqual(code, 1)
         self.assertIn("MathlibExt/Edited.lean", err)
         self.assertFalse((self.atlas / c.MANIFEST).exists(), "fail-closed run must not write the manifest")
+        self.assertFalse(report_path.exists(), "fail-closed run must not write the report")
 
         rationales = self.atlas.parent / "rationales.json"
         for bad in ({"rationale": " ", "backport": "pending"}, {"rationale": "fix", "backport": ["pending"]},
@@ -308,6 +310,15 @@ class SyncTest(unittest.TestCase):
         code, _, err = self.sync()
         self.assertEqual(code, 1)
         self.assertIn("MathlibExt/Same.lean", err)
+        self.assertNotIn("MathlibExt/Edited.lean", err, "an unchanged divergence keeps its explanation")
+        write(self.atlas, "MathlibExt/Same.lean", c.META + "\n" + BODY)
+
+        # A diverged file that changes again needs a fresh explanation.
+        write(self.atlas, "MathlibExt/Edited.lean", c.META + "\n" + BODY + "\ndef fix : Nat := 9\n")
+        code, _, err = self.sync()
+        self.assertEqual(code, 1)
+        self.assertIn("MathlibExt/Edited.lean", err)
+        self.assertEqual((self.atlas / c.MANIFEST).read_bytes(), first_bytes, "rejected sync must not write")
 
 
 if __name__ == "__main__":

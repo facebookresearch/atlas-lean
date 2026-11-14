@@ -49,6 +49,7 @@ scripts/sync_formal_math.py --formal-math <formal-math checkout> --commit <sha> 
 
 The script reads Formal-Math only through `git` in the given local repository and never fetches.
 It regenerates the manifest and prints a report of added, removed, changed and diverged rows. It
-refuses to write the manifest when a file newly diverges without a rationale; pass those as
-`{"<path>": {"rationale": "...", "backport": "..."}}` in `--rationales`. Rows already diverged in
-the manifest keep their rationale.
+refuses to write the manifest or the report when a file newly diverges without a rationale; pass
+those as `{"<path>": {"rationale": "...", "backport": "..."}}` in `--rationales`. A row already
+diverged in the manifest keeps its rationale only while its published and upstream hashes are
+unchanged.
