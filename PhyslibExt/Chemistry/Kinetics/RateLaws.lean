@@ -8,25 +8,81 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Inv
-public import Mathlib.Analysis.Calculus.Deriv.MeanValue
-public import Mathlib.Analysis.Calculus.MeanValue
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+public import MathlibExt.Biology.Biophysics.CompartmentKinetics
+
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Tactic
 
 /-!
 # Rate laws
 
-Extent-rate convention, integrated rate laws (orders 0, 1, 2), half-life
-characterization, rate-constant units, and a pseudo-first-order error bound.
+Extent-rate convention, integrated rate laws of orders 0, 1 and 2, model-specific half-lives, the
+scalar rate group and a pseudo-first-order error bound.
+
+## i. Overview
+
+The rate of a reaction is the extent rate `v = (1 / V) dξ/dt`, and at constant volume each
+concentration changes as `dc/dt = ν v` with its stoichiometric number `ν`. The rate laws `v = k`,
+`v = k[A]`, `v = k[A]²` (for `2A → P`, `ν_A = -2`) and `v = k[A][B]` (for `A + B → P`) are model
+inputs; their integrated solutions, uniqueness on `t ≥ 0` and half-lives are proved.
+
+The first-order law is the bolus case (infusion rate `0`) of the one-compartment model
+`MathlibExt.Biology.Biophysics.CompartmentKinetics` (`firstOrderSol_eq_amount`); its derivative,
+uniqueness and half-life are corollaries of that module.
+
+Half-lives depend on the model, not only on the order: `2A → P` and `A + B → P` with equal initial
+amounts are both second order, but they halve at `1 / (2k[A]₀)` and `1 / (k[A]₀)`. `RateModel`
+lists the models with a closed-form half-life.
+
+`rateGroup n k t [A]₀ = k t [A]₀ ^ (n - 1)` is the scalar through which the integrated laws depend
+on `k`, `t` and `[A]₀`. It is real arithmetic only: no dimensions or units are formalized.
+
+The pseudo-first-order bounds compare `[A]` for `A + B → P` with `[A]₀ exp(-k[B]₀t)`, explicitly
+in `r = [A]₀ / [B]₀ < 1`.
+
+## ii. Key results
+
+- `hasDerivAt_concOfExtent` : `dc/dt = ν v` under the extent-rate convention.
+- `zeroOrderSol_unique`, `zeroOrderConc_before`, `zeroOrderConc_after` : the zero-order law and
+  depletion.
+- `firstOrderSol_eq_amount`, `firstOrderSol_unique`, `firstOrderSol_halfLife` : the first-order
+  law.
+- `secondOrderAASol_unique`, `secondOrderABSol_unique`, `secondOrderABEqualSol_unique` : the
+  second-order laws.
+- `halfLife_correct`, `halfLife_indep_iff_first_order` : model-specific half-lives; among the
+  models of `RateModel`, the half-life is independent of `[A]₀` exactly at order `1`.
+- `pfo_error_bound`, `pfo_error_div_initial_bound` : pseudo-first-order error bounds.
+
+## iii. Table of contents
+
+- A. Extent-rate convention
+- B. Order 0
+- C. Order 1
+- D. Order 2: single reactant and `2A → P`
+- E. Order 2: `A + B → P`
+- F. Half-lives
+- G. Scalar rate group
+- H. Pseudo-first-order approximation
+
+## iv. References
+
+- IUPAC, *Compendium of Chemical Terminology* (the Gold Book), entries "extent of reaction" and
+  "rate of reaction": the convention `v = (1 / V) dξ/dt`.
+- OpenStax, *Chemistry 2e* (2019), Ch. 12 (Kinetics): rate laws, integrated rate laws and
+  half-lives.
+- P. Atkins and J. de Paula, *Physical Chemistry* (Oxford University Press), the chapter on the
+  rates of chemical reactions: integrated rate laws, half-lives and pseudo-first-order conditions.
 -/
 
 @[expose] public section
 
 namespace Chemistry.Kinetics
 
-/-! ## Extent-rate convention -/
+/-! ## A. Extent-rate convention -/
 
 /-- Extent rate `v = (1 / V) dξ/dt`: the single rate convention used here. -/
 noncomputable def extentRate (V : ℝ) (ξ : ℝ → ℝ) (t : ℝ) : ℝ := (1 / V) * deriv ξ t
@@ -35,7 +91,7 @@ noncomputable def extentRate (V : ℝ) (ξ : ℝ → ℝ) (t : ℝ) : ℝ := (1 
 noncomputable def concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ) : ℝ := c₀ + ν * ξ t / V
 
 /-- Concentration rate from the extent rate: `dc/dt = ν v`. -/
-theorem hasDerivAt_concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ)
+lemma hasDerivAt_concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ)
     (hξ : DifferentiableAt ℝ ξ t) :
     HasDerivAt (concOfExtent c₀ ν V ξ) (ν * extentRate V ξ t) t := by
   have hbase : HasDerivAt (fun s : ℝ => (ν / V) * ξ s) _ t :=
@@ -56,13 +112,13 @@ theorem hasDerivAt_concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ)
   exact hfinal
 
 /-- `deriv` form of `hasDerivAt_concOfExtent`. -/
-theorem deriv_concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ)
+lemma deriv_concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ)
     (hξ : DifferentiableAt ℝ ξ t) :
     deriv (concOfExtent c₀ ν V ξ) t = ν * extentRate V ξ t :=
   (hasDerivAt_concOfExtent c₀ ν V ξ t hξ).deriv
 
 /-- Zero-order ODE from the convention: `v = k`, `ν = -1`. -/
-theorem rateLaw_zero_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
+lemma rateLaw_zero_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
     (hA : ∀ s, A s = concOfExtent A0 (-1) V ξ s)
     (hξ : DifferentiableAt ℝ ξ t)
     (hrate : extentRate V ξ t = k) :
@@ -76,7 +132,7 @@ theorem rateLaw_zero_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
   exact hbase
 
 /-- First-order ODE from the convention: `v = k[A]`, `ν = -1`. -/
-theorem rateLaw_first_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
+lemma rateLaw_first_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
     (hA : ∀ s, A s = concOfExtent A0 (-1) V ξ s)
     (hξ : DifferentiableAt ℝ ξ t)
     (hrate : extentRate V ξ t = k * A t) :
@@ -90,21 +146,21 @@ theorem rateLaw_first_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
   exact hbase
 
 /-- Second-order `2A → P` ODE: `v = k[A]²`, `ν = -2`. -/
-theorem rateLaw_secondAA_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
+lemma rateLaw_secondAA_ode (A ξ : ℝ → ℝ) (A0 k V t : ℝ)
     (hA : ∀ s, A s = concOfExtent A0 (-2) V ξ s)
     (hξ : DifferentiableAt ℝ ξ t)
-    (hrate : extentRate V ξ t = k * (A t)^2) :
-    HasDerivAt A (-(2 * k) * (A t)^2) t := by
+    (hrate : extentRate V ξ t = k * (A t) ^ 2) :
+    HasDerivAt A (-(2 * k) * (A t) ^ 2) t := by
   have hAfun : A = concOfExtent A0 (-2) V ξ := funext hA
   have hbase := hasDerivAt_concOfExtent A0 (-2) V ξ t hξ
   rw [← hAfun] at hbase
   rw [hrate] at hbase
-  have hval : (-2) * (k * (A t)^2) = -(2 * k) * (A t)^2 := by ring
+  have hval : (-2) * (k * (A t) ^ 2) = -(2 * k) * (A t) ^ 2 := by ring
   rw [hval] at hbase
   exact hbase
 
 /-- Second-order `A + B` ODEs: `v = k[A][B]`, `ν = -1` for both. -/
-theorem rateLaw_secondAB_ode (A B ξ : ℝ → ℝ) (A0 B0 k V t : ℝ)
+lemma rateLaw_secondAB_ode (A B ξ : ℝ → ℝ) (A0 B0 k V t : ℝ)
     (hA : ∀ s, A s = concOfExtent A0 (-1) V ξ s)
     (hB : ∀ s, B s = concOfExtent B0 (-1) V ξ s)
     (hξ : DifferentiableAt ℝ ξ t)
@@ -125,10 +181,10 @@ theorem rateLaw_secondAB_ode (A B ξ : ℝ → ℝ) (A0 B0 k V t : ℝ)
     rw [hval] at hbase
     exact hbase
 
-/-! ## Solution uniqueness helper -/
+/-! ## B. Order 0 -/
 
 /-- A function with zero derivative on `t ≥ 0` is determined by its value at `0`. -/
-theorem eq_of_hasDerivAt_zero (g : ℝ → ℝ)
+private lemma eq_of_hasDerivAt_zero (g : ℝ → ℝ)
     (hg : ∀ t : ℝ, 0 ≤ t → HasDerivAt g 0 t) (hg0 : g 0 = 0)
     (t : ℝ) (ht : 0 ≤ t) : g t = 0 := by
   rcases eq_or_lt_of_le ht with rfl | hlt
@@ -147,13 +203,11 @@ theorem eq_of_hasDerivAt_zero (g : ℝ → ℝ)
     · exact h
     · exact absurd h hne
 
-/-! ## Order 0 -/
-
 /-- Zero-order integrated law (before depletion): `[A]₀ - kt`. -/
 def zeroOrderSol (A0 k : ℝ) (t : ℝ) : ℝ := A0 - k * t
 
 /-- The zero-order solution has constant derivative `-k`. -/
-theorem hasDerivAt_zeroOrderSol (A0 k t : ℝ) :
+lemma hasDerivAt_zeroOrderSol (A0 k t : ℝ) :
     HasDerivAt (zeroOrderSol A0 k) (-k) t := by
   have hchain : HasDerivAt (fun s : ℝ => A0 - k * s) _ t :=
     (hasDerivAt_const t A0).sub ((hasDerivAt_id' t).const_mul k)
@@ -185,7 +239,7 @@ theorem zeroOrderSol_unique (A0 k : ℝ) (g : ℝ → ℝ)
   linarith
 
 /-- The zero-order solution starts at `[A]₀`. -/
-theorem zeroOrderSol_zero (A0 k : ℝ) : zeroOrderSol A0 k 0 = A0 := by
+lemma zeroOrderSol_zero (A0 k : ℝ) : zeroOrderSol A0 k 0 = A0 := by
   simp [zeroOrderSol]
 
 /-- Zero-order depletion time `[A]₀ / k`. -/
@@ -195,7 +249,7 @@ noncomputable def depletionTime (A0 k : ℝ) : ℝ := A0 / k
 def zeroOrderConc (A0 k : ℝ) (t : ℝ) : ℝ := max (A0 - k * t) 0
 
 /-- Before depletion the physical concentration tracks `A₀ - kt`. -/
-theorem zeroOrderConc_before (A0 k t : ℝ) (hk : 0 < k)
+lemma zeroOrderConc_before (A0 k t : ℝ) (hk : 0 < k)
     (ht : t ≤ depletionTime A0 k) : zeroOrderConc A0 k t = A0 - k * t := by
   have ht' : t ≤ A0 / k := ht
   have hkne : k ≠ 0 := ne_of_gt hk
@@ -207,7 +261,7 @@ theorem zeroOrderConc_before (A0 k t : ℝ) (hk : 0 < k)
   exact max_eq_left hle
 
 /-- After depletion the physical concentration is zero. -/
-theorem zeroOrderConc_after (A0 k t : ℝ) (hk : 0 < k)
+lemma zeroOrderConc_after (A0 k t : ℝ) (hk : 0 < k)
     (ht : depletionTime A0 k ≤ t) : zeroOrderConc A0 k t = 0 := by
   have ht' : A0 / k ≤ t := ht
   have hkne : k ≠ 0 := ne_of_gt hk
@@ -226,89 +280,64 @@ theorem zeroOrderSol_halfLife (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
   field_simp; ring
 
 /-- The zero-order half-life time is unique. -/
-theorem zeroOrderSol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k) (_hA0 : 0 < A0)
+lemma zeroOrderSol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k) (_hA0 : 0 < A0)
     (h : zeroOrderSol A0 k t = A0 / 2) : t = A0 / (2 * k) := by
   have h2kpos : (0:ℝ) < 2 * k := by positivity
   rw [eq_div_iff (ne_of_gt h2kpos)]
   simp only [zeroOrderSol] at h
   linarith
 
-/-! ## Order 1 -/
+/-! ## C. Order 1 -/
 
 /-- First-order integrated law: `[A]₀ exp(-kt)`. -/
 noncomputable def firstOrderSol (A0 k : ℝ) (t : ℝ) : ℝ := A0 * Real.exp (-k * t)
 
+/-- The first-order solution is the bolus case (infusion rate `0`) of the one-compartment amount
+`MathlibExt.Biology.Biophysics.CompartmentKinetics.amount`, by `amount_bolus`. The first-order
+lemmas below are corollaries of that module. -/
+lemma firstOrderSol_eq_amount (A0 k : ℝ) :
+    firstOrderSol A0 k = MathlibExt.Biology.Biophysics.CompartmentKinetics.amount k 0 A0 :=
+  funext fun t => (MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_bolus k A0 t).symm
+
 /-- The first-order solution starts at `[A]₀`. -/
-theorem firstOrderSol_zero (A0 k : ℝ) : firstOrderSol A0 k 0 = A0 := by
-  simp [firstOrderSol]
+lemma firstOrderSol_zero (A0 k : ℝ) : firstOrderSol A0 k 0 = A0 := by
+  rw [firstOrderSol_eq_amount, MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_zero]
 
 /-- The first-order solution stays positive. -/
-theorem firstOrderSol_pos (A0 k t : ℝ) (hA0 : 0 < A0) :
+lemma firstOrderSol_pos (A0 k t : ℝ) (hA0 : 0 < A0) :
     0 < firstOrderSol A0 k t := by
   show 0 < A0 * Real.exp (-k * t)
   exact mul_pos hA0 (Real.exp_pos _)
 
-/-- The first-order solution satisfies `f' = -k f`. -/
-theorem hasDerivAt_firstOrderSol (A0 k t : ℝ) :
+/-- The first-order solution satisfies `f' = -k f`: `CompartmentKinetics.hasDerivAt_amount` at
+infusion rate `0`. -/
+lemma hasDerivAt_firstOrderSol (A0 k t : ℝ) :
     HasDerivAt (firstOrderSol A0 k) (-k * firstOrderSol A0 k t) t := by
-  have hchain : HasDerivAt (fun s : ℝ => A0 * Real.exp (-k * s)) _ t :=
-    (((hasDerivAt_id' t).const_mul (-k)).exp).const_mul A0
-  have hderiv : deriv (fun s : ℝ => A0 * Real.exp (-k * s)) t
-      = -k * (A0 * Real.exp (-k * t)) := by
-    rw [hchain.deriv]; ring
-  have hfinal := hchain.differentiableAt.hasDerivAt
-  rw [hderiv] at hfinal
-  show HasDerivAt (fun s : ℝ => A0 * Real.exp (-k * s))
-    (-k * (A0 * Real.exp (-k * t))) t
-  exact hfinal
+  rw [firstOrderSol_eq_amount]
+  exact (MathlibExt.Biology.Biophysics.CompartmentKinetics.hasDerivAt_amount k 0 A0 t).congr_deriv
+    (by ring)
 
-/-- Uniqueness for `f' = -k f` on `t ≥ 0`, via the integrating factor. -/
+/-- First-order integrated law: a solution of `f' = -k f` on `t ≥ 0` with `f 0 = [A]₀` is
+`[A]₀ exp(-kt)` there. This is `CompartmentKinetics.IsSolution.eq_amount` at infusion rate `0`. -/
 theorem firstOrderSol_unique (A0 k : ℝ) (g : ℝ → ℝ)
     (hg : ∀ t : ℝ, 0 ≤ t → HasDerivAt g (-k * g t) t) (hg0 : g 0 = A0)
     (t : ℝ) (ht : 0 ≤ t) : g t = firstOrderSol A0 k t := by
-  have hh : ∀ s : ℝ, 0 ≤ s →
-      HasDerivAt (fun s : ℝ => g s * Real.exp (k * s) - A0) 0 s := by
-    intro s hs
-    have hchain : HasDerivAt (fun s : ℝ => g s * Real.exp (k * s) - A0) _ s :=
-      ((hg s hs).mul (((hasDerivAt_id' s).const_mul k).exp)).sub
-        (hasDerivAt_const s A0)
-    have hderiv : deriv (fun s : ℝ => g s * Real.exp (k * s) - A0) s = 0 := by
-      rw [hchain.deriv]; ring
-    have hfinal := hchain.differentiableAt.hasDerivAt
-    rw [hderiv] at hfinal
-    exact hfinal
-  have h0 : (fun s : ℝ => g s * Real.exp (k * s) - A0) 0 = 0 := by
-    simp [hg0]
-  have heq := eq_of_hasDerivAt_zero _ hh h0 t ht
-  have heq' : g t * Real.exp (k * t) - A0 = 0 := heq
-  have hmul : g t * Real.exp (k * t) = A0 := by linarith
-  have hEne : Real.exp (k * t) ≠ 0 := Real.exp_ne_zero _
-  have h1 : g t = A0 / Real.exp (k * t) := by
-    rw [eq_div_iff hEne]
-    exact hmul
-  have h2 : (Real.exp (k * t))⁻¹ = Real.exp (-k * t) := by
-    rw [← Real.exp_neg]
-    congr 1
-    ring
-  have hconcl : g t = A0 * Real.exp (-k * t) := by
-    rw [h1, div_eq_mul_inv, h2]
-  show g t = A0 * Real.exp (-k * t)
-  exact hconcl
+  have hsol : MathlibExt.Biology.Biophysics.CompartmentKinetics.IsSolution k 0 g :=
+    fun s hs => (hg s hs).congr_deriv (by ring)
+  rw [firstOrderSol_eq_amount, ← hg0]
+  exact hsol.eq_amount ht
 
-/-- First-order half-life: `ln 2 / k`. -/
+/-- First-order half-life: `ln 2 / k`, from `CompartmentKinetics.amount_bolus_add_halfLife`. -/
 theorem firstOrderSol_halfLife (A0 k : ℝ) (hk : 0 < k) (_hA0 : 0 < A0) :
     firstOrderSol A0 k (Real.log 2 / k) = A0 / 2 := by
-  have hkne : k ≠ 0 := ne_of_gt hk
-  have hexp : -k * (Real.log 2 / k) = -Real.log 2 := by field_simp
-  have he2 : Real.exp (-Real.log 2) = 1 / 2 := by
-    rw [Real.exp_neg, Real.exp_log (by norm_num : (0:ℝ) < 2)]
-    norm_num
-  show A0 * Real.exp (-k * (Real.log 2 / k)) = A0 / 2
-  rw [hexp, he2]
-  ring
+  have h :=
+    MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_bolus_add_halfLife hk.ne' A0 0
+  rw [zero_add, MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_zero] at h
+  rw [firstOrderSol_eq_amount]
+  exact h
 
 /-- The first-order half-life time is unique. -/
-theorem firstOrderSol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
+lemma firstOrderSol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
     (h : firstOrderSol A0 k t = A0 / 2) : t = Real.log 2 / k := by
   have hA0ne : A0 ≠ 0 := ne_of_gt hA0
   have hkne : k ≠ 0 := ne_of_gt hk
@@ -323,10 +352,10 @@ theorem firstOrderSol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
   rw [eq_div_iff hkne]
   linarith
 
-/-! ## Order 2: general single-reactant law and A+A -/
+/-! ## D. Order 2: single reactant and `2A → P` -/
 
 /-- Uniqueness for `f' = -c f²` with `c > 0`, via the reciprocal transform. -/
-theorem secondOrderGen_unique (A0 c : ℝ) (g : ℝ → ℝ) (hc : 0 < c) (hA0 : 0 < A0)
+lemma secondOrderGen_unique (A0 c : ℝ) (g : ℝ → ℝ) (hc : 0 < c) (hA0 : 0 < A0)
     (hg : ∀ t : ℝ, 0 ≤ t → HasDerivAt g (-c * (g t)^2) t)
     (hpos : ∀ t : ℝ, 0 ≤ t → 0 < g t) (hg0 : g 0 = A0)
     (t : ℝ) (ht : 0 ≤ t) : g t = A0 / (1 + c * A0 * t) := by
@@ -382,21 +411,21 @@ theorem secondOrderGen_unique (A0 c : ℝ) (g : ℝ → ℝ) (hc : 0 < c) (hA0 :
 noncomputable def secondOrderAASol (A0 k : ℝ) (t : ℝ) : ℝ := A0 / (1 + 2 * k * A0 * t)
 
 /-- The `2A → P` solution starts at `[A]₀`. -/
-theorem secondOrderAASol_zero (A0 k : ℝ) : secondOrderAASol A0 k 0 = A0 := by
+lemma secondOrderAASol_zero (A0 k : ℝ) : secondOrderAASol A0 k 0 = A0 := by
   simp [secondOrderAASol]
 
 /-- The `2A → P` denominator stays positive for `t ≥ 0`. -/
-theorem secondOrderAASol_denom_pos (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
+lemma secondOrderAASol_denom_pos (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
     (ht : 0 ≤ t) : 0 < 1 + 2 * k * A0 * t := by positivity
 
 /-- The `2A → P` solution stays positive for `t ≥ 0`. -/
-theorem secondOrderAASol_pos (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
+lemma secondOrderAASol_pos (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
     (ht : 0 ≤ t) : 0 < secondOrderAASol A0 k t := by
   show 0 < A0 / (1 + 2 * k * A0 * t)
   exact div_pos hA0 (secondOrderAASol_denom_pos A0 k t hk hA0 ht)
 
 /-- The `2A → P` solution satisfies `f' = -(2k) f²`. -/
-theorem hasDerivAt_secondOrderAASol (A0 k t : ℝ)
+lemma hasDerivAt_secondOrderAASol (A0 k t : ℝ)
     (hM : 1 + 2 * k * A0 * t ≠ 0) :
     HasDerivAt (secondOrderAASol A0 k)
       (-(2 * k) * (secondOrderAASol A0 k t)^2) t := by
@@ -439,7 +468,7 @@ theorem secondOrderAASol_halfLife (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
   norm_num
 
 /-- The `2A → P` half-life time is unique. -/
-theorem secondOrderAASol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k)
+lemma secondOrderAASol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k)
     (hA0 : 0 < A0)
     (h : secondOrderAASol A0 k t = A0 / 2) : t = 1 / (2 * k * A0) := by
   have hA0ne : A0 ≠ 0 := ne_of_gt hA0
@@ -456,7 +485,7 @@ theorem secondOrderAASol_halfLife_unique (A0 k t : ℝ) (hk : 0 < k)
   rw [eq_div_iff h2kA0ne]
   linarith
 
-/-! ## Order 2: A+B with unequal and equal initial amounts -/
+/-! ## E. Order 2: `A + B → P` -/
 
 /-- `A + B` integrated law for `[A]`, unequal initial amounts. -/
 noncomputable def secondOrderABSolA (A0 B0 k : ℝ) (t : ℝ) : ℝ :=
@@ -468,19 +497,19 @@ noncomputable def secondOrderABSolB (A0 B0 k : ℝ) (t : ℝ) : ℝ :=
   secondOrderABSolA A0 B0 k t + (B0 - A0)
 
 /-- The `A + B` solution for `[A]` starts at `[A]₀`. -/
-theorem secondOrderABSolA_zero (A0 B0 k : ℝ) (hΔ : B0 - A0 ≠ 0) :
+lemma secondOrderABSolA_zero (A0 B0 k : ℝ) (hΔ : B0 - A0 ≠ 0) :
     secondOrderABSolA A0 B0 k 0 = A0 := by
   simp only [secondOrderABSolA, mul_zero, Real.exp_zero, mul_one]
   rw [div_eq_iff hΔ]
 
 /-- The `A + B` solution for `[B]` starts at `[B]₀`. -/
-theorem secondOrderABSolB_zero (A0 B0 k : ℝ) (hΔ : B0 - A0 ≠ 0) :
+lemma secondOrderABSolB_zero (A0 B0 k : ℝ) (hΔ : B0 - A0 ≠ 0) :
     secondOrderABSolB A0 B0 k 0 = B0 := by
   rw [secondOrderABSolB, secondOrderABSolA_zero A0 B0 k hΔ]
   ring
 
 /-- The `A + B` denominator stays nonzero for `t ≥ 0` when amounts differ. -/
-theorem secondOrderAB_denom_ne (A0 B0 k t : ℝ) (hA0 : 0 < A0) (_hB0 : 0 < B0)
+lemma secondOrderAB_denom_ne (A0 B0 k t : ℝ) (hA0 : 0 < A0) (_hB0 : 0 < B0)
     (hk : 0 < k) (hΔ : B0 - A0 ≠ 0) (ht : 0 ≤ t) :
     B0 - A0 * Real.exp (-k * (B0 - A0) * t) ≠ 0 := by
   rcases lt_or_gt_of_ne hΔ with hneg | hpos
@@ -506,7 +535,7 @@ theorem secondOrderAB_denom_ne (A0 B0 k t : ℝ) (hA0 : 0 < A0) (_hB0 : 0 < B0)
     exact ne_of_gt hMpos
 
 /-- The `A + B` solution for `[A]` satisfies the system ODE. -/
-theorem hasDerivAt_secondOrderABSolA (A0 B0 k t : ℝ)
+lemma hasDerivAt_secondOrderABSolA (A0 B0 k t : ℝ)
     (hM : B0 - A0 * Real.exp (-k * (B0 - A0) * t) ≠ 0) :
     HasDerivAt (secondOrderABSolA A0 B0 k)
       (-k * (secondOrderABSolA A0 B0 k t)
@@ -548,7 +577,7 @@ theorem hasDerivAt_secondOrderABSolA (A0 B0 k t : ℝ)
   exact hfinal
 
 /-- The `A + B` solution for `[B]` satisfies the system ODE. -/
-theorem hasDerivAt_secondOrderABSolB (A0 B0 k t : ℝ)
+lemma hasDerivAt_secondOrderABSolB (A0 B0 k t : ℝ)
     (hM : B0 - A0 * Real.exp (-k * (B0 - A0) * t) ≠ 0) :
     HasDerivAt (secondOrderABSolB A0 B0 k)
       (-k * (secondOrderABSolA A0 B0 k t)
@@ -569,13 +598,14 @@ theorem hasDerivAt_secondOrderABSolB (A0 B0 k t : ℝ)
     (-k * (secondOrderABSolA A0 B0 k t) * (secondOrderABSolB A0 B0 k t)) t
   exact hfinal
 
-/-- The `A + B` solutions conserve `[B] - [A]`. -/
-theorem secondOrderABSol_conserved (A0 B0 k t : ℝ) :
+/-- By construction of `secondOrderABSolB`, the explicit pair keeps `[B] - [A] = [B]₀ - [A]₀`;
+`ab_conservation` proves this for every solution pair. -/
+lemma secondOrderABSol_conserved (A0 B0 k t : ℝ) :
     secondOrderABSolB A0 B0 k t - secondOrderABSolA A0 B0 k t = B0 - A0 := by
   simp only [secondOrderABSolB]; ring
 
 /-- Any `A + B` solution pair conserves `[B] - [A]`. -/
-theorem ab_conservation (A0 B0 k : ℝ) (gA gB : ℝ → ℝ)
+lemma ab_conservation (A0 B0 k : ℝ) (gA gB : ℝ → ℝ)
     (hgA : ∀ t : ℝ, 0 ≤ t → HasDerivAt gA (-k * gA t * gB t) t)
     (hgB : ∀ t : ℝ, 0 ≤ t → HasDerivAt gB (-k * gA t * gB t) t)
     (hgA0 : gA 0 = A0) (hgB0 : gB 0 = B0)
@@ -675,22 +705,22 @@ theorem secondOrderABSol_unique (A0 B0 k : ℝ) (gA gB : ℝ → ℝ)
 noncomputable def secondOrderABEqualSol (A0 k : ℝ) (t : ℝ) : ℝ := A0 / (1 + k * A0 * t)
 
 /-- The equal-initial-amounts solution starts at `[A]₀`. -/
-theorem secondOrderABEqualSol_zero (A0 k : ℝ) :
+lemma secondOrderABEqualSol_zero (A0 k : ℝ) :
     secondOrderABEqualSol A0 k 0 = A0 := by
   simp [secondOrderABEqualSol]
 
 /-- The equal-initial-amounts denominator stays positive for `t ≥ 0`. -/
-theorem secondOrderABEqualSol_denom_pos (A0 k t : ℝ) (hk : 0 < k)
+lemma secondOrderABEqualSol_denom_pos (A0 k t : ℝ) (hk : 0 < k)
     (hA0 : 0 < A0) (ht : 0 ≤ t) : 0 < 1 + k * A0 * t := by positivity
 
 /-- The equal-initial-amounts solution stays positive for `t ≥ 0`. -/
-theorem secondOrderABEqualSol_pos (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
+lemma secondOrderABEqualSol_pos (A0 k t : ℝ) (hk : 0 < k) (hA0 : 0 < A0)
     (ht : 0 ≤ t) : 0 < secondOrderABEqualSol A0 k t := by
   show 0 < A0 / (1 + k * A0 * t)
   exact div_pos hA0 (secondOrderABEqualSol_denom_pos A0 k t hk hA0 ht)
 
 /-- The equal-initial-amounts solution satisfies `f' = -k f²`. -/
-theorem hasDerivAt_secondOrderABEqualSol (A0 k t : ℝ)
+lemma hasDerivAt_secondOrderABEqualSol (A0 k t : ℝ)
     (hM : 1 + k * A0 * t ≠ 0) :
     HasDerivAt (secondOrderABEqualSol A0 k)
       (-k * (secondOrderABEqualSol A0 k t)^2) t := by
@@ -744,89 +774,98 @@ theorem secondOrderABEqualSol_halfLife (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) 
   rw [hD]
   norm_num
 
-/-! ## Half-lives -/
+/-! ## F. Half-lives -/
 
-/-- Half-life by order: `[A]₀/(2k)`, `ln 2/k`, `1/(2k[A]₀)`. -/
-noncomputable def halfLife (n : ℕ) (k A0 : ℝ) : ℝ :=
-  match n with
-  | 0 => A0 / (2 * k)
-  | 1 => Real.log 2 / k
-  | _ => 1 / (2 * k * A0)
+/-- The rate-law models of this module with a closed-form half-life: zero order, first order,
+second order `2A → P` (`ν_A = -2`), and second order `A + B → P` with equal initial amounts. The
+half-life depends on the model, not only on its order. -/
+inductive RateModel
+  | zeroOrder
+  | firstOrder
+  | secondOrderAA
+  | secondOrderABEqual
+  deriving DecidableEq
 
-/-- `halfLife 0` halves the zero-order solution. -/
-theorem halfLife_correct_zero (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
-    zeroOrderSol A0 k (halfLife 0 k A0) = A0 / 2 := by
-  show zeroOrderSol A0 k (A0 / (2 * k)) = A0 / 2
-  exact zeroOrderSol_halfLife A0 k hk hA0
+/-- The reaction order of each model. -/
+def RateModel.order : RateModel → ℕ
+  | .zeroOrder => 0
+  | .firstOrder => 1
+  | .secondOrderAA => 2
+  | .secondOrderABEqual => 2
 
-/-- `halfLife 1` halves the first-order solution. -/
-theorem halfLife_correct_first (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
-    firstOrderSol A0 k (halfLife 1 k A0) = A0 / 2 := by
-  show firstOrderSol A0 k (Real.log 2 / k) = A0 / 2
-  exact firstOrderSol_halfLife A0 k hk hA0
+/-- The integrated concentration of `A` in each model, as a function of `[A]₀`, `k` and `t` (for
+zero order, before depletion). -/
+noncomputable def RateModel.sol : RateModel → ℝ → ℝ → ℝ → ℝ
+  | .zeroOrder => zeroOrderSol
+  | .firstOrder => firstOrderSol
+  | .secondOrderAA => secondOrderAASol
+  | .secondOrderABEqual => secondOrderABEqualSol
 
-/-- `halfLife 2` halves the `2A → P` solution. -/
-theorem halfLife_correct_second (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
-    secondOrderAASol A0 k (halfLife 2 k A0) = A0 / 2 := by
-  show secondOrderAASol A0 k (1 / (2 * k * A0)) = A0 / 2
-  exact secondOrderAASol_halfLife A0 k hk hA0
+/-- Half-life of each model: `[A]₀ / (2k)`, `ln 2 / k`, `1 / (2k[A]₀)` and `1 / (k[A]₀)`. -/
+noncomputable def halfLife : RateModel → ℝ → ℝ → ℝ
+  | .zeroOrder, k, A0 => A0 / (2 * k)
+  | .firstOrder, k, _ => Real.log 2 / k
+  | .secondOrderAA, k, A0 => 1 / (2 * k * A0)
+  | .secondOrderABEqual, k, A0 => 1 / (k * A0)
 
-/-- Among orders `{0, 1, 2}`, the half-life ignores `[A]₀` iff first order. -/
-theorem halfLife_indep_iff_first_order (n : ℕ) (k : ℝ)
-    (hn : n = 0 ∨ n = 1 ∨ n = 2) (hk : 0 < k) :
-    ((∀ A0 A0' : ℝ, 0 < A0 → 0 < A0' →
-      halfLife n k A0 = halfLife n k A0') ↔ n = 1) := by
-  rcases hn with rfl | rfl | rfl
-  · constructor
-    · intro h
-      exfalso
-      have h2 := h 1 2 (by norm_num) (by norm_num)
-      have hcon : (1:ℝ) / (2 * k) = 2 / (2 * k) := h2
-      have h2kne : (2:ℝ) * k ≠ 0 := ne_of_gt (by positivity)
-      rw [div_eq_div_iff h2kne h2kne] at hcon
-      linarith
-    · intro h01
-      exact absurd h01 (by decide)
-  · constructor
-    · intro _
-      rfl
-    · intro _ A0 A0' _ _
-      rfl
-  · constructor
-    · intro h
-      exfalso
-      have h2 := h 1 2 (by norm_num) (by norm_num)
-      have hcon : (1:ℝ) / (2 * k * 1) = 1 / (2 * k * 2) := h2
-      have h2k1 : (2:ℝ) * k * 1 ≠ 0 := ne_of_gt (by positivity)
-      have h2k2 : (2:ℝ) * k * 2 ≠ 0 := ne_of_gt (by positivity)
-      rw [div_eq_div_iff h2k1 h2k2] at hcon
-      linarith
-    · intro h21
-      exact absurd h21 (by decide)
+/-- Each model's half-life halves its integrated concentration. -/
+theorem halfLife_correct (m : RateModel) (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
+    m.sol A0 k (halfLife m k A0) = A0 / 2 := by
+  cases m
+  · exact zeroOrderSol_halfLife A0 k hk hA0
+  · exact firstOrderSol_halfLife A0 k hk hA0
+  · exact secondOrderAASol_halfLife A0 k hk hA0
+  · exact secondOrderABEqualSol_halfLife A0 k hk hA0
 
-/-! ## Rate-constant units via the dimensionless group -/
+/-- Among the models of `RateModel`, the half-life is independent of `[A]₀` iff the reaction is
+first order. -/
+theorem halfLife_indep_iff_first_order (m : RateModel) (k : ℝ) (hk : 0 < k) :
+    (∀ A0 A0' : ℝ, 0 < A0 → 0 < A0' → halfLife m k A0 = halfLife m k A0') ↔
+      m.order = 1 := by
+  cases m with
+  | zeroOrder =>
+    refine iff_of_false (fun h => ?_) (by decide)
+    have h2 : (1:ℝ) / (2 * k) = 2 / (2 * k) := h 1 2 one_pos two_pos
+    rw [div_eq_div_iff (by positivity) (by positivity)] at h2
+    linarith
+  | firstOrder => exact iff_of_true (fun _ _ _ _ => rfl) rfl
+  | secondOrderAA =>
+    refine iff_of_false (fun h => ?_) (by decide)
+    have h2 : (1:ℝ) / (2 * k * 1) = 1 / (2 * k * 2) := h 1 2 one_pos two_pos
+    rw [div_eq_div_iff (by positivity) (by positivity)] at h2
+    linarith
+  | secondOrderABEqual =>
+    refine iff_of_false (fun h => ?_) (by decide)
+    have h2 : (1:ℝ) / (k * 1) = 1 / (k * 2) := h 1 2 one_pos two_pos
+    rw [div_eq_div_iff (by positivity) (by positivity)] at h2
+    linarith
 
-/-- Dimensionless group `k t [A]₀^(n-1)` fixing the units of `k`. -/
+/-! ## G. Scalar rate group -/
+
+/-- The scalar `k * t * [A]₀ ^ (n - 1)` through which the integrated laws of order `n` depend on
+`k`, `t` and `[A]₀` (`zeroOrderSol_rateGroup`, `firstOrderSol_rateGroup`,
+`secondOrderAASol_rateGroup`). This is a normalization identity in real arithmetic: no dimensions
+or units are formalized here. -/
 noncomputable def rateGroup (n : ℕ) (k t A0 : ℝ) : ℝ := k * t * A0 ^ ((n:ℤ) - 1)
 
 /-- The order-0 rate group is `kt / [A]₀`. -/
-theorem rateGroup_zero (k t A0 : ℝ) : rateGroup 0 k t A0 = k * t / A0 := by
+lemma rateGroup_zero (k t A0 : ℝ) : rateGroup 0 k t A0 = k * t / A0 := by
   have e : ((0:ℕ):ℤ) - 1 = -1 := by norm_num
   simp only [rateGroup, e, zpow_neg_one]
   rw [div_eq_mul_inv]
 
 /-- The order-1 rate group is `kt`. -/
-theorem rateGroup_one (k t A0 : ℝ) : rateGroup 1 k t A0 = k * t := by
+lemma rateGroup_one (k t A0 : ℝ) : rateGroup 1 k t A0 = k * t := by
   have e : ((1:ℕ):ℤ) - 1 = 0 := by norm_num
   simp only [rateGroup, e, zpow_zero, mul_one]
 
 /-- The order-2 rate group is `kt[A]₀`. -/
-theorem rateGroup_two (k t A0 : ℝ) : rateGroup 2 k t A0 = k * t * A0 := by
+lemma rateGroup_two (k t A0 : ℝ) : rateGroup 2 k t A0 = k * t * A0 := by
   have e : ((2:ℕ):ℤ) - 1 = 1 := by norm_num
   simp only [rateGroup, e, zpow_one]
 
-/-- `k` in units of the group: concentration^(1-n) per time. -/
-theorem k_of_rateGroup (n : ℕ) (k t A0 : ℝ) (ht : t ≠ 0) (hA0 : 0 < A0) :
+/-- `k` is recovered from the rate group by dividing by `t * [A]₀ ^ (n - 1)`. -/
+lemma k_of_rateGroup (n : ℕ) (k t A0 : ℝ) (ht : t ≠ 0) (hA0 : 0 < A0) :
     rateGroup n k t A0 / (t * A0 ^ ((n:ℤ) - 1)) = k := by
   have he : (0:ℝ) < A0 ^ ((n:ℤ) - 1) := by positivity
   rw [div_eq_iff (mul_ne_zero ht (ne_of_gt he))]
@@ -834,7 +873,7 @@ theorem k_of_rateGroup (n : ℕ) (k t A0 : ℝ) (ht : t ≠ 0) (hA0 : 0 < A0) :
   ring
 
 /-- First-order solution in terms of the rate group. -/
-theorem firstOrderSol_rateGroup (A0 k t : ℝ) :
+lemma firstOrderSol_rateGroup (A0 k t : ℝ) :
     firstOrderSol A0 k t = A0 * Real.exp (-(rateGroup 1 k t A0)) := by
   simp only [firstOrderSol, rateGroup_one]
   congr 1
@@ -842,20 +881,20 @@ theorem firstOrderSol_rateGroup (A0 k t : ℝ) :
   ring
 
 /-- `2A → P` solution in terms of the rate group. -/
-theorem secondOrderAASol_rateGroup (A0 k t : ℝ) :
+lemma secondOrderAASol_rateGroup (A0 k t : ℝ) :
     secondOrderAASol A0 k t = A0 / (1 + 2 * rateGroup 2 k t A0) := by
   simp only [secondOrderAASol, rateGroup_two]
   congr 1
   ring
 
 /-- Zero-order solution in terms of the rate group. -/
-theorem zeroOrderSol_rateGroup (A0 k t : ℝ) (hA0 : A0 ≠ 0) :
+lemma zeroOrderSol_rateGroup (A0 k t : ℝ) (hA0 : A0 ≠ 0) :
     zeroOrderSol A0 k t = A0 * (1 - rateGroup 0 k t A0) := by
   rw [rateGroup_zero k t A0]
   simp only [zeroOrderSol]
   field_simp
 
-/-! ## Pseudo-first-order approximation -/
+/-! ## H. Pseudo-first-order approximation -/
 
 /-- Observed pseudo-first-order constant `k[B]₀`. -/
 def pfoRateConst (B0 k : ℝ) : ℝ := k * B0
@@ -864,19 +903,20 @@ def pfoRateConst (B0 k : ℝ) : ℝ := k * B0
 noncomputable def pfoSol (A0 B0 k : ℝ) (t : ℝ) : ℝ := A0 * Real.exp (-(k * B0) * t)
 
 /-- The pseudo-first-order approximation starts at `[A]₀`. -/
-theorem pfoSol_zero (A0 B0 k : ℝ) : pfoSol A0 B0 k 0 = A0 := by
+lemma pfoSol_zero (A0 B0 k : ℝ) : pfoSol A0 B0 k 0 = A0 := by
   simp [pfoSol]
 
 /-- The pseudo-first-order approximation satisfies its ODE. -/
-theorem hasDerivAt_pfoSol (A0 B0 k t : ℝ) :
+lemma hasDerivAt_pfoSol (A0 B0 k t : ℝ) :
     HasDerivAt (pfoSol A0 B0 k) (-(pfoRateConst B0 k) * pfoSol A0 B0 k t) t :=
   hasDerivAt_firstOrderSol A0 (k * B0) t
 
 /-- Excess ratio `r = [A]₀ / [B]₀`. -/
 noncomputable def pfoRatio (A0 B0 : ℝ) : ℝ := A0 / B0
 
-/-- Pseudo-first-order error bound, explicit in `r`. -/
-theorem pfo_error_bound (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0)
+/-- Pseudo-first-order error bound, explicit in `r = [A]₀ / [B]₀ < 1`:
+`|[A](t) - [A]₀ exp(-k[B]₀t)| ≤ [A]₀ r (1 / (1 - r) + k[B]₀t)` for `t ≥ 0`. -/
+lemma pfo_error_bound (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0)
     (hk : 0 < k) (hlt : A0 < B0) (ht : 0 ≤ t) :
     |secondOrderABSolA A0 B0 k t - pfoSol A0 B0 k t|
       ≤ A0 * pfoRatio A0 B0 * (1 / (1 - pfoRatio A0 B0) + k * B0 * t) := by
@@ -1000,8 +1040,10 @@ theorem pfo_error_bound (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0)
   rw [← hfin]
   linarith [s1, s2, s3]
 
-/-- Relative pseudo-first-order error bound. -/
-theorem pfo_rel_error_bound (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0)
+/-- Pseudo-first-order error normalized by the initial concentration `[A]₀`:
+`|[A](t) - [A]₀ exp(-k[B]₀t)| / [A]₀ ≤ r (1 / (1 - r) + k[B]₀t)`. The denominator is `[A]₀`, not
+the concentration at time `t`, so this is not a relative error at time `t`. -/
+lemma pfo_error_div_initial_bound (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0)
     (hk : 0 < k) (hlt : A0 < B0) (ht : 0 ≤ t) :
     |secondOrderABSolA A0 B0 k t - pfoSol A0 B0 k t| / A0
       ≤ pfoRatio A0 B0 * (1 / (1 - pfoRatio A0 B0) + k * B0 * t) := by

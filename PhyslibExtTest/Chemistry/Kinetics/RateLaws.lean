@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.Chemistry.Kinetics.RateLaws
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
 
 /-!
 # Rate laws tests
@@ -85,7 +87,6 @@ adjust the corresponding prod call site to the reported signature.
 #check @rateLaw_first_ode
 #check @rateLaw_secondAA_ode
 #check @rateLaw_secondAB_ode
-#check @eq_of_hasDerivAt_zero
 #check @zeroOrderSol
 #check @hasDerivAt_zeroOrderSol
 #check @zeroOrderSol_unique
@@ -97,6 +98,7 @@ adjust the corresponding prod call site to the reported signature.
 #check @zeroOrderSol_halfLife
 #check @zeroOrderSol_halfLife_unique
 #check @firstOrderSol
+#check @firstOrderSol_eq_amount
 #check @firstOrderSol_zero
 #check @firstOrderSol_pos
 #check @hasDerivAt_firstOrderSol
@@ -129,10 +131,11 @@ adjust the corresponding prod call site to the reported signature.
 #check @hasDerivAt_secondOrderABEqualSol
 #check @secondOrderABEqualSol_unique
 #check @secondOrderABEqualSol_halfLife
+#check @RateModel
+#check @RateModel.order
+#check @RateModel.sol
 #check @halfLife
-#check @halfLife_correct_zero
-#check @halfLife_correct_first
-#check @halfLife_correct_second
+#check @halfLife_correct
 #check @halfLife_indep_iff_first_order
 #check @rateGroup
 #check @rateGroup_zero
@@ -148,7 +151,7 @@ adjust the corresponding prod call site to the reported signature.
 #check @hasDerivAt_pfoSol
 #check @pfoRatio
 #check @pfo_error_bound
-#check @pfo_rel_error_bound
+#check @pfo_error_div_initial_bound
 
 /-! ## Concrete checks -/
 
@@ -163,9 +166,37 @@ example (A0 B0 k : ℝ) (hΔ : B0 - A0 ≠ 0) :
 example (A0 B0 k : ℝ) (hΔ : B0 - A0 ≠ 0) :
     secondOrderABSolB A0 B0 k 0 = B0 := secondOrderABSolB_zero A0 B0 k hΔ
 
-example : halfLife 1 5 7 = Real.log 2 / 5 := rfl
-example (k A0 : ℝ) : halfLife 0 k A0 = A0 / (2 * k) := rfl
-example (k A0 : ℝ) : halfLife 2 k A0 = 1 / (2 * k * A0) := rfl
+example (A0 k t : ℝ) :
+    firstOrderSol A0 k t = MathlibExt.Biology.Biophysics.CompartmentKinetics.amount k 0 A0 t :=
+  congrFun (firstOrderSol_eq_amount A0 k) t
+
+example : halfLife .firstOrder 5 7 = Real.log 2 / 5 := rfl
+example (k A0 : ℝ) : halfLife .zeroOrder k A0 = A0 / (2 * k) := rfl
+example (k A0 : ℝ) : halfLife .secondOrderAA k A0 = 1 / (2 * k * A0) := rfl
+example (k A0 : ℝ) : halfLife .secondOrderABEqual k A0 = 1 / (k * A0) := rfl
+
+/-- Both second-order models have order `2`, but their half-lives differ: the order alone does not
+determine the half-life. -/
+example (k A0 : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
+    RateModel.secondOrderAA.order = RateModel.secondOrderABEqual.order ∧
+      halfLife .secondOrderAA k A0 ≠ halfLife .secondOrderABEqual k A0 := by
+  refine ⟨rfl, ?_⟩
+  simp only [halfLife]
+  rw [Ne, div_eq_div_iff (by positivity) (by positivity)]
+  intro h
+  have hkA0 := mul_pos hk hA0
+  linarith
+
+/-- The equal-amounts `A + B → P` half-life halves its concentration. -/
+example (A0 k : ℝ) (hk : 0 < k) (hA0 : 0 < A0) :
+    secondOrderABEqualSol A0 k (halfLife .secondOrderABEqual k A0) = A0 / 2 :=
+  halfLife_correct .secondOrderABEqual A0 k hk hA0
+
+/-- The equal-amounts `A + B → P` half-life depends on `[A]₀`. -/
+example (k : ℝ) (hk : 0 < k) :
+    ¬ ∀ A0 A0' : ℝ, 0 < A0 → 0 < A0' →
+      halfLife .secondOrderABEqual k A0 = halfLife .secondOrderABEqual k A0' :=
+  fun h => absurd ((halfLife_indep_iff_first_order _ k hk).mp h) (by decide)
 
 example (k t A0 : ℝ) : rateGroup 0 k t A0 = k * t / A0 := rateGroup_zero k t A0
 example (k t A0 : ℝ) : rateGroup 1 k t A0 = k * t := rateGroup_one k t A0
@@ -178,6 +209,8 @@ example : rateGroup 0 6 4 3 = 8 := by
 
 example : pfoRatio 1 2 = 1 / 2 := rfl
 example : depletionTime 4 2 = 4 / 2 := rfl
+
+/-! Non-vacuity: the explicit solutions satisfy every hypothesis of the uniqueness theorems. -/
 
 example (A0 k t : ℝ) (ht : 0 ≤ t) :
     zeroOrderSol A0 k t = zeroOrderSol A0 k t :=
@@ -245,7 +278,6 @@ example (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0) (hk : 0 < k)
 
 /-! ## Axiom audits -/
 
-#print axioms eq_of_hasDerivAt_zero
 #print axioms zeroOrderSol_unique
 #print axioms firstOrderSol_unique
 #print axioms secondOrderGen_unique
@@ -254,6 +286,7 @@ example (A0 B0 k t : ℝ) (hA0 : 0 < A0) (hB0 : 0 < B0) (hk : 0 < k)
 #print axioms secondOrderABEqualSol_unique
 #print axioms halfLife_indep_iff_first_order
 #print axioms pfo_error_bound
-#print axioms pfo_rel_error_bound
+#print axioms pfo_error_div_initial_bound
+#print axioms halfLife_correct
 
 end Chemistry.Kinetics
