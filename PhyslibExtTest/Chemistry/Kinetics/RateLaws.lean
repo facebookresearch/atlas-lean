@@ -81,6 +81,7 @@ adjust the corresponding prod call site to the reported signature.
 
 #check @extentRate
 #check @concOfExtent
+#check @concOfExtent_zero
 #check @hasDerivAt_concOfExtent
 #check @deriv_concOfExtent
 #check @rateLaw_zero_ode
@@ -209,6 +210,21 @@ example : rateGroup 0 6 4 3 = 8 := by
 
 example : pfoRatio 1 2 = 1 / 2 := rfl
 example : depletionTime 4 2 = 4 / 2 := rfl
+
+/-- Regression: an extent trajectory that does not start at `0` (`ξ ≡ 1`, `V = ν = 1`) still gives
+initial concentration `c₀`. -/
+example (c₀ : ℝ) : concOfExtent c₀ 1 1 (fun _ => 1) 0 = c₀ := concOfExtent_zero c₀ 1 1 _
+
+example (c₀ t : ℝ) : concOfExtent c₀ 1 1 (fun s => 1 + s) t = c₀ + t := by
+  simp [concOfExtent]
+
+/-- Extent-based first-order kinetics feeds the integrated law: with `A s = c(s)` for
+`c = concOfExtent A0 (-1) V ξ` and `v = k[A]` on `t ≥ 0`, `A` is the first-order solution. -/
+example (A ξ : ℝ → ℝ) (A0 k V t : ℝ) (hA : ∀ s, A s = concOfExtent A0 (-1) V ξ s)
+    (hξ : ∀ s, DifferentiableAt ℝ ξ s) (hrate : ∀ s, 0 ≤ s → extentRate V ξ s = k * A s)
+    (ht : 0 ≤ t) : A t = firstOrderSol A0 k t :=
+  firstOrderSol_unique A0 k A (fun s hs => rateLaw_first_ode A ξ A0 k V s hA (hξ s) (hrate s hs))
+    (by rw [hA, concOfExtent_zero]) t ht
 
 /-! Non-vacuity: the explicit solutions satisfy every hypothesis of the uniqueness theorems. -/
 

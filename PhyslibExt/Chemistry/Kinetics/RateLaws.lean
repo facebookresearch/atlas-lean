@@ -26,7 +26,8 @@ scalar rate group and a pseudo-first-order error bound.
 ## i. Overview
 
 The rate of a reaction is the extent rate `v = (1 / V) dξ/dt`, and at constant volume each
-concentration changes as `dc/dt = ν v` with its stoichiometric number `ν`. The rate laws `v = k`,
+concentration is `c = c₀ + ν (ξ - ξ(0)) / V`, so it changes as `dc/dt = ν v` with its
+stoichiometric number `ν` and starts at `c₀`. The rate laws `v = k`,
 `v = k[A]`, `v = k[A]²` (for `2A → P`, `ν_A = -2`) and `v = k[A][B]` (for `A + B → P`) are model
 inputs; their integrated solutions, uniqueness on `t ≥ 0` and half-lives are proved.
 
@@ -46,7 +47,8 @@ in `r = [A]₀ / [B]₀ < 1`.
 
 ## ii. Key results
 
-- `hasDerivAt_concOfExtent` : `dc/dt = ν v` under the extent-rate convention.
+- `hasDerivAt_concOfExtent`, `concOfExtent_zero` : `dc/dt = ν v` under the extent-rate
+  convention, with initial concentration `c₀`.
 - `zeroOrderSol_unique`, `zeroOrderConc_before`, `zeroOrderConc_after` : the zero-order law and
   depletion.
 - `firstOrderSol_eq_amount`, `firstOrderSol_unique`, `firstOrderSol_halfLife` : the first-order
@@ -87,29 +89,24 @@ namespace Chemistry.Kinetics
 /-- Extent rate `v = (1 / V) dξ/dt`: the single rate convention used here. -/
 noncomputable def extentRate (V : ℝ) (ξ : ℝ → ℝ) (t : ℝ) : ℝ := (1 / V) * deriv ξ t
 
-/-- Concentration from extent at constant volume: `c = c₀ + ν ξ / V`. -/
-noncomputable def concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ) : ℝ := c₀ + ν * ξ t / V
+/-- Concentration from extent at constant volume, measured from the state at time `0`:
+`c = c₀ + ν (ξ - ξ(0)) / V`, so `c₀` is the initial concentration for every extent trajectory
+`ξ` (`concOfExtent_zero`). -/
+noncomputable def concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ) : ℝ :=
+  c₀ + ν * (ξ t - ξ 0) / V
+
+/-- The concentration from extent starts at `c₀`. -/
+lemma concOfExtent_zero (c₀ ν V : ℝ) (ξ : ℝ → ℝ) : concOfExtent c₀ ν V ξ 0 = c₀ := by
+  simp [concOfExtent]
 
 /-- Concentration rate from the extent rate: `dc/dt = ν v`. -/
 lemma hasDerivAt_concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ)
     (hξ : DifferentiableAt ℝ ξ t) :
     HasDerivAt (concOfExtent c₀ ν V ξ) (ν * extentRate V ξ t) t := by
-  have hbase : HasDerivAt (fun s : ℝ => (ν / V) * ξ s) _ t :=
-    hξ.hasDerivAt.const_mul (ν / V)
-  have hadd : HasDerivAt (fun s : ℝ => c₀ + (ν / V) * ξ s) _ t :=
-    hbase.const_add c₀
-  have heq : (fun s : ℝ => c₀ + ν * ξ s / V) = (fun s : ℝ => c₀ + (ν / V) * ξ s) := by
-    funext s
-    ring
-  have hchain : HasDerivAt (fun s : ℝ => c₀ + ν * ξ s / V) _ t :=
-    hadd.congr_of_eventuallyEq (Filter.EventuallyEq.of_eq heq)
-  have hderiv : deriv (fun s : ℝ => c₀ + ν * ξ s / V) t
-      = ν * ((1 / V) * deriv ξ t) := by
-    rw [hchain.deriv]; ring
-  have hfinal := hchain.differentiableAt.hasDerivAt
-  rw [hderiv] at hfinal
-  show HasDerivAt (fun s : ℝ => c₀ + ν * ξ s / V) (ν * ((1 / V) * deriv ξ t)) t
-  exact hfinal
+  have h := (((hξ.hasDerivAt.sub_const (ξ 0)).const_mul ν).div_const V).const_add c₀
+  unfold concOfExtent extentRate
+  convert h using 1
+  ring
 
 /-- `deriv` form of `hasDerivAt_concOfExtent`. -/
 lemma deriv_concOfExtent (c₀ ν V : ℝ) (ξ : ℝ → ℝ) (t : ℝ)
