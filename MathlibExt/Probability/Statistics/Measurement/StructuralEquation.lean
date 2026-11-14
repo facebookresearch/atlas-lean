@@ -35,6 +35,11 @@ of the Gaussian covariance-fit discrepancy (D07.3). The discrepancy results are
 corollaries of the log-determinant/trace inequality
 `Matrix.PosDef.log_det_mul_le_trace` and its equality case
 `Matrix.PosDef.mul_eq_one_of_log_det_eq_trace`, applied to `S` and `C⁻¹`.
+
+Three-time-point linear-growth covariance identification (D08.1): the
+Intercept/Slope loading matrix `growthLoading` with closed-form recovery of
+the intercept/slope (co)variances and error variances from the model
+covariance (Duncan and Duncan (2009)).
 -/
 
 @[expose] public section
@@ -194,6 +199,113 @@ theorem gaussianDiscrepancy_eq_zero_iff
   · intro hSC
     rw [hSC]
     exact gaussianDiscrepancy_self hCu
+
+open scoped Matrix
+
+/-- Linear-growth factor loading matrix for three equally spaced time points
+(Duncan and Duncan (2009), Figure 2): Intercept loadings `1, 1, 1`, Slope
+loadings `0, 1, 2`. -/
+def growthLoading : Matrix (Fin 3) (Fin 2) ℝ := !![1, 0; 1, 1; 1, 2]
+
+/-- Model covariance entries for the three-time-point linear growth model:
+with random intercept/slope covariance `G` and uncorrelated errors `θ`, the
+`(s, t)` entry of `growthLoading * G * growthLoadingᵀ + diagonal θ` is
+`G 0 0 + (s + t) * G 0 1 + s * t * G 1 1`, plus `θ s` on the diagonal
+(Duncan and Duncan (2009)). -/
+theorem growthLoading_cov_apply
+    (G : Matrix (Fin 2) (Fin 2) ℝ) (hG : G.IsSymm)
+    (θ : Fin 3 → ℝ) (s t : Fin 3) :
+    ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+      Matrix (Fin 3) (Fin 3) ℝ)) s t
+      = G 0 0 + ((s : ℝ) + (t : ℝ)) * G 0 1
+        + (s : ℝ) * (t : ℝ) * G 1 1
+        + (if s = t then θ s else 0) := by
+  have h10 : G 1 0 = G 0 1 := hG.apply 0 1
+  have e0 : ∀ w : Fin 3, growthLoading w 0 = 1 := by
+    intro w
+    fin_cases w <;> simp [growthLoading]
+  have e1 : ∀ w : Fin 3, growthLoading w 1 = (w : ℝ) := by
+    intro w
+    fin_cases w <;> simp [growthLoading]
+  have hLG : ∀ (u : Fin 3) (k : Fin 2),
+      ((growthLoading * G : Matrix (Fin 3) (Fin 2) ℝ)) u k
+        = G 0 k + (u : ℝ) * G 1 k := by
+    intro u k
+    rw [Matrix.mul_apply, Fin.sum_univ_two, e0 u, e1 u, one_mul]
+  rw [Matrix.add_apply, Matrix.mul_apply, Fin.sum_univ_two, hLG s 0, hLG s 1,
+    Matrix.transpose_apply, Matrix.transpose_apply, e0 t, e1 t, h10,
+    Matrix.diagonal_apply]
+  ring
+
+/-- Closed-form recovery of the growth parameters from the model covariance
+(Duncan and Duncan (2009)): the intercept/slope (co)variances from the
+off-diagonal entries, each error variance by subtraction. -/
+theorem growth_recover
+    (G : Matrix (Fin 2) (Fin 2) ℝ) (hG : G.IsSymm)
+    (θ : Fin 3 → ℝ) :
+    G 0 1 = ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+      Matrix (Fin 3) (Fin 3) ℝ)) 0 2
+      - ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+        Matrix (Fin 3) (Fin 3) ℝ)) 0 1
+    ∧ G 0 0 = 2 * ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+        Matrix (Fin 3) (Fin 3) ℝ)) 0 1
+      - ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+        Matrix (Fin 3) (Fin 3) ℝ)) 0 2
+    ∧ G 1 1 = ((((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+        Matrix (Fin 3) (Fin 3) ℝ)) 1 2
+      + ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+        Matrix (Fin 3) (Fin 3) ℝ)) 0 1
+      - 2 * ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+        Matrix (Fin 3) (Fin 3) ℝ)) 0 2)) / 2
+    ∧ θ 0 = ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+        Matrix (Fin 3) (Fin 3) ℝ)) 0 0 - G 0 0
+    ∧ θ 1 = ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+        Matrix (Fin 3) (Fin 3) ℝ)) 1 1
+      - (G 0 0 + 2 * G 0 1 + G 1 1)
+    ∧ θ 2 = ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+        Matrix (Fin 3) (Fin 3) ℝ)) 2 2
+      - (G 0 0 + 4 * G 0 1 + 4 * G 1 1) := by
+  have e := growthLoading_cov_apply G hG θ
+  rw [e 0 0, e 0 1, e 0 2, e 1 1, e 1 2, e 2 2]
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> simp <;> linarith
+
+/-- The three-time-point growth covariance identifies its parameters: equal
+model covariances force equal intercept/slope covariances and error
+variances (Duncan and Duncan (2009)). -/
+theorem growth_identified
+    (G G' : Matrix (Fin 2) (Fin 2) ℝ)
+    (hG : G.IsSymm) (hG' : G'.IsSymm) (θ θ' : Fin 3 → ℝ)
+    (h : ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+      Matrix (Fin 3) (Fin 3) ℝ))
+      = ((growthLoading * G' * growthLoadingᵀ + Matrix.diagonal θ' :
+        Matrix (Fin 3) (Fin 3) ℝ))) :
+    G = G' ∧ θ = θ' := by
+  have hM : ∀ s t : Fin 3,
+      ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+        Matrix (Fin 3) (Fin 3) ℝ)) s t
+        = ((growthLoading * G' * growthLoadingᵀ + Matrix.diagonal θ' :
+          Matrix (Fin 3) (Fin 3) ℝ)) s t := by
+    intro s t
+    rw [h]
+  obtain ⟨g01, g00, g11, t0, t1, t2⟩ := growth_recover G hG θ
+  obtain ⟨g01', g00', g11', t0', t1', t2'⟩ := growth_recover G' hG' θ'
+  have eG01 : G 0 1 = G' 0 1 := by rw [g01, g01', hM 0 2, hM 0 1]
+  have eG00 : G 0 0 = G' 0 0 := by rw [g00, g00', hM 0 1, hM 0 2]
+  have eG11 : G 1 1 = G' 1 1 := by rw [g11, g11', hM 1 2, hM 0 1, hM 0 2]
+  have eG : G = G' := by
+    have hall : ∀ i j : Fin 2, G i j = G' i j := by
+      simp only [Fin.forall_fin_two]
+      refine ⟨⟨eG00, eG01⟩, ?_, eG11⟩
+      rw [hG.apply 0 1, hG'.apply 0 1]
+      exact eG01
+    exact Matrix.ext hall
+  have eθ : θ = θ' := by
+    have h0 : θ 0 = θ' 0 := by rw [t0, t0', hM 0 0, eG00]
+    have h1 : θ 1 = θ' 1 := by rw [t1, t1', hM 1 1, eG00, eG01, eG11]
+    have h2 : θ 2 = θ' 2 := by rw [t2, t2', hM 2 2, eG00, eG01, eG11]
+    funext s
+    fin_cases s <;> assumption
+  exact ⟨eG, eθ⟩
 
 end MathlibExt.Probability.Statistics.Measurement
 
