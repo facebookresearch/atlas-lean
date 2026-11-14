@@ -17,14 +17,16 @@ import Mathlib.Tactic.Ring
 Concrete consumers of `PhyslibExt.EarthScience.AirWaterExchange`:
 conservation for a linear exchange, the disequilibrium equation at all-ones
 coefficients, the equilibrium boundary case, and a concrete relaxing
-solution that satisfies the hypotheses of the forward-time decay theorem.
+solution that satisfies the hypotheses of the conservation and forward-time
+decay theorems.
 
 ## i. Overview
 
 These are elaboration and non-vacuity checks, not new results. With all
 coefficients `1`, the rate is `2`; at equilibrium (`J = 0`) both stocks
 are constant; `ng t = 1 + exp (-2 * t)`, `nw t = 1 - exp (-2 * t)` solves
-the all-ones exchange equations, and its disequilibrium tends to `0`.
+the all-ones exchange equations, keeps the total `2`, and its
+disequilibrium tends to `0`.
 
 ## ii. Key results
 
@@ -38,12 +40,12 @@ No new definitions or results are introduced here.
 
 /-! ## A. Conservation and the equation at unit coefficients -/
 
-/-- The public shape of total-inventory conservation. -/
+/-- The public shape of the pointwise inventory derivative. -/
 example (Vg Vw R T H k A : ℝ) (ng nw : ℝ → ℝ) (t : ℝ)
     (hng : HasDerivAt ng (-(k * A * (H * (ng t * R * T / Vg) - nw t / Vw))) t)
     (hnw : HasDerivAt nw (k * A * (H * (ng t * R * T / Vg) - nw t / Vw)) t) :
     HasDerivAt (fun t => ng t + nw t) 0 t :=
-  EarthScience.air_water_total_conserved Vg Vw R T H k A ng nw t hng hnw
+  EarthScience.air_water_total_hasDerivAt_zero Vg Vw R T H k A ng nw t hng hnw
 
 /-- All-ones coefficients: the disequilibrium `ng - nw` satisfies
 `d' = -2 * d`, so the rate is `2`. -/
@@ -72,7 +74,7 @@ example (t : ℝ) :
     have h : (1 * 1 * (1 * ((5 : ℝ) * 1 * 1 / 1) - 5 / 1)) = 0 := by norm_num
     rw [h]
     exact hasDerivAt_const t (5 : ℝ)
-  have htot := EarthScience.air_water_total_conserved 1 1 1 1 1 1 1
+  have htot := EarthScience.air_water_total_hasDerivAt_zero 1 1 1 1 1 1 1
     (fun _ => (5 : ℝ)) (fun _ => (5 : ℝ)) t hng hnw
   simpa using htot
 
@@ -93,3 +95,18 @@ example : Filter.Tendsto
     (((hasDerivAt_id' t).const_mul (-2 : ℝ)).exp.const_sub 1).congr_deriv (by ring)
   exact EarthScience.air_water_difference_tendsto_zero 1 1 1 1 1 1 1 one_pos one_pos
     one_pos one_pos one_pos one_pos one_pos _ _ hng hnw
+
+/-- The same concrete solution keeps the total inventory at its initial
+value `2`, as `air_water_total_conserved` asserts. -/
+example (t : ℝ) :
+    (1 + Real.exp (-2 * t)) + (1 - Real.exp (-2 * t)) =
+      (1 + Real.exp (-2 * 0)) + (1 - Real.exp (-2 * 0)) := by
+  have hng : ∀ t : ℝ, HasDerivAt (fun t => 1 + Real.exp (-2 * t))
+      (-(1 * 1 * (1 * ((1 + Real.exp (-2 * t)) * 1 * 1 / 1) -
+        (1 - Real.exp (-2 * t)) / 1))) t := fun t =>
+    (((hasDerivAt_id' t).const_mul (-2 : ℝ)).exp.const_add 1).congr_deriv (by ring)
+  have hnw : ∀ t : ℝ, HasDerivAt (fun t => 1 - Real.exp (-2 * t))
+      (1 * 1 * (1 * ((1 + Real.exp (-2 * t)) * 1 * 1 / 1) -
+        (1 - Real.exp (-2 * t)) / 1)) t := fun t =>
+    (((hasDerivAt_id' t).const_mul (-2 : ℝ)).exp.const_sub 1).congr_deriv (by ring)
+  exact EarthScience.air_water_total_conserved 1 1 1 1 1 1 1 _ _ hng hnw t

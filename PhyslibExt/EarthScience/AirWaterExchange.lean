@@ -11,6 +11,7 @@ public import MathlibExt.Analysis.ODE.ExponentialGrowth
 
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Order.Filter.AtTopBot.Field
 import Mathlib.Tactic.Positivity
@@ -22,7 +23,11 @@ import Mathlib.Tactic.Ring
 Closed isothermal two-compartment system: gas amount `ng` and dissolved
 amount `nw` exchange through the flux `J = k * A * (H * p - c)` with
 `p = ng * R * T / Vg` and `c = nw / Vw`, satisfying `ng' = -J` and
-`nw' = J`. The total inventory `ng + nw` is conserved, and the
+`nw' = J`. The flux is a transfer coefficient `k` times the interface area
+`A` times the departure of the dissolved concentration `c` from its
+Henry-law equilibrium value `H * p`, with `H` the solubility form of the
+Henry constant (`c = H * p` at equilibrium) and `p` the ideal-gas partial
+pressure. The total inventory `ng + nw` is conserved, and the
 disequilibrium `d = H * p - c` satisfies the linear equation
 `d' = -rate * d` with `rate = k * A * (H * R * T / Vg + 1 / Vw)`.
 
@@ -46,7 +51,10 @@ source or sink enters the budget.
 
 ## ii. Key results
 
-- `EarthScience.air_water_total_conserved`: total inventory derivative `0`.
+- `EarthScience.air_water_total_hasDerivAt_zero`: total inventory derivative
+  `0` at a time where the exchange equations hold.
+- `EarthScience.air_water_total_conserved`: `ng t + nw t = ng 0 + nw 0` when
+  the exchange equations hold at every time.
 - `EarthScience.air_water_difference_ode`: the linear equation
   `d' = -rate * d`, for all real `k`, `A`, `H`, `R`, `T`.
 - `EarthScience.air_water_difference_eq_expGrowthPath`: the signed
@@ -64,7 +72,12 @@ source or sink enters the budget.
 
 ## iv. References
 
-- `HasDerivAt` API in `Mathlib/Analysis/Calculus/Deriv/Add.lean`.
+- P. S. Liss and P. G. Slater, *Flux of gases across the air-sea interface*,
+  Nature 247 (1974), 181–184: the exchange flux as a transfer velocity times
+  the departure of the dissolved concentration from its equilibrium value.
+- R. Sander, *Compilation of Henry's law constants (version 4.0) for water as
+  solvent*, Atmos. Chem. Phys. 15 (2015), 4399–4981: the solubility form
+  `c = H * p` of the Henry constant.
 - `expGrowthPath` and its uniqueness theorem in
   `MathlibExt/Analysis/ODE/ExponentialGrowth.lean`.
 -/
@@ -77,11 +90,10 @@ open MathlibExt.Analysis.ODE.ExponentialGrowth
 
 /-! ## A. Total inventory conservation -/
 
-/-- Air-water exchange: the total inventory `ng + nw` has zero time
-derivative at `t`, since `ng' = -J` and `nw' = J`. Here
-`J t = k * A * (H * p t - c t)` with `p t = ng t * R * T / Vg` and
-`c t = nw t / Vw`. -/
-theorem air_water_total_conserved (Vg Vw R T H k A : ℝ)
+/-- At a time `t` where `ng' = -J` and `nw' = J`, the total inventory
+`ng + nw` has zero time derivative. Here `J t = k * A * (H * p t - c t)` with
+`p t = ng t * R * T / Vg` and `c t = nw t / Vw`. -/
+lemma air_water_total_hasDerivAt_zero (Vg Vw R T H k A : ℝ)
     (ng nw : ℝ → ℝ) (t : ℝ)
     (hng : HasDerivAt ng (-(k * A * (H * (ng t * R * T / Vg) - nw t / Vw))) t)
     (hnw : HasDerivAt nw (k * A * (H * (ng t * R * T / Vg) - nw t / Vw)) t) :
@@ -89,6 +101,17 @@ theorem air_water_total_conserved (Vg Vw R T H k A : ℝ)
   have h := hng.add hnw
   rw [neg_add_cancel] at h
   exact h
+
+/-- Conservation of the total inventory: if the exchange equations hold at
+every time, then `ng t + nw t = ng 0 + nw 0` for every `t`. -/
+theorem air_water_total_conserved (Vg Vw R T H k A : ℝ) (ng nw : ℝ → ℝ)
+    (hng : ∀ t, HasDerivAt ng (-(k * A * (H * (ng t * R * T / Vg) - nw t / Vw))) t)
+    (hnw : ∀ t, HasDerivAt nw (k * A * (H * (ng t * R * T / Vg) - nw t / Vw)) t)
+    (t : ℝ) :
+    ng t + nw t = ng 0 + nw 0 := by
+  have h := fun s =>
+    air_water_total_hasDerivAt_zero Vg Vw R T H k A ng nw s (hng s) (hnw s)
+  exact is_const_of_deriv_eq_zero (fun s => (h s).differentiableAt) (fun s => (h s).deriv) t 0
 
 /-! ## B. Disequilibrium equation and closed form -/
 
