@@ -55,9 +55,11 @@ decomposition splits `{M > k}` over the events `{τ₊ = n, S_n = j}`, which dep
 `n` scores; after the fixed time `n` the walk restarts independently with the same law, so no
 strong Markov property at the (possibly infinite) ladder epoch is needed. One input stays a
 hypothesis of `tendsto_exp_mul_maxTail_scoreWalk`: the ladder Cramér identity
-`∑ g j e^{θ j} = 1`, which for a negative-drift walk with positive-score support holds at the
-root `θ > 0` of `𝔼 e^{θ X} = 1` (optional stopping of `e^{θ S_n}` at `τ₊ ∧ n`); that link is
-not proved here. Drift enters only through this hypothesis: it forces a defective ladder law,
+`∑ g j e^{θ j} = 1`. It holds at the root `θ > 0` of `𝔼 e^{θ X} = 1` whenever `X` is not
+almost surely `0` (`hasSum_ladderLaw_mul_exp` in `MathlibExt.Probability.Renewal.CramerIdentity`,
+by optional stopping of `e^{θ S_n}` at `τ₊ ∧ n`), and
+`tendsto_exp_mul_maxTail_scoreWalk_of_mgf` there states the limit with this hypothesis
+discharged. Drift enters only through this hypothesis: it forces a defective ladder law,
 `P(τ₊ < ∞) < 1` (`tsum_lt_one_of_hasSum_exp_mul`), and a proper ladder law (nonnegative
 drift) admits no positive root (`not_hasSum_exp_mul_of_hasSum_one`). Finite tilted ladder mean
 and aperiodic ladder support are also hypotheses. The lattice case is not treated.
@@ -993,8 +995,9 @@ theorem tsum_ladderLaw {P : Measure Ω} [IsProbabilityMeasure P] {X : ℕ → Ω
 /-- **Ladder-height limit for an i.i.d. integer score walk** (Cramér–Lundberg /
 Karlin–Dembo). Let `X` be i.i.d. integer scores with walk `S`, maximum `M = sup_n S n`, and
 ladder-height law `g j = P(τ₊ < ∞, S_{τ₊} = j)`. If `θ > 0` satisfies the ladder Cramér
-identity `∑ g j e^{θ j} = 1` (for a negative-drift walk this holds at the root of
-`𝔼 e^{θ X} = 1`; here it is a hypothesis, and it forces `P(τ₊ < ∞) < 1`, see
+identity `∑ g j e^{θ j} = 1` (here a hypothesis; it holds at the root of `𝔼 e^{θ X} = 1`
+when `X` is not almost surely `0`, `hasSum_ladderLaw_mul_exp` in `CramerIdentity`, and it
+forces `P(τ₊ < ∞) < 1`, see
 `tsum_lt_one_of_hasSum_exp_mul`), the ladder support is aperiodic and the tilted ladder mean
 `μ = ∑ j g j e^{θ j}` is finite, then
 `e^{θ k} P(M > k) → (1 - P(τ₊ < ∞)) / ((e^θ - 1) μ)`. The ladder decomposition is proved
