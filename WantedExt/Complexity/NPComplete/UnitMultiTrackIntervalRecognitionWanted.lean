@@ -22,14 +22,16 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Set.Defs
-public import Mathlib.Order.SetNotation
+public import WantedExt.Complexity.NPComplete.TrackIntervalGraphRecognitionWanted
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.UnitMultiTrackIntervalRecognition
+
+open MetaMathlibExt.Complexity.NPComplete.TrackIntervalGraphRecognition
+  (TrackIntervalGraphRecognitionInstance Graph WellFormed)
 
 /-!
 # UNIT d-TRACK INTERVAL GRAPH RECOGNITION is NP-complete for every fixed d ≥ 2
@@ -55,8 +57,11 @@ recognized in linear time, and, as the vertex count `n` is written in binary, is
 vertices.
 
 `d` is fixed, not part of the input: the decision problem is
-`unitMultiTrackIntervalRecognitionDec d`, and the theorem holds for every `d ≥ 2`. The graph is
-given by an edge list on `Fin n`. A representation assigns to each vertex `v` and track `j : Fin d`
+`unitMultiTrackIntervalRecognitionDec d`, and the theorem holds for every `d ≥ 2`. The instance (a
+graph given by an edge list on `Fin n`), `Graph` and `WellFormed` are those of the general
+`d`-track problem, `WantedExt.Complexity.NPComplete.TrackIntervalGraphRecognitionWanted`, reused
+unchanged; that module's `IsTrackIntervalGraph` allows intervals of any length, and the unit class
+fixes every right endpoint to the left endpoint plus `1`. A representation assigns to each vertex `v` and track `j : Fin d`
 the left endpoint `l v j` of the closed unit interval `[l v j, l v j + 1]` on track `j`; intervals
 on different tracks never meet, so two distinct vertices are adjacent exactly when their intervals
 on some common track intersect (`IsUnitMultiTrackIntervalGraph`).
@@ -72,18 +77,6 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: vertex count `n` (vertices `0, …, n - 1`) and edge list. -/
-abbrev UnitMultiTrackIntervalRecognitionInstance := ℕ × List (ℕ × ℕ)
-
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : UnitMultiTrackIntervalRecognitionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- Well-formedness of an instance: the edge list describes a simple graph on `0, …, n - 1` (no
-duplicate edges in either orientation, no self-loops, endpoints in range). -/
-def WellFormed (i : UnitMultiTrackIntervalRecognitionInstance) : Prop :=
-  i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
 /-- `H` is a unit `d`-track interval graph: each vertex `v` is assigned one closed unit interval
 `[l v j, l v j + 1]` on each track `j : Fin d`, and two distinct vertices are adjacent in `H`
 exactly when their intervals on some track intersect. -/
@@ -94,7 +87,7 @@ def IsUnitMultiTrackIntervalGraph (d : ℕ) {n : ℕ} (H : SimpleGraph (Fin n)) 
 
 /-- The graph of the instance is a unit `d`-track interval graph. -/
 def UnitMultiTrackIntervalRecognitionFeasible (d : ℕ)
-    (i : UnitMultiTrackIntervalRecognitionInstance) : Prop :=
+    (i : TrackIntervalGraphRecognitionInstance) : Prop :=
   IsUnitMultiTrackIntervalGraph d (Graph i)
 
 open Classical in
@@ -103,7 +96,7 @@ bitstrings. -/
 noncomputable def unitMultiTrackIntervalRecognitionDec (d : ℕ) :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitMultiTrackIntervalRecognitionInstance) x with
+      (α := TrackIntervalGraphRecognitionInstance) x with
   | some i => decide (WellFormed i ∧ UnitMultiTrackIntervalRecognitionFeasible d i)
   | none => false
 
