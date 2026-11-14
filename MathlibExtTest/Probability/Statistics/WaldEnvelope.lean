@@ -11,7 +11,7 @@ module
 public import MathlibExt.Probability.Statistics.WaldEnvelope
 
 /-!
-# Tests for Wald consistency under Wald's original conditions
+# Tests for Wald consistency without compactness
 
 * **Laplace location model on `ℝ`.** `ℓ θ x = -|θ - x|` with parameter set `S = ℝ`, which is not
   compact, so `MLEConsistency` does not apply. Computed from the definitions: for every sample
@@ -19,7 +19,7 @@ public import MathlibExt.Probability.Statistics.WaldEnvelope
   infinity `|x| - n` around `0`; for `X 0 = 0`, a one-set Wald cover at every radius (envelope
   `min (|x| - ε) 0`).
 * **Joint non-vacuity.** For a constant sample `X i = 0` on a one-point probability space, every
-  hypothesis of Wald's theorem `ae_tendsto_of_isMLEOn_of_hasTailEnvelope` holds on `S = ℝ`:
+  hypothesis of the closed-set theorem `ae_tendsto_of_isMLEOn_of_hasTailEnvelope` holds on `S = ℝ`:
   identifiability of the population criterion `-|θ|` at `0` and the MLE `0` are computed from the
   definitions. The instance is degenerate (independence and identical distribution are trivial
   for a constant sample); a non-degenerate i.i.d. instance on a product space is not constructed.
@@ -65,9 +65,9 @@ theorem absLL_le_absEnv {ε θ : ℝ} (hθ : θ ∈ (univ : Set ℝ) \ ball 0 ε
   exact le_min (by linarith) (by linarith [abs_nonneg (θ - x)])
 
 /-- **A Wald cover of `ℝ` for the Laplace model** by one set, at every radius `ε`, when `X 0 = 0`:
-the mean of the envelope is `-ε < 0 = E ℓ 0 (X 0)`. (For a spread-out law of `X 0` one set does
-not suffice at small `ε`; `exists_isWaldCover` builds the finer cover from the local envelopes
-and the envelope at infinity below, which hold for every integrable `X 0`.) -/
+the mean of the envelope is `-ε < 0 = E ℓ 0 (X 0)`. (For other laws of `X 0`,
+`exists_isWaldCover` builds a cover from the local envelopes and the envelope at infinity below,
+which hold for every integrable `X 0`.) -/
 theorem absLL_isWaldCover {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
     [IsProbabilityMeasure P] {X : ℕ → Ω → ℝ} (hX : ∀ ω, X 0 ω = 0) {ε : ℝ} (hε : 0 < ε) :
     IsWaldCover P absLL X univ 0 ε {(univ \ ball 0 ε, absEnv ε)} := by
@@ -158,8 +158,9 @@ theorem absLL_isMLEOn : IsMLEOn univ absLL X₀ fun _ _ => (0 : ℝ) := by
 
 theorem integrable_X₀ : Integrable (X₀ 0) P₁ := integrable_const (0 : ℝ)
 
-/-- **Every hypothesis of Wald's theorem holds jointly** for the Laplace model on `ℝ` with the
-constant sample, so the theorem applies with no hypothesis left open. -/
+/-- **Every hypothesis of `ae_tendsto_of_isMLEOn_of_hasTailEnvelope` holds jointly** for the
+Laplace model on `ℝ` with the constant sample, so the theorem applies with no hypothesis left
+open. -/
 example : ∀ᵐ ω ∂P₁, Tendsto (fun n : ℕ => (fun (_ : ℕ) (_ : Unit) => (0 : ℝ)) n ω) atTop (𝓝 0) :=
   ae_tendsto_of_isMLEOn_of_hasTailEnvelope isClosed_univ absLL_isIdentifiedOn
     (by unfold absLL; fun_prop) (fun θ _ => by simp only [absLL, X₀]; exact integrable_const _)

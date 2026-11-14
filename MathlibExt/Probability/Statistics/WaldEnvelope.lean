@@ -11,13 +11,19 @@ module
 public import MathlibExt.Probability.Statistics.MLEConsistency
 
 /-!
-# Wald consistency under Wald's original conditions
+# Wald consistency without compactness
 
 `MLEConsistency` proves almost-sure consistency of the maximum-likelihood estimator on a compact
-parameter set from a uniform law of large numbers. This file proves it under **Wald's original
-conditions** (Wald 1949): an integrable upper envelope of the log-likelihood on each set of a
-finite cover of the parameter set away from the truth, with no compactness of the parameter set
-and no uniform law of large numbers.
+parameter set from a uniform law of large numbers. This file proves it by Wald's envelope argument
+(Wald 1949): an integrable upper envelope of the log-likelihood on each set of a finite cover of
+the parameter set away from the truth, with no compactness of the parameter set and no uniform
+law of large numbers.
+
+The theorems built from local envelopes are a **finite-expected-log-likelihood specialization**
+of Wald's theorem, not Wald's original conditions: the log-likelihood is real-valued, the
+population criterion `popCrit` is a Bochner integral, and `ℓ θ (X 0)` is assumed integrable at
+every parameter `θ` considered, so every expected log-likelihood there is finite. Wald's theorem
+also allows the expected log-likelihood to be `-∞` away from the true parameter.
 
 ## Setting
 
@@ -34,28 +40,30 @@ observations are pairwise independent and identically distributed, `ℓ θ₀` i
   `S`, of the topology of `Θ` beyond the pseudometric, or of the regularity of `ℓ`.
 * **Local envelopes** (`HasLocalEnvelope`): at `θ`, a sequence `u n` of measurable functions,
   decreasing in `n`, converging pointwise to `ℓ θ`, with `ℓ θ' ≤ u n` for `θ' ∈ S` at distance
-  `< 1 / (n + 1)` from `θ`, and `u 0 (X 0)` integrable. This is Wald's condition on the local
-  suprema `x ↦ sup {ℓ θ' x | θ' ∈ S, dist θ' θ < ρ}` (measurable, integrable for small `ρ`, and
-  tending to `ℓ θ x` as `ρ → 0` by upper semicontinuity), stated for any dominating sequence.
+  `< 1 / (n + 1)` from `θ`, and `u 0 (X 0)` integrable. The model case, as in Wald's condition on
+  local suprema, is `u n x = sup {ℓ θ' x | θ' ∈ S, dist θ' θ < 1 / (n + 1)}`, when these suprema
+  are real-valued and measurable, `u 0 (X 0)` is integrable, and they tend to `ℓ θ x` (for
+  `θ ∈ S`, upper semicontinuity of `θ' ↦ ℓ θ' x` suffices for the last).
 * **Envelope at infinity** (`HasTailEnvelope`): a sequence `v n` of measurable functions,
   decreasing in `n` and tending to `-∞` pointwise, with `ℓ θ ≤ v n` for `θ ∈ S` at distance
-  `> n` from a fixed centre, and `v 0 (X 0)` integrable. This is Wald's condition
-  `lim_{|θ| → ∞} f(x, θ) = 0` with `E sup_{|θ| > r} log f(X, θ)⁺ < ∞`, in log form.
+  `> n` from a fixed centre, and `v 0 (X 0)` integrable. Since `v 0` bounds `ℓ θ` at every
+  `θ ∈ S` at positive distance from the centre, this is stronger than the log form of Wald's
+  conditions `lim_{|θ| → ∞} f(x, θ) = 0` and `E sup_{|θ| > r} log f(X, θ)⁺ < ∞` for large `r`.
 
-Local envelopes on a compact set `K`, strict identification at each `θ ∈ K \ {θ₀}` and one
-integrable envelope on `S \ K` with mean below `E ℓ θ₀ (X 0)` produce a Wald cover for every `ε`
-(`exists_isWaldCover`): dominated convergence lowers the local envelope means below
-`E ℓ θ₀ (X 0)`, and compactness extracts a finite subcover. In a proper space (such as `ℝᵈ`)
-with `S` closed, the envelope at infinity supplies the compact core `S ∩ closedBall θc n` and the
-envelope on its complement, which gives Wald's 1949 theorem
-(`ae_tendsto_of_isMLEOn_of_hasTailEnvelope`).
+Local envelopes on a compact set `K`, integrability of `ℓ θ (X 0)` and strict identification at
+each `θ ∈ K \ {θ₀}`, and one integrable envelope on `S \ K` with mean below `E ℓ θ₀ (X 0)`
+produce a Wald cover for every `ε` (`exists_isWaldCover`): dominated convergence lowers the local
+envelope means below `E ℓ θ₀ (X 0)`, and compactness extracts a finite subcover. In a proper
+space (such as `ℝᵈ`) with `S` closed, the envelope at infinity supplies the compact core
+`S ∩ closedBall θc n` and the envelope on its complement, which gives consistency on closed
+parameter sets with finite expected log-likelihoods (`ae_tendsto_of_isMLEOn_of_hasTailEnvelope`).
 
 ## Main definitions
 
 * `IsWaldCover`: a finite cover of `S \ ball θ₀ ε` by sets with integrable upper envelopes whose
   means are below the population criterion at `θ₀`.
-* `HasLocalEnvelope`: Wald's local upper envelopes at a parameter.
-* `HasTailEnvelope`: Wald's upper envelope at infinity.
+* `HasLocalEnvelope`: Wald-type local upper envelopes at a parameter.
+* `HasTailEnvelope`: a Wald-type upper envelope at infinity.
 
 ## Main results
 
@@ -66,9 +74,10 @@ envelope on its complement, which gives Wald's 1949 theorem
   with no compactness assumption.
 * `exists_isWaldCover`: local envelopes on a compact set plus an envelope off it give the cover.
 * `ae_tendsto_of_isMLEOn_of_hasLocalEnvelope`: Wald consistency on a compact parameter set from
-  local envelopes alone, with no uniform law of large numbers.
-* `ae_tendsto_of_isMLEOn_of_hasTailEnvelope`: **Wald's theorem (1949)**, a closed parameter set in
-  a proper space, local envelopes and an envelope at infinity.
+  local envelopes and finite expected log-likelihoods, with no uniform law of large numbers.
+* `ae_tendsto_of_isMLEOn_of_hasTailEnvelope`: **consistency on closed parameter sets**, for a
+  closed parameter set in a proper space with finite expected log-likelihoods, local envelopes and
+  an envelope at infinity; a finite-expected-log-likelihood specialization of Wald's theorem.
 * `tendstoInMeasure_of_isMLEOn_of_hasTailEnvelope`: the same, in probability.
 
 ## References
@@ -105,7 +114,7 @@ def IsWaldCover (P : Measure Ω) (ℓ : Θ → α → ℝ) (X : ℕ → Ω → �
     ∀ p ∈ C, Measurable p.2 ∧ Integrable (fun ω => p.2 (X 0 ω)) P ∧
       (∀ θ ∈ p.1, ∀ x, ℓ θ x ≤ p.2 x) ∧ ∫ ω, p.2 (X 0 ω) ∂P < popCrit P ℓ X θ₀
 
-/-- **Wald's local upper envelopes** at `θ`: measurable functions `u n`, decreasing in `n` and
+/-- **Wald-type local upper envelopes** at `θ`: measurable functions `u n`, decreasing in `n` and
 converging pointwise to `ℓ θ`, with `ℓ θ' ≤ u n` for every `θ' ∈ S` at distance
 `< 1 / (n + 1)` from `θ`, and `u 0 (X 0)` integrable. -/
 def HasLocalEnvelope (P : Measure Ω) (S : Set Θ) (ℓ : Θ → α → ℝ) (X : ℕ → Ω → α) (θ : Θ) :
@@ -114,7 +123,7 @@ def HasLocalEnvelope (P : Measure Ω) (S : Set Θ) (ℓ : Θ → α → ℝ) (X 
     (∀ n : ℕ, ∀ θ' ∈ S, dist θ' θ < 1 / ((n : ℝ) + 1) → ∀ x, ℓ θ' x ≤ u n x) ∧
     (∀ x, Antitone fun n => u n x) ∧ ∀ x, Tendsto (fun n => u n x) atTop (𝓝 (ℓ θ x))
 
-/-- **Wald's upper envelope at infinity** around the centre `θc`: measurable functions `v n`,
+/-- **Wald-type upper envelope at infinity** around the centre `θc`: measurable functions `v n`,
 decreasing in `n` and tending to `-∞` pointwise, with `ℓ θ ≤ v n` for every `θ ∈ S` at distance
 `> n` from `θc`, and `v 0 (X 0)` integrable. -/
 def HasTailEnvelope (P : Measure Ω) (S : Set Θ) (ℓ : Θ → α → ℝ) (X : ℕ → Ω → α) (θc : Θ) :
@@ -339,12 +348,14 @@ theorem exists_tail_envelope_lt [IsProbabilityMeasure P] {S : Set Θ} {ℓ : Θ 
   exact Integrable.mono' (hint0.abs.add (integrable_const _)) (hmeas' n)
     (ae_of_all _ fun ω => hbd n (X 0 ω))
 
-/-- **Wald's theorem (1949)**: consistency of the MLE on a closed parameter set in a proper space
-(such as `ℝᵈ`), almost surely. Let `S` be closed, the population criterion have the unique
-maximizer `θ₀` on `S`, `ℓ θ (X 0)` be integrable for every `θ ∈ S`, `ℓ θ₀` be measurable, local
-envelopes exist at every `θ ∈ S` other than `θ₀`, an envelope at infinity exist around some centre
-`θc`, and the observations be pairwise independent and identically distributed. Then every MLE
-on `S` converges to `θ₀` almost surely. `S` need not be compact. -/
+/-- **Consistency of the MLE on a closed parameter set** in a proper space (such as `ℝᵈ`), almost
+surely: a finite-expected-log-likelihood specialization of Wald's theorem (1949). Let `S` be
+closed, the population criterion have the unique maximizer `θ₀` on `S`, `ℓ θ (X 0)` be integrable
+for every `θ ∈ S` (so every expected log-likelihood on `S` is finite, whereas Wald's theorem
+allows `-∞` away from `θ₀`), `ℓ θ₀` be measurable, local envelopes exist at every `θ ∈ S` other
+than `θ₀`, an envelope at infinity exist around some centre `θc`, and the observations be
+pairwise independent and identically distributed. Then every MLE on `S` converges to `θ₀` almost
+surely. `S` need not be compact. -/
 theorem ae_tendsto_of_isMLEOn_of_hasTailEnvelope [ProperSpace Θ] [IsProbabilityMeasure P]
     {S : Set Θ} (hS : IsClosed S) {ℓ : Θ → α → ℝ} {X : ℕ → Ω → α} {θ₀ θc : Θ}
     (hId : IsIdentifiedOn S (popCrit P ℓ X) θ₀) (hℓ₀ : Measurable (ℓ θ₀))
@@ -363,7 +374,7 @@ theorem ae_tendsto_of_isMLEOn_of_hasTailEnvelope [ProperSpace Θ] [IsProbability
   by_contra h
   exact hθ.2 ⟨hθ.1, mem_closedBall.2 (not_lt.1 h)⟩
 
-/-- **Wald's theorem in probability**: under the hypotheses of
+/-- **Consistency on a closed parameter set, in probability**: under the hypotheses of
 `ae_tendsto_of_isMLEOn_of_hasTailEnvelope` and for an a.e. strongly measurable MLE,
 `est n → θ₀` in probability, the consistent-root input of `EstimatedInformation`. -/
 theorem tendstoInMeasure_of_isMLEOn_of_hasTailEnvelope [ProperSpace Θ] [IsProbabilityMeasure P]
