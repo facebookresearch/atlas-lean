@@ -42,7 +42,7 @@ set `W` of nodes is defined in `CSLibExt/MachineLearning/GraphicalModels/CausalB
   `P(X_k = a', M = m) > 0` for all `a'` and `m`.
 
 Both formulas are stated for a single outcome node. The three rules of the do-calculus (Pearl
-1995; Pearl 2009, Theorem 3.4.1) are not covered.
+1995; Pearl 2009, Theorem 3.4.1) are in `CSLibExt/MachineLearning/GraphicalModels/DoCalculus.lean`.
 
 ## References
 
