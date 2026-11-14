@@ -23,13 +23,6 @@ import Mathlib.Tactic.Ring
 section
 namespace MetaMathlibExt
 
--- Helper: `Polynomial.C a` as a Nat cast in `Polynomial ℕ`.
--- Stated without the inner `Nat.cast` so it rewrites `C (m - 1)` directly
--- (plain `rw [Polynomial.C_eq_natCast]` fails to match in `ℕ[X]`).
-private theorem poly_C_eq_natCast (a : ℕ) :
-    (Polynomial.C a : Polynomial ℕ) = ((a : ℕ) : Polynomial ℕ) :=
-  Polynomial.C_eq_natCast a
-
 -- Helper N5: r-Stirling number at j + r is the coefficient of the shifted rising product.
 private theorem rStirlingFirst_add_eq_coeff_prod_range (n r j : ℕ) :
     rStirlingFirst n (j + r) r =
@@ -106,14 +99,14 @@ private theorem meshPoly_step (k m : ℕ) (hk : 1 < k) (hm : k ≤ m) :
   have h : PolyN m k =
       (Polynomial.X + Polynomial.C (m - 1)) * PolyN (m - 1) k :=
     (meshPatternCount_stirlingRecursion k m 1 hk hm one_pos).2.1
-  rwa [poly_C_eq_natCast] at h
+  rwa [eq_natCast Polynomial.C] at h
 
 -- Helper N3: base case for the canonical polynomial.
 private theorem meshPoly_base (k : ℕ) (hk : 1 < k) :
     PolyN (k - 1) k = ((((k - 1).factorial : ℕ)) : Polynomial ℕ) := by
   have h : PolyN (k - 1) k = Polynomial.C ((k - 1).factorial) :=
     (meshPatternCount_stirlingRecursion k k 1 hk le_rfl one_pos).2.2.2
-  rwa [poly_C_eq_natCast] at h
+  rwa [eq_natCast Polynomial.C] at h
 
 -- Helper N4: closed product form for the canonical polynomial.
 private theorem meshPoly_eq_factorial_mul_prod (n k : ℕ) (hkn : k ≤ n) (hk : 2 ≤ k) :

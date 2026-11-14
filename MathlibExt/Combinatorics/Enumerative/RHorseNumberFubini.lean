@@ -284,25 +284,6 @@ private theorem rHorse_signedStirling_power (r k : ℕ) :
       rw [rHorse_signedStirling_orthogonal_rat]
     _ = (k.descFactorial r : ℚ) := by simp
 
-private theorem rHorse_sum_range_reflect (r : ℕ) (f : ℕ → ℚ) :
-    (∑ j ∈ Finset.range (r + 1), f (r - j)) =
-      ∑ m ∈ Finset.range (r + 1), f m := by
-  refine Finset.sum_bij (fun j _ => r - j) ?_ ?_ ?_ ?_
-  · intro j hj
-    rw [Finset.mem_range] at hj ⊢
-    omega
-  · intro j₁ hj₁ j₂ hj₂ h
-    rw [Finset.mem_range] at hj₁ hj₂
-    omega
-  · intro m hm
-    rw [Finset.mem_range] at hm
-    refine ⟨r - m, ?_, ?_⟩
-    · rw [Finset.mem_range]
-      omega
-    · omega
-  · intro j _
-    rfl
-
 private theorem rHorse_signedStirlingFirst_cast (r m : ℕ) :
     (signedStirlingFirst r m : ℚ) =
       (-1 : ℚ) ^ (r - m) * (Nat.stirlingFirst r m : ℚ) := by
@@ -328,7 +309,7 @@ private theorem rHorse_falling_stirling (r k : ℕ) :
       rw [hsub]
     _ = ∑ m ∈ Finset.range (r + 1),
           (-1 : ℚ) ^ (r - m) * (Nat.stirlingFirst r m : ℚ) * (k : ℚ) ^ m :=
-      rHorse_sum_range_reflect r
+      Finset.sum_flip
         (fun m => (-1 : ℚ) ^ (r - m) * (Nat.stirlingFirst r m : ℚ) * (k : ℚ) ^ m)
     _ = ∑ m ∈ Finset.range (r + 1),
           (signedStirlingFirst r m : ℚ) * (k : ℚ) ^ m := by

@@ -3149,12 +3149,6 @@ private theorem hsPad_arith (n k : ℕ) (hk : 0 < k) :
   have e : k * (n / k + 1) = k * (n / k) + k := by rw [mul_add, mul_one]
   exact ⟨n / k + 1, k * (n / k + 1) - n, rfl, by omega, by omega, by omega⟩
 
-/-- Auxiliary: no edges between the two sides of a sum. -/
-private theorem hsSum_nocross {V W : Type*}
-    (G : SimpleGraph V) (H : SimpleGraph W) (a : V) (b : W) :
-    ¬ (G ⊕g H).Adj (Sum.inl a) (Sum.inr b) := by
-  simp
-
 private theorem hsSum_nocrossR {V W : Type*}
     (G : SimpleGraph V) (H : SimpleGraph W) (a : V) (b : W) :
     ¬ (G ⊕g H).Adj (Sum.inr b) (Sum.inl a) := by
@@ -3182,7 +3176,7 @@ private theorem hsDeg_sum {V : Type*} [Fintype V] [DecidableEq V]
             exact hadj
           exact Finset.mem_image.mpr ⟨b, hb', rfl⟩
         | inr j =>
-          exact (hsSum_nocross G ⊤ a j hadj).elim
+          exact (SimpleGraph.not_adj_sum_inl_inr a j hadj).elim
       · intro hmem
         obtain ⟨b, hb, rfl⟩ := Finset.mem_image.mp hmem
         rw [SimpleGraph.sum_adj_inl]

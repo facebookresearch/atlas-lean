@@ -385,11 +385,6 @@ private theorem chordSlope_eq (n j : ℕ) (h : j + 1 ≤ n) :
     rw [c2, e0]
     simp only [Nat.cast_zero, zero_div]
 
-private theorem choose_pascal_add (n c : ℕ) :
-    (n + 1).choose (c + 2) = n.choose (c + 1) + n.choose (c + 2) := by
-  have h := Nat.choose_succ_succ' n (c + 1)
-  rwa [show c + 1 + 1 = c + 2 from rfl] at h
-
 private theorem ballVol_pascal_pred {n c : ℕ} (hc : 1 ≤ c) :
     ballVol (n + 1) c = ballVol n c + ballVol n (c - 1) := by
   have h := ballVol_pascal n (c - 1)
@@ -840,7 +835,7 @@ private theorem chord_combine {n u v : ℕ} (hvu : v ≤ u) (hu : u ≤ 2 ^ n) :
               rwa [show c + 1 + 1 = c + 2 from rfl] at h
             have hW1 : ballVol n (c + 1) = ballVol n c + n.choose (c + 1) :=
               ballVol_succ n c
-            have hpas := choose_pascal_add n c
+            have hpas := Nat.choose_succ_succ' n (c + 1)
             have hUq : ((ballVol (n + 1) (c + 1) : ℕ) : ℚ)
                 = ((ballVol n (c + 1) : ℕ) : ℚ)
                   + ((ballVol n c : ℕ) : ℚ) := by exact_mod_cast hU
@@ -1270,7 +1265,7 @@ private theorem chord_combine {n u v : ℕ} (hvu : v ≤ u) (hu : u ≤ 2 ^ n) :
                 ballVol_succ (n + 1) c
               have hmul1 := chordSlope_mul n c (by omega)
               have hmul2 := chordSlope_mul (n + 1) c (by omega)
-              have hpas := choose_pascal_add n c
+              have hpas := Nat.choose_succ_succ' n (c + 1)
               have hslope : chordSlope n c ≤ chordSlope (n + 1) c :=
                 chordSlope_caseHi (n := n) (c := c) (by omega)
               have hUq : ((ballVol (n + 1) (c + 1) : ℕ) : ℚ)

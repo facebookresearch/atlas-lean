@@ -473,9 +473,6 @@ private theorem cntO_perm (n : ℕ) (σ : Equiv.Perm (Fin n)) :
 private theorem cntE_perm (n : ℕ) (σ : Equiv.Perm (Fin n)) :
     cntE n (fun i => (σ i).val) = evenC n σ := rfl
 
-private theorem ofFn_zero_empty (f : Fin 0 → ℕ) : List.ofFn f = [] :=
-  List.eq_nil_of_length_eq_zero List.length_ofFn
-
 private theorem cntO_of_le_one {n : ℕ} (f : Fin n → ℕ) (hn : n ≤ 1) :
     cntO n f = 0 := by
   have h : ∀ i ∈ (Finset.univ : Finset (Fin n)),
@@ -555,7 +552,7 @@ private theorem cnt_bridge (n : ℕ) :
   induction n with
   | zero =>
     intro f p q
-    rw [ofFn_zero_empty f, wt_nil]
+    rw [List.ofFn_zero, wt_nil]
     have hO := cntO_of_le_one f (by omega : 0 ≤ 1)
     have hE := cntE_of_le_one f (by omega : 0 ≤ 1)
     rw [hO, hE, pow_zero, pow_zero, mul_one]
@@ -1035,10 +1032,6 @@ private theorem idxOf_concat_zero (L R : List ℕ) (h : 0 ∉ L) :
     (L ++ 0 :: R).idxOf 0 = L.length := by
   rw [List.idxOf_append_of_notMem h, List.idxOf_cons_self, Nat.add_zero]
 
-private theorem take_concat_zero (L R : List ℕ) :
-    (L ++ 0 :: R).take L.length = L :=
-  List.take_left
-
 private theorem drop_concat_zero (L R : List ℕ) :
     (L ++ 0 :: R).drop (L.length + 1) = R := by
   have h1 : (L ++ 0 :: R).drop L.length = 0 :: R := List.drop_left
@@ -1239,7 +1232,7 @@ private theorem arr_insert_zero_sum (T : Finset ℕ) (h0 : 0 ∉ T)
     have hidx : (L ++ 0 :: R).idxOf 0 = L.length :=
       idxOf_concat_zero L R h0L
     have htake : (L ++ 0 :: R).take ((L ++ 0 :: R).idxOf 0) = L := by
-      rw [hidx]; exact take_concat_zero L R
+      rw [hidx]; exact List.take_left
     have hdrop : (L ++ 0 :: R).drop ((L ++ 0 :: R).idxOf 0 + 1) = R := by
       rw [hidx]; exact drop_concat_zero L R
     have hfin : ((L ++ 0 :: R).take ((L ++ 0 :: R).idxOf 0)).toFinset = U := by

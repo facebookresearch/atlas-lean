@@ -280,10 +280,6 @@ private lemma neck_range (G : Type*) [Group G]
   · rintro ⟨q, _, hO⟩
     exact ⟨(Quotient.out q).val, (Quotient.out q).prop, hO.symm⟩
 
-/-- Cast of a mod is the original element in `ZMod n`. -/
-private lemma cast_mod_eq (n m : ℕ) : (((m % n : ℕ)) : ZMod n) = ((m : ℕ) : ZMod n) :=
-  (ZMod.natCast_eq_natCast_iff _ _ _).mpr (Nat.mod_modEq m n)
-
 /-- Shifting by a multiple of `d` preserves the mod-`d` class, through a mod-`n` wrap. -/
 private lemma mod_shift_eq (i k d n : ℕ) (hdvd_n : d ∣ n) (hdvd_k : d ∣ k) :
     ((i + k) % n) % d = i % d := by
@@ -411,7 +407,7 @@ private lemma path_lemma (G : Type*)
     have h1 : ((((i.val % dd + s.val * k.val) % n : ℕ))) = ((i.val : ℕ) : ZMod n) := by
       have h1a : ((((i.val % dd + s.val * k.val) % n : ℕ)) : ZMod n)
           = ((i.val % dd : ℕ) : ZMod n) + s * k := by
-        rw [cast_mod_eq]
+        rw [ZMod.natCast_mod]
         push_cast
         rw [ZMod.natCast_zmod_val, ZMod.natCast_zmod_val]
       rw [h1a]
