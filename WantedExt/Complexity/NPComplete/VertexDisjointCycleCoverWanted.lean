@@ -26,7 +26,7 @@ public import CSLibExt.Computability.CookLevin
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import MathlibExt.Combinatorics.SimpleGraph.CycleCover
 
 @[expose] public section
 
@@ -49,11 +49,12 @@ in NP: the cycles are a certificate. The vertex count `n` is binary, but a verte
 on no cycle, so an instance with more than `2|E|` vertices is a no-instance, recognized in
 polynomial time, and otherwise the certificate lists at most `n ≤ 2|E|` vertices.
 
-The graph is given by an edge list on `Fin n`. A cycle is a closed walk `c : G.Walk a a` with
+The graph is given by an edge list on `Fin n`. A cycle is a `SimpleGraph.Cycle` (from
+`MathlibExt.Combinatorics.SimpleGraph.CycleCover`): a base vertex and a closed walk at it with
 Mathlib's `SimpleGraph.Walk.IsCycle` (nonempty, no repeated edge, no repeated vertex except the
 endpoints; in a simple graph it has length at least `3`). The family is indexed by `Fin k` with
 `k ≤ K`, and "vertex disjoint, covering `V`" says that every vertex lies on exactly one of the
-cycles.
+cycles, i.e. in the support of exactly one of their walks.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -79,11 +80,10 @@ def WellFormed (i : VertexDisjointCycleCoverInstance) : Prop :=
   (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
     0 < i.2.2
 
-/-- Some family of `k ≤ K` cycles `c j` of `G` (based at `a j`) covers every vertex exactly
-once: each vertex lies on exactly one of the cycles. -/
+/-- Some family of `k ≤ K` cycles `c j` of `G` covers every vertex exactly once: each vertex
+lies on exactly one of the cycles. -/
 def VertexDisjointCycleCoverFeasible (i : VertexDisjointCycleCoverInstance) : Prop :=
-  ∃ k ≤ i.2.2, ∃ (a : Fin k → Fin i.1) (c : ∀ j, (Graph i).Walk (a j) (a j)),
-    (∀ j, (c j).IsCycle) ∧ ∀ v, ∃! j, v ∈ (c j).support
+  ∃ k ≤ i.2.2, ∃ c : Fin k → SimpleGraph.Cycle (Graph i), ∀ v, ∃! j, v ∈ (c j).walk.support
 
 open Classical in
 /-- VERTEX DISJOINT CYCLE COVER as a decision problem over bitstrings. -/
