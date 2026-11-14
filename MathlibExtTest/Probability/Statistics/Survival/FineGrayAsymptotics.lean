@@ -18,6 +18,7 @@ open MathlibExt.Probability.Statistics.FineGray
 open MathlibExt.Probability.Statistics.CoxPartialLikelihood
 open MathlibExt.Probability.Statistics.CoxAsymptotics
 open MathlibExt.Probability.Statistics.FineGrayAsymptotics
+open MathlibExt.Probability.Statistics.ConcaveScore
 
 namespace MathlibExtTest.Probability.Statistics.FineGrayAsymptotics
 
