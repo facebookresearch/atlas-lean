@@ -41,12 +41,16 @@ The argument: `L₀(θ̂₀) ≥ L₀(θ⋆)` because `θ̂₀` maximizes over a
   null parameter `θ⋆ ∈ Θ₀`.
 * `measure_splitLRTRejects_le`: **finite-sample type-I error control**,
   `P_{θ⋆} {T ≥ 1 / α} ≤ α` for every `θ⋆ ∈ Θ₀`.
-* `isValidPValue_splitLRT`: `min (1, 1 / T)` is a valid p-value.
+* `isValidPValue_splitLRT`: `(max T 1)⁻¹` is a valid p-value.
 * `measure_not_mem_universalConfidenceSet_le`: the **universal confidence set**
   `{θ | L₀(θ̂₁) / L₀(θ) < 1 / α}` covers the true parameter with probability at least `1 - α`.
 
 The e-value consequences (Markov bound, e-to-p calibration) are those of `EValues.lean`; this
 file proves only that the split construction produces an e-value.
+
+Only the split half is formalized: the swapped statistic (roles of `D₀` and `D₁` exchanged) and
+the cross-fit average `Wₙ = (Uₙ + Uₙ^swap) / 2` of Wasserman, Ramdas and Balakrishnan (2020),
+eq. (5), are out of scope.
 
 ## Implementation notes
 
@@ -54,14 +58,17 @@ The law of `D₀` under `θ` is `ref.withDensity (ofReal ∘ p θ)` (`modelLaw`)
 nonnegative densities `p θ` with `∫⁻ ofReal (p θ) ∂ref ≤ 1`; the sample space `X₀` is arbitrary,
 so an i.i.d. sample of size `n` is the case `X₀ = Fin n → X` with a product density. The ratio
 uses real division, so a zero denominator gives `T = 0`; validity needs no positivity, since
-`p θ⋆ ≤ L` makes `p θ⋆ · (q / L) ≤ q` hold pointwise, including where `L = 0`. The joint law is
+`p θ⋆ ≤ L` makes `p θ⋆ · (q / L) ≤ q` hold pointwise, including where `L = 0`. Where the
+denominator vanishes and the numerator does not, the paper's statistic is `+∞` and this one is
+`0`; that costs power off the null and puts zero-likelihood parameters into the confidence set,
+but under `θ⋆` it happens with probability `0`, so the theorems are unaffected. The joint law is
 `modelLaw ref p θ⋆ ⊗ ν` with `ν` the law of `D₁`; the theorems allow any probability measure
 `ν`, in particular the model law of `D₁` under `θ⋆`.
 
 ## References
 
 * L. Wasserman, A. Ramdas and S. Balakrishnan, *Universal inference*, Proc. Natl. Acad. Sci.
-  USA 117 (2020), 16880–16890 (Theorem 1: split LRT; Theorem 2: universal confidence set).
+  USA 117 (2020), 16880–16890 (Theorem 1: universal confidence set; Theorem 3: split LRT).
 * A. Ramdas, P. Grünwald, V. Vovk and G. Shafer, *Game-theoretic statistics and safe anytime-valid
   inference*, Statist. Sci. 38 (2023), 576–601.
 -/
@@ -91,7 +98,7 @@ instance (ref : Measure X₀) [SFinite ref] (p : Θ → X₀ → ℝ) (θ : Θ) 
 estimation split, divided by `L(D₀)`. The split LRT takes `L(D₀)` to be the maximized null
 likelihood (`splitLRT`); the universal confidence set takes `L = p θ` (`universalConfidenceSet`).
 
-Source: Wasserman, Ramdas and Balakrishnan (2020), eq. (4). -/
+Source: Wasserman, Ramdas and Balakrishnan (2020), eq. (3). -/
 noncomputable def splitLR (p : Θ → X₀ → ℝ) (θ₁ : X₁ → Θ) (L : X₀ → ℝ) (z : X₀ × X₁) : ℝ :=
   p (θ₁ z.2) z.1 / L z.1
 
@@ -117,7 +124,7 @@ def splitLRTRejects (p : Θ → X₀ → ℝ) (θ₁ : X₁ → Θ) (θ₀ : X�
 /-- The **universal confidence set** at level `α`: the parameters `θ` whose split likelihood
 ratio `L₀(θ̂₁) / L₀(θ)` is below `1 / α`.
 
-Source: Wasserman, Ramdas and Balakrishnan (2020), eq. (5). -/
+Source: Wasserman, Ramdas and Balakrishnan (2020), eq. (4). -/
 def universalConfidenceSet (p : Θ → X₀ → ℝ) (θ₁ : X₁ → Θ) (α : ℝ) (z : X₀ × X₁) : Set Θ :=
   {θ | splitLR p θ₁ (p θ) z < α⁻¹}
 
@@ -165,7 +172,7 @@ theorem isEValue_splitLR_section {ref : Measure X₀} {p : Θ → X₀ → ℝ} 
 independent splits, whenever its denominator dominates the true density `p θ⋆`. The law `ν` of
 the estimation split is arbitrary.
 
-Source: Wasserman, Ramdas and Balakrishnan (2020), Theorem 1. -/
+Source: Wasserman, Ramdas and Balakrishnan (2020), Theorem 3. -/
 theorem isEValue_splitLR {ref : Measure X₀} [SFinite ref] {ν : Measure X₁}
     [IsProbabilityMeasure ν] {p : Θ → X₀ → ℝ} {θ₁ : X₁ → Θ} {L : X₀ → ℝ} {θstar : Θ}
     (hp : ∀ θ x, 0 ≤ p θ x) (hdens : ∀ θ, ∫⁻ x, ENNReal.ofReal (p θ x) ∂ref ≤ 1)
@@ -185,7 +192,7 @@ theorem isEValue_splitLR {ref : Measure X₀} [SFinite ref] {ν : Measure X₁}
 is a null MLE on the inference split and `θ⋆ ∈ Θ₀`, then `T = L₀(θ̂₁) / L₀(θ̂₀)` is an e-value
 under `P_{θ⋆} ⊗ ν`, whatever the estimator `θ̂₁` fitted on the estimation split.
 
-Source: Wasserman, Ramdas and Balakrishnan (2020), Theorem 1. -/
+Source: Wasserman, Ramdas and Balakrishnan (2020), Theorem 3. -/
 theorem isEValue_splitLRT {ref : Measure X₀} [SFinite ref] {ν : Measure X₁}
     [IsProbabilityMeasure ν] {p : Θ → X₀ → ℝ} {θ₁ : X₁ → Θ} {θ₀ : X₀ → Θ} {Θ₀ : Set Θ}
     {θstar : Θ} (hp : ∀ θ x, 0 ≤ p θ x) (hdens : ∀ θ, ∫⁻ x, ENNReal.ofReal (p θ x) ∂ref ≤ 1)
@@ -198,7 +205,7 @@ theorem isEValue_splitLRT {ref : Measure X₀} [SFinite ref] {ν : Measure X₁}
 `θ⋆ ∈ Θ₀` and every `α > 0`, the test rejecting when `T ≥ 1 / α` has
 `P_{θ⋆} (reject) ≤ α`.
 
-Source: Wasserman, Ramdas and Balakrishnan (2020), Theorem 1. -/
+Source: Wasserman, Ramdas and Balakrishnan (2020), Theorem 3. -/
 theorem measure_splitLRTRejects_le {ref : Measure X₀} [SFinite ref] {ν : Measure X₁}
     [IsProbabilityMeasure ν] {p : Θ → X₀ → ℝ} {θ₁ : X₁ → Θ} {θ₀ : X₀ → Θ} {Θ₀ : Set Θ}
     {θstar : Θ} (hp : ∀ θ x, 0 ≤ p θ x) (hdens : ∀ θ, ∫⁻ x, ENNReal.ofReal (p θ x) ∂ref ≤ 1)
@@ -222,7 +229,7 @@ theorem isValidPValue_splitLRT {ref : Measure X₀} [SFinite ref] {ν : Measure 
 /-- **Coverage of the universal confidence set.** The true parameter lies outside the level-`α`
 universal confidence set with probability at most `α`.
 
-Source: Wasserman, Ramdas and Balakrishnan (2020), Theorem 2. -/
+Source: Wasserman, Ramdas and Balakrishnan (2020), Theorem 1. -/
 theorem measure_not_mem_universalConfidenceSet_le {ref : Measure X₀} [SFinite ref]
     {ν : Measure X₁} [IsProbabilityMeasure ν] {p : Θ → X₀ → ℝ} {θ₁ : X₁ → Θ} {θstar : Θ}
     (hp : ∀ θ x, 0 ≤ p θ x) (hdens : ∀ θ, ∫⁻ x, ENNReal.ofReal (p θ x) ∂ref ≤ 1)
