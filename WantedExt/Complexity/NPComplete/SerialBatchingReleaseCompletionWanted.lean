@@ -91,9 +91,10 @@ def completion (i : SerialBatchingReleaseCompletionInstance)
 def release (i : SerialBatchingReleaseCompletionInstance) (j : Fin (numJobs i)) : ℕ :=
   (i.2.1.get j).2
 
-/-- Well-formedness of an instance: the setup time `s` and every processing time are positive. -/
+/-- Well-formedness of an instance: the setup time `s`, every processing time and the bound `K` are
+positive. -/
 def WellFormed (i : SerialBatchingReleaseCompletionInstance) : Prop :=
-  0 < i.1 ∧ ∀ job ∈ i.2.1, 0 < job.1
+  0 < i.1 ∧ (∀ job ∈ i.2.1, 0 < job.1) ∧ 0 < i.2.2
 
 /-- Some serial-batching schedule starts every job (at the start `S (b j) + s` of its batch's
 processing) no earlier than its release date and has total completion time at most `K`. -/
