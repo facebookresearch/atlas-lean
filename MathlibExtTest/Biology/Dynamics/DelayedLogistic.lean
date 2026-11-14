@@ -21,7 +21,9 @@ is `1`; characteristic roots computed from the definition on either side of and 
 positive real part at `τ = (3π/4) √2 e^{3π/4}`); stability for `τ = 1`, instability and a
 growing linearized oscillation for `τ = 2`; the zero-delay reduction to the logistic ODE;
 global existence for a constant history, with the first step of the method of steps computed
-explicitly.
+explicitly; nonlinear local asymptotic stability for `τ = 1`, with the contraction factor
+computed from its definition at `r τ = 1` and at the boundary `r τ = √5 - 1`, and `τ = 3 / 2`
+as a delay in the uncovered gap `√5 - 1 ≤ r τ < π / 2`.
 -/
 
 @[expose] public section
@@ -176,5 +178,50 @@ example {x : ℝ → ℝ} (hx : IsSolution 1 1 2 (fun _ => 1 / 2) x) {t : ℝ} (
 example {x : ℝ → ℝ} (hx : IsSolution 1 1 2 (fun _ => 1 / 2) x) :
     EqOn x (solution 1 1 2 fun _ => 1 / 2) (Ici (-2)) :=
   hx.eqOn two_pos (isSolution_solution two_pos continuousOn_const)
+
+/-! ### Nonlinear local asymptotic stability -/
+
+/-- The contraction factor at `r τ = 1`, from the definition: `ρ(1, 0) = 1 / 2 < 1`. -/
+example : contractionFactor 1 0 = 1 / 2 := by norm_num [contractionFactor]
+
+/-- Boundary of the covered range, from the definition: `ρ(√5 - 1, 0) = 1`, so the window
+estimate gives no contraction at `r τ = √5 - 1`. -/
+example : contractionFactor (√5 - 1) 0 = 1 := by
+  have h5 := Real.sq_sqrt (show (0 : ℝ) ≤ 5 by norm_num)
+  have h2 : (2 : ℝ) < √5 := by rw [Real.lt_sqrt (by norm_num)]; norm_num
+  rw [contractionFactor, abs_of_neg (by linarith)]
+  nlinarith
+
+/-- `r = τ = 1` satisfies the hypothesis `r τ < √5 - 1`, checked directly (`√5 > 2`). -/
+example : (1 : ℝ) * 1 < √5 - 1 := by
+  have h2 : (2 : ℝ) < √5 := by rw [Real.lt_sqrt (by norm_num)]; norm_num
+  linarith
+
+/-- The uncovered gap is nonempty: `τ = 3 / 2` (with `r = 1`) is linearly stable, `3/2 < π/2`,
+but `r τ ≥ √5 - 1`, checked directly. -/
+example : √5 - 1 ≤ 1 * (3 / 2 : ℝ) ∧ 3 / 2 < criticalDelay 1 := by
+  have h : √5 ≤ 5 / 2 := by rw [Real.sqrt_le_left (by norm_num)]; norm_num
+  refine ⟨by linarith, ?_⟩
+  rw [criticalDelay]; linarith [pi_gt_three]
+
+/-- The equilibrium in logarithmic coordinates, `y ≡ 0`, solves Wright's equation, checked from
+the definition. -/
+example (r τ : ℝ) : IsWrightSolution r τ (fun _ => 0) :=
+  ⟨continuousOn_const, fun t _ => by simpa using hasDerivWithinAt_const t (Ici t) (0 : ℝ)⟩
+
+/-- `τ = 1`, `r = K = 1`: method-of-steps solutions with constant history `1 + c` near the
+equilibrium stay near `1` and converge to `1`. -/
+example : ∀ ε > 0, ∃ δ > 0, ∀ c : ℝ, |c| ≤ δ →
+    (∀ t, -1 ≤ t → |solution 1 1 1 (fun _ => 1 + c) t - 1| ≤ ε) ∧
+      Filter.Tendsto (solution 1 1 1 fun _ => 1 + c) Filter.atTop (nhds 1) := by
+  intro ε hε
+  have h2 : (2 : ℝ) < √5 := by rw [Real.lt_sqrt (by norm_num)]; norm_num
+  obtain ⟨δ, hδ, h⟩ := localAsymptoticStability one_pos one_pos one_pos (by linarith) ε hε
+  refine ⟨δ, hδ, fun c hc => ?_⟩
+  exact h _ _ (isSolution_solution one_pos continuousOn_const)
+    (fun s _ => by simpa using hc)
+
+/-- The covered delays lie below `τ_c`: `(√5 - 1) / 1 < π / 2`. -/
+example : (√5 - 1) / 1 < criticalDelay 1 := sqrt_five_sub_one_div_lt_criticalDelay one_pos
 
 end MathlibExtTest.Biology.Dynamics.DelayedLogistic

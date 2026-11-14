@@ -226,7 +226,7 @@ private lemma coe_eraseIdx_append {l : List ℕ} {j : ℕ} (hj : j < l.length) (
 
 /-- The sum over pairs of positions of a statistic of the merged multiset depends only on the
 multiset of block sizes. -/
-private lemma sum_blockPairs_eq_powersetCard (l : List ℕ) (G : Multiset ℕ → ℝ) :
+lemma sum_blockPairs_eq_powersetCard (l : List ℕ) (G : Multiset ℕ → ℝ) :
     ∑ p ∈ blockPairs l.length, G (mergeBlocks l p.1 p.2) =
       ((Multiset.powersetCard 2 (l : Multiset ℕ)).map
         fun t => G (t.sum ::ₘ ((l : Multiset ℕ) - t))).sum := by
@@ -252,13 +252,13 @@ private lemma sum_blockPairs_eq_powersetCard (l : List ℕ) (G : Multiset ℕ �
       simp [Multiset.sub_cons]
 
 /-- A statistic of block-size lists that does not depend on the order of the blocks. -/
-private def IsSymm (g : List ℕ → ℝ) : Prop := ∀ l l' : List ℕ, l.Perm l' → g l = g l'
+def IsSymm (g : List ℕ → ℝ) : Prop := ∀ l l' : List ℕ, l.Perm l' → g l = g l'
 
 private lemma IsSymm.eq_toList {g : List ℕ → ℝ} (hg : IsSymm g) (l : List ℕ) :
     g l = g (l : Multiset ℕ).toList :=
   hg _ _ (Multiset.coe_eq_coe.1 (Multiset.coe_toList _).symm)
 
-private lemma isSymm_joinStep {g : List ℕ → ℝ} (hg : IsSymm g) : IsSymm (joinStep g) := by
+lemma isSymm_joinStep {g : List ℕ → ℝ} (hg : IsSymm g) : IsSymm (joinStep g) := by
   intro l l' h
   have key : ∀ l : List ℕ, ∑ p ∈ blockPairs l.length, g (mergeBlocks l p.1 p.2) =
       ((Multiset.powersetCard 2 (l : Multiset ℕ)).map
@@ -279,10 +279,10 @@ private lemma coe_mergeBlocks {l : List ℕ} {i j : ℕ} (hij : i < j) (hj : j <
   simp only [Multiset.coe_erase]
 
 /-- Compositions of `N` into `k` positive parts, as functions on `Fin k`. -/
-private def comps (N k : ℕ) : Finset (Fin k → ℕ) :=
+def comps (N k : ℕ) : Finset (Fin k → ℕ) :=
   (Fintype.piFinset fun _ => Icc 1 N).filter fun c => ∑ t, c t = N
 
-private lemma mem_comps {N k : ℕ} {c : Fin k → ℕ} :
+lemma mem_comps {N k : ℕ} {c : Fin k → ℕ} :
     c ∈ comps N k ↔ (∀ t, 1 ≤ c t) ∧ ∑ t, c t = N := by
   simp only [comps, mem_filter, Fintype.mem_piFinset, mem_Icc]
   constructor
@@ -292,7 +292,7 @@ private lemma mem_comps {N k : ℕ} {c : Fin k → ℕ} :
     rw [← hs]
     exact single_le_sum (fun _ _ => Nat.zero_le _) (mem_univ t)
 
-private lemma sum_comps_comp_perm {M : Type*} [AddCommMonoid M] {N k : ℕ}
+lemma sum_comps_comp_perm {M : Type*} [AddCommMonoid M] {N k : ℕ}
     (σ : Equiv.Perm (Fin k)) (F : (Fin k → ℕ) → M) :
     ∑ c ∈ comps N k, F (c ∘ σ) = ∑ c ∈ comps N k, F c := by
   refine sum_nbij' (· ∘ σ) (· ∘ σ.symm) (fun c hc => ?_) (fun c hc => ?_)
@@ -302,7 +302,7 @@ private lemma sum_comps_comp_perm {M : Type*} [AddCommMonoid M] {N k : ℕ}
   · rw [mem_comps] at hc ⊢
     exact ⟨fun t => hc.1 _, by rw [← hc.2]; exact Equiv.sum_comp σ.symm c⟩
 
-private lemma sum_comps_succ {M : Type*} [AddCommMonoid M] (N m : ℕ)
+lemma sum_comps_succ {M : Type*} [AddCommMonoid M] (N m : ℕ)
     (F : ℕ → (Fin m → ℕ) → M) :
     ∑ c ∈ comps N (m + 1), F (c 0) (fun t => c t.succ) =
       ∑ a ∈ Icc 1 N, ∑ r ∈ comps (N - a) m, F a r := by
@@ -447,7 +447,7 @@ private lemma comps_self (N : ℕ) : comps N N = {fun _ => 1} := by
   · rintro rfl
     simp
 
-private lemma joinStep_iterate_replicate {N : ℕ} :
+lemma joinStep_iterate_replicate {N : ℕ} :
     ∀ j, j + 1 ≤ N → ∀ g : List ℕ → ℝ, IsSymm g →
       (joinStep^[j] g) (List.replicate N 1) * ((N - 1).choose j : ℝ) =
         ∑ c ∈ comps N (N - j), g (List.ofFn c)
@@ -474,7 +474,7 @@ private lemma joinStep_iterate_replicate {N : ℕ} :
     apply mul_right_cancel₀ hj1
     rw [mul_assoc, hch', ← mul_assoc, ih, mul_comm, htr, mul_comm]
 
-private lemma count_ofFn {k : ℕ} (c : Fin k → ℕ) (i : ℕ) :
+lemma count_ofFn {k : ℕ} (c : Fin k → ℕ) (i : ℕ) :
     ((List.ofFn c).count i : ℝ) = ∑ t, if c t = i then 1 else 0 := by
   induction k with
   | zero => simp
@@ -483,7 +483,7 @@ private lemma count_ofFn {k : ℕ} (c : Fin k → ℕ) (i : ℕ) :
     push_cast
     by_cases h : c 0 = i <;> simp [h, add_comm]
 
-private lemma card_comps {N k : ℕ} (hk : 1 ≤ k) (hN : 1 ≤ N) :
+lemma card_comps {N k : ℕ} (hk : 1 ≤ k) (hN : 1 ≤ N) :
     ((comps N k).card : ℝ) = ((N - 1).choose (k - 1) : ℝ) := by
   by_cases hkN : k ≤ N
   · have hone : IsSymm fun _ => (1 : ℝ) := fun _ _ _ => rfl

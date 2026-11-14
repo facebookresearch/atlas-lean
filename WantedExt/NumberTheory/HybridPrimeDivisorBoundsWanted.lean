@@ -78,7 +78,9 @@ element (`Nat.nth`, `0`-indexed here). The source's
 `∏_{s ≤ t} p_s^{a_s}`, as the existence of a composition `k` meeting every bound. The parts `k_j`
 range over `ℕ` (the source writes `k_i ∈ ℤ⁺`; with positive parts the claim fails for
 `n = 3`, `x = 2`, where `x^3 - 1 = 7` and `ω_n = 1` admits no positive composition into two
-parts).
+parts). The source's factors are all primes, and since `Nat.nth` returns `0` past the end of
+a finite set, the statement requires every factor to be a genuine (positive) element of its
+prime class.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Theorem 1 (`integers-2026-A95-thm-1`). -/
@@ -88,6 +90,9 @@ public theorem_wanted hybrid_bound_prime_divisors (m : ℕ) (p a : ℕ → ℕ)
     ∃ k : ℕ → ℕ,
       ∑ j ∈ Finset.range (m + 1), k j =
           (x ^ (∏ i ∈ Finset.Icc 1 m, p i ^ a i) - 1).primeFactors.card ∧
+        (∀ j ≤ m, ∀ i < k j, 0 < Nat.nth (fun ρ => ρ.Prime ∧
+          (j = 0 ∨ Nat.ModEq (p j) ρ 1) ∧
+            ∀ s ∈ Finset.Ioc j m, ¬ Nat.ModEq (p s) ρ 1) i) ∧
         ∀ t ≤ m,
           1 + ∏ j ∈ Finset.range (t + 1), ∏ i ∈ Finset.range (k j),
               Nat.nth (fun ρ => ρ.Prime ∧ (j = 0 ∨ Nat.ModEq (p j) ρ 1) ∧
@@ -99,12 +104,15 @@ public theorem_wanted hybrid_bound_prime_divisors (m : ℕ) (p a : ℕ → ℕ)
 (`Nat.nth`, `0`-indexed here). The source's
 `x ≥ min_{0 ≤ k < ω_p} max(1 + ∏_{i ≤ k} r_{i,0}, (1 + ∏_{i ≤ k} r_{i,0} ∏_{j ≤ ω_p - k} r_{j,1})^{1/p})`
 is stated equivalently as the existence of `k < ω_p` meeting both bounds, the second after
-raising to the `p`-th power.
+raising to the `p`-th power. The source's factors are all primes, and since `Nat.nth`
+returns `0` past the end of a finite set, the statement requires every factor to be a genuine
+(positive) element of its prime class.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Proposition 2 (`integers-2026-A95-prop-2`). -/
 public theorem_wanted prime_hybrid_bound {p : ℕ} (hp : p.Prime) {x : ℕ} (hx : 1 < x) :
     ∃ k < (x ^ p - 1).primeFactors.card,
+      (∀ i < k, 0 < Nat.nth (fun ρ => ρ.Prime ∧ ¬ Nat.ModEq p ρ 1) i) ∧
       1 + ∏ i ∈ Finset.range k, Nat.nth (fun ρ => ρ.Prime ∧ ¬ Nat.ModEq p ρ 1) i ≤ x ∧
         1 + (∏ i ∈ Finset.range k, Nat.nth (fun ρ => ρ.Prime ∧ ¬ Nat.ModEq p ρ 1) i) *
             ∏ j ∈ Finset.range ((x ^ p - 1).primeFactors.card - k),
@@ -157,7 +165,9 @@ largest factor `r_{k_τ,τ}` replaced by `p_α`, and block `α` gains the factor
 the divisible case the composition also has `k_τ > 0` (the source's `δ_α(τ)` is undefined at
 `k_τ = 0`). The source's worked example (`n = 3`, `ω_3 = 10`: `x ≥ 4387` if `3 ∣ x^3 - 1`,
 `x ≥ 5423` otherwise) is reproduced exactly by this reading. Definitions follow the arXiv version
-(arXiv:2412.00010), whose statement matches the journal record.
+(arXiv:2412.00010), whose statement matches the journal record. The source's factors are
+all primes, and since `Nat.nth` returns `0` past the end of a finite set, the statement
+requires every factor to be a genuine (positive) element of its prime class.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Theorem 2 (`integers-2026-A95-thm-2`). -/
@@ -171,6 +181,7 @@ public theorem_wanted ramified_bound_prime_divisors (m : ℕ) (p a : ℕ → ℕ
     let R : ℕ → ℕ → ℕ := fun j k => ∏ i ∈ Finset.range k, r j i
     ∀ τ ≤ m, ∀ b, r τ b = p α →
       ∃ k : ℕ → ℕ, ∑ j ∈ Finset.range (m + 1), k j = (x ^ n - 1).primeFactors.card ∧
+        (∀ j ≤ m, ∀ i < k j, 0 < r j i) ∧
         if p α ∣ x ^ n - 1 then
           0 < k τ ∧ ∀ t ≤ m,
             1 + ∏ j ∈ Finset.range (t + 1),
@@ -178,7 +189,7 @@ public theorem_wanted ramified_bound_prime_divisors (m : ℕ) (p a : ℕ → ℕ
                   else if j = α then p α ^ a α * R α (k α) else R j (k j)) ≤
               x ^ ∏ s ∈ Finset.Icc 1 t, p s ^ a s
         else
-          ∀ t ≤ m,
+          0 < r τ (k τ) ∧ ∀ t ≤ m,
             1 + ∏ j ∈ Finset.range (t + 1),
                 (if j = τ ∧ b < k τ then ∏ i ∈ (Finset.range (k τ + 1)).erase b, r τ i
                   else R j (k j)) ≤
@@ -196,7 +207,9 @@ raising to the `p`-th power; `p^{-1} R^0_{k+1}` is written as the product over
 `1 + R^0_k ≤ x`, `1 + p R^0_k R^1_k ≤ x^p`. The divisible case requires `p ≠ 2` and has `k > 0`:
 `R^0_{-1}` is undefined at `k = 0`, and for `p = 2`, `x = 3` (`x^2 - 1 = 8`, `ω_2 = 1`) the only
 admitted `k = 0` fails under any reading (with `R^0_{-1} := 1` the second bound reads
-`1 + 4 · 3 = 13 ≤ 9`).
+`1 + 4 · 3 = 13 ≤ 9`). The source's factors are all primes, and since `Nat.nth` returns `0`
+past the end of a finite set, the statement requires every factor to be a genuine (positive)
+element of its prime class.
 
 Source: Gustav Kjærbye Bagger, *Hybrid Bounds for Prime Divisors*, INTEGERS 26 (2026),
 Article A95, Proposition 3 (`integers-2026-A95-prop-3`). -/
@@ -209,11 +222,12 @@ public theorem_wanted prime_ramified_bound {p : ℕ} (hp : p.Prime) {x : ℕ} (h
     let R₁ : ℕ → ℕ := fun k =>
       ∏ j ∈ Finset.range (ω - k), Nat.nth (fun ρ => ρ.Prime ∧ Nat.ModEq p ρ 1) j
     (¬ p ∣ x ^ p - 1 → ∃ k < ω,
-      if k ≤ b then 1 + R₀ k ≤ x ∧ 1 + R₀ k * R₁ k ≤ x ^ p
-      else 1 + S₀ k ≤ x ∧ 1 + S₀ k * R₁ k ≤ x ^ p) ∧
+      if k ≤ b then (∀ i < k, 0 < r₀ i) ∧ 1 + R₀ k ≤ x ∧ 1 + R₀ k * R₁ k ≤ x ^ p
+      else (∀ i ≤ k, i ≠ b → 0 < r₀ i) ∧ 1 + S₀ k ≤ x ∧ 1 + S₀ k * R₁ k ≤ x ^ p) ∧
     (p ≠ 2 → p ∣ x ^ p - 1 → ∃ k, 0 < k ∧ k < ω ∧
-      if k ≤ b then 1 + p * R₀ (k - 1) ≤ x ∧ 1 + p ^ 2 * R₀ (k - 1) * R₁ k ≤ x ^ p
-      else 1 + R₀ k ≤ x ∧ 1 + p * R₀ k * R₁ k ≤ x ^ p)
+      if k ≤ b then (∀ i < k - 1, 0 < r₀ i) ∧ 1 + p * R₀ (k - 1) ≤ x ∧
+        1 + p ^ 2 * R₀ (k - 1) * R₁ k ≤ x ^ p
+      else (∀ i < k, 0 < r₀ i) ∧ 1 + R₀ k ≤ x ∧ 1 + p * R₀ k * R₁ k ≤ x ^ p)
 
 /-- For `n = ∏_{i=1}^m p_i^{a_i}` and `x_i = x^{∏_{r < i} p_r^{a_r}}`,
 `x^n - 1 = (x - 1) ∏_{i=1}^m ∏_{j=1}^{a_i} Φ_{p_i}(x_i^{p_i^{j-1}})` in `ℤ[x]`, with `Φ_p` Mathlib's
