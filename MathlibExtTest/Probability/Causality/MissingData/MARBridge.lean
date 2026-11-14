@@ -27,6 +27,20 @@ with the response `R = heads₁` (the first coin shows heads).
 * Strictness of the single-outcome form: for the outcome `Ycx = 1, -1, 0, 0` (on `(T,T)`, `(T,F)`,
   `(F,T)`, `(F,F)`) and a constant covariate, mean MAR holds for `Ycx` itself, yet MAR fails. So
   the characterization needs every transform `g ∘ Y`, not only `Y`.
+* Which `hMAR` each form discharges: the set-wise form is the hypothesis of
+  `integral_ipw_eq_integral_of_mar_sigma` (`GeneralIPW`), the mean form that of
+  `integral_ipw_eq_integral_of_mar_condExp` (`Identification`); `MissingAtRandomCondIndepFun`
+  reaches the latter through the former.
+* Discrete MAR without standard Borel: `Latent` has a covariate, an outcome and a latent coin the
+  σ-algebra does not see, so its singletons are not measurable and it is not standard Borel
+  (`not_standardBorelSpace_latent`). With response `R = {X = true}`, `CondIndepDiscrete` holds for
+  every measure and every outcome, checked by set algebra from the definition, and the discrete
+  theorems give the set-wise and mean forms.
+* Where the route does not apply: on `Latent`, the self-masking response `R = {Y = true}` under
+  `mnarLaw` (two points with `X = true` and `Y = true, false`) fails `CondIndepDiscrete`, and the
+  set-wise form fails too: `P(R ∩ {Y = true} | σ(X)) = 1/2` while
+  `P(R | σ(X)) P(Y = true | σ(X)) = 1/4`. Both are computed from the definitions; no MAR
+  conclusion is claimed there.
 -/
 
 @[expose] public section
@@ -140,5 +154,207 @@ example : ¬((coins[heads₁.indicator Ycx | MeasurableSpace.comap (fun _ => ())
           coins[Ycx | MeasurableSpace.comap (fun _ => ()) inferInstance] ω) →
     MissingAtRandomCondIndepFun coins heads₁ (fun _ => ()) measurable_const Ycx) :=
   fun h => not_mar_Ycx (h meanMAR_Ycx)
+
+/-! ### Which `hMAR` each form discharges -/
+
+/-- The set-wise form from discrete MAR is the hypothesis of `integral_ipw_eq_integral_of_mar_sigma`
+(`GeneralIPW`), with no standard Borel assumption. -/
+example {Ω 𝒳 : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    [m𝒳 : MeasurableSpace 𝒳] [Countable 𝒳] [MeasurableSingletonClass 𝒳] {R : Set Ω}
+    {X : Ω → 𝒳} {Y : Ω → ℝ} (h : CondIndepDiscrete μ R Y X) (hR : MeasurableSet R)
+    (hX : Measurable X) (hY : Measurable Y) (hYi : Integrable Y μ) {ε : ℝ} (hε : 0 < ε)
+    (hpos : ∀ᵐ ω ∂μ, ε ≤ (μ⟦R | m𝒳.comap X⟧) ω) :
+    ∫ ω, R.indicator (fun ω => Y ω / (μ⟦R | m𝒳.comap X⟧) ω) ω ∂μ = ∫ ω, Y ω ∂μ :=
+  integral_ipw_eq_integral_of_mar_sigma hX.comap_le hR hY hYi
+    (condExp_inter_preimage_ae_eq_mul_of_condIndepDiscrete h hR hX hY) hε hpos
+
+/-- The mean form from discrete MAR is the hypothesis of `integral_ipw_eq_integral_of_mar_condExp`
+(`Identification`), with no standard Borel assumption. -/
+example {Ω 𝒳 : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    [m𝒳 : MeasurableSpace 𝒳] [Countable 𝒳] [MeasurableSingletonClass 𝒳] {R : Set Ω}
+    {X : Ω → 𝒳} {Y : Ω → ℝ} (h : CondIndepDiscrete μ R Y X) (hR : MeasurableSet R)
+    (hX : Measurable X) (hY : Measurable Y) (hYi : Integrable Y μ) {ε : ℝ} (hε : 0 < ε)
+    (hpos : ∀ᵐ ω ∂μ, ε ≤ μ[R.indicator 1 | m𝒳.comap X] ω) :
+    ∫ ω, R.indicator (fun ω => Y ω / μ[R.indicator 1 | m𝒳.comap X] ω) ω ∂μ = ∫ ω, Y ω ∂μ :=
+  integral_ipw_eq_integral_of_mar_condExp hX.comap_le hR hYi
+    (condExp_indicator_mul_of_condIndepDiscrete h hR hX hY hYi) hε hpos
+
+/-- `MissingAtRandomCondIndepFun` discharges `Identification`'s mean-form `hMAR` through the
+set-wise form: `condExp_inter_preimage_ae_eq_mul_of_condIndepFun`, then
+`condExp_indicator_ae_eq_mul_of_mar`. -/
+example {Ω 𝒳 : Type*} [MeasurableSpace Ω] [StandardBorelSpace Ω] {μ : Measure Ω}
+    [IsProbabilityMeasure μ] [m𝒳 : MeasurableSpace 𝒳] {R : Set Ω} {X : Ω → 𝒳}
+    (hX : Measurable X) {Y : Ω → ℝ} (h : MissingAtRandomCondIndepFun μ R X hX Y)
+    (hR : MeasurableSet R) (hY : Measurable Y) (hYi : Integrable Y μ) {ε : ℝ} (hε : 0 < ε)
+    (hpos : ∀ᵐ ω ∂μ, ε ≤ μ[R.indicator 1 | m𝒳.comap X] ω) :
+    ∫ ω, R.indicator (fun ω => Y ω / μ[R.indicator 1 | m𝒳.comap X] ω) ω ∂μ = ∫ ω, Y ω ∂μ :=
+  integral_ipw_eq_integral_of_mar_condExp hX.comap_le hR hYi
+    (condExp_indicator_ae_eq_mul_of_mar hX.comap_le hR hY hYi
+      (condExp_inter_preimage_ae_eq_mul_of_condIndepFun hX.comap_le hR hY h)) hε hpos
+
+/-! ### Discrete MAR on a sample space that is not standard Borel -/
+
+/-- A unit with a covariate `x`, an outcome `y` and a latent coin `u`. -/
+structure Latent where
+  /-- The covariate. -/
+  x : Bool
+  /-- The outcome. -/
+  y : Bool
+  /-- A latent coin that the σ-algebra does not see. -/
+  u : Bool
+
+/-- The observed coordinates `(x, y)`. -/
+def Latent.obs (ω : Latent) : Bool × Bool := (ω.x, ω.y)
+
+/-- Events are the events of the observed coordinates; the latent coin is not measurable. -/
+instance : MeasurableSpace Latent := MeasurableSpace.comap Latent.obs inferInstance
+
+lemma measurable_latentObs : Measurable Latent.obs := comap_measurable _
+
+/-- The covariate. -/
+def latX : Latent → Bool := Latent.x
+
+/-- The outcome. -/
+def latY : Latent → Bool := Latent.y
+
+lemma measurable_latX : Measurable latX := measurable_fst.comp measurable_latentObs
+
+lemma measurable_latY : Measurable latY := measurable_snd.comp measurable_latentObs
+
+/-- No singleton of `Latent` is measurable: an event cannot separate the two values of the
+latent coin. -/
+theorem not_measurableSet_singleton_latent (a : Latent) : ¬MeasurableSet ({a} : Set Latent) := by
+  intro h
+  obtain ⟨T, -, hT⟩ := MeasurableSpace.measurableSet_comap.1 h
+  have ha : a ∈ Latent.obs ⁻¹' T := (Set.ext_iff.1 hT a).2 rfl
+  have hb : (⟨a.x, a.y, !a.u⟩ : Latent) ∈ Latent.obs ⁻¹' T := ha
+  have hu := congrArg Latent.u (Set.mem_singleton_iff.1 ((Set.ext_iff.1 hT _).1 hb))
+  cases a with
+  | mk x y u => cases u <;> simp at hu
+
+/-- **`Latent` is not standard Borel**: a standard Borel space has measurable singletons. -/
+theorem not_standardBorelSpace_latent : ¬StandardBorelSpace Latent := by
+  intro _
+  exact not_measurableSet_singleton_latent ⟨true, true, true⟩ (measurableSet_singleton _)
+
+/-- The response depends on the covariate only: `R = {X = true}`. -/
+def latR : Set Latent := latX ⁻¹' {true}
+
+lemma measurableSet_latR : MeasurableSet latR := measurable_latX (measurableSet_singleton true)
+
+/-- **Discrete MAR on `Latent`**, for every measure and every outcome, from the definition of
+`CondIndepDiscrete`: `R ∩ {X = x}` is `∅` for `x = false` and `{X = x}` for `x = true`. -/
+theorem condIndepDiscrete_latR {β : Type*} [MeasurableSpace β] (μ : Measure Latent)
+    (V : Latent → β) : CondIndepDiscrete μ latR V latX := by
+  intro B _ x
+  rw [Set.inter_right_comm]
+  cases x
+  · have h0 : latR ∩ latX ⁻¹' {false} = ∅ := by
+      ext ω
+      simp only [latR, Set.mem_inter_iff, Set.mem_preimage, Set.mem_singleton_iff,
+        Set.mem_empty_iff_false, iff_false, not_and]
+      intro h
+      simp [h]
+    rw [h0, Set.empty_inter, measureReal_empty, zero_mul, zero_mul]
+  · have h1 : latR ∩ latX ⁻¹' {true} = latX ⁻¹' {true} := Set.inter_self _
+    rw [h1, Set.inter_comm (latX ⁻¹' {true}), mul_comm]
+
+/-- **Set-wise MAR on a sample space that is not standard Borel**, for every finite measure on
+`Latent`. -/
+example (μ : Measure Latent) [IsFiniteMeasure μ] :
+    ∀ S, MeasurableSet S →
+      (μ⟦latR ∩ latY ⁻¹' S | MeasurableSpace.comap latX inferInstance⟧) =ᵐ[μ]
+        (μ⟦latR | MeasurableSpace.comap latX inferInstance⟧) *
+          (μ⟦latY ⁻¹' S | MeasurableSpace.comap latX inferInstance⟧) :=
+  condExp_inter_preimage_ae_eq_mul_of_condIndepDiscrete (condIndepDiscrete_latR μ latY)
+    measurableSet_latR measurable_latX measurable_latY
+
+/-- The outcome of `Latent` coded `0/1`. -/
+noncomputable def latYr : Latent → ℝ := coinCode ∘ latY
+
+lemma measurable_latYr : Measurable latYr := (Measurable.of_discrete).comp measurable_latY
+
+/-- **Mean MAR on a sample space that is not standard Borel**, for every finite measure on
+`Latent`: the mean-form `hMAR` of `integral_ipw_eq_integral_of_mar_condExp`. -/
+example (μ : Measure Latent) [IsFiniteMeasure μ] :
+    μ[latR.indicator latYr | MeasurableSpace.comap latX inferInstance] =ᵐ[μ] fun ω =>
+      μ[latR.indicator 1 | MeasurableSpace.comap latX inferInstance] ω *
+        μ[latYr | MeasurableSpace.comap latX inferInstance] ω :=
+  condExp_indicator_mul_of_condIndepDiscrete (condIndepDiscrete_latR μ latYr) measurableSet_latR
+    measurable_latX measurable_latYr
+    (Integrable.of_bound measurable_latYr.aestronglyMeasurable 1 (ae_of_all _ fun ω => by
+      by_cases h : latY ω <;> simp [latYr, coinCode, h]))
+
+/-! ### Where the set-wise route does not apply -/
+
+/-- Two units with covariate `true`, outcomes `true` and `false`. -/
+noncomputable def mnarLaw : Measure Latent :=
+  Measure.dirac ⟨true, true, false⟩ + Measure.dirac ⟨true, false, false⟩
+
+instance : IsFiniteMeasure mnarLaw := by unfold mnarLaw; infer_instance
+
+/-- The self-masking response `R = {Y = true}`: missing not at random. -/
+def latRm : Set Latent := latY ⁻¹' {true}
+
+lemma measurableSet_latRm : MeasurableSet latRm := measurable_latY (measurableSet_singleton true)
+
+open Classical in
+lemma mnarLaw_real {s : Set Latent} (hs : MeasurableSet s) :
+    mnarLaw.real s = (if (⟨true, true, false⟩ : Latent) ∈ s then 1 else 0) +
+      (if (⟨true, false, false⟩ : Latent) ∈ s then 1 else 0) := by
+  rw [mnarLaw, measureReal_def, Measure.add_apply, Measure.dirac_apply' _ hs,
+    Measure.dirac_apply' _ hs]
+  simp only [Set.indicator_apply, Pi.one_apply]
+  split_ifs <;> norm_num [ENNReal.toReal_add]
+
+lemma mnarLaw_X_true : mnarLaw.real (latX ⁻¹' {true}) = 2 := by
+  rw [mnarLaw_real (measurable_latX (measurableSet_singleton true))]
+  norm_num [latX]
+
+/-- **Discrete MAR fails** under `mnarLaw` for the self-masking response: at `B = {true}`,
+`x = true`, the two sides of `CondIndepDiscrete` are `1 · 2` and `1 · 1`. -/
+theorem not_condIndepDiscrete_latRm : ¬CondIndepDiscrete mnarLaw latRm latY latX := by
+  intro h
+  have key := h {true} (measurableSet_singleton true) true
+  have hXt := measurable_latX (measurableSet_singleton true)
+  have hYt := measurable_latY (measurableSet_singleton true)
+  rw [mnarLaw_real ((measurableSet_latRm.inter hYt).inter hXt), mnarLaw_X_true,
+    mnarLaw_real (measurableSet_latRm.inter hXt), mnarLaw_real (hYt.inter hXt)] at key
+  norm_num [latRm, latX, latY] at key
+
+/-- **The set-wise form fails** under `mnarLaw` for the self-masking response, at `S = {true}`:
+given `σ(X)` (here `X = true` almost surely), `P(R ∩ {Y = true} | σ(X)) = 1/2` and
+`P(R | σ(X)) P(Y = true | σ(X)) = 1/2 · 1/2`. Each conditional probability is computed as a
+propensity by `condExp_indicator_comap_ae_eq`. So no MAR conclusion holds here. -/
+theorem not_setwise_latRm :
+    ¬∀ S, MeasurableSet S →
+      (mnarLaw⟦latRm ∩ latY ⁻¹' S | MeasurableSpace.comap latX inferInstance⟧) =ᵐ[mnarLaw]
+        (mnarLaw⟦latRm | MeasurableSpace.comap latX inferInstance⟧) *
+          (mnarLaw⟦latY ⁻¹' S | MeasurableSpace.comap latX inferInstance⟧) := by
+  intro H
+  have hXt := measurable_latX (measurableSet_singleton true)
+  have hYt := measurable_latY (measurableSet_singleton true)
+  have hRY := measurableSet_latRm.inter hYt
+  have hXae : ∀ᵐ ω ∂mnarLaw, latX ω = true := by
+    have hc : MeasurableSet {ω | ¬latX ω = true} := hXt.compl
+    refine ae_iff.2 ((measureReal_eq_zero_iff).1 ?_)
+    rw [mnarLaw_real hc]
+    norm_num [latX]
+  have hne : mnarLaw ≠ 0 := fun h0 => by
+    have h2 := mnarLaw_X_true
+    rw [h0] at h2
+    norm_num at h2
+  have hfalse : ∀ᵐ _ ∂mnarLaw, False := by
+    filter_upwards [H {true} (measurableSet_singleton true),
+      condExp_indicator_comap_ae_eq (μ := mnarLaw) measurable_latX hRY,
+      condExp_indicator_comap_ae_eq (μ := mnarLaw) measurable_latX measurableSet_latRm,
+      condExp_indicator_comap_ae_eq (μ := mnarLaw) measurable_latX hYt, hXae]
+      with ω h0 h1 h2 h3 hω
+    rw [Pi.mul_apply, h1, h2, h3, hω] at h0
+    simp only [propensity] at h0
+    rw [mnarLaw_real (hRY.inter hXt), mnarLaw_real (measurableSet_latRm.inter hXt),
+      mnarLaw_real (hYt.inter hXt), mnarLaw_X_true] at h0
+    norm_num [latRm, latX, latY] at h0
+  exact hne (ae_eq_bot.1 (Filter.eventually_false_iff_eq_bot.1 hfalse))
 
 end MathlibExtTest.Probability.Causality.MissingData.MARBridge
