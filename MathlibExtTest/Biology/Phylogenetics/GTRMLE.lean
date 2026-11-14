@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.Phylogenetics.GTRMLE
+public import MathlibExt.Biology.Phylogenetics.GTRTwoStateSampling
 public import MathlibExt.Biology.Phylogenetics.SubstitutionModels
 public import Mathlib.Probability.Independence.InfinitePi
 
@@ -31,6 +32,16 @@ public import Mathlib.Probability.Independence.InfinitePi
   (continuity, positivity, normalization, injectivity) and the MLE of the branch length is
   consistent for any sample satisfying the sampling hypotheses, which are left open there; the
   fair-coin test is the only fully discharged instance.
+* `hId` from T66 for the GTR pair-site model. On two states with base frequencies `(1/2, 1/2)`,
+  exchangeability `1` and branch length `t ∈ [1, 2]`, the GTR domain and positivity are checked
+  from the definitions, the identified class is computed from its definition to be `{θ₀}`, and
+  `mem_gtrClass_of_gtrLaw_eq` (T66) gives `law θ = law θ₀ → θ = θ₀`; continuity is checked
+  from the closed-form two-state transition function, so the point-consistency theorem applies
+  with only the sampling hypotheses open. With branch length and exchangeability both free, the
+  class computed from its definition is not a singleton (rate/time scaling).
+* Outside T66's hypotheses `hId` is not claimed: with base frequencies `(1, 0)` (not positive,
+  so not in the GTR domain) the law, computed from the closed form, is the same at every branch
+  length, yet `t = 1` is not in the class of `t = 2`, so the `hId` conclusion is false there.
 * Wald's argmax theorem on an abstract criterion: the maximizers `1/(n+1)` of
   `-(θ - 1/(n+1))²` on `[-1, 1]` converge to the identified maximum `{0}`.
 -/
@@ -43,6 +54,8 @@ namespace MathlibExtTest.Biology.Phylogenetics.GTRMLE
 
 open MathlibExt.Biology.Phylogenetics.GTRMLE MathlibExt.Biology.Phylogenetics.GTRInference
   MathlibExt.Biology.Phylogenetics.JukesCantor MathlibExt.Biology.Phylogenetics.SubstitutionModels
+  MathlibExt.Biology.Phylogenetics.GTRIdentifiability
+  MathlibExt.Biology.Phylogenetics.GTRTwoStateSampling
 
 /-! ## The criterion at the empirical frequencies -/
 
@@ -269,6 +282,119 @@ example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure
       hindep hident hsample (isMLE_mle continuous_jcLaw jcLaw_pos _),
     tendstoInMeasure_mle_of_injective continuous_jcLaw jcLaw_pos jcLaw_sum (jcLaw_injective t₀) hX
       hindep hident hsample (isMLE_mle continuous_jcLaw jcLaw_pos _)⟩
+
+/-! ## `hId` from T66: the GTR pair-site model -/
+
+/-- Uniform base frequencies on two states. -/
+noncomputable def πu : Fin 2 → ℝ := ![1 / 2, 1 / 2]
+
+/-- Exchangeability `1`. -/
+def s1 : Matrix (Fin 2) (Fin 2) ℝ := Matrix.of fun _ _ => 1
+
+theorem isGTRParam_πu_s1 : IsGTRParam πu s1 where
+  pos i := by fin_cases i <;> norm_num [πu]
+  sum_eq_one := by norm_num [πu, Fin.sum_univ_two]
+  symm _ _ := rfl
+  offDiag_pos _ _ _ := by norm_num [s1]
+
+/-- The branch length of `t ∈ [1, 2]`. -/
+def tlen (θ : Θjc) : ℝ := θ
+
+theorem tlen_pos (θ : Θjc) : 0 < tlen θ := lt_of_lt_of_le one_pos θ.2.1
+
+/-- The two-state GTR pair-site model with unknown branch length `t ∈ [1, 2]`. -/
+noncomputable abbrev lawU : Θjc → Fin 2 × Fin 2 → ℝ :=
+  gtrLaw (fun _ => πu) (fun _ => s1) tlen
+
+/-- The identified class, computed from the definition of `gtrClass`: it is `{θ₀}`. -/
+theorem gtrClass_lawU (θ₀ : Θjc) : gtrClass (fun _ => πu) (fun _ => s1) tlen θ₀ ⊆ {θ₀} := by
+  intro θ ⟨_, h⟩
+  have := h 0 1 (by decide)
+  simp only [s1, Matrix.of_apply, mul_one, tlen] at this
+  exact Subtype.ext this
+
+/-- **`hId` holds via T66**: the law identifies the branch length, through
+`mem_gtrClass_of_gtrLaw_eq` and the class computed above. -/
+example (θ₀ θ : Θjc) (h : lawU θ = lawU θ₀) : θ = θ₀ :=
+  gtrClass_lawU θ₀ (mem_gtrClass_of_gtrLaw_eq (fun _ => isGTRParam_πu_s1) tlen_pos θ₀ θ h)
+
+/-- The law of the model, from the closed-form two-state transition function. -/
+theorem lawU_eq (θ : Θjc) (a : Fin 2 × Fin 2) :
+    lawU θ a = πu a.1 * (Real.exp (-(1 * (θ : ℝ))) * (if a.1 = a.2 then 1 else 0) +
+      (1 - Real.exp (-(1 * (θ : ℝ)))) * πu a.2) := by
+  simp only [lawU, gtrLaw, gtrPairLaw]
+  rw [ctmcTransition_gtrRate_two isGTRParam_πu_s1.sum_eq_one isGTRParam_πu_s1.symm]
+  rfl
+
+theorem continuous_lawU : Continuous lawU := by
+  refine continuous_pi fun a => ?_
+  simp only [lawU_eq]
+  fun_prop
+
+/-- **Point consistency of the GTR pair-site MLE with `hId` from T66**: almost surely and in
+probability, with the GTR domain, positivity, normalization, continuity and identifiability all
+discharged; only the sampling hypotheses are open. -/
+example {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P] (θ₀ : Θjc)
+    {X : ℕ → Ω → Fin 2 × Fin 2} (hX : ∀ i, Measurable (X i))
+    (hindep : Pairwise ((· ⟂ᵢ[P] ·) on X)) (hident : ∀ i, IdentDistrib (X i) (X 0) P P)
+    (hsample : ∀ a, P.real (X 0 ⁻¹' {a}) = lawU θ₀ a) {est : ℕ → Ω → Θjc}
+    (hest : IsMLE lawU (empiricalFreq X) est) :
+    (∀ᵐ ω ∂P, Tendsto (fun n => est n ω) atTop (𝓝 θ₀)) ∧
+      TendstoInMeasure P est atTop fun _ => θ₀ :=
+  ⟨ae_tendsto_mle_of_gtrClass_subset_singleton continuous_lawU (fun _ => isGTRParam_πu_s1)
+      tlen_pos (gtrClass_lawU θ₀) hX hindep hident hsample hest,
+    tendstoInMeasure_mle_of_gtrClass_subset_singleton continuous_lawU
+      (fun _ => isGTRParam_πu_s1) tlen_pos (gtrClass_lawU θ₀) hX hindep hident hsample hest⟩
+
+/-- Rate and branch length both free: `θ = (c, t)`, exchangeability `c`, branch length `t`. -/
+def sScaled (θ : Θjc × Θjc) : Matrix (Fin 2) (Fin 2) ℝ := ((θ.1 : ℝ)) • s1
+
+/-- The point `1 ∈ [1, 2]`. -/
+def θ1 : Θjc := ⟨1, le_rfl, one_le_two⟩
+
+/-- The point `2 ∈ [1, 2]`. -/
+def θ2 : Θjc := ⟨2, one_le_two, le_rfl⟩
+
+/-- The identified class under rate/time scaling is not a singleton: `(1, 2)` lies in the class
+of `(2, 1)` (same products `c * t = 2`), computed from the definition of `gtrClass`. -/
+example : ((θ1, θ2) : Θjc × Θjc) ∈ gtrClass (fun _ => πu) sScaled (fun θ => tlen θ.2) (θ2, θ1) ∧
+    ((θ1, θ2) : Θjc × Θjc) ≠ (θ2, θ1) := by
+  refine ⟨⟨rfl, fun i j _ => ?_⟩, fun h => ?_⟩
+  · simp [sScaled, s1, tlen, θ1, θ2, mul_comm]
+  · have := congrArg (fun p : Θjc × Θjc => (p.1 : ℝ)) h
+    norm_num [θ1, θ2] at this
+
+/-! ## Outside T66's hypotheses `hId` is not claimed -/
+
+/-- Base frequencies `(1, 0)`: not positive. -/
+noncomputable def πdeg : Fin 2 → ℝ := ![1, 0]
+
+/-- T66's GTR-domain hypothesis fails. -/
+example : ¬ IsGTRParam πdeg s1 := fun h => by
+  have := h.pos 1
+  norm_num [πdeg] at this
+
+/-- The degenerate model with branch length `t ∈ [1, 2]`. -/
+noncomputable abbrev lawDeg : Θjc → Fin 2 × Fin 2 → ℝ :=
+  gtrLaw (fun _ => πdeg) (fun _ => s1) tlen
+
+/-- The degenerate law does not depend on the branch length, computed from the closed-form
+two-state transition function (which needs only `∑ π = 1` and symmetry of `s`). -/
+theorem lawDeg_eq (θ θ₀ : Θjc) : lawDeg θ = lawDeg θ₀ := by
+  have hπ1 : ∑ i, πdeg i = 1 := by norm_num [πdeg, Fin.sum_univ_two]
+  have hs : ∀ i j, s1 i j = s1 j i := fun _ _ => rfl
+  funext a
+  obtain ⟨i, j⟩ := a
+  simp only [lawDeg, gtrLaw, gtrPairLaw]
+  rw [ctmcTransition_gtrRate_two hπ1 hs, ctmcTransition_gtrRate_two hπ1 hs]
+  fin_cases i <;> fin_cases j <;> simp [πdeg]
+
+/-- **`hId` fails without T66's hypotheses**: `t = 1` has the law of `t = 2` but is not in its
+class (`1 * 1 ≠ 2 * 1`), so the `hId` conclusion is false and is not claimed. -/
+example : ¬ ∀ θ, lawDeg θ = lawDeg θ2 → θ ∈ gtrClass (fun _ => πdeg) (fun _ => s1) tlen θ2 := by
+  intro h
+  have := (h θ1 (lawDeg_eq θ1 θ2)).2 0 1 (by decide)
+  norm_num [s1, tlen, θ1, θ2] at this
 
 /-! ## Wald's argmax theorem on an abstract criterion -/
 
