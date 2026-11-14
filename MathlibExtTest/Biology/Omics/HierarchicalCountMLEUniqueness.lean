@@ -121,14 +121,83 @@ boundary term of the single-crossing proof vanishes. -/
 example : smoothedDiscrepancy k02 2 = 0 := by
   norm_num [smoothedDiscrepancy, countMean_k02, rampSum, Fin.sum_univ_two, sum_range_succ]
 
-/-- At the boundary the profile shape score at `a = 1` is `3/2 - 2 log 2 > 0`: the likelihood
-still increases in the shape there (Levin–Reeds: no finite maximizer when `V ≤ M`; not proved
-here, and no uniqueness is claimed). -/
+/-- At the boundary the profile shape score at `a = 1` is `3/2 - 2 log 2 > 0`, from the
+definition: the likelihood still increases in the shape there. -/
 example : 0 < profileShapeScore 1 k02 := by
   rw [profileShapeScore, countMean_k02]
   norm_num [digammaIncrement, Fin.sum_univ_two, sum_range_succ]
   have := log_two_lt_d9
   linarith
+
+/-- **The likelihood increases along the path `a ↦ (a, a)` at the boundary**, from the
+definitions (`σ = 1`, `M = 1`): `ℓ(1, 1) = -4 log 2 < 4 log 2 - 5 log 3 = ℓ(2, 2)`, i.e.
+`3⁵ = 243 < 256 = 2⁸`. -/
+example : logMarginalLik 1 1 (fun _ => (1 : ℝ)) k02 < logMarginalLik 2 2 (fun _ => 1) k02 := by
+  rw [logMarginalLik_eq one_pos one_pos (fun _ => one_pos),
+    logMarginalLik_eq two_pos two_pos (fun _ => one_pos)]
+  norm_num [Fin.sum_univ_two, sum_range_succ]
+  have h3 : log ((3 : ℝ) ^ 5) < log ((2 : ℝ) ^ 8) := log_lt_log (by norm_num) (by norm_num)
+  rw [log_pow, log_pow] at h3
+  push_cast at h3
+  linarith
+
+/-- **No finite joint MLE at the boundary `V = M`** (the converse, at `σ = 1`). -/
+example : ¬ ∃ p : ℝ × ℝ, 0 < p.1 ∧ 0 < p.2 ∧ ∀ q : ℝ × ℝ, 0 < q.1 → 0 < q.2 →
+    logMarginalLik q.1 q.2 (fun _ => (1 : ℝ)) k02 ≤ logMarginalLik p.1 p.2 (fun _ => 1) k02 := by
+  have hV : countVar k02 = 1 := by rw [countVar, countMean_k02]; norm_num [Fin.sum_univ_two]
+  exact not_exists_isMaxOn_logMarginalLik one_pos (by rw [countMean_k02]; norm_num)
+    (by rw [hV, countMean_k02])
+
+/-! ### Underdispersed: `V < M`, no finite MLE (the converse of Theorem 2) -/
+
+/-- Two counts `1, 1`: `M = 1`, `V = 0`. -/
+abbrev k11 : Fin 2 → ℕ := ![1, 1]
+
+theorem countMean_k11 : countMean k11 = 1 := by
+  norm_num [countMean, Fin.sum_univ_two]
+
+theorem countVar_k11 : countVar k11 = 0 := by
+  rw [countVar, countMean_k11]; norm_num [Fin.sum_univ_two]
+
+/-- **Non-vacuity of the converse's hypotheses**: `0 < M` and `V ≤ M` (strictly). -/
+theorem underdispersed_k11 : 0 < countMean k11 ∧ countVar k11 < countMean k11 := by
+  rw [countMean_k11, countVar_k11]; norm_num
+
+/-- **The profile shape score is positive everywhere, from the definition** (independently of
+`H`): it is `2 / a - 2 log ((a + 1) / a)`, positive since `log x < x - 1` for `x ≠ 1`. -/
+example {a : ℝ} (ha : 0 < a) : 0 < profileShapeScore a k11 := by
+  rw [profileShapeScore, countMean_k11]
+  norm_num [digammaIncrement, Fin.sum_univ_two]
+  have hx : log ((a + 1) / a) < (a + 1) / a - 1 :=
+    log_lt_sub_one_of_pos (by positivity) (by rw [ne_eq, div_eq_one_iff_eq ha.ne']; linarith)
+  rw [log_div (by positivity) ha.ne'] at hx
+  have : (a + 1) / a - 1 = a⁻¹ := by field_simp; ring
+  linarith
+
+/-- **The likelihood increases along the path `a ↦ (a, a)`**, from the definitions (`σ = 1`,
+`M = 1`): `ℓ(1, 1) = -4 log 2 < 6 log 2 - 6 log 3 = ℓ(2, 2)`, i.e. `3⁶ = 729 < 1024 = 2¹⁰`. -/
+example : logMarginalLik 1 1 (fun _ => (1 : ℝ)) k11 < logMarginalLik 2 2 (fun _ => 1) k11 := by
+  rw [logMarginalLik_eq one_pos one_pos (fun _ => one_pos),
+    logMarginalLik_eq two_pos two_pos (fun _ => one_pos)]
+  norm_num [Fin.sum_univ_two]
+  have h3 : log ((3 : ℝ) ^ 6) < log ((2 : ℝ) ^ 10) := log_lt_log (by norm_num) (by norm_num)
+  rw [log_pow, log_pow] at h3
+  push_cast at h3
+  linarith
+
+/-- **No finite joint MLE for `(1, 1)`** (the converse, at `σ = 1`): `ℓ` has no maximizer on
+`(0, ∞)²`, and the joint score equations have no positive root. -/
+example : ¬ ∃ p : ℝ × ℝ, 0 < p.1 ∧ 0 < p.2 ∧ ∀ q : ℝ × ℝ, 0 < q.1 → 0 < q.2 →
+    logMarginalLik q.1 q.2 (fun _ => (1 : ℝ)) k11 ≤ logMarginalLik p.1 p.2 (fun _ => 1) k11 :=
+  not_exists_isMaxOn_logMarginalLik one_pos underdispersed_k11.1 underdispersed_k11.2.le
+
+example {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
+    ¬ (shapeScore a b (fun _ => (1 : ℝ)) k11 = 0 ∧ rateScore a b (fun _ => 1) k11 = 0) :=
+  score_ne_zero_of_le one_pos underdispersed_k11.1 underdispersed_k11.2.le ha hb
+
+/-- **Contrast: the overdispersed `(0, 3)` fails the converse's hypothesis**, and its finite MLE
+exists and is unique (`existsUnique_isMaxOn_logMarginalLik`, exercised on `k03` above). -/
+example : ¬ countVar k03 ≤ countMean k03 := not_le.2 overdispersed_k03.2
 
 /-! ### Heterogeneous size factors (the common-size-factor hypothesis fails) -/
 
@@ -149,5 +218,10 @@ example : rateScore 1 (4 / 3) ![1, 3] k03 = 27 / 182 ∧ rateScore 1 (4 / 3) ![1
 #print axioms logMarginalLik_lt_of_score_root
 #print axioms existsUnique_isMaxOn_logMarginalLik
 #print axioms score_eq_zero_of_isMaxOn
+#print axioms smoothedDiscrepancy_nonneg
+#print axioms profileShapeScore_pos_of_le
+#print axioms score_ne_zero_of_le
+#print axioms strictMonoOn_logMarginalLik_rateRoot
+#print axioms not_exists_isMaxOn_logMarginalLik
 
 end MathlibExtTest.Biology.Omics.HierarchicalCountMLEUniqueness
