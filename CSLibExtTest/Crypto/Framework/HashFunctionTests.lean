@@ -93,9 +93,9 @@ theorem tcrToColl_tcrAdv : tcrToColl tcrAdv = pairFinder := rfl
 theorem tcrAdvantage_keyedHash_tcrAdv : tcrAdvantage keyedHash tcrAdv = 1 / 2 := by
   rw [tcrAdvantage_eq_collAdvantage, tcrToColl_tcrAdv, collAdvantage_keyedHash_pairFinder]
 
-/-! ### The hash-commitment bridge -/
+/-! ### Hash-commitment binding -/
 
-section Bridge
+section Binding
 
 open Cslib.Crypto.Protocols.Commitment
 
@@ -125,6 +125,6 @@ theorem framework_collAdvantage_reduction_openTwice :
       HashCommitment.bindingAdvantage_le ⟨PMF.pure (), addHash⟩ openTwice)
 
 
-end Bridge
+end Binding
 
 end Cslib.Crypto.FrameworkTests.HashFunction
