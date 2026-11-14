@@ -1,0 +1,1177 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import Mathlib.Algebra.BigOperators.Group.List.Basic
+public import Mathlib.Combinatorics.Digraph.Basic
+public import Mathlib.Data.List.Basic
+public import Mathlib.Basic.Real.Basic
+import Mathlib.Data.Finset.Max
+import Mathlib.Data.Finset.Prod
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
+
+/-!
+# Finding the `k` shortest paths (Eppstein), sidetracks and enumeration
+
+Formalization of Eppstein's `k` shortest paths algorithm
+(D. Eppstein, "Finding the k Shortest Paths",
+SIAM J. Comput. 28(2):652–673, 1998), Sections 2.2–2.4:
+the sidetrack/`δ` representation of `s–t` walks, the path-graph
+correspondence (as an abstraction), and conditional correctness of
+abstract best-first traces.
+
+* **Lemma 1.** For every edge `e`, `δ(e) ≥ 0`; for edges of the
+  shortest-path tree `T`, `δ(e) = 0`.
+* **Lemma 2.** For any `s–t` path `p`,
+  `ℓ(p) = d(s,t) + ∑ δ(e)` over `sidetracks(p)`
+  (equivalently, over all of `p`, since `δ` vanishes on `T`).
+* **Lemma 3.** `ℓ(p) ≥ ℓ(prefpath p)`: dropping the last sidetrack edge
+  cannot increase the length.
+* **Lemma 4** (the `D(G)`/`H_G` heap construction with its size/degree/time
+  bounds) is intentionally not formalized: heap-edge segments are left
+  implicit in `PPath`, and there is no cost model in scope.
+* **Lemma 5.** `s–t` walks are in length-preserving correspondence
+  with `PPath`s (decode/encode), via Lemma 2. Under unique tree walks
+  the correspondence is one-to-one: sidetrack lists identify walks
+  and `PPath`s, and Theorem 1 has a unique-decoding variant.
+* **Lemma 6.** Extending a `PPath` by a sidetrack of nonnegative `δ`
+  cannot decrease its weight.
+* **Lemma 7.** The tree of `PPath`s (parent = `prefpath`) is heap-ordered
+  by weight, via Lemma 3.
+* **Theorems 1–2 (conditional cores).** For every list satisfying the
+  abstract best-first-trace specification `IsBFSTrace`, the list is
+  weight-sorted and minimal, decodes to `s–t` walks, and every walk is
+  represented or no shorter than the outputs. Under unique tree walks,
+  each output decodes to a unique walk. These are correctness cores
+  only: no trace-producing function is given (see the scope note).
+* **Finiteness (§2.1).** The paper assumes `n` vertices and `m` edges.
+  Under `[Finite V]`, every abstract trace extends by a frontier
+  minimum or is exhaustive, so abstract traces of every length exist up
+  to exhaustion (`trace_extend_or_exhaustive`,
+  `exists_trace_length_or_exhaustive`).
+
+Ported from the `kth-shortest-path-epp` T-Bench Lean verification task
+(authored by Leo Osvald). Complexity bounds (`O(m + n log n + k log k)`
+and variants) are documented in the source but not formalized:
+there is no cost model in scope.
+
+## Scope note: what is not formalized
+
+No `P(G)`/`H(G)` graph, priority-queue algorithm, reversed-graph
+construction, or trace-producing function is formalized here.
+`PPath` abstracts a path-graph path (see §2.3 below), and
+`IsBFSTrace.step` takes frontier minimality as a premise rather than
+producing a minimum. Theorems 1–2 are therefore conditional: they say
+what holds of any list satisfying the abstract trace specification,
+not that Eppstein's algorithm produces such a list. Whether any
+nontrivial trace satisfies the specification is a separate question
+from the specification itself.
+
+## Modeling choices
+
+* The input digraph `G` and the single-destination shortest-path tree `T`
+  are `Digraph`s (Mathlib). Edge lengths are `len : V → V → ℝ`
+  and distances to the fixed target `t` are `dist : V → ℝ`.
+* The characteristic consequences of "`T` is a shortest-path tree to `t`"
+  (the triangle inequality and tightness of tree edges) are taken as
+  explicit hypotheses. Deriving them from Dijkstra's algorithm is out of
+  scope; they are exactly what the paper's proofs consume.
+* Walks carry their endpoints in their type (`DiWalk G s t`), which makes
+  the telescoping argument of Lemma 2 a direct induction.
+* `PPath`/`IsBFSTrace` abstract the paper's `P(G)`/`H(G)` and
+  priority-queue search: a `PPath` joins sidetracks by an arbitrary
+  tree walk, contracting the heap/cross-edge steps of `P(G)`, and
+  `IsBFSTrace.step` takes frontier minimality as a hypothesis. No
+  function in this file constructs a trace from `G`/`T`.
+* Tree uniqueness is not assumed globally: only the uniqueness lemmas
+  and their Theorem 1–2 variants assume that all tree walks between
+  two vertices coincide (`htree`), the abstract form of the paper's
+  `nextT` tree. The other lemmas hold for arbitrary `T`.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+
+namespace Cslib.Algorithms.Lean.KShortestPathsEppstein
+
+open Classical
+
+universe u
+
+variable {V : Type u}
+
+/-- `δ(e) = ℓ(e) + d(head(e), t) − d(tail(e), t)` (Eppstein §2.2):
+how much distance is lost by being "sidetracked" along `e`
+instead of taking a shortest path to `t`. -/
+noncomputable def eppDelta (len : V → V → ℝ) (dist : V → ℝ) (u v : V) : ℝ :=
+  len u v + dist v - dist u
+
+/-- A directed walk from `s` to `t` in the simple digraph `G`,
+as an explicit sequence of steps. -/
+inductive DiWalk (G : Digraph V) : V → V → Type u where
+  | nil (u : V) : DiWalk G u u
+  | cons (u v w : V) : G.Adj u v → DiWalk G v w → DiWalk G u w
+
+/-- Total length `ℓ(p)` of a walk: the sum of its edge lengths. -/
+noncomputable def DiWalk.length (len : V → V → ℝ) {G : Digraph V}
+    {s t : V} : DiWalk G s t → ℝ
+  | .nil _ => 0
+  | .cons u v _ _ tl => len u v + tl.length len
+
+/-- Sum of `δ` over every edge of a walk. -/
+noncomputable def DiWalk.deltaSum (len : V → V → ℝ) (dist : V → ℝ)
+    {G : Digraph V} {s t : V} : DiWalk G s t → ℝ
+  | .nil _ => 0
+  | .cons u v _ _ tl => eppDelta len dist u v + tl.deltaSum len dist
+
+/-- Sum of `δ` over the sidetrack edges of a walk, i.e. the edges
+outside the shortest-path tree `T` (tree edges contribute `0`). -/
+noncomputable def DiWalk.sidetrackSum (T : Digraph V) (len : V → V → ℝ)
+    (dist : V → ℝ) {G : Digraph V} {s t : V} : DiWalk G s t → ℝ
+  | .nil _ => 0
+  | .cons u v _ _ tl =>
+      (if T.Adj u v then 0 else eppDelta len dist u v) + tl.sidetrackSum T len dist
+
+/-- The sidetrack subsequence `sidetracks(p)`: the edges of the walk
+that lie in `G − T`.  In the paper, a path is uniquely determined by this
+subsequence (Eppstein §2.2), since `T` is a tree and the tree edges between
+consecutive sidetracks are forced.  Here uniqueness is proved only under
+the unique-tree-walks hypothesis: see `DiWalk_eq_of_sidetracks_eq`. -/
+noncomputable def DiWalk.sidetracks (T : Digraph V) {G : Digraph V}
+    {s t : V} : DiWalk G s t → List (V × V)
+  | .nil _ => []
+  | .cons u v _ _ tl =>
+      if T.Adj u v then tl.sidetracks T else (u, v) :: tl.sidetracks T
+
+/-- Length of a path presented by its sidetrack sequence `L`:
+`d(s,t) + ∑ δ(e)` over `L`. -/
+noncomputable def listSidetrackSum (len : V → V → ℝ) (dist : V → ℝ)
+    (L : List (V × V)) : ℝ :=
+  (L.map (fun e => eppDelta len dist e.1 e.2)).sum
+
+/-- Lemma 1 (first part): `δ(e) ≥ 0` for every edge of `G`, from the
+triangle inequality for distances to `t`. -/
+theorem lemma1_delta_nonneg (len : V → V → ℝ) (dist : V → ℝ)
+    {G : Digraph V} {u v : V} (_hadj : G.Adj u v)
+    (htri : dist u ≤ len u v + dist v) :
+    0 ≤ eppDelta len dist u v := by
+  unfold eppDelta
+  linarith
+
+/-- Lemma 1 (second part): `δ(e) = 0` for edges of the
+shortest-path tree `T`, where the triangle inequality is tight. -/
+theorem lemma1_delta_tree (len : V → V → ℝ) (dist : V → ℝ) {u v : V}
+    (htight : len u v + dist v = dist u) :
+    eppDelta len dist u v = 0 := by
+  unfold eppDelta
+  linarith
+
+/-- Lemma 1 over a whole graph: every edge has nonnegative `δ`. -/
+theorem lemma1_all_nonneg (len : V → V → ℝ) (dist : V → ℝ)
+    {G : Digraph V}
+    (htri : ∀ a b : V, G.Adj a b → dist a ≤ len a b + dist b)
+    {u v : V} (hadj : G.Adj u v) :
+    0 ≤ eppDelta len dist u v :=
+  lemma1_delta_nonneg len dist hadj (htri u v hadj)
+
+/-- Lemma 2 (first equality): the walk length telescopes to
+`ℓ(p) = d(s,t) + ∑_{e ∈ p} δ(e)`.  This is pure algebra and needs
+no optimality hypotheses. -/
+theorem lemma2_telescoping (len : V → V → ℝ) (dist : V → ℝ)
+    {G : Digraph V} {s t : V} (p : DiWalk G s t) :
+    p.length len = dist s - dist t + p.deltaSum len dist := by
+  induction p with
+  | nil u =>
+    simp only [DiWalk.length, DiWalk.deltaSum]
+    ring
+  | cons u v w _ tl ih =>
+    simp only [DiWalk.length, DiWalk.deltaSum]
+    rw [ih]
+    unfold eppDelta
+    ring
+
+/-- Lemma 2 (second equality): since `δ` vanishes on tree edges, the sum
+of `δ` over all edges of a walk equals the sum over its sidetracks. -/
+theorem lemma2_sidetrack (T : Digraph V) (len : V → V → ℝ)
+    (dist : V → ℝ) {G : Digraph V} {s t : V}
+    (htight : ∀ a b : V, T.Adj a b → eppDelta len dist a b = 0)
+    (p : DiWalk G s t) :
+    p.deltaSum len dist = p.sidetrackSum T len dist := by
+  induction p with
+  | nil _ => rfl
+  | cons u v w _ tl ih =>
+    simp only [DiWalk.deltaSum, DiWalk.sidetrackSum]
+    by_cases h : T.Adj u v
+    · simp only [h, ite_true, htight u v h, ih]
+    · simp only [h, ite_false, ih]
+
+/-- Lemma 2 in the paper's form: with `d(t,t) = 0`,
+`ℓ(p) = d(s,t) + ∑_{e ∈ sidetracks(p)} δ(e)`. -/
+theorem lemma2_path_length (T : Digraph V) (len : V → V → ℝ)
+    (dist : V → ℝ) {G : Digraph V} {s t : V} (hdist_t : dist t = 0)
+    (htight : ∀ a b : V, T.Adj a b → eppDelta len dist a b = 0)
+    (p : DiWalk G s t) :
+    p.length len = dist s + p.sidetrackSum T len dist := by
+  have h1 := lemma2_telescoping len dist p
+  have h2 := lemma2_sidetrack T len dist htight p
+  rw [h2, hdist_t] at h1
+  simpa using h1
+
+/-- The recursive sidetrack sum agrees with the sum over the explicit
+sidetrack list.  This bridges the walk view and the sequence view of §2.2. -/
+theorem sidetrackSum_eq_listSum (T : Digraph V) (len : V → V → ℝ)
+    (dist : V → ℝ) {G : Digraph V} {s t : V} (p : DiWalk G s t) :
+    p.sidetrackSum T len dist = listSidetrackSum len dist (p.sidetracks T) := by
+  induction p with
+  | nil _ => simp only [DiWalk.sidetrackSum, DiWalk.sidetracks, listSidetrackSum, List.map_nil, List.sum_nil]
+  | cons u v w _ tl ih =>
+    simp only [DiWalk.sidetrackSum, DiWalk.sidetracks]
+    by_cases h : T.Adj u v
+    · simp only [h, ite_true, ih, zero_add]
+    · simp only [h, ite_false, ih]
+      unfold listSidetrackSum
+      simp only [List.map_cons, List.sum_cons]
+
+/-- Lemma 3 (sequence core): dropping the last sidetrack edge cannot
+increase `d(s,t) + ∑ δ`, since the dropped `δ` is nonnegative (Lemma 1). -/
+theorem lemma3_core (len : V → V → ℝ) (dist : V → ℝ) (P : List (V × V))
+    {u v : V} (hδ : 0 ≤ eppDelta len dist u v) :
+    listSidetrackSum len dist P
+      ≤ listSidetrackSum len dist (P ++ [(u, v)]) := by
+  have h : listSidetrackSum len dist (P ++ [(u, v)])
+      = listSidetrackSum len dist P + eppDelta len dist u v := by
+    unfold listSidetrackSum
+    rw [List.map_append, List.sum_append]
+    simp only [List.map_cons, List.map_nil, List.sum_cons, List.sum_nil, add_zero]
+  rw [h]
+  linarith
+
+/-- Lemma 3 (Eppstein): `ℓ(p) ≥ ℓ(prefpath p)`.  Here `q` plays the role
+of `prefpath p`: its sidetrack sequence is that of `p` with the last
+sidetrack edge dropped. -/
+theorem lemma3_prefpath_le (T : Digraph V) (len : V → V → ℝ)
+    (dist : V → ℝ) {G : Digraph V} {s t : V} (hdist_t : dist t = 0)
+    (htight : ∀ a b : V, T.Adj a b → eppDelta len dist a b = 0)
+    (p q : DiWalk G s t) (P : List (V × V)) {u v : V}
+    (hδ : 0 ≤ eppDelta len dist u v)
+    (hp : p.sidetracks T = P ++ [(u, v)])
+    (hq : q.sidetracks T = P) :
+    q.length len ≤ p.length len := by
+  have hp_len := lemma2_path_length T len dist hdist_t htight p
+  have hq_len := lemma2_path_length T len dist hdist_t htight q
+  have hp_sum := sidetrackSum_eq_listSum T len dist p
+  have hq_sum := sidetrackSum_eq_listSum T len dist q
+  rw [hp] at hp_sum
+  rw [hq] at hq_sum
+  have hle := lemma3_core len dist P hδ
+  rw [hq_len, hp_len, hq_sum, hp_sum]
+  linarith [hle]
+
+/-!
+# The path graph, abstracted (§2.3), and conditional trace correctness
+(§2.4, Theorems 1–2 cores).
+
+A node of the paper's path graph `P(G)` is a sidetrack edge; heap edges
+walk between sidetracks that share a tree path, and cross edges jump from
+a sidetrack to the heap of the tree below its head.  Neither `P(G)` nor
+its heap `H(G)` is constructed here.  Instead, a `PPath` abstracts a
+path of `P(G)` starting from the root directly: it is the sidetrack
+sequence of an `s–t` walk, where consecutive sidetracks are joined by an
+arbitrary explicit tree walk.  A single sidestep thereby contracts the
+heap-edge segments of `P(G)` (and any number of its heap/cross edges),
+which are left implicit.  Its `weight` is the sum of `δ` over the
+sidetracks, telescoping as in Lemma 2.
+
+* **Lemma 5.** `s–t` walks in `G` are in length-preserving correspondence
+  with `PPath` abstractions (decode/encode), via Lemma 2; one-to-one
+  under unique tree walks (see `DiWalk_eq_of_sidetracks_eq`).  This is
+  a correspondence with the abstraction, not with literal `P(G)` paths.
+* **Lemma 6.** Extending a `PPath` by a sidetrack of nonnegative `δ`
+  cannot decrease its weight (the nonnegativity the paper gets from
+  heap ordering in `P(G)`).
+* **Lemma 7.** The tree of `PPath`s (parent = `prefpath`) is heap-ordered
+  by weight, via Lemma 3.
+* **Theorems 1–2 (conditional cores).** If a list satisfies the abstract
+  trace specification `IsBFSTrace`, then it is weight-sorted and minimal
+  (from `s` to `t`, resp. to every vertex), decodes to `s–t` walks, and
+  every walk is represented in the outputs or no shorter than them.
+  No priority-queue algorithm, reversed-graph construction, or
+  complexity bound (`O(m + n log n + k log k)` for the basic algorithm)
+  is formalized: there is no cost model in scope, and `IsBFSTrace.step`
+  assumes a frontier minimum rather than producing one.
+-/
+
+/-- Concatenation of two compatible walks. -/
+def DiWalk.append {G : Digraph V} {a b c : V} :
+    DiWalk G a b → DiWalk G b c → DiWalk G a c
+  | .nil _, q => q
+  | .cons u v _ h tl, q => .cons u v _ h (tl.append q)
+
+/-- Single-edge walk. -/
+def DiWalk.single {G : Digraph V} {a b : V} (h : G.Adj a b) :
+    DiWalk G a b :=
+  .cons a b b h (.nil b)
+
+/-- Lift a walk in the tree `T` to a walk in `G` (using `T ⊆ G`). -/
+def DiWalk.liftT {G T : Digraph V}
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b) {a b : V} :
+    DiWalk T a b → DiWalk G a b
+  | .nil u => .nil u
+  | .cons u v w h tl => .cons u v w (Tle u v h) (tl.liftT Tle)
+
+theorem DiWalk_append_assoc {G : Digraph V} {a b c d : V}
+    (p : DiWalk G a b) (q : DiWalk G b c) (r : DiWalk G c d) :
+    (p.append q).append r = p.append (q.append r) := by
+  induction p with
+  | nil _ => rfl
+  | cons u v w _ tl ih => simp only [DiWalk.append, ih]
+
+theorem DiWalk_liftT_append {G T : Digraph V}
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b) {a b c : V}
+    (p : DiWalk T a b) (q : DiWalk T b c) :
+    (p.append q).liftT Tle = (p.liftT Tle).append (q.liftT Tle) := by
+  induction p with
+  | nil _ => rfl
+  | cons u v w _ tl ih => simp only [DiWalk.append, DiWalk.liftT, ih]
+
+/-- An abstraction of a path of the path graph `P(G)` starting from the
+root: the sidetrack sequence of an `s`-rooted walk, with consecutive
+sidetracks joined by an arbitrary explicit tree walk in `T` (a single
+sidestep may contract several heap/cross edges of `P(G)`).  The
+endpoint index is the head of the last sidetrack (or `s` for the empty
+sequence). -/
+inductive PPath (G T : Digraph V) (s : V) : V → Type u where
+  | root : PPath G T s s
+  | sidestep {a : V} (e : V × V) : PPath G T s a → DiWalk T a e.1 →
+      G.Adj e.1 e.2 → ¬ T.Adj e.1 e.2 → PPath G T s e.2
+
+/-- The sidetrack sequence underlying a `PPath`. -/
+def PPath.sidetrackList {G T : Digraph V} {s c : V} :
+    PPath G T s c → List (V × V)
+  | .root => []
+  | .sidestep e prev _ _ _ => prev.sidetrackList ++ [e]
+
+/-- Weight of a `PPath`: the sum of `δ` over its sidetracks, telescoping
+as in Lemma 2, so an `s–t` walk has length `d(s,t) + weight`. -/
+noncomputable def PPath.weight (len : V → V → ℝ) (dist : V → ℝ)
+    {G T : Digraph V} {s c : V} : PPath G T s c → ℝ
+  | .root => 0
+  | .sidestep e prev _ _ _ => prev.weight len dist + eppDelta len dist e.1 e.2
+
+/-- Parent of a `PPath` in the path tree (`prefpath`: drop the last
+sidetrack). -/
+def PPath.parent {G T : Digraph V} {s c : V} :
+    PPath G T s c → Option (Σ c', PPath G T s c')
+  | .root => none
+  | .sidestep _ prev _ _ _ => some ⟨_, prev⟩
+
+/-- Child relation in the abstract path tree: `child` extends `par` by a
+single sidestep (the converse of `PPath.parent`).  No `H(G)` is
+constructed: the joining tree walk is arbitrary, so one sidestep may
+contract several heap/cross edges of the paper's `P(G)`. -/
+def PPath.IsChild {G T : Digraph V} {s : V}
+    (child par : Σ c, PPath G T s c) : Prop :=
+  ∃ (e : V × V) (tw : DiWalk T par.1 e.1) (hadj : G.Adj e.1 e.2)
+    (hside : ¬ T.Adj e.1 e.2),
+    child = ⟨e.2, PPath.sidestep e par.2 tw hadj hside⟩
+
+/-- Abstract best-first traces over the heap-ordered path tree: a
+specification only.  The list starts at `root`, and each new output is
+assumed to be a minimum-weight frontier node — a child of an
+already-output node that has not been output yet.  `step` takes that
+minimality as a premise; nothing here constructs such a list, runs a
+priority queue, or builds `P(G)`/`H(G)`, so this is not a claim that
+the paper's §2.4 algorithm produces exactly these lists.  Tie-breaking
+between equal-weight frontier nodes is left arbitrary.  Whether any
+nontrivial list satisfies this specification is a separate question
+from the specification itself. -/
+inductive IsBFSTrace (G T : Digraph V) (s : V) (len : V → V → ℝ)
+    (dist : V → ℝ) : List (Σ c, PPath G T s c) → Prop where
+  | root : IsBFSTrace G T s len dist [⟨s, PPath.root⟩]
+  | step (L : List (Σ c, PPath G T s c)) (next : Σ c, PPath G T s c) :
+      IsBFSTrace G T s len dist L →
+      (∃ par ∈ L, PPath.IsChild next par) →
+      next ∉ L →
+      (∀ y : Σ c, PPath G T s c, (∃ par ∈ L, PPath.IsChild y par) → y ∉ L →
+        next.2.weight len dist ≤ y.2.weight len dist) →
+      IsBFSTrace G T s len dist (L ++ [next])
+
+theorem listSidetrackSum_append (len : V → V → ℝ) (dist : V → ℝ)
+    (L1 L2 : List (V × V)) :
+    listSidetrackSum len dist (L1 ++ L2)
+      = listSidetrackSum len dist L1 + listSidetrackSum len dist L2 := by
+  unfold listSidetrackSum
+  rw [List.map_append, List.sum_append]
+
+theorem PPath_weight_eq_listSum (len : V → V → ℝ) (dist : V → ℝ)
+    {G T : Digraph V} {s c : V} (q : PPath G T s c) :
+    q.weight len dist = listSidetrackSum len dist q.sidetrackList := by
+  induction q with
+  | root =>
+    simp only [PPath.weight, PPath.sidetrackList, listSidetrackSum,
+      List.map_nil, List.sum_nil]
+  | sidestep e prev tw hadj hside ih =>
+    simp only [PPath.weight, PPath.sidetrackList]
+    rw [listSidetrackSum_append]
+    have hsingle : listSidetrackSum len dist [e]
+        = eppDelta len dist e.1 e.2 := by
+      simp only [listSidetrackSum, List.map_cons, List.map_nil,
+        List.sum_cons, List.sum_nil, add_zero]
+    rw [hsingle, ih]
+
+theorem DiWalk_sidetracks_append {G : Digraph V} (T : Digraph V)
+    {a b c : V} (p : DiWalk G a b) (q : DiWalk G b c) :
+    (p.append q).sidetracks T = p.sidetracks T ++ q.sidetracks T := by
+  induction p with
+  | nil _ =>
+    simp only [DiWalk.append, DiWalk.sidetracks, List.nil_append]
+  | cons u v w hadj tl ih =>
+    simp only [DiWalk.append, DiWalk.sidetracks]
+    by_cases h : T.Adj u v
+    · simp only [h, ite_true, ih]
+    · simp only [h, ite_false, ih, List.cons_append]
+
+theorem DiWalk_liftT_sidetracks {G T : Digraph V}
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)
+    {a b : V} (r : DiWalk T a b) :
+    (r.liftT Tle).sidetracks T = [] := by
+  induction r with
+  | nil _ =>
+    simp only [DiWalk.liftT, DiWalk.sidetracks]
+  | cons u v w h tl ih =>
+    simp only [DiWalk.liftT, DiWalk.sidetracks]
+    have hT : T.Adj u v := h
+    simp only [hT, ite_true, ih]
+
+theorem DiWalk_single_sidetracks {G : Digraph V} (T : Digraph V)
+    {a b : V} (h : G.Adj a b) (hside : ¬ T.Adj a b) :
+    (DiWalk.single h).sidetracks T = [(a, b)] := by
+  simp only [DiWalk.single, DiWalk.sidetracks, hside, ite_false]
+
+theorem DiWalk_exists_liftT_of_sidetracks_nil {G T : Digraph V}
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b) {a b : V} (p : DiWalk G a b) :
+    p.sidetracks T = [] → ∃ r : DiWalk T a b, p = r.liftT Tle := by
+  induction p with
+  | nil u => intro _; exact ⟨DiWalk.nil u, rfl⟩
+  | cons u v w hadj tl ih =>
+    intro h
+    simp only [DiWalk.sidetracks] at h
+    by_cases hT : T.Adj u v
+    · have htl : tl.sidetracks T = [] := by simpa [hT] using h
+      obtain ⟨r, hr⟩ := ih htl
+      exact ⟨DiWalk.cons u v w hT r, by simp only [DiWalk.liftT, hr]⟩
+    · simp only [hT, ite_false] at h
+      simp at h
+
+/-- Every walk is either tree-only or a tree segment followed by a first
+sidetrack and a rest.  This is the decomposition behind the uniqueness of
+the sidetrack representation. -/
+theorem DiWalk_split_first_sidetrack {G T : Digraph V}
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b) {a b : V} (p : DiWalk G a b) :
+    (∃ r : DiWalk T a b, p = r.liftT Tle ∧ p.sidetracks T = []) ∨
+    ∃ (e : V × V) (r : DiWalk T a e.1) (rest : DiWalk G e.2 b)
+      (hadj : G.Adj e.1 e.2) (_hside : ¬ T.Adj e.1 e.2),
+      p = (r.liftT Tle).append ((DiWalk.single hadj).append rest) ∧
+      p.sidetracks T = e :: rest.sidetracks T := by
+  induction p with
+  | nil u =>
+    left
+    exact ⟨DiWalk.nil u, rfl, rfl⟩
+  | cons u v w hadj tl ih =>
+    by_cases hT : T.Adj u v
+    · rcases ih with ⟨r, hr, hs⟩ | ⟨e, r, rest, hadj2, _hside2, heq, hlist⟩
+      · left
+        refine ⟨(DiWalk.single hT).append r, ?_, ?_⟩
+        · rw [DiWalk_liftT_append, ← hr]
+          rfl
+        · simp only [DiWalk.sidetracks, hT, ite_true, hs]
+      · right
+        refine ⟨e, (DiWalk.single hT).append r, rest, hadj2, _hside2, ?_, ?_⟩
+        · rw [DiWalk_liftT_append, DiWalk_append_assoc, ← heq]
+          rfl
+        · simp only [DiWalk.sidetracks, hT, ite_true, hlist]
+    · right
+      refine ⟨(u, v), DiWalk.nil u, tl, hadj, hT, ?_, ?_⟩
+      · rfl
+      · simp only [DiWalk.sidetracks, hT, ite_false]
+
+/-- A walk is determined by its sidetrack list when tree walks are unique
+(the paper's §2.2 claim for a shortest-path tree `T`): the tree segments
+between consecutive sidetracks are then forced.  This needs only the
+unique-tree-walks hypothesis `htree` and `T ⊆ G`; no lengths, potentials,
+finiteness, or tree walk to `t` is assumed. -/
+theorem DiWalk_eq_of_sidetracks_eq {G T : Digraph V}
+    (htree : ∀ a b (p q : DiWalk T a b), p = q)
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b) :
+    ∀ (L : List (V × V)) {a b : V} (p q : DiWalk G a b),
+      p.sidetracks T = L → q.sidetracks T = L → p = q := by
+  intro L
+  induction L with
+  | nil =>
+    intro a b p q hp hq
+    obtain ⟨r1, hr1⟩ := DiWalk_exists_liftT_of_sidetracks_nil Tle p hp
+    obtain ⟨r2, hr2⟩ := DiWalk_exists_liftT_of_sidetracks_nil Tle q hq
+    rw [hr1, hr2, htree a b r1 r2]
+  | cons e L ih =>
+    intro a b p q hp hq
+    obtain (⟨r, hr, hs⟩ | ⟨e1, r1, rest1, hadj1, _hside1, heq1, hlist1⟩) :=
+      DiWalk_split_first_sidetrack Tle p
+    · simp [hs] at hp
+    obtain (⟨r, hr, hs⟩ | ⟨e2, r2, rest2, hadj2, _hside2, heq2, hlist2⟩) :=
+      DiWalk_split_first_sidetrack Tle q
+    · simp [hs] at hq
+    rw [hlist1] at hp
+    rw [hlist2] at hq
+    simp only [List.cons.injEq] at hp hq
+    obtain ⟨rfl, hL1⟩ := hp
+    obtain ⟨rfl, hL2⟩ := hq
+    have hr_eq : r1 = r2 := htree _ _ r1 r2
+    have hrest_eq : rest1 = rest2 := ih rest1 rest2 hL1 hL2
+    rw [heq1, heq2, hr_eq, hrest_eq]
+
+theorem decode_aux (T : Digraph V)
+    {G : Digraph V} {s : V}
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)
+    {c : V} (q : PPath G T s c) :
+    ∃ r : DiWalk G s c, r.sidetracks T = q.sidetrackList := by
+  induction q with
+  | root =>
+    exact ⟨DiWalk.nil s, rfl⟩
+  | sidestep e prev tw hadj hside ih =>
+    obtain ⟨r_prev, hr_prev⟩ := ih
+    refine ⟨r_prev.append ((tw.liftT Tle).append (DiWalk.single hadj)), ?_⟩
+    rw [DiWalk_sidetracks_append, DiWalk_sidetracks_append,
+      DiWalk_liftT_sidetracks Tle,
+      DiWalk_single_sidetracks T hadj hside, hr_prev]
+    simp only [PPath.sidetrackList]
+    cases e with
+    | mk e1 e2 =>
+      simp only [List.nil_append]
+
+theorem encode_aux {G T : Digraph V} {s : V} {a b : V} (p : DiWalk G a b) :
+    ∀ {a0 : V} (q : PPath G T s a0) (tw : DiWalk T a0 a),
+      ∃ (c : V) (q' : PPath G T s c),
+        q'.sidetrackList = q.sidetrackList ++ p.sidetracks T := by
+  induction p with
+  | nil u =>
+    intro a0 q tw
+    exact ⟨a0, q, by simp only [DiWalk.sidetracks, List.append_nil]⟩
+  | cons u v w hadj tl ih =>
+    intro a0 q tw
+    by_cases hT : T.Adj u v
+    · have hp : (DiWalk.cons u v w hadj tl).sidetracks T
+          = tl.sidetracks T := by
+        simp only [DiWalk.sidetracks, hT, ite_true]
+      have tw' : DiWalk T a0 v := tw.append (DiWalk.single hT)
+      obtain ⟨c, q', hq'⟩ := ih q tw'
+      refine ⟨c, q', ?_⟩
+      rw [hp]
+      exact hq'
+    · have hp : (DiWalk.cons u v w hadj tl).sidetracks T
+          = (u, v) :: tl.sidetracks T := by
+        simp only [DiWalk.sidetracks, hT, ite_false]
+      let q1 : PPath G T s v := PPath.sidestep (u, v) q tw hadj hT
+      have hq1 : q1.sidetrackList = q.sidetrackList ++ [(u, v)] := rfl
+      obtain ⟨c, q', hq'⟩ := ih q1 (DiWalk.nil v)
+      rw [hq1] at hq'
+      have heq : (q.sidetrackList ++ [(u, v)]) ++ tl.sidetracks T
+          = q.sidetrackList ++ ((u, v) :: tl.sidetracks T) := by
+        simp only [List.append_assoc, List.cons_append, List.nil_append]
+      rw [heq] at hq'
+      refine ⟨c, q', ?_⟩
+      rw [hp]
+      exact hq'
+
+/-- Lemma 5 (decode): every `PPath` determines an `s–t` walk with the same
+sidetracks, of length `d(s,t) + weight` (length preservation is Lemma 2:
+tree segments contribute `δ = 0` by Lemma 1, and the final tree walk to
+`t` is `treeWalk`). -/
+theorem lemma5_decode (T : Digraph V) (len : V → V → ℝ)
+    (dist : V → ℝ) {G : Digraph V} {s t : V}
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)
+    (treeWalk : ∀ a : V, DiWalk T a t)
+    (hdist_t : dist t = 0)
+    (htight : ∀ a b : V, T.Adj a b → eppDelta len dist a b = 0)
+    {c : V} (q : PPath G T s c) :
+    ∃ p : DiWalk G s t, p.sidetracks T = q.sidetrackList ∧
+      p.length len = dist s + q.weight len dist := by
+  obtain ⟨r, hr⟩ := decode_aux T Tle q
+  have hp_side : (r.append ((treeWalk c).liftT Tle)).sidetracks T
+      = q.sidetrackList := by
+    rw [DiWalk_sidetracks_append, hr, DiWalk_liftT_sidetracks Tle,
+      List.append_nil]
+  have hp_len : (r.append ((treeWalk c).liftT Tle)).length len
+      = dist s + q.weight len dist := by
+    have h1 := lemma2_path_length T len dist hdist_t htight
+      (r.append ((treeWalk c).liftT Tle))
+    have h2 := sidetrackSum_eq_listSum T len dist
+      (r.append ((treeWalk c).liftT Tle))
+    have h3 := PPath_weight_eq_listSum len dist q
+    rw [h2, hp_side, ← h3] at h1
+    exact h1
+  exact ⟨_, hp_side, hp_len⟩
+
+/-- Lemma 5 (encode): every `s–t` walk arises from a `PPath` with the same
+sidetrack sequence (its tree segments become the joining tree walks).
+This is purely combinatorial: it needs no lengths, potentials, or
+spanning-tree witness. -/
+theorem lemma5_encode (T : Digraph V)
+    {G : Digraph V} {s t : V} (p : DiWalk G s t) :
+    ∃ (c : V) (q : PPath G T s c), q.sidetrackList = p.sidetracks T := by
+  obtain ⟨c, q, hq⟩ := encode_aux p PPath.root (DiWalk.nil s)
+  refine ⟨c, q, ?_⟩
+  simpa [PPath.sidetrackList] using hq
+
+/-- A `PPath` is determined by its sidetrack list when tree walks are
+unique (the `PPath` half of the paper's §2.2/§2.3 one-to-one
+correspondence): the joining tree walks are then forced, so two
+`PPath`s with the same list coincide as nodes of the path tree. -/
+theorem PPath_eq_of_sidetrackList_eq {G T : Digraph V}
+    (htree : ∀ a b (p q : DiWalk T a b), p = q) {s : V} :
+    ∀ {c1 : V} (q1 : PPath G T s c1) {c2 : V} (q2 : PPath G T s c2),
+      q1.sidetrackList = q2.sidetrackList →
+      (⟨c1, q1⟩ : Σ c, PPath G T s c) = ⟨c2, q2⟩ := by
+  intro c1 q1
+  induction q1 with
+  | root =>
+    intro c2 q2 h
+    cases q2 with
+    | root => rfl
+    | sidestep e2 prev2 tw2 hadj2 hside2 =>
+      simp only [PPath.sidetrackList] at h
+      exact absurd h (by simp)
+  | sidestep e prev tw hadj hside ih =>
+    intro c2 q2 h
+    cases q2 with
+    | root =>
+      simp only [PPath.sidetrackList] at h
+      exact absurd h.symm (by simp)
+    | sidestep e2 prev2 tw2 hadj2 hside2 =>
+      simp only [PPath.sidetrackList] at h
+      obtain ⟨hprev, he⟩ := List.append_singleton_inj.mp h
+      obtain rfl : e2 = e := he.symm
+      have hSigma := ih prev2 hprev
+      cases hSigma
+      have htw : tw = tw2 := htree _ _ tw tw2
+      subst htw
+      rfl
+
+/-- Lemma 6 (nonnegative extension): appending a sidetrack of nonnegative
+`δ` (Lemma 1) cannot decrease a `PPath`'s weight.  This is the
+nonnegativity core of the paper's Lemma 6 (which also constructs
+`P(G)`); heap/cross edges themselves are not formalized here. -/
+theorem lemma6_weight_mono (len : V → V → ℝ) (dist : V → ℝ)
+    {G T : Digraph V} {s a : V} (q : PPath G T s a) (e : V × V)
+    (tw : DiWalk T a e.1) (hadj : G.Adj e.1 e.2) (hside : ¬ T.Adj e.1 e.2)
+    (hδ : 0 ≤ eppDelta len dist e.1 e.2) :
+    q.weight len dist ≤ (PPath.sidestep e q tw hadj hside).weight len dist := by
+  simp only [PPath.weight]
+  linarith [hδ]
+
+/-- Lemma 7 (heap-ordered path tree): a `PPath` weighs no less than its
+parent (`prefpath`), provided every sidetrack has nonnegative `δ`.
+This is Lemma 3 lifted to the abstract path tree. -/
+theorem lemma7_parent_weight (len : V → V → ℝ) (dist : V → ℝ)
+    {G T : Digraph V} {s c : V} (q : PPath G T s c)
+    {c' : V} {q' : PPath G T s c'} (hpar : q.parent = some ⟨c', q'⟩)
+    (hnn : ∀ e ∈ q.sidetrackList, 0 ≤ eppDelta len dist e.1 e.2) :
+    q'.weight len dist ≤ q.weight len dist := by
+  cases q with
+  | root =>
+    simp only [PPath.parent] at hpar
+    cases hpar
+  | sidestep e prev tw hadj hside =>
+    simp only [PPath.parent] at hpar
+    have hEq : ((⟨_, prev⟩ : Σ c, PPath G T s c)) = ⟨c', q'⟩ :=
+      Option.some_inj.mp hpar
+    have hW : prev.weight len dist = q'.weight len dist :=
+      congrArg (fun x => x.2.weight len dist) hEq
+    have hmem : e ∈ (PPath.sidestep e prev tw hadj hside).sidetrackList := by
+      simp only [PPath.sidetrackList, List.mem_append, List.mem_cons,
+        List.not_mem_nil, or_false, or_true]
+    have hδ : 0 ≤ eppDelta len dist e.1 e.2 := hnn e hmem
+    have hWeight : (PPath.sidestep e prev tw hadj hside).weight len dist
+        = prev.weight len dist + eppDelta len dist e.1 e.2 := by
+      simp only [PPath.weight]
+    rw [hWeight, ← hW]
+    linarith [hδ]
+
+-- PPath weights are nonneg under triangle inequality (uses lemma1_all_nonneg)
+theorem PPath_weight_nonneg {G T : Digraph V} {s : V}
+    (len : V → V → ℝ) (dist : V → ℝ)
+    (htri : ∀ a b : V, G.Adj a b → dist a ≤ len a b + dist b)
+    {c : V} (q : PPath G T s c) : 0 ≤ q.weight len dist := by
+  induction q with
+  | root =>
+    simp only [PPath.weight, le_refl]
+  | sidestep e prev tw hadj hside ih =>
+    simp only [PPath.weight]
+    have hδ : 0 ≤ eppDelta len dist e.1 e.2 :=
+      lemma1_all_nonneg len dist htri hadj
+    linarith [ih]
+
+theorem trace_root_mem {G T : Digraph V} {s : V}
+    (len : V → V → ℝ) (dist : V → ℝ)
+    {L : List (Σ c, PPath G T s c)} (h : IsBFSTrace G T s len dist L) :
+    (⟨s, PPath.root⟩ : Σ c, PPath G T s c) ∈ L := by
+  induction h with
+  | root =>
+    simp only [List.mem_singleton]
+  | step L next hTrace hChild hNotMem hMin ih =>
+    exact List.mem_append_left _ ih
+
+theorem complete_of_minimal (T : Digraph V) (len : V → V → ℝ)
+    (dist : V → ℝ) {G : Digraph V} {s t : V}
+    (hdist_t : dist t = 0)
+    (htight : ∀ a b : V, T.Adj a b → eppDelta len dist a b = 0)
+    (L : List (Σ c, PPath G T s c))
+    (hMin : ∀ x ∈ L, ∀ y : Σ c, PPath G T s c, y ∉ L →
+      x.2.weight len dist ≤ y.2.weight len dist) :
+    (∀ y : DiWalk G s t,
+      (∃ q : Σ c, PPath G T s c,
+        q ∈ L ∧ q.2.sidetrackList = y.sidetracks T) ∨
+      (∀ x ∈ L, ∀ p : DiWalk G s t,
+        p.sidetracks T = x.2.sidetrackList →
+        p.length len = dist s + x.2.weight len dist →
+        p.length len ≤ y.length len)) := by
+  intro y
+  obtain ⟨c, q, hq_list⟩ := lemma5_encode T y
+  let qSig : Σ c, PPath G T s c := ⟨c, q⟩
+  by_cases hmem : qSig ∈ L
+  · left
+    exact ⟨qSig, hmem, hq_list⟩
+  · right
+    intro x hx p hp_side hp_len
+    have hMin_xq : x.2.weight len dist ≤ qSig.2.weight len dist :=
+      hMin x hx qSig hmem
+    have hy_len : y.length len = dist s + qSig.2.weight len dist := by
+      have h1 := lemma2_path_length T len dist hdist_t htight y
+      have h2 := sidetrackSum_eq_listSum T len dist y
+      have h3 := PPath_weight_eq_listSum len dist q
+      rw [h2] at h1
+      rw [← hq_list] at h1
+      rw [← h3] at h1
+      exact h1
+    rw [hp_len, hy_len]
+    linarith [hMin_xq]
+
+/-- Trace extension under the paper's finiteness assumption (§2.1: the
+graph has `n` vertices and `m` edges). When `V` is finite, an abstract
+best-first trace either extends by one step — appending a frontier
+child of minimum weight, so the extension is again a trace — or it
+already lists every `PPath` from `s`. The minimum is attained because
+the frontier (pairs of a listed `PPath` and a vertex) is a finite set.
+This is the existence half that Theorem 1's conditional-correctness
+statement does not provide: an abstract best-first trace can always be
+extended until nothing remains. -/
+theorem trace_extend_or_exhaustive (T : Digraph V) (len : V → V → ℝ)
+    (dist : V → ℝ) {G : Digraph V} {s : V} [Finite V]
+    (L : List (Σ c, PPath G T s c)) (hL : IsBFSTrace G T s len dist L) :
+    (∃ L', IsBFSTrace G T s len dist L' ∧ L'.length = L.length + 1) ∨
+    (∀ q : Σ c, PPath G T s c, q ∈ L) := by
+  classical
+  have : Fintype V := Fintype.ofFinite V
+  set S : Finset ((Σ c, PPath G T s c) × (V × V)) :=
+    (L.toFinset ×ˢ Finset.univ).filter (fun pe =>
+      ∃ tw : DiWalk T pe.1.1 pe.2.1, ∃ hadj : G.Adj pe.2.1 pe.2.2,
+        ∃ hside : ¬ T.Adj pe.2.1 pe.2.2,
+          (⟨pe.2.2, PPath.sidestep pe.2 pe.1.2 tw hadj hside⟩ :
+            Σ c, PPath G T s c) ∉ L) with hS
+  rcases Finset.eq_empty_or_nonempty S with hEmpty | hNonempty
+  · right
+    have hexh : ∀ {c : V} (q : PPath G T s c),
+        (⟨c, q⟩ : Σ c, PPath G T s c) ∈ L := by
+      intro c q
+      induction q with
+      | root => exact trace_root_mem len dist hL
+      | sidestep e prev tw hadj hside ih =>
+        by_cases hmem : (⟨e.2, PPath.sidestep e prev tw hadj hside⟩ :
+            Σ c, PPath G T s c) ∈ L
+        · exact hmem
+        · exfalso
+          have hpair_mem : ((⟨_, prev⟩ : Σ c, PPath G T s c), e) ∈ S := by
+            rw [hS, Finset.mem_filter]
+            refine ⟨Finset.mem_product.mpr ⟨List.mem_toFinset.mpr ih,
+              Finset.mem_univ e⟩, tw, hadj, hside, hmem⟩
+          rw [hEmpty] at hpair_mem
+          simp at hpair_mem
+    intro q
+    obtain ⟨c, qq⟩ := q
+    exact hexh qq
+  · obtain ⟨pe0, hpe0, hmin⟩ := Finset.exists_min_image S
+      (fun pe => pe.1.2.weight len dist + eppDelta len dist pe.2.1 pe.2.2)
+      hNonempty
+    rw [hS, Finset.mem_filter] at hpe0
+    obtain ⟨hprod, tw0, hadj0, hside0, hnotmem0⟩ := hpe0
+    obtain ⟨hpar0_mem, -⟩ := Finset.mem_product.mp hprod
+    have hpar0 : pe0.1 ∈ L := List.mem_toFinset.mp hpar0_mem
+    refine Or.inl ⟨L ++ [⟨pe0.2.2,
+      PPath.sidestep pe0.2 pe0.1.2 tw0 hadj0 hside0⟩], ?_, ?_⟩
+    · refine IsBFSTrace.step L _ hL ?_ hnotmem0 ?_
+      · exact ⟨pe0.1, hpar0, pe0.2, tw0, hadj0, hside0, rfl⟩
+      · intro y hchild hy
+        obtain ⟨par, hpar_mem, hchild⟩ := hchild
+        obtain ⟨e, tw, hadj, hside, hy_eq⟩ := hchild
+        have hpair_mem : (par, e) ∈ S := by
+          rw [hS, Finset.mem_filter]
+          refine ⟨Finset.mem_product.mpr ⟨List.mem_toFinset.mpr hpar_mem,
+            Finset.mem_univ e⟩, tw, hadj, hside, ?_⟩
+          rw [hy_eq] at hy
+          exact hy
+        have hle := hmin (par, e) hpair_mem
+        have hnext : (⟨pe0.2.2,
+            PPath.sidestep pe0.2 pe0.1.2 tw0 hadj0 hside0⟩ :
+            Σ c, PPath G T s c).2.weight len dist
+            = pe0.1.2.weight len dist + eppDelta len dist pe0.2.1 pe0.2.2 := rfl
+        have hyw : y.2.weight len dist
+            = par.2.weight len dist + eppDelta len dist e.1 e.2 := by
+          rw [hy_eq]
+          rfl
+        rw [hnext, hyw]
+        exact hle
+    · simp [List.length_append]
+
+/-- Existence of abstract traces of every length, up to exhaustion,
+under the paper's finiteness assumption (§2.1). For every `n` there is
+an abstract best-first trace with `n + 1` entries — the root plus `n`
+extensions — unless some shorter trace already lists every `PPath`
+from `s`, in which case enumeration is complete. Together with
+Theorem 1's conditional core, this gives existence for abstract
+traces: traces of any requested length exist (or enumeration is
+exhaustive), and every such trace is correct. It does not formalize
+an algorithm producing them. -/
+theorem exists_trace_length_or_exhaustive (T : Digraph V)
+    (len : V → V → ℝ) (dist : V → ℝ) {G : Digraph V} {s : V} [Finite V] :
+    ∀ n : ℕ, ∃ L : List (Σ c, PPath G T s c),
+      IsBFSTrace G T s len dist L ∧
+      (L.length = n + 1 ∨ ∀ q : Σ c, PPath G T s c, q ∈ L) := by
+  intro n
+  induction n with
+  | zero =>
+    exact ⟨[⟨s, PPath.root⟩], IsBFSTrace.root, Or.inl rfl⟩
+  | succ n ih =>
+    obtain ⟨L, hL, h⟩ := ih
+    rcases h with hlen | hexh
+    · rcases trace_extend_or_exhaustive T len dist L hL with
+        ⟨L', hL', hlen'⟩ | hexh'
+      · exact ⟨L', hL', Or.inl (by rw [hlen', hlen])⟩
+      · exact ⟨L, hL, Or.inr hexh'⟩
+    · exact ⟨L, hL, Or.inr hexh⟩
+
+/-- Theorem 1, conditional-correctness core (basic algorithm): for every
+abstract best-first trace `L` satisfying `IsBFSTrace`, `L` lists
+shortest paths first — `L` is duplicate-free, weight-sorted, and every
+path outside `L` weighs at least as much as every path inside it.  Each
+output decodes to an `s–t` walk of length `d(s,t) + weight` (Lemma 5,
+decode direction), and every `s–t` walk is either represented in `L` or
+no shorter than every output.  This is conditional: `IsBFSTrace.step`
+assumes each output is a frontier minimum, and no function here
+produces such a list, runs a priority queue, or constructs `P(G)`/
+`H(G)`.  The name refers to the paper's Theorem 1, whose correctness
+core this is; its `O(log i)`-per-path claim and complexity bounds are
+not formalized (no cost model).  Neither `δ`-fact is assumed.  No
+finiteness hypothesis: correctness is conditional on the supplied
+trace.  Existence of length-`k` abstract traces under the paper's
+finite-graph assumption (§2.1) is the separate
+`exists_trace_length_or_exhaustive`.  No uniqueness is claimed here:
+the Lemma 5 correspondence is existence in both directions (every
+`PPath` decodes, every walk encodes), and tree walks are not assumed
+unique.  For the one-to-one form under unique tree walks, see
+`thm1_bfs_enumeration_unique`. -/
+theorem thm1_bfs_enumeration (T : Digraph V) (len : V → V → ℝ)
+    (dist : V → ℝ) {G : Digraph V} {s t : V}
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)
+    (treeWalk : ∀ a : V, DiWalk T a t)
+    (hdist_t : dist t = 0)
+    (htight : ∀ a b : V, T.Adj a b → len a b + dist b = dist a)
+    (htri : ∀ a b : V, G.Adj a b → dist a ≤ len a b + dist b) :
+    ∀ L : List (Σ c, PPath G T s c), IsBFSTrace G T s len dist L →
+      L.Nodup ∧
+      L.Pairwise (fun x y => x.2.weight len dist ≤ y.2.weight len dist) ∧
+      (∀ x ∈ L, ∀ y : Σ c, PPath G T s c, y ∉ L →
+        x.2.weight len dist ≤ y.2.weight len dist) ∧
+      (∀ x ∈ L, ∃ p : DiWalk G s t,
+        p.sidetracks T = x.2.sidetrackList ∧
+        p.length len = dist s + x.2.weight len dist) ∧
+      (∀ y : DiWalk G s t,
+        (∃ q : Σ c, PPath G T s c,
+          q ∈ L ∧ q.2.sidetrackList = y.sidetracks T) ∨
+        (∀ x ∈ L, ∀ p : DiWalk G s t,
+          p.sidetracks T = x.2.sidetrackList →
+          p.length len = dist s + x.2.weight len dist →
+          p.length len ≤ y.length len)) := by
+  have htight_delta : ∀ a b : V, T.Adj a b → eppDelta len dist a b = 0 :=
+    fun a b h => lemma1_delta_tree len dist (htight a b h)
+  intro L hTrace
+  induction hTrace with
+  | root =>
+    have hNodup : ([(⟨s, PPath.root⟩ : Σ c, PPath G T s c)]).Nodup := by
+      exact List.Pairwise.cons (by simp) List.Pairwise.nil
+    have hPair : ([(⟨s, PPath.root⟩ : Σ c, PPath G T s c)]).Pairwise
+        (fun x y => x.2.weight len dist ≤ y.2.weight len dist) := by
+      exact List.Pairwise.cons (by simp) List.Pairwise.nil
+    have hMin : ∀ x ∈ [(⟨s, PPath.root⟩ : Σ c, PPath G T s c)],
+        ∀ y : Σ c, PPath G T s c, y ∉ [(⟨s, PPath.root⟩ : Σ c, PPath G T s c)] →
+        x.2.weight len dist ≤ y.2.weight len dist := by
+      intro x hx y hy
+      have hx_eq := List.mem_singleton.mp hx
+      subst hx_eq
+      obtain ⟨c, q⟩ := y
+      show (PPath.root : PPath G T s s).weight len dist ≤ q.weight len dist
+      have hRoot : (PPath.root : PPath G T s s).weight len dist = 0 := rfl
+      rw [hRoot]
+      exact PPath_weight_nonneg len dist htri q
+    have hDec : ∀ x ∈ [(⟨s, PPath.root⟩ : Σ c, PPath G T s c)],
+        ∃ p : DiWalk G s t,
+        p.sidetracks T = x.2.sidetrackList ∧
+        p.length len = dist s + x.2.weight len dist := by
+      intro x hx
+      exact lemma5_decode T len dist Tle treeWalk hdist_t htight_delta x.2
+    have hComp := complete_of_minimal T len dist hdist_t
+      htight_delta [(⟨s, PPath.root⟩ : Σ c, PPath G T s c)] hMin
+    exact ⟨hNodup, hPair, hMin, hDec, hComp⟩
+  | step L next hTrace hChild hNotMem hMinChoice ih =>
+    obtain ⟨hNodupL, hPairL, hMinL, hDecL, hCompL⟩ := ih
+    have hNodup' : (L ++ [next]).Nodup := by
+      have hSingle : ([next].Pairwise (· ≠ ·)) :=
+        List.Pairwise.cons (by simp) List.Pairwise.nil
+      have hcross : ∀ x ∈ L, ∀ y ∈ [next], x ≠ y := by
+        intro x hx y hy
+        have hy_eq := List.mem_singleton.mp hy
+        rw [hy_eq]
+        intro hEq
+        rw [hEq] at hx
+        exact hNotMem hx
+      exact List.pairwise_append.mpr ⟨hNodupL, hSingle, hcross⟩
+    have hPair' : (L ++ [next]).Pairwise
+        (fun x y => x.2.weight len dist ≤ y.2.weight len dist) := by
+      have hSingle : ([next].Pairwise
+          (fun x y => x.2.weight len dist ≤ y.2.weight len dist)) :=
+        List.Pairwise.cons (by simp) List.Pairwise.nil
+      have hcross : ∀ x ∈ L, ∀ y ∈ [next],
+          x.2.weight len dist ≤ y.2.weight len dist := by
+        intro x hx y hy
+        have hy_eq := List.mem_singleton.mp hy
+        rw [hy_eq]
+        exact hMinL x hx next hNotMem
+      exact List.pairwise_append.mpr ⟨hPairL, hSingle, hcross⟩
+    have hNextMin : ∀ y : Σ c, PPath G T s c, y ∉ L ++ [next] →
+        next.2.weight len dist ≤ y.2.weight len dist := by
+      have hAux : ∀ {c : V} (q : PPath G T s c),
+          (⟨c, q⟩ : Σ c, PPath G T s c) ∉ L ++ [next] →
+          next.2.weight len dist ≤
+            (⟨c, q⟩ : Σ c, PPath G T s c).2.weight len dist := by
+        intro c q
+        induction q with
+        | root =>
+          intro hy
+          have hRootL : (⟨s, PPath.root⟩ : Σ c, PPath G T s c) ∈ L :=
+            trace_root_mem len dist hTrace
+          have hRootL' : (⟨s, PPath.root⟩ : Σ c, PPath G T s c) ∈ L ++ [next] :=
+            List.mem_append.mpr (Or.inl hRootL)
+          exact absurd hRootL' hy
+        | sidestep e prev tw hadj hside ih2 =>
+          intro hy
+          have hδ : 0 ≤ eppDelta len dist e.1 e.2 :=
+            lemma1_all_nonneg len dist htri hadj
+          have hPrevLe : prev.weight len dist ≤
+              (PPath.sidestep e prev tw hadj hside).weight len dist :=
+            lemma6_weight_mono len dist prev e tw hadj hside hδ
+          by_cases hPrevMem : (⟨_, prev⟩ : Σ c, PPath G T s c) ∈ L ++ [next]
+          · have hOrPrev := List.mem_append.mp hPrevMem
+            cases hOrPrev with
+            | inl hInL =>
+              have hyL : (⟨e.2, PPath.sidestep e prev tw hadj hside⟩ :
+                  Σ c, PPath G T s c) ∉ L := by
+                intro h
+                exact hy (List.mem_append.mpr (Or.inl h))
+              have hFront : ∃ par ∈ L, PPath.IsChild
+                  (⟨e.2, PPath.sidestep e prev tw hadj hside⟩ :
+                    Σ c, PPath G T s c) par := by
+                exact ⟨⟨_, prev⟩, hInL, e, tw, hadj, hside, rfl⟩
+              exact hMinChoice _ hFront hyL
+            | inr hInSingle =>
+              have heq := List.mem_singleton.mp hInSingle
+              have hEqW : prev.weight len dist = next.2.weight len dist :=
+                congrArg (fun x => x.2.weight len dist) heq
+              show next.2.weight len dist ≤
+                (PPath.sidestep e prev tw hadj hside).weight len dist
+              linarith [hPrevLe, hEqW]
+          · have hNextPrev : next.2.weight len dist ≤
+                (⟨_, prev⟩ : Σ c, PPath G T s c).2.weight len dist :=
+              ih2 hPrevMem
+            have h1 : next.2.weight len dist ≤ prev.weight len dist :=
+              hNextPrev
+            have h2 : prev.weight len dist ≤
+                (⟨e.2, PPath.sidestep e prev tw hadj hside⟩ :
+                  Σ c, PPath G T s c).2.weight len dist :=
+              hPrevLe
+            exact le_trans h1 h2
+      intro y hy
+      obtain ⟨c, q⟩ := y
+      exact hAux q hy
+    have hMin' : ∀ x ∈ L ++ [next], ∀ y : Σ c, PPath G T s c,
+        y ∉ L ++ [next] → x.2.weight len dist ≤ y.2.weight len dist := by
+      intro x hx y hy
+      have hOr := List.mem_append.mp hx
+      cases hOr with
+      | inl hxL =>
+        have hyL : y ∉ L := fun h => hy (List.mem_append.mpr (Or.inl h))
+        exact hMinL x hxL y hyL
+      | inr hxSingle =>
+        have hx_eq := List.mem_singleton.mp hxSingle
+        rw [hx_eq]
+        exact hNextMin y hy
+    have hDec' : ∀ x ∈ L ++ [next], ∃ p : DiWalk G s t,
+        p.sidetracks T = x.2.sidetrackList ∧
+        p.length len = dist s + x.2.weight len dist := by
+      intro x hx
+      exact lemma5_decode T len dist Tle treeWalk hdist_t htight_delta x.2
+    have hComp' := complete_of_minimal T len dist hdist_t
+      htight_delta (L ++ [next]) hMin'
+    exact ⟨hNodup', hPair', hMin', hDec', hComp'⟩
+
+/-- Theorem 1 with unique decoding: under unique tree walks (`htree`,
+the abstract form of the paper's tree `T`), every output of an abstract
+best-first trace decodes to exactly one `s–t` walk, and every `s–t`
+walk is represented by an output with the same sidetrack list and
+length `d(s,t) + weight`, or is no shorter than every output.  This is
+the paper's one-to-one form of the Lemma 5 correspondence, as a
+conditional-correctness core like the plain Theorem 1 above: no
+algorithm is formalized, and no existence of traces of any given
+length is claimed.  The plain Theorem 1 above needs no uniqueness
+hypothesis; only this variant assumes `htree`. -/
+theorem thm1_bfs_enumeration_unique (T : Digraph V) (len : V → V → ℝ)
+    (dist : V → ℝ) {G : Digraph V} {s t : V}
+    (htree : ∀ a b (p q : DiWalk T a b), p = q)
+    (Tle : ∀ a b : V, T.Adj a b → G.Adj a b)
+    (treeWalk : ∀ a : V, DiWalk T a t)
+    (hdist_t : dist t = 0)
+    (htight : ∀ a b : V, T.Adj a b → len a b + dist b = dist a)
+    (htri : ∀ a b : V, G.Adj a b → dist a ≤ len a b + dist b) :
+    ∀ L : List (Σ c, PPath G T s c), IsBFSTrace G T s len dist L →
+      L.Nodup ∧
+      L.Pairwise (fun x y => x.2.weight len dist ≤ y.2.weight len dist) ∧
+      (∀ x ∈ L, ∀ y : Σ c, PPath G T s c, y ∉ L →
+        x.2.weight len dist ≤ y.2.weight len dist) ∧
+      (∀ x ∈ L, ∃! p : DiWalk G s t,
+        p.sidetracks T = x.2.sidetrackList ∧
+        p.length len = dist s + x.2.weight len dist) ∧
+      (∀ y : DiWalk G s t,
+        (∃ q : Σ c, PPath G T s c,
+          q ∈ L ∧ q.2.sidetrackList = y.sidetracks T ∧
+          y.length len = dist s + q.2.weight len dist) ∨
+        (∀ x ∈ L, ∀ p : DiWalk G s t,
+          p.sidetracks T = x.2.sidetrackList →
+          p.length len = dist s + x.2.weight len dist →
+          p.length len ≤ y.length len)) := by
+  have htight_delta : ∀ a b : V, T.Adj a b → eppDelta len dist a b = 0 :=
+    fun a b h => lemma1_delta_tree len dist (htight a b h)
+  intro L hTrace
+  obtain ⟨hNodup, hPair, hMin, hDec, hComp⟩ :=
+    thm1_bfs_enumeration T len dist Tle treeWalk hdist_t htight htri L hTrace
+  refine ⟨hNodup, hPair, hMin, ?_, ?_⟩
+  · intro x hx
+    obtain ⟨p, hp_side, hp_len⟩ := hDec x hx
+    refine ⟨p, ⟨hp_side, hp_len⟩, ?_⟩
+    intro p' hp'
+    exact DiWalk_eq_of_sidetracks_eq htree Tle _ p' p hp'.1 hp_side
+  · intro y
+    rcases hComp y with ⟨q, hq_mem, hq_list⟩ | hlong
+    · left
+      have hy_len : y.length len = dist s + q.2.weight len dist := by
+        have h1 := lemma2_path_length T len dist hdist_t htight_delta y
+        have h2 := sidetrackSum_eq_listSum T len dist y
+        have h3 := PPath_weight_eq_listSum len dist q.2
+        rw [h2] at h1
+        rw [← hq_list] at h1
+        rw [← h3] at h1
+        exact h1
+      exact ⟨q, hq_mem, hq_list, hy_len⟩
+    · exact Or.inr hlong
+
+/-- Theorem 2, conditional-correctness core (one source, all
+destinations): for every target `t`, every abstract best-first trace
+over the path tree of `T t` is correct as in Theorem 1
+(duplicate-free, weight-sorted, minimal, decoding to `s–t` walks with
+`length = dist t s + weight`, represented-or-longer completeness).
+This is a pointwise instantiation of Theorem 1's core, with the
+per-target trees supplied as parameters: it does not construct the
+paper's single reversed graph `Gᴿ` (no reversed graph is defined here),
+and, as in Theorem 1, it formalizes no algorithm.  As in Theorem 1, no
+uniqueness is claimed here (existence in both directions only); see
+`thm2_bfs_enumeration_unique` for the one-to-one form under unique
+tree walks.  Complexity `O(m + n log n + kn log k)` not formalized. -/
+theorem thm2_all_dests (len : V → V → ℝ) (dist : V → V → ℝ)
+    {G : Digraph V} {s : V}
+    (T : V → Digraph V)
+    (Tle : ∀ t a b : V, (T t).Adj a b → G.Adj a b)
+    (treeWalk : ∀ t a : V, DiWalk (T t) a t)
+    (hdist : ∀ t : V, dist t t = 0)
+    (htight : ∀ t a b : V, (T t).Adj a b → len a b + dist t b = dist t a)
+    (htri : ∀ t a b : V, G.Adj a b → dist t a ≤ len a b + dist t b) :
+    ∀ t : V, ∀ L : List (Σ c, PPath G (T t) s c),
+      IsBFSTrace G (T t) s len (dist t) L →
+      L.Nodup ∧
+      L.Pairwise (fun x y => x.2.weight len (dist t) ≤ y.2.weight len (dist t)) ∧
+      (∀ x ∈ L, ∀ y : Σ c, PPath G (T t) s c, y ∉ L →
+        x.2.weight len (dist t) ≤ y.2.weight len (dist t)) ∧
+      (∀ x ∈ L, ∃ p : DiWalk G s t,
+        p.sidetracks (T t) = x.2.sidetrackList ∧
+        p.length len = dist t s + x.2.weight len (dist t)) ∧
+      (∀ y : DiWalk G s t,
+        (∃ q : Σ c, PPath G (T t) s c,
+          q ∈ L ∧ q.2.sidetrackList = y.sidetracks (T t)) ∨
+        (∀ x ∈ L, ∀ p : DiWalk G s t,
+          p.sidetracks (T t) = x.2.sidetrackList →
+          p.length len = dist t s + x.2.weight len (dist t) →
+          p.length len ≤ y.length len)) := by
+  intro t L hL
+  exact thm1_bfs_enumeration (T t) len (dist t) (Tle t) (treeWalk t)
+    (hdist t) (htight t) (htri t) L hL
+
+/-- Theorem 2 with unique decoding: the per-target form of
+`thm1_bfs_enumeration_unique`, under per-target unique tree walks.
+As with Theorem 2, this is a pointwise instantiation per target of a
+conditional-correctness core, not the paper's single reversed-graph
+construction, and no algorithm is formalized. -/
+theorem thm2_bfs_enumeration_unique (len : V → V → ℝ) (dist : V → V → ℝ)
+    {G : Digraph V} {s : V}
+    (T : V → Digraph V)
+    (htree : ∀ t a b (p q : DiWalk (T t) a b), p = q)
+    (Tle : ∀ t a b : V, (T t).Adj a b → G.Adj a b)
+    (treeWalk : ∀ t a : V, DiWalk (T t) a t)
+    (hdist : ∀ t : V, dist t t = 0)
+    (htight : ∀ t a b : V, (T t).Adj a b → len a b + dist t b = dist t a)
+    (htri : ∀ t a b : V, G.Adj a b → dist t a ≤ len a b + dist t b) :
+    ∀ t : V, ∀ L : List (Σ c, PPath G (T t) s c),
+      IsBFSTrace G (T t) s len (dist t) L →
+      L.Nodup ∧
+      L.Pairwise (fun x y => x.2.weight len (dist t) ≤ y.2.weight len (dist t)) ∧
+      (∀ x ∈ L, ∀ y : Σ c, PPath G (T t) s c, y ∉ L →
+        x.2.weight len (dist t) ≤ y.2.weight len (dist t)) ∧
+      (∀ x ∈ L, ∃! p : DiWalk G s t,
+        p.sidetracks (T t) = x.2.sidetrackList ∧
+        p.length len = dist t s + x.2.weight len (dist t)) ∧
+      (∀ y : DiWalk G s t,
+        (∃ q : Σ c, PPath G (T t) s c,
+          q ∈ L ∧ q.2.sidetrackList = y.sidetracks (T t) ∧
+          y.length len = dist t s + q.2.weight len (dist t)) ∨
+        (∀ x ∈ L, ∀ p : DiWalk G s t,
+          p.sidetracks (T t) = x.2.sidetrackList →
+          p.length len = dist t s + x.2.weight len (dist t) →
+          p.length len ≤ y.length len)) := by
+  intro t L hL
+  exact thm1_bfs_enumeration_unique (T t) len (dist t) (htree t) (Tle t)
+    (treeWalk t) (hdist t) (htight t) (htri t) L hL
+
+end Cslib.Algorithms.Lean.KShortestPathsEppstein
