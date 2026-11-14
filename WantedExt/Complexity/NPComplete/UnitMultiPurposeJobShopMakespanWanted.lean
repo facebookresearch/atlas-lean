@@ -45,13 +45,13 @@ This is the job shop with multi-purpose machines (MPM) of Brucker and Knust's cl
 Rinnooy Kan (1979). Their result is for the dedicated-machine job shop `J3|p_ij=1|C_max`
 (Garey and Johnson, [SS18], comment: "If in the nonpreemptive case all tasks have the same
 length, the problem is NP-complete for `m = 3`"), which is the special case in which every
-`μ_{jk}` is a single machine and consecutive operations of a job have different machines.
-The multi-purpose problem puts no condition on the eligible sets of consecutive operations;
-with unit-time operations processed one after another, two consecutive operations of a job
-never overlap, so they may use the same machine.
+`μ_{jk}` is a single machine and consecutive operations of a job have different machines. As
+in that model, consecutive operations of a job are processed on different machines; with
+eligible sets this is a condition on the machines the schedule chooses.
 
 A schedule chooses a machine `μ t ∈ μ_{jk}` and a start time `σ t ∈ ℤ₀⁺` for every operation
-`t`; operations on the same machine have different start times (with unit lengths, this is
+`t`; consecutive operations of a job get different machines; operations on the same machine have
+different start times (with unit lengths, this is
 "one operation at a time"). Start times are natural numbers: with unit operations, shifting
 every operation of a feasible schedule as early as its machine order allows gives an integral
 schedule with no later completion times, so this does not change the answer. The number of
@@ -85,11 +85,12 @@ def eligible (i : UnitMultiPurposeJobShopInstance) (t : Operation i) : List ℕ 
 /-- A schedule of the unit-time multi-purpose job shop: machine `μ t` and start time `σ t` for
 every operation `t`, with every operation on an eligible machine, operations on the same
 machine at different start times, and every operation of a job starting after the previous
-operation of the job completes. -/
+operation of the job completes, on a different machine. -/
 def IsUnitMPMSchedule (i : UnitMultiPurposeJobShopInstance) (μ σ : Operation i → ℕ) : Prop :=
   (∀ t, μ t ∈ eligible i t) ∧
     (∀ t t', μ t = μ t' → σ t = σ t' → t = t') ∧
-    ∀ j (k k' : Fin (i.2.1.get j).length), k'.1 = k.1 + 1 → σ ⟨j, k⟩ + 1 ≤ σ ⟨j, k'⟩
+    ∀ j (k k' : Fin (i.2.1.get j).length), k'.1 = k.1 + 1 →
+      σ ⟨j, k⟩ + 1 ≤ σ ⟨j, k'⟩ ∧ μ ⟨j, k⟩ ≠ μ ⟨j, k'⟩
 
 /-- An instance describes a multi-purpose job shop: every job has at least one operation, every
 operation has a nonempty set of eligible machines, and every eligible machine lies in
