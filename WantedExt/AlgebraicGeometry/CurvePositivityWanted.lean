@@ -41,17 +41,20 @@ open MathlibExt.AlgebraicGeometry.CurvePositivity
 
 universe u
 
-variable (k : Type u) [Field k] [IsAlgClosed k]
+/-- The precise degree-zero torsion exception in semiampleness. -/
+theorem_wanted semiample_iff (k : Type u) [Field k] [IsAlgClosed k]
     (C : Over (Spec (.of k))) [IsProper C.hom]
     [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
     (L : C.left.Modules)
-
-/-- The precise degree-zero torsion exception in semiampleness. -/
-theorem_wanted semiample_iff (hL : IsLineBundle L) :
+    (hL : IsLineBundle L) :
     IsSemiample L ↔ 0 < degree C.hom L ∨ IsTorsion L
 
 /-- Positive asymptotic section growth agrees with numerical positive degree. -/
-theorem_wanted big_iff (hL : IsLineBundle L) :
+theorem_wanted big_iff (k : Type u) [Field k] [IsAlgClosed k]
+    (C : Over (Spec (.of k))) [IsProper C.hom]
+    [SmoothOfRelativeDimension 1 C.hom] [GeometricallyIrreducible C.hom]
+    (L : C.left.Modules)
+    (hL : IsLineBundle L) :
     IsBigOnCurve C.hom L ↔ 0 < degree C.hom L
 
 end WantedExt.AlgebraicGeometry.CurvePositivityWanted
