@@ -41,9 +41,10 @@ orbits.
 
 **Symmetric equilibrium.** With an equilibrium level `p ≥ 0` and `α = eqRate n p = p (1 + pⁿ)`
 (T196's parametrization by the equilibrium level), the constant state `x = (p, …, p)` is an
-equilibrium; for `n ≥ 1`, `β ≠ 0` it is the only one in the closed nonnegative orthant. The
-hypothesis `p ≥ 0` is needed: for `n = 1`, `β = 1` and `p = -2`, `α = eqRate 1 (-2) = 2` and
-`(-2, …, -2)` is an equilibrium, but so is the nonnegative state `(1, …, 1)`.
+equilibrium; for `n ≥ 1`, `α > 0` and `β ≠ 0` it is the only one in the closed nonnegative
+orthant. The hypothesis `p ≥ 0` is needed: for `n = 1`, `β = 1` and `p = -2`,
+`α = eqRate 1 (-2) = 2` and `(-2, …, -2)` is an equilibrium, but so is the nonnegative state
+`(1, …, 1)`.
 
 **Linearization.** At the symmetric equilibrium the Jacobian is the block matrix
 `[[-I, -a P], [β I, -β I]]`, with `P` the cyclic shift and `a = gain n p = n pⁿ / (1 + pⁿ)` the
@@ -55,14 +56,14 @@ loop gain of T196. Its characteristic polynomial is
 **Stability boundary.** Writing `b = 1 + β` (`β > 0`, `a ≥ 0`), the equilibrium is linearly
 stable when `3 a² β < (4 - 2 a) b²` and linearly unstable when `3 a² β > (4 - 2 a) b²`; this is
 Elowitz and Leibler's boundary `(β + 1)² / β = 3 a² / (4 - 2 a)`. On the boundary
-(`IsHopf a β`, `a > 0`) the linearization has the simple pure imaginary pair `±iω`,
-`ω = √3 a β / (2 (1 + β))`, and no other eigenvalue on the imaginary axis. The eigenvalue
+(`IsHopf a β`, `a > 0`) `iω`, `ω = √3 a β / (2 (1 + β))`, is a simple eigenvalue of the
+linearization, and every eigenvalue on the imaginary axis is `iω` or `-iω`. The eigenvalue
 curve `λ(μ) = (-(1 + β) + √D(μ)) / 2`, `D(μ) = (1 - β)² + 4 a(μ) β c` (principal square root),
 passes through `iω` at a Hopf level and its real part crosses zero with positive speed.
 
 **Standard regime.** For `n = 2`, `α = 216`, `β = 5` the symmetric equilibrium is linearly
 unstable (`exists_re_pos_standardRegime`), whereas T196's reduction with `n = 2` is linearly
-stable for every `α`.
+stable for every `α ≥ 0` (`Repressilator.re_neg_of_le_two`).
 
 ## Scope
 
@@ -539,8 +540,8 @@ lemma quad_sub_hopf {a β : ℝ} (hβ : 0 < β) (hH : IsHopf a β) :
   rw [quad]
   linear_combination X * h2 - h1
 
-/-- **No other eigenvalue on the imaginary axis.** For `a ≥ 0`, `β > 0`, the only eigenvalues
-with zero real part are `±iω`, `ω = √3 a β / (2 (1 + β))`. -/
+/-- **No other eigenvalue on the imaginary axis.** For `a ≥ 0`, `β > 0`, every eigenvalue with
+zero real part is `iω` or `-iω`, `ω = √3 a β / (2 (1 + β))`. -/
 theorem eq_of_isRoot_of_re_eq_zero {a β : ℝ} (ha : 0 ≤ a) (hβ : 0 < β) {z : ℂ}
     (hz : ((jacobian a β).charpoly.map Complex.ofRealHom).IsRoot z) (hre : z.re = 0) :
     z = (hopfFreq a β : ℂ) * Complex.I ∨ z = -((hopfFreq a β : ℂ) * Complex.I) := by
