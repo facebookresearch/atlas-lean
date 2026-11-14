@@ -29,32 +29,52 @@ noncomputable section
 
 open Complex Set
 
-/-- The Taylor coefficient of an entire function at the origin. -/
+/-- **Wiman Taylor coefficient.** For a function $f : \mathbb{C} \to \mathbb{C}$ and
+$n \in \mathbb{N}$, the $n$th Taylor coefficient of $f$ at the origin is
+$a_n = f^{(n)}(0) / n!$, where $f^{(n)}$ is the $n$th iterated complex derivative of $f$.
+
+Here the derivative at a point where a function is not complex differentiable is taken to be
+$0$. For an entire function these are the coefficients of its Taylor series at $0$. -/
 def wimanTaylorCoefficient (f : ℂ → ℂ) (n : ℕ) : ℂ :=
   iteratedDeriv n f 0 / (n.factorial : ℂ)
 
-/-- The modulus of the `n`th Taylor term at radius `|r|`.
+/-- **Wiman term.** For a function $f : \mathbb{C} \to \mathbb{C}$, a real number $r$ and a natural
+number $n$, the Wiman term of $f$ at radius $r$ and index $n$ is the real number $|a_n| \, |r|^n$,
+where $a_n = f^{(n)}(0) / n!$ is the $n$th Taylor coefficient of $f$ at the origin. It is the
+modulus of the $n$th Taylor term of $f$ on the circle of radius $|r|$.
 
-Normalizing at the definition boundary makes negative inputs denote the same radius as their
-absolute values, so this quantity is always nonnegative. -/
+Using $|r|$ makes a negative input denote the same radius as its absolute value, so the Wiman
+term is always nonnegative. -/
 def wimanTerm (f : ℂ → ℂ) (r : ℝ) (n : ℕ) : ℝ :=
   ‖wimanTaylorCoefficient f n‖ * |r| ^ n
 
-/-- The maximum term, initially expressed as a supremum over all indices. -/
+/-- **Wiman maximum term.** For a function $f : \mathbb{C} \to \mathbb{C}$ and a real number $r$,
+the Wiman maximum term $\mu(f, r)$ is the supremum over $n \in \mathbb{N}$ of the Wiman terms
+$|a_n| \, |r|^n$, where $a_n = f^{(n)}(0) / n!$ is the $n$th Wiman Taylor coefficient of $f$.
+
+Here the supremum of a set of real numbers that is not bounded above is taken to be $0$. -/
 def wimanMaximumTerm (f : ℂ → ℂ) (r : ℝ) : ℝ :=
   sSup (range (wimanTerm f r))
 
-/-- The maximum modulus on the circle of radius `|r|`. -/
+/-- **Wiman maximum modulus.** For a function $f : \mathbb{C} \to \mathbb{C}$ and a real number
+$r$, the Wiman maximum modulus $M(f, r)$ is the supremum of $|f(z)|$ over all $z \in \mathbb{C}$
+with $|z| = |r|$.
+
+Here the supremum of a set of real numbers that is not bounded above is taken to be $0$. -/
 def wimanMaximumModulus (f : ℂ → ℂ) (r : ℝ) : ℝ :=
   sSup ((fun z : ℂ => ‖f z‖) '' Metric.sphere 0 |r|)
 
-/-- Re-normalizing a Wiman term's radius does not change it. -/
+/-- **Wiman term at the absolute value of the radius.** For every function
+$f : \mathbb{C} \to \mathbb{C}$, every real number $r$ and every natural number $n$, the Wiman term
+of $f$ at radius $|r|$ and index $n$ equals the Wiman term of $f$ at radius $r$ and index $n$. -/
 @[simp]
 theorem wimanTerm_abs (f : ℂ → ℂ) (r : ℝ) (n : ℕ) :
     wimanTerm f |r| n = wimanTerm f r n := by
   simp [wimanTerm]
 
-/-- Re-normalizing the radius does not change the maximum Taylor term. -/
+/-- **Wiman maximum term at the absolute value of the radius.** For every function
+$f : \mathbb{C} \to \mathbb{C}$ and every real number $r$, the Wiman maximum term of $f$ at
+radius $|r|$ equals the Wiman maximum term of $f$ at radius $r$. -/
 @[simp]
 theorem wimanMaximumTerm_abs (f : ℂ → ℂ) (r : ℝ) :
     wimanMaximumTerm f |r| = wimanMaximumTerm f r := by
@@ -63,19 +83,25 @@ theorem wimanMaximumTerm_abs (f : ℂ → ℂ) (r : ℝ) :
   funext n
   exact wimanTerm_abs f r n
 
-/-- Re-normalizing the radius does not change the maximum modulus. -/
+/-- **Wiman maximum modulus at the absolute value of the radius.** For every function
+$f : \mathbb{C} \to \mathbb{C}$ and every real number $r$, the Wiman maximum modulus of $f$ at
+radius $|r|$ equals the Wiman maximum modulus of $f$ at radius $r$. -/
 @[simp]
 theorem wimanMaximumModulus_abs (f : ℂ → ℂ) (r : ℝ) :
     wimanMaximumModulus f |r| = wimanMaximumModulus f r := by
   simp [wimanMaximumModulus]
 
-/-- Negating a radius does not change its Wiman term. -/
+/-- **Wiman term at a negated radius.** For every function $f : \mathbb{C} \to \mathbb{C}$, every
+real number $r$ and every natural number $n$, the Wiman term of $f$ at radius $-r$ and index $n$
+equals the Wiman term of $f$ at radius $r$ and index $n$. -/
 @[simp]
 theorem wimanTerm_neg (f : ℂ → ℂ) (r : ℝ) (n : ℕ) :
     wimanTerm f (-r) n = wimanTerm f r n := by
   simp [wimanTerm]
 
-/-- Negating a radius does not change the maximum Taylor term. -/
+/-- **The Wiman maximum term is even in the radius.** For every function
+$f : \mathbb{C} \to \mathbb{C}$ and every real number $r$, the Wiman maximum term of $f$ at
+radius $-r$ equals the Wiman maximum term of $f$ at radius $r$. -/
 @[simp]
 theorem wimanMaximumTerm_neg (f : ℂ → ℂ) (r : ℝ) :
     wimanMaximumTerm f (-r) = wimanMaximumTerm f r := by
@@ -84,19 +110,25 @@ theorem wimanMaximumTerm_neg (f : ℂ → ℂ) (r : ℝ) :
   funext n
   exact wimanTerm_neg f r n
 
-/-- Negating a radius does not change the maximum modulus. -/
+/-- **The Wiman maximum modulus is even in the radius.** For every function
+$f : \mathbb{C} \to \mathbb{C}$ and every real number $r$, the Wiman maximum modulus of $f$ at
+radius $-r$ equals the Wiman maximum modulus of $f$ at radius $r$. -/
 @[simp]
 theorem wimanMaximumModulus_neg (f : ℂ → ℂ) (r : ℝ) :
     wimanMaximumModulus f (-r) = wimanMaximumModulus f r := by
   simp [wimanMaximumModulus]
 
-/-- A complex function is transcendental when it is not represented by a complex polynomial.
-Analytic regularity is recorded separately by callers. -/
+/-- **Transcendental functions.** A function $f : \mathbb{C} \to \mathbb{C}$ is
+transcendental when there is no complex polynomial $p$ with $f(z) = p(z)$ for all
+$z \in \mathbb{C}$.
+
+No analyticity is assumed; results about transcendental entire functions assume it separately. -/
 def IsTranscendental (f : ℂ → ℂ) : Prop :=
   ¬ ∃ p : Polynomial ℂ, ∀ z : ℂ, f z = p.eval z
 
-/-- Every value on the circle is bounded by the supremum used for the Wiman
-maximum modulus. -/
+/-- **Values on a circle are bounded by the maximum modulus.** Let $f : \mathbb{C} \to \mathbb{C}$
+be continuous, let $r$ be a real number and let $z \in \mathbb{C}$ with $|z| = r$. Then
+$|f(z)| \le M(f, r)$, where $M(f, r)$ is the Wiman maximum modulus of $f$ at radius $r$. -/
 theorem norm_le_wimanMaximumModulus {f : ℂ → ℂ} {r : ℝ} {z : ℂ}
     (hf : Continuous f) (hz : ‖z‖ = r) :
     ‖f z‖ ≤ wimanMaximumModulus f r := by
@@ -106,7 +138,9 @@ theorem norm_le_wimanMaximumModulus {f : ℂ → ℂ} {r : ℝ} {z : ℂ}
       ((continuous_norm.comp hf).continuousOn)
   · exact ⟨z, by simpa [Metric.mem_sphere, abs_of_nonneg hr] using hz, rfl⟩
 
-/-- Cubing removes the fractional exponent in a Wiman `2/3` bound. -/
+/-- **Cubing a Wiman 2/3 bound.** Let $M$ and $\mu$ be real numbers with $M \ge 0$,
+$\mu \ge 0$ and $\log \mu \ge 0$, where $\log$ is the real logarithm with $\log 0 = 0$.
+If $M \le \mu (\log \mu)^{2/3}$, then $M^3 \le \mu^3 (\log \mu)^2$. -/
 theorem cube_le_cube_mul_log_sq_of_wiman {M μ : ℝ}
     (hM : 0 ≤ M) (_hμ : 0 ≤ μ) (hlog : 0 ≤ Real.log μ)
     (hWiman : M ≤ μ * Real.log μ ^ (2 / 3 : ℝ)) :
