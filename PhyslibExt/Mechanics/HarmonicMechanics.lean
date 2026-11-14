@@ -14,6 +14,7 @@ public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.Defs
+public import Mathlib.LinearAlgebra.Matrix.PosDef
 
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Algebra.BigOperators.Group.Finset.Piecewise
@@ -78,8 +79,12 @@ carried as explicit hypotheses or definitions. Continuum stress and strain are i
   stiffness quadratic form; `springEnergy_nonneg`.
 * `stiffnessMatrix_transpose`: the stiffness matrix is symmetric.
 * `stiffnessMatrix_mulVec_one`, `stiffnessMatrix_free_zeroMode`,
-  `springEnergy_free_const`: rigid translations are zero modes only in the
-  free (`w = 0`) case; `stiffnessMatrix_fixedEnds_rowNonzero` for fixed ends.
+  `springEnergy_free_const`: the stiffness matrix sends the all-ones vector to
+  `w`, so rigid translations are in its kernel only in the free (`w = 0`)
+  case, where they also carry zero energy; `stiffnessMatrix_fixedEnds_rowNonzero`
+  for fixed ends.
+* `stiffnessMatrix_free_not_posDef`: on a nonempty node type, the stiffness
+  matrix of a free network is not positive definite.
 * `innerProductM_eq_zero_of_ne`: distinct normal modes are mass-orthogonal.
 * `rayleigh_nonneg`: Rayleigh quotient nonnegativity for spring stiffness.
 
@@ -455,13 +460,28 @@ lemma stiffnessMatrix_mulVec_one {ι : Type*} [Fintype ι] [DecidableEq ι]
   rw [hcongr, Finset.sum_sub_distrib, hite]
   ring
 
-/-- Rigid-translation zero mode (MC, free network only): with `w = 0` the
-all-ones vector is in the kernel, so the stiffness matrix of a free network is
-not positive definite. -/
+/-- Rigid-translation kernel identity (MC, free network only): with `w = 0` the
+stiffness matrix sends the all-ones vector to `0`. On an empty node type that
+vector is itself `0` and the identity is trivial; see
+`stiffnessMatrix_free_not_posDef` for the nonempty case. -/
 lemma stiffnessMatrix_free_zeroMode {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (hkii : ∀ i, k i i = 0) :
     stiffnessMatrix k 0 *ᵥ (fun _ => (1 : ℝ)) = 0 := by
   rw [stiffnessMatrix_mulVec_one k 0 hkii]
+
+/-- The stiffness matrix of a free network is not positive definite (MC): on a
+nonempty node type the all-ones vector is nonzero and, by
+`stiffnessMatrix_free_zeroMode`, in its kernel. `[Nonempty ι]` cannot be
+dropped: on an empty node type every matrix is positive definite, vacuously. -/
+lemma stiffnessMatrix_free_not_posDef {ι : Type*} [Fintype ι] [DecidableEq ι]
+    [Nonempty ι] (k : ι → ι → ℝ) (hkii : ∀ i, k i i = 0) :
+    ¬ (stiffnessMatrix k 0).PosDef := by
+  intro hK
+  have hone : (fun _ => (1 : ℝ)) ≠ (0 : ι → ℝ) := fun h =>
+    one_ne_zero (congrFun h (Classical.arbitrary ι))
+  have hpos := hK.dotProduct_mulVec_pos hone
+  rw [stiffnessMatrix_free_zeroMode k hkii, dotProduct_zero] at hpos
+  exact lt_irrefl 0 hpos
 
 /-- Constant displacements of a free network carry zero energy. -/
 lemma springEnergy_free_const {ι : Type*} [Fintype ι]

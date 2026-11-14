@@ -25,7 +25,8 @@ oscillator frequency, energy derivative and conservation along the explicit
 solution, force/moment balance and work examples (including
 `isEquilibrated_iff`, `moment2D_add`, `totalWork_add`), the fixed-end two-mass
 chain with normal modes, every spring-network theorem applied to that chain,
-and `#print axioms` for every public lemma.
+the empty node type (the kernel identity is trivial there and positive
+definiteness vacuous), and `#print axioms` for every public lemma.
 -/
 
 @[expose] public section
@@ -461,6 +462,11 @@ example : stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ
     (fun _ => 1) = 0 :=
   stiffnessMatrix_free_zeroMode _ chain_diag
 
+/-- `stiffnessMatrix_free_not_posDef`: the free chain's stiffness matrix `[[1, -1], [-1, 1]]` is
+not positive definite. -/
+example : ¬ (stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) 0).PosDef :=
+  stiffnessMatrix_free_not_posDef _ chain_diag
+
 /-- `springEnergy_free_const`: a translation of the free chain stores no energy. -/
 example : springEnergy (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) 0 (fun _ => 5) = 0 :=
   springEnergy_free_const _ 5
@@ -480,6 +486,23 @@ example (lam : ℝ) (v : Fin 2 → ℝ) (hv : v ≠ 0)
   rayleigh_nonneg _ _ _ v lam chain_symm chain_diag chain_nonneg (fun i => (ones_pos i).le)
     ones_pos hv heig
 
+/-! ## Boundary: the empty node type. -/
+
+/-- `stiffnessMatrix_free_zeroMode` on the empty node type `Fin 0`: the kernel identity still
+holds. -/
+example (k : Fin 0 → Fin 0 → ℝ) : stiffnessMatrix k 0 *ᵥ (fun _ => (1 : ℝ)) = 0 :=
+  stiffnessMatrix_free_zeroMode k fun i => i.elim0
+
+/-- On `Fin 0` the all-ones vector is the zero vector, so that kernel identity is trivial. -/
+example : (fun _ : Fin 0 => (1 : ℝ)) = 0 :=
+  Subsingleton.elim _ _
+
+/-- `[Nonempty ι]` is needed in `stiffnessMatrix_free_not_posDef`: on `Fin 0` the free stiffness
+matrix is positive definite, vacuously, since its only vector is `0`. -/
+example (k : Fin 0 → Fin 0 → ℝ) : (stiffnessMatrix k 0).PosDef :=
+  Matrix.PosDef.of_dotProduct_mulVec_pos (Matrix.IsHermitian.ext fun i => i.elim0)
+    fun x hx => (hx (Subsingleton.elim x 0)).elim
+
 /-! ## Axiom audits for every public lemma. -/
 
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.hasDerivAt_oscillatorEnergy
@@ -497,6 +520,7 @@ example (lam : ℝ) (v : Fin 2 → ℝ) (hv : v ≠ 0)
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.stiffnessMatrix_transpose
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.stiffnessMatrix_mulVec_one
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.stiffnessMatrix_free_zeroMode
+#print axioms PhyslibExt.Mechanics.HarmonicMechanics.stiffnessMatrix_free_not_posDef
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.springEnergy_free_const
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.stiffnessMatrix_fixedEnds_rowNonzero
 #print axioms PhyslibExt.Mechanics.HarmonicMechanics.innerProductM_eq_zero_of_ne
