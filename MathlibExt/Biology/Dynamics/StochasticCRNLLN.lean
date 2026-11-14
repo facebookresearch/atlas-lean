@@ -9,8 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.Dynamics.StochasticCRNNonExplosion
-public import MathlibExt.Biology.Epidemiology.StochasticSIRKurtz
+public import MathlibExt.Biology.Dynamics.SystemsBiology
+public import MathlibExt.Probability.Process.PoissonProcess
 import MathlibExt.Analysis.ODE.GronwallIntegral
+import MathlibExt.Biology.Epidemiology.StochasticSIRKurtz
 
 /-!
 # Kurtz's law of large numbers for density-dependent stochastic reaction networks
@@ -59,9 +61,10 @@ locally integrable propensities along the path.
 * `tendsto_measure_deviation_zero_of_initial`: the initial-condition hypothesis for deterministic
   initial counts with `X^N(0) / N → x(0)`.
 * `tendsto_measure_deviation_massAction`: **mass-action kinetics.** For the stochastic mass-action
-  propensities `massActionPropensity` (falling factorials over `N^{|src r|}`), the limit is the
-  deterministic mass-action system `x' = massActionField κ x`; the propensity error is `O(1 / N)`
-  on bounded sets (`abs_massActionPropensity_div_sub_le`).
+  propensities `massActionPropensity`, the volume scaling `N λ_r(z) / N^{|src r|}` of the
+  falling-factorial propensity `SystemsBiology.propensity` (`massActionPropensity_one`: the two
+  agree at `N = 1`), the limit is the deterministic mass-action system `x' = massActionField κ x`;
+  the propensity error is `O(1 / N)` on bounded sets (`abs_massActionPropensity_div_sub_le`).
 
 ## Scope
 
@@ -854,15 +857,32 @@ theorem cast_descFactorial_eq_prod (n k : ℕ) :
 
 variable [Fintype S]
 
-/-- The **stochastic mass-action propensity** at system size `N` (Kurtz 1972):
-with `k = src r`,
-
-  `λ^N_r(z) = N κ_r ∏_s z_s (z_s - 1) ⋯ (z_s - k_s + 1) / N^{k_s}`,
-
-the number of ordered choices of the reactant molecules, scaled by the volume. -/
+/-- The **stochastic mass-action propensity** at system size `N` (Kurtz 1972): the
+falling-factorial propensity `SystemsBiology.propensity G κ r z = κ_r ∏_s (z_s)_{(k_s)}`,
+`k = src r`, scaled by the volume, `N · propensity G κ r z / N^{|k|}`
+(`massActionPropensity_eq_prod`: `N κ_r ∏_s z_s (z_s - 1) ⋯ (z_s - k_s + 1) / N^{k_s}`). -/
 noncomputable def massActionPropensity (G : ReactionNetwork S ρ) (κ : ρ → ℝ) (N : ℕ) (r : ρ)
     (z : S → ℕ) : ℝ :=
-  N * κ r * ∏ s, ((z s).descFactorial (G.src r s) : ℝ) / (N : ℝ) ^ G.src r s
+  N * SystemsBiology.propensity G κ r z / (N : ℝ) ^ ∑ s, G.src r s
+
+omit [Fintype ρ] in
+/-- The explicit form of the stochastic mass-action propensity:
+`λ^N_r(z) = N κ_r ∏_s z_s (z_s - 1) ⋯ (z_s - k_s + 1) / N^{k_s}` with `k = src r`. -/
+theorem massActionPropensity_eq_prod (G : ReactionNetwork S ρ) (κ : ρ → ℝ) (N : ℕ) (r : ρ)
+    (z : S → ℕ) :
+    massActionPropensity G κ N r z =
+      N * κ r * ∏ s, ((z s).descFactorial (G.src r s) : ℝ) / (N : ℝ) ^ G.src r s := by
+  rw [massActionPropensity, SystemsBiology.propensity, Finset.prod_div_distrib,
+    Finset.prod_pow_eq_pow_sum]
+  ring
+
+omit [Fintype ρ] in
+/-- **Compatibility with `SystemsBiology.propensity`**: at system size `N = 1` the stochastic
+mass-action propensity is the falling-factorial propensity of `SystemsBiology`. -/
+theorem massActionPropensity_one (G : ReactionNetwork S ρ) (κ : ρ → ℝ) :
+    massActionPropensity G κ 1 = SystemsBiology.propensity G κ := by
+  funext r z
+  simp [massActionPropensity]
 
 /-- The stochastic reaction network with mass-action propensities at system size `N`. -/
 noncomputable def massAction (G : ReactionNetwork S ρ) (κ : ρ → ℝ) (hκ : ∀ r, 0 ≤ κ r)
@@ -870,15 +890,14 @@ noncomputable def massAction (G : ReactionNetwork S ρ) (κ : ρ → ℝ) (hκ :
   network := G
   propensity := massActionPropensity G κ N
   propensity_nonneg r z := by
-    unfold massActionPropensity
+    rw [massActionPropensity_eq_prod]
     have := hκ r
     positivity
   propensity_eq_zero r z h := by
     obtain ⟨s, hs⟩ : ∃ s, z s < G.src r s := by
       by_contra hcon
       exact h fun s => not_lt.1 fun hs => hcon ⟨s, hs⟩
-    unfold massActionPropensity
-    rw [Finset.prod_eq_zero (Finset.mem_univ s)
+    rw [massActionPropensity_eq_prod, Finset.prod_eq_zero (Finset.mem_univ s)
       (by rw [Nat.descFactorial_eq_zero_iff_lt.2 hs]; simp), mul_zero]
 
 omit [Fintype ρ] in
@@ -916,7 +935,7 @@ theorem abs_massActionPropensity_div_sub_le (G : ReactionNetwork S ρ) (κ : ρ 
     simp_rw [← sub_div]
     rw [Finset.prod_div_distrib, Finset.prod_const, Finset.card_range]
   have hdiv : massActionPropensity G κ N r z / N = κ r * ∏ s, a s := by
-    unfold massActionPropensity
+    rw [massActionPropensity_eq_prod]
     simp only [hfac]
     field_simp
   have hrate : G.rate κ u r = κ r * ∏ s, b s := rfl

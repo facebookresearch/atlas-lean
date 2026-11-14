@@ -37,6 +37,7 @@ namespace MathlibExtTest.Biology.Dynamics.StochasticCRNLLN
 open MathlibExt.Biology.Dynamics.ComplexBalanced
 open MathlibExt.Biology.Dynamics.StochasticCRNNonExplosion
 open MathlibExt.Biology.Dynamics.StochasticCRNLLN
+open MathlibExt.Biology.Dynamics.SystemsBiology (propensity)
 
 /-! ### Reaction vectors and mass-action propensities, from the definitions -/
 
@@ -62,13 +63,26 @@ example : massActionPropensity dimer (fun _ => 1) 10 () (fun _ => 5) = 2 ∧
     (10 : ℝ) * dimer.rate (fun _ => 1) (scaled 10 fun _ => 5) () = 5 / 2 := by
   have h : Nat.descFactorial 5 2 = 20 := rfl
   constructor
-  · norm_num [massActionPropensity, dimer, h]
+  · norm_num [massActionPropensity, propensity, dimer, h]
   · norm_num [ReactionNetwork.rate, scaled, dimer]
 
 /-- One molecule cannot dimerize: the propensity vanishes, as `propensity_eq_zero` requires. -/
 example : massActionPropensity dimer (fun _ => 1) 10 () (fun _ => 1) = 0 := by
   have h : Nat.descFactorial 1 2 = 0 := rfl
-  norm_num [massActionPropensity, dimer, h]
+  norm_num [massActionPropensity, propensity, dimer, h]
+
+/-- At `N = 1` the stochastic mass-action propensity is `SystemsBiology.propensity`: for
+dimerization with `κ = 3` at `z = 4` both are `3 · 4 · 3 = 36`, computed from the definitions. -/
+example : massActionPropensity dimer (fun _ => 3) 1 () (fun _ => 4) = 36 ∧
+    propensity dimer (fun _ => 3) () (fun _ => 4) = 36 := by
+  have h : Nat.descFactorial 4 2 = 12 := rfl
+  constructor
+  · norm_num [massActionPropensity, propensity, dimer, h]
+  · norm_num [propensity, dimer, h]
+
+example :
+    massActionPropensity dimer (fun _ => 3) 1 = propensity dimer (fun _ => 3) :=
+  massActionPropensity_one dimer _
 
 /-! ### The immigration chain, from the definition -/
 
@@ -80,7 +94,7 @@ def immig : ReactionNetwork Unit Unit where
 /-- The mass-action propensity of immigration is the constant `N κ`. -/
 theorem massActionPropensity_immig (κ : ℝ) (N : ℕ) (r : Unit) (z : Unit → ℕ) :
     massActionPropensity immig (fun _ => κ) N r z = N * κ := by
-  simp [massActionPropensity, immig]
+  simp [massActionPropensity, propensity, immig]
 
 /-- The immigration path `X(t) = y(N κ t)`. -/
 noncomputable def immigPath (κ : ℝ) (N : ℕ) (y : ℝ≥0 → ℕ) : ℝ → Unit → ℕ :=
