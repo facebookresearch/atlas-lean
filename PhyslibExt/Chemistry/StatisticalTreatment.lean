@@ -64,7 +64,10 @@ independent and identically distributed with finite second moment, with equal va
 The Dixon Q and Grubbs statistics are computed from the whole sample: Dixon's Q for observation
 `j` is the gap to its nearest other observation over the sample range, and Grubbs' G is the
 largest absolute deviation from the sample mean over the sample standard deviation. The decision
-procedures compare them with nonnegative caller-supplied critical values, Dixon's procedure
+procedures compare them with nonnegative caller-supplied critical values and require at least
+three observations; samples of fewer than three are never rejected (`not_dixonReject_of_lt_three`,
+`not_grubbsReject_of_lt_three`). Neither test is defined for two observations: Dixon's Q of two
+distinct values is `1` and Grubbs' G is `1/√2`, whatever the data. Dixon's procedure
 rejects only an extreme observation, and a sample without spread is never rejected
 (`not_dixonReject_of_no_spread`, `not_grubbsReject_of_sd_zero`). No error-rate claim is made for
 these procedures, nor for the `k = 3` and `k = 3.3` detection-limit conventions, which are stated
@@ -89,10 +92,11 @@ the formula is meaningful. Dixon's Q and Grubbs' G are defined to be `0` when th
   pooled variance as a weighted average of the sample variances, and nonnegativity.
 - `integral_pooledVariance`: the pooled variance is unbiased under the equal-variance model.
 - `dixonQ_of_ne`, `dixonQ_of_no_spread`, `dixonQ_nonneg`, `dixonReject_mono`,
-  `not_dixonReject_of_no_spread`: Dixon's Q and its decision procedure.
+  `not_dixonReject_of_lt_three`, `not_dixonReject_of_no_spread`: Dixon's Q and its decision
+  procedure.
 - `grubbsG_of_ne`, `grubbsG_of_sd_zero`, `grubbsG_nonneg`, `div_le_grubbsG`,
-  `exists_grubbsG_eq`, `grubbsReject_mono`, `not_grubbsReject_of_sd_zero`: Grubbs' G is the
-  largest standardized residual.
+  `exists_grubbsG_eq`, `grubbsReject_mono`, `not_grubbsReject_of_lt_three`,
+  `not_grubbsReject_of_sd_zero`: Grubbs' G is the largest standardized residual.
 - `mem_bonferroniRejections_iff`, `bonferroniLevel_nonneg`, `lodK3_nonneg`, `lodK33_nonneg`: the
   Bonferroni level of the canonical procedure, and the detection-limit conventions.
 
@@ -157,7 +161,9 @@ lemma sampleVarUnbiased_fin_one (x : Fin 1 → ℝ) : sampleVarUnbiased x = 0 :=
   rw [sampleVarUnbiased_eq_sum_div, Fintype.card_fin]
   norm_num
 
-/-- Sample standard deviation `s = √s²`, from the canonical unbiased sample variance. -/
+/-- Sample standard deviation `s = √s²`, from the canonical unbiased sample variance; meaningful
+for `n ≥ 2`. For `n ≤ 1` the sample variance is a junk `0` (at `n = 1`,
+`sampleVarUnbiased_fin_one`), so `s` is `0` and carries no information. -/
 noncomputable def sampleStdDev {n : ℕ} (x : Fin n → ℝ) : ℝ :=
   Real.sqrt (sampleVarUnbiased x)
 
@@ -191,9 +197,9 @@ lemma tHalfWidth_nonneg (s : ℝ) (n : ℕ) (tcrit : ℝ) (ht : 0 ≤ tcrit)
   unfold tHalfWidth
   exact div_nonneg (mul_nonneg ht hs) (Real.sqrt_nonneg _)
 
-/-- The t-interval `x̄ ± tcrit * s / √n` as a set. Its exact coverage under i.i.d. normal sampling,
-with the sample mean, the sample standard deviation and the Student-t quantile, is
-`tInterval_coverage`. -/
+/-- The t-interval `x̄ ± tcrit * s / √n` as a set; it carries no coverage claim. Its exact
+coverage under i.i.d. normal sampling of `n ≥ 2` observations, with the sample mean, the sample
+standard deviation and the Student-t quantile, is `tInterval_coverage`. -/
 def tInterval (xbar s : ℝ) (n : ℕ) (tcrit : ℝ) : Set ℝ :=
   Set.Icc (xbar - tHalfWidth s n tcrit) (xbar + tHalfWidth s n tcrit)
 
@@ -341,10 +347,10 @@ def IsExtremeObservation {n : ℕ} (x : Fin n → ℝ) (j : Fin n) : Prop :=
 
 /-- Dixon's Q statistic for observation `j` of the sample `x`: the gap to the nearest other
 observation over the sample range, `nearestGap x j / sampleRange x`, and `0` when the range is
-`0` (no spread, hence no rejection). Dixon's procedure applies it to an extreme observation
-(`IsExtremeObservation`, which `dixonReject` requires). Tabulated critical values, and any
-error-rate meaning of the comparison, assume i.i.d. normal sampling, which is not modelled
-here. -/
+`0` (no spread, hence no rejection). Dixon's procedure applies it to an extreme observation of a
+sample of at least three observations (`dixonReject` requires both); for two distinct observations
+`Q = 1` whatever the data. Tabulated critical values, and any error-rate meaning of the
+comparison, assume i.i.d. normal sampling, which is not modelled here. -/
 noncomputable def dixonQ {n : ℕ} (x : Fin n → ℝ) (j : Fin n) : ℝ :=
   if sampleRange x = 0 then 0 else nearestGap x j / sampleRange x
 
@@ -365,30 +371,40 @@ lemma dixonQ_nonneg {n : ℕ} (x : Fin n → ℝ) (j : Fin n) : 0 ≤ dixonQ x j
   · exact le_rfl
   · exact div_nonneg (nearestGap_nonneg x j) (sampleRange_nonneg x)
 
-/-- Dixon decision procedure: reject observation `j` at the critical value `qcrit ≥ 0` when it is
-extreme and its Q statistic exceeds `qcrit`. The critical value is an explicit nonnegative input
-(tabulated values assume normality); a negative `qcrit` never rejects. -/
+/-- Dixon decision procedure: reject observation `j` of a sample of `n ≥ 3` observations at the
+critical value `qcrit ≥ 0` when it is extreme and its Q statistic exceeds `qcrit`. The test is not
+defined for fewer than three observations, which are never rejected
+(`not_dixonReject_of_lt_three`). The critical value is an explicit nonnegative input (tabulated
+values assume normality); a negative `qcrit` never rejects. -/
 def dixonReject {n : ℕ} (x : Fin n → ℝ) (j : Fin n) (qcrit : ℝ) : Prop :=
-  IsExtremeObservation x j ∧ 0 ≤ qcrit ∧ qcrit < dixonQ x j
+  3 ≤ n ∧ IsExtremeObservation x j ∧ 0 ≤ qcrit ∧ qcrit < dixonQ x j
 
 /-- Rejection is monotone in the critical value: a smaller nonnegative threshold rejects whenever
 a larger one does. -/
 lemma dixonReject_mono {n : ℕ} (x : Fin n → ℝ) (j : Fin n) (qa qb : ℝ) (hb : 0 ≤ qb)
     (h : qb ≤ qa) (r : dixonReject x j qa) : dixonReject x j qb :=
-  ⟨r.1, hb, lt_of_le_of_lt h r.2.2⟩
+  ⟨r.1, r.2.1, hb, lt_of_le_of_lt h r.2.2.2⟩
+
+/-- Dixon's procedure rejects nothing in a sample of fewer than three observations, at any
+critical value. -/
+lemma not_dixonReject_of_lt_three {n : ℕ} (x : Fin n → ℝ) (j : Fin n) (hn : n < 3)
+    (qcrit : ℝ) : ¬ dixonReject x j qcrit := by
+  rintro ⟨h, -⟩
+  omega
 
 /-- A sample without spread is never rejected by Dixon's procedure, at any critical value. -/
 lemma not_dixonReject_of_no_spread {n : ℕ} (x : Fin n → ℝ) (j : Fin n) (h : sampleRange x = 0)
     (qcrit : ℝ) : ¬ dixonReject x j qcrit := by
-  rintro ⟨-, hq, hlt⟩
+  rintro ⟨-, -, hq, hlt⟩
   rw [dixonQ_of_no_spread x j h] at hlt
   exact absurd hlt (not_lt.mpr hq)
 
 /-- Grubbs' statistic `G = max_i |x i - x̄| / s` of a sample: the largest absolute deviation from
 the sample mean over the sample standard deviation, and `0` when `s = 0` (no spread, hence no
 rejection). The maximum is over the whole sample (`div_le_grubbsG`) and is attained by an
-observation (`exists_grubbsG_eq`). Tabulated critical values assume i.i.d. normal sampling,
-which is not modelled here. -/
+observation (`exists_grubbsG_eq`). Grubbs' procedure needs at least three observations
+(`grubbsReject` requires it); for two distinct observations `G = 1/√2` whatever the data.
+Tabulated critical values assume i.i.d. normal sampling, which is not modelled here. -/
 noncomputable def grubbsG {n : ℕ} (x : Fin n → ℝ) : ℝ :=
   if sampleStdDev x = 0 then 0 else (⨆ i, |x i - sampleMean x|) / sampleStdDev x
 
@@ -428,23 +444,32 @@ lemma exists_grubbsG_eq {n : ℕ} (x : Fin n → ℝ) (h : sampleStdDev x ≠ 0)
   obtain ⟨i, hi⟩ := exists_eq_ciSup_of_finite (f := fun i => |x i - sampleMean x|)
   exact ⟨i, by rw [grubbsG_of_ne x h, ← hi]⟩
 
-/-- Grubbs decision procedure: reject the most extreme observation of `x` at the critical value
-`gcrit ≥ 0`. The critical value is an explicit nonnegative input (tabulated values assume
-normality); a negative `gcrit` never rejects. -/
+/-- Grubbs decision procedure: reject the most extreme observation of a sample `x` of `n ≥ 3`
+observations at the critical value `gcrit ≥ 0`. The test is not defined for fewer than three
+observations, which are never rejected (`not_grubbsReject_of_lt_three`). The critical value is an
+explicit nonnegative input (tabulated values assume normality); a negative `gcrit` never
+rejects. -/
 def grubbsReject {n : ℕ} (x : Fin n → ℝ) (gcrit : ℝ) : Prop :=
-  0 ≤ gcrit ∧ gcrit < grubbsG x
+  3 ≤ n ∧ 0 ≤ gcrit ∧ gcrit < grubbsG x
 
 /-- Rejection is monotone in the critical value: a smaller nonnegative threshold rejects whenever
 a larger one does. -/
 lemma grubbsReject_mono {n : ℕ} (x : Fin n → ℝ) (ga gb : ℝ) (hb : 0 ≤ gb) (h : gb ≤ ga)
     (r : grubbsReject x ga) : grubbsReject x gb :=
-  ⟨hb, lt_of_le_of_lt h r.2⟩
+  ⟨r.1, hb, lt_of_le_of_lt h r.2.2⟩
+
+/-- Grubbs' procedure rejects nothing in a sample of fewer than three observations, at any
+critical value. -/
+lemma not_grubbsReject_of_lt_three {n : ℕ} (x : Fin n → ℝ) (hn : n < 3) (gcrit : ℝ) :
+    ¬ grubbsReject x gcrit := by
+  rintro ⟨h, -⟩
+  omega
 
 /-- A sample with zero standard deviation is never rejected by Grubbs' procedure, at any critical
 value. -/
 lemma not_grubbsReject_of_sd_zero {n : ℕ} (x : Fin n → ℝ) (h : sampleStdDev x = 0)
     (gcrit : ℝ) : ¬ grubbsReject x gcrit := by
-  rintro ⟨hg, hlt⟩
+  rintro ⟨-, hg, hlt⟩
   rw [grubbsG_of_sd_zero x h] at hlt
   exact absurd hlt (not_lt.mpr hg)
 

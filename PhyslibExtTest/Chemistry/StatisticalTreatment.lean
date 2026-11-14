@@ -17,8 +17,9 @@ import Mathlib.Tactic.NormNum
 
 Instances pinning the canonical pooled variance and variance ratio on concrete samples, both
 outlier procedures on concrete samples, the Bonferroni threshold, both LOD conventions, the exact
-t-interval coverage on a normal sample, and boundary cases (no claim at `n = 1`; no rejection on
-degenerate input at any critical value).
+t-interval coverage on a normal sample, and boundary cases (no claim at `n = 1`; no outlier
+rejection at `n = 2`, where neither test is defined; no rejection on degenerate input at any
+critical value).
 -/
 
 namespace Chemistry.StatisticalTreatmentTest
@@ -101,23 +102,23 @@ example : IsExtremeObservation dixonSample 3 :=
 
 -- Dixon procedure instance: Q = 3/7 rejects at qcrit = 0.41.
 example : dixonReject dixonSample 3 0.41 :=
-  ⟨Or.inl (by rw [dixonSample_iSup]; norm_num [dixonSample]), by norm_num,
+  ⟨by norm_num, Or.inl (by rw [dixonSample_iSup]; norm_num [dixonSample]), by norm_num,
     by rw [dixonSample_Q]; norm_num⟩
 
 -- Dixon procedure instance: Q = 3/7 does not reject at qcrit = 0.56.
 example : ¬ dixonReject dixonSample 3 0.56 := by
-  rintro ⟨-, -, h⟩
+  rintro ⟨-, -, -, h⟩
   rw [dixonSample_Q] at h
   norm_num at h
 
 -- A negative critical value never rejects.
 example : ¬ dixonReject dixonSample 3 (-1) := by
-  rintro ⟨-, h, -⟩
+  rintro ⟨-, -, h, -⟩
   norm_num at h
 
 -- A non-extreme observation (`10.0`) is never rejected, whatever its Q.
 example (q : ℝ) : ¬ dixonReject dixonSample 1 q := by
-  rintro ⟨h | h, -⟩
+  rintro ⟨-, h | h, -⟩
   · rw [dixonSample_iSup] at h
     norm_num [dixonSample] at h
   · rw [dixonSample_iInf] at h
@@ -150,10 +151,10 @@ lemma grubbsSample_G : grubbsG grubbsSample = 3 / 2 := by
 
 -- Grubbs procedure instance: G = 1.5 rejects at gcrit = 1.4 and not at gcrit = 1.6.
 example : grubbsReject grubbsSample 1.4 :=
-  ⟨by norm_num, by rw [grubbsSample_G]; norm_num⟩
+  ⟨by norm_num, by norm_num, by rw [grubbsSample_G]; norm_num⟩
 
 example : ¬ grubbsReject grubbsSample 1.6 := by
-  rintro ⟨-, h⟩
+  rintro ⟨-, -, h⟩
   rw [grubbsSample_G] at h
   norm_num at h
 
@@ -229,6 +230,119 @@ example (g : ℝ) : ¬ grubbsReject constSample g :=
 -- Boundary: constant samples have zero SD, so Grubbs reports 0 end to end.
 example (c : ℝ) (x : Fin 5 → ℝ) (h : ∀ i, x i = c) : grubbsG x = 0 :=
   grubbsG_of_sd_zero x (sampleStdDev_const 5 (by norm_num) c x h)
+
+/-! ### Two observations: neither outlier test is defined -/
+
+/-- Two observations `0, 1`: range `1` and gap `1`, so Dixon's `Q = 1`; mean `1/2` and sample
+variance `1/2`, so Grubbs' `G = (1/2) / √(1/2) = √(1/2)`. -/
+noncomputable def twoPointSample : Fin 2 → ℝ := ![0, 1]
+
+lemma twoPointSample_iSup : (⨆ i, twoPointSample i) = 1 :=
+  le_antisymm (ciSup_le fun i => by fin_cases i <;> norm_num [twoPointSample])
+    (le_ciSup_of_le (Set.finite_range _).bddAbove 1 (by norm_num [twoPointSample]))
+
+lemma twoPointSample_iInf : (⨅ i, twoPointSample i) = 0 :=
+  le_antisymm (ciInf_le_of_le (Set.finite_range _).bddBelow 0 (by norm_num [twoPointSample]))
+    (le_ciInf fun i => by fin_cases i <;> norm_num [twoPointSample])
+
+/-- Q = 1/1 = 1. -/
+lemma twoPointSample_Q : dixonQ twoPointSample 1 = 1 := by
+  have hrange : sampleRange twoPointSample = 1 := by
+    rw [sampleRange, twoPointSample_iSup, twoPointSample_iInf, sub_zero]
+  have hgap : nearestGap twoPointSample 1 = 1 := by
+    have : Nonempty {i : Fin 2 // i ≠ 1} := ⟨⟨0, by decide⟩⟩
+    refine le_antisymm
+      (ciInf_le_of_le (Set.finite_range _).bddBelow ⟨0, by decide⟩ (by norm_num [twoPointSample]))
+      (le_ciInf fun ⟨i, hi⟩ => ?_)
+    fin_cases i
+    all_goals first
+      | exact absurd rfl hi
+      | norm_num [twoPointSample]
+  rw [dixonQ_of_ne _ _ (by rw [hrange]; norm_num), hrange, hgap, div_one]
+
+/-- G = (1/2) / √(1/2) = √(1/2). -/
+lemma twoPointSample_G : grubbsG twoPointSample = Real.sqrt (1 / 2) := by
+  have hmean : sampleMean twoPointSample = 1 / 2 := by
+    rw [sampleMean_eq_sum_div, Fin.sum_univ_two, Fintype.card_fin]
+    norm_num [twoPointSample]
+  have hv : sampleVarUnbiased twoPointSample = 1 / 2 := by
+    rw [sampleVarUnbiased_eq_sum_div, hmean, Fin.sum_univ_two, Fintype.card_fin]
+    norm_num [twoPointSample]
+  have hdev : (⨆ i, |twoPointSample i - sampleMean twoPointSample|) = 1 / 2 := by
+    rw [hmean]
+    exact le_antisymm (ciSup_le fun i => by fin_cases i <;> norm_num [twoPointSample])
+      (le_ciSup_of_le (Set.finite_range _).bddAbove 1 (by norm_num [twoPointSample]))
+  have hs : Real.sqrt (1 / 2) ≠ 0 := by positivity
+  rw [grubbsG_of_ne _ (by rw [sampleStdDev, hv]; exact hs), hdev, sampleStdDev, hv,
+    div_eq_iff hs, Real.mul_self_sqrt (by norm_num)]
+
+-- Observation `1` is extreme and Q = 1 exceeds the critical value 1/2, yet Dixon's procedure
+-- does not reject: it needs at least three observations.
+example : IsExtremeObservation twoPointSample 1 ∧ (1 / 2 : ℝ) < dixonQ twoPointSample 1 ∧
+    ¬ dixonReject twoPointSample 1 (1 / 2) :=
+  ⟨Or.inl (by rw [twoPointSample_iSup]; norm_num [twoPointSample]),
+    by rw [twoPointSample_Q]; norm_num, not_dixonReject_of_lt_three _ _ (by norm_num) _⟩
+
+-- G = √(1/2) exceeds the critical value 1/2, yet Grubbs' procedure does not reject.
+example : (1 / 2 : ℝ) < grubbsG twoPointSample ∧ ¬ grubbsReject twoPointSample (1 / 2) :=
+  ⟨by rw [twoPointSample_G]; exact Real.lt_sqrt_of_sq_lt (by norm_num),
+    not_grubbsReject_of_lt_three _ (by norm_num) _⟩
+
+-- No two-point sample is rejected by either procedure, at any critical value.
+example (x : Fin 2 → ℝ) (j : Fin 2) (q : ℝ) : ¬ dixonReject x j q :=
+  not_dixonReject_of_lt_three x j (by norm_num) q
+
+example (x : Fin 2 → ℝ) (g : ℝ) : ¬ grubbsReject x g :=
+  not_grubbsReject_of_lt_three x (by norm_num) g
+
+/-! ### Three observations: the smallest sample either test accepts -/
+
+/-- Three observations `0, 0, 1`: the suspect `1` has gap `1` over range `1`, so Dixon's `Q = 1`;
+mean `1/3`, sample variance `1/3` and largest absolute deviation `2/3`, so Grubbs'
+`G = (2/3) / √(1/3) > 1`. -/
+noncomputable def threePointSample : Fin 3 → ℝ := ![0, 0, 1]
+
+-- Dixon's procedure rejects the suspect at qcrit = 1/2.
+example : dixonReject threePointSample 2 (1 / 2) := by
+  have hsup : (⨆ i, threePointSample i) = 1 :=
+    le_antisymm (ciSup_le fun i => by fin_cases i <;> norm_num [threePointSample])
+      (le_ciSup_of_le (Set.finite_range _).bddAbove 2 (by norm_num [threePointSample]))
+  have hinf : (⨅ i, threePointSample i) = 0 :=
+    le_antisymm (ciInf_le_of_le (Set.finite_range _).bddBelow 0 (by norm_num [threePointSample]))
+      (le_ciInf fun i => by fin_cases i <;> norm_num [threePointSample])
+  have hrange : sampleRange threePointSample = 1 := by
+    rw [sampleRange, hsup, hinf, sub_zero]
+  have hgap : nearestGap threePointSample 2 = 1 := by
+    have : Nonempty {i : Fin 3 // i ≠ 2} := ⟨⟨0, by decide⟩⟩
+    refine le_antisymm
+      (ciInf_le_of_le (Set.finite_range _).bddBelow ⟨0, by decide⟩
+        (by norm_num [threePointSample]))
+      (le_ciInf fun ⟨i, hi⟩ => ?_)
+    fin_cases i
+    all_goals first
+      | exact absurd rfl hi
+      | norm_num [threePointSample]
+  refine ⟨le_refl 3, Or.inl (by rw [hsup]; norm_num [threePointSample]), by norm_num, ?_⟩
+  rw [dixonQ_of_ne _ _ (by rw [hrange]; norm_num), hrange, hgap]
+  norm_num
+
+-- Grubbs' procedure rejects at gcrit = 1.
+example : grubbsReject threePointSample 1 := by
+  have hmean : sampleMean threePointSample = 1 / 3 := by
+    rw [sampleMean_eq_sum_div, Fin.sum_univ_three, Fintype.card_fin]
+    norm_num [threePointSample]
+  have hv : sampleVarUnbiased threePointSample = 1 / 3 := by
+    rw [sampleVarUnbiased_eq_sum_div, hmean, Fin.sum_univ_three, Fintype.card_fin]
+    norm_num [threePointSample]
+  have hdev : (⨆ i, |threePointSample i - sampleMean threePointSample|) = 2 / 3 := by
+    rw [hmean]
+    exact le_antisymm (ciSup_le fun i => by fin_cases i <;> norm_num [threePointSample])
+      (le_ciSup_of_le (Set.finite_range _).bddAbove 2 (by norm_num [threePointSample]))
+  have hs : 0 < Real.sqrt (1 / 3) := by positivity
+  refine ⟨le_refl 3, zero_le_one, ?_⟩
+  rw [grubbsG_of_ne _ (by rw [sampleStdDev, hv]; exact hs.ne'), hdev, sampleStdDev, hv,
+    one_lt_div₀ hs, Real.sqrt_lt' (by norm_num)]
+  norm_num
 
 /-! ### Bonferroni and the random-variable bridges -/
 
