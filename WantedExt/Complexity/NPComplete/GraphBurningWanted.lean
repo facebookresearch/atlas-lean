@@ -29,7 +29,8 @@ namespace MetaMathlibExt.Complexity.NPComplete.GraphBurning
 /-!
 # GRAPH BURNING is NP-complete
 
-INSTANCE: a graph `G = (V, E)` (finite, simple, undirected) and an integer `k ≥ 2`.
+INSTANCE: a graph `G = (V, E)` (finite, simple, undirected, with at least one vertex) and an
+integer `k ≥ 2`.
 QUESTION: is the burning number `b(G)` at most `k`?
 
 Bessy, Bonato, Janssen, Rautenbach and Roshanbin, Lemma 2: "The burning number of a graph G is
@@ -38,7 +39,9 @@ condition `N_{k-1}[x₁] ∪ N_{k-2}[x₂] ∪ ⋯ ∪ N₀[x_k] = V(G)`, where 
 vertices at distance at most `r` from `x`. So `b(G) ≤ k` exactly when some sequence
 `x₀, …, x_{k-1}` (indexed from `0`) has every vertex within distance `k - 1 - j` of some `x_j`.
 Distances are Mathlib's extended distance `SimpleGraph.edist` (`⊤` between different
-components), since the graph need not be connected.
+components), since the graph need not be connected. The burning process burns one vertex per
+round, so the graph has at least one vertex (the source's "simple graph G of order n" with a
+burning sequence); the null graph is malformed.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -59,10 +62,11 @@ def Graph (i : GraphBurningInstance) : SimpleGraph (Fin i.1) :=
   Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
 
 /-- Well-formedness of an instance: the edge list describes a simple graph (no duplicate edges
-in either orientation, no self-loops, endpoints in range), and `2 ≤ k`. -/
+in either orientation, no self-loops, endpoints in range) with at least one vertex, and
+`2 ≤ k`. -/
 def WellFormed (i : GraphBurningInstance) : Prop :=
   (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    2 ≤ i.2.2
+    0 < i.1 ∧ 2 ≤ i.2.2
 
 /-- `b(G) ≤ k`: some sequence `x₀, …, x_{k-1}` of vertices has every vertex within distance
 `k - 1 - j` of some `x_j`. -/
