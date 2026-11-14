@@ -16,9 +16,12 @@ import MathlibExt.Biology.Biophysics.FitzHughNagumo
 pointwise on its boundary from the definitions (and a non-trapping small ellipse), boundary probes
 of the classification (center, saddle), and pulses after which the voltage falls or rises, both
 by the definitions and through the full dynamics (`single_pulse_response` along solutions given
-by `exists_isSolution`, with `ε = 10⁻⁵`). -/
+by `exists_isSolution`, with `ε = 10⁻⁵`); return to rest from a basin of that rest state and, for a
+rest state with `v*² > 4`, from every initial state; and the exclusion of periodic orbits for
+`v*² ≥ 4`, with boundary probes at `v*² = 4`. -/
 
-open Real Set
+open Real Set Filter
+open scoped Topology
 
 namespace MathlibExtTest.Biology.Biophysics.FitzHughNagumo
 
@@ -248,5 +251,123 @@ example : ∃ v w : ℝ → ℝ, IsSolution (6 / 5) (4 / 5) (1 / 100000) 0 v w �
       unfold vField
       nlinarith [mul_nonneg h1 h2]) (by norm_num) (by norm_num)
   exact ⟨v, w, h, hv0, hw0, hsup⟩
+
+/-! ### Return to rest -/
+
+/-- From the definition, `restFactor (-3/2) (9/4) = 7/16 > 0`: at the classical rest state the
+band `restFactor > 0` is nonempty, so `eq_rest_of_periodic` does not apply everywhere there. -/
+example : restFactor (-3 / 2) (9 / 4) = 7 / 16 := by norm_num [restFactor]
+
+/-- The displacement `9/4` lies in the rising-pulse window `(pulseRootLow, pulseRootHigh)`. -/
+example : pulseRootLow (-3 / 2) < 9 / 4 ∧ (9 / 4 : ℝ) < pulseRootHigh (-3 / 2) :=
+  (restFactor_pos_iff (by norm_num)).1 (by norm_num [restFactor])
+
+/-- **Probe: the basin hypothesis is needed.** At `(v, w) = (3/4, -3/8)`, displacement `9/4`
+from rest, the flux of `restEnergy` computed from the definitions is `567/128 > 0`: the shifted
+energy increases there. -/
+example : restFlux (6 / 5) (4 / 5) (2 / 25) 0 (-3 / 2) (-3 / 8) (3 / 4) (-3 / 8) = 567 / 128 := by
+  norm_num [restFlux, vField, wField]
+
+/-- The closed form `restFlux_eq` agrees with the definition at that point. -/
+example : restFlux (6 / 5) (4 / 5) (2 / 25) 0 (-3 / 2) (-3 / 8) (3 / 4) (-3 / 8) =
+    2 * ((9 / 4) ^ 2 * (7 / 16) - 4 / 5 * 0 ^ 2) := by
+  norm_num [restFlux, vField, wField]
+
+theorem abs_rest : |(-3 / 2 : ℝ)| = 3 / 2 := by rw [abs_of_neg (by norm_num)]; norm_num
+
+/-- The basin condition `|v*| ρ < v*² - 1` holds at `ρ = 2/3` (`1 < 5/4`) and fails at `ρ = 5/6`
+(equality). -/
+example : |(-3 / 2 : ℝ)| * (2 / 3) < (-3 / 2) ^ 2 - 1 ∧
+    ¬ |(-3 / 2 : ℝ)| * (5 / 6) < (-3 / 2) ^ 2 - 1 := by
+  rw [abs_rest]; norm_num
+
+/-- **Return to rest after the falling pulse.** The solution started by the pulse `δ = 1/2` from
+the rest state (`restEnergy = 1/4 ≤ (2/3)²`) converges to the rest state, with
+`restEnergy(t) ≤ e^{-16 t / 125} / 4`. -/
+example : ∃ v w : ℝ → ℝ, IsSolution (6 / 5) (4 / 5) (2 / 25) 0 v w ∧ v 0 = -3 / 2 + 1 / 2 ∧
+    w 0 = -3 / 8 ∧ Tendsto (fun t => (v t, w t)) atTop (𝓝 (-3 / 2, -3 / 8)) ∧
+    ∀ t, 0 ≤ t → restEnergy (2 / 25) (-3 / 2) (-3 / 8) (v t) (w t) ≤
+      exp (-(16 / 125) * t) * (1 / 4) := by
+  obtain ⟨v, w, h, hv0, hw0⟩ := exists_isSolution (a := 6 / 5) (b := 4 / 5) (ε := 2 / 25)
+    (I := 0) (by norm_num) (by norm_num) (-3 / 2 + 1 / 2) (-3 / 8)
+  have hrest : IsEquilibrium (6 / 5) (4 / 5) (2 / 25) 0 (-3 / 2) (-3 / 8) := by
+    norm_num [IsEquilibrium, vField, wField]
+  have hE0 : restEnergy (2 / 25) (-3 / 2) (-3 / 8) (v 0) (w 0) = 1 / 4 := by
+    rw [hv0, hw0]; norm_num [restEnergy, energy]
+  have hρv : |(-3 / 2 : ℝ)| * (2 / 3) < (-3 / 2) ^ 2 - 1 := by rw [abs_rest]; norm_num
+  have h0 : restEnergy (2 / 25) (-3 / 2) (-3 / 8) (v 0) (w 0) ≤ (2 / 3) ^ 2 := by
+    rw [hE0]; norm_num
+  refine ⟨v, w, h, hv0, hw0,
+    h.tendsto_rest_of_basin hrest (by norm_num) (by norm_num) (by norm_num) hρv h0, fun t ht => ?_⟩
+  have := h.restEnergy_le_exp_of_basin hrest (by norm_num) (by norm_num) (by norm_num) hρv h0 ht
+  have hk : min ((-3 / 2 : ℝ) ^ 2 - 1 - |(-3 / 2 : ℝ)| * (2 / 3)) (4 / 5 * (2 / 25)) = 8 / 125 := by
+    rw [abs_rest, min_eq_right (by norm_num)]; norm_num
+  rw [hk, hE0] at this
+  convert this using 3
+  norm_num
+
+/-! ### Global return to rest and no periodic orbits: `a = 6`, `b = 1/2`, `ε = 1`, `I = 0`
+
+The rest state is `(-3, 6)`, with `v*² = 9 > 4`. -/
+
+example : IsEquilibrium 6 (1 / 2) 1 0 (-3) 6 := by norm_num [IsEquilibrium, vField, wField]
+
+/-- The bound `restFactor_le` is attained, from the definition:
+`restFactor (-3) (9/2) = -5/4 = 1 - 9/4`. -/
+example : restFactor (-3) (9 / 2) = -5 / 4 := by norm_num [restFactor]
+
+/-- The solution from `(10, -10)` converges to the rest state. -/
+example : ∃ v w : ℝ → ℝ, IsSolution 6 (1 / 2) 1 0 v w ∧ v 0 = 10 ∧ w 0 = -10 ∧
+    Tendsto (fun t => (v t, w t)) atTop (𝓝 (-3, 6)) := by
+  obtain ⟨v, w, h, hv0, hw0⟩ := exists_isSolution (a := 6) (b := 1 / 2) (ε := 1) (I := 0)
+    (by norm_num) (by norm_num) 10 (-10)
+  exact ⟨v, w, h, hv0, hw0, h.tendsto_rest_of_four_lt_sq
+    (by norm_num [IsEquilibrium, vField, wField]) (by norm_num) (by norm_num) (by norm_num)⟩
+
+/-- Every periodic solution is the rest state. -/
+example {v w : ℝ → ℝ} (h : IsSolution 6 (1 / 2) 1 0 v w) {T : ℝ} (hT : 0 < T)
+    (hvT : ∀ t, 0 ≤ t → v (t + T) = v t) (hwT : ∀ t, 0 ≤ t → w (t + T) = w t) {t : ℝ}
+    (ht : 0 ≤ t) : v t = -3 ∧ w t = 6 :=
+  h.eq_rest_of_periodic_of_four_le_sq (by norm_num [IsEquilibrium, vField, wField]) (by norm_num)
+    (by norm_num) (by norm_num) hT hvT hwT ht
+
+/-! ### Boundary `v*² = 4`: `a = 5/2`, `b = 3/4`, `ε = 1`, `I = 0`, rest state `(-2, 2/3)` -/
+
+example : IsEquilibrium (5 / 2) (3 / 4) 1 0 (-2) (2 / 3) := by
+  norm_num [IsEquilibrium, vField, wField]
+
+/-- From the definition, `restFactor (-2) x = -(x - 3)² / 3 ≤ 0`, with equality at `x = 3`: the
+band `restFactor > 0` is empty, and the global rate `min (v*²/4 - 1) (b ε)` is `0`. -/
+example : restFactor (-2) 3 = 0 := by norm_num [restFactor]
+
+example (x : ℝ) : restFactor (-2) x = -(x - 3) ^ 2 / 3 := by unfold restFactor; ring
+
+example : min ((-2 : ℝ) ^ 2 / 4 - 1) (3 / 4 * 1) = 0 := by norm_num
+
+/-- The rest state is a periodic solution of every period (the periodicity hypotheses are
+satisfiable). -/
+example : IsSolution (5 / 2) (3 / 4) 1 0 (fun _ => -2) (fun _ => 2 / 3) := by
+  intro t _
+  constructor
+  · convert hasDerivAt_const t (-2 : ℝ) using 1; norm_num [vField]
+  · convert hasDerivAt_const t (2 / 3 : ℝ) using 1; norm_num [wField]
+
+/-- Periodic orbits are still excluded at `v*² = 4`. -/
+example {v w : ℝ → ℝ} (h : IsSolution (5 / 2) (3 / 4) 1 0 v w) {T : ℝ} (hT : 0 < T)
+    (hvT : ∀ t, 0 ≤ t → v (t + T) = v t) (hwT : ∀ t, 0 ≤ t → w (t + T) = w t) {t : ℝ}
+    (ht : 0 ≤ t) : v t = -2 ∧ w t = 2 / 3 :=
+  h.eq_rest_of_periodic_of_four_le_sq (by norm_num [IsEquilibrium, vField, wField]) (by norm_num)
+    (by norm_num) (by norm_num) hT hvT hwT ht
+
+/-- At the classical rest state a nonconstant periodic solution would have to visit the
+rising-pulse window. -/
+example {v w : ℝ → ℝ} (h : IsSolution (6 / 5) (4 / 5) (2 / 25) 0 v w) {T : ℝ} (hT : 0 < T)
+    (hvT : ∀ t, 0 ≤ t → v (t + T) = v t) (hwT : ∀ t, 0 ≤ t → w (t + T) = w t)
+    (hne : ∃ t₀, 0 ≤ t₀ ∧ (v t₀ ≠ -3 / 2 ∨ w t₀ ≠ -3 / 8)) :
+    ∃ t, 0 ≤ t ∧ pulseRootLow (-3 / 2) < v t + 3 / 2 ∧ v t + 3 / 2 < pulseRootHigh (-3 / 2) := by
+  obtain ⟨t, ht, h1, h2⟩ := h.exists_mem_pulse_window_of_periodic
+    (by norm_num [IsEquilibrium, vField, wField]) (by norm_num) (by norm_num) (by norm_num) hT hvT
+    hwT hne
+  exact ⟨t, ht, by linarith, by linarith⟩
 
 end MathlibExtTest.Biology.Biophysics.FitzHughNagumo

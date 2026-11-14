@@ -102,11 +102,31 @@ the equilibrium needs `0 < b ≤ 1`.
   `γ` the voltage reaches `γ` within an explicit time. These trajectory statements carry their
   slow-drift, margin and time hypotheses explicitly; they do not follow from
   `IsRisingAfterPulse` alone.
+* **Return to rest.** Around an equilibrium `(v*, w*)` the shifted energy
+  `restEnergy ε v* w* v w = (v - v*)² + (w - w*)² / ε` has derivative
+  `restFlux = 2 ((v - v*)² · restFactor v* (v - v*) - b (w - w*)²)` along the field
+  (`hasDerivAt_restEnergy`, `restFlux_eq`), where `restFactor v* x = 1 - v*² - v* x - x² / 3`
+  is the post-pulse factor of `vField_pulse`. `IsSolution.restEnergy_le_exp`: while
+  `restFactor ≤ -c` along a solution, `restEnergy` decays like `e^{-2 min c (b ε) t}`. Since
+  `restFactor v* x ≤ 1 - v*² / 4` (`restFactor_le`), for `v*² > 4`, `b, ε > 0` every solution
+  returns to rest exponentially (`IsSolution.restEnergy_le_exp_global`,
+  `IsSolution.tendsto_rest_of_four_lt_sq`). For `ρ > 0` with `|v*| ρ < v*² - 1` (so `v*² > 1`;
+  this includes the classical left-branch rest states) the set `restEnergy ≤ ρ²` is forward
+  invariant (`IsSolution.restEnergy_le_of_basin`) and every solution starting in it returns to rest
+  exponentially (`IsSolution.restEnergy_le_exp_of_basin`, `IsSolution.tendsto_rest_of_basin`).
+* **Periodic orbits.** `IsSolution.eq_rest_of_periodic`: for `b, ε > 0` a periodic solution along
+  which `restFactor v* (v - v*) ≤ 0` throughout is the constant rest state. Hence for `v*² ≥ 4`
+  there is no nonconstant periodic orbit (`IsSolution.eq_rest_of_periodic_of_four_le_sq`), and for
+  `v*² ≤ 4` every nonconstant periodic orbit visits a state whose voltage displacement `v - v*`
+  lies in the rising-pulse window `(pulseRootLow v*, pulseRootHigh v*)`
+  (`restFactor_pos_iff`, `IsSolution.exists_mem_pulse_window_of_periodic`).
 
-The singular-perturbation (`ε → 0`) analysis, a trajectory-level firing threshold, the full return
-to rest after a spike, periodic orbits and bifurcations (a linear center is only a nonhyperbolic
-linearization; no transversality or nonlinear nondegeneracy condition is checked), and the Nagumo
-cubic `v (v - α)(1 - v)` form are not treated.
+The singular-perturbation (`ε → 0`) analysis, a trajectory-level firing threshold, the return to
+rest after a large excursion (a spike) from a rest state with `v*² ≤ 4` (the basin above is a
+neighbourhood of the rest state, not a spike), the existence of periodic orbits (relaxation
+oscillations; this needs Poincaré–Bendixson, which is not available) and bifurcations (a linear
+center is only a nonhyperbolic linearization; no transversality or nonlinear nondegeneracy
+condition is checked), and the Nagumo cubic `v (v - α)(1 - v)` form are not treated.
 
 ## References
 
@@ -884,5 +904,343 @@ theorem single_pulse_response {vr wr δ : ℝ} (hrest : IsEquilibrium a b ε I v
   refine ⟨fun hsub => h.v_le_of_barrier hdrift ?_ hv0.le, fun γ m hγ hm hηm hTlen =>
     h.exists_v_ge hT hdrift hγ hm hηm hTlen hv0.ge⟩
   rwa [vField_pulse hrest.1]
+
+/-! ### Return to rest -/
+
+/-- The energy `(v - vr)² + (w - wr)² / ε` centred at the state `(vr, wr)`. -/
+def restEnergy (ε vr wr v w : ℝ) : ℝ := energy ε (v - vr) (w - wr)
+
+/-- `restFactor vr x = 1 - vr² - vr x - x² / 3`. At an equilibrium with voltage `vr` the voltage
+field at the voltage displacement `x = v - vr` is `x · restFactor vr x - (w - wr)`
+(`vField_eq_restFactor`); at `x = δ`, `w = wr` this is the post-pulse field of `vField_pulse`. -/
+def restFactor (vr x : ℝ) : ℝ := 1 - vr ^ 2 - vr * x - x ^ 2 / 3
+
+/-- The flux `⟪∇restEnergy, field⟫` of the field through the level sets of `restEnergy`: the
+derivative of `restEnergy` along trajectories (`hasDerivAt_restEnergy`). -/
+def restFlux (a b ε I vr wr v w : ℝ) : ℝ :=
+  2 * (v - vr) * vField I v w + 2 * (w - wr) / ε * wField a b ε v w
+
+theorem restFactor_eq (vr x : ℝ) :
+    restFactor vr x = 1 - vr ^ 2 / 4 - (x + 3 * vr / 2) ^ 2 / 3 := by
+  unfold restFactor
+  ring
+
+/-- `restFactor vr x ≤ 1 - vr² / 4`, with equality at `x = -3 vr / 2`. -/
+theorem restFactor_le (vr x : ℝ) : restFactor vr x ≤ 1 - vr ^ 2 / 4 := by
+  rw [restFactor_eq]
+  have := sq_nonneg (x + 3 * vr / 2)
+  linarith
+
+/-- On the strip `|x| ≤ ρ`, `restFactor vr x ≤ -(vr² - 1 - |vr| ρ)`. -/
+theorem restFactor_le_of_abs_le {vr x ρ : ℝ} (hx : |x| ≤ ρ) :
+    restFactor vr x ≤ -(vr ^ 2 - 1 - |vr| * ρ) := by
+  have h1 : -(vr * x) ≤ |vr| * ρ :=
+    calc -(vr * x) ≤ |vr * x| := neg_le_abs _
+      _ = |vr| * |x| := abs_mul _ _
+      _ ≤ |vr| * ρ := mul_le_mul_of_nonneg_left hx (abs_nonneg _)
+  have := sq_nonneg x
+  unfold restFactor
+  linarith
+
+/-- For `vr² ≤ 4`, `restFactor vr δ > 0` exactly on the rising-pulse window
+`pulseRootLow vr < δ < pulseRootHigh vr` (`isRisingAfterPulse_iff`). -/
+theorem restFactor_pos_iff {vr δ : ℝ} (hv : vr ^ 2 ≤ 4) :
+    0 < restFactor vr δ ↔ pulseRootLow vr < δ ∧ δ < pulseRootHigh vr := by
+  unfold restFactor
+  rw [pulse_factor hv]
+  have hle := pulseRootLow_le_pulseRootHigh vr
+  constructor
+  · intro hpos
+    have : (δ - pulseRootLow vr) * (δ - pulseRootHigh vr) < 0 := by linarith
+    rcases mul_neg_iff.1 this with ⟨h1, h2⟩ | ⟨h1, h2⟩
+    · exact ⟨by linarith, by linarith⟩
+    · exact absurd hle (by linarith)
+  · rintro ⟨h1, h2⟩
+    have : (δ - pulseRootLow vr) * (δ - pulseRootHigh vr) < 0 :=
+      mul_neg_of_pos_of_neg (by linarith) (by linarith)
+    linarith
+
+/-- The voltage field in coordinates centred at an equilibrium `(vr, wr)`. -/
+theorem vField_eq_restFactor {vr wr : ℝ} (hrest : IsEquilibrium a b ε I vr wr) (v w : ℝ) :
+    vField I v w = (v - vr) * restFactor vr (v - vr) - (w - wr) := by
+  have := hrest.1
+  unfold vField restFactor at *
+  linear_combination this
+
+/-- The recovery field in coordinates centred at an equilibrium `(vr, wr)`. -/
+theorem wField_eq_shift {vr wr : ℝ} (hrest : IsEquilibrium a b ε I vr wr) (v w : ℝ) :
+    wField a b ε v w = ε * ((v - vr) - b * (w - wr)) := by
+  have := hrest.2
+  unfold wField at *
+  linear_combination this
+
+/-- The flux in closed form at an equilibrium `(vr, wr)` (the coupling terms `∓ (v - vr)(w - wr)`
+cancel): `restFlux = 2 ((v - vr)² · restFactor vr (v - vr) - b (w - wr)²)`. -/
+theorem restFlux_eq {vr wr : ℝ} (hrest : IsEquilibrium a b ε I vr wr) (hε : ε ≠ 0) (v w : ℝ) :
+    restFlux a b ε I vr wr v w =
+      2 * ((v - vr) ^ 2 * restFactor vr (v - vr) - b * (w - wr) ^ 2) := by
+  unfold restFlux
+  rw [vField_eq_restFactor hrest, wField_eq_shift hrest]
+  field_simp
+  ring
+
+/-- The derivative of `restEnergy` along a trajectory is `restFlux`. -/
+theorem hasDerivAt_restEnergy {vr wr t : ℝ} (hv : HasDerivAt v (vField I (v t) (w t)) t)
+    (hw : HasDerivAt w (wField a b ε (v t) (w t)) t) :
+    HasDerivAt (fun s => restEnergy ε vr wr (v s) (w s))
+      (restFlux a b ε I vr wr (v t) (w t)) t := by
+  have := ((hv.sub_const vr).pow 2).add (((hw.sub_const wr).pow 2).div_const ε)
+  refine this.congr_deriv ?_
+  unfold restFlux
+  push_cast
+  ring
+
+theorem restEnergy_nonneg (hε : 0 < ε) (vr wr v w : ℝ) : 0 ≤ restEnergy ε vr wr v w :=
+  add_nonneg (sq_nonneg _) (div_nonneg (sq_nonneg _) hε.le)
+
+theorem sq_sub_le_restEnergy (hε : 0 < ε) (vr wr v w : ℝ) :
+    (v - vr) ^ 2 ≤ restEnergy ε vr wr v w := by
+  unfold restEnergy energy
+  linarith [div_nonneg (sq_nonneg (w - wr)) hε.le]
+
+theorem sq_sub_le_mul_restEnergy (hε : 0 < ε) (vr wr v w : ℝ) :
+    (w - wr) ^ 2 ≤ ε * restEnergy ε vr wr v w := by
+  have : ε * restEnergy ε vr wr v w = ε * (v - vr) ^ 2 + (w - wr) ^ 2 := by
+    unfold restEnergy energy
+    field_simp
+  rw [this]
+  linarith [mul_nonneg hε.le (sq_nonneg (v - vr))]
+
+/-- **Dissipation at an equilibrium.** For `ε > 0`, at a state whose voltage displacement `x`
+has `restFactor vr x ≤ -c`, `restFlux ≤ -2 min c (b ε) · restEnergy`. -/
+theorem restFlux_le {vr wr : ℝ} (hrest : IsEquilibrium a b ε I vr wr) (hε : 0 < ε)
+    {c v w : ℝ} (hq : restFactor vr (v - vr) ≤ -c) :
+    restFlux a b ε I vr wr v w ≤ -(2 * min c (b * ε)) * restEnergy ε vr wr v w := by
+  rw [restFlux_eq hrest hε.ne']
+  have hk1 : min c (b * ε) ≤ c := min_le_left _ _
+  have hk2 : min c (b * ε) ≤ b * ε := min_le_right _ _
+  have h1 : (v - vr) ^ 2 * restFactor vr (v - vr) ≤ -(min c (b * ε)) * (v - vr) ^ 2 := by
+    nlinarith [mul_le_mul_of_nonneg_left hq (sq_nonneg (v - vr)),
+      mul_le_mul_of_nonneg_right hk1 (sq_nonneg (v - vr))]
+  have h2 : min c (b * ε) * ((w - wr) ^ 2 / ε) ≤ b * (w - wr) ^ 2 := by
+    rw [mul_div_assoc', div_le_iff₀ hε]
+    nlinarith [mul_le_mul_of_nonneg_right hk2 (sq_nonneg (w - wr))]
+  unfold restEnergy energy
+  nlinarith [h1, h2]
+
+/-- **Exponential decay to rest.** For `ε > 0` and an equilibrium `(vr, wr)`: if
+`restFactor vr (v s - vr) ≤ -c` along a solution for `s ∈ [0, t]`, then
+`restEnergy(t) ≤ e^{-2 min c (b ε) t} restEnergy(0)`.
+
+Proof: `restFlux_le` and Mathlib's Grönwall bound `le_gronwallBound_of_liminf_deriv_right_le`. -/
+theorem IsSolution.restEnergy_le_exp (h : IsSolution a b ε I v w) {vr wr : ℝ}
+    (hrest : IsEquilibrium a b ε I vr wr) (hε : 0 < ε) {c t : ℝ} (ht : 0 ≤ t)
+    (hq : ∀ s ∈ Icc 0 t, restFactor vr (v s - vr) ≤ -c) :
+    restEnergy ε vr wr (v t) (w t) ≤
+      exp (-(2 * min c (b * ε)) * t) * restEnergy ε vr wr (v 0) (w 0) := by
+  have hd : ∀ s ∈ Icc 0 t, HasDerivAt (fun s => restEnergy ε vr wr (v s) (w s))
+      (restFlux a b ε I vr wr (v s) (w s)) s := fun s hs =>
+    hasDerivAt_restEnergy (h s hs.1).1 (h s hs.1).2
+  have := le_gronwallBound_of_liminf_deriv_right_le
+    (f := fun s => restEnergy ε vr wr (v s) (w s))
+    (δ := restEnergy ε vr wr (v 0) (w 0)) (K := -(2 * min c (b * ε))) (ε := 0)
+    (fun s hs => (hd s hs).continuousAt.continuousWithinAt)
+    (fun s hs _ hr => ((hd s (Ico_subset_Icc_self hs)).hasDerivWithinAt).liminf_right_slope_le hr)
+    le_rfl (fun s hs => by
+      rw [add_zero]
+      exact restFlux_le hrest hε (hq s (Ico_subset_Icc_self hs))) t ⟨ht, le_rfl⟩
+  rw [gronwallBound_ε0, sub_zero] at this
+  exact this.trans_eq (mul_comm _ _)
+
+/-- **Global return to rest, rate form.** For `ε > 0` and any equilibrium `(vr, wr)`, every
+solution satisfies `restEnergy(t) ≤ e^{-2 min (vr²/4 - 1) (b ε) t} restEnergy(0)`; the rate is
+positive iff `vr² > 4` and `b > 0` (`IsSolution.tendsto_rest_of_four_lt_sq`). -/
+theorem IsSolution.restEnergy_le_exp_global (h : IsSolution a b ε I v w) {vr wr : ℝ}
+    (hrest : IsEquilibrium a b ε I vr wr) (hε : 0 < ε) {t : ℝ} (ht : 0 ≤ t) :
+    restEnergy ε vr wr (v t) (w t) ≤
+      exp (-(2 * min (vr ^ 2 / 4 - 1) (b * ε)) * t) * restEnergy ε vr wr (v 0) (w 0) :=
+  h.restEnergy_le_exp hrest hε ht fun s _ => by
+    have := restFactor_le vr (v s - vr)
+    linarith
+
+/-- **Forward invariance of a basin of the rest state.** For `b, ε > 0`, an equilibrium
+`(vr, wr)` and `ρ > 0` with `|vr| ρ < vr² - 1`, a solution starting in `restEnergy ≤ ρ²` stays
+there for all `t ≥ 0`. -/
+theorem IsSolution.restEnergy_le_of_basin (h : IsSolution a b ε I v w) {vr wr : ℝ}
+    (hrest : IsEquilibrium a b ε I vr wr) (hb : 0 < b) (hε : 0 < ε) {ρ : ℝ} (hρ : 0 < ρ)
+    (hρv : |vr| * ρ < vr ^ 2 - 1) (h0 : restEnergy ε vr wr (v 0) (w 0) ≤ ρ ^ 2) {t : ℝ}
+    (ht : 0 ≤ t) : restEnergy ε vr wr (v t) (w t) ≤ ρ ^ 2 := by
+  have hd : ∀ s ∈ Icc 0 t, HasDerivAt (fun s => restEnergy ε vr wr (v s) (w s))
+      (restFlux a b ε I vr wr (v s) (w s)) s := fun s hs =>
+    hasDerivAt_restEnergy (h s hs.1).1 (h s hs.1).2
+  refine image_le_of_deriv_right_lt_deriv_boundary' (B := fun _ => ρ ^ 2) (B' := fun _ => 0)
+    (fun s hs => (hd s hs).continuousAt.continuousWithinAt)
+    (fun s hs => (hd s (Ico_subset_Icc_self hs)).hasDerivWithinAt) h0 continuousOn_const
+    (fun _ _ => hasDerivWithinAt_const _ _ _) (fun s _ hs => ?_) ⟨ht, le_rfl⟩
+  have hs' : restEnergy ε vr wr (v s) (w s) = ρ ^ 2 := hs
+  have hx : |v s - vr| ≤ ρ := by
+    have := Real.abs_le_sqrt ((sq_sub_le_restEnergy hε vr wr (v s) (w s)).trans hs'.le)
+    rwa [Real.sqrt_sq hρ.le] at this
+  have hc : 0 < min (vr ^ 2 - 1 - |vr| * ρ) (b * ε) := lt_min (sub_pos.2 hρv) (mul_pos hb hε)
+  have := restFlux_le (v := v s) (w := w s) hrest hε (restFactor_le_of_abs_le hx)
+  rw [hs'] at this
+  change restFlux a b ε I vr wr (v s) (w s) < 0
+  nlinarith [mul_pos hc (pow_pos hρ 2)]
+
+/-- **Local return to rest, rate form.** For `b, ε > 0`, an equilibrium `(vr, wr)` and `ρ > 0`
+with `|vr| ρ < vr² - 1` (so `vr² > 1`), every solution starting in `restEnergy ≤ ρ²` satisfies
+`restEnergy(t) ≤ e^{-2 min (vr² - 1 - |vr| ρ) (b ε) t} restEnergy(0)`. -/
+theorem IsSolution.restEnergy_le_exp_of_basin (h : IsSolution a b ε I v w) {vr wr : ℝ}
+    (hrest : IsEquilibrium a b ε I vr wr) (hb : 0 < b) (hε : 0 < ε) {ρ : ℝ} (hρ : 0 < ρ)
+    (hρv : |vr| * ρ < vr ^ 2 - 1) (h0 : restEnergy ε vr wr (v 0) (w 0) ≤ ρ ^ 2) {t : ℝ}
+    (ht : 0 ≤ t) :
+    restEnergy ε vr wr (v t) (w t) ≤
+      exp (-(2 * min (vr ^ 2 - 1 - |vr| * ρ) (b * ε)) * t) * restEnergy ε vr wr (v 0) (w 0) :=
+  h.restEnergy_le_exp hrest hε ht fun s hs => restFactor_le_of_abs_le (by
+    have := Real.abs_le_sqrt ((sq_sub_le_restEnergy hε vr wr (v s) (w s)).trans
+      (h.restEnergy_le_of_basin hrest hb hε hρ hρv h0 hs.1))
+    rwa [Real.sqrt_sq hρ.le] at this)
+
+/-- An exponential bound on `restEnergy` with a positive rate gives convergence to `(vr, wr)`. -/
+theorem tendsto_of_restEnergy_le_exp (hε : 0 < ε) {vr wr κ E₀ : ℝ} (hκ : 0 < κ)
+    (hE : ∀ t, 0 ≤ t → restEnergy ε vr wr (v t) (w t) ≤ exp (-(2 * κ) * t) * E₀) :
+    Tendsto (fun t => (v t, w t)) atTop (𝓝 (vr, wr)) := by
+  have hexp : Tendsto (fun t => exp (-(2 * κ) * t) * E₀) atTop (𝓝 0) := by
+    have : Tendsto (fun t : ℝ => exp (-(2 * κ * t))) atTop (𝓝 0) :=
+      Real.tendsto_exp_neg_atTop_nhds_zero.comp (tendsto_id.const_mul_atTop (by positivity))
+    simpa [neg_mul] using this.mul_const E₀
+  have h0 : Tendsto (fun t => restEnergy ε vr wr (v t) (w t)) atTop (𝓝 0) :=
+    squeeze_zero' (Eventually.of_forall fun t => restEnergy_nonneg hε _ _ _ _)
+      ((eventually_ge_atTop 0).mono fun t ht => hE t ht) hexp
+  have h0' : Tendsto (fun t => ε * restEnergy ε vr wr (v t) (w t)) atTop (𝓝 0) := by
+    simpa using h0.const_mul ε
+  have hs1 : Tendsto (fun t => √(restEnergy ε vr wr (v t) (w t))) atTop (𝓝 0) := by
+    have := (Real.continuous_sqrt.tendsto 0).comp h0
+    rwa [Real.sqrt_zero] at this
+  have hs2 : Tendsto (fun t => √(ε * restEnergy ε vr wr (v t) (w t))) atTop (𝓝 0) := by
+    have := (Real.continuous_sqrt.tendsto 0).comp h0'
+    rwa [Real.sqrt_zero] at this
+  have hv : Tendsto v atTop (𝓝 vr) := tendsto_sub_nhds_zero_iff.1 <|
+    squeeze_zero_norm (fun t => by
+      rw [Real.norm_eq_abs]; exact Real.abs_le_sqrt (sq_sub_le_restEnergy hε _ _ _ _)) hs1
+  have hw : Tendsto w atTop (𝓝 wr) := tendsto_sub_nhds_zero_iff.1 <|
+    squeeze_zero_norm (fun t => by
+      rw [Real.norm_eq_abs]; exact Real.abs_le_sqrt (sq_sub_le_mul_restEnergy hε _ _ _ _)) hs2
+  exact hv.prodMk_nhds hw
+
+/-- **Global return to rest.** For `b, ε > 0` and an equilibrium `(vr, wr)` with `vr² > 4`, every
+solution converges to `(vr, wr)` (exponentially, `IsSolution.restEnergy_le_exp_global`). -/
+theorem IsSolution.tendsto_rest_of_four_lt_sq (h : IsSolution a b ε I v w) {vr wr : ℝ}
+    (hrest : IsEquilibrium a b ε I vr wr) (hb : 0 < b) (hε : 0 < ε) (hv : 4 < vr ^ 2) :
+    Tendsto (fun t => (v t, w t)) atTop (𝓝 (vr, wr)) :=
+  tendsto_of_restEnergy_le_exp hε (lt_min (by linarith) (mul_pos hb hε))
+    fun _ ht => h.restEnergy_le_exp_global hrest hε ht
+
+/-- **Local return to rest.** For `b, ε > 0`, an equilibrium `(vr, wr)` and `ρ > 0` with
+`|vr| ρ < vr² - 1`, every solution starting in `restEnergy ≤ ρ²` converges to `(vr, wr)`
+(exponentially, `IsSolution.restEnergy_le_exp_of_basin`). -/
+theorem IsSolution.tendsto_rest_of_basin (h : IsSolution a b ε I v w) {vr wr : ℝ}
+    (hrest : IsEquilibrium a b ε I vr wr) (hb : 0 < b) (hε : 0 < ε) {ρ : ℝ} (hρ : 0 < ρ)
+    (hρv : |vr| * ρ < vr ^ 2 - 1) (h0 : restEnergy ε vr wr (v 0) (w 0) ≤ ρ ^ 2) :
+    Tendsto (fun t => (v t, w t)) atTop (𝓝 (vr, wr)) :=
+  tendsto_of_restEnergy_le_exp hε (lt_min (sub_pos.2 hρv) (mul_pos hb hε))
+    fun _ ht => h.restEnergy_le_exp_of_basin hrest hb hε hρ hρv h0 ht
+
+/-! ### Periodic orbits -/
+
+/-- **Periodic orbits must enter the band `restFactor > 0`.** For `b, ε > 0` and an equilibrium
+`(vr, wr)`, a `T`-periodic solution (`T > 0`) along which `restFactor vr (v - vr) ≤ 0` at all
+times is the constant rest state.
+
+Proof: `restEnergy` is antitone (its derivative is `restFlux ≤ -2 b (w - wr)² ≤ 0`) and
+`T`-periodic, hence constant on `[0, ∞)`; so `restFlux = 0` on `(0, ∞)`, forcing `w = wr` there,
+and then `w' = ε (v - vr) = 0` forces `v = vr`. The time `0` follows by periodicity. -/
+theorem IsSolution.eq_rest_of_periodic (h : IsSolution a b ε I v w) {vr wr : ℝ}
+    (hrest : IsEquilibrium a b ε I vr wr) (hb : 0 < b) (hε : 0 < ε) {T : ℝ} (hT : 0 < T)
+    (hvT : ∀ t, 0 ≤ t → v (t + T) = v t) (hwT : ∀ t, 0 ≤ t → w (t + T) = w t)
+    (hq : ∀ t, 0 ≤ t → restFactor vr (v t - vr) ≤ 0) {t : ℝ} (ht : 0 ≤ t) :
+    v t = vr ∧ w t = wr := by
+  set E : ℝ → ℝ := fun s => restEnergy ε vr wr (v s) (w s) with hEdef
+  have hd : ∀ s, 0 ≤ s → HasDerivAt E (restFlux a b ε I vr wr (v s) (w s)) s := fun s hs =>
+    hasDerivAt_restEnergy (h s hs).1 (h s hs).2
+  have hflux : ∀ s, 0 ≤ s → restFlux a b ε I vr wr (v s) (w s) ≤ -(2 * b) * (w s - wr) ^ 2 := by
+    intro s hs
+    rw [restFlux_eq hrest hε.ne']
+    nlinarith [mul_nonpos_of_nonneg_of_nonpos (sq_nonneg (v s - vr)) (hq s hs)]
+  have hanti : AntitoneOn E (Ici 0) := by
+    refine antitoneOn_of_deriv_nonpos (convex_Ici 0)
+      (fun s hs => (hd s hs).continuousAt.continuousWithinAt) (fun s hs => ?_) (fun s hs => ?_)
+    · rw [interior_Ici] at hs
+      exact (hd s (le_of_lt hs)).differentiableAt.differentiableWithinAt
+    · rw [interior_Ici] at hs
+      rw [(hd s (le_of_lt hs)).deriv]
+      nlinarith [hflux s (le_of_lt hs), sq_nonneg (w s - wr)]
+  have hper : ∀ n : ℕ, E (n * T) = E 0 := by
+    intro n
+    induction n with
+    | zero => simp
+    | succ n ih =>
+      have hn : (0 : ℝ) ≤ n * T := by positivity
+      rw [Nat.cast_succ, add_mul, one_mul, ← ih]
+      change restEnergy ε vr wr (v (n * T + T)) (w (n * T + T)) =
+        restEnergy ε vr wr (v (n * T)) (w (n * T))
+      rw [hvT _ hn, hwT _ hn]
+  have hconst : ∀ s, 0 ≤ s → E s = E 0 := by
+    intro s hs
+    obtain ⟨n, hn⟩ := exists_nat_gt (s / T)
+    have hsn : s ≤ n * T := by rw [div_lt_iff₀ hT] at hn; linarith
+    refine le_antisymm (hanti (mem_Ici.2 le_rfl) (mem_Ici.2 hs) hs) ?_
+    rw [← hper n]
+    exact hanti (mem_Ici.2 hs) (mem_Ici.2 (hs.trans hsn)) hsn
+  have hw_eq : ∀ s, 0 < s → w s = wr := by
+    intro s hs
+    have h0 : HasDerivAt E 0 s := (hasDerivAt_const s (E 0)).congr_of_eventuallyEq
+      (by filter_upwards [Ioi_mem_nhds hs] with u hu using hconst u (le_of_lt hu))
+    have h1 := hflux s hs.le
+    rw [(hd s hs.le).unique h0] at h1
+    have h2 : (w s - wr) ^ 2 = 0 := le_antisymm (by nlinarith) (sq_nonneg _)
+    have := (pow_eq_zero_iff two_ne_zero).1 h2
+    linarith
+  have hv_eq : ∀ s, 0 < s → v s = vr := by
+    intro s hs
+    have h0 : HasDerivAt w 0 s := (hasDerivAt_const s wr).congr_of_eventuallyEq
+      (by filter_upwards [Ioi_mem_nhds hs] with u hu using hw_eq u hu)
+    have h1 := (h s hs.le).2.unique h0
+    rw [wField_eq_shift hrest, hw_eq s hs] at h1
+    have h2 : ε * (v s - vr) = 0 := by linear_combination h1
+    have := (mul_eq_zero.1 h2).resolve_left hε.ne'
+    linarith
+  rcases ht.eq_or_lt with rfl | ht'
+  · rw [← hvT 0 le_rfl, ← hwT 0 le_rfl, zero_add]
+    exact ⟨hv_eq T hT, hw_eq T hT⟩
+  · exact ⟨hv_eq t ht', hw_eq t ht'⟩
+
+/-- **No periodic orbits for `vr² ≥ 4`.** For `b, ε > 0` and an equilibrium `(vr, wr)` with
+`vr² ≥ 4`, every periodic solution is the constant rest state. -/
+theorem IsSolution.eq_rest_of_periodic_of_four_le_sq (h : IsSolution a b ε I v w) {vr wr : ℝ}
+    (hrest : IsEquilibrium a b ε I vr wr) (hb : 0 < b) (hε : 0 < ε) (hv : 4 ≤ vr ^ 2) {T : ℝ}
+    (hT : 0 < T) (hvT : ∀ t, 0 ≤ t → v (t + T) = v t) (hwT : ∀ t, 0 ≤ t → w (t + T) = w t)
+    {t : ℝ} (ht : 0 ≤ t) : v t = vr ∧ w t = wr :=
+  h.eq_rest_of_periodic hrest hb hε hT hvT hwT (fun s _ => by
+    have := restFactor_le vr (v s - vr)
+    linarith) ht
+
+/-- **Nonconstant periodic orbits pass through the rising-pulse window.** For `b, ε > 0` and an
+equilibrium `(vr, wr)` with `vr² ≤ 4`, a `T`-periodic solution that is not the constant rest
+state visits a state whose voltage displacement `v - vr` lies in the window
+`pulseRootLow vr < v - vr < pulseRootHigh vr` of pulse amplitudes after which the voltage rises
+(`isRisingAfterPulse_iff`). -/
+theorem IsSolution.exists_mem_pulse_window_of_periodic (h : IsSolution a b ε I v w)
+    {vr wr : ℝ} (hrest : IsEquilibrium a b ε I vr wr) (hb : 0 < b) (hε : 0 < ε)
+    (hv : vr ^ 2 ≤ 4) {T : ℝ} (hT : 0 < T) (hvT : ∀ t, 0 ≤ t → v (t + T) = v t)
+    (hwT : ∀ t, 0 ≤ t → w (t + T) = w t) (hne : ∃ t₀, 0 ≤ t₀ ∧ (v t₀ ≠ vr ∨ w t₀ ≠ wr)) :
+    ∃ t, 0 ≤ t ∧ pulseRootLow vr < v t - vr ∧ v t - vr < pulseRootHigh vr := by
+  by_contra hcon
+  obtain ⟨t₀, ht₀, hne⟩ := hne
+  have hq : ∀ t, 0 ≤ t → restFactor vr (v t - vr) ≤ 0 := fun t ht => by
+    by_contra hpos
+    exact hcon ⟨t, ht, (restFactor_pos_iff hv).1 (lt_of_not_ge hpos)⟩
+  have := h.eq_rest_of_periodic hrest hb hε hT hvT hwT hq ht₀
+  tauto
 
 end MathlibExt.Biology.Biophysics.FitzHughNagumo
