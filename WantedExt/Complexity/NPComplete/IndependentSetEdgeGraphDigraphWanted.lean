@@ -59,9 +59,15 @@ DIRECTED CUT). For an undirected graph `H`, let the loopless digraph `D` have th
 and `(v, u)` for every edge `{u, v}`: the arcs leaving `X` are one per edge of `H` between `X` and
 its complement, so the edge graph of `D` has an independent set of `K` or more vertices iff `H` has
 a cut of `K` or more edges, which is SIMPLE MAX CUT, NP-complete by Garey, Johnson and Stockmeyer
-(1976) (`MaxCutWanted`). Membership in NP: the certificate is `V'` together with `D` and the
-isomorphism, of size polynomial in `|V|` (`D` may be taken without isolated vertices, so it has at
-most `2 |V|` vertices).
+(1976) (`MaxCutWanted`). Membership in NP: `n` is binary, so the certificate covers only the
+non-isolated vertices of `G`, at most `2 |E|` of them. Deleting from `D` the arcs that are isolated
+vertices of its edge graph leaves, on the remaining arcs, the edge graph of the remaining digraph,
+and a fresh arc `x → y` between two new vertices is an isolated vertex of the edge graph; hence `G`
+is the edge graph of a digraph iff the subgraph induced by its non-isolated vertices is. The
+certificate is a digraph for that subgraph, restricted to the endpoints of its arcs (at most `4 |E|`
+vertices), the isomorphism, and the part `S` of `V'` among the non-isolated vertices, checked
+against `|S| + (n - c) ≥ K` with `c` the number of non-isolated vertices (isolated vertices can
+always join an independent set).
 
 The instance, the graph and the question follow
 `WantedExt.Complexity.NPComplete.TriangleFreeIndependentSetWanted`: a vertex count `n`
