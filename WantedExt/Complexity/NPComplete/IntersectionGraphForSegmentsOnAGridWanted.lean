@@ -43,6 +43,15 @@ A segment `[(x, y), (z, w)]` is MathlibExt's closed straight-line segment
 two segments intersect when they share a point. The "if and only if" is required for distinct
 vertices `u ≠ v` (a segment always meets itself, while the graph has no loops).
 
+Membership in NP with the vertex count `n` in binary: only the vertices incident to an edge
+(at most `2|E|`) need segments in a certificate. An isolated vertex can always take a single
+grid point covered by no other segment (a point meets only segments through it), and in any
+representation each isolated vertex's segment has an endpoint on no other segment, distinct for
+distinct isolated vertices. So the instance is a yes-instance iff some placement of the
+non-isolated vertices leaves at least as many uncovered points of the `M × N` grid as there are
+isolated vertices, and that count is computed in polynomial time from the at most `2|E|` axis-
+parallel segments (merge overlapping segments per line, then subtract crossings).
+
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
 bitstrings decoding to malformed instances, are no-instances.
