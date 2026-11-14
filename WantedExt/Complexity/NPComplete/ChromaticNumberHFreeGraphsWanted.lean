@@ -37,7 +37,7 @@ namespace MetaMathlibExt.Complexity.NPComplete.ChromaticNumberHFreeGraphs
 
 Fix a graph `H` that is not an induced subgraph of `P₄` or of `P₁ + P₃`.
 INSTANCE: a graph `G = (V, E)` (finite, simple, undirected) with no induced subgraph
-isomorphic to `H`, and an integer `K`.
+isomorphic to `H`, and a positive integer `K`.
 QUESTION: is `G` properly `K`-colorable?
 
 This is GRAPH COLORING (`WantedExt.Complexity.NPComplete.GraphColoringWanted`) restricted to
@@ -46,7 +46,8 @@ polynomial-time solvable if `H` is an induced subgraph of `P₄` or of `P₁ + P
 NP-complete otherwise; the theorem below states the NP-complete side, for every such `H`. The
 instance type, the graph, the parent well-formedness condition and the question are those of
 the parent module (`GraphColoring.GraphColoringInstance`, `GraphColoring.Graph`,
-`GraphColoring.WellFormed`, `GraphColoring.GraphColoringFeasible`). `H` is any graph on
+`GraphColoring.WellFormed`, `GraphColoring.GraphColoringFeasible`); `WellFormed` adds `0 < K`
+and the `H`-freeness of the graph. `H` is any graph on
 `Fin h`; induced subgraphs are Mathlib's `SimpleGraph.IsIndContained` (an embedding that
 preserves adjacency and non-adjacency), `Pₘ` is `SimpleGraph.pathGraph m`, and `P₁ + P₃` is the
 disjoint union `SimpleGraph.pathGraph 1 ⊕g SimpleGraph.pathGraph 3`.
@@ -63,11 +64,11 @@ reduction from every language in `NP`
 -/
 
 /-- Well-formedness of an instance for the forbidden graph `H`: it is a well-formed GRAPH
-COLORING instance (a simple graph given by an edge list), and `H` is not an induced subgraph of
-its graph. -/
+COLORING instance (a simple graph given by an edge list), `K` is positive, and `H` is not an
+induced subgraph of its graph. -/
 def WellFormed {h : ℕ} (H : SimpleGraph (Fin h)) (i : GraphColoring.GraphColoringInstance) :
     Prop :=
-  GraphColoring.WellFormed i ∧ ¬ H.IsIndContained (GraphColoring.Graph i)
+  GraphColoring.WellFormed i ∧ 0 < i.2.2 ∧ ¬ H.IsIndContained (GraphColoring.Graph i)
 
 open Classical in
 /-- CHROMATIC NUMBER OF `H`-FREE GRAPHS as a decision problem over bitstrings. -/
