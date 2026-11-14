@@ -51,8 +51,9 @@ the graph). Their question bounds the number of Steiner vertices `|S|` by `k`; a
 well-formedness and the question (a sub-list of the edges of total weight at most `K` connecting
 all terminals; a minimal such edge set is a tree) are the parent's, as in
 `SteinerTreeSplitGraphsWanted`; the restriction adds to `WellFormed` that every edge has weight
-`1`, that the graph `SteinerTree.Graph i i.2.1` is an undirected path graph, and `0 < K` (the
-source's "positive integer").
+`1`, that the graph `SteinerTree.Graph i i.2.1` is an undirected path graph, that it has at least
+one vertex (`0 < n`: the empty graph has no subtree, as in `SteinerTreeChordalBipartiteWanted`), and
+`0 < K` (the source's "positive integer").
 
 "Undirected path graph" is the repository's predicate
 `DominatingSetUndirectedPathGraphs.IsUndirectedPathGraph` (also used by
@@ -81,11 +82,12 @@ reduction from every language in `NP`
 -/
 
 /-- Well-formedness of an instance: a well-formed STEINER TREE IN GRAPHS instance in which every
-edge has weight `1`, whose graph is an undirected path graph, and `0 < K`. -/
+edge has weight `1`, whose graph is an undirected path graph with at least one vertex, and
+`0 < K`. -/
 def WellFormed (i : SteinerTreeInstance) : Prop :=
   SteinerTree.WellFormed i ∧ (∀ e ∈ i.2.1, e.2.2 = 1) ∧
     DominatingSetUndirectedPathGraphs.IsUndirectedPathGraph (SteinerTree.Graph i i.2.1) ∧
-    0 < i.2.2.2
+    0 < i.1 ∧ 0 < i.2.2.2
 
 open Classical in
 /-- STEINER TREE IN GRAPHS (unit weights) for undirected path graphs as a decision problem
