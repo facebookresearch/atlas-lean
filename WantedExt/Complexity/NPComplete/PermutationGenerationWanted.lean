@@ -41,7 +41,7 @@ This is the word problem for products of symmetric groups of Garey, Johnson, Mil
 Papadimitriou. Elements are `0, ..., N - 1`. The permutation `σ` is given by its list of images
 `[σ 0, ..., σ (N - 1)]`; the factors are `Equiv.Perm (Fin N)`. The product `σ₁ σ₂ ⋯ σₘ` applies
 `σ₁` first, then `σ₂`, and so on, as in the cited sources: the image of `x` is
-`(List.ofFn τ).foldl (fun y s => s y) x`. For `m = 0` the product is the identity.
+`(List.ofFn τ).foldl (fun y s => s y) x`. As in the cited definition, `N ≥ 1` and `m ≥ 1`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -58,10 +58,12 @@ reduction from every language in `NP`
 subsets `S₁, ..., Sₘ`, each as a list of elements. -/
 abbrev PermutationGenerationInstance := List ℕ × List (List ℕ)
 
-/-- Well-formedness of an instance: the image list is a permutation of `[0, ..., N - 1]`, and
-every listed subset element is below `N`. -/
+/-- Well-formedness of an instance: `N ≥ 1`, the image list is a permutation of
+`[0, ..., N - 1]`, there is at least one subset (`m ≥ 1`), and every listed subset element is
+below `N`. -/
 def WellFormed (i : PermutationGenerationInstance) : Prop :=
-  i.1.Perm (List.range i.1.length) ∧ ∀ s ∈ i.2, ∀ x ∈ s, x < i.1.length
+  0 < i.1.length ∧ i.1.Perm (List.range i.1.length) ∧ 0 < i.2.length ∧
+    ∀ s ∈ i.2, ∀ x ∈ s, x < i.1.length
 
 /-- There are permutations `τ k` of `Fin N`, one for each subset, each fixing every element
 outside its subset, such that applying `τ 0`, then `τ 1`, ..., then `τ (m - 1)` sends every `x`
