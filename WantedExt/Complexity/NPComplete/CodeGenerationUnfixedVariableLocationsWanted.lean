@@ -43,9 +43,11 @@ of `f`?
 
 The instructions are indexed by `Fin n`, `0`-based (index `j` is `I_{j+1}`), and the variables
 by `Fin m`; `f` is a function on `Fin n ⊕ Fin m`. The instance lists `g(I₁), …, g(Iₙ)`, so
-its length is `n`: `(0, j)` is the instruction `I_{j+1}` and `(1, j)` the variable `j`. The
-question is the source's "i.e." condition, verbatim: a two-byte instruction only needs
-`f(Iᵢ) + 1` outside the range of `f`.
+its length is `n`: `(0, j)` is the instruction `I_{j+1}` and `(1, j)` the variable `j`. As in
+`CodeGenerationWithAddressExpressionsWanted` ([PO7]), the second byte of a two-byte instruction
+must also lie in `{1, …, M}` (`f(Iᵢ) + 1 ≤ M`), so that the total memory required is at most
+`M` as the question demands; the source's "i.e." condition leaves this implicit for the
+instruction stored last.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -77,7 +79,8 @@ def targetLocation (i : CodeGenerationUnfixedVariableLocationsInstance)
 
 /-- There is a one-to-one `f : I ∪ V → {1, …, M}`, increasing on the instructions, under which
 every instruction `Iᵢ` has `|f(Iᵢ) - f(g(Iᵢ))| < B` (a one-byte instruction) or has
-`f(Iᵢ) + 1` outside the range of `f` (room for a two-byte instruction). -/
+`f(Iᵢ) + 1` outside the range of `f` and at most `M` (room for a two-byte instruction within
+the `M` bytes of memory). -/
 def CodeGenerationUnfixedVariableLocationsFeasible
     (i : CodeGenerationUnfixedVariableLocationsInstance) : Prop :=
   ∃ f : Fin i.2.1.length ⊕ Fin i.1 → ℕ,
@@ -85,7 +88,7 @@ def CodeGenerationUnfixedVariableLocationsFeasible
       (∀ x y : Fin i.2.1.length, x < y → f (Sum.inl x) < f (Sum.inl y)) ∧
       ∀ x : Fin i.2.1.length,
         ((f (Sum.inl x) : ℤ) - targetLocation i f x).natAbs < i.2.2.1 ∨
-          f (Sum.inl x) + 1 ∉ Set.range f
+          (f (Sum.inl x) + 1 ≤ i.2.2.2 ∧ f (Sum.inl x) + 1 ∉ Set.range f)
 
 open Classical in
 /-- CODE GENERATION WITH UNFIXED VARIABLE LOCATIONS as a decision problem over bitstrings. -/
