@@ -13,7 +13,7 @@ import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Topology.Order.IntermediateValue
 
 /-!
-# Hodgkin–Huxley with a constant applied current: the equilibrium branch and its loss of stability
+# Hodgkin–Huxley with a constant applied current: the equilibrium branch and its linear stability
 
 `HodgkinHuxley.lean` proves global existence, boundedness and the stability of the squid resting
 state for `I = 0` (T199), and that the squid steady-state current `steadyCurrent squid` is
@@ -38,27 +38,31 @@ current does not enter the Jacobian, which along the branch is the arrowhead mat
 * `re_neg_of_quartic_eq_zero`, `Arrow.isHurwitz_of_hdet_pos`: **Routh–Hurwitz for quartics**
   (sufficiency): `a₁, a₃, a₄ > 0` and `Δ₃ = a₁ a₂ a₃ - a₃² - a₁² a₄ > 0` put every root in the open
   left half-plane.
-* `quartic_eq_mul_of_hurwitz3_eq_zero`, `Arrow.isHopf_of_hdet_eq_zero`: **Hopf point from the
-  coefficients**: `Δ₃ = 0` with `a₁, a₃, a₄ > 0` gives the spectral Hopf conditions `IsHopf ω`,
-  `ω = √(a₃ / a₁)`: `± i ω` are eigenvalues, every other eigenvalue has negative real part, and
-  `i ω` is a simple root of the characteristic polynomial.
+* `quartic_eq_mul_of_hurwitz3_eq_zero`, `Arrow.isSpectralHopfCandidate_of_hdet_eq_zero`:
+  **spectral Hopf candidate from the coefficients**: `Δ₃ = 0` with `a₁, a₃, a₄ > 0` gives
+  `IsSpectralHopfCandidate ω`, `ω = √(a₃ / a₁)`: `± i ω` are eigenvalues, every other eigenvalue
+  has negative real part, and `i ω` is a simple root of the characteristic polynomial. These are
+  eigenvalue conditions only; a Hopf bifurcation also needs a transversal crossing, not shown.
 * `hurwitz3_eq_zero_of_quartic_I_mul`, `hdet_eq_zero_of_imaginary_eigenvalue`: conversely, a
   nonzero purely imaginary eigenvalue forces `Δ₃ = 0`.
 * `arrowAt_0_signs`, `arrowAt_15_signs`, `arrowAt_15_hdet_neg`: certified interval arithmetic on
   the rate functions. At rest the Routh–Hurwitz conditions hold; at `V = 15` mV
   (`I∞(15) ≈ 62` µA/cm² in floating point) `coef₂ < 0` and `Δ₃ < 0` while `coef₃, coef₄ > 0`.
 * `coef₄_eq_deriv_Iss`, `zero_mem_spectrum_jac_iff`: `coef₄ = k₁ k₂ k₃ · I∞'(V)`, so `0` is an
-  eigenvalue on the branch exactly at critical points of the I–V curve (folds).
-* `exists_hopf_or_fold`: there is `V* ∈ (0, 15)` mV such that, at the equilibrium `eqPoint V*`
-  of the current `I* = I∞(V*)`, either the spectral Hopf conditions hold and every branch
-  equilibrium with `V ∈ [0, V*)` has a Hurwitz Jacobian, or `0` is an eigenvalue
-  (`I∞'(V*) = 0`). The fold alternative says nothing about the branch below `V*`.
-* `exists_hopf_of_deriv_Iss_pos`: if `I∞' > 0` on `[0, 15]`, the fold case is excluded and the
-  Hopf point sits at a current `I* ∈ (0, I∞(15))`.
-* `exists_hopf`: **main theorem.** T256's `steadyCurrentDeriv_squid_pos` gives `I∞' > 0` on
-  `[0, 15]`, so there is `V* ∈ (0, 15)` mV with Hurwitz Jacobians along the branch for
-  `V ∈ [0, V*)` and the spectral Hopf conditions at `V*`, at a current `I* ∈ (0, I∞(15))`: the
-  branch first stops being Hurwitz at a Hopf point, not at a fold.
+  eigenvalue on the branch exactly at critical points of the I–V curve. A fold would need
+  further nondegeneracy, which is not shown.
+* `exists_spectral_hopf_candidate_or_zero_eigenvalue`: there is `V* ∈ (0, 15)` mV such that, at
+  the equilibrium `eqPoint V*` of the current `I* = I∞(V*)`, either the spectral Hopf conditions
+  hold and every branch equilibrium with `V ∈ [0, V*)` has a Hurwitz Jacobian, or `0` is an
+  eigenvalue (`I∞'(V*) = 0`). The zero-eigenvalue alternative says nothing about the branch
+  below `V*`.
+* `exists_spectral_hopf_candidate_of_deriv_Iss_pos`: if `I∞' > 0` on `[0, 15]`, the
+  zero-eigenvalue case is excluded and the candidate sits at a current `I* ∈ (0, I∞(15))`.
+* `exists_spectral_hopf_candidate`: **main theorem.** T256's `steadyCurrentDeriv_squid_pos`
+  gives `I∞' > 0` on `[0, 15]`, so there is `V* ∈ (0, 15)` mV with Hurwitz Jacobians along the
+  branch for `V ∈ [0, V*)` and the spectral Hopf conditions at `V*`, at a current
+  `I* ∈ (0, I∞(15))`: the branch first stops being Hurwitz at a spectral Hopf candidate, where
+  `0` is not an eigenvalue.
 * `eqPoint_globalSolution_decay`: at a branch point with a Hurwitz Jacobian, solutions defined on
   all of `[0, ∞)` that start nearby decay exponentially to it. This is the conditional form of
   linearized stability: it does not assert that such solutions exist.
@@ -67,17 +71,19 @@ current does not enter the Jacobian, which along the branch is the arrowhead mat
 
 The task asks for the Hopf bifurcation in `I` (rest → periodic firing). Proved here are the
 equilibrium branch, Hurwitz Jacobians along it up to `V*`, and the spectral Hopf conditions at
-`V*` (`exists_hopf`). Deferred, exactly:
+`V*` (`exists_spectral_hopf_candidate`): a Hopf candidate, not a Hopf bifurcation. Deferred,
+exactly:
 
 1. **`V*` is not located.** It comes from the intermediate value theorem on `[0, 15]`.
    Floating-point evaluation of these definitions puts the first zero of `Δ₃` near `V ≈ 5.3` mV,
    `I ≈ 9.8` µA/cm², consistent with Rinzel and Miller (1980); none of these numbers is proved.
 2. **Transversality is not proved.** The sign of `d Re λ / d I` at `I*` is not controlled, since
-   `V*` is only characterized as the first voltage where the branch Jacobian stops being Hurwitz.
+   `V*` is only characterized as the first voltage where the branch Jacobian stops being Hurwitz;
+   without it `V*` is only a spectral Hopf candidate.
 3. **No periodic orbits.** Mathlib has no Hopf bifurcation theorem. Rinzel and Miller (1980)
-   compute that the squid Hopf point is subcritical, so the orbits born there are unstable;
-   repetitive firing (the stable large-amplitude limit cycle) is not addressed. The second Hopf
-   point (`I ≈ 154` µA/cm²) is not treated.
+   compute that the squid Hopf bifurcation at this current is subcritical, so the orbits born
+   there are unstable; repetitive firing (the stable large-amplitude limit cycle) is not
+   addressed. The second Hopf bifurcation they report (`I ≈ 154` µA/cm²) is not treated.
 4. **Stability is linear.** Along the branch segment `V ∈ [0, V*)` the Jacobian is Hurwitz;
    `eqPoint_globalSolution_decay` adds decay of global solutions near such a point but not their
    existence, and uniqueness of the equilibrium for those currents is not shown.
@@ -111,7 +117,7 @@ namespace MathlibExt.Biology.Biophysics.HodgkinHuxleyCurrent
 
 open MathlibExt.Biology.Biophysics.HodgkinHuxley
 
-/-! ## A. Quartics: Routh–Hurwitz, the Hopf factorization, necessity of `Δ₃ = 0` -/
+/-! ## A. Quartics: Routh–Hurwitz, the factorization at `Δ₃ = 0`, necessity of `Δ₃ = 0` -/
 
 /-- The monic real quartic `μ⁴ + a₁ μ³ + a₂ μ² + a₃ μ + a₄`, evaluated at a complex `μ`. -/
 noncomputable def quartic (a₁ a₂ a₃ a₄ : ℝ) (μ : ℂ) : ℂ :=
@@ -228,8 +234,8 @@ theorem re_neg_of_quartic_eq_zero {a₁ a₂ a₃ a₄ : ℝ} (h₁ : 0 < a₁) 
       linarith
     linarith
 
-/-- **The Hopf factorization.** If `Δ₃ = 0` with `a₁, a₃, a₄ > 0`, then with `ω² = a₃ / a₁` and
-`c = a₁ a₄ / a₃ > 0`, the quartic factors as `(μ² + ω²)(μ² + a₁ μ + c)`. -/
+/-- **The factorization at `Δ₃ = 0`.** If `Δ₃ = 0` with `a₁, a₃, a₄ > 0`, then with
+`ω² = a₃ / a₁` and `c = a₁ a₄ / a₃ > 0`, the quartic factors as `(μ² + ω²)(μ² + a₁ μ + c)`. -/
 theorem quartic_eq_mul_of_hurwitz3_eq_zero {a₁ a₂ a₃ a₄ : ℝ} (h₁ : 0 < a₁) (h₃ : 0 < a₃)
     (hH : hurwitz3 a₁ a₂ a₃ a₄ = 0) (μ : ℂ) :
     quartic a₁ a₂ a₃ a₄ μ = (μ ^ 2 + ((√(a₃ / a₁) : ℝ) : ℂ) ^ 2) *
@@ -335,20 +341,21 @@ theorem isHurwitz_of_hdet_pos (h₁ : 0 < A.coef₁) (h₃ : 0 < A.coef₃) (h�
     (hH : 0 < A.hdet) : A.mat.IsHurwitz := fun μ hμ =>
   re_neg_of_quartic_eq_zero h₁ h₃ h₄ hH ((A.mem_spectrum_iff μ).1 hμ)
 
-/-- The spectral Hopf conditions at frequency `ω`: `± i ω` are eigenvalues, they are the only
-eigenvalues in the closed right half-plane, and `i ω` is a simple root of the characteristic
-polynomial. -/
-def IsHopf (ω : ℝ) : Prop :=
+/-- The spectral Hopf conditions at frequency `ω`, which make the point a Hopf candidate:
+`± i ω` are eigenvalues, they are the only eigenvalues in the closed right half-plane, and `i ω`
+is a simple root of the characteristic polynomial. No parameter crossing is part of this, so it
+does not by itself give a Hopf bifurcation. -/
+def IsSpectralHopfCandidate (ω : ℝ) : Prop :=
   0 < ω ∧ Complex.I * ω ∈ spectrum ℂ (A.mat.map (algebraMap ℝ ℂ)) ∧
     -(Complex.I * ω) ∈ spectrum ℂ (A.mat.map (algebraMap ℝ ℂ)) ∧
     (∀ μ ∈ spectrum ℂ (A.mat.map (algebraMap ℝ ℂ)), 0 ≤ μ.re →
       μ = Complex.I * ω ∨ μ = -(Complex.I * ω)) ∧
     quarticDeriv A.coef₁ A.coef₂ A.coef₃ (Complex.I * ω) ≠ 0
 
-/-- **Hopf point from the coefficients.** `Δ₃ = 0` with `coef₁, coef₃, coef₄ > 0` gives the
-spectral Hopf conditions at `ω = √(coef₃ / coef₁)`. -/
-theorem isHopf_of_hdet_eq_zero (h₁ : 0 < A.coef₁) (h₃ : 0 < A.coef₃) (h₄ : 0 < A.coef₄)
-    (hH : A.hdet = 0) : A.IsHopf √(A.coef₃ / A.coef₁) := by
+/-- **Spectral Hopf candidate from the coefficients.** `Δ₃ = 0` with `coef₁, coef₃, coef₄ > 0`
+gives the spectral Hopf conditions at `ω = √(coef₃ / coef₁)`. -/
+theorem isSpectralHopfCandidate_of_hdet_eq_zero (h₁ : 0 < A.coef₁) (h₃ : 0 < A.coef₃)
+    (h₄ : 0 < A.coef₄) (hH : A.hdet = 0) : A.IsSpectralHopfCandidate √(A.coef₃ / A.coef₁) := by
   set ω := √(A.coef₃ / A.coef₁) with hωdef
   set c := A.coef₁ * A.coef₄ / A.coef₃ with hcdef
   have hω : 0 < ω := Real.sqrt_pos.2 (div_pos h₃ h₁)
@@ -1337,16 +1344,16 @@ theorem arrowAt_0_signs :
   exact ⟨by linarith [ha3.1], by linarith [ha4.1], by linarith [hH.1]⟩
 
 
-/-! ## H. A Hopf point or a fold along the branch -/
+/-! ## H. A spectral Hopf candidate or a zero eigenvalue along the branch -/
 
-/-- **A Hopf point or a fold along the branch (coefficient form).** Between `V = 0` (rest,
+/-- **`Δ₃ = 0` or `coef₄ = 0` along the branch (coefficient form).** Between `V = 0` (rest,
 `I = 0`) and `V = 15` mV there is a branch voltage `V*` where either
 
-* (Hopf) `Δ₃ = 0` with `coef₃, coef₄ > 0`, and for every `W ∈ [0, V*)` the Routh–Hurwitz
-  conditions `coef₃, coef₄, Δ₃ > 0` hold, so `V*` is where they first fail; or
-* (fold) `coef₄ = 0`, i.e. `0` is an eigenvalue. This alternative says nothing about `[0, V*)`,
-  where the Routh–Hurwitz conditions may already have failed. -/
-theorem exists_hopf_or_fold_coef :
+* `Δ₃ = 0` with `coef₃, coef₄ > 0`, and for every `W ∈ [0, V*)` the Routh–Hurwitz conditions
+  `coef₃, coef₄, Δ₃ > 0` hold, so `V*` is where they first fail; or
+* `coef₄ = 0`, i.e. `0` is an eigenvalue. This alternative says nothing about `[0, V*)`, where the
+  Routh–Hurwitz conditions may already have failed. -/
+theorem exists_hdet_eq_zero_or_coef₄_eq_zero :
     ∃ V ∈ Ioo (0 : ℝ) 15,
       ((arrowAt V).hdet = 0 ∧ 0 < (arrowAt V).coef₃ ∧ 0 < (arrowAt V).coef₄ ∧
         ∀ W ∈ Ico 0 V, 0 < (arrowAt W).coef₃ ∧ 0 < (arrowAt W).coef₄ ∧ 0 < (arrowAt W).hdet) ∨
@@ -1444,28 +1451,29 @@ theorem hdet_eq_zero_of_imaginary_eigenvalue {V ω : ℝ} (hω : ω ≠ 0)
   rw [jac_eqPoint] at h
   exact (arrowAt V).hdet_eq_zero_of_mem_spectrum hω h
 
-/-- **A Hopf point or a fold on the equilibrium branch.** There is a branch voltage
-`V* ∈ (0, 15)` mV, with applied current `I* = I∞(V*)` and equilibrium `eqPoint V*` of the squid
-system with current `I*`, such that either
+/-- **A spectral Hopf candidate or a zero eigenvalue on the equilibrium branch.** There is a
+branch voltage `V* ∈ (0, 15)` mV, with applied current `I* = I∞(V*)` and equilibrium `eqPoint V*`
+of the squid system with current `I*`, such that either
 
-* (Hopf) the Jacobian there satisfies the spectral Hopf conditions `IsHopf ω` (a simple pair
-  `± i ω`, `ω > 0`, and every other eigenvalue in the open left half-plane), and for every
+* the Jacobian there satisfies the spectral Hopf conditions `IsSpectralHopfCandidate ω` (a simple
+  pair `± i ω`, `ω > 0`, and every other eigenvalue in the open left half-plane), and for every
   `W ∈ [0, V*)` the branch equilibrium with current `I∞(W)` has a Hurwitz Jacobian, so `V*` is
   the first branch voltage in `[0, 15]` where the Jacobian stops being Hurwitz; or
-* (fold) `0` is an eigenvalue of the Jacobian at `eqPoint V*`; this alternative says nothing about
-  the branch below `V*`.
+* `0` is an eigenvalue of the Jacobian at `eqPoint V*`, i.e. `I∞'(V*) = 0`
+  (`zero_mem_spectrum_jac_iff`); this alternative says nothing about the branch below `V*`.
 
-`exists_hopf` shows that the Hopf alternative holds. -/
-theorem exists_hopf_or_fold :
+Neither transversality nor fold nondegeneracy is shown. `exists_spectral_hopf_candidate` shows
+that the first alternative holds. -/
+theorem exists_spectral_hopf_candidate_or_zero_eigenvalue :
     ∃ V ∈ Ioo (0 : ℝ) 15, field (squidI (Iss V)) (eqPoint V) = 0 ∧
-      (((∃ ω, (arrowAt V).IsHopf ω) ∧ jac squid (eqPoint V) = (arrowAt V).mat ∧
+      (((∃ ω, (arrowAt V).IsSpectralHopfCandidate ω) ∧ jac squid (eqPoint V) = (arrowAt V).mat ∧
           ∀ W ∈ Ico 0 V, (jac squid (eqPoint W)).IsHurwitz) ∨
         (0 : ℂ) ∈ spectrum ℂ ((jac squid (eqPoint V)).map (algebraMap ℝ ℂ))) := by
-  obtain ⟨V, hV, hcase⟩ := exists_hopf_or_fold_coef
+  obtain ⟨V, hV, hcase⟩ := exists_hdet_eq_zero_or_coef₄_eq_zero
   refine ⟨V, hV, field_eqPoint V, ?_⟩
   rcases hcase with ⟨hH, h3, h4, hW⟩ | h4
-  · refine Or.inl ⟨⟨_, (arrowAt V).isHopf_of_hdet_eq_zero (arrowAt_coef₁_pos V) h3 h4 hH⟩,
-      jac_eqPoint V, fun W hWm => ?_⟩
+  · refine Or.inl ⟨⟨_, (arrowAt V).isSpectralHopfCandidate_of_hdet_eq_zero
+      (arrowAt_coef₁_pos V) h3 h4 hH⟩, jac_eqPoint V, fun W hWm => ?_⟩
     obtain ⟨w3, w4, wH⟩ := hW W hWm
     rw [jac_eqPoint]
     exact (arrowAt W).isHurwitz_of_hdet_pos (arrowAt_coef₁_pos W) w3 w4 wH
@@ -1474,7 +1482,7 @@ theorem exists_hopf_or_fold :
     exact h4
 
 
-/-! ## I. The fold alternative is a critical point of the steady-state I–V curve -/
+/-! ## I. The zero-eigenvalue alternative is a critical point of the steady-state I–V curve -/
 
 /-- `HodgkinHuxley.hasDerivAt_steady` in the form of the Jacobian entries:
 `y∞' = (α' (1 - y∞) - β' y∞) / (α + β)`. -/
@@ -1525,15 +1533,18 @@ theorem zero_mem_spectrum_jac_iff (V : ℝ) :
   · intro h
     rw [h, mul_zero]
 
-/-- **The Hopf point, given monotonicity of the I–V curve on `[0, 15]`.** If `I∞' > 0` on
-`[0, 15]` mV (the steady-state current is increasing there), the fold alternative of
-`exists_hopf_or_fold` cannot occur: there is `V* ∈ (0, 15)` with the spectral Hopf conditions at
-the equilibrium for `I* = I∞(V*) ∈ (0, I∞(15))`, and the branch equilibria for every
-`I = I∞(W)`, `W ∈ [0, V*)`, have Hurwitz Jacobians. -/
-theorem exists_hopf_of_deriv_Iss_pos (hmono : ∀ V ∈ Icc (0 : ℝ) 15, 0 < deriv Iss V) :
+/-- **The spectral Hopf candidate, given monotonicity of the I–V curve on `[0, 15]`.** If
+`I∞' > 0` on `[0, 15]` mV (the steady-state current is increasing there), the zero-eigenvalue
+alternative of `exists_spectral_hopf_candidate_or_zero_eigenvalue` cannot occur: there is
+`V* ∈ (0, 15)` with the spectral Hopf conditions at the equilibrium for
+`I* = I∞(V*) ∈ (0, I∞(15))`, and the branch equilibria for every `I = I∞(W)`, `W ∈ [0, V*)`,
+have Hurwitz Jacobians. -/
+theorem exists_spectral_hopf_candidate_of_deriv_Iss_pos
+    (hmono : ∀ V ∈ Icc (0 : ℝ) 15, 0 < deriv Iss V) :
     ∃ V ∈ Ioo (0 : ℝ) 15, Iss V ∈ Ioo 0 (Iss 15) ∧ field (squidI (Iss V)) (eqPoint V) = 0 ∧
-      (∃ ω, (arrowAt V).IsHopf ω) ∧ ∀ W ∈ Ico 0 V, (jac squid (eqPoint W)).IsHurwitz := by
-  obtain ⟨V, hV, heq, hcase⟩ := exists_hopf_or_fold
+      (∃ ω, (arrowAt V).IsSpectralHopfCandidate ω) ∧
+        ∀ W ∈ Ico 0 V, (jac squid (eqPoint W)).IsHurwitz := by
+  obtain ⟨V, hV, heq, hcase⟩ := exists_spectral_hopf_candidate_or_zero_eigenvalue
   have hsm : StrictMonoOn Iss (Icc 0 15) :=
     strictMonoOn_of_deriv_pos (convex_Icc 0 15) continuous_Iss.continuousOn fun x hx =>
       hmono x (interior_subset hx)
@@ -1545,16 +1556,18 @@ theorem exists_hopf_of_deriv_Iss_pos (hmono : ∀ V ∈ Icc (0 : ℝ) 15, 0 < de
   · exact ⟨V, hV, hI, heq, hH, hW⟩
   · exact absurd ((zero_mem_spectrum_jac_iff V).1 h0) (hmono V ⟨hV.1.le, hV.2.le⟩).ne'
 
-/-- **The squid branch first stops being Hurwitz at a Hopf point.** T256's
+/-- **The squid branch first stops being Hurwitz at a spectral Hopf candidate.** T256's
 `steadyCurrentDeriv_squid_pos` gives `I∞' > 0` on `[-12, 115]` mV, which is the hypothesis of
-`exists_hopf_of_deriv_Iss_pos`. So there is `V* ∈ (0, 15)` mV such that the branch equilibria for
-the currents `I∞(W)`, `W ∈ [0, V*)`, have Hurwitz Jacobians and the equilibrium for
-`I* = I∞(V*) ∈ (0, I∞(15))` satisfies the spectral Hopf conditions; in particular `0` is not an
-eigenvalue there, so `V*` is not a fold. -/
-theorem exists_hopf :
+`exists_spectral_hopf_candidate_of_deriv_Iss_pos`. So there is `V* ∈ (0, 15)` mV such that the
+branch equilibria for the currents `I∞(W)`, `W ∈ [0, V*)`, have Hurwitz Jacobians and the
+equilibrium for `I* = I∞(V*) ∈ (0, I∞(15))` satisfies the spectral Hopf conditions; in
+particular `0` is not an eigenvalue there. Transversality is not shown, so `V*` is a Hopf
+candidate, not a proved Hopf bifurcation. -/
+theorem exists_spectral_hopf_candidate :
     ∃ V ∈ Ioo (0 : ℝ) 15, Iss V ∈ Ioo 0 (Iss 15) ∧ field (squidI (Iss V)) (eqPoint V) = 0 ∧
-      (∃ ω, (arrowAt V).IsHopf ω) ∧ ∀ W ∈ Ico 0 V, (jac squid (eqPoint W)).IsHurwitz :=
-  exists_hopf_of_deriv_Iss_pos fun V hV => by
+      (∃ ω, (arrowAt V).IsSpectralHopfCandidate ω) ∧
+        ∀ W ∈ Ico 0 V, (jac squid (eqPoint W)).IsHurwitz :=
+  exists_spectral_hopf_candidate_of_deriv_Iss_pos fun V hV => by
     change 0 < deriv (steadyCurrent squid) V
     rw [(hasDerivAt_steadyCurrent squid V).deriv]
     exact steadyCurrentDeriv_squid_pos ⟨by linarith [hV.1], by linarith [hV.2]⟩

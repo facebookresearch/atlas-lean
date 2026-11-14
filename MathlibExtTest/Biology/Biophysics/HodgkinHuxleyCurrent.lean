@@ -16,9 +16,10 @@ vector field), not through the theorems they exercise:
 
 * the branch at `I = 0` is T199's resting state, and `I∞(0) = 0`;
 * a branch point is an equilibrium for its own current (`V = 15` mV, evaluated directly);
-* an arrowhead matrix meeting the hypotheses of `Arrow.isHopf_of_hdet_eq_zero` exists and has the
-  eigenvalue `i` with an explicit eigenvector (non-vacuity of the Hopf alternative);
-* an arrowhead matrix with `coef₄ = 0` has the eigenvalue `0` (non-vacuity of the fold
+* an arrowhead matrix meeting the hypotheses of `Arrow.isSpectralHopfCandidate_of_hdet_eq_zero`
+  exists and has the eigenvalue `i` with an explicit eigenvector (non-vacuity of the spectral Hopf
+  alternative);
+* an arrowhead matrix with `coef₄ = 0` has the eigenvalue `0` (non-vacuity of the zero-eigenvalue
   alternative);
 * a quartic with all coefficients positive but `Δ₃ < 0` has the root `1 + 2 i` (boundary: the
   Routh–Hurwitz hypothesis `Δ₃ > 0` cannot be dropped). -/
@@ -62,37 +63,40 @@ example : field (squidI (Iss 15)) (eqPoint 15) = 0 := by
     field_simp
     ring
 
-/-! ### Non-vacuity of the Hopf alternative -/
+/-! ### Non-vacuity of the spectral Hopf alternative -/
 
 /-- `[[1, 1, 0, 0], [-2, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, -2]]`: the upper block has
 eigenvalues `± i`. -/
-def hopfExample : Arrow :=
+def spectralHopfExample : Arrow :=
   { a := 1, b₁ := 1, b₂ := 0, b₃ := 0, c₁ := -2, c₂ := 0, c₃ := 0, k₁ := 1, k₂ := 1, k₃ := 2 }
 
-example : hopfExample.coef₁ = 3 ∧ hopfExample.coef₂ = 3 ∧ hopfExample.coef₃ = 3 ∧
-    hopfExample.coef₄ = 2 ∧ hopfExample.hdet = 0 := by
+example : spectralHopfExample.coef₁ = 3 ∧ spectralHopfExample.coef₂ = 3 ∧
+    spectralHopfExample.coef₃ = 3 ∧ spectralHopfExample.coef₄ = 2 ∧
+    spectralHopfExample.hdet = 0 := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;>
-    norm_num [hopfExample, Arrow.coef₁, Arrow.coef₂, Arrow.coef₃, Arrow.coef₄, Arrow.hdet,
+    norm_num [spectralHopfExample, Arrow.coef₁, Arrow.coef₂, Arrow.coef₃, Arrow.coef₄, Arrow.hdet,
       hurwitz3]
 
 /-- `i` is an eigenvalue: `M v = i v` for `v = (1, i - 1, 0, 0)`, computed entrywise. -/
-example : (hopfExample.mat.map (algebraMap ℝ ℂ)).mulVec ![1, Complex.I - 1, 0, 0] =
+example : (spectralHopfExample.mat.map (algebraMap ℝ ℂ)).mulVec ![1, Complex.I - 1, 0, 0] =
     Complex.I • ![1, Complex.I - 1, 0, 0] := by
   funext i
-  fin_cases i <;> simp [hopfExample, Arrow.mat, Matrix.mulVec, dotProduct, Fin.sum_univ_four]
+  fin_cases i <;>
+    simp [spectralHopfExample, Arrow.mat, Matrix.mulVec, dotProduct, Fin.sum_univ_four]
   linear_combination -Complex.I_sq
 
-/-! ### Non-vacuity of the fold alternative -/
+/-! ### Non-vacuity of the zero-eigenvalue alternative -/
 
 /-- `[[0, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, -1]]` has `coef₄ = 0`. -/
-def foldExample : Arrow :=
+def zeroEigenvalueExample : Arrow :=
   { a := 0, b₁ := 0, b₂ := 0, b₃ := 0, c₁ := 0, c₂ := 0, c₃ := 0, k₁ := 1, k₂ := 1, k₃ := 1 }
 
-example : foldExample.coef₄ = 0 := by norm_num [foldExample, Arrow.coef₄]
+example : zeroEigenvalueExample.coef₄ = 0 := by norm_num [zeroEigenvalueExample, Arrow.coef₄]
 
-example : (foldExample.mat.map (algebraMap ℝ ℂ)).mulVec ![1, 0, 0, 0] = 0 := by
+example : (zeroEigenvalueExample.mat.map (algebraMap ℝ ℂ)).mulVec ![1, 0, 0, 0] = 0 := by
   funext i
-  fin_cases i <;> simp [foldExample, Arrow.mat, Matrix.mulVec, dotProduct, Fin.sum_univ_four]
+  fin_cases i <;>
+    simp [zeroEigenvalueExample, Arrow.mat, Matrix.mulVec, dotProduct, Fin.sum_univ_four]
 
 /-! ### Boundary: Routh–Hurwitz needs `Δ₃ > 0` -/
 
