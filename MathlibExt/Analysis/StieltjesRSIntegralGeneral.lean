@@ -41,9 +41,10 @@ integrator `h : ℝ → ℝ`; with `G = 1` it is the left-endpoint integral `∫
 (`hasTwoTagRSIntegral_one_iff`). `HasDuhamelIntegral A B h a b I` is the instance with the
 Duhamel kernel, and `hasDuhamelIntegral_sub` is the Duhamel identity in integral form:
 `∫_{(a,b]} P(A)(a, s) d(B - A)(s) P(B)(s, b] = P(B)(a, b] - P(A)(a, b]`. Tagging the two factors
-at opposite ends is what makes this integral exist when `B` jumps: with a single tag the kernel
-and the integrator jump on the same side at the jumps of `B` (see the module docstrings of
-`MathlibExt.Analysis.StieltjesRSIntegral` and `StieltjesRSIntegralLeftContinuous`).
+at opposite ends is what makes the integral of `h = B - A` exist when `B` jumps
+(`hasDuhamelIntegral_sub`): with a single tag the kernel and the integrator jump on the same side
+at the jumps of `B` (see the module docstrings of `MathlibExt.Analysis.StieltjesRSIntegral` and
+`StieltjesRSIntegralLeftContinuous`).
 
 ## The operator
 
@@ -64,12 +65,14 @@ equals the refinement limit whenever that exists. Hence:
 * `psi_apply_sub`: the **Duhamel equation** `Ψ A B (B - A) t = P(B)(0, t] - P(A)(0, t]` in
   `ℓ^∞`.
 
-Where the integral does not exist, the value of `Ψ A B h t` depends on the choice of the
-ultrafilter and **nothing is claimed about it**. Every use in the Gill–Johansen argument (the
-Duhamel equation for `h = B - A` of bounded variation, continuity on step functions, density of
-the regulated functions) evaluates `Ψ` only where the integral exists.
+Where the integral does not exist, `Ψ A B h t` is the limit selected by the fixed ultrafilter
+and **nothing is claimed about it**. This file proves that the integral exists only for
+`h = B - A` (`hasDuhamelIntegral_sub`, used by `psi_apply_sub`). For step, continuous or regulated
+`h`, existence of the integral is **not proved here and remains to be proved**; until it is,
+`psi_apply_eq_of_hasDuhamelIntegral` identifies `Ψ A B h t` with the integral for such `h` only
+conditionally on that existence.
 
-## Interface for the Ψ-CLM bridge
+## The three properties as a predicate
 
 `IsPsiCLM τ Ψ` collects exactly the three properties above, stated with the merged primitives
 `twoTagSum`, `partitionPts`, `productIntegral` and `eVariationOn` only, so that a file that does
@@ -84,7 +87,7 @@ by `0` outside `[0, τ]` (`extendIcc`), whose values outside `[0, t]` are never 
 * `refinementUltrafilter`, `twoTagLim`: the ultrafilter limit of the two-tag sums.
 * `extendIcc h`: a bounded function on `[0, τ]` extended by `0`.
 * `psiFun`, `psiConst`, `psiOfBV`, `psi`: the Duhamel operator and its norm bound.
-* `IsPsiCLM`: the hypotheses the bridge takes.
+* `IsPsiCLM`: the three properties of `psi τ` as a predicate on operators.
 
 ## Main results
 
@@ -109,8 +112,14 @@ two-tag sums), `leftSum`, `HasLeftRSIntegral`. Reused from Mathlib: `lp`, `mem�
 `lp.norm_le_of_forall_le`, `LinearMap.mkContinuous`, `Ultrafilter.of`,
 `IsCompact.ultrafilter_le_nhds`. The hypothesis predicate
 `MathlibExt.Probability.Statistics.ContinuousProductIntegral.IsStieltjesProductIntegral` (T78)
-takes `Ψ : 𝔻[τ] → 𝔻[τ] → 𝔻[τ] →L[ℝ] 𝔻[τ]` with exactly this norm bound and Duhamel equation; the
-continuity of `Ψ` in `B` and the multi-jump product integral are not treated here.
+does not take `psi` as it stands. Its `Ψ : 𝔻[τ] → 𝔻[τ] → 𝔻[τ] →L[ℝ] 𝔻[τ]` takes the integrators
+in `ℓ^∞([0, τ])`, while `psi τ A B` takes functions `A B : ℝ → ℝ`; and its `norm_le` field asks for
+one constant `C` with `‖Ψ A B‖ ≤ C` for all `A`, `B` in a domain `D`, while the bound
+`6 exp (V(A)) exp (V(B))` proved here depends on `A` and `B`. Obtaining that API from `psi` needs
+an extension map from `ℓ^∞([0, τ])` to functions `ℝ → ℝ` and a domain `D` on which the total
+variations over `[0, τ]` are uniformly bounded, by `M` say, so that `C = 6 exp M exp M` works. The
+other fields of that predicate (continuity of `Ψ` in `B` on a class whose closure contains
+`C[0, τ]`, and the product integral of pure-jump integrators) are not treated here.
 
 ## References
 
@@ -541,7 +550,7 @@ theorem psi_apply_sub (hA : BoundedVariationOn A (Set.Icc 0 τ))
 
 end Operator
 
-/-! ### The hypotheses the Ψ-CLM bridge takes -/
+/-! ### The three properties as a predicate -/
 
 /-- **The Ψ-CLM hypotheses.** `Ψ` assigns to integrators `A`, `B : ℝ → ℝ` a continuous linear map
 on `ℓ^∞([0, τ])` such that, for `A`, `B` of bounded variation on `[0, τ]`:
