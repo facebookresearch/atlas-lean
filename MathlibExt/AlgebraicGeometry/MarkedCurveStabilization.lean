@@ -50,12 +50,15 @@ abbrev NodeRing (k : Type u) [Field k] :=
 def nodeCurve (k : Type u) [Field k] : Over (Spec (.of k)) :=
   Over.mk (Spec.map (CommRingCat.ofHom (algebraMap k (NodeRing k))))
 
-/-- A curve is nodal if geometric closed points have actual nodal étale charts. -/
+/-- A curve is nodal if closed points lift to an actual étale neighborhood
+with an étale map to the standard node. The chart is an étale neighborhood,
+so an irreducible nodal curve may split into its two local branches there.
+Smooth points map to a smooth point of the same standard nodal curve. -/
 def IsNodal {k : Type u} [Field k] (C : Over (Spec (.of k))) : Prop :=
   ∀ x : C.left, IsClosed ({x} : Set C.left) →
-    ∃ U : C.left.Opens, x ∈ U ∧
-      ∃ f : U.toScheme ⟶ (nodeCurve k).left,
-        Etale f ∧ f ≫ (nodeCurve k).hom = U.ι ≫ C.hom
+    ∃ (V : Scheme.{u}) (a : V ⟶ C.left) (v : V)
+      (f : V ⟶ (nodeCurve k).left),
+      Etale a ∧ Etale f ∧ a v = x ∧ a ≫ C.hom = f ≫ (nodeCurve k).hom
 
 /-- Marked automorphisms are actual automorphisms over the field. -/
 abbrev MarkedAut {k : Type u} [Field k] (C : Over (Spec (.of k))) (n : ℕ)
