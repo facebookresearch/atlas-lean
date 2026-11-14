@@ -66,6 +66,7 @@ yield/failure criteria, and no beam or pressure-vessel applications.
 
 - `Elasticity.traction_neg` : traction flips sign on the opposite face.
 - `Elasticity.traction_linear` : traction is linear in the normal vector.
+- `Elasticity.traction_smul_one` : hydrostatic stress `s • 1` has traction `s • v`.
 - `Elasticity.principalStresses_real` : principal stresses are real.
 - `Elasticity.spectral_decomposition` : the spectral decomposition of `σ`.
 - `Elasticity.principalDirection_eigen` : the eigenvector equation for principal directions.
@@ -81,6 +82,9 @@ yield/failure criteria, and no beam or pressure-vessel applications.
 - `Elasticity.principalPlaneShear_bound`, `Elasticity.principalPlaneShear_max` : the in-plane
   maximum shear bound and its attainment at `θ = π/4`.
 - `Elasticity.smallStrain_symmetric` : small strain is symmetric.
+- `Elasticity.smallStrain_apply`, `Elasticity.smallStrain_apply_self` : the entries
+  `ε i j = (H i j + H j i) / 2`, so `ε i i = H i i`.
+- `Elasticity.engineeringShear_smallStrain` : `γ₀₁ = H 0 1 + H 1 0`.
 - `Elasticity.displacementGradient_affine` : the gradient of an affine field is its matrix.
 - `Elasticity.smallStrain_rigid` : infinitesimal rigid motions have zero small strain.
 - `Elasticity.simpleShear_smallStrain`, `Elasticity.simpleShear_strain`,
@@ -132,6 +136,12 @@ lemma traction_linear {n : ℕ} (σ : Matrix (Fin n) (Fin n) ℝ) (a b : ℝ)
     (v w : Fin n → ℝ) :
     traction σ (a • v + b • w) = a • traction σ v + b • traction σ w := by
   simp only [traction, ← Matrix.mulVecLin_apply, map_add, map_smul]
+
+/-- Hydrostatic stress `σ = s • 1` has traction `s • v` on the face with normal `v`: the traction
+is along the normal, outward for `s > 0` (tension-positive). -/
+lemma traction_smul_one {n : ℕ} (s : ℝ) (v : Fin n → ℝ) :
+    traction (s • (1 : Matrix (Fin n) (Fin n) ℝ)) v = s • v := by
+  rw [traction, Matrix.smul_mulVec, Matrix.one_mulVec]
 
 /-! ## B. Principal stresses, invariants, and the deviatoric split -/
 
@@ -414,6 +424,19 @@ lemma smallStrain_symmetric (H : Matrix (Fin 3) (Fin 3) ℝ) :
   unfold smallStrain
   rw [Matrix.transpose_smul, Matrix.transpose_add, Matrix.transpose_transpose, add_comm]
 
+/-- Entries of the small strain: `ε i j = (H i j + H j i) / 2`. -/
+lemma smallStrain_apply (H : Matrix (Fin 3) (Fin 3) ℝ) (i j : Fin 3) :
+    smallStrain H i j = (H i j + H j i) / 2 := by
+  simp only [smallStrain, Matrix.smul_apply, Matrix.add_apply, Matrix.transpose_apply,
+    smul_eq_mul]
+  ring
+
+/-- On the diagonal the small strain is the displacement gradient: `ε i i = H i i`. -/
+lemma smallStrain_apply_self (H : Matrix (Fin 3) (Fin 3) ℝ) (i : Fin 3) :
+    smallStrain H i i = H i i := by
+  rw [smallStrain_apply]
+  ring
+
 /-- Helper: derivative of an affine function at `0`. -/
 lemma deriv_affine (a b : ℝ) : deriv (fun t : ℝ => a * t + b) 0 = a := by
   have h : HasDerivAt (fun t : ℝ => a * t + b) (a * 1) 0 :=
@@ -458,6 +481,12 @@ lemma smallStrain_rigid (W : Matrix (Fin 3) (Fin 3) ℝ) (x : Fin 3 → ℝ)
 
 /-- Engineering shear strain `γ_xy = 2 ε_xy`. -/
 def engineeringShear (ε : Matrix (Fin 3) (Fin 3) ℝ) : ℝ := 2 * ε 0 1
+
+/-- Engineering shear of a small strain: `γ₀₁ = 2 ε₀₁ = H 0 1 + H 1 0`. -/
+lemma engineeringShear_smallStrain (H : Matrix (Fin 3) (Fin 3) ℝ) :
+    engineeringShear (smallStrain H) = H 0 1 + H 1 0 := by
+  rw [engineeringShear, smallStrain_apply]
+  ring
 
 /-- Simple-shear displacement field with amount `γ`: `u(x) = (γ x₁, 0, 0)`, so the deformation
 is `x ↦ x + u x = (x₀ + γ x₁, x₁, x₂)`. -/

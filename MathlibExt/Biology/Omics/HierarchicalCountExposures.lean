@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.Omics.HierarchicalCount
+public import MathlibExt.Biology.Omics.HierarchicalCountPooled
 public import Mathlib.Probability.Distributions.Poisson.Basic
 public import Mathlib.Probability.HasLaw
 
@@ -35,7 +36,7 @@ for that purpose.
   A. Vehtari, D. B. Rubin, *Bayesian Data Analysis*, 3rd ed., CRC Press (2013), §2.6, "Poisson
   model parameterized in terms of rate and exposure": for `yᵢ ∼ Po(xᵢ θ)` and
   `θ ∼ Gamma(α, β)`, the posterior is `θ ∣ y ∼ Gamma(α + ∑ᵢ yᵢ, β + ∑ᵢ xᵢ)`
-  (`pooledPosterior_eq_gammaPDFReal`).
+  (`HierarchicalCountPooled.pooledPosterior_eq_gammaPDFReal`).
 * Posterior consistency: the same book, Appendix B (large-sample theory): the posterior
   concentrates at the true parameter as data accumulate (`tendsto_pooledPosterior_of_tendsto`,
   `ae_tendsto_pooledPosterior_exposures`, `ae_tendsto_pooledPosterior_poisson`).
@@ -44,10 +45,9 @@ for that purpose.
 
 * `prod_poissonExposureLik`: the joint likelihood factors as a rate-free constant times
   `r^K e^{-S r}`.
-* `pooledPosterior_eq_gammaPDFReal`: **pooled conjugacy with exposures.** The posterior is
-  `Gamma(a + ∑ᵢ kᵢ, b + ∑ᵢ sᵢ)`.
 * `tendsto_pooledPosterior_of_tendsto`: **deterministic core.** If `S → ∞` and `K / S → r₀`, the
-  posterior mean tends to `r₀`, the posterior variance to `0`, and the posterior mass outside
+  posterior mean tends to `r₀`, the posterior variance to `0` (both from
+  `HierarchicalCountPooled.tendsto_posteriorMean_of_tendsto`), and the posterior mass outside
   every neighbourhood of `r₀` to `0`.
 * `ae_tendsto_gammaSequence_of_moments`: **a.s. convergence of the Gamma sequence.** For
   pairwise independent counts with `E Xᵢ = sᵢ r₀`, `Var Xᵢ ≤ C sᵢ`, real `sᵢ ≤ B` and
@@ -60,16 +60,15 @@ for that purpose.
 
 ## Implementation notes
 
-The pooled posterior is restated without new definitions, as the product of the one-cell
-likelihoods `HierarchicalCount.poissonExposureLik`; its mean and variance are
-`HierarchicalCount.integral_id_posterior` and `HierarchicalCount.variance_posterior` at count
-`K` and exposure `S`. `HierarchicalCountPooled` (PR #1608, open) is not imported, and two results
-here overlap it: `pooledPosterior_eq_gammaPDFReal` duplicates
-`HierarchicalCountPooled.pooledPosterior_eq_gammaPDFReal` (same name, sibling namespace), and
-`tendsto_pooledPosterior_of_tendsto` is #1608's `tendsto_posteriorMean_of_tendsto` plus the
-concentration conclusion. Follow-up: after #1608 merges, derive both from #1608's versions and
-remove the duplicate names. The new content with exposures is the strong law and the two a.s.
-theorems.
+Pooled conjugacy with exposures is `HierarchicalCountPooled.pooledPosterior_eq_gammaPDFReal`:
+its `pooledLik s k r` and `pooledMarginalLik a b s k` unfold to the product of the one-cell
+likelihoods `HierarchicalCount.poissonExposureLik` and its integral against `Gamma(a, b)`, so the
+statement in product form follows by `exact`. The posterior mean and variance are
+`HierarchicalCount.integral_id_posterior` and `HierarchicalCount.variance_posterior` at count `K`
+and exposure `S`. `tendsto_pooledPosterior_of_tendsto` takes its mean and variance limits from
+`HierarchicalCountPooled.tendsto_posteriorMean_of_tendsto` and adds the concentration
+conclusion. The new content with exposures is the factorization `prod_poissonExposureLik`, the
+concentration step, the strong law and the a.s. theorems.
 
 The strong law `ProbabilityTheory.ae_tendsto_sum_div_sum_integral` is a pure probability result
 and lives in `MathlibExt.Probability.NonnegSLLN`, next to `PairwiseIndepSLLN`; the indicator law
@@ -99,7 +98,7 @@ namespace MathlibExt.Biology.Omics.HierarchicalCountExposures
 
 variable {ι : Type*} [Fintype ι]
 
-/-! ### The pooled posterior with per-cell exposures -/
+/-! ### Factorization of the joint likelihood with per-cell exposures -/
 
 /-- **Factorization of the joint likelihood.** For cells `i` with size factors `sᵢ` and counts
 `kᵢ`, `∏ᵢ e^{-sᵢ r} (sᵢ r)^{kᵢ} / kᵢ! = (∏ᵢ sᵢ^{kᵢ} / kᵢ!) · r^K e^{-S r}` with `K = ∑ᵢ kᵢ`
@@ -112,38 +111,6 @@ theorem prod_poissonExposureLik (s : ι → ℝ) (k : ι → ℕ) (r : ℝ) :
     rw [poissonExposureLik, mul_pow]; ring
   simp_rw [h, Finset.prod_mul_distrib, Finset.prod_pow_eq_pow_sum, ← Real.exp_sum,
     Finset.sum_mul, ← Finset.sum_neg_distrib]
-
-/-- **Pooled Gamma–Poisson conjugacy with different exposures.** With prior `λ ~ Gamma(a, b)`
-(`a, b > 0`) and conditionally independent cell counts `kᵢ ~ Po(sᵢ λ)` with size factors
-`sᵢ > 0`, the posterior density (joint likelihood times prior density over
-the joint marginal likelihood) is the `Gamma(a + ∑ᵢ kᵢ, b + ∑ᵢ sᵢ)` density: the one-cell
-posterior `HierarchicalCount.posterior_eq_gammaPDFReal` at count `K = ∑ᵢ kᵢ` and exposure
-`S = ∑ᵢ sᵢ`. Its mean `(a + K) / (b + S)` and variance `(a + K) / (b + S)²` are then
-`HierarchicalCount.integral_id_posterior` and `HierarchicalCount.variance_posterior`. -/
-theorem pooledPosterior_eq_gammaPDFReal {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
-    {s : ι → ℝ} (hs : ∀ i, 0 < s i) (k : ι → ℕ) (r : ℝ) :
-    (∏ i, poissonExposureLik (s i) (k i) r) * gammaPDFReal a b r /
-        (∫ x, ∏ i, poissonExposureLik (s i) (k i) x ∂gammaMeasure a b) =
-      gammaPDFReal (a + (∑ i, k i : ℕ)) (b + ∑ i, s i) r := by
-  rcases isEmpty_or_nonempty ι with hι | hι
-  · have := isProbabilityMeasure_gammaMeasure ha hb
-    simp [Finset.univ_eq_empty]
-  set K := ∑ i, k i
-  set S := ∑ i, s i
-  have hS : 0 < S := Finset.sum_pos (fun i _ => hs i) Finset.univ_nonempty
-  have hc : (∏ i, s i ^ k i / (k i)!) ≠ 0 := Finset.prod_ne_zero_iff.2 fun i _ =>
-    div_ne_zero (pow_ne_zero _ (hs i).ne') (Nat.cast_ne_zero.2 (Nat.factorial_ne_zero _))
-  have hd : S ^ K / (K)! ≠ 0 :=
-    div_ne_zero (pow_ne_zero _ hS.ne') (Nat.cast_ne_zero.2 (Nat.factorial_ne_zero _))
-  have h1 : ∀ x, poissonExposureLik S K x = S ^ K / (K)! * (x ^ K * exp (-(S * x))) :=
-    fun x => by rw [poissonExposureLik, mul_pow]; ring
-  have hone := posterior_eq_gammaPDFReal ha hb hS K r
-  rw [marginalLik] at hone
-  simp_rw [h1] at hone
-  rw [integral_const_mul, mul_assoc, mul_div_mul_left _ _ hd] at hone
-  simp_rw [prod_poissonExposureLik]
-  rw [integral_const_mul, mul_assoc, mul_div_mul_left _ _ hc]
-  exact hone
 
 /-! ### Posterior consistency: deterministic core -/
 
@@ -159,24 +126,7 @@ theorem tendsto_pooledPosterior_of_tendsto {α : Type*} {l : Filter α} {a b r�
       Tendsto (fun i => (a + K i) / (b + S i) ^ 2) l (𝓝 0) ∧
       ∀ ε : ℝ, 0 < ε →
         Tendsto (fun i => gammaMeasure (a + K i) (b + S i) {x | ε ≤ |x - r₀|}) l (𝓝 0) := by
-  have h0 : ∀ c : ℝ, Tendsto (fun i => c / S i) l (𝓝 0) := fun c =>
-    tendsto_const_nhds.div_atTop hS
-  have hmean : Tendsto (fun i => posteriorMean a b (S i) (K i)) l (𝓝 r₀) := by
-    have h := ((h0 a).add hK).div ((h0 b).add tendsto_const_nhds) (by norm_num : (0 : ℝ) + 1 ≠ 0)
-    rw [zero_add, zero_add, div_one] at h
-    refine h.congr' ?_
-    filter_upwards [hS.eventually_gt_atTop 0] with i hi
-    change (a / S i + K i / S i) / (b / S i + 1) = (a + K i) / (b + S i)
-    rw [← add_div, div_add_one hi.ne', div_div_div_cancel_right₀ hi.ne']
-  have hvar : Tendsto (fun i => (a + K i) / (b + S i) ^ 2) l (𝓝 0) := by
-    have hinv : Tendsto (fun i => (b + S i)⁻¹) l (𝓝 0) :=
-      (tendsto_atTop_add_const_left l b hS).inv_tendsto_atTop
-    have h := hmean.mul hinv
-    rw [mul_zero] at h
-    refine h.congr' (Eventually.of_forall fun i => ?_)
-    change (a + K i) / (b + S i) * (b + S i)⁻¹ = (a + K i) / (b + S i) ^ 2
-    rw [sq, ← div_div]
-    exact (div_eq_mul_inv _ _).symm
+  obtain ⟨hmean, hvar⟩ := HierarchicalCountPooled.tendsto_posteriorMean_of_tendsto hS hK
   refine ⟨hmean, hvar, fun ε hε => ?_⟩
   have hε2 : 0 < ε / 2 := by linarith
   have hup : Tendsto (fun i => ENNReal.ofReal ((a + K i) / (b + S i) ^ 2 / (ε / 2) ^ 2)) l

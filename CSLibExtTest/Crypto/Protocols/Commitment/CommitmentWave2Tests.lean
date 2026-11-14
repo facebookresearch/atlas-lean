@@ -182,12 +182,12 @@ example : commitValue addHash () (2 : ZMod 5) (1 : ZMod 5) = 3 := by decide
 
 example : commitValue addHash () (1 : ZMod 5) (2 : ZMod 5) = 3 := by decide
 
-example : IsCollision addHash () ((1 : ZMod 5), (2 : ZMod 5)) (2, 1) :=
+example : IsCollision (addHash ()) (((1 : ZMod 5), (2 : ZMod 5)), (2, 1)) :=
   collision_of_openings (c := 3) (by decide) (by decide) (by decide)
 
-example : ¬ IsCollision addHash () ((1 : ZMod 5), (2 : ZMod 5)) (1, 2) := by decide
+example : ¬ IsCollision (addHash ()) (((1 : ZMod 5), (2 : ZMod 5)), (1, 2)) := by decide
 
-example : ¬ IsCollision addHash () ((1 : ZMod 5), (2 : ZMod 5)) (1, 3) := by decide
+example : ¬ IsCollision (addHash ()) (((1 : ZMod 5), (2 : ZMod 5)), (1, 3)) := by decide
 
 /-- Every nonce digest of `addHash` is uniform. -/
 theorem nonceDigest_addHash (m : ZMod 5) :
@@ -276,8 +276,8 @@ theorem bindingAdvantage_constHashAdv :
   · rfl
   · exact (hw (by decide)).elim
 
-example : 1 ≤ collAdvantage (PMF.pure ()) addHash (reduction constHashAdv) :=
-  bindingAdvantage_constHashAdv ▸ bindingAdvantage_le _ addHash constHashAdv
+example : 1 ≤ collAdvantage ⟨PMF.pure (), addHash⟩ (reduction constHashAdv) :=
+  bindingAdvantage_constHashAdv ▸ bindingAdvantage_le ⟨PMF.pure (), addHash⟩ constHashAdv
 
 /-- A keyed hash: `addHash` under key `true`, and `r + 2 m` under key `false`. -/
 def keyedHash : Bool → ZMod 5 × ZMod 5 → ZMod 5 := fun b x => if b then x.1 + x.2 else x.1 + 2 * x.2
@@ -297,17 +297,18 @@ theorem bindingAdvantage_keyedHash_uniform :
   norm_num
   decide
 
-example : 1 / 2 ≤ collAdvantage (Cslib.Probability.PMF.uniformOfFintype Bool) keyedHash
+example : 1 / 2 ≤ collAdvantage ⟨Cslib.Probability.PMF.uniformOfFintype Bool, keyedHash⟩
     (reduction constHashAdv) :=
-  bindingAdvantage_keyedHash_uniform ▸ bindingAdvantage_le _ keyedHash constHashAdv
+  bindingAdvantage_keyedHash_uniform ▸
+    bindingAdvantage_le ⟨Cslib.Probability.PMF.uniformOfFintype Bool, keyedHash⟩ constHashAdv
 
 /-- A collision finder with coins in the infinite type `ℕ`: on coin `n` it outputs the collision
 `(1, 2), (2, 1)` of `addHash` shifted by `n` in the first coordinate. -/
-noncomputable def natCollFinder : CollFinder Unit (ZMod 5 × ZMod 5) ℕ where
+noncomputable def natCollFinder : CollisionFinder Unit (ZMod 5 × ZMod 5) ℕ where
   coins := PMF.pure 7
-  run _ n := ((1 + n, 2), (2 + n, 1))
+  find _ n := ((1 + n, 2), (2 + n, 1))
 
-example : collAdvantage (PMF.pure ()) addHash natCollFinder = 1 := by
+example : collAdvantage ⟨PMF.pure (), addHash⟩ natCollFinder = 1 := by
   rw [collAdvantage, collGame, PMF.pure_bind, natCollFinder, PMF.pure_map, winProb_pure]
   split_ifs with hw
   · rfl
