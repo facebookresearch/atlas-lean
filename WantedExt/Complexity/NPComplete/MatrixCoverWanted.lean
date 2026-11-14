@@ -41,7 +41,8 @@ INSTANCE: an `n × n` matrix `A = (a i j)` with nonnegative integer entries, and
 `∑_{1 ≤ i, j ≤ n} a i j * f i * f j ≤ K`?
 
 The comparison is `≤`. Garey and Johnson's entry (p. 282) prints `≥ K`; read literally, that
-question is not the NP-complete one. With nonnegative entries every term satisfies
+question is decidable in polynomial time, and it is not the question that the cited MAX CUT
+transformation proves NP-hard. With nonnegative entries every term satisfies
 `a i j * f i * f j ≤ a i j`, so the constant function `f = +1` maximizes the sum and the
 question with `≥` is decidable by adding up the entries. The `≤` question is the one the
 transformation from MAX CUT proves NP-complete: for the adjacency matrix of a graph, the sum is
