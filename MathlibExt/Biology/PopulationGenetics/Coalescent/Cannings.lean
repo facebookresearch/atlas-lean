@@ -10,6 +10,7 @@ module
 
 public import Mathlib.LinearAlgebra.Matrix.Defs
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
+public import MathlibExt.Probability.ProbabilityMassFunction.Expectation
 import Mathlib.Data.Fintype.Sum
 import Mathlib.Logic.Equiv.Fintype
 
@@ -30,12 +31,12 @@ the probability `mergeProb k` that `k` lineages share a parent, the coalescence 
 `coalProb = mergeProb 2`, the probability `doubleMergeProb` of a simultaneous double merger, and
 the one-generation transition matrix `lineageMatrix n` of the ancestral lineage count.
 Real-valued probabilities use the masses `(law f).toReal`, which sum to `1` (`sum_toReal_law`).
-`sampleExpect hb F` is the expectation of a real function `F` of the parents of the first `b`
-children, and `expect F` that of a function of the whole parent map, the case `b = N`
-(`expect_eq_sampleExpect`). Their linearity and monotonicity lemmas, and their invariance under
-relabeling children (`sampleExpect_comp_perm`, `expect_comp_perm`) and parents
-(`sampleExpect_perm_comp`, `expect_perm_comp`, `expect_offspring_comp_perm`), are shared by both
-limits.
+`expect F` is the expectation of a real function `F` of the whole parent map, which is
+`PMF.expect` under `law` (`expect_eq_law_expect`); `sampleLaw hb` is the law of the parents of
+the first `b` children, and expectations of functions of a sample are `PMF.expect` under it
+(`expect_sampleLaw`). Both are invariant under relabeling children (`expect_comp_perm`,
+`expect_sampleLaw_comp_perm`) and parents (`expect_perm_comp`, `expect_sampleLaw_perm_comp`,
+`expect_offspring_comp_perm`), and are shared by both limits.
 
 ## References
 
@@ -182,112 +183,65 @@ theorem offspring_perm_comp (f : Fin N → Fin N) (σ : Equiv.Perm (Fin N)) (i :
 
 /-! ### Expectations -/
 
-/-- Expectation `E[F (f ∘ Fin.castLE hb)]` of a real function `F` of the parents of the first `b`
-children, with the masses `(law f).toReal`. -/
-def sampleExpect {b : ℕ} (hb : b ≤ N) (F : (Fin b → Fin N) → ℝ) : ℝ :=
-  ∑ f, (M.law f).toReal * F (f ∘ Fin.castLE hb)
-
 /-- Expectation of a real function of the whole parent map, with the masses `(law f).toReal`. -/
 def expect (F : (Fin N → Fin N) → ℝ) : ℝ := ∑ f, (M.law f).toReal * F f
 
-/-- The whole-map expectation is the sampled expectation of all `N` children: `f ∘ Fin.castLE
-le_rfl` is `f` by definition. -/
-theorem expect_eq_sampleExpect (F : (Fin N → Fin N) → ℝ) :
-    M.expect F = M.sampleExpect le_rfl F :=
-  rfl
-
-section SampleExpect
-
-variable {b : ℕ} {hb : b ≤ N}
-
-theorem sampleExpect_add (F G : (Fin b → Fin N) → ℝ) :
-    M.sampleExpect hb (fun g => F g + G g) = M.sampleExpect hb F + M.sampleExpect hb G := by
-  simp only [sampleExpect, mul_add, sum_add_distrib]
-
-theorem sampleExpect_sub (F G : (Fin b → Fin N) → ℝ) :
-    M.sampleExpect hb (fun g => F g - G g) = M.sampleExpect hb F - M.sampleExpect hb G := by
-  simp only [sampleExpect, mul_sub, sum_sub_distrib]
-
-theorem sampleExpect_const_mul (a : ℝ) (F : (Fin b → Fin N) → ℝ) :
-    M.sampleExpect hb (fun g => a * F g) = a * M.sampleExpect hb F := by
-  simp only [sampleExpect, mul_sum]
-  exact sum_congr rfl fun f _ => by ring
-
-theorem sampleExpect_const (a : ℝ) : M.sampleExpect hb (fun _ => a) = a := by
-  simp only [sampleExpect, ← sum_mul, M.sum_toReal_law, one_mul]
-
-theorem sampleExpect_sum {ι : Type*} (s : Finset ι) (F : ι → (Fin b → Fin N) → ℝ) :
-    M.sampleExpect hb (fun g => ∑ i ∈ s, F i g) = ∑ i ∈ s, M.sampleExpect hb (F i) := by
-  simp only [sampleExpect, mul_sum]
-  exact sum_comm
-
-theorem sampleExpect_mono {F G : (Fin b → Fin N) → ℝ} (h : ∀ g, F g ≤ G g) :
-    M.sampleExpect hb F ≤ M.sampleExpect hb G :=
-  sum_le_sum fun _ _ => mul_le_mul_of_nonneg_left (h _) ENNReal.toReal_nonneg
-
-theorem sampleExpect_nonneg {F : (Fin b → Fin N) → ℝ} (h : ∀ g, 0 ≤ F g) :
-    0 ≤ M.sampleExpect hb F :=
-  sum_nonneg fun _ _ => mul_nonneg ENNReal.toReal_nonneg (h _)
-
-/-- Relabeling the parents does not change sampled expectations. -/
-theorem sampleExpect_perm_comp (σ : Equiv.Perm (Fin N)) (F : (Fin b → Fin N) → ℝ) :
-    M.sampleExpect hb (fun g => F (σ ∘ g)) = M.sampleExpect hb F := by
-  refine Fintype.sum_equiv (Equiv.arrowCongr (Equiv.refl _) σ) _ _ fun f => ?_
-  change _ = (M.law (σ ∘ f)).toReal * F ((σ ∘ f) ∘ Fin.castLE hb)
-  rw [M.law_perm_comp σ f]
-  rfl
-
-/-- Relabeling the sampled children does not change sampled expectations. -/
-theorem sampleExpect_comp_perm (σ : Equiv.Perm (Fin b)) (F : (Fin b → Fin N) → ℝ) :
-    M.sampleExpect hb (fun g => F (g ∘ σ)) = M.sampleExpect hb F := by
-  obtain ⟨τ, hτ⟩ := Equiv.Perm.exists_extending_pair (Fin.castLE hb ∘ σ) (Fin.castLE hb)
-    ((Fin.castLE_injective hb).comp σ.injective) (Fin.castLE_injective hb)
-  refine Fintype.sum_equiv (Equiv.arrowCongr τ (Equiv.refl _)) _ _ fun f => ?_
-  have h : (f ∘ Fin.castLE hb) ∘ σ = (f ∘ τ.symm) ∘ Fin.castLE hb := by
-    funext i
-    simp only [Function.comp_apply, ← hτ i, Equiv.symm_apply_apply]
-  change _ = (M.law (f ∘ τ.symm)).toReal * F ((f ∘ τ.symm) ∘ Fin.castLE hb)
-  rw [M.law_comp_perm τ.symm f, ← h]
-
-end SampleExpect
-
-/-! The whole-map expectation inherits the sampled lemmas at `b = N`. -/
+/-- The expectation is `PMF.expect` under the law of the parent map. -/
+theorem expect_eq_law_expect (F : (Fin N → Fin N) → ℝ) : M.expect F = M.law.expect F :=
+  (PMF.expect_eq_sum M.law F).symm
 
 theorem expect_add (F G : (Fin N → Fin N) → ℝ) :
-    M.expect (fun f => F f + G f) = M.expect F + M.expect G :=
-  M.sampleExpect_add (hb := le_rfl) F G
+    M.expect (fun f => F f + G f) = M.expect F + M.expect G := by
+  simp only [expect_eq_law_expect]
+  exact PMF.expect_add (f := F) (g := G)
 
 theorem expect_sub (F G : (Fin N → Fin N) → ℝ) :
-    M.expect (fun f => F f - G f) = M.expect F - M.expect G :=
-  M.sampleExpect_sub (hb := le_rfl) F G
+    M.expect (fun f => F f - G f) = M.expect F - M.expect G := by
+  rw [eq_sub_iff_add_eq, ← M.expect_add]
+  simp only [sub_add_cancel]
 
 theorem expect_const_mul (a : ℝ) (F : (Fin N → Fin N) → ℝ) :
-    M.expect (fun f => a * F f) = a * M.expect F :=
-  M.sampleExpect_const_mul (hb := le_rfl) a F
+    M.expect (fun f => a * F f) = a * M.expect F := by
+  simp only [expect_eq_law_expect]
+  exact PMF.expect_const_mul a F
 
-theorem expect_const (a : ℝ) : M.expect (fun _ => a) = a :=
-  M.sampleExpect_const (hb := le_rfl) a
+theorem expect_const (a : ℝ) : M.expect (fun _ => a) = a := by
+  rw [expect_eq_law_expect]
+  exact PMF.expect_const M.law a
 
 theorem expect_sum {ι : Type*} (s : Finset ι) (F : ι → (Fin N → Fin N) → ℝ) :
-    M.expect (fun f => ∑ i ∈ s, F i f) = ∑ i ∈ s, M.expect (F i) :=
-  M.sampleExpect_sum (hb := le_rfl) s F
+    M.expect (fun f => ∑ i ∈ s, F i f) = ∑ i ∈ s, M.expect (F i) := by
+  simp only [expect_eq_law_expect]
+  exact PMF.expect_sum s F
 
 theorem expect_mono {F G : (Fin N → Fin N) → ℝ} (h : ∀ f, F f ≤ G f) :
-    M.expect F ≤ M.expect G :=
-  M.sampleExpect_mono (hb := le_rfl) h
+    M.expect F ≤ M.expect G := by
+  simp only [expect_eq_law_expect]
+  exact PMF.expect_le_expect h
 
-theorem expect_nonneg {F : (Fin N → Fin N) → ℝ} (h : ∀ f, 0 ≤ F f) : 0 ≤ M.expect F :=
-  M.sampleExpect_nonneg (hb := le_rfl) h
+theorem expect_nonneg {F : (Fin N → Fin N) → ℝ} (h : ∀ f, 0 ≤ F f) : 0 ≤ M.expect F := by
+  rw [expect_eq_law_expect]
+  exact PMF.expect_nonneg h
 
 /-- Relabeling the children does not change expectations. -/
 theorem expect_comp_perm (σ : Equiv.Perm (Fin N)) (F : (Fin N → Fin N) → ℝ) :
-    M.expect (fun f => F (f ∘ σ)) = M.expect F :=
-  M.sampleExpect_comp_perm (hb := le_rfl) σ F
+    M.expect (fun f => F (f ∘ σ)) = M.expect F := by
+  let e : (Fin N → Fin N) ≃ (Fin N → Fin N) :=
+    { toFun := fun f => f ∘ σ
+      invFun := fun f => f ∘ σ.symm
+      left_inv := fun f => by funext; simp
+      right_inv := fun f => by funext; simp }
+  exact Fintype.sum_equiv e _ _ fun f => by simp [e, M.law_comp_perm]
 
 /-- Relabeling the parents does not change expectations. -/
 theorem expect_perm_comp (σ : Equiv.Perm (Fin N)) (F : (Fin N → Fin N) → ℝ) :
-    M.expect (fun f => F (σ ∘ f)) = M.expect F :=
-  M.sampleExpect_perm_comp (hb := le_rfl) σ F
+    M.expect (fun f => F (σ ∘ f)) = M.expect F := by
+  let e : (Fin N → Fin N) ≃ (Fin N → Fin N) :=
+    { toFun := fun f => σ ∘ f
+      invFun := fun f => σ.symm ∘ f
+      left_inv := fun f => by funext; simp
+      right_inv := fun f => by funext; simp }
+  exact Fintype.sum_equiv e _ _ fun f => by simp [e, M.law_perm_comp]
 
 /-- **Exchangeable offspring numbers**: the offspring vector `(ν_1, …, ν_N)` has the same law
 as `(ν_{σ 1}, …, ν_{σ N})` for every permutation `σ`. -/
@@ -298,6 +252,43 @@ theorem expect_offspring_comp_perm (σ : Equiv.Perm (Fin N)) (F : (Fin N → ℕ
     rw [Function.comp_apply, offspring_perm_comp, Equiv.symm_symm]
   simp_rw [h]
   exact M.expect_perm_comp σ.symm (fun f => F (offspring f))
+
+/-- The law of the parents `f ∘ Fin.castLE hb` of the first `b` children. Expectations of real
+functions of a sample are `PMF.expect` under it, with its linearity and monotonicity lemmas. -/
+noncomputable def sampleLaw {b : ℕ} (hb : b ≤ N) : PMF (Fin b → Fin N) :=
+  M.law.map fun f => f ∘ Fin.castLE hb
+
+section SampleLaw
+
+variable {b : ℕ} {hb : b ≤ N}
+
+/-- A sampled expectation is the expectation of the observable on the first `b` children. -/
+theorem expect_sampleLaw (F : (Fin b → Fin N) → ℝ) :
+    (M.sampleLaw hb).expect F = M.expect fun f => F (f ∘ Fin.castLE hb) := by
+  rw [sampleLaw, PMF.expect_map, expect_eq_law_expect]
+  rfl
+
+/-- Relabeling the parents does not change sampled expectations. -/
+theorem expect_sampleLaw_perm_comp (σ : Equiv.Perm (Fin N)) (F : (Fin b → Fin N) → ℝ) :
+    (M.sampleLaw hb).expect (fun g => F (σ ∘ g)) = (M.sampleLaw hb).expect F := by
+  rw [expect_sampleLaw, expect_sampleLaw]
+  exact M.expect_perm_comp σ fun f => F (f ∘ Fin.castLE hb)
+
+/-- Relabeling the sampled children does not change sampled expectations: the relabeling of the
+`b` sampled children extends to a permutation of all `N` children. -/
+theorem expect_sampleLaw_comp_perm (σ : Equiv.Perm (Fin b)) (F : (Fin b → Fin N) → ℝ) :
+    (M.sampleLaw hb).expect (fun g => F (g ∘ σ)) = (M.sampleLaw hb).expect F := by
+  obtain ⟨τ, hτ⟩ := Equiv.Perm.exists_extending_pair (Fin.castLE hb ∘ σ) (Fin.castLE hb)
+    ((Fin.castLE_injective hb).comp σ.injective) (Fin.castLE_injective hb)
+  have h : ∀ f : Fin N → Fin N, (f ∘ Fin.castLE hb) ∘ σ = (f ∘ τ.symm) ∘ Fin.castLE hb := by
+    intro f
+    funext i
+    simp only [Function.comp_apply, ← hτ i, Equiv.symm_apply_apply]
+  rw [expect_sampleLaw, expect_sampleLaw]
+  simp_rw [h]
+  exact M.expect_comp_perm τ.symm fun f => F (f ∘ Fin.castLE hb)
+
+end SampleLaw
 
 end CanningsModel
 
