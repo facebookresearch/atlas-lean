@@ -40,7 +40,9 @@ decided as the [ND1] instance `(n, E, K)` (`withBound K`), whose
 `DegreeConstrainedSpanningTree.WellFormed` (`0 < n`, simple edge list) and
 `DegreeConstrainedSpanningTree.DegreeConstrainedSpanningTreeFeasible` (a sublist of `n - 1`
 edges forming a connected graph on `Fin n` in which no vertex meets `K + 1` of them) are reused
-unchanged. For `K = 2` the question is HAMILTONIAN PATH, the source of the reduction.
+unchanged. `WellFormed` adds Garey and Johnson's instance bound `K ≤ |V|`, so graphs with fewer
+than `K` vertices are no-instances. For `K = 2` the question is HAMILTONIAN PATH, the source of
+the reduction.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -61,6 +63,11 @@ def withBound (K : ℕ) (i : DegreeConstrainedSpanningTreeFixedKInstance) :
     DegreeConstrainedSpanningTree.DegreeConstrainedSpanningTreeInstance :=
   (i.1, i.2, K)
 
+/-- Well-formedness of an instance for the fixed bound `K`: the [ND1] well-formedness of
+`(n, E, K)` (`0 < n`, simple edge list) and Garey and Johnson's `K ≤ |V|`. -/
+def WellFormed (K : ℕ) (i : DegreeConstrainedSpanningTreeFixedKInstance) : Prop :=
+  DegreeConstrainedSpanningTree.WellFormed (withBound K i) ∧ K ≤ i.1
+
 open Classical in
 /-- DEGREE CONSTRAINED SPANNING TREE for a fixed bound `K` as a decision problem over
 bitstrings. -/
@@ -68,7 +75,7 @@ noncomputable def degreeConstrainedSpanningTreeFixedKDec (K : ℕ) :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
       (α := DegreeConstrainedSpanningTreeFixedKInstance) x with
-  | some i => decide (DegreeConstrainedSpanningTree.WellFormed (withBound K i) ∧
+  | some i => decide (WellFormed K i ∧
       DegreeConstrainedSpanningTree.DegreeConstrainedSpanningTreeFeasible (withBound K i))
   | none => false
 
