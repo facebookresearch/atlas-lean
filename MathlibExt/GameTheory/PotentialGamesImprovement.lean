@@ -1,0 +1,126 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.GameTheory.PotentialGames
+
+@[expose] public section
+
+/-! # Improvement paths in exact potential games
+
+This file is a consumer of `MathlibExt.GameTheory.PotentialGames`
+(roadmap package DPA-37); it reuses `IsExactPotential` and `IsPureNash`
+and introduces no second game, profile, or potential encoding.
+
+## Main results
+
+* `IsImprovementPath`: a finite strict improvement path, the standard
+  `List.IsChain` of the step relation `IsStrictBetterResponse`, so the
+  `List.IsChain` API applies to it directly.
+* `IsMaximalImprovementPath`: a nonempty improvement path that cannot be
+  extended by appending a profile.
+* `strict_better_response_decreases_potential`,
+  `IsStrictBetterResponse.potential_lt`: one strict better-response step
+  strictly decreases the potential.
+* `IsMaximalImprovementPath.not_isStrictBetterResponse`: no strict
+  better-response step leaves the last profile of a maximal path; such a
+  step would extend the path by the `List.IsChain` append lemma.
+* `maximal_improvement_path_ends_at_nash`: a maximal finite strict
+  improvement path ends at a pure Nash equilibrium.
+* `maximal_improvement_path_last_is_nash`: a maximal path is nonempty,
+  and its last profile is a pure Nash equilibrium.
+-/
+
+/-- A strict better-response step: `s'` arises from `s` by a unilateral
+deviation that strictly lowers the deviator's cost. -/
+def IsStrictBetterResponse {ι : Type*} [Fintype ι] [DecidableEq ι] {S : ι → Type*}
+    [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
+    (c : ι → (∀ i, S i) → ℝ) (s s' : ∀ i, S i) : Prop :=
+  ∃ (i : ι) (a : S i), s' = Function.update s i a ∧ c i s' < c i s
+
+/-- A finite strict improvement path: every consecutive pair of profiles
+is a strict better-response step. This is `List.IsChain` for the step
+relation, so the `List.IsChain` API applies directly. -/
+abbrev IsImprovementPath {ι : Type*} [Fintype ι] [DecidableEq ι] {S : ι → Type*}
+    [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
+    (c : ι → (∀ i, S i) → ℝ) (path : List (∀ i, S i)) : Prop :=
+  path.IsChain (IsStrictBetterResponse c)
+
+/-- A finite strict improvement path is maximal when it is nonempty and
+cannot be extended: no profile `s'` makes `path ++ [s']` an improvement
+path. The empty list is not maximal. -/
+def IsMaximalImprovementPath {ι : Type*} [Fintype ι] [DecidableEq ι]
+    {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
+    (c : ι → (∀ i, S i) → ℝ) (path : List (∀ i, S i)) : Prop :=
+  path ≠ [] ∧ IsImprovementPath c path ∧ ∀ s', ¬ IsImprovementPath c (path ++ [s'])
+
+/-- One-step lemma: a strict better-response step strictly decreases the
+potential. This file uses the COST orientation of exact potential games:
+a unilateral deviation changes the deviator's cost by exactly the change
+in `Φ`. The roadmap gap text phrases this fact as "increases the
+potential", which is the PAYOFF orientation (there the potential equals
+`-Φ` in payoff terms); in the cost orientation used here the true
+statement is a strict decrease of `Φ`. -/
+theorem strict_better_response_decreases_potential {ι : Type*} [Fintype ι]
+    [DecidableEq ι] {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
+    {c : ι → (∀ i, S i) → ℝ} {Φ : (∀ i, S i) → ℝ}
+    (hΦ : IsExactPotential c Φ) {i : ι} {s s' : ∀ i, S i} {a : S i}
+    (hEq : s' = Function.update s i a) (hlt : c i s' < c i s) :
+    Φ s' < Φ s := by
+  subst hEq
+  have h := hΦ i s a
+  linarith
+
+/-- The one-step lemma for the step predicate: a strict better-response step
+`IsStrictBetterResponse c s s'` strictly decreases the potential. -/
+theorem IsStrictBetterResponse.potential_lt {ι : Type*} [Fintype ι]
+    [DecidableEq ι] {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
+    {c : ι → (∀ i, S i) → ℝ} {Φ : (∀ i, S i) → ℝ} {s s' : ∀ i, S i}
+    (hstep : IsStrictBetterResponse c s s') (hΦ : IsExactPotential c Φ) :
+    Φ s' < Φ s := by
+  obtain ⟨i, a, hEq, hlt⟩ := hstep
+  exact strict_better_response_decreases_potential hΦ hEq hlt
+
+/-- Endpoint closure from maximality: no strict better-response step leaves
+the last profile of a maximal path, because `List.IsChain.append` would turn
+such a step into an extension of the path. -/
+theorem IsMaximalImprovementPath.not_isStrictBetterResponse {ι : Type*} [Fintype ι]
+    [DecidableEq ι] {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
+    {c : ι → (∀ i, S i) → ℝ} {path : List (∀ i, S i)} {s : ∀ i, S i}
+    (hmax : IsMaximalImprovementPath c path) (hlast : path.getLast? = some s)
+    (s' : ∀ i, S i) : ¬ IsStrictBetterResponse c s s' := by
+  intro hstep
+  refine hmax.2.2 s' (hmax.2.1.append (.singleton s') ?_)
+  intro x hx y hy
+  rw [Option.mem_def, hlast, Option.some_inj] at hx
+  rw [Option.mem_def, List.head?_cons, Option.some_inj] at hy
+  subst hx hy
+  exact hstep
+
+/-- Maximal-path termination: a maximal finite strict improvement path
+terminates at a pure Nash equilibrium, namely its last profile. A cheaper
+unilateral deviation there would be a strict better-response step that
+extends the path (`IsMaximalImprovementPath.not_isStrictBetterResponse`). -/
+theorem maximal_improvement_path_ends_at_nash {ι : Type*} [Fintype ι]
+    [DecidableEq ι] {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
+    {c : ι → (∀ i, S i) → ℝ} {path : List (∀ i, S i)} {s : ∀ i, S i}
+    (hmax : IsMaximalImprovementPath c path) (hlast : path.getLast? = some s) :
+    IsPureNash c s := by
+  intro i a
+  by_contra hcon
+  exact hmax.not_isStrictBetterResponse hlast _ ⟨i, a, rfl, lt_of_not_ge hcon⟩
+
+/-- Maximality supplies the endpoint: a maximal finite strict improvement
+path is nonempty, and its last profile is a pure Nash equilibrium. -/
+theorem maximal_improvement_path_last_is_nash {ι : Type*} [Fintype ι]
+    [DecidableEq ι] {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
+    {c : ι → (∀ i, S i) → ℝ} {path : List (∀ i, S i)}
+    (hmax : IsMaximalImprovementPath c path) :
+    IsPureNash c (path.getLast hmax.1) :=
+  maximal_improvement_path_ends_at_nash hmax (List.getLast?_eq_some_getLast hmax.1)
