@@ -26,6 +26,7 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import Mathlib.Data.Finset.Filter
 
 @[expose] public section
 
@@ -43,11 +44,11 @@ the edges on the path joining `u` and `v` in `T`.
 Every tree on `V` is a spanning tree of the complete graph on `V`, so `T` ranges over all trees
 on `Fin n`. A tree has exactly one path between any two vertices (Mathlib
 `SimpleGraph.IsTree.existsUnique_path`), so choosing a path for every ordered pair, as the
-statement does, fixes `W_T`. The sum runs over all ordered pairs `(u, v) ∈ V × V`, as the index
-`u, v ∈ V` reads; the terms with `u = v` vanish because the path from `u` to itself is empty.
-Weights and requirements are given by symmetric `n × n` matrices with zero diagonal, the
-encoding of functions on unordered pairs of distinct vertices. Numbers use the canonical binary
-encoding.
+statement does, fixes `W_T`. Weights and requirements are data on unordered pairs, so the sum
+counts each unordered pair `{u, v}` of distinct vertices once, as `u < v` (pairs `u = v`
+contribute nothing: the path from `u` to itself is empty). Weights and requirements are given
+by symmetric `n × n` matrices with zero diagonal, the encoding of functions on unordered pairs
+of distinct vertices. Numbers use the canonical binary encoding.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -88,13 +89,15 @@ def walkWeight (i : OptimumCommunicationSpanningTreeInstance) {T : SimpleGraph (
     {u v : Fin i.1} (p : T.Walk u v) : ℕ :=
   (p.darts.map fun d => weight i d.fst d.snd).sum
 
-/-- A spanning tree `T` with `∑_{u, v} W_T({u, v}) * r({u, v}) ≤ B`, where `P u v` is the
-path joining `u` and `v` in `T` and `W_T({u, v})` its total weight. -/
+/-- A spanning tree `T` with `∑_{u, v} W_T({u, v}) * r({u, v}) ≤ B`, the sum over unordered
+pairs `{u, v}` of distinct vertices (each once, as `u < v`), where `P u v` is the path joining
+`u` and `v` in `T` and `W_T({u, v})` its total weight. -/
 def OptimumCommunicationSpanningTreeFeasible (i : OptimumCommunicationSpanningTreeInstance) :
     Prop :=
   ∃ T : SimpleGraph (Fin i.1), T.IsTree ∧
     ∃ P : (u v : Fin i.1) → T.Walk u v, (∀ u v, (P u v).IsPath) ∧
-      ∑ u : Fin i.1, ∑ v : Fin i.1, walkWeight i (P u v) * requirement i u v ≤ i.2.2.2
+      ∑ u : Fin i.1, ∑ v ∈ Finset.univ.filter (u < ·),
+        walkWeight i (P u v) * requirement i u v ≤ i.2.2.2
 
 open Classical in
 /-- OPTIMUM COMMUNICATION SPANNING TREE as a decision problem over bitstrings. -/
