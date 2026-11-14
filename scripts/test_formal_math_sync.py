@@ -172,6 +172,21 @@ class CheckerTest(unittest.TestCase):
             self.save()
         self.assert_clean_then(mutate, "recorded notice does not follow the Meta header")
 
+    def notice_as(self, notice: str) -> None:
+        text = c.META + "\n" + notice + "\n\n" + BODY
+        write(self.root, "MathlibExt/Attributed.lean", text)
+        row = self.row("MathlibExt/Attributed.lean")
+        row["published_sha256"], row["notice"] = c.sha256(text), notice
+        self.save()
+
+    def test_header_only_violation_code_recorded_as_notice(self) -> None:
+        self.assert_clean_then(lambda: self.notice_as("def atlasOnly : Nat := 999"),
+                               "recorded notice is not exactly one plain block comment")
+
+    def test_header_only_violation_code_between_notice_blocks(self) -> None:
+        self.assert_clean_then(lambda: self.notice_as(NOTICE + "\ndef atlasOnly : Nat := 999\n" + NOTICE),
+                               "recorded notice is not exactly one plain block comment")
+
     def test_header_only_violation_kept_header_is_not_a_license(self) -> None:
         def mutate() -> None:
             text = "/-\nAuthors: Someone\n-/\n\n" + BODY

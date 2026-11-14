@@ -62,7 +62,7 @@ def split_published(text: str, notice: str = "", header: str = "meta") -> tuple[
     """Split an ATLAS file into its body, or explain why it is not header + notice + body.
 
     `header="meta"`: the file starts with the exact Meta header, then the notice if one is
-    recorded. `header="upstream"`: the file keeps the upstream file's own third-party copyright and
+    recorded; a notice is exactly one plain block comment (`/- ... -/`), never Lean code. `header="upstream"`: the file keeps the upstream file's own third-party copyright and
     license block (as scripts/check_copyright.py allows for code copied from another project).
     Blank lines after the header and after the notice are separators, not body.
     Returns (body, None) or (None, problem).
@@ -79,6 +79,9 @@ def split_published(text: str, notice: str = "", header: str = "meta") -> tuple[
         return None, "does not start with the Meta header"
     rest = text[len(META):].lstrip("\n")
     if notice:
+        block = PLAIN_BLOCK.match(notice)
+        if not block or block.group(0) != notice:
+            return None, "recorded notice is not exactly one plain block comment"
         if not rest.startswith(notice):
             return None, "recorded notice does not follow the Meta header"
         rest = rest[len(notice):].lstrip("\n")
