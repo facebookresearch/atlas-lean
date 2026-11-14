@@ -40,10 +40,9 @@ definite, and an integer `K`. QUESTION: is there a function `f : {1, ..., n} →
 that `∑_{1 ≤ i, j ≤ n} a i j * f i * f j ≤ K`?
 
 The instance and the question (with the comparison `≤`, as in `MatrixCoverWanted`) are those of
-the parent; only the restriction is new, in `WellFormed`. Garey and Johnson do not require `A`
-to be symmetric, so "positive definite" is read on the quadratic form: `xᵀ A x > 0` for every
-nonzero real vector `x`. This is Mathlib's `Matrix.PosDef` of the symmetric matrix `A + Aᵀ`
-(`xᵀ (A + Aᵀ) x = 2 xᵀ A x`); for a symmetric `A` it is equivalent to `A.PosDef`.
+the parent; only the restriction is new, in `WellFormed`: `A`, read as a real matrix, is
+positive definite in Mathlib's sense (`Matrix.PosDef`), i.e. symmetric with `xᵀ A x > 0` for
+every nonzero real vector `x`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -60,10 +59,10 @@ reduction from every language in `NP`
 def realMatrix (i : MatrixCoverInstance) : Matrix (Fin i.1) (Fin i.1) ℝ :=
   Matrix.of fun r c => ((i.2.1.getD r []).getD c 0 : ℝ)
 
-/-- Well-formedness of an instance: the [MS13] well-formedness, and `A` is positive definite:
-`A + Aᵀ` is positive definite, i.e. `xᵀ A x > 0` for every nonzero real vector `x`. -/
+/-- Well-formedness of an instance: the [MS13] well-formedness, and `A` is positive definite
+(Mathlib's `Matrix.PosDef`: symmetric, and `xᵀ A x > 0` for every nonzero real vector `x`). -/
 def WellFormed (i : MatrixCoverInstance) : Prop :=
-  MatrixCover.WellFormed i ∧ (realMatrix i + (realMatrix i).transpose).PosDef
+  MatrixCover.WellFormed i ∧ (realMatrix i).PosDef
 
 open Classical in
 /-- MATRIX COVER with a positive definite matrix as a decision problem over bitstrings. -/
