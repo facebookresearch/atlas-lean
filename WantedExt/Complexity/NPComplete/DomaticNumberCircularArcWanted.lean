@@ -13,7 +13,9 @@ Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
 Theory of NP-Completeness*, W. H. Freeman (1979), problem [GT3] DOMATIC NUMBER;
 M. A. Bonuccelli, "Dominating sets and domatic number of circular arc graphs", Discrete Applied
-Mathematics 12 (1985), 203-213, doi:10.1016/0166-218X(85)90025-3.
+Mathematics 12 (1985), 203-213, doi:10.1016/0166-218X(85)90025-3;
+A. Sprague, "NP-completeness of the domatic number problem on circular arc graphs", Proceedings
+of the 37th Annual ACM Southeast Regional Conference (1999), doi:10.1145/306363.306416.
 -/
 module
 
@@ -37,8 +39,9 @@ INSTANCE: a circular-arc graph `G = (V, E)` (the intersection graph of a finite 
 on a circle) and a positive integer `K ≤ |V|`. QUESTION: is the domatic number of `G` at least
 `K`, i.e. can `V` be partitioned into `k ≥ K` disjoint sets `V₁, …, Vₖ` such that each `Vᵢ` is
 a dominating set for `G`? This is DOMATIC NUMBER (Garey and Johnson, [GT3]) restricted to
-circular-arc graphs; Bonuccelli (1985) shows that it is NP-complete for circular-arc graphs
-(and polynomial for proper circular-arc graphs).
+circular-arc graphs. Bonuccelli (1985) states that it is NP-complete for circular-arc graphs
+(and polynomial for proper circular-arc graphs); Sprague (1999) reports that Bonuccelli's
+reduction, from coloring circular-arc graphs, is in error, and proves the NP-completeness anew.
 
 The instance type, the graph, the simple-graph and `0 < K ≤ |V|` conditions, and the question
 are those of `DomaticNumber` (`DomaticNumberWanted`); the restriction adds that `G` is a
@@ -83,7 +86,7 @@ noncomputable def domaticNumberCircularArcDec :
   | none => false
 
 /-- **DOMATIC NUMBER of circular-arc graphs is NP-complete.** Source: Garey and Johnson (1979),
-[GT3]; Bonuccelli (1985). -/
+[GT3]; Bonuccelli (1985); Sprague (1999). -/
 public theorem_wanted domaticNumberCircularArc_npComplete :
     domaticNumberCircularArcDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
