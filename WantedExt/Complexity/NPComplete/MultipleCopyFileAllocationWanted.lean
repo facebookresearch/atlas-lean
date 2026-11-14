@@ -42,7 +42,9 @@ member of `V'`, we have `∑_{v ∈ V'} s(v) + ∑_{v ∈ V} d(v) · u(v) ≤ K`
 vertex `v` a copy `c(v) ∈ V'` reachable from `v` and charges `dist(v, c(v))` (Mathlib's
 `SimpleGraph.dist`, the number of edges of a shortest walk); since every term is non-negative,
 some assignment meets the bound exactly when the nearest copies do, so this is the source's
-condition with `d(v) = min_{w ∈ V'} dist(v, w)`. Numbers use the binary encoding.
+condition with `d(v)` the minimum of `dist(v, w)` over the members `w ∈ V'` that `v` can reach
+(Mathlib's `dist` is `0` for an unreachable pair, so unreachable members are excluded). Numbers
+use the binary encoding.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
