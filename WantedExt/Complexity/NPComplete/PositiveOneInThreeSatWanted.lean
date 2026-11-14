@@ -22,7 +22,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import CSLibExt.Logics.Propositional.CNF.Semantics
+public import WantedExt.Complexity.NPComplete.OneInThreeSatWanted
 
 @[expose] public section
 
@@ -38,9 +38,10 @@ assignment for `U` such that each clause in `C` has exactly one true literal?
 This is the restriction of ONE-IN-THREE 3SAT ([LO4], `OneInThreeSatWanted`) to clauses without
 negated literals: Schaefer's ONE-IN-THREE SATISFIABILITY, "whether an arbitrary conjunction of
 clauses of the form `R(x, y, z)` is satisfiable", where `R(x, y, z)` holds iff exactly one of
-`x, y, z` is true. Formulas are `Cslib.Logic.PL.CNF` (a literal `(x, b)` is true under `t` iff
-`t x = b`, so a positive literal is `(x, true)`); clauses are lists of three literals, as in
-`OneInThreeSatWanted`, and "exactly one true literal" counts positions in the clause.
+`x, y, z` is true. The instance type and the question are the parent's
+(`OneInThreeSat.OneInThreeSatInstance`, `OneInThreeSat.OneInThreeSatFeasible`); `WellFormed` is
+the parent's plus the restriction. In `Cslib.Logic.PL.CNF` a literal `(x, b)` is true under `t`
+iff `t x = b`, so a positive literal is `(x, true)`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -53,31 +54,18 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number of variables `n` (variables `0, …, n - 1`) and the clauses. -/
-abbrev PositiveOneInThreeSatInstance := ℕ × Cslib.Logic.PL.CNF
-
-/-- Well-formedness of an instance: every clause has three literals, each a positive literal
-`(x, true)` with `x < n`. -/
-def WellFormed (i : PositiveOneInThreeSatInstance) : Prop :=
-  ∀ clause ∈ i.2, clause.length = 3 ∧ ∀ l ∈ clause, l.1 < i.1 ∧ l.2 = true
-
-/-- Some assignment makes exactly one literal of each clause true. -/
-def PositiveOneInThreeSatFeasible (i : PositiveOneInThreeSatInstance) : Prop :=
-  ∃ assign : List Bool, assign.length = i.1 ∧
-    ∀ clause ∈ i.2, ∃ k < clause.length,
-      Cslib.Logic.PL.CNFLiteral.Satisfies (fun x => assign.getD x false)
-        (clause.getD k (0, false)) ∧
-        ∀ j < clause.length,
-          Cslib.Logic.PL.CNFLiteral.Satisfies (fun x => assign.getD x false)
-            (clause.getD j (0, false)) → j = k
+/-- Well-formedness of an instance: the parent's (three literals per clause, variables `< n`),
+and every literal is positive. -/
+def WellFormed (i : OneInThreeSat.OneInThreeSatInstance) : Prop :=
+  OneInThreeSat.WellFormed i ∧ ∀ clause ∈ i.2, ∀ l ∈ clause, l.2 = true
 
 open Classical in
 /-- POSITIVE ONE-IN-THREE 3SAT as a decision problem over bitstrings. -/
 noncomputable def positiveOneInThreeSatDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := PositiveOneInThreeSatInstance) x with
-  | some i => decide (WellFormed i ∧ PositiveOneInThreeSatFeasible i)
+      (α := OneInThreeSat.OneInThreeSatInstance) x with
+  | some i => decide (WellFormed i ∧ OneInThreeSat.OneInThreeSatFeasible i)
   | none => false
 
 /-- **POSITIVE ONE-IN-THREE 3SAT is NP-complete.** Source: Garey and Johnson (1979), [LO4];
