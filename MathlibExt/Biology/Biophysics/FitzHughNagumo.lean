@@ -118,15 +118,21 @@ the equilibrium needs `0 < b ≤ 1`.
   which `restFactor v* (v - v*) ≤ 0` throughout is the constant rest state. Hence for `v*² ≥ 4`
   there is no nonconstant periodic orbit (`IsSolution.eq_rest_of_periodic_of_four_le_sq`), and for
   `v*² ≤ 4` every nonconstant periodic orbit visits a state whose voltage displacement `v - v*`
-  lies in the rising-pulse window `(pulseRootLow v*, pulseRootHigh v*)`
-  (`restFactor_pos_iff`, `IsSolution.exists_mem_pulse_window_of_periodic`).
+  lies in the window `(pulseRootLow v*, pulseRootHigh v*)` where `restFactor v* > 0`
+  (`restFactor_pos_iff`, `IsSolution.exists_mem_pulse_window_of_periodic`). For `v* < -1` this
+  window consists of positive amplitudes (`pulseRootLow_pos`) and is the rising-pulse window of
+  `isRisingAfterPulse_iff`; for `v* ≥ -1` it also contains nonpositive displacements, at which the
+  voltage need not rise (at `v* = 0`, `x = -1`: `restFactor = 2/3` but the voltage field
+  `x · restFactor` is `-2/3`).
 
 The singular-perturbation (`ε → 0`) analysis, a trajectory-level firing threshold, the return to
 rest after a large excursion (a spike) from a rest state with `v*² ≤ 4` (the basin above is a
 neighbourhood of the rest state, not a spike), the existence of periodic orbits (relaxation
 oscillations; this needs Poincaré–Bendixson, which is not available) and bifurcations (a linear
 center is only a nonhyperbolic linearization; no transversality or nonlinear nondegeneracy
-condition is checked), and the Nagumo cubic `v (v - α)(1 - v)` form are not treated.
+condition is checked), and the Nagumo cubic `v (v - α)(1 - v)` form are not treated. Rest states
+with `1 - ε b < v*² ≤ 1` are linearly stable (for `0 < b < 1`) but outside the local return-to-rest
+result: there `restFactor v* 0 = 1 - v*² ≥ 0`, so the energy method gives nothing.
 
 ## References
 
@@ -942,8 +948,9 @@ theorem restFactor_le_of_abs_le {vr x ρ : ℝ} (hx : |x| ≤ ρ) :
   unfold restFactor
   linarith
 
-/-- For `vr² ≤ 4`, `restFactor vr δ > 0` exactly on the rising-pulse window
-`pulseRootLow vr < δ < pulseRootHigh vr` (`isRisingAfterPulse_iff`). -/
+/-- For `vr² ≤ 4`, `restFactor vr δ > 0` exactly on the window
+`pulseRootLow vr < δ < pulseRootHigh vr`. For `δ > 0` this is the rising-pulse condition of
+`isRisingAfterPulse_iff`; the whole window has `δ > 0` only when `vr < -1` (`pulseRootLow_pos`). -/
 theorem restFactor_pos_iff {vr δ : ℝ} (hv : vr ^ 2 ≤ 4) :
     0 < restFactor vr δ ↔ pulseRootLow vr < δ ∧ δ < pulseRootHigh vr := by
   unfold restFactor
@@ -1225,11 +1232,13 @@ theorem IsSolution.eq_rest_of_periodic_of_four_le_sq (h : IsSolution a b ε I v 
     have := restFactor_le vr (v s - vr)
     linarith) ht
 
-/-- **Nonconstant periodic orbits pass through the rising-pulse window.** For `b, ε > 0` and an
-equilibrium `(vr, wr)` with `vr² ≤ 4`, a `T`-periodic solution that is not the constant rest
+/-- **Nonconstant periodic orbits pass through the window `restFactor > 0`.** For `b, ε > 0` and
+an equilibrium `(vr, wr)` with `vr² ≤ 4`, a `T`-periodic solution that is not the constant rest
 state visits a state whose voltage displacement `v - vr` lies in the window
-`pulseRootLow vr < v - vr < pulseRootHigh vr` of pulse amplitudes after which the voltage rises
-(`isRisingAfterPulse_iff`). -/
+`pulseRootLow vr < v - vr < pulseRootHigh vr` where `restFactor vr > 0` (`restFactor_pos_iff`).
+For `vr < -1` the window consists of positive amplitudes (`pulseRootLow_pos`), the pulses after
+which the voltage rises (`isRisingAfterPulse_iff`); for `vr ≥ -1` it also contains nonpositive
+displacements, at which the voltage need not rise. -/
 theorem IsSolution.exists_mem_pulse_window_of_periodic (h : IsSolution a b ε I v w)
     {vr wr : ℝ} (hrest : IsEquilibrium a b ε I vr wr) (hb : 0 < b) (hε : 0 < ε)
     (hv : vr ^ 2 ≤ 4) {T : ℝ} (hT : 0 < T) (hvT : ∀ t, 0 ≤ t → v (t + T) = v t)
