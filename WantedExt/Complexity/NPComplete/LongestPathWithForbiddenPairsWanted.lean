@@ -11,7 +11,8 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), LONGEST PATH WITH FORBIDDEN PAIRS [GT50] (decision version), related to
+2000), entry LONGEST PATH WITH FORBIDDEN PAIRS in its graph theory section (decision version;
+the entry gives the Garey-Johnson code GT54), related to
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
 Theory of NP-Completeness*, W. H. Freeman (1979), problem [GT54] PATH WITH FORBIDDEN PAIRS;
 H. N. Gabow, S. N. Maheshwari and L. J. Osterweil, "On two problems in the generation of program
@@ -90,8 +91,8 @@ noncomputable def longestPathWithForbiddenPairsDec :
   | some i => decide (WellFormed i ∧ LongestPathWithForbiddenPairsFeasible i)
   | none => false
 
-/-- **LONGEST PATH WITH FORBIDDEN PAIRS is NP-complete.** Source: Crescenzi and Kann, [GT50];
-Garey and Johnson (1979), [GT54], [GT39]. -/
+/-- **LONGEST PATH WITH FORBIDDEN PAIRS is NP-complete.** Source: Crescenzi and Kann, LONGEST
+PATH WITH FORBIDDEN PAIRS; Garey and Johnson (1979), [GT54], [GT39]. -/
 public theorem_wanted longestPathWithForbiddenPairs_npComplete :
     longestPathWithForbiddenPairsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
