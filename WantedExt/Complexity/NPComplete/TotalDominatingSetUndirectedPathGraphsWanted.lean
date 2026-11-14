@@ -33,8 +33,8 @@ open MetaMathlibExt.Complexity.NPComplete.TotalDominatingSet
 /-!
 # TOTAL DOMINATING SET for undirected path graphs is NP-complete
 
-INSTANCE: an undirected path graph `G = (V, E)`, that is, the vertex intersection graph of a
-family of paths in an undirected tree, and a nonnegative integer `K`.
+INSTANCE: an undirected path graph `G = (V, E)` with no isolated vertices, that is, the vertex
+intersection graph of a family of paths in an undirected tree, and a positive integer `K`.
 QUESTION: does `G` have a total dominating set of size at most `K`, i.e. a set `D ⊆ V` with
 `|D| ≤ K` such that every vertex of `V` (including those in `D`) is adjacent to a vertex of `D`?
 
@@ -47,15 +47,16 @@ This is the restriction of TOTAL DOMINATING SET (`TotalDominatingSetWanted`) to 
 graphs. The instance type, the graph, the well-formedness (a simple edge list on `Fin n`) and the
 question are the parent's (`TotalDominatingSet.TotalDominatingSetInstance`,
 `TotalDominatingSet.Graph`, `TotalDominatingSet.WellFormed`,
-`TotalDominatingSet.TotalDominatingSetFeasible`); `WellFormed` adds the class restriction
+`TotalDominatingSet.TotalDominatingSetFeasible`); `WellFormed` adds the usual instance conditions of
+total domination, `0 < K` and no isolated vertex (every vertex has a neighbor; a graph with an
+isolated vertex has no total dominating set), and the class restriction
 `DominatingSetUndirectedPathGraphs.IsUndirectedPathGraph` of
 `WantedExt.Complexity.NPComplete.DominatingSetUndirectedPathGraphsWanted`, reused unchanged: a
 finite tree `T` (Mathlib's `SimpleGraph.IsTree`) and, for each vertex `v`, the vertex set `P v` of
 a path in `T` (a `SimpleGraph.Walk` with `IsPath`), such that two distinct vertices are adjacent
-exactly when their paths share a vertex of `T`. A graph with an isolated vertex has no total
-dominating set, so on yes-instances `n ≤ 2|E|` although `n` is written in binary, and a model whose
-host tree has at most `max 1 n` nodes (a clique tree; `IsTree` needs at least one node, also when
-`n = 0`) plus the set `D` is a polynomial certificate.
+exactly when their paths share a vertex of `T`. Without isolated vertices `n ≤ 2|E|`, although `n`
+is written in binary, and a model whose host tree has at most `max 1 n` nodes (a clique tree;
+`IsTree` needs at least one node, also when `n = 0`) plus the set `D` is a polynomial certificate.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -68,10 +69,10 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`), and the graph is
-an undirected path graph. -/
+/-- Well-formedness of an instance: the parent's (a simple edge list on `Fin n`), `0 < K`, no
+isolated vertex, and the graph is an undirected path graph. -/
 def WellFormed (i : TotalDominatingSetInstance) : Prop :=
-  TotalDominatingSet.WellFormed i ∧
+  TotalDominatingSet.WellFormed i ∧ 0 < i.2.2 ∧ (∀ v : Fin i.1, ∃ u, (Graph i).Adj v u) ∧
     DominatingSetUndirectedPathGraphs.IsUndirectedPathGraph (Graph i)
 
 open Classical in
