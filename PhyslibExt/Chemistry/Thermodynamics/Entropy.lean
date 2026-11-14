@@ -48,26 +48,26 @@ algebra (`Real.log_div`, `Real.log_mul`, `Real.log_rpow`), `Real.log_injOn_pos`,
 
 ## ii. Key results
 
-- `carnotEfficiency`, `carnotHeatPos` : `η = 1 - Tc / Th` and positivity of the
+- `carnotEfficiency`, `carnot_heat_pos` : `η = 1 - Tc / Th` and positivity of the
   isothermal heats.
-- `carnotVolumeRatio` : the adiabatic legs force `V₂ / V₁ = V₃ / V₄`.
-- `carnotHeatRatio`, `carnotCycleEfficiency` : positive heats with `Qc / Qh = Tc / Th` and
+- `carnot_volume_ratio` : the adiabatic legs force `V₂ / V₁ = V₃ / V₄`.
+- `carnot_heat_ratio`, `carnot_cycle_efficiency` : positive heats with `Qc / Qh = Tc / Th` and
   `1 - Qc / Qh = carnotEfficiency Tc Th` for the reversible cycle.
-- `engineEfficiencyLeCarnot`, `engineEfficiencyEqCarnot` : the second-law bound for any engine
-  and its equality case for reversible engines.
+- `engine_efficiency_le_carnotEfficiency`, `engine_efficiency_eq_carnotEfficiency` : the
+  second-law bound for any engine and its equality case for reversible engines.
 - `idealGasEntropyChange` : `ΔS = n * cv * log (T₂ / T₁) + n * R * log (V₂ / V₁)`.
-- `idealGasEntropyChangeTotalCV` : the no-double-counting `CV` form.
-- `idealGasEntropyChangeAdd`, `idealGasEntropyChangeIsothermal`,
-  `idealGasEntropyChangeAdiabatic`, `idealGasEntropyChangeSymm` : additivity, the isothermal
+- `idealGasEntropyChange_totalCV` : the no-double-counting `CV` form.
+- `idealGasEntropyChange_add`, `idealGasEntropyChange_isothermal`,
+  `idealGasEntropyChange_adiabatic`, `idealGasEntropyChange_symm` : additivity, the isothermal
   case, the reversible-adiabatic case and sign reversal.
 - `entropyOfMixing`, `entropyOfMixing_eq_neg_sum` : `ΔS_mix = n * R * H(x)` with `H` the
   Shannon entropy, that is `-n * R * ∑ i, x i * log (x i)`.
-- `moleFraction_le_one`, `entropyOfMixingNonneg`, `entropyOfMixingEqZeroIff`,
-  `entropyOfMixingBinary` : the mole-fraction bound, nonnegativity, the single-component
+- `moleFraction_le_one`, `entropyOfMixing_nonneg`, `entropyOfMixing_eq_zero_iff`,
+  `entropyOfMixing_binary` : the mole-fraction bound, nonnegativity, the single-component
   equality case and the binary case.
 - `absoluteEntropy` : `S(T) = ∫ t in 0..T, Cp t / t + ∑ transitions below T, ΔH / Tt`.
-- `absoluteEntropyZero`, `hasDerivAtAbsoluteEntropy`, `absoluteEntropyMono`,
-  `absoluteEntropyInsertAbove` : the third-law convention, `S' = Cp / T`, monotonicity and the
+- `absoluteEntropy_zero`, `hasDerivAt_absoluteEntropy`, `absoluteEntropy_mono`,
+  `absoluteEntropy_insert_of_lt` : the third-law convention, `S' = Cp / T`, monotonicity and the
   transition filter.
 
 ## iii. Table of contents
@@ -107,7 +107,7 @@ noncomputable def carnotEfficiency (Tc Th : ℝ) : ℝ := 1 - Tc / Th
 /-- An isothermal leg with heat `Q = n * R * T * log (V₂ / V₁)` absorbs positive heat
 for an expansion leg: `0 < Q` needs `V₁ < V₂`. Applied to the hot leg (`V₁ < V₂`) and the
 cold leg (`V₄ < V₃`, with the rejected heat counted positive). -/
-lemma carnotHeatPos {n R T V1 V2 : ℝ} (hn : 0 < n) (hR : 0 < R) (hT : 0 < T)
+lemma carnot_heat_pos {n R T V1 V2 : ℝ} (hn : 0 < n) (hR : 0 < R) (hT : 0 < T)
     (hV1 : 0 < V1) (hexp : V1 < V2) : 0 < n * R * T * Real.log (V2 / V1) := by
   have hL : 0 < Real.log (V2 / V1) := Real.log_pos ((one_lt_div hV1).mpr hexp)
   exact mul_pos (mul_pos (mul_pos hn hR) hT) hL
@@ -118,7 +118,7 @@ from the MODEL hypotheses `Th * V₂ ^ k = Tc * V₃ ^ k` and `Tc * V₄ ^ k = T
 derived from the first law here. Route: `Real.log` of both relations (`Real.log_mul`,
 `Real.log_rpow`), added (`linear_combination`), the factor `k ≠ 0` cancelled
 (`mul_left_cancel₀`), and injectivity of `Real.log` on positives (`Real.log_injOn_pos`). -/
-lemma carnotVolumeRatio {Tc Th V1 V2 V3 V4 R cv : ℝ}
+lemma carnot_volume_ratio {Tc Th V1 V2 V3 V4 R cv : ℝ}
     (hTc : 0 < Tc) (hT : Tc < Th)
     (hR : 0 < R) (hcv : 0 < cv)
     (hV1 : 0 < V1) (hV2 : 0 < V2) (hV3 : 0 < V3) (hV4 : 0 < V4)
@@ -149,7 +149,7 @@ lemma carnotVolumeRatio {Tc Th V1 V2 V3 V4 R cv : ℝ}
 heat ratio equals the temperature ratio: with `Qh = n * R * Th * log (V₂ / V₁)` and
 `Qc = n * R * Tc * log (V₃ / V₄)`, `0 < Qh ∧ 0 < Qc ∧ Qc / Qh = Tc / Th`. Positivity of
 the heats needs the expansion hypotheses `V₁ < V₂` and `V₄ < V₃`. -/
-lemma carnotHeatRatio {Tc Th n R V1 V2 V3 V4 Qh Qc : ℝ}
+lemma carnot_heat_ratio {Tc Th n R V1 V2 V3 V4 Qh Qc : ℝ}
     (hTc : 0 < Tc) (hT : Tc < Th)
     (hn : 0 < n) (hR : 0 < R)
     (hV1 : 0 < V1) (hV4 : 0 < V4)
@@ -161,10 +161,10 @@ lemma carnotHeatRatio {Tc Th n R V1 V2 V3 V4 Qh Qc : ℝ}
   have hTh : 0 < Th := lt_trans hTc hT
   have hQhpos : 0 < Qh := by
     rw [hQh]
-    exact carnotHeatPos hn hR hTh hV1 hexp
+    exact carnot_heat_pos hn hR hTh hV1 hexp
   have hQcpos : 0 < Qc := by
     rw [hQc]
-    exact carnotHeatPos hn hR hTc hV4 hcomp
+    exact carnot_heat_pos hn hR hTc hV4 hcomp
   have hL : 0 < Real.log (V2 / V1) := Real.log_pos ((one_lt_div hV1).mpr hexp)
   have hD : n * R * Th * Real.log (V2 / V1) ≠ 0 :=
     mul_ne_zero (mul_ne_zero (mul_ne_zero hn.ne' hR.ne') hTh.ne') hL.ne'
@@ -175,9 +175,9 @@ lemma carnotHeatRatio {Tc Th n R V1 V2 V3 V4 Qh Qc : ℝ}
   exact ⟨hQhpos, hQcpos, hratio⟩
 
 /-- The reversible ideal-gas Carnot cycle attains the Carnot efficiency: the full chain from
-the adiabatic MODEL hypotheses through `carnotVolumeRatio` and `carnotHeatRatio` gives
+the adiabatic MODEL hypotheses through `carnot_volume_ratio` and `carnot_heat_ratio` gives
 `1 - Qc / Qh = carnotEfficiency Tc Th`. -/
-lemma carnotCycleEfficiency {Tc Th n R V1 V2 V3 V4 Qh Qc cv : ℝ}
+lemma carnot_cycle_efficiency {Tc Th n R V1 V2 V3 V4 Qh Qc cv : ℝ}
     (hTc : 0 < Tc) (hT : Tc < Th)
     (hn : 0 < n) (hR : 0 < R) (hcv : 0 < cv)
     (hV1 : 0 < V1) (hV2 : 0 < V2) (hV3 : 0 < V3) (hV4 : 0 < V4)
@@ -187,8 +187,8 @@ lemma carnotCycleEfficiency {Tc Th n R V1 V2 V3 V4 Qh Qc cv : ℝ}
     (hQh : Qh = n * R * Th * Real.log (V2 / V1))
     (hQc : Qc = n * R * Tc * Real.log (V3 / V4)) :
     1 - Qc / Qh = carnotEfficiency Tc Th := by
-  have hV := carnotVolumeRatio hTc hT hR hcv hV1 hV2 hV3 hV4 had1 had2
-  have hheat := carnotHeatRatio hTc hT hn hR hV1 hV4 hexp hcomp hV hQh hQc
+  have hV := carnot_volume_ratio hTc hT hR hcv hV1 hV2 hV3 hV4 had1 had2
+  have hheat := carnot_heat_ratio hTc hT hn hR hV1 hV4 hexp hcomp hV hQh hQc
   rw [hheat.2.2]
   rfl
 
@@ -197,7 +197,7 @@ heat rejected `Qc`, work `W = Qh - Qc` (first law) and the Clausius inequality
 `Qh / Th - Qc / Tc ≤ 0` as the second-law input (LAW), satisfies
 `W / Qh ≤ carnotEfficiency Tc Th`. The Clausius inequality is a model hypothesis, not a
 theorem derived in this module. -/
-lemma engineEfficiencyLeCarnot {Qh Qc W Tc Th : ℝ}
+lemma engine_efficiency_le_carnotEfficiency {Qh Qc W Tc Th : ℝ}
     (hTc : 0 < Tc) (hTh : 0 < Th) (hQh : 0 < Qh)
     (hW : W = Qh - Qc) (hClausius : Qh / Th - Qc / Tc ≤ 0) :
     W / Qh ≤ carnotEfficiency Tc Th := by
@@ -210,7 +210,7 @@ lemma engineEfficiencyLeCarnot {Qh Qc W Tc Th : ℝ}
 
 /-- A reversible engine attains the Carnot efficiency: with `W = Qh - Qc` and the Clausius
 relation as an equality, `W / Qh = carnotEfficiency Tc Th`. -/
-lemma engineEfficiencyEqCarnot {Qh Qc W Tc Th : ℝ}
+lemma engine_efficiency_eq_carnotEfficiency {Qh Qc W Tc Th : ℝ}
     (hTc : 0 < Tc) (hTh : 0 < Th) (hQh : 0 < Qh)
     (hW : W = Qh - Qc) (hClausius : Qh / Th - Qc / Tc = 0) :
     W / Qh = carnotEfficiency Tc Th := by
@@ -245,14 +245,14 @@ noncomputable def idealGasEntropyChange (n cv R T1 V1 T2 V2 : ℝ) : ℝ :=
 /-- No-double-counting: with total heat capacity `CV = n * cv`, the change is
 `CV * log (T₂ / T₁) + n * R * log (V₂ / V₁)` — using total `CV` one does NOT multiply by
 `n` again. -/
-lemma idealGasEntropyChangeTotalCV {n cv R T1 V1 T2 V2 CV : ℝ} (hCV : CV = n * cv) :
+lemma idealGasEntropyChange_totalCV {n cv R T1 V1 T2 V2 CV : ℝ} (hCV : CV = n * cv) :
     idealGasEntropyChange n cv R T1 V1 T2 V2
       = CV * Real.log (T2 / T1) + n * R * Real.log (V2 / V1) := by
   unfold idealGasEntropyChange
   rw [hCV]
 
 /-- Additivity (state-function property): `ΔS(1→2) + ΔS(2→3) = ΔS(1→3)`. -/
-lemma idealGasEntropyChangeAdd {n cv R T1 V1 T2 V2 T3 V3 : ℝ}
+lemma idealGasEntropyChange_add {n cv R T1 V1 T2 V2 T3 V3 : ℝ}
     (hT1 : 0 < T1) (hT2 : 0 < T2) (hT3 : 0 < T3)
     (hV1 : 0 < V1) (hV2 : 0 < V2) (hV3 : 0 < V3) :
     idealGasEntropyChange n cv R T1 V1 T2 V2 + idealGasEntropyChange n cv R T2 V2 T3 V3
@@ -264,7 +264,7 @@ lemma idealGasEntropyChangeAdd {n cv R T1 V1 T2 V2 T3 V3 : ℝ}
   ring
 
 /-- Isothermal case: if `T₂ = T₁` then `ΔS = n * R * log (V₂ / V₁)`. -/
-lemma idealGasEntropyChangeIsothermal {n cv R T1 V1 T2 V2 : ℝ}
+lemma idealGasEntropyChange_isothermal {n cv R T1 V1 T2 V2 : ℝ}
     (hT1 : 0 < T1) (hT : T2 = T1) :
     idealGasEntropyChange n cv R T1 V1 T2 V2 = n * R * Real.log (V2 / V1) := by
   unfold idealGasEntropyChange
@@ -272,17 +272,17 @@ lemma idealGasEntropyChangeIsothermal {n cv R T1 V1 T2 V2 : ℝ}
   ring
 
 /-- Isothermal expansion increases entropy: if `T₂ = T₁` and `V₁ < V₂` then `0 < ΔS`. -/
-lemma idealGasEntropyChangeIsothermalPos {n cv R T1 V1 T2 V2 : ℝ}
+lemma idealGasEntropyChange_isothermal_pos {n cv R T1 V1 T2 V2 : ℝ}
     (hn : 0 < n) (hR : 0 < R) (hT1 : 0 < T1) (hV1 : 0 < V1)
     (hT : T2 = T1) (hexp : V1 < V2) :
     0 < idealGasEntropyChange n cv R T1 V1 T2 V2 := by
-  rw [idealGasEntropyChangeIsothermal hT1 hT]
+  rw [idealGasEntropyChange_isothermal hT1 hT]
   exact mul_pos (mul_pos hn hR) (Real.log_pos ((one_lt_div hV1).mpr hexp))
 
 /-- Reversible-adiabatic case: if `T₂ / T₁ = (V₁ / V₂) ^ (R / cv)` (the adiabatic relation
 for constant `cv`) then `ΔS = 0`. Route: `Real.log` algebra (`Real.log_div`,
 `Real.log_rpow`), then `field_simp` and `ring`. -/
-lemma idealGasEntropyChangeAdiabatic {n cv R T1 V1 T2 V2 : ℝ}
+lemma idealGasEntropyChange_adiabatic {n cv R T1 V1 T2 V2 : ℝ}
     (hcv : 0 < cv)
     (hV1 : 0 < V1) (hV2 : 0 < V2)
     (had : T2 / T1 = (V1 / V2) ^ (R / cv)) :
@@ -299,7 +299,7 @@ lemma idealGasEntropyChangeAdiabatic {n cv R T1 V1 T2 V2 : ℝ}
   ring
 
 /-- Sign reversal: `ΔS(1→2) = -ΔS(2→1)`. -/
-lemma idealGasEntropyChangeSymm {n cv R T1 V1 T2 V2 : ℝ}
+lemma idealGasEntropyChange_symm {n cv R T1 V1 T2 V2 : ℝ}
     (hT1 : 0 < T1) (hT2 : 0 < T2) (hV1 : 0 < V1) (hV2 : 0 < V2) :
     idealGasEntropyChange n cv R T1 V1 T2 V2
       = -idealGasEntropyChange n cv R T2 V2 T1 V1 := by
@@ -338,7 +338,7 @@ lemma moleFraction_le_one {ι : Type*} [Fintype ι] {x : ι → ℝ}
 
 /-- The entropy of mixing is nonnegative for `0 ≤ n`, `0 ≤ R` and genuine mole fractions:
 `n * R ≥ 0` times the nonnegative Shannon entropy `FiniteEnsembles.shannonEntropy_nonneg`. -/
-lemma entropyOfMixingNonneg {ι : Type*} [Fintype ι] {n R : ℝ} {x : ι → ℝ}
+lemma entropyOfMixing_nonneg {ι : Type*} [Fintype ι] {n R : ℝ} {x : ι → ℝ}
     (hn : 0 ≤ n) (hR : 0 ≤ R) (hx : ∀ i, 0 ≤ x i) (hsum : ∑ i, x i = 1) :
     0 ≤ entropyOfMixing n R x :=
   mul_nonneg (mul_nonneg hn hR) (FiniteEnsembles.shannonEntropy_nonneg hx hsum)
@@ -346,8 +346,7 @@ lemma entropyOfMixingNonneg {ι : Type*} [Fintype ι] {n R : ℝ} {x : ι → �
 /-- The entropy of mixing vanishes exactly for a single component: for `0 < n` and `0 < R`,
 `entropyOfMixing n R x = 0 ↔ ∃ i, x i = 1 ∧ ∀ j, j ≠ i → x j = 0`. Since `n * R ≠ 0`, this is
 the equality case `FiniteEnsembles.shannonEntropy_eq_zero_iff` of the Shannon entropy. -/
-lemma entropyOfMixingEqZeroIff {ι : Type*} [Fintype ι] [DecidableEq ι]
-    {n R : ℝ} {x : ι → ℝ}
+lemma entropyOfMixing_eq_zero_iff {ι : Type*} [Fintype ι] {n R : ℝ} {x : ι → ℝ}
     (hn : 0 < n) (hR : 0 < R) (hx : ∀ i, 0 ≤ x i) (hsum : ∑ i, x i = 1) :
     entropyOfMixing n R x = 0 ↔ (∃ i, x i = 1 ∧ ∀ j, j ≠ i → x j = 0) := by
   rw [entropyOfMixing, mul_eq_zero, or_iff_right (mul_pos hn hR).ne',
@@ -355,7 +354,7 @@ lemma entropyOfMixingEqZeroIff {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-- Binary case: for `ι = Fin 2` and `x = ![a, 1 - a]`, the mixing entropy unfolds to
 `-n * R * (a * log a + (1 - a) * log (1 - a))`. -/
-lemma entropyOfMixingBinary (n R a : ℝ) :
+lemma entropyOfMixing_binary (n R a : ℝ) :
     entropyOfMixing n R (![a, 1 - a] : Fin 2 → ℝ)
       = -n * R * (a * Real.log a + (1 - a) * Real.log (1 - a)) := by
   rw [entropyOfMixing_eq_neg_sum, Fin.sum_univ_two]
@@ -381,7 +380,7 @@ noncomputable def absoluteEntropy {ι : Type*} (Cp : ℝ → ℝ) (trans : Finse
   (∫ t in (0:ℝ)..T, Cp t / t) + ∑ k ∈ trans.filter (fun k => Tt k ≤ T), dH k / Tt k
 
 /-- Third-law convention: `S(0) = 0` (empty integral plus empty transition sum). -/
-lemma absoluteEntropyZero {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
+lemma absoluteEntropy_zero {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
     (Tt : ι → ℝ) (dH : ι → ℝ) (hTt : ∀ k ∈ trans, 0 < Tt k) :
     absoluteEntropy Cp trans Tt dH 0 = 0 := by
   unfold absoluteEntropy
@@ -395,7 +394,7 @@ continuity of `Cp` on positive temperatures and integrability of `Cp t / t` on `
 `HasDerivAt (absoluteEntropy Cp trans Tt dH) (Cp T / T) T` at points `T` that are not
 transition temperatures. Via Mathlib's FTC `intervalIntegral.integral_hasDerivAt_right`; the
 transition sum is locally constant near such `T`. -/
-lemma hasDerivAtAbsoluteEntropy {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
+lemma hasDerivAt_absoluteEntropy {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
     (Tt : ι → ℝ) (dH : ι → ℝ) {T : ℝ}
     (hT : 0 < T)
     (hCp : ContinuousOn Cp (Set.Ioi 0))
@@ -437,7 +436,7 @@ lemma hasDerivAtAbsoluteEntropy {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset 
 /-- Absolute entropy is monotone: with `0 ≤ Cp` on `[0, T]`, nonnegative transition
 enthalpies and positive transition temperatures, `S(T₁) ≤ S(T₂)` for `T₁ ≤ T₂` (both in
 `[0, T]`). Via integral monotonicity and growth of the transition sums. -/
-lemma absoluteEntropyMono {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
+lemma absoluteEntropy_mono {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
     (Tt : ι → ℝ) (dH : ι → ℝ) {T T₁ T₂ : ℝ}
     (hCp : ∀ t ∈ Set.Icc (0 : ℝ) T, 0 ≤ Cp t)
     (hdH : ∀ k ∈ trans, 0 ≤ dH k)
@@ -470,7 +469,7 @@ lemma absoluteEntropyMono {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
 
 /-- Transitions above `T` do not contribute: inserting a transition with `Tt k > T` does not
 change `S(T)`. -/
-lemma absoluteEntropyInsertAbove {ι : Type*} [DecidableEq ι] (Cp : ℝ → ℝ)
+lemma absoluteEntropy_insert_of_lt {ι : Type*} [DecidableEq ι] (Cp : ℝ → ℝ)
     (trans : Finset ι) (Tt : ι → ℝ) (dH : ι → ℝ) (k : ι) {T : ℝ}
     (habove : T < Tt k) :
     absoluteEntropy Cp (insert k trans) Tt dH T

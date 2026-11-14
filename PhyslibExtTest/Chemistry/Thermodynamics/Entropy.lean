@@ -42,7 +42,7 @@ example (R V1 V2 V3 V4 : ℝ) (hR : 0 < R)
       = 300 / 600 := by
   have hT1 : (0:ℝ) < 300 := by norm_num
   have hT2 : (300:ℝ) < 600 := by norm_num
-  exact (carnotHeatRatio hT1 hT2 one_pos hR hV1 hV4 hexp hcomp hV rfl rfl).2.2
+  exact (carnot_heat_ratio hT1 hT2 one_pos hR hV1 hV4 hexp hcomp hV rfl rfl).2.2
 
 /-- With `V₂ / V₁ = 2` the hot heat is `R * 600 * log 2` for `n = 1`. -/
 example (R : ℝ) (V1 V2 : ℝ) (hratio : V2 / V1 = 2) :
@@ -72,7 +72,7 @@ example : (1000 / 600 - 550 / 300 : ℝ) ≤ 0 := by norm_num
 
 /-- The consistent set `Qh = 1000`, `Qc = 550`, `W = 450` obeys the second-law bound. -/
 example : (450 / 1000 : ℝ) ≤ carnotEfficiency 300 600 := by
-  have h := engineEfficiencyLeCarnot (Qh := 1000) (Qc := 550) (W := 450)
+  have h := engine_efficiency_le_carnotEfficiency (Qh := 1000) (Qc := 550) (W := 450)
     (Tc := 300) (Th := 600)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
   exact h
@@ -82,7 +82,7 @@ example : (450 / 1000 : ℝ) ≤ 1 / 2 := by norm_num
 
 /-- A reversible engine attains the bound: `Qh = 1000`, `Qc = 500`, `W = 500`. -/
 example : (500 / 1000 : ℝ) = carnotEfficiency 300 600 := by
-  have h := engineEfficiencyEqCarnot (Qh := 1000) (Qc := 500) (W := 500)
+  have h := engine_efficiency_eq_carnotEfficiency (Qh := 1000) (Qc := 500) (W := 500)
     (Tc := 300) (Th := 600)
     (by norm_num) (by norm_num) (by norm_num) (by norm_num) (by norm_num)
   exact h
@@ -119,7 +119,7 @@ example (R V : ℝ) (hV : 0 < V) :
 example (cv R : ℝ) :
     idealGasEntropyChange 2 cv R 300 1 600 1
       = (2 * cv) * Real.log (600 / 300) + 2 * R * Real.log (1 / 1) :=
-  idealGasEntropyChangeTotalCV rfl
+  idealGasEntropyChange_totalCV rfl
 
 /-- The double-counted value differs from the correct one for the doubling case. -/
 example (cv R V : ℝ) (hcv : 0 < cv) (hV : 0 < V) :
@@ -137,13 +137,13 @@ example (cv R V : ℝ) (hcv : 0 < cv) (hV : 0 < V) :
 /-- Isothermal case: with `T₂ = T₁` only the volume term survives. -/
 example (R V1 V2 : ℝ) :
     idealGasEntropyChange 1 2 R 300 V1 300 V2 = 1 * R * Real.log (V2 / V1) :=
-  idealGasEntropyChangeIsothermal (by norm_num) rfl
+  idealGasEntropyChange_isothermal (by norm_num) rfl
 
 /-- Sign reversal at `300 → 600` against `600 → 300`. -/
 example (R cv V : ℝ) (hV : 0 < V) :
     idealGasEntropyChange 1 cv R 300 V 600 V
       = -idealGasEntropyChange 1 cv R 600 V 300 V :=
-  idealGasEntropyChangeSymm (by norm_num) (by norm_num) hV hV
+  idealGasEntropyChange_symm (by norm_num) (by norm_num) hV hV
 
 /-!
 
@@ -155,12 +155,12 @@ example (R cv V : ℝ) (hV : 0 < V) :
 example (R : ℝ) :
     entropyOfMixing 1 R (![1/2, 1 - 1/2] : Fin 2 → ℝ)
       = -1 * R * ((1/2) * Real.log (1/2) + (1 - 1/2) * Real.log (1 - 1/2)) :=
-  entropyOfMixingBinary 1 R (1/2)
+  entropyOfMixing_binary 1 R (1/2)
 
 /-- …which simplifies to `R * log 2`. -/
 example (R : ℝ) :
     entropyOfMixing 1 R (![1/2, 1 - 1/2] : Fin 2 → ℝ) = R * Real.log 2 := by
-  rw [entropyOfMixingBinary]
+  rw [entropyOfMixing_binary]
   have h12 : (1 - 1/2 : ℝ) = 1/2 := by norm_num
   rw [h12]
   have hlog : Real.log (1/2 : ℝ) = -Real.log 2 := by
@@ -182,7 +182,7 @@ example (R : ℝ) (hR : 0 ≤ R) :
     rw [Fin.sum_univ_two]
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
     norm_num
-  exact entropyOfMixingNonneg (by norm_num) hR hx hsum
+  exact entropyOfMixing_nonneg (by norm_num) hR hx hsum
 
 /-- Single component `x = ![1, 0]`: the mixing entropy is `0`. -/
 example (R : ℝ) : entropyOfMixing 1 R (![1, 0] : Fin 2 → ℝ) = 0 := by
@@ -247,7 +247,7 @@ example : ∑ _k ∈ ({0} : Finset (Fin 1)).filter (fun _ => (100:ℝ) ≤ 150),
 /-- `S(0) = 0` with no transitions. -/
 example (Cp : ℝ → ℝ) :
     absoluteEntropy Cp (∅ : Finset (Fin 1)) (fun _ => 1) (fun _ => 0) 0 = 0 :=
-  absoluteEntropyZero Cp ∅ _ _ (fun _ hk => by simp at hk)
+  absoluteEntropy_zero Cp ∅ _ _ (fun _ hk => by simp at hk)
 
 /-!
 
@@ -273,7 +273,7 @@ example : ∑ i, (![2, -1] : Fin 2 → ℝ) i = 1 := by
   norm_num
 
 /-- (e) Countermodel: for `x = ![2, -1]` the mixing entropy is `-2 * log 2 < 0`, so the
-hypothesis `∀ i, 0 ≤ x i` of `entropyOfMixingNonneg` cannot be dropped. -/
+hypothesis `∀ i, 0 ≤ x i` of `entropyOfMixing_nonneg` cannot be dropped. -/
 example : entropyOfMixing 1 1 (![2, -1] : Fin 2 → ℝ) < 0 := by
   rw [entropyOfMixing_eq_neg_sum, Fin.sum_univ_two]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Real.log_neg_eq_log, Real.log_one]
