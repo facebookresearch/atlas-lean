@@ -508,46 +508,9 @@ lemma innerProductM_eq_zero_of_ne {ι : Type*} [Fintype ι]
     (hv : K *ᵥ v = ω2 • (fun i => m i * v i))
     (hw : K *ᵥ w = μ2 • (fun i => m i * w i)) :
     innerProductM m v w = 0 := by
-  have hij : ∀ a b, K a b = K b a := by
-    intro a b
-    have h := congrFun (congrFun hsymm a) b
-    rw [Matrix.transpose_apply] at h
-    exact h.symm
-  have hsym_dot : dotProduct (K *ᵥ v) w =
-      dotProduct v (K *ᵥ w) := by
-    have hexpand : ∀ a b : ι → ℝ, dotProduct (K *ᵥ a) b =
-        ∑ i, ∑ j, K i j * a j * b i := by
-      intro a b
-      simp only [dotProduct, Matrix.mulVec]
-      apply Finset.sum_congr rfl
-      intro i _
-      rw [Finset.sum_mul]
-    rw [hexpand, dotProduct_comm, hexpand]
-    have hsum0 : ∑ i, ∑ j, (K i j * v j * w i - K i j * w j * v i) = 0 := by
-      have hF : (∑ p : ι × ι, (K p.1 p.2 * v p.2 * w p.1 -
-          K p.1 p.2 * w p.2 * v p.1)) =
-          ∑ i, ∑ j, (K i j * v j * w i - K i j * w j * v i) :=
-        Fintype.sum_prod_type _
-      rw [← hF]
-      apply sum_pairwise_antisymmetric_eq_zero
-      intro i j
-      change K j i * v i * w j - K j i * w i * v j =
-        -(K i j * v j * w i - K i j * w j * v i)
-      rw [hij j i]
-      ring
-    have h1 : ∀ i, (∑ j, K i j * v j * w i) - (∑ j, K i j * w j * v i) =
-        ∑ j, (K i j * v j * w i - K i j * w j * v i) :=
-      fun i => (Finset.sum_sub_distrib _ _).symm
-    have h2 : (∑ i, ∑ j, K i j * v j * w i) - (∑ i, ∑ j, K i j * w j * v i) =
-        ∑ i, ((∑ j, K i j * v j * w i) - (∑ j, K i j * w j * v i)) :=
-      (Finset.sum_sub_distrib _ _).symm
-    have h3 : (∑ i, ((∑ j, K i j * v j * w i) - (∑ j, K i j * w j * v i))) =
-        ∑ i, ∑ j, (K i j * v j * w i - K i j * w j * v i) :=
-      Finset.sum_congr rfl (fun i _ => h1 i)
-    have hdiff : (∑ i, ∑ j, K i j * v j * w i) -
-        (∑ i, ∑ j, K i j * w j * v i) = 0 := by
-      rw [h2, h3, hsum0]
-    exact sub_eq_zero.mp hdiff
+  have hsym_dot : dotProduct (K *ᵥ v) w = dotProduct v (K *ᵥ w) := by
+    rw [dotProduct_comm, Matrix.dotProduct_mulVec, ← Matrix.mulVec_transpose, hsymm,
+      dotProduct_comm]
   have hlhs : dotProduct (K *ᵥ v) w = ω2 * innerProductM m v w := by
     rw [hv]
     simp only [dotProduct, Pi.smul_apply, smul_eq_mul, innerProductM,

@@ -22,8 +22,10 @@ import Mathlib.Tactic.Ring
 
 Exact compiling checks for `PhyslibExt.Mechanics.HarmonicMechanics`:
 oscillator frequency, energy derivative and conservation along the explicit
-solution, force/moment balance examples, the fixed-end two-mass chain with
-normal modes, and `#print axioms` for every public lemma.
+solution, force/moment balance and work examples (including
+`isEquilibrated_iff`, `moment2D_add`, `totalWork_add`), the fixed-end two-mass
+chain with normal modes, every spring-network theorem applied to that chain,
+and `#print axioms` for every public lemma.
 -/
 
 @[expose] public section
@@ -215,6 +217,29 @@ example : resultantForce (![![(1 : ℝ), 0], ![0, 1]] :
   have h0 := congrFun hcon 0
   simp at h0
 
+/-- An action-reaction pair `(-1, 1)`, `(1, -1)` is in equilibrium, through
+`isEquilibrated_iff`. -/
+example : IsEquilibrated (![![(-1 : ℝ), 1], ![1, -1]] : Fin 2 → (Fin 2 → ℝ)) := by
+  rw [isEquilibrated_iff, Fin.sum_univ_two]
+  funext i
+  fin_cases i <;> norm_num
+
+/-- `moment2D_add`: at positions `(1, 0)` and `(0, 1)` the force families
+`((0, 1), (0, 0))` and `((0, 0), (-1, 0))` each have moment `1`, so their sum has moment `2`. -/
+example : moment2D (![![(1 : ℝ), 0], ![0, 1]] : Fin 2 → (Fin 2 → ℝ))
+    (fun i => (![![0, 1], ![0, 0]] : Fin 2 → (Fin 2 → ℝ)) i + ![![0, 0], ![-1, 0]] i) = 2 := by
+  rw [moment2D_add]
+  simp only [moment2D, Fin.sum_univ_two]
+  norm_num
+
+/-- `totalWork_add`: under the displacement `(3, 4)` the forces `(1, 0)` and `(0, 1)` do work
+`3` and `4`, so their sum does work `7`. -/
+example : totalWork (fun r => (![![(1 : ℝ), 0]] : Fin 1 → (Fin 2 → ℝ)) r + ![![0, 1]] r)
+    ![3, 4] = 7 := by
+  rw [totalWork_add]
+  simp only [totalWork, Fin.sum_univ_one, Fin.sum_univ_two]
+  norm_num
+
 /-! ## Spring checks: fixed-end two-mass chain, modes, free countermodel. -/
 
 /-- Fixed-end two-mass chain stiffness: `K = [[2, -1], [-1, 2]]`. -/
@@ -344,6 +369,116 @@ example : stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ
   intro hcon
   have h00 := congrFun (congrFun hcon 0) 0
   simp at h00
+
+/-! ## Spring theorems applied to the two-mass chain. -/
+
+/-- The chain's pair stiffness is symmetric. -/
+private lemma chain_symm : ∀ i j, (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) i j =
+    (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) j i := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The chain has no self-springs. -/
+private lemma chain_diag : ∀ i, (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) i i = 0 := by
+  intro i
+  fin_cases i <;> rfl
+
+/-- The chain's pair stiffnesses are nonnegative. -/
+private lemma chain_nonneg : ∀ i j, 0 ≤ (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) i j := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> norm_num
+
+/-- The unit wall stiffnesses (and unit masses) are positive. -/
+private lemma ones_pos : ∀ i, 0 < (![1, 1] : Fin 2 → ℝ) i := by
+  intro i
+  fin_cases i <;> norm_num
+
+/-- Mode `(1, 1)` with eigenvalue `1` and unit masses, in the form of `innerProductM_eq_zero_of_ne`
+and `rayleigh_nonneg`. -/
+private lemma chain_mode_one :
+    stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) ![1, 1] *ᵥ ![1, 1] =
+      (1 : ℝ) • (fun i => (![1, 1] : Fin 2 → ℝ) i * (![1, 1] : Fin 2 → ℝ) i) := by
+  rw [chain_stiffness]
+  funext i
+  fin_cases i
+  · simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_two, Pi.smul_apply, smul_eq_mul]
+    show (2 : ℝ) * 1 + (-1) * 1 = 1 * (1 * 1)
+    norm_num
+  · simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_two, Pi.smul_apply, smul_eq_mul]
+    show (-1 : ℝ) * 1 + 2 * 1 = 1 * (1 * 1)
+    norm_num
+
+/-- Mode `(1, -1)` with eigenvalue `3` and unit masses. -/
+private lemma chain_mode_three :
+    stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) ![1, 1] *ᵥ ![1, -1] =
+      (3 : ℝ) • (fun i => (![1, 1] : Fin 2 → ℝ) i * (![1, -1] : Fin 2 → ℝ) i) := by
+  rw [chain_stiffness]
+  funext i
+  fin_cases i
+  · simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_two, Pi.smul_apply, smul_eq_mul]
+    show (2 : ℝ) * 1 + (-1) * (-1) = 3 * (1 * 1)
+    norm_num
+  · simp only [Matrix.mulVec, dotProduct, Fin.sum_univ_two, Pi.smul_apply, smul_eq_mul]
+    show (-1 : ℝ) * 1 + 2 * (-1) = 3 * (1 * (-1))
+    norm_num
+
+/-- `springEnergy_eq_quadForm`: half the stiffness quadratic form at `(1, -1)` is the
+energy `3` computed above. -/
+example : (1 / 2 : ℝ) * dotProduct ![1, -1]
+    (stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) ![1, 1] *ᵥ ![1, -1]) =
+      3 := by
+  rw [← springEnergy_eq_quadForm _ _ _ chain_symm chain_diag]
+  simp only [springEnergy, Fin.sum_univ_two]
+  show (1 / 4 : ℝ) * ((0 * (1 - 1) ^ 2 + 1 * ((-1) - 1) ^ 2) +
+    (1 * (1 - (-1)) ^ 2 + 0 * ((-1) - (-1)) ^ 2)) +
+    (1 / 2) * ((1 * 1 ^ 2) + (1 * (-1) ^ 2)) = 3
+  norm_num
+
+/-- `springEnergy_nonneg`: every displacement of the fixed-end chain has nonnegative energy. -/
+example (u : Fin 2 → ℝ) :
+    0 ≤ springEnergy (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) ![1, 1] u :=
+  springEnergy_nonneg _ _ u chain_nonneg fun i => (ones_pos i).le
+
+/-- `stiffnessMatrix_transpose`: the chain's stiffness matrix is symmetric. -/
+example : (stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) ![1, 1])ᵀ =
+    stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) ![1, 1] :=
+  stiffnessMatrix_transpose _ _ chain_symm
+
+/-- `stiffnessMatrix_mulVec_one`: the row sums of the fixed-end chain are its wall
+stiffnesses `(1, 1)`. -/
+example : stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) ![1, 1] *ᵥ
+    (fun _ => 1) = ![1, 1] :=
+  stiffnessMatrix_mulVec_one _ _ chain_diag
+
+/-- `stiffnessMatrix_fixedEnds_rowNonzero`: with a wall spring at node `0`, the translation
+`(1, 1)` is not a zero mode. -/
+example : (stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) ![1, 1] *ᵥ
+    (fun _ => 1)) 0 ≠ 0 :=
+  stiffnessMatrix_fixedEnds_rowNonzero _ _ 0 chain_diag (ones_pos 0)
+
+/-- `stiffnessMatrix_free_zeroMode`: without walls the translation is a zero mode. -/
+example : stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) 0 *ᵥ
+    (fun _ => 1) = 0 :=
+  stiffnessMatrix_free_zeroMode _ chain_diag
+
+/-- `springEnergy_free_const`: a translation of the free chain stores no energy. -/
+example : springEnergy (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) 0 (fun _ => 5) = 0 :=
+  springEnergy_free_const _ 5
+
+/-- `innerProductM_eq_zero_of_ne`: the chain modes `(1, 1)` and `(1, -1)` have the distinct
+eigenvalues `1` and `3`, so they are orthogonal for the unit masses. -/
+example : innerProductM (![1, 1] : Fin 2 → ℝ) ![1, 1] ![1, -1] = 0 :=
+  innerProductM_eq_zero_of_ne _ _ _ _ 1 3 (by norm_num)
+    (stiffnessMatrix_transpose _ _ chain_symm) chain_mode_one chain_mode_three
+
+/-- `rayleigh_nonneg`: every generalized eigenvalue of the fixed-end chain with unit masses is
+nonnegative. -/
+example (lam : ℝ) (v : Fin 2 → ℝ) (hv : v ≠ 0)
+    (heig : stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) ![1, 1] *ᵥ v =
+      lam • (fun i => (![1, 1] : Fin 2 → ℝ) i * v i)) :
+    0 ≤ lam :=
+  rayleigh_nonneg _ _ _ v lam chain_symm chain_diag chain_nonneg (fun i => (ones_pos i).le)
+    ones_pos hv heig
 
 /-! ## Axiom audits for every public lemma. -/
 
