@@ -62,9 +62,9 @@ The deterministic core: `riskVar_nonneg` and `coxInformation_nonneg`, which give
 `coxScore_eq_zero_of_isMaxOn` (maximizers are the roots of the score),
 `coxScore_eq_zero_and_abs_sub_lt` (a lower bound on the information near `β₀` and a small score
 at `β₀` locate every maximizer near `β₀`), and `abs_sqrt_mul_sub_sub_le` (the one-step mean-value
-expansion `√n (βhat - β₀) ≈ (Uₙ(β₀) / √n) / v`). All of these, and the Andersen–Gill theorems,
-are instances of the abstract results of `ConcaveScore`; the probabilistic helper
-`tendstoInMeasure_div_sqrt` is proved there and re-exported here.
+expansion `√n (βhat - β₀) ≈ (Uₙ(β₀) / √n) / v`). The results from `antitone_coxScore` on, and the
+Andersen–Gill theorems, are instances of the abstract results of `ConcaveScore`; the
+probabilistic helper `tendstoInMeasure_div_sqrt` is proved there and re-exported here.
 
 ## Scope
 

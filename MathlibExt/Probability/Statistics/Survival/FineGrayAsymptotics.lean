@@ -407,4 +407,26 @@ theorem tendstoInMeasure_fgInformation_fgMPLE (h : FineGrayConditions P P' X ε 
 
 end FineGrayAsymptotics
 
+/-! ### Old names
+
+The concave-criterion API moved to `ConcaveScore` and `isConcaveScore_cox` to `CoxAsymptotics`.
+These re-exports keep the old names in this namespace resolving to the moved declarations, as
+`CoxAsymptotics` does for `tendstoInMeasure_div_sqrt`. They are exports rather than deprecated
+aliases because an alias of the structure would break field notation on hypotheses stated with
+the old name. -/
+
+export MathlibExt.Probability.Statistics.ConcaveScore (IsConcaveScore
+  tendsto_measure_not_score_eq_zero_and_abs_sub_lt tendsto_measure_not_exists_isMaxOn
+  tendstoInMeasure_argmax tendstoInDistribution_argmax tendstoInMeasure_info_argmax)
+export MathlibExt.Probability.Statistics.CoxAsymptotics (isConcaveScore_cox)
+
+namespace IsConcaveScore
+
+export MathlibExt.Probability.Statistics.ConcaveScore.IsConcaveScore (mk hasDerivAt_crit
+  hasDerivAt_score info_nonneg continuous_score antitone_score exists_score_sub_eq
+  score_eq_zero_of_isMaxOn isMaxOn_of_score_eq_zero score_eq_zero_and_abs_sub_lt
+  score_eq_zero_and_abs_sub_lt_of_div abs_sqrt_mul_sub_sub_le)
+
+end IsConcaveScore
+
 end MathlibExt.Probability.Statistics.FineGrayAsymptotics

@@ -578,6 +578,32 @@ example : fgInformation (Xde 3) (εde 3) 0 (fun _ => 1) (zde 3) 0 = 2 / 9 := by
   simp only [fgVar, fgMean, fgWeightedSum, Fin.sum_univ_three, fgWeight]
   norm_num [Xde, εde, zde, grp, Xe, εe, ze]
 
+/-! ### The pre-`ConcaveScore` names still resolve -/
+
+example {ℓ U I : ℝ → ℝ} (h₁ : ∀ b, HasDerivAt ℓ (U b) b) (h₂ : ∀ b, HasDerivAt U (-I b) b)
+    (h₃ : ∀ b, 0 ≤ I b) :
+    MathlibExt.Probability.Statistics.FineGrayAsymptotics.IsConcaveScore ℓ U I :=
+  ⟨h₁, h₂, h₃⟩
+
+example {ℓ U I : ℝ → ℝ}
+    (h : MathlibExt.Probability.Statistics.FineGrayAsymptotics.IsConcaveScore ℓ U I) :
+    Antitone U ∧ ∀ b, 0 ≤ I b :=
+  ⟨MathlibExt.Probability.Statistics.FineGrayAsymptotics.IsConcaveScore.antitone_score h,
+    MathlibExt.Probability.Statistics.FineGrayAsymptotics.IsConcaveScore.info_nonneg h⟩
+
+example {ℓ U I : ℝ → ℝ}
+    (h : MathlibExt.Probability.Statistics.FineGrayAsymptotics.IsConcaveScore ℓ U I) :
+    Continuous U :=
+  h.continuous_score
+
+example {n : ℕ} (T : Fin n → ℝ) (δ : Fin n → Bool) (z : Fin n → ℝ) :
+    MathlibExt.Probability.Statistics.FineGrayAsymptotics.IsConcaveScore
+      (logPartialLikelihood₁ T δ z) (coxScore T δ z) (coxInformation T δ z) :=
+  MathlibExt.Probability.Statistics.FineGrayAsymptotics.isConcaveScore_cox T δ z
+
+#print axioms MathlibExt.Probability.Statistics.FineGrayAsymptotics.tendstoInMeasure_argmax
+#print axioms MathlibExt.Probability.Statistics.FineGrayAsymptotics.IsConcaveScore.mk
+
 #print axioms IsConcaveScore.isMaxOn_of_score_eq_zero
 #print axioms IsConcaveScore.abs_sqrt_mul_sub_sub_le
 #print axioms tendstoInMeasure_argmax
