@@ -37,8 +37,8 @@ open Cslib.Bioinformatics.Phylogenetics.Splits (FourGametes)
 # MAXIMUM COMPATIBLE CHARACTER SET for binary characters is NP-complete
 
 INSTANCE: `n ≥ 2` species described by `m` binary (two-state, unrooted) characters, and an
-integer `K`. QUESTION: is there a set of at least `K` characters that are perfectly compatible with one
-phylogeny, i.e. a set admitting a perfect phylogeny?
+integer `K`. QUESTION: is there a set of at least `K` characters that are perfectly compatible
+with one phylogeny, i.e. a set admitting a perfect phylogeny?
 
 For binary characters a set fits one phylogeny iff its members are pairwise compatible, and two
 binary characters are compatible iff they do not show all four gametes `(0,0), (0,1), (1,0),
