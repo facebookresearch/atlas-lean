@@ -7,29 +7,33 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Comp
 public import Mathlib.Analysis.Calculus.FDeriv.Basic
-public import Mathlib.Analysis.Calculus.FDeriv.Comp
-public import Mathlib.Analysis.Calculus.FDeriv.Linear
-public import Mathlib.Analysis.Calculus.FDeriv.Prod
-public import Mathlib.Analysis.Calculus.TangentCone.Real
-public import Mathlib.Analysis.Calculus.Taylor
 public import Mathlib.Analysis.Normed.Group.Basic
 public import Mathlib.Data.Matrix.Mul
-public import Mathlib.LinearAlgebra.Dimension.Constructions
-public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 public import Mathlib.LinearAlgebra.Matrix.Defs
 public import Mathlib.LinearAlgebra.Matrix.Notation
-public import Mathlib.LinearAlgebra.Matrix.ToLin
-public import Mathlib.Order.Interval.Set.UnorderedInterval
-public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
 public import Mathlib.Topology.EMetricSpace.Lipschitz
 public import Mathlib.Topology.MetricSpace.Lipschitz
+public import MathlibExt.Probability.FiniteProbability
+
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Analysis.Calculus.ContDiff.Operations
+import Mathlib.Analysis.Calculus.Deriv.Comp
+import Mathlib.Analysis.Calculus.FDeriv.Comp
+import Mathlib.Analysis.Calculus.FDeriv.Linear
+import Mathlib.Analysis.Calculus.FDeriv.Prod
+import Mathlib.Analysis.Calculus.TangentCone.Real
+import Mathlib.Analysis.Calculus.Taylor
+import Mathlib.LinearAlgebra.Dimension.Constructions
+import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
+import Mathlib.LinearAlgebra.Matrix.DotProduct
+import Mathlib.LinearAlgebra.Matrix.ToLin
+import Mathlib.Order.Interval.Set.UnorderedInterval
+import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.PiProd
+import PhyslibExt.Chemistry.Uncertainty.Propagation
 
 /-!
 # Uncertainty propagation for finite models, Jacobians, Lipschitz maps and calibration
@@ -40,33 +44,36 @@ linear calibration identifiability.
 
 ## i. Overview
 
-The finite probability model is elementary: a finite sample space `Ω` with `[Fintype Ω]`
-and a probability mass function `p : Ω → ℝ` with `∀ ω, 0 ≤ p ω` and `∑ ω, p ω = 1`.
-Both conditions are explicit hypotheses where they are used, never derived facts: error
-distributions and covariances are INPUTS. All expectations are explicit finite sums over
-`Ω` against `p`; no measure theory is used.
+The finite probability model is that of `MathlibExt.Probability.FiniteProbability`: a finite
+sample space `Ω` with `[Fintype Ω]` and a weight `p : Ω → ℝ`, a finite distribution when
+`∀ ω, 0 ≤ p ω` and `∑ ω, p ω = 1`. Both conditions are explicit hypotheses where they are
+used, never derived facts: error distributions and covariances are INPUTS. Expectations are
+`FiniteProbability.expectation` and covariance matrices are `FiniteProbability.covMatrix`,
+used directly; no measure theory is used.
 
-Section A proves exact covariance propagation for affine maps: the mean law
-`meanVec p (A *ᵥ X · + b) = A *ᵥ meanVec p X + b` and
-`covMatrix p (A *ᵥ X · + b) = A * covMatrix p X * Aᵀ`, with the correlated two-input
-consequence carrying the explicit cross term `2 a₁ a₂ Cov(X₁, X₂)`. Quadrature
-(addition in quadrature) is proved only as a SPECIAL case under zero cross-covariance,
-never as the general law. The finite sums here coincide with
-`MathlibExt.Probability.FiniteProbability.expectation` and `covMatrix`; this module keeps
-the self-contained finite-sum form and does not import them.
+Section A proves exact covariance propagation for affine maps on top of that API: the mean
+law `meanVec p (A *ᵥ X · + b) = A *ᵥ meanVec p X + b` for the coordinate-wise mean
+`meanVec`, and `covMatrix p (A *ᵥ X · + b) = A * covMatrix p X * Aᵀ`, whose linear part is
+`FiniteProbability.covMatrix_mulVec`. The correlated two-input consequence carries the
+explicit cross term `2 a₁ a₂ Cov(X₁, X₂)`. Quadrature (addition in quadrature) is proved only
+as a SPECIAL case under zero cross-covariance, never as the general law.
 
 Section B treats Jacobian propagation as what it is: an APPROXIMATION. The first-order
 value is `f x + fderiv ℝ f x δ`, the remainder `jacobianRemainder f x δ` is bounded, not
 zero. The scalar bound reuses Mathlib's Lagrange remainder
-`taylor_mean_remainder_lagrange_iteratedDeriv`. The vector bound is componentwise, with
-the bounded-Hessian hypothesis in checkable one-variable form along each segment
-`φᵢ t = f i (x + t • δ)`; see `jacobianRemainder_component_le_of_hessian` for why the
-`‖δ‖ ^ 2` conclusion needs the `‖δ‖ ^ 2`-scaled one-variable hypothesis.
+`taylor_mean_remainder_lagrange_iteratedDeriv`. The vector bounds are componentwise. Two of
+them bound the second derivative of the one-variable segment function
+`φᵢ t = f i (x + t • δ)`: by `H i` (`jacobianRemainder_component_le`, conclusion `H i / 2`)
+or by `H i * ‖δ‖ ^ 2` (`jacobianRemainder_component_le_of_scaled`, conclusion
+`H i / 2 * ‖δ‖ ^ 2`). The third, `jacobianRemainder_component_le_of_hessian`, assumes a
+bound `H i` on the operator norm of the second Fréchet derivative of `f i` on a box and
+concludes `H i / 2 * ‖δ‖ ^ 2`; it instantiates
+`Chemistry.Uncertainty.measurementFunction_firstOrder_remainder_le`.
 
 Section C proves deterministic Lipschitz error propagation: the basic bound, its
-error-budget form, composition of constants, and the affine map as an exact special
-case. Any Lipschitz bound for an affine map is a consequence of the exact equality, not
-the sharp statement.
+error-budget form, and the affine map as an exact special case. Composition of Lipschitz
+constants is Mathlib's `LipschitzWith.comp`. Any Lipschitz bound for an affine map is a
+consequence of the exact equality, not the sharp statement.
 
 Section D treats linear calibration `y = A *ᵥ θ`: identifiability as injectivity of
 `θ ↦ A *ᵥ θ` (linear-algebraic, distinct from statistical `IsIdentifiedBy`), its trivial
@@ -80,15 +87,17 @@ uncertainties; they enter only as separate hypotheses and inputs, never conflate
 
 ## ii. Key results
 
-- `mean`, `meanVec`, `covMatrix` : finite mean, vector mean and covariance matrix.
+- `meanVec` : the coordinate-wise finite mean of a random vector.
 - `meanVec_affine` : exact affine mean law (needs total mass one).
-- `covMatrix_affine` : exact affine covariance propagation `A * C * Aᵀ`.
+- `covMatrix_affine` : exact affine covariance propagation `A * C * Aᵀ` (needs total mass one).
 - `covMatrix_two_linear` : correlated two-input variance with the explicit cross term.
 - `variance_linear_two_uncorrelated` : quadrature as a special case only.
 - `taylor_first_order_bound` : scalar first-order remainder `H / 2 * δ ^ 2`.
 - `jacobianRemainder` : the (nonzero in general) first-order remainder.
-- `jacobianRemainder_component_le(_of_hessian)` : componentwise remainder bounds.
-- `lipschitz_error_propagation`, `lipschitz_error_budget`, `lipschitz_comp` : Lipschitz.
+- `jacobianRemainder_component_le(_of_scaled)` : componentwise bounds from bounds along the
+  segment.
+- `jacobianRemainder_component_le_of_hessian` : componentwise bound from a Hessian bound.
+- `lipschitz_error_propagation`, `lipschitz_error_budget` : Lipschitz error bounds.
 - `affine_exact` : the affine map is exact, not merely Lipschitz.
 - `Identifiable`, `identifiable_iff_trivial_ker` : calibration identifiability.
 - `exists_distinct_of_nontrivial_ker` : nonzero kernel vector kills uniqueness.
@@ -108,79 +117,36 @@ uncertainties; they enter only as separate hypotheses and inputs, never conflate
   propagation of uncertainty (first-order approximation for nonlinear functions).
 - Mathlib's Taylor theorem with Lagrange remainder,
   `taylor_mean_remainder_lagrange_iteratedDeriv` in `Mathlib.Analysis.Calculus.Taylor`.
+- `MathlibExt.Probability.FiniteProbability` (finite expectation and covariance matrices).
+- `Chemistry.Uncertainty.measurementFunction_firstOrder_remainder_le` (first-order remainder
+  from a second-derivative bound).
 -/
 
 @[expose] public section
 
 open scoped BigOperators
-open Matrix
+open Matrix MathlibExt.Probability.FiniteProbability
 
 namespace Statistics.UncertaintyPropagation
 
 /-! ## A. Finite means and exact affine covariance propagation -/
 
-/-- The finite mean `∑ ω, p ω * X ω` of `X : Ω → ℝ` under the weight `p : Ω → ℝ`
-on a finite type. For a finite distribution (`0 ≤ p`, `∑ ω, p ω = 1`) this is the
-expectation of `X`; the distribution conditions are hypotheses of the lemmas below,
-not part of the definition. -/
-noncomputable def mean {Ω : Type*} [Fintype Ω] (p : Ω → ℝ) (X : Ω → ℝ) : ℝ :=
-  ∑ ω, p ω * X ω
-
-/-- The coordinate-wise finite mean of a random vector `X : Ω → Fin n → ℝ`. -/
+/-- The coordinate-wise finite mean of a random vector `X : Ω → Fin n → ℝ`: coordinate `i`
+is the expectation `FiniteProbability.expectation p (X · i)`. For a finite distribution
+(`0 ≤ p`, `∑ ω, p ω = 1`) this is the mean vector of `X`; the distribution conditions are
+hypotheses of the lemmas below, not part of the definition. -/
 noncomputable def meanVec {Ω : Type*} [Fintype Ω] {n : ℕ} (p : Ω → ℝ)
     (X : Ω → Fin n → ℝ) : Fin n → ℝ :=
-  fun i => mean p (fun ω => X ω i)
-
-/-- The covariance matrix of the finite random vector `X : Ω → Fin n → ℝ`: entry
-`(i, j)` is `∑ ω, p ω * (X ω i - μ i) * (X ω j - μ j)` with `μ = meanVec p X`.
-The body is stated as a plain function of `i j` (elaborated to a matrix via the
-function-matrix coercion, exactly the contract's right-hand side); the centering uses
-the means, so affine laws about it need total mass one. -/
-noncomputable def covMatrix {Ω : Type*} [Fintype Ω] {n : ℕ} (p : Ω → ℝ)
-    (X : Ω → Fin n → ℝ) : Matrix (Fin n) (Fin n) ℝ :=
-  fun i j => ∑ ω, p ω * (X ω i - meanVec p X i) * (X ω j - meanVec p X j)
-
-/-- Unfolding a covariance-matrix entry. -/
-lemma covMatrix_apply {Ω : Type*} [Fintype Ω] {n : ℕ} (p : Ω → ℝ) (X : Ω → Fin n → ℝ)
-    (i j : Fin n) :
-    covMatrix p X i j = ∑ ω, p ω * (X ω i - meanVec p X i) * (X ω j - meanVec p X j) :=
-  rfl
+  fun i => expectation p (fun ω => X ω i)
 
 /-- Unfolding a vector-mean coordinate. -/
 lemma meanVec_apply {Ω : Type*} [Fintype Ω] {n : ℕ} (p : Ω → ℝ) (X : Ω → Fin n → ℝ)
     (i : Fin n) :
-    meanVec p X i = mean p (fun ω => X ω i) :=
+    meanVec p X i = expectation p (fun ω => X ω i) :=
   rfl
 
-/-- The mean of a sum is the sum of the means, for every weight. -/
-lemma mean_add {Ω : Type*} [Fintype Ω] (p X Y : Ω → ℝ) :
-    mean p (fun ω => X ω + Y ω) = mean p X + mean p Y := by
-  simp only [mean, mul_add, Finset.sum_add_distrib]
-
-/-- The mean of a difference is the difference of the means, for every weight. -/
-lemma mean_sub {Ω : Type*} [Fintype Ω] (p X Y : Ω → ℝ) :
-    mean p (fun ω => X ω - Y ω) = mean p X - mean p Y := by
-  simp only [mean, mul_sub, Finset.sum_sub_distrib]
-
-/-- Constants factor out of the mean, for every weight. -/
-lemma mean_const_mul {Ω : Type*} [Fintype Ω] (p X : Ω → ℝ) (c : ℝ) :
-    mean p (fun ω => c * X ω) = c * mean p X := by
-  rw [mean, mean, Finset.mul_sum]
-  exact Finset.sum_congr rfl fun ω _ => by ring
-
-/-- The mean of a constant is that constant when the total mass is one. -/
-lemma mean_const {Ω : Type*} [Fintype Ω] {p : Ω → ℝ} (hp1 : ∑ ω, p ω = 1) (c : ℝ) :
-    mean p (fun _ => c) = c := by
-  rw [mean, ← Finset.sum_mul, hp1, one_mul]
-
-/-- The mean of a finite sum is the sum of the means, for every weight. -/
-lemma mean_sum {Ω ι : Type*} [Fintype Ω] (p : Ω → ℝ) (s : Finset ι) (X : ι → Ω → ℝ) :
-    mean p (fun ω => ∑ i ∈ s, X i ω) = ∑ i ∈ s, mean p (X i) := by
-  simp only [mean, Finset.mul_sum]
-  exact Finset.sum_comm
-
 /-- **Affine mean law**, exact: the mean of `A *ᵥ X ω + b` is `A *ᵥ meanVec p X + b`.
-The `+ b` part needs total mass one (`mean_const`); without `hp1` the constant shift
+The `+ b` part needs total mass one (`expectation_const`); without `hp1` the constant shift
 is scaled by the total mass instead. -/
 lemma meanVec_affine {Ω : Type*} [Fintype Ω] {m n : ℕ} (p : Ω → ℝ)
     (X : Ω → Fin n → ℝ) (A : Matrix (Fin m) (Fin n) ℝ) (b : Fin m → ℝ)
@@ -188,106 +154,46 @@ lemma meanVec_affine {Ω : Type*} [Fintype Ω] {m n : ℕ} (p : Ω → ℝ)
     meanVec p (fun ω => A *ᵥ X ω + b) = A *ᵥ meanVec p X + b := by
   ext i
   simp only [meanVec_apply, Pi.add_apply, Matrix.mulVec, dotProduct]
-  rw [mean_add, mean_sum _ Finset.univ, mean_const hp1]
+  rw [expectation_add, expectation_sum _ Finset.univ, expectation_const hp1]
   congr 1
   refine Finset.sum_congr rfl fun j _ => ?_
-  exact mean_const_mul p (fun ω => X ω j) (A i j)
+  exact expectation_const_mul p (fun ω => X ω j) (A i j)
 
-/-- The covariance matrix is symmetric entrywise, for every weight: centering is
-symmetric in `i` and `j` by pure algebra under the sum. -/
-lemma covMatrix_symm {Ω : Type*} [Fintype Ω] {n : ℕ} (p : Ω → ℝ) (X : Ω → Fin n → ℝ)
-    (i j : Fin n) :
-    covMatrix p X i j = covMatrix p X j i := by
-  simp only [covMatrix_apply]
-  exact Finset.sum_congr rfl fun ω _ => by ring
-
-/-- **Exact covariance propagation for affine maps**: centering the affine image
-`A *ᵥ X ω + b` cancels `b` and factors `A` out of both centered slots, giving
-`A * covMatrix p X * Aᵀ` with exactly this multiplication order. Needs total mass
-one (via the affine mean law). -/
+/-- **Exact covariance propagation for affine maps**:
+`covMatrix p (A *ᵥ X · + b) = A * covMatrix p X * Aᵀ`, with exactly this multiplication
+order. The linear part is `FiniteProbability.covMatrix_mulVec`, valid for every weight; the
+shift by `b` cancels in the centering, which needs total mass one. -/
 lemma covMatrix_affine {Ω : Type*} [Fintype Ω] {m n : ℕ} (p : Ω → ℝ)
     (X : Ω → Fin n → ℝ) (A : Matrix (Fin m) (Fin n) ℝ) (b : Fin m → ℝ)
     (hp1 : ∑ ω, p ω = 1) :
     covMatrix p (fun ω => A *ᵥ X ω + b) = A * covMatrix p X * Aᵀ := by
-  have hmean : meanVec p (fun ω => A *ᵥ X ω + b) = A *ᵥ meanVec p X + b :=
-    meanVec_affine p X A b hp1
-  have hcenter : ∀ ω (k : Fin m),
-      (A *ᵥ X ω + b) k - meanVec p (fun ω => A *ᵥ X ω + b) k
-        = (A *ᵥ (X ω - meanVec p X)) k := by
-    intro ω k
-    rw [hmean]
-    simp only [Pi.add_apply, Matrix.mulVec_sub, Pi.sub_apply]
-    ring
-  have hLHS : covMatrix p (fun ω => A *ᵥ X ω + b) =
-      fun i j => ∑ k, ∑ l, A i k * covMatrix p X k l * A j l := by
-    ext i j
-    show covMatrix p (fun ω => A *ᵥ X ω + b) i j =
-      ∑ k, ∑ l, A i k * covMatrix p X k l * A j l
-    have hdist : ∀ (c : ℝ) (a b u v : Fin n → ℝ),
-        (c * (∑ k, a k * u k)) * (∑ l, b l * v l)
-          = ∑ k, ∑ l, c * (a k * (u k * v l) * b l) := by
-      intro c a b u v
-      simp only [mul_assoc]
-      simp only [Finset.sum_mul_sum]
-      simp only [Finset.mul_sum]
-      refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
-      ring
-    have hfactor : ∀ (a : ℝ) (H : Ω → ℝ) (b : ℝ),
-        (∑ ω, a * H ω * b) = a * (∑ ω, H ω) * b := by
-      intro a H b
-      rw [← Finset.sum_mul, ← Finset.mul_sum]
-    conv_lhs => simp only [covMatrix_apply, hcenter, Matrix.mulVec, dotProduct, Pi.sub_apply]
-    calc ∑ ω, (p ω * (∑ k, A i k * (X ω k - meanVec p X k)))
-              * (∑ l, A j l * (X ω l - meanVec p X l))
-        = ∑ ω, ∑ k, ∑ l,
-            p ω * (A i k * ((X ω k - meanVec p X k) * (X ω l - meanVec p X l)) * A j l) := by
-          refine Finset.sum_congr rfl fun ω _ => ?_
-          exact hdist (p ω) _ _ _ _
-      _ = ∑ ω, ∑ k, ∑ l,
-            A i k * (p ω * (X ω k - meanVec p X k) * (X ω l - meanVec p X l)) * A j l := by
-          refine Finset.sum_congr rfl fun ω _ => Finset.sum_congr rfl fun k _ =>
-            Finset.sum_congr rfl fun l _ => ?_
-          ring
-        _ = ∑ k, ∑ ω, ∑ l,
-            A i k * (p ω * (X ω k - meanVec p X k) * (X ω l - meanVec p X l)) * A j l := by
-          exact Finset.sum_comm
-        _ = ∑ k, ∑ l, ∑ ω,
-            A i k * (p ω * (X ω k - meanVec p X k) * (X ω l - meanVec p X l)) * A j l := by
-          refine Finset.sum_congr rfl fun k _ => Finset.sum_comm
-        _ = ∑ k, ∑ l,
-            A i k * (∑ ω, p ω * (X ω k - meanVec p X k) * (X ω l - meanVec p X l)) * A j l := by
-          refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
-          exact hfactor _ _ _
-        _ = ∑ k, ∑ l, A i k * covMatrix p X k l * A j l := by
-          refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
-          congr 1
-  have hRHS : A * covMatrix p X * Aᵀ =
-      fun i j => ∑ k, ∑ l, A i k * covMatrix p X k l * A j l := by
-    ext i j
-    simp only [Matrix.mul_apply, Matrix.transpose_apply, Finset.sum_mul]
-    exact Finset.sum_comm
-  rw [hLHS, hRHS]
+  rw [← covMatrix_mulVec]
+  have hE : ∀ k, expectation p (fun ω => (A *ᵥ X ω) k + b k) =
+      expectation p (fun ω => (A *ᵥ X ω) k) + b k := fun k => by
+    rw [expectation_add, expectation_const hp1]
+  ext i j
+  simp only [covMatrix_apply, covariance, Pi.add_apply, hE]
+  congr 1
+  funext ω
+  ring
 
 /-- **Correlated two-input variance**, via `covMatrix` entries so the cross term is
 explicit: the variance of `a₁ X₁ + a₂ X₂` is
-`a₁² Var X₁ + a₂² Var X₂ + 2 a₁ a₂ Cov(X₁, X₂)`. The linear combination is the
-single entry of a `1 × 2` measurement matrix; the `2 a₁ a₂` cross term comes from
-`covMatrix_symm`, not from any independence assumption. -/
+`a₁² Var X₁ + a₂² Var X₂ + 2 a₁ a₂ Cov(X₁, X₂)`, for every weight. The linear combination
+is the single entry of a `1 × 2` measurement matrix, so this is
+`FiniteProbability.covMatrix_mulVec`; the `2 a₁ a₂` cross term comes from the symmetry
+`covariance_comm`, not from any independence assumption. -/
 lemma covMatrix_two_linear {Ω : Type*} [Fintype Ω] (p : Ω → ℝ) (X : Ω → Fin 2 → ℝ)
-    (a₁ a₂ : ℝ) (hp1 : ∑ ω, p ω = 1) :
+    (a₁ a₂ : ℝ) :
     covMatrix p (fun ω => Matrix.of ![![a₁, a₂]] *ᵥ X ω) 0 0
       = a₁ ^ 2 * covMatrix p X 0 0 + a₂ ^ 2 * covMatrix p X 1 1
         + 2 * a₁ * a₂ * covMatrix p X 0 1 := by
-  have hprop := covMatrix_affine p X (Matrix.of ![![a₁, a₂]]) 0 hp1
-  have heq : (fun ω => Matrix.of ![![a₁, a₂]] *ᵥ X ω + (0 : Fin 1 → ℝ)) =
-      (fun ω => Matrix.of ![![a₁, a₂]] *ᵥ X ω) := by
-    funext ω
-    simp
-  rw [heq] at hprop
-  rw [hprop]
+  have hsymm : covMatrix p X 1 0 = covMatrix p X 0 1 := by
+    rw [covMatrix_apply, covMatrix_apply, covariance_comm]
+  rw [covMatrix_mulVec]
   simp only [Matrix.mul_apply, Matrix.transpose_apply, Fin.sum_univ_two, Matrix.of_apply,
     Matrix.cons_val_zero, Matrix.cons_val_one]
-  rw [covMatrix_symm p X 1 0]
+  rw [hsymm]
   ring
 
 /-- **Quadrature is a SPECIAL case, not the general law**: only when the
@@ -295,11 +201,10 @@ cross-covariance entry vanishes does the variance of `a₁ X₁ + a₂ X₂` red
 `a₁² Var X₁ + a₂² Var X₂`. Correlated errors must keep the cross term of
 `covMatrix_two_linear`. -/
 lemma variance_linear_two_uncorrelated {Ω : Type*} [Fintype Ω] (p : Ω → ℝ)
-    (X : Ω → Fin 2 → ℝ) (a₁ a₂ : ℝ) (hp1 : ∑ ω, p ω = 1)
-    (hcov : covMatrix p X 0 1 = 0) :
+    (X : Ω → Fin 2 → ℝ) (a₁ a₂ : ℝ) (hcov : covMatrix p X 0 1 = 0) :
     covMatrix p (fun ω => Matrix.of ![![a₁, a₂]] *ᵥ X ω) 0 0
       = a₁ ^ 2 * covMatrix p X 0 0 + a₂ ^ 2 * covMatrix p X 1 1 := by
-  rw [covMatrix_two_linear p X a₁ a₂ hp1, hcov, mul_zero, add_zero]
+  rw [covMatrix_two_linear p X a₁ a₂, hcov, mul_zero, add_zero]
 
 /-! ## B. Jacobian propagation as a first-order approximation -/
 
@@ -357,17 +262,23 @@ lemma taylor_first_order_bound {a b H : ℝ} {f : ℝ → ℝ} (hf : ContDiff �
 /-- **Jacobian propagation is an APPROXIMATION.** The first-order value of `f` at
 `x + δ` is `f x + fderiv ℝ f x δ`; `jacobianRemainder f x δ` is the leftover
 `f (x + δ) - f x - fderiv ℝ f x δ`, bounded by the lemmas below but NOT zero in
-general (see the `x ^ 2` test, where it equals `1`). -/
+general: for the square map on `Fin 1 → ℝ` at `x = 0` and `δ = 1 / 2` it is `1 / 4`
+(see the tests). Where `f` is not differentiable at `x`, Mathlib's `fderiv ℝ f x` is `0`
+and the value is just `f (x + δ) - f x`; every bound below assumes differentiability at
+`x`. -/
 noncomputable def jacobianRemainder {n m : ℕ} (f : (Fin n → ℝ) → (Fin m → ℝ))
     (x δ : Fin n → ℝ) : Fin m → ℝ :=
   f (x + δ) - f x - fderiv ℝ f x δ
 
-/-- **Componentwise Jacobian remainder bound.** If `f` is differentiable at `x` and,
-for each component `i`, the concrete one-variable segment function
+/-- **Componentwise Jacobian remainder bound, unit-step form.** If `f` is differentiable at
+`x` and, for each component `i`, the concrete one-variable segment function
 `φᵢ t = f i (x + t • δ)` is `C²` with `|φᵢ'' t| ≤ H i` on `[0, 1]`, then
 `|jacobianRemainder f x δ i| ≤ H i / 2`. This is the scalar bound applied to `φᵢ`
 with unit step; the `fderiv`/`φᵢ'` identification uses the chain rule along the
-segment. See `jacobianRemainder_component_le_of_hessian` for the `‖δ‖ ^ 2` form. -/
+segment. The second derivative of `φᵢ` already carries two factors of `δ`, so `H i` bounds
+it along this one segment and is not a Hessian bound; see
+`jacobianRemainder_component_le_of_scaled` for the `‖δ‖ ^ 2`-scaled form and
+`jacobianRemainder_component_le_of_hessian` for the bound from a Hessian bound. -/
 lemma jacobianRemainder_component_le {n m : ℕ} (f : (Fin n → ℝ) → (Fin m → ℝ))
     (x δ : Fin n → ℝ) (i : Fin m) (H : Fin m → ℝ)
     (hdiff : DifferentiableAt ℝ f x)
@@ -407,14 +318,16 @@ lemma jacobianRemainder_component_le {n m : ℕ} (f : (Fin n → ℝ) → (Fin m
   rw [hrem]
   exact hbound
 
-/-- **Componentwise remainder bound in Hessian form.** The `‖δ‖ ^ 2` conclusion needs
-the `‖δ‖ ^ 2`-scaled one-variable hypothesis
-`|φᵢ'' t| ≤ H i * ‖δ‖ ^ 2`, where `‖δ‖` is Mathlib's pi-type norm on `Fin n → ℝ`:
-here `H i` bounds the Hessian (the second derivative in `x`), and the segment
-reparametrization contributes the `‖δ‖ ^ 2`. With the unscaled hypothesis the sharp
-conclusion is `H i / 2` (`jacobianRemainder_component_le`); the unscaled-hypothesis
-plus `‖δ‖ ^ 2`-conclusion combination is false (e.g. the square map with small `δ`). -/
-lemma jacobianRemainder_component_le_of_hessian {n m : ℕ} (f : (Fin n → ℝ) → (Fin m → ℝ))
+/-- **Componentwise remainder bound, `‖δ‖ ^ 2`-scaled segment form.** If the segment
+functions `φᵢ t = f i (x + t • δ)` are `C²` with `|φᵢ'' t| ≤ H i * ‖δ‖ ^ 2` on `[0, 1]`,
+where `‖δ‖` is Mathlib's sup norm on `Fin n → ℝ`, then
+`|jacobianRemainder f x δ i| ≤ H i / 2 * ‖δ‖ ^ 2`. This is
+`jacobianRemainder_component_le` for the bound `H i * ‖δ‖ ^ 2`. The hypothesis still bounds
+the second derivative along the given segment, not the Hessian of `f i`; for a Hessian
+bound use `jacobianRemainder_component_le_of_hessian`. With the unscaled hypothesis
+`|φᵢ'' t| ≤ H i`, the `‖δ‖ ^ 2` conclusion is false: the square map at `δ = 1 / 2` is a
+counterexample (see the tests). -/
+lemma jacobianRemainder_component_le_of_scaled {n m : ℕ} (f : (Fin n → ℝ) → (Fin m → ℝ))
     (x δ : Fin n → ℝ) (i : Fin m) (H : Fin m → ℝ)
     (hdiff : DifferentiableAt ℝ f x)
     (hφ : ∀ i, ContDiff ℝ 2 (fun t : ℝ => f (x + t • δ) i))
@@ -425,12 +338,44 @@ lemma jacobianRemainder_component_le_of_hessian {n m : ℕ} (f : (Fin n → ℝ)
   calc |jacobianRemainder f x δ i| ≤ H i * ‖δ‖ ^ 2 / 2 := h
     _ = H i / 2 * ‖δ‖ ^ 2 := by ring
 
+/-- **Componentwise remainder bound from a Hessian bound.** Let `f` be `C²` on an open set
+`U` containing the box `Set.Icc lo hi`, and let the second Fréchet derivative of component
+`i` satisfy `‖fderiv ℝ (fderiv ℝ (fun y => f y i)) y‖ ≤ H i` on the box, the operator norm
+for the sup norm on `Fin n → ℝ`. For `x` and `x + δ` in the box,
+`|jacobianRemainder f x δ i| ≤ H i / 2 * ‖δ‖ ^ 2`. This is
+`Chemistry.Uncertainty.measurementFunction_firstOrder_remainder_le` for the component
+`fun y => f y i`; the chain rule identifies its derivative at `x` with component `i` of
+`fderiv ℝ f x`. -/
+lemma jacobianRemainder_component_le_of_hessian {n m : ℕ} (f : (Fin n → ℝ) → (Fin m → ℝ))
+    (x δ : Fin n → ℝ) (i : Fin m) (H : Fin m → ℝ) {lo hi : Fin n → ℝ}
+    {U : Set (Fin n → ℝ)} (hU : IsOpen U) (hbox : Set.Icc lo hi ⊆ U)
+    (hf : ContDiffOn ℝ 2 f U)
+    (hH : ∀ y ∈ Set.Icc lo hi, ‖fderiv ℝ (fderiv ℝ (fun y => f y i)) y‖ ≤ H i)
+    (hx : x ∈ Set.Icc lo hi) (hxδ : x + δ ∈ Set.Icc lo hi) :
+    |jacobianRemainder f x δ i| ≤ H i / 2 * ‖δ‖ ^ 2 := by
+  have hdiff : DifferentiableAt ℝ f x :=
+    (hf.differentiableOn (by norm_num) x (hbox hx)).differentiableAt (hU.mem_nhds (hbox hx))
+  have hg : HasFDerivAt (fun y : Fin n → ℝ => f y i)
+      ((ContinuousLinearMap.proj i).comp (fderiv ℝ f x)) x :=
+    (hasFDerivAt_apply (𝕜 := ℝ) i (f x)).comp x hdiff.hasFDerivAt
+  have hconn : fderiv ℝ f x δ i = fderiv ℝ (fun y : Fin n → ℝ => f y i) x δ := by
+    rw [hg.fderiv, ContinuousLinearMap.comp_apply]
+    rfl
+  have h := Chemistry.Uncertainty.measurementFunction_firstOrder_remainder_le hU hbox
+    (contDiffOn_pi.1 hf i) hH hx hxδ
+  have hrem : jacobianRemainder f x δ i =
+      f (x + δ) i - f x i - fderiv ℝ (fun y : Fin n → ℝ => f y i) x δ := by
+    simp only [jacobianRemainder, Pi.sub_apply, hconn]
+  rw [hrem]
+  calc _ ≤ 1 / 2 * H i * ‖δ‖ ^ 2 := h
+    _ = H i / 2 * ‖δ‖ ^ 2 := by ring
+
 /-! ## C. Deterministic Lipschitz error propagation -/
 
 /-- **Lipschitz error propagation**: if `f` is Lipschitz with constant `L`
 (`LipschitzWith L f`, so `L : ℝ≥0` per Mathlib), then
-`‖f (x + δ) - f x‖ ≤ L * ‖δ‖`. Via `LipschitzWith.dist_le_mul_of_le` with
-`dist_eq_norm` and `(x + δ) - x = δ`. -/
+`‖f (x + δ) - f x‖ ≤ L * ‖δ‖`. This is Mathlib's `LipschitzWith.dist_le_mul_of_le` read
+with `dist_eq_norm` and `(x + δ) - x = δ`. -/
 lemma lipschitz_error_propagation {E F : Type*} [NormedAddCommGroup E]
     [NormedAddCommGroup F] {f : E → F} {L : NNReal} (hf : LipschitzWith L f)
     (x δ : E) :
@@ -447,14 +392,6 @@ lemma lipschitz_error_budget {E F : Type*} [NormedAddCommGroup E]
     ‖f (x + δ) - f x‖ ≤ (L : ℝ) * ε := by
   calc ‖f (x + δ) - f x‖ ≤ (L : ℝ) * ‖δ‖ := lipschitz_error_propagation hf x δ
     _ ≤ (L : ℝ) * ε := mul_le_mul_of_nonneg_left hδε (by positivity)
-
-/-- **Lipschitz constants compose**: `f` with constant `L` and `g` with constant `K`
-give `g ∘ f` with constant `K * L`. This is Mathlib's `LipschitzWith.comp`. -/
-lemma lipschitz_comp {E F G : Type*} [PseudoEMetricSpace E] [PseudoEMetricSpace F]
-    [PseudoEMetricSpace G] {f : E → F} {g : F → G} {L K : NNReal}
-    (hf : LipschitzWith L f) (hg : LipschitzWith K g) :
-    LipschitzWith (K * L) (g ∘ f) :=
-  hg.comp hf
 
 /-- **The affine map is exact**: for `f x = A *ᵥ x + b`,
 `f (x + δ) - f x = A *ᵥ δ` on the nose. Any Lipschitz bound for an affine map is a
@@ -522,21 +459,11 @@ lemma not_identifiable_of_lt {m n : ℕ} (hmn : m < n) (A : Matrix (Fin m) (Fin 
   rw [LinearMap.mem_ker, Matrix.mulVecLin_apply] at hmem
   exact hne (hcon θ₀ hmem)
 
-/-- A real vector with zero self dot product is zero: `x ⬝ᵥ x = ∑ i, x i * x i`
-is a sum of nonneg terms, so each term vanishes. Used for the normal matrix. -/
-lemma dotProduct_self_eq_zero {n : ℕ} (x : Fin n → ℝ) (h : x ⬝ᵥ x = 0) : x = 0 := by
-  have hsum : ∑ i, x i * x i = 0 := h
-  have hall : ∀ i ∈ (Finset.univ : Finset (Fin n)), x i * x i = 0 :=
-    (Finset.sum_eq_zero_iff_of_nonneg (fun i _ => mul_self_nonneg (x i))).mp hsum
-  ext i
-  simp only [Pi.zero_apply]
-  have hi := hall i (Finset.mem_univ i)
-  rcases mul_eq_zero.mp hi with h1 | h1 <;> exact h1
-
 /-- **The normal matrix is injective** when `A` is identifiable: from
 `(Aᵀ * A) *ᵥ θ = 0`, the quadratic form `θ ⬝ᵥ (Aᵀ * A) *ᵥ θ` rewrites (via
 `Matrix.mulVec_mulVec`, `Matrix.dotProduct_mulVec` and `Matrix.vecMul_transpose`)
-to `(A *ᵥ θ) ⬝ᵥ (A *ᵥ θ) = 0`, so `A *ᵥ θ = 0` and then `θ = 0`. -/
+to `(A *ᵥ θ) ⬝ᵥ (A *ᵥ θ) = 0`, so `A *ᵥ θ = 0` by Mathlib's `dotProduct_self_eq_zero` and
+then `θ = 0`. -/
 lemma identifiable_normal_injective {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ)
     (hA : Identifiable A) :
     Function.Injective (fun θ => (Aᵀ * A) *ᵥ θ) := by
@@ -548,7 +475,7 @@ lemma identifiable_normal_injective {m n : ℕ} (A : Matrix (Fin m) (Fin n) ℝ)
   have hquad : (A *ᵥ θ) ⬝ᵥ (A *ᵥ θ) = 0 := by
     have h0 : θ ⬝ᵥ ((Aᵀ * A) *ᵥ θ) = 0 := by simp [hθ, dotProduct]
     rwa [← Matrix.mulVec_mulVec, Matrix.dotProduct_mulVec, Matrix.vecMul_transpose] at h0
-  exact dotProduct_self_eq_zero _ hquad
+  exact dotProduct_self_eq_zero.1 hquad
 
 /-- **Normal equations have AT MOST ONE solution**: any two solutions of
 `Aᵀ * A *ᵥ θ = Aᵀ *ᵥ y` agree, by injectivity of the normal matrix. Existence is a
