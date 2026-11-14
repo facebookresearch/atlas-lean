@@ -37,11 +37,12 @@ resulting p-value is calibrated in the null model, in the sense that the Gumbel 
 * `gumbelPValue_le_iff`: `gumbelPValue K θ n s ≤ α ↔ log n / θ + gumbelLevel K θ α ≤ s` for
   `0 < α < 1`, where `exp (-K e^{-θ x_α}) = 1 - α` at `x_α = gumbelLevel K θ α`
   (`exp_neg_mul_exp_gumbelLevel`).
-* `exp_neg_mul_exp_eq_gumbelCDF`, `gumbelLevel_eq_gumbelQuantile`: `exp (-K e^{-θ x})` and
-  `gumbelLevel K θ α` are the Gumbel distribution function and its quantile at `1 - α` of
-  `MathlibExt.Probability.Distributions.Gumbel`, with location `log K / θ` and scale `θ⁻¹`.
-  `gumbelPValue_le_iff` and `exp_neg_mul_exp_gumbelLevel` are derived from the order and inverse
-  lemmas proved there.
+* `exp_neg_mul_exp_eq_gumbelCDF`, `gumbelLevel_eq_gumbelQuantile`: for `K, θ > 0`,
+  `exp (-K e^{-θ x})` is the distribution function `gumbelCDF` of the Gumbel law with location
+  `log K / θ` and scale `θ⁻¹` (`MathlibExt.Probability.Distributions.Gumbel`), and
+  `gumbelLevel K θ α` is its quantile `gumbelQuantile` at `1 - α` (an identity that holds for
+  every `θ`). `gumbelPValue_le_iff` and `exp_neg_mul_exp_gumbelLevel` are derived from the order
+  and inverse lemmas proved there.
 * `eventually_real_gumbelPValue_le_le`, `tendsto_real_gumbelPValue_le`: the calibration
   statements for any statistic satisfying the Gumbel lower bound (resp. Gumbel limit).
 * `NonlatticeRenewalInput.tendsto_real_gumbelPValue_le`: **exact asymptotic calibration**,
@@ -101,17 +102,18 @@ noncomputable def gumbelLevel (K θ α : ℝ) : ℝ :=
 
 variable {K θ α : ℝ} {n : ℕ}
 
-/-- The Gumbel distribution function `exp (-K e^{-θ x})` is `gumbelCDF` with location
-`log K / θ` and scale `θ⁻¹`. -/
-theorem exp_neg_mul_exp_eq_gumbelCDF (hK : 0 < K) (hθ : θ ≠ 0) (x : ℝ) :
+/-- For `K > 0` and `θ > 0`, the Gumbel distribution function `exp (-K e^{-θ x})` is `gumbelCDF`
+with location `log K / θ` and positive scale `θ⁻¹`. -/
+theorem exp_neg_mul_exp_eq_gumbelCDF (hK : 0 < K) (hθ : 0 < θ) (x : ℝ) :
     Real.exp (-(K * Real.exp (-(θ * x)))) = gumbelCDF (Real.log K / θ) θ⁻¹ x := by
   have h : -(x - Real.log K / θ) / θ⁻¹ = Real.log K + -(θ * x) := by
-    field_simp
+    field_simp [hθ.ne']
     ring
   rw [gumbelCDF, h, Real.exp_add, Real.exp_log hK]
 
-/-- The Gumbel level `x_α` is the Gumbel quantile at `1 - α`, with location `log K / θ` and
-scale `θ⁻¹`. -/
+/-- The Gumbel level `x_α` is `gumbelQuantile` at `1 - α` with location `log K / θ` and scale
+`θ⁻¹`. The identity holds for every `θ`; for `θ > 0` the right side is the `(1 - α)`-quantile of
+the Gumbel law of `exp_neg_mul_exp_eq_gumbelCDF`. -/
 theorem gumbelLevel_eq_gumbelQuantile (hK : 0 < K) (hα0 : 0 < α) (hα1 : α < 1) :
     gumbelLevel K θ α = gumbelQuantile (Real.log K / θ) θ⁻¹ (1 - α) := by
   have hL : 0 < -Real.log (1 - α) := neg_pos.2 (Real.log_neg (by linarith) (by linarith))
@@ -142,13 +144,13 @@ theorem gumbelPValue_le_iff (hK : 0 < K) (hθ : 0 < θ) (hn : 0 < n) (hα0 : 0 <
       Real.log_mul hK.ne' hn'.ne']
     ring
   rw [hshift, gumbelQuantile_le_iff_le_gumbelCDF (inv_pos.2 hθ) hq0 hq1,
-    ← exp_neg_mul_exp_eq_gumbelCDF (mul_pos hK hn') hθ.ne', gumbelPValue, sub_le_comm]
+    ← exp_neg_mul_exp_eq_gumbelCDF (mul_pos hK hn') hθ, gumbelPValue, sub_le_comm]
 
 /-- At the Gumbel level, the Gumbel distribution function equals `1 - α`:
 `exp (-K e^{-θ x_α}) = 1 - α`. -/
 theorem exp_neg_mul_exp_gumbelLevel (hK : 0 < K) (hθ : 0 < θ) (hα0 : 0 < α) (hα1 : α < 1) :
     Real.exp (-(K * Real.exp (-(θ * gumbelLevel K θ α)))) = 1 - α := by
-  rw [exp_neg_mul_exp_eq_gumbelCDF hK hθ.ne', gumbelLevel_eq_gumbelQuantile hK hα0 hα1]
+  rw [exp_neg_mul_exp_eq_gumbelCDF hK hθ, gumbelLevel_eq_gumbelQuantile hK hα0 hα1]
   exact gumbelCDF_gumbelQuantile (inv_ne_zero hθ.ne') (by linarith) (by linarith)
 
 /-- The maximal segment score of measurable scores is measurable. -/

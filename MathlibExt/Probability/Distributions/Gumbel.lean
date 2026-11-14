@@ -30,11 +30,13 @@ characterization of the quantile need `β > 0`. No measure is constructed here.
 
 ## Main results
 
-* `ProbabilityTheory.gumbelCDF_gumbelQuantile`: `F(Q(q)) = q` for `β ≠ 0` and `0 < q < 1`.
-* `ProbabilityTheory.gumbelQuantile_gumbelCDF`: `Q(F(x)) = x` for `β ≠ 0`.
-* `ProbabilityTheory.strictMono_gumbelCDF`: `F` is strictly increasing for `β > 0`.
-* `ProbabilityTheory.gumbelQuantile_le_iff_le_gumbelCDF`: `Q(q) ≤ x ↔ q ≤ F(x)` for `β > 0`
-  and `0 < q < 1`.
+* `ProbabilityTheory.gumbelCDF_gumbelQuantile`: `gumbelCDF μ β (gumbelQuantile μ β q) = q` for
+  `β ≠ 0` and `0 < q < 1`.
+* `ProbabilityTheory.gumbelQuantile_gumbelCDF`: `gumbelQuantile μ β (gumbelCDF μ β x) = x` for
+  `β ≠ 0`.
+* `ProbabilityTheory.strictMono_gumbelCDF`: `gumbelCDF μ β` is strictly increasing for `β > 0`.
+* `ProbabilityTheory.gumbelQuantile_le_iff_le_gumbelCDF`:
+  `gumbelQuantile μ β q ≤ x ↔ q ≤ gumbelCDF μ β x` for `β > 0` and `0 < q < 1`.
 
 ## References
 
@@ -49,20 +51,21 @@ namespace ProbabilityTheory
 
 noncomputable section
 
-/-- The **Gumbel distribution function** with location `μ` and scale `β`:
-`exp(-exp(-(x - μ) / β))`. For `β > 0` it is the cumulative distribution function of the Gumbel
-law. -/
+/-- The Gumbel distribution function formula `exp(-exp(-(x - μ) / β))`, defined for all real `μ`
+and `β`. For scale `β > 0` it is the cumulative distribution function of the Gumbel law with
+location `μ` and scale `β`. -/
 def gumbelCDF (μ β x : ℝ) : ℝ :=
   exp (-exp (-(x - μ) / β))
 
-/-- The **Gumbel quantile function** with location `μ` and scale `β`: `μ - β log(-log q)`. On
-`0 < q < 1` it inverts `gumbelCDF μ β` (`gumbelCDF_gumbelQuantile`). -/
+/-- The Gumbel quantile formula `μ - β log(-log q)`, defined for all real `μ`, `β` and `q`. For
+`β ≠ 0` and `0 < q < 1` it inverts `gumbelCDF μ β` (`gumbelCDF_gumbelQuantile`); for `β > 0` it
+is the `q`-quantile of the Gumbel law with location `μ` and scale `β`. -/
 def gumbelQuantile (μ β q : ℝ) : ℝ :=
   μ - β * log (-log q)
 
 variable {μ β q x : ℝ}
 
-/-- The Gumbel distribution function at the `q`-quantile is `q`. -/
+/-- For `β ≠ 0` and `0 < q < 1`, `gumbelCDF μ β` at `gumbelQuantile μ β q` is `q`. -/
 theorem gumbelCDF_gumbelQuantile (hβ : β ≠ 0) (hq₀ : 0 < q) (hq₁ : q < 1) :
     gumbelCDF μ β (gumbelQuantile μ β q) = q := by
   have h : -(gumbelQuantile μ β q - μ) / β = log (-log q) := by
@@ -71,7 +74,7 @@ theorem gumbelCDF_gumbelQuantile (hβ : β ≠ 0) (hq₀ : 0 < q) (hq₁ : q < 1
     ring
   rw [gumbelCDF, h, exp_log (neg_pos.2 (log_neg hq₀ hq₁)), neg_neg, exp_log hq₀]
 
-/-- The Gumbel quantile at the value `gumbelCDF μ β x` is `x`. -/
+/-- For `β ≠ 0`, `gumbelQuantile μ β` at `gumbelCDF μ β x` is `x`. -/
 theorem gumbelQuantile_gumbelCDF (hβ : β ≠ 0) (μ x : ℝ) :
     gumbelQuantile μ β (gumbelCDF μ β x) = x := by
   rw [gumbelQuantile, gumbelCDF, log_exp, neg_neg, log_exp]

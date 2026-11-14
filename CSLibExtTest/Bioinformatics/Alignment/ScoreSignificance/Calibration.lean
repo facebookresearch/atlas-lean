@@ -58,7 +58,7 @@ example : Real.exp (-(1 * Real.exp (-(1 * gumbelLevel 1 1 (1 / 2))))) = 1 / 2 :=
 /-- With `K = e` and `θ = 1`, the distribution function `exp (-K e^{-θ x})` is the shared
 `gumbelCDF` with location `1` and scale `1`. -/
 example (x : ℝ) : Real.exp (-(Real.exp 1 * Real.exp (-(1 * x)))) = gumbelCDF 1 1 x := by
-  simpa using exp_neg_mul_exp_eq_gumbelCDF (Real.exp_pos 1) one_ne_zero x
+  simpa using exp_neg_mul_exp_eq_gumbelCDF (Real.exp_pos 1) one_pos x
 
 /-- With `K = e` and `θ = 1`, the Gumbel level at `α = 1 - e⁻¹` is the shared quantile at `e⁻¹`,
 which is the location `1`. -/
@@ -70,7 +70,7 @@ example : gumbelLevel (Real.exp 1) 1 (1 - Real.exp (-1)) = 1 := by
 /-- `exp_neg_mul_exp_gumbelLevel` at `K = 2`, `θ = 3`, `α = 1 / 20`, obtained from the shared
 inverse lemma `gumbelCDF_gumbelQuantile` through the two bridges. -/
 example : Real.exp (-(2 * Real.exp (-(3 * gumbelLevel 2 3 (1 / 20))))) = 1 - 1 / 20 := by
-  rw [exp_neg_mul_exp_eq_gumbelCDF two_pos three_ne_zero,
+  rw [exp_neg_mul_exp_eq_gumbelCDF two_pos three_pos,
     gumbelLevel_eq_gumbelQuantile two_pos (by norm_num) (by norm_num)]
   exact gumbelCDF_gumbelQuantile (by norm_num) (by norm_num) (by norm_num)
 
