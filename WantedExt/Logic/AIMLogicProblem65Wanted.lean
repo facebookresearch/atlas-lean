@@ -11,6 +11,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+public import Mathlib.ModelTheory.Algebra.Ring.Basic
 public import Mathlib.RingTheory.Algebraic.Defs
 public import Batteries.Util.ProofWanted
 
@@ -18,50 +19,17 @@ public import Batteries.Util.ProofWanted
 
 namespace MathlibExt.Logic.AIMLogicProblem65Wanted
 
+open FirstOrder
+
 /-! Source record `UM-20002289-Q001`. -/
-/-- Terms of the language of rings: variables indexed by `ℕ`, `0`, `1`, sums, products and
-negations. -/
-inductive RingTerm : Type where
-  | var : Nat → RingTerm
-  | zero : RingTerm
-  | one : RingTerm
-  | add : RingTerm → RingTerm → RingTerm
-  | mul : RingTerm → RingTerm → RingTerm
-  | neg : RingTerm → RingTerm
-
-/-- First-order formulas of the language of rings, quantifying over variables indexed by `ℕ`. -/
-inductive RingFormula : Type where
-  | equal : RingTerm → RingTerm → RingFormula
-  | not : RingFormula → RingFormula
-  | and : RingFormula → RingFormula → RingFormula
-  | or : RingFormula → RingFormula → RingFormula
-  | imp : RingFormula → RingFormula → RingFormula
-  | forall_ : Nat → RingFormula → RingFormula
-  | exists_ : Nat → RingFormula → RingFormula
-
-/-- The value of a term in a field under the variable assignment `v`. -/
-def RingTerm.eval {F : Type} [Field F] (v : Nat → F) : RingTerm → F
-  | .var n => v n
-  | .zero => 0
-  | .one => 1
-  | .add t₁ t₂ => (eval v t₁) + (eval v t₂)
-  | .mul t₁ t₂ => (eval v t₁) * (eval v t₂)
-  | .neg t => - (eval v t)
-
-/-- Satisfaction of a formula in a field under the variable assignment `v`. -/
-def RingFormula.satisfies {F : Type} [Field F] (v : Nat → F) : RingFormula → Prop
-  | .equal t₁ t₂ => t₁.eval v = t₂.eval v
-  | .not φ => ¬ φ.satisfies v
-  | .and φ₁ φ₂ => φ₁.satisfies v ∧ φ₂.satisfies v
-  | .or φ₁ φ₂ => φ₁.satisfies v ∨ φ₂.satisfies v
-  | .imp φ₁ φ₂ => φ₁.satisfies v → φ₂.satisfies v
-  | .forall_ n φ => ∀ x : F, φ.satisfies (Function.update v n x)
-  | .exists_ n φ => ∃ x : F, φ.satisfies (Function.update v n x)
-
-/-- `F` is elementarily equivalent to `ℚ` in the language of rings: a formula holds under every
-assignment in `ℚ` exactly when it holds under every assignment in `F`. -/
+/-- `F` is elementarily equivalent to `ℚ` in Mathlib's first-order language of rings
+`FirstOrder.Language.ring` (symbols `+`, `*`, `-`, `0`, `1`): `ℚ` and `F` satisfy the same
+sentences when the symbols are interpreted by the field operations
+(`FirstOrder.Ring.compatibleRingOfRing`). -/
 def ElementarilyEquivalentToRat (F : Type) [Field F] : Prop :=
-  ∀ φ : RingFormula, (∀ v : Nat → ℚ, φ.satisfies v) ↔ (∀ v : Nat → F, φ.satisfies v)
+  letI := Ring.compatibleRingOfRing ℚ
+  letI := Ring.compatibleRingOfRing F
+  Language.ring.ElementarilyEquivalent ℚ F
 
 /-- Koenigsmann's question: if `ℚ* ⊆ ℚ**` are both elementarily equivalent to `ℚ`, then `ℚ*` is
 relatively algebraically closed in `ℚ**`. -/
