@@ -11,6 +11,7 @@ module
 public import Mathlib.LinearAlgebra.Matrix.Defs
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
 import Mathlib.Data.Fintype.Sum
+import Mathlib.Logic.Equiv.Fintype
 
 /-!
 # Cannings models
@@ -29,6 +30,10 @@ the probability `mergeProb k` that `k` lineages share a parent, the coalescence 
 `coalProb = mergeProb 2`, the probability `doubleMergeProb` of a simultaneous double merger, and
 the one-generation transition matrix `lineageMatrix n` of the ancestral lineage count.
 Real-valued probabilities use the masses `(law f).toReal`, which sum to `1` (`sum_toReal_law`).
+`expect hb F` is the expectation of a real function `F` of the parents of the first `b` children
+(with `b = N`, `hb = le_rfl`, of the whole parent map); its linearity and monotonicity lemmas, and
+its invariance under relabeling children (`expect_comp_perm`) and parents (`expect_perm_comp`,
+`expect_offspring_comp_perm`), are shared by both limits.
 
 ## References
 
@@ -172,6 +177,78 @@ theorem offspring_perm_comp (f : Fin N → Fin N) (σ : Equiv.Perm (Fin N)) (i :
   unfold offspring
   congr 1
   exact filter_congr fun c _ => (Equiv.eq_symm_apply σ).symm
+
+/-! ### Expectations -/
+
+/-- Expectation `E[F (f ∘ Fin.castLE hb)]` of a real function `F` of the parents of the first `b`
+children, with the masses `(law f).toReal`. For `b = N` and `hb = le_rfl` it is the expectation
+of a function of the whole parent map, since `f ∘ Fin.castLE le_rfl` is `f` by definition. -/
+def expect {b : ℕ} (hb : b ≤ N) (F : (Fin b → Fin N) → ℝ) : ℝ :=
+  ∑ f, (M.law f).toReal * F (f ∘ Fin.castLE hb)
+
+section Expect
+
+variable {b : ℕ} {hb : b ≤ N}
+
+theorem expect_add (F G : (Fin b → Fin N) → ℝ) :
+    M.expect hb (fun g => F g + G g) = M.expect hb F + M.expect hb G := by
+  simp only [expect, mul_add, sum_add_distrib]
+
+theorem expect_sub (F G : (Fin b → Fin N) → ℝ) :
+    M.expect hb (fun g => F g - G g) = M.expect hb F - M.expect hb G := by
+  simp only [expect, mul_sub, sum_sub_distrib]
+
+theorem expect_const_mul (a : ℝ) (F : (Fin b → Fin N) → ℝ) :
+    M.expect hb (fun g => a * F g) = a * M.expect hb F := by
+  simp only [expect, mul_sum]
+  exact sum_congr rfl fun f _ => by ring
+
+theorem expect_const (a : ℝ) : M.expect hb (fun _ => a) = a := by
+  simp only [expect, ← sum_mul, M.sum_toReal_law, one_mul]
+
+theorem expect_sum {ι : Type*} (s : Finset ι) (F : ι → (Fin b → Fin N) → ℝ) :
+    M.expect hb (fun g => ∑ i ∈ s, F i g) = ∑ i ∈ s, M.expect hb (F i) := by
+  simp only [expect, mul_sum]
+  exact sum_comm
+
+theorem expect_mono {F G : (Fin b → Fin N) → ℝ} (h : ∀ g, F g ≤ G g) :
+    M.expect hb F ≤ M.expect hb G :=
+  sum_le_sum fun _ _ => mul_le_mul_of_nonneg_left (h _) ENNReal.toReal_nonneg
+
+theorem expect_nonneg {F : (Fin b → Fin N) → ℝ} (h : ∀ g, 0 ≤ F g) : 0 ≤ M.expect hb F :=
+  sum_nonneg fun _ _ => mul_nonneg ENNReal.toReal_nonneg (h _)
+
+/-- Relabeling the parents does not change expectations. -/
+theorem expect_perm_comp (σ : Equiv.Perm (Fin N)) (F : (Fin b → Fin N) → ℝ) :
+    M.expect hb (fun g => F (σ ∘ g)) = M.expect hb F := by
+  refine Fintype.sum_equiv (Equiv.arrowCongr (Equiv.refl _) σ) _ _ fun f => ?_
+  change _ = (M.law (σ ∘ f)).toReal * F ((σ ∘ f) ∘ Fin.castLE hb)
+  rw [M.law_perm_comp σ f]
+  rfl
+
+/-- Relabeling the sampled children does not change expectations. -/
+theorem expect_comp_perm (σ : Equiv.Perm (Fin b)) (F : (Fin b → Fin N) → ℝ) :
+    M.expect hb (fun g => F (g ∘ σ)) = M.expect hb F := by
+  obtain ⟨τ, hτ⟩ := Equiv.Perm.exists_extending_pair (Fin.castLE hb ∘ σ) (Fin.castLE hb)
+    ((Fin.castLE_injective hb).comp σ.injective) (Fin.castLE_injective hb)
+  refine Fintype.sum_equiv (Equiv.arrowCongr τ (Equiv.refl _)) _ _ fun f => ?_
+  have h : (f ∘ Fin.castLE hb) ∘ σ = (f ∘ τ.symm) ∘ Fin.castLE hb := by
+    funext i
+    simp only [Function.comp_apply, ← hτ i, Equiv.symm_apply_apply]
+  change _ = (M.law (f ∘ τ.symm)).toReal * F ((f ∘ τ.symm) ∘ Fin.castLE hb)
+  rw [M.law_comp_perm τ.symm f, ← h]
+
+end Expect
+
+/-- **Exchangeable offspring numbers**: the offspring vector `(ν_1, …, ν_N)` has the same law
+as `(ν_{σ 1}, …, ν_{σ N})` for every permutation `σ`. -/
+theorem expect_offspring_comp_perm (σ : Equiv.Perm (Fin N)) (F : (Fin N → ℕ) → ℝ) :
+    M.expect le_rfl (fun f => F (offspring f ∘ σ)) = M.expect le_rfl fun f => F (offspring f) := by
+  have h : ∀ f : Fin N → Fin N, offspring f ∘ σ = offspring (σ.symm ∘ f) := fun f => by
+    funext j
+    rw [Function.comp_apply, offspring_perm_comp, Equiv.symm_symm]
+  simp_rw [h]
+  exact M.expect_perm_comp σ.symm (fun f => F (offspring f))
 
 end CanningsModel
 
