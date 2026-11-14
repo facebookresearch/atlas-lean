@@ -32,8 +32,9 @@ namespace MetaMathlibExt.Complexity.NPComplete.PlanarThreeSatVariableCycle
 /-!
 # PLANAR 3SAT WITH VARIABLE CYCLE is NP-complete
 
-INSTANCE: a 3-CNF formula `F` over variables `u₀, …, u_{n-1}` such that the variable-clause
-incidence graph together with the cycle edges `{uᵢ, uᵢ₊₁}` (indices mod `n`) is planar.
+INSTANCE: a 3-CNF formula `F` over variables `u₀, …, u_{n-1}` (`n ≥ 3`) such that the
+variable-clause incidence graph together with the cycle edges `{uᵢ, uᵢ₊₁}` (indices mod `n`) is
+planar.
 QUESTION: is `F` satisfiable?
 
 This is the restriction of PLANAR 3SAT (`WantedExt.Complexity.NPComplete.PlanarThreeSatWanted`)
@@ -46,9 +47,10 @@ The instance type, the incidence graph, the parent well-formedness condition and
 are those of the parent module (`PlanarThreeSat.PlanarThreeSatInstance`,
 `PlanarThreeSat.IncidenceGraph`, `PlanarThreeSat.WellFormed`,
 `PlanarThreeSat.PlanarThreeSatFeasible`). The cycle is Mathlib's `SimpleGraph.cycleGraph n` on
-the variable vertices (`i ~ j` iff `i - j = ±1` in `Fin n`; no edges for `n ≤ 1`, one edge for
-`n = 2`), placed on the left summand of the vertex type by the disjoint sum `⊕g` with the empty
-graph on the clauses; `WellFormed` adds that the union of the two graphs is planar.
+the variable vertices (`i ~ j` iff `i - j = ±1` in `Fin n`), placed on the left summand of the
+vertex type by the disjoint sum `⊕g` with the empty graph on the clauses. A cycle through the
+variables needs at least three of them (`cycleGraph n` is a cycle only for `n ≥ 3`), so
+`WellFormed` adds `3 ≤ n` and that the union of the two graphs is planar.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -68,10 +70,10 @@ def VariableCycleGraph (i : PlanarThreeSat.PlanarThreeSatInstance) :
   PlanarThreeSat.IncidenceGraph i ⊔ (SimpleGraph.cycleGraph i.1 ⊕g ⊥)
 
 /-- Well-formedness of an instance: it is a well-formed PLANAR 3SAT instance (at most three
-literals per clause, variables in range, planar incidence graph), and the incidence graph
-together with the variable cycle is planar. -/
+literals per clause, variables in range, planar incidence graph), there are at least three
+variables, and the incidence graph together with the variable cycle is planar. -/
 def WellFormed (i : PlanarThreeSat.PlanarThreeSatInstance) : Prop :=
-  PlanarThreeSat.WellFormed i ∧ (VariableCycleGraph i).IsPlanar
+  PlanarThreeSat.WellFormed i ∧ 3 ≤ i.1 ∧ (VariableCycleGraph i).IsPlanar
 
 open Classical in
 /-- PLANAR 3SAT WITH VARIABLE CYCLE as a decision problem over bitstrings. -/
