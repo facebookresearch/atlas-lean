@@ -22,7 +22,7 @@ public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import Mathlib.Combinatorics.SimpleGraph.Walk.Basic
 public import Mathlib.Basic.Real.Basic
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 
@@ -56,10 +56,10 @@ total length of a `SimpleGraph.Walk` from `v` to `a`. `DistLE i v p r` states
 
 Two conventions are fixed and disclosed. `P` has at most `K` points: more points never increase
 any `d(v)`, and `K ≤ |V|` vertices are available, so "at most `K`" and "exactly `K`" agree (and a
-point written in two ways is counted twice, which is harmless). `G` is connected (in
-`WellFormed`): `d(v)` is the length of a shortest path, so the source presupposes that a path
-exists; on a disconnected graph `d(v)` would be infinite and `d(v) · w(v)` with `w(v) = 0`
-would depend on a convention.
+point written in two ways is counted twice, which is harmless). `d(v)` is the length of a
+shortest path from `v` to `P`, so it is defined only when such a path exists: every vertex must
+reach a point of `P` (on a disconnected graph, `P` needs a point in every component), whatever
+its weight.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -111,13 +111,13 @@ def DistLE (i : MinSumMulticenterInstance) (v : Fin i.1) (p : Fin i.1 × Fin i.1
       (walkLength i W : ℝ) + ((edgeLength i s(p.1, p.2.1) : ℝ) - p.2.2) ≤ r
 
 /-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), the graph is
-connected, there is one weight per vertex, `0 < K ≤ n`, and `B = p / q` with `0 < p`, `0 < q`. -/
+duplicate edges in either orientation, no self-loops, endpoints in range), there is one weight
+per vertex, `0 < K ≤ n`, and `B = p / q` with `0 < p`, `0 < q`. -/
 def WellFormed (i : MinSumMulticenterInstance) : Prop :=
   ((i.2.1.map fun e => (e.1, e.2.1)).Nodup ∧
     ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2.1 < i.1 ∧ e.1 ≠ e.2.1 ∧
       (e.2.1, e.1) ∉ i.2.1.map fun e => (e.1, e.2.1)) ∧
-    (Graph i).Connected ∧ i.2.2.1.length = i.1 ∧
+    i.2.2.1.length = i.1 ∧
     0 < i.2.2.2.1 ∧ i.2.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2.2.1 ∧ 0 < i.2.2.2.2.2
 
 /-- Some set `P` of at most `K` points on `G` has `∑_v w(v) · d(v) ≤ B`, where `d(v)` is the
