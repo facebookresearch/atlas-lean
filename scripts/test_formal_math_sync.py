@@ -320,6 +320,18 @@ class SyncTest(unittest.TestCase):
         self.assertIn("MathlibExt/Edited.lean", err)
         self.assertEqual((self.atlas / c.MANIFEST).read_bytes(), first_bytes, "rejected sync must not write")
 
+    def test_ignores_git_replace_refs(self) -> None:
+        run_git(self.fm, "replace", self.commit, self.first)  # make HEAD read as the first commit
+        rationales = self.atlas.parent / "rationales.json"
+        rationales.write_text(json.dumps({"MathlibExt/Edited.lean": {"rationale": "urgent fix", "backport": "pending"}}))
+        code, _, _ = self.sync("--rationales", str(rationales))
+        self.assertEqual(code, 0)
+        manifest = json.loads((self.atlas / c.MANIFEST).read_text())
+        self.assertEqual(manifest["upstream"]["commit"], self.commit)
+        got = {row["path"]: row["disposition"] for row in manifest["rows"]}
+        self.assertEqual(got["MathlibExt/Old.lean"], "behind")
+        self.assertEqual(got["MathlibExt/Gone.lean"], "retired")
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -33,7 +33,8 @@ FLT_RATIONALE = "third-party FLT content; keeps its own copyright header"
 
 
 def git(repo: Path, *args: str) -> bytes:
-    return subprocess.run(["git", "-C", str(repo), "-c", "core.quotepath=off", *args],
+    # --no-replace-objects: `git replace` refs must not make the recorded commit read as another.
+    return subprocess.run(["git", "--no-replace-objects", "-C", str(repo), "-c", "core.quotepath=off", *args],
                           check=True, capture_output=True).stdout
 
 
@@ -41,7 +42,7 @@ class Blobs:
     """Batch blob reader over `git cat-file --batch`."""
 
     def __init__(self, repo: Path) -> None:
-        self.proc = subprocess.Popen(["git", "-C", str(repo), "cat-file", "--batch"],
+        self.proc = subprocess.Popen(["git", "--no-replace-objects", "-C", str(repo), "cat-file", "--batch"],
                                      stdin=subprocess.PIPE, stdout=subprocess.PIPE)
 
     def read(self, oid: str) -> bytes:
