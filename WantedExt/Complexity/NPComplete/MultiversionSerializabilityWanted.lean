@@ -61,6 +61,12 @@ variable, or `none`, the original value. The final value of `x` is the value of 
 after another in some order `π` (a permutation of `0, ..., n - 1`), each with its steps in their
 original order.
 
+The number `n` is encoded in binary. NP membership is unaffected: a transaction with no action in
+`S` contributes nothing to any serial schedule, so a certificate orders only the at most `|S|`
+transactions that occur in `S` (any permutation of `0, ..., n - 1` extending that order gives the
+same serial schedule), together with one position per read for `V`; symbolic values are compared
+as shared DAGs, in polynomial time.
+
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
 bitstrings decoding to malformed instances, are no-instances.
