@@ -77,12 +77,14 @@ Local asymptotic stability of the nonlinear equation.
 
 The characteristic-root results are *linearized* statements about `u' = -r u(t - τ)`.
 Local asymptotic stability of the nonlinear equation is proved directly, by a Razumikhin-type
-window estimate on Wright's form, for `0 < r τ < √5 - 1 ≈ 1.236`. The remaining range
-`√5 - 1 ≤ r τ < π / 2` of the linearly stable regime is not covered: estimates of this kind
-also hold for time-varying coefficients, where `3 / 2` is the sharp bound, so reaching `τ_c`
-needs the principle of linearized stability for delay equations (variation of constants and
-exponential decay of the fundamental solution), which is not formalized here. The Hopf normal
-form at `τ_c` is not formalized either.
+window estimate on Wright's form, for `0 < r τ < √5 - 1 ≈ 1.236`. `√5 - 1` is where this
+one-window estimate stops (`|1 - a| + a² / 2 < 1`), not the limit of the method: Yorke-type
+refinements reach `r τ < 3 / 2` (Yorke 1970; Wright 1955), and `3 / 2` is the best possible
+bound for any estimate that also holds with time-varying coefficients. Only
+`3 / 2 ≤ r τ < π / 2` needs the principle of linearized stability for delay equations
+(variation of constants and exponential decay of the fundamental solution). Neither the
+refinement to `3 / 2` nor that principle is formalized here, so `√5 - 1 ≤ r τ < π / 2` is not
+covered. The Hopf normal form at `τ_c` is not formalized either.
 
 ## References
 
@@ -94,6 +96,8 @@ form at `τ_c` is not formalized either.
   Sciences*, Springer (2011), §3.4 and §4.4.
 * E. M. Wright, *A non-linear difference-differential equation*, J. Reine Angew. Math. 194
   (1955) 66–87.
+* J. A. Yorke, *Asymptotic stability for one dimensional differential-delay equations*,
+  J. Differential Equations 7 (1970) 189–202.
 * B. S. Razumikhin, *On the stability of systems with a delay*, Prikl. Mat. Mekh. 20 (1956)
   500–512.
 -/
@@ -1043,7 +1047,8 @@ theorem sqrt_five_sub_one_lt_pi_div_two : √5 - 1 < π / 2 := by
   linarith [pi_gt_three]
 
 /-- The delay range of `localAsymptoticStability` in terms of `τ`: `r τ < √5 - 1` iff
-`τ < (√5 - 1) / r`, and this bound is below `criticalDelay r`. -/
+`τ < (√5 - 1) / r`. That this bound is below `criticalDelay r` is
+`sqrt_five_sub_one_div_lt_criticalDelay`. -/
 theorem mul_lt_sqrt_five_sub_one_iff {r τ : ℝ} (hr : 0 < r) :
     r * τ < √5 - 1 ↔ τ < (√5 - 1) / r := by
   rw [lt_div_iff₀ hr, mul_comm]
