@@ -24,8 +24,8 @@ public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.Digraph.Orientation
-public import WantedExt.Combinatorics.PlanarOrientedAcyclicThreeFifthsWanted
+public import Mathlib.Combinatorics.Digraph.Basic
+public import MathlibExt.Combinatorics.SimpleGraph.Dichromatic
 
 @[expose] public section
 
@@ -38,11 +38,10 @@ INSTANCE: a graph `G = (V, E)` and a positive integer `K ≤ |V|`. QUESTION: can
 be oriented so that the resulting directed graph is strongly connected and has diameter no more
 than `K`?
 
-An orientation is a Mathlib `Digraph` `D` on `V` that keeps exactly one direction of each edge:
-its underlying simple graph `D.toSimpleGraphInclusive` is `G`, and `D` is an oriented graph in
-the sense of the existing WantedExt predicate
-`MathlibExt.Combinatorics.PlanarOrientedAcyclicThreeFifthsWanted.IsOriented` (loopless, and
-never both `u → v` and `v → u`). The diameter of `D` is at most `K` when every vertex `v` can
+An orientation is a Mathlib `Digraph` `D` on `V` whose arcs choose exactly one direction for each
+edge: `(Graph i).IsOrientation D.Adj`, the existing MathlibExt predicate
+`SimpleGraph.IsOrientation` (every arc is an edge of `G`, and every edge `{u, v}` carries exactly
+one of `u → v`, `v → u`). The diameter of `D` is at most `K` when every vertex `v` can
 be reached from every vertex `u` along at most `K` arcs (`ReachWithin`: a sequence of `K + 1`
 vertices from `u` to `v` in which each step stays put or follows an arc). Diameter at most `K`
 means every ordered pair is joined by a directed path, so it implies strong connectivity; the
@@ -58,12 +57,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- `D` is an orientation of `G`: its underlying simple graph is `G`, and it is an oriented
-graph (loopless, with at most one of the arcs `u → v`, `v → u` for every pair). -/
-def IsOrientation {V : Type} (G : SimpleGraph V) (D : Digraph V) : Prop :=
-  D.toSimpleGraphInclusive = G ∧
-    MathlibExt.Combinatorics.PlanarOrientedAcyclicThreeFifthsWanted.IsOriented D
 
 /-- `v` is reachable from `u` along at most `K` arcs of `D`: there is a sequence
 `p 0 = u, ..., p K = v` in which each step `p t → p (t + 1)` stays put or is an arc of `D`. -/
@@ -87,7 +80,7 @@ def WellFormed (i : OrientedDiameterInstance) : Prop :=
 /-- Some orientation of the graph has diameter at most `K`: every vertex is reachable from
 every vertex along at most `K` arcs (hence the orientation is strongly connected). -/
 def OrientedDiameterFeasible (i : OrientedDiameterInstance) : Prop :=
-  ∃ D : Digraph (Fin i.1), IsOrientation (Graph i) D ∧ ∀ u v, ReachWithin D i.2.2 u v
+  ∃ D : Digraph (Fin i.1), (Graph i).IsOrientation D.Adj ∧ ∀ u v, ReachWithin D i.2.2 u v
 
 open Classical in
 /-- ORIENTED DIAMETER as a decision problem over bitstrings. -/
