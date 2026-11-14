@@ -37,9 +37,11 @@ open Polynomial
 INSTANCE: an integer `m > 0`, a set `D = {x₁, x₂, …, xₙ}` consisting of `n` distinct elements of
 `F_{2^m}`, an integer `k > 0`, a target vector `y ∈ F_{2^m}^n`, and an integer `w > 0`.
 QUESTION: is there a codeword `c ∈ C_{2^m}(D, k)` such that `d(c, y) ≤ w`? Here the
-Reed-Solomon code `C_{2^m}(D, k)` is the set of vectors `(f(x₁), …, f(xₙ))` for the polynomials
-`f ∈ F_{2^m}[X]` with `deg f < k`, and `d` is the Hamming distance (Guruswami and Vardy,
-Section 1, problem MLD-RS).
+Reed-Solomon code `C_{2^m}(D, k)` "of length `n` and dimension `k`" is the set of vectors
+`(f(x₁), …, f(xₙ))` for the polynomials `f ∈ F_{2^m}[X]` with `deg f < k`, and `d` is the Hamming
+distance (Guruswami and Vardy, Section 1, problem MLD-RS). A code of length `n` has dimension at
+most `n`, so `k ≤ n` is part of the instance class; for `k > n` the vectors above are all of
+`F_{2^m}^n`, a code of dimension `n`, not `k`.
 
 Field representation: Guruswami and Vardy represent the elements of `F_{2^m}` by `m`-bit
 vectors; their reduction (Section 2, step B and Lemma 1) constructs the field from an irreducible
@@ -101,12 +103,12 @@ noncomputable def target (i : MaximumLikelihoodDecodingOfReedSolomonCodesInstanc
 
 /-- Well-formedness of an instance: `f` has degree `m ≥ 1` with leading bit `1` and is
 irreducible; the points are `m`-bit vectors, pairwise distinct; the target has one `m`-bit
-vector per point; and `k > 0`, `w > 0`. -/
+vector per point; `0 < k ≤ n` (the code has length `n` and dimension `k`); and `w > 0`. -/
 def WellFormed (i : MaximumLikelihoodDecodingOfReedSolomonCodesInstance) : Prop :=
   2 ≤ i.1.length ∧ i.1.getLast? = some true ∧ Irreducible (modulus i) ∧
     (∀ v ∈ i.2.1, v.length = i.1.length - 1) ∧ i.2.1.Nodup ∧
     i.2.2.2.1.length = i.2.1.length ∧ (∀ v ∈ i.2.2.2.1, v.length = i.1.length - 1) ∧
-    0 < i.2.2.1 ∧ 0 < i.2.2.2.2
+    0 < i.2.2.1 ∧ i.2.2.1 ≤ i.2.1.length ∧ 0 < i.2.2.2.2
 
 open Classical in
 /-- Over the field `AdjoinRoot f` (with `f` irreducible), some codeword `c` of the Reed-Solomon
