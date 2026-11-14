@@ -214,65 +214,25 @@ section Integral
 variable [Countable S] [MeasurableSpace S] [MeasurableSingletonClass S] {P : S → PMF S}
 
 omit [Countable S] [MeasurableSingletonClass S] in
-/-- The first `n` steps are independent of the remaining steps. Copy of `ctmc_indep` in
-`ContinuousTimeMarkovChain/Path.lean`, where it is private. -/
-private lemma inputMeasure_indep (P : S → PMF S) (n : ℕ) :
-    Indep (⨆ k ∈ Set.Iio n, MeasurableSpace.comap (fun ω : ℕ → (S → S) × ℝ => ω k) inferInstance)
-      (⨆ k ∈ Set.Ici n, MeasurableSpace.comap (fun ω : ℕ → (S → S) × ℝ => ω k) inferInstance)
-      (inputMeasure P) := by
-  have h := iIndepFun_infinitePi (P := fun _ : ℕ => stepMeasure P)
-    (X := fun _ x => x) (fun _ => measurable_id)
-  rw [iIndepFun_iff_iIndep] at h
-  refine indep_iSup_of_disjoint (fun k => (measurable_pi_apply k).comap_le) h ?_
-  exact Set.disjoint_left.mpr fun k hk hk' => absurd (Set.mem_Iio.mp hk) (not_lt.mpr hk')
-
-omit [Countable S] [MeasurableSingletonClass S] in
-/-- The shift by one step is measurable for the σ-algebra of the steps from index `1` on.
-Copy of `measurable_ctmcShift` (with `n = 1`) in `ContinuousTimeMarkovChain/Path.lean`, where it
-is private. -/
-private lemma measurable_ctmcShift_one :
-    Measurable[⨆ k ∈ Set.Ici 1,
-      MeasurableSpace.comap (fun ω : ℕ → (S → S) × ℝ => ω k) inferInstance] (ctmcShift 1) := by
-  rw [measurable_iff_comap_le, MeasurableSpace.pi, MeasurableSpace.comap_iSup]
-  refine iSup_le fun j => ?_
-  rw [MeasurableSpace.comap_comp]
-  exact le_iSup₂ (f := fun k (_ : k ∈ Set.Ici 1) =>
-    MeasurableSpace.comap (fun ω : ℕ → (S → S) × ℝ => ω k) inferInstance) (1 + j)
-    (Set.mem_Ici.mpr (Nat.le_add_right 1 j))
-
-omit [Countable S] [MeasurableSingletonClass S] in
 /-- The first step and the remaining steps are independent, with the step law and the input
-law respectively. Copy of `ctmc_map_first` (with `ctmc_map_shift` inlined) in
-`ContinuousTimeMarkovChain/Path.lean`, where it is private. -/
+law respectively (`ctmc_map_first_infinitePi` for the step law `stepMeasure P`). -/
 theorem inputMeasure_map_first (P : S → PMF S) :
     (inputMeasure P).map (fun ω => (ω 0, ctmcShift 1 ω)) =
-      (stepMeasure P).prod (inputMeasure P) := by
-  have hsh : Measurable (ctmcShift (ι := S) 1) :=
-    Measurable.of_eval fun j => measurable_pi_apply (1 + j)
-  have hind : IndepFun (fun ω : ℕ → (S → S) × ℝ => ω 0) (ctmcShift 1) (inputMeasure P) := by
-    rw [IndepFun_iff_Indep]
-    refine indep_of_indep_of_le_right (indep_of_indep_of_le_left (inputMeasure_indep P 1) ?_)
-      measurable_ctmcShift_one.comap_le
-    exact le_iSup₂ (f := fun k (_ : k ∈ Set.Iio 1) =>
-      MeasurableSpace.comap (fun ω : ℕ → (S → S) × ℝ => ω k) inferInstance) 0
-      (Set.mem_Iio.mpr Nat.zero_lt_one)
-  rw [(indepFun_iff_map_prod_eq_prod_map_map (measurable_pi_apply 0).aemeasurable
-    hsh.aemeasurable).1 hind]
-  congr 1
-  · exact Measure.infinitePi_map_eval _ 0
-  · exact Measure.map_infinitePi_infinitePi_of_inj (P := fun _ : ℕ => stepMeasure P)
-      (f := fun j => 1 + j) (add_right_injective 1)
+      (stepMeasure P).prod (inputMeasure P) :=
+  ctmc_map_first_infinitePi (stepMeasure P)
 
 omit [Countable S] [MeasurableSingletonClass S] in
-/-- The clock coordinates `E n` have law `Exp(1)`. This is the first step of
-`ae_tendsto_sum_clock` in `ContinuousTimeMarkovChain/Path.lean` (a copy; private there), split
-out. -/
-theorem inputMeasure_map_clock (P : S → PMF S) (k : ℕ) :
-    (inputMeasure P).map (fun ω : ℕ → (S → S) × ℝ => (ω k).2) = expMeasure 1 := by
+/-- The clock coordinate of the step law is `Exp(1)`. -/
+theorem stepMeasure_map_snd (P : S → PMF S) : (stepMeasure P).map Prod.snd = expMeasure 1 := by
   have : IsProbabilityMeasure (expMeasure 1) := isProbabilityMeasure_expMeasure one_pos
-  rw [show (fun ω : ℕ → (S → S) × ℝ => (ω k).2) = Prod.snd ∘ (fun ω => ω k) from rfl,
-    ← Measure.map_map measurable_snd (measurable_pi_apply k), inputMeasure,
-    Measure.infinitePi_map_eval, stepMeasure, Measure.map_snd_prod, measure_univ, one_smul]
+  rw [stepMeasure, Measure.map_snd_prod, measure_univ, one_smul]
+
+omit [Countable S] [MeasurableSingletonClass S] in
+/-- The clock coordinates `E n` have law `Exp(1)` (`ctmc_map_clock_infinitePi` for the step law
+`stepMeasure P`). -/
+theorem inputMeasure_map_clock (P : S → PMF S) (k : ℕ) :
+    (inputMeasure P).map (fun ω : ℕ → (S → S) × ℝ => (ω k).2) = expMeasure 1 :=
+  ctmc_map_clock_infinitePi (stepMeasure P) (stepMeasure_map_snd P) k
 
 /-- The Laplace transform of `Exp(1)`: `∫ e^{-a E} = 1 / (1 + a)` for `a ≥ 0`. -/
 theorem lintegral_exp_neg_mul_expMeasure_one {a : ℝ} (ha : 0 ≤ a) :
@@ -308,43 +268,6 @@ theorem ae_clock_nonneg (P : S → PMF S) :
   have hset : {ω : ℕ → (S → S) × ℝ | ¬ 0 ≤ (ω k).2} = (fun ω => (ω k).2) ⁻¹' Set.Iio 0 := by
     ext ω; simp
   rw [hset, this]
-
-omit [Countable S] [MeasurableSingletonClass S] in
-/-- The partial sums of the clocks tend to `∞` almost surely (strong law of large numbers).
-Copy of `ae_tendsto_sum_clock` in `ContinuousTimeMarkovChain/Path.lean`, where it is private. -/
-theorem ae_tendsto_sum_clock (P : S → PMF S) :
-    ∀ᵐ ω ∂inputMeasure P, Tendsto (fun n => ∑ k ∈ range n, (ω k).2) atTop atTop := by
-  set μ := inputMeasure P
-  have hmap := inputMeasure_map_clock P
-  have hmeas : ∀ k, Measurable fun ω : ℕ → (S → S) × ℝ => (ω k).2 :=
-    fun k => (measurable_pi_apply k).snd
-  have hint : Integrable (fun ω : ℕ → (S → S) × ℝ => (ω 0).2) μ := by
-    have := integrable_id_expMeasure (r := 1) one_pos
-    rw [← hmap 0] at this
-    exact (integrable_map_measure (by fun_prop) (hmeas 0).aemeasurable).1 this
-  have hindep : Pairwise fun a b =>
-      IndepFun (fun ω : ℕ → (S → S) × ℝ => (ω a).2) (fun ω => (ω b).2) μ := by
-    intro a b hab
-    exact (iIndepFun_infinitePi (P := fun _ : ℕ => stepMeasure P)
-      (X := fun _ x => x.2) (fun _ => measurable_snd)).indepFun hab
-  have hident : ∀ k, IdentDistrib (fun ω : ℕ → (S → S) × ℝ => (ω k).2)
-      (fun ω => (ω 0).2) μ μ := fun k =>
-    ⟨(hmeas k).aemeasurable, (hmeas 0).aemeasurable, by rw [hmap, hmap]⟩
-  have hmean : μ[fun ω : ℕ → (S → S) × ℝ => (ω 0).2] = 1 := by
-    have h := integral_map (μ := μ) (f := fun y : ℝ => y) (hmeas 0).aemeasurable
-      aestronglyMeasurable_id
-    rw [hmap 0, integral_id_expMeasure one_pos, inv_one] at h
-    exact h.symm
-  filter_upwards [strong_law_ae _ hint hindep hident] with ω hω
-  rw [hmean] at hω
-  have hev : ∀ᶠ n : ℕ in atTop, (1 / 2 : ℝ) < (n : ℝ)⁻¹ • ∑ k ∈ range n, (ω k).2 :=
-    hω.eventually (lt_mem_nhds (by norm_num))
-  refine tendsto_atTop_mono' atTop ?_
-    (tendsto_natCast_atTop_atTop.atTop_mul_const (by norm_num : (0 : ℝ) < 1 / 2))
-  filter_upwards [hev, eventually_gt_atTop 0] with n hn hn0
-  have hnpos : (0 : ℝ) < n := Nat.cast_pos.mpr hn0
-  rw [smul_eq_mul, lt_inv_mul_iff₀ hnpos] at hn
-  linarith
 
 omit [Countable S] [MeasurableSingletonClass S] in
 private lemma measurable_eval_first (x : S) :
@@ -513,7 +436,10 @@ theorem ae_tendsto_jumpTime_atTop {V : S → ℝ≥0} (hq : ∀ x, 0 < q x) (hc 
       intro m hm
       obtain ⟨K, hK⟩ := hbdd m
       refine (measure_mono_ae ?_).trans (measure_reach_le hq hc hdrift hm t x₀)
-      filter_upwards [ae_clock_nonneg P, ae_tendsto_sum_clock P] with ω hE hsum hBω'
+      filter_upwards [ae_clock_nonneg P,
+        (ae_tendsto_sum_clock_infinitePi (stepMeasure P) (stepMeasure_map_snd P) :
+          ∀ᵐ ω ∂inputMeasure P, Tendsto (fun n => ∑ k ∈ range n, (ω k).2) atTop atTop)]
+        with ω hE hsum hBω'
       have hBω : ∀ n, jumpTime q x₀ ω n ≤ t := hBω'
       change ∃ k, m ≤ V (ctmcJumpChain x₀ ω k) ∧ (∀ j < k, V (ctmcJumpChain x₀ ω j) < m) ∧
         jumpTime q x₀ ω k ≤ t
@@ -659,42 +585,6 @@ theorem measurable_stateAt (n : ℕ) :
     exact hg.comp (((measurable_eval_first x).comp measurable_snd).prodMk
       ((measurable_fst.sub hE).prodMk (hsh.comp measurable_snd)))
 
-/-- The renewal integral against `Exp(1)` (the same computation as in the finite-state
-construction, `ContinuousTimeMarkovChain/Path.lean`, where it is private). -/
-private lemma integral_expMeasure_renewal' {q t c : ℝ} (hq : 0 < q) (ht : 0 ≤ t)
-    {f g : ℝ → ℝ} (hg : Integrable g (expMeasure 1))
-    (hgf : ∀ e, 0 < e → g e = if t < e / q then c else f (t - e / q)) :
-    ∫ e, g e ∂expMeasure 1 =
-      c * Real.exp (-(q * t)) + q * ∫ s in (0 : ℝ)..t, Real.exp (-(q * s)) * f (t - s) := by
-  open Set in
-  have hqt : 0 ≤ q * t := mul_nonneg hq.le ht
-  rw [integral_expMeasure_eq_setIntegral one_pos]
-  have hI := (integrable_expMeasure_iff one_pos).1 hg
-  rw [← Set.Ioc_union_Ioi_eq_Ioi hqt, setIntegral_union Set.Ioc_disjoint_Ioi_same
-    measurableSet_Ioi (hI.mono_set Set.Ioc_subset_Ioi_self)
-    (hI.mono_set (Set.Ioi_subset_Ioi hqt))]
-  have h2 : ∫ e in Set.Ioi (q * t), 1 * Real.exp (-(1 * e)) * g e =
-      ∫ e in Set.Ioi (q * t), Real.exp (-e) * c := by
-    refine setIntegral_congr_fun measurableSet_Ioi fun e he => ?_
-    have he0 : 0 < e := lt_of_le_of_lt hqt he
-    have : t < e / q := by rw [lt_div_iff₀ hq]; linarith [Set.mem_Ioi.mp he]
-    simp only [hgf e he0, this, ite_true, one_mul]
-  have h1 : ∫ e in Set.Ioc 0 (q * t), 1 * Real.exp (-(1 * e)) * g e =
-      ∫ e in Set.Ioc 0 (q * t), Real.exp (-e) * f (t - e / q) := by
-    refine setIntegral_congr_fun measurableSet_Ioc fun e he => ?_
-    have : ¬ t < e / q := by
-      rw [not_lt, div_le_iff₀ hq]; linarith [(Set.mem_Ioc.mp he).2]
-    simp only [hgf e (Set.mem_Ioc.mp he).1, this, ite_false, one_mul]
-  rw [h1, h2, integral_mul_const, integral_exp_neg_Ioi, ← intervalIntegral.integral_of_le hqt]
-  have hsub := intervalIntegral.integral_comp_mul_left
-    (fun e => Real.exp (-e) * f (t - e / q)) hq.ne' (a := 0) (b := t)
-  simp only [mul_zero, smul_eq_mul] at hsub
-  have hc : ∀ x, Real.exp (-(q * x)) * f (t - q * x / q) = Real.exp (-(q * x)) * f (t - x) := by
-    intro x; rw [mul_div_cancel_left₀ x hq.ne']
-  simp only [hc] at hsub
-  rw [hsub, ← mul_assoc, mul_inv_cancel₀ hq.ne', one_mul, mul_comm c]
-  ring
-
 private lemma integral_exp_neg_mul_interval {k s : ℝ} (hk : 0 < k) :
     ∫ u in (0 : ℝ)..s, Real.exp (-(k * u)) = (1 - Real.exp (-(k * s))) / k := by
   have hd : ∀ u ∈ Set.uIcc (0 : ℝ) s,
@@ -742,7 +632,7 @@ private lemma lintegral_expMeasure_ite {q c s A B : ℝ} (hq : 0 < q) (hc : 0 �
       mul_comm M, show Real.exp (-1 * x) = Real.exp (-(1 * x)) by ring_nf]
     exact mul_le_mul_of_nonneg_left (hgM x (le_of_lt hx)) (Real.exp_pos _).le
   rw [← ofReal_integral_eq_lintegral_ofReal hint (Eventually.of_forall hg0),
-    integral_expMeasure_renewal' hq hs hint (f := fun u => Real.exp (c * u) * B)
+    integral_expMeasure_renewal hq hs hint (f := fun u => Real.exp (c * u) * B)
       (fun e _ => rfl)]
   congr 1
   have hfun : (fun u => Real.exp (-(q * u)) * (Real.exp (c * (s - u)) * B)) =
