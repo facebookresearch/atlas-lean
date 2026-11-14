@@ -53,8 +53,9 @@ question are the parent's (`TotalDominatingSet.TotalDominatingSetInstance`,
 finite tree `T` (Mathlib's `SimpleGraph.IsTree`) and, for each vertex `v`, the vertex set `P v` of
 a path in `T` (a `SimpleGraph.Walk` with `IsPath`), such that two distinct vertices are adjacent
 exactly when their paths share a vertex of `T`. A graph with an isolated vertex has no total
-dominating set, so on yes-instances `n ≤ 2|E|` although `n` is written in binary, and a tree model
-plus the set `D` is a polynomial certificate.
+dominating set, so on yes-instances `n ≤ 2|E|` although `n` is written in binary, and a model whose
+host tree has at most `max 1 n` nodes (a clique tree; `IsTree` needs at least one node, also when
+`n = 0`) plus the set `D` is a polynomial certificate.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
