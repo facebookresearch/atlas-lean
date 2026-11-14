@@ -13,6 +13,7 @@ public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.MeasureTheory.Measure.Dirac.Def
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Data.Nat.Digits.Defs
+public import MathlibExt.Analysis.Series.RiemannRearrangement
 
 namespace MetaMathlibExt
 
@@ -20,6 +21,7 @@ namespace MetaMathlibExt
 
 open scoped BigOperators ENNReal
 open Filter MeasureTheory Set
+open MathlibExt.Analysis.Series.RiemannRearrangementWanted (OrderedHasSum)
 
 /-- `digitCount b d n` is the number of occurrences of `d` in the minimal
 base-`b` representation of `n`; `Nat.digits b 0 = []`, so zero has length and
@@ -203,15 +205,18 @@ public theorem stringAtom_nil (b : ℕ) : stringAtom b [] = Measure.dirac 0 := b
   simp [stringAtom, stringWeight, normalizedStringValue, stringValue]
 
 /-- Theorem 1(a): under exactly the two displayed recurrences (packaged in
-`OrdinaryMomentRecurrence`), the family indexed by `m≥1` has sum equal to the
+`OrdinaryMomentRecurrence`), the family indexed by `m≥1` has ordered sum
+(`OrderedHasSum`: its partial sums over `Finset.range N` converge) equal to the
 Irwin sum minus the exact short block and `b` times the at-most-`k` length-`l`
-block. `HasSum` is used so a divergent `tsum` cannot make the identity vacuous.
+block. `HasSum` would be wrong here: in `ℝ` it forces absolute summability, but
+at `l = 1` the series can converge only conditionally (for example `b = 10`,
+`d = 0`, `k = 0`).
 Source: Jean-François Burnol, *Measures for the Summation of Irwin Series*,
 INTEGERS 26 (2026), Article A11, Theorem 1. -/
-public theorem_wanted irwinSum_hasSum_alternating
+public theorem_wanted irwinSum_orderedHasSum_alternating
     (b d : ℕ) (hb : 1 < b) (hd : d < b) (u : ℕ → ℕ → ℝ)
     (hu : OrdinaryMomentRecurrence b d u) (k l : ℕ) (hl : 1 ≤ l) :
-    HasSum
+    OrderedHasSum
       (fun m : ℕ =>
         if 1 ≤ m then
           (-1 : ℝ) ^ m *
@@ -316,9 +321,11 @@ public theorem_wanted integral_eq_leadingReciprocal_hasSum
       (∫ x in Set.Ico (0 : ℝ) 1, ((n : ℝ) + x)⁻¹ ∂irwinMeasure b d k hd)
 
 /-- Corollary 1: when `k(n)≤k`, the prefix-restricted reciprocal series and
-the alternating ordinary-moment series have a common sum. The existential
-common value plus two `HasSum` assertions avoids any divergent-`tsum`
-vacuity; the length is `integerLength b n`. Source: Jean-François Burnol,
+the alternating ordinary-moment series have a common sum. The reciprocal
+family has positive terms and is stated with `HasSum`; the alternating series
+is stated with `OrderedHasSum` (ordered partial sums), because at `n = 1` it can
+converge only conditionally (for example `b = 10`, `d = 0`, `k = 0`), as in
+Theorem 1. The length is `integerLength b n`. Source: Jean-François Burnol,
 *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026), Article A11,
 Corollary 1. -/
 public theorem_wanted leadingReciprocal_hasSum_ordinaryMoments
@@ -326,7 +333,7 @@ public theorem_wanted leadingReciprocal_hasSum_ordinaryMoments
     (hn : 0 < n) (hnk : digitCount b d n ≤ k) :
     ∃ S : ℝ,
       HasSum (leadingReciprocalTerm b d k n) S ∧
-      HasSum
+      OrderedHasSum
         (fun m : ℕ =>
           (-1 : ℝ) ^ m * ordinaryMoment b d (k - digitCount b d n) m hd /
             (n : ℝ) ^ (m + 1)) S
