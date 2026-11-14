@@ -10,14 +10,19 @@ LICENSE file in the root directory of this source tree.
 # PARTITION INTO ISOMORPHIC SUBGRAPHS is NP-complete
 
 Source:
-M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
-Theory of NP-Completeness*, W. H. Freeman (1979), problem [GT12] PARTITION INTO
-ISOMORPHIC SUBGRAPHS;
 D. G. Kirkpatrick and P. Hell, "On the completeness of a generalized matching
 problem", Proceedings of the 10th Annual ACM Symposium on Theory of Computing
 (1978), 240-245, doi:10.1145/800133.804353;
 D. G. Kirkpatrick and P. Hell, "On the complexity of general graph factor
-problems", SIAM Journal on Computing 12 (1983), 601-609, doi:10.1137/0212040.
+problems", SIAM Journal on Computing 12 (1983), 601-609, doi:10.1137/0212040;
+M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
+Theory of NP-Completeness*, W. H. Freeman (1979), p. 193, the comment to problem
+[GT12] PARTITION INTO ISOMORPHIC SUBGRAPHS ("the analogous problem in which the
+subgraph induced by `V_i` need only have the same number of vertices as `H` and
+contain a subgraph isomorphic to `H`"). This module states that variant (the
+`H`-factor problem). Garey and Johnson's main [GT12] entry asks instead that
+the subgraph induced by each `V_i` be isomorphic to `H`; that problem is not
+stated here.
 -/
 module
 
@@ -41,7 +46,9 @@ each `i`, the subgraph of `G` induced by `Vᵢ` contains a spanning subgraph iso
 (a perfect `H`-packing, or `H`-factor, of `G`)?
 
 This is the problem whose NP-completeness Kirkpatrick and Hell prove, for every fixed `H` with
-a connected component of at least three vertices: the copies of `H` need not be induced.
+a connected component of at least three vertices: the copies of `H` need not be induced. It is
+the variant recorded in the comment to Garey and Johnson's [GT12] (p. 193), not their main
+entry, which requires each induced subgraph `G[Vᵢ]` to be isomorphic to `H`.
 
 The partition is a map `P : V → Fin q` with blocks `P⁻¹(k)`. "The subgraph induced by `P⁻¹(k)`
 contains a spanning subgraph isomorphic to `H`" is a bijective graph homomorphism
@@ -97,8 +104,9 @@ noncomputable def partitionIntoIsomorphicSubgraphsDec :
   | some i => decide (WellFormed i ∧ PartitionIntoIsomorphicSubgraphsFeasible i)
   | none => false
 
-/-- **PARTITION INTO ISOMORPHIC SUBGRAPHS is NP-complete.** Source: Garey and Johnson (1979),
-[GT12]; Kirkpatrick and Hell (1978, 1983). -/
+/-- **PARTITION INTO ISOMORPHIC SUBGRAPHS, in the non-induced (`H`-factor) form, is
+NP-complete.** Source: Kirkpatrick and Hell (1978, 1983); Garey and Johnson (1979), p. 193,
+comment to [GT12]. -/
 public theorem_wanted partitionIntoIsomorphicSubgraphs_npComplete :
     partitionIntoIsomorphicSubgraphsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
