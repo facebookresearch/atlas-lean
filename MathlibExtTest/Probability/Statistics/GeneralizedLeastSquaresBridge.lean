@@ -167,7 +167,7 @@ example. -/
 theorem bridge_blup_mse (C : Matrix (Fin 1) (Fin 2) ℝ) (hC : C * tX = 0) :
     (mseMatrix tZ tG tV C -
       mseMatrix tZ tG tV (blupMatrix tX tZ tG tV)).PosSemidef :=
-  blup_mse_minimality hG hV hX C hC
+  blup_mse_minimality hG.isHermitian hV hX C hC
 
 /-- Mixed-model GLS unbiasedness instantiated in the example. -/
 theorem bridge_mixed_unbiased {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
@@ -186,6 +186,39 @@ theorem bridge_mixed_covariance {Ω : Type*} [MeasurableSpace Ω] {μ : Measure 
     cov[fun ω => glsEstimator tX (phenCov tZ tG tR) (tX *ᵥ β + ε ω) a,
       fun ω => glsEstimator tX (phenCov tZ tG tR) (tX *ᵥ β + ε ω) b; μ] =
       (tXᵀ * (phenCov tZ tG tR)⁻¹ * tX)⁻¹ a b :=
-  mixed_glsEstimator_covariance tX tZ tG tR hG hR hXm β hL2 hcov a b
+  mixed_glsEstimator_covariance tX tZ tG tR hG.posSemidef hR hXm β hL2 hcov a b
+
+/-! ### Singular random-effect covariance `G = 0` -/
+
+/-- With `G = 0`, `phenCov Z 0 R = R`. -/
+theorem bridge_phenCov_zeroG : phenCov tZ (0 : Matrix (Fin 1) (Fin 1) ℝ) tR = tR := by
+  simp [phenCov]
+
+/-- The singular `G = 0` is not positive definite. -/
+theorem bridge_zeroG_not_posDef : ¬ (0 : Matrix (Fin 1) (Fin 1) ℝ).PosDef := by
+  intro h
+  have hpos := h.det_pos
+  simp at hpos
+
+private theorem hXm0 :
+    IsUnit (tXᵀ * (phenCov tZ (0 : Matrix (Fin 1) (Fin 1) ℝ) tR)⁻¹ * tX) := by
+  rw [bridge_phenCov_zeroG]
+  exact isUnit_XtVinvX_of_linearIndependent tX tR hR hrank
+
+/-- Mixed-model GLS covariance with the singular `G = 0`. -/
+theorem bridge_mixed_covariance_zeroG {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    [IsProbabilityMeasure μ] (β : Fin 1 → ℝ) {ε : Ω → Fin 2 → ℝ}
+    (hL2 : ∀ i, MemLp (fun ω => ε ω i) 2 μ)
+    (hcov : ∀ i j, cov[fun ω => ε ω i, fun ω => ε ω j; μ] =
+      phenCov tZ (0 : Matrix (Fin 1) (Fin 1) ℝ) tR i j) (a b : Fin 1) :
+    cov[fun ω => glsEstimator tX (phenCov tZ 0 tR) (tX *ᵥ β + ε ω) a,
+      fun ω => glsEstimator tX (phenCov tZ 0 tR) (tX *ᵥ β + ε ω) b; μ] =
+      (tXᵀ * (phenCov tZ (0 : Matrix (Fin 1) (Fin 1) ℝ) tR)⁻¹ * tX)⁻¹ a b :=
+  mixed_glsEstimator_covariance tX tZ 0 tR Matrix.PosSemidef.zero hR hXm0 β hL2 hcov a b
+
+/-- BLUP criterion minimality with the singular `G = 0`. -/
+theorem bridge_blup_mse_zeroG (C : Matrix (Fin 1) (Fin 2) ℝ) (hC : C * tX = 0) :
+    (mseMatrix tZ 0 tV C - mseMatrix tZ 0 tV (blupMatrix tX tZ 0 tV)).PosSemidef :=
+  blup_mse_minimality Matrix.isHermitian_zero hV hX C hC
 
 end MathlibExtTest.GLSBridge

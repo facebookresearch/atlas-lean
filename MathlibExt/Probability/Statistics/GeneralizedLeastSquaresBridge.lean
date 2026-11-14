@@ -46,13 +46,15 @@ uncorrelated with `u`). No such random vectors appear in `mseMatrix` or
 * `integral_glsEstimator_apply`, `integral_glsEstimator`: unbiasedness.
 * `covariance_glsEstimator`: covariance `(Xᵀ V⁻¹ X)⁻¹`.
 * `mixed_glsEstimator_unbiased`, `mixed_glsEstimator_covariance`: the same
-  with `V = phenCov Z G R`, stating the `G`/`R`/`V` dimensions.
+  with `V = phenCov Z G R`, stating the `G`/`R`/`V` dimensions; the covariance
+  needs only `G` positive semidefinite (singular `G` allowed) and `R` positive
+  definite.
 * `isMMESolution_iff_glsEstimator`: Henderson solutions carry `glsEstimator`.
 * `blupMatrix`: the BLUP weights `G Zᵀ V⁻¹ (1 - X B)`.
 * `blupMatrix_mul_X`: prediction weights annihilate `X` (`L * X = 0`).
 * `blupPredictionError_eq`: the prediction error is free of `β`.
 * `blup_mse_minimality`: minimality of the algebraic criterion `mseMatrix`
-  among `C` with `C * X = 0` (no probabilistic hypotheses).
+  among `C` with `C * X = 0`, for symmetric `G` (no probabilistic hypotheses).
 -/
 
 @[expose] public section
@@ -196,11 +198,21 @@ theorem mixed_glsEstimator_unbiased {n p q : ℕ} (X : Matrix (Fin n) (Fin p) �
     ∫ ω, glsEstimator X (phenCov Z G R) (X *ᵥ β + ε ω) ∂μ = β :=
   integral_glsEstimator hX β hint hmean
 
+/-- `V = Z G Zᵀ + R` is positive definite for positive semidefinite `G` and positive
+definite `R`. -/
+private theorem posDef_phenCov_of_posSemidef {n q : ℕ} (Z : Matrix (Fin n) (Fin q) ℝ)
+    {G : Matrix (Fin q) (Fin q) ℝ} {R : Matrix (Fin n) (Fin n) ℝ} (hG : G.PosSemidef)
+    (hR : R.PosDef) : (phenCov Z G R).PosDef := by
+  have hZG : (Z * G * Zᵀ).PosSemidef := by
+    simpa [Matrix.conjTranspose_eq_transpose_of_trivial] using hG.mul_mul_conjTranspose_same Z
+  simpa [phenCov] using Matrix.PosDef.posSemidef_add hZG hR
+
 /-- Mixed-model GLS covariance: with the same `G`/`R`/`V` dimensions as above,
-`cov[β̂ a, β̂ b] = (Xᵀ V⁻¹ X)⁻¹ a b` at `V = phenCov Z G R`. -/
+`cov[β̂ a, β̂ b] = (Xᵀ V⁻¹ X)⁻¹ a b` at `V = phenCov Z G R`, for positive semidefinite `G`
+(singular random-effect covariances allowed) and positive definite `R`. -/
 theorem mixed_glsEstimator_covariance {n p q : ℕ} (X : Matrix (Fin n) (Fin p) ℝ)
     (Z : Matrix (Fin n) (Fin q) ℝ) (G : Matrix (Fin q) (Fin q) ℝ)
-    (R : Matrix (Fin n) (Fin n) ℝ) (hG : G.PosDef) (hR : R.PosDef)
+    (R : Matrix (Fin n) (Fin n) ℝ) (hG : G.PosSemidef) (hR : R.PosDef)
     (hX : IsUnit (Xᵀ * (phenCov Z G R)⁻¹ * X)) {Ω : Type*}
     [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     (β : Fin p → ℝ) {ε : Ω → Fin n → ℝ}
@@ -210,7 +222,7 @@ theorem mixed_glsEstimator_covariance {n p q : ℕ} (X : Matrix (Fin n) (Fin p) 
     cov[fun ω => glsEstimator X (phenCov Z G R) (X *ᵥ β + ε ω) a,
       fun ω => glsEstimator X (phenCov Z G R) (X *ᵥ β + ε ω) b; μ] =
       (Xᵀ * (phenCov Z G R)⁻¹ * X)⁻¹ a b :=
-  covariance_glsEstimator (posDef_phenCov hG hR) hX β hL2 hcov a b
+  covariance_glsEstimator (posDef_phenCov_of_posSemidef Z hG hR) hX β hL2 hcov a b
 
 /-- Henderson's equations carry the GLS estimator: `(b, u)` solves the MME
 exactly when `b` is `glsEstimator` at `V = phenCov Z G R`. -/
@@ -253,7 +265,8 @@ theorem blupPredictionError_eq {n p q : Type*} [Fintype n] [DecidableEq n]
   abel
 
 /-- **BLUP criterion minimality**, the algebraic prediction analogue of
-Aitken's theorem: for positive-definite `G` and `V`, among all weight matrices
+Aitken's theorem: for symmetric `G` (for example a positive semidefinite, possibly
+singular, covariance) and positive-definite `V`, among all weight matrices
 `C` with `C * X = 0`, the BLUP weights minimize the matrix criterion
 `mseMatrix Z G V C = C V Cᵀ - C Z G - G Zᵀ Cᵀ + G` in the positive-semidefinite
 order. Reading this as minimality of the covariance of the prediction error
@@ -262,13 +275,13 @@ order. Reading this as minimality of the covariance of the prediction error
 theorem blup_mse_minimality {n p q : Type*} [Fintype n] [DecidableEq n]
     [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
     {X : Matrix n p ℝ} {Z : Matrix n q ℝ} {G : Matrix q q ℝ}
-    {V : Matrix n n ℝ} (hG : G.PosDef) (hV : V.PosDef)
+    {V : Matrix n n ℝ} (hG : G.IsHermitian) (hV : V.PosDef)
     (hX : IsUnit (Xᵀ * V⁻¹ * X)) (C : Matrix q n ℝ) (hC : C * X = 0) :
     (mseMatrix Z G V C -
       mseMatrix Z G V (blupMatrix X Z G V)).PosSemidef := by
   set L := blupMatrix X Z G V with hL
   have hGt : Gᵀ = G := by
-    simpa [Matrix.conjTranspose_eq_transpose_of_trivial] using hG.isHermitian.eq
+    simpa [Matrix.conjTranspose_eq_transpose_of_trivial] using hG.eq
   have hVt : Vᵀ = V := by
     simpa [Matrix.conjTranspose_eq_transpose_of_trivial] using hV.isHermitian.eq
   have hVit : (V⁻¹)ᵀ = V⁻¹ := by
