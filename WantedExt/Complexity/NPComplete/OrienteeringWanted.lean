@@ -30,7 +30,7 @@ namespace MetaMathlibExt.Complexity.NPComplete.Orienteering
 
 INSTANCE: a complete graph on vertices `0, …, n - 1` with a travel time `t_uv ∈ ℤ₀⁺` on each
 edge `{u, v}`, a start vertex `s` and a different end vertex `t`, a score `r_v ∈ ℤ₀⁺` at each
-vertex, a time limit `T` and a target score `S`.
+vertex other than `s` and `t`, a time limit `T` and a target score `S`.
 QUESTION: is there a path from `s` to `t` (visiting each vertex at most once) whose total travel
 time is at most `T` and whose visited vertices have total score at least `S`?
 
@@ -39,9 +39,10 @@ points are specified, the other locations have scores, and the competitor visits
 time limit, a subset of the locations on the way from the start to the end so as to maximize the
 total score. The graph is Mathlib's complete graph `⊤ : SimpleGraph (Fin n)`, the route is a
 `SimpleGraph.Walk` with `Walk.IsPath`, its travel time is the sum of the travel times of its
-darts and its score is the sum of the scores of its support (the visited vertices, `s` and `t`
-included). Travel times are given as an `n × n` matrix that is symmetric, so each edge has one
-travel time; the diagonal is unused.
+darts and its score is the sum of the scores of its support (the visited vertices). Only the
+locations other than the start and the end have scores in Golden, Levy and Vohra's formulation,
+so the score list gives `s` and `t` the score `0`. Travel times are given as an `n × n` matrix
+that is symmetric, so each edge has one travel time; the diagonal is unused.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -67,11 +68,12 @@ def score (i : OrienteeringInstance) (v : ℕ) : ℕ :=
   i.2.2.2.2.1.getD v 0
 
 /-- Well-formedness of an instance: the travel-time matrix is `n × n` and symmetric, `s` and
-`t` are different vertices, and there is one score per vertex. -/
+`t` are different vertices, there is one score per vertex, and `s` and `t` have score `0`. -/
 def WellFormed (i : OrienteeringInstance) : Prop :=
   i.2.1.length = i.1 ∧ (∀ row ∈ i.2.1, row.length = i.1) ∧
     (∀ u < i.1, ∀ v < i.1, travelTime i u v = travelTime i v u) ∧
-    i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧ i.2.2.1 ≠ i.2.2.2.1 ∧ i.2.2.2.2.1.length = i.1
+    i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧ i.2.2.1 ≠ i.2.2.2.1 ∧ i.2.2.2.2.1.length = i.1 ∧
+    score i i.2.2.1 = 0 ∧ score i i.2.2.2.1 = 0
 
 /-- There is a path from `s` to `t` in the complete graph whose total travel time is at most
 `T` and whose visited vertices have total score at least `S`. -/
