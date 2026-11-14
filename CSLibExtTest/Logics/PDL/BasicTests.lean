@@ -16,7 +16,10 @@ public import CSLibExt.Logics.PDL.Basic
 The Boolean action `true` flips a Boolean world, while `false` leaves it alone.
 Tests distinguish sequence order, both choice branches, blocked and successful
 tests, and zero-step iteration. A three-world chain requires two iterations
-to reach a state that a single atomic step cannot reach.
+to reach a state that a single atomic step cannot reach. The bridge tests run
+the same models through the upstream HML model (`modelEquiv`), the upstream
+frame of an atomic box (`sat_box_atomic_iff`), and the modal translation of
+compound programs (`sat_iff_satisfies_toModel`).
 -/
 
 set_option autoImplicit false
@@ -143,5 +146,78 @@ example : ¬ Sat twoActions (.dia (.test .bot) (.atom ())) true := by
   apply h
   intro v hTest
   exact hTest.2.elim
+
+/-! ### Bridge to upstream HML and modal models -/
+
+/-- The HML round trip returns the PDL model. -/
+example : Model.ofHML twoActions.toHML = twoActions := rfl
+
+example : modelEquiv.symm (modelEquiv twoActions) = twoActions :=
+  modelEquiv.left_inv twoActions
+
+/-- Upstream transitions are the PDL relations: the flip action `true` moves
+`false` to `true`, and the idle action `false` does not. -/
+example : (modelEquiv twoActions).lts.Tr false true true := rfl
+
+example : ¬ (modelEquiv twoActions).lts.Tr false false true := by
+  intro h
+  exact Bool.false_ne_true h.symm
+
+/-- The upstream valuation is the PDL valuation. -/
+example : (modelEquiv twoActions).v true () := rfl
+
+/-- An atomic box quantifies over the upstream frame's successors. -/
+example : twoActions.toHML.toModal.toFrame.diagonal true false true := rfl
+
+example : ¬ twoActions.toHML.toModal.toFrame.diagonal false false true := by
+  intro h
+  exact Bool.false_ne_true h.symm
+
+example : Sat twoActions (.box (.atomic true) (.atom ())) false :=
+  (sat_box_atomic_iff twoActions true).mpr fun _ hv => hv
+
+example : ¬ Sat twoActions (.box (.atomic true) (.atom ())) true := by
+  rw [sat_box_atomic_iff twoActions true]
+  intro h
+  exact Bool.false_ne_true (h false rfl)
+
+/-- A compound program is one upstream label, related by `ProgRel`: `stepChain`
+reaches `2` from `0` under iteration but not in one step. -/
+example : stepChain.toModel.toFrame.diagonal (.star (.atomic ())) 0 2 :=
+  Relation.ReflTransGen.head (b := (1 : Fin 3)) rfl (Relation.ReflTransGen.single rfl)
+
+example : ¬ stepChain.toModel.toFrame.diagonal (.atomic ()) 0 2 := by
+  change (2 : Nat) ≠ 1
+  decide
+
+/-- The translation of `[a;a]p` holds at `0`, through `sat_iff_satisfies_toModel`. -/
+example : Cslib.Logic.Modal.Satisfies stepChain.toModel 0
+    (Formula.toModal (.box (.seq (.atomic ()) (.atomic ())) (.atom ()))) := by
+  rw [← sat_iff_satisfies_toModel]
+  rintro v ⟨u, h0, h1⟩
+  have hu : u = (1 : Fin 3) := Fin.ext h0
+  subst hu
+  exact Fin.ext h1
+
+/-- The translation of `[a]p` fails at `0`: one step stops at `1`. -/
+example : ¬ Cslib.Logic.Modal.Satisfies stepChain.toModel 0
+    (Formula.toModal (.box (.atomic ()) (.atom ()))) := by
+  rw [← sat_iff_satisfies_toModel]
+  intro h
+  exact (by decide : (1 : Fin 3) ≠ 2) (h 1 rfl)
+
+/-- Tests and choice translate too: the blocked test makes `[p?; flip]⊥` true at
+`false`, and the identity branch makes `[flip ∪ idle]p` false there. -/
+example : Cslib.Logic.Modal.Satisfies twoActions.toModel false
+    (Formula.toModal (.box (.seq (.test (.atom ())) (.atomic true)) .bot)) := by
+  rw [← sat_iff_satisfies_toModel, sat_box_seq twoActions, sat_box_test twoActions]
+  intro h
+  exact (Bool.false_ne_true h).elim
+
+example : ¬ Cslib.Logic.Modal.Satisfies twoActions.toModel false
+    (Formula.toModal (.box (.choice (.atomic true) (.atomic false)) (.atom ()))) := by
+  rw [← sat_iff_satisfies_toModel]
+  intro h
+  exact Bool.false_ne_true (((sat_box_choice twoActions).mp h).2 false rfl)
 
 end CSLibExtTest.Logics.PDL.Basic
