@@ -1,0 +1,118 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# RECTILINEAR STEINER ARBORESCENCE is NP-complete
+
+Source:
+W. Shi and C. Su, "The rectilinear Steiner arborescence problem is NP-complete", SIAM Journal on
+Computing 35 (2006), 729-740, doi:10.1137/S0097539704371353.
+-/
+module
+
+public import Batteries.Util.ProofWanted
+public import CSLibExt.Computability.CookLevin
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Logic.Relation
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.RectilinearSteinerArborescence
+
+/-!
+# RECTILINEAR STEINER ARBORESCENCE is NP-complete
+
+INSTANCE: a set of points `P = {p₁, p₂, …, pₙ}` in the first quadrant of the plane, and a
+positive integer `k`. QUESTION: is there a rectilinear Steiner arborescence (RSA) for `P` of total
+edge length `k` or less? An RSA for `P` is a directed Steiner tree `T` rooted at the origin,
+containing all points in `P`, and composed solely of horizontal and vertical line segments
+oriented from left to right, or from bottom to top (Shi and Su, Section 1 and the decision
+version in Section 2.1).
+
+The points have integer coordinates `(x, y)` with `x, y ≥ 0`. Shi and Su prove NP-completeness
+in the strong sense: their reduction produces points whose coordinates are integers "of
+polynomial size" (proof of Theorem 2.8), and membership in NP follows from the Hanan property of
+Rao, Sadayappan, Hwang and Shor (an optimal RSA uses only the grid lines through the points).
+
+The tree is given by its list `T` of directed edges `(a, b)` from `a` to `b`, with endpoints
+anywhere in `ℝ × ℝ` (Steiner points are arbitrary). `IsRSA P T` says:
+* every edge is a horizontal segment oriented from left to right or a vertical segment oriented
+  from bottom to top (`IsRectilinearEdge`);
+* no edge is listed twice, and no two edges end at the same point (every vertex has at most one
+  incoming edge);
+* the origin reaches the start of every edge, and every point of `P`, along edges.
+These say that `T` is a directed tree rooted at the origin containing `P`: every vertex other
+than the origin is reached from the origin, so it has exactly one incoming edge, and an edge
+strictly increases `x + y`, so there is no directed cycle and no edge enters the origin. Each
+root-to-point path is then monotone, hence a shortest rectilinear path. The total edge length is
+the sum over the edges of `(b.x - a.x) + (b.y - a.y)`, the length of the segment.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
+
+NP-completeness is stated in the same form as the proved results in
+`CSLibExt.Computability.Complexity.Karp`: membership in
+`MetaMathlibExt.ComplexityTheory.NP`, plus a polynomial-time many-one
+reduction from every language in `NP`
+(`Cslib.CookLevin.PolyManyOneRed`).
+-/
+
+/-- An instance: the points `p₁, …, pₙ` of `P`, each a pair `(x, y)` of nonnegative integer
+coordinates, and the bound `k`. -/
+abbrev RectilinearSteinerArborescenceInstance := List (ℕ × ℕ) × ℕ
+
+/-- The edge `(a, b)` from `a` to `b` is a horizontal segment oriented from left to right or a
+vertical segment oriented from bottom to top. -/
+def IsRectilinearEdge (e : (ℝ × ℝ) × (ℝ × ℝ)) : Prop :=
+  (e.1.2 = e.2.2 ∧ e.1.1 < e.2.1) ∨ (e.1.1 = e.2.1 ∧ e.1.2 < e.2.2)
+
+/-- The length `(b.x - a.x) + (b.y - a.y)` of an edge `(a, b)`; for a horizontal or vertical
+segment oriented to the right or upward it is the Euclidean length of the segment. -/
+def edgeLength (e : (ℝ × ℝ) × (ℝ × ℝ)) : ℝ :=
+  (e.2.1 - e.1.1) + (e.2.2 - e.1.2)
+
+/-- `a` reaches `b` along the edges of `T`. -/
+def Reaches (T : List ((ℝ × ℝ) × (ℝ × ℝ))) (a b : ℝ × ℝ) : Prop :=
+  Relation.ReflTransGen (fun u v => (u, v) ∈ T) a b
+
+/-- The edge list `T` is a rectilinear Steiner arborescence for the points `P`: rectilinear
+edges oriented right or up, no edge listed twice, at most one edge into each point, and the
+origin reaches the start of every edge and every point of `P`. -/
+def IsRSA (P : List (ℕ × ℕ)) (T : List ((ℝ × ℝ) × (ℝ × ℝ))) : Prop :=
+  (∀ e ∈ T, IsRectilinearEdge e) ∧ T.Nodup ∧ (∀ e ∈ T, ∀ e' ∈ T, e.2 = e'.2 → e = e') ∧
+    (∀ e ∈ T, Reaches T (0, 0) e.1) ∧ ∀ p ∈ P, Reaches T (0, 0) ((p.1 : ℝ), (p.2 : ℝ))
+
+/-- Well-formedness of an instance: `k` is positive. -/
+def WellFormed (i : RectilinearSteinerArborescenceInstance) : Prop :=
+  0 < i.2
+
+/-- Some rectilinear Steiner arborescence for `P` has total edge length at most `k`. -/
+def RectilinearSteinerArborescenceFeasible (i : RectilinearSteinerArborescenceInstance) :
+    Prop :=
+  ∃ T, IsRSA i.1 T ∧ (T.map edgeLength).sum ≤ i.2
+
+open Classical in
+/-- RECTILINEAR STEINER ARBORESCENCE as a decision problem over bitstrings. -/
+noncomputable def rectilinearSteinerArborescenceDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := RectilinearSteinerArborescenceInstance) x with
+  | some i => decide (WellFormed i ∧ RectilinearSteinerArborescenceFeasible i)
+  | none => false
+
+/-- **RECTILINEAR STEINER ARBORESCENCE is NP-complete.** Source: Shi and Su (2006). -/
+public theorem_wanted rectilinearSteinerArborescence_npComplete :
+    rectilinearSteinerArborescenceDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
+      ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
+        L ∈ MetaMathlibExt.ComplexityTheory.NP →
+          Cslib.CookLevin.PolyManyOneRed L rectilinearSteinerArborescenceDec
+
+end MetaMathlibExt.Complexity.NPComplete.RectilinearSteinerArborescence
