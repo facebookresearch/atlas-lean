@@ -14,6 +14,7 @@ public import Mathlib.Algebra.Homology.DerivedCategory.HomologySequence
 public import Mathlib.Algebra.Homology.EulerCharacteristic
 public import Mathlib.CategoryTheory.Triangulated.Basic
 public import Mathlib.Analysis.SpecialFunctions.Complex.Arg
+public import MathlibExt.CategoryTheory.Triangulated.BridgelandStability
 
 /-!
 # A concrete bounded derived quiver slicing and numerical support packet
@@ -98,22 +99,8 @@ def slicing (z : V → ℂ) (phi : ℝ) : ObjectProperty (D k V) := fun K ↦
       heartPhase k V z (cohomology k V K n) - (n : ℝ) = phi
 
 /-- An actual distinguished-triangle HN tower, with literal stages and nonzero pieces. -/
-structure HNFiltration (z : V → ℂ) (K : D k V) where
-  length : ℕ
-  stages : Fin (length + 1) → D k V
-  pieces : Fin length → D k V
-  phases : Fin length → ℝ
-  start : IsZero (stages 0)
-  finish : stages (Fin.last length) ≅ K
-  arrow : ∀ i : Fin length, stages i.castSucc ⟶ stages i.succ
-  toPiece : ∀ i : Fin length, stages i.succ ⟶ pieces i
-  boundary : ∀ i : Fin length, pieces i ⟶ (stages i.castSucc)⟦(1 : ℤ)⟧
-  distinguished : ∀ i : Fin length,
-    _root_.CategoryTheory.Pretriangulated.Triangle.mk
-      (arrow i) (toPiece i) (boundary i) ∈ distTriang (D k V)
-  semistable : ∀ i : Fin length, slicing k V z (phases i) (pieces i)
-  nonzero : ∀ i : Fin length, ¬ IsZero (pieces i)
-  decreasing : StrictAnti phases
+abbrev HNFiltration (z : V → ℂ) (K : D k V) :=
+  MathlibExt.CategoryTheory.BridgelandStability.HNFiltration (D k V) (slicing k V z) K
 
 /-- The actual extension window of slicing objects, via a finite triangle tower. -/
 def InPhaseWindow (z : V → ℂ) (a b : ℝ) (K : D k V) : Prop :=
