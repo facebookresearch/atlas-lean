@@ -45,8 +45,10 @@ the singletons, and nonempty subsets any two nested or disjoint), and two such t
 isomorphic as leaf-labeled trees, once vertices of one child are suppressed, iff their cluster
 systems are equal (Semple and Steel 2003, Section 3.5). The clusters of `T|Y` are the nonempty
 sets `C ∩ Y` for the clusters `C` of `T`, so `T₁|Y, T₂|Y, T₃|Y` are isomorphic iff these
-restricted families coincide. The leaves are `X = Fin n`; a tree's clusters are listed as lists
-of leaves, at most `2n - 1` of them.
+restricted families coincide. The leaves are `X = Fin n`; a tree is given by a list of its
+clusters, each a list of leaves, in any order and possibly with repetitions; `clusters` takes the
+set of clusters the list denotes (a hierarchy on `n` leaves has at most `2n - 1` members, so a
+tree's cluster list without repetitions has polynomial size).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
