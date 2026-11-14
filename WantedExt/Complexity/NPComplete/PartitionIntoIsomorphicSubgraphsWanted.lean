@@ -80,12 +80,12 @@ def WellFormed (i : PartitionIntoIsomorphicSubgraphsInstance) : Prop :=
       e.1 < i.2.2.1 ∧ e.2 < i.2.2.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.2.2) ∧
     ∃ q, 0 < q ∧ i.1 = q * i.2.2.1
 
-/-- The vertices of `G` split into blocks `P⁻¹(k)`, `k : Fin q`, such that each block's
-induced subgraph contains a spanning copy of `H`: a bijective homomorphism from `H` onto the
-block. -/
+/-- For some positive integer `q`, the vertices of `G` split into blocks `P⁻¹(k)`, `k : Fin q`,
+such that each block's induced subgraph contains a spanning copy of `H`: a bijective
+homomorphism from `H` onto the block. -/
 def PartitionIntoIsomorphicSubgraphsFeasible
     (i : PartitionIntoIsomorphicSubgraphsInstance) : Prop :=
-  ∃ q, ∃ P : Fin i.1 → Fin q, ∀ k : Fin q,
+  ∃ q, 0 < q ∧ ∃ P : Fin i.1 → Fin q, ∀ k : Fin q,
     ∃ φ : Pattern i →g (Graph i).induce {v | P v = k}, Function.Bijective φ
 
 open Classical in
