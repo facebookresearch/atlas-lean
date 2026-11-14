@@ -61,7 +61,11 @@ machine indices; "pairwise different" compares them as sets (`List.toFinset`). O
 interval `[σ i s, σ i s + p_is)`. The precedence relation is given by the list of its pairs
 `(i, k)` with `i → k`, required to be a strict partial order (Mathlib's `IsStrictOrder`); since a
 job completes after it starts, the constraints of an acyclic digraph and of its transitive
-closure are satisfied by the same schedules, so giving the closure loses nothing. With integer
+closure are satisfied by the same schedules, so giving the closure loses nothing. The jobs are
+listed explicitly, one list `[p_i1, …, p_ir]` of processing times per job, each required to be
+`1` (the convention of `PrecedenceConstrainedSchedulingWanted`, which lists unit task lengths), so
+the input length grows with the number of jobs. Every stage machine set must be nonempty: an
+operation "has to be processed by one machine in the set" (Brucker, Chapter 10). With integer
 data, integer start times lose no generality. Binary encoding of all numbers (the problem is
 NP-complete in the strong sense).
 
@@ -122,22 +126,26 @@ def IsPrecedenceSchedule {n : ℕ} (m : ℕ) (μ : List (List ℕ)) (prs : List 
   IsMPMFlowShopSchedule m μ (fun _ _ => 1) σ a ∧
     ∀ i k, Prec prs i k → ∀ s, completionTime (fun _ _ => 1) σ i ≤ σ k s
 
-/-- An instance: the number of machines `m`, the stage machine sets `[μ_1, …, μ_r]`, the number
-of jobs `n`, the pairs `(i, k)` with `i → k`, and the bound `K`. -/
+/-- An instance: the number of machines `m`, the stage machine sets `[μ_1, …, μ_r]`, one list
+`[p_i1, …, p_ir]` of processing times per job (all `1`), the pairs `(i, k)` with `i → k`, and the
+bound `K`. -/
 abbrev MultipurposeFlowShopPrecedenceMakespanInstance :=
-  ℕ × List (List ℕ) × ℕ × List (ℕ × ℕ) × ℕ
+  ℕ × List (List ℕ) × List (List ℕ) × List (ℕ × ℕ) × ℕ
 
-/-- The jobs of the instance, `Fin n`. -/
-abbrev Job (i : MultipurposeFlowShopPrecedenceMakespanInstance) : Type := Fin i.2.2.1
+/-- The jobs of the instance, `Fin n` for `n` listed jobs. -/
+abbrev Job (i : MultipurposeFlowShopPrecedenceMakespanInstance) : Type := Fin i.2.2.1.length
 
 /-- The stages of the instance, `Fin r` for `r` machine sets. -/
 abbrev Stage (i : MultipurposeFlowShopPrecedenceMakespanInstance) : Type := Fin i.2.1.length
 
 /-- Well-formedness of an instance: the machine environment is well formed
-(`StagesWellFormed`), and the listed pairs describe a precedence relation on the `n` jobs
+(`StagesWellFormed`) and every stage machine set is nonempty, every job lists one processing time
+per stage and all of them are `1`, and the listed pairs describe a precedence relation on the jobs
 (`PrecedenceWellFormed`). -/
 def WellFormed (i : MultipurposeFlowShopPrecedenceMakespanInstance) : Prop :=
-  StagesWellFormed i.1 i.2.1 ∧ PrecedenceWellFormed i.2.2.1 i.2.2.2.1
+  StagesWellFormed i.1 i.2.1 ∧ (∀ M ∈ i.2.1, M ≠ []) ∧
+    (∀ job ∈ i.2.2.1, job.length = i.2.1.length ∧ ∀ p ∈ job, p = 1) ∧
+    PrecedenceWellFormed i.2.2.1.length i.2.2.2.1
 
 /-- Some MPM flow-shop schedule of the unit-time jobs obeys the precedence constraints and has
 makespan at most `K`. -/
