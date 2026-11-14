@@ -38,8 +38,8 @@ namespace MetaMathlibExt.Complexity.NPComplete.PerfectHPacking
 For a fixed graph `H`: INSTANCE: a graph `G = (V, E)` with `|V|` divisible by `|V(H)|`.
 QUESTION: can `V` be partitioned into blocks, each inducing a subgraph of `G` that contains a
 spanning copy of `H`? Kirkpatrick and Hell prove this NP-complete whenever `H` has a connected
-component with at least 3 vertices (for the other `H`, it is a perfect matching problem and
-polynomial).
+component with at least 3 vertices (when every component of `H` has at most 2 vertices, the
+problem is solvable in polynomial time via matching).
 
 `H` is not part of the instance: it is the pattern `(m, hs)` (vertices `Fin m`, simple edge list
 `hs`), a parameter of the decision problem `perfectHPackingDec m hs`, and the theorem is stated
