@@ -20,7 +20,7 @@ public import MathlibExt.Probability.Statistics.MultipleTesting.Adaptive.Hierarc
   two sibling families, computed from the definitions.
 * **Power over Meinshausen**: children with p-values `1/50, 1/40, 1/30` and `q = 1/20` are all
   rejected (BH in the child family has cutoff `1/20`), while Meinshausen's level `α / 3 = 1/60`
-  rejects none of them.
+  does not reject the child `{0}` (`p = 1/50`), the smallest of the three child p-values.
 * **Gating**: if the root has p-value `9/10 > q`, nothing is rejected, though every child has
   p-value `0`.
 * **Exact FDR, bound attained** (one node, `Uniform[0, 1]` null p-value): the full-tree FDR
