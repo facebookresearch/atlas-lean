@@ -23,16 +23,20 @@ import Mathlib.Topology.Algebra.InfiniteSum.Basic
 
 Second-order inclusion probabilities, the general Horvitz-Thompson variance
 identity (mean-squared error about the population total), its Yates-Grundy
-form for fixed-size designs, and unbiasedness of the Sen-Yates-Grundy
-variance estimator.
+form for fixed-size designs, and the expectation of the Sen-Yates-Grundy
+variance estimator. The estimator's expectation is the Sen-Yates-Grundy form
+whenever every pair has positive inclusion probability
+(`integral_senYatesGrundyEstimate`), but that form is the variance only for
+fixed-size designs, so the estimator is unbiased for the variance only there
+(`integral_senYatesGrundyEstimate_eq_variance`).
 
 ## References
 
 - Shalabh, *Sampling Theory*, Chapter 7 "Varying Probability Sampling",
-  Department of Mathematics and Statistics, IIT Kanpur, pages 25-30.
-- D. G. Horvitz and D. N. Thompson, "A generalization of sampling without
+  Department of Mathematics and Statistics, IIT Kanpur.
+- D. G. Horvitz and D. J. Thompson, "A generalization of sampling without
   replacement from a finite universe", JASA 47(260) (1952), 663-685.
-- M. H. Yates and F. Grundy, "Selection without replacement from within
+- F. Yates and P. M. Grundy, "Selection without replacement from within
   strata with probability proportional to size", JRSS B 15(2) (1953).
 - C.-E. Särndal, B. Swensson, and J. Wretman, *Model Assisted Survey
   Sampling*, Springer (1992), Chapter 2.
@@ -50,7 +54,9 @@ noncomputable def pairInclusionProbability {α : Type*} [Fintype α]
     [DecidableEq α] (p : PMF (Finset α)) (i j : α) : ℝ :=
   ∑ s, if i ∈ s ∧ j ∈ s then (p s).toReal else 0
 
-/-- Sen-Yates-Grundy variance form for fixed-size designs. -/
+/-- Sen-Yates-Grundy variance form for fixed-size designs. It equals the
+    variance of the Horvitz-Thompson total only for fixed-size designs
+    (`variance_horvitzThompsonTotal_fixed`). -/
 noncomputable def senYatesGrundyVariance {α : Type*} [Fintype α]
     [DecidableEq α] (p : PMF (Finset α)) (y : α → ℝ) : ℝ :=
   (1 / 2) * ∑ i, ∑ j ∈ Finset.univ.erase i,
@@ -159,8 +165,9 @@ private theorem indicator_cov {α : Type*} [Fintype α] [DecidableEq α]
     mul_one]
   ring
 
-/-- Fixed-size row-sum identity (Shalabh p28): under `hfix`, each row of the
-    covariance matrix sums to `-π i (1 - π i)`. -/
+/-- Fixed-size row-sum identity (Shalabh, Ch. 7): under `hfix`, the
+    off-diagonal entries of each row of the inclusion-indicator covariance
+    matrix sum to `-π i (1 - π i)`, so each full row sums to zero. -/
 private theorem row_sum_fixed {α : Type*} [Fintype α] [DecidableEq α]
     (p : PMF (Finset α)) (n : ℕ)
     (hfix : ∀ s, p s ≠ 0 → s.card = n) (i : α) :
@@ -312,7 +319,7 @@ private theorem sum_erase_swap {α : Type*} [Fintype α] [DecidableEq α]
   intro j _
   exact h2 j
 
-/-- General Horvitz-Thompson variance identity (Shalabh p27, total form):
+/-- General Horvitz-Thompson variance identity (Shalabh, Ch. 7, total form):
     the mean-squared error about the population total splits into a diagonal
     term and an off-diagonal term weighted by second-order inclusion. -/
 theorem variance_horvitzThompsonTotal {α : Type*} [Fintype α] [DecidableEq α]
@@ -416,8 +423,9 @@ theorem variance_horvitzThompsonTotal {α : Type*} [Fintype α] [DecidableEq α]
     rw [ite_eq_right hnij]
     field_simp
 
-/-- Yates-Grundy form for fixed-size designs (Shalabh p29): the variance
-    equals half the weighted sum of squared pairwise contrasts. -/
+/-- Yates-Grundy form for fixed-size designs (Yates and Grundy (1953);
+    Shalabh, Ch. 7): the variance equals half the weighted sum of squared
+    pairwise contrasts. -/
 theorem variance_horvitzThompsonTotal_fixed {α : Type*} [Fintype α]
     [DecidableEq α] [MeasurableSpace (Finset α)]
     [MeasurableSingletonClass (Finset α)] (p : PMF (Finset α)) (y : α → ℝ)
@@ -559,9 +567,12 @@ theorem variance_horvitzThompsonTotal_fixed {α : Type*} [Fintype α]
   unfold senYatesGrundyVariance
   rw [hexp_all, hT1, hmid, hhalf, hD, hOeq]
 
-/-- Sen-Yates-Grundy variance estimator is unbiased (Shalabh p30): its
-    expectation is the variance, whenever every pair has positive inclusion
-    probability. No fixed-size hypothesis is needed. -/
+/-- Expectation of the Sen-Yates-Grundy variance estimator: whenever every
+    pair has positive inclusion probability, its expectation is the
+    Sen-Yates-Grundy form `senYatesGrundyVariance`. This identity needs no
+    fixed-size hypothesis, but the form is the variance of the
+    Horvitz-Thompson total only for fixed-size designs; unbiasedness for the
+    variance is `integral_senYatesGrundyEstimate_eq_variance`. -/
 theorem integral_senYatesGrundyEstimate {α : Type*} [Fintype α]
     [DecidableEq α] [MeasurableSpace (Finset α)]
     [MeasurableSingletonClass (Finset α)] (p : PMF (Finset α)) (y : α → ℝ)
@@ -701,8 +712,9 @@ theorem integral_senYatesGrundyEstimate {α : Type*} [Fintype α]
   rw [Finset.mem_erase] at hj
   exact hper i j (fun h => hj.1 h.symm)
 
-/-- The Sen-Yates-Grundy estimator is unbiased for the mean-squared error:
-    its expectation equals the variance integral. -/
+/-- For fixed-size designs with positive pair inclusion probabilities, the
+    Sen-Yates-Grundy estimator is unbiased for the mean-squared error
+    (Shalabh, Ch. 7): its expectation equals the variance integral. -/
 theorem integral_senYatesGrundyEstimate_eq_variance {α : Type*} [Fintype α]
     [DecidableEq α] [MeasurableSpace (Finset α)]
     [MeasurableSingletonClass (Finset α)] (p : PMF (Finset α)) (y : α → ℝ)

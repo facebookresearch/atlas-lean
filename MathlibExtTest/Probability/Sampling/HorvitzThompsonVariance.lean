@@ -9,7 +9,6 @@ module
 
 public import MathlibExt.Probability.Sampling.HorvitzThompsonVariance
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
-public import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 import Mathlib.Probability.ProbabilityMassFunction.Integrals
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -1059,7 +1058,8 @@ private theorem sys_v2 : sysEstPos {1, 3} = -18 := by
   norm_num
 
 /-- Zero pair inclusion: the pair-weighted estimator restricted to positive
-    pairs has expectation `-13`, so no unbiased SYG estimator exists. -/
+    pairs has expectation `-13`, while the variance is `9` (`sys_var`), so
+    this standard restricted estimator is biased for this design. -/
 theorem sys_est :
     ∫ s, sysEstPos s ∂sysPmf.toMeasure = -13 := by
   rw [PMF.integral_eq_sum]
