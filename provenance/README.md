@@ -32,7 +32,9 @@ library: one row per root-library file (no missing, extra, duplicate, absolute, 
 symlinked paths), every `published_sha256`, the header-only transformation of `identical`,
 `attributed` and `behind` rows, and a rationale and backport status on every `diverged` row.
 `scripts/check.sh preflight` runs it in report-only mode: it prints every mismatch and exits 0.
-`--strict` exits 1 on any mismatch.
+`--strict` exits 1 on any mismatch; `FORMAL_MATH_SYNC_STRICT=1 scripts/check.sh preflight` runs
+preflight that way. Report-only is the default so that open pull requests editing synced files are
+not blocked before they can record a divergence; making it blocking is a maintainer decision.
 
 A pull request that edits a synced file should either land the fix in Formal-Math first and sync,
 or mark the row `diverged` with a rationale and the Formal-Math backport pull request in

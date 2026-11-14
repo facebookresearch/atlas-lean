@@ -209,8 +209,17 @@ def check_row(root: Path, row: dict) -> list[str]:
         problems.append(f"{path}: header field is only for identical or behind rows that keep the upstream header")
     if disposition == "identical" and "notice" in row:
         problems.append(f"{path}: identical row records a notice; use the attributed disposition")
-    if disposition == "behind" and not (isinstance(row.get("upstream_commit"), str) and COMMIT.fullmatch(row["upstream_commit"])):
-        problems.append(f"{path}: behind row needs the full upstream_commit its body matches")
+    if disposition in ("behind", "retired") or "upstream_commit" in row:
+        commit = row.get("upstream_commit")
+        if not (isinstance(commit, str) and COMMIT.fullmatch(commit)):
+            problems.append(f"{path}: {disposition} row needs a full 40-hex upstream_commit")
+    if disposition == "diverged" or ("upstream_sha256" in row and disposition not in HEADER_CHECKED):
+        upstream = row.get("upstream_sha256")
+        if not (isinstance(upstream, str) and SHA256.fullmatch(upstream)):
+            problems.append(f"{path}: upstream_sha256 is not a SHA-256 hex digest")
+    for field in ("notice", "rationale", "backport"):
+        if field in row and not (isinstance(row[field], str) and row[field].strip()):
+            problems.append(f"{path}: {field} must be a non-empty string")
     if disposition in HEADER_CHECKED:
         upstream = row.get("upstream_sha256")
         if not isinstance(upstream, str) or not SHA256.fullmatch(upstream):
@@ -227,8 +236,7 @@ def check_row(root: Path, row: dict) -> list[str]:
                 problems.append(f"{path}: header-only violation: body after the header does not hash to upstream_sha256")
     if disposition == "diverged":
         for field in ("rationale", "backport"):
-            value = row.get(field)
-            if not isinstance(value, str) or not value.strip():
+            if field not in row:
                 problems.append(f"{path}: diverged row has no {field}")
     return problems
 

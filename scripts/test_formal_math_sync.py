@@ -60,7 +60,7 @@ class CheckerTest(unittest.TestCase):
                                        {"disposition": "diverged", "upstream_sha256": c.sha256(BODY),
                                         "rationale": "ATLAS-only fix", "backport": "pending"}),
             "CSLibExtTest/Local.lean": (c.META + "\ndef z : Nat := 3\n", {"disposition": "local"}),
-            "WantedExt/Retired.lean": (c.META + "\ndef w : Nat := 4\n", {"disposition": "retired"}),
+            "WantedExt/Retired.lean": (c.META + "\ndef w : Nat := 4\n", {"disposition": "retired", "upstream_commit": COMMIT}),
         }
         rows = []
         for path, (text, fields) in files.items():
@@ -190,7 +190,31 @@ class CheckerTest(unittest.TestCase):
         def mutate() -> None:
             self.row("CSLibExt/Diverged.lean")["backport"] = " "
             self.save()
-        self.assert_clean_then(mutate, "diverged row has no backport")
+        self.assert_clean_then(mutate, "backport must be a non-empty string")
+
+    def test_divergence_with_invalid_upstream_hash(self) -> None:
+        def mutate() -> None:
+            self.row("CSLibExt/Diverged.lean")["upstream_sha256"] = "not-a-hash"
+            self.save()
+        self.assert_clean_then(mutate, "CSLibExt/Diverged.lean: upstream_sha256 is not a SHA-256 hex digest")
+
+    def test_divergence_without_upstream_hash(self) -> None:
+        def mutate() -> None:
+            del self.row("CSLibExt/Diverged.lean")["upstream_sha256"]
+            self.save()
+        self.assert_clean_then(mutate, "CSLibExt/Diverged.lean: upstream_sha256 is not a SHA-256 hex digest")
+
+    def test_retired_with_invalid_commit(self) -> None:
+        def mutate() -> None:
+            self.row("WantedExt/Retired.lean")["upstream_commit"] = "abc"
+            self.save()
+        self.assert_clean_then(mutate, "retired row needs a full 40-hex upstream_commit")
+
+    def test_retired_without_commit(self) -> None:
+        def mutate() -> None:
+            del self.row("WantedExt/Retired.lean")["upstream_commit"]
+            self.save()
+        self.assert_clean_then(mutate, "retired row needs a full 40-hex upstream_commit")
 
     def test_digest_and_counts(self) -> None:
         def mutate() -> None:
@@ -250,6 +274,13 @@ class SyncTest(unittest.TestCase):
         self.assertFalse((self.atlas / c.MANIFEST).exists(), "fail-closed run must not write the manifest")
 
         rationales = self.atlas.parent / "rationales.json"
+        for bad in ({"rationale": " ", "backport": "pending"}, {"rationale": "fix", "backport": ["pending"]},
+                    {"rationale": "fix"}):
+            rationales.write_text(json.dumps({"MathlibExt/Edited.lean": bad}))
+            code, _, err = self.sync("--rationales", str(rationales))
+            self.assertEqual(code, 1, bad)
+            self.assertIn("MathlibExt/Edited.lean", err)
+            self.assertFalse((self.atlas / c.MANIFEST).exists(), bad)
         rationales.write_text(json.dumps({"MathlibExt/Edited.lean": {"rationale": "urgent fix", "backport": "pending"}}))
         code, report, _ = self.sync("--rationales", str(rationales))
         self.assertEqual(code, 0)

@@ -140,6 +140,12 @@ def classify(text: str, up_text: str | None, versions: list[tuple[str, str]], cu
     return {"disposition": "diverged", "upstream_sha256": sha256(upstream_body(up_text))}
 
 
+def explained(source: object) -> bool:
+    """A divergence is explained by a non-empty rationale and backport status (the checker's rule)."""
+    return isinstance(source, dict) and all(
+        isinstance(source.get(field), str) and source[field].strip() for field in ("rationale", "backport"))
+
+
 def load_json(path: Path | None) -> dict:
     if path is None or not path.is_file():
         return {}
@@ -166,10 +172,9 @@ def build(atlas: Path, repo: Path, commit: str, repository: str, previous: dict,
             row = {"path": path, "published_sha256": sha256(data)}
             row.update(classify(text, up_text, history.get(path, []), oid, blobs))
             if row["disposition"] == "diverged":
-                given = rationales.get(path) or {}
                 old = old_rows.get(path, {})
-                source = given if given.get("rationale") else old if old.get("disposition") == "diverged" else {}
-                if source.get("rationale") and source.get("backport"):
+                source = rationales.get(path) if path in rationales else old if old.get("disposition") == "diverged" else {}
+                if explained(source):
                     row["rationale"], row["backport"] = source["rationale"], source["backport"]
                 else:
                     unexplained.append(path)
@@ -233,8 +238,10 @@ def main(argv: list[str] | None = None) -> int:
     manifest_path = a.manifest or a.atlas / MANIFEST
     commit = git(a.formal_math, "rev-parse", "--verify", f"{a.commit}^{{commit}}").decode().strip()
     previous = load_json(manifest_path)
-    manifest, unexplained = build(a.atlas, a.formal_math, commit, a.repository, previous,
-                                  load_json(a.rationales))
+    rationales = load_json(a.rationales)
+    if not isinstance(rationales, dict):
+        raise SystemExit("sync: --rationales must be a JSON object mapping paths to {rationale, backport}")
+    manifest, unexplained = build(a.atlas, a.formal_math, commit, a.repository, previous, rationales)
     text = report(previous, manifest)
     if a.report:
         a.report.write_text(text + "\n", encoding="utf-8")
