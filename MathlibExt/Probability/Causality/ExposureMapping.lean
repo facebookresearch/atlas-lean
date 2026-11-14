@@ -26,15 +26,25 @@ realized assignment `z` is `yr i z`. The Horvitz-Thompson exposure-total
 estimator weights these observed outcomes over the exposed set by the
 exposure probabilities `πᵢ(d)`.
 
-* `integral_exposureHTTotal_of_consistent`: if fixed exposure potentials
-  `y i d` agree with the observed outcomes on the support of the design,
-  and `πᵢ(d) > 0` for every unit, the estimator is design-unbiased for the
-  total `∑ i, y i d`.
-* `integral_exposureHTTotal` (Lemma 4.1 of Aronow and Samii, unbiasedness
-  part): under their Condition 1 (`ExposureSufficiency`, a property of the
-  outcome schedule over all assignments, not of the design), the
-  potentials `exposurePotential e yr i d` are well defined and the
-  estimator is unbiased for their total.
+Aronow and Samii's estimand is the mean `μ(d) = (1 / N) ∑ᵢ yᵢ(d) = yᵀ(d) / N`.
+Their estimator (1), `ŷᵀ_HT(d) = ∑ᵢ I(Dᵢ = d) Yᵢ / πᵢ(d)`, estimates the total
+`yᵀ(d)`, and their Lemma 4.1 states `E[ŷᵀ_HT(d)] = ∑ᵢ yᵢ(d)`. `exposureHTTotal`
+is that total estimator; dividing it by `N = Fintype.card α` estimates `μ(d)`
+(`integral_exposureHTTotal_div_card`).
+
+* `integral_exposureHTTotal_of_consistent` (Lemma 4.1 of Aronow and Samii,
+  expectation part): if fixed exposure potentials `y i d` agree with the
+  observed outcomes on the support of the design (their Conditions 1 and 2,
+  which they state on the support `Ω = {z : p_z > 0}`, with the potentials
+  given explicitly), and `πᵢ(d) > 0` for every unit, the estimator is
+  design-unbiased for the total `∑ i, y i d`.
+* `integral_exposureHTTotal`: the corollary under `ExposureSufficiency`, a
+  design-free strengthening of their Condition 1 (required at every
+  assignment, not only on the support), under which the potentials
+  `exposurePotential e yr i d` are defined without reference to the design.
+* `integral_exposureHTTotal_div_card_of_consistent`,
+  `integral_exposureHTTotal_div_card`: the same for the mean estimator
+  `exposureHTTotal / N` and the mean `μ(d)`.
 
 The source assumes `0 < πᵢ(d) < 1`; only `0 < πᵢ(d)` is used here.
 
@@ -42,7 +52,7 @@ The source assumes `0 < πᵢ(d) < 1`; only `0 < πᵢ(d)` is used here.
 
 - P. M. Aronow and C. Samii, "Estimating average causal effects under
   general interference, with application to a social network experiment",
-  Annals of Applied Statistics 11(4) (2017), 1912-1947 (Condition 1,
+  Annals of Applied Statistics 11(4) (2017), 1912-1947 (Conditions 1 and 2,
   estimator (1) and Lemma 4.1; numbering as in arXiv:1305.6156v4).
 -/
 
@@ -119,10 +129,12 @@ theorem exposureProbability_eq_sum {α Ω Δ : Type*} [Fintype α]
         · intro hcon
           exact absurd (Finset.mem_univ _) hcon
 
-/-- Condition 1 of Aronow and Samii (2017), properly specified exposure
-mapping: for every unit, the randomization outcomes agree at any two
-assignments carrying the same exposure. This is a property of the outcome
-schedule `yr` over all assignments and does not involve the design.
+/-- Design-free form of Condition 1 of Aronow and Samii (2017), properly
+specified exposure mapping: for every unit, the randomization outcomes agree
+at any two assignments carrying the same exposure. The source quantifies over
+the support `Ω = {z : p_z > 0}` of the design; requiring the condition at
+every assignment makes `exposurePotential` independent of the design. The
+support-restricted setting is `integral_exposureHTTotal_of_consistent`.
 Individual SUTVA is not assumed. -/
 def ExposureSufficiency {α Ω Δ : Type*} (e : α → Ω → Δ)
     (yr : α → Ω → ℝ) : Prop :=
@@ -131,9 +143,10 @@ def ExposureSufficiency {α Ω Δ : Type*} (e : α → Ω → Δ)
 open Classical in
 /-- Exposure-specific potential outcome `yᵢ(d)`: the randomization outcome
 at some assignment giving unit `i` exposure `d` (junk value `0` if no
-assignment does). Under Condition 1 the choice does not matter
-(`exposurePotential_eq_of_mem`), and the definition does not depend on
-the design. -/
+assignment does). Under `ExposureSufficiency` the choice does not matter
+(`exposurePotential_eq_of_mem`), so this agrees with the source's choice of
+an assignment in the support, and the definition does not depend on the
+design. -/
 noncomputable def exposurePotential {α Ω Δ : Type*}
     (e : α → Ω → Δ) (yr : α → Ω → ℝ) (i : α) (d : Δ) : ℝ :=
   if h : ∃ z, e i z = d then yr i (Classical.choose h) else 0
@@ -157,18 +170,22 @@ theorem exposurePotential_factorization {α Ω Δ : Type*}
   (exposurePotential_eq_of_mem e yr hcond i z _ rfl).symm
 
 /-- Horvitz-Thompson exposure-total estimator at assignment `z`
-(Aronow and Samii (2017), estimator (1)): the observed outcomes `yr i z`
-of the units with exposure `d`, each weighted by `1 / πᵢ(d)`. -/
+(Aronow and Samii (2017), estimator (1), `ŷᵀ_HT(d)`, which estimates the
+total `yᵀ(d)`): the observed outcomes `yr i z` of the units with exposure
+`d`, each weighted by `1 / πᵢ(d)`. Dividing by `N` gives the estimator of
+the mean `μ(d)`. -/
 noncomputable def exposureHTTotal {α Ω Δ : Type*} [Fintype α]
     [DecidableEq α] [DecidableEq Δ] (e : α → Ω → Δ) (p : PMF Ω)
     (yr : α → Ω → ℝ) (d : Δ) (z : Ω) : ℝ :=
   ∑ i ∈ exposedSet e d z, yr i z / exposureProbability e p i d
 
-/-- **Design-unbiasedness of the exposure-total estimator**, for fixed
-exposure potentials `y` that agree with the observed outcomes on the
-support of the design: with `πᵢ(d) > 0` for every unit, the design
-expectation is the potential-outcome total `∑ i, y i d`. Only positivity
-at `d` is needed; the source's `πᵢ(d) < 1` is not. -/
+/-- **Design-unbiasedness of the exposure-total estimator** (Aronow and
+Samii (2017), Lemma 4.1, expectation part `E[ŷᵀ_HT(d)] = ∑ᵢ yᵢ(d)`), for
+fixed exposure potentials `y` that agree with the observed outcomes on the
+support of the design (the source's Conditions 1 and 2 on the support): with
+`πᵢ(d) > 0` for every unit, the design expectation is the potential-outcome
+total `∑ i, y i d`. Only positivity at `d` is needed; the source's
+`πᵢ(d) < 1` is not. -/
 theorem integral_exposureHTTotal_of_consistent {α Ω Δ : Type*}
     [Fintype α] [DecidableEq α] [Countable Ω] [DecidableEq Δ]
     [MeasurableSpace Ω] [MeasurableSingletonClass Ω]
@@ -206,10 +223,12 @@ theorem integral_exposureHTTotal_of_consistent {α Ω Δ : Type*}
     PMF.toMeasure_map _ _ hmeas]
   exact integral_horvitzThompsonTotal _ _ hpos
 
-/-- **Design-unbiasedness under Condition 1** (Aronow and Samii (2017),
-Lemma 4.1, the expectation part): if the exposure mapping is properly
-specified and `πᵢ(d) > 0` for every unit, the expectation of the
-estimator is `∑ i, exposurePotential e yr i d`. -/
+/-- **Design-unbiasedness under the design-free Condition 1**: if
+`ExposureSufficiency e yr` holds and `πᵢ(d) > 0` for every unit, the
+expectation of the estimator is `∑ i, exposurePotential e yr i d`. This is
+`integral_exposureHTTotal_of_consistent` with the potentials
+`exposurePotential e yr`, consistent at every assignment by
+`exposurePotential_factorization`. -/
 theorem integral_exposureHTTotal {α Ω Δ : Type*} [Fintype α]
     [DecidableEq α] [Countable Ω] [DecidableEq Δ] [MeasurableSpace Ω]
     [MeasurableSingletonClass Ω] [MeasurableSpace (Finset α)]
@@ -220,5 +239,35 @@ theorem integral_exposureHTTotal {α Ω Δ : Type*} [Fintype α]
       = ∑ i, exposurePotential e yr i d :=
   integral_exposureHTTotal_of_consistent e p yr (exposurePotential e yr)
     (fun i z _ => exposurePotential_factorization e yr hcond i z) d hpos
+
+/-- The mean estimator `exposureHTTotal / N` is unbiased for the mean
+`(1 / N) ∑ i, y i d` of fixed potentials that agree with the observed
+outcomes on the design support. The identity also holds at `N = 0` under
+Lean's division convention. -/
+theorem integral_exposureHTTotal_div_card_of_consistent {α Ω Δ : Type*}
+    [Fintype α] [DecidableEq α] [Countable Ω] [DecidableEq Δ]
+    [MeasurableSpace Ω] [MeasurableSingletonClass Ω]
+    [MeasurableSpace (Finset α)] [MeasurableSingletonClass (Finset α)]
+    (e : α → Ω → Δ) (p : PMF Ω) (yr : α → Ω → ℝ) (y : α → Δ → ℝ)
+    (hy : ∀ i z, p z ≠ 0 → yr i z = y i (e i z)) (d : Δ)
+    (hpos : ∀ i, 0 < exposureProbability e p i d) :
+    ∫ z, exposureHTTotal e p yr d z / (Fintype.card α : ℝ) ∂p.toMeasure
+      = (∑ i, y i d) / (Fintype.card α : ℝ) := by
+  rw [MeasureTheory.integral_div,
+    integral_exposureHTTotal_of_consistent e p yr y hy d hpos]
+
+/-- **Design-unbiasedness of the mean estimator under the design-free
+Condition 1**: the estimator `exposureHTTotal / N` of Aronow and Samii's estimand
+`μ(d) = (1 / N) ∑ᵢ yᵢ(d)` is unbiased when `πᵢ(d) > 0` for every unit. The
+identity also holds at `N = 0` under Lean's division convention. -/
+theorem integral_exposureHTTotal_div_card {α Ω Δ : Type*} [Fintype α]
+    [DecidableEq α] [Countable Ω] [DecidableEq Δ] [MeasurableSpace Ω]
+    [MeasurableSingletonClass Ω] [MeasurableSpace (Finset α)]
+    [MeasurableSingletonClass (Finset α)] (e : α → Ω → Δ) (p : PMF Ω)
+    (yr : α → Ω → ℝ) (hcond : ExposureSufficiency e yr) (d : Δ)
+    (hpos : ∀ i, 0 < exposureProbability e p i d) :
+    ∫ z, exposureHTTotal e p yr d z / (Fintype.card α : ℝ) ∂p.toMeasure
+      = (∑ i, exposurePotential e yr i d) / (Fintype.card α : ℝ) := by
+  rw [MeasureTheory.integral_div, integral_exposureHTTotal e p yr hcond d hpos]
 
 end MathlibExt.Probability.Causality

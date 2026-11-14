@@ -22,10 +22,11 @@ public import Mathlib.Tactic.NormNum
 Two units joined by an edge with independent fair-coin treatments; the
 fine exposure is (own treatment, neighbour treatment).
 
-* Nonvacuity: spillover outcomes satisfy Condition 1, every
+* Nonvacuity: spillover outcomes satisfy the design-free Condition 1, every
   `πᵢ(d) = 1/4`, and the HT exposure-total estimator, built from the
   observed outcomes, is unbiased for all four exposures, both for
-  `exposurePotential` and for the explicit potentials `yPot`.
+  `exposurePotential` and for the explicit potentials `yPot`; the mean
+  estimator targets `μ((1, 1)) = 7 / 2`.
 * Violated sufficiency: the coarser "own treatment only" map with the
   same spillover outcomes has no potential outcomes, and the same
   estimator for the coarse map has expectation `-1` at `false`, which
@@ -154,6 +155,15 @@ theorem total_TT :
     exposurePotential_eq_of_mem _ _ sufficiency _ _ _ e0,
     exposurePotential_eq_of_mem _ _ sufficiency _ _ _ e1]
   norm_num [yr, bit, c, exMap]
+
+/-- The mean estimator at `(1, 1)` targets Aronow and Samii's mean
+`μ((1, 1)) = 7 / 2`. -/
+theorem mean_TT :
+    ∫ z, exposureHTTotal exMap unifP yr (true, true) z / (Fintype.card (Fin 2) : ℝ)
+      ∂unifP.toMeasure = 7 / 2 := by
+  rw [integral_exposureHTTotal_div_card exMap unifP yr sufficiency _ (pi_pos _),
+    total_TT]
+  norm_num
 
 /-- The explicit potentials give the same `(1, 1)` total. -/
 theorem yPot_total_TT : (∑ i, yPot i (true, true)) = 7 := by
