@@ -56,8 +56,7 @@ The first two constrain the family and are not imposed at all: a noncomputable f
 non-compressing one, can satisfy `CollisionResistant`. In particular an injective family has no
 collisions (`collAdvantage_eq_zero_of_injective`), so it is collision resistant against every
 adversary family, although it does not compress. The games are therefore the generic collision
-and target-collision games of a keyed function; compression is a property of the instance (for
-example the Merkle–Damgård compression functions of `CSLibExt.Crypto.Hash.MerkleDamgardFull`).
+and target-collision games of a keyed function; compression is a property of the instance.
 The third condition is whatever `Admissible` encodes: the framework has no polynomial-time model
 for these adversaries (see "What is deferred" in `CSLibExt.Crypto.Framework.Asymptotic`).
 
@@ -65,12 +64,15 @@ These are the Framework's hash-function games: `HashFamily`, `CollisionFinder`, 
 and the games live in the namespace `Cslib.Crypto.Framework` next to the scheme games of
 `CSLibExt.Crypto.Framework.Games`, and the asymptotic notions are instances of
 `Framework.AsymptoticallySecure`. Hash commitments
-(`CSLibExt.Crypto.Protocols.Commitment.HashCommitment`) bound their binding advantage by
-`collAdvantage`, and `CSLibExt.Crypto.Hash.MerkleDamgardFull` proves its keyed Merkle–Damgård
-variant collision resistant in `collGame`. The older unkeyed compression-collision game
-`Cslib.Crypto.MerkleDamgard.compressionCollisionGame` predates the framework but uses the same
-predicate (`MerkleDamgard.IsCollision` abbreviates `IsCollision`); it is the special case of
-`collGame` with a single key and uniform coins, and the two games are not related formally here.
+(`CSLibExt.Crypto.Protocols.Commitment.HashCommitment`) prove binding against their own local
+collision game; `CSLibExt.Crypto.Protocols.Commitment.HashCommitmentFramework` identifies that
+game with `collGame` (`HashCommitment.framework_collAdvantage_toCollisionFinder`) and restates
+the binding bound with `collAdvantage`
+(`HashCommitment.bindingAdvantage_le_framework_collAdvantage`).
+The older unkeyed compression-collision game `Cslib.Crypto.MerkleDamgard.compressionCollisionGame`
+predates the framework; its predicate `MerkleDamgard.IsCollision` has the same definition as
+`IsCollision`, but its adversary has uniform coins and an optional output, and the two games are
+not related formally here.
 
 ## References
 
