@@ -270,6 +270,13 @@ theorem ae_clock_nonneg (P : S → PMF S) :
   rw [hset, this]
 
 omit [Countable S] [MeasurableSingletonClass S] in
+/-- The partial sums of the clocks tend to `∞` almost surely (strong law of large numbers;
+`ae_tendsto_sum_clock_infinitePi` for the step law `stepMeasure P`). -/
+theorem ae_tendsto_sum_clock (P : S → PMF S) :
+    ∀ᵐ ω ∂inputMeasure P, Tendsto (fun n => ∑ k ∈ range n, (ω k).2) atTop atTop :=
+  ae_tendsto_sum_clock_infinitePi (stepMeasure P) (stepMeasure_map_snd P)
+
+omit [Countable S] [MeasurableSingletonClass S] in
 private lemma measurable_eval_first (x : S) :
     Measurable fun ω : ℕ → (S → S) × ℝ => (ω 0).1 x :=
   (measurable_pi_apply x).comp (measurable_pi_apply 0).fst
@@ -436,10 +443,7 @@ theorem ae_tendsto_jumpTime_atTop {V : S → ℝ≥0} (hq : ∀ x, 0 < q x) (hc 
       intro m hm
       obtain ⟨K, hK⟩ := hbdd m
       refine (measure_mono_ae ?_).trans (measure_reach_le hq hc hdrift hm t x₀)
-      filter_upwards [ae_clock_nonneg P,
-        (ae_tendsto_sum_clock_infinitePi (stepMeasure P) (stepMeasure_map_snd P) :
-          ∀ᵐ ω ∂inputMeasure P, Tendsto (fun n => ∑ k ∈ range n, (ω k).2) atTop atTop)]
-        with ω hE hsum hBω'
+      filter_upwards [ae_clock_nonneg P, ae_tendsto_sum_clock P] with ω hE hsum hBω'
       have hBω : ∀ n, jumpTime q x₀ ω n ≤ t := hBω'
       change ∃ k, m ≤ V (ctmcJumpChain x₀ ω k) ∧ (∀ j < k, V (ctmcJumpChain x₀ ω j) < m) ∧
         jumpTime q x₀ ω k ≤ t
