@@ -45,8 +45,10 @@ linear predictor), and the Dempster–Lerner conversion is then exact:
   uncorrelated with `L`, hence independent of it (joint Gaussianity), and uses the truncated
   mean `𝔼[L 1{L ≥ t}] = φ(t)` (from `GaussianSelection.integral_cond_selectionError_eq`).
 * `variance_caseInd`: `Var(1{L ≥ t}) = K (1 - K)`.
-* `corrSq_caseInd` (the `R²` conversion of Lee et al. 2012 for polygenic scores): for any score
-  `S` jointly Gaussian with `L`, `corr²(S, Y) = corr²(S, L) · z² / (K (1 - K))`.
+* `corrSq_caseInd` (the population-sample form, case fraction `P = K`, of the `R²` conversion of
+  Lee et al. 2012 for polygenic scores): for any score `S` jointly Gaussian with `L`,
+  `corr²(S, Y) = corr²(S, L) · z² / (K (1 - K))` in the population. Their case-control formula
+  for `P ≠ K` is not treated here.
 * `corrSq_genetic_caseInd` and `h2_eq_popLiabilityFactor_mul` (Dempster–Lerner): for a genetic
   value `G` with `Var G = Cov(G, L) = h²` (as for `L = G + E` with `E` independent of `G`, see
   `hasGaussianLaw_liability` and `covariance_liability`), `h²_o = corr²(G, Y) = h² z² / (K (1 - K))`
@@ -294,8 +296,9 @@ variance vanishes). -/
 noncomputable def corrSq (μ : Measure Ω) (X Y : Ω → ℝ) : ℝ :=
   cov[X, Y; μ] ^ 2 / (Var[X; μ] * Var[Y; μ])
 
-/-- **Observed versus liability `R²`** (Lee et al. 2012). For a score `S` jointly Gaussian with
-the standard normal liability `L`, `corr²(S, Y) = corr²(S, L) · z² / (K (1 - K))`. -/
+/-- **Observed versus liability `R²` in the population** (the population-sample form of Lee et
+al. 2012). For a score `S` jointly Gaussian with the standard normal liability `L`,
+`corr²(S, Y) = corr²(S, L) · z² / (K (1 - K))`. -/
 theorem corrSq_caseInd [IsProbabilityMeasure μ] {S L : Ω → ℝ}
     (hSL : HasGaussianLaw (fun ω => (S ω, L ω)) μ) (hL : HasLaw L (gaussianReal 0 1) μ)
     (hLm : Measurable L) (t : ℝ) :
@@ -305,7 +308,7 @@ theorem corrSq_caseInd [IsProbabilityMeasure μ] {S L : Ω → ℝ}
   rw [covariance_caseInd hSL hL hLm t, variance_caseInd hL hLm t, variance_of_hasLaw_std hL,
     mul_pow, mul_one, div_mul_div_comm]
 
-/-- The liability-scale `R²` of a score from its observed-scale `R²`:
+/-- The liability-scale `R²` of a score from its observed-scale `R²` in the population:
 `corr²(S, L) = corr²(S, Y) · K (1 - K) / z²`. -/
 theorem corrSq_liability_eq [IsProbabilityMeasure μ] {S L : Ω → ℝ}
     (hSL : HasGaussianLaw (fun ω => (S ω, L ω)) μ) (hL : HasLaw L (gaussianReal 0 1) μ)
