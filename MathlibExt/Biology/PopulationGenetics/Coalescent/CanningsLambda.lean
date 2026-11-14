@@ -333,32 +333,10 @@ Divided by `c_N` it converges to Pitman's rate `λ_{b,k} = ∫ x^(k-2) (1-x)^(b-
 def altMergeSum (b k : ℕ) : ℝ :=
   ∑ m ∈ range (b - k + 1), ((b - k).choose m : ℝ) * ((-1) ^ m * M.mergeProb (k + m))
 
-/-- Expectation of a function of the parents of the first `b` children. -/
-private def expect {b : ℕ} (hb : b ≤ N) (F : (Fin b → Fin N) → ℝ) : ℝ :=
-  ∑ f, (M.law f).toReal * F (f ∘ Fin.castLE hb)
-
-private lemma sampleProb_eq_expect {b : ℕ} (hb : b ≤ N) (E : (Fin b → Fin N) → Prop)
-    [DecidablePred E] : M.sampleProb E = M.expect hb fun g => if E g then 1 else 0 :=
-  M.sampleProb_of_le E hb
-
-private lemma expect_add {b : ℕ} (hb : b ≤ N) (F G : (Fin b → Fin N) → ℝ) :
-    M.expect hb (fun g => F g + G g) = M.expect hb F + M.expect hb G := by
-  simp only [expect, mul_add, sum_add_distrib]
-
-private lemma expect_sum {b : ℕ} {ι : Type*} (hb : b ≤ N) (s : Finset ι)
-    (F : ι → (Fin b → Fin N) → ℝ) :
-    M.expect hb (fun g => ∑ i ∈ s, F i g) = ∑ i ∈ s, M.expect hb (F i) := by
-  simp only [expect, mul_sum]
-  exact sum_comm
-
-private lemma expect_const_mul {b : ℕ} (hb : b ≤ N) (c : ℝ) (F : (Fin b → Fin N) → ℝ) :
-    M.expect hb (fun g => c * F g) = c * M.expect hb F := by
-  simp only [expect, mul_sum]
-  exact sum_congr rfl fun f _ => by ring
-
-private lemma expect_mono {b : ℕ} (hb : b ≤ N) {F G : (Fin b → Fin N) → ℝ}
-    (h : ∀ g, F g ≤ G g) : M.expect hb F ≤ M.expect hb G :=
-  sum_le_sum fun _ _ => mul_le_mul_of_nonneg_left (h _) ENNReal.toReal_nonneg
+private lemma sampleProb_eq_expect_sampleLaw {b : ℕ} (hb : b ≤ N)
+    (E : (Fin b → Fin N) → Prop) [DecidablePred E] :
+    M.sampleProb E = (M.sampleLaw hb).expect fun g => if E g then 1 else 0 := by
+  rw [expect_sampleLaw, expect, M.sampleProb_of_le E hb]
 
 private lemma ind_nonneg (p : Prop) [Decidable p] : (0 : ℝ) ≤ if p then 1 else 0 := by
   split_ifs <;> norm_num
@@ -401,10 +379,11 @@ private lemma sampleProb_doublePattern_le {b : ℕ} (hb : b ≤ N) (i : Fin 4 �
 private lemma sampleProb_hasDoubleMerger_le {b : ℕ} (hb : b ≤ N) :
     M.sampleProb (fun g : Fin b → Fin N => HasDoubleMerger g) ≤
       (b : ℝ) ^ 4 * M.doubleMergeProb := by
-  rw [M.sampleProb_eq_expect hb]
-  calc M.expect hb (fun g => if HasDoubleMerger g then 1 else 0)
-      ≤ M.expect hb (fun g => ∑ i : Fin 4 → Fin b, if DoublePattern i g then 1 else 0) :=
-        M.expect_mono hb fun g => by
+  rw [M.sampleProb_eq_expect_sampleLaw hb]
+  calc (M.sampleLaw hb).expect (fun g => if HasDoubleMerger g then 1 else 0)
+      ≤ (M.sampleLaw hb).expect
+          (fun g => ∑ i : Fin 4 → Fin b, if DoublePattern i g then 1 else 0) :=
+        PMF.expect_le_expect fun g => by
           split_ifs with h
           · obtain ⟨i, hi⟩ := hasDoubleMerger_iff.1 h
             calc (1 : ℝ) = if DoublePattern i g then 1 else 0 := (ite_eq_left hi).symm
@@ -412,8 +391,8 @@ private lemma sampleProb_hasDoubleMerger_le {b : ℕ} (hb : b ≤ N) :
                   (fun j _ => ind_nonneg _) (mem_univ i)
           · exact sum_nonneg fun j _ => ind_nonneg _
     _ = ∑ i : Fin 4 → Fin b, M.sampleProb (fun g => DoublePattern i g) := by
-        rw [M.expect_sum]
-        exact sum_congr rfl fun i _ => (M.sampleProb_eq_expect hb _).symm
+        rw [PMF.expect_sum]
+        exact sum_congr rfl fun i _ => (M.sampleProb_eq_expect_sampleLaw hb _).symm
     _ ≤ ∑ _i : Fin 4 → Fin b, M.doubleMergeProb :=
         sum_le_sum fun i _ => M.sampleProb_doublePattern_le hb i
     _ = _ := by simp
@@ -424,10 +403,10 @@ private lemma sampleProb_inclusionExclusion {b : ℕ} (hb : b ≤ N) {S : Finset
     {s₀ : Fin b} (hs₀ : s₀ ∈ S) :
     M.sampleProb (fun g : Fin b → Fin N => ConstOn g S ∧ ∀ t ∈ Sᶜ, g t ≠ g s₀) =
       M.altMergeSum b #S := by
-  rw [M.sampleProb_eq_expect hb]
+  rw [M.sampleProb_eq_expect_sampleLaw hb]
   simp_rw [indicator_eq_sum_powerset _ hs₀]
-  rw [M.expect_sum]
-  simp_rw [M.expect_const_mul, ← M.sampleProb_eq_expect hb, M.sampleProb_constOn hb]
+  rw [PMF.expect_sum]
+  simp_rw [PMF.expect_const_mul, ← M.sampleProb_eq_expect_sampleLaw hb, M.sampleProb_constOn hb]
   rw [sum_congr rfl fun J hJ => by
     rw [card_union_eq_card_add_card.2
       (disjoint_of_subset_right (mem_powerset.1 hJ) disjoint_compl_right)]]
@@ -451,10 +430,11 @@ theorem abs_lineageProb_sub_le {b a : ℕ} (hb : b ≤ N) (ha : a < b) :
   have h1 : M.lineageProb b a = ∑ S ∈ 𝒮, M.sampleProb (fun g : Fin b → Fin N =>
       IsSingleMerger g S) + M.sampleProb (fun g : Fin b → Fin N =>
         #(univ.image g) = a ∧ HasDoubleMerger g) := by
-    rw [lineageProb, M.sampleProb_eq_expect hb, M.sampleProb_eq_expect hb]
-    simp_rw [M.sampleProb_eq_expect hb, ← M.expect_sum, ← M.expect_add]
+    rw [lineageProb, M.sampleProb_eq_expect_sampleLaw hb, M.sampleProb_eq_expect_sampleLaw hb]
+    simp_rw [M.sampleProb_eq_expect_sampleLaw hb, ← PMF.expect_sum, ← PMF.expect_add]
     congr 1
     funext g
+    rw [Pi.add_apply]
     by_cases hd : HasDoubleMerger g
     · rw [sum_eq_zero fun S _ => ite_eq_right fun h => h.not_hasDoubleMerger hd, zero_add]
       exact if_congr ⟨fun h => ⟨h, hd⟩, fun h => h.1⟩ rfl rfl
@@ -491,8 +471,8 @@ theorem abs_lineageProb_sub_le {b a : ℕ} (hb : b ≤ N) (ha : a < b) :
     obtain ⟨s₀, hs₀⟩ := card_pos.1 (by omega : 0 < #S)
     refine ⟨M.sampleProb (fun g : Fin b → Fin N =>
       (ConstOn g S ∧ ∀ t ∈ Sᶜ, g t ≠ g s₀) ∧ ¬ IsSingleMerger g S), M.sampleProb_nonneg _, ?_, ?_⟩
-    · rw [M.sampleProb_eq_expect hb, hD, M.sampleProb_eq_expect hb]
-      refine M.expect_mono hb fun g => ?_
+    · rw [M.sampleProb_eq_expect_sampleLaw hb, hD, M.sampleProb_eq_expect_sampleLaw hb]
+      refine PMF.expect_le_expect fun g => ?_
       split_ifs with h h'
       · exact le_rfl
       · exact absurd (by_contra fun hd => h.2 (isSingleMerger_of_constOn (by omega) hs₀ h.1.1
@@ -500,10 +480,11 @@ theorem abs_lineageProb_sub_le {b a : ℕ} (hb : b ≤ N) (ha : a < b) :
       · exact zero_le_one
       · exact le_rfl
     · rw [← hSk, ← M.sampleProb_inclusionExclusion hb hs₀, eq_sub_iff_add_eq,
-        M.sampleProb_eq_expect hb, M.sampleProb_eq_expect hb, M.sampleProb_eq_expect hb,
-        ← M.expect_add]
+        M.sampleProb_eq_expect_sampleLaw hb, M.sampleProb_eq_expect_sampleLaw hb,
+        M.sampleProb_eq_expect_sampleLaw hb, ← PMF.expect_add]
       congr 1
       funext g
+      rw [Pi.add_apply]
       by_cases h : IsSingleMerger g S
       · have e1 : (if (ConstOn g S ∧ ∀ t ∈ Sᶜ, g t ≠ g s₀) ∧ ¬ IsSingleMerger g S then (1 : ℝ)
             else 0) = 0 := ite_eq_right fun h' => h'.2 h
@@ -515,8 +496,8 @@ theorem abs_lineageProb_sub_le {b a : ℕ} (hb : b ≤ N) (ha : a < b) :
   choose! e he0 heD hse using h2
   have h3 : M.sampleProb (fun g : Fin b → Fin N => #(univ.image g) = a ∧ HasDoubleMerger g) ≤
       D := by
-    rw [M.sampleProb_eq_expect hb, hD, M.sampleProb_eq_expect hb]
-    exact M.expect_mono hb fun g => by
+    rw [M.sampleProb_eq_expect_sampleLaw hb, hD, M.sampleProb_eq_expect_sampleLaw hb]
+    exact PMF.expect_le_expect fun g => by
       split_ifs with h h' <;> first | exact le_rfl | exact zero_le_one | exact absurd h.2 h'
   have h30 := M.sampleProb_nonneg (fun g : Fin b → Fin N => #(univ.image g) = a ∧
     HasDoubleMerger g)
