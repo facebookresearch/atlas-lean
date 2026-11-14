@@ -56,8 +56,10 @@ The threshold is sharp:
   `I = I_u + I_v`; the last term is the two-group Cauchy–Schwarz (AM–HM) defect. As in
   `SISGlobalStability`, convergence is quantitative: `V(t) ≤ V(0) e^{-κ t}`.
 
-So `p > p_c` eliminates the infection and `p < p_c` leaves it endemic: herd immunity by
-vaccination is possible iff `p_c ≤ 1`, i.e. iff `ε ≥ 1 - 1 / R₀` (`criticalCoverage_le_one_iff`).
+So `p > p_c` eliminates the infection and `p < p_c` leaves it endemic. Algebraically, the
+critical coverage is attainable (`p_c ≤ 1`) iff `ε ≥ 1 - 1 / R₀` (`criticalCoverage_le_one_iff`);
+the dynamic converse at full coverage `p = 1` is not proved here (`exists_isEndemicEq` needs
+`p < 1`).
 
 ## Main results
 
@@ -74,6 +76,18 @@ vaccination is possible iff `p_c ≤ 1`, i.e. iff `ε ≥ 1 - 1 / R₀` (`critic
 * `lyapunov`, `lyapunovDeriv`, `lyapunov_deriv_eq`, `IsSolution.hasDerivAt_lyapunov`.
 * `IsSolution.exists_lyapunov_le_exp`, `IsSolution.tendsto_endemic`,
   `IsSolution.endemic_stability`, `IsEndemicEq.unique`, `IsSolution.tendsto_endemic_of_lt`.
+
+## Scope
+
+* A perfect vaccine at exactly the critical coverage (`ε = 1`, `R_v = 1`) is not covered:
+  `IsSolution.tendsto_dfe` needs `R_v < 1`, or `R_v = 1` together with `ε < 1`.
+* Endemic convergence is proved only when both groups start with infectives
+  (`I_u(0), I_v(0) > 0`); a solution with `I_u(0) = 0` or `I_v(0) = 0` (and positive total) is
+  not treated.
+* Existence of general non-constant solutions is not proved. The hypotheses are shown
+  satisfiable by the constant equilibria (`isSolution_const_dfe`, `isSolution_const_endemic`)
+  and, in the tests, by an explicit non-constant solution for `ε = 1` built from
+  `SIS.isSolution_sis`.
 
 ## References
 
@@ -392,8 +406,9 @@ theorem totalInfected_le_initial (hR : Rv β γ ε p ≤ 1) {t : ℝ} (ht : 0 �
       linarith) ht
   simpa using this
 
-/-- **Exponential extinction below threshold.** If `R_v < 1`, then
-`I_u(t) + I_v(t) ≤ (I_u(0) + I_v(0)) e^{-γ (1 - R_v) t}`. -/
+/-- **Exponential bound on the total infected.** For every `R_v`,
+`I_u(t) + I_v(t) ≤ (I_u(0) + I_v(0)) e^{-γ (1 - R_v) t}`; this is exponential decay when
+`R_v < 1`. -/
 theorem totalInfected_le_exp {t : ℝ} (ht : 0 ≤ t) :
     Iu t + Iv t ≤ (Iu 0 + Iv 0) * exp (-(γ * (1 - Rv β γ ε p)) * t) :=
   le_mul_exp_of_hasDerivAt
