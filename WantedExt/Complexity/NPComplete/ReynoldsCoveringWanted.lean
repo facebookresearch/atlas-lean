@@ -35,8 +35,8 @@ namespace MetaMathlibExt.Complexity.NPComplete.ReynoldsCovering
 Given context-free grammars `G₁ = (N₁, Σ, Π₁, S₁)` and `G₂ = (N₂, Σ, Π₂, S₂)` over the same
 terminal alphabet, does `G₂` Reynolds cover `G₁`: is there a function `f` from `N₁ ∪ Σ` to
 `N₂ ∪ Σ` with `f x = x` for every terminal `x`, `f A ∈ N₂` for every `A ∈ N₁`,
-`f S₁ = S₂`, and such that for every production `A → x₁ ⋯ xₙ` of `Π₁` the image
-`f A → f x₁ ⋯ f xₙ` is a production of `Π₂`?
+`f S₁ = S₂`, and such that for every production `A → x₁ ⋯ xᵣ` of `Π₁` the image
+`f A → f x₁ ⋯ f xᵣ` is a production of `Π₂`?
 
 The terminal alphabet is `Σ = {0, ..., k - 1}` and the nonterminals of a grammar with `n`
 nonterminals are `0, ..., n - 1`. A production is a pair of a left-hand side and a list of
