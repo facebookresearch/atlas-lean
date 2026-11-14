@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Biology.Epidemiology.SEIRGlobalStability
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 
 /-!
 # Tests for the Lyapunov global stability of the SEIR endemic equilibrium
@@ -28,6 +29,20 @@ Concrete model `β = 8`, `σ = 1`, `γ = 1`, `μ = 1`, `N = 1`:
 * non-vacuity: the constant endemic solution satisfies every hypothesis of the main theorems;
 * boundaries: at `R₀ = 1` (`β = 4`) the equilibrium degenerates to `S* = N`, `E* = 0`, and at
   `μ = 0` (closed model) `E* = 0`, so the endemic equilibrium leaves the open orthant.
+
+Disease-free equilibrium `(N, 0, 0)` and the removed class:
+
+* `R₀ ≤ 1` (`β = 2`, `R₀ = 1/2`): `V̇₀` at a concrete state from the definition of
+  `dfeLyapunovDeriv` agrees with the chain-rule value; at `R₀ = 1` (`β = 4`) a state with
+  `S = N`, `I > 0` has `V̇₀ = 0`, so the invariance step is needed there too;
+* an explicit trajectory with `R₀ = 0 ≤ 1` (`β = 0`): `S = 1 + e^{-t}`, `E = e^{-2t}`,
+  `I = (t + 1) e^{-2t}`, `R = 2 e^{-t} - (t + 2) e^{-2t}`, checked to be a solution from the
+  ODE, starts in the open orthant, and converges to `(1, 0, 0)` with `R → 0`; `S → 1` and
+  `E → 0` are also checked directly;
+* `R₀ > 1` (`β = 8`, `R₀ = 2`): the hypothesis `R₀ ≤ 1` fails, `V̇₀ = 4 > 0` at `(1, 1, 1)`, and
+  the constant endemic solution starts in the open orthant but does not converge to `(1, 0, 0)`;
+* `R → R*`: for `β = 12, σ = 1, γ = 2, μ = 1, N = 1` (`R₀ = 2`), `R* = γ I* / μ = 1/6` from the
+  definitions, `S* + E* + I* + R* = N`, and the constant endemic solution has `R → R*`.
 -/
 
 open Real Filter Set
@@ -179,5 +194,159 @@ example : endemicI 4 1 1 1 1 = 0 := by norm_num [endemicI, endemicE, endemicS]
 /-- Below the threshold (`β = 2`, `R₀ = 1/2`): `S* = 2 > N` and `E* < 0`. -/
 example : R0 2 1 1 1 = 1 / 2 := by norm_num [R0]
 example : endemicE 2 1 1 1 1 < 0 := by norm_num [endemicE, endemicS]
+
+/-! ### The disease-free equilibrium, `R₀ ≤ 1` -/
+
+/-- `R₀ = 2 · 1 / ((1 + 1)(1 + 1)) = 1/2 ≤ 1`, from the definition. -/
+theorem hR_half : R0 2 1 1 1 ≤ 1 := by norm_num [R0]
+
+example : R0 2 1 1 1 = 1 / 2 := by norm_num [R0]
+
+/-- `V₀` vanishes at `(N, 0, 0)`, from the definition. -/
+example : dfeLyapunov 1 1 1 1 0 0 = 0 := by norm_num [dfeLyapunov, volterra]
+
+/-- `V̇₀` at `(S, E, I) = (2, 1, 1)` for `β = 2`, from the definition of `dfeLyapunovDeriv`:
+`-(1 · 1²)/2 + (2 - 4) · 1 = -5/2`. -/
+theorem dfeLyapunovDeriv_val : dfeLyapunovDeriv 2 1 1 1 1 2 1 = -5 / 2 := by
+  norm_num [dfeLyapunovDeriv]
+
+/-- The chain-rule value `(1 - N/S) S' + E' + ((μ + σ)/σ) I'` at `(2, 1, 1)`, with
+`S' = 1 - 2·2·1 - 2 = -5`, `E' = 4 - 2 = 2`, `I' = 1 - 2 = -1` computed from the vector field:
+`(1/2)(-5) + 2 + 2(-1) = -5/2`. -/
+example :
+    (1 - 1 / 2) * ((1 : ℝ) * 1 - 2 * 2 * 1 / 1 - 1 * 2) + ((2 : ℝ) * 2 * 1 / 1 - (1 + 1) * 1) +
+      (1 + 1) / 1 * ((1 : ℝ) * 1 - (1 + 1) * 1) = -5 / 2 := by
+  norm_num
+
+/-- Any solution of the `β = 2` model through `(2, 1, 1)` has `d/dt V₀ = -5/2` there. -/
+example {S E I R : ℝ → ℝ} (h : IsSolution 2 1 1 1 1 S E I R) {t : ℝ} (ht : 0 ≤ t)
+    (hS : S t = 2) (hI : I t = 1) :
+    HasDerivAt (fun s => dfeLyapunov 1 1 1 (S s) (E s) (I s)) (-5 / 2) t := by
+  have := h.hasDerivAt_dfeLyapunov one_ne_zero one_ne_zero ht (by rw [hS]; norm_num)
+  rwa [hS, hI, dfeLyapunovDeriv_val] at this
+
+/-- The general bound `V̇₀ ≤ -μ (S - N)² / S` agrees at that state (`-5/2 ≤ -1/2`). -/
+example : dfeLyapunovDeriv 2 1 1 1 1 2 1 ≤ -(1 * (2 - 1) ^ 2 / 2) :=
+  dfeLyapunovDeriv_le one_pos zero_le_one one_pos hR_half zero_le_one
+
+/-- At the threshold `R₀ = 1` (`β = 4`), `V̇₀ = 0` at `(S, I) = (N, 1)` although `I > 0`: the
+Lyapunov function alone does not force `I → 0`. -/
+example : R0 4 1 1 1 ≤ 1 := by norm_num [R0]
+example : dfeLyapunovDeriv 4 1 1 1 1 1 1 = 0 := by norm_num [dfeLyapunovDeriv]
+
+/-! ### An explicit trajectory with `R₀ = 0` (`β = 0`) -/
+
+private theorem hasDerivAt_exp_neg (t : ℝ) : HasDerivAt (fun x => exp (-x)) (-exp (-t)) t :=
+  ((hasDerivAt_neg t).exp).congr_deriv (by ring)
+
+private theorem hasDerivAt_exp_neg_two (t : ℝ) :
+    HasDerivAt (fun x => exp (-(2 * x))) (-(2 * exp (-(2 * t)))) t :=
+  (((hasDerivAt_id' t).const_mul 2).neg.exp).congr_deriv (by simp only [Pi.neg_apply]; ring)
+
+/-- `S = 1 + e^{-t}`, `E = e^{-2t}`, `I = (t + 1) e^{-2t}`, `R = 2 e^{-t} - (t + 2) e^{-2t}`
+solves the model `β = 0, σ = 1, γ = 1, μ = 1, N = 1`, checked against each right-hand side. -/
+theorem isSolution_explicit :
+    IsSolution 0 1 1 1 1 (fun t => 1 + exp (-t)) (fun t => exp (-(2 * t)))
+      (fun t => (t + 1) * exp (-(2 * t))) (fun t => 2 * exp (-t) - (t + 2) * exp (-(2 * t))) :=
+  ⟨fun t _ => ((hasDerivAt_exp_neg t).const_add 1).congr_deriv (by ring),
+    fun t _ => (hasDerivAt_exp_neg_two t).congr_deriv (by ring),
+    fun t _ => (((hasDerivAt_id' t).add_const 1).mul (hasDerivAt_exp_neg_two t)).congr_deriv
+      (by ring),
+    fun t _ => (((hasDerivAt_exp_neg t).const_mul 2).sub
+      (((hasDerivAt_id' t).add_const 2).mul (hasDerivAt_exp_neg_two t))).congr_deriv (by ring)⟩
+
+example : R0 0 1 1 1 = 0 := by norm_num [R0]
+theorem hR_zero : R0 0 1 1 1 ≤ 1 := by norm_num [R0]
+
+/-- The trajectory starts in the open orthant: `(S, E, I)(0) = (2, 1, 1)`. -/
+example : (1 + exp (-0) : ℝ) = 2 ∧ exp (-(2 * 0)) = (1 : ℝ) ∧ ((0 : ℝ) + 1) * exp (-(2 * 0)) = 1 :=
+  by norm_num
+
+/-- **Global attractivity on the explicit trajectory**: `(S, E, I) → (1, 0, 0)`. -/
+theorem explicit_tendsto :
+    Tendsto (fun t => (1 + exp (-t), exp (-(2 * t)), (t + 1) * exp (-(2 * t)))) atTop
+      (𝓝 ((1 : ℝ), (0 : ℝ), (0 : ℝ))) :=
+  isSolution_explicit.tendsto_diseaseFree le_rfl one_pos zero_le_one one_pos one_pos hR_zero
+    (by positivity) (by positivity) (by positivity)
+
+/-- Independent check of the `S` and `E` limits, from `e^{-t} → 0`. -/
+example : Tendsto (fun t : ℝ => 1 + exp (-t)) atTop (𝓝 1) := by
+  simpa using (Real.tendsto_exp_neg_atTop_nhds_zero.const_add 1)
+
+example : Tendsto (fun t : ℝ => exp (-(2 * t))) atTop (𝓝 0) :=
+  Real.tendsto_exp_neg_atTop_nhds_zero.comp (tendsto_id.const_mul_atTop two_pos)
+
+/-- `R → R* = γ · 0 / μ = 0` on the explicit trajectory. -/
+example : Tendsto (fun t => 2 * exp (-t) - (t + 2) * exp (-(2 * t))) atTop (𝓝 0) :=
+  isSolution_explicit.tendsto_removed_diseaseFree le_rfl one_pos zero_le_one one_pos one_pos
+    hR_zero (by positivity) (by positivity) (by positivity)
+
+/-- Lyapunov stability of `(1, 0, 0)` (`ε = 1`) applied to the explicit trajectory. -/
+example : ∃ δ > 0, dist ((1 + exp (-0) : ℝ), exp (-(2 * 0) : ℝ), ((0 : ℝ) + 1) * exp (-(2 * 0)))
+      ((1 : ℝ), (0 : ℝ), (0 : ℝ)) < δ →
+    ∀ t, 0 ≤ t → dist (1 + exp (-t), exp (-(2 * t)), (t + 1) * exp (-(2 * t)))
+      ((1 : ℝ), (0 : ℝ), (0 : ℝ)) < 1 := by
+  obtain ⟨δ, hδ, hst⟩ :=
+    diseaseFree_lyapunovStable le_rfl one_pos zero_le_one one_pos one_pos hR_zero 1 one_pos
+  exact ⟨δ, hδ, hst _ _ _ _ isSolution_explicit (by positivity) (by positivity) (by positivity)⟩
+
+/-- The global asymptotic stability theorem, attractivity half, on the explicit trajectory. -/
+example : Tendsto (fun t => (1 + exp (-t), exp (-(2 * t)), (t + 1) * exp (-(2 * t)))) atTop
+    (𝓝 ((1 : ℝ), (0 : ℝ), (0 : ℝ))) :=
+  (diseaseFree_globallyAsymptoticallyStable le_rfl one_pos zero_le_one one_pos one_pos
+    hR_zero).2 _ _ _ _ isSolution_explicit (by positivity) (by positivity) (by positivity)
+
+/-! ### `R₀ > 1`: disease-free stability is not claimed -/
+
+/-- For `β = 8` (`R₀ = 2`) the hypothesis `R₀ ≤ 1` fails. -/
+example : ¬ R0 8 1 1 1 ≤ 1 := by norm_num [R0]
+
+/-- `V̇₀ = (8 - 4) · 1 = 4 > 0` at `(1, 1, 1)`: `V₀` is not a Lyapunov function above the
+threshold. -/
+example : dfeLyapunovDeriv 8 1 1 1 1 1 1 = 4 := by norm_num [dfeLyapunovDeriv]
+
+/-- The constant endemic solution starts in the open orthant and does not converge to the
+disease-free state `(1, 0, 0)`: the conclusion of `tendsto_diseaseFree` is false at `R₀ = 2`. -/
+example : ¬ Tendsto (fun _ : ℝ => ((1 / 2 : ℝ), (1 / 4 : ℝ), (1 / 8 : ℝ))) atTop
+    (𝓝 ((1 : ℝ), (0 : ℝ), (0 : ℝ))) := by
+  rw [tendsto_const_nhds_iff]
+  norm_num
+
+/-! ### `R → R*` with explicit numbers -/
+
+/-- `β = 12, σ = 1, γ = 2, μ = 1, N = 1`: `R₀ = 12 / (2 · 3) = 2`. -/
+theorem hR12 : 1 < R0 12 1 2 1 := by norm_num [R0]
+
+example : endemicS 12 1 2 1 1 = 1 / 2 := by norm_num [endemicS]
+example : endemicE 12 1 2 1 1 = 1 / 4 := by norm_num [endemicE, endemicS]
+example : endemicI 12 1 2 1 1 = 1 / 12 := by norm_num [endemicI, endemicE, endemicS]
+
+/-- `R* = γ I* / μ = 2 · (1/12) / 1 = 1/6`, from the definitions. -/
+example : endemicR 12 1 2 1 1 = 1 / 6 := by norm_num [endemicR, endemicI, endemicE, endemicS]
+
+/-- `S* + E* + I* + R* = 1/2 + 1/4 + 1/12 + 1/6 = 1 = N`. -/
+example : endemicS 12 1 2 1 1 + endemicE 12 1 2 1 1 + endemicI 12 1 2 1 1 +
+    endemicR 12 1 2 1 1 = 1 := by norm_num [endemicR, endemicI, endemicE, endemicS]
+
+/-- The constant solution at `(1/2, 1/4, 1/12, 1/6)`, checked against each right-hand side. -/
+theorem isSolution_const12 :
+    IsSolution 12 1 2 1 1 (fun _ => 1 / 2) (fun _ => 1 / 4) (fun _ => 1 / 12) (fun _ => 1 / 6) :=
+  ⟨fun t _ => (hasDerivAt_const t _).congr_deriv (by norm_num),
+    fun t _ => (hasDerivAt_const t _).congr_deriv (by norm_num),
+    fun t _ => (hasDerivAt_const t _).congr_deriv (by norm_num),
+    fun t _ => (hasDerivAt_const t _).congr_deriv (by norm_num)⟩
+
+/-- `tendsto_removed_endemic` on it: `R → R* = endemicR 12 1 2 1 1`. -/
+example : Tendsto (fun _ : ℝ => (1 / 6 : ℝ)) atTop (𝓝 (endemicR 12 1 2 1 1)) :=
+  isSolution_const12.tendsto_removed_endemic one_pos zero_le_two one_pos one_pos hR12
+    (by norm_num) (by norm_num) (by norm_num)
+
+/-- `tendsto_removed` with `I → 1/12` gives `R → 2 · (1/12) / 1 = 1/6`. -/
+example : Tendsto (fun _ : ℝ => (1 / 6 : ℝ)) atTop (𝓝 (2 * (1 / 12) / 1)) :=
+  isSolution_const12.tendsto_removed one_pos tendsto_const_nhds
+
+/-- `tendsto_total` on it: `S + E + I + R → N = 1`. -/
+example : Tendsto (fun _ : ℝ => (1 / 2 : ℝ) + 1 / 4 + 1 / 12 + 1 / 6) atTop (𝓝 1) :=
+  isSolution_const12.tendsto_total one_pos
 
 end MathlibExtTest.Biology.Epidemiology.SEIRGlobalStability
