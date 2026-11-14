@@ -80,9 +80,11 @@ are the connected areas of the painting. -/
 def areaGraph {h w : ℕ} (black : Fin h × Fin w → Bool) : SimpleGraph (Fin h × Fin w) :=
   grid h w ⊓ SimpleGraph.fromRel fun p q => black p = black q
 
-/-- A set of cells is a rectangle area: all cells in rows `r₁ … r₂` and columns `c₁ … c₂`. -/
+/-- A set of cells is a rectangle area: all cells in rows `r₁ … r₂` and columns `c₁ … c₂`, for
+some `r₁ ≤ r₂` and `c₁ ≤ c₂`. -/
 def IsRectangle {h w : ℕ} (S : Set (Fin h × Fin w)) : Prop :=
-  ∃ r₁ r₂ : Fin h, ∃ c₁ c₂ : Fin w, S = {p | r₁ ≤ p.1 ∧ p.1 ≤ r₂ ∧ c₁ ≤ p.2 ∧ p.2 ≤ c₂}
+  ∃ r₁ r₂ : Fin h, ∃ c₁ c₂ : Fin w, r₁ ≤ r₂ ∧ c₁ ≤ c₂ ∧
+    S = {p | r₁ ≤ p.1 ∧ p.1 ≤ r₂ ∧ c₁ ≤ p.2 ∧ p.2 ≤ c₂}
 
 /-- The connected area containing cell `p`. -/
 def area {h w : ℕ} (black : Fin h × Fin w → Bool) (p : Fin h × Fin w) : Set (Fin h × Fin w) :=
