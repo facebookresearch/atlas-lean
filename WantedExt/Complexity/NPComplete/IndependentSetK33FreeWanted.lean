@@ -28,7 +28,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Paths
+public import MathlibExt.Combinatorics.SimpleGraph.Connectivity
 public import WantedExt.Complexity.NPComplete.TriangleFreeIndependentSetWanted
 
 @[expose] public section
@@ -52,7 +52,9 @@ homeomorphic to `K_3,3`). A subgraph homeomorphic to `K_3,3` is a subdivision of
 path from `a_i` to `b_j`, where the inner vertices of a path are not branch vertices and no two
 of the nine paths share an inner vertex. `HasK33Subdivision G` states this with the branch
 vertices given by an injective map `Fin 3 ⊕ Fin 3 → V` and Mathlib paths (`Walk.IsPath`); the
-inner vertices of a walk are its support without the first and last vertex.
+inner vertices of a walk are its support without the first and last vertex
+(`support.tail.dropLast`), and two different paths are `SimpleGraph.InternallyDisjoint`
+(`MathlibExt.Combinatorics.SimpleGraph.Connectivity`: their inner vertex lists are disjoint).
 
 The instance type (vertex count `n`, edge list, bound `K`), the graph
 (`Cslib.Complexity.Karp.edgeGraph` on `Fin n`) and the question (a `Finset` of at least `K`
@@ -78,20 +80,16 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- The inner vertices of a walk: its support without the first and the last vertex. -/
-def innerVertices {V : Type*} {G : SimpleGraph V} {u v : V} (p : G.Walk u v) : List V :=
-  p.support.tail.dropLast
-
 /-- `G` has a subgraph homeomorphic to `K_3,3`: injective branch vertices `f (inl i)` and
 `f (inr j)` (`i, j : Fin 3`) and paths `p i j` from `f (inl i)` to `f (inr j)` such that no inner
-vertex of a path is a branch vertex and two different paths share no inner vertex. -/
+vertex of a path (its support without the two ends) is a branch vertex and two different paths
+are internally disjoint. -/
 def HasK33Subdivision {V : Type*} (G : SimpleGraph V) : Prop :=
   ∃ f : Fin 3 ⊕ Fin 3 → V, Function.Injective f ∧
     ∃ p : ∀ i j : Fin 3, G.Walk (f (Sum.inl i)) (f (Sum.inr j)),
       (∀ i j, (p i j).IsPath) ∧
-      (∀ i j, ∀ v ∈ innerVertices (p i j), ∀ x, v ≠ f x) ∧
-      ∀ i j i' j', (i, j) ≠ (i', j') →
-        ∀ v ∈ innerVertices (p i j), v ∉ innerVertices (p i' j')
+      (∀ i j, ∀ v ∈ (p i j).support.tail.dropLast, ∀ x, v ≠ f x) ∧
+      ∀ i j i' j', (i, j) ≠ (i', j') → SimpleGraph.InternallyDisjoint (p i j) (p i' j')
 
 /-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
 duplicate edges in either orientation, no self-loops, endpoints in range) with no subgraph
