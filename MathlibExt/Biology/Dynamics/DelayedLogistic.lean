@@ -11,7 +11,10 @@ module
 public import MathlibExt.Biology.Dynamics.Logistic
 public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Analysis.Calculus.MeanValue
+import Mathlib.Analysis.Real.Pi.Bounds
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Bounds
 import Mathlib.Topology.Order.IntermediateValue
 
@@ -57,12 +60,29 @@ Linearized stability of the positive equilibrium `K`.
 * `exists_linearized_oscillation`: for `τ > τ_c` the linearized equation has a real solution
   oscillating about `0` with unbounded amplitude.
 
+Local asymptotic stability of the nonlinear equation.
+* `IsSolution.isWrightSolution_log`: `y = log (x / K)` solves Wright's equation
+  `y'(t) = -r (e^{y(t - τ)} - 1)`.
+* `IsWrightSolution.abs_le_step`: the Razumikhin-type window contraction
+  `|y t| ≤ ρ(rτ, M) M` from `|y| ≤ M` on `[t - 3τ, t - τ]`.
+* `IsWrightSolution.abs_le_of_initial`, `IsWrightSolution.abs_le_pow`,
+  `IsWrightSolution.tendsto_zero`: stability, geometric decay and attractivity of Wright's
+  equation when `ρ(rτ, M) < 1`.
+* `localAsymptoticStability`: for `r, K, τ > 0` with `r τ < √5 - 1`, the equilibrium `K` of the
+  nonlinear delayed logistic equation is locally asymptotically stable.
+* `sqrt_five_sub_one_div_lt_criticalDelay`: this range `τ < (√5 - 1) / r` lies strictly inside
+  `τ < τ_c`.
+
 ## Scope
 
-Stability is the *linearized* statement: it concerns the characteristic roots of the linear
-delay equation `u' = -r u(t - τ)`. Transferring it to local asymptotic stability of the
-nonlinear equation (the principle of linearized stability for delay equations), and the Hopf
-normal form at `τ_c`, are not formalized here.
+The characteristic-root results are *linearized* statements about `u' = -r u(t - τ)`.
+Local asymptotic stability of the nonlinear equation is proved directly, by a Razumikhin-type
+window estimate on Wright's form, for `0 < r τ < √5 - 1 ≈ 1.236`. The remaining range
+`√5 - 1 ≤ r τ < π / 2` of the linearly stable regime is not covered: estimates of this kind
+also hold for time-varying coefficients, where `3 / 2` is the sharp bound, so reaching `τ_c`
+needs the principle of linearized stability for delay equations (variation of constants and
+exponential decay of the fundamental solution), which is not formalized here. The Hopf normal
+form at `τ_c` is not formalized either.
 
 ## References
 
@@ -72,6 +92,10 @@ normal form at `τ_c`, are not formalized here.
   Springer (1993), §5.2 (method of steps) and §11.4.
 * H. Smith, *An Introduction to Delay Differential Equations with Applications to the Life
   Sciences*, Springer (2011), §3.4 and §4.4.
+* E. M. Wright, *A non-linear difference-differential equation*, J. Reine Angew. Math. 194
+  (1955) 66–87.
+* B. S. Razumikhin, *On the stability of systems with a delay*, Prikl. Mat. Mekh. 20 (1956)
+  500–512.
 -/
 
 @[expose] public section
@@ -632,5 +656,402 @@ theorem exists_linearized_oscillation {r τ : ℝ} (hr : 0 < r) (hτc : critical
       calc M ≤ exp (a * t) := hexp
         _ ≤ exp (a * (t + π / b)) := by
           gcongr; linarith [div_pos pi_pos him]
+
+/-! ### Local asymptotic stability of the nonlinear equation
+
+With `y = log (x / K)` Hutchinson's equation becomes Wright's equation
+`y'(t) = -r (e^{y(t - τ)} - 1)`, whose right side depends on the delayed value only. Writing
+`y(t) = y(t - τ) - r ∫_{t-τ}^t (e^{y(s - τ)} - 1) ds` and expanding about `y(t - τ)` gives, for
+`t ≥ 2τ`, the window estimate `|y t| ≤ ρ(M) M` whenever `|y| ≤ M ≤ 1` on `[t - 3τ, t - τ]`, where
+`ρ(M) = |1 - rτ| + (rτ)² (1 + M) / 2 + rτ M` (`contractionFactor`). This is a Razumikhin-type
+argument: the bound on the past window controls the present value. `ρ(0) < 1` exactly when
+`0 < rτ < √5 - 1`, and then the window bound propagates forward (stability) and improves by the
+factor `ρ` every `3τ` (geometric decay). -/
+
+/-- `y` solves Wright's equation `y'(t) = -r (e^{y(t - τ)} - 1)`: `y` is continuous on
+`[-τ, ∞)` and at every `t ≥ 0` its right derivative is `-r (e^{y(t - τ)} - 1)`. -/
+structure IsWrightSolution (r τ : ℝ) (y : ℝ → ℝ) : Prop where
+  continuousOn : ContinuousOn y (Ici (-τ))
+  hasDerivWithinAt : ∀ t, 0 ≤ t →
+    HasDerivWithinAt y (-(r * (exp (y (t - τ)) - 1))) (Ici t) t
+
+/-- The window contraction factor `ρ(a, m) = |1 - a| + a² (1 + m) / 2 + a m`, used with
+`a = r τ` and `m` a bound on `|y|` over the past window. -/
+noncomputable def contractionFactor (a m : ℝ) : ℝ := |1 - a| + a ^ 2 * (1 + m) / 2 + a * m
+
+/-- `|e^z - 1| ≤ M (1 + M)` for `|z| ≤ M ≤ 1`. -/
+theorem abs_exp_sub_one_le_mul {z M : ℝ} (hz : |z| ≤ M) (hM : M ≤ 1) :
+    |exp z - 1| ≤ M * (1 + M) := by
+  have h1 := Real.abs_exp_sub_one_sub_id_le (hz.trans hM)
+  have h2 : z ^ 2 ≤ M ^ 2 := by
+    rw [← sq_abs]; exact pow_le_pow_left₀ (abs_nonneg z) hz 2
+  calc |exp z - 1| = |(exp z - 1 - z) + z| := by ring_nf
+    _ ≤ |exp z - 1 - z| + |z| := abs_add_le _ _
+    _ ≤ M * (1 + M) := by nlinarith
+
+/-- **Lipschitz bound on a window**: if `|y| ≤ M ≤ 1` on `[c - τ, d - τ]` with `0 ≤ c ≤ d`,
+then `|y d - y c| ≤ r M (1 + M) (d - c)`. -/
+theorem IsWrightSolution.abs_sub_le {r τ M c d : ℝ} {y : ℝ → ℝ} (hy : IsWrightSolution r τ y)
+    (hr : 0 ≤ r) (hτ : 0 ≤ τ) (hM : M ≤ 1) (hc : 0 ≤ c) (hcd : c ≤ d)
+    (hb : ∀ s ∈ Icc (c - τ) (d - τ), |y s| ≤ M) :
+    |y d - y c| ≤ r * (M * (1 + M)) * (d - c) := by
+  have := norm_image_sub_le_of_norm_deriv_right_le_segment (f := y) (a := c) (b := d)
+    (C := r * (M * (1 + M)))
+    (hy.continuousOn.mono fun s hs => by simp only [mem_Ici]; linarith [hs.1])
+    (fun s hs => hy.hasDerivWithinAt s (hc.trans hs.1))
+    (fun s hs => by
+      rw [Real.norm_eq_abs, abs_neg, abs_mul, abs_of_nonneg hr]
+      gcongr
+      exact abs_exp_sub_one_le_mul (hb _ ⟨by linarith [hs.1], by linarith [hs.2]⟩) hM)
+    d ⟨hcd, le_rfl⟩
+  simpa [Real.norm_eq_abs] using this
+
+/-- **Window contraction** (Razumikhin step): for `t ≥ 2τ`, if `|y| ≤ M ≤ 1` on
+`[t - 3τ, t - τ]` then `|y t| ≤ ρ(rτ, M) M`. -/
+theorem IsWrightSolution.abs_le_step {r τ M t : ℝ} {y : ℝ → ℝ} (hy : IsWrightSolution r τ y)
+    (hr : 0 ≤ r) (hτ : 0 ≤ τ) (ht : 2 * τ ≤ t) (hM : M ≤ 1)
+    (hb : ∀ s ∈ Icc (t - 3 * τ) (t - τ), |y s| ≤ M) :
+    |y t| ≤ contractionFactor (r * τ) M * M := by
+  set a := t - τ with ha
+  have hM0 : 0 ≤ M := (abs_nonneg _).trans (hb a ⟨by linarith, le_rfl⟩)
+  have hya : |y a| ≤ M := hb a ⟨by linarith, le_rfl⟩
+  set F : ℝ → ℝ := fun s => y s - y a + r * (s - a) * y a with hF
+  set B : ℝ → ℝ := fun s => r * M ^ 2 * (s - a) + r ^ 2 * (M * (1 + M)) * (τ ^ 2 - (t - s) ^ 2) / 2
+    with hB
+  have hBd : ∀ s, HasDerivAt B (r * M ^ 2 + r ^ 2 * (M * (1 + M)) * (t - s)) s := by
+    intro s
+    have h1 := ((hasDerivAt_id s).sub_const a).const_mul (r * M ^ 2)
+    have h2 := (((hasDerivAt_const s t).sub (hasDerivAt_id s)).pow 2).const_sub (τ ^ 2)
+    have h3 := (h2.const_mul (r ^ 2 * (M * (1 + M)))).div_const 2
+    convert h1.add h3 using 1
+    · funext s; simp [hB, mul_div_assoc]
+    · simp; ring
+  have key := image_norm_le_of_norm_deriv_right_le_deriv_boundary (f := F) (a := a) (b := t)
+    (f' := fun s => -(r * (exp (y (s - τ)) - 1)) + r * y a) (B := B)
+    (B' := fun s => r * M ^ 2 + r ^ 2 * (M * (1 + M)) * (t - s))
+    (by
+      refine ((hy.continuousOn.mono fun s hs => ?_).sub continuousOn_const).add
+        (ContinuousOn.mul (by fun_prop) continuousOn_const)
+      simp only [mem_Ici]; linarith [hs.1])
+    (fun s hs => by
+      have h := hy.hasDerivWithinAt s (by linarith [hs.1])
+      convert (h.sub_const (y a)).add
+        ((((hasDerivWithinAt_id s _).sub_const a).const_mul r).mul_const (y a)) using 1
+      · funext x; simp [hF]
+      · ring)
+    (by simp [hF, hB, ha]) hBd
+    (fun s hs => by
+      have hs1 : |y (s - τ)| ≤ M := hb _ ⟨by linarith [hs.1], by linarith [hs.2]⟩
+      have hdiff : |y a - y (s - τ)| ≤ r * (M * (1 + M)) * (a - (s - τ)) :=
+        hy.abs_sub_le hr hτ hM (by linarith [hs.1]) (by linarith [hs.2])
+          (fun σ hσ => hb σ ⟨by linarith [hσ.1, hs.1], by linarith [hσ.2]⟩)
+      have hq := Real.abs_exp_sub_one_sub_id_le (hs1.trans hM)
+      have hq' : y (s - τ) ^ 2 ≤ M ^ 2 := by
+        rw [← sq_abs]; exact pow_le_pow_left₀ (abs_nonneg _) hs1 2
+      have heq : -(r * (exp (y (s - τ)) - 1)) + r * y a =
+          r * ((y a - y (s - τ)) - (exp (y (s - τ)) - 1 - y (s - τ))) := by ring
+      rw [Real.norm_eq_abs, heq, abs_mul, abs_of_nonneg hr]
+      have habs := abs_sub (y a - y (s - τ)) (exp (y (s - τ)) - 1 - y (s - τ))
+      have : a - (s - τ) = t - s := by rw [ha]; ring
+      rw [this] at hdiff
+      nlinarith)
+    (x := t) ⟨by linarith, le_rfl⟩
+  have hFt : y t = F t + (1 - r * τ) * y a := by simp only [hF, ha]; ring
+  have hBt : B t = r * M ^ 2 * τ + r ^ 2 * (M * (1 + M)) * τ ^ 2 / 2 := by
+    simp only [hB, ha]; ring
+  rw [Real.norm_eq_abs, hBt] at key
+  rw [hFt, contractionFactor]
+  calc |F t + (1 - r * τ) * y a| ≤ |F t| + |1 - r * τ| * |y a| := by
+        rw [← abs_mul]; exact abs_add_le _ _
+    _ ≤ (r * M ^ 2 * τ + r ^ 2 * (M * (1 + M)) * τ ^ 2 / 2) + |1 - r * τ| * M := by
+        gcongr
+    _ = (|1 - r * τ| + (r * τ) ^ 2 * (1 + M) / 2 + r * τ * M) * M := by ring
+
+
+/-- `ρ(a, m)` is monotone in `m` for `a ≥ 0`. -/
+theorem contractionFactor_mono {a m m' : ℝ} (ha : 0 ≤ a) (h : m ≤ m') :
+    contractionFactor a m ≤ contractionFactor a m' := by
+  unfold contractionFactor; gcongr
+
+/-- `ρ(a, m) ≥ 0` for `a, m ≥ 0`. -/
+theorem contractionFactor_nonneg {a m : ℝ} (ha : 0 ≤ a) (hm : 0 ≤ m) :
+    0 ≤ contractionFactor a m := by
+  unfold contractionFactor; positivity
+
+/-- **First two windows**: a history bound `|y| ≤ δ` on `[-τ, 0]` gives
+`|y| ≤ δ (1 + 2 r τ)²` on `[-τ, 2τ]`, provided the latter is at most `1`. -/
+theorem IsWrightSolution.abs_le_initial {r τ δ : ℝ} {y : ℝ → ℝ} (hy : IsWrightSolution r τ y)
+    (hr : 0 ≤ r) (hτ : 0 < τ) (hδ : ∀ s ∈ Icc (-τ) 0, |y s| ≤ δ)
+    (hδ1 : δ * (1 + 2 * (r * τ)) ^ 2 ≤ 1) :
+    ∀ s ∈ Icc (-τ) (2 * τ), |y s| ≤ δ * (1 + 2 * (r * τ)) ^ 2 := by
+  have hδ0 : 0 ≤ δ := (abs_nonneg _).trans (hδ (-τ) ⟨le_rfl, by linarith⟩)
+  have hg : 1 ≤ 1 + 2 * (r * τ) := by nlinarith
+  set δ₁ := δ * (1 + 2 * (r * τ)) with hδ₁
+  have hδδ₁ : δ ≤ δ₁ := le_mul_of_one_le_right hδ0 hg
+  have hδ₁0 : 0 ≤ δ₁ := hδ0.trans hδδ₁
+  have hδ₁1 : δ₁ ≤ 1 := by
+    calc δ₁ ≤ δ₁ * (1 + 2 * (r * τ)) := le_mul_of_one_le_right hδ₁0 hg
+      _ = δ * (1 + 2 * (r * τ)) ^ 2 := by rw [hδ₁]; ring
+      _ ≤ 1 := hδ1
+  have hδ1' : δ ≤ 1 := hδδ₁.trans hδ₁1
+  -- first window `[0, τ]`
+  have h1 : ∀ s ∈ Icc (-τ) τ, |y s| ≤ δ₁ := by
+    intro s hs
+    rcases le_or_gt s 0 with h | h
+    · exact (hδ s ⟨hs.1, h⟩).trans hδδ₁
+    · have hd := hy.abs_sub_le hr hτ.le hδ1' le_rfl h.le
+        (fun σ hσ => hδ σ ⟨by linarith [hσ.1], by linarith [hσ.2, hs.2]⟩)
+      have hy0 := hδ 0 ⟨by linarith, le_rfl⟩
+      have : r * (δ * (1 + δ)) * (s - 0) ≤ r * (δ * 2) * τ := by
+        gcongr <;> linarith [hs.2]
+      calc |y s| = |(y s - y 0) + y 0| := by ring_nf
+        _ ≤ |y s - y 0| + |y 0| := abs_add_le _ _
+        _ ≤ δ₁ := by rw [hδ₁]; nlinarith
+  intro s hs
+  rcases le_or_gt s τ with h | h
+  · exact (h1 s ⟨hs.1, h⟩).trans (le_mul_of_one_le_right hδ₁0 hg |>.trans_eq (by rw [hδ₁]; ring))
+  · have hd := hy.abs_sub_le hr hτ.le hδ₁1 hτ.le h.le
+      (fun σ hσ => h1 σ ⟨by linarith [hσ.1], by linarith [hσ.2, hs.2]⟩)
+    have hyτ := h1 τ ⟨by linarith, le_rfl⟩
+    have : r * (δ₁ * (1 + δ₁)) * (s - τ) ≤ r * (δ₁ * 2) * τ := by
+      gcongr <;> linarith [hs.2]
+    calc |y s| = |(y s - y τ) + y τ| := by ring_nf
+      _ ≤ |y s - y τ| + |y τ| := abs_add_le _ _
+      _ ≤ δ₁ * (1 + 2 * (r * τ)) := by nlinarith
+      _ = δ * (1 + 2 * (r * τ)) ^ 2 := by rw [hδ₁]; ring
+
+/-- **Stability of Wright's equation**: if `|y| ≤ M ≤ 1` on `[-τ, 2τ]` and `ρ(rτ, M) ≤ 1`, then
+`|y| ≤ M` on all of `[-τ, ∞)`. -/
+theorem IsWrightSolution.abs_le_of_initial {r τ M : ℝ} {y : ℝ → ℝ} (hy : IsWrightSolution r τ y)
+    (hr : 0 ≤ r) (hτ : 0 < τ) (hM : M ≤ 1) (hρ : contractionFactor (r * τ) M ≤ 1)
+    (hinit : ∀ s ∈ Icc (-τ) (2 * τ), |y s| ≤ M) : ∀ t, -τ ≤ t → |y t| ≤ M := by
+  have hM0 : 0 ≤ M := (abs_nonneg _).trans (hinit (-τ) ⟨le_rfl, by linarith⟩)
+  have key : ∀ n : ℕ, ∀ t ∈ Icc (-τ) (2 * τ + n * τ), |y t| ≤ M := by
+    intro n
+    induction n with
+    | zero => simpa using hinit
+    | succ n ih =>
+      intro t ht
+      rcases le_or_gt t (2 * τ + n * τ) with h | h
+      · exact ih t ⟨ht.1, h⟩
+      · have hn : (0 : ℝ) ≤ n * τ := by positivity
+        have ht2 : (t : ℝ) ≤ 2 * τ + n * τ + τ := by
+          have := ht.2; push_cast at this; linarith
+        have := hy.abs_le_step hr hτ.le (t := t) (M := M) (by linarith) hM
+          (fun s hs => ih s ⟨by linarith [hs.1], by linarith [hs.2]⟩)
+        calc |y t| ≤ contractionFactor (r * τ) M * M := this
+          _ ≤ 1 * M := by gcongr
+          _ = M := one_mul M
+  intro t ht
+  obtain ⟨n, hn⟩ := exists_nat_ge (t / τ)
+  refine key n t ⟨ht, ?_⟩
+  rw [div_le_iff₀ hτ] at hn
+  linarith
+
+/-- **Geometric decay**: under the hypotheses of `abs_le_of_initial`, `|y t| ≤ ρ(rτ, M)ⁿ M`
+for `t ≥ -τ + 3τ n`. -/
+theorem IsWrightSolution.abs_le_pow {r τ M : ℝ} {y : ℝ → ℝ} (hy : IsWrightSolution r τ y)
+    (hr : 0 ≤ r) (hτ : 0 < τ) (hM : M ≤ 1) (hρ : contractionFactor (r * τ) M ≤ 1)
+    (hinit : ∀ s ∈ Icc (-τ) (2 * τ), |y s| ≤ M) :
+    ∀ n : ℕ, ∀ t, -τ + 3 * τ * n ≤ t → |y t| ≤ contractionFactor (r * τ) M ^ n * M := by
+  have hM0 : 0 ≤ M := (abs_nonneg _).trans (hinit (-τ) ⟨le_rfl, by linarith⟩)
+  have ha : 0 ≤ r * τ := mul_nonneg hr hτ.le
+  set ρ := contractionFactor (r * τ) M with hρdef
+  have hρ0 : 0 ≤ ρ := contractionFactor_nonneg ha hM0
+  intro n
+  induction n with
+  | zero =>
+    intro t ht
+    simpa using hy.abs_le_of_initial hr hτ hM hρ hinit t (by simpa using ht)
+  | succ n ih =>
+    intro t ht
+    push_cast at ht
+    have hpn : ρ ^ n ≤ 1 := pow_le_one₀ hρ0 hρ
+    have hMn0 : 0 ≤ ρ ^ n * M := by positivity
+    have hMn : ρ ^ n * M ≤ M := by
+      calc ρ ^ n * M ≤ 1 * M := by gcongr
+        _ = M := one_mul M
+    have hn : (0 : ℝ) ≤ 3 * τ * n := by positivity
+    have := hy.abs_le_step hr hτ.le (t := t) (M := ρ ^ n * M) (by linarith) (hMn.trans hM)
+      (fun s hs => ih s (by linarith [hs.1]))
+    calc |y t| ≤ contractionFactor (r * τ) (ρ ^ n * M) * (ρ ^ n * M) := this
+      _ ≤ ρ * (ρ ^ n * M) := by gcongr; exact contractionFactor_mono ha hMn
+      _ = ρ ^ (n + 1) * M := by ring
+
+/-- **Attractivity of Wright's equation**: if `|y| ≤ M ≤ 1` on `[-τ, 2τ]` and `ρ(rτ, M) < 1`,
+then `y t → 0`. -/
+theorem IsWrightSolution.tendsto_zero {r τ M : ℝ} {y : ℝ → ℝ} (hy : IsWrightSolution r τ y)
+    (hr : 0 ≤ r) (hτ : 0 < τ) (hM : M ≤ 1) (hρ : contractionFactor (r * τ) M < 1)
+    (hinit : ∀ s ∈ Icc (-τ) (2 * τ), |y s| ≤ M) : Tendsto y atTop (𝓝 0) := by
+  have hM0 : 0 ≤ M := (abs_nonneg _).trans (hinit (-τ) ⟨le_rfl, by linarith⟩)
+  have ha : 0 ≤ r * τ := mul_nonneg hr hτ.le
+  have hρ0 := contractionFactor_nonneg ha hM0
+  have hp := (tendsto_pow_atTop_nhds_zero_of_lt_one hρ0 hρ).mul_const M
+  rw [zero_mul] at hp
+  rw [Metric.tendsto_atTop] at hp ⊢
+  intro ε hε
+  obtain ⟨N, hN⟩ := hp ε hε
+  refine ⟨-τ + 3 * τ * N, fun t ht => ?_⟩
+  have h1 := hy.abs_le_pow hr hτ hM hρ.le hinit N t ht
+  have h2 := hN N le_rfl
+  rw [Real.dist_eq, sub_zero] at h2 ⊢
+  exact lt_of_le_of_lt h1 (le_abs_self _ |>.trans_lt h2)
+
+/-- `|1 - a| + a² / 2 < 1` for `0 < a < √5 - 1`. -/
+theorem contractionFactor_zero_lt_one {a : ℝ} (ha : 0 < a) (ha' : a < √5 - 1) :
+    contractionFactor a 0 < 1 := by
+  unfold contractionFactor
+  have h5 := Real.sq_sqrt (show (0 : ℝ) ≤ 5 by norm_num)
+  have hs := Real.sqrt_nonneg 5
+  rcases le_or_gt a 1 with h | h
+  · rw [abs_of_nonneg (by linarith)]; nlinarith
+  · rw [abs_of_neg (by linarith)]; nlinarith
+
+/-- If `ρ(a, 0) < 1` then some window bound `0 < m ≤ 1` still has `ρ(a, m) < 1`. -/
+theorem exists_contractionFactor_lt_one {a : ℝ} (ha : 0 ≤ a) (h0 : contractionFactor a 0 < 1) :
+    ∃ m, 0 < m ∧ m ≤ 1 ∧ contractionFactor a m < 1 := by
+  set g := 1 - contractionFactor a 0 with hg
+  set c := a ^ 2 / 2 + a with hc
+  have hg0 : 0 < g := by linarith
+  have hc0 : 0 ≤ c := by positivity
+  refine ⟨min 1 (g / (2 * (c + 1))), lt_min one_pos (by positivity), min_le_left _ _, ?_⟩
+  set m := min 1 (g / (2 * (c + 1)))
+  have hm0 : 0 ≤ m := le_min zero_le_one (by positivity)
+  have heq : contractionFactor a m = contractionFactor a 0 + m * c := by
+    simp only [contractionFactor, hc]; ring
+  have : m * c ≤ g / 2 := by
+    calc m * c ≤ m * (c + 1) := by nlinarith
+      _ ≤ g / (2 * (c + 1)) * (c + 1) := by gcongr; exact min_le_right _ _
+      _ = g / 2 := by field_simp
+  linarith
+
+/-- `|x - K| ≤ δ ≤ K / 2` gives `|log (x / K)| ≤ 2 δ / K`. -/
+theorem abs_log_div_le {x K δ : ℝ} (hK : 0 < K) (hδ : δ ≤ K / 2) (hx : |x - K| ≤ δ) :
+    |log (x / K)| ≤ 2 * δ / K := by
+  have hδ0 : 0 ≤ δ := (abs_nonneg _).trans hx
+  obtain ⟨hx1, hx2⟩ := abs_le.mp hx
+  have hxK : K / 2 ≤ x := by linarith
+  have hx0 : 0 < x := by linarith
+  rw [abs_le]
+  constructor
+  · have h := Real.one_sub_inv_le_log_of_pos (div_pos hx0 hK)
+    have he : 1 - (x / K)⁻¹ = (x - K) / x := by field_simp
+    rw [he] at h
+    refine le_trans ?_ h
+    rw [le_div_iff₀ hx0]
+    have h1 : δ ≤ 2 * δ / K * x := by
+      calc δ = 2 * δ / K * (K / 2) := by field_simp
+        _ ≤ 2 * δ / K * x := by gcongr
+    nlinarith
+  · calc log (x / K) ≤ x / K - 1 := Real.log_le_sub_one_of_pos (div_pos hx0 hK)
+      _ = (x - K) / K := by field_simp
+      _ ≤ δ / K := by gcongr
+      _ ≤ 2 * δ / K := by gcongr; linarith
+
+/-- A positive solution of Hutchinson's equation gives a solution `log (x / K)` of Wright's
+equation. -/
+theorem IsSolution.isWrightSolution_log {r K τ : ℝ} {φ x : ℝ → ℝ} (hK : 0 < K) (hτ : 0 ≤ τ)
+    (hx : IsSolution r K τ φ x) (hpos : ∀ t, -τ ≤ t → 0 < x t) :
+    IsWrightSolution r τ (fun t => log (x t / K)) where
+  continuousOn := (hx.continuousOn.div_const K).log fun t ht => (div_pos (hpos t ht) hK).ne'
+  hasDerivWithinAt t ht := by
+    have hxt := hpos t (by linarith)
+    have hxd := hpos (t - τ) (by linarith)
+    have h := ((hx.hasDerivWithinAt t ht).div_const K).log (div_pos hxt hK).ne'
+    convert h using 1
+    rw [exp_log (div_pos hxd hK)]
+    field_simp
+    ring
+
+/-- **Local asymptotic stability of the nonlinear equation** for `0 < r τ < √5 - 1`: the
+positive equilibrium `K` is stable (every `ε` has a `δ` such that histories within `δ` of `K`
+give solutions within `ε` of `K` on all of `[-τ, ∞)`) and attracting (those solutions converge
+to `K`). The bound `√5 - 1` lies below `π / 2`, so this covers `0 < τ < (√5 - 1) / r`, a
+proper part of the linearly stable range `τ < τ_c` (`sqrt_five_sub_one_lt_pi_div_two`). -/
+theorem localAsymptoticStability {r K τ : ℝ} (hr : 0 < r) (hK : 0 < K) (hτ : 0 < τ)
+    (hrτ : r * τ < √5 - 1) :
+    ∀ ε > 0, ∃ δ > 0, ∀ φ x : ℝ → ℝ, IsSolution r K τ φ x →
+      (∀ s ∈ Icc (-τ) 0, |φ s - K| ≤ δ) →
+      (∀ t, -τ ≤ t → |x t - K| ≤ ε) ∧ Tendsto x atTop (𝓝 K) := by
+  intro ε hε
+  have ha : 0 < r * τ := mul_pos hr hτ
+  obtain ⟨m, hm0, hm1, hρm⟩ :=
+    exists_contractionFactor_lt_one ha.le (contractionFactor_zero_lt_one ha hrτ)
+  set G := (1 + 2 * (r * τ)) ^ 2 with hG
+  have hG1 : 1 ≤ G := one_le_pow₀ (by linarith)
+  have hG0 : 0 < G := by linarith
+  set M := min m (ε / (2 * K)) with hMdef
+  have hM0 : 0 < M := lt_min hm0 (by positivity)
+  have hMm : M ≤ m := min_le_left _ _
+  have hMε : M ≤ ε / (2 * K) := min_le_right _ _
+  set δ := min (K / 2) (K * (M / G) / 2) with hδdef
+  have hδ0 : 0 < δ := lt_min (by positivity) (by positivity)
+  refine ⟨δ, hδ0, fun φ x hx hφ => ?_⟩
+  have hφx : ∀ s ∈ Icc (-τ) 0, |x s - K| ≤ δ := fun s hs => by
+    rw [hx.eqOn_history hs]; exact hφ s hs
+  have hhist : ∀ s ∈ Icc (-τ) 0, K / 2 ≤ x s := by
+    intro s hs
+    have := (abs_le.mp ((hφx s hs).trans (min_le_left _ _))).1
+    linarith
+  have hpos : ∀ t, -τ ≤ t → 0 < x t := by
+    intro t ht
+    rcases le_or_gt t 0 with h | h
+    · linarith [hhist t ⟨ht, h⟩]
+    · have h0 : 0 < φ 0 := by
+        rw [← hx.eqOn_history ⟨by linarith, le_rfl⟩]; linarith [hhist 0 ⟨by linarith, le_rfl⟩]
+      exact hx.pos hτ.le h0 h.le
+  set y : ℝ → ℝ := fun t => log (x t / K) with hy
+  have hW : IsWrightSolution r τ y := hx.isWrightSolution_log hK hτ.le hpos
+  have hxy : ∀ t, -τ ≤ t → x t = K * exp (y t) := by
+    intro t ht
+    simp only [hy]
+    rw [exp_log (div_pos (hpos t ht) hK)]
+    field_simp
+  have hyδ : ∀ s ∈ Icc (-τ) 0, |y s| ≤ M / G := by
+    intro s hs
+    have h := abs_log_div_le hK (min_le_left _ _) (hφx s hs)
+    calc |y s| ≤ 2 * δ / K := h
+      _ ≤ 2 * (K * (M / G) / 2) / K := by gcongr; exact min_le_right _ _
+      _ = M / G := by field_simp
+  have hMG : M / G * G = M := by field_simp
+  have hM1 : M ≤ 1 := hMm.trans hm1
+  have hinit := hW.abs_le_initial hr.le hτ hyδ (by rw [← hG, hMG]; exact hM1)
+  rw [← hG, hMG] at hinit
+  have hρ : contractionFactor (r * τ) M < 1 := (contractionFactor_mono ha.le hMm).trans_lt hρm
+  have hglob := hW.abs_le_of_initial hr.le hτ hM1 hρ.le hinit
+  refine ⟨fun t ht => ?_, ?_⟩
+  · have hyt := hglob t ht
+    rw [hxy t ht]
+    have he := Real.abs_exp_sub_one_le (hyt.trans hM1)
+    calc |K * exp (y t) - K| = K * |exp (y t) - 1| := by
+          rw [← abs_of_pos hK, ← abs_mul, abs_of_pos hK]; ring_nf
+      _ ≤ K * (2 * M) := by gcongr; linarith
+      _ ≤ K * (2 * (ε / (2 * K))) := by gcongr
+      _ = ε := by field_simp
+  · have hyl := hW.tendsto_zero hr.le hτ hM1 hρ hinit
+    have hl : Tendsto (fun t => K * exp (y t)) atTop (𝓝 K) := by
+      simpa using ((continuous_exp.tendsto 0).comp hyl).const_mul K
+    refine hl.congr' ?_
+    filter_upwards [eventually_ge_atTop (-τ)] with t ht
+    exact (hxy t ht).symm
+
+/-- The nonlinear stability bound lies strictly below the critical one: `√5 - 1 < π / 2`, so
+`(√5 - 1) / r < τ_c` for `r > 0`. -/
+theorem sqrt_five_sub_one_lt_pi_div_two : √5 - 1 < π / 2 := by
+  have h : √5 < 9 / 4 := by
+    rw [Real.sqrt_lt' (by norm_num)]; norm_num
+  linarith [pi_gt_three]
+
+/-- The delay range of `localAsymptoticStability` in terms of `τ`: `r τ < √5 - 1` iff
+`τ < (√5 - 1) / r`, and this bound is below `criticalDelay r`. -/
+theorem mul_lt_sqrt_five_sub_one_iff {r τ : ℝ} (hr : 0 < r) :
+    r * τ < √5 - 1 ↔ τ < (√5 - 1) / r := by
+  rw [lt_div_iff₀ hr, mul_comm]
+
+/-- `(√5 - 1) / r < τ_c = π / (2 r)` for `r > 0`. -/
+theorem sqrt_five_sub_one_div_lt_criticalDelay {r : ℝ} (hr : 0 < r) :
+    (√5 - 1) / r < criticalDelay r := by
+  rw [criticalDelay, div_lt_div_iff₀ hr (by positivity)]
+  nlinarith [sqrt_five_sub_one_lt_pi_div_two]
 
 end MathlibExt.Biology.Dynamics.DelayedLogistic
