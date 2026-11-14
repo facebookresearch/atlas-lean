@@ -36,15 +36,16 @@ open Cslib.Bioinformatics.Phylogenetics.Splits (FourGametes)
 /-!
 # MAXIMUM COMPATIBLE CHARACTER SET for binary characters is NP-complete
 
-INSTANCE: `n` species described by `m` binary (two-state, unrooted) characters, and an integer
-`K`. QUESTION: is there a set of at least `K` characters that are perfectly compatible with one
+INSTANCE: `n ≥ 2` species described by `m` binary (two-state, unrooted) characters, and an
+integer `K`. QUESTION: is there a set of at least `K` characters that are perfectly compatible with one
 phylogeny, i.e. a set admitting a perfect phylogeny?
 
 For binary characters a set fits one phylogeny iff its members are pairwise compatible, and two
 binary characters are compatible iff they do not show all four gametes `(0,0), (0,1), (1,0),
 (1,1)` on the species (Estabrook, Johnson and McMorris 1976; in this repository
-`Cslib.Bioinformatics.Phylogenetics.Splits.exists_perfectPhylogeny_iff`, for at least two
-species). The question is stated with the repository's `FourGametes`. The species are
+`Cslib.Bioinformatics.Phylogenetics.Splits.exists_perfectPhylogeny_iff`, which needs at least two
+species, so `WellFormed` requires `n ≥ 2`). The question is stated with the repository's
+`FourGametes`. The species are
 `Fin n`, and the character matrix is given by its columns, one list of `n` states per
 character, so every character is listed explicitly.
 
@@ -71,9 +72,10 @@ def character (i : MaximumCompatibleBinaryCharactersInstance) (j : Character i) 
     Fin i.1 → Bool :=
   fun s => (i.2.1.get j).getD s false
 
-/-- Well-formedness of an instance: every column has one state per species. -/
+/-- Well-formedness of an instance: there are at least two species, and every column has one
+state per species. -/
 def WellFormed (i : MaximumCompatibleBinaryCharactersInstance) : Prop :=
-  ∀ col ∈ i.2.1, col.length = i.1
+  2 ≤ i.1 ∧ ∀ col ∈ i.2.1, col.length = i.1
 
 /-- Some set of at least `K` characters, no two of which show all four gametes. -/
 def MaximumCompatibleBinaryCharactersFeasible
