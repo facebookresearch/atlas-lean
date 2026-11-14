@@ -146,9 +146,15 @@ example (R cv V : ℝ) (hV : 0 < V) :
       = -idealGasEntropyChange 1 cv R 600 V 300 V :=
   idealGasEntropyChange_symm (by norm_num) (by norm_num) hV hV
 
+/-- Reversible adiabatic expansion with `cv = R = 1`: `2 → 1` in temperature while the volume
+doubles, `1 / 2 = (1 / 2) ^ (1 / 1)`, so `ΔS = 0`. -/
+example : idealGasEntropyChange 1 1 1 2 1 1 2 = 0 :=
+  idealGasEntropyChange_adiabatic (by norm_num) (by norm_num) (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num)
+
 /-!
 
-## C. Entropy of mixing
+## C. Ideal entropy of mixing
 
 -/
 
@@ -319,15 +325,22 @@ example : carnotEfficiency 0 600 = 1 := by
 
 /-- (e) Outside the domain: at `Th = 0`, Lean's `x / 0 = 0` gives `carnotEfficiency 300 0 = 1`.
 This is a junk value, not an efficiency; the lemmas that read `carnotEfficiency` assume
-`0 < Th`. -/
+`0 < Tc ≤ Th`. -/
 example : carnotEfficiency 300 0 = 1 := by
   unfold carnotEfficiency
   simp
 
+/-- (e) Outside the domain: a cold reservoir hotter than the hot one, `Tc = 600 > Th = 300`,
+gives the negative value `-1`, and a negative `Tc = -300` gives `3 / 2 > 1`; neither is an
+efficiency, which is why the engine lemmas assume `0 < Tc` and `Tc ≤ Th`. -/
+example : carnotEfficiency 600 300 = -1 ∧ carnotEfficiency (-300) 600 = 3 / 2 := by
+  unfold carnotEfficiency
+  constructor <;> norm_num
+
 /-- (e) Outside the domain: with constant `cv`, heating from `T₁ → 0` to `300` has a divergent
 entropy change, but at `T₁ = 0` Lean's `300 / 0 = 0` and `Real.log 0 = 0` give the junk value
 `0`, which is not an entropy change. The lemmas that read `idealGasEntropyChange` physically
-have hypotheses that keep `T₂ / T₁` and `V₂ / V₁` positive. -/
+assume positive temperatures and volumes. -/
 example : idealGasEntropyChange 1 1 1 0 1 300 1 = 0 := by
   unfold idealGasEntropyChange
   simp

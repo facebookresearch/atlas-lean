@@ -22,8 +22,8 @@ import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 # Entropy, heat engines and the third law
 
-Second-law bounds through Carnot efficiency, ideal-gas entropy changes, entropy of mixing and
-absolute entropy with the third-law convention.
+Second-law bounds through Carnot efficiency, ideal-gas entropy changes, the ideal entropy of
+mixing and absolute entropy with the third-law convention.
 
 ## i. Overview
 
@@ -31,7 +31,8 @@ Temperatures are absolute, `R` is the molar gas constant (a symbolic real parame
 numerical value is fixed), `n` is the amount of substance in mol and `cv` a constant molar heat
 capacity. Each lemma states the positivity hypotheses it uses (`0 < T`, `0 < R`, `0 < n`,
 `0 < cv`); the definitions and the purely algebraic identities hold for all real arguments, and
-their physical reading is at positive values.
+their physical reading is at positive values, with the cold reservoir no hotter than the hot one
+(`Tc ≤ Th`) for the Carnot efficiency.
 
 Junk values: the definitions are total, so outside its domain each returns a value fixed by
 Lean's conventions (`x / 0 = 0`, `Real.log 0 = 0`, `Real.log (-x) = Real.log x`, and `0` for a
@@ -43,11 +44,11 @@ about the definitions only rewrite a formula, so they hold on junk inputs too.
 
 The physics inputs are carried as explicit hypotheses and definitions, never derived here.
 The adiabatic relations of §A, the Clausius inequality (the second-law input, LAW), the
-integrated ideal-gas entropy differential of §B and the third-law convention `S(0) = 0` of §D
-are MODEL inputs. No entropy is derived from statistics (CH34 territory) and no Gibbs or
-Helmholtz Legendre development is claimed (CH14 territory).
+integrated ideal-gas entropy differential of §B, the ideal-mixing model of §C and the third-law
+convention `S(0) = 0` of §D are MODEL inputs. No entropy is derived from statistics (CH34
+territory) and no Gibbs or Helmholtz Legendre development is claimed (CH14 territory).
 
-The entropy of mixing is `n * R` times the Shannon entropy
+The ideal entropy of mixing is `n * R` times the Shannon entropy
 `Chemistry.FiniteEnsembles.shannonEntropy` of the mole fractions, so the Shannon-entropy API of
 `PhyslibExt.Chemistry.FiniteEnsembles` (`shannonEntropy_nonneg`, `shannonEntropy_eq_zero_iff`)
 applies to it directly; that module is the only non-Mathlib import. Proofs use `Real.log`
@@ -62,14 +63,16 @@ algebra (`Real.log_div`, `Real.log_mul`, `Real.log_rpow`), `Real.log_injOn_pos`,
 - `carnot_heat_ratio`, `carnot_cycle_efficiency` : positive heats with `Qc / Qh = Tc / Th` and
   `1 - Qc / Qh = carnotEfficiency Tc Th` for the reversible cycle.
 - `engine_efficiency_le_carnotEfficiency`, `engine_efficiency_eq_carnotEfficiency` : the
-  second-law bound for any engine and its equality case for reversible engines.
+  second-law bound for any engine between reservoirs `0 < Tc ≤ Th` and its equality case for
+  reversible engines.
 - `idealGasEntropyChange` : `ΔS = n * cv * log (T₂ / T₁) + n * R * log (V₂ / V₁)`.
 - `idealGasEntropyChange_totalCV` : the no-double-counting `CV` form.
 - `idealGasEntropyChange_add`, `idealGasEntropyChange_isothermal`,
   `idealGasEntropyChange_adiabatic`, `idealGasEntropyChange_symm` : additivity, the isothermal
   case, the reversible-adiabatic case and sign reversal.
-- `entropyOfMixing`, `entropyOfMixing_eq_neg_sum` : `ΔS_mix = n * R * H(x)` with `H` the
-  Shannon entropy, that is `-n * R * ∑ i, x i * log (x i)`.
+- `entropyOfMixing`, `entropyOfMixing_eq_neg_sum` : the ideal entropy of mixing
+  `ΔS_mix = n * R * H(x)` with `H` the Shannon entropy, that is
+  `-n * R * ∑ i, x i * log (x i)`.
 - `moleFraction_le_one`, `entropyOfMixing_nonneg`, `entropyOfMixing_eq_zero_iff`,
   `entropyOfMixing_binary` : the mole-fraction bound, nonnegativity, the single-component
   equality case and the binary case.
@@ -82,7 +85,7 @@ algebra (`Real.log_div`, `Real.log_mul`, `Real.log_rpow`), `Real.log_injOn_pos`,
 
 - A. Carnot efficiency and the second-law bound
 - B. Ideal-gas entropy changes
-- C. Entropy of mixing
+- C. Ideal entropy of mixing
 - D. Absolute entropy and the third law
 
 ## iv. References
@@ -110,8 +113,11 @@ open scoped BigOperators Matrix Topology
 
 /-- The Carnot efficiency `1 - Tc / Th` of a reversible engine operating between a cold
 reservoir at absolute temperature `Tc` and a hot reservoir at absolute temperature `Th`.
-Domain: `0 < Th`. At `Th = 0`, Lean's `x / 0 = 0` gives the junk value `1`, which is not an
-efficiency; the lemmas that read it assume `0 < Th`, directly or through `0 < Tc < Th`. -/
+Physical domain: `0 ≤ Tc ≤ Th` with `0 < Th`, where the value lies in `[0, 1]`; the engine
+results use `0 < Tc ≤ Th` and the reversible cycle `0 < Tc < Th`. Other values are
+nonphysical: `Tc > Th` gives a negative value, a negative `Tc` a value above `1`, and at
+`Th = 0` Lean's `x / 0 = 0` gives the junk value `1`. The lemmas that read it assume `0 < Tc`
+and `Tc ≤ Th`. -/
 noncomputable def carnotEfficiency (Tc Th : ℝ) : ℝ := 1 - Tc / Th
 
 /-- An isothermal leg with heat `Q = n * R * T * log (V₂ / V₁)` absorbs positive heat
@@ -202,15 +208,16 @@ lemma carnot_cycle_efficiency {Tc Th n R V1 V2 V3 V4 Qh Qc cv : ℝ}
   rw [hheat.2.2]
   rfl
 
-/-- The second-law bound: any engine between the same reservoirs, with heat absorbed `Qh`,
-heat rejected `Qc`, work `W = Qh - Qc` (first law) and the Clausius inequality
+/-- The second-law bound: any engine between reservoirs at `0 < Tc ≤ Th`, with heat absorbed
+`Qh`, heat rejected `Qc`, work `W = Qh - Qc` (first law) and the Clausius inequality
 `Qh / Th - Qc / Tc ≤ 0` as the second-law input (LAW), satisfies
 `W / Qh ≤ carnotEfficiency Tc Th`. The Clausius inequality is a model hypothesis, not a
 theorem derived in this module. -/
 lemma engine_efficiency_le_carnotEfficiency {Qh Qc W Tc Th : ℝ}
-    (hTc : 0 < Tc) (hTh : 0 < Th) (hQh : 0 < Qh)
+    (hTc : 0 < Tc) (hT : Tc ≤ Th) (hQh : 0 < Qh)
     (hW : W = Qh - Qc) (hClausius : Qh / Th - Qc / Tc ≤ 0) :
     W / Qh ≤ carnotEfficiency Tc Th := by
+  have hTh : 0 < Th := lt_of_lt_of_le hTc hT
   have h1 : Qh / Th ≤ Qc / Tc := by linarith
   have h2 : Qh * Tc ≤ Qc * Th := (div_le_div_iff₀ hTh hTc).mp h1
   have h3 : Tc / Th ≤ Qc / Qh := (div_le_div_iff₀ hTh hQh).mpr (by linarith)
@@ -218,12 +225,13 @@ lemma engine_efficiency_le_carnotEfficiency {Qh Qc W Tc Th : ℝ}
   unfold carnotEfficiency
   linarith
 
-/-- A reversible engine attains the Carnot efficiency: with `W = Qh - Qc` and the Clausius
-relation as an equality, `W / Qh = carnotEfficiency Tc Th`. -/
+/-- A reversible engine attains the Carnot efficiency: between reservoirs at `0 < Tc ≤ Th`,
+with `W = Qh - Qc` and the Clausius relation as an equality, `W / Qh = carnotEfficiency Tc Th`. -/
 lemma engine_efficiency_eq_carnotEfficiency {Qh Qc W Tc Th : ℝ}
-    (hTc : 0 < Tc) (hTh : 0 < Th) (hQh : 0 < Qh)
+    (hTc : 0 < Tc) (hT : Tc ≤ Th) (hQh : 0 < Qh)
     (hW : W = Qh - Qc) (hClausius : Qh / Th - Qc / Tc = 0) :
     W / Qh = carnotEfficiency Tc Th := by
+  have hTh : 0 < Th := lt_of_lt_of_le hTc hT
   have h1 : Qh / Th = Qc / Tc := by linarith
   have hTh0 : Th ≠ 0 := hTh.ne'
   have hTc0 : Tc ≠ 0 := hTc.ne'
@@ -248,12 +256,12 @@ lemma engine_efficiency_eq_carnotEfficiency {Qh Qc W Tc Th : ℝ}
 `ΔS = n * cv * log (T₂ / T₁) + n * R * log (V₂ / V₁)` with constant molar heat capacity
 `cv`: the integral of the MODEL differential `dS = n * cv * dT / T + n * R * dV / V`. The
 lemmas below are consequences of this definition, not a derivation of the differential from
-statistics. Domain: positive ratios `T₂ / T₁` and `V₂ / V₁`, as for positive temperatures and
-volumes. At `T₁ = 0` or `V₁ = 0`, Lean's `x / 0 = 0` and `Real.log 0 = 0` give junk (with
-constant `cv`, heating from `T₁ → 0` has a divergent `ΔS`, yet `T₁ = 0` returns a finite value),
-and a negative ratio meets `Real.log (-x) = Real.log x`. The lemmas that read `ΔS` physically
-have hypotheses that keep both ratios positive; `idealGasEntropyChange_totalCV` and
-`idealGasEntropyChange_isothermal` only rewrite the formula and hold on junk inputs too. -/
+statistics. Domain: positive temperatures and volumes. At `T₁ = 0` or `V₁ = 0`, Lean's
+`x / 0 = 0` and `Real.log 0 = 0` give junk (with constant `cv`, heating from `T₁ → 0` has a
+divergent `ΔS`, yet `T₁ = 0` returns a finite value), and a negative ratio meets
+`Real.log (-x) = Real.log x`. The lemmas that read `ΔS` physically assume positive temperatures
+and volumes; `idealGasEntropyChange_totalCV` and `idealGasEntropyChange_isothermal` only rewrite
+the formula and hold on junk inputs too. -/
 noncomputable def idealGasEntropyChange (n cv R T1 V1 T2 V2 : ℝ) : ℝ :=
   n * cv * Real.log (T2 / T1) + n * R * Real.log (V2 / V1)
 
@@ -294,21 +302,19 @@ lemma idealGasEntropyChange_isothermal_pos {n cv R T1 V1 T2 V2 : ℝ}
   rw [idealGasEntropyChange_isothermal hT1 hT]
   exact mul_pos (mul_pos hn hR) (Real.log_pos ((one_lt_div hV1).mpr hexp))
 
-/-- Reversible-adiabatic case: if `T₂ / T₁ = (V₁ / V₂) ^ (R / cv)` (the adiabatic relation
-for constant `cv`) then `ΔS = 0`. Route: `Real.log` algebra (`Real.log_div`,
-`Real.log_rpow`), then `field_simp` and `ring`. -/
+/-- Reversible-adiabatic case: for positive temperatures and volumes, if
+`T₂ / T₁ = (V₁ / V₂) ^ (R / cv)` (the adiabatic relation for constant `cv`) then `ΔS = 0`.
+Route: `Real.log` algebra (`Real.log_div`, `Real.log_rpow`), then `field_simp` and `ring`. -/
 lemma idealGasEntropyChange_adiabatic {n cv R T1 V1 T2 V2 : ℝ}
-    (hcv : 0 < cv)
+    (hcv : 0 < cv) (hT1 : 0 < T1) (hT2 : 0 < T2)
     (hV1 : 0 < V1) (hV2 : 0 < V2)
     (had : T2 / T1 = (V1 / V2) ^ (R / cv)) :
     idealGasEntropyChange n cv R T1 V1 T2 V2 = 0 := by
-  have hlogT : Real.log (T2 / T1) = (R / cv) * Real.log (V1 / V2) := by
-    rw [had, Real.log_rpow (div_pos hV1 hV2)]
-  have hneg : Real.log (V1 / V2) = -Real.log (V2 / V1) := by
-    rw [Real.log_div hV1.ne' hV2.ne', Real.log_div hV2.ne' hV1.ne']
-    ring
+  have hlogT : Real.log T2 - Real.log T1 = (R / cv) * (Real.log V1 - Real.log V2) := by
+    rw [← Real.log_div hT2.ne' hT1.ne', had, Real.log_rpow (div_pos hV1 hV2),
+      Real.log_div hV1.ne' hV2.ne']
   unfold idealGasEntropyChange
-  rw [hlogT, hneg]
+  rw [Real.log_div hT2.ne' hT1.ne', Real.log_div hV2.ne' hV1.ne', hlogT]
   have hcv0 : cv ≠ 0 := hcv.ne'
   field_simp
   ring
@@ -325,24 +331,27 @@ lemma idealGasEntropyChange_symm {n cv R T1 V1 T2 V2 : ℝ}
 
 /-!
 
-## C. Entropy of mixing
+## C. Ideal entropy of mixing
 
 -/
 
-/-- The entropy of mixing `ΔS_mix = n * R * H(x)` for mole fractions `x : ι → ℝ`, where
+/-- The ideal entropy of mixing `ΔS_mix = n * R * H(x)` for mole fractions `x : ι → ℝ`, where
 `H(x) = -∑ i, x i * log (x i)` is the Shannon entropy
-`Chemistry.FiniteEnsembles.shannonEntropy`. With Mathlib's convention `Real.log 0 = 0`, a
-component with `x i = 0` contributes `0 * log 0 = 0` automatically, the continuous extension of
-`x * log x` and so the correct value. Domain: mole fractions (`0 ≤ x i`, `∑ i, x i = 1`),
-which `entropyOfMixing_nonneg` and `entropyOfMixing_eq_zero_iff` assume; a negative entry meets
-Lean's `Real.log (-x) = Real.log x`, and the value is then not an entropy (it can be negative).
+`Chemistry.FiniteEnsembles.shannonEntropy`. MODEL input: ideal mixing, as for ideal gases or an
+ideal solution (random mixing, no excess entropy). A nonideal mixture adds an excess entropy
+`S^E` that is not modeled here, so this is not the entropy of mixing of a general mixture.
+With Mathlib's convention `Real.log 0 = 0`, a component with `x i = 0` contributes
+`0 * log 0 = 0` automatically, the continuous extension of `x * log x` and so the correct value.
+Domain: mole fractions (`0 ≤ x i`, `∑ i, x i = 1`), which `entropyOfMixing_nonneg` and
+`entropyOfMixing_eq_zero_iff` assume; a negative entry meets Lean's
+`Real.log (-x) = Real.log x`, and the value is then not an entropy (it can be negative).
 Gibbs-paradox remark: mixing identical gases gives zero here only because they are counted as
 one component; the identical-gas resolution (indistinguishability) is CH34 territory and is NOT
 claimed here. -/
 noncomputable def entropyOfMixing {ι : Type*} [Fintype ι] (n R : ℝ) (x : ι → ℝ) : ℝ :=
   n * R * FiniteEnsembles.shannonEntropy x
 
-/-- The entropy of mixing in explicit form: `ΔS_mix = -n * R * ∑ i, x i * log (x i)`. -/
+/-- The ideal entropy of mixing in explicit form: `ΔS_mix = -n * R * ∑ i, x i * log (x i)`. -/
 lemma entropyOfMixing_eq_neg_sum {ι : Type*} [Fintype ι] (n R : ℝ) (x : ι → ℝ) :
     entropyOfMixing n R x = -n * R * ∑ i, x i * Real.log (x i) := by
   rw [entropyOfMixing, FiniteEnsembles.shannonEntropy]
@@ -355,23 +364,24 @@ lemma moleFraction_le_one {ι : Type*} [Fintype ι] {x : ι → ℝ}
   calc x i ≤ ∑ j, x j := Finset.single_le_sum (fun j _ => hx j) (Finset.mem_univ i)
   _ = 1 := hsum
 
-/-- The entropy of mixing is nonnegative for `0 ≤ n`, `0 ≤ R` and genuine mole fractions:
+/-- The ideal entropy of mixing is nonnegative for `0 ≤ n`, `0 ≤ R` and genuine mole fractions:
 `n * R ≥ 0` times the nonnegative Shannon entropy `FiniteEnsembles.shannonEntropy_nonneg`. -/
 lemma entropyOfMixing_nonneg {ι : Type*} [Fintype ι] {n R : ℝ} {x : ι → ℝ}
     (hn : 0 ≤ n) (hR : 0 ≤ R) (hx : ∀ i, 0 ≤ x i) (hsum : ∑ i, x i = 1) :
     0 ≤ entropyOfMixing n R x :=
   mul_nonneg (mul_nonneg hn hR) (FiniteEnsembles.shannonEntropy_nonneg hx hsum)
 
-/-- The entropy of mixing vanishes exactly for a single component: for `0 < n` and `0 < R`,
-`entropyOfMixing n R x = 0 ↔ ∃ i, x i = 1 ∧ ∀ j, j ≠ i → x j = 0`. Since `n * R ≠ 0`, this is
-the equality case `FiniteEnsembles.shannonEntropy_eq_zero_iff` of the Shannon entropy. -/
+/-- The ideal entropy of mixing vanishes exactly for a single component: for `0 < n` and
+`0 < R`, `entropyOfMixing n R x = 0 ↔ ∃ i, x i = 1 ∧ ∀ j, j ≠ i → x j = 0`. Since
+`n * R ≠ 0`, this is the equality case `FiniteEnsembles.shannonEntropy_eq_zero_iff` of the
+Shannon entropy. -/
 lemma entropyOfMixing_eq_zero_iff {ι : Type*} [Fintype ι] {n R : ℝ} {x : ι → ℝ}
     (hn : 0 < n) (hR : 0 < R) (hx : ∀ i, 0 ≤ x i) (hsum : ∑ i, x i = 1) :
     entropyOfMixing n R x = 0 ↔ (∃ i, x i = 1 ∧ ∀ j, j ≠ i → x j = 0) := by
   rw [entropyOfMixing, mul_eq_zero, or_iff_right (mul_pos hn hR).ne',
     FiniteEnsembles.shannonEntropy_eq_zero_iff hx hsum]
 
-/-- Binary case: for `ι = Fin 2` and `x = ![a, 1 - a]`, the mixing entropy unfolds to
+/-- Binary case: for `ι = Fin 2` and `x = ![a, 1 - a]`, the ideal mixing entropy unfolds to
 `-n * R * (a * log a + (1 - a) * log (1 - a))`. -/
 lemma entropyOfMixing_binary (n R a : ℝ) :
     entropyOfMixing n R (![a, 1 - a] : Fin 2 → ℝ)
