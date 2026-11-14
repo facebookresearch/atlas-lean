@@ -44,8 +44,9 @@ of vertices that carry a peg; the initial position for hole `s` has a peg on eve
 `s`. A jump `x → y → z` turns the pegs on `x` and `y` into holes and puts a peg on `z`.
 
 Vertices are given by their number `n`. Every vertex that lies on no edge keeps its initial
-contents forever, so a solvable graph has at most one such vertex and `n ≤ 2|E| + 1`; the
-certificate (the sequence of at most `n - 2` jumps) is therefore polynomial in the input.
+contents forever, so in a solvable graph such a vertex is the initial hole or carries the final
+peg; there are at most two of them and `n ≤ 2|E| + 2`. The certificate (the initial hole and a
+sequence of fewer than `n` jumps) is therefore polynomial in the input.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
