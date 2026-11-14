@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 C. Iwamoto, "Yosenabe is NP-complete", Journal of Information Processing 22(1) (2014), 40-43,
-doi:10.2197/ipsjjip.22.40; rules as published by Nikoli (nikoli.co.jp, "Yosenabe").
+doi:10.2197/ipsjjip.22.40.
 -/
 module
 
@@ -44,11 +44,11 @@ The grid is given explicitly, row by row: each cell is `(k, a)` with `k = 0` an 
 Gray areas are the connected components of the gray cells in the grid graph
 `pathGraph m □ pathGraph n` (`SameArea`). A solution gives every circle `x` the tip `tip x` of
 its arrow, a gray cell in the same row or column; the arrow's line is the cells from `x`
-(excluded) to `tip x` (included) (`OnArrow`). Following Nikoli's rules ("the tip of the arrow in a
-grey cell", "they go straight to their grey area"), once the line reaches a gray cell it stays
-on gray cells up to its tip (`GrayToTip`), so it enters exactly one gray area, the tip's, and
-does not pass over another. No line contains a circle, and lines of different arrows share no
-cell; in particular at most one arrow tip enters each gray cell, as the source notes.
+(excluded) to `tip x` (included) (`OnArrow`), and the circle enters the gray area of its tip. As
+in the source's rule (i), the only restrictions on a line are that it does not bend, contains no
+circle, and shares no cell with the line of another arrow; in particular at most one arrow tip
+enters each gray cell, as the source notes. The source does not forbid a line from passing over
+gray cells before its tip, so neither does the statement.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -99,11 +99,6 @@ def OnArrow (i : YosenabeInstance) (x t z : Cell i) : Prop :=
     ((z.1 = x.1 ∧ t.1 = x.1 ∧ min (x.2 : ℕ) t.2 ≤ z.2 ∧ (z.2 : ℕ) ≤ max (x.2 : ℕ) t.2) ∨
       (z.2 = x.2 ∧ t.2 = x.2 ∧ min (x.1 : ℕ) t.1 ≤ z.1 ∧ (z.1 : ℕ) ≤ max (x.1 : ℕ) t.1))
 
-/-- Along the arrow from `x` to `t`, every cell from a gray cell `z` of the line to the tip is
-gray: the line stays on gray cells from where it first reaches one to its tip. -/
-def GrayToTip (i : YosenabeInstance) (x t : Cell i) : Prop :=
-  ∀ z w, OnArrow i x t z → Gray i z → OnArrow i z t w → Gray i w
-
 /-- Well-formedness of an instance: the grid has at least one row and one column, all rows have
 the same length, every cell kind is `0`, `1` or `2`, every circle has a positive number, and each
 gray area has at most one label. -/
@@ -114,13 +109,13 @@ def WellFormed (i : YosenabeInstance) : Prop :=
 
 open Classical in
 /-- Some arrows (tips `tip x` for the circles `x`) satisfy the rules: each tip is a gray cell in
-the circle's row or column, the line stays on gray cells once it reaches one, no line contains a
-circle, lines of different arrows share no cell, every labelled area receives circles whose
-numbers sum to its label, and every area receives at least one circle. -/
+the circle's row or column, no line contains a circle, lines of different arrows share no cell,
+every labelled area receives circles whose numbers sum to its label, and every area receives at
+least one circle. -/
 def YosenabeFeasible (i : YosenabeInstance) : Prop :=
   ∃ tip : Cell i → Cell i,
     (∀ x, Circle i x → Gray i (tip x) ∧ ((tip x).1 = x.1 ∨ (tip x).2 = x.2) ∧
-      GrayToTip i x (tip x) ∧ ∀ z, OnArrow i x (tip x) z → ¬ Circle i z) ∧
+      ∀ z, OnArrow i x (tip x) z → ¬ Circle i z) ∧
     (∀ x x', Circle i x → Circle i x' → x ≠ x' → ∀ z,
       ¬ (OnArrow i x (tip x) z ∧ OnArrow i x' (tip x') z)) ∧
     (∀ g, Gray i g → (cell i g).2 ≠ 0 →
