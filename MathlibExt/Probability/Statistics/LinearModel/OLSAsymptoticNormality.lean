@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.LinearModel.OLSConsistency
+public import MathlibExt.Probability.Statistics.LinearModel.HeteroskedasticityRobust
 public import MathlibExt.Probability.Statistics.MultivariateCLT
 public import MathlibExt.Probability.Statistics.Slutsky
 public import Mathlib.Probability.Distributions.Gaussian.Multivariate
@@ -35,6 +36,11 @@ under `Q⁻¹`, which is `N(0, Q⁻¹ Ω Q⁻¹)` by
 `olsSeqEstimator_eq` the discrepancy `√n (β̂ₙ - β) - Q̂ₙ⁻¹ *ᵥ (√n • n⁻¹ ∑ xᵢ uᵢ)` is `0`
 whenever `Q̂ₙ` is a unit, and `P(Q̂ₙ not a unit) → 0`, so it tends to `0` in probability;
 `tendstoInDistribution_of_tendstoInMeasure_sub` closes the argument.
+
+`popScoreCov_eq_hc0PopMeat` and `popScoreCov_sandwich_eq_hc0PopSandwich` identify the meat and
+the limit covariance with `hc0PopMeat` and `hc0PopSandwich` of `HeteroskedasticityRobust`, whose
+robust Wald theorem `tendsto_coverage_hc0Wald` assumes asymptotic normality of a linear contrast
+(`hAN`); deriving that contrast form from this theorem is not done here.
 -/
 
 @[expose] public section
@@ -48,7 +54,8 @@ namespace MathlibExt.Probability.Statistics.LinearModel
 /-- The population score second-moment matrix, entrywise:
 `Ω a b = 𝔼[(x₀ u₀) a * (x₀ u₀) b]`. Under the exogeneity hypothesis
 `𝔼[x₀ u₀] = 0` this is the covariance matrix of the score `x₀ u₀`, the
-meat of the sandwich covariance `Q⁻¹ Ω Q⁻¹`. -/
+meat of the sandwich covariance `Q⁻¹ Ω Q⁻¹`. It equals the population HC0 meat
+`hc0PopMeat` (`popScoreCov_eq_hc0PopMeat`); the frozen ST05.T02 statement keeps this name. -/
 noncomputable def popScoreCov {k : Type*} [Fintype k] {Ω : Type*} [MeasurableSpace Ω]
     (X0 : Ω → (k → ℝ)) (U0 : Ω → ℝ) (μ : Measure Ω) : Matrix k k ℝ :=
   Matrix.of fun a b => ∫ ω, ((U0 ω) • X0 ω) a * ((U0 ω) • X0 ω) b ∂μ
@@ -959,5 +966,33 @@ theorem tendstoInDistribution_sqrt_mul_olsSeqEstimator_sub
         (olsSeqEstimator X (fun i ω => X i ω ⬝ᵥ β + U i ω) n ω - β))) μ :=
     fun (n : ℕ) => aemeasurable_sqrt_smul_olsSeqEstimator_sub β hident n
   exact MeasureTheory.tendstoInDistribution_of_tendstoInMeasure_sub _ _ hS hSub hMeas
+
+/-! ### Relation to the HC0 sandwich of `HeteroskedasticityRobust` -/
+
+/-- `popScoreCov` is the population HC0 meat `hc0PopMeat`. -/
+theorem popScoreCov_eq_hc0PopMeat {k : Type*} [Fintype k] {Ω : Type*} [MeasurableSpace Ω]
+    (X0 : Ω → (k → ℝ)) (U0 : Ω → ℝ) (μ : Measure Ω) :
+    popScoreCov X0 U0 μ = hc0PopMeat X0 U0 μ := by
+  ext a b
+  simp only [popScoreCov, hc0PopMeat, Matrix.of_apply]
+  congr 1
+  funext ω
+  simp only [Pi.smul_apply, smul_eq_mul]
+  ring
+
+/-- The asymptotic covariance `Q⁻¹ Ω Q⁻¹` of `√n (β̂ₙ - β)` is the population HC0 sandwich
+`hc0PopSandwich`. -/
+theorem popScoreCov_sandwich_eq_hc0PopSandwich {k : Type*} [Fintype k] [DecidableEq k]
+    {Ω : Type*} [MeasurableSpace Ω] (X0 : Ω → (k → ℝ)) (U0 : Ω → ℝ) (μ : Measure Ω) :
+    (popGram X0 μ)⁻¹ * popScoreCov X0 U0 μ * (popGram X0 μ)⁻¹ = hc0PopSandwich X0 U0 μ := by
+  have hsym : (popGram X0 μ)ᵀ = popGram X0 μ := by
+    ext a b
+    simp only [popGram, Matrix.transpose_apply, Matrix.of_apply]
+    congr 1
+    funext ω
+    ring
+  have hinv : ((popGram X0 μ)⁻¹)ᵀ = (popGram X0 μ)⁻¹ := by
+    rw [Matrix.transpose_nonsing_inv, hsym]
+  rw [hc0PopSandwich, popScoreCov_eq_hc0PopMeat, hinv]
 
 end MathlibExt.Probability.Statistics.LinearModel

@@ -41,8 +41,10 @@ theorem popGram_const_two {Ω : Type*} [MeasurableSpace Ω]
     {μ : Measure Ω} [IsProbabilityMeasure μ] :
     popGram (fun _ : Ω => ![2]) μ = !![4] := by
   ext a b
-  fin_cases a <;> fin_cases b
-  simp [popGram]; norm_num
+  fin_cases a
+  fin_cases b
+  simp [popGram]
+  norm_num
 
 /-- `Ω = 36` for `x₀ = ![2]`, `u₀ = 3`. -/
 theorem popScoreCov_const {Ω : Type*} [MeasurableSpace Ω]
@@ -50,8 +52,10 @@ theorem popScoreCov_const {Ω : Type*} [MeasurableSpace Ω]
     popScoreCov (fun _ : Ω => ![2]) (fun _ : Ω => 3) μ =
       !![36] := by
   ext a b
-  fin_cases a <;> fin_cases b
-  simp [popScoreCov]; norm_num
+  fin_cases a
+  fin_cases b
+  simp [popScoreCov]
+  norm_num
 
 /-- For `k = Fin 1` the sandwich is `Ω / Q²`. -/
 theorem sandwich_fin_one :
