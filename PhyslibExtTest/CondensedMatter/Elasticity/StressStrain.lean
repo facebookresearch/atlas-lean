@@ -25,6 +25,10 @@ public import PhyslibExt.CondensedMatter.Elasticity.StressStrain
   `γ = 0` the strain is zero.
 * True strain at `e = 0.1`: `ln 1.1`, between `0` and `0.1`; true stress `110` from
   `F = 1000`, `A₀ = 10`, `e = 0.1`.
+* Hydrostatic tension `σ = 2 • 1`: traction `(0, 0, 2)` on the face with normal `(0, 0, 1)` and
+  `(0, 0, -2)` on the opposite face. Displacement gradient `H` with `H 0 1 = 1/2` and all other
+  entries `0`: tensor shear `ε₀₁ = 1/4`, engineering shear `1/2`, `ε₀₀ = H 0 0`, and, `H` being
+  asymmetric, `ε₀₁ ≠ H 0 1`.
 * Countermodels: a non-symmetric matrix is not a symmetric stress; `e = -1` has no proof of the
   true-strain domain `-1 < e`, while the unrestricted helper gives `logStrain (-1) = 0`.
 -/
@@ -190,6 +194,40 @@ example (x : Fin 3 → ℝ) :
   rw [simpleShear_smallStrain]
   ext i j
   fin_cases i <;> fin_cases j <;> simp
+
+/-! ### Hydrostatic traction and small-strain entries -/
+
+-- Hydrostatic tension `σ = 2 • 1`: traction `(0, 0, 2)` on the face with normal `(0, 0, 1)`.
+example : traction ((2 : ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ)) ![0, 0, 1] = ![0, 0, 2] := by
+  rw [traction_smul_one]
+  ext i
+  fin_cases i <;> simp
+
+-- The opposite face carries the opposite traction `(0, 0, -2)`.
+example : traction ((2 : ℝ) • (1 : Matrix (Fin 3) (Fin 3) ℝ)) (-![0, 0, 1]) = ![0, 0, -2] := by
+  rw [traction_neg, traction_smul_one]
+  ext i
+  fin_cases i <;> simp
+
+-- Tensor shear `ε₀₁ = 1/4` for `H 0 1 = 1/2`, other entries `0`.
+example : smallStrain !![(0 : ℝ), 1/2, 0; 0, 0, 0; 0, 0, 0] 0 1 = 1 / 4 := by
+  rw [smallStrain_apply]
+  norm_num
+
+-- Engineering shear `γ₀₁ = 1/2` for the same `H`.
+example : engineeringShear (smallStrain !![(0 : ℝ), 1/2, 0; 0, 0, 0; 0, 0, 0]) = 1 / 2 := by
+  rw [engineeringShear_smallStrain]
+  norm_num
+
+-- The diagonal entry `ε₀₀` is `H 0 0`.
+example : smallStrain !![(0 : ℝ), 1/2, 0; 0, 0, 0; 0, 0, 0] 0 0 = 0 := by
+  rw [smallStrain_apply_self]
+  simp
+
+-- Countermodel: `H` is asymmetric, so the tensor shear `ε₀₁` is not `H 0 1`.
+example : smallStrain !![(0 : ℝ), 1/2, 0; 0, 0, 0; 0, 0, 0] 0 1 ≠ 1 / 2 := by
+  rw [smallStrain_apply]
+  norm_num
 
 /-! ### True strain and true stress -/
 

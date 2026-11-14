@@ -163,4 +163,141 @@ example [IsFiniteMeasure μ] (hcont : ∀ ω, Continuous fun t => X t ω)
 
 end Boundary
 
+/-! ### The realization corollary without a Markov hypothesis -/
+
+section Unconditional
+
+/-- The interior initial frequency `1/2`. -/
+private noncomputable def xHalf : I := ⟨1 / 2, by constructor <;> norm_num⟩
+
+-- At the interior start `1/2` the absorbing-path argument behind `markov_modifiedProcess_zero`
+-- is unavailable; the corollary needs no Markov hypothesis from the caller.
+example {τ : SamplePath → WithTop ℝ≥0} (hτ : IsStoppingTime (naturalFiltration xHalf) τ)
+    (t : ℝ≥0) (g : C(I, ℝ)) :
+    (rawMeasure xHalf)[{ω | τ ω ≠ ⊤}.indicator
+        (fun ω => g (stoppedValue (modifiedState xHalf) (fun ω => τ ω + t) ω)) |
+        hτ.measurableSpace] =ᵐ[rawMeasure xHalf]
+      {ω | τ ω ≠ ⊤}.indicator
+        (fun ω => wfSemigroup t g (stoppedValue (modifiedState xHalf) τ ω)) :=
+  condExp_modifiedState_stoppedValue_add xHalf hτ t g
+
+-- Concrete check for `g = 1`: the left side computed directly from the definitions, since
+-- `{τ < ∞}` is `ℱ_τ`-measurable, is `1_{τ < ∞}` ...
+private theorem condExp_indicator_one {x : I} {τ : SamplePath → WithTop ℝ≥0}
+    (hτ : IsStoppingTime (naturalFiltration x) τ) :
+    (rawMeasure x)[{ω | τ ω ≠ ⊤}.indicator (fun _ => (1 : ℝ)) | hτ.measurableSpace] =
+      {ω | τ ω ≠ ⊤}.indicator (fun _ => (1 : ℝ)) := by
+  have hfin : MeasurableSet[hτ.measurableSpace] {ω | τ ω ≠ ⊤} :=
+    hτ.measurable (measurableSet_singleton ⊤).compl
+  have hsm : StronglyMeasurable[hτ.measurableSpace]
+      ({ω | τ ω ≠ ⊤}.indicator (fun _ => (1 : ℝ))) :=
+    stronglyMeasurable_const.indicator hfin
+  exact condExp_of_stronglyMeasurable hτ.measurableSpace_le hsm
+    ((integrable_const (1 : ℝ)).indicator (hτ.measurableSpace_le _ hfin))
+
+-- ... and the corollary at `x = 1/2` for `g = 1` agrees with that direct value.
+example {τ : SamplePath → WithTop ℝ≥0} (hτ : IsStoppingTime (naturalFiltration xHalf) τ)
+    (t : ℝ≥0) :
+    {ω | τ ω ≠ ⊤}.indicator (fun _ => (1 : ℝ)) =ᵐ[rawMeasure xHalf]
+      {ω | τ ω ≠ ⊤}.indicator
+        (fun ω => wfSemigroup t 1 (stoppedValue (modifiedState xHalf) τ ω)) := by
+  have h := condExp_modifiedState_stoppedValue_add xHalf hτ t 1
+  simp only [ContinuousMap.one_apply] at h
+  rwa [condExp_indicator_one hτ] at h
+
+end Unconditional
+
+/-! ### Outside the corollary: a process that is not Wright–Fisher Markov -/
+
+section NotMarkov
+
+open Polynomial
+open MathlibExt.Biology.PopulationGenetics.Coalescent.KingmanBlockCounting
+
+/-- Heterozygosity `H(y) = 2y(1 - y)` on `[0, 1]`. -/
+private noncomputable def het : C(I, ℝ) := (2 * X * (1 - X) : ℝ[X]).toContinuousMapOn I
+
+-- Exact decay `P_t H = e^{-t} H`, computed from the dual block-counting entries (the same
+-- computation as in the semigroup tests).
+private theorem wfSemigroup_het {t : ℝ} (ht : 0 ≤ t) (x : I) :
+    wfSemigroup t het x = Real.exp (-t) * (2 * x * (1 - x)) := by
+  have h21 : NormedSpace.exp (t • blockCountingGenerator 2) 2 1 = 1 - Real.exp (-t) := by
+    rw [exp_blockCountingGenerator_apply 2 t 2 1 (by decide) (by decide)]
+    change tavareProb 2 1 t = _
+    rw [tavareProb, show Finset.Icc 1 2 = {1, 2} by decide, Finset.sum_pair (by norm_num)]
+    simp [Nat.ascFactorial, Nat.descFactorial, Nat.factorial]
+    ring_nf
+  have h22 : NormedSpace.exp (t • blockCountingGenerator 2) 2 2 = Real.exp (-t) := by
+    rw [exp_blockCountingGenerator_apply 2 t 2 2 (by decide) le_rfl]
+    change tavareProb 2 2 t = _
+    simp [tavareProb, Nat.ascFactorial, Nat.descFactorial, Nat.factorial]
+    ring_nf
+  have h20 : NormedSpace.exp (t • blockCountingGenerator 2) 2 0 = 0 := by
+    rw [exp_smul_blockCountingGenerator]
+    simp [Matrix.mul_apply, Fin.sum_univ_three, blockCountingRightEigen, blockCountingLeftEigen,
+      Nat.ascFactorial, Nat.descFactorial, blockCountingEigenvalue]
+    norm_num
+  have hX1 := wfSemigroup_X_pow ht 1 x
+  have hX2 := wfSemigroup_X_pow ht 2 x
+  have hG : blockCountingGenerator 1 = 0 := by
+    ext i j
+    fin_cases i <;> fin_cases j <;> simp [blockCountingGenerator]
+  have hp : het = (2 : ℝ) • (X ^ 1 : ℝ[X]).toContinuousMapOn I -
+      (2 : ℝ) • (X ^ 2 : ℝ[X]).toContinuousMapOn I := by
+    ext y
+    simp [het]
+    ring
+  rw [hp, map_sub, map_smul, map_smul, ContinuousMap.sub_apply, ContinuousMap.smul_apply,
+    ContinuousMap.smul_apply, hX1, hX2]
+  simp [hG, Fin.sum_univ_two, Fin.sum_univ_three, h20, h21, h22]
+  ring
+
+private theorem projIcc_half :
+    projIcc (0 : ℝ) 1 zero_le_one (1 / 2) = ⟨1 / 2, by constructor <;> norm_num⟩ :=
+  projIcc_of_mem _ ⟨by norm_num, by norm_num⟩
+
+-- At `1/2` one unit of time moves `H` from `1/2` to `e⁻¹ / 2`.
+private theorem het_half_ne :
+    het ⟨1 / 2, by constructor <;> norm_num⟩ ≠
+      wfSemigroup 1 het ⟨1 / 2, by constructor <;> norm_num⟩ := by
+  have hl : het ⟨1 / 2, by constructor <;> norm_num⟩ = 1 / 2 := by norm_num [het]
+  have hlt : Real.exp (-1) < 1 := Real.exp_lt_one_iff.2 (by norm_num)
+  intro h
+  rw [hl, wfSemigroup_het zero_le_one] at h
+  change (1 / 2 : ℝ) = Real.exp (-1) * (2 * (1 / 2) * (1 - 1 / 2)) at h
+  linarith
+
+variable {Ω : Type*} {mΩ : MeasurableSpace Ω} (ℱ : Filtration ℝ≥0 mΩ) (μ : Measure Ω)
+  [IsProbabilityMeasure μ]
+
+-- The constant process at `1/2` fails the `wfSemigroup` equality (for `g = H`, `s = 0`,
+-- `t = 1`), whatever the filtration, so the general theorem's hypothesis does not hold ...
+example :
+    ¬ ∀ s t : ℝ≥0, s ≤ t → ∀ g : C(I, ℝ),
+      μ[fun ω => g (projIcc (0 : ℝ) 1 zero_le_one ((fun _ _ => (1 / 2 : ℝ)) t ω)) | ℱ s] =ᵐ[μ]
+        fun ω => wfSemigroup ((t : ℝ) - s) g
+          (projIcc (0 : ℝ) 1 zero_le_one ((fun _ _ => (1 / 2 : ℝ)) s ω)) := by
+  intro h
+  have h1 := h 0 1 zero_le_one het
+  rw [condExp_const (ℱ.le 0)] at h1
+  obtain ⟨ω, hω⟩ := Filter.Eventually.exists h1
+  simp only [projIcc_half, NNReal.coe_one, NNReal.coe_zero, sub_zero] at hω
+  exact het_half_ne hω
+
+-- ... and the strong Markov conclusion is false for it at `τ ≡ 0`, `t = 1`. The corollary is
+-- stated only for the realization `modifiedProcess x`, so nothing is claimed for this process.
+example :
+    ¬ μ[fun ω => het (projIcc (0 : ℝ) 1 zero_le_one (stoppedValue (fun _ _ => (1 / 2 : ℝ))
+        (fun _ => ((0 : ℝ≥0) : WithTop ℝ≥0) + 1) ω)) |
+        (isStoppingTime_const ℱ 0).measurableSpace] =ᵐ[μ]
+      fun ω => wfSemigroup ((1 : ℝ≥0) : ℝ) het (projIcc (0 : ℝ) 1 zero_le_one
+        (stoppedValue (fun _ _ => (1 / 2 : ℝ)) (fun _ => ((0 : ℝ≥0) : WithTop ℝ≥0)) ω)) := by
+  intro h
+  simp only [stoppedValue, projIcc_half, NNReal.coe_one] at h
+  rw [condExp_const (isStoppingTime_const ℱ 0).measurableSpace_le] at h
+  obtain ⟨ω, hω⟩ := Filter.Eventually.exists h
+  exact het_half_ne hω
+
+end NotMarkov
+
 end MathlibExtTest.Biology.PopulationGenetics.Diffusion.NeutralStrongMarkov

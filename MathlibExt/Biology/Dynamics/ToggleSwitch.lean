@@ -72,10 +72,11 @@ real roots of the cubic `cubic a b u = u³ - a u² + (1 + b) u - a`, all of whic
 * `ncard_equilibria_eq_three_iff_bistable`: exactly three equilibria iff two distinct linearly
   stable equilibria exist (bistability).
 
-Other Hill exponents (the equilibrium polynomial then has degree `γ + 1` for `β = 1` and degree 5
-for `β = γ = 2`; the mirror case `β = 2`, `γ = 1` follows by swapping `u` and `v` but is not
-stated), the global phase portrait (basins, separatrix = stable manifold of the saddle) and the
-continuous-time dynamics beyond linearization are not treated.
+The equilibrium count for `β = 1` with any `γ` (polynomial of degree `γ + 1`, at most three
+equilibria) and for `β = γ = 2` (a quintic, at most five) is in
+`MathlibExt.Biology.Dynamics.ToggleSwitchGeneral`. The global phase portrait (basins, separatrix =
+stable manifold of the saddle) and the continuous-time dynamics beyond linearization are not
+treated.
 
 ## References
 

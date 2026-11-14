@@ -62,7 +62,8 @@ assumptions are:
 ## Scope
 
 The general version, with only some spectrum outside the closed unit disk and no eigenvector,
-uses approximate eigenvectors at a spectral point of maximal modulus; it is proved in
+uses approximate eigenvectors at a spectral point of maximal modulus; it is proved as
+`GeneralInstability.exists_escape_of_mem_spectrum` in
 `MathlibExt.Analysis.PDE.SemilinearFlow.GeneralInstability` from the public proof steps of this
 module. Here we assume an eigenvector and the growth condition `μ < |ν|ᵖ`. An unstable
 *continuum* wavenumber of a reaction–diffusion system is not enough on a bounded domain: the

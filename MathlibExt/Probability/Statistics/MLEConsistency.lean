@@ -46,7 +46,8 @@ fun _ => θ₀` used there, for any (a.e. strongly measurable) maximum-likelihoo
   law for pairwise independent identically distributed data (`uniformLLNOn_of_finiteRank`).
 * **Identifiability** (`IsIdentifiedOn`): `θ₀ ∈ K` and `popCrit P ℓ X θ < popCrit P ℓ X θ₀` for
   every `θ ∈ K` with `θ ≠ θ₀`. For a correctly specified model this is the information
-  inequality together with identifiability of the law; that derivation is not part of this file.
+  inequality together with identifiability of the law, derived in
+  `InformationInequalityIdentification`.
 * **Regularity**: either the population criterion is upper semicontinuous on `K` (Wald's
   condition), or `θ ↦ ℓ θ x` is continuous on `K` for every `x`, in which case the population
   criterion is continuous on `K` as a uniform limit of continuous functions and no condition on
@@ -90,8 +91,9 @@ cover; that form, unbounded parameter sets (which need a separate argument that 
 in a compact set), rates and asymptotic normality are outside this file. The uniform LLN is a
 hypothesis of the main theorems and is derived here only for finite-rank log-likelihoods
 `ℓ θ x = ∑ j, a j θ * g j x` (`uniformLLNOn_of_finiteRank`). Identifiability is the
-unique-maximizer condition `IsIdentifiedOn` on the population criterion; deriving it from
-identifiability of the law via the information inequality is not done.
+unique-maximizer condition `IsIdentifiedOn` on the population criterion; its derivation from
+identifiability of the law via the information inequality is in
+`InformationInequalityIdentification`.
 
 ## References
 
