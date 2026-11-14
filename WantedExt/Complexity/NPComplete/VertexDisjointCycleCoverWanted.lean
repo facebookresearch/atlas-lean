@@ -43,8 +43,11 @@ DISJOINT CYCLE COVER ("A family `F` of vertex disjoint cycles covering `V`", mea
 cycles in `F`"). Equivalently, `V` is partitioned into at most `K` sets, each with at least three
 vertices and inducing a subgraph that contains a Hamiltonian circuit: Garey and Johnson's [GT13]
 comment records that this undirected problem "becomes NP-complete … if the instance includes an
-upper bound `K` on `k`". The case `K = 1` asks for a single cycle through every vertex, which is
-HAMILTONIAN CIRCUIT (Karp 1972), so the instances `(G, 1)` already make the problem NP-hard. It is
+upper bound `K` on `k`". For a graph with at least one vertex, the case `K = 1` asks for a single
+cycle through every vertex, which is HAMILTONIAN CIRCUIT (Karp 1972); so HAMILTONIAN CIRCUIT
+reduces to this problem by mapping a graph `G` with a vertex to `(G, 1)` and the empty graph (no
+Hamiltonian circuit) to a fixed no-instance, such as a single edge with `K = 1`. The empty graph
+itself is a yes-instance here for every `K`: it is covered by the empty family (`k = 0`). It is
 in NP: the cycles are a certificate. The vertex count `n` is binary, but a vertex on no edge lies
 on no cycle, so an instance with more than `2|E|` vertices is a no-instance, recognized in
 polynomial time, and otherwise the certificate lists at most `n ≤ 2|E|` vertices.
