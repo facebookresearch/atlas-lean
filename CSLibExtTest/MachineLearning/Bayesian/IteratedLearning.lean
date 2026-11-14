@@ -15,13 +15,16 @@ public import Mathlib.Probability.ProbabilityMassFunction.Monad
 /-!
 # Tests for iterated learning: posterior sampling preserves the prior
 
-Three boundary cases on two hypotheses and two observations (`Bool`/`Bool`):
+Four boundary cases on two hypotheses and two observations (`Bool`/`Bool`):
 
 * symmetric positive likelihoods: the prior is stationary and the chain is
   irreducible (every entry positive);
 * identical likelihoods: data are uninformative, the chain forgets in one step;
 * disjoint likelihood supports: the chain is the identity, so every
-  distribution is stationary (stationarity is not unique convergence).
+  distribution is stationary (stationarity is not unique convergence);
+* the zero-mass prior `PMF.pure true`: it is stationary, and clearing the
+  denominator holds at the datum `false`, whose predictive probability is `0`
+  although the zero-mass hypothesis `false` gives it likelihood `1`.
 -/
 
 @[expose] public section
@@ -81,7 +84,7 @@ theorem stationary_symmetric :
     priorUniform.bind
         (transmissionKernel Bool Bool priorUniform likelihoodSymm)
       = priorUniform :=
-  transmission_stationary Bool Bool priorUniform likelihoodSymm priorUniform_pos
+  transmission_stationary Bool Bool priorUniform likelihoodSymm
 
 /-- Boundary case 1: with positive likelihoods the chain is irreducible. -/
 theorem irreducible_symmetric (h h' : Bool) :
@@ -104,7 +107,7 @@ theorem forgets_in_one_step (h : Bool) :
     transmissionKernel Bool Bool priorUniform likelihoodConst h
       = priorUniform :=
   transmissionKernel_eq_prior Bool Bool priorUniform likelihoodConst
-    priorUniform_pos fairCoin (fun _ => rfl) h
+    fairCoin (fun _ => rfl) h
 
 /-- Noiseless likelihoods: each hypothesis produces its own datum only. -/
 noncomputable def likelihoodNoiseless : Bool → PMF Bool
@@ -131,5 +134,34 @@ theorem identity_stationary (σ : PMF Bool) :
     σ.bind (transmissionKernel Bool Bool priorUniform likelihoodNoiseless)
       = σ :=
   bind_eq_of_eq_pure Bool _ (fun h => identity_kernel h) σ
+
+/-- Boundary case 4: the zero-mass prior `PMF.pure true` is stationary. -/
+theorem sparse_prior_stationary :
+    (PMF.pure true).bind
+        (transmissionKernel Bool Bool (PMF.pure true) likelihoodSymm)
+      = PMF.pure true :=
+  transmission_stationary Bool Bool (PMF.pure true) likelihoodSymm
+
+/-- Boundary case 4: detailed balance under the zero-mass prior. -/
+theorem sparse_prior_detailedBalance (h h' : Bool) :
+    (PMF.pure true) h * transmissionKernel Bool Bool (PMF.pure true) likelihoodSymm h h' =
+      (PMF.pure true) h' *
+        transmissionKernel Bool Bool (PMF.pure true) likelihoodSymm h' h :=
+  transmission_detailedBalance Bool Bool (PMF.pure true) likelihoodSymm h h'
+
+/-- Boundary case 4 (zero-mass-prior regression): under the prior `PMF.pure true`
+and noiseless likelihoods, the datum `false` has predictive probability `0`, yet
+the zero-mass hypothesis `false` gives it likelihood `1`; clearing the
+denominator still holds there, with both sides `0`. -/
+theorem sparse_prior_zero_predictive :
+    predictive Bool Bool (PMF.pure true) likelihoodNoiseless false = 0 ∧
+      likelihoodNoiseless false false = 1 ∧
+      predictive Bool Bool (PMF.pure true) likelihoodNoiseless false *
+          posterior Bool Bool (PMF.pure true) likelihoodNoiseless false false =
+        (PMF.pure true) false * likelihoodNoiseless false false := by
+  refine ⟨?_, ?_, posterior_mul_predictive Bool Bool _ _ false false⟩
+  · rw [predictive_apply, Fintype.sum_bool]
+    simp [likelihoodNoiseless, PMF.pure_apply]
+  · simp [likelihoodNoiseless, PMF.pure_apply]
 
 end CSLibExtTest.MachineLearning.Bayesian.IteratedLearning
