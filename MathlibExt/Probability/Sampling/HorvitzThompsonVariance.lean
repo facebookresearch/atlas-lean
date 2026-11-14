@@ -576,12 +576,9 @@ theorem variance_horvitzThompsonTotal_fixed {α : Type*} [Fintype α]
 theorem integral_senYatesGrundyEstimate {α : Type*} [Fintype α]
     [DecidableEq α] [MeasurableSpace (Finset α)]
     [MeasurableSingletonClass (Finset α)] (p : PMF (Finset α)) (y : α → ℝ)
-    (hpos : ∀ i, 0 < inclusionProbability p i)
     (hpij : ∀ i j, i ≠ j → 0 < pairInclusionProbability p i j) :
     ∫ s, senYatesGrundyEstimate p y s ∂p.toMeasure
       = senYatesGrundyVariance p y := by
-  have hne : ∀ i, inclusionProbability p i ≠ 0 :=
-    fun i => ne_of_gt (hpos i)
   have hinner : ∀ (F : α → α → ℝ) (s : Finset α) (i : α), i ∈ s →
       (∑ j ∈ s.erase i, F i j)
       = ∑ j ∈ Finset.univ.erase i,
@@ -723,7 +720,7 @@ theorem integral_senYatesGrundyEstimate_eq_variance {α : Type*} [Fintype α]
     (hpij : ∀ i j, i ≠ j → 0 < pairInclusionProbability p i j) :
     ∫ s, senYatesGrundyEstimate p y s ∂p.toMeasure
       = ∫ s, (horvitzThompsonTotal p y s - ∑ i, y i) ^ 2 ∂p.toMeasure := by
-  rw [integral_senYatesGrundyEstimate p y hpos hpij,
+  rw [integral_senYatesGrundyEstimate p y hpij,
     variance_horvitzThompsonTotal_fixed p y n hpos hfix]
 
 end MathlibExt.Probability.Sampling
