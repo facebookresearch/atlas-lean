@@ -74,6 +74,14 @@ private theorem fermatPoly_sq_mod_eight (n : ℕ) :
     · exact Or.inr (Or.inr h)
   · exact Or.inr (Or.inl (fermatPoly_odd_sq_mod_eight hn))
 
+private theorem fermatPoly_three_sq_mod_eight {x y z : ℕ}
+    (h : (x ^ 2 % 8 + y ^ 2 % 8 + z ^ 2 % 8) % 8 = 3) :
+    x ^ 2 % 8 = 1 ∧ y ^ 2 % 8 = 1 ∧ z ^ 2 % 8 = 1 := by
+  have hx := fermatPoly_sq_mod_eight x
+  have hy := fermatPoly_sq_mod_eight y
+  have hz := fermatPoly_sq_mod_eight z
+  omega
+
 private theorem fermatPoly_odd_iff_sq_mod_eight_eq_one (n : ℕ) :
     Odd n ↔ n ^ 2 % 8 = 1 := by
   constructor
@@ -131,10 +139,7 @@ theorem exists_eq_add_add_triangular (n : ℕ) :
           (x ^ 2 + y ^ 2 + z ^ 2) % 8 := by simp [Nat.add_mod]
       _ = (8 * n + 3) % 8 := congrArg (· % 8) hxyz
       _ = 3 := hmod
-  have hmods : x ^ 2 % 8 = 1 ∧ y ^ 2 % 8 = 1 ∧ z ^ 2 % 8 = 1 := by
-    rcases fermatPoly_sq_mod_eight x with hx | hx | hx <;>
-      rcases fermatPoly_sq_mod_eight y with hy | hy | hy <;>
-      rcases fermatPoly_sq_mod_eight z with hz | hz | hz <;> omega
+  have hmods := fermatPoly_three_sq_mod_eight hsumMod
   have hxodd := (fermatPoly_odd_iff_sq_mod_eight_eq_one x).mpr hmods.1
   have hyodd := (fermatPoly_odd_iff_sq_mod_eight_eq_one y).mpr hmods.2.1
   have hzodd := (fermatPoly_odd_iff_sq_mod_eight_eq_one z).mpr hmods.2.2
@@ -240,10 +245,7 @@ theorem exists_sum_four_sq_eq_and_sum_eq_of_odd {a b : ℕ}
           (x ^ 2 + y ^ 2 + z ^ 2) % 8 := by simp [Nat.add_mod]
       _ = d % 8 := congrArg (· % 8) hxyz
       _ = 3 := hdMod
-  have hmods : x ^ 2 % 8 = 1 ∧ y ^ 2 % 8 = 1 ∧ z ^ 2 % 8 = 1 := by
-    rcases fermatPoly_sq_mod_eight x with hx | hx | hx <;>
-      rcases fermatPoly_sq_mod_eight y with hy | hy | hy <;>
-      rcases fermatPoly_sq_mod_eight z with hz | hz | hz <;> omega
+  have hmods := fermatPoly_three_sq_mod_eight hsumMod
   have hx : Odd x := (fermatPoly_odd_iff_sq_mod_eight_eq_one x).mpr hmods.1
   have hy : Odd y := (fermatPoly_odd_iff_sq_mod_eight_eq_one y).mpr hmods.2.1
   have hz : Odd z := (fermatPoly_odd_iff_sq_mod_eight_eq_one z).mpr hmods.2.2
@@ -325,9 +327,7 @@ theorem exists_sum_four_sq_eq_and_sum_eq_of_odd {a b : ℕ}
     omega
   have hTnonneg : 0 ≤ T := by
     rcases hw with hw | hw
-    · have hzx : (z : ℤ) ≤ X := by
-        dsimp [X]
-        exact_mod_cast hzy.trans hyx
+    · have hzx : (z : ℤ) ≤ X := Int.ofNat_le.mpr (hzy.trans hyx)
       rw [hw] at hT4 hV4
       omega
     · have hX : 0 ≤ X := by positivity
@@ -336,9 +336,7 @@ theorem exists_sum_four_sq_eq_and_sum_eq_of_odd {a b : ℕ}
       omega
   have hUnonneg : 0 ≤ U := by
     rcases hw with hw | hw
-    · have hzyInt : (z : ℤ) ≤ Y := by
-        dsimp [Y]
-        exact_mod_cast hzy
+    · have hzyInt : (z : ℤ) ≤ Y := Int.ofNat_le.mpr hzy
       rw [hw] at hU4 hV4
       omega
     · have hY : 0 ≤ Y := by positivity
@@ -599,31 +597,75 @@ private theorem fermatPolyRoute_of_large {m n : ℕ} (hm : 3 ≤ m) (hn : 120 * 
       · exact hbound (b + 2) (by omega) (by omega)
     · exact fermatPoly_large_upper_ineq (q := q) (b := b) hdq (by omega) (by omega) hgood
 
-private def fermatPolyRouteAtB (m n b : ℕ) : Bool :=
-  let r := (n - b) % m
-  let d := (n - b) / m
-  decide (b ≤ n ∧ r ≤ m - 2 ∧
-    (b : ℤ) ^ 2 - 4 * b < 8 * d ∧ 6 * (d : ℤ) < (b : ℤ) ^ 2 - b + 4)
+-- Three nearby odd witnesses suffice for the finite tables below. Soundness only uses
+-- the checked certificate; the bound also keeps witnesses below 34 in the large-m route.
+private def fermatPolyRouteCandidates (q : ℕ) : List ℕ :=
+  let j := min (Nat.sqrt (6 * q) / 2) 14
+  [j, j + 1, j + 2]
 
-private def fermatPolyRouteB (m n : ℕ) : Bool :=
-  (List.range 17).any fun j ↦ fermatPolyRouteAtB m n (2 * j + 1)
+private theorem fermatPolyRouteCandidates_lt {q j : ℕ}
+    (hj : j ∈ fermatPolyRouteCandidates q) : j < 17 := by
+  let j0 := min (Nat.sqrt (6 * q) / 2) 14
+  have hj0 : j0 ≤ 14 := min_le_right _ _
+  change j ∈ [j0, j0 + 1, j0 + 2] at hj
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hj
+  rcases hj with rfl | rfl | rfl <;> omega
 
-private theorem fermatPolyRouteB_sound {m n : ℕ}
-    (h : fermatPolyRouteB m n = true) : fermatPolyRoute m n := by
+private theorem fermatPoly_route_ineqs {b d : ℕ}
+    (hlo : b * b < 8 * d + 4 * b) (hhi : 6 * d + b < b * b + 4) :
+    (b : ℤ) ^ 2 - 4 * b < 8 * d ∧ 6 * (d : ℤ) < (b : ℤ) ^ 2 - b + 4 := by
+  have hloZ : (b : ℤ) * b < 8 * d + 4 * b := by exact_mod_cast hlo
+  have hhiZ : 6 * (d : ℤ) + b < (b : ℤ) * b + 4 := by exact_mod_cast hhi
+  constructor <;> nlinarith only [hloZ, hhiZ]
+
+-- Compute the route quotient and remainder from the small witness b.
+private def fermatPolyRouteAtB (m q rho b : ℕ) : Bool :=
+  let k := b / m
+  let sigma := b % m
+  let c := if sigma ≤ rho then k else k + 1
+  let d := q - c
+  let r := if sigma ≤ rho then rho - sigma else m + rho - sigma
+  decide (0 < m ∧ c ≤ q ∧ r ≤ m - 2 ∧ b * b < 8 * d + 4 * b ∧
+    6 * d + b < b * b + 4)
+
+private def fermatPolyRouteB (m q rho : ℕ) : Bool :=
+  (fermatPolyRouteCandidates q).any fun j ↦ fermatPolyRouteAtB m q rho (2 * j + 1)
+
+private theorem fermatPolyRouteB_sound {m q rho : ℕ}
+    (h : fermatPolyRouteB m q rho = true) : fermatPolyRoute m (m * q + rho) := by
   rw [fermatPolyRouteB, List.any_eq_true] at h
   obtain ⟨j, _, h⟩ := h
   let b := 2 * j + 1
-  let r := (n - b) % m
-  let d := (n - b) / m
-  change fermatPolyRouteAtB m n b = true at h
+  let k := b / m
+  let sigma := b % m
+  let c := if sigma ≤ rho then k else k + 1
+  let d := q - c
+  let r := if sigma ≤ rho then rho - sigma else m + rho - sigma
+  change fermatPolyRouteAtB m q rho b = true at h
   simp only [fermatPolyRouteAtB, decide_eq_true_eq] at h
-  change b ≤ n ∧ r ≤ m - 2 ∧
-    (b : ℤ) ^ 2 - 4 * b < 8 * d ∧ 6 * (d : ℤ) < (b : ℤ) ^ 2 - b + 4 at h
-  obtain ⟨hbn, hr, hlo, hhi⟩ := h
+  change 0 < m ∧ c ≤ q ∧ r ≤ m - 2 ∧ b * b < 8 * d + 4 * b ∧
+    6 * d + b < b * b + 4 at h
+  obtain ⟨hm, hcq, hr, hlo, hhi⟩ := h
   have hb : b % 2 = 1 := by simp [b]
-  have hnsub : n - b = m * d + r := by
-    simpa [d, r] using (Nat.div_add_mod (n - b) m).symm
-  have hn : n = m * d + b + r := by omega
+  have hbm : b = m * k + sigma := by
+    simpa [k, sigma] using (Nat.div_add_mod b m).symm
+  have hdm : m * d + m * c = m * q := by
+    change m * (q - c) + m * c = m * q
+    rw [← Nat.mul_add, Nat.sub_add_cancel hcq]
+  have hn : m * q + rho = m * d + b + r := by
+    by_cases hsigma : sigma ≤ rho
+    · have hc : c = k := by simp [c, hsigma]
+      have hrEq : r = rho - sigma := by simp [r, hsigma]
+      rw [hc] at hdm
+      rw [hrEq]
+      omega
+    · have hc : c = k + 1 := by simp [c, hsigma]
+      have hrEq : r = m + rho - sigma := by simp [r, hsigma]
+      have hsigmaLt : sigma < m := by simpa [sigma] using Nat.mod_lt b hm
+      rw [hc, Nat.mul_add, Nat.mul_one] at hdm
+      rw [hrEq]
+      omega
+  obtain ⟨hlo, hhi⟩ := fermatPoly_route_ineqs hlo hhi
   exact ⟨d, b, r, hb, hr, hn, hlo, hhi⟩
 
 private theorem fermatPoly_list_add_ones {m n r : ℕ} (ks : List ℕ)
@@ -758,122 +800,160 @@ private theorem fermatPoly_ones {m n : ℕ} (hn : n ≤ m + 2) :
   apply fermatPoly_of_fin_sum (f := fun _ : Fin n ↦ 1) hn
   simp
 
+private def fermatPolySmallPairGoodB (m q rho : ℕ) : Bool :=
+  let n := m * q + rho
+  decide (n ≤ m + 2) || fermatPolyRouteB m q rho || fermatPolyFamB m n
+
 private def fermatPolySmallGoodB (m n : ℕ) : Bool :=
-  fermatPolyRouteB m n || fermatPolyFamB m n || decide (n ≤ m + 2)
+  fermatPolySmallPairGoodB m (n / m) (n % m)
 
 private theorem fermatPolySmallGoodB_sound {m n : ℕ} (hm : 3 ≤ m)
     (h : fermatPolySmallGoodB m n = true) :
     ∃ (t : Finset ℕ) (k : ℕ → ℕ), t.card ≤ m + 2 ∧
       n = ∑ i ∈ t, Nat.polygonalNumber (m + 2) (k i) := by
-  simp only [fermatPolySmallGoodB, Bool.or_eq_true, decide_eq_true_eq] at h
+  have hn : m * (n / m) + n % m = n := Nat.div_add_mod n m
+  simp only [fermatPolySmallGoodB, fermatPolySmallPairGoodB, Bool.or_eq_true,
+    decide_eq_true_eq] at h
   rcases h with (h | h) | h
-  · exact fermatPolyRoute_sound hm (fermatPolyRouteB_sound h)
-  · exact fermatPolyFamB_sound hm h
-  · exact fermatPoly_ones (by omega)
+  · apply fermatPoly_ones
+    rwa [hn] at h
+  · simpa only [hn] using
+      fermatPolyRoute_sound hm (fermatPolyRouteB_sound h)
+  · simpa only [hn] using fermatPolyFamB_sound hm h
+
+private theorem fermatPoly_check_of_pairs {m : ℕ} (hm : 0 < m)
+    (h : (List.range 120).all (fun q ↦
+      (List.range m).all (fermatPolySmallPairGoodB m q)) = true) :
+    ∀ n < 120 * m, fermatPolySmallGoodB m n = true := by
+  intro n hn
+  have hq : n / m < 120 := (Nat.div_lt_iff_lt_mul hm).mpr (by omega)
+  have hrho : n % m < m := Nat.mod_lt n hm
+  change fermatPolySmallPairGoodB m (n / m) (n % m) = true
+  exact List.all_eq_true.mp (List.all_eq_true.mp h (n / m) (List.mem_range.mpr hq))
+    (n % m) (List.mem_range.mpr hrho)
 
 private theorem fermatPoly_check_m3 : ∀ n < 120 * 3, fermatPolySmallGoodB 3 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m4 : ∀ n < 120 * 4, fermatPolySmallGoodB 4 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m5 : ∀ n < 120 * 5, fermatPolySmallGoodB 5 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m6 : ∀ n < 120 * 6, fermatPolySmallGoodB 6 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m7 : ∀ n < 120 * 7, fermatPolySmallGoodB 7 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m8 : ∀ n < 120 * 8, fermatPolySmallGoodB 8 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m9 : ∀ n < 120 * 9, fermatPolySmallGoodB 9 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m10 : ∀ n < 120 * 10, fermatPolySmallGoodB 10 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m11 : ∀ n < 120 * 11, fermatPolySmallGoodB 11 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m12 : ∀ n < 120 * 12, fermatPolySmallGoodB 12 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m13 : ∀ n < 120 * 13, fermatPolySmallGoodB 13 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m14 : ∀ n < 120 * 14, fermatPolySmallGoodB 14 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m15 : ∀ n < 120 * 15, fermatPolySmallGoodB 15 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m16 : ∀ n < 120 * 16, fermatPolySmallGoodB 16 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m17 : ∀ n < 120 * 17, fermatPolySmallGoodB 17 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m18 : ∀ n < 120 * 18, fermatPolySmallGoodB 18 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m19 : ∀ n < 120 * 19, fermatPolySmallGoodB 19 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m20 : ∀ n < 120 * 20, fermatPolySmallGoodB 20 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m21 : ∀ n < 120 * 21, fermatPolySmallGoodB 21 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 private theorem fermatPoly_check_m22 : ∀ n < 120 * 22, fermatPolySmallGoodB 22 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
--- The larger bounded tables need additional kernel reduction depth.
-set_option maxRecDepth 2000 in
 private theorem fermatPoly_check_m23 : ∀ n < 120 * 23, fermatPolySmallGoodB 23 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
-set_option maxRecDepth 2000 in
 private theorem fermatPoly_check_m24 : ∀ n < 120 * 24, fermatPolySmallGoodB 24 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
-set_option maxRecDepth 2000 in
 private theorem fermatPoly_check_m25 : ∀ n < 120 * 25, fermatPolySmallGoodB 25 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
-set_option maxRecDepth 2000 in
 private theorem fermatPoly_check_m26 : ∀ n < 120 * 26, fermatPolySmallGoodB 26 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
-set_option maxRecDepth 2000 in
 private theorem fermatPoly_check_m27 : ∀ n < 120 * 27, fermatPolySmallGoodB 27 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
-set_option maxRecDepth 2000 in
 private theorem fermatPoly_check_m28 : ∀ n < 120 * 28, fermatPolySmallGoodB 28 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
-set_option maxRecDepth 2000 in
 private theorem fermatPoly_check_m29 : ∀ n < 120 * 29, fermatPolySmallGoodB 29 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
-set_option maxRecDepth 2000 in
 private theorem fermatPoly_check_m30 : ∀ n < 120 * 30, fermatPolySmallGoodB 30 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
-set_option maxRecDepth 2000 in
 private theorem fermatPoly_check_m31 : ∀ n < 120 * 31, fermatPolySmallGoodB 31 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
-set_option maxRecDepth 2000 in
 private theorem fermatPoly_check_m32 : ∀ n < 120 * 32, fermatPolySmallGoodB 32 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
-set_option maxRecDepth 2000 in
 private theorem fermatPoly_check_m33 : ∀ n < 120 * 33, fermatPolySmallGoodB 33 n = true := by
+  apply fermatPoly_check_of_pairs (by decide)
   decide +kernel
 
 
@@ -919,14 +999,12 @@ private theorem fermatPoly_small_of_small_m {m n : ℕ} (hm : 3 ≤ m) (hm34 : m
   fermatPolySmallGoodB_sound hm (fermatPoly_check_small_m hm hm34 hn)
 
 private def fermatPolyRoutePairAtB (q rho b : ℕ) : Bool :=
-  decide ((b ≤ rho ∧ (b : ℤ) ^ 2 - 4 * b < 8 * (q : ℤ) ∧
-      6 * (q : ℤ) < (b : ℤ) ^ 2 - b + 4) ∨
+  decide ((b ≤ rho ∧ b * b < 8 * q + 4 * b ∧ 6 * q + b < b * b + 4) ∨
     (rho + 2 ≤ b ∧ 1 ≤ q ∧
-      (b : ℤ) ^ 2 - 4 * b < 8 * ((q - 1 : ℕ) : ℤ) ∧
-      6 * ((q - 1 : ℕ) : ℤ) < (b : ℤ) ^ 2 - b + 4))
+      b * b < 8 * (q - 1) + 4 * b ∧ 6 * (q - 1) + b < b * b + 4))
 
 private def fermatPolyRoutePairB (q rho : ℕ) : Bool :=
-  (List.range 17).any fun j ↦ fermatPolyRoutePairAtB q rho (2 * j + 1)
+  (fermatPolyRouteCandidates q).any fun j ↦ fermatPolyRoutePairAtB q rho (2 * j + 1)
 
 private theorem fermatPolyRoutePairB_sound {m n q rho : ℕ} (hm : 34 ≤ m) (hrho : rho < m)
     (hn : n = m * q + rho) (h : fermatPolyRoutePairB q rho = true) :
@@ -936,17 +1014,19 @@ private theorem fermatPolyRoutePairB_sound {m n q rho : ℕ} (hm : 34 ≤ m) (hr
   let b := 2 * j + 1
   change fermatPolyRoutePairAtB q rho b = true at h
   simp only [fermatPolyRoutePairAtB, decide_eq_true_eq] at h
-  have hj : j < 17 := List.mem_range.mp hjmem
+  have hj : j < 17 := fermatPolyRouteCandidates_lt hjmem
   have hb34 : b < 34 := by simp [b]; omega
   have hb : b % 2 = 1 := by simp [b]
   rcases h with ⟨hbrho, hlo, hhi⟩ | ⟨hbrho, hq, hlo, hhi⟩
-  · refine ⟨q, b, rho - b, hb, ?_, ?_, hlo, hhi⟩
+  · obtain ⟨hlo, hhi⟩ := fermatPoly_route_ineqs hlo hhi
+    refine ⟨q, b, rho - b, hb, ?_, ?_, hlo, hhi⟩
     · have hb1 : 1 ≤ b := by
         have hbmod := Nat.mod_lt b (by norm_num : 0 < 2)
         omega
       omega
     · omega
-  · have hbm : b ≤ m + rho := by omega
+  · obtain ⟨hlo, hhi⟩ := fermatPoly_route_ineqs hlo hhi
+    have hbm : b ≤ m + rho := by omega
     refine ⟨q - 1, b, m + rho - b, hb, ?_, ?_, hlo, hhi⟩
     · omega
     · have hmul : m * (q - 1) + m = m * q := by
@@ -963,11 +1043,12 @@ private theorem fermatPolyRoutePairB_high_sound {m n q rho : ℕ} (hm : 34 ≤ m
   let b := 2 * j + 1
   change fermatPolyRoutePairAtB q 34 b = true at h
   simp only [fermatPolyRoutePairAtB, decide_eq_true_eq] at h
-  have hj : j < 17 := List.mem_range.mp hjmem
+  have hj : j < 17 := fermatPolyRouteCandidates_lt hjmem
   have hblt : b < 34 := by simp [b]; omega
   have hb : b % 2 = 1 := by simp [b]
   rcases h with ⟨hb34, hlo, hhi⟩ | ⟨hb36, hq, hlo, hhi⟩
-  · refine ⟨q, b, rho - b, hb, ?_, ?_, hlo, hhi⟩
+  · obtain ⟨hlo, hhi⟩ := fermatPoly_route_ineqs hlo hhi
+    refine ⟨q, b, rho - b, hb, ?_, ?_, hlo, hhi⟩
     · have hb1 : 1 ≤ b := by
         have hbmod := Nat.mod_lt b (by norm_num : 0 < 2)
         omega
@@ -989,7 +1070,11 @@ private def fermatPolyPairGoodB (q rho : ℕ) : Bool :=
 
 private theorem fermatPoly_check_large_pairs :
     ∀ q < 120, ∀ rho ≤ 34, fermatPolyPairGoodB q rho = true := by
-  decide +kernel
+  have h : (List.range 120).all (fun q ↦
+      (List.range 35).all (fermatPolyPairGoodB q)) = true := by decide +kernel
+  intro q hq rho hrho
+  exact List.all_eq_true.mp (List.all_eq_true.mp h q (List.mem_range.mpr hq)) rho
+    (List.mem_range.mpr (by omega))
 
 private theorem fermatPolyFamPairB_lift {m n q rho : ℕ} (hn : n = m * q + rho)
     (h : fermatPolyFamPairB q rho = true) : fermatPolyFamB m n = true := by
