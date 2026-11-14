@@ -30,7 +30,11 @@ open MetaMathlibExt.ComplexityTheory
 instance Machine.instFintypeΓ (k : Machine.K) : Fintype (Machine.Γ k) := by
   cases k <;> infer_instance
 
-/-- The marking machine as a host component. -/
+/-- **The marking machine as a host component.** The component machine whose stack indices,
+stack alphabets, labels and program are those of the marking machine, with its eleven stacks
+listed once each, in the order: input, output, edge bits, junk, the counters for the source, the
+target and the number of vertices, the counters for the two ends of an arc, the marks and the
+parked marks. -/
 abbrev pathComp : Host.Comp where
   K := Machine.K
   Γ := Machine.Γ
@@ -40,7 +44,9 @@ abbrev pathComp : Host.Comp where
   ks_nodup := by decide
   mem_ks k := by cases k <;> decide
 
-/-- **The marking algorithm is polynomial-time.** -/
+/-- **The marking algorithm is polynomial-time.** The marking algorithm for PATH, as a function
+from bit strings to booleans, is computable in polynomial time by a Turing machine with respect
+to the canonical bitstring encodings of lists of booleans and of booleans. -/
 theorem isPolyTime_pathCheck : IsPolyTime pathCheck :=
   Host.isPolyTime_decider (c := pathComp) (cX := Machine.K.X) (cO := Machine.K.O)
     (gX := SatVerifier.Sym.bit) (start := Machine.start) (done := Machine.Lab.done)
@@ -49,7 +55,11 @@ theorem isPolyTime_pathCheck : IsPolyTime pathCheck :=
         Machine.K.X (x.map SatVerifier.Sym.bit)) (by simp) (fun k hk => by simp [hk])
       exact ⟨v', S', r.mono (le_of_eq (by simp)), by simpa using h⟩
 
-/-- **PATH ∈ P** (Sipser, Theorem 7.14). -/
+/-- **PATH ∈ P** (Sipser, Theorem 7.14). The decision problem PATH belongs to the class P of
+decision problems decidable in polynomial time. Here PATH accepts a bit string exactly when it
+encodes natural numbers $s$, $t$, $n$ and a list $E$ of pairs of natural numbers such that
+$s < n$, $t < n$ and $t$ is reachable from $s$ in zero or more steps along the arcs of $E$ below
+$n$, the pairs $(u, v) \in E$ with $u < n$ and $v < n$. -/
 theorem pathDec_mem_P : pathDec ∈ P := by
   show IsPolyTime pathDec
   rw [show pathDec = pathCheck from funext pathDec_eq_pathCheck]

@@ -27,10 +27,14 @@ namespace Cslib.Complexity.DenseSAT.ToBinary
 
 open Turing MetaMathlibExt TM2Program Function
 
-/-- The translation on raw bits. -/
+/-- **The dense-to-binary translation on bit strings.** The translation of a bit string $w$ is the
+backwards dense-to-binary translation applied to the reversal of $w$, started with no clause open,
+with its literal, slot and clause counters all equal to $0$, and with empty output. -/
 def binConv (w : List Bool) : List Bool := conv w.reverse false 0 0 0 []
 
-/-- Stacks: input, stash, output, and the counters `n`, `k`, `m` and a scratch `t`. -/
+/-- **Stacks of the dense-to-binary machine.** The stack names of the Turing machine for the
+dense-to-binary translation form a type with exactly seven elements: the input, a stash, the
+output, the three counters $n$, $k$ and $m$, and a scratch stack $t$. -/
 inductive Stk | inp | stash | out | N | K | M | T
   deriving DecidableEq
 
@@ -38,7 +42,14 @@ instance : Fintype Stk where
   elems := ⟨↑[Stk.inp, Stk.stash, Stk.out, Stk.N, Stk.K, Stk.M, Stk.T], by decide⟩
   complete := fun k => by cases k <;> decide
 
-/-- Labels. `ins` records whether a clause is open; `s` is the bit read first of a slot. -/
+/-- **Labels of the dense-to-binary converter.** The labels of the dense-to-binary converter
+program are the moving label $\mathrm{mv}$; the reading label $\mathrm{rd}(\iota)$ for a Boolean
+$\iota$; the second-read label $\mathrm{rd2}(\iota, s)$ for Booleans $\iota$ and $s$; the two
+literal labels $\mathrm{litA}$ and $\mathrm{litB}$; the two closing labels $\mathrm{eN}$ and
+$\mathrm{eK}$; the clearing label $\mathrm{fK}(\iota)$ for a Boolean $\iota$; the literal-count
+label $\mathrm{fN}$; and the clause-count label $\mathrm{fM}$. Equality of labels is decidable.
+
+Here $\iota$ records whether a clause is open, and $s$ is the first bit read of a slot. -/
 inductive Lab
   | mv
   | rd (ins : Bool)
@@ -62,7 +73,10 @@ instance : Fintype Lab where
     | fK ins => cases ins <;> decide
     | _ => decide
 
-/-- The stacks, with the counters as lists of `true`. -/
+/-- **Stack contents of the converter.** For bit strings $i$, $a$, $o$ and natural numbers
+$n, k, m, t$, this stack assignment gives the input stack $i$, the stash $a$, the output stack $o$,
+and the counter stacks $N$, $K$, $M$ and the scratch stack $T$ respectively $n$, $k$, $m$ and $t$
+copies of $1$ (true). -/
 def stk (i a o : List Bool) (n k m t : ℕ) : Stk → List Bool
   | .inp => i
   | .stash => a
@@ -119,7 +133,44 @@ variable (i a o l : List Bool) (n k m t j : ℕ)
 end Upd
 
 open TM2.Stmt in
-/-- The program. -/
+/-- **The dense-to-binary converter program.** The program uses an input stack, a stash, an
+output stack, unary counter stacks $N$, $K$, $M$ and a scratch stack $T$; each label first pops
+one stack and keeps the popped bit (or nothing, if the stack was empty) as its internal state.
+Below, $\iota$ says whether a clause is open, $0$ is false and $1$ is true.
+
+Moving: pop the input; if a bit $b$ was popped, push $b$ onto the stash and repeat, otherwise go to
+reading with $\iota$ false.
+
+Reading with $\iota$: pop the stash; if a bit $s$ was popped, go to the second read with $\iota$
+and $s$, otherwise go to clearing with $\iota$.
+
+Second read with $\iota$ and $s$: pop the stash. If it was empty, go to clearing with $\iota$. If
+it gave $0$: when $s = 1$, push $1$ onto $K$ and go to reading with $\iota$; when $s = 0$ and
+$\iota$ is true, push $0$ onto the output and go to the first closing label; when $s = 0$ and
+$\iota$ is false, go to the second closing label. If it gave $1$: when $\iota$ is true, push
+$\lnot s$ and then $0$ onto the output and go to the first literal label; otherwise go to reading
+with $\iota$ false.
+
+First literal label: pop $K$; if a bit was popped, push $1$ twice onto the output and $1$ onto $T$
+and repeat, otherwise go to the second literal label.
+
+Second literal label: pop $T$; if a bit was popped, push $1$ onto $K$ and repeat, otherwise push
+$1$ onto $N$, then $1$ onto $K$, and go to reading with $\iota$ true.
+
+First closing label: pop $N$; if a bit was popped, push $1$ onto the output and repeat, otherwise
+go to the second closing label.
+
+Second closing label: pop $K$; if a bit was popped, repeat, otherwise push $1$ onto $M$ and go to
+reading with $\iota$ true.
+
+Clearing with $\iota$: pop $K$; if a bit was popped, repeat, otherwise push $0$ onto the output and
+go to the literal-count label if $\iota$ is true and to the clause-count label otherwise.
+
+Literal-count label: pop $N$; if a bit was popped, push $1$ onto the output and repeat, otherwise
+push $0$ onto the output and go to the clause-count label.
+
+Clause-count label: pop $M$; if a bit was popped, push $1$ onto the output and repeat, otherwise
+halt. -/
 def prog : Lab → TM2.Stmt (fun _ : Stk => Bool) Lab (Option Bool)
   | .mv => pop .inp (fun _ o => o) <| branch (fun s => s.isSome)
       (push .stash (fun s => s.getD false) <| goto fun _ => .mv) (goto fun _ => .rd false)
@@ -152,12 +203,20 @@ def prog : Lab → TM2.Stmt (fun _ : Stk => Bool) Lab (Option Bool)
   | .fM => pop .M (fun _ o => o) <| branch (fun v => v.isSome)
       (push .out (fun _ => true) <| goto fun _ => .fM) halt
 
-/-- Exact `n`-step runs of the program. -/
+/-- **Exact runs of the dense-to-binary converter.** For a natural number $n$ and configurations
+$c$ and $d$ of the converter program, $c$ leads to $d$ in exactly $n$ steps when the program,
+started at $c$, is at configuration $d$ after exactly $n$ steps. -/
 abbrev Run (n : ℕ) (c d : TM2.Cfg (fun _ : Stk => Bool) Lab (Option Bool)) : Prop :=
   TM2Program.Run prog n c d
 
 /-! ### Loops -/
 
+/-- **Moving the input onto the stash.** Let $l$, $a$, $o$ be bit strings and $v$ an optional
+bit, and list stacks top first. Started at the moving label with internal state $v$, input stack
+$l$, stash $a$, output stack $o$, empty counter stacks $N$, $K$, $M$ and empty scratch stack $T$,
+the dense-to-binary converter reaches, in exactly $|l| + 1$ steps, the label for reading with no
+clause open, with no internal state, an empty input stack, the reversal of $l$ followed by $a$ on
+the stash, output stack $o$, and $N$, $K$, $M$, $T$ still empty. -/
 theorem mv_run (l : List Bool) : ∀ (a o : List Bool) (v : Option Bool),
     Run (l.length + 1) ⟨some .mv, v, stk l a o 0 0 0 0⟩
       ⟨some (.rd false), none, stk [] (l.reverse ++ a) o 0 0 0 0⟩ := by
@@ -254,7 +313,15 @@ theorem fM_run (i a : List Bool) (n k t : ℕ) : ∀ (m : ℕ) (o : List Bool) (
         simp [List.replicate_succ']] at h
       exact Run.head (by simp [TM2.step, prog, TM2.stepAux, List.replicate_succ]) h
 
-/-- The end of the stash: close the open clause (if any), emit the clause count, halt. -/
+/-- **The converter's final phase.** Write $0$ for false, $1$ for true and $1^j$ for $j$ copies
+of $1$. Let $o$ be a bit string, $\iota$ a flag saying whether a clause is open, and $n, k, m$
+natural numbers with $n = 0$ if no clause is open; let $c = n + 1$ if a clause is open and $c = 0$
+otherwise. Started at the label that clears the slot counter at the end, for the flag $\iota$, with
+empty internal state, empty input and stash, output $o$, literal, slot and clause counter stacks
+holding $n$, $k$ and $m$ ones respectively, and an empty scratch stack, the converter reaches in
+exactly $(k + 1) + c + (m + 1)$ steps the halting configuration with empty internal state, every
+stack but the output empty, and output $1^m 0 1^n 0 o$ if a clause is open and $1^m 0 o$ otherwise
+(listed from the top of the stack). -/
 theorem fin_run (o : List Bool) (ins : Bool) (n k m : ℕ) (hn : ins = false → n = 0) :
     Run ((k + 1) + (if ins then n + 1 else 0) + (m + 1))
       ⟨some (.fK ins), none, stk [] [] o n k m 0⟩
@@ -273,7 +340,15 @@ theorem fin_run (o : List Bool) (ins : Bool) (n k m : ℕ) (hn : ins = false →
 
 /-! ### The main loop -/
 
-/-- Exact step count of the main loop. -/
+/-- **Step count of the main loop.** Write $0$ for false, $1$ for true, and $xyr$ for the bit
+string whose first two bits are $x, y$ followed by $r$. For a bit string $l$, a flag $\iota$
+(whether a clause is open) and natural numbers $n, k, m$, let $c = n + 1$ if $\iota$ is true and
+$c = 0$ otherwise. The step count $T(l, \iota, n, k, m)$ is defined by recursion on $l$:
+$T(00r, \iota, n, k, m) = 2 + c + (k + 1) + T(r, 1, 0, 0, m + 1)$;
+$T(10r, \iota, n, k, m) = 2 + T(r, \iota, n, k + 1, m)$;
+for every bit $s$, $T(s1r, \iota, n, k, m)$ is $2 + 2(k + 1) + T(r, 1, n + 1, k + 1, m)$ if $\iota$
+is true and $2 + T(r, 0, n, k, m)$ otherwise; on a one-bit string $T = 2 + (k + 1) + c + (m + 1)$;
+and on the empty string $T = 1 + (k + 1) + c + (m + 1)$. -/
 def convT : List Bool → Bool → ℕ → ℕ → ℕ → ℕ
   | false :: false :: r, ins, n, k, m =>
       2 + (if ins then n + 1 else 0) + (k + 1) + convT r true 0 0 (m + 1)
@@ -358,7 +433,10 @@ theorem main_run : ∀ (l : List Bool) (ins : Bool) (n k m : ℕ) (o : List Bool
 
 /-! ### Time bound and the packaged machine -/
 
-/-- The main loop's step count, with `Q` bounding the stash length plus the three counters. -/
+/-- **Step bound for the main loop.** For every bit string $l$, whether or not a clause is open, and
+all natural numbers $n, k, m, Q$ with $|l| + n + k + m \le Q$, the exact step count of the main loop
+on stash $l$ with literal, slot and clause counters $n, k, m$ is at most
+$(|l| + 1)(2Q + 6) + Q + 4$. -/
 theorem convT_le : ∀ (l : List Bool) (ins : Bool) (n k m Q : ℕ),
     l.length + n + k + m ≤ Q → convT l ins n k m ≤ (l.length + 1) * (2 * Q + 6) + Q + 4
   | false :: false :: r, ins, n, k, m, Q, hQ => by
@@ -402,7 +480,12 @@ theorem convT_le : ∀ (l : List Bool) (ins : Bool) (n k m Q : ℕ),
       simp only [convT, List.length_nil] at hQ ⊢
       split <;> omega
 
-/-- The machine. -/
+/-- **The dense-to-binary machine.** The multi-stack Turing machine whose stacks are indexed by
+the stack names (input, stash, output, the counters $n$, $k$, $m$ and the scratch $t$), each
+with the Booleans as alphabet. It reads its input from the input stack and leaves its output on
+the output stack; its labels are the program labels, starting at the label that moves the input
+onto the stash; its internal state is an optional Boolean, initially empty; and each label runs
+the corresponding statement of the program. -/
 def tm : FinTM2 where
   K := Stk
   k₀ := .inp
@@ -427,8 +510,10 @@ theorem haltList_tm (w : List Bool) : haltList tm w = ⟨none, none, stk [] [] w
   funext k
   cases k <;> rfl
 
-/-- **The dense-to-binary translation on raw bits is polynomial-time**, within
-`2 L² + 10 L + 11` steps on an input of length `L`. -/
+/-- **The dense-to-binary translation on raw bits is polynomial-time.** There is a finite
+multi-stack Turing machine whose input and output alphabets are the bits such that, for every bit
+string $w$ of length $L$, the machine started on input $w$ halts within $2L^2 + 10L + 11$ steps with
+the dense-to-binary translation of $w$ on its output stack and all other stacks empty. -/
 noncomputable def computable :
     TM2ComputableInPolyTime (fun l : List Bool => l) (fun l : List Bool => l) binConv where
   tm := tm
