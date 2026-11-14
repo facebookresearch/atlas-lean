@@ -39,17 +39,17 @@ INSTANCE: a graph `G = (V, E)` with no vertex degree exceeding 3 and no triangle
 positive integer `K ≤ |E|`. QUESTION: is there a subset `E' ⊆ E` with `|E'| ≥ K` such that
 `G' = (V, E')` is bipartite?
 
-This is BIPARTITE SUBGRAPH (Garey and Johnson [GT25]; on `main` as the equivalent
-`MaxCutWanted`) restricted as in the [GT25] comment, which credits the restriction to
-[Yannakakis, 1978b]. Yannakakis (1978), Theorem 13: "The edge-deletion 'bipartite' (simple
-max-cut) problem on cubic graphs is NP-complete". Triangles are then removed by replacing every
-edge `uv` of a cubic graph by a path `u a b v` through two new vertices: degrees stay at most 3,
-the new graph has no triangles, and for every bipartition of the old vertices each such path has
-3 crossing edges if `u` and `v` are separated and at most 2 otherwise (2 attained), so the old
-graph has a cut of `K` or more edges iff the new one has a cut of `K + 2 |E|` or more edges. A
-cut is a bipartite spanning subgraph and the edges inside a 2-colouring of a bipartite
-`(V, E')` form a cut containing `E'`, so the cut question is the question above. It is in NP:
-`E'` is a certificate.
+This is BIPARTITE SUBGRAPH (Garey and Johnson [GT25]; on `main` as the equivalent `MaxCutWanted`)
+restricted as in the [GT25] comment, which credits the restriction to [Yannakakis, 1978b].
+Yannakakis (1978), Theorem 13: "The edge-deletion 'bipartite' (simple max-cut) problem on cubic
+graphs is NP-complete". Triangles are then removed by replacing every edge `uv` of a cubic graph by
+a path `u a b v` through two new vertices: degrees stay at most 3, the new graph has no triangles,
+and for every bipartition of the old vertices each such path has at most 3 crossing edges if `u` and
+`v` are separated and at most 2 otherwise, both bounds attained by placing `a` and `b`
+(independently for each path), so the old graph has a cut of `K` or more edges iff the new one has a
+cut of `K + 2 |E|` or more edges. A cut is a bipartite spanning subgraph and the edges between the
+two colour classes of a 2-colouring of a bipartite `(V, E')` form a cut containing `E'`, so the cut
+question is the question above. It is in NP: `E'` is a certificate.
 
 `E'` is a sublist of the edge list; under `WellFormed` the edge list has no duplicate edges in
 either orientation, so the sublist's length is `|E'|` and the edge list's length is `|E|`.
