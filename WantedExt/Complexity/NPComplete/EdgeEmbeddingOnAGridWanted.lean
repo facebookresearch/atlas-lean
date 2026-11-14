@@ -23,6 +23,8 @@ public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
+public import Mathlib.Combinatorics.SimpleGraph.Copy
+public import MathlibExt.Combinatorics.SimpleGraph.RookGraph
 
 @[expose] public section
 
@@ -36,8 +38,11 @@ QUESTION: is there a one-to-one function `f : V → {1, 2, …, M} × {1, 2, …
 `{u, v} ∈ E`, `f(u) = (x₁, y₁)` and `f(v) = (x₂, y₂)`, then either `x₁ = x₂` or `y₁ = y₂`, i.e.
 `f(u)` and `f(v)` are both on the same "line" of the grid?
 
-Grid coordinates are `0`-based: `f : Fin n → Fin M × Fin N`, a relabelling of
-`{1, …, M} × {1, …, N}`.
+Grid coordinates are `0`-based (`Fin M × Fin N`, a relabelling of `{1, …, M} × {1, …, N}`).
+Two distinct grid points on a common line are exactly the adjacent vertices of MathlibExt's rook
+graph `SimpleGraph.rookGraph M N`, so a one-to-one `f` sending edges to pairs on a common line
+is an injective graph homomorphism `G →g rookGraph M N`, i.e. `G` is contained in the rook graph
+(Mathlib's `SimpleGraph.IsContained`, a `SimpleGraph.Copy`).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -65,10 +70,9 @@ def WellFormed (i : EdgeEmbeddingOnAGridInstance) : Prop :=
     0 < i.2.2.1 ∧ 0 < i.2.2.2
 
 /-- A one-to-one placement of the vertices on the `M × N` grid in which the two ends of every
-edge share a row or a column. -/
+edge share a row or a column: `G` is contained in the rook graph on `Fin M × Fin N`. -/
 def EdgeEmbeddingOnAGridFeasible (i : EdgeEmbeddingOnAGridInstance) : Prop :=
-  ∃ f : Fin i.1 → Fin i.2.2.1 × Fin i.2.2.2, Function.Injective f ∧
-    ∀ u v, (Graph i).Adj u v → (f u).1 = (f v).1 ∨ (f u).2 = (f v).2
+  (Graph i).IsContained (SimpleGraph.rookGraph i.2.2.1 i.2.2.2)
 
 open Classical in
 /-- EDGE EMBEDDING ON A GRID as a decision problem over bitstrings. -/
