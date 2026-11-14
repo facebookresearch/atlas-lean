@@ -22,7 +22,7 @@ rate) of the hierarchy `kᵢ ∣ λᵢ ~ Po(sᵢ λᵢ)`, `λᵢ ~ Gamma(a, b)` 
 score `profileShapeScore a k = ∑ᵢ ∑_{j<kᵢ} 1 / (a + j) - n log (1 + M / a)`
 (`score_eq_zero_iff_const`), and shows a root exists under overdispersion `0 < M < V`
 (`exists_score_root_of_overdispersed`). This file proves that root unique and that it is the
-unique joint MLE, and conversely that no joint MLE exists when `V ≤ M`.
+unique joint MLE, and conversely that no joint MLE exists when `0 < M` and `V ≤ M`.
 
 ## Source
 
@@ -75,14 +75,15 @@ one-sign-change case is done directly: with `u*` the sign-change point of `H`, t
 `a ↦ (a + u*)³ · profileShapeScore a k` is strictly decreasing (strict from `H(T) < 0`).
 
 For the converse, when `V ≤ M` a negative value of `H` would persist to `H(T) = n (M - V) / 2 ≥ 0`,
-so `H ≥ 0`; near `0`, `H(u) ≥ u - n u² / 2 > 0` (some count is positive), so the transform above
-is positive at every `a > 0`.
+so `H ≥ 0`; near `0`, `H(u) ≥ u - n u² / 2 > 0` (some count is positive, as `0 < M`), so the
+transform above is positive at every `a > 0`.
 
 ## Not proved here
 
-* The all-zero sample `M = 0` (also `V ≤ M`; `ℓ` then has no maximizer either, but the rate
-  root `σ a / M` is undefined and the converse here assumes `0 < M`), and the limit of `ℓ` as
-  `a → ∞` (the Poisson fit).
+* The all-zero sample `M = 0`, which also has `V ≤ M`: the converse here assumes `0 < M`, since
+  the rate root `σ a / M` is undefined at `M = 0`.
+* The limit of `ℓ` as `a → ∞` (the Poisson fit), and any statement that `ℓ` is maximized or
+  bounded in that limit; the converse only shows that no finite point maximizes `ℓ`.
 * Heterogeneous size factors. The reduction to one profile equation uses a common size factor;
   with distinct `sᵢ` the rate root is no longer `s̄ a / M` (tests), and uniqueness is not claimed.
 * Levin and Reeds's Theorem 1 (compound multinomial) and Theorem 3 (Poisson mixtures), and their
@@ -826,7 +827,7 @@ theorem score_eq_zero_of_isMaxOn [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι
   exact absurd (hmax (a', b') ha' hb')
     (not_le.2 (logMarginalLik_lt_of_score_root hσ hM hMV ha' hb' ⟨hs, hr⟩ ha hb hne))
 
-/-! ### The converse: no finite MLE when `V ≤ M` -/
+/-! ### The converse: no finite MLE when `0 < M` and `V ≤ M` -/
 
 /-- **`H ≥ 0` without overdispersion.** If `V ≤ M`, Levin and Reeds's `H` is nonnegative on
 `[0, ∞)`: a negative value would persist (`smoothedDiscrepancy_neg_of_le`) up to the terminal
@@ -862,8 +863,8 @@ private lemma smoothedDiscrepancy_pos_of_small [Nonempty ι] {k : ι → ℕ} (h
   rw [smoothedDiscrepancy_eq_of_le huM]
   linarith [mul_lt_mul_of_pos_right hun hu]
 
-/-- **The profile shape score is positive when `V ≤ M`** (Levin and Reeds 1977, Theorem 2,
-converse half). In `profileShapeScore_eq_integral` the boundary term is `≥ 0` by
+/-- **The profile shape score is positive when `0 < M` and `V ≤ M`** (Levin and Reeds 1977,
+Theorem 2, converse half). In `profileShapeScore_eq_integral` the boundary term is `≥ 0` by
 `smoothedDiscrepancy_nonneg`, and `H > 0` just right of `0` makes the integral positive. -/
 theorem profileShapeScore_pos_of_le [Nonempty ι] {k : ι → ℕ} (hM : 0 < countMean k)
     (hVM : countVar k ≤ countMean k) {a : ℝ} (ha : 0 < a) : 0 < profileShapeScore a k := by
@@ -899,14 +900,17 @@ theorem profileShapeScore_pos_of_le [Nonempty ι] {k : ι → ℕ} (hM : 0 < cou
     (sq_nonneg (a + T))
   linarith
 
-/-- **Without overdispersion the joint score equations have no positive root.** -/
+/-- **Without overdispersion the joint score equations have no positive root.** At a common size
+factor `σ > 0` and a sample with `0 < M` and `V ≤ M`, no `(a, b) ∈ (0, ∞)²` solves both score
+equations. -/
 theorem score_ne_zero_of_le [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι → ℕ}
     (hM : 0 < countMean k) (hVM : countVar k ≤ countMean k) {a b : ℝ} (ha : 0 < a) (hb : 0 < b) :
     ¬ (shapeScore a b (fun _ => σ) k = 0 ∧ rateScore a b (fun _ => σ) k = 0) := fun h =>
   (profileShapeScore_pos_of_le hM hVM ha).ne' ((score_eq_zero_iff_const ha hb hσ hM).1 h).2
 
-/-- **The likelihood increases along the rate root when `V ≤ M`.** The explicit path
-`a ↦ (a, σ a / M)` strictly increases `ℓ`, so `ℓ` is maximized only in the limit `a → ∞`. -/
+/-- **The likelihood increases along the rate root when `0 < M` and `V ≤ M`.** At a common size
+factor `σ > 0`, `ℓ` strictly increases along the explicit path `a ↦ (a, σ a / M)`, so `ℓ` has no
+finite maximizer along this path. -/
 theorem strictMonoOn_logMarginalLik_rateRoot [Nonempty ι] {σ : ℝ} (hσ : 0 < σ) {k : ι → ℕ}
     (hM : 0 < countMean k) (hVM : countVar k ≤ countMean k) :
     StrictMonoOn (fun a => logMarginalLik a (σ * a / countMean k) (fun _ => σ) k) (Ioi 0) := by
