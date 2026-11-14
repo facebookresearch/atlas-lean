@@ -39,7 +39,9 @@ merged when it was written. This file states the composite null for the random-d
   composite likelihood-ratio statistic of the density `nbRegDensity`.
   `nbRegCompositeLRStat_eq_sub`: it is the simple-null statistic of `NegativeBinomialAN` at `p̂`
   minus the same statistic at `(β₀, θ̃)`; with `θ̃ = θ₀` the second term vanishes and the composite
-  statistic is the simple-joint-null statistic.
+  statistic is the simple-joint-null statistic, whose limit at a consistent root `p̂` is `χ²` with
+  `|κ| + 1` degrees of freedom (`tendstoInDistribution_two_mul_logLik_sub_nbJointMLE_randomDesign`),
+  not the composite `χ²_{|κ|}`.
 
 ## Asymptotic null distributions (random design, under `H₀`, true parameter `(β₀, θ₀)`)
 
@@ -77,9 +79,13 @@ Still hypotheses:
   Deriving it would duplicate that proof, so both expansions stay hypotheses;
 * a.e.-measurability of the two statistics.
 
-Fixed shape: when `θ` is known there is no nuisance parameter. Taking `θ̃ = θ₀` makes the
-composite statistics the known-shape statistics; the composite theorems then hold trivially in
-their restricted-estimate hypotheses, and nothing composite is claimed (see the tests).
+Fixed shape: when `θ` is known there is no nuisance parameter. For the score test, taking
+`θ̃ = θ₀` makes the composite score statistic the known-shape coefficient score statistic, and
+the consistency and `√n`-tightness hypotheses on `θ̃` hold trivially (see the tests). This does
+not extend to the likelihood-ratio test: with `θ̃ = θ₀` the numerator still uses the unrestricted
+`p̂`, the statistic is the simple-joint-null statistic above, and the hypothesis `hres` of
+`tendstoInDistribution_nbRegCompositeLRStat` becomes `-(Sₙ)_θ² / D → 0`, which fails when the
+shape score is nondegenerate. Nothing composite is claimed for a known shape.
 
 ## References
 
@@ -238,24 +244,6 @@ section RandomDesign
 
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} [IsProbabilityMeasure P]
   {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'} [IsProbabilityMeasure P']
-
-omit [IsProbabilityMeasure P] in
-/-- Two sequences tending to zero in probability have difference tending to zero in
-probability. -/
-private theorem tendstoInMeasure_sub_zero' {U V : ℕ → Ω → ℝ}
-    (hU : TendstoInMeasure P U atTop 0) (hV : TendstoInMeasure P V atTop 0) :
-    TendstoInMeasure P (U - V) atTop 0 := by
-  rw [tendstoInMeasure_iff_norm] at hU hV ⊢
-  intro ε hε
-  have h2 := (hU (ε / 2) (by positivity)).add (hV (ε / 2) (by positivity))
-  rw [add_zero] at h2
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds h2 (fun _ => zero_le)
-    fun i => (measure_mono fun ω hω => ?_).trans (measure_union_le _ _)
-  simp only [Set.mem_ofPred_eq, Pi.zero_apply, Pi.sub_apply, sub_zero, Real.norm_eq_abs]
-    at hω ⊢
-  by_contra h
-  simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_le] at h
-  linarith [abs_sub (U i ω) (V i ω)]
 
 /-- A Gaussian vector with covariance the Fisher information of the joint model, on
 `stdGaussian`: the limit object of the score central limit theorem. -/
@@ -455,7 +443,11 @@ theorem tendstoInDistribution_nbRegCompositeLRStat [DecidableEq κ] [Nonempty κ
     (nbCoefProj.continuous.comp Y.continuous).measurable.aemeasurable (hasLaw_inner_nbCoefProj hY)
   have hQn := (hT.continuous_comp (g := fun v => ⟪Ring.inverse B v, v⟫)
     (by fun_prop)).of_map_eq hQ.aemeasurable (by rw [hQ.map_eq, ← hchi.map_eq]; rfl)
-  have hdiff := tendstoInMeasure_sub_zero' hfull hres
+  have hneg : ∀ {V : ℕ → Ω → ℝ}, TendstoInMeasure P V atTop 0 →
+      TendstoInMeasure P (fun n ω => -V n ω) atTop 0 := fun hV => by
+    rw [tendstoInMeasure_iff_norm] at hV ⊢
+    simpa only [Pi.zero_apply, sub_zero, norm_neg] using hV
+  have hdiff := tendstoInMeasure_add_zero hfull (hneg hres)
   refine tendstoInDistribution_of_tendstoInMeasure_sub _ Q hQn ?_ hLR_meas
   refine hdiff.congr_left fun n => ae_of_all _ fun ω => ?_
   simp only [Pi.sub_apply, Function.comp_apply]

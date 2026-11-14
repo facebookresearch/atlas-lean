@@ -171,7 +171,10 @@ end NullDistributions
 
 When the restricted shape equals the true shape, `θ̃ = θ₀`, the composite statistic is the
 simple-joint-null statistic of `NegativeBinomialAN`, `2 ∑ (log f(p̂) - log f(p₀))`, and the
-coefficient score is the coefficient block of T131's scaled joint score at `p₀`. -/
+coefficient score is the coefficient block of T131's scaled joint score at `p₀`. That statistic has
+the `χ²` limit with `|κ| + 1` degrees of freedom of
+`tendstoInDistribution_two_mul_logLik_sub_nbJointMLE_randomDesign`; the composite `χ²_{|κ|}`
+theorem does not apply to it, because its hypothesis `hres` fails at `θ̃ = θ₀`. -/
 
 /-- With `θ̃ = θ₀` the composite statistic is T131's simple-null statistic (definitional). -/
 example (n : ℕ) (zs : ℕ → (Fin 1 → ℝ) × ℕ) (phat : NBParam (Fin 1)) (β₀ : Fin 1 → ℝ)
@@ -204,10 +207,12 @@ example (n : ℕ) (zs : ℕ → (Fin 1 → ℝ) × ℕ) (β₀ : Fin 1 → ℝ) 
 
 /-! ### Fixed shape: no nuisance parameter, no composite claim
 
-If `k = θ₀` is known, the "restricted estimate" is the constant `θ₀`. Its hypotheses in the
-composite theorems hold by computation (below), and the statistic is the known-shape coefficient
-score statistic, whose limit is the plain central limit theorem
-`tendstoInDistribution_nbRegCoefScore`. Nothing composite is claimed in this case. -/
+If `k = θ₀` is known, the "restricted estimate" is the constant `θ₀`. Its consistency and
+`√n`-tightness hypotheses in the composite score theorem hold by computation (below), and the
+score statistic is the known-shape coefficient score statistic, whose limit is the plain central
+limit theorem `tendstoInDistribution_nbRegCoefScore`. This does not extend to the likelihood-ratio
+theorem: its numerator still uses the unrestricted `p̂`, and its hypothesis `hres` fails at
+`θ̃ = θ₀` (see the section above). Nothing composite is claimed in this case. -/
 
 section FixedShape
 
