@@ -443,34 +443,15 @@ theorem tendstoInDistribution_sqrt_smul_sub_sandwich_estimatedWeights {U : ℕ �
     (hWlaw : ∀ t, HasLaw (fun ω ↦ ⟪W ω, t⟫)
       (gaussianReal 0 (⟪sandwichCovariance A B t, t⟫).toNNReal) P') :
     TendstoInDistribution (fun (n : ℕ) ω ↦ √n • (βhat n ω - β₀)) atTop W (fun _ ↦ P) P' := by
-  set Ai := Ring.inverse A with hAi_def
   -- the cluster CLT for the transformed fixed-nuisance scores `-A⁻¹ U k β₀ θ₀`
-  set s : E → E := fun t ↦ -ContinuousLinearMap.adjoint Ai t with hs_def
-  set V : ℕ → Ω → E := fun k ω ↦ -Ai (U k β₀ θ₀ ω) with hV_def
-  have hVinner : ∀ k ω t, ⟪V k ω, t⟫ = ⟪U k β₀ θ₀ ω, s t⟫ := by
-    intro k ω t
-    simp only [hV_def, hs_def, inner_neg_left, inner_neg_right,
-      ContinuousLinearMap.adjoint_inner_right]
-  have hq : ∀ t, ⟪B (s t), s t⟫ = ⟪sandwichCovariance A B t, t⟫ := by
-    intro t
-    simp only [hs_def, map_neg, inner_neg_neg, inner_sandwichCovariance_apply, hAi_def]
-  have hCLT : TendstoInDistribution (fun (n : ℕ) ω ↦ (√n)⁻¹ • ∑ k ∈ range n, V k ω) atTop W
-      (fun _ ↦ P) P' := by
-    refine tendstoInDistribution_inv_sqrt_smul_sum_of_lindeberg hW hWlaw
-      (fun k ↦ (Ai.continuous.measurable.comp (hmeas k)).neg)
-      (hindep.comp (fun _ x ↦ -Ai x) fun _ ↦ Ai.continuous.measurable.neg)
-      (fun k ↦ ?_) (fun k ↦ ((hL2 k).continuousLinearMap_comp Ai).neg) (fun t ↦ ?_)
-      (fun t ↦ ?_)
-    · simp only [hV_def, integral_neg, Ai.integral_comp_comm ((hL2 k).integrable one_le_two),
-        hmean k, map_zero, neg_zero]
-    · simp_rw [hVinner, ← hq]
-      exact hvar (s t)
-    · simp_rw [hVinner]
-      exact hL (s t)
   have hX0 : TendstoInDistribution
-      (fun (n : ℕ) ω ↦ -Ai ((√n)⁻¹ • ∑ i ∈ range n, U i β₀ θ₀ ω)) atTop W (fun _ ↦ P) P' := by
-    refine hCLT.congr (fun n ↦ ae_of_all _ fun ω ↦ ?_) (ae_of_all _ fun _ ↦ rfl)
-    simp only [hV_def, map_smul, map_sum, smul_neg, Finset.sum_neg_distrib]
+      (fun (n : ℕ) ω ↦ -Ring.inverse A ((√n)⁻¹ • ∑ i ∈ range n, U i β₀ θ₀ ω)) atTop W
+      (fun _ ↦ P) P' := by
+    refine (tendstoInDistribution_inv_sqrt_smul_sum_sandwich (U := fun k β ↦ U k β θ₀) hmeas
+      hindep hmean hL2 hvar hL hW hWlaw).congr (fun n ↦ ae_of_all _ fun ω ↦ ?_)
+      (ae_of_all _ fun _ ↦ rfl)
+    simp only [map_smul, map_sum, smul_neg, Finset.sum_neg_distrib]
+  set Ai := Ring.inverse A
   -- plugging in `θhat` changes the transformed score sums by `o_p(1)`
   have hX : TendstoInDistribution
       (fun (n : ℕ) ω ↦ -Ai ((√n)⁻¹ • ∑ i ∈ range n, U i β₀ (θhat n ω) ω)) atTop W
