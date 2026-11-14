@@ -347,6 +347,32 @@ class SyncTest(unittest.TestCase):
         self.assertEqual(got["MathlibExt/Old.lean"], "behind")
         self.assertEqual(got["MathlibExt/Gone.lean"], "retired")
 
+    def clone(self, name: str, *flags: str) -> None:
+        run_git(self.fm, "config", "uploadpack.allowFilter", "true")
+        target = self.fm.parent / name
+        subprocess.run(["git", "clone", "-q", *flags, f"file://{self.fm}", str(target)], check=True, capture_output=True)
+        self.fm = target
+
+    def test_rejects_shallow_clone(self) -> None:
+        self.clone("shallow", "--depth=1")
+        with self.assertRaises(SystemExit) as raised:
+            self.sync()
+        self.assertIn("shallow clone", str(raised.exception))
+        self.assertFalse((self.atlas / c.MANIFEST).exists())
+
+    def test_never_lazy_fetches_from_a_partial_clone(self) -> None:
+        self.clone("partial", "--filter=blob:none", "--no-checkout")
+        blob = run_git(self.fm, "rev-parse", "HEAD:MathlibExt/Same.lean")
+        missing = ["git", "-C", str(self.fm), "cat-file", "-e", blob]
+        env = {**os.environ, "GIT_NO_LAZY_FETCH": "1"}
+        self.assertNotEqual(subprocess.run(missing, env=env, capture_output=True).returncode, 0)
+        with self.assertRaises(SystemExit) as raised:
+            self.sync()
+        self.assertIn("not in the local Formal-Math repository", str(raised.exception))
+        self.assertNotEqual(subprocess.run(missing, env=env, capture_output=True).returncode, 0,
+                            "sync must not have fetched the missing blob")
+        self.assertFalse((self.atlas / c.MANIFEST).exists())
+
 
 if __name__ == "__main__":
     unittest.main()

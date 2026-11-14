@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -29,12 +30,14 @@ from check_formal_math_sync import (  # noqa: E402  (the checker owns the header
 )
 
 ZERO = "0" * 40
+# Read only what is already local: no `git replace` substitutions, no partial-clone lazy fetches.
+GIT_ENV = {**os.environ, "GIT_NO_REPLACE_OBJECTS": "1", "GIT_NO_LAZY_FETCH": "1"}
 FLT_RATIONALE = "third-party FLT content; keeps its own copyright header"
 
 
 def git(repo: Path, *args: str) -> bytes:
     # --no-replace-objects: `git replace` refs must not make the recorded commit read as another.
-    return subprocess.run(["git", "--no-replace-objects", "-C", str(repo), "-c", "core.quotepath=off", *args],
+    return subprocess.run(["git", "--no-replace-objects", "-C", str(repo), "-c", "core.quotepath=off", *args], env=GIT_ENV,
                           check=True, capture_output=True).stdout
 
 
@@ -43,13 +46,16 @@ class Blobs:
 
     def __init__(self, repo: Path) -> None:
         self.proc = subprocess.Popen(["git", "--no-replace-objects", "-C", str(repo), "cat-file", "--batch"],
-                                     stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+                                     stdin=subprocess.PIPE, stdout=subprocess.PIPE, env=GIT_ENV)
 
     def read(self, oid: str) -> bytes:
         assert self.proc.stdin and self.proc.stdout
         self.proc.stdin.write(oid.encode() + b"\n")
         self.proc.stdin.flush()
         header = self.proc.stdout.readline().split()
+        if header[1:] == [b"missing"]:
+            raise SystemExit(f"sync: blob {oid} is not in the local Formal-Math repository (partial clone?); "
+                             "fetch the pinned commit's objects first, this script never fetches")
         if len(header) != 3 or header[1] != b"blob":
             raise SystemExit(f"sync: cannot read blob {oid}: {header!r}")
         data = self.proc.stdout.read(int(header[2]))
@@ -240,6 +246,9 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--report", type=Path, help="also write the sync report here")
     a = ap.parse_args(argv)
     manifest_path = a.manifest or a.atlas / MANIFEST
+    if git(a.formal_math, "rev-parse", "--is-shallow-repository").decode().strip() != "false":
+        raise SystemExit(f"sync: {a.formal_math} is a shallow clone; classification needs the full first-parent "
+                         "history (run `git fetch --unshallow` first)")
     commit = git(a.formal_math, "rev-parse", "--verify", f"{a.commit}^{{commit}}").decode().strip()
     previous = load_json(manifest_path)
     rationales = load_json(a.rationales)
