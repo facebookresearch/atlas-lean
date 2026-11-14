@@ -13,6 +13,7 @@ public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import MathlibExt.Analysis.ODE.MaximalSolution
 import MathlibExt.Biology.Epidemiology.StochasticSIRKurtz
+import MathlibExt.Analysis.ODE.GronwallIntegral
 import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Analysis.ODE.Gronwall
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
@@ -277,7 +278,7 @@ theorem norm_le (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {B k : ℝ} (hB0 : 0 ≤ B)
     ∀ t ∈ Icc 0 T, ‖U t‖ ≤ 3 * k * exp ((2 * β * B + γ) * t) := by
   have hL : 0 ≤ 2 * β * B + γ := by positivity
   have hcont := continuousOn_jacobian (β := β) (γ := γ) hxc hU.continuousOn
-  refine StochasticSIR.le_mul_exp_of_le_add_integral hL
+  refine MathlibExt.Analysis.ODE.le_mul_exp_of_le_add_integral hL
     (hU.continuousOn.norm.integrableOn_Icc (μ := volume)) (fun _ _ => norm_nonneg _)
     fun t ht => ?_
   have hii : IntervalIntegrable (fun s => jacobian β γ (x s) (U s)) volume 0 t :=
@@ -311,7 +312,7 @@ theorem unique (hβ : 0 ≤ β) (hγ : 0 ≤ γ) (hxc : ContinuousOn x (Icc 0 T)
   have hD : ContinuousOn (fun s => U s - U' s) (Icc 0 T) := hU.continuousOn.sub hU'.continuousOn
   have hc := continuousOn_jacobian (β := β) (γ := γ) hxc hU.continuousOn
   have hc' := continuousOn_jacobian (β := β) (γ := γ) hxc hU'.continuousOn
-  have key := StochasticSIR.le_mul_exp_of_le_add_integral (a := 0) hL
+  have key := MathlibExt.Analysis.ODE.le_mul_exp_of_le_add_integral (a := 0) hL
     (hD.norm.integrableOn_Icc (μ := volume)) (fun _ _ => norm_nonneg _) fun t ht => ?_
   · intro t ht
     have := key t ht
@@ -572,7 +573,7 @@ theorem norm_sqrt_smul_sub_sub_le {β γ T B δ ρ k : ℝ} (hβ : 0 ≤ β) (h�
     simp only [d, u, smul_sub]
     abel
   -- Gronwall
-  have hgron := StochasticSIR.le_mul_exp_of_le_add_integral (a := 3 * ρ + β * δ * T * K')
+  have hgron := MathlibExt.Analysis.ODE.le_mul_exp_of_le_add_integral (a := 3 * ρ + β * δ * T * K')
     (by positivity : 0 ≤ L + β) hdi.norm (fun _ _ => norm_nonneg _) fun t ht => ?_
   · calc ‖c • (X t₀ - x t₀) - U t₀‖ = ‖d t₀‖ := rfl
       _ ≤ (3 * ρ + β * δ * T * K') * exp ((L + β) * t₀) := hgron t₀ ht₀
