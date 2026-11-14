@@ -95,4 +95,82 @@ example {Z : Type*} [MeasurableSpace Z] (μ : Measure Z) [IsProbabilityMeasure �
   have hset : {p : (Fin n → Z) × (Fin n → Z) | p.2 ∈ A} = Prod.snd ⁻¹' A := rfl
   rw [hset, ← Measure.map_apply measurable_snd hA, ghostSample_map_snd]
 
+/-- Singleton class: the inequality for one loss, with both suprema collapsed. -/
+theorem symmetrization_singleton {Z : Type*} [MeasurableSpace Z] (μ : Measure Z)
+    [IsProbabilityMeasure μ] {n : ℕ} (g : Z → ℝ) (hg : Measurable g)
+    (hbd : ∀ᵐ z ∂μ, g z ∈ Set.Icc (0 : ℝ) 1) {ε : ℝ} (hε : 0 < ε)
+    (hnε : 2 ≤ (n : ℝ) * ε ^ 2) :
+    (Measure.pi fun _ : Fin n => μ).real
+        {S | ε < |(n : ℝ)⁻¹ * ∑ i : Fin n, g (S i) - ∫ z, g z ∂μ|} ≤
+      2 * ((Measure.pi fun _ : Fin n => μ).prod (Measure.pi fun _ : Fin n => μ)).real
+        {p | ε / 2 <
+          |(n : ℝ)⁻¹ * ∑ i : Fin n, g (p.1 i) - (n : ℝ)⁻¹ * ∑ i : Fin n, g (p.2 i)|} := by
+  have h := measureReal_supDeviation_gt_le_two_mul_ghost μ (fun (_ : Fin 1) => g)
+    (fun _ => hg) (fun _ => hbd) hε hnε
+  unfold supDeviation ghostSupDeviation at h
+  simpa only [ciSup_unique] using h
+
+/-- Binary class: the inequality for the error indicators of a finite binary class. -/
+theorem symmetrization_binaryClass {α : Type*} [MeasurableSpace α] (μ : Measure (α × Bool))
+    [IsProbabilityMeasure μ] {M n : ℕ} (h : Fin M → α → Bool)
+    (herr : ∀ j, MeasurableSet {p : α × Bool | h j p.1 ≠ p.2}) {ε : ℝ} (hε : 0 < ε)
+    (hnε : 2 ≤ (n : ℝ) * ε ^ 2) :
+    (Measure.pi fun _ : Fin n => μ).real {S | ε < supDeviation μ (binaryErrorIndicator h) S} ≤
+      2 * ((Measure.pi fun _ : Fin n => μ).prod (Measure.pi fun _ : Fin n => μ)).real
+        {p | ε / 2 < ghostSupDeviation (binaryErrorIndicator h) p.1 p.2} := by
+  exact measureReal_supDeviation_gt_le_two_mul_ghost μ (binaryErrorIndicator h)
+    (fun j => measurable_binaryErrorIndicator h j (herr j))
+    (fun j => Filter.Eventually.of_forall fun p => binaryErrorIndicator_mem_Icc h j p)
+    hε hnε
+
+/-- Threshold class with two hypotheses on `ℝ`: losses `1{z ≤ t j}`, `j : Fin 2`. -/
+theorem symmetrization_thresholdClass (μ : Measure ℝ) [IsProbabilityMeasure μ] {n : ℕ}
+    (t : Fin 2 → ℝ) {ε : ℝ} (hε : 0 < ε) (hnε : 2 ≤ (n : ℝ) * ε ^ 2) :
+    (Measure.pi fun _ : Fin n => μ).real
+        {S | ε < supDeviation μ (fun j => (Set.Iic (t j)).indicator 1) S} ≤
+      2 * ((Measure.pi fun _ : Fin n => μ).prod (Measure.pi fun _ : Fin n => μ)).real
+        {p | ε / 2 < ghostSupDeviation (fun j => (Set.Iic (t j)).indicator 1) p.1 p.2} := by
+  refine measureReal_supDeviation_gt_le_two_mul_ghost μ _ ?_ ?_ hε hnε
+  · intro j
+    exact measurable_const.indicator measurableSet_Iic
+  · intro j
+    filter_upwards with z
+    by_cases hz : z ∈ Set.Iic (t j)
+    · rw [Set.indicator_of_mem hz]
+      exact ⟨zero_le_one, le_rfl⟩
+    · rw [Set.indicator_of_notMem hz]
+      exact ⟨le_rfl, zero_le_one⟩
+
+/-- Empty class: both sides vanish. -/
+theorem symmetrization_emptyClass {Z : Type*} [MeasurableSpace Z] (μ : Measure Z)
+    [IsProbabilityMeasure μ] {n : ℕ} (f : Fin 0 → Z → ℝ) {ε : ℝ} (hε : 0 < ε) :
+    (Measure.pi fun _ : Fin n => μ).real {S | ε < supDeviation μ f S} = 0 ∧
+      ((Measure.pi fun _ : Fin n => μ).prod (Measure.pi fun _ : Fin n => μ)).real
+        {p | ε / 2 < ghostSupDeviation f p.1 p.2} = 0 := by
+  have hB : {S : Fin n → Z | ε < supDeviation μ f S} = ∅ := by
+    ext S
+    simp [lt_supDeviation_iff μ f S hε.le]
+  have hG : {p : (Fin n → Z) × (Fin n → Z) | ε / 2 < ghostSupDeviation f p.1 p.2} = ∅ := by
+    ext p
+    simp [lt_ghostSupDeviation_iff f p.1 p.2 (half_pos hε).le]
+  rw [hB, hG]
+  simp
+
+/-- Dependent ghost (negative): with the ghost sample equal to the sample, the ghost event has
+probability `0`, so the inequality fails for a dependent ghost whenever its left side is positive;
+the product law is necessary. -/
+theorem symmetrization_diagonalGhost_eq_zero {Z : Type*} [MeasurableSpace Z] (μ : Measure Z)
+    [IsProbabilityMeasure μ] {M n : ℕ} (f : Fin M → Z → ℝ) (hf : ∀ j, Measurable (f j))
+    {ε : ℝ} (hε : 0 ≤ ε) :
+    ((Measure.pi fun _ : Fin n => μ).map fun S => (S, S)).real
+        {p | ε / 2 < ghostSupDeviation f p.1 p.2} = 0 := by
+  have hdiag : Measurable fun S : Fin n → Z => (S, S) :=
+    measurable_id.prodMk measurable_id
+  rw [measureReal_def, Measure.map_apply hdiag (measurableSet_lt_ghostSupDeviation f hf _)]
+  have hpre : (fun S : Fin n → Z => (S, S)) ⁻¹' {p | ε / 2 < ghostSupDeviation f p.1 p.2} = ∅ := by
+    ext S
+    simp [ghostSupDeviation_self, not_lt.mpr (div_nonneg hε zero_le_two)]
+  rw [hpre]
+  simp
+
 end MathlibExtTest.Probability.Statistics.Learning.Symmetrization
