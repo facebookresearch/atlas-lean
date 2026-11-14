@@ -26,8 +26,10 @@ rank-deficient vs identifiable calibration designs.
 
 Section A evaluates `meanVec`/`covMatrix` entries on `p = ![1/2, 1/2]`,
 `X = ![![1, 2], ![3, 4]]` and checks the two-input variance is `4`, not the
-quadrature value `2`. Section B shows the `x ^ 2` remainder at `δ = 1` equals `1`
-(nonzero) and satisfies the `H = 2` bound. For the square map `y ↦ (y 0) ^ 2` on
+quadrature value `2`. It applies the affine mean and covariance laws with a non-identity,
+non-symmetric `A` and a nonzero `b` (the order `A C Aᵀ` matters), and quadrature to
+four-point data with uncorrelated coordinates. Section B shows the `x ^ 2` remainder at
+`δ = 1` equals `1` (nonzero) and satisfies the `H = 2` bound. For the square map `y ↦ (y 0) ^ 2` on
 `Fin 1 → ℝ` at `x = 0` and the small step `δ = 1 / 2`, the Jacobian remainder is `1 / 4`;
 the unit-step, scaled and Hessian bounds all equal `1 / 4`, while the unscaled hypothesis
 with the `‖δ‖ ^ 2` conclusion would give `1 / 16`, which fails. Section C checks a Lipschitz
@@ -102,6 +104,61 @@ example : covMatrix ![1 / 2, 1 / 2]
       Matrix.cons_val_zero, Matrix.cons_val_one]
     norm_num
   rw [covMatrix_two_linear _ _ 1 1, hC00, hC11, hC01]
+  norm_num
+
+/-- The two-point weight has total mass one. -/
+lemma sum_twoPoint : ∑ ω, (![1 / 2, 1 / 2] : Fin 2 → ℝ) ω = 1 := by
+  norm_num [Fin.sum_univ_two]
+
+/-- Every covariance entry of the two-point data `X = ![![1, 2], ![3, 4]]` is `1`. -/
+lemma covMatrix_twoPoint (i j : Fin 2) :
+    covMatrix ![1 / 2, 1 / 2] ![![1, 2], ![3, 4]] i j = 1 := by
+  fin_cases i <;> fin_cases j <;>
+    norm_num [covMatrix_apply, covariance, expectation, Fin.sum_univ_two]
+
+/-- A non-identity, non-symmetric `2 × 2` measurement matrix. -/
+noncomputable def designA : Matrix (Fin 2) (Fin 2) ℝ := Matrix.of ![![1, 1], ![0, 2]]
+
+/-- **Affine mean law** with `A = designA` and the nonzero shift `b = (1, -1)`: the mean of
+`A X + b` is `A (2, 3) + (1, -1) = (6, 5)`. -/
+example : meanVec ![1 / 2, 1 / 2] (fun ω => designA *ᵥ ![![1, 2], ![3, 4]] ω + ![1, -1]) =
+    ![6, 5] := by
+  rw [meanVec_affine _ _ _ _ sum_twoPoint]
+  ext i
+  fin_cases i <;>
+    norm_num [designA, Matrix.mulVec, dotProduct, Fin.sum_univ_two, meanVec_apply, expectation]
+
+/-- **Affine covariance propagation** with the same `A` and `b`: entry `(0, 1)` of `A C Aᵀ` is
+`4`, and the shift `b` drops out. -/
+example : covMatrix ![1 / 2, 1 / 2]
+    (fun ω => designA *ᵥ ![![1, 2], ![3, 4]] ω + ![1, -1]) 0 1 = 4 := by
+  rw [covMatrix_affine _ _ _ _ sum_twoPoint]
+  norm_num [Matrix.mul_apply, Matrix.vecMul, dotProduct, Fin.sum_univ_two, covMatrix_twoPoint,
+    designA]
+
+/-- The multiplication order matters: the same entry of `Aᵀ C A` is `3`, not `4`. -/
+example : (designAᵀ * covMatrix ![1 / 2, 1 / 2] ![![1, 2], ![3, 4]] * designA) 0 1 = 3 := by
+  norm_num [Matrix.mul_apply, Fin.sum_univ_two, covMatrix_twoPoint, designA]
+
+/-- Four-point data with uncorrelated coordinates: `X = (±1, ±1)` under the uniform weight. -/
+noncomputable def signData : Fin 4 → Fin 2 → ℝ :=
+  ![![1, 1], ![1, -1], ![-1, 1], ![-1, -1]]
+
+/-- The coordinates of `signData` are uncorrelated. -/
+lemma covMatrix_signData_01 : covMatrix ![1 / 4, 1 / 4, 1 / 4, 1 / 4] signData 0 1 = 0 := by
+  norm_num [covMatrix_apply, covariance, expectation, Fin.sum_univ_four, signData]
+
+lemma covMatrix_signData_00 : covMatrix ![1 / 4, 1 / 4, 1 / 4, 1 / 4] signData 0 0 = 1 := by
+  norm_num [covMatrix_apply, covariance, expectation, Fin.sum_univ_four, signData]
+
+lemma covMatrix_signData_11 : covMatrix ![1 / 4, 1 / 4, 1 / 4, 1 / 4] signData 1 1 = 1 := by
+  norm_num [covMatrix_apply, covariance, expectation, Fin.sum_univ_four, signData]
+
+/-- **Quadrature** for uncorrelated inputs: `Var(X₁ + 2 X₂) = 1 + 4 = 5`. -/
+example : covMatrix ![1 / 4, 1 / 4, 1 / 4, 1 / 4]
+    (fun ω => Matrix.of ![![1, 2]] *ᵥ signData ω) 0 0 = 5 := by
+  rw [variance_linear_two_uncorrelated _ _ 1 2 covMatrix_signData_01, covMatrix_signData_00,
+    covMatrix_signData_11]
   norm_num
 
 /-! ## B. The nonlinear Jacobian remainder is nonzero and bounded -/
@@ -229,22 +286,23 @@ lemma jacobianRemainder_sqMap : jacobianRemainder sqMap 0 halfStep 0 = 1 / 4 := 
 example : |jacobianRemainder sqMap 0 halfStep 0| ≤ (1 / 2) / 2 :=
   jacobianRemainder_component_le sqMap 0 halfStep 0 (fun _ => 1 / 2)
     hasFDerivAt_sqMap_zero.differentiableAt
-    (fun i => by rw [sqMap_segment]; fun_prop)
-    (fun i t _ => by rw [deriv_deriv_sqMap_segment]; norm_num)
+    (by rw [sqMap_segment]; fun_prop)
+    (fun t _ => by rw [deriv_deriv_sqMap_segment]; norm_num)
 
 /-- `‖δ‖ ^ 2`-scaled bound: `1 / 2 ≤ 2 * ‖δ‖ ^ 2`, so the bound is
 `2 / 2 * ‖δ‖ ^ 2 = 1 / 4`. -/
 example : |jacobianRemainder sqMap 0 halfStep 0| ≤ 2 / 2 * ‖halfStep‖ ^ 2 :=
   jacobianRemainder_component_le_of_scaled sqMap 0 halfStep 0 (fun _ => 2)
     hasFDerivAt_sqMap_zero.differentiableAt
-    (fun i => by rw [sqMap_segment]; fun_prop)
-    (fun i t _ => by rw [deriv_deriv_sqMap_segment, norm_halfStep]; norm_num)
+    (by rw [sqMap_segment]; fun_prop)
+    (fun t _ => by rw [deriv_deriv_sqMap_segment, norm_halfStep]; norm_num)
 
 /-- Hessian bound: the component `y ↦ (y 0) ^ 2` has Hessian norm at most `2`, so the
 bound is `2 / 2 * ‖δ‖ ^ 2 = 1 / 4`. -/
 example : |jacobianRemainder sqMap 0 halfStep 0| ≤ 2 / 2 * ‖halfStep‖ ^ 2 :=
   jacobianRemainder_component_le_of_hessian sqMap 0 halfStep 0 (fun _ => 2)
-    (lo := 0) (hi := halfStep) isOpen_univ (Set.subset_univ _) contDiff_sqMap.contDiffOn
+    (lo := 0) (hi := halfStep) isOpen_univ (Set.subset_univ _)
+    hasFDerivAt_sqMap_zero.differentiableAt (contDiff_pi.1 contDiff_sqMap 0).contDiffOn
     (fun y _ => norm_fderiv_fderiv_sqMap_le y)
     ⟨le_rfl, fun _ => by norm_num [halfStep]⟩ ⟨fun _ => by norm_num [halfStep], by simp⟩
 

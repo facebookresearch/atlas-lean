@@ -271,9 +271,9 @@ noncomputable def jacobianRemainder {n m : ℕ} (f : (Fin n → ℝ) → (Fin m 
   f (x + δ) - f x - fderiv ℝ f x δ
 
 /-- **Componentwise Jacobian remainder bound, unit-step form.** If `f` is differentiable at
-`x` and, for each component `i`, the concrete one-variable segment function
-`φᵢ t = f i (x + t • δ)` is `C²` with `|φᵢ'' t| ≤ H i` on `[0, 1]`, then
-`|jacobianRemainder f x δ i| ≤ H i / 2`. This is the scalar bound applied to `φᵢ`
+`x` and the one-variable segment function `φᵢ t = f i (x + t • δ)` of the selected component
+`i` is `C²` with `|φᵢ'' t| ≤ H i` on `[0, 1]`, then `|jacobianRemainder f x δ i| ≤ H i / 2`;
+the other components need no smoothness. This is the scalar bound applied to `φᵢ`
 with unit step; the `fderiv`/`φᵢ'` identification uses the chain rule along the
 segment. The second derivative of `φᵢ` already carries two factors of `δ`, so `H i` bounds
 it along this one segment and is not a Hessian bound; see
@@ -282,14 +282,14 @@ it along this one segment and is not a Hessian bound; see
 lemma jacobianRemainder_component_le {n m : ℕ} (f : (Fin n → ℝ) → (Fin m → ℝ))
     (x δ : Fin n → ℝ) (i : Fin m) (H : Fin m → ℝ)
     (hdiff : DifferentiableAt ℝ f x)
-    (hφ : ∀ i, ContDiff ℝ 2 (fun t : ℝ => f (x + t • δ) i))
-    (hH : ∀ i, ∀ t ∈ Set.Icc (0 : ℝ) 1,
+    (hφ : ContDiff ℝ 2 (fun t : ℝ => f (x + t • δ) i))
+    (hH : ∀ t ∈ Set.Icc (0 : ℝ) 1,
       |deriv (deriv (fun t : ℝ => f (x + t • δ) i)) t| ≤ H i) :
     |jacobianRemainder f x δ i| ≤ H i / 2 := by
   set φ : ℝ → ℝ := fun t => f (x + t • δ) i with hφdef
   have hφ0 : φ 0 = f x i := by simp [hφdef]
   have hφ1 : φ 1 = f (x + δ) i := by simp [hφdef]
-  have hbound := taylor_first_order_bound (f := φ) (hφ i) (hH i) (x := 0) (δ := 1)
+  have hbound := taylor_first_order_bound (f := φ) hφ hH (x := 0) (δ := 1)
     (by norm_num : (0 : ℝ) ∈ Set.Icc 0 1) (by norm_num : (0 : ℝ) + 1 ∈ Set.Icc 0 1)
   rw [zero_add, one_pow, mul_one, mul_one] at hbound
   have hline : HasDerivAt (fun t : ℝ => x + t • δ) δ 0 := by
@@ -318,10 +318,10 @@ lemma jacobianRemainder_component_le {n m : ℕ} (f : (Fin n → ℝ) → (Fin m
   rw [hrem]
   exact hbound
 
-/-- **Componentwise remainder bound, `‖δ‖ ^ 2`-scaled segment form.** If the segment
-functions `φᵢ t = f i (x + t • δ)` are `C²` with `|φᵢ'' t| ≤ H i * ‖δ‖ ^ 2` on `[0, 1]`,
-where `‖δ‖` is Mathlib's sup norm on `Fin n → ℝ`, then
-`|jacobianRemainder f x δ i| ≤ H i / 2 * ‖δ‖ ^ 2`. This is
+/-- **Componentwise remainder bound, `‖δ‖ ^ 2`-scaled segment form.** If `f` is differentiable
+at `x` and the segment function `φᵢ t = f i (x + t • δ)` of the selected component `i` is `C²`
+with `|φᵢ'' t| ≤ H i * ‖δ‖ ^ 2` on `[0, 1]`, where `‖δ‖` is Mathlib's sup norm on
+`Fin n → ℝ`, then `|jacobianRemainder f x δ i| ≤ H i / 2 * ‖δ‖ ^ 2`. This is
 `jacobianRemainder_component_le` for the bound `H i * ‖δ‖ ^ 2`. The hypothesis still bounds
 the second derivative along the given segment, not the Hessian of `f i`; for a Hessian
 bound use `jacobianRemainder_component_le_of_hessian`. With the unscaled hypothesis
@@ -330,18 +330,19 @@ counterexample (see the tests). -/
 lemma jacobianRemainder_component_le_of_scaled {n m : ℕ} (f : (Fin n → ℝ) → (Fin m → ℝ))
     (x δ : Fin n → ℝ) (i : Fin m) (H : Fin m → ℝ)
     (hdiff : DifferentiableAt ℝ f x)
-    (hφ : ∀ i, ContDiff ℝ 2 (fun t : ℝ => f (x + t • δ) i))
-    (hH : ∀ i, ∀ t ∈ Set.Icc (0 : ℝ) 1,
+    (hφ : ContDiff ℝ 2 (fun t : ℝ => f (x + t • δ) i))
+    (hH : ∀ t ∈ Set.Icc (0 : ℝ) 1,
       |deriv (deriv (fun t : ℝ => f (x + t • δ) i)) t| ≤ H i * ‖δ‖ ^ 2) :
     |jacobianRemainder f x δ i| ≤ H i / 2 * ‖δ‖ ^ 2 := by
   have h := jacobianRemainder_component_le f x δ i (fun i => H i * ‖δ‖ ^ 2) hdiff hφ hH
   calc |jacobianRemainder f x δ i| ≤ H i * ‖δ‖ ^ 2 / 2 := h
     _ = H i / 2 * ‖δ‖ ^ 2 := by ring
 
-/-- **Componentwise remainder bound from a Hessian bound.** Let `f` be `C²` on an open set
-`U` containing the box `Set.Icc lo hi`, and let the second Fréchet derivative of component
-`i` satisfy `‖fderiv ℝ (fderiv ℝ (fun y => f y i)) y‖ ≤ H i` on the box, the operator norm
-for the sup norm on `Fin n → ℝ`. For `x` and `x + δ` in the box,
+/-- **Componentwise remainder bound from a Hessian bound.** Let `f` be differentiable at `x`,
+let its component `i` be `C²` on an open set `U` containing the box `Set.Icc lo hi`, and let
+the second Fréchet derivative of that component satisfy
+`‖fderiv ℝ (fderiv ℝ (fun y => f y i)) y‖ ≤ H i` on the box, the operator norm for the sup
+norm on `Fin n → ℝ`; the other components need no smoothness. For `x` and `x + δ` in the box,
 `|jacobianRemainder f x δ i| ≤ H i / 2 * ‖δ‖ ^ 2`. This is
 `Chemistry.Uncertainty.measurementFunction_firstOrder_remainder_le` for the component
 `fun y => f y i`; the chain rule identifies its derivative at `x` with component `i` of
@@ -349,20 +350,18 @@ for the sup norm on `Fin n → ℝ`. For `x` and `x + δ` in the box,
 lemma jacobianRemainder_component_le_of_hessian {n m : ℕ} (f : (Fin n → ℝ) → (Fin m → ℝ))
     (x δ : Fin n → ℝ) (i : Fin m) (H : Fin m → ℝ) {lo hi : Fin n → ℝ}
     {U : Set (Fin n → ℝ)} (hU : IsOpen U) (hbox : Set.Icc lo hi ⊆ U)
-    (hf : ContDiffOn ℝ 2 f U)
+    (hdiff : DifferentiableAt ℝ f x) (hf : ContDiffOn ℝ 2 (fun y => f y i) U)
     (hH : ∀ y ∈ Set.Icc lo hi, ‖fderiv ℝ (fderiv ℝ (fun y => f y i)) y‖ ≤ H i)
     (hx : x ∈ Set.Icc lo hi) (hxδ : x + δ ∈ Set.Icc lo hi) :
     |jacobianRemainder f x δ i| ≤ H i / 2 * ‖δ‖ ^ 2 := by
-  have hdiff : DifferentiableAt ℝ f x :=
-    (hf.differentiableOn (by norm_num) x (hbox hx)).differentiableAt (hU.mem_nhds (hbox hx))
   have hg : HasFDerivAt (fun y : Fin n → ℝ => f y i)
       ((ContinuousLinearMap.proj i).comp (fderiv ℝ f x)) x :=
     (hasFDerivAt_apply (𝕜 := ℝ) i (f x)).comp x hdiff.hasFDerivAt
   have hconn : fderiv ℝ f x δ i = fderiv ℝ (fun y : Fin n → ℝ => f y i) x δ := by
     rw [hg.fderiv, ContinuousLinearMap.comp_apply]
     rfl
-  have h := Chemistry.Uncertainty.measurementFunction_firstOrder_remainder_le hU hbox
-    (contDiffOn_pi.1 hf i) hH hx hxδ
+  have h := Chemistry.Uncertainty.measurementFunction_firstOrder_remainder_le hU hbox hf hH hx
+    hxδ
   have hrem : jacobianRemainder f x δ i =
       f (x + δ) i - f x i - fderiv ℝ (fun y : Fin n → ℝ => f y i) x δ := by
     simp only [jacobianRemainder, Pi.sub_apply, hconn]
