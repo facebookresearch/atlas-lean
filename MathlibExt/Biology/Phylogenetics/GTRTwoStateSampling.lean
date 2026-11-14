@@ -11,7 +11,7 @@ module
 public import MathlibExt.Biology.Phylogenetics.GTRLogDetRecovery
 public import MathlibExt.Probability.Process.ContinuousTimeMarkovChain.StickyKernel
 public import Mathlib.Probability.ProductMeasure
-public import Mathlib.Probability.Independence.InfinitePi
+import Mathlib.Probability.Independence.InfinitePi
 
 /-!
 # An i.i.d. sampling instance for the GTR log-det consistency theorems
@@ -32,9 +32,9 @@ builds such a sequence and so shows that those hypotheses are satisfiable.
 
 ## Main results
 
-* `ctmcTransition_pos`: for a rate matrix with positive off-diagonal rates, every entry of
-  `P(t)` is positive for `t > 0`; hence `divergenceWeight_pos`: the GTR divergence law has
-  **full support** for `t > 0` and `π, s > 0`.
+* `divergenceWeight_pos`: the GTR divergence law has **full support** for `t > 0` and
+  `π, s > 0`, from the positivity of the CTMC transition function
+  (`IsRateMatrix.ctmcTransition_pos`).
 * `measurable_site`, `pairwise_indepFun_site`, `identDistrib_site`,
   `measureReal_site_preimage_singleton`: the four sampling hypotheses of T158 hold for `site`
   under `sampleLaw π s t` (built from `Measure.infinitePi`, `infinitePi_map_eval` and
@@ -57,12 +57,12 @@ builds such a sequence and so shows that those hypotheses are satisfiable.
   `tendstoInMeasure_rateEstimate_empirical`, `empiricalDivergence`, `rateEstimate`,
   `logDetDistance`; `SubstitutionModels.gtrRate`, `isRateMatrix_gtrRate`;
   `IsRateMatrix.ctmcTransition_nonneg`, `IsRateMatrix.sum_ctmcTransition`,
-  `IsRateMatrix.exists_add_smul_one_nonneg`, `ctmcTransition_eq_exp_smul_uniformized`;
+  `IsRateMatrix.ctmcTransition_pos`;
   `equalInputRate`, `ctmcTransition_equalInputRate`, `stickyKernel_apply`; Mathlib's
   `Measure.infinitePi`, `Measure.infinitePi_map_eval`, `iIndepFun_infinitePi`.
-* Proved here: the entrywise lower bound `1 + t A ≤ exp (t A)` for nonnegative `A`, positivity
-  of `P(t)`, the sampling model and its four hypotheses, the two-state closed form, the
-  non-independence of the constant sample, and the instantiated consistency theorems.
+* Proved here: full support of the divergence law, the sampling model and its four
+  hypotheses, the two-state closed form, the non-independence of the constant sample, and the
+  instantiated consistency theorems.
 * Not covered elsewhere: no file in `MathlibExt` constructs a probability space carrying the
   sampling hypotheses of T158 or T67 (`GTRInference`) for a GTR law. T67's test discharges them
   with a constant sample on a point-mass law, and T158's test applies only the deterministic
@@ -85,48 +85,6 @@ open SubstitutionModels GTRLogDetRecovery
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-! ## Positivity of the transition function -/
-
-/-- For a matrix `A` with nonnegative entries and `t ≥ 0`, `exp (t • A)` dominates the first two
-terms of its series entrywise: `1 i j + t * A i j ≤ exp (t • A) i j`. -/
-theorem one_add_le_ctmcTransition_of_nonneg {A : Matrix ι ι ℝ} (hA : ∀ i j, 0 ≤ A i j) {t : ℝ}
-    (ht : 0 ≤ t) (i j : ι) : (1 : Matrix ι ι ℝ) i j + t * A i j ≤ ctmcTransition A t i j := by
-  let := Matrix.linftyOpNormedRing (n := ι) (α := ℝ)
-  let := Matrix.linftyOpNormedAlgebra (R := ℝ) (n := ι) (α := ℝ)
-  have hp (n : ℕ) : ∀ i j, 0 ≤ ((t • A) ^ n) i j := by
-    induction n with
-    | zero =>
-      intro i j
-      simp only [pow_zero, Matrix.one_apply]
-      split <;> norm_num
-    | succ n hn =>
-      intro i j
-      rw [pow_succ, Matrix.mul_apply]
-      exact Finset.sum_nonneg fun k _ => mul_nonneg (hn i k) (mul_nonneg ht (hA k j))
-  have hij := Pi.hasSum.mp (Pi.hasSum.mp (NormedSpace.exp_series_hasSum_exp' (𝕂 := ℝ) (t • A)) i) j
-  have hle := sum_le_hasSum (Finset.range 2) (fun n _ => by
-    simp only [Matrix.smul_apply, smul_eq_mul]
-    exact mul_nonneg (inv_nonneg.mpr (Nat.cast_nonneg _)) (hp n i j)) hij
-  exact le_of_eq_of_le (by simp [Finset.sum_range_succ]) hle
-
-/-- **Positivity of the transition function**: if `Q` is a rate matrix with positive
-off-diagonal rates, every entry of `P(t) = exp (t • Q)` is positive for `t > 0`. -/
-theorem ctmcTransition_pos {Q : Matrix ι ι ℝ} (hQ : IsRateMatrix Q)
-    (hoff : ∀ i j, i ≠ j → 0 < Q i j) {t : ℝ} (ht : 0 < t) (i j : ι) :
-    0 < ctmcTransition Q t i j := by
-  obtain ⟨c, -, hc⟩ := hQ.exists_add_smul_one_nonneg
-  rw [ctmcTransition_eq_exp_smul_uniformized Q c t, Matrix.smul_apply, smul_eq_mul]
-  refine mul_pos (Real.exp_pos _)
-    (lt_of_lt_of_le ?_ (one_add_le_ctmcTransition_of_nonneg hc ht.le i j))
-  by_cases h : i = j
-  · subst h
-    rw [one_apply_eq]
-    have := mul_nonneg ht.le (hc i i)
-    linarith
-  · have hQc : (Q + c • (1 : Matrix ι ι ℝ)) i j = Q i j := by simp [one_apply_ne h]
-    rw [one_apply_ne h, zero_add, hQc]
-    exact mul_pos ht (hoff i j h)
-
 /-! ## The GTR divergence law -/
 
 section Law
@@ -145,9 +103,8 @@ theorem divergenceWeight_nonneg (hπ : ∀ i, 0 ≤ π i) (hs : ∀ i j, i ≠ j
 exchangeabilities, every site pair has positive GTR divergence weight. -/
 theorem divergenceWeight_pos (hπ : ∀ i, 0 < π i) (hs : ∀ i j, i ≠ j → 0 < s i j) (ht : 0 < t)
     (a : ι × ι) : 0 < divergenceWeight π s t a := by
-  refine mul_pos (hπ _) (ctmcTransition_pos
-    (isRateMatrix_gtrRate (fun i => (hπ i).le) fun i j h => (hs i j h).le) (fun i j h => ?_) ht
-    _ _)
+  refine mul_pos (hπ _) ((isRateMatrix_gtrRate (fun i => (hπ i).le) fun i j h =>
+    (hs i j h).le).ctmcTransition_pos (fun i j h => ?_) ht _ _)
   simpa [gtrRate, h] using mul_pos (hs i j h) (hπ j)
 
 theorem sum_divergenceWeight (hπ : ∀ i, 0 ≤ π i) (hπ1 : ∑ i, π i = 1)
