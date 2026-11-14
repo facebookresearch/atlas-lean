@@ -39,9 +39,10 @@ such that every edge is a monotonically increasing curve in the vertical directi
 edges cross", and they show that testing upward planarity is NP-complete.
 
 The drawing is stated in straight-line form: vertices are distinct points of `ℝ × ℝ`, every arc
-`u → v` is the segment from `u` to `v` with `u` strictly below `v`, and the segments of two arcs
+`u → v` is the segment from `u` to `v` with `u` strictly below `v`, the segments of two arcs
 with different endpoint sets meet only in common endpoints (the crossing-free condition of the
-shared MathlibExt predicate `SimpleGraph.IsPlanar`, built on its `SimpleGraph.Segment`). By Di
+shared MathlibExt predicate `SimpleGraph.IsPlanar`, built on its `SimpleGraph.Segment`), and no
+vertex lies on the segment of an arc unless it is an endpoint of that arc. By Di
 Battista and Tamassia (1988), every upward planar digraph has a planar straight-line upward
 drawing, so this is upward planarity.
 
@@ -78,14 +79,15 @@ def WellFormed (i : UpwardPlanarityTestingInstance) : Prop :=
 
 /-- A planar straight-line upward drawing of a digraph `G`: distinct vertices go to distinct
 points, every arc `u → v` goes strictly upward (`f u` has smaller second coordinate than
-`f v`), and the segments of two arcs with different endpoint sets meet only in common
-endpoints. -/
+`f v`), the segments of two arcs with different endpoint sets meet only in common endpoints,
+and a vertex lies on the segment of an arc only if it is an endpoint of that arc. -/
 def IsUpwardPlanarDrawing {V : Type*} (G : Digraph V) (f : V → ℝ × ℝ) : Prop :=
   Function.Injective f ∧
     (∀ ⦃u v⦄, G.Adj u v → (f u).2 < (f v).2) ∧
-    ∀ ⦃u v x y⦄, G.Adj u v → G.Adj x y → ({u, v} : Set V) ≠ {x, y} →
+    (∀ ⦃u v x y⦄, G.Adj u v → G.Adj x y → ({u, v} : Set V) ≠ {x, y} →
       SimpleGraph.Segment (f u) (f v) ∩ SimpleGraph.Segment (f x) (f y) ⊆
-        ({f u, f v} : Set (ℝ × ℝ)) ∩ {f x, f y}
+        ({f u, f v} : Set (ℝ × ℝ)) ∩ {f x, f y}) ∧
+    ∀ ⦃u v⦄ w, G.Adj u v → f w ∈ SimpleGraph.Segment (f u) (f v) → w = u ∨ w = v
 
 /-- The digraph of the instance has a planar straight-line upward drawing. -/
 def UpwardPlanarityTestingFeasible (i : UpwardPlanarityTestingInstance) : Prop :=
