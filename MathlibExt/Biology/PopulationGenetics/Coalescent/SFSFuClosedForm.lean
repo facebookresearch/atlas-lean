@@ -35,9 +35,9 @@ the total length of the branches subtending `i` sample copies.
 
 The covariance formula of the SFS comes from `SFSCovariance.covariance_count_kingman`
 (not repeated here): `Cov(ξ_i, ξ_j) = δ_{ij} θ / i + (θ / 2)² Cov(L_i, L_j)`. Fu's closed form
-of the branch-length covariances enters as the hypothesis `Cov(L_i, L_j) = 4 σ_{ij}`; deriving
-it from the random-joining law needs the joint second moments of the block counts and is not
-done here. From it:
+of the branch-length covariances enters as the hypothesis `Cov(L_i, L_j) = 4 σ_{ij}`, not
+derived here; `SFSFuCovariance.covariance_sfsLength_eq_four_mul_fuSigma` derives it from the
+random-joining law and `KingmanTimes` for every sample size. From it:
 
 * `covariance_count_kingman_of_fuSigma`: Fu's `Cov(ξ_i, ξ_j) = δ_{ij} θ / i + σ_{ij} θ²`;
 * `variance_sum_sfsLength_of_fuSigma`: `Var(∑_i c_i L_i) = 4 ∑_{i,j} c_i c_j σ_{ij}`, and

@@ -44,6 +44,8 @@ theorem to `n^{-1/2} ∑ ψ θ₀ (X i)`, the strong law to `n⁻¹ ∑ ∂_θ �
   to `0`.
 * `MeasureTheory.tendstoInMeasure_zero_of_abs_le`: domination by a sequence tending to `0` in
   probability on events whose probability tends to one.
+* `MeasureTheory.tendstoInMeasure_add_zero`: a sum of two sequences tending to `0` in
+  probability tends to `0` in probability.
 * `tendstoInDistribution_score`: the central limit theorem for the score,
   `n^{-1/2} ∑_{i<n} ∂_θ log p θ₀ (X i) → N(0, I(θ₀))`.
 * `tendstoInDistribution_sqrt_mul_sub_of_estimatingEquation`: asymptotic normality of a
@@ -98,7 +100,7 @@ theorem tendstoInMeasure_zero_of_abs_le {W V : ι → Ω → ℝ} {G : ι → Se
   · exact Or.inl hG'
 
 /-- A sum of two sequences tending to `0` in probability tends to `0` in probability. -/
-private theorem tendstoInMeasure_add_zero {U V : ι → Ω → ℝ}
+theorem tendstoInMeasure_add_zero {U V : ι → Ω → ℝ}
     (hU : TendstoInMeasure P U l 0) (hV : TendstoInMeasure P V l 0) :
     TendstoInMeasure P (fun i ω => U i ω + V i ω) l 0 := by
   rw [tendstoInMeasure_iff_norm] at hU hV ⊢

@@ -58,10 +58,9 @@ independence of the topology and the holding times.
 
 ## What is not proved
 
-The deterministic identity `fuTopologyCov n i j = 4 σ_{ij}` for general `n`. It needs the joint
-law of block counts at two levels in closed form (the nested uniform-composition structure of
-random joining) followed by Fu's summation to harmonic numbers in each of the six cases of
-`fuSigma`. The general theorem therefore takes it as the hypothesis `hfu`.
+The deterministic identity `fuTopologyCov n i j = 4 σ_{ij}` for general `n`; the general theorem
+here takes it as the hypothesis `hfu`. It is proved for every `n` in `SFSFuCovariance`
+(`fuTopologyCov_eq_four_mul_fuSigma`), which also states `hσ` unconditionally.
 
 ## References
 

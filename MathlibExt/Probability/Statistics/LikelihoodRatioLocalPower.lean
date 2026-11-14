@@ -388,22 +388,6 @@ theorem tendstoInMeasure_logLikelihoodRatio_sub {p : ℝ → 𝓧 → ℝ} {θ�
   have : |F n ω + h ^ 2 * I / 2| < ε := by linarith
   exact absurd hω (not_le.2 this)
 
-omit [IsProbabilityMeasure P] in
-/-- A sum of two sequences tending to `0` in probability tends to `0` in probability. -/
-private theorem tendstoInMeasure_add_zero'' {U V : ℕ → Ω → ℝ}
-    (hU : TendstoInMeasure P U atTop 0) (hV : TendstoInMeasure P V atTop 0) :
-    TendstoInMeasure P (fun i ω => U i ω + V i ω) atTop 0 := by
-  rw [tendstoInMeasure_iff_norm] at hU hV ⊢
-  intro ε hε
-  have h2 := (hU (ε / 2) (by positivity)).add (hV (ε / 2) (by positivity))
-  rw [add_zero] at h2
-  refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds h2 (fun _ => zero_le)
-    fun i => (measure_mono fun ω hω => ?_).trans (measure_union_le _ _)
-  simp only [Set.mem_ofPred_eq, Pi.zero_apply, sub_zero, Real.norm_eq_abs] at hω ⊢
-  by_contra h
-  simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_le] at h
-  linarith [abs_add_le (U i ω) (V i ω)]
-
 /-- **Wilks' expansion for a triangular array.** Let `X n i` be random variables (row `n` is the
 sample of size `n`) and `θ̂ₙ` estimators that solve the likelihood equation
 `∑_{i<n} ∂_θ log p θ (X n i) = 0` with probability tending to one and converge to `θ₀` in
@@ -476,7 +460,7 @@ theorem tendstoInDistribution_two_mul_logLikelihood_sub_of_triangular
       ).mul_tendstoInMeasure_zero hdθ
       (fun n => continuous_abs.measurable.comp_aemeasurable ((hθ_meas n).sub_const _))
     simpa only [mul_comm] using h
-  have hη : TendstoInMeasure P η atTop 0 := tendstoInMeasure_add_zero'' hBI hrem
+  have hη : TendstoInMeasure P η atTop 0 := tendstoInMeasure_add_zero hBI hrem
   -- the good events
   set G : ℕ → Set Ω := fun n =>
     {ω | ∑ i ∈ Finset.range n, score p (θhat n ω) (X n i ω) = 0} ∩
