@@ -23,14 +23,16 @@ Two units joined by an edge with independent fair-coin treatments; the
 fine exposure is (own treatment, neighbour treatment).
 
 * Nonvacuity: spillover outcomes satisfy Condition 1, every
-  `πᵢ(d) = 1/4`, and the HT exposure-total estimator is unbiased for all
-  four exposures.
+  `πᵢ(d) = 1/4`, and the HT exposure-total estimator, built from the
+  observed outcomes, is unbiased for all four exposures, both for
+  `exposurePotential` and for the explicit potentials `yPot`.
 * Violated sufficiency: the coarser "own treatment only" map with the
-  same spillover outcomes has no potential outcomes, and the
-  coarse-map estimator expectation (`-1` at `false`) estimates no
-  potential-outcome total.
+  same spillover outcomes has no potential outcomes, and the same
+  estimator for the coarse map has expectation `-1` at `false`, which
+  estimates no potential-outcome total.
 * Zero exposure probability: a design that never treats both units has
-  `πᵢ((1, 1)) = 0`, expectation `0`, and true total `7`.
+  `πᵢ((1, 1)) = 0` and estimator expectation `0`, while the design-free
+  potential-outcome total at `(1, 1)` is `7`.
 -/
 
 @[expose] public section
@@ -87,18 +89,22 @@ theorem unifP_ne_zero (z : Bool × Bool) : unifP z ≠ 0 := by
   rw [h]
   exact ne_of_gt (ENNReal.ofReal_pos.mpr (by norm_num))
 
-/-- Condition 1 holds for the fine map under every design: outcomes
-depend on the assignment only through the exposure. -/
-theorem sufficiency_of (p : PMF (Bool × Bool)) :
-    ExposureSufficiency exMap p yr := by
-  intro i z z' _ _ h
+/-- Condition 1 holds for the fine map: outcomes depend on the
+assignment only through the exposure. -/
+theorem sufficiency : ExposureSufficiency exMap yr := by
+  intro i z z' h
   show 3 * bit (exMap i z).1 + 2 * bit (exMap i z).2 + c i
     = 3 * bit (exMap i z').1 + 2 * bit (exMap i z').2 + c i
   rw [h]
 
-/-- Condition 1 holds under the uniform design. -/
-theorem sufficiency : ExposureSufficiency exMap unifP yr :=
-  sufficiency_of unifP
+/-- Explicit exposure potentials of the spillover outcomes. -/
+def yPot : Fin 2 → Bool × Bool → ℝ :=
+  fun i d => 3 * bit d.1 + 2 * bit d.2 + c i
+
+/-- The observed outcomes are the explicit potentials at the realized
+exposure, at every assignment. -/
+theorem yPot_consistent (i : Fin 2) (z : Bool × Bool) :
+    yr i z = yPot i (exMap i z) := rfl
 
 /-- Exposure probabilities are `1/4` at unit `0`. -/
 theorem pi_quarter_0 (d : Bool × Bool) :
@@ -116,11 +122,8 @@ theorem pi_quarter_1 (d : Bool × Bool) :
   obtain ⟨d1, d2⟩ := d
   cases d1 <;> cases d2 <;> norm_num [exMap, unif_toReal]
 
-/-- Nonvacuity: unbiasedness for every exposure. -/
-theorem nonvacuous_unbiased (d : Bool × Bool) :
-    ∫ z, exposureHTTotal exMap unifP yr sufficiency d z ∂unifP.toMeasure
-      = ∑ i, exposurePotential exMap unifP yr sufficiency i d := by
-  apply integral_exposureHTTotal
+/-- Every unit has positive exposure probability under the uniform design. -/
+theorem pi_pos (d : Bool × Bool) : ∀ i, 0 < exposureProbability exMap unifP i d := by
   rw [Fin.forall_fin_two]
   constructor
   · rw [pi_quarter_0 d]
@@ -128,16 +131,33 @@ theorem nonvacuous_unbiased (d : Bool × Bool) :
   · rw [pi_quarter_1 d]
     norm_num
 
-/-- The `(1, 1)` potential-outcome total is `7`. -/
+/-- Nonvacuity: unbiasedness for every exposure, under Condition 1. -/
+theorem nonvacuous_unbiased (d : Bool × Bool) :
+    ∫ z, exposureHTTotal exMap unifP yr d z ∂unifP.toMeasure
+      = ∑ i, exposurePotential exMap yr i d :=
+  integral_exposureHTTotal exMap unifP yr sufficiency d (pi_pos d)
+
+/-- Nonvacuity: unbiasedness for the explicit potentials `yPot`. -/
+theorem nonvacuous_unbiased_explicit (d : Bool × Bool) :
+    ∫ z, exposureHTTotal exMap unifP yr d z ∂unifP.toMeasure
+      = ∑ i, yPot i d :=
+  integral_exposureHTTotal_of_consistent exMap unifP yr yPot
+    (fun i z _ => yPot_consistent i z) d (pi_pos d)
+
+/-- The `(1, 1)` potential-outcome total is `7`; it does not depend on a
+design. -/
 theorem total_TT :
-    (∑ i, exposurePotential exMap unifP yr sufficiency i (true, true))
-      = 7 := by
+    (∑ i, exposurePotential exMap yr i (true, true)) = 7 := by
   have e0 : exMap 0 (true, true) = (true, true) := rfl
   have e1 : exMap 1 (true, true) = (true, true) := rfl
   rw [Fin.sum_univ_two,
-    exposurePotential_eq_of_mem _ _ _ _ _ _ _ (unifP_ne_zero _) e0,
-    exposurePotential_eq_of_mem _ _ _ _ _ _ _ (unifP_ne_zero _) e1]
+    exposurePotential_eq_of_mem _ _ sufficiency _ _ _ e0,
+    exposurePotential_eq_of_mem _ _ sufficiency _ _ _ e1]
   norm_num [yr, bit, c, exMap]
+
+/-- The explicit potentials give the same `(1, 1)` total. -/
+theorem yPot_total_TT : (∑ i, yPot i (true, true)) = 7 := by
+  norm_num [Fin.sum_univ_two, yPot, bit, c]
 
 /-- Values of `yr` at the two witnesses: they differ on one exposure class. -/
 theorem v0 : yr 0 (false, false) = -1 := by norm_num [yr, bit, c, exMap]
@@ -147,10 +167,9 @@ theorem v1 : yr 0 (false, true) = 1 := by norm_num [yr, bit, c, exMap]
 
 /-- Violated sufficiency: the coarse map is not exposure-sufficient. -/
 theorem coarse_not_sufficient :
-    ¬ ExposureSufficiency coarseMap unifP yr := by
+    ¬ ExposureSufficiency coarseMap yr := by
   intro h
-  have h0 := h 0 (false, false) (false, true) (unifP_ne_zero _)
-    (unifP_ne_zero _) rfl
+  have h0 := h 0 (false, false) (false, true) rfl
   rw [v0, v1] at h0
   norm_num at h0
 
@@ -170,10 +189,6 @@ theorem coarse_no_factorization :
   rw [v1] at h2
   rw [← h2] at h1
   norm_num at h1
-
-/-- Coarse-map HT estimator with the correct `1/2` denominators. -/
-noncomputable def coarseHT (d : Bool) (z : Bool × Bool) : ℝ :=
-  ∑ i ∈ exposedSet coarseMap d z, yr i z / (1 / 2)
 
 /-- Coarse exposure probabilities are `1/2` at unit `0`. -/
 theorem coarse_pi_0 (d : Bool) :
@@ -206,29 +221,35 @@ theorem coarse_set_TT :
     exposedSet coarseMap false (true, true) = ∅ := by decide
 
 /-- Coarse estimator values at each assignment. -/
-theorem coarseHT_FF : coarseHT false (false, false) = -6 := by
-  simp only [coarseHT, coarse_set_FF]
-  rw [Finset.sum_insert (by decide), Finset.sum_singleton]
+theorem coarseHT_FF :
+    exposureHTTotal coarseMap unifP yr false (false, false) = -6 := by
+  simp only [exposureHTTotal, coarse_set_FF]
+  rw [Finset.sum_insert (by decide), Finset.sum_singleton, coarse_pi_0, coarse_pi_1]
   norm_num [yr, bit, c, exMap]
 
 /-- Coarse estimator values at each assignment. -/
-theorem coarseHT_FT : coarseHT false (false, true) = 2 := by
-  simp only [coarseHT, coarse_set_FT, Finset.sum_singleton]
+theorem coarseHT_FT :
+    exposureHTTotal coarseMap unifP yr false (false, true) = 2 := by
+  simp only [exposureHTTotal, coarse_set_FT, Finset.sum_singleton]
+  rw [coarse_pi_0]
   norm_num [yr, bit, c, exMap]
 
 /-- Coarse estimator values at each assignment. -/
-theorem coarseHT_TF : coarseHT false (true, false) = 0 := by
-  simp only [coarseHT, coarse_set_TF, Finset.sum_singleton]
+theorem coarseHT_TF :
+    exposureHTTotal coarseMap unifP yr false (true, false) = 0 := by
+  simp only [exposureHTTotal, coarse_set_TF, Finset.sum_singleton]
+  rw [coarse_pi_1]
   norm_num [yr, bit, c, exMap]
 
 /-- Coarse estimator values at each assignment. -/
-theorem coarseHT_TT : coarseHT false (true, true) = 0 := by
-  simp only [coarseHT, coarse_set_TT, Finset.sum_empty]
+theorem coarseHT_TT :
+    exposureHTTotal coarseMap unifP yr false (true, true) = 0 := by
+  simp only [exposureHTTotal, coarse_set_TT, Finset.sum_empty]
 
 /-- The coarse estimator expectation is `-1`: it estimates no
-potential-outcome total. -/
+potential-outcome total (`coarse_no_factorization`). -/
 theorem coarse_expectation :
-    (∫ z, coarseHT false z ∂unifP.toMeasure) = -1 := by
+    (∫ z, exposureHTTotal coarseMap unifP yr false z ∂unifP.toMeasure) = -1 := by
   rw [PMF.integral_eq_sum]
   simp only [smul_eq_mul, Fintype.sum_prod_type, Fintype.sum_bool,
     unif_toReal, coarseHT_FF, coarseHT_FT, coarseHT_TF, coarseHT_TT]
@@ -282,10 +303,6 @@ theorem noBoth_toReal_TT : (noBothP (true, true)).toReal = 0 := by
     simp [noBothP, PMF.ofFintype_apply, noBothMass]
   rw [h, ENNReal.toReal_zero]
 
-/-- Condition 1 holds for the fine map under the never-both design. -/
-theorem sufficiency_noBoth : ExposureSufficiency exMap noBothP yr :=
-  sufficiency_of noBothP
-
 /-- The `(1, 1)` exposure probability is zero at unit `0`. -/
 theorem zero_pi_0 :
     exposureProbability exMap noBothP 0 (true, true) = 0 := by
@@ -316,41 +333,43 @@ theorem zero_set_TF :
 
 /-- Estimator values at the never-both assignments vanish. -/
 theorem zero_est_FF :
-    exposureHTTotal exMap noBothP yr sufficiency_noBoth (true, true)
-      (false, false) = 0 := by
-  simp only [exposureHTTotal, zero_set_FF, horvitzThompsonTotal,
-    Finset.sum_empty]
+    exposureHTTotal exMap noBothP yr (true, true) (false, false) = 0 := by
+  simp only [exposureHTTotal, zero_set_FF, Finset.sum_empty]
 
 /-- Estimator values at the never-both assignments vanish. -/
 theorem zero_est_FT :
-    exposureHTTotal exMap noBothP yr sufficiency_noBoth (true, true)
-      (false, true) = 0 := by
-  simp only [exposureHTTotal, zero_set_FT, horvitzThompsonTotal,
-    Finset.sum_empty]
+    exposureHTTotal exMap noBothP yr (true, true) (false, true) = 0 := by
+  simp only [exposureHTTotal, zero_set_FT, Finset.sum_empty]
 
 /-- Estimator values at the never-both assignments vanish. -/
 theorem zero_est_TF :
-    exposureHTTotal exMap noBothP yr sufficiency_noBoth (true, true)
-      (true, false) = 0 := by
-  simp only [exposureHTTotal, zero_set_TF, horvitzThompsonTotal,
-    Finset.sum_empty]
+    exposureHTTotal exMap noBothP yr (true, true) (true, false) = 0 := by
+  simp only [exposureHTTotal, zero_set_TF, Finset.sum_empty]
 
 /-- The `(1, 1)` estimator expectation is zero. -/
 theorem zero_expectation :
-    (∫ z, exposureHTTotal exMap noBothP yr sufficiency_noBoth (true, true) z
+    (∫ z, exposureHTTotal exMap noBothP yr (true, true) z
       ∂noBothP.toMeasure) = 0 := by
   rw [PMF.integral_eq_sum]
   simp only [smul_eq_mul, Fintype.sum_prod_type, Fintype.sum_bool,
     zero_est_FF, zero_est_FT, zero_est_TF, noBoth_toReal_TT]
   simp
 
-/-- The zero-probability estimator misses the true total `7`. -/
+/-- The zero-probability estimator misses the true total `7`: the target
+`∑ i, exposurePotential exMap yr i (true, true)` is the same design-free
+total as in `total_TT`. -/
 theorem zero_bias :
-    (∫ z, exposureHTTotal exMap noBothP yr sufficiency_noBoth (true, true) z
+    (∫ z, exposureHTTotal exMap noBothP yr (true, true) z
       ∂noBothP.toMeasure)
-      ≠ (∑ i, exposurePotential exMap unifP yr sufficiency i
-        (true, true)) := by
+      ≠ (∑ i, exposurePotential exMap yr i (true, true)) := by
   rw [zero_expectation, total_TT]
+  norm_num
+
+/-- The same miss, against the explicit potentials `yPot`. -/
+theorem zero_bias_explicit :
+    (∫ z, exposureHTTotal exMap noBothP yr (true, true) z
+      ∂noBothP.toMeasure) ≠ (∑ i, yPot i (true, true)) := by
+  rw [zero_expectation, yPot_total_TT]
   norm_num
 
 end MathlibExtTest.Probability.Causality.ExposureMapping

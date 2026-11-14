@@ -9,7 +9,7 @@ module
 
 public import MathlibExt.Probability.Sampling.HorvitzThompson
 public import Mathlib.Probability.ProbabilityMassFunction.Constructions
-public import Mathlib.Probability.ProbabilityMassFunction.Integrals
+import Mathlib.Probability.ProbabilityMassFunction.Integrals
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Basic.ENNReal.BigOperators
 import Mathlib.MeasureTheory.Integral.Bochner.Basic
@@ -19,17 +19,31 @@ import Mathlib.MeasureTheory.MeasurableSpace.Basic
 # Exposure mappings and the Horvitz-Thompson exposure-total estimator
 
 Finite-population causal inference under interference, after Aronow and
-Samii (2017). An exposure mapping sends each assignment to a per-unit
-exposure value. Under an explicit exposure-sufficiency condition the
-randomization outcomes factor through exposures, and the Horvitz-Thompson
-total over the exposed set is design-unbiased for the exposure-specific
-potential-outcome total (Lemma 4.1).
+Samii (2017). An exposure mapping `e` sends each assignment `z` to a
+per-unit exposure `e i z`, and `yr i z` is unit `i`'s randomization
+potential outcome under assignment `z`, so the observed outcome at the
+realized assignment `z` is `yr i z`. The Horvitz-Thompson exposure-total
+estimator weights these observed outcomes over the exposed set by the
+exposure probabilities `πᵢ(d)`.
+
+* `integral_exposureHTTotal_of_consistent`: if fixed exposure potentials
+  `y i d` agree with the observed outcomes on the support of the design,
+  and `πᵢ(d) > 0` for every unit, the estimator is design-unbiased for the
+  total `∑ i, y i d`.
+* `integral_exposureHTTotal` (Lemma 4.1 of Aronow and Samii, unbiasedness
+  part): under their Condition 1 (`ExposureSufficiency`, a property of the
+  outcome schedule over all assignments, not of the design), the
+  potentials `exposurePotential e yr i d` are well defined and the
+  estimator is unbiased for their total.
+
+The source assumes `0 < πᵢ(d) < 1`; only `0 < πᵢ(d)` is used here.
 
 ## References
 
 - P. M. Aronow and C. Samii, "Estimating average causal effects under
   general interference, with application to a social network experiment",
-  Annals of Applied Statistics 11(4) (2017), 1912-1947.
+  Annals of Applied Statistics 11(4) (2017), 1912-1947 (Condition 1,
+  estimator (1) and Lemma 4.1; numbering as in arXiv:1305.6156v4).
 -/
 
 @[expose] public section
@@ -105,75 +119,106 @@ theorem exposureProbability_eq_sum {α Ω Δ : Type*} [Fintype α]
         · intro hcon
           exact absurd (Finset.mem_univ _) hcon
 
-/-- Condition 1 of Aronow and Samii (2017): the randomization outcomes
-depend on the assignment only through the exposure, on the support of
-the design. Individual SUTVA is not assumed. -/
-def ExposureSufficiency {α Ω Δ : Type*} (e : α → Ω → Δ) (p : PMF Ω)
+/-- Condition 1 of Aronow and Samii (2017), properly specified exposure
+mapping: for every unit, the randomization outcomes agree at any two
+assignments carrying the same exposure. This is a property of the outcome
+schedule `yr` over all assignments and does not involve the design.
+Individual SUTVA is not assumed. -/
+def ExposureSufficiency {α Ω Δ : Type*} (e : α → Ω → Δ)
     (yr : α → Ω → ℝ) : Prop :=
-  ∀ i z z', p z ≠ 0 → p z' ≠ 0 → e i z = e i z' → yr i z = yr i z'
+  ∀ i z z', e i z = e i z' → yr i z = yr i z'
 
 open Classical in
-/-- Exposure-specific potential outcome, defined from the randomization
-outcomes under Condition 1 by evaluating `yr` at a supported assignment
-with the required exposure (junk value `0` off the support). -/
+/-- Exposure-specific potential outcome `yᵢ(d)`: the randomization outcome
+at some assignment giving unit `i` exposure `d` (junk value `0` if no
+assignment does). Under Condition 1 the choice does not matter
+(`exposurePotential_eq_of_mem`), and the definition does not depend on
+the design. -/
 noncomputable def exposurePotential {α Ω Δ : Type*}
-    (e : α → Ω → Δ) (p : PMF Ω) (yr : α → Ω → ℝ)
-    (_hcond : ExposureSufficiency e p yr) (i : α) (d : Δ) : ℝ :=
-  if h : ∃ z, p z ≠ 0 ∧ e i z = d then yr i (Classical.choose h) else 0
+    (e : α → Ω → Δ) (yr : α → Ω → ℝ) (i : α) (d : Δ) : ℝ :=
+  if h : ∃ z, e i z = d then yr i (Classical.choose h) else 0
 
-/-- The potential outcome agrees with `yr` at every supported assignment
-carrying the exposure. -/
+/-- Under Condition 1, the potential outcome agrees with `yr` at every
+assignment carrying the exposure. -/
 theorem exposurePotential_eq_of_mem {α Ω Δ : Type*}
-    (e : α → Ω → Δ) (p : PMF Ω) (yr : α → Ω → ℝ)
-    (hcond : ExposureSufficiency e p yr) (i : α) (z : Ω) (d : Δ)
-    (hp : p z ≠ 0) (he : e i z = d) :
-    exposurePotential e p yr hcond i d = yr i z := by
+    (e : α → Ω → Δ) (yr : α → Ω → ℝ) (hcond : ExposureSufficiency e yr)
+    (i : α) (z : Ω) (d : Δ) (he : e i z = d) :
+    exposurePotential e yr i d = yr i z := by
   unfold exposurePotential
-  have hex : ∃ w, p w ≠ 0 ∧ e i w = d := ⟨z, hp, he⟩
+  have hex : ∃ w, e i w = d := ⟨z, he⟩
   rw [dite_eq_left hex]
-  obtain ⟨hw, hew⟩ := Classical.choose_spec hex
-  exact hcond i _ z hw hp (hew.trans he.symm)
+  exact hcond i _ z ((Classical.choose_spec hex).trans he.symm)
 
 /-- Randomization outcomes factor through the exposure under Condition 1. -/
 theorem exposurePotential_factorization {α Ω Δ : Type*}
-    (e : α → Ω → Δ) (p : PMF Ω) (yr : α → Ω → ℝ)
-    (hcond : ExposureSufficiency e p yr) (i : α) (z : Ω)
-    (hp : p z ≠ 0) :
-    yr i z = exposurePotential e p yr hcond i (e i z) :=
-  (exposurePotential_eq_of_mem e p yr hcond i z _ hp rfl).symm
+    (e : α → Ω → Δ) (yr : α → Ω → ℝ) (hcond : ExposureSufficiency e yr)
+    (i : α) (z : Ω) :
+    yr i z = exposurePotential e yr i (e i z) :=
+  (exposurePotential_eq_of_mem e yr hcond i z _ rfl).symm
 
-/-- Horvitz-Thompson exposure-total estimator at assignment `z`: the HT
-total over the exposed set, weighting observed outcomes by `πᵢ(d)`. -/
+/-- Horvitz-Thompson exposure-total estimator at assignment `z`
+(Aronow and Samii (2017), estimator (1)): the observed outcomes `yr i z`
+of the units with exposure `d`, each weighted by `1 / πᵢ(d)`. -/
 noncomputable def exposureHTTotal {α Ω Δ : Type*} [Fintype α]
     [DecidableEq α] [DecidableEq Δ] (e : α → Ω → Δ) (p : PMF Ω)
-    (yr : α → Ω → ℝ) (hcond : ExposureSufficiency e p yr) (d : Δ)
-    (z : Ω) : ℝ :=
-  horvitzThompsonTotal (p.map (exposedSet e d))
-    (fun i => exposurePotential e p yr hcond i d) (exposedSet e d z)
+    (yr : α → Ω → ℝ) (d : Δ) (z : Ω) : ℝ :=
+  ∑ i ∈ exposedSet e d z, yr i z / exposureProbability e p i d
 
-/-- Design-unbiasedness of the exposure-total estimator (Aronow and
-Samii (2017), Lemma 4.1): with `πᵢ(d) > 0` for the target exposure,
-the design expectation equals the potential-outcome total. Only
-positivity at `d` is needed; the source's `< 1` is not. -/
-theorem integral_exposureHTTotal {α Ω Δ : Type*} [Fintype α]
-    [DecidableEq α] [Countable Ω] [DecidableEq Δ] [MeasurableSpace Ω]
-    [MeasurableSingletonClass Ω] [MeasurableSpace (Finset α)]
-    [MeasurableSingletonClass (Finset α)] (e : α → Ω → Δ) (p : PMF Ω)
-    (yr : α → Ω → ℝ) (hcond : ExposureSufficiency e p yr) (d : Δ)
+/-- **Design-unbiasedness of the exposure-total estimator**, for fixed
+exposure potentials `y` that agree with the observed outcomes on the
+support of the design: with `πᵢ(d) > 0` for every unit, the design
+expectation is the potential-outcome total `∑ i, y i d`. Only positivity
+at `d` is needed; the source's `πᵢ(d) < 1` is not. -/
+theorem integral_exposureHTTotal_of_consistent {α Ω Δ : Type*}
+    [Fintype α] [DecidableEq α] [Countable Ω] [DecidableEq Δ]
+    [MeasurableSpace Ω] [MeasurableSingletonClass Ω]
+    [MeasurableSpace (Finset α)] [MeasurableSingletonClass (Finset α)]
+    (e : α → Ω → Δ) (p : PMF Ω) (yr : α → Ω → ℝ) (y : α → Δ → ℝ)
+    (hy : ∀ i z, p z ≠ 0 → yr i z = y i (e i z)) (d : Δ)
     (hpos : ∀ i, 0 < exposureProbability e p i d) :
-    ∫ z, exposureHTTotal e p yr hcond d z ∂p.toMeasure
-      = ∑ i, exposurePotential e p yr hcond i d := by
+    ∫ z, exposureHTTotal e p yr d z ∂p.toMeasure = ∑ i, y i d := by
+  have hsupp : ∀ᵐ z ∂p.toMeasure, p z ≠ 0 := by
+    rw [ae_iff]
+    refine (p.toMeasure_apply_eq_zero_iff (Set.to_countable _).measurableSet).2 ?_
+    rw [Set.disjoint_left]
+    intro z hz hz'
+    exact hz' ((p.mem_support_iff z).1 hz)
+  have hae : (fun z => exposureHTTotal e p yr d z) =ᵐ[p.toMeasure]
+      (fun z => horvitzThompsonTotal (p.map (exposedSet e d))
+        (fun i => y i d) (exposedSet e d z)) := by
+    filter_upwards [hsupp] with z hz
+    unfold exposureHTTotal horvitzThompsonTotal
+    refine Finset.sum_congr rfl fun i hi => ?_
+    have hiz : e i z = d := by
+      simpa only [exposedSet, Finset.mem_filter, Finset.mem_univ, true_and] using hi
+    rw [hy i z hz, hiz]
+    rfl
   have hmeas : Measurable (exposedSet e d) := measurable_of_countable _
   have hAES : AEStronglyMeasurable
-      (horvitzThompsonTotal (p.map (exposedSet e d))
-        (fun i => exposurePotential e p yr hcond i d))
+      (horvitzThompsonTotal (p.map (exposedSet e d)) (fun i => y i d))
       (Measure.map (exposedSet e d) p.toMeasure) :=
     (measurable_of_countable _).aestronglyMeasurable
   have hAEM : AEMeasurable (exposedSet e d) p.toMeasure :=
     hmeas.aemeasurable
-  unfold exposureHTTotal
-  rw [← MeasureTheory.integral_map hAEM hAES,
+  rw [integral_congr_ae hae,
+    ← MeasureTheory.integral_map (f := horvitzThompsonTotal (p.map (exposedSet e d))
+      (fun i => y i d)) hAEM hAES,
     PMF.toMeasure_map _ _ hmeas]
   exact integral_horvitzThompsonTotal _ _ hpos
+
+/-- **Design-unbiasedness under Condition 1** (Aronow and Samii (2017),
+Lemma 4.1, the expectation part): if the exposure mapping is properly
+specified and `πᵢ(d) > 0` for every unit, the expectation of the
+estimator is `∑ i, exposurePotential e yr i d`. -/
+theorem integral_exposureHTTotal {α Ω Δ : Type*} [Fintype α]
+    [DecidableEq α] [Countable Ω] [DecidableEq Δ] [MeasurableSpace Ω]
+    [MeasurableSingletonClass Ω] [MeasurableSpace (Finset α)]
+    [MeasurableSingletonClass (Finset α)] (e : α → Ω → Δ) (p : PMF Ω)
+    (yr : α → Ω → ℝ) (hcond : ExposureSufficiency e yr) (d : Δ)
+    (hpos : ∀ i, 0 < exposureProbability e p i d) :
+    ∫ z, exposureHTTotal e p yr d z ∂p.toMeasure
+      = ∑ i, exposurePotential e yr i d :=
+  integral_exposureHTTotal_of_consistent e p yr (exposurePotential e yr)
+    (fun i z _ => exposurePotential_factorization e yr hcond i z) d hpos
 
 end MathlibExt.Probability.Causality
