@@ -24,6 +24,8 @@ and introduces no second game, profile, or potential encoding.
   better-response step strictly decreases the potential.
 * `maximal_improvement_path_ends_at_nash`: a maximal finite strict
   improvement path ends at a pure Nash equilibrium.
+* `maximal_improvement_path_last_is_nash`: a maximal path is nonempty,
+  and its last profile is a pure Nash equilibrium.
 -/
 
 /-- A strict better-response step: `s'` arises from `s` by a unilateral
@@ -43,13 +45,14 @@ def IsImprovementPath {ι : Type*} [Fintype ι] [DecidableEq ι] {S : ι → Typ
   | s₁ :: s₂ :: rest =>
     IsStrictBetterResponse c s₁ s₂ ∧ IsImprovementPath c (s₂ :: rest)
 
-/-- A finite strict improvement path is maximal when its last profile
-has no strict unilateral improvement, so the path cannot be
-extended by another strict better-response step. -/
+/-- A finite strict improvement path is maximal when it is nonempty and
+its last profile has no strict unilateral improvement, so the path
+cannot be extended by another strict better-response step. The empty
+list has no last profile and is not maximal. -/
 def IsMaximalImprovementPath {ι : Type*} [Fintype ι] [DecidableEq ι]
     {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
     (c : ι → (∀ i, S i) → ℝ) (path : List (∀ i, S i)) : Prop :=
-  IsImprovementPath c path ∧
+  path ≠ [] ∧ IsImprovementPath c path ∧
     ∀ s, path.getLast? = some s →
       ¬ ∃ (i : ι) (a : S i), c i (Function.update s i a) < c i s
 
@@ -79,4 +82,13 @@ theorem maximal_improvement_path_ends_at_nash {ι : Type*} [Fintype ι]
     IsPureNash c s := by
   intro i a
   by_contra hcon
-  exact hmax.2 s hlast ⟨i, a, lt_of_not_ge hcon⟩
+  exact hmax.2.2 s hlast ⟨i, a, lt_of_not_ge hcon⟩
+
+/-- Maximality supplies the endpoint: a maximal finite strict improvement
+path is nonempty, and its last profile is a pure Nash equilibrium. -/
+theorem maximal_improvement_path_last_is_nash {ι : Type*} [Fintype ι]
+    [DecidableEq ι] {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
+    {c : ι → (∀ i, S i) → ℝ} {path : List (∀ i, S i)}
+    (hmax : IsMaximalImprovementPath c path) :
+    IsPureNash c (path.getLast hmax.1) :=
+  maximal_improvement_path_ends_at_nash hmax (List.getLast?_eq_some_getLast hmax.1)

@@ -16,8 +16,9 @@ public import MathlibExt.GameTheory.PotentialGamesImprovement
 
 Boundary checks on a concrete two-player identical-interest game: a
 strict step decreases the potential, a maximal two-step path ends at a
-pure Nash equilibrium, and a one-step prefix is extendable with a last
-profile that is not Nash, pinning maximality as load-bearing.
+pure Nash equilibrium, a one-step prefix is extendable with a last
+profile that is not Nash, pinning maximality as load-bearing, and the
+empty path is not maximal.
 -/
 
 namespace MathlibExtTest.GameTheory.PotentialGamesImprovement
@@ -55,9 +56,9 @@ theorem test_strict_step_decreases_potential :
   exact strict_better_response_decreases_potential (Φ := testPot)
     testIsExact (s := profTT) (s' := profFT) rfl hcost
 
-/-- A maximal two-step improvement path ends at a pure Nash equilibrium. -/
-theorem test_maximal_two_step_path_is_nash :
-    IsPureNash testCost profFF := by
+/-- The two-step improvement path `profTT → profFT → profFF` is maximal. -/
+theorem test_two_step_path_is_maximal :
+    IsMaximalImprovementPath testCost [profTT, profFT, profFF] := by
   have hFT0 : profFT (0 : Fin 2) = false := by simp [profFT]
   have hne10 : (1 : Fin 2) ≠ 0 := by decide
   have hFT1 : profFT (1 : Fin 2) = true := by simp [profFT, profTT, hne10]
@@ -75,7 +76,6 @@ theorem test_maximal_two_step_path_is_nash :
     ⟨1, false, rfl, hcost12⟩
   have hchain : IsImprovementPath testCost [profTT, profFT, profFF] :=
     ⟨hstep01, hstep12, trivial⟩
-  have hlast : [profTT, profFT, profFF].getLast? = some profFF := rfl
   have hclosed : ∀ s : ∀ _ : Fin 2, Bool,
       [profTT, profFT, profFF].getLast? = some s →
       ¬ ∃ (i : Fin 2) (a : Bool),
@@ -91,9 +91,18 @@ theorem test_maximal_two_step_path_is_nash :
       unfold testCost
       split_ifs <;> norm_num
     linarith
-  have hmax : IsMaximalImprovementPath testCost [profTT, profFT, profFF] :=
-    ⟨hchain, hclosed⟩
-  exact maximal_improvement_path_ends_at_nash hmax hlast
+  exact ⟨List.cons_ne_nil _ _, hchain, hclosed⟩
+
+/-- A maximal two-step improvement path ends at a pure Nash equilibrium. -/
+theorem test_maximal_two_step_path_is_nash :
+    IsPureNash testCost profFF :=
+  maximal_improvement_path_ends_at_nash test_two_step_path_is_maximal rfl
+
+/-- Maximality alone supplies the endpoint: the last profile of the
+maximal path, `profFF`, is a pure Nash equilibrium. -/
+theorem test_maximal_path_last_is_nash :
+    IsPureNash testCost profFF :=
+  maximal_improvement_path_last_is_nash test_two_step_path_is_maximal
 
 /-- The one-step prefix path is a valid improvement path that is
 extendable, and its last profile is not Nash: maximality is load-bearing
@@ -120,5 +129,11 @@ theorem test_prefix_extendable_not_nash :
   intro hNash
   have hle : testCost 1 profFT ≤ testCost 1 profFF := hNash 1 false
   linarith
+
+/-- The empty list is a (trivial) improvement path but has no last
+profile, so it is not maximal. -/
+theorem test_empty_path_not_maximal :
+    IsImprovementPath testCost [] ∧ ¬ IsMaximalImprovementPath testCost [] :=
+  ⟨trivial, fun hmax => hmax.1 rfl⟩
 
 end MathlibExtTest.GameTheory.PotentialGamesImprovement
