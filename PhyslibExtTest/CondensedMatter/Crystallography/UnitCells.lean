@@ -16,12 +16,12 @@ public import PhyslibExt.CondensedMatter.Crystallography.UnitCells
   and the forward direction extracts a unimodular matrix.
 * Volume: the left-handed cubic basis has `det = -1` but cell volume `1`, and the sheared
   lattice has the same volume as the simple cubic lattice.
-* FCC/BCC: FCC has 4 and BCC has 2 lattice points per conventional cell, with explicit
-  basis matrices and volume ratios.
+* FCC/BCC: FCC has 4 and BCC has 2 lattice points per conventional cell (quotient counts), with
+  explicit basis matrices and volume ratios.
 * Wigner-Seitz: covering and disjoint interiors on the simple cubic lattice, and the face
   midpoint `(1/2, 0, 0)` lying in two closed cells.
-* Table: entry evaluation, injectivity, the three cubic entries, and a same-system
-  lattice inequality.
+* Metadata table: entry evaluation, injectivity and the three cubic entries; and a same-system
+  lattice inequality between two constructors.
 * Countermodel: doubling the cells (`det = 8`, not unimodular) does not preserve the lattice.
 -/
 
@@ -211,16 +211,16 @@ lemma faceMid_mem_translate (ha : 0 < (1 : ℝ)) :
     rwa [WithLp.toLp_ofLp, WithLp.toLp_ofLp] at h1
   exact ⟨-faceMid, (BravaisLattice.wignerSeitzCell_neg_mem _ _).mpr (faceMid_mem ha), h0⟩
 
-/-! ### The 14-entry table -/
+/-! ### The 14-entry metadata table -/
 
 -- Entry 0 is cubic P.
-example : bravaisTable 0 = ⟨"cP", .cubic, .primitive⟩ := rfl
+example : bravaisMetadataTable 0 = ⟨"cP", .cubic, .primitive⟩ := rfl
 
 -- The entries are pairwise distinct.
-example : Function.Injective bravaisTable := bravaisTable_injective
+example : Function.Injective bravaisMetadataTable := bravaisMetadataTable_injective
 
 -- Three cubic entries.
-example : (Finset.univ.filter (fun i => (bravaisTable i).system = .cubic)).card = 3 := by
+example : (Finset.univ.filter (fun i => (bravaisMetadataTable i).system = .cubic)).card = 3 := by
   decide
 
 -- A same-system inequality, applied.

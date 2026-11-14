@@ -30,10 +30,10 @@ public import PhyslibExt.CondensedMatter.Crystallography.BravaisLattice
 public import PhyslibExt.CondensedMatter.Crystallography.ReciprocalLattice
 
 /-!
-# Unit cells: GL(3,Z) bases, conventional cells, Wigner-Seitz cells, 14 Bravais lattices
+# Unit cells: GL(3,Z) bases, conventional cells, Wigner-Seitz cells, Bravais metadata
 
 Conventional vs primitive cells, the GL(3,Z) change-of-basis theorem, Wigner-Seitz covering and
-disjointness, and a reference table of the 14 Bravais lattices.
+disjointness, and a metadata table of the 14 Bravais lattice types.
 
 ## i. Overview
 
@@ -51,22 +51,29 @@ integer matrix `P` with `det P = ±1` (`lattice_eq_iff_gl`). The `<=` direction 
 choice of basis, with the sign of `det` (left- vs right-handed bases) absorbed by the absolute
 value.
 
-A conventional cell is the fundamental parallelepiped of a coarse superlattice: `Λc` is a
-superlattice of `Λf` (`IsSuperlatticeOf`) when `Λc.lattice ≤ Λf.lattice`, e.g. the simple cubic
+A conventional cell is the fundamental parallelepiped of a coarse sublattice: `Λc` is a
+sublattice of `Λf` (`IsSublatticeOf`) when `Λc.lattice ≤ Λf.lattice`, e.g. the simple cubic
 lattice of side `a` inside the face-centred cubic lattice. The number of lattice points per
-conventional cell (`pointsPerCell`, the cardinality of the quotient) equals `V_conv / V_prim`,
-proved to be a natural number (`pointsPerCell_eq_volume_ratio`): 4 for FCC, 2 for BCC.
+conventional cell (`pointsPerCell`) is a quotient count: the index of `Λc` in `Λf`, the
+cardinality of `Λf / Λc`. It equals `V_conv / V_prim`, proved to be a natural number
+(`pointsPerCell_eq_volume_ratio`): 4 for FCC, 2 for BCC. It is not the number of `Λf` points in
+the closed cell `conventionalCell Λc`, whose boundary points are shared with neighbouring cells:
+the 8 corners of the closed cube are already 8 lattice points. Crystallographers obtain the same
+number by weighting each point by the share of it the cell owns (`1/8` for a corner, `1/2` for a
+face centre); that weighted count is not formalized here.
 
-The Wigner-Seitz cell is reused from `BravaisLattice.wignerSeitzCell` (closed convention: points
-at least as close to the origin as to any lattice point, ties included) together with its
-fundamental-domain theorem; this module proves the pointwise covering and disjoint-interiors
-statements, shows overlaps of closed cells lie on the boundary, and exhibits overlapping
-boundary points.
+The Wigner-Seitz cell is `BravaisLattice.wignerSeitzCell` from
+`PhyslibExt.CondensedMatter.Crystallography.ReciprocalLattice` (closed convention: points at
+least as close to the origin as to any lattice point, ties included), where
+`isAddFundamentalDomain_wignerSeitzCell` proves it is a measure-theoretic fundamental domain.
+This module proves pointwise covering and disjoint-interiors statements, shows overlaps of
+closed cells lie on the boundary, and exhibits overlapping boundary points.
 
-The 14 Bravais lattices and seven crystal systems are a reference-only data table
-(`bravaisTable`): names, systems, centring types and explicit parametrised basis matrices, with
-machine-checked nonzero determinants and pairwise-distinct entries. No completeness or
-classification theorem is claimed.
+The names, crystal systems and centring types of the 14 Bravais lattice types form a metadata
+table (`bravaisMetadataTable`) with pairwise-distinct entries. The table holds no basis
+matrices and is not linked to the `BravaisLattice` constructors of section F, which carry the
+same Pearson symbols in their docstrings only. No completeness or classification theorem is
+claimed.
 
 ## ii. Key results
 
@@ -77,9 +84,10 @@ classification theorem is claimed.
 - `Crystallography.BravaisLattice.abs_det_eq_of_lattice_eq` : `|det B|` is basis-independent.
 - `Crystallography.BravaisLattice.volume_parallelepiped_eq_of_lattice_eq` : cell volume is
   basis-independent.
-- `Crystallography.BravaisLattice.IsSuperlatticeOf` : the conventional-cell (superlattice)
-  relation.
-- `Crystallography.BravaisLattice.pointsPerCell` : lattice points per conventional cell.
+- `Crystallography.BravaisLattice.IsSublatticeOf` : the sublattice relation behind conventional
+  cells.
+- `Crystallography.BravaisLattice.pointsPerCell` : lattice points per conventional cell, as a
+  quotient count.
 - `Crystallography.BravaisLattice.pointsPerCell_eq_volume_ratio` : the count equals
   `V_conv / V_prim` and the sublattice index.
 - `Crystallography.BravaisLattice.pointsPerCell_faceCenteredCubic` : FCC has 4.
@@ -88,17 +96,18 @@ classification theorem is claimed.
 - `Crystallography.BravaisLattice.wignerSeitzCell_disjoint_interior_translate` : distinct
   translates have disjoint interiors.
 - `Crystallography.BravaisLattice.wignerSeitzCell_exists_overlap` : closed cells can overlap.
-- `Crystallography.bravaisTable` : the 14 Bravais lattices (reference-only).
-- `Crystallography.bravaisTable_injective` : the 14 entries are pairwise distinct.
+- `Crystallography.bravaisMetadataTable` : names, systems and centrings of the 14 Bravais
+  lattice types (metadata only).
+- `Crystallography.bravaisMetadataTable_injective` : the 14 entries are pairwise distinct.
 
 ## iii. Table of contents
 
 - A. Integer change of basis and GL(3, Z)
 - B. Cell volume invariance
-- C. Superlattices and points per cell
+- C. Sublattices and points per cell
 - D. FCC and BCC
 - E. Wigner-Seitz covering and disjoint interiors
-- F. The 14 Bravais lattices (reference-only)
+- F. Bravais metadata table and further lattice constructors
 
 ## iv. References
 
@@ -198,21 +207,24 @@ lemma volume_parallelepiped_eq_of_lattice_eq (Λ Λ' : BravaisLattice)
   rw [volume_parallelepiped_primitiveVector, volume_parallelepiped_primitiveVector,
     abs_det_eq_of_lattice_eq Λ Λ' h]
 
-/-! ## C. Superlattices and points per cell -/
+/-! ## C. Sublattices and points per cell -/
 
-/-- `Λc` is a superlattice of `Λf` when its lattice is contained in that of `Λf`: the coarse
-(conventional) cell is larger. Running example: the simple cubic lattice of side `a` is a
-superlattice of the face-centred cubic lattice with the same conventional cell. -/
-def IsSuperlatticeOf (Λc Λf : BravaisLattice) : Prop := Λc.lattice ≤ Λf.lattice
+/-- `Λc` is a sublattice of `Λf` when its lattice is contained in that of `Λf`; its cell (the
+conventional cell) is then larger. Running example: the simple cubic lattice of side `a` is a
+sublattice of the face-centred cubic lattice with the same cube as conventional cell. -/
+def IsSublatticeOf (Λc Λf : BravaisLattice) : Prop := Λc.lattice ≤ Λf.lattice
 
-/-- The conventional cell of `Λc`: its fundamental parallelepiped. For a superlattice pair this
-is the cell whose lattice points are counted by `pointsPerCell`. -/
+/-- The closed conventional cell of `Λc`: its fundamental parallelepiped, the points with all
+primitive coordinates in `[0, 1]`. Lattice points on its faces, edges and corners are shared with
+neighbouring cells, so `pointsPerCell` (a quotient count) is not the number of `Λf` points in this
+set: for the cube and FCC, the 8 corners alone are FCC points, while `pointsPerCell = 4`. -/
 def conventionalCell (Λc : BravaisLattice) : Set (EuclideanSpace ℝ (Fin 3)) :=
   parallelepiped Λc.primitiveVector
 
-/-- The number of lattice points of `Λf` per conventional cell of `Λc`: the cardinality of the
-quotient of the fine lattice by the coarse sublattice. Meaningful when
-`IsSuperlatticeOf Λc Λf`, in which case `pointsPerCell_eq_volume_ratio` shows it equals
+/-- The number of lattice points of `Λf` per conventional cell of `Λc`, as a quotient count: the
+cardinality of the quotient of the fine lattice by the coarse sublattice (the index). It is not
+the number of `Λf` points in the closed set `conventionalCell Λc`. Meaningful when
+`IsSublatticeOf Λc Λf`, in which case `pointsPerCell_eq_volume_ratio` shows it equals
 `V_conv / V_prim`. -/
 noncomputable def pointsPerCell (Λc Λf : BravaisLattice) : ℕ :=
   Nat.card (↥Λf.lattice ⧸ (Λc.lattice.comap Λf.lattice.subtype))
@@ -244,9 +256,9 @@ private lemma map_intCast_mulVec (M : Matrix (Fin 3) (Fin 3) ℤ) (v : Fin 3 →
   ext i
   simp [Matrix.mulVec, dotProduct, Matrix.map_apply, Int.cast_sum, Int.cast_mul]
 
-/-- **Points per conventional cell**: for a superlattice pair, the number of fine-lattice points
-per coarse cell equals `V_conv / V_prim`, a natural number, and equals the sublattice index
-(the cardinality of the quotient). -/
+/-- **Points per conventional cell**: for a sublattice pair, the number of fine-lattice points
+per coarse cell, counted as the sublattice index (the cardinality of the quotient), equals
+`V_conv / V_prim`, a natural number. -/
 theorem pointsPerCell_eq_volume_ratio (Λc Λf : BravaisLattice)
     (h : Λc.lattice ≤ Λf.lattice) :
     ∃ k : ℕ, pointsPerCell Λc Λf = k ∧
@@ -394,9 +406,9 @@ theorem pointsPerCell_eq_volume_ratio (Λc Λf : BravaisLattice)
 
 /-! ## D. FCC and BCC -/
 
-/-- The simple cubic lattice of side `a` is a superlattice of the face-centred cubic lattice:
+/-- The simple cubic lattice of side `a` is a sublattice of the face-centred cubic lattice:
 each cubic edge is an integer combination of FCC primitive vectors. -/
-lemma fcc_superlattice (a : ℝ) (ha : 0 < a) :
+lemma simpleCubic_lattice_le_fcc (a : ℝ) (ha : 0 < a) :
     (simpleCubic a ha).lattice ≤ (faceCenteredCubic a ha).lattice := by
   refine Submodule.span_le.mpr ?_
   intro x hx
@@ -422,9 +434,9 @@ lemma fcc_superlattice (a : ℝ) (ha : 0 < a) :
     fin_cases i <;> simp [faceCenteredCubic, simpleCubic, Matrix.mulVec, dotProduct,
       Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply] <;> ring
 
-/-- The simple cubic lattice of side `a` is a superlattice of the body-centred cubic lattice:
+/-- The simple cubic lattice of side `a` is a sublattice of the body-centred cubic lattice:
 each cubic edge is an integer combination of BCC primitive vectors. -/
-lemma bcc_superlattice (a : ℝ) (ha : 0 < a) :
+lemma simpleCubic_lattice_le_bcc (a : ℝ) (ha : 0 < a) :
     (simpleCubic a ha).lattice ≤ (bodyCenteredCubic a ha).lattice := by
   refine Submodule.span_le.mpr ?_
   intro x hx
@@ -450,9 +462,11 @@ lemma bcc_superlattice (a : ℝ) (ha : 0 < a) :
     fin_cases i <;> simp [bodyCenteredCubic, simpleCubic, Matrix.mulVec, dotProduct,
       Fin.sum_univ_three, Matrix.col_apply, Matrix.one_apply] <;> ring
 
-/-- **FCC has 4 lattice points per conventional cubic cell**, by the general theorem. The
-conventional cell is the cube (basis matrix `a • 1`); the FCC primitive vectors are
-`(a/2) (0,1,1)`, `(a/2) (1,0,1)` and `(a/2) (1,1,0)`. -/
+/-- **FCC has 4 lattice points per conventional cubic cell**, as a quotient count, by the general
+theorem. The conventional cell is the cube (basis matrix `a • 1`); the FCC primitive vectors are
+`(a/2) (0,1,1)`, `(a/2) (1,0,1)` and `(a/2) (1,1,0)`. The count 4 is the index of the cubic
+lattice in the FCC lattice, not the number of FCC points in the closed cube (its 8 corners alone
+are FCC points). -/
 theorem pointsPerCell_faceCenteredCubic (a : ℝ) (ha : 0 < a) :
     pointsPerCell (simpleCubic a ha) (faceCenteredCubic a ha) = 4 ∧
       |(simpleCubic a ha).basisMatrix.det|
@@ -460,7 +474,7 @@ theorem pointsPerCell_faceCenteredCubic (a : ℝ) (ha : 0 < a) :
       |(simpleCubic a ha).basisMatrix.det| / |(faceCenteredCubic a ha).basisMatrix.det| = 4 := by
   obtain ⟨k, hcard, hvol, hratio⟩ :=
     pointsPerCell_eq_volume_ratio (simpleCubic a ha) (faceCenteredCubic a ha)
-      (fcc_superlattice a ha)
+      (simpleCubic_lattice_le_fcc a ha)
   have vSC : |(simpleCubic a ha).basisMatrix.det| = a ^ 3 := by
     change |((a • 1 : Matrix (Fin 3) (Fin 3) ℝ)).det| = a ^ 3
     rw [Matrix.det_smul, Matrix.det_one, Fintype.card_fin, mul_one,
@@ -486,9 +500,11 @@ theorem pointsPerCell_faceCenteredCubic (a : ℝ) (ha : 0 < a) :
   simp only [Nat.cast_ofNat] at hvol hratio
   exact ⟨hcard, hvol, hratio⟩
 
-/-- **BCC has 2 lattice points per conventional cubic cell**, by the general theorem. The
-conventional cell is the cube (basis matrix `a • 1`); the BCC primitive vectors are
-`(a/2) (-1,1,1)`, `(a/2) (1,-1,1)` and `(a/2) (1,1,-1)`. -/
+/-- **BCC has 2 lattice points per conventional cubic cell**, as a quotient count, by the general
+theorem. The conventional cell is the cube (basis matrix `a • 1`); the BCC primitive vectors are
+`(a/2) (-1,1,1)`, `(a/2) (1,-1,1)` and `(a/2) (1,1,-1)`. The count 2 is the index of the cubic
+lattice in the BCC lattice, not the number of BCC points in the closed cube (its 8 corners alone
+are BCC points). -/
 theorem pointsPerCell_bodyCenteredCubic (a : ℝ) (ha : 0 < a) :
     pointsPerCell (simpleCubic a ha) (bodyCenteredCubic a ha) = 2 ∧
       |(simpleCubic a ha).basisMatrix.det|
@@ -496,7 +512,7 @@ theorem pointsPerCell_bodyCenteredCubic (a : ℝ) (ha : 0 < a) :
       |(simpleCubic a ha).basisMatrix.det| / |(bodyCenteredCubic a ha).basisMatrix.det| = 2 := by
   obtain ⟨k, hcard, hvol, hratio⟩ :=
     pointsPerCell_eq_volume_ratio (simpleCubic a ha) (bodyCenteredCubic a ha)
-      (bcc_superlattice a ha)
+      (simpleCubic_lattice_le_bcc a ha)
   have vSC : |(simpleCubic a ha).basisMatrix.det| = a ^ 3 := by
     change |((a • 1 : Matrix (Fin 3) (Fin 3) ℝ)).det| = a ^ 3
     rw [Matrix.det_smul, Matrix.det_one, Fintype.card_fin, mul_one,
@@ -765,35 +781,35 @@ theorem wignerSeitzCell_exists_overlap (Λ : BravaisLattice) :
 
 end BravaisLattice
 
-/-! ## F. The 14 Bravais lattices (reference-only) -/
+/-! ## F. Bravais metadata table and further lattice constructors -/
 
-/-- The seven crystal systems. Reference-only: part of the 14-Bravais-lattice data table, not a
+/-- The seven crystal systems. Metadata only: part of the 14-Bravais-lattice metadata table, not a
 classification theorem. -/
 inductive CrystalSystem
   | triclinic | monoclinic | orthorhombic | tetragonal | trigonal | hexagonal | cubic
   deriving DecidableEq, Repr
 
-/-- Centring types. Reference-only: part of the 14-Bravais-lattice data table. `baseCentred`
+/-- Centring types. Metadata only: part of the 14-Bravais-lattice metadata table. `baseCentred`
 is the C setting (A and B are equivalent alternate settings); `rhombohedral` is the R
 centring of the trigonal system. -/
 inductive CentringType
   | primitive | baseCentred | bodyCentred | faceCentred | rhombohedral
   deriving DecidableEq, Repr
 
-/-- A Bravais-lattice table entry: name, crystal system and centring type. Reference-only: the
-corresponding parametrised basis matrices are the `BravaisLattice` definitions in this section
-(`simpleCubic`, `faceCenteredCubic`, `bodyCenteredCubic` and the eleven below); no completeness
-or classification theorem is claimed. -/
+/-- A Bravais metadata entry: name (Pearson symbol), crystal system and centring type. It holds
+no basis matrix and is not linked to any `BravaisLattice`; no completeness or classification
+theorem is claimed. -/
 structure BravaisEntry where
   name : String
   system : CrystalSystem
   centring : CentringType
   deriving DecidableEq, Repr
 
-/-- The 14 Bravais lattices. Reference-only data table: names, crystal systems and centring
-types, indexed by `Fin 14`. Each entry has nonzero determinant (proved in its `BravaisLattice`
-definition) and the entries are pairwise distinct (`bravaisTable_injective`). -/
-def bravaisTable : Fin 14 → BravaisEntry :=
+/-- Metadata of the 14 Bravais lattice types: Pearson symbols, crystal systems and centring
+types, indexed by `Fin 14`. The entries are pairwise distinct
+(`bravaisMetadataTable_injective`). The table records metadata only: it contains no basis
+matrices or lattices. -/
+def bravaisMetadataTable : Fin 14 → BravaisEntry :=
   ![⟨"cP", .cubic, .primitive⟩, ⟨"cI", .cubic, .bodyCentred⟩,
     ⟨"cF", .cubic, .faceCentred⟩, ⟨"tP", .tetragonal, .primitive⟩,
     ⟨"tI", .tetragonal, .bodyCentred⟩, ⟨"oP", .orthorhombic, .primitive⟩,
@@ -802,13 +818,13 @@ def bravaisTable : Fin 14 → BravaisEntry :=
     ⟨"hR", .trigonal, .rhombohedral⟩, ⟨"mP", .monoclinic, .primitive⟩,
     ⟨"mC", .monoclinic, .baseCentred⟩, ⟨"aP", .triclinic, .primitive⟩]
 
-/-- The 14 table entries are pairwise distinct. -/
-lemma bravaisTable_injective : Function.Injective bravaisTable := by decide
+/-- The 14 metadata entries are pairwise distinct. -/
+lemma bravaisMetadataTable_injective : Function.Injective bravaisMetadataTable := by decide
 
 namespace BravaisLattice
 
 /-- The primitive tetragonal lattice with parameters `a, c > 0`: diagonal basis matrix
-`diag(a, a, c)`. Reference-only table entry `tP`. -/
+`diag(a, a, c)`. Pearson symbol `tP`. -/
 noncomputable def tetragonalP (a c : ℝ) (ha : 0 < a) (hc : 0 < c) : BravaisLattice where
   basisMatrix := !![a, 0, 0; 0, a, 0; 0, 0, c]
   det_ne_zero := by
@@ -819,7 +835,7 @@ noncomputable def tetragonalP (a c : ℝ) (ha : 0 < a) (hc : 0 < c) : BravaisLat
     positivity
 
 /-- The body-centred tetragonal lattice with parameters `a, c > 0` and primitive vectors
-`(-a/2, a/2, c/2)`, `(a/2, -a/2, c/2)`, `(a/2, a/2, -c/2)`. Reference-only table entry `tI`. -/
+`(-a/2, a/2, c/2)`, `(a/2, -a/2, c/2)`, `(a/2, a/2, -c/2)`. Pearson symbol `tI`. -/
 noncomputable def tetragonalI (a c : ℝ) (ha : 0 < a) (hc : 0 < c) : BravaisLattice where
   basisMatrix := !![-a / 2, a / 2, a / 2; a / 2, -a / 2, a / 2; c / 2, c / 2, -c / 2]
   det_ne_zero := by
@@ -831,7 +847,7 @@ noncomputable def tetragonalI (a c : ℝ) (ha : 0 < a) (hc : 0 < c) : BravaisLat
     positivity
 
 /-- The primitive orthorhombic lattice with parameters `a, b, c > 0`: diagonal basis matrix
-`diag(a, b, c)`. Reference-only table entry `oP`. -/
+`diag(a, b, c)`. Pearson symbol `oP`. -/
 noncomputable def orthorhombicP (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     BravaisLattice where
   basisMatrix := !![a, 0, 0; 0, b, 0; 0, 0, c]
@@ -843,7 +859,7 @@ noncomputable def orthorhombicP (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 
     positivity
 
 /-- The base-centred orthorhombic lattice with parameters `a, b, c > 0` and primitive vectors
-`(a/2, -b/2, 0)`, `(a/2, b/2, 0)`, `(0, 0, c)`. Reference-only table entry `oC`. -/
+`(a/2, -b/2, 0)`, `(a/2, b/2, 0)`, `(0, 0, c)`. Pearson symbol `oC`. -/
 noncomputable def orthorhombicC (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     BravaisLattice where
   basisMatrix := !![a / 2, a / 2, 0; -b / 2, b / 2, 0; 0, 0, c]
@@ -856,7 +872,7 @@ noncomputable def orthorhombicC (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 
     positivity
 
 /-- The body-centred orthorhombic lattice with parameters `a, b, c > 0` and primitive vectors
-`(-a/2, b/2, c/2)`, `(a/2, -b/2, c/2)`, `(a/2, b/2, -c/2)`. Reference-only table entry `oI`. -/
+`(-a/2, b/2, c/2)`, `(a/2, -b/2, c/2)`, `(a/2, b/2, -c/2)`. Pearson symbol `oI`. -/
 noncomputable def orthorhombicI (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     BravaisLattice where
   basisMatrix := !![-a / 2, a / 2, a / 2; b / 2, -b / 2, b / 2; c / 2, c / 2, -c / 2]
@@ -869,7 +885,7 @@ noncomputable def orthorhombicI (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 
     positivity
 
 /-- The face-centred orthorhombic lattice with parameters `a, b, c > 0` and primitive vectors
-`(0, b/2, c/2)`, `(a/2, 0, c/2)`, `(a/2, b/2, 0)`. Reference-only table entry `oF`. -/
+`(0, b/2, c/2)`, `(a/2, 0, c/2)`, `(a/2, b/2, 0)`. Pearson symbol `oF`. -/
 noncomputable def orthorhombicF (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c) :
     BravaisLattice where
   basisMatrix := !![0, a / 2, a / 2; b / 2, 0, b / 2; c / 2, c / 2, 0]
@@ -882,7 +898,7 @@ noncomputable def orthorhombicF (a b c : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 
     positivity
 
 /-- The primitive hexagonal lattice with parameters `a, c > 0` and primitive vectors
-`(a, 0, 0)`, `(-a/2, a√3/2, 0)`, `(0, 0, c)`. Reference-only table entry `hP`. -/
+`(a, 0, 0)`, `(-a/2, a√3/2, 0)`, `(0, 0, c)`. Pearson symbol `hP`. -/
 noncomputable def hexagonalP (a c : ℝ) (ha : 0 < a) (hc : 0 < c) : BravaisLattice where
   basisMatrix := !![a, -a / 2, 0; 0, a * Real.sqrt 3 / 2, 0; 0, 0, c]
   det_ne_zero := by
@@ -893,8 +909,8 @@ noncomputable def hexagonalP (a c : ℝ) (ha : 0 < a) (hc : 0 < c) : BravaisLatt
     positivity
 
 /-- The rhombohedral lattice with parameters `a > 0` and rhombohedral angle `α`, with
-`sin α ≠ 0` and positive volume factor `1 - 3cos²α + 2cos³α > 0`. Reference-only table
-entry `hR` (trigonal system, rhombohedral centring). -/
+`sin α ≠ 0` and positive volume factor `1 - 3cos²α + 2cos³α > 0`. Pearson symbol `hR`
+(trigonal system, rhombohedral centring). -/
 noncomputable def rhombohedralR (a α : ℝ) (ha : 0 < a) (hsin : Real.sin α ≠ 0)
     (hΩ : 0 < 1 - 3 * Real.cos α ^ 2 + 2 * Real.cos α ^ 3) : BravaisLattice where
   basisMatrix := !![a, a * Real.cos α, a * Real.cos α;
@@ -912,8 +928,7 @@ noncomputable def rhombohedralR (a α : ℝ) (ha : 0 < a) (hsin : Real.sin α �
     positivity
 
 /-- The primitive monoclinic lattice with parameters `a, b, c > 0` and angle `β` with
-`sin β ≠ 0`: basis vectors `(a, 0, 0)`, `(0, b, 0)`, `(c cosβ, 0, c sinβ)`. Reference-only
-table entry `mP`. -/
+`sin β ≠ 0`: basis vectors `(a, 0, 0)`, `(0, b, 0)`, `(c cosβ, 0, c sinβ)`. Pearson symbol `mP`. -/
 noncomputable def monoclinicP (a b c β : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
     (hsin : Real.sin β ≠ 0) : BravaisLattice where
   basisMatrix := !![a, 0, c * Real.cos β; 0, b, 0; 0, 0, c * Real.sin β]
@@ -927,7 +942,7 @@ noncomputable def monoclinicP (a b c β : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0
 
 /-- The base-centred monoclinic lattice with parameters `a, b, c > 0` and angle `β` with
 `sin β ≠ 0`, with primitive vectors `(a/2, -b/2, 0)`, `(a/2, b/2, 0)`,
-`(c cosβ, 0, c sinβ)`. Reference-only table entry `mC`. -/
+`(c cosβ, 0, c sinβ)`. Pearson symbol `mC`. -/
 noncomputable def monoclinicC (a b c β : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
     (hsin : Real.sin β ≠ 0) : BravaisLattice where
   basisMatrix := !![a / 2, a / 2, c * Real.cos β; -b / 2, b / 2, 0; 0, 0, c * Real.sin β]
@@ -941,7 +956,7 @@ noncomputable def monoclinicC (a b c β : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0
 
 /-- The triclinic lattice with parameters `a, b, c > 0` and angles `α, β, γ`, with
 `sin γ ≠ 0` and positive volume factor `1 - cos²α - cos²β - cos²γ + 2cosα cosβ cosγ > 0`.
-Reference-only table entry `aP`. -/
+Pearson symbol `aP`. -/
 noncomputable def triclinicP (a b c α β γ : ℝ) (ha : 0 < a) (hb : 0 < b) (hc : 0 < c)
     (hsin : Real.sin γ ≠ 0)
     (hΩ : 0 < 1 - Real.cos α ^ 2 - Real.cos β ^ 2 - Real.cos γ ^ 2
