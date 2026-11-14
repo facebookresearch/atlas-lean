@@ -15,7 +15,9 @@ Theory of NP-Completeness*, W. H. Freeman (1979), problem [MS3] NON-LIVENESS OF 
 CHOICE PETRI NETS;
 N. D. Jones, L. H. Landweber, and Y. E. Lien, "Complexity of some problems in Petri
 nets", Theoretical Computer Science 4 (1977), 277-299,
-doi:10.1016/0304-3975(77)90014-7.
+doi:10.1016/0304-3975(77)90014-7;
+liveness as in T. Murata, "Petri nets: properties, analysis and applications",
+Proceedings of the IEEE 77 (1989), 541-580, doi:10.1109/5.24143.
 -/
 module
 
@@ -39,10 +41,12 @@ gives `M - a + b`. `P` is free choice: for each `⟨a, b⟩ ∈ T`, either `a` c
 QUESTION: is `P` not live, that is, is there a transition `t ∈ T` and a firing sequence `σ`
 such that, for every sequence `τ` of transitions, the sequence `σ τ t` is not firable at `M₀`?
 
-`σ` is a firing sequence, so it is itself firable at `M₀`: `P` is not live exactly when some
-reachable marking (the one `σ` leads to) allows no continuation that fires `t`. Without that
-condition any non-firable `σ` would make the answer yes. Places are `0, ..., n - 1`; a marking
-is a function `ℕ → ℕ`, and only places below `n` are ever changed.
+`σ` is a firing sequence, so it is itself firable at `M₀`. This is the standard notion of
+liveness (Murata 1989, Section IV): a net is live if, no matter what marking has been reached
+from `M₀`, every transition can still be fired by some further firing sequence. So `P` is not
+live exactly when some reachable marking (the one `σ` leads to) allows no continuation that
+fires `t`. Without that condition any non-firable `σ` would make the answer yes. Places are
+`0, ..., n - 1`; a marking is a function `ℕ → ℕ`, and only places below `n` are ever changed.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
