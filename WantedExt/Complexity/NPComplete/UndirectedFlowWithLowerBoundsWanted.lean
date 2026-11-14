@@ -33,10 +33,11 @@ namespace MetaMathlibExt.Complexity.NPComplete.UndirectedFlowWithLowerBounds
 # UNDIRECTED FLOW WITH LOWER BOUNDS is NP-complete
 
 INSTANCE: a graph `G = (V, E)`, specified vertices `s` and `t`, a capacity `c(e) ∈ ℤ⁺` and a
-lower bound `l(e) ∈ ℤ₀⁺` for each `e ∈ E`, and a requirement `R ∈ ℤ⁺`. QUESTION: is there a
-flow function `f : {(u, v), (v, u) : {u, v} ∈ E} → ℤ₀⁺` such that for each `{u, v} ∈ E` either
-`f(u, v) = 0` or `f(v, u) = 0`, `l({u, v}) ≤ max (f(u, v), f(v, u)) ≤ c({u, v})`, flow is
-conserved at every vertex other than `s` and `t`, and the net flow into `t` is at least `R`?
+lower bound `l(e) ∈ ℤ₀⁺` with `l(e) ≤ c(e)` for each `e ∈ E`, and a requirement `R ∈ ℤ⁺`.
+QUESTION: is there a flow function `f : {(u, v), (v, u) : {u, v} ∈ E} → ℤ₀⁺` such that for each
+`{u, v} ∈ E` either `f(u, v) = 0` or `f(v, u) = 0`,
+`l({u, v}) ≤ max (f(u, v), f(v, u)) ≤ c({u, v})`, flow is conserved at every vertex other than
+`s` and `t`, and the net flow into `t` is at least `R`?
 
 The vertices are `0, ..., n - 1`. Each edge is a record `(u, v, l, c)`: the edge `{u, v}` with
 lower bound `l` and capacity `c`; there are no self-loops and at most one record per unordered
@@ -89,11 +90,12 @@ def lowerBound (i : UndirectedFlowWithLowerBoundsInstance) (u v : ℕ) : ℕ :=
 
 /-- Well-formedness of an instance: the edge records describe a simple graph on
 `0, ..., n - 1` (endpoints in range, no self-loops, at most one record per unordered pair),
-every capacity is positive, `s` and `t` are vertices, and the requirement `R` is positive. -/
+every capacity is positive and at least the edge's lower bound, `s` and `t` are vertices, and
+the requirement `R` is positive. -/
 def WellFormed (i : UndirectedFlowWithLowerBoundsInstance) : Prop :=
   ((endpoints i).Nodup ∧ ∀ e ∈ endpoints i,
       e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ endpoints i) ∧
-    (∀ e ∈ i.2.1, 0 < e.2.2.2) ∧
+    (∀ e ∈ i.2.1, 0 < e.2.2.2 ∧ e.2.2.1 ≤ e.2.2.2) ∧
     i.2.2.1 < i.1 ∧ i.2.2.2.1 < i.1 ∧ 0 < i.2.2.2.2
 
 /-- There is an integral flow `f` from `s` to `t` that is feasible for the symmetric edge
