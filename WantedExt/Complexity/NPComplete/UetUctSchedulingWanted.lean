@@ -49,7 +49,10 @@ and the makespan is `max_j C_j`. Rayward-Smith (1987) established NP-hardness; H
 Lenstra and Veltman prove the question NP-complete already for `d = 4`. The constraint is
 imposed on the arcs of `G`; on the rest of its transitive closure it follows, since every
 task has unit length (a path `j → k → k'` already gives `S_k' ≥ C_j + 1`). Processors are
-`Fin m`, tasks `Fin n`. Binary encoding of all numbers.
+`Fin m`, tasks `Fin n`. The tasks are listed explicitly, one processing time per task, each
+required to be `1` (the convention of `PrecedenceConstrainedSchedulingWanted`, which lists unit
+task lengths), so the input length grows with the number of tasks. Binary encoding of all
+numbers.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -62,19 +65,20 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number `m` of processors, the number `n` of tasks, the arcs `(j, k)` of
-the precedence graph (`k` needs data from `j`), and the bound `d`. -/
-abbrev UetUctSchedulingInstance := ℕ × ℕ × List (ℕ × ℕ) × ℕ
+/-- An instance: the number `m` of processors, the processing times `[p_1, …, p_n]` of the
+tasks (all `1`), the arcs `(j, k)` of the precedence graph (`k` needs data from `j`), and the
+bound `d`. -/
+abbrev UetUctSchedulingInstance := ℕ × List ℕ × List (ℕ × ℕ) × ℕ
 
 /-- The arc relation of the precedence graph: `j → k` when the pair `(j, k)` is listed. -/
-def Arc (i : UetUctSchedulingInstance) (j k : Fin i.2.1) : Prop :=
+def Arc (i : UetUctSchedulingInstance) (j k : Fin i.2.1.length) : Prop :=
   ((j : ℕ), (k : ℕ)) ∈ i.2.2.1
 
-/-- Well-formedness of an instance: `0 < m`, every arc names two tasks, and the precedence
-graph is acyclic (the transitive closure `Relation.TransGen` of the arc relation is
-irreflexive). -/
+/-- Well-formedness of an instance: `0 < m`, every processing time is `1`, every arc names two
+tasks, and the precedence graph is acyclic (the transitive closure `Relation.TransGen` of the arc
+relation is irreflexive). -/
 def WellFormed (i : UetUctSchedulingInstance) : Prop :=
-  0 < i.1 ∧ (∀ a ∈ i.2.2.1, a.1 < i.2.1 ∧ a.2 < i.2.1) ∧
+  0 < i.1 ∧ (∀ p ∈ i.2.1, p = 1) ∧ (∀ a ∈ i.2.2.1, a.1 < i.2.1.length ∧ a.2 < i.2.1.length) ∧
     ∀ j, ¬ Relation.TransGen (Arc i) j j
 
 /-- Some schedule, a start time `S j` (task `j` occupies `[S j, S j + 1)`) and a processor
@@ -82,7 +86,7 @@ def WellFormed (i : UetUctSchedulingInstance) : Prop :=
 `j → k` (`S j + 1 ≤ S k` on a common processor, `S j + 1 + 1 ≤ S k` on different
 processors), and completes every task by `d`. -/
 def UetUctSchedulingFeasible (i : UetUctSchedulingInstance) : Prop :=
-  ∃ (S : Fin i.2.1 → ℕ) (P : Fin i.2.1 → Fin i.1),
+  ∃ (S : Fin i.2.1.length → ℕ) (P : Fin i.2.1.length → Fin i.1),
     (∀ j k, j ≠ k → P j = P k → S j ≠ S k) ∧
     (∀ j k, Arc i j k → P j = P k → S j + 1 ≤ S k) ∧
     (∀ j k, Arc i j k → P j ≠ P k → S j + 1 + 1 ≤ S k) ∧

@@ -47,15 +47,15 @@ Veltman distinguish the variant with a restrictively small number of machines
 at most 5 is decidable in polynomial time.
 
 It restricts UET-UCT SCHEDULING (`UetUctSchedulingWanted`), whose instance type, schedule and
-question are reused unchanged: machine count `m`, job count `n`, arc list and bound `d`
+question are reused unchanged: machine count `m`, the jobs' unit processing times (one entry
+per job, so `n` is the length of that list), arc list and bound `d`
 (`UetUctScheduling.UetUctSchedulingInstance`), the parent's well-formedness
-(`UetUctScheduling.WellFormed`: `0 < m`, arcs name jobs, acyclic precedence graph) and question
+(`UetUctScheduling.WellFormed`: `0 < m`, unit processing times, arcs name jobs, acyclic
+precedence graph) and question
 (`UetUctScheduling.UetUctSchedulingFeasible`). The restriction adds `n ≤ m` and `d = 6`. With at
 least as many machines as jobs the number of machines never binds: any schedule can be
 relabelled to use at most `n` machines, one per job, and every job may have a machine of its own,
-which is the source's unrestricted variant. The job count `n` is binary, but jobs on no arc can
-each start at time 0 on a machine of their own, so a schedule of the jobs on arcs (polynomial in
-the input) extends to all jobs; the question stays in NP.
+which is the source's unrestricted variant.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -72,7 +72,7 @@ reduction from every language in `NP`
 many machines as jobs (`n ≤ m`, so the number of machines is not restrictive) and bound
 `d = 6`. -/
 def WellFormed (i : UetUctSchedulingInstance) : Prop :=
-  UetUctScheduling.WellFormed i ∧ i.2.1 ≤ i.1 ∧ i.2.2.2 = 6
+  UetUctScheduling.WellFormed i ∧ i.2.1.length ≤ i.1 ∧ i.2.2.2 = 6
 
 open Classical in
 /-- UET-UCT SCHEDULING ON UNBOUNDEDLY MANY PROCESSORS WITH MAKESPAN AT MOST 6 as a decision
