@@ -255,31 +255,6 @@ private theorem sinkJ_exists_min {n : ℕ}
     hcompact.exists_isMinOn hne (sinkJ_cont A hA ne).continuousOn
   exact ⟨u_star, hmem.1, hmem.2, fun v hv1 hv2 => hmin ⟨hv1, hv2⟩⟩
 
-private theorem hasDerivAt_piadd {f g : ℝ → ℝ} {f' g' : ℝ} {x : ℝ}
-    (h : HasDerivAt (f + g) (f' + g') x) :
-    HasDerivAt (fun t => f t + g t) (f' + g') x := by
-  have hfun : (f + g) = (fun t => f t + g t) := by
-    funext t
-    exact (Pi.add_apply f g t).symm
-  rwa [hfun] at h
-
-private theorem hasDerivAt_pisub {f g : ℝ → ℝ} {f' g' : ℝ} {x : ℝ}
-    (h : HasDerivAt (f - g) (f' - g') x) :
-    HasDerivAt (fun t => f t - g t) (f' - g') x := by
-  have hfun : (f - g) = (fun t => f t - g t) := by
-    funext t
-    exact (Pi.sub_apply f g t).symm
-  rwa [hfun] at h
-
-private theorem hasDerivAt_pisum {n : ℕ} {s : Finset (Fin n)} {F : Fin n → ℝ → ℝ}
-    {F' : Fin n → ℝ} {x : ℝ}
-    (h : HasDerivAt (∑ j ∈ s, F j) (∑ j ∈ s, F' j) x) :
-    HasDerivAt (fun t => ∑ j ∈ s, F j t) (∑ j ∈ s, F' j) x := by
-  have hfun : (∑ j ∈ s, F j) = (fun t => ∑ j ∈ s, F j t) := by
-    funext t
-    exact Finset.sum_apply t s F
-  rwa [hfun] at h
-
 private theorem sinkJ_crit {n : ℕ} (hn : 0 < n) (A : Matrix (Fin n) (Fin n) ℝ)
     (hA : ∀ i j, 0 < A i j)
     (c : Fin n → ℝ) (k l : Fin n)
@@ -304,8 +279,7 @@ private theorem sinkJ_crit {n : ℕ} (hn : 0 < n) (A : Matrix (Fin n) (Fin n) �
       have h := (hasDerivAt_id (0 : ℝ)).mul_const
         ((if j = k then (1 : ℝ) else 0) - (if j = l then (1 : ℝ) else 0))
       simpa using h
-    have h2 := hasDerivAt_piadd ((hasDerivAt_const (0 : ℝ) (c j)).add h1)
-    simpa using h2
+    exact h1.const_add (c j)
   have hexp : ∀ j, HasDerivAt
       (fun t : ℝ => Real.exp (c j
         + t * ((if j = k then (1 : ℝ) else 0) - (if j = l then (1 : ℝ) else 0))))
@@ -326,7 +300,7 @@ private theorem sinkJ_crit {n : ℕ} (hn : 0 < n) (A : Matrix (Fin n) (Fin n) �
         + t * ((if j = k then (1 : ℝ) else 0) - (if j = l then (1 : ℝ) else 0))))
       (∑ j, A i j * (Real.exp (c j)
         * ((if j = k then (1 : ℝ) else 0) - (if j = l then (1 : ℝ) else 0)))) 0 :=
-    fun i => hasDerivAt_pisum (HasDerivAt.sum (fun j _ => hterm i j))
+    fun i => HasDerivAt.fun_sum (fun j _ => hterm i j)
   have hlog : ∀ i, HasDerivAt
       (fun t : ℝ => Real.log (∑ j, A i j * Real.exp (c j
         + t * ((if j = k then (1 : ℝ) else 0) - (if j = l then (1 : ℝ) else 0)))))
@@ -357,7 +331,7 @@ private theorem sinkJ_crit {n : ℕ} (hn : 0 < n) (A : Matrix (Fin n) (Fin n) �
       (∑ i, (∑ j, A i j * (Real.exp (c j)
         * ((if j = k then (1 : ℝ) else 0) - (if j = l then (1 : ℝ) else 0))))
         / (∑ j, A i j * Real.exp (c j))) 0 :=
-    hasDerivAt_pisum (HasDerivAt.sum (fun i _ => hlog i))
+    HasDerivAt.fun_sum (fun i _ => hlog i)
   have hwsum : HasDerivAt
       (fun t : ℝ => ∑ j, (c j
         + t * ((if j = k then (1 : ℝ) else 0) - (if j = l then (1 : ℝ) else 0))))
@@ -366,7 +340,7 @@ private theorem sinkJ_crit {n : ℕ} (hn : 0 < n) (A : Matrix (Fin n) (Fin n) �
         (fun t : ℝ => ∑ j, (c j
           + t * ((if j = k then (1 : ℝ) else 0) - (if j = l then (1 : ℝ) else 0))))
         (∑ j, ((if j = k then (1 : ℝ) else 0) - (if j = l then (1 : ℝ) else 0))) 0 :=
-      hasDerivAt_pisum (HasDerivAt.sum (fun j _ => hbase j))
+      HasDerivAt.fun_sum (fun j _ => hbase j)
     have h2 : (∑ j, ((if j = k then (1 : ℝ) else 0)
         - (if j = l then (1 : ℝ) else 0))) = 0 := by
       rw [Finset.sum_sub_distrib]
@@ -442,7 +416,7 @@ private theorem sinkJ_crit {n : ℕ} (hn : 0 < n) (A : Matrix (Fin n) (Fin n) �
           + t * ((if j = k then (1 : ℝ) else 0) - (if j = l then (1 : ℝ) else 0)))))
       (Real.exp (c k) * (∑ i, A i k / (∑ j, A i j * Real.exp (c j)))
         - Real.exp (c l) * (∑ i, A i l / (∑ j, A i j * Real.exp (c j)))) 0 := by
-    have h := hasDerivAt_pisub (hlogsum.sub hwsum)
+    have h := hlogsum.fun_sub hwsum
     rw [hD] at h
     simpa using h
   have hmin : IsMinOn

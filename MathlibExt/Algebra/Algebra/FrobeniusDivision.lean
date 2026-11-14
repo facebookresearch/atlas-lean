@@ -36,22 +36,11 @@ namespace MathlibExt.Algebra.Algebra.FrobeniusDivisionWanted
 Proves the classification of finite-dimensional associative division ℝ-algebras.
 -/
 
--- Helper 1: the structure map ℝ → A is injective (ℝ is a field, A nontrivial).
-private lemma algMap_injective {A : Type*} [DivisionRing A] [Algebra ℝ A] :
-    Function.Injective (algebraMap ℝ A) :=
-  RingHom.injective (algebraMap ℝ A)
-
--- Helper 2: every element is integral over ℝ (finite-dimensionality).
-private lemma isIntegral_mem {A : Type*} [DivisionRing A] [Algebra ℝ A]
-    [FiniteDimensional ℝ A] (x : A) : IsIntegral ℝ x := by
-  have h : Algebra.IsIntegral ℝ A := Algebra.IsIntegral.of_finite ℝ A
-  exact h.isIntegral x
-
 -- Helper 3: every element satisfies a real polynomial of degree ≤ 2.
 private lemma minpoly_natDegree_le_two {A : Type*} [DivisionRing A] [Algebra ℝ A]
     [FiniteDimensional ℝ A] (x : A) : (minpoly ℝ x).natDegree ≤ 2 := by
   have hirr : Irreducible (minpoly ℝ x) :=
-    minpoly.irreducible (isIntegral_mem x)
+    minpoly.irreducible (IsIntegral.of_finite ℝ x)
   have hdeg : (minpoly ℝ x).degree ≤ 2 := Irreducible.degree_le_two hirr
   exact Polynomial.natDegree_le_of_degree_le hdeg
 
@@ -60,7 +49,7 @@ private lemma minpoly_natDegree_le_two {A : Type*} [DivisionRing A] [Algebra ℝ
 private lemma quad_relation {A : Type*} [DivisionRing A] [Algebra ℝ A]
     [FiniteDimensional ℝ A] {x : A} (hx : ∀ r : ℝ, algebraMap ℝ A r ≠ x) :
     ∃ c₁ c₀ : ℝ, x ^ 2 + algebraMap ℝ A c₁ * x + algebraMap ℝ A c₀ = 0 := by
-  have hint : IsIntegral ℝ x := isIntegral_mem x
+  have hint : IsIntegral ℝ x := IsIntegral.of_finite ℝ x
   have hmonic : (minpoly ℝ x).Monic := minpoly.monic hint
   have hdeg2 : (minpoly ℝ x).natDegree ≤ 2 := minpoly_natDegree_le_two x
   have haeval : Polynomial.aeval x (minpoly ℝ x) = 0 := minpoly.aeval ℝ x
@@ -79,7 +68,7 @@ private lemma quad_relation {A : Type*} [DivisionRing A] [Algebra ℝ A]
       exact hmc
     rw [hform, Polynomial.aeval_C] at haeval
     have hcz : (minpoly ℝ x).coeff 0 = 0 :=
-      algMap_injective (by rw [haeval, map_zero])
+      (algebraMap ℝ A).injective (by rw [haeval, map_zero])
     rw [hc1] at hcz
     exact one_ne_zero hcz
   have hdeg1 : (minpoly ℝ x).natDegree ≠ 1 := by
@@ -223,7 +212,7 @@ private lemma exists_sq_eq_neg_one {A : Type*} [DivisionRing A] [Algebra ℝ A]
       intro hz
       have hz' : algebraMap ℝ A d = algebraMap ℝ A 0 := by
         rw [hz, map_zero]
-      exact hd0 (algMap_injective hz')
+      exact hd0 ((algebraMap ℝ A).injective hz')
     have hcommd : algebraMap ℝ A d * t = t * algebraMap ℝ A d :=
       (Algebra.commute_algebraMap_left d t).eq
     have hinvcomm : (algebraMap ℝ A d)⁻¹ * t
@@ -274,9 +263,9 @@ private lemma equiv_real_of_finrank_one {A : Type*} [DivisionRing A] [Algebra �
     [FiniteDimensional ℝ A] (h : Module.finrank ℝ A = 1) :
     Nonempty (A ≃ₐ[ℝ] ℝ) := by
   have hbij : Function.Bijective (Algebra.ofId ℝ A) := by
-    refine ⟨algMap_injective, ?_⟩
+    refine ⟨(algebraMap ℝ A).injective, ?_⟩
     have hs := surjective_of_injective_of_finrank_eq
-      (Algebra.ofId ℝ A).toLinearMap algMap_injective
+      (Algebra.ofId ℝ A).toLinearMap (algebraMap ℝ A).injective
       (by rw [Module.finrank_self, h])
     exact hs
   exact ⟨(AlgEquiv.ofBijective (Algebra.ofId ℝ A) hbij).symm⟩
@@ -318,7 +307,7 @@ private lemma field_finrank {K : Type*} [Field K] [Algebra ℝ K]
   by_cases hK : ∀ z : K, ∃ r : ℝ, algebraMap ℝ K r = z
   · left
     have hbij : Function.Bijective (Algebra.ofId ℝ K) := by
-      refine ⟨algMap_injective, ?_⟩
+      refine ⟨(algebraMap ℝ K).injective, ?_⟩
       intro z
       exact hK z
     have e := AlgEquiv.ofBijective (Algebra.ofId ℝ K) hbij
@@ -542,7 +531,7 @@ private lemma two_ne_zero {A : Type*} [DivisionRing A] [Algebra ℝ A] : (2 : A)
   apply h2r
   have hcon2 : algebraMap ℝ A 2 = algebraMap ℝ A 0 := by
     rw [← h22, hcon, map_zero]
-  exact algMap_injective hcon2
+  exact (algebraMap ℝ A).injective hcon2
 
 -- Helper 16: `X + X = 0` forces `X = 0` (characteristic zero).
 private lemma eq_zero_of_add_self {A : Type*} [DivisionRing A] [Algebra ℝ A]
@@ -621,7 +610,7 @@ private lemma exists_anticommute {A : Type*} [DivisionRing A] [Algebra ℝ A]
       rcases mul_eq_zero.mp hX0 with h | h
       · exact h
       · exact absurd h hji
-    exact algMap_injective (by rw [halg0, map_zero])
+    exact (algebraMap ℝ A).injective (by rw [halg0, map_zero])
   have hreal : j₀ * j₀ = algebraMap ℝ A z.re := by
     rw [hexpand, him0, zero_smul, add_zero]
   by_cases hge : 0 ≤ z.re
@@ -668,7 +657,7 @@ private lemma exists_anticommute {A : Type*} [DivisionRing A] [Algebra ℝ A]
       intro hz
       have hz' : algebraMap ℝ A d = algebraMap ℝ A 0 := by
         rw [hz, map_zero]
-      exact hd0 (algMap_injective hz')
+      exact hd0 ((algebraMap ℝ A).injective hz')
     have hinvcomm : (algebraMap ℝ A d)⁻¹ * j₀
         = j₀ * (algebraMap ℝ A d)⁻¹ := by
       apply mul_left_cancel₀ hSd0
@@ -761,7 +750,7 @@ private lemma exists_nonreal {A : Type*} [DivisionRing A] [Algebra ℝ A]
     apply hcon
     exact ⟨z, fun r hr => hz ⟨r, hr⟩⟩
   have hbij : Function.Bijective (Algebra.ofId ℝ A) := by
-    refine ⟨algMap_injective, ?_⟩
+    refine ⟨(algebraMap ℝ A).injective, ?_⟩
     intro z
     exact hall z
   have e := AlgEquiv.ofBijective (Algebra.ofId ℝ A) hbij

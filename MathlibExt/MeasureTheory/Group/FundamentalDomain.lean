@@ -45,9 +45,6 @@ of a fundamental domain for `Γ₁` is a fundamental domain for `Γ₂`.
 open MeasureTheory
 open scoped Pointwise ENNReal
 
-private theorem subgroup_smul_set {G X : Type*} [Group G] [MulAction G X]
-    (Γ : Subgroup G) (γ : Γ) (s : Set X) : γ • s = (γ : G) • s := rfl
-
 private theorem smul_iUnion_inv_smul {G X ι : Type*} [Group G] [MulAction G X]
     (Γ : Subgroup G) (R : ι → Γ) (g : G) (s : Set X) :
     g • (⋃ i, ((R i : G)⁻¹) • s) = ⋃ i, (g * (R i : G)⁻¹) • s := by
@@ -69,7 +66,7 @@ theorem MeasureTheory.IsFundamentalDomain.iUnion_inv_smul_of_leftCosetRepresenta
   refine ⟨?_, ?_, ?_⟩
   · refine NullMeasurableSet.iUnion fun i => ?_
     have h := h𝓕.nullMeasurableSet_smul (R i)⁻¹
-    rwa [subgroup_smul_set, Subgroup.coe_inv] at h
+    rwa [Set.subtype_smul_set, Subgroup.coe_inv] at h
   · filter_upwards [h𝓕.ae_covers] with x hx
     obtain ⟨γ, hγ⟩ := hx
     obtain ⟨i, hi, -⟩ := hR γ
@@ -81,7 +78,7 @@ theorem MeasureTheory.IsFundamentalDomain.iUnion_inv_smul_of_leftCosetRepresenta
     exact Set.smul_mem_smul_set (by rw [← Subgroup.smul_def]; exact hγ)
   · intro γ γ' hne
     change AEDisjoint μ (γ • ⋃ i, ((R i : G)⁻¹) • 𝓕) (γ' • ⋃ i, ((R i : G)⁻¹) • 𝓕)
-    rw [subgroup_smul_set, subgroup_smul_set, smul_iUnion_inv_smul Γ₁ R,
+    rw [Set.subtype_smul_set, Set.subtype_smul_set, smul_iUnion_inv_smul Γ₁ R,
       smul_iUnion_inv_smul Γ₁ R, AEDisjoint.iUnion_left_iff]
     intro i
     rw [AEDisjoint.iUnion_right_iff]
@@ -109,4 +106,4 @@ theorem MeasureTheory.IsFundamentalDomain.iUnion_inv_smul_of_leftCosetRepresenta
       apply Subtype.ext
       exact mul_right_cancel heq'
     have h := h𝓕.aedisjoint hne'
-    simpa only [Function.onFun, subgroup_smul_set] using h
+    simpa only [Function.onFun, Set.subtype_smul_set] using h

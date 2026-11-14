@@ -34,10 +34,6 @@ private def cS (n : ℕ) : R :=
     (-a 0) ^ (n - c.length) *
       Finset.univ.prod (fun r : Fin c.length => a (c.blocksFun r)))
 
-private lemma comp_length_le {n : ℕ} (c : Composition n) : c.length ≤ n := by
-  have h := List.length_le_sum_of_one_le c.blocks (fun i hi => c.blocks_pos hi)
-  rwa [c.blocks_sum] at h
-
 /-- Forward map for `splitEquiv`: values `< iv` go left, the rest go right. -/
 private def splitTo (N iv : ℕ) (r : Fin N) : Fin iv ⊕ Fin (N - iv) :=
   if hr : r.val < iv then Sum.inl ⟨r.val, hr⟩
@@ -186,7 +182,7 @@ private lemma cS_term_cons (n : ℕ) (i : Fin (n + 1)) (d : Composition (n - i.v
       congr 1
   have hexp : (n + 1) - (d.length + 1) = n - d.length := by omega
   have hsplit : n - d.length = i.val + ((n - i.val) - d.length) := by
-    have hle := comp_length_le d
+    have hle := Composition.length_le d
     have hlt := i.isLt
     omega
   change (-a 0) ^ ((n + 1) - (d.length + 1)) *
@@ -373,7 +369,7 @@ private lemma base0 : (tH a 0).det = cS a 0 := by
   have h0 : ∀ c : Composition 0, c = c0 := by
     intro c
     apply Composition.ext
-    have hlen : c.blocks.length = 0 := Nat.le_zero.mp (comp_length_le c)
+    have hlen : c.blocks.length = 0 := Nat.le_zero.mp (Composition.length_le c)
     exact List.length_eq_zero_iff.mp hlen
   have hU : (Finset.univ : Finset (Composition 0)) = {c0} := by
     rw [Finset.eq_singleton_iff_unique_mem]

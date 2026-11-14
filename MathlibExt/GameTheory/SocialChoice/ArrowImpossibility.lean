@@ -20,11 +20,6 @@ namespace MetaMathlibExt
 
 section
 
-private theorem preRefl {Alt : Type} (R : Alt → Alt → Prop)
-    (h : IsPreorder Alt R) (x : Alt) : R x x := by
-  have := IsPreorder.toRefl (self := h)
-  exact Std.Refl.refl x
-
 private theorem preTrans {Alt : Type} (R : Alt → Alt → Prop)
     (h : IsPreorder Alt R) {x y z : Alt} (h1 : R x y) (h2 : R y z) : R x z := by
   have := IsPreorder.toIsTrans (self := h)
@@ -606,7 +601,7 @@ private theorem expand {Alt Voter : Type} {electorate : Finset Voter}
     intro P hDom hGxx
     obtain ⟨d, hd⟩ := hGne
     have hc := hGxx d hd
-    have hr := preRefl (P d) (hDom d (hG hd)).1 x
+    have hr := (hDom d (hG hd)).1.refl x
     exact absurd hr hc.2
   · by_cases hxz : x = z
     · subst hxz

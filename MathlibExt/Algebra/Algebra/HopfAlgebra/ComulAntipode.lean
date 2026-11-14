@@ -127,27 +127,6 @@ private theorem toConv_comm_map_antipode_comul_mul_toConv_comul :
     toConv_includeLeft_comp_antipode_mul_toConv_includeLeft, one_mul]
   exact toConv_includeRight_comp_antipode_mul_toConv_includeRight
 
-private theorem toConv_comul_mul_toConv_comul_comp_antipode :
-    WithConv.toConv (Coalgebra.comul : A →ₗ[R] A ⊗[R] A)
-        * WithConv.toConv (Coalgebra.comul ∘ₗ HopfAlgebra.antipode R :
-          A →ₗ[R] A ⊗[R] A)
-      = (1 : WithConv (A →ₗ[R] A ⊗[R] A)) := by
-  refine WithConv.ext (LinearMap.ext fun a => ?_)
-  simp only [LinearMap.convMul_def, LinearMap.convOne_def, WithConv.ofConv_toConv,
-    LinearMap.comp_apply, Algebra.linearMap_apply]
-  rw [← (Coalgebra.Repr.arbitrary R a).eq]
-  simp only [map_sum, TensorProduct.map_tmul, LinearMap.mul'_apply, LinearMap.comp_apply,
-    ← Bialgebra.comul_mul]
-  rw [show ∑ i ∈ (Coalgebra.Repr.arbitrary R a).index,
-        Coalgebra.comul (R := R) ((Coalgebra.Repr.arbitrary R a).left i *
-          HopfAlgebra.antipode R ((Coalgebra.Repr.arbitrary R a).right i))
-      = Coalgebra.comul (R := R) (∑ i ∈ (Coalgebra.Repr.arbitrary R a).index,
-        (Coalgebra.Repr.arbitrary R a).left i *
-          HopfAlgebra.antipode R ((Coalgebra.Repr.arbitrary R a).right i)) from
-      (map_sum _ _ _).symm,
-    HopfAlgebra.sum_mul_antipode_eq_algebraMap_counit (Coalgebra.Repr.arbitrary R a),
-    Bialgebra.comul_algebraMap]
-
 private theorem comul_comp_antipode :
     Coalgebra.comul ∘ₗ HopfAlgebra.antipode R
       = (TensorProduct.comm R A A).toLinearMap
@@ -156,7 +135,7 @@ private theorem comul_comp_antipode :
   (WithConv.toConv_injective
     (left_inv_eq_right_inv
       (toConv_comm_map_antipode_comul_mul_toConv_comul (R := R) (A := A))
-      (toConv_comul_mul_toConv_comul_comp_antipode (R := R) (A := A)))).symm
+      (LinearMap.comul_right_inv (R := R) (C := A)))).symm
 
 end HopfComulAntipodeAux
 

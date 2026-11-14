@@ -1156,17 +1156,10 @@ private theorem btT_word (n : ℕ) :
   rw [inv_pow, FreeGroup.toWord_inv, FreeGroup.toWord_of_pow]
   simp [FreeGroup.invRev]
 
-/-- The `toWord` of a generator is its single letter. -/
-private theorem btToWord_of (x : Fin 2) :
-    (FreeGroup.of x).toWord = [(x, true)] := by
-  have h1 : FreeGroup.of x = FreeGroup.mk [(x, true)] := rfl
-  rw [h1, FreeGroup.toWord_mk]
-  exact FreeGroup.IsReduced.reduce_eq FreeGroup.IsReduced.singleton
-
 /-- A generator lies in the piece for its own head letter. -/
 private theorem btW_of (x : Fin 2) : FreeGroup.of x ∈ btW (x, true) := by
   change (FreeGroup.of x).toWord.head? = some (x, true)
-  rw [btToWord_of x, List.head?_cons]
+  rw [FreeGroup.toWord_of x, List.head?_cons]
 
 /-- Pieces for distinct head letters are disjoint. -/
 private theorem btW_disjoint {s t : Fin 2 × Bool} (h : s ≠ t) :

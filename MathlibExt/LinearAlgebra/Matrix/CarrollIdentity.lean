@@ -146,14 +146,11 @@ private noncomputable def carrollSplitEquiv (p q : Fin (m + 2)) (hp : p = i ∨ 
     (hq : q = i ∨ q = j) (hqp : q ≠ p) : Fin (m + 1) ≃ {k : Fin (m + 2) // k ≠ i ∧ k ≠ j} ⊕ Fin 1 :=
   Equiv.ofBijective _ (carrollSplit_bijective i j p q hp hq hqp)
 
-private lemma carroll_ofBijective_apply {α β : Sort*} (f : α → β) (h : Function.Bijective f)
-    (a : α) : Equiv.ofBijective f h a = f a := rfl
-
 private lemma carrollSplitEquiv_inr (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
     (hq : q = i ∨ q = j) (hqp : q ≠ p) (a : Fin (m + 1))
     (h : Fin.succAbove p a = q) :
     carrollSplitEquiv i j p q hp hq hqp a = Sum.inr 0 := by
-  simp only [carrollSplitEquiv, carroll_ofBijective_apply, carrollSplit, dif_pos h]
+  simp only [carrollSplitEquiv, Equiv.ofBijective_apply, carrollSplit, dif_pos h]
 
 private lemma carrollSplitEquiv_inl (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
     (hq : q = i ∨ q = j) (hqp : q ≠ p) (a : Fin (m + 1))
@@ -165,7 +162,7 @@ private lemma carrollSplitEquiv_inl (p q : Fin (m + 2)) (hp : p = i ∨ p = j)
         · exact ⟨Fin.succAbove_ne _ _, h⟩
         · exact ⟨h, Fin.succAbove_ne _ _⟩
         · exact absurd rfl hqp⟩ := by
-  simp only [carrollSplitEquiv, carroll_ofBijective_apply, carrollSplit, dite_eq_right h]
+  simp only [carrollSplitEquiv, Equiv.ofBijective_apply, carrollSplit, dite_eq_right h]
 
 private def carrollFwd : {k : Fin (m + 2) // k ≠ i ∧ k ≠ j} ⊕ Fin 2 → Fin (m + 2) :=
   Sum.elim Subtype.val ![i, j]

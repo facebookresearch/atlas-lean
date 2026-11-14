@@ -86,33 +86,6 @@ private lemma hli_Dpsi (F ψ : PowerSeries ℂ)
   rw [PowerSeries.derivative_subst hψ, PowerSeries.derivative_X] at h
   exact h
 
-private lemma hli_Xmul0 (K : PowerSeries ℂ) : PowerSeries.coeff 0 (PowerSeries.X * K) = 0 := by
-  rw [PowerSeries.coeff_mul, Finset.sum_eq_zero]
-  intro p hp
-  rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-  have h1 : p.1 = 0 := by omega
-  simp [PowerSeries.coeff_X, h1]
-
-private lemma hli_Xmul (K : PowerSeries ℂ) (n : ℕ) : PowerSeries.coeff (n + 1) (PowerSeries.X * K) =
-    PowerSeries.coeff n K := by
-  rw [PowerSeries.coeff_mul, Finset.sum_eq_single (1, n)]
-  · simp [PowerSeries.coeff_X]
-  · intro p hp hpn
-    rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-    have h1 : p.1 ≠ 1 := by
-      intro hcon
-      apply hpn
-      ext
-      · simp_all
-      · simp_all; omega
-    simp [PowerSeries.coeff_X, h1]
-  · intro hcon
-    exfalso
-    apply hcon
-    rw [Finset.HasAntidiagonal.mem_antidiagonal]
-    change (1 : ℕ) + n = n + 1
-    omega
-
 -- δ-lemma: PowerSeries.coeff r (v^(r+1) * (PowerSeries.X*u)') = δ_{r,0}, where v = u⁻¹
 private lemma hli_delta (u : PowerSeries ℂ) (hu : PowerSeries.constantCoeff u ≠ 0) (r : ℕ) :
     PowerSeries.coeff r ((u⁻¹ ^ (r + 1)) * PowerSeries.derivative (PowerSeries.X * u)) =
@@ -139,9 +112,9 @@ private lemma hli_delta (u : PowerSeries ℂ) (hu : PowerSeries.constantCoeff u 
     linear_combination hvr
   rw [hexpand, map_add]
   rcases Nat.eq_zero_or_pos r with rfl | hr
-  · rw [hli_Xmul0, add_zero, pow_zero, PowerSeries.coeff_one]
+  · rw [PowerSeries.coeff_zero_X_mul, add_zero, pow_zero, PowerSeries.coeff_one]
   · obtain ⟨s, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (ne_of_gt hr)
-    rw [hli_Xmul, ite_eq_right (Nat.succ_ne_zero s)]
+    rw [PowerSeries.coeff_succ_X_mul, ite_eq_right (Nat.succ_ne_zero s)]
     -- goal: PowerSeries.coeff (s+1) v^{s+1} + PowerSeries.coeff s (v^{s+2} * u') = 0
     have e1 : u⁻¹ * PowerSeries.derivative u = -(PowerSeries.derivative (u⁻¹) * u) :=
       eq_neg_of_add_eq_zero_left hrel
@@ -169,7 +142,8 @@ private lemma hli_delta (u : PowerSeries ℂ) (hu : PowerSeries.constantCoeff u 
       rw [hC] at hL
       linear_combination hL
     have hDc := congrArg (PowerSeries.coeff (s + 1)) hD
-    rw [PowerSeries.coeff_derivative, hli_Xmul, map_add, hli_Xmul, PowerSeries.coeff_C_mul] at hDc
+    rw [PowerSeries.coeff_derivative, PowerSeries.coeff_succ_X_mul, map_add,
+      PowerSeries.coeff_succ_X_mul, PowerSeries.coeff_C_mul] at hDc
     have hcancel : ((s + 1 : ℕ) : ℂ) ≠ 0 := by exact_mod_cast Nat.succ_ne_zero s
     have heq : PowerSeries.coeff (s + 1) (u⁻¹ ^ (s + 1))
         = PowerSeries.coeff s (u⁻¹ ^ s * PowerSeries.derivative (u⁻¹)) := by
@@ -187,34 +161,6 @@ private lemma hli_psi_pow_coeff (ψ : PowerSeries ℂ) (hψ0 : PowerSeries.const
   calc (↑b : ℕ∞) < ↑d := by exact_mod_cast h
     _ ≤ (ψ ^ d).order := PowerSeries.le_order_pow_of_constantCoeff_eq_zero d hψ0
 
--- PowerSeries.coeff of PowerSeries.X^d * K
-private lemma hli_Xpow_mul (d N : ℕ) (K : PowerSeries ℂ) :
-    PowerSeries.coeff N (PowerSeries.X ^ d * K) = if d ≤ N then PowerSeries.coeff (N - d) K else
-        0 := by
-  by_cases h : d ≤ N
-  · rw [PowerSeries.coeff_mul, Finset.sum_eq_single (d, N - d)]
-    · rw [PowerSeries.coeff_X_pow, ite_eq_left rfl, one_mul, ite_eq_left h]
-    · intro p hp hpn
-      rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-      have hne : p.1 ≠ d := by
-        intro hcon
-        apply hpn
-        ext
-        · simp_all
-        · simp_all; omega
-      simp [PowerSeries.coeff_X_pow, hne]
-    · intro hcon
-      exfalso
-      apply hcon
-      rw [Finset.HasAntidiagonal.mem_antidiagonal]
-      change d + (N - d) = N
-      omega
-  · rw [ite_eq_right h, PowerSeries.coeff_mul, Finset.sum_eq_zero]
-    intro p hp
-    rw [Finset.HasAntidiagonal.mem_antidiagonal] at hp
-    have hne : p.1 ≠ d := by omega
-    simp [PowerSeries.coeff_X_pow, hne]
-
 private lemma hli_psipow (ψ Φ : PowerSeries ℂ) (hψeq : ψ = PowerSeries.X * Φ) (d : ℕ) :
     ψ ^ d = PowerSeries.X ^ d * Φ ^ d := by
   rw [hψeq, mul_pow]
@@ -227,7 +173,7 @@ private lemma hli_inner (ψ Φ : PowerSeries ℂ) (hψeq : ψ = PowerSeries.X * 
   rw [hli_psipow ψ Φ hψeq d]
   have hrew : (Φ⁻¹ ^ (N + 1)) * (PowerSeries.X ^ d * Φ ^ d) * PowerSeries.derivative ψ
       = PowerSeries.X ^ d * ((Φ⁻¹ ^ (N + 1) * Φ ^ d) * PowerSeries.derivative ψ) := by ring
-  rw [hrew, hli_Xpow_mul]
+  rw [hrew, PowerSeries.coeff_X_pow_mul']
   by_cases h : d ≤ N
   · rw [ite_eq_left h]
     have h2 : Φ⁻¹ ^ d * Φ ^ d = 1 := by

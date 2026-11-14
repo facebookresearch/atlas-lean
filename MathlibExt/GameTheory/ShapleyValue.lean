@@ -204,17 +204,6 @@ private theorem sum_powerset_neg_one_pow_card (M : Finset Player) :
     exact h.symm
 
 omit [Fintype Player] in
-private theorem card_sdiff_of_subset {R T : Finset Player} (h : R ⊆ T) :
-    (T \ R).card = T.card - R.card := by
-  have h1 : R ∩ T = R := by
-    ext x
-    simp only [Finset.mem_inter]
-    constructor
-    · intro hx; exact hx.1
-    · intro hx; exact ⟨hx, h hx⟩
-  rw [Finset.card_sdiff, h1]
-
-omit [Fintype Player] in
 /-- Inner Möbius sum: summing the kernel over `T` with `R ⊆ T ⊆ S` picks out `R = S`. -/
 private theorem inner_mobius_sum (S R : Finset Player) (hR : R ∈ S.powerset) :
     ∑ T ∈ S.powerset.filter (fun T => R ⊆ T), (-1 : ℝ) ^ (T.card - R.card)
@@ -258,7 +247,7 @@ private theorem inner_mobius_sum (S R : Finset Player) (hR : R ∈ S.powerset) :
     · intro T hT
       rw [Finset.mem_filter] at hT
       show (-1 : ℝ) ^ (T.card - R.card) = (-1 : ℝ) ^ (T \ R).card
-      rw [card_sdiff_of_subset hT.2]
+      rw [Finset.card_sdiff_of_subset hT.2]
   rw [hsum, sum_powerset_neg_one_pow_card]
   have hiff : (S \ R = ∅) ↔ (R = S) := by
     constructor
@@ -747,16 +736,6 @@ private theorem mobiusCoeff_perm (σ : Equiv.Perm Player) (v : CoopGame Player)
     exact hinv ↑R
   rw [hcardT, hcardR, hchar]
 
-private theorem image_univ_perm (σ : Equiv.Perm Player) :
-    Finset.image (⇑σ) Finset.univ = Finset.univ := by
-  ext x
-  simp only [Finset.mem_image, Finset.mem_univ, true_and]
-  constructor
-  · intro _
-    trivial
-  · intro _
-    exact ⟨σ.symm x, Equiv.apply_symm_apply σ x⟩
-
 private theorem shapley_symmetric : IsSymmetric
     (shapleyLM : CoopGame Player →ₗ[ℝ] (Player → ℝ)) := by
   intro σ v hinv i
@@ -766,7 +745,7 @@ private theorem shapley_symmetric : IsSymmetric
       = Finset.image (fun T => Finset.image (⇑σ) T)
         (Finset.univ : Finset Player).powerset := by
     have himg : Finset.image (⇑σ) (Finset.univ : Finset Player) = Finset.univ :=
-      image_univ_perm σ
+      Finset.image_univ_equiv σ
     have h := Finset.powerset_image (s := (Finset.univ : Finset Player)) (f := (⇑σ))
     rw [himg] at h
     exact h
