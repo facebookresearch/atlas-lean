@@ -67,8 +67,8 @@ theorem toReal_law_ofReal (w : (Fin N → Fin N) → ℝ) (hw0 : ∀ f, 0 ≤ w 
 
 /-- Expectations only see the support of the law. -/
 theorem expect_congr_support (W : CanningsModel N) {F G : (Fin N → Fin N) → ℝ}
-    (h : ∀ f, (W.law f).toReal ≠ 0 → F f = G f) : W.expect le_rfl F = W.expect le_rfl G := by
-  simp only [CanningsModel.expect, Fin.castLE_rfl, Function.comp_id]
+    (h : ∀ f, (W.law f).toReal ≠ 0 → F f = G f) : W.expect F = W.expect G := by
+  unfold CanningsModel.expect
   refine sum_congr rfl fun f _ => ?_
   by_cases hf : (W.law f).toReal = 0
   · simp [hf]
@@ -138,10 +138,10 @@ theorem sum_allEq_wf {m : ℕ} {g : Fin (m + 1) → Fin N} (hg : Function.Inject
 /-- Under Wright–Fisher, `m + 1` distinct children have a common parent with probability
 `N ^ (-m)`. -/
 theorem wf_expect_allEq {m : ℕ} {g : Fin (m + 1) → Fin N} (hg : Function.Injective g) :
-    (wf N).expect le_rfl (fun f => if ∀ i, f (g i) = f (g 0) then 1 else 0) = ((N : ℝ) ^ m)⁻¹ := by
+    (wf N).expect (fun f => if ∀ i, f (g i) = f (g 0) then 1 else 0) = ((N : ℝ) ^ m)⁻¹ := by
   have hmN : m + 1 ≤ N := by simpa using Fintype.card_le_of_injective g hg
   have hN : (N : ℝ) ≠ 0 := by exact_mod_cast (by omega : N ≠ 0)
-  simp only [CanningsModel.expect, Fin.castLE_rfl, Function.comp_id, wf, toReal_law_ofReal]
+  simp only [CanningsModel.expect, wf, toReal_law_ofReal]
   rw [← mul_sum, sum_allEq_wf hg]
   have hpow : (N : ℝ) ^ N = (N : ℝ) ^ (N - m) * (N : ℝ) ^ m := by
     rw [← pow_add, Nat.sub_add_cancel (by omega)]
@@ -324,7 +324,7 @@ noncomputable def moran (N : ℕ) (hN : 2 ≤ N) : CanningsModel N :=
     (fun σ f => by simp only [natPairCount_perm_comp])
 
 theorem moran_pairCount (hN : 2 ≤ N) :
-    (moran N hN).expect le_rfl CanningsModel.pairCount = 2 := by
+    (moran N hN).expect CanningsModel.pairCount = 2 := by
   rw [expect_congr_support (moran N hN) (G := fun _ => 2), CanningsModel.expect_const]
   intro f hf
   have : natPairCount f = 2 := by
@@ -335,7 +335,7 @@ theorem moran_pairCount (hN : 2 ≤ N) :
   simpa [natPairCount] using h2
 
 theorem moran_tripleCount (hN : 2 ≤ N) :
-    (moran N hN).expect le_rfl CanningsModel.tripleCount = 0 := by
+    (moran N hN).expect CanningsModel.tripleCount = 0 := by
   rw [expect_congr_support (moran N hN) (G := fun _ => 0), CanningsModel.expect_const]
   intro f hf
   have hpc : natPairCount f = 2 := by
@@ -437,7 +437,7 @@ noncomputable def sweep (N : ℕ) : CanningsModel N :=
 
 /-- Under a total sweep every sample of children has a common parent. -/
 theorem sweep_expect_allEq {m : ℕ} (g : Fin (m + 1) → Fin N) :
-    (sweep N).expect le_rfl (fun f => if ∀ i, f (g i) = f (g 0) then 1 else 0) = 1 := by
+    (sweep N).expect (fun f => if ∀ i, f (g i) = f (g 0) then 1 else 0) = 1 := by
   rw [expect_congr_support (sweep N) (G := fun _ => 1), CanningsModel.expect_const]
   intro f hf
   have hc : ∀ a b, f a = f b := by
@@ -457,8 +457,7 @@ noncomputable def mix (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (W₁ W₂ : Can
 
 theorem expect_mix (p : ℝ) (hp0 : 0 ≤ p) (hp1 : p ≤ 1) (W₁ W₂ : CanningsModel N)
     (F : (Fin N → Fin N) → ℝ) :
-    (mix p hp0 hp1 W₁ W₂).expect le_rfl F =
-      (1 - p) * W₁.expect le_rfl F + p * W₂.expect le_rfl F := by
+    (mix p hp0 hp1 W₁ W₂).expect F = (1 - p) * W₁.expect F + p * W₂.expect F := by
   simp only [CanningsModel.expect, mix, toReal_law_ofReal, add_mul, sum_add_distrib, mul_sum,
     mul_assoc]
 
@@ -469,7 +468,7 @@ noncomputable def sweepMix (N : ℕ) : CanningsModel N :=
 /-- In the sweep mixture, `m + 1` distinct children have a common parent with probability
 `(1 - 1/N) N^(-m) + 1/N`. -/
 theorem sweepMix_expect_allEq {m : ℕ} {g : Fin (m + 1) → Fin N} (hg : Function.Injective g) :
-    (sweepMix N).expect le_rfl (fun f => if ∀ i, f (g i) = f (g 0) then 1 else 0) =
+    (sweepMix N).expect (fun f => if ∀ i, f (g i) = f (g 0) then 1 else 0) =
       (1 - (N : ℝ)⁻¹) * ((N : ℝ) ^ m)⁻¹ + (N : ℝ)⁻¹ := by
   rw [sweepMix, expect_mix, wf_expect_allEq hg, sweep_expect_allEq, mul_one]
 

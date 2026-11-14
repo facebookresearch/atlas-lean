@@ -30,10 +30,12 @@ the probability `mergeProb k` that `k` lineages share a parent, the coalescence 
 `coalProb = mergeProb 2`, the probability `doubleMergeProb` of a simultaneous double merger, and
 the one-generation transition matrix `lineageMatrix n` of the ancestral lineage count.
 Real-valued probabilities use the masses `(law f).toReal`, which sum to `1` (`sum_toReal_law`).
-`expect hb F` is the expectation of a real function `F` of the parents of the first `b` children
-(with `b = N`, `hb = le_rfl`, of the whole parent map); its linearity and monotonicity lemmas, and
-its invariance under relabeling children (`expect_comp_perm`) and parents (`expect_perm_comp`,
-`expect_offspring_comp_perm`), are shared by both limits.
+`sampleExpect hb F` is the expectation of a real function `F` of the parents of the first `b`
+children, and `expect F` that of a function of the whole parent map, the case `b = N`
+(`expect_eq_sampleExpect`). Their linearity and monotonicity lemmas, and their invariance under
+relabeling children (`sampleExpect_comp_perm`, `expect_comp_perm`) and parents
+(`sampleExpect_perm_comp`, `expect_perm_comp`, `expect_offspring_comp_perm`), are shared by both
+limits.
 
 ## References
 
@@ -181,54 +183,63 @@ theorem offspring_perm_comp (f : Fin N → Fin N) (σ : Equiv.Perm (Fin N)) (i :
 /-! ### Expectations -/
 
 /-- Expectation `E[F (f ∘ Fin.castLE hb)]` of a real function `F` of the parents of the first `b`
-children, with the masses `(law f).toReal`. For `b = N` and `hb = le_rfl` it is the expectation
-of a function of the whole parent map, since `f ∘ Fin.castLE le_rfl` is `f` by definition. -/
-def expect {b : ℕ} (hb : b ≤ N) (F : (Fin b → Fin N) → ℝ) : ℝ :=
+children, with the masses `(law f).toReal`. -/
+def sampleExpect {b : ℕ} (hb : b ≤ N) (F : (Fin b → Fin N) → ℝ) : ℝ :=
   ∑ f, (M.law f).toReal * F (f ∘ Fin.castLE hb)
 
-section Expect
+/-- Expectation of a real function of the whole parent map, with the masses `(law f).toReal`. -/
+def expect (F : (Fin N → Fin N) → ℝ) : ℝ := ∑ f, (M.law f).toReal * F f
+
+/-- The whole-map expectation is the sampled expectation of all `N` children: `f ∘ Fin.castLE
+le_rfl` is `f` by definition. -/
+theorem expect_eq_sampleExpect (F : (Fin N → Fin N) → ℝ) :
+    M.expect F = M.sampleExpect le_rfl F :=
+  rfl
+
+section SampleExpect
 
 variable {b : ℕ} {hb : b ≤ N}
 
-theorem expect_add (F G : (Fin b → Fin N) → ℝ) :
-    M.expect hb (fun g => F g + G g) = M.expect hb F + M.expect hb G := by
-  simp only [expect, mul_add, sum_add_distrib]
+theorem sampleExpect_add (F G : (Fin b → Fin N) → ℝ) :
+    M.sampleExpect hb (fun g => F g + G g) = M.sampleExpect hb F + M.sampleExpect hb G := by
+  simp only [sampleExpect, mul_add, sum_add_distrib]
 
-theorem expect_sub (F G : (Fin b → Fin N) → ℝ) :
-    M.expect hb (fun g => F g - G g) = M.expect hb F - M.expect hb G := by
-  simp only [expect, mul_sub, sum_sub_distrib]
+theorem sampleExpect_sub (F G : (Fin b → Fin N) → ℝ) :
+    M.sampleExpect hb (fun g => F g - G g) = M.sampleExpect hb F - M.sampleExpect hb G := by
+  simp only [sampleExpect, mul_sub, sum_sub_distrib]
 
-theorem expect_const_mul (a : ℝ) (F : (Fin b → Fin N) → ℝ) :
-    M.expect hb (fun g => a * F g) = a * M.expect hb F := by
-  simp only [expect, mul_sum]
+theorem sampleExpect_const_mul (a : ℝ) (F : (Fin b → Fin N) → ℝ) :
+    M.sampleExpect hb (fun g => a * F g) = a * M.sampleExpect hb F := by
+  simp only [sampleExpect, mul_sum]
   exact sum_congr rfl fun f _ => by ring
 
-theorem expect_const (a : ℝ) : M.expect hb (fun _ => a) = a := by
-  simp only [expect, ← sum_mul, M.sum_toReal_law, one_mul]
+theorem sampleExpect_const (a : ℝ) : M.sampleExpect hb (fun _ => a) = a := by
+  simp only [sampleExpect, ← sum_mul, M.sum_toReal_law, one_mul]
 
-theorem expect_sum {ι : Type*} (s : Finset ι) (F : ι → (Fin b → Fin N) → ℝ) :
-    M.expect hb (fun g => ∑ i ∈ s, F i g) = ∑ i ∈ s, M.expect hb (F i) := by
-  simp only [expect, mul_sum]
+theorem sampleExpect_sum {ι : Type*} (s : Finset ι) (F : ι → (Fin b → Fin N) → ℝ) :
+    M.sampleExpect hb (fun g => ∑ i ∈ s, F i g) = ∑ i ∈ s, M.sampleExpect hb (F i) := by
+  simp only [sampleExpect, mul_sum]
   exact sum_comm
 
-theorem expect_mono {F G : (Fin b → Fin N) → ℝ} (h : ∀ g, F g ≤ G g) :
-    M.expect hb F ≤ M.expect hb G :=
+theorem sampleExpect_mono {F G : (Fin b → Fin N) → ℝ} (h : ∀ g, F g ≤ G g) :
+    M.sampleExpect hb F ≤ M.sampleExpect hb G :=
   sum_le_sum fun _ _ => mul_le_mul_of_nonneg_left (h _) ENNReal.toReal_nonneg
 
-theorem expect_nonneg {F : (Fin b → Fin N) → ℝ} (h : ∀ g, 0 ≤ F g) : 0 ≤ M.expect hb F :=
+theorem sampleExpect_nonneg {F : (Fin b → Fin N) → ℝ} (h : ∀ g, 0 ≤ F g) :
+    0 ≤ M.sampleExpect hb F :=
   sum_nonneg fun _ _ => mul_nonneg ENNReal.toReal_nonneg (h _)
 
-/-- Relabeling the parents does not change expectations. -/
-theorem expect_perm_comp (σ : Equiv.Perm (Fin N)) (F : (Fin b → Fin N) → ℝ) :
-    M.expect hb (fun g => F (σ ∘ g)) = M.expect hb F := by
+/-- Relabeling the parents does not change sampled expectations. -/
+theorem sampleExpect_perm_comp (σ : Equiv.Perm (Fin N)) (F : (Fin b → Fin N) → ℝ) :
+    M.sampleExpect hb (fun g => F (σ ∘ g)) = M.sampleExpect hb F := by
   refine Fintype.sum_equiv (Equiv.arrowCongr (Equiv.refl _) σ) _ _ fun f => ?_
   change _ = (M.law (σ ∘ f)).toReal * F ((σ ∘ f) ∘ Fin.castLE hb)
   rw [M.law_perm_comp σ f]
   rfl
 
-/-- Relabeling the sampled children does not change expectations. -/
-theorem expect_comp_perm (σ : Equiv.Perm (Fin b)) (F : (Fin b → Fin N) → ℝ) :
-    M.expect hb (fun g => F (g ∘ σ)) = M.expect hb F := by
+/-- Relabeling the sampled children does not change sampled expectations. -/
+theorem sampleExpect_comp_perm (σ : Equiv.Perm (Fin b)) (F : (Fin b → Fin N) → ℝ) :
+    M.sampleExpect hb (fun g => F (g ∘ σ)) = M.sampleExpect hb F := by
   obtain ⟨τ, hτ⟩ := Equiv.Perm.exists_extending_pair (Fin.castLE hb ∘ σ) (Fin.castLE hb)
     ((Fin.castLE_injective hb).comp σ.injective) (Fin.castLE_injective hb)
   refine Fintype.sum_equiv (Equiv.arrowCongr τ (Equiv.refl _)) _ _ fun f => ?_
@@ -238,12 +249,50 @@ theorem expect_comp_perm (σ : Equiv.Perm (Fin b)) (F : (Fin b → Fin N) → �
   change _ = (M.law (f ∘ τ.symm)).toReal * F ((f ∘ τ.symm) ∘ Fin.castLE hb)
   rw [M.law_comp_perm τ.symm f, ← h]
 
-end Expect
+end SampleExpect
+
+/-! The whole-map expectation inherits the sampled lemmas at `b = N`. -/
+
+theorem expect_add (F G : (Fin N → Fin N) → ℝ) :
+    M.expect (fun f => F f + G f) = M.expect F + M.expect G :=
+  M.sampleExpect_add (hb := le_rfl) F G
+
+theorem expect_sub (F G : (Fin N → Fin N) → ℝ) :
+    M.expect (fun f => F f - G f) = M.expect F - M.expect G :=
+  M.sampleExpect_sub (hb := le_rfl) F G
+
+theorem expect_const_mul (a : ℝ) (F : (Fin N → Fin N) → ℝ) :
+    M.expect (fun f => a * F f) = a * M.expect F :=
+  M.sampleExpect_const_mul (hb := le_rfl) a F
+
+theorem expect_const (a : ℝ) : M.expect (fun _ => a) = a :=
+  M.sampleExpect_const (hb := le_rfl) a
+
+theorem expect_sum {ι : Type*} (s : Finset ι) (F : ι → (Fin N → Fin N) → ℝ) :
+    M.expect (fun f => ∑ i ∈ s, F i f) = ∑ i ∈ s, M.expect (F i) :=
+  M.sampleExpect_sum (hb := le_rfl) s F
+
+theorem expect_mono {F G : (Fin N → Fin N) → ℝ} (h : ∀ f, F f ≤ G f) :
+    M.expect F ≤ M.expect G :=
+  M.sampleExpect_mono (hb := le_rfl) h
+
+theorem expect_nonneg {F : (Fin N → Fin N) → ℝ} (h : ∀ f, 0 ≤ F f) : 0 ≤ M.expect F :=
+  M.sampleExpect_nonneg (hb := le_rfl) h
+
+/-- Relabeling the children does not change expectations. -/
+theorem expect_comp_perm (σ : Equiv.Perm (Fin N)) (F : (Fin N → Fin N) → ℝ) :
+    M.expect (fun f => F (f ∘ σ)) = M.expect F :=
+  M.sampleExpect_comp_perm (hb := le_rfl) σ F
+
+/-- Relabeling the parents does not change expectations. -/
+theorem expect_perm_comp (σ : Equiv.Perm (Fin N)) (F : (Fin N → Fin N) → ℝ) :
+    M.expect (fun f => F (σ ∘ f)) = M.expect F :=
+  M.sampleExpect_perm_comp (hb := le_rfl) σ F
 
 /-- **Exchangeable offspring numbers**: the offspring vector `(ν_1, …, ν_N)` has the same law
 as `(ν_{σ 1}, …, ν_{σ N})` for every permutation `σ`. -/
 theorem expect_offspring_comp_perm (σ : Equiv.Perm (Fin N)) (F : (Fin N → ℕ) → ℝ) :
-    M.expect le_rfl (fun f => F (offspring f ∘ σ)) = M.expect le_rfl fun f => F (offspring f) := by
+    M.expect (fun f => F (offspring f ∘ σ)) = M.expect fun f => F (offspring f) := by
   have h : ∀ f : Fin N → Fin N, offspring f ∘ σ = offspring (σ.symm ∘ f) := fun f => by
     funext j
     rw [Function.comp_apply, offspring_perm_comp, Equiv.symm_symm]

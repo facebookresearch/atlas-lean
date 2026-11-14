@@ -27,7 +27,7 @@ under relabeling the parents (exchangeable offspring numbers, `expect_offspring_
 under relabeling the children (children are listed in uniformly random order, so any set of
 distinct children may serve as the sample). Labeling the children of an exchangeable offspring
 vector uniformly at random gives such a law. Expectations use the masses `(law f).toReal`
-(`CanningsModel.expect le_rfl`, from `Cannings.lean`).
+(`CanningsModel.expect`, from `Cannings.lean`).
 
 **The Möhle–Sagitov conditions** (`MohleSagitov`). Let
 `c_N = E[ν₁ (ν₁ - 1)] / (N - 1)` (`CanningsModel.pairCoalescence`), the probability that two
@@ -106,9 +106,9 @@ open Finset Filter Topology Matrix
 
 /-! ### Expectations under a Cannings model
 
-The model and its expectation `CanningsModel.expect` are in `Cannings.lean`; expectations of
-functions of the whole parent map are `W.expect le_rfl F`. The results below are stated in the
-namespace of the shared model, so that they apply by dot notation to every `CanningsModel`. -/
+The model and its expectation `CanningsModel.expect` are in `Cannings.lean`. The results below
+are stated in the namespace of the shared model, so that they apply by dot notation to every
+`CanningsModel`. -/
 
 namespace MathlibExt.Biology.PopulationGenetics.Coalescent.Cannings.CanningsModel
 
@@ -124,7 +124,7 @@ variable {N : ℕ} (W : CanningsModel N)
 of a parent, averaged over the parents (by exchangeability every parent has the same law,
 `factorialMoment_eq`). -/
 noncomputable def factorialMoment (m : ℕ) : ℝ :=
-  (N : ℝ)⁻¹ * ∑ j, W.expect le_rfl fun f => ((offspring f j).descFactorial m : ℝ)
+  (N : ℝ)⁻¹ * ∑ j, W.expect fun f => ((offspring f j).descFactorial m : ℝ)
 
 /-- The **pair-coalescence probability** `c_N = E[ν₁ (ν₁ - 1)] / (N - 1)`: the probability that
 two distinct children have the same parent (`expect_pair`). -/
@@ -132,12 +132,12 @@ noncomputable def pairCoalescence : ℝ := W.factorialMoment 2 / ((N : ℝ) - 1)
 
 /-- Every parent has the same offspring factorial moments. -/
 theorem factorialMoment_eq (m : ℕ) (j : Fin N) :
-    W.factorialMoment m = W.expect le_rfl fun f => ((offspring f j).descFactorial m : ℝ) := by
+    W.factorialMoment m = W.expect fun f => ((offspring f j).descFactorial m : ℝ) := by
   have hN : (N : ℝ) ≠ 0 := by
     have := j.pos
     positivity
-  have h : ∀ k : Fin N, (W.expect le_rfl fun f => ((offspring f k).descFactorial m : ℝ)) =
-      W.expect le_rfl fun f => ((offspring f j).descFactorial m : ℝ) := by
+  have h : ∀ k : Fin N, (W.expect fun f => ((offspring f k).descFactorial m : ℝ)) =
+      W.expect fun f => ((offspring f j).descFactorial m : ℝ) := by
     intro k
     have := W.expect_offspring_comp_perm (Equiv.swap j k)
       (fun ν => ((ν j).descFactorial m : ℝ))
@@ -171,8 +171,8 @@ children), `(N)_m E[F (f ∘ g)] = E[∑_{g' injective} F (f ∘ g')]`: by excha
 children, every sample of `m` distinct children has the same law. -/
 theorem descFactorial_mul_expect {m : ℕ} {g : Fin m → Fin N} (hg : Function.Injective g)
     (F : (Fin m → Fin N) → ℝ) :
-    (N.descFactorial m : ℝ) * W.expect le_rfl (fun f => F (f ∘ g)) =
-      W.expect le_rfl fun f => ∑ g' ∈ {g' : Fin m → Fin N | Function.Injective g'}, F (f ∘ g') := by
+    (N.descFactorial m : ℝ) * W.expect (fun f => F (f ∘ g)) =
+      W.expect fun f => ∑ g' ∈ {g' : Fin m → Fin N | Function.Injective g'}, F (f ∘ g') := by
   rw [W.expect_sum, ← card_injective, ← nsmul_eq_mul, ← sum_const]
   refine sum_congr rfl fun g' hg' => ?_
   obtain ⟨σ, hσ⟩ := Equiv.Perm.exists_extending_pair g g' hg (mem_filter.1 hg').2
@@ -210,7 +210,7 @@ children, `P(all have the same parent) · (N)_{m+1} = N E[(ν₁)_{m+1}]`. -/
 theorem descFactorial_mul_expect_allEq {m : ℕ} {g : Fin (m + 1) → Fin N}
     (hg : Function.Injective g) :
     (N.descFactorial (m + 1) : ℝ) *
-        W.expect le_rfl (fun f => if ∀ i, f (g i) = f (g 0) then 1 else 0) =
+        W.expect (fun f => if ∀ i, f (g i) = f (g 0) then 1 else 0) =
       N * W.factorialMoment (m + 1) := by
   have hN : (N : ℝ) ≠ 0 := by
     have := (g 0).pos
@@ -230,11 +230,11 @@ theorem descFactorial_pos_of_injective {m : ℕ} {g : Fin m → Fin N}
 /-- **The pair-coalescence probability.** Two distinct children `a ≠ b` have the same parent
 with probability `c_N = E[(ν₁)_2] / (N - 1)`. -/
 theorem expect_pair {a b : Fin N} (hab : a ≠ b) :
-    W.expect le_rfl (fun f => if f a = f b then 1 else 0) = W.pairCoalescence := by
+    W.expect (fun f => if f a = f b then 1 else 0) = W.pairCoalescence := by
   have hg : Function.Injective ![a, b] := by
     intro i j h
     fin_cases i <;> fin_cases j <;> simp_all [eq_comm]
-  have h : (N.descFactorial 2 : ℝ) * W.expect le_rfl (fun f => if f a = f b then 1 else 0) =
+  have h : (N.descFactorial 2 : ℝ) * W.expect (fun f => if f a = f b then 1 else 0) =
       N * W.factorialMoment 2 := by
     have h0 := W.descFactorial_mul_expect_allEq (m := 1) hg
     convert h0 using 3
@@ -262,7 +262,6 @@ theorem coalProb_eq_pairCoalescence (hN : 2 ≤ N) : W.coalProb = W.pairCoalesce
   rw [← W.expect_pair (a := Fin.castLE hN 0) (b := Fin.castLE hN 1)
     (fun h => by simpa using congrArg Fin.val h), coalProb, mergeProb, sampleProb_of_le _ _ hN]
   refine sum_congr rfl fun f _ => ?_
-  simp only [Function.comp_apply, Fin.castLE_refl]
   congr 1
   refine if_congr ⟨fun h => h 0 1, fun h i j => ?_⟩ rfl rfl
   fin_cases i <;> fin_cases j <;> simp [h]
@@ -287,11 +286,10 @@ noncomputable def tripleCoalescence : ℝ :=
 /-- An upper bound `E[pairCount²] / (N)_4` for the probability that two disjoint pairs of
 children each have a common parent (`expect_double_le`). -/
 noncomputable def doubleBound : ℝ :=
-  W.expect le_rfl (fun f => pairCount f ^ 2) / (N.descFactorial 4 : ℝ)
+  W.expect (fun f => pairCount f ^ 2) / (N.descFactorial 4 : ℝ)
 
 theorem natCast_mul_factorialMoment (m : ℕ) :
-    N * W.factorialMoment m =
-      W.expect le_rfl fun f => ∑ j, ((offspring f j).descFactorial m : ℝ) := by
+    N * W.factorialMoment m = W.expect fun f => ∑ j, ((offspring f j).descFactorial m : ℝ) := by
   rw [W.expect_sum, factorialMoment]
   rcases Nat.eq_zero_or_pos N with rfl | hN
   · simp
@@ -299,7 +297,7 @@ theorem natCast_mul_factorialMoment (m : ℕ) :
 
 /-- Three distinct children have a common parent with probability `N E[(ν₁)_3] / (N)_3`. -/
 theorem expect_triple {g : Fin 3 → Fin N} (hg : Function.Injective g) :
-    W.expect le_rfl (fun f => if ∀ i, f (g i) = f (g 0) then 1 else 0) = W.tripleCoalescence := by
+    W.expect (fun f => if ∀ i, f (g i) = f (g 0) then 1 else 0) = W.tripleCoalescence := by
   have h := W.descFactorial_mul_expect_allEq (m := 2) hg
   have hpos := descFactorial_pos_of_injective hg
   rw [tripleCoalescence, eq_div_iff hpos.ne', mul_comm]
@@ -404,7 +402,7 @@ theorem sum_injective_double_le (f : Fin N → Fin N) :
 /-- Two disjoint pairs of distinct children both have common parents with probability at most
 `E[pairCount²] / (N)_4`. -/
 theorem expect_double_le {g : Fin 4 → Fin N} (hg : Function.Injective g) :
-    W.expect le_rfl (fun f => if f (g 0) = f (g 1) ∧ f (g 2) = f (g 3) then 1 else 0) ≤
+    W.expect (fun f => if f (g 0) = f (g 1) ∧ f (g 2) = f (g 3) then 1 else 0) ≤
       W.doubleBound := by
   have hpos := descFactorial_pos_of_injective hg
   rw [doubleBound, le_div_iff₀ hpos, mul_comm]
@@ -436,22 +434,22 @@ theorem doubleBound_le (hN : 4 ≤ N) (hc : 0 < W.pairCoalescence) :
   have hμ3 : W.factorialMoment 3 = r * N ^ 2 * c := by
     rw [hr, div_mul_eq_mul_div, div_mul_eq_mul_div, eq_div_iff (by positivity)]
     ring
-  have hEX : W.expect le_rfl pairCount = N * (c * (N - 1)) := by
+  have hEX : W.expect pairCount = N * (c * (N - 1)) := by
     rw [← hμ2, natCast_mul_factorialMoment]
     rfl
-  have hET : W.expect le_rfl tripleCount = N * (r * N ^ 2 * c) := by
+  have hET : W.expect tripleCount = N * (r * N ^ 2 * c) := by
     rw [← hμ3, natCast_mul_factorialMoment]
     rfl
-  have hmain : W.expect le_rfl (fun f => pairCount f ^ 2) ≤
-      a * N * W.expect le_rfl pairCount + ((N : ℝ) ^ 2 / a) * W.expect le_rfl tripleCount := by
-    calc _ ≤ W.expect le_rfl (fun f => a * N * pairCount f + ((N : ℝ) ^ 2 / a) * tripleCount f) :=
+  have hmain : W.expect (fun f => pairCount f ^ 2) ≤
+      a * N * W.expect pairCount + ((N : ℝ) ^ 2 / a) * W.expect tripleCount := by
+    calc _ ≤ W.expect (fun f => a * N * pairCount f + ((N : ℝ) ^ 2 / a) * tripleCount f) :=
           W.expect_mono fun f => (pairCount_sq_le f ha1).trans_eq (by ring)
       _ = _ := by rw [W.expect_add, W.expect_const_mul, W.expect_const_mul]
   have hra : r / a ≤ √r / N := by
     rw [div_le_div_iff₀ ha0 hN0]
     have : √r * √r = r := Real.mul_self_sqrt hr0
     nlinarith
-  calc W.expect le_rfl (fun f => pairCount f ^ 2)
+  calc W.expect (fun f => pairCount f ^ 2)
       ≤ a * N * (N * (c * (N - 1))) + ((N : ℝ) ^ 2 / a) * (N * (r * N ^ 2 * c)) := by
         rw [← hEX, ← hET]; exact hmain
     _ = c * (a * N ^ 2 * (N - 1) + N ^ 5 * (r / a)) := by ring
@@ -775,7 +773,7 @@ merge into `η`. (When the sample has more blocks than the population, which doe
 noncomputable def ancestralMatrix (W : CanningsModel N) (n : ℕ) :
     Matrix (SamplePartition n) (SamplePartition n) ℝ :=
   Matrix.of fun ξ η =>
-    if h : #ξ.parts ≤ N then W.expect le_rfl (fun f => if step ξ h f = η then 1 else 0)
+    if h : #ξ.parts ≤ N then W.expect (fun f => if step ξ h f = η then 1 else 0)
     else if ξ = η then 1 else 0
 
 theorem ancestralMatrix_nonneg (W : CanningsModel N) (ξ η : SamplePartition n) :
@@ -832,7 +830,7 @@ variable {N : ℕ} (W : CanningsModel N)
 /-- Three distinct children with a common parent: bound by `tripleCoalescence`. -/
 theorem expect_le_triple {Q : (Fin N → Fin N) → Prop} [DecidablePred Q] {x y z : Fin N}
     (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) (hQ : ∀ f, Q f → f x = f y ∧ f y = f z) :
-    W.expect le_rfl (fun f => if Q f then 1 else 0) ≤ W.tripleCoalescence := by
+    W.expect (fun f => if Q f then 1 else 0) ≤ W.tripleCoalescence := by
   have hyx := hxy.symm
   have hzy := hyz.symm
   have hzx := hxz.symm
@@ -853,7 +851,7 @@ theorem expect_le_triple {Q : (Fin N → Fin N) → Prop} [DecidablePred Q] {x y
 /-- Two disjoint pairs of distinct children with common parents: bound by `doubleBound`. -/
 theorem expect_le_double {w x y z : Fin N} (hwx : w ≠ x) (hwy : w ≠ y) (hwz : w ≠ z)
     (hxy : x ≠ y) (hxz : x ≠ z) (hyz : y ≠ z) :
-    W.expect le_rfl (fun f => if f w = f x ∧ f y = f z then 1 else 0) ≤ W.doubleBound := by
+    W.expect (fun f => if f w = f x ∧ f y = f z then 1 else 0) ≤ W.doubleBound := by
   have := hwx.symm
   have := hwy.symm
   have := hwz.symm
@@ -873,7 +871,7 @@ theorem expect_le_double {w x y z : Fin N} (hwx : w ≠ x) (hwy : w ≠ y) (hwz 
 `tripleCoalescence + doubleBound`. -/
 theorem expect_two_pairs_le {b : ℕ} {e : Fin b → Fin N} (he : Function.Injective e)
     {p q : Fin b × Fin b} (hp : p ∈ lineagePairs b) (hq : q ∈ lineagePairs b) (hpq : p ≠ q) :
-    W.expect le_rfl (fun f => if f (e p.1) = f (e p.2) ∧ f (e q.1) = f (e q.2) then 1 else 0) ≤
+    W.expect (fun f => if f (e p.1) = f (e p.2) ∧ f (e q.1) = f (e q.2) then 1 else 0) ≤
       W.tripleCoalescence + W.doubleBound := by
   obtain ⟨k, l⟩ := p
   obtain ⟨k', l'⟩ := q
@@ -908,7 +906,7 @@ theorem expect_two_pairs_le {b : ℕ} {e : Fin b → Fin N} (he : Function.Injec
 
 /-- Expected number of coalescing pairs among `b` lineages: `(b.choose 2) c_N`. -/
 theorem expect_collCount {b : ℕ} (h : b ≤ N) :
-    W.expect le_rfl (fun f => (collCount (f ∘ Fin.castLE h) : ℝ)) =
+    W.expect (fun f => (collCount (f ∘ Fin.castLE h) : ℝ)) =
       #(lineagePairs b) * W.pairCoalescence := by
   simp_rw [collCount_cast]
   rw [W.expect_sum, ← nsmul_eq_mul, ← sum_const]
@@ -919,8 +917,7 @@ theorem expect_collCount {b : ℕ} (h : b ≤ N) :
 /-- `E[k² - k] ≤ #pairs (#pairs - 1) (P(triple) + doubleBound)`, `k` the number of coalescing
 pairs. -/
 theorem expect_collCount_sq_le {b : ℕ} (h : b ≤ N) :
-    W.expect le_rfl
-        (fun f => (collCount (f ∘ Fin.castLE h) : ℝ) ^ 2 - collCount (f ∘ Fin.castLE h)) ≤
+    W.expect (fun f => (collCount (f ∘ Fin.castLE h) : ℝ) ^ 2 - collCount (f ∘ Fin.castLE h)) ≤
       #(lineagePairs b) * (#(lineagePairs b) - 1) *
         (W.tripleCoalescence + W.doubleBound) := by
   simp_rw [← sum_sum_ne]
@@ -929,7 +926,7 @@ theorem expect_collCount_sq_le {b : ℕ} (h : b ≤ N) :
   set S := lineagePairs b
   set K := W.tripleCoalescence + W.doubleBound
   have hK : 0 ≤ K := add_nonneg W.tripleCoalescence_nonneg W.doubleBound_nonneg
-  have hle : ∀ p ∈ S, ∀ q ∈ S, W.expect le_rfl (fun f => if p ≠ q then
+  have hle : ∀ p ∈ S, ∀ q ∈ S, W.expect (fun f => if p ≠ q then
       (if (f ∘ Fin.castLE h) p.1 = (f ∘ Fin.castLE h) p.2 then (1 : ℝ) else 0) *
         (if (f ∘ Fin.castLE h) q.1 = (f ∘ Fin.castLE h) q.2 then 1 else 0) else 0) ≤
       if p ≠ q then K else 0 := by
@@ -963,7 +960,7 @@ variable (W : CanningsModel N) {ξ : SamplePartition n} (h : #ξ.parts ≤ N)
 
 /-- The probability that one generation takes the partition `ξ` to `η`. -/
 noncomputable def stepProb (η : SamplePartition n) : ℝ :=
-  W.expect le_rfl fun f => if step ξ h f = η then 1 else 0
+  W.expect fun f => if step ξ h f = η then 1 else 0
 
 theorem stepProb_nonneg (η : SamplePartition n) : 0 ≤ stepProb W h η :=
   W.expect_nonneg fun f => by split_ifs <;> norm_num
@@ -976,8 +973,7 @@ theorem sum_stepProb : ∑ η, stepProb W h η = 1 := by
 
 theorem one_sub_stepProb_self_le :
     1 - stepProb W h ξ ≤ #(lineagePairs #ξ.parts) * W.pairCoalescence := by
-  have h1 : 1 - stepProb W h ξ =
-      W.expect le_rfl (fun f => 1 - if step ξ h f = ξ then (1 : ℝ) else 0) := by
+  have h1 : 1 - stepProb W h ξ = W.expect (fun f => 1 - if step ξ h f = ξ then (1 : ℝ) else 0) := by
     rw [W.expect_sub, W.expect_const, stepProb]
   rw [h1, ← W.expect_collCount h]
   refine W.expect_mono fun f => ?_
@@ -996,7 +992,7 @@ theorem sum_stepProb_isMerge_ge :
       ∑ η with IsMerge ξ η, stepProb W h η := by
   have h1 := W.expect_collCount h
   have h2 := W.expect_collCount_sq_le h
-  have hpw : W.expect le_rfl (fun f => (collCount (f ∘ Fin.castLE h) : ℝ) -
+  have hpw : W.expect (fun f => (collCount (f ∘ Fin.castLE h) : ℝ) -
       ((collCount (f ∘ Fin.castLE h) : ℝ) ^ 2 - collCount (f ∘ Fin.castLE h))) ≤
       ∑ η with IsMerge ξ η, stepProb W h η := by
     simp only [stepProb]
