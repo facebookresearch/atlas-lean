@@ -9,10 +9,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.StatisticalGenetics.LDScoreRegression
-public import MathlibExt.Probability.Causality.MissingData.GaussianSelection
-public import MathlibExt.Probability.Distributions.GaussianCdf
+public import Mathlib.Probability.CDF
 public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
-public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Independence
+public import Mathlib.Probability.HasLaw
+public import Mathlib.Probability.Independence.Basic
+public import Mathlib.Probability.Moments.Covariance
+import MathlibExt.Probability.Causality.MissingData.GaussianSelection
+import MathlibExt.Probability.Distributions.GaussianCdf
+import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Independence
 
 /-!
 # LD-score regression on the liability scale for binary traits
@@ -30,11 +34,11 @@ prevalence and `z = φ(t)` for the standard normal density at the threshold, the
 
 and Bulik-Sullivan et al. convert their observed-scale estimate with the second formula.
 
-## Exact results under the Gaussian threshold model
+## Exact population results under the Gaussian threshold model
 
-The usual derivations of both conversions are first-order approximations. Here the observed-scale
-quantities are defined as squared correlations (variance explained by the best linear
-predictor), and the conversions are then exact:
+The usual derivations of both conversions are first-order approximations. In the population, the
+observed-scale quantities are defined here as squared correlations (variance explained by the best
+linear predictor), and the Dempster–Lerner conversion is then exact:
 
 * `covariance_caseInd`: if `(S, L)` is jointly Gaussian and `L` is standard normal, then
   `Cov(S, 1{L ≥ t}) = Cov(S, L) · φ(t)`. The proof writes `S = Cov(S, L) L + R` with `R`
@@ -59,15 +63,19 @@ sample with case fraction `P`. Results:
 * `covariance_caseControl`: for any square-integrable `S`,
   `Cov_cc(S, Y) = P (1 - P) / (K (1 - K)) · Cov(S, Y)`; no Gaussianity is needed.
 * `variance_caseInd_caseControl`: `Var_cc(Y) = P (1 - P)`.
-* `caseControlH2Obs_genetic` and `h2_eq_ccLiabilityFactor_mul` (Lee et al. 2011): with
-  `h²_cc = Cov_cc(G, Y)² / (Var G · Var_cc(Y))`, `h²_cc = h² P (1 - P) z² / (K² (1 - K)²)` and
-  `h² = h²_cc · K² (1 - K)² / (P (1 - P) z²)` exactly.
+* `caseControlH2Proxy_genetic` and `h2_eq_ccLiabilityFactor_mul`: for the population-variance
+  proxy `h²_cc = Cov_cc(G, Y)² / (Var G · Var_cc(Y))` (`caseControlH2Proxy`),
+  `h²_cc = h² P (1 - P) z² / (K² (1 - K)²)`, so the factor of Lee et al. (2011) gives
+  `h² = h²_cc · K² (1 - K)² / (P (1 - P) z²)`. The proxy is not the squared correlation under the
+  case-control law, `Cov_cc(G, Y)² / (Var_cc G · Var_cc(Y))`: ascertainment changes the genetic
+  variance, so this conversion is proved for the proxy, not for the case-control squared
+  correlation.
 
 ## Liability-scale LD-score regression
 
 `liabilityH2Hat t P N M ℓ χ` is T147's unweighted estimator `olsH2Hat` multiplied by the
 case-control conversion factor. If the case-control statistics follow T147's regression model
-with observed-scale heritability `h²_cc` of a liability model with heritability `h²`, then:
+with heritability equal to the proxy `h²_cc` of a liability model with heritability `h²`, then:
 
 * `liabilityH2Hat_integral_chiSqStrat` (population version) returns `h²`;
 * `integral_liabilityH2Hat_chiSqStrat` (unbiasedness): `𝔼[ĥ²_l] = h²`;
@@ -76,14 +84,16 @@ with observed-scale heritability `h²_cc` of a liability model with heritability
 
 ## What is assumed rather than derived
 
-The threshold is the parameter: `K = Φ(-t)`, so `t = Φ⁻¹(1 - K)`. The observed-scale heritability
-is the squared correlation of the trait with the genetic value. In the case-control version its
-denominator uses the population genetic variance `Var G`, as in Lee et al. (2011); ascertainment
-also changes the genetic variance within the sample, and that change is not modeled.
-The step from binary case-control statistics to T147's regression model (`χ²_j` satisfying the
-LD-score regression identity with heritability `h²_cc`) is the approximation made by
-Bulik-Sullivan et al. and is a hypothesis here (`hobs`): the binary trait is not a linear
-model in the genotypes, so T147's model does not hold for it exactly. Weighted least squares and
+The threshold is the parameter: `K = Φ(-t)`, so `t = Φ⁻¹(1 - K)`. In the population the
+observed-scale heritability is the squared correlation of the trait with the genetic value. The
+case-control quantity `caseControlH2Proxy` is not a squared correlation: its denominator keeps
+the population genetic variance `Var G`, while ascertainment changes the genetic variance within
+the sample. That change is not modeled, and the case-control squared correlation is not related
+to `h²` here. The step from binary case-control statistics to T147's regression model (`χ²_j`
+satisfying the LD-score regression identity), with its heritability identified with the proxy
+`h²_cc`, is a hypothesis here (`hobs`). Applying the linear model to case-control statistics is
+the approximation made by Bulik-Sullivan et al.: the binary trait is not a linear model in the
+genotypes, so T147's model does not hold for it exactly. Weighted least squares and
 the paper's intercept handling are not treated (see `LDScoreRegression`).
 
 ## References
@@ -140,7 +150,7 @@ noncomputable def popLiabilityFactor (t : ℝ) : ℝ :=
   prevalence t * (1 - prevalence t) / thresholdDensity t ^ 2
 
 /-- The case-control conversion factor `K² (1 - K)² / (P (1 - P) z²)` of Lee et al. (2011), for
-case fraction `P`. -/
+case fraction `0 < P < 1` (at `P ∈ {0, 1}` Lean's division by zero makes it `0`). -/
 noncomputable def ccLiabilityFactor (t P : ℝ) : ℝ :=
   prevalence t ^ 2 * (1 - prevalence t) ^ 2 / (P * (1 - P) * thresholdDensity t ^ 2)
 
@@ -360,7 +370,9 @@ variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
 
 /-- The law of a **case-control sample** with case fraction `P`: the population law `μ`
 reweighted so that cases `{t ≤ L}` have total mass `P` and controls `1 - P`, keeping the
-conditional laws within cases and within controls. -/
+conditional laws within cases and within controls. This holds when `0 < μ{t ≤ L} < 1` and
+`0 ≤ P ≤ 1` (`isProbabilityMeasure_caseControl`, `measureReal_case_caseControl`); outside that
+range Lean's division by zero and `toNNReal` change the weights. -/
 noncomputable def caseControl (μ : Measure Ω) (L : Ω → ℝ) (t P : ℝ) : Measure Ω :=
   (P / μ.real {ω | t ≤ L ω}).toNNReal • μ.restrict {ω | t ≤ L ω} +
     ((1 - P) / (1 - μ.real {ω | t ≤ L ω})).toNNReal • μ.restrict {ω | t ≤ L ω}ᶜ
@@ -486,26 +498,29 @@ theorem variance_caseInd_caseControl [IsProbabilityMeasure μ] (hLm : Measurable
   rw [variance_eq_sub (memLp_caseInd hLm t 2), caseInd_sq, hE]
   ring
 
-/-- The **case-control observed-scale heritability** of Lee et al. (2011): the squared
+/-- A **population-variance proxy for the case-control observed-scale heritability**: the squared
 covariance of the genetic value `G` and the case indicator in the case-control sample, divided by
-the population genetic variance and the case-control variance of the case indicator. -/
-noncomputable def caseControlH2Obs (μ : Measure Ω) (L G : Ω → ℝ) (t P : ℝ) : ℝ :=
+the population genetic variance `Var G` and the case-control variance of the case indicator.
+It is not the squared correlation under the case-control law, whose denominator has the
+case-control genetic variance `Var_cc G` instead; ascertainment changes that variance. The
+factor of Lee et al. (2011) recovers `h²` from this proxy (`h2_eq_ccLiabilityFactor_mul`). -/
+noncomputable def caseControlH2Proxy (μ : Measure Ω) (L G : Ω → ℝ) (t P : ℝ) : ℝ :=
   cov[G, caseInd L t; caseControl μ L t P] ^ 2 /
     (Var[G; μ] * Var[caseInd L t; caseControl μ L t P])
 
-/-- **Lee et al. (2011), exact form.** For a genetic value `G` with `Var G = Cov(G, L) = h²`
-jointly Gaussian with the standard normal liability `L`, and a case fraction `0 < P < 1`,
-`h²_cc = h² P (1 - P) z² / (K² (1 - K)²)`. -/
-theorem caseControlH2Obs_genetic [IsProbabilityMeasure μ] {G : Ω → ℝ}
+/-- **The case-control proxy in closed form.** For a genetic value `G` with
+`Var G = Cov(G, L) = h²` jointly Gaussian with the standard normal liability `L`, and a case
+fraction `0 < P < 1`, the proxy is `h²_cc = h² P (1 - P) z² / (K² (1 - K)²)`. -/
+theorem caseControlH2Proxy_genetic [IsProbabilityMeasure μ] {G : Ω → ℝ}
     (hGL : HasGaussianLaw (fun ω => (G ω, L ω)) μ)
     (hL : HasLaw L (gaussianReal 0 1) μ) (hLm : Measurable L) (hP0 : 0 < P) (hP1 : P < 1)
     {h2 : ℝ} (hvar : Var[G; μ] = h2) (hcov : cov[G, L; μ] = h2) :
-    caseControlH2Obs μ L G t P = h2 * (P * (1 - P) * thresholdDensity t ^ 2 /
+    caseControlH2Proxy μ L G t P = h2 * (P * (1 - P) * thresholdDensity t ^ 2 /
       (prevalence t ^ 2 * (1 - prevalence t) ^ 2)) := by
   have hk := measureReal_case hL t
   have hk0 : 0 < μ.real {ω | t ≤ L ω} := hk ▸ prevalence_pos t
   have hk1 : μ.real {ω | t ≤ L ω} < 1 := hk ▸ prevalence_lt_one t
-  unfold caseControlH2Obs
+  unfold caseControlH2Proxy
   rw [covariance_caseControl hLm hP0.le hP1.le hk0 hk1 hGL.fst.memLp_two,
     variance_caseInd_caseControl hLm hP0.le hP1.le hk0 hk1, covariance_caseInd hGL hL hLm t,
     hvar, hcov, hk]
@@ -517,13 +532,14 @@ theorem caseControlH2Obs_genetic [IsProbabilityMeasure μ] {G : Ω → ℝ}
   · simp [h]
   · field_simp
 
-/-- **Case-control conversion** (Lee et al. 2011): `h² = h²_cc · K² (1 - K)² / (P (1 - P) z²)`. -/
+/-- **Case-control conversion** with the factor of Lee et al. (2011):
+`h² = h²_cc · K² (1 - K)² / (P (1 - P) z²)` for the proxy `h²_cc = caseControlH2Proxy`. -/
 theorem h2_eq_ccLiabilityFactor_mul [IsProbabilityMeasure μ] {G : Ω → ℝ}
     (hGL : HasGaussianLaw (fun ω => (G ω, L ω)) μ) (hL : HasLaw L (gaussianReal 0 1) μ)
     (hLm : Measurable L) (hP0 : 0 < P) (hP1 : P < 1) {h2 : ℝ} (hvar : Var[G; μ] = h2)
     (hcov : cov[G, L; μ] = h2) :
-    h2 = ccLiabilityFactor t P * caseControlH2Obs μ L G t P := by
-  rw [caseControlH2Obs_genetic hGL hL hLm hP0 hP1 hvar hcov, ccLiabilityFactor]
+    h2 = ccLiabilityFactor t P * caseControlH2Proxy μ L G t P := by
+  rw [caseControlH2Proxy_genetic hGL hL hLm hP0 hP1 hvar hcov, ccLiabilityFactor]
   have hK := (prevalence_pos t).ne'
   have hK1 : 1 - prevalence t ≠ 0 := (sub_pos.mpr (prevalence_lt_one t)).ne'
   have hz := (thresholdDensity_pos t).ne'
@@ -547,15 +563,15 @@ variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
   {Ξ : Type*} {mΞ : MeasurableSpace Ξ} {ν : Measure Ξ} {N M : ℕ}
 
 /-- **Population consistency on the liability scale.** If the expected case-control statistics
-follow T147's regression model whose heritability is the case-control observed-scale
-heritability of a liability model with heritability `h²` (hypothesis `hobs`), then the
+follow T147's regression model whose heritability is the case-control proxy
+`caseControlH2Proxy` of a liability model with heritability `h²` (hypothesis `hobs`), then the
 liability-scale estimator applied to the expected statistics returns `h²`. -/
 theorem liabilityH2Hat_integral_chiSqStrat [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
     {L G : Ξ → ℝ} {t P h2 : ℝ}
     (hGL : HasGaussianLaw (fun ω => (G ω, L ω)) ν) (hL : HasLaw L (gaussianReal 0 1) ν)
     (hLm : Measurable L) (hP0 : 0 < P) (hP1 : P < 1) (hvar : Var[G; ν] = h2)
     (hcov : cov[G, L; ν] = h2)
-    (D : Model μ N M) (hobs : D.h2 = caseControlH2Obs ν L G t P)
+    (D : Model μ N M) (hobs : D.h2 = caseControlH2Proxy ν L G t P)
     (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hM : M ≠ 0) (hX : IsStandardized X)
     (hℓ : sxy (ldScore X) (ldScore X) ≠ 0)
     (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0) (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) (s : ℝ)
@@ -571,7 +587,7 @@ theorem integral_liabilityH2Hat_chiSqStrat [IsProbabilityMeasure μ] [IsProbabil
     (hGL : HasGaussianLaw (fun ω => (G ω, L ω)) ν) (hL : HasLaw L (gaussianReal 0 1) ν)
     (hLm : Measurable L) (hP0 : 0 < P) (hP1 : P < 1) (hvar : Var[G; ν] = h2)
     (hcov : cov[G, L; ν] = h2)
-    (D : Model μ N M) (hobs : D.h2 = caseControlH2Obs ν L G t P)
+    (D : Model μ N M) (hobs : D.h2 = caseControlH2Proxy ν L G t P)
     (X : Matrix (Fin N) (Fin M) ℝ) (hN : N ≠ 0) (hM : M ≠ 0) (hX : IsStandardized X)
     (hℓ : sxy (ldScore X) (ldScore X) ≠ 0)
     (hβ : ∀ k, ∫ ω, D.beta k ω ∂μ = 0) (hε : ∀ i, ∫ ω, D.eps i ω ∂μ = 0) (s : ℝ)
@@ -582,7 +598,7 @@ theorem integral_liabilityH2Hat_chiSqStrat [IsProbabilityMeasure μ] [IsProbabil
   exact (h2_eq_ccLiabilityFactor_mul hGL hL hLm hP0 hP1 hvar hcov).symm
 
 /-- **Consistency on the liability scale.** Along a sequence of designs and observed-scale
-models whose common heritability is the case-control observed-scale heritability of a liability
+models whose common heritability is the case-control proxy `caseControlH2Proxy` of a liability
 model with heritability `h²`, if the variance of the observed-scale estimator tends to `0`, then
 the liability-scale estimator converges in probability to `h²`. -/
 theorem tendstoInMeasure_liabilityH2Hat [IsProbabilityMeasure μ] [IsProbabilityMeasure ν]
@@ -592,7 +608,7 @@ theorem tendstoInMeasure_liabilityH2Hat [IsProbabilityMeasure μ] [IsProbability
     (hcov : cov[G, L; ν] = h2)
     {ι : Type*} {l : Filter ι}
     {N M : ι → ℕ} (D : ∀ n, Model μ (N n) (M n)) (X : ∀ n, Matrix (Fin (N n)) (Fin (M n)) ℝ)
-    (hobs : ∀ n, (D n).h2 = caseControlH2Obs ν L G t P) (hN : ∀ n, N n ≠ 0)
+    (hobs : ∀ n, (D n).h2 = caseControlH2Proxy ν L G t P) (hN : ∀ n, N n ≠ 0)
     (hM : ∀ n, M n ≠ 0)
     (hX : ∀ n, IsStandardized (X n)) (hℓ : ∀ n, sxy (ldScore (X n)) (ldScore (X n)) ≠ 0)
     (hβ : ∀ n k, ∫ ω, (D n).beta k ω ∂μ = 0) (hε : ∀ n i, ∫ ω, (D n).eps i ω ∂μ = 0)

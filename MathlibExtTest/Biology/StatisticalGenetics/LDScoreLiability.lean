@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.StatisticalGenetics.LDScoreLiability
+import MathlibExt.Probability.Distributions.GaussianCdf
 
 @[expose] public section
 
@@ -158,16 +159,16 @@ example : (caseControl μ2 Prod.fst 0 (1 / 4)).real {p | 0 ≤ p.1} = 1 / 4 := b
   exact measureReal_case_caseControl measurable_fst (by norm_num) (by norm_num)
     (hk ▸ prevalence_pos 0) (hk ▸ prevalence_lt_one 0)
 
-/-- The case-control observed-scale heritability with `P = 1/2 = K` is `1 / π`. -/
-theorem caseControlH2Obs_half : caseControlH2Obs μ2 Prod.fst G 0 (1 / 2) = 1 / π := by
-  rw [caseControlH2Obs_genetic hasGaussianLaw_G_fst hasLaw_fst measurable_fst (by norm_num)
+/-- The case-control proxy with `P = 1/2 = K` is `1 / π`. -/
+theorem caseControlH2Proxy_half : caseControlH2Proxy μ2 Prod.fst G 0 (1 / 2) = 1 / π := by
+  rw [caseControlH2Proxy_genetic hasGaussianLaw_G_fst hasLaw_fst measurable_fst (by norm_num)
     (by norm_num) var_G cov_G_fst, prevalence_zero, thresholdDensity_zero_sq]
   field_simp
   ring
 
-/-- Oversampling controls (`P = 1/4`) changes the observed-scale heritability to `3 / (4π)`. -/
-example : caseControlH2Obs μ2 Prod.fst G 0 (1 / 4) = 3 / (4 * π) := by
-  rw [caseControlH2Obs_genetic hasGaussianLaw_G_fst hasLaw_fst measurable_fst (by norm_num)
+/-- Oversampling controls (`P = 1/4`) changes the proxy to `3 / (4π)`. -/
+example : caseControlH2Proxy μ2 Prod.fst G 0 (1 / 4) = 3 / (4 * π) := by
+  rw [caseControlH2Proxy_genetic hasGaussianLaw_G_fst hasLaw_fst measurable_fst (by norm_num)
     (by norm_num) var_G cov_G_fst, prevalence_zero, thresholdDensity_zero_sq]
   field_simp
   ring
@@ -296,9 +297,9 @@ theorem ha : ∀ j, (1 : ℝ) ^ 2 * ((∑ i, X i j * (![1, 0, 0, 0] : Fin 4 → 
   fin_cases j <;> simp [X, Fin.sum_univ_four] <;> norm_num
 
 /-- The bridging hypothesis holds for the witnesses: the observed-scale model's heritability is
-the case-control observed-scale heritability of the liability model with `P = 1/2`. -/
-theorem hobs : Dπ.h2 = caseControlH2Obs μ2 Prod.fst G 0 (1 / 2) := by
-  rw [caseControlH2Obs_half]
+the case-control proxy of the liability model with `P = 1/2`. -/
+theorem hobs : Dπ.h2 = caseControlH2Proxy μ2 Prod.fst G 0 (1 / 2) := by
+  rw [caseControlH2Proxy_half]
   rfl
 
 /-- Non-vacuity of the liability-scale LD-score regression theorems: population consistency
