@@ -11,7 +11,12 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 B. L. Golden, L. Levy and R. Vohra, "The orienteering problem", Naval Research Logistics 34
-(1987), 307-318, doi:10.1002/1520-6750(198706)34:3<307::AID-NAV3220340302>3.0.CO;2-D.
+(1987), 307-318, doi:10.1002/1520-6750(198706)34:3<307::AID-NAV3220340302>3.0.CO;2-D (the problem
+and the NP-hardness of its optimization version);
+M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
+NP-Completeness*, W. H. Freeman (1979), problem [GT39] HAMILTONIAN PATH, pp. 199-200 (comment: the
+variants in which the starting point or the ending point or both are specified are also
+NP-complete), for the reduction to this decision version given in the module docstring.
 -/
 module
 
@@ -43,6 +48,16 @@ darts and its score is the sum of the scores of its support (the visited vertice
 locations other than the start and the end have scores in Golden, Levy and Vohra's formulation,
 so the score list gives `s` and `t` the score `0`. Travel times are given as an `n × n` matrix
 that is symmetric, so each edge has one travel time; the diagonal is unused.
+
+Golden, Levy and Vohra show that the orienteering problem is NP-hard. For this decision version:
+it is in NP, since a certificate is the vertex sequence of the path (at most `n` vertices), and
+checking that it starts at `s`, ends at `t`, repeats no vertex, and meets the time and score
+bounds takes polynomial time. It is NP-hard by a reduction from HAMILTONIAN PATH with both
+endpoints specified ([GT39]): for a graph on `n` vertices with specified `s ≠ t`, give `s` and `t`
+score `0` and the other vertices score `1`, travel time `1` on edges and `2` on non-edges,
+`T = n - 1` and `S = n - 2`. A path with score `n - 2` visits all `n` vertices, so it has `n - 1`
+darts, and time at most `n - 1` forces every dart to be an edge; conversely a Hamiltonian
+`s`-`t` path has time `n - 1` and score `n - 2`. Numbers are written in binary.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -92,7 +107,8 @@ noncomputable def orienteeringDec :
   | some i => decide (WellFormed i ∧ OrienteeringFeasible i)
   | none => false
 
-/-- **ORIENTEERING is NP-complete.** Source: Golden, Levy and Vohra (1987). -/
+/-- **ORIENTEERING is NP-complete.** Source: Golden, Levy and Vohra (1987) (problem, NP-hardness);
+Garey and Johnson (1979), [GT39] (reduction in the module docstring). -/
 public theorem_wanted orienteering_npComplete :
     orienteeringDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
