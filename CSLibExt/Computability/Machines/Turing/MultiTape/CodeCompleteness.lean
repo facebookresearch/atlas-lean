@@ -17,7 +17,7 @@ public import Mathlib.Data.Fintype.Prod
 /-!
 # Codes are complete for finite-state binary machines
 
-Codes (`Code k`) and binary multi-tape machines with finitely many states describe the same
+Codes (`Code k`, MT1) and binary multi-tape machines with finitely many states describe the same
 computations:
 
 - **Codes give finite-state machines.** The machine of a code, `Code.toTM c`, has states in `ℕ`,
@@ -37,7 +37,8 @@ Relabelling preserves outputs, time and space (`IsRelabelling.computes_iff` and 
 the classes of CSLib's model, and `DTIME`/`DSPACE`, can be stated equivalently over codes
 (`computableInTimeAndSpace_iff_exists_code`, `decidableInTimeAndSpace_iff_exists_code`,
 `mem_DTIME_iff_exists_code`, `mem_DSPACE_iff_exists_code`). This is what a diagonal argument
-over codes needs; the universal machine that runs codes is future work.
+over codes needs; the universal machine that runs codes is a separate item
+(`CSLibExt/BACKLOG.md`, MT3).
 
 ## Main definitions
 
