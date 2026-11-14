@@ -27,11 +27,13 @@ namespace MathlibExt.Analysis.CStarAlgebra.LandmarkWanted
 -- Helper predicates allowed; no forbidden constructs.
 
 /--
-In a C*-algebra, the norm-closure of the convex hull of unitaries equals the closed unit ball
-`closedBall 0 1`. Source: Russo–Dye theorem, B. Russo–H. Dye, Duke Math. J. 33 (1966); see
-Takesaki I; Lean is norm-closure of convex hull of unitaries equals closed unit ball.
+**Russo–Dye theorem.** In a unital C*-algebra $A$, the norm closure of the convex hull of the
+unitary elements of $A$ equals the closed unit ball $\{a \in A : \|a\| \le 1\}$.
 
 Proves `Wanted` entry `cStarAlgebra_russoDye`.
+
+Source: Russo–Dye theorem, B. Russo–H. Dye, Duke Math. J. 33 (1966); see
+Takesaki I; Lean is norm-closure of convex hull of unitaries equals closed unit ball.
 -/
 theorem cStarAlgebra_russoDye
     (A : Type u) [CStarAlgebra A] :
