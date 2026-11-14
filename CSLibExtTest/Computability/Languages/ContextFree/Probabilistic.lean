@@ -149,4 +149,19 @@ theorem test_cyk_mem :
   exact mem_cykCell_of_inside_pos Unit ambG ambG_cnf cgWeightFun 3
     ambG.initial [(), (), ()] (by decide) hpos
 
+/-- The right-associated tree is a valid grammar tree of depth at most three. -/
+theorem test_mem_ambTreesUpTo : ambT₁ ∈ ambTreesUpTo 3 :=
+  (mem_ambTreesUpTo_iff 3 ambT₁).2 ⟨isValidTree_ambG ambT₁, by decide⟩
+
+/-- The grammar's trees of depth at most two weigh `S 3 = 11 / 27`. -/
+theorem test_sum_ambTreesUpTo_two :
+    ∑ t ∈ ambTreesUpTo 2, t.weightOf cgWeightFun = 11 / 27 := by
+  rw [sum_ambTreesUpTo_weightOf cgWeightFun (2 / 3) (1 / 3) rfl rfl 2]
+  exact chiGemanS_three
+
+/-- The Chi-Geman bound for the grammar's trees of depth at most five. -/
+theorem test_sum_ambTreesUpTo_five_le_half :
+    ∑ t ∈ ambTreesUpTo 5, t.weightOf cgWeightFun ≤ 1 / 2 :=
+  sum_ambTreesUpTo_cgWeightFun_le_half 5
+
 end CSLibExtTest.Computability.Languages.ContextFree.Probabilistic

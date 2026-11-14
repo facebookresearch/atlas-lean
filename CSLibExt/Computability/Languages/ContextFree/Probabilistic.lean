@@ -51,10 +51,15 @@ The same file carries the Chi-Geman counterexample: the one-nonterminal
 grammar `A -> A A` (weight `p = 2 / 3`) and `A -> a` (`q = 1 / 3`) is
 normalized per nonterminal, yet the total weight `S (h + 1)` of the trees of
 depth at most `h` is at most `1 / 2` for every `h`, so the mass left
-uncaptured at every depth cutoff is at least `1 / 2`. No probability space on
-derivations is constructed, so this uncaptured mass is not identified with
-the probability of an infinite derivation. For `p = 1 / 2` and `p = 1 / 3`
-the cutoff sums do tend to `1`.
+uncaptured at every depth cutoff is at least `1 / 2`. The cutoff sums are
+computed on one-nonterminal trees (`CGTree`), which are in depth- and
+weight-preserving bijection with the derivation trees of the grammar `ambG`
+(`ofCGTree`, `toCGTree`), so `S (h + 1)` is the total weight of the valid
+`ambG` trees of depth at most `h` (`sum_ambTreesUpTo_weightOf`), and the bound
+holds for the grammar itself (`sum_ambTreesUpTo_cgWeightFun_le_half`). No
+probability space on derivations is constructed, so this uncaptured mass is
+not identified with the probability of an infinite derivation. For `p = 1 / 2`
+and `p = 1 / 3` the cutoff sums do tend to `1`.
 
 ## Main definitions
 
@@ -65,6 +70,8 @@ the cutoff sums do tend to `1`.
 * `Cslib.Language.treesUpTo`: the finite set of valid trees of depth at most
   `d` with yield `w` rooted at `A`.
 * `Cslib.Language.chiGemanS`: the Chi-Geman total-weight sequence.
+* `Cslib.Language.ambTreesUpTo`: the valid trees of the Chi-Geman grammar of
+  depth at most `h`, of any yield.
 
 ## Main results
 
@@ -75,6 +82,9 @@ the cutoff sums do tend to `1`.
 * `Cslib.Language.inside_stable`: depth `d >= |w|` sums every valid
   `PDerivTree` for `w`.
 * `Cslib.Language.chiGeman_main_half`: the Chi-Geman bound `S h <= 1 / 2`.
+* `Cslib.Language.sum_ambTreesUpTo_weightOf`,
+  `Cslib.Language.sum_ambTreesUpTo_cgWeightFun_le_half`: `S (h + 1)` is the
+  grammar's total tree weight up to depth `h`, so the bound holds for the PCFG.
 * `Cslib.Language.tendsto_chiGemanS_half`, `Cslib.Language.tendsto_chiGemanS_third`:
   the tight boundary cases `p = 1 / 2` and `p = 1 / 3`, where `S h -> 1`.
 -/
@@ -777,7 +787,7 @@ def ambG : ContextFreeGrammar Unit where
 /-- Decidable equality on the nonterminals of the example grammar. -/
 instance : DecidableEq ambG.NT := inferInstanceAs (DecidableEq Unit)
 
-/-- Left-associated tree for `a a a`. -/
+/-- Right-associated tree `a (a a)` for `a a a`. -/
 def ambT₁ : PDerivTree ambG.NT Unit :=
   PDerivTree.node ambG.initial ambG.initial ambG.initial
     (PDerivTree.leaf ambG.initial ())
@@ -785,7 +795,7 @@ def ambT₁ : PDerivTree ambG.NT Unit :=
       (PDerivTree.leaf ambG.initial ())
       (PDerivTree.leaf ambG.initial ()))
 
-/-- Right-associated tree for `a a a`. -/
+/-- Left-associated tree `(a a) a` for `a a a`. -/
 def ambT₂ : PDerivTree ambG.NT Unit :=
   PDerivTree.node ambG.initial ambG.initial ambG.initial
     (PDerivTree.node ambG.initial ambG.initial ambG.initial
@@ -1261,5 +1271,126 @@ theorem cgWeightFun_normalized : IsNormalized Unit ambG cgWeightFun := by
     have e2 : cgWeightFun ⟨(), [Symbol.terminal ()]⟩ = 1 / 3 := rfl
     rw [e1, e2]
     norm_num
+
+/-! ## The Chi-Geman cutoff sums are the grammar's tree masses -/
+
+/-- Every nonterminal of `ambG` is its initial nonterminal. -/
+theorem ambG_NT_eq_initial (A : ambG.NT) : A = ambG.initial := by
+  cases A
+  rfl
+
+/-- The terminal rule `A -> a` of `ambG`. -/
+private theorem ambG_terminal_mem :
+    (⟨ambG.initial, [Symbol.terminal ()]⟩ : ContextFreeRule Unit ambG.NT) ∈ ambG.rules := by
+  decide
+
+/-- The binary rule `A -> A A` of `ambG`. -/
+private theorem ambG_binary_mem :
+    (⟨ambG.initial, [Symbol.nonterminal ambG.initial, Symbol.nonterminal ambG.initial]⟩ :
+      ContextFreeRule Unit ambG.NT) ∈ ambG.rules := by
+  decide
+
+/-- Every `ambG` derivation tree is valid: both rule shapes it can use are rules of
+`ambG`. -/
+theorem isValidTree_ambG (t : PDerivTree ambG.NT Unit) : IsValidTree Unit ambG t := by
+  induction t with
+  | leaf A a =>
+      rw [ambG_NT_eq_initial A]
+      cases a
+      exact ambG_terminal_mem
+  | node A B C l r ihl ihr =>
+      rw [ambG_NT_eq_initial A, ambG_NT_eq_initial B, ambG_NT_eq_initial C]
+      exact ⟨ambG_binary_mem, ambG_NT_eq_initial _, ambG_NT_eq_initial _, ihl, ihr⟩
+
+/-- The shape of an `ambG` derivation tree as a one-nonterminal tree. -/
+def toCGTree : PDerivTree ambG.NT Unit → CGTree
+  | .leaf _ _ => .leaf
+  | .node _ _ _ l r => .node (toCGTree l) (toCGTree r)
+
+/-- The `ambG` derivation tree with the shape of a one-nonterminal tree. -/
+def ofCGTree : CGTree → PDerivTree ambG.NT Unit
+  | .leaf => .leaf ambG.initial ()
+  | .node l r => .node ambG.initial ambG.initial ambG.initial (ofCGTree l) (ofCGTree r)
+
+/-- `toCGTree` is a left inverse of `ofCGTree`. -/
+theorem toCGTree_ofCGTree (t : CGTree) : toCGTree (ofCGTree t) = t := by
+  induction t with
+  | leaf => rfl
+  | node l r ihl ihr => exact congrArg₂ CGTree.node ihl ihr
+
+/-- `ofCGTree` is a left inverse of `toCGTree`, so the two are inverse bijections. -/
+theorem ofCGTree_toCGTree (t : PDerivTree ambG.NT Unit) : ofCGTree (toCGTree t) = t := by
+  induction t with
+  | leaf A a =>
+      rw [ambG_NT_eq_initial A]
+      rfl
+  | node A B C l r ihl ihr =>
+      rw [ambG_NT_eq_initial A, ambG_NT_eq_initial B, ambG_NT_eq_initial C]
+      exact congrArg₂ (PDerivTree.node ambG.initial ambG.initial ambG.initial) ihl ihr
+
+/-- `ofCGTree` is injective. -/
+theorem ofCGTree_injective : Function.Injective ofCGTree :=
+  Function.LeftInverse.injective toCGTree_ofCGTree
+
+/-- `ofCGTree` preserves depth. -/
+theorem depthOf_ofCGTree (t : CGTree) : (ofCGTree t).depthOf = t.depth := by
+  induction t with
+  | leaf => rfl
+  | node l r ihl ihr =>
+      simp only [ofCGTree, PDerivTree.depthOf, CGTree.depth, ihl, ihr]
+
+/-- `ofCGTree` turns the one-nonterminal weight into the derivation weight: under rule
+weights giving `p` to `A -> A A` and `q` to `A -> a`, the weight of `ofCGTree t` is
+`t.weight p q`. -/
+theorem weightOf_ofCGTree (w : ContextFreeRule Unit ambG.NT → ℝ) (p q : ℝ)
+    (hp : w ⟨ambG.initial, [Symbol.nonterminal ambG.initial,
+      Symbol.nonterminal ambG.initial]⟩ = p)
+    (hq : w ⟨ambG.initial, [Symbol.terminal ()]⟩ = q) (t : CGTree) :
+    (ofCGTree t).weightOf w = t.weight p q := by
+  induction t with
+  | leaf => exact hq
+  | node l r ihl ihr =>
+      simp only [ofCGTree, PDerivTree.weightOf, CGTree.weight, hp, ihl, ihr]
+
+/-- The valid `ambG` derivation trees of depth at most `h`, of any yield
+(`mem_ambTreesUpTo_iff`). -/
+def ambTreesUpTo (h : ℕ) : Finset (PDerivTree ambG.NT Unit) :=
+  (cgTrees h).map ⟨ofCGTree, ofCGTree_injective⟩
+
+/-- Membership in `ambTreesUpTo h` is validity plus the depth bound. -/
+theorem mem_ambTreesUpTo_iff (h : ℕ) (t : PDerivTree ambG.NT Unit) :
+    t ∈ ambTreesUpTo h ↔ IsValidTree Unit ambG t ∧ t.depthOf ≤ h := by
+  constructor
+  · intro ht
+    rw [ambTreesUpTo, Finset.mem_map] at ht
+    obtain ⟨s, hs, rfl⟩ := ht
+    refine ⟨isValidTree_ambG _, ?_⟩
+    change (ofCGTree s).depthOf ≤ h
+    rw [depthOf_ofCGTree]
+    exact (mem_cgTrees_iff h s).1 hs
+  · rintro ⟨-, hd⟩
+    rw [ambTreesUpTo, Finset.mem_map]
+    refine ⟨toCGTree t, (mem_cgTrees_iff h _).2 ?_, ofCGTree_toCGTree t⟩
+    rw [← depthOf_ofCGTree, ofCGTree_toCGTree]
+    exact hd
+
+/-- **Cutoff sums are tree masses.** Under rule weights giving `p` to `A -> A A` and `q` to
+`A -> a`, the valid `ambG` derivation trees of depth at most `h` have total weight
+`S (h + 1) = chiGemanS p q (h + 1)`. -/
+theorem sum_ambTreesUpTo_weightOf (w : ContextFreeRule Unit ambG.NT → ℝ) (p q : ℝ)
+    (hp : w ⟨ambG.initial, [Symbol.nonterminal ambG.initial,
+      Symbol.nonterminal ambG.initial]⟩ = p)
+    (hq : w ⟨ambG.initial, [Symbol.terminal ()]⟩ = q) (h : ℕ) :
+    ∑ t ∈ ambTreesUpTo h, t.weightOf w = chiGemanS p q (h + 1) := by
+  rw [ambTreesUpTo, Finset.sum_map, chiGemanS_link, cgTotal]
+  exact Finset.sum_congr rfl fun t _ => weightOf_ofCGTree w p q hp hq t
+
+/-- **The Chi-Geman bound for the normalized grammar.** Under the normalized weights
+`cgWeightFun` (`cgWeightFun_normalized`), the valid `ambG` derivation trees of depth at most
+`h` carry total weight at most `1 / 2`, for every `h`. -/
+theorem sum_ambTreesUpTo_cgWeightFun_le_half (h : ℕ) :
+    ∑ t ∈ ambTreesUpTo h, t.weightOf cgWeightFun ≤ 1 / 2 := by
+  rw [sum_ambTreesUpTo_weightOf cgWeightFun (2 / 3) (1 / 3) rfl rfl h]
+  exact chiGeman_main_half (h + 1)
 
 end Cslib.Language
