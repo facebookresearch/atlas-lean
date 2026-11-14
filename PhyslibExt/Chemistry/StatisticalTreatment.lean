@@ -18,8 +18,11 @@ public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Probability.IdentDistrib
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Moments.Variance
+public import MathlibExt.Probability.ContinuousDistributions
 public import MathlibExt.Probability.FiniteProbability
+public import MathlibExt.Probability.Statistics.MultipleTesting.Bonferroni
 public import MathlibExt.Probability.Statistics.NormalTheory
+public import MathlibExt.Probability.Statistics.NormalTheoryTwoSample
 import MathlibExt.Probability.Statistics.SampleMoments
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -38,26 +41,37 @@ outlier-test procedures, and detection-limit conventions for quantitative analys
 This module collects the statistical toolkit of analytical chemistry on the canonical ATLAS
 statistics API. The sample mean and the Bessel-corrected sample variance are
 `MathlibExt.Probability.FiniteProbability.sampleMean` and `sampleVarUnbiased`; this module adds
-the sample standard deviation and facts about constant samples and `n = 1`.
+the data-level sample standard deviation `sampleStdDev` (the random-variable version
+`MathlibExt.Probability.ContinuousDistributions.sampleStdDev` is this applied to the first `n`
+observations, `sampleStdDev_eq_of_seq`) and facts about constant samples and `n = 1`.
 
-The two-sided t-interval `x̄ ± t s / √n` covers the mean of an i.i.d. normal sample with
-probability exactly `1 - α` when `t` is the upper `α/2` point of Student's t law on `n - 1`
-degrees of freedom (`tInterval_coverage`, which restates
+The two-sided t-interval `x̄ ± t s / √n` (`tInterval`; the random-variable version
+`ContinuousDistributions.studentTInterval` is this on the first `n` observations,
+`studentTInterval_eq_tInterval`) covers the mean of an i.i.d. normal sample with probability
+exactly `1 - α` when `t` is the upper `α/2` point of Student's t law on `n - 1` degrees of
+freedom (`tInterval_coverage`, which restates
 `ProbabilityTheory.one_sample_t_interval_coverage_eq`).
 
-The pooled variance of two samples is unbiased for their common variance when each sample is
-pairwise independent and identically distributed with finite second moment and the two
-variances are equal (`integral_pooledVariance`, from
-`MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin`). The two-sample t and
-variance-ratio F statistics are formulas only: no distribution claim is made for them.
+The pooled variance, the pooled two-sample t statistic and the variance ratio are the canonical
+`ProbabilityTheory.pooledVariance`, `twoSampleTStatistic` and `varianceRatio` of
+`MathlibExt.Probability.Statistics.NormalTheoryTwoSample`, which also proves their exact laws for
+independent normal samples (`hasLaw_twoSampleTStatistic`, `hasLaw_varianceRatio`). This module
+adds the weighted form of the pooled variance (`pooledVariance_eq_weighted`) and its
+unbiasedness without normality (`integral_pooledVariance`): for two samples, each pairwise
+independent and identically distributed with finite second moment, with equal variances, from
+`MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin`.
 
 The Dixon Q and Grubbs statistics are computed from the whole sample: Dixon's Q for observation
 `j` is the gap to its nearest other observation over the sample range, and Grubbs' G is the
 largest absolute deviation from the sample mean over the sample standard deviation. The decision
-procedures compare them with caller-supplied critical values, and Dixon's procedure rejects only
-an extreme observation. No error-rate claim is made for these procedures, nor for the Bonferroni
-adjustment or the `k = 3` and `k = 3.3` detection-limit conventions, which are stated
-conventions.
+procedures compare them with nonnegative caller-supplied critical values, Dixon's procedure
+rejects only an extreme observation, and a sample without spread is never rejected
+(`not_dixonReject_of_no_spread`, `not_grubbsReject_of_sd_zero`). No error-rate claim is made for
+these procedures, nor for the `k = 3` and `k = 3.3` detection-limit conventions, which are stated
+conventions. The Bonferroni level `α / m` is the threshold of the canonical
+`MathlibExt.Probability.Statistics.MultipleTesting.bonferroniRejections`
+(`mem_bonferroniRejections_iff`), whose family-wise error control is
+`MultipleTesting.measure_bonferroni_familywiseError_le`.
 
 Several formulas divide by a quantity that can vanish; each docstring states the domain on which
 the formula is meaningful. Dixon's Q and Grubbs' G are defined to be `0` when the spread is `0`.
@@ -67,16 +81,20 @@ the formula is meaningful. Dixon's Q and Grubbs' G are defined to be `0` when th
 - `sampleMean_const`, `sampleVarUnbiased_nonneg`, `sampleVarUnbiased_const`,
   `sampleVarUnbiased_fin_one`, `sampleStdDev_const`: constant samples, nonnegativity for
   `2 ≤ n`, and the degenerate value `0` at `n = 1`.
+- `sampleStdDev_eq_of_seq`, `studentTInterval_eq_tInterval`: bridges to the random-variable API
+  of `ContinuousDistributions`.
 - `tHalfWidth_nonneg`, `mem_tInterval_iff`: the t half-width and the membership duality.
 - `tInterval_coverage`: exact coverage `1 - α` of the t-interval for i.i.d. normal samples.
-- `pooledVariance_nonneg`, `pooledStdDev_sq`: the pooled variance and standard deviation.
+- `pooledVariance_eq_weighted`, `pooledVariance_nonneg`, `varianceRatio_nonneg`: the canonical
+  pooled variance as a weighted average of the sample variances, and nonnegativity.
 - `integral_pooledVariance`: the pooled variance is unbiased under the equal-variance model.
-- `varianceRatioF_nonneg`: the F-ratio shape is nonnegative for nonnegative inputs.
-- `dixonQ_of_ne`, `dixonQ_of_no_spread`, `dixonQ_nonneg`, `dixonReject_mono`: Dixon's Q.
+- `dixonQ_of_ne`, `dixonQ_of_no_spread`, `dixonQ_nonneg`, `dixonReject_mono`,
+  `not_dixonReject_of_no_spread`: Dixon's Q and its decision procedure.
 - `grubbsG_of_ne`, `grubbsG_of_sd_zero`, `grubbsG_nonneg`, `div_le_grubbsG`,
-  `exists_grubbsG_eq`, `grubbsReject_mono`: Grubbs' G is the largest standardized residual.
-- `bonferroniLevel_nonneg`, `lodK3_nonneg`, `lodK33_nonneg`: nonnegativity of the stated
-  multiplicity and detection-limit conventions.
+  `exists_grubbsG_eq`, `grubbsReject_mono`, `not_grubbsReject_of_sd_zero`: Grubbs' G is the
+  largest standardized residual.
+- `mem_bonferroniRejections_iff`, `bonferroniLevel_nonneg`, `lodK3_nonneg`, `lodK33_nonneg`: the
+  Bonferroni level of the canonical procedure, and the detection-limit conventions.
 
 ## iii. Table of contents
 
@@ -96,7 +114,10 @@ the formula is meaningful. Dixon's Q and Grubbs' G are defined to be `0` when th
   abridged 4th edition (RSC, 2023) (quantity and unit conventions).
 - ATLAS statistics API: `MathlibExt.Probability.FiniteProbability` (sample mean and
   variance), `MathlibExt.Probability.Statistics.SampleMoments` (unbiasedness of the sample
-  variance) and `MathlibExt.Probability.Statistics.NormalTheory` (exact t-interval coverage).
+  variance), `MathlibExt.Probability.Statistics.NormalTheory` (exact t-interval coverage),
+  `MathlibExt.Probability.Statistics.NormalTheoryTwoSample` (pooled variance, two-sample t,
+  variance ratio), `MathlibExt.Probability.ContinuousDistributions` (random-variable t-interval)
+  and `MathlibExt.Probability.Statistics.MultipleTesting.Bonferroni`.
 
 ## A. Sample mean, variance, and standard deviation
 -/
@@ -150,6 +171,13 @@ lemma sampleStdDev_const (n : ℕ) (hn : n ≠ 0) (c : ℝ) (x : Fin n → ℝ)
   unfold sampleStdDev
   rw [sampleVarUnbiased_const n hn c x h, Real.sqrt_zero]
 
+/-- The random-variable sample standard deviation of `ContinuousDistributions` is
+`sampleStdDev` of the first `n` observations. -/
+lemma sampleStdDev_eq_of_seq {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (ω : Ω) :
+    MathlibExt.Probability.ContinuousDistributions.sampleStdDev X n ω =
+      sampleStdDev (fun i : Fin n => X i ω) :=
+  rfl
+
 /-! ## B. t-intervals and their exact coverage -/
 
 /-- Half-width `tcrit * s / √n` of a t-interval, meaningful for `n ≥ 1` (at `n = 0` Lean's
@@ -184,10 +212,13 @@ lemma mem_tInterval_iff (xbar s : ℝ) (n : ℕ) (tcrit μ : ℝ) :
     obtain ⟨hlo, hhi⟩ := h
     constructor <;> linarith
 
-/-- Student-t pivot `(x̄ - μ) / (s / √n)` of a sample, as a formula, meaningful when `s > 0` and
-`n ≥ 1` (otherwise Lean's division returns `0`). -/
-noncomputable def tPivot {n : ℕ} (x : Fin n → ℝ) (μ : ℝ) : ℝ :=
-  (sampleMean x - μ) / (sampleStdDev x / Real.sqrt (n : ℝ))
+/-- The random-variable t-interval of `ContinuousDistributions` is `tInterval` computed from the
+first `n` observations. Its coverage under `ContinuousDistributions.StudentTPivotLaw` is
+`StudentTPivotLaw.measureReal_mem_studentTInterval`. -/
+lemma studentTInterval_eq_tInterval {Ω : Type*} (X : ℕ → Ω → ℝ) (n : ℕ) (q : ℝ) (ω : Ω) :
+    MathlibExt.Probability.ContinuousDistributions.studentTInterval X n q ω =
+      tInterval (sampleMean fun i : Fin n => X i ω) (sampleStdDev fun i : Fin n => X i ω) n q :=
+  rfl
 
 /-- **Exact coverage of the two-sided t-interval.** For an i.i.d. `N(μ, v)` sample `X` of size
 `n ≥ 2` with `v ≠ 0` and `α ∈ (0, 1)`, let `t = cdfQuantile (t_{n-1}) (1 - α/2)` be the upper
@@ -206,109 +237,79 @@ theorem tInterval_coverage {n : ℕ} (hn : 2 ≤ n) (μ : ℝ) {v : NNReal} (hv 
   simp only [Set.mem_ofPred_eq, mem_tInterval_iff, tHalfWidth, sampleStdDev,
     sampleVarUnbiased_eq_sum_div, sampleMean_eq_sum_div, Fintype.card_fin]
 
-/-! ## C. Pooled variance and two-sample statistics -/
+/-! ## C. Pooled variance and two-sample statistics
 
-/-- Pooled variance `((n₁-1)s₁² + (n₂-1)s₂²) / (n₁+n₂-2)` of two samples from their unbiased
-sample variances, meaningful for `n₁, n₂ ≥ 2` (then the denominator is positive,
-`pooledDenom_ne_zero`). It is unbiased under the equal-variance model
-(`integral_pooledVariance`). -/
-noncomputable def pooledVariance (n1 n2 : ℕ) (s1sq s2sq : ℝ) : ℝ :=
-  (((n1 - 1 : ℕ) : ℝ) * s1sq + ((n2 - 1 : ℕ) : ℝ) * s2sq)
-    / ((n1 + n2 - 2 : ℕ) : ℝ)
+The pooled variance `S_p² = (∑ (xᵢ - x̄)² + ∑ (yⱼ - ȳ)²) / (m + n - 2)`, the pooled two-sample t
+statistic and the variance ratio `S_x² / S_y²` are `ProbabilityTheory.pooledVariance`,
+`ProbabilityTheory.twoSampleTStatistic` (the chemists' statistic is `twoSampleTStatistic 0`) and
+`ProbabilityTheory.varianceRatio`; their exact laws for independent normal samples are in
+`MathlibExt.Probability.Statistics.NormalTheoryTwoSample`. -/
 
-/-- The pooled denominator is nonzero for `2 ≤ n₁` and `2 ≤ n₂`. -/
-lemma pooledDenom_ne_zero (n1 n2 : ℕ) (h1 : 2 ≤ n1) (h2 : 2 ≤ n2) :
-    ((n1 + n2 - 2 : ℕ) : ℝ) ≠ 0 := by
-  have hpos : 0 < n1 + n2 - 2 := by omega
-  have hcast : (0 : ℝ) < ((n1 + n2 - 2 : ℕ) : ℝ) := by exact_mod_cast hpos
-  exact ne_of_gt hcast
+/-- For `m, n ≥ 2` the pooled variance is the weighted average
+`((m - 1) s_x² + (n - 1) s_y²) / (m + n - 2)` of the two unbiased sample variances. -/
+theorem pooledVariance_eq_weighted {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n) (x : Fin m → ℝ)
+    (y : Fin n → ℝ) :
+    pooledVariance x y =
+      (((m : ℝ) - 1) * sampleVarUnbiased x + ((n : ℝ) - 1) * sampleVarUnbiased y) /
+        ((m : ℝ) + n - 2) := by
+  have hm1 : (m : ℝ) - 1 ≠ 0 := by
+    have : (2 : ℝ) ≤ m := by exact_mod_cast hm
+    linarith
+  have hn1 : (n : ℝ) - 1 ≠ 0 := by
+    have : (2 : ℝ) ≤ n := by exact_mod_cast hn
+    linarith
+  rw [pooledVariance_eq_sampleMean, sampleVarUnbiased_eq_sum_div, sampleVarUnbiased_eq_sum_div,
+    Fintype.card_fin, Fintype.card_fin]
+  congr 1
+  field_simp
 
-/-- The pooled variance is nonnegative for nonnegative inputs. -/
-lemma pooledVariance_nonneg (n1 n2 : ℕ) (s1sq s2sq : ℝ)
-    (h1 : 0 ≤ s1sq) (h2 : 0 ≤ s2sq) : 0 ≤ pooledVariance n1 n2 s1sq s2sq := by
-  unfold pooledVariance
-  apply div_nonneg
-  · apply add_nonneg
-    · exact mul_nonneg (by positivity) h1
-    · exact mul_nonneg (by positivity) h2
-  · positivity
+/-- The pooled variance is nonnegative for `m, n ≥ 2`. -/
+lemma pooledVariance_nonneg {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n) (x : Fin m → ℝ)
+    (y : Fin n → ℝ) : 0 ≤ pooledVariance x y := by
+  rw [pooledVariance_eq_sampleMean]
+  have h2m : (2 : ℝ) ≤ m := by exact_mod_cast hm
+  have h2n : (2 : ℝ) ≤ n := by exact_mod_cast hn
+  exact div_nonneg (add_nonneg (Finset.sum_nonneg fun i _ => sq_nonneg _)
+    (Finset.sum_nonneg fun j _ => sq_nonneg _)) (by linarith)
 
-/-- The pooled weights `n₁ - 1` and `n₂ - 1` add up to the denominator `n₁ + n₂ - 2`. -/
-private lemma pooled_weights_sum (n1 n2 : ℕ) (h1 : 2 ≤ n1) (h2 : 2 ≤ n2) :
-    ((n1 - 1 : ℕ) : ℝ) + ((n2 - 1 : ℕ) : ℝ) = ((n1 + n2 - 2 : ℕ) : ℝ) := by
-  have e1 : ((n1 - 1 : ℕ) : ℝ) = (n1 : ℝ) - 1 := by
-    rw [Nat.cast_sub (by omega : 1 ≤ n1)]
-    norm_num
-  have e2 : ((n2 - 1 : ℕ) : ℝ) = (n2 : ℝ) - 1 := by
-    rw [Nat.cast_sub (by omega : 1 ≤ n2)]
-    norm_num
-  have eD : ((n1 + n2 - 2 : ℕ) : ℝ) = (n1 : ℝ) + (n2 : ℝ) - 2 := by
-    rw [Nat.cast_sub (by omega : 2 ≤ n1 + n2), Nat.cast_add]
-    norm_num
-  rw [e1, e2, eD]
-  ring
-
-/-- **The pooled variance is unbiased under the equal-variance model.** Let `X i`, `i : Fin n₁`,
-and `Y j`, `j : Fin n₂`, with `n₁, n₂ ≥ 2`, be two samples on a probability space. Each sample is
+/-- **The pooled variance is unbiased under the equal-variance model.** Let `X i`, `i : Fin m`,
+and `Y j`, `j : Fin n`, with `m, n ≥ 2`, be two samples on a probability space. Each sample is
 pairwise independent and identically distributed (common laws those of `X i0` and `Y j0`) with
 finite second moment, and the two variances are equal: `Var Y j0 = Var X i0`, the
-equal-variance model hypothesis. Then the pooled variance of the two unbiased sample variances
-is integrable and its expectation is the common variance. No independence between the two
-samples is needed: each sample variance is unbiased
+equal-variance model hypothesis. Then the pooled variance of the two samples is integrable and
+its expectation is the common variance. No normality and no independence between the two samples
+are needed: each sample variance is unbiased
 (`MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin`), and the pooled variance
-is a weighted average of the two. -/
+is their weighted average (`pooledVariance_eq_weighted`). -/
 theorem integral_pooledVariance {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    [IsProbabilityMeasure P] {n1 n2 : ℕ} (h1 : 2 ≤ n1) (h2 : 2 ≤ n2)
-    (X : Fin n1 → Ω → ℝ) (Y : Fin n2 → Ω → ℝ) (i0 : Fin n1) (j0 : Fin n2)
+    [IsProbabilityMeasure P] {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n)
+    (X : Fin m → Ω → ℝ) (Y : Fin n → Ω → ℝ) (i0 : Fin m) (j0 : Fin n)
     (hXind : Pairwise fun i j => X i ⟂ᵢ[P] X j) (hXid : ∀ i, IdentDistrib (X i) (X i0) P P)
     (hX2 : MemLp (X i0) 2 P)
     (hYind : Pairwise fun i j => Y i ⟂ᵢ[P] Y j) (hYid : ∀ j, IdentDistrib (Y j) (Y j0) P P)
     (hY2 : MemLp (Y j0) 2 P) (hvar : variance (Y j0) P = variance (X i0) P) :
-    Integrable (fun ω => pooledVariance n1 n2 (sampleVarUnbiased fun i => X i ω)
-      (sampleVarUnbiased fun j => Y j ω)) P ∧
-    ∫ ω, pooledVariance n1 n2 (sampleVarUnbiased fun i => X i ω)
-      (sampleVarUnbiased fun j => Y j ω) ∂P = variance (X i0) P := by
+    Integrable (fun ω => pooledVariance (fun i => X i ω) (fun j => Y j ω)) P ∧
+    ∫ ω, pooledVariance (fun i => X i ω) (fun j => Y j ω) ∂P = variance (X i0) P := by
   obtain ⟨iX, eX⟩ :=
-    MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin h1 X i0 hXind hXid hX2
+    MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin hm X i0 hXind hXid hX2
   obtain ⟨iY, eY⟩ :=
-    MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin h2 Y j0 hYind hYid hY2
-  have hD := pooledDenom_ne_zero n1 n2 h1 h2
-  unfold pooledVariance
+    MathlibExt.Probability.integral_sampleVariance_of_pairwise_iid_fin hn Y j0 hYind hYid hY2
+  have hD : (m : ℝ) + n - 2 ≠ 0 := by
+    have : (2 : ℝ) ≤ m := by exact_mod_cast hm
+    have : (2 : ℝ) ≤ n := by exact_mod_cast hn
+    linarith
+  simp_rw [pooledVariance_eq_weighted hm hn]
   refine ⟨((iX.const_mul _).add (iY.const_mul _)).div_const _, ?_⟩
   rw [integral_div, integral_add (iX.const_mul _) (iY.const_mul _), integral_const_mul,
-    integral_const_mul, eX, eY, hvar, ← add_mul, pooled_weights_sum n1 n2 h1 h2]
+    integral_const_mul, eX, eY, hvar]
   field_simp
+  ring
 
-/-- Pooled standard deviation `s_p = √pooledVariance`. -/
-noncomputable def pooledStdDev (n1 n2 : ℕ) (s1sq s2sq : ℝ) : ℝ :=
-  Real.sqrt (pooledVariance n1 n2 s1sq s2sq)
-
-/-- The squared pooled SD recovers the pooled variance. -/
-lemma pooledStdDev_sq (n1 n2 : ℕ) (s1sq s2sq : ℝ)
-    (h1 : 0 ≤ s1sq) (h2 : 0 ≤ s2sq) :
-    (pooledStdDev n1 n2 s1sq s2sq) ^ 2 = pooledVariance n1 n2 s1sq s2sq := by
-  unfold pooledStdDev
-  exact Real.sq_sqrt (pooledVariance_nonneg n1 n2 s1sq s2sq h1 h2)
-
-/-- Two-sample t-statistic `(x̄₁ - x̄₂) / (s_p √(1/n₁ + 1/n₂))` built from the pooled SD `sp`,
-meaningful for positive group sizes and `sp > 0` (otherwise Lean's division returns `0`). The
-Student-t reference distribution assumes i.i.d. normal samples with equal variances; no
-distribution or error-rate claim is made here. -/
-noncomputable def twoSampleT (xbar1 xbar2 sp : ℝ) (n1 n2 : ℕ) : ℝ :=
-  (xbar1 - xbar2) / (sp * Real.sqrt (1 / (n1 : ℝ) + 1 / (n2 : ℝ)))
-
-/-- Variance ratio `F = s₁²/s₂²` for comparing two sample variances (F-test statistic shape),
-meaningful for `s₂² > 0` (at `s₂² = 0` Lean's division returns `0`). Tabulated F critical values
-assume i.i.d. normal samples with independent groups; this definition carries no error-rate
-claim. -/
-noncomputable def varianceRatioF (s1sq s2sq : ℝ) : ℝ :=
-  s1sq / s2sq
-
-/-- The variance ratio is nonnegative for nonnegative inputs. -/
-lemma varianceRatioF_nonneg (s1sq s2sq : ℝ) (h1 : 0 ≤ s1sq) (h2 : 0 ≤ s2sq) :
-    0 ≤ varianceRatioF s1sq s2sq := by
-  unfold varianceRatioF
-  exact div_nonneg h1 h2
+/-- The variance ratio `S_x² / S_y²` is nonnegative for `m, n ≥ 2`. -/
+lemma varianceRatio_nonneg {m n : ℕ} (hm : 2 ≤ m) (hn : 2 ≤ n) (x : Fin m → ℝ)
+    (y : Fin n → ℝ) : 0 ≤ varianceRatio x y := by
+  rw [varianceRatio_eq]
+  exact div_nonneg (sampleVarUnbiased_nonneg m hm x) (sampleVarUnbiased_nonneg n hn y)
 
 /-! ## D. Outlier procedures: Dixon Q and Grubbs -/
 
@@ -364,17 +365,24 @@ lemma dixonQ_nonneg {n : ℕ} (x : Fin n → ℝ) (j : Fin n) : 0 ≤ dixonQ x j
   · exact le_rfl
   · exact div_nonneg (nearestGap_nonneg x j) (sampleRange_nonneg x)
 
-/-- Dixon decision procedure: reject observation `j` at critical value `qcrit` when it is extreme
-and its Q statistic exceeds `qcrit`. The critical value is an explicit input (tabulated values
-assume normality). -/
+/-- Dixon decision procedure: reject observation `j` at the critical value `qcrit ≥ 0` when it is
+extreme and its Q statistic exceeds `qcrit`. The critical value is an explicit nonnegative input
+(tabulated values assume normality); a negative `qcrit` never rejects. -/
 def dixonReject {n : ℕ} (x : Fin n → ℝ) (j : Fin n) (qcrit : ℝ) : Prop :=
-  IsExtremeObservation x j ∧ qcrit < dixonQ x j
+  IsExtremeObservation x j ∧ 0 ≤ qcrit ∧ qcrit < dixonQ x j
 
-/-- Rejection is monotone in the critical value: a smaller threshold rejects whenever a larger
-one does. -/
-lemma dixonReject_mono {n : ℕ} (x : Fin n → ℝ) (j : Fin n) (qa qb : ℝ) (h : qb ≤ qa)
-    (r : dixonReject x j qa) : dixonReject x j qb :=
-  ⟨r.1, lt_of_le_of_lt h r.2⟩
+/-- Rejection is monotone in the critical value: a smaller nonnegative threshold rejects whenever
+a larger one does. -/
+lemma dixonReject_mono {n : ℕ} (x : Fin n → ℝ) (j : Fin n) (qa qb : ℝ) (hb : 0 ≤ qb)
+    (h : qb ≤ qa) (r : dixonReject x j qa) : dixonReject x j qb :=
+  ⟨r.1, hb, lt_of_le_of_lt h r.2.2⟩
+
+/-- A sample without spread is never rejected by Dixon's procedure, at any critical value. -/
+lemma not_dixonReject_of_no_spread {n : ℕ} (x : Fin n → ℝ) (j : Fin n) (h : sampleRange x = 0)
+    (qcrit : ℝ) : ¬ dixonReject x j qcrit := by
+  rintro ⟨-, hq, hlt⟩
+  rw [dixonQ_of_no_spread x j h] at hlt
+  exact absurd hlt (not_lt.mpr hq)
 
 /-- Grubbs' statistic `G = max_i |x i - x̄| / s` of a sample: the largest absolute deviation from
 the sample mean over the sample standard deviation, and `0` when `s = 0` (no spread, hence no
@@ -420,21 +428,32 @@ lemma exists_grubbsG_eq {n : ℕ} (x : Fin n → ℝ) (h : sampleStdDev x ≠ 0)
   obtain ⟨i, hi⟩ := exists_eq_ciSup_of_finite (f := fun i => |x i - sampleMean x|)
   exact ⟨i, by rw [grubbsG_of_ne x h, ← hi]⟩
 
-/-- Grubbs decision procedure: reject the most extreme observation of `x` at critical value
-`gcrit`. The critical value is an explicit input (tabulated values assume normality). -/
+/-- Grubbs decision procedure: reject the most extreme observation of `x` at the critical value
+`gcrit ≥ 0`. The critical value is an explicit nonnegative input (tabulated values assume
+normality); a negative `gcrit` never rejects. -/
 def grubbsReject {n : ℕ} (x : Fin n → ℝ) (gcrit : ℝ) : Prop :=
-  gcrit < grubbsG x
+  0 ≤ gcrit ∧ gcrit < grubbsG x
 
-/-- Rejection is monotone in the critical value. -/
-lemma grubbsReject_mono {n : ℕ} (x : Fin n → ℝ) (ga gb : ℝ) (h : gb ≤ ga)
+/-- Rejection is monotone in the critical value: a smaller nonnegative threshold rejects whenever
+a larger one does. -/
+lemma grubbsReject_mono {n : ℕ} (x : Fin n → ℝ) (ga gb : ℝ) (hb : 0 ≤ gb) (h : gb ≤ ga)
     (r : grubbsReject x ga) : grubbsReject x gb :=
-  lt_of_le_of_lt h r
+  ⟨hb, lt_of_le_of_lt h r.2⟩
+
+/-- A sample with zero standard deviation is never rejected by Grubbs' procedure, at any critical
+value. -/
+lemma not_grubbsReject_of_sd_zero {n : ℕ} (x : Fin n → ℝ) (h : sampleStdDev x = 0)
+    (gcrit : ℝ) : ¬ grubbsReject x gcrit := by
+  rintro ⟨hg, hlt⟩
+  rw [grubbsG_of_sd_zero x h] at hlt
+  exact absurd hlt (not_lt.mpr hg)
 
 /-! ## E. Multiplicity adjustment and detection limits -/
 
-/-- Bonferroni-adjusted level `α/m`: the conventional multiplicity adjustment comparing each of
-`m` p-values to `α/m`, meaningful for `m ≥ 1` (at `m = 0` Lean's division returns `0`). Stated as
-a conventional adjustment procedure; no error-rate claim is proved here. -/
+/-- Bonferroni-adjusted level `α/m`: each of `m` p-values is compared with `α/m`, meaningful for
+`m ≥ 1` (at `m = 0` Lean's division returns `0`). It is the threshold of the canonical procedure
+`MultipleTesting.bonferroniRejections` (`mem_bonferroniRejections_iff`), whose family-wise error
+control is proved there. -/
 noncomputable def bonferroniLevel (α : ℝ) (m : ℕ) : ℝ :=
   α / (m : ℝ)
 
@@ -444,6 +463,14 @@ lemma bonferroniLevel_nonneg (α : ℝ) (m : ℕ) (hα : 0 ≤ α) :
   unfold bonferroniLevel
   apply div_nonneg hα
   positivity
+
+/-- The canonical Bonferroni procedure rejects exactly the hypotheses whose p-value is at most
+`bonferroniLevel α m`; its family-wise error control is
+`MathlibExt.Probability.Statistics.MultipleTesting.measure_bonferroni_familywiseError_le`. -/
+lemma mem_bonferroniRejections_iff {m : ℕ} (α : ℝ) (p : Fin m → ℝ) (i : Fin m) :
+    i ∈ MathlibExt.Probability.Statistics.MultipleTesting.bonferroniRejections α p ↔
+      p i ≤ bonferroniLevel α m := by
+  simp [MathlibExt.Probability.Statistics.MultipleTesting.bonferroniRejections, bonferroniLevel]
 
 /-- Detection limit `LOD = 3·s/m` as a stated convention (not a theorem): `k = 3` convention,
 `s` the blank standard deviation, `m` the calibration slope, meaningful for `m > 0` (at `m = 0`

@@ -15,9 +15,10 @@ import Mathlib.Tactic.NormNum
 /-!
 # Statistical treatment checks
 
-Instances pinning the pooled SD, both outlier procedures on concrete samples, both LOD
-conventions, the exact t-interval coverage on a normal sample, and boundary cases (no claim at
-`n = 1`; no rejection on degenerate input).
+Instances pinning the canonical pooled variance and variance ratio on concrete samples, both
+outlier procedures on concrete samples, the Bonferroni threshold, both LOD conventions, the exact
+t-interval coverage on a normal sample, and boundary cases (no claim at `n = 1`; no rejection on
+degenerate input at any critical value).
 -/
 
 namespace Chemistry.StatisticalTreatmentTest
@@ -28,25 +29,37 @@ open MathlibExt.Probability.FiniteProbability (sampleMean sampleVarUnbiased samp
 
 @[expose] public section
 
--- Pooled-SD instance: n1 = 5 with s1² = 0.025, n2 = 4 with s2² = 0.02/3;
--- pooled variance (4*0.025 + 3*(0.02/3))/7 = 0.12/7.
-example : pooledVariance 5 4 0.025 (0.02 / 3) = 0.12 / 7 := by
-  have e1 : ((5 - 1 : ℕ) : ℝ) = 4 := by norm_num
-  have e2 : ((4 - 1 : ℕ) : ℝ) = 3 := by norm_num
-  have eD : ((5 + 4 - 2 : ℕ) : ℝ) = 7 := by norm_num
-  unfold pooledVariance
-  rw [e1, e2, eD]
+/-! ### Pooled variance and variance ratio on the samples `1, 2, 3` and `4, 6` -/
+
+/-- Mean `2`, sum of squared deviations `2`, sample variance `1`. -/
+noncomputable def sampleA : Fin 3 → ℝ := ![1, 2, 3]
+
+/-- Mean `5`, sum of squared deviations `2`, sample variance `2`. -/
+noncomputable def sampleB : Fin 2 → ℝ := ![4, 6]
+
+lemma sampleA_var : sampleVarUnbiased sampleA = 1 := by
+  rw [sampleVarUnbiased_eq_sum_div, sampleMean_eq_sum_div, Fin.sum_univ_three, Fin.sum_univ_three,
+    Fintype.card_fin]
+  norm_num [sampleA]
+
+lemma sampleB_var : sampleVarUnbiased sampleB = 2 := by
+  rw [sampleVarUnbiased_eq_sum_div, sampleMean_eq_sum_div, Fin.sum_univ_two, Fin.sum_univ_two,
+    Fintype.card_fin]
+  norm_num [sampleB]
+
+-- Pooled variance from the definition: (2 + 2) / (3 + 2 - 2) = 4/3.
+example : pooledVariance sampleA sampleB = 4 / 3 := by
+  rw [pooledVariance, Fin.sum_univ_three, Fin.sum_univ_three, Fin.sum_univ_two, Fin.sum_univ_two]
+  norm_num [sampleA, sampleB]
+
+-- The weighted form agrees: ((3 - 1) * 1 + (2 - 1) * 2) / 3 = 4/3.
+example : pooledVariance sampleA sampleB = 4 / 3 := by
+  rw [pooledVariance_eq_weighted (by norm_num) (by norm_num), sampleA_var, sampleB_var]
   norm_num
 
--- Pooled-SD instance: the pooled SD is the square root of 0.12/7.
-example : pooledStdDev 5 4 0.025 (0.02 / 3) = Real.sqrt (0.12 / 7) := by
-  have e1 : ((5 - 1 : ℕ) : ℝ) = 4 := by norm_num
-  have e2 : ((4 - 1 : ℕ) : ℝ) = 3 := by norm_num
-  have eD : ((5 + 4 - 2 : ℕ) : ℝ) = 7 := by norm_num
-  unfold pooledStdDev pooledVariance
-  rw [e1, e2, eD]
-  congr 1
-  norm_num
+-- Variance ratio 1 / 2, through the canonical bridge `varianceRatio_eq`.
+example : varianceRatio sampleA sampleB = 1 / 2 := by
+  rw [varianceRatio_eq, sampleA_var, sampleB_var]
 
 /-! ### Dixon's Q on the sample `9.8, 10.0, 10.2, 10.5` -/
 
@@ -88,12 +101,18 @@ example : IsExtremeObservation dixonSample 3 :=
 
 -- Dixon procedure instance: Q = 3/7 rejects at qcrit = 0.41.
 example : dixonReject dixonSample 3 0.41 :=
-  ⟨Or.inl (by rw [dixonSample_iSup]; norm_num [dixonSample]), by rw [dixonSample_Q]; norm_num⟩
+  ⟨Or.inl (by rw [dixonSample_iSup]; norm_num [dixonSample]), by norm_num,
+    by rw [dixonSample_Q]; norm_num⟩
 
 -- Dixon procedure instance: Q = 3/7 does not reject at qcrit = 0.56.
 example : ¬ dixonReject dixonSample 3 0.56 := by
-  rintro ⟨-, h⟩
+  rintro ⟨-, -, h⟩
   rw [dixonSample_Q] at h
+  norm_num at h
+
+-- A negative critical value never rejects.
+example : ¬ dixonReject dixonSample 3 (-1) := by
+  rintro ⟨-, h, -⟩
   norm_num at h
 
 -- A non-extreme observation (`10.0`) is never rejected, whatever its Q.
@@ -130,15 +149,13 @@ lemma grubbsSample_G : grubbsG grubbsSample = 3 / 2 := by
   rw [grubbsG_of_ne _ (by rw [grubbsSample_sd]; norm_num), grubbsSample_maxDev, grubbsSample_sd]
 
 -- Grubbs procedure instance: G = 1.5 rejects at gcrit = 1.4 and not at gcrit = 1.6.
-example : grubbsReject grubbsSample 1.4 := by
-  unfold grubbsReject
-  rw [grubbsSample_G]
-  norm_num
+example : grubbsReject grubbsSample 1.4 :=
+  ⟨by norm_num, by rw [grubbsSample_G]; norm_num⟩
 
 example : ¬ grubbsReject grubbsSample 1.6 := by
-  unfold grubbsReject
-  rw [grubbsSample_G]
-  norm_num
+  rintro ⟨-, h⟩
+  rw [grubbsSample_G] at h
+  norm_num at h
 
 -- Every standardized residual is at most G: observation `0` has `|0 - 1| / 2 = 1/2 ≤ 3/2`.
 example : |grubbsSample 0 - sampleMean grubbsSample| / sampleStdDev grubbsSample
@@ -183,13 +200,54 @@ example : ¬ (2 ≤ 1) := by decide
 -- Boundary: zero-spread input gives no Grubbs claim.
 example (x : Fin 3 → ℝ) (h : sampleStdDev x = 0) : grubbsG x = 0 := grubbsG_of_sd_zero x h
 
--- Boundary: no-spread input gives Q = 0, hence no Dixon rejection at a nonnegative threshold.
+-- Boundary: no-spread input gives Q = 0.
 example (x : Fin 3 → ℝ) (j : Fin 3) (h : sampleRange x = 0) : dixonQ x j = 0 :=
   dixonQ_of_no_spread x j h
+
+/-- A constant sample: every observation is extreme, the range and the SD are `0`. -/
+noncomputable def constSample : Fin 3 → ℝ := fun _ => 5
+
+lemma constSample_range : sampleRange constSample = 0 := by
+  simp [sampleRange, constSample]
+
+-- On the constant sample every observation is extreme ...
+example (j : Fin 3) : IsExtremeObservation constSample j :=
+  Or.inl (by simp [constSample])
+
+-- ... but Dixon's procedure rejects none of them, at any critical value (negative ones included).
+example (j : Fin 3) (q : ℝ) : ¬ dixonReject constSample j q :=
+  not_dixonReject_of_no_spread constSample j constSample_range q
+
+example : ¬ dixonReject constSample 0 (-1) :=
+  not_dixonReject_of_no_spread constSample 0 constSample_range (-1)
+
+-- Grubbs' procedure rejects nothing on the constant sample, at any critical value.
+example (g : ℝ) : ¬ grubbsReject constSample g :=
+  not_grubbsReject_of_sd_zero constSample (sampleStdDev_const 3 (by norm_num) 5 constSample
+    (fun _ => rfl)) g
 
 -- Boundary: constant samples have zero SD, so Grubbs reports 0 end to end.
 example (c : ℝ) (x : Fin 5 → ℝ) (h : ∀ i, x i = c) : grubbsG x = 0 :=
   grubbsG_of_sd_zero x (sampleStdDev_const 5 (by norm_num) c x h)
+
+/-! ### Bonferroni and the random-variable bridges -/
+
+-- With α = 0.05 and m = 2 the threshold is 0.025: p = 0.01 is rejected, p = 0.2 is not.
+example : (0 : Fin 2) ∈
+    MathlibExt.Probability.Statistics.MultipleTesting.bonferroniRejections 0.05 ![0.01, 0.2] := by
+  rw [mem_bonferroniRejections_iff]
+  norm_num [bonferroniLevel]
+
+example : (1 : Fin 2) ∉
+    MathlibExt.Probability.Statistics.MultipleTesting.bonferroniRejections 0.05 ![0.01, 0.2] := by
+  rw [mem_bonferroniRejections_iff]
+  norm_num [bonferroniLevel]
+
+-- The random-variable t-interval is the data-level one on the first `n` observations.
+example (X : ℕ → Unit → ℝ) (q : ℝ) :
+    MathlibExt.Probability.ContinuousDistributions.studentTInterval X 3 q () =
+      tInterval (sampleMean fun i : Fin 3 => X i ()) (sampleStdDev fun i : Fin 3 => X i ()) 3 q :=
+  studentTInterval_eq_tInterval X 3 q ()
 
 end
 
