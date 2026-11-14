@@ -57,10 +57,11 @@ reduction from every language in `NP`
 distance bound `d`. -/
 abbrev ClosestSubstringInstance := ℕ × List (List ℕ) × ℕ × ℕ
 
-/-- Well-formedness of an instance: every letter of every string is in the alphabet, `L` is
-positive, and `L ≤ |sᵢ|` for every string. -/
+/-- Well-formedness of an instance: there is at least one string (so that `min |sᵢ|` exists),
+every letter of every string is in the alphabet, `L` is positive, and `L ≤ |sᵢ|` for every
+string. -/
 def WellFormed (i : ClosestSubstringInstance) : Prop :=
-  (∀ s ∈ i.2.1, ∀ x ∈ s, x < i.1) ∧ 0 < i.2.2.1 ∧ ∀ s ∈ i.2.1, i.2.2.1 ≤ s.length
+  i.2.1 ≠ [] ∧ (∀ s ∈ i.2.1, ∀ x ∈ s, x < i.1) ∧ 0 < i.2.2.1 ∧ ∀ s ∈ i.2.1, i.2.2.1 ≤ s.length
 
 /-- The length-`L` substring of `s` starting at position `j`, as a word `Fin L → ℕ`. -/
 def substringAt (s : List ℕ) (j L : ℕ) : Fin L → ℕ := fun k => s.getD (j + k) 0
