@@ -56,7 +56,9 @@ unchanged. `WellFormed` adds:
 * the grid restriction: the graph of the instance is isomorphic to a (not necessarily induced)
   subgraph of the grid `ℤ × ℤ`, the box product of two copies of the Hasse graph of `ℤ`
   (`SimpleGraph.IsContained`, as in `DominatingSetPartialGridWanted`);
-* `0 < K`, the source's positive bound.
+* `0 < K`, the source's positive bound;
+* `0 < n`: the graph has a vertex. With no vertices the parent's feasibility condition would hold
+  vacuously (no terminals to connect, `T = []`), although the empty graph has no subtree.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -71,11 +73,11 @@ reduction from every language in `NP`
 
 /-- Well-formedness of an instance: the parent's (simple weighted edge list, terminals listed
 once and below `n`), every edge weight is 1, the graph is a subgraph of the grid up to
-isomorphism, and `K` is positive. -/
+isomorphism, `K` is positive, and the graph has a vertex. -/
 def WellFormed (i : SteinerTreeInstance) : Prop :=
   SteinerTree.WellFormed i ∧ (∀ e ∈ i.2.1, e.2.2 = 1) ∧
     (SteinerTree.Graph i i.2.1).IsContained (SimpleGraph.hasse ℤ □ SimpleGraph.hasse ℤ) ∧
-    0 < i.2.2.2
+    0 < i.2.2.2 ∧ 0 < i.1
 
 open Classical in
 /-- STEINER TREE IN GRAPHS with unit weights on grid graphs as a decision problem over
