@@ -22,7 +22,7 @@ public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Data.Fintype.Card
-public import Mathlib.Logic.Relation
+public import WantedExt.Complexity.NPComplete.TwoProcessorUnitFlowShopChainsTardinessWanted
 public import WantedExt.Complexity.NPComplete.UnitFlowShopTransportationDelaysWanted
 
 @[expose] public section
@@ -30,6 +30,8 @@ public import WantedExt.Complexity.NPComplete.UnitFlowShopTransportationDelaysWa
 namespace MetaMathlibExt.Complexity.NPComplete.UnitFlowShopChainsLateJobs
 
 open UnitFlowShopTransportationDelays (IsUnitFlowShopSchedule)
+open TwoProcessorUnitFlowShopChainsTardiness
+  (TwoProcessorUnitFlowShopChainsTardinessInstance Job dueDate Arc)
 
 /-!
 # FLOW SHOP F2|p_ij=1;chains|ΣU_i is NP-complete
@@ -48,17 +50,20 @@ classification lists it as minimal strongly NP-hard, citing Brucker and Knust (1
 complexity results for single-machine problems with constant positive time-lags "also lead to
 new results for flow-shop problems with unit processing times and job precedences".
 
-The chains are given by the list of immediate-predecessor pairs `(a, b)` ("`a` immediately
-precedes `b`"); `WellFormed` requires that every pair names two jobs, that no job has two
-immediate successors or two immediate predecessors, and that the pairs have no directed cycle
-(`IsChains`). Enforcing the listed immediate precedences enforces the whole chain order, since
-it is their transitive closure. A schedule is the repository's unit-time two-machine flow-shop
-schedule `IsUnitFlowShopSchedule` with zero delays: each machine runs a one-processor schedule of
-its unit operations and a job's second operation starts after its first is completed. Start
-times are natural numbers: with integer data, shifting every operation of a feasible schedule as
-early as its machine order allows gives an integral schedule with no later completion times, so
-this does not change the answer. The jobs are `Fin n`, one per listed due date. Binary encoding
-of all numbers (the problem is NP-complete in the strong sense).
+The instance, jobs, due dates, chain arcs and well-formedness are those of
+`TwoProcessorUnitFlowShopChainsTardinessWanted` (`F2|p_ij=1; chains|∑ T_i`), reused unchanged:
+the chains are given by the list of immediate-predecessor pairs `(j, k)`, and `WellFormed`
+requires that every pair names two jobs, that no job has two immediate successors or two
+immediate predecessors, and that the pairs have no cycle. Enforcing the listed immediate
+precedences enforces the whole chain order, since it is their transitive closure.
+
+A schedule is the repository's unit-time two-machine flow-shop schedule `IsUnitFlowShopSchedule`
+with zero delays: each machine runs a one-processor schedule of its unit operations and a job's
+second operation starts after its first is completed. Start times are natural numbers: with
+integer data, shifting every operation of a feasible schedule as early as its machine order
+allows gives an integral schedule with no later completion times, so this does not change the
+answer. The jobs are `Fin n`, one per listed due date. Binary encoding of all numbers (the problem
+is NP-complete in the strong sense).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -71,40 +76,13 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- The pairs `arcs` (`(a, b)`: job `a` immediately precedes job `b`) form disjoint chains on
-the jobs `0, …, n - 1`: every pair names two jobs, no job has two immediate successors or two
-immediate predecessors, and there is no directed cycle (so no job precedes itself). -/
-def IsChains (n : ℕ) (arcs : List (ℕ × ℕ)) : Prop :=
-  (∀ e ∈ arcs, e.1 < n ∧ e.2 < n) ∧
-    (∀ e ∈ arcs, ∀ e' ∈ arcs, e.1 = e'.1 → e = e') ∧
-    (∀ e ∈ arcs, ∀ e' ∈ arcs, e.2 = e'.2 → e = e') ∧
-    ∀ v, ¬ Relation.TransGen (fun a b => (a, b) ∈ arcs) v v
-
-/-- An instance: the due dates `d_j`, one per job; the immediate-predecessor pairs of the chains;
-and the bound `K`. -/
-abbrev UnitFlowShopChainsLateJobsInstance := List ℕ × List (ℕ × ℕ) × ℕ
-
-/-- The jobs of the instance, `Fin n` for `n` listed due dates. -/
-abbrev Job (i : UnitFlowShopChainsLateJobsInstance) : Type := Fin i.1.length
-
-/-- The due date `d_j` of job `j`. -/
-def dueDate (i : UnitFlowShopChainsLateJobsInstance) (j : Job i) : ℕ :=
-  i.1.get j
-
-/-- Job `a` immediately precedes job `b`: the pair `(a, b)` is listed. -/
-def Prec (i : UnitFlowShopChainsLateJobsInstance) (a b : Job i) : Prop :=
-  ((a : ℕ), (b : ℕ)) ∈ i.2.1
-
-/-- Well-formedness of an instance: the listed pairs form disjoint chains on the jobs. -/
-def WellFormed (i : UnitFlowShopChainsLateJobsInstance) : Prop :=
-  IsChains i.1.length i.2.1
-
 /-- Some unit-time two-machine flow-shop schedule obeys the chains (job `b` starts on `M₁` only
 after its immediate predecessor `a` completes on `M₂`) and has at most `K` late jobs: jobs `j`
 with `d_j < C_j`, where `C_j = σ 1 j + 1`. -/
-def UnitFlowShopChainsLateJobsFeasible (i : UnitFlowShopChainsLateJobsInstance) : Prop :=
+def UnitFlowShopChainsLateJobsFeasible (i : TwoProcessorUnitFlowShopChainsTardinessInstance) :
+    Prop :=
   ∃ σ : Fin 2 → Job i → ℕ, IsUnitFlowShopSchedule (fun _ => 0) σ ∧
-    (∀ a b, Prec i a b → σ 1 a + 1 ≤ σ 0 b) ∧
+    (∀ a b, Arc i a b → σ 1 a + 1 ≤ σ 0 b) ∧
     (Finset.univ.filter fun j => dueDate i j < σ 1 j + 1).card ≤ i.2.2
 
 open Classical in
@@ -112,8 +90,10 @@ open Classical in
 noncomputable def unitFlowShopChainsLateJobsDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := UnitFlowShopChainsLateJobsInstance) x with
-  | some i => decide (WellFormed i ∧ UnitFlowShopChainsLateJobsFeasible i)
+      (α := TwoProcessorUnitFlowShopChainsTardinessInstance) x with
+  | some i =>
+    decide (TwoProcessorUnitFlowShopChainsTardiness.WellFormed i ∧
+      UnitFlowShopChainsLateJobsFeasible i)
   | none => false
 
 /-- **FLOW SHOP `F2|p_ij=1;chains|∑ U_i` is NP-complete.** Source: Brucker and Knust (1999);
