@@ -54,7 +54,7 @@ theorem popScoreCov_const {Ω : Type*} [MeasurableSpace Ω]
   ext a b
   fin_cases a
   fin_cases b
-  simp [popScoreCov]
+  simp [popScoreCov, hc0PopMeat]
   norm_num
 
 /-- For `k = Fin 1` the sandwich is `Ω / Q²`. -/

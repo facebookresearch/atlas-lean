@@ -37,10 +37,11 @@ under `Q⁻¹`, which is `N(0, Q⁻¹ Ω Q⁻¹)` by
 whenever `Q̂ₙ` is a unit, and `P(Q̂ₙ not a unit) → 0`, so it tends to `0` in probability;
 `tendstoInDistribution_of_tendstoInMeasure_sub` closes the argument.
 
-`popScoreCov_eq_hc0PopMeat` and `popScoreCov_sandwich_eq_hc0PopSandwich` identify the meat and
-the limit covariance with `hc0PopMeat` and `hc0PopSandwich` of `HeteroskedasticityRobust`, whose
-robust Wald theorem `tendsto_coverage_hc0Wald` assumes asymptotic normality of a linear contrast
-(`hAN`); deriving that contrast form from this theorem is not done here.
+`popScoreCov` abbreviates the population HC0 meat `hc0PopMeat` of `HeteroskedasticityRobust`
+(`popScoreCov_eq_hc0PopMeat` is `rfl`), and `popScoreCov_sandwich_eq_hc0PopSandwich` identifies
+the limit covariance with `hc0PopSandwich`, whose robust Wald theorem `tendsto_coverage_hc0Wald`
+assumes asymptotic normality of a linear contrast (`hAN`); deriving that contrast form from this
+theorem is not done here.
 -/
 
 @[expose] public section
@@ -51,14 +52,24 @@ open scoped Function RealInnerProductSpace Topology
 
 namespace MathlibExt.Probability.Statistics.LinearModel
 
-/-- The population score second-moment matrix, entrywise:
-`Ω a b = 𝔼[(x₀ u₀) a * (x₀ u₀) b]`. Under the exogeneity hypothesis
-`𝔼[x₀ u₀] = 0` this is the covariance matrix of the score `x₀ u₀`, the
-meat of the sandwich covariance `Q⁻¹ Ω Q⁻¹`. It equals the population HC0 meat
-`hc0PopMeat` (`popScoreCov_eq_hc0PopMeat`); the frozen ST05.T02 statement keeps this name. -/
-noncomputable def popScoreCov {k : Type*} [Fintype k] {Ω : Type*} [MeasurableSpace Ω]
+/-- The population score second-moment matrix `Ω a b = 𝔼[(x₀ u₀) a * (x₀ u₀) b]`, the meat of
+the sandwich covariance `Q⁻¹ Ω Q⁻¹`. Under the exogeneity hypothesis `𝔼[x₀ u₀] = 0` this is the
+covariance matrix of the score `x₀ u₀`. The frozen ST05.T02 statement keeps this name; it is an
+abbreviation for the population HC0 meat `hc0PopMeat`, `𝔼[u₀² x₀ x₀ᵀ]`, the same matrix written
+with `u₀²` (`popScoreCov_apply` gives the score form of the entries). -/
+noncomputable abbrev popScoreCov {k : Type*} [Fintype k] {Ω : Type*} [MeasurableSpace Ω]
     (X0 : Ω → (k → ℝ)) (U0 : Ω → ℝ) (μ : Measure Ω) : Matrix k k ℝ :=
-  Matrix.of fun a b => ∫ ω, ((U0 ω) • X0 ω) a * ((U0 ω) • X0 ω) b ∂μ
+  hc0PopMeat X0 U0 μ
+
+/-- The entries of `popScoreCov` in score form: `Ω a b = 𝔼[(x₀ u₀) a * (x₀ u₀) b]`. -/
+theorem popScoreCov_apply {k : Type*} [Fintype k] {Ω : Type*} [MeasurableSpace Ω]
+    (X0 : Ω → (k → ℝ)) (U0 : Ω → ℝ) (μ : Measure Ω) (a b : k) :
+    popScoreCov X0 U0 μ a b = ∫ ω, ((U0 ω) • X0 ω) a * ((U0 ω) • X0 ω) b ∂μ := by
+  simp only [popScoreCov, hc0PopMeat, Matrix.of_apply]
+  congr 1
+  funext ω
+  simp only [Pi.smul_apply, smul_eq_mul]
+  ring
 
 /-! ### Proof steps -/
 
@@ -75,8 +86,7 @@ private lemma popScoreCov_posSemidef {k : Type*} [Fintype k] {Ω : Type*} [Measu
   refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg ?_ ?_
   · change (popScoreCov X0 U0 μ)ᴴ = popScoreCov X0 U0 μ
     ext a b
-    simp only [Matrix.conjTranspose_apply, popScoreCov, Matrix.of_apply,
-      star_trivial]
+    simp only [Matrix.conjTranspose_apply, popScoreCov_apply, star_trivial]
     apply integral_congr_ae
     filter_upwards with ω
     exact mul_comm _ _
@@ -89,7 +99,7 @@ private lemma popScoreCov_posSemidef {k : Type*} [Fintype k] {Ω : Type*} [Measu
         (integral_const_mul _ _).symm
       have hL : x i * (popScoreCov X0 U0 μ i j * x j)
           = (x i * x j) * (∫ ω, (U0 ω • X0 ω) i * (U0 ω • X0 ω) j ∂μ) := by
-        simp only [popScoreCov, Matrix.of_apply]
+        simp only [popScoreCov_apply]
         ring
       have hR : (fun ω => x i * (((U0 ω • X0 ω) i * (U0 ω • X0 ω) j) * x j))
           = fun ω => (x i * x j) * ((U0 ω • X0 ω) i * (U0 ω • X0 ω) j) := by
@@ -213,7 +223,7 @@ private lemma variance_inner_score {k : Type*} [Fintype k] {Ω : Type*} [Measura
         (integral_const_mul _ _).symm
       have hL : x i * (popScoreCov X0 U0 μ i j * x j)
           = (x i * x j) * (∫ ω, (U0 ω • X0 ω) i * (U0 ω • X0 ω) j ∂μ) := by
-        simp only [popScoreCov, Matrix.of_apply]
+        simp only [popScoreCov_apply]
         ring
       have hR : (fun ω => x i * (((U0 ω • X0 ω) i * (U0 ω • X0 ω) j) * x j))
           = fun ω => (x i * x j) * ((U0 ω • X0 ω) i * (U0 ω • X0 ω) j) := by
@@ -969,16 +979,11 @@ theorem tendstoInDistribution_sqrt_mul_olsSeqEstimator_sub
 
 /-! ### Relation to the HC0 sandwich of `HeteroskedasticityRobust` -/
 
-/-- `popScoreCov` is the population HC0 meat `hc0PopMeat`. -/
+/-- `popScoreCov` is the population HC0 meat `hc0PopMeat`, by definition. -/
 theorem popScoreCov_eq_hc0PopMeat {k : Type*} [Fintype k] {Ω : Type*} [MeasurableSpace Ω]
     (X0 : Ω → (k → ℝ)) (U0 : Ω → ℝ) (μ : Measure Ω) :
-    popScoreCov X0 U0 μ = hc0PopMeat X0 U0 μ := by
-  ext a b
-  simp only [popScoreCov, hc0PopMeat, Matrix.of_apply]
-  congr 1
-  funext ω
-  simp only [Pi.smul_apply, smul_eq_mul]
-  ring
+    popScoreCov X0 U0 μ = hc0PopMeat X0 U0 μ :=
+  rfl
 
 /-- The asymptotic covariance `Q⁻¹ Ω Q⁻¹` of `√n (β̂ₙ - β)` is the population HC0 sandwich
 `hc0PopSandwich`. -/
