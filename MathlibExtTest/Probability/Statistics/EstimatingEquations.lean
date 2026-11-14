@@ -13,6 +13,7 @@ public import Mathlib.Probability.Independence.InfinitePi
 public import Mathlib.Probability.StrongLaw
 public import Mathlib.Probability.Distributions.Gaussian.Real
 import MathlibExt.Probability.Statistics.VectorInference
+import Mathlib.Analysis.PSeries
 
 /-!
 # Tests for general estimating equations: cluster sandwich and asymptotic linearity
@@ -28,6 +29,9 @@ import MathlibExt.Probability.Statistics.VectorInference
 * Boundary (S16.3, negative): the constant function `1` on `ℕ` with counting measure
   is not square integrable, so it is not an influence function and no normal limit is
   claimed.
+* Boundary (S16.3, integrability): `φ n = 1 / (n + 1)` on `ℕ` with counting measure is
+  square integrable and its Bochner integral is the junk value `0`, but it is not
+  integrable, so it is not an influence function.
 -/
 
 @[expose] public section
@@ -296,8 +300,9 @@ theorem tendstoInDistribution_sqrt_mean_of_clusterEE :
 /-- The identity is an influence function on `N(0, 1)`. -/
 theorem influenceFunction_id :
     IsInfluenceFunction (fun x : ℝ => x) (gaussianReal 0 1) := by
-  refine ⟨measurable_id, memLp_id_gaussianReal' 2 (by simp), ?_⟩
-  exact integral_id_gaussianReal
+  refine ⟨measurable_id, memLp_id_gaussianReal' 2 (by simp), ?_, ?_⟩
+  · exact (memLp_id_gaussianReal' 2 (by simp)).integrable one_le_two
+  · exact integral_id_gaussianReal
 
 /-- The sample mean has zero remainder: the linear expansion is exact. -/
 theorem tendstoInMeasure_rem_clusterMean :
@@ -366,7 +371,7 @@ theorem not_isFiniteMeasure_count :
 function: no normal limit is claimed for it. -/
 theorem not_isInfluenceFunction_const :
     ¬ IsInfluenceFunction (fun _ : ℕ => (1 : ℝ)) Measure.count := by
-  rintro ⟨-, hLp, -⟩
+  rintro ⟨-, hLp, -, -⟩
   have hInt : Integrable (fun _ : ℕ => (1 : ℝ)) Measure.count := by
     have h := (memLp_two_iff_integrable_sq_norm
       aestronglyMeasurable_const).1 hLp
@@ -375,5 +380,40 @@ theorem not_isInfluenceFunction_const :
   rcases hInt with h | h
   · exact one_ne_zero h
   · exact absurd h not_isFiniteMeasure_count
+
+/-- The sequence `φ n = 1 / (n + 1)`: square summable but not summable. -/
+noncomputable def harmonicTail (n : ℕ) : ℝ := 1 / ((n : ℝ) + 1)
+
+/-- `φ n = 1 / (n + 1)` is square integrable for counting measure. -/
+theorem memLp_two_harmonicTail : MemLp harmonicTail 2 Measure.count := by
+  rw [memLp_two_iff_integrable_sq_norm
+    (measurable_of_countable harmonicTail).aestronglyMeasurable, integrable_count_iff]
+  have h : Summable (fun n : ℕ => 1 / ((n + 1 : ℕ) : ℝ) ^ 2) :=
+    (summable_nat_add_iff 1).2 (Real.summable_one_div_nat_pow.2 one_lt_two)
+  refine h.congr fun n => ?_
+  have hn : (0 : ℝ) < (n : ℝ) + 1 := by positivity
+  simp only [harmonicTail, Nat.cast_add, Nat.cast_one, Real.norm_eq_abs, abs_pow,
+    abs_div, abs_one, abs_of_pos hn, div_pow, one_pow]
+
+/-- `φ n = 1 / (n + 1)` is not integrable for counting measure (harmonic series). -/
+theorem not_integrable_harmonicTail : ¬ Integrable harmonicTail Measure.count := by
+  rw [integrable_count_iff]
+  intro h
+  have h' : Summable (fun n : ℕ => 1 / ((n + 1 : ℕ) : ℝ)) := by
+    refine h.congr fun n => ?_
+    have hn : (0 : ℝ) < (n : ℝ) + 1 := by positivity
+    simp only [harmonicTail, Nat.cast_add, Nat.cast_one, Real.norm_eq_abs, abs_div,
+      abs_one, abs_of_pos hn]
+  exact Real.not_summable_one_div_natCast ((summable_nat_add_iff 1).1 h')
+
+/-- The Bochner integral of `φ n = 1 / (n + 1)` is the junk value `0`. -/
+theorem integral_harmonicTail : ∫ n, harmonicTail n ∂Measure.count = 0 :=
+  integral_undef not_integrable_harmonicTail
+
+/-- Boundary (integrability): `φ n = 1 / (n + 1)` is measurable, square integrable and has
+junk integral `0`, yet it is not an influence function, because it is not integrable. -/
+theorem not_isInfluenceFunction_harmonicTail :
+    ¬ IsInfluenceFunction harmonicTail Measure.count :=
+  fun h => not_integrable_harmonicTail h.2.2.1
 
 end MathlibExtTest.Probability.Statistics.EstimatingEquations

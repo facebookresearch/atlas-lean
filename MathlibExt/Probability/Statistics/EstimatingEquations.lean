@@ -50,9 +50,9 @@ identified with `N(0, A⁻¹ B A⁻ᵀ)` through the repository's sandwich opera
 
 ## S16.3: asymptotically linear estimators
 
-For an asymptotically linear estimator with square-integrable mean-zero influence
-function, `√n (θ̂ₙ - θ) = n^{-1/2} ∑ φ(Xᵢ) + oₚ(1)` with `E φ = 0`, `φ ∈ L²`, the normal
-limit follows from the shared scalar/vector CLT plus Slutsky: the scalar case
+For an asymptotically linear estimator with an integrable, square-integrable, mean-zero
+influence function, `√n (θ̂ₙ - θ) = n^{-1/2} ∑ φ(Xᵢ) + oₚ(1)` with `E φ = 0`, `φ ∈ L²`, the
+normal limit follows from the shared scalar/vector CLT plus Slutsky: the scalar case
 (`tendstoInDistribution_of_asymptoticallyLinear`) via Mathlib's
 `tendstoInDistribution_inv_sqrt_mul_sum_sub`, the vector case
 (`tendstoInDistribution_of_asymptoticallyLinear_vector`) via
@@ -65,7 +65,7 @@ remainder bound is a separate obligation and is assumed here, not proved.
 * `tendstoInDistribution_sqrt_smul_sub_of_clusterEstimatingEquation`: the cluster
   sandwich theorem, `√n (θ̂ₙ - θ₀) ⇒ Z` with `⟪Z, t⟫ ~ N(0, ⟪A⁻¹ B A⁻ᵀ t, t⟫)`, where
   `A⁻¹ B A⁻ᵀ = sandwichCovariance A B` and `B = covarianceOperator (μC.map (ψ θ₀))`.
-* `IsInfluenceFunction`: `φ ∈ L²` with mean zero.
+* `IsInfluenceFunction`: `φ` measurable, integrable and in `L²`, with mean zero.
 * `tendstoInDistribution_of_asymptoticallyLinear` (scalar),
   `tendstoInDistribution_of_asymptoticallyLinear_vector` (vector): normal limits for
   asymptotically linear estimators.
@@ -216,17 +216,20 @@ theorem tendstoInDistribution_sqrt_smul_sub_of_clusterEstimatingEquation
 
 /-! ### Asymptotically linear estimators (S16.3) -/
 
-/-- An **influence function**: measurable, square integrable, with mean zero. -/
+/-- An **influence function**: measurable, square integrable and integrable, with mean
+zero. Integrability is a separate condition because square integrability does not imply it
+on an infinite measure, where the Bochner integral of a non-integrable function is the junk
+value `0`. -/
 def IsInfluenceFunction
     {𝓧 : Type*} [MeasurableSpace 𝓧]
     {E : Type*} [MeasurableSpace E]
     [NormedAddCommGroup E] [InnerProductSpace ℝ E]
     (φ : 𝓧 → E) (μX : Measure 𝓧) : Prop :=
-  Measurable φ ∧ MemLp φ 2 μX ∧ ∫ x, φ x ∂μX = 0
+  Measurable φ ∧ MemLp φ 2 μX ∧ Integrable φ μX ∧ ∫ x, φ x ∂μX = 0
 
 /-- **Normal limit of an asymptotically linear estimator (scalar).** If
-`√n (θ̂ₙ - θ) = n^{-1/2} ∑ φ(Xᵢ) + oₚ(1)` with `φ` a square-integrable mean-zero
-influence function, then `√n (θ̂ₙ - θ) ⇒ N(0, E φ²)`: the CLT
+`√n (θ̂ₙ - θ) = n^{-1/2} ∑ φ(Xᵢ) + oₚ(1)` with `φ` an influence function (integrable,
+square integrable, mean zero), then `√n (θ̂ₙ - θ) ⇒ N(0, E φ²)`: the CLT
 (`tendstoInDistribution_inv_sqrt_mul_sum_sub`) gives the limit for the linear part and
 Slutsky (`tendstoInDistribution_of_tendstoInMeasure_sub`) removes the remainder. The
 `oₚ(1)` remainder is an explicit hypothesis; a cross-fitted nuisance product-rate
@@ -254,7 +257,7 @@ theorem tendstoInDistribution_of_asymptoticallyLinear
       atTop Y (fun _ => P) P' := by
   have hφ_meas : Measurable φ := hφ.1
   have hMemLp : MemLp φ 2 μX := hφ.2.1
-  have hmean0 : ∫ x, φ x ∂μX = 0 := hφ.2.2
+  have hmean0 : ∫ x, φ x ∂μX = 0 := hφ.2.2.2
   set Z : ℕ → Ω → ℝ := fun i ω => φ (X i ω) with hZ_def
   have hident : ∀ i, IdentDistrib (Z i) (Z 0) P P := fun i =>
     (⟨(hX_law i).aemeasurable, (hX_law 0).aemeasurable,
@@ -287,8 +290,8 @@ theorem tendstoInDistribution_of_asymptoticallyLinear
     (fun n => ((hθ_meas n).sub_const _).const_mul _)
 
 /-- **Normal limit of an asymptotically linear estimator (vector).** If
-`√n (θ̂ₙ - θ) = n^{-1/2} ∑ φ(Xᵢ) + oₚ(1)` with `φ` a square-integrable mean-zero
-influence function, then `√n (θ̂ₙ - θ) ⇒ Y` with `⟪Y, t⟫ ~ N(0, E ⟪φ, t⟫²)`: the
+`√n (θ̂ₙ - θ) = n^{-1/2} ∑ φ(Xᵢ) + oₚ(1)` with `φ` an influence function (integrable,
+square integrable, mean zero), then `√n (θ̂ₙ - θ) ⇒ Y` with `⟪Y, t⟫ ~ N(0, E ⟪φ, t⟫²)`: the
 multivariate CLT (`tendstoInDistribution_inv_sqrt_smul_sum_comp`) plus Slutsky. As in
 the scalar case, the `oₚ(1)` remainder (in particular any cross-fitted nuisance
 product-rate bound) is an explicit hypothesis, not proved here. -/
@@ -320,7 +323,7 @@ theorem tendstoInDistribution_of_asymptoticallyLinear_vector
   have hφ_sq : Integrable (fun x => ‖φ x‖ ^ 2) μX :=
     hMemLp.integrable_norm_pow two_ne_zero
   have hCLT := tendstoInDistribution_inv_sqrt_smul_sum_comp
-    hX_law hX_indep hφ_meas hφ_sq hφ.2.2 hY_meas hY
+    hX_law hX_indep hφ_meas hφ_sq hφ.2.2.2 hY_meas hY
   refine tendstoInDistribution_of_tendstoInMeasure_sub _ Y hCLT hrem
     (fun n => ((hθ_meas n).sub_const _).const_smul _)
 
