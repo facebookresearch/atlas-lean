@@ -15,6 +15,8 @@ namespace MathlibExtTest.LinearModelOLSAsymptoticNormality
 open Matrix MeasureTheory ProbabilityTheory Filter Finset
 open MathlibExt.Probability.Statistics.LinearModel
 
+-- Moment hypotheses are assumed, not discharged: this example instantiates
+-- the theorem at `k = Fin 1`.
 example {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {X : ℕ → Ω → (Fin 1 → ℝ)} {U : ℕ → Ω → ℝ} (β : Fin 1 → ℝ)
     (hindep : iIndepFun (fun (i : ℕ) (ω : Ω) => (X i ω, U i ω)) μ)
