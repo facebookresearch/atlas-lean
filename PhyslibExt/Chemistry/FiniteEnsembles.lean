@@ -17,6 +17,8 @@ public import Mathlib.Data.Finsupp.Multiset
 public import Mathlib.Data.Sym.Card
 public import MathlibExt.InformationTheory.LogSum
 public import Physlib.StatisticalMechanics.CanonicalEnsemble.Finite
+
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 /-!
 
 # Finite-state ensembles and partition functions
@@ -153,6 +155,8 @@ ATLAS module `MathlibExt.InformationTheory.LogSum`: no unlanded ATLAS module
 - `sum_mul_log_div_nonneg`, `sum_mul_log_div_eq_zero_iff` : Gibbs' inequality and its equality
   case, and `sum_mul_log_div_boltzmannProb_nonneg`, `sum_mul_log_div_boltzmannProb_eq_zero_iff`
   relative to the Boltzmann distribution.
+- `shannonEntropy_nonneg`, `shannonEntropy_eq_zero_iff` : `0 ≤ H(p)` for a probability
+  distribution, with equality exactly at a point mass.
 - `shannonEntropy_le_shannonEntropy_boltzmannProb`,
   `shannonEntropy_eq_shannonEntropy_boltzmannProb_iff` : at fixed mean energy the Boltzmann
   distribution maximizes the Shannon entropy, and is the only maximizer.
@@ -261,6 +265,51 @@ noncomputable def shannonEntropy {ι : Type*} [Fintype ι] (p : ι → ℝ) : �
 lemma nonempty_of_sum_eq_one {ι : Type*} [Fintype ι] {p : ι → ℝ} (hp1 : ∑ i, p i = 1) :
     Nonempty ι :=
   Finset.univ_nonempty_iff.mp (Finset.nonempty_of_sum_ne_zero (by rw [hp1]; exact one_ne_zero))
+
+/-- The Shannon entropy of a probability distribution is nonnegative: each term satisfies
+`p i * log (p i) ≤ 0` because `0 ≤ p i ≤ 1` (`Real.mul_log_nonpos`). -/
+lemma shannonEntropy_nonneg {ι : Type*} [Fintype ι] {p : ι → ℝ} (hp : ∀ i, 0 ≤ p i)
+    (hp1 : ∑ i, p i = 1) : 0 ≤ shannonEntropy p := by
+  have hle : ∀ i, p i ≤ 1 := fun i =>
+    (Finset.single_le_sum (fun j _ => hp j) (Finset.mem_univ i)).trans hp1.le
+  rw [shannonEntropy, neg_nonneg]
+  exact Finset.sum_nonpos fun i _ => Real.mul_log_nonpos (hp i) (hle i)
+
+/-- The Shannon entropy of a probability distribution vanishes exactly at a point mass: some
+state has probability `1` and every other state has probability `0`. -/
+lemma shannonEntropy_eq_zero_iff {ι : Type*} [Fintype ι] {p : ι → ℝ} (hp : ∀ i, 0 ≤ p i)
+    (hp1 : ∑ i, p i = 1) :
+    shannonEntropy p = 0 ↔ ∃ i, p i = 1 ∧ ∀ j, j ≠ i → p j = 0 := by
+  classical
+  have hle : ∀ i, p i ≤ 1 := fun i =>
+    (Finset.single_le_sum (fun j _ => hp j) (Finset.mem_univ i)).trans hp1.le
+  have hterm : ∀ i ∈ (Finset.univ : Finset ι), p i * Real.log (p i) ≤ 0 :=
+    fun i _ => Real.mul_log_nonpos (hp i) (hle i)
+  rw [shannonEntropy, neg_eq_zero, Finset.sum_eq_zero_iff_of_nonpos hterm]
+  constructor
+  · intro hall
+    have h01 : ∀ i, p i = 0 ∨ p i = 1 := by
+      intro i
+      rcases mul_eq_zero.mp (hall i (Finset.mem_univ i)) with hpi | hlog
+      · exact Or.inl hpi
+      · rcases (hp i).eq_or_lt with h0 | hpos
+        · exact Or.inl h0.symm
+        · exact Or.inr (Real.eq_one_of_pos_of_log_eq_zero hpos hlog)
+    obtain ⟨i0, hi0⟩ : ∃ i, p i = 1 := by
+      by_contra hne
+      have hsum0 : ∑ i, p i = 0 :=
+        Finset.sum_eq_zero fun i _ => (h01 i).resolve_right fun h => hne ⟨i, h⟩
+      rw [hp1] at hsum0
+      exact one_ne_zero hsum0
+    refine ⟨i0, hi0, fun j hj => (h01 j).resolve_right fun hpj => ?_⟩
+    have h2 : ∑ k ∈ ({i0, j} : Finset ι), p k ≤ ∑ k, p k :=
+      Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _) fun k _ _ => hp k
+    rw [Finset.sum_pair (Ne.symm hj), hi0, hpj, hp1] at h2
+    norm_num at h2
+  · rintro ⟨i, hi1, hj0⟩ k _
+    by_cases hki : k = i
+    · rw [hki, hi1, Real.log_one, mul_zero]
+    · rw [hj0 k hki, zero_mul]
 
 /-- The pointwise bound `p * log (q / p) ≤ q - p` for `0 ≤ p` and `0 < q`, from
 `log x ≤ x - 1`. Rearranged, it is `0 ≤ q * InformationTheory.klFun (p / q)`. -/

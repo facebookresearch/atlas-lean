@@ -9,6 +9,8 @@ module
 
 public import PhyslibExt.Chemistry.Thermodynamics.Entropy
 
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
+
 /-!
 
 # Tests for entropy, heat engines and the third law
@@ -91,6 +93,12 @@ efficiency. -/
 example : (1000 / 600 - 100 / 300 : ℝ) = 4 / 3 := by norm_num
 
 example : ¬ ((1000 / 600 - 100 / 300 : ℝ) ≤ 0) := by norm_num
+
+/-- Its efficiency `900 / 1000` exceeds the Carnot bound, as the violated Clausius inequality
+allows. -/
+example : ¬ ((900 / 1000 : ℝ) ≤ carnotEfficiency 300 600) := by
+  unfold carnotEfficiency
+  norm_num
 
 /-!
 
@@ -178,8 +186,7 @@ example (R : ℝ) (hR : 0 ≤ R) :
 
 /-- Single component `x = ![1, 0]`: the mixing entropy is `0`. -/
 example (R : ℝ) : entropyOfMixing 1 R (![1, 0] : Fin 2 → ℝ) = 0 := by
-  unfold entropyOfMixing
-  rw [Fin.sum_univ_two]
+  rw [entropyOfMixing_eq_neg_sum, Fin.sum_univ_two]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Real.log_one, mul_zero, zero_mul,
     add_zero]
 
@@ -187,8 +194,7 @@ example (R : ℝ) : entropyOfMixing 1 R (![1, 0] : Fin 2 → ℝ) = 0 := by
 mixing entropy is `R * log 2`. -/
 example (R : ℝ) :
     entropyOfMixing 1 R (![1/2, 1/2, 0] : Fin 3 → ℝ) = R * Real.log 2 := by
-  unfold entropyOfMixing
-  rw [Fin.sum_univ_three]
+  rw [entropyOfMixing_eq_neg_sum, Fin.sum_univ_three]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_two,
     Matrix.tail_cons, Matrix.head_cons, zero_mul, add_zero]
   have hlog : Real.log (1/2 : ℝ) = -Real.log 2 := by
@@ -254,19 +260,24 @@ example : carnotEfficiency 300 300 = 0 := by
   unfold carnotEfficiency
   norm_num
 
-/-- (e) Boundary case: `T ≤ 0` is outside the domain — the Carnot-cycle hypotheses
-`0 < Tc ∧ Tc < Th` are false for `Tc = 0`. -/
-example : ¬ ((0:ℝ) < 0 ∧ (0:ℝ) < 600) := by norm_num
+/-- (e) Boundary case: at `Tc = 0` the formula would give efficiency `1`, which is why the
+Carnot-cycle lemmas assume `0 < Tc`. -/
+example : carnotEfficiency 0 600 = 1 := by
+  unfold carnotEfficiency
+  norm_num
 
-/-- (e) Boundary case: `x = ![2, -1]` sums to `1` but has a negative fraction, so
-nonnegativity is not claimed there — the `x i ≤ 1` step already fails: `¬ 2 ≤ 1`. -/
+/-- (e) Boundary case: `x = ![2, -1]` sums to `1` but has a negative fraction. -/
 example : ∑ i, (![2, -1] : Fin 2 → ℝ) i = 1 := by
   rw [Fin.sum_univ_two]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
   norm_num
 
-example : (![2, -1] : Fin 2 → ℝ) 1 = -1 := by simp
-
-example : ¬ ((2:ℝ) ≤ 1) := by norm_num
+/-- (e) Countermodel: for `x = ![2, -1]` the mixing entropy is `-2 * log 2 < 0`, so the
+hypothesis `∀ i, 0 ≤ x i` of `entropyOfMixingNonneg` cannot be dropped. -/
+example : entropyOfMixing 1 1 (![2, -1] : Fin 2 → ℝ) < 0 := by
+  rw [entropyOfMixing_eq_neg_sum, Fin.sum_univ_two]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Real.log_neg_eq_log, Real.log_one]
+  have hL : 0 < Real.log 2 := Real.log_pos one_lt_two
+  linarith
 
 end PhyslibExtTest.Chemistry.Thermodynamics

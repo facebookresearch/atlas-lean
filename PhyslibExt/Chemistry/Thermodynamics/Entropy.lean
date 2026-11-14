@@ -7,15 +7,16 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import PhyslibExt.Chemistry.FiniteEnsembles
+
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
 
@@ -26,10 +27,11 @@ absolute entropy with the third-law convention.
 
 ## i. Overview
 
-All temperatures are absolute: `T > 0` is a hypothesis wherever `1 / T` or `log T` appears.
-`R > 0` is the molar gas constant, a symbolic positive real parameter; no numerical value is
-fixed. `n` is the amount of substance in mol (`0 < n` where division by `n` or a per-mol
-statement needs it). `cv > 0` is a constant molar heat capacity.
+Temperatures are absolute, `R` is the molar gas constant (a symbolic real parameter; no
+numerical value is fixed), `n` is the amount of substance in mol and `cv` a constant molar heat
+capacity. Each lemma states the positivity hypotheses it uses (`0 < T`, `0 < R`, `0 < n`,
+`0 < cv`); the definitions and the purely algebraic identities hold for all real arguments, and
+their physical reading is at positive values.
 
 The physics inputs are carried as explicit hypotheses and definitions, never derived here.
 The adiabatic relations of §A, the Clausius inequality (the second-law input, LAW), the
@@ -37,9 +39,10 @@ integrated ideal-gas entropy differential of §B and the third-law convention `S
 are MODEL inputs. No entropy is derived from statistics (CH34 territory) and no Gibbs or
 Helmholtz Legendre development is claimed (CH14 territory).
 
-Reuse was checked against Mathlib and ATLAS main: besides Mathlib this module imports no other
-library (no Physlib definitions are needed for these statements) and no unlanded ATLAS module
-(prerequisites CH11/CH12/MF04/MF05/MF11 have no landed module yet). Proofs use `Real.log`
+The entropy of mixing is `n * R` times the Shannon entropy
+`Chemistry.FiniteEnsembles.shannonEntropy` of the mole fractions, so the Shannon-entropy API of
+`PhyslibExt.Chemistry.FiniteEnsembles` (`shannonEntropy_nonneg`, `shannonEntropy_eq_zero_iff`)
+applies to it directly; that module is the only non-Mathlib import. Proofs use `Real.log`
 algebra (`Real.log_div`, `Real.log_mul`, `Real.log_rpow`), `Real.log_injOn_pos`,
 `intervalIntegral.integral_hasDerivAt_right` and `Finset` sum lemmas.
 
@@ -57,14 +60,15 @@ algebra (`Real.log_div`, `Real.log_mul`, `Real.log_rpow`), `Real.log_injOn_pos`,
 - `idealGasEntropyChangeAdd`, `idealGasEntropyChangeIsothermal`,
   `idealGasEntropyChangeAdiabatic`, `idealGasEntropyChangeSymm` : additivity, the isothermal
   case, the reversible-adiabatic case and sign reversal.
-- `entropyOfMixing` : `ΔS_mix = -n * R * ∑ i, x i * log (x i)`.
-- `moleFraction_le_one`, `mul_log_self_nonpos`, `entropyOfMixingNonneg`,
-  `entropyOfMixingEqZeroIff`, `entropyOfMixingBinary` : the mole-fraction bound, term
-  nonpositivity, nonnegativity, the single-component equality case and the binary case.
+- `entropyOfMixing`, `entropyOfMixing_eq_neg_sum` : `ΔS_mix = n * R * H(x)` with `H` the
+  Shannon entropy, that is `-n * R * ∑ i, x i * log (x i)`.
+- `moleFraction_le_one`, `entropyOfMixingNonneg`, `entropyOfMixingEqZeroIff`,
+  `entropyOfMixingBinary` : the mole-fraction bound, nonnegativity, the single-component
+  equality case and the binary case.
 - `absoluteEntropy` : `S(T) = ∫ t in 0..T, Cp t / t + ∑ transitions below T, ΔH / Tt`.
-- `absoluteEntropyZero`, `intervalIntegrableSplit`, `hasDerivAtAbsoluteEntropy`,
-  `absoluteEntropyMono`, `absoluteEntropyInsertAbove` : the third-law convention, interval
-  splitting, `S' = Cp / T`, monotonicity and the transition filter.
+- `absoluteEntropyZero`, `hasDerivAtAbsoluteEntropy`, `absoluteEntropyMono`,
+  `absoluteEntropyInsertAbove` : the third-law convention, `S' = Cp / T`, monotonicity and the
+  transition filter.
 
 ## iii. Table of contents
 
@@ -310,13 +314,20 @@ lemma idealGasEntropyChangeSymm {n cv R T1 V1 T2 V2 : ℝ}
 
 -/
 
-/-- The entropy of mixing `ΔS_mix = -n * R * ∑ i, x i * log (x i)` for mole fractions
-`x : ι → ℝ`. With Mathlib's convention `Real.log 0 = 0`, a component with `x i = 0`
-contributes `0 * log 0 = 0` automatically. Gibbs-paradox remark: mixing identical gases gives
-zero here only because they are counted as one component; the identical-gas resolution
-(indistinguishability) is CH34 territory and is NOT claimed here. -/
+/-- The entropy of mixing `ΔS_mix = n * R * H(x)` for mole fractions `x : ι → ℝ`, where
+`H(x) = -∑ i, x i * log (x i)` is the Shannon entropy
+`Chemistry.FiniteEnsembles.shannonEntropy`. With Mathlib's convention `Real.log 0 = 0`, a
+component with `x i = 0` contributes `0 * log 0 = 0` automatically. Gibbs-paradox remark: mixing
+identical gases gives zero here only because they are counted as one component; the identical-gas
+resolution (indistinguishability) is CH34 territory and is NOT claimed here. -/
 noncomputable def entropyOfMixing {ι : Type*} [Fintype ι] (n R : ℝ) (x : ι → ℝ) : ℝ :=
-  -n * R * ∑ i, x i * Real.log (x i)
+  n * R * FiniteEnsembles.shannonEntropy x
+
+/-- The entropy of mixing in explicit form: `ΔS_mix = -n * R * ∑ i, x i * log (x i)`. -/
+lemma entropyOfMixing_eq_neg_sum {ι : Type*} [Fintype ι] (n R : ℝ) (x : ι → ℝ) :
+    entropyOfMixing n R x = -n * R * ∑ i, x i * Real.log (x i) := by
+  rw [entropyOfMixing, FiniteEnsembles.shannonEntropy]
+  ring
 
 /-- Mole fractions are bounded by `1`: from `∀ i, 0 ≤ x i` and `∑ i, x i = 1`, `x i ≤ 1`
 for every `i`. -/
@@ -325,97 +336,29 @@ lemma moleFraction_le_one {ι : Type*} [Fintype ι] {x : ι → ℝ}
   calc x i ≤ ∑ j, x j := Finset.single_le_sum (fun j _ => hx j) (Finset.mem_univ i)
   _ = 1 := hsum
 
-/-- Each mixing term is nonpositive: for `0 ≤ x ≤ 1`, `x * log x ≤ 0`. -/
-lemma mul_log_self_nonpos {x : ℝ} (hx0 : 0 ≤ x) (hx1 : x ≤ 1) :
-    x * Real.log x ≤ 0 := by
-  rcases eq_or_lt_of_le hx0 with h0 | hpos
-  · rw [← h0]
-    simp
-  · exact mul_nonpos_of_nonneg_of_nonpos hx0 (Real.log_nonpos hx0 hx1)
-
-/-- The entropy of mixing is nonnegative for `0 ≤ n`, `0 ≤ R` and genuine mole fractions. -/
+/-- The entropy of mixing is nonnegative for `0 ≤ n`, `0 ≤ R` and genuine mole fractions:
+`n * R ≥ 0` times the nonnegative Shannon entropy `FiniteEnsembles.shannonEntropy_nonneg`. -/
 lemma entropyOfMixingNonneg {ι : Type*} [Fintype ι] {n R : ℝ} {x : ι → ℝ}
     (hn : 0 ≤ n) (hR : 0 ≤ R) (hx : ∀ i, 0 ≤ x i) (hsum : ∑ i, x i = 1) :
-    0 ≤ entropyOfMixing n R x := by
-  have hS : ∑ i, x i * Real.log (x i) ≤ 0 := by
-    apply Finset.sum_nonpos
-    intro i _
-    exact mul_log_self_nonpos (hx i) (moleFraction_le_one hx hsum i)
-  have hEq : -n * R * (∑ i, x i * Real.log (x i))
-      = (n * R) * (-(∑ i, x i * Real.log (x i))) := by
-    ring
-  unfold entropyOfMixing
-  rw [hEq]
-  exact mul_nonneg (mul_nonneg hn hR) (neg_nonneg.mpr hS)
+    0 ≤ entropyOfMixing n R x :=
+  mul_nonneg (mul_nonneg hn hR) (FiniteEnsembles.shannonEntropy_nonneg hx hsum)
 
 /-- The entropy of mixing vanishes exactly for a single component: for `0 < n` and `0 < R`,
-`entropyOfMixing n R x = 0 ↔ ∃ i, x i = 1 ∧ ∀ j, j ≠ i → x j = 0`. A sum of nonpositive
-terms is zero iff every term is zero; `x * log x = 0` with `0 ≤ x ≤ 1` iff `x = 0 ∨ x = 1`;
-at most one component can be `1` since the fractions sum to `1`. -/
+`entropyOfMixing n R x = 0 ↔ ∃ i, x i = 1 ∧ ∀ j, j ≠ i → x j = 0`. Since `n * R ≠ 0`, this is
+the equality case `FiniteEnsembles.shannonEntropy_eq_zero_iff` of the Shannon entropy. -/
 lemma entropyOfMixingEqZeroIff {ι : Type*} [Fintype ι] [DecidableEq ι]
     {n R : ℝ} {x : ι → ℝ}
     (hn : 0 < n) (hR : 0 < R) (hx : ∀ i, 0 ≤ x i) (hsum : ∑ i, x i = 1) :
     entropyOfMixing n R x = 0 ↔ (∃ i, x i = 1 ∧ ∀ j, j ≠ i → x j = 0) := by
-  have hle : ∀ i, x i ≤ 1 := fun i => moleFraction_le_one hx hsum i
-  have hterm : ∀ i ∈ (Finset.univ : Finset ι), x i * Real.log (x i) ≤ 0 :=
-    fun i _ => mul_log_self_nonpos (hx i) (hle i)
-  constructor
-  · intro h0
-    have hS0 : ∑ i, x i * Real.log (x i) = 0 := by
-      have hne : -n * R ≠ 0 := mul_ne_zero (neg_ne_zero.mpr hn.ne') hR.ne'
-      unfold entropyOfMixing at h0
-      exact (mul_eq_zero.mp h0).resolve_left hne
-    have hall : ∀ i ∈ (Finset.univ : Finset ι), x i * Real.log (x i) = 0 :=
-      (Finset.sum_eq_zero_iff_of_nonpos hterm).mp hS0
-    have h01 : ∀ i, x i = 0 ∨ x i = 1 := by
-      intro i
-      have hti := hall i (Finset.mem_univ i)
-      rcases mul_eq_zero.mp hti with hxi | hlog
-      · exact Or.inl hxi
-      · rcases eq_or_lt_of_le (hx i) with h0i | hpos
-        · exact Or.inl h0i.symm
-        · right
-          have hexp := Real.exp_log hpos
-          rw [hlog, Real.exp_zero] at hexp
-          exact hexp.symm
-    obtain ⟨i0, hi0⟩ : ∃ i, x i = 1 := by
-      by_contra hall0
-      push Not at hall0
-      have hzero : ∀ i, x i = 0 := fun i => (h01 i).resolve_right (hall0 i)
-      have hsum0 : ∑ i, x i = 0 := by simp [hzero]
-      rw [hsum] at hsum0
-      norm_num at hsum0
-    refine ⟨i0, hi0, fun j hj => ?_⟩
-    rcases h01 j with h | h
-    · exact h
-    · exfalso
-      have hmem : i0 ∉ ({j} : Finset ι) := by
-        intro hm
-        exact hj (Finset.mem_singleton.mp hm).symm
-      have h2 : (∑ k ∈ ({i0, j} : Finset ι), x k) ≤ ∑ k, x k :=
-        Finset.sum_le_sum_of_subset_of_nonneg (Finset.subset_univ _) (fun k _ _ => hx k)
-      rw [Finset.sum_insert hmem, Finset.sum_singleton, hi0, h, hsum] at h2
-      norm_num at h2
-  · rintro ⟨i, hi1, hj0⟩
-    have hall0 : ∀ k ∈ (Finset.univ : Finset ι), x k * Real.log (x k) = 0 := by
-      intro k _
-      by_cases hki : k = i
-      · subst hki
-        rw [hi1, Real.log_one, mul_zero]
-      · rw [hj0 k hki]
-        exact zero_mul _
-    have hS0 : ∑ k, x k * Real.log (x k) = 0 :=
-      (Finset.sum_eq_zero_iff_of_nonpos hterm).mpr hall0
-    unfold entropyOfMixing
-    rw [hS0, mul_zero]
+  rw [entropyOfMixing, mul_eq_zero, or_iff_right (mul_pos hn hR).ne',
+    FiniteEnsembles.shannonEntropy_eq_zero_iff hx hsum]
 
 /-- Binary case: for `ι = Fin 2` and `x = ![a, 1 - a]`, the mixing entropy unfolds to
 `-n * R * (a * log a + (1 - a) * log (1 - a))`. -/
 lemma entropyOfMixingBinary (n R a : ℝ) :
     entropyOfMixing n R (![a, 1 - a] : Fin 2 → ℝ)
       = -n * R * (a * Real.log a + (1 - a) * Real.log (1 - a)) := by
-  unfold entropyOfMixing
-  rw [Fin.sum_univ_two]
+  rw [entropyOfMixing_eq_neg_sum, Fin.sum_univ_two]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
 
 /-!
@@ -446,20 +389,6 @@ lemma absoluteEntropyZero {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
   have hfilter : trans.filter (fun k => Tt k ≤ (0:ℝ)) = ∅ :=
     Finset.filter_false_of_mem (fun k hk => not_le.mpr (hTt k hk))
   rw [hfilter, Finset.sum_empty, add_zero]
-
-/-- An `IntervalIntegrable` function on `0..T₂` restricts to `0..T₁` and `T₁..T₂`. -/
-lemma intervalIntegrableSplit {f : ℝ → ℝ} {T₁ T₂ : ℝ}
-    (h : IntervalIntegrable f MeasureTheory.volume 0 T₂)
-    (h1 : 0 ≤ T₁) (h12 : T₁ ≤ T₂) :
-    IntervalIntegrable f MeasureTheory.volume 0 T₁
-      ∧ IntervalIntegrable f MeasureTheory.volume T₁ T₂ := by
-  have h02 : (0:ℝ) ≤ T₂ := le_trans h1 h12
-  rw [intervalIntegrable_iff_integrableOn_Ioc_of_le h02] at h
-  constructor
-  · rw [intervalIntegrable_iff_integrableOn_Ioc_of_le h1]
-    exact h.mono_set (Set.Ioc_subset_Ioc le_rfl h12)
-  · rw [intervalIntegrable_iff_integrableOn_Ioc_of_le h12]
-    exact h.mono_set (Set.Ioc_subset_Ioc h1 le_rfl)
 
 /-- The temperature derivative of absolute entropy is `Cp / T`: for `0 < T`, under
 continuity of `Cp` on positive temperatures and integrability of `Cp t / t` on `0..T`,
@@ -510,13 +439,16 @@ enthalpies and positive transition temperatures, `S(T₁) ≤ S(T₂)` for `T₁
 `[0, T]`). Via integral monotonicity and growth of the transition sums. -/
 lemma absoluteEntropyMono {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
     (Tt : ι → ℝ) (dH : ι → ℝ) {T T₁ T₂ : ℝ}
-    (hCp : ∀ t ∈ Set.Icc (0:ℝ) T, 0 ≤ Cp t)
+    (hCp : ∀ t ∈ Set.Icc (0 : ℝ) T, 0 ≤ Cp t)
     (hdH : ∀ k ∈ trans, 0 ≤ dH k)
     (hTt : ∀ k ∈ trans, 0 < Tt k)
     (hInt : IntervalIntegrable (fun t => Cp t / t) MeasureTheory.volume 0 T₂)
     (h10 : 0 ≤ T₁) (h12 : T₁ ≤ T₂) (h2T : T₂ ≤ T) :
     absoluteEntropy Cp trans Tt dH T₁ ≤ absoluteEntropy Cp trans Tt dH T₂ := by
-  obtain ⟨h01, h12'⟩ := intervalIntegrableSplit hInt h10 h12
+  have h01 : IntervalIntegrable (fun t => Cp t / t) MeasureTheory.volume 0 T₁ :=
+    hInt.mono_set (Set.uIcc_subset_uIcc_left (Set.mem_uIcc_of_le h10 h12))
+  have h12' : IntervalIntegrable (fun t => Cp t / t) MeasureTheory.volume T₁ T₂ :=
+    hInt.mono_set (Set.uIcc_subset_uIcc_right (Set.mem_uIcc_of_le h10 h12))
   have hsplit : (∫ t in (0:ℝ)..T₁, Cp t / t) + (∫ t in T₁..T₂, Cp t / t)
       = ∫ t in (0:ℝ)..T₂, Cp t / t :=
     intervalIntegral.integral_add_adjacent_intervals h01 h12'
