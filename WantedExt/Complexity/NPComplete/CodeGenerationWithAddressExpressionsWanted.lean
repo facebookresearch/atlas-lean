@@ -41,10 +41,13 @@ is defined to be `f(Iⱼ)`, `f(Iⱼ) ± k`, or `k` depending on whether `g(Iᵢ)
 or `k`, then for each `i`, `1 ≤ i ≤ n`, either `-C < f(Iᵢ) - h(Iᵢ) < B` or `f(Iᵢ) + 1` is not
 in the range of `f`?
 
-The instructions are indexed by `Fin n`, `0`-based: index `j` is the instruction `I_{j+1}`.
-The instance lists the expressions `g(I₁), …, g(Iₙ)`, so its length is `n`: `(0, j, 0)` is
+The instructions are indexed by `Fin n`, `0`-based: index `j` is the instruction `I_{j+1}`. The
+instance lists the expressions `g(I₁), …, g(Iₙ)`, so its length is `n`: `(0, j, 0)` is
 `I_{j+1}`, `(1, j, k)` is `I_{j+1} + k`, `(2, j, k)` is `I_{j+1} - k`, and `(3, 0, k)` is the
-constant `k`. The value `h(Iᵢ)` (`addressValue`) and the span `f(Iᵢ) - h(Iᵢ)` are integers.
+constant `k`. The value `h(Iᵢ)` (`addressValue`) and the span `f(Iᵢ) - h(Iᵢ)` are integers. The
+second byte of a two-byte instruction must also lie in `{1, …, M}` (`f(Iᵢ) + 1 ≤ M`), so that
+the total memory required is at most `M`; the source's "i.e." condition leaves this implicit for
+the last instruction, whose successor address is never in the range of `f`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding` (numbers in binary). Undecodable bitstrings, and
@@ -83,7 +86,8 @@ def addressValue (g : List (ℕ × ℕ × ℕ)) (f : Fin g.length → ℕ) (x : 
 
 /-- There is a one-to-one, order-preserving `f : I → {1, …, M}` under which every
 instruction `Iᵢ` has `-C < f(Iᵢ) - h(Iᵢ) < B` (a one-byte instruction) or has `f(Iᵢ) + 1`
-outside the range of `f` (room for a two-byte instruction). -/
+outside the range of `f` and at most `M` (room for a two-byte instruction within the `M`
+bytes of memory). -/
 def CodeGenerationWithAddressExpressionsFeasible
     (i : CodeGenerationWithAddressExpressionsInstance) : Prop :=
   ∃ f : Fin i.1.length → ℕ,
@@ -91,7 +95,7 @@ def CodeGenerationWithAddressExpressionsFeasible
       (∀ x y, x < y → f x < f y) ∧
       ∀ x, (-(i.2.2.1 : ℤ) < (f x : ℤ) - addressValue i.1 f x ∧
           (f x : ℤ) - addressValue i.1 f x < (i.2.1 : ℤ)) ∨
-        f x + 1 ∉ Set.range f
+        (f x + 1 ≤ i.2.2.2 ∧ f x + 1 ∉ Set.range f)
 
 open Classical in
 /-- CODE GENERATION WITH ADDRESS EXPRESSIONS as a decision problem over bitstrings. -/
