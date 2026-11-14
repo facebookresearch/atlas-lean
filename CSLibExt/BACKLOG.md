@@ -1,9 +1,9 @@
 # CSLibExt backlog (B1-B31, MT1-MT11)
 
-Theory-of-computation gaps identified by the October 2026 CSLibExt audit
-against the undergraduate-theory rows (automata/languages and
-computability) of the coverage matrix in `README.md`. Each entry names the
-missing result, the evidence that it is absent, and the natural home.
+Theory-of-computation gaps identified by the October 2026 audit of the CSLibExt corpus,
+scoped to undergraduate theory (automata/languages and computability). Each entry names the
+missing result, the evidence that it is absent, and the natural home. Status words describe
+atlas-lean: entries marked Done are present here, entries marked unported are absent.
 Entries graduate out of this file when formalized.
 
 | ID | Gap | Evidence (October 2026) | Natural home |
@@ -22,8 +22,8 @@ Entries graduate out of this file when formalized.
 | B12 | ~~TM <-> general-recursive equivalence~~; TM<->URM bridge | TM2 <-> general recursion done: `computable_iff_nonempty_tm2Computable` (Mathlib `Computable` <-> `TM2Computable` for `f : ℕ → ℕ`) in MathlibExt/Computability/TuringMachine/Recursive/Equiv.lean, discharging the former wish `turing_recursive_equiv`; URM ⇒ TM done: `URM.partrec_of_computable`, `URM.Decidable.tm2Decidable` and `URM.Recognizable.tm2Recognizable` in Computability/Decidability/URMBridge.lean | Prove TM ⇒ URM (`partrec_to_urm` in WantedExt/TheoryOfComputation/PartrecToURM.lean) |
 | B13 | ~~Halting undecidability~~ | Done on `FinTM2`: `not_tm2Decidable_halting` (recognizable, not co-recognizable), a `FinTM2` with an undecidable halting set (`exists_not_tm2Decidable_tm2HaltsOn`), and Rice's theorem (`rice_tm2`) in Computability/Decidability/Undecidable.lean | Computability/Decidability |
 | B14 | ~~Computability reductions (many-one, Turing, complete sets)~~ | Done: Mathlib's many-one reducibility characterized by `FinTM2`-computed reductions (`manyOneReducible_iff_exists_tm2`), with transfer of decidability and recognizability, in Computability/Decidability/Undecidable.lean; Turing reductions of sets through their characteristic functions on Mathlib's `≤ᵀ` (decidability transfer, many-one implies Turing, complements, the halting set not below a decidable set) in Computability/Decidability/TuringReducible.lean; the halting set is r.e.-complete under many-one and one-one reductions (`manyOneReducible_haltingSet`, `oneOneReducible_haltingSet`) in Computability/Decidability/REComplete.lean | `Computability/` theory layer |
-| B15 | README matrix gap wording | Reflected in `README.md` matrix rows (2) and (3) | Done with this file |
-| B16 | Audit `MathlibExt`/TCS for rows (2) and (3) | This pass did not audit that tree | Follow-up audit |
+| B15 | README matrix gap wording (formal-math only) | Not applicable in atlas-lean: no coverage matrix document exists here | Not applicable |
+| B16 | Audit the `MathlibExt` TCS tree | This pass did not audit that tree | Follow-up audit |
 | B17 | ~~omega-automata (Buchi/Muller) coverage claim~~ | Done (phase 1): audited upstream (`NA.Buchi`, `NA.Muller`, `DA.Buchi`, `iSum_language_eq`, `inter_language_eq`, `IsRegular.compl`, `SafetyLiveness`); added Büchi emptiness (`NA.Buchi.language_nonempty_iff_hasLasso`, `isEmptyB_iff`), parity automata (`NA.Buchi.language_toParity`), `G F p`/`F G p` automata, parity-game basics; follow-ups B18-B30 below | Computability/Automata/NA, Computability/Games |
 
 ## ω-automata, temporal logic and infinite games (B18-B31)
@@ -62,7 +62,7 @@ separately. Items are in dependency order; each lists what it needs.
 | MT2 | Code completeness and finite states: every `MultiTapeTM k Bool State` with finitely many states has a code simulating it up to a state relabelling, and every code gives a machine with `Fin` states, so codes land in `DecidableInTimeAndSpace` | MT1 | Done: `MultiTape/Relabel.lean` (`IsRelabelling`, `IsRelabelling.runFrom`, `IsRelabelling.computesFunInTimeAndSpace_iff`, `runsInSpace_iff_forall_spaceUsed_le`), `MultiTape/CodeCompleteness.lean` (`Code.toFinTM`, `Code.isRelabelling_toFinTM`, `Code.decidableInTimeAndSpace`, `Code.ofTM`, `Code.exists_code_isRelabelling`, `decidableInTimeAndSpace_iff_exists_code`, `mem_DTIME_iff_exists_code`) |
 | MT3 | Universal multi-tape machine: one fixed machine that runs `Code.evalSteps`, with time overhead polynomial in the code length times the simulated time and linear-in-code space overhead | MT2; upstream combinators (`Plumbing/Sequential`, `RepeatUntilBlank`, `TransformsTapes`, pinned) and composition bounds (leanprover/cslib#1111, #1112, open) | Definition and evaluator exist (MT1); the machine and its bounds do not |
 | MT4 | Deterministic time hierarchy on one model: time constructibility, clocked diagonalization over codes, `DTIME f ⊊ DTIME g` for suitable `g` | MT3; relates to `Universal/Diagonalization.lean` (cross-model `TM0` codes) | The existing `P ⊄ CodeTime (n ^ 2 + 1)` is across models |
-| MT5 | Bridge to `FinTM2`: multi-tape `Classes.P` equals the canonical `MetaMathlibExt.ComplexityTheory.P`, via polynomial-time simulations in both directions | MT1; MT2 for the multi-tape-to-`FinTM2` direction | Required before results on this model transfer to the canonical classes |
+| MT5 | Bridge to `FinTM2`: multi-tape `Classes.P` equals the canonical `MetaMathlibExt.ComplexityTheory.P`, via polynomial-time simulations in both directions | MT1; MT2 for the multi-tape-to-`FinTM2` direction | Required before results on this model transfer to the canonical classes. Deferred specification: `Cslib.MultiTapeComplexityBridgeWanted.multiTape_P_eq_canonical_P` in `WantedExt/TheoryOfComputation/MultiTapeComplexityBridge.lean` |
 | MT6 | Space hierarchy and Savitch's theorem (`NSPACE s ⊆ DSPACE s²`) | MT3, MT7; configuration counting (upstream `ConfigBound.lean`; space-to-time leanprover/cslib#767, open) | Savitch needs nondeterministic acceptance (MT7) |
 | MT7 | `NP` and `NL` on this model: an acceptance predicate for `MultiTapeNTM`, nondeterministic time/space classes, and the verifier characterization (polynomial verifier iff polynomially bounded NTM) | MT1; upstream NTM acceptance (no predicate at the pinned rev; leanprover/cslib#1153 refactors computation predicates, open) | Deferred from MT1 because the pinned CSLib has no NTM acceptance predicate |
 | MT8 | Uniform `A_LBA` and `E_LBA` (Sipser, Theorems 5.9 and 5.10, quantified over machine codes) | MT2; configuration counting | `SingleTape/SpaceBounded.lean` and `Fence.lean` prove the fixed-machine forms |
