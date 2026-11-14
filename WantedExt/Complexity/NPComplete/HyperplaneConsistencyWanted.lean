@@ -36,10 +36,10 @@ namespace MetaMathlibExt.Complexity.NPComplete.HyperplaneConsistency
 /-!
 # HYPERPLANE CONSISTENCY is NP-complete
 
-INSTANCE: finite sets `P` and `N` of integer `n`-vectors (`P` the positive examples, `N` the
-negative examples), and a positive integer `K ≤ |P| + |N|`.
-QUESTION: is there a hyperplane, given by a normal vector `w ∈ ℚⁿ` and a bias `w₀ ∈ ℚ`, such
-that the number of examples consistent with it,
+INSTANCE: finite sets `P` and `N` of integer `n`-vectors, `n ≥ 1` (`P` the positive examples,
+`N` the negative examples), and a positive integer `K ≤ |P| + |N|`.
+QUESTION: is there a hyperplane, given by a normal vector `w ∈ ℚⁿ`, `w ≠ 0`, and a bias
+`w₀ ∈ ℚ`, such that the number of examples consistent with it,
 `|{x ∈ P : w · x > w₀}| + |{x ∈ N : w · x < w₀}|`, is at least `K`?
 
 This is the decision version of MAXIMUM HYPERPLANE CONSISTENCY from the Crescenzi-Kann
@@ -52,7 +52,8 @@ Each integer is encoded as a pair of naturals `(positive part, negative part)` r
 difference (`intOf`), as in `WantedExt.Complexity.NPComplete.ZeroOneILPWanted`; numbers use the
 canonical binary encoding. `P` and `N` are lists; since they are sets, `WellFormed` requires
 the decoded integer vectors of each to be pairwise distinct, so the counts are counts of
-elements of `P` and of `N`. As in the source, `P` and `N` need not be disjoint.
+elements of `P` and of `N`. As in the source, `P` and `N` need not be disjoint. A hyperplane
+needs a nonzero normal vector, hence `w ≠ 0` and `n ≥ 1`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -77,18 +78,18 @@ def intOf (p : ℕ × ℕ) : ℤ := (p.1 : ℤ) - (p.2 : ℤ)
 def dot {n : ℕ} (w : Fin n → ℚ) (x : List (ℕ × ℕ)) : ℚ :=
   ∑ j : Fin n, (intOf (x.getD j (0, 0)) : ℚ) * w j
 
-/-- Well-formedness of an instance: every example is an `n`-vector, the decoded vectors of `P`
-are pairwise distinct and so are those of `N` (`P` and `N` are sets), and
+/-- Well-formedness of an instance: `0 < n`, every example is an `n`-vector, the decoded vectors
+of `P` are pairwise distinct and so are those of `N` (`P` and `N` are sets), and
 `0 < K ≤ |P| + |N|`. -/
 def WellFormed (i : HyperplaneConsistencyInstance) : Prop :=
-  (∀ x ∈ i.2.1, x.length = i.1) ∧ (∀ x ∈ i.2.2.1, x.length = i.1) ∧
+  0 < i.1 ∧ (∀ x ∈ i.2.1, x.length = i.1) ∧ (∀ x ∈ i.2.2.1, x.length = i.1) ∧
     (i.2.1.map fun x => x.map intOf).Nodup ∧ (i.2.2.1.map fun x => x.map intOf).Nodup ∧
     0 < i.2.2.2 ∧ i.2.2.2 ≤ i.2.1.length + i.2.2.1.length
 
-/-- A hyperplane `(w, w₀)` with `w · x > w₀` for positive examples and `w · x < w₀` for negative
-examples, for at least `K` examples in total. -/
+/-- A hyperplane `(w, w₀)`, `w ≠ 0`, with `w · x > w₀` for positive examples and `w · x < w₀` for
+negative examples, for at least `K` examples in total. -/
 def HyperplaneConsistencyFeasible (i : HyperplaneConsistencyInstance) : Prop :=
-  ∃ (w : Fin i.1 → ℚ) (w₀ : ℚ), i.2.2.2 ≤
+  ∃ (w : Fin i.1 → ℚ) (w₀ : ℚ), w ≠ 0 ∧ i.2.2.2 ≤
     (i.2.1.filter fun x => w₀ < dot w x).length + (i.2.2.1.filter fun x => dot w x < w₀).length
 
 open Classical in
