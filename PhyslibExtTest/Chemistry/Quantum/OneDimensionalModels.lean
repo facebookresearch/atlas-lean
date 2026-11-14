@@ -8,13 +8,14 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Chemistry.Quantum.OneDimensionalModels
+import Mathlib.Analysis.Complex.RealDeriv
 
 /-!
 # One-dimensional model system checks
 
 Concrete consumers of `Chemistry.Quantum.OneDimensionalModels`: box
 eigen-equation and Dirichlet checks, box orthonormality diagonal and
-off-diagonal instances, oscillator `v = 0` checks, ladder-commutator
+off-diagonal instances, oscillator `v = 0` checks, pointwise ladder-identity
 instances, box moment checks, and a polyene rational-arithmetic probe.
 -/
 
@@ -99,12 +100,12 @@ example : ∫ x : ℝ, oscFun2 x * oscFun1 x = 0 :=
 example : ∫ x : ℝ, oscFun2 x * oscFun2 x = 1 :=
   osc_orthonormality_22
 
-/-- Ladder commutator on the zero Schwartz function. -/
+/-- Pointwise ladder identity on the zero Schwartz function. -/
 example (x : ℝ) : annFun (creFun 0) x - creFun (annFun 0) x
     = (0 : ℝ → ℂ) x :=
-  ladder_commutator_schwartz 0 ⟨0, rfl⟩ x
+  ladder_commutator_pointwise_schwartz 0 ⟨0, rfl⟩ x
 
-/-- Ladder commutator `(of_hasDerivAt)` on the concrete function `x ↦ ↑x`. -/
+/-- Pointwise ladder identity (`of_hasDerivAt`) on the concrete function `x ↦ ↑x`. -/
 example (x : ℝ) : annFun (creFun (fun x : ℝ => (x : ℂ))) x
       - creFun (annFun (fun x : ℝ => (x : ℂ))) x = (x : ℂ) := by
   have h1 : ∀ y : ℝ, HasDerivAt (fun x : ℝ => (x : ℂ)) 1 y := by
@@ -116,7 +117,7 @@ example (x : ℝ) : annFun (creFun (fun x : ℝ => (x : ℂ))) x
   have hf' : HasDerivAt (deriv (fun x : ℝ => (x : ℂ))) 0 x := by
     rw [hder]
     exact hasDerivAt_const x 1
-  exact ladder_commutator_of_hasDerivAt _ _ _ x (h1 x) hf'
+  exact ladder_commutator_pointwise_of_hasDerivAt _ _ _ x (h1 x) hf'
 
 /-- Box position mean `⟨x⟩ = 1/2` (`n = 1`, `L = 1`). -/
 example : ∫ x in (0:ℝ)..1, x * (boxFunction 1 1 x) ^ 2 = 1 / 2 :=

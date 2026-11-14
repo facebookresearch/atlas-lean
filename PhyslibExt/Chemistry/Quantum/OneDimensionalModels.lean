@@ -8,42 +8,43 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Quantum.FiniteState
-public import Mathlib.Analysis.Calculus.ContDiff.Basic
-public import Mathlib.Analysis.Calculus.ContDiff.Comp
 public import Mathlib.Analysis.Calculus.ContDiff.Defs
-public import Mathlib.Analysis.Calculus.ContDiff.Deriv
-public import Mathlib.Analysis.Calculus.ContDiff.Operations
-public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Mul
-public import Mathlib.Analysis.Calculus.Deriv.Pow
 public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.Analysis.Complex.RealDeriv
 public import Mathlib.Analysis.Distribution.SchwartzSpace.Basic
 public import Mathlib.Analysis.Real.Sqrt
-public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-public import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
-public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
-public import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Analysis.Calculus.ContDiff.Basic
+import Mathlib.Analysis.Calculus.ContDiff.Comp
+import Mathlib.Analysis.Calculus.ContDiff.Deriv
+import Mathlib.Analysis.Calculus.ContDiff.Operations
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Complex.RealDeriv
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
+import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
 # One-dimensional model systems with explicit domains
 
-Particle in a box, low-lying harmonic-oscillator states, ladder-operator
-algebra on Schwartz space, box moments, and a free-electron polyene
-absorption model, with explicit operator domains.
+Particle in a box, low-lying harmonic-oscillator states, the ladder
+commutator as a pointwise identity for Schwartz functions, box moments, and
+a free-electron polyene absorption model.
 
 ## i. Overview
 
 This module formalizes the ATLAS CH37 one-dimensional-model-systems pilot:
 the particle in a box (eigenfunctions, eigen-equation, Dirichlet boundary
 conditions, orthonormality), the harmonic oscillator (low-lying eigenstates
-and eigen-equations in `ħ = m = ω = 1` units), the ladder-operator algebra
-on Schwartz space, box position moments, and a free-electron estimate of
+and eigen-equations in `ħ = m = ω = 1` units), the ladder commutator
+`a a† - a† a = 1` as a pointwise identity of differential expressions for
+Schwartz functions, box position moments, and a free-electron estimate of
 polyene absorption wavelengths.
 
 Conventions used consistently throughout: box functions are real-valued
@@ -64,10 +65,11 @@ proof (see the deferrals below).
 
 * `box_eigen_equation`: pointwise eigen-equation for the box states.
 * `box_orthonormality`: orthonormality of the box states on `(0, L)`.
-* `box_mem_BoxDomain`: box states lie in `BoxDomain L` (twice continuously
-  differentiable plus Dirichlet, the function-space form of `H^2 ∩ H^1_0`).
+* `box_mem_BoxC2Dirichlet`: box states lie in `BoxC2Dirichlet L` (real `C²`
+  functions vanishing at `0` and `L`; not the Sobolev domain `H² ∩ H¹₀`).
 * `osc_eigen_0/1/2`: oscillator eigen-equations for `v ∈ {0, 1, 2}`.
-* `ladder_commutator_schwartz`: `[a, a†] = 1` on the Schwartz carrier.
+* `ladder_commutator_pointwise_schwartz`: `annFun (creFun f) - creFun (annFun f) = f`
+  pointwise for Schwartz `f`, a formal identity of the differential expressions.
 * `box_moment_x`, `box_moment_x2`: `⟨x⟩` and `⟨x^2⟩` for box states.
 * `polyene_wavelength_closed_form`: closed form of the model wavelength.
 
@@ -75,7 +77,7 @@ proof (see the deferrals below).
 
 * Section A: particle in a box.
 * Section B: harmonic oscillator (low-lying states, Physlib reuse noted).
-* Section C: ladder operators on Schwartz space; box moments.
+* Section C: the pointwise ladder identity; box moments.
 * Section D: free-electron polyene model.
 * Section E (in this doc only): explicit deferrals.
 
@@ -83,16 +85,21 @@ proof (see the deferrals below).
 
 * MIT OCW 5.61 Physical Chemistry, Fall 2017, Lectures 8 (harmonic
   oscillator) and related particle-in-a-box material.
-* Pinned Physlib `Physlib/QuantumMechanics/HarmonicOscillator/OneDimension/`:
-  the oscillator eigen-equation is Physlib's proved result
+* Pinned Physlib `Physlib/QuantumMechanics/HarmonicOscillator/OneDimension/`,
+  for Physlib's `HarmonicOscillator` structure and its physical constants
+  (cited in prose; none of these statements is restated here): the
+  general-`v` eigen-equation is
   `QuantumMechanics.OneDimension.HarmonicOscillator.schrodingerOperator_eigenfunction`
-  (`TISE.lean`), reused here in prose; the general-`v` oscillator
-  orthonormality/recorded completeness is Physlib's
-  `eigenfunction_completeness` (`Completeness.lean`), cited in prose.
-  Neither statement is restated as a theorem of this module, since the exact
-  statements could not be compile-checked against the pinned Physlib source
-  in the sandbox (no Physlib/ATLAS checkout available); the pinned-build
-  check must confirm the declaration names before any PR.
+  (`TISE.lean`); orthonormality of all eigenfunctions is
+  `QuantumMechanics.OneDimension.HarmonicOscillator.eigenfunction_orthonormal`
+  (`Eigenfunction.lean`); completeness is `eigenfunction_completeness`
+  (`Completeness.lean`), proved there with Plancherel's theorem taken as a
+  hypothesis.
+* Pinned Physlib `Physlib/QuantumMechanics/HarmonicOscillator/LadderOperators.lean`:
+  the ladder operators of the `d`-dimensional oscillator as continuous linear
+  maps on Schwartz space, with the operator commutator
+  `QuantumMechanics.HarmonicOscillator.lowering_commutation_raising`. The
+  pointwise identity of this module is not that operator statement.
 * Pinned Physlib `Physlib/QuantumMechanics/Operators/OneDimension/Unbounded.lean`
   (domain-embedding operator pattern).
 * MF10 `PhyslibExt.Quantum.FiniteState` (ATLAS main): `OperatorWithDomain`
@@ -105,7 +112,8 @@ proof (see the deferrals below).
 is `n^2 h^2 / (8 m L^2)` with `h = 2πħ`. We prove the equivalent form
 `n^2 π^2 ħ^2 / (2 m L^2)`, the pointwise eigen-equation (two `deriv`s),
 Dirichlet boundary values, orthonormality on `(0, L)` by product-to-sum
-plus cosine interval integrals, and membership in `BoxDomain L`.
+plus cosine interval integrals, and membership in the smooth Dirichlet
+carrier `BoxC2Dirichlet L`.
 
 ## B. Harmonic oscillator
 
@@ -126,11 +134,17 @@ moments.
 
 Annihilation/creation functions `annFun`/`creFun` in `ħ = m = ω = 1`
 units with the sign convention `a f = (x·f + f')/√2`,
-`a† f = (x·f - f')/√2`, the commutator `[a, a†] = 1` pointwise on the
-Schwartz carrier (`SchwartzCarrier`, Mathlib `SchwartzMap`), and the box
+`a† f = (x·f - f')/√2`; the pointwise identity
+`annFun (creFun f) x - creFun (annFun f) x = f x` for every `f` in the
+Schwartz carrier (`SchwartzCarrier`, Mathlib `SchwartzMap`); and the box
 moments `⟨x⟩ = L/2`, `⟨x^2⟩ = L^2 (1/3 - 1/(2n^2π^2))` by `sin^2`
-interval integrals. Closure of the Schwartz space under `a`/`a†` is NOT
-claimed. The `OperatorWithDomain` records wrap the proved functions.
+interval integrals. The identity is a formal one between differential
+expressions: it composes the total functions `annFun` and `creFun`, not the
+records `annihilation` and `creation`. Closure of the Schwartz carrier under
+`annFun`/`creFun` is not proved, so those records, whose domain is the
+Schwartz carrier, cannot be composed, and no operator commutator on Schwartz
+space is claimed here (Physlib's `lowering_commutation_raising` is such a
+statement; see section iv).
 
 ## D. Polyene model
 
@@ -146,18 +160,20 @@ model inputs.
 * Completeness of the box eigenfunctions in `L^2(0, L)` and
   self-adjointness of the box Hamiltonian on `H^2 ∩ H^1_0`: DEFERRED
   (allowed by the contract). Nothing in this module proves or assumes
-  either statement. Sobolev regularity is NOT developed here.
+  either statement. Sobolev regularity is NOT developed here, and the
+  Sobolev domain `H²(0, L) ∩ H¹₀(0, L)` is not modeled: `BoxC2Dirichlet` is
+  only a carrier of smooth real functions.
 * General-`v` oscillator eigen-equation: Physlib's proved result, cited
-  in prose only (see sections ii and iv).
-* General-`v` oscillator orthonormality: recorded as following from
-  Physlib's oscillator completeness if the `eigenfunction_completeness`
-  citation checks in the pinned build, else DEFERRED; not claimed here.
+  in prose only (see section iv).
+* General-`v` oscillator orthonormality: Physlib's proved
+  `eigenfunction_orthonormal`, for Physlib's `HarmonicOscillator` and its
+  constants, cited in prose only (see section iv); not restated here.
 * Oscillator orthonormality for `(v, w) ∈ {0,1,2}^2`: PROVED
   (`osc_orthonormality_00/01/10/02/20/11/12/21/22`) by explicit Gaussian
   moments: odd vanishing of `∫ x·e^(-x^2)` and `∫ x^3·e^(-x^2)` by
   whole-line negation symmetry, and even moments `∫ x^2·e^(-x^2)` and
   `∫ x^4·e^(-x^2)` by integration by parts from the base integral.
-  Only general-`v` orthonormality (beyond `{0,1,2}`) remains deferred
+  General-`v` orthonormality (beyond `{0,1,2}`) is not restated here
   (see the Physlib citation above).
 -/
 
@@ -303,10 +319,11 @@ lemma box_dirichlet_right (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
     try ring
   rw [harg, Real.sin_nat_mul_pi n, mul_zero]
 
-/-- Box Hamiltonian domain: twice continuously differentiable plus Dirichlet
-(the function-space form of `H^2 ∩ H^1_0`; Sobolev regularity is NOT
-developed here). -/
-def BoxDomain (L : ℝ) : Set (ℝ → ℝ) :=
+/-- Smooth Dirichlet carrier for the box states: real-valued `C²` functions on `ℝ` vanishing
+at `0` and `L`. It is not the Sobolev domain `H²(0, L) ∩ H¹₀(0, L)` of the box Hamiltonian,
+whose elements are complex-valued `L²` classes with weak derivatives, and it is not a complex
+vector space; no Hamiltonian domain is claimed. -/
+def BoxC2Dirichlet (L : ℝ) : Set (ℝ → ℝ) :=
   {f | ContDiff ℝ 2 f ∧ f 0 = 0 ∧ f L = 0}
 
 /-- The affine inner function is `C^2` (Mathlib `contDiff_id`,
@@ -331,9 +348,9 @@ private lemma contDiff_box (n : ℕ) (L : ℝ) :
     simpa only [smul_eq_mul] using hsin.const_smul (Real.sqrt (2 / L))
   exact hfin
 
-/-- Box states lie in `BoxDomain L`. -/
-lemma box_mem_BoxDomain (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
-    boxFunction n L ∈ BoxDomain L := by
+/-- Box states lie in the smooth Dirichlet carrier `BoxC2Dirichlet L`. -/
+lemma box_mem_BoxC2Dirichlet (n : ℕ) (L : ℝ) (hn : 1 ≤ n) (hL : 0 < L) :
+    boxFunction n L ∈ BoxC2Dirichlet L := by
   show ContDiff ℝ 2 (boxFunction n L)
     ∧ boxFunction n L 0 = 0 ∧ boxFunction n L L = 0
   exact ⟨contDiff_box n L, box_dirichlet_zero n L hn hL,
@@ -1378,10 +1395,11 @@ noncomputable def annFun (f : ℝ → ℂ) : ℝ → ℂ :=
 noncomputable def creFun (f : ℝ → ℂ) : ℝ → ℂ :=
   fun x => (↑x * f x - deriv f x) / ↑(Real.sqrt 2)
 
-/-- Ladder commutator `[a, a†] = 1` pointwise, for any `f` with first and
-second derivatives at `x` (by `deriv` arithmetic plus the product rule;
-Mathlib `HasDerivAt.mul`, `HasDerivAt.add/sub/div_const`). -/
-lemma ladder_commutator_of_hasDerivAt (f : ℝ → ℂ) (df ddf : ℂ) (x : ℝ)
+/-- Pointwise ladder identity `annFun (creFun f) x - creFun (annFun f) x = f x`, for any `f`
+with first and second derivatives at `x`: a formal identity of the differential expressions
+(by `deriv` arithmetic plus the product rule; Mathlib `HasDerivAt.mul`,
+`HasDerivAt.add/sub/div_const`). -/
+lemma ladder_commutator_pointwise_of_hasDerivAt (f : ℝ → ℂ) (df ddf : ℂ) (x : ℝ)
     (hf : HasDerivAt f df x) (hf' : HasDerivAt (deriv f) ddf x) :
     annFun (creFun f) x - creFun (annFun f) x = f x := by
   have hpos : (0:ℝ) < Real.sqrt 2 := Real.sqrt_pos.mpr (by norm_num)
@@ -1434,11 +1452,13 @@ lemma ladder_commutator_of_hasDerivAt (f : ℝ → ℂ) (df ddf : ℂ) (x : ℝ)
   rw [div_eq_iff (pow_ne_zero 2 hs), hsq]
   ring
 
-/-- Ladder commutator on the Schwartz carrier: `(a * a† - a† * a) f = f`
-pointwise for every `f` in `SchwartzCarrier` (Mathlib
-`SchwartzMap.smooth`, `ContDiff.deriv`). Closure of Schwartz space under
-`a`/`a†` is NOT claimed. -/
-lemma ladder_commutator_schwartz (f : ℝ → ℂ) (hf : f ∈ SchwartzCarrier)
+/-- Pointwise ladder identity for Schwartz functions:
+`annFun (creFun f) x - creFun (annFun f) x = f x` for every `f` in `SchwartzCarrier` (Mathlib
+`SchwartzMap.smooth`, `ContDiff.deriv`). This is a formal identity of the differential
+expressions `annFun` and `creFun`, not a commutator of the records `annihilation` and
+`creation`: closure of the Schwartz carrier under `annFun`/`creFun` is not proved, so those
+records cannot be composed. -/
+lemma ladder_commutator_pointwise_schwartz (f : ℝ → ℂ) (hf : f ∈ SchwartzCarrier)
     (x : ℝ) :
     annFun (creFun f) x - creFun (annFun f) x = f x := by
   obtain ⟨s, hs⟩ := hf
@@ -1451,18 +1471,19 @@ lemma ladder_commutator_schwartz (f : ℝ → ℂ) (hf : f ∈ SchwartzCarrier)
   have hf2 : HasDerivAt (deriv ⇑s) (deriv (deriv ⇑s) x) x :=
     ((hderiv1.contDiffAt (x := x)).differentiableAt
       (by decide)).hasDerivAt
-  exact ladder_commutator_of_hasDerivAt _ _ _ x hf1 hf2
+  exact ladder_commutator_pointwise_of_hasDerivAt _ _ _ x hf1 hf2
 
 /-- Annihilation operator as an `OperatorWithDomain` record (MF10
 `PhyslibExt.Quantum.FiniteState` pattern; domain is the Schwartz
-carrier). Record fields verified against merged ATLAS main as
-`domain`/`op`. -/
+carrier). Its values are not proved to lie in the Schwartz carrier, so it
+does not compose with `creation`; the ladder identity of this module is stated
+for `annFun`/`creFun` (`ladder_commutator_pointwise_schwartz`). -/
 noncomputable def annihilation : Quantum.FiniteState.OperatorWithDomain where
   domain := SchwartzCarrier
   op f x := annFun (f : ℝ → ℂ) x
 
 /-- Creation operator as an `OperatorWithDomain` record (same MF10
-pattern as `annihilation`). -/
+pattern and the same caveat as `annihilation`). -/
 noncomputable def creation : Quantum.FiniteState.OperatorWithDomain where
   domain := SchwartzCarrier
   op f x := creFun (f : ℝ → ℂ) x
@@ -1907,18 +1928,21 @@ lemma polyene_wavelength_closed_form (k : ℕ) (a m ħ c : ℝ) (hk : 1 ≤ k)
 * Completeness of the box eigenfunctions in `L^2(0, L)` and
   self-adjointness of the box Hamiltonian on `H^2 ∩ H^1_0`: DEFERRED
   (allowed by the contract). Nothing in this module proves or assumes
-  either statement. Sobolev regularity is NOT developed here.
+  either statement. Sobolev regularity is NOT developed here, and the
+  Sobolev domain `H²(0, L) ∩ H¹₀(0, L)` is not modeled: `BoxC2Dirichlet` is
+  only a carrier of smooth real functions.
 * General-`v` oscillator eigen-equation: Physlib's proved result, cited
   in prose only (see the module header).
-* General-`v` oscillator orthonormality: recorded as following from
-  Physlib's oscillator completeness if the `eigenfunction_completeness`
-  citation checks in the pinned build, else DEFERRED; not claimed here.
+* General-`v` oscillator orthonormality: Physlib's proved
+  `eigenfunction_orthonormal`, for Physlib's `HarmonicOscillator` and its
+  constants, cited in prose only (see the module header); not restated
+  here.
 * Oscillator orthonormality for `(v, w) ∈ {0,1,2}^2`: PROVED
   (`osc_orthonormality_00/01/10/02/20/11/12/21/22`) by explicit Gaussian
   moments (odd vanishing by whole-line negation symmetry; even moments
-  by integration by parts from the base Gaussian integral). Only
-  general-`v` orthonormality (beyond `{0,1,2}`) remains deferred (see
-  the Physlib citation in the module header).
+  by integration by parts from the base Gaussian integral). General-`v`
+  orthonormality (beyond `{0,1,2}`) is not restated here (see the Physlib
+  citation in the module header).
 -/
 
 end Chemistry.Quantum.OneDimensionalModels
