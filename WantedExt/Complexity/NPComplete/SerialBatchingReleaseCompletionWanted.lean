@@ -46,7 +46,7 @@ it completes. A schedule puts job `j` into batch `b j` and starts the setup of b
 `S k`: batch `k` is set up during `[S k, S k + s)` and processes its jobs during
 `[S k + s, S k + s + p(batch k))`, and a batch with a larger index starts only after every
 nonempty batch with a smaller index has completed. Empty batch indices play no role. The setup
-time is a natural number; `s = 0` is allowed, as in both sources.
+time is a positive natural number.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`; numbers are in binary encoding.
@@ -91,9 +91,9 @@ def completion (i : SerialBatchingReleaseCompletionInstance)
 def release (i : SerialBatchingReleaseCompletionInstance) (j : Fin (numJobs i)) : ℕ :=
   (i.2.1.get j).2
 
-/-- Well-formedness of an instance: every list of jobs, setup time and bound is an instance. -/
-def WellFormed (_ : SerialBatchingReleaseCompletionInstance) : Prop :=
-  True
+/-- Well-formedness of an instance: the setup time `s` is positive. -/
+def WellFormed (i : SerialBatchingReleaseCompletionInstance) : Prop :=
+  0 < i.1
 
 /-- Some serial-batching schedule starts every job (at the start `S (b j) + s` of its batch's
 processing) no earlier than its release date and has total completion time at most `K`. -/
