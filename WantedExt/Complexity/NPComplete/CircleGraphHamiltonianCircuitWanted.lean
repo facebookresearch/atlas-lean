@@ -21,14 +21,14 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
+public import Mathlib.Combinatorics.SimpleGraph.Hamiltonian
+public import WantedExt.Complexity.NPComplete.DominatingSetCircleGraphWanted
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.CircleGraphHamiltonianCircuit
 
-open MetaMathlibExt.Complexity.NPComplete.HamiltonianCycleUndirected
-  (HamiltonianCycleUndirectedInstance HamiltonianCycleUndirectedFeasible)
+open MetaMathlibExt.Complexity.NPComplete.DominatingSetCircleGraph (circleGraph)
 
 /-!
 # HAMILTONIAN CIRCUIT on circle graphs is NP-complete
@@ -37,17 +37,18 @@ INSTANCE: a circle graph `G`, given by a chord model: a family of chords of a ci
 vertex, two vertices being adjacent when their chords intersect.
 QUESTION: does `G` have a Hamiltonian circuit?
 
-A chord is given by its two endpoints, natural numbers `a < b` naming points in clockwise order
-on the circle; the endpoints of all chords are distinct. Two chords `(a, b)` and `(c, d)` with
-distinct endpoints intersect exactly when their endpoints interleave, `a < c < b < d` or
-`c < a < d < b`; nested or disjoint chords do not meet. Every circle graph has such a model.
+The chord model and the circle graph are those of
+`WantedExt.Complexity.NPComplete.DominatingSetCircleGraphWanted`: a chord is given by its two
+endpoints, natural numbers `a < b` naming points in clockwise order on the circle; the endpoints
+of all chords are distinct; `DominatingSetCircleGraph.circleGraph` joins two chords when their
+endpoints interleave (`a < c < b < d`, symmetrized by `SimpleGraph.fromRel`), which for distinct
+endpoints is exactly when they intersect. Every circle graph has such a model. `WellFormed`
+states the chord conditions of `DominatingSetCircleGraph.WellFormed` (that predicate also
+constrains a domination bound, which this problem does not have).
 
-Vertex `u` is the `u`-th chord, and the circle graph is passed to `HamiltonianCycleUndirected`
-([GT37]) as the instance with one vertex per chord and the edge list `chordEdges`: the pairs
-`u < v` whose chords intersect. That edge list has no repeated edge, no loop and no reversed
-copy, so it is a well-formed `HamiltonianCycleUndirected` edge list, and the question is that
-module's `HamiltonianCycleUndirectedFeasible` (a Hamiltonian circuit needs at least three
-vertices).
+The question is the one of HAMILTONIAN CIRCUIT ([GT37], `HamiltonianCycleUndirectedWanted`):
+at least three vertices and a Hamiltonian cycle (Mathlib's `SimpleGraph.IsHamiltonian`), asked
+of the circle graph.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -63,32 +64,15 @@ reduction from every language in `NP`
 /-- An instance: the chords, one per vertex, each given by its endpoints `(a, b)`. -/
 abbrev CircleGraphHamiltonianCircuitInstance := List (ℕ × ℕ)
 
-/-- Two chords with distinct endpoints intersect: their endpoints interleave. -/
-def Crosses (p q : ℕ × ℕ) : Prop :=
-  (p.1 < q.1 ∧ q.1 < p.2 ∧ p.2 < q.2) ∨ (q.1 < p.1 ∧ p.1 < q.2 ∧ q.2 < p.2)
-
-/-- Crossing is decidable: it is a statement about natural numbers. -/
-instance : DecidableRel Crosses := fun p q => by
-  unfold Crosses
-  infer_instance
-
 /-- Well-formedness of an instance: every chord has endpoints `a < b`, and all endpoints of all
 chords are distinct. -/
 def WellFormed (i : CircleGraphHamiltonianCircuitInstance) : Prop :=
   (∀ c ∈ i, c.1 < c.2) ∧ (i.flatMap fun c => [c.1, c.2]).Nodup
 
-/-- The edges of the circle graph: the pairs `(u, v)` with `u < v < |V|` whose chords
-intersect. -/
-def chordEdges (i : CircleGraphHamiltonianCircuitInstance) : List (ℕ × ℕ) :=
-  (List.range i.length).flatMap fun u =>
-    ((List.range i.length).filter fun v =>
-      decide (u < v ∧ Crosses (i.getD u (0, 0)) (i.getD v (0, 0)))).map fun v => (u, v)
-
-/-- The circle graph as a HAMILTONIAN CIRCUIT instance: one vertex per chord and the chord
-edges. -/
-def toHamiltonianInstance (i : CircleGraphHamiltonianCircuitInstance) :
-    HamiltonianCycleUndirectedInstance :=
-  (i.length, chordEdges i)
+/-- The circle graph has a Hamiltonian circuit (at least three vertices, as in
+`HamiltonianCycleUndirectedFeasible`). -/
+def CircleGraphHamiltonianCircuitFeasible (i : CircleGraphHamiltonianCircuitInstance) : Prop :=
+  3 ≤ i.length ∧ (circleGraph i).IsHamiltonian
 
 open Classical in
 /-- HAMILTONIAN CIRCUIT on circle graphs as a decision problem over bitstrings. -/
@@ -96,7 +80,7 @@ noncomputable def circleGraphHamiltonianCircuitDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
       (α := CircleGraphHamiltonianCircuitInstance) x with
-  | some i => decide (WellFormed i ∧ HamiltonianCycleUndirectedFeasible (toHamiltonianInstance i))
+  | some i => decide (WellFormed i ∧ CircleGraphHamiltonianCircuitFeasible i)
   | none => false
 
 /-- **HAMILTONIAN CIRCUIT on circle graphs is NP-complete.** Source: Garey and Johnson (1979),
