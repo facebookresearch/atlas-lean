@@ -412,7 +412,11 @@ public theorem_wanted irwinMeasure_open_local_mass
 
 /-- Lemma 3: under the same depth, string, adjusted digit-count, and scale
 hypotheses as Lemma 2, the rescaling identity also holds for every subset of
-the half-open interval. Masses use `.toReal`. Source: Jean-François Burnol,
+the half-open interval, under the added atom hypothesis `0 < d → l' = l ∨ j < k`
+omitted by the paper's Lemma 3; without it the identity fails at the atom at `x`
+(the strings `X 0^r`) when `0 < d`, `l < l'`, `k = j` and `x ∈ U`. For example,
+`b = 2`, `d = 1`, `x = 0`, `l = 0`, `l' = 1`, `j = k = 0`, `U = {0}` gives left
+side `2` and right side `1`. Masses use `.toReal`. Source: Jean-François Burnol,
 *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026), Article A11,
 Lemma 3. -/
 public theorem_wanted irwinMeasure_halfOpen_deeper_local_mass
@@ -422,6 +426,7 @@ public theorem_wanted irwinMeasure_halfOpen_deeper_local_mass
     (hXval : normalizedStringValue b X = x) (j : ℕ)
     (hj : j = X.count ⟨d, hd⟩) (l' : ℕ) (hll' : l ≤ l')
     (k : ℕ) (hk : (if 0 < d then j else j + l' - l) ≤ k)
+    (hatom : 0 < d → l' = l ∨ j < k)
     (U : Set ℝ)
     (hU : U ⊆ Set.Ico x (x + (b : ℝ) ^ (-(l' : ℤ)))) :
     (irwinMeasure b d k hd U).toReal =
