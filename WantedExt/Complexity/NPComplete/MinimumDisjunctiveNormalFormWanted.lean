@@ -26,7 +26,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import CSLibExt.Logics.Propositional.CNF.Semantics
+public import WantedExt.Complexity.KeyTheorems.KarpLubyWanted
 
 @[expose] public section
 
@@ -42,10 +42,10 @@ and no others?
 
 Variables are `u₀, …, u_{n-1}`; a truth assignment is a list of `n` Booleans, and `A` is given
 explicitly as a list of such lists (Allender et al. call this the `A` version, `Min-DNF(A)`). A
-disjunct is a list of literals `(x, b)`, true when every literal holds; a literal holds under an
-assignment `a` when `a.getD x false = b`, which is CSLibExt's
-`Cslib.Logic.PL.CNFLiteral.Satisfies`. A DNF expression is a list of disjuncts, true when some
-disjunct is true.
+DNF expression is a list of disjuncts, each a list of literals `(x, b)` (`uₓ` if `b`, `¬uₓ`
+otherwise); its truth value is the repository's existing DNF semantics
+`MetaMathlibExt.Complexity.KeyTheorems.KarpLuby.dnfSat` (some disjunct has every literal
+`(x, b)` with `σ x = b`), evaluated at `σ x = a.getD x false` for an assignment `a`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -62,11 +62,6 @@ reduction from every language in `NP`
 `K`. -/
 abbrev MinimumDisjunctiveNormalFormInstance := ℕ × List (List Bool) × ℕ
 
-/-- A DNF expression is true under the assignment `σ` when some disjunct has all of its
-literals satisfied. -/
-def DNFTrue (σ : ℕ → Bool) (E : List (List (ℕ × Bool))) : Prop :=
-  ∃ t ∈ E, ∀ l ∈ t, Cslib.Logic.PL.CNFLiteral.Satisfies σ l
-
 /-- Well-formedness of an instance: every listed truth assignment has length `n`, and `K` is
 positive. -/
 def WellFormed (i : MinimumDisjunctiveNormalFormInstance) : Prop :=
@@ -76,7 +71,9 @@ def WellFormed (i : MinimumDisjunctiveNormalFormInstance) : Prop :=
 assignments in `A`. -/
 def MinimumDisjunctiveNormalFormFeasible (i : MinimumDisjunctiveNormalFormInstance) : Prop :=
   ∃ E : List (List (ℕ × Bool)), E.length ≤ i.2.2 ∧ (∀ t ∈ E, ∀ l ∈ t, l.1 < i.1) ∧
-    ∀ a : List Bool, a.length = i.1 → (DNFTrue (fun x => a.getD x false) E ↔ a ∈ i.2.1)
+    ∀ a : List Bool, a.length = i.1 →
+      (MetaMathlibExt.Complexity.KeyTheorems.KarpLuby.dnfSat (fun x => a.getD x false) E ↔
+        a ∈ i.2.1)
 
 open Classical in
 /-- MINIMUM DISJUNCTIVE NORMAL FORM as a decision problem over bitstrings. -/
