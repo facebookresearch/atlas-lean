@@ -10,7 +10,8 @@ module
 
 public import Mathlib.Data.ZMod.Basic
 public import Mathlib.Data.Fintype.Card
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.FinCases
@@ -18,17 +19,56 @@ import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 
-variable {n : ℕ}
+/-!
+# The BLR linearity test over `ZMod 2`
+
+The Blum–Luby–Rubinfeld (BLR) test checks whether a function `f : (ZMod 2)ⁿ → ZMod 2` is
+linear: draw `x` and `y` independently and uniformly from `(ZMod 2)ⁿ` and accept when
+`f (x + y) = f x + f y`. Probabilities are finite counts: `acceptProb f` is the number of
+accepting pairs `(x, y)` (`blrAccepts f`) divided by the number `4ⁿ` of all pairs, and
+`disagreeProb f g` is the fraction of the `2ⁿ` inputs on which `f` and `g` differ. The linear
+functions are `linFun a`, the map `x ↦ a ⬝ᵥ x` given by Mathlib's `dotProduct` (`linFun_apply`).
+
+## Main results
+
+* `blr_complete`: a linear function passes the test with probability `1`.
+* `blr_soundness`: if `f` passes with probability at least `1 - ε`, then
+  `disagreeProb f (linFun a) ≤ ε` for some `a`. The soundness constant is normalized so that a
+  rejection probability `ε` bounds the distance to the nearest linear function by `ε`, as in the
+  Fourier-analytic proof.
+
+## Proof
+
+With the sign characters `χ_a x = (-1)^(a ⬝ᵥ x)` and `F x = (-1)^(f x)`, write
+`F̂ a = ∑ x, F x * χ_a x`. Character orthogonality gives Parseval, `∑ a, F̂ a ^ 2 = 4ⁿ`, and the
+cubic identity `∑ a, F̂ a ^ 3 = 2ⁿ ∑ x, ∑ y, F x * F y * F (x + y)`; the double sum counts
+accepting minus rejecting pairs. So acceptance with probability at least `1 - ε` forces
+`F̂ a ≥ (1 - 2ε) 2ⁿ` for some `a`, and the number of inputs where `f` and `linFun a` differ is
+`(2ⁿ - F̂ a) / 2`.
+
+## References
+
+* M. Blum, M. Luby and R. Rubinfeld, *Self-testing/correcting with applications to numerical
+  problems*, J. Comput. System Sci. 47 (1993) 549–595.
+* R. O'Donnell, *Analysis of Boolean Functions*, Cambridge University Press (2014), Chapter 1.
+-/
 
 @[expose] public section
 
 open Finset
 
+namespace MathlibExt.Complexity.LinearityTest
+
 variable {n : ℕ}
 
-/-- The linear function `x ↦ ∑ i, a i * x i` over `ZMod 2`. -/
+/-- The linear function `x ↦ a ⬝ᵥ x` over `ZMod 2` (Mathlib's `dotProduct`), as a function that
+can be passed to `acceptProb` and `disagreeProb`; `linFun_apply` unfolds it. -/
 def linFun (a : Fin n → ZMod 2) (x : Fin n → ZMod 2) : ZMod 2 :=
-  ∑ i, a i * x i
+  dotProduct a x
+
+@[simp]
+theorem linFun_apply (a x : Fin n → ZMod 2) : linFun a x = dotProduct a x :=
+  rfl
 
 /-- The pairs `(x, y)` on which the BLR linearity test accepts
 `f`, i.e. `f (x + y) = f x + f y`. -/
@@ -71,12 +111,10 @@ private theorem sgn_add (u v : ZMod 2) : sgn (u + v) = sgn u * sgn v := by
 
 private theorem linFun_add_left (a b x : Fin n → ZMod 2) :
     linFun (a + b) x = linFun a x + linFun b x := by
-  unfold linFun
-  simp [Pi.add_apply, add_mul, Finset.sum_add_distrib]
+  simp only [linFun_apply, add_dotProduct]
 
 private theorem linFun_zero_right (a : Fin n → ZMod 2) : linFun a 0 = 0 := by
-  unfold linFun
-  simp
+  simp only [linFun_apply, dotProduct_zero]
 
 private def chi (a x : Fin n → ZMod 2) : ℝ := sgn (linFun a x)
 
@@ -90,8 +128,7 @@ private theorem chi_add_right (a x y : Fin n → ZMod 2) :
     chi a (x + y) = chi a x * chi a y := by
   unfold chi
   have h : linFun a (x + y) = linFun a x + linFun a y := by
-    unfold linFun
-    simp [Pi.add_apply, mul_add, Finset.sum_add_distrib]
+    simp only [linFun_apply, dotProduct_add]
   rw [h]
   exact sgn_add _ _
 
@@ -115,7 +152,7 @@ private theorem ortho (w : Fin n → ZMod 2) :
     set s : Fin n → ZMod 2 := Pi.single j 1 with hs
     have hsw : linFun s w = 1 := by
       have hsum : linFun s w = w j := by
-        unfold linFun
+        unfold linFun dotProduct
         rw [Finset.sum_eq_single j]
         · rw [hs, Pi.single_eq_same, one_mul]
         · intro i _ hij
@@ -366,8 +403,8 @@ private theorem count_disagree (f : (Fin n → ZMod 2) → ZMod 2) (a : Fin n �
       have h2 : (if f x = linFun a x then (1:ℝ) else -1) = 1 := by simp [hx]
       rw [hper x, h1, h2]
       norm_num
-    · have h1 : (if f x ≠ linFun a x then (1:ℝ) else 0) = 1 := by simp [hx]
-      have h2 : (if f x = linFun a x then (1:ℝ) else -1) = -1 := by simp [hx]
+    · have h1 : (if f x ≠ linFun a x then (1:ℝ) else 0) = 1 := ite_eq_left hx
+      have h2 : (if f x = linFun a x then (1:ℝ) else -1) = -1 := ite_eq_right hx
       rw [hper x, h1, h2]
       norm_num
   rw [hcard, Finset.sum_congr rfl (fun x _ => hper2 x)]
@@ -447,8 +484,7 @@ private theorem count_accept (f : (Fin n → ZMod 2) → ZMod 2) :
 
 private theorem linFun_add (a x y : Fin n → ZMod 2) :
     linFun a (x + y) = linFun a x + linFun a y := by
-  unfold linFun
-  simp [Pi.add_apply, mul_add, Finset.sum_add_distrib]
+  simp only [linFun_apply, dotProduct_add]
 
 /-- Completeness: every linear function passes the BLR test
 with probability `1`. -/
@@ -552,3 +588,5 @@ theorem blr_soundness (f : (Fin n → ZMod 2) → ZMod 2) (ε : ℝ)
       ≤ (2 * (ε * (Fintype.card (Fin n → ZMod 2) : ℝ)))/2 :=
         div_le_div_of_nonneg_right h6 (le_of_lt h2pos)
     _ = ε * (Fintype.card (Fin n → ZMod 2) : ℝ) := by ring
+
+end MathlibExt.Complexity.LinearityTest
