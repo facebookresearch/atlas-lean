@@ -20,8 +20,12 @@ and introduces no second game, profile, or potential encoding.
 
 ## Main results
 
-* `strict_better_response_decreases_potential`: one strict
-  better-response step strictly decreases the potential.
+* `IsImprovementPath`: a finite strict improvement path, the standard
+  `List.IsChain` of the step relation `IsStrictBetterResponse`, so the
+  `List.IsChain` API applies to it directly.
+* `strict_better_response_decreases_potential`,
+  `IsStrictBetterResponse.potential_lt`: one strict better-response step
+  strictly decreases the potential.
 * `maximal_improvement_path_ends_at_nash`: a maximal finite strict
   improvement path ends at a pure Nash equilibrium.
 * `maximal_improvement_path_last_is_nash`: a maximal path is nonempty,
@@ -36,25 +40,22 @@ def IsStrictBetterResponse {ι : Type*} [Fintype ι] [DecidableEq ι] {S : ι �
   ∃ (i : ι) (a : S i), s' = Function.update s i a ∧ c i s' < c i s
 
 /-- A finite strict improvement path: every consecutive pair of profiles
-is a strict better-response step. -/
-def IsImprovementPath {ι : Type*} [Fintype ι] [DecidableEq ι] {S : ι → Type*}
+is a strict better-response step. This is `List.IsChain` for the step
+relation, so the `List.IsChain` API applies directly. -/
+abbrev IsImprovementPath {ι : Type*} [Fintype ι] [DecidableEq ι] {S : ι → Type*}
     [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
-    (c : ι → (∀ i, S i) → ℝ) : List (∀ i, S i) → Prop
-  | [] => True
-  | [_] => True
-  | s₁ :: s₂ :: rest =>
-    IsStrictBetterResponse c s₁ s₂ ∧ IsImprovementPath c (s₂ :: rest)
+    (c : ι → (∀ i, S i) → ℝ) (path : List (∀ i, S i)) : Prop :=
+  path.IsChain (IsStrictBetterResponse c)
 
 /-- A finite strict improvement path is maximal when it is nonempty and
-its last profile has no strict unilateral improvement, so the path
-cannot be extended by another strict better-response step. The empty
-list has no last profile and is not maximal. -/
+no strict better-response step leaves its last profile, so the path
+cannot be extended. The empty list has no last profile and is not
+maximal. -/
 def IsMaximalImprovementPath {ι : Type*} [Fintype ι] [DecidableEq ι]
     {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
     (c : ι → (∀ i, S i) → ℝ) (path : List (∀ i, S i)) : Prop :=
   path ≠ [] ∧ IsImprovementPath c path ∧
-    ∀ s, path.getLast? = some s →
-      ¬ ∃ (i : ι) (a : S i), c i (Function.update s i a) < c i s
+    ∀ s, path.getLast? = some s → ∀ s', ¬ IsStrictBetterResponse c s s'
 
 /-- One-step lemma: a strict better-response step strictly decreases the
 potential. This file uses the COST orientation of exact potential games:
@@ -73,6 +74,16 @@ theorem strict_better_response_decreases_potential {ι : Type*} [Fintype ι]
   have h := hΦ i s a
   linarith
 
+/-- The one-step lemma for the step predicate: a strict better-response step
+`IsStrictBetterResponse c s s'` strictly decreases the potential. -/
+theorem IsStrictBetterResponse.potential_lt {ι : Type*} [Fintype ι]
+    [DecidableEq ι] {S : ι → Type*} [∀ i, Fintype (S i)] [∀ i, Nonempty (S i)]
+    {c : ι → (∀ i, S i) → ℝ} {Φ : (∀ i, S i) → ℝ} {s s' : ∀ i, S i}
+    (hstep : IsStrictBetterResponse c s s') (hΦ : IsExactPotential c Φ) :
+    Φ s' < Φ s := by
+  obtain ⟨i, a, hEq, hlt⟩ := hstep
+  exact strict_better_response_decreases_potential hΦ hEq hlt
+
 /-- Maximal-path termination: a maximal finite strict improvement path
 terminates at a pure Nash equilibrium, namely its last profile. -/
 theorem maximal_improvement_path_ends_at_nash {ι : Type*} [Fintype ι]
@@ -82,7 +93,7 @@ theorem maximal_improvement_path_ends_at_nash {ι : Type*} [Fintype ι]
     IsPureNash c s := by
   intro i a
   by_contra hcon
-  exact hmax.2.2 s hlast ⟨i, a, lt_of_not_ge hcon⟩
+  exact hmax.2.2 s hlast _ ⟨i, a, rfl, lt_of_not_ge hcon⟩
 
 /-- Maximality supplies the endpoint: a maximal finite strict improvement
 path is nonempty, and its last profile is a pure Nash equilibrium. -/

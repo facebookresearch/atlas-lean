@@ -15,10 +15,11 @@ public import MathlibExt.GameTheory.PotentialGamesImprovement
 /-! # Tests for improvement paths in exact potential games
 
 Boundary checks on a concrete two-player identical-interest game: a
-strict step decreases the potential, a maximal two-step path ends at a
-pure Nash equilibrium, a one-step prefix is extendable with a last
-profile that is not Nash, pinning maximality as load-bearing, and the
-empty path is not maximal.
+strict step decreases the potential (also in the step-predicate form), a
+maximal two-step path ends at a pure Nash equilibrium, the `List.IsChain`
+API applies to improvement paths, a one-step prefix is extendable with a
+last profile that is not Nash, pinning maximality as load-bearing, and
+the empty path is not maximal.
 -/
 
 namespace MathlibExtTest.GameTheory.PotentialGamesImprovement
@@ -56,6 +57,17 @@ theorem test_strict_step_decreases_potential :
   exact strict_better_response_decreases_potential (Φ := testPot)
     testIsExact (s := profTT) (s' := profFT) rfl hcost
 
+/-- The step-predicate form: the step from `profTT` to `profFT`, given as an
+`IsStrictBetterResponse`, strictly decreases the potential. -/
+theorem test_step_predicate_decreases_potential :
+    testPot profFT < testPot profTT := by
+  have hFT0 : profFT (0 : Fin 2) = false := by simp [profFT]
+  have hne10 : (1 : Fin 2) ≠ 0 := by decide
+  have hFT1 : profFT (1 : Fin 2) = true := by simp [profFT, profTT, hne10]
+  have hcost : testCost 0 profFT < testCost 0 profTT := by
+    norm_num [testCost, profTT, hFT0, hFT1]
+  exact IsStrictBetterResponse.potential_lt ⟨0, false, rfl, hcost⟩ testIsExact
+
 /-- The two-step improvement path `profTT → profFT → profFF` is maximal. -/
 theorem test_two_step_path_is_maximal :
     IsMaximalImprovementPath testCost [profTT, profFT, profFF] := by
@@ -75,16 +87,15 @@ theorem test_two_step_path_is_maximal :
   have hstep12 : IsStrictBetterResponse testCost profFT profFF :=
     ⟨1, false, rfl, hcost12⟩
   have hchain : IsImprovementPath testCost [profTT, profFT, profFF] :=
-    ⟨hstep01, hstep12, trivial⟩
+    .cons_cons hstep01 (.cons_cons hstep12 (.singleton _))
   have hclosed : ∀ s : ∀ _ : Fin 2, Bool,
       [profTT, profFT, profFF].getLast? = some s →
-      ¬ ∃ (i : Fin 2) (a : Bool),
-        testCost i (Function.update s i a) < testCost i s := by
-    intro s hs
+      ∀ s', ¬ IsStrictBetterResponse testCost s s' := by
+    intro s hs s'
     have hred : [profTT, profFT, profFF].getLast? = some profFF := rfl
     rw [hred] at hs
     obtain rfl := Option.some_inj.mp hs
-    rintro ⟨i, a, hlt⟩
+    rintro ⟨i, a, rfl, hlt⟩
     have e0 : testCost i profFF = 0 := by
       norm_num [testCost, hFF0, hFF1]
     have enn : (0 : ℝ) ≤ testCost i (Function.update profFF i a) := by
@@ -104,13 +115,20 @@ theorem test_maximal_path_last_is_nash :
     IsPureNash testCost profFF :=
   maximal_improvement_path_last_is_nash test_two_step_path_is_maximal
 
+/-- Improvement paths are `List.IsChain`, so its API applies directly:
+dropping the first profile of the maximal path leaves an improvement path. -/
+theorem test_isChain_api :
+    IsImprovementPath testCost [profFT, profFF] :=
+  (List.isChain_cons_cons.mp test_two_step_path_is_maximal.2.1).2
+
 /-- The one-step prefix path is a valid improvement path that is
-extendable, and its last profile is not Nash: maximality is load-bearing
-for the termination theorem. -/
+extendable by a strict better-response step, hence not maximal, and its
+last profile is not Nash: maximality is load-bearing for the termination
+theorem. -/
 theorem test_prefix_extendable_not_nash :
     IsImprovementPath testCost [profTT, profFT] ∧
-    (∃ (i : Fin 2) (a : Bool),
-      testCost i (Function.update profFT i a) < testCost i profFT) ∧
+    IsStrictBetterResponse testCost profFT profFF ∧
+    ¬ IsMaximalImprovementPath testCost [profTT, profFT] ∧
     ¬ IsPureNash testCost profFT := by
   have hFT0 : profFT (0 : Fin 2) = false := by simp [profFT]
   have hne10 : (1 : Fin 2) ≠ 0 := by decide
@@ -124,8 +142,10 @@ theorem test_prefix_extendable_not_nash :
   have hcost12 : testCost 1 profFF < testCost 1 profFT := by
     norm_num [testCost, hFT0, hFT1, hFF0, hFF1]
   have hchain : IsImprovementPath testCost [profTT, profFT] :=
-    ⟨⟨0, false, rfl, hcost01⟩, trivial⟩
-  refine ⟨hchain, ⟨1, false, hcost12⟩, ?_⟩
+    .cons_cons ⟨0, false, rfl, hcost01⟩ (.singleton _)
+  have hstep : IsStrictBetterResponse testCost profFT profFF :=
+    ⟨1, false, rfl, hcost12⟩
+  refine ⟨hchain, hstep, fun hmax => hmax.2.2 profFT rfl profFF hstep, ?_⟩
   intro hNash
   have hle : testCost 1 profFT ≤ testCost 1 profFF := hNash 1 false
   linarith
@@ -134,6 +154,6 @@ theorem test_prefix_extendable_not_nash :
 profile, so it is not maximal. -/
 theorem test_empty_path_not_maximal :
     IsImprovementPath testCost [] ∧ ¬ IsMaximalImprovementPath testCost [] :=
-  ⟨trivial, fun hmax => hmax.1 rfl⟩
+  ⟨List.IsChain.nil, fun hmax => hmax.1 rfl⟩
 
 end MathlibExtTest.GameTheory.PotentialGamesImprovement
