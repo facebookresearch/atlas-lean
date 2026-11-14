@@ -7,12 +7,14 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Tactic
-public import Mathlib.Analysis.Calculus.Deriv.Add
-public import Mathlib.Analysis.Calculus.Deriv.MeanValue
-public import Mathlib.Analysis.Calculus.Deriv.Mul
-public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
-public import Mathlib.Analysis.SpecialFunctions.Exponential
+public import MathlibExt.Analysis.ODE.ExponentialGrowth
+
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.SpecialFunctions.Exp
+import Mathlib.Order.Filter.AtTopBot.Field
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 
 /-!
 # Air-water exchange with a conserved inventory
@@ -21,45 +23,64 @@ Closed isothermal two-compartment system: gas amount `ng` and dissolved
 amount `nw` exchange through the flux `J = k * A * (H * p - c)` with
 `p = ng * R * T / Vg` and `c = nw / Vw`, satisfying `ng' = -J` and
 `nw' = J`. The total inventory `ng + nw` is conserved, and the
-disequilibrium `d = H * p - c` decays exponentially at rate
-`k * A * (H * R * T / Vg + 1 / Vw)`.
+disequilibrium `d = H * p - c` satisfies the linear equation
+`d' = -rate * d` with `rate = k * A * (H * R * T / Vg + 1 / Vw)`.
 
 ## i. Overview
 
 Conservation is the cancellation of `+J` against `-J` in the derivative
-of the total. The disequilibrium obeys a linear decay equation because
+of the total. The disequilibrium obeys a linear equation because
 differentiating `H * p - c` pulls out one factor of the flux coefficient
-from each compartment, and a function satisfying `d' = -rate * d`
-everywhere decays as `d(t) = d(0) * exp (-rate * t)`. This is a closed
-isothermal ideal-gas/Henry model with constant geometry; an external gas
-source would add to the total budget rather than vanish.
+from each compartment. Both identities hold for all real `k`, `A`, `H`,
+`R`, `T` (the equation is stated for positive volumes), and a
+disequilibrium satisfying the equation at every time is the signed
+exponential `d(t) = d(0) * exp (-rate * t)`
+(`MathlibExt.Analysis.ODE.ExponentialGrowth.eq_expGrowthPath_of_hasDerivAt`).
+That exponential decays only when `rate > 0`; a negative rate would make
+it grow. The rate is positive when the transfer coefficient `k`, the
+interface area `A`, the Henry constant `H`, the gas constant `R`, the
+absolute temperature `T` and both volumes are positive, and then the
+disequilibrium tends to `0` in forward time. The model is a closed
+isothermal ideal-gas/Henry system with constant geometry: no external
+source or sink enters the budget.
 
 ## ii. Key results
 
 - `EarthScience.air_water_total_conserved`: total inventory derivative `0`.
-- `EarthScience.air_water_difference_ode`: disequilibrium decay equation.
-- `EarthScience.exp_decay_of_linear_ode`: exponential decay from the
-  linear ODE.
+- `EarthScience.air_water_difference_ode`: the linear equation
+  `d' = -rate * d`, for all real `k`, `A`, `H`, `R`, `T`.
+- `EarthScience.air_water_difference_eq_expGrowthPath`: the signed
+  exponential closed form `d(t) = d(0) * exp (-rate * t)`.
+- `EarthScience.air_water_rate_pos`: `0 < rate` for positive physical
+  parameters.
+- `EarthScience.air_water_difference_tendsto_zero`: with positive physical
+  parameters, the disequilibrium tends to `0` as `t → ∞`.
 
 ## iii. Table of contents
 
 - A. Total inventory conservation
-- B. Disequilibrium decay equation
-- C. Exponential decay
+- B. Disequilibrium equation and closed form
+- C. Physical decay
 
 ## iv. References
 
 - `HasDerivAt` API in `Mathlib/Analysis/Calculus/Deriv/Add.lean`.
-- `Real.exp` in `Mathlib/Analysis/SpecialFunctions/Exponential.lean`.
+- `expGrowthPath` and its uniqueness theorem in
+  `MathlibExt/Analysis/ODE/ExponentialGrowth.lean`.
 -/
 
 @[expose] public section
 
 namespace EarthScience
 
-/-- Air-water exchange: total inventory `ng + nw` is conserved to first
-order, since `ng' = -J` and `nw' = J`. Here `J t = k * A * (H * p t - c t)`
-with `p t = ng t * R * T / Vg` and `c t = nw t / Vw`. -/
+open MathlibExt.Analysis.ODE.ExponentialGrowth
+
+/-! ## A. Total inventory conservation -/
+
+/-- Air-water exchange: the total inventory `ng + nw` has zero time
+derivative at `t`, since `ng' = -J` and `nw' = J`. Here
+`J t = k * A * (H * p t - c t)` with `p t = ng t * R * T / Vg` and
+`c t = nw t / Vw`. -/
 theorem air_water_total_conserved (Vg Vw R T H k A : ℝ)
     (ng nw : ℝ → ℝ) (t : ℝ)
     (hng : HasDerivAt ng (-(k * A * (H * (ng t * R * T / Vg) - nw t / Vw))) t)
@@ -69,9 +90,13 @@ theorem air_water_total_conserved (Vg Vw R T H k A : ℝ)
   rw [neg_add_cancel] at h
   exact h
 
-/-- The disequilibrium `d t = H * p t - c t` satisfies the linear decay
-equation `d' t = -rate * d t` with
-`rate = k * A * (H * R * T / Vg + 1 / Vw)`. -/
+/-! ## B. Disequilibrium equation and closed form -/
+
+/-- The disequilibrium `d t = H * p t - c t` satisfies the linear equation
+`d' t = -rate * d t` with `rate = k * A * (H * R * T / Vg + 1 / Vw)`.
+The identity holds for all real `k`, `A`, `H`, `R`, `T`; it describes
+relaxation toward equilibrium only when `rate > 0` (see
+`air_water_rate_pos`). -/
 theorem air_water_difference_ode (Vg Vw R T H k A : ℝ)
     (hVg : 0 < Vg) (hVw : 0 < Vw)
     (ng nw : ℝ → ℝ) (t : ℝ)
@@ -95,35 +120,51 @@ theorem air_water_difference_ode (Vg Vw R T H k A : ℝ)
   convert h using 1
   ring
 
-/-- A function satisfying `d' t = -rate * d t` for all `t` decays
-exponentially: `d t = d 0 * exp (-rate * t)`. -/
-theorem exp_decay_of_linear_ode (d : ℝ → ℝ) (rate : ℝ)
-    (hd : ∀ t, HasDerivAt d (-rate * d t) t) (t : ℝ) :
-    d t = d 0 * Real.exp (-rate * t) := by
-  have hlin : ∀ s, HasDerivAt (fun t => rate * t) rate s := fun s => by
-    simpa using (hasDerivAt_id s).const_mul rate
-  have hexp : ∀ s, HasDerivAt (fun t => Real.exp (rate * t))
-      (Real.exp (rate * s) * rate) s := fun s => (hlin s).exp
-  have he : ∀ s, HasDerivAt (fun t => d t * Real.exp (rate * t)) 0 s := fun s => by
-    have h := (hd s).mul (hexp s)
-    have hder : (-rate * d s) * Real.exp (rate * s)
-        + d s * (Real.exp (rate * s) * rate) = 0 := by ring
-    rw [hder] at h
-    exact h
-  have hdiff : Differentiable ℝ (fun t => d t * Real.exp (rate * t)) :=
-    fun s => (he s).differentiableAt
-  have hderiv : ∀ s, deriv (fun t => d t * Real.exp (rate * t)) s = 0 :=
-    fun s => (he s).deriv
-  have hconst := is_const_of_deriv_eq_zero hdiff hderiv t 0
-  simp only [mul_zero, Real.exp_zero, mul_one] at hconst
-  have h2 : Real.exp (rate * t) * Real.exp (-rate * t) = 1 := by
-    have harg : rate * t + -rate * t = 0 := by ring
-    calc Real.exp (rate * t) * Real.exp (-rate * t)
-        = Real.exp (rate * t + -rate * t) := (Real.exp_add _ _).symm
-      _ = 1 := by rw [harg, Real.exp_zero]
-  calc d t = d t * 1 := (mul_one _).symm
-    _ = d t * (Real.exp (rate * t) * Real.exp (-rate * t)) := by rw [h2]
-    _ = (d t * Real.exp (rate * t)) * Real.exp (-rate * t) := by ring
-    _ = d 0 * Real.exp (-rate * t) := by rw [hconst]
+/-- If the exchange equations hold at every time, the disequilibrium is the
+signed exponential `d t = d 0 * exp (-rate * t)`, written as the exponential
+path with rate `-rate`. No sign is imposed on `k`, `A`, `H`, `R`, `T`: for
+`rate > 0` the path decays, for `rate < 0` it grows. -/
+theorem air_water_difference_eq_expGrowthPath (Vg Vw R T H k A : ℝ)
+    (hVg : 0 < Vg) (hVw : 0 < Vw) (ng nw : ℝ → ℝ)
+    (hng : ∀ t, HasDerivAt ng (-(k * A * (H * (ng t * R * T / Vg) - nw t / Vw))) t)
+    (hnw : ∀ t, HasDerivAt nw (k * A * (H * (ng t * R * T / Vg) - nw t / Vw)) t)
+    (t : ℝ) :
+    H * (ng t * R * T / Vg) - nw t / Vw =
+      expGrowthPath (H * (ng 0 * R * T / Vg) - nw 0 / Vw)
+        (-(k * A * (H * R * T / Vg + 1 / Vw))) t :=
+  eq_expGrowthPath_of_hasDerivAt (x := fun t => H * (ng t * R * T / Vg) - nw t / Vw)
+    (fun s => air_water_difference_ode Vg Vw R T H k A hVg hVw ng nw s (hng s) (hnw s)) t
+
+/-! ## C. Physical decay -/
+
+/-- With positive transfer coefficient `k`, interface area `A`, Henry
+constant `H`, gas constant `R`, absolute temperature `T` and volumes `Vg`,
+`Vw`, the relaxation rate `k * A * (H * R * T / Vg + 1 / Vw)` is positive. -/
+lemma air_water_rate_pos (Vg Vw R T H k A : ℝ) (hVg : 0 < Vg) (hVw : 0 < Vw)
+    (hR : 0 < R) (hT : 0 < T) (hH : 0 < H) (hk : 0 < k) (hA : 0 < A) :
+    0 < k * A * (H * R * T / Vg + 1 / Vw) := by
+  positivity
+
+/-- Forward-time decay: with positive physical parameters and the exchange
+equations holding at every time, the disequilibrium `H * p t - c t` tends
+to `0` as `t → ∞`. -/
+theorem air_water_difference_tendsto_zero (Vg Vw R T H k A : ℝ)
+    (hVg : 0 < Vg) (hVw : 0 < Vw) (hR : 0 < R) (hT : 0 < T) (hH : 0 < H)
+    (hk : 0 < k) (hA : 0 < A) (ng nw : ℝ → ℝ)
+    (hng : ∀ t, HasDerivAt ng (-(k * A * (H * (ng t * R * T / Vg) - nw t / Vw))) t)
+    (hnw : ∀ t, HasDerivAt nw (k * A * (H * (ng t * R * T / Vg) - nw t / Vw)) t) :
+    Filter.Tendsto (fun t => H * (ng t * R * T / Vg) - nw t / Vw) Filter.atTop
+      (nhds 0) := by
+  have hrate := air_water_rate_pos Vg Vw R T H k A hVg hVw hR hT hH hk hA
+  have hexp : Filter.Tendsto
+      (fun t => Real.exp (-(k * A * (H * R * T / Vg + 1 / Vw)) * t)) Filter.atTop
+      (nhds 0) :=
+    Real.tendsto_exp_atBot.comp
+      (Filter.tendsto_id.const_mul_atTop_of_neg (neg_neg_of_pos hrate))
+  have hlim := hexp.const_mul (H * (ng 0 * R * T / Vg) - nw 0 / Vw)
+  rw [mul_zero] at hlim
+  refine hlim.congr fun t => ?_
+  rw [air_water_difference_eq_expGrowthPath Vg Vw R T H k A hVg hVw ng nw hng hnw t,
+    expGrowthPath]
 
 end EarthScience
