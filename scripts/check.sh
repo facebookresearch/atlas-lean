@@ -62,6 +62,8 @@ if [[ "$scope" == all || "$scope" == preflight ]]; then
   run_check "maintenance script regressions" scripts/test_scripts.sh
   run_check "library policy" scripts/check_health.sh
   run_check "copyright headers" python3 scripts/check_copyright.py --all
+  # Report-only: prints every manifest mismatch and exits 0. Pass --strict to make it blocking.
+  run_check "formal-math sync manifest (report-only)" python3 scripts/check_formal_math_sync.py
 fi
 
 if [[ "$scope" == all || "$scope" == build ]]; then
