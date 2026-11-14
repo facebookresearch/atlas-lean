@@ -8,9 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.Omics.HierarchicalCountMLEUniqueness
+public import MathlibExt.Biology.Omics.HierarchicalCountMLE
 
 import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
+import MathlibExt.Biology.Omics.HierarchicalCountMLEUniqueness
 
 /-!
 # Maximum marginal likelihood for the Gamma–Poisson hierarchy at heterogeneous size factors
@@ -81,19 +82,16 @@ The model is the intercept-only negative binomial regression with offsets `log s
   exactly this form was found; the statement is proved here, not transcribed.
 * Uniqueness at a common size factor: Levin and Reeds (1977), Theorem 2, proved in
   `HierarchicalCountMLEUniqueness`; also Aragón, Eberly and Eberly (1992).
-* Non-uniqueness at heterogeneous size factors: found by a numerical search, not from the
-  literature. The profile shape score was evaluated on a 600-point log grid of shapes in
-  `[10⁻³, 10⁷]` for 19,036 random overdispersed samples (2 to 10 cells, size factors from `10⁻²`
-  to `10³`); five had three sign changes, among them `s = (1000, 1/100, 100)`,
-  `k = (12, 1, 6)`, and the others one. Samples that fail the condition and still have two roots
-  also occur (for example `s = (100, 1)`, `k = (2, 1)`, also in the tests). The sign changes in
-  the tests are proved from the definitions, with exact rational rate roots.
+* Non-uniqueness at heterogeneous size factors: not from the literature. The evidence is the two
+  samples in the tests: `s = (1000, 1/100, 100)`, `k = (12, 1, 6)`, which satisfies the
+  overdispersion condition, and `s = (100, 1)`, `k = (2, 1)`, which fails it. For both, the sign
+  changes of the profile are proved from the definitions, with exact rational rate roots.
 * Consistency: Cramér (1946), consistent root of the likelihood equations.
 
 ## Not proved here
 
-* At heterogeneous size factors: uniqueness of the joint MLE (the tests show the score root is
-  not unique, but not whether the two local maxima can tie), that a root of the score
+* At heterogeneous size factors: uniqueness of the joint MLE (the tests show that the score root
+  is not unique, not where the likelihood attains its maximum), that a root of the score
   equations maximizes the likelihood, and any converse for `∑ᵢ (kᵢ - sᵢ μ̂)² ≤ ∑ᵢ kᵢ`. The
   common-size-factor converse (no root, no MLE) fails here: the tests give a sample at size
   factors `(100, 1)` that violates the condition and still has two roots. A sufficient

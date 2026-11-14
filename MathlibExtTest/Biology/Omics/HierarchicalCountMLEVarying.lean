@@ -11,6 +11,7 @@ module
 public import MathlibExt.Biology.Omics.HierarchicalCountMLEVarying
 
 import Mathlib.Analysis.Complex.ExponentialBounds
+import MathlibExt.Biology.Omics.HierarchicalCountMLEUniqueness
 public import Mathlib.Probability.ProductMeasure
 public import Mathlib.Probability.Independence.InfinitePi
 
@@ -318,8 +319,8 @@ theorem overdispersed : ∑ i, (k₁ i : ℝ) < ∑ i, ((k₁ i : ℝ) - s₁ i 
 rate root `4`, positive at the one with rate root `10` and negative at the one with rate root
 `100`, so the joint score equations have two positive solutions with different shapes, although
 the hypothesis of `exists_score_root_of_overdispersed_varying` holds. Numerically the profile
-has three zeros, near `a ≈ 0.17, 0.72, 1.38`. Which of the two local maxima is the global one,
-and whether the joint MLE is unique, is not decided here. -/
+vanishes near `a ≈ 0.175, 0.723, 1.385`. Where the likelihood attains its maximum, and whether the
+joint MLE is unique, is not decided here. -/
 theorem two_score_roots : ∃ a b a' b', 0 < a ∧ 0 < b ∧ 0 < a' ∧ 0 < b' ∧ a < a' ∧
     shapeScore a b s₁ k₁ = 0 ∧ rateScore a b s₁ k₁ = 0 ∧
     shapeScore a' b' s₁ k₁ = 0 ∧ rateScore a' b' s₁ k₁ = 0 :=
