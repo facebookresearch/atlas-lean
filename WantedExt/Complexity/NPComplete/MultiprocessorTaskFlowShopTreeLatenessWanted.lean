@@ -59,8 +59,9 @@ so forests are included. The tree condition is checked on the immediate predeces
 precedence relation: `i` is an immediate predecessor of `k` when `k` is reachable from `i` along
 arcs and no job `c` lies strictly between them. Arcs implied by transitivity may therefore be
 listed or omitted; they constrain the same schedules, since a job completes after it starts. The
-maximum lateness bound is stated as `C_i - d_i ≤ K` for every job `i`. Due dates and `K` are
-integers given as `(positive part, negative part)` pairs. Binary encoding of all numbers.
+maximum lateness bound is stated as `C_i - d_i ≤ K` for every job `i`; there is at least one job,
+since `max_i (C_i - d_i)` is undefined for an empty job set. Due dates and `K` are integers given
+as `(positive part, negative part)` pairs. Binary encoding of all numbers.
 
 Brucker and Knust's flow-shop table lists `F|p_ij = 1; outtree|L_max` as strongly NP-hard
 (Brucker and Knust 1999); it is the special case `r = m`, `μ_j = {M_j}` with an outtree of this
@@ -106,12 +107,12 @@ def dueDate (i : MultiprocessorTaskFlowShopTreeLatenessInstance) (j : Fin i.2.2.
 def bound (i : MultiprocessorTaskFlowShopTreeLatenessInstance) : ℤ :=
   (i.2.2.2.2.1 : ℤ) - (i.2.2.2.2.2 : ℤ)
 
-/-- Well-formedness of an instance: the machine environment is well formed
-(`StagesWellFormed`), every job has `r` unit processing times (`UnitJobs`), the listed arcs
+/-- Well-formedness of an instance: there is at least one job, the machine environment is well
+formed (`StagesWellFormed`), every job has `r` unit processing times (`UnitJobs`), the listed arcs
 describe an acyclic precedence digraph on the jobs (`PrecWellFormed`), and its
 precedence relation is a tree (`IsTreePrecedence`). -/
 def WellFormed (i : MultiprocessorTaskFlowShopTreeLatenessInstance) : Prop :=
-  StagesWellFormed i.1 i.2.1 ∧ UnitJobs i.2.1.length (i.2.2.1.map Prod.fst) ∧
+  i.2.2.1 ≠ [] ∧ StagesWellFormed i.1 i.2.1 ∧ UnitJobs i.2.1.length (i.2.2.1.map Prod.fst) ∧
     PrecWellFormed i.2.2.1.length i.2.2.2.1 ∧ IsTreePrecedence i.2.2.1.length i.2.2.2.1
 
 /-- Some MPT flow-shop schedule of the unit-time jobs obeys the precedence constraints and has
