@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Bioinformatics.Alignment.ScoreSignificance.GumbelTail
+public import MathlibExt.Probability.Distributions.Gumbel
 
 /-!
 # Calibration of the Karlin–Altschul p-value in the null model
@@ -36,6 +37,11 @@ resulting p-value is calibrated in the null model, in the sense that the Gumbel 
 * `gumbelPValue_le_iff`: `gumbelPValue K θ n s ≤ α ↔ log n / θ + gumbelLevel K θ α ≤ s` for
   `0 < α < 1`, where `exp (-K e^{-θ x_α}) = 1 - α` at `x_α = gumbelLevel K θ α`
   (`exp_neg_mul_exp_gumbelLevel`).
+* `exp_neg_mul_exp_eq_gumbelCDF`, `gumbelLevel_eq_gumbelQuantile`: `exp (-K e^{-θ x})` and
+  `gumbelLevel K θ α` are the Gumbel distribution function and its quantile at `1 - α` of
+  `MathlibExt.Probability.Distributions.Gumbel`, with location `log K / θ` and scale `θ⁻¹`.
+  `gumbelPValue_le_iff` and `exp_neg_mul_exp_gumbelLevel` are derived from the order and inverse
+  lemmas proved there.
 * `eventually_real_gumbelPValue_le_le`, `tendsto_real_gumbelPValue_le`: the calibration
   statements for any statistic satisfying the Gumbel lower bound (resp. Gumbel limit).
 * `NonlatticeRenewalInput.tendsto_real_gumbelPValue_le`: **exact asymptotic calibration**,
@@ -95,6 +101,23 @@ noncomputable def gumbelLevel (K θ α : ℝ) : ℝ :=
 
 variable {K θ α : ℝ} {n : ℕ}
 
+/-- The Gumbel distribution function `exp (-K e^{-θ x})` is `gumbelCDF` with location
+`log K / θ` and scale `θ⁻¹`. -/
+theorem exp_neg_mul_exp_eq_gumbelCDF (hK : 0 < K) (hθ : θ ≠ 0) (x : ℝ) :
+    Real.exp (-(K * Real.exp (-(θ * x)))) = gumbelCDF (Real.log K / θ) θ⁻¹ x := by
+  have h : -(x - Real.log K / θ) / θ⁻¹ = Real.log K + -(θ * x) := by
+    field_simp
+    ring
+  rw [gumbelCDF, h, Real.exp_add, Real.exp_log hK]
+
+/-- The Gumbel level `x_α` is the Gumbel quantile at `1 - α`, with location `log K / θ` and
+scale `θ⁻¹`. -/
+theorem gumbelLevel_eq_gumbelQuantile (hK : 0 < K) (hα0 : 0 < α) (hα1 : α < 1) :
+    gumbelLevel K θ α = gumbelQuantile (Real.log K / θ) θ⁻¹ (1 - α) := by
+  have hL : 0 < -Real.log (1 - α) := neg_pos.2 (Real.log_neg (by linarith) (by linarith))
+  rw [gumbelLevel, gumbelQuantile, Real.log_div hK.ne' hL.ne']
+  ring
+
 /-- The p-value is positive once `K > 0` and `n ≥ 1`. -/
 theorem gumbelPValue_pos (hK : 0 < K) (hn : 0 < n) (s : ℝ) : 0 < gumbelPValue K θ n s := by
   have hn' : (0 : ℝ) < n := by exact_mod_cast hn
@@ -110,31 +133,23 @@ theorem gumbelPValue_le_one (s : ℝ) : gumbelPValue K θ n s ≤ 1 := by
 exceeds the Gumbel threshold `log n / θ + x_α`. -/
 theorem gumbelPValue_le_iff (hK : 0 < K) (hθ : 0 < θ) (hn : 0 < n) (hα0 : 0 < α) (hα1 : α < 1)
     (s : ℝ) : gumbelPValue K θ n s ≤ α ↔ Real.log n / θ + gumbelLevel K θ α ≤ s := by
-  have hL : 0 < -Real.log (1 - α) := neg_pos.2 (Real.log_neg (by linarith) (by linarith))
   have hn' : (0 : ℝ) < n := by exact_mod_cast hn
-  have hKn : 0 < K * n := mul_pos hK hn'
-  unfold gumbelPValue gumbelLevel
-  rw [Real.log_div hK.ne' hL.ne', ← add_div, div_le_iff₀ hθ]
-  calc 1 - Real.exp (-(K * n * Real.exp (-(θ * s)))) ≤ α
-      ↔ Real.log (1 - α) ≤ -(K * n * Real.exp (-(θ * s))) := by
-        rw [Real.log_le_iff_le_exp (by linarith)]; constructor <;> intro h <;> linarith
-    _ ↔ Real.exp (-(θ * s)) ≤ -Real.log (1 - α) / (K * n) := by
-        rw [le_div_iff₀ hKn]; constructor <;> intro h <;> linarith
-    _ ↔ -(θ * s) ≤ Real.log (-Real.log (1 - α) / (K * n)) :=
-        (Real.le_log_iff_exp_le (div_pos hL hKn)).symm
-    _ ↔ Real.log n + (Real.log K - Real.log (-Real.log (1 - α))) ≤ s * θ := by
-        rw [Real.log_div hL.ne' hKn.ne', Real.log_mul hK.ne' hn'.ne']
-        constructor <;> intro h <;> linarith
+  have hq0 : 0 < 1 - α := by linarith
+  have hq1 : 1 - α < 1 := by linarith
+  have hshift : Real.log n / θ + gumbelLevel K θ α =
+      gumbelQuantile (Real.log (K * n) / θ) θ⁻¹ (1 - α) := by
+    rw [gumbelLevel_eq_gumbelQuantile hK hα0 hα1, gumbelQuantile, gumbelQuantile,
+      Real.log_mul hK.ne' hn'.ne']
+    ring
+  rw [hshift, gumbelQuantile_le_iff_le_gumbelCDF (inv_pos.2 hθ) hq0 hq1,
+    ← exp_neg_mul_exp_eq_gumbelCDF (mul_pos hK hn') hθ.ne', gumbelPValue, sub_le_comm]
 
 /-- At the Gumbel level, the Gumbel distribution function equals `1 - α`:
 `exp (-K e^{-θ x_α}) = 1 - α`. -/
 theorem exp_neg_mul_exp_gumbelLevel (hK : 0 < K) (hθ : 0 < θ) (hα0 : 0 < α) (hα1 : α < 1) :
     Real.exp (-(K * Real.exp (-(θ * gumbelLevel K θ α)))) = 1 - α := by
-  have hL : 0 < -Real.log (1 - α) := neg_pos.2 (Real.log_neg (by linarith) (by linarith))
-  unfold gumbelLevel
-  rw [mul_div_cancel₀ _ hθ.ne', Real.exp_neg (Real.log _), Real.exp_log (div_pos hK hL),
-    show K * (K / -Real.log (1 - α))⁻¹ = -Real.log (1 - α) by field_simp, neg_neg,
-    Real.exp_log (by linarith)]
+  rw [exp_neg_mul_exp_eq_gumbelCDF hK hθ.ne', gumbelLevel_eq_gumbelQuantile hK hα0 hα1]
+  exact gumbelCDF_gumbelQuantile (inv_ne_zero hθ.ne') (by linarith) (by linarith)
 
 /-- The maximal segment score of measurable scores is measurable. -/
 theorem measurable_maxSegmentScoreRV {Ω : Type*} [MeasurableSpace Ω] {X : ℕ → Ω → ℝ}
