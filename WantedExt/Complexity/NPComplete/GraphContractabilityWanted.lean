@@ -32,7 +32,8 @@ namespace MetaMathlibExt.Complexity.NPComplete.GraphContractability
 /-!
 # GRAPH CONTRACTABILITY is NP-complete
 
-Given graphs `G = (V₁, E₁)` and `H = (V₂, E₂)`, can a graph isomorphic to `H` be obtained
+The name is Garey and Johnson's heading for [GT51]; the literature also spells it
+"contractibility" (Brouwer and Veldman). Given graphs `G = (V₁, E₁)` and `H = (V₂, E₂)`, can a graph isomorphic to `H` be obtained
 from `G` by a sequence of edge contractions, where each step replaces two adjacent vertices
 `u, v` by a single vertex `w` adjacent to exactly those vertices that were previously adjacent
 to at least one of `u` and `v`?
