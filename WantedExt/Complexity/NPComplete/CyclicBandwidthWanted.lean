@@ -60,8 +60,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- The distance between positions `a` and `b` on a cycle of `n` positions. -/
-def cyclicDist (n a b : ℕ) : ℕ := min (Nat.dist a b) (n - Nat.dist a b)
+/-- The distance between positions `a` and `b` on a cycle of `n > 0` positions `0, …, n - 1`, the
+shorter way around. Positions are taken modulo `n`, so every pair of naturals denotes two cycle
+positions; for `a, b < n` this is `min(|a - b|, n - |a - b|)`. -/
+def cyclicDist (n a b : ℕ) : ℕ :=
+  min (Nat.dist (a % n) (b % n)) (n - Nat.dist (a % n) (b % n))
 
 /-- Well-formedness of an instance: a well-formed BANDWIDTH instance (simple edge list) with
 `0 < K ≤ n`. -/
