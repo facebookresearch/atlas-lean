@@ -34,6 +34,12 @@ INSTANCE: an alphabet `Σ`; "bad" strings `B₁, ..., Bₘ` and "good" strings `
 `Σ^L`; nonnegative integers `k_b` and `k_g`. QUESTION: is there a string `t ∈ Σ^L` with
 `d_H(t, Bᵢ) ≤ k_b` for all `i` and `d_H(t, Gⱼ) ≥ k_g` for all `j`?
 
+The direction of the two bounds is the source's: Lanctot et al. write the bad strings as `B_c`
+and the good strings as `G_f`, with thresholds `k_c` and `k_f` ("c" for close, "f" for far). In
+their drug-target application the selected string must be close to every bad (pathogen) string
+and far from every good (host) string; Wang and Zhu (FAW 2009, doi:10.1007/978-3-642-02270-8_27)
+state the problem the same way, with bad genes close and good genes far.
+
 The alphabet is `{0, ..., q - 1}` and strings are lists of symbols. `d_H` is Mathlib's
 `hammingDist`, applied to strings of length `L` read as functions `Fin L → ℕ`. With no good strings
 this is CLOSEST STRING, which Lanctot et al. prove NP-hard; the problem is in NP because `t` is a
