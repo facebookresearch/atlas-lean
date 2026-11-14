@@ -34,7 +34,7 @@ unterminated pipe end. The tile types are the empty tile, the dead end, the stra
 curve, the T-join and the X-join, in all their rotations; together these are all `2⁴` patterns
 of pipe ends on the four sides.
 
-INSTANCE: an `m × n` grid of tiles.
+INSTANCE: an `m × n` grid of tiles, `m, n ≥ 1`.
 QUESTION: can the tiles be rotated so that all unterminated pipe ends are paired along interior
 edges, that is, every pipe end of a tile meets a pipe end of the neighbouring tile across the
 same edge, and no pipe end lies on the boundary of the grid?
@@ -76,9 +76,10 @@ def rotatedSide (t : Tile) (k s : Fin 4) : Bool :=
 def tileAt (i : KPlumberInstance) (r c : ℕ) : Tile :=
   i.2.2.getD (r * i.2.1 + c) (false, false, false, false)
 
-/-- Well-formedness of an instance: the grid lists exactly `m * n` tiles. -/
+/-- Well-formedness of an instance: the grid has at least one row and one column, and lists
+exactly `m * n` tiles. -/
 def WellFormed (i : KPlumberInstance) : Prop :=
-  i.2.2.length = i.1 * i.2.1
+  0 < i.1 ∧ 0 < i.2.1 ∧ i.2.2.length = i.1 * i.2.1
 
 /-- The rotation `rot r c` of every tile closes the pipe system: every pipe end of the tile in
 row `r`, column `c` faces a neighbouring cell of the grid whose rotated tile has a pipe end on
