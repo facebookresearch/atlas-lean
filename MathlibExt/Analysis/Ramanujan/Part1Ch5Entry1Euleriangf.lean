@@ -311,6 +311,20 @@ private theorem iterate_derivative_monomial (c : ℝ) (k n : ℕ) :
     · have h3 : ¬ n + 1 ≤ k := by omega
       rw [ite_eq_right h1, ite_eq_right h3, map_zero]
 
+private theorem iterate_derivative_add (p q : ℝ[X]) (n : ℕ) :
+    (Polynomial.derivative^[n]) (p + q)
+      = (Polynomial.derivative^[n]) p + (Polynomial.derivative^[n]) q := by
+  induction n with
+  | zero => rfl
+  | succ n ih => simp only [Function.iterate_succ_apply', ih, map_add]
+
+private theorem coeff_finset_sum (s : Finset ℕ) (f : ℕ → ℝ[X]) (j : ℕ) :
+    (∑ n ∈ s, f n).coeff j = ∑ n ∈ s, (f n).coeff j := by
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert x s hx ih =>
+    rw [Finset.sum_insert hx, Finset.sum_insert hx, Polynomial.coeff_add, ih]
+
 private theorem expansion_eq_sum_range (a : ℕ → ℝ) (h : ℝ) (phi : ℝ[X]) (D : ℕ)
     (hD : phi.natDegree + 1 ≤ D) :
     chapter5DerivativeExpansion a h phi
@@ -341,7 +355,7 @@ private theorem expansion_add (a : ℕ → ℝ) (h : ℝ) (p q : ℝ[X]) :
     ← Finset.sum_add_distrib]
   apply Finset.sum_congr rfl
   intro n _
-  rw [iterate_map_add Polynomial.derivative, mul_add]
+  rw [iterate_derivative_add, mul_add]
 
 private theorem descFactorial_eq_choose_mul_factorial (k n : ℕ) (h : n ≤ k) :
     k.descFactorial n = k.choose n * n.factorial := by
@@ -431,7 +445,7 @@ private theorem shift_pow_coeff (h : ℝ) (m j : ℕ) :
     ((Polynomial.X + Polynomial.C h : ℝ[X])^m).coeff j
       = if j ≤ m then (((m.choose j : ℕ)):ℝ) * h^(m-j) else 0 := by
   rw [add_pow]
-  rw [Polynomial.finsetSum_coeff]
+  rw [coeff_finset_sum]
   have hmono : ∀ i : ℕ, Polynomial.X ^ i * Polynomial.C h ^ (m - i) *
       (((m.choose i : ℕ)):ℝ[X])
       = Polynomial.C (h^(m-i) * (((m.choose i : ℕ)):ℝ)) * Polynomial.X ^ i := by
@@ -473,7 +487,7 @@ private theorem expansion_monomial_coeff (c h : ℝ) (k j : ℕ) (hjk : j ≤ k)
     Polynomial.natDegree_monomial_le c
   have hEform := expansion_eq_sum_range chapter5Entry1PlusCoeff h
     (Polynomial.monomial k c) (k+1) (by omega)
-  rw [hEform, Polynomial.finsetSum_coeff]
+  rw [hEform, coeff_finset_sum]
   have hterm : ∀ n ∈ Finset.range (k+1),
       (Polynomial.C (chapter5Entry1PlusCoeff n * h^n) *
         ((Polynomial.derivative^[n]) (Polynomial.monomial k c))).coeff j
@@ -532,7 +546,7 @@ private theorem shift_expansion_monomial_coeff (c h : ℝ) (k j : ℕ) (hjk : j 
       = ∑ n ∈ Finset.range (k-j+1),
         (chapter5Entry1PlusCoeff n * h^n * (c * (((k.descFactorial n : ℕ)):ℝ))) *
           (((((k-n).choose j : ℕ)):ℝ) * h^(k-n-j)) := by
-  rw [shift_expansion_form, Polynomial.finsetSum_coeff]
+  rw [shift_expansion_form, coeff_finset_sum]
   have hterm : ∀ n ∈ Finset.range (k+1),
       (Polynomial.C (chapter5Entry1PlusCoeff n * h ^ n) *
         (((Polynomial.derivative^[n]) (Polynomial.monomial k c)).comp
@@ -691,7 +705,7 @@ private theorem monomial_case (c h : ℝ) (k : ℕ) :
   · have hkj : k < j := by omega
     have hE0 : (chapter5DerivativeExpansion chapter5Entry1PlusCoeff h
         (Polynomial.monomial k c)).coeff j = 0 := by
-      rw [hEform, Polynomial.finsetSum_coeff]
+      rw [hEform, coeff_finset_sum]
       apply Finset.sum_eq_zero
       intro n hn
       have hnk : n ≤ k := Nat.le_of_lt_succ (Finset.mem_range.mp hn)
@@ -699,7 +713,7 @@ private theorem monomial_case (c h : ℝ) (k : ℕ) :
         Polynomial.coeff_monomial, ite_eq_right (by omega : ¬ k - n = j), mul_zero]
     have hS0 : (chapter5PolynomialShift h (chapter5DerivativeExpansion
         chapter5Entry1PlusCoeff h (Polynomial.monomial k c))).coeff j = 0 := by
-      rw [shift_expansion_form c h k, Polynomial.finsetSum_coeff]
+      rw [shift_expansion_form c h k, coeff_finset_sum]
       apply Finset.sum_eq_zero
       intro n hn
       have hnk : n ≤ k := Nat.le_of_lt_succ (Finset.mem_range.mp hn)
@@ -733,6 +747,13 @@ private theorem existence_part :
   case monomial n a =>
     exact monomial_case a h n
 
+private theorem eval_finset_sum (s : Finset ℕ) (f : ℕ → ℝ[X]) (x : ℝ) :
+    Polynomial.eval x (∑ n ∈ s, f n) = ∑ n ∈ s, Polynomial.eval x (f n) := by
+  induction s using Finset.induction_on with
+  | empty => simp
+  | insert n s hn ih =>
+    rw [Finset.sum_insert hn, Finset.sum_insert hn, Polynomial.eval_add, ih]
+
 private theorem key_recurrence (a : ℕ → ℝ)
     (hP : ∀ (phi : ℝ[X]) (h : ℝ),
       chapter5PolynomialShift h (chapter5DerivativeExpansion a h phi) +
@@ -753,7 +774,7 @@ private theorem key_recurrence (a : ℕ → ℝ)
   rw [hshift] at h0
   have hE0 : Polynomial.eval 0 (chapter5DerivativeExpansion a 1 (Polynomial.X^m : ℝ[X]))
       = a m * (((m.factorial:ℕ)):ℝ) := by
-    rw [hEformX, Polynomial.eval_finsetSum]
+    rw [hEformX, eval_finset_sum]
     have hterm : ∀ n ∈ Finset.range (m+1),
         Polynomial.eval 0 (Polynomial.C (a n * 1^n) *
           (Polynomial.derivative^[n]) (Polynomial.X^m : ℝ[X]))
@@ -772,7 +793,7 @@ private theorem key_recurrence (a : ℕ → ℝ)
       ite_eq_left (Finset.mem_range.mpr (Nat.lt_succ_self m))]
   have hE1 : Polynomial.eval 1 (chapter5DerivativeExpansion a 1 (Polynomial.X^m : ℝ[X]))
       = ∑ n ∈ Finset.range (m+1), a n * (((m.descFactorial n : ℕ)):ℝ) := by
-    rw [hEformX, Polynomial.eval_finsetSum]
+    rw [hEformX, eval_finset_sum]
     apply Finset.sum_congr rfl
     intro n hn
     have hnm : n ≤ m := Nat.le_of_lt_succ (Finset.mem_range.mp hn)

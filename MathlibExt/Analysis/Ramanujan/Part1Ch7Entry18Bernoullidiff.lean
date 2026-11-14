@@ -40,22 +40,28 @@ noncomputable section
 
 
 
+/-- The right side of the functional equation,
+`cos (π r / 2) * (π / 2) ^ (r - 1) * Γ (1 - r) * chapter7DirichletBeta (1 - r)`. -/
 def chapter7Entry18FunctionalRight (r : ℂ) : ℂ :=
   Complex.cos (Real.pi * r / 2) *
     Complex.cpow ((Real.pi / 2 : ℝ) : ℂ) (r - 1) *
       Complex.Gamma (1 - r) * chapter7DirichletBeta (1 - r)
 
 
+/-- The left member `cos (π r / 2) * chapter7EulerStar (1 - r)` of Entry 18. -/
 def chapter7Entry18Left (r : ℂ) : ℂ :=
   Complex.cos (Real.pi * r / 2) * chapter7EulerStar (1 - r)
 
+/-- The middle member `2 * chapter7DirichletBeta r` of Entry 18. -/
 def chapter7Entry18Middle (r : ℂ) : ℂ :=
   2 * chapter7DirichletBeta r
 
+/-- The right member `(π / 2) ^ r * chapter7EulerStar r / Γ r` of Entry 18. -/
 def chapter7Entry18Right (r : ℂ) : ℂ :=
   Complex.cpow ((Real.pi / 2 : ℝ) : ℂ) r * chapter7EulerStar r /
     Complex.Gamma r
 
+private lemma betaStdAddChar0 : ZMod.stdAddChar (0 : ZMod 4) = 1 := by simp
 private lemma betaStdAddChar1 : ZMod.stdAddChar (1 : ZMod 4) = Complex.I := by
   have h : (1 : ZMod 4) = ((1 : ℤ) : ZMod 4) := by simp
   rw [h, ZMod.stdAddChar_coe]
@@ -93,7 +99,7 @@ private lemma betaDft : ZMod.dft chapter7BetaCharacter =
   funext k
   rcases h4 k with rfl | rfl | rfl | rfl <;> rw [red]
   · rw [show (-((1 : ZMod 4) * 0) : ZMod 4) = 0 from by decide,
-      show (-((3 : ZMod 4) * 0) : ZMod 4) = 0 from by decide, AddChar.map_zero_eq_one, betaChar0]
+      show (-((3 : ZMod 4) * 0) : ZMod 4) = 0 from by decide, betaStdAddChar0, betaChar0]
     ring
   · rw [show (-((1 : ZMod 4) * 1) : ZMod 4) = 3 from by decide,
       show (-((3 : ZMod 4) * 1) : ZMod 4) = 1 from by decide, betaStdAddChar3,
@@ -254,13 +260,15 @@ private lemma entry18LeftMeromorphic : MeromorphicOn chapter7Entry18Left Set.uni
   have mCpow : MeromorphicOn (fun s : ℂ => ((((Real.pi / 2 : ℝ)) : ℂ)) ^ s) Set.univ :=
     fun x _ => (Differentiable.analyticAt dCpow x).meromorphicAt
   have mEuler : MeromorphicOn chapter7EulerStar Set.univ := by
-    show MeromorphicOn (fun s => 2 * Complex.Gamma s * chapter7DirichletBeta s /
+    change MeromorphicOn (fun s => 2 * Complex.Gamma s * chapter7DirichletBeta s /
       ((((Real.pi / 2 : ℝ)) : ℂ)) ^ s) Set.univ
-    exact (((MeromorphicOn.const (2 : ℂ) (U := Set.univ)).mul MeromorphicOn.Gamma).mul betaDirichletMeromorphic).div mCpow
+    exact (((MeromorphicOn.const (2 : ℂ) (U := Set.univ)).mul MeromorphicOn.Gamma).mul
+        betaDirichletMeromorphic).div mCpow
   have hAn : AnalyticOnNhd ℂ (fun r : ℂ => 1 - r) Set.univ := by fun_prop
   have mComp : MeromorphicOn (chapter7EulerStar ∘ (fun r : ℂ => 1 - r)) Set.univ :=
     mEuler.comp_analyticOnNhd hAn (Set.mapsTo_univ _ _)
-  show MeromorphicOn (fun r => Complex.cos ((Real.pi : ℂ) * r / 2) * chapter7EulerStar (1 - r)) Set.univ
+  change MeromorphicOn (fun r => Complex.cos ((Real.pi : ℂ) * r / 2) * chapter7EulerStar (1 - r))
+      Set.univ
   exact mCos.mul mComp
 
 private lemma entry18RightMeromorphic : MeromorphicOn chapter7Entry18Right Set.univ := by
@@ -271,11 +279,11 @@ private lemma entry18RightMeromorphic : MeromorphicOn chapter7Entry18Right Set.u
   have mCpow : MeromorphicOn (fun s : ℂ => ((((Real.pi / 2 : ℝ)) : ℂ)) ^ s) Set.univ :=
     fun x _ => (Differentiable.analyticAt dCpow x).meromorphicAt
   have mEuler : MeromorphicOn chapter7EulerStar Set.univ := by
-    show MeromorphicOn (fun s => 2 * Complex.Gamma s * chapter7DirichletBeta s /
+    change MeromorphicOn (fun s => 2 * Complex.Gamma s * chapter7DirichletBeta s /
       ((((Real.pi / 2 : ℝ)) : ℂ)) ^ s) Set.univ
     exact (((MeromorphicOn.const (2 : ℂ) (U := Set.univ)).mul MeromorphicOn.Gamma).mul
       betaDirichletMeromorphic).div mCpow
-  show MeromorphicOn (fun r => ((((Real.pi / 2 : ℝ)) : ℂ)) ^ r * chapter7EulerStar r /
+  change MeromorphicOn (fun r => ((((Real.pi / 2 : ℝ)) : ℂ)) ^ r * chapter7EulerStar r /
     Complex.Gamma r) Set.univ
   exact (mCpow.mul mEuler).div MeromorphicOn.Gamma
 
@@ -297,8 +305,9 @@ private lemma entry18FRMeromorphic : MeromorphicOn chapter7Entry18FunctionalRigh
     MeromorphicOn.Gamma.comp_analyticOnNhd hAn (Set.mapsTo_univ _ _)
   have mBeta : MeromorphicOn (fun r : ℂ => chapter7DirichletBeta (1 - r)) Set.univ :=
     betaDirichletMeromorphic.comp_analyticOnNhd hAn (Set.mapsTo_univ _ _)
-  show MeromorphicOn (fun r => Complex.cos ((Real.pi : ℂ) * r / 2) *
-    ((((Real.pi / 2 : ℝ)) : ℂ)) ^ (r - 1) * Complex.Gamma (1 - r) * chapter7DirichletBeta (1 - r)) Set.univ
+  change MeromorphicOn (fun r => Complex.cos ((Real.pi : ℂ) * r / 2) *
+    ((((Real.pi / 2 : ℝ)) : ℂ)) ^ (r - 1) * Complex.Gamma (1 - r) *
+        chapter7DirichletBeta (1 - r)) Set.univ
   exact ((mCos.mul mCpowS).mul mGamma).mul mBeta
 
 private lemma entry18LeftEqMiddle (r : ℂ) (hr : Complex.sin ((Real.pi : ℂ) * r) ≠ 0) :
@@ -318,11 +327,12 @@ private lemma entry18LeftEqMiddle (r : ℂ) (hr : Complex.sin ((Real.pi : ℂ) *
     rw [eq_div_iff hc1]
     exact hcc
   have hM : chapter7Entry18Middle r = 2 * chapter7Entry18FunctionalRight r := by
-    show 2 * chapter7DirichletBeta r = 2 * chapter7Entry18FunctionalRight r
+    change 2 * chapter7DirichletBeta r = 2 * chapter7Entry18FunctionalRight r
     rw [h6r]
   rw [hM]
-  show Complex.cos ((Real.pi : ℂ) * r / 2) * chapter7EulerStar (1 - r) = 2 * chapter7Entry18FunctionalRight r
-  show Complex.cos ((Real.pi : ℂ) * r / 2) *
+  change Complex.cos ((Real.pi : ℂ) * r / 2) * chapter7EulerStar (1 - r) =
+      2 * chapter7Entry18FunctionalRight r
+  change Complex.cos ((Real.pi : ℂ) * r / 2) *
     (2 * Complex.Gamma (1 - r) * chapter7DirichletBeta (1 - r) /
     ((((Real.pi / 2 : ℝ)) : ℂ)) ^ (1 - r)) = 2 *
     (Complex.cos ((Real.pi : ℂ) * r / 2) * ((((Real.pi / 2 : ℝ)) : ℂ)) ^ (r - 1) *
@@ -346,9 +356,11 @@ private lemma entry18MiddleEqRight (r : ℂ) (hr : Complex.sin ((Real.pi : ℂ) 
     Complex.ofReal_ne_zero.mpr (by positivity : (Real.pi / 2 : ℝ) ≠ 0)
   have hcr : ((((Real.pi / 2 : ℝ)) : ℂ)) ^ r ≠ 0 :=
     Complex.cpow_ne_zero_iff.mpr (Or.inl hc)
-  show 2 * chapter7DirichletBeta r = ((((Real.pi / 2 : ℝ)) : ℂ)) ^ r * chapter7EulerStar r / Complex.Gamma r
-  show 2 * chapter7DirichletBeta r = ((((Real.pi / 2 : ℝ)) : ℂ)) ^ r *
-    (2 * Complex.Gamma r * chapter7DirichletBeta r / ((((Real.pi / 2 : ℝ)) : ℂ)) ^ r) / Complex.Gamma r
+  change 2 * chapter7DirichletBeta r =
+      ((((Real.pi / 2 : ℝ)) : ℂ)) ^ r * chapter7EulerStar r / Complex.Gamma r
+  change 2 * chapter7DirichletBeta r = ((((Real.pi / 2 : ℝ)) : ℂ)) ^ r *
+    (2 * Complex.Gamma r * chapter7DirichletBeta r / ((((Real.pi / 2 : ℝ)) : ℂ)) ^ r) /
+        Complex.Gamma r
   field_simp
 
 /-- Source: Bruce C. Berndt, Ramanujan's Notebooks, Part I, Chapter 7.
@@ -362,7 +374,6 @@ theorem ramanujan_part1_ch7_entry18_bernoullidiff :
       chapter7Entry18Middle =ᶠ[codiscrete ℂ] chapter7Entry18Right ∧
       chapter7DirichletBeta =ᶠ[codiscrete ℂ]
         chapter7Entry18FunctionalRight := by
-
   have hNe : NeZero 4 := ⟨by decide⟩
   have hSin : Differentiable ℂ (fun s : ℂ => Complex.sin ((Real.pi : ℂ) * s)) := by
     fun_prop
@@ -371,7 +382,7 @@ theorem ramanujan_part1_ch7_entry18_bernoullidiff :
   have hSinHalf : (fun s : ℂ => Complex.sin ((Real.pi : ℂ) * s)) (1 / 2) ≠ 0 := by
     have e : (Real.pi : ℂ) * (1 / 2 : ℂ) = ((((Real.pi / 2 : ℝ))) : ℂ) := by
       push_cast; ring
-    show Complex.sin ((Real.pi : ℂ) * (1 / 2 : ℂ)) ≠ 0
+    change Complex.sin ((Real.pi : ℂ) * (1 / 2 : ℂ)) ≠ 0
     rw [e, ← Complex.ofReal_sin, Real.sin_pi_div_two]
     simp
   have hGmem : (fun s : ℂ => Complex.sin ((Real.pi : ℂ) * s)) ⁻¹' {0}ᶜ ∈ codiscrete ℂ :=
