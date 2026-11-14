@@ -24,7 +24,8 @@ Exact compiling checks for `PhyslibExt.Mechanics.HarmonicMechanics`:
 oscillator frequency, energy derivative and conservation along the explicit
 solution, force/moment balance and work examples (including
 `isEquilibrated_iff`, `moment2D_add`, `totalWork_add`), the fixed-end two-mass
-chain with normal modes, every spring-network theorem applied to that chain,
+chain with normal modes and every spring-network theorem applied to it, a
+reciprocal spring against a directed-weight countermodel for `springEnergy`,
 the empty node type (the kernel identity is trivial there and positive
 definiteness vacuous), and `#print axioms` for every public lemma.
 -/
@@ -284,6 +285,17 @@ example : springEnergy (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ)
     (1 * (1 - (-1)) ^ 2 + 0 * ((-1) - (-1)) ^ 2)) +
     (1 / 2) * ((1 * 1 ^ 2) + (1 * (-1) ^ 2)) = 3
   norm_num
+
+/-- A reciprocal unit spring between two free nodes, stretched by `1`, stores the physical energy
+`(1 / 2) * 1 * 1 ^ 2 = 1 / 2`. -/
+example : springEnergy (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ) 0 ![0, 1] = 1 / 2 := by
+  norm_num [springEnergy, Fin.sum_univ_two]
+
+/-- Countermodel for a directed weight (`k 0 1 = 1`, `k 1 0 = 0`): the same stretch gives `1 / 4`,
+the energy of the average weight `1 / 2`, so `springEnergy` is the physical energy only for
+reciprocal `k`. -/
+example : springEnergy (![![(0 : ℝ), 1], ![0, 0]] : Fin 2 → Fin 2 → ℝ) 0 ![0, 1] = 1 / 4 := by
+  norm_num [springEnergy, Fin.sum_univ_two]
 
 /-- Mode equation `K *ᵥ (1, 1) = 1 • (1, 1)`, frequency `1`. -/
 example : stiffnessMatrix (![![(0 : ℝ), 1], ![1, 0]] : Fin 2 → Fin 2 → ℝ)

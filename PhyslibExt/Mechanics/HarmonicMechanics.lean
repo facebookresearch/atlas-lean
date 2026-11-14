@@ -75,18 +75,24 @@ carried as explicit hypotheses or definitions. Continuum stress and strain are i
 * `moment2D_add`, `central_pair_moment_eq_zero`: 2D moment linearity and the
   single central-pair zero moment (no-body-couple model).
 * `totalWork_add`: discrete work distributes over force families.
-* `springEnergy_eq_quadForm`: spring energy equals `(1 / 2)` times the
-  stiffness quadratic form; `springEnergy_nonneg`.
-* `stiffnessMatrix_transpose`: the stiffness matrix is symmetric.
+* `springEnergy_eq_quadForm`: for reciprocal weights without self-springs, the
+  spring energy equals `(1 / 2)` times the stiffness quadratic form;
+  `springEnergy_nonneg`.
+* `stiffnessMatrix_transpose`: for reciprocal weights the stiffness matrix is
+  symmetric.
 * `stiffnessMatrix_mulVec_one`, `stiffnessMatrix_free_zeroMode`,
-  `springEnergy_free_const`: the stiffness matrix sends the all-ones vector to
-  `w`, so rigid translations are in its kernel only in the free (`w = 0`)
-  case, where they also carry zero energy; `stiffnessMatrix_fixedEnds_rowNonzero`
-  for fixed ends.
-* `stiffnessMatrix_free_not_posDef`: on a nonempty node type, the stiffness
-  matrix of a free network is not positive definite.
-* `innerProductM_eq_zero_of_ne`: distinct normal modes are mass-orthogonal.
-* `rayleigh_nonneg`: Rayleigh quotient nonnegativity for spring stiffness.
+  `springEnergy_free_const`: without self-springs the stiffness matrix sends
+  the all-ones vector to `w`, so rigid translations are in its kernel only in
+  the free (`w = 0`) case, where they also carry zero energy;
+  `stiffnessMatrix_fixedEnds_rowNonzero` for fixed ends.
+* `stiffnessMatrix_free_not_posDef`: on a nonempty node type without
+  self-springs, the stiffness matrix of a free network is not positive
+  definite.
+* `innerProductM_eq_zero_of_ne`: for a symmetric stiffness, normal modes with
+  distinct eigenvalues are mass-orthogonal.
+* `rayleigh_nonneg`: generalized eigenvalues are nonnegative for spring
+  stiffness (reciprocal nonnegative weights, no self-springs, nonnegative
+  walls) and positive masses.
 
 ## iii. Table of contents
 
@@ -289,18 +295,23 @@ lemma totalWork_add {ρ ι : Type*} [Fintype ρ] [Fintype ι]
 /-! ## C. Finite spring networks, stiffness matrices, and normal modes. -/
 
 /-- Spring-network energy (DEF) for scalar displacements on a finite node
-type: pair springs of stiffness `k i j` plus wall springs of stiffness `w i`
-from node `i` to a fixed wall. `w = 0` is the free network; `w i > 0` is a
-fixed end. The `1 / 4` on the pair sum counts each unordered pair once with
-the physical spring energy `(1 / 2) * k * stretch ^ 2`: the ordered double
-sum counts every pair twice, and each spring carries its own `1 / 2`. -/
+type: pair weights `k i j` plus wall springs of stiffness `w i` from node `i`
+to a fixed wall. `w = 0` is the free network; `w i > 0` is a fixed end. The
+definition accepts any `k`, but it is the physical spring energy only for
+reciprocal weights `k i j = k j i` (as in `springEnergy_eq_quadForm`): the
+ordered double sum then counts each spring twice, so the `1 / 4` gives each
+spring its energy `(1 / 2) * k i j * (u j - u i) ^ 2`, and diagonal terms
+vanish. For other `k` the pair `{i, j}` gets the average weight
+`(k i j + k j i) / 2`. -/
 noncomputable def springEnergy {ι : Type*} [Fintype ι] (k : ι → ι → ℝ)
     (w : ι → ℝ) (u : ι → ℝ) : ℝ :=
   (1 / 4) * (∑ i, ∑ j, k i j * (u j - u i) ^ 2) +
     (1 / 2) * (∑ i, w i * u i ^ 2)
 
 /-- Stiffness matrix (DEF): diagonal `(∑ j, k i j) + w i`, off-diagonal
-`-k i j`. Row `i` encodes force balance on node `i`. -/
+`-k i j`. For reciprocal weights without self-springs (`k i j = k j i`,
+`k i i = 0`), row `i` is the force balance on node `i` and half the quadratic
+form is `springEnergy` (`springEnergy_eq_quadForm`). -/
 noncomputable def stiffnessMatrix {ι : Type*} [Fintype ι] [DecidableEq ι]
     (k : ι → ι → ℝ) (w : ι → ℝ) : Matrix ι ι ℝ :=
   Matrix.of fun i j => if i = j then (∑ l, k i l) + w i else -k i j
