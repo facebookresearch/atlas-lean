@@ -47,8 +47,10 @@ component of the instance is the bound `K ∈ ℤ⁺` in place of the deadline `
 `WellFormed` adds `m = 2`. The schedule conditions are the parent's (one task at a time on each
 processor, each job's tasks in processor order) with the deadline condition replaced by the
 bound on the sum of the completion times `σ p j + l(t_p[j])` on the last processor `p`
-(`p + 1 = m`). Processors are `Fin m` (`i = 0, 1`), jobs `Fin |J|`. Binary encoding of all
-numbers.
+(`p + 1 = m`), plus the requirement of [SS1] that each one-processor schedule `σ_i` is
+one-to-one: tasks of length `0` count, so without it several zero-length jobs could share a
+start time and lower the sum. Processors are `Fin m` (`i = 0, 1`), jobs `Fin |J|`. Binary
+encoding of all numbers.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -66,12 +68,13 @@ and `m = 2`. -/
 def WellFormed (i : FlowShopScheduling.FlowShopSchedulingInstance) : Prop :=
   FlowShopScheduling.WellFormed i ∧ i.1 = 2
 
-/-- Some schedule `σ p j` (start of job `j`'s task on processor `p`) runs one task at a time on
-each processor and each job's tasks in processor order, and the sum over all jobs of the
-completion times on the last processor is at most `K`. -/
+/-- Some schedule `σ p j` (start of job `j`'s task on processor `p`) is one-to-one on each
+processor, runs one task at a time on each processor and each job's tasks in processor order,
+and the sum over all jobs of the completion times on the last processor is at most `K`. -/
 def TwoProcessorFlowShopMeanFlowTimeFeasible
     (i : FlowShopScheduling.FlowShopSchedulingInstance) : Prop :=
   ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ,
+    (∀ p, Function.Injective (σ p)) ∧
     (∀ p j k, j ≠ k →
       σ p j + FlowShopScheduling.len i p j ≤ σ p k ∨
         σ p k + FlowShopScheduling.len i p k ≤ σ p j) ∧
