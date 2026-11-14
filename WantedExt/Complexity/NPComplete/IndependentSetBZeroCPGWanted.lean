@@ -48,9 +48,16 @@ input.
 Champseix, Galby, Munaro and Ries show that Independent Set remains NP-hard for `B₀-CPG` graphs
 (abstract: "Independent Set and Clique Cover remain NP-hard for B₀-CPG graphs"); their
 reduction outputs `B₀-CPG` graphs, so it is a reduction to this problem. Membership in NP: the
-certificate is `V'` together with a segment model; segment endpoints can be compressed to their
-ranks among all endpoint coordinates without changing contacts or interior intersections, so the
-model has polynomial size and is checked in polynomial time.
+vertex count `n` is written in binary, so the vertices occurring in no listed edge (isolated
+vertices) may be exponentially many and are not listed in the certificate. An isolated vertex can
+be added to or removed from a `B₀-CPG` model without affecting the other segments (as a unit
+segment outside the bounding box of all others), so `G` is `B₀-CPG` exactly when its subgraph
+`G'` induced on the vertices occurring in edges is, and the independence number of `G` is that of
+`G'` plus the number of isolated vertices. The certificate is a segment model of `G'`, with
+endpoints compressed to their ranks among all endpoint coordinates (this changes no contact and no
+interior intersection), and an independent set `S'` of `G'` with
+`|S'| + (n - |V(G')|) ≥ K`; it has size polynomial in the edge list and is checked in polynomial
+time in the input length.
 
 The instance, the graph and the question follow
 `WantedExt.Complexity.NPComplete.TriangleFreeIndependentSetWanted`: a vertex count `n`
