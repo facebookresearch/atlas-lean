@@ -31,17 +31,20 @@ namespace WantedExt.AlgebraicGeometry.MinimalGradedResolutionWanted
 
 open MathlibExt.RingTheory.MinimalGradedResolution
 
-variable {k : Type*} [Field k] {n : ℕ} {M : Type*}
-  [AddCommGroup M] [Module (PolynomialRing k n) M]
-  [Module k M] [IsScalarTower k (PolynomialRing k n) M]
-  [Module.Finite (PolynomialRing k n) M]
-
 /-- Graded Hilbert syzygy with minimal differentials and the correct length bound. -/
-theorem_wanted exists_minimalResolution
+theorem_wanted exists_minimalResolution {k : Type*} [Field k] {n : ℕ} {M : Type*}
+    [AddCommGroup M] [Module (PolynomialRing k n) M]
+    [Module k M] [IsScalarTower k (PolynomialRing k n) M]
+    [Module.Finite (PolynomialRing k n) M]
+   
     (G : Grading (k := k) (n := n) (M := M)) : Nonempty (MinimalResolution G)
 
 /-- The graded Betti table does not depend on the chosen minimal resolution. -/
-theorem_wanted betti_eq (G : Grading (k := k) (n := n) (M := M))
+theorem_wanted betti_eq {k : Type*} [Field k] {n : ℕ} {M : Type*}
+    [AddCommGroup M] [Module (PolynomialRing k n) M]
+    [Module k M] [IsScalarTower k (PolynomialRing k n) M]
+    [Module.Finite (PolynomialRing k n) M]
+    (G : Grading (k := k) (n := n) (M := M))
     (P Q : MinimalResolution G) (i : ℕ) (j : ℤ) :
     betti G P i j = betti G Q i j
 
