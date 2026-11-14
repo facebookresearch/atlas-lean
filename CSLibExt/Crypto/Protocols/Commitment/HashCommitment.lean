@@ -155,7 +155,7 @@ collision-finding advantage of `reduction A` against `F` (Katz and Lindell, Sect
 Definition 5.2). -/
 theorem bindingAdvantage_le (F : HashFamily K (N × M) D) (A : BindingAdversary K M D N R) :
     bindingAdvantage F.gen (scheme F.hash) A ≤ collAdvantage F (reduction A) := by
-  refine winProb_bind_map_mono _ _ fun s _ t hw => ?_
+  refine Cslib.Crypto.Framework.winProb_bind_map_mono _ _ fun s _ t hw => ?_
   obtain ⟨h₁, h₂, hne⟩ := of_decide_eq_true hw
   exact decide_eq_true (collision_of_openings hne (accepts_iff.mp h₁) (accepts_iff.mp h₂))
 
