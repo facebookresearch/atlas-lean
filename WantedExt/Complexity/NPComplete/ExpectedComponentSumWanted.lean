@@ -38,9 +38,11 @@ disjoint sets `C₁, C₂, …, C_K` such that
 `∑_{i=1}^{K} max_{1 ≤ j ≤ m} (∑_{v ∈ C_i} v_j) ≥ B`?
 
 The vectors of `C` are indexed by `Fin |C|`, one per listed vector, so a vector may occur
-more than once. A partition into `C₁, …, C_K` is a map `f : Fin |C| → Fin K` with
-`C_k = f⁻¹(k)`; parts may be empty, as in the source (an empty part contributes `0`). The
-maximum over `j` is `Finset.sup` in `ℕ`. All numbers use the binary encoding.
+more than once. A partition into `C₁, …, C_K` is a surjective map `f : Fin |C| → Fin K` with
+`C_k = f⁻¹(k)`, so every block is non-empty and there is no partition when `K > |C|`. (For
+`K ≤ |C|`, allowing empty blocks would not change the answer: moving one vector of a block with
+two or more vectors into an empty block does not decrease the component sum.) The maximum over
+`j` is `Finset.sup` in `ℕ`. All numbers use the binary encoding.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -68,9 +70,10 @@ def componentSum (m : ℕ) (C : List (List ℕ)) {K : ℕ} (f : Fin C.length →
   ∑ k : Fin K, Finset.univ.sup fun j : Fin m =>
     ∑ c ∈ Finset.univ.filter (fun c => f c = k), (C.get c).getD j 0
 
-/-- Some partition of `C` into `K` disjoint sets has component sum at least `B`. -/
+/-- Some partition of `C` into `K` non-empty disjoint sets has component sum at least `B`. -/
 def ExpectedComponentSumFeasible (i : ExpectedComponentSumInstance) : Prop :=
-  ∃ f : Fin i.2.1.length → Fin i.2.2.1, i.2.2.2 ≤ componentSum i.1 i.2.1 f
+  ∃ f : Fin i.2.1.length → Fin i.2.2.1, Function.Surjective f ∧
+    i.2.2.2 ≤ componentSum i.1 i.2.1 f
 
 open Classical in
 /-- EXPECTED COMPONENT SUM as a decision problem over bitstrings. -/
