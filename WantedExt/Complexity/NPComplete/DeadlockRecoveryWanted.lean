@@ -22,6 +22,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
+public import CSLibExt.Algorithms.Concurrency.DeadlockDetection
 public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 @[expose] public section
@@ -47,9 +48,12 @@ column says this sequential version is the problem of Leung and Lai; the Septemb
 had stated the simultaneous version `Σ_{p ∉ P'} (r_j(p) + a_j(p)) ≤ B_j`.
 
 Formally, the remaining processes are run in the order of a list `L` without repetitions that
-contains exactly the processes outside `P'`. When the process `L[i]` runs, the processes
-`L[i], L[i+1], …` still hold their allocations and the earlier ones have returned everything,
-so its request is grantable when `a_j(L[i]) + Σ_{q ∈ L.drop i} r_j(q) ≤ B_j` for every `j`.
+contains exactly the processes outside `P'`, and `L` is a reduction sequence
+(`Cslib.Algorithms.Concurrency.DeadlockDetection.State.Reduces`) of the state with allocations
+`r` and requests `a`, starting from the free amounts `B_j - Σ_{q ∉ P'} r_j(q)`: each process in
+turn gets its request, finishes, and releases its allocation. `WellFormed` also asks that the
+current allocations fit in the resources (`Σ_{p ∈ P} r_j(p) ≤ B_j`), which every actual system
+state satisfies and which makes the free amounts natural numbers.
 
 Resources are indexed `0, …, m - 1`, with `m` the length of the bound list; each process is a
 triple `(c(p), r(p), a(p))` whose vectors have length `m`; processes are indexed by their
@@ -88,23 +92,38 @@ def alloc (i : DeadlockRecoveryInstance) (p : Fin i.2.1.length) (j : ℕ) : ℕ 
 def request (i : DeadlockRecoveryInstance) (p : Fin i.2.1.length) (j : ℕ) : ℕ :=
   i.2.1[p].2.2.getD j 0
 
-/-- Well-formedness of an instance: every allocation and request vector has length `m`, and every
-process `p` satisfies (a) `r_j(p) + a_j(p) ≤ B_j` for every `j`, and (b) is blocked: for some
-`j`, `a_j(p) + Σ_{q ∈ P} r_j(q) > B_j`. -/
+/-- Well-formedness of an instance: every allocation and request vector has length `m`, the
+current allocations fit in the resources (`Σ_{q ∈ P} r_j(q) ≤ B_j`), and every process `p`
+satisfies (a) `r_j(p) + a_j(p) ≤ B_j` for every `j`, and (b) is blocked: for some `j`,
+`a_j(p) + Σ_{q ∈ P} r_j(q) > B_j`. -/
 def WellFormed (i : DeadlockRecoveryInstance) : Prop :=
   (∀ p ∈ i.2.1, p.2.1.length = numResources i ∧ p.2.2.length = numResources i) ∧
+    (∀ j < numResources i, ∑ q : Fin i.2.1.length, alloc i q j ≤ bound i j) ∧
     (∀ p : Fin i.2.1.length, ∀ j < numResources i, alloc i p j + request i p j ≤ bound i j) ∧
     ∀ p : Fin i.2.1.length, ∃ j < numResources i,
       bound i j < request i p j + ∑ q : Fin i.2.1.length, alloc i q j
 
+/-- The allocations `r` and requests `a` as a deadlock-detection state over the processes
+`Fin |P|` and the resources `Fin m`. -/
+def state (i : DeadlockRecoveryInstance) :
+    Cslib.Algorithms.Concurrency.DeadlockDetection.State (Fin i.2.1.length)
+      (Fin (numResources i)) where
+  alloc p j := alloc i p j
+  request p j := request i p j
+
+/-- The free amounts after the processes in `A` are aborted and their resources returned:
+`B_j - Σ_{q ∉ A} r_j(q)`. -/
+def free (i : DeadlockRecoveryInstance) (A : Finset (Fin i.2.1.length))
+    (j : Fin (numResources i)) : ℕ :=
+  bound i j - ∑ q ∈ Aᶜ, alloc i q j
+
 /-- Some set `P'` of processes (`A`) of total cost at most `K` can be aborted so that the
-remaining processes, run one at a time in the order of a list `L`, each find their request
-grantable: while `L[i]` runs, the processes from `L[i]` on still hold their allocations. -/
+remaining processes, in the order of a list `L`, can each get their request, finish and release
+their allocation (`State.Reduces` from the free amounts `free i A`). -/
 def DeadlockRecoveryFeasible (i : DeadlockRecoveryInstance) : Prop :=
   ∃ A : Finset (Fin i.2.1.length), ∑ q ∈ A, cost i q ≤ i.2.2 ∧
     ∃ L : List (Fin i.2.1.length), L.Nodup ∧ (∀ q, q ∈ L ↔ q ∉ A) ∧
-      ∀ k : Fin L.length, ∀ j < numResources i,
-        request i L[k] j + ((L.drop k).map fun q => alloc i q j).sum ≤ bound i j
+      (state i).Reduces (free i A) L
 
 open Classical in
 /-- DEADLOCK RECOVERY as a decision problem over bitstrings. -/
