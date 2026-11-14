@@ -37,9 +37,9 @@ Given directed graphs `G = (V₁, A₁)` and `H = (V₂, A₂)`, is there a D-mo
 `(f u, v') ∈ A₂` then there is a `v ∈ f⁻¹(v')` with `(u, v) ∈ A₁`?
 
 The vertices of a digraph with `n` vertices are `0, ..., n - 1`, and its arcs are a list of
-ordered pairs (a repeated arc does not change the digraph). The source puts no further
-restriction on the digraphs, so loops `(v, v)` are allowed. Each digraph is a Mathlib
-`Digraph (Fin n)`.
+ordered pairs (a repeated arc does not change the digraph). As in the repository's other
+directed-graph problems, digraphs have no loops: every arc `(u, v)` has `u ≠ v`. Each digraph
+is a Mathlib `Digraph (Fin n)`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -63,10 +63,11 @@ def DigraphG (i : DigraphDMorphismInstance) : Digraph (Fin i.1) where
 def DigraphH (i : DigraphDMorphismInstance) : Digraph (Fin i.2.2.1) where
   Adj u v := ((u : ℕ), (v : ℕ)) ∈ i.2.2.2
 
-/-- Well-formedness of an instance: every arc of `G` joins vertices below `n₁`, and every arc
-of `H` joins vertices below `n₂`. -/
+/-- Well-formedness of an instance: every arc of `G` joins two distinct vertices below `n₁`,
+and every arc of `H` joins two distinct vertices below `n₂` (no loops). -/
 def WellFormed (i : DigraphDMorphismInstance) : Prop :=
-  (∀ a ∈ i.2.1, a.1 < i.1 ∧ a.2 < i.1) ∧ ∀ a ∈ i.2.2.2, a.1 < i.2.2.1 ∧ a.2 < i.2.2.1
+  (∀ a ∈ i.2.1, a.1 < i.1 ∧ a.2 < i.1 ∧ a.1 ≠ a.2) ∧
+    ∀ a ∈ i.2.2.2, a.1 < i.2.2.1 ∧ a.2 < i.2.2.1 ∧ a.1 ≠ a.2
 
 /-- There is a D-morphism from `G` to `H`: every arc of `G` is sent to an arc of `H` in one
 of the two directions, and every arc of `H` leaving the image `f u` of a vertex `u` ends at
