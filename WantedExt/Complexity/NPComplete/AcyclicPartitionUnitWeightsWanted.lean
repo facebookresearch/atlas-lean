@@ -37,10 +37,10 @@ INSTANCE: a directed graph `G = (V, A)`, weight `w(v) = 1` for each `v ∈ V`, c
 for each `a ∈ A`, and positive integers `B` and `K`.
 QUESTION: is there a partition of `V` into disjoint sets `V₁, V₂, …, V_m` such that the
 directed graph `G' = (V', A')`, where `V' = {V₁, V₂, …, V_m}` and `(Vᵢ, Vⱼ) ∈ A'` if and only if
-`(vᵢ, vⱼ) ∈ A` for some `vᵢ ∈ Vᵢ` and some `vⱼ ∈ Vⱼ`, is acyclic, such that the sum of the
-weights of the vertices in each `Vᵢ` does not exceed `B` (at most `B` vertices), and such that
-the sum of the costs of all those arcs having their endpoints in different sets does not exceed
-`K` (at most `K` such arcs)?
+`(vᵢ, vⱼ) ∈ A` for some `vᵢ ∈ Vᵢ` and some `vⱼ ∈ Vⱼ` (`i ≠ j`: an arc inside one block gives no
+arc of `G'`), is acyclic, such that the sum of the weights of the vertices in each `Vᵢ` does not
+exceed `B` (at most `B` vertices), and such that the sum of the costs of all those arcs having
+their endpoints in different sets does not exceed `K` (at most `K` such arcs)?
 
 The instance, `WellFormed` (one positive weight per vertex, an arc list without loops or
 repeated arcs, positive costs, `0 < B`, `0 < K`) and the question are those of
