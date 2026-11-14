@@ -102,7 +102,7 @@ noncomputable def marginalLik (a b s : ℝ) (k : ℕ) : ℝ :=
 theorem marginalLik_eq {a b s : ℝ} (ha : 0 < a) (hb : 0 < b) (hs : 0 ≤ s) (k : ℕ) :
     marginalLik a b s k =
       (ascPochhammer ℝ k).eval a * s ^ k * b ^ a / (b + s) ^ (a + k) / k ! := by
-  have h := integral_pow_mul_exp_neg_mul_gammaMeasure ha hb hs k
+  have h := integral_pow_mul_exp_neg_mul_gammaMeasure (c := s) ha hb (by linarith) k
   rw [marginalLik]
   have : (fun r => poissonExposureLik s k r) =
       fun r => (s ^ k / k !) * (r ^ k * exp (-(s * r))) := by
