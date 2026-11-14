@@ -73,6 +73,13 @@ left-endpoint integral weights every jump of `h` at `c` by `f c`; for general `f
   `MathlibExt.Analysis.Integration.HasRSIntegral f h a b I` exists, the left-endpoint integral
   exists and equals `I`. `leftSum_image_points_eq_rsSum_leftTag` identifies the left-endpoint sum
   over the points of a partition with `rsSum` of its left tagging.
+* `twoTagSum F G h P`: sums `∑ F(u) Δh G(x)` with `F` tagged at the left and `G` at the right
+  endpoint of each cell, the shape of `duhamelSum` (`duhamelSum_eq_twoTagSum`;
+  `twoTagSum_image_points` reads the tags off `Partition.leftTag` and `Partition.rightTag`).
+  `twoTagSum_eq_leftSum_add` / `twoTagSum_eq_rightSum_sub` split it into the left- or
+  right-endpoint sum of `F G` and a second-order term; `abs_twoTagSum_le_of_abs_le` bounds it by
+  `‖h‖_∞ (2‖F‖‖G‖ + ‖G‖ V(F) + 3‖F‖ V(G))` uniformly in the partition, and
+  `abs_twoTagSum_sub_le` gives Lipschitz dependence on `h`.
 
 ## Implementation notes
 
@@ -105,7 +112,7 @@ tags) and `MathlibExt.Analysis.Integration.RiemannPartition`: `Partition`, `Part
 `Partition.ofFinset`, `Partition.pointSet_ofFinset`, `Partition.points_mem_Icc`,
 `Partition.a_le_b`, `rsSum` and `HasRSIntegral`. Proved here: the left-endpoint sums and integral,
 their bilinearity, the insertion formula, monotonicity, existence, summation by parts, the bounds,
-the two step-integrator values, and the bridge to T125's sums and integral.
+the two step-integrator values, the bridge to T125's sums and integral, and the two-tag sums.
 
 T125's uniform-norm bound `|∫ f dh| ≤ B (2M + V(f))` is proved here again for the left-endpoint
 sums by the same Abel summation: the left-endpoint integral also exists where T125's does not,
@@ -631,26 +638,31 @@ theorem hasLeftRSIntegral_ite_lt {c : ℝ} (hac : a ≤ c) (hcb : c < b) :
 
 /-! ### Agreement with the free-tag refinement integral -/
 
+/-- The first point of a partition `P` has no predecessor among the points of `P`. -/
+theorem prev_image_points_zero (P : Integration.Partition a b) :
+    prev (univ.image P.points) (P.points 0) = P.points 0 := by
+  refine prev_eq_self ?_
+  rintro ⟨z, hz, hzlt⟩
+  obtain ⟨k, -, rfl⟩ := mem_image.1 hz
+  exact absurd (P.ordered.lt_iff_lt.1 hzlt) (Fin.not_lt_zero k)
+
+/-- Among the points of a partition `P`, the predecessor of `P.points i.succ` is
+`P.points i.castSucc`. -/
+theorem prev_image_points_succ (P : Integration.Partition a b) (i : Fin P.n) :
+    prev (univ.image P.points) (P.points i.succ) = P.points i.castSucc := by
+  refine prev_eq_of (mem_image_of_mem _ (mem_univ _)) (P.ordered Fin.castSucc_lt_succ) ?_
+  intro z hz hzlt
+  obtain ⟨k, -, rfl⟩ := mem_image.1 hz
+  exact P.ordered.monotone (Fin.le_castSucc_iff.2 (P.ordered.lt_iff_lt.1 hzlt))
+
 /-- The left-endpoint sum over the points of a partition `P` of `[a, b]` (the canonical
 `MathlibExt.Analysis.Integration.Partition`) is the Riemann–Stieltjes sum `rsSum` of its
 left-endpoint tagging `P.leftTag`. -/
 theorem leftSum_image_points_eq_rsSum_leftTag (f h : ℝ → ℝ) (P : Integration.Partition a b) :
     leftSum f h (univ.image P.points) = Integration.rsSum f h P.leftTag := by
-  have hprev0 : prev (univ.image P.points) (P.points 0) = P.points 0 := by
-    refine prev_eq_self ?_
-    rintro ⟨z, hz, hzlt⟩
-    obtain ⟨k, -, rfl⟩ := mem_image.1 hz
-    exact absurd (P.ordered.lt_iff_lt.1 hzlt) (Fin.not_lt_zero k)
-  have hprev : ∀ i : Fin P.n,
-      prev (univ.image P.points) (P.points i.succ) = P.points i.castSucc := by
-    intro i
-    refine prev_eq_of (mem_image_of_mem _ (mem_univ _)) (P.ordered Fin.castSucc_lt_succ) ?_
-    intro z hz hzlt
-    obtain ⟨k, -, rfl⟩ := mem_image.1 hz
-    exact P.ordered.monotone (Fin.le_castSucc_iff.2 (P.ordered.lt_iff_lt.1 hzlt))
-  rw [leftSum, sum_image fun x _ y _ hxy => P.ordered.injective hxy, Fin.sum_univ_succ, hprev0,
-    sub_self, mul_zero, zero_add]
-  simp only [hprev]
+  rw [leftSum, sum_image fun x _ y _ hxy => P.ordered.injective hxy, Fin.sum_univ_succ,
+    prev_image_points_zero, sub_self, mul_zero, zero_add]
+  simp only [prev_image_points_succ]
   rfl
 
 /-- **Agreement with the free-tag integral.** If `∫ₐᵇ f dh = I` in the refinement sense with
@@ -684,5 +696,135 @@ theorem hasLeftRSIntegral_of_hasRSIntegral (hI : Integration.HasRSIntegral f h a
     exact hmem
   rw [Real.dist_eq, leftPartitionSum, ← hQpts, leftSum_image_points_eq_rsSum_leftTag]
   exact hP Q.leftTag hQP
+
+/-! ### Sums with different tags for the two factors
+
+The Duhamel sums `duhamelSum A B a b s` of `MathlibExt.Analysis.StieltjesProductIntegral` evaluate
+the first factor `P(A)(a, ·]` at the left endpoint of each cell and the second factor `P(B)(·, b]`
+at the right endpoint. `twoTagSum F G h P` is that shape for general `F`, `G`, `h`. It is the
+left-endpoint sum of `F G` plus a second-order term `∑ F(u) ΔG Δh`, and the right-endpoint sum of
+`F G` minus `∑ ΔF G(x) Δh`; the second-order terms are the products of jumps that make the two
+taggings differ. Both decompositions give a bound uniform in the partition and linear in `‖h‖_∞`,
+the estimate the continuity of `h ↦ Ψ(h)` in the uniform norm needs. -/
+
+section TwoTag
+
+variable {F G : ℝ → ℝ}
+
+/-- The **two-tag sum** `∑_{x ∈ P} F (prev P x) * (h x - h (prev P x)) * G x`: on every cell
+`(prev P x, x]` the factor `F` is tagged at the left endpoint and `G` at the right endpoint. -/
+noncomputable def twoTagSum (F G h : ℝ → ℝ) (P : Finset ℝ) : ℝ :=
+  ∑ x ∈ P, F (prev P x) * (h x - h (prev P x)) * G x
+
+/-- The Duhamel sum is the two-tag sum of `P(A)(a, ·]` (left tags) and `P(B)(·, b]` (right tags)
+against `B - A`. -/
+theorem duhamelSum_eq_twoTagSum (A B : ℝ → ℝ) (a b : ℝ) (s : Finset ℝ) :
+    duhamelSum A B a b s = twoTagSum (productIntegral A a) (fun x => productIntegral B x b)
+      (B - A) (partitionPts a b s) := by
+  rw [duhamelSum, twoTagSum]
+  exact sum_congr rfl fun x _ => by simp only [Pi.sub_apply]; ring
+
+/-- Over the points of a partition `P` of `[a, b]`, the two-tag sum evaluates `F` at the tags of
+`P.leftTag` and `G` at the tags of `P.rightTag`. -/
+theorem twoTagSum_image_points (F G h : ℝ → ℝ) (P : Integration.Partition a b) :
+    twoTagSum F G h (univ.image P.points) = ∑ i : Fin P.n, F (P.leftTag.tags i) *
+      (h (P.points i.succ) - h (P.points i.castSucc)) * G (P.rightTag.tags i) := by
+  rw [twoTagSum, sum_image fun x _ y _ hxy => P.ordered.injective hxy, Fin.sum_univ_succ,
+    prev_image_points_zero, sub_self, mul_zero, zero_mul, zero_add]
+  simp only [prev_image_points_succ]
+  rfl
+
+theorem twoTagSum_sub_right (P : Finset ℝ) :
+    twoTagSum F G (h - g) P = twoTagSum F G h P - twoTagSum F G g P := by
+  simp only [twoTagSum, Pi.sub_apply, ← sum_sub_distrib]
+  exact sum_congr rfl fun _ _ => by ring
+
+/-- **Left decomposition**: the two-tag sum is the left-endpoint sum of `F G` plus the
+second-order term `∑ F(u) Δh ΔG`. -/
+theorem twoTagSum_eq_leftSum_add (F G h : ℝ → ℝ) (P : Finset ℝ) :
+    twoTagSum F G h P = leftSum (F * G) h P +
+      ∑ x ∈ P, F (prev P x) * (h x - h (prev P x)) * (G x - G (prev P x)) := by
+  rw [twoTagSum, leftSum, ← sum_add_distrib]
+  exact sum_congr rfl fun x _ => by simp only [Pi.mul_apply]; ring
+
+/-- **Right decomposition**: the two-tag sum is the right-endpoint sum of `F G` minus the
+second-order term `∑ G(x) Δh ΔF`. -/
+theorem twoTagSum_eq_rightSum_sub (F G h : ℝ → ℝ) (P : Finset ℝ) :
+    twoTagSum F G h P = rightSum (F * G) h P -
+      ∑ x ∈ P, G x * (h x - h (prev P x)) * (F x - F (prev P x)) := by
+  rw [twoTagSum, rightSum, ← sum_sub_distrib]
+  exact sum_congr rfl fun x _ => by simp only [Pi.mul_apply]; ring
+
+/-- A product of bounded functions with controls is controlled: for `|F| ≤ M`, `|G| ≤ N` on
+`[a, b]`, `F` controlled by `V` and `G` by `W`, the product `F G` is controlled by `N V + M W`. -/
+theorem isControl_mul {M N : ℝ} (hM : ∀ x ∈ Set.Icc a b, |F x| ≤ M)
+    (hN : ∀ x ∈ Set.Icc a b, |G x| ≤ N) (hF : IsControl F V a b) (hG : IsControl G W a b) :
+    IsControl (F * G) (fun t => N * V t + M * W t) a b := by
+  intro x y hy hyx hx
+  have hxI : x ∈ Set.Icc a b := ⟨hy.trans hyx, hx⟩
+  have hyI : y ∈ Set.Icc a b := ⟨hy, hyx.trans hx⟩
+  have e : (F * G) x - (F * G) y = (F x - F y) * G x + F y * (G x - G y) := by
+    simp only [Pi.mul_apply]; ring
+  rw [e]
+  have h1 : |(F x - F y) * G x| ≤ (V x - V y) * N := by
+    rw [abs_mul]
+    exact mul_le_mul (hF x y hy hyx hx) (hN x hxI) (abs_nonneg _)
+      (hF.sub_nonneg hy hyx hx)
+  have h2 : |F y * (G x - G y)| ≤ M * (W x - W y) := by
+    rw [abs_mul]
+    exact mul_le_mul (hM y hyI) (hG x y hy hyx hx) (abs_nonneg _)
+      ((abs_nonneg _).trans (hM y hyI))
+  calc |(F x - F y) * G x + F y * (G x - G y)|
+      ≤ |(F x - F y) * G x| + |F y * (G x - G y)| := abs_add_le _ _
+    _ ≤ (V x - V y) * N + M * (W x - W y) := add_le_add h1 h2
+    _ = (N * V x + M * W x) - (N * V y + M * W y) := by ring
+
+/-- **Uniform-norm bound for the two-tag sum.** For `|h| ≤ B`, `|F| ≤ M`, `|G| ≤ N` on `[a, b]`,
+`F` controlled by `V` and `G` by `W`, every two-tag sum over a partition of `[a, b]` satisfies
+`|∑ F(u) Δh G(x)| ≤ B (2MN + N (V b - V a) + 3M (W b - W a))`. No regularity of `h` is used, and
+`F`, `G`, `h` may jump on the same side at the same point. -/
+theorem abs_twoTagSum_le_of_abs_le (hab : a ≤ b) {B M N : ℝ}
+    (hB : ∀ x ∈ Set.Icc a b, |h x| ≤ B) (hM : ∀ x ∈ Set.Icc a b, |F x| ≤ M)
+    (hN : ∀ x ∈ Set.Icc a b, |G x| ≤ N) (hF : IsControl F V a b) (hG : IsControl G W a b)
+    (s : Finset ℝ) :
+    |twoTagSum F G h (partitionPts a b s)| ≤
+      B * (2 * M * N + N * (V b - V a) + 3 * M * (W b - W a)) := by
+  set P := partitionPts a b s
+  have haI : a ∈ Set.Icc a b := ⟨le_rfl, hab⟩
+  have hM0 : 0 ≤ M := (abs_nonneg _).trans (hM a haI)
+  have hMN : ∀ x ∈ Set.Icc a b, |(F * G) x| ≤ M * N := fun x hx => by
+    rw [Pi.mul_apply, abs_mul]
+    exact mul_le_mul (hM x hx) (hN x hx) (abs_nonneg _) hM0
+  have hL := abs_leftPartitionSum_le_of_abs_le hab hB hMN (isControl_mul hM hN hF hG) s
+  have hR : |∑ x ∈ P, F (prev P x) * (h x - h (prev P x)) * (G x - G (prev P x))| ≤
+      M * (2 * B) * (W b - W a) :=
+    abs_sum_cells_mul_le hab hG _ s fun x hx => by
+      have hu := mem_Icc_of_mem_partitionPts hab (prev_mem hx)
+      have hxI := mem_Icc_of_mem_partitionPts hab hx
+      rw [abs_mul]
+      refine mul_le_mul (hM _ hu) ((abs_sub _ _).trans ?_) (abs_nonneg _) hM0
+      linarith [hB x hxI, hB _ hu]
+  rw [twoTagSum_eq_leftSum_add]
+  refine (abs_add_le _ _).trans ?_
+  rw [leftPartitionSum] at hL
+  calc |leftSum (F * G) h P| +
+        |∑ x ∈ P, F (prev P x) * (h x - h (prev P x)) * (G x - G (prev P x))|
+      ≤ B * (2 * (M * N) + ((N * V b + M * W b) - (N * V a + M * W a))) +
+        M * (2 * B) * (W b - W a) := add_le_add hL hR
+    _ = B * (2 * M * N + N * (V b - V a) + 3 * M * (W b - W a)) := by ring
+
+/-- **Lipschitz dependence of the two-tag sum on the integrator**, uniformly in the partition:
+for `|h - g| ≤ B` on `[a, b]`, `|S(F, G; h) - S(F, G; g)| ≤ B (2MN + N (V b - V a) +
+3M (W b - W a))`. -/
+theorem abs_twoTagSum_sub_le (hab : a ≤ b) {B M N : ℝ}
+    (hB : ∀ x ∈ Set.Icc a b, |h x - g x| ≤ B) (hM : ∀ x ∈ Set.Icc a b, |F x| ≤ M)
+    (hN : ∀ x ∈ Set.Icc a b, |G x| ≤ N) (hF : IsControl F V a b) (hG : IsControl G W a b)
+    (s : Finset ℝ) :
+    |twoTagSum F G h (partitionPts a b s) - twoTagSum F G g (partitionPts a b s)| ≤
+      B * (2 * M * N + N * (V b - V a) + 3 * M * (W b - W a)) := by
+  rw [← twoTagSum_sub_right]
+  exact abs_twoTagSum_le_of_abs_le (h := h - g) hab hB hM hN hF hG s
+
+end TwoTag
 
 end MathlibExt.Analysis.StieltjesRSIntegralLeftContinuous

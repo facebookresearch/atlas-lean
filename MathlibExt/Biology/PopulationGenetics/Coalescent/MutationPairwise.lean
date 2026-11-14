@@ -10,7 +10,6 @@ module
 
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.Mutation
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.Topology
-import Mathlib.Probability.CDF
 
 /-!
 # Pairwise differences under Poisson mutation marking
@@ -609,25 +608,12 @@ theorem hasCondDistrib_branch_of_treeMutation [SFinite μ] {X : Ω → (Icc 2 n 
   rw [hk] at h
   exact h
 
-/-- An exponentially distributed random variable is a.s. nonnegative. Copy of the private
-`ae_nonneg_of_hasLaw_expMeasure` in `Mutation.lean`; make that one public and delete this copy. -/
-private lemma ae_nonneg_of_hasLaw_expMeasure' {Y : Ω → ℝ} {r : ℝ} (hr : 0 < r)
-    (hY : HasLaw Y (expMeasure r) μ) : ∀ᵐ ω ∂μ, 0 ≤ Y ω := by
-  have := isProbabilityMeasure_expMeasure hr
-  have h : ∀ᵐ x ∂expMeasure r, 0 ≤ x := by
-    rw [ae_iff]
-    refine measure_mono_null (fun x (hx : ¬0 ≤ x) => Set.mem_Iic.2 (not_le.1 hx).le) ?_
-    rw [← ofReal_cdf, cdf_expMeasure_eq hr]
-    simp
-  rw [← hY.map_eq] at h
-  exact ae_of_ae_map hY.aemeasurable h
-
 namespace KingmanTimes
 
 variable (K : KingmanTimes μ n)
 
 private theorem ae_nonneg_epochs : ∀ᵐ ω ∂μ, ∀ k : Icc 2 n, 0 ≤ K.epochs ω k :=
-  ae_all_iff.2 fun k => ae_nonneg_of_hasLaw_expMeasure' (choose_two_pos k.2) (K.hasLaw k k.2)
+  ae_all_iff.2 fun k => ae_nonneg_of_hasLaw_expMeasure (choose_two_pos k.2) (K.hasLaw k k.2)
 
 private theorem integrable_branchLength (b : KingmanBranch n) :
     Integrable (fun ω => ((kingmanBranchLength n (K.epochs ω) b : ℝ≥0) : ℝ)) μ := by

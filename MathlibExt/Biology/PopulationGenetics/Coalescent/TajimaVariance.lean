@@ -68,6 +68,7 @@ integral of a non-integrable function is `0`). The identities hold for every rea
 
 * `sum_samplePairs_card_inter`: among the `C(n, 2)` pairs, `1` equals a given pair, `2 (n - 2)`
   share one gene with it and `C(n - 2, 2)` are disjoint from it.
+* `memLp_meanPairDiff`: `π` is square integrable when each pairwise count is.
 * `variance_meanPairDiff`: `Var π = b₁ θ + b₂ θ²` (Tajima 1983).
 * `KingmanTimes.covariance_meanPairDiff_segSites`: `Cov(π, S) = θ + (n + 2) θ² / (2 n)`.
 * `KingmanTimes.variance_tajimaNumerator`: `Var(π - S / a₁) = c₁ θ + c₂ θ²` (Tajima 1989).
@@ -454,7 +455,7 @@ private theorem covariance_meanPairDiff_segSites_aux {Ω : Type*} {mΩ : Measura
   ring
 
 /-- The mean number of pairwise differences is square integrable when each `D s` is. -/
-private theorem memLp_meanPairDiff {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
+theorem memLp_meanPairDiff {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     {n : ℕ} {D : Finset (Fin n) → Ω → ℝ} (hD2 : ∀ s ∈ samplePairs n, MemLp (D s) 2 μ) :
     MemLp (meanPairDiff n D) 2 μ :=
   (memLp_finsetSum (samplePairs n) hD2).const_mul _
@@ -561,9 +562,7 @@ theorem variance_tajimaNumerator [IsProbabilityMeasure μ] {m : MeasurableSpace 
       fun ω => θ ^ 2 / 2 * (τ s ω * K.totalLength ω) + θ * τ s ω) :
     Var[fun ω => meanPairDiff n D ω - S ω / tajimaA1 n; μ] =
       tajimaC1 n * θ + tajimaC2 n * θ ^ 2 := by
-  have ha1 : 0 < tajimaA1 n := by
-    rw [tajimaA1_eq_harmonic]
-    exact_mod_cast harmonic_pos (by omega)
+  have ha1 := tajimaA1_pos hn
   have hn0 : (n : ℝ) ≠ 0 := by positivity
   have hSa : MemLp (fun ω => S ω / tajimaA1 n) 2 μ := by
     simpa [div_eq_mul_inv, mul_comm] using hS2.const_mul (tajimaA1 n)⁻¹

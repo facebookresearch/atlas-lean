@@ -36,6 +36,10 @@ topological order.
 
 Boundary tests for `gaussianDiscrepancy`: one-two, singular, two-one, and
 identity cases (Bartlett, STAT 241A (2007), Lemma 2).
+
+Boundary tests for the three-time-point linear growth model (D08.1): an
+identity-covariance example, a two-time-point non-identification witness,
+and an inadmissible input (Duncan and Duncan (2009)).
 -/
 
 @[expose] public section
@@ -298,6 +302,156 @@ theorem discrepancy_eq_zero_iff_mpr_diag :
     gaussianDiscrepancy (Matrix.diagonal ![2] : Matrix (Fin 1) (Fin 1) ℝ)
       (Matrix.diagonal ![2] : Matrix (Fin 1) (Fin 1) ℝ) = 0 :=
   (gaussianDiscrepancy_eq_zero_iff diag_two_pd diag_two_pd).mpr rfl
+
+open scoped Matrix
+
+/-- Two-time-point loading matrix: Intercept loadings `1, 1`, Slope loadings
+`0, 1` (underidentified comparison case for D08.1). -/
+def growthLoading2 : Matrix (Fin 2) (Fin 2) ℝ := !![1, 0; 1, 1]
+
+/-- First covariance decomposition of the two-time-point example. -/
+def twoG1 : Matrix (Fin 2) (Fin 2) ℝ := !![1, 0; 0, 1]
+
+/-- Second covariance decomposition of the two-time-point example. -/
+noncomputable def twoG2 : Matrix (Fin 2) (Fin 2) ℝ :=
+  !![3 / 2, -1 / 2; -1 / 2, 3 / 2]
+
+/-- Error variances for the first two-time-point decomposition. -/
+def twoTheta1 : Fin 2 → ℝ := ![1, 1]
+
+/-- Error variances for the second two-time-point decomposition. -/
+noncomputable def twoTheta2 : Fin 2 → ℝ := ![1 / 2, 1]
+
+/-- Covariance with no symmetric nonnegative-error decomposition: the
+recovery forces `θ 0 = -4 / 5`. -/
+noncomputable def badInput : Matrix (Fin 3) (Fin 3) ℝ :=
+  !![1, 9 / 10, 0; 9 / 10, 1, 0; 0, 0, 1]
+
+/-- The identity-covariance growth example gives
+`!![2, 1, 1; 1, 3, 3; 1, 3, 6]`. -/
+theorem growth_example_cov :
+    ((growthLoading * (1 : Matrix (Fin 2) (Fin 2) ℝ) * growthLoadingᵀ
+      + Matrix.diagonal ![1, 1, 1] :
+      Matrix (Fin 3) (Fin 3) ℝ)) = !![2, 1, 1; 1, 3, 3; 1, 3, 6] := by
+  rw [Matrix.one_fin_two]
+  have h1 : ((!![1, 0; 0, 1] : Matrix (Fin 2) (Fin 2) ℝ)).IsSymm := by
+    ext i j
+    fin_cases i <;> fin_cases j <;> simp [Matrix.transpose_apply]
+  have e := growthLoading_cov_apply _ h1 ![1, 1, 1]
+  ext i j
+  fin_cases i <;> fin_cases j <;> rw [e _ _] <;> simp <;> norm_num
+
+/-- The recovery on the identity-covariance example gives `G 0 0 = 1`,
+`G 0 1 = 0`, `G 1 1 = 1`. -/
+theorem growth_example_recovered :
+    ((growthLoading * (1 : Matrix (Fin 2) (Fin 2) ℝ) * growthLoadingᵀ
+      + Matrix.diagonal ![1, 1, 1] :
+      Matrix (Fin 3) (Fin 3) ℝ)) 0 2
+      - ((growthLoading * (1 : Matrix (Fin 2) (Fin 2) ℝ) * growthLoadingᵀ
+        + Matrix.diagonal ![1, 1, 1] :
+        Matrix (Fin 3) (Fin 3) ℝ)) 0 1 = 0
+    ∧ 2 * ((growthLoading * (1 : Matrix (Fin 2) (Fin 2) ℝ) * growthLoadingᵀ
+        + Matrix.diagonal ![1, 1, 1] :
+        Matrix (Fin 3) (Fin 3) ℝ)) 0 1
+      - ((growthLoading * (1 : Matrix (Fin 2) (Fin 2) ℝ) * growthLoadingᵀ
+        + Matrix.diagonal ![1, 1, 1] :
+        Matrix (Fin 3) (Fin 3) ℝ)) 0 2 = 1
+    ∧ ((((growthLoading * (1 : Matrix (Fin 2) (Fin 2) ℝ) * growthLoadingᵀ
+        + Matrix.diagonal ![1, 1, 1] :
+        Matrix (Fin 3) (Fin 3) ℝ)) 1 2
+      + ((growthLoading * (1 : Matrix (Fin 2) (Fin 2) ℝ) * growthLoadingᵀ
+        + Matrix.diagonal ![1, 1, 1] :
+        Matrix (Fin 3) (Fin 3) ℝ)) 0 1
+      - 2 * ((growthLoading * (1 : Matrix (Fin 2) (Fin 2) ℝ) * growthLoadingᵀ
+        + Matrix.diagonal ![1, 1, 1] :
+        Matrix (Fin 3) (Fin 3) ℝ)) 0 2)) / 2 = 1 := by
+  rw [growth_example_cov]
+  refine ⟨?_, ?_, ?_⟩ <;> simp <;> norm_num
+
+/-- Both two-time-point decompositions give `!![2, 1; 1, 3]`. -/
+theorem two_time_same_cov :
+    ((growthLoading2 * twoG1 * growthLoading2ᵀ + Matrix.diagonal twoTheta1 :
+      Matrix (Fin 2) (Fin 2) ℝ)) = !![2, 1; 1, 3]
+    ∧ ((growthLoading2 * twoG2 * growthLoading2ᵀ + Matrix.diagonal twoTheta2 :
+      Matrix (Fin 2) (Fin 2) ℝ)) = !![2, 1; 1, 3] := by
+  constructor
+  · ext i j
+    fin_cases i <;> fin_cases j <;> rw [Matrix.add_apply, Matrix.mul_apply,
+      Fin.sum_univ_two, Matrix.mul_apply, Matrix.mul_apply, Fin.sum_univ_two,
+      Fin.sum_univ_two, Matrix.transpose_apply, Matrix.transpose_apply,
+      Matrix.diagonal_apply] <;> simp [growthLoading2, twoG1, twoTheta1]
+      <;> ring
+  · ext i j
+    fin_cases i <;> fin_cases j <;> rw [Matrix.add_apply, Matrix.mul_apply,
+      Fin.sum_univ_two, Matrix.mul_apply, Matrix.mul_apply, Fin.sum_univ_two,
+      Fin.sum_univ_two, Matrix.transpose_apply, Matrix.transpose_apply,
+      Matrix.diagonal_apply] <;> simp [growthLoading2, twoG2, twoTheta2]
+      <;> ring
+
+/-- The two two-time-point covariance parameters differ. -/
+theorem two_time_params_ne : twoG1 ≠ twoG2 := by
+  intro h
+  have h00 : twoG1 0 0 = twoG2 0 0 := by rw [h]
+  simp [twoG1, twoG2] at h00
+  norm_num at h00
+
+/-- Both two-time-point decompositions are admissible: symmetric `G` with
+positive diagonal and determinant, positive `θ`. -/
+theorem two_time_admissible :
+    twoG1.IsSymm ∧ 0 < twoG1 0 0 ∧ 0 < twoG1 1 1 ∧ 0 < twoG1.det ∧
+      twoG2.IsSymm ∧ 0 < twoG2 0 0 ∧ 0 < twoG2 1 1 ∧ 0 < twoG2.det ∧
+      0 < twoTheta1 0 ∧ 0 < twoTheta1 1 ∧ 0 < twoTheta2 0 ∧
+      0 < twoTheta2 1 := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · ext i j
+    fin_cases i <;> fin_cases j <;> simp [twoG1, Matrix.transpose_apply]
+  · simp [twoG1]
+  · simp [twoG1]
+  · simp only [twoG1, Matrix.det_fin_two_of]
+    norm_num
+  · ext i j
+    fin_cases i <;> fin_cases j <;> simp [twoG2, Matrix.transpose_apply]
+  · simp [twoG2]
+  · simp [twoG2]
+  · simp only [twoG2, Matrix.det_fin_two_of]
+    norm_num
+  · simp [twoTheta1]
+  · simp [twoTheta1]
+  · simp [twoTheta2]
+  · simp [twoTheta2]
+
+/-- `badInput` is symmetric with leading principal minors `1`, `19 / 100`,
+`19 / 100`. -/
+theorem inadmissible_input_minors :
+    badInput.IsSymm ∧ badInput 0 0 = 1 ∧
+      ((!![1, 9 / 10; 9 / 10, 1] : Matrix (Fin 2) (Fin 2) ℝ)).det
+        = 19 / 100 ∧
+      badInput.det = 19 / 100 := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · ext i j
+    fin_cases i <;> fin_cases j <;> simp [badInput, Matrix.transpose_apply]
+  · simp [badInput]
+  · rw [Matrix.det_fin_two_of]
+    norm_num
+  · rw [Matrix.det_fin_three]
+    simp [badInput]
+    ring
+
+/-- `badInput` has no symmetric `G` with nonnegative `θ` giving it: the
+recovery forces `θ 0 = -4 / 5`. -/
+theorem inadmissible_input : ¬ ∃ (G : Matrix (Fin 2) (Fin 2) ℝ)
+    (θ : Fin 3 → ℝ),
+    G.IsSymm ∧ (∀ s, 0 ≤ θ s) ∧
+      ((growthLoading * G * growthLoadingᵀ + Matrix.diagonal θ :
+        Matrix (Fin 3) (Fin 3) ℝ)) = badInput := by
+  rintro ⟨G, θ, hG, hθ, hM⟩
+  have r := growth_recover G hG θ
+  obtain ⟨g01, g00, g11, t0, t1, t2⟩ := r
+  rw [hM] at g01 g00 t0
+  simp [badInput] at g01 g00 t0
+  have hneg : θ 0 = -(4 / 5) := by linarith
+  have hpos := hθ 0
+  linarith
 
 end MathlibExt.Probability.Statistics.Measurement.Test
 

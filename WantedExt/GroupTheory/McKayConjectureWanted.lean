@@ -9,7 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import Batteries.Util.ProofWanted
-public import Mathlib.Data.Complex.Basic
+public import Mathlib.Basic.Complex.Basic
 public import Mathlib.GroupTheory.Sylow
 public import Mathlib.RepresentationTheory.Character
 public import Mathlib.SetTheory.Cardinal.Basic
@@ -39,6 +39,42 @@ theorem_wanted mckay_irr_equicardinal (G : Type*) [Group G] [Finite G]
     (p : ℕ) [Fact p.Prime] (P : Sylow p G) :
     Cardinal.mk (pPrimeCharacters G p) =
       Cardinal.mk (pPrimeCharacters (Subgroup.normalizer (P : Set G)) p)
+
+/-! ## AnnalsChallenge statement of the McKay theorem
+
+The formalization above (pPrimeCharacters / mckay_irr_equicardinal) predates the
+AnnalsChallenge port. The declarations below reproduce Thomas Browning's
+expert-written AnnalsChallenge formalization of the same theorem
+(ImperialCollegeLondon/AnnalsChallenge v1.0.0, e32eb14,
+AnnalsChallenge/AnnalsOfMathematics/2026-203-3-McKayConjecture.lean,
+Apache License 2.0; dataset paper arXiv:2610.18301) verbatim, with only the
+WantedExt conversion of the sorried theorem to theorem_wanted. It counts
+Irr' by Set.ncard and coprimality, where the formalization above uses
+Cardinal.mk and non-divisibility. -/
+
+namespace McKayConjecture
+
+open CategoryTheory Module Subgroup
+
+variable (ℓ : ℕ) (X : Type*) [Group X] [Finite X]
+
+/-- `Irr'(X)` is the set of complex irreducible characters of `X` whose degree is prime to `ℓ`. -/
+def Irr' : Set (X → ℂ) :=
+  {χ | ∃ V : FDRep ℂ X, Simple V ∧ V.character = χ ∧ ℓ.Coprime (finrank ℂ V)}
+
+/--
+Statement of Theorem 1.1:
+
+Let `X` be a finite group, `ℓ` a prime and `S` a Sylow `ℓ`-subgroup of `X`. Let `Irr_ℓ'(X)` denote
+the set of complex irreducible characters of `X` whose degree is prime to `ℓ`. Then
+`|Irr_ℓ'(X)| = |Irr_ℓ'(N_X(S))|`.
+
+Source: M. Cabanes and B. Spaeth, The McKay Conjecture on character degrees, Annals of Math, 203 (3) 2026. Statement taken verbatim from https://github.com/ImperialCollegeLondon/AnnalsChallenge (v1.0.0, e32eb14), AnnalsChallenge/AnnalsOfMathematics/2026-203-3-McKayConjecture.lean (author: Thomas Browning; Apache License 2.0); dataset paper arXiv:2610.18301.
+-/
+public theorem_wanted theorem_1_1 (hℓ : ℓ.Prime) (S : Sylow ℓ X) :
+    (Irr' ℓ X).ncard = (Irr' ℓ (normalizer S : Subgroup X)).ncard
+
+end McKayConjecture
 
 end
 

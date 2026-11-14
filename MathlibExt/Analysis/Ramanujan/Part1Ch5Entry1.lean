@@ -28,8 +28,27 @@ open Entry1Euleriangf (chapter5DerivativeExpansion)
 
 noncomputable section
 
+/-- The coefficient `bernoulli n / n!`, with Mathlib's `bernoulli` (the convention
+with `bernoulli 1 = -1 / 2`). -/
 def chapter5Entry1MinusCoeff (n : ℕ) : ℝ :=
   (bernoulli n : ℝ) / (n.factorial : ℝ)
+
+private lemma iter_deriv_zero (n : ℕ) :
+    (Polynomial.derivative^[n]) (0 : ℝ[X]) = 0 := by
+  induction n with
+  | zero => simp
+  | succ k ih =>
+    rw [Function.iterate_succ_apply', ih]
+    simp
+
+private lemma iter_deriv_C_mul (a : ℝ) (p : ℝ[X]) (n : ℕ) :
+    (Polynomial.derivative^[n]) (Polynomial.C a * p)
+      = Polynomial.C a * (Polynomial.derivative^[n]) p := by
+  induction n generalizing p with
+  | zero => simp
+  | succ k ih =>
+    rw [Function.iterate_succ_apply', Function.iterate_succ_apply', ih]
+    exact Polynomial.derivative_C_mul a _
 
 private lemma eval_iter_deriv_X_pow (x : ℝ) (m n : ℕ) :
     Polynomial.eval x ((Polynomial.derivative^[n]) ((Polynomial.X : ℝ[X]) ^ m)) =
@@ -45,7 +64,7 @@ private lemma eval_iter_deriv_X_pow (x : ℝ) (m n : ℕ) :
       have hder : Polynomial.derivative (Polynomial.C (1 : ℝ)) = 0 :=
         Polynomial.derivative_C
       have h0 : (Polynomial.derivative^[k]) (Polynomial.derivative (Polynomial.C (1 : ℝ))) = 0 := by
-        rw [hder]; exact Polynomial.iterate_derivative_zero
+        rw [hder]; exact iter_deriv_zero k
       have hdesc : Nat.descFactorial 0 (k + 1) = 0 := by
         cases k with
         | zero => simp [Nat.descFactorial_succ]
@@ -56,7 +75,7 @@ private lemma eval_iter_deriv_X_pow (x : ℝ) (m n : ℕ) :
           = Polynomial.C ((m + 1 : ℕ) : ℝ) * Polynomial.X ^ m := by
         have h := Polynomial.derivative_X_pow (R := ℝ) (m + 1)
         rwa [Nat.add_sub_cancel] at h
-      rw [hder, Polynomial.iterate_derivative_C_mul]
+      rw [hder, iter_deriv_C_mul]
       have hih := ih m
       rw [Polynomial.eval_mul, Polynomial.eval_C, hih]
       have hdesc : Nat.descFactorial (m + 1) (k + 1) = (m + 1) * Nat.descFactorial m k := by
@@ -77,6 +96,19 @@ private lemma desc_eq_fact_div_real (m n : ℕ) (h : n ≤ m) :
   rw [eq_div_iff hne, mul_comm]
   exact hcast
 
+private lemma choose_eq_fact_div_real (m j : ℕ) (h : j ≤ m) :
+    (Nat.choose m j : ℝ) = (m.factorial : ℝ) / ((j.factorial : ℝ) * ((m - j).factorial : ℝ)) := by
+  have hnat := Nat.choose_mul_factorial_mul_factorial h
+  have hcast : ((Nat.choose m j : ℕ) : ℝ) * (j.factorial : ℝ) * (((m - j).factorial : ℕ) : ℝ)
+      = (m.factorial : ℝ) := by
+    exact_mod_cast hnat
+  have hne : (j.factorial : ℝ) * (((m - j).factorial : ℕ) : ℝ) ≠ 0 := by
+    apply mul_ne_zero
+    · exact Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero _)
+    · exact Nat.cast_ne_zero.mpr (Nat.factorial_ne_zero _)
+  rw [eq_div_iff hne]
+  linarith [hcast]
+
 private lemma desc_choose_mul_real (m n j : ℕ) (h : n + j ≤ m) :
     (Nat.descFactorial m n : ℝ) * (Nat.choose (m - n) j : ℝ)
       = (Nat.choose m j : ℝ) * (Nat.descFactorial (m - j) n : ℝ) := by
@@ -86,8 +118,8 @@ private lemma desc_choose_mul_real (m n j : ℕ) (h : n + j ≤ m) :
   have hnj : n ≤ m - j := by omega
   have hsub : m - n - j = m - j - n := by omega
   rw [desc_eq_fact_div_real m n hn_le,
-    Nat.cast_choose ℝ hjn,
-    Nat.cast_choose ℝ hj_le,
+    choose_eq_fact_div_real (m - n) j hjn,
+    choose_eq_fact_div_real m j hj_le,
     desc_eq_fact_div_real (m - j) n hnj,
     hsub]
   field_simp
@@ -141,7 +173,8 @@ private lemma pow_add_sub_pow (x h : ℝ) (N : ℕ) :
     rw [Nat.choose_self]
     simp
   rw [htop] at hadd
-  have : (x + h) ^ N = (∑ m ∈ Finset.range N, x ^ m * h ^ (N - m) * (Nat.choose N m : ℝ)) + x ^ N := hadd
+  have : (x + h) ^ N = (∑ m ∈ Finset.range N, x ^ m * h ^ (N - m) * (Nat.choose N m : ℝ)) +
+      x ^ N := hadd
   rw [this]
   rw [add_sub_cancel_right]
   apply Finset.sum_congr rfl
@@ -155,7 +188,8 @@ private lemma numE_diff_eq (a : ℕ → ℝ) (m : ℕ) (x h : ℝ) :
     numE a m (x + h) h - numE a m x h
       = ∑ n ∈ Finset.range (m + 1),
           a n * h ^ n * (Nat.descFactorial m n : ℝ)
-            * (∑ j ∈ Finset.range (m - n), (Nat.choose (m - n) j : ℝ) * x ^ j * h ^ (m - n - j)) := by
+            * (∑ j ∈ Finset.range (m - n),
+                (Nat.choose (m - n) j : ℝ) * x ^ j * h ^ (m - n - j)) := by
   unfold numE
   rw [← Finset.sum_sub_distrib]
   apply Finset.sum_congr rfl
@@ -197,13 +231,13 @@ private lemma numE_diff_closed (a : ℕ → ℝ) (m : ℕ) (x h : ℝ) :
       apply Finset.sum_subset hsub
       intro j _ hj2
       have hneg : ¬ j < m - n := fun hlt => hj2 (Finset.mem_range.mpr hlt)
-      simp only [hF, if_neg hneg]
+      simp only [hF, ite_eq_right hneg]
     rw [h1]
     rw [Finset.mul_sum]
     apply Finset.sum_congr rfl
     intro j hj
     have hjlt : j < m - n := Finset.mem_range.mp hj
-    simp only [hF, if_pos hjlt]
+    simp only [hF, ite_eq_left hjlt]
   rw [Finset.sum_congr rfl hF_eq]
   rw [Finset.sum_comm]
   have hdrop : ∑ j ∈ Finset.range (m + 1), ∑ n ∈ Finset.range (m + 1), F n j
@@ -216,7 +250,7 @@ private lemma numE_diff_closed (a : ℕ → ℝ) (m : ℕ) (x h : ℝ) :
         apply Finset.sum_eq_zero
         intro n _
         simp only [hF]
-        rw [if_neg (by omega)]
+        rw [ite_eq_right (by omega)]
       rw [hm0, add_zero]
   rw [hdrop]
   apply Finset.sum_congr rfl
@@ -238,18 +272,19 @@ private lemma numE_diff_closed (a : ℕ → ℝ) (m : ℕ) (x h : ℝ) :
       have hneg : ¬ j < m - n := by
         have : ¬ n < m - j := fun hlt => hn2 (Finset.mem_range.mpr hlt)
         omega
-      simp only [hF, if_neg hneg]
+      simp only [hF, ite_eq_right hneg]
     rw [h1]
     apply Finset.sum_congr rfl
     intro n hn
     have hnlt : n < m - j := Finset.mem_range.mp hn
     have hpos : j < m - n := by omega
-    simp only [hF, if_pos hpos]
+    simp only [hF, ite_eq_left hpos]
   rw [hinner]
   have hfact : ∀ n ∈ Finset.range (m - j),
       a n * h ^ n * (Nat.descFactorial m n : ℝ)
         * ((Nat.choose (m - n) j : ℝ) * x ^ j * h ^ (m - n - j))
-      = x ^ j * (h ^ (m - j) * (Nat.choose m j : ℝ) * (a n * (Nat.descFactorial (m - j) n : ℝ))) := by
+      = x ^ j *
+          (h ^ (m - j) * (Nat.choose m j : ℝ) * (a n * (Nat.descFactorial (m - j) n : ℝ))) := by
     intro n hn
     have hnlt : n < m - j := Finset.mem_range.mp hn
     have hle : n + j ≤ m := by omega
@@ -259,7 +294,8 @@ private lemma numE_diff_closed (a : ℕ → ℝ) (m : ℕ) (x h : ℝ) :
       rw [← pow_add, hexp]
     have hrr : a n * h ^ n * (Nat.descFactorial m n : ℝ)
         * ((Nat.choose (m - n) j : ℝ) * x ^ j * h ^ (m - n - j))
-        = x ^ j * (h ^ n * h ^ (m - n - j)) * ((Nat.descFactorial m n : ℝ) * (Nat.choose (m - n) j : ℝ)) * a n := by
+        = x ^ j * (h ^ n * h ^ (m - n - j)) *
+            ((Nat.descFactorial m n : ℝ) * (Nat.choose (m - n) j : ℝ)) * a n := by
       ring
     rw [hrr, hpow, hdc]
     ring
@@ -297,10 +333,10 @@ private lemma numE_bernoulli_diff (m : ℕ) (x h : ℝ) :
           ring
         have hmem : m ∈ Finset.range (m + 1) := Finset.mem_range.mpr (Nat.lt_succ_self m)
         rw [hinner m hmem, hmj, hch]
-        simp only [if_true]
+        simp only [ite_true]
         ring
       · have hne : m + 1 - j ≠ 1 := by omega
-        rw [hinner j hj, if_neg hne, if_neg hjj]
+        rw [hinner j hj, ite_eq_right hne, ite_eq_right hjj]
         ring
     rw [Finset.sum_congr rfl hterm]
     have hmem : m ∈ Finset.range (m + 1) := Finset.mem_range.mpr (Nat.lt_succ_self m)
@@ -324,6 +360,15 @@ private lemma desc_zero_of_lt {i n : ℕ} (h : i < n) : i.descFactorial n = 0 :=
       rw [Nat.descFactorial_succ]
       simp
 
+private lemma iter_deriv_sum {ι : Type*} (s : Finset ι) (g : ι → ℝ[X]) (n : ℕ) :
+    (Polynomial.derivative^[n]) (∑ i ∈ s, g i) = ∑ i ∈ s, (Polynomial.derivative^[n]) (g i) := by
+  induction n with
+  | zero => simp
+  | succ k ih =>
+    simp only [Function.iterate_succ_apply']
+    rw [ih]
+    exact Polynomial.derivative_sum
+
 private lemma eval_expansion (a : ℕ → ℝ) (h x : ℝ) (phi : ℝ[X]) :
     Polynomial.eval x (chapter5DerivativeExpansion a h phi)
       = ∑ n ∈ range (phi.natDegree + 1),
@@ -342,11 +387,10 @@ private lemma eval_iter_deriv_phi (phi : ℝ[X]) (y : ℝ) (n : ℕ) :
       = ∑ i ∈ range (phi.natDegree + 1), Polynomial.C (phi.coeff i) * Polynomial.X ^ i :=
     Polynomial.as_sum_range_C_mul_X_pow phi
   nth_rewrite 1 [hphi]
-  rw [Polynomial.iterate_derivative_sum, Polynomial.eval_finsetSum]
+  rw [iter_deriv_sum, Polynomial.eval_finsetSum]
   apply Finset.sum_congr rfl
   intro i _
-  rw [Polynomial.iterate_derivative_C_mul, Polynomial.eval_mul, Polynomial.eval_C,
-    eval_iter_deriv_X_pow]
+  rw [iter_deriv_C_mul, Polynomial.eval_mul, Polynomial.eval_C, eval_iter_deriv_X_pow]
   ring
 
 private lemma eval_expansion_X_pow (a : ℕ → ℝ) (h x : ℝ) (m : ℕ) :
@@ -522,7 +566,7 @@ private lemma T_eq_of_hyp (a : ℕ → ℝ)
         intro i _
         rw [pow_succ]
         simp
-      rw [hzero, zero_add, pow_zero, one_mul, if_neg (Nat.succ_ne_zero k)]
+      rw [hzero, zero_add, pow_zero, one_mul, ite_eq_right (Nat.succ_ne_zero k)]
   have hcol := hcollapse (fun j => (1 : ℝ) ^ (m - j) * (Nat.choose m j : ℝ)
     * (∑ n ∈ Finset.range (m - j), a n * (Nat.descFactorial (m - j) n : ℝ)))
   rw [hcol] at heval
@@ -530,7 +574,7 @@ private lemma T_eq_of_hyp (a : ℕ → ℝ)
   | zero => simp
   | succ k =>
     have hm0 : k + 1 ≠ 0 := Nat.succ_ne_zero k
-    rw [if_neg hm0] at heval
+    rw [ite_eq_right hm0] at heval
     have hG0 : (1 : ℝ) ^ (k + 1 - 0) * (Nat.choose (k + 1) 0 : ℝ)
         * (∑ n ∈ Finset.range (k + 1 - 0), a n * (Nat.descFactorial (k + 1 - 0) n : ℝ))
         = ∑ n ∈ Finset.range (k + 1), a n * (Nat.descFactorial (k + 1) n : ℝ) := by

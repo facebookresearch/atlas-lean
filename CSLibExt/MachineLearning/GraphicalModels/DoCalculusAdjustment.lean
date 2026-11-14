@@ -15,9 +15,10 @@ public import CSLibExt.MachineLearning.GraphicalModels.CausalAdjustment
 
 This file is documentation: it records how the two adjustment formulas proved in
 `CSLibExt/MachineLearning/GraphicalModels/CausalAdjustment.lean` are obtained by Pearl's
-do-calculus, and it adds no declarations. The do-calculus itself is not formalized in Atlas;
-the adjustment theorems are proved directly from the truncated factorization and the global
-Markov property.
+do-calculus, and it adds no declarations. The three rules are proved in
+`CSLibExt/MachineLearning/GraphicalModels/DoCalculus.lean`, but the adjustment theorems do not
+use them: they are proved directly from the truncated factorization and the global Markov
+property.
 
 ## Notation
 

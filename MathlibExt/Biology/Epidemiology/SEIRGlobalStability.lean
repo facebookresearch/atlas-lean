@@ -10,8 +10,12 @@ module
 
 public import MathlibExt.Biology.Epidemiology.SEIR
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import MathlibExt.Analysis.ODE.MaximalSolution
+import Mathlib.Analysis.Calculus.ContDiff.RCLike
+import Mathlib.Analysis.Calculus.Deriv.Prod
 import Mathlib.Analysis.Calculus.MeanValue
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
 # Global stability of the SEIR endemic and disease-free equilibria via Lyapunov functions
@@ -98,6 +102,11 @@ then `E → 0`.
   `diseaseFree_lyapunovStable`, `diseaseFree_globallyAsymptoticallyStable`: for `R₀ ≤ 1`, the
   disease-free equilibrium `(N, 0, 0)` is Lyapunov stable and attracts every solution starting
   in the open positive orthant, and `R → 0`.
+
+* `exists_isSolution`, `exists_isSolution_of_nonneg`: forward-global existence for nonnegative
+  initial data, with nonnegative compartments and total `≤ max N (S₀ + E₀ + I₀ + R₀)`, so the
+  `IsSolution` hypothesis of the results above is satisfiable from every initial state in the
+  open positive orthant.
 
 ## References
 
@@ -1473,5 +1482,236 @@ theorem diseaseFree_globallyAsymptoticallyStable (hβ : 0 ≤ β) (hσ : 0 < σ)
     h.tendsto_diseaseFree hβ hσ hγ hμ hN hR hS0 hE0 hI0⟩
 
 end DiseaseFreeStability
+
+/-! ### Forward-global existence in the feasible region -/
+
+section Existence
+
+/-- **Nonnegativity under a nonnegative inflow.** If `u' = a u + b` on `[0, T]` with `a`
+continuous there, `b ≥ 0` and `u(0) ≥ 0`, then `u ≥ 0` on `[0, T]`: `u e^{-∫₀ᵗ a}` has derivative
+`b e^{-∫₀ᵗ a} ≥ 0`. -/
+private theorem nonneg_of_hasDerivAt_linear {u a b : ℝ → ℝ} {T : ℝ}
+    (ha : ContinuousOn a (Icc 0 T)) (hb : ∀ t ∈ Icc 0 T, 0 ≤ b t)
+    (hu : ∀ t ∈ Icc 0 T, HasDerivAt u (a t * u t + b t) t) (h0 : 0 ≤ u 0) :
+    ∀ t ∈ Icc 0 T, 0 ≤ u t := by
+  intro t ht
+  have hT : 0 ≤ T := ht.1.trans ht.2
+  set a' : ℝ → ℝ := fun s => a (max 0 (min T s)) with ha'
+  have ha'c : Continuous a' := ha.comp_continuous (by fun_prop)
+    fun s => ⟨le_max_left _ _, max_le hT (min_le_left _ _)⟩
+  have ha'eq : ∀ s ∈ Icc 0 T, a' s = a s := fun s hs => by
+    simp only [ha', min_eq_right hs.2, max_eq_right hs.1]
+  set A : ℝ → ℝ := fun t => ∫ s in (0 : ℝ)..t, a' s with hA
+  have hAd : ∀ s, HasDerivAt A (a' s) s := fun s =>
+    (ha'c.integral_hasStrictDerivAt 0 s).hasDerivAt
+  have hwd : ∀ s ∈ Icc 0 T,
+      HasDerivAt (fun s => u s * exp (-A s)) (b s * exp (-A s)) s := fun s hs => by
+    convert (hu s hs).mul ((hAd s).neg.exp) using 1
+    rw [ha'eq s hs, Pi.neg_apply]
+    ring
+  have hmono : MonotoneOn (fun s => u s * exp (-A s)) (Icc 0 T) :=
+    monotoneOn_of_hasDerivWithinAt_nonneg (convex_Icc 0 T)
+      (fun s hs => (hwd s hs).continuousAt.continuousWithinAt)
+      (fun s hs => (hwd s (interior_subset hs)).hasDerivWithinAt)
+      fun s hs => mul_nonneg (hb s (interior_subset hs)) (exp_pos _).le
+  have hle := hmono ⟨le_rfl, hT⟩ ht ht.1
+  have hA0 : A 0 = 0 := intervalIntegral.integral_same
+  simp only [hA0, neg_zero, exp_zero, mul_one] at hle
+  exact (mul_nonneg_iff_of_pos_right (exp_pos _)).1 (h0.trans hle)
+
+/-- Auxiliary field for the existence proof: the SEIR field with vital dynamics in which every
+inflow term is evaluated at a second argument `y`, meant to be the positive part `x⁺` of the
+state `x` (`posLift`). Keeping `y` separate makes the map polynomial; at `y = x` it is the
+SEIR field with vital dynamics. -/
+private noncomputable def posField (β σ γ μ N : ℝ) (p : (Fin 4 → ℝ) × (Fin 4 → ℝ)) :
+    Fin 4 → ℝ :=
+  ![μ * N - β * p.1 0 * p.2 2 / N - μ * p.1 0, β * p.2 0 * p.2 2 / N - (μ + σ) * p.1 1,
+    σ * p.2 1 - (μ + γ) * p.1 2, γ * p.2 2 - μ * p.1 3]
+
+/-- The state together with its componentwise positive part. -/
+private def posLift (x : Fin 4 → ℝ) : (Fin 4 → ℝ) × (Fin 4 → ℝ) := (x, fun i => max (x i) 0)
+
+private theorem posField_contDiff {β σ γ μ N : ℝ} {n : WithTop ℕ∞} :
+    ContDiff ℝ n (posField β σ γ μ N) := by
+  refine contDiff_pi.2 fun i => ?_
+  fin_cases i
+  · change ContDiff ℝ n fun p : (Fin 4 → ℝ) × (Fin 4 → ℝ) =>
+      μ * N - β * p.1 0 * p.2 2 / N - μ * p.1 0
+    fun_prop
+  · change ContDiff ℝ n fun p : (Fin 4 → ℝ) × (Fin 4 → ℝ) =>
+      β * p.2 0 * p.2 2 / N - (μ + σ) * p.1 1
+    fun_prop
+  · change ContDiff ℝ n fun p : (Fin 4 → ℝ) × (Fin 4 → ℝ) => σ * p.2 1 - (μ + γ) * p.1 2
+    fun_prop
+  · change ContDiff ℝ n fun p : (Fin 4 → ℝ) × (Fin 4 → ℝ) => γ * p.2 2 - μ * p.1 3
+    fun_prop
+
+private theorem lipschitzWith_posLift : LipschitzWith 1 posLift := by
+  refine LipschitzWith.of_dist_le_mul fun x y => ?_
+  rw [NNReal.coe_one, one_mul, Prod.dist_eq]
+  refine max_le le_rfl ((dist_pi_le_iff dist_nonneg).2 fun i => ?_)
+  rw [Real.dist_eq]
+  exact (abs_max_sub_max_le_abs _ _ _).trans ((Real.dist_eq _ _).symm.trans_le
+    (dist_le_pi_dist x y i))
+
+/-- The uncurried auxiliary field `(t, x) ↦ posField (x, x⁺)` satisfies the spacetime local
+Lipschitz hypothesis of `ode_maximal_solution_exit_compact` on `U = univ`: `posLift` is
+`1`-Lipschitz and `posField` is `C¹`, hence Lipschitz on the closed unit ball around
+`posLift p.2`. -/
+private theorem posField_locallyLipschitz (β σ γ μ N : ℝ) (p : ℝ × (Fin 4 → ℝ)) :
+    ∃ C : NNReal, ∃ s ∈ 𝓝 p, ∀ t : ℝ, ∀ x y : Fin 4 → ℝ,
+      (t, x) ∈ s ∩ univ → (t, y) ∈ s ∩ univ →
+        dist ((fun q : ℝ × (Fin 4 → ℝ) => posField β σ γ μ N (posLift q.2)) (t, x))
+          ((fun q : ℝ × (Fin 4 → ℝ) => posField β σ γ μ N (posLift q.2)) (t, y)) ≤
+            C * dist x y := by
+  obtain ⟨C, hC⟩ := ((posField_contDiff (β := β) (σ := σ) (γ := γ) (μ := μ) (N := N)
+    (n := 1)).contDiffOn (s := Metric.closedBall (posLift p.2) 1)).exists_lipschitzOnWith
+    one_ne_zero (convex_closedBall _ _) (isCompact_closedBall _ _)
+  refine ⟨C, univ ×ˢ Metric.closedBall p.2 1,
+    prod_mem_nhds univ_mem (Metric.closedBall_mem_nhds _ one_pos), ?_⟩
+  rintro t x y ⟨⟨-, hx⟩, -⟩ ⟨⟨-, hy⟩, -⟩
+  have hmaps : ∀ z ∈ Metric.closedBall p.2 1, posLift z ∈ Metric.closedBall (posLift p.2) 1 :=
+    fun z hz => by
+      have := lipschitzWith_posLift.dist_le_mul z p.2
+      rw [Metric.mem_closedBall] at hz ⊢
+      simp only [NNReal.coe_one, one_mul] at this
+      linarith
+  have hxy := lipschitzWith_posLift.dist_le_mul x y
+  simp only [NNReal.coe_one, one_mul] at hxy
+  calc dist (posField β σ γ μ N (posLift x)) (posField β σ γ μ N (posLift y))
+      ≤ C * dist (posLift x) (posLift y) := hC.dist_le_mul _ (hmaps x hx) _ (hmaps y hy)
+    _ ≤ C * dist x y := by gcongr
+
+/-- The feasible region `{x ≥ 0, x 0 + x 1 + x 2 + x 3 ≤ M}` is compact. -/
+private theorem isCompact_feasible (M : ℝ) :
+    IsCompact {x : Fin 4 → ℝ | (∀ i, 0 ≤ x i) ∧ x 0 + x 1 + x 2 + x 3 ≤ M} := by
+  refine (isCompact_Icc (a := (0 : Fin 4 → ℝ)) (b := fun _ => M)).of_isClosed_subset ?_ ?_
+  · exact (isClosed_Ici (a := (0 : Fin 4 → ℝ))).inter (isClosed_le
+      (by fun_prop : Continuous fun x : Fin 4 → ℝ => x 0 + x 1 + x 2 + x 3) continuous_const)
+  · rintro x ⟨hx, hsum⟩
+    refine ⟨hx, fun i => ?_⟩
+    have := hx 0; have := hx 1; have := hx 2; have := hx 3
+    fin_cases i <;> simp <;> linarith
+
+/-- **Forward-global solutions in the feasible region (nonnegative rates).** For `β, σ, γ, μ ≥ 0`
+and `N ≥ 0` (so `μ = 0`, the closed model of `isSolution_zero_iff`, is included) and every
+nonnegative initial state `(S₀, E₀, I₀, R₀)`, the SEIR system with vital dynamics has a solution
+with these initial values, with two-sided derivatives at every `t ≥ 0`, whose compartments stay
+nonnegative and whose total stays `≤ max N (S₀ + E₀ + I₀ + R₀)` for all `t ≥ 0`.
+
+Proof: run `ode_maximal_solution_exit_compact` (`U = univ`, `t₀ = 0`) on the auxiliary field
+`posField` with inflows `β S⁺ I⁺ / N`, `σ E⁺`, `γ I⁺` and `μ N`. Each compartment then solves a
+linear equation `u' = a u + b` with `b ≥ 0`, so it stays nonnegative on its own
+(`nonneg_of_hasDerivAt_linear`; no cooperative-system argument is needed), and on the
+nonnegative orthant `posField` is the SEIR field. The total `P` satisfies `P' = μ (N - P)`, so
+`M - P ≥ 0` for `M = max N P(0)`. The maximal solution thus stays in the compact set
+`[0, T] ×ˢ feasible` over `[0, T]`; if some `T ≥ 0` were outside its interval, the time
+`max c 0` would contradict the forward exit from that set. -/
+theorem exists_isSolution_of_nonneg {β σ γ μ N : ℝ} (hβ : 0 ≤ β) (hσ : 0 ≤ σ) (hγ : 0 ≤ γ)
+    (hμ : 0 ≤ μ) (hN : 0 ≤ N) {S₀ E₀ I₀ R₀ : ℝ} (hS₀ : 0 ≤ S₀) (hE₀ : 0 ≤ E₀) (hI₀ : 0 ≤ I₀)
+    (hR₀ : 0 ≤ R₀) :
+    ∃ S E I R : ℝ → ℝ, IsSolution β σ γ μ N S E I R ∧
+      S 0 = S₀ ∧ E 0 = E₀ ∧ I 0 = I₀ ∧ R 0 = R₀ ∧
+      (∀ t, 0 ≤ t → 0 ≤ S t ∧ 0 ≤ E t ∧ 0 ≤ I t ∧ 0 ≤ R t) ∧
+      (∀ t, 0 ≤ t → S t + E t + I t + R t ≤ max N (S₀ + E₀ + I₀ + R₀)) := by
+  set M := max N (S₀ + E₀ + I₀ + R₀) with hM
+  obtain ⟨J, α, hα0, hJo, h0J, hJc, hαd, hexit⟩ :=
+    MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_maximal_solution_exit_compact univ
+      (fun q : ℝ × (Fin 4 → ℝ) => posField β σ γ μ N (posLift q.2)) 0 ![S₀, E₀, I₀, R₀]
+      isOpen_univ trivial
+      ((posField_contDiff (n := 0)).continuous.comp
+        (lipschitzWith_posLift.continuous.comp continuous_snd)).continuousOn
+      fun p _ => posField_locallyLipschitz β σ γ μ N p
+  have hpi : ∀ t ∈ J, ∀ i, HasDerivAt (α · i) (posField β σ γ μ N (posLift (α t)) i) t :=
+    fun t ht => hasDerivAt_pi.1 (hαd t ht).2
+  have hcomp : ∀ t ∈ J,
+      HasDerivAt (α · 0) (μ * N - β * α t 0 * max (α t 2) 0 / N - μ * α t 0) t ∧
+        HasDerivAt (α · 1) (β * max (α t 0) 0 * max (α t 2) 0 / N - (μ + σ) * α t 1) t ∧
+          HasDerivAt (α · 2) (σ * max (α t 1) 0 - (μ + γ) * α t 2) t ∧
+            HasDerivAt (α · 3) (γ * max (α t 2) 0 - μ * α t 3) t := fun t ht =>
+    ⟨hpi t ht 0, hpi t ht 1, hpi t ht 2, hpi t ht 3⟩
+  have hi : α 0 0 = S₀ ∧ α 0 1 = E₀ ∧ α 0 2 = I₀ ∧ α 0 3 = R₀ := by simp [hα0]
+  obtain ⟨hi0, hi1, hi2, hi3⟩ := hi
+  have hcont : ∀ T ∈ J, ∀ i, ContinuousOn (α · i) (Icc 0 T) := fun T hT i s hs =>
+    (hpi s (hJc 0 h0J T hT hs) i).continuousAt.continuousWithinAt
+  have hnn : ∀ T ∈ J, ∀ t ∈ Icc 0 T, 0 ≤ α t 0 ∧ 0 ≤ α t 1 ∧ 0 ≤ α t 2 ∧ 0 ≤ α t 3 := by
+    intro T hT t ht
+    have hd := fun s (hs : s ∈ Icc 0 T) => hcomp s (hJc 0 h0J T hT hs)
+    have hc2 : ContinuousOn (fun s => max (α s 2) 0) (Icc 0 T) :=
+      (continuous_id.max continuous_const).comp_continuousOn (hcont T hT 2)
+    refine ⟨?_, ?_, ?_, ?_⟩
+    · refine nonneg_of_hasDerivAt_linear (a := fun s => -(β * max (α s 2) 0 / N + μ))
+        (b := fun _ => μ * N) (((hc2.const_smul β).div_const N).add continuousOn_const).neg
+        (fun _ _ => mul_nonneg hμ hN) (fun s hs => (hd s hs).1.congr_deriv (by ring))
+        (hi0 ▸ hS₀) t ht
+    · refine nonneg_of_hasDerivAt_linear (a := fun _ => -(μ + σ))
+        (b := fun s => β * max (α s 0) 0 * max (α s 2) 0 / N) continuousOn_const
+        (fun s _ => by positivity) (fun s hs => (hd s hs).2.1.congr_deriv (by ring))
+        (hi1 ▸ hE₀) t ht
+    · refine nonneg_of_hasDerivAt_linear (a := fun _ => -(μ + γ))
+        (b := fun s => σ * max (α s 1) 0) continuousOn_const
+        (fun s _ => by positivity) (fun s hs => (hd s hs).2.2.1.congr_deriv (by ring))
+        (hi2 ▸ hI₀) t ht
+    · refine nonneg_of_hasDerivAt_linear (a := fun _ => -μ)
+        (b := fun s => γ * max (α s 2) 0) continuousOn_const
+        (fun s _ => by positivity) (fun s hs => (hd s hs).2.2.2.congr_deriv (by ring))
+        (hi3 ▸ hR₀) t ht
+  have hreal : ∀ t ∈ J, 0 ≤ t →
+      HasDerivAt (α · 0) (μ * N - β * α t 0 * α t 2 / N - μ * α t 0) t ∧
+        HasDerivAt (α · 1) (β * α t 0 * α t 2 / N - (μ + σ) * α t 1) t ∧
+          HasDerivAt (α · 2) (σ * α t 1 - (μ + γ) * α t 2) t ∧
+            HasDerivAt (α · 3) (γ * α t 2 - μ * α t 3) t := fun t ht ht0 => by
+    obtain ⟨h0, h1, h2, -⟩ := hnn t ht t ⟨ht0, le_rfl⟩
+    have h := hcomp t ht
+    rwa [max_eq_left h0, max_eq_left h1, max_eq_left h2] at h
+  have htot : ∀ T ∈ J, ∀ t ∈ Icc 0 T, α t 0 + α t 1 + α t 2 + α t 3 ≤ M := by
+    intro T hT t ht
+    have h := nonneg_of_hasDerivAt_linear (u := fun s => M - (α s 0 + α s 1 + α s 2 + α s 3))
+      (a := fun _ => -μ) (b := fun _ => μ * (M - N)) continuousOn_const
+      (fun _ _ => mul_nonneg hμ (sub_nonneg.2 (le_max_left _ _)))
+      (fun s hs => by
+        obtain ⟨h0, h1, h2, h3⟩ := hreal s (hJc 0 h0J T hT hs) hs.1
+        exact (((h0.add h1).add h2).add h3).const_sub M |>.congr_deriv (by ring))
+      (by simp only [hi0, hi1, hi2, hi3, sub_nonneg]; exact le_max_right _ _) t ht
+    simpa only [sub_nonneg] using h
+  have hglobal : Ici 0 ⊆ J := by
+    intro T hT0
+    by_contra hTJ
+    obtain ⟨⟨c, hcJ, hc⟩, -⟩ := hexit (Icc 0 T ×ˢ
+      {x : Fin 4 → ℝ | (∀ i, 0 ≤ x i) ∧ x 0 + x 1 + x 2 + x 3 ≤ M})
+      (isCompact_Icc.prod (isCompact_feasible _)) (subset_univ _)
+    have htJ : max c 0 ∈ J := by rcases max_choice c 0 with h | h <;> rw [h] <;> assumption
+    set t := max c 0
+    have ht0 : 0 ≤ t := le_max_right _ _
+    have htT : t ≤ T := by
+      by_contra h
+      exact hTJ (hJc 0 h0J t htJ ⟨hT0, (not_le.1 h).le⟩)
+    refine hc t htJ (le_max_left _ _) ⟨⟨ht0, htT⟩, fun i => ?_, htot t htJ t ⟨ht0, le_rfl⟩⟩
+    obtain ⟨h0, h1, h2, h3⟩ := hnn t htJ t ⟨ht0, le_rfl⟩
+    fin_cases i <;> assumption
+  have hsol : IsSolution β σ γ μ N (α · 0) (α · 1) (α · 2) (α · 3) :=
+    ⟨fun t ht => (hreal t (hglobal ht) ht).1, fun t ht => (hreal t (hglobal ht) ht).2.1,
+      fun t ht => (hreal t (hglobal ht) ht).2.2.1, fun t ht => (hreal t (hglobal ht) ht).2.2.2⟩
+  exact ⟨(α · 0), (α · 1), (α · 2), (α · 3), hsol, hi0, hi1, hi2, hi3,
+    fun t ht => hnn t (hglobal ht) t ⟨ht, le_rfl⟩, fun t ht => htot t (hglobal ht) t ⟨ht, le_rfl⟩⟩
+
+/-- **Existence of solutions of the SEIR system with vital dynamics.** For `β ≥ 0`, `σ > 0`,
+`γ ≥ 0`, `μ > 0`, `N > 0` and every nonnegative initial state `(S₀, E₀, I₀, R₀)`, there are
+`S, E, I, R` solving the system (`IsSolution`) with these initial values; the solution stays in
+the feasible region: its compartments are nonnegative and its total is
+`≤ max N (S₀ + E₀ + I₀ + R₀)` for all `t ≥ 0` (so `≤ N` when it starts there). This discharges
+the `IsSolution` hypothesis of the stability theorems above for every positive initial state.
+The hypotheses `σ > 0`, `μ > 0`, `N > 0` are those of the stability theorems; existence itself
+only needs them nonnegative (`exists_isSolution_of_nonneg`). -/
+theorem exists_isSolution {β σ γ μ N : ℝ} (hβ : 0 ≤ β) (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ)
+    (hN : 0 < N) {S₀ E₀ I₀ R₀ : ℝ} (hS₀ : 0 ≤ S₀) (hE₀ : 0 ≤ E₀) (hI₀ : 0 ≤ I₀)
+    (hR₀ : 0 ≤ R₀) :
+    ∃ S E I R : ℝ → ℝ, IsSolution β σ γ μ N S E I R ∧
+      S 0 = S₀ ∧ E 0 = E₀ ∧ I 0 = I₀ ∧ R 0 = R₀ ∧
+      (∀ t, 0 ≤ t → 0 ≤ S t ∧ 0 ≤ E t ∧ 0 ≤ I t ∧ 0 ≤ R t) ∧
+      (∀ t, 0 ≤ t → S t + E t + I t + R t ≤ max N (S₀ + E₀ + I₀ + R₀)) :=
+  exists_isSolution_of_nonneg hβ hσ.le hγ hμ.le hN.le hS₀ hE₀ hI₀ hR₀
+
+end Existence
 
 end MathlibExt.Biology.Epidemiology.SEIRVital

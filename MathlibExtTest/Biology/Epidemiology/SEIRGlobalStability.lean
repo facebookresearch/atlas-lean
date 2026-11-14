@@ -43,6 +43,20 @@ Disease-free equilibrium `(N, 0, 0)` and the removed class:
   the constant endemic solution starts in the open orthant but does not converge to `(1, 0, 0)`;
 * `R → R*`: for `β = 12, σ = 1, γ = 2, μ = 1, N = 1` (`R₀ = 2`), `R* = γ I* / μ = 1/6` from the
   definitions, `S* + E* + I* + R* = N`, and the constant endemic solution has `R → R*`.
+
+Existence (`exists_isSolution`, `exists_isSolution_of_nonneg`):
+
+* concrete parameters `β = 1`, `σ = 1`, `γ = 1`, `μ = 0.1`, `N = 1` with initial data
+  `(0.9, 0.05, 0.05, 0)`: a solution exists, its initial values are the given ones, and its initial
+  derivatives `(-0.035, -0.01, -0.005, 0.05)` are computed from the right-hand sides in the
+  definition of `IsSolution`; its total stays `≤ 1 = N`;
+* the existence theorem discharges the `IsSolution` hypothesis of the stability theorem: for the
+  `R₀ = 2` model a non-constant solution from `(0.9, 0.05, 0.05, 0)` converges to `(S*, E*, I*)`;
+* `μ = 0`: `exists_isSolution` does not apply (it assumes `μ > 0`); existence there is proved
+  separately by `exists_isSolution_of_nonneg` (which assumes only `μ ≥ 0`), and the solution is
+  one of the closed SEIR model via `isSolution_zero_iff`;
+* negative initial data (`S₀ = -1`): the hypothesis `0 ≤ S₀` fails and no solution with these
+  initial values lies in the feasible region, checked at `t = 0` from the initial value alone.
 -/
 
 open Real Filter Set
@@ -348,5 +362,73 @@ example : Tendsto (fun _ : ℝ => (1 / 6 : ℝ)) atTop (𝓝 (2 * (1 / 12) / 1))
 /-- `tendsto_total` on it: `S + E + I + R → N = 1`. -/
 example : Tendsto (fun _ : ℝ => (1 / 2 : ℝ) + 1 / 4 + 1 / 12 + 1 / 6) atTop (𝓝 1) :=
   isSolution_const12.tendsto_total one_pos
+
+/-! ### Existence -/
+
+/-- **Concrete existence** at `β = σ = γ = 1`, `μ = 0.1`, `N = 1`, initial data
+`(0.9, 0.05, 0.05, 0)`. The initial values come from the theorem; the initial derivatives are
+computed from the right-hand sides in `IsSolution`:
+`S'(0) = 0.1 - 0.9 · 0.05 - 0.1 · 0.9 = -0.035`, `E'(0) = 0.045 - 1.1 · 0.05 = -0.01`,
+`I'(0) = 0.05 - 1.1 · 0.05 = -0.005`, `R'(0) = 0.05 - 0.1 · 0 = 0.05`. The total stays
+`≤ max 1 1 = 1`. -/
+theorem exists_concrete : ∃ S E I R : ℝ → ℝ, IsSolution 1 1 1 0.1 1 S E I R ∧
+    S 0 = 0.9 ∧ E 0 = 0.05 ∧ I 0 = 0.05 ∧ R 0 = 0 ∧
+    HasDerivAt S (-0.035) 0 ∧ HasDerivAt E (-0.01) 0 ∧ HasDerivAt I (-0.005) 0 ∧
+    HasDerivAt R 0.05 0 ∧ ∀ t, 0 ≤ t → S t + E t + I t + R t ≤ 1 := by
+  obtain ⟨S, E, I, R, h, h0, h1, h2, h3, -, htot⟩ :=
+    exists_isSolution (β := 1) (σ := 1) (γ := 1) (μ := 0.1) (N := 1) zero_le_one one_pos
+      zero_le_one (by norm_num) one_pos (S₀ := 0.9) (E₀ := 0.05) (I₀ := 0.05) (R₀ := 0)
+      (by norm_num) (by norm_num) (by norm_num) le_rfl
+  refine ⟨S, E, I, R, h, h0, h1, h2, h3, ?_, ?_, ?_, ?_, fun t ht => ?_⟩
+  · exact (h.hasDerivAt_susceptible 0 le_rfl).congr_deriv (by rw [h0, h2]; norm_num)
+  · exact (h.hasDerivAt_exposed 0 le_rfl).congr_deriv (by rw [h0, h1, h2]; norm_num)
+  · exact (h.hasDerivAt_infected 0 le_rfl).congr_deriv (by rw [h1, h2]; norm_num)
+  · exact (h.hasDerivAt_removed 0 le_rfl).congr_deriv (by rw [h2, h3]; norm_num)
+  · have := htot t ht
+    norm_num at this
+    linarith
+
+/-- The existence theorem discharges the `IsSolution` hypothesis of the stability theorem with a
+non-constant solution: in the `R₀ = 2` model, the solution from `(0.9, 0.05, 0.05, 0)` (which is
+not the equilibrium `(1/2, 1/4, 1/8)`) converges to the endemic equilibrium. -/
+example : ∃ S E I R : ℝ → ℝ, IsSolution 8 1 1 1 1 S E I R ∧
+    S 0 = 0.9 ∧ E 0 = 0.05 ∧ I 0 = 0.05 ∧ R 0 = 0 ∧
+    Tendsto (fun t => (S t, E t, I t)) atTop
+      (𝓝 (endemicS 8 1 1 1 1, endemicE 8 1 1 1 1, endemicI 8 1 1 1 1)) := by
+  obtain ⟨S, E, I, R, h, h0, h1, h2, h3, -, -⟩ :=
+    exists_isSolution (β := 8) (σ := 1) (γ := 1) (μ := 1) (N := 1) (by norm_num) one_pos
+      zero_le_one one_pos one_pos (S₀ := 0.9) (E₀ := 0.05) (I₀ := 0.05) (R₀ := 0)
+      (by norm_num) (by norm_num) (by norm_num) le_rfl
+  exact ⟨S, E, I, R, h, h0, h1, h2, h3, h.tendsto_endemic one_pos zero_le_one one_pos one_pos hR
+    (by rw [h0]; norm_num) (by rw [h1]; norm_num) (by rw [h2]; norm_num)⟩
+
+/-- `μ = 0` is outside `exists_isSolution`, whose hypothesis `0 < μ` fails there. -/
+example : ¬ (0 : ℝ) < 0 := lt_irrefl 0
+
+/-- `μ = 0` is covered separately by `exists_isSolution_of_nonneg` (hypothesis `0 ≤ μ`), and the
+solution solves the closed SEIR model by `isSolution_zero_iff`; the total stays `≤ 1`. -/
+example : ∃ S E I R : ℝ → ℝ, MathlibExt.Biology.Epidemiology.SEIR.IsSolution 1 1 1 1 S E I R ∧
+    S 0 = 0.9 ∧ E 0 = 0.05 ∧ I 0 = 0.05 ∧ R 0 = 0 ∧
+    ∀ t, 0 ≤ t → S t + E t + I t + R t ≤ 1 := by
+  obtain ⟨S, E, I, R, h, h0, h1, h2, h3, -, htot⟩ :=
+    exists_isSolution_of_nonneg (β := 1) (σ := 1) (γ := 1) (μ := 0) (N := 1) zero_le_one
+      zero_le_one zero_le_one le_rfl zero_le_one (S₀ := 0.9) (E₀ := 0.05) (I₀ := 0.05) (R₀ := 0)
+      (by norm_num) (by norm_num) (by norm_num) le_rfl
+  refine ⟨S, E, I, R, isSolution_zero_iff.1 h, h0, h1, h2, h3, fun t ht => ?_⟩
+  have := htot t ht
+  norm_num at this
+  linarith
+
+/-- Negative initial data: the hypothesis `0 ≤ S₀` of `exists_isSolution` fails at `S₀ = -1`. -/
+example : ¬ (0 : ℝ) ≤ -1 := by norm_num
+
+/-- Negative initial data: no solution with `S(0) = -1` lies in the feasible region, from the
+initial value alone (independently of the existence theorem). -/
+example : ¬ ∃ S E I R : ℝ → ℝ, IsSolution 1 1 1 0.1 1 S E I R ∧ S 0 = -1 ∧
+    ∀ t, 0 ≤ t → 0 ≤ S t ∧ 0 ≤ E t ∧ 0 ≤ I t ∧ 0 ≤ R t := by
+  rintro ⟨S, E, I, R, -, h0, hnn⟩
+  have := (hnn 0 le_rfl).1
+  rw [h0] at this
+  norm_num at this
 
 end MathlibExtTest.Biology.Epidemiology.SEIRGlobalStability

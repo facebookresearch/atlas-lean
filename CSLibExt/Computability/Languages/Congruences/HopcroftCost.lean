@@ -21,9 +21,9 @@ form used by the algorithm: the `smaller` half of a split is at most half the bl
 of halving steps grows the initial block by a factor of two per step, and every entry that
 `newSplitters` adds for a split block is a half of that block, so a smaller-half entry
 halves. It also defines `hopcroftSplitters`, the list of splitters the loop pops, so that
-the total-work bound can be stated precisely; that bound itself is not proved here
-(it needs the charging argument that turns this counting lemma into a bound on the
-predecessor cost). The cost model is predecessor
+the total-work bound can be stated precisely; that bound itself is registered as a
+`theorem_wanted` in `WantedExt` (it needs the charging argument that turns this counting
+lemma into a bound on the predecessor cost). The cost model is predecessor
 cost: processing a popped splitter `(C, a)` costs one predecessor visit for each state
 whose `a`-successor lies in `C`, i.e. `(preimage M C a).card`, plus `O(1)` per-splitter
 overhead for popping and bookkeeping. Splitting the blocks only touches the states in
@@ -173,8 +173,8 @@ def hopcroftSplitters : ℕ → List (Finset σ) → List (Finset σ × α) → 
 
 /-- The predecessor cost of a splitter trace: for each popped splitter `(C, a)`, one
 predecessor visit per state in the preimage `preimage M C a`, plus `1` per-splitter
-overhead. This is the quantity the total-work bound, not proved here, constrains
-to `O(|Σ| n log n)`. Charging splitter size `C.card` instead
+overhead. This is the quantity the total-work bound (`hopcroft_total_work` in
+`WantedExt`) constrains to `O(|Σ| n log n)`. Charging splitter size `C.card` instead
 would undercount: if all `n` states transition on `a` to one state `q`, processing the
 singleton splitter `({q}, a)` costs `n` predecessor visits while `C.card` charges
 only `1`. -/

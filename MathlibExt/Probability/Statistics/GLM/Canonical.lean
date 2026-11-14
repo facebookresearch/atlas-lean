@@ -8,44 +8,68 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.Statistics.GLM.Basic
 public import Mathlib.Analysis.SpecialFunctions.Sigmoid
 public import Mathlib.Analysis.SpecialFunctions.BinaryEntropy
-public import Mathlib.Analysis.Convex.Function
-public import Mathlib.Data.Matrix.Mul
-public import Mathlib.Order.Filter.Extr
 public import MathlibExt.Probability.Statistics.PoissonLikelihood
-public import MathlibExt.Analysis.Calculus.DotProductGradient
-import Mathlib.Analysis.Convex.Deriv
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 
 /-!
 # Canonical logistic and Poisson generalized linear models
 
-Observations are indexed by a finite type `ι`, coefficients by a finite type `κ`. A design matrix
-`X : Matrix ι κ ℝ` and a fixed offset vector `o : ι → ℝ` (never optimized) give the linear
-predictor `η(β) = X β + o` (`linearPredictor`). The responses `y` are fixed observed values (real
-for the logistic objective and the Poisson kernel, natural counts for the Poisson likelihood); every
-objective here is a deterministic function of `β`.
+The logistic (Bernoulli, logit link) and Poisson (log link) models are instances of the generic
+canonical-link GLM of `GLM.Basic`: `logisticCumulant` and `poissonCumulant` are
+`CanonicalCumulant`s on the natural-parameter domain `Θ = ℝ`, with
 
-* **Bernoulli with logit link.** The mean is `μᵢ = σ(ηᵢ)` with Mathlib's `Real.sigmoid`. The log
-  likelihood is `ℓ(β) = ∑ᵢ (yᵢ ηᵢ - log (1 + exp ηᵢ))` (`logisticLogLik`);
+* Bernoulli: cumulant `b θ = log (1 + exp θ)`, mean `σ θ` (Mathlib's `Real.sigmoid`), variance
+  `σ θ (1 - σ θ)`;
+* Poisson: cumulant, mean and variance all `exp`.
+
+Observations are indexed by a finite type `ι`, coefficients by a finite type `κ`; the linear
+predictor is `GLM.glmPredictor X o β = X β + o` with a fixed offset `o`. Both objectives are the
+generic `CanonicalCumulant.glmLogLik` at unit dispersion (`unitDispersion`), so the score,
+Hessian, concavity and uniqueness results of `GLM.Basic` apply to them directly; this file only
+specializes them. The responses `y` are fixed observed values (real for the logistic objective and
+the Poisson kernel, natural counts for the Poisson likelihood).
+
+* **Bernoulli with logit link.** `logisticLogLik = logisticCumulant.glmLogLik unitDispersion`;
+  explicitly `ℓ(β) = ∑ᵢ (yᵢ ηᵢ - log (1 + exp ηᵢ))` (`logisticLogLik_eq_sum`).
   `sigmoid_logLik_term` is the per-observation identity
   `y log σ(η) + (1 - y) log (1 - σ(η)) = y η - log (1 + exp η)`, valid for every real `y`.
-* **Poisson with log link.** The mean is `exp ηᵢ`. For counts `y : ι → ℕ` the log likelihood
-  `poissonLogLik` is the shared count likelihood `PoissonLikelihood.poissonLogLik` at the means
-  `exp ηᵢ`; for independent `Yᵢ ~ Poisson(exp ηᵢ)` it is the log-probability of the observed
-  counts under their joint law (`poissonLogLik_eq_log_pi_poissonMeasure`). The algebraic kernel
-  `poissonLogLikKernel` is `∑ᵢ (yᵢ ηᵢ - exp ηᵢ)` for every real `y`. For counts,
-  `poissonLogLik_eq_kernel` shows that the likelihood is the kernel minus the `β`-free constant
-  `∑ᵢ log yᵢ!`, and `isMaxOn_poissonLogLik_iff` that both have the same maximizers.
+* **Poisson with log link.** The kernel `poissonLogLikKernel = poissonCumulant.glmLogLik
+  unitDispersion` is `∑ᵢ (yᵢ ηᵢ - exp ηᵢ)` for every real `y` (`poissonLogLikKernel_eq_sum`).
+  For counts `y : ι → ℕ` the log likelihood `poissonLogLik` is the shared count likelihood
+  `PoissonLikelihood.poissonLogLik` at the means `exp ηᵢ`; for independent
+  `Yᵢ ~ Poisson(exp ηᵢ)` it is the log-probability of the observed counts under their joint law
+  (`poissonLogLik_eq_log_pi_poissonMeasure`). `poissonLogLik_eq_kernel` shows that it is the
+  kernel minus the `β`-free constant `∑ᵢ log yᵢ!`, and `isMaxOn_poissonLogLik_iff` that both have
+  the same maximizers.
+
+## Exponential-family structure
+
+The cumulants are the log-partition functions of the response families, with sufficient statistic
+`T(y) = y`:
+
+* Bernoulli: `logisticCumulant_cumulant_eq_log_sum_exp` gives
+  `b θ = log ∑_{y ∈ {0, 1}} exp (y θ)`, and `exp_logisticCumulant_one`,
+  `exp_logisticCumulant_zero` that `exp (y θ - b θ)` is `σ θ` at `y = 1` and `1 - σ θ` at
+  `y = 0`, i.e. the Bernoulli probabilities with success probability `σ θ`.
+* Poisson: `poissonMeasure_real_singleton_eq_exp` gives
+  `P(Y = k) = exp (k θ - b θ) / k!` for `Y ~ Poisson(exp θ)`.
+
+## Main results
 
 For both models (the Poisson statements are about the kernel `poissonLogLikKernel`):
 
+* `logisticCumulant_glmScore`, `poissonCumulant_glmScore`: the generic score is `Xᵀ (y - μ(β))`;
+  `logisticCumulant_glmHessian`, `poissonCumulant_glmHessian`: the generic Hessian is `-Xᵀ W X`
+  with `Wᵢ = σ(ηᵢ)(1 - σ(ηᵢ))`, resp. `Wᵢ = exp ηᵢ`.
 * `hasFDerivAt_logisticLogLik`, `hasFDerivAt_poissonLogLikKernel`: the Fréchet derivative at `β` is
   `Real.dotL (Xᵀ (y - μ(β)))`, and the `hasGradientAt_*` corollaries state that `Xᵀ (y - μ(β))` is
-  the gradient on `EuclideanSpace ℝ κ`.
+  the gradient on `EuclideanSpace ℝ κ`. `hasFDerivAt_logisticScore`,
+  `hasFDerivAt_poissonScore`: the derivative of the score is the Hessian.
 * `deriv2_logisticLogLik_line`, `deriv2_poissonLogLikKernel_line`: along `t ↦ β + t u` the second
-  derivative at `0` is `-∑ᵢ wᵢ ((X u)ᵢ)²` with `wᵢ = σ(ηᵢ)(1 - σ(ηᵢ))`, resp. `wᵢ = exp ηᵢ`.
+  derivative at `0` is `-∑ᵢ wᵢ ((X u)ᵢ)²`.
 * `concaveOn_logisticLogLik`, `concaveOn_poissonLogLikKernel`: concavity on all of `κ → ℝ`.
 * `logisticLogLik_maximizer_unique`, `poissonLogLikKernel_maximizer_unique`: if `β ↦ X β` is
   injective there is at most one maximizer. Existence is not claimed and can fail:
@@ -74,133 +98,151 @@ namespace MathlibExt.Probability.Statistics.GLM
 
 open Finset Real Matrix
 
+/-- The unit dispersion `φ = 1`. -/
+def unitDispersion : Dispersion := ⟨1, one_pos⟩
+
+@[simp]
+theorem coe_unitDispersion : (unitDispersion : ℝ) = 1 := rfl
+
+/-! ### A second derivative along a line -/
+
+/-- On a natural-parameter domain equal to `ℝ`, the second derivative of the log likelihood along
+`t ↦ β + t u` at `0` is the Hessian quadratic form `uᵀ H(β) u`. -/
+private lemma deriv2_glmLogLik_line {ι κ : Type*} [Fintype ι] [Fintype κ] [DecidableEq ι]
+    [DecidableEq κ] (F : CanonicalCumulant) (hF : F.natDomain = Set.univ) (φ : Dispersion)
+    (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β u : κ → ℝ) :
+    deriv^[2] (fun t : ℝ => F.glmLogLik φ X o y (β + t • u)) 0 =
+      u ⬝ᵥ (F.glmHessian φ X o β *ᵥ u) := by
+  have hmem : ∀ γ, γ ∈ F.glmDomain X o := fun γ i => hF ▸ Set.mem_univ _
+  have hl : ∀ t : ℝ, HasDerivAt (fun t : ℝ => β + t • u) u t := fun t => by
+    simpa using ((hasDerivAt_id t).smul_const u).const_add β
+  have hd : deriv (fun t : ℝ => F.glmLogLik φ X o y (β + t • u)) =
+      fun t => F.glmScore φ X o y (β + t • u) ⬝ᵥ u := by
+    funext t
+    have h := (F.hasFDerivAt_glmLogLik φ X o y (hmem (β + t • u))).comp_hasDerivAt t (hl t)
+    rw [Function.comp_def] at h
+    rw [h.deriv, Real.dotL_apply, dotProduct_comm]
+  have hs := (F.hasFDerivAt_glmScore φ X o y (hmem β)).comp_hasDerivAt_of_eq 0 (hl 0)
+    (by simp)
+  have h2 := (Real.hasFDerivAt_dotProduct u _).comp_hasDerivAt 0 hs
+  rw [Function.comp_def, Function.comp_def] at h2
+  simp only [LinearMap.coe_toContinuousLinearMap', Matrix.toLin'_apply, Real.dotL_apply] at h2
+  rw [Function.iterate_succ, Function.iterate_one, Function.comp_apply, hd, h2.deriv,
+    dotProduct_comm]
+
 variable {ι κ : Type*} [Fintype κ]
 
-/-- The linear predictor `η(β) = X β + o` of a generalized linear model with design `X` and a fixed
-offset `o`. -/
-def linearPredictor (X : Matrix ι κ ℝ) (o : ι → ℝ) (β : κ → ℝ) : ι → ℝ :=
-  X *ᵥ β + o
+/-! ### The Bernoulli cumulant -/
 
-theorem linearPredictor_apply (X : Matrix ι κ ℝ) (o : ι → ℝ) (β : κ → ℝ) (i : ι) :
-    linearPredictor X o β i = (X *ᵥ β) i + o i := rfl
-
-private lemma linearPredictor_combo (X : Matrix ι κ ℝ) (o : ι → ℝ) (β γ : κ → ℝ) {a b : ℝ}
-    (hab : a + b = 1) (i : ι) :
-    linearPredictor X o (a • β + b • γ) i =
-      a * linearPredictor X o β i + b * linearPredictor X o γ i := by
-  simp only [linearPredictor_apply, Matrix.mulVec_add, Matrix.mulVec_smul, Pi.add_apply,
-    Pi.smul_apply, smul_eq_mul]
-  linear_combination (o i) * hab.symm
-
-private lemma linearPredictor_line (X : Matrix ι κ ℝ) (o : ι → ℝ) (β u : κ → ℝ) (t : ℝ)
-    (i : ι) :
-    linearPredictor X o (β + t • u) i = linearPredictor X o β i + t * (X *ᵥ u) i := by
-  simp only [linearPredictor_apply, Matrix.mulVec_add, Matrix.mulVec_smul, Pi.add_apply,
-    Pi.smul_apply, smul_eq_mul]
+private lemma sigmoid_eq_exp_div (η : ℝ) : sigmoid η = exp η / (1 + exp η) := by
+  rw [sigmoid_def, exp_neg]
+  field_simp
   ring
 
+/-- The derivative of the Bernoulli cumulant `log (1 + exp x)` is `σ x`. -/
+theorem hasDerivAt_log_one_add_exp (x : ℝ) :
+    HasDerivAt (fun x => log (1 + exp x)) (sigmoid x) x := by
+  have h := ((hasDerivAt_exp x).const_add 1).log (by positivity)
+  convert h using 1
+  rw [sigmoid_eq_exp_div]
+
+/-- The Bernoulli variance `σ θ (1 - σ θ)` is strictly positive. -/
+theorem sigmoid_mul_one_sub_pos (θ : ℝ) : 0 < sigmoid θ * (1 - sigmoid θ) :=
+  mul_pos (sigmoid_pos θ) (sub_pos.2 (sigmoid_lt_one θ))
+
+/-- The canonical Bernoulli (logit-link) cumulant on `Θ = ℝ`: `b θ = log (1 + exp θ)`, mean
+`σ θ`, variance `σ θ (1 - σ θ)`. -/
+noncomputable def logisticCumulant : CanonicalCumulant where
+  natDomain := Set.univ
+  isOpen_natDomain := isOpen_univ
+  convex_natDomain := convex_univ
+  cumulant θ := log (1 + exp θ)
+  mean := sigmoid
+  variance θ := sigmoid θ * (1 - sigmoid θ)
+  hasDerivAt_cumulant θ _ := hasDerivAt_log_one_add_exp θ
+  hasDerivAt_mean θ _ := hasDerivAt_sigmoid θ
+  variance_nonneg θ _ := (sigmoid_mul_one_sub_pos θ).le
+
+@[simp] theorem logisticCumulant_natDomain : logisticCumulant.natDomain = Set.univ := rfl
+
+@[simp] theorem logisticCumulant_cumulant (θ : ℝ) :
+    logisticCumulant.cumulant θ = log (1 + exp θ) := rfl
+
+@[simp] theorem logisticCumulant_mean : logisticCumulant.mean = sigmoid := rfl
+
+@[simp] theorem logisticCumulant_variance (θ : ℝ) :
+    logisticCumulant.variance θ = sigmoid θ * (1 - sigmoid θ) := rfl
+
+theorem logisticCumulant_mem_glmDomain (X : Matrix ι κ ℝ) (o : ι → ℝ) (β : κ → ℝ) :
+    β ∈ logisticCumulant.glmDomain X o := fun _ => Set.mem_univ _
+
+@[simp] theorem logisticCumulant_glmDomain (X : Matrix ι κ ℝ) (o : ι → ℝ) :
+    logisticCumulant.glmDomain X o = Set.univ :=
+  Set.eq_univ_of_forall (logisticCumulant_mem_glmDomain X o)
+
+/-! ### Bernoulli exponential-family structure -/
+
+/-- **The Bernoulli log-partition function.** With sufficient statistic `T(y) = y` and counting
+measure on `{0, 1}`, the cumulant is `b θ = log ∑_{y ∈ {0, 1}} exp (y θ)`. -/
+theorem logisticCumulant_cumulant_eq_log_sum_exp (θ : ℝ) :
+    logisticCumulant.cumulant θ = log (∑ y ∈ ({0, 1} : Finset ℝ), exp (y * θ)) := by
+  rw [Finset.sum_pair zero_ne_one]
+  simp
+
+/-- The Bernoulli density `exp (y θ - b θ)` at `y = 1` is the success probability `σ θ`. -/
+theorem exp_logisticCumulant_one (θ : ℝ) :
+    exp (1 * θ - logisticCumulant.cumulant θ) = sigmoid θ := by
+  rw [logisticCumulant_cumulant, one_mul, exp_sub, exp_log (by positivity), sigmoid_eq_exp_div]
+
+/-- The Bernoulli density `exp (y θ - b θ)` at `y = 0` is the failure probability `1 - σ θ`. -/
+theorem exp_logisticCumulant_zero (θ : ℝ) :
+    exp (0 * θ - logisticCumulant.cumulant θ) = 1 - sigmoid θ := by
+  have h : 0 < 1 + exp θ := by positivity
+  rw [logisticCumulant_cumulant, zero_mul, zero_sub, exp_neg, exp_log h, sigmoid_eq_exp_div]
+  field_simp
+  ring
+
+/-! ### The Poisson cumulant -/
+
+/-- The canonical Poisson (log-link) cumulant on `Θ = ℝ`: cumulant, mean and variance are all
+`exp`. -/
+noncomputable def poissonCumulant : CanonicalCumulant where
+  natDomain := Set.univ
+  isOpen_natDomain := isOpen_univ
+  convex_natDomain := convex_univ
+  cumulant := exp
+  mean := exp
+  variance := exp
+  hasDerivAt_cumulant θ _ := hasDerivAt_exp θ
+  hasDerivAt_mean θ _ := hasDerivAt_exp θ
+  variance_nonneg θ _ := (exp_pos θ).le
+
+@[simp] theorem poissonCumulant_natDomain : poissonCumulant.natDomain = Set.univ := rfl
+
+@[simp] theorem poissonCumulant_cumulant : poissonCumulant.cumulant = exp := rfl
+
+@[simp] theorem poissonCumulant_mean : poissonCumulant.mean = exp := rfl
+
+@[simp] theorem poissonCumulant_variance : poissonCumulant.variance = exp := rfl
+
+theorem poissonCumulant_mem_glmDomain (X : Matrix ι κ ℝ) (o : ι → ℝ) (β : κ → ℝ) :
+    β ∈ poissonCumulant.glmDomain X o := fun _ => Set.mem_univ _
+
+@[simp] theorem poissonCumulant_glmDomain (X : Matrix ι κ ℝ) (o : ι → ℝ) :
+    poissonCumulant.glmDomain X o = Set.univ :=
+  Set.eq_univ_of_forall (poissonCumulant_mem_glmDomain X o)
+
+/-- **The Poisson exponential-family density.** For `Y ~ Poisson(exp θ)`,
+`P(Y = k) = exp (k θ - b θ) / k!`: sufficient statistic `T(k) = k`, log-partition function
+`b = exp`, base measure `1 / k!` on `ℕ`. -/
+theorem poissonMeasure_real_singleton_eq_exp (θ : ℝ) (k : ℕ) :
+    (ProbabilityTheory.poissonMeasure ⟨exp θ, (exp_pos θ).le⟩).real {k} =
+      exp (k * θ - poissonCumulant.cumulant θ) / k.factorial := by
+  refine (ProbabilityTheory.poissonMeasure_real_singleton _ k).trans ?_
+  change exp (-exp θ) * exp θ ^ k / k.factorial = _
+  rw [poissonCumulant_cumulant, ← exp_nat_mul, ← exp_add, neg_add_eq_sub]
+
 variable [Fintype ι]
-
-/-! ### A sum of scalar terms of the linear predictor -/
-
-section Engine
-
-variable (X : Matrix ι κ ℝ) (o : ι → ℝ) (f f' f'' : ι → ℝ → ℝ)
-
-private lemma hasFDerivAt_sum_terms (hf : ∀ i x, HasDerivAt (f i) (f' i x) x) (β : κ → ℝ) :
-    HasFDerivAt (fun β => ∑ i, f i (linearPredictor X o β i))
-      (Real.dotL (X.transpose *ᵥ fun i => f' i (linearPredictor X o β i))) β := by
-  have hη : ∀ i, HasFDerivAt (fun β => linearPredictor X o β i) (Real.dotL (X i)) β := by
-    intro i
-    have e : (fun β => linearPredictor X o β i) = fun β => β ⬝ᵥ X i + o i := by
-      funext β
-      simp [linearPredictor_apply, Matrix.mulVec, dotProduct_comm]
-    rw [e]
-    exact (Real.hasFDerivAt_dotProduct (X i) β).add_const (o i)
-  have h := HasFDerivAt.fun_sum (u := Finset.univ) fun i _ =>
-    (hf i (linearPredictor X o β i)).comp_hasFDerivAt β (hη i)
-  refine h.congr_fderiv (ContinuousLinearMap.ext fun v => ?_)
-  simp only [FunLike.coe_sum, Finset.sum_apply, FunLike.coe_smul, Pi.smul_apply, smul_eq_mul,
-    Real.dotL_apply]
-  simp only [dotProduct, Matrix.mulVec, Matrix.transpose_apply, Finset.mul_sum]
-  rw [Finset.sum_comm]
-  exact Finset.sum_congr rfl fun i _ => Finset.sum_congr rfl fun j _ => by ring
-
-private lemma hasDerivAt_sum_terms_line (hf : ∀ i x, HasDerivAt (f i) (f' i x) x)
-    (β u : κ → ℝ) (t : ℝ) :
-    HasDerivAt (fun t => ∑ i, f i (linearPredictor X o (β + t • u) i))
-      (∑ i, f' i (linearPredictor X o β i + t * (X *ᵥ u) i) * (X *ᵥ u) i) t := by
-  simp only [linearPredictor_line]
-  refine HasDerivAt.fun_sum fun i _ => ?_
-  have hl : HasDerivAt (fun t => linearPredictor X o β i + t * (X *ᵥ u) i) ((X *ᵥ u) i) t := by
-    simpa using (hasDerivAt_mul_const ((X *ᵥ u) i)).const_add (linearPredictor X o β i)
-  exact (hf i _).comp t hl
-
-private lemma deriv2_sum_terms_line (hf : ∀ i x, HasDerivAt (f i) (f' i x) x)
-    (hf' : ∀ i x, HasDerivAt (f' i) (f'' i x) x) (β u : κ → ℝ) :
-    deriv^[2] (fun t : ℝ => ∑ i, f i (linearPredictor X o (β + t • u) i)) 0 =
-      ∑ i, f'' i (linearPredictor X o β i) * (X *ᵥ u) i ^ 2 := by
-  have hd : deriv (fun t : ℝ => ∑ i, f i (linearPredictor X o (β + t • u) i)) =
-      fun t => ∑ i, f' i (linearPredictor X o β i + t * (X *ᵥ u) i) * (X *ᵥ u) i :=
-    funext fun t => (hasDerivAt_sum_terms_line X o f f' hf β u t).deriv
-  have h2 : HasDerivAt
-      (fun t => ∑ i, f' i (linearPredictor X o β i + t * (X *ᵥ u) i) * (X *ᵥ u) i)
-      (∑ i, f'' i (linearPredictor X o β i) * (X *ᵥ u) i ^ 2) 0 := by
-    refine HasDerivAt.fun_sum fun i _ => ?_
-    have hl : HasDerivAt (fun t => linearPredictor X o β i + t * (X *ᵥ u) i) ((X *ᵥ u) i) 0 := by
-      simpa using (hasDerivAt_mul_const ((X *ᵥ u) i)).const_add (linearPredictor X o β i)
-    have hc := ((hf' i (linearPredictor X o β i + 0 * (X *ᵥ u) i)).comp 0 hl).mul_const
-      ((X *ᵥ u) i)
-    convert hc using 1
-    · simp
-    · simp only [zero_mul, add_zero]
-      ring
-  rw [Function.iterate_succ, Function.iterate_one, Function.comp_apply, hd]
-  exact h2.deriv
-
-private lemma concaveOn_sum_terms (hc : ∀ i, ConcaveOn ℝ Set.univ (f i)) :
-    ConcaveOn ℝ Set.univ (fun β => ∑ i, f i (linearPredictor X o β i)) := by
-  refine ⟨convex_univ, fun β _ γ _ a b ha hb hab => ?_⟩
-  simp only [smul_eq_mul, Finset.mul_sum, ← Finset.sum_add_distrib]
-  refine Finset.sum_le_sum fun i _ => ?_
-  rw [linearPredictor_combo X o β γ hab]
-  simpa [smul_eq_mul] using (hc i).2 (Set.mem_univ _) (Set.mem_univ _) ha hb hab
-
-private lemma maximizer_unique_sum_terms (hinj : Function.Injective X.mulVec)
-    (hs : ∀ i, StrictConcaveOn ℝ Set.univ (f i)) {β₁ β₂ : κ → ℝ}
-    (h₁ : IsMaxOn (fun β => ∑ i, f i (linearPredictor X o β i)) Set.univ β₁)
-    (h₂ : IsMaxOn (fun β => ∑ i, f i (linearPredictor X o β i)) Set.univ β₂) : β₁ = β₂ := by
-  by_contra hne
-  obtain ⟨j, hj⟩ : ∃ j, linearPredictor X o β₁ j ≠ linearPredictor X o β₂ j := by
-    by_contra hall
-    push Not at hall
-    exact hne (hinj (funext fun i => by simpa [linearPredictor_apply] using hall i))
-  have hab : (1 / 2 : ℝ) + 1 / 2 = 1 := by norm_num
-  have hlt : (1 / 2 : ℝ) * ∑ i, f i (linearPredictor X o β₁ i) +
-      1 / 2 * ∑ i, f i (linearPredictor X o β₂ i) <
-      ∑ i, f i (linearPredictor X o ((1 / 2 : ℝ) • β₁ + (1 / 2 : ℝ) • β₂) i) := by
-    simp only [Finset.mul_sum, ← Finset.sum_add_distrib, linearPredictor_combo X o β₁ β₂ hab]
-    refine Finset.sum_lt_sum (fun i _ => ?_) ⟨j, Finset.mem_univ j, ?_⟩
-    · simpa [smul_eq_mul] using
-        (hs i).concaveOn.2 (Set.mem_univ _) (Set.mem_univ _) (by norm_num) (by norm_num) hab
-    · simpa [smul_eq_mul] using
-        (hs j).2 (Set.mem_univ _) (Set.mem_univ _) hj (by norm_num) (by norm_num) hab
-  have e₁ := h₁ (Set.mem_univ β₂)
-  have e₂ := h₂ (Set.mem_univ β₁)
-  have em := h₁ (Set.mem_univ ((1 / 2 : ℝ) • β₁ + (1 / 2 : ℝ) • β₂))
-  simp only [Set.mem_ofPred_eq] at e₁ e₂ em
-  linarith
-
-private lemma strictConcaveOn_of_deriv (g g' g'' : ℝ → ℝ) (hg : ∀ x, HasDerivAt g (g' x) x)
-    (hg' : ∀ x, HasDerivAt g' (g'' x) x) (hneg : ∀ x, g'' x < 0) :
-    StrictConcaveOn ℝ Set.univ g := by
-  have hd : deriv g = g' := funext fun x => (hg x).deriv
-  refine strictConcaveOn_univ_of_deriv2_neg
-    (continuous_iff_continuousAt.2 fun x => (hg x).continuousAt) fun x => ?_
-  rw [Function.iterate_succ, Function.iterate_one, Function.comp_apply, hd, (hg' x).deriv]
-  exact hneg x
-
-end Engine
 
 /-! ### The Bernoulli model with logit link -/
 
@@ -209,78 +251,88 @@ end Engine
 theorem sigmoid_logLik_term (y η : ℝ) :
     y * log (sigmoid η) + (1 - y) * log (1 - sigmoid η) = y * η - log (1 + exp η) := by
   have h1 : 0 < 1 + exp η := by positivity
-  have hs : sigmoid η = exp η / (1 + exp η) := by
-    rw [sigmoid_def, exp_neg]
-    field_simp
-    ring
   have hs' : 1 - sigmoid η = 1 / (1 + exp η) := by
-    rw [hs]
+    rw [sigmoid_eq_exp_div]
     field_simp
     ring
-  rw [hs', hs, log_div (exp_pos η).ne' h1.ne', log_exp, one_div, log_inv]
+  rw [hs', sigmoid_eq_exp_div, log_div (exp_pos η).ne' h1.ne', log_exp, one_div, log_inv]
   ring
 
-private lemma hasDerivAt_log_one_add_exp (x : ℝ) :
-    HasDerivAt (fun x => log (1 + exp x)) (sigmoid x) x := by
-  have h := ((hasDerivAt_exp x).const_add 1).log (by positivity)
-  convert h using 1
-  rw [sigmoid_def, exp_neg]
-  field_simp
-  ring
-
-private lemma hasDerivAt_logisticTerm (y x : ℝ) :
-    HasDerivAt (fun x => y * x - log (1 + exp x)) (y - sigmoid x) x := by
-  simpa using ((hasDerivAt_id x).const_mul y).fun_sub (hasDerivAt_log_one_add_exp x)
-
-private lemma hasDerivAt_logisticScoreTerm (y x : ℝ) :
-    HasDerivAt (fun x => y - sigmoid x) (-(sigmoid x * (1 - sigmoid x))) x := by
-  simpa using (hasDerivAt_sigmoid x).const_sub y
-
-private lemma strictConcaveOn_logisticTerm (y : ℝ) :
-    StrictConcaveOn ℝ Set.univ (fun x => y * x - log (1 + exp x)) :=
-  strictConcaveOn_of_deriv _ _ _ (hasDerivAt_logisticTerm y) (hasDerivAt_logisticScoreTerm y)
-    fun x => neg_neg_of_pos (mul_pos (sigmoid_pos x) (sub_pos.2 (sigmoid_lt_one x)))
-
-/-- The log likelihood of the canonical Bernoulli (logistic regression) model,
-`ℓ(β) = ∑ᵢ (yᵢ ηᵢ(β) - log (1 + exp ηᵢ(β)))`. For `yᵢ ∈ {0, 1}` each term is
-`log P(Yᵢ = yᵢ)` under success probability `σ(ηᵢ)` (`sigmoid_logLik_term`). -/
+/-- The log likelihood of the canonical Bernoulli (logistic regression) model: the generic
+canonical-link log likelihood of `logisticCumulant` at unit dispersion, explicitly
+`ℓ(β) = ∑ᵢ (yᵢ ηᵢ(β) - log (1 + exp ηᵢ(β)))` (`logisticLogLik_eq_sum`). For `yᵢ ∈ {0, 1}` each
+term is `log P(Yᵢ = yᵢ)` under success probability `σ(ηᵢ)` (`sigmoid_logLik_term`). -/
 noncomputable def logisticLogLik (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) : ℝ :=
-  ∑ i, (y i * linearPredictor X o β i - log (1 + exp (linearPredictor X o β i)))
+  logisticCumulant.glmLogLik unitDispersion X o y β
+
+theorem logisticLogLik_eq_sum (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) :
+    logisticLogLik X o y β =
+      ∑ i, (y i * glmPredictor X o β i - log (1 + exp (glmPredictor X o β i))) := by
+  simp [logisticLogLik, CanonicalCumulant.glmLogLik]
+
+/-- The generic score of `logisticCumulant` at unit dispersion is `Xᵀ (y - σ(η(β)))`. -/
+theorem logisticCumulant_glmScore (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) :
+    logisticCumulant.glmScore unitDispersion X o y β =
+      X.transpose *ᵥ (y - sigmoid ∘ glmPredictor X o β) := by
+  simp only [CanonicalCumulant.glmScore, coe_unitDispersion, inv_one, one_smul,
+    logisticCumulant_mean]
+  rfl
+
+/-- The generic Hessian of `logisticCumulant` at unit dispersion is `-Xᵀ W X` with Bernoulli
+weights `Wᵢ = σ(ηᵢ)(1 - σ(ηᵢ))`. -/
+theorem logisticCumulant_glmHessian [DecidableEq ι] [DecidableEq κ] (X : Matrix ι κ ℝ)
+    (o : ι → ℝ) (β : κ → ℝ) :
+    logisticCumulant.glmHessian unitDispersion X o β =
+      -IRLS.weightedGram X
+        (fun i => sigmoid (glmPredictor X o β i) * (1 - sigmoid (glmPredictor X o β i))) := by
+  simp only [CanonicalCumulant.glmHessian, coe_unitDispersion, inv_one, one_smul]
+  rfl
 
 /-- **The logistic score.** The Fréchet derivative of the logistic log likelihood at `β` is
 `v ↦ ⟪v, Xᵀ (y - σ(η(β)))⟫`. -/
 theorem hasFDerivAt_logisticLogLik (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) :
     HasFDerivAt (logisticLogLik X o y)
-      (Real.dotL (X.transpose *ᵥ (y - sigmoid ∘ linearPredictor X o β))) β :=
-  hasFDerivAt_sum_terms X o (fun i x => y i * x - log (1 + exp x)) (fun i x => y i - sigmoid x)
-    (fun i => hasDerivAt_logisticTerm (y i)) β
+      (Real.dotL (X.transpose *ᵥ (y - sigmoid ∘ glmPredictor X o β))) β := by
+  rw [← logisticCumulant_glmScore]
+  exact logisticCumulant.hasFDerivAt_glmLogLik unitDispersion X o y
+    (logisticCumulant_mem_glmDomain X o β)
 
 /-- The logistic score `Xᵀ (y - σ(η(β)))` is the gradient of the log likelihood on
 `EuclideanSpace ℝ κ`. -/
 theorem hasGradientAt_logisticLogLik (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) :
     HasGradientAt (fun b : EuclideanSpace ℝ κ => logisticLogLik X o y b.ofLp)
-      (WithLp.toLp 2 (X.transpose *ᵥ (y - sigmoid ∘ linearPredictor X o β))) (WithLp.toLp 2 β) :=
+      (WithLp.toLp 2 (X.transpose *ᵥ (y - sigmoid ∘ glmPredictor X o β))) (WithLp.toLp 2 β) :=
   Real.hasGradientAt_ofLp (hasFDerivAt_logisticLogLik X o y β)
+
+/-- **The logistic Hessian.** The derivative of the logistic score `Xᵀ (y - σ(η(β)))` at `β` is
+`-Xᵀ W X` with `Wᵢ = σ(ηᵢ)(1 - σ(ηᵢ))`. -/
+theorem hasFDerivAt_logisticScore [DecidableEq ι] [DecidableEq κ] (X : Matrix ι κ ℝ)
+    (o y : ι → ℝ) (β : κ → ℝ) :
+    HasFDerivAt (fun β => X.transpose *ᵥ (y - sigmoid ∘ glmPredictor X o β))
+      (LinearMap.toContinuousLinearMap (Matrix.toLin' (-IRLS.weightedGram X
+        (fun i => sigmoid (glmPredictor X o β i) * (1 - sigmoid (glmPredictor X o β i)))))) β := by
+  rw [← logisticCumulant_glmHessian]
+  simp only [← logisticCumulant_glmScore]
+  exact logisticCumulant.hasFDerivAt_glmScore unitDispersion X o y
+    (logisticCumulant_mem_glmDomain X o β)
 
 /-- **The logistic Hessian quadratic form.** Along `t ↦ β + t u` the second derivative at `0` is
 `-∑ᵢ σ(ηᵢ)(1 - σ(ηᵢ)) ((X u)ᵢ)²`. -/
 theorem deriv2_logisticLogLik_line (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β u : κ → ℝ) :
     deriv^[2] (fun t : ℝ => logisticLogLik X o y (β + t • u)) 0 =
-      -∑ i, sigmoid (linearPredictor X o β i) * (1 - sigmoid (linearPredictor X o β i)) *
+      -∑ i, sigmoid (glmPredictor X o β i) * (1 - sigmoid (glmPredictor X o β i)) *
         (X *ᵥ u) i ^ 2 := by
-  refine (deriv2_sum_terms_line X o (fun i x => y i * x - log (1 + exp x))
-    (fun i x => y i - sigmoid x) (fun i x => -(sigmoid x * (1 - sigmoid x)))
-    (fun i => hasDerivAt_logisticTerm (y i)) (fun i => hasDerivAt_logisticScoreTerm (y i))
-    β u).trans ?_
-  rw [← Finset.sum_neg_distrib]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  ring
+  classical
+  refine (deriv2_glmLogLik_line logisticCumulant rfl unitDispersion X o y β u).trans ?_
+  rw [CanonicalCumulant.dotProduct_glmHessian_mulVec]
+  simp [CanonicalCumulant.glmWeights]
 
 /-- The logistic log likelihood is concave on `κ → ℝ`. -/
 theorem concaveOn_logisticLogLik (X : Matrix ι κ ℝ) (o y : ι → ℝ) :
-    ConcaveOn ℝ Set.univ (logisticLogLik X o y) :=
-  concaveOn_sum_terms X o (fun i x => y i * x - log (1 + exp x))
-    fun i => (strictConcaveOn_logisticTerm (y i)).concaveOn
+    ConcaveOn ℝ Set.univ (logisticLogLik X o y) := by
+  have h := logisticCumulant.concaveOn_glmLogLik unitDispersion X o y
+  rw [logisticCumulant_glmDomain] at h
+  exact h
 
 /-- **At most one logistic maximum likelihood estimate.** If `β ↦ X β` is injective (full column
 rank), the logistic log likelihood has at most one maximizer. The weights `σ(1 - σ)` are always
@@ -289,8 +341,10 @@ theorem logisticLogLik_maximizer_unique (X : Matrix ι κ ℝ) (o y : ι → ℝ
     (hX : Function.Injective X.mulVec) {β₁ β₂ : κ → ℝ}
     (h₁ : IsMaxOn (logisticLogLik X o y) Set.univ β₁)
     (h₂ : IsMaxOn (logisticLogLik X o y) Set.univ β₂) : β₁ = β₂ :=
-  maximizer_unique_sum_terms X o (fun i x => y i * x - log (1 + exp x)) hX
-    (fun i => strictConcaveOn_logisticTerm (y i)) h₁ h₂
+  logisticCumulant.glmLogLik_maximizer_unique unitDispersion hX
+    (fun θ _ => sigmoid_mul_one_sub_pos θ) o y (logisticCumulant_mem_glmDomain X o β₁)
+    (logisticCumulant_mem_glmDomain X o β₂)
+    (by rw [logisticCumulant_glmDomain]; exact h₁) (by rw [logisticCumulant_glmDomain]; exact h₂)
 
 private lemma log_one_add_exp (x : ℝ) : log (1 + exp x) = x + log (1 + exp (-x)) := by
   have e : 1 + exp x = exp x * (1 + exp (-x)) := by
@@ -309,8 +363,9 @@ theorem logisticTerm_neg {y : ℝ} (hy : y = 0 ∨ y = 1) (η : ℝ) :
 
 /-- For binary responses the logistic log likelihood is nonpositive. -/
 theorem logisticLogLik_nonpos (X : Matrix ι κ ℝ) (o y : ι → ℝ) (hy : ∀ i, y i = 0 ∨ y i = 1)
-    (β : κ → ℝ) : logisticLogLik X o y β ≤ 0 :=
-  Finset.sum_nonpos fun i _ => (logisticTerm_neg (hy i) _).le
+    (β : κ → ℝ) : logisticLogLik X o y β ≤ 0 := by
+  rw [logisticLogLik_eq_sum]
+  exact Finset.sum_nonpos fun i _ => (logisticTerm_neg (hy i) _).le
 
 /-! ### Complete separation: no logistic maximizer -/
 
@@ -331,8 +386,8 @@ theorem separationDesign_mulVec_injective : Function.Injective separationDesign.
 is `-2 log (1 + exp (-β))`. -/
 theorem logisticLogLik_separation (β : Fin 1 → ℝ) :
     logisticLogLik separationDesign 0 ![0, 1] β = -2 * log (1 + exp (-β 0)) := by
-  simp only [logisticLogLik, linearPredictor_apply, separationDesign, Matrix.mulVec, dotProduct,
-    Fin.sum_univ_one, Fin.sum_univ_two, Matrix.of_apply, Matrix.cons_val_zero,
+  simp only [logisticLogLik_eq_sum, glmPredictor_apply, separationDesign, Matrix.mulVec,
+    dotProduct, Fin.sum_univ_one, Fin.sum_univ_two, Matrix.of_apply, Matrix.cons_val_zero,
     Matrix.cons_val_one, Matrix.cons_val_fin_one, Pi.zero_apply, add_zero, zero_mul, one_mul,
     neg_mul, zero_sub]
   rw [log_one_add_exp (β 0)]
@@ -381,8 +436,9 @@ theorem logisticLogLikSaturated_eq_zero (y : ι → ℝ) (hy : ∀ i, y i = 0 �
   simp only [logisticLogLikSaturated, neg_eq_zero]
   exact Finset.sum_eq_zero fun i _ => by rcases hy i with h | h <;> simp [h]
 
-/-- The logistic deviance `2 (ℓ_sat - ℓ(β))`. Its deviance interpretation applies only on the
-response domain `[0, 1]`; for binary responses it is `-2 ℓ(β) ≥ 0` (`logisticDeviance_eq`,
+/-- The logistic deviance `2 (ℓ_sat - ℓ(β))`, with `ℓ = logisticLogLik` the generic
+canonical-link log likelihood of `logisticCumulant`. Its deviance interpretation applies only on
+the response domain `[0, 1]`; for binary responses it is `-2 ℓ(β) ≥ 0` (`logisticDeviance_eq`,
 `logisticDeviance_nonneg`). For other real `y` it is an algebraic extension and can be negative
 (`y = 2` and `η = log 7` give `10 log 2 - 4 log 7 < 0`). -/
 noncomputable def logisticDeviance (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) : ℝ :=
@@ -402,25 +458,18 @@ theorem logisticDeviance_nonneg (X : Matrix ι κ ℝ) (o y : ι → ℝ) (hy : 
 
 /-! ### The Poisson model with log link -/
 
-private lemma hasDerivAt_poissonTerm (y x : ℝ) :
-    HasDerivAt (fun x => y * x - exp x) (y - exp x) x := by
-  simpa using ((hasDerivAt_id x).const_mul y).fun_sub (hasDerivAt_exp x)
-
-private lemma hasDerivAt_poissonScoreTerm (y x : ℝ) :
-    HasDerivAt (fun x => y - exp x) (-exp x) x := by
-  simpa using (hasDerivAt_exp x).const_sub y
-
-private lemma strictConcaveOn_poissonTerm (y : ℝ) :
-    StrictConcaveOn ℝ Set.univ (fun x => y * x - exp x) :=
-  strictConcaveOn_of_deriv _ _ _ (hasDerivAt_poissonTerm y) (hasDerivAt_poissonScoreTerm y)
-    fun x => neg_neg_of_pos (exp_pos x)
-
-/-- The algebraic kernel of the canonical Poisson (log-linear) log likelihood,
-`∑ᵢ (yᵢ ηᵢ(β) - exp ηᵢ(β))`, defined for every real response vector `y`. It is a likelihood only
-up to a constant and only for counts: for `y : ι → ℕ` it exceeds `poissonLogLik` by the `β`-free
-term `∑ᵢ log yᵢ!` (`poissonLogLik_eq_kernel`). -/
+/-- The algebraic kernel of the canonical Poisson (log-linear) log likelihood: the generic
+canonical-link log likelihood of `poissonCumulant` at unit dispersion, explicitly
+`∑ᵢ (yᵢ ηᵢ(β) - exp ηᵢ(β))` (`poissonLogLikKernel_eq_sum`), defined for every real response
+vector `y`. It is a likelihood only up to a constant and only for counts: for `y : ι → ℕ` it
+exceeds `poissonLogLik` by the `β`-free term `∑ᵢ log yᵢ!` (`poissonLogLik_eq_kernel`). -/
 noncomputable def poissonLogLikKernel (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) : ℝ :=
-  ∑ i, (y i * linearPredictor X o β i - exp (linearPredictor X o β i))
+  poissonCumulant.glmLogLik unitDispersion X o y β
+
+theorem poissonLogLikKernel_eq_sum (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) :
+    poissonLogLikKernel X o y β =
+      ∑ i, (y i * glmPredictor X o β i - exp (glmPredictor X o β i)) := by
+  simp [poissonLogLikKernel, CanonicalCumulant.glmLogLik]
 
 /-- **The canonical Poisson log likelihood of counts.** For natural-valued counts `y : ι → ℕ`
 this is the shared Poisson count log-likelihood
@@ -429,7 +478,7 @@ For independent responses `Yᵢ ~ Poisson(exp ηᵢ(β))` (`ProbabilityTheory.po
 the log-probability of the observed counts `y` under their joint law
 (`poissonLogLik_eq_log_pi_poissonMeasure`). -/
 noncomputable def poissonLogLik (X : Matrix ι κ ℝ) (o : ι → ℝ) (y : ι → ℕ) (β : κ → ℝ) : ℝ :=
-  PoissonLikelihood.poissonLogLik (fun i => exp (linearPredictor X o β i)) y
+  PoissonLikelihood.poissonLogLik (fun i => exp (glmPredictor X o β i)) y
 
 /-- **The joint law of independent Poisson responses.** For independent responses
 `Yᵢ ~ Poisson(exp ηᵢ(β))`, the canonical Poisson log likelihood of the counts `y` is the
@@ -439,18 +488,18 @@ theorem poissonLogLik_eq_log_pi_poissonMeasure (X : Matrix ι κ ℝ) (o : ι �
     (β : κ → ℝ) :
     poissonLogLik X o y β =
       log ((MeasureTheory.Measure.pi fun i => ProbabilityTheory.poissonMeasure
-        ⟨exp (linearPredictor X o β i), (exp_pos _).le⟩).real {y}) :=
+        ⟨exp (glmPredictor X o β i), (exp_pos _).le⟩).real {y}) :=
   (PoissonLikelihood.log_pi_poissonMeasure_real_singleton
-    (fun i => ⟨exp (linearPredictor X o β i), (exp_pos _).le⟩)
-    (fun i => NNReal.coe_pos.mp (exp_pos (linearPredictor X o β i))) y).symm
+    (fun i => ⟨exp (glmPredictor X o β i), (exp_pos _).le⟩)
+    (fun i => NNReal.coe_pos.mp (exp_pos (glmPredictor X o β i))) y).symm
 
 /-- **The Poisson likelihood of counts is the kernel minus a `β`-free constant:**
 `ℓ(β) = ∑ᵢ (yᵢ ηᵢ(β) - exp ηᵢ(β)) - ∑ᵢ log yᵢ!`. -/
 theorem poissonLogLik_eq_kernel (X : Matrix ι κ ℝ) (o : ι → ℝ) (y : ι → ℕ) (β : κ → ℝ) :
     poissonLogLik X o y β =
       poissonLogLikKernel X o (fun i => (y i : ℝ)) β - ∑ i, log ((y i).factorial : ℝ) := by
-  simp only [poissonLogLik, PoissonLikelihood.poissonLogLik, poissonLogLikKernel, log_exp,
-    ← Finset.sum_sub_distrib]
+  rw [poissonLogLikKernel_eq_sum]
+  simp only [poissonLogLik, PoissonLikelihood.poissonLogLik, log_exp, ← Finset.sum_sub_distrib]
 
 /-- The Poisson likelihood of counts and its kernel have the same maximizers on every set, so
 `poissonLogLikKernel_maximizer_unique` and `poissonLogLikKernel_allZero_not_isMaxOn` apply to
@@ -461,38 +510,67 @@ theorem isMaxOn_poissonLogLik_iff (X : Matrix ι κ ℝ) (o : ι → ℝ) (y : �
       IsMaxOn (poissonLogLikKernel X o (fun i => (y i : ℝ))) s β := by
   simp only [isMaxOn_iff, poissonLogLik_eq_kernel, sub_le_sub_iff_right]
 
+/-- The generic score of `poissonCumulant` at unit dispersion is `Xᵀ (y - exp (η(β)))`. -/
+theorem poissonCumulant_glmScore (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) :
+    poissonCumulant.glmScore unitDispersion X o y β =
+      X.transpose *ᵥ (y - exp ∘ glmPredictor X o β) := by
+  simp only [CanonicalCumulant.glmScore, coe_unitDispersion, inv_one, one_smul,
+    poissonCumulant_mean]
+  rfl
+
+/-- The generic Hessian of `poissonCumulant` at unit dispersion is `-Xᵀ W X` with Poisson
+weights `Wᵢ = exp ηᵢ`. -/
+theorem poissonCumulant_glmHessian [DecidableEq ι] [DecidableEq κ] (X : Matrix ι κ ℝ)
+    (o : ι → ℝ) (β : κ → ℝ) :
+    poissonCumulant.glmHessian unitDispersion X o β =
+      -IRLS.weightedGram X (fun i => exp (glmPredictor X o β i)) := by
+  simp only [CanonicalCumulant.glmHessian, coe_unitDispersion, inv_one, one_smul]
+  rfl
+
 /-- **The Poisson score.** The Fréchet derivative of the Poisson kernel at `β` is
 `v ↦ ⟪v, Xᵀ (y - exp (η(β)))⟫`. -/
 theorem hasFDerivAt_poissonLogLikKernel (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) :
     HasFDerivAt (poissonLogLikKernel X o y)
-      (Real.dotL (X.transpose *ᵥ (y - exp ∘ linearPredictor X o β))) β :=
-  hasFDerivAt_sum_terms X o (fun i x => y i * x - exp x) (fun i x => y i - exp x)
-    (fun i => hasDerivAt_poissonTerm (y i)) β
+      (Real.dotL (X.transpose *ᵥ (y - exp ∘ glmPredictor X o β))) β := by
+  rw [← poissonCumulant_glmScore]
+  exact poissonCumulant.hasFDerivAt_glmLogLik unitDispersion X o y
+    (poissonCumulant_mem_glmDomain X o β)
 
 /-- The Poisson score `Xᵀ (y - exp (η(β)))` is the gradient of the Poisson kernel on
 `EuclideanSpace ℝ κ`. -/
 theorem hasGradientAt_poissonLogLikKernel (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β : κ → ℝ) :
     HasGradientAt (fun b : EuclideanSpace ℝ κ => poissonLogLikKernel X o y b.ofLp)
-      (WithLp.toLp 2 (X.transpose *ᵥ (y - exp ∘ linearPredictor X o β))) (WithLp.toLp 2 β) :=
+      (WithLp.toLp 2 (X.transpose *ᵥ (y - exp ∘ glmPredictor X o β))) (WithLp.toLp 2 β) :=
   Real.hasGradientAt_ofLp (hasFDerivAt_poissonLogLikKernel X o y β)
+
+/-- **The Poisson Hessian.** The derivative of the Poisson score `Xᵀ (y - exp (η(β)))` at `β` is
+`-Xᵀ W X` with `Wᵢ = exp ηᵢ`. -/
+theorem hasFDerivAt_poissonScore [DecidableEq ι] [DecidableEq κ] (X : Matrix ι κ ℝ)
+    (o y : ι → ℝ) (β : κ → ℝ) :
+    HasFDerivAt (fun β => X.transpose *ᵥ (y - exp ∘ glmPredictor X o β))
+      (LinearMap.toContinuousLinearMap (Matrix.toLin'
+        (-IRLS.weightedGram X (fun i => exp (glmPredictor X o β i))))) β := by
+  rw [← poissonCumulant_glmHessian]
+  simp only [← poissonCumulant_glmScore]
+  exact poissonCumulant.hasFDerivAt_glmScore unitDispersion X o y
+    (poissonCumulant_mem_glmDomain X o β)
 
 /-- **The Poisson Hessian quadratic form.** Along `t ↦ β + t u` the second derivative at `0` is
 `-∑ᵢ exp ηᵢ ((X u)ᵢ)²`. -/
 theorem deriv2_poissonLogLikKernel_line (X : Matrix ι κ ℝ) (o y : ι → ℝ) (β u : κ → ℝ) :
     deriv^[2] (fun t : ℝ => poissonLogLikKernel X o y (β + t • u)) 0 =
-      -∑ i, exp (linearPredictor X o β i) * (X *ᵥ u) i ^ 2 := by
-  refine (deriv2_sum_terms_line X o (fun i x => y i * x - exp x) (fun i x => y i - exp x)
-    (fun i x => -exp x) (fun i => hasDerivAt_poissonTerm (y i))
-    (fun i => hasDerivAt_poissonScoreTerm (y i)) β u).trans ?_
-  rw [← Finset.sum_neg_distrib]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  ring
+      -∑ i, exp (glmPredictor X o β i) * (X *ᵥ u) i ^ 2 := by
+  classical
+  refine (deriv2_glmLogLik_line poissonCumulant rfl unitDispersion X o y β u).trans ?_
+  rw [CanonicalCumulant.dotProduct_glmHessian_mulVec]
+  simp [CanonicalCumulant.glmWeights]
 
 /-- The Poisson kernel is concave on `κ → ℝ`. -/
 theorem concaveOn_poissonLogLikKernel (X : Matrix ι κ ℝ) (o y : ι → ℝ) :
-    ConcaveOn ℝ Set.univ (poissonLogLikKernel X o y) :=
-  concaveOn_sum_terms X o (fun i x => y i * x - exp x)
-    fun i => (strictConcaveOn_poissonTerm (y i)).concaveOn
+    ConcaveOn ℝ Set.univ (poissonLogLikKernel X o y) := by
+  have h := poissonCumulant.concaveOn_glmLogLik unitDispersion X o y
+  rw [poissonCumulant_glmDomain] at h
+  exact h
 
 /-- **At most one maximizer of the Poisson kernel** when `β ↦ X β` is injective, hence at most
 one Poisson maximum likelihood estimate for counts (`isMaxOn_poissonLogLik_iff`). -/
@@ -500,8 +578,9 @@ theorem poissonLogLikKernel_maximizer_unique (X : Matrix ι κ ℝ) (o y : ι �
     (hX : Function.Injective X.mulVec) {β₁ β₂ : κ → ℝ}
     (h₁ : IsMaxOn (poissonLogLikKernel X o y) Set.univ β₁)
     (h₂ : IsMaxOn (poissonLogLikKernel X o y) Set.univ β₂) : β₁ = β₂ :=
-  maximizer_unique_sum_terms X o (fun i x => y i * x - exp x) hX
-    (fun i => strictConcaveOn_poissonTerm (y i)) h₁ h₂
+  poissonCumulant.glmLogLik_maximizer_unique unitDispersion hX (fun θ _ => exp_pos θ) o y
+    (poissonCumulant_mem_glmDomain X o β₁) (poissonCumulant_mem_glmDomain X o β₂)
+    (by rw [poissonCumulant_glmDomain]; exact h₁) (by rw [poissonCumulant_glmDomain]; exact h₂)
 
 /-! ### All-zero counts: no Poisson maximizer -/
 
@@ -510,7 +589,7 @@ theorem poissonLogLikKernel_maximizer_unique (X : Matrix ι κ ℝ) (o y : ι �
 theorem poissonLogLikKernel_allZero (β : Fin 1 → ℝ) :
     poissonLogLikKernel (Matrix.of fun (_ : ι) (_ : Fin 1) => (1 : ℝ)) 0 0 β =
       -(Fintype.card ι * exp (β 0)) := by
-  simp [poissonLogLikKernel, linearPredictor_apply, Matrix.mulVec, dotProduct,
+  simp [poissonLogLikKernel_eq_sum, glmPredictor_apply, Matrix.mulVec, dotProduct,
     Finset.sum_neg_distrib]
 
 /-- **All-zero counts: no maximizer of the Poisson kernel** (at least one observation), hence no

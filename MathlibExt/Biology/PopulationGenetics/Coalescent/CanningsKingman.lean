@@ -27,7 +27,7 @@ under relabeling the parents (exchangeable offspring numbers, `expect_offspring_
 under relabeling the children (children are listed in uniformly random order, so any set of
 distinct children may serve as the sample). Labeling the children of an exchangeable offspring
 vector uniformly at random gives such a law. Expectations use the masses `(law f).toReal`
-(`CanningsModel.expect`).
+(`CanningsModel.expect`, from `Cannings.lean`).
 
 **The Möhle–Sagitov conditions** (`MohleSagitov`). Let
 `c_N = E[ν₁ (ν₁ - 1)] / (N - 1)` (`CanningsModel.pairCoalescence`), the probability that two
@@ -74,9 +74,9 @@ entry of `exp ((t_{i+1} - t_i) • Q)`.
 
 ## Main results
 
-* `CanningsModel.expect`, `CanningsModel.expect_offspring_comp_perm`,
-  `CanningsModel.sum_offspring`: expectations under the shared model, and its exchangeable
-  offspring numbers.
+* `CanningsModel.sum_offspring`: the offspring numbers add up to `N`.
+  The expectation `CanningsModel.expect` and its lemmas, including the exchangeable offspring
+  numbers `CanningsModel.expect_offspring_comp_perm`, are in `Cannings.lean`.
 * `CanningsModel.expect_pair`, `CanningsModel.expect_triple`, `CanningsModel.expect_double_le`:
   coalescence probabilities in terms of offspring factorial moments.
 * `MohleSagitov`: the Möhle–Sagitov conditions; `MohleSagitov.tendsto_multiple`: triple and
@@ -106,8 +106,9 @@ open Finset Filter Topology Matrix
 
 /-! ### Expectations under a Cannings model
 
-The model is `Cannings.CanningsModel` (`Cannings.lean`). Its expectation layer is stated in the
-namespace of the shared model, so that it applies by dot notation to every `CanningsModel`. -/
+The model and its expectation `CanningsModel.expect` are in `Cannings.lean`. The results below
+are stated in the namespace of the shared model, so that they apply by dot notation to every
+`CanningsModel`. -/
 
 namespace MathlibExt.Biology.PopulationGenetics.Coalescent.Cannings.CanningsModel
 
@@ -119,9 +120,6 @@ theorem sum_offspring {N : ℕ} (f : Fin N → Fin N) : ∑ j, offspring f j = N
 
 variable {N : ℕ} (W : CanningsModel N)
 
-/-- Expectation of a real function of the parent map, with the masses `(law f).toReal`. -/
-def expect (F : (Fin N → Fin N) → ℝ) : ℝ := ∑ f, (W.law f).toReal * F f
-
 /-- The `m`-th factorial moment `E[(ν)_m] = E[ν (ν - 1) ⋯ (ν - m + 1)]` of the offspring number
 of a parent, averaged over the parents (by exchangeability every parent has the same law,
 `factorialMoment_eq`). -/
@@ -131,67 +129,6 @@ noncomputable def factorialMoment (m : ℕ) : ℝ :=
 /-- The **pair-coalescence probability** `c_N = E[ν₁ (ν₁ - 1)] / (N - 1)`: the probability that
 two distinct children have the same parent (`expect_pair`). -/
 noncomputable def pairCoalescence : ℝ := W.factorialMoment 2 / ((N : ℝ) - 1)
-
-theorem expect_add (F G : (Fin N → Fin N) → ℝ) :
-    W.expect (fun f => F f + G f) = W.expect F + W.expect G := by
-  simp [expect, mul_add, sum_add_distrib]
-
-theorem expect_sub (F G : (Fin N → Fin N) → ℝ) :
-    W.expect (fun f => F f - G f) = W.expect F - W.expect G := by
-  simp [expect, mul_sub, sum_sub_distrib]
-
-theorem expect_const_mul (a : ℝ) (F : (Fin N → Fin N) → ℝ) :
-    W.expect (fun f => a * F f) = a * W.expect F := by
-  simp [expect, mul_sum, mul_left_comm]
-
-theorem expect_const (a : ℝ) : W.expect (fun _ => a) = a := by
-  simp [expect, ← sum_mul, W.sum_toReal_law]
-
-theorem expect_sum {ι : Type*} (s : Finset ι) (F : ι → (Fin N → Fin N) → ℝ) :
-    W.expect (fun f => ∑ i ∈ s, F i f) = ∑ i ∈ s, W.expect (F i) := by
-  simp only [expect, mul_sum]
-  exact sum_comm
-
-theorem expect_mono {F G : (Fin N → Fin N) → ℝ} (h : ∀ f, F f ≤ G f) :
-    W.expect F ≤ W.expect G :=
-  sum_le_sum fun f _ => mul_le_mul_of_nonneg_left (h f) ENNReal.toReal_nonneg
-
-theorem expect_nonneg {F : (Fin N → Fin N) → ℝ} (h : ∀ f, 0 ≤ F f) : 0 ≤ W.expect F := by
-  simpa [expect] using W.expect_mono (F := fun _ => 0) h
-
-/-- Relabeling the children does not change expectations. -/
-theorem expect_comp_perm (σ : Equiv.Perm (Fin N)) (F : (Fin N → Fin N) → ℝ) :
-    W.expect (fun f => F (f ∘ σ)) = W.expect F := by
-  let e : (Fin N → Fin N) ≃ (Fin N → Fin N) :=
-    { toFun := fun f => f ∘ σ
-      invFun := fun f => f ∘ σ.symm
-      left_inv := fun f => by funext; simp
-      right_inv := fun f => by funext; simp }
-  exact Fintype.sum_equiv e _ _ fun f => by simp [e, W.law_comp_perm]
-
-/-- Relabeling the parents does not change expectations. -/
-theorem expect_perm_comp (σ : Equiv.Perm (Fin N)) (F : (Fin N → Fin N) → ℝ) :
-    W.expect (fun f => F (σ ∘ f)) = W.expect F := by
-  let e : (Fin N → Fin N) ≃ (Fin N → Fin N) :=
-    { toFun := fun f => σ ∘ f
-      invFun := fun f => σ.symm ∘ f
-      left_inv := fun f => by funext; simp
-      right_inv := fun f => by funext; simp }
-  exact Fintype.sum_equiv e _ _ fun f => by simp [e, W.law_perm_comp]
-
-/-- **Exchangeable offspring numbers**: the offspring vector `(ν_1, …, ν_N)` has the same law
-as `(ν_{σ 1}, …, ν_{σ N})` for every permutation `σ`. -/
-theorem expect_offspring_comp_perm (σ : Equiv.Perm (Fin N)) (F : (Fin N → ℕ) → ℝ) :
-    W.expect (fun f => F (offspring f ∘ σ)) = W.expect fun f => F (offspring f) := by
-  have h : ∀ f : Fin N → Fin N, offspring f ∘ σ = offspring (σ.symm ∘ f) := by
-    intro f
-    funext j
-    simp only [Function.comp_apply, offspring]
-    congr 1
-    ext c
-    simp [Equiv.symm_apply_eq]
-  simp_rw [h]
-  exact W.expect_perm_comp σ.symm (fun f => F (offspring f))
 
 /-- Every parent has the same offspring factorial moments. -/
 theorem factorialMoment_eq (m : ℕ) (j : Fin N) :

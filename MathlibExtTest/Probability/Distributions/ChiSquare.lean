@@ -22,7 +22,7 @@ public import MathlibExt.Probability.Distributions.ChiSquare
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory
+open MeasureTheory ProbabilityTheory Set
 
 namespace ChiSquareTest
 
@@ -49,5 +49,42 @@ example : chiSquareMeasure 1 ≠ Measure.dirac 0 := by
   have := chiSquareMeasure_singleton 1 0
   rw [h, Measure.dirac_apply_of_mem (Set.mem_singleton 0)] at this
   exact one_ne_zero this
+
+/-- Chi-square with one degree is a probability law. -/
+example : IsProbabilityMeasure (chiSquareMeasure 1) :=
+  isProbabilityMeasure_chiSquareMeasure (by norm_num)
+
+/-- Chi-square MGF at zero is one. -/
+example : mgf id (chiSquareMeasure 2) 0 = 1 := by
+  rw [mgf_chiSquareMeasure_of_lt (by norm_num) (by norm_num)]
+  norm_num
+
+/-- The chi-square-one MGF matches the Gaussian-square MGF at zero. -/
+example : mgf id (gammaMeasure (1 / 2) (1 / 2)) 0
+    = (Real.sqrt (1 - 2 * (0 : ℝ)))⁻¹ :=
+  mgf_gammaMeasure_half_half_eq_sqrt (by norm_num)
+
+/-- Two chi-square-one MGFs multiply to chi-square-two below `1/2`. -/
+example (t : ℝ) (ht : t < 1 / 2) :
+    mgf id (chiSquareMeasure 1) t * mgf id (chiSquareMeasure 1) t
+      = mgf id (chiSquareMeasure 2) t := by
+  have h := prod_mgf_chiSquareMeasure_eq_mgf_sum
+    (s := ({0, 1} : Finset ℕ)) (p := fun _ => 1) (by simp) (fun _ _ => by norm_num) ht
+  have hsum : ∑ _i ∈ ({0, 1} : Finset ℕ), (1 : ℕ) = 2 := by
+    rw [Finset.sum_pair (by norm_num)]
+  have hprod : ∏ _i ∈ ({0, 1} : Finset ℕ), mgf id (chiSquareMeasure 1) t
+      = mgf id (chiSquareMeasure 1) t * mgf id (chiSquareMeasure 1) t := by
+    rw [Finset.prod_pair (by norm_num)]
+  rw [hprod, hsum] at h
+  exact h
+
+/-- Finite-family API: MGFs multiply over `Finset.univ` for `Fin 2`. -/
+example (t : ℝ) (ht : t < 1 / 2) :
+    ∏ i ∈ (Finset.univ : Finset (Fin 2)),
+        mgf id (chiSquareMeasure ((fun _ : Fin 2 => 1) i)) t
+      = mgf id (chiSquareMeasure
+        (∑ i ∈ (Finset.univ : Finset (Fin 2)), (fun _ : Fin 2 => 1) i)) t :=
+  prod_mgf_chiSquareMeasure_eq_mgf_sum Finset.univ_nonempty
+    (fun _ _ => by norm_num) ht
 
 end ChiSquareTest
