@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.InformationTheory.FiniteEntropy
+public import MathlibExt.Probability.ProbabilityMassFunction.Uniform
 
 /-!
 # Empirical cross-entropy of a fixed model on a finite sample
@@ -19,7 +20,10 @@ Hence it equals entropy plus divergence by the existing population identity
 `InformationTheory.crossEntropy_eq_shannonEntropy_add_klDiv`; this file does not
 reprove that decomposition, it only identifies its left-hand side on samples.
 
-* `empiricalPMF`: the empirical law `p̂` (outcome frequencies `count / N`).
+* `empiricalPMF`: the empirical law `p̂`, the image of the uniform law on the sample
+  indices under `S`, so outcomes get their frequencies `count / N`
+  (`empiricalPMF_apply`). The outcome type `α` may be infinite; the cross-entropy
+  results assume `Fintype α` only because `crossEntropy` does.
 * `empiricalCrossEntropy_eq_avg_surprisal`: `H(p̂, q)` is the average surprisal
   `(∑ n, surprisal (q (S n))) / N`.
 * `empiricalCrossEntropy_eq_top_iff`: the cross-entropy is infinite exactly when
@@ -45,38 +49,31 @@ namespace Cslib.MachineLearning.InformationTheory
 open Real _root_.InformationTheory
 open scoped ENNReal
 
-/-- The **empirical law** `p̂` of a nonempty finite sample: outcome frequencies. -/
-noncomputable def empiricalPMF {α : Type*} [Fintype α] [DecidableEq α] {N : ℕ}
-    (S : Fin N → α) (hN : N ≠ 0) : PMF α :=
-  PMF.ofFintype (fun a => ((Finset.univ.filter (fun n => S n = a)).card : ℝ≥0∞)
-    / (N : ℝ≥0∞)) (by
-    have hmaps : Set.MapsTo S (↑(Finset.univ : Finset (Fin N)))
-        (↑(Finset.univ : Finset α)) :=
-      fun _ _ => Finset.mem_coe.mpr (Finset.mem_univ _)
-    have hcard : ∑ a, (Finset.univ.filter (fun n => S n = a)).card = N := by
-      have h := Finset.card_eq_sum_card_fiberwise (s := Finset.univ)
-        (t := Finset.univ) (f := S) hmaps
-      rw [Finset.card_univ, Fintype.card_fin] at h
-      exact h.symm
-    have hsum : (∑ a, (((Finset.univ.filter (fun n => S n = a)).card : ℝ≥0∞)))
-        = (N : ℝ≥0∞) := by
-      rw [← Nat.cast_sum, hcard]
-    have hNe : (N : ℝ≥0∞) ≠ 0 := by exact_mod_cast hN
-    have hTop : (N : ℝ≥0∞) ≠ ⊤ := ENNReal.natCast_ne_top N
-    simp only [div_eq_mul_inv, ← Finset.sum_mul, hsum]
-    exact ENNReal.mul_inv_cancel hNe hTop)
+/-- The **empirical law** `p̂` of a nonempty finite sample: the uniform law on the
+sample indices, pushed forward along `S`. -/
+noncomputable def empiricalPMF {α : Type*} {N : ℕ} (S : Fin N → α) (hN : N ≠ 0) :
+    PMF α :=
+  haveI : Nonempty (Fin N) := ⟨⟨0, Nat.pos_of_ne_zero hN⟩⟩
+  (PMF.uniformFintype (Fin N)).map S
 
+open scoped Classical in
 /-- Applying the empirical law counts occurrences. -/
-@[simp] theorem empiricalPMF_apply {α : Type*} [Fintype α] [DecidableEq α] {N : ℕ}
+@[simp] theorem empiricalPMF_apply {α : Type*} {N : ℕ}
     (S : Fin N → α) (hN : N ≠ 0) (a : α) : (empiricalPMF S hN) a =
-      ((Finset.univ.filter (fun n => S n = a)).card : ℝ≥0∞) / (N : ℝ≥0∞) := rfl
+      ((Finset.univ.filter (fun n => S n = a)).card : ℝ≥0∞) / (N : ℝ≥0∞) := by
+  have : Nonempty (Fin N) := ⟨⟨0, Nat.pos_of_ne_zero hN⟩⟩
+  simp only [empiricalPMF, PMF.map_apply, tsum_fintype, PMF.uniformFintype_apply,
+    Fintype.card_fin]
+  rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul, div_eq_mul_inv]
+  simp only [eq_comm]
 
 /-- On a nonempty sample, cross-entropy against the empirical law is the average
 surprisal of the sample under the model. -/
 theorem empiricalCrossEntropy_eq_avg_surprisal {α : Type*} [Fintype α]
-    [DecidableEq α] {N : ℕ} (S : Fin N → α) (hN : N ≠ 0) (q : PMF α) :
+    {N : ℕ} (S : Fin N → α) (hN : N ≠ 0) (q : PMF α) :
     crossEntropy (empiricalPMF S hN) q =
       (∑ n, surprisal (q (S n))) / (N : ℝ≥0∞) := by
+  classical
   have hbase : ∑ n : Fin N, surprisal (q (S n)) = ∑ a,
       (((Finset.univ.filter (fun n => S n = a)).card : ℝ≥0∞) * surprisal (q a)) := by
     have hinner : ∀ a, (∑ n ∈ Finset.univ.filter (fun n => S n = a),
@@ -114,9 +111,10 @@ theorem empiricalCrossEntropy_eq_avg_surprisal {α : Type*} [Fintype α]
 
 /-- The empirical cross-entropy is infinite exactly when the model rules out a
 sampled token; both sides are `∞` in that case. -/
-theorem empiricalCrossEntropy_eq_top_iff {α : Type*} [Fintype α] [DecidableEq α]
+theorem empiricalCrossEntropy_eq_top_iff {α : Type*} [Fintype α]
     {N : ℕ} (S : Fin N → α) (hN : N ≠ 0) (q : PMF α) :
     crossEntropy (empiricalPMF S hN) q = ∞ ↔ ∃ n, q (S n) = 0 := by
+  classical
   have hNe : (N : ℝ≥0∞) ≠ 0 := by exact_mod_cast hN
   have hTop : (N : ℝ≥0∞) ≠ ⊤ := ENNReal.natCast_ne_top N
   have hzero : ∀ a : α, (empiricalPMF S hN) a = 0 →
@@ -155,7 +153,7 @@ theorem empiricalCrossEntropy_eq_top_iff {α : Type*} [Fintype α] [DecidableEq 
 /-- Hence the empirical cross-entropy equals entropy plus divergence: with no
 support hypothesis, both sides are `∞` when `p̂` charges an outcome `q` rules out. -/
 theorem empiricalCrossEntropy_eq_shannonEntropy_add_klDiv {α : Type*}
-    [Fintype α] [DecidableEq α] [MeasurableSpace α] [MeasurableSingletonClass α]
+    [Fintype α] [MeasurableSpace α] [MeasurableSingletonClass α]
     {N : ℕ} (S : Fin N → α) (hN : N ≠ 0) (q : PMF α) :
     crossEntropy (empiricalPMF S hN) q =
       ENNReal.ofReal (shannonEntropy (empiricalPMF S hN)) +

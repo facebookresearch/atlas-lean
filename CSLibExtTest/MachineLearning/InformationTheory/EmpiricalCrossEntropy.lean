@@ -13,10 +13,12 @@ public import CSLibExt.MachineLearning.InformationTheory.EmpiricalCrossEntropy
 /-!
 # Tests for the empirical cross-entropy of a fixed model
 
-Two-token vocabulary (`Bool`) with sample `[false, false, true]`: a model giving
-`true` probability `0` has infinite empirical cross-entropy on both sides (the
+Two-token vocabulary (`Bool`) with sample `[false, false, true]`: the empirical
+law gives `false` mass `2/3` and `true` mass `1/3`; a model giving `true`
+probability `0` has infinite empirical cross-entropy on both sides (the
 cross-entropy and the average surprisal are both `∞`), while a fully supported
-model is finite and satisfies entropy plus divergence.
+model is finite and satisfies entropy plus divergence. A sample in the infinite
+vocabulary `ℕ` also has an empirical law.
 -/
 
 @[expose] public section
@@ -31,6 +33,32 @@ noncomputable def tokSample : Fin 3 → Bool := fun n => decide (n.val = 2)
 
 /-- The sample is nonempty. -/
 theorem tokSample_ne : 3 ≠ 0 := by decide
+
+/-- The empirical law of `[false, false, true]` gives `false` mass `2/3`. -/
+theorem tokSample_mass_false :
+    empiricalPMF tokSample tokSample_ne false = 2 / 3 := by
+  have hcard : (Finset.univ.filter (fun n : Fin 3 => tokSample n = false)).card = 2 := by
+    decide
+  rw [empiricalPMF_apply, Finset.filter_congr_decidable, hcard]
+  norm_num
+
+/-- The empirical law of `[false, false, true]` gives `true` mass `1/3`. -/
+theorem tokSample_mass_true :
+    empiricalPMF tokSample tokSample_ne true = 1 / 3 := by
+  have hcard : (Finset.univ.filter (fun n : Fin 3 => tokSample n = true)).card = 1 := by
+    decide
+  rw [empiricalPMF_apply, Finset.filter_congr_decidable, hcard]
+  norm_num
+
+/-- A sample in the infinite vocabulary `ℕ`: the empirical law of `[5, 5, 7]`
+gives `5` mass `2/3`. -/
+theorem nat_sample_mass :
+    empiricalPMF (fun n : Fin 3 => if n.val = 2 then 7 else 5) tokSample_ne 5 = 2 / 3 := by
+  have hcard : (Finset.univ.filter
+      (fun n : Fin 3 => (if n.val = 2 then 7 else 5) = 5)).card = 2 := by
+    decide
+  rw [empiricalPMF_apply, Finset.filter_congr_decidable, hcard]
+  norm_num
 
 /-- A model that always predicts `false` rules out the sampled `true`. -/
 theorem two_token_zero_model_top :
