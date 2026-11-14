@@ -7,11 +7,8 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Basic.Real.Basic
-public import Mathlib.Analysis.Normed.Group.Basic
-public import Mathlib.Analysis.InnerProductSpace.Basic
+public import Mathlib.Analysis.Normed.Lp.PiLp
 public import Mathlib.LinearAlgebra.CrossProduct
-public import Mathlib.LinearAlgebra.Matrix.DotProduct
 
 /-!
 # Central forces have zero torque
@@ -25,8 +22,13 @@ vector with a scalar multiple of itself is zero.
 The torque of a force `F` applied at position `r` is `r ⨯₃ F`. For a
 central force `F = c • r`, linearity of the cross product gives
 `r ⨯₃ (c • r) = c • (r ⨯₃ r) = c • 0 = 0`. The same argument covers a
-radial central force `F = φ (‖r‖) • r` for any radial profile `φ`, and
-the attractive case `F = -k • r`.
+radial central force `F = φ (|r|) • r`, whose coefficient depends only on the
+Euclidean distance `|r|` from the origin, and the signed linear central force
+`F = -k • r`, which is attractive for `0 < k` and repulsive for `k < 0`.
+
+Positions are vectors `r : Fin 3 → ℝ`. Mathlib equips this type with the
+supremum norm, so the Euclidean distance is written `‖WithLp.toLp 2 r‖`, the
+norm of `r` in `EuclideanSpace ℝ (Fin 3)`.
 
 ## ii. Key results
 
@@ -34,14 +36,15 @@ the attractive case `F = -k • r`.
 - `EarthScience.central_force_torque_eq_zero`: a central force has zero
   torque.
 - `EarthScience.radial_central_force_torque_eq_zero`: a radial central
-  force has zero torque.
-- `EarthScience.attractive_central_force_torque_eq_zero`: an attractive
-  central force has zero torque.
+  force, with coefficient a function of the Euclidean distance, has zero
+  torque.
+- `EarthScience.linear_central_force_torque_eq_zero`: a signed linear
+  central force `F = -k • r` has zero torque.
 
 ## iii. References
 
-- `cross_self` and `map_smul` for the cross product in
-  `Mathlib/LinearAlgebra/CrossProduct.lean`.
+- `cross_self` in `Mathlib/LinearAlgebra/CrossProduct.lean`, with linearity of
+  the cross product (`map_smul`).
 -/
 
 @[expose] public section
@@ -59,14 +62,15 @@ theorem central_force_torque_eq_zero (r : Fin 3 → ℝ) (c : ℝ) :
   unfold torque
   rw [map_smul, cross_self, smul_zero]
 
-/-- A radial central force `F = φ (‖r‖) • r`, with any radial profile `φ`,
-has zero torque. -/
+/-- A radial central force `F = φ (|r|) • r`, with any radial profile `φ` of the
+Euclidean distance `|r| = ‖WithLp.toLp 2 r‖`, has zero torque. -/
 theorem radial_central_force_torque_eq_zero (r : Fin 3 → ℝ) (φ : ℝ → ℝ) :
-    torque r (φ ‖r‖ • r) = 0 := by
-  exact central_force_torque_eq_zero r (φ ‖r‖)
+    torque r (φ ‖WithLp.toLp 2 r‖ • r) = 0 := by
+  exact central_force_torque_eq_zero r (φ ‖WithLp.toLp 2 r‖)
 
-/-- An attractive central force `F = -k • r` has zero torque. -/
-theorem attractive_central_force_torque_eq_zero (r : Fin 3 → ℝ) (k : ℝ) :
+/-- A signed linear central force `F = -k • r` has zero torque. It is attractive
+for `0 < k`, repulsive for `k < 0`, and zero for `k = 0`. -/
+theorem linear_central_force_torque_eq_zero (r : Fin 3 → ℝ) (k : ℝ) :
     torque r ((-k) • r) = 0 := by
   exact central_force_torque_eq_zero r (-k)
 
