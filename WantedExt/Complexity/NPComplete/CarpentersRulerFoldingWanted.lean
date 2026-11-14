@@ -33,8 +33,8 @@ namespace MetaMathlibExt.Complexity.NPComplete.CarpentersRulerFolding
 /-!
 # CARPENTER'S RULER FOLDING is NP-complete
 
-INSTANCE: a sequence of positive integer link lengths `l₁, …, lₙ` (a carpenter's ruler: rigid
-links joined end to end by hinges) and a positive integer `K`.
+INSTANCE: a nonempty sequence of positive integer link lengths `l₁, …, lₙ` (`n ≥ 1`; a carpenter's
+ruler: rigid links joined end to end by hinges) and a positive integer `K`.
 QUESTION: can the ruler be folded, each hinge either straight or folded completely (angle `0` or
 `180` degrees), so that its folded length is at most `K`?
 
@@ -67,9 +67,10 @@ sum of the first `j` links (joint `0` at position `0`). -/
 def jointPos (lengths : List ℕ) (dirs : List Bool) (j : ℕ) : ℤ :=
   ((List.zipWith (fun l d => if d then (l : ℤ) else -(l : ℤ)) lengths dirs).take j).sum
 
-/-- Well-formedness of an instance: every link length is positive and `0 < K`. -/
+/-- Well-formedness of an instance: the ruler has at least one link, every link length is
+positive, and `0 < K`. -/
 def WellFormed (i : CarpentersRulerFoldingInstance) : Prop :=
-  (∀ l ∈ i.1, 0 < l) ∧ 0 < i.2
+  i.1 ≠ [] ∧ (∀ l ∈ i.1, 0 < l) ∧ 0 < i.2
 
 /-- Some choice of a direction for every link places all joints within an interval of length at
 most `K`. -/
