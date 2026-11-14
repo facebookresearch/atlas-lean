@@ -25,7 +25,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import Mathlib.Combinatorics.SimpleGraph.Coloring.Vertex
+public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 public import WantedExt.Complexity.NPComplete.HamiltonianPathUndirectedWanted
 
 @[expose] public section
@@ -52,7 +52,9 @@ The instance, the graph and the question are those of HAMILTONIAN PATH
 (`HamiltonianPathUndirectedWanted`), reused unchanged: a vertex count `n` and an edge list on
 `Fin n`, the parent's well-formedness (`0 < n` and a simple edge list), and the parent's
 question (an ordering of all vertices in which consecutive vertices are adjacent). The
-restriction adds that the graph is bipartite: Mathlib's `SimpleGraph.Colorable 2`.
+restriction adds that the graph is bipartite: Mathlib's `SimpleGraph.IsBipartite`
+(`Colorable 2`), as in `FeedbackVertexSetBipartiteWanted` and
+`HamiltonianPathChordalBipartiteWanted`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -66,9 +68,9 @@ reduction from every language in `NP`
 -/
 
 /-- Well-formedness of an instance: a well-formed HAMILTONIAN PATH instance (`0 < n`, simple
-edge list) whose graph is bipartite (2-colorable). -/
+edge list) whose graph is bipartite (`SimpleGraph.IsBipartite`). -/
 def WellFormed (i : HamiltonianPathUndirectedInstance) : Prop :=
-  HamiltonianPathUndirected.WellFormed i ∧ (Graph i).Colorable 2
+  HamiltonianPathUndirected.WellFormed i ∧ (Graph i).IsBipartite
 
 open Classical in
 /-- HAMILTONIAN PATH for bipartite graphs as a decision problem over bitstrings. -/
