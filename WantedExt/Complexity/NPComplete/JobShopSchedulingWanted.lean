@@ -65,11 +65,11 @@ reduction from every language in `NP`
 its processor), and the deadline `D`. -/
 abbrev JobShopSchedulingInstance := ℕ × List (List (ℕ × ℕ)) × ℕ
 
-/-- Well-formedness of an instance: `m ∈ ℤ⁺`, every task's processor lies in
-`{1, …, m}`, consecutive tasks of a job use different processors (`List.IsChain`), and
-`D ∈ ℤ⁺`. -/
+/-- Well-formedness of an instance: `m ∈ ℤ⁺`, every job has at least one task (`n_j ≥ 1`;
+the deadline clause refers to its last task), every task's processor lies in `{1, …, m}`,
+consecutive tasks of a job use different processors (`List.IsChain`), and `D ∈ ℤ⁺`. -/
 def WellFormed (i : JobShopSchedulingInstance) : Prop :=
-  0 < i.1 ∧ (∀ job ∈ i.2.1, ∀ t ∈ job, 1 ≤ t.2 ∧ t.2 ≤ i.1) ∧
+  0 < i.1 ∧ (∀ job ∈ i.2.1, job ≠ []) ∧ (∀ job ∈ i.2.1, ∀ t ∈ job, 1 ≤ t.2 ∧ t.2 ≤ i.1) ∧
     (∀ job ∈ i.2.1, job.IsChain fun t t' => t.2 ≠ t'.2) ∧ 0 < i.2.2
 
 /-- A task `t_k[j]` of the instance: a job `j` and a position `k < n_j` in its task
