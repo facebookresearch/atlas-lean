@@ -162,7 +162,8 @@ theorem bridge_blup_annihilates : blupMatrix tX tZ tG tV * tX = 0 :=
 theorem bridge_gls_identity : glsMatrix tX tV * tX = 1 :=
   glsMatrix_mul_self hX
 
-/-- BLUP MSE minimality instantiated in the example. -/
+/-- BLUP criterion minimality (`blup_mse_minimality`) instantiated in the
+example. -/
 theorem bridge_blup_mse (C : Matrix (Fin 1) (Fin 2) ℝ) (hC : C * tX = 0) :
     (mseMatrix tZ tG tV C -
       mseMatrix tZ tG tV (blupMatrix tX tZ tG tV)).PosSemidef :=

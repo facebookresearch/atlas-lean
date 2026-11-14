@@ -20,15 +20,23 @@ For a design matrix `X` and positive-definite noise covariance `V`, the GLS
 estimator `β̂ = glsMatrix X V *ᵥ y` is unbiased with covariance
 `(Xᵀ V⁻¹ X)⁻¹`, and full column rank of `X` supplies the invertibility
 hypothesis used by `MathlibExt.Probability.Statistics.GeneralizedLeastSquares`.
-With `V = Z G Zᵀ + R` (`phenCov`), this is the covariance of the mixed-model
-marginal law, and Henderson's equations pick out the same `β̂`
-(`isMMESolution_iff_gls`).
+With `V = Z G Zᵀ + R` (`phenCov`), the covariance of the response in the
+Gaussian mixed model (`covariance_mixedModel_response`), Henderson's equations
+pick out the same `β̂` (`isMMESolution_iff_gls`).
 
 Estimation and prediction are separate obligations with distinct hypotheses.
 Unbiased estimation of the fixed effects `β` asks `B * X = 1`; best linear
 unbiased prediction of the random effects asks `L * X = 0`, and the BLUP
-weights `L = G Zᵀ V⁻¹ (1 - X B)` minimize the mean-squared-error matrix
-`C ↦ C V Cᵀ - C Z G - G Zᵀ Cᵀ + G` among all weight matrices with `C * X = 0`.
+weights `L = G Zᵀ V⁻¹ (1 - X B)` minimize the matrix criterion
+`mseMatrix Z G V C = C V Cᵀ - C Z G - G Zᵀ Cᵀ + G` among all weight matrices
+with `C * X = 0`.
+
+That minimality is an algebraic criterion, not a theorem about a probability
+model. Reading `mseMatrix Z G V C` as the covariance of the prediction error
+`C y - u` needs `Cov y = V`, `Cov u = G` and also the cross-covariances
+`Cov(y, u) = Z G` and `Cov(u, y) = G Zᵀ` (as when `y = X β + Z u + e` with `e`
+uncorrelated with `u`). No such random vectors appear in `mseMatrix` or
+`blup_mse_minimality`, and that covariance expansion is not derived here.
 
 ## Main results
 
@@ -43,7 +51,8 @@ weights `L = G Zᵀ V⁻¹ (1 - X B)` minimize the mean-squared-error matrix
 * `blupMatrix`: the BLUP weights `G Zᵀ V⁻¹ (1 - X B)`.
 * `blupMatrix_mul_X`: prediction weights annihilate `X` (`L * X = 0`).
 * `blupPredictionError_eq`: the prediction error is free of `β`.
-* `blup_mse_minimality`: MSE-matrix minimality among `C` with `C * X = 0`.
+* `blup_mse_minimality`: minimality of the algebraic criterion `mseMatrix`
+  among `C` with `C * X = 0` (no probabilistic hypotheses).
 -/
 
 @[expose] public section
@@ -69,8 +78,11 @@ noncomputable def blupMatrix {n p q : Type*} [Fintype n] [DecidableEq n]
     (V : Matrix n n ℝ) : Matrix q n ℝ :=
   G * Zᵀ * V⁻¹ * (1 - X * glsMatrix X V)
 
-/-- Mean-squared-error matrix of a linear predictor with weights `C`:
-`C V Cᵀ - C Z G - G Zᵀ Cᵀ + G`, for `Cov u = G` and `Cov y = V`. -/
+/-- The BLUP matrix criterion of a linear predictor `C y` of `u`:
+`C V Cᵀ - C Z G - G Zᵀ Cᵀ + G`, an algebraic expression in `Z`, `G`, `V` and
+`C`. Reading it as the covariance of the prediction error `C y - u` needs
+`Cov y = V`, `Cov u = G`, `Cov(y, u) = Z G` and `Cov(u, y) = G Zᵀ`; none of
+these is assumed or derived here. -/
 noncomputable def mseMatrix {n q : Type*} [Fintype n] [Fintype q]
     (Z : Matrix n q ℝ) (G : Matrix q q ℝ) (V : Matrix n n ℝ)
     (C : Matrix q n ℝ) : Matrix q q ℝ :=
@@ -240,10 +252,13 @@ theorem blupPredictionError_eq {n p q : Type*} [Fintype n] [DecidableEq n]
     zero_mulVec, zero_add, Matrix.sub_mulVec, Matrix.one_mulVec]
   abel
 
-/-- **BLUP MSE-matrix minimality**, the prediction analogue of Aitken's
-theorem: for positive-definite `G` and `V`, among all weight matrices `C`
-with `C * X = 0`, the BLUP weights minimize
-`C ↦ C V Cᵀ - C Z G - G Zᵀ Cᵀ + G` in the positive-semidefinite order. -/
+/-- **BLUP criterion minimality**, the algebraic prediction analogue of
+Aitken's theorem: for positive-definite `G` and `V`, among all weight matrices
+`C` with `C * X = 0`, the BLUP weights minimize the matrix criterion
+`mseMatrix Z G V C = C V Cᵀ - C Z G - G Zᵀ Cᵀ + G` in the positive-semidefinite
+order. Reading this as minimality of the covariance of the prediction error
+`C y - u` needs `Cov y = V`, `Cov u = G` and the cross-covariances
+`Cov(y, u) = Z G`, `Cov(u, y) = G Zᵀ`; none of these is a hypothesis here. -/
 theorem blup_mse_minimality {n p q : Type*} [Fintype n] [DecidableEq n]
     [Fintype p] [DecidableEq p] [Fintype q] [DecidableEq q]
     {X : Matrix n p ℝ} {Z : Matrix n q ℝ} {G : Matrix q q ℝ}
