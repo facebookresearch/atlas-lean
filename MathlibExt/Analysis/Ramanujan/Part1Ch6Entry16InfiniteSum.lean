@@ -33,14 +33,19 @@ open Asymptotics Filter Finset Complex Topology
 
 noncomputable section
 
+/-- The `j`-th term `r ^ k / (1 - a * x ^ k)`, with `k = j + 1`, of the left side of Entry 16. -/
 def chapter6Entry16LeftTerm (a r x : ℂ) (j : ℕ) : ℂ :=
   let k := j + 1
   r ^ k / (1 - a * x ^ k)
 
+/-- The `j`-th term `(a * r * x ^ k) ^ k / (1 - a * x ^ k)`, with `k = j + 1`, of the first
+series on the right side of Entry 16. -/
 def chapter6Entry16MiddleTerm (a r x : ℂ) (j : ℕ) : ℂ :=
   let k := j + 1
   (a * r * x ^ k) ^ k / (1 - a * x ^ k)
 
+/-- The `j`-th term `a ^ (k - 1) * r ^ k * x ^ ((k - 1) * k) / (1 - r * x ^ (k - 1))`, with
+`k = j + 1`, of the second series on the right side of Entry 16. -/
 def chapter6Entry16RightTerm (a r x : ℂ) (j : ℕ) : ℂ :=
   let k := j + 1
   a ^ (k - 1) * r ^ k * x ^ ((k - 1) * k) /
@@ -83,10 +88,21 @@ private lemma norm_rx_lt {r x : ℂ} (hr : ‖r‖ < 1) (hx : ‖x‖ ≤ 1) (m 
   _ = ‖r‖ := mul_one _
   _ < 1 := hr
 
+private lemma summable_real_geometric {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
+    Summable (fun n : ℕ => q ^ n) := by
+  have h : ‖q‖ < 1 := by
+    rw [Real.norm_eq_abs, abs_of_nonneg hq0]
+    exact hq1
+  exact summable_geometric_of_norm_lt_one h
+
+private lemma summable_const_mul_real_geometric {C q : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
+    Summable (fun n : ℕ => C * q ^ n) :=
+  (summable_real_geometric hq0 hq1).mul_left C
+
 private lemma summable_shifted_geometric {C q : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :
     Summable (fun j : ℕ => C * q ^ (j + 1)) := by
   have hgeo : Summable (fun j : ℕ => (C * q) * q ^ j) :=
-    (summable_geometric_of_lt_one hq0 hq1).mul_left _
+    (summable_real_geometric hq0 hq1).mul_left _
   have heq : (fun j : ℕ => C * q ^ (j + 1)) = (fun j : ℕ => (C * q) * q ^ j) := by
     funext j
     rw [pow_succ]
@@ -137,7 +153,7 @@ private lemma summable_left_of_denom_bound {a r x : ℂ} (hr : ‖r‖ < 1)
   apply Summable.of_norm_bounded (g := fun j : ℕ => δ⁻¹ * ‖r‖ ^ (j + 1))
   · exact summable_shifted_geometric (norm_nonneg _) hr
   · intro j
-    show ‖r ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ δ⁻¹ * ‖r‖ ^ (j + 1)
+    change ‖r ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ δ⁻¹ * ‖r‖ ^ (j + 1)
     rw [norm_div, norm_pow]
     exact div_norm_le_of_denom_le (pow_nonneg (norm_nonneg _) _) (hδ _ (by omega)) hδ0
 
@@ -149,7 +165,7 @@ private lemma summable_middle_of_boundary {a r x : ℂ} (har : ‖a‖ * ‖r‖
   apply Summable.of_norm_bounded (g := fun j : ℕ => δ⁻¹ * (‖a‖ * ‖r‖) ^ (j + 1))
   · exact summable_shifted_geometric har0 har
   · intro j
-    show ‖(a * r * x ^ (j + 1)) ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ _
+    change ‖(a * r * x ^ (j + 1)) ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ _
     simp only [norm_div, norm_pow, norm_mul, hξ1, one_pow, mul_one]
     exact div_norm_le_of_denom_le (pow_nonneg har0 _) (hδ _ (by omega)) hδ0
 
@@ -160,9 +176,9 @@ private lemma summable_right_of_boundary {a r x : ℂ} (hr : ‖r‖ < 1)
   have har0 : 0 ≤ ‖a‖ * ‖r‖ := mul_nonneg (norm_nonneg _) (norm_nonneg _)
   apply Summable.of_norm_bounded
     (g := fun j : ℕ => (‖r‖ / (1 - ‖r‖)) * (‖a‖ * ‖r‖) ^ j)
-  · exact (summable_geometric_of_lt_one har0 har).mul_left _
+  · exact (summable_real_geometric har0 har).mul_left _
   · intro j
-    show ‖a ^ (j + 1 - 1) * r ^ (j + 1) * x ^ ((j + 1 - 1) * (j + 1)) /
+    change ‖a ^ (j + 1 - 1) * r ^ (j + 1) * x ^ ((j + 1 - 1) * (j + 1)) /
         (1 - r * x ^ (j + 1 - 1))‖ ≤ _
     rw [Nat.add_sub_cancel]
     have hD : (1 : ℝ) - ‖r‖ ≤ ‖1 - r * x ^ j‖ := by
@@ -190,7 +206,7 @@ private lemma summable_left_of_interior {a r x : ℂ} (hr : ‖r‖ < 1)
   · exact summable_shifted_geometric (norm_nonneg _) hr
   · have h1 := eventually_cofinite_of_atTop h2
     filter_upwards [h1] with j hj
-    show ‖r ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ 2 * ‖r‖ ^ (j + 1)
+    change ‖r ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ 2 * ‖r‖ ^ (j + 1)
     rw [norm_div, norm_pow]
     have hD := half_le_denom_of_small hj
     have hN : (0 : ℝ) ≤ ‖r‖ ^ (j + 1) := pow_nonneg (norm_nonneg _) _
@@ -219,7 +235,7 @@ private lemma summable_middle_of_interior {a r x : ℂ} (hr : ‖r‖ < 1)
   · have h1 := eventually_cofinite_of_atTop hboth
     filter_upwards [h1] with j hj
     obtain ⟨hj1, hj2⟩ := hj
-    show ‖(a * r * x ^ (j + 1)) ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ _
+    change ‖(a * r * x ^ (j + 1)) ^ (j + 1) / (1 - a * x ^ (j + 1))‖ ≤ _
     simp only [norm_div, norm_pow]
     have hD := half_le_denom_of_small hj1
     have hnum : ‖a * r * x ^ (j + 1)‖ ^ (j + 1) ≤ (1 / 2 : ℝ) ^ (j + 1) :=
@@ -242,12 +258,12 @@ private lemma summable_right_of_interior {a r x : ℂ} (hr : ‖r‖ < 1) (hx : 
   have h1ρ : (0 : ℝ) < 1 - ‖r‖ := sub_pos.mpr hr
   apply Summable.of_norm_bounded_eventually
     (g := fun j : ℕ => (‖r‖ / (1 - ‖r‖)) * (1 / 2 : ℝ) ^ j)
-  · exact (summable_geometric_of_lt_one (by norm_num) (by norm_num)).mul_left _
+  · exact (summable_real_geometric (by norm_num) (by norm_num)).mul_left _
   · have h2 : ∀ᶠ j : ℕ in Filter.atTop, ‖a * x ^ (j + 1)‖ ≤ 1 / 2 :=
       Filter.eventually_atTop.mpr ⟨N, fun j _ => hN (j + 1) (by omega)⟩
     have h1 := eventually_cofinite_of_atTop h2
     filter_upwards [h1] with j hj
-    show ‖a ^ (j + 1 - 1) * r ^ (j + 1) * x ^ ((j + 1 - 1) * (j + 1)) /
+    change ‖a ^ (j + 1 - 1) * r ^ (j + 1) * x ^ ((j + 1 - 1) * (j + 1)) /
         (1 - r * x ^ (j + 1 - 1))‖ ≤ (‖r‖ / (1 - ‖r‖)) * (1 / 2 : ℝ) ^ j
     rw [Nat.add_sub_cancel, norm_div]
     have hD : (1 : ℝ) - ‖r‖ ≤ ‖1 - r * x ^ j‖ := by
@@ -336,7 +352,7 @@ private lemma summable_uncurry_of_fiber_bounds {F : ℕ → ℕ → ℂ} {g : �
 private lemma fiber_summable {a r x : ℂ} (hr : ‖r‖ < 1) (hx : ‖x‖ ≤ 1)
     (n : ℕ) : Summable (fun m => triFun a r x n m) := by
   apply Summable.of_norm_bounded (g := fun m : ℕ => (‖a‖ ^ n * ‖r‖) * ‖r‖ ^ m)
-  · exact (summable_geometric_of_lt_one (norm_nonneg _) hr).mul_left _
+  · exact (summable_real_geometric (norm_nonneg _) hr).mul_left _
   · intro m
     unfold triFun
     by_cases h : n ≤ m
@@ -416,7 +432,7 @@ private lemma column_tsum {a r x : ℂ} (hr : ‖r‖ < 1) (hx : ‖x‖ ≤ 1) 
   have hval := hmul.tsum_eq
   have hR : chapter6Entry16RightTerm a r x n
       = (a ^ n * r ^ (n + 1) * x ^ (n * (n + 1))) * (1 - r * x ^ n)⁻¹ := by
-    show a ^ (n + 1 - 1) * r ^ (n + 1) * x ^ ((n + 1 - 1) * (n + 1)) /
+    change a ^ (n + 1 - 1) * r ^ (n + 1) * x ^ ((n + 1 - 1) * (n + 1)) /
         (1 - r * x ^ (n + 1 - 1))
       = (a ^ n * r ^ (n + 1) * x ^ (n * (n + 1))) * (1 - r * x ^ n)⁻¹
     rw [Nat.add_sub_cancel, div_eq_mul_inv]
@@ -519,7 +535,7 @@ private lemma row_tsum {a r x : ℂ}
     rw [eq_div_iff hA]
     linear_combination -hgeom
   rw [hval, hS, ← mul_div_assoc]
-  show r ^ (m + 1) * (1 - (a * x ^ (m + 1)) ^ (m + 1)) / (1 - a * x ^ (m + 1))
+  change r ^ (m + 1) * (1 - (a * x ^ (m + 1)) ^ (m + 1)) / (1 - a * x ^ (m + 1))
     = (r ^ (m + 1) / (1 - a * x ^ (m + 1))
       - (a * r * x ^ (m + 1)) ^ (m + 1) / (1 - a * x ^ (m + 1)))
   rw [← sub_div]
@@ -588,7 +604,7 @@ theorem ramanujan_part1_ch6_entry16_infinite_sum
         unfold triBound
         rw [hξ1, one_pow, mul_one]
       rw [heq]
-      exact (summable_geometric_of_lt_one
+      exact (summable_real_geometric
         (mul_nonneg (norm_nonneg _) (norm_nonneg _)) har').mul_left _
     have hpair : Summable (Function.uncurry (triFun a r x)) :=
       summable_uncurry_of_fiber_bounds (fun n => triBound_nonneg _ _ _ hr n)
@@ -609,7 +625,7 @@ theorem ramanujan_part1_ch6_entry16_infinite_sum
     have hgI : Summable (triBound a r x) := by
       apply Summable.of_norm_bounded_eventually
         (g := fun n : ℕ => (‖r‖ / (1 - ‖r‖)) * (1 / 2 : ℝ) ^ n)
-      · exact (summable_geometric_of_lt_one (by norm_num) (by norm_num)).mul_left _
+      · exact (summable_real_geometric (by norm_num) (by norm_num)).mul_left _
       · have h2 : ∀ᶠ n : ℕ in Filter.atTop,
             ‖a‖ * ‖r‖ * ‖x‖ ^ (n + 1) ≤ 1 / 2 :=
           Filter.eventually_atTop.mpr ⟨N, fun n _ => by
