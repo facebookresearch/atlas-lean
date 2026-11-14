@@ -10,7 +10,7 @@ module
 
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.NumberTheory.LSeries.RiemannZeta
-public import Mathlib.NumberTheory.ZetaValues
+public import MathlibExt.Analysis.Calculus.EulerMaclaurinFormula
 
 import Mathlib.Analysis.Analytic.Uniqueness
 import Mathlib.Analysis.Calculus.IteratedDeriv.Lemmas
@@ -20,12 +20,12 @@ import Mathlib.Analysis.PSeriesComplex
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 import Mathlib.Analysis.SpecialFunctions.Complex.Analytic
 import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.NumberTheory.ZetaValues
 import Mathlib.Tactic.FunProp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
-import MathlibExt.Analysis.Calculus.EulerMaclaurinFormula
 
 /-!
 # Ramanujan's asymptotic expansion for power sums
@@ -42,6 +42,7 @@ namespace Entry1Powersum
 
 open scoped Nat Real BigOperators Interval Polynomial ContDiff
 open Asymptotics Filter Finset Complex Topology MeasureTheory
+open MetaMathlibExt (bernoulliKernel bernoulliKernel_continuous bernoulliKernel_norm_le)
 
 noncomputable section
 
@@ -79,33 +80,6 @@ def chapter7Entry1Approx (r : ℂ) (N n : ℕ) : ℂ :=
 def chapter7PowerSum (r : ℂ) (n : ℕ) : ℂ :=
   ∑ k ∈ Icc 1 n, chapter7NatCpow k r
 
-/-- The raw periodic Bernoulli polynomial `B_p(fract x)`, without factorial normalization. -/
-noncomputable def bernoulliKernel (p : ℕ) (x : ℝ) : ℝ :=
-  bernoulliFun p (Int.fract x)
-
-/-- Evaluation of the raw kernel through the fractional part. -/
-theorem bernoulliKernel_apply (p : ℕ) (x : ℝ) :
-    bernoulliKernel p x = bernoulliFun p (Int.fract x) := rfl
-
-/-- At an integer, the raw kernel equals the Bernoulli number. -/
-@[simp]
-theorem bernoulliKernel_intCast (p : ℕ) (integer : ℤ) :
-    bernoulliKernel p (integer : ℝ) = (bernoulli p : ℝ) := by
-  simp [bernoulliKernel_apply, bernoulliFun_eval_zero]
-
-/-- The raw Bernoulli kernel has period one. -/
-theorem bernoulliKernel_periodic (p : ℕ) :
-    Function.Periodic (bernoulliKernel p) 1 := by
-  intro x
-  simp [bernoulliKernel, Int.fract_add_one]
-
-private theorem ch7Entry1Kernel_continuous {p : ℕ} (hp : p ≠ 1) :
-    Continuous (bernoulliKernel p) := by
-  change Continuous (fun x : ℝ => bernoulliFun p (Int.fract x))
-  simpa [Function.comp_def] using
-    (continuous_bernoulliFun p).continuousOn.comp_fract''
-      (bernoulliFun_endpoints_eq_of_ne_one hp).symm
-
 private theorem ch7Entry1Kernel_one (N : ℕ) (hN : 0 < N) :
     bernoulliKernel (2 * N + 1) 1 = 0 := by
   have hodd : Odd (2 * N + 1) := ⟨N, by omega⟩
@@ -120,7 +94,7 @@ private theorem ch7Entry1MellinBase_continuous (N : ℕ) (hN : 0 < N) :
     Continuous (ch7Entry1MellinBase N) := by
   have hp : 2 * N + 1 ≠ 1 := by omega
   have hk : Continuous (fun x => (bernoulliKernel (2 * N + 1) x : ℂ)) :=
-    Complex.continuous_ofReal.comp (ch7Entry1Kernel_continuous hp)
+    Complex.continuous_ofReal.comp (bernoulliKernel_continuous hp)
   change Continuous (fun x : ℝ => if 1 ≤ x then
     (bernoulliKernel (2 * N + 1) x : ℂ) else 0)
   refine hk.if_le continuous_const continuous_const continuous_id ?_
@@ -132,14 +106,6 @@ private theorem ch7Entry1MellinBase_continuous (N : ℕ) (hN : 0 < N) :
 private theorem ch7Entry1MellinBase_locallyIntegrable (N : ℕ) (hN : 0 < N) :
     LocallyIntegrableOn (ch7Entry1MellinBase N) (Set.Ioi 0) :=
   (ch7Entry1MellinBase_continuous N hN).continuousOn.locallyIntegrableOn measurableSet_Ioi
-
-/-- Every odd Bernoulli kernel of degree at least three is uniformly bounded. -/
-theorem bernoulliKernel_norm_le (N : ℕ) (hN : 0 < N) :
-    ∃ C : ℝ, ∀ x : ℝ, ‖bernoulliKernel (2 * N + 1) x‖ ≤ C := by
-  have hp : 2 * N + 1 ≠ 1 := by omega
-  obtain ⟨C, hC⟩ := ((bernoulliKernel_periodic (2 * N + 1)).isBounded_of_continuous
-    one_ne_zero (ch7Entry1Kernel_continuous hp)).exists_norm_le
-  exact ⟨C, fun x => hC _ ⟨x, rfl⟩⟩
 
 private theorem ch7Entry1MellinBase_isBigO_atTop (N : ℕ) (hN : 0 < N) :
     ch7Entry1MellinBase N =O[atTop] (fun _ : ℝ => (1 : ℝ)) := by
@@ -410,7 +376,7 @@ private theorem ch7Entry1EulerMaclaurin_complex
   have hremint : IntervalIntegrable
       (fun x => (bernoulliKernel p x : ℂ) * iteratedDerivWithin p f s x)
       volume (a : ℝ) (b : ℝ) :=
-    (((Complex.continuous_ofReal.comp (ch7Entry1Kernel_continuous hp1)).continuousOn.mul
+    (((Complex.continuous_ofReal.comp (bernoulliKernel_continuous hp1)).continuousOn.mul
       hdcont).mono (by simp [s, Set.uIcc_of_le habr.le])).intervalIntegrable
   have hrem_re :
       (∫ x in (a : ℝ)..(b : ℝ), bernoulliKernel p x *

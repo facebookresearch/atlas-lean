@@ -11,8 +11,8 @@ module
 public import Mathlib.NumberTheory.Bernoulli
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
+public import Mathlib.NumberTheory.ZetaValues
 import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-import Mathlib.NumberTheory.ZetaValues
 import Mathlib.Order.CompletePartialOrder
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -790,6 +790,42 @@ private lemma em_assembly (a b : ℤ) (p : ℕ) (f : ℝ → ℝ)
     ring
   linear_combination hLHS + hbridge_trap + hSUM + hmsum_bridge + hINT + hMSUM + hREM
 
+/-- The raw periodic Bernoulli polynomial `B_p(fract x)`, without factorial normalization. -/
+noncomputable def bernoulliKernel (p : ℕ) (x : ℝ) : ℝ :=
+  bernoulliFun p (Int.fract x)
+
+/-- Evaluation of the raw kernel through the fractional part. -/
+theorem bernoulliKernel_apply (p : ℕ) (x : ℝ) :
+    bernoulliKernel p x = bernoulliFun p (Int.fract x) := rfl
+
+/-- At an integer, the raw kernel equals the Bernoulli number. -/
+@[simp]
+theorem bernoulliKernel_intCast (p : ℕ) (integer : ℤ) :
+    bernoulliKernel p (integer : ℝ) = (bernoulli p : ℝ) := by
+  simp [bernoulliKernel_apply, bernoulliFun_eval_zero]
+
+/-- The raw Bernoulli kernel has period one. -/
+theorem bernoulliKernel_periodic (p : ℕ) :
+    Function.Periodic (bernoulliKernel p) 1 := by
+  intro x
+  simp [bernoulliKernel, Int.fract_add_one]
+
+/-- Away from degree one, the raw Bernoulli kernel is continuous. -/
+theorem bernoulliKernel_continuous {p : ℕ} (hp : p ≠ 1) :
+    Continuous (bernoulliKernel p) := by
+  change Continuous (fun x : ℝ => bernoulliFun p (Int.fract x))
+  simpa [Function.comp_def] using
+    (continuous_bernoulliFun p).continuousOn.comp_fract''
+      (bernoulliFun_endpoints_eq_of_ne_one hp).symm
+
+/-- Every odd Bernoulli kernel of degree at least three is uniformly bounded. -/
+theorem bernoulliKernel_norm_le (N : ℕ) (hN : 0 < N) :
+    ∃ C : ℝ, ∀ x : ℝ, ‖bernoulliKernel (2 * N + 1) x‖ ≤ C := by
+  have hp : 2 * N + 1 ≠ 1 := by omega
+  obtain ⟨C, hC⟩ := ((bernoulliKernel_periodic (2 * N + 1)).isBounded_of_continuous
+    one_ne_zero (bernoulliKernel_continuous hp)).exists_norm_le
+  exact ⟨C, fun x => hC _ ⟨x, rfl⟩⟩
+
 section
 /-- Euler-Maclaurin formula (canonical name "Euler-Maclaurin formula",
 statement `euler-maclaurin-s1`).
@@ -825,15 +861,11 @@ theorem eulerMaclaurinFormula :
             ((-1 : ℝ) ^ (p + 1) / (Nat.factorial p : ℝ) *
               (∫ x in (↑a)..(↑b), P p x * iteratedDerivWithin p f (Set.Icc (↑a) (↑b)) x)) := by
   intro a b p f hab hp hdf
-  refine ⟨fun m x => bernoulliFun m (Int.fract x), ?_, ?_, ?_⟩
+  refine ⟨bernoulliKernel, ?_, ?_, ?_⟩
   · intro m x
-    change bernoulliFun m (Int.fract (x + 1)) = bernoulliFun m (Int.fract x)
-    rw [Int.fract_add_one]
+    exact bernoulliKernel_periodic m x
   · intro x hx
-    change bernoulliFun p (Int.fract x) =
-      ∑ j ∈ Finset.range (p + 1), (Nat.choose p j : ℝ) *
-        (if j = 1 then (-1 / 2 : ℝ) else (bernoulli j : ℝ)) * x ^ (p - j)
-    rw [Int.fract_eq_self.mpr ⟨hx.1, hx.2⟩]
+    rw [bernoulliKernel_apply, Int.fract_eq_self.mpr ⟨hx.1, hx.2⟩]
     exact bernoulliFun_eq_sum p x
   · exact em_assembly a b p f hab hp hdf
 
