@@ -28,7 +28,7 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 
 @[expose] public section
 
