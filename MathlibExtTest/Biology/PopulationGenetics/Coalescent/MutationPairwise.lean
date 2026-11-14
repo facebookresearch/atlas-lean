@@ -158,4 +158,104 @@ example : ∫ p, meanPairDiff 3 (pairDiff (fun p => p.1.2) Prod.snd) p
     ∂kingmanTreeMutationMeasure 3 0 = 0 := by
   simpa using integral_meanPairDiff_kingmanTreeMutationMeasure (n := 3) (θ := 0) (by decide)
 
+/-! ### The law of `τ` and second moments -/
+
+/-- Boundary sample of size `2`, from the definitions: the pair is apart during the only epoch, so
+`τ = T₂`, the coordinate of `piMeasure 2` with law `Exp(C(2, 2)) = Exp(1)`. This is the value
+`hasLaw_pairCoalTime_kingmanGenealogyMeasure` gives at `n = 2`. -/
+example : HasLaw (fun g : (Icc 2 2 → ℝ) × RankedHistory 2 => pairCoalTime g.2 {0, 1} g.1)
+    (expMeasure 1) (kingmanGenealogyMeasure 2) := by
+  have hA : ∀ h : RankedHistory 2, PairApart h {0, 1} (2 - 2) := by decide +kernel
+  have huniv : (univ : Finset (Icc 2 2)) = {⟨2, by decide⟩} := by decide
+  have hτ : (fun g : (Icc 2 2 → ℝ) × RankedHistory 2 => pairCoalTime g.2 {0, 1} g.1) =
+      (fun t : Icc 2 2 → ℝ => t ⟨2, by decide⟩) ∘ Prod.fst := by
+    funext g
+    simp only [pairCoalTime, huniv, Finset.sum_singleton, Function.comp_apply]
+    rw [ite_eq_left (hA g.2)]
+  have h1 : MeasurePreserving (fun t : Icc 2 2 → ℝ => t ⟨2, by decide⟩) (piMeasure 2)
+      (expMeasure 1) := by
+    have := measurePreserving_eval
+      (fun k : Icc 2 2 => expMeasure (((k : ℕ).choose 2 : ℕ) : ℝ)) ⟨2, by decide⟩
+    simpa [piMeasure] using this
+  rw [hτ, kingmanGenealogyMeasure]
+  exact (h1.comp (measurePreserving_fst (μ := piMeasure 2) (ν := randomJoining 2))).hasLaw
+
+/-- `pairRatio m = (m - 1) / (m + 1)` at the first values, from the definition. -/
+example : pairRatio 1 = 0 ∧ pairRatio 2 = 1 / 3 ∧ pairRatio 3 = 1 / 2 := by
+  refine ⟨?_, ?_, ?_⟩ <;> norm_num [pairRatio]
+
+/-- **The mixture identity for three lineages**, expanded from the definitions: the pair
+coalesces in epoch `2` (weight `r₂ - r₁ = 1/3`, both epochs) or epoch `3` (weight
+`r₃ - r₂ = 1/6`), and the mixture of the transforms is `r₃ / (1 - z)`. -/
+example (z : ℂ) (h1 : z ≠ 1) (h3 : z ≠ 3) :
+    ∑ m ∈ Icc 2 3, (pairRatio m - pairRatio (m - 1)) *
+        ∏ k ∈ Icc m 3, ((k.choose 2 : ℕ) : ℂ) / (((k.choose 2 : ℕ) : ℂ) - z) =
+      pairRatio 3 / (1 - z) := by
+  have h1' : (1 : ℂ) - z ≠ 0 := sub_ne_zero.2 h1.symm
+  have h3' : (3 : ℂ) - z ≠ 0 := sub_ne_zero.2 h3.symm
+  rw [show Icc 2 3 = {2, 3} by decide, Finset.sum_pair (by decide),
+    show Icc 3 3 = {3} by decide, show Icc 2 3 = {2, 3} by decide]
+  simp only [Finset.prod_pair (show (2 : ℕ) ≠ 3 by decide), Finset.prod_singleton]
+  norm_num [pairRatio, Nat.choose]
+  field_simp
+  ring
+
+/-- The overlap of the paths of `{0, 1}` and `{0, 2}` in `h01`, from the definitions: the leaf
+branch of gene `0`, length `T₃`. -/
+example (t : Icc 2 3 → ℝ) : pairPathOverlap h01 {0, 1} {0, 2} t = max (t (e3 3)) 0 := by
+  have hi : pairPath h01 {0, 1} ∩ pairPath h01 {0, 2} = {br 3 0} := by decide +kernel
+  rw [pairPathOverlap, hi, Finset.sum_singleton]
+  simp [kingmanBranchLength, Real.coe_toNNReal']
+
+/-- The overlap of the paths of `{0, 2}` and `{1, 2}` in `h01`, from the definitions: the leaf
+branch of gene `2` and both branches of epoch `2`, length `T₃ + 2 T₂`. -/
+example (t : Icc 2 3 → ℝ) :
+    pairPathOverlap h01 {0, 2} {1, 2} t = max (t (e3 3)) 0 + 2 * max (t (e3 2)) 0 := by
+  have hi : pairPath h01 {0, 2} ∩ pairPath h01 {1, 2} = {br 3 2, br 2 0, br 2 1} := by
+    decide +kernel
+  rw [pairPathOverlap, hi, Finset.sum_insert (by decide), Finset.sum_pair (by decide)]
+  simp only [kingmanBranchLength, Real.coe_toNNReal']
+  ring
+
+/-- A pair overlaps its own path in full: from the definitions, `ℓ(path ∩ path) = 2 T₃` for
+`{0, 1}` in `h01`. -/
+example (t : Icc 2 3 → ℝ) :
+    pairPathOverlap h01 {0, 1} {0, 1} t = 2 * max (t (e3 3)) 0 := by
+  have hp : pairPath h01 {0, 1} = {br 3 0, br 3 1} := by decide +kernel
+  rw [pairPathOverlap, Finset.inter_self, hp, Finset.sum_pair (by decide)]
+  simp only [kingmanBranchLength, Real.coe_toNNReal']
+  ring
+
+/-- **Hand computation of `E τ²` for three genes**: `τ₀₁ = T₃ + 1[apart] T₂` with
+`P(apart) = 2/3` independent of the epochs, `E T₃² = 2/9`, `E T₃ = 1/3`, `E T₂ = 1`,
+`E T₂² = 2`, so `E τ² = 2/9 + 2 (2/3)(1/3) + (2/3) 2 = 2`, the `Exp(1)` second moment; it agrees
+with the law `τ ~ Exp(1)` of `hasLaw_pairCoalTime_kingmanGenealogyMeasure`. -/
+example : (2 : ℝ) / 3 ^ 2 + 2 * (2 / 3) * (1 / 3) * 1 + 2 / 3 * (2 / 1 ^ 2) = 2 ∧
+    ∫ g, pairCoalTime g.2 {0, 1} g.1 ^ 2 ∂kingmanGenealogyMeasure 3 = 2 := by
+  refine ⟨by norm_num, ?_⟩
+  have h := (hasLaw_pairCoalTime_kingmanGenealogyMeasure (n := 3) (by decide)
+    (s := {0, 1}) (by decide)).integral_comp (f := fun x : ℝ => x ^ 2) (by fun_prop)
+  rw [integral_sq_expMeasure one_pos] at h
+  simpa using h
+
+/-- Three genes: `τ₀₂ ~ Exp(1)` in the marked model, `Var D₀₂ = θ + θ²`, and the covariance of two
+pairs sharing gene `0` reduces to the genealogy. -/
+example (θ : ℝ≥0) :
+    HasLaw (fun p : ((Icc 2 3 → ℝ) × RankedHistory 3) × (KingmanBranch 3 → ℕ) =>
+      pairCoalTime p.1.2 {0, 2} p.1.1) (expMeasure 1) (kingmanTreeMutationMeasure 3 θ) ∧
+    Var[pairDiff (fun p => p.1.2) Prod.snd {0, 2}; kingmanTreeMutationMeasure 3 θ] =
+      θ + θ ^ 2 ∧
+    cov[pairDiff (fun p => p.1.2) Prod.snd {0, 1}, pairDiff (fun p => p.1.2) Prod.snd {0, 2};
+        kingmanTreeMutationMeasure 3 θ] =
+      θ ^ 2 * cov[fun g => pairCoalTime g.2 {0, 1} g.1, fun g => pairCoalTime g.2 {0, 2} g.1;
+          kingmanGenealogyMeasure 3] +
+        θ / 2 * ∫ g, pairPathOverlap g.2 {0, 1} {0, 2} g.1 ∂kingmanGenealogyMeasure 3 :=
+  ⟨hasLaw_pairCoalTime_kingmanTreeMutationMeasure (by decide) (by decide),
+    variance_pairDiff_kingmanTreeMutationMeasure (by decide) (by decide),
+    covariance_pairDiff_kingmanTreeMutationMeasure (by decide) (by decide) (by decide)⟩
+
+/-- Boundary sample of size `2` with zero mutation rate: `Var D = 0`. -/
+example : Var[pairDiff (fun p => p.1.2) Prod.snd {0, 1}; kingmanTreeMutationMeasure 2 0] = 0 := by
+  simpa using variance_pairDiff_kingmanTreeMutationMeasure (n := 2) (θ := 0) le_rfl (by decide)
+
 end MathlibExtTest.Biology.PopulationGenetics.Coalescent.MutationPairwise

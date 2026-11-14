@@ -10,6 +10,10 @@ module
 
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.Mutation
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.Topology
+public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
+public import Mathlib.MeasureTheory.Integral.Pi
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+public import Mathlib.Probability.Independence.Integration
 
 /-!
 # Pairwise differences under Poisson mutation marking
@@ -51,11 +55,29 @@ labeled history (`RankedHistory`, `Topology.lean`) and discharges those hypothes
   `E[D_s] = θ` for every pair and Tajima's `E π = θ` with no remaining hypotheses
   (`integral_pairDiff_kingmanTreeMutationMeasure`,
   `integral_meanPairDiff_kingmanTreeMutationMeasure`).
+* **The law `τ_s ~ Exp(1)`.** In the same model the coalescence time of every pair is `Exp(1)`
+  (`hasLaw_pairCoalTime_kingmanGenealogyMeasure`), the hypothesis `hτ` of
+  `integral_meanPairDiff`, which `integral_meanPairDiff_kingmanTreeMutationMeasure_of_law` then
+  discharges. The pair is apart during an upward-closed set of epochs `k ≥ M`; conditionally on
+  the topology the characteristic function of `τ_s` is `∏_{k ≥ M} C(k, 2) / (C(k, 2) - i u)`,
+  which telescopes into a sum linear in the indicators of `PairApart`
+  (`prod_ite_eq_sum_of_threshold`). Averaging with `pairSeparateProb` and summing
+  (`sum_pairRatio_prod`) gives `1 / (1 - i u)`, the transform of `Exp(1)`
+  (`charFun_expMeasure`, `hasLaw_sum_ite_of_threshold`).
+* **Second moments.** Given the genealogy, the branch counts are independent Poisson with means
+  `λ_b = (θ/2) ℓ_b`, so `E[D_s D_{s'} | g] = θ² τ_s τ_{s'} + (θ/2) ℓ(path s ∩ path s')`, the
+  second term being the Poisson variance on the branches separating both pairs
+  (`integral_pairDiff_mul_kernel`, `pairPathOverlap`). Hence
+  `E[D_s D_{s'}] = θ² E[τ_s τ_{s'}] + (θ/2) E[ℓ(path s ∩ path s')]` and
+  `Cov(D_s, D_{s'}) = θ² Cov(τ_s, τ_{s'}) + (θ/2) E[ℓ(path s ∩ path s')]`
+  (`integral_pairDiff_mul_kingmanTreeMutationMeasure`,
+  `covariance_pairDiff_kingmanTreeMutationMeasure`), the pair covariances entering Tajima's
+  `Var π`. For a single pair the path overlaps itself in length `2 τ_s`, and `E τ_s² = 2` gives
+  `Var D_s = θ + θ²` (`variance_pairDiff_kingmanTreeMutationMeasure`).
 
-The segregating-site moments are not repeated here (see `Mutation.lean`). The law
-`τ_s ~ Exp(1)` itself (hypothesis `hτ` of `integral_meanPairDiff`) is not derived; only its mean
-is, which is what `E π = θ` needs. The covariances between the pairwise differences of two pairs
-(the input to Tajima's `Var π`) are not treated.
+The segregating-site moments are not repeated here (see `Mutation.lean`). The genealogical
+moments `E[τ_s τ_{s'}]` and `E[ℓ(path s ∩ path s')]` for two distinct pairs (sharing one gene or
+disjoint), and hence the closed form of Tajima's `Var π`, are not evaluated here.
 
 ## References
 
@@ -896,5 +918,566 @@ theorem integral_meanPairDiff_kingmanTreeMutationMeasure {θ : ℝ≥0} (hn : 2 
   field_simp
 
 end Model
+
+/-! ### The law of the coalescence time of a pair -/
+
+section Law
+
+open Complex
+
+variable {n : ℕ}
+
+/-- The characteristic function of the exponential law of rate `r > 0`:
+`E[exp(i u X)] = r / (r - i u)`. -/
+theorem charFun_expMeasure {r : ℝ} (hr : 0 < r) (u : ℝ) :
+    charFun (expMeasure r) u = r / (r - u * I) := by
+  have hm : Measurable (gammaPDF 1 r) := by
+    unfold gammaPDF
+    exact (measurable_gammaPDFReal 1 r).ennreal_ofReal
+  rw [charFun_apply, expMeasure, gammaMeasure,
+    integral_withDensity_eq_integral_toReal_smul hm (ae_of_all _ fun _ => by simp [gammaPDF])]
+  have h : ∀ x : ℝ, (gammaPDF 1 r x).toReal • cexp ((inner ℝ x u : ℝ) * I) =
+      Set.indicator (Set.Ici 0) (fun x : ℝ => (r : ℂ) * cexp ((-r + u * I) * x)) x := by
+    intro x
+    by_cases hx : 0 ≤ x
+    · rw [gammaPDF_of_nonneg hx, Set.indicator_of_mem (Set.mem_Ici.2 hx),
+        ENNReal.toReal_ofReal (by positivity)]
+      simp only [Real.rpow_zero, mul_one, Real.Gamma_one, div_one, Real.rpow_one, sub_self]
+      rw [Complex.real_smul, ofReal_mul, ofReal_exp, mul_assoc, ← Complex.exp_add]
+      congr 2
+      simp [RCLike.inner_apply]
+      ring
+    · rw [gammaPDF_of_neg (not_le.1 hx), Set.indicator_of_notMem (by simpa using hx)]
+      simp
+  simp_rw [h]
+  rw [integral_indicator measurableSet_Ici, integral_Ici_eq_integral_Ioi, integral_const_mul,
+    integral_exp_mul_complex_Ioi (by simp [hr]) 0]
+  have h1 : (r : ℂ) - u * I ≠ 0 := by
+    intro h0
+    have := congrArg Complex.re h0
+    simp at this
+    linarith
+  have : -(r : ℂ) + u * I ≠ 0 := by
+    intro h0
+    apply h1
+    linear_combination -h0
+  simp
+  field_simp
+  ring
+
+/-- The ratio `(m - 1) / (m + 1)`; the probability that a pair is still apart with `m` lineages
+is `pairSeparateProb n m = ((n + 1) / (n - 1)) * pairRatio m`. -/
+noncomputable def pairRatio (m : ℕ) : ℂ := ((m : ℂ) - 1) / ((m : ℂ) + 1)
+
+/-- `C(m, 2) (r_m - r_{m-1}) = r_m`: given apart with `m` lineages, the pair coalesces at the next
+event with probability `1 / C(m, 2)`. -/
+private theorem choose_mul_pairRatio_sub {m : ℕ} (hm : 2 ≤ m) :
+    ((m.choose 2 : ℕ) : ℂ) * (pairRatio m - pairRatio (m - 1)) = pairRatio m := by
+  obtain ⟨j, rfl⟩ : ∃ j, m = j + 1 := ⟨m - 1, by omega⟩
+  rw [Nat.cast_choose_two, pairRatio, pairRatio, Nat.add_sub_cancel]
+  push_cast
+  have h1 : (j : ℂ) + 1 + 1 ≠ 0 := by norm_cast
+  have h2 : (j : ℂ) + 1 ≠ 0 := by norm_cast
+  field_simp
+  ring
+
+/-- **The mixture identity behind `τ ~ Exp(1)`**: mixing the hypoexponential sums
+`T_m + ⋯ + T_N` (`T_k ~ Exp(C(k, 2))`) over the epoch `m` in which the pair coalesces, with
+weights `r_m - r_{m-1}`, gives `r_N` times the `Exp(1)` transform `1 / (1 - z)`. -/
+theorem sum_pairRatio_prod {z : ℂ} (hz : ∀ k, 2 ≤ k → z ≠ ((k.choose 2 : ℕ) : ℂ)) {N : ℕ}
+    (hN : 2 ≤ N) :
+    ∑ m ∈ Icc 2 N, (pairRatio m - pairRatio (m - 1)) *
+        ∏ k ∈ Icc m N, ((k.choose 2 : ℕ) : ℂ) / (((k.choose 2 : ℕ) : ℂ) - z) =
+      pairRatio N / (1 - z) := by
+  have h1 : (1 : ℂ) - z ≠ 0 := sub_ne_zero.2 (by simpa using (hz 2 le_rfl).symm)
+  induction N, hN using Nat.le_induction with
+  | base =>
+    simp [pairRatio]
+    norm_num
+    ring
+  | succ N hN ih =>
+    have hc : ((N + 1).choose 2 : ℕ) - z ≠ (0 : ℂ) := sub_ne_zero.2 (hz _ (by omega)).symm
+    rw [sum_Icc_succ_top (by omega)]
+    have : ∀ m ∈ Icc 2 N, (pairRatio m - pairRatio (m - 1)) *
+        ∏ k ∈ Icc m (N + 1), ((k.choose 2 : ℕ) : ℂ) / (((k.choose 2 : ℕ) : ℂ) - z) =
+        (pairRatio m - pairRatio (m - 1)) *
+          (∏ k ∈ Icc m N, ((k.choose 2 : ℕ) : ℂ) / (((k.choose 2 : ℕ) : ℂ) - z)) *
+          (((N + 1).choose 2 : ℕ) / ((((N + 1).choose 2 : ℕ) : ℂ) - z)) := fun m hm => by
+      rw [prod_Icc_succ_top (by simp at hm; omega), mul_assoc]
+    rw [sum_congr rfl this, ← sum_mul, ih, Nat.add_sub_cancel, Icc_self, prod_singleton]
+    have key := choose_mul_pairRatio_sub (m := N + 1) (by omega)
+    rw [Nat.add_sub_cancel] at key
+    field_simp
+    linear_combination (-z) * key
+
+/-- A predicate on `1, …, n` that is false at `1`, true at `n` and upward closed is a threshold
+`M ≤ k` with `2 ≤ M ≤ n`. -/
+private theorem exists_threshold (a : ℕ → Prop) (hn2 : 2 ≤ n) (h1 : ¬a 1)
+    (hn : a n) (hmono : ∀ k, 1 ≤ k → k < n → a k → a (k + 1)) :
+    ∃ M, 2 ≤ M ∧ M ≤ n ∧ ∀ k, 1 ≤ k → k ≤ n → (a k ↔ M ≤ k) := by
+  have hex : ∃ k, 1 ≤ k ∧ a k := ⟨n, by omega, hn⟩
+  classical
+  refine ⟨Nat.find hex, ?_, Nat.find_min' hex ⟨by omega, hn⟩, fun k hk1 hkn => ⟨fun hk =>
+    Nat.find_min' hex ⟨hk1, hk⟩, fun hk => ?_⟩⟩
+  · obtain ⟨hM1, hMa⟩ := Nat.find_spec hex
+    by_contra hlt
+    have : Nat.find hex = 1 := by omega
+    exact h1 (this ▸ hMa)
+  · obtain ⟨-, hMa⟩ := Nat.find_spec hex
+    induction k, hk using Nat.le_induction with
+    | base => exact hMa
+    | succ k hk ih =>
+      have := (Nat.find_spec hex).1
+      exact hmono k (by omega) (by omega) (ih (by omega) (by omega))
+
+/-- **Telescoping over a threshold**: if `a k ↔ M ≤ k` on `1, …, n`, the product of `φ k` over
+the `k ∈ [2, n]` with `a k` is `∑_m (1[a m] - 1[a (m - 1)]) ∏_{k=m}^n φ k`, whose only nonzero
+term is `m = M`. The right side is linear in the indicators. -/
+private theorem prod_ite_eq_sum_of_threshold {M : ℕ} (hM : 2 ≤ M) (hMn : M ≤ n) (a : ℕ → Prop)
+    [DecidablePred a] (ha : ∀ k, 1 ≤ k → k ≤ n → (a k ↔ M ≤ k)) (φ : ℕ → ℂ) :
+    ∏ k ∈ Icc 2 n, (if a k then φ k else 1) =
+      ∑ m ∈ Icc 2 n, ((if a m then (1 : ℂ) else 0) - (if a (m - 1) then 1 else 0)) *
+        ∏ k ∈ Icc m n, φ k := by
+  rw [Finset.sum_eq_single M]
+  · rw [ite_eq_left ((ha M (by omega) hMn).2 le_rfl), ite_eq_right (fun h => by
+      have := (ha (M - 1) (by omega) (by omega)).1 h; omega), sub_zero, one_mul,
+      prod_ite, prod_const_one, mul_one]
+    congr 1
+    ext k
+    simp only [mem_filter, mem_Icc]
+    constructor
+    · rintro ⟨⟨h2, hkn⟩, hk⟩
+      exact ⟨(ha k (by omega) hkn).1 hk, hkn⟩
+    · rintro ⟨hMk, hkn⟩
+      exact ⟨⟨by omega, hkn⟩, (ha k (by omega) hkn).2 hMk⟩
+  · intro m hm hmM
+    simp only [mem_Icc] at hm
+    have e1 := ha m (by omega) hm.2
+    have e2 := ha (m - 1) (by omega) (by omega)
+    rcases lt_or_gt_of_ne hmM with h | h
+    · rw [ite_eq_right (fun x => by have := e1.1 x; omega),
+        ite_eq_right (fun x => by have := e2.1 x; omega)]
+      simp
+    · rw [ite_eq_left (e1.2 (by omega)), ite_eq_left (e2.2 (by omega))]
+      simp
+  · intro h
+    exact absurd (mem_Icc.2 ⟨hM, hMn⟩) h
+
+/-- **A sum of exponential epochs stopped at a threshold epoch is `Exp(1)`.** Let the epochs be
+independent `T_k ~ Exp(C(k, 2))` (`piMeasure n`) and, independently, let `h ~ ν` select the epochs
+`k` with `A h k`, an upward-closed set containing `n` but not `1`. If
+`P(A · k) = (k - 1)(n + 1) / ((n - 1)(k + 1))` for `1 ≤ k ≤ n`, then `∑_{k : A h k} T_k` has law
+`Exp(1)`. The proof compares characteristic functions: conditionally on `h` the transform is
+`∏_{k : A h k} C(k, 2) / (C(k, 2) - i u)`, which `prod_ite_eq_sum_of_threshold` makes linear in
+the indicators, and `sum_pairRatio_prod` sums to `1 / (1 - i u)`. -/
+theorem hasLaw_sum_ite_of_threshold {H : Type*} [Finite H] [MeasurableSpace H]
+    [DiscreteMeasurableSpace H] (ν : Measure H) [IsProbabilityMeasure ν] (A : H → ℕ → Prop)
+    [∀ h k, Decidable (A h k)] (hn : 2 ≤ n) (h1 : ∀ h, ¬A h 1) (hN : ∀ h, A h n)
+    (hmono : ∀ h k, 1 ≤ k → k < n → A h k → A h (k + 1))
+    (hp : ∀ k, 1 ≤ k → k ≤ n → ∫ h, (if A h k then (1 : ℝ) else 0) ∂ν =
+      ((k : ℝ) - 1) * ((n : ℝ) + 1) / (((n : ℝ) - 1) * ((k : ℝ) + 1))) :
+    HasLaw (fun g : (Icc 2 n → ℝ) × H => ∑ k : Icc 2 n, if A g.2 k then g.1 k else 0)
+      (expMeasure 1) ((piMeasure n).prod ν) := by
+  have hmeas : Measurable fun g : (Icc 2 n → ℝ) × H =>
+      ∑ k : Icc 2 n, if A g.2 k then g.1 k else 0 :=
+    Finset.measurable_sum _ fun k _ => Measurable.ite
+      (measurable_snd (MeasurableSet.of_discrete : MeasurableSet {h : H | A h k}))
+      ((measurable_pi_apply k).comp measurable_fst) measurable_const
+  have := isProbabilityMeasure_expMeasure (zero_lt_one' ℝ)
+  refine ⟨hmeas.aemeasurable, Measure.ext_of_charFun (funext fun u => ?_)⟩
+  rw [charFun_apply, integral_map hmeas.aemeasurable (by fun_prop), charFun_expMeasure one_pos]
+  set z : ℂ := u * I with hz_def
+  have hint : Integrable (fun g : (Icc 2 n → ℝ) × H =>
+      cexp (↑(inner ℝ (∑ k : Icc 2 n, if A g.2 k then g.1 k else 0) u) * I))
+      ((piMeasure n).prod ν) :=
+    Integrable.of_bound (((by fun_prop : Continuous fun x : ℝ =>
+      cexp (↑(inner ℝ x u) * I)).measurable.comp hmeas).aestronglyMeasurable) 1
+      (ae_of_all _ fun g => by
+        rw [Complex.norm_exp_ofReal_mul_I])
+  rw [integral_prod_symm _ hint]
+  set φ : ℕ → ℂ := fun k => ((k.choose 2 : ℕ) : ℂ) / (((k.choose 2 : ℕ) : ℂ) - z) with hφ
+  have hinner : ∀ h, ∫ t, cexp (↑(inner ℝ (∑ k : Icc 2 n, if A h k then t k else 0) u) * I)
+      ∂piMeasure n = ∏ k ∈ Icc 2 n, (if A h k then φ k else 1) := by
+    intro h
+    have hprod : ∀ t : Icc 2 n → ℝ,
+        cexp (↑(inner ℝ (∑ k : Icc 2 n, if A h k then t k else 0) u) * I) =
+        ∏ k : Icc 2 n, (fun (k : Icc 2 n) (x : ℝ) =>
+          if A h k then cexp (↑(inner ℝ x u) * I) else 1) k (t k) := by
+      intro t
+      simp only [RCLike.inner_apply, conj_trivial]
+      rw [Finset.mul_sum, ofReal_sum, Finset.sum_mul, Complex.exp_sum]
+      refine Finset.prod_congr rfl fun k _ => ?_
+      split_ifs <;> simp
+    refine (integral_congr_ae (ae_of_all _ hprod)).trans ?_
+    rw [piMeasure, integral_fintype_prod_eq_prod (fun (k : Icc 2 n) (x : ℝ) =>
+      if A h k then cexp (↑(inner ℝ x u) * I) else 1), ← Finset.prod_coe_sort (Icc 2 n)]
+    refine Finset.prod_congr rfl fun k _ => ?_
+    split_ifs
+    · rw [← charFun_apply, charFun_expMeasure (KingmanTimes.choose_two_pos k.2)]
+      simp [φ, z]
+    · simp
+  simp_rw [hinner]
+  have htel : ∀ h, ∏ k ∈ Icc 2 n, (if A h k then φ k else 1) =
+      ∑ m ∈ Icc 2 n, ((if A h m then (1 : ℂ) else 0) - (if A h (m - 1) then 1 else 0)) *
+        ∏ k ∈ Icc m n, φ k := fun h => by
+    obtain ⟨M, hM2, hMn, hM⟩ := exists_threshold (A h) hn (h1 h) (hN h) (hmono h)
+    exact prod_ite_eq_sum_of_threshold hM2 hMn (A h) hM φ
+  simp_rw [htel]
+  rw [integral_finsetSum _ fun m _ => Integrable.of_finite]
+  simp_rw [integral_mul_const]
+  set κ : ℂ := ((n : ℂ) + 1) / ((n : ℂ) - 1) with hκ
+  have hind : ∀ k, 1 ≤ k → k ≤ n →
+      ∫ h, (if A h k then (1 : ℂ) else 0) ∂ν = κ * pairRatio k := by
+    intro k hk1 hkn
+    have e : (fun h => if A h k then (1 : ℂ) else 0) =
+        fun h => ((if A h k then (1 : ℝ) else 0 : ℝ) : ℂ) := by
+      funext h
+      split_ifs <;> simp
+    rw [e, integral_complex_ofReal, hp k hk1 hkn, pairRatio, hκ]
+    push_cast
+    rw [mul_comm ((k : ℂ) - 1), mul_div_mul_comm]
+  rw [Finset.sum_congr rfl fun m hm => by
+    rw [integral_sub Integrable.of_finite Integrable.of_finite,
+      hind m (by simp at hm; omega) (by simp at hm; omega),
+      hind (m - 1) (by simp at hm; omega) (by simp at hm; omega), ← mul_sub, mul_assoc]]
+  rw [← Finset.mul_sum, sum_pairRatio_prod (fun k hk heq => ?_) hn]
+  · have hn1 : (n : ℂ) - 1 ≠ 0 := by
+      intro h0
+      have := congrArg Complex.re h0
+      simp at this
+      have : (2 : ℝ) ≤ n := by exact_mod_cast hn
+      linarith
+    have hn2 : (n : ℂ) + 1 ≠ 0 := by norm_cast
+    rw [hκ, pairRatio, hz_def]
+    field_simp
+    simp
+  · have := congrArg Complex.re heq
+    simp [hz_def] at this
+    exact (Nat.choose_pos hk).ne' (by exact_mod_cast this.symm)
+
+/-- After `n - 1` events all genes are in one lineage, so no pair is apart. -/
+theorem not_pairApart_sub_one (h : RankedHistory n) (hn : 1 ≤ n) (a b : Fin n) :
+    ¬PairApart h {a, b} (n - 1) := by
+  obtain ⟨hlen, pos, hP⟩ := blocksAfter_spec h (t := n - 1) le_rfl
+  rw [pairApart_iff hP, not_not]
+  have ha := (hP a).1
+  have hb := (hP b).1
+  rw [hlen] at ha hb
+  omega
+
+/-- **The coalescence time of a pair is `Exp(1)`** (in units of `2N` generations) in the Kingman
+genealogy with random-joining topology: the hypothesis `hτ` of `integral_meanPairDiff`. While
+the pair is apart with `k` lineages, the next event merges it with probability `1 / C(k, 2)` and
+comes at rate `C(k, 2)`, so the pair coalesces at rate one. -/
+theorem hasLaw_pairCoalTime_kingmanGenealogyMeasure (hn : 2 ≤ n) {s : Finset (Fin n)}
+    (hs : s ∈ samplePairs n) :
+    HasLaw (fun g : (Icc 2 n → ℝ) × RankedHistory n => pairCoalTime g.2 s g.1) (expMeasure 1)
+      (kingmanGenealogyMeasure n) := by
+  have hs' := hs
+  obtain ⟨a, b, hab, rfl⟩ := Finset.card_eq_two.1 (Finset.mem_powersetCard.1 hs).2
+  refine hasLaw_sum_ite_of_threshold (randomJoining n) (fun h k => PairApart h {a, b} (n - k)) hn
+    (fun h => not_pairApart_sub_one h (by omega) a b)
+    (fun h => by simpa using pairApart_zero h hab)
+    (fun h k hk1 hkn H => ?_) (fun k hk1 hkn => ?_)
+  · have e : n - k = n - (k + 1) + 1 := by omega
+    rw [e] at H
+    exact H.of_succ
+  · rcases Nat.eq_or_lt_of_le hk1 with rfl | hk
+    · have : ∀ h : RankedHistory n, (if PairApart h {a, b} (n - 1) then (1 : ℝ) else 0) = 0 :=
+        fun h => ite_eq_right (not_pairApart_sub_one h (by omega) a b)
+      simp only [Nat.cast_one, sub_self, zero_mul, zero_div]
+      simp_rw [this, integral_zero]
+    · rw [integral_pairApart_randomJoining hs' (Finset.mem_Icc.2 ⟨hk, hkn⟩), pairSeparateProb]
+
+/-- In the marked Kingman model the coalescence time of every pair is `Exp(1)`. -/
+theorem hasLaw_pairCoalTime_kingmanTreeMutationMeasure {θ : ℝ≥0} (hn : 2 ≤ n)
+    {s : Finset (Fin n)} (hs : s ∈ samplePairs n) :
+    HasLaw (fun p : ((Icc 2 n → ℝ) × RankedHistory n) × (KingmanBranch n → ℕ) =>
+      pairCoalTime p.1.2 s p.1.1) (expMeasure 1) (kingmanTreeMutationMeasure n θ) :=
+  (hasLaw_pairCoalTime_kingmanGenealogyMeasure hn hs).comp
+    (measurePreserving_genealogy n θ).hasLaw
+
+/-- **Tajima's `E π = θ` through `integral_meanPairDiff_of_mutation`**: in the marked Kingman
+model every hypothesis of the general theorem holds, including the law `τ_s ~ Exp(1)`. -/
+theorem integral_meanPairDiff_kingmanTreeMutationMeasure_of_law {θ : ℝ≥0} (hn : 2 ≤ n) :
+    ∫ p, meanPairDiff n (pairDiff (fun p => p.1.2) Prod.snd) p ∂kingmanTreeMutationMeasure n θ =
+      θ := by
+  refine (KingmanTimes.ofTreeMutationModel n θ).integral_meanPairDiff_of_mutation
+    (measurable_genealogy n θ) (hasCondDistrib_kingmanTreeMutationMeasure n θ) hn
+    fun s hs => ?_
+  rw [KingmanTimes.epochs_ofTreeMutationModel]
+  exact hasLaw_pairCoalTime_kingmanTreeMutationMeasure hn hs
+
+end Law
+
+/-! ### Second moments of pairwise differences -/
+
+section SecondMoment
+
+variable {n : ℕ}
+
+/-- The total length of the branches separating **both** pairs `s` and `s'`: mutations there are
+counted in both `D_s` and `D_{s'}`. -/
+def pairPathOverlap (h : RankedHistory n) (s s' : Finset (Fin n)) (t : Icc 2 n → ℝ) : ℝ :=
+  ∑ b ∈ pairPath h s ∩ pairPath h s', (kingmanBranchLength n t b : ℝ)
+
+/-- Product moments of the coordinates of a product of laws on `ℕ` with finite second moments:
+`E[N_b N_b'] = E[N_b²]` if `b = b'` and `E[N_b] E[N_b']` otherwise. -/
+theorem integrable_integral_mul_pi {ι : Type*} [Fintype ι] [DecidableEq ι] (ν : ι → Measure ℕ)
+    [∀ i, IsProbabilityMeasure (ν i)] (h1 : ∀ i, Integrable (fun n : ℕ => (n : ℝ)) (ν i))
+    (h2 : ∀ i, Integrable (fun n : ℕ => (n : ℝ) ^ 2) (ν i)) (b b' : ι) :
+    Integrable (fun N : ι → ℕ => (N b : ℝ) * N b') (Measure.pi ν) ∧
+      ∫ N, (N b : ℝ) * N b' ∂Measure.pi ν = if b = b' then ∫ n, (n : ℝ) ^ 2 ∂ν b
+        else (∫ n, (n : ℝ) ∂ν b) * ∫ n, (n : ℝ) ∂ν b' := by
+  have hev : ∀ i, MeasurePreserving (fun N : ι → ℕ => N i) (Measure.pi ν) (ν i) :=
+    fun i => measurePreserving_eval ν i
+  have heval : ∀ i (f : ℕ → ℝ), ∫ N, f (N i) ∂Measure.pi ν = ∫ n, f n ∂ν i := fun i f => by
+    rw [← (hev i).map_eq, integral_map (hev i).measurable.aemeasurable
+      (measurable_of_countable f).aestronglyMeasurable]
+  by_cases hbb : b = b'
+  · subst hbb
+    simp only [↓reduceIte, ← sq]
+    exact ⟨(hev b).integrable_comp_of_integrable (h2 b), heval b fun n => (n : ℝ) ^ 2⟩
+  · simp only [hbb, ↓reduceIte]
+    have hind : IndepFun (fun N : ι → ℕ => (N b : ℝ)) (fun N => (N b' : ℝ)) (Measure.pi ν) :=
+      (iIndepFun_pi (μ := ν) (X := fun _ (n : ℕ) => (n : ℝ)) (fun _ => by fun_prop)).indepFun hbb
+    have hi : ∀ i, Integrable (fun N : ι → ℕ => (N i : ℝ)) (Measure.pi ν) :=
+      fun i => (hev i).integrable_comp_of_integrable (h1 i)
+    refine ⟨IndepFun.integrable_mul hind (hi b) (hi b'), ?_⟩
+    have := IndepFun.integral_mul_eq_mul_integral hind (hi b).aestronglyMeasurable
+      (hi b').aestronglyMeasurable
+    rw [Pi.mul_def] at this
+    rw [this, heval b fun n => (n : ℝ), heval b' fun n => (n : ℝ)]
+
+/-- The mutation kernel at a genealogy `g`: independent `Po((θ/2) ℓ_b)` counts. -/
+theorem kingmanTreeMutationKernel_apply (θ : ℝ≥0) (g : (Icc 2 n → ℝ) × RankedHistory n) :
+    kingmanTreeMutationKernel n θ g =
+      Measure.pi fun b => poissonMeasure (θ / 2 * kingmanBranchLength n g.1 b) := by
+  rw [kingmanTreeMutationKernel, Kernel.comap_apply, kingmanMutationKernel, branchMutationKernel,
+    Kernel.comap_apply, piPoissonKernel_apply]
+
+/-- **Conditional product moment of two pairwise differences**: given the genealogy, the counts on
+the branches are independent Poisson with means `λ_b = (θ/2) ℓ_b`, so
+`E[D_s D_{s'} | g] = (∑_{b ∈ path s} λ_b)(∑_{b ∈ path s'} λ_b) + ∑_{b ∈ path s ∩ path s'} λ_b`:
+the Poisson variance of a shared branch adds to the product of the means. -/
+theorem integral_pairDiff_mul_kernel (θ : ℝ≥0) (g : (Icc 2 n → ℝ) × RankedHistory n)
+    (s s' : Finset (Fin n)) :
+    ∫ N, ((∑ b ∈ pairPath g.2 s, N b : ℕ) : ℝ) * ((∑ b ∈ pairPath g.2 s', N b : ℕ) : ℝ)
+        ∂kingmanTreeMutationKernel n θ g =
+      (∑ b ∈ pairPath g.2 s, ((θ / 2 * kingmanBranchLength n g.1 b : ℝ≥0) : ℝ)) *
+          (∑ b ∈ pairPath g.2 s', ((θ / 2 * kingmanBranchLength n g.1 b : ℝ≥0) : ℝ)) +
+        ∑ b ∈ pairPath g.2 s ∩ pairPath g.2 s',
+          ((θ / 2 * kingmanBranchLength n g.1 b : ℝ≥0) : ℝ) := by
+  classical
+  set lam : KingmanBranch n → ℝ := fun b => ((θ / 2 * kingmanBranchLength n g.1 b : ℝ≥0) : ℝ)
+    with hlam
+  have hm := integrable_integral_mul_pi
+    (fun b => poissonMeasure (θ / 2 * kingmanBranchLength n g.1 b))
+    (fun b => integrable_natCast_poissonMeasure _) (fun b => integrable_natCast_sq_poissonMeasure _)
+  rw [kingmanTreeMutationKernel_apply]
+  simp_rw [Nat.cast_sum, Finset.sum_mul_sum]
+  rw [integral_finsetSum _ fun b _ => integrable_finsetSum _ fun b' _ => (hm b b').1,
+    Finset.sum_congr rfl fun b _ => integral_finsetSum _ fun b' _ => (hm b b').1]
+  rw [Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun b' _ => (hm b b').2]
+  simp only [integral_natCast_sq_poissonMeasure, integral_natCast_poissonMeasure]
+  have hsplit : ∀ b b', (if b = b' then lam b + lam b ^ 2 else lam b * lam b') =
+      lam b * lam b' + if b = b' then lam b else 0 := by
+    intro b b'
+    split_ifs with h
+    · subst h
+      ring
+    · ring
+  simp_rw [hlam] at hsplit
+  simp_rw [hsplit, Finset.sum_add_distrib, ← Finset.sum_mul_sum, Finset.sum_ite_eq,
+    Finset.sum_ite_mem]
+  rfl
+
+/-- Each branch count is square integrable in the marked model. -/
+private theorem memLp_branch_kingmanTreeMutationMeasure (θ : ℝ≥0) (b : KingmanBranch n) :
+    MemLp (fun p : ((Icc 2 n → ℝ) × RankedHistory n) × (KingmanBranch n → ℕ) => (p.2 b : ℝ)) 2
+      (kingmanTreeMutationMeasure n θ) := by
+  refine memLp_two_natCast_of_hasCondDistrib_poisson
+    (hasCondDistrib_branch_of_treeMutation (hasCondDistrib_kingmanTreeMutationMeasure n θ) b) ?_
+  have := ((KingmanTimes.ofTreeMutationModel n θ).memLp_T b.1.2).pos_part.const_mul ((θ : ℝ) / 2)
+  simpa [kingmanBranchLength, KingmanTimes.epochs, Real.coe_toNNReal'] using this
+
+/-- The pairwise difference as a sum over all branches, pointwise. -/
+private theorem pairDiff_apply_eq {Ω : Type*} (H : Ω → RankedHistory n)
+    (N : Ω → KingmanBranch n → ℕ) (s : Finset (Fin n)) (ω : Ω) :
+    pairDiff H N s ω = ∑ b, (if b ∈ pairPath (H ω) s then (1 : ℝ) else 0) * (N ω b : ℝ) := by
+  simp only [pairDiff, Nat.cast_sum, ite_mul, one_mul, zero_mul]
+  rw [Finset.sum_ite_mem, Finset.univ_inter]
+
+/-- **The product of two pairwise differences is integrable** in the marked model. -/
+theorem integrable_pairDiff_mul_kingmanTreeMutationMeasure (θ : ℝ≥0) (s s' : Finset (Fin n)) :
+    Integrable (fun p => pairDiff (fun p => p.1.2) Prod.snd s p *
+      pairDiff (fun p => p.1.2) Prod.snd s' p) (kingmanTreeMutationMeasure n θ) := by
+  have hterm : ∀ b b' : KingmanBranch n, Integrable
+      (fun p : ((Icc 2 n → ℝ) × RankedHistory n) × (KingmanBranch n → ℕ) =>
+        ((if b ∈ pairPath p.1.2 s then (1 : ℝ) else 0) *
+          (if b' ∈ pairPath p.1.2 s' then (1 : ℝ) else 0)) * ((p.2 b : ℝ) * (p.2 b' : ℝ)))
+      (kingmanTreeMutationMeasure n θ) := fun b b' => by
+    refine ((memLp_branch_kingmanTreeMutationMeasure θ b).integrable_mul
+      (memLp_branch_kingmanTreeMutationMeasure θ b')).bdd_mul (c := 1) ?_
+      (ae_of_all _ fun p => ?_)
+    · exact ((Measurable.of_discrete (f := fun h : RankedHistory n =>
+        (if b ∈ pairPath h s then (1 : ℝ) else 0) *
+          (if b' ∈ pairPath h s' then (1 : ℝ) else 0))).comp
+            (measurable_snd.comp measurable_fst)).aestronglyMeasurable
+    · split_ifs <;> simp
+  have heq : (fun p => pairDiff (fun p => p.1.2) Prod.snd s p *
+      pairDiff (fun p => p.1.2) Prod.snd s' p) =
+      fun p : ((Icc 2 n → ℝ) × RankedHistory n) × (KingmanBranch n → ℕ) => ∑ b, ∑ b',
+        ((if b ∈ pairPath p.1.2 s then (1 : ℝ) else 0) *
+          (if b' ∈ pairPath p.1.2 s' then (1 : ℝ) else 0)) * ((p.2 b : ℝ) * (p.2 b' : ℝ)) := by
+    funext p
+    rw [pairDiff_apply_eq, pairDiff_apply_eq, Finset.sum_mul_sum]
+    refine Finset.sum_congr rfl fun b _ => Finset.sum_congr rfl fun b' _ => ?_
+    ring
+  rw [heq]
+  exact integrable_finsetSum _ fun b _ => integrable_finsetSum _ fun b' _ => hterm b b'
+
+/-- The epoch lengths of the genealogy are a.s. nonnegative. -/
+private theorem ae_nonneg_kingmanGenealogyMeasure :
+    ∀ᵐ g ∂kingmanGenealogyMeasure n, ∀ k : Icc 2 n, 0 ≤ g.1 k := by
+  have hpi : ∀ᵐ t ∂piMeasure n, ∀ k : Icc 2 n, 0 ≤ t k := by
+    filter_upwards [(KingmanTimes.ofPi n).ae_nonneg_epochs] with t ht k
+    have := ht k
+    simpa [KingmanTimes.epochs, KingmanTimes.ofPi, (Finset.mem_Icc.1 k.2).1,
+      (Finset.mem_Icc.1 k.2).2] using this
+  exact (measurePreserving_fst (μ := piMeasure n) (ν := randomJoining n)).quasiMeasurePreserving.ae
+    hpi
+
+/-- For nonnegative epoch lengths the path between the two genes of `s` has length `2 τ_s`. -/
+private theorem sum_pairPath_eq_two_mul (h : RankedHistory n) {t : Icc 2 n → ℝ}
+    (ht : ∀ k, 0 ≤ t k) {s : Finset (Fin n)} (hs : s ∈ samplePairs n) :
+    ∑ b ∈ pairPath h s, (kingmanBranchLength n t b : ℝ) = 2 * pairCoalTime h s t := by
+  have hpath := congrArg (fun x : ℝ≥0 => (x : ℝ)) (sum_pairPath_branchLength h hs t)
+  simp only [NNReal.coe_sum, NNReal.coe_mul, NNReal.coe_ofNat] at hpath
+  rw [hpath, pairCoalTime]
+  congr 1
+  refine Finset.sum_congr rfl fun k _ => ?_
+  split_ifs <;> simp [Real.coe_toNNReal _ (ht k)]
+
+/-- The coalescence time of a pair is square integrable. -/
+private theorem memLp_pairCoalTime (hn : 2 ≤ n) {s : Finset (Fin n)} (hs : s ∈ samplePairs n) :
+    MemLp (fun g : (Icc 2 n → ℝ) × RankedHistory n => pairCoalTime g.2 s g.1) 2
+      (kingmanGenealogyMeasure n) := by
+  have := isProbabilityMeasure_expMeasure (zero_lt_one' ℝ)
+  refine (hasLaw_pairCoalTime_kingmanGenealogyMeasure hn hs).memLp ?_
+  exact (memLp_two_iff_integrable_sq aestronglyMeasurable_id).2
+    (by simpa using integrable_pow_expMeasure one_pos 2)
+
+/-- The overlap length is integrable. -/
+private theorem integrable_pairPathOverlap (s s' : Finset (Fin n)) :
+    Integrable (fun g : (Icc 2 n → ℝ) × RankedHistory n => pairPathOverlap g.2 s s' g.1)
+      (kingmanGenealogyMeasure n) := by
+  have heq : (fun g : (Icc 2 n → ℝ) × RankedHistory n => pairPathOverlap g.2 s s' g.1) =
+      fun g => ∑ b, (if b ∈ pairPath g.2 s ∩ pairPath g.2 s' then (1 : ℝ) else 0) *
+        max (g.1 b.1) 0 := by
+    funext g
+    simp only [pairPathOverlap, kingmanBranchLength, Real.coe_toNNReal', ite_mul, one_mul,
+      zero_mul]
+    rw [Finset.sum_ite_mem, Finset.univ_inter]
+  rw [heq]
+  refine integrable_finsetSum _ fun b _ => ?_
+  have hT : Integrable (fun g : (Icc 2 n → ℝ) × RankedHistory n => max (g.1 b.1) 0)
+      (kingmanGenealogyMeasure n) := by
+    have hTi : Integrable (fun t : Icc 2 n → ℝ => t b.1) (piMeasure n) := by
+      have := (KingmanTimes.ofPi n).integrable_T b.1.2
+      simpa [KingmanTimes.ofPi, Finset.mem_Icc.1 b.1.2] using this
+    exact (measurePreserving_fst (μ := piMeasure n)
+      (ν := randomJoining n)).integrable_comp_of_integrable hTi.pos_part
+  refine hT.bdd_mul (c := 1) ?_ (ae_of_all _ fun g => ?_)
+  · exact ((Measurable.of_discrete (f := fun h : RankedHistory n =>
+      if b ∈ pairPath h s ∩ pairPath h s' then (1 : ℝ) else 0)).comp
+        measurable_snd).aestronglyMeasurable
+  · split_ifs <;> simp
+
+/-- **Product moment of two pairwise differences** in the marked Kingman model:
+`E[D_s D_{s'}] = θ² E[τ_s τ_{s'}] + (θ/2) E[ℓ(path s ∩ path s')]`. The first term is the
+product of the conditional means `θ τ_s`, `θ τ_{s'}`; the second is the Poisson variance of the
+mutations on the branches separating both pairs. This reduces Tajima's `Var π` to moments of the
+genealogy. -/
+theorem integral_pairDiff_mul_kingmanTreeMutationMeasure {θ : ℝ≥0} (hn : 2 ≤ n)
+    {s s' : Finset (Fin n)} (hs : s ∈ samplePairs n) (hs' : s' ∈ samplePairs n) :
+    ∫ p, pairDiff (fun p => p.1.2) Prod.snd s p * pairDiff (fun p => p.1.2) Prod.snd s' p
+        ∂kingmanTreeMutationMeasure n θ =
+      (θ : ℝ) ^ 2 * ∫ g, pairCoalTime g.2 s g.1 * pairCoalTime g.2 s' g.1
+          ∂kingmanGenealogyMeasure n +
+        (θ : ℝ) / 2 * ∫ g, pairPathOverlap g.2 s s' g.1 ∂kingmanGenealogyMeasure n := by
+  have hint := integrable_pairDiff_mul_kingmanTreeMutationMeasure θ s s'
+  rw [kingmanTreeMutationMeasure] at hint ⊢
+  rw [Measure.integral_compProd hint]
+  have hi1 := ((memLp_pairCoalTime hn hs).integrable_mul (memLp_pairCoalTime hn hs')).const_mul
+    ((θ : ℝ) ^ 2)
+  have hi2 := (integrable_pairPathOverlap (n := n) s s').const_mul ((θ : ℝ) / 2)
+  simp only [Pi.mul_apply] at hi1
+  rw [← integral_const_mul, ← integral_const_mul, ← integral_add hi1 hi2]
+  refine integral_congr_ae ?_
+  filter_upwards [ae_nonneg_kingmanGenealogyMeasure] with g hg
+  simp only [pairDiff]
+  rw [integral_pairDiff_mul_kernel]
+  have hsum : ∀ {s : Finset (Fin n)}, s ∈ samplePairs n →
+      ∑ b ∈ pairPath g.2 s, ((θ / 2 * kingmanBranchLength n g.1 b : ℝ≥0) : ℝ) =
+        (θ : ℝ) * pairCoalTime g.2 s g.1 := fun hs => by
+    simp only [NNReal.coe_mul, NNReal.coe_div, NNReal.coe_ofNat]
+    rw [← Finset.mul_sum, sum_pairPath_eq_two_mul g.2 hg hs]
+    ring
+  rw [hsum hs, hsum hs', pairPathOverlap]
+  simp only [NNReal.coe_mul, NNReal.coe_div, NNReal.coe_ofNat]
+  rw [← Finset.mul_sum]
+  ring
+
+/-- **Covariance of two pairwise differences** in the marked Kingman model:
+`Cov(D_s, D_{s'}) = θ² Cov(τ_s, τ_{s'}) + (θ/2) E[ℓ(path s ∩ path s')]`. -/
+theorem covariance_pairDiff_kingmanTreeMutationMeasure {θ : ℝ≥0} (hn : 2 ≤ n)
+    {s s' : Finset (Fin n)} (hs : s ∈ samplePairs n) (hs' : s' ∈ samplePairs n) :
+    cov[pairDiff (fun p => p.1.2) Prod.snd s, pairDiff (fun p => p.1.2) Prod.snd s';
+        kingmanTreeMutationMeasure n θ] =
+      (θ : ℝ) ^ 2 * cov[fun g => pairCoalTime g.2 s g.1, fun g => pairCoalTime g.2 s' g.1;
+          kingmanGenealogyMeasure n] +
+        (θ : ℝ) / 2 * ∫ g, pairPathOverlap g.2 s s' g.1 ∂kingmanGenealogyMeasure n := by
+  have hL2 : ∀ {s : Finset (Fin n)}, MemLp (pairDiff (fun p => p.1.2) Prod.snd s) 2
+      (kingmanTreeMutationMeasure n θ) := fun {s} => by
+    refine (memLp_two_iff_integrable_sq ((KingmanTimes.ofTreeMutationModel n θ)
+      |>.integrable_pairDiff_of_mutation (measurable_genealogy n θ)
+        (hasCondDistrib_kingmanTreeMutationMeasure n θ) s).aestronglyMeasurable).2 ?_
+    simpa [sq] using integrable_pairDiff_mul_kingmanTreeMutationMeasure θ s s
+  have hτ1 : ∀ {s : Finset (Fin n)}, s ∈ samplePairs n →
+      ∫ g, pairCoalTime g.2 s g.1 ∂kingmanGenealogyMeasure n = 1 :=
+    fun hs => integral_pairCoalTime_kingmanGenealogyMeasure hn hs
+  rw [covariance_eq_sub hL2 hL2, covariance_eq_sub (memLp_pairCoalTime hn hs)
+    (memLp_pairCoalTime hn hs'), integral_pairDiff_kingmanTreeMutationMeasure hn hs,
+    integral_pairDiff_kingmanTreeMutationMeasure hn hs', hτ1 hs, hτ1 hs']
+  have := integral_pairDiff_mul_kingmanTreeMutationMeasure (θ := θ) hn hs hs'
+  simp only [Pi.mul_apply] at this ⊢
+  rw [this]
+  ring
+
+/-- **Variance of the pairwise differences of one pair** (Tajima 1983): in the marked Kingman
+model `D_s` is geometric with mean `θ`, so `Var D_s = θ + θ²`. Here `E[τ_s²] = 2` from
+`τ_s ~ Exp(1)` and the path of `s` overlaps itself in its whole length `2 τ_s`. -/
+theorem variance_pairDiff_kingmanTreeMutationMeasure {θ : ℝ≥0} (hn : 2 ≤ n)
+    {s : Finset (Fin n)} (hs : s ∈ samplePairs n) :
+    Var[pairDiff (fun p => p.1.2) Prod.snd s; kingmanTreeMutationMeasure n θ] =
+      (θ : ℝ) + (θ : ℝ) ^ 2 := by
+  have := isProbabilityMeasure_expMeasure (zero_lt_one' ℝ)
+  have hcov := covariance_pairDiff_kingmanTreeMutationMeasure (θ := θ) hn hs hs
+  rw [covariance_self (((KingmanTimes.ofTreeMutationModel n θ)
+      |>.integrable_pairDiff_of_mutation (measurable_genealogy n θ)
+        (hasCondDistrib_kingmanTreeMutationMeasure n θ) s).aemeasurable),
+    covariance_self (measurable_pairCoalTime s).aemeasurable,
+    (hasLaw_pairCoalTime_kingmanGenealogyMeasure hn hs).variance_eq_of_expMeasure one_pos] at hcov
+  rw [hcov]
+  have hover : ∫ g, pairPathOverlap g.2 s s g.1 ∂kingmanGenealogyMeasure n = 2 := by
+    rw [integral_congr_ae (g := fun g => 2 * pairCoalTime g.2 s g.1) ?_, integral_const_mul,
+      integral_pairCoalTime_kingmanGenealogyMeasure hn hs, mul_one]
+    filter_upwards [ae_nonneg_kingmanGenealogyMeasure] with g hg
+    rw [pairPathOverlap, Finset.inter_self, sum_pairPath_eq_two_mul g.2 hg hs]
+  rw [hover]
+  ring
+
+end SecondMoment
 
 end MathlibExt.Biology.PopulationGenetics.Coalescent
