@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.Epidemiology.SIS
+public import MathlibExt.Dynamics.EquilibriumStability
 
 /-!
 # The Levins metapopulation (patch-occupancy) model
@@ -61,7 +62,9 @@ With `S = 1 - p` the pair `(S, p)` solves the closed-population SIS model of
 The explicit solution, uniqueness and the two limits are taken from that file; the Lyapunov
 stability bounds are proved here from the explicit formula. For `0 ≤ e < c` the explicit
 solution is the logistic curve with rate `c - e` and carrying capacity `p*`
-(`levins_eq_logistic`).
+(`levins_eq_logistic`). The stability notions `IsLyapunovStable`, `IsGloballyAttracting` and
+`IsGloballyStable` abbreviate the shared notions of `MathlibExt.Dynamics.EquilibriumStability` for
+the Levins solutions `IsSolution c e`.
 
 ## References
 
@@ -258,18 +261,17 @@ end IsSolution
 
 /-- `a` is **Lyapunov stable** for solutions starting in `D`: solutions that start in `D` close
 to `a` stay close to `a` for all `t ≥ 0`. -/
-def IsLyapunovStable (c e a : ℝ) (D : Set ℝ) : Prop :=
-  ∀ ε > 0, ∃ δ > 0, ∀ p : ℝ → ℝ, IsSolution c e p → p 0 ∈ D → |p 0 - a| < δ →
-    ∀ t, 0 ≤ t → |p t - a| < ε
+abbrev IsLyapunovStable (c e a : ℝ) (D : Set ℝ) : Prop :=
+  MathlibExt.Dynamics.EquilibriumStability.IsLyapunovStable (IsSolution c e) a D
 
 /-- `a` **attracts** every solution starting in `D`. -/
-def IsGloballyAttracting (c e a : ℝ) (D : Set ℝ) : Prop :=
-  ∀ p : ℝ → ℝ, IsSolution c e p → p 0 ∈ D → Tendsto p atTop (𝓝 a)
+abbrev IsGloballyAttracting (c e a : ℝ) (D : Set ℝ) : Prop :=
+  MathlibExt.Dynamics.EquilibriumStability.IsGloballyAttracting (IsSolution c e) a D
 
 /-- `a` is **globally (asymptotically) stable** on `D`: Lyapunov stable and attracting every
 solution starting in `D`. -/
-def IsGloballyStable (c e a : ℝ) (D : Set ℝ) : Prop :=
-  IsLyapunovStable c e a D ∧ IsGloballyAttracting c e a D
+abbrev IsGloballyStable (c e a : ℝ) (D : Set ℝ) : Prop :=
+  MathlibExt.Dynamics.EquilibriumStability.IsGloballyStable (IsSolution c e) a D
 
 /-! ### Extinction: `c ≤ e` -/
 

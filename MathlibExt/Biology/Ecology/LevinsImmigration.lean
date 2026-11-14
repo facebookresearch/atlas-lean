@@ -9,9 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Biology.Ecology.LevinsMetapopulation
-public import Mathlib.Analysis.Calculus.Deriv.Inv
-public import Mathlib.Analysis.Calculus.Deriv.MeanValue
-public import Mathlib.Analysis.Calculus.LocalExtr.Basic
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.Calculus.LocalExtr.Basic
 
 /-!
 # The Levins model with immigration (mainland–island model)
@@ -27,11 +27,15 @@ with colonization rate `c ≥ 0`, extinction rate `e ≥ 0` and immigration rate
 `IsSolution c e m p` says that `p` solves the equation on `[0, ∞)`. At `m = 0` this is the Levins
 model (`balance_zero_right`, `isSolution_zero_right_iff`).
 
-**Main point.** Without immigration and with `c ≤ e`, every population goes extinct
+**Main point.** Without immigration and with `c ≤ e`, `e > 0`, every population goes extinct
 (`LevinsMetapopulation.extinction_isGloballyStable`). With any `m > 0`, extinction is not even an
 equilibrium (`balance c e m 0 = m`), and there is a unique equilibrium `p̂ ∈ (0, 1]` in `[0, ∞)`,
 for every `c ≥ 0` and `e ≥ 0`, which attracts every solution with `p(0) ≥ 0` at exponential rate
-`m / p̂`. Even a trickle of immigrants rescues the metapopulation (`rescue_effect`).
+`m / p̂`. Even a trickle of immigrants keeps the metapopulation from going extinct
+(`propagule_rain_persistence`). The immigration term `m (1 - p)` is propagule rain, mainland
+colonization of empty patches: it leaves the local extinction term `e p` unchanged, so this is
+not the rescue effect, in which immigration lowers local extinction (Gotelli 1991 distinguishes
+the two).
 
 The balance is the concave quadratic `-c p² + b p + m` with `b = c - e - m`, so for `c > 0` its
 positive root is `(b + √(b² + 4 c m)) / (2 c)` (`immigrationEq_eq_quadratic`). The rationalized
@@ -52,8 +56,8 @@ where `p̂ = m / (e + m)`.
   invariant, and an empty island is colonized at once (`p(t) > 0` for `t > 0`).
 * `IsSolution.abs_sub_le_exp`: `|p(t) - p̂| ≤ |p(0) - p̂| e^{-(m / p̂) t}` for `p(0) ≥ 0`.
 * `isGloballyStable`: `p̂` is Lyapunov stable and attracts every solution from `[0, ∞)`.
-* `rescue_effect`: for `0 ≤ c ≤ e`, `e > 0`, extinction is globally stable at `m = 0`, while
-  for every `m > 0` the positive equilibrium is.
+* `propagule_rain_persistence`: for `0 ≤ c ≤ e`, `e > 0`, extinction is globally stable at
+  `m = 0`, while for every `m > 0` the positive equilibrium is.
 
 ## Implementation
 
@@ -62,7 +66,9 @@ The stability proofs do not use the explicit solution. Positivity is a barrier a
 `L = c p̂ + m / p̂`, the equation is `q' = -L q - c q²`; then `q e^{L t}` is nonincreasing (upper
 bound and invariance of `[0, 1]`), and `q² e^{2 (m / p̂) t}` is nonincreasing while `p ≥ 0`
 (exponential decay). The explicit solution `p̂ + L q₀ / ((L + c q₀) e^{L t} - c q₀)` serves only
-for existence.
+for existence. The stability notions `IsLyapunovStable`, `IsGloballyAttracting` and
+`IsGloballyStable` abbreviate the shared notions of `MathlibExt.Dynamics.EquilibriumStability` for
+the solutions `IsSolution c e m`, as the Levins model's notions do for its solutions.
 
 ## References
 
@@ -93,7 +99,9 @@ noncomputable def disc (c e m : ℝ) : ℝ := (c - e - m) ^ 2 + 4 * c * m
 
 /-- The **immigration equilibrium** `p̂ = 2 m / (e + m - c + √((c - e - m)² + 4 c m))`, the positive
 root of the balance in rationalized form; for `c > 0` it equals the quadratic-formula root
-(`immigrationEq_eq_quadratic`), and for `c = 0` it is `m / (e + m)`. -/
+(`immigrationEq_eq_quadratic`), and for `c = 0` it is `m / (e + m)`. This holds for `c ≥ 0`,
+`e ≥ 0` and `m > 0`, the range of every result below, where the denominator is positive
+(`denom_pos`); outside it the formula need not be a root of the balance (at `m = 0` it is `0`). -/
 noncomputable def immigrationEq (c e m : ℝ) : ℝ := 2 * m / (e + m - c + √(disc c e m))
 
 /-- The **return rate** `c p̂ + m / p̂ = -f'(p̂)` at the immigration equilibrium. -/
@@ -228,7 +236,7 @@ theorem immigrationEq_eq_one_iff (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) :
     · linarith
 
 /-- **Persistence with immigration**: `p̂ ∈ (0, 1]` for every `c ≥ 0`, `e ≥ 0`, `m > 0`, including
-`c ≤ e`, where the Levins model without immigration goes extinct. -/
+`c ≤ e` with `e > 0`, where the Levins model without immigration goes extinct. -/
 theorem immigrationEq_mem_Ioc (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) :
     immigrationEq c e m ∈ Ioc 0 1 :=
   ⟨immigrationEq_pos (c := c) he hm, immigrationEq_le_one hc he hm⟩
@@ -539,17 +547,16 @@ end IsSolution
 /-! ### Global stability -/
 
 /-- `a` is **Lyapunov stable** for solutions starting in `D`. -/
-def IsLyapunovStable (c e m a : ℝ) (D : Set ℝ) : Prop :=
-  ∀ ε > 0, ∃ δ > 0, ∀ p : ℝ → ℝ, IsSolution c e m p → p 0 ∈ D → |p 0 - a| < δ →
-    ∀ t, 0 ≤ t → |p t - a| < ε
+abbrev IsLyapunovStable (c e m a : ℝ) (D : Set ℝ) : Prop :=
+  MathlibExt.Dynamics.EquilibriumStability.IsLyapunovStable (IsSolution c e m) a D
 
 /-- `a` **attracts** every solution starting in `D`. -/
-def IsGloballyAttracting (c e m a : ℝ) (D : Set ℝ) : Prop :=
-  ∀ p : ℝ → ℝ, IsSolution c e m p → p 0 ∈ D → Tendsto p atTop (𝓝 a)
+abbrev IsGloballyAttracting (c e m a : ℝ) (D : Set ℝ) : Prop :=
+  MathlibExt.Dynamics.EquilibriumStability.IsGloballyAttracting (IsSolution c e m) a D
 
 /-- `a` is **globally (asymptotically) stable** on `D`. -/
-def IsGloballyStable (c e m a : ℝ) (D : Set ℝ) : Prop :=
-  IsLyapunovStable c e m a D ∧ IsGloballyAttracting c e m a D
+abbrev IsGloballyStable (c e m a : ℝ) (D : Set ℝ) : Prop :=
+  MathlibExt.Dynamics.EquilibriumStability.IsGloballyStable (IsSolution c e m) a D
 
 /-- **Global stability of the immigration equilibrium.** For `c, e ≥ 0` and `m > 0`, `p̂ ∈ (0, 1]`
 is Lyapunov stable and attracts every solution with `p(0) ≥ 0`. -/
@@ -566,10 +573,12 @@ theorem isGloballyStable (hc : 0 ≤ c) (he : 0 ≤ e) (hm : 0 < m) :
     _ ≤ |p 0 - immigrationEq c e m| := mul_le_of_le_one_right (abs_nonneg _) hE
     _ < ε := hδ
 
-/-- **Rescue effect.** Below the Levins threshold (`0 ≤ c ≤ e`, `e > 0`), extinction is globally
-stable without immigration, while for every `m > 0` the equilibrium `p̂ > 0` is globally stable:
-every solution with `p(0) ≥ 0` persists at `p̂`. -/
-theorem rescue_effect (hc : 0 ≤ c) (he : 0 < e) (hce : c ≤ e) (hm : 0 < m) :
+/-- **Persistence under propagule rain.** Below the Levins threshold (`0 ≤ c ≤ e`, `e > 0`),
+extinction is globally stable without immigration, while for every `m > 0` the equilibrium
+`p̂ > 0` is globally stable: every solution with `p(0) ≥ 0` persists at `p̂`. Immigration only
+colonizes empty patches and leaves the extinction rate `e` unchanged, so this is not the rescue
+effect. -/
+theorem propagule_rain_persistence (hc : 0 ≤ c) (he : 0 < e) (hce : c ≤ e) (hm : 0 < m) :
     LevinsMetapopulation.IsGloballyStable c e 0 (Icc 0 1) ∧
       0 < immigrationEq c e m ∧ IsGloballyStable c e m (immigrationEq c e m) (Ici 0) :=
   ⟨LevinsMetapopulation.extinction_isGloballyStable hc he hce, immigrationEq_pos (c := c) he.le hm,

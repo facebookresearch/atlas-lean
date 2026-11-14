@@ -176,11 +176,11 @@ example {t : ℝ} (ht : 0 ≤ t) : |traj t - 1 / 2| ≤ 1 / 2 * exp (-(1 * t)) :
   norm_num at h ⊢
   exact h
 
-/-- **Rescue effect at `c = e = 1`.** -/
+/-- **Persistence under propagule rain at `c = e = 1`.** -/
 example : LevinsMetapopulation.IsGloballyStable 1 1 0 (Icc 0 1) ∧
     0 < immigrationEq 1 1 (1 / 2) ∧
       IsGloballyStable 1 1 (1 / 2) (immigrationEq 1 1 (1 / 2)) (Ici 0) :=
-  rescue_effect zero_le_one one_pos le_rfl (by norm_num)
+  propagule_rain_persistence zero_le_one one_pos le_rfl (by norm_num)
 
 /-- The explicit solution exists from `p₀ = 0`, and starts there. -/
 example : solution 1 1 (1 / 2) 0 0 = 0 :=
