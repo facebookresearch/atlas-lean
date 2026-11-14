@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Logic.Relation
+public import Cslib.Logics.HML.Basic
+public import Cslib.Logics.Modal.Unary.Basic
 
 /-!
 # Propositional dynamic logic (PDL)
@@ -27,6 +29,17 @@ Main results: the standard program laws, as validities on every model:
 * `sat_box_choice`: `[α ∪ β]φ ↔ [α]φ ∧ [β]φ`.
 * `sat_box_star_unfold`: `[α*]φ ↔ φ ∧ [α][α*]φ`.
 * `sat_box_test`: `[ψ?]φ ↔ (ψ → φ)`.
+
+A PDL model carries the same data as an upstream HML model (an upstream
+`LTS` plus a valuation): `modelEquiv`. Atomic-program boxes are upstream
+unary-modal boxes on that model's frame (`sat_box_atomic_iff`).
+
+Whole programs also index upstream modalities: `Model.toModel` frames complete
+programs by the existing program relation `ProgRel`, and `Formula.toModal` with
+`sat_iff_satisfies_toModel` embed full formulas. This is satisfaction
+interoperability only: whole programs are labels interpreted by `ProgRel`, not a
+new native PDL algebra, and the upstream side proves no sequencing, choice,
+iteration, or test laws about these labels, nor any decision procedure.
 
 Plus a concrete calculation on the toggle model: `[a;a]p` fails at
 `false`, since two flips return to `false` where `p` is false.
@@ -142,6 +155,86 @@ theorem sat_box_test :
     exact h w ⟨rfl, hψ⟩
   · intro h v ⟨rfl, hψ⟩
     exact h hψ
+
+section CslibBridge
+
+/-- A PDL model as an upstream HML model: the per-label relations form an
+upstream `LTS`. -/
+def Model.toHML {World Atom Label : Type*} (M : Model World Atom Label) :
+    Logic.Modal.HML.Model World Label Atom :=
+  { lts := ⟨fun w a v => M.rel a w v⟩, v := M.valuation }
+
+/-- An upstream HML model as a PDL model. -/
+def Model.ofHML {World Atom Label : Type*} (m : Logic.Modal.HML.Model World Label Atom) :
+    Model World Atom Label :=
+  { rel := fun a w v => m.lts.Tr w a v, valuation := m.v }
+
+/-- PDL models and upstream HML models carry the same data. -/
+def modelEquiv {World Atom Label : Type*} :
+    Model World Atom Label ≃ Logic.Modal.HML.Model World Label Atom where
+  toFun := Model.toHML
+  invFun := Model.ofHML
+  left_inv _ := rfl
+  right_inv _ := rfl
+
+/-- An atomic PDL box quantifies over the successors in the upstream frame of
+the translated model, as the upstream unary box `d[a]` does. -/
+theorem sat_box_atomic_iff (a : Label) :
+    Sat M (.box (.atomic a) φ) w ↔
+      ∀ v, M.toHML.toModal.toFrame.diagonal a w v → Sat M φ v :=
+  Iff.rfl
+
+/-- A PDL model as an upstream multimodal model: complete programs are labels,
+interpreted by the existing program relation `ProgRel`. -/
+def Model.toModel {World Atom Label : Type*} (M : Model World Atom Label) :
+    Logic.Modal.Model World (PFunctor.mkUnary (Program Atom Label)) Atom where
+  toFrame := Frame.ofRelations (ProgRel M)
+  v := M.valuation
+
+/-- Translate a PDL formula into an upstream modal proposition, with each box
+`[α]` becoming the upstream modality indexed by the entire program `α`. -/
+def Formula.toModal {Atom Label : Type*} :
+    Formula Atom Label → Logic.Modal.Proposition (PFunctor.mkUnary (Program Atom Label)) Atom
+  | .atom a => .atom a
+  | .bot => .false
+  | .imp φ ψ => .imp φ.toModal ψ.toModal
+  | .box α φ => Logic.HasDynamicBox.dynBox α φ.toModal
+
+/-- Translation preserves PDL satisfaction, including modalities for compound
+programs (Codex bridge idea, proved against the pinned upstream box
+characterization). This states satisfaction interoperability only; the upstream
+side knows nothing of sequencing, choice, iteration, or tests. -/
+theorem sat_iff_satisfies_toModel {World Atom Label : Type*} (M : Model World Atom Label) :
+    (φ : Formula Atom Label) → (w : World) →
+      (Sat M φ w ↔ Logic.Modal.Satisfies M.toModel w φ.toModal)
+  | .atom _, _ => Iff.rfl
+  | .bot, _ => Iff.rfl
+  | .imp φ ψ, w => by
+      change (Sat M φ w → Sat M ψ w) ↔
+        Logic.Modal.Satisfies M.toModel w (Logic.Modal.Proposition.imp φ.toModal ψ.toModal)
+      have himp :
+          Logic.Modal.Satisfies M.toModel w
+            (Logic.Modal.Proposition.imp φ.toModal ψ.toModal) ↔
+          (Logic.Modal.Satisfies M.toModel w φ.toModal →
+            Logic.Modal.Satisfies M.toModel w ψ.toModal) :=
+        Logic.Modal.Satisfies.imp_iff_imp (m := M.toModel) (w := w)
+          (φ₁ := φ.toModal) (φ₂ := ψ.toModal)
+      exact (imp_congr (sat_iff_satisfies_toModel M φ w)
+        (sat_iff_satisfies_toModel M ψ w)).trans himp.symm
+  | .box α φ, w => by
+      change (∀ v, ProgRel M α w v → Sat M φ v) ↔
+        Logic.Modal.Satisfies M.toModel w (Logic.HasDynamicBox.dynBox α φ.toModal)
+      have hbox :
+          Logic.Modal.Satisfies M.toModel w (Logic.HasDynamicBox.dynBox α φ.toModal) ↔
+          ∀ v, ProgRel M α w v → Logic.Modal.Satisfies M.toModel v φ.toModal := by
+        simpa only [← Logic.Modal.derivation_def, Model.toModel,
+          Frame.ofRelations_diagonal_iff] using
+          (Logic.Modal.Satisfies.dynBox_iff_forall (m := M.toModel) (w := w)
+            (a := α) (φ := φ.toModal))
+      exact (forall_congr' fun v =>
+        imp_congr Iff.rfl (sat_iff_satisfies_toModel M φ v)).trans hbox.symm
+
+end CslibBridge
 
 /-- The toggle model: one atomic action flips the state, `p` holds at
 `true`. -/
