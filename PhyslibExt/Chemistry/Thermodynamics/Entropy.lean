@@ -33,6 +33,14 @@ capacity. Each lemma states the positivity hypotheses it uses (`0 < T`, `0 < R`,
 `0 < cv`); the definitions and the purely algebraic identities hold for all real arguments, and
 their physical reading is at positive values.
 
+Junk values: the definitions are total, so outside its domain each returns a value fixed by
+Lean's conventions (`x / 0 = 0`, `Real.log 0 = 0`, `Real.log (-x) = Real.log x`, and `0` for a
+non-integrable interval integral). Such a value is not a physical quantity. Each definition's
+docstring names its domain, and no lemma draws a physical conclusion from a junk value: the
+lemmas that read a value physically have hypotheses that keep it in the domain (for
+`absoluteEntropy`, integrability of `Cp t / t`, automatic at `T = 0`), and the remaining lemmas
+about the definitions only rewrite a formula, so they hold on junk inputs too.
+
 The physics inputs are carried as explicit hypotheses and definitions, never derived here.
 The adiabatic relations of §A, the Clausius inequality (the second-law input, LAW), the
 integrated ideal-gas entropy differential of §B and the third-law convention `S(0) = 0` of §D
@@ -101,7 +109,9 @@ open scoped BigOperators Matrix Topology
 -/
 
 /-- The Carnot efficiency `1 - Tc / Th` of a reversible engine operating between a cold
-reservoir at absolute temperature `Tc` and a hot reservoir at absolute temperature `Th`. -/
+reservoir at absolute temperature `Tc` and a hot reservoir at absolute temperature `Th`.
+Domain: `0 < Th`. At `Th = 0`, Lean's `x / 0 = 0` gives the junk value `1`, which is not an
+efficiency; the lemmas that read it assume `0 < Th`, directly or through `0 < Tc < Th`. -/
 noncomputable def carnotEfficiency (Tc Th : ℝ) : ℝ := 1 - Tc / Th
 
 /-- An isothermal leg with heat `Q = n * R * T * log (V₂ / V₁)` absorbs positive heat
@@ -238,7 +248,12 @@ lemma engine_efficiency_eq_carnotEfficiency {Qh Qc W Tc Th : ℝ}
 `ΔS = n * cv * log (T₂ / T₁) + n * R * log (V₂ / V₁)` with constant molar heat capacity
 `cv`: the integral of the MODEL differential `dS = n * cv * dT / T + n * R * dV / V`. The
 lemmas below are consequences of this definition, not a derivation of the differential from
-statistics. -/
+statistics. Domain: positive ratios `T₂ / T₁` and `V₂ / V₁`, as for positive temperatures and
+volumes. At `T₁ = 0` or `V₁ = 0`, Lean's `x / 0 = 0` and `Real.log 0 = 0` give junk (with
+constant `cv`, heating from `T₁ → 0` has a divergent `ΔS`, yet `T₁ = 0` returns a finite value),
+and a negative ratio meets `Real.log (-x) = Real.log x`. The lemmas that read `ΔS` physically
+have hypotheses that keep both ratios positive; `idealGasEntropyChange_totalCV` and
+`idealGasEntropyChange_isothermal` only rewrite the formula and hold on junk inputs too. -/
 noncomputable def idealGasEntropyChange (n cv R T1 V1 T2 V2 : ℝ) : ℝ :=
   n * cv * Real.log (T2 / T1) + n * R * Real.log (V2 / V1)
 
@@ -317,9 +332,13 @@ lemma idealGasEntropyChange_symm {n cv R T1 V1 T2 V2 : ℝ}
 /-- The entropy of mixing `ΔS_mix = n * R * H(x)` for mole fractions `x : ι → ℝ`, where
 `H(x) = -∑ i, x i * log (x i)` is the Shannon entropy
 `Chemistry.FiniteEnsembles.shannonEntropy`. With Mathlib's convention `Real.log 0 = 0`, a
-component with `x i = 0` contributes `0 * log 0 = 0` automatically. Gibbs-paradox remark: mixing
-identical gases gives zero here only because they are counted as one component; the identical-gas
-resolution (indistinguishability) is CH34 territory and is NOT claimed here. -/
+component with `x i = 0` contributes `0 * log 0 = 0` automatically, the continuous extension of
+`x * log x` and so the correct value. Domain: mole fractions (`0 ≤ x i`, `∑ i, x i = 1`),
+which `entropyOfMixing_nonneg` and `entropyOfMixing_eq_zero_iff` assume; a negative entry meets
+Lean's `Real.log (-x) = Real.log x`, and the value is then not an entropy (it can be negative).
+Gibbs-paradox remark: mixing identical gases gives zero here only because they are counted as
+one component; the identical-gas resolution (indistinguishability) is CH34 territory and is NOT
+claimed here. -/
 noncomputable def entropyOfMixing {ι : Type*} [Fintype ι] (n R : ℝ) (x : ι → ℝ) : ℝ :=
   n * R * FiniteEnsembles.shannonEntropy x
 
@@ -370,16 +389,28 @@ lemma entropyOfMixing_binary (n R a : ℝ) :
 `S(T) = ∫ t in 0..T, Cp t / t + ∑ k ∈ trans with Tt k ≤ T, ΔH k / Tt k` for molar heat
 capacity `Cp : ℝ → ℝ`, finitely many first-order transitions (`trans`, with temperatures
 `Tt k > 0` and molar enthalpies `ΔH k`), at absolute temperature `T ≥ 0`. The third-law
-convention `S(0) = 0` for a perfect crystal is built in (integral from `0`). Integrability
-at `0` is carried as explicit `IntervalIntegrable` hypotheses where used (equivalent to
-`IntegrableOn` over the interval). Debye remark (EF = empirical fit): the low-`T` Debye `T³`
-extrapolation `Cp t ≈ a * t^3` makes `Cp t / t ≈ a * t^2` integrable at `0`; Debye's law
-itself is NOT proved here. -/
+convention `S(0) = 0` for a perfect crystal is built in (integral from `0`).
+
+Domain: the value is an entropy only when the entropy integral converges, that is under
+`IntervalIntegrable (fun t => Cp t / t) MeasureTheory.volume 0 T`. Otherwise Mathlib's
+interval integral takes its junk value `0` (`intervalIntegral.integral_undef`) and the
+definition returns just the transition sum, which is NOT an entropy: `Cp = 1`, `T = 1` and no
+transitions give `0` although `∫₀¹ dt / t` diverges. The lemmas that read `absoluteEntropy` as
+an entropy assume this integrability (`hasDerivAt_absoluteEntropy`, `absoluteEntropy_mono`);
+`absoluteEntropy_zero` needs none because the interval `0..0` is degenerate, and
+`absoluteEntropy_insert_of_lt` is an identity of the transition sum. Likewise a transition at
+`Tt k = 0` would contribute Lean's junk `ΔH k / 0 = 0`; the lemmas that use transition values
+assume `0 < Tt k`. Debye remark (EF = empirical fit): the low-`T` Debye `T³` extrapolation
+`Cp t ≈ a * t^3` makes `Cp t / t ≈ a * t^2` integrable at `0`; Debye's law itself is NOT
+proved here. -/
 noncomputable def absoluteEntropy {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
     (Tt : ι → ℝ) (dH : ι → ℝ) (T : ℝ) : ℝ :=
   (∫ t in (0:ℝ)..T, Cp t / t) + ∑ k ∈ trans.filter (fun k => Tt k ≤ T), dH k / Tt k
 
-/-- Third-law convention: `S(0) = 0` (empty integral plus empty transition sum). -/
+/-- Third-law convention: `S(0) = 0` (empty integral plus empty transition sum). No
+integrability hypothesis is needed: on the degenerate interval `0..0` every function is
+interval integrable (`IntervalIntegrable.refl`), so this `0` is the genuine integral, not a junk
+value. -/
 lemma absoluteEntropy_zero {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
     (Tt : ι → ℝ) (dH : ι → ℝ) (hTt : ∀ k ∈ trans, 0 < Tt k) :
     absoluteEntropy Cp trans Tt dH 0 = 0 := by
@@ -434,8 +465,9 @@ lemma hasDerivAt_absoluteEntropy {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset
   exact h2.congr_of_eventuallyEq (Filter.Eventually.of_forall fun u => rfl)
 
 /-- Absolute entropy is monotone: with `0 ≤ Cp` on `[0, T]`, nonnegative transition
-enthalpies and positive transition temperatures, `S(T₁) ≤ S(T₂)` for `T₁ ≤ T₂` (both in
-`[0, T]`). Via integral monotonicity and growth of the transition sums. -/
+enthalpies, positive transition temperatures and `Cp t / t` integrable on `0..T₂` (so both
+values are genuine entropies), `S(T₁) ≤ S(T₂)` for `T₁ ≤ T₂` (both in `[0, T]`). Via integral
+monotonicity and growth of the transition sums. -/
 lemma absoluteEntropy_mono {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
     (Tt : ι → ℝ) (dH : ι → ℝ) {T T₁ T₂ : ℝ}
     (hCp : ∀ t ∈ Set.Icc (0 : ℝ) T, 0 ≤ Cp t)
@@ -468,7 +500,8 @@ lemma absoluteEntropy_mono {ι : Type*} (Cp : ℝ → ℝ) (trans : Finset ι)
   exact add_le_add hint hsum
 
 /-- Transitions above `T` do not contribute: inserting a transition with `Tt k > T` does not
-change `S(T)`. -/
+change `S(T)`. An identity of the transition sum, valid whatever value the integral term
+takes. -/
 lemma absoluteEntropy_insert_of_lt {ι : Type*} [DecidableEq ι] (Cp : ℝ → ℝ)
     (trans : Finset ι) (Tt : ι → ℝ) (dH : ι → ℝ) (k : ι) {T : ℝ}
     (habove : T < Tt k) :
