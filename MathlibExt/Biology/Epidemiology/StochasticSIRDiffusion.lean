@@ -11,12 +11,16 @@ module
 public import MathlibExt.Biology.Epidemiology.SIR
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import Mathlib.Probability.Distributions.Gaussian.HasGaussianLaw.Basic
+public import Mathlib.Probability.Moments.Covariance
+public import Mathlib.Topology.ContinuousMap.Compact
 import MathlibExt.Analysis.ODE.MaximalSolution
 import MathlibExt.Biology.Epidemiology.StochasticSIRKurtz
 import MathlibExt.Analysis.ODE.GronwallIntegral
 import Mathlib.Analysis.ODE.ExistUnique
 import Mathlib.Analysis.ODE.Gronwall
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Topology.ContinuousMap.SecondCountableSpace
 
 /-!
 # Diffusion approximation (central limit theorem) for the stochastic SIR epidemic
@@ -65,7 +69,8 @@ the probabilistic conclusion, taking as **explicit hypotheses**
 The proof of the convergence theorem uses no property of `M` beyond continuity of its paths and
 measurability of its marginals, so the theorem holds for whatever limit the martingale CLT
 supplies; the Gaussian description of `M` above is what Ethier–Kurtz ch. 7, Thm 1.4 gives for
-the SIR chain, and it is not used here.
+the SIR chain. It is not used for the convergence theorem; `hasGaussianLaw_isFluctuationPath`
+takes it as hypotheses to identify the law of `U(t)`.
 
 ## Main results
 
@@ -89,15 +94,26 @@ the SIR chain, and it is not used here.
   `u₀` and each continuous driving path, and it starts at `u₀`.
 * `IsLimitCovariance.eqOn`: the Lyapunov equation for the limit covariance has at most one
   solution from a given initial covariance.
+* `hasGaussianLaw_isFluctuationPath`, `covariance_isFluctuationPath`: **the limit is Gaussian
+  with covariance `V(t)`.** If `(U(0), M)` is jointly Gaussian as a random element of
+  `ℝ² × C([0, T], ℝ²)`, centered, with `U(0)` of covariance `V₀` and uncorrelated with `M`, and
+  `M` has the covariance `E[(M(s) - M(0)) (M(r) - M(0))ᵀ] = ∫₀^{min s r} G(x)` (`quadCov`) of
+  the Gaussian martingale above, then `U(t)` is centered Gaussian with covariance `V(t)`.
+* `IsFluctuationPath.dot_eq`: the duality identity
+  `⟨y(t), U(t)⟩ = ⟨y(0), U(0)⟩ + ∫₀ᵗ ⟨y(s), dM(s)⟩` (integration-by-parts Wiener integral) for
+  solutions `y` of the adjoint equation `y' = -DF(x)ᵀ y` (`exists_adjoint`).
 
 ## Scope
 
 * The martingale functional CLT for `M_N` (Poisson Donsker theorem plus the random time change)
   is a hypothesis, as is the law of large numbers.
-* That `U(t)` is Gaussian with covariance `V(t)` (`IsLimitCovariance`) when `M` is the Gaussian
-  martingale above is not proved: it needs the Wiener integral `∫ Φ(t, s) dM(s)` for the
-  two-dimensional, time-inhomogeneous equation. The Lyapunov equation is stated and its
-  solutions are shown to be unique, so `V(t)` is determined by the definitions.
+* The Gaussian identification takes the law of `M` through its defining properties (joint
+  Gaussianity of `(U(0), M)` on path space, means, covariances) as hypotheses; it does not
+  construct the Gaussian martingale, and it identifies the law of the limit `U(t)`, not of the
+  prelimit `U_N(t)`. Independence of `U(0)` and `M` enters only as zero cross-covariance, which
+  for jointly Gaussian data is equivalent. Joint Gaussianity is assumed for the law on the Banach
+  space `ℝ² × C([0, T], ℝ²)` (`HasGaussianLaw`); that a process with continuous paths and
+  Gaussian finite-dimensional distributions has such a law is not proved here.
 * Probabilities of events over `[0, T]` (some time at which a deviation reaches a threshold, or
   a supremum at least a threshold) are outer measures; those events are not assumed measurable.
 
@@ -114,7 +130,7 @@ the SIR chain, and it is not used here.
 @[expose] public section
 
 open MeasureTheory ProbabilityTheory Real Set Filter
-open scoped Topology NNReal ENNReal
+open scoped Topology NNReal ENNReal ProbabilityTheory
 
 namespace MathlibExt.Biology.Epidemiology.StochasticSIRDiffusion
 
@@ -883,7 +899,7 @@ theorem tendsto_measure_norm_sub_of_deviation {S I R : ℕ → Ω → ℝ → �
 derivative is taken within `[0, ∞)`, so it is one-sided at `t = 0` and the values of `V` at
 negative times play no role. This is the covariance of the solution of `dU = DF(x(t)) U dt + dM`
 when `M` is a Gaussian martingale with `d⟨M⟩ = G(x(t)) dt` and `U(0)` is centered Gaussian with
-covariance `V₀`, independent of `M`; that identification is not proved in this file. -/
+covariance `V₀`, independent of `M`: `hasGaussianLaw_isFluctuationPath`. -/
 structure IsLimitCovariance (β γ : ℝ) (x : ℝ → ℝ × ℝ) (V₀ : ℝ × ℝ × ℝ) (V : ℝ → ℝ × ℝ × ℝ) :
     Prop where
   /-- The initial covariance. -/
@@ -957,5 +973,770 @@ theorem IsLimitCovariance.eqOn {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
   refine (LipschitzWith.of_dist_le_mul fun c c' => ?_).lipschitzOnWith
   rw [Real.coe_toNNReal _ hK, dist_eq_norm, dist_eq_norm]
   exact norm_lyapunovField_sub_le hβ hγ (hB t (Ico_subset_Icc_self ht)) c c'
+
+
+/-! ### The Gaussian limit
+
+When the driving martingale `M` is the Gaussian martingale of the module docstring and `U(0)` is
+centered Gaussian, independent of `M`, the solution of the fluctuation equation is a Gaussian
+process and `U(t)` has covariance `V(t)`. The two-dimensional, time-inhomogeneous Wiener integral
+needed for this is taken in integration-by-parts form against the solution of the adjoint
+equation `y' = -DF(x)ᵀ y`, which only uses the paths of `M`. -/
+
+/-- The Euclidean dot product `⟨a, b⟩ = a₁ b₁ + a₂ b₂` on `ℝ × ℝ` (whose norm is the sup norm). -/
+def dot (a b : ℝ × ℝ) : ℝ := a.1 * b.1 + a.2 * b.2
+
+/-- The symmetric matrix `[[c₁, c₂], [c₂, c₃]]`, stored as `c = (c₁, c₂, c₃)` as in
+`diffusionMatrix` and `lyapunovField`, applied to a vector. -/
+def symmApply (c : ℝ × ℝ × ℝ) (v : ℝ × ℝ) : ℝ × ℝ :=
+  (c.1 * v.1 + c.2.1 * v.2, c.2.1 * v.1 + c.2.2 * v.2)
+
+/-- The bilinear form `⟨a, C b⟩` of the symmetric matrix `C` stored as `c`. -/
+def quadForm (c : ℝ × ℝ × ℝ) (a b : ℝ × ℝ) : ℝ := dot a (symmApply c b)
+
+/-- The transposed Jacobian `DF(p)ᵀ y = (-β i y₁ + β i y₂, -β s y₁ + (β s - γ) y₂)` at
+`p = (s, i)`: `⟨y, DF(p) h⟩ = ⟨DF(p)ᵀ y, h⟩` (`dot_jacobian`). -/
+def jacobianT (β γ : ℝ) (p y : ℝ × ℝ) : ℝ × ℝ :=
+  (-(β * p.2 * y.1) + β * p.2 * y.2, -(β * p.1 * y.1) + (β * p.1 - γ) * y.2)
+
+theorem dot_jacobian (β γ : ℝ) (p y h : ℝ × ℝ) :
+    dot y (jacobian β γ p h) = dot (jacobianT β γ p y) h := by
+  simp only [dot, jacobian, jacobianT]; ring
+
+theorem quadForm_comm (c : ℝ × ℝ × ℝ) (a b : ℝ × ℝ) : quadForm c a b = quadForm c b a := by
+  simp only [quadForm, dot, symmApply]; ring
+
+theorem quadForm_lyapunovField (β γ : ℝ) (p : ℝ × ℝ) (c : ℝ × ℝ × ℝ) (a b : ℝ × ℝ) :
+    quadForm (lyapunovField β γ p c) a b = quadForm c (jacobianT β γ p a) b +
+      quadForm c a (jacobianT β γ p b) + quadForm (diffusionMatrix β γ p) a b := by
+  simp only [quadForm, dot, symmApply, lyapunovField_apply, jacobianT, diffusionMatrix]; ring
+
+theorem continuous_jacobianT (β γ : ℝ) :
+    Continuous (fun q : (ℝ × ℝ) × (ℝ × ℝ) => jacobianT β γ q.1 q.2) := by
+  unfold jacobianT; fun_prop
+
+theorem norm_jacobianT_le {β γ : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {B : ℝ} {p : ℝ × ℝ}
+    (hp : ‖p‖ ≤ B) (y : ℝ × ℝ) : ‖jacobianT β γ p y‖ ≤ (2 * β * B + γ) * ‖y‖ := by
+  have hp1 : |p.1| ≤ B := by rw [← Real.norm_eq_abs]; exact (norm_fst_le p).trans hp
+  have hp2 : |p.2| ≤ B := by rw [← Real.norm_eq_abs]; exact (norm_snd_le p).trans hp
+  have hy1 : |y.1| ≤ ‖y‖ := by rw [← Real.norm_eq_abs]; exact norm_fst_le y
+  have hy2 : |y.2| ≤ ‖y‖ := by rw [← Real.norm_eq_abs]; exact norm_snd_le y
+  have hB : 0 ≤ B := (abs_nonneg _).trans hp1
+  have hyn : 0 ≤ ‖y‖ := norm_nonneg y
+  rw [Prod.norm_def, Real.norm_eq_abs, Real.norm_eq_abs]
+  refine max_le ?_ ?_
+  · calc |-(β * p.2 * y.1) + β * p.2 * y.2| ≤ |β * p.2 * y.1| + |β * p.2 * y.2| := by
+          refine (abs_add_le _ _).trans ?_; rw [abs_neg]
+      _ = β * (|p.2| * |y.1|) + β * (|p.2| * |y.2|) := by
+          simp only [abs_mul, abs_of_nonneg hβ]; ring
+      _ ≤ β * (B * ‖y‖) + β * (B * ‖y‖) := by gcongr
+      _ ≤ (2 * β * B + γ) * ‖y‖ := by nlinarith [mul_nonneg hγ hyn]
+  · calc |-(β * p.1 * y.1) + (β * p.1 - γ) * y.2|
+        ≤ |β * p.1 * y.1| + (|β * p.1 * y.2| + |γ * y.2|) := by
+          refine (abs_add_le _ _).trans ?_; rw [abs_neg, sub_mul]
+          gcongr; exact abs_sub _ _
+      _ = β * (|p.1| * |y.1|) + (β * (|p.1| * |y.2|) + γ * |y.2|) := by
+          simp only [abs_mul, abs_of_nonneg hβ, abs_of_nonneg hγ]; ring
+      _ ≤ β * (B * ‖y‖) + (β * (B * ‖y‖) + γ * ‖y‖) := by gcongr
+      _ = (2 * β * B + γ) * ‖y‖ := by ring
+
+theorem jacobianT_sub (β γ : ℝ) (p y z : ℝ × ℝ) :
+    jacobianT β γ p (y - z) = jacobianT β γ p y - jacobianT β γ p z := by
+  simp only [jacobianT, Prod.fst_sub, Prod.snd_sub, Prod.mk_sub_mk, Prod.mk.injEq]
+  refine ⟨by ring, by ring⟩
+
+/-- **The adjoint equation.** For every terminal time `t` and terminal value `ℓ` the backward
+linear equation `y' = -DF(x(s))ᵀ y`, `y(t) = ℓ`, has a solution on `[0, T]` (indeed a continuous
+function on `ℝ`). -/
+theorem exists_adjoint {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ) {x : ℝ → ℝ × ℝ}
+    (hxc : ContinuousOn x (Icc 0 T)) (hT : 0 ≤ T) (t : ℝ) (ℓ : ℝ × ℝ) :
+    ∃ y : ℝ → ℝ × ℝ, y t = ℓ ∧ Continuous y ∧
+      ∀ s ∈ Icc 0 T, HasDerivAt y (-jacobianT β γ (x s) (y s)) s := by
+  obtain ⟨C, hC⟩ := isCompact_Icc.exists_bound_of_continuousOn hxc
+  set B := max C 0
+  set proj : ℝ → ℝ := fun t => (projIcc 0 T hT t : ℝ)
+  have hπc : Continuous proj := continuous_subtype_val.comp continuous_projIcc
+  have hπmem : ∀ t, proj t ∈ Icc 0 T := fun t => (projIcc 0 T hT t).2
+  have hπeq : ∀ t ∈ Icc 0 T, proj t = t := fun t ht => by
+    simp only [proj, projIcc_of_mem hT ht]
+  set xe : ℝ → ℝ × ℝ := fun t => x (proj t)
+  have hxe : Continuous xe := hxc.comp_continuous hπc hπmem
+  have hxeB : ∀ t, ‖xe t‖ ≤ B := fun t => (hC _ (hπmem t)).trans (le_max_left _ _)
+  set f : ℝ → ℝ × ℝ → ℝ × ℝ := fun s v => -jacobianT β γ (xe s) v
+  have hfc : Continuous (Function.uncurry f) := by
+    change Continuous (fun q : ℝ × (ℝ × ℝ) => -jacobianT β γ (xe q.1) q.2)
+    exact ((continuous_jacobianT β γ).comp ((hxe.comp continuous_fst).prodMk continuous_snd)).neg
+  have hL : 0 ≤ 2 * β * B + γ := by positivity
+  have hlip : ∀ s, LipschitzWith (Real.toNNReal (2 * β * B + γ)) (f s) := by
+    intro s
+    refine LipschitzWith.of_dist_le_mul fun v w => ?_
+    rw [Real.coe_toNNReal _ hL, dist_eq_norm, dist_eq_norm]
+    simp only [f, neg_sub_neg]
+    rw [← jacobianT_sub, norm_sub_rev v w]
+    exact norm_jacobianT_le hβ hγ (hxeB s) _
+  obtain ⟨y, ⟨hy0, hy⟩, -⟩ :=
+    MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz
+      f t ℓ _ hfc hlip
+  refine ⟨y, hy0, continuous_iff_continuousAt.2 fun s => (hy s).continuousAt, fun s hs => ?_⟩
+  have := hy s
+  simp only [f, xe, hπeq s hs] at this
+  exact this
+
+private theorem hasDerivAt_prodFst' {f : ℝ → ℝ × ℝ} {f' : ℝ × ℝ} {s : ℝ} (hf : HasDerivAt f f' s) :
+    HasDerivAt (fun r => (f r).1) f'.1 s :=
+  (ContinuousLinearMap.fst ℝ ℝ ℝ).hasFDerivAt.comp_hasDerivAt s hf
+
+private theorem hasDerivAt_prodSnd' {f : ℝ → ℝ × ℝ} {f' : ℝ × ℝ} {s : ℝ} (hf : HasDerivAt f f' s) :
+    HasDerivAt (fun r => (f r).2) f'.2 s :=
+  (ContinuousLinearMap.snd ℝ ℝ ℝ).hasFDerivAt.comp_hasDerivAt s hf
+
+theorem hasDerivAt_dot' {f g : ℝ → ℝ × ℝ} {f' g' : ℝ × ℝ} {s : ℝ} (hf : HasDerivAt f f' s)
+    (hg : HasDerivAt g g' s) :
+    HasDerivAt (fun r => dot (f r) (g r)) (dot f' (g s) + dot (f s) g') s := by
+  have h1 := ((hasDerivAt_prodFst' hf).mul (hasDerivAt_prodFst' hg)).add
+    ((hasDerivAt_prodSnd' hf).mul (hasDerivAt_prodSnd' hg))
+  refine h1.congr_deriv ?_
+  simp only [dot]; ring
+
+theorem dot_sub_right (a b c : ℝ × ℝ) : dot a (b - c) = dot a b - dot a c := by
+  simp only [dot, Prod.fst_sub, Prod.snd_sub]; ring
+
+theorem dot_add_right (a b c : ℝ × ℝ) : dot a (b + c) = dot a b + dot a c := by
+  simp only [dot, Prod.fst_add, Prod.snd_add]; ring
+
+theorem dot_neg_left (a b : ℝ × ℝ) : dot (-a) b = -dot a b := by
+  simp only [dot, Prod.fst_neg, Prod.snd_neg]; ring
+
+theorem continuous_dot : Continuous (fun q : (ℝ × ℝ) × (ℝ × ℝ) => dot q.1 q.2) := by
+  unfold dot; fun_prop
+
+/-- **Duality identity** (the integration-by-parts Wiener integral). If `y` solves the adjoint
+equation `y' = -DF(x)ᵀ y` on `[0, t]`, then for the fluctuation path driven by `m`,
+`⟨y(t), U(t)⟩ = ⟨y(0), u₀⟩ + ⟨y(t), m(t) - m(0)⟩ + ∫₀ᵗ ⟨DF(x(s))ᵀ y(s), m(s) - m(0)⟩ ds`.
+The last two terms are `∫₀ᵗ ⟨y(s), dm(s)⟩`, integrated by parts. -/
+theorem IsFluctuationPath.dot_eq {β γ T : ℝ} {x : ℝ → ℝ × ℝ} {u₀ : ℝ × ℝ} {m U : ℝ → ℝ × ℝ}
+    (hxc : ContinuousOn x (Icc 0 T)) (hm : ContinuousOn m (Icc 0 T))
+    (hU : IsFluctuationPath β γ T x u₀ m U) {t : ℝ} (ht : t ∈ Icc 0 T) {y : ℝ → ℝ × ℝ}
+    (hyc : ContinuousOn y (Icc 0 t))
+    (hy : ∀ s ∈ Ioo 0 t, HasDerivAt y (-jacobianT β γ (x s) (y s)) s) :
+    dot (y t) (U t) = dot (y 0) u₀ + dot (y t) (m t - m 0) +
+      ∫ s in (0 : ℝ)..t, dot (jacobianT β γ (x s) (y s)) (m s - m 0) := by
+  have hsub : Icc 0 t ⊆ Icc 0 T := Icc_subset_Icc_right ht.2
+  set W : ℝ → ℝ × ℝ := fun s => u₀ + ∫ r in (0 : ℝ)..s, jacobian β γ (x r) (U r) with hW
+  have hUW : ∀ s ∈ Icc 0 T, U s = W s + (m s - m 0) := fun s hs => by
+    rw [hU.eq s hs]; simp only [W]; abel
+  have hWc : ContinuousOn W (Icc 0 t) := by
+    have : ContinuousOn (fun s => U s - (m s - m 0)) (Icc 0 t) :=
+      (hU.continuousOn.sub (hm.sub continuousOn_const)).mono hsub
+    refine this.congr fun s hs => ?_
+    simp only [hUW s (hsub hs)]; abel
+  have hJc : ContinuousOn (fun r => jacobian β γ (x r) (U r)) (Icc 0 T) :=
+    (continuous_jacobian β γ).comp_continuousOn (hxc.prodMk hU.continuousOn)
+  have hWd : ∀ s ∈ Ioo 0 t, HasDerivAt W (jacobian β γ (x s) (U s)) s := by
+    intro s hs
+    have hsT : s ∈ Ioo 0 T := ⟨hs.1, hs.2.trans_le ht.2⟩
+    have hint : IntervalIntegrable (fun r => jacobian β γ (x r) (U r)) volume 0 s :=
+      (hJc.mono (by rw [uIcc_of_le hs.1.le]; exact Icc_subset_Icc_right hsT.2.le)
+        ).intervalIntegrable
+    have hmeas := (hJc.mono Ioo_subset_Icc_self).stronglyMeasurableAtFilter (μ := volume)
+      isOpen_Ioo s hsT
+    have hca : ContinuousAt (fun r => jacobian β γ (x r) (U r)) s :=
+      hJc.continuousAt (Icc_mem_nhds hsT.1 hsT.2)
+    exact (intervalIntegral.integral_hasDerivAt_right hint hmeas hca).const_add u₀
+  have hW0 : W 0 = u₀ := by simp [W]
+  clear_value W
+  have hfc : ContinuousOn (fun s => dot (y s) (W s)) (Icc 0 t) :=
+    continuous_dot.comp_continuousOn (hyc.prodMk hWc)
+  have hg : ContinuousOn (fun s => dot (jacobianT β γ (x s) (y s)) (m s - m 0)) (Icc 0 t) :=
+    continuous_dot.comp_continuousOn
+      (((continuous_jacobianT β γ).comp_continuousOn ((hxc.mono hsub).prodMk hyc)).prodMk
+        ((hm.sub continuousOn_const).mono hsub))
+  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le ht.1 hfc
+    (fun s hs => (hasDerivAt_dot' (hy s hs) (hWd s hs)).congr_deriv (by
+      rw [hUW s ⟨hs.1.le, hs.2.le.trans ht.2⟩]
+      simp only [dot, jacobianT, jacobian, Prod.fst_add, Prod.snd_add, Prod.fst_sub,
+        Prod.snd_sub, Prod.fst_neg, Prod.snd_neg]
+      ring))
+    (hg.intervalIntegrable_of_Icc ht.1)
+  rw [hFTC]
+  rw [hW0, hUW t ht, dot_add_right]
+  ring
+
+/-! ### Linear functionals of the driving data -/
+
+/-- The dot product as a continuous linear functional. -/
+noncomputable def dotCLM (a : ℝ × ℝ) : ℝ × ℝ →L[ℝ] ℝ :=
+  a.1 • ContinuousLinearMap.fst ℝ ℝ ℝ + a.2 • ContinuousLinearMap.snd ℝ ℝ ℝ
+
+@[simp]
+theorem dotCLM_apply (a v : ℝ × ℝ) : dotCLM a v = dot a v := by
+  simp [dotCLM, dot]
+
+theorem abs_dot_le (a v : ℝ × ℝ) : |dot a v| ≤ 2 * ‖a‖ * ‖v‖ := by
+  have ha1 : |a.1| ≤ ‖a‖ := by rw [← Real.norm_eq_abs]; exact norm_fst_le a
+  have ha2 : |a.2| ≤ ‖a‖ := by rw [← Real.norm_eq_abs]; exact norm_snd_le a
+  have hv1 : |v.1| ≤ ‖v‖ := by rw [← Real.norm_eq_abs]; exact norm_fst_le v
+  have hv2 : |v.2| ≤ ‖v‖ := by rw [← Real.norm_eq_abs]; exact norm_snd_le v
+  calc |dot a v| ≤ |a.1| * |v.1| + |a.2| * |v.2| := by
+        unfold dot; refine (abs_add_le _ _).trans ?_; rw [abs_mul, abs_mul]
+    _ ≤ ‖a‖ * ‖v‖ + ‖a‖ * ‖v‖ := by gcongr
+    _ = 2 * ‖a‖ * ‖v‖ := by ring
+
+/-- The functional `(u, f) ↦ ⟨c₀, u⟩ + ⟨ℓ, f(t) - f(0)⟩ + ∫₀ᵗ ⟨κ(s), f(s) - f(0)⟩ ds` on initial
+values and driving paths is continuous and linear. -/
+theorem exists_drivingFunctional {T : ℝ} (hT : 0 ≤ T) {t : ℝ} (ht : t ∈ Icc 0 T) (c₀ ℓ : ℝ × ℝ)
+    {κ : ℝ → ℝ × ℝ} (hκ : ContinuousOn κ (Icc 0 t)) :
+    ∃ Λ : (ℝ × ℝ) × C(Icc 0 T, ℝ × ℝ) →L[ℝ] ℝ, ∀ e,
+      Λ e = dot c₀ e.1 + dot ℓ (e.2 ⟨t, ht⟩ - e.2 ⟨0, left_mem_Icc.2 hT⟩) +
+        ∫ s in (0 : ℝ)..t, dot (κ s) (IccExtend hT e.2 s - e.2 ⟨0, left_mem_Icc.2 hT⟩) := by
+  set z : Icc 0 T := ⟨0, left_mem_Icc.2 hT⟩
+  have hi : ∀ f : C(Icc 0 T, ℝ × ℝ),
+      IntervalIntegrable (fun s => dot (κ s) (IccExtend hT f s - f z)) volume 0 t := fun f =>
+    (continuous_dot.comp_continuousOn (hκ.prodMk
+      ((f.continuous.Icc_extend' (h := hT)).continuousOn.sub continuousOn_const))
+      ).intervalIntegrable_of_Icc ht.1
+  obtain ⟨C, hC⟩ := isCompact_Icc.exists_bound_of_continuousOn hκ
+  let φ : C(Icc 0 T, ℝ × ℝ) →ₗ[ℝ] ℝ :=
+    { toFun := fun f => ∫ s in (0 : ℝ)..t, dot (κ s) (IccExtend hT f s - f z)
+      map_add' := fun f g => by
+        rw [← intervalIntegral.integral_add (hi f) (hi g)]
+        refine intervalIntegral.integral_congr fun s _ => ?_
+        simp only [IccExtend_apply, ContinuousMap.add_apply, dot, Prod.fst_add, Prod.snd_add,
+          Prod.fst_sub, Prod.snd_sub]
+        ring
+      map_smul' := fun c f => by
+        rw [RingHom.id_apply, smul_eq_mul, ← intervalIntegral.integral_const_mul]
+        refine intervalIntegral.integral_congr fun s _ => ?_
+        simp only [IccExtend_apply, ContinuousMap.smul_apply, dot, Prod.smul_fst, Prod.smul_snd,
+          Prod.fst_sub, Prod.snd_sub, smul_eq_mul]
+        ring }
+  let φc := φ.mkContinuous (4 * C * |t - 0|) fun f => by
+    change ‖∫ s in (0 : ℝ)..t, dot (κ s) (IccExtend hT f s - f z)‖ ≤ _
+    rw [mul_assoc, mul_comm |t - 0|, ← mul_assoc]
+    refine intervalIntegral.norm_integral_le_of_norm_le_const fun s hs => ?_
+    rw [uIoc_of_le ht.1] at hs
+    have hκs := hC s (Ioc_subset_Icc_self hs)
+    have hf : ‖IccExtend hT f s - f z‖ ≤ 2 * ‖f‖ := by
+      refine (norm_sub_le _ _).trans ?_
+      rw [IccExtend_apply, two_mul]
+      exact add_le_add (f.norm_coe_le_norm _) (f.norm_coe_le_norm _)
+    rw [Real.norm_eq_abs]
+    refine (abs_dot_le _ _).trans ?_
+    have hC0 : 0 ≤ C := (norm_nonneg (κ s)).trans hκs
+    calc 2 * ‖κ s‖ * ‖IccExtend hT f s - f z‖ ≤ 2 * C * (2 * ‖f‖) := by gcongr
+      _ = 4 * C * ‖f‖ := by ring
+  refine ⟨(dotCLM c₀).comp (ContinuousLinearMap.fst ℝ _ _) +
+    (dotCLM ℓ).comp (((ContinuousMap.evalCLM ℝ (⟨t, ht⟩ : Icc 0 T) :
+      C(Icc 0 T, ℝ × ℝ) →L[ℝ] ℝ × ℝ) - ContinuousMap.evalCLM ℝ z).comp
+      (ContinuousLinearMap.snd ℝ _ _)) + φc.comp (ContinuousLinearMap.snd ℝ _ _), fun e => ?_⟩
+  simp [φc, φ, z, dot_sub_right]
+
+/-! ### Calculus with quadratic forms -/
+
+theorem hasDerivAt_quadForm {K : ℝ → ℝ × ℝ × ℝ} {u v : ℝ → ℝ × ℝ} {K' : ℝ × ℝ × ℝ}
+    {u' v' : ℝ × ℝ} {s : ℝ} (hK : HasDerivAt K K' s) (hu : HasDerivAt u u' s)
+    (hv : HasDerivAt v v' s) :
+    HasDerivAt (fun r => quadForm (K r) (u r) (v r))
+      (quadForm K' (u s) (v s) + quadForm (K s) u' (v s) + quadForm (K s) (u s) v') s := by
+  have hK1 : HasDerivAt (fun r => (K r).1) K'.1 s :=
+    (ContinuousLinearMap.fst ℝ ℝ (ℝ × ℝ)).hasFDerivAt.comp_hasDerivAt s hK
+  have hK2 : HasDerivAt (fun r => (K r).2) K'.2 s :=
+    (ContinuousLinearMap.snd ℝ ℝ (ℝ × ℝ)).hasFDerivAt.comp_hasDerivAt s hK
+  have hK21 := hasDerivAt_prodFst' hK2
+  have hK22 := hasDerivAt_prodSnd' hK2
+  have hu1 := hasDerivAt_prodFst' hu
+  have hu2 := hasDerivAt_prodSnd' hu
+  have hv1 := hasDerivAt_prodFst' hv
+  have hv2 := hasDerivAt_prodSnd' hv
+  have h := (hu1.mul ((hK1.mul hv1).add (hK21.mul hv2))).add
+    (hu2.mul ((hK21.mul hv1).add (hK22.mul hv2)))
+  refine h.congr_deriv ?_
+  simp only [quadForm, dot, symmApply, Pi.mul_apply, Pi.add_apply]; ring
+
+theorem quadForm_neg_left (c : ℝ × ℝ × ℝ) (u v : ℝ × ℝ) :
+    quadForm c (-u) v = -quadForm c u v := by
+  simp only [quadForm, dot, symmApply, Prod.fst_neg, Prod.snd_neg]; ring
+
+theorem quadForm_neg_right (c : ℝ × ℝ × ℝ) (u v : ℝ × ℝ) :
+    quadForm c u (-v) = -quadForm c u v := by
+  simp only [quadForm, dot, symmApply, Prod.fst_neg, Prod.snd_neg]; ring
+
+theorem quadForm_zero (u v : ℝ × ℝ) : quadForm 0 u v = 0 := by
+  simp [quadForm, dot, symmApply]
+
+theorem continuous_quadForm :
+    Continuous (fun q : (ℝ × ℝ × ℝ) × (ℝ × ℝ) × (ℝ × ℝ) => quadForm q.1 q.2.1 q.2.2) := by
+  unfold quadForm dot symmApply; fun_prop
+
+theorem continuous_symmApply :
+    Continuous (fun q : (ℝ × ℝ × ℝ) × (ℝ × ℝ) => symmApply q.1 q.2) := by
+  unfold symmApply; fun_prop
+
+theorem continuousOn_quadForm {K : ℝ → ℝ × ℝ × ℝ} {u v : ℝ → ℝ × ℝ} {S : Set ℝ}
+    (hK : ContinuousOn K S) (hu : ContinuousOn u S) (hv : ContinuousOn v S) :
+    ContinuousOn (fun r => quadForm (K r) (u r) (v r)) S :=
+  continuous_quadForm.comp_continuousOn (hK.prodMk (hu.prodMk hv))
+
+/-- The deterministic half of the Wiener isometry: the second moment of the integration-by-parts
+Wiener integrals, written through the covariance `K(min s r)` of the driving path, equals
+`∫₀ᵗ ⟨y_b, G y_a⟩`. -/
+theorem wienerIsometry_aux {t : ℝ} (ht : 0 ≤ t) {a b : ℝ × ℝ} {ya yb κa κb : ℝ → ℝ × ℝ}
+    {K G : ℝ → ℝ × ℝ × ℝ} (hyac : ContinuousOn ya (Icc 0 t)) (hybc : ContinuousOn yb (Icc 0 t))
+    (hya : ∀ s ∈ Ioo 0 t, HasDerivAt ya (-κa s) s) (hyb : ∀ s ∈ Ioo 0 t, HasDerivAt yb (-κb s) s)
+    (hyat : ya t = a) (hybt : yb t = b) (hκa : ContinuousOn κa (Icc 0 t))
+    (hκb : ContinuousOn κb (Icc 0 t)) (hKc : ContinuousOn K (Icc 0 t)) (hK0 : K 0 = 0)
+    (hK : ∀ s ∈ Ioo 0 t, HasDerivAt K (G s) s) (hGc : ContinuousOn G (Icc 0 t)) :
+    quadForm (K t) b a + (∫ s in (0 : ℝ)..t, quadForm (K (min t s)) b (κa s)) +
+      ∫ s in (0 : ℝ)..t, (quadForm (K (min s t)) (κb s) a +
+        ∫ r in (0 : ℝ)..t, quadForm (K (min s r)) (κb s) (κa r)) =
+      ∫ s in (0 : ℝ)..t, quadForm (G s) (yb s) (ya s) := by
+  -- the primitive `h(s) = ∫₀ˢ K κ_a`
+  set g : ℝ → ℝ × ℝ := fun r => symmApply (K r) (κa r) with hg
+  have hgc : ContinuousOn g (Icc 0 t) := continuous_symmApply.comp_continuousOn (hKc.prodMk hκa)
+  set h : ℝ → ℝ × ℝ := fun s => ∫ r in (0 : ℝ)..s, g r with hh
+  have hgi : ∀ s ∈ Icc 0 t, IntervalIntegrable g volume 0 s := fun s hs =>
+    (hgc.mono (Icc_subset_Icc_right hs.2)).intervalIntegrable_of_Icc hs.1
+  have hhc : ContinuousOn h (Icc 0 t) := by
+    have := intervalIntegral.continuousOn_primitive_interval (μ := volume) (a := 0) (b := t)
+      (f := g) (by rw [uIcc_of_le ht]; exact hgc.integrableOn_Icc)
+    rwa [uIcc_of_le ht] at this
+  have hhd : ∀ s ∈ Ioo 0 t, HasDerivAt h (g s) s := fun s hs =>
+    intervalIntegral.integral_hasDerivAt_right (hgi s (Ioo_subset_Icc_self hs))
+      ((hgc.mono Ioo_subset_Icc_self).stronglyMeasurableAtFilter (μ := volume) isOpen_Ioo s hs)
+      (hgc.continuousAt (Icc_mem_nhds hs.1 hs.2))
+  have hh0 : h 0 = 0 := by simp [h]
+  -- step 1: the inner integral, split at `s`
+  have hinner : ∀ s ∈ Icc 0 t, (∫ r in (0 : ℝ)..t, quadForm (K (min s r)) (κb s) (κa r)) =
+      dot (κb s) (h s) + quadForm (K s) (κb s) (ya s) - quadForm (K s) (κb s) a := by
+    intro s hs
+    have hc : ContinuousOn (fun r => quadForm (K (min s r)) (κb s) (κa r)) (Icc 0 t) :=
+      continuousOn_quadForm (hKc.comp (continuous_const.min continuous_id).continuousOn
+        fun r hr => ⟨le_min hs.1 hr.1, (min_le_left _ _).trans hs.2⟩) continuousOn_const hκa
+    rw [← intervalIntegral.integral_add_adjacent_intervals (b := s)
+      ((hc.mono (Icc_subset_Icc_right hs.2)).intervalIntegrable_of_Icc hs.1)
+      ((hc.mono (Icc_subset_Icc_left hs.1)).intervalIntegrable_of_Icc hs.2)]
+    have h1 : (∫ r in (0 : ℝ)..s, quadForm (K (min s r)) (κb s) (κa r)) = dot (κb s) (h s) := by
+      rw [← dotCLM_apply, ← (dotCLM (κb s)).intervalIntegral_comp_comm (hgi s hs)]
+      refine intervalIntegral.integral_congr fun r hr => ?_
+      rw [uIcc_of_le hs.1] at hr
+      simp only [dotCLM_apply, quadForm, g, min_eq_right hr.2]
+    set w := symmApply (K s) (κb s)
+    have h2 : (∫ r in s..t, quadForm (K (min s r)) (κb s) (κa r)) =
+        dot (ya s) w - dot a w := by
+      have hcongr : (∫ r in s..t, quadForm (K (min s r)) (κb s) (κa r)) =
+          ∫ r in s..t, -dot (-κa r) w := by
+        refine intervalIntegral.integral_congr fun r hr => ?_
+        rw [uIcc_of_le hs.2] at hr
+        simp only [min_eq_left hr.1, w, dot_neg_left, neg_neg]
+        rw [quadForm_comm]; rfl
+      have hint : IntervalIntegrable (fun r => dot (-κa r) w) volume s t :=
+        ((continuous_dot.comp_continuousOn (hκa.neg.prodMk continuousOn_const)).mono
+          (Icc_subset_Icc_left hs.1)).intervalIntegrable_of_Icc hs.2
+      have hFTC : (∫ r in s..t, dot (-κa r) w) = dot (ya t) w - dot (ya s) w :=
+        intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hs.2
+          (continuous_dot.comp_continuousOn ((hyac.mono (Icc_subset_Icc_left hs.1)).prodMk
+            continuousOn_const))
+          (fun r hr => (hasDerivAt_dot' (hya r ⟨hs.1.trans_lt hr.1, hr.2⟩)
+            (hasDerivAt_const r w)).congr_deriv (by simp [dot])) hint
+      rw [hcongr, intervalIntegral.integral_neg, hFTC, hyat]
+      ring
+    rw [h1, h2]
+    simp only [quadForm, w]
+    rw [show dot (κb s) (symmApply (K s) (ya s)) = dot (ya s) (symmApply (K s) (κb s)) from
+      quadForm_comm _ _ _, show dot (κb s) (symmApply (K s) a) = dot a (symmApply (K s) (κb s))
+      from quadForm_comm _ _ _]
+    ring
+  -- continuity of the four scalar integrands
+  have hA1 : ContinuousOn (fun s => dot (κb s) (h s)) (Icc 0 t) :=
+    continuous_dot.comp_continuousOn (hκb.prodMk hhc)
+  have hA2 : ContinuousOn (fun s => quadForm (K s) (κb s) (ya s)) (Icc 0 t) :=
+    continuousOn_quadForm hKc hκb hyac
+  have hA3 : ContinuousOn (fun s => quadForm (K s) (yb s) (κa s)) (Icc 0 t) :=
+    continuousOn_quadForm hKc hybc hκa
+  have hA4 : ContinuousOn (fun s => quadForm (G s) (yb s) (ya s)) (Icc 0 t) :=
+    continuousOn_quadForm hGc hybc hyac
+  have hi1 := hA1.intervalIntegrable_of_Icc (μ := volume) ht
+  have hi2 := hA2.intervalIntegrable_of_Icc (μ := volume) ht
+  have hi3 := hA3.intervalIntegrable_of_Icc (μ := volume) ht
+  have hi4 := hA4.intervalIntegrable_of_Icc (μ := volume) ht
+  have hi1n : IntervalIntegrable (fun s => -dot (κb s) (h s)) volume 0 t := hi1.neg
+  -- step 2: the outer integral
+  have hout : (∫ s in (0 : ℝ)..t, (quadForm (K (min s t)) (κb s) a +
+      ∫ r in (0 : ℝ)..t, quadForm (K (min s r)) (κb s) (κa r))) =
+      (∫ s in (0 : ℝ)..t, dot (κb s) (h s)) + ∫ s in (0 : ℝ)..t, quadForm (K s) (κb s) (ya s) := by
+    rw [← intervalIntegral.integral_add hi1 hi2]
+    refine intervalIntegral.integral_congr fun s hs => ?_
+    rw [uIcc_of_le ht] at hs
+    simp only [hinner s hs, min_eq_left hs.2]
+    ring
+  -- step 3: the middle term
+  have hmid : (∫ s in (0 : ℝ)..t, quadForm (K (min t s)) b (κa s)) = dot b (h t) := by
+    rw [← dotCLM_apply, ← (dotCLM b).intervalIntegral_comp_comm (hgi t ⟨ht, le_rfl⟩)]
+    refine intervalIntegral.integral_congr fun s hs => ?_
+    rw [uIcc_of_le ht] at hs
+    simp only [dotCLM_apply, quadForm, g, min_eq_right hs.2]
+  -- step 4: integration by parts against `y_b`
+  have hibp : (∫ s in (0 : ℝ)..t, (-dot (κb s) (h s) + quadForm (K s) (yb s) (κa s))) =
+      dot b (h t) := by
+    rw [intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le
+      (f := fun s => dot (yb s) (h s))
+      (f' := fun s => -dot (κb s) (h s) + quadForm (K s) (yb s) (κa s)) ht
+      (continuous_dot.comp_continuousOn (hybc.prodMk hhc))
+      (fun s hs => (hasDerivAt_dot' (hyb s hs) (hhd s hs)).congr_deriv
+        (by simp only [dot_neg_left, quadForm, g]))
+      (hi1n.add hi3), hybt, hh0]
+    simp [dot]
+  -- step 5: the fundamental theorem for `⟨y_b, K y_a⟩`
+  have hftc : (∫ s in (0 : ℝ)..t, (quadForm (G s) (yb s) (ya s) -
+      quadForm (K s) (κb s) (ya s) - quadForm (K s) (yb s) (κa s))) = quadForm (K t) b a := by
+    rw [intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le
+      (f' := fun s => quadForm (G s) (yb s) (ya s) - quadForm (K s) (κb s) (ya s) -
+        quadForm (K s) (yb s) (κa s)) (f := fun s => quadForm (K s) (yb s) (ya s)) ht
+      (continuousOn_quadForm hKc hybc hyac)
+      (fun s hs => (hasDerivAt_quadForm (hK s hs) (hyb s hs) (hya s hs)).congr_deriv
+        (by rw [quadForm_neg_left, quadForm_neg_right]; ring))
+      ((hi4.sub hi2).sub hi3), hybt, hyat, hK0, quadForm_zero, sub_zero]
+  rw [intervalIntegral.integral_add hi1n hi3, intervalIntegral.integral_neg] at hibp
+  rw [intervalIntegral.integral_sub (hi4.sub hi2) hi3,
+    intervalIntegral.integral_sub hi4 hi2] at hftc
+  rw [hout, hmid]
+  linarith
+
+/-- Along the adjoint flow, the quadratic form of a limit covariance grows by the diffusion
+matrix: `⟨y_a(t), V(t) y_b(t)⟩ = ⟨y_a(0), V₀ y_b(0)⟩ + ∫₀ᵗ ⟨y_a, G(x) y_b⟩`. -/
+theorem IsLimitCovariance.quadForm_eq {β γ : ℝ} {x : ℝ → ℝ × ℝ} {V₀ : ℝ × ℝ × ℝ}
+    {V : ℝ → ℝ × ℝ × ℝ} {t : ℝ} (hV : IsLimitCovariance β γ x V₀ V) (ht : 0 ≤ t)
+    (hxc : ContinuousOn x (Icc 0 t)) {ya yb : ℝ → ℝ × ℝ} (hyac : ContinuousOn ya (Icc 0 t))
+    (hybc : ContinuousOn yb (Icc 0 t))
+    (hya : ∀ s ∈ Ioo 0 t, HasDerivAt ya (-jacobianT β γ (x s) (ya s)) s)
+    (hyb : ∀ s ∈ Ioo 0 t, HasDerivAt yb (-jacobianT β γ (x s) (yb s)) s) :
+    quadForm (V t) (ya t) (yb t) = quadForm V₀ (ya 0) (yb 0) +
+      ∫ s in (0 : ℝ)..t, quadForm (diffusionMatrix β γ (x s)) (ya s) (yb s) := by
+  have hVc : ContinuousOn V (Icc 0 t) := fun s hs =>
+    (hV.hasDerivWithinAt s hs.1).continuousWithinAt.mono Icc_subset_Ici_self
+  have hGc : ContinuousOn (fun s => diffusionMatrix β γ (x s)) (Icc 0 t) := by
+    have : Continuous (diffusionMatrix β γ) := by unfold diffusionMatrix; fun_prop
+    exact this.comp_continuousOn hxc
+  have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le
+    (f := fun s => quadForm (V s) (ya s) (yb s))
+    (f' := fun s => quadForm (diffusionMatrix β γ (x s)) (ya s) (yb s)) ht
+    (continuousOn_quadForm hVc hyac hybc)
+    (fun s hs => (hasDerivAt_quadForm
+      ((hV.hasDerivWithinAt s hs.1.le).hasDerivAt (Ici_mem_nhds hs.1)) (hya s hs)
+      (hyb s hs)).congr_deriv (by
+        rw [quadForm_lyapunovField, quadForm_neg_left, quadForm_neg_right]; ring))
+    ((continuousOn_quadForm hGc hyac hybc).intervalIntegrable_of_Icc ht)
+  rw [hFTC, hV.initial]
+  ring
+
+/-- The covariance of the driving martingale: `K(t) = ∫₀ᵗ G(x(s)) ds`, so that
+`E[(M(s) - M(0)) (M(r) - M(0))ᵀ] = K(min s r)` for the Gaussian martingale of the diffusion
+approximation. -/
+noncomputable def quadCov (β γ : ℝ) (x : ℝ → ℝ × ℝ) (t : ℝ) : ℝ × ℝ × ℝ :=
+  ∫ s in (0 : ℝ)..t, diffusionMatrix β γ (x s)
+
+theorem quadCov_zero (β γ : ℝ) (x : ℝ → ℝ × ℝ) : quadCov β γ x 0 = 0 := by
+  simp [quadCov]
+
+theorem continuousOn_quadCov {β γ T : ℝ} {x : ℝ → ℝ × ℝ} (hT : 0 ≤ T)
+    (hxc : ContinuousOn x (Icc 0 T)) : ContinuousOn (quadCov β γ x) (Icc 0 T) := by
+  have hGc : ContinuousOn (fun s => diffusionMatrix β γ (x s)) (Icc 0 T) := by
+    have : Continuous (diffusionMatrix β γ) := by unfold diffusionMatrix; fun_prop
+    exact this.comp_continuousOn hxc
+  have := intervalIntegral.continuousOn_primitive_interval (μ := volume) (a := 0) (b := T)
+    (f := fun s => diffusionMatrix β γ (x s)) (by rw [uIcc_of_le hT]; exact hGc.integrableOn_Icc)
+  rwa [uIcc_of_le hT] at this
+
+theorem hasDerivAt_quadCov {β γ T : ℝ} {x : ℝ → ℝ × ℝ} (hxc : ContinuousOn x (Icc 0 T)) {s : ℝ}
+    (hs : s ∈ Ioo 0 T) : HasDerivAt (quadCov β γ x) (diffusionMatrix β γ (x s)) s := by
+  have hGc : ContinuousOn (fun s => diffusionMatrix β γ (x s)) (Icc 0 T) := by
+    have : Continuous (diffusionMatrix β γ) := by unfold diffusionMatrix; fun_prop
+    exact this.comp_continuousOn hxc
+  exact intervalIntegral.integral_hasDerivAt_right
+    ((hGc.mono (Icc_subset_Icc_right hs.2.le)).intervalIntegrable_of_Icc hs.1.le)
+    ((hGc.mono Ioo_subset_Icc_self).stronglyMeasurableAtFilter (μ := volume) isOpen_Ioo s hs)
+    (hGc.continuousAt (Icc_mem_nhds hs.1 hs.2))
+
+section Moments
+
+variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {T : ℝ}
+  [MeasurableSpace C(Icc (0 : ℝ) T, ℝ × ℝ)] [BorelSpace C(Icc (0 : ℝ) T, ℝ × ℝ)]
+  {Z : Ω → (ℝ × ℝ) × C(Icc (0 : ℝ) T, ℝ × ℝ)}
+
+theorem integrable_smul_of_hasGaussianLaw (hZ : HasGaussianLaw Z P)
+    (L : (ℝ × ℝ) × C(Icc (0 : ℝ) T, ℝ × ℝ) →L[ℝ] ℝ) :
+    Integrable (fun ω => L (Z ω) • Z ω) P := by
+  have h2 : MemLp Z 2 P := hZ.memLp_two
+  have hL : MemLp (fun ω => L (Z ω)) 2 P := (hZ.map_fun L).memLp_two
+  exact memLp_one_iff_integrable.1 (hL.smul h2)
+
+theorem clm_integral_smul (hZ : HasGaussianLaw Z P)
+    (L₁ L : (ℝ × ℝ) × C(Icc (0 : ℝ) T, ℝ × ℝ) →L[ℝ] ℝ) :
+    L (∫ ω, L₁ (Z ω) • Z ω ∂P) = ∫ ω, L₁ (Z ω) * L (Z ω) ∂P := by
+  rw [← L.integral_comp_comm (integrable_smul_of_hasGaussianLaw hZ L₁)]
+  simp [map_smul, smul_eq_mul]
+
+/-- Moments against a driving functional, by exchanging the expectation with the `ds` integral
+(the expectation of an `E`-valued Gaussian commutes with continuous linear maps). -/
+theorem integral_mul_drivingFunctional (hZ : HasGaussianLaw Z P) (hT : 0 ≤ T) {t : ℝ}
+    (ht : t ∈ Icc 0 T) {U₀ : Ω → ℝ × ℝ} {M : Ω → ℝ → ℝ × ℝ} (hZU₀ : ∀ ω, (Z ω).1 = U₀ ω)
+    (hZM : ∀ ω (s : Icc (0 : ℝ) T), (Z ω).2 s = M ω s) {c₀ ℓ : ℝ × ℝ} {κ : ℝ → ℝ × ℝ}
+    {Λ : (ℝ × ℝ) × C(Icc (0 : ℝ) T, ℝ × ℝ) →L[ℝ] ℝ}
+    (hΛ : ∀ e, Λ e = dot c₀ e.1 + dot ℓ (e.2 ⟨t, ht⟩ - e.2 ⟨0, left_mem_Icc.2 hT⟩) +
+        ∫ s in (0 : ℝ)..t, dot (κ s) (IccExtend hT e.2 s - e.2 ⟨0, left_mem_Icc.2 hT⟩))
+    (L₁ : (ℝ × ℝ) × C(Icc (0 : ℝ) T, ℝ × ℝ) →L[ℝ] ℝ) :
+    ∫ ω, L₁ (Z ω) * Λ (Z ω) ∂P = ∫ ω, L₁ (Z ω) * dot c₀ (U₀ ω) ∂P +
+      ∫ ω, L₁ (Z ω) * dot ℓ (M ω t - M ω 0) ∂P +
+      ∫ s in (0 : ℝ)..t, ∫ ω, L₁ (Z ω) * dot (κ s) (M ω s - M ω 0) ∂P := by
+  set z : Icc (0 : ℝ) T := ⟨0, left_mem_Icc.2 hT⟩
+  have key := fun L => clm_integral_smul (P := P) hZ L₁ L
+  rw [← key Λ, hΛ]
+  have k1 := key ((dotCLM c₀).comp (ContinuousLinearMap.fst ℝ _ _))
+  have k2 := key ((dotCLM ℓ).comp (((ContinuousMap.evalCLM ℝ (⟨t, ht⟩ : Icc 0 T) :
+      C(Icc 0 T, ℝ × ℝ) →L[ℝ] ℝ × ℝ) - ContinuousMap.evalCLM ℝ z).comp
+      (ContinuousLinearMap.snd ℝ _ _)))
+  simp only [ContinuousLinearMap.coe_comp, Function.comp_apply, ContinuousLinearMap.coe_fst',
+    ContinuousLinearMap.coe_snd', FunLike.coe_sub, Pi.sub_apply,
+    ContinuousMap.evalCLM_apply, dotCLM_apply, hZU₀, hZM] at k1 k2
+  rw [k1, k2]
+  congr 1
+  refine intervalIntegral.integral_congr fun s hs => ?_
+  rw [uIcc_of_le ht.1] at hs
+  have hsT : s ∈ Icc 0 T := ⟨hs.1, hs.2.trans ht.2⟩
+  have k3 := key ((dotCLM (κ s)).comp (((ContinuousMap.evalCLM ℝ (⟨s, hsT⟩ : Icc 0 T) :
+      C(Icc 0 T, ℝ × ℝ) →L[ℝ] ℝ × ℝ) - ContinuousMap.evalCLM ℝ z).comp
+      (ContinuousLinearMap.snd ℝ _ _)))
+  simp only [ContinuousLinearMap.coe_comp, Function.comp_apply,
+    ContinuousLinearMap.coe_snd', FunLike.coe_sub, Pi.sub_apply,
+    ContinuousMap.evalCLM_apply, dotCLM_apply, hZM] at k3
+  simp only [IccExtend_of_mem hT _ hsT]
+  exact k3
+
+end Moments
+
+/-- Each linear functional `⟨ℓ, U(t)⟩` of the fluctuation path is a continuous linear functional
+of the driving data `(U₀, M)`, through the adjoint solution `y` with `y(t) = ℓ`. -/
+theorem exists_dot_eq_drivingFunctional {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
+    {x : ℝ → ℝ × ℝ} (hxc : ContinuousOn x (Icc 0 T)) (hT : 0 ≤ T) {t : ℝ} (ht : t ∈ Icc 0 T)
+    {Ω : Type*} {U₀ : Ω → ℝ × ℝ} {M U : Ω → ℝ → ℝ × ℝ}
+    {Z : Ω → (ℝ × ℝ) × C(Icc (0 : ℝ) T, ℝ × ℝ)} (hZU₀ : ∀ ω, (Z ω).1 = U₀ ω)
+    (hZM : ∀ ω (s : Icc (0 : ℝ) T), (Z ω).2 s = M ω s)
+    (hU : ∀ ω, IsFluctuationPath β γ T x (U₀ ω) (M ω) (U ω)) (ℓ : ℝ × ℝ) :
+    ∃ (y : ℝ → ℝ × ℝ) (Λ : (ℝ × ℝ) × C(Icc (0 : ℝ) T, ℝ × ℝ) →L[ℝ] ℝ), y t = ℓ ∧
+      ContinuousOn y (Icc 0 t) ∧
+      (∀ s ∈ Ioo 0 t, HasDerivAt y (-jacobianT β γ (x s) (y s)) s) ∧
+      (∀ e, Λ e = dot (y 0) e.1 + dot ℓ (e.2 ⟨t, ht⟩ - e.2 ⟨0, left_mem_Icc.2 hT⟩) +
+        ∫ s in (0 : ℝ)..t, dot (jacobianT β γ (x s) (y s))
+          (IccExtend hT e.2 s - e.2 ⟨0, left_mem_Icc.2 hT⟩)) ∧
+      ∀ ω, dot ℓ (U ω t) = Λ (Z ω) := by
+  have hsub : Icc 0 t ⊆ Icc 0 T := Icc_subset_Icc_right ht.2
+  obtain ⟨y, hyt, hyc, hyd⟩ := exists_adjoint hβ hγ hxc hT t ℓ
+  have hκ : ContinuousOn (fun s => jacobianT β γ (x s) (y s)) (Icc 0 t) :=
+    (continuous_jacobianT β γ).comp_continuousOn ((hxc.mono hsub).prodMk hyc.continuousOn)
+  obtain ⟨Λ, hΛ⟩ := exists_drivingFunctional hT ht (y 0) ℓ hκ
+  have hyd' : ∀ s ∈ Ioo 0 t, HasDerivAt y (-jacobianT β γ (x s) (y s)) s := fun s hs =>
+    hyd s ⟨hs.1.le, hs.2.le.trans ht.2⟩
+  refine ⟨y, Λ, hyt, hyc.continuousOn, hyd', hΛ, fun ω => ?_⟩
+  have hMc : ContinuousOn (M ω) (Icc 0 T) :=
+    ((Z ω).2.continuous.Icc_extend' (h := hT)).continuousOn.congr fun s hs => by
+      rw [IccExtend_of_mem hT _ hs, hZM]
+  have h := (hU ω).dot_eq hxc hMc ht hyc.continuousOn hyd'
+  rw [hyt] at h
+  rw [h, hΛ, hZU₀, hZM, hZM]
+  congr 1
+  refine intervalIntegral.integral_congr fun s hs => ?_
+  rw [uIcc_of_le ht.1] at hs
+  simp only [IccExtend_of_mem hT _ (hsub hs), hZM]
+
+/-- **The limit fluctuation is Gaussian with covariance `V(t)`.** Let the driving data `(U₀, M)`
+be jointly Gaussian as one random element `Z` of `ℝ² × C([0, T], ℝ²)` (`hZ`, `hZU₀`, `hZM`),
+centered, with `U₀` of covariance `V₀` and uncorrelated with the increments of `M`, and with
+`E[(M(s) - M(0)) (M(r) - M(0))ᵀ] = K(min s r)` for `K(t) = ∫₀ᵗ G(x)` (`quadCov`): the
+covariance of the Gaussian martingale with `d⟨M⟩ = G(x(t)) dt` of the diffusion approximation.
+Then the solution `U` of the fluctuation equation has, at each `t ∈ [0, T]`, a Gaussian law with
+mean `0` and second moments `E[⟨a, U(t)⟩ ⟨b, U(t)⟩] = ⟨a, V(t) b⟩`, where `V` is the limit
+covariance (`IsLimitCovariance`); `covariance_isFluctuationPath` restates the last part entrywise.
+
+The proof writes `⟨ℓ, U(t)⟩` as the integration-by-parts Wiener integral
+`⟨y(0), U₀⟩ + ∫₀ᵗ ⟨y(s), dM(s)⟩` against the adjoint solution `y' = -DF(x)ᵀ y`, `y(t) = ℓ`
+(`IsFluctuationPath.dot_eq`), a continuous linear functional of `Z`. Gaussianity follows; the
+Wiener isometry `E[(∫ y_a dM) (∫ y_b dM)] = ∫₀ᵗ ⟨y_b, G y_a⟩` follows from the covariance of `M`
+(`wienerIsometry_aux`); and the Lyapunov equation transports `⟨y_a, V y_b⟩` along the same flow
+(`IsLimitCovariance.quadForm_eq`). -/
+theorem hasGaussianLaw_isFluctuationPath {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
+    {x : ℝ → ℝ × ℝ} (hxc : ContinuousOn x (Icc 0 T)) {V₀ : ℝ × ℝ × ℝ} {V : ℝ → ℝ × ℝ × ℝ}
+    (hV : IsLimitCovariance β γ x V₀ V) {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [MeasurableSpace C(Icc (0 : ℝ) T, ℝ × ℝ)] [BorelSpace C(Icc (0 : ℝ) T, ℝ × ℝ)]
+    {U₀ : Ω → ℝ × ℝ} {M : Ω → ℝ → ℝ × ℝ} {Z : Ω → (ℝ × ℝ) × C(Icc (0 : ℝ) T, ℝ × ℝ)}
+    (hZ : HasGaussianLaw Z P) (hZU₀ : ∀ ω, (Z ω).1 = U₀ ω)
+    (hZM : ∀ ω (s : Icc (0 : ℝ) T), (Z ω).2 s = M ω s)
+    (hmean₀ : ∫ ω, U₀ ω ∂P = 0) (hmeanM : ∀ s ∈ Icc 0 T, ∫ ω, (M ω s - M ω 0) ∂P = 0)
+    (hcov₀ : ∀ a b, ∫ ω, dot a (U₀ ω) * dot b (U₀ ω) ∂P = quadForm V₀ a b)
+    (hcross : ∀ a b, ∀ s ∈ Icc 0 T, ∫ ω, dot a (U₀ ω) * dot b (M ω s - M ω 0) ∂P = 0)
+    (hcovM : ∀ a b, ∀ s ∈ Icc 0 T, ∀ r ∈ Icc 0 T,
+      ∫ ω, dot a (M ω s - M ω 0) * dot b (M ω r - M ω 0) ∂P =
+        quadForm (quadCov β γ x (min s r)) a b)
+    {U : Ω → ℝ → ℝ × ℝ} (hU : ∀ ω, IsFluctuationPath β γ T x (U₀ ω) (M ω) (U ω)) {t : ℝ}
+    (ht : t ∈ Icc 0 T) :
+    HasGaussianLaw (fun ω => U ω t) P ∧ ∫ ω, U ω t ∂P = 0 ∧
+      ∀ a b, ∫ ω, dot a (U ω t) * dot b (U ω t) ∂P = quadForm (V t) a b := by
+  have hT : 0 ≤ T := ht.1.trans ht.2
+  have hsub : Icc 0 t ⊆ Icc 0 T := Icc_subset_Icc_right ht.2
+  set z : Icc (0 : ℝ) T := ⟨0, left_mem_Icc.2 hT⟩
+  have rep := exists_dot_eq_drivingFunctional hβ hγ hxc hT ht hZU₀ hZM hU
+  -- moments of a driving functional against the initial value and the driving increments
+  have mom₀ : ∀ (c c₀ ℓ : ℝ × ℝ) (κ : ℝ → ℝ × ℝ)
+      (Λ : (ℝ × ℝ) × C(Icc (0 : ℝ) T, ℝ × ℝ) →L[ℝ] ℝ),
+      (∀ e, Λ e = dot c₀ e.1 + dot ℓ (e.2 ⟨t, ht⟩ - e.2 z) +
+        ∫ s in (0 : ℝ)..t, dot (κ s) (IccExtend hT e.2 s - e.2 z)) →
+      ∫ ω, dot c (U₀ ω) * Λ (Z ω) ∂P = quadForm V₀ c c₀ := by
+    intro c c₀ ℓ κ Λ hΛ
+    have h := integral_mul_drivingFunctional (P := P) hZ hT ht hZU₀ hZM hΛ
+      ((dotCLM c).comp (ContinuousLinearMap.fst ℝ _ _))
+    simp only [ContinuousLinearMap.coe_comp, Function.comp_apply, ContinuousLinearMap.coe_fst',
+      dotCLM_apply, hZU₀] at h
+    rw [h, hcov₀, hcross c ℓ t ht, intervalIntegral.integral_congr (g := fun _ => (0 : ℝ))
+      fun s hs => hcross c (κ s) s (hsub (by rwa [uIcc_of_le ht.1] at hs))]
+    simp
+  have momM : ∀ (c : ℝ × ℝ) (r : ℝ), r ∈ Icc 0 T → ∀ (c₀ ℓ : ℝ × ℝ) (κ : ℝ → ℝ × ℝ)
+      (Λ : (ℝ × ℝ) × C(Icc (0 : ℝ) T, ℝ × ℝ) →L[ℝ] ℝ),
+      (∀ e, Λ e = dot c₀ e.1 + dot ℓ (e.2 ⟨t, ht⟩ - e.2 z) +
+        ∫ s in (0 : ℝ)..t, dot (κ s) (IccExtend hT e.2 s - e.2 z)) →
+      ∫ ω, dot c (M ω r - M ω 0) * Λ (Z ω) ∂P = quadForm (quadCov β γ x (min r t)) c ℓ +
+        ∫ s in (0 : ℝ)..t, quadForm (quadCov β γ x (min r s)) c (κ s) := by
+    intro c r hr c₀ ℓ κ Λ hΛ
+    have h := integral_mul_drivingFunctional (P := P) hZ hT ht hZU₀ hZM hΛ
+      ((dotCLM c).comp (((ContinuousMap.evalCLM ℝ (⟨r, hr⟩ : Icc 0 T) :
+        C(Icc 0 T, ℝ × ℝ) →L[ℝ] ℝ × ℝ) - ContinuousMap.evalCLM ℝ z).comp
+        (ContinuousLinearMap.snd ℝ _ _)))
+    simp only [ContinuousLinearMap.coe_comp, Function.comp_apply, ContinuousLinearMap.coe_snd',
+      FunLike.coe_sub, Pi.sub_apply, ContinuousMap.evalCLM_apply, dotCLM_apply, hZM] at h
+    rw [h]
+    have h0 : ∫ ω, dot c (M ω r - M ω 0) * dot c₀ (U₀ ω) ∂P = 0 := by
+      simp_rw [mul_comm (dot c _)]; exact hcross c₀ c r hr
+    rw [h0, zero_add, hcovM c ℓ r hr t ht]
+    congr 1
+    refine intervalIntegral.integral_congr fun s hs => ?_
+    rw [uIcc_of_le ht.1] at hs
+    exact hcovM c (κ s) r hr s (hsub hs)
+  -- the mean of a driving functional vanishes
+  have meanΛ : ∀ (c₀ ℓ : ℝ × ℝ) (κ : ℝ → ℝ × ℝ)
+      (Λ : (ℝ × ℝ) × C(Icc (0 : ℝ) T, ℝ × ℝ) →L[ℝ] ℝ),
+      (∀ e, Λ e = dot c₀ e.1 + dot ℓ (e.2 ⟨t, ht⟩ - e.2 z) +
+        ∫ s in (0 : ℝ)..t, dot (κ s) (IccExtend hT e.2 s - e.2 z)) →
+      Λ (∫ ω, Z ω ∂P) = 0 := by
+    intro c₀ ℓ κ Λ hΛ
+    have h1 : (∫ ω, Z ω ∂P).1 = 0 := by
+      have := (ContinuousLinearMap.fst ℝ (ℝ × ℝ) C(Icc (0 : ℝ) T, ℝ × ℝ)).integral_comp_comm
+        hZ.integrable
+      simp only [ContinuousLinearMap.coe_fst', hZU₀] at this
+      rw [← this, hmean₀]
+    have h2 : ∀ s (hs : s ∈ Icc 0 T), (∫ ω, Z ω ∂P).2 ⟨s, hs⟩ - (∫ ω, Z ω ∂P).2 z = 0 := by
+      intro s hs
+      have := ((((ContinuousMap.evalCLM ℝ (⟨s, hs⟩ : Icc 0 T) :
+        C(Icc 0 T, ℝ × ℝ) →L[ℝ] ℝ × ℝ) - ContinuousMap.evalCLM ℝ z).comp
+        (ContinuousLinearMap.snd ℝ _ _))).integral_comp_comm hZ.integrable (μ := P)
+      simp only [ContinuousLinearMap.coe_comp, Function.comp_apply, ContinuousLinearMap.coe_snd',
+        FunLike.coe_sub, Pi.sub_apply, ContinuousMap.evalCLM_apply, hZM] at this
+      rw [← this]
+      exact hmeanM s hs
+    rw [hΛ, h1, h2 t ht, intervalIntegral.integral_congr (g := fun _ => (0 : ℝ)) fun s hs => by
+      rw [uIcc_of_le ht.1] at hs
+      simp only [IccExtend_of_mem hT _ (hsub hs), h2 s (hsub hs), dot, Prod.fst_zero,
+        Prod.snd_zero, mul_zero, add_zero]]
+    simp [dot]
+  obtain ⟨y₁, Λ₁, -, -, -, hΛ₁, hrep₁⟩ := rep (1, 0)
+  obtain ⟨y₂, Λ₂, -, -, -, hΛ₂, hrep₂⟩ := rep (0, 1)
+  have hfun : (fun ω => U ω t) = fun ω => (Λ₁.prod Λ₂) (Z ω) := by
+    funext ω
+    rw [ContinuousLinearMap.prod_apply, ← hrep₁, ← hrep₂]
+    simp [dot]
+  refine ⟨?_, ?_, fun a b => ?_⟩
+  · rw [hfun]
+    exact hZ.map_fun _
+  · rw [hfun, (Λ₁.prod Λ₂).integral_comp_comm hZ.integrable, ContinuousLinearMap.prod_apply,
+      meanΛ _ _ _ _ hΛ₁, meanΛ _ _ _ _ hΛ₂, Prod.mk_zero_zero]
+  · obtain ⟨ya, Λa, hyat, hyac, hyad, hΛa, hrepa⟩ := rep a
+    obtain ⟨yb, Λb, hybt, hybc, hybd, hΛb, hrepb⟩ := rep b
+    simp_rw [hrepa, hrepb]
+    rw [integral_mul_drivingFunctional (P := P) hZ hT ht hZU₀ hZM hΛb Λa]
+    have e1 : ∫ ω, Λa (Z ω) * dot (yb 0) (U₀ ω) ∂P = quadForm V₀ (yb 0) (ya 0) := by
+      simp_rw [mul_comm (Λa _)]; exact mom₀ _ _ _ _ _ hΛa
+    have e2 : ∫ ω, Λa (Z ω) * dot b (M ω t - M ω 0) ∂P =
+        quadForm (quadCov β γ x (min t t)) b a +
+          ∫ s in (0 : ℝ)..t, quadForm (quadCov β γ x (min t s)) b
+            (jacobianT β γ (x s) (ya s)) := by
+      simp_rw [mul_comm (Λa _)]; exact momM _ _ ht _ _ _ _ hΛa
+    have e3 : (∫ s in (0 : ℝ)..t, ∫ ω, Λa (Z ω) *
+        dot (jacobianT β γ (x s) (yb s)) (M ω s - M ω 0) ∂P) =
+        ∫ s in (0 : ℝ)..t, (quadForm (quadCov β γ x (min s t)) (jacobianT β γ (x s) (yb s)) a +
+          ∫ r in (0 : ℝ)..t, quadForm (quadCov β γ x (min s r)) (jacobianT β γ (x s) (yb s))
+            (jacobianT β γ (x r) (ya r))) := by
+      refine intervalIntegral.integral_congr fun s hs => ?_
+      rw [uIcc_of_le ht.1] at hs
+      simp_rw [mul_comm (Λa _)]; exact momM _ _ (hsub hs) _ _ _ _ hΛa
+    rw [e1, e2, e3, min_self]
+    have hGc : ContinuousOn (fun s => diffusionMatrix β γ (x s)) (Icc 0 t) := by
+      have : Continuous (diffusionMatrix β γ) := by unfold diffusionMatrix; fun_prop
+      exact this.comp_continuousOn (hxc.mono hsub)
+    have hiso := wienerIsometry_aux ht.1 hyac hybc hyad hybd hyat hybt
+      ((continuous_jacobianT β γ).comp_continuousOn ((hxc.mono hsub).prodMk hyac))
+      ((continuous_jacobianT β γ).comp_continuousOn ((hxc.mono hsub).prodMk hybc))
+      ((continuousOn_quadCov hT hxc).mono hsub) (quadCov_zero β γ x)
+      (fun s hs => hasDerivAt_quadCov hxc ⟨hs.1, hs.2.trans_le ht.2⟩) hGc
+    have hlyap := hV.quadForm_eq ht.1 (hxc.mono hsub) hyac hybc hyad hybd
+    rw [hyat, hybt] at hlyap
+    rw [add_assoc, hiso, hlyap, quadForm_comm V₀]
+    congr 1
+    refine intervalIntegral.integral_congr fun s _ => ?_
+    exact quadForm_comm _ _ _
+
+
+/-- **The limit covariance is the covariance of the Gaussian limit**, entrywise in Mathlib's
+`covariance`: under the hypotheses of `hasGaussianLaw_isFluctuationPath`,
+`Cov(U₁(t), U₁(t)) = V₁₁(t)`, `Cov(U₁(t), U₂(t)) = V₁₂(t)` and `Cov(U₂(t), U₂(t)) = V₂₂(t)`. -/
+theorem covariance_isFluctuationPath {β γ T : ℝ} (hβ : 0 ≤ β) (hγ : 0 ≤ γ)
+    {x : ℝ → ℝ × ℝ} (hxc : ContinuousOn x (Icc 0 T)) {V₀ : ℝ × ℝ × ℝ} {V : ℝ → ℝ × ℝ × ℝ}
+    (hV : IsLimitCovariance β γ x V₀ V) {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
+    [MeasurableSpace C(Icc (0 : ℝ) T, ℝ × ℝ)] [BorelSpace C(Icc (0 : ℝ) T, ℝ × ℝ)]
+    {U₀ : Ω → ℝ × ℝ} {M : Ω → ℝ → ℝ × ℝ} {Z : Ω → (ℝ × ℝ) × C(Icc (0 : ℝ) T, ℝ × ℝ)}
+    (hZ : HasGaussianLaw Z P) (hZU₀ : ∀ ω, (Z ω).1 = U₀ ω)
+    (hZM : ∀ ω (s : Icc (0 : ℝ) T), (Z ω).2 s = M ω s)
+    (hmean₀ : ∫ ω, U₀ ω ∂P = 0) (hmeanM : ∀ s ∈ Icc 0 T, ∫ ω, (M ω s - M ω 0) ∂P = 0)
+    (hcov₀ : ∀ a b, ∫ ω, dot a (U₀ ω) * dot b (U₀ ω) ∂P = quadForm V₀ a b)
+    (hcross : ∀ a b, ∀ s ∈ Icc 0 T, ∫ ω, dot a (U₀ ω) * dot b (M ω s - M ω 0) ∂P = 0)
+    (hcovM : ∀ a b, ∀ s ∈ Icc 0 T, ∀ r ∈ Icc 0 T,
+      ∫ ω, dot a (M ω s - M ω 0) * dot b (M ω r - M ω 0) ∂P =
+        quadForm (quadCov β γ x (min s r)) a b)
+    {U : Ω → ℝ → ℝ × ℝ} (hU : ∀ ω, IsFluctuationPath β γ T x (U₀ ω) (M ω) (U ω)) {t : ℝ}
+    (ht : t ∈ Icc 0 T) :
+    cov[fun ω => (U ω t).1, fun ω => (U ω t).1; P] = (V t).1 ∧
+      cov[fun ω => (U ω t).1, fun ω => (U ω t).2; P] = (V t).2.1 ∧
+      cov[fun ω => (U ω t).2, fun ω => (U ω t).2; P] = (V t).2.2 := by
+  obtain ⟨hG, hmean, hmom⟩ := hasGaussianLaw_isFluctuationPath hβ hγ hxc hV hZ hZU₀ hZM hmean₀
+    hmeanM hcov₀ hcross hcovM hU ht
+  have := hG.isProbabilityMeasure
+  have h1 : MemLp (fun ω => (U ω t).1) 2 P :=
+    (hG.map_fun (ContinuousLinearMap.fst ℝ ℝ ℝ)).memLp_two
+  have h2 : MemLp (fun ω => (U ω t).2) 2 P :=
+    (hG.map_fun (ContinuousLinearMap.snd ℝ ℝ ℝ)).memLp_two
+  have hm1 : ∫ ω, (U ω t).1 ∂P = 0 := by
+    have := (ContinuousLinearMap.fst ℝ ℝ ℝ).integral_comp_comm hG.integrable
+    simp only [ContinuousLinearMap.coe_fst', hmean, Prod.fst_zero] at this
+    exact this
+  have hm2 : ∫ ω, (U ω t).2 ∂P = 0 := by
+    have := (ContinuousLinearMap.snd ℝ ℝ ℝ).integral_comp_comm hG.integrable
+    simp only [ContinuousLinearMap.coe_snd', hmean, Prod.snd_zero] at this
+    exact this
+  have e11 := hmom (1, 0) (1, 0)
+  have e12 := hmom (1, 0) (0, 1)
+  have e22 := hmom (0, 1) (0, 1)
+  simp only [dot, quadForm, symmApply, one_mul, zero_mul, add_zero, zero_add, mul_one,
+    mul_zero] at e11 e12 e22
+  refine ⟨?_, ?_, ?_⟩
+  · rw [covariance_eq_sub h1 h1, hm1, mul_zero, sub_zero]; exact e11
+  · rw [covariance_eq_sub h1 h2, hm1, zero_mul, sub_zero]; exact e12
+  · rw [covariance_eq_sub h2 h2, hm2, mul_zero, sub_zero]; exact e22
+
 
 end MathlibExt.Biology.Epidemiology.StochasticSIRDiffusion
