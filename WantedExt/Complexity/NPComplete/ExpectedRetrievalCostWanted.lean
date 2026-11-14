@@ -39,7 +39,8 @@ and the "latency cost" `d(i, j)` is defined to be `j - i - 1` if `1 ≤ i < j �
 `1 ≤ i, j ≤ m`, of `p(Rᵢ) · p(Rⱼ) · d(i, j)` is at most `K`?
 
 The partition is given by the map `f : R → Fin m` sending each record to its sector, so
-`Rᵢ = f⁻¹(i)`; sectors may be empty. Sectors are indexed from `0` here, which leaves both
+`Rᵢ = f⁻¹(i)`; `f` is surjective because the blocks of a partition are nonempty (so a
+yes-instance has `m ≤ |R|`). Sectors are indexed from `0` here, which leaves both
 cases of `d` unchanged. A rational probability `a / b` is encoded as a pair of naturals
 `(a, b)` with `0 < b`; the cost is a rational number compared with the integer `K`. Numbers use
 the binary encoding.
@@ -82,10 +83,10 @@ def retrievalCost (inst : ExpectedRetrievalCostInstance)
 def WellFormed (inst : ExpectedRetrievalCostInstance) : Prop :=
   (∀ q ∈ inst.1, 0 < q.2 ∧ q.1 ≤ q.2) ∧ (inst.1.map toRat).sum = 1 ∧ 0 < inst.2.2
 
-/-- Some allocation of the records to the `m` sectors has expected retrieval cost at most
-`K`. -/
+/-- Some allocation of the records to the `m` sectors, with every sector nonempty, has expected
+retrieval cost at most `K`. -/
 def ExpectedRetrievalCostFeasible (inst : ExpectedRetrievalCostInstance) : Prop :=
-  ∃ f : Fin inst.1.length → Fin inst.2.1, retrievalCost inst f ≤ inst.2.2
+  ∃ f : Fin inst.1.length → Fin inst.2.1, Function.Surjective f ∧ retrievalCost inst f ≤ inst.2.2
 
 open Classical in
 /-- EXPECTED RETRIEVAL COST as a decision problem over bitstrings. -/
