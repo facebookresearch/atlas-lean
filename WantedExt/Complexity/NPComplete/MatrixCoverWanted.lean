@@ -15,7 +15,7 @@ Theory of NP-Completeness*, W. H. Freeman (1979), p. 282, problem [MS13] MATRIX
 COVER (credited there to Garey and Johnson, unpublished; transformation from
 MAX CUT), with the comparison reversed: the entry prints `≥ K`, and this module
 states `≤ K`, the question that the cited MAX CUT transformation proves
-NP-complete (see the module docstring). The `≤ K` reading, with the target
+NP-hard (see the module docstring). The `≤ K` reading, with the target
 `K' = 2(|E| - 2K)` for a MAX CUT bound `K`, is the one in S. McCulloch,
 "Discussions of NP-Complete Problems", entry for MS13 Matrix Cover,
 https://npcomplete.owu.edu/.
@@ -45,7 +45,7 @@ question is decidable in polynomial time, and it is not the question that the ci
 transformation proves NP-hard. With nonnegative entries every term satisfies
 `a i j * f i * f j ≤ a i j`, so the constant function `f = +1` maximizes the sum and the
 question with `≥` is decidable by adding up the entries. The `≤` question is the one the
-transformation from MAX CUT proves NP-complete: for the adjacency matrix of a graph, the sum is
+transformation from MAX CUT proves NP-hard: for the adjacency matrix of a graph, the sum is
 `2 * (|E| - 2 * c)` where `c` is the number of edges `f` cuts.
 
 Indices are `0, ..., n - 1` here. Entries are natural numbers in binary; `K` is the integer
@@ -88,7 +88,7 @@ noncomputable def matrixCoverDec :
 
 /-- **MATRIX COVER (with `≤ K`) is NP-complete.** Source: Garey and Johnson (1979), p. 282,
 [MS13], which prints `≥ K`; the `≤ K` question is the one its cited MAX CUT transformation
-proves, as in McCulloch's discussion of MS13. -/
+proves NP-hard, as in McCulloch's discussion of MS13. -/
 public theorem_wanted matrixCover_npComplete :
     matrixCoverDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
