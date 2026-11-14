@@ -257,9 +257,6 @@ private lemma sum_piWeight {n : ℕ} (hn : 2 ≤ n) :
     ring
   rw [← sum_div, hs, Nat.cast_choose_two, div_self (by rw [← Nat.cast_choose_two]; exact hC.ne')]
 
-private lemma tajimaA1_pos {n : ℕ} (hn : 2 ≤ n) : 0 < tajimaA1 n :=
-  sum_pos (fun i hi => by have := (mem_Ico.1 hi).1; positivity) ⟨1, mem_Ico.2 ⟨le_rfl, hn⟩⟩
-
 /-- The `θ`-linear coefficient of `Var θ_π` from the SFS:
 `∑_{i=1}^{n-1} ((n - i) / C(n, 2))² i = b₁ = (n + 1) / (3 (n - 1))` (Tajima 1983). -/
 theorem sum_piWeight_sq_mul {n : ℕ} (hn : 2 ≤ n) :
