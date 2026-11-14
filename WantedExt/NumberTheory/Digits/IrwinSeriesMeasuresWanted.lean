@@ -203,29 +203,34 @@ public theorem stringAtom_nil (b : ℕ) : stringAtom b [] = Measure.dirac 0 := b
   simp [stringAtom, stringWeight, normalizedStringValue, stringValue]
 
 /-- Theorem 1(a): under exactly the two displayed recurrences (packaged in
-`OrdinaryMomentRecurrence`), the family indexed by `m≥1` has sum equal to the
-Irwin sum minus the exact short block and `b` times the at-most-`k` length-`l`
-block. `HasSum` is used so a divergent `tsum` cannot make the identity vacuous.
+`OrdinaryMomentRecurrence`), the partial sums of the family indexed by `m≥1`
+tend to the Irwin sum minus the exact short block and `b` times the at-most-`k`
+length-`l` block. The identity is stated with partial sums, not `HasSum`: in `ℝ`,
+`HasSum` forces absolute summability, but at `l = 1` the series can converge only
+conditionally (for example `b = 10`, `d = 0`, `k = 0`).
 Source: Jean-François Burnol, *Measures for the Summation of Irwin Series*,
 INTEGERS 26 (2026), Article A11, Theorem 1. -/
-public theorem_wanted irwinSum_hasSum_alternating
+public theorem_wanted irwinSum_tendsto_alternating
     (b d : ℕ) (hb : 1 < b) (hd : d < b) (u : ℕ → ℕ → ℝ)
     (hu : OrdinaryMomentRecurrence b d u) (k l : ℕ) (hl : 1 ≤ l) :
-    HasSum
-      (fun m : ℕ =>
-        if 1 ≤ m then
-          (-1 : ℝ) ^ m *
+    Filter.Tendsto
+      (fun N : ℕ =>
+        ∑ m ∈ Finset.range N,
+          if 1 ≤ m then
+            (-1 : ℝ) ^ m *
+              ∑ n ∈ Finset.Ico (b ^ (l - 1)) (b ^ l),
+                if digitCount b d n ≤ k then
+                  u (k - digitCount b d n) m / (n : ℝ) ^ (m + 1)
+                else 0
+          else 0)
+      Filter.atTop
+      (nhds
+        (irwinSum b d k -
+          (∑ n ∈ Finset.Ico 1 (b ^ (l - 1)),
+            if digitCount b d n = k then (1 : ℝ) / n else 0) -
+          (b : ℝ) *
             ∑ n ∈ Finset.Ico (b ^ (l - 1)) (b ^ l),
-              if digitCount b d n ≤ k then
-                u (k - digitCount b d n) m / (n : ℝ) ^ (m + 1)
-              else 0
-        else 0)
-      (irwinSum b d k -
-        (∑ n ∈ Finset.Ico 1 (b ^ (l - 1)),
-          if digitCount b d n = k then (1 : ℝ) / n else 0) -
-        (b : ℝ) *
-          ∑ n ∈ Finset.Ico (b ^ (l - 1)) (b ^ l),
-            if digitCount b d n ≤ k then (1 : ℝ) / n else 0)
+              if digitCount b d n ≤ k then (1 : ℝ) / n else 0))
 
 /-- Theorem 1(b–d): every zeroth moment is `b`; for `m≥1`, the recurrence family is nonnegative
 and has
@@ -316,9 +321,11 @@ public theorem_wanted integral_eq_leadingReciprocal_hasSum
       (∫ x in Set.Ico (0 : ℝ) 1, ((n : ℝ) + x)⁻¹ ∂irwinMeasure b d k hd)
 
 /-- Corollary 1: when `k(n)≤k`, the prefix-restricted reciprocal series and
-the alternating ordinary-moment series have a common sum. The existential
-common value plus two `HasSum` assertions avoids any divergent-`tsum`
-vacuity; the length is `integerLength b n`. Source: Jean-François Burnol,
+the alternating ordinary-moment series have a common sum. The reciprocal
+family has positive terms and is stated with `HasSum`; the alternating series
+is stated with partial sums, because at `n = 1` it can converge only
+conditionally (for example `b = 10`, `d = 0`, `k = 0`), as in Theorem 1. The
+length is `integerLength b n`. Source: Jean-François Burnol,
 *Measures for the Summation of Irwin Series*, INTEGERS 26 (2026), Article A11,
 Corollary 1. -/
 public theorem_wanted leadingReciprocal_hasSum_ordinaryMoments
@@ -326,10 +333,12 @@ public theorem_wanted leadingReciprocal_hasSum_ordinaryMoments
     (hn : 0 < n) (hnk : digitCount b d n ≤ k) :
     ∃ S : ℝ,
       HasSum (leadingReciprocalTerm b d k n) S ∧
-      HasSum
-        (fun m : ℕ =>
-          (-1 : ℝ) ^ m * ordinaryMoment b d (k - digitCount b d n) m hd /
-            (n : ℝ) ^ (m + 1)) S
+      Filter.Tendsto
+        (fun N : ℕ =>
+          ∑ m ∈ Finset.range N,
+            (-1 : ℝ) ^ m * ordinaryMoment b d (k - digitCount b d n) m hd /
+              (n : ℝ) ^ (m + 1))
+        Filter.atTop (nhds S)
 
 /-- Corollary 2: the prefix reciprocal family and the complementary-moment
 series have a common sum; every term on the right is positive and that family
