@@ -66,9 +66,8 @@ and the games live in the namespace `Cslib.Crypto.Framework` next to the scheme 
 `Framework.AsymptoticallySecure`. Hash commitments
 (`CSLibExt.Crypto.Protocols.Commitment.HashCommitment`) prove binding against their own local
 collision game; `CSLibExt.Crypto.Protocols.Commitment.HashCommitmentFramework` identifies that
-game with `collGame` (`HashCommitment.framework_collAdvantage_toCollisionFinder`) and restates
-the binding bound with `collAdvantage`
-(`HashCommitment.bindingAdvantage_le_framework_collAdvantage`).
+game with `collGame` and restates the binding bound with `collAdvantage`
+(`HashCommitment.bindingAdvantage_le`).
 The older unkeyed compression-collision game `Cslib.Crypto.MerkleDamgard.compressionCollisionGame`
 predates the framework; its predicate `MerkleDamgard.IsCollision` has the same definition as
 `IsCollision`, but its adversary has uniform coins and an optional output, and the two games are

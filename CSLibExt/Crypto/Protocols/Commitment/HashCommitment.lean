@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Crypto.Protocols.Commitment.Binding
+public import CSLibExt.Crypto.Framework.HashFunction
 
 /-!
 # Hash-based commitments: binding from collision resistance
@@ -20,12 +21,15 @@ back into nonce and message is unambiguous. It is packaged as a CSLib
 `Cslib.Crypto.Protocols.Commitment.Scheme`.
 
 * `collision_of_openings` (**binding extraction**): two openings `(m, r)` and `(m', r')` of one
-  commitment with `m ≠ m'` are a collision `(r, m), (r', m')` of `H s`.
-* `bindingAdvantage_le` (**computational binding from collision resistance**): in the generic
-  binding experiment `Commitment.bindingGame gen (scheme H)`, where the key `s ← gen` comes from an
+  commitment with `m ≠ m'` are a collision `((r, m), (r', m'))` of `H s`, in the sense of the
+  Framework's `IsCollision`.
+* `bindingAdvantage_le` (**computational binding from collision resistance**): for a keyed hash
+  family `F : Framework.HashFamily K (N × M) D`, in the generic binding experiment
+  `Commitment.bindingGame F.gen (scheme F.hash)`, where the key `s ← F.gen` comes from an
   arbitrary key-generation distribution and the adversary, with arbitrary coins, outputs a
   commitment with two openings, the success probability is at most the collision-finding advantage
-  `collAdvantage gen H (reduction A)`; the reduction runs on the same key and the same coins.
+  `Framework.collAdvantage F (reduction A)` (the experiment `Hash-coll` of Katz and Lindell,
+  Definition 5.2); the reduction runs on the same key and the same coins.
 * `perfectlyBinding_of_injective`: if `H s` is injective, the scheme is perfectly binding.
 * Hiding is **not** unconditional, and is proved only from an explicit hypothesis on `H`:
   `NonceClose H s ε` says that, for every message, the digest of a uniform nonce and that message
@@ -37,9 +41,9 @@ back into nonce and message is unambiguous. It is packaged as a CSLib
   oracle and needs a separate game that models oracle sampling and queries; it is deferred to the
   random-oracle lane.
 
-The collision game `collGame` is a minimal local interface in the style of
-`CSLibExt.Crypto.Framework.Games` (key generation `gen : PMF K`, adversary coins `coins : PMF R`).
-Wave 3: unify with the Wave 1 HashFunction CRHF.
+Collision resistance is the Framework's: the hash family, the collision predicate, the collision
+finder (`CollisionFinder`), the game `collGame` and the advantage `collAdvantage` all come from
+`CSLibExt.Crypto.Framework.HashFunction`.
 
 ## References
 
@@ -54,41 +58,6 @@ namespace Cslib.Crypto.Protocols.Commitment.HashCommitment
 open Cslib.Crypto.Framework
 
 variable {K N M D : Type*}
-
-/-! ### A local collision-resistance interface -/
-
-/-- A collision of the keyed hash `H` under key `s`: two distinct inputs with the same digest.
-Wave 3: unify with the Wave 1 HashFunction CRHF. -/
-def IsCollision {X : Type*} (H : K → X → D) (s : K) (x x' : X) : Prop :=
-  x ≠ x' ∧ H s x = H s x'
-
-instance {X : Type*} [DecidableEq X] [DecidableEq D] (H : K → X → D) (s : K) (x x' : X) :
-    Decidable (IsCollision H s x x') := by
-  unfold IsCollision; infer_instance
-
-/-- A collision finder for a keyed hash with keys in `K` and inputs in `X`: with coins
-`r ← coins`, from the key it outputs two inputs. -/
-structure CollFinder (K X R : Type*) where
-  /-- The distribution of the collision finder's random coins. -/
-  coins : PMF R
-  /-- The collision finder, as a function of the key and its coins. -/
-  run : K → R → X × X
-
-section Collision
-
-variable {X R : Type*} [DecidableEq X] [DecidableEq D]
-
-/-- The collision-finding experiment `Hash-coll` (Katz and Lindell, Section 5.1): `s ← gen`,
-`r ← A.coins`, and the experiment outputs `1` when the two inputs `A.run s r` collide under
-`H s`. Wave 3: unify with the Wave 1 HashFunction CRHF. -/
-noncomputable def collGame (gen : PMF K) (H : K → X → D) (A : CollFinder K X R) : PMF Bool :=
-  gen.bind fun s => A.coins.map fun r => decide (IsCollision H s (A.run s r).1 (A.run s r).2)
-
-/-- The collision-finding advantage: the success probability in `collGame`. -/
-noncomputable def collAdvantage (gen : PMF K) (H : K → X → D) (A : CollFinder K X R) : ℝ :=
-  winProb (collGame gen H A)
-
-end Collision
 
 /-! ### The scheme -/
 
@@ -166,7 +135,7 @@ end Scheme
 collision of `H s`. -/
 theorem collision_of_openings {H : K → N × M → D} {s : K} {c : D} {m m' : M} {r r' : N}
     (hne : m ≠ m') (h₁ : commitValue H s m r = c) (h₂ : commitValue H s m' r' = c) :
-    IsCollision H s (r, m) (r', m') :=
+    IsCollision (H s) ((r, m), (r', m')) :=
   ⟨fun h => hne (Prod.ext_iff.mp h).2, h₁.trans h₂.symm⟩
 
 section Binding
@@ -175,17 +144,18 @@ variable [Fintype N] [Nonempty N] [DecidableEq N] [DecidableEq M] [DecidableEq D
 
 /-- The collision finder built from a binding adversary: on the same key and the same coins,
 output the two hash inputs `(r, m)` and `(r', m')` of its openings. -/
-def reduction (A : BindingAdversary K M D N R) : CollFinder K (N × M) R where
+def reduction (A : BindingAdversary K M D N R) : CollisionFinder K (N × M) R where
   coins := A.coins
-  run s t := (((A.run s t).2.1.2, (A.run s t).2.1.1), ((A.run s t).2.2.2, (A.run s t).2.2.1))
+  find s t := (((A.run s t).2.1.2, (A.run s t).2.1.1), ((A.run s t).2.2.2, (A.run s t).2.2.1))
 
-/-- **Computational binding of hash commitments from collision resistance**: for every key
-distribution `gen` and every binding adversary (with arbitrary coins), the success probability in
-the binding experiment for `scheme H` is at most the collision-finding advantage of
-`reduction A` (Katz and Lindell, Section 5.6.5). -/
-theorem bindingAdvantage_le (gen : PMF K) (H : K → N × M → D) (A : BindingAdversary K M D N R) :
-    bindingAdvantage gen (scheme H) A ≤ collAdvantage gen H (reduction A) := by
-  refine Cslib.Crypto.Framework.winProb_bind_map_mono _ _ fun s _ t hw => ?_
+/-- **Computational binding of hash commitments from collision resistance**: for every keyed hash
+family `F` (an arbitrary key distribution `F.gen`) and every binding adversary (with arbitrary
+coins), the success probability in the binding experiment for `scheme F.hash` is at most the
+collision-finding advantage of `reduction A` against `F` (Katz and Lindell, Section 5.6.5 and
+Definition 5.2). -/
+theorem bindingAdvantage_le (F : HashFamily K (N × M) D) (A : BindingAdversary K M D N R) :
+    bindingAdvantage F.gen (scheme F.hash) A ≤ collAdvantage F (reduction A) := by
+  refine winProb_bind_map_mono _ _ fun s _ t hw => ?_
   obtain ⟨h₁, h₂, hne⟩ := of_decide_eq_true hw
   exact decide_eq_true (collision_of_openings hne (accepts_iff.mp h₁) (accepts_iff.mp h₂))
 
