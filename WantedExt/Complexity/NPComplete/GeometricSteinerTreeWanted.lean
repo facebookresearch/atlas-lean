@@ -23,9 +23,9 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import Mathlib.Combinatorics.SimpleGraph.Finite
+public import WantedExt.Complexity.NPComplete.GeometricTravelingSalesmanWanted
 
 @[expose] public section
 
@@ -39,8 +39,10 @@ there a finite set `Q ⊆ Z × Z` such that there is a spanning tree of total we
 for the vertex set `P ∪ Q`, where the weight of an edge `{(x₁, y₁), (x₂, y₂)}` is the
 discretized Euclidean length `⌈√((x₁ - x₂)² + (y₁ - y₂)²)⌉`?
 
-`P` is given as a list of points (repetitions do not change the set `points`), each integer as
-a pair of naturals `(positive part, negative part)`. A spanning tree for `P ∪ Q` is a
+The instance encoding, the point decoding `point` and the distance `discreteDist` are those of
+`GeometricTravelingSalesmanWanted` (GJ [ND23]), which uses the same discretized Euclidean
+metric. `P` is given as a list of points (repetitions do not change the set `points`), each
+integer as a pair of naturals `(positive part, negative part)`. A spanning tree for `P ∪ Q` is a
 `SimpleGraph` on the points of `P ∪ Q` that is a tree (Mathlib's `SimpleGraph.IsTree`), and its
 weight is the sum of `edgeLength` over its edges. Coordinates and `B` use the canonical binary
 encoding.
@@ -56,27 +58,25 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
+open GeometricTravelingSalesman (point discreteDist)
+
 /-- An instance: the points of `P` as `((x⁺, x⁻), (y⁺, y⁻))`, standing for
-`(x⁺ - x⁻, y⁺ - y⁻)`, and the bound `B`. -/
-abbrev GeometricSteinerTreeInstance := List ((ℕ × ℕ) × (ℕ × ℕ)) × ℕ
+`(x⁺ - x⁻, y⁺ - y⁻)`, and the bound `B` (the encoding of GEOMETRIC TRAVELING SALESMAN). -/
+abbrev GeometricSteinerTreeInstance :=
+  GeometricTravelingSalesman.GeometricTravelingSalesmanInstance
 
 /-- The set `P` of the instance. -/
 def points (i : GeometricSteinerTreeInstance) : Finset (ℤ × ℤ) :=
-  (i.1.map fun q => ((q.1.1 : ℤ) - q.1.2, (q.2.1 : ℤ) - q.2.2)).toFinset
+  (i.1.map point).toFinset
 
-/-- The discretized Euclidean length `⌈√((x₁ - x₂)² + (y₁ - y₂)²)⌉` of the segment from `p` to
-`q`. -/
-noncomputable def discretizedLength (p q : ℤ × ℤ) : ℕ :=
-  ⌈Real.sqrt (((p.1 - q.1) ^ 2 + (p.2 - q.2) ^ 2 : ℤ) : ℝ)⌉₊
-
-/-- The discretized length is symmetric. -/
-theorem discretizedLength_comm (p q : ℤ × ℤ) : discretizedLength p q = discretizedLength q p := by
-  unfold discretizedLength
+/-- The discretized Euclidean distance is symmetric. -/
+theorem discreteDist_comm (p q : ℤ × ℤ) : discreteDist p q = discreteDist q p := by
+  unfold discreteDist
   rw [show (p.1 - q.1) ^ 2 + (p.2 - q.2) ^ 2 = (q.1 - p.1) ^ 2 + (q.2 - p.2) ^ 2 by ring]
 
-/-- The weight of an edge `{p, q}`: the discretized Euclidean length of the segment. -/
+/-- The weight of an edge `{p, q}`: the discretized Euclidean distance `discreteDist p q`. -/
 noncomputable def edgeLength : Sym2 (ℤ × ℤ) → ℕ :=
-  Sym2.lift ⟨discretizedLength, discretizedLength_comm⟩
+  Sym2.lift ⟨discreteDist, discreteDist_comm⟩
 
 /-- Well-formedness of an instance: `0 < B`. -/
 def WellFormed (i : GeometricSteinerTreeInstance) : Prop :=
