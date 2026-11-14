@@ -48,7 +48,7 @@ snowball sample.
   when both endpoints lie in the vertex sample.
 - O. Frank, "Estimation of graph totals", Scand. J. Statist. 4 (1977),
   81-89.
-- D. G. Horvitz and D. N. Thompson, "A generalization of sampling
+- D. G. Horvitz and D. J. Thompson, "A generalization of sampling
   without replacement from a finite universe", JASA 47(260) (1952),
   663-685.
 -/
