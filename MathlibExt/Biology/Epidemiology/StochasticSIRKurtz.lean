@@ -65,9 +65,12 @@ are `ProbabilityTheory.IsPoissonProcess` of rate `1`.
 ## Scope
 
 * The theorems take the chain as given: a family of paths satisfying the time-change equations
-  almost surely. That such paths exist (the pathwise jump-by-jump construction), and that they
-  have the law of the jump chain built in
-  `MathlibExt.Probability.Process.ContinuousTimeMarkovChain.Path`, are not proved here.
+  almost surely. That such paths exist, and that they have the law of the jump chain built in
+  `MathlibExt.Probability.Process.ContinuousTimeMarkovChain.Path`, is proved in
+  `MathlibExt.Biology.Epidemiology.StochasticSIRChain`: existence (`isChainPath_sir`,
+  `ae_isChainPath_sir`) for the canonical clocks with exponential interarrival times rather
+  than an arbitrary `IsPoissonProcess`, and the law identification (`map_sirPath`) for
+  independent clocks.
 * Independence of `Y₁` and `Y₂` is not used: the law of large numbers holds for any coupling of
   the two clocks, so it is not assumed.
 * Only the law of large numbers is proved, with an `O(1/N)` Chebyshev bound for the clock
