@@ -23,6 +23,7 @@ module
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import MathlibExt.Combinatorics.SimpleGraph.Dichromatic
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted
@@ -55,12 +56,13 @@ The instance, the graph and the question are those of HAMILTONIAN CIRCUIT
 `HamiltonianCycleUndirected.HamiltonianCycleUndirectedFeasible` (`3 ≤ n` and Mathlib's
 `SimpleGraph.IsHamiltonian`: a cycle through every vertex). The restriction adds that the graph is a
 directed path graph (`IsDirectedPathGraph`): there are a finite tree `T` (Mathlib's
-`SimpleGraph.IsTree`) on `Fin m`, an orientation `D` of its edges (every edge `xy` of `T` is
-oriented exactly one way, `D x y` or `D y x`, and `D` relates only adjacent vertices), and for every
-vertex `v` of `G` the vertex set `P v` of a path of `T` all of whose edges are traversed along their
-orientation, such that two distinct vertices are adjacent in `G` exactly when their paths share a
-vertex of `T`. This follows `DominatingSetUndirectedPathGraphsWanted.IsUndirectedPathGraph`, adding
-the orientation; a path may consist of a single tree vertex.
+`SimpleGraph.IsTree`) on `Fin m`, an orientation `D` of its edges (MathlibExt's
+`SimpleGraph.IsOrientation`: `D` relates only adjacent vertices and orients every edge `xy` of `T`
+exactly one way, `D x y` or `D y x`), and for every vertex `v` of `G` the vertex set `P v` of a path
+of `T` all of whose edges are traversed along their orientation, such that two distinct vertices are
+adjacent in `G` exactly when their paths share a vertex of `T`. This follows
+`DominatingSetUndirectedPathGraphsWanted.IsUndirectedPathGraph`, adding the orientation; a path may
+consist of a single tree vertex.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -74,11 +76,12 @@ reduction from every language in `NP`
 -/
 
 /-- `G` is a directed path graph: for some tree `T` on `Fin m` and some orientation `D` of its
-edges, each vertex `v` of `G` has the vertex set `P v` of a path of `T` whose edges all follow
-`D`, and distinct vertices are adjacent in `G` exactly when their paths share a vertex. -/
+edges (MathlibExt's `SimpleGraph.IsOrientation`), each vertex `v` of `G` has the vertex set `P v`
+of a path of `T` whose edges all follow `D`, and distinct vertices are adjacent in `G` exactly when
+their paths share a vertex. -/
 def IsDirectedPathGraph {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
   ∃ (m : ℕ) (T : SimpleGraph (Fin m)) (D : Fin m → Fin m → Prop), T.IsTree ∧
-    (∀ x y, D x y → T.Adj x y) ∧ (∀ x y, T.Adj x y → (D x y ↔ ¬ D y x)) ∧
+    T.IsOrientation D ∧
     ∃ P : Fin n → Finset (Fin m),
       (∀ v, ∃ (a b : Fin m) (p : T.Walk a b), p.IsPath ∧ (∀ d ∈ p.darts, D d.fst d.snd) ∧
         p.support.toFinset = P v) ∧
