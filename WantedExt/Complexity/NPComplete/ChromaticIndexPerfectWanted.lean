@@ -41,15 +41,16 @@ open MetaMathlibExt.Complexity.NPComplete.EdgeColoring (EdgeColoringInstance Edg
 INSTANCE: a perfect graph `G = (V, E)` and a positive integer `K`. QUESTION: is the chromatic
 index of `G` at most `K`, i.e. can `E` be partitioned into at most `K` matchings?
 
-This is CHROMATIC INDEX (`EdgeColoringWanted`) restricted to perfect graphs, the entry of
-Johnson's Table 1 (sixteenth column) that was open in 1985. Cai and Ellis proved the problem
-NP-complete for regular comparability graphs, and comparability graphs are perfect. The instance
-type, `EdgeColoring.WellFormed` (simple edge list) and `EdgeColoring.EdgeColoringFeasible` (a
-color below `K` for each listed edge, different on any two edges sharing an end) are the
-parent's, unchanged; `WellFormed` adds the restriction, MathlibExt
-`MathlibExt.Combinatorics.SimpleGraph.PerfectGraphWanted.IsPerfect` (every induced subgraph has
-chromatic number equal to its clique number, as in `FeedbackVertexSetPerfectWanted`) on the graph
-`Cslib.Complexity.Karp.edgeGraph n E`, and `0 < K` (as in the comparability-graph sibling).
+This is CHROMATIC INDEX (`EdgeColoringWanted`) restricted to perfect graphs, the entry of Table 1
+of the sixteenth edition of Johnson's column (row "Perfect", column "ChrInd") that was open in
+1985. Cai and Ellis proved the problem NP-complete for regular comparability graphs, and
+comparability graphs are perfect. The instance type, `EdgeColoring.WellFormed` (simple edge list)
+and `EdgeColoring.EdgeColoringFeasible` (a color below `K` for each listed edge, different on any
+two edges sharing an end) are the parent's, unchanged; `WellFormed` adds the restriction,
+MathlibExt `MathlibExt.Combinatorics.SimpleGraph.PerfectGraphWanted.IsPerfect` (every induced
+subgraph has chromatic number equal to its clique number, as in `FeedbackVertexSetPerfectWanted`)
+on the graph `Cslib.Complexity.Karp.edgeGraph n E`, and `0 < K` (as in the comparability-graph
+sibling).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
