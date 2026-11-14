@@ -53,6 +53,14 @@ those `y` with `y = x` or `y < x` for some `x ∈ X'` with `c(x) = EASY`. The ex
 when every problem is classified, and well-defined when no problem is classified both HARD and
 EASY (this also covers a rule overriding `c` on `X'` itself).
 
+The number `n` is encoded in binary, so the instance does not list the problems one by one.
+NP membership is unaffected: a problem that occurs in no listed pair is classified only when it
+lies in `X'` (no rule reaches it from another problem, and it never causes a conflict), so it
+costs exactly one unit of `B`. An instance is therefore a yes-instance iff the at most
+`2 |pairs|` problems occurring in pairs can be resolved by a program of size at most `B` minus the
+number of problems occurring in no pair; that program and its classification are a certificate
+polynomial in the encoding, and the count of the other problems is arithmetic on `n`.
+
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
 bitstrings decoding to malformed instances, are no-instances.
