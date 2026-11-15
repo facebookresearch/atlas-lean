@@ -29,10 +29,15 @@ with the inspection times at which the event had occurred,
 
   `(S, {c ∈ S | T ≤ c})`  (`icObsLaw pT pS`),
 
-which is the same as observing the interval `(max {c ∈ S | c < T}, min {c ∈ S | T ≤ c}]` of the
-partition cut out by `S` that contains `T`. A single inspection time (`S = {C}`) is *current status*
-data (case I interval censoring); two inspection times are case II; a random number of them is
-mixed-case interval censoring. Given `S`, the observation has law `inspectLaw pT S`.
+which is the same as observing the cell `(L, R]` of the partition cut out by `S` that contains `T`,
+with `L = max {c ∈ S | c < T}` and `R = min {c ∈ S | T ≤ c}`. Either set can be empty (`S = ∅`,
+every inspection before `T`, or every inspection at or after `T`), so the endpoints are extended:
+`L = -∞` when no inspection precedes `T` (only `T ≤ R` is learned) and `R = +∞` when the event had
+not happened at any inspection (only `L < T` is learned). These are `Finset.max : WithBot (Fin k)`
+and `Finset.min : WithTop (Fin k)`, which send `∅` to `⊥` and `⊤`. For `S = ∅` the cell is
+`(-∞, +∞)` and nothing is learned about `T`. A single inspection time (`S = {C}`) is *current
+status* data (case I interval censoring); two inspection times are case II; a random number of
+them is mixed-case interval censoring. Given `S`, the observation has law `inspectLaw pT S`.
 
 ## Main results
 

@@ -34,6 +34,20 @@ theorem hazard_pure_self (t : Fin 4) : hazard (PMF.pure t) t = 1 := by
 theorem hazard_pure_of_ne {t j : Fin 4} (h : t ≠ j) : hazard (PMF.pure t) j = 0 := by
   simp [hazard, PMF.pure_apply, Ne.symm h]
 
+/-- Boundary conventions of the cell `(L, R]` in the module docstring. An event at `0` precedes
+every inspection, so `L = ⊥` (`-∞`) and `R = 1`. -/
+example : (({1, 2} : Finset (Fin 4)).filter (· < 0)).max = ⊥ ∧
+    (({1, 2} : Finset (Fin 4)).filter (0 ≤ ·)).min = ((1 : Fin 4) : WithTop (Fin 4)) := by
+  decide
+
+/-- An event at `3` follows every inspection, so `L = 2` and `R = ⊤` (`+∞`). -/
+example : (({1, 2} : Finset (Fin 4)).filter (· < 3)).max = ((2 : Fin 4) : WithBot (Fin 4)) ∧
+    (({1, 2} : Finset (Fin 4)).filter (3 ≤ ·)).min = ⊤ := by
+  decide
+
+/-- With no inspections (`S = ∅`) nothing is seen, whatever the event time. -/
+example (t : Fin 4) : inspect ∅ t = ∅ := Finset.filter_empty _
+
 /-- Grid point `0` is never inspected; `1` and `2` are. -/
 theorem zero_notMem : (0 : Fin 4) ∉ inspSupport pS := by
   rintro ⟨S, hS, hc⟩
