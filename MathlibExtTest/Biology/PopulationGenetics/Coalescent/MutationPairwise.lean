@@ -226,17 +226,187 @@ example (t : Icc 2 3 → ℝ) :
   simp only [kingmanBranchLength, Real.coe_toNNReal']
   ring
 
-/-- **Hand computation of `E τ²` for three genes**: `τ₀₁ = T₃ + 1[apart] T₂` with
-`P(apart) = 2/3` independent of the epochs, `E T₃² = 2/9`, `E T₃ = 1/3`, `E T₂ = 1`,
-`E T₂² = 2`, so `E τ² = 2/9 + 2 (2/3)(1/3) + (2/3) 2 = 2`, the `Exp(1)` second moment; it agrees
-with the law `τ ~ Exp(1)` of `hasLaw_pairCoalTime_kingmanGenealogyMeasure`. -/
-example : (2 : ℝ) / 3 ^ 2 + 2 * (2 / 3) * (1 / 3) * 1 + 2 / 3 * (2 / 1 ^ 2) = 2 ∧
-    ∫ g, pairCoalTime g.2 {0, 1} g.1 ^ 2 ∂kingmanGenealogyMeasure 3 = 2 := by
-  refine ⟨by norm_num, ?_⟩
-  have h := (hasLaw_pairCoalTime_kingmanGenealogyMeasure (n := 3) (by decide)
-    (s := {0, 1}) (by decide)).integral_comp (f := fun x : ℝ => x ^ 2) (by fun_prop)
-  rw [integral_sq_expMeasure one_pos] at h
-  simpa using h
+/-- The holding time of epoch `k` under `piMeasure 3` is coordinate `k`. -/
+private theorem ofPi3_T (k : ℕ) (hk : k ∈ Icc 2 3) :
+    (KingmanTimes.ofPi 3).T k = fun t => t ⟨k, hk⟩ := by
+  funext t
+  simp [KingmanTimes.ofPi, Finset.mem_Icc.1 hk]
+
+private theorem integrable3 (k k' : Icc 2 3) :
+    Integrable (fun t : Icc 2 3 → ℝ => t k * t k') (piMeasure 3) := by
+  have h1 := (KingmanTimes.ofPi 3).memLp_T k.2
+  have h2 := (KingmanTimes.ofPi 3).memLp_T k'.2
+  rw [ofPi3_T _ k.2] at h1
+  rw [ofPi3_T _ k'.2] at h2
+  exact h1.integrable_mul h2
+
+private theorem moment3 (k k' : ℕ) (hk : k ∈ Icc 2 3) (hk' : k' ∈ Icc 2 3) :
+    ∫ t, t ⟨k, hk⟩ * t ⟨k', hk'⟩ ∂piMeasure 3 =
+      ((k.choose 2 : ℕ) : ℝ)⁻¹ * ((k'.choose 2 : ℕ) : ℝ)⁻¹ +
+        if k = k' then (((k.choose 2 : ℕ) : ℝ)⁻¹) ^ 2 else 0 := by
+  have := (KingmanTimes.ofPi 3).integral_T_mul_T hk hk'
+  rw [ofPi3_T k hk, ofPi3_T k' hk'] at this
+  exact this
+
+/-- Counts of three-gene histories: `{0, 1}` and `{0, 2}` are each apart after the first event
+in two of the three histories, both in one. -/
+private theorem counts3 :
+    #{h : RankedHistory 3 | PairApart h {0, 1} 1} = 2 ∧
+      #{h : RankedHistory 3 | PairApart h {0, 2} 1} = 2 ∧
+      #{h : RankedHistory 3 | PairApart h {0, 1} 1 ∧ PairApart h {0, 2} 1} = 1 ∧
+      Fintype.card (RankedHistory 3) = 3 := by
+  decide +kernel
+
+private theorem integral_ite3 (P : RankedHistory 3 → Prop) [DecidablePred P] :
+    ∫ h, (if P h then (1 : ℝ) else 0) ∂randomJoining 3 =
+      (#{h : RankedHistory 3 | P h} : ℝ) / 3 := by
+  rw [integral_randomJoining, Finset.sum_boole, counts3.2.2.2]
+  norm_num
+
+/-- **`E τ² = 2` for three genes, from the definitions**: `τ₀₁ = T₃ + 1[apart] T₂` by the
+definition of `pairCoalTime`, the epochs are the coordinates of `piMeasure 3` with
+`E T₃² = 2/9`, `E T₃ T₂ = 1/3`, `E T₂² = 2`, and `P(apart) = 2/3` by counting histories, so
+`E τ² = 2/9 + 2 (1/3)(2/3) + 2 (2/3) = 2`, the `Exp(1)` second moment that
+`hasLaw_pairCoalTime_kingmanGenealogyMeasure` predicts. -/
+example : ∫ g, pairCoalTime g.2 {0, 1} g.1 ^ 2 ∂kingmanGenealogyMeasure 3 = 2 := by
+  have hA0 : ∀ h : RankedHistory 3, PairApart h {0, 1} 0 := by decide +kernel
+  have hτ : ∀ g : (Icc 2 3 → ℝ) × RankedHistory 3, pairCoalTime g.2 {0, 1} g.1 ^ 2 =
+      (fun t : Icc 2 3 → ℝ => t (e3 3) * t (e3 3)) g.1 * (fun _ : RankedHistory 3 => (1 : ℝ)) g.2 +
+        (fun t : Icc 2 3 → ℝ => 2 * (t (e3 3) * t (e3 2))) g.1 *
+          (fun h : RankedHistory 3 => if PairApart h {0, 1} 1 then (1 : ℝ) else 0) g.2 +
+        (fun t : Icc 2 3 → ℝ => t (e3 2) * t (e3 2)) g.1 *
+          (fun h : RankedHistory 3 => if PairApart h {0, 1} 1 then (1 : ℝ) else 0) g.2 := by
+    intro g
+    unfold pairCoalTime
+    rw [univ_Icc23, Finset.sum_pair (by decide)]
+    simp only [e3, show 3 - 2 = 1 from rfl, show 3 - 3 = 0 from rfl, hA0 g.2, ite_true]
+    split_ifs <;> ring
+  have i1 := (integrable3 (e3 3) (e3 3)).mul_prod (ν := randomJoining 3)
+    (g := fun _ : RankedHistory 3 => (1 : ℝ)) (integrable_const _)
+  have i2 := ((integrable3 (e3 3) (e3 2)).const_mul 2).mul_prod (ν := randomJoining 3)
+    (g := fun h : RankedHistory 3 => if PairApart h {0, 1} 1 then (1 : ℝ) else 0)
+    Integrable.of_finite
+  have i3 := (integrable3 (e3 2) (e3 2)).mul_prod (ν := randomJoining 3)
+    (g := fun h : RankedHistory 3 => if PairApart h {0, 1} 1 then (1 : ℝ) else 0)
+    Integrable.of_finite
+  have key : ∫ g, pairCoalTime g.2 {0, 1} g.1 ^ 2 ∂kingmanGenealogyMeasure 3 =
+      (∫ z, z.1 (e3 3) * z.1 (e3 3) * 1 ∂(piMeasure 3).prod (randomJoining 3)) +
+        (∫ z, 2 * (z.1 (e3 3) * z.1 (e3 2)) * (if PairApart z.2 {0, 1} 1 then (1 : ℝ) else 0)
+          ∂(piMeasure 3).prod (randomJoining 3)) +
+        ∫ z, z.1 (e3 2) * z.1 (e3 2) * (if PairApart z.2 {0, 1} 1 then (1 : ℝ) else 0)
+          ∂(piMeasure 3).prod (randomJoining 3) := by
+    have i12 := i1.add i2
+    simp only [Pi.add_def] at i12
+    rw [← integral_add i1 i2, ← integral_add i12 i3, kingmanGenealogyMeasure]
+    exact integral_congr_ae (ae_of_all _ hτ)
+  rw [key, integral_prod_mul (fun t : Icc 2 3 → ℝ => t (e3 3) * t (e3 3))
+      (fun _ : RankedHistory 3 => (1 : ℝ)),
+    integral_prod_mul (fun t : Icc 2 3 → ℝ => 2 * (t (e3 3) * t (e3 2)))
+      (fun h : RankedHistory 3 => if PairApart h {0, 1} 1 then (1 : ℝ) else 0),
+    integral_prod_mul (fun t : Icc 2 3 → ℝ => t (e3 2) * t (e3 2))
+      (fun h : RankedHistory 3 => if PairApart h {0, 1} 1 then (1 : ℝ) else 0),
+    integral_const_mul,
+    moment3 3 3 (by decide) (by decide), moment3 3 2 (by decide) (by decide),
+    moment3 2 2 (by decide) (by decide), integral_ite3, counts3.1]
+  norm_num [Nat.choose]
+
+/-- **`E[τ₀₁ τ₀₂] = 4/3` for three genes, from the definitions**: `τ₀₁ = T₃ + 1[0, 1 apart] T₂`,
+`τ₀₂ = T₃ + 1[0, 2 apart] T₂`; each indicator has mean `2/3` and their product (first merge
+`{1, 2}`) mean `1/3`, so `E[τ₀₁ τ₀₂] = 2/9 + (1/3)(4/3) + 2 (1/3) = 4/3`, the value of
+`integral_pairCoalTime_mul_shared` (`Cov = 1/3`). -/
+example : ∫ g, pairCoalTime g.2 {0, 1} g.1 * pairCoalTime g.2 {0, 2} g.1
+    ∂kingmanGenealogyMeasure 3 = 4 / 3 ∧
+    ∫ g, pairCoalTime g.2 {0, 1} g.1 * pairCoalTime g.2 {0, 2} g.1
+      ∂kingmanGenealogyMeasure 3 =
+    ∫ g, pairCoalTime g.2 {0, 1} g.1 * pairCoalTime g.2 {0, 2} g.1
+      ∂kingmanGenealogyMeasure 3 := by
+  refine ⟨?_, rfl⟩
+  have hA0 : ∀ h : RankedHistory 3, PairApart h {0, 1} 0 ∧ PairApart h {0, 2} 0 := by
+    decide +kernel
+  have hτ : ∀ g : (Icc 2 3 → ℝ) × RankedHistory 3,
+      pairCoalTime g.2 {0, 1} g.1 * pairCoalTime g.2 {0, 2} g.1 =
+      (fun t : Icc 2 3 → ℝ => t (e3 3) * t (e3 3)) g.1 * (fun _ : RankedHistory 3 => (1 : ℝ)) g.2 +
+        (fun t : Icc 2 3 → ℝ => t (e3 3) * t (e3 2)) g.1 *
+          (fun h : RankedHistory 3 => if PairApart h {0, 1} 1 then (1 : ℝ) else 0) g.2 +
+        (fun t : Icc 2 3 → ℝ => t (e3 3) * t (e3 2)) g.1 *
+          (fun h : RankedHistory 3 => if PairApart h {0, 2} 1 then (1 : ℝ) else 0) g.2 +
+        (fun t : Icc 2 3 → ℝ => t (e3 2) * t (e3 2)) g.1 *
+          (fun h : RankedHistory 3 =>
+            if PairApart h {0, 1} 1 ∧ PairApart h {0, 2} 1 then (1 : ℝ) else 0) g.2 := by
+    intro g
+    unfold pairCoalTime
+    rw [univ_Icc23, Finset.sum_pair (by decide), Finset.sum_pair (by decide)]
+    simp only [e3, show 3 - 2 = 1 from rfl, show 3 - 3 = 0 from rfl, (hA0 g.2).1, (hA0 g.2).2,
+      ite_true]
+    split_ifs <;> simp_all <;> ring
+  have i1 := (integrable3 (e3 3) (e3 3)).mul_prod (ν := randomJoining 3)
+    (g := fun _ : RankedHistory 3 => (1 : ℝ)) (integrable_const _)
+  have i2 := (integrable3 (e3 3) (e3 2)).mul_prod (ν := randomJoining 3)
+    (g := fun h : RankedHistory 3 => if PairApart h {0, 1} 1 then (1 : ℝ) else 0)
+    Integrable.of_finite
+  have i3 := (integrable3 (e3 3) (e3 2)).mul_prod (ν := randomJoining 3)
+    (g := fun h : RankedHistory 3 => if PairApart h {0, 2} 1 then (1 : ℝ) else 0)
+    Integrable.of_finite
+  have i4 := (integrable3 (e3 2) (e3 2)).mul_prod (ν := randomJoining 3)
+    (g := fun h : RankedHistory 3 =>
+      if PairApart h {0, 1} 1 ∧ PairApart h {0, 2} 1 then (1 : ℝ) else 0) Integrable.of_finite
+  have key : ∫ g, pairCoalTime g.2 {0, 1} g.1 * pairCoalTime g.2 {0, 2} g.1
+      ∂kingmanGenealogyMeasure 3 =
+      (∫ z, z.1 (e3 3) * z.1 (e3 3) * 1 ∂(piMeasure 3).prod (randomJoining 3)) +
+        (∫ z, z.1 (e3 3) * z.1 (e3 2) * (if PairApart z.2 {0, 1} 1 then (1 : ℝ) else 0)
+          ∂(piMeasure 3).prod (randomJoining 3)) +
+        (∫ z, z.1 (e3 3) * z.1 (e3 2) * (if PairApart z.2 {0, 2} 1 then (1 : ℝ) else 0)
+          ∂(piMeasure 3).prod (randomJoining 3)) +
+        ∫ z, z.1 (e3 2) * z.1 (e3 2) *
+          (if PairApart z.2 {0, 1} 1 ∧ PairApart z.2 {0, 2} 1 then (1 : ℝ) else 0)
+          ∂(piMeasure 3).prod (randomJoining 3) := by
+    have i12 := i1.add i2
+    simp only [Pi.add_def] at i12
+    have i123 := i12.add i3
+    simp only [Pi.add_def] at i123
+    rw [← integral_add i1 i2, ← integral_add i12 i3, ← integral_add i123 i4,
+      kingmanGenealogyMeasure]
+    exact integral_congr_ae (ae_of_all _ hτ)
+  rw [key, integral_prod_mul (fun t : Icc 2 3 → ℝ => t (e3 3) * t (e3 3))
+      (fun _ : RankedHistory 3 => (1 : ℝ)),
+    integral_prod_mul (fun t : Icc 2 3 → ℝ => t (e3 3) * t (e3 2))
+      (fun h : RankedHistory 3 => if PairApart h {0, 1} 1 then (1 : ℝ) else 0),
+    integral_prod_mul (fun t : Icc 2 3 → ℝ => t (e3 3) * t (e3 2))
+      (fun h : RankedHistory 3 => if PairApart h {0, 2} 1 then (1 : ℝ) else 0),
+    integral_prod_mul (fun t : Icc 2 3 → ℝ => t (e3 2) * t (e3 2))
+      (fun h : RankedHistory 3 =>
+        if PairApart h {0, 1} 1 ∧ PairApart h {0, 2} 1 then (1 : ℝ) else 0), moment3 3 3 (by decide) (by decide), moment3 3 2 (by decide) (by decide),
+    moment3 2 2 (by decide) (by decide), integral_ite3, integral_ite3, integral_ite3, counts3.1,
+    counts3.2.1, counts3.2.2.1]
+  norm_num [Nat.choose]
+
+/-- Transition counts from the definitions: from three distinct lineages at `n = 3` no history
+keeps them distinct (`C(3, 2) - 3 = 0`) and one merges genes `1` and `2` first; from four
+distinct lineages at `n = 4` no history keeps them distinct (`C(4, 2) - 6 = 0`), and of the
+`18` histories three merge the cross pair `{0, 2}` first (a fraction `1 / C(4, 2)`). -/
+example : #{h : RankedHistory 3 | Apart3 h 0 1 2 1} = 0 ∧
+    #{h : RankedHistory 3 | Apart3 h 0 1 2 0 ∧ SplitA h 0 1 2 1} = 1 ∧
+    #{h : RankedHistory 4 | Apart4 h 0 1 2 3 1} = 0 ∧
+    #{h : RankedHistory 4 | Apart4 h 0 1 2 3 0 ∧ ¬PairApart h {0, 2} 1} = 3 ∧
+    Fintype.card (RankedHistory 4) = 18 := by
+  decide +kernel
+
+/-- The shared-gene overlap identity in the history `h01`, from the definitions: after one event
+(genes `0, 1` merged) no lineage separates both `{0, 1}` and `{0, 2}`, and
+`1[0, 1 apart] + 1[0, 2 apart] - 1[1, 2 apart] = 0 + 1 - 1`. -/
+example : overlapCount h01 {0, 1} {0, 2} 1 = 0 ∧
+    apartInd h01 {0, 1} 1 + apartInd h01 {0, 2} 1 - apartInd h01 {1, 2} 1 = 0 := by
+  have hb : (blocksAfter h01 1) = [{0, 1}, {2}] := by decide +kernel
+  have h1 : ¬PairApart h01 {0, 1} 1 ∧ PairApart h01 {0, 2} 1 ∧ PairApart h01 {1, 2} 1 := by
+    decide +kernel
+  have c0 : ¬(#(({0, 1} : Finset (Fin 3)) ∩ [{0, 1}, {2}].getD 0 ∅) = 1 ∧
+      #(({0, 2} : Finset (Fin 3)) ∩ [{0, 1}, {2}].getD 0 ∅) = 1) := by decide
+  have c1 : ¬(#(({0, 1} : Finset (Fin 3)) ∩ [{0, 1}, {2}].getD 1 ∅) = 1 ∧
+      #(({0, 2} : Finset (Fin 3)) ∩ [{0, 1}, {2}].getD 1 ∅) = 1) := by decide
+  constructor
+  · rw [overlapCount, hb, show 3 - 1 = 2 from rfl, Finset.sum_range_succ, Finset.sum_range_one]
+    simp only [c0, c1, ↓reduceIte, add_zero]
+  · simp [apartInd, h1.1, h1.2.1, h1.2.2]
 
 /-- Three genes: `τ₀₂ ~ Exp(1)` in the marked model, `Var D₀₂ = θ + θ²`, and the covariance of two
 pairs sharing gene `0` reduces to the genealogy. -/
@@ -253,6 +423,38 @@ example (θ : ℝ≥0) :
   ⟨hasLaw_pairCoalTime_kingmanTreeMutationMeasure (by decide) (by decide),
     variance_pairDiff_kingmanTreeMutationMeasure (by decide) (by decide),
     covariance_pairDiff_kingmanTreeMutationMeasure (by decide) (by decide) (by decide)⟩
+
+/-- Three genes: the pair covariances of the marked model for two pairs sharing gene `0`. -/
+example (θ : ℝ≥0) :
+    cov[fun g => pairCoalTime g.2 {0, 1} g.1, fun g => pairCoalTime g.2 {0, 2} g.1;
+        kingmanGenealogyMeasure 3] = 1 / 3 ∧
+    ∫ g, pairPathOverlap g.2 {0, 1} {0, 2} g.1 ∂kingmanGenealogyMeasure 3 = 1 ∧
+    cov[pairDiff (fun p => p.1.2) Prod.snd {0, 1}, pairDiff (fun p => p.1.2) Prod.snd {0, 2};
+        kingmanTreeMutationMeasure 3 θ] = θ / 2 + θ ^ 2 / 3 :=
+  ⟨covariance_pairCoalTime_shared (by decide) (by decide) (by decide),
+    integral_pairPathOverlap_shared (by decide) (by decide) (by decide),
+    covariance_pairDiff_shared (by decide) (by decide) (by decide)⟩
+
+/-- Four genes: the pair covariances of the marked model for the disjoint pairs `{0, 1}`,
+`{2, 3}`. -/
+example (θ : ℝ≥0) :
+    cov[fun g => pairCoalTime g.2 {0, 1} g.1, fun g => pairCoalTime g.2 {2, 3} g.1;
+        kingmanGenealogyMeasure 4] = 2 / 9 ∧
+    ∫ g, pairPathOverlap g.2 {0, 1} {2, 3} g.1 ∂kingmanGenealogyMeasure 4 = 2 / 3 ∧
+    cov[pairDiff (fun p => p.1.2) Prod.snd {0, 1}, pairDiff (fun p => p.1.2) Prod.snd {2, 3};
+        kingmanTreeMutationMeasure 4 θ] = θ / 3 + 2 * θ ^ 2 / 9 :=
+  ⟨covariance_pairCoalTime_disjoint (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide),
+    integral_pairPathOverlap_disjoint (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide),
+    covariance_pairDiff_disjoint (by decide) (by decide) (by decide) (by decide) (by decide)
+      (by decide)⟩
+
+/-- Zero mutation rate: the pairwise differences of distinct pairs are uncorrelated. -/
+example : cov[pairDiff (fun p => p.1.2) Prod.snd {0, 1}, pairDiff (fun p => p.1.2) Prod.snd {2, 3};
+    kingmanTreeMutationMeasure 4 0] = 0 := by
+  simpa using covariance_pairDiff_disjoint (n := 4) (θ := 0) (a := 0) (b := 1) (c := 2) (d := 3)
+    (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
 
 /-- Boundary sample of size `2` with zero mutation rate: `Var D = 0`. -/
 example : Var[pairDiff (fun p => p.1.2) Prod.snd {0, 1}; kingmanTreeMutationMeasure 2 0] = 0 := by
