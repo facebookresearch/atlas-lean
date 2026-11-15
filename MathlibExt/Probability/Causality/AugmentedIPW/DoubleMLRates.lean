@@ -21,9 +21,9 @@ cross-fitted AIPW estimator of the average treatment effect assuming, for each f
 The first hypothesis is a statement about the score, not about the nuisance estimators. This file
 replaces it with rate conditions on the nuisances themselves, modeled on Chernozhukov et al.
 (2018, Assumption 5.1): `L²` consistency of the fitted propensity and outcome regressions,
-together with a bounded conditional variance of each potential outcome. The variance bound is not
-the paper's noise condition (see "Hypotheses and scope"). The product-rate condition then gives
-asymptotic normality with no condition on the fitted score.
+together with a bounded conditional variance of each potential outcome. The variance bound is
+stronger than the paper's noise condition (see "Hypotheses and scope"). The product-rate
+condition then gives asymptotic normality with no condition on the fitted score.
 
 ## Main results
 
@@ -46,13 +46,16 @@ asymptotic normality with no condition on the fitted score.
 ## Hypotheses and scope
 
 * The outcome-noise condition is `E[(Yₐ - E[Yₐ | m])² | m] ≤ C` a.e. for both arms: a bound on
-  the conditional variance of each potential outcome. It differs from the noise condition of
+  the conditional variance of each potential outcome. It is stronger than the noise condition of
   Chernozhukov et al. (2018, Assumption 5.1; arXiv:1608.00060v6, eqs. (5.1)–(5.2)), which bounds
   `‖E[U² | X]‖_∞` for the residual `U = Y - g₀(D, X)`, `E[U | X, D] = 0`, of the observed outcome
-  after regressing on treatment and covariates. The two conditions imply each other, up to
-  constants such as `C / ε₀`, when `Yₐ` is conditionally independent of the treatment given the
-  covariates; under the mean exchangeability assumed here neither implies the other. The
-  condition here is used only to bound the cross term
+  after regressing on treatment and covariates. Under consistency and mean exchangeability,
+  `E[Y | T, m] = 1_T μ₁* + 1_{Tᶜ} μ₀*`, so `U² = 1_T (Y₁ - μ₁*)² + 1_{Tᶜ} (Y₀ - μ₀*)²` and the
+  condition here gives `E[U² | m] ≤ 2C`. The converse needs more than mean exchangeability: the
+  paper's bound `C'` controls only `E[1_T (Y₁ - μ₁*)² | m]` and `E[1_{Tᶜ} (Y₀ - μ₀*)² | m]`,
+  which give `E[(Yₐ - μₐ*)² | m] ≤ C' / ε₀` when, for example, `(Yₐ - μₐ*)²` is conditionally
+  mean independent of the treatment given the covariates. The condition here is used only to
+  bound the cross term
   `E[(Yₐ - μₐ*)² (e* - ê)²] ≤ C ‖e* - ê‖₂²`, through the pull-out property of the conditional
   expectation; the fitted propensity must therefore be `m`-measurable, as in `CrossFitting`.
 * The remaining hypotheses (i.i.d. data, consistency, mean exchangeability, strong overlap,
