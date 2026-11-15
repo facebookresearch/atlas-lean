@@ -12,8 +12,32 @@ public import MathlibExt.Quantum.QueryOracle
 
 @[expose] public section
 
+/-- The constant-true oracle flips the target bit `false` to `true`. -/
+example : queryOracle (fun _ : Fin 2 => true) (1, false) = (1, true) := rfl
+
+/-- The constant-true oracle flips the target bit `true` to `false`. -/
+example : queryOracle (fun _ : Fin 2 => true) (1, true) = (1, false) := rfl
+
+/-- The constant-false oracle leaves the state unchanged. -/
+example : queryOracle (fun _ : Fin 2 => false) (1, false) = (1, false) := rfl
+
+/-- The constant-false oracle leaves a `true` target unchanged. -/
+example : queryOracle (fun _ : Fin 2 => false) (0, true) = (0, true) := rfl
+
+/-- A non-constant oracle flips the target only where `f x = true`. -/
+example : queryOracle (fun x : Fin 2 => decide (x = 0)) (0, false) = (0, true) := rfl
+
+/-- At a register value with `f x = false`, the same oracle leaves the target alone. -/
+example : queryOracle (fun x : Fin 2 => decide (x = 0)) (1, false) = (1, false) := rfl
+
+/-- The XOR form computes the flipped target bit. -/
+example : queryOracle (fun _ : Fin 3 => true) (2, true) = (2, false) := by
+  rw [queryOracle_apply]
+  rfl
+
 /-- Querying twice with the constant-true oracle restores the state. -/
-example : queryOracle (fun _ : Fin 2 => true) (queryOracle (fun _ : Fin 2 => true) (1, false)) = (1, false) :=
+example : queryOracle (fun _ : Fin 2 => true) (queryOracle (fun _ : Fin 2 => true) (1, false)) =
+    (1, false) :=
   queryOracle_involutive _ _
 
 /-- The oracle keeps the register value. -/
