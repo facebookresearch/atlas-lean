@@ -66,6 +66,12 @@ equilibrium equations decouple across linkage classes (Feinberg 1995; Boros 2012
 Terminal strong linkage classes (hypothesis 3) are not defined here, and neither conclusion of
 the deficiency-one theorem is proved: not uniqueness of positive equilibria in a
 stoichiometric compatibility class, and not existence in the weakly reversible case.
+Uniqueness needs the general kernel theory of the Laplacian of the weighted reaction digraph:
+its kernel is spanned by nonnegative vectors supported on the terminal strong linkage classes,
+one per class. Only the weakly reversible case is proved so far (step 1 of
+`MathlibExt.Biology.Dynamics.DeficiencyZero.Existence`: a positive kernel vector). The general
+theory would also give the open non-weakly-reversible half of the deficiency-zero theorem,
+`not_exists_positive_equilibrium` in `WantedExt/Biology/Dynamics/DeficiencyZeroWanted.lean`.
 
 ## References
 
