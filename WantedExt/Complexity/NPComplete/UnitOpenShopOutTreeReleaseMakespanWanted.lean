@@ -51,7 +51,8 @@ arcs `(i, j)`. Well-formedness is that of the unit-time flow shop with out-tree 
 (`UnitFlowShopOutTreeMaxLatenessWanted`: `m ≥ 1`, `m` unit operations per job, acyclic arcs
 naming jobs, each job with at most one immediate predecessor), applied to the jobs with their
 release dates set aside (that well-formedness reads neither the due dates of its own instances
-nor its bound). The schedule is the open-shop schedule `IsSchedule` of
+nor its bound), together with a nonempty job list (the makespan `max_j C_j` is a maximum over
+the jobs). The schedule is the open-shop schedule `IsSchedule` of
 `UnitOpenShopPrecedenceMakespanWanted` (integer start times `σ k j` of operation `O_jk`; with
 unit lengths and integer data, rounding start times down keeps every constraint). Numbers use
 the binary encoding.
@@ -78,11 +79,12 @@ abbrev UnitOpenShopOutTreeReleaseMakespanInstance :=
   ℕ × List (List ℕ × ℕ) × List (ℕ × ℕ) × ℕ
 
 /-- Well-formedness of an instance `(m, J, A, K)`: well-formed for the unit-time out-tree flow
-shop once the release dates are set aside: `m ≥ 1`, every job has `m` unit operations, the arcs
-name jobs and are acyclic, and each job has at most one immediate predecessor. -/
+shop once the release dates are set aside (`m ≥ 1`, every job has `m` unit operations, the arcs
+name jobs and are acyclic, and each job has at most one immediate predecessor), and there is at
+least one job. -/
 def WellFormed (i : UnitOpenShopOutTreeReleaseMakespanInstance) : Prop :=
   UnitFlowShopOutTreeMaxLateness.WellFormed
-    (i.1, i.2.1.map (fun job => (job.1, (0, 0))), i.2.2.1, (0, 0))
+    (i.1, i.2.1.map (fun job => (job.1, (0, 0))), i.2.2.1, (0, 0)) ∧ i.2.1 ≠ []
 
 /-- Some open-shop schedule starts no operation of a job before its release date and completes
 every operation by time `K` (makespan `max_j C_j ≤ K`). -/
