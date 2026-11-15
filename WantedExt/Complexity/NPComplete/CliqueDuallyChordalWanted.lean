@@ -62,9 +62,15 @@ ordering that puts the new vertex last is a maximum neighbourhood ordering, the 
 a maximum neighbour of every vertex), and it raises the size of a largest clique by exactly one.
 Wikipedia ("Dually chordal graph", Complexity of problems) records maximum clique as
 NP-complete on dually chordal graphs, citing Brandstädt, Chepoi and Dragan (1998); ISGCI records
-the same, with the universal-vertex reduction. The clique is a polynomial certificate and dually
-chordal graphs are recognizable in linear time (Brandstädt, Chepoi and Dragan 1998), so the
-problem is in NP.
+the same, with the universal-vertex reduction.
+
+Membership in NP, with `n` written in binary (so most vertices may be isolated): an isolated
+vertex is its own maximum neighbour and lies in no other closed neighbourhood, so it can sit
+anywhere in a maximum neighbourhood ordering, and the graph is dually chordal exactly when the
+subgraph induced by the at most `2|E|` endpoints of edges is; dually chordal graphs are
+recognizable in linear time (Brandstädt, Chepoi and Dragan 1998). For `K = 1` the answer is yes
+(`n ≥ K`); for `K ≥ 2` a clique of size `K` consists of endpoints of edges, and such a clique is
+a certificate of polynomial size.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
