@@ -32,7 +32,7 @@ namespace MetaMathlibExt.Complexity.NPComplete.MaximumMinimumMetricKSpanningTree
 /-!
 # MAXIMUM MINIMUM METRIC K-SPANNING TREE is NP-complete
 
-INSTANCE: a complete graph on a set `V` of `n` vertices with a length `l(u, v) ∈ ℤ₀⁺` on each
+INSTANCE: a complete graph on a set `V` of `n` vertices with a length `l(u, v) ∈ ℤ⁺` on each
 edge satisfying the triangle inequality, a number `k`, and a bound `K`. QUESTION: is there a
 subset `V' ⊆ V` with `|V'| = k` such that the minimum spanning tree of the subgraph induced by
 `V'` has length at least `K`?
@@ -44,8 +44,9 @@ reduction from MAXIMUM INDEPENDENT SET: with lengths `1` on the edges of a graph
 non-edges, the minimum spanning tree on `k` vertices has length `2 (k - 1)` exactly when they
 are independent).
 
-The lengths are an `n × n` matrix with zero diagonal, symmetric, satisfying the triangle
-inequality, as in the compendium's metric problems. The induced subgraph on `V'` is complete, so
+The lengths are an `n × n` matrix that is a metric on the vertices: zero exactly on the
+diagonal (positive between distinct vertices), symmetric, and satisfying the triangle
+inequality. The induced subgraph on `V'` is complete, so
 its minimum spanning tree has length at least `K` exactly when every tree on the vertex set
 `V'` (a `SimpleGraph` on the subtype with `SimpleGraph.IsTree`) has total edge length at least
 `K`. The length of an edge `{u, v}` is read as `min (l(u, v), l(v, u))`, which is `l(u, v)` for
@@ -72,10 +73,11 @@ def dist (i : MaximumMinimumMetricKSpanningTreeInstance) (a b : ℕ) : ℕ :=
   (i.2.1.getD a []).getD b 0
 
 /-- Well-formedness of an instance: the matrix has `n` rows of `n` entries and is a metric
-(`l(a, a) = 0`, `l(a, b) = l(b, a)`, `l(a, c) ≤ l(a, b) + l(b, c)`), and `1 ≤ k ≤ n`. -/
+(`l(a, a) = 0`, `0 < l(a, b)` for `a ≠ b`, `l(a, b) = l(b, a)`, `l(a, c) ≤ l(a, b) + l(b, c)`),
+and `1 ≤ k ≤ n`. -/
 def WellFormed (i : MaximumMinimumMetricKSpanningTreeInstance) : Prop :=
   i.2.1.length = i.1 ∧ (∀ row ∈ i.2.1, row.length = i.1) ∧
-    (∀ a < i.1, dist i a a = 0) ∧
+    (∀ a < i.1, dist i a a = 0) ∧ (∀ a < i.1, ∀ b < i.1, a ≠ b → 0 < dist i a b) ∧
     (∀ a < i.1, ∀ b < i.1, dist i a b = dist i b a) ∧
     (∀ a < i.1, ∀ b < i.1, ∀ c < i.1, dist i a c ≤ dist i a b + dist i b c) ∧
     1 ≤ i.2.2.1 ∧ i.2.2.1 ≤ i.1
