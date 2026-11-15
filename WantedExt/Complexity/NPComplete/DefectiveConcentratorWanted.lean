@@ -38,24 +38,26 @@ open MetaMathlibExt.Complexity.NPComplete.DefectiveSuperconcentrator
 # DEFECTIVE CONCENTRATOR is NP-complete
 
 INSTANCE: an acyclic directed graph `G = (V, A)` and disjoint sets `I, O ⊆ V` of "input" and
-"output" vertices.
+"output" vertices with `|O| ≤ |I|`.
 QUESTION: is it the case that `G` is not a concentrator? (It would be one if, for every subset
 `S ⊆ I` with `|S| = |O|`, there are `|S|` vertex-disjoint paths from `S` to `O`.)
 
 Johnson's column defines a concentrator this way and records, citing Blum, Karp, Vornberger,
 Papadimitriou and Yannakakis, that identifying defective concentrators is NP-complete, even if
-`G` has no path longer than two arcs (and polynomial if it has no path longer than one arc).
-When `|O| > |I|` no such `S` exists, so `G` is a concentrator and the answer is no.
+`G` has no path longer than two arcs (and polynomial if it has no path longer than one arc). As
+for the standard `(n, m)`-concentrator, the instance has at least as many inputs as outputs
+(`|O| ≤ |I|`); then the condition is equivalent to routing every input set of size at most
+`|O|`.
 
 The instance and the representation are those of DEFECTIVE SUPERCONCENTRATOR
 (`WantedExt.Complexity.NPComplete.DefectiveSuperconcentratorWanted`): vertices `0, …, n - 1`,
 the arcs a list of ordered pairs without repetitions or loops, `I` and `O` lists without
 repetitions, and acyclicity as "no vertex reaches itself by a nonempty directed path"
-(`Relation.TransGen` of the arc relation). `WellFormed` is that problem's well-formedness without
-its condition `|I| = |O|`. A path from `S` to `O` is a directed path, in the sense of
-`DirectedTwoDisjointConnectingPaths.IsDirectedPath` (pairwise distinct vertices, an arc from
-each vertex to the next), that starts at a vertex of `S` and ends at a vertex of `O`; paths are
-vertex-disjoint when their vertex lists are disjoint. Membership in NP follows from the
+(`Relation.TransGen` of the arc relation). `WellFormed` is that problem's well-formedness with
+its condition `|I| = |O|` relaxed to `|O| ≤ |I|`. A path from `S` to `O` is a directed path, in
+the sense of `DirectedTwoDisjointConnectingPaths.IsDirectedPath` (pairwise distinct vertices, an
+arc from each vertex to the next), that starts at a vertex of `S` and ends at a vertex of `O`;
+paths are vertex-disjoint when their vertex lists are disjoint. Membership in NP follows from the
 max-flow min-cut theorem, as for DEFECTIVE SUPERCONCENTRATOR (a set `S` together with a vertex
 cut of size below `|S|` is a certificate).
 
@@ -71,12 +73,13 @@ reduction from every language in `NP`
 -/
 
 /-- Well-formedness of an instance: the arcs are distinct, loopless and between vertices; the
-digraph is acyclic; `I` and `O` are lists of distinct vertices, disjoint from each other. -/
+digraph is acyclic; `I` and `O` are lists of distinct vertices, disjoint from each other, with
+`|O| ≤ |I|`. -/
 def WellFormed (i : DefectiveSuperconcentratorInstance) : Prop :=
   (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2) ∧
     (∀ v : ℕ, ¬ Relation.TransGen (fun u w => (u, w) ∈ i.2.1) v v) ∧
     i.2.2.1.Nodup ∧ i.2.2.2.Nodup ∧ (∀ v ∈ i.2.2.1, v < i.1) ∧ (∀ v ∈ i.2.2.2, v < i.1) ∧
-    i.2.2.1.Disjoint i.2.2.2
+    i.2.2.1.Disjoint i.2.2.2 ∧ i.2.2.2.length ≤ i.2.2.1.length
 
 /-- The digraph is a concentrator: for every set `S ⊆ I` with `|S| = |O|` there are `|S|`
 pairwise vertex-disjoint directed paths, each from a vertex of `S` to a vertex of `O`. -/
