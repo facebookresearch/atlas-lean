@@ -53,11 +53,13 @@ adjacent to all of `Y` gives a star convex graph (star on `X ∪ {x}` centred at
 Hamiltonian cycle if and only if `G` has a Hamiltonian path; if `|X| = |Y|`, adding `x`, `u` to
 `X` and `y`, `v` to `Y`, with `x` adjacent to `Y ∪ {y, v}`, `y` adjacent to `X ∪ {u}` and `u`
 adjacent to `v`, gives a star convex graph (star centred at `x`) with a Hamiltonian cycle if and
-only if `G` has a Hamiltonian path. HAMILTONIAN PATH is NP-complete on bipartite graphs
-(`HamiltonianPathBipartiteWanted`). Membership in NP holds for all graphs, and the note shows
-that star convex graphs are recognized in linear time. A graph with an isolated vertex and more
-than one vertex has no Hamiltonian circuit, so the binary vertex count does not make the problem
-succinct.
+only if `G` has a Hamiltonian path. A graph with one vertex has a Hamiltonian path, while the
+first construction would give the 2-vertex graph `K₂`, which has no Hamiltonian circuit; that
+instance is mapped to the fixed star convex yes-instance `C₄` instead. HAMILTONIAN PATH is
+NP-complete on bipartite graphs (`HamiltonianPathBipartiteWanted`). Membership in NP holds for all
+graphs, and the note shows that star convex graphs are recognized in linear time. A graph with an
+isolated vertex and more than one vertex has no Hamiltonian circuit, so the binary vertex count does
+not make the problem succinct.
 
 The instance type, the graph, the parent's well-formedness (at least one vertex, simple edge list
 on `Fin n`) and the question (`3 ≤ n` and Mathlib's `SimpleGraph.IsHamiltonian`) are the
