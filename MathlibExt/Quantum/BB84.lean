@@ -14,51 +14,71 @@ public import Mathlib.Data.Fintype.Prod
 /-!
 # BB84 intercept-resend error rate
 
-In the BB84 protocol with an intercept-resend attack, the
-sifted rounds (Bob's basis equals Alice's) have error
-exactly when Eve measured in the wrong basis and flipped
-the bit: 4 of the 16 uniform sifted combinations, a rate of
-`1/4`. Counts are stated over the five uniform booleans
-`(a, e, ba, be, bb)`.
+In BB84, Alice sends the bit `a` encoded in the basis `ba` (`false` = Z, `true` = X). In an
+intercept-resend attack, Eve measures the qubit in a basis `be` and resends her result `e`
+encoded in `be`; Bob then measures in a basis `bb` and obtains `r`. Measuring a basis state in
+its own basis returns its bit, and measuring it in the other basis returns a fair coin. So `e = a`
+when `be = ba` and `e` is Eve's coin `ce` otherwise (`bb84EveResult`), and `r = e` when `bb = be`
+and `r` is Bob's coin `cb` otherwise (`bb84BobResult`). A round is sifted when `bb = ba`, and it
+has an error when it is sifted and `r ≠ a`.
+
+Eve's coin never matters in a sifted round. If `be = ba`, Bob measures Eve's copy of `a` in its own
+basis and gets `r = a`. If `be ≠ ba`, then also `bb ≠ be`, so `r = cb`. The sifted error event is
+therefore `bb = ba ∧ be ≠ ba ∧ cb ≠ a` (`bb84Error`, and `bb84Error_eq` for the derivation), a
+function of the five independent fair bits `(a, cb, ba, be, bb)`. Of their 32 equally likely
+values, 16 are sifted and 4 of those have an error, so the attack causes errors in `1/4` of the
+sifted rounds.
 -/
 
 @[expose] public section
 
-/-- BB84 intercept-resend outcomes (core of QCI-50). Alice
-sends bit `a` in basis `ba` (false = Z, true = X); Eve measures
-in basis `be` obtaining `e`, resends; Bob measures in basis
-`bb` obtaining `r`. The (deterministic given bases) resent bit
-is `e`; Bob's result is wrong when bases align (`bb = ba`) but
-Eve chose wrong (`be ≠ ba`) and her outcome flipped the bit:
-modeled by the standard table: error iff `bb = ba ∧ be ≠ ba ∧ e ≠ a`,
-with `e` uniform. Counting form below. -/
-def bb84Error (a e : Bool) (ba be bb : Bool) : Bool :=
-  (bb == ba) && (be != ba) && (e != a)
+/-- Eve's result in an intercept-resend attack on BB84: measuring Alice's bit `a`, sent in the
+basis `ba`, in the basis `be` returns `a` when the bases agree and Eve's fair coin `ce`
+otherwise. -/
+def bb84EveResult (a ba be ce : Bool) : Bool :=
+  if be = ba then a else ce
 
-/-- Over uniform Eve outcomes and basis choices, exactly
-1/4 of the 32 equally likely `(a, e, ba, be, bb)` combinations
-with sifted bases (`bb = ba`) produce an error: precisely 4 of
-the 16 sifted combinations. Sifted error count: -/
+/-- Bob's result in an intercept-resend attack on BB84: measuring Eve's resent bit `e`, encoded in
+the basis `be`, in the basis `bb` returns `e` when the bases agree and Bob's fair coin `cb`
+otherwise. -/
+def bb84BobResult (e be bb cb : Bool) : Bool :=
+  if bb = be then e else cb
+
+/-- The BB84 intercept-resend error event in closed form, for Alice's bit `a`, Bob's coin `cb`,
+and the bases `ba`, `be`, `bb` of Alice, Eve and Bob: the round is sifted (`bb = ba`), Eve measured
+in the other basis (`be ≠ ba`), and Bob's coin differs from Alice's bit. By `bb84Error_eq` this is
+the event that the round is sifted and Bob's result differs from `a`, for every value of Eve's
+coin. -/
+def bb84Error (a cb : Bool) (ba be bb : Bool) : Bool :=
+  (bb == ba) && (be != ba) && (cb != a)
+
+/-- The closed form `bb84Error` is the sifted error event of the intercept-resend model: the round
+is sifted and Bob's result, obtained from Eve's resent result, differs from Alice's bit, whatever
+Eve's coin `ce`. -/
+theorem bb84Error_eq (a cb ba be bb ce : Bool) :
+    bb84Error a cb ba be bb =
+      ((bb == ba) && (bb84BobResult (bb84EveResult a ba be ce) be bb cb != a)) := by
+  revert a cb ba be bb ce
+  decide
+
+/-- Of the 32 equally likely values of `(a, cb, ba, be, bb)`, exactly 4 are sifted rounds
+(`bb = ba`) with an error. -/
 theorem bb84_sifted_errors :
     (Finset.univ.filter (fun p : Bool × Bool × Bool × Bool × Bool =>
       bb84Error p.1 p.2.1 p.2.2.1 p.2.2.2.1 p.2.2.2.2
         && (p.2.2.2.2 == p.2.2.1))).card = 4 := by
   decide
 
-/-- Total sifted combinations: 16 of 32 have `bb = ba` after
-also fixing... stated as the full count of sifted tuples: -/
+/-- Exactly 16 of the 32 values of `(a, cb, ba, be, bb)` are sifted rounds (`bb = ba`). With
+`bb84_sifted_errors`, the sifted error rate is `4 / 16 = 1 / 4`. -/
 theorem bb84_sifted_total :
     (Finset.univ.filter (fun p : Bool × Bool × Bool × Bool × Bool =>
       p.2.2.2.2 == p.2.2.1)).card = 16 := by
   decide
 
-/-- Hence the sifted error rate is `4/16 = 1/4` (kept here as
-the two counts). No error when Eve measures in Alice's basis: -/
-theorem bb84_no_error_when_eve_correct (a e : Bool) (ba bb : Bool)
-    (hbe : bb = ba) :
-    bb84Error a e ba ba bb = false := by
-  have _ := hbe
-  unfold bb84Error
-  simp
+/-- No error occurs when Eve measures in Alice's basis, whatever Bob's basis and coin. -/
+theorem bb84_no_error_when_eve_correct (a cb : Bool) (ba bb : Bool) :
+    bb84Error a cb ba ba bb = false := by
+  simp [bb84Error]
 
 end
