@@ -28,7 +28,7 @@ public import WantedExt.Complexity.NPComplete.PolarityTwoKTwoCFiveFreeWanted
 namespace MetaMathlibExt.Complexity.NPComplete.PolarityClawFree
 
 open MetaMathlibExt.Complexity.NPComplete.PolarityTwoKTwoCFiveFree
-  (PolarityTwoKTwoCFiveFreeInstance Graph IsPolar PolarityTwoKTwoCFiveFreeFeasible)
+  (PolarityTwoKTwoCFiveFreeInstance Graph PolarityTwoKTwoCFiveFreeFeasible)
 
 /-!
 # POLARITY OF CLAW-FREE GRAPHS is NP-complete
@@ -42,13 +42,13 @@ cliques?
 Churchley and Huang prove that recognizing polarity is NP-complete for claw-free graphs (while
 monopolarity is polynomial there). Membership in NP: the partition is a polynomial certificate.
 
-The instance type, the graph, polarity and the question are reused from
-`PolarityTwoKTwoCFiveFreeWanted` (`PolarityTwoKTwoCFiveFree.PolarityTwoKTwoCFiveFreeInstance`,
-`PolarityTwoKTwoCFiveFree.Graph`, `PolarityTwoKTwoCFiveFree.IsPolar`,
+The instance type, the graph and the question are reused from `PolarityTwoKTwoCFiveFreeWanted`
+(`PolarityTwoKTwoCFiveFree.PolarityTwoKTwoCFiveFreeInstance`, `PolarityTwoKTwoCFiveFree.Graph`,
 `PolarityTwoKTwoCFiveFree.PolarityTwoKTwoCFiveFreeFeasible`, which says only that the graph is
-polar); this module replaces the `(2K₂, C₅)`-freeness by claw-freeness, MathlibExt's
-`SimpleGraph.IsClawFree` (no vertex with three pairwise non-adjacent distinct neighbors, equivalent
-to the claw not being an induced subgraph, `SimpleGraph.isClawFree_iff_not_isIndContained`).
+polar in the sense of `PolarityTriangleFree.IsPolar`); this module replaces the `(2K₂, C₅)`-freeness
+by claw-freeness, MathlibExt's `SimpleGraph.IsClawFree` (no vertex with three pairwise non-adjacent
+distinct neighbors, equivalent to the claw not being an induced subgraph,
+`SimpleGraph.isClawFree_iff_not_isIndContained`).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
