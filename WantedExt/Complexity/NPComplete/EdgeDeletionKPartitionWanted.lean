@@ -33,8 +33,8 @@ namespace MetaMathlibExt.Complexity.NPComplete.EdgeDeletionKPartition
 # EDGE DELETION k-PARTITION is NP-complete
 
 For a fixed number `k ≥ 2` of parts:
-INSTANCE: a graph `G = (V, E)`, a weight `w(e) ∈ ℕ` for each edge `e ∈ E`, and a positive integer
-`K`.
+INSTANCE: a graph `G = (V, E)`, a positive integer weight `w(e)` for each edge `e ∈ E`, and a
+positive integer `K`.
 QUESTION: is there a `k`-partition of `V`, i.e., a color assignment `c : V → {1, …, k}`, such
 that the weight of the monochromatic edges, `∑ {w(v₁, v₂) : (v₁, v₂) ∈ E, c(v₁) = c(v₂)}`, is at
 most `K`?
@@ -42,7 +42,8 @@ most `K`?
 This is the decision version of MINIMUM EDGE DELETION K-PARTITION ([GT33] of the Crescenzi-Kann
 compendium), the Min k-Partition problem of Kann, Khanna, Lagergren and Panconesi: deleting the
 monochromatic edges leaves a `k`-colorable graph. The number `k` of parts is fixed, a parameter
-of the language, as in the compendium's comments for `k = 2` and for `k ≥ 3`. For `k = 2` the
+of the language, as in the compendium's comments for `k = 2` and for `k ≥ 3`. Weights are
+positive, as in Kann, Khanna, Lagergren and Panconesi. For `k = 2` the
 question is MAX CUT [ND16] with the complementary bound (the cut has weight at least
 `w(E) - K`). The bound is a positive integer, following the Garey-Johnson convention for decision
 versions.
@@ -72,10 +73,11 @@ def edges (i : EdgeDeletionKPartitionInstance) : List (ℕ × ℕ) :=
   i.2.1.map fun e => (e.1, e.2.1)
 
 /-- Well-formedness of an instance: the edges are distinct, in range, without loops or repeated
-pairs, and `0 < K`. -/
+pairs; every weight is positive; and `0 < K`. -/
 def WellFormed (i : EdgeDeletionKPartitionInstance) : Prop :=
   (edges i).Nodup ∧
-    (∀ e ∈ edges i, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ edges i) ∧ 0 < i.2.2
+    (∀ e ∈ edges i, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ edges i) ∧
+    (∀ e ∈ i.2.1, 0 < e.2.2) ∧ 0 < i.2.2
 
 /-- The weight of the edges whose endpoints get the same color under `c`. -/
 def monochromaticWeight (i : EdgeDeletionKPartitionInstance) (c : List ℕ) : ℕ :=
