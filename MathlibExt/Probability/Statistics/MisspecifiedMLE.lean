@@ -10,10 +10,10 @@ module
 
 public import MathlibExt.Probability.Statistics.EstimatingEquations
 public import MathlibExt.Probability.Statistics.InformationInequalityIdentification
-public import Mathlib.Analysis.Calculus.FDeriv.Mul
 public import Mathlib.Analysis.Calculus.Gradient.Basic
-public import Mathlib.Analysis.Calculus.LocalExtr.Basic
-public import Mathlib.Analysis.Calculus.ParametricIntegral
+import Mathlib.Analysis.Calculus.FDeriv.Mul
+import Mathlib.Analysis.Calculus.LocalExtr.Basic
+import Mathlib.Analysis.Calculus.ParametricIntegral
 
 /-!
 # The misspecified maximum-likelihood estimator (White)
@@ -127,8 +127,8 @@ theorem popCrit_lt_popCrit_iff [IsProbabilityMeasure μ₀] {θ θ' : Θ}
     ← ENNReal.toReal_lt_toReal hne' hne]
   constructor <;> intro h <;> linarith
 
-/-- **The pseudo-true value is the Kullback–Leibler projection** (abstract form; White 1982,
-Theorem 2.2). Let `μ₀`, the law of `X 0`, be a probability measure with `ℓ₀` integrable, and for
+/-- **The pseudo-true value is the Kullback–Leibler projection** (abstract form; cf. White 1982,
+§2). Let `μ₀`, the law of `X 0`, be a probability measure with `ℓ₀` integrable, and for
 every `θ ∈ K` let `μ θ` be a probability measure with `μ₀ ≪ μ θ`, `ℓ θ` integrable under `μ₀` and
 `ℓ₀ - ℓ θ = llr μ₀ (μ θ)` `μ₀`-a.e. Then `θstar` is the unique maximizer of the expected
 log-likelihood on `K` if and only if it is the unique minimizer of `θ ↦ KL(μ₀ ‖ μ θ)` on `K`.

@@ -9,6 +9,9 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.MisspecifiedMLE
+public import MathlibExtTest.Probability.Statistics.MLEConsistency
+public import Mathlib.Probability.Independence.InfinitePi
+public import Mathlib.Probability.ProductMeasure
 
 /-!
 # Tests for the misspecified maximum-likelihood estimator
@@ -34,17 +37,34 @@ the definitions (`integral_trueLaw`), not through the theorems under test.
   the conclusion of `tendstoInDistribution_sqrt_smul_sub_of_isMLEOn` is `4`, while the inverse of
   the model information `-A = 1` is `1`: under misspecification the sandwich does not collapse to
   the inverse information.
+* **Kullback–Leibler projection.** The true law `Ber(3/4)` is fitted by the Bernoulli model
+  `Ber(θ)`, `θ ∈ K = [1/4, 1/2]`, which does not contain it. `KL(Ber(3/4) ‖ Ber(θ))` is computed
+  from `klDiv` (`toReal_klDiv_bern`), its unique minimizer on `K` is the boundary point `1/2`
+  (`isKLProjectionOn_bern`), and every hypothesis of
+  `isIdentifiedOn_popCrit_iff_isKLProjectionOn_of_density` holds for IID coordinates on the
+  product space `Measure.infinitePi`, so `1/2` is the pseudo-true value.
+* **Consistency for the KL projection (non-degenerate).** For the same IID sample, every
+  hypothesis of `ae_tendsto_of_isMLEOn_of_isKLProjectionOn` holds, the uniform LLN derived from
+  the strong law (the Bernoulli log-likelihood has rank 2), so every MLE on `K` converges almost
+  surely to `1/2`; an MLE exists.
+* **White's theorem end to end (degenerate).** For the IID sample with law `dirac 4` (so the
+  sample is almost surely constant, as in the non-vacuity test of `MLEConsistency`), the
+  Gaussian location model on `K = [0, 8]`, the clamped sample mean as MLE, `θ* = 4`, `M = 0`, the
+  meat is `0` and the limit is `Z = 0`: every hypothesis of
+  `tendstoInDistribution_sqrt_smul_sub_of_isMLEOn` holds at once. The instance is degenerate; a
+  non-degenerate end-to-end instance is not constructed here.
 -/
 
 @[expose] public section
 
-open MeasureTheory ProbabilityTheory Filter Topology Metric Set
+open MeasureTheory ProbabilityTheory InformationTheory Filter Topology Metric Set
 open scoped RealInnerProductSpace ENNReal
 
 namespace MathlibExtTest.Probability.Statistics.MisspecifiedMLE
 
 open MathlibExt.Probability.Statistics.MLEConsistency
 open MathlibExt.Probability.Statistics.MisspecifiedMLE
+open MathlibExt.Probability.Statistics.InformationInequalityIdentification
 
 /-! ## The two-point true law and the Gaussian location model -/
 
@@ -81,19 +101,21 @@ theorem integral_psi (θ : ℝ) : ∫ b, psi θ b ∂trueLaw = 2 - θ := by
   simp only [psi, val, ite_true, Bool.false_eq_true, ite_false]
   ring
 
-theorem hasGradientAt_ell (b : Bool) (θ : ℝ) :
-    HasGradientAt (fun t => ell t b) (psi θ b) θ := by
-  have h1 : HasDerivAt (fun t => val b - t) (-1) θ := (hasDerivAt_id' θ).const_sub (val b)
+theorem hasGradientAt_gaussLL (x θ : ℝ) :
+    HasGradientAt (fun t => MLEConsistency.gaussLL t x) (x - θ) θ := by
+  have h1 : HasDerivAt (fun t => x - t) (-1) θ := (hasDerivAt_id' θ).const_sub x
   have h2 := (h1.mul h1).neg.div_const 2
-  have e1 : (fun t => ell t b) = fun y => -((val b - y) * (val b - y)) / 2 := by
+  have e1 : (fun t => MLEConsistency.gaussLL t x) = fun y => -((x - y) * (x - y)) / 2 := by
     funext t
-    simp only [ell]
+    simp only [MLEConsistency.gaussLL]
     ring
-  have e2 : psi θ b = -(-1 * (val b - θ) + (val b - θ) * -1) / 2 := by
-    simp only [psi]
-    ring
+  have e2 : x - θ = -(-1 * (x - θ) + (x - θ) * -1) / 2 := by ring
   rw [e1, e2]
   exact HasDerivAt.hasGradientAt' h2
+
+theorem hasGradientAt_ell (b : Bool) (θ : ℝ) :
+    HasGradientAt (fun t => ell t b) (psi θ b) θ :=
+  hasGradientAt_gaussLL (val b) θ
 
 /-! ## Interior pseudo-true value -/
 
@@ -210,8 +232,8 @@ theorem inner_meat_one :
 theorem ring_inverse_neg_one : Ring.inverse (-1 : ℝ →L[ℝ] ℝ) = -1 :=
   Ring.inverse_unit (-1 : (ℝ →L[ℝ] ℝ)ˣ)
 
-/-- **The sandwich variance is `4`**: the variance of the limit law in
-`tendstoInDistribution_sqrt_smul_sub_of_isMLEOn` for the misspecified model. -/
+/-- **The sandwich variance is `4`**: the variance expression in the conclusion of
+`tendstoInDistribution_sqrt_smul_sub_of_isMLEOn`, evaluated for the misspecified model. -/
 theorem sandwich_eq_four :
     ⟪ProbabilityTheory.GEE.sandwichCovariance
         (∫ b, fderiv ℝ (fun t => psi t b) 2 ∂trueLaw)
@@ -236,5 +258,301 @@ example :
       ⟪Ring.inverse (-∫ b, fderiv ℝ (fun t => psi t b) 2 ∂trueLaw) 1, 1⟫ := by
   rw [sandwich_eq_four, inverse_information_eq_one]
   norm_num
+
+/-! ## IID coordinates on the product space -/
+
+section IID
+
+variable {α : Type*} [MeasurableSpace α] (μ : Measure α) [IsProbabilityMeasure μ]
+
+theorem hasLaw_eval (i : ℕ) :
+    HasLaw (fun ω : ℕ → α => ω i) μ (Measure.infinitePi fun _ => μ) :=
+  ⟨(measurable_pi_apply i).aemeasurable, Measure.infinitePi_map_eval _ i⟩
+
+theorem iIndepFun_eval :
+    iIndepFun (fun i (ω : ℕ → α) => ω i) (Measure.infinitePi fun _ => μ) :=
+  iIndepFun_infinitePi (P := fun _ => μ) (X := fun _ => id) fun _ => measurable_id
+
+theorem identDistrib_eval (i : ℕ) :
+    IdentDistrib (fun ω : ℕ → α => ω i) (fun ω => ω 0) (Measure.infinitePi fun _ => μ)
+      (Measure.infinitePi fun _ => μ) :=
+  ⟨(hasLaw_eval μ i).aemeasurable, (hasLaw_eval μ 0).aemeasurable,
+    (hasLaw_eval μ i).map_eq.trans (hasLaw_eval μ 0).map_eq.symm⟩
+
+theorem integrable_comp_eval {f : α → ℝ} (hf : Integrable f μ) :
+    Integrable (fun ω : ℕ → α => f (ω 0)) (Measure.infinitePi fun _ => μ) :=
+  (integrable_map_measure (by rw [(hasLaw_eval μ 0).map_eq]; exact hf.aestronglyMeasurable)
+    (hasLaw_eval μ 0).aemeasurable).1 (by rw [(hasLaw_eval μ 0).map_eq]; exact hf)
+
+end IID
+
+/-! ## The Kullback–Leibler projection of `Ber(3/4)` onto `Ber(θ)`, `θ ∈ [1/4, 1/2]` -/
+
+/-- The Bernoulli density with success probability `q` with respect to the counting measure on
+`Bool`. -/
+noncomputable def bernDens (q : ℝ) (b : Bool) : ℝ := if b then q else 1 - q
+
+theorem bernDens_nonneg {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1) (b : Bool) : 0 ≤ bernDens q b := by
+  cases b <;> simp [bernDens] <;> linarith
+
+theorem bernDens_pos {q : ℝ} (hq0 : 0 < q) (hq1 : q < 1) (b : Bool) : 0 < bernDens q b := by
+  cases b <;> simp [bernDens] <;> linarith
+
+theorem isProbabilityMeasure_bern {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1) :
+    IsProbabilityMeasure (densityModel Measure.count bernDens q) := by
+  constructor
+  rw [densityModel, withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ, lintegral_count,
+    tsum_fintype, ← ENNReal.ofReal_sum_of_nonneg fun b _ => bernDens_nonneg hq0 hq1 b]
+  simp [bernDens]
+
+/-- Integrals against a Bernoulli law, computed from the definitions. -/
+theorem integral_bern {q : ℝ} (hq0 : 0 ≤ q) (hq1 : q ≤ 1) (f : Bool → ℝ) :
+    ∫ b, f b ∂densityModel Measure.count bernDens q = q * f true + (1 - q) * f false := by
+  rw [densityModel, integral_withDensity_eq_integral_toReal_smul (measurable_of_countable _)
+    (ae_of_all _ fun _ => ENNReal.ofReal_lt_top), integral_count, Fintype.sum_bool]
+  simp [bernDens, ENNReal.toReal_ofReal hq0, ENNReal.toReal_ofReal (sub_nonneg.2 hq1)]
+
+/-- The true law `Ber(3/4)` is a probability measure. -/
+instance : IsProbabilityMeasure (densityModel Measure.count bernDens (3 / 4)) :=
+  isProbabilityMeasure_bern (by norm_num) (by norm_num)
+
+theorem absolutelyContinuous_bern {θ : ℝ} (h0 : 0 < θ) (h1 : θ < 1) :
+    densityModel Measure.count bernDens (3 / 4) ≪ densityModel Measure.count bernDens θ :=
+  densityModel_absolutelyContinuous (measurable_of_countable _)
+    (ae_of_all _ fun b => bernDens_pos h0 h1 b)
+
+theorem klDiv_bern_ne_top {θ : ℝ} (h0 : 0 < θ) (h1 : θ < 1) :
+    klDiv (densityModel Measure.count bernDens (3 / 4)) (densityModel Measure.count bernDens θ)
+      ≠ ∞ :=
+  klDiv_ne_top (absolutelyContinuous_bern h0 h1) Integrable.of_finite
+
+/-- `KL(Ber(3/4) ‖ Ber(θ))`, computed from `klDiv` and the log-likelihood ratio of the
+densities. -/
+theorem toReal_klDiv_bern {θ : ℝ} (h0 : 0 < θ) (h1 : θ < 1) :
+    (klDiv (densityModel Measure.count bernDens (3 / 4))
+      (densityModel Measure.count bernDens θ)).toReal =
+      3 / 4 * Real.log (3 / 4) + 1 / 4 * Real.log (1 / 4) -
+        (3 / 4 * Real.log θ + 1 / 4 * Real.log (1 - θ)) := by
+  have := isProbabilityMeasure_bern h0.le h1.le
+  rw [toReal_klDiv_of_measure_eq (absolutelyContinuous_bern h0 h1)
+      (by rw [measure_univ, measure_univ]),
+    ← integral_congr_ae (llr_densityModel_ae_eq (ν := Measure.count) (p := bernDens)
+      (θ₀ := 3 / 4) (θ := θ) (measurable_of_countable _) (measurable_of_countable _)
+      (ae_of_all _ (bernDens_pos (by norm_num) (by norm_num))) (ae_of_all _ (bernDens_pos h0 h1))),
+    integral_bern (by norm_num) (by norm_num)]
+  simp only [logDensity, bernDens, ite_true, Bool.false_eq_true, ite_false]
+  rw [show (1 : ℝ) - 3 / 4 = 1 / 4 by norm_num]
+  ring
+
+/-- **The KL projection of `Ber(3/4)` onto `{Ber(θ) : θ ∈ [1/4, 1/2]}` is the boundary point
+`1/2`**, from the computed divergence: `θ³ (1 - θ)` increases on `[1/4, 1/2]`. -/
+theorem isKLProjectionOn_bern :
+    IsKLProjectionOn (Icc (1 / 4 : ℝ) (1 / 2)) (densityModel Measure.count bernDens (3 / 4))
+      (densityModel Measure.count bernDens) (1 / 2) := by
+  refine ⟨by norm_num [mem_Icc], fun θ hθ hne => ?_⟩
+  have h0 : 0 < θ := by linarith [hθ.1]
+  have h1 : θ < 1 := by linarith [hθ.2]
+  have hlt : θ < 1 / 2 := lt_of_le_of_ne hθ.2 hne
+  rw [← ENNReal.toReal_lt_toReal (klDiv_bern_ne_top (by norm_num) (by norm_num))
+      (klDiv_bern_ne_top h0 h1), toReal_klDiv_bern (by norm_num) (by norm_num),
+    toReal_klDiv_bern h0 h1]
+  have hf : 0 < -θ ^ 3 + θ ^ 2 / 2 + θ / 4 + 1 / 8 := by
+    nlinarith [mul_le_mul_of_nonneg_right hθ.2 (sq_nonneg θ)]
+  have key : θ ^ 3 * (1 - θ) < (1 / 2) ^ 4 := by nlinarith [mul_pos (sub_pos.2 hlt) hf]
+  have hpos : 0 < θ ^ 3 * (1 - θ) := mul_pos (pow_pos h0 3) (sub_pos.2 h1)
+  have hlog := Real.log_lt_log hpos key
+  rw [Real.log_mul (pow_pos h0 3).ne' (sub_pos.2 h1).ne', Real.log_pow, Real.log_pow] at hlog
+  push_cast at hlog
+  rw [show (1 : ℝ) - 1 / 2 = 1 / 2 by norm_num]
+  linarith
+
+/-- The IID sample with law `Ber(3/4)`: the coordinates of the product space. -/
+noncomputable def bernP : Measure (ℕ → Bool) :=
+  Measure.infinitePi fun _ => densityModel Measure.count bernDens (3 / 4)
+
+instance : IsProbabilityMeasure bernP := by
+  unfold bernP
+  infer_instance
+
+theorem prob_bern_K {θ : ℝ} (hθ : θ ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+    IsProbabilityMeasure (densityModel Measure.count bernDens θ) :=
+  isProbabilityMeasure_bern (by linarith [hθ.1]) (by linarith [hθ.2])
+
+theorem pos_bern_K {θ : ℝ} (hθ : θ ∈ Icc (1 / 4 : ℝ) (1 / 2)) :
+    ∀ᵐ b ∂Measure.count, 0 < bernDens θ b :=
+  ae_of_all _ (bernDens_pos (by linarith [hθ.1]) (by linarith [hθ.2]))
+
+/-- **Non-vacuity of `isIdentifiedOn_popCrit_iff_isKLProjectionOn_of_density`**: every hypothesis
+holds for the IID `Ber(3/4)` sample, and the KL projection `1/2` is the pseudo-true value. -/
+theorem isIdentifiedOn_bern :
+    IsIdentifiedOn (Icc (1 / 4 : ℝ) (1 / 2))
+      (popCrit bernP (logDensity bernDens) fun i ω => ω i) (1 / 2) := by
+  have : IsProbabilityMeasure
+      (Measure.count.withDensity fun x => ENNReal.ofReal (bernDens (3 / 4) x)) :=
+    isProbabilityMeasure_bern (by norm_num) (by norm_num)
+  exact (isIdentifiedOn_popCrit_iff_isKLProjectionOn_of_density (g := bernDens (3 / 4))
+    (measurable_of_countable _) (ae_of_all _ (bernDens_pos (by norm_num) (by norm_num)))
+    (fun θ hθ => prob_bern_K hθ) (fun _ _ => measurable_of_countable _)
+    (fun θ hθ => pos_bern_K hθ) (hasLaw_eval _ 0).aemeasurable (hasLaw_eval _ 0).map_eq
+    Integrable.of_finite (fun _ _ => Integrable.of_finite)).2 isKLProjectionOn_bern
+
+/-- The expected log-likelihood of the Bernoulli model under `Ber(3/4)`, from the definitions. -/
+theorem popCrit_bern (θ : ℝ) :
+    popCrit bernP (logDensity bernDens) (fun i ω => ω i) θ =
+      3 / 4 * Real.log θ + 1 / 4 * Real.log (1 - θ) := by
+  have h := (hasLaw_eval (densityModel Measure.count bernDens (3 / 4)) 0).integral_comp
+    (f := logDensity bernDens θ) Integrable.of_finite.aestronglyMeasurable
+  rw [integral_bern (by norm_num) (by norm_num)] at h
+  unfold popCrit
+  refine h.trans ?_
+  simp only [logDensity, bernDens, ite_true, Bool.false_eq_true, ite_false]
+  rw [show (1 : ℝ) - 3 / 4 = 1 / 4 by norm_num]
+
+/-- Independent check of the identification at `θ = 1/4`, from the definitions:
+`3/4 log (1/4) + 1/4 log (3/4) < log (1/2)`. -/
+example :
+    popCrit bernP (logDensity bernDens) (fun i ω => ω i) (1 / 4) <
+      popCrit bernP (logDensity bernDens) (fun i ω => ω i) (1 / 2) := by
+  rw [popCrit_bern, popCrit_bern]
+  have h : Real.log ((1 / 4) ^ 3 * (3 / 4)) < Real.log ((1 / 2) ^ 4) :=
+    Real.log_lt_log (by norm_num) (by norm_num)
+  rw [Real.log_mul (by norm_num) (by norm_num), Real.log_pow, Real.log_pow] at h
+  push_cast at h
+  rw [show (1 : ℝ) - 1 / 4 = 3 / 4 by norm_num, show (1 : ℝ) - 1 / 2 = 1 / 2 by norm_num]
+  linarith
+
+/-! ## Consistency for the KL projection -/
+
+/-- Coefficients of the rank-2 decomposition of the Bernoulli log-likelihood. -/
+noncomputable def bernA : Fin 2 → ℝ → ℝ := ![fun θ => Real.log θ, fun θ => Real.log (1 - θ)]
+
+/-- Statistics of the rank-2 decomposition of the Bernoulli log-likelihood. -/
+noncomputable def bernG : Fin 2 → Bool → ℝ :=
+  ![fun b => if b then 1 else 0, fun b => if b then 0 else 1]
+
+theorem logDensity_bern_eq (θ : ℝ) (b : Bool) :
+    logDensity bernDens θ b = ∑ j, bernA j θ * bernG j b := by
+  cases b <;> simp [logDensity, bernDens, bernA, bernG, Fin.sum_univ_two]
+
+theorem continuousOn_bernA (j : Fin 2) : ContinuousOn (bernA j) (Icc (1 / 4 : ℝ) (1 / 2)) := by
+  fin_cases j
+  · show ContinuousOn (fun θ : ℝ => Real.log θ) _
+    exact continuousOn_id.log fun θ hθ => (by linarith [hθ.1] : (0 : ℝ) < θ).ne'
+  · show ContinuousOn (fun θ : ℝ => Real.log (1 - θ)) _
+    exact (continuousOn_const.sub continuousOn_id).log fun θ hθ =>
+      (by linarith [hθ.2] : (0 : ℝ) < 1 - θ).ne'
+
+theorem continuousOn_logDensity_bern (b : Bool) :
+    ContinuousOn (fun θ => logDensity bernDens θ b) (Icc (1 / 4 : ℝ) (1 / 2)) := by
+  simp_rw [logDensity_bern_eq]
+  exact continuousOn_finsetSum _ fun j _ => (continuousOn_bernA j).mul continuousOn_const
+
+/-- The uniform LLN for the Bernoulli log-likelihood on `[1/4, 1/2]`, from the strong law. -/
+theorem uniformLLNOn_bern :
+    UniformLLNOn bernP (Icc (1 / 4 : ℝ) (1 / 2)) (logDensity bernDens) fun i ω => ω i :=
+  uniformLLNOn_of_finiteRank_of_continuousOn isCompact_Icc bernA bernG logDensity_bern_eq
+    continuousOn_bernA (fun _ => measurable_of_countable _)
+    (fun _ => integrable_comp_eval _ Integrable.of_finite)
+    (fun _ _ hij => (iIndepFun_eval _).indepFun hij) (identDistrib_eval _)
+
+/-- **Non-vacuity of `ae_tendsto_of_isMLEOn_of_isKLProjectionOn`**: for the IID `Ber(3/4)`
+sample, every MLE of the Bernoulli model on `[1/4, 1/2]` converges almost surely to the KL
+projection `1/2`. -/
+theorem ae_tendsto_bern {est : ℕ → (ℕ → Bool) → ℝ}
+    (hest : IsMLEOn (Icc (1 / 4 : ℝ) (1 / 2)) (logDensity bernDens) (fun i ω => ω i) est) :
+    ∀ᵐ ω ∂bernP, Tendsto (fun n => est n ω) atTop (𝓝 (1 / 2)) := by
+  have : IsProbabilityMeasure
+      (Measure.count.withDensity fun x => ENNReal.ofReal (bernDens (3 / 4) x)) :=
+    isProbabilityMeasure_bern (by norm_num) (by norm_num)
+  exact ae_tendsto_of_isMLEOn_of_isKLProjectionOn (g := bernDens (3 / 4)) isCompact_Icc
+    (measurable_of_countable _) (ae_of_all _ (bernDens_pos (by norm_num) (by norm_num)))
+    (fun θ hθ => prob_bern_K hθ) (fun _ _ => measurable_of_countable _)
+    (fun θ hθ => pos_bern_K hθ) (hasLaw_eval _ 0).aemeasurable (hasLaw_eval _ 0).map_eq
+    Integrable.of_finite (fun _ _ => Integrable.of_finite) isKLProjectionOn_bern
+    continuousOn_logDensity_bern uniformLLNOn_bern hest
+
+/-- An MLE of the Bernoulli model on `[1/4, 1/2]` exists, so `ae_tendsto_bern` is not vacuous. -/
+example : ∃ est : ℕ → (ℕ → Bool) → ℝ,
+    IsMLEOn (Icc (1 / 4 : ℝ) (1 / 2)) (logDensity bernDens) (fun i ω => ω i) est :=
+  exists_isMLEOn isCompact_Icc ⟨1 / 2, by norm_num [mem_Icc]⟩ continuousOn_logDensity_bern _
+
+/-! ## White's theorem end to end: a degenerate instance -/
+
+/-- The IID sample with law `dirac 4`: the coordinates of the product space. -/
+noncomputable def diracP : Measure (ℕ → ℝ) := Measure.infinitePi fun _ => Measure.dirac (4 : ℝ)
+
+instance : IsProbabilityMeasure diracP := by
+  unfold diracP
+  infer_instance
+
+theorem integral_comp_eval_dirac {f : ℝ → ℝ} (hf : Continuous f) :
+    ∫ ω, f (ω 0) ∂diracP = f 4 := by
+  rw [← integral_dirac f 4]
+  exact (hasLaw_eval (Measure.dirac (4 : ℝ)) 0).integral_comp hf.aestronglyMeasurable
+
+theorem fderiv_const_sub_id (x θ : ℝ) :
+    fderiv ℝ (fun t => x - t) θ = -ContinuousLinearMap.id ℝ ℝ :=
+  ((hasFDerivAt_id θ).const_sub x).fderiv
+
+theorem continuous_gaussLL_left (θ : ℝ) : Continuous (MLEConsistency.gaussLL θ) := by
+  show Continuous fun x : ℝ => -(x - θ) ^ 2 / 2
+  fun_prop
+
+/-- **Every hypothesis of `tendstoInDistribution_sqrt_smul_sub_of_isMLEOn` holds at once** for
+the IID `dirac 4` sample, the Gaussian location model on `[0, 8]` and the clamped sample mean, with
+`θ* = 4`, `ψ θ x = x - θ`, `M = 0`: the meat is `0` and the limit is `Z = 0`. The instance is
+degenerate (the sample is almost surely constant). -/
+theorem tendstoInDistribution_dirac :
+    TendstoInDistribution
+      (fun (n : ℕ) ω => √n • (MLEConsistency.clampMLE 0 8 (fun i (ω : ℕ → ℝ) => ω i) n ω - 4))
+      atTop (fun _ : Unit => (0 : ℝ)) (fun _ => diracP) (Measure.dirac ()) := by
+  have hX_law : ∀ i, HasLaw (fun ω : ℕ → ℝ => ω i) (Measure.dirac (4 : ℝ)) diracP :=
+    hasLaw_eval _
+  have hX_indep : iIndepFun (fun i (ω : ℕ → ℝ) => ω i) diracP := iIndepFun_eval _
+  have hint1 : Integrable (fun ω : ℕ → ℝ => ω 0) diracP :=
+    integrable_comp_eval _ (f := id) (integrable_dirac enorm_lt_top)
+  have hint2 : Integrable (fun ω : ℕ → ℝ => ω 0 ^ 2) diracP :=
+    integrable_comp_eval _ (f := fun x => x ^ 2) (integrable_dirac enorm_lt_top)
+  have hindep : Pairwise fun i j => (fun ω : ℕ → ℝ => ω i) ⟂ᵢ[diracP] fun ω => ω j :=
+    fun _ _ hij => hX_indep.indepFun hij
+  have hmean : ∫ ω, ω 0 ∂diracP = 4 := integral_comp_eval_dirac continuous_id
+  have hId : IsIdentifiedOn (Icc 0 8)
+      (popCrit diracP MLEConsistency.gaussLL fun i ω => ω i) 4 := by
+    have h := MLEConsistency.gauss_isIdentifiedOn (X := fun i (ω : ℕ → ℝ) => ω i) (a := 0)
+      (b := 8) hint1 hint2 (by rw [hmean]; norm_num [mem_Icc])
+    rwa [hmean] at h
+  have hA : IsUnit (∫ x, fderiv ℝ (fun t => x - t) 4 ∂Measure.dirac (4 : ℝ)) := by
+    simp only [fderiv_const_sub_id, integral_const, probReal_univ, one_smul]
+    rw [← ContinuousLinearMap.one_def]
+    exact isUnit_one.neg
+  refine tendstoInDistribution_sqrt_smul_sub_of_isMLEOn (ψ := fun θ x => x - θ) (δ := 1)
+    (G := fun x => |x| + 5) (M := fun _ => 0) hX_law hX_indep isCompact_Icc
+    (fun x => (MLEConsistency.continuous_gaussLL x).continuousOn)
+    (MLEConsistency.gauss_uniformLLNOn 0 8 hint1 hint2 hindep (identDistrib_eval _)) hId
+    (by rw [interior_Icc]; constructor <;> norm_num)
+    (MLEConsistency.isMLEOn_clampMLE (by norm_num) _) (fun n => ?_) one_pos
+    (fun x θ _ => hasGradientAt_gaussLL x θ)
+    (fun θ _ => (continuous_gaussLL_left θ).aestronglyMeasurable)
+    (integrable_dirac enorm_lt_top) (integrable_dirac enorm_lt_top) (fun x θ hθ => ?_)
+    (fun x θ _ => ((hasFDerivAt_id θ).const_sub x).differentiableAt) measurable_const
+    (integrable_dirac enorm_lt_top) (fun x θ _ => by simp [fderiv_const_sub_id])
+    (measurable_id.sub_const 4) (integrable_dirac enorm_lt_top)
+    (by simp only [fderiv_const_sub_id]; exact stronglyMeasurable_const)
+    (integrable_dirac enorm_lt_top) hA aemeasurable_const (fun t => ?_)
+  · show AEStronglyMeasurable
+      (fun ω : ℕ → ℝ => max 0 (min 8 ((n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, ω i))) diracP
+    exact (measurable_const.max (measurable_const.min (measurable_const.mul
+      (Finset.measurable_sum _ fun i _ => measurable_pi_apply i)))).aestronglyMeasurable
+  · rw [mem_ball, Real.dist_eq, abs_lt] at hθ
+    rw [Real.norm_eq_abs, abs_le]
+    constructor <;> linarith [le_abs_self x, neg_abs_le x]
+  · have hB : ∀ v : ℝ,
+        ⟪covarianceOperator ((Measure.dirac (4 : ℝ)).map fun x => x - 4) v, v⟫ = 0 := fun v => by
+      rw [Measure.map_dirac' (f := fun x : ℝ => x - 4) (by fun_prop),
+        covarianceOperator_inner (memLp_dirac enorm_lt_top), integral_dirac]
+      simp
+    rw [ProbabilityTheory.GEE.inner_sandwichCovariance_apply, hB, Real.toNNReal_zero,
+      gaussianReal_zero_var]
+    exact ⟨aemeasurable_const, by simp⟩
 
 end MathlibExtTest.Probability.Statistics.MisspecifiedMLE
