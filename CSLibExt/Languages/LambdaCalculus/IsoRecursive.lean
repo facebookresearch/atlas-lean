@@ -8,48 +8,83 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Nat.Basic
 public import Mathlib.Data.List.Basic
 
 /-!
 # Iso-recursive types: progress
 
-Types include `mu` binders with de Bruijn indices; terms
-include `fold` and `unfold`. A closed well-typed term is a
-value or takes a step. Preservation is not included here.
+The call-by-value lambda calculus with `unit`, function types and
+iso-recursive types `μX. a` of Pierce, *Types and Programming Languages*
+(MIT Press, 2002), Chapter 20: `fold` and `unfold` convert between `μX. a`
+and its unfolding `[X ↦ μX. a] a`. Pierce annotates `fold` and `unfold`
+with the recursive type; here they are unannotated.
+
+Types and terms use de Bruijn indices. `Ty.subst` and `Tm.subst` substitute
+for variable `0`, shift the substituted type or term under binders so that its
+free variables are not captured, and lower the remaining free variables by
+one.
+
+The main result, `progress`, states that a closed well-typed term is a value
+or takes a step. Preservation is not proved here.
 -/
 
 @[expose] public section
 
-/-- Iso-recursive types (core of VER-26), de Bruijn indices. -/
+namespace Cslib.Languages.LambdaCalculus.IsoRecursive
+
+/-- Types with de Bruijn type variables; `mu a` binds variable `0` in `a`. -/
 inductive Ty : Type
+  /-- The unit type. -/
   | unit : Ty
+  /-- Function types. -/
   | arr (a b : Ty) : Ty
+  /-- A de Bruijn type variable. -/
   | var (n : ℕ) : Ty
+  /-- The recursive type `μX. a`, binding `X` as variable `0` in `a`. -/
   | mu (a : Ty) : Ty
+  deriving DecidableEq, Repr
 
-/-- Terms. -/
+/-- Terms with de Bruijn variables; `lam t` binds variable `0` in `t`. -/
 inductive Tm : Type
+  /-- The unit value. -/
   | unit : Tm
+  /-- A de Bruijn variable. -/
   | var (n : ℕ) : Tm
+  /-- Abstraction, binding variable `0` in its body. -/
   | lam (t : Tm) : Tm
+  /-- Application. -/
   | app (t u : Tm) : Tm
+  /-- Folding into a recursive type. -/
   | fold (t : Tm) : Tm
+  /-- Unfolding out of a recursive type. -/
   | unfold (t : Tm) : Tm
+  deriving DecidableEq, Repr
 
-/-- Type substitution: `tySubst a b` replaces `var 0` in `a`
-by `b`, shifting under binders (variables are de Bruijn;
-the standard weakening on `b` under `mu` is folded into the
-definition by mapping over `b`'s variables). -/
-def tySubst : Ty → Ty → Ty
-  | .unit, _ => .unit
-  | .arr a b, s => .arr (tySubst a s) (tySubst b s)
-  | .var 0, s => s
-  | .var (n + 1), _ => .var (n + 1)
-  | .mu a, s => .mu (tySubst a s)
+/-- `a.shift d c` adds `d` to every type variable of `a` at or above the
+cutoff `c`. -/
+def Ty.shift : Ty → ℕ → ℕ → Ty
+  | .unit, _, _ => .unit
+  | .arr a b, d, c => .arr (a.shift d c) (b.shift d c)
+  | .var n, d, c => if n < c then .var n else .var (n + d)
+  | .mu a, d, c => .mu (a.shift d (c + 1))
 
-/-- Unfolding a mu type. -/
-def Ty.unfold (a : Ty) : Ty := tySubst a (.mu a)
+/-- `a.substAt k s` replaces type variable `k` of `a` by `s`, shifted past the
+`k` binders it is placed under, and lowers the type variables above `k` by
+one. Descending through `mu` increments `k`. -/
+def Ty.substAt : Ty → ℕ → Ty → Ty
+  | .unit, _, _ => .unit
+  | .arr a b, k, s => .arr (a.substAt k s) (b.substAt k s)
+  | .var n, k, s =>
+      if n < k then .var n else if n = k then s.shift k 0 else .var (n - 1)
+  | .mu a, k, s => .mu (a.substAt (k + 1) s)
+
+/-- `a.subst s` substitutes `s` for type variable `0` of `a`, the variable
+bound by an enclosing `mu`, and lowers the other free type variables. -/
+def Ty.subst (a s : Ty) : Ty := a.substAt 0 s
+
+/-- The unfolding `[X ↦ μX. a] a` of the recursive type `μX. a` with body
+`a`. -/
+def Ty.unfold (a : Ty) : Ty := a.subst (.mu a)
 
 /-- Typing. Contexts are lists; `HasType Γ t a`. -/
 inductive HasType : List Ty → Tm → Ty → Prop
@@ -72,7 +107,8 @@ inductive Value : Tm → Prop
   | lam (t : Tm) : Value (.lam t)
   | fold {t : Tm} (h : Value t) : Value (.fold t)
 
-/-- Shift free variables at or above the cutoff by `d`. -/
+/-- `t.shift d c` adds `d` to every variable of `t` at or above the cutoff
+`c`. -/
 def Tm.shift : Tm → ℕ → ℕ → Tm
   | .unit, _, _ => .unit
   | .var n, d, c => if n < c then .var n else .var (n + d)
@@ -81,17 +117,24 @@ def Tm.shift : Tm → ℕ → ℕ → Tm
   | .fold t, d, c => .fold (t.shift d c)
   | .unfold t, d, c => .unfold (t.shift d c)
 
-/-- Substitute `u` for `var 0`, decrementing higher variables. -/
-def Tm.subst : Tm → Tm → Tm
-  | .unit, _ => .unit
-  | .var 0, u => u
-  | .var (n + 1), _ => .var n
-  | .lam t, u => .lam (t.subst (u.shift 1 0))
-  | .app t u, s => .app (t.subst s) (u.subst s)
-  | .fold t, s => .fold (t.subst s)
-  | .unfold t, s => .unfold (t.subst s)
+/-- `t.substAt k u` replaces variable `k` of `t` by `u`, shifted past the `k`
+binders it is placed under, and lowers the variables above `k` by one.
+Descending through `lam` increments `k`. -/
+def Tm.substAt : Tm → ℕ → Tm → Tm
+  | .unit, _, _ => .unit
+  | .var n, k, u =>
+      if n < k then .var n else if n = k then u.shift k 0 else .var (n - 1)
+  | .lam t, k, u => .lam (t.substAt (k + 1) u)
+  | .app t t', k, u => .app (t.substAt k u) (t'.substAt k u)
+  | .fold t, k, u => .fold (t.substAt k u)
+  | .unfold t, k, u => .unfold (t.substAt k u)
 
-/-- Small-step reduction. -/
+/-- `t.subst u` substitutes `u` for variable `0` of `t`, the variable bound
+by an enclosing `lam`, and lowers the other free variables: the result of
+applying `lam t` to `u`. -/
+def Tm.subst (t u : Tm) : Tm := t.substAt 0 u
+
+/-- Call-by-value small-step reduction. -/
 inductive Step : Tm → Tm → Prop
   | appL {t t' u : Tm} (h : Step t t') : Step (.app t u) (.app t' u)
   | appR {t u u' : Tm} (hv : Value t) (h : Step u u') :
@@ -139,10 +182,9 @@ private theorem progressAux {Γ : List Ty} {t : Tm} {a : Ty}
         | fold h0 => exact Or.inr ⟨_, Step.unfoldFold h0⟩
       · exact Or.inr ⟨_, Step.unfoldL hs⟩
 
-/-- Progress: a closed well-typed term is a value or steps.
-Preservation and the substitution lemma are downstream. -/
+/-- Progress: a closed well-typed term is a value or takes a step. -/
 theorem progress {t : Tm} {a : Ty} (h : HasType [] t a) :
     Value t ∨ ∃ t', Step t t' :=
   progressAux h rfl
 
-end
+end Cslib.Languages.LambdaCalculus.IsoRecursive
