@@ -54,8 +54,10 @@ mode `k ≠ 0` is unstable iff `d_u d_v k² < α χ u₀ - β d_u`
 condition `α χ u₀ > β d_u` in its long-wave limit; on `[0, L]` with Neumann conditions this reads
 `d_u d_v (π / L)² < α χ u₀ - β d_u`.
 
-Rates, diffusion coefficients and the sensitivity `χ` are dimensionless. Only the *linear* theory
-is formalized.
+Rates, diffusion coefficients and the sensitivity `χ` are dimensionless. Only the *linear*
+analysis is formalized: the linearization principle (that linear instability implies nonlinear
+instability of the Keller–Segel PDE), pattern selection, and finite-time blow-up of the minimal
+model are not covered.
 
 ## Main results
 
@@ -74,7 +76,8 @@ is formalized.
   Keller–Segel kinetics, their Jacobian, and the linearization of the chemotactic flux.
 * `kellerSegel_turing_iff`, `kellerSegel_crossDiffusionDriven`: chemotaxis-driven instability with
   logistic growth.
-* `minimalKellerSegel_isCrossUnstableMode_iff`, `minimalKellerSegel_not_isCrossUnstableMode_zero`,
+* `minimalKellerSegel_steadyState`, `jacobianMatrix_minimalKellerSegel`,
+  `minimalKellerSegel_isCrossUnstableMode_iff`, `minimalKellerSegel_not_isCrossUnstableMode_zero`,
   `minimalKellerSegel_exists_neumann_iff`: the minimal Keller–Segel model.
 
 ## References
@@ -186,7 +189,12 @@ theorem crossDispersionDet_diffusionMatrix (J : Matrix (Fin 2) (Fin 2) ℝ) (du 
     Matrix.det_fin_two]
   simp
 
-/-- The `x`-derivative of the Fourier mode: `-k e^{μ t} sin(k x) v`. -/
+/-! The next three derivative lemmas are copied from `TuringPatterns.lean`, where they are
+private (`fourierMode_hasDerivAt_space`, `fourierMode_hasDerivAt_space_second`,
+`fourierMode_hasDerivAt_time`). Delete these copies once those lemmas are public. -/
+
+/-- The `x`-derivative of the Fourier mode: `-k e^{μ t} sin(k x) v` (copy of a private lemma of
+`TuringPatterns.lean`). -/
 private theorem fourierMode_hasDerivAt_space' (μ : ℂ) (k : ℝ) (v : Fin 2 → ℂ) (t x : ℝ) :
     HasDerivAt (fourierMode μ k v t)
       ((Complex.exp (μ * t) * ((-k * Real.sin (k * x) : ℝ) : ℂ)) • v) x := by
@@ -196,7 +204,8 @@ private theorem fourierMode_hasDerivAt_space' (μ : ℂ) (k : ℝ) (v : Fin 2 �
   simpa [fourierMode, mul_comm, mul_left_comm, mul_assoc] using
     (h.ofReal_comp.const_mul (Complex.exp (μ * t))).smul_const v
 
-/-- The second `x`-derivative of the Fourier mode: `-k² e^{μ t} cos(k x) v`. -/
+/-- The second `x`-derivative of the Fourier mode: `-k² e^{μ t} cos(k x) v` (copy of a private
+lemma of `TuringPatterns.lean`). -/
 private theorem fourierMode_hasDerivAt_space_second' (μ : ℂ) (k : ℝ) (v : Fin 2 → ℂ)
     (t x : ℝ) :
     HasDerivAt
@@ -210,7 +219,8 @@ private theorem fourierMode_hasDerivAt_space_second' (μ : ℂ) (k : ℝ) (v : F
     ring
   exact (h.ofReal_comp.const_mul (Complex.exp (μ * t))).smul_const v
 
-/-- The `t`-derivative of the Fourier mode: `μ e^{μ t} cos(k x) v`. -/
+/-- The `t`-derivative of the Fourier mode: `μ e^{μ t} cos(k x) v` (copy of a private lemma of
+`TuringPatterns.lean`). -/
 private theorem fourierMode_hasDerivAt_time' (μ : ℂ) (k : ℝ) (v : Fin 2 → ℂ) (t x : ℝ) :
     HasDerivAt (fun s => fourierMode μ k v s x)
       ((μ * Complex.exp (μ * t) * (Real.cos (k * x) : ℂ)) • v) t := by
@@ -565,6 +575,38 @@ theorem kellerSegel_crossDiffusionDriven {r α β du dv χ : ℝ} (hr : 0 < r) (
   rw [div_lt_iff₀ hα] at hχ
   linarith
 
+/-- In the minimal Keller–Segel model (`r = 0`) every `(u₀, α u₀ / β)` is a steady state
+(`β ≠ 0`). -/
+theorem minimalKellerSegel_steadyState (α : ℝ) {β : ℝ} (hβ : β ≠ 0) (u₀ : ℝ) :
+    kellerSegelKinetics 0 α β ![u₀, α * u₀ / β] = 0 := by
+  funext i
+  fin_cases i
+  · simp [kellerSegelKinetics]
+  · simp [kellerSegelKinetics]
+    field_simp
+    ring
+
+/-- The minimal Keller–Segel kinetics are linear, so their Jacobian is
+`kellerSegelJacobian 0 α β` at every state, in particular at each steady state
+`(u₀, α u₀ / β)`. -/
+theorem jacobianMatrix_minimalKellerSegel (α β : ℝ) (x : Fin 2 → ℝ) :
+    MetaMathlibExt.jacobianMatrix (kellerSegelKinetics 0 α β) x = kellerSegelJacobian 0 α β := by
+  have h0 : HasDerivAt (fun t : ℝ => x 0 + t) 1 0 := (hasDerivAt_id' (0 : ℝ)).const_add _
+  have h1 : HasDerivAt (fun t : ℝ => x 1 + t) 1 0 := (hasDerivAt_id' (0 : ℝ)).const_add _
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one,
+      MetaMathlibExt.jacobianMatrix_apply, kellerSegelKinetics, Pi.add_apply, cons_val_zero,
+      Pi.smul_apply, Pi.single_eq_same, smul_eq_mul, mul_one, cons_val_one, cons_val_fin_one,
+      ne_eq, one_ne_zero, zero_ne_one, not_false_eq_true, Pi.single_eq_of_ne, mul_zero,
+      add_zero, kellerSegelJacobian, of_apply, cons_val']
+  · simp
+  · simp
+  · rw [((h0.const_mul α).sub_const (β * x 1)).deriv]
+    ring
+  · rw [((h1.const_mul β).const_sub (α * x 0)).deriv]
+    ring
+
 /-- The minimal Keller–Segel dispersion polynomial: with `r = 0`,
 `h(k²) = k² (d_u d_v k² - (α χ u₀ - β d_u))`. -/
 theorem crossDispersionDet_minimalKellerSegel (α β du dv χ u₀ k : ℝ) :
@@ -575,7 +617,9 @@ theorem crossDispersionDet_minimalKellerSegel (α β du dv χ u₀ k : ℝ) :
   ring
 
 /-- **Chemotactic instability of the minimal Keller–Segel model.** For `β > 0` and
-`d_u, d_v ≥ 0`, at any homogeneous cell density `u₀` (with chemical `α u₀ / β`) the mode
+`d_u, d_v ≥ 0`, at any homogeneous cell density `u₀` (steady state `(u₀, α u₀ / β)` by
+`minimalKellerSegel_steadyState`, Jacobian `kellerSegelJacobian 0 α β` by
+`jacobianMatrix_minimalKellerSegel`, diffusion matrix by `kellerSegelFlux_add`) the mode
 `k ≠ 0` is unstable iff `d_u d_v k² < α χ u₀ - β d_u`. -/
 theorem minimalKellerSegel_isCrossUnstableMode_iff {α β du dv χ u₀ k : ℝ} (hβ : 0 < β)
     (hdu : 0 ≤ du) (hdv : 0 ≤ dv) (hk : k ≠ 0) :

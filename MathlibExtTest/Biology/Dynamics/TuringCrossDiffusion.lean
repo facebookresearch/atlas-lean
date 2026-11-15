@@ -21,7 +21,8 @@ import MathlibExt.Biology.Dynamics.TuringCrossDiffusion
 * Boundary: at the threshold `χ = 4` the dispersion polynomial is `(q - 1)²`, so no mode is
   unstable and `k = 1` is marginal; the theorem's strict inequality `2 < 2` agrees.
 * Minimal Keller–Segel (`r = 0`, `α = β = d_u = d_v = u₀ = 1`, `χ = 4`): mode `1` is unstable,
-  mode `2` is stable, and `k = √3` is marginal (`det = 0`), all computed from the mode matrix.
+  mode `2` is stable, `k = √3` is marginal (`det = 0`), and no Neumann mode on `[0, π / 2]` is
+  unstable, all computed from the mode matrix.
 * Junk values: the band ends divide by `2 det D`, so they are `0` at `det D = 0`.
 -/
 
@@ -208,16 +209,38 @@ example : ¬ IsCrossUnstableMode (kellerSegelJacobian 0 1 1) (kellerSegelDiffusi
   rw [isCrossUnstableMode_iff]
   norm_num [crossModeMatrix, kellerSegelJacobian, Matrix.det_fin_two, Matrix.trace_fin_two]
 
-/-- On `[0, π]` the first Neumann mode (`k = 1`) is unstable for the minimal model, as the
-Neumann criterion `1 · 1 · 1 < 4 - 1` says. -/
+/-- Through the theorem: on `[0, π]` the first Neumann mode (`k = 1`) is unstable for the minimal
+model, as the Neumann criterion `1 · 1 · 1 < 4 - 1` says (direct check: mode `1` above). -/
 example : ∃ n : ℕ, 0 < n ∧ IsCrossUnstableMode (kellerSegelJacobian 0 1 1)
     (kellerSegelDiffusion 1 1 4 1) (neumannWavenumber Real.pi n) := by
   rw [minimalKellerSegel_exists_neumann_iff one_pos zero_le_one zero_le_one Real.pi_pos,
     div_self Real.pi_ne_zero]
   norm_num
 
-/-- On `[0, π / 2]` the first Neumann mode has `k = 2`, beyond the band (`4 ≥ 3`): no
-nonhomogeneous mode is unstable. -/
+/-- Directly from the definitions: on `[0, π / 2]` the Neumann wavenumbers are `k = 2 n`, and
+for `n ≥ 1` the mode matrix `[[-k², 4 k²], [1, -1 - k²]]` has trace `-1 - 2 k² < 0` and
+determinant `k² (k² - 3) = 4 n² (4 n² - 3) > 0`, so no nonhomogeneous mode is unstable. -/
+example : ¬ ∃ n : ℕ, 0 < n ∧ IsCrossUnstableMode (kellerSegelJacobian 0 1 1)
+    (kellerSegelDiffusion 1 1 4 1) (neumannWavenumber (Real.pi / 2) n) := by
+  rintro ⟨n, hn, h⟩
+  have hk : neumannWavenumber (Real.pi / 2) n = 2 * n := by
+    rw [neumannWavenumber, div_eq_iff (by positivity)]
+    ring
+  have htr : (crossModeMatrix (kellerSegelJacobian 0 1 1) (kellerSegelDiffusion 1 1 4 1)
+      (2 * n)).trace = -1 - 2 * (2 * n) ^ 2 := by
+    simp [crossModeMatrix, Matrix.trace_fin_two, kellerSegelJacobian, kellerSegelDiffusion]
+    ring
+  have hdet : (crossModeMatrix (kellerSegelJacobian 0 1 1) (kellerSegelDiffusion 1 1 4 1)
+      (2 * n)).det = (2 * n) ^ 2 * ((2 * n) ^ 2 - 3) := by
+    simp [crossModeMatrix, Matrix.det_fin_two, kellerSegelJacobian, kellerSegelDiffusion]
+    ring
+  have h1 : (1 : ℝ) ≤ n := by exact_mod_cast hn
+  have hq : 4 ≤ (2 * (n : ℝ)) ^ 2 := by nlinarith
+  rw [isCrossUnstableMode_iff, hk, htr, hdet] at h
+  rcases h with h | h <;> nlinarith
+
+/-- The same `[0, π / 2]` case through the theorem: the first Neumann mode has `k = 2`, beyond
+the band (`4 ≥ 3`). -/
 example : ¬ ∃ n : ℕ, 0 < n ∧ IsCrossUnstableMode (kellerSegelJacobian 0 1 1)
     (kellerSegelDiffusion 1 1 4 1) (neumannWavenumber (Real.pi / 2) n) := by
   rw [minimalKellerSegel_exists_neumann_iff one_pos zero_le_one zero_le_one
