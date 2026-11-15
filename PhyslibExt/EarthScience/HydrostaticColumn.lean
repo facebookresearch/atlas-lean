@@ -7,9 +7,10 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Tactic
-public import Mathlib.Analysis.Calculus.Deriv.Add
-public import Mathlib.Analysis.Calculus.Deriv.Mul
+public import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Tactic.Ring
 
 /-!
 # Hydrostatic columns
@@ -22,10 +23,12 @@ coordinates `d = -z` (downward) the same column reads
 
 ## i. Overview
 
-Both statements are the derivative of an affine function plus the
-value at the surface. Hydrostatic balance is stipulated; the profile
-is the solution of `dp/dz = -rho * g` with `p(0) = p0`, not a derivation
-of the balance law itself.
+Both statements pair the derivative of an affine function with an
+evaluation: the surface value `p(0) = p0` in height coordinates, and
+agreement with the height profile at `d = -z` in depth coordinates.
+Hydrostatic balance is stipulated; the results show that the profile is
+a solution of `dp/dz = -rho * g` with `p(0) = p0` (uniqueness is not
+proved here), not a derivation of the balance law itself.
 
 ## ii. Key results
 
