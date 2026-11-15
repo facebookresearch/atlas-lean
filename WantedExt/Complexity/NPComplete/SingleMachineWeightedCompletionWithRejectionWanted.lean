@@ -45,10 +45,8 @@ of all numbers). The machine processes one job at a time without preemption: the
 of the accepted jobs form a one-processor schedule in the sense of Garey and Johnson [SS1]
 (`SequencingToMinimizeWeightedTardiness.IsOneProcessorSchedule`), applied to the accepted jobs
 listed in increasing order (`Finset.orderEmbOfFin`); job `j` started at `σ_j` completes at
-`C_j = σ_j + p_j`. Processing times are positive, as for [SS1] schedules, whose start times are
-one-to-one: a job of length `0` occupies no machine time and can be accepted at no cost
-(completed at time `0`), so an instance with such jobs has the answer of the instance without
-them.
+`C_j = σ_j + p_j`. Positive processing times are part of the instance domain, as for the [SS1]
+schedules, whose start times are one-to-one.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
