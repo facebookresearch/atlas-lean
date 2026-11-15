@@ -47,6 +47,13 @@ suit. On each turn the player can:
    pile in one move, preserving their order (unlimited redeals);
 5. move the top card of the talon to the top of a build stack or a suit stack that accepts it.
 
+Rule 1 moves the whole face-up part of the source stack: the paper says "Note that all faceup
+cards on the source stack must be moved together", and its NP upper bound (proof of Theorem 2)
+counts every move from build stack to build stack as a move that turns a face-down card face up
+or empties the stack, which holds only under this rule. Common Klondike software also lets a
+player move only the top part of the face-up cards; this statement follows the paper's rules,
+the game Theorem 2 is about.
+
 Acceptance: 6. a build stack accepts a block if its top card is adjacent to (one rank higher
 than) and braided with (of the other color than) the bottom card of the block; an empty build
 stack accepts only a block whose bottom card is a King (rank `n`). 7. a suit stack accepts only
