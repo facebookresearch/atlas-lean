@@ -166,7 +166,7 @@ example (p : ℕ → ℝ → ℝ) :
     (isBetaSpendingFunction_linear (by norm_num)) (by norm_num) τ₂_zero τ₂_mono τ₂_two.le
     fun _ _ => isValidPValue_of_hasLaw_uniform HasLaw.id
 
-/-! ### Per-look futility levels lose up to `K β` -/
+/-! ### Per-look futility levels can stop for futility with probability up to `K β` -/
 
 /-- Some trial with two valid futility looks tested at `1/4` each stops for futility with
 probability strictly above `1/4`. -/

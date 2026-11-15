@@ -52,10 +52,11 @@ most `β`.
   the alternative the power drops by at most `β`
   (`measure_rejectedLooks_nonempty_le_rejectsWithFutility_add`) and the type-II error grows by
   at most `β` (`measure_not_rejectsWithFutility_le_add`).
-* **Per-look futility levels lose up to `K β`.** Testing futility at the same level `β` at each
-  look can stop for futility with probability `2 β` over two looks
-  (`exists_stopsForFutility_const_eq`): the spending budget, not the per-look level, is what
-  bounds the power loss.
+* **Per-look futility levels can stop for futility with probability up to `K β`.** Testing
+  futility at the same level `β` at each look can stop for futility with probability `2 β` over
+  two looks (`exists_stopsForFutility_const_eq`): the spending budget, not the per-look level, is
+  what bounds the futility-stop probability. This is sharpness for the futility-stop probability
+  only: the witness has no efficacy rejections, so neither design has any power to lose.
 
 ## Scope
 
@@ -266,10 +267,11 @@ end Control
 
 /-! ### Per-look futility levels -/
 
-/-- **Computed power-loss example.** On four equally likely outcomes, two looks with futility
+/-- **Computed futility-stop example.** On four equally likely outcomes, two looks with futility
 p-values valid under `ν`, each tested at the per-look level `1/4` and with no efficacy
 rejection possible, stop for futility with probability `2 · 1/4 = 1/2`: twice the per-look
-level. A beta-spending budget of `1/4` would cap this at `1/4`. -/
+level. A beta-spending budget of `1/4` would cap this at `1/4`. Since no efficacy rejection is
+possible, this concerns the futility-stop probability only, not power. -/
 theorem exists_stopsForFutility_const_eq :
     ∃ (ν : Measure (Fin 4)) (q : ℕ → Fin 4 → ℝ), IsProbabilityMeasure ν ∧
       (∀ k < 2, IsValidPValue ν (q k)) ∧
