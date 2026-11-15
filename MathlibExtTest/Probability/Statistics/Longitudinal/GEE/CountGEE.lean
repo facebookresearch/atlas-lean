@@ -29,6 +29,10 @@ covariate `x₀ = 1` and `β₀ = 0`, so the model mean is `μ = exp 0 = 1` what
 * Model-based meat: the same two-point law has variance `1 = v(μ)` for `α = 0`, so the
   hypotheses of `integral_inner_countGEEScore_sq` hold with `Q = R = 1`; both sides are also
   computed directly and equal `u²`.
+* Integrated bread and meat on the joint law `δ_{x₀} ⊗ₘ twoPoint`: the hypotheses of
+  `integral_fderiv_countGEEScore` and `integral_inner_countGEEScore_sq_compProd` hold, the
+  expected information is `1` (so the bread is nonsingular), the expected Jacobian is `-1`, and
+  `E ⟪ψ, u⟫² = u²` both through the theorem and directly over the two atoms.
 -/
 
 @[expose] public section
@@ -150,12 +154,27 @@ theorem compProd_twoPoint : Measure.dirac x₀ ⊗ₘ Kernel.const (Unit → ℝ
     Measure.map_dirac' measurable_prodMk_left]
   exact measurable_prodMk_left.aemeasurable
 
-theorem integrable_countGEEScore_twoPoint :
-    Integrable (countGEEScore (1 : Matrix Unit Unit ℝ) 0 (0 : ℝ))
-      (Measure.dirac x₀ ⊗ₘ Kernel.const (Unit → ℝ) twoPoint) := by
+/-- Every function is integrable for the two-atom joint law. -/
+theorem integrable_compProd_twoPoint {F : Type*} [NormedAddCommGroup F]
+    (f : (Unit → ℝ) × (Unit → ℝ) → F) :
+    Integrable f (Measure.dirac x₀ ⊗ₘ Kernel.const (Unit → ℝ) twoPoint) := by
   rw [compProd_twoPoint]
   exact ((integrable_dirac enorm_lt_top).add_measure (integrable_dirac enorm_lt_top)).smul_measure
     (by simp)
+
+theorem integral_compProd_twoPoint {F : Type*} [NormedAddCommGroup F] [NormedSpace ℝ F]
+    [CompleteSpace F] (f : (Unit → ℝ) × (Unit → ℝ) → F) :
+    ∫ z, f z ∂(Measure.dirac x₀ ⊗ₘ Kernel.const (Unit → ℝ) twoPoint) =
+      (2⁻¹ : ℝ) • (f (x₀, fun _ => 0) + f (x₀, fun _ => 2)) := by
+  rw [compProd_twoPoint, integral_smul_measure,
+    integral_add_measure (integrable_dirac enorm_lt_top) (integrable_dirac enorm_lt_top),
+    integral_dirac, integral_dirac]
+  simp
+
+theorem integrable_countGEEScore_twoPoint :
+    Integrable (countGEEScore (1 : Matrix Unit Unit ℝ) 0 (0 : ℝ))
+      (Measure.dirac x₀ ⊗ₘ Kernel.const (Unit → ℝ) twoPoint) :=
+  integrable_compProd_twoPoint _
 
 /-- Non-vacuity of `integral_countGEEScore_eq_zero`: every hypothesis holds. -/
 example : ∫ z, countGEEScore (1 : Matrix Unit Unit ℝ) 0 (0 : ℝ) z
@@ -181,9 +200,9 @@ example : ∫ y, countGEEScore (1 : Matrix Unit Unit ℝ) 0 (0 : ℝ) (x₀, y)
 
 /-- The second moment of the two-point law about the model mean is `1 = v(1)` for `α = 0`,
 the NB working covariance with correlation `R = 1`. -/
-theorem hcov_twoPoint (s t : Unit) :
-    ∫ y, (y s - countMean (0 : ℝ) x₀ s) * (y t - countMean (0 : ℝ) x₀ t) ∂twoPoint =
-      √(nbVariance 0 (countMean (0 : ℝ) x₀ s)) * √(nbVariance 0 (countMean (0 : ℝ) x₀ t)) *
+theorem hcov_twoPoint (x : Unit → ℝ) (s t : Unit) :
+    ∫ y, (y s - countMean (0 : ℝ) x s) * (y t - countMean (0 : ℝ) x t) ∂twoPoint =
+      √(nbVariance 0 (countMean (0 : ℝ) x s)) * √(nbVariance 0 (countMean (0 : ℝ) x t)) *
         (1 : Matrix Unit Unit ℝ) s t := by
   rw [integral_twoPoint]
   simp [countMean_zero, nbVariance]
@@ -192,7 +211,7 @@ theorem hcov_twoPoint (s t : Unit) :
 /-- Non-vacuity of `integral_inner_countGEEScore_sq`: every hypothesis holds. -/
 example (u : ℝ) : ∫ y, ⟪countGEEScore (1 : Matrix Unit Unit ℝ) 0 (0 : ℝ) (x₀, y), u⟫ ^ 2
     ∂twoPoint = ⟪countGEEInfo (1 : Matrix Unit Unit ℝ) 0 (0 : ℝ) x₀ u, u⟫ :=
-  integral_inner_countGEEScore_sq le_rfl 1 1 (mul_one 1) 0 x₀ memLp_twoPoint hcov_twoPoint u
+  integral_inner_countGEEScore_sq le_rfl 1 1 (mul_one 1) 0 x₀ memLp_twoPoint (hcov_twoPoint x₀) u
 
 /-- Both sides computed from the definitions: `E ⟪ψ, u⟫² = u²`. -/
 example (u : ℝ) : ∫ y, ⟪countGEEScore (1 : Matrix Unit Unit ℝ) 0 (0 : ℝ) (x₀, y), u⟫ ^ 2
@@ -204,5 +223,50 @@ example (u : ℝ) : ∫ y, ⟪countGEEScore (1 : Matrix Unit Unit ℝ) 0 (0 : �
 example (u : ℝ) : ⟪countGEEInfo (1 : Matrix Unit Unit ℝ) 0 (0 : ℝ) x₀ u, u⟫ = u ^ 2 := by
   rw [countGEEInfo_x₀]
   simp [sq]
+
+/-! ### The integrated bread and meat on the joint law
+
+On `δ_{x₀} ⊗ₘ twoPoint` the hypotheses `hy`, `hinfo`, `hψ'_int` and `hA` that the count GEE adds
+to the Z-estimator theorem all hold. -/
+
+/-- The expected model-based information on the joint law is `1`, computed from the
+definitions; in particular the bread is nonsingular (`hA`). -/
+theorem integral_countGEEInfo_twoPoint :
+    ∫ z, countGEEInfo (1 : Matrix Unit Unit ℝ) 0 (0 : ℝ) z.1
+      ∂(Measure.dirac x₀ ⊗ₘ Kernel.const (Unit → ℝ) twoPoint) = 1 := by
+  rw [integral_compProd_twoPoint]
+  simp only [countGEEInfo_x₀]
+  rw [← two_smul ℝ (1 : ℝ →L[ℝ] ℝ), smul_smul]
+  norm_num
+
+example : IsUnit (∫ z, countGEEInfo (1 : Matrix Unit Unit ℝ) 0 (0 : ℝ) z.1
+    ∂(Measure.dirac x₀ ⊗ₘ Kernel.const (Unit → ℝ) twoPoint)) := by
+  rw [integral_countGEEInfo_twoPoint]
+  exact isUnit_one
+
+/-- Non-vacuity of `integral_fderiv_countGEEScore` (the bread): every hypothesis holds, and
+with the information computed above the expected Jacobian is `-1`. -/
+example : ∫ z, fderiv ℝ (fun b => countGEEScore (1 : Matrix Unit Unit ℝ) 0 b z) (0 : ℝ)
+    ∂(Measure.dirac x₀ ⊗ₘ Kernel.const (Unit → ℝ) twoPoint) = -1 := by
+  rw [integral_fderiv_countGEEScore le_rfl 1 hy_twoPoint (integrable_compProd_twoPoint _)
+    (integrable_compProd_twoPoint _), integral_countGEEInfo_twoPoint]
+
+/-- Non-vacuity of `integral_inner_countGEEScore_sq_compProd` (meat equals bread, integrated):
+every hypothesis holds, and both sides equal `u²`. -/
+example (u : ℝ) : ∫ z, ⟪countGEEScore (1 : Matrix Unit Unit ℝ) 0 (0 : ℝ) z, u⟫ ^ 2
+    ∂(Measure.dirac x₀ ⊗ₘ Kernel.const (Unit → ℝ) twoPoint) = u ^ 2 := by
+  rw [integral_inner_countGEEScore_sq_compProd le_rfl 1 1 (mul_one 1)
+    (ae_of_all _ fun x t => by simpa only [Kernel.const_apply] using memLp_twoPoint t)
+    (ae_of_all _ fun x s t => by simpa only [Kernel.const_apply] using hcov_twoPoint x s t) u
+    (integrable_compProd_twoPoint _) (integrable_compProd_twoPoint _),
+    integral_countGEEInfo_twoPoint]
+  simp [sq]
+
+/-- The left side computed from the definitions over the two atoms. -/
+example (u : ℝ) : ∫ z, ⟪countGEEScore (1 : Matrix Unit Unit ℝ) 0 (0 : ℝ) z, u⟫ ^ 2
+    ∂(Measure.dirac x₀ ⊗ₘ Kernel.const (Unit → ℝ) twoPoint) = u ^ 2 := by
+  rw [integral_compProd_twoPoint]
+  simp [countGEEScore_poisson, countMean_zero, x₀]
+  ring
 
 end MathlibExtTest.Probability.Statistics.Longitudinal.GEE.CountGEE
