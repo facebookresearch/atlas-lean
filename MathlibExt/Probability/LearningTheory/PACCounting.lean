@@ -8,29 +8,29 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Fintype.Card
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import Mathlib.Data.Fintype.Pi
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Data.Fintype.BigOperators
 
 /-!
 # Finite-class PAC learnability: counting core
 
-For a finite hypothesis class, learnability rests on counting:
-a hypothesis that disagrees with the target somewhere is
-consistent with at most `(|X| - 1) ^ m` of the `|X| ^ m`
-samples, so a union bound over the class leaves a sample on
-which only everywhere-agreeing hypotheses are consistent. This
-module proves that counting core; the measure-theoretic PAC
-statement is not formalized here.
+Samples of size `m` from a finite domain `X` are the `|X| ^ m` functions `Fin m → X`. A
+hypothesis that disagrees with the target somewhere is consistent with at most
+`(|X| - 1) ^ m` of them, so a union bound over a finite class leaves a sample on which only
+hypotheses agreeing with the target everywhere are consistent. This is the counting form of
+the finite-class argument: no distribution, accuracy, or confidence parameter appears. The
+measure-theoretic finite-class PAC bound is
+`Cslib.MachineLearning.PACLearning.IsConsistent.failure_le_exp` in
+`CSLibExt/MachineLearning/PACLearning/FiniteClass.lean`.
 -/
 
 @[expose] public section
 
-/-- Counting core of finite-class PAC learnability (ML-01):
-samples are functions `Fin m → X`; a hypothesis `h` is
-consistent with target `c` on sample `s` when it agrees at
-every sampled point. The consistent samples for `h` are
-counted exactly by the agreement set. -/
+/-- A hypothesis `h` is consistent with the target `c` on a sample `s : Fin m → X` when it
+agrees with `c` at every sampled point. The number of such samples is `a ^ m`, where `a` is the
+number of points at which `h` and `c` agree. -/
 theorem card_consistent {X : Type*} [Fintype X] [DecidableEq X]
     (c h : X → Bool) (m : ℕ) :
     (Finset.univ.filter (fun s : Fin m → X => ∀ i, h (s i) = c (s i))).card
@@ -96,7 +96,8 @@ theorem exists_sample_kills_bad {X : Type*} [Fintype X] [DecidableEq X]
   have huniv : (Finset.univ : Finset (Fin m → X)).card = (Fintype.card X) ^ m := by
     rw [Finset.card_univ, Fintype.card_fun, Fintype.card_fin]
   have hTne : (C.filter (fun h => ∃ x, h x ≠ c x)).biUnion
-      (fun h => Finset.univ.filter (fun s : Fin m → X => ∀ i, h (s i) = c (s i))) ≠ Finset.univ := by
+      (fun h => Finset.univ.filter (fun s : Fin m → X => ∀ i, h (s i) = c (s i))) ≠
+        Finset.univ := by
     intro heq
     rw [heq, huniv] at hcardT
     exact Nat.not_le_of_gt hcount hcardT
