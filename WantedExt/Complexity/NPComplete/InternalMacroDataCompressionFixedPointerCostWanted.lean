@@ -12,8 +12,8 @@ LICENSE file in the root directory of this source tree.
 Source:
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
 Theory of NP-Completeness*, W. H. Freeman (1979), problem [SR23] INTERNAL MACRO DATA
-COMPRESSION, p. 231 (comment: "Remains NP-complete even if `h` is any fixed integer 2 or
-greater"; references [Storer, 1977], [Storer and Szymanski, 1978]);
+COMPRESSION, p. 231, the page that also holds [SR22] (comment: "Remains NP-complete even if `h`
+is any fixed integer 2 or greater"; references [Storer, 1977], [Storer and Szymanski, 1978]);
 J. A. Storer and T. G. Szymanski, "Data compression via textual substitution", Journal of the
 ACM 29 (1982), 928-951, doi:10.1145/322344.322346.
 -/
