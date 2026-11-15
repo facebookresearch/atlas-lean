@@ -60,10 +60,10 @@ reduction from every language in `NP`
 bound `K`. -/
 abbrev UnitDedicatedProcessorInstance := ℕ × List (List ℕ) × ℕ
 
-/-- Well-formedness of an instance: every task has a nonempty set of processors, listed without
-repetitions, all below `m`; and `0 < K`. -/
+/-- Well-formedness of an instance: there is at least one processor (`0 < m`); every task has a
+nonempty set of processors, listed without repetitions, all below `m`; and `0 < K`. -/
 def WellFormed (i : UnitDedicatedProcessorInstance) : Prop :=
-  (∀ f ∈ i.2.1, f ≠ [] ∧ f.Nodup ∧ ∀ k ∈ f, k < i.1) ∧ 0 < i.2.2
+  0 < i.1 ∧ (∀ f ∈ i.2.1, f ≠ [] ∧ f.Nodup ∧ ∀ k ∈ f, k < i.1) ∧ 0 < i.2.2
 
 /-- There are start times `s` with makespan at most `K` (every `s j + 1 ≤ K`) such that any two
 different tasks with a common processor are processed in disjoint unit time intervals. -/
