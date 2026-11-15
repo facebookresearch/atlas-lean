@@ -43,14 +43,18 @@ states NP-completeness for every fixed `K ≥ 2`. The sizes, `J`, well-formednes
 NP-complete in the ordinary sense (the [SP19] comment: pseudo-polynomial for fixed `K`); all
 numbers use the binary encoding. For `K = 1` the question is a single comparison.
 
-Hardness for fixed `K ≥ 2`, from PARTITION (the [SP19] reference): given positive sizes
-`a₁, …, a_m` with sum `S`, if `m < 2` or `S` is odd the PARTITION instance is a no-instance;
-otherwise add `K - 2` elements of size `S / 2` and set `J = K (S / 2)²`. The `K` part sums add
-up to `K S / 2`, so by convexity the sum of squares is at least `K (S / 2)²`, with equality iff
-every part sums to `S / 2`. Since sizes are positive, an added element fills its part alone, so
-equality holds iff the original elements split into two parts of sum `S / 2` each, that is, iff
-the PARTITION instance is a yes-instance; and `K ≤ m + K - 2` as `m ≥ 2`. Membership in NP is
-inherited from [SP19]: the partition is a certificate.
+Hardness for fixed `K ≥ 2`, from PARTITION (the [SP19] reference; the repository's PARTITION takes a
+list of natural numbers, possibly empty or with zeros): zero sizes do not affect a PARTITION
+instance, so drop them. If no size remains, the PARTITION instance is a yes-instance; output `K`
+elements of size 1 with `J = K` (one element per part). If one size remains or the remaining sum `S`
+is odd, it is a no-instance; output `K` elements of size 1 with `J = K - 1` (every partition has sum
+of squares at least `K`). Otherwise there are positive sizes `a₁, …, a_m` with `m ≥ 2` and even sum
+`S`; add `K - 2` elements of size `S / 2` and set `J = K (S / 2)²`. The `K` part sums add up to
+`K S / 2`, so by convexity the sum of squares is at least `K (S / 2)²`, with equality iff every part
+sums to `S / 2`. Since sizes are positive, an added element fills its part alone, so equality holds
+iff the original elements split into two parts of sum `S / 2` each, that is, iff the PARTITION
+instance is a yes-instance; and `K ≤ m + K - 2`. Membership in NP is inherited from [SP19]: the
+partition is a certificate.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
