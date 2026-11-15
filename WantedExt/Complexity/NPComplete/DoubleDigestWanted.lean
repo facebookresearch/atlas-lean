@@ -40,7 +40,7 @@ QUESTION: are there orderings of `A` and of `B` such that, when both are laid ou
 starting point, the union of their cut points cuts the sequence into fragments whose lengths
 form the multiset `C`? As in the source formulation, the restriction sites of the two enzymes
 do not coincide: apart from the common ends of the sequence, no cut point of `A` is a cut point
-of `B` (so `|C| = |A| + |B| - 1` for every solution with `A` and `B` nonempty).
+of `B` (so `|C| = |A| + |B| - 1` for every solution).
 
 Kao, Samet and Sung define the problem this way ("It is a biology fact that the restriction
 sites for enzymes A and B do not coincide"; `A`, `B`, `C` the multisets of fragment lengths
@@ -71,9 +71,10 @@ reduction from every language in `NP`
 as lists read as multisets. -/
 abbrev DoubleDigestInstance := List ℕ × List ℕ × List ℕ
 
-/-- Well-formedness of an instance: all lengths are positive and `∑ A = ∑ B = ∑ C`. -/
+/-- Well-formedness of an instance: `A` and `B` are nonempty (each enzyme yields at least one
+fragment), all lengths are positive, and `∑ A = ∑ B = ∑ C`. -/
 def WellFormed (i : DoubleDigestInstance) : Prop :=
-  (∀ x ∈ i.1, 0 < x) ∧ (∀ x ∈ i.2.1, 0 < x) ∧ (∀ x ∈ i.2.2, 0 < x) ∧
+  i.1 ≠ [] ∧ i.2.1 ≠ [] ∧ (∀ x ∈ i.1, 0 < x) ∧ (∀ x ∈ i.2.1, 0 < x) ∧ (∀ x ∈ i.2.2, 0 < x) ∧
     i.1.sum = i.2.1.sum ∧ i.2.1.sum = i.2.2.sum
 
 /-- The cut points of an ordering `a` of fragment lengths: its prefix sums
