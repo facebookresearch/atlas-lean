@@ -21,10 +21,13 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Analysis.Real.Sqrt
+public import WantedExt.Complexity.NPComplete.QuadraticProgrammingWanted
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.SparseApproximation
+
+open QuadraticProgramming (RatCode ratVal)
 
 /-!
 # SPARSE APPROXIMATION is NP-complete
@@ -40,7 +43,9 @@ version with the bound `k` on the number of nonzero entries. It is in NP: a supp
 most `k` is a certificate, and for a fixed support the least residual is a least-squares problem
 solvable exactly over `ℚ`.
 
-The input numbers are rationals, given as `((a, b), d)` with value `(a - b) / d` and `0 < d`;
+The input numbers are rationals, given as `((a, b), d)` with value `(a - b) / d` and `0 < d`
+(`QuadraticProgramming.RatCode`, `QuadraticProgramming.ratVal`, reused from
+`QuadraticProgrammingWanted`);
 `ε` must be positive. The matrix is a list of `m` rows of `n` entries and `b` a list of `m`
 entries. `x` ranges over real vectors `Fin n → ℝ`, the number of nonzero entries is the size of
 its support, and `‖·‖₂` is the Euclidean norm `√(∑ᵢ (∑ⱼ Aᵢⱼ xⱼ - bᵢ)²)`. All numbers use the
@@ -56,12 +61,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A rational number `(a - b) / d`, given as `((a, b), d)`. -/
-abbrev RatCode := (ℕ × ℕ) × ℕ
-
-/-- The value `(a - b) / d` of `((a, b), d)`. -/
-def ratVal (r : RatCode) : ℚ := ((r.1.1 : ℚ) - r.1.2) / r.2
 
 /-- An instance: the number of columns `n`, the rows of `A`, the vector `b`, `ε`, and `k`. -/
 abbrev SparseApproximationInstance := ℕ × List (List RatCode) × List RatCode × RatCode × ℕ
