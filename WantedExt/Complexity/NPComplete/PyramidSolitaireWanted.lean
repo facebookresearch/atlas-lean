@@ -53,8 +53,8 @@ QUESTION: can the player remove all `4k` cards?
 A card is `(rank, suit)` with rank in `1, …, k` and suit in `0, …, 3`. The pyramid is a list of
 layers, layer `0` being the first (uncovered) layer; layer `j` has `l - j` cards, and the card
 in position `p` of layer `j + 1` is covered by the cards in positions `p` and `p + 1` of layer
-`j`. The stock is listed from top to bottom. `WellFormed` asks for these layer lengths and that
-the pyramid and stock together are the `4k` distinct cards of the deck.
+`j`. The stock is listed from top to bottom. `WellFormed` asks for at least one rank, these
+layer lengths, and that the pyramid and stock together are the `4k` distinct cards of the deck.
 
 A position of the game is the set of pyramid positions still holding a card and the number `t`
 of stock cards already removed (matched or discarded). The moves are the four removals above.
@@ -84,10 +84,11 @@ def layers (i : PyramidSolitaireInstance) : ℕ := i.2.1.length
 /-- The number of stock cards `s`. -/
 def stockSize (i : PyramidSolitaireInstance) : ℕ := i.2.2.length
 
-/-- Well-formedness: layer `j` has `l - j` cards, every card has rank in `1, …, k` and suit in
-`0, …, 3`, and the pyramid and stock together are `4k` distinct cards, i.e. the whole deck. -/
+/-- Well-formedness: `k ≥ 1`, layer `j` has `l - j` cards, every card has rank in `1, …, k` and
+suit in `0, …, 3`, and the pyramid and stock together are `4k` distinct cards, i.e. the whole
+deck. -/
 def WellFormed (i : PyramidSolitaireInstance) : Prop :=
-  (∀ j < layers i, (i.2.1.getD j []).length = layers i - j) ∧
+  0 < i.1 ∧ (∀ j < layers i, (i.2.1.getD j []).length = layers i - j) ∧
     (∀ x ∈ i.2.1.flatten ++ i.2.2, 1 ≤ x.1 ∧ x.1 ≤ i.1 ∧ x.2 < 4) ∧
     (i.2.1.flatten ++ i.2.2).Nodup ∧ (i.2.1.flatten ++ i.2.2).length = 4 * i.1
 
