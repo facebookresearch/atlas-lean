@@ -21,7 +21,8 @@ header, without leading blank lines. Formal-Math's own header is a block whose c
 and `Author:`/`Authors:` names are all Formal-Math's own (`FORMAL_MATH_HOLDERS` and
 `FORMAL_MATH_AUTHORS` in `scripts/check_formal_math_sync.py`: Meta, its employees, and the agents and
 models formal-math is written with); a block without a copyright line must also carry no license
-text, and a copyright line naming no holder does not count. ATLAS replaces that header with the Meta header. Any other copyright or
+text, and a copyright line naming no holder does not count. `Author:`, `Authors:` and `Author(s):`
+lines are read, and a parenthetical that is not all-lowercase description counts as more names. ATLAS replaces that header with the Meta header. Any other copyright or
 license block is third-party and part of the body, so ATLAS keeps it byte for byte or records a
 divergence.
 
@@ -67,7 +68,9 @@ the Python standard library, and fails on:
   group's base, or for a pull request the merge ref's first parent, fetched if the checkout is
   shallow; if it cannot be read the check fails. Locally it is
   the merge-base with `origin/main`, and the comparison is skipped with a warning when neither can
-  be read. `--base REV` names it explicitly.
+  be read. `--base REV` names it explicitly. The base manifest is looked up at every path the
+manifest has had (`MANIFEST_PATHS`); a base without one is accepted only before the cutover, that is
+when it also lacks `scripts/check_formal_math_sync.py`.
 
 Files without a row are ATLAS-only and ignored; new upstream files enter at sync time. So the set
 of upstream-derived paths cannot change silently (every row's bytes are checked) or shrink silently

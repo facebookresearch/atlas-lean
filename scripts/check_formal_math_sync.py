@@ -48,6 +48,10 @@ from check_copyright import META  # noqa: E402  (the one definition of the Meta 
 
 SCHEMA_VERSION = 1
 MANIFEST = "provenance/formal-math-sync.json"
+# Every path the manifest has had. A base commit is compared through whichever of these it has, so
+# moving the manifest cannot make the base look manifest-less; add a new path here, keep old ones.
+MANIFEST_PATHS = (MANIFEST,)
+CHECKER = "scripts/check_formal_math_sync.py"
 ROOTS = ("MathlibExt", "MathlibExtTest", "CSLibExt", "CSLibExtTest", "WantedExt")
 # identical:  Meta header + body of the upstream file at `upstream.commit`; with
 #             "header": "upstream", the upstream file byte for byte (its third-party license kept)
@@ -127,16 +131,21 @@ FORMAL_MATH_HOLDERS = ("Meta Platforms, Inc. and affiliates", "Meta Platforms, I
 FORMAL_MATH_AUTHORS = ("Adam Kiezun", "@akiezun", "Tsutomu Okano", "@toskua", "toskua", "Toskua",
                        "toskua-Avocado", "Avocado", "Muse", "Muse Spark", "Muse Spark 1.3", "Muse Code",
                        "Muse Code powered by Meta Muse Spark", "Metamate", "Metamate metamate-algos", "Codex",
-                       "Claude Opus 5.5", "@vonbo", "Formal Math")
+                       "Claude Opus 5.5", "@vonbo", "Formal Math", "Codex-assisted formalization")
 CODEX_AGENT = re.compile(r"Codex [A-Z][a-z]+-[0-9a-f]{4}")  # named Codex agent runs, e.g. Codex Vale-62b0
 COPYRIGHT_HOLDER = re.compile(r"Copyright(?: \(c\))?(?: \d{4}(?:[-–]\d{4})?)?\.?[ \t]*([^\n]*)")
 
 
 def block_authors(block: str) -> list[str]:
-    """Names on the block's `Author:`/`Authors:` lines, without parentheticals or e-mail addresses."""
+    """Names on the block's `Author:`, `Authors:` and `Author(s):` lines.
+
+    E-mail addresses are dropped. A parenthetical that is all lowercase description (`(canonical
+    root support)`) is dropped too; any other parenthetical is read as more names, so it cannot
+    hide a third-party author."""
     names = []
-    for line in re.findall(r"Authors?:([^\n]*)", block):
-        line = re.sub(r"\([^)]*\)|<[^>]*>", "", line.replace("-/", ""))
+    for line in re.findall(r"Author(?:s|\(s\))?:([^\n]*)", block):
+        line = re.sub(r"<[^<>@\s]+@[^<>\s]+>", "", line.replace("-/", ""))
+        line = re.sub(r"\(([^()]*)\)", lambda m: "" if re.fullmatch(r"[a-z0-9 \-]+", m.group(1)) else f", {m.group(1)}", line)
         names += [n.strip().strip(".\"'") for n in re.split(r",|;| and ", line)]
     return [n for n in names if n]
 
@@ -601,13 +610,19 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
     if symlinked_component(root, manifest_path):
         return [], []  # check() reports it
     rel = manifest_rel(root, manifest_path)
-    listing = git(root, "ls-tree", "--name-only", commit, "--", rel)
+    candidates = [rel] + [p for p in MANIFEST_PATHS if p != rel] + [CHECKER]
+    listing = git(root, "ls-tree", "--name-only", commit, "--", *candidates)
     if listing is None:
         return unreadable(f"cannot read the tree of base {commit}")
-    if not listing:
-        return [], []  # the base has no manifest yet
+    present = set(listing.splitlines())
+    base_rel = next((p for p in candidates[:-1] if p in present), None)
+    if base_rel is None:
+        if CHECKER in present:  # only the cutover itself may compare against a base without a manifest
+            return [f"manifest: base {commit[:12]} has {CHECKER} but no manifest at {', '.join(candidates[:-1])}; "
+                    "keep the manifest at a known path (MANIFEST_PATHS)"], []
+        return [], []  # the cutover: the base predates the manifest
     try:
-        old_manifest = json.loads(git(root, "show", f"{commit}:{rel}") or "")
+        old_manifest = json.loads(git(root, "show", f"{commit}:{base_rel}") or "")
         old = {row["path"]: row for row in old_manifest["rows"]}
         old_pin = old_manifest["upstream"]["commit"]
     except (ValueError, KeyError, TypeError):

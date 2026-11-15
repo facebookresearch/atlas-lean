@@ -769,6 +769,25 @@ class BaseGuardTest(unittest.TestCase):
         self.assertIn("must not go through a symlink", out)
         self.assertNotIn("ok [formal-math-sync]", out)
 
+    def test_moving_the_manifest_cannot_hide_the_base(self) -> None:
+        run_git(self.root, "mv", c.MANIFEST, "provenance/moved.json")
+        write(self.root, "provenance/moved.json", json.dumps({**self.manifest, "rows": []}))
+        self.commit("move the manifest and empty it")
+        code, out = self.run_check(None, "--manifest", str(self.root / "provenance/moved.json"))
+        self.assertEqual(code, 1)
+        self.assertEqual(out.count("row removed or renamed"), 6, out)
+
+    def test_post_cutover_base_without_a_manifest_fails_closed(self) -> None:
+        os.remove(self.root / c.MANIFEST)
+        write(self.root, c.CHECKER, "# the checker exists in this base\n")
+        self.commit("a base with the checker but no manifest")
+        self.manifest["rows"] = []
+        self.save()
+        self.commit("bring back an empty manifest")
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertIn(f"has {c.CHECKER} but no manifest", out)
+
     def test_explicit_base_must_resolve(self) -> None:
         del os.environ["GITHUB_ACTIONS"]
         code, out = self.run_check(None, "--base", "no-such-ref")
@@ -902,7 +921,10 @@ class SyncTest(unittest.TestCase):
                  "Author: @vonbo, Avocado": True,
                  "Authors: Codex Vale-62b0 (canonical root support)": True,
                  "Authors: Jane Doe": False,                       # third-party
-                 "Authors: Adam Kiezun, Jane Doe": False}          # mixed counts as third-party
+                 "Authors: Adam Kiezun, Jane Doe": False,          # mixed counts as third-party
+                 "Author(s): Jane Doe": False,
+                 "Authors: Adam Kiezun (with Jane Doe)": False,     # a parenthetical cannot hide a name
+                 "Authors: Muse Code powered by Meta Muse Spark (Muse Spark 1.3)": True}
         for line, own in cases.items():
             with self.subTest(line=line):
                 self.assertEqual(c.is_formal_math_header(f"/-\n{line}\n-/"), own)
@@ -929,7 +951,8 @@ class SyncTest(unittest.TestCase):
                  "Copyright 2026 Meta Platforms, Inc. and affiliates and Jane Doe.": False,
                  "Copyright (c) 2026 Adam Kiezun and Jane Doe. All rights reserved.": False,
                  "Copyright (c) 2026. All rights reserved.": False,
-                 "Copyright (c) 2026\nAuthors: Jane Doe": False}
+                 "Copyright (c) 2026\nAuthors: Jane Doe": False,
+                 "Copyright (c) 2026 Adam Kiezun. All rights reserved.\nAuthor(s): Jane Doe": False}
         for line, own in cases.items():
             with self.subTest(line=line):
                 self.assertEqual(c.is_formal_math_header(f"/-\n{line}\nReleased under Apache 2.0 license.\n-/"), own)
