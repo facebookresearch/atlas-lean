@@ -1,0 +1,336 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+module
+
+public import MathlibExt.Probability.Statistics.Survival.CompensatorUniquenessCadlag
+public import Mathlib.MeasureTheory.MeasurableSpace.CountablyGenerated
+
+/-!
+# Uniqueness of compensators for a marked single-jump process
+
+`MathlibExt/Probability/Statistics/Survival/CompensatorUniquenessCadlag.lean` (T168) proves that
+càdlàg compensators of a real process are unique for a single-jump history. This file treats a
+**marked** point process: at the exit time `X` a mark `J` in a measurable space `E` is revealed
+(a failure cause in competing risks, a destination state in a multi-state model). For a mark set
+`B ⊆ E` the marked counting process is `N(t, B) = 1{X ≤ t, J ∈ B}`, and its compensator is a
+random measure `A(t, ·)` on `E`, with `t ↦ A(t, B)` the compensator of `N(·, B)`.
+
+## Source receipt
+
+* P. K. Andersen, Ø. Borgan, R. D. Gill and N. Keiding, *Statistical Models Based on Counting
+  Processes*, Springer (1993), Section II.7 (marked point processes; the compensating random
+  measure `ν(dt, dm)`, unique by uniqueness of the compensators of `N(·, B)`), and Section II.3.1
+  (uniqueness of the compensator of a counting process).
+* J. Jacod, *Multivariate point processes: predictable projection, Radon–Nikodym derivatives,
+  representation of martingales*, Z. Wahrscheinlichkeitstheorie verw. Gebiete 31 (1975),
+  235–253, Theorem 2.1 (existence and uniqueness of the compensator of a marked point process).
+
+## Hypotheses
+
+The filtration hypotheses are those of `ae_forall_eq_of_isCompensator_cadlag`: `hX`
+(`{X > s} ∈ ℱ s`), `hpast` (nothing is learned before exit) and `hfut` (nothing is learned after
+exit). Learning the mark at exit is allowed: `hpast` only constrains `{X > s}`. For each mark set
+the compensator is predictable, every path is right-continuous, almost every path is of finite
+variation and tends to `0` at `-∞`.
+
+`singleJumpHistory` is the history `ℱ_t = σ(Z u : u ≤ t)` of any measurable process `Z` with
+values in a measurable space that sits at a base point `z₀` exactly before `X` and is frozen
+from `X` on. With `Z u = 1{X ≤ u} · J`-style encodings this is the history of a marked single
+jump; with `Z = observedProcess` it is T56's `historyFiltration` (see the test file). All three
+filtration hypotheses hold for it (`measurableSet_lt_singleJumpHistory`,
+`singleJumpHistory_inter_or_subset`, `measurableSet_inter_le_singleJumpHistory`).
+
+## Main results
+
+* `ae_forall_eq_of_isMarkedCompensator_cadlag`: for countably many mark sets `i : ι`, two families
+  of compensators of `N i` are indistinguishable simultaneously in `i` and `t`.
+* `ae_forall_eq_of_isMarkedCompensator_measure_cadlag`: on a countably generated mark space, two
+  compensating random measures `A(t, ω)`, `A'(t, ω)` (finite measures, with `t ↦ A(t, ω)(B)` a
+  compensator of `N(·, B)` for every measurable `B`) satisfy `A(t, ω) = A'(t, ω)` as measures, for
+  all `t`, almost surely.
+* `ae_forall_eq_of_isMarkedCompensator_singleJump`: the same for `singleJumpHistory`.
+
+## Proof
+
+For a fixed mark set the statement is T168's theorem, which puts no hypothesis on the process
+being compensated. Countably many mark sets give a simultaneous almost-sure event. For random
+measures, the finite intersections of a countable generating sequence of `E` form a countable
+π-system that contains `univ` and generates the σ-algebra; on the simultaneous event the two
+finite measures agree on it, hence everywhere (`ext_of_generate_finite`).
+
+## Scope
+
+* The compensator of a concrete marked model (for competing risks under independent censoring,
+  `A(t, B) = ∫_{(-∞, t ∧ X]} P(T ∈ ds, J ∈ B) / P(T ≥ s)`) is not constructed, and its martingale
+  property is not proved; T56 does this for the unmarked process.
+* Mark spaces that are not countably generated are not treated by the random-measure theorem;
+  for them the countable-family theorem still applies to any countable collection of mark sets.
+* Right-continuity is assumed for every path, as in T168.
+
+## Reused API
+
+* `ae_forall_eq_of_isCompensator_cadlag`
+  (`MathlibExt/Probability/Statistics/Survival/CompensatorUniquenessCadlag.lean`).
+* `trivialOn` (`MathlibExt/Probability/Statistics/Survival/CountingProcess.lean`).
+* `MeasureTheory.ext_of_generate_finite`, `MeasureTheory.ae_all_iff`,
+  `MeasurableSpace.natGeneratingSequence`, `MeasurableSpace.generateFrom_natGeneratingSequence`.
+-/
+
+@[expose] public section
+
+set_option autoImplicit false
+
+namespace MathlibExt.Probability.Statistics.CountingProcess.ContinuousTime
+
+open MeasureTheory ProbabilityTheory Set Filter Topology
+open scoped ENNReal
+
+variable {Ω : Type*} {m0 : MeasurableSpace Ω}
+
+/-! ### A countable generating π-system -/
+
+/-- A countably generated measurable space is generated by a countable π-system containing
+`univ`: the finite intersections of `natGeneratingSequence`. -/
+theorem exists_countable_isPiSystem_generateFrom (E : Type*) [mE : MeasurableSpace E]
+    [MeasurableSpace.CountablyGenerated E] :
+    ∃ C : Set (Set E), C.Countable ∧ IsPiSystem C ∧ mE = MeasurableSpace.generateFrom C ∧
+      univ ∈ C := by
+  refine ⟨range fun F : Finset ℕ => ⋂ i ∈ F, MeasurableSpace.natGeneratingSequence E i,
+    countable_range _, ?_, ?_, ⟨∅, by simp⟩⟩
+  · rintro _ ⟨F, rfl⟩ _ ⟨G, rfl⟩ _
+    refine ⟨F ∪ G, ?_⟩
+    ext x
+    simp only [mem_inter_iff, mem_iInter, Finset.mem_union]
+    exact ⟨fun h => ⟨fun i hi => h i (Or.inl hi), fun i hi => h i (Or.inr hi)⟩,
+      fun h i hi => hi.elim (h.1 i) (h.2 i)⟩
+  · refine le_antisymm ?_ (MeasurableSpace.generateFrom_le ?_)
+    · calc mE = MeasurableSpace.generateFrom
+            (range (MeasurableSpace.natGeneratingSequence E)) :=
+          (MeasurableSpace.generateFrom_natGeneratingSequence E).symm
+        _ ≤ _ := by
+          refine MeasurableSpace.generateFrom_mono ?_
+          rintro _ ⟨n, rfl⟩
+          exact ⟨{n}, by simp⟩
+    · rintro _ ⟨F, rfl⟩
+      exact Finset.measurableSet_biInter F fun i _ =>
+        MeasurableSpace.measurableSet_natGeneratingSequence i
+
+/-! ### Uniqueness for marked compensators -/
+
+section Marked
+
+variable {ℱ : Filtration ℝ m0} {X : Ω → ℝ} {P : Measure Ω} [IsFiniteMeasure P]
+
+/-- **Marked compensators, countably many mark sets.** Under the single-jump hypotheses of
+`ae_forall_eq_of_isCompensator_cadlag`, let `A i` and `A' i` be predictable, càdlàg,
+finite-variation, normalized compensators of the same process `N i` for every index `i` of a
+countable type (for instance `N i t = 1{X ≤ t, J ∈ Bᵢ}` for countably many mark sets `Bᵢ`). Then
+almost surely `A i t = A' i t` for all `i` and all `t`. -/
+theorem ae_forall_eq_of_isMarkedCompensator_cadlag {ι : Type*} [Countable ι]
+    {N A A' : ι → ℝ → Ω → ℝ}
+    (hX : ∀ s, MeasurableSet[ℱ s] {ω | s < X ω})
+    (hpast : ∀ s (B : Set Ω), MeasurableSet[ℱ s] B →
+      B ∩ {ω | s < X ω} = ∅ ∨ {ω | s < X ω} ⊆ B)
+    (hfut : ∀ s t (B : Set Ω), s ≤ t → MeasurableSet[ℱ t] B →
+      MeasurableSet[ℱ s] (B ∩ {ω | X ω ≤ s}))
+    (hA : ∀ i, Martingale (fun t => N i t - A i t) ℱ P)
+    (hA' : ∀ i, Martingale (fun t => N i t - A' i t) ℱ P)
+    (hApred : ∀ i t, Measurable[⨆ s < t, ℱ s] (A i t))
+    (hA'pred : ∀ i t, Measurable[⨆ s < t, ℱ s] (A' i t))
+    (hAcont : ∀ i ω t, ContinuousWithinAt (fun s => A i s ω) (Ici t) t)
+    (hA'cont : ∀ i ω t, ContinuousWithinAt (fun s => A' i s ω) (Ici t) t)
+    (hAfv : ∀ i, ∀ᵐ ω ∂P, LocallyBoundedVariationOn (fun t => A i t ω) univ)
+    (hA'fv : ∀ i, ∀ᵐ ω ∂P, LocallyBoundedVariationOn (fun t => A' i t ω) univ)
+    (hAlim : ∀ i, ∀ᵐ ω ∂P, Tendsto (fun t => A i t ω) atBot (𝓝 0))
+    (hA'lim : ∀ i, ∀ᵐ ω ∂P, Tendsto (fun t => A' i t ω) atBot (𝓝 0)) :
+    ∀ᵐ ω ∂P, ∀ i t, A i t ω = A' i t ω := by
+  rw [ae_all_iff]
+  intro i
+  exact ae_forall_eq_of_isCompensator_cadlag hX hpast hfut (hA i) (hA' i) (hApred i)
+    (hA'pred i) (hAcont i) (hA'cont i) (hAfv i) (hA'fv i) (hAlim i) (hA'lim i)
+
+/-- **Uniqueness of the compensating random measure of a marked single jump.** Let the mark space
+`E` be countably generated, and let `A t ω`, `A' t ω` be finite measures on `E` such that, for
+every measurable mark set `B`, both `t ↦ A t ω B` and `t ↦ A' t ω B` (as real numbers) are
+predictable, càdlàg, finite-variation, normalized compensators of the same process `N B`. Then
+almost surely `A t ω = A' t ω` as measures, for every `t`. -/
+theorem ae_forall_eq_of_isMarkedCompensator_measure_cadlag {E : Type*} [mE : MeasurableSpace E]
+    [MeasurableSpace.CountablyGenerated E] {N : Set E → ℝ → Ω → ℝ} {A A' : ℝ → Ω → Measure E}
+    (hAfin : ∀ t ω, IsFiniteMeasure (A t ω)) (hA'fin : ∀ t ω, IsFiniteMeasure (A' t ω))
+    (hX : ∀ s, MeasurableSet[ℱ s] {ω | s < X ω})
+    (hpast : ∀ s (B : Set Ω), MeasurableSet[ℱ s] B →
+      B ∩ {ω | s < X ω} = ∅ ∨ {ω | s < X ω} ⊆ B)
+    (hfut : ∀ s t (B : Set Ω), s ≤ t → MeasurableSet[ℱ t] B →
+      MeasurableSet[ℱ s] (B ∩ {ω | X ω ≤ s}))
+    (hA : ∀ B, MeasurableSet B → Martingale (fun t ω => N B t ω - (A t ω B).toReal) ℱ P)
+    (hA' : ∀ B, MeasurableSet B → Martingale (fun t ω => N B t ω - (A' t ω B).toReal) ℱ P)
+    (hApred : ∀ B, MeasurableSet B → ∀ t,
+      Measurable[⨆ s < t, ℱ s] fun ω => (A t ω B).toReal)
+    (hA'pred : ∀ B, MeasurableSet B → ∀ t,
+      Measurable[⨆ s < t, ℱ s] fun ω => (A' t ω B).toReal)
+    (hAcont : ∀ B, MeasurableSet B → ∀ ω t,
+      ContinuousWithinAt (fun s => (A s ω B).toReal) (Ici t) t)
+    (hA'cont : ∀ B, MeasurableSet B → ∀ ω t,
+      ContinuousWithinAt (fun s => (A' s ω B).toReal) (Ici t) t)
+    (hAfv : ∀ B, MeasurableSet B →
+      ∀ᵐ ω ∂P, LocallyBoundedVariationOn (fun t => (A t ω B).toReal) univ)
+    (hA'fv : ∀ B, MeasurableSet B →
+      ∀ᵐ ω ∂P, LocallyBoundedVariationOn (fun t => (A' t ω B).toReal) univ)
+    (hAlim : ∀ B, MeasurableSet B → ∀ᵐ ω ∂P, Tendsto (fun t => (A t ω B).toReal) atBot (𝓝 0))
+    (hA'lim : ∀ B, MeasurableSet B →
+      ∀ᵐ ω ∂P, Tendsto (fun t => (A' t ω B).toReal) atBot (𝓝 0)) :
+    ∀ᵐ ω ∂P, ∀ t, A t ω = A' t ω := by
+  obtain ⟨C, hCc, hCpi, hgen, hCuniv⟩ := exists_countable_isPiSystem_generateFrom E
+  have hCm : ∀ B ∈ C, MeasurableSet B := fun B hB => by
+    rw [hgen]; exact MeasurableSpace.measurableSet_generateFrom hB
+  have := hCc.to_subtype
+  have h : ∀ᵐ ω ∂P, ∀ (B : C) t, (A t ω B).toReal = (A' t ω B).toReal :=
+    ae_forall_eq_of_isMarkedCompensator_cadlag (N := fun B : C => N B)
+      (A := fun B t ω => (A t ω B).toReal) (A' := fun B t ω => (A' t ω B).toReal) hX hpast hfut
+      (fun B => hA B (hCm B B.2)) (fun B => hA' B (hCm B B.2))
+      (fun B => hApred B (hCm B B.2)) (fun B => hA'pred B (hCm B B.2))
+      (fun B => hAcont B (hCm B B.2)) (fun B => hA'cont B (hCm B B.2))
+      (fun B => hAfv B (hCm B B.2)) (fun B => hA'fv B (hCm B B.2))
+      (fun B => hAlim B (hCm B B.2)) (fun B => hA'lim B (hCm B B.2))
+  filter_upwards [h] with ω hω t
+  have := hAfin t ω
+  have := hA'fin t ω
+  have hC : ∀ B ∈ C, A t ω B = A' t ω B := fun B hB =>
+    (ENNReal.toReal_eq_toReal_iff' (measure_ne_top _ _) (measure_ne_top _ _)).1 (hω ⟨B, hB⟩ t)
+  exact ext_of_generate_finite C hgen hCpi hC (hC univ hCuniv)
+
+end Marked
+
+/-! ### The history of a single marked jump -/
+
+section SingleJump
+
+variable {β : Type*} [mβ : MeasurableSpace β] {Z : ℝ → Ω → β}
+
+/-- The history `ℱ_t = σ(Z u : u ≤ t)` of a measurable process `Z` with values in an arbitrary
+measurable space (Mathlib's `Filtration.natural` needs a metrizable Borel target). -/
+def singleJumpHistory (hZ : ∀ u, Measurable (Z u)) : Filtration ℝ m0 where
+  seq t := ⨆ u ≤ t, MeasurableSpace.comap (Z u) mβ
+  mono' _ t hst := iSup₂_le fun u hu =>
+    le_iSup₂ (f := fun u (_ : u ≤ t) => MeasurableSpace.comap (Z u) mβ) u (hu.trans hst)
+  le' _ := iSup₂_le fun u _ => (hZ u).comap_le
+
+variable (hZ : ∀ u, Measurable (Z u))
+
+/-- `Z u` is observed at every time `t ≥ u`. -/
+theorem comap_le_singleJumpHistory {u t : ℝ} (hut : u ≤ t) :
+    MeasurableSpace.comap (Z u) mβ ≤ singleJumpHistory hZ t :=
+  le_iSup₂ (f := fun u (_ : u ≤ t) => MeasurableSpace.comap (Z u) mβ) u hut
+
+variable {X : Ω → ℝ} {z₀ : β}
+
+/-- **Exit is observed.** If `Z u = z₀` exactly when `u < X`, then `{X > s}` is observed at
+time `s`. -/
+theorem measurableSet_lt_singleJumpHistory [MeasurableSingletonClass β]
+    (hZ0 : ∀ u ω, Z u ω = z₀ ↔ u < X ω) (s : ℝ) :
+    MeasurableSet[singleJumpHistory hZ s] {ω | s < X ω} := by
+  have : {ω | s < X ω} = Z s ⁻¹' {z₀} := by
+    ext ω
+    simp only [mem_ofPred_eq, mem_preimage, mem_singleton_iff, hZ0]
+  rw [this]
+  exact comap_le_singleJumpHistory hZ le_rfl _ ⟨{z₀}, measurableSet_singleton _, rfl⟩
+
+/-- **Nothing is learned before exit.** If `Z u = z₀` whenever `u < X`, every event observed by
+time `s` contains `{X > s}` or misses it. -/
+theorem singleJumpHistory_inter_or_subset (hZ0 : ∀ u ω, u < X ω → Z u ω = z₀) {s : ℝ}
+    {B : Set Ω} (hB : MeasurableSet[singleJumpHistory hZ s] B) :
+    B ∩ {ω | s < X ω} = ∅ ∨ {ω | s < X ω} ⊆ B := by
+  suffices h : singleJumpHistory hZ s ≤ trivialOn {ω | s < X ω} from h B hB
+  refine iSup₂_le fun u hu => ?_
+  rintro _ ⟨S, -, rfl⟩
+  by_cases hz : z₀ ∈ S
+  · exact Or.inr fun ω (hω : s < X ω) => by
+      change Z u ω ∈ S
+      rw [hZ0 u ω (hu.trans_lt hω)]
+      exact hz
+  · exact Or.inl (eq_empty_of_forall_notMem fun ω hω => hz (by
+      have h1 : Z u ω ∈ S := hω.1
+      rwa [hZ0 u ω (hu.trans_lt hω.2)] at h1))
+
+/-- **Nothing is learned after exit.** If `Z` is frozen from `X` on and `{X ≤ s}` is observed at
+time `s`, the trace on `{X ≤ s}` of an event observed by any time `t` is observed at time `s`. -/
+theorem measurableSet_inter_le_singleJumpHistory
+    (hfreeze : ∀ ω s u, X ω ≤ s → s ≤ u → Z u ω = Z s ω)
+    (hXle : ∀ s, MeasurableSet[singleJumpHistory hZ s] {ω | X ω ≤ s}) {s t : ℝ} {B : Set Ω}
+    (hB : MeasurableSet[singleJumpHistory hZ t] B) :
+    MeasurableSet[singleJumpHistory hZ s] (B ∩ {ω | X ω ≤ s}) := by
+  have hE := hXle s
+  let T : MeasurableSpace Ω :=
+    { MeasurableSet' := fun B => MeasurableSet[singleJumpHistory hZ s] (B ∩ {ω | X ω ≤ s})
+      measurableSet_empty := by
+        rw [empty_inter]; exact @MeasurableSet.empty _ (singleJumpHistory hZ s)
+      measurableSet_compl := fun B hB => by
+        have : Bᶜ ∩ {ω | X ω ≤ s} = {ω | X ω ≤ s} \ (B ∩ {ω | X ω ≤ s}) := by
+          ext; simp only [mem_inter_iff, mem_compl_iff, Set.mem_sdiff]; tauto
+        rw [this]; exact hE.diff hB
+      measurableSet_iUnion := fun f hf => by rw [iUnion_inter]; exact MeasurableSet.iUnion hf }
+  suffices h : singleJumpHistory hZ t ≤ T from h B hB
+  refine iSup₂_le fun u _ => ?_
+  rintro _ ⟨S, hS, rfl⟩
+  change MeasurableSet[singleJumpHistory hZ s] (Z u ⁻¹' S ∩ {ω | X ω ≤ s})
+  rcases le_total u s with hus | hsu
+  · exact (comap_le_singleJumpHistory hZ hus _ ⟨S, hS, rfl⟩).inter hE
+  · have : Z u ⁻¹' S ∩ {ω | X ω ≤ s} = Z s ⁻¹' S ∩ {ω | X ω ≤ s} := by
+      ext ω
+      simp only [mem_inter_iff, mem_preimage, mem_ofPred_eq]
+      constructor
+      · rintro ⟨h1, h2⟩; exact ⟨by rwa [← hfreeze ω s u h2 hsu], h2⟩
+      · rintro ⟨h1, h2⟩; exact ⟨by rwa [hfreeze ω s u h2 hsu], h2⟩
+    rw [this]
+    exact (comap_le_singleJumpHistory hZ le_rfl _ ⟨S, hS, rfl⟩).inter hE
+
+variable {P : Measure Ω} [IsFiniteMeasure P]
+
+/-- **Marked compensator uniqueness for a single-jump history.** Let `Z` be a measurable process
+with `Z u = z₀` exactly when `u < X`, frozen from `X` on, and `ℱ = singleJumpHistory`. On a
+countably generated mark space, two compensating random measures `A`, `A'` of the same marked
+process `N` (finite measures; for every measurable `B`, `t ↦ A t ω B` predictable, càdlàg, of
+finite variation, normalized, and `N B - A(·, B)` a martingale) are indistinguishable. -/
+theorem ae_forall_eq_of_isMarkedCompensator_singleJump [MeasurableSingletonClass β]
+    (hZ0 : ∀ u ω, Z u ω = z₀ ↔ u < X ω) (hfreeze : ∀ ω s u, X ω ≤ s → s ≤ u → Z u ω = Z s ω)
+    {E : Type*} [MeasurableSpace E] [MeasurableSpace.CountablyGenerated E]
+    {N : Set E → ℝ → Ω → ℝ} {A A' : ℝ → Ω → Measure E}
+    (hAfin : ∀ t ω, IsFiniteMeasure (A t ω)) (hA'fin : ∀ t ω, IsFiniteMeasure (A' t ω))
+    (hA : ∀ B, MeasurableSet B →
+      Martingale (fun t ω => N B t ω - (A t ω B).toReal) (singleJumpHistory hZ) P)
+    (hA' : ∀ B, MeasurableSet B →
+      Martingale (fun t ω => N B t ω - (A' t ω B).toReal) (singleJumpHistory hZ) P)
+    (hApred : ∀ B, MeasurableSet B → ∀ t,
+      Measurable[⨆ s < t, singleJumpHistory hZ s] fun ω => (A t ω B).toReal)
+    (hA'pred : ∀ B, MeasurableSet B → ∀ t,
+      Measurable[⨆ s < t, singleJumpHistory hZ s] fun ω => (A' t ω B).toReal)
+    (hAcont : ∀ B, MeasurableSet B → ∀ ω t,
+      ContinuousWithinAt (fun s => (A s ω B).toReal) (Ici t) t)
+    (hA'cont : ∀ B, MeasurableSet B → ∀ ω t,
+      ContinuousWithinAt (fun s => (A' s ω B).toReal) (Ici t) t)
+    (hAfv : ∀ B, MeasurableSet B →
+      ∀ᵐ ω ∂P, LocallyBoundedVariationOn (fun t => (A t ω B).toReal) univ)
+    (hA'fv : ∀ B, MeasurableSet B →
+      ∀ᵐ ω ∂P, LocallyBoundedVariationOn (fun t => (A' t ω B).toReal) univ)
+    (hAlim : ∀ B, MeasurableSet B → ∀ᵐ ω ∂P, Tendsto (fun t => (A t ω B).toReal) atBot (𝓝 0))
+    (hA'lim : ∀ B, MeasurableSet B →
+      ∀ᵐ ω ∂P, Tendsto (fun t => (A' t ω B).toReal) atBot (𝓝 0)) :
+    ∀ᵐ ω ∂P, ∀ t, A t ω = A' t ω := by
+  have hX := measurableSet_lt_singleJumpHistory hZ hZ0
+  have hXle : ∀ s, MeasurableSet[singleJumpHistory hZ s] {ω | X ω ≤ s} := fun s => by
+    have h := (hX s).compl
+    simpa only [compl_ofPred, not_lt] using h
+  exact ae_forall_eq_of_isMarkedCompensator_measure_cadlag hAfin hA'fin hX
+    (fun _ _ hB => singleJumpHistory_inter_or_subset hZ (fun u ω => (hZ0 u ω).2) hB)
+    (fun _ _ _ _ hB => measurableSet_inter_le_singleJumpHistory hZ hfreeze hXle hB)
+    hA hA' hApred hA'pred hAcont hA'cont hAfv hA'fv hAlim hA'lim
+
+end SingleJump
+
+end MathlibExt.Probability.Statistics.CountingProcess.ContinuousTime
