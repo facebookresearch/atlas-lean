@@ -43,7 +43,12 @@ entry it can drop to `0` at a grid time between two times where somebody is at r
 Nelson–Aalen jumps out of a state with an empty risk set are totalized to `0`, so the estimator
 keeps the state's row equal to the identity row there
 (`transitionMatrix_apply_of_atRisk_eq_zero`): the data identify no transition intensity out of
-that state, and the identity row is a convention, not an estimate.
+that state, and the identity row is a convention, not an estimate. In particular, if the overall
+risk set is empty at a grid time in `(s, t]`, the product `P̂(s, t)` combines risk populations that
+need not be connected (one subject observed only at `t₀` and another entering after `t₁` and
+observed at `t₂`). Its entries are then totalized algebraic quantities, not estimates of
+transition probabilities, just as `LeftTruncation`'s product-limit estimate is a survival estimate
+only on `GapFree` data. The identities below are algebra and hold for all data.
 
 ## Main results
 
@@ -65,8 +70,11 @@ that state, and the identity row is a convention, not an estimate.
   product-limit factors of `LeftTruncation` (`transitionMatrix_none_none_eq_plSurvival` from
   before the first grid time, and `transitionMatrix_none_none_eq_kmSurvival`, Kaplan–Meier, under
   early entry); `transitionMatrix_none_some` gives the left-truncated cumulative incidence
-  `F̂_c(s, t) = ∑_{s < tⱼ ≤ t} Ŝ(s, tⱼ-) d_{j,c} / Yⱼ`; `sum_condCumInc_add_condSurvival`: the
-  cumulative incidences and the survival add up to `1`.
+  `F̂_c(s, t) = ∑_{s < tⱼ ≤ t} Ŝ(s, tⱼ-) d_{j,c} / Yⱼ`; `sum_condCumInc_add_condSurvival`: these
+  totalized cumulative incidences and survival add up to `1`. `condSurvival` and `condCumInc` are
+  estimates of survival and cumulative incidence over `(s, t]`, conditional on being event free at
+  `s`, only when somebody is at risk at every grid time of `(s, t]`; otherwise they are totalized
+  algebraic quantities without that interpretation.
 
 ## Scope
 
@@ -431,19 +439,32 @@ theorem noReturn_naIncrement (j : Fin k) :
     CompetingRiskData.NoReturn ((ofCompetingRisks E cause).toMultiState.naIncrement j) :=
   fun c => naIncrement_some E cause j c none
 
-/-- The delayed-entry product-limit estimate of survival over `(s, t]`, conditional on being event
-free at `s`: `Ŝ(s, t) = ∏_{s < tⱼ ≤ t} (1 - dⱼ / Yⱼ)`. -/
+/-- The totalized delayed-entry product-limit product over `(s, t]`:
+`Ŝ(s, t) = ∏_{s < tⱼ ≤ t} (1 - dⱼ / Yⱼ)`, where a grid time with nobody at risk contributes the
+factor `1` (`LeftTruncation.DelayedEntryData.plFactor`).
+
+It is defined for all data, but it estimates survival over `(s, t]`, conditional on being event
+free at `s`, only when somebody is at risk at every grid time of `(s, t]`. Across a grid time with
+an empty risk set the hazard is unidentified and the product combines risk populations that need
+not be connected (one subject observed only at `t₀` and another entering after `t₁` and observed
+at `t₂`), so it then has no conditional-survival interpretation; compare
+`LeftTruncation.DelayedEntryData.plSurvival`, which is a survival estimate only under `GapFree`. -/
 noncomputable def condSurvival (s t : ℝ) : ℝ := ∏ j with s < E.time j ∧ E.time j ≤ t, E.plFactor j
 
-/-- The left-truncated Aalen–Johansen estimate of the cumulative incidence of cause `c` over
-`(s, t]`: `F̂_c(s, t) = ∑_{s < tⱼ ≤ t} Ŝ(s, tⱼ-) d_{j,c} / Yⱼ`. -/
+/-- The totalized left-truncated Aalen–Johansen sum for cause `c` over `(s, t]`:
+`F̂_c(s, t) = ∑_{s < tⱼ ≤ t} Ŝ(s, tⱼ-) d_{j,c} / Yⱼ`, with the term `0` where `Yⱼ = 0`.
+
+As for `condSurvival`, it estimates the cumulative incidence of cause `c` over `(s, t]`,
+conditional on being event free at `s`, only when somebody is at risk at every grid time of
+`(s, t]`; otherwise it is a totalized algebraic quantity without that interpretation. -/
 noncomputable def condCumInc (c : Fin r) (s t : ℝ) : ℝ :=
   ∑ j with s < E.time j ∧ E.time j ≤ t,
     (∏ l with s < E.time l ∧ E.time l < E.time j, E.plFactor l) *
       ((causeDeaths E cause j c : ℝ) / E.atRisk j)
 
-/-- **Left-truncated Aalen–Johansen survival = delayed-entry product-limit**: the
-transient-to-transient entry of the estimator over `(s, t]` is `∏_{s < tⱼ ≤ t} (1 - dⱼ / Yⱼ)`. -/
+/-- **Left-truncated Aalen–Johansen survival entry = delayed-entry product-limit product**: the
+transient-to-transient entry of the estimator over `(s, t]` is the totalized product
+`condSurvival E s t = ∏_{s < tⱼ ≤ t} (1 - dⱼ / Yⱼ)`, for all data. -/
 theorem transitionMatrix_none_none (s t : ℝ) :
     (ofCompetingRisks E cause).transitionMatrix s t none none = condSurvival E s t := by
   rw [DelayedEntryMultiStateData.transitionMatrix, MultiStateData.transitionMatrix, jumpProd,
@@ -453,8 +474,9 @@ theorem transitionMatrix_none_none (s t : ℝ) :
   rw [naIncrement_none_none, ← sub_eq_add_neg]
   rfl
 
-/-- **Left-truncated Aalen–Johansen cumulative incidence**: the entry `none → some c` of the
-estimator over `(s, t]` is `F̂_c(s, t) = ∑_{s < tⱼ ≤ t} Ŝ(s, tⱼ-) d_{j,c} / Yⱼ`. -/
+/-- **Left-truncated Aalen–Johansen cumulative-incidence entry**: the entry `none → some c` of
+the estimator over `(s, t]` is the totalized sum
+`condCumInc E cause c s t = ∑_{s < tⱼ ≤ t} Ŝ(s, tⱼ-) d_{j,c} / Yⱼ`, for all data. -/
 theorem transitionMatrix_none_some (s t : ℝ) (c : Fin r) :
     (ofCompetingRisks E cause).transitionMatrix s t none (some c) = condCumInc E cause c s t := by
   rw [DelayedEntryMultiStateData.transitionMatrix, MultiStateData.transitionMatrix_forward,
@@ -472,8 +494,10 @@ theorem transitionMatrix_none_some (s t : ℝ) (c : Fin r) :
   rw [naIncrement_none_none, ← sub_eq_add_neg]
   rfl
 
-/-- **Mass conservation**: the left-truncated cumulative incidences over `(s, t]` and the
-conditional survival add up to `1`. -/
+/-- **Row-sum identity**: the totalized cumulative incidences `condCumInc` over `(s, t]` and
+`condSurvival` add up to `1`, for all data (the row sum of the stochastic matrix). They form one
+conditional distribution given event-freeness at `s` only when somebody is at risk at every grid
+time of `(s, t]`; otherwise the terms come from risk populations that need not be connected. -/
 theorem sum_condCumInc_add_condSurvival (s t : ℝ) :
     ∑ c, condCumInc E cause c s t + condSurvival E s t = 1 := by
   have h := (ofCompetingRisks E cause).transitionMatrix_sum_row s t none
@@ -481,20 +505,22 @@ theorem sum_condCumInc_add_condSurvival (s t : ℝ) :
   simp only [transitionMatrix_none_none, transitionMatrix_none_some] at h
   linarith
 
-/-- The left-truncated cumulative incidences are non-negative. -/
+/-- The totalized cumulative incidences `condCumInc` are non-negative. -/
 theorem condCumInc_nonneg (c : Fin r) (s t : ℝ) : 0 ≤ condCumInc E cause c s t :=
   transitionMatrix_none_some E cause s t c ▸
     (ofCompetingRisks E cause).transitionMatrix_nonneg s t none (some c)
 
-/-- From before the first grid time, the conditional survival is the delayed-entry
-product-limit estimate `plSurvival` of `LeftTruncation`. -/
+/-- From before the first grid time, `condSurvival` is the totalized product `plSurvival` of
+`LeftTruncation`, for all data; like `plSurvival`, it is a survival estimate only on `GapFree`
+data. -/
 theorem condSurvival_eq_plSurvival {s : ℝ} (hs : ∀ j, s < E.time j) (t : ℝ) :
     condSurvival E s t = E.plSurvival t := by
   rw [DelayedEntryData.plSurvival_eq_prod_all, condSurvival]
   exact prod_congr (filter_congr fun j _ => ⟨fun h => h.2, fun h => ⟨hs j, h⟩⟩) fun _ _ => rfl
 
 /-- From before the first grid time, the transient-to-transient entry of the left-truncated
-Aalen–Johansen estimator is the delayed-entry product-limit estimate of `LeftTruncation`. -/
+Aalen–Johansen estimator is the totalized product `plSurvival` of `LeftTruncation`, for all
+data. -/
 theorem transitionMatrix_none_none_eq_plSurvival {s : ℝ} (hs : ∀ j, s < E.time j) (t : ℝ) :
     (ofCompetingRisks E cause).transitionMatrix s t none none = E.plSurvival t := by
   rw [transitionMatrix_none_none, condSurvival_eq_plSurvival E hs]
