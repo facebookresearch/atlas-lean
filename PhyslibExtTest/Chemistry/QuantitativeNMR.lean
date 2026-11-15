@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.Chemistry.QuantitativeNMR
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Data.Nat.Choose.Vandermonde
 
 open Chemistry.QuantitativeNMR
 
@@ -16,8 +18,9 @@ open Chemistry.QuantitativeNMR
 
 # Tests for quantitative NMR
 
-Exact numeric checks for `Chemistry.QuantitativeNMR`, including nonzero-coupling checks of the
-AB energy levels and lines, plus `#print axioms` for every public declaration.
+Exact numeric checks for `Chemistry.QuantitativeNMR`, including convolution weights and totals,
+nonzero-coupling checks of the AB energy levels, signed transition offsets and line frequencies,
+and the equivalent-shift boundary, plus `#print axioms` for every public declaration.
 
 -/
 
@@ -107,6 +110,11 @@ example : ∑ k, multipletWeights 3 k = 8 := by
 example (ν0 : ℝ) : Function.Injective (linePosition ν0 1 2) :=
   linePosition_injective ν0 1 2 (by norm_num)
 
+/-- Triplet line positions at `ν0 = 100`, `J = 6`: `94`, `100` and `106`. -/
+example : linePosition 100 6 2 0 = 94 ∧ linePosition 100 6 2 1 = 100 ∧
+    linePosition 100 6 2 2 = 106 := by
+  norm_num [linePosition]
+
 /-- Two spin-1/2 groups with `n = (2, 1)` give `3 * 2 = 6`. -/
 example : maxMultiplicity ![2, 1] ![1, 1] = 6 := by
   norm_num [maxMultiplicity, maxMultiplicityOn, Fin.prod_univ_two]
@@ -180,6 +188,29 @@ example : (combinedLines ![{0, 1, 2}, {0, 1}]).card < 6 := by
     Finset.card_le_card hsub
   omega
 
+/-- Combined line index `i + j` of a triplet line `i` and a doublet line `j` with equal
+couplings. -/
+private def tripletDoubletPos (i : Fin 3) (j : Fin 2) : Fin 4 :=
+  ⟨i.val + j.val, by have := i.isLt; have := j.isLt; omega⟩
+
+/-- Convolving the triplet `(1, 2, 1)` with the doublet `(1, 1)` at equal couplings gives the
+quartet `(1, 3, 3, 1)`: each outer position comes from one pair, each inner position from two
+coincident pairs. -/
+example :
+    convIntensity (multipletWeights 2) (multipletWeights 1) tripletDoubletPos 0 = 1 ∧
+      convIntensity (multipletWeights 2) (multipletWeights 1) tripletDoubletPos 1 = 3 ∧
+      convIntensity (multipletWeights 2) (multipletWeights 1) tripletDoubletPos 2 = 3 ∧
+      convIntensity (multipletWeights 2) (multipletWeights 1) tripletDoubletPos 3 = 1 := by
+  simp only [convIntensity, Fin.sum_univ_succ, Fin.sum_univ_zero]
+  simp +decide [multipletWeights]
+  norm_num
+
+/-- `conv_total` on that quartet: the total intensity is `(1 + 2 + 1) * (1 + 1) = 8`. -/
+example :
+    ∑ k, convIntensity (multipletWeights 2) (multipletWeights 1) tripletDoubletPos k = 8 := by
+  rw [conv_total, multiplet_sum, multiplet_sum]
+  norm_num
+
 /-- Vandermonde at `n = 2, m = 1, k = 1`: the antidiagonal sum is
 `choose 2 0 * choose 1 1 + choose 2 1 * choose 1 0 = 3`. -/
 example : ∑ ij ∈ Finset.antidiagonal 1,
@@ -194,11 +225,12 @@ example : ∑ ij ∈ Finset.antidiagonal 1,
     ((Nat.choose 2 1 : ℝ) * (Nat.choose 1 0 : ℝ)) = 3
   norm_num [c20, c11, c21, c10]
 
-/-- The production Vandermonde lemma at `n = 2, m = 1, k = 1`. -/
+/-- Mathlib's Vandermonde identity `Nat.add_choose_eq`, cast to `ℝ`, at `n = 2, m = 1, k = 1`:
+the inner quartet weight `3` above is `choose 3 1`. -/
 example : ∑ ij ∈ Finset.antidiagonal 1,
     ((Nat.choose 2 ij.1 : ℝ) * (Nat.choose 1 ij.2 : ℝ)) =
-    ((Nat.choose (2 + 1) 1 : ℕ) : ℝ) :=
-  binomial_vandermonde 2 1 1
+    ((Nat.choose (2 + 1) 1 : ℕ) : ℝ) := by
+  exact_mod_cast (Nat.add_choose_eq 2 1 1).symm
 
 /-- `choose 3 1 = 3` (the closed form above). -/
 example : ((Nat.choose 3 1 : ℕ) : ℝ) = 3 := by
@@ -219,6 +251,16 @@ example (ii ij : ℝ) (hi : ii = 1 / 2 * 6) (hj : ij = 1 / 2 * 3) : ii / ij = 2 
 example : excessFraction 0 = 0 := by
   simp [excessFraction, Real.exp_zero]
 
+/-- Populations in the ratio `3 : 1` (`x = log 3`) have excess `(3 - 1) / (3 + 1) = 1 / 2`. -/
+example : excessFraction (Real.log 3) = 1 / 2 := by
+  rw [excessFraction, Real.exp_log (by norm_num)]
+  norm_num
+
+/-- The excess is signed: the ratio `1 : 3` (`x = -log 3`) gives `-1 / 2`. -/
+example : excessFraction (-Real.log 3) = -1 / 2 := by
+  rw [excessFraction, Real.exp_neg, Real.exp_log (by norm_num)]
+  norm_num
+
 /-- Boltzmann populations `Nα = e^x * Nβ` have excess fraction `excessFraction x`. -/
 example (x Nβ : ℝ) (hβ : 0 < Nβ) :
     (Real.exp x * Nβ - Nβ) / (Real.exp x * Nβ + Nβ) = excessFraction x :=
@@ -236,14 +278,20 @@ example : |excessFraction (1 / 2) - (1 / 2) / 2| ≤ (1 / 2) ^ 2 :=
 
 ## E. AB spin system checks
 
-With `νA = 4`, `νB = -4`, `J = 6` one has `D = √(8 ^ 2 + 6 ^ 2) = 10`: the energies are
-`αα, ββ = 3 / 2`, `+ = 7 / 2`, `− = -13 / 2`, and the four lines are `±8` and `±2`.
-With `νA = 10`, `νB = 0`, `J = 0` the levels show the Zeeman sign of §A: `αα` lies below `ββ`.
+With `νA = 4`, `νB = -4`, `J = 6` (signed frequencies measured from a carrier) one has
+`D = √(8 ^ 2 + 6 ^ 2) = 10`: the energies are `αα, ββ = 3 / 2`, `+ = 7 / 2`, `− = -13 / 2`, the
+four signed transition offsets are `±8` and `±2`, and the line frequencies are `8, 2, 2, 8`.
+With `νA = 104`, `νB = 96`, `J = 6` (both above `|J|`) again `D = 10`, and the line frequencies
+equal the offsets `92, 102, 98, 108`. With `νA = 10`, `νB = 0`, `J = 0` the levels show the
+Zeeman sign of §A: `αα` lies below `ββ`.
 
 -/
 
 private lemma sqrt_ab_example : Real.sqrt ((4 - -4) ^ 2 + (6 : ℝ) ^ 2) = 10 := by
   rw [show ((4 - -4) ^ 2 + (6 : ℝ) ^ 2) = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+
+private lemma sqrt_ab_lab : Real.sqrt ((104 - 96) ^ 2 + (6 : ℝ) ^ 2) = 10 := by
+  rw [show ((104 - 96) ^ 2 + (6 : ℝ) ^ 2) = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
 
 /-- With the Zeeman sign of `zeemanEnergy`, `αα` (both `m = +1/2`) is the lowest level and `ββ`
 the highest at `νA = 10`, `νB = 0`, `J = 0`. -/
@@ -272,27 +320,58 @@ example : ¬ Module.End.HasEigenvalue (Matrix.toLin' (abHamiltonian 4 (-4) 6)) 0
     sqrt_ab_example]
   norm_num
 
-/-- The four lines at `νA = 4`, `νB = -4`, `J = 6` are `-8, 2, -2, 8`. -/
-example : abLineAlphaMinus 4 (-4) 6 = -8 ∧ abLineAlphaPlus 4 (-4) 6 = 2 ∧
-    abLinePlusBeta 4 (-4) 6 = -2 ∧ abLineMinusBeta 4 (-4) 6 = 8 := by
-  obtain ⟨h1, h2, h3, h4⟩ := abLines_eq 4 (-4) 6
+/-- The four signed transition offsets at `νA = 4`, `νB = -4`, `J = 6` are `-8, 2, -2, 8`. -/
+example : abOffsetAlphaMinus 4 (-4) 6 = -8 ∧ abOffsetAlphaPlus 4 (-4) 6 = 2 ∧
+    abOffsetPlusBeta 4 (-4) 6 = -2 ∧ abOffsetMinusBeta 4 (-4) 6 = 8 := by
+  obtain ⟨h1, h2, h3, h4⟩ := abOffsets_eq 4 (-4) 6
   rw [sqrt_ab_example] at h1 h2 h3 h4
   refine ⟨?_, ?_, ?_, ?_⟩ <;> [rw [h1]; rw [h2]; rw [h3]; rw [h4]] <;> norm_num
 
-/-- At `J = 0` the lines are exactly the two resonance frequencies, each twice: the `A` flips
-`αα ↔ +` and `− ↔ ββ` at `νA = 10`, the `B` flips at `νB = 0`. -/
-example : abLineAlphaMinus 10 0 0 = 0 ∧ abLineAlphaPlus 10 0 0 = 10 ∧
-    abLinePlusBeta 10 0 0 = 0 ∧ abLineMinusBeta 10 0 0 = 10 := by
+/-- The line frequencies there are the absolute energy gaps `8, 2, 2, 8`, although two offsets
+are negative. -/
+example : abGapAlphaMinus 4 (-4) 6 = 8 ∧ abGapAlphaPlus 4 (-4) 6 = 2 ∧
+    abGapPlusBeta 4 (-4) 6 = 2 ∧ abGapMinusBeta 4 (-4) 6 = 8 := by
+  simp only [abGapAlphaMinus, abGapAlphaPlus, abGapPlusBeta, abGapMinusBeta, abEnergyAlphaAlpha,
+    abEnergyBetaBeta, abEnergyPlus, abEnergyMinus, sqrt_ab_example]
+  norm_num
+
+/-- With both resonance frequencies above `|J|` (`νA = 104`, `νB = 96`, `J = 6`) the offsets are
+positive, and the line frequencies are `92, 102, 98, 108` (`abGaps_eq`). -/
+example : 0 < abOffsetAlphaMinus 104 96 6 ∧ abGapAlphaMinus 104 96 6 = 92 ∧
+    abGapAlphaPlus 104 96 6 = 102 ∧ abGapPlusBeta 104 96 6 = 98 ∧
+    abGapMinusBeta 104 96 6 = 108 := by
+  obtain ⟨h1, h2, h3, h4⟩ := abGaps_eq 104 96 6 (by norm_num) (by norm_num)
+  rw [sqrt_ab_lab] at h1 h2 h3 h4
+  refine ⟨(abOffsets_pos 104 96 6 (by norm_num) (by norm_num)).1, ?_, ?_, ?_, ?_⟩ <;>
+    [rw [h1]; rw [h2]; rw [h3]; rw [h4]] <;> norm_num
+
+/-- There each line frequency equals the offset of its candidate (`abGaps_eq_offsets`). -/
+example : abGapPlusBeta 104 96 6 = abOffsetPlusBeta 104 96 6 :=
+  (abGaps_eq_offsets 104 96 6 (by norm_num) (by norm_num)).2.2.1
+
+/-- At `J = 0` the offsets are exactly the two resonance frequencies, each twice: the `A` flips
+`αα → +` and `− → ββ` at `νA = 10`, the `B` flips at `νB = 0`. -/
+example : abOffsetAlphaMinus 10 0 0 = 0 ∧ abOffsetAlphaPlus 10 0 0 = 10 ∧
+    abOffsetPlusBeta 10 0 0 = 0 ∧ abOffsetMinusBeta 10 0 0 = 10 := by
   have hD : Real.sqrt ((10 - 0) ^ 2 + (0 : ℝ) ^ 2) = 10 := by
     rw [show ((10 - 0) ^ 2 + (0 : ℝ) ^ 2) = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
-  obtain ⟨h1, h2, h3, h4⟩ := abLines_eq 10 0 0
+  obtain ⟨h1, h2, h3, h4⟩ := abOffsets_eq 10 0 0
   rw [hD] at h1 h2 h3 h4
   refine ⟨?_, ?_, ?_, ?_⟩ <;> [rw [h1]; rw [h2]; rw [h3]; rw [h4]] <;> norm_num
 
-/-- Strong coupling moves the lines off first order: at `νA = 3`, `νB = -3`, `J = 4` the line
-`− ↔ ββ` is `2 + √13`, not the first-order position `3 + J / 2 = 5`. -/
-example : abLineMinusBeta 3 (-3) 4 ≠ 3 + 4 / 2 := by
-  obtain ⟨-, -, -, h4⟩ := abLines_eq 3 (-3) 4
+/-- Equivalent shifts at `ν0 = 100`, `J = 6`: the candidates are `94`, `100`, `100` and `106`;
+the two at `100 ± 6` are the forbidden singlet transitions of the `A₂` spectrum. -/
+example : abOffsetAlphaMinus 100 100 6 = 94 ∧ abOffsetAlphaPlus 100 100 6 = 100 ∧
+    abOffsetPlusBeta 100 100 6 = 100 ∧ abOffsetMinusBeta 100 100 6 = 106 := by
+  obtain ⟨h1, h2, h3, h4⟩ := abOffsets_self 100 6 (by norm_num)
+  refine ⟨?_, h2, h3, ?_⟩
+  · rw [h1]; norm_num
+  · rw [h4]; norm_num
+
+/-- Strong coupling moves the offsets off first order: at `νA = 3`, `νB = -3`, `J = 4` the offset
+of `− → ββ` is `2 + √13`, not the first-order position `3 + J / 2 = 5`. -/
+example : abOffsetMinusBeta 3 (-3) 4 ≠ 3 + 4 / 2 := by
+  obtain ⟨-, -, -, h4⟩ := abOffsets_eq 3 (-3) 4
   rw [h4]
   intro h
   have hs : Real.sqrt ((3 - -3) ^ 2 + (4 : ℝ) ^ 2) = 6 := by norm_num at h ⊢; linarith
@@ -300,11 +379,28 @@ example : abLineMinusBeta 3 (-3) 4 ≠ 3 + 4 / 2 := by
   rw [hs] at this
   norm_num at this
 
-/-- Weak coupling at `νA = 100`, `νB = 0`, `J = 6`: the line `− ↔ ββ` is within
-`36 / 400` of the first-order position `100 + J / 2`. -/
-example : |abLineMinusBeta 100 0 6 - (100 + 6 / 2)| ≤ 6 ^ 2 / (4 * |(100 : ℝ) - 0|) := by
-  have h := (abLines_weakCoupling 100 0 6 (by norm_num)).1
+/-- Weak coupling at `νA = 100`, `νB = 0`, `J = 6`: the offset of `− → ββ` is within `36 / 400`
+of the first-order position `100 + J / 2`. -/
+example : |abOffsetMinusBeta 100 0 6 - (100 + 6 / 2)| ≤ 6 ^ 2 / (4 * |(100 : ℝ) - 0|) := by
+  have h := (abOffsets_weakCoupling 100 0 6 (by norm_num)).1
   rwa [show max (100 : ℝ) 0 = 100 by norm_num] at h
+
+/-- The same bound for line frequencies at `νA = 1100`, `νB = 1000`, `J = 6`: the line frequency
+of `− ↔ ββ` is within `36 / 400` of the first-order position `1100 + J / 2`. -/
+example : |abGapMinusBeta 1100 1000 6 - (1100 + 6 / 2)| ≤
+    6 ^ 2 / (4 * |(1100 : ℝ) - 1000|) := by
+  have h := (abGaps_weakCoupling 1100 1000 6 (by norm_num) (by norm_num) (by norm_num)).1
+  rwa [show max (1100 : ℝ) 1000 = 1100 by norm_num] at h
+
+/-- `abMixedState` lists `βα` before `αβ`. -/
+example : abMixedState 0 = (1, 0) ∧ abMixedState 1 = (0, 1) := ⟨rfl, rfl⟩
+
+/-- The mixed-state block at `νA = 4`, `νB = -4`, `J = 6`: the `βα` diagonal entry is
+`(νA - νB) / 2 - J / 4 = 5 / 2` and the coupling entry is `J / 2 = 3`. -/
+example : (abHamiltonian 4 (-4) 6).submatrix abMixedState abMixedState 0 0 = 5 / 2 ∧
+    (abHamiltonian 4 (-4) 6).submatrix abMixedState abMixedState 0 1 = 3 := by
+  rw [abHamiltonian_submatrix_mixed]
+  constructor <;> simp [abMixingMatrix] <;> norm_num
 
 /-- The mixed-state energies are the eigenvalues of `abMixingMatrix` minus
 `(νA + νB) / 2 + J / 4`. -/
@@ -354,9 +450,7 @@ example : abMixingEigenPlus 4 (-4) 6 + abMixingEigenMinus 4 (-4) 6 = 4 + (-4) :=
 #print axioms chemicalShift_scale
 #print axioms multipletWeights
 #print axioms multiplet_sum
-#print axioms multiplet_symm_nat
 #print axioms multiplet_symm
-#print axioms multiplet_card
 #print axioms linePosition
 #print axioms linePosition_injective
 #print axioms maxMultiplicityOn
@@ -371,7 +465,6 @@ example : abMixingEigenPlus 4 (-4) 6 + abMixingEigenMinus 4 (-4) 6 = 4 + (-4) :=
 #print axioms card_combined_eq_iff
 #print axioms convIntensity
 #print axioms conv_total
-#print axioms binomial_vandermonde
 #print axioms integral_ratio
 #print axioms excessFraction
 #print axioms excessFraction_eq_of_populations
@@ -408,10 +501,19 @@ example : abMixingEigenPlus 4 (-4) 6 + abMixingEigenMinus 4 (-4) 6 = 4 + (-4) :=
 #print axioms ab_eigen_sum
 #print axioms ab_eigen_prod
 #print axioms abEnergyPlus_eq_abMixingEigenPlus
-#print axioms abLineAlphaMinus
-#print axioms abLineAlphaPlus
-#print axioms abLinePlusBeta
-#print axioms abLineMinusBeta
-#print axioms abLines_eq
+#print axioms abOffsetAlphaMinus
+#print axioms abOffsetAlphaPlus
+#print axioms abOffsetPlusBeta
+#print axioms abOffsetMinusBeta
+#print axioms abGapAlphaMinus
+#print axioms abGapAlphaPlus
+#print axioms abGapPlusBeta
+#print axioms abGapMinusBeta
+#print axioms abOffsets_eq
+#print axioms abOffsets_self
+#print axioms abOffsets_pos
+#print axioms abGaps_eq_offsets
+#print axioms abGaps_eq
 #print axioms ab_first_order_limit
-#print axioms abLines_weakCoupling
+#print axioms abOffsets_weakCoupling
+#print axioms abGaps_weakCoupling

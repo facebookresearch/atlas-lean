@@ -17,7 +17,6 @@ public import Mathlib.Data.Fin.Rev
 public import Mathlib.Data.Fin.Tuple.Basic
 public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Data.Finset.Card
-public import Mathlib.Data.Finset.NatAntidiagonal
 public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Fintype.Card
 public import Mathlib.Data.Matrix.Basic
@@ -34,7 +33,6 @@ import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.Data.Nat.Choose.Sum
-import Mathlib.Data.Nat.Choose.Vandermonde
 import Lean.Elab.Tactic.Omega
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
@@ -49,7 +47,7 @@ import Mathlib.Tactic.Ring
 # Quantitative NMR
 
 Zeeman splitting, chemical shift, first-order multiplets, integrals, population excess, and the
-exact energy levels and line positions of the two-spin AB system.
+exact energy levels and candidate transitions of the two-spin AB system.
 
 ## i. Overview
 
@@ -68,13 +66,18 @@ parameters, never universal constants.
 The AB section (§E) starts from the full two-spin Hamiltonian
 `H = -νA I_zA - νB I_zB + J I_A · I_B` in frequency units, built from Physlib's Pauli matrices on
 the product basis `αα, αβ, βα, ββ`. The Zeeman terms carry the sign of §A (`E = -γ hbar B0 m`,
-with the resonance frequencies `νA`, `νB` positive for `γ > 0`), so `α` (`m = +1/2`) lies below
-`β`. Its eigenvalues are exactly the four levels `-(νA + νB) / 2 + J / 4` (`αα`),
-`(νA + νB) / 2 + J / 4` (`ββ`) and `-J / 4 ± D / 2`, where `D = √((νA - νB) ^ 2 + J ^ 2)`. The
-four lines are the transitions between `αα` or `ββ` and the two mixed states (the `ΔM = ±1`
-selection rule is assumed, not derived), at `(νA + νB) / 2 ± (D ± J) / 2`. When `νA ≠ νB`
-each line lies within `J ^ 2 / (4 |νA - νB|)` of its first-order position. Line intensities are
-not formalized.
+with the resonance frequencies `νA`, `νB` positive for `γ > 0`), so for positive `νA`, `νB` the
+state `α` (`m = +1/2`) lies below `β`; the Hamiltonian and its spectrum are defined for all real
+`νA`, `νB`, `J`, including signed frequencies measured from a carrier. Its eigenvalues are
+exactly the four levels `-(νA + νB) / 2 + J / 4` (`αα`), `(νA + νB) / 2 + J / 4` (`ββ`) and
+`-J / 4 ± D / 2`, where `D = √((νA - νB) ^ 2 + J ^ 2)`. The four candidate transitions run
+between `αα` or `ββ` and the two mixed states (the `ΔM = ±1` selection rule is assumed, not
+derived). Their signed transition offsets are `(νA + νB) / 2 ± (D ± J) / 2`; their line
+frequencies, the absolute energy gaps, equal these offsets when `|J| < νA` and `|J| < νB`. When
+`νA ≠ νB` each offset lies within `J ^ 2 / (4 |νA - νB|)` of its first-order position.
+Transition moments and line intensities are not formalized. A candidate is an observed line only
+if its transition moment is nonzero, and for `J ≠ 0` all four are observed only when `νA ≠ νB`:
+at `νA = νB = ν0` the two candidates at `ν0 ± J` have zero transition moment.
 
 ## ii. Key results
 
@@ -86,14 +89,18 @@ not formalized.
   neighbours.
 - `card_combined_le`, `card_combined_eq_iff` : the maximum multiplicity `∏ (nᵢ * sᵢ + 1)` of
   several groups, and when it is attained.
-- `conv_total`, `binomial_vandermonde` : total intensity under convolution, and the Vandermonde
-  identity for binomial weights.
+- `conv_total` : total intensity under convolution. The Vandermonde identity for binomial
+  weights is Mathlib's `Nat.add_choose_eq`.
 - `integral_ratio` : integrals are proportional to nucleus count under full relaxation.
-- `excessFraction_eq_of_populations`, `excessFraction_bound` : the Boltzmann population excess
-  and its first-order value `x / 2` with an explicit `x ^ 2` bound.
+- `excessFraction_eq_of_populations`, `excessFraction_bound` : the signed Boltzmann population
+  excess and its first-order value `x / 2` with an explicit `x ^ 2` bound.
 - `abHamiltonian_hasEigenvalue_iff` : the four energy levels of the AB system.
-- `abLines_eq` : the four AB line positions `(νA + νB) / 2 ± (D ± J) / 2`.
-- `abLines_weakCoupling` : the weak-coupling limit of the AB lines, with an explicit bound.
+- `abOffsets_eq` : the signed transition offsets `(νA + νB) / 2 ± (D ± J) / 2` of the four
+  candidate AB transitions.
+- `abGaps_eq` : the line frequencies, the absolute energy gaps, equal these offsets when both
+  resonance frequencies exceed `|J|`.
+- `abOffsets_weakCoupling`, `abGaps_weakCoupling` : the weak-coupling limit, with an explicit
+  bound.
 
 ## iii. Table of contents
 
@@ -105,7 +112,7 @@ not formalized.
   - E.1. The two-spin Hamiltonian
   - E.2. Energy levels
   - E.3. The mixed-state block
-  - E.4. Line positions and the weak-coupling limit
+  - E.4. Candidate transitions and the weak-coupling limit
 
 ## iv. References
 
@@ -230,10 +237,6 @@ lemma multiplet_sum (n : ℕ) : ∑ k, multipletWeights n k = 2 ^ n := by
   rw [h1, ← Nat.cast_sum]
   exact_mod_cast Nat.sum_range_choose n
 
-/-- Symmetry of binomial coefficients: `choose n k = choose n (n - k)`. -/
-lemma multiplet_symm_nat (n k : ℕ) (hk : k ≤ n) :
-    Nat.choose n k = Nat.choose n (n - k) := (Nat.choose_symm hk).symm
-
 /-- The multiplet weights are symmetric under reversal of the line order. -/
 lemma multiplet_symm (n : ℕ) (k : Fin (n + 1)) :
     multipletWeights n k = multipletWeights n (Fin.rev k) := by
@@ -243,11 +246,7 @@ lemma multiplet_symm (n : ℕ) (k : Fin (n + 1)) :
     omega
   have hk : (k : ℕ) ≤ n := by have h2 := k.2; omega
   rw [hrev]
-  exact congrArg Nat.cast (multiplet_symm_nat n _ hk)
-
-/-- The number of lines for `n` equivalent spin-1/2 neighbours is `n + 1`. -/
-lemma multiplet_card (n : ℕ) : Fintype.card (Fin (n + 1)) = n + 1 :=
-  Fintype.card_fin _
+  exact congrArg Nat.cast (Nat.choose_symm hk).symm
 
 /-- Position of the `k`-th multiplet line: `ν0 + (k - n / 2) * J`, with centre
 `ν0` and coupling `J`, both in Hz. -/
@@ -409,15 +408,6 @@ lemma conv_total {α β γ : Type*} [Fintype α] [Fintype β] [Fintype γ]
   intro j _
   exact Fintype.sum_ite_eq _ _
 
-/-- Vandermonde convolution for binomials over `Finset.antidiagonal`
-(`Nat.choose` is zero above the diagonal, as Mathlib defines it). -/
-lemma binomial_vandermonde (n m k : ℕ) :
-    ∑ ij ∈ Finset.antidiagonal k,
-        ((Nat.choose n ij.1 : ℝ) * (Nat.choose m ij.2 : ℝ)) =
-      ((Nat.choose (n + m) k : ℕ) : ℝ) := by
-  simp_rw [← Nat.cast_mul, ← Nat.cast_sum]
-  exact (congrArg Nat.cast (Nat.add_choose_eq n m k)).symm
-
 /-!
 
 ## D. Integrals and population excess
@@ -436,9 +426,11 @@ lemma integral_ratio (C Ni Nj ii ij : ℝ) (hC : C ≠ 0) (hNj : Nj ≠ 0)
 
 /-- The population excess fraction `(e^x - 1) / (e^x + 1)` of a two-level
 system whose populations are in the Boltzmann ratio `Nα / Nβ = e^x`
-(`excessFraction_eq_of_populations`). For spin-1/2 nuclei in a field `B0` at
-temperature `T`, `x = γ * hbar * B0 / (kB * T)`, with all parameters explicit
-reals; the Boltzmann ratio is the model assumption. -/
+(`excessFraction_eq_of_populations`). It is signed: the excess
+`(Nα - Nβ) / (Nα + Nβ)` of `α` over `β`, negative when `x < 0`. For spin-1/2
+nuclei in a field `B0` at temperature `T`, `x = γ * hbar * B0 / (kB * T)`,
+with all parameters explicit reals; the Boltzmann ratio is the model
+assumption. -/
 noncomputable def excessFraction (x : ℝ) : ℝ :=
   (Real.exp x - 1) / (Real.exp x + 1)
 
@@ -893,8 +885,8 @@ theorem abHamiltonian_hasEigenvalue_iff (νA νB J : ℝ) (E : ℂ) :
 
 On the mixed states `βα`, `αβ` (in that order) the Hamiltonian is the `2 × 2` matrix
 `abMixingMatrix` minus the scalar `(νA + νB) / 2 + J / 4`. Its eigenvalues `abMixingEigenPlus`,
-`abMixingEigenMinus` are the two mixed-state energies plus that scalar; they are not line
-positions.
+`abMixingEigenMinus` are the two mixed-state energies plus that scalar; they are not transition
+frequencies.
 
 -/
 
@@ -994,48 +986,147 @@ lemma abEnergyPlus_eq_abMixingEigenPlus (νA νB J : ℝ) :
 
 /-!
 
-### E.4. Line positions and the weak-coupling limit
+### E.4. Candidate transitions and the weak-coupling limit
 
-The observed lines are the transitions between `αα` or `ββ` and the two mixed states (total
-magnetic quantum number `M = 1` or `-1` to `M = 0`); the selection rule `ΔM = ±1` that makes
-them the only lines is a model assumption here. Each line is a difference of two energies, in Hz.
+The candidate transitions are the four between `αα` or `ββ` (total magnetic quantum number
+`M = 1` or `-1`) and the two mixed states (`M = 0`); the selection rule `ΔM = ±1` that leaves
+only these is a model assumption here. Each candidate flips one spin from `α` to `β`. Its signed
+transition offset (`abOffsetAlphaMinus`, ...) is the energy change `E(final) - E(initial)` in Hz,
+and its line frequency (`abGapAlphaMinus`, ...) is the absolute energy gap
+`|E(final) - E(initial)|`, by `ν = ΔE / h`. The offsets can be negative, for example for
+frequencies measured from a carrier; when both resonance frequencies exceed `|J|` they are
+positive and equal the line frequencies (`abGaps_eq_offsets`).
+
+Transition moments are not formalized, and a candidate is an observed line only if its transition
+moment is nonzero. For `J ≠ 0` all four candidates are observed only when `νA ≠ νB`: at
+`νA = νB = ν0` the two at `ν0 ± J` (`abOffsets_self`) have zero transition moment, leaving the
+single line `ν0` of the `A₂` spectrum.
 
 -/
 
-/-- The line of the transition between `αα` and the lower mixed state:
-`abEnergyMinus - abEnergyAlphaAlpha`. -/
-noncomputable def abLineAlphaMinus (νA νB J : ℝ) : ℝ :=
+/-- Signed transition offset (Hz) of the candidate transition from `αα` to the lower mixed state:
+`abEnergyMinus - abEnergyAlphaAlpha`. It can be negative; its absolute value is the line
+frequency `abGapAlphaMinus`. -/
+noncomputable def abOffsetAlphaMinus (νA νB J : ℝ) : ℝ :=
   abEnergyMinus νA νB J - abEnergyAlphaAlpha νA νB J
 
-/-- The line of the transition between `αα` and the upper mixed state:
-`abEnergyPlus - abEnergyAlphaAlpha`. -/
-noncomputable def abLineAlphaPlus (νA νB J : ℝ) : ℝ :=
+/-- Signed transition offset (Hz) of the candidate transition from `αα` to the upper mixed state:
+`abEnergyPlus - abEnergyAlphaAlpha`. It can be negative; its absolute value is the line
+frequency `abGapAlphaPlus`. -/
+noncomputable def abOffsetAlphaPlus (νA νB J : ℝ) : ℝ :=
   abEnergyPlus νA νB J - abEnergyAlphaAlpha νA νB J
 
-/-- The line of the transition between the upper mixed state and `ββ`:
-`abEnergyBetaBeta - abEnergyPlus`. -/
-noncomputable def abLinePlusBeta (νA νB J : ℝ) : ℝ :=
+/-- Signed transition offset (Hz) of the candidate transition from the upper mixed state to `ββ`:
+`abEnergyBetaBeta - abEnergyPlus`. It can be negative; its absolute value is the line
+frequency `abGapPlusBeta`. -/
+noncomputable def abOffsetPlusBeta (νA νB J : ℝ) : ℝ :=
   abEnergyBetaBeta νA νB J - abEnergyPlus νA νB J
 
-/-- The line of the transition between the lower mixed state and `ββ`:
-`abEnergyBetaBeta - abEnergyMinus`. -/
-noncomputable def abLineMinusBeta (νA νB J : ℝ) : ℝ :=
+/-- Signed transition offset (Hz) of the candidate transition from the lower mixed state to `ββ`:
+`abEnergyBetaBeta - abEnergyMinus`. It can be negative; its absolute value is the line
+frequency `abGapMinusBeta`. -/
+noncomputable def abOffsetMinusBeta (νA νB J : ℝ) : ℝ :=
   abEnergyBetaBeta νA νB J - abEnergyMinus νA νB J
 
-/-- The four AB line positions: with `D = √((νA - νB) ^ 2 + J ^ 2)`, the lines lie at
-`(νA + νB) / 2 ± (D + J) / 2` and `(νA + νB) / 2 ± (D - J) / 2`. -/
-theorem abLines_eq (νA νB J : ℝ) :
-    abLineAlphaMinus νA νB J = (νA + νB) / 2 - (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) + J) / 2 ∧
-    abLineAlphaPlus νA νB J = (νA + νB) / 2 + (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) - J) / 2 ∧
-    abLinePlusBeta νA νB J = (νA + νB) / 2 - (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) - J) / 2 ∧
-    abLineMinusBeta νA νB J = (νA + νB) / 2 + (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) + J) / 2 := by
+/-- Line frequency (Hz) of the candidate transition between `αα` and the lower mixed state: the
+absolute energy gap `|abEnergyMinus - abEnergyAlphaAlpha|`. -/
+noncomputable def abGapAlphaMinus (νA νB J : ℝ) : ℝ :=
+  |abEnergyMinus νA νB J - abEnergyAlphaAlpha νA νB J|
+
+/-- Line frequency (Hz) of the candidate transition between `αα` and the upper mixed state: the
+absolute energy gap `|abEnergyPlus - abEnergyAlphaAlpha|`. -/
+noncomputable def abGapAlphaPlus (νA νB J : ℝ) : ℝ :=
+  |abEnergyPlus νA νB J - abEnergyAlphaAlpha νA νB J|
+
+/-- Line frequency (Hz) of the candidate transition between the upper mixed state and `ββ`: the
+absolute energy gap `|abEnergyBetaBeta - abEnergyPlus|`. -/
+noncomputable def abGapPlusBeta (νA νB J : ℝ) : ℝ :=
+  |abEnergyBetaBeta νA νB J - abEnergyPlus νA νB J|
+
+/-- Line frequency (Hz) of the candidate transition between the lower mixed state and `ββ`: the
+absolute energy gap `|abEnergyBetaBeta - abEnergyMinus|`. -/
+noncomputable def abGapMinusBeta (νA νB J : ℝ) : ℝ :=
+  |abEnergyBetaBeta νA νB J - abEnergyMinus νA νB J|
+
+/-- The signed offsets of the four candidate transitions: with `D = √((νA - νB) ^ 2 + J ^ 2)`,
+they are `(νA + νB) / 2 ± (D + J) / 2` and `(νA + νB) / 2 ± (D - J) / 2`. -/
+theorem abOffsets_eq (νA νB J : ℝ) :
+    abOffsetAlphaMinus νA νB J =
+      (νA + νB) / 2 - (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) + J) / 2 ∧
+    abOffsetAlphaPlus νA νB J =
+      (νA + νB) / 2 + (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) - J) / 2 ∧
+    abOffsetPlusBeta νA νB J =
+      (νA + νB) / 2 - (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) - J) / 2 ∧
+    abOffsetMinusBeta νA νB J =
+      (νA + νB) / 2 + (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) + J) / 2 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
-    simp only [abLineAlphaMinus, abLineAlphaPlus, abLinePlusBeta, abLineMinusBeta,
+    simp only [abOffsetAlphaMinus, abOffsetAlphaPlus, abOffsetPlusBeta, abOffsetMinusBeta,
       abEnergyAlphaAlpha, abEnergyBetaBeta, abEnergyPlus, abEnergyMinus] <;> ring
+
+/-- Equivalent shifts (`A₂`): at `νA = νB = ν0` with `J ≥ 0` the four candidate offsets are
+`ν0 - J`, `ν0`, `ν0` and `ν0 + J`. For `J > 0` the outer two involve the lower mixed state, which
+is then the antisymmetric singlet `αβ - βα`; their transition moments vanish (not formalized
+here), so the observed spectrum is the single line `ν0`, not four lines. For `J < 0` the two
+mixed states exchange roles. -/
+lemma abOffsets_self (ν0 J : ℝ) (hJ : 0 ≤ J) :
+    abOffsetAlphaMinus ν0 ν0 J = ν0 - J ∧ abOffsetAlphaPlus ν0 ν0 J = ν0 ∧
+      abOffsetPlusBeta ν0 ν0 J = ν0 ∧ abOffsetMinusBeta ν0 ν0 J = ν0 + J := by
+  have hD : Real.sqrt ((ν0 - ν0) ^ 2 + J ^ 2) = J := by simp [Real.sqrt_sq hJ]
+  obtain ⟨h1, h2, h3, h4⟩ := abOffsets_eq ν0 ν0 J
+  rw [hD] at h1 h2 h3 h4
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [h1]; ring
+  · rw [h2]; ring
+  · rw [h3]; ring
+  · rw [h4]; ring
+
+/-- When both resonance frequencies exceed `|J|` (as lab-frame NMR frequencies do), all four
+signed transition offsets are positive. -/
+lemma abOffsets_pos (νA νB J : ℝ) (hA : |J| < νA) (hB : |J| < νB) :
+    0 < abOffsetAlphaMinus νA νB J ∧ 0 < abOffsetAlphaPlus νA νB J ∧
+      0 < abOffsetPlusBeta νA νB J ∧ 0 < abOffsetMinusBeta νA νB J := by
+  obtain ⟨h1, h2, h3, h4⟩ := abOffsets_eq νA νB J
+  have hJD : |J| ≤ Real.sqrt ((νA - νB) ^ 2 + J ^ 2) := by
+    rw [← Real.sqrt_sq_eq_abs]
+    exact Real.sqrt_le_sqrt (le_add_of_nonneg_left (sq_nonneg _))
+  have hDle : Real.sqrt ((νA - νB) ^ 2 + J ^ 2) ≤ |νA - νB| + |J| := by
+    rw [← Real.sqrt_sq (by positivity : (0 : ℝ) ≤ |νA - νB| + |J|)]
+    exact Real.sqrt_le_sqrt (by
+      nlinarith [sq_abs (νA - νB), sq_abs J, mul_nonneg (abs_nonneg (νA - νB)) (abs_nonneg J)])
+  have hAB : |νA - νB| < νA + νB - 2 * |J| := abs_lt.mpr ⟨by linarith, by linarith⟩
+  have hJ := le_abs_self J
+  have hJ' := neg_abs_le J
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [h1]; linarith
+  · rw [h2]; linarith
+  · rw [h3]; linarith
+  · rw [h4]; linarith
+
+/-- When both resonance frequencies exceed `|J|`, each line frequency equals the signed offset
+of its candidate transition. -/
+lemma abGaps_eq_offsets (νA νB J : ℝ) (hA : |J| < νA) (hB : |J| < νB) :
+    abGapAlphaMinus νA νB J = abOffsetAlphaMinus νA νB J ∧
+      abGapAlphaPlus νA νB J = abOffsetAlphaPlus νA νB J ∧
+      abGapPlusBeta νA νB J = abOffsetPlusBeta νA νB J ∧
+      abGapMinusBeta νA νB J = abOffsetMinusBeta νA νB J := by
+  obtain ⟨h1, h2, h3, h4⟩ := abOffsets_pos νA νB J hA hB
+  exact ⟨abs_of_pos h1, abs_of_pos h2, abs_of_pos h3, abs_of_pos h4⟩
+
+/-- The four AB line frequencies: when both resonance frequencies exceed `|J|`, with
+`D = √((νA - νB) ^ 2 + J ^ 2)`, they are `(νA + νB) / 2 ± (D + J) / 2` and
+`(νA + νB) / 2 ± (D - J) / 2`. -/
+theorem abGaps_eq (νA νB J : ℝ) (hA : |J| < νA) (hB : |J| < νB) :
+    abGapAlphaMinus νA νB J = (νA + νB) / 2 - (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) + J) / 2 ∧
+    abGapAlphaPlus νA νB J = (νA + νB) / 2 + (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) - J) / 2 ∧
+    abGapPlusBeta νA νB J = (νA + νB) / 2 - (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) - J) / 2 ∧
+    abGapMinusBeta νA νB J = (νA + νB) / 2 + (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) + J) / 2 := by
+  obtain ⟨g1, g2, g3, g4⟩ := abGaps_eq_offsets νA νB J hA hB
+  rw [g1, g2, g3, g4]
+  exact abOffsets_eq νA νB J
 
 /-- First-order limit: for `Δν ≠ 0`,
 `|√(Δν ^ 2 + J ^ 2) - |Δν|| ≤ J ^ 2 / (2 * |Δν|)`. With `Δν = νA - νB` this bounds how far
-the AB lines are from their first-order positions (`abLines_weakCoupling`). -/
+the AB transition offsets are from their first-order positions (`abOffsets_weakCoupling`). -/
 lemma ab_first_order_limit (Δν J : ℝ) (hΔ : Δν ≠ 0) :
     |(Real.sqrt (Δν ^ 2 + J ^ 2) - |Δν|)| ≤ J ^ 2 / (2 * |Δν|) := by
   have ha : (0 : ℝ) < |Δν| := abs_pos.mpr hΔ
@@ -1069,16 +1160,16 @@ lemma ab_first_order_limit (Δν J : ℝ) (hΔ : Δν ≠ 0) :
   rw [abs_of_nonneg hnn, hdiff]
   exact hle
 
-/-- Weak-coupling limit of the AB spectrum: when `νA ≠ νB`, the lines `− ↔ ββ` and `αα ↔ +` lie
-within `J ^ 2 / (4 |νA - νB|)` of the first-order doublet `max νA νB ± J / 2` of the
-higher-frequency nucleus, and `+ ↔ ββ` and `αα ↔ −` within the same bound of the doublet
-`min νA νB ± J / 2` of the lower one. -/
-lemma abLines_weakCoupling (νA νB J : ℝ) (h : νA ≠ νB) :
-    |abLineMinusBeta νA νB J - (max νA νB + J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
-    |abLineAlphaPlus νA νB J - (max νA νB - J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
-    |abLinePlusBeta νA νB J - (min νA νB + J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
-    |abLineAlphaMinus νA νB J - (min νA νB - J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) := by
-  obtain ⟨h1, h2, h3, h4⟩ := abLines_eq νA νB J
+/-- Weak-coupling limit of the AB transition offsets: when `νA ≠ νB`, the offsets of `− → ββ`
+and `αα → +` lie within `J ^ 2 / (4 |νA - νB|)` of the first-order doublet `max νA νB ± J / 2`
+of the nucleus with the larger resonance frequency, and those of `+ → ββ` and `αα → −` within
+the same bound of the doublet `min νA νB ± J / 2` of the other one. -/
+lemma abOffsets_weakCoupling (νA νB J : ℝ) (h : νA ≠ νB) :
+    |abOffsetMinusBeta νA νB J - (max νA νB + J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
+    |abOffsetAlphaPlus νA νB J - (max νA νB - J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
+    |abOffsetPlusBeta νA νB J - (min νA νB + J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
+    |abOffsetAlphaMinus νA νB J - (min νA νB - J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) := by
+  obtain ⟨h1, h2, h3, h4⟩ := abOffsets_eq νA νB J
   have hlim := ab_first_order_limit (νA - νB) J (sub_ne_zero.mpr h)
   have hmax : max νA νB = (νA + νB) / 2 + |νA - νB| / 2 := by
     rcases le_total νA νB with hle | hle
@@ -1107,5 +1198,16 @@ lemma abLines_weakCoupling (νA νB J : ℝ) (h : νA ≠ νB) :
       _ ≤ _ := e2 ▸ hbound
   · calc _ = |-((D - d) / 2)| := by congr 1; ring
       _ ≤ _ := e2 ▸ hbound
+
+/-- Weak-coupling limit of the AB line frequencies: when both resonance frequencies exceed `|J|`
+and `νA ≠ νB`, each line frequency obeys the bound of `abOffsets_weakCoupling`. -/
+lemma abGaps_weakCoupling (νA νB J : ℝ) (hA : |J| < νA) (hB : |J| < νB) (h : νA ≠ νB) :
+    |abGapMinusBeta νA νB J - (max νA νB + J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
+    |abGapAlphaPlus νA νB J - (max νA νB - J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
+    |abGapPlusBeta νA νB J - (min νA νB + J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
+    |abGapAlphaMinus νA νB J - (min νA νB - J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) := by
+  obtain ⟨g1, g2, g3, g4⟩ := abGaps_eq_offsets νA νB J hA hB
+  rw [g1, g2, g3, g4]
+  exact abOffsets_weakCoupling νA νB J h
 
 end Chemistry.QuantitativeNMR
