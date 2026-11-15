@@ -56,7 +56,10 @@ Regions are arbitrary labels and need not be connected: this class contains the 
 Tang's construction, so hardness transfers, and the membership argument does not use
 connectivity.
 Cells are `Fin m × Fin n`, adjacent in Mathlib's grid graph `pathGraph m □ pathGraph n`, and the
-path is a Hamiltonian walk (`SimpleGraph.Walk.IsHamiltonian`) from `S` to `F`. At step `t` the
+path is a Hamiltonian walk (`SimpleGraph.Walk.IsHamiltonian`) from `S` to `F`. Mathlib defines
+`p.IsHamiltonian` as `∀ a, p.support.count a = 1`: every cell occurs exactly once in the walk, so
+a walk that revisits a cell is excluded and the walk is a path
+(`SimpleGraph.Walk.IsHamiltonian.isPath`). At step `t` the
 path is at `c.getVert t`; the visits to a region `k` up to step `t` are the start (if `S` is in
 `k`) and the moves among the first `t` that go from a cell outside `k` to a cell inside `k`. The
 author's optional room-count clues (a small number giving the total number of entries into a
