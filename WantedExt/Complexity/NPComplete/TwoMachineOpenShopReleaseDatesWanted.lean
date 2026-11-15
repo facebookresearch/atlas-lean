@@ -27,7 +27,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.NoWaitFlowShopSchedulingWanted
+public import WantedExt.Complexity.NPComplete.FlowShopSchedulingWanted
 public import WantedExt.Complexity.NPComplete.TwoMachineFlowShopReleaseDatesWanted
 
 @[expose] public section
@@ -54,11 +54,11 @@ deadline `D` read as the makespan bound `K` (every task ends by `D` iff the make
 `D`), and release dates added. The instance type and its well-formedness (`m = 2`, two tasks per
 job, one release date per job; all data, `K` included, may be `0`) are those of the flow shop
 `F2|r_j|C_max` (`TwoMachineFlowShopReleaseDatesWanted`), which pairs the [SS14]/[SS15] instance
-`(m, task lengths per job, D)` with the list of release dates. The schedule is Garey and
-Johnson's open-shop schedule meeting the deadline, `NoWaitFlowShopScheduling.IsOpenShopSchedule`
-(each processor's start times one-to-one, a later task on a processor starting after an earlier
-one completes, the tasks of a job in pairwise disjoint intervals, every task ending by `D`),
-plus `rⱼ ≤ σ(p, j)` for both tasks of job `j`. Processors are `Fin m`, jobs `Fin |J|`. Binary
+`(m, task lengths per job, D)` with the list of release dates. The schedule conditions are that
+module's, with its processor-order condition replaced by the open-shop condition: every task
+ends by `D`, two tasks on one processor do not overlap, the two tasks of a job do not overlap
+(non-overlap read, as there, as `s + l ≤ s'` or `s' + l' ≤ s`), and `rⱼ ≤ σ(p, j)` for both
+tasks of job `j`. Processors are `Fin m`, jobs `Fin |J|`. Binary
 encoding of all numbers. Membership in NP is the certificate argument: the `2n` start times,
 each at most `K`, are checked in polynomial time.
 
@@ -73,13 +73,18 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- Some open-shop schedule `σ p j` (start of job `j`'s task on processor `p`) meets the bound
-`K` and starts both tasks of every job `j` no earlier than its release date `rⱼ`. -/
+/-- Some open-shop schedule `σ p j` (start of job `j`'s task on processor `p`) ends every task
+by `K`, runs one task at a time on each processor, never runs the two tasks of a job at the same
+time, and starts both tasks of every job `j` no earlier than its release date `rⱼ`. -/
 def TwoMachineOpenShopReleaseDatesFeasible (i : TwoMachineFlowShopReleaseDatesInstance) :
     Prop :=
   ∃ σ : Fin i.1.1 → Fin i.1.2.1.length → ℕ,
-    NoWaitFlowShopScheduling.IsOpenShopSchedule i.1 σ ∧
-      ∀ (p : Fin i.1.1) (j : Fin i.1.2.1.length), i.2.getD j 0 ≤ σ p j
+    (∀ p j, σ p j + FlowShopScheduling.len i.1 p j ≤ i.1.2.2) ∧
+    (∀ p j k, j ≠ k → σ p j + FlowShopScheduling.len i.1 p j ≤ σ p k ∨
+      σ p k + FlowShopScheduling.len i.1 p k ≤ σ p j) ∧
+    (∀ j p q, p ≠ q → σ p j + FlowShopScheduling.len i.1 p j ≤ σ q j ∨
+      σ q j + FlowShopScheduling.len i.1 q j ≤ σ p j) ∧
+    ∀ (p : Fin i.1.1) (j : Fin i.1.2.1.length), i.2.getD j 0 ≤ σ p j
 
 open Classical in
 /-- OPEN SHOP O2|r_i|Cmax as a decision problem over bitstrings. -/
