@@ -102,8 +102,8 @@ its first venue, from each venue to the next, and from its last venue back home.
 def totalTravel (d : ℕ → ℕ → ℕ) (n : ℕ) (opp : ℕ → ℕ → ℕ) (home : ℕ → ℕ → Bool) : ℕ :=
   ∑ t ∈ Finset.range n,
     (d t (venue opp home t 0) +
-      ∑ r ∈ Finset.range (numRounds n - 1),
-        d (venue opp home t r) (venue opp home t (r + 1)) +
+      (∑ r ∈ Finset.range (numRounds n - 1),
+        d (venue opp home t r) (venue opp home t (r + 1))) +
       d (venue opp home t (numRounds n - 1)) t)
 
 /-- Some double round robin league schedule has total travel distance at most `K`. -/
