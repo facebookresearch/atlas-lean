@@ -72,13 +72,22 @@ with depolarization negative (`V_HH = -V`); the modern absolute potential is `V 
 * `jac_squid_rest_isHurwitz`, `rest_exponentially_stable`: **stability of the resting state**.
   The Jacobian at rest is Hurwitz, so nearby initial states have solutions and all of them
   converge to `rest` exponentially.
+* `strictMono_mInf`, `strictAnti_hInf`, `strictMono_nInf`: `m∞` and `n∞` increase and `h∞`
+  decreases on `ℝ` (bounds on the logarithmic derivative of `vtrap`).
+* `strictMonoOn_steadyCurrent_squid`: the squid **steady-state current**
+  `I∞(V) = ionic squid V m∞(V) h∞(V) n∞(V)` is strictly increasing on `[-12, 115]`: its derivative
+  is positive on 18 voltage cells, each closed by rational enclosures of `m∞, h∞, n∞` at the cell
+  endpoints. Outside `[-12, 115]`, `I∞` has the sign of `V`.
+* `field_squid_eq_zero_iff`: **uniqueness of the squid equilibrium**. `rest` is the only zero of
+  `field squid`.
 
 ## Scope
 
-Proved for constant applied current `I`. Not treated: uniqueness of the equilibrium for the
-squid parameters (monotonicity of the steady-state current is not shown), initial gating values
-outside `[0, 1]`, time-dependent stimuli, and all bifurcation and excitability questions
-(threshold, action potentials, the Hopf bifurcation and repetitive firing as `I` grows).
+Proved for constant applied current `I`. Uniqueness of the equilibrium is proved for the squid
+parameters only (`field_squid_eq_zero_iff`); for general `Params` it can fail. Not treated:
+initial gating values outside `[0, 1]`, time-dependent stimuli, and all bifurcation and
+excitability questions (threshold, action potentials, the Hopf bifurcation and repetitive firing
+as `I` grows).
 
 ## Source receipt (reuse search, 2026-11-13)
 
@@ -979,5 +988,1200 @@ theorem rest_exponentially_stable :
     · exact (min_le_right _ _).trans (min_le_right _ _)
   · rw [← h0] at hx₀ ⊢
     exact hdecay x hx (hx₀.trans_le (min_le_left _ _)) t ht
+
+
+/-! ## I. The steady-state current and uniqueness of the squid equilibrium -/
+
+/-! ### I.1 The logarithmic derivative of `vtrap` -/
+
+/-- Padé bound `1 + x / 2 + x² / 12 ≤ eˣ (1 - x / 2 + x² / 12)` for `x ≥ 0`. -/
+private theorem pade_le_exp {x : ℝ} (hx : 0 ≤ x) :
+    1 + x / 2 + x ^ 2 / 12 ≤ exp x * (1 - x / 2 + x ^ 2 / 12) := by
+  have hT := Real.sum_le_exp_of_nonneg hx 6
+  norm_num [Finset.sum_range_succ, Nat.factorial] at hT
+  have hQ : 0 < 1 - x / 2 + x ^ 2 / 12 := by nlinarith [sq_nonneg (x - 3)]
+  have h5 : 0 ≤ x ^ 5 * (2 - x + x ^ 2) := by
+    have : 0 < 2 - x + x ^ 2 := by nlinarith [sq_nonneg (x - 1 / 2)]
+    positivity
+  nlinarith [mul_le_mul_of_nonneg_right hT hQ.le]
+
+/-- `eˣ (x - 2) + x + 2 ≥ 0` for `x ≥ 0` (its derivative `eˣ (x - 1) + 1` is nonnegative). -/
+private theorem exp_mul_sub_two_add_nonneg {x : ℝ} (hx : 0 ≤ x) :
+    0 ≤ exp x * (x - 2) + x + 2 := by
+  have hd : ∀ y, HasDerivAt (fun y => exp y * (y - 2) + y + 2) (exp y * (y - 1) + 1) y := by
+    intro y
+    have := (((hasDerivAt_exp y).mul ((hasDerivAt_id y).sub_const 2)).add
+      (hasDerivAt_id y)).add_const 2
+    exact this.congr_deriv (by simp only [id]; ring)
+  have hmono : Monotone fun y => exp y * (y - 2) + y + 2 :=
+    monotone_of_deriv_nonneg (fun y => (hd y).differentiableAt) fun y => by
+      rw [(hd y).deriv]
+      have h1 := mul_le_mul_of_nonneg_left (add_one_le_exp (-y)) (exp_pos y).le
+      have h2 : exp y * exp (-y) = 1 := by rw [← exp_add]; simp
+      nlinarith
+  simpa using hmono hx
+
+private theorem exp_sub_one_ne {x : ℝ} (hx : x ≠ 0) : exp x - 1 ≠ 0 := by
+  intro h; apply hx; simpa [sub_eq_zero] using h
+
+private theorem neg_deriv_vtrap_of_ne {x : ℝ} (hx : x ≠ 0) :
+    -deriv vtrap x = (x * exp x - exp x + 1) / (exp x - 1) ^ 2 := by
+  rw [(hasDerivAt_vtrap hx).deriv]; ring
+
+/-- Away from `0`, `c vtrap x ≤ -vtrap' x` is a polynomial inequality in `x` and `eˣ`. -/
+private theorem mul_vtrap_le_iff {x : ℝ} (hx : x ≠ 0) (c : ℝ) :
+    c * vtrap x ≤ -deriv vtrap x ↔ c * x * (exp x - 1) ≤ x * exp x - exp x + 1 := by
+  have hE := exp_sub_one_ne hx
+  have hE2 : 0 < (exp x - 1) ^ 2 := by positivity
+  have he : c * (x / (exp x - 1)) * (exp x - 1) ^ 2 = c * x * (exp x - 1) := by
+    field_simp
+  rw [neg_deriv_vtrap_of_ne hx, vtrap_of_ne hx, le_div_iff₀ hE2, he]
+
+/-- Away from `0`, `-vtrap' x ≤ c vtrap x` is a polynomial inequality in `x` and `eˣ`. -/
+private theorem le_mul_vtrap_iff {x : ℝ} (hx : x ≠ 0) (c : ℝ) :
+    -deriv vtrap x ≤ c * vtrap x ↔ x * exp x - exp x + 1 ≤ c * x * (exp x - 1) := by
+  have hE := exp_sub_one_ne hx
+  have hE2 : 0 < (exp x - 1) ^ 2 := by positivity
+  have he : c * (x / (exp x - 1)) * (exp x - 1) ^ 2 = c * x * (exp x - 1) := by
+    field_simp
+  rw [neg_deriv_vtrap_of_ne hx, vtrap_of_ne hx, div_le_iff₀ hE2, he]
+
+/-- A continuous function that is nonnegative on `(0, ∞)` is nonnegative at `0`. -/
+private theorem nonneg_zero_of_pos {g : ℝ → ℝ} (hg : Continuous g) (h : ∀ x, 0 < x → 0 ≤ g x) :
+    0 ≤ g 0 :=
+  ge_of_tendsto (x := 𝓝[>] (0 : ℝ)) ((hg.tendsto 0).mono_left nhdsWithin_le_nhds)
+    (eventually_nhdsWithin_of_forall (s := Ioi 0) fun x hx => h x hx)
+
+private theorem continuous_deriv_vtrap : Continuous (deriv vtrap) :=
+  contDiff_vtrap.continuous_deriv le_rfl
+
+/-- `vtrap x / 2 ≤ -vtrap' x` for `x > 0`. -/
+private theorem half_vtrap_le_of_pos {x : ℝ} (hx : 0 < x) : 1 / 2 * vtrap x ≤ -deriv vtrap x := by
+  rw [mul_vtrap_le_iff hx.ne']
+  nlinarith [exp_mul_sub_two_add_nonneg hx.le]
+
+/-- `-vtrap' x ≤ (1 / 2 + x / 12) vtrap x` for `x > 0`. -/
+private theorem le_pade_vtrap_of_pos {x : ℝ} (hx : 0 < x) :
+    -deriv vtrap x ≤ (1 / 2 + x / 12) * vtrap x := by
+  rw [le_mul_vtrap_iff hx.ne']
+  nlinarith [pade_le_exp hx.le]
+
+/-- `vtrap' 0 = -1 / 2`. -/
+theorem deriv_vtrap_zero : deriv vtrap 0 = -(1 / 2) := by
+  have hv : vtrap 0 = 1 := by simp [vtrap]
+  have h1 := nonneg_zero_of_pos (g := fun x => -deriv vtrap x - 1 / 2 * vtrap x)
+    (continuous_deriv_vtrap.neg.sub (continuous_const.mul contDiff_vtrap.continuous))
+    fun x hx => by
+      have := half_vtrap_le_of_pos hx
+      change 0 ≤ -deriv vtrap x - 1 / 2 * vtrap x; linarith
+  have h2 := nonneg_zero_of_pos (g := fun x => (1 / 2 + x / 12) * vtrap x - -deriv vtrap x)
+    (((continuous_const.add (continuous_id.div_const _)).mul contDiff_vtrap.continuous).sub
+      continuous_deriv_vtrap.neg)
+    fun x hx => by
+      have := le_pade_vtrap_of_pos hx
+      change 0 ≤ (1 / 2 + x / 12) * vtrap x - -deriv vtrap x; linarith
+  simp only [hv] at h1 h2
+  linarith
+
+/-- `vtrap` is nonincreasing: `0 ≤ -vtrap' x`. -/
+theorem neg_deriv_vtrap_nonneg (x : ℝ) : 0 ≤ -deriv vtrap x := by
+  rcases eq_or_ne x 0 with rfl | hx
+  · rw [deriv_vtrap_zero]; norm_num
+  · have := (mul_vtrap_le_iff hx 0).2 (by
+      have h1 := mul_le_mul_of_nonneg_left (add_one_le_exp (-x)) (exp_pos x).le
+      have h2 : exp x * exp (-x) = 1 := by rw [← exp_add]; simp
+      nlinarith)
+    simpa using this
+
+/-- `-vtrap' x ≤ vtrap x`. -/
+theorem neg_deriv_vtrap_le (x : ℝ) : -deriv vtrap x ≤ vtrap x := by
+  rcases eq_or_ne x 0 with rfl | hx
+  · rw [deriv_vtrap_zero]; simp [vtrap]; norm_num
+  · have := (le_mul_vtrap_iff hx 1).2 (by nlinarith [add_one_le_exp x])
+    simpa using this
+
+/-- `vtrap x / 2 ≤ -vtrap' x` for `x ≥ 0`. -/
+theorem half_vtrap_le_neg_deriv {x : ℝ} (hx : 0 ≤ x) : 1 / 2 * vtrap x ≤ -deriv vtrap x := by
+  rcases hx.eq_or_lt with rfl | hx
+  · rw [deriv_vtrap_zero]; simp [vtrap]
+  · exact half_vtrap_le_of_pos hx
+
+/-- `-vtrap' x ≤ (1 / 2 + x / 12) vtrap x` for `x ≥ 0`. -/
+theorem neg_deriv_vtrap_le_pade {x : ℝ} (hx : 0 ≤ x) :
+    -deriv vtrap x ≤ (1 / 2 + x / 12) * vtrap x := by
+  rcases hx.eq_or_lt with rfl | hx
+  · rw [deriv_vtrap_zero]; simp [vtrap]
+  · exact le_pade_vtrap_of_pos hx
+
+/-- `(1 / 2 + x / 12) vtrap x ≤ -vtrap' x` for `x ≤ 0`. -/
+theorem pade_vtrap_le_neg_deriv {x : ℝ} (hx : x ≤ 0) :
+    (1 / 2 + x / 12) * vtrap x ≤ -deriv vtrap x := by
+  rcases hx.eq_or_lt with rfl | hx
+  · rw [deriv_vtrap_zero]; simp [vtrap]
+  · rw [mul_vtrap_le_iff hx.ne]
+    have hp := pade_le_exp (x := -x) (by linarith)
+    have h2 : exp x * exp (-x) = 1 := by rw [← exp_add]; simp
+    have h3 := mul_le_mul_of_nonneg_left hp (exp_pos x).le
+    nlinarith
+
+/-! ### I.2 Derivatives of the rates and the steady states -/
+
+private theorem hasDerivAt_vtrap_comp (a V : ℝ) :
+    HasDerivAt (fun V => vtrap ((a - V) / 10)) (-deriv vtrap ((a - V) / 10) / 10) V := by
+  have hin : HasDerivAt (fun V : ℝ => (a - V) / 10) (-1 / 10) V :=
+    ((hasDerivAt_id V).const_sub a).div_const 10
+  have := ((contDiff_vtrap.differentiable one_ne_zero) ((a - V) / 10)).hasDerivAt.comp V hin
+  exact this.congr_deriv (by ring)
+
+private theorem hasDerivAt_betaM (V : ℝ) : HasDerivAt betaM (-betaM V / 18) V := by
+  have h := (((hasDerivAt_id V).neg.div_const 18).exp).const_mul 4
+  refine (h.congr_deriv ?_).congr_of_eventuallyEq (Eventually.of_forall fun W => ?_)
+  · simp only [betaM, Pi.neg_apply, id]; ring
+  · simp [betaM]
+
+private theorem hasDerivAt_alphaH (V : ℝ) : HasDerivAt alphaH (-alphaH V / 20) V := by
+  have h := (((hasDerivAt_id V).neg.div_const 20).exp).const_mul (7 / 100)
+  refine (h.congr_deriv ?_).congr_of_eventuallyEq (Eventually.of_forall fun W => ?_)
+  · simp only [alphaH, Pi.neg_apply, id]; ring
+  · simp [alphaH]
+
+private theorem hasDerivAt_betaN (V : ℝ) : HasDerivAt betaN (-betaN V / 80) V := by
+  have h := (((hasDerivAt_id V).neg.div_const 80).exp).const_mul (1 / 8)
+  refine (h.congr_deriv ?_).congr_of_eventuallyEq (Eventually.of_forall fun W => ?_)
+  · simp only [betaN, Pi.neg_apply, id]; ring
+  · simp [betaN]
+
+private theorem hasDerivAt_betaH (V : ℝ) :
+    HasDerivAt betaH (betaH V * (1 - betaH V) / 10) V := by
+  have hin : HasDerivAt (fun V : ℝ => exp ((30 - V) / 10) + 1)
+      (exp ((30 - V) / 10) * (-1 / 10)) V :=
+    ((((hasDerivAt_id V).const_sub 30).div_const 10).exp).add_const 1
+  have hpos : exp ((30 - V) / 10) + 1 ≠ 0 := by positivity
+  have h := hin.inv hpos
+  refine (h.congr_deriv ?_).congr_of_eventuallyEq (Eventually.of_forall fun W => ?_)
+  · simp only [betaH]; field_simp; ring
+  · simp [betaH]
+
+/-- Derivative of a steady state: `y∞' = y∞ (1 - y∞) (α'/α - β'/β)`. -/
+theorem hasDerivAt_steady {α β : ℝ → ℝ} {a b V : ℝ} (hα : HasDerivAt α a V)
+    (hβ : HasDerivAt β b V) (hα0 : 0 < α V) (hβ0 : 0 < β V) :
+    HasDerivAt (steady α β) (steady α β V * (1 - steady α β V) * (a / α V - b / β V)) V := by
+  have hs : α V + β V ≠ 0 := (add_pos hα0 hβ0).ne'
+  have ha := hα0.ne'
+  have hb := hβ0.ne'
+  refine (hα.div (hα.add hβ) hs).congr_deriv ?_
+  simp only [steady, Pi.add_apply]; field_simp; ring
+
+/-- Steady-state sodium activation `m∞(V)`. -/
+noncomputable def mInf (V : ℝ) : ℝ := steady alphaM betaM V
+/-- Steady-state sodium inactivation `h∞(V)`. -/
+noncomputable def hInf (V : ℝ) : ℝ := steady alphaH betaH V
+/-- Steady-state potassium activation `n∞(V)`. -/
+noncomputable def nInf (V : ℝ) : ℝ := steady alphaN betaN V
+
+/-- Logarithmic derivative `d/dV log (α_m / β_m)`. -/
+noncomputable def lamM (V : ℝ) : ℝ :=
+  -deriv vtrap ((25 - V) / 10) / (10 * vtrap ((25 - V) / 10)) + 1 / 18
+/-- Logarithmic derivative `d/dV log (α_h / β_h) = -1/20 - (1 - β_h) / 10`. -/
+noncomputable def lamH (V : ℝ) : ℝ := -(1 / 20) - (1 - betaH V) / 10
+/-- Logarithmic derivative `d/dV log (α_n / β_n)`. -/
+noncomputable def lamN (V : ℝ) : ℝ :=
+  -deriv vtrap ((10 - V) / 10) / (10 * vtrap ((10 - V) / 10)) + 1 / 80
+
+theorem hasDerivAt_mInf (V : ℝ) : HasDerivAt mInf (mInf V * (1 - mInf V) * lamM V) V := by
+  have h := hasDerivAt_steady (α := alphaM) (hasDerivAt_vtrap_comp 25 V) (hasDerivAt_betaM V)
+    (alphaM_pos V) (betaM_pos V)
+  have hb := (betaM_pos V).ne'
+  refine h.congr_deriv ?_
+  simp only [mInf, lamM, alphaM]; field_simp; ring
+
+theorem hasDerivAt_hInf (V : ℝ) : HasDerivAt hInf (hInf V * (1 - hInf V) * lamH V) V := by
+  have h := hasDerivAt_steady (hasDerivAt_alphaH V) (hasDerivAt_betaH V)
+    (alphaH_pos V) (betaH_pos V)
+  have ha := (alphaH_pos V).ne'
+  have hb := (betaH_pos V).ne'
+  refine h.congr_deriv ?_
+  simp only [hInf, lamH]; field_simp
+
+theorem hasDerivAt_nInf (V : ℝ) : HasDerivAt nInf (nInf V * (1 - nInf V) * lamN V) V := by
+  have h := hasDerivAt_steady (α := alphaN) ((hasDerivAt_vtrap_comp 10 V).div_const 10)
+    (hasDerivAt_betaN V)
+    (alphaN_pos V) (betaN_pos V)
+  have hb := (betaN_pos V).ne'
+  have hv := (vtrap_pos ((10 - V) / 10)).ne'
+  refine h.congr_deriv ?_
+  simp only [nInf, lamN, alphaN]; field_simp; ring
+
+/-! ### I.3 Bounds on the logarithmic derivatives -/
+
+theorem one_div_eighteen_le_lamM (V : ℝ) : 1 / 18 ≤ lamM V := by
+  have := div_nonneg (neg_deriv_vtrap_nonneg ((25 - V) / 10))
+    (mul_pos (by norm_num : (0 : ℝ) < 10) (vtrap_pos ((25 - V) / 10))).le
+  unfold lamM; linarith
+
+theorem lamM_le (V : ℝ) : lamM V ≤ 1 / 18 + 1 / 10 := by
+  have hv := vtrap_pos ((25 - V) / 10)
+  have h := neg_deriv_vtrap_le ((25 - V) / 10)
+  have : -deriv vtrap ((25 - V) / 10) / (10 * vtrap ((25 - V) / 10)) ≤ 1 / 10 := by
+    rw [div_le_iff₀ (by positivity)]; linarith
+  unfold lamM; linarith
+
+/-- On `[p, q]` with `q ≤ 25`, `lamM ≤ 1/18 + (1/2 + (25 - p)/120)/10`. -/
+theorem lamM_le_of_le {p q V : ℝ} (hq : q ≤ 25) (hV : V ∈ Icc p q) :
+    lamM V ≤ 1 / 18 + (1 / 2 + (25 - p) / 120) / 10 := by
+  have hx : 0 ≤ (25 - V) / 10 := by linarith [hV.2]
+  have hv := vtrap_pos ((25 - V) / 10)
+  have h := neg_deriv_vtrap_le_pade hx
+  have h2 : (1 / 2 + (25 - V) / 10 / 12) * vtrap ((25 - V) / 10) ≤
+      (1 / 2 + (25 - p) / 120) * vtrap ((25 - V) / 10) :=
+    mul_le_mul_of_nonneg_right (by linarith [hV.1]) hv.le
+  have : -deriv vtrap ((25 - V) / 10) / (10 * vtrap ((25 - V) / 10)) ≤
+      (1 / 2 + (25 - p) / 120) / 10 := by
+    rw [div_le_iff₀ (by positivity)]; nlinarith
+  unfold lamM; linarith
+
+theorem one_div_eighty_le_lamN (V : ℝ) : 1 / 80 ≤ lamN V := by
+  have := div_nonneg (neg_deriv_vtrap_nonneg ((10 - V) / 10))
+    (mul_pos (by norm_num : (0 : ℝ) < 10) (vtrap_pos ((10 - V) / 10))).le
+  unfold lamN; linarith
+
+/-- For `V ≤ 10`, `lamN ≥ 1/80 + 1/20`. -/
+theorem lamN_ge_of_le {V : ℝ} (hV : V ≤ 10) : 1 / 80 + 1 / 20 ≤ lamN V := by
+  have hx : 0 ≤ (10 - V) / 10 := by linarith
+  have hv := vtrap_pos ((10 - V) / 10)
+  have h := half_vtrap_le_neg_deriv hx
+  have : 1 / 20 ≤ -deriv vtrap ((10 - V) / 10) / (10 * vtrap ((10 - V) / 10)) := by
+    rw [le_div_iff₀ (by positivity)]; linarith
+  unfold lamN; linarith
+
+/-- On `[p, q]` with `10 ≤ q`, `lamN ≥ 1/80 + (1/2 + (10 - q)/120)/10`. -/
+theorem lamN_ge_of_ge {p q V : ℝ} (hq : 10 ≤ q) (hV : V ∈ Icc p q) :
+    1 / 80 + (1 / 2 + (10 - q) / 120) / 10 ≤ lamN V := by
+  rcases le_total V 10 with hV10 | hV10
+  · have := lamN_ge_of_le hV10; linarith
+  have hx : (10 - V) / 10 ≤ 0 := by linarith
+  have hv := vtrap_pos ((10 - V) / 10)
+  have h := pade_vtrap_le_neg_deriv hx
+  have h2 : (1 / 2 + (10 - q) / 120) * vtrap ((10 - V) / 10) ≤
+      (1 / 2 + (10 - V) / 10 / 12) * vtrap ((10 - V) / 10) :=
+    mul_le_mul_of_nonneg_right (by linarith [hV.2]) hv.le
+  have : (1 / 2 + (10 - q) / 120) / 10 ≤
+      -deriv vtrap ((10 - V) / 10) / (10 * vtrap ((10 - V) / 10)) := by
+    rw [le_div_iff₀ (by positivity)]; nlinarith
+  unfold lamN; linarith
+
+theorem lamH_le (V : ℝ) : lamH V ≤ -(1 / 20) := by
+  have : betaH V ≤ 1 := by
+    unfold betaH; rw [div_le_one (by positivity)]; linarith [exp_pos ((30 - V) / 10)]
+  unfold lamH; linarith
+
+/-! ### I.4 Monotonicity of the steady states -/
+
+theorem mInf_mem_Ioo (V : ℝ) : mInf V ∈ Ioo 0 1 := steady_mem_Ioo (alphaM_pos V) (betaM_pos V)
+theorem hInf_mem_Ioo (V : ℝ) : hInf V ∈ Ioo 0 1 := steady_mem_Ioo (alphaH_pos V) (betaH_pos V)
+theorem nInf_mem_Ioo (V : ℝ) : nInf V ∈ Ioo 0 1 := steady_mem_Ioo (alphaN_pos V) (betaN_pos V)
+
+/-- `m∞` is strictly increasing. -/
+theorem strictMono_mInf : StrictMono mInf :=
+  strictMono_of_deriv_pos fun V => by
+    rw [(hasDerivAt_mInf V).deriv]
+    have h := mInf_mem_Ioo V
+    have := one_div_eighteen_le_lamM V
+    exact mul_pos (mul_pos h.1 (by linarith [h.2])) (by linarith)
+
+/-- `h∞` is strictly decreasing. -/
+theorem strictAnti_hInf : StrictAnti hInf :=
+  strictAnti_of_deriv_neg fun V => by
+    rw [(hasDerivAt_hInf V).deriv]
+    have h := hInf_mem_Ioo V
+    have := lamH_le V
+    exact mul_neg_of_pos_of_neg (mul_pos h.1 (by linarith [h.2])) (by linarith)
+
+/-- `n∞` is strictly increasing. -/
+theorem strictMono_nInf : StrictMono nInf :=
+  strictMono_of_deriv_pos fun V => by
+    rw [(hasDerivAt_nInf V).deriv]
+    have h := nInf_mem_Ioo V
+    have := one_div_eighty_le_lamN V
+    exact mul_pos (mul_pos h.1 (by linarith [h.2])) (by linarith)
+
+/-! ### I.5 The steady-state current and its derivative -/
+
+/-- The steady-state current `I∞(V) = ionic p V m∞(V) h∞(V) n∞(V)`; by `field_eq_zero_iff` the
+equilibria are the points over the zeros of `I∞ - I`. -/
+noncomputable def steadyCurrent (p : Params) (V : ℝ) : ℝ := ionic p V (mInf V) (hInf V) (nInf V)
+
+/-- The derivative of the steady-state current, with `y∞' = y∞ (1 - y∞) λ_y`. -/
+noncomputable def steadyCurrentDeriv (p : Params) (V : ℝ) : ℝ :=
+  p.gNa * (3 * mInf V ^ 2 * (mInf V * (1 - mInf V) * lamM V) * hInf V +
+      mInf V ^ 3 * (hInf V * (1 - hInf V) * lamH V)) * (V - p.ENa) +
+    p.gNa * mInf V ^ 3 * hInf V +
+    p.gK * (4 * nInf V ^ 3 * (nInf V * (1 - nInf V) * lamN V)) * (V - p.EK) +
+    p.gK * nInf V ^ 4 + p.gL
+
+theorem hasDerivAt_steadyCurrent (p : Params) (V : ℝ) :
+    HasDerivAt (steadyCurrent p) (steadyCurrentDeriv p V) V := by
+  have hV := hasDerivAt_id V
+  have h := (((((hasDerivAt_mInf V).pow 3).const_mul p.gNa).mul (hasDerivAt_hInf V)).mul
+    (hV.sub_const p.ENa)).add ((((hasDerivAt_nInf V).pow 4).const_mul p.gK).mul
+      (hV.sub_const p.EK)) |>.add ((hV.sub_const p.EL).const_mul p.gL)
+  refine h.congr_deriv ?_
+  simp only [steadyCurrentDeriv, id]
+  norm_num
+  ring
+
+
+
+/-! ### I.6 Rigorous enclosures of the steady states on a voltage grid -/
+
+private theorem steady_ge {α β : ℝ → ℝ} {V A B : ℝ} (hA : A ≤ α V) (hB : β V ≤ B) (hA0 : 0 < A)
+    (hβ : 0 < β V) : A / (A + B) ≤ steady α β V := by
+  unfold steady
+  rw [div_le_div_iff₀ (by linarith) (by linarith)]
+  nlinarith [mul_le_mul_of_nonneg_right hA hβ.le, mul_le_mul_of_nonneg_left hB (hA0.le.trans hA)]
+
+private theorem steady_le {α β : ℝ → ℝ} {V A B : ℝ} (hA : α V ≤ A) (hB : B ≤ β V) (hB0 : 0 < B)
+    (hα : 0 < α V) : steady α β V ≤ A / (A + B) := by
+  unfold steady
+  rw [div_le_div_iff₀ (by linarith) (by linarith)]
+  nlinarith [mul_le_mul_of_nonneg_left hB hα.le, mul_le_mul_of_nonneg_right hA (hB0.le.trans hB)]
+
+private theorem exp_bounds_nat {c L U : ℝ} (h : L ≤ exp c ∧ exp c ≤ U) (hL : 0 ≤ L) (k : ℕ)
+    {x : ℝ} (hx : x = k * c) : L ^ k ≤ exp x ∧ exp x ≤ U ^ k := by
+  rw [hx, Real.exp_nat_mul]
+  exact ⟨pow_le_pow_left₀ hL h.1 k, pow_le_pow_left₀ (exp_pos c).le h.2 k⟩
+
+private theorem exp_bounds_neg {c L U : ℝ} (h : L ≤ exp c ∧ exp c ≤ U) (hL : 0 < L) (k : ℕ)
+    {x : ℝ} (hx : x = -(k * c)) : (U ^ k)⁻¹ ≤ exp x ∧ exp x ≤ (L ^ k)⁻¹ := by
+  rw [hx, Real.exp_neg, Real.exp_nat_mul]
+  exact ⟨inv_anti₀ (pow_pos (exp_pos c) k) (pow_le_pow_left₀ (exp_pos c).le h.2 k),
+    inv_anti₀ (pow_pos hL k) (pow_le_pow_left₀ hL.le h.1 k)⟩
+
+private theorem exp_bounds_zero {x : ℝ} (hx : x = 0) : 1 ≤ exp x ∧ exp x ≤ 1 := by simp [hx]
+
+private theorem vtrap_bounds_pos {x L U : ℝ} (hx : 0 < x) (h : L ≤ exp x ∧ exp x ≤ U)
+    (hL : 1 < L) : x / (U - 1) ≤ vtrap x ∧ vtrap x ≤ x / (L - 1) := by
+  rw [vtrap_of_ne hx.ne']
+  exact ⟨div_le_div_of_nonneg_left hx.le (by linarith) (by linarith),
+    div_le_div_of_nonneg_left hx.le (by linarith) (by linarith)⟩
+
+private theorem vtrap_bounds_neg {x L U : ℝ} (hx : x < 0) (h : L ≤ exp x ∧ exp x ≤ U)
+    (hU : U < 1) : -x / (1 - L) ≤ vtrap x ∧ vtrap x ≤ -x / (1 - U) := by
+  have he : vtrap x = -x / (1 - exp x) := by
+    rw [vtrap_of_ne hx.ne, ← neg_div_neg_eq, neg_sub]
+  rw [he]
+  exact ⟨div_le_div_of_nonneg_left (by linarith) (by linarith) (by linarith),
+    div_le_div_of_nonneg_left (by linarith) (by linarith) (by linarith)⟩
+
+private theorem vtrap_bounds_zero {x : ℝ} (hx : x = 0) : 1 ≤ vtrap x ∧ vtrap x ≤ 1 := by
+  simp [hx, vtrap]
+
+private theorem mInf_bounds {V A₁ A₂ B₁ B₂ : ℝ}
+    (hA : A₁ ≤ vtrap ((25 - V) / 10) ∧ vtrap ((25 - V) / 10) ≤ A₂)
+    (hB : B₁ ≤ exp (-V / 18) ∧ exp (-V / 18) ≤ B₂) (hA₁ : 0 < A₁) (hB₁ : 0 < B₁) :
+    A₁ / (A₁ + 4 * B₂) ≤ mInf V ∧ mInf V ≤ A₂ / (A₂ + 4 * B₁) :=
+  ⟨steady_ge hA.1 (by simp only [betaM]; linarith [hB.2]) hA₁ (betaM_pos V),
+    steady_le hA.2 (by simp only [betaM]; linarith [hB.1]) (by linarith) (alphaM_pos V)⟩
+
+private theorem hInf_bounds {V A₁ A₂ B₁ B₂ : ℝ}
+    (hA : A₁ ≤ exp (-V / 20) ∧ exp (-V / 20) ≤ A₂)
+    (hB : B₁ ≤ exp ((30 - V) / 10) ∧ exp ((30 - V) / 10) ≤ B₂) (hA₁ : 0 < A₁) (hB₁ : 0 < B₁) :
+    7 / 100 * A₁ / (7 / 100 * A₁ + 1 / (B₁ + 1)) ≤ hInf V ∧
+      hInf V ≤ 7 / 100 * A₂ / (7 / 100 * A₂ + 1 / (B₂ + 1)) := by
+  have hE := exp_pos ((30 - V) / 10)
+  have hb1 : betaH V ≤ 1 / (B₁ + 1) :=
+    one_div_le_one_div_of_le (by linarith) (by linarith [hB.1])
+  have hb2 : 1 / (B₂ + 1) ≤ betaH V :=
+    one_div_le_one_div_of_le (by linarith) (by linarith [hB.2])
+  exact ⟨steady_ge (by simp only [alphaH]; linarith [hA.1]) hb1 (by linarith) (betaH_pos V),
+    steady_le (by simp only [alphaH]; linarith [hA.2]) hb2
+      (one_div_pos.2 (by linarith [hB.2])) (alphaH_pos V)⟩
+
+private theorem nInf_bounds {V A₁ A₂ B₁ B₂ : ℝ}
+    (hA : A₁ ≤ vtrap ((10 - V) / 10) ∧ vtrap ((10 - V) / 10) ≤ A₂)
+    (hB : B₁ ≤ exp (-V / 80) ∧ exp (-V / 80) ≤ B₂) (hA₁ : 0 < A₁) (hB₁ : 0 < B₁) :
+    A₁ / 10 / (A₁ / 10 + 1 / 8 * B₂) ≤ nInf V ∧ nInf V ≤ A₂ / 10 / (A₂ / 10 + 1 / 8 * B₁) :=
+  ⟨steady_ge (by simp only [alphaN]; linarith [hA.1]) (by simp only [betaN]; linarith [hB.2])
+      (by linarith) (betaN_pos V),
+    steady_le (by simp only [alphaN]; linarith [hA.2]) (by simp only [betaN]; linarith [hB.1])
+      (by linarith) (alphaN_pos V)⟩
+
+private theorem exp_tenth : (110517091807 / 100000000000 : ℝ) ≤ exp (1 / 10) ∧
+    exp (1 / 10) ≤ 3453659119 / 3125000000 := by
+  have h1 := Real.sum_le_exp_of_nonneg (x := 1 / 10) (by norm_num) 8
+  have h2 := Real.exp_bound' (x := 1 / 10) (by norm_num) (by norm_num) (n := 8) (by norm_num)
+  generalize exp (1 / 10) = E at h1 h2 ⊢
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h1 h2
+  constructor <;> linarith
+
+private theorem exp_e18 : (26428193619 / 25000000000 : ℝ) ≤ exp (1 / 18) ∧
+    exp (1 / 18) ≤ 105712774477 / 100000000000 := by
+  have h1 := Real.sum_le_exp_of_nonneg (x := 1 / 18) (by norm_num) 8
+  have h2 := Real.exp_bound' (x := 1 / 18) (by norm_num) (by norm_num) (n := 8) (by norm_num)
+  generalize exp (1 / 18) = E at h1 h2 ⊢
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h1 h2
+  constructor <;> linarith
+
+private theorem exp_e20 : (105127109637 / 100000000000 : ℝ) ≤ exp (1 / 20) ∧
+    exp (1 / 20) ≤ 52563554819 / 50000000000 := by
+  have h1 := Real.sum_le_exp_of_nonneg (x := 1 / 20) (by norm_num) 8
+  have h2 := Real.exp_bound' (x := 1 / 20) (by norm_num) (by norm_num) (n := 8) (by norm_num)
+  generalize exp (1 / 20) = E at h1 h2 ⊢
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h1 h2
+  constructor <;> linarith
+
+private theorem exp_e80 : (50628922577 / 50000000000 : ℝ) ≤ exp (1 / 80) ∧
+    exp (1 / 80) ≤ 20251569031 / 20000000000 := by
+  have h1 := Real.sum_le_exp_of_nonneg (x := 1 / 80) (by norm_num) 8
+  have h2 := Real.exp_bound' (x := 1 / 80) (by norm_num) (by norm_num) (n := 8) (by norm_num)
+  generalize exp (1 / 80) = E at h1 h2 ⊢
+  norm_num [Finset.sum_range_succ, Nat.factorial] at h1 h2
+  constructor <;> linarith
+
+private theorem grid_m_n12 : (118959 / 10000000 : ℝ) ≤ mInf (-12) ∧
+    mInf (-12) ≤ 1487 / 125000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := -12)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 37 (by norm_num)) (by norm_num))
+    (exp_bounds_nat exp_e18 (by norm_num) 12 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_n12 : (896193 / 1000000 : ℝ) ≤ hInf (-12) ∧
+    hInf (-12) ≤ 448097 / 500000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := -12)
+    (exp_bounds_nat exp_e20 (by norm_num) 12 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 42 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_n12 : (158791 / 1000000 : ℝ) ≤ nInf (-12) ∧
+    nInf (-12) ≤ 19849 / 125000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := -12)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 22 (by norm_num)) (by norm_num))
+    (exp_bounds_nat exp_e80 (by norm_num) 12 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_n3 : (369477 / 10000000 : ℝ) ≤ mInf (-3) ∧
+    mInf (-3) ≤ 184739 / 5000000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := -3)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 28 (by norm_num)) (by norm_num))
+    (exp_bounds_nat exp_e18 (by norm_num) 3 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_n3 : (695711 / 1000000 : ℝ) ≤ hInf (-3) ∧
+    hInf (-3) ≤ 21741 / 31250 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := -3)
+    (exp_bounds_nat exp_e20 (by norm_num) 3 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 33 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_n3 : (272873 / 1000000 : ℝ) ≤ nInf (-3) ∧
+    nInf (-3) ≤ 136437 / 500000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := -3)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 13 (by norm_num)) (by norm_num))
+    (exp_bounds_nat exp_e80 (by norm_num) 3 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_0 : (3176 / 10000 : ℝ) ≤ nInf 0 ∧ nInf 0 ≤ 3178 / 10000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 0)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 10 (by norm_num)) (by norm_num))
+    (exp_bounds_zero (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_1 : (148787 / 2500000 : ℝ) ≤ mInf 1 ∧
+    mInf 1 ≤ 595149 / 10000000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 1)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 24 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 1 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_1 : (560773 / 1000000 : ℝ) ≤ hInf 1 ∧
+    hInf 1 ≤ 280387 / 500000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 1)
+    (exp_bounds_neg exp_e20 (by norm_num) 1 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 29 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_1 : (166553 / 500000 : ℝ) ≤ nInf 1 ∧
+    nInf 1 ≤ 333107 / 1000000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 1)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 9 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 1 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_4 : (419113 / 5000000 : ℝ) ≤ mInf 4 ∧
+    mInf 4 ≤ 838227 / 10000000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 4)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 21 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 4 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_4 : (453233 / 1000000 : ℝ) ≤ hInf 4 ∧
+    hInf 4 ≤ 226617 / 500000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 4)
+    (exp_bounds_neg exp_e20 (by norm_num) 4 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 26 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_4 : (380341 / 1000000 : ℝ) ≤ nInf 4 ∧
+    nInf 4 ≤ 190171 / 500000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 4)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 6 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 4 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_6 : (20883 / 200000 : ℝ) ≤ mInf 6 ∧
+    mInf 6 ≤ 3263 / 31250 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 6)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 19 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 6 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_6 : (192021 / 500000 : ℝ) ≤ hInf 6 ∧
+    hInf 6 ≤ 384043 / 1000000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 6)
+    (exp_bounds_neg exp_e20 (by norm_num) 6 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 24 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_6 : (206109 / 500000 : ℝ) ≤ nInf 6 ∧
+    nInf 6 ≤ 412219 / 1000000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 6)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 4 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 6 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_8 : (129037 / 1000000 : ℝ) ≤ mInf 8 ∧
+    mInf 8 ≤ 64519 / 500000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 8)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 17 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 8 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_8 : (319911 / 1000000 : ℝ) ≤ hInf 8 ∧
+    hInf 8 ≤ 39989 / 125000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 8)
+    (exp_bounds_neg exp_e20 (by norm_num) 8 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 22 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_8 : (444033 / 1000000 : ℝ) ≤ nInf 8 ∧
+    nInf 8 ≤ 222017 / 500000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 8)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 2 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 8 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_10 : (39513 / 250000 : ℝ) ≤ mInf 10 ∧
+    mInf 10 ≤ 158053 / 1000000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 10)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 15 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 10 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_10 : (32829 / 125000 : ℝ) ≤ hInf 10 ∧
+    hInf 10 ≤ 262633 / 1000000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 10)
+    (exp_bounds_neg exp_e20 (by norm_num) 10 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 20 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_10 : (475483 / 1000000 : ℝ) ≤ nInf 10 ∧
+    nInf 10 ≤ 118871 / 250000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 10)
+    (vtrap_bounds_zero (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 10 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_12 : (23961 / 125000 : ℝ) ≤ mInf 12 ∧
+    mInf 12 ≤ 191689 / 1000000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 12)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 13 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 12 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_12 : (213109 / 1000000 : ℝ) ≤ hInf 12 ∧
+    hInf 12 ≤ 21311 / 100000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 12)
+    (exp_bounds_neg exp_e20 (by norm_num) 12 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 18 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_12 : (506297 / 1000000 : ℝ) ≤ nInf 12 ∧
+    nInf 12 ≤ 253149 / 500000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 12)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 2 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 12 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_14 : (114989 / 500000 : ℝ) ≤ mInf 14 ∧
+    mInf 14 ≤ 229979 / 1000000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 14)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 11 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 14 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_14 : (171453 / 1000000 : ℝ) ≤ hInf 14 ∧
+    hInf 14 ≤ 85727 / 500000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 14)
+    (exp_bounds_neg exp_e20 (by norm_num) 14 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 16 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_14 : (134059 / 250000 : ℝ) ≤ nInf 14 ∧
+    nInf 14 ≤ 536237 / 1000000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 14)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 4 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 14 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_16 : (272707 / 1000000 : ℝ) ≤ mInf 16 ∧
+    mInf 16 ≤ 68177 / 250000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 16)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 9 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 16 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_16 : (34297 / 250000 : ℝ) ≤ hInf 16 ∧
+    hInf 16 ≤ 137189 / 1000000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 16)
+    (exp_bounds_neg exp_e20 (by norm_num) 16 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 14 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_16 : (565103 / 1000000 : ℝ) ≤ nInf 16 ∧
+    nInf 16 ≤ 35319 / 62500 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 16)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 6 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 16 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_18 : (159689 / 500000 : ℝ) ≤ mInf 18 ∧
+    mInf 18 ≤ 319379 / 1000000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 18)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 7 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 18 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_18 : (6843 / 62500 : ℝ) ≤ hInf 18 ∧
+    hInf 18 ≤ 109489 / 1000000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 18)
+    (exp_bounds_neg exp_e20 (by norm_num) 18 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 12 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_18 : (296373 / 500000 : ℝ) ≤ nInf 18 ∧
+    nInf 18 ≤ 592747 / 1000000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 18)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 8 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 18 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_20 : (5769 / 15625 : ℝ) ≤ mInf 20 ∧
+    mInf 20 ≤ 369217 / 1000000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 20)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 5 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 20 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_20 : (873843 / 10000000 : ℝ) ≤ hInf 20 ∧
+    hInf 20 ≤ 218461 / 2500000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 20)
+    (exp_bounds_neg exp_e20 (by norm_num) 20 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 10 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_20 : (619053 / 1000000 : ℝ) ≤ nInf 20 ∧
+    nInf 20 ≤ 309527 / 500000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 20)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 10 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 20 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_23 : (223823 / 500000 : ℝ) ≤ mInf 23 ∧
+    mInf 23 ≤ 447647 / 1000000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 23)
+    (vtrap_bounds_pos (by norm_num)
+      (exp_bounds_nat exp_tenth (by norm_num) 2 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 23 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_23 : (313079 / 5000000 : ℝ) ≤ hInf 23 ∧
+    hInf 23 ≤ 626159 / 10000000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 23)
+    (exp_bounds_neg exp_e20 (by norm_num) 23 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 7 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_23 : (655861 / 1000000 : ℝ) ≤ nInf 23 ∧
+    nInf 23 ≤ 327931 / 500000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 23)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 13 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 23 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_25 : (62581 / 125000 : ℝ) ≤ mInf 25 ∧
+    mInf 25 ≤ 500649 / 1000000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 25)
+    (vtrap_bounds_zero (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 25 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_25 : (252207 / 5000000 : ℝ) ≤ hInf 25 ∧
+    hInf 25 ≤ 100883 / 2000000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 25)
+    (exp_bounds_neg exp_e20 (by norm_num) 25 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 5 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_25 : (67859 / 100000 : ℝ) ≤ nInf 25 ∧
+    nInf 25 ≤ 678591 / 1000000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 25)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 15 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 25 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_28 : (57823 / 100000 : ℝ) ≤ mInf 28 ∧
+    mInf 28 ≤ 578231 / 1000000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 28)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 3 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 28 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_28 : (369293 / 10000000 : ℝ) ≤ hInf 28 ∧
+    hInf 28 ≤ 184647 / 5000000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 28)
+    (exp_bounds_neg exp_e20 (by norm_num) 28 (by norm_num))
+    (exp_bounds_nat exp_tenth (by norm_num) 2 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_28 : (709987 / 1000000 : ℝ) ≤ nInf 28 ∧
+    nInf 28 ≤ 177497 / 250000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 28)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 18 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 28 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_33 : (138869 / 200000 : ℝ) ≤ mInf 33 ∧
+    mInf 33 ≤ 347173 / 500000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 33)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 8 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 33 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_33 : (9147 / 400000 : ℝ) ≤ hInf 33 ∧
+    hInf 33 ≤ 57169 / 2500000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 33)
+    (exp_bounds_neg exp_e20 (by norm_num) 33 (by norm_num))
+    (exp_bounds_neg exp_tenth (by norm_num) 3 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_33 : (755453 / 1000000 : ℝ) ≤ nInf 33 ∧
+    nInf 33 ≤ 377727 / 500000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 33)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 23 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 33 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_47 : (223463 / 250000 : ℝ) ≤ mInf 47 ∧
+    mInf 47 ≤ 893853 / 1000000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 47)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 22 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 47 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_47 : (156671 / 20000000 : ℝ) ≤ hInf 47 ∧
+    hInf 47 ≤ 195839 / 25000000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 47)
+    (exp_bounds_neg exp_e20 (by norm_num) 47 (by norm_num))
+    (exp_bounds_neg exp_tenth (by norm_num) 17 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_47 : (845237 / 1000000 : ℝ) ≤ nInf 47 ∧
+    nInf 47 ≤ 422619 / 500000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 47)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 37 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 47 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_107 : (998723 / 1000000 : ℝ) ≤ mInf 107 ∧
+    mInf 107 ≤ 249681 / 250000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 107)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 82 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 107 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_107 : (33241 / 100000000 : ℝ) ≤ hInf 107 ∧
+    hInf 107 ≤ 332411 / 1000000000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 107)
+    (exp_bounds_neg exp_e20 (by norm_num) 107 (by norm_num))
+    (exp_bounds_neg exp_tenth (by norm_num) 77 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_107 : (967281 / 1000000 : ℝ) ≤ nInf 107 ∧
+    nInf 107 ≤ 483641 / 500000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 107)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 97 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 107 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_m_115 : (999253 / 1000000 : ℝ) ≤ mInf 115 ∧
+    mInf 115 ≤ 499627 / 500000 := by
+  obtain ⟨h1, h2⟩ := mInf_bounds (V := 115)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 90 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e18 (by norm_num) 115 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_h_115 : (22279 / 100000000 : ℝ) ≤ hInf 115 ∧
+    hInf 115 ≤ 222791 / 1000000000 := by
+  obtain ⟨h1, h2⟩ := hInf_bounds (V := 115)
+    (exp_bounds_neg exp_e20 (by norm_num) 115 (by norm_num))
+    (exp_bounds_neg exp_tenth (by norm_num) 85 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+private theorem grid_n_115 : (486251 / 500000 : ℝ) ≤ nInf 115 ∧
+    nInf 115 ≤ 972503 / 1000000 := by
+  obtain ⟨h1, h2⟩ := nInf_bounds (V := 115)
+    (vtrap_bounds_neg (by norm_num)
+      (exp_bounds_neg exp_tenth (by norm_num) 105 (by norm_num)) (by norm_num))
+    (exp_bounds_neg exp_e80 (by norm_num) 115 (by norm_num)) (by norm_num) (by norm_num)
+  exact ⟨le_trans (by norm_num) h1, le_trans h2 (by norm_num)⟩
+
+/-! ### I.7 The derivative of the squid steady-state current is positive on `[-12, 115]` -/
+
+/-- One interval cell `[p, q] ⊆ [-12, 115]`: endpoint enclosures of `m∞, h∞, n∞`, bounds on the
+logarithmic derivatives, and one rational inequality give `I∞' > 0` on the cell. -/
+private theorem steadyCurrentDeriv_pos_of_cell {p q ml mu hl hu nl nu Lm Ln : ℝ}
+    (hp : -12 ≤ p) (hq : q ≤ 115) (hm1 : ml ≤ mInf p) (hm2 : mInf q ≤ mu) (hh1 : hl ≤ hInf q)
+    (hh2 : hInf p ≤ hu) (hn1 : nl ≤ nInf p) (hn2 : nInf q ≤ nu) (hml : 0 ≤ ml) (hhl : 0 ≤ hl)
+    (hnl : 0 ≤ nl) (hhu : hu ≤ 1) (hnu : nu ≤ 1) (hLm : ∀ V ∈ Icc p q, lamM V ≤ Lm)
+    (hLn : ∀ V ∈ Icc p q, Ln ≤ lamN V) (hLn0 : 0 ≤ Ln)
+    (hcheck : 360 * mu ^ 3 * hu * (1 - ml) * Lm * (115 - p) <
+      3 / 10 + 36 * nl ^ 4 * (1 + 4 * (1 - nu) * Ln * (p + 12)) +
+        120 * ml ^ 3 * hl * (1 + (115 - q) * (1 - hu) / 20)) :
+    ∀ V ∈ Icc p q, 0 < steadyCurrentDeriv squid V := by
+  intro V hV
+  have hm := mInf_mem_Ioo V
+  have hh := hInf_mem_Ioo V
+  have hn := nInf_mem_Ioo V
+  have hmV1 : ml ≤ mInf V := hm1.trans (strictMono_mInf.monotone hV.1)
+  have hmV2 : mInf V ≤ mu := (strictMono_mInf.monotone hV.2).trans hm2
+  have hhV1 : hl ≤ hInf V := hh1.trans (strictAnti_hInf.antitone hV.2)
+  have hhV2 : hInf V ≤ hu := (strictAnti_hInf.antitone hV.1).trans hh2
+  have hnV1 : nl ≤ nInf V := hn1.trans (strictMono_nInf.monotone hV.1)
+  have hnV2 : nInf V ≤ nu := (strictMono_nInf.monotone hV.2).trans hn2
+  have lm0 := one_div_eighteen_le_lamM V
+  have lmU := hLm V hV
+  have lh := lamH_le V
+  have lnL := hLn V hV
+  -- the potassium term
+  have a1 : (1 - nu) * Ln ≤ (1 - nInf V) * lamN V :=
+    mul_le_mul (by linarith) lnL hLn0 (by linarith [hn.2])
+  have a2 : (1 - nu) * Ln * (p + 12) ≤ (1 - nInf V) * lamN V * (V + 12) :=
+    mul_le_mul a1 (by linarith [hV.1]) (by linarith)
+      (mul_nonneg (by linarith [hn.2]) (by linarith))
+  have a0 : 0 ≤ 1 + 4 * ((1 - nu) * Ln * (p + 12)) := by
+    have := mul_nonneg (mul_nonneg (sub_nonneg.2 hnu) hLn0) (by linarith : (0 : ℝ) ≤ p + 12)
+    linarith
+  have a3 : nl ^ 4 * (1 + 4 * ((1 - nu) * Ln * (p + 12))) ≤
+      nInf V ^ 4 * (1 + 4 * ((1 - nInf V) * lamN V * (V + 12))) :=
+    mul_le_mul (pow_le_pow_left₀ hnl hnV1 4) (by linarith) a0 (by positivity)
+  -- the sodium-inactivation term
+  have b1 : (1 - hu) * (1 / 20) ≤ (1 - hInf V) * -lamH V :=
+    mul_le_mul (by linarith) (by linarith) (by norm_num) (by linarith [hh.2])
+  have b2 : (1 - hu) * (1 / 20) * (115 - q) ≤ (1 - hInf V) * -lamH V * (115 - V) :=
+    mul_le_mul b1 (by linarith [hV.2]) (by linarith)
+      (mul_nonneg (by linarith [hh.2]) (by linarith))
+  have b3 : ml ^ 3 * hl ≤ mInf V ^ 3 * hInf V :=
+    mul_le_mul (pow_le_pow_left₀ hml hmV1 3) hhV1 hhl (pow_nonneg hm.1.le 3)
+  have b0 : 0 ≤ 1 + (1 - hu) * (1 / 20) * (115 - q) := by
+    have := mul_nonneg (mul_nonneg (sub_nonneg.2 hhu) (by norm_num : (0 : ℝ) ≤ 1 / 20))
+      (by linarith : (0 : ℝ) ≤ 115 - q)
+    linarith
+  have b4 : ml ^ 3 * hl * (1 + (1 - hu) * (1 / 20) * (115 - q)) ≤
+      mInf V ^ 3 * hInf V * (1 + (1 - hInf V) * -lamH V * (115 - V)) :=
+    mul_le_mul b3 (by linarith) b0 (mul_nonneg (pow_nonneg hm.1.le 3) hh.1.le)
+  -- the destabilizing sodium-activation term
+  have hmu0 : 0 ≤ mu := hml.trans (hmV1.trans hmV2)
+  have hhu0 : 0 ≤ hu := hh.1.le.trans hhV2
+  have c1 : mInf V ^ 3 * hInf V ≤ mu ^ 3 * hu :=
+    mul_le_mul (pow_le_pow_left₀ hm.1.le hmV2 3) hhV2 hh.1.le (pow_nonneg hmu0 3)
+  have c2 : mInf V ^ 3 * hInf V * (1 - mInf V) ≤ mu ^ 3 * hu * (1 - ml) :=
+    mul_le_mul c1 (by linarith) (by linarith [hm.2]) (mul_nonneg (pow_nonneg hmu0 3) hhu0)
+  have c3 : mInf V ^ 3 * hInf V * (1 - mInf V) * lamM V ≤ mu ^ 3 * hu * (1 - ml) * Lm :=
+    mul_le_mul c2 lmU (by linarith)
+      (mul_nonneg (mul_nonneg (pow_nonneg hmu0 3) hhu0) (by linarith [hm.2]))
+  have c4 : mInf V ^ 3 * hInf V * (1 - mInf V) * lamM V * (115 - V) ≤
+      mu ^ 3 * hu * (1 - ml) * Lm * (115 - p) :=
+    mul_le_mul c3 (by linarith [hV.1]) (by linarith [hV.2])
+      (mul_nonneg (mul_nonneg (mul_nonneg (pow_nonneg hmu0 3) hhu0) (by linarith [hm.2]))
+        (by linarith))
+  simp only [steadyCurrentDeriv, squid]
+  nlinarith
+
+private theorem cell_0 : ∀ V ∈ Icc (-12 : ℝ) (-3), 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_n12.1 grid_m_n3.2
+    grid_h_n3.1 grid_h_n12.2 grid_n_n12.1 grid_n_n3.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_le (hV.2.trans (by norm_num))) (by norm_num) (by norm_num)
+
+private theorem cell_1 : ∀ V ∈ Icc (-3 : ℝ) 1, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_n3.1 grid_m_1.2
+    grid_h_1.1 grid_h_n3.2 grid_n_n3.1 grid_n_1.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_le (hV.2.trans (by norm_num))) (by norm_num) (by norm_num)
+
+private theorem cell_2 : ∀ V ∈ Icc (1 : ℝ) 4, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_1.1 grid_m_4.2
+    grid_h_4.1 grid_h_1.2 grid_n_1.1 grid_n_4.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_le (hV.2.trans (by norm_num))) (by norm_num) (by norm_num)
+
+private theorem cell_3 : ∀ V ∈ Icc (4 : ℝ) 6, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_4.1 grid_m_6.2
+    grid_h_6.1 grid_h_4.2 grid_n_4.1 grid_n_6.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_le (hV.2.trans (by norm_num))) (by norm_num) (by norm_num)
+
+private theorem cell_4 : ∀ V ∈ Icc (6 : ℝ) 8, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_6.1 grid_m_8.2
+    grid_h_8.1 grid_h_6.2 grid_n_6.1 grid_n_8.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_le (hV.2.trans (by norm_num))) (by norm_num) (by norm_num)
+
+private theorem cell_5 : ∀ V ∈ Icc (8 : ℝ) 10, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_8.1 grid_m_10.2
+    grid_h_10.1 grid_h_8.2 grid_n_8.1 grid_n_10.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_le (hV.2.trans (by norm_num))) (by norm_num) (by norm_num)
+
+private theorem cell_6 : ∀ V ∈ Icc (10 : ℝ) 12, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_10.1 grid_m_12.2
+    grid_h_12.1 grid_h_10.2 grid_n_10.1 grid_n_12.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_ge (by norm_num) hV) (by norm_num) (by norm_num)
+
+private theorem cell_7 : ∀ V ∈ Icc (12 : ℝ) 14, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_12.1 grid_m_14.2
+    grid_h_14.1 grid_h_12.2 grid_n_12.1 grid_n_14.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_ge (by norm_num) hV) (by norm_num) (by norm_num)
+
+private theorem cell_8 : ∀ V ∈ Icc (14 : ℝ) 16, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_14.1 grid_m_16.2
+    grid_h_16.1 grid_h_14.2 grid_n_14.1 grid_n_16.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_ge (by norm_num) hV) (by norm_num) (by norm_num)
+
+private theorem cell_9 : ∀ V ∈ Icc (16 : ℝ) 18, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_16.1 grid_m_18.2
+    grid_h_18.1 grid_h_16.2 grid_n_16.1 grid_n_18.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_ge (by norm_num) hV) (by norm_num) (by norm_num)
+
+private theorem cell_10 : ∀ V ∈ Icc (18 : ℝ) 20, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_18.1 grid_m_20.2
+    grid_h_20.1 grid_h_18.2 grid_n_18.1 grid_n_20.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_ge (by norm_num) hV) (by norm_num) (by norm_num)
+
+private theorem cell_11 : ∀ V ∈ Icc (20 : ℝ) 23, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_20.1 grid_m_23.2
+    grid_h_23.1 grid_h_20.2 grid_n_20.1 grid_n_23.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_ge (by norm_num) hV) (by norm_num) (by norm_num)
+
+private theorem cell_12 : ∀ V ∈ Icc (23 : ℝ) 25, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_23.1 grid_m_25.2
+    grid_h_25.1 grid_h_23.2 grid_n_23.1 grid_n_25.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V hV => lamM_le_of_le (by norm_num) hV)
+    (fun V hV => lamN_ge_of_ge (by norm_num) hV) (by norm_num) (by norm_num)
+
+private theorem cell_13 : ∀ V ∈ Icc (25 : ℝ) 28, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_25.1 grid_m_28.2
+    grid_h_28.1 grid_h_25.2 grid_n_25.1 grid_n_28.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V _ => lamM_le V)
+    (fun V hV => lamN_ge_of_ge (by norm_num) hV) (by norm_num) (by norm_num)
+
+private theorem cell_14 : ∀ V ∈ Icc (28 : ℝ) 33, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_28.1 grid_m_33.2
+    grid_h_33.1 grid_h_28.2 grid_n_28.1 grid_n_33.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V _ => lamM_le V)
+    (fun V hV => lamN_ge_of_ge (by norm_num) hV) (by norm_num) (by norm_num)
+
+private theorem cell_15 : ∀ V ∈ Icc (33 : ℝ) 47, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_33.1 grid_m_47.2
+    grid_h_47.1 grid_h_33.2 grid_n_33.1 grid_n_47.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V _ => lamM_le V)
+    (fun V hV => lamN_ge_of_ge (by norm_num) hV) (by norm_num) (by norm_num)
+
+private theorem cell_16 : ∀ V ∈ Icc (47 : ℝ) 107, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_47.1 grid_m_107.2
+    grid_h_107.1 grid_h_47.2 grid_n_47.1 grid_n_107.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V _ => lamM_le V)
+    (fun V _ => one_div_eighty_le_lamN V) (by norm_num) (by norm_num)
+
+private theorem cell_17 : ∀ V ∈ Icc (107 : ℝ) 115, 0 < steadyCurrentDeriv squid V :=
+  steadyCurrentDeriv_pos_of_cell (by norm_num) (by norm_num) grid_m_107.1 grid_m_115.2
+    grid_h_115.1 grid_h_107.2 grid_n_107.1 grid_n_115.2 (by norm_num) (by norm_num)
+    (by norm_num) (by norm_num) (by norm_num) (fun V _ => lamM_le V)
+    (fun V _ => one_div_eighty_le_lamN V) (by norm_num) (by norm_num)
+
+/-- **The squid steady-state current is strictly increasing on `[-12, 115]`**: its derivative
+is positive there (18 interval cells). -/
+theorem steadyCurrentDeriv_squid_pos {V : ℝ} (hV : V ∈ Icc (-12 : ℝ) 115) :
+    0 < steadyCurrentDeriv squid V := by
+  rcases le_or_gt V (-3) with h0 | h0
+  · exact cell_0 V ⟨hV.1, h0⟩
+  rcases le_or_gt V 1 with h1 | h1
+  · exact cell_1 V ⟨h0.le, h1⟩
+  rcases le_or_gt V 4 with h2 | h2
+  · exact cell_2 V ⟨h1.le, h2⟩
+  rcases le_or_gt V 6 with h3 | h3
+  · exact cell_3 V ⟨h2.le, h3⟩
+  rcases le_or_gt V 8 with h4 | h4
+  · exact cell_4 V ⟨h3.le, h4⟩
+  rcases le_or_gt V 10 with h5 | h5
+  · exact cell_5 V ⟨h4.le, h5⟩
+  rcases le_or_gt V 12 with h6 | h6
+  · exact cell_6 V ⟨h5.le, h6⟩
+  rcases le_or_gt V 14 with h7 | h7
+  · exact cell_7 V ⟨h6.le, h7⟩
+  rcases le_or_gt V 16 with h8 | h8
+  · exact cell_8 V ⟨h7.le, h8⟩
+  rcases le_or_gt V 18 with h9 | h9
+  · exact cell_9 V ⟨h8.le, h9⟩
+  rcases le_or_gt V 20 with h10 | h10
+  · exact cell_10 V ⟨h9.le, h10⟩
+  rcases le_or_gt V 23 with h11 | h11
+  · exact cell_11 V ⟨h10.le, h11⟩
+  rcases le_or_gt V 25 with h12 | h12
+  · exact cell_12 V ⟨h11.le, h12⟩
+  rcases le_or_gt V 28 with h13 | h13
+  · exact cell_13 V ⟨h12.le, h13⟩
+  rcases le_or_gt V 33 with h14 | h14
+  · exact cell_14 V ⟨h13.le, h14⟩
+  rcases le_or_gt V 47 with h15 | h15
+  · exact cell_15 V ⟨h14.le, h15⟩
+  rcases le_or_gt V 107 with h16 | h16
+  · exact cell_16 V ⟨h15.le, h16⟩
+  exact cell_17 V ⟨h16.le, hV.2⟩
+
+/-- **Monotonicity of the steady-state current.** For the squid parameters
+`I∞(V) = ionic squid V m∞(V) h∞(V) n∞(V)` is strictly increasing on `[-12, 115]`. -/
+theorem strictMonoOn_steadyCurrent_squid : StrictMonoOn (steadyCurrent squid) (Icc (-12) 115) :=
+  strictMonoOn_of_deriv_pos (convex_Icc _ _)
+    (fun V _ => (hasDerivAt_steadyCurrent squid V).continuousAt.continuousWithinAt)
+    fun V hV => by
+      rw [(hasDerivAt_steadyCurrent squid V).deriv]
+      exact steadyCurrentDeriv_squid_pos (interior_subset hV)
+
+/-! ### I.8 Uniqueness of the squid equilibrium -/
+
+/-- `-12 < EL < 115`. -/
+theorem squidEL_mem : squidEL ∈ Ioo (-12) 115 := by
+  have hm := mRest_mem
+  have hh := hRest_mem
+  have hn := nRest_mem
+  have hn4 : nRest ^ 4 ≤ (3178 / 10000) ^ 4 :=
+    pow_le_pow_left₀ hn.1.le grid_n_0.2 4
+  have hm3 : mRest ^ 3 ≤ (27 / 500) ^ 3 := pow_le_pow_left₀ hm.1.le mRest_le 3
+  have hmh : mRest ^ 3 * hRest ≤ (27 / 500) ^ 3 * (3 / 5) :=
+    mul_le_mul hm3 hRest_le hh.1.le (by norm_num)
+  have h0 : 0 ≤ mRest ^ 3 * hRest := mul_nonneg (pow_nonneg hm.1.le 3) hh.1.le
+  have hn0 : 0 ≤ nRest ^ 4 := by positivity
+  have hEL : squidEL = 1440 * nRest ^ 4 - 46000 * (mRest ^ 3 * hRest) := by
+    simp only [squidEL]; ring
+  rw [hEL]
+  norm_num at hn4 hmh ⊢
+  constructor <;> linarith
+
+/-- The squid steady-state current is negative for `V ≤ -12` (every current is outward-negative
+there: `V ≤ EK < EL < ENa`). -/
+theorem steadyCurrent_squid_neg {V : ℝ} (hV : V ≤ -12) : steadyCurrent squid V < 0 := by
+  have hm := mInf_mem_Ioo V
+  have hh := hInf_mem_Ioo V
+  have h1 : 0 ≤ mInf V ^ 3 * hInf V := mul_nonneg (pow_nonneg hm.1.le 3) hh.1.le
+  have h2 : 0 ≤ nInf V ^ 4 := by positivity
+  have hEL := squidEL_mem
+  have := mul_nonneg h1 (by linarith : (0 : ℝ) ≤ 115 - V)
+  have := mul_nonneg h2 (by linarith : (0 : ℝ) ≤ -12 - V)
+  simp only [steadyCurrent, ionic, squid]
+  nlinarith [hEL.1]
+
+/-- The squid steady-state current is positive for `V ≥ 115`. -/
+theorem steadyCurrent_squid_pos {V : ℝ} (hV : 115 ≤ V) : 0 < steadyCurrent squid V := by
+  have hm := mInf_mem_Ioo V
+  have hh := hInf_mem_Ioo V
+  have h1 : 0 ≤ mInf V ^ 3 * hInf V := mul_nonneg (pow_nonneg hm.1.le 3) hh.1.le
+  have h2 : 0 ≤ nInf V ^ 4 := by positivity
+  have hEL := squidEL_mem
+  have := mul_nonneg h1 (by linarith : (0 : ℝ) ≤ V - 115)
+  have := mul_nonneg h2 (by linarith : (0 : ℝ) ≤ V + 12)
+  simp only [steadyCurrent, ionic, squid]
+  nlinarith [hEL.2]
+
+/-- The squid steady-state current vanishes at rest (this is how `squidEL` is defined). -/
+theorem steadyCurrent_squid_zero : steadyCurrent squid 0 = 0 := by
+  change ionic squid 0 mRest hRest nRest = 0
+  simp only [ionic, squid, squidEL]
+  ring
+
+/-- `V = 0` is the only zero of the squid steady-state current. -/
+theorem steadyCurrent_squid_eq_zero_iff (V : ℝ) : steadyCurrent squid V = 0 ↔ V = 0 := by
+  refine ⟨fun hV => ?_, fun h => by rw [h]; exact steadyCurrent_squid_zero⟩
+  rcases le_or_gt V (-12) with h1 | h1
+  · exact absurd hV (steadyCurrent_squid_neg h1).ne
+  rcases le_or_gt 115 V with h2 | h2
+  · exact absurd hV (steadyCurrent_squid_pos h2).ne'
+  exact strictMonoOn_steadyCurrent_squid.injOn ⟨h1.le, h2.le⟩ ⟨by norm_num, by norm_num⟩
+    (hV.trans steadyCurrent_squid_zero.symm)
+
+/-- **Uniqueness of the squid equilibrium.** The resting state is the only equilibrium of the
+Hodgkin–Huxley equations with the squid giant axon parameters. -/
+theorem field_squid_eq_zero_iff (x : Fin 4 → ℝ) : field squid x = 0 ↔ x = rest := by
+  refine ⟨fun hx => ?_, fun h => h ▸ field_squid_rest⟩
+  obtain ⟨hm, hh, hn, hI⟩ := (field_eq_zero_iff squid_valid x).1 hx
+  have h0 : x 0 = 0 := (steadyCurrent_squid_eq_zero_iff (x 0)).1 hI
+  rw [h0] at hm hh hn
+  funext i
+  fin_cases i
+  · exact h0
+  · exact hm
+  · exact hh
+  · exact hn
 
 end MathlibExt.Biology.Biophysics.HodgkinHuxley

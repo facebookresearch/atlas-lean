@@ -75,7 +75,7 @@ theorem integral_dotProduct {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 `cov[ε i, ε j] = if i = j then σ² else 0` and `E[ε i] = 0` for all `i`, then
 `∫ ε_i ε_j = if i = j then σ² else 0`. -/
 theorem second_moment_of_cov {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
-    [IsProbabilityMeasure μ] {m : Type*} [Fintype m] [DecidableEq m] {ε : Ω → m → ℝ}
+    [IsProbabilityMeasure μ] {m : Type*} [DecidableEq m] {ε : Ω → m → ℝ}
     (σ : ℝ) (hL2 : ∀ i, MemLp (fun ω => ε ω i) 2 μ)
     (hcov : ∀ i j, cov[fun ω => ε ω i, fun ω => ε ω j; μ] = if i = j then σ ^ 2 else 0)
     (hmean : ∀ i, ∫ ω, ε ω i ∂μ = 0) (i j : m) :

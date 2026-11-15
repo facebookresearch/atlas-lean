@@ -18,7 +18,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
-# Global stability of the SEIR endemic equilibrium via a Lyapunov function
+# Stability of the SEIR endemic and disease-free equilibria via Lyapunov functions
 
 The closed SEIR model of `MathlibExt.Biology.Epidemiology.SEIR` has no endemic equilibrium
 (every solution has `E, I → 0`). An endemic state needs a supply of susceptibles, so we add
@@ -38,7 +38,7 @@ the first three equations, so the dynamics is that of `(S, E, I)`.
   `S* = N / R₀`,   `E* = μ (N - S*) / (μ + σ)`,   `I* = σ E* / (μ + γ)`
 
 lies in the open positive orthant (`endemicS_lt`: `S* < N` exactly because `R₀ > 1`). The
-disease-free case `R₀ ≤ 1` is not treated here.
+disease-free case `R₀ ≤ 1` is treated at the end of the file.
 
 **Lyapunov function** (Korobeinikov 2004), with `g(a, x) = x - a - a log (x / a)`:
 
@@ -68,6 +68,23 @@ state space; instead we carry out the step along each trajectory:
 Steps 3–4 are the statement that the largest invariant subset of `{V̇ = 0}` is the equilibrium:
 on it `S ≡ S*` forces `I ≡ I*`, then `E ≡ E*`.
 
+**Disease-free equilibrium, `R₀ ≤ 1`.** With `β ≥ 0`, the Lyapunov function
+
+  `V₀(S, E, I) = g(N, S) + E + ((μ + σ) / σ) I`   (`dfeLyapunov`)
+
+has `V̇₀ = -μ (S - N)² / S + ((μ + σ) (μ + γ) / σ) (R₀ - 1) I ≤ 0` (`dfeLyapunovDeriv_le`).
+Positivity is no longer given by a log barrier in `E, I`; instead `E e^{(μ + σ) t}` and
+`I e^{(μ + γ) t}` are nondecreasing while `S, E, I > 0` (`IsSolution.pos_of_R0_le_one`). The
+invariance step gives `S → N`, then `S' → 0` (so `β S I / N → 0`), then Barbalat for
+`σ E + (μ + σ) I` gives `I → 0` (this covers `R₀ = 1`, where the `I` term of `V̇₀` vanishes),
+then `E → 0`. Every disease-free result assumes `S(0), E(0), I(0) > 0`: stability and
+attractivity are proved relative to the open positive orthant. Initial states on its boundary,
+including the disease-free equilibrium itself, are not covered, so this is not global
+asymptotic stability on the nonnegative orthant.
+
+**Removed class.** `R' = γ I - μ R` is linear relaxation at rate `μ`, so `I → I∞` gives
+`R → γ I∞ / μ` (`IsSolution.tendsto_removed`); likewise `S + E + I + R → N`.
+
 ## Main results
 
 * `IsSolution`, `isSolution_zero_iff`, `R0`, `R0_zero`, `endemicS`, `endemicE`, `endemicI` and
@@ -81,6 +98,14 @@ on it `S ≡ S*` forces `I ≡ I*`, then `E ≡ E*`.
 * `IsSolution.tendsto_endemic`: global attractivity, `(S, E, I) → (S*, E*, I*)`.
 * `endemic_lyapunovStable`, `endemic_globallyAsymptoticallyStable`: Lyapunov stability, and
   stability with global attractivity together.
+* `IsSolution.tendsto_removed`, `IsSolution.tendsto_total`, `IsSolution.tendsto_removed_endemic`:
+  `R → γ I∞ / μ`, `S + E + I + R → N`, and `R → R* = γ I* / μ` (`endemicR`) for `R₀ > 1`.
+* `dfeLyapunov`, `dfeLyapunovDeriv`, `dfeLyapunovDeriv_le`, `IsSolution.pos_of_R0_le_one`,
+  `IsSolution.tendsto_diseaseFree`, `IsSolution.tendsto_removed_diseaseFree`,
+  `diseaseFree_lyapunovStable_of_pos`, `diseaseFree_lyapunovStable_and_attractive_of_pos`: for
+  `R₀ ≤ 1`, the disease-free equilibrium `(N, 0, 0)` is Lyapunov stable relative to the open
+  positive orthant and attracts every solution starting in it, and then `R → 0`.
+
 * `exists_isSolution`, `exists_isSolution_of_nonneg`: forward-global existence for nonnegative
   initial data, with nonnegative compartments and total `≤ max N (S₀ + E₀ + I₀ + R₀)`, so the
   `IsSolution` hypothesis of the results above is satisfiable from every initial state in the
@@ -963,6 +988,511 @@ theorem endemic_globallyAsymptoticallyStable (hσ : 0 < σ) (hγ : 0 ≤ γ) (h�
     h.tendsto_endemic hσ hγ hμ hN hR hS0 hE0 hI0⟩
 
 end Stability
+
+/-! ### The removed class and the total population -/
+
+/-- **Linear relaxation, one side.** If `u' = f - μ u` on `[0, ∞)` with `μ > 0` and `f → 0`,
+then `u < ε` eventually, for every `ε > 0`: past a time `T` with `f < μ ε / 2`,
+`(u - ε / 2) e^{μ t}` is nonincreasing, so `u(t) ≤ ε / 2 + C e^{-μ t}`. -/
+private theorem eventually_lt_of_hasDerivAt_relax {u f : ℝ → ℝ} {μ : ℝ} (hμ : 0 < μ)
+    (hd : ∀ t, 0 ≤ t → HasDerivAt u (f t - μ * u t) t) (hf : Tendsto f atTop (𝓝 0))
+    {ε : ℝ} (hε : 0 < ε) : ∀ᶠ t in atTop, u t < ε := by
+  obtain ⟨T, hT⟩ := eventually_atTop.1
+    (hf.eventually (gt_mem_nhds (show (0 : ℝ) < μ * ε / 2 by positivity)))
+  set T' := max T 0
+  have hg : ∀ t, T' ≤ t →
+      HasDerivAt (fun s => (u s - ε / 2) * exp (μ * s)) ((f t - μ * ε / 2) * exp (μ * t)) t :=
+    fun t ht => (((hd t ((le_max_right _ _).trans ht)).sub_const (ε / 2)).mul
+      ((hasDerivAt_id' t).const_mul μ).exp).congr_deriv (by ring)
+  have hanti : AntitoneOn (fun s => (u s - ε / 2) * exp (μ * s)) (Ici T') :=
+    antitoneOn_of_hasDerivWithinAt_nonpos (convex_Ici T')
+      (fun t ht => (hg t ht).continuousAt.continuousWithinAt)
+      (fun t ht => (hg t (interior_subset ht)).hasDerivWithinAt)
+      (fun t ht => mul_nonpos_of_nonpos_of_nonneg
+        (by linarith [hT t ((le_max_left _ _).trans (interior_subset ht : T' ≤ t))])
+        (exp_pos _).le)
+  set C := (u T' - ε / 2) * exp (μ * T')
+  have hlim : Tendsto (fun t => C * exp (-(μ * t))) atTop (𝓝 0) := by
+    have := (Real.tendsto_exp_neg_atTop_nhds_zero.comp (tendsto_id.const_mul_atTop hμ)).const_mul C
+    simpa [Function.comp_def] using this
+  filter_upwards [hlim.eventually (gt_mem_nhds (half_pos hε)), eventually_ge_atTop T'] with t h1 ht
+  have h2 : (u t - ε / 2) * exp (μ * t) ≤ C := hanti (mem_Ici.2 le_rfl) (mem_Ici.2 ht) ht
+  have h3 : u t - ε / 2 ≤ C * exp (-(μ * t)) := by
+    rw [exp_neg, ← div_eq_mul_inv, le_div_iff₀ (exp_pos _)]
+    exact h2
+  linarith
+
+/-- **Linear relaxation.** If `u' = f - μ u` on `[0, ∞)` with `μ > 0` and `f → 0`, then
+`u → 0`. -/
+private theorem tendsto_zero_of_hasDerivAt_relax {u f : ℝ → ℝ} {μ : ℝ} (hμ : 0 < μ)
+    (hd : ∀ t, 0 ≤ t → HasDerivAt u (f t - μ * u t) t) (hf : Tendsto f atTop (𝓝 0)) :
+    Tendsto u atTop (𝓝 0) := by
+  refine tendsto_order.2 ⟨fun a ha => ?_, fun a ha =>
+    eventually_lt_of_hasDerivAt_relax hμ hd hf ha⟩
+  have := eventually_lt_of_hasDerivAt_relax (u := fun t => -u t) (f := fun t => -f t) hμ
+    (fun t ht => (hd t ht).neg.congr_deriv (by ring)) (by simpa using hf.neg) (neg_pos.2 ha)
+  filter_upwards [this] with t ht
+  linarith
+
+/-- Removed level `R* = γ I* / μ` at the endemic equilibrium. Meaningful for `μ > 0`, which
+every theorem using it assumes (at `μ = 0` Lean's division returns `0`). -/
+noncomputable def endemicR (β σ γ μ N : ℝ) : ℝ := γ * endemicI β σ γ μ N / μ
+
+namespace IsSolution
+
+variable {β σ γ μ N : ℝ} {S E I R : ℝ → ℝ}
+
+/-- **The removed class follows the infectives.** Along a solution with `μ > 0`, if `I → I∞`
+then `R → γ I∞ / μ`: `R' = γ I - μ R` is linear relaxation at rate `μ` driven by `γ I`. -/
+theorem tendsto_removed (h : IsSolution β σ γ μ N S E I R) (hμ : 0 < μ) {c : ℝ}
+    (hI : Tendsto I atTop (𝓝 c)) : Tendsto R atTop (𝓝 (γ * c / μ)) := by
+  have hu := tendsto_zero_of_hasDerivAt_relax (u := fun t => R t - γ * c / μ)
+    (f := fun t => γ * (I t - c)) hμ
+    (fun t ht => ((h.hasDerivAt_removed t ht).sub_const _).congr_deriv (by field_simp; ring))
+    (by simpa using (hI.sub_const c).const_mul γ)
+  simpa using hu.add_const (γ * c / μ)
+
+/-- **The total population relaxes to `N`.** Along a solution with `μ > 0`,
+`S + E + I + R → N`: the total satisfies `(S + E + I + R)' = μ (N - (S + E + I + R))`. -/
+theorem tendsto_total (h : IsSolution β σ γ μ N S E I R) (hμ : 0 < μ) :
+    Tendsto (fun t => S t + E t + I t + R t) atTop (𝓝 N) := by
+  have hu := tendsto_zero_of_hasDerivAt_relax (u := fun t => S t + E t + I t + R t - N)
+    (f := fun _ => 0) hμ (fun t ht => ((((h.hasDerivAt_susceptible t ht).add
+      (h.hasDerivAt_exposed t ht)).add (h.hasDerivAt_infected t ht)).add
+      (h.hasDerivAt_removed t ht)).sub_const N |>.congr_deriv (by ring)) tendsto_const_nhds
+  simpa using hu.add_const N
+
+/-- **`R → R*` at the endemic equilibrium.** Under the hypotheses of `tendsto_endemic`
+(`R₀ > 1`), the removed class converges to `R* = γ I* / μ`. -/
+theorem tendsto_removed_endemic (h : IsSolution β σ γ μ N S E I R) (hσ : 0 < σ) (hγ : 0 ≤ γ)
+    (hμ : 0 < μ) (hN : 0 < N) (hR : 1 < R0 β σ γ μ) (hS0 : 0 < S 0) (hE0 : 0 < E 0)
+    (hI0 : 0 < I 0) : Tendsto R atTop (𝓝 (endemicR β σ γ μ N)) :=
+  h.tendsto_removed hμ ((continuous_snd.comp continuous_snd).tendsto _ |>.comp
+    (h.tendsto_endemic hσ hγ hμ hN hR hS0 hE0 hI0))
+
+end IsSolution
+
+/-! ### The disease-free equilibrium when `R₀ ≤ 1` -/
+
+/-- The **Lyapunov function of the disease-free equilibrium** `(N, 0, 0)`:
+`V₀(S, E, I) = g(N, S) + E + ((μ + σ) / σ) I`, `g` the Volterra function. Meaningful for
+`S > 0`, `N > 0` and `σ > 0`, which every theorem about it assumes; outside that domain Lean's
+`log` and division return junk values. -/
+noncomputable def dfeLyapunov (σ μ N S E I : ℝ) : ℝ :=
+  volterra N S + E + (μ + σ) / σ * I
+
+/-- The derivative of `dfeLyapunov` along the vector field
+(`IsSolution.hasDerivAt_dfeLyapunov`): `V̇₀ = -μ (S - N)² / S + (β - (μ + σ) (μ + γ) / σ) I`.
+The coefficient of `I` is `((μ + σ) (μ + γ) / σ) (R₀ - 1)`. Meaningful for `S > 0` and
+`σ > 0`, where it is the derivative; at `S = 0` or `σ = 0` Lean's division returns `0`. -/
+noncomputable def dfeLyapunovDeriv (β σ γ μ N S I : ℝ) : ℝ :=
+  -(μ * (S - N) ^ 2 / S) + (β - (μ + σ) * (μ + γ) / σ) * I
+
+section DiseaseFree
+
+variable {β σ γ μ N : ℝ}
+
+/-- `R₀ ≤ 1` says `β ≤ (μ + σ) (μ + γ) / σ`. -/
+theorem beta_le_of_R0_le_one (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ) (hR : R0 β σ γ μ ≤ 1) :
+    β ≤ (μ + σ) * (μ + γ) / σ := by
+  rw [R0, div_le_one (by positivity)] at hR
+  rw [le_div_iff₀ hσ]
+  linarith
+
+/-- **Lyapunov decrease at the disease-free equilibrium**: for `R₀ ≤ 1`, `S > 0` and `I ≥ 0`,
+`V̇₀ ≤ -μ (S - N)² / S ≤ 0`. -/
+theorem dfeLyapunovDeriv_le (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ) (hR : R0 β σ γ μ ≤ 1)
+    {S I : ℝ} (hI : 0 ≤ I) : dfeLyapunovDeriv β σ γ μ N S I ≤ -(μ * (S - N) ^ 2 / S) := by
+  have := beta_le_of_R0_le_one hσ hγ hμ hR
+  have : (β - (μ + σ) * (μ + γ) / σ) * I ≤ 0 :=
+    mul_nonpos_of_nonpos_of_nonneg (by linarith) hI
+  rw [dfeLyapunovDeriv]
+  linarith
+
+/-- Each term of `V₀` is bounded by `V₀` on `S > 0`, `E, I ≥ 0`. -/
+theorem le_dfeLyapunov (hσ : 0 < σ) (hμ : 0 ≤ μ) (hN : 0 < N) {S E I : ℝ} (hS : 0 < S)
+    (hE : 0 ≤ E) (hI : 0 ≤ I) :
+    volterra N S ≤ dfeLyapunov σ μ N S E I ∧ E ≤ dfeLyapunov σ μ N S E I ∧
+      I ≤ dfeLyapunov σ μ N S E I := by
+  have h1 := volterra_nonneg hN hS
+  have hc : 1 ≤ (μ + σ) / σ := by rw [le_div_iff₀ hσ]; linarith
+  have hc3 := le_mul_of_one_le_left hI hc
+  rw [dfeLyapunov]
+  exact ⟨by linarith, by linarith, by linarith⟩
+
+theorem dfeLyapunov_nonneg (hσ : 0 < σ) (hμ : 0 ≤ μ) (hN : 0 < N) {S E I : ℝ} (hS : 0 < S)
+    (hE : 0 ≤ E) (hI : 0 ≤ I) : 0 ≤ dfeLyapunov σ μ N S E I :=
+  (volterra_nonneg hN hS).trans (le_dfeLyapunov hσ hμ hN hS hE hI).1
+
+theorem dfeLyapunov_diseaseFree (hN : N ≠ 0) : dfeLyapunov σ μ N N 0 0 = 0 := by
+  simp [dfeLyapunov, volterra, div_self hN]
+
+/-- `V₀` is continuous at the disease-free equilibrium. -/
+theorem continuousAt_dfeLyapunov (hN : 0 < N) :
+    ContinuousAt (fun p : ℝ × ℝ × ℝ => dfeLyapunov σ μ N p.1 p.2.1 p.2.2) (N, 0, 0) := by
+  unfold dfeLyapunov volterra
+  fun_prop (disch := (simp only; positivity))
+
+end DiseaseFree
+
+namespace IsSolution
+
+variable {β σ γ μ N : ℝ} {S E I R : ℝ → ℝ}
+
+/-- **Derivative of `V₀` along solutions**: at a time `t ≥ 0` with `S(t) ≠ 0`,
+`d/dt V₀(S(t), E(t), I(t)) = dfeLyapunovDeriv (S(t), I(t))`. -/
+theorem hasDerivAt_dfeLyapunov (h : IsSolution β σ γ μ N S E I R) (hσ : σ ≠ 0) (hN : N ≠ 0)
+    {t : ℝ} (ht : 0 ≤ t) (hSt : S t ≠ 0) :
+    HasDerivAt (fun s => dfeLyapunov σ μ N (S s) (E s) (I s))
+      (dfeLyapunovDeriv β σ γ μ N (S t) (I t)) t := by
+  have dS := (hasDerivAt_volterra hN hSt).comp t (h.hasDerivAt_susceptible t ht)
+  have dI := (h.hasDerivAt_infected t ht).const_mul ((μ + σ) / σ)
+  refine ((dS.add (h.hasDerivAt_exposed t ht)).add dI).congr_deriv ?_
+  rw [dfeLyapunovDeriv]
+  field_simp
+  ring
+
+/-- If `u' = a - k u` on `[0, τ]` with `a ≥ 0` on `(0, τ)` and `u(0) > 0`, then `u(τ) > 0`:
+`u e^{k t}` is nondecreasing there. -/
+private theorem pos_of_hasDerivAt_ge {u a : ℝ → ℝ} {k τ : ℝ} (hτ : 0 ≤ τ)
+    (hd : ∀ s ∈ Icc 0 τ, HasDerivAt u (a s - k * u s) s) (ha : ∀ s ∈ Ioo 0 τ, 0 ≤ a s)
+    (h0 : 0 < u 0) : 0 < u τ := by
+  have hg : ∀ s ∈ Icc 0 τ, HasDerivAt (fun s => u s * exp (k * s)) (a s * exp (k * s)) s :=
+    fun s hs => ((hd s hs).mul ((hasDerivAt_id' s).const_mul k).exp).congr_deriv (by ring)
+  have hmono : MonotoneOn (fun s => u s * exp (k * s)) (Icc 0 τ) :=
+    monotoneOn_of_hasDerivWithinAt_nonneg (convex_Icc 0 τ)
+      (fun s hs => (hg s hs).continuousAt.continuousWithinAt)
+      (fun s hs => (hg s (interior_subset hs)).hasDerivWithinAt)
+      (fun s hs => by
+        rw [interior_Icc] at hs
+        exact mul_nonneg (ha s hs) (exp_pos _).le)
+  have := hmono ⟨le_rfl, hτ⟩ ⟨hτ, le_rfl⟩ hτ
+  simp only [mul_zero, exp_zero, mul_one] at this
+  exact pos_of_mul_pos_left (h0.trans_le this) (exp_pos _).le
+
+section DiseaseFreeInvariance
+
+variable (h : IsSolution β σ γ μ N S E I R) (hβ : 0 ≤ β) (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ)
+  (hN : 0 < N) (hR : R0 β σ γ μ ≤ 1)
+include h hσ hγ hμ hN hR
+
+/-- `V₀` does not increase while the solution stays in the positive orthant. -/
+theorem dfeLyapunov_le_of_pos_on {t : ℝ} (ht : 0 ≤ t)
+    (hpos : ∀ s ∈ Icc 0 t, 0 < S s ∧ 0 < E s ∧ 0 < I s) :
+    dfeLyapunov σ μ N (S t) (E t) (I t) ≤ dfeLyapunov σ μ N (S 0) (E 0) (I 0) :=
+  le_of_hasDerivAt_nonpos_Icc (f := fun s => dfeLyapunov σ μ N (S s) (E s) (I s)) ht
+    (fun s hs => h.hasDerivAt_dfeLyapunov hσ.ne' hN.ne' hs.1 (hpos s hs).1.ne')
+    (fun s hs => (dfeLyapunovDeriv_le hσ hγ hμ hR (hpos s hs).2.2.le).trans
+      (neg_nonpos.2 (div_nonneg (by positivity) (hpos s hs).1.le)))
+
+variable (hS0 : 0 < S 0) (hE0 : 0 < E 0) (hI0 : 0 < I 0)
+include hβ hS0 hE0 hI0
+
+/-- **Forward invariance of the open positive orthant** for `R₀ ≤ 1`: `V₀ ≤ V₀(0)` keeps `S`
+above a fixed positive level, and `E e^{(μ + σ) t}`, `I e^{(μ + γ) t}` are nondecreasing while
+`S, E, I > 0`; so no compartment reaches `0`. -/
+theorem pos_of_R0_le_one {t : ℝ} (ht : 0 ≤ t) : 0 < S t ∧ 0 < E t ∧ 0 < I t := by
+  set C := dfeLyapunov σ μ N (S 0) (E 0) (I 0)
+  have cS : ContinuousOn S (Ici 0) := fun s hs =>
+    (h.hasDerivAt_susceptible s hs).continuousAt.continuousWithinAt
+  have cE : ContinuousOn E (Ici 0) := fun s hs =>
+    (h.hasDerivAt_exposed s hs).continuousAt.continuousWithinAt
+  have cI : ContinuousOn I (Ici 0) := fun s hs =>
+    (h.hasDerivAt_infected s hs).continuousAt.continuousWithinAt
+  set A : Set ℝ := (Ici 0 ∩ S ⁻¹' Iic 0) ∪ (Ici 0 ∩ E ⁻¹' Iic 0) ∪ (Ici 0 ∩ I ⁻¹' Iic 0)
+  have hA : IsClosed A :=
+    ((cS.preimage_isClosed_of_isClosed isClosed_Ici isClosed_Iic).union
+      (cE.preimage_isClosed_of_isClosed isClosed_Ici isClosed_Iic)).union
+      (cI.preimage_isClosed_of_isClosed isClosed_Ici isClosed_Iic)
+  have memA : ∀ s, s ∈ A ↔ 0 ≤ s ∧ ¬ (0 < S s ∧ 0 < E s ∧ 0 < I s) := by
+    intro s
+    simp only [A, mem_union, mem_inter_iff, mem_Ici, mem_preimage, mem_Iic]
+    constructor
+    · rintro ((⟨h0, h1⟩ | ⟨h0, h1⟩) | ⟨h0, h1⟩) <;> refine ⟨h0, fun hp => ?_⟩ <;>
+        linarith [hp.1, hp.2.1, hp.2.2]
+    · rintro ⟨h0, hn⟩
+      by_cases h1 : 0 < S s
+      · by_cases h2 : 0 < E s
+        · exact Or.inr ⟨h0, not_lt.1 fun h3 => hn ⟨h1, h2, h3⟩⟩
+        · exact Or.inl (Or.inr ⟨h0, not_lt.1 h2⟩)
+      · exact Or.inl (Or.inl ⟨h0, not_lt.1 h1⟩)
+  by_contra hcon
+  have hbdd : BddBelow A := ⟨0, fun s hs => ((memA s).1 hs).1⟩
+  have hτA := hA.csInf_mem ⟨t, (memA t).2 ⟨ht, hcon⟩⟩ hbdd
+  set τ := sInf A
+  have hτ0 : 0 ≤ τ := ((memA τ).1 hτA).1
+  have hbefore : ∀ s, 0 ≤ s → s < τ → 0 < S s ∧ 0 < E s ∧ 0 < I s := fun s hs hsτ => by
+    by_contra hn
+    exact notMem_of_lt_csInf hsτ hbdd ((memA s).2 ⟨hs, hn⟩)
+  have hτpos : 0 < τ := by
+    rcases hτ0.lt_or_eq with h0 | h0
+    · exact h0
+    · have := ((memA τ).1 hτA).2
+      rw [← h0] at this
+      exact absurd ⟨hS0, hE0, hI0⟩ this
+  have hSτ : N * exp (-(C + N) / N) ≤ S τ := by
+    refine le_of_forall_le_Ioo hτpos (h.hasDerivAt_susceptible τ hτ0).continuousAt fun s hs => ?_
+    obtain ⟨h1, h2, h3⟩ := hbefore s hs.1.le hs.2
+    have hV := h.dfeLyapunov_le_of_pos_on hσ hγ hμ hN hR hs.1.le
+      fun u hu => hbefore u hu.1 (hu.2.trans_lt hs.2)
+    exact le_of_volterra_le hN h1 ((le_dfeLyapunov hσ hμ.le hN h1 h2.le h3.le).1.trans hV)
+  have hEτ := pos_of_hasDerivAt_ge hτ0 (fun s hs => h.hasDerivAt_exposed s hs.1)
+    (fun s hs => by
+      obtain ⟨h1, -, h3⟩ := hbefore s hs.1.le hs.2
+      positivity) hE0
+  have hIτ := pos_of_hasDerivAt_ge hτ0 (fun s hs => h.hasDerivAt_infected s hs.1)
+    (fun s hs => by
+      obtain ⟨-, h2, -⟩ := hbefore s hs.1.le hs.2
+      positivity) hI0
+  exact ((memA τ).1 hτA).2 ⟨(by positivity : (0 : ℝ) < N * exp (-(C + N) / N)).trans_le hSτ,
+    hEτ, hIτ⟩
+
+/-- **`V₀` is nonincreasing along solutions** for `R₀ ≤ 1`: `V₀(t) ≤ V₀(0)` for `t ≥ 0`. -/
+theorem dfeLyapunov_le_initial {t : ℝ} (ht : 0 ≤ t) :
+    dfeLyapunov σ μ N (S t) (E t) (I t) ≤ dfeLyapunov σ μ N (S 0) (E 0) (I 0) :=
+  h.dfeLyapunov_le_of_pos_on hσ hγ hμ hN hR ht fun _ hs =>
+    h.pos_of_R0_le_one hβ hσ hγ hμ hN hR hS0 hE0 hI0 hs.1
+
+/-- **Attractivity of the disease-free equilibrium from the open positive orthant.** If `β ≥ 0`,
+`σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and `R₀ = β σ / ((μ + σ) (μ + γ)) ≤ 1`, every solution with
+`S(0), E(0), I(0) > 0` converges to `(N, 0, 0)`. Boundary initial states are not covered.
+
+`V̇₀ ≤ -μ (S - N)² / S` and `V₀` converges, so `S → N` (Barbalat). Barbalat for `S` gives
+`S' → 0`, i.e. `β S I / N → 0`. `L = σ E + (μ + σ) I = σ (V₀ - g(N, S))` converges, so
+`L' = σ β S I / N - (μ + σ) (μ + γ) I → 0` (Barbalat), hence `I → 0`; this step covers
+`R₀ = 1`, where the `I`-coefficient of `V̇₀` vanishes. Finally `I' → 0` gives `E → 0`. -/
+theorem tendsto_diseaseFree :
+    Tendsto (fun t => (S t, E t, I t)) atTop (𝓝 (N, 0, 0)) := by
+  have hpos := fun t (ht : 0 ≤ t) => h.pos_of_R0_le_one hβ hσ hγ hμ hN hR hS0 hE0 hI0 ht
+  set C := dfeLyapunov σ μ N (S 0) (E 0) (I 0)
+  have hC : 0 ≤ C := dfeLyapunov_nonneg hσ hμ.le hN hS0 hE0.le hI0.le
+  have hVle : ∀ t, 0 ≤ t → dfeLyapunov σ μ N (S t) (E t) (I t) ≤ C :=
+    fun t ht => h.dfeLyapunov_le_initial hβ hσ hγ hμ hN hR hS0 hE0 hI0 ht
+  set M := 2 * (C + N) + C
+  have hM : 0 < M := by positivity
+  have hb : ∀ t, 0 ≤ t → (0 ≤ S t ∧ S t ≤ M) ∧ (0 ≤ E t ∧ E t ≤ M) ∧ (0 ≤ I t ∧ I t ≤ M) := by
+    intro t ht
+    obtain ⟨h1, h2, h3⟩ := hpos t ht
+    obtain ⟨vS, vE, vI⟩ := le_dfeLyapunov hσ hμ.le hN h1 h2.le h3.le
+    have := le_two_mul_of_volterra_le hN h1 (vS.trans (hVle t ht))
+    exact ⟨⟨h1.le, by linarith⟩, ⟨h2.le, by linarith [hVle t ht]⟩,
+      ⟨h3.le, by linarith [hVle t ht]⟩⟩
+  set W : ℝ → ℝ := fun t => dfeLyapunov σ μ N (S t) (E t) (I t)
+  have hWd : ∀ t, 0 ≤ t → HasDerivAt W (dfeLyapunovDeriv β σ γ μ N (S t) (I t)) t :=
+    fun t ht => h.hasDerivAt_dfeLyapunov hσ.ne' hN.ne' ht (hpos t ht).1.ne'
+  -- `V₀` converges.
+  have hWanti : AntitoneOn W (Ici 0) :=
+    antitoneOn_of_hasDerivWithinAt_nonpos (convex_Ici 0)
+      (fun x hx => (hWd x hx).continuousAt.continuousWithinAt)
+      (fun x hx => (hWd x (interior_subset hx)).hasDerivWithinAt)
+      (fun x hx => (dfeLyapunovDeriv_le hσ hγ hμ hR (hpos x (interior_subset hx)).2.2.le).trans
+        (neg_nonpos.2 (div_nonneg (by positivity) (hpos x (interior_subset hx)).1.le)))
+  have hWlim : ∃ c, Tendsto W atTop (𝓝 c) := by
+    have hanti : Antitone fun t => W (max t 0) := fun s t hst =>
+      hWanti (mem_Ici.2 (le_max_right _ _)) (mem_Ici.2 (le_max_right _ _))
+        (max_le_max hst le_rfl)
+    have hbdd : BddBelow (range fun t => W (max t 0)) := ⟨0, by
+      rintro _ ⟨t, rfl⟩
+      have hp := hpos (max t 0) (le_max_right _ _)
+      exact dfeLyapunov_nonneg hσ hμ.le hN hp.1 hp.2.1.le hp.2.2.le⟩
+    refine ⟨_, (tendsto_atTop_ciInf hanti hbdd).congr' ?_⟩
+    filter_upwards [eventually_ge_atTop 0] with t ht
+    rw [max_eq_left ht]
+  obtain ⟨c, hW⟩ := hWlim
+  -- Step 1: `S → N`.
+  have hSN : Tendsto S atTop (𝓝 N) := by
+    have hφ : Continuous fun p : ℝ × ℝ × ℝ =>
+        μ * (2 * (p.1 - N) * (μ * N - β * p.1 * p.2.2 / N - μ * p.1)) / M := by fun_prop
+    have hd : ∀ t, 0 ≤ t → HasDerivAt (fun t => μ * (S t - N) ^ 2 / M)
+        ((fun p : ℝ × ℝ × ℝ =>
+          μ * (2 * (p.1 - N) * (μ * N - β * p.1 * p.2.2 / N - μ * p.1)) / M) (S t, E t, I t))
+        t := by
+      intro t ht
+      refine ((((h.hasDerivAt_susceptible t ht).sub_const N).pow 2).const_mul μ).div_const M
+        |>.congr_deriv ?_
+      dsimp only
+      ring
+    obtain ⟨L, hL, hLip⟩ := exists_lipschitz_of_box hb hφ hd
+    have hev : ∀ ε > 0, ∀ᶠ t in atTop, μ * (S t - N) ^ 2 / M < ε := fun ε hε =>
+      eventually_lt_of_tendsto_of_hasDerivAt hW.neg (fun t ht => (hWd t ht).neg) hL hLip
+        (fun t ht => by
+          have hp := hpos t ht
+          have h1 := dfeLyapunovDeriv_le (N := N) (S := S t) hσ hγ hμ hR hp.2.2.le
+          have h2 : μ * (S t - N) ^ 2 / M ≤ μ * (S t - N) ^ 2 / S t :=
+            div_le_div_of_nonneg_left (by positivity) hp.1 (hb t ht).1.2
+          linarith) hε
+    have h0 : Tendsto (fun t => μ * (S t - N) ^ 2 / M) atTop (𝓝 0) :=
+      tendsto_order.2 ⟨fun b hb' => Eventually.of_forall fun t => hb'.trans_le (by positivity),
+        fun b hb' => hev b hb'⟩
+    have hsq : Tendsto (fun t => (S t - N) ^ 2) atTop (𝓝 0) := by
+      have := h0.const_mul (M / μ)
+      rw [mul_zero] at this
+      refine this.congr fun t => ?_
+      field_simp
+    rw [tendsto_iff_norm_sub_tendsto_zero]
+    have := hsq.sqrt
+    simp only [Real.sqrt_sq_eq_abs, Real.sqrt_zero] at this
+    simpa [Real.norm_eq_abs] using this
+  -- Step 2: `S' → 0`, hence `β S I / N → 0`.
+  have hq : Tendsto (fun t => β * S t * I t / N) atTop (𝓝 0) := by
+    have hφ : Continuous fun p : ℝ × ℝ × ℝ =>
+        -((β * (μ * N - β * p.1 * p.2.2 / N - μ * p.1) * p.2.2 +
+          β * p.1 * (σ * p.2.1 - (μ + γ) * p.2.2)) / N) -
+          μ * (μ * N - β * p.1 * p.2.2 / N - μ * p.1) := by fun_prop
+    have hd : ∀ t, 0 ≤ t → HasDerivAt (fun t => μ * N - β * S t * I t / N - μ * S t)
+        ((fun p : ℝ × ℝ × ℝ =>
+          -((β * (μ * N - β * p.1 * p.2.2 / N - μ * p.1) * p.2.2 +
+            β * p.1 * (σ * p.2.1 - (μ + γ) * p.2.2)) / N) -
+            μ * (μ * N - β * p.1 * p.2.2 / N - μ * p.1)) (S t, E t, I t)) t := by
+      intro t ht
+      refine (((hasDerivAt_const t (μ * N)).sub ((((h.hasDerivAt_susceptible t ht).const_mul
+        β).mul (h.hasDerivAt_infected t ht)).div_const N)).sub
+        ((h.hasDerivAt_susceptible t ht).const_mul μ)).congr_deriv ?_
+      dsimp only
+      ring
+    obtain ⟨L, hL, hLip⟩ := exists_lipschitz_of_box hb hφ hd
+    have hp0 := tendsto_zero_of_tendsto_of_hasDerivAt hSN h.hasDerivAt_susceptible hL hLip
+    have hlim := ((tendsto_const_nhds (x := μ * N)).sub (hSN.const_mul μ)).sub hp0
+    rw [show μ * N - μ * N - 0 = (0 : ℝ) by ring] at hlim
+    exact hlim.congr fun t => by ring
+  -- Step 3: `L = σ E + (μ + σ) I` converges, so `L' → 0`, hence `I → 0`.
+  have hI0' : Tendsto I atTop (𝓝 0) := by
+    have hv : ContinuousAt (volterra N) N := by
+      unfold volterra
+      fun_prop (disch := positivity)
+    have hv0 : volterra N N = 0 := by simp [volterra, div_self hN.ne']
+    have hL : Tendsto (fun t => σ * E t + (μ + σ) * I t) atTop (𝓝 (σ * (c - 0))) := by
+      have := ((hW.sub (hv0 ▸ hv.tendsto.comp hSN)).const_mul σ)
+      refine this.congr fun t => ?_
+      simp only [W, dfeLyapunov, Function.comp_apply]
+      field_simp
+      ring
+    have hd : ∀ t, 0 ≤ t → HasDerivAt (fun t => σ * E t + (μ + σ) * I t)
+        (σ * (β * S t * I t / N - (μ + σ) * E t) + (μ + σ) * (σ * E t - (μ + γ) * I t)) t :=
+      fun t ht =>
+        ((h.hasDerivAt_exposed t ht).const_mul σ).add ((h.hasDerivAt_infected t ht).const_mul _)
+    -- `L'` is Lipschitz: its derivative is a continuous function of the boxed state.
+    have hφ : Continuous fun p : ℝ × ℝ × ℝ =>
+        σ * (β * ((μ * N - β * p.1 * p.2.2 / N - μ * p.1) * p.2.2 +
+          p.1 * (σ * p.2.1 - (μ + γ) * p.2.2)) / N -
+          (μ + σ) * (β * p.1 * p.2.2 / N - (μ + σ) * p.2.1)) +
+        (μ + σ) * (σ * (β * p.1 * p.2.2 / N - (μ + σ) * p.2.1) -
+          (μ + γ) * (σ * p.2.1 - (μ + γ) * p.2.2)) := by fun_prop
+    have hd2 : ∀ t, 0 ≤ t → HasDerivAt
+        (fun t => σ * (β * S t * I t / N - (μ + σ) * E t) + (μ + σ) * (σ * E t - (μ + γ) * I t))
+        ((fun p : ℝ × ℝ × ℝ =>
+          σ * (β * ((μ * N - β * p.1 * p.2.2 / N - μ * p.1) * p.2.2 +
+            p.1 * (σ * p.2.1 - (μ + γ) * p.2.2)) / N -
+            (μ + σ) * (β * p.1 * p.2.2 / N - (μ + σ) * p.2.1)) +
+          (μ + σ) * (σ * (β * p.1 * p.2.2 / N - (μ + σ) * p.2.1) -
+            (μ + γ) * (σ * p.2.1 - (μ + γ) * p.2.2))) (S t, E t, I t)) t := by
+      intro t ht
+      have dS := h.hasDerivAt_susceptible t ht
+      have dE := h.hasDerivAt_exposed t ht
+      have dI := h.hasDerivAt_infected t ht
+      refine (((((dS.const_mul β).mul dI).div_const N).sub (dE.const_mul (μ + σ))).const_mul
+        σ |>.add (((dE.const_mul σ).sub (dI.const_mul (μ + γ))).const_mul (μ + σ))).congr_deriv ?_
+      dsimp only
+      ring
+    obtain ⟨L, hL0, hLip⟩ := exists_lipschitz_of_box hb hφ hd2
+    have hl0 := tendsto_zero_of_tendsto_of_hasDerivAt hL hd hL0 hLip
+    have hlim := ((hq.const_mul σ).sub hl0).div_const ((μ + σ) * (μ + γ))
+    rw [show (σ * 0 - 0) / ((μ + σ) * (μ + γ)) = (0 : ℝ) by ring] at hlim
+    refine hlim.congr fun t => ?_
+    have : (μ + σ) * (μ + γ) ≠ 0 := by positivity
+    field_simp
+    ring
+  -- Step 4: `I' → 0`, hence `E → 0`.
+  have hE0' : Tendsto E atTop (𝓝 0) := by
+    have hφ : Continuous fun p : ℝ × ℝ × ℝ =>
+        σ * (β * p.1 * p.2.2 / N - (μ + σ) * p.2.1) - (μ + γ) * (σ * p.2.1 - (μ + γ) * p.2.2) :=
+      by fun_prop
+    have hd : ∀ t, 0 ≤ t → HasDerivAt (fun t => σ * E t - (μ + γ) * I t)
+        ((fun p : ℝ × ℝ × ℝ => σ * (β * p.1 * p.2.2 / N - (μ + σ) * p.2.1) -
+          (μ + γ) * (σ * p.2.1 - (μ + γ) * p.2.2)) (S t, E t, I t)) t := fun t ht =>
+      ((h.hasDerivAt_exposed t ht).const_mul σ).sub ((h.hasDerivAt_infected t ht).const_mul _)
+    obtain ⟨L, hL, hLip⟩ := exists_lipschitz_of_box hb hφ hd
+    have hq0 := tendsto_zero_of_tendsto_of_hasDerivAt hI0' h.hasDerivAt_infected hL hLip
+    have hlim := (hq0.add (hI0'.const_mul (μ + γ))).div_const σ
+    rw [show (0 + (μ + γ) * 0) / σ = (0 : ℝ) by ring] at hlim
+    refine hlim.congr fun t => ?_
+    field_simp
+    ring
+  exact hSN.prodMk_nhds (hE0'.prodMk_nhds hI0')
+
+/-- **`R → 0` at the disease-free equilibrium** for `R₀ ≤ 1` (`R* = γ · 0 / μ = 0`). -/
+theorem tendsto_removed_diseaseFree : Tendsto R atTop (𝓝 0) := by
+  have hI := (continuous_snd.comp continuous_snd).tendsto _ |>.comp
+    (h.tendsto_diseaseFree hβ hσ hγ hμ hN hR hS0 hE0 hI0)
+  simpa using h.tendsto_removed hμ hI
+
+end DiseaseFreeInvariance
+
+end IsSolution
+
+section DiseaseFreeStability
+
+variable {β σ γ μ N : ℝ}
+
+/-- **Lyapunov stability of the disease-free equilibrium relative to the open positive orthant**
+for `R₀ ≤ 1`: for every `ε > 0` there is `δ > 0` such that every solution starting in the open
+positive orthant within distance `δ` of `(N, 0, 0)` stays within distance `ε` of it for all
+`t ≥ 0`. Initial states on the boundary of the orthant, including `(N, 0, 0)` itself, are not
+covered. -/
+theorem diseaseFree_lyapunovStable_of_pos (hβ : 0 ≤ β) (hσ : 0 < σ) (hγ : 0 ≤ γ) (hμ : 0 < μ)
+    (hN : 0 < N) (hR : R0 β σ γ μ ≤ 1) :
+    ∀ ε > 0, ∃ δ > 0, ∀ S E I R : ℝ → ℝ, IsSolution β σ γ μ N S E I R → 0 < S 0 → 0 < E 0 →
+      0 < I 0 → dist (S 0, E 0, I 0) (N, 0, 0) < δ →
+      ∀ t, 0 ≤ t → dist (S t, E t, I t) (N, 0, 0) < ε := by
+  intro ε hε
+  set M₁ := 2 * (1 + N) with hM₁
+  have hM₁pos : 0 < M₁ := by positivity
+  set η := min 1 (min ε (ε ^ 2 / (4 * M₁))) with hη
+  have hηpos : 0 < η := by positivity
+  have hη1 : η ≤ 1 := min_le_left _ _
+  have hηε : η ≤ ε := (min_le_right _ _).trans (min_le_left _ _)
+  have hη2 : 2 * M₁ * η < ε ^ 2 := by
+    have : η ≤ ε ^ 2 / (4 * M₁) := (min_le_right _ _).trans (min_le_right _ _)
+    rw [le_div_iff₀ (by positivity)] at this
+    nlinarith [sq_pos_of_pos hε]
+  obtain ⟨δ, hδ, hcont⟩ :=
+    Metric.continuousAt_iff.1 (continuousAt_dfeLyapunov (σ := σ) (μ := μ) hN) η hηpos
+  refine ⟨δ, hδ, fun S E I R h hS0 hE0 hI0 hd t ht => ?_⟩
+  have hVinit : dfeLyapunov σ μ N (S 0) (E 0) (I 0) < η := by
+    have := hcont hd
+    simp only at this
+    rw [dfeLyapunov_diseaseFree hN.ne', Real.dist_eq, sub_zero] at this
+    exact (le_abs_self _).trans_lt this
+  obtain ⟨h1, h2, h3⟩ := h.pos_of_R0_le_one hβ hσ hγ hμ hN hR hS0 hE0 hI0 ht
+  have hVt := (h.dfeLyapunov_le_initial hβ hσ hγ hμ hN hR hS0 hE0 hI0 ht).trans_lt hVinit
+  obtain ⟨vS, vE, vI⟩ := le_dfeLyapunov hσ hμ.le hN h1 h2.le h3.le
+  have hSM : S t ≤ M₁ := by
+    have := le_two_mul_of_volterra_le hN h1 (vS.trans hVt.le)
+    linarith
+  have hsq := sq_le_volterra hN h1 (by linarith) hSM
+  have hS : (S t - N) ^ 2 < ε ^ 2 := by nlinarith
+  rw [Prod.dist_eq, Prod.dist_eq, Real.dist_eq, Real.dist_eq, Real.dist_eq, sub_zero, sub_zero,
+    abs_of_pos h2, abs_of_pos h3, max_lt_iff, max_lt_iff]
+  exact ⟨abs_lt_of_sq_lt_sq hS hε.le, by linarith, by linarith⟩
+
+/-- **Stability and attractivity of the SEIR disease-free equilibrium from the open positive
+orthant.** If `β ≥ 0`, `σ > 0`, `γ ≥ 0`, `μ > 0`, `N > 0` and
+`R₀ = β σ / ((μ + σ) (μ + γ)) ≤ 1`, the disease-free equilibrium `(N, 0, 0)` is Lyapunov stable
+relative to the open positive orthant `S, E, I > 0` and attracts every solution starting in it;
+both facts are proved from the Lyapunov function `dfeLyapunov`. Both quantify only over initial
+states with `S(0), E(0), I(0) > 0`; boundary initial states, including the equilibrium itself,
+are not covered, so this is not global asymptotic stability on the nonnegative orthant. -/
+theorem diseaseFree_lyapunovStable_and_attractive_of_pos (hβ : 0 ≤ β) (hσ : 0 < σ) (hγ : 0 ≤ γ)
+    (hμ : 0 < μ) (hN : 0 < N) (hR : R0 β σ γ μ ≤ 1) :
+    (∀ ε > 0, ∃ δ > 0, ∀ S E I R : ℝ → ℝ, IsSolution β σ γ μ N S E I R → 0 < S 0 → 0 < E 0 →
+      0 < I 0 → dist (S 0, E 0, I 0) (N, 0, 0) < δ →
+      ∀ t, 0 ≤ t → dist (S t, E t, I t) (N, 0, 0) < ε) ∧
+    (∀ S E I R : ℝ → ℝ, IsSolution β σ γ μ N S E I R → 0 < S 0 → 0 < E 0 → 0 < I 0 →
+      Tendsto (fun t => (S t, E t, I t)) atTop (𝓝 (N, 0, 0))) :=
+  ⟨diseaseFree_lyapunovStable_of_pos hβ hσ hγ hμ hN hR, fun _ _ _ _ h hS0 hE0 hI0 =>
+    h.tendsto_diseaseFree hβ hσ hγ hμ hN hR hS0 hE0 hI0⟩
+
+end DiseaseFreeStability
 
 /-! ### Forward-global existence in the feasible region -/
 

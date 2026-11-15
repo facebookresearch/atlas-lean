@@ -37,7 +37,7 @@ noncomputable def weightLaw {𝓧 : Type*} [Fintype 𝓧] [MeasurableSpace 𝓧]
 
 /-- Nonnegative point masses summing to one give a probability measure. -/
 theorem isProbabilityMeasure_weightLaw {𝓧 : Type*} [Fintype 𝓧] [MeasurableSpace 𝓧]
-    [MeasurableSingletonClass 𝓧] (g : 𝓧 → ℝ) (hg_nonneg : ∀ x, 0 ≤ g x)
+    (g : 𝓧 → ℝ) (hg_nonneg : ∀ x, 0 ≤ g x)
     (hg_sum : ∑ x, g x = 1) :
     IsProbabilityMeasure (weightLaw g) := by
   constructor

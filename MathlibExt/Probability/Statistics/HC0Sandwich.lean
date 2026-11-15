@@ -102,7 +102,7 @@ private lemma abs_dotProduct_le_card {ι : Type*} [Fintype ι] (v w : ι → ℝ
 /-- Deterministic entrywise residual bound: replacing oracle errors `u` by
 residuals `u - x ⬝ᵥ δ` moves entry `(a, b)` of the HC0 meat by at most
 `2 * card * ‖δ‖ * (n⁻¹ ∑ ‖x_i‖³ |u_i|) + card² * ‖δ‖² * (n⁻¹ ∑ ‖x_i‖⁴)`. -/
-theorem hc0Meat_entrywise_sub_le {ι : Type*} [Fintype ι] [DecidableEq ι]
+theorem hc0Meat_entrywise_sub_le {ι : Type*} [Fintype ι]
     {x : ℕ → ι → ℝ} {u : ℕ → ℝ} {δ : ι → ℝ} {n : ℕ} (hn : 0 < n) (a b : ι) :
     |(hc0Meat x (fun i => u i - (x i) ⬝ᵥ δ) n) a b -
         (hc0Meat x u n) a b| ≤
@@ -186,7 +186,7 @@ the moment conditions `E ‖x‖⁴ < ∞`, `E ‖x‖² u² < ∞`, and a.s. co
 `β̂_n`, each entry of the residual meat converges a.s. to
 `Ω a b = E[u² * x_a * x_b]`. The oracle meat entries are integrable because
 `|u² * x_a * x_b| ≤ ‖x‖² u²`. -/
-theorem hc0Meat_tendsto_ae {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq ι]
+theorem hc0Meat_tendsto_ae {ι : Type*} [Fintype ι]
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {x : ℕ → Ω → (ι → ℝ)} {u : ℕ → Ω → ℝ}
     {β : ι → ℝ} {βhat : ℕ → Ω → (ι → ℝ)}
@@ -344,7 +344,7 @@ theorem hc0Meat_tendsto_ae {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq 
 /-- A.s. consistency of the HC0 sandwich `Q̂_n⁻¹ Ω̂_n Q̂_n⁻ᵀ`, entrywise, from entrywise
 a.s. convergence of the bread inverse and the meat. The right factor is the transpose of
 the bread inverse, so no symmetry of the bread is assumed. -/
-theorem hc0Sandwich_tendsto_ae {ι : Type*} [Fintype ι] [Nonempty ι] [DecidableEq ι]
+theorem hc0Sandwich_tendsto_ae {ι : Type*} [Fintype ι] [DecidableEq ι]
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     {Qhat : ℕ → Ω → Matrix ι ι ℝ} {Q Ωm : Matrix ι ι ℝ}
     {meat : ℕ → Ω → Matrix ι ι ℝ}

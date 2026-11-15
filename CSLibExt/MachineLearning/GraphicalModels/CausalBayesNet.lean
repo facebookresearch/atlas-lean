@@ -112,10 +112,12 @@ noncomputable def intervene (k : Fin n) (a : α) : BayesNet α n where
   cpt j z := if h : j = k then StdSimplex.single a
     else b.cpt j fun i => z ⟨i.1, by rw [if_neg h]; exact i.2⟩
 
+omit [Nonempty α] in
 /-- The parents of the intervened node are deleted. -/
 theorem intervene_pa_self (k : Fin n) (a : α) : (b.intervene k a).pa k = ∅ := by
   simp [intervene]
 
+omit [Nonempty α] in
 /-- The parents of every other node are unchanged by the intervention. -/
 theorem intervene_pa_of_ne {j k : Fin n} (hj : j ≠ k) (a : α) :
     (b.intervene k a).pa j = b.pa j := by

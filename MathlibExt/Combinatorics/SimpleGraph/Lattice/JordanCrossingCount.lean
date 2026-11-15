@@ -52,7 +52,7 @@ theorem jcx_isEven_of_isCycles {V : Type*} [Finite V] {K : SimpleGraph V} (hcyc 
     jcx_IsEven K :=
   fun v => jvp_isCycles_even hcyc v
 
-theorem jcx_cycle_neighborCard {V : Type*} [Finite V] {K : SimpleGraph V}
+theorem jcx_cycle_neighborCard {V : Type*} {K : SimpleGraph V}
     {v : V} (p : K.Walk v v) (hp : p.IsCycle) (u : V) :
     Nat.card (p.toSubgraph.spanningCoe.neighborSet u) = 0 ∨
       Nat.card (p.toSubgraph.spanningCoe.neighborSet u) = 2 := by
@@ -310,7 +310,7 @@ theorem jcx_addWalk_faceCount {V : Type*} [Finite V] {G : SimpleGraph V} :
       · exact hxz_reach.trans ((ihreach u hup).mono hle)
 
 theorem jcx_faceCount_deleteCycle {V : Type*} [Finite V]
-    (K : SimpleGraph V) [LocallyFinite K] {v : V} (p : K.Walk v v) (hp : p.IsCycle)
+    (K : SimpleGraph V) {v : V} (p : K.Walk v v) (hp : p.IsCycle)
     (hiso : ∀ u ∈ p.support, u ≠ v →
       ∀ w, ¬ (K.deleteEdges p.toSubgraph.edgeSet).Adj u w) :
     faceCount (K.deleteEdges p.toSubgraph.edgeSet) + 1 = faceCount K := by
@@ -424,7 +424,7 @@ theorem jcx_faithfulDiscreteJordan (P : PlanarZ2Subgraph) (hpe : jcx_IsEvenPeela
   unfold whc_faithfulRegionCount at heq
   exact ⟨Finite.equivFinOfCardEq heq⟩
 
-theorem jcx_cycleVerts_isolated {V : Type*} [Finite V] {K : SimpleGraph V}
+theorem jcx_cycleVerts_isolated {V : Type*} {K : SimpleGraph V}
     [LocallyFinite K] (hcyc : K.IsCycles) {v : V} (p : K.Walk v v) (hp : p.IsCycle) :
     ∀ u ∈ p.support, ∀ w, ¬ (K.deleteEdges p.toSubgraph.edgeSet).Adj u w := by
   intro u hu w hadjw

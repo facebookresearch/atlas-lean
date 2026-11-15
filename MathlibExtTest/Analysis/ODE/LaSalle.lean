@@ -25,6 +25,12 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 * The damped oscillator `x' = y, y' = -x - y` with `{V' = 0} = {y = 0}`: the largest
   forward-invariant subset of `{y = 0}` is `{0}` (hand computation), strictly smaller than
   `{y = 0}`.
+* `x' = -x` on `K = [0, 1]` with `V = 0`: every point of `K` keeps `V` constant, so the largest
+  forward-invariant subset of `{V' = 0} = K` is all of `K` (hand computation) and the forward
+  theorems give nothing. The largest invariant subset is `{0}` (hand computation: an entire
+  solution `x₀ e^{-t}` with `x₀ > 0` leaves `[0, 1]` as `t → -∞`), so the two-sided theorem
+  `tendsto_of_lasalle_invariant` gives `x(t) → 0`, which is checked against the explicit
+  formula.
 * A noncompact case where LaSalle is not claimed: `x' = 1` on `K = [0, ∞)` with `V = e^{-x}`.
   Every hypothesis holds except compactness, `V' < 0` so the largest invariant subset of
   `{V' = 0}` is empty, and the conclusion fails: the ω-limit set of `x(t) = t` is empty.
@@ -188,6 +194,110 @@ example : ({0} : Set (ℝ × ℝ)) ⊂ {q | sqNorm' q (damped q) = 0} := by
   have := h (show ((1 : ℝ), (0 : ℝ)) ∈ {q : ℝ × ℝ | sqNorm' q (damped q) = 0} by
     simp [sqNorm'_damped])
   simp [Prod.ext_iff] at this
+
+/-! ### `x' = -x` on `[0, 1]`: the largest invariant subset is strictly smaller -/
+
+/-- The field `x ↦ -x` on `ℝ`, as a continuous linear map. -/
+noncomputable def negField : ℝ →L[ℝ] ℝ := -(ContinuousLinearMap.id ℝ ℝ)
+
+@[simp] theorem negField_apply (x : ℝ) : negField x = -x := rfl
+
+/-- The explicit solution `x₀ e^{-t}`, defined for all `t ∈ ℝ`. -/
+noncomputable def negSol (x t : ℝ) : ℝ := x * Real.exp (-t)
+
+theorem isIntegralCurve_negSol (x : ℝ) : IsIntegralCurve (negSol x) (fun _ => negField) := by
+  intro t
+  have h : HasDerivAt (fun τ => x * Real.exp (-τ)) (-(x * Real.exp (-t))) t := by
+    have := ((hasDerivAt_neg t).exp).const_mul x
+    convert this using 1; ring
+  show HasDerivAt (fun τ => x * Real.exp (-τ)) (negField (x * Real.exp (-t))) t
+  rw [negField_apply]
+  exact h
+
+theorem negSol_mem {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) {t : ℝ} (ht : 0 ≤ t) :
+    negSol x t ∈ Icc (0 : ℝ) 1 := by
+  have he : Real.exp (-t) ≤ 1 := Real.exp_le_one_iff.2 (by linarith)
+  refine ⟨mul_nonneg hx.1 (Real.exp_pos _).le, ?_⟩
+  calc negSol x t = x * Real.exp (-t) := rfl
+    _ ≤ x * 1 := mul_le_mul_of_nonneg_left he hx.1
+    _ ≤ 1 := by linarith [hx.2]
+
+theorem isForwardInvariant_Icc_neg : IsForwardInvariant negField (Icc (0 : ℝ) 1) := fun x hx =>
+  ⟨negSol x, (isIntegralCurve_negSol x).isIntegralCurveOn _, by simp [negSol],
+    fun _ ht => negSol_mem hx ht⟩
+
+/-- **The forward LaSalle set, by hand.** `[0, 1]` is forward invariant for `x' = -x`, so it is its
+own largest forward-invariant subset. -/
+theorem largestForwardInvariantSubset_neg :
+    largestForwardInvariantSubset negField (Icc (0 : ℝ) 1) = Icc 0 1 :=
+  Subset.antisymm largestForwardInvariantSubset_subset
+    (subset_largestForwardInvariantSubset le_rfl isForwardInvariant_Icc_neg)
+
+/-- **The two-sided LaSalle set, by hand.** The largest invariant subset of `[0, 1]` for
+`x' = -x` is `{0}`: along an entire solution `e^t x(t)` is constant, so `x(t) = x₀ e^{-t}`, and
+for `x₀ > 0` the value at `t = -1/x₀` is `x₀ e^{1/x₀} ≥ 1 + x₀ > 1`. -/
+theorem largestInvariantSubset_neg :
+    largestInvariantSubset negField (Icc (0 : ℝ) 1) = {0} := by
+  refine Subset.antisymm (fun x hx => ?_) (subset_largestInvariantSubset (by simp) ?_)
+  · obtain ⟨φ, hφ, hφ0, hφM⟩ := isInvariant_largestInvariantSubset x hx
+    have hM : ∀ t, φ t ∈ Icc (0 : ℝ) 1 := fun t => largestInvariantSubset_subset (hφM t)
+    have hg : ∀ t, HasDerivAt (fun τ => Real.exp τ * φ τ) 0 t := by
+      intro t
+      convert (Real.hasDerivAt_exp t).mul (hφ t) using 1
+      simp only [negField_apply]; ring
+    have hφeq : ∀ t, Real.exp t * φ t = x := by
+      intro t
+      have := is_const_of_deriv_eq_zero (fun τ => (hg τ).differentiableAt)
+        (fun τ => (hg τ).deriv) t 0
+      simpa [hφ0] using this
+    have hx0 : 0 ≤ x := by simpa [hφ0] using (hM 0).1
+    rw [mem_singleton_iff]
+    by_contra hne
+    have hpos : 0 < x := lt_of_le_of_ne hx0 (Ne.symm hne)
+    have he : Real.exp (-(1 / x)) * Real.exp (1 / x) = 1 := by rw [← Real.exp_add]; simp
+    have hφv : φ (-(1 / x)) = x * Real.exp (1 / x) := by
+      calc φ (-(1 / x)) = (Real.exp (-(1 / x)) * Real.exp (1 / x)) * φ (-(1 / x)) := by
+            rw [he, one_mul]
+        _ = (Real.exp (-(1 / x)) * φ (-(1 / x))) * Real.exp (1 / x) := by ring
+        _ = x * Real.exp (1 / x) := by rw [hφeq]
+    have h4 : x * (1 / x + 1) = 1 + x := by rw [mul_add, mul_one_div_cancel hpos.ne', mul_one]
+    have h5 := mul_le_mul_of_nonneg_left (Real.add_one_le_exp (1 / x)) hx0
+    linarith [(hM (-(1 / x))).2]
+  · rintro x hx
+    rw [mem_singleton_iff] at hx
+    subst hx
+    refine ⟨fun _ => 0, fun t => ?_, rfl, fun _ => rfl⟩
+    simpa using hasDerivAt_const t (0 : ℝ)
+
+/-- The two-sided LaSalle set `{0}` is strictly smaller than the forward one `[0, 1]`. -/
+example : largestInvariantSubset negField (Icc (0 : ℝ) 1) ⊂
+    largestForwardInvariantSubset negField (Icc (0 : ℝ) 1) := by
+  rw [largestInvariantSubset_neg, largestForwardInvariantSubset_neg]
+  refine ⟨by simp, fun h => ?_⟩
+  have := h (show (1 : ℝ) ∈ Icc (0 : ℝ) 1 by simp)
+  simp at this
+
+/-- **Convergence that needs two-sided invariance.** With `V = 0` the set `{V' = 0}` is all of
+`K = [0, 1]`, which is forward invariant, so the forward theorems only say that `x(t)` stays in
+`[0, 1]`. Its largest invariant subset is `{0}`, so `tendsto_of_lasalle_invariant` gives
+`x(t) → 0`. -/
+theorem negSol_tendsto {x : ℝ} (hx : x ∈ Icc (0 : ℝ) 1) : Tendsto (negSol x) atTop (𝓝 0) := by
+  refine tendsto_of_lasalle_invariant (V := fun _ => (0 : ℝ)) (V' := fun _ => 0)
+    isCompact_Icc negField.lipschitzWith.lipschitzOnWith isForwardInvariant_Icc_neg
+    ((isIntegralCurve_negSol x).isIntegralCurveOn _) (fun _ ht => negSol_mem hx ht)
+    (fun y _ => hasFDerivAt_const 0 y) (fun _ _ => by simp) ?_
+  convert largestInvariantSubset_neg.subset using 2
+  ext y
+  simp
+
+/-- The two-sided LaSalle conclusion agrees with the explicit formula `x₀ e^{-t} → 0`. -/
+example (x : ℝ) : Tendsto (negSol x) atTop (𝓝 0) := by
+  have := Real.tendsto_exp_neg_atTop_nhds_zero.const_mul x
+  rw [mul_zero] at this
+  exact this
+
+/-- The theorem applies to a concrete starting point, `x₀ = 1`. -/
+example : Tendsto (negSol 1) atTop (𝓝 0) := negSol_tendsto (by simp)
 
 /-! ### A noncompact set: LaSalle is not claimed -/
 

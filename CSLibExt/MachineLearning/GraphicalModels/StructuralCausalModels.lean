@@ -544,13 +544,6 @@ namespace BayesNet
 
 open Finset Convexity
 
-/-- Helper: away from the intervened node, `intervene` keeps the parents. (Atlas's
-`BayesNet.intervene_pa_of_ne` carries an unused `[Nonempty α]` section variable, so it does not
-apply in the `Nonempty`-free helpers below.) -/
-private theorem intervene_pa_of_ne' {α : Type*} {n : ℕ} (b : BayesNet α n) (k : Fin n) (a : α)
-    {j : Fin n} (hjk : j ≠ k) : (b.intervene k a).pa j = b.pa j := by
-  simp [intervene, hjk]
-
 /-- Helper: at the intervened node, the table is the point mass. -/
 private theorem intervene_cpt_of_eq {α : Type*} {n : ℕ} (b : BayesNet α n) (k : Fin n) (a : α)
     (z : (b.intervene k a).pa k → α) :
@@ -561,7 +554,7 @@ private theorem intervene_cpt_of_eq {α : Type*} {n : ℕ} (b : BayesNet α n) (
 private theorem intervene_cpt_of_ne {α : Type*} {n : ℕ} (b : BayesNet α n) (k : Fin n) (a : α)
     {j : Fin n} (hjk : j ≠ k) (z : (b.intervene k a).pa j → α) :
     (b.intervene k a).cpt j z
-      = b.cpt j (fun i => z ⟨i.1, by rw [b.intervene_pa_of_ne' k a hjk]; exact i.2⟩) := by
+      = b.cpt j (fun i => z ⟨i.1, by rw [b.intervene_pa_of_ne hjk a]; exact i.2⟩) := by
   simp [intervene, hjk]
 
 /-- Helper: away from the mutilated set, `mutilateSet` keeps the parents. -/
@@ -622,7 +615,7 @@ private theorem inducedBayesNet_intervene_cpt_of_ne {α : Type*} {n : ℕ} {U : 
     (z : ((M.inducedBayesNet μ).intervene k a).pa j → α) :
     ((M.inducedBayesNet μ).intervene k a).cpt j z
       = (μ j).map (M.f j (fun i => z ⟨i.1, by
-        rw [(M.inducedBayesNet μ).intervene_pa_of_ne' k a hjk]; exact i.2⟩)) := by
+        rw [(M.inducedBayesNet μ).intervene_pa_of_ne hjk a]; exact i.2⟩)) := by
   rw [(M.inducedBayesNet μ).intervene_cpt_of_ne k a hjk]
   rfl
 

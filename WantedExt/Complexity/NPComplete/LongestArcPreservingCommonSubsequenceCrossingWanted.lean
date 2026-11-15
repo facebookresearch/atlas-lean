@@ -1,0 +1,107 @@
+/-
+Copyright (c) Meta Platforms, Inc. and affiliates.
+All rights reserved.
+
+This source code is licensed under the license found in the
+LICENSE file in the root directory of this source tree.
+-/
+
+/-
+# LONGEST ARC-PRESERVING COMMON SUBSEQUENCE (crossing, crossing) is NP-complete
+
+Source:
+P. A. Evans, "Finding common subsequences with arcs and pseudoknots", Combinatorial Pattern
+Matching (CPM 1999), Lecture Notes in Computer Science 1645 (1999), 270-280,
+doi:10.1007/3-540-48452-3_20 (full text not available);
+G.-H. Lin, Z.-Z. Chen, T. Jiang and J. Wen, "The longest common subsequence problem for
+sequences with nested arc annotations", Journal of Computer and System Sciences 65 (2002),
+465-480, doi:10.1016/S0022-0000(02)00004-1;
+problem definitions as in V. Yu. Popov, "Arc-preserving subsequences of arc-annotated
+sequences", Acta Universitatis Sapientiae, Informatica 3 (2011), 35-47, arXiv:1104.4433.
+-/
+module
+
+public import Batteries.Util.ProofWanted
+public import CSLibExt.Computability.CookLevin
+public import MathlibExt.Computability.BinaryNatEncoding
+public import MathlibExt.Computability.Complexity
+public import WantedExt.Complexity.NPComplete.LongestArcPreservingCommonSubsequenceNestedWanted
+
+@[expose] public section
+
+namespace MetaMathlibExt.Complexity.NPComplete.LongestArcPreservingCommonSubsequenceCrossing
+
+open MetaMathlibExt.Complexity.NPComplete.LongestArcPreservingCommonSubsequenceNested
+  (LongestArcPreservingCommonSubsequenceNestedInstance
+    LongestArcPreservingCommonSubsequenceNestedFeasible)
+
+/-!
+# LONGEST ARC-PRESERVING COMMON SUBSEQUENCE (crossing, crossing) is NP-complete
+
+Arc-annotated sequences, common subsequences and arc preservation are as in
+`WantedExt.Complexity.NPComplete.LongestArcPreservingCommonSubsequenceNestedWanted`. Popov's
+levels of arc structure: an arc set is crossing if no two arcs share an endpoint, that is, for
+all `(i₁, i₂), (i₃, i₄) ∈ P`, `i₁ ≠ i₄`, `i₂ ≠ i₃`, and `i₁ = i₃ ⇔ i₂ = i₄` (every position
+lies in at most one arc); arcs may cross (pseudoknots). Nested arc sets are the crossing arc
+sets in which, in addition, no two arcs cross.
+
+LAPCS(CROSSING, CROSSING): given two arc-annotated sequences `(S₁, P₁)` and `(S₂, P₂)` with
+crossing arc sets and a positive integer `k`, is there a common subsequence `T` of `S₁` and
+`S₂` that is arc-preserving with `|T| ≥ k`?
+
+Evans (1999) introduced the problem for arcs with pseudoknots. Every nested arc set is a
+crossing arc set, so LAPCS(NESTED, NESTED), proved NP-hard by Lin, Chen, Jiang and Wen (2002)
+(`LongestArcPreservingCommonSubsequenceNestedWanted`), is a restriction of this problem with the
+same instances and question; NP-hardness follows. It is in NP: the two position mappings are a
+certificate. The instance encoding and the question are those of the nested module.
+
+Encoding: the instance is decoded from a bitstring with the repository's
+canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
+bitstrings decoding to malformed instances, are no-instances.
+
+NP-completeness is stated in the same form as the proved results in
+`CSLibExt.Computability.Complexity.Karp`: membership in
+`MetaMathlibExt.ComplexityTheory.NP`, plus a polynomial-time many-one
+reduction from every language in `NP`
+(`Cslib.CookLevin.PolyManyOneRed`).
+-/
+
+/-- An instance: the sequence `S₁` and its arc list `P₁`, the sequence `S₂` and its arc list
+`P₂`, and the bound `k` (the instance type of the nested problem). -/
+abbrev LongestArcPreservingCommonSubsequenceCrossingInstance :=
+  LongestArcPreservingCommonSubsequenceNestedInstance
+
+/-- `P` is a crossing arc set on a sequence of length `n`: a list without repetitions of arcs
+`(i₁, i₂)` with `i₁ < i₂ < n`, no two sharing an endpoint. -/
+def IsCrossingArcSet (n : ℕ) (P : List (ℕ × ℕ)) : Prop :=
+  P.Nodup ∧ (∀ a ∈ P, a.1 < a.2 ∧ a.2 < n) ∧
+    ∀ a ∈ P, ∀ b ∈ P, a.1 ≠ b.2 ∧ a.2 ≠ b.1 ∧ (a.1 = b.1 ↔ a.2 = b.2)
+
+/-- Well-formedness of an instance: both arc sets are crossing and `k` is positive. -/
+def WellFormed (i : LongestArcPreservingCommonSubsequenceCrossingInstance) : Prop :=
+  IsCrossingArcSet i.1.length i.2.1 ∧ IsCrossingArcSet i.2.2.1.length i.2.2.2.1 ∧ 0 < i.2.2.2.2
+
+/-- There is an arc-preserving common subsequence of length at least `k` (the question of the
+nested problem). -/
+def LongestArcPreservingCommonSubsequenceCrossingFeasible
+    (i : LongestArcPreservingCommonSubsequenceCrossingInstance) : Prop :=
+  LongestArcPreservingCommonSubsequenceNestedFeasible i
+
+open Classical in
+/-- LAPCS(CROSSING, CROSSING) as a decision problem over bitstrings. -/
+noncomputable def longestArcPreservingCommonSubsequenceCrossingDec :
+    MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
+  match MetaMathlibExt.BitstringEncoding.bitDecode
+      (α := LongestArcPreservingCommonSubsequenceCrossingInstance) x with
+  | some i => decide (WellFormed i ∧ LongestArcPreservingCommonSubsequenceCrossingFeasible i)
+  | none => false
+
+/-- **LONGEST ARC-PRESERVING COMMON SUBSEQUENCE (crossing, crossing) is NP-complete.** Source:
+Evans (1999); Lin, Chen, Jiang and Wen (2002). -/
+public theorem_wanted longestArcPreservingCommonSubsequenceCrossing_npComplete :
+    longestArcPreservingCommonSubsequenceCrossingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
+      ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
+        L ∈ MetaMathlibExt.ComplexityTheory.NP →
+          Cslib.CookLevin.PolyManyOneRed L longestArcPreservingCommonSubsequenceCrossingDec
+
+end MetaMathlibExt.Complexity.NPComplete.LongestArcPreservingCommonSubsequenceCrossing

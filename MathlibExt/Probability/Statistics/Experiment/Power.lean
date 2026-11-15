@@ -177,4 +177,18 @@ theorem power_ge_of_le_ceil {α β δ μ0 : ℝ} {v : NNReal}
   exact (cdfQuantile_mem (gaussianReal 0 1) hu).trans
     (monotone_cdf (gaussianReal 0 1) hkey)
 
+/-- Exact size of the one-sided z test at the point null: with the cutoff
+`z₁₋α = Φ⁻¹(1 - α)`, the rejection probability under the null mean `μ0` is exactly `α`. -/
+theorem measureReal_zTestReject_quantile {n : ℕ} (hn : 0 < n) {v : NNReal} (hv : v ≠ 0)
+    (μ0 : ℝ) {α : ℝ} (hα : α ∈ Set.Ioo 0 1) :
+    (Measure.pi fun _ : Fin n => gaussianReal μ0 v).real
+      (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α))) = α := by
+  have h := measureReal_zTestReject hn μ0 0 (cdfQuantile (gaussianReal 0 1) (1 - α)) hv
+  simp only [add_zero, mul_zero, zero_div, sub_zero] at h
+  have hu : 1 - α ∈ Set.Ioo (0 : ℝ) 1 := by
+    obtain ⟨h0, h1⟩ := hα
+    exact ⟨by linarith, by linarith⟩
+  rw [h, cdf_cdfQuantile_eq_of_continuous _ (continuous_cdf_gaussianReal 0 one_ne_zero) hu,
+    sub_sub_cancel]
+
 end MathlibExt.Probability.Statistics.Experiment

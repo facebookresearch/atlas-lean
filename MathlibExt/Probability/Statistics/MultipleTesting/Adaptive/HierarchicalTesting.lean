@@ -84,9 +84,11 @@ leaf rejections are a subset of Bonferroni's: the gain is at coarse resolution, 
 ## Not covered
 
 Meinshausen's construction of cluster p-values from a regression model (multi-sample splitting),
-the Shaffer-type improvement that redistributes level from accepted siblings, Goeman–Finos
-sequential rejection with level reallocation, and FDR versions of hierarchical testing (Yekutieli)
-are not formalized.
+the Shaffer-type improvement that redistributes level from accepted siblings, and Goeman–Finos
+sequential rejection with level reallocation are not formalized. For FDR versions of hierarchical
+testing, `MultipleTesting.Adaptive.HierarchicalFDR` proves per-family FDR control of Yekutieli's
+procedure and a full-tree bound `q ∑_S (m₀_S / m_S) P(S tested)`; Yekutieli's sharper full-tree
+bound `2 δ* q` and his level-restricted FDR bounds are not formalized.
 
 ## References
 

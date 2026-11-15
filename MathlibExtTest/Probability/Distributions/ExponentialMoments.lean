@@ -69,4 +69,13 @@ example [IsProbabilityMeasure μ] {X Y : Ω → ℝ} (hX : HasLaw X (expMeasure 
   rw [measureReal_lt_of_hasLaw_expMeasure one_pos (by norm_num) hX hY hXY]
   norm_num
 
+/-- The characteristic function at `0` is `1`, and at `u = 2` for rate `2` it is `1 / (1 - i)`. -/
+example : charFun (expMeasure 2) 0 = 1 ∧
+    charFun (expMeasure 2) 2 = 1 / (1 - Complex.I) := by
+  rw [charFun_expMeasure two_pos, charFun_expMeasure two_pos]
+  have h : (2 : ℂ) - 2 * Complex.I = 2 * (1 - Complex.I) := by ring
+  refine ⟨by simp, ?_⟩
+  push_cast
+  rw [h, div_mul_cancel_left₀ two_ne_zero, one_div]
+
 end MathlibExtTest.Probability.Distributions.ExponentialMoments

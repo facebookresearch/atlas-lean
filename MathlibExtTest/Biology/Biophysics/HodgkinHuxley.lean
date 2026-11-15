@@ -238,4 +238,60 @@ example : vtrap 0 = 1 := by simp [vtrap]
 
 example : ContinuousAt vtrap 0 := contDiff_vtrap.continuous.continuousAt
 
+/-! ### The steady-state current and uniqueness of the squid equilibrium -/
+
+/-- The steady states at `V = 0` are the resting gating values (by definition). -/
+example : mInf 0 = mRest ∧ hInf 0 = hRest ∧ nInf 0 = nRest := ⟨rfl, rfl, rfl⟩
+
+/-- `I∞(0) = 0`, unfolded from the definitions of `steadyCurrent`, `ionic` and `squidEL`. -/
+example : steadyCurrent squid 0 = 0 := by
+  change ionic squid 0 mRest hRest nRest = 0
+  simp only [ionic, squid, squidEL]
+  ring
+
+/-- Boundary sign at `V = -12`: `I∞(-12) < 0`, computed from the definitions with gating values
+in `(0, 1)` and the test-local bound `EL > 10.5` (not through the library sign lemmas). -/
+example : steadyCurrent squid (-12) < 0 := by
+  obtain ⟨hEL, -⟩ := squidEL_bounds
+  have hm := steady_mem_Ioo (alphaM_pos (-12)) (betaM_pos (-12))
+  have hh := steady_mem_Ioo (alphaH_pos (-12)) (betaH_pos (-12))
+  have h1 : 0 ≤ steady alphaM betaM (-12) ^ 3 * steady alphaH betaH (-12) :=
+    mul_nonneg (pow_nonneg hm.1.le 3) hh.1.le
+  simp only [steadyCurrent, ionic, squid, mInf, hInf, nInf]
+  norm_num
+  nlinarith
+
+/-- Boundary sign at `V = 115`: `I∞(115) > 0`, computed from the definitions with gating values
+in `(0, 1)` and the test-local bound `EL < 10.7`. -/
+example : 0 < steadyCurrent squid 115 := by
+  obtain ⟨-, hEL⟩ := squidEL_bounds
+  have hn := steady_mem_Ioo (alphaN_pos 115) (betaN_pos 115)
+  have h2 : 0 ≤ steady alphaN betaN 115 ^ 4 := pow_nonneg hn.1.le 4
+  simp only [steadyCurrent, ionic, squid, mInf, hInf, nInf]
+  norm_num
+  nlinarith
+
+/-- The steady states are monotone: `m∞` and `n∞` increase, `h∞` decreases (library). -/
+example : mInf 0 < mInf 50 ∧ hInf 50 < hInf 0 ∧ nInf 0 < nInf 50 :=
+  ⟨strictMono_mInf (by norm_num), strictAnti_hInf (by norm_num), strictMono_nInf (by norm_num)⟩
+
+/-- `vtrap' (0) = -1/2` (library). -/
+example : deriv vtrap 0 = -(1 / 2) := deriv_vtrap_zero
+
+/-- The squid steady-state current is strictly increasing on `[-12, 115]` (library). -/
+example : steadyCurrent squid 10 < steadyCurrent squid 20 :=
+  strictMonoOn_steadyCurrent_squid ⟨by norm_num, by norm_num⟩ ⟨by norm_num, by norm_num⟩
+    (by norm_num)
+
+/-- **Uniqueness** (library): the clamped-at-`10 mV` steady state
+`(10, m∞(10), h∞(10), n∞(10))` satisfies the three gating equations but is not an equilibrium,
+because `rest` is the only one and its voltage is `0`. -/
+example : field squid ![10, mInf 10, hInf 10, nInf 10] ≠ 0 := by
+  intro h
+  have := congrFun ((field_squid_eq_zero_iff _).1 h) 0
+  simp [rest] at this
+
+/-- And `rest` itself is the equilibrium the theorem names. -/
+example : field squid rest = 0 := (field_squid_eq_zero_iff rest).2 rfl
+
 end MathlibExtTest.Biology.Biophysics.HodgkinHuxley
