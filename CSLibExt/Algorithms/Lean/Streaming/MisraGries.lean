@@ -22,14 +22,14 @@ equality, and a step reads and rewrites only the stored entries.
 
 For a run over a stream `s`, this module proves that the summary stores each item at most once
 and at most `k - 1` items, that counters never exceed true frequencies, that a frequency
-exceeds its counter by at most the number of decrement rounds, that `k` times the number of
-rounds plus the stored mass equals `s.length`, and hence the deterministic error bound
-`(s.count x - counter) * k ≤ s.length - mass`.
+exceeds its counter by at most the number of decrement rounds, and that for `0 < k`, `k` times
+the number of rounds plus the stored mass equals `s.length`. The deterministic error bound
+`(s.count x - counter) * k ≤ s.length - mass` follows, and holds for every `k`.
 
 The summary is the one of Misra and Gries, which for parameter `k` keeps at most `k - 1`
-counters. A decrement round discards `k` distinct occurrences, the unstored item and one
-occurrence of each of the `k - 1` stored items, which is where the factor `k` in the bound
-comes from.
+counters. For `0 < k`, a decrement round discards `k` distinct occurrences, the unstored item
+and one occurrence of each of the `k - 1` stored items, which is where the factor `k` in the
+bound comes from.
 
 ## References
 
