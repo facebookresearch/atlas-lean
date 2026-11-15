@@ -70,8 +70,9 @@ unbiased estimator of `π₀` whose plug-in BH procedure has FDR `1/3` at `q = 1
 
 FDR control of the Storey q-value procedure (`TwoGroupsTesting.qValue` applied to a pFDR estimate)
 or of Storey-BH with a data-dependent `lam` (or a `lam`-grid chosen by bootstrap), FDR control
-under PRDS or arbitrary dependence (where Storey-BH can fail), and the asymptotic results of Storey
-et al. (2004, §4) are not formalized.
+under arbitrary dependence, and the asymptotic results of Storey et al. (2004, §4) are not
+formalized. Under PRDS, level-`q` control fails; the attained bound
+`E[FDP] ≤ q (1 - lam) |H0|` and the counterexample are in `MultipleTesting.Adaptive.StoreyPRDS`.
 
 ## Implementation notes
 
