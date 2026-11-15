@@ -114,30 +114,25 @@ def classify(text: str, up_text: str | None, versions: list[tuple[str, str]], cu
     """Disposition fields for one ATLAS file (without path, published hash, or rationale)."""
     if is_flt(text):
         return {"disposition": "local"}  # third-party FLT content keeps its own header
-    # Candidate (notice, header) readings of the ATLAS file, keyed by the hash of the body they leave.
-    readings: list[tuple[str, str]] = [("", "meta")]
-    notice = leading_notice(text)
-    if notice:
-        readings.append((notice, "meta"))
-    readings.append(("", "upstream"))
-    bodies: dict[str, tuple[str, str]] = {}
-    for n, header in readings:
-        body = split_published(text, n, header)[0]
+    # Meta-header readings of the ATLAS file (with and without an attribution notice), keyed by
+    # the hash of the body they leave.
+    readings = [""] + ([notice] if (notice := leading_notice(text)) else [])
+    bodies: dict[str, str] = {}
+    for n in readings:
+        body = split_published(text, n)[0]
         if body is not None:
-            bodies.setdefault(sha256(body), (n, header))
+            bodies.setdefault(sha256(body), n)
 
     def match(source: str) -> tuple[str, dict] | None:
+        if source == text and split_published(text, "", "upstream")[1] is None:
+            # The upstream file byte for byte, its own copyright and license header kept.
+            return sha256(text), {"upstream_sha256": sha256(text), "header": "upstream"}
         digest = sha256(upstream_body(source))
         if digest not in bodies:
             return None
-        n, header = bodies[digest]
-        if header == "upstream" and source != text:
-            return None  # a kept third-party header must be the upstream header byte for byte
         fields = {"upstream_sha256": digest}
-        if n:
-            fields["notice"] = n
-        if header == "upstream":
-            fields["header"] = "upstream"
+        if bodies[digest]:
+            fields["notice"] = bodies[digest]
         return digest, fields
 
     if up_text is None:
@@ -227,10 +222,11 @@ def build(atlas: Path, repo: Path, commit: str, previous: dict,
 def report(previous: dict, manifest: dict, local: int) -> str:
     old = {row["path"]: row for row in previous.get("rows", [])}
     new = {row["path"]: row for row in manifest["rows"]}
-    keys = ("disposition", "published_sha256", "upstream_sha256", "notice", "header")
     added = sorted(new.keys() - old.keys())
     removed = sorted(old.keys() - new.keys())
-    changed = sorted(p for p in new.keys() & old.keys() if any(new[p].get(k) != old[p].get(k) for k in keys))
+    # Whole rows, every provenance field included: the report is how a sync gets reviewed.
+    changed = sorted(p for p in new.keys() & old.keys()
+                     if json.dumps(new[p], sort_keys=True) != json.dumps(old[p], sort_keys=True))
     diverged = [p for p in sorted(new) if new[p]["disposition"] == "diverged"]
     up = manifest["upstream"]
     lines = [f"# Formal-Math sync report: {up['repository']}@{up['commit']}", "",

@@ -16,12 +16,17 @@ and third-party FLT content, which keeps its own header) have no row. Totals are
 sync report, not stored, so concurrent pull requests touching different rows do not conflict.
 
 Each row has `path` and `disposition`. `published_sha256` is the SHA-256 of the ATLAS file's bytes;
-`upstream_sha256` is the SHA-256 of an upstream file's body: the text after its leading license or
-authorship block comment, without leading blank lines.
+`upstream_sha256` is the SHA-256 of an upstream file's body: the text after Formal-Math's own leading
+header, without leading blank lines. Formal-Math's own header is a block whose copyright lines name
+only Formal-Math's holders (`FORMAL_MATH_HOLDERS` in `scripts/check_formal_math_sync.py`: Meta, Adam
+Kiezun, Avocado, the formal-math and Mathlib Extension contributors), or an authorship block with no
+copyright or license text. ATLAS replaces that header with the Meta header. Any other copyright or
+license block is third-party and part of the body, so ATLAS keeps it byte for byte or records a
+divergence.
 
 | Disposition | Meaning | Fields |
 | --- | --- | --- |
-| `identical` | Meta header, then the body of the upstream file at `upstream.commit`. With `"header": "upstream"`, the upstream file byte for byte, keeping its third-party copyright and license header. | `published_sha256`, `upstream_sha256`, optional `header` |
+| `identical` | Meta header, then the body of the upstream file at `upstream.commit`. With `"header": "upstream"`, the upstream file byte for byte, keeping its own copyright and license header (then `upstream_sha256` hashes the whole file). | `published_sha256`, `upstream_sha256`, optional `header` |
 | `attributed` | As `identical`, with an attribution notice (one block comment naming provenance or licensing, for example Apache 2.0 Section 4) between the Meta header and the body. | `published_sha256`, `upstream_sha256`, `notice` |
 | `behind` | Header-only copy of an older upstream version of the same path; the next sync brings it current. | `published_sha256`, `upstream_commit` (the commit that introduced that version), `upstream_sha256` (its body), optional `notice` or `header` |
 | `diverged` | Reviewed ATLAS-side difference from upstream, including a file deleted upstream that ATLAS still publishes. | `published_sha256` (the reviewed bytes), `rationale`, `backport` (`pending`, `not-needed`, or the Formal-Math backport PR URL); informational `upstream_sha256`, `upstream_commit` |

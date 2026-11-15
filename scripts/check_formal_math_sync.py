@@ -60,7 +60,6 @@ SHA256 = re.compile(r"[0-9a-f]{64}")
 COMMIT = re.compile(r"[0-9a-f]{40}")
 PLAIN_BLOCK = re.compile(r"/-(?![-!]).*?-/", re.S)
 UPSTREAM_REPOSITORY = "fairinternal/formal-math"
-UPSTREAM_HEADER_WORDS = re.compile(r"Copyright|Authors?:|[Ll]icen[cs]e")
 # An attribution notice names provenance or licensing; a descriptive comment is not one.
 NOTICE_WORDS = re.compile(r"Copyright|[Ll]icen[cs]e|[Aa]ttribution|Authors?:|[Pp]orted from|[Aa]dapted from|Portions")
 FLT_MARKERS = ("Anthropic, PBC", "flt-regular authors")
@@ -86,7 +85,8 @@ def split_published(text: str, notice: str = "", header: str = "meta") -> tuple[
     recorded; a notice is exactly one plain block comment naming provenance or licensing, never
     Lean code or a descriptive comment. `header="upstream"`: the file keeps the upstream file's own
     third-party copyright and license block (as scripts/check_copyright.py allows for code copied
-    from another project). Blank lines after the header and after the notice are separators.
+    from another project); that block is part of the body, which is then the whole file. Blank
+    lines after the Meta header and after the notice are separators.
     Returns (body, None) or (None, problem).
     """
     if header == "upstream":
@@ -94,7 +94,7 @@ def split_published(text: str, notice: str = "", header: str = "meta") -> tuple[
         if notice or not block or "Meta Platforms" in block.group(0) or "Copyright" not in block.group(0) \
                 or not re.search(r"[Ll]icen[cs]e", block.group(0)):
             return None, "does not start with a third-party copyright and license header"
-        return text[block.end():].lstrip("\n"), None
+        return text.lstrip("\n"), None  # the header is part of the upstream body, kept byte for byte
     if header != "meta":
         return None, f"unknown header kind {header!r}"
     if not text.startswith(META):
@@ -117,10 +117,27 @@ def leading_notice(text: str) -> str | None:
     return block.group(0) if block and is_notice(block.group(0)) else None
 
 
+# Copyright holders of Formal-Math's own headers, which ATLAS replaces with the Meta header. Any
+# other holder, or a license block without one of these holders, is third-party and stays.
+FORMAL_MATH_HOLDERS = ("Meta Platforms, Inc. and affiliates", "Adam Kiezun", "Avocado",
+                       "The formal-math Contributors", "Mathlib Extension Contributors", "")
+COPYRIGHT_HOLDER = re.compile(r"Copyright(?: \(c\))?(?: \d{4}(?:[-–]\d{4})?)?\.?[ \t]*([^\n]*)")
+
+
+def is_formal_math_header(block: str) -> bool:
+    """Formal-Math's own header: copyright lines naming only Formal-Math's own holders, or an
+    authorship block with no copyright or license text. Third-party copyright and license blocks
+    are part of the body and must be kept byte for byte."""
+    holders = [re.sub(r"\.?\s*All rights reserved\.?$", "", h).strip().rstrip(".") for h in COPYRIGHT_HOLDER.findall(block)]
+    if holders:
+        return all(h in FORMAL_MATH_HOLDERS or h.startswith("Meta Platforms") for h in holders)
+    return bool(re.search(r"Authors?:", block)) and not re.search(r"[Ll]icen[cs]e", block)
+
+
 def upstream_body(text: str) -> str:
-    """Formal-Math file body: the text after a leading license or authorship block comment."""
+    """Formal-Math file body: the text after Formal-Math's own leading header, if any."""
     block = PLAIN_BLOCK.match(text)
-    if block and UPSTREAM_HEADER_WORDS.search(block.group(0)):
+    if block and is_formal_math_header(block.group(0)):
         return text[block.end():].lstrip("\n")
     return text.lstrip("\n")
 

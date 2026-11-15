@@ -60,8 +60,8 @@ def make_fixture(root: Path) -> dict:
     for path, (text, fields) in files.items():
         write(root, path, text)
         row = {"path": path, "published_sha256": c.sha256(text), **fields}
-        if fields["disposition"] in c.SYNCED:
-            row["upstream_sha256"] = c.sha256(BODY)
+        if fields["disposition"] in c.SYNCED:  # a kept third-party header is part of the body
+            row["upstream_sha256"] = c.sha256(text if fields.get("header") == "upstream" else BODY)
         rows.append(row)
     rows.append({"path": "WantedExt/Retired.lean", "disposition": "retired"})
     write(root, "CSLibExtTest/Local.lean", c.META + "\ndef z : Nat := 3\n")  # no row: ignored
@@ -622,6 +622,58 @@ class SyncTest(unittest.TestCase):
         self.assertIn("MathlibExt/Edited.lean", err)
         self.assertNotIn("MathlibExt/Gone.lean", err, "an unchanged divergence keeps its explanation")
         self.assertEqual((self.atlas / c.MANIFEST).read_bytes(), first_bytes, "rejected sync must not write")
+
+    def test_third_party_headers_must_be_kept(self) -> None:
+        third_party = {"Replaced": c.META + "\n" + BODY,                  # header swapped for Meta
+                       "Kept": THIRD_PARTY + "\n" + BODY,                 # byte for byte
+                       "Prefixed": c.META + "\n" + THIRD_PARTY + "\n" + BODY}  # Meta header added
+        for name in third_party:
+            write(self.fm, f"MathlibExt/{name}.lean", THIRD_PARTY + "\n" + BODY)
+        run_git(self.fm, "add", "-A")
+        run_git(self.fm, "commit", "-qm", "third-party files")
+        for name, text in third_party.items():
+            write(self.atlas, f"MathlibExt/{name}.lean", text)
+        code, _, err = self.sync("--rationales", str(self.rationales))
+        self.assertEqual(code, 1)
+        self.assertIn("MathlibExt/Replaced.lean", err)  # only a recorded divergence may drop the header
+        self.assertNotIn("MathlibExt/Kept.lean", err)
+        self.assertNotIn("MathlibExt/Prefixed.lean", err)
+        rationales = json.loads(self.rationales.read_text())
+        rationales["MathlibExt/Replaced.lean"] = {"rationale": "header replaced", "backport": "not-needed"}
+        self.rationales.write_text(json.dumps(rationales))
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        rows = self.rows()
+        self.assertEqual(rows["MathlibExt/Replaced.lean"]["disposition"], "diverged")
+        self.assertEqual((rows["MathlibExt/Kept.lean"]["disposition"], rows["MathlibExt/Kept.lean"]["header"]),
+                         ("identical", "upstream"))
+        self.assertEqual(rows["MathlibExt/Prefixed.lean"]["disposition"], "identical")
+        self.assertNotIn("header", rows["MathlibExt/Prefixed.lean"])
+        self.assertEqual(c.check(self.atlas, self.atlas / c.MANIFEST)[0], [])
+
+    def test_formal_math_headers_may_be_replaced(self) -> None:
+        own = "/-\nCopyright (c) 2026 Adam Kiezun. All rights reserved.\nReleased under Apache 2.0 license.\n-/\n"
+        write(self.fm, "MathlibExt/Own.lean", own + BODY)
+        run_git(self.fm, "add", "-A")
+        run_git(self.fm, "commit", "-qm", "own header")
+        write(self.atlas, "MathlibExt/Own.lean", c.META + "\n" + BODY)
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        self.assertEqual(self.rows()["MathlibExt/Own.lean"]["disposition"], "identical")
+
+    def test_report_lists_every_field_change(self) -> None:
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        manifest = json.loads((self.atlas / c.MANIFEST).read_text())
+        for row in manifest["rows"]:
+            if row["path"] == "MathlibExt/Old.lean":
+                row["upstream_commit"] = "c" * 40  # stale: the sync recomputes it
+        write(self.atlas, c.MANIFEST, c.dump_manifest(manifest))
+        rationales = json.loads(self.rationales.read_text())
+        rationales["MathlibExt/Gone.lean"]["rationale"] = "a better reason"
+        self.rationales.write_text(json.dumps(rationales))
+        code, report, _ = self.sync("--rationales", str(self.rationales))
+        self.assertEqual(code, 0)
+        self.assertIn("## Changed (2)", report)
+        self.assertIn("- `MathlibExt/Old.lean`: behind -> behind", report)
+        self.assertIn("- `MathlibExt/Gone.lean`: diverged -> diverged", report)
 
     def test_rows_never_disappear(self) -> None:
         self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
