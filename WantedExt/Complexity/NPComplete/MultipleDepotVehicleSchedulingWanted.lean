@@ -30,7 +30,7 @@ namespace MetaMathlibExt.Complexity.NPComplete.MultipleDepotVehicleScheduling
 # MULTIPLE-DEPOT VEHICLE SCHEDULING is NP-complete
 
 INSTANCE: trips `T_0, …, T_{n-1}`, trip `T_i` with starting time `σ_i` and ending time
-`τ_i ≥ σ_i`; the time `θ_{ij}` a vehicle needs from the end location of `T_i` to the start
+`τ_i > σ_i`; the time `θ_{ij}` a vehicle needs from the end location of `T_i` to the start
 location of `T_j`; the cost `c_{ij}` of a vehicle performing `T_j` right after `T_i`;
 `m ≥ 2` depots, depot `D_d` with `r_d` available vehicles, a pull-out cost `o_{di}` from
 `D_d` to trip `T_i` and a pull-in cost `e_{id}` from `T_i` back to `D_d`; and a bound `B`.
@@ -43,9 +43,10 @@ at most `B`?
 The model is the multiple-depot vehicle scheduling problem (MDVSP) as defined by Olariu and
 Frăsinaru, Section 1, who record that it is NP-hard when there are at least two depots
 (Bertossi, Carraresi and Gallo); with one depot it is polynomial, so `m ≥ 2` is part of the
-instance class. A list of vehicle schedules, each tagged with its depot, is a certificate
-checkable in polynomial time. Trips and depots are numbered from `0` below; all numbers use
-the canonical binary encoding.
+instance class. Trips take positive time, so every feasible pair `T_i, T_j` has `σ_i < σ_j`
+and vehicle schedules follow the timetable. A list of vehicle schedules, each tagged with its
+depot, is a certificate checkable in polynomial time. Trips and depots are numbered from `0`
+below; all numbers use the canonical binary encoding.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -71,10 +72,10 @@ def numTrips (i : MultipleDepotVehicleSchedulingInstance) : ℕ := i.1.length
 def depots (i : MultipleDepotVehicleSchedulingInstance) : List (ℕ × List ℕ × List ℕ) :=
   i.2.2.2.1
 
-/-- Well-formedness of an instance: at least two depots, `σ_i ≤ τ_i` for every trip, `θ` and
+/-- Well-formedness of an instance: at least two depots, `σ_i < τ_i` for every trip, `θ` and
 `c` are `n × n` matrices, and every depot lists `n` pull-out and `n` pull-in costs. -/
 def WellFormed (i : MultipleDepotVehicleSchedulingInstance) : Prop :=
-  2 ≤ (depots i).length ∧ (∀ p ∈ i.1, p.1 ≤ p.2) ∧
+  2 ≤ (depots i).length ∧ (∀ p ∈ i.1, p.1 < p.2) ∧
     i.2.1.length = numTrips i ∧ (∀ row ∈ i.2.1, row.length = numTrips i) ∧
     i.2.2.1.length = numTrips i ∧ (∀ row ∈ i.2.2.1, row.length = numTrips i) ∧
     ∀ d ∈ depots i, d.2.1.length = numTrips i ∧ d.2.2.length = numTrips i
