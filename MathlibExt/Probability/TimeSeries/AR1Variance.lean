@@ -41,7 +41,7 @@ namespace MathlibExt.Probability.TimeSeries.AR1Variance
 /-- If `X = ρ * Y + ε` with `Y` independent of `ε`, `Y` and `ε` square-integrable,
 and `Var Y = Var X` (stationarity), then `Var X = Var ε / (1 - ρ²)`. -/
 theorem stationaryAR1_variance {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
-    {ρ : ℝ} {X Y ε : Ω → ℝ} (hρ : ρ ^ 2 ≠ 1)
+    [IsProbabilityMeasure μ] {ρ : ℝ} {X Y ε : Ω → ℝ} (hρ : ρ ^ 2 ≠ 1)
     (hY : MemLp Y 2 μ) (hε : MemLp ε 2 μ)
     (hrec : X = fun ω => ρ * Y ω + ε ω) (hstat : variance Y μ = variance X μ)
     (hindep : IndepFun Y ε μ) :

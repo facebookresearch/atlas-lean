@@ -187,7 +187,7 @@ the moment conditions `E ‖x‖⁴ < ∞`, `E ‖x‖² u² < ∞`, and a.s. co
 `Ω a b = E[u² * x_a * x_b]`. The oracle meat entries are integrable because
 `|u² * x_a * x_b| ≤ ‖x‖² u²`. -/
 theorem hc0Meat_tendsto_ae {ι : Type*} [Fintype ι]
-    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
     {x : ℕ → Ω → (ι → ℝ)} {u : ℕ → Ω → ℝ}
     {β : ι → ℝ} {βhat : ℕ → Ω → (ι → ℝ)}
     (hJoint : iIndepFun (fun i ω => (x i ω, u i ω)) μ)

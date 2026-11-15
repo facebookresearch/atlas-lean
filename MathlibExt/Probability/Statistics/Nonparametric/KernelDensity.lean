@@ -93,7 +93,7 @@ measurable integrable kernel, then for `h > 0` and every `t`,
 `E[kde K h X t] = ∫ K(u) f(t - h u) du`. Independence is not needed, and neither are
 continuity of `f`, `K ≥ 0` or `∫ K = 1`. -/
 theorem integral_kde_eq {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω}
-    {n : ℕ} (hn : 0 < n) {X : Fin n → Ω → ℝ}
+    [IsProbabilityMeasure P] {n : ℕ} (hn : 0 < n) {X : Fin n → Ω → ℝ}
     {f : ℝ → ℝ} (hf_meas : Measurable f) (hf_nonneg : ∀ x, 0 ≤ f x)
     {B : ℝ} (hf_le : ∀ x, f x ≤ B)
     (hX : ∀ i, HasLaw (X i) (volume.withDensity fun x => ENNReal.ofReal (f x)) P)

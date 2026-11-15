@@ -69,7 +69,7 @@ average treatment effect on the treated plus the selection bias,
 `E[Y | T] - E[Y | Tᶜ] = E[Y₁ - Y₀ | T] + (E[Y₀ | T] - E[Y₀ | Tᶜ])`. No positivity is needed for
 the identity; when `0 < P(T) < 1` the three terms are genuine conditional means. -/
 theorem diffInGroupMeans_observed_eq_att_add_selectionBias {Ω : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} {T : Set Ω} (hT : MeasurableSet T)
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {T : Set Ω} (hT : MeasurableSet T)
     {Y₀ Y₁ : Ω → ℝ} (hY₀ : Integrable Y₀ μ) (hY₁ : Integrable Y₁ μ) :
     diffInGroupMeans μ T (observed T Y₀ Y₁) = att μ T Y₀ Y₁ + selectionBias μ T Y₀ := by
   have hTc : MeasurableSet Tᶜ := hT.compl

@@ -56,8 +56,8 @@ theorem iIndepFun_and_hasLaw_of_hasLaw_tuple_pi {Ω S : Type*} [MeasurableSpace 
 /-- **Sampling distribution of a statistic.** For a measurable statistic `T` of an i.i.d.
 tuple with marginal law `ν`, `T (X₁, …, Xₙ)` has law `(νⁿ).map T`. -/
 theorem hasLaw_statistic {Ω S U : Type*} [MeasurableSpace Ω] [MeasurableSpace S]
-    [MeasurableSpace U] {μ : Measure Ω} {ν : Measure S}
-    {n : ℕ} {X : Fin n → Ω → S} (hlaw : ∀ i, HasLaw (X i) ν μ)
+    [MeasurableSpace U] {μ : Measure Ω} [IsProbabilityMeasure μ] {ν : Measure S}
+    [IsProbabilityMeasure ν] {n : ℕ} {X : Fin n → Ω → S} (hlaw : ∀ i, HasLaw (X i) ν μ)
     (hind : iIndepFun X μ) {T : (Fin n → S) → U} (hT : Measurable T) :
     HasLaw (fun ω => T fun i => X i ω) ((Measure.pi fun _ : Fin n => ν).map T) μ := by
   exact (hasLaw_map hT.aemeasurable).comp (hind.hasLaw_pi hlaw)
@@ -68,7 +68,7 @@ is the population integral `∫ g dν`. Independence is unnecessary (linearity o
 (`integral_sample_mean`) only). Proved directly; `hasLaw_statistic` is not used. -/
 theorem integral_empiricalMean_of_common_marginals
     {Ω S : Type*} [MeasurableSpace Ω] [MeasurableSpace S]
-    {μ : Measure Ω} {ν : Measure S}
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {ν : Measure S} [IsProbabilityMeasure ν]
     {n : ℕ} (hn : 0 < n) {g : S → ℝ} (hg : Integrable g ν)
     {X : Fin n → Ω → S} (hlaw : ∀ i, HasLaw (X i) ν μ) :
     ∫ ω, (∑ i, g (X i ω)) / n ∂μ = ∫ s, g s ∂ν := by
@@ -95,7 +95,7 @@ The proof reduces to `Measure.pi_withDensity` after replacing the a.e.-measurabl
 measurable representative. -/
 theorem HasLaw_tuple_of_iidLikelihood
     {Ω S Θ : Type*} [MeasurableSpace Ω] [MeasurableSpace S]
-    {μ : Measure Ω} {μ₀ : Measure S} [SigmaFinite μ₀]
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {μ₀ : Measure S} [SigmaFinite μ₀]
     {F : NormalizedDensityFamily S Θ μ₀} {θ : Θ} {n : ℕ}
     {X : Fin n → Ω → S}
     (hlaw : ∀ i, HasLaw (X i) (F.law θ) μ) (hind : iIndepFun X μ) :

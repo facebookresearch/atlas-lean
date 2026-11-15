@@ -130,7 +130,7 @@ theorem coverage_of_projected_pointTests
 
 /-- A cutoff above the `(1 - α)` cdf level gives a level-`α` one-sided test. -/
 theorem measureReal_lt_le_of_le_cdf {Ω : Type*} [MeasurableSpace Ω]
-    {P : Measure Ω}
+    {P : Measure Ω} [IsProbabilityMeasure P]
     {ν : Measure ℝ} [IsProbabilityMeasure ν]
     {T : Ω → ℝ} (hT : HasLaw T ν P) {α c : ℝ}
     (hc : 1 - α ≤ cdf ν c) : P.real {ω | c < T ω} ≤ α := by

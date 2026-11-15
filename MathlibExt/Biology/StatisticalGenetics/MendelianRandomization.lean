@@ -554,7 +554,7 @@ private theorem lintegral_enorm_inv_gaussianReal {m : ℝ} {v : ℝ≥0} (hv : v
 weak-instrument analysis of Burgess & Thompson 2011): if `D ~ N(m, v)` with `v > 0` and `N` is
 independent of `D` and not almost surely `0`, then `𝔼|N / D| = ∞`. Applied to the ratio
 estimator `β̂_Y / β̂_X` with a normally distributed SNP–exposure estimate `β̂_X`. -/
-theorem lintegral_enorm_div_eq_top {μ : Measure Ω} {N D : Ω → ℝ}
+theorem lintegral_enorm_div_eq_top {μ : Measure Ω} [IsProbabilityMeasure μ] {N D : Ω → ℝ}
     {m : ℝ} {v : ℝ≥0} (hv : v ≠ 0) (hD : HasLaw D (gaussianReal m v) μ)
     (hN : AEMeasurable N μ) (hind : IndepFun N D μ) (hN0 : ¬ N =ᵐ[μ] 0) :
     ∫⁻ ω, ‖N ω / D ω‖ₑ ∂μ = ∞ := by
