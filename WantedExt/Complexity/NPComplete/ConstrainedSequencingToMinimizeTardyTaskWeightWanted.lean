@@ -17,10 +17,11 @@ D. Zuckerman, "On unapproximable versions of NP-complete problems", SIAM Journal
 JOB SEQUENCING); conference version: Proc. 8th Annual Structure in Complexity Theory Conference
 (1993), 305-312, doi:10.1109/SCT.1993.336517;
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
-NP-Completeness*, W. H. Freeman (1979), problem [SS3] SEQUENCING TO MINIMIZE TARDY TASK WEIGHT;
+NP-Completeness*, W. H. Freeman (1979), problem [SS3] SEQUENCING TO MINIMIZE TARDY TASK WEIGHT
+(the unconstrained problem, an antecedent);
 R. M. Karp, "Reducibility among combinatorial problems", in *Complexity of Computer
 Computations* (R. E. Miller and J. W. Thatcher, eds.), Plenum Press (1972), 85-103,
-doi:10.1007/978-1-4684-2001-2_9 (JOB SEQUENCING).
+doi:10.1007/978-1-4684-2001-2_9 (JOB SEQUENCING, the unconstrained problem, an antecedent).
 -/
 module
 
@@ -106,7 +107,7 @@ noncomputable def constrainedSequencingDec :
 
 /-- **CONSTRAINED SEQUENCING TO MINIMIZE TARDY TASK WEIGHT is NP-complete.** Source: Crescenzi
 and Kann, MAXIMUM CONSTRAINED SEQUENCING TO MINIMIZE TARDY TASK WEIGHT; Zuckerman (1996),
-problem 19; Garey and Johnson (1979), [SS3]; Karp (1972). -/
+problem 19. The unconstrained problem is Garey and Johnson (1979), [SS3], and Karp (1972). -/
 public theorem_wanted constrainedSequencing_npComplete :
     constrainedSequencingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
