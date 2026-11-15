@@ -40,21 +40,29 @@ elastic-constant counts.
 
 ## i. Overview
 
-A rotation that preserves a full-rank lattice has restricted order: combining
+A lattice endomorphism (`IsLatticeEndomorphism`) maps a full-rank lattice
+into itself, possibly onto a proper sublattice, as doubling does on `ℤ`. A
+lattice symmetry (`IsLatticeSymmetry`) maps a full-rank lattice onto itself,
+which is what an element of the lattice's point group does. Every lattice
+symmetry is a lattice endomorphism, and a lattice endomorphism of finite order
+is a lattice symmetry, since `R ^ k = 1` makes `R` bijective on the lattice. So
+for a rotation of finite order, the lattice hypothesis of the restriction
+theorems says exactly that the rotation lies in the point group of a full-rank
+lattice. Such a rotation has restricted order: combining
 trace integrality (the trace is conjugation-invariant, so it equals the trace
 of an integer matrix) with the rotation trace formula forces the order into
 `{1, 2, 3, 4, 6}`. The two-dimensional case is proved by elementary matrix
 algebra from the `2 × 2` Cayley-Hamilton identity; the three-dimensional case
 reduces to it on the plane orthogonal to the rotation axis. The module then
 verifies concrete point-group matrices by computation, derives Neumann's
-principle consequences (inversion kills odd-rank polar tensors; cubic symmetry
-forces a symmetric rank-2 tensor to be scalar), and counts independent elastic
-constants (`21` triclinic, `3` cubic, `2` isotropic) in Voigt notation. The
-isotropic count is derived from rotational invariance: `voigtRotate` is the
-action of a `3 × 3` matrix on Voigt matrices through the rank-four elasticity
-tensor, invariance of a cubic matrix under the `45°` rotation `Rz45` about `z`
-forces `c11 - c12 = 2 * c44`, and the resulting Lamé family is invariant under
-every orthogonal matrix.
+principle consequences (inversion kills polar vectors and rank-3 polar tensors;
+cubic symmetry forces a symmetric rank-2 tensor to be scalar), and counts
+independent elastic constants (`21` triclinic, `3` cubic, `2` isotropic) in
+Voigt notation. The isotropic count is derived from rotational invariance:
+`voigtRotate` is the action of a `3 × 3` matrix on Voigt matrices through the
+rank-four elasticity tensor, invariance of a cubic matrix under the `45°`
+rotation `Rz45` about `z` forces `c11 - c12 = 2 * c44`, and the resulting Lamé
+family is invariant under every orthogonal matrix.
 
 Reuse-verified against Mathlib / ATLAS main: this module imports no next-50
 prerequisite module.
@@ -74,15 +82,25 @@ This module treats polar tensors only. Axial (pseudo) tensors pick up an extra
 
 ## ii. Key results
 
-- `Crystallography.Symmetry.IsLatticePreserving` : lattice-preserving rotation.
-- `Crystallography.Symmetry.trace_integer_of_latticePreserving` : its trace is
-  an integer.
+- `Crystallography.Symmetry.IsLatticeEndomorphism` : a matrix conjugate to an
+  integer matrix, which maps a full-rank lattice into itself.
+- `Crystallography.Symmetry.trace_integer_of_latticeEndomorphism` : its trace
+  is an integer.
+- `Crystallography.Symmetry.basisLattice`, `isLatticeEndomorphism_iff_mapsTo`,
+  `IsLatticeSymmetry` : the lattice of a basis matrix, the characterization of
+  lattice endomorphisms as maps of a full-rank lattice into itself, and a
+  matrix mapping a full-rank lattice onto itself.
+- `Crystallography.Symmetry.IsLatticeSymmetry.isLatticeEndomorphism`,
+  `IsLatticeEndomorphism.isLatticeSymmetry_of_pow_eq_one` : every lattice
+  symmetry is a lattice endomorphism, and a finite-order lattice endomorphism
+  is a lattice symmetry.
 - `Crystallography.Symmetry.exists_angle_of_trace_two`,
   `Crystallography.Symmetry.exists_angle_of_trace_three` : rotation trace
   formulas.
 - `Crystallography.Symmetry.crystallographic_restriction_two`,
-  `Crystallography.Symmetry.crystallographic_restriction_three` : rotation
-  orders lie in `{1, 2, 3, 4, 6}`.
+  `Crystallography.Symmetry.crystallographic_restriction_three` : a
+  finite-order rotation that is a lattice endomorphism, equivalently a lattice
+  symmetry, has order in `{1, 2, 3, 4, 6}`.
 - `Crystallography.Symmetry.C2`, `C4`, `mirror`, `Rx90`, `Ry90`, `Rz90` :
   concrete point-group matrices with verified orthogonality, determinant,
   order, and trace.
@@ -110,7 +128,7 @@ This module treats polar tensors only. Axial (pseudo) tensors pick up an extra
 
 ## iii. Table of contents
 
-- A. Lattice-preserving rotations and trace integrality
+- A. Lattice endomorphisms, lattice symmetries, and trace integrality
 - B. The two-dimensional restriction
 - C. The three-dimensional restriction by planar reduction
 - D. Point groups: concrete matrices
@@ -134,18 +152,22 @@ open scoped Matrix
 
 namespace Crystallography.Symmetry
 
-/-! ## A. Lattice-preserving rotations and trace integrality -/
+/-! ## A. Lattice endomorphisms, lattice symmetries, and trace integrality -/
 
-/-- A rotation is lattice-preserving if it is conjugate (over `ℝ`) to an
-integer matrix: `R = P * M * P⁻¹` with `P` invertible. -/
-def IsLatticePreserving (n : ℕ) (R : Matrix (Fin n) (Fin n) ℝ) : Prop :=
+/-- A matrix is a lattice endomorphism if it is conjugate (over `ℝ`) to an
+integer matrix: `R = P * M * P⁻¹` with `P` invertible. Equivalently
+(`isLatticeEndomorphism_iff_mapsTo`), `R` maps the full-rank lattice
+`basisLattice n P` into itself, possibly onto a proper sublattice: for `n = 1`,
+`R = M = 2` and `P = 1` send `ℤ` onto `2ℤ`. A matrix mapping a full-rank
+lattice onto itself is an `IsLatticeSymmetry`. -/
+def IsLatticeEndomorphism (n : ℕ) (R : Matrix (Fin n) (Fin n) ℝ) : Prop :=
   ∃ M : Matrix (Fin n) (Fin n) ℤ, ∃ P : Matrix (Fin n) (Fin n) ℝ,
     IsUnit P.det ∧ R = P * (M.map Int.cast) * P⁻¹
 
-/-- Trace integrality: a lattice-preserving rotation has integer trace, since
-the trace is invariant under conjugation. -/
-lemma trace_integer_of_latticePreserving (n : ℕ) (R : Matrix (Fin n) (Fin n) ℝ)
-    (h : IsLatticePreserving n R) : ∃ k : ℤ, R.trace = k := by
+/-- Trace integrality: a lattice endomorphism has integer trace, since the
+trace is invariant under conjugation. -/
+lemma trace_integer_of_latticeEndomorphism (n : ℕ) (R : Matrix (Fin n) (Fin n) ℝ)
+    (h : IsLatticeEndomorphism n R) : ∃ k : ℤ, R.trace = k := by
   obtain ⟨M, P, hP, rfl⟩ := h
   refine ⟨M.trace, ?_⟩
   have hcyc : (P * (M.map Int.cast) * P⁻¹).trace = (M.map Int.cast).trace := by
@@ -157,13 +179,107 @@ lemma trace_integer_of_latticePreserving (n : ℕ) (R : Matrix (Fin n) (Fin n) �
 
 /-- Trace integrality in two dimensions. -/
 lemma trace_integer_two (R : Matrix (Fin 2) (Fin 2) ℝ)
-    (h : IsLatticePreserving 2 R) : ∃ k : ℤ, R.trace = k :=
-  trace_integer_of_latticePreserving 2 R h
+    (h : IsLatticeEndomorphism 2 R) : ∃ k : ℤ, R.trace = k :=
+  trace_integer_of_latticeEndomorphism 2 R h
 
 /-- Trace integrality in three dimensions. -/
 lemma trace_integer_three (R : Matrix (Fin 3) (Fin 3) ℝ)
-    (h : IsLatticePreserving 3 R) : ∃ k : ℤ, R.trace = k :=
-  trace_integer_of_latticePreserving 3 R h
+    (h : IsLatticeEndomorphism 3 R) : ∃ k : ℤ, R.trace = k :=
+  trace_integer_of_latticeEndomorphism 3 R h
+
+/-- The lattice with basis matrix `P`: the integer combinations `P *ᵥ z`,
+`z : Fin n → ℤ`, of the columns of `P`. It has full rank when `P` is
+invertible. -/
+def basisLattice (n : ℕ) (P : Matrix (Fin n) (Fin n) ℝ) : Set (Fin n → ℝ) :=
+  Set.range fun z : Fin n → ℤ => P *ᵥ fun i => (z i : ℝ)
+
+/-- A matrix is a lattice symmetry if it maps a full-rank lattice onto itself:
+for some invertible basis matrix `P`, the image of `basisLattice n P` under `R`
+is `basisLattice n P`. This is the defining property of the elements of a
+lattice's point group; `IsLatticeEndomorphism` only asks for a map into the
+lattice. -/
+def IsLatticeSymmetry (n : ℕ) (R : Matrix (Fin n) (Fin n) ℝ) : Prop :=
+  ∃ P : Matrix (Fin n) (Fin n) ℝ, IsUnit P.det ∧
+    (fun v => R *ᵥ v) '' basisLattice n P = basisLattice n P
+
+/-- A matrix is a lattice endomorphism exactly when it maps some full-rank
+lattice into itself: in a basis of that lattice it acts by an integer matrix. -/
+theorem isLatticeEndomorphism_iff_mapsTo {n : ℕ} {R : Matrix (Fin n) (Fin n) ℝ} :
+    IsLatticeEndomorphism n R ↔ ∃ P : Matrix (Fin n) (Fin n) ℝ, IsUnit P.det ∧
+      Set.MapsTo (fun v => R *ᵥ v) (basisLattice n P) (basisLattice n P) := by
+  constructor
+  · rintro ⟨M, P, hP, hR⟩
+    have hRP : R * P = P * M.map Int.cast := by
+      rw [hR, Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hP, Matrix.mul_one]
+    refine ⟨P, hP, ?_⟩
+    rintro _ ⟨z, rfl⟩
+    refine ⟨M *ᵥ z, ?_⟩
+    change (P *ᵥ fun i => ((M *ᵥ z) i : ℝ)) = R *ᵥ (P *ᵥ fun i => (z i : ℝ))
+    rw [Matrix.mulVec_mulVec, hRP, ← Matrix.mulVec_mulVec]
+    congr 1
+    funext i
+    simp [Matrix.mulVec, dotProduct]
+  · rintro ⟨P, hP, hmaps⟩
+    have hcol : ∀ j, ∃ m : Fin n → ℤ,
+        (P *ᵥ fun i => (m i : ℝ)) = R *ᵥ (P *ᵥ Pi.single j 1) := by
+      intro j
+      have hcast : (fun i => ((Pi.single j 1 : Fin n → ℤ) i : ℝ)) = Pi.single j 1 := by
+        funext i
+        by_cases hij : i = j
+        · subst hij; simp
+        · simp [hij]
+      have hmem : P *ᵥ Pi.single j 1 ∈ basisLattice n P := by
+        refine ⟨Pi.single j 1, ?_⟩
+        change (P *ᵥ fun i => ((Pi.single j 1 : Fin n → ℤ) i : ℝ)) = P *ᵥ Pi.single j 1
+        rw [hcast]
+      exact hmaps hmem
+    choose m hm using hcol
+    refine ⟨Matrix.of fun i j => m j i, P, hP, ?_⟩
+    have hRP : R * P = P * (Matrix.of fun i j => m j i).map Int.cast := by
+      ext i j
+      have e := congrFun (hm j) i
+      rw [Matrix.mulVec_mulVec, Matrix.mulVec_single_one] at e
+      rw [← Matrix.col_apply (R * P) j i, ← e]
+      simp [Matrix.mulVec, dotProduct, Matrix.mul_apply]
+    calc R = R * P * P⁻¹ := by
+          rw [Matrix.mul_assoc, Matrix.mul_nonsing_inv _ hP, Matrix.mul_one]
+      _ = P * (Matrix.of fun i j => m j i).map Int.cast * P⁻¹ := by rw [hRP]
+
+/-- Every lattice symmetry is a lattice endomorphism. -/
+theorem IsLatticeSymmetry.isLatticeEndomorphism {n : ℕ}
+    {R : Matrix (Fin n) (Fin n) ℝ} (h : IsLatticeSymmetry n R) :
+    IsLatticeEndomorphism n R := by
+  obtain ⟨P, hP, hL⟩ := h
+  refine isLatticeEndomorphism_iff_mapsTo.mpr ⟨P, hP, fun v hv => ?_⟩
+  rw [← hL]
+  exact Set.mem_image_of_mem _ hv
+
+/-- A lattice endomorphism of finite order is a lattice symmetry: `R ^ k = 1`
+with `0 < k` makes `R` bijective on the lattice, with inverse `R ^ (k - 1)`.
+With `IsLatticeSymmetry.isLatticeEndomorphism`, the finite-order lattice
+endomorphisms are exactly the finite-order lattice symmetries, so for a rotation
+of finite order the lattice hypothesis of `crystallographic_restriction_two` and
+`crystallographic_restriction_three` says exactly that it lies in the point
+group of a full-rank lattice. -/
+theorem IsLatticeEndomorphism.isLatticeSymmetry_of_pow_eq_one {n : ℕ}
+    {R : Matrix (Fin n) (Fin n) ℝ} (h : IsLatticeEndomorphism n R) {k : ℕ}
+    (hk : 0 < k) (hpow : R ^ k = 1) : IsLatticeSymmetry n R := by
+  obtain ⟨P, hP, hmaps⟩ := isLatticeEndomorphism_iff_mapsTo.mp h
+  have hpowmaps : ∀ j : ℕ, ∀ v ∈ basisLattice n P, (R ^ j) *ᵥ v ∈ basisLattice n P := by
+    intro j
+    induction j with
+    | zero => intro v hv; simpa using hv
+    | succ j ih =>
+        intro v hv
+        rw [pow_succ, ← Matrix.mulVec_mulVec]
+        exact ih _ (hmaps hv)
+  refine ⟨P, hP, Set.Subset.antisymm ?_ ?_⟩
+  · rintro _ ⟨v, hv, rfl⟩
+    exact hmaps hv
+  · intro v hv
+    refine ⟨(R ^ (k - 1)) *ᵥ v, hpowmaps _ v hv, ?_⟩
+    simp only [Matrix.mulVec_mulVec, ← pow_succ', Nat.sub_add_cancel hk, hpow,
+      Matrix.one_mulVec]
 
 /-! ## B. The two-dimensional restriction -/
 
@@ -411,11 +527,15 @@ lemma exists_angle_of_trace_two (R : Matrix (Fin 2) (Fin 2) ℝ)
   have hcos := Real.cos_arccos h1 h2
   linarith [hcos]
 
-/-- The two-dimensional crystallographic restriction: a lattice-preserving
-proper rotation of finite order `n` has `n ∈ {1, 2, 3, 4, 6}`. -/
+/-- The two-dimensional crystallographic restriction: a proper rotation of
+finite order `n` that is a lattice endomorphism has `n ∈ {1, 2, 3, 4, 6}`. For
+a matrix of finite order, being a lattice endomorphism is equivalent to being a
+lattice symmetry (`IsLatticeEndomorphism.isLatticeSymmetry_of_pow_eq_one`,
+`IsLatticeSymmetry.isLatticeEndomorphism`), so this bounds the orders of the
+rotations in the point group of a planar lattice. -/
 theorem crystallographic_restriction_two (R : Matrix (Fin 2) (Fin 2) ℝ)
     (horth : Rᵀ * R = 1) (hdet : R.det = 1)
-    (hlat : IsLatticePreserving 2 R)
+    (hlat : IsLatticeEndomorphism 2 R)
     (n : ℕ) (hpos : 0 < n) (hpow : R ^ n = 1)
     (hmin : ∀ m : ℕ, 0 < m → m < n → R ^ m ≠ 1) :
     n ∈ ({1, 2, 3, 4, 6} : Finset ℕ) :=
@@ -839,15 +959,16 @@ lemma exists_angle_of_trace_three (R : Matrix (Fin 3) (Fin 3) ℝ)
   have hcos := Real.cos_arccos h1 h2
   linarith [hcos]
 
-/-- The three-dimensional crystallographic restriction: a lattice-preserving
-proper rotation with axis `u`, of finite order `n`, has
+/-- The three-dimensional crystallographic restriction: a proper rotation with
+axis `u` and finite order `n` that is a lattice endomorphism, equivalently (as
+in `crystallographic_restriction_two`) a lattice symmetry, has
 `n ∈ {1, 2, 3, 4, 6}`. -/
 theorem crystallographic_restriction_three (R : Matrix (Fin 3) (Fin 3) ℝ)
     (horth1 : Rᵀ * R = 1) (horth2 : R * Rᵀ = 1) (hdetR : R.det = 1)
     (u : Fin 3 → ℝ)
     (hunit : u 0 * u 0 + u 1 * u 1 + u 2 * u 2 = 1)
     (haxis : R *ᵥ u = u)
-    (hlat : IsLatticePreserving 3 R)
+    (hlat : IsLatticeEndomorphism 3 R)
     (n : ℕ) (hpos : 0 < n) (hpow : R ^ n = 1)
     (hmin : ∀ m : ℕ, 0 < m → m < n → R ^ m ≠ 1) :
     n ∈ ({1, 2, 3, 4, 6} : Finset ℕ) :=

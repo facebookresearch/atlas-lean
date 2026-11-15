@@ -21,8 +21,11 @@ public import Mathlib.Tactic.IntervalCases
 # Tests for `PhyslibExt.CondensedMatter.Crystallography.Symmetry`
 
 * Restriction: `C6lat` has trace `1` and order `6`; `C4` has trace `0` and
-  order `4`; the order-5 rotation with `cos = (√5-1)/4` has non-integer trace
-  and is not lattice-preserving.
+  order `4`; the order-5 rotation with `cos = (√5-1)/4` has non-integer trace,
+  so it is neither a lattice endomorphism nor a lattice symmetry.
+* Lattice maps: doubling on `ℤ` is a lattice endomorphism but not a lattice
+  symmetry; the integer matrices `C4`, `C6lat` and `Rz90` of finite order are
+  lattice symmetries.
 * Point groups: orthogonality (except for the lattice-basis matrix `C6lat`),
   orders, determinants, and traces for every concrete matrix in the module.
 * Neumann: a rank-3 tensor with `T 0 0 0 = 1` is not inversion-invariant; the
@@ -192,10 +195,61 @@ lemma R72_trace_not_integer : ¬ ∃ k : ℤ, R72.trace = k := by
     Int.isUnit_iff.mp (isUnit_of_dvd_one ⟨k + 1, hmul.symm⟩)
   rcases hkunit with rfl | rfl <;> norm_num at hkz
 
-/-- `R72` is not lattice-preserving. -/
-lemma R72_not_latticePreserving : ¬ IsLatticePreserving 2 R72 := by
+/-- `R72` is not a lattice endomorphism. -/
+lemma R72_not_latticeEndomorphism : ¬ IsLatticeEndomorphism 2 R72 := by
   intro hlat
   exact R72_trace_not_integer (trace_integer_two R72 hlat)
+
+/-- `R72` is not a lattice symmetry: it maps no full-rank lattice onto itself. -/
+lemma R72_not_latticeSymmetry : ¬ IsLatticeSymmetry 2 R72 := fun h =>
+  R72_not_latticeEndomorphism h.isLatticeEndomorphism
+
+/-! ### Lattice endomorphisms and lattice symmetries -/
+
+/-- Doubling on `ℤ` is a lattice endomorphism. -/
+lemma doubling_latticeEndomorphism : IsLatticeEndomorphism 1 !![(2 : ℝ)] :=
+  ⟨!![2], 1, by simp, by ext i j; fin_cases i; fin_cases j; simp⟩
+
+/-- Doubling is not a lattice symmetry: it maps every full-rank lattice of the
+line onto a proper sublattice, so `IsLatticeEndomorphism` alone does not give a
+symmetry. -/
+lemma doubling_not_latticeSymmetry : ¬ IsLatticeSymmetry 1 !![(2 : ℝ)] := by
+  rintro ⟨P, hP, hL⟩
+  have hP0 : P 0 0 ≠ 0 := by
+    have h := hP.ne_zero
+    rwa [Matrix.det_unique] at h
+  have hv : (P *ᵥ fun _ => ((1 : ℤ) : ℝ)) ∈ basisLattice 1 P := ⟨fun _ => 1, rfl⟩
+  rw [← hL] at hv
+  obtain ⟨_, ⟨z, rfl⟩, hw⟩ := hv
+  have e := congrFun hw 0
+  simp [Matrix.mulVec, dotProduct] at e
+  have hz : (2 * z 0 : ℝ) = 1 := by
+    have e' : P 0 0 * (2 * z 0 - 1) = 0 := by linear_combination e
+    rcases mul_eq_zero.mp e' with h | h
+    · exact absurd h hP0
+    · linarith
+  have hz' : 2 * z 0 = 1 := by exact_mod_cast hz
+  omega
+
+/-- `C4` maps `ℤ²` onto itself: an integer matrix of finite order is a lattice
+symmetry. -/
+lemma C4_latticeSymmetry : IsLatticeSymmetry 2 C4 :=
+  IsLatticeEndomorphism.isLatticeSymmetry_of_pow_eq_one
+    ⟨!![0, -1; 1, 0], 1, by simp, by ext i j; fin_cases i <;> fin_cases j <;> simp [C4]⟩
+    (by norm_num) C4_order.1
+
+/-- `C6lat` maps `ℤ²` onto itself. -/
+lemma C6lat_latticeSymmetry : IsLatticeSymmetry 2 C6lat :=
+  IsLatticeEndomorphism.isLatticeSymmetry_of_pow_eq_one
+    ⟨!![1, -1; 1, 0], 1, by simp, by ext i j; fin_cases i <;> fin_cases j <;> simp [C6lat]⟩
+    (by norm_num) C6lat_order.1
+
+/-- `Rz90` maps `ℤ³` onto itself. -/
+lemma Rz90_latticeSymmetry : IsLatticeSymmetry 3 Rz90 :=
+  IsLatticeEndomorphism.isLatticeSymmetry_of_pow_eq_one
+    ⟨!![0, -1, 0; 1, 0, 0; 0, 0, 1], 1, by simp,
+      by ext i j; fin_cases i <;> fin_cases j <;> simp [Rz90]⟩
+    (by norm_num) Rz90_order.1
 
 /-! ### Point-group checks -/
 
@@ -427,10 +481,15 @@ lemma test_isotropic_from_invariance :
 
 end PhyslibExtTest.CondensedMatter.Crystallography.Symmetry
 
-#print axioms Crystallography.Symmetry.IsLatticePreserving
-#print axioms Crystallography.Symmetry.trace_integer_of_latticePreserving
+#print axioms Crystallography.Symmetry.IsLatticeEndomorphism
+#print axioms Crystallography.Symmetry.trace_integer_of_latticeEndomorphism
 #print axioms Crystallography.Symmetry.trace_integer_two
 #print axioms Crystallography.Symmetry.trace_integer_three
+#print axioms Crystallography.Symmetry.basisLattice
+#print axioms Crystallography.Symmetry.isLatticeEndomorphism_iff_mapsTo
+#print axioms Crystallography.Symmetry.IsLatticeSymmetry
+#print axioms Crystallography.Symmetry.IsLatticeSymmetry.isLatticeEndomorphism
+#print axioms Crystallography.Symmetry.IsLatticeEndomorphism.isLatticeSymmetry_of_pow_eq_one
 #print axioms Crystallography.Symmetry.exists_angle_of_trace_two
 #print axioms Crystallography.Symmetry.crystallographic_restriction_two
 #print axioms Crystallography.Symmetry.exists_angle_of_trace_three
@@ -531,7 +590,13 @@ end PhyslibExtTest.CondensedMatter.Crystallography.Symmetry
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.R72_minimal
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.R72_trace
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.R72_trace_not_integer
-#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.R72_not_latticePreserving
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.R72_not_latticeEndomorphism
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.R72_not_latticeSymmetry
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.doubling_latticeEndomorphism
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.doubling_not_latticeSymmetry
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.C4_latticeSymmetry
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.C6lat_latticeSymmetry
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.Rz90_latticeSymmetry
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.rank3_nonzero_not_inversionInvariant
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.diag123
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.diag123_symmetric
