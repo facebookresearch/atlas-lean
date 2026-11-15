@@ -49,9 +49,9 @@ NP-hardness with a T-metacell gadget and notes that a solution is checked in pol
 Representation. The grid is given explicitly, row by row: entry `c` of row `r` is the region of
 cell `(r, c)`, and the regions are `0, …, R - 1`, where `R` is the length of the list of region
 numbers; entry `k` of that list is `0` when region `k` has no number and `v + 1` when it carries
-the number `v`. So the instance size is proportional to the area of the grid. `WellFormed`
-requires at least one row and one column, rows of equal length, region indices below `R`, and
-every region a nonempty connected set of cells (as in
+the number `v`. The grid is explicit, so its area is at most the encoded input length.
+`WellFormed` requires at least one row and one column, rows of equal length, region indices
+below `R`, and every region a nonempty connected set of cells (as in
 `WantedExt.Complexity.NPComplete.MoonOrSunWanted`). Cells are `Fin m × Fin n`, adjacent when
 they share a side in Mathlib's grid graph `pathGraph m □ pathGraph n`. The loop through cell
 centres is a cycle `c` of this graph (`SimpleGraph.Walk.IsCycle`); its cells, the cells the loop
