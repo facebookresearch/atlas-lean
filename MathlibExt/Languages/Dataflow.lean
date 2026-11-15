@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Finite.Defs
+public import Mathlib.Basic.Finite.Defs
 import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Order.FixedPoints
 import Mathlib.Tactic.Push
@@ -42,8 +42,9 @@ theorem kildall_stabilizes {A : Type*} [PartialOrder A] [OrderBot A]
     strictMono_nat_of_lt_succ hlt
   exact not_injective_infinite_finite _ hmono.injective
 
-/-- The stabilized iterate from `⊥` is the least fixpoint. -/
-theorem kildall_eq_lfp {A : Type*} [CompleteLattice A] [Finite A]
+/-- On any complete lattice, finite or not, an iterate of a monotone `F`
+from `⊥` that is a fixpoint of `F` is the least fixpoint of `F`. -/
+theorem kildall_eq_lfp {A : Type*} [CompleteLattice A]
     (F : A → A) (hF : Monotone F) (k : ℕ)
     (hstab : F^[k] (⊥ : A) = F (F^[k] (⊥ : A))) :
     F^[k] (⊥ : A) = OrderHom.lfp ⟨F, hF⟩ := by
@@ -59,5 +60,5 @@ theorem kildall_eq_lfp {A : Type*} [CompleteLattice A] [Finite A]
         _ = OrderHom.lfp ⟨F, hF⟩ := hfix
   refine le_antisymm (hle k) ?_
   apply OrderHom.lfp_le
-  show F (F^[k] (⊥ : A)) ≤ F^[k] (⊥ : A)
+  change F (F^[k] (⊥ : A)) ≤ F^[k] (⊥ : A)
   exact le_of_eq hstab.symm
