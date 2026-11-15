@@ -145,7 +145,7 @@ theorem gaussianReal_eq_withDensity_wakefieldABF {V : ℝ≥0} (hV : V ≠ 0) (W
 independent, the law of the estimate `β + ε` (alternative) has density `wakefieldABF V W` with
 respect to the law of `ε` (null). -/
 theorem rnDeriv_map_add_ae_eq {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
-    {β ε : Ω → ℝ} (hβ : Measurable β) (hε : Measurable ε)
+    [IsProbabilityMeasure P] {β ε : Ω → ℝ} (hβ : Measurable β) (hε : Measurable ε)
     (hind : IndepFun β ε P) {V W : ℝ≥0} (hV : V ≠ 0) (hβl : P.map β = gaussianReal 0 W)
     (hεl : P.map ε = gaussianReal 0 V) :
     (P.map (fun ω => β ω + ε ω)).rnDeriv (P.map ε) =ᵐ[P.map ε]

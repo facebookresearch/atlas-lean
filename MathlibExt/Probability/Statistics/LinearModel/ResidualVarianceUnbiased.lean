@@ -43,7 +43,7 @@ namespace MathlibExt.Probability.Statistics.LinearModel
 (with product integrability), then `E[εᵀ M ε] = σ² * tr M` for any matrix `M`.
 No symmetry, idempotence, or PSD hypothesis on `M` is needed. -/
 theorem integral_dotProduct {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
-    {m : Type*} [Fintype m] [DecidableEq m] {ε : Ω → m → ℝ}
+    [IsProbabilityMeasure μ] {m : Type*} [Fintype m] [DecidableEq m] {ε : Ω → m → ℝ}
     (σ : ℝ) (hint : ∀ i j, Integrable (fun ω => ε ω i * ε ω j) μ)
     (hsecond : ∀ i j, ∫ ω, ε ω i * ε ω j ∂μ = if i = j then σ ^ 2 else 0)
     (M : Matrix m m ℝ) :

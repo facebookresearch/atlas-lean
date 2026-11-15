@@ -169,7 +169,7 @@ namespace LadderInput
 variable {Ω : Type*} [MeasurableSpace Ω] {P : Measure Ω} {M : ℕ → Ω → ℝ}
 
 /-- Independence: `P(Y 0, …, Y (m - 1) ≤ t) = F(t)^m`. -/
-theorem real_forall_lt_le (I : LadderInput P M) (m : ℕ) (t : ℝ) :
+theorem real_forall_lt_le [IsProbabilityMeasure P] (I : LadderInput P M) (m : ℕ) (t : ℝ) :
     P.real {ω | ∀ i < m, I.Y i ω ≤ t} = I.F t ^ m := by
   have hset : {ω | ∀ i < m, I.Y i ω ≤ t} = ⋂ i ∈ Finset.range m, I.Y i ⁻¹' Set.Iic t := by
     ext ω; simp
@@ -389,7 +389,7 @@ theorem tendsto_real_le_log_div_add [IsProbabilityMeasure P] (I : LadderInput P 
 
 /-- If the excursion heights lie on the lattice `hℤ`, their distribution function is constant on
 each cell `[k h, (k + 1) h)`. -/
-theorem F_eq_F_floor_mul (I : LadderInput P M) {h : ℝ} (hh : 0 < h)
+theorem F_eq_F_floor_mul [IsProbabilityMeasure P] (I : LadderInput P M) {h : ℝ} (hh : 0 < h)
     (hlat : ∀ i, ∀ᵐ ω ∂P, ∃ k : ℤ, I.Y i ω = k * h) (t : ℝ) :
     I.F t = I.F (⌊t / h⌋ * h) := by
   rw [← I.real_Y_le 0 t, ← I.real_Y_le 0 (⌊t / h⌋ * h), measureReal_def, measureReal_def]

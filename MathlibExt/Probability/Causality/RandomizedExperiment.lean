@@ -57,7 +57,7 @@ Bochner integrals in general, and when `Y₁` is integrable (as in
 `diff_integral_observed_cond_eq_ate_of_indepFun`) both sides are genuine means,
 `E[Y | T] = E[Y₁]`; for non-integrable `Y₁` both sides are the conventional value `0`. -/
 theorem integral_observed_cond_treated_of_indepFun {Ω : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} {T : Set Ω} (hT : MeasurableSet T)
+    {μ : Measure Ω} [IsProbabilityMeasure μ] {T : Set Ω} (hT : MeasurableSet T)
     {Y₀ Y₁ : Ω → ℝ} (hY₁ : Measurable Y₁)
     (hind : IndepFun (T.indicator (1 : Ω → ℝ)) Y₁ μ) (hpos : 0 < μ.real T) :
     ∫ ω, observed T Y₀ Y₁ ω ∂μ[|T] = ∫ ω, Y₁ ω ∂μ := by
