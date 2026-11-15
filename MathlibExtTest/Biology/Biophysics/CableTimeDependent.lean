@@ -9,12 +9,16 @@ LICENSE file in the root directory of this source tree.
 module
 
 import MathlibExt.Biology.Biophysics.CableTimeDependent
+import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 
 /-! Tests for the time-dependent sealed-end cable: mode values, a mode self-inner-product
 (squared norm) computed with Mathlib's `integral_cos_sq`, decay rates at sample parameters, a
 hand-checked solution witnessing that `IsCableSolution`, `SealedEnds` and the hypotheses of
 `modeCoeff_eq_mul_exp` are satisfiable, a summable coefficient sequence for the infinite
-expansion, and boundary cases (`ℓ = 0`, `t = 0`, no nonuniform modes). -/
+expansion, boundary cases (`ℓ = 0`, `t = 0`, no nonuniform modes), and the Green's functions:
+point-charge coefficients from the definition (including their non-summability), the uniform
+term's charge, the infinite-cable total charge computed with `integral_gaussian`, and the
+boundaries `t = 0` and `x = x₀`. -/
 
 open Real Set Filter Topology intervalIntegral
 
@@ -196,5 +200,117 @@ example : IsCableSolution 1 1 1 univ (chargingSum 1 1 1 2 {1} fun _ => -1) :=
 
 example (t : ℝ) : deriv (chargingSum 1 1 1 2 {1} (fun _ => -1) t) 0 = -2 * sinh 1 := by
   rw [(deriv_chargingSum_ends one_ne_zero 1 1 2 {1} _ t).2]; simp
+
+/-! ### Green's function of the sealed cable -/
+
+/-- Uniform coefficient of a point charge, from the definition: `1 / L`. -/
+example (L x₀ : ℝ) : greenCoeff L x₀ 0 = 1 / L := by simp [greenCoeff, cosMode]
+
+/-- Boundary `x₀ = 0` (charge at the sealed end): every nonuniform mode has weight `2 / L`. -/
+example (L : ℝ) {n : ℕ} (hn : n ≠ 0) : greenCoeff L 0 n = 2 / L := by
+  simp [greenCoeff, cosMode, hn]
+
+/-- A charge at the midpoint of `[0, π]` does not excite the first mode (`cos (π / 2) = 0`). -/
+example : greenCoeff π (π / 2) 1 = 0 := by
+  simp [greenCoeff, cosMode, pi_ne_zero]
+
+/-- The point-charge coefficients are not absolutely summable, so the summable-coefficient
+theorems such as `isCableSolution_cableSeries` do not apply to the Green's function; the
+bounded-coefficient versions are needed. -/
+example : ¬ Summable fun n => |greenCoeff π 0 n| := by
+  intro h
+  have hc : (fun n => |greenCoeff π 0 n|) =ᶠ[atTop] fun _ => 2 / π := by
+    filter_upwards [eventually_ge_atTop 1] with n hn
+    rw [show greenCoeff π 0 n = 2 / π by simp [greenCoeff, cosMode, show n ≠ 0 by omega]]
+    exact abs_of_pos (by positivity)
+  have := tendsto_nhds_unique (h.tendsto_atTop_zero.congr' hc) tendsto_const_nhds
+  exact (by positivity : (0 : ℝ) < 2 / π).ne this
+
+/-- The uniform term alone carries the total charge `e^{-t/τ}`, computed from the definitions with
+`integral_const` (the other modes integrate to `0` by orthogonality). -/
+example {L : ℝ} (hL : L ≠ 0) (τ ℓ x₀ t : ℝ) :
+    ∫ x in (0 : ℝ)..L, greenCoeff L x₀ 0 * (exp (-decayRate τ ℓ L 0 * t) * cosMode L 0 x) =
+      exp (-t / τ) := by
+  simp only [greenCoeff, cosMode, decayRate, ite_true, CharP.cast_eq_zero, zero_mul, zero_div,
+    cos_zero, mul_one, intervalIntegral.integral_const, sub_zero, smul_eq_mul]
+  field_simp
+  ring_nf
+
+/-- The weights times the self-inner-products recover `δ_{x₀}`'s pairings `cos (n π x₀ / L)`:
+the algebra behind `integral_sealedGreen_mul_cosMode`, checked from the definitions. -/
+example {L : ℝ} (hL : L ≠ 0) (x₀ : ℝ) (n : ℕ) :
+    greenCoeff L x₀ n * (if n = 0 then L else L / 2) = cosMode L n x₀ := by
+  unfold greenCoeff
+  split_ifs <;> field_simp
+
+/-- Non-vacuity: the Green's function with the input at the sealed end of `[0, π]` solves the
+cable equation with sealed ends. -/
+example : IsCableSolution 1 1 π (Ioi 0) (sealedGreen 1 1 π 0) :=
+  isCableSolution_sealedGreen one_pos one_ne_zero pi_ne_zero 0
+
+example : SealedEnds π (Ioi 0) (sealedGreen 1 1 π (π / 3)) :=
+  sealedEnds_sealedGreen one_pos one_ne_zero pi_ne_zero _
+
+/-- Total charge at `τ = 2`, `t = 1`: `e^{-1/2}`. -/
+example : ∫ x in (0 : ℝ)..π, sealedGreen 2 1 π 1 1 x = exp (-1 / 2) :=
+  integral_sealedGreen two_pos one_ne_zero pi_ne_zero 1 one_pos
+
+/-- Non-vacuity of the superposition theorem with the geometric profile `∑ 2⁻ⁿ cos (n y)`. -/
+example (x : ℝ) :
+    ∫ y in (0 : ℝ)..π, sealedGreen 1 1 π y 1 x * ∑' n, (1 / 2 : ℝ) ^ n * cosMode π n y =
+      cableSeries 1 1 π (fun n => (1 / 2 : ℝ) ^ n) 1 x :=
+  integral_sealedGreen_mul_cosSeries one_pos one_ne_zero pi_ne_zero summable_half_pow one_pos x
+
+/-- Non-vacuity of the semigroup law. -/
+example (x z : ℝ) :
+    ∫ y in (0 : ℝ)..π, sealedGreen 1 1 π y 1 x * sealedGreen 1 1 π z 2 y =
+      sealedGreen 1 1 π z 3 x := by
+  rw [integral_sealedGreen_mul_sealedGreen one_pos one_ne_zero pi_ne_zero one_pos two_pos]
+  norm_num
+
+/-! ### Green's function of the infinite cable -/
+
+/-- Value at the input site, from the definition: `e^{-t/τ} / √(4 π D t)`. -/
+example (τ ℓ x₀ t : ℝ) :
+    infiniteGreen τ ℓ x₀ t x₀ = exp (-t / τ) / √(4 * π * (ℓ ^ 2 / τ) * t) := by
+  simp [infiniteGreen]
+
+/-- Boundary `t = 0`: the formula degenerates (division by `0` gives `0` in Lean), so the
+theorems are stated for `t > 0`. -/
+example (τ ℓ x₀ x : ℝ) : infiniteGreen τ ℓ x₀ 0 x = 0 := by simp [infiniteGreen]
+
+/-- Total charge at `τ = 1`, `ℓ = 1`, `t = 1/4`, computed from the definition with Mathlib's
+`integral_gaussian` (`4 D t = 1`): `e^{-1/4} / √π · √π = e^{-1/4}`. -/
+example : ∫ x, infiniteGreen 1 1 0 (1 / 4) x = exp (-(1 / 4)) := by
+  have h : (fun x => infiniteGreen 1 1 0 (1 / 4) x) =
+      fun x => exp (-(1 / 4)) / √π * exp (-1 * x ^ 2) := by
+    funext x
+    unfold infiniteGreen
+    rw [show 4 * π * ((1 : ℝ) ^ 2 / 1) * (1 / 4) = π by ring,
+      show -(x - 0) ^ 2 / (4 * ((1 : ℝ) ^ 2 / 1) * (1 / 4)) = -1 * x ^ 2 by ring,
+      show -(1 / 4 : ℝ) / 1 = -(1 / 4) by ring]
+  rw [h, MeasureTheory.integral_const_mul, integral_gaussian, div_one,
+    div_mul_cancel₀ _ (sqrt_pos.mpr pi_pos).ne']
+
+/-- The theorem agrees at those parameters. -/
+example : ∫ x, infiniteGreen 1 1 0 (1 / 4) x = exp (-(1 / 4) / 1) :=
+  integral_infiniteGreen one_pos one_ne_zero 0 (by norm_num)
+
+/-- Non-vacuity: the infinite-cable Green's function solves the cable equation for `t > 0`. -/
+example : IsCableSolution 1 1 1 (Ioi 0) (infiniteGreen 1 1 0) :=
+  isCableSolution_infiniteGreen one_pos one_ne_zero 1 0
+
+/-- Non-vacuity of localization: at `x = 1`, away from the input at `0`, the response vanishes as
+`t → 0⁺`. -/
+example : Tendsto (fun t => infiniteGreen 1 1 0 t 1) (𝓝[>] 0) (𝓝 0) :=
+  tendsto_infiniteGreen_of_ne one_pos one_ne_zero one_ne_zero
+
+/-- Boundary `x = x₀` for localization: at the input site the response blows up instead, since
+`G(t, x₀; x₀) = e^{-t} / √(4 π t) ≥ e^{-1} / √(4 π t)` for `t ≤ 1`; so `x ≠ x₀` is needed. -/
+example {t : ℝ} (ht : 0 < t) (ht1 : t ≤ 1) :
+    exp (-1) / √(4 * π * t) ≤ infiniteGreen 1 1 0 t 0 := by
+  simp only [infiniteGreen, sub_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+    neg_zero, zero_div, exp_zero, mul_one, one_pow, div_one]
+  gcongr
 
 end MathlibExtTest.Biology.Biophysics.CableTimeDependent
