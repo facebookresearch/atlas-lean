@@ -84,7 +84,7 @@ def WellFormed (i : SparseApproximationInstance) : Prop :=
 def SparseApproximationFeasible (i : SparseApproximationInstance) : Prop :=
   ∃ x : Fin i.1 → ℝ, (Finset.univ.filter fun c => x c ≠ 0).card ≤ i.2.2.2.2 ∧
     Real.sqrt (∑ r : Fin i.2.2.1.length,
-      (∑ c : Fin i.1, (entry i r c : ℝ) * x c - rhs i r) ^ 2) ≤ ratVal i.2.2.2.1
+      ((∑ c : Fin i.1, (entry i r c : ℝ) * x c) - rhs i r) ^ 2) ≤ ratVal i.2.2.2.1
 
 open Classical in
 /-- SPARSE APPROXIMATION as a decision problem over bitstrings. -/
