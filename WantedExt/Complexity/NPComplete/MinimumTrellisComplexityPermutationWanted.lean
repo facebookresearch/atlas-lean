@@ -102,7 +102,7 @@ noncomputable def minimumTrellisComplexityPermutationDec :
   | none => false
 
 /-- **MINIMUM TRELLIS COMPLEXITY UNDER COORDINATE PERMUTATION is NP-complete.** Source:
-Kashyap (2008), Corollary 3.3. -/
+Kashyap (2008), Corollary 3.3 and Section 4. -/
 public theorem_wanted minimumTrellisComplexityPermutation_npComplete :
     minimumTrellisComplexityPermutationDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
