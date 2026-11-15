@@ -22,8 +22,8 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import CSLibExt.Computability.Complexity.Karp.Color
 public import MathlibExt.Combinatorics.SimpleGraph.Planarity
+public import WantedExt.Complexity.NPComplete.PlanarThreeSatWanted
 public import WantedExt.Complexity.NPComplete.PositiveOneInThreeSatWanted
 
 @[expose] public section
@@ -44,10 +44,12 @@ truth assignment for `U` such that each clause in `C` has exactly one true liter
 This is POSITIVE ONE-IN-THREE 3SAT (`PositiveOneInThreeSatWanted`) restricted to instances whose
 variable-clause graph is planar (Moore and Robson's "Planar Monotone 1-in-3 SAT"). The instance
 type and the question are those of ONE-IN-THREE 3SAT (`OneInThreeSatWanted`); `WellFormed` is
-POSITIVE ONE-IN-THREE 3SAT's plus planarity. In `incidenceGraph` the variables are the vertices
-`0, …, n - 1` and clause `c` (counting from `0`) is the vertex `n + c`; planarity is the
-repository's `SimpleGraph.IsPlanar` (a crossing-free straight-line drawing, which by Fáry's
-theorem exists exactly for the planar finite simple graphs).
+POSITIVE ONE-IN-THREE 3SAT's plus planarity of the variable-clause graph, which is PLANAR 3SAT's
+`PlanarThreeSat.IncidenceGraph` (`WantedExt.Complexity.NPComplete.PlanarThreeSatWanted`, on the
+same instance type): a vertex `Sum.inl u` per variable and `Sum.inr c` per clause, with `u` and
+`c` adjacent exactly when some literal of `c` has variable `u`. Planarity is the repository's
+`SimpleGraph.IsPlanar` (a crossing-free straight-line drawing, which by Fáry's theorem exists
+exactly for the planar finite simple graphs).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -60,17 +62,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- The variable-clause graph: vertex `x < n` is the variable `x`, vertex `n + c` is the clause
-`c`, and the variable `x` is joined to the clause `c` when a literal of `c` has variable `x`. -/
-def incidenceGraph (i : OneInThreeSatInstance) : SimpleGraph (Fin (i.1 + i.2.length)) :=
-  Cslib.Complexity.Karp.edgeGraph (i.1 + i.2.length)
-    ((List.finRange i.2.length).flatMap fun c => (i.2.get c).map fun l => (l.1, i.1 + c))
-
 /-- Well-formedness of an instance: it is well-formed for POSITIVE ONE-IN-THREE 3SAT (three
 literals per clause, variables `< n`, no negated literal), and the variable-clause graph is
 planar. -/
 def WellFormed (i : OneInThreeSatInstance) : Prop :=
-  PositiveOneInThreeSat.WellFormed i ∧ (incidenceGraph i).IsPlanar
+  PositiveOneInThreeSat.WellFormed i ∧ (PlanarThreeSat.IncidenceGraph i).IsPlanar
 
 open Classical in
 /-- PLANAR POSITIVE ONE-IN-THREE 3SAT as a decision problem over bitstrings. -/
