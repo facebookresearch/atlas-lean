@@ -18,8 +18,10 @@ namespace TorusSobolev
 
 open MeasureTheory
 
-local instance : MeasureSpace UnitAddCircle := ⟨AddCircle.haarAddCircle⟩
-local instance : IsProbabilityMeasure (volume : Measure UnitAddCircle) :=
+local instance instMeasureSpaceUnitAddCircle_mathlibExt : MeasureSpace UnitAddCircle :=
+  ⟨AddCircle.haarAddCircle⟩
+local instance instIsProbabilityMeasureUnitAddCircleVolume_mathlibExt :
+    IsProbabilityMeasure (volume : Measure UnitAddCircle) :=
   inferInstanceAs (IsProbabilityMeasure AddCircle.haarAddCircle)
 
 /-- The actual integral coefficient of a single multivariate Fourier monomial. -/
