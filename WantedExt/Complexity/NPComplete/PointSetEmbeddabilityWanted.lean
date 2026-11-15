@@ -44,8 +44,10 @@ pair `(a, b)` of naturals standing for `a - b`, `GeometricTravelingSalesman.poin
 reduction outputs integer points with polynomially bounded coordinates, and rational points
 reduce to integer ones by scaling, which preserves straight-line drawings. The vertices of `G` are
 `0, ..., n - 1`, where `n` is the number of points, and `G` is `edgeGraph n E` for an edge list `E`.
-Segments are the repository's `SimpleGraph.Segment`, and the crossing condition is the one in the
-repository's `SimpleGraph.IsPlanar`, for the drawing that puts vertex `v` at the point `σ v`.
+Segments are the repository's `SimpleGraph.Segment`. For the drawing that puts vertex `v` at the
+point `σ v`, the conditions are those of `RectilinearPlanarity.IsRectilinearDrawing` without
+its axis-parallel clause: the crossing condition of `SimpleGraph.IsPlanar`, and no vertex
+(isolated ones included) lies on an edge except at its endpoints.
 
 Cabello proves the problem NP-complete, even for 2-connected 2-outerplanar `G` (Theorem 1, by a
 reduction from 3-PARTITION); membership in NP: the bijection is a certificate, checked by
@@ -80,15 +82,19 @@ def WellFormed (i : PointSetEmbeddabilityInstance) : Prop :=
     ∀ e ∈ i.1, e.1 < i.2.length ∧ e.2 < i.2.length ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.1
 
 /-- Some bijection `σ` from the vertices onto the points gives a planar straight-line drawing:
-the segments of two different edges meet only at common endpoints. -/
+the segments of two different edges meet only at common endpoints, and no vertex lies on the
+segment of an edge other than at its own endpoints. -/
 def PointSetEmbeddabilityFeasible (i : PointSetEmbeddabilityInstance) : Prop :=
   ∃ σ : Fin i.2.length ≃ Fin i.2.length,
-    ∀ ⦃v w x y⦄, (Graph i).Adj v w → (Graph i).Adj x y →
+    (∀ ⦃v w x y⦄, (Graph i).Adj v w → (Graph i).Adj x y →
       ({v, w} : Set (Fin i.2.length)) ≠ {x, y} →
       SimpleGraph.Segment (position i (σ v)) (position i (σ w)) ∩
           SimpleGraph.Segment (position i (σ x)) (position i (σ y)) ⊆
         ({position i (σ v), position i (σ w)} : Set (ℝ × ℝ)) ∩
-          {position i (σ x), position i (σ y)}
+          {position i (σ x), position i (σ y)}) ∧
+    ∀ ⦃v w⦄ u, (Graph i).Adj v w →
+      position i (σ u) ∈ SimpleGraph.Segment (position i (σ v)) (position i (σ w)) →
+        u = v ∨ u = w
 
 open Classical in
 /-- PLANAR POINT-SET EMBEDDABILITY as a decision problem over bitstrings. -/
