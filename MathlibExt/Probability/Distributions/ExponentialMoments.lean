@@ -13,6 +13,7 @@ public import Mathlib.Probability.Distributions.Exponential
 public import Mathlib.Probability.HasLaw
 public import Mathlib.Probability.Independence.Basic
 public import Mathlib.Probability.Moments.Variance
+public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
 import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
 
 /-!
@@ -22,7 +23,8 @@ Mathlib defines the exponential law of rate `r` as `expMeasure r := gammaMeasure
 density `r * exp (-(r * x))` on `[0, ∞)`. This file computes its moments: the `n`-th moment is
 `n! / r ^ n`; in particular the mean is `r⁻¹`, the second moment is `2 / r ^ 2` and the variance
 is `r⁻¹ ^ 2`. The results are transported to random variables via `HasLaw`. It also gives the
-probability that the first of two independent exponential clocks rings first.
+characteristic function `r / (r - i u)` and the probability that the first of two independent
+exponential clocks rings first.
 
 ## Main results
 
@@ -34,6 +36,7 @@ probability that the first of two independent exponential clocks rings first.
   the mean is `r⁻¹`.
 * `ProbabilityTheory.integral_sq_expMeasure`: the second moment is `2 / r ^ 2`.
 * `ProbabilityTheory.variance_id_expMeasure`: the variance is `r⁻¹ ^ 2`.
+* `ProbabilityTheory.charFun_expMeasure`: the characteristic function is `r / (r - i u)`.
 * `ProbabilityTheory.HasLaw.integral_eq_inv_of_expMeasure`,
   `ProbabilityTheory.HasLaw.variance_eq_of_expMeasure`: the same for a random variable with
   law `expMeasure r`.
@@ -134,6 +137,52 @@ theorem variance_id_expMeasure {r : ℝ} (hr : 0 < r) : Var[id; expMeasure r] = 
   rw [integral_sq_expMeasure hr, integral_id_expMeasure hr]
   field_simp
   ring
+
+/-! ### Characteristic function -/
+
+section CharFun
+
+open Complex
+
+/-- The characteristic function of the exponential law of rate `r > 0`:
+`E[exp(i u X)] = r / (r - i u)`. -/
+theorem charFun_expMeasure {r : ℝ} (hr : 0 < r) (u : ℝ) :
+    charFun (expMeasure r) u = r / (r - u * I) := by
+  have hm : Measurable (gammaPDF 1 r) := by
+    unfold gammaPDF
+    exact (measurable_gammaPDFReal 1 r).ennreal_ofReal
+  rw [charFun_apply, expMeasure, gammaMeasure,
+    integral_withDensity_eq_integral_toReal_smul hm (ae_of_all _ fun _ => by simp [gammaPDF])]
+  have h : ∀ x : ℝ, (gammaPDF 1 r x).toReal • cexp ((inner ℝ x u : ℝ) * I) =
+      Set.indicator (Set.Ici 0) (fun x : ℝ => (r : ℂ) * cexp ((-r + u * I) * x)) x := by
+    intro x
+    by_cases hx : 0 ≤ x
+    · rw [gammaPDF_of_nonneg hx, Set.indicator_of_mem (Set.mem_Ici.2 hx),
+        ENNReal.toReal_ofReal (by positivity)]
+      simp only [Real.rpow_zero, mul_one, Real.Gamma_one, div_one, Real.rpow_one, sub_self]
+      rw [Complex.real_smul, ofReal_mul, ofReal_exp, mul_assoc, ← Complex.exp_add]
+      congr 2
+      simp [RCLike.inner_apply]
+      ring
+    · rw [gammaPDF_of_neg (not_le.1 hx), Set.indicator_of_notMem (by simpa using hx)]
+      simp
+  simp_rw [h]
+  rw [integral_indicator measurableSet_Ici, integral_Ici_eq_integral_Ioi, integral_const_mul,
+    integral_exp_mul_complex_Ioi (by simp [hr]) 0]
+  have h1 : (r : ℂ) - u * I ≠ 0 := by
+    intro h0
+    have := congrArg Complex.re h0
+    simp at this
+    linarith
+  have : -(r : ℂ) + u * I ≠ 0 := by
+    intro h0
+    apply h1
+    linear_combination -h0
+  simp
+  field_simp
+  ring
+
+end CharFun
 
 /-! ### Competing exponential clocks -/
 

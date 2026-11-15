@@ -10,10 +10,10 @@ module
 
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.Mutation
 public import MathlibExt.Biology.PopulationGenetics.Coalescent.Topology
-public import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-public import Mathlib.MeasureTheory.Integral.Pi
-public import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
-public import Mathlib.Probability.Independence.Integration
+import MathlibExt.Probability.Distributions.ExponentialMoments
+import Mathlib.MeasureTheory.Integral.Pi
+import Mathlib.MeasureTheory.Measure.CharacteristicFunction.Basic
+import Mathlib.Probability.Independence.Integration
 
 /-!
 # Pairwise differences under Poisson mutation marking
@@ -64,7 +64,7 @@ labeled history (`RankedHistory`, `Topology.lean`) and discharges those hypothes
   `∏_{k ≥ M} C(k, 2) / (C(k, 2) - i u)`, which telescopes into a sum linear in the indicators of
   `PairApart` (`prod_ite_eq_sum_of_threshold`). Averaging with `pairSeparateProb` and summing
   (`sum_pairRatio_prod`) gives `1 / (1 - i u)`, the transform of `Exp(1)`
-  (`charFun_expMeasure`, `hasLaw_sum_ite_of_threshold`).
+  (`ProbabilityTheory.charFun_expMeasure`, `hasLaw_sum_ite_of_threshold`).
 * **Second moments.** Given the genealogy, the branch counts are independent Poisson with means
   `λ_b = (θ/2) ℓ_b`, so `E[D_s D_{s'} | g] = θ² τ_s τ_{s'} + (θ/2) ℓ(path s ∩ path s')`, the
   second term being the Poisson variance on the branches separating both pairs
@@ -944,44 +944,6 @@ open Complex
 
 variable {n : ℕ}
 
-/-- The characteristic function of the exponential law of rate `r > 0`:
-`E[exp(i u X)] = r / (r - i u)`. -/
-theorem charFun_expMeasure {r : ℝ} (hr : 0 < r) (u : ℝ) :
-    charFun (expMeasure r) u = r / (r - u * I) := by
-  have hm : Measurable (gammaPDF 1 r) := by
-    unfold gammaPDF
-    exact (measurable_gammaPDFReal 1 r).ennreal_ofReal
-  rw [charFun_apply, expMeasure, gammaMeasure,
-    integral_withDensity_eq_integral_toReal_smul hm (ae_of_all _ fun _ => by simp [gammaPDF])]
-  have h : ∀ x : ℝ, (gammaPDF 1 r x).toReal • cexp ((inner ℝ x u : ℝ) * I) =
-      Set.indicator (Set.Ici 0) (fun x : ℝ => (r : ℂ) * cexp ((-r + u * I) * x)) x := by
-    intro x
-    by_cases hx : 0 ≤ x
-    · rw [gammaPDF_of_nonneg hx, Set.indicator_of_mem (Set.mem_Ici.2 hx),
-        ENNReal.toReal_ofReal (by positivity)]
-      simp only [Real.rpow_zero, mul_one, Real.Gamma_one, div_one, Real.rpow_one, sub_self]
-      rw [Complex.real_smul, ofReal_mul, ofReal_exp, mul_assoc, ← Complex.exp_add]
-      congr 2
-      simp [RCLike.inner_apply]
-      ring
-    · rw [gammaPDF_of_neg (not_le.1 hx), Set.indicator_of_notMem (by simpa using hx)]
-      simp
-  simp_rw [h]
-  rw [integral_indicator measurableSet_Ici, integral_Ici_eq_integral_Ioi, integral_const_mul,
-    integral_exp_mul_complex_Ioi (by simp [hr]) 0]
-  have h1 : (r : ℂ) - u * I ≠ 0 := by
-    intro h0
-    have := congrArg Complex.re h0
-    simp at this
-    linarith
-  have : -(r : ℂ) + u * I ≠ 0 := by
-    intro h0
-    apply h1
-    linear_combination -h0
-  simp
-  field_simp
-  ring
-
 /-- The ratio `(m - 1) / (m + 1)`; the probability that a pair is still apart with `m` lineages
 is `pairSeparateProb n m = ((n + 1) / (n - 1)) * pairRatio m`. -/
 noncomputable def pairRatio (m : ℕ) : ℂ := ((m : ℂ) - 1) / ((m : ℂ) + 1)
@@ -1229,7 +1191,7 @@ def pairPathOverlap (h : RankedHistory n) (s s' : Finset (Fin n)) (t : Icc 2 n �
 
 /-- Product moments of the coordinates of a product of laws on `ℕ` with finite second moments:
 `E[N_b N_b'] = E[N_b²]` if `b = b'` and `E[N_b] E[N_b']` otherwise. -/
-theorem integrable_and_integral_natCast_mul_pi {ι : Type*} [Fintype ι] [DecidableEq ι]
+private theorem integrable_and_integral_natCast_mul_pi {ι : Type*} [Fintype ι] [DecidableEq ι]
     (ν : ι → Measure ℕ) [∀ i, IsProbabilityMeasure (ν i)]
     (h1 : ∀ i, Integrable (fun n : ℕ => (n : ℝ)) (ν i))
     (h2 : ∀ i, Integrable (fun n : ℕ => (n : ℝ) ^ 2) (ν i)) (b b' : ι) :
@@ -2810,7 +2772,7 @@ private theorem integral_randomJoining (F : RankedHistory n → ℝ) :
   rw [inv_mul_eq_div]
 
 /-- Epoch `k ∈ [2, n]` is the epoch after `n - k` events. -/
-theorem sum_Icc_sub_eq_sum_Ico (g : ℕ → ℝ) :
+private theorem sum_Icc_sub_eq_sum_Ico (g : ℕ → ℝ) :
     ∑ k : Icc 2 n, g (n - k) = ∑ u ∈ Ico 0 (n - 1), g u := by
   rw [Finset.sum_coe_sort (Icc 2 n) (fun k => g (n - k))]
   refine Finset.sum_nbij' (fun k => n - k) (fun u => n - u) ?_ ?_ ?_ ?_ fun _ _ => rfl
