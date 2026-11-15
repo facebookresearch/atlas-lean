@@ -68,8 +68,7 @@ The classical three-machine open shop `O3||C_max` is the special case `r = 3`, `
 Gonzalez and Sahni prove NP-hard (Garey and Johnson [SS14]: NP-complete for `m = 3`), and Brucker
 and Knust list `OMPM3||C_max` as minimal NP-hard in the ordinary sense on that basis. Processing
 times and the bound use the binary encoding. Membership in NP: the machines and start times are a
-certificate; some optimal schedule has no idle time slot in which no operation runs before its last
-start, so its start times are at most the sum of all processing times and have polynomial size.
+certificate; every start time is at most `C_j ≤ K`, so the certificate has polynomial size.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
