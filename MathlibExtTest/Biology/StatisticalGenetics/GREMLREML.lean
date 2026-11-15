@@ -23,7 +23,8 @@ variance, so the estimate is unconstrained. Both REML scores vanish there and no
 these are computed from the definitions. For `y₁ = (1, -1, 0, 0)` the class mean `m_a` is `0`
 and the closed form leaves the positive-definite region, so `0 < m_a` is needed. At `θ = (0, 0)`
 the restricted log-likelihood is the junk value `0` and differs from the spectral form, so the
-positivity hypothesis of `remlLogLik_gremlCov` is needed.
+positivity hypothesis of `remlLogLik_gremlCov` is needed; both scores are also the junk value `0`
+there, so `integral_scoreG` and `integral_scoreE` assume positive contrast variances.
 -/
 
 @[expose] public section
@@ -190,6 +191,12 @@ theorem remlLogLik_zero_ne :
   have : 0 < Real.log (2 * Real.pi) := Real.log_pos (by linarith [Real.two_le_pi])
   linarith
 
+/-- **Positive contrast variances are needed in `integral_scoreG` and `integral_scoreE`.** At
+`θ = (0, 0)` every contrast variance is `0`, so both scores are the junk value `0` for every `w`
+and are not REML derivatives there. -/
+theorem score_zero_zero (w : Fin 3 → ℝ) : scoreG d₀ w (0, 0) = 0 ∧ scoreE d₀ w (0, 0) = 0 := by
+  simp [scoreG, scoreE, contrastVar]
+
 /-! ### Unbiasedness: the Gaussian hypotheses are satisfiable -/
 
 /-- With `y ~ N(X₀ β, K₀ + I)` (the identity on the multivariate Gaussian law), the closed-form
@@ -202,10 +209,12 @@ example (β : Fin 1 → ℝ) :
     ∫ x, scoreE d₀ (B₀ *ᵥ ofLp x) (1, 1) ∂μ = 0 := by
   intro μ
   have hV := posSemidef_gremlCov₀ (θ := (1, 1)) (by norm_num) (by norm_num)
+  have hθ : ∀ i, 0 < contrastVar d₀ (1, 1) i := fun i => by
+    fin_cases i <;> norm_num [contrastVar, d₀]
   refine ⟨integral_twoLevelREML isSpectralContrast₀ hV β HasLaw.id (by norm_num)
       ⟨0, by simp [d₀]⟩ ⟨1, by simp [d₀]⟩,
-    integral_scoreG isSpectralContrast₀ hV β HasLaw.id,
-    integral_scoreE isSpectralContrast₀ hV β HasLaw.id⟩
+    integral_scoreG isSpectralContrast₀ hV hθ β HasLaw.id,
+    integral_scoreE isSpectralContrast₀ hV hθ β HasLaw.id⟩
 
 /-! ### Other entry points -/
 

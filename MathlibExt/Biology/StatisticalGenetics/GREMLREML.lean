@@ -45,8 +45,8 @@ estimate in the interior of the positive-definite region solves both equations
 `yᵀ P K P y = tr (P K)` and `yᵀ P P y = tr P` (`reml_equations_of_isLocalMax`; Yang et al.
 2011, where `P` is written `V⁻¹ - V⁻¹ X (Xᵀ V⁻¹ X)⁻¹ Xᵀ V⁻¹`; that this equals `remlProj` is not
 proved here). The REML estimating equations are unbiased: if `y ~ N(X β, σ²_g K + σ²_e I)` at
-`θ₀`, then `𝔼[w_i²] = λ_i(θ₀)` and both scores have mean zero at `θ₀` (`integral_sq_contrast`,
-`integral_scoreG`, `integral_scoreE`).
+`θ₀`, then `𝔼[w_i²] = λ_i(θ₀)` (`integral_sq_contrast`), and if moreover every `λ_i(θ₀) > 0`,
+both scores have mean zero at `θ₀` (`integral_scoreG`, `integral_scoreE`).
 
 **Closed form for two-level spectra.** When `d` takes exactly two values `a ≠ b` on the contrast
 space (for example sib pairs with an intercept, where the GRM blocks `[1, 1/2; 1/2, 1]` give
@@ -62,8 +62,9 @@ contrast covariance is positive definite (`isMaxOn_remlLogLik_twoLevelREML`), an
 
 Not covered: existence of a REML maximizer for general spectra, the average-information
 algorithm itself, consistency or asymptotic normality of the REML estimator, and constrained
-(boundary) estimates. Singular contrast covariances are excluded by hypothesis, as in
-`remlLogLik`.
+(boundary) estimates. Singular contrast covariances are excluded by hypothesis wherever a
+result divides by a contrast variance (the spectral form, the score equations and their
+unbiasedness), as in `remlLogLik`.
 
 ## Main results
 
@@ -451,10 +452,13 @@ theorem integral_sq_contrast {X : Matrix m k ℝ} {K : Matrix m m ℝ} {B : Matr
   rw [h2, Real.coe_toNNReal _ hS.diag_nonneg, contrast_gremlCov hB.mul_transpose
     hB.mul_mul_transpose, diagonal_apply_eq]
 
-/-- **The REML score for `σ²_g` is unbiased**: at the true parameter `θ₀`, `𝔼[scoreG] = 0`. -/
+set_option linter.unusedVariables false in
+/-- **The REML score for `σ²_g` is unbiased**: at a true parameter `θ₀` with every contrast
+variance positive, where `scoreG` is the derivative of the REML criterion, `𝔼[scoreG] = 0`. -/
 theorem integral_scoreG [IsProbabilityMeasure μ] {X : Matrix m k ℝ} {K : Matrix m m ℝ}
     {B : Matrix r m ℝ} {d : r → ℝ} (hB : IsSpectralContrast X K B d) {θ₀ : ℝ × ℝ}
-    (hV : (gremlCov K θ₀).PosSemidef) (β : k → ℝ) {y : Ω → EuclideanSpace ℝ m}
+    (hV : (gremlCov K θ₀).PosSemidef) (hθ₀ : ∀ i, 0 < contrastVar d θ₀ i) (β : k → ℝ)
+    {y : Ω → EuclideanSpace ℝ m}
     (hy : HasLaw y (multivariateGaussian (toLp 2 (X *ᵥ β)) (gremlCov K θ₀)) μ) :
     ∫ ω, scoreG d (B *ᵥ ofLp (y ω)) θ₀ ∂μ = 0 := by
   have hint : ∀ i ∈ Finset.univ, Integrable (fun ω => d i * ((B *ᵥ ofLp (y ω)) i ^ 2 -
@@ -467,10 +471,13 @@ theorem integral_scoreG [IsProbabilityMeasure μ] {X : Matrix m k ℝ} {K : Matr
   rw [integral_div, integral_const_mul, integral_sub h1 (integrable_const _), h2, integral_const]
   simp
 
-/-- **The REML score for `σ²_e` is unbiased**: at the true parameter `θ₀`, `𝔼[scoreE] = 0`. -/
+set_option linter.unusedVariables false in
+/-- **The REML score for `σ²_e` is unbiased**: at a true parameter `θ₀` with every contrast
+variance positive, where `scoreE` is the derivative of the REML criterion, `𝔼[scoreE] = 0`. -/
 theorem integral_scoreE [IsProbabilityMeasure μ] {X : Matrix m k ℝ} {K : Matrix m m ℝ}
     {B : Matrix r m ℝ} {d : r → ℝ} (hB : IsSpectralContrast X K B d) {θ₀ : ℝ × ℝ}
-    (hV : (gremlCov K θ₀).PosSemidef) (β : k → ℝ) {y : Ω → EuclideanSpace ℝ m}
+    (hV : (gremlCov K θ₀).PosSemidef) (hθ₀ : ∀ i, 0 < contrastVar d θ₀ i) (β : k → ℝ)
+    {y : Ω → EuclideanSpace ℝ m}
     (hy : HasLaw y (multivariateGaussian (toLp 2 (X *ᵥ β)) (gremlCov K θ₀)) μ) :
     ∫ ω, scoreE d (B *ᵥ ofLp (y ω)) θ₀ ∂μ = 0 := by
   have hint : ∀ i ∈ Finset.univ, Integrable (fun ω => ((B *ᵥ ofLp (y ω)) i ^ 2 -
