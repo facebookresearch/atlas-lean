@@ -13,6 +13,7 @@ public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Logic.Equiv.Defs
 public import Mathlib.Order.Fin.Basic
+public import Mathlib.Order.Interval.Set.Basic
 public import Mathlib.Order.Monotone.Basic
 
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
@@ -35,7 +36,8 @@ nonincreasing discounts `w`, and an injective ranked prefix `r`, discounted
 cumulative gain is `∑ i, w i * g (r i)`. The ideal DCG uses the first `k`
 entries of a full gain-sorted permutation. The main theorem
 `dcgAt_le_idealDCGAt` bounds every injective prefix by that ideal prefix, and
-`exists_sortedPerm` supplies the sorted permutation.
+`exists_sortedPerm` supplies the sorted permutation. Normalized DCG divides
+actual DCG by ideal DCG, with value `0` when the ideal DCG is zero.
 
 ## Main declarations
 
@@ -43,6 +45,10 @@ entries of a full gain-sorted permutation. The main theorem
 * `idealDCGAt`: discounted cumulative gain of the first `k` entries of an ideal ranking.
 * `dcgAt_le_idealDCGAt`: every injective prefix scores no more than the ideal ranking.
 * `exists_sortedPerm`: every finite gain vector admits a gain-sorted permutation.
+* `ndcgAt`: normalized discounted cumulative gain at a cutoff.
+* `ndcgAt_mem_Icc`: normalized DCG lies in `[0, 1]` for nonnegative gains.
+* `ndcgAt_sortedPrefix_eq_one_of_pos`: the sorted prefix has normalized DCG `1`
+  when the ideal DCG is positive.
 -/
 
 @[expose] public section
@@ -183,5 +189,68 @@ theorem exists_sortedPerm {N : ℕ} (g : Fin N → ℝ) :
   have h2 : Monotone (OrderDual.toDual ∘ (g ∘ Tuple.sort (OrderDual.toDual ∘ g))) := by
     simpa [Function.comp_assoc] using h
   exact (monotone_toDual_comp_iff).mp h2
+
+/-- Normalized discounted cumulative gain at cutoff `k`.
+
+This is `dcgAt` divided by `idealDCGAt` for the bundled valid discounts and
+bundled sorted ranking. The selected convention when the ideal DCG is zero
+is `0`. -/
+noncomputable def ndcgAt {N k : ℕ} (hk : k ≤ N) (g : Fin N → ℝ)
+    (w : {w : Fin k → ℝ // (∀ i, 0 ≤ w i) ∧ Antitone w})
+    (r : Fin k → Fin N)
+    (s : {s : Equiv.Perm (Fin N) // Antitone (g ∘ s)}) : ℝ :=
+  if idealDCGAt hk g w s = 0 then 0
+  else dcgAt g w.1 r / idealDCGAt hk g w s
+
+/-- Normalized DCG is zero by convention when the ideal DCG is zero. -/
+theorem ndcgAt_of_ideal_eq_zero {N k : ℕ} (hk : k ≤ N) (g : Fin N → ℝ)
+    (w : {w : Fin k → ℝ // (∀ i, 0 ≤ w i) ∧ Antitone w})
+    (r : Fin k → Fin N)
+    (s : {s : Equiv.Perm (Fin N) // Antitone (g ∘ s)})
+    (h : idealDCGAt hk g w s = 0) : ndcgAt hk g w r s = 0 := by
+  unfold ndcgAt
+  exact ite_eq_left h
+
+/-- Normalized DCG lies in `[0, 1]` for nonnegative gains and an injective
+ranked prefix. -/
+theorem ndcgAt_mem_Icc {N k : ℕ} (hk : k ≤ N)
+    {g : Fin N → ℝ}
+    {w : {w : Fin k → ℝ // (∀ i, 0 ≤ w i) ∧ Antitone w}}
+    {r : Fin k → Fin N}
+    {s : {s : Equiv.Perm (Fin N) // Antitone (g ∘ s)}}
+    (hg : ∀ i, 0 ≤ g i) (hr : Function.Injective r) :
+    ndcgAt hk g w r s ∈ Set.Icc (0 : ℝ) 1 := by
+  by_cases h0 : idealDCGAt hk g w s = 0
+  · rw [ndcgAt_of_ideal_eq_zero hk g w r s h0, Set.mem_Icc]
+    exact ⟨le_rfl, zero_le_one⟩
+  · have hideal0 : 0 ≤ idealDCGAt hk g w s := by
+      unfold idealDCGAt
+      apply Finset.sum_nonneg
+      intro i _
+      exact mul_nonneg (w.2.1 i) (hg _)
+    have hpos : 0 < idealDCGAt hk g w s := lt_of_le_of_ne hideal0 (Ne.symm h0)
+    have hdcg0 : 0 ≤ dcgAt g w.1 r := by
+      unfold dcgAt
+      apply Finset.sum_nonneg
+      intro i _
+      exact mul_nonneg (w.2.1 i) (hg _)
+    have hle : dcgAt g w.1 r ≤ idealDCGAt hk g w s :=
+      dcgAt_le_idealDCGAt hk w.2.1 w.2.2 hr s.2
+    unfold ndcgAt
+    rw [ite_eq_right h0, Set.mem_Icc]
+    exact ⟨div_nonneg hdcg0 (le_of_lt hpos), (div_le_one hpos).mpr hle⟩
+
+/-- The sorted prefix has normalized DCG `1` when the ideal DCG is positive. -/
+theorem ndcgAt_sortedPrefix_eq_one_of_pos {N k : ℕ} (hk : k ≤ N)
+    (g : Fin N → ℝ)
+    (w : {w : Fin k → ℝ // (∀ i, 0 ≤ w i) ∧ Antitone w})
+    (s : {s : Equiv.Perm (Fin N) // Antitone (g ∘ s)})
+    (hpos : 0 < idealDCGAt hk g w s) :
+    ndcgAt hk g w (fun i => s.1 (Fin.castLE hk i)) s = 1 := by
+  have hne : idealDCGAt hk g w s ≠ 0 := ne_of_gt hpos
+  have hdcg : dcgAt g w.1 (fun i => s.1 (Fin.castLE hk i))
+      = idealDCGAt hk g w s := rfl
+  unfold ndcgAt
+  rw [ite_eq_right hne, hdcg, div_self hne]
 
 end Cslib.InformationRetrieval
