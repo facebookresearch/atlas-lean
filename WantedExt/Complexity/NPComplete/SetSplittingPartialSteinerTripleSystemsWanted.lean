@@ -39,10 +39,9 @@ This is Garey and Johnson's SET SPLITTING [SP4] (hypergraph 2-colorability) rest
 Steiner triple systems. Johnson's NP-completeness column (J. Algorithms 3 (1982), in its
 discussion of [SP4]) records: "Phelps [33] has shown that the problem is NP-complete for partial
 Steiner triple systems (3-regular hypergraphs in which each pair of vertices occurs in at most one
-hyperedge)", while for (full) Steiner triple systems the answer is always "no"; Phelps's proof
-itself was not available. The column uses "3-regular hypergraphs" for "instances where all
-hyperedges are of size 3", i.e. 3-uniform hypergraphs, not vertex degree three. Membership in
-NP: the partition is a certificate.
+hyperedge)"; Phelps's proof itself was not available. The column uses "3-regular hypergraphs"
+for "instances where all hyperedges are of size 3", i.e. 3-uniform hypergraphs, not vertex
+degree three. Membership in NP: the partition is a certificate.
 
 The instance type, the parent well-formedness condition and the question are those of
 `SetSplitting` (`SetSplitting.SetSplittingInstance`, `SetSplitting.WellFormed`,
