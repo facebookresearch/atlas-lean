@@ -30,7 +30,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_formal_math_sync import (  # noqa: E402  (the checker owns the header parser)
     BACKPORT, MANIFEST, ROOTS, SCHEMA_VERSION, UPSTREAM_REPOSITORY, count_rows, dump_manifest, is_flt, leading_notice,
-    library_files, sha256, split_published, upstream_body,
+    last_committed_text, library_files, retired_row, sha256, split_published, upstream_body,
 )
 
 ZERO = "0" * 40
@@ -210,8 +210,9 @@ def build(atlas: Path, repo: Path, commit: str, previous: dict,
     if dropped:  # rows never disappear; the checker rejects a manifest that drops one
         raise SystemExit("sync: these files have manifest rows but no longer look upstream-derived "
                          "(third-party FLT header or no upstream history); resolve them by hand: " + ", ".join(dropped))
-    # A file that left ATLAS keeps its row as retired.
-    rows += [{"path": path, "disposition": "retired"} for path in sorted(old_rows) if not (atlas / path).exists()]
+    # A file that left ATLAS keeps its row as retired, with its provenance and line fingerprint.
+    rows += [retired_row(old_rows[path], path, last_committed_text(atlas, path))
+             for path in sorted(old_rows) if not (atlas / path).exists()]
     rows.sort(key=lambda row: row["path"])
     toolchain = (atlas / "lean-toolchain").read_text().strip()
     manifest = {

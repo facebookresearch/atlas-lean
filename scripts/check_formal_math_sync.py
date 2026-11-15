@@ -167,6 +167,28 @@ def is_flt(text: str) -> bool:
     return bool(block) and any(marker in block.group(0) for marker in FLT_MARKERS)
 
 
+FINGERPRINT = re.compile(r"[0-9a-f]{12}")
+NEAR_COPY = 0.9  # share of a retired file's distinct lines that marks a new file as its near copy
+
+
+def line_fingerprint(text: str) -> list[str]:
+    """Sorted short hashes of a file's distinct non-trivial lines (8+ characters once stripped).
+
+    A retired row keeps this, so a later near copy of the retired file is still recognized."""
+    return sorted({sha256(line.strip())[:12] for line in text.splitlines() if len(line.strip()) >= 8})
+
+
+def retired_row(old: dict, path: str, previous_text: str | None) -> dict:
+    """The retired form of a row: its provenance and fingerprints stay, so copies stay visible."""
+    if old.get("disposition") == "retired":
+        return dict(old)
+    row = {"path": path, "disposition": "retired"}
+    row.update({k: old[k] for k in ("published_sha256", "upstream_sha256", "upstream_commit") if k in old})
+    if previous_text is not None:
+        row["line_fingerprint"] = line_fingerprint(previous_text)
+    return row
+
+
 def count_rows(rows: list[dict]) -> dict[str, int]:
     counts = {d: 0 for d in DISPOSITIONS}
     for row in rows:
@@ -261,6 +283,11 @@ def field_problems(row: dict) -> list[str]:
             problems.append(f"{path}: {field} must be a non-empty string")
     if isinstance(row.get("backport"), str) and row["backport"].strip() and not BACKPORT.fullmatch(row["backport"]):
         problems.append(f"{path}: backport must be 'pending', 'not-needed', or an https:// URL")
+    fingerprint = row.get("line_fingerprint")
+    if "line_fingerprint" in row and (disposition != "retired" or not isinstance(fingerprint, list)
+                                      or not all(isinstance(h, str) and FINGERPRINT.fullmatch(h) for h in fingerprint)
+                                      or fingerprint != sorted(set(fingerprint))):
+        problems.append(f"{path}: line_fingerprint must be a sorted list of 12-hex line hashes on a retired row")
     if "notice" in row and disposition not in ("attributed", "behind"):
         problems.append(f"{path}: only attributed or behind rows record a notice")
     if "header" in row and (disposition not in ("identical", "behind") or row["header"] != "upstream"):
@@ -349,14 +376,29 @@ def check(root: Path, manifest_path: Path) -> tuple[list[str], dict[str, list[st
     if paths != sorted(paths):
         problems.append("manifest: rows are not sorted by path")
     # A byte-for-byte copy of a tracked file must be tracked too (no base commit needed).
+    # Retired rows count too: a file retired in one PR and copied back in a later one is still caught.
     tracked = {row["published_sha256"]: row["path"] for row in manifest["rows"] if isinstance(row, dict)
-               and row.get("disposition") in (*SYNCED, "diverged") and isinstance(row.get("published_sha256"), str)}
+               and row.get("disposition") in (*SYNCED, "diverged", "retired")
+               and isinstance(row.get("published_sha256"), str)}
+    retired = [(row["path"], set(row["line_fingerprint"])) for row in manifest["rows"] if isinstance(row, dict)
+               and row.get("disposition") == "retired" and isinstance(row.get("line_fingerprint"), list)
+               and len(row["line_fingerprint"]) >= 5]
     files, _ = library_files(root)
     for path in sorted(files - seen):
-        source = tracked.get(sha256((root / path).read_bytes()))
+        data = (root / path).read_bytes()
+        source = tracked.get(sha256(data))
         if source:
             problems.append(f"{path}: exact copy of tracked {source} but has no row; record it with --record-divergence")
             fixes["record"].append(path)
+            continue
+        if retired:
+            lines = set(line_fingerprint(data.decode("utf-8", "replace")))
+            for old_path, old_lines in retired:
+                if len(old_lines & lines) >= NEAR_COPY * len(old_lines):
+                    problems.append(f"{path}: near copy of retired {old_path} but has no row; record it with "
+                                    "--record-divergence")
+                    fixes["record"].append(path)
+                    break
     return problems, fixes, len(manifest["rows"])
 
 
@@ -367,6 +409,15 @@ def git(root: Path, *args: str) -> str | None:
     except (OSError, subprocess.TimeoutExpired):
         return None
     return done.stdout.strip() if done.returncode == 0 else None
+
+
+def last_committed_text(root: Path, path: str) -> str | None:
+    """A deleted file's last committed text: from HEAD, or from before the commit that deleted it."""
+    text = git(root, "show", f"HEAD:{path}")
+    if text is None:
+        deleting = git(root, "rev-list", "-1", "HEAD", "--", path)
+        text = git(root, "show", f"{deleting}^:{path}") if deleting else None
+    return None if text is None else text + "\n"
 
 
 def first_parent(root: Path) -> str | None:
@@ -465,7 +516,15 @@ def row_transition_problems(path: str, before: dict | None, row: dict, short: st
             return [f"{path}: new synced row while the upstream pin is unchanged; synced rows come "
                     "from scripts/sync_formal_math.py"]
         return []
-    if row == before or disposition == "retired":
+    if row == before:
+        return []
+    if disposition == "retired":
+        if before.get("disposition") == "retired":
+            return [f"{path}: retired row changed (base {short}); a retired row keeps its provenance"]
+        dropped = [k for k in ("published_sha256", "upstream_sha256", "upstream_commit") if row.get(k) != before.get(k)
+                   and k in before]
+        if dropped:
+            return [f"{path}: retiring the row changed {', '.join(dropped)} (base {short}); --retire keeps them"]
         return []
     if disposition in SYNCED:
         fields = sorted(k for k in set(row) | set(before) if row.get(k) != before.get(k))
@@ -570,6 +629,12 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
         return problems + ([problem] if problem else []), warnings + ([note] if note else [])
     for path, row in sorted(new.items(), key=lambda item: str(item[0])):
         problems += row_transition_problems(path, old.get(path), row, short)
+        before = old.get(path) or {}
+        if row.get("disposition") == "retired" and before.get("disposition") not in (None, "retired"):
+            text = git(root, "show", f"{commit}:{path}")
+            if text is not None and row.get("line_fingerprint") != line_fingerprint(text + "\n"):
+                problems.append(f"{path}: retired row's line_fingerprint does not match the file at base {short}; "
+                                "use --retire")
     return problems, warnings
 
 
@@ -649,7 +714,7 @@ def main(argv: list[str] | None = None) -> int:
         def retire(old: dict, path: str) -> dict | str:
             if (a.root / path).exists():
                 return "file still exists; delete it first, or use --record-divergence for a changed file"
-            return {"path": path, "disposition": "retired"}
+            return retired_row(old, path, last_committed_text(a.root, path))
         return edit(a.root, manifest_path, a.retire, retire)
 
     problems, fixes, rows = check(a.root, manifest_path)

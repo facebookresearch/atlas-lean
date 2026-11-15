@@ -311,7 +311,9 @@ class CheckerTest(unittest.TestCase):
         self.assertNotEqual(self.problems(), [])
         self.assertEqual(self.main("--retire", "MathlibExt/Kept.lean")[0], 0)
         self.assertEqual(self.problems(), [])
-        self.assertEqual(self.row_on_disk("MathlibExt/Kept.lean"), {"path": "MathlibExt/Kept.lean", "disposition": "retired"})
+        row = self.row_on_disk("MathlibExt/Kept.lean")
+        self.assertEqual(row["disposition"], "retired")
+        self.assertEqual(row["published_sha256"], self.row("MathlibExt/Kept.lean")["published_sha256"])  # kept
 
     def test_retire_rejects_an_existing_file(self) -> None:
         code, out = self.main("--retire", "MathlibExt/Kept.lean")
@@ -488,9 +490,15 @@ class BaseGuardTest(unittest.TestCase):
         self.assertEqual(self.run_check(None, "--retire", "MathlibExt/Identical.lean")[0], 0)
         self.manifest = json.loads((self.root / c.MANIFEST).read_text())
 
+    def assert_fails(self, message: str, expected: str) -> None:
+        self.commit(message)
+        code, out = self.run_check()
+        self.assertEqual(code, 1, out)
+        self.assertIn(expected, out)
+
     def test_pure_rename_of_a_tracked_file_needs_a_row(self) -> None:
         self.move_identical(edit=False)
-        self.assert_blocked("retire and rename", "WantedExt/Renamed.lean: renamed from tracked MathlibExt/Identical.lean")
+        self.assert_fails("retire and rename", "WantedExt/Renamed.lean: renamed from tracked MathlibExt/Identical.lean")
         self.assertEqual(self.run_check(None, "--record-divergence", "WantedExt/Renamed.lean", "--rationale",
                                         "moved to WantedExt", "--backport", "not-needed")[0], 0)
         self.commit("track the new path")
@@ -498,7 +506,7 @@ class BaseGuardTest(unittest.TestCase):
 
     def test_rename_with_edits_of_a_tracked_file_needs_a_row(self) -> None:
         self.move_identical(edit=True)
-        self.assert_blocked("retire, rename and edit", "WantedExt/Renamed.lean: renamed from tracked")
+        self.assert_fails("retire, rename and edit", "WantedExt/Renamed.lean: renamed from tracked")
 
     def test_near_copy_of_a_tracked_file_needs_a_row(self) -> None:
         text = (self.root / "MathlibExt/Identical.lean").read_text().replace("def x7 ", "def y7 ")
@@ -508,6 +516,43 @@ class BaseGuardTest(unittest.TestCase):
         code, out = self.run_check()
         self.assertEqual(code, 1, out)
         self.assertIn("WantedExt/NearCopy.lean: copied from tracked MathlibExt/Identical.lean", out)
+
+    def retire_identical(self) -> str:
+        text = (self.root / "MathlibExt/Identical.lean").read_text()
+        os.remove(self.root / "MathlibExt/Identical.lean")
+        self.assertEqual(self.run_check(None, "--retire", "MathlibExt/Identical.lean")[0], 0)
+        self.commit("retire a synced file")
+        self.assertEqual(self.run_check()[0], 0)
+        return text
+
+    def test_exact_copy_of_a_file_retired_earlier_needs_a_row(self) -> None:
+        text = self.retire_identical()
+        write(self.root, "WantedExt/Back.lean", text)
+        self.assert_fails("copy it back later", "WantedExt/Back.lean: exact copy of tracked MathlibExt/Identical.lean")
+
+    def test_near_copy_of_a_file_retired_earlier_needs_a_row(self) -> None:
+        text = self.retire_identical()
+        write(self.root, "WantedExt/Back.lean", text.replace("def x7 ", "def y7 ") + "-- reworded\n")
+        self.assert_fails("near copy later", "WantedExt/Back.lean: near copy of retired MathlibExt/Identical.lean")
+
+    def test_retiring_cannot_drop_provenance(self) -> None:
+        os.remove(self.root / "MathlibExt/Identical.lean")
+        self.edit_row("MathlibExt/Identical.lean", disposition="retired", published_sha256=None, upstream_sha256=None)
+        self.assert_fails("retire and drop the fingerprint", "retiring the row changed published_sha256, upstream_sha256")
+
+    def test_retired_fingerprint_must_match_the_base_file(self) -> None:
+        os.remove(self.root / "MathlibExt/Identical.lean")
+        self.assertEqual(self.run_check(None, "--retire", "MathlibExt/Identical.lean")[0], 0)
+        self.manifest = json.loads((self.root / c.MANIFEST).read_text())
+        self.edit_row("MathlibExt/Identical.lean", line_fingerprint=["0" * 12])
+        self.assert_fails("forge the fingerprint", "line_fingerprint does not match the file at base")
+
+    def test_retire_after_committing_the_deletion_keeps_the_fingerprint(self) -> None:
+        os.remove(self.root / "MathlibExt/Identical.lean")
+        self.commit("delete first")
+        self.assertEqual(self.run_check(None, "--retire", "MathlibExt/Identical.lean")[0], 0)
+        self.commit("then retire")
+        self.assertEqual(self.run_check(None, "--base", "HEAD~2")[0], 0)
 
     def test_retire_with_deletion_passes(self) -> None:
         os.remove(self.root / "MathlibExt/Identical.lean")
@@ -902,9 +947,13 @@ class SyncTest(unittest.TestCase):
         self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
         os.remove(self.atlas / "MathlibExt/Same.lean")  # deleted without --retire: the sync retires it
         self.assertEqual(self.sync()[0], 0)
-        self.assertEqual(self.rows()["MathlibExt/Same.lean"], {"path": "MathlibExt/Same.lean", "disposition": "retired"})
+        retired = self.rows()["MathlibExt/Same.lean"]
+        self.assertEqual((retired["disposition"], retired["published_sha256"]),
+                         ("retired", c.sha256(c.META + "\n" + BODY)))
         self.assertEqual(self.sync()[0], 0)  # and keeps it retired
-        self.assertEqual(self.rows()["MathlibExt/Same.lean"], {"path": "MathlibExt/Same.lean", "disposition": "retired"})
+        retired = self.rows()["MathlibExt/Same.lean"]
+        self.assertEqual((retired["disposition"], retired["published_sha256"]),
+                         ("retired", c.sha256(c.META + "\n" + BODY)))
         self.assertEqual(self.rows()["MathlibExt/Same.lean"]["disposition"], "retired")
         write(self.atlas, "MathlibExt/Same.lean", c.META + "\n" + BODY)  # restored: synced again
         self.assertEqual(self.sync()[0], 0)

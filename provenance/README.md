@@ -31,7 +31,7 @@ divergence.
 | `attributed` | As `identical`, with an attribution notice (one block comment naming provenance or licensing, for example Apache 2.0 Section 4) between the Meta header and the body. | `published_sha256`, `upstream_sha256`, `notice` |
 | `behind` | Header-only copy of an older upstream version of the same path; the next sync brings it current. | `published_sha256`, `upstream_commit` (the commit that introduced that version), `upstream_sha256` (its body), optional `notice` or `header` |
 | `diverged` | Reviewed ATLAS-side difference from upstream, including a file deleted upstream that ATLAS still publishes. | `published_sha256` (the reviewed bytes), `rationale`, `backport` (`pending`, `not-needed`, or the Formal-Math backport PR URL); informational `upstream_sha256`, `upstream_commit` |
-| `retired` | A synced file ATLAS removed on purpose. | none |
+| `retired` | A synced or diverged file ATLAS removed on purpose; the file must stay absent. | the row's last `published_sha256`, `upstream_sha256` and `upstream_commit`, and `line_fingerprint` (sorted 12-hex hashes of the file's distinct lines of 8+ characters) |
 
 ## What preflight enforces
 
@@ -55,8 +55,9 @@ the Python standard library, and fails on:
   similar, searched from every base file) to a path without a row fails until the new path gets
   one (`--record-divergence NEW`, then `--retire OLD` if it was deleted): a tracked file stays
   tracked when it moves or is copied.
-- a file without a row whose bytes equal a tracked row's `published_sha256` (an exact copy; checked
-  without a base commit). Only a sync moves the pin and says
+- a file without a row whose bytes equal a synced, diverged or retired row's `published_sha256` (an
+  exact copy), or that contains 90% of a retired row's `line_fingerprint` lines (a near copy of a
+  file retired earlier); both are checked without a base commit. Only a sync moves the pin and says
   what upstream contains. CI cannot read the private upstream, so a pin change is authorized
   rather than verified: a pull request that moves the pin needs the `formal-math-sync` label, which
   only maintainers (triage or write access) can add, and is reviewed through its sync report. After
