@@ -17,55 +17,128 @@ import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import PhyslibExt.EarthScience.InternalEnergyMonotonic
 
 /-!
-# First law of thermodynamics: work, heat, and ideal-gas processes
 
-IUPAC sign convention: `w` is work done **on** the system. Reversible volume
-work is therefore `-∫ p dV`, and work against a constant external pressure is
-`-p_ext * (V₂ - V₁)`.
+# First law of thermodynamics for the ideal gas
 
-Model boundary:
+Work, heat and internal energy of an ideal gas with constant heat capacities: the path
+dependence of heat, reversible isothermal and adiabatic processes, the heat-capacity relation
+`Cp - Cv = nR`, and reversible versus irreversible work.
 
-* LAW: the first law `dU = δq + δw`. The internal energy `U` is a state
-  function (exact differential `dU`); heat `δq` and work `δw` are inexact
-  1-forms, so only `ΔU` is path independent.
-* MOD: the ideal gas (`p * V = n * R * T`), constant heat capacities, and
-  quasi-static reversibility taken as a limit (the external pressure equals
-  the system pressure along reversible paths).
-* MC: the proved consequences below: path (in)dependence of the heat form and
-  the energy differential, reversible isothermal work, reversible adiabatic
-  invariants, the heat-capacity relation, and the reversible/irreversible
-  work comparison for admissible external pressures.
+## i. Overview
+
+The first law is `ΔU = q + w` with the IUPAC sign convention: `w` is the work done on the
+system. Reversible volume work is therefore `-∫ p dV`, and work against a constant external
+pressure `p_ext` is `-p_ext * (V₂ - V₁)`. The internal energy is a state function, so its
+differential is exact and `ΔU` does not depend on the path; heat is not exact, so `q` does.
+
+The model is the ideal gas `p * V = n * R * T` with constant heat capacities. Its internal
+energy is `U(T) = U₀ + Cv * (T - T₀)` relative to an explicit reference state `(T₀, U₀)`: a
+constant `Cv` fixes only energy differences. Reversible paths are quasi-static, with the
+external pressure equal to the gas pressure. Quantities are real numbers in consistent units,
+and physical states have `n, R, T, V > 0`. Some definitions are total functions that return
+Lean's junk values outside that domain (division by zero, the logarithm of a nonpositive
+number); their docstrings say so, and the results assume the physical domain.
+
+Proved here: the heat 1-form `δq = p dV + Cv dT` has a nonzero loop integral, while an exact
+differential has none; reversible isothermal work is `-(n * R * T * log (V₂ / V₁))`; along a
+reversible adiabat `T * V ^ (γ - 1)` and `p * V ^ γ` are constant; `Cp - Cv = nR` for the
+total heat capacities and `Cp / n - Cv / n = R` for the molar ones; and in an isothermal
+expansion against a constant external pressure `p_ext ≤ p_final` the irreversible work is at
+most the reversible work in magnitude.
+
+## ii. Key results
+
+- `heat_pathDependent`, `heat_twoPaths_differ` : heat depends on the path.
+- `exact_loopIntegral_eq_zero`, `exact_twoPaths_equal` : an exact differential does not.
+- `isothermal_work` : the reversible isothermal work of an ideal gas.
+- `adiabatic_invariant_TV`, `adiabatic_invariant_pV` : the reversible adiabatic invariants.
+- `heatCapacity_difference`, `molarHeatCapacity_difference` : Mayer's relation, total and molar.
+- `hasDerivAt_enthalpyOf_internalEnergy` : `Cp = Cv + nR` for the constant-`Cv` ideal gas.
+- `irreversible_le_reversible` : `|w_irr| ≤ |w_rev|` for admissible external pressures.
+
+## iii. Table of contents
+
+- A. Ideal-gas quantities
+- B. Heat and internal energy as 1-forms
+- C. Reversible isothermal work
+- D. Reversible adiabatic processes
+- E. Heat capacities
+- F. Reversible versus irreversible work
+
+## iv. References
+
+- E. R. Cohen et al., *Quantities, Units and Symbols in Physical Chemistry* (the IUPAC Green
+  Book), 3rd ed., RSC Publishing, 2007: the first law `ΔU = q + w`, with `w` the work done on the
+  system.
+- P. Atkins and J. de Paula, *Atkins' Physical Chemistry*, 9th ed., Oxford University Press,
+  2010, Chapter 2, "The First Law": expansion work, adiabatic changes of a perfect gas and the
+  relation between the heat capacities.
+
 -/
 
 @[expose] public section
 
 namespace Chemistry.Thermodynamics
 
-/-- Ideal-gas pressure `p = n * R * T / V` (MOD: ideal-gas equation of state). -/
+/-!
+
+## A. Ideal-gas quantities
+
+-/
+
+/-- Ideal-gas pressure `p = n * R * T / V` of `n` moles at temperature `T` in volume `V` (model
+assumption: the ideal-gas equation of state). Physical states have `V > 0`; at `V = 0` Lean's
+convention `x / 0 = 0` gives the meaningless value `0`, and the results below use `idealGasP`
+only for `V > 0`. -/
 noncomputable def idealGasP (n R T V : ℝ) : ℝ := n * R * T / V
 
-/-- Heat-capacity ratio `γ = Cp / Cv` (MOD: constant heat capacities). -/
+/-- Heat-capacity ratio `γ = Cp / Cv` (constant heat capacities). It is defined for `Cv ≠ 0`;
+at `Cv = 0` Lean's convention `x / 0 = 0` gives the meaningless value `0`, and `gamma_sub_one`
+assumes `Cv ≠ 0`. -/
 noncomputable def heatCapacityRatio (Cp Cv : ℝ) : ℝ := Cp / Cv
 
-/-- Ideal-gas internal energy `U = Cv * T`: constant-`Cv` model, independent of `V` (MOD). -/
-def internalEnergy (Cv T : ℝ) : ℝ := Cv * T
+/-- Internal energy of an ideal gas with constant heat capacity `Cv`, relative to a reference
+state: `U(T) = U₀ + Cv * (T - T₀)`, where `U₀` is the energy at the reference temperature `T₀`.
+A constant `Cv` determines only energy differences (`internalEnergy_sub`), so the reference is
+an explicit parameter; in the ideal-gas model `U` does not depend on `V`. This is the model of
+`EarthScience.internalEnergy_hasDerivAt`. -/
+def internalEnergy (Cv U₀ T₀ T : ℝ) : ℝ := U₀ + Cv * (T - T₀)
 
-/-- Enthalpy `H(T) = U(T) + nR * T`, from `H = U + p * V` and `p * V = n * R * T` (MOD). -/
+/-- The constant-`Cv` internal energy changes by `Cv * (T₂ - T₁)`, whatever the reference
+state. -/
+lemma internalEnergy_sub (Cv U₀ T₀ T₁ T₂ : ℝ) :
+    internalEnergy Cv U₀ T₀ T₂ - internalEnergy Cv U₀ T₀ T₁ = Cv * (T₂ - T₁) := by
+  simp only [internalEnergy]
+  ring
+
+/-- The constant-`Cv` internal energy has temperature derivative `Cv`. -/
+lemma hasDerivAt_internalEnergy (Cv U₀ T₀ T : ℝ) :
+    HasDerivAt (internalEnergy Cv U₀ T₀) Cv T :=
+  EarthScience.internalEnergy_hasDerivAt T
+
+/-- Enthalpy `H(T) = U(T) + nR * T` of an ideal gas with internal energy `U`, from
+`H = U + p * V` and `p * V = n * R * T`. -/
 def enthalpyOf (U : ℝ → ℝ) (nR : ℝ) : ℝ → ℝ := fun T => U T + nR * T
 
-/-- Reversible isothermal work done on the system, `w = -(n * R * T * log (V₂ / V₁))` (MC). -/
-noncomputable def isothermalWorkOn (n R T V₁ V₂ : ℝ) : ℝ :=
-  -(n * R * T * Real.log (V₂ / V₁))
+/-!
 
-/-- Work done on the system against a constant external pressure (MC). -/
-def irreversibleWorkOn (p_ext V₁ V₂ : ℝ) : ℝ := -(p_ext * (V₂ - V₁))
+## B. Heat and internal energy as 1-forms
 
-/-- `dV`-coefficient of the heat 1-form `δq = P dV + Q dT`: the ideal-gas pressure. -/
+For a reversible process of an ideal gas, `δq = dU - δw = Cv dT + p dV`. Line integrals of
+`P dV + Q dT` are taken along axis-aligned paths in the `(V, T)` plane.
+
+-/
+
+/-- The `dV` coefficient of the reversible heat 1-form `δq = p dV + Cv dT` of an ideal gas: the
+pressure `n * R * T / V`. Physical states have `V > 0`; at `V = 0` it is Lean's junk value
+`0`. -/
 noncomputable def heatCoeffV (n R : ℝ) : ℝ → ℝ → ℝ := fun V T => n * R * T / V
 
-/-- `dT`-coefficient of the heat 1-form `δq = P dV + Q dT`: the constant-volume heat capacity. -/
+/-- The `dT` coefficient of the reversible heat 1-form `δq = p dV + Cv dT`: the constant-volume
+heat capacity `Cv`. -/
 def heatCoeffT (Cv : ℝ) : ℝ → ℝ → ℝ := fun _ _ => Cv
 
 /-- Line integral of the 1-form `P dV + Q dT` around the axis-aligned rectangle
@@ -100,7 +173,7 @@ private lemma integral_const_div (c V₁ V₂ : ℝ) (hV₁ : 0 < V₁) (hV : V�
     rw [div_eq_mul_inv]
   rw [hfun, intervalIntegral.integral_const_mul c _, hinv]
 
-/-- The loop integral of an exact energy differential vanishes (path independence, MC). -/
+/-- The loop integral of an exact energy differential vanishes (path independence). -/
 lemma exact_loopIntegral_eq_zero (U dUdV dUdT : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂ : ℝ)
     (hPderiv : ∀ T : ℝ, ∀ V ∈ Set.uIcc V₁ V₂,
       HasDerivAt (fun V => U V T) (dUdV V T) V)
@@ -145,7 +218,7 @@ private lemma loop_eq_paths_sub (P Q : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂
   rw [hT, hL]
   ring
 
-/-- Exact energy differentials are path independent: the two spanning paths agree (MC). -/
+/-- Exact energy differentials are path independent: the two spanning paths agree. -/
 lemma exact_twoPaths_equal (U dUdV dUdT : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂ : ℝ)
     (hPderiv : ∀ T : ℝ, ∀ V ∈ Set.uIcc V₁ V₂,
       HasDerivAt (fun V => U V T) (dUdV V T) V)
@@ -162,7 +235,7 @@ lemma exact_twoPaths_equal (U dUdV dUdT : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T
   rw [hloop] at hsub
   exact sub_eq_zero.mp hsub.symm
 
-/-- Closed rectangular loop integral of the heat 1-form in closed form (MC). -/
+/-- Closed rectangular loop integral of the heat 1-form in closed form. -/
 lemma heat_loopIntegral_eq (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hV₁ : 0 < V₁)
     (hV : V₁ ≤ V₂) :
     rectLoopIntegral (heatCoeffV n R) (heatCoeffT Cv) V₁ V₂ T₁ T₂
@@ -185,7 +258,7 @@ lemma heat_loopIntegral_eq (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hV₁ : 0 < V₁)
   rw [eB, eT, eR, eL]
   ring
 
-/-- The heat 1-form is path dependent: its rectangular loop integral is nonzero (MC). -/
+/-- The heat 1-form is path dependent: its rectangular loop integral is nonzero. -/
 lemma heat_pathDependent (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hn : 0 < n) (hR : 0 < R)
     (hT : T₁ ≠ T₂) (hV₁ : 0 < V₁) (hV : V₁ < V₂) :
     rectLoopIntegral (heatCoeffV n R) (heatCoeffT Cv) V₁ V₂ T₁ T₂ ≠ 0 := by
@@ -198,7 +271,7 @@ lemma heat_pathDependent (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hn : 0 < n) (hR : 0
   exact mul_ne_zero
     (mul_ne_zero (mul_ne_zero (ne_of_gt hn) (ne_of_gt hR)) (sub_ne_zero.mpr hT)) hlog
 
-/-- Heat is path dependent: the two spanning path integrals differ (MC). -/
+/-- Heat is path dependent: the two spanning path integrals differ. -/
 lemma heat_twoPaths_differ (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hn : 0 < n) (hR : 0 < R)
     (hT : T₁ ≠ T₂) (hV₁ : 0 < V₁) (hV : V₁ < V₂) :
     pathRightUp (heatCoeffV n R) (heatCoeffT Cv) V₁ V₂ T₁ T₂
@@ -209,7 +282,20 @@ lemma heat_twoPaths_differ (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hn : 0 < n) (hR :
   rw [heq, sub_self] at hsub
   exact hloop hsub
 
-/-- Reversible isothermal ideal-gas work done on the system (MC within MOD).
+/-!
+
+## C. Reversible isothermal work
+
+-/
+
+/-- Reversible isothermal work done on `n` moles of ideal gas at temperature `T` taken from
+volume `V₁` to `V₂`: `w = -(n * R * T * log (V₂ / V₁))`. Physical volumes are positive; for
+`V₁ ≤ 0` or `V₂ ≤ 0`, `Real.log` returns `log |V₂ / V₁|` (and `0` at `0`), a meaningless value,
+and `isothermal_work` assumes `0 < V₁` and `0 < V₂`. -/
+noncomputable def isothermalWorkOn (n R T V₁ V₂ : ℝ) : ℝ :=
+  -(n * R * T * Real.log (V₂ / V₁))
+
+/-- Reversible isothermal ideal-gas work done on the system.
 The ideal-gas equation and reversibility enter as the explicit integrand
 `-p dV` with `p = n * R * T / V` at constant `T`. -/
 lemma isothermal_work (n R T V₁ V₂ : ℝ) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂) :
@@ -235,7 +321,17 @@ lemma isothermal_work (n R T V₁ V₂ : ℝ) (hV₁ : 0 < V₁) (hV₂ : 0 < V�
     simp only [isothermalWorkOn]
     ring
 
-/-- From `Cp - Cv = nR` and `γ = Cp / Cv`: `γ - 1 = nR / Cv` (MOD definitions). -/
+/-!
+
+## D. Reversible adiabatic processes
+
+Along a reversible adiabat of the constant-`Cv` ideal gas, `dU = δw` gives
+`Cv * dT = -p dV = -n * R * T * dV / V`, the separated equation
+`Cv * dT / T + nR * dV / V = 0`. It is a hypothesis of the results below.
+
+-/
+
+/-- From `Cp - Cv = nR` and `γ = Cp / Cv`: `γ - 1 = nR / Cv`. -/
 lemma gamma_sub_one (Cp Cv nR γ : ℝ) (hCv : Cv ≠ 0)
     (hγ : γ = heatCapacityRatio Cp Cv) (hCpCv : Cp - Cv = nR) :
     γ - 1 = nR / Cv := by
@@ -246,7 +342,7 @@ lemma gamma_sub_one (Cp Cv nR γ : ℝ) (hCv : Cv ≠ 0)
   rw [hC, hCpCv]
 
 /-- Along a reversible adiabatic path, the log-invariant has vanishing
-derivative: the separated ODE `Cv * dT / T + nR * dV / V = 0` (MC). -/
+derivative: the separated ODE `Cv * dT / T + nR * dV / V = 0`. -/
 lemma adiabatic_invariant_hasDerivAt (T V T' V' : ℝ → ℝ) (Cv nR γ t : ℝ)
     (hT : HasDerivAt T (T' t) t) (hV : HasDerivAt V (V' t) t)
     (hTpos : 0 < T t) (hVpos : 0 < V t)
@@ -271,7 +367,7 @@ lemma adiabatic_invariant_hasDerivAt (T V T' V' : ℝ → ℝ) (Cv nR γ t : ℝ
   exact hadd
 
 /-- Integrating the separated adiabatic ODE along a path gives the logarithmic
-relation between the endpoint states (MC). -/
+relation between the endpoint states. -/
 lemma adiabatic_path_integrated (T V T' V' : ℝ → ℝ) (Cv nR : ℝ)
     (hT : ∀ t : ℝ, HasDerivAt T (T' t) t)
     (hV : ∀ t : ℝ, HasDerivAt V (V' t) t)
@@ -308,7 +404,7 @@ lemma adiabatic_path_integrated (T V T' V' : ℝ → ℝ) (Cv nR : ℝ)
   have hV1 : V 1 ≠ 0 := ne_of_gt (hVpos 1)
   rw [Real.log_div hT1 hT0, Real.log_div hV1 hV0, ← hsplit, hzero]
 
-/-- Reversible adiabatic invariant in ratio form: `T₂ / T₁ = (V₁ / V₂) ^ (γ - 1)` (MC). -/
+/-- Reversible adiabatic invariant in ratio form: `T₂ / T₁ = (V₁ / V₂) ^ (γ - 1)`. -/
 lemma adiabatic_invariant_ratio_T (T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
     (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂)
     (hCv : Cv ≠ 0)
@@ -334,7 +430,7 @@ lemma adiabatic_invariant_ratio_T (T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
     _ = Real.exp ((γ - 1) * Real.log (V₁ / V₂)) := by rw [hlogT]
     _ = (V₁ / V₂) ^ (γ - 1) := hrpow
 
-/-- Reversible adiabatic invariant: `T * V ^ (γ - 1)` is constant across states (MC). -/
+/-- Reversible adiabatic invariant: `T * V ^ (γ - 1)` is constant across states. -/
 lemma adiabatic_invariant_TV (T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
     (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂)
     (hCv : Cv ≠ 0)
@@ -352,7 +448,7 @@ lemma adiabatic_invariant_TV (T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
   field_simp at hratio ⊢
   linear_combination hratio
 
-/-- Reversible adiabatic invariant in ratio form: `p₂ / p₁ = (V₁ / V₂) ^ γ` (MC). -/
+/-- Reversible adiabatic invariant in ratio form: `p₂ / p₁ = (V₁ / V₂) ^ γ`. -/
 lemma adiabatic_invariant_ratio_p (n R T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
     (hn : 0 < n) (hR : 0 < R)
     (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂)
@@ -379,7 +475,7 @@ lemma adiabatic_invariant_ratio_p (n R T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
     div_ne_zero (mul_ne_zero (mul_ne_zero hn' hR') hT₁') hV₁'
   field_simp
 
-/-- Reversible adiabatic invariant: `p * V ^ γ` is constant across states (MC). -/
+/-- Reversible adiabatic invariant: `p * V ^ γ` is constant across states. -/
 lemma adiabatic_invariant_pV (n R T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
     (hn : 0 < n) (hR : 0 < R)
     (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂)
@@ -401,7 +497,13 @@ lemma adiabatic_invariant_pV (n R T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
   field_simp at hratio ⊢
   linear_combination hratio
 
-/-- For an ideal gas, `Cp - Cv = nR` for total heat capacities (MC).
+/-!
+
+## E. Heat capacities
+
+-/
+
+/-- For an ideal gas, `Cp - Cv = nR` for total heat capacities (Mayer's relation).
 `Cp` is the temperature derivative of the enthalpy `H(T) = U(T) + nR * T`
 and `Cv` the temperature derivative of the internal energy `U`. -/
 lemma heatCapacity_difference (U : ℝ → ℝ) (Cp Cv nR T : ℝ)
@@ -416,30 +518,36 @@ lemma heatCapacity_difference (U : ℝ → ℝ) (Cp Cv nR T : ℝ)
     exact hadd.deriv
   linarith
 
-/-- Molar form: `cp - cv = R` per mole of ideal gas (MC). -/
-lemma molarHeatCapacity_difference (u : ℝ → ℝ) (cp cv R T : ℝ)
-    (hu : HasDerivAt u cv T)
-    (hh : HasDerivAt (enthalpyOf u R) cp T) :
-    cp - cv = R :=
-  heatCapacity_difference u cp cv R T hu hh
+/-- Molar form of Mayer's relation: for `n ≠ 0` moles with `H = U + n * R * T`, the molar heat
+capacities `Cp / n` and `Cv / n` differ by the gas constant `R`. -/
+lemma molarHeatCapacity_difference (U : ℝ → ℝ) (Cp Cv n R T : ℝ) (hn : n ≠ 0)
+    (hU : HasDerivAt U Cv T) (hH : HasDerivAt (enthalpyOf U (n * R)) Cp T) :
+    Cp / n - Cv / n = R := by
+  have h := heatCapacity_difference U Cp Cv (n * R) T hU hH
+  rw [← sub_div, h]
+  field_simp
 
-/-- Constant-coefficient instance: with `U = a * T`, `(a + b) - a = b` (MC). -/
-lemma heatCapacity_linear (a b T : ℝ) : (a + b) - a = b := by
-  have hU : HasDerivAt (fun S : ℝ => internalEnergy a S) a T := by
-    have h : HasDerivAt (fun S : ℝ => a * S) (a * 1) T :=
-      (hasDerivAt_id' T).const_mul a
-    rw [mul_one] at h
-    simpa [internalEnergy] using h
-  have hH : HasDerivAt (enthalpyOf (fun S : ℝ => internalEnergy a S) b) (a + b) T := by
-    have h : HasDerivAt (fun S : ℝ => a * S + b * S) (a + b * 1) T :=
-      hU.add ((hasDerivAt_id' T).const_mul b)
-    rw [mul_one] at h
-    change HasDerivAt (fun S : ℝ => a * S + b * S) (a + b) T
-    exact h
-  exact heatCapacity_difference _ _ _ _ _ hU hH
+/-- Mayer's relation for the constant-`Cv` ideal gas: the enthalpy `U + nR * T` of
+`internalEnergy Cv U₀ T₀` has temperature derivative `Cp = Cv + nR`, for every reference
+state. -/
+lemma hasDerivAt_enthalpyOf_internalEnergy (Cv nR U₀ T₀ T : ℝ) :
+    HasDerivAt (enthalpyOf (internalEnergy Cv U₀ T₀) nR) (Cv + nR) T := by
+  have h := (hasDerivAt_internalEnergy Cv U₀ T₀ T).add ((hasDerivAt_id' T).const_mul nR)
+  rw [mul_one] at h
+  exact h
+
+/-!
+
+## F. Reversible versus irreversible work
+
+-/
+
+/-- Work done on the system by a constant external pressure `p_ext` during a volume change from
+`V₁` to `V₂`: `w = -(p_ext * (V₂ - V₁))`. -/
+def irreversibleWorkOn (p_ext V₁ V₂ : ℝ) : ℝ := -(p_ext * (V₂ - V₁))
 
 /-- For isothermal expansion between the same end states with admissible
-constant `p_ext ≤ p_final`: `|w_irr| ≤ |w_rev|` (MC). No unrestricted
+constant `p_ext ≤ p_final`: `|w_irr| ≤ |w_rev|`. No unrestricted
 irreversible-work comparison is claimed: the side hypotheses are essential. -/
 lemma irreversible_le_reversible (n R T V₁ V₂ p_ext : ℝ)
     (hn : 0 < n) (hR : 0 < R) (hT : 0 < T)

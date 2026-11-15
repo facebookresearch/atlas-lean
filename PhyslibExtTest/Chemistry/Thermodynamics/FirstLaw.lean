@@ -18,16 +18,16 @@ import Mathlib.Analysis.SpecialFunctions.Pow.Real
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.Tactic.NormNum
 
 /-!
+
 # Tests for the first-law module
 
-Exact checks: a reversible isothermal work instance with a computed numeric
-value (both the closed form and the integral), an adiabatic invariant
-instance, `Cp - Cv` instances (total and molar), a reversible/irreversible
-work comparison instance, heat path dependence and energy path independence
-instances, and boundary cases (equal volumes give zero work; an inadmissible
-external pressure gives no comparison claim).
+Instances of each result with computed values, the reference-independence of internal-energy
+differences, and boundary cases: Lean's junk values outside the physical domain, equal volumes,
+and an inadmissible external pressure for which the work comparison fails.
+
 -/
 
 @[expose] public section
@@ -36,61 +36,31 @@ open Chemistry.Thermodynamics
 
 namespace PhyslibExtTest.Chemistry.Thermodynamics
 
--- Reversible isothermal work with a computed numeric value: `n = 2`, `R = 3`,
--- `T = 1`, `V₁ = 1`, `V₂ = e` gives `w = -6`.
-example : isothermalWorkOn 2 3 1 1 (Real.exp 1) = -6 := by
-  unfold isothermalWorkOn
-  simp only [div_one, Real.log_exp]
-  norm_num
+/-!
 
--- The reversible isothermal integral agrees with the closed form numerically.
-example : (∫ V in (1:ℝ)..Real.exp 1,
-    -(idealGasP 2 3 1 V) ∂MeasureTheory.volume) = -6 := by
-  rw [isothermal_work 2 3 1 1 (Real.exp 1) zero_lt_one (Real.exp_pos 1)]
-  unfold isothermalWorkOn
-  simp only [div_one, Real.log_exp]
-  norm_num
+## A. Ideal-gas quantities
 
--- Adiabatic invariant instance: `γ = 2`, `Cv = nR = 1`, states `(T₁, V₁) = (1, e)`
--- and `(T₂, V₂) = (e, 1)` satisfy `T₂ / T₁ = (V₁ / V₂) ^ (γ - 1)`.
-example : (Real.exp 1 / 1 : ℝ) = (Real.exp 1 / 1) ^ ((2:ℝ) - 1) := by
-  have had : (1:ℝ) * Real.log (Real.exp 1 / 1) + 1 * Real.log (1 / Real.exp 1)
-      = 0 := by
-    rw [div_one, one_div, Real.log_inv, Real.log_exp]
-    norm_num
-  have hγ : (2:ℝ) - 1 = 1 / 1 := by norm_num
-  exact adiabatic_invariant_ratio_T 1 (Real.exp 1) (Real.exp 1) 1 1 1 2
-    zero_lt_one (Real.exp_pos 1) (Real.exp_pos 1) zero_lt_one one_ne_zero hγ had
+-/
 
--- Adiabatic `p * V ^ γ` invariant instance with the same states and `n = R = 1`.
-example : idealGasP 1 1 (Real.exp 1) 1 * (1:ℝ) ^ (2:ℝ)
-    = idealGasP 1 1 1 (Real.exp 1) * (Real.exp 1) ^ (2:ℝ) := by
-  have had : (1:ℝ) * Real.log (Real.exp 1 / 1) + 1 * Real.log (1 / Real.exp 1)
-      = 0 := by
-    rw [div_one, one_div, Real.log_inv, Real.log_exp]
-    norm_num
-  have hγ : (2:ℝ) - 1 = 1 / 1 := by norm_num
-  exact adiabatic_invariant_pV 1 1 1 (Real.exp 1) (Real.exp 1) 1 1 1 2
-    zero_lt_one zero_lt_one zero_lt_one (Real.exp_pos 1) (Real.exp_pos 1)
-    zero_lt_one one_ne_zero hγ had
+/-- Internal-energy differences do not depend on the reference state. -/
+example (T₁ T₂ : ℝ) :
+    internalEnergy 3 0 0 T₂ - internalEnergy 3 0 0 T₁ =
+      internalEnergy 3 100 298 T₂ - internalEnergy 3 100 298 T₁ := by
+  rw [internalEnergy_sub, internalEnergy_sub]
 
--- The `γ` chain: `γ = 5 / 3` with `Cp - Cv = nR` gives `γ - 1 = nR / Cv`.
-example : ((5:ℝ) / 3) - 1 = 2 / 3 :=
-  gamma_sub_one 5 3 2 (5 / 3) (by norm_num) rfl (by norm_num)
+/-- At the reference temperature the internal energy is the reference energy. -/
+example : internalEnergy 3 100 298 298 = 100 := by
+  simp [internalEnergy]
 
--- Total heat capacities: `Cp = 3 + 2`, `Cv = 3`, `nR = 2`.
-example : (3:ℝ) + 2 - 3 = 2 := heatCapacity_linear 3 2 0
+/-- Outside the physical domain the definitions return Lean's junk value `0`. -/
+example : idealGasP 1 1 1 0 = 0 ∧ heatCapacityRatio 5 0 = 0 := by
+  simp [idealGasP, heatCapacityRatio]
 
--- Molar heat capacities: `cp = 2 + 1`, `cv = 2`, `R = 1`.
-example : (2:ℝ) + 1 - 2 = 1 := heatCapacity_linear 2 1 0
+/-!
 
--- Reversible/irreversible comparison instance: `n = R = T = 1`, `V₁ = 1`,
--- `V₂ = 2`, `p_ext = 1 / 2 = p_final`.
-example : |irreversibleWorkOn (1 / 2) 1 2|
-    ≤ |isothermalWorkOn 1 1 1 1 2| :=
-  irreversible_le_reversible 1 1 1 1 2 (1 / 2)
-    zero_lt_one zero_lt_one zero_lt_one zero_lt_one (by norm_num) (by norm_num)
-    (by norm_num)
+## B. Heat and internal energy as 1-forms
+
+-/
 
 -- Heat path dependence instance: `n = R = Cv = 1` on the rectangle
 -- `[1, 2] × [1, 2]` gives different path integrals.
@@ -125,11 +95,102 @@ example : pathRightUp (fun _ _ : ℝ => 1) (fun _ _ : ℝ => 1) 1 2 1 2
   exact exact_twoPaths_equal (fun V T : ℝ => V + T) (fun _ _ : ℝ => 1)
     (fun _ _ : ℝ => 1) 1 2 1 2 hPderiv hPint hQderiv hQint
 
+/-!
+
+## C. Reversible isothermal work
+
+-/
+
+-- Reversible isothermal work with a computed numeric value: `n = 2`, `R = 3`,
+-- `T = 1`, `V₁ = 1`, `V₂ = e` gives `w = -6`.
+example : isothermalWorkOn 2 3 1 1 (Real.exp 1) = -6 := by
+  unfold isothermalWorkOn
+  simp only [div_one, Real.log_exp]
+  norm_num
+
+-- The reversible isothermal integral agrees with the closed form numerically.
+example : (∫ V in (1:ℝ)..Real.exp 1,
+    -(idealGasP 2 3 1 V) ∂MeasureTheory.volume) = -6 := by
+  rw [isothermal_work 2 3 1 1 (Real.exp 1) zero_lt_one (Real.exp_pos 1)]
+  unfold isothermalWorkOn
+  simp only [div_one, Real.log_exp]
+  norm_num
+
 -- Boundary case: equal volumes give zero reversible isothermal work.
 example (n R T V : ℝ) (hV : 0 < V) :
     isothermalWorkOn n R T V V = 0 := by
   unfold isothermalWorkOn
   rw [div_self (ne_of_gt hV), Real.log_one, mul_zero, neg_zero]
+
+/-!
+
+## D. Reversible adiabatic processes
+
+-/
+
+/-- A monatomic ideal gas (`Cv = 3/2`, `nR = 1`, so `γ = 5/3`) compressed reversibly and
+adiabatically to an eighth of its volume heats up by the factor `8 ^ (2/3) = 4`. -/
+example (T₁ T₂ : ℝ) (hT₁ : 0 < T₁) (hT₂ : 0 < T₂)
+    (had : (3 / 2 : ℝ) * Real.log (T₂ / T₁) + 1 * Real.log (1 / 8) = 0) :
+    T₂ / T₁ = 4 := by
+  rw [adiabatic_invariant_ratio_T T₁ T₂ 8 1 (3 / 2) 1 (5 / 3) hT₁ hT₂ (by norm_num) one_pos
+    (by norm_num) (by norm_num) had]
+  rw [show (8 : ℝ) / 1 = 2 ^ (3 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]
+  norm_num
+
+/-- The `p * V ^ γ` invariant for `γ = 2`, `Cv = nR = n = R = 1` between the states
+`(T, V) = (1, e)` and `(e, 1)`. -/
+example : idealGasP 1 1 (Real.exp 1) 1 * (1:ℝ) ^ (2:ℝ)
+    = idealGasP 1 1 1 (Real.exp 1) * (Real.exp 1) ^ (2:ℝ) := by
+  have had : (1:ℝ) * Real.log (Real.exp 1 / 1) + 1 * Real.log (1 / Real.exp 1)
+      = 0 := by
+    rw [div_one, one_div, Real.log_inv, Real.log_exp]
+    norm_num
+  have hγ : (2:ℝ) - 1 = 1 / 1 := by norm_num
+  exact adiabatic_invariant_pV 1 1 1 (Real.exp 1) (Real.exp 1) 1 1 1 2
+    zero_lt_one zero_lt_one zero_lt_one (Real.exp_pos 1) (Real.exp_pos 1)
+    zero_lt_one one_ne_zero hγ had
+
+/-- The `γ` chain: `γ = Cp / Cv = 5 / 3` with `Cp - Cv = nR = 2` gives `γ - 1 = nR / Cv`. -/
+example (γ : ℝ) (hγ : γ = heatCapacityRatio 5 3) : γ - 1 = 2 / 3 :=
+  gamma_sub_one 5 3 2 γ (by norm_num) hγ (by norm_num)
+
+/-!
+
+## E. Heat capacities
+
+-/
+
+/-- For `U = internalEnergy 3 100 298` and `nR = 2`, any `Cp` with `dH/dT = Cp` is `5`. -/
+example (Cp T : ℝ) (h : HasDerivAt (enthalpyOf (internalEnergy 3 100 298) 2) Cp T) :
+    Cp = 5 := by
+  have := heatCapacity_difference _ Cp 3 2 T (hasDerivAt_internalEnergy 3 100 298 T) h
+  linarith
+
+/-- The constant-`Cv` enthalpy has derivative `Cv + nR = 5`. -/
+example (T : ℝ) : HasDerivAt (enthalpyOf (internalEnergy 3 100 298) 2) 5 T := by
+  have h := hasDerivAt_enthalpyOf_internalEnergy 3 2 100 298 T
+  norm_num at h
+  exact h
+
+/-- Molar heat capacities of `n = 2` moles with `R = 1` and `Cv = 3` differ by `R`. -/
+example (Cp T : ℝ) (h : HasDerivAt (enthalpyOf (internalEnergy 3 0 0) (2 * 1)) Cp T) :
+    Cp / 2 - 3 / 2 = 1 :=
+  molarHeatCapacity_difference _ Cp 3 2 1 T two_ne_zero (hasDerivAt_internalEnergy 3 0 0 T) h
+
+/-!
+
+## F. Reversible versus irreversible work
+
+-/
+
+-- Reversible/irreversible comparison instance: `n = R = T = 1`, `V₁ = 1`,
+-- `V₂ = 2`, `p_ext = 1 / 2 = p_final`.
+example : |irreversibleWorkOn (1 / 2) 1 2|
+    ≤ |isothermalWorkOn 1 1 1 1 2| :=
+  irreversible_le_reversible 1 1 1 1 2 (1 / 2)
+    zero_lt_one zero_lt_one zero_lt_one zero_lt_one (by norm_num) (by norm_num)
+    (by norm_num)
 
 -- Boundary case: equal volumes give zero irreversible work.
 example (p V : ℝ) : irreversibleWorkOn p V V = 0 := by
