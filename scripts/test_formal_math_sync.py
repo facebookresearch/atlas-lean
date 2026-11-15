@@ -404,10 +404,69 @@ class BaseGuardTest(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("MathlibExt/Identical.lean: upstream_sha256 changed while the upstream pin is unchanged", out)
 
-    def test_upstream_hash_change_passes_with_repin(self) -> None:
+    def labeled_pr(self, *labels: str) -> None:
+        self.event("pull_request", {"pull_request": {"labels": [{"name": name} for name in labels]}})
+
+    def test_upstream_hash_change_passes_with_labeled_repin(self) -> None:
         self.relabel_edit()
         self.repin()
         self.commit("sync: upstream changed this file")
+        self.labeled_pr("formal-math-sync")
+        code, out = self.run_check()
+        self.assertEqual(code, 0, out)
+        self.assertIn("authorized by the 'formal-math-sync' label", out)
+
+    def test_unlabeled_pr_cannot_repin(self) -> None:
+        self.relabel_edit()
+        self.repin()
+        self.commit("forge an upstream relabel with an arbitrary pin")
+        self.labeled_pr("statement-fix")
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertIn("without the 'formal-math-sync' label", out)
+        self.assertIn("push a commit or close and reopen", out)
+
+    def test_push_may_repin(self) -> None:
+        before = run_git(self.root, "rev-parse", "HEAD")
+        self.relabel_edit()
+        self.repin()
+        self.commit("sync pushed to main")
+        self.event("push", {"before": before})
+        code, out = self.run_check()
+        self.assertEqual(code, 0, out)
+        self.assertIn("by a push event (maintainer-only)", out)
+
+    def test_repin_fails_closed_without_event_payload(self) -> None:
+        self.relabel_edit()
+        self.repin()
+        self.commit("sync")
+        os.environ["GITHUB_EVENT_NAME"], os.environ["GITHUB_EVENT_PATH"] = "pull_request", str(Path(self.tmp.name) / "none.json")
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertIn("cannot authorize it (event payload unreadable)", out)
+
+    def test_local_repin_warns(self) -> None:
+        self.relabel_edit()
+        self.repin()
+        self.commit("sync")
+        del os.environ["GITHUB_ACTIONS"]
+        code, out = self.run_check(None, "--base", "HEAD~1")
+        self.assertEqual(code, 0, out)
+        self.assertIn("allowed outside CI", out)
+
+    def test_diverged_rehash_needs_a_new_rationale(self) -> None:
+        text = c.META + "\ndef y : Nat := 3\n"
+        write(self.root, "CSLibExt/Diverged.lean", text)
+        row = next(r for r in self.manifest["rows"] if r["path"] == "CSLibExt/Diverged.lean")
+        row["published_sha256"] = c.sha256(text)  # rehashed by hand, old rationale kept
+        self.save()
+        self.commit("edit a diverged file")
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertIn("CSLibExt/Diverged.lean: diverged file changed but its rationale did not", out)
+        self.assertEqual(self.run_check(None, "--record-divergence", "CSLibExt/Diverged.lean",
+                                        "--rationale", "second fix", "--backport", "pending")[0], 0)
+        self.commit("explain it")
         self.assertEqual(self.run_check()[0], 0)
 
     def add_synced_row(self) -> None:
@@ -423,10 +482,11 @@ class BaseGuardTest(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("WantedExt/New.lean: new synced row while the upstream pin is unchanged", out)
 
-    def test_new_synced_row_passes_with_repin(self) -> None:
+    def test_new_synced_row_passes_with_labeled_repin(self) -> None:
         self.add_synced_row()
         self.repin()
         self.commit("sync: import a new upstream file")
+        self.labeled_pr("formal-math-sync")
         self.assertEqual(self.run_check()[0], 0)
 
     def rename(self) -> None:

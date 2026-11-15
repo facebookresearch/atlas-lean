@@ -20,7 +20,8 @@ only, and scoped to those synced files, so a pull request fails only if it touch
 - `retired` rows: the file is absent;
 - compared with the base manifest: no row disappears or changes path (a deleted synced file keeps
   its row as `retired`), and while the upstream pin is unchanged no synced row is added or changes
-  its `upstream_sha256` (only a sync says what upstream contains). In CI the base is the push's
+  its `upstream_sha256` (only a sync says what upstream contains), and a pull request may move
+  the pin only with the `formal-math-sync` label (pushes and merge groups are maintainer-only). In CI the base is the push's
   `before` commit, the merge group's base, or for a pull request the merge ref's first parent,
   fetched if the checkout is shallow (unreadable fails closed); locally the merge-base with
   origin/main, else the comparison is skipped with a warning;
@@ -350,17 +351,47 @@ def first_parent(root: Path) -> str | None:
     return parents[0] if parents else None
 
 
+SYNC_LABEL = "formal-math-sync"
+
+
+def ci_event() -> dict | None:
+    """The GitHub Actions event payload, or None if it cannot be read."""
+    try:
+        event = json.loads(Path(os.environ.get("GITHUB_EVENT_PATH", "")).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return event if isinstance(event, dict) else None
+
+
+def repin_authorization(old_pin: str, pin: str) -> tuple[str | None, str | None]:
+    """Whether this run may move the upstream pin: (problem, note).
+
+    A pull request needs the `formal-math-sync` label, which only maintainers (triage or write
+    access) can add. A push or merge group is already maintainer-only. A local run is allowed."""
+    change = f"upstream pin changed from {old_pin[:12]} to {str(pin)[:12]}"
+    if not os.environ.get("GITHUB_ACTIONS"):
+        return None, f"{change}; allowed outside CI (a pull request needs the {SYNC_LABEL!r} label)"
+    name = os.environ.get("GITHUB_EVENT_NAME", "")
+    if name in ("push", "merge_group", "workflow_dispatch"):
+        return None, f"{change} by a {name} event (maintainer-only)"
+    event = ci_event()
+    if name in ("pull_request", "pull_request_target") and event is not None:
+        labels = (event.get("pull_request") or {}).get("labels") or []
+        if any(isinstance(label, dict) and label.get("name") == SYNC_LABEL for label in labels):
+            return None, f"{change}; authorized by the {SYNC_LABEL!r} label"
+        return (f"manifest: {change} without the {SYNC_LABEL!r} label. A re-pin is a formal-math sync and "
+                "needs a maintainer to add that label; then push a commit or close and reopen the pull request "
+                "(adding a label does not start CI, and a re-run reuses the old event)."), None
+    return f"manifest: {change}, but the {name or 'unknown'} event cannot authorize it (event payload unreadable)", None
+
+
 def ci_base(root: Path) -> tuple[str | None, str]:
     """The base of a GitHub Actions run: (commit, where it came from).
 
     A push compares with the commit before the push (a multi-commit push must not hide a removal
     in an earlier commit), a merge group with its base, and a pull request with the merge ref's
     first parent."""
-    event: dict = {}
-    try:
-        event = json.loads(Path(os.environ.get("GITHUB_EVENT_PATH", "")).read_text(encoding="utf-8"))
-    except (OSError, ValueError):
-        pass
+    event = ci_event() or {}
     name = os.environ.get("GITHUB_EVENT_NAME", "")
     if name == "push":
         before = event.get("before") if isinstance(event, dict) else None
@@ -436,17 +467,26 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
     problems = [f"{path}: row removed or renamed (base {short}); rows are never dropped: restore it, then use "
                 "--record-divergence for a changed file or --retire for a deleted one"
                 for path in sorted(old.keys() - new.keys())]
-    if pin == old_pin:
-        for path, row in sorted(new.items(), key=lambda item: str(item[0])):
-            if row.get("disposition") not in SYNCED:
-                continue
-            before = old.get(path)
-            if before is None:
-                problems.append(f"{path}: new synced row while the upstream pin is unchanged; synced rows come "
-                                "from scripts/sync_formal_math.py")
-            elif before.get("upstream_sha256") != row.get("upstream_sha256"):
-                problems.append(f"{path}: upstream_sha256 changed while the upstream pin is unchanged (base "
-                                f"{short}); record the edit with --record-divergence")
+    if pin != old_pin:
+        problem, note = repin_authorization(old_pin, pin)
+        return problems + ([problem] if problem else []), ([note] if note else [])
+    for path, row in sorted(new.items(), key=lambda item: str(item[0])):
+        before = old.get(path)
+        if row.get("disposition") == "diverged":
+            if before and before.get("disposition") == "diverged" and \
+                    before.get("published_sha256") != row.get("published_sha256") and \
+                    before.get("rationale") == row.get("rationale"):
+                problems.append(f"{path}: diverged file changed but its rationale did not (base {short}); "
+                                "explain the new change with --record-divergence")
+            continue
+        if row.get("disposition") not in SYNCED:
+            continue
+        if before is None:
+            problems.append(f"{path}: new synced row while the upstream pin is unchanged; synced rows come "
+                            "from scripts/sync_formal_math.py")
+        elif before.get("upstream_sha256") != row.get("upstream_sha256"):
+            problems.append(f"{path}: upstream_sha256 changed while the upstream pin is unchanged (base "
+                            f"{short}); record the edit with --record-divergence")
     return problems, []
 
 
