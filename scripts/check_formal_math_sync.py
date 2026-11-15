@@ -119,7 +119,7 @@ def leading_notice(text: str) -> str | None:
 
 # Copyright holders of Formal-Math's own headers, which ATLAS replaces with the Meta header. Any
 # other holder, or a license block without one of these holders, is third-party and stays.
-FORMAL_MATH_HOLDERS = ("Meta Platforms, Inc. and affiliates", "Adam Kiezun", "Avocado",
+FORMAL_MATH_HOLDERS = ("Meta Platforms, Inc. and affiliates", "Meta Platforms, Inc", "Adam Kiezun", "Avocado",
                        "The formal-math Contributors", "Mathlib Extension Contributors", "")
 COPYRIGHT_HOLDER = re.compile(r"Copyright(?: \(c\))?(?: \d{4}(?:[-–]\d{4})?)?\.?[ \t]*([^\n]*)")
 
@@ -130,7 +130,7 @@ def is_formal_math_header(block: str) -> bool:
     are part of the body and must be kept byte for byte."""
     holders = [re.sub(r"\.?\s*All rights reserved\.?$", "", h).strip().rstrip(".") for h in COPYRIGHT_HOLDER.findall(block)]
     if holders:
-        return all(h in FORMAL_MATH_HOLDERS or h.startswith("Meta Platforms") for h in holders)
+        return all(h in FORMAL_MATH_HOLDERS for h in holders)
     return bool(re.search(r"Authors?:", block)) and not re.search(r"[Ll]icen[cs]e", block)
 
 

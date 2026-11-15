@@ -659,6 +659,15 @@ class SyncTest(unittest.TestCase):
         self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
         self.assertEqual(self.rows()["MathlibExt/Own.lean"]["disposition"], "identical")
 
+    def test_formal_math_holder_names_match_exactly(self) -> None:
+        cases = {"Copyright (c) 2026 Meta Platforms, Inc. All rights reserved.": True,
+                 "Copyright (c) Meta Platforms, Inc. and affiliates.": True,
+                 "Copyright 2026 Meta Platforms, Inc. and affiliates and Jane Doe.": False,
+                 "Copyright (c) 2026 Adam Kiezun and Jane Doe. All rights reserved.": False}
+        for line, own in cases.items():
+            with self.subTest(line=line):
+                self.assertEqual(c.is_formal_math_header(f"/-\n{line}\nReleased under Apache 2.0 license.\n-/"), own)
+
     def test_report_lists_every_field_change(self) -> None:
         self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
         manifest = json.loads((self.atlas / c.MANIFEST).read_text())

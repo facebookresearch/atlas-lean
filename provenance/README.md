@@ -48,8 +48,9 @@ the Python standard library, and fails on:
 - compared with the base manifest: a row that disappears or changes path (rows are never dropped;
   a deleted file keeps its row as `retired`), and, while the upstream pin is unchanged, a new
   synced row or a synced row whose `upstream_sha256` changed. Only a sync moves the pin and says
-  what upstream contains; a sync pull request is reviewed through its sync report, because CI
-  cannot read the private upstream. In CI the base is the push's `before` commit, the merge
+  what upstream contains. A pin change is trusted on review, not verified: CI cannot read the
+  private upstream, so a sync pull request is reviewed through its sync report (authenticating it
+  in CI would need sync automation with access to formal-math). In CI the base is the push's `before` commit, the merge
   group's base, or for a pull request the merge ref's first parent, fetched if the checkout is
   shallow; if it cannot be read the check fails. Locally it is
   the merge-base with `origin/main`, and the comparison is skipped with a warning when neither can
