@@ -15,6 +15,8 @@ import MathlibExt.Biology.Epidemiology.SISVaccination
 
 * `R_v` and the critical coverage `p_c` computed from their definitions, including the boundary
   `p = p_c` (`R_v = 1`) and the perfect-vaccine value `p_c = 1 - 1 / R₀`;
+* without transmission (`β = 0`), `R_v = 0`, the threshold equivalence fails, and extinction
+  still holds;
 * the concrete endemic equilibrium `(I_u*, I_v*) = (1/3, 1/6)` of `β = 4`, `γ = 1`, `ε = 3/4`,
   `N = 1`, `p = 1/2` (`R_v = 5/2`, `p_c = 1`), checked from the equilibrium equations;
 * the Lyapunov function and its derivative expression computed from their definitions;
@@ -69,6 +71,14 @@ example : ¬ criticalCoverage 4 1 (1 / 2) ≤ 1 := by norm_num [criticalCoverage
 
 /-- `R₀ ≤ 1` needs no vaccination. -/
 example : criticalCoverage (1 / 2) 1 (1 / 2) = -2 := by norm_num [criticalCoverage]
+
+/-- Without transmission `R_v = 0` at every coverage. -/
+example : Rv 0 1 (1 / 2) (3 / 4) = 0 := Rv_zero_transmission 1 (1 / 2) (3 / 4)
+
+/-- The threshold equivalence needs `β > 0`: for `β = 0`, `γ = ε = 1` and `p = 0`, `R_v = 0 < 1`
+while `p_c = 1 > p` (Lean's convention `γ / 0 = 0`). -/
+example : Rv 0 1 1 0 < 1 ∧ ¬ criticalCoverage 0 1 1 < 0 := by
+  norm_num [Rv, criticalCoverage]
 
 /-- Without vaccination `R_v` is the SIS next-generation `R₀`. -/
 example : Rv 4 1 (3 / 4) 0 = NextGenerationMatrix.R0 !![4] !![1] :=
@@ -142,6 +152,12 @@ example : Tendsto (fun _ : ℝ => (0 : ℝ)) atTop (𝓝 0) :=
   ((isSolution_const_dfe (3 / 2) 1 (1 / 2) 1 (3 / 4)).tendsto_dfe (p := 3 / 4) (by norm_num) one_pos
     (by norm_num) (by norm_num) one_pos (by norm_num) (by norm_num) (by norm_num) le_rfl
     (by norm_num) le_rfl (Or.inl (by norm_num [Rv]))).2.1
+
+/-- Without transmission the extinction theorem applies at every coverage. -/
+example : Tendsto (fun _ : ℝ => (0 : ℝ)) atTop (𝓝 0) :=
+  ((isSolution_const_dfe 0 1 (1 / 2) 1 (1 / 4)).tendsto_dfe (p := 1 / 4) le_rfl one_pos
+    (by norm_num) (by norm_num) one_pos (by norm_num) (by norm_num) (by norm_num) le_rfl
+    (by norm_num) le_rfl (Or.inl (by simp))).2.1
 
 /-! ### A non-constant solution: a perfect vaccine
 
