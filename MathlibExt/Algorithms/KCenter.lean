@@ -18,14 +18,14 @@ import Mathlib.Tactic.Linarith
 The Gonzalez farthest-first 2-approximation rests on a counting
 fact: `k + 1` points, pairwise more than `2r` apart, cannot all
 lie within `r` of `k` or fewer centers. This module proves that
-fact and the triangle-inequality step it uses. The greedy
+fact for finite sets of points and centers. The greedy
 algorithm itself is not formalized here.
 -/
 
 @[expose] public section
 
 /-- Two points within `r` of one center are within `2 * r`. -/
-theorem dist_le_two_mul_of_le {X : Type*} [PseudoMetricSpace X]
+private theorem dist_le_two_mul_of_le {X : Type*} [PseudoMetricSpace X]
     {x y c : X} {r : ℝ} (hx : dist x c ≤ r) (hy : dist y c ≤ r) :
     dist x y ≤ 2 * r := by
   have h := dist_triangle x c y
@@ -36,7 +36,9 @@ theorem dist_le_two_mul_of_le {X : Type*} [PseudoMetricSpace X]
 more than `2 * r` apart, cannot all lie within `r` of `k` or
 fewer centers. This is the counting step behind the Gonzalez
 farthest-first 2-approximation; the greedy algorithm itself is
-downstream. -/
+not formalized here. The general form, for packing and covering
+numbers of arbitrary sets, is Mathlib's
+`Metric.packingNumber_two_mul_le_externalCoveringNumber`. -/
 theorem kcenter_separation_impossible {X : Type*} [PseudoMetricSpace X]
     {k : ℕ} {r : ℝ} (centers pts : Finset X)
     (hc : centers.card ≤ k) (hpts : k < pts.card)
