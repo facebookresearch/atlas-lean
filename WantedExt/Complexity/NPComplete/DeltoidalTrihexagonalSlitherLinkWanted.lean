@@ -51,13 +51,18 @@ four sides in `C` as its clue value?
 
 Representation. Hexagon `c` of row `r` (both from `0`, left to right and top to bottom) is the
 hexagon `(c, r)`; row `r + 1` is shifted half a hexagon to the right of row `r` when `r` is even
-and to the left when `r` is odd. Points are in `ℕ × ℕ` (`y` downwards) at half the hex side
-length: with `x₀ = 2c + r % 2`, the corners of hexagon `(c, r)`, clockwise from the top left,
-are `P₀ = (2x₀, 2r)`, `P₁ = (2x₀ + 2, 2r)` (the top corner), `P₂ = (2x₀ + 4, 2r)`,
-`P₃ = (2x₀ + 4, 2r + 2)`, `P₄ = (2x₀ + 2, 2r + 2)` (the bottom corner) and
-`P₅ = (2x₀, 2r + 2)`; the midpoint of the side `PₖPₖ₊₁` is `Mₖ` (`M₀ = (2x₀ + 1, 2r)`,
-`M₁ = (2x₀ + 3, 2r)`, `M₂ = (2x₀ + 4, 2r + 1)`, `M₃ = (2x₀ + 3, 2r + 2)`,
-`M₄ = (2x₀ + 1, 2r + 2)`, `M₅ = (2x₀, 2r + 1)`), and its center is `Z = (2x₀ + 2, 2r + 1)`.
+and to the left when `r` is odd. Vertices are labelled by pairs in `ℕ × ℕ`. The labels are
+combinatorial, not a metric embedding: they follow the brick-wall model of the hexagonal grid
+(each hexagon drawn as a `2 × 1` brick whose top and bottom sides each have a middle corner, the
+first coordinate growing to the right and the second downwards), at doubled resolution so that
+side midpoints and centers get labels too. With `x₀ = 2c + r % 2`, the six corners of hexagon
+`(c, r)`, in cyclic order starting at the top left corner, are labelled `P₀ = (2x₀, 2r)`,
+`P₁ = (2x₀ + 2, 2r)` (the top corner), `P₂ = (2x₀ + 4, 2r)`, `P₃ = (2x₀ + 4, 2r + 2)`,
+`P₄ = (2x₀ + 2, 2r + 2)` (the bottom corner) and `P₅ = (2x₀, 2r + 2)`; the midpoint of the
+side `PₖPₖ₊₁` is labelled `Mₖ` (`M₀ = (2x₀ + 1, 2r)`, `M₁ = (2x₀ + 3, 2r)`,
+`M₂ = (2x₀ + 4, 2r + 1)`, `M₃ = (2x₀ + 3, 2r + 2)`, `M₄ = (2x₀ + 1, 2r + 2)`,
+`M₅ = (2x₀, 2r + 1)`), and its center `Z = (2x₀ + 2, 2r + 1)`. Distinct points of the grid get
+distinct labels.
 So hexagons `(c, r)` and `(c + 1, r)` share the vertical side `P₂P₃` of `(c, r)`, and for even
 `r` hexagon `(c, r + 1)` shares the side `P₃P₄` of `(c, r)`. Kite `k` of hexagon `(c, r)` is the
 kite at the corner `Pₖ`, with the four sides `Z`-`Mₖ₋₁`, `Mₖ₋₁`-`Pₖ`, `Pₖ`-`Mₖ` and `Mₖ`-`Z`
