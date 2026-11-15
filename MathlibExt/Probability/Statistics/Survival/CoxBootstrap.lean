@@ -62,7 +62,12 @@ mean is shown to stay near `θ` with conditional probability tending to one.
   single covariate level the score map vanishes identically and `hinfo` fails; the test file
   exhibits this.
 * Build on `KMBootstrap` (`ae_resample_mem`) and `ProbabilityTheory.Bootstrap`; the
-  Kaplan–Meier bootstrap itself is not reproved.
+  Kaplan–Meier bootstrap itself is not reproved. Three private helpers of `KMBootstrap` are
+  copied here because they are private there: `tendstoInDistribution_comp_of_map_eq` and
+  `inv_sqrt_smul_sum_sub_eq` verbatim, and `map_world_obsVec` adapted to the `(T, d, z)`
+  encoding. The public `ProbabilityTheory.Bootstrap.map_world` cannot replace the last one: it
+  needs the encoding to fix `0`, and `obsVec t c 0` has at-risk entries `1` whenever some
+  `t j ≤ 0` and some level `c a = 0`, so the unused row zero is sent to `0` by hand.
 
 ## References
 
@@ -539,7 +544,10 @@ end Limits
 
 section Transfer
 
-/-- Transfer convergence in distribution along a measure-preserving map. -/
+/-- Transfer convergence in distribution along a measure-preserving map.
+
+Copy of the private `KMBootstrap.tendstoInDistribution_comp_of_map_eq` (also private in
+`ProbabilityTheory.Bootstrap`). -/
 private theorem tendstoInDistribution_comp_of_map_eq {Ω₁ Ω₂ Ω' F : Type*} [MeasurableSpace Ω₁]
     [MeasurableSpace Ω₂] [MeasurableSpace Ω'] [TopologicalSpace F] [MeasurableSpace F]
     [OpensMeasurableSpace F] {μ₁ : Measure Ω₁} {μ₂ : Measure Ω₂}
@@ -554,7 +562,9 @@ private theorem tendstoInDistribution_comp_of_map_eq {Ω₁ Ω₂ Ω' F : Type*}
   rw [← hmap, Measure.map_map (hY n) hΦ]
 
 /-- Encoding every positive row of the bootstrap world of `x` gives the bootstrap world of the
-encoded data; the unused row zero is sent to `0`. -/
+encoded data; the unused row zero is sent to `0`.
+
+Adapted from the private `KMBootstrap.map_world_obsVec` to the `(T, d, z)` encoding. -/
 private theorem map_world_obsVec (t : Fin k → ℝ) (c : Fin q → ℝ) (x : ℕ → ℝ × ℝ × ℝ) :
     (world x).map (fun ω n m => if n = 0 then (0 : Coord k q) else obsVec t c (ω n m)) =
       world (fun i => obsVec t c (x i)) := by
@@ -756,7 +766,9 @@ theorem tendstoInDistribution_bootstrap_coxMPLE (ht : Function.Injective t)
 
 end Deterministic
 
-/-- `(√n)⁻¹ (S - n θ) = √n (S / n - θ)`, including `n = 0`. -/
+/-- `(√n)⁻¹ (S - n θ) = √n (S / n - θ)`, including `n = 0`.
+
+Copy of the private `KMBootstrap.inv_sqrt_smul_sum_sub_eq`. -/
 private theorem inv_sqrt_smul_sum_sub_eq {E : Type*} [AddCommGroup E] [Module ℝ E] (S θ : E)
     (n : ℕ) : (√(n : ℝ))⁻¹ • (S - n • θ) = √(n : ℝ) • ((n : ℝ)⁻¹ • S - θ) := by
   have h1 : (√(n : ℝ))⁻¹ = √(n : ℝ) * (n : ℝ)⁻¹ := by
