@@ -90,6 +90,7 @@ def expectedCorrect (T : ℕ) (z : Fin (T + 1) → Fin n) : K :=
   ∑ w : Fin (T + 1) → Fin n,
     pathProb g x T w / likelihood g x T * ((Finset.univ.filter fun t => w t = z t).card : K)
 
+omit [LinearOrder K] in
 /-- **The expected number of correct states is a sum of posteriors**: for every path `z`, the
 posterior expected number of times `t ≤ T` with `w t = z t` is the sum over `t` of the posterior
 of `z t` at time `t`. -/

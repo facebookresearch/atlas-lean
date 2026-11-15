@@ -114,11 +114,11 @@ set_option linter.unusedFintypeInType false in
 /-- **Finite-model weights are the kernel posterior.** The explicit posterior weights
 `postWeight` of the merged finite-model consistency theorem equal the `toReal` of the kernel
 posterior `bayesPosterior` of any product likelihood kernel against any counting-weighted prior. -/
-theorem postWeight_eq_bayesPosterior {Θ 𝓧 : Type*} [Fintype Θ] [DecidableEq Θ]
-    [Fintype 𝓧] [MeasurableSpace Θ] [Countable Θ] [MeasurableSingletonClass Θ]
+theorem postWeight_eq_bayesPosterior {Θ 𝓧 : Type*} [Fintype Θ]
+    [MeasurableSpace Θ] [Countable Θ] [MeasurableSingletonClass Θ]
     [MeasurableSpace 𝓧] [MeasurableSingletonClass 𝓧]
     (π : Θ → ℝ) (hπ : ∀ θ, 0 ≤ π θ) (f : Θ → 𝓧 → ℝ) (hf : ∀ θ x, 0 ≤ f θ x)
-    {Ω : Type*} [MeasurableSpace Ω] (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) (θ : Θ)
+    {Ω : Type*} (X : ℕ → Ω → 𝓧) (n : ℕ) (ω : Ω) (θ : Θ)
     (μ : Measure Θ) (hμ : ∀ θ, μ {θ} = ENNReal.ofReal (π θ))
     (K : Kernel Θ (Fin n → 𝓧))
     (hK : ∀ θ (s : Fin n → 𝓧), K θ {s} = ∏ i, ENNReal.ofReal (f θ (s i))) :

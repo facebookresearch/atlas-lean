@@ -93,31 +93,37 @@ def swap (a b : Atom) : FinPerm Atom :=
       (fun h₁ => hx (Finset.mem_insert.mpr (Or.inl h₁)))
       (fun h₂ => hx (Finset.mem_insert.mpr (Or.inr (Finset.mem_singleton.mpr h₂)))))⟩⟩
 
+omit [Infinite Atom] in
 /-- Applying a transposition is applying the underlying `Equiv.swap`. -/
 theorem swap_smul (a b c : Atom) :
     (swap a b : FinPerm Atom) • c = Equiv.swap a b c := rfl
 
+omit [Infinite Atom] in
 /-- A transposition is an involution, stated for the `FinPerm` group. -/
 theorem swap_mul_self (a b : Atom) : (swap a b : FinPerm Atom) * swap a b = 1 := by
   rw [Subtype.ext_iff]
   simp only [Subgroup.coe_mul, Subgroup.coe_one]
   exact Equiv.swap_mul_self a b
 
+omit [Infinite Atom] in
 /-- A transposition is its own inverse. -/
 theorem swap_inv (a b : Atom) : (swap a b : FinPerm Atom)⁻¹ = swap a b := by
   exact (eq_inv_of_mul_eq_one_left (swap_mul_self a b)).symm
 
+omit [Infinite Atom] in
 /-- A transposition of an atom with itself is the identity. -/
 theorem swap_self (a : Atom) : (swap a a : FinPerm Atom) = 1 := by
   rw [Subtype.ext_iff]
   simp only [Subgroup.coe_one]
   exact Equiv.swap_self a
 
+omit [Infinite Atom] in
 /-- Transpositions are symmetric. -/
 theorem swap_comm (a b : Atom) : (swap a b : FinPerm Atom) = swap b a := by
   rw [Subtype.ext_iff]
   exact Equiv.swap_comm a b
 
+omit [Infinite Atom] in
 /-- Conjugation of a transposition: `σ * swap b c * σ⁻¹ = swap (σ b) (σ c)`. -/
 theorem swap_conj (σ : FinPerm Atom) (b c : Atom) :
     σ * swap b c * σ⁻¹ = swap (σ • b) (σ • c) := by
@@ -125,6 +131,7 @@ theorem swap_conj (σ : FinPerm Atom) (b c : Atom) :
   simp only [Subgroup.coe_mul, Subgroup.coe_inv]
   exact (Equiv.swap_apply_apply σ.1 b c).symm
 
+omit [Infinite Atom] in
 /-- A transposition fixes every atom distinct from its two swapped atoms. -/
 theorem swap_smul_of_ne_of_ne {a b c : Atom} (h1 : c ≠ a) (h2 : c ≠ b) :
     (swap a b : FinPerm Atom) • c = c := by
@@ -135,6 +142,7 @@ theorem swap_smul_of_ne_of_ne {a b c : Atom} (h1 : c ≠ a) (h2 : c ≠ b) :
 def Supports {X : Type*} [MulAction (FinPerm Atom) X] (S : Finset Atom) (x : X) : Prop :=
   ∀ π : FinPerm Atom, (∀ a ∈ S, π • a = a) → π • x = x
 
+omit [Infinite Atom] in
 /-- A support can be enlarged: fixing a larger set pointwise is a stronger
 hypothesis. -/
 theorem Supports.mono {X : Type*} [MulAction (FinPerm Atom) X] {S T : Finset Atom}
@@ -169,6 +177,7 @@ instance instNominalProd {X Y : Type*} [MulAction (FinPerm Atom) X]
     have hy : π • y = y := hSy π (fun a ha => hπ a (Finset.mem_union_right Sx ha))
     exact Prod.ext hx hy
 
+omit [Infinite Atom] in
 /-- A pair is supported by the union of supports of its components. -/
 theorem Supports.prod {X Y : Type*} [MulAction (FinPerm Atom) X]
     [MulAction (FinPerm Atom) Y] {S T : Finset Atom} {x : X} {y : Y}
@@ -189,6 +198,7 @@ theorem exists_fresh {X : Type*} [MulAction (FinPerm Atom) X] [NominalSet Atom X
   obtain ⟨a, -, ha⟩ := Set.infinite_univ.exists_notMem_finset S
   exact ⟨a, S, hS, ha⟩
 
+omit [Infinite Atom] in
 /-- A transposition of two atoms both outside a support of `x` fixes `x`. -/
 theorem swap_smul_of_supports_not_mem {X : Type*} [MulAction (FinPerm Atom) X]
     {S : Finset Atom} {x : X} (hS : Supports S x) {a b : Atom} (ha : a ∉ S)
@@ -321,6 +331,7 @@ theorem Supports.inter {X : Type*} [MulAction (FinPerm Atom) X]
         exact ha (Finset.mem_sdiff.mpr ⟨h, haInt⟩)
       exact hSπ a haSπ
 
+omit [Infinite Atom] in
 /-- A permutation moves a support of `x` to a support of `π • x`. -/
 theorem Supports.image {X : Type*} [MulAction (FinPerm Atom) X] {S : Finset Atom}
     {x : X} (hS : Supports S x) (π : FinPerm Atom) :
@@ -472,6 +483,7 @@ theorem smul_eq_of_agree_on_supp {X : Type*} [MulAction (FinPerm Atom) X]
 def IsEquivariant {X : Type*} [MulAction (FinPerm Atom) X] (x : X) : Prop :=
   ∀ π : FinPerm Atom, π • x = x
 
+omit [Infinite Atom] in
 /-- An equivariant element is supported by the empty set. -/
 theorem supports_empty_of_equivariant {X : Type*} [MulAction (FinPerm Atom) X]
     {x : X} (h : IsEquivariant (Atom := Atom) x) : Supports (∅ : Finset Atom) x := by
