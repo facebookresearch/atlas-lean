@@ -10,19 +10,22 @@ module
 
 import PhyslibExt.Chemistry.QuantitativeNMR
 
-open Classical
 open Chemistry.QuantitativeNMR
 
 /-!
-# Quantitative NMR tests
 
-Exact numeric checks for `Chemistry.QuantitativeNMR`, plus `#print axioms` for
-every public declaration. Verification concatenation: production content
-followed by these test examples with only the production import mechanically
-removed.
+# Tests for quantitative NMR
+
+Exact numeric checks for `Chemistry.QuantitativeNMR`, including nonzero-coupling checks of the
+AB energy levels and lines, plus `#print axioms` for every public declaration.
+
 -/
 
-/-! ## Zeeman checks (CH43.1) -/
+/-!
+
+## A. Zeeman checks
+
+-/
 
 /-- Energy difference at `γ = 1, hbar = 1, B0 = 2π` is `ΔE = 2π`. -/
 example : zeemanEnergy 1 1 (2 * Real.pi) (-1 / 2) -
@@ -33,18 +36,17 @@ example : zeemanEnergy 1 1 (2 * Real.pi) (-1 / 2) -
   simpa using h
 
 /-- Transition frequency at `γ = 1, hbar = 1, B0 = 2π` is `ν = 1`. -/
-example : (2 * Real.pi) / (2 * Real.pi * 1) = 1 := by
+example (ΔE h ν : ℝ) (hΔE : ΔE = 1 * 1 * (2 * Real.pi)) (hh : h = 2 * Real.pi * 1)
+    (hν : ν = ΔE / h) : ν = 1 := by
   have hpi : (2 : ℝ) * Real.pi ≠ 0 := mul_ne_zero two_ne_zero Real.pi_ne_zero
-  have hpos : (0 : ℝ) < Real.pi := Real.pi_pos
-  have h := zeeman_transition_freq 1 1 (2 * Real.pi) (2 * Real.pi)
-    (2 * Real.pi * 1) ((2 * Real.pi) / (2 * Real.pi * 1))
-    (by norm_num) (by norm_num) (by linarith) (by ring) rfl rfl
-  have h2 : (1 : ℝ) * (2 * Real.pi) / (2 * Real.pi) = 1 := by
-    rw [div_eq_iff hpi]
-  rw [h]
-  exact h2
+  rw [zeeman_transition_freq 1 1 (2 * Real.pi) ΔE h ν (by norm_num) (by norm_num)
+    (by positivity) hΔE hh hν, one_mul, div_self hpi]
 
-/-! ## Chemical shift checks (CH43.2) -/
+/-!
+
+## B. Chemical shift checks
+
+-/
 
 /-- `chemicalShift 400 400 = 0` in abstract units. -/
 example : chemicalShift 400 400 = 0 := chemicalShift_self 400 (by norm_num)
@@ -62,23 +64,21 @@ example : chemicalShift (1 * (2 * Real.pi) * (1 - 0) / (2 * Real.pi))
   rw [h]
   norm_num
 
-/-! ## Multiplet checks (CH43.3, binomial part) -/
+/-!
+
+## C. Multiplet, multiplicity and convolution checks
+
+-/
 
 /-- Triplet weights `(1, 2, 1)` for `n = 2`. -/
 example : multipletWeights 2 ⟨0, by decide⟩ = 1 := by
-  have h0 : ((⟨0, by decide⟩ : Fin (2 + 1)) : ℕ) = 0 := rfl
-  have h : Nat.choose 2 0 = 1 := by decide
-  simp only [multipletWeights, h0, h, Nat.cast_one]
+  simp [multipletWeights]
 
 example : multipletWeights 2 ⟨1, by decide⟩ = 2 := by
-  have h1 : ((⟨1, by decide⟩ : Fin (2 + 1)) : ℕ) = 1 := rfl
-  have h : Nat.choose 2 1 = 2 := by decide
-  simp only [multipletWeights, h1, h, Nat.cast_ofNat]
+  simp [multipletWeights]
 
 example : multipletWeights 2 ⟨2, by decide⟩ = 1 := by
-  have h2 : ((⟨2, by decide⟩ : Fin (2 + 1)) : ℕ) = 2 := rfl
-  have h : Nat.choose 2 2 = 1 := by decide
-  simp only [multipletWeights, h2, h, Nat.cast_one]
+  simp [multipletWeights]
 
 /-- Triplet weights sum to `4 = 2 ^ 2`. -/
 example : ∑ k, multipletWeights 2 k = 4 := by
@@ -87,24 +87,16 @@ example : ∑ k, multipletWeights 2 k = 4 := by
 
 /-- Quartet weights `(1, 3, 3, 1)` for `n = 3`. -/
 example : multipletWeights 3 ⟨0, by decide⟩ = 1 := by
-  have h0 : ((⟨0, by decide⟩ : Fin (3 + 1)) : ℕ) = 0 := rfl
-  have h : Nat.choose 3 0 = 1 := by decide
-  simp only [multipletWeights, h0, h, Nat.cast_one]
+  simp [multipletWeights]
 
 example : multipletWeights 3 ⟨1, by decide⟩ = 3 := by
-  have h1 : ((⟨1, by decide⟩ : Fin (3 + 1)) : ℕ) = 1 := rfl
-  have h : Nat.choose 3 1 = 3 := by decide
-  simp only [multipletWeights, h1, h, Nat.cast_ofNat]
+  simp [multipletWeights]
 
 example : multipletWeights 3 ⟨2, by decide⟩ = 3 := by
-  have h2 : ((⟨2, by decide⟩ : Fin (3 + 1)) : ℕ) = 2 := rfl
-  have h : Nat.choose 3 2 = 3 := by decide
-  simp only [multipletWeights, h2, h, Nat.cast_ofNat]
+  norm_num [multipletWeights, Nat.choose]
 
 example : multipletWeights 3 ⟨3, by decide⟩ = 1 := by
-  have h3 : ((⟨3, by decide⟩ : Fin (3 + 1)) : ℕ) = 3 := rfl
-  have h : Nat.choose 3 3 = 1 := by decide
-  simp only [multipletWeights, h3, h, Nat.cast_one]
+  simp [multipletWeights]
 
 /-- Quartet weights sum to `8 = 2 ^ 3`. -/
 example : ∑ k, multipletWeights 3 k = 8 := by
@@ -114,8 +106,6 @@ example : ∑ k, multipletWeights 3 k = 8 := by
 /-- Distinctness of positions for `J = 1 ≠ 0` at `n = 2`. -/
 example (ν0 : ℝ) : Function.Injective (linePosition ν0 1 2) :=
   linePosition_injective ν0 1 2 (by norm_num)
-
-/-! ## General multiplicity checks (CH43.3, product part) -/
 
 /-- Two spin-1/2 groups with `n = (2, 1)` give `3 * 2 = 6`. -/
 example : maxMultiplicity ![2, 1] ![1, 1] = 6 := by
@@ -190,8 +180,6 @@ example : (combinedLines ![{0, 1, 2}, {0, 1}]).card < 6 := by
     Finset.card_le_card hsub
   omega
 
-/-! ## Convolution checks (CH43.3, Vandermonde part) -/
-
 /-- Vandermonde at `n = 2, m = 1, k = 1`: the antidiagonal sum is
 `choose 2 0 * choose 1 1 + choose 2 1 * choose 1 0 = 3`. -/
 example : ∑ ij ∈ Finset.antidiagonal 1,
@@ -214,87 +202,141 @@ example : ∑ ij ∈ Finset.antidiagonal 1,
 
 /-- `choose 3 1 = 3` (the closed form above). -/
 example : ((Nat.choose 3 1 : ℕ) : ℝ) = 3 := by
-  have h : Nat.choose 3 1 = 3 := by decide
-  simpa [h]
+  simp
 
-/-! ## Integral and population checks (CH43.4) -/
+/-!
+
+## D. Integral and population checks
+
+-/
 
 /-- Integral ratio `2` for `C = 1 / 2`, `N = (6, 3)`. -/
-example : ((1 / 2 : ℝ) * 6) / ((1 / 2 : ℝ) * 3) = 2 := by
-  have h := integral_ratio (1 / 2) 6 3 _ _ (by norm_num) (by norm_num) rfl rfl
-  rw [h]
+example (ii ij : ℝ) (hi : ii = 1 / 2 * 6) (hj : ij = 1 / 2 * 3) : ii / ij = 2 := by
+  rw [integral_ratio (1 / 2) 6 3 ii ij (by norm_num) (by norm_num) hi hj]
   norm_num
 
 /-- Population excess at `x = 0` is `0`. -/
 example : excessFraction 0 = 0 := by
   simp [excessFraction, Real.exp_zero]
 
+/-- Boltzmann populations `Nα = e^x * Nβ` have excess fraction `excessFraction x`. -/
+example (x Nβ : ℝ) (hβ : 0 < Nβ) :
+    (Real.exp x * Nβ - Nβ) / (Real.exp x * Nβ + Nβ) = excessFraction x :=
+  excessFraction_eq_of_populations x _ Nβ hβ rfl
+
+/-- Equal populations (`x = 0`) have zero excess. -/
+example (N : ℝ) (hN : 0 < N) : (N - N) / (N + N) = excessFraction 0 :=
+  excessFraction_eq_of_populations 0 N N hN (by simp)
+
 /-- First-order bound instance at `x = 1 / 2`. -/
 example : |excessFraction (1 / 2) - (1 / 2) / 2| ≤ (1 / 2) ^ 2 :=
   excessFraction_bound (1 / 2) (by norm_num)
 
-/-! ## AB checks (CH43.5) -/
+/-!
 
-/-- `νA = 10, νB = 0, J = 0` gives eigenvalues `10, 0` (first-order limit). -/
-example : abEigenPlus 10 0 0 = 10 := by
-  simp only [abEigenPlus]
-  have hsq : Real.sqrt ((10 - 0) ^ 2 + (0 : ℝ) ^ 2) = 10 := by
-    have h100 : ((10 - 0) ^ 2 + (0 : ℝ) ^ 2) = 10 ^ 2 := by norm_num
-    rw [h100, Real.sqrt_sq_eq_abs]
-    norm_num
-  rw [hsq]
+## E. AB spin system checks
+
+With `νA = 4`, `νB = -4`, `J = 6` one has `D = √(8 ^ 2 + 6 ^ 2) = 10`: the energies are
+`αα, ββ = 3 / 2`, `+ = 7 / 2`, `− = -13 / 2`, and the four lines are `±8` and `±2`.
+
+-/
+
+private lemma sqrt_ab_example : Real.sqrt ((4 - -4) ^ 2 + (6 : ℝ) ^ 2) = 10 := by
+  rw [show ((4 - -4) ^ 2 + (6 : ℝ) ^ 2) = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+
+/-- The four energy levels at `νA = 4`, `νB = -4`, `J = 6`. -/
+example : abEnergyAlphaAlpha 4 (-4) 6 = 3 / 2 ∧ abEnergyBetaBeta 4 (-4) 6 = 3 / 2 ∧
+    abEnergyPlus 4 (-4) 6 = 7 / 2 ∧ abEnergyMinus 4 (-4) 6 = -13 / 2 := by
+  simp only [abEnergyAlphaAlpha, abEnergyBetaBeta, abEnergyPlus, abEnergyMinus,
+    sqrt_ab_example]
   norm_num
 
-example : abEigenMinus 10 0 0 = 0 := by
-  simp only [abEigenMinus]
-  have hsq : Real.sqrt ((10 - 0) ^ 2 + (0 : ℝ) ^ 2) = 10 := by
-    have h100 : ((10 - 0) ^ 2 + (0 : ℝ) ^ 2) = 10 ^ 2 := by norm_num
-    rw [h100, Real.sqrt_sq_eq_abs]
-    norm_num
-  rw [hsq]
+/-- `7 / 2` is an eigenvalue of the AB Hamiltonian at `νA = 4`, `νB = -4`, `J = 6`. -/
+example : Module.End.HasEigenvalue (Matrix.toLin' (abHamiltonian 4 (-4) 6)) (7 / 2) := by
+  have h : abEnergyPlus 4 (-4) 6 = 7 / 2 := by
+    rw [abEnergyPlus, sqrt_ab_example]; norm_num
+  have := abHamiltonian_hasEigenvalue_plus 4 (-4) 6
+  rw [h] at this
+  simpa using this
+
+/-- `0` is not an eigenvalue there: the spectrum is exactly the four levels. -/
+example : ¬ Module.End.HasEigenvalue (Matrix.toLin' (abHamiltonian 4 (-4) 6)) 0 := by
+  rw [abHamiltonian_hasEigenvalue_iff]
+  simp only [abEnergyAlphaAlpha, abEnergyPlus, abEnergyMinus, abEnergyBetaBeta,
+    sqrt_ab_example]
   norm_num
 
-/-- `νA = 4, νB = -4, J = 6` gives eigenvalues `±5`
-(hand-verified: `√(64 + 36) / 2 = 5`). -/
-example : abEigenPlus 4 (-4) 6 = 5 := by
-  simp only [abEigenPlus]
-  have hsq : Real.sqrt ((4 - -4) ^ 2 + (6 : ℝ) ^ 2) = 10 := by
-    have h100 : ((4 - -4) ^ 2 + (6 : ℝ) ^ 2) = 10 ^ 2 := by norm_num
-    rw [h100, Real.sqrt_sq_eq_abs]
-    norm_num
-  rw [hsq]
+/-- The four lines at `νA = 4`, `νB = -4`, `J = 6` are `8, -2, 2, -8`. -/
+example : abLineAlphaMinus 4 (-4) 6 = 8 ∧ abLineAlphaPlus 4 (-4) 6 = -2 ∧
+    abLinePlusBeta 4 (-4) 6 = 2 ∧ abLineMinusBeta 4 (-4) 6 = -8 := by
+  obtain ⟨h1, h2, h3, h4⟩ := abLines_eq 4 (-4) 6
+  rw [sqrt_ab_example] at h1 h2 h3 h4
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> [rw [h1]; rw [h2]; rw [h3]; rw [h4]] <;> norm_num
+
+/-- At `J = 0` the lines are exactly the two resonance frequencies, each twice. -/
+example : abLineAlphaMinus 10 0 0 = 10 ∧ abLineAlphaPlus 10 0 0 = 0 ∧
+    abLinePlusBeta 10 0 0 = 10 ∧ abLineMinusBeta 10 0 0 = 0 := by
+  have hD : Real.sqrt ((10 - 0) ^ 2 + (0 : ℝ) ^ 2) = 10 := by
+    rw [show ((10 - 0) ^ 2 + (0 : ℝ) ^ 2) = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+  obtain ⟨h1, h2, h3, h4⟩ := abLines_eq 10 0 0
+  rw [hD] at h1 h2 h3 h4
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> [rw [h1]; rw [h2]; rw [h3]; rw [h4]] <;> norm_num
+
+/-- Strong coupling moves the lines off first order: at `νA = 3`, `νB = -3`, `J = 4` the line
+`αα ↔ −` is `2 + √13`, not the first-order position `3 + J / 2 = 5`. -/
+example : abLineAlphaMinus 3 (-3) 4 ≠ 3 + 4 / 2 := by
+  obtain ⟨h1, -, -, -⟩ := abLines_eq 3 (-3) 4
+  rw [h1]
+  intro h
+  have hs : Real.sqrt ((3 - -3) ^ 2 + (4 : ℝ) ^ 2) = 6 := by norm_num at h ⊢; linarith
+  have := Real.sq_sqrt (show (0 : ℝ) ≤ (3 - -3) ^ 2 + 4 ^ 2 by norm_num)
+  rw [hs] at this
+  norm_num at this
+
+/-- Weak coupling at `νA = 100`, `νB = 0`, `J = 6`: the line `αα ↔ −` is within
+`36 / 400` of the first-order position `100 + J / 2`. -/
+example : |abLineAlphaMinus 100 0 6 - (100 + 6 / 2)| ≤ 6 ^ 2 / (4 * |(100 : ℝ) - 0|) := by
+  have h := (abLines_weakCoupling 100 0 6 (by norm_num)).1
+  rwa [show max (100 : ℝ) 0 = 100 by norm_num] at h
+
+/-- The mixed-state energies are the eigenvalues of `abMixingMatrix` minus
+`(νA + νB) / 2 + J / 4`. -/
+example : abEnergyPlus 4 (-4) 6 = abMixingEigenPlus 4 (-4) 6 - ((4 + -4) / 2 + 6 / 4) :=
+  (abEnergyPlus_eq_abMixingEigenPlus 4 (-4) 6).1
+
+/-- `abMixingMatrix` at `νA = 10`, `νB = 0`, `J = 0` has eigenvalues `10` and `0`. -/
+example : abMixingEigenPlus 10 0 0 = 10 ∧ abMixingEigenMinus 10 0 0 = 0 := by
+  have hD : Real.sqrt ((10 - 0) ^ 2 + (0 : ℝ) ^ 2) = 10 := by
+    rw [show ((10 - 0) ^ 2 + (0 : ℝ) ^ 2) = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+  simp only [abMixingEigenPlus, abMixingEigenMinus, hD]
   norm_num
 
-example : abEigenMinus 4 (-4) 6 = -5 := by
-  simp only [abEigenMinus]
-  have hsq : Real.sqrt ((4 - -4) ^ 2 + (6 : ℝ) ^ 2) = 10 := by
-    have h100 : ((4 - -4) ^ 2 + (6 : ℝ) ^ 2) = 10 ^ 2 := by norm_num
-    rw [h100, Real.sqrt_sq_eq_abs]
-    norm_num
-  rw [hsq]
-  norm_num
+/-- Characteristic-equation instances for `abMixingMatrix` at `νA = 4`, `νB = -4`, `J = 6`. -/
+example : Matrix.det (abMixingMatrix 4 (-4) 6 - abMixingEigenPlus 4 (-4) 6 • 1) = 0 :=
+  ab_det_plus 4 (-4) 6
 
-/-- Characteristic-equation instances at `νA = 10, νB = 0, J = 0`. -/
-example : Matrix.det (abHamiltonian 10 0 0 - abEigenPlus 10 0 0 • 1) = 0 :=
-  ab_det_plus 10 0 0
+example : Matrix.det (abMixingMatrix 4 (-4) 6 - abMixingEigenMinus 4 (-4) 6 • 1) = 0 :=
+  ab_det_minus 4 (-4) 6
 
-example : Matrix.det (abHamiltonian 10 0 0 - abEigenMinus 10 0 0 • 1) = 0 :=
-  ab_det_minus 10 0 0
-
-/-- Trace-matching instance at `νA = 4, νB = -4, J = 6`. -/
-example : abEigenPlus 4 (-4) 6 + abEigenMinus 4 (-4) 6 = 4 + (-4) :=
+/-- Trace-matching instance at `νA = 4`, `νB = -4`, `J = 6`. -/
+example : abMixingEigenPlus 4 (-4) 6 + abMixingEigenMinus 4 (-4) 6 = 4 + (-4) :=
   ab_eigen_sum 4 (-4) 6
 
-/-! ## Countermodel / boundary notes (no theorems claimed) -/
+/-!
+
+## Boundary notes
+
+-/
 
 -- `chemicalShift` with `νref = 0` is not claimed: division by zero in Lean is
 -- junk (`x / 0 = 0`), and no theorem above applies there (`chemicalShift_self`
 -- and `chemicalShift_scale` both require `νref ≠ 0`).
--- The first-order multiplet (`multipletWeights`, `linePosition`) is not claimed
--- when `Δν ~ J`; the AB section (§E) shows the deviation from first order
--- (e.g. `νA = 3, νB = -3, J = 4` gives `±√13`, hand-verified, not `±5`).
 
-/-! ## Axioms -/
+/-!
+
+## Axioms
+
+-/
 
 #print axioms zeemanEnergy
 #print axioms zeeman_energy_split
@@ -325,16 +367,44 @@ example : abEigenPlus 4 (-4) 6 + abEigenMinus 4 (-4) 6 = 4 + (-4) :=
 #print axioms binomial_vandermonde
 #print axioms integral_ratio
 #print axioms excessFraction
+#print axioms excessFraction_eq_of_populations
 #print axioms excessFraction_abs_lt_one
 #print axioms excessFraction_lower
 #print axioms excessFraction_upper
 #print axioms excessFraction_bound_interior
 #print axioms excessFraction_bound
 #print axioms abHamiltonian
-#print axioms abEigenPlus
-#print axioms abEigenMinus
+#print axioms abHamiltonian_mulVec_alphaAlpha
+#print axioms abHamiltonian_mulVec_alphaBeta
+#print axioms abHamiltonian_mulVec_betaAlpha
+#print axioms abHamiltonian_mulVec_betaBeta
+#print axioms abHamiltonian_mulVec_eq_smul_iff
+#print axioms abHamiltonian_hasEigenvalue_iff_exists
+#print axioms abEnergyAlphaAlpha
+#print axioms abEnergyBetaBeta
+#print axioms abEnergyPlus
+#print axioms abEnergyMinus
+#print axioms ab_half_sqrt_sq
+#print axioms abHamiltonian_hasEigenvalue_alphaAlpha
+#print axioms abHamiltonian_hasEigenvalue_betaBeta
+#print axioms abHamiltonian_hasEigenvalue_plus
+#print axioms abHamiltonian_hasEigenvalue_minus
+#print axioms abHamiltonian_eigenvalue_cases
+#print axioms abHamiltonian_hasEigenvalue_iff
+#print axioms abMixedState
+#print axioms abMixingMatrix
+#print axioms abHamiltonian_submatrix_mixed
+#print axioms abMixingEigenPlus
+#print axioms abMixingEigenMinus
 #print axioms ab_det_plus
 #print axioms ab_det_minus
 #print axioms ab_eigen_sum
 #print axioms ab_eigen_prod
+#print axioms abEnergyPlus_eq_abMixingEigenPlus
+#print axioms abLineAlphaMinus
+#print axioms abLineAlphaPlus
+#print axioms abLinePlusBeta
+#print axioms abLineMinusBeta
+#print axioms abLines_eq
 #print axioms ab_first_order_limit
+#print axioms abLines_weakCoupling
