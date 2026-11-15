@@ -83,7 +83,7 @@ def WellFormed (i : MinimumErrorCorrectionInstance) : Prop :=
 induced on the remaining fragments is bipartite. -/
 def MinimumFragmentRemovalFeasible (i : MinimumErrorCorrectionInstance) : Prop :=
   ∃ R : Finset (Fin i.2.1.length), R.card ≤ i.2.2 ∧
-    ((fragmentConflictGraph i).induce (↑R : Set (Fin i.2.1.length))ᶜ).IsBipartite
+    ((fragmentConflictGraph i).induce ((↑R : Set (Fin i.2.1.length))ᶜ)).IsBipartite
 
 open Classical in
 /-- MINIMUM FRAGMENT REMOVAL as a decision problem over bitstrings. -/
