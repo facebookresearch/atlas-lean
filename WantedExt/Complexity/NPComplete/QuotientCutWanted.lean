@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, MINIMUM QUOTIENT
-CUT [ND26];
+CUT;
 J. K. Park and C. A. Phillips, "Finding minimum-quotient cuts in planar graphs", Proceedings
 of the 25th Annual ACM Symposium on Theory of Computing (STOC 1993), 766-775,
 doi:10.1145/167088.167284.
@@ -37,7 +37,7 @@ INSTANCE: a graph `G = (V, E)`, a vertex-weight function `w : V → ℕ`, an edg
 edges with exactly one endpoint in `C` and `w(V')` is the sum of the weights of the vertices
 in `V'`?
 
-This is the decision version of Crescenzi and Kann's MINIMUM QUOTIENT CUT [ND26] (also called
+This is the decision version of Crescenzi and Kann's MINIMUM QUOTIENT CUT (also called
 minimum flux cut). Park and Phillips (abstract) state that "the minimum-quotient-cut problem is
 strongly NP-hard for general graphs". An integer bound loses nothing: scaling the costs by
 `q` and the weights by `p` turns a rational bound `p / q` into `1`. Membership in NP: `C` is a
@@ -94,8 +94,8 @@ noncomputable def quotientCutDec :
   | some i => decide (WellFormed i ∧ QuotientCutFeasible i)
   | none => false
 
-/-- **QUOTIENT CUT is NP-complete.** Source: Crescenzi and Kann, [ND26]; Park and Phillips
-(1993). -/
+/-- **QUOTIENT CUT is NP-complete.** Source: Crescenzi and Kann, MINIMUM QUOTIENT CUT; Park and
+Phillips (1993). -/
 public theorem_wanted quotientCut_npComplete :
     quotientCutDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

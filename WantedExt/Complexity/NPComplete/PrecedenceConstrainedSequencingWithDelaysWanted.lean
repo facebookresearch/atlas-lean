@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # PRECEDENCE CONSTRAINED SEQUENCING WITH DELAYS is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [SS3]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM PRECEDENCE CONSTRAINED SEQUENCING WITH DELAYS (decision version);
 D. Bernstein, M. Rodeh and I. Gertner, "Approximation algorithms for scheduling arithmetic
 expressions on pipelined machines", J. Algorithms 10 (1989), 120-139,
@@ -105,8 +105,8 @@ noncomputable def precedenceConstrainedSequencingWithDelaysDec :
   | none => false
 
 /-- **PRECEDENCE CONSTRAINED SEQUENCING WITH DELAYS is NP-complete.** Source: Crescenzi and
-Kann, [SS3]; Bernstein, Rodeh and Gertner (1989); Leung, Vornberger and Witthoff (1984) for
-equal delays. -/
+Kann, MINIMUM PRECEDENCE CONSTRAINED SEQUENCING WITH DELAYS; Bernstein, Rodeh and Gertner (1989);
+Leung, Vornberger and Witthoff (1984) for equal delays. -/
 public theorem_wanted precedenceConstrainedSequencingWithDelays_npComplete :
     precedenceConstrainedSequencingWithDelaysDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), MINIMUM DISTINGUISHED ONES [LO7] (decision version);
+2000), MINIMUM DISTINGUISHED ONES (decision version);
 V. Kann, "Polynomially bounded minimization problems which are hard to approximate", Proc.
 20th ICALP, LNCS 700 (1993), 52-63, doi:10.1007/3-540-56939-1_61;
 R. M. Karp, "Reducibility among combinatorial problems", in *Complexity of Computer
@@ -39,7 +39,7 @@ most 3 literals over `X ∪ Z` (a literal is a variable or a negated variable), 
 QUESTION: is there a truth assignment for `X` and `Z` that satisfies every clause of `C` and
 sets at most `K` variables of `Z` to true?
 
-This is the decision version of the compendium's MINIMUM DISTINGUISHED ONES [LO7] (measure: the
+This is the decision version of the compendium's MINIMUM DISTINGUISHED ONES (measure: the
 number of `Z` variables set to true), shown NPO PB-complete by Kann. NP-hardness of the decision
 version is immediate: with `Z = ∅` and `K = 0` it asks whether a formula with at most three
 literals per clause is satisfiable, which Karp (1972) proved NP-complete.
@@ -85,8 +85,8 @@ noncomputable def minimumDistinguishedOnesDec :
   | some i => decide (WellFormed i ∧ MinimumDistinguishedOnesFeasible i)
   | none => false
 
-/-- **MINIMUM DISTINGUISHED ONES is NP-complete.** Source: Crescenzi and Kann, [LO7]; Kann
-(1993); Karp (1972). -/
+/-- **MINIMUM DISTINGUISHED ONES is NP-complete.** Source: Crescenzi and Kann, MINIMUM DISTINGUISHED
+ONES; Kann (1993); Karp (1972). -/
 public theorem_wanted minimumDistinguishedOnes_npComplete :
     minimumDistinguishedOnesDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

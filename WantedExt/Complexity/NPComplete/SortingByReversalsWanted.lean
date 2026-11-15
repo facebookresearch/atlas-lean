@@ -13,7 +13,7 @@ Source:
 A. Caprara, "Sorting permutations by reversals and Eulerian cycle decompositions", SIAM
 Journal on Discrete Mathematics 12 (1999), 91-110, doi:10.1137/S089548019731994X;
 problem as stated in P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization
-problems*, entry MS12 MINIMUM SORTING BY REVERSALS.
+problems*, entry MINIMUM SORTING BY REVERSALS.
 -/
 module
 
@@ -80,8 +80,8 @@ noncomputable def sortingByReversalsDec :
   | some i => decide (WellFormed i ∧ SortingByReversalsFeasible i)
   | none => false
 
-/-- **SORTING BY REVERSALS is NP-complete.** Source: Caprara (1999); Crescenzi and Kann,
-compendium entry MS12. -/
+/-- **SORTING BY REVERSALS is NP-complete.** Source: Caprara (1999); Crescenzi and Kann, MINIMUM
+SORTING BY REVERSALS. -/
 public theorem_wanted sortingByReversals_npComplete :
     sortingByReversalsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

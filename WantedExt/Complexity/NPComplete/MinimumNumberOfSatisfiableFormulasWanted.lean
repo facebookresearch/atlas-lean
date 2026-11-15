@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), MINIMUM NUMBER OF SATISFIABLE FORMULAS [LO10] (decision version);
+2000), MINIMUM NUMBER OF SATISFIABLE FORMULAS (decision version);
 V. Kann, "Polynomially bounded minimization problems which are hard to approximate", Proc.
 20th ICALP, LNCS 700 (1993), 52-63, doi:10.1007/3-540-56939-1_61;
 R. Kohli, R. Krishnamurti, and P. Mirchandani, "The minimum satisfiability problem", SIAM
@@ -36,7 +36,7 @@ namespace MetaMathlibExt.Complexity.NPComplete.MinimumNumberOfSatisfiableFormula
 INSTANCE: a set `U` of variables, a collection `C` of 3CNF formulas over `U`, and a bound
 `K`. QUESTION: is there a truth assignment for `U` that satisfies at most `K` formulas of `C`?
 
-This is the decision version of the compendium's MINIMUM NUMBER OF SATISFIABLE FORMULAS [LO10]
+This is the decision version of the compendium's MINIMUM NUMBER OF SATISFIABLE FORMULAS
 (measure: the number of formulas satisfied), shown NPO PB-complete by Kann through a
 transformation from MINIMUM DISTINGUISHED ONES. NP-hardness of the decision version also follows
 from the case in which every formula is a single clause: that is MINIMUM SATISFIABILITY, which
@@ -85,7 +85,7 @@ noncomputable def minimumNumberOfSatisfiableFormulasDec :
   | none => false
 
 /-- **MINIMUM NUMBER OF SATISFIABLE FORMULAS is NP-complete.** Source: Crescenzi and Kann,
-[LO10]; Kann (1993); Kohli, Krishnamurti, and Mirchandani (1994). -/
+MINIMUM NUMBER OF SATISFIABLE FORMULAS; Kann (1993); Kohli, Krishnamurti, and Mirchandani (1994). -/
 public theorem_wanted minimumNumberOfSatisfiableFormulas_npComplete :
     minimumNumberOfSatisfiableFormulasDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

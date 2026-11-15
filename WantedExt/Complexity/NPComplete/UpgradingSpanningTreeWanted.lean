@@ -14,7 +14,7 @@ S. O. Krumke, M. V. Marathe, H. Noltemeier, R. Ravi, S. S. Ravi, R. Sundaram and
 "Improving minimum cost spanning trees by upgrading nodes", Journal of Algorithms 33 (1999),
 92-111, doi:10.1006/jagm.1999.1021 (Definition 2; Section 5, Lemma 18: reduction from MINIMUM
 DOMINATING SET);
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [ND13]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM UPGRADING SPANNING TREE.
 -/
 module
@@ -108,7 +108,8 @@ noncomputable def upgradingSpanningTreeDec :
   | none => false
 
 /-- **UPGRADING SPANNING TREE is NP-complete.** Source: Krumke, Marathe, Noltemeier, Ravi,
-Ravi, Sundaram and Wirth (1999), Definition 2 and Lemma 18; Crescenzi and Kann, [ND13]. -/
+Ravi, Sundaram and Wirth (1999), Definition 2 and Lemma 18; Crescenzi and Kann, MINIMUM UPGRADING
+SPANNING TREE. -/
 public theorem_wanted upgradingSpanningTree_npComplete :
     upgradingSpanningTreeDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

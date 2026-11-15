@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
-problem ND20 MINIMUM VERTEX K-CUT, citing N. Garg, V. V. Vazirani and M. Yannakakis, "Multiway
+problem MINIMUM VERTEX K-CUT, citing N. Garg, V. V. Vazirani and M. Yannakakis, "Multiway
 cuts in directed and node weighted graphs", Proc. 21st ICALP, Lecture Notes in Computer Science
 820 (1994), 487-498, doi:10.1007/3-540-58201-0_92; journal version: "Multiway cuts in node
 weighted graphs", Journal of Algorithms 50 (2004), 49-61, doi:10.1016/S0196-6774(03)00111-1;
@@ -101,9 +101,9 @@ noncomputable def vertexKCutDec :
   | some i => decide (WellFormed i ∧ VertexKCutFeasible i)
   | none => false
 
-/-- **VERTEX K-CUT is NP-complete.** Source: Crescenzi and Kann, ND20, citing Garg, Vazirani and
-Yannakakis (1994); NP-complete already for NODE MULTIWAY CUT with unit weights, Johnson, Martin,
-Pandey, Paulusma, Smith and van Leeuwen (2026). -/
+/-- **VERTEX K-CUT is NP-complete.** Source: Crescenzi and Kann, MINIMUM VERTEX K-CUT, citing Garg,
+Vazirani and Yannakakis (1994); NP-complete already for NODE MULTIWAY CUT with unit weights,
+Johnson, Martin, Pandey, Paulusma, Smith and van Leeuwen (2026). -/
 public theorem_wanted vertexKCut_npComplete :
     vertexKCutDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

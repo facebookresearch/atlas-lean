@@ -10,8 +10,8 @@ LICENSE file in the root directory of this source tree.
 # 3-DIMENSIONAL ASSIGNMENT is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, entry [SP10]
-MINIMUM 3-DIMENSIONAL ASSIGNMENT (weighted version of [SP2] 3-DIMENSIONAL MATCHING);
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, entry
+MINIMUM 3-DIMENSIONAL ASSIGNMENT (weighted version of 3-DIMENSIONAL MATCHING);
 Y. Crama and F. C. R. Spieksma, "Approximation algorithms for three-dimensional assignment
 problems with triangle inequalities", European Journal of Operational Research 60 (1992),
 273-279, doi:10.1016/0377-2217(92)90078-N;
@@ -91,8 +91,8 @@ noncomputable def threeDimensionalAssignmentDec :
   | some i => decide (WellFormed i ∧ ThreeDimensionalAssignmentFeasible i)
   | none => false
 
-/-- **3-DIMENSIONAL ASSIGNMENT is NP-complete.** Source: Crescenzi and Kann, [SP10]; Crama and
-Spieksma (1992); Karp (1972). -/
+/-- **3-DIMENSIONAL ASSIGNMENT is NP-complete.** Source: Crescenzi and Kann, MINIMUM 3-DIMENSIONAL
+ASSIGNMENT; Crama and Spieksma (1992); Karp (1972). -/
 public theorem_wanted threeDimensionalAssignment_npComplete :
     threeDimensionalAssignmentDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

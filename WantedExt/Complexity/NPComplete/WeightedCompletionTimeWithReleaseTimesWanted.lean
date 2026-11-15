@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, web edition
-(2000), problem [SS4] MINIMUM SEQUENCING WITH RELEASE TIMES;
+(2000), problem MINIMUM SEQUENCING WITH RELEASE TIMES;
 J. K. Lenstra, A. H. G. Rinnooy Kan, and P. Brucker, "Complexity of machine scheduling
 problems", Annals of Discrete Mathematics 1 (1977), 343-362,
 doi:10.1016/S0167-5060(08)70743-X, Theorem 4(a) (`1|rⱼ|∑ Cⱼ` is NP-hard).
@@ -40,7 +40,7 @@ INSTANCE: a set `T` of tasks, for each task `t ∈ T` a release time `r(t)`, a l
 one-processor schedule `f` for `T` that obeys the release times (`f(t) ≥ r(t)` for every task)
 such that the weighted sum of completion times `∑_{t ∈ T} w(t) (f(t) + l(t))` is at most `K`?
 
-This is the decision version, with bound `K`, of Crescenzi and Kann's [SS4] MINIMUM SEQUENCING
+This is the decision version, with bound `K`, of Crescenzi and Kann's MINIMUM SEQUENCING
 WITH RELEASE TIMES (`1|rⱼ|∑ wⱼCⱼ`). Crescenzi and Kann define the schedule as a function
 `f : T → ℕ` such that at every time `u` the set `S(u)` of tasks `t` with `f(t) ≤ u < f(t) + l(t)`
 has one element; read literally ("`|S(u)| = 1` for all `u ≥ 0`") no schedule would exist after
@@ -115,8 +115,8 @@ noncomputable def weightedCompletionTimeWithReleaseTimesDec :
   | none => false
 
 /-- **SEQUENCING WITH RELEASE TIMES TO MINIMIZE WEIGHTED COMPLETION TIME is NP-complete.**
-Source: Crescenzi and Kann (2000), [SS4]; Lenstra, Rinnooy Kan, and Brucker (1977),
-Theorem 4(a). -/
+Source: Crescenzi and Kann (2000), MINIMUM SEQUENCING WITH RELEASE TIMES; Lenstra, Rinnooy Kan, and
+Brucker (1977), Theorem 4(a). -/
 public theorem_wanted weightedCompletionTimeWithReleaseTimes_npComplete :
     weightedCompletionTimeWithReleaseTimesDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

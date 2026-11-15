@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), MAXIMUM MINIMUM METRIC K-SPANNING TREE [ND5] (decision version);
+2000), MAXIMUM MINIMUM METRIC K-SPANNING TREE (decision version);
 M. M. Halldórsson, K. Iwano, N. Katoh, and T. Tokuyama, "Finding subsets maximizing minimum
 structures", SIAM Journal on Discrete Mathematics 12 (1999), 342-359,
 doi:10.1137/S0895480196309791.
@@ -37,7 +37,7 @@ edge satisfying the triangle inequality, a number `k`, and a bound `K`. QUESTION
 subset `V' ⊆ V` with `|V'| = k` such that the minimum spanning tree of the subgraph induced by
 `V'` has length at least `K`?
 
-This is the decision version of the compendium's MAXIMUM MINIMUM METRIC K-SPANNING TREE [ND5],
+This is the decision version of the compendium's MAXIMUM MINIMUM METRIC K-SPANNING TREE,
 also called REMOTE-MST: Halldórsson, Iwano, Katoh, and Tokuyama (1999) show that on metric
 graphs it is NP-hard to approximate within a factor less than `2` (the compendium notes a
 reduction from MAXIMUM INDEPENDENT SET: with lengths `1` on the edges of a graph and `2` on its
@@ -104,7 +104,7 @@ noncomputable def maximumMinimumMetricKSpanningTreeDec :
   | none => false
 
 /-- **MAXIMUM MINIMUM METRIC K-SPANNING TREE is NP-complete.** Source: Crescenzi and Kann,
-[ND5]; Halldórsson, Iwano, Katoh, and Tokuyama (1999). -/
+MAXIMUM MINIMUM METRIC K-SPANNING TREE; Halldórsson, Iwano, Katoh, and Tokuyama (1999). -/
 public theorem_wanted maximumMinimumMetricKSpanningTree_npComplete :
     maximumMinimumMetricKSpanningTreeDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

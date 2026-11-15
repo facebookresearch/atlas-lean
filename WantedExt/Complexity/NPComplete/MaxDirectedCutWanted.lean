@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, web edition
-(2000), problem [ND16] MAXIMUM DIRECTED CUT (decision version);
+(2000), problem MAXIMUM DIRECTED CUT (decision version);
 J. Håstad, "Some optimal inapproximability results", Journal of the ACM 48(4) (2001),
 798-859, doi:10.1145/502090.502098 (Definition 2.7 and Theorem 8.3 in the author's
 version);
@@ -39,7 +39,7 @@ INSTANCE: a directed graph `G = (V, A)` and a positive integer `K`.
 QUESTION: is there a partition of `V` into disjoint sets `V₁` and `V₂` such that the number of
 arcs with start point in `V₁` and endpoint in `V₂` is at least `K`?
 
-This is the decision version of MAXIMUM DIRECTED CUT of Crescenzi and Kann ([ND16]), the problem
+This is the decision version of MAXIMUM DIRECTED CUT of Crescenzi and Kann, the problem
 Max-di-Cut of Håstad (Definition 2.7). Håstad (Theorem 8.3) proves that approximating Max-di-Cut
 within a constant factor is NP-hard; the gap reduction behind it is a polynomial-time many-one
 reduction to this decision problem. Hardness also follows from SIMPLE MAX CUT (Garey, Johnson
@@ -98,8 +98,8 @@ noncomputable def maxDirectedCutDec :
   | some i => decide (WellFormed i ∧ MaxDirectedCutFeasible i)
   | none => false
 
-/-- **MAX DIRECTED CUT is NP-complete.** Source: Crescenzi and Kann, [ND16]; Håstad (2001);
-Garey, Johnson and Stockmeyer (1976). -/
+/-- **MAX DIRECTED CUT is NP-complete.** Source: Crescenzi and Kann, MAXIMUM DIRECTED CUT; Håstad
+(2001); Garey, Johnson and Stockmeyer (1976). -/
 public theorem_wanted maxDirectedCut_npComplete :
     maxDirectedCutDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

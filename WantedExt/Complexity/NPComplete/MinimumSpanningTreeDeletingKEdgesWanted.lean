@@ -17,9 +17,9 @@ W. Liang, "Finding the k most vital edges with respect to minimum spanning trees
 Discrete Applied Mathematics 113 (2001), 319-327, doi:10.1016/S0166-218X(01)00189-5
 (Section 1 states the problem with `|S*| = k` and records that Frederickson and Solis-Oba proved
 it NP-complete);
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [ND12]
-MAXIMUM MINIMUM SPANNING TREE DELETING K EDGES.
--/
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
+MAXIMUM MINIMUM SPANNING TREE DELETING K
+EDGES. -/
 module
 
 public import Batteries.Util.ProofWanted
@@ -109,7 +109,8 @@ noncomputable def minimumSpanningTreeDeletingKEdgesDec :
   | none => false
 
 /-- **MINIMUM SPANNING TREE DELETING K EDGES is NP-complete.** Source: Frederickson and
-Solis-Oba (1999); Liang (2001); Crescenzi and Kann, [ND12]. -/
+Solis-Oba (1999); Liang (2001); Crescenzi and Kann, MAXIMUM MINIMUM SPANNING TREE DELETING K
+EDGES. -/
 public theorem_wanted minimumSpanningTreeDeletingKEdges_npComplete :
     minimumSpanningTreeDeletingKEdgesDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

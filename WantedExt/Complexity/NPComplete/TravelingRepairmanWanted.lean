@@ -16,7 +16,7 @@ Applications 20 (1986), 79-87, doi:10.1051/ita/1986200100791 (definition of the 
 NP-completeness of the general version, credited there to S. Sahni and T. Gonzalez,
 "P-complete approximation problems", Journal of the ACM 23 (1976), 555-565,
 doi:10.1145/321958.321975);
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [ND45]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM TRAVELING REPAIRMAN (metric instances);
 A. Blum, P. Chalasani, D. Coppersmith, B. Pulleyblank, P. Raghavan, and M. Sudan, "The minimum
 latency problem", Proc. 26th ACM Symposium on Theory of Computing (1994), 163-171,
@@ -47,12 +47,12 @@ whose total latency `∑_{i=1}^{n-1} ∑_{j=1}^{i} t[π(j - 1), π(j)]` is at mo
 
 The cost is Afrati et al.'s (1986) formula: the latency of `π(i)` is the distance traveled from
 `s` until `π(i)` is first visited, and the total latency is their sum (the latency of `s` itself
-is `0`). The instance class is that of Crescenzi and Kann's [ND45] and of Blum et al. (1994):
-nonnegative integer lengths satisfying the triangle inequality. With the triangle inequality,
-visiting the locations in the order `π` along direct legs is no worse than any walk that first
-visits them in that order, so permutations capture [ND45]'s walks. Afrati et al. state the
-general version NP-complete (crediting Sahni and Gonzalez 1976); Blum et al. observe that a
-reduction from the traveling salesman problem makes the problem NP-hard already for points in
+is `0`). The instance class is that of Crescenzi and Kann's MINIMUM TRAVELING REPAIRMAN and of Blum
+et al. (1994): nonnegative integer lengths satisfying the triangle inequality. With the triangle
+inequality, visiting the locations in the order `π` along direct legs is no worse than any walk that
+first visits them in that order, so permutations capture the compendium entry's walks. Afrati et al.
+state the general version NP-complete (crediting Sahni and Gonzalez 1976); Blum et al. observe that
+a reduction from the traveling salesman problem makes the problem NP-hard already for points in
 the plane, and Sitters (2002) proves it NP-hard for the shortest-path metrics of weighted
 trees. The route is listed as a permutation of
 `List.range n` that starts at `s`. Binary encoding of all numbers.
@@ -87,7 +87,7 @@ def totalLatency (i : TravelingRepairmanInstance) (route : List ℕ) : ℕ :=
   ∑ k ∈ Finset.range route.length, routeLength i (route.take (k + 1))
 
 /-- Well-formedness of an instance: the matrix has `n` rows of `n` entries, `s < n`, and the
-distances form a metric on the locations in the sense of [ND45]: `t[a, a] = 0`,
+distances form a metric on the locations in the sense of the compendium entry: `t[a, a] = 0`,
 `t[a, b] = t[b, a]`, and `t[a, c] ≤ t[a, b] + t[b, c]`. -/
 def WellFormed (i : TravelingRepairmanInstance) : Prop :=
   i.2.1.length = i.1 ∧ (∀ row ∈ i.2.1, row.length = i.1) ∧ i.2.2.1 < i.1 ∧
@@ -111,7 +111,7 @@ noncomputable def travelingRepairmanDec :
   | none => false
 
 /-- **TRAVELING REPAIRMAN (MINIMUM LATENCY) is NP-complete.** Source: Afrati et al. (1986);
-Crescenzi and Kann, [ND45]; Blum et al. (1994); Sitters (2002). -/
+Crescenzi and Kann, MINIMUM TRAVELING REPAIRMAN; Blum et al. (1994); Sitters (2002). -/
 public theorem_wanted travelingRepairman_npComplete :
     travelingRepairmanDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

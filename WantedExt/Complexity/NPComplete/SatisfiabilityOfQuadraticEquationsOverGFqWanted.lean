@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # SATISFIABILITY OF QUADRATIC EQUATIONS OVER GF[q] is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [AN1]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MAXIMUM SATISFIABILITY OF QUADRATIC EQUATIONS OVER GF[Q] (decision version);
 J. Håstad, S. Phillips and S. Safra, "A well-characterized approximation problem",
 Information Processing Letters 47 (1993), 301-305, doi:10.1016/0020-0190(93)90076-L,
@@ -104,7 +104,8 @@ noncomputable def quadraticEquationsDec :
   | none => false
 
 /-- **SATISFIABILITY OF QUADRATIC EQUATIONS OVER GF[q] is NP-complete.** Source: Crescenzi and
-Kann, [AN1]; Håstad, Phillips and Safra (1993), Theorem 4.2. -/
+Kann, MAXIMUM SATISFIABILITY OF QUADRATIC EQUATIONS OVER GF[Q]; Håstad, Phillips and Safra (1993),
+Theorem 4.2. -/
 public theorem_wanted quadraticEquations_npComplete :
     quadraticEquationsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

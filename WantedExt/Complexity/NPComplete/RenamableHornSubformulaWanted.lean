@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # RENAMABLE HORN SUBFORMULA is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [LO15]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MAXIMUM RENAMABLE HORN SUBFORMULA (decision version);
 E. Boros, "Maximum renamable Horn sub-CNFs", Discrete Appl. Math. 96-97 (1999), 29-40,
 doi:10.1016/S0166-218X(99)00031-1, Sections 1-2 (definitions; NP-hard because on CNFs whose
@@ -88,8 +88,8 @@ noncomputable def renamableHornSubformulaDec :
   | some i => decide (WellFormed i ∧ RenamableHornSubformulaFeasible i)
   | none => false
 
-/-- **RENAMABLE HORN SUBFORMULA is NP-complete.** Source: Crescenzi and Kann, [LO15];
-Boros (1999). -/
+/-- **RENAMABLE HORN SUBFORMULA is NP-complete.** Source: Crescenzi and Kann, MAXIMUM RENAMABLE HORN
+SUBFORMULA; Boros (1999). -/
 public theorem_wanted renamableHornSubformula_npComplete :
     renamableHornSubformulaDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

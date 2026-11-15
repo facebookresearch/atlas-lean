@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
-problem ND22 MINIMUM MULTI-CUT, citing N. Garg, V. V. Vazirani and M. Yannakakis, "Approximate
+problem MINIMUM MULTI-CUT, citing N. Garg, V. V. Vazirani and M. Yannakakis, "Approximate
 max-flow min-(multi)cut theorems and their applications", SIAM Journal on Computing 25(2)
 (1996), 235-251, doi:10.1137/S0097539793243016;
 E. Dahlhaus, D. S. Johnson, C. H. Papadimitriou, P. D. Seymour and M. Yannakakis, "The
@@ -92,9 +92,9 @@ noncomputable def multiCutDec :
   | some i => decide (WellFormed i ∧ MultiCutFeasible i)
   | none => false
 
-/-- **MULTI-CUT is NP-complete.** Source: Crescenzi and Kann, ND22, citing Garg, Vazirani and
-Yannakakis (1996); NP-hard already for MULTIWAY CUT with three terminals, Dahlhaus, Johnson,
-Papadimitriou, Seymour and Yannakakis (1994). -/
+/-- **MULTI-CUT is NP-complete.** Source: Crescenzi and Kann, MINIMUM MULTI-CUT, citing Garg,
+Vazirani and Yannakakis (1996); NP-hard already for MULTIWAY CUT with three terminals, Dahlhaus,
+Johnson, Papadimitriou, Seymour and Yannakakis (1994). -/
 public theorem_wanted multiCut_npComplete :
     multiCutDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

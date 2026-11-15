@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # PARALLEL PROCESSOR TOTAL FLOW TIME is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [SS11]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM PARALLEL PROCESSOR TOTAL FLOW TIME (decision version);
 J. K. Lenstra, A. H. G. Rinnooy Kan and P. Brucker, "Complexity of machine scheduling
 problems", Annals of Discrete Mathematics 1 (1977), 343-362,
@@ -99,8 +99,8 @@ noncomputable def parallelProcessorTotalFlowTimeDec :
   | some i => decide (WellFormed i ∧ ParallelProcessorTotalFlowTimeFeasible i)
   | none => false
 
-/-- **PARALLEL PROCESSOR TOTAL FLOW TIME is NP-complete.** Source: Crescenzi and Kann, [SS11];
-Lenstra, Rinnooy Kan and Brucker (1977) for `m = 1`. -/
+/-- **PARALLEL PROCESSOR TOTAL FLOW TIME is NP-complete.** Source: Crescenzi and Kann, MINIMUM
+PARALLEL PROCESSOR TOTAL FLOW TIME; Lenstra, Rinnooy Kan and Brucker (1977) for `m = 1`. -/
 public theorem_wanted parallelProcessorTotalFlowTime_npComplete :
     parallelProcessorTotalFlowTimeDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

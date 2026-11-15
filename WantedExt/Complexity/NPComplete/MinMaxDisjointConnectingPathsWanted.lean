@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # MINIMUM MAXIMUM DISJOINT CONNECTING PATHS is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [ND50]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM MAXIMUM DISJOINT CONNECTING PATHS (decision version);
 C.-L. Li, S. T. McCormick and D. Simchi-Levi, "The complexity of finding two disjoint paths
 with min-max objective function", Discrete Appl. Math. 26 (1990), 105-115,
@@ -46,8 +46,8 @@ Paths from `s` to `t` are Mathlib paths `G.Path s t`, and vertex-disjointness is
 paths share no vertex other than `s` and `t`. The two paths are required to be different, so a
 single edge `{s, t}` cannot serve as both. The length of a path is the sum of the lengths of
 its edges. Lengths are non-negative integers, as in Crescenzi and Kann, whose `N` denotes the
-non-negative integers (their [MP14] reads "nonnegative integer `m × n`-matrix `A ∈ N^{m·n}`"),
-so an edge may have length `0`; the bound `K` is a positive integer.
+non-negative integers (their MAXIMUM INTEGER M-DIMENSIONAL KNAPSACK entry reads "nonnegative integer
+`m × n`-matrix `A ∈ N^{m·n}`"), so an edge may have length `0`; the bound `K` is a positive integer.
 
 Crescenzi and Kann write the paths as vertex sequences `s, u₁, …, u_m, t` and
 `s, v₁, …, v_n, t` with `m, n ≥ 1`, which excludes the one-edge path along an edge `{s, t}`;
@@ -107,7 +107,7 @@ noncomputable def minMaxDisjointConnectingPathsDec :
   | none => false
 
 /-- **MINIMUM MAXIMUM DISJOINT CONNECTING PATHS is NP-complete.** Source: Crescenzi and Kann,
-[ND50]; Li, McCormick and Simchi-Levi (1990). -/
+MINIMUM MAXIMUM DISJOINT CONNECTING PATHS; Li, McCormick and Simchi-Levi (1990). -/
 public theorem_wanted minMaxDisjointConnectingPaths_npComplete :
     minMaxDisjointConnectingPathsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

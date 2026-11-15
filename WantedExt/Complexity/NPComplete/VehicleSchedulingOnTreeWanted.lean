@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
-problem SS20 MINIMUM VEHICLE SCHEDULING ON TREE (decision version), citing Y. Karuno,
+problem MINIMUM VEHICLE SCHEDULING ON TREE (decision version), citing Y. Karuno,
 H. Nagamochi and T. Ibaraki, "Vehicle scheduling on a tree with release and handling times",
 Proc. 4th ISAAC, Lecture Notes in Computer Science 762 (1993), 486-495,
 doi:10.1007/3-540-57568-5_280 (journal version: Annals of Operations Research 69 (1997),
@@ -136,9 +136,9 @@ noncomputable def vehicleSchedulingOnTreeDec :
   | some i => decide (WellFormed i ∧ VehicleSchedulingOnTreeFeasible i)
   | none => false
 
-/-- **VEHICLE SCHEDULING ON TREE is NP-complete.** Source: Crescenzi and Kann, SS20, citing
-Karuno, Nagamochi and Ibaraki (1993); strongly NP-hard already with symmetric travel times and
-zero handling times, Nagamochi, Mochizuki and Ibaraki (1997). -/
+/-- **VEHICLE SCHEDULING ON TREE is NP-complete.** Source: Crescenzi and Kann, MINIMUM VEHICLE
+SCHEDULING ON TREE, citing Karuno, Nagamochi and Ibaraki (1993); strongly NP-hard already with
+symmetric travel times and zero handling times, Nagamochi, Mochizuki and Ibaraki (1997). -/
 public theorem_wanted vehicleSchedulingOnTree_npComplete :
     vehicleSchedulingOnTreeDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

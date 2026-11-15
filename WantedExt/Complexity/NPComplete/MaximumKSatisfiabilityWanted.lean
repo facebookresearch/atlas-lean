@@ -16,7 +16,7 @@ Theoretical Computer Science 1(3) (1976), 237-267, doi:10.1016/0304-3975(76)9005
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
 Theory of NP-Completeness*, W. H. Freeman (1979), problem [LO5] MAXIMUM 2-SATISFIABILITY;
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), MAXIMUM K-SATISFIABILITY [LO2].
+2000), MAXIMUM K-SATISFIABILITY.
 -/
 module
 
@@ -85,7 +85,8 @@ noncomputable def maximumKSatisfiabilityDec (k : ℕ) :
   | none => false
 
 /-- **MAXIMUM K-SATISFIABILITY is NP-complete for every fixed `k ≥ 2`.** Source: Garey, Johnson
-and Stockmeyer (1976); Garey and Johnson (1979), [LO5]; Crescenzi and Kann, [LO2]. -/
+and Stockmeyer (1976); Garey and Johnson (1979), [LO5]; Crescenzi and Kann, MAXIMUM
+K-SATISFIABILITY. -/
 public theorem_wanted maximumKSatisfiability_npComplete (k : ℕ) (hk : 2 ≤ k) :
     maximumKSatisfiabilityDec k ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

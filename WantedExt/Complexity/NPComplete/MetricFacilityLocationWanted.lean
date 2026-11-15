@@ -14,7 +14,7 @@ S. Guha and S. Khuller, "Greedy strikes back: improved facility location algorit
 J. Algorithms 31 (1999), 228-248, doi:10.1006/jagm.1998.0993 (the metric uncapacitated facility
 location problem, proved max SNP-hard);
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
-problem [ND61] MINIMUM FACILITY LOCATION (the same instance; its printed objective differs, see
+problem MINIMUM FACILITY LOCATION (the same instance; its printed objective differs, see
 below).
 -/
 module
@@ -42,7 +42,7 @@ This is the decision version of the metric uncapacitated facility location probl
 by Guha and Khuller, who prove it max SNP-hard: every location's demand is served by a built
 facility, at the cost of the connection times the demand, and each location is served from a
 cheapest built facility. The Crescenzi-Kann compendium lists the problem as MINIMUM FACILITY
-LOCATION [ND61] with the same instance, but prints the service cost as
+LOCATION with the same instance, but prints the service cost as
 `∑_{u ∈ F'} ∑_{v ∈ V} d(v) · c(u, v)`, which charges every location to every built facility; the
 statement follows Guha and Khuller's minimum, not that printed sum. Choosing for each location a
 built facility serving it, with the cost bound, is the same as the bound with the minimum, since
@@ -109,7 +109,7 @@ noncomputable def metricFacilityLocationDec :
   | none => false
 
 /-- **METRIC FACILITY LOCATION is NP-complete.** Source: Guha and Khuller (1999); Crescenzi and
-Kann, [ND61]. -/
+Kann, MINIMUM FACILITY LOCATION. -/
 public theorem_wanted metricFacilityLocation_npComplete :
     metricFacilityLocationDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

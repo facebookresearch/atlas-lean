@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # MINIMUM 3DNF SATISFIABILITY is NP-complete
 
 Source:
-P. Crescenzi and V. Kann, *A compendium of NP optimization problems* (2000), problem [LO5]
+P. Crescenzi and V. Kann, *A compendium of NP optimization problems* (2000), problem
 MINIMUM 3DNF SATISFIABILITY ("Instance: Set U of variables, collection C of conjunctive clauses
 of at most three literals ... Measure: Number of clauses satisfied by the truth assignment"),
 which the compendium relates to Garey and Johnson's [LO8];
@@ -90,8 +90,8 @@ noncomputable def minimum3DnfSatisfiabilityDec :
   | some i => decide (WellFormed i ∧ Minimum3DnfSatisfiabilityFeasible i)
   | none => false
 
-/-- **MINIMUM 3DNF SATISFIABILITY is NP-complete.** Source: Crescenzi and Kann, [LO5]; Garey and
-Johnson (1979), [LO8] (the case of no satisfied clause); Cook (1971). -/
+/-- **MINIMUM 3DNF SATISFIABILITY is NP-complete.** Source: Crescenzi and Kann, MINIMUM 3DNF
+SATISFIABILITY; Garey and Johnson (1979), [LO8] (the case of no satisfied clause); Cook (1971). -/
 public theorem_wanted minimum3DnfSatisfiability_npComplete :
     minimum3DnfSatisfiabilityDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
