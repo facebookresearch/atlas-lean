@@ -8,8 +8,9 @@ reviewed ATLAS pull requests, and Formal-Math never depends on ATLAS.
 
 ## Schema (version 1)
 
-Top level: `schema_version`, `upstream` (`repository`, full `commit`), `lean_toolchain`, `roots`,
-and `rows`, sorted by path, one per line. Files that never came from Formal-Math (ATLAS-only work
+Top level: `schema_version`, `upstream` (`repository`, full `commit`), `lean_toolchain` (the ATLAS
+toolchain when the sync ran; a later Lean bump does not invalidate the recorded provenance, and the
+next sync updates it), `roots`, and `rows`, sorted by path, one per line. Files that never came from Formal-Math (ATLAS-only work
 and third-party FLT content, which keeps its own header) have no row. Totals are computed by the
 sync report, not stored, so concurrent pull requests touching different rows do not conflict.
 
@@ -40,11 +41,14 @@ the Python standard library, and fails on:
 
 It does not compare diverged files' hashes, and it ignores files without a row. So a pull request
 fails only if it changes or deletes a file synced from Formal-Math, and the failure prints the
-command that records it:
+command that records it. Neither gap is an exemption: the next sync re-creates a row for every file
+that came from Formal-Math, requires a fresh rationale for any diverged file whose bytes changed,
+and writes nothing until every new difference is explained. A deleted row is also a visible
+manifest change in review.
 
 ```bash
 python3 scripts/check_formal_math_sync.py --record-divergence PATH... \
-    --rationale 'why ATLAS differs' --backport pending   # or the Formal-Math backport PR URL
+    --rationale 'why ATLAS differs' --backport pending   # or not-needed, or the backport PR URL
 python3 scripts/check_formal_math_sync.py --retire PATH...   # for a deleted synced file
 ```
 

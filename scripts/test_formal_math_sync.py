@@ -223,6 +223,10 @@ class CheckerTest(unittest.TestCase):
         self.assert_clean_then(lambda: self.set_row("CSLibExt/Diverged.lean", rationale=" "),
                                "rationale must be a non-empty string")
 
+    def test_divergence_with_undeclared_backport_status(self) -> None:
+        self.assert_clean_then(lambda: self.set_row("CSLibExt/Diverged.lean", backport="pending: maybe later"),
+                               "backport must be 'pending', 'not-needed', or an https:// URL")
+
     def test_divergence_without_backport(self) -> None:
         def mutate() -> None:
             del self.row("CSLibExt/Diverged.lean")["backport"]
@@ -331,7 +335,7 @@ class SyncTest(unittest.TestCase):
         self.assertFalse(report_path.exists(), "fail-closed run must not write the report")
 
         for bad in ({"rationale": " ", "backport": "pending"}, {"rationale": "fix", "backport": ["pending"]},
-                    {"rationale": "fix"}):
+                    {"rationale": "fix"}, {"rationale": "fix", "backport": "pending: later"}):
             bad_file = self.atlas.parent / "bad.json"
             bad_file.write_text(json.dumps({"MathlibExt/Edited.lean": bad, "MathlibExt/Gone.lean": bad}))
             self.assertEqual(self.sync("--rationales", str(bad_file))[0], 1, bad)

@@ -29,7 +29,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_formal_math_sync import (  # noqa: E402  (the checker owns the header parser)
-    MANIFEST, ROOTS, SCHEMA_VERSION, count_rows, dump_manifest, is_flt, leading_notice,
+    BACKPORT, MANIFEST, ROOTS, SCHEMA_VERSION, count_rows, dump_manifest, is_flt, leading_notice,
     library_files, sha256, split_published, upstream_body,
 )
 
@@ -159,9 +159,9 @@ def classify(text: str, up_text: str | None, versions: list[tuple[str, str]], cu
 
 
 def explained(source: object) -> bool:
-    """A divergence is explained by a non-empty rationale and backport status (the checker's rule)."""
-    return isinstance(source, dict) and all(
-        isinstance(source.get(field), str) and source[field].strip() for field in ("rationale", "backport"))
+    """A divergence is explained by a non-empty rationale and a valid backport status (the checker's rule)."""
+    return (isinstance(source, dict) and isinstance(source.get("rationale"), str) and bool(source["rationale"].strip())
+            and isinstance(source.get("backport"), str) and bool(BACKPORT.fullmatch(source["backport"])))
 
 
 def load_json(path: Path | None) -> dict:

@@ -55,7 +55,7 @@ UPSTREAM_HEADER_WORDS = re.compile(r"Copyright|Authors?:|[Ll]icen[cs]e")
 # An attribution notice names provenance or licensing; a descriptive comment is not one.
 NOTICE_WORDS = re.compile(r"Copyright|[Ll]icen[cs]e|[Aa]ttribution|Authors?:|[Pp]orted from|[Aa]dapted from|Portions")
 FLT_MARKERS = ("Anthropic, PBC", "flt-regular authors")
-BACKPORT = re.compile(r"pending|not-needed|https://\S+")
+BACKPORT = re.compile(r"pending|not-needed|https://\S+")  # the formal-math backport PR, once it exists
 
 
 def sha256(data: bytes | str) -> str:
@@ -214,6 +214,8 @@ def field_problems(row: dict) -> list[str]:
     for field in ("notice", "rationale", "backport"):
         if field in row and not (isinstance(row[field], str) and row[field].strip()):
             problems.append(f"{path}: {field} must be a non-empty string")
+    if isinstance(row.get("backport"), str) and row["backport"].strip() and not BACKPORT.fullmatch(row["backport"]):
+        problems.append(f"{path}: backport must be 'pending', 'not-needed', or an https:// URL")
     if "notice" in row and disposition not in ("attributed", "behind"):
         problems.append(f"{path}: only attributed or behind rows record a notice")
     if "header" in row and (disposition not in ("identical", "behind") or row["header"] != "upstream"):
