@@ -66,8 +66,9 @@ and `C_i = f i + p`. With integer data, starting every step as early as the rele
 the orders on the machines and on the robot allow gives an integral schedule with no later
 completion times, so integer start times lose no generality. Membership in NP: some optimal
 schedule starts every step by `max_i r_i + ∑_i (3p + t_i1 + t_i2)`, so start times form a
-certificate of polynomial size. Well-formedness asks for `p > 0`. Binary encoding of all numbers
-(the problem is NP-hard in the strong sense).
+certificate of polynomial size. Well-formedness asks for at least one job, so that `C_max` is a
+maximum over a nonempty set, and `p > 0`. Binary encoding of all numbers (the problem is NP-hard
+in the strong sense).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -117,8 +118,10 @@ def secondTransport (i : RobotFlowShopThreeMachinesEqualReleaseMakespanInstance)
 def releaseDate (i : RobotFlowShopThreeMachinesEqualReleaseMakespanInstance) (j : Job i) : ℕ :=
   (i.1.get j).2.2
 
-/-- Well-formedness: the processing time `p` is positive. -/
-def WellFormed (i : RobotFlowShopThreeMachinesEqualReleaseMakespanInstance) : Prop := 0 < i.2.1
+/-- Well-formedness: there is at least one job, so that `C_max` is a maximum over a nonempty set,
+and the processing time `p` is positive. -/
+def WellFormed (i : RobotFlowShopThreeMachinesEqualReleaseMakespanInstance) : Prop :=
+  i.1 ≠ [] ∧ 0 < i.2.1
 
 /-- Some single-robot schedule with operations of length `p` starts every job on `M_1` no earlier
 than its release date and completes every job by `K` (`C_j = f j + p`). -/
