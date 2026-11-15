@@ -53,8 +53,9 @@ a disconnected `(V, E')` has infinite diameter). Walks are Mathlib `SimpleGraph.
 length of a walk is the sum of `l(e)` over the edges it traverses (`walkLength`). The graph is a
 simple edge list with weights and lengths (an entry `(u, v, w, l)` is the edge `{u, v}`), as in
 `BoundedDiameterSpanningTreeWanted`, and `E'` is a sublist of it. Vertices are `Fin n`; when
-`n` exceeds `|E| + 1` the graph has an isolated vertex and every instance is a no-instance, so
-the binary `n` does not make certificates long. Numbers use the binary encoding.
+`n` exceeds `|E| + 1` the graph is disconnected (a connected graph on `n` vertices has at least
+`n - 1` edges) and every instance is a no-instance, so the binary `n` does not make certificates
+long. Numbers use the binary encoding.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
