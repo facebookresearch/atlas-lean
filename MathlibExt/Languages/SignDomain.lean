@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Data.Finset.Basic
 public import Mathlib.Data.Int.Basic
+public import Mathlib.Algebra.Order.Ring.Basic
 
 /-!
 # Sign domain for abstract interpretation
@@ -110,13 +111,13 @@ theorem signOf_mul_mem (a b : ℤ) :
   rcases lt_trichotomy a 0 with ha | ha | ha
   · rcases lt_trichotomy b 0 with hb | hb | hb
     · rw [signOf_of_neg ha, signOf_of_neg hb,
-        signOf_of_pos (show 0 < a * b by exact mul_pos_of_neg_of_neg ha hb)]
+        signOf_of_pos (show 0 < a * b by exact Int.mul_pos_iff.mpr (Or.inr ⟨ha, hb⟩))]
       decide
     · rw [signOf_of_neg ha, signOf_of_eq_zero hb,
         signOf_of_eq_zero (show a * b = 0 by simp [hb])]
       decide
     · rw [signOf_of_neg ha, signOf_of_pos hb,
-        signOf_of_neg (show a * b < 0 by exact mul_neg_of_neg_of_pos ha hb)]
+        signOf_of_neg (show a * b < 0 by exact Int.mul_neg_iff.mpr (Or.inr ⟨ha, hb⟩))]
       decide
   · rcases lt_trichotomy b 0 with hb | hb | hb
     · rw [signOf_of_eq_zero ha, signOf_of_neg hb,
@@ -130,13 +131,13 @@ theorem signOf_mul_mem (a b : ℤ) :
       decide
   · rcases lt_trichotomy b 0 with hb | hb | hb
     · rw [signOf_of_pos ha, signOf_of_neg hb,
-        signOf_of_neg (show a * b < 0 by exact mul_neg_of_pos_of_neg ha hb)]
+        signOf_of_neg (show a * b < 0 by exact Int.mul_neg_iff.mpr (Or.inl ⟨ha, hb⟩))]
       decide
     · rw [signOf_of_pos ha, signOf_of_eq_zero hb,
         signOf_of_eq_zero (show a * b = 0 by simp [hb])]
       decide
     · rw [signOf_of_pos ha, signOf_of_pos hb,
-        signOf_of_pos (show 0 < a * b by exact mul_pos ha hb)]
+        signOf_of_pos (show 0 < a * b by exact Int.mul_pos_iff.mpr (Or.inl ⟨ha, hb⟩))]
       decide
 
 end
