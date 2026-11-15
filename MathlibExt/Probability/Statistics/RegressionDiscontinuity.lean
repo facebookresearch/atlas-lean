@@ -71,7 +71,7 @@ noncomputable def sharpRDMean (c : ℝ) (m₀ m₁ : ℝ → ℝ) (x : ℝ) : �
 /-- In a sharp RD design (treated event `{X ≥ c}`), `sharpRDMean c m₀ m₁ ∘ X` is a version of the
 conditional expectation of the observed outcome given `X`. -/
 theorem condExp_observed_ae_eq_sharpRDMean {Ω : Type*} {mΩ : MeasurableSpace Ω}
-    {μ : Measure Ω} [IsFiniteMeasure μ] {X : Ω → ℝ} (hX : Measurable X) (c : ℝ)
+    {μ : Measure Ω} {X : Ω → ℝ} (hX : Measurable X) (c : ℝ)
     {Y₀ Y₁ : Ω → ℝ} (hY₀ : Integrable Y₀ μ) (hY₁ : Integrable Y₁ μ) {m₀ m₁ : ℝ → ℝ}
     (h₀ : μ[Y₀ | MeasurableSpace.comap X inferInstance] =ᵐ[μ] m₀ ∘ X)
     (h₁ : μ[Y₁ | MeasurableSpace.comap X inferInstance] =ᵐ[μ] m₁ ∘ X) :

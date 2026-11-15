@@ -63,7 +63,7 @@ independence, the joint observed-data likelihood `L1` factorizes into a
 missingness factor depending only on `ψ` and a full-data factor depending
 only on `θ`. -/
 theorem likelihood_factorization
-  {Y Θ Ψ M O : Type*} [MeasurableSpace Y] [MeasurableSingletonClass Y]
+  {Y Θ Ψ M O : Type*} [MeasurableSpace Y]
   (F : ProbabilityTheory.NormalizedDensityFamily Y Θ
     MeasureTheory.Measure.count)
   (g : Ψ → Y → PMF M) (o : Y → M → O)

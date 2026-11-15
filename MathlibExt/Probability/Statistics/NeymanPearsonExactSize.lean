@@ -119,7 +119,7 @@ power at least that of every test of null size at most `α`.
 Source: J. Neyman and E. S. Pearson (1933), DOI `10.1098/rsta.1933.0009`; E. L. Lehmann and
 J. P. Romano, *Testing Statistical Hypotheses*, 3rd ed., Theorem 3.2.1 (i)–(ii). -/
 theorem exists_exact_size_most_powerful_finite
-    {Ω : Type*} [Fintype Ω] [Nonempty Ω]
+    {Ω : Type*} [Fintype Ω]
     (p q : Ω → ℝ) (hp_nonneg : ∀ x, 0 ≤ p x) (hq_nonneg : ∀ x, 0 ≤ q x)
     (hp_sum : ∑ x, p x = 1) (hq_sum : ∑ x, q x = 1)
     (α : ℝ) (hα0 : 0 < α) (hα1 : α < 1) :

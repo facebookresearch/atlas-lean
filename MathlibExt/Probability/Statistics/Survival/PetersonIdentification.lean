@@ -131,7 +131,7 @@ theorem obsFailMeasure_apply (P : Measure (ℝ × Bool)) {A : Set ℝ} (hA : Mea
   simp
 
 /-- **At-risk mass under independent censoring**: `P(X ≥ s) = F[s, ∞) G[s, ∞)`. -/
-theorem censoredObsLaw_apply_Ici_prod_univ (F G : Measure ℝ) [SFinite F] [SFinite G] (s : ℝ) :
+theorem censoredObsLaw_apply_Ici_prod_univ (F G : Measure ℝ) [SFinite G] (s : ℝ) :
     censoredObsLaw F G (Ici s ×ˢ univ) = F (Ici s) * G (Ici s) := by
   have hpre : censoredObsMap ⁻¹' (Ici s ×ˢ univ) = Ici s ×ˢ Ici s := by
     ext ⟨t, c⟩

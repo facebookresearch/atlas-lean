@@ -886,7 +886,7 @@ open MeasureTheory in
 /-- Expectation commutes with the least-squares intercept, for a probability measure and
 integrable responses. -/
 theorem integral_olsIntercept {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω}
-    [IsProbabilityMeasure μ] {ι : Type*} [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ}
+    {ι : Type*} [Fintype ι] (x : ι → ℝ) {Y : ι → Ω → ℝ}
     (hY : ∀ i, Integrable (Y i) μ) :
     ∫ ω, olsIntercept x (fun i => Y i ω) ∂μ = olsIntercept x fun i => ∫ ω, Y i ω ∂μ := by
   have hm : Integrable (fun ω => sampleMean fun i => Y i ω) μ := by
