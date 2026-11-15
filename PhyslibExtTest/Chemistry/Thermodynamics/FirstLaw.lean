@@ -25,8 +25,10 @@ import Mathlib.Tactic.NormNum
 # Tests for the first-law module
 
 Instances of each result with computed values, the reference-independence of internal-energy
-differences, and boundary cases: Lean's junk values outside the physical domain, equal volumes,
-and an inadmissible external pressure for which the work comparison fails.
+differences, and boundary cases: Lean's junk values outside the physical domain, a heat loop
+through a nonpositive temperature, an adiabatic coefficient other than `n * R` that only the
+algebraic pressure identity accepts, equal volumes, and an inadmissible external pressure for
+which the work comparison fails.
 
 -/
 
@@ -69,6 +71,13 @@ example : pathRightUp (heatCoeffV 1 1) (heatCoeffT 1)
     ≠ pathUpRight (heatCoeffV 1 1) (heatCoeffT 1)
       1 2 1 2 :=
   heat_twoPaths_differ 1 1 1 1 2 1 2
+    zero_lt_one zero_lt_one (by norm_num) zero_lt_one (by norm_num)
+
+/-- The path-dependence result also holds outside the physical domain, as a fact about the
+1-form: this loop passes through the nonphysical temperature `T₁ = -1`. -/
+example : pathRightUp (heatCoeffV 1 1) (heatCoeffT 1) 1 2 (-1) 1
+    ≠ pathUpRight (heatCoeffV 1 1) (heatCoeffT 1) 1 2 (-1) 1 :=
+  heat_twoPaths_differ 1 1 1 (-1) 1 1 2
     zero_lt_one zero_lt_one (by norm_num) zero_lt_one (by norm_num)
 
 -- Energy path independence instance: `U = V + T` on `[1, 2] × [1, 2]`.
@@ -176,18 +185,45 @@ example : (1 : ℝ) * Real.log ((1 / (1 + 1)) / (1 / (1 + 0))) +
 exclude the process above. -/
 example : ¬ ∀ t : ℝ, 0 < 1 + t := fun h => by linarith [h (-2)]
 
-/-- The `p * V ^ γ` invariant for `γ = 2`, `Cv = nR = n = R = 1` between the states
+/-- The `p * V ^ γ` invariant for `γ = 2`, `Cv = n = R = 1` between the states
 `(T, V) = (1, e)` and `(e, 1)`. -/
 example : idealGasP 1 1 (Real.exp 1) 1 * (1:ℝ) ^ (2:ℝ)
     = idealGasP 1 1 1 (Real.exp 1) * (Real.exp 1) ^ (2:ℝ) := by
-  have had : (1:ℝ) * Real.log (Real.exp 1 / 1) + 1 * Real.log (1 / Real.exp 1)
+  have had : (1:ℝ) * Real.log (Real.exp 1 / 1) + 1 * 1 * Real.log (1 / Real.exp 1)
       = 0 := by
     rw [div_one, one_div, Real.log_inv, Real.log_exp]
     norm_num
-  have hγ : (2:ℝ) - 1 = 1 / 1 := by norm_num
-  exact adiabatic_invariant_pV 1 1 1 (Real.exp 1) (Real.exp 1) 1 1 1 2
+  have hγ : (2:ℝ) - 1 = 1 * 1 / 1 := by norm_num
+  exact adiabatic_invariant_pV 1 1 1 (Real.exp 1) (Real.exp 1) 1 1 2
     zero_lt_one zero_lt_one zero_lt_one (Real.exp_pos 1) (Real.exp_pos 1)
     zero_lt_one one_ne_zero hγ had
+
+/-- The pressure ratio for the same gas (`Cv = n = R = 1`, `γ = 2`) compressed reversibly and
+adiabatically from `(T, V) = (1, 2)` to `(2, 1)`: the pressure rises by `2 ^ 2 = 4`. -/
+example : idealGasP 1 1 2 1 / idealGasP 1 1 1 2 = 4 := by
+  have had : (1:ℝ) * Real.log (2 / 1) + 1 * 1 * Real.log (1 / 2) = 0 := by
+    rw [div_one, one_div, Real.log_inv]
+    ring
+  rw [adiabatic_invariant_ratio_p 1 1 1 2 2 1 1 2 zero_lt_one zero_lt_one zero_lt_one
+    two_pos two_pos zero_lt_one one_ne_zero (by norm_num) had]
+  norm_num
+
+/-- The algebraic identity accepts a coefficient `k = 2` that is not the `n * R = 1` of the
+pressure model (`Cv = 1`, so `γ = 3`): the states `(T, V) = (1, 2)` and `(4, 1)` satisfy its
+hypotheses. -/
+example : idealGasP 1 1 4 1 * (1:ℝ) ^ (3:ℝ) = idealGasP 1 1 1 2 * (2:ℝ) ^ (3:ℝ) := by
+  have had : (1:ℝ) * Real.log (4 / 1) + 2 * Real.log (1 / 2) = 0 := by
+    rw [div_one, one_div, Real.log_inv, show (4:ℝ) = 2 ^ 2 by norm_num, Real.log_pow]
+    push_cast
+    ring
+  exact idealGasP_mul_rpow_of_log_relation 1 1 1 4 2 1 1 2 3
+    zero_lt_one zero_lt_one zero_lt_one (by norm_num) two_pos zero_lt_one one_ne_zero
+    (by norm_num) had
+
+/-- The physical invariant ties `γ` to the gas: for `Cv = n = R = 1` its hypothesis
+`γ - 1 = n * R / Cv` holds only for `γ = 2`, so it rejects the `γ = 3` of the example above. -/
+example (γ : ℝ) (hγ : γ - 1 = 1 * 1 / 1) : γ = 2 := by
+  linarith
 
 /-- The `γ` chain: `γ = Cp / Cv = 5 / 3` with `Cp - Cv = nR = 2` gives `γ - 1 = nR / Cv`. -/
 example (γ : ℝ) (hγ : γ = heatCapacityRatio 5 3) : γ - 1 = 2 / 3 :=

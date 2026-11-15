@@ -38,9 +38,12 @@ The model is the ideal gas `p * V = n * R * T` with constant heat capacities. It
 energy is `U(T) = U₀ + Cv * (T - T₀)` relative to an explicit reference state `(T₀, U₀)`: a
 constant `Cv` fixes only energy differences. Reversible paths are quasi-static, with the
 external pressure equal to the gas pressure. Quantities are real numbers in consistent units,
-and physical states have `n, R, T, V > 0`. Some definitions are total functions that return
-Lean's junk values outside that domain (division by zero, the logarithm of a nonpositive
-number); their docstrings say so, and the results assume the physical domain.
+and physical values are positive: `n, R, T, V > 0` and `Cv > 0`. Some definitions are total
+functions that return Lean's junk values outside that domain (division by zero, the logarithm
+of a nonpositive number); their docstrings say so. Each result assumes only the hypotheses its
+proof uses. Where that leaves out part of the physical domain, the result's docstring or section
+note says which part; the result then also holds outside the physical domain, where it is an
+identity about the model's formulas rather than a statement about a gas.
 
 Proved here: the heat 1-form `δq = p dV + Cv dT` has a nonzero loop integral, while an exact
 differential has none; reversible isothermal work is `-(n * R * T * log (V₂ / V₁))`; along a
@@ -55,6 +58,8 @@ most the reversible work in magnitude.
 - `exact_loopIntegral_eq_zero`, `exact_twoPaths_equal` : an exact differential does not.
 - `isothermal_work` : the reversible isothermal work of an ideal gas.
 - `adiabatic_invariant_TV`, `adiabatic_invariant_pV` : the reversible adiabatic invariants.
+- `idealGasP_ratio_of_log_relation`, `idealGasP_mul_rpow_of_log_relation` : the algebraic
+  identities behind the pressure invariants, for an arbitrary coefficient in place of `n * R`.
 - `heatCapacity_difference`, `molarHeatCapacity_difference` : Mayer's relation, total and molar.
 - `hasDerivAt_enthalpyOf_internalEnergy` : `Cp = Cv + nR` for the constant-`Cv` ideal gas.
 - `irreversible_le_reversible` : `|w_irr| ≤ |w_rev|` for admissible external pressures.
@@ -108,13 +113,14 @@ an explicit parameter; in the ideal-gas model `U` does not depend on `V`. This i
 def internalEnergy (Cv U₀ T₀ T : ℝ) : ℝ := U₀ + Cv * (T - T₀)
 
 /-- The constant-`Cv` internal energy changes by `Cv * (T₂ - T₁)`, whatever the reference
-state. -/
+state. It is an identity of the model formula and holds for all real `Cv` and temperatures. -/
 lemma internalEnergy_sub (Cv U₀ T₀ T₁ T₂ : ℝ) :
     internalEnergy Cv U₀ T₀ T₂ - internalEnergy Cv U₀ T₀ T₁ = Cv * (T₂ - T₁) := by
   simp only [internalEnergy]
   ring
 
-/-- The constant-`Cv` internal energy has temperature derivative `Cv`. -/
+/-- The constant-`Cv` internal energy has temperature derivative `Cv`, at every real `T` and for
+every real `Cv`. -/
 lemma hasDerivAt_internalEnergy (Cv U₀ T₀ T : ℝ) :
     HasDerivAt (internalEnergy Cv U₀ T₀) Cv T :=
   EarthScience.internalEnergy_hasDerivAt T
@@ -128,7 +134,9 @@ def enthalpyOf (U : ℝ → ℝ) (nR : ℝ) : ℝ → ℝ := fun T => U T + nR *
 ## B. Heat and internal energy as 1-forms
 
 For a reversible process of an ideal gas, `δq = dU - δw = Cv dT + p dV`. Line integrals of
-`P dV + Q dT` are taken along axis-aligned paths in the `(V, T)` plane.
+`P dV + Q dT` are taken along axis-aligned paths in the `(V, T)` plane. The heat results below
+use positive volumes but no sign of `T` or `Cv`: they hold for all real temperatures and `Cv`,
+and their physical reading is the case `T > 0`, `Cv > 0`.
 
 -/
 
@@ -241,7 +249,8 @@ lemma exact_twoPaths_equal (U dUdV dUdT : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T
   rw [hloop] at hsub
   exact sub_eq_zero.mp hsub.symm
 
-/-- Closed rectangular loop integral of the heat 1-form in closed form. -/
+/-- Closed rectangular loop integral of the heat 1-form in closed form. Only `0 < V₁ ≤ V₂` is
+used: the formula holds for all real `n`, `R`, `Cv`, `T₁` and `T₂`. -/
 lemma heat_loopIntegral_eq (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hV₁ : 0 < V₁)
     (hV : V₁ ≤ V₂) :
     rectLoopIntegral (heatCoeffV n R) (heatCoeffT Cv) V₁ V₂ T₁ T₂
@@ -264,7 +273,11 @@ lemma heat_loopIntegral_eq (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hV₁ : 0 < V₁)
   rw [eB, eT, eR, eL]
   ring
 
-/-- The heat 1-form is path dependent: its rectangular loop integral is nonzero. -/
+/-- The heat 1-form is path dependent: its rectangular loop integral is nonzero. It assumes
+nothing about the temperatures beyond `T₁ ≠ T₂` and nothing about `Cv`, so it also holds for
+nonpositive temperatures outside the physical domain, where it is a fact about the 1-form
+`n * R * T / V dV + Cv dT` rather than about a gas. The physical heat-path statement is the
+case `0 < T₁`, `0 < T₂`, `0 < Cv`. -/
 lemma heat_pathDependent (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hn : 0 < n) (hR : 0 < R)
     (hT : T₁ ≠ T₂) (hV₁ : 0 < V₁) (hV : V₁ < V₂) :
     rectLoopIntegral (heatCoeffV n R) (heatCoeffT Cv) V₁ V₂ T₁ T₂ ≠ 0 := by
@@ -277,7 +290,10 @@ lemma heat_pathDependent (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hn : 0 < n) (hR : 0
   exact mul_ne_zero
     (mul_ne_zero (mul_ne_zero (ne_of_gt hn) (ne_of_gt hR)) (sub_ne_zero.mpr hT)) hlog
 
-/-- Heat is path dependent: the two spanning path integrals differ. -/
+/-- Heat is path dependent: the two spanning path integrals differ. Like `heat_pathDependent`,
+it holds for all real `T₁ ≠ T₂` and every `Cv`, nonpositive temperatures included, where it
+describes the 1-form rather than a gas; the physical statement is the case `0 < T₁`, `0 < T₂`,
+`0 < Cv`. -/
 lemma heat_twoPaths_differ (n R Cv T₁ T₂ V₁ V₂ : ℝ) (hn : 0 < n) (hR : 0 < R)
     (hT : T₁ ≠ T₂) (hV₁ : 0 < V₁) (hV : V₁ < V₂) :
     pathRightUp (heatCoeffV n R) (heatCoeffT Cv) V₁ V₂ T₁ T₂
@@ -303,7 +319,8 @@ noncomputable def isothermalWorkOn (n R T V₁ V₂ : ℝ) : ℝ :=
 
 /-- Reversible isothermal ideal-gas work done on the system.
 The ideal-gas equation and reversibility enter as the explicit integrand
-`-p dV` with `p = n * R * T / V` at constant `T`. -/
+`-p dV` with `p = n * R * T / V` at constant `T`. Only the positive volumes are used: the
+identity holds for all real `n`, `R` and `T`, and its physical case is `n, R, T > 0`. -/
 lemma isothermal_work (n R T V₁ V₂ : ℝ) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂) :
     (∫ V in V₁..V₂, -(idealGasP n R T V) ∂MeasureTheory.volume)
       = isothermalWorkOn n R T V₁ V₂ := by
@@ -333,11 +350,21 @@ lemma isothermal_work (n R T V₁ V₂ : ℝ) (hV₁ : 0 < V₁) (hV₂ : 0 < V�
 
 Along a reversible adiabat of the constant-`Cv` ideal gas, `dU = δw` gives
 `Cv * dT = -p dV = -n * R * T * dV / V`, the separated equation
-`Cv * dT / T + nR * dV / V = 0`. It is a hypothesis of the results below.
+`Cv * dT / T + n * R * dV / V = 0`. It is a hypothesis of the results below. The results about
+`T` and `V` alone write the coefficient `n * R` as one parameter `nR`. The pressure invariants
+`adiabatic_invariant_ratio_p` and `adiabatic_invariant_pV` use the `n * R` of `idealGasP n R`
+itself, so the adiabatic equation belongs to the gas whose pressure they state; their algebraic
+forms `idealGasP_ratio_of_log_relation` and `idealGasP_mul_rpow_of_log_relation` accept any
+coefficient.
+
+Physical gases have `0 < Cv` and `0 < nR`. The results below need at most `Cv ≠ 0`, and those
+with a parameter `nR` hold for every real `nR`; outside the physical domain they are identities
+about the formulas.
 
 -/
 
-/-- From `Cp - Cv = nR` and `γ = Cp / Cv`: `γ - 1 = nR / Cv`. -/
+/-- From `Cp - Cv = nR` and `γ = Cp / Cv`: `γ - 1 = nR / Cv`. An algebraic identity: it needs
+only `Cv ≠ 0`. -/
 lemma gamma_sub_one (Cp Cv nR γ : ℝ) (hCv : Cv ≠ 0)
     (hγ : γ = heatCapacityRatio Cp Cv) (hCpCv : Cp - Cv = nR) :
     γ - 1 = nR / Cv := by
@@ -455,15 +482,19 @@ lemma adiabatic_invariant_TV (T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
   field_simp at hratio ⊢
   linear_combination hratio
 
-/-- Reversible adiabatic invariant in ratio form: `p₂ / p₁ = (V₁ / V₂) ^ γ`. -/
-lemma adiabatic_invariant_ratio_p (n R T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
+/-- Pressure ratio of the ideal-gas model `idealGasP n R` between two states related by
+`Cv * log (T₂ / T₁) + k * log (V₂ / V₁) = 0` with `γ - 1 = k / Cv`, for an arbitrary
+coefficient `k`: `p₂ / p₁ = (V₁ / V₂) ^ γ`. This is an algebraic identity, not the physical
+adiabat: `n * R` cancels from the pressure ratio, so `k` need not be the `n * R` of the
+pressure model. The physical statement, with `k = n * R`, is `adiabatic_invariant_ratio_p`. -/
+lemma idealGasP_ratio_of_log_relation (n R T₁ T₂ V₁ V₂ Cv k γ : ℝ)
     (hn : 0 < n) (hR : 0 < R)
     (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂)
     (hCv : Cv ≠ 0)
-    (hγ : γ - 1 = nR / Cv)
-    (had : Cv * Real.log (T₂ / T₁) + nR * Real.log (V₂ / V₁) = 0) :
+    (hγ : γ - 1 = k / Cv)
+    (had : Cv * Real.log (T₂ / T₁) + k * Real.log (V₂ / V₁) = 0) :
     idealGasP n R T₂ V₂ / idealGasP n R T₁ V₁ = (V₁ / V₂) ^ γ := by
-  have hratio := adiabatic_invariant_ratio_T T₁ T₂ V₁ V₂ Cv nR γ
+  have hratio := adiabatic_invariant_ratio_T T₁ T₂ V₁ V₂ Cv k γ
     hT₁ hT₂ hV₁ hV₂ hCv hγ had
   have hVpos : 0 < V₁ / V₂ := div_pos hV₁ hV₂
   have hsplit : (V₁ / V₂) ^ ((γ - 1) + 1)
@@ -482,15 +513,33 @@ lemma adiabatic_invariant_ratio_p (n R T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
     div_ne_zero (mul_ne_zero (mul_ne_zero hn' hR') hT₁') hV₁'
   field_simp
 
-/-- Reversible adiabatic invariant: `p * V ^ γ` is constant across states. -/
-lemma adiabatic_invariant_pV (n R T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
+/-- Reversible adiabatic invariant in ratio form: `p₂ / p₁ = (V₁ / V₂) ^ γ` for the ideal gas
+`idealGasP n R`. The relation `had`, which `adiabatic_path_integrated` gives with `nR = n * R`,
+and `γ - 1 = n * R / Cv` carry the gas's own coefficient `n * R`. It needs only `Cv ≠ 0`; the
+physical case is `0 < Cv`. -/
+lemma adiabatic_invariant_ratio_p (n R T₁ T₂ V₁ V₂ Cv γ : ℝ)
     (hn : 0 < n) (hR : 0 < R)
     (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂)
     (hCv : Cv ≠ 0)
-    (hγ : γ - 1 = nR / Cv)
-    (had : Cv * Real.log (T₂ / T₁) + nR * Real.log (V₂ / V₁) = 0) :
+    (hγ : γ - 1 = n * R / Cv)
+    (had : Cv * Real.log (T₂ / T₁) + n * R * Real.log (V₂ / V₁) = 0) :
+    idealGasP n R T₂ V₂ / idealGasP n R T₁ V₁ = (V₁ / V₂) ^ γ :=
+  idealGasP_ratio_of_log_relation n R T₁ T₂ V₁ V₂ Cv (n * R) γ
+    hn hR hT₁ hT₂ hV₁ hV₂ hCv hγ had
+
+/-- The ideal-gas `p * V ^ γ` takes equal values at two states related by
+`Cv * log (T₂ / T₁) + k * log (V₂ / V₁) = 0` with `γ - 1 = k / Cv`, for an arbitrary
+coefficient `k`. Like `idealGasP_ratio_of_log_relation`, this is an algebraic identity: `k`
+need not be the `n * R` of `idealGasP n R`. The physical statement, with `k = n * R`, is
+`adiabatic_invariant_pV`. -/
+lemma idealGasP_mul_rpow_of_log_relation (n R T₁ T₂ V₁ V₂ Cv k γ : ℝ)
+    (hn : 0 < n) (hR : 0 < R)
+    (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂)
+    (hCv : Cv ≠ 0)
+    (hγ : γ - 1 = k / Cv)
+    (had : Cv * Real.log (T₂ / T₁) + k * Real.log (V₂ / V₁) = 0) :
     idealGasP n R T₂ V₂ * V₂ ^ γ = idealGasP n R T₁ V₁ * V₁ ^ γ := by
-  have hratio := adiabatic_invariant_ratio_p n R T₁ T₂ V₁ V₂ Cv nR γ
+  have hratio := idealGasP_ratio_of_log_relation n R T₁ T₂ V₁ V₂ Cv k γ
     hn hR hT₁ hT₂ hV₁ hV₂ hCv hγ had
   have hdiv : (V₁ / V₂) ^ γ = V₁ ^ γ / V₂ ^ γ :=
     Real.div_rpow (le_of_lt hV₁) (le_of_lt hV₂) γ
@@ -504,9 +553,27 @@ lemma adiabatic_invariant_pV (n R T₁ T₂ V₁ V₂ Cv nR γ : ℝ)
   field_simp at hratio ⊢
   linear_combination hratio
 
+/-- Reversible adiabatic invariant: `p * V ^ γ` is constant across states of the ideal gas
+`idealGasP n R`. The relation `had`, which `adiabatic_path_integrated` gives with `nR = n * R`,
+and `γ - 1 = n * R / Cv` carry the gas's own coefficient `n * R`. It needs only `Cv ≠ 0`; the
+physical case is `0 < Cv`. -/
+lemma adiabatic_invariant_pV (n R T₁ T₂ V₁ V₂ Cv γ : ℝ)
+    (hn : 0 < n) (hR : 0 < R)
+    (hT₁ : 0 < T₁) (hT₂ : 0 < T₂) (hV₁ : 0 < V₁) (hV₂ : 0 < V₂)
+    (hCv : Cv ≠ 0)
+    (hγ : γ - 1 = n * R / Cv)
+    (had : Cv * Real.log (T₂ / T₁) + n * R * Real.log (V₂ / V₁) = 0) :
+    idealGasP n R T₂ V₂ * V₂ ^ γ = idealGasP n R T₁ V₁ * V₁ ^ γ :=
+  idealGasP_mul_rpow_of_log_relation n R T₁ T₂ V₁ V₂ Cv (n * R) γ
+    hn hR hT₁ hT₂ hV₁ hV₂ hCv hγ had
+
 /-!
 
 ## E. Heat capacities
+
+These relations are identities about derivatives. They hold at every real temperature `T` and
+for all real `Cv` and `nR` (in the molar form, every `n ≠ 0` and every real `R`), not only in
+the physical domain where these quantities are positive.
 
 -/
 
