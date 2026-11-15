@@ -56,7 +56,9 @@ intersection before the last one, which must not be the neighbor of `g` in the d
 beams do not intersect: the intersections that beams pass through (all but the last point of
 each beam) are pairwise distinct, within one beam and across beams; together with the dot rule
 this also keeps the segments of different beams apart. Connectivity is
-`SimpleGraph.Preconnected` of the graph on the fireflies joining `f` and `tgt f`.
+`SimpleGraph.Connected` of the graph on the fireflies joining `f` and `tgt f`, so an instance
+has at least one firefly. An unnumbered firefly carries `(false, 0)`, so every instance has one
+encoding.
 
 Grid dimensions are given in unary (`W` and `H` are the lengths of lists of `true`s): a beam
 can follow the grid lines through every intersection, so a solution has size proportional to
@@ -97,10 +99,12 @@ def bends (P : List (ℕ × ℕ)) : ℕ :=
       (P.getD j (0, 0)).2 + (P.getD (j + 2) (0, 0)).2 ≠ 2 * (P.getD (j + 1) (0, 0)).2).length
 
 /-- Well-formedness: the unary dimensions are lists of `true`s, every firefly lies on the grid
-with a dot direction below `4`, and no two fireflies share an intersection. -/
+with a dot direction below `4` and, if unnumbered, the number `0`, and no two fireflies share an
+intersection. -/
 def WellFormed (i : HotaruBeamInstance) : Prop :=
   (∀ b ∈ i.1, b = true) ∧ (∀ b ∈ i.2.1, b = true) ∧
-    (∀ F ∈ i.2.2, F.1.1 < i.1.length ∧ F.1.2 < i.2.1.length ∧ F.2.1 < 4) ∧
+    (∀ F ∈ i.2.2, F.1.1 < i.1.length ∧ F.1.2 < i.2.1.length ∧ F.2.1 < 4 ∧
+      (F.2.2.1 = false → F.2.2.2 = 0)) ∧
     (i.2.2.map fun F => F.1).Nodup
 
 /-- `B` is a legal beam for the firefly `F` that ends at the firefly `G`. -/
@@ -119,13 +123,13 @@ def BeamOK (i : HotaruBeamInstance) (F G : Firefly) (B : List (ℕ × ℕ)) : Pr
     (F.2.2.1 = true → bends (F.1 :: B) = F.2.2.2)
 
 /-- Every firefly `f` has a beam `beam f` ending at `tgt f`, the beams do not intersect, and the
-beams connect all fireflies. -/
+beams connect all fireflies into one component. -/
 def HotaruBeamFeasible (i : HotaruBeamInstance) : Prop :=
   ∃ (beam : Fin i.2.2.length → List (ℕ × ℕ)) (tgt : Fin i.2.2.length → Fin i.2.2.length),
     (∀ f, BeamOK i i.2.2[f] i.2.2[tgt f] (beam f)) ∧
     (∀ f f', ∀ j < (beam f).length - 1, ∀ j' < (beam f').length - 1,
       (beam f).getD j (0, 0) = (beam f').getD j' (0, 0) → f = f' ∧ j = j') ∧
-    (SimpleGraph.fromRel fun f g => tgt f = g).Preconnected
+    (SimpleGraph.fromRel fun f g => tgt f = g).Connected
 
 open Classical in
 /-- HOTARU BEAM as a decision problem over bitstrings. -/
