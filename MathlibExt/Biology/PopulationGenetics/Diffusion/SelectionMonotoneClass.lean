@@ -53,6 +53,9 @@ for `σ ≠ 0` nor a selection semigroup or transition kernel (via Girsanov's th
 Feller semigroup of `L_σ`) is formalized. The martingale-problem field identifies the process
 and supplies path continuity and adaptedness; the Markov field, which ties `X` to `κ`, is what
 the monotone-class arguments use. At `σ = 0` both are discharged for the neutral realization.
+The only `σ ≠ 0` instance available is degenerate: the process frozen at the boundary state
+`0`, with identity kernels (`MathlibExtTest`), where nothing ties `κ` to the selection dynamics
+in the interior of `[0, 1]`.
 
 ## Method
 
@@ -74,9 +77,19 @@ approximation `τₙ = ⌈2ⁿ τ⌉ / 2ⁿ` of `NeutralStrongMarkov`, using onl
   `IsWrightFisherSolution` (`Diffusion.KimuraFixationProcess`),
   `isWrightFisherSolution_zero_modifiedProcess`, `condExp_modifiedProcess_eq_wfSemigroup`
   (`NeutralMartingaleProblem.Markov`).
-* Adapted here from private proofs: the dyadic approximation of stopping times
-  (`Diffusion.NeutralStrongMarkov`) and the kernel, joint and multi-time laws
-  (`Diffusion.NeutralMonotoneClass`), for a general kernel family.
+* Copied and generalized from `neutralKernel` to a kernel family `κ`, about 475 lines:
+  - from `Diffusion.NeutralMonotoneClass`, the public `rawMeasure_cylinder`,
+    `measurable_rawMeasure`, `wfPathKernel` (here `pathMeasure_cylinder`,
+    `measurable_pathMeasure`, `pathKernel`) and the public
+    `IsNeutralMarkovFamily.map_restrict_eq_comp`, `.lintegral_step`,
+    `.map_restrict_prod_eq_compProd`, `.map_restrict_finite_eq_comp`,
+    `.map_restrict_path_eq_comp` (here on `IsKernelMarkovFamily`), copied because they are fixed
+    to `neutralKernel`, together with their private helpers;
+  - from `Diffusion.NeutralStrongMarkov`, the private dyadic approximation of stopping times,
+    with `wfSemigroup t g` replaced by an arbitrary continuous `P t g`.
+  The post-`τ` Markov family and the three strong Markov theorems follow the proofs of
+  `Diffusion.NeutralMonotoneClass` step for step. Re-deriving the neutral API as the
+  `κ = neutralKernel` case of this file is a filed follow-up.
 
 ## References
 
@@ -265,7 +278,9 @@ private theorem measurable_snoc {n : ℕ} :
   · simp only [Fin.snoc_castSucc]
     exact (measurable_pi_apply j).comp measurable_fst
 
-/-- The one-time chain law is one kernel step. -/
+/-- The one-time chain law is one kernel step. This is the `n = 0` case of the private
+`MarkovSemigroupProjective.lintegral_finiteChainLaw_cons`; delete it once that lemma is
+public. -/
 private theorem lintegral_finiteChainKernel_one (s : ℝ≥0) (t : Fin 1 → ℝ≥0) (x : I)
     {F : (Fin 1 → I) → ℝ≥0∞} (hF : Measurable F) :
     ∫⁻ z, F z ∂finiteChainKernel κ s t x = ∫⁻ y, F (fun _ => y) ∂κ (t 0 - s) x := by

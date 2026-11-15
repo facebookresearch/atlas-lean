@@ -27,7 +27,8 @@ open MathlibExt.Biology.PopulationGenetics.Diffusion.SelectionMonotoneClass
 
 At the boundary state `0` the selection generator `L_σ f (0) = 0` vanishes for every `σ`, so the
 process frozen at `0` solves the selection martingale problem with `σ = 1`, and it is Markov for
-the identity kernels. -/
+the identity kernels. This instance is degenerate: nothing ties `κ` to the selection dynamics in
+the interior of `[0, 1]`, and it is the only `σ ≠ 0` instance available. -/
 
 /-- The identity kernels at every time. -/
 noncomputable def idFamily : ℝ≥0 → Kernel I I := fun _ => Kernel.id
