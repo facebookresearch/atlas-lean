@@ -22,10 +22,13 @@ public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import Mathlib.Algebra.BigOperators.Fin
 public import Mathlib.Algebra.Order.Field.Rat
+public import WantedExt.Complexity.NPComplete.QuadraticProgrammingWanted
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.DeterministicMechanismDesignDominantStrategies
+
+open QuadraticProgramming (RatCode ratVal)
 
 /-!
 # DETERMINISTIC MECHANISM DESIGN WITH DOMINANT STRATEGIES (two agents) is NP-complete
@@ -49,8 +52,9 @@ stated here.
 
 Outcomes are `0, ..., m - 1` and the types of agent `i` are `0, ..., |Θᵢ| - 1`, where `|Θᵢ|` is
 the length of the prior's list. A rational number is given as `((a, b), d)` with value
-`(a - b) / d` and `0 < d`; a probability is given as `(a, d)` with value `a / d` and `0 < d`.
-Agent `i`'s utility table has one row of `m` entries per type, and the objective table is
+`(a - b) / d` and `0 < d` (`QuadraticProgramming.RatCode` and `QuadraticProgramming.ratVal`,
+reused from `QuadraticProgrammingWanted`); a probability is given as `(a, d)` with value `a / d` and
+`0 < d`. Agent `i`'s utility table has one row of `m` entries per type, and the objective table is
 indexed by `θ₁`, then `θ₂`, then the outcome. All numbers use the canonical binary encoding.
 
 Encoding: the instance is decoded from a bitstring with the repository's
@@ -63,12 +67,6 @@ NP-completeness is stated in the same form as the proved results in
 reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
-
-/-- A rational number `(a - b) / d`, given as `((a, b), d)`. -/
-abbrev RatCode := (ℕ × ℕ) × ℕ
-
-/-- The value `(a - b) / d` of `((a, b), d)`. -/
-def ratVal (r : RatCode) : ℚ := ((r.1.1 : ℚ) - r.1.2) / r.2
 
 /-- The value `a / d` of a probability given as `(a, d)`. -/
 def probVal (q : ℕ × ℕ) : ℚ := (q.1 : ℚ) / q.2
