@@ -36,7 +36,7 @@ namespace MetaMathlibExt.Complexity.NPComplete.OptimalLeftDeepJoinTreeCrossProdu
 /-!
 # OPTIMAL LEFT-DEEP JOIN TREE WITH CROSS PRODUCTS is NP-complete
 
-INSTANCE: relations `R₁, …, Rₙ` with cardinalities `|Rᵢ| ∈ ℤ⁺`, a selectivity
+INSTANCE: relations `R₁, …, Rₙ`, `n ≥ 1`, with cardinalities `|Rᵢ| ∈ ℤ⁺`, a selectivity
 `f_{i,j} = f_{j,i} ∈ (0, 1]` for each pair of relations joined by a predicate (`f_{i,j} = 1` for
 the other pairs, whose join is a cross product, and `f_{i,i} = 1`), and an integer `K`.
 QUESTION: is there a left-deep processing tree, cross products allowed, whose cost `C_out` is at
@@ -84,10 +84,11 @@ abbrev Relation (i : OptimalLeftDeepJoinTreeCrossProductsInstance) : Type := Fin
 def cardinality (i : OptimalLeftDeepJoinTreeCrossProductsInstance) (a : Relation i) : ℕ :=
   i.1.get a
 
-/-- Well-formedness of an instance: every cardinality is positive, every selectivity entry
-`(i, j, p, q)` has `i < j < n` and `0 < p ≤ q`, and no pair `(i, j)` is listed twice. -/
+/-- Well-formedness of an instance: there is at least one relation, every cardinality is
+positive, every selectivity entry `(i, j, p, q)` has `i < j < n` and `0 < p ≤ q`, and no pair
+`(i, j)` is listed twice. -/
 def WellFormed (i : OptimalLeftDeepJoinTreeCrossProductsInstance) : Prop :=
-  (∀ c ∈ i.1, 0 < c) ∧
+  i.1 ≠ [] ∧ (∀ c ∈ i.1, 0 < c) ∧
     (∀ e ∈ i.2.1, e.1 < e.2.1 ∧ e.2.1 < i.1.length ∧ 0 < e.2.2.1 ∧ e.2.2.1 ≤ e.2.2.2) ∧
     (i.2.1.map fun e => (e.1, e.2.1)).Nodup
 
