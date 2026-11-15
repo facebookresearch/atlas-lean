@@ -63,6 +63,16 @@ open-shop schedule with precedence `IsMPTOpenShopPrecedenceSchedule` of
 operations of a job have no prescribed order. The maximum lateness bound is stated as
 `C_i - d_i ≤ K` for every job `i`. Binary encoding of all numbers.
 
+OMPT is Brucker's stage model (*Scheduling Algorithms*, Chapter 11), as in the base module
+`MultiprocessorTaskOpenShopPrecedenceMakespanWanted`: as in the MPT flow shop, every job has one
+task per stage `j`, and the task of stage `j` needs the processor set `μ_j`. Brucker states the
+polynomial cases of the class as `OMPT|p_ij = 1; stages = r|…`, with the number `r` of stages as a
+parameter, and his algorithm for them fixes, for each order of the stages, how many jobs pass the
+stages in that order, which presupposes stage-dependent sets; task-dependent sets `μ_ij` with no
+precedence between the tasks of a job are the general shop with MPT. A stage set may be empty, as
+`μ_j ⊆ {M_1, …, M_m}` allows; the classical special case `μ_j = {M_j}`, which carries the
+NP-hardness, has nonempty sets.
+
 Brucker and Knust's open-shop table lists `O|p_ij = 1; outtree|L_max` as strongly NP-hard
 (Timkovsky 2003, whose paper was not available to this formalization); it is the special case
 `r = m`, `μ_j = {M_j}` with an outtree of this problem.
