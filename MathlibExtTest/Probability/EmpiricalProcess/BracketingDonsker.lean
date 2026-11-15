@@ -15,7 +15,8 @@ public import Mathlib.Probability.Independence.InfinitePi
 # Tests for Donsker conditions under uniform bracketing entropy
 
 * Boundary values of the bracketing number and entropy, computed from the definitions: no cover
-  of negative width exists for a nonempty class, the empty class needs `0` brackets, and a class
+  of negative width exists for a nonempty class, every bracket is ordered (so not even the
+  empty class has a bracket of negative width), the empty class needs `0` brackets, and a class
   of copies of one function needs one bracket at every width `ε ≥ 0`.
 * The empirical process vanishes at `n = 0` and at constant functions.
 * Non-vacuity of the entropy hypothesis: the infinite class `{θ • g : θ ∈ [0, 1]}` with `|g| ≤ 1`
@@ -38,7 +39,7 @@ namespace BracketingDonskerTest
 example {S ι : Type*} [MeasurableSpace S] [Nonempty S] [Nonempty ι] (F : ι → S → ℝ) {ε : ℝ}
     (hε : ε < 0) : uniformBracketingNumber F ε = ⊤ ∧ uniformBracketingEntropy F ε = ⊤ := by
   have h : ∀ n, ¬ IsUniformBracketCover F ε n := by
-    rintro n ⟨l, u, -, -, hw, hc⟩
+    rintro n ⟨l, u, -, -, -, hw, hc⟩
     obtain ⟨i⟩ := ‹Nonempty ι›
     obtain ⟨x⟩ := ‹Nonempty S›
     obtain ⟨j, hj⟩ := hc i
@@ -49,7 +50,8 @@ example {S ι : Type*} [MeasurableSpace S] [Nonempty S] [Nonempty ι] (F : ι �
 example {S : Type*} [MeasurableSpace S] (F : Empty → S → ℝ) (ε : ℝ) :
     uniformBracketingNumber F ε = 0 ∧ uniformBracketingEntropy F ε = 0 := by
   have h : IsUniformBracketCover F ε 0 :=
-    ⟨Fin.elim0, Fin.elim0, fun j ↦ j.elim0, fun j ↦ j.elim0, fun j ↦ j.elim0, fun i ↦ i.elim⟩
+    ⟨Fin.elim0, Fin.elim0, fun j ↦ j.elim0, fun j ↦ j.elim0, fun j ↦ j.elim0, fun j ↦ j.elim0,
+      fun i ↦ i.elim⟩
   refine ⟨nonpos_iff_eq_zero.1 ?_, nonpos_iff_eq_zero.1 ?_⟩
   · simpa using uniformBracketingNumber_le h
   · simpa using uniformBracketingEntropy_le h
@@ -60,11 +62,19 @@ example {S : Type*} [MeasurableSpace S] {g : S → ℝ} (hg : Measurable g) {ε 
     uniformBracketingNumber (fun _ : ℕ ↦ g) ε ≤ 1 ∧
       uniformBracketingEntropy (fun _ : ℕ ↦ g) ε = 0 := by
   have h : IsUniformBracketCover (fun _ : ℕ ↦ g) ε 1 :=
-    ⟨fun _ ↦ g, fun _ ↦ g, fun _ ↦ hg, fun _ ↦ hg, fun _ _ ↦ by simpa using hε,
+    ⟨fun _ ↦ g, fun _ ↦ g, fun _ ↦ hg, fun _ ↦ hg, fun _ _ ↦ le_rfl, fun _ _ ↦ by simpa using hε,
       fun _ ↦ ⟨0, fun _ ↦ ⟨le_rfl, le_rfl⟩⟩⟩
   refine ⟨?_, nonpos_iff_eq_zero.1 ?_⟩
   · simpa using uniformBracketingNumber_le h
   · simpa using uniformBracketingEntropy_le h
+
+/-- Every bracket is ordered, so a cover of negative width has no brackets at all, even for the
+empty class (the unordered pair `l = 1`, `u = 0` is not a bracket). -/
+example {S : Type*} [MeasurableSpace S] [Nonempty S] (F : Empty → S → ℝ) :
+    ¬ IsUniformBracketCover F (-1) 1 := by
+  rintro ⟨l, u, -, -, hlu, hw, -⟩
+  obtain ⟨x⟩ := ‹Nonempty S›
+  linarith [hlu 0 x, hw 0 x]
 
 /-! ### The empirical process at boundary inputs -/
 
@@ -88,7 +98,7 @@ theorem isUniformBracketCover_scale {S : Type*} [MeasurableSpace S] {g : S → �
   refine ⟨fun j x ↦ ((j : ℝ) + 1 / 2) * ε * g x - ε / 2,
     fun j x ↦ ((j : ℝ) + 1 / 2) * ε * g x + ε / 2,
     fun j ↦ ((hg.const_mul _).sub_const _), fun j ↦ ((hg.const_mul _).add_const _),
-    fun j x ↦ le_of_eq (by ring), fun θ ↦ ?_⟩
+    fun j x ↦ by linarith, fun j x ↦ le_of_eq (by ring), fun θ ↦ ?_⟩
   have hθ0 : 0 ≤ (θ : ℝ) / ε := div_nonneg θ.2.1 hε.le
   have hj : ⌊(θ : ℝ) / ε⌋₊ < ⌈1 / ε⌉₊ + 1 :=
     Nat.lt_succ_of_le ((Nat.floor_le_floor (div_le_div_of_nonneg_right θ.2.2 hε.le)).trans

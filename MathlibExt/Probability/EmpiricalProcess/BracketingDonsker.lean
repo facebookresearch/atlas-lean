@@ -93,11 +93,12 @@ variable {S ι Ω : Type*} [MeasurableSpace S]
 /-! ### Uniform bracketing numbers -/
 
 /-- `IsUniformBracketCover F ε n`: there are `n` brackets `[l j, u j]` of measurable functions,
-each of uniform width `u j x - l j x ≤ ε` at every point, such that every `F i` lies in one
-of them. -/
+each with `l j x ≤ u j x` and of uniform width `u j x - l j x ≤ ε` at every point, such that
+every `F i` lies in one of them. -/
 def IsUniformBracketCover (F : ι → S → ℝ) (ε : ℝ) (n : ℕ) : Prop :=
   ∃ l u : Fin n → S → ℝ, (∀ j, Measurable (l j)) ∧ (∀ j, Measurable (u j)) ∧
-    (∀ j x, u j x - l j x ≤ ε) ∧ ∀ i, ∃ j, ∀ x, l j x ≤ F i x ∧ F i x ≤ u j x
+    (∀ j x, l j x ≤ u j x) ∧ (∀ j x, u j x - l j x ≤ ε) ∧
+    ∀ i, ∃ j, ∀ x, l j x ≤ F i x ∧ F i x ≤ u j x
 
 /-- The uniform (sup-norm) bracketing number `N_[](ε, F, ‖·‖_∞)`: the least number of brackets
 of uniform width at most `ε` covering `F`, and `⊤` when no finite cover exists. -/
@@ -111,8 +112,8 @@ noncomputable def uniformBracketingEntropy (F : ι → S → ℝ) (ε : ℝ) : �
 
 theorem IsUniformBracketCover.mono {F : ι → S → ℝ} {ε ε' : ℝ} {n : ℕ}
     (h : IsUniformBracketCover F ε n) (hε : ε ≤ ε') : IsUniformBracketCover F ε' n := by
-  obtain ⟨l, u, hl, hu, hw, hc⟩ := h
-  exact ⟨l, u, hl, hu, fun j x ↦ (hw j x).trans hε, hc⟩
+  obtain ⟨l, u, hl, hu, hlu, hw, hc⟩ := h
+  exact ⟨l, u, hl, hu, hlu, fun j x ↦ (hw j x).trans hε, hc⟩
 
 theorem uniformBracketingEntropy_antitone (F : ι → S → ℝ) :
     Antitone (uniformBracketingEntropy F) := fun _ _ hε ↦
@@ -612,7 +613,7 @@ theorem measure_exists_abs_empiricalProcess_sub_gt_le (hlaw : ∀ k, HasLaw (X k
         ENNReal.ofReal η := by
   classical
   obtain ⟨N, hN, hNsum⟩ := exists_dyadic_covers hJ
-  choose l u hl hu hw hcov using hN
+  choose l u hl hu _ hw hcov using hN
   choose β hβ' using hcov
   have hβ : ∀ k i x, 0 ≤ F i x - l k (β k i) x ∧ F i x - l k (β k i) x ≤ (1 / 2) ^ k :=
     fun k i x ↦ ⟨by linarith [(hβ' k i x).1], by linarith [(hβ' k i x).2, hw k (β k i) x]⟩
@@ -724,7 +725,7 @@ theorem exists_finset_variance_lt {F : ι → S → ℝ} (hFm : ∀ i, Measurabl
   classical
   obtain ⟨N, hN, -⟩ := exists_dyadic_covers hJ
   obtain ⟨k, hk⟩ := exists_pow_lt_of_lt_one hδ (by norm_num : (1 / 2 : ℝ) < 1)
-  obtain ⟨l, u, -, -, hw, hcov⟩ := hN k
+  obtain ⟨l, u, -, -, -, hw, hcov⟩ := hN k
   choose β hβ using hcov
   set T := (Finset.univ : Finset (Fin (N k))).filter fun a ↦ ∃ i, β i = a
   refine ⟨T.attach.image fun a ↦ (Finset.mem_filter.1 a.2).2.choose, fun i ↦ ?_⟩
