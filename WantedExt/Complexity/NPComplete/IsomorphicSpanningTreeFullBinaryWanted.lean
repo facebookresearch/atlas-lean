@@ -44,12 +44,12 @@ lists, `T` a tree) and `IsomorphicSpanningTree.IsomorphicSpanningTreeFeasible` a
 unchanged; `WellFormed` adds that `T` is a full binary tree.
 
 A full binary tree is a rooted tree in which every vertex has either no children or exactly two
-children. `T` is given unrooted, so `IsFullBinary` asks for a vertex `r` to serve as the root:
-`T` has one vertex, or `r` has degree `2` (its two children) and every other vertex has degree
-`1` (a leaf: its parent only) or `3` (its parent and two children). Rooting the tree at `r`
-shows that this is exactly the rooted definition. Garey and Johnson do not define the term;
-the complete binary trees (all leaves at one depth) are among these trees, so a narrower
-reading of the source is a special case of this statement.
+children. `T` is given unrooted, so `IsFullBinary` asks that `T` be a tree with a vertex `r` to
+serve as the root: `T` has one vertex, or `r` has degree `2` (its two children) and every other
+vertex has degree `1` (a leaf: its parent only) or `3` (its parent and two children). Rooting
+the tree at `r` shows that this is exactly the rooted definition. Garey and Johnson do not
+define the term; the complete binary trees (all leaves at one depth) are among these trees, so a
+narrower reading of the source is a special case of this statement.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -62,14 +62,14 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- `T` is a full binary tree when rooted at a suitable vertex: one vertex, or a vertex `r` of
-degree `2` with every other vertex of degree `1` or `3`. -/
+/-- `T` is a full binary tree: a tree that, rooted at a suitable vertex, has one vertex, or a
+root `r` of degree `2` with every other vertex of degree `1` or `3`. -/
 def IsFullBinary {m : ℕ} (T : SimpleGraph (Fin m)) : Prop :=
-  m = 1 ∨ ∃ r : Fin m, (T.neighborSet r).ncard = 2 ∧
-    ∀ v, v ≠ r → (T.neighborSet v).ncard = 1 ∨ (T.neighborSet v).ncard = 3
+  T.IsTree ∧ (m = 1 ∨ ∃ r : Fin m, (T.neighborSet r).ncard = 2 ∧
+    ∀ v, v ≠ r → (T.neighborSet v).ncard = 1 ∨ (T.neighborSet v).ncard = 3)
 
 /-- Well-formedness of an instance: the parent's (simple edge lists, `T` a tree), and `T` is a
-full binary tree. -/
+full binary tree (which repeats the tree condition). -/
 def WellFormed (i : IsomorphicSpanningTreeInstance) : Prop :=
   IsomorphicSpanningTree.WellFormed i ∧ IsFullBinary (TreeGraph i)
 
