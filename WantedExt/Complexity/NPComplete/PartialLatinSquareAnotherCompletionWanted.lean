@@ -43,12 +43,13 @@ INSTANCE: an `n × n` partial Latin square `M` and a completion `L` of `M` to a 
 QUESTION: does `M` have a completion to a Latin square different from `L`?
 
 The matrix part reuses `LatinSquareCompletion`: `n` and `M`, row by row, with `0` for a missing
-entry, and a completion is exactly a witness of
-`LatinSquareCompletion.LatinSquareCompletionFeasible` (`latinSquareCompletionFeasible_iff`): an
-`n × n` matrix whose rows and columns are permutations of `1, …, n` and which agrees with `M` on
-its nonzero entries. `WellFormed` asks for
-`LatinSquareCompletion.WellFormed` and that `L` is such a completion; `M` then has no repeated
-nonzero entry in a row or column, since the Latin square `L` extends it.
+entry. A completion of `M` is a full `n × n` matrix `C` (entries in `1, …, n`) that agrees with
+`M` on its nonzero entries and is a Latin square. Being a Latin square is expressed with
+`LatinSquareCompletion.LatinSquareCompletionFeasible`: a full matrix's only completion is the
+matrix itself, so `(n, C)` is a yes-instance of `LATIN SQUARE COMPLETION` exactly when every row
+and column of `C` is a permutation of `1, …, n`. `WellFormed` asks for
+`LatinSquareCompletion.WellFormed` and that `L` completes `M`; `M` then has no repeated nonzero
+entry in a row or column, since the Latin square `L` extends it.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -68,21 +69,16 @@ given completion `L`. -/
 abbrev PartialLatinSquareAnotherCompletionInstance :=
   LatinSquareCompletionInstance × List (List ℕ)
 
-/-- `C` completes `M` to a Latin square: an `n × n` matrix that agrees with `M` on its nonzero
-entries and whose rows and columns are permutations of `1, …, n`. -/
-def IsCompletion (i : LatinSquareCompletionInstance) (C : List (List ℕ)) : Prop :=
-  C.length = i.1 ∧
-    (∀ row ∈ C, row.length = i.1) ∧
-    (∀ r < i.1, ∀ c < i.1, (i.2.getD r []).getD c 0 = 0 ∨
-      (i.2.getD r []).getD c 0 = (C.getD r []).getD c 0) ∧
-    (∀ r < i.1, (C.getD r []).Perm ((List.range i.1).map (· + 1))) ∧
-    ∀ c < i.1, ((List.range i.1).map
-      (fun r => (C.getD r []).getD c 0)).Perm ((List.range i.1).map (· + 1))
+/-- The entry in row `r`, column `c` of a matrix given row by row (`0` outside it). -/
+def entry (A : List (List ℕ)) (r c : ℕ) : ℕ := (A.getD r []).getD c 0
 
-/-- The completions are exactly the witnesses of `LATIN SQUARE COMPLETION`. -/
-theorem latinSquareCompletionFeasible_iff (i : LatinSquareCompletionInstance) :
-    LatinSquareCompletionFeasible i ↔ ∃ C, IsCompletion i C :=
-  Iff.rfl
+/-- `C` completes `M` to a Latin square: `C` is a full `n × n` matrix with entries in
+`1, …, n`, it agrees with `M` on the nonzero entries of `M`, and it is a Latin square (as a full
+matrix it is a yes-instance of `LATIN SQUARE COMPLETION`). -/
+def IsCompletion (i : LatinSquareCompletionInstance) (C : List (List ℕ)) : Prop :=
+  LatinSquareCompletion.WellFormed (i.1, C) ∧ (∀ r < i.1, ∀ c < i.1, entry C r c ≠ 0) ∧
+    (∀ r < i.1, ∀ c < i.1, entry i.2 r c = 0 ∨ entry i.2 r c = entry C r c) ∧
+    LatinSquareCompletionFeasible (i.1, C)
 
 /-- Well-formedness: `(n, M)` is a well-formed `LATIN SQUARE COMPLETION` instance and `L`
 completes `M`. -/
