@@ -24,30 +24,32 @@ to an interval. This file proves Peterson's bounds and shows that they are sharp
 
 The lower bound counts observed failures by time `t`. The upper bound adds every subject censored
 strictly before `t`, who could have failed between its censoring time and `t`. Ties count as
-failures (`censoredObsMap`), so a subject censored at `C = t` has `T > t`; that is why the upper
-bound uses `X < t` rather than Peterson's `X ≤ t`.
+failures (`censoredObsMap`), so a subject censored at `C = t` has `T > t`. The textbook form
+with `P(X ≤ t, δ = 0)` is still a valid upper bound, but it is not sharp when the censored
+observations have an atom at `t`; the `X < t` form is.
 
 ## Definitions
 
 * `jointCensoredObsLaw μ`: the observed-data law of `(T ∧ C, 1{T ≤ C})` when `(T, C) ~ μ`.
-* `failureLaw μ`: the law of `T`, the first marginal of `μ`.
+* The failure-time law, the law of `T`, is the first marginal `μ.fst` (Mathlib's
+  `MeasureTheory.Measure.fst`).
 * `petersonLower P t = P(X ≤ t, δ = 1)` and `petersonUpper P t = P(X ≤ t, δ = 1) + P(X < t, δ = 0)`.
 * `petersonIdentifiedSet P t`: the values of `P(T ≤ t)` over all joint laws compatible with `P`.
 
 ## Main results
 
-* `petersonLower_le_failureLaw_Iic`, `failureLaw_Iic_le_petersonUpper`: **Peterson's bounds**, for
+* `petersonLower_le_fst_Iic`, `fst_Iic_le_petersonUpper`: **Peterson's bounds**, for
   every measure `μ` on `ℝ × ℝ`.
 * `petersonLower_le_censoredObsLaw`, `le_petersonUpper_censoredObsLaw`: under independent
   censoring the bounds hold for `F (Iic t)`, so they contain the point identified in
   `PetersonIdentification`.
-* `jointCensoredObsLaw_lowerCoupling`, `failureLaw_lowerCoupling_Iic` (and the `upperCoupling`
+* `jointCensoredObsLaw_lowerCoupling`, `fst_map_lowerCoupling_Iic` (and the `upperCoupling`
   versions): explicit joint laws compatible with any `P` that attain each bound.
 * `petersonIdentifiedSet_eq`: **sharp partial identification**: the identified set of
   `P(T ≤ t)` is exactly the interval `[petersonLower P t, petersonUpper P t]`.
-* `petersonLower_eq_petersonUpper_iff`, `failureLaw_Iic_eq_of_jointCensoredObsLaw_eq`: the
+* `petersonLower_eq_petersonUpper_iff`, `fst_Iic_eq_of_jointCensoredObsLaw_eq`: the
   distribution function at `t` is point identified exactly when `P(X < t, δ = 0) = 0`.
-* `exists_failureLaw_Iic_ne_of_jointCensoredObsLaw_eq`: otherwise two joint laws with the same
+* `exists_fst_Iic_ne_of_jointCensoredObsLaw_eq`: otherwise two joint laws with the same
   observed-data law give different values of `P(T ≤ t)`.
 
 ## Scope
@@ -61,8 +63,9 @@ failure-time law (a joint condition across all `t`) is not formalized.
 
 * `censoredObsMap`, `measurable_censoredObsMap`, `censoredObsLaw`
   (`IdentifiableHazardContinuous.lean`); `obsTime` (`CountingProcess.lean`).
-* `MeasureTheory.Measure.map_apply`, `Measure.map_map`, `Measure.map_add`, `Measure.map_smul`,
-  `Measure.map_fst_prod` (Mathlib `MeasureTheory/Measure/*`);
+* `MeasureTheory.Measure.fst`, `Measure.fst_apply`, `Measure.fst_prod`
+  (`MeasureTheory/Measure/Prod.lean`); `Measure.map_apply`, `Measure.map_map`, `Measure.map_add`,
+  `Measure.map_smul` (`MeasureTheory/Measure/Map.lean`);
   `measurable_from_prod_countable_left` (`MeasureTheory/MeasurableSpace/Constructions.lean`).
 
 ## References
@@ -89,9 +92,6 @@ pair `(T, C)` has the arbitrary joint law `μ`. -/
 noncomputable def jointCensoredObsLaw (μ : Measure (ℝ × ℝ)) : Measure (ℝ × Bool) :=
   μ.map censoredObsMap
 
-/-- The **failure-time law** of a joint law `μ` of `(T, C)`: its first marginal. -/
-noncomputable def failureLaw (μ : Measure (ℝ × ℝ)) : Measure ℝ := μ.map Prod.fst
-
 /-- Independent censoring is the special case `μ = F ⊗ G`. -/
 theorem censoredObsLaw_eq_jointCensoredObsLaw (F G : Measure ℝ) :
     censoredObsLaw F G = jointCensoredObsLaw (F.prod G) := rfl
@@ -111,7 +111,7 @@ noncomputable def petersonUpper (P : Measure (ℝ × Bool)) (t : ℝ) : ℝ≥0�
 produce the observed-data law `P`. -/
 def petersonIdentifiedSet (P : Measure (ℝ × Bool)) (t : ℝ) : Set ℝ≥0∞ :=
   {v | ∃ μ : Measure (ℝ × ℝ), IsProbabilityMeasure μ ∧ jointCensoredObsLaw μ = P ∧
-    failureLaw μ (Iic t) = v}
+    μ.fst (Iic t) = v}
 
 private lemma measurableSet_Iic_prod (t : ℝ) (b : Bool) :
     MeasurableSet (Iic t ×ˢ ({b} : Set Bool)) :=
@@ -150,18 +150,17 @@ theorem jointCensoredObsLaw_Iio_false (μ : Measure (ℝ × ℝ)) (t : ℝ) :
     exact ⟨(min_le_right _ _).trans_lt h1, h2⟩
 
 /-- **Peterson lower bound**: `P(X ≤ t, δ = 1) ≤ P(T ≤ t)` for every joint law `μ` of `(T, C)`. -/
-theorem petersonLower_le_failureLaw_Iic (μ : Measure (ℝ × ℝ)) (t : ℝ) :
-    petersonLower (jointCensoredObsLaw μ) t ≤ failureLaw μ (Iic t) := by
-  rw [petersonLower, jointCensoredObsLaw_Iic_true, failureLaw,
-    Measure.map_apply measurable_fst measurableSet_Iic]
+theorem petersonLower_le_fst_Iic (μ : Measure (ℝ × ℝ)) (t : ℝ) :
+    petersonLower (jointCensoredObsLaw μ) t ≤ μ.fst (Iic t) := by
+  rw [petersonLower, jointCensoredObsLaw_Iic_true, Measure.fst_apply measurableSet_Iic]
   exact measure_mono fun ω hω => hω.1
 
 /-- **Peterson upper bound**: `P(T ≤ t) ≤ P(X ≤ t, δ = 1) + P(X < t, δ = 0)` for every joint law
 `μ` of `(T, C)`. -/
-theorem failureLaw_Iic_le_petersonUpper (μ : Measure (ℝ × ℝ)) (t : ℝ) :
-    failureLaw μ (Iic t) ≤ petersonUpper (jointCensoredObsLaw μ) t := by
-  rw [petersonUpper, jointCensoredObsLaw_Iic_true, jointCensoredObsLaw_Iio_false, failureLaw,
-    Measure.map_apply measurable_fst measurableSet_Iic]
+theorem fst_Iic_le_petersonUpper (μ : Measure (ℝ × ℝ)) (t : ℝ) :
+    μ.fst (Iic t) ≤ petersonUpper (jointCensoredObsLaw μ) t := by
+  rw [petersonUpper, jointCensoredObsLaw_Iic_true, jointCensoredObsLaw_Iio_false,
+    Measure.fst_apply measurableSet_Iic]
   have hsub : Prod.fst ⁻¹' Iic t ⊆
       {ω : ℝ × ℝ | ω.1 ≤ t ∧ ω.1 ≤ ω.2} ∪ {ω : ℝ × ℝ | ω.2 < t ∧ ω.2 < ω.1} := by
     intro ω hω
@@ -181,15 +180,15 @@ theorem petersonLower_le_petersonUpper (P : Measure (ℝ × Bool)) (t : ℝ) :
 `P(X ≤ t, δ = 1) ≤ F(-∞, t]`. -/
 theorem petersonLower_le_censoredObsLaw (F G : Measure ℝ) [SFinite F] [IsProbabilityMeasure G]
     (t : ℝ) : petersonLower (censoredObsLaw F G) t ≤ F (Iic t) := by
-  have h := petersonLower_le_failureLaw_Iic (F.prod G) t
-  rwa [failureLaw, Measure.map_fst_prod, measure_univ, one_smul] at h
+  have h := petersonLower_le_fst_Iic (F.prod G) t
+  rwa [Measure.fst_prod] at h
 
 /-- **Under independent censoring the Peterson bounds contain the identified value**:
 `F(-∞, t] ≤ P(X ≤ t, δ = 1) + P(X < t, δ = 0)`. -/
 theorem le_petersonUpper_censoredObsLaw (F G : Measure ℝ) [SFinite F] [IsProbabilityMeasure G]
     (t : ℝ) : F (Iic t) ≤ petersonUpper (censoredObsLaw F G) t := by
-  have h := failureLaw_Iic_le_petersonUpper (F.prod G) t
-  rwa [failureLaw, Measure.map_fst_prod, measure_univ, one_smul] at h
+  have h := fst_Iic_le_petersonUpper (F.prod G) t
+  rwa [Measure.fst_prod] at h
 
 /-! ### Sharpness: joint laws attaining the bounds -/
 
@@ -275,18 +274,18 @@ theorem jointCensoredObsLaw_upperCoupling (P : Measure (ℝ × Bool)) (t : ℝ) 
     censoredObsMap_comp_upperCoupling, Measure.map_id]
 
 /-- The lower coupling attains the lower bound. -/
-theorem failureLaw_lowerCoupling_Iic (P : Measure (ℝ × Bool)) (t : ℝ) :
-    failureLaw (P.map (lowerCoupling t)) (Iic t) = petersonLower P t := by
-  rw [failureLaw, Measure.map_map measurable_fst (measurable_lowerCoupling t),
-    Measure.map_apply (measurable_fst.comp (measurable_lowerCoupling t)) measurableSet_Iic,
-    preimage_comp, lowerCoupling_preimage_fst_Iic, petersonLower]
+theorem fst_map_lowerCoupling_Iic (P : Measure (ℝ × Bool)) (t : ℝ) :
+    (P.map (lowerCoupling t)).fst (Iic t) = petersonLower P t := by
+  rw [Measure.fst_apply measurableSet_Iic,
+    Measure.map_apply (measurable_lowerCoupling t) (measurable_fst measurableSet_Iic),
+    lowerCoupling_preimage_fst_Iic, petersonLower]
 
 /-- The upper coupling attains the upper bound. -/
-theorem failureLaw_upperCoupling_Iic (P : Measure (ℝ × Bool)) (t : ℝ) :
-    failureLaw (P.map (upperCoupling t)) (Iic t) = petersonUpper P t := by
-  rw [failureLaw, Measure.map_map measurable_fst (measurable_upperCoupling t),
-    Measure.map_apply (measurable_fst.comp (measurable_upperCoupling t)) measurableSet_Iic,
-    preimage_comp, upperCoupling_preimage_fst_Iic, petersonUpper,
+theorem fst_map_upperCoupling_Iic (P : Measure (ℝ × Bool)) (t : ℝ) :
+    (P.map (upperCoupling t)).fst (Iic t) = petersonUpper P t := by
+  rw [Measure.fst_apply measurableSet_Iic,
+    Measure.map_apply (measurable_upperCoupling t) (measurable_fst measurableSet_Iic),
+    upperCoupling_preimage_fst_Iic, petersonUpper,
     measure_union (disjoint_prod.2 (Or.inr (disjoint_singleton.2 (by decide))))
       (measurableSet_Iio_prod _ _)]
 
@@ -310,11 +309,11 @@ theorem petersonIdentifiedSet_eq (P : Measure (ℝ × Bool)) [IsProbabilityMeasu
   constructor
   · rintro ⟨μ, -, hμ, rfl⟩
     rw [← hμ]
-    exact ⟨petersonLower_le_failureLaw_Iic μ t, failureLaw_Iic_le_petersonUpper μ t⟩
+    exact ⟨petersonLower_le_fst_Iic μ t, fst_Iic_le_petersonUpper μ t⟩
   rintro ⟨hlo, hhi⟩
   rcases eq_or_lt_of_le (hlo.trans hhi) with heq | hlt
   · exact ⟨P.map (lowerCoupling t), inferInstance, jointCensoredObsLaw_lowerCoupling P t,
-      (failureLaw_lowerCoupling_Iic P t).trans (le_antisymm hlo (hhi.trans heq.ge))⟩
+      (fst_map_lowerCoupling_Iic P t).trans (le_antisymm hlo (hhi.trans heq.ge))⟩
   have hhi_top : petersonUpper P t ≠ ∞ :=
     ENNReal.add_ne_top.2 ⟨measure_ne_top _ _, measure_ne_top _ _⟩
   have hv_top : v ≠ ∞ := ne_top_of_le_ne_top hhi_top hhi
@@ -344,11 +343,10 @@ theorem petersonIdentifiedSet_eq (P : Measure (ℝ × Bool)) [IsProbabilityMeasu
       ← jointCensoredObsLaw,
       jointCensoredObsLaw_lowerCoupling, jointCensoredObsLaw_upperCoupling, ← add_smul, hsum,
       one_smul]
-  · rw [failureLaw, Measure.map_add _ _ measurable_fst,
-      Measure.map_smul _ measurable_fst.aemeasurable,
-      Measure.map_smul _ measurable_fst.aemeasurable, Measure.add_apply, Measure.smul_apply,
-      Measure.smul_apply, ← failureLaw, ← failureLaw,
-      failureLaw_lowerCoupling_Iic, failureLaw_upperCoupling_Iic, smul_eq_mul, smul_eq_mul,
+  · rw [Measure.fst_apply measurableSet_Iic, Measure.add_apply, Measure.smul_apply,
+      Measure.smul_apply, ← Measure.fst_apply measurableSet_Iic,
+      ← Measure.fst_apply measurableSet_Iic,
+      fst_map_lowerCoupling_Iic, fst_map_upperCoupling_Iic, smul_eq_mul, smul_eq_mul,
       ← ENNReal.ofReal_toReal hlo_top, ← ENNReal.ofReal_toReal hhi_top,
       ← ENNReal.ofReal_toReal hv_top, ← ENNReal.ofReal_mul ha0,
       ← ENNReal.ofReal_mul (sub_nonneg.2 ha1),
@@ -358,11 +356,11 @@ theorem petersonIdentifiedSet_eq (P : Measure (ℝ × Bool)) [IsProbabilityMeasu
     linarith
 
 /-- Every value in the Peterson interval is attained by a joint law compatible with `P`. -/
-theorem exists_jointCensoredObsLaw_eq_failureLaw_Iic_eq (P : Measure (ℝ × Bool))
+theorem exists_jointCensoredObsLaw_eq_fst_Iic_eq (P : Measure (ℝ × Bool))
     [IsProbabilityMeasure P] {t : ℝ} {v : ℝ≥0∞} (hlo : petersonLower P t ≤ v)
     (hhi : v ≤ petersonUpper P t) :
     ∃ μ : Measure (ℝ × ℝ), IsProbabilityMeasure μ ∧ jointCensoredObsLaw μ = P ∧
-      failureLaw μ (Iic t) = v := by
+      μ.fst (Iic t) = v := by
   have hv : v ∈ petersonIdentifiedSet P t := by
     rw [petersonIdentifiedSet_eq]
     exact ⟨hlo, hhi⟩
@@ -382,27 +380,27 @@ theorem petersonLower_eq_petersonUpper_iff (P : Measure (ℝ × Bool)) [IsFinite
 
 /-- **Point identification without early censoring.** If no subject is censored strictly before
 `t`, any two joint laws with the same observed-data law have the same `P(T ≤ t)`. -/
-theorem failureLaw_Iic_eq_of_jointCensoredObsLaw_eq {μ μ' : Measure (ℝ × ℝ)}
+theorem fst_Iic_eq_of_jointCensoredObsLaw_eq {μ μ' : Measure (ℝ × ℝ)}
     (heq : jointCensoredObsLaw μ = jointCensoredObsLaw μ') {t : ℝ}
     (h0 : jointCensoredObsLaw μ (Iio t ×ˢ {false}) = 0) :
-    failureLaw μ (Iic t) = failureLaw μ' (Iic t) := by
+    μ.fst (Iic t) = μ'.fst (Iic t) := by
   have hub : ∀ ν : Measure (ℝ × ℝ), jointCensoredObsLaw ν (Iio t ×ˢ {false}) = 0 →
-      failureLaw ν (Iic t) = petersonLower (jointCensoredObsLaw ν) t := fun ν hν =>
-    le_antisymm ((failureLaw_Iic_le_petersonUpper ν t).trans_eq (by rw [petersonUpper, hν,
-      add_zero, petersonLower])) (petersonLower_le_failureLaw_Iic ν t)
+      ν.fst (Iic t) = petersonLower (jointCensoredObsLaw ν) t := fun ν hν =>
+    le_antisymm ((fst_Iic_le_petersonUpper ν t).trans_eq (by rw [petersonUpper, hν,
+      add_zero, petersonLower])) (petersonLower_le_fst_Iic ν t)
   rw [hub μ h0, hub μ' (heq ▸ h0), heq]
 
 /-- **Non-identification under dependent censoring.** If some subjects are censored strictly
 before `t`, there are two joint laws of `(T, C)` with the same observed-data law `P` and different
 values of `P(T ≤ t)`. -/
-theorem exists_failureLaw_Iic_ne_of_jointCensoredObsLaw_eq (P : Measure (ℝ × Bool))
+theorem exists_fst_Iic_ne_of_jointCensoredObsLaw_eq (P : Measure (ℝ × Bool))
     [IsProbabilityMeasure P] {t : ℝ} (h0 : P (Iio t ×ˢ {false}) ≠ 0) :
     ∃ μ μ' : Measure (ℝ × ℝ), IsProbabilityMeasure μ ∧ IsProbabilityMeasure μ' ∧
       jointCensoredObsLaw μ = P ∧ jointCensoredObsLaw μ' = P ∧
-      failureLaw μ (Iic t) ≠ failureLaw μ' (Iic t) := by
+      μ.fst (Iic t) ≠ μ'.fst (Iic t) := by
   refine ⟨P.map (lowerCoupling t), P.map (upperCoupling t), inferInstance, inferInstance,
     jointCensoredObsLaw_lowerCoupling P t, jointCensoredObsLaw_upperCoupling P t, ?_⟩
-  rw [failureLaw_lowerCoupling_Iic, failureLaw_upperCoupling_Iic]
+  rw [fst_map_lowerCoupling_Iic, fst_map_upperCoupling_Iic]
   exact fun h => h0 ((petersonLower_eq_petersonUpper_iff P t).1 h)
 
 end MathlibExt.Probability.Statistics.CountingProcess.ContinuousTime

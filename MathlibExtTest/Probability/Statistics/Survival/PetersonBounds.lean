@@ -27,9 +27,9 @@ theorem jointCensoredObsLaw_dirac (s c : ℝ) :
   rw [jointCensoredObsLaw, Measure.map_dirac' measurable_censoredObsMap]
 
 /-- The failure-time law of a point-mass joint law, evaluated on `(-∞, t]`. -/
-theorem failureLaw_dirac_Iic (s c t : ℝ) :
-    failureLaw (Measure.dirac (s, c)) (Iic t) = if s ≤ t then 1 else 0 := by
-  rw [failureLaw, Measure.map_dirac' measurable_fst, Measure.dirac_apply' _ measurableSet_Iic]
+theorem fst_dirac_Iic (s c t : ℝ) :
+    (Measure.dirac (s, c)).fst (Iic t) = if s ≤ t then 1 else 0 := by
+  rw [Measure.fst, Measure.map_dirac' measurable_fst, Measure.dirac_apply' _ measurableSet_Iic]
   by_cases h : s ≤ t <;> simp [h, indicator]
 
 open Classical in
@@ -59,9 +59,9 @@ example : jointCensoredObsLaw (Measure.dirac ((1 / 2 : ℝ), (0 : ℝ))) =
 
 /-- **Non-identification, computed directly**: the two joint laws above have the same
 observed-data law but `P(T ≤ 1)` is `0` for one and `1` for the other. -/
-example : failureLaw (Measure.dirac ((2 : ℝ), (0 : ℝ))) (Iic 1) = 0 ∧
-    failureLaw (Measure.dirac ((1 / 2 : ℝ), (0 : ℝ))) (Iic 1) = 1 := by
-  rw [failureLaw_dirac_Iic, failureLaw_dirac_Iic]
+example : (Measure.dirac ((2 : ℝ), (0 : ℝ))).fst (Iic 1) = 0 ∧
+    (Measure.dirac ((1 / 2 : ℝ), (0 : ℝ))).fst (Iic 1) = 1 := by
+  rw [fst_dirac_Iic, fst_dirac_Iic]
   norm_num
 
 /-- The Peterson bounds of `P = δ_(0, censored)` at `t = 1`, computed from the definitions. -/
@@ -74,25 +74,26 @@ theorem petersonUpper_censored_one : petersonUpper (Measure.dirac ((0 : ℝ), fa
   norm_num
 
 /-- The two endpoints are attained by the explicit point-mass joint laws above. -/
-example : failureLaw (Measure.dirac ((2 : ℝ), (0 : ℝ))) (Iic 1) =
+example : (Measure.dirac ((2 : ℝ), (0 : ℝ))).fst (Iic 1) =
       petersonLower (Measure.dirac ((0 : ℝ), false)) 1 ∧
-    failureLaw (Measure.dirac ((1 / 2 : ℝ), (0 : ℝ))) (Iic 1) =
+    (Measure.dirac ((1 / 2 : ℝ), (0 : ℝ))).fst (Iic 1) =
       petersonUpper (Measure.dirac ((0 : ℝ), false)) 1 := by
-  rw [failureLaw_dirac_Iic, failureLaw_dirac_Iic, petersonLower_censored_one,
+  rw [fst_dirac_Iic, fst_dirac_Iic, petersonLower_censored_one,
     petersonUpper_censored_one]
   norm_num
 
 /-- The couplings of the main file, evaluated: the lower coupling puts `T = 2 > 1`, the upper
 coupling puts `T = 1`. -/
-example : lowerCoupling 1 ((0 : ℝ), false) = (2, 0) ∧ upperCoupling 1 ((0 : ℝ), false) = (1, 0) := by
+example : lowerCoupling 1 ((0 : ℝ), false) = (2, 0) ∧
+    upperCoupling 1 ((0 : ℝ), false) = (1, 0) := by
   simp only [lowerCoupling, upperCoupling, Bool.cond_false, Prod.mk.injEq]
   norm_num
 
 /-! ### Boundary: censoring exactly at `t` -/
 
 /-- **Ties.** At `t = 0`, the subject censored at `0` has `T > 0` (ties count as failures), so the
-interval collapses to `{0}`: the upper bound uses `X < t`. With Peterson's `X ≤ t` the censored
-mass `P(X ≤ 0, δ = 0) = 1` would be wrongly included. -/
+interval collapses to `{0}`: the upper bound uses `X < t`. The textbook form with `X ≤ t` adds
+the censored mass `P(X ≤ 0, δ = 0) = 1`; it is still an upper bound, but not sharp. -/
 example : petersonLower (Measure.dirac ((0 : ℝ), false)) 0 = 0 ∧
     petersonUpper (Measure.dirac ((0 : ℝ), false)) 0 = 0 ∧
     Measure.dirac ((0 : ℝ), false) (Iic 0 ×ˢ {false}) = 1 := by
@@ -113,8 +114,8 @@ example : petersonIdentifiedSet (Measure.dirac ((0 : ℝ), false)) 1 = Icc 0 1 :
 
 /-- An interior value `1/2` is attained by some compatible joint law. -/
 example : ∃ μ : Measure (ℝ × ℝ), IsProbabilityMeasure μ ∧
-    jointCensoredObsLaw μ = Measure.dirac ((0 : ℝ), false) ∧ failureLaw μ (Iic 1) = 2⁻¹ := by
-  refine exists_jointCensoredObsLaw_eq_failureLaw_Iic_eq _ ?_ ?_
+    jointCensoredObsLaw μ = Measure.dirac ((0 : ℝ), false) ∧ μ.fst (Iic 1) = 2⁻¹ := by
+  refine exists_jointCensoredObsLaw_eq_fst_Iic_eq _ ?_ ?_
   · rw [petersonLower_censored_one]
     exact zero_le
   · rw [petersonUpper_censored_one]
@@ -124,13 +125,13 @@ example : ∃ μ : Measure (ℝ × ℝ), IsProbabilityMeasure μ ∧
 example : ∃ μ μ' : Measure (ℝ × ℝ), IsProbabilityMeasure μ ∧ IsProbabilityMeasure μ' ∧
     jointCensoredObsLaw μ = Measure.dirac ((0 : ℝ), false) ∧
     jointCensoredObsLaw μ' = Measure.dirac ((0 : ℝ), false) ∧
-    failureLaw μ (Iic 1) ≠ failureLaw μ' (Iic 1) :=
-  exists_failureLaw_Iic_ne_of_jointCensoredObsLaw_eq _ (by rw [dirac_prod]; norm_num)
+    μ.fst (Iic 1) ≠ μ'.fst (Iic 1) :=
+  exists_fst_Iic_ne_of_jointCensoredObsLaw_eq _ (by rw [dirac_prod]; norm_num)
 
 /-- Point identification at `t = 0` for laws observed as `(0, censored)`: the two joint laws above
 agree on `P(T ≤ 0)`. -/
-example : failureLaw (Measure.dirac ((2 : ℝ), (0 : ℝ))) (Iic 0) =
-    failureLaw (Measure.dirac ((1 / 2 : ℝ), (0 : ℝ))) (Iic 0) := by
+example : (Measure.dirac ((2 : ℝ), (0 : ℝ))).fst (Iic 0) =
+    (Measure.dirac ((1 / 2 : ℝ), (0 : ℝ))).fst (Iic 0) := by
   have h₁ : jointCensoredObsLaw (Measure.dirac ((2 : ℝ), (0 : ℝ))) =
       Measure.dirac ((0 : ℝ), false) := by
     rw [jointCensoredObsLaw_dirac]
@@ -143,15 +144,15 @@ example : failureLaw (Measure.dirac ((2 : ℝ), (0 : ℝ))) (Iic 0) =
     congr 1
     simp only [censoredObsMap, obsTime, Prod.mk.injEq]
     norm_num
-  refine failureLaw_Iic_eq_of_jointCensoredObsLaw_eq (h₁.trans h₂.symm) ?_
+  refine fst_Iic_eq_of_jointCensoredObsLaw_eq (h₁.trans h₂.symm) ?_
   rw [h₁, dirac_prod]
   simp
 
 /-- The bounds hold for an arbitrary joint law. -/
 example (μ : Measure (ℝ × ℝ)) (t : ℝ) :
-    failureLaw μ (Iic t) ∈ Icc (petersonLower (jointCensoredObsLaw μ) t)
+    μ.fst (Iic t) ∈ Icc (petersonLower (jointCensoredObsLaw μ) t)
       (petersonUpper (jointCensoredObsLaw μ) t) :=
-  ⟨petersonLower_le_failureLaw_Iic μ t, failureLaw_Iic_le_petersonUpper μ t⟩
+  ⟨petersonLower_le_fst_Iic μ t, fst_Iic_le_petersonUpper μ t⟩
 
 /-- Under independent censoring (`T = 0`, `C = 1`), the bounds contain `F(-∞, 0] = 1`. -/
 example : petersonLower (censoredObsLaw (Measure.dirac 0) (Measure.dirac 1)) 0 ≤
