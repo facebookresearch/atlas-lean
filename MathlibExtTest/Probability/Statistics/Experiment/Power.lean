@@ -179,4 +179,54 @@ theorem samplesize_zBeta_half_nonpos : cdfQuantile (gaussianReal 0 1) (1 - 1 / 2
   rw [cdfQuantile_le_iff _ h, cdf_gaussianReal_zero]
   norm_num
 
+/-- Use and non-vacuity: at the textbook level `α = 5/100`, one observation with unit known
+variance gives size exactly `5/100`. -/
+theorem zTestReject_size_five_percent (μ0 : ℝ) :
+    (Measure.pi fun _ : Fin 1 => gaussianReal μ0 1).real
+      (zTestReject 1 μ0 1 (cdfQuantile (gaussianReal 0 1) (1 - 5 / 100))) = 5 / 100 := by
+  exact measureReal_zTestReject_quantile Nat.one_pos one_ne_zero μ0 (by norm_num)
+
+/-- Use: in `Φ` form the exact size reads `Φ(-z₁₋α) = α`. -/
+theorem zTestReject_size_cdf_neg_quantile {α : ℝ} (hα : α ∈ Set.Ioo 0 1) :
+    cdf (gaussianReal 0 1) (-cdfQuantile (gaussianReal 0 1) (1 - α)) = α := by
+  have h1 := measureReal_zTestReject_quantile Nat.one_pos one_ne_zero (0 : ℝ) hα
+  have h2 := measureReal_zTestReject_eq_cdf Nat.one_pos (0 : ℝ) 0
+    (cdfQuantile (gaussianReal 0 1) (1 - α)) one_ne_zero
+  simp only [add_zero, mul_zero, zero_div, zero_sub] at h2
+  exact h2.symm.trans h1
+
+/-- Boundary: at `α = 1` the level `1 - α = 0` leaves `(0, 1)`, the quantile is `0` by
+convention, and the size is `1 / 2`, not `1`; the upper end of `hα` cannot be closed. -/
+theorem zTestReject_size_alpha_one {n : ℕ} (hn : 0 < n) {v : NNReal} (hv : v ≠ 0) (μ0 : ℝ) :
+    (Measure.pi fun _ : Fin n => gaussianReal μ0 v).real
+      (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - 1))) = 1 / 2 := by
+  have hq : cdfQuantile (gaussianReal 0 1) (1 - 1) = 0 := by simp [cdfQuantile]
+  rw [hq]
+  have h := measureReal_zTestReject_eq_cdf hn μ0 0 0 hv
+  simp only [add_zero, mul_zero, zero_div, sub_zero, cdf_gaussianReal_zero] at h
+  exact h
+
+/-- Negative: at variance `0` the null law is a Dirac mass, the statistic is identically `0`,
+and for `α ∈ (0, 1/2)` the test never rejects, so its size is `0`, not `α`. Exactness needs a
+continuous null law; `hv` cannot be dropped. -/
+theorem zTestReject_size_zero_variance {n : ℕ} (μ0 : ℝ) {α : ℝ}
+    (hα : α ∈ Set.Ioo 0 (1 / 2)) :
+    (Measure.pi fun _ : Fin n => gaussianReal μ0 0).real
+      (zTestReject n μ0 0 (cdfQuantile (gaussianReal 0 1) (1 - α))) = 0 := by
+  have hpos : 0 < cdfQuantile (gaussianReal 0 1) (1 - α) := by
+    apply cdfQuantile_gaussianReal_pos
+    obtain ⟨h0, h1⟩ := hα
+    exact ⟨by linarith, by linarith⟩
+  have hstat : ∀ x : Fin n → ℝ, zStat n μ0 0 x = 0 := by
+    intro x
+    show Real.sqrt (n : ℝ) * ((∑ i, x i) / (n : ℝ) - μ0) / Real.sqrt ((0 : NNReal) : ℝ) = 0
+    simp only [NNReal.coe_zero, Real.sqrt_zero, div_zero]
+  have hempty : zTestReject n μ0 0 (cdfQuantile (gaussianReal 0 1) (1 - α)) = ∅ := by
+    ext x
+    show x ∈ {x : Fin n → ℝ | cdfQuantile (gaussianReal 0 1) (1 - α) < zStat n μ0 0 x} ↔
+      x ∈ (∅ : Set (Fin n → ℝ))
+    rw [Set.mem_ofPred_eq, Set.mem_empty_iff_false, hstat x]
+    exact iff_false_intro (not_lt_of_ge hpos.le)
+  rw [hempty, measureReal_empty]
+
 end MathlibExt.Probability.Statistics.Experiment
