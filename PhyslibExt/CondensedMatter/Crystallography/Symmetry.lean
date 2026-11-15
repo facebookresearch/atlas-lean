@@ -98,8 +98,10 @@ This module treats polar tensors only. Axial (pseudo) tensors pick up an extra
   triclinic constants.
 - `Crystallography.Symmetry.cubicVoigt`, `eq_cubicVoigt_of_voigtInvariance`,
   `cubicVoigt_inj` : the 3-parameter cubic family.
-- `Crystallography.Symmetry.voigtRotate`, `Rz45` : the action of a `3 × 3`
-  matrix on Voigt matrices, and the `45°` rotation about `z`.
+- `Crystallography.Symmetry.voigtRotate`, `voigtRotate_Rz90_transpose_apply`,
+  `Rz45` : the action of a `3 × 3` matrix on Voigt matrices, which gives the
+  quarter-turn entry equations of `eq_cubicVoigt_of_voigtInvariance` for
+  `Rz90ᵀ`, and the `45°` rotation about `z`.
 - `Crystallography.Symmetry.isotropicVoigt`,
   `eq_isotropicVoigt_of_rotationInvariance`, `voigtRotate_isotropicVoigt`,
   `isotropicVoigt_inj` : the 2-parameter Lamé family, forced by invariance
@@ -1374,10 +1376,12 @@ def voigtSwap02 : Fin 6 → Fin 6 := ![2, 1, 0, 5, 4, 3]
 /-- Voigt index permutation for swapping axes `y ↔ z`. -/
 def voigtSwap12 : Fin 6 → Fin 6 := ![0, 2, 1, 3, 5, 4]
 
-/-- Voigt index permutation for the `z`-axis quarter-turn. -/
+/-- Voigt index permutation for the `z`-axis quarter-turn `Rz90ᵀ = Rz90⁻¹` (rotation by `-90°`),
+the action computed by `voigtRotate` (`voigtRotate_Rz90_transpose_apply`). -/
 def voigtRotZ90 : Fin 6 → Fin 6 := ![1, 0, 2, 4, 3, 5]
 
-/-- Voigt signs for the `z`-axis quarter-turn. -/
+/-- Voigt signs for the `z`-axis quarter-turn `Rz90ᵀ = Rz90⁻¹` (rotation by `-90°`), the action
+computed by `voigtRotate` (`voigtRotate_Rz90_transpose_apply`). -/
 def voigtRotZ90Sign : Fin 6 → ℝ := ![1, 1, 1, -1, 1, -1]
 
 /-- The cubic Voigt family: `3 × 3` normal block with `c11` on the diagonal
@@ -1400,7 +1404,8 @@ def cubicVoigt (c11 c12 c44 : ℝ) : Matrix (Fin 6) (Fin 6) ℝ :=
 
 /-- A symmetric Voigt matrix invariant under axis permutations and the
 `z`-axis quarter-turn is cubic. The invariances are stated as explicit entry
-equations. Note: axis permutations alone do NOT imply the cubic form (the
+equations; `hrot` is the entry form of `voigtRotate Rz90ᵀ C = C`
+(`voigtRotate_Rz90_transpose_apply`). Note: axis permutations alone do NOT imply the cubic form (the
 test file exhibits a permutation-invariant counterexample with nonzero
 normal-shear couplings), so the quarter-turn invariance, with its signs, is
 an essential hypothesis. -/
@@ -1539,7 +1544,7 @@ lemma cubicVoigt_swap12 (c11 c12 c44 : ℝ) (i j : Fin 6) :
   fin_cases i <;> fin_cases j <;>
     simp [cubicVoigt, Matrix.of_apply, voigtSwap12]
 
-/-- The cubic family is invariant under the `z`-axis quarter-turn. -/
+/-- The cubic family is invariant under the `z`-axis quarter-turn `Rz90ᵀ`, in entry form. -/
 lemma cubicVoigt_rotZ90 (c11 c12 c44 : ℝ) (i j : Fin 6) :
     cubicVoigt c11 c12 c44 i j = voigtRotZ90Sign i * voigtRotZ90Sign j *
       cubicVoigt c11 c12 c44 (voigtRotZ90 i) (voigtRotZ90 j) := by
@@ -1616,7 +1621,7 @@ lemma isotropicVoigt_swap12 (lam mu : ℝ) (i j : Fin 6) :
   rw [isotropicVoigt_isCubic]
   exact cubicVoigt_swap12 _ _ _ i j
 
-/-- The isotropic family is invariant under the `z`-axis quarter-turn. -/
+/-- The isotropic family is invariant under the `z`-axis quarter-turn `Rz90ᵀ`, in entry form. -/
 lemma isotropicVoigt_rotZ90 (lam mu : ℝ) (i j : Fin 6) :
     isotropicVoigt lam mu i j = voigtRotZ90Sign i * voigtRotZ90Sign j *
       isotropicVoigt lam mu (voigtRotZ90 i) (voigtRotZ90 j) := by
@@ -1665,6 +1670,16 @@ lemma voigtRotate_one (C : Matrix (Fin 6) (Fin 6) ℝ) : voigtRotate 1 C = C := 
   simp only [voigtRotate, Matrix.of_apply, Matrix.one_apply, ite_mul, one_mul, zero_mul,
     Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
   rw [voigtIndex_fst_snd, voigtIndex_fst_snd]
+
+set_option maxHeartbeats 1000000 in -- 36 entries, each a sum of 81 terms
+/-- The entry equations of `voigtRotZ90` and `voigtRotZ90Sign` are the action of the quarter-turn
+`Rz90ᵀ = Rz90⁻¹`, the rotation by `-90°` about `z`. -/
+theorem voigtRotate_Rz90_transpose_apply (C : Matrix (Fin 6) (Fin 6) ℝ) (I J : Fin 6) :
+    voigtRotate Rz90ᵀ C I J =
+      voigtRotZ90Sign I * voigtRotZ90Sign J * C (voigtRotZ90 I) (voigtRotZ90 J) := by
+  fin_cases I <;> fin_cases J <;>
+    simp [voigtRotate, Rz90, voigtFst, voigtSnd, voigtIndex, voigtRotZ90, voigtRotZ90Sign,
+      Fin.sum_univ_three]
 
 /-- The rotation by `45°` about the `z`-axis. -/
 noncomputable def Rz45 : Matrix (Fin 3) (Fin 3) ℝ :=

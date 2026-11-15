@@ -32,7 +32,8 @@ public import Mathlib.Tactic.IntervalCases
   instances; a cubic matrix violating `(c11-c12) = 2*c44` is not invariant
   under the `45°` rotation `Rz45`; axis permutations alone do not imply the
   cubic form (counterexample).
-* Rotation action: the identity acts trivially, the cubic family is fixed by
+* Rotation action: the identity acts trivially, the quarter-turn entry
+  equation is invariance under `Rz90ᵀ` (not `Rz90`), the cubic family is fixed by
   the quarter-turn `Rz90`, the Lamé family is fixed by `Rz45` and `Rx90`, and
   the hypotheses of `eq_isotropicVoigt_of_rotationInvariance` are satisfiable.
 -/
@@ -389,7 +390,23 @@ lemma test_isotropic_invariant :
   ⟨voigtRotate_isotropicVoigt _ Rz45_orthogonal _ _,
     voigtRotate_isotropicVoigt _ Rx90_orthogonal _ _⟩
 
-set_option maxHeartbeats 1000000 in
+/-- The quarter-turn entry equation is invariance under `Rz90ᵀ`: at `(0, 3)` it
+reads `C 0 3 = -C 1 4`, while the inverse turn `Rz90` sends `C 0 3` to `C 1 4`. -/
+lemma test_voigtRotZ90_inverse (C : Matrix (Fin 6) (Fin 6) ℝ) :
+    voigtRotate Rz90ᵀ C 0 3 = -C 1 4 ∧ voigtRotate Rz90 C 0 3 = C 1 4 := by
+  refine ⟨?_, ?_⟩
+  · rw [voigtRotate_Rz90_transpose_apply]
+    simp [voigtRotZ90, voigtRotZ90Sign]
+  · simp [voigtRotate, Rz90, voigtFst, voigtSnd, voigtIndex, Fin.sum_univ_three]
+
+/-- The `hrot` hypothesis of `eq_cubicVoigt_of_voigtInvariance` follows from
+`voigtRotate Rz90ᵀ C = C`. -/
+lemma test_hrot_of_voigtRotate (C : Matrix (Fin 6) (Fin 6) ℝ)
+    (h : voigtRotate Rz90ᵀ C = C) (i j : Fin 6) :
+    C i j = voigtRotZ90Sign i * voigtRotZ90Sign j * C (voigtRotZ90 i) (voigtRotZ90 j) := by
+  rw [← voigtRotate_Rz90_transpose_apply, h]
+
+set_option maxHeartbeats 1000000 in -- 36 entries, each a sum of 81 terms
 /-- The tensor action agrees with the cubic invariance: every cubic matrix is
 fixed by the quarter-turn `Rz90`, computed entry by entry. -/
 lemma test_cubic_Rz90_invariant (c11 c12 c44 : ℝ) :
@@ -492,6 +509,7 @@ end PhyslibExtTest.CondensedMatter.Crystallography.Symmetry
 #print axioms Crystallography.Symmetry.voigtIndex_fst_snd
 #print axioms Crystallography.Symmetry.voigtRotate
 #print axioms Crystallography.Symmetry.voigtRotate_one
+#print axioms Crystallography.Symmetry.voigtRotate_Rz90_transpose_apply
 #print axioms Crystallography.Symmetry.Rz45
 #print axioms Crystallography.Symmetry.Rz45_orthogonal
 #print axioms Crystallography.Symmetry.Rz45_det
@@ -538,5 +556,7 @@ end PhyslibExtTest.CondensedMatter.Crystallography.Symmetry
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_Rz45_shear
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_cubic_not_Rz45_invariant
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_isotropic_invariant
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_voigtRotZ90_inverse
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_hrot_of_voigtRotate
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_cubic_Rz90_invariant
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_isotropic_from_invariance
