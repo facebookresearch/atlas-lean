@@ -145,8 +145,8 @@ separate from this contribution template.
 The [native state and exception lesson](teaching/native-contracts.md) follows
 one checked debit through precise success/error contracts, monadic composition,
 actual-run corollaries, and discriminating fixtures. It reuses core `EStateM`
-and `Std.Do` in a private teaching/test consumer. It does not add a parallel
-logic or increase this inventory's accepted-spec count.
+and `Std.Do` in a standalone teaching example with explicit CI coverage.
+It does not add a parallel logic or increase this inventory's accepted-spec count.
 
 ## Source snapshots
 

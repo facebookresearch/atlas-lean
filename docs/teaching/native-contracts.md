@@ -4,7 +4,7 @@ Roadmap facet: `cs:VER-046#native-state-exception-contracts`.
 
 This lesson follows one checked debit from a precise contract through
 composition, weakest-precondition reasoning, concrete execution, and
-counterexamples. The [Lean example](../../CSLibExtTest/Specs/NativeStateContracts.lean)
+counterexamples. The [Lean example](examples/NativeStateContracts.lean)
 uses Lean's existing `EStateM`, `Std.Do.Triple`, and standard monad transformers.
 It does not introduce another program logic or a production banking API.
 
@@ -84,14 +84,14 @@ evidence, but does not replace running the assertion harness.
 To replay the file's commands with the repository-pinned toolchain:
 
 ```sh
-lake env lean CSLibExtTest/Specs/NativeStateContracts.lean
+lake env lean -DwarningAsError=true docs/teaching/examples/NativeStateContracts.lean
 ```
 
-The regular module target is
-`lake build CSLibExtTest.Specs.NativeStateContracts`. Axiom listings and
-executable assertion results establish different facts; inspect both. The
-kernel checks the stated propositions. These finite executions do not verify
-Lean's compiler or establish a claim about a deployed service.
+CI runs this standalone teaching file explicitly. It is not a library or a
+`CSLibExtTest` module: it exercises core APIs rather than a public Atlas API.
+Axiom listings and executable assertion results establish different facts;
+inspect both. The kernel checks the stated propositions. These finite
+executions do not verify Lean's compiler or a deployed service.
 
 ## Transformer order changes the observable result
 
