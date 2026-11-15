@@ -50,7 +50,11 @@ Let `inspSupport pS` be the set of grid points that are inspected with positive 
   or `j = 0`).
 * `hazard_identified_iff`: these conditions are also necessary: if `j` (not the last point) or
   `j - 1` is never inspected, two point masses give the same observed-data law and different
-  hazards at `j`.
+  hazards at `j`. At the last grid point the `j - 1` condition is an artifact of the convention
+  `x / 0 = 0` in `Censoring.hazard`: there the hazard is `1` whenever `P(T ≥ j) > 0`, and the
+  counterexample's hazard `0` comes from `P(T ≥ j) = 0`, so no real information is missing. Away
+  from the last point the non-identification is genuine (mix both point masses with the last
+  point to make `P(T ≥ j) > 0`).
 * `inspSupport_currentStatus`: for current status data the inspected set is the support of the
   inspection-time law, so the hazard at `j` is identified iff both `j` and `j - 1` are possible
   inspection times (up to the boundary cases above).
@@ -309,7 +313,8 @@ theorem exists_hazard_ne_of_notMem {pS : PMF (Finset (Fin k))} {j : Fin k}
   · simp [hazard_pure, Fin.ext_iff]
 
 /-- If `j - 1` is never inspected, the hazard at `j` is not identified: point masses at `j - 1`
-and `j` have the same observed-data law and hazards `0` and `1` at `j`. -/
+and `j` have the same observed-data law and hazards `0` and `1` at `j`. The hazard `0` of the
+point mass at `j - 1` is the `x / 0 = 0` convention (`P(T ≥ j) = 0`); see the module docstring. -/
 theorem exists_hazard_ne_of_prev_notMem {pS : PMF (Finset (Fin k))} {i j : Fin k}
     (hi : i ∉ inspSupport pS) (hij : i.val + 1 = j.val) :
     ∃ pT pT' : PMF (Fin k), icObsLaw pT pS = icObsLaw pT' pS ∧ hazard pT j ≠ hazard pT' j := by

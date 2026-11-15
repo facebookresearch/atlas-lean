@@ -78,8 +78,9 @@ example {pT pT' : PMF (Fin 4)} (h : icObsLaw pT pS = icObsLaw pT' pS) :
     obtain rfl : i = 1 := Fin.ext (by simpa using hi)
     exact one_mem
 
-/-- The last grid point `3` is never inspected, but `F(3) = 1`, so the hazard at `3` is
-identified as soon as `2` is inspected. -/
+/-- The last grid point `3` is never inspected, but `F(3) = 1`, so `hazard_eq_of_icObsLaw_eq`
+applies at `3` once `2` is inspected. This is not substantive identification: the hazard at the
+last point is `1` whenever `P(T ≥ 3) > 0` and `0` otherwise, by the `x / 0 = 0` convention. -/
 example {pT pT' : PMF (Fin 4)} (h : icObsLaw pT pS = icObsLaw pT' pS) :
     hazard pT 3 = hazard pT' 3 :=
   hazard_eq_of_icObsLaw_eq h (Or.inr rfl) fun i hi => by
