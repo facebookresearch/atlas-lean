@@ -67,7 +67,7 @@ def Graph (i : MaximumWeightConnectedSubgraphInstance) : SimpleGraph (Fin i.1) :
   Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
 
 /-- The integer weight `w(v)` of vertex `v`. -/
-def weight (i : MaximumWeightConnectedSubgraphInstance) (v : ℕ) : ℤ :=
+def weight (i : MaximumWeightConnectedSubgraphInstance) (v : Fin i.1) : ℤ :=
   ((i.2.2.1.getD v (0, 0)).1 : ℤ) - (i.2.2.1.getD v (0, 0)).2
 
 /-- The integer bound `B`. -/
