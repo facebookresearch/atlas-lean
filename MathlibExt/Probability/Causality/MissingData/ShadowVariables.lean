@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Causality.CausalIdentification
+public import MathlibExt.Probability.WeightLaw
 
 /-!
 # Missing not at random: identification with a shadow variable
@@ -40,7 +41,6 @@ determined by the observed-data law.
 * `ShadowVariable P`: `Z ⊥ R | Y` under `P`, as `CondIndepDiscrete`.
 * `ShadowComplete P`: completeness of the respondents' outcome given the shadow variable.
 * `shadowOdds P y`: the nonresponse odds `P(R = false, Y = y) / P(R = true, Y = y)`.
-* `weightedDiracSum w`: the finite measure with point masses `w ω`.
 
 ## Main results
 
@@ -341,27 +341,6 @@ theorem integral_eq_of_map_shadowObs_eq [Fintype 𝒴] [Finite 𝒵] [Inhabited 
 
 /-! ### Completeness is necessary -/
 
-/-- The finite measure with point mass `w ω` at each `ω` (negative weights are read as `0`). -/
-noncomputable def weightedDiracSum {α : Type*} [Fintype α] [MeasurableSpace α] (w : α → ℝ) :
-    Measure α :=
-  ∑ ω, ENNReal.ofReal (w ω) • Measure.dirac ω
-
-instance {α : Type*} [Fintype α] [MeasurableSpace α] (w : α → ℝ) :
-    IsFiniteMeasure (weightedDiracSum w) := by
-  constructor
-  simp only [weightedDiracSum, Measure.coe_finsetSum, Finset.sum_apply, Measure.smul_apply,
-    measure_univ, smul_eq_mul, mul_one]
-  exact ENNReal.sum_lt_top.2 fun _ _ => ENNReal.ofReal_lt_top
-
-lemma measureReal_weightedDiracSum_singleton {α : Type*} [Fintype α] [MeasurableSpace α]
-    [MeasurableSingletonClass α] {w : α → ℝ} (hw : ∀ ω, 0 ≤ w ω) (a : α) :
-    (weightedDiracSum w).real {a} = w a := by
-  classical
-  simp only [Measure.real, weightedDiracSum, Measure.coe_finsetSum, Finset.sum_apply,
-    Measure.smul_apply, Measure.dirac_apply, Set.indicator, Set.mem_singleton_iff, Pi.one_apply,
-    smul_eq_mul, mul_ite, mul_one, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
-  exact ENNReal.toReal_ofReal (hw a)
-
 /-- **Completeness cannot be dropped.** Let `P` satisfy the shadow assumption with overlap,
 `0 < P(R = true, Y = y)` and `0 < P(R = false, Y = y)` for every `y`. If `P` is not complete,
 another probability law that satisfies the shadow assumption has the same observed-data law as
@@ -406,12 +385,12 @@ theorem exists_ne_map_shadowObs_eq_of_not_shadowComplete [Fintype 𝒴] [Fintype
     rintro ⟨_ | _, y, z⟩
     · exact mul_nonneg (hb y).le measureReal_nonneg
     · exact measureReal_nonneg
-  set Q := weightedDiracSum w
+  set Q := weightLaw w
   have hQ1 : ∀ y z, Q.real {(true, y, z)} = P.real {(true, y, z)} := fun y z => by
-    rw [measureReal_weightedDiracSum_singleton hw]
+    rw [measureReal_weightLaw_singleton hw]
     simp [w]
   have hQ0 : ∀ y z, Q.real {(false, y, z)} = b y * P.real {(true, y, z)} := fun y z => by
-    rw [measureReal_weightedDiracSum_singleton hw]
+    rw [measureReal_weightLaw_singleton hw]
     simp [w]
   -- The nonrespondent shadow margins are unchanged, because `g` solves the homogeneous equation.
   have hmargin : ∀ z, ∑ y, Q.real {(false, y, z)} = ∑ y, P.real {(false, y, z)} := fun z => by

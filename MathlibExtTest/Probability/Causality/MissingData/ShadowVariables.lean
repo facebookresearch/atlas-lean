@@ -27,7 +27,8 @@ public import MathlibExt.Probability.Causality.MissingData.ShadowVariables
 
 @[expose] public section
 
-open MeasureTheory MathlibExt.Probability.Causality MathlibExt.Probability.Causality.MissingData
+open MeasureTheory MathlibExt.Probability MathlibExt.Probability.Causality
+  MathlibExt.Probability.Causality.MissingData
 
 namespace MathlibExtTest.Probability.Causality.MissingData.Shadow
 
@@ -50,10 +51,10 @@ lemma w_nonneg : ∀ ω, 0 ≤ w ω := by
   rintro ⟨_ | _, _ | _, _ | _⟩ <;> norm_num [w]
 
 /-- The identified MNAR law. -/
-noncomputable abbrev mnarLaw : Measure (Bool × Bool × Bool) := weightedDiracSum w
+noncomputable abbrev mnarLaw : Measure (Bool × Bool × Bool) := weightLaw w
 
 @[simp] lemma mnarLaw_singleton (ω : Bool × Bool × Bool) : mnarLaw.real {ω} = w ω :=
-  measureReal_weightedDiracSum_singleton w_nonneg ω
+  measureReal_weightLaw_singleton w_nonneg ω
 
 open scoped Classical in
 lemma mnarLaw_real (s : Set (Bool × Bool × Bool)) :
@@ -181,10 +182,10 @@ example : (∀ y z, constLaw.real {(true, y, z)} = maskLaw.real {(true, y, z)}) 
 /-! ### Non-vacuity of the necessity theorem -/
 
 /-- Response a fair coin independent of a fair-coin outcome, with a trivial shadow variable. -/
-noncomputable abbrev indepLaw : Measure (Bool × Bool × Unit) := weightedDiracSum fun _ => 1 / 4
+noncomputable abbrev indepLaw : Measure (Bool × Bool × Unit) := weightLaw fun _ => 1 / 4
 
 @[simp] lemma indepLaw_singleton (ω : Bool × Bool × Unit) : indepLaw.real {ω} = 1 / 4 :=
-  measureReal_weightedDiracSum_singleton (fun _ => by norm_num) ω
+  measureReal_weightLaw_singleton (fun _ => by norm_num) ω
 
 instance : IsProbabilityMeasure indepLaw := by
   constructor
