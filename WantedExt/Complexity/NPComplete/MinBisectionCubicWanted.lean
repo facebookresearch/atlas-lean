@@ -15,7 +15,7 @@ average case behavior", Combinatorica 7(2) (1987), 171-191, doi:10.1007/BF025794
 L. Lichev and D. Mitsche, "On the minimum bisection of random 3-regular graphs", The Electronic
 Journal of Combinatorics 30(2) (2023), doi:10.37236/11085, Section 1;
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
-NP-Completeness*, W. H. Freeman (1979), problem [ND17] GRAPH PARTITIONING.
+NP-Completeness*, W. H. Freeman (1979), problem [ND17] MINIMUM CUT INTO BOUNDED SETS.
 -/
 module
 
