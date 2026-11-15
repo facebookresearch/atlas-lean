@@ -42,11 +42,12 @@ of them empty, with `T₁ ∪ T₂ = S₁ ∪ S₂`; if all four are nonempty, r
 `T₁, T₂` is a translocation; if `S₂` is empty, replacing `S₁` by `T₁, T₂` is a fission; if
 `T₂` is empty, replacing `S₁, S₂` by `T₁` is a fusion. The syntenic distance `D(G₁, G₂)` is
 the least number of moves transforming `G₁` into `G₂`; Theorem 3.1 proves that computing it is
-NP-hard. Membership in NP: moves preserve the union of the chromosomes; when the unions agree,
-fusing all chromosomes of `G₁` into one and splitting it into those of `G₂` takes
-`|G₁| + |G₂| - 2` moves, so a shortest move sequence is a certificate of polynomial size.
+NP-hard. Membership in NP: moves preserve the union of the chromosomes; when the unions agree
+and both genomes are nonempty, fusing all chromosomes of `G₁` into one and splitting it into
+those of `G₂` takes `|G₁| + |G₂| - 2` moves, so a shortest move sequence is a certificate of
+polynomial size.
 
-A genome is a multiset of nonempty finite sets of genes (`Multiset (Finset ℕ)`), so its
+A genome is a nonempty multiset of nonempty finite sets of genes (`Multiset (Finset ℕ)`), so its
 chromosomes are unordered and two equal chromosomes count twice (the source's compact
 representation allows equal sets). The instance lists each chromosome as a list of genes.
 
@@ -83,10 +84,11 @@ inductive Move : Multiset (Finset ℕ) → Multiset (Finset ℕ) → Prop
       S₁.Nonempty → S₂.Nonempty → T₁ = S₁ ∪ S₂ →
       Move (S₁ ::ₘ S₂ ::ₘ R) (T₁ ::ₘ R)
 
-/-- Well-formedness of an instance: every chromosome is a nonempty list of distinct genes, and
-the two genomes are over the same set of genes. -/
+/-- Well-formedness of an instance: both genomes have at least one chromosome, every chromosome
+is a nonempty list of distinct genes, and the two genomes are over the same set of genes. -/
 def WellFormed (i : SyntenicDistanceInstance) : Prop :=
-  (∀ c ∈ i.1 ++ i.2.1, c ≠ [] ∧ c.Nodup) ∧ i.1.flatten.toFinset = i.2.1.flatten.toFinset
+  i.1 ≠ [] ∧ i.2.1 ≠ [] ∧ (∀ c ∈ i.1 ++ i.2.1, c ≠ [] ∧ c.Nodup) ∧
+    i.1.flatten.toFinset = i.2.1.flatten.toFinset
 
 /-- The syntenic distance from `G₁` to `G₂` is at most `K`: a sequence of `m ≤ K` moves leads
 from `G₁` to `G₂`. -/
