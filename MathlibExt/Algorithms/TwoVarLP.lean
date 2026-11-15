@@ -9,25 +9,23 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.NormNum
-public import Mathlib.Data.List.Basic
 
 /-!
-# Incremental two-variable LP: feasibility facts
+# Two-variable LP: feasibility under added constraints
 
-Constraints `(a, b, c)` mean `a * x + b * y ≤ c` over `ℚ`.
-Feasibility is antitone in the constraint list, and a point
-feasible after adding a constraint satisfies that
-constraint. The randomized incremental analysis is not
-included here.
+A constraint `(a, b, c) : ℚ × ℚ × ℚ` means `a * x + b * y ≤ c`, and a point
+`p = (x, y)` is feasible for a list of constraints when it satisfies all of
+them. Feasibility is antitone in the constraint list, and a point feasible
+after appending a constraint satisfies that constraint. Algorithms for
+two-variable linear programming are not included here.
 -/
 
 @[expose] public section
 
-/-- Two-variable linear programming, incremental core
-(ALG-48). A constraint is `(a, b, c) : ℚ × ℚ × ℚ` meaning
-`a * x + b * y ≤ c`. The feasible set after a list of
-constraints, as a predicate. -/
+namespace MathlibExt.Algorithms.TwoVarLP
+
+/-- The point `p = (x, y)` satisfies every constraint `(a, b, c)` in `cs`,
+that is, `a * x + b * y ≤ c`. -/
 def feasible (cs : List (ℚ × ℚ × ℚ)) (p : ℚ × ℚ) : Prop :=
   ∀ c ∈ cs, c.1 * p.1 + c.2.1 * p.2 ≤ c.2.2
 
@@ -38,18 +36,10 @@ theorem feasible_mono {cs₁ cs₂ : List (ℚ × ℚ × ℚ)} {p : ℚ × ℚ}
   intro c hc
   exact h c (hsub c hc)
 
-/-- Optimal value of a bounded LP is attained at a vertex:
-for a single constraint line and objective `x`, the minimum
-over the half-plane... too specific; instead the incremental
-step invariant: if `p` is feasible for `cs` and violates the
-new constraint `c`, any feasible point `q` for `cs ++ [c]`
-lies on the line of `c` or beyond in the violated direction:
-`c.1 * q.1 + c.2.1 * q.2 ≤ c.2.2 < c.1 * p.1 + c.2.1 * p.2`. -/
+/-- A point feasible after appending the constraint `c` satisfies `c`. -/
 theorem feasible_new_constraint {cs : List (ℚ × ℚ × ℚ)}
-    (c : ℚ × ℚ × ℚ) {p q : ℚ × ℚ}
-    (hp : feasible cs p) (hviol : c.2.2 < c.1 * p.1 + c.2.1 * p.2)
-    (hq : feasible (cs ++ [c]) q) :
-    c.1 * q.1 + c.2.1 * q.2 ≤ c.2.2 := by
-  exact hq c (List.mem_append_right cs (List.mem_singleton_self c))
+    (c : ℚ × ℚ × ℚ) {p : ℚ × ℚ} (hp : feasible (cs ++ [c]) p) :
+    c.1 * p.1 + c.2.1 * p.2 ≤ c.2.2 :=
+  hp c (List.mem_append_right cs (List.mem_singleton_self c))
 
-end
+end MathlibExt.Algorithms.TwoVarLP
