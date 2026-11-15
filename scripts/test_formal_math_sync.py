@@ -402,7 +402,48 @@ class BaseGuardTest(unittest.TestCase):
         self.commit("relabel an edit as upstream")
         code, out = self.run_check()
         self.assertEqual(code, 1)
-        self.assertIn("MathlibExt/Identical.lean: upstream_sha256 changed while the upstream pin is unchanged", out)
+        self.assertIn("MathlibExt/Identical.lean: synced row changed (published_sha256, upstream_sha256) while the "
+                      "upstream pin is unchanged", out)
+
+    def edit_row(self, path: str, **fields) -> dict:
+        row = next(r for r in self.manifest["rows"] if r["path"] == path)
+        for key, value in fields.items():
+            if value is None:
+                row.pop(key, None)
+            else:
+                row[key] = value
+        self.save()
+        return row
+
+    def assert_blocked(self, message: str, expected: str) -> None:
+        self.assertEqual(c.check(self.root, self.root / c.MANIFEST)[0], [], "the tree alone must look valid")
+        self.commit(message)
+        code, out = self.run_check()
+        self.assertEqual(code, 1, out)
+        self.assertIn(expected, out)
+
+    def test_attribution_cannot_be_dropped_by_relabeling(self) -> None:
+        text = c.META + "\n" + BODY  # notice deleted from the file
+        write(self.root, "MathlibExt/Attributed.lean", text)
+        self.edit_row("MathlibExt/Attributed.lean", disposition="identical", notice=None, published_sha256=c.sha256(text))
+        self.assert_blocked("drop an attribution notice", "MathlibExt/Attributed.lean: synced row changed "
+                            "(disposition, notice, published_sha256)")
+
+    def test_behind_cannot_be_relabeled_identical(self) -> None:
+        self.edit_row("MathlibExtTest/Behind.lean", disposition="identical",
+                      upstream_commit=None)
+        self.assert_blocked("claim a behind file is current", "MathlibExtTest/Behind.lean: synced row changed "
+                            "(disposition, upstream_commit)")
+
+    def test_diverged_upstream_hash_is_frozen(self) -> None:
+        self.edit_row("CSLibExt/Diverged.lean", upstream_sha256="e" * 64)
+        self.assert_blocked("rewrite a diverged row's upstream hash",
+                            "CSLibExt/Diverged.lean: diverged row changed upstream_sha256")
+
+    def test_backport_link_update_passes(self) -> None:
+        self.edit_row("CSLibExt/Diverged.lean", backport="https://github.com/fairinternal/formal-math/pull/1")
+        self.commit("link the backport PR")
+        self.assertEqual(self.run_check()[0], 0)
 
     def labeled_pr(self, *labels: str) -> None:
         self.event("pull_request", {"pull_request": {"labels": [{"name": name} for name in labels]}})

@@ -427,6 +427,39 @@ def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
     return None, "no origin/main merge-base and no readable parent commit"
 
 
+def row_transition_problems(path: str, before: dict | None, row: dict, short: str) -> list[str]:
+    """With the upstream pin unchanged, a row may only stay as it was or take an allowed step:
+    to `retired`; to `diverged` (keeping the base `upstream_sha256`); or, for a diverged row, a new
+    `published_sha256` with a new rationale, or a rationale/backport update, while `upstream_sha256`
+    and `upstream_commit` stay the same. Synced rows are frozen: only a sync changes them."""
+    disposition = row.get("disposition")
+    if before is None:
+        if disposition in SYNCED:
+            return [f"{path}: new synced row while the upstream pin is unchanged; synced rows come "
+                    "from scripts/sync_formal_math.py"]
+        return []
+    if row == before or disposition == "retired":
+        return []
+    if disposition in SYNCED:
+        fields = sorted(k for k in set(row) | set(before) if row.get(k) != before.get(k))
+        return [f"{path}: synced row changed ({', '.join(fields)}) while the upstream pin is unchanged "
+                f"(base {short}); record an edit with --record-divergence or a deletion with --retire"]
+    if disposition != "diverged":
+        return []  # check() reports an unknown disposition
+    if before.get("disposition") != "diverged":
+        if "upstream_sha256" in before and row.get("upstream_sha256") != before["upstream_sha256"]:
+            return [f"{path}: upstream_sha256 changed when the row became diverged (base {short})"]
+        return []
+    changed = [k for k in ("upstream_sha256", "upstream_commit") if row.get(k) != before.get(k)]
+    if changed:
+        return [f"{path}: diverged row changed {', '.join(changed)} while the upstream pin is unchanged "
+                f"(base {short})"]
+    if row.get("published_sha256") != before.get("published_sha256") and row.get("rationale") == before.get("rationale"):
+        return [f"{path}: diverged file changed but its rationale did not (base {short}); "
+                "explain the new change with --record-divergence"]
+    return []
+
+
 def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[list[str], list[str]]:
     """Compare the manifest with the base manifest. Returns (problems, warnings).
 
@@ -471,22 +504,7 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
         problem, note = repin_authorization(old_pin, pin)
         return problems + ([problem] if problem else []), ([note] if note else [])
     for path, row in sorted(new.items(), key=lambda item: str(item[0])):
-        before = old.get(path)
-        if row.get("disposition") == "diverged":
-            if before and before.get("disposition") == "diverged" and \
-                    before.get("published_sha256") != row.get("published_sha256") and \
-                    before.get("rationale") == row.get("rationale"):
-                problems.append(f"{path}: diverged file changed but its rationale did not (base {short}); "
-                                "explain the new change with --record-divergence")
-            continue
-        if row.get("disposition") not in SYNCED:
-            continue
-        if before is None:
-            problems.append(f"{path}: new synced row while the upstream pin is unchanged; synced rows come "
-                            "from scripts/sync_formal_math.py")
-        elif before.get("upstream_sha256") != row.get("upstream_sha256"):
-            problems.append(f"{path}: upstream_sha256 changed while the upstream pin is unchanged (base "
-                            f"{short}); record the edit with --record-divergence")
+        problems += row_transition_problems(path, old.get(path), row, short)
     return problems, []
 
 
@@ -554,6 +572,8 @@ def main(argv: list[str] | None = None) -> int:
             row = {"path": path, "disposition": "diverged", "published_sha256": sha256(target.read_bytes())}
             if "upstream_sha256" in old:
                 row["upstream_sha256"] = old["upstream_sha256"]
+            if old.get("disposition") == "diverged" and "upstream_commit" in old:
+                row["upstream_commit"] = old["upstream_commit"]  # e.g. the commit that deleted it upstream
             row.update(rationale=a.rationale.strip(), backport=a.backport)
             return row
         return edit(a.root, manifest_path, a.record_divergence, diverge)
