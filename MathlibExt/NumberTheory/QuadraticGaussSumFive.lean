@@ -34,7 +34,8 @@ namespace MetaMathlibExt
 
 /-- Primality of `5` for the Legendre-symbol API. Scoped (not global), so
 importers only see it under `open scoped MetaMathlibExt`. -/
-scoped instance : Fact (Nat.Prime 5) := ⟨by decide⟩
+scoped instance instFactPrimeOfNatNat_mathlibExt : Fact (Nat.Prime 5) :=
+  ⟨by decide⟩
 
 open scoped MetaMathlibExt
 
