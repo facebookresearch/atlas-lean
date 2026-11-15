@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), problem GT18 MAXIMUM BALANCED CONNECTED PARTITION;
+2000), problem MAXIMUM BALANCED CONNECTED PARTITION;
 J. Chlebíková, "Approximating the maximally balanced connected partition problem in graphs",
 Information Processing Letters 60(5) (1996), 225-230, doi:10.1016/S0020-0190(96)00175-5
 (NP-hard even for bipartite graphs with unit weights);
@@ -94,8 +94,8 @@ noncomputable def balancedConnectedPartitionDec :
   | some i => decide (WellFormed i ∧ BalancedConnectedPartitionFeasible i)
   | none => false
 
-/-- **BALANCED CONNECTED PARTITION is NP-complete.** Source: Crescenzi and Kann, GT18;
-Chlebíková (1996); Dyer and Frieze (1985), Theorem 2.2. -/
+/-- **BALANCED CONNECTED PARTITION is NP-complete.** Source: Crescenzi and Kann, MAXIMUM BALANCED
+CONNECTED PARTITION; Chlebíková (1996); Dyer and Frieze (1985), Theorem 2.2. -/
 public theorem_wanted balancedConnectedPartition_npComplete :
     balancedConnectedPartitionDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

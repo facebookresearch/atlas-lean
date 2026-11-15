@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, MAXIMUM CAPACITY
-REPRESENTATIVES [SP11];
+REPRESENTATIVES;
 M. Bellare, "Interactive proofs and approximation: reductions from two provers in one round",
 Proceedings of the 2nd Israel Symposium on Theory and Computing Systems (ISTCS 1993), 266-274,
 doi:10.1109/ISTCS.1993.253462.
@@ -36,7 +36,7 @@ nonnegative capacity `c(x, y)`; a positive integer `K`. QUESTION: is there a sys
 representatives `T`, i.e. a set `T` with `|T ∩ Sᵢ| = 1` for every `i`, whose capacity
 `∑_{x, y ∈ T} c(x, y)` is at least `K`?
 
-This is the decision version of Crescenzi and Kann's MAXIMUM CAPACITY REPRESENTATIVES [SP11],
+This is the decision version of Crescenzi and Kann's MAXIMUM CAPACITY REPRESENTATIVES,
 whose entry records that it "does not admit a PTAS" (Bellare), so the decision version is
 NP-hard. It contains MAX CUT directly: for a graph with edge weights `w`, take
 `S_v = {v⁰, v¹}` for every vertex `v` and `c(uᵃ, vᵇ) = w(uv)` when `uv` is an edge and `a ≠ b`
@@ -93,8 +93,8 @@ noncomputable def capacityRepresentativesDec :
   | some i => decide (WellFormed i ∧ CapacityRepresentativesFeasible i)
   | none => false
 
-/-- **CAPACITY REPRESENTATIVES is NP-complete.** Source: Crescenzi and Kann, [SP11]; Bellare
-(1993). -/
+/-- **CAPACITY REPRESENTATIVES is NP-complete.** Source: Crescenzi and Kann, MAXIMUM CAPACITY
+REPRESENTATIVES; Bellare (1993). -/
 public theorem_wanted capacityRepresentatives_npComplete :
     capacityRepresentativesDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

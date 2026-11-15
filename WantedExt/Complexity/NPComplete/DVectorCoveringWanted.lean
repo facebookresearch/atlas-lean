@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, web edition
-(2000), problem [SR3] MAXIMUM D-VECTOR COVERING (decision version);
+(2000), problem MAXIMUM D-VECTOR COVERING (decision version);
 S. F. Assmann, D. S. Johnson, D. J. Kleitman and J. Y.-T. Leung, "On a dual version of the
 one-dimensional bin packing problem", Journal of Algorithms 5(4) (1984), 502-525,
 doi:10.1016/0196-6774(84)90004-x (bin covering, the case `d = 1`; the paper was not available,
@@ -40,7 +40,7 @@ QUESTION: is there a partition of the positions `{1, …, N}` of `X` into subset
 that at least `K` of them are unit covers, where `S` is a unit cover if, for every `i ≤ d`, the
 sum of the `i`-th components of the vectors `x_j`, `j ∈ S`, is at least `1`?
 
-This is the decision version of MAXIMUM D-VECTOR COVERING of Crescenzi and Kann ([SR3]). The
+This is the decision version of MAXIMUM D-VECTOR COVERING of Crescenzi and Kann. The
 dimension `d` is part of the instance, so every fixed `d ≥ 1` is a special case. For `d = 1` the
 problem is bin covering (fill as many bins of size `1` as possible to level at least `1`), which
 Assmann, Johnson, Kleitman and Leung (1984) proved NP-hard (as recorded by Csirik, Frenk, Labbé
@@ -108,8 +108,8 @@ noncomputable def dVectorCoveringDec :
   | some i => decide (WellFormed i ∧ DVectorCoveringFeasible i)
   | none => false
 
-/-- **D-VECTOR COVERING (list of vectors) is NP-complete.** Source: Crescenzi and Kann, [SR3];
-Assmann, Johnson, Kleitman and Leung (1984). -/
+/-- **D-VECTOR COVERING (list of vectors) is NP-complete.** Source: Crescenzi and Kann, MAXIMUM
+D-VECTOR COVERING; Assmann, Johnson, Kleitman and Leung (1984). -/
 public theorem_wanted dVectorCovering_npComplete :
     dVectorCoveringDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

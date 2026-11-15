@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # HYPERPLANE CONSISTENCY is NP-complete
 
 Source:
-P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem [MP12]
+P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem
 MAXIMUM HYPERPLANE CONSISTENCY;
 E. Amaldi and V. Kann, "The complexity and approximability of finding maximum feasible
 subsystems of linear relations", Theoretical Computer Science 147 (1995), 181-210,
@@ -43,7 +43,7 @@ QUESTION: is there a hyperplane, given by a normal vector `w ∈ ℚⁿ`, `w ≠
 `|{x ∈ P : w · x > w₀}| + |{x ∈ N : w · x < w₀}|`, is at least `K`?
 
 This is the decision version of MAXIMUM HYPERPLANE CONSISTENCY from the Crescenzi-Kann
-compendium ([MP12]), which records it as APX-complete (Amaldi and Kann). The compendium calls
+compendium, which records it as APX-complete (Amaldi and Kann). The compendium calls
 it similar to OPEN HEMISPHERE ([MP6], Garey and Johnson, stated on `main` as
 `WantedExt.Complexity.NPComplete.OpenHemisphereWanted`), the homogeneous problem without a
 bias and without negative examples; the bound `K ≤ |P| + |N|` follows [MP6]'s `K ≤ |X|`.
@@ -101,8 +101,8 @@ noncomputable def hyperplaneConsistencyDec :
   | some i => decide (WellFormed i ∧ HyperplaneConsistencyFeasible i)
   | none => false
 
-/-- **HYPERPLANE CONSISTENCY is NP-complete.** Source: Crescenzi and Kann, [MP12]; Amaldi and
-Kann (1995). -/
+/-- **HYPERPLANE CONSISTENCY is NP-complete.** Source: Crescenzi and Kann, MAXIMUM HYPERPLANE
+CONSISTENCY; Amaldi and Kann (1995). -/
 public theorem_wanted hyperplaneConsistency_npComplete :
     hyperplaneConsistencyDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

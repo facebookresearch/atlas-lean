@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, web edition
-(2000), problem [ND31] MINIMUM BOUNDED DIAMETER AUGMENTATION;
+(2000), problem MINIMUM BOUNDED DIAMETER AUGMENTATION;
 C.-L. Li, S. T. McCormick and D. Simchi-Levi, "On the minimum-cardinality-bounded-diameter and
 the bounded-cardinality-minimum-diameter edge addition problems", Operations Research Letters
 11 (1992), 303-308, doi:10.1016/0167-6377(92)90007-P.
@@ -38,7 +38,7 @@ QUESTION: is there an augmenting set `E'` for `G`, a set of unordered pairs of v
 such that `G' = (V, E ∪ E')` has diameter at most `D` (the maximum distance of any pair of
 vertices is at most `D`) and `|E'| ≤ K`?
 
-This is the decision version, with bound `K`, of Crescenzi and Kann's [ND31] MINIMUM BOUNDED
+This is the decision version, with bound `K`, of Crescenzi and Kann's MINIMUM BOUNDED
 DIAMETER AUGMENTATION, the minimum-cardinality-bounded-diameter (MCBD) edge addition problem of
 Li, McCormick and Simchi-Levi (1992): "Given a graph `G = (V, E)`, positive integer `D < |V|`
 […], find a superset of edges `E′ ⊇ E` such that the graph `G′ = (V, E′)` has diameter no greater
@@ -103,8 +103,8 @@ noncomputable def boundedDiameterAugmentationDec :
   | some i => decide (WellFormed i ∧ BoundedDiameterAugmentationFeasible i)
   | none => false
 
-/-- **BOUNDED DIAMETER AUGMENTATION is NP-complete.** Source: Crescenzi and Kann (2000), [ND31];
-Li, McCormick and Simchi-Levi (1992). -/
+/-- **BOUNDED DIAMETER AUGMENTATION is NP-complete.** Source: Crescenzi and Kann (2000), MINIMUM
+BOUNDED DIAMETER AUGMENTATION; Li, McCormick and Simchi-Levi (1992). -/
 public theorem_wanted boundedDiameterAugmentation_npComplete :
     boundedDiameterAugmentationDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

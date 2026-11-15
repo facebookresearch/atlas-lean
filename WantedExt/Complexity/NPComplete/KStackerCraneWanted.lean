@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # K-STACKER CRANE PROBLEM is NP-complete
 
 Source:
-P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem [ND40]
+P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem
 MINIMUM K-STACKER CRANE PROBLEM;
 G. N. Frederickson, M. S. Hecht, and C. E. Kim, "Approximation algorithms for some routing
 problems", SIAM Journal on Computing 7 (1978), 178-193, doi:10.1137/0207017;
@@ -42,7 +42,7 @@ collectively traverse each directed edge in `A` at least once, such that the max
 the `k` cycles is at most `K`?
 
 This is the decision version of MINIMUM K-STACKER CRANE PROBLEM from the Crescenzi-Kann
-compendium ([ND40]), the `k`-person variant of STACKER-CRANE with a minimax objective treated
+compendium, the `k`-person variant of STACKER-CRANE with a minimax objective treated
 by Frederickson, Hecht and Kim. For `k = 1` it is STACKER-CRANE ([ND26], NP-complete by
 Frederickson, Hecht and Kim) with the cycle required to pass through `s`; when `A` is nonempty
 and `s` is the tail of a directed edge, every cycle that traverses all of `A` contains `s`.
@@ -103,8 +103,8 @@ noncomputable def kStackerCraneDec :
   | some i => decide (WellFormed i ∧ KStackerCraneFeasible i)
   | none => false
 
-/-- **K-STACKER CRANE PROBLEM is NP-complete.** Source: Crescenzi and Kann, [ND40];
-Frederickson, Hecht, and Kim (1978); Garey and Johnson (1979), [ND26]. -/
+/-- **K-STACKER CRANE PROBLEM is NP-complete.** Source: Crescenzi and Kann, MINIMUM K-STACKER CRANE
+PROBLEM; Frederickson, Hecht, and Kim (1978); Garey and Johnson (1979), [ND26]. -/
 public theorem_wanted kStackerCrane_npComplete :
     kStackerCraneDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

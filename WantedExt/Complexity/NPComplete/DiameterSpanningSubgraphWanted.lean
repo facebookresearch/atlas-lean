@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, web edition
-(2000), problem [ND6] MINIMUM DIAMETER SPANNING SUBGRAPH (decision version);
+(2000), problem MINIMUM DIAMETER SPANNING SUBGRAPH (decision version);
 J. Plesník, "The complexity of designing a network with minimum diameter", Networks 11(1)
 (1981), 77-85, doi:10.1002/net.3230110110;
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
@@ -40,12 +40,12 @@ QUESTION: is there a spanning subgraph `E' ⊆ E` for `G` such that the sum of t
 edges in `E'` does not exceed `B` and such that the diameter of the spanning subgraph `(V, E')`,
 with edge lengths `l`, is at most `K`?
 
-This is the decision version of MINIMUM DIAMETER SPANNING SUBGRAPH of Crescenzi and Kann
-([ND6]), the network design problem of Plesník (1981): given a graph with edge lengths and
-costs, find a subgraph that connects all the vertices and minimizes the maximum distance,
-subject to a budget on the total edge cost. Plesník proves it NP-hard, even for planar graphs of
-maximum degree `3` and budgets that restrict the choice to spanning trees. Membership in NP: `E'`
-is a certificate, checked with shortest-path computations.
+This is the decision version of MINIMUM DIAMETER SPANNING SUBGRAPH of Crescenzi and Kann, the
+network design problem of Plesník (1981): given a graph with edge lengths and costs, find a subgraph
+that connects all the vertices and minimizes the maximum distance, subject to a budget on the total
+edge cost. Plesník proves it NP-hard, even for planar graphs of maximum degree `3` and budgets that
+restrict the choice to spanning trees. Membership in NP: `E'` is a certificate, checked with
+shortest-path computations.
 
 The diameter is at most `K` when every two vertices `u, v` are joined in `(V, E')` by a walk of
 total length at most `K` (with non-negative lengths, a shortest walk can be taken to be a path;
@@ -116,8 +116,8 @@ noncomputable def diameterSpanningSubgraphDec :
   | some i => decide (WellFormed i ∧ DiameterSpanningSubgraphFeasible i)
   | none => false
 
-/-- **DIAMETER SPANNING SUBGRAPH is NP-complete.** Source: Crescenzi and Kann, [ND6];
-Plesník (1981). -/
+/-- **DIAMETER SPANNING SUBGRAPH is NP-complete.** Source: Crescenzi and Kann, MINIMUM DIAMETER
+SPANNING SUBGRAPH; Plesník (1981). -/
 public theorem_wanted diameterSpanningSubgraph_npComplete :
     diameterSpanningSubgraphDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

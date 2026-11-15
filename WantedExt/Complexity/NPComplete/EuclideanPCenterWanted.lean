@@ -12,7 +12,7 @@ LICENSE file in the root directory of this source tree.
 Source:
 N. Megiddo and K. J. Supowit, "On the complexity of some common geometric location
 problems", SIAM Journal on Computing 13 (1984), 182-196, doi:10.1137/0213014;
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [SP8]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM GEOMETRIC DISK COVER.
 -/
 module
@@ -97,7 +97,7 @@ noncomputable def euclideanPCenterDec :
   | none => false
 
 /-- **EUCLIDEAN p-CENTER is NP-complete.** Source: Megiddo and Supowit (1984); Crescenzi and
-Kann, [SP8]. -/
+Kann, MINIMUM GEOMETRIC DISK COVER. -/
 public theorem_wanted euclideanPCenter_npComplete :
     euclideanPCenterDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

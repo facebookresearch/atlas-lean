@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # H-MATCHING is NP-complete for every fixed H with a component of at least 3 vertices
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [GT14]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MAXIMUM H-MATCHING (the decision version of the optimization problem stated here);
 D. G. Kirkpatrick and P. Hell, "On the completeness of a generalized matching
 problem", Proceedings of the 10th Annual ACM Symposium on Theory of Computing
@@ -101,7 +101,7 @@ noncomputable def hMatchingDec (m : ℕ) (hs : List (ℕ × ℕ)) :
   | none => false
 
 /-- **H-MATCHING is NP-complete for every fixed `H` with a connected component of at least 3
-vertices.** Source: Crescenzi and Kann, [GT14]; Kirkpatrick and Hell (1978, 1983). -/
+vertices.** Source: Crescenzi and Kann, MAXIMUM H-MATCHING; Kirkpatrick and Hell (1978, 1983). -/
 public theorem_wanted hMatching_npComplete (m : ℕ) (hs : List (ℕ × ℕ))
     (_hH : PerfectHPacking.ValidPattern m hs) :
     hMatchingDec m hs ∈ MetaMathlibExt.ComplexityTheory.NP ∧

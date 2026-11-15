@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), problem LO12 MAXIMUM K-CONSTRAINT SATISFACTION (APX-complete; transformation from
+2000), problem MAXIMUM K-CONSTRAINT SATISFACTION (APX-complete; transformation from
 MAXIMUM 2-SATISFIABILITY);
 M. R. Garey, D. S. Johnson and L. Stockmeyer, "Some simplified NP-complete graph problems",
 Theoretical Computer Science 1(3) (1976), 237-267, doi:10.1016/0304-3975(76)90059-1
@@ -83,7 +83,7 @@ noncomputable def kConstraintSatisfactionDec (k : ℕ) :
   | none => false
 
 /-- **K-CONSTRAINT SATISFACTION is NP-complete for every constant `k ≥ 2`.** Source:
-Crescenzi and Kann, LO12; Garey, Johnson and Stockmeyer (1976). -/
+Crescenzi and Kann, MAXIMUM K-CONSTRAINT SATISFACTION; Garey, Johnson and Stockmeyer (1976). -/
 public theorem_wanted kConstraintSatisfaction_npComplete (k : ℕ) (hk : 2 ≤ k) :
     kConstraintSatisfactionDec k ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

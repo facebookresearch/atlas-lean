@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
-problem [LO11] MINIMUM EQUIVALENCE DELETION;
+problem MINIMUM EQUIVALENCE DELETION;
 N. Garg, V. V. Vazirani and M. Yannakakis, "Approximate max-flow min-(multi)cut theorems and
 their applications", SIAM J. Comput. 25 (1996), 235-251, doi:10.1137/S0097539793243016 (the
 problem as 2CNF≡ clause deletion);
@@ -39,7 +39,7 @@ INSTANCE: a set `U` of variables, a collection `C` of equivalences, i.e., pairs 
 QUESTION: is there a truth assignment for `U` such that at most `K` equivalences of `C` are not
 satisfied?
 
-This is the decision version of MINIMUM EQUIVALENCE DELETION ([LO11] of the Crescenzi-Kann
+This is the decision version of MINIMUM EQUIVALENCE DELETION (an entry of the Crescenzi-Kann
 compendium); the bound is a positive integer, following the Garey-Johnson convention for decision
 versions. An equivalence `l₁ ≡ l₂` is satisfied when both literals get the same truth value.
 NP-hardness, from SIMPLE MAX CUT ([ND16], Garey, Johnson and Stockmeyer): for a graph and a cut
@@ -94,8 +94,8 @@ noncomputable def equivalenceDeletionDec :
   | some i => decide (WellFormed i ∧ EquivalenceDeletionFeasible i)
   | none => false
 
-/-- **EQUIVALENCE DELETION is NP-complete.** Source: Crescenzi and Kann, [LO11]; Garg, Vazirani
-and Yannakakis (1996); Garey, Johnson and Stockmeyer (1976). -/
+/-- **EQUIVALENCE DELETION is NP-complete.** Source: Crescenzi and Kann, MINIMUM EQUIVALENCE
+DELETION; Garg, Vazirani and Yannakakis (1996); Garey, Johnson and Stockmeyer (1976). -/
 public theorem_wanted equivalenceDeletion_npComplete :
     equivalenceDeletionDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

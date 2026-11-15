@@ -15,7 +15,7 @@ J. K. Lenstra and A. H. G. Rinnooy Kan, "On general routing problems", Networks 
 that its special case `Q = ∅`, the rural postman problem, is polynomial complete);
 C. S. Orloff, "A fundamental problem in vehicle routing", Networks 4 (1974), 35-64,
 doi:10.1002/net.3230040105 (definition of the problem);
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [ND41]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM GENERAL ROUTING ("Generalization of ND27" of Garey and Johnson (1979)).
 -/
 module
@@ -95,7 +95,7 @@ noncomputable def generalRoutingDec :
   | none => false
 
 /-- **GENERAL ROUTING is NP-complete.** Source: Lenstra and Rinnooy Kan (1976); Orloff (1974);
-Crescenzi and Kann, [ND41]. -/
+Crescenzi and Kann, MINIMUM GENERAL ROUTING. -/
 public theorem_wanted generalRouting_npComplete :
     generalRoutingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

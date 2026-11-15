@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
-problem MP6 MINIMUM GENERALIZED 0-1 ASSIGNMENT, citing S. Sahni and T. Gonzalez,
+problem MINIMUM GENERALIZED 0-1 ASSIGNMENT, citing S. Sahni and T. Gonzalez,
 "P-complete approximation problems", Journal of the ACM 23(3) (1976), 555-565,
 doi:10.1145/321958.321975;
 S. Martello and P. Toth, *Knapsack Problems: Algorithms and Computer Implementations*, Wiley
@@ -100,8 +100,8 @@ noncomputable def generalizedZeroOneAssignmentDec :
   | some i => decide (WellFormed i ∧ GeneralizedZeroOneAssignmentFeasible i)
   | none => false
 
-/-- **GENERALIZED 0-1 ASSIGNMENT is NP-complete.** Source: Crescenzi and Kann, MP6, citing Sahni
-and Gonzalez (1976); Martello and Toth (1990), Section 7.1. -/
+/-- **GENERALIZED 0-1 ASSIGNMENT is NP-complete.** Source: Crescenzi and Kann, MINIMUM GENERALIZED
+0-1 ASSIGNMENT, citing Sahni and Gonzalez (1976); Martello and Toth (1990), Section 7.1. -/
 public theorem_wanted generalizedZeroOneAssignment_npComplete :
     generalizedZeroOneAssignmentDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

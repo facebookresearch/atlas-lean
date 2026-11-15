@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), MINIMUM K-SUPPLIER [ND57] (decision version);
+2000), MINIMUM K-SUPPLIER (decision version);
 D. S. Hochbaum and D. B. Shmoys, "A unified approach to approximation algorithms for bottleneck
 problems", Journal of the ACM 33(3) (1986), 533-550, doi:10.1145/5925.5933 (weighted center and
 supplier problems; "for all of the problems we consider, this decision problem is
@@ -103,8 +103,8 @@ noncomputable def kSupplierDec :
   | some i => decide (WellFormed i ∧ KSupplierFeasible i)
   | none => false
 
-/-- **K-SUPPLIER is NP-complete.** Source: Crescenzi and Kann, [ND57]; Hochbaum and Shmoys
-(1986); Garey and Johnson (1979), [ND50], [GT2]. -/
+/-- **K-SUPPLIER is NP-complete.** Source: Crescenzi and Kann, MINIMUM K-SUPPLIER; Hochbaum and
+Shmoys (1986); Garey and Johnson (1979), [ND50], [GT2]. -/
 public theorem_wanted kSupplier_npComplete :
     kSupplierDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

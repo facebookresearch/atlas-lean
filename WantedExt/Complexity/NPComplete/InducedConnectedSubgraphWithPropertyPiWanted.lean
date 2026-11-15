@@ -44,7 +44,7 @@ QUESTION: is there a subset `V' ⊆ V` with `|V'| ≥ K` such that the subgraph 
 Garey and Johnson, [GT22], comment: "NP-hard for any hereditary property that holds for
 arbitrarily large connected graphs but not for all connected graphs. If, in addition, one can
 determine in polynomial time whether `Π` holds for a graph, then the problem is NP-complete."
-The theorem states the NP-complete case. Crescenzi and Kann's [GT30] MINIMUM VERTEX DELETION TO
+The theorem states the NP-complete case. Crescenzi and Kann's MINIMUM VERTEX DELETION TO
 OBTAIN CONNECTED SUBGRAPH WITH PROPERTY P is the same question with the deleted set
 `V - V'` bounded by `|V| - K`.
 

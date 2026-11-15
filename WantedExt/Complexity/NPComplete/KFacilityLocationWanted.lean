@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # K-FACILITY LOCATION is NP-complete
 
 Source:
-P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem [ND62]
+P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem
 MAXIMUM K-FACILITY LOCATION;
 G. Cornuéjols, M. L. Fisher, and G. L. Nemhauser, "Location of bank accounts to optimize
 float: an analytic study of exact and approximate algorithms", Management Science 23 (1977),
@@ -37,13 +37,13 @@ integer `K`.
 QUESTION: is there a set of `k` facilities, i.e. a subset `F ⊆ V` with `|F| = k`, such that the
 total profit `∑_{v ∈ V} max_{f ∈ F} p(v, f)` is at least `K`?
 
-This is the decision version of MAXIMUM K-FACILITY LOCATION from the Crescenzi-Kann compendium
-([ND62]), the bank-account location problem of Cornuéjols, Fisher and Nemhauser with the
-clients and the candidate locations both identified with `V`: each vertex `v` collects the
-largest profit `p(v, f)` over the open facilities `f ∈ F`. The total profit uses `p(v, f)` for
-every ordered pair, including `p(v, v)` when `v ∈ F`, so the instance gives the profits as a
-`|V| × |V|` matrix, one row per vertex `v` (as a client) and one column per vertex `f` (as a
-facility). As in the bank-account model, the matrix need not be symmetric.
+This is the decision version of MAXIMUM K-FACILITY LOCATION from the Crescenzi-Kann compendium, the
+bank-account location problem of Cornuéjols, Fisher and Nemhauser with the clients and the candidate
+locations both identified with `V`: each vertex `v` collects the largest profit `p(v, f)` over the
+open facilities `f ∈ F`. The total profit uses `p(v, f)` for every ordered pair, including `p(v, v)`
+when `v ∈ F`, so the instance gives the profits as a `|V| × |V|` matrix, one row per vertex `v` (as
+a client) and one column per vertex `f` (as a facility). As in the bank-account model, the matrix
+need not be symmetric.
 
 The maximum over `F` is `Finset.sup` (for `k = 0` the empty maximum is `0 < K`, a
 no-instance). NP-hardness: DOMINATING SET is the special case `p(v, f) = 1` if `f = v` or `f` is
@@ -87,8 +87,8 @@ noncomputable def kFacilityLocationDec :
   | some i => decide (WellFormed i ∧ KFacilityLocationFeasible i)
   | none => false
 
-/-- **K-FACILITY LOCATION is NP-complete.** Source: Crescenzi and Kann, [ND62]; Cornuéjols,
-Fisher, and Nemhauser (1977). -/
+/-- **K-FACILITY LOCATION is NP-complete.** Source: Crescenzi and Kann, MAXIMUM K-FACILITY LOCATION;
+Cornuéjols, Fisher, and Nemhauser (1977). -/
 public theorem_wanted kFacilityLocation_npComplete :
     kFacilityLocationDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
