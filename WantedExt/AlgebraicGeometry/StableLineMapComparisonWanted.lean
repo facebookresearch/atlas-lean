@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Batteries.Util.ProofWanted
+public import MathlibExt.AlgebraicGeometry.GeneralStableMapFamilies
 public import MathlibExt.AlgebraicGeometry.StableLineMaps
 
 /-!
