@@ -39,7 +39,9 @@ Items are `0, ..., m - 1`. Bids are listed and referred to by their position, so
 place equal bids; a bid's item set is a duplicate-free list. Accepted bids are a `Finset` of
 positions whose item sets are pairwise disjoint in Mathlib's `Set.PairwiseDisjoint` sense.
 Prices and `K` are natural numbers in binary; `K = 0` is a trivial yes-instance (accept no bid).
-With every price `1` this is SET PACKING ([SP3], `SetPackingWanted`).
+SET PACKING ([SP3], `SetPackingWanted`) reduces to the unit-price case: after removing repeated
+sets (`SetPackingWanted` selects distinct sets, while equal bids here are distinct positions and
+two empty bids are disjoint), give every set price `1`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
