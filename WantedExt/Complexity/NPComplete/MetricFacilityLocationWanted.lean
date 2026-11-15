@@ -49,7 +49,9 @@ same as the bound with the minimum, since serving each location from its cheapes
 only lowers the cost. The bound is a positive integer, following the Garey-Johnson convention.
 
 Locations are `0, …, n - 1`; the costs are an `n × n` matrix, symmetric, satisfying the triangle
-inequality, and zero on the diagonal (a facility serves its own location at no connection cost).
+inequality, and zero exactly on the diagonal (a facility serves its own location at no connection
+cost, and distinct locations are at positive cost), as in
+`WantedExt.Complexity.NPComplete.MetricKCenterWanted`.
 The candidate locations come with their building costs as a list of pairs `(v, f(v))` with
 distinct `v`; the facilities built are a sublist of it. A list `a` names, for each location `v`,
 the location `a(v)` of the built facility serving it. This is the metric special case, with
@@ -76,12 +78,13 @@ abbrev MetricFacilityLocationInstance :=
 /-- The cost `c(u, v)`. -/
 def cost (i : MetricFacilityLocationInstance) (u v : ℕ) : ℕ := (i.2.1.getD u []).getD v 0
 
-/-- Well-formedness of an instance: the cost matrix is `n × n`, zero on the diagonal, symmetric
-and satisfies the triangle inequality; the candidate locations are distinct locations; there is
-one demand per location; and `0 < K`. -/
+/-- Well-formedness of an instance: the cost matrix is `n × n`, zero exactly on the diagonal,
+symmetric and satisfies the triangle inequality; the candidate locations are distinct locations;
+there is one demand per location; and `0 < K`. -/
 def WellFormed (i : MetricFacilityLocationInstance) : Prop :=
   i.2.1.length = i.1 ∧ (∀ row ∈ i.2.1, row.length = i.1) ∧
-    (∀ v < i.1, cost i v v = 0) ∧ (∀ u < i.1, ∀ v < i.1, cost i u v = cost i v u) ∧
+    (∀ u < i.1, ∀ v < i.1, cost i u v = 0 ↔ u = v) ∧
+    (∀ u < i.1, ∀ v < i.1, cost i u v = cost i v u) ∧
     (∀ u < i.1, ∀ v < i.1, ∀ w < i.1, cost i u w ≤ cost i u v + cost i v w) ∧
     (i.2.2.1.map Prod.fst).Nodup ∧ (∀ p ∈ i.2.2.1, p.1 < i.1) ∧ i.2.2.2.1.length = i.1 ∧
     0 < i.2.2.2.2
