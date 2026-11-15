@@ -15,12 +15,17 @@ only, and scoped to those synced files, so a pull request fails only if it touch
   `published_sha256`, and it is the Meta header (or, with `"header": "upstream"`, the upstream
   third-party license block), then the recorded attribution notice if any, then a body whose
   SHA-256 is `upstream_sha256` (one parser: `split_published`);
+- `diverged` rows: the file exists, its SHA-256 is `published_sha256` (so a later edit refreshes the
+  row and its rationale), and `rationale` and `backport` are set;
 - `retired` rows: the file is absent;
-- `diverged` rows: a non-empty `rationale` and `backport`; their hashes are not compared;
-- files without a row (ATLAS-only work) are ignored.
+- no row of the base manifest disappears or changes path unless the upstream pin also moves (a
+  sync). The base is HEAD's first parent in CI (the merge ref's base, fetched if the checkout is
+  shallow; unreadable fails closed), else the merge-base with origin/main, else the check is
+  skipped with a warning;
+- files without a row (ATLAS-only work) are ignored; new upstream files enter at sync time.
 
-A pull request that changes or deletes a synced file records that with `--record-divergence` or
-`--retire`; neither needs a Formal-Math checkout. `scripts/sync_formal_math.py` regenerates the
+A pull request that changes or deletes a synced or diverged file records that with
+`--record-divergence` or `--retire`; neither needs a Formal-Math checkout. `scripts/sync_formal_math.py` regenerates the
 manifest from a Formal-Math checkout and uses the header parser defined here.
 """
 from __future__ import annotations
@@ -31,6 +36,7 @@ import json
 import os
 import re
 import shlex
+import subprocess
 import sys
 from pathlib import Path, PurePosixPath
 
@@ -44,7 +50,7 @@ ROOTS = ("MathlibExt", "MathlibExtTest", "CSLibExt", "CSLibExtTest", "WantedExt"
 #             "header": "upstream", the upstream file byte for byte (its third-party license kept)
 # attributed: Meta header + recorded attribution notice + that body
 # behind:     header-only copy of an older upstream version (`upstream_commit`)
-# diverged:   reviewed ATLAS-side difference; needs `rationale` and `backport`
+# diverged:   reviewed ATLAS-side difference at `published_sha256`; needs `rationale` and `backport`
 # retired:    removed from ATLAS on purpose; the file must stay absent
 DISPOSITIONS = ("identical", "attributed", "behind", "diverged", "retired")
 SYNCED = ("identical", "attributed", "behind")
@@ -202,7 +208,7 @@ def field_problems(row: dict) -> list[str]:
     required = {"identical": ("published_sha256", "upstream_sha256"),
                 "attributed": ("published_sha256", "upstream_sha256", "notice"),
                 "behind": ("published_sha256", "upstream_sha256", "upstream_commit"),
-                "diverged": ("rationale", "backport"), "retired": ()}[disposition]
+                "diverged": ("published_sha256", "rationale", "backport"), "retired": ()}[disposition]
     for field in required:
         if field not in row:
             problems.append(f"{path}: {disposition} row has no {field}")
@@ -229,13 +235,14 @@ def file_problems(root: Path, row: dict) -> list[str]:
     target = root / path
     if disposition == "retired":
         return [f"{path}: retired row, but the file exists"] if target.exists() else []
-    if disposition not in SYNCED:
-        return []
     if not target.is_file():
-        return [f"{path}: synced file is missing"]
+        return [f"{path}: {disposition} file is missing"]
     data = target.read_bytes()
     if sha256(data) != row["published_sha256"]:
-        return [f"{path}: synced file changed (sha256 {sha256(data)}, manifest {row['published_sha256']})"]
+        what = "diverged file changed since its rationale was recorded" if disposition == "diverged" else "synced file changed"
+        return [f"{path}: {what} (sha256 {sha256(data)}, manifest {row['published_sha256']})"]
+    if disposition == "diverged":
+        return []
     try:
         text = data.decode("utf-8")
     except UnicodeDecodeError:
@@ -299,10 +306,81 @@ def check(root: Path, manifest_path: Path) -> tuple[list[str], dict[str, list[st
         found = file_problems(root, row)
         problems += found
         if found:
-            fixes["retire" if row["disposition"] in SYNCED and not (root / path).exists() else "record"].append(path)
+            fixes["retire" if row["disposition"] != "retired" and not (root / path).exists() else "record"].append(path)
     if paths != sorted(paths):
         problems.append("manifest: rows are not sorted by path")
     return problems, fixes, len(manifest["rows"])
+
+
+def git(root: Path, *args: str) -> str | None:
+    """stdout of a git command in `root`, or None if it fails."""
+    try:
+        done = subprocess.run(["git", "-C", str(root), *args], capture_output=True, text=True, timeout=120)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return done.stdout.strip() if done.returncode == 0 else None
+
+
+def first_parent(root: Path) -> str | None:
+    """HEAD's first parent, read from the commit object (present even in a depth-1 checkout).
+
+    In CI the checkout is the pull request's merge ref, whose first parent is the base branch."""
+    commit = git(root, "cat-file", "-p", "HEAD")
+    parents = [line.split()[1] for line in (commit or "").splitlines() if line.startswith("parent ")]
+    return parents[0] if parents else None
+
+
+def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
+    """The commit whose manifest this tree is compared with: (commit, None) or (None, why not)."""
+    if git(root, "rev-parse", "--show-toplevel") != str(root.resolve()):
+        return None, "not a git checkout"
+    if base:
+        commit = git(root, "rev-parse", "--verify", f"{base}^{{commit}}")
+        return (commit, None) if commit else (None, f"cannot resolve --base {base}")
+    if os.environ.get("GITHUB_ACTIONS"):
+        parent = first_parent(root)
+        if parent and git(root, "cat-file", "-e", f"{parent}^{{commit}}") is None:
+            git(root, "fetch", "--no-tags", "--depth=1", "origin", parent)  # shallow CI checkout
+        if parent and git(root, "cat-file", "-e", f"{parent}^{{commit}}") is not None:
+            return parent, None
+        return None, "cannot read the base commit (first parent of HEAD)"
+    for candidate in (git(root, "merge-base", "HEAD", "origin/main"), first_parent(root)):
+        if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
+            return candidate, None
+    return None, "no origin/main merge-base and no readable parent commit"
+
+
+def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[list[str], list[str]]:
+    """Rows of the base manifest may not disappear or change path unless the upstream pin moves.
+
+    Returns (problems, warnings). Fails closed in GitHub Actions when the base cannot be read."""
+    strict = bool(os.environ.get("GITHUB_ACTIONS") or base)
+
+    def unreadable(why: str) -> tuple[list[str], list[str]]:
+        if strict:
+            return [f"manifest: {why}; cannot check that no synced row was removed"], []
+        return [], [f"skipping the removed-row check: {why}"]
+
+    commit, why = base_commit(root, base)
+    if commit is None:
+        return unreadable(why or "no base commit")
+    rel = manifest_path.resolve().relative_to(root.resolve()).as_posix()
+    listing = git(root, "ls-tree", "--name-only", commit, "--", rel)
+    if listing is None:
+        return unreadable(f"cannot read the tree of base {commit}")
+    if not listing:
+        return [], []  # the base has no manifest yet
+    try:
+        old = json.loads(git(root, "show", f"{commit}:{rel}") or "")
+        new = json.loads(manifest_path.read_text(encoding="utf-8"))
+        old_paths = {row["path"] for row in old["rows"]}
+        new_paths = {row.get("path") for row in new["rows"] if isinstance(row, dict)}
+        if old["upstream"]["commit"] != new.get("upstream", {}).get("commit"):
+            return [], []  # a re-pin: the sync script reclassified every file
+    except (ValueError, KeyError, TypeError, AttributeError):
+        return [], []  # a malformed side is reported by check()
+    return [f"{path}: row removed or renamed without moving the upstream pin (base {commit[:12]}); keep the "
+            "row and record the change with --record-divergence or --retire" for path in sorted(old_paths - new_paths)], []
 
 
 def fix_commands(fixes: dict[str, list[str]]) -> list[str]:
@@ -353,6 +431,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--rationale", help="why ATLAS differs from formal-math (with --record-divergence)")
     ap.add_argument("--backport", help="'pending', 'not-needed', or the formal-math backport PR URL")
     ap.add_argument("--retire", nargs="+", metavar="PATH", help="mark deleted synced files as retired")
+    ap.add_argument("--base", help="commit to compare rows with (default: in CI the first parent of HEAD, "
+                    "else the merge-base with origin/main)")
     a = ap.parse_args(argv)
     manifest_path = a.manifest or a.root / MANIFEST
 
@@ -379,6 +459,10 @@ def main(argv: list[str] | None = None) -> int:
         return edit(a.root, manifest_path, a.retire, retire)
 
     problems, fixes, rows = check(a.root, manifest_path)
+    removed, warnings = base_problems(a.root, manifest_path, a.base)
+    problems += removed
+    for warning in warnings:
+        print(f"warning [formal-math-sync]: {warning}")
     for problem in problems:
         print(f"FAIL [formal-math-sync]: {problem}")
     if problems:

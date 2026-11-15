@@ -23,7 +23,7 @@ authorship block comment, without leading blank lines.
 | `identical` | Meta header, then the body of the upstream file at `upstream.commit`. With `"header": "upstream"`, the upstream file byte for byte, keeping its third-party copyright and license header. | `published_sha256`, `upstream_sha256`, optional `header` |
 | `attributed` | As `identical`, with an attribution notice (one block comment naming provenance or licensing, for example Apache 2.0 Section 4) between the Meta header and the body. | `published_sha256`, `upstream_sha256`, `notice` |
 | `behind` | Header-only copy of an older upstream version of the same path; the next sync brings it current. | `published_sha256`, `upstream_commit` (the commit that introduced that version), `upstream_sha256` (its body), optional `notice` or `header` |
-| `diverged` | Reviewed ATLAS-side difference from upstream, including a file deleted upstream that ATLAS still publishes. | `rationale`, `backport` (`pending`, `not-needed`, or the Formal-Math backport PR URL); informational `published_sha256`, `upstream_sha256`, `upstream_commit` |
+| `diverged` | Reviewed ATLAS-side difference from upstream, including a file deleted upstream that ATLAS still publishes. | `published_sha256` (the reviewed bytes), `rationale`, `backport` (`pending`, `not-needed`, or the Formal-Math backport PR URL); informational `upstream_sha256`, `upstream_commit` |
 | `retired` | A synced file ATLAS removed on purpose. | none |
 
 ## What preflight enforces
@@ -36,20 +36,24 @@ the Python standard library, and fails on:
 - an `identical`, `attributed` or `behind` row whose file is missing or whose SHA-256 differs from
   `published_sha256`, or whose header is not the recorded header-only transformation of
   `upstream_sha256`;
+- a `diverged` row whose file is missing or differs from `published_sha256` (refresh the row and
+  its rationale), or that lacks a non-empty `rationale` and `backport`;
 - a `retired` row whose file exists;
-- a `diverged` row without a non-empty `rationale` and `backport`.
+- a row of the base manifest that disappears or changes path while the upstream pin stays the
+  same. Only a sync, which moves the pin and reclassifies every file, may drop rows. In CI the base
+  is HEAD's first parent (the pull request's base), fetched if the checkout is shallow; if it
+  cannot be read the check fails. Locally it is the merge-base with `origin/main`, and the check is
+  skipped with a warning when neither can be read. `--base REV` names it explicitly.
 
-It does not compare diverged files' hashes, and it ignores files without a row. So a pull request
-fails only if it changes or deletes a file synced from Formal-Math, and the failure prints the
-command that records it. Neither gap is an exemption: the next sync re-creates a row for every file
-that came from Formal-Math, requires a fresh rationale for any diverged file whose bytes changed,
-and writes nothing until every new difference is explained. A deleted row is also a visible
-manifest change in review.
+Files without a row are ATLAS-only and ignored; new upstream files enter at sync time. So the set
+of upstream-derived paths cannot change silently (every row's bytes are checked) or shrink silently
+(the base comparison), and a pull request fails only if it touches one of those files. The failure
+prints the command that records the change:
 
 ```bash
 python3 scripts/check_formal_math_sync.py --record-divergence PATH... \
     --rationale 'why ATLAS differs' --backport pending   # or not-needed, or the backport PR URL
-python3 scripts/check_formal_math_sync.py --retire PATH...   # for a deleted synced file
+python3 scripts/check_formal_math_sync.py --retire PATH...   # for a deleted synced or diverged file
 ```
 
 Neither needs a Formal-Math checkout. Prefer landing a fix in Formal-Math first and syncing; record
@@ -68,5 +72,5 @@ regenerates the manifest and prints a report with totals and the added, removed,
 diverged rows. It writes neither the manifest nor the report when a file newly diverges without a
 rationale; pass those as `{"<path>": {"rationale": "...", "backport": "..."}}` in `--rationales`.
 A row already diverged keeps its rationale only while its published and upstream hashes are
-unchanged; `retired` rows carry over while their file stays absent. A periodic sync also catches
-upstream changes and drift in diverged files, which preflight does not compare.
+unchanged; `retired` rows carry over while their file stays absent. A periodic sync picks up
+upstream changes and new upstream files.

@@ -18,6 +18,7 @@ import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_formal_math_sync as c  # noqa: E402
@@ -42,41 +43,51 @@ def quiet(fn, *args):
     return code, out.getvalue() + err.getvalue()
 
 
+def make_fixture(root: Path) -> dict:
+    """Write one file per disposition (plus an unlisted local file) and return the manifest."""
+    for library in c.ROOTS:
+        (root / library).mkdir(parents=True, exist_ok=True)
+    files = {
+        "MathlibExt/Identical.lean": (c.META + "\n" + BODY, {"disposition": "identical"}),
+        "MathlibExt/Attributed.lean": (c.META + "\n" + NOTICE + "\n\n" + BODY,
+                                       {"disposition": "attributed", "notice": NOTICE}),
+        "MathlibExt/Kept.lean": (THIRD_PARTY + "\n" + BODY, {"disposition": "identical", "header": "upstream"}),
+        "MathlibExtTest/Behind.lean": (c.META + BODY, {"disposition": "behind", "upstream_commit": COMMIT}),
+        "CSLibExt/Diverged.lean": (c.META + "\ndef y : Nat := 2\n",
+                                   {"disposition": "diverged", "rationale": "ATLAS-only fix", "backport": "pending"}),
+    }
+    rows = []
+    for path, (text, fields) in files.items():
+        write(root, path, text)
+        row = {"path": path, "published_sha256": c.sha256(text), **fields}
+        if fields["disposition"] in c.SYNCED:
+            row["upstream_sha256"] = c.sha256(BODY)
+        rows.append(row)
+    rows.append({"path": "WantedExt/Retired.lean", "disposition": "retired"})
+    write(root, "CSLibExtTest/Local.lean", c.META + "\ndef z : Nat := 3\n")  # no row: ignored
+    manifest = {
+        "schema_version": 1,
+        "upstream": {"repository": "fairinternal/formal-math", "commit": COMMIT},
+        "lean_toolchain": "leanprover/lean4:v4.35.0",
+        "roots": list(c.ROOTS),
+        "rows": sorted(rows, key=lambda row: row["path"]),
+    }
+    write(root, c.MANIFEST, c.dump_manifest(manifest))
+    return manifest
+
+
 class CheckerTest(unittest.TestCase):
     def setUp(self) -> None:
+        self.env = mock.patch.dict(os.environ)
+        self.env.start()
+        os.environ.pop("GITHUB_ACTIONS", None)
         self.tmp = tempfile.TemporaryDirectory()
         self.root = Path(self.tmp.name)
-        for library in c.ROOTS:
-            (self.root / library).mkdir()
-        files = {
-            "MathlibExt/Identical.lean": (c.META + "\n" + BODY, {"disposition": "identical"}),
-            "MathlibExt/Attributed.lean": (c.META + "\n" + NOTICE + "\n\n" + BODY,
-                                           {"disposition": "attributed", "notice": NOTICE}),
-            "MathlibExt/Kept.lean": (THIRD_PARTY + "\n" + BODY, {"disposition": "identical", "header": "upstream"}),
-            "MathlibExtTest/Behind.lean": (c.META + BODY, {"disposition": "behind", "upstream_commit": COMMIT}),
-            "CSLibExt/Diverged.lean": (c.META + "\ndef y : Nat := 2\n",
-                                       {"disposition": "diverged", "rationale": "ATLAS-only fix", "backport": "pending"}),
-        }
-        rows = []
-        for path, (text, fields) in files.items():
-            write(self.root, path, text)
-            row = {"path": path, "published_sha256": c.sha256(text), **fields}
-            if fields["disposition"] in c.SYNCED:
-                row["upstream_sha256"] = c.sha256(BODY)
-            rows.append(row)
-        rows.append({"path": "WantedExt/Retired.lean", "disposition": "retired"})
-        write(self.root, "CSLibExtTest/Local.lean", c.META + "\ndef z : Nat := 3\n")  # no row: ignored
-        self.manifest = {
-            "schema_version": 1,
-            "upstream": {"repository": "fairinternal/formal-math", "commit": COMMIT},
-            "lean_toolchain": "leanprover/lean4:v4.35.0",
-            "roots": list(c.ROOTS),
-            "rows": sorted(rows, key=lambda row: row["path"]),
-        }
-        self.save()
+        self.manifest = make_fixture(self.root)
 
     def tearDown(self) -> None:
         self.tmp.cleanup()
+        self.env.stop()
 
     def save(self, sort: bool = True) -> None:
         if sort:
@@ -105,16 +116,29 @@ class CheckerTest(unittest.TestCase):
 
     # Positive cases: what the scoped check deliberately ignores.
     def test_valid_manifest_passes(self) -> None:
-        self.assertEqual(self.main(), (0, "ok [formal-math-sync]: 6 rows; synced files match the manifest.\n"))
+        code, out = self.main()
+        self.assertEqual(code, 0)
+        self.assertIn("ok [formal-math-sync]: 6 rows; synced files match the manifest.", out)
+        self.assertIn("skipping the removed-row check: not a git checkout", out)  # outside CI only
 
     def test_files_without_a_row_are_ignored(self) -> None:
         write(self.root, "WantedExt/New.lean", c.META + BODY)
         write(self.root, "CSLibExtTest/Local.lean", c.META + "\ndef z : Nat := 4\n")
         self.assertEqual(self.problems(), [])
 
-    def test_diverged_files_are_not_hashed(self) -> None:
-        write(self.root, "CSLibExt/Diverged.lean", c.META + "\ndef y : Nat := 3\n")
+    def test_diverged_file_edit_needs_a_refreshed_row(self) -> None:
+        self.assert_clean_then(lambda: write(self.root, "CSLibExt/Diverged.lean", c.META + "\ndef y : Nat := 3\n"),
+                               "diverged file changed since its rationale was recorded")
+        code, out = self.main()
+        self.assertIn("--record-divergence CSLibExt/Diverged.lean --rationale", out)
+        self.assertEqual(self.main("--record-divergence", "CSLibExt/Diverged.lean", "--rationale", "second fix",
+                                   "--backport", "pending")[0], 0)
         self.assertEqual(self.problems(), [])
+        self.assertEqual(self.row_on_disk("CSLibExt/Diverged.lean")["rationale"], "second fix")
+
+    def test_diverged_file_missing(self) -> None:
+        self.assert_clean_then(lambda: os.remove(self.root / "CSLibExt/Diverged.lean"), "diverged file is missing")
+        self.assertIn("--retire CSLibExt/Diverged.lean", self.main()[1])
 
     # Malformed manifest.
     def test_unreadable_manifest(self) -> None:
@@ -167,7 +191,7 @@ class CheckerTest(unittest.TestCase):
 
     # Synced rows.
     def test_synced_file_missing(self) -> None:
-        self.assert_clean_then(lambda: os.remove(self.root / "MathlibExt/Identical.lean"), "synced file is missing")
+        self.assert_clean_then(lambda: os.remove(self.root / "MathlibExt/Identical.lean"), "identical file is missing")
         code, out = self.main()
         self.assertIn("--retire MathlibExt/Identical.lean", out)
 
@@ -281,6 +305,123 @@ class CheckerTest(unittest.TestCase):
 def run_git(repo: Path, *args: str) -> str:
     return subprocess.run(["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@t", *args],
                           check=True, capture_output=True, text=True).stdout.strip()
+
+
+class BaseGuardTest(unittest.TestCase):
+    """Rows may not disappear or change path relative to the base unless the upstream pin moves."""
+
+    def setUp(self) -> None:
+        self.env = mock.patch.dict(os.environ)
+        self.env.start()
+        os.environ["GITHUB_ACTIONS"] = "true"  # CI mode: the base is HEAD's first parent
+        self.tmp = tempfile.TemporaryDirectory()
+        self.root = Path(self.tmp.name) / "atlas"
+        self.root.mkdir()
+        run_git(self.root, "init", "-q", "-b", "main")
+        write(self.root, "README.md", "atlas\n")
+        self.commit("init")  # no manifest yet
+        self.manifest = make_fixture(self.root)
+        self.commit("base")
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+        self.env.stop()
+
+    def commit(self, message: str) -> None:
+        run_git(self.root, "add", "-A")
+        run_git(self.root, "commit", "-qm", message)
+
+    def save(self) -> None:
+        self.manifest["rows"].sort(key=lambda row: row["path"])
+        write(self.root, c.MANIFEST, c.dump_manifest(self.manifest))
+
+    def run_check(self, root: Path | None = None, *args: str) -> tuple[int, str]:
+        return quiet(c.main, ["--root", str(root or self.root), *args])
+
+    def drop_row(self, path: str) -> None:
+        self.manifest["rows"] = [row for row in self.manifest["rows"] if row["path"] != path]
+        self.save()
+
+    def repin(self) -> None:
+        self.manifest["upstream"]["commit"] = "b" * 40
+        self.save()
+
+    def test_unchanged_rows_pass(self) -> None:
+        write(self.root, "WantedExt/New.lean", c.META + BODY)
+        self.commit("add a local file")
+        self.assertEqual(self.run_check(), (0, "ok [formal-math-sync]: 6 rows; synced files match the manifest.\n"))
+
+    def test_row_removed_fails_without_repin(self) -> None:
+        self.assertEqual(self.run_check()[0], 0)
+        self.drop_row("MathlibExt/Identical.lean")
+        self.commit("drop a row")
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertIn("MathlibExt/Identical.lean: row removed or renamed without moving the upstream pin", out)
+
+    def test_row_removed_passes_with_repin(self) -> None:
+        self.drop_row("MathlibExt/Identical.lean")
+        self.repin()
+        self.commit("sync to a new upstream commit")
+        self.assertEqual(self.run_check()[0], 0)
+
+    def rename(self) -> None:
+        os.replace(self.root / "MathlibExt/Identical.lean", self.root / "MathlibExt/Moved.lean")
+        next(row for row in self.manifest["rows"] if row["path"] == "MathlibExt/Identical.lean")["path"] = \
+            "MathlibExt/Moved.lean"
+        self.save()
+
+    def test_row_path_change_fails_without_repin(self) -> None:
+        self.rename()
+        self.commit("move a synced file")
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertIn("MathlibExt/Identical.lean: row removed or renamed", out)
+
+    def test_row_path_change_passes_with_repin(self) -> None:
+        self.rename()
+        self.repin()
+        self.commit("move a synced file in a sync")
+        self.assertEqual(self.run_check()[0], 0)
+
+    def shallow_clone(self) -> Path:
+        run_git(self.root, "config", "uploadpack.allowReachableSHA1InWant", "true")
+        run_git(self.root, "config", "uploadpack.allowAnySHA1InWant", "true")
+        work = Path(self.tmp.name) / "ci"
+        subprocess.run(["git", "clone", "-q", "--depth=1", f"file://{self.root}", str(work)],
+                       check=True, capture_output=True)
+        return work
+
+    def test_shallow_ci_checkout_fetches_the_base(self) -> None:
+        self.drop_row("MathlibExt/Identical.lean")
+        self.commit("drop a row")
+        work = self.shallow_clone()
+        parent = run_git(work, "cat-file", "-p", "HEAD").split("parent ")[1].split()[0]
+        self.assertNotEqual(subprocess.run(["git", "-C", str(work), "cat-file", "-e", parent]).returncode, 0)
+        code, out = self.run_check(work)
+        self.assertEqual(code, 1, out)
+        self.assertIn("row removed or renamed", out)  # only visible if the base was fetched
+        run_git(work, "cat-file", "-e", parent)
+
+    def test_shallow_ci_checkout_passes_when_rows_are_kept(self) -> None:
+        write(self.root, "WantedExt/New.lean", c.META + BODY)
+        self.commit("add a local file")
+        self.assertEqual(self.run_check(self.shallow_clone())[0], 0)
+
+    def test_fails_closed_in_ci_when_the_base_is_unreadable(self) -> None:
+        work = self.shallow_clone()
+        run_git(work, "remote", "set-url", "origin", f"file://{self.tmp.name}/missing")
+        code, out = self.run_check(work)
+        self.assertEqual(code, 1)
+        self.assertIn("cannot read the base commit", out)
+        del os.environ["GITHUB_ACTIONS"]  # outside CI: fall back to the origin/main merge-base
+        self.assertEqual(self.run_check(work)[0], 0)
+
+    def test_explicit_base_must_resolve(self) -> None:
+        del os.environ["GITHUB_ACTIONS"]
+        code, out = self.run_check(None, "--base", "no-such-ref")
+        self.assertEqual(code, 1)
+        self.assertIn("cannot resolve --base no-such-ref", out)
 
 
 class SyncTest(unittest.TestCase):
