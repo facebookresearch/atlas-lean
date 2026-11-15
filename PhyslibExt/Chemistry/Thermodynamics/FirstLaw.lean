@@ -175,31 +175,37 @@ private lemma integral_const_div (c V₁ V₂ : ℝ) (hV₁ : 0 < V₁) (hV : V�
 
 /-- The loop integral of an exact energy differential vanishes (path independence). -/
 lemma exact_loopIntegral_eq_zero (U dUdV dUdT : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂ : ℝ)
-    (hPderiv : ∀ T : ℝ, ∀ V ∈ Set.uIcc V₁ V₂,
+    (hPderiv : ∀ T ∈ ({T₁, T₂} : Set ℝ), ∀ V ∈ Set.uIcc V₁ V₂,
       HasDerivAt (fun V => U V T) (dUdV V T) V)
-    (hPint : ∀ T : ℝ,
+    (hPint : ∀ T ∈ ({T₁, T₂} : Set ℝ),
       IntervalIntegrable (fun V => dUdV V T) MeasureTheory.volume V₁ V₂)
-    (hQderiv : ∀ V : ℝ, ∀ T ∈ Set.uIcc T₁ T₂,
+    (hQderiv : ∀ V ∈ ({V₁, V₂} : Set ℝ), ∀ T ∈ Set.uIcc T₁ T₂,
       HasDerivAt (fun T => U V T) (dUdT V T) T)
-    (hQint : ∀ V : ℝ,
+    (hQint : ∀ V ∈ ({V₁, V₂} : Set ℝ),
       IntervalIntegrable (fun T => dUdT V T) MeasureTheory.volume T₁ T₂) :
     rectLoopIntegral dUdV dUdT V₁ V₂ T₁ T₂ = 0 := by
+  have hT₁ : T₁ ∈ ({T₁, T₂} : Set ℝ) := Set.mem_insert _ _
+  have hT₂ : T₂ ∈ ({T₁, T₂} : Set ℝ) := Set.mem_insert_of_mem _ rfl
+  have hV₁ : V₁ ∈ ({V₁, V₂} : Set ℝ) := Set.mem_insert _ _
+  have hV₂ : V₂ ∈ ({V₁, V₂} : Set ℝ) := Set.mem_insert_of_mem _ rfl
   have eB : (∫ V in V₁..V₂, dUdV V T₁ ∂MeasureTheory.volume) = U V₂ T₁ - U V₁ T₁ :=
-    intervalIntegral.integral_eq_sub_of_hasDerivAt (fun V hV => hPderiv T₁ V hV) (hPint T₁)
+    intervalIntegral.integral_eq_sub_of_hasDerivAt (fun V hV => hPderiv T₁ hT₁ V hV)
+      (hPint T₁ hT₁)
   have eR : (∫ T in T₁..T₂, dUdT V₂ T ∂MeasureTheory.volume) = U V₂ T₂ - U V₂ T₁ :=
-    intervalIntegral.integral_eq_sub_of_hasDerivAt (fun T hT => hQderiv V₂ T hT) (hQint V₂)
+    intervalIntegral.integral_eq_sub_of_hasDerivAt (fun T hT => hQderiv V₂ hV₂ T hT)
+      (hQint V₂ hV₂)
   have eT : (∫ V in V₂..V₁, dUdV V T₂ ∂MeasureTheory.volume) = U V₁ T₂ - U V₂ T₂ := by
     have hmem : ∀ V ∈ Set.uIcc V₂ V₁, HasDerivAt (fun V => U V T₂) (dUdV V T₂) V := by
       intro V hVmem
       rw [Set.uIcc_comm] at hVmem
-      exact hPderiv T₂ V hVmem
-    exact intervalIntegral.integral_eq_sub_of_hasDerivAt hmem (hPint T₂).symm
+      exact hPderiv T₂ hT₂ V hVmem
+    exact intervalIntegral.integral_eq_sub_of_hasDerivAt hmem (hPint T₂ hT₂).symm
   have eL : (∫ T in T₂..T₁, dUdT V₁ T ∂MeasureTheory.volume) = U V₁ T₁ - U V₁ T₂ := by
     have hmem : ∀ T ∈ Set.uIcc T₂ T₁, HasDerivAt (fun T => U V₁ T) (dUdT V₁ T) T := by
       intro T hTmem
       rw [Set.uIcc_comm] at hTmem
-      exact hQderiv V₁ T hTmem
-    exact intervalIntegral.integral_eq_sub_of_hasDerivAt hmem (hQint V₁).symm
+      exact hQderiv V₁ hV₁ T hTmem
+    exact intervalIntegral.integral_eq_sub_of_hasDerivAt hmem (hQint V₁ hV₁).symm
   simp only [rectLoopIntegral]
   rw [eB, eR, eT, eL]
   ring
@@ -220,13 +226,13 @@ private lemma loop_eq_paths_sub (P Q : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂
 
 /-- Exact energy differentials are path independent: the two spanning paths agree. -/
 lemma exact_twoPaths_equal (U dUdV dUdT : ℝ → ℝ → ℝ) (V₁ V₂ T₁ T₂ : ℝ)
-    (hPderiv : ∀ T : ℝ, ∀ V ∈ Set.uIcc V₁ V₂,
+    (hPderiv : ∀ T ∈ ({T₁, T₂} : Set ℝ), ∀ V ∈ Set.uIcc V₁ V₂,
       HasDerivAt (fun V => U V T) (dUdV V T) V)
-    (hPint : ∀ T : ℝ,
+    (hPint : ∀ T ∈ ({T₁, T₂} : Set ℝ),
       IntervalIntegrable (fun V => dUdV V T) MeasureTheory.volume V₁ V₂)
-    (hQderiv : ∀ V : ℝ, ∀ T ∈ Set.uIcc T₁ T₂,
+    (hQderiv : ∀ V ∈ ({V₁, V₂} : Set ℝ), ∀ T ∈ Set.uIcc T₁ T₂,
       HasDerivAt (fun T => U V T) (dUdT V T) T)
-    (hQint : ∀ V : ℝ,
+    (hQint : ∀ V ∈ ({V₁, V₂} : Set ℝ),
       IntervalIntegrable (fun T => dUdT V T) MeasureTheory.volume T₁ T₂) :
     pathRightUp dUdV dUdT V₁ V₂ T₁ T₂ = pathUpRight dUdV dUdT V₁ V₂ T₁ T₂ := by
   have hloop :=
@@ -366,30 +372,31 @@ lemma adiabatic_invariant_hasDerivAt (T V T' V' : ℝ → ℝ) (Cv nR γ t : ℝ
   rw [hzero] at hadd
   exact hadd
 
-/-- Integrating the separated adiabatic ODE along a path gives the logarithmic
-relation between the endpoint states. -/
+/-- Integrating the separated adiabatic ODE along a path parameterized by `t ∈ [0, 1]` gives
+the logarithmic relation between the endpoint states. Every hypothesis is required only on the
+process interval `[0, 1]`. -/
 lemma adiabatic_path_integrated (T V T' V' : ℝ → ℝ) (Cv nR : ℝ)
-    (hT : ∀ t : ℝ, HasDerivAt T (T' t) t)
-    (hV : ∀ t : ℝ, HasDerivAt V (V' t) t)
-    (hTpos : ∀ t : ℝ, 0 < T t)
-    (hVpos : ∀ t : ℝ, 0 < V t)
+    (hT : ∀ t ∈ Set.uIcc (0 : ℝ) 1, HasDerivAt T (T' t) t)
+    (hV : ∀ t ∈ Set.uIcc (0 : ℝ) 1, HasDerivAt V (V' t) t)
+    (hTpos : ∀ t ∈ Set.uIcc (0 : ℝ) 1, 0 < T t)
+    (hVpos : ∀ t ∈ Set.uIcc (0 : ℝ) 1, 0 < V t)
     (hTint : IntervalIntegrable (fun t => T' t / T t) MeasureTheory.volume 0 1)
     (hVint : IntervalIntegrable (fun t => V' t / V t) MeasureTheory.volume 0 1)
-    (hODE : ∀ t : ℝ, Cv * (T' t / T t) + nR * (V' t / V t) = 0) :
+    (hODE : ∀ t ∈ Set.uIcc (0 : ℝ) 1, Cv * (T' t / T t) + nR * (V' t / V t) = 0) :
     Cv * Real.log (T 1 / T 0) + nR * Real.log (V 1 / V 0) = 0 := by
+  have h0 : (0 : ℝ) ∈ Set.uIcc (0 : ℝ) 1 := Set.left_mem_uIcc
+  have h1 : (1 : ℝ) ∈ Set.uIcc (0 : ℝ) 1 := Set.right_mem_uIcc
   have eT : (∫ t in (0:ℝ)..1, T' t / T t ∂MeasureTheory.volume)
       = Real.log (T 1) - Real.log (T 0) :=
     intervalIntegral.integral_eq_sub_of_hasDerivAt
-      (fun t _ => (hT t).log (ne_of_gt (hTpos t))) hTint
+      (fun t ht => (hT t ht).log (ne_of_gt (hTpos t ht))) hTint
   have eV : (∫ t in (0:ℝ)..1, V' t / V t ∂MeasureTheory.volume)
       = Real.log (V 1) - Real.log (V 0) :=
     intervalIntegral.integral_eq_sub_of_hasDerivAt
-      (fun t _ => (hV t).log (ne_of_gt (hVpos t))) hVint
-  have hfun : (fun t : ℝ => Cv * (T' t / T t) + nR * (V' t / V t)) = fun _ => (0:ℝ) :=
-    funext hODE
+      (fun t ht => (hV t ht).log (ne_of_gt (hVpos t ht))) hVint
   have hzero : (∫ t in (0:ℝ)..1,
       (Cv * (T' t / T t) + nR * (V' t / V t)) ∂MeasureTheory.volume) = 0 := by
-    rw [hfun, intervalIntegral.integral_const]
+    rw [intervalIntegral.integral_congr (g := fun _ => (0 : ℝ)) (fun t ht => hODE t ht)]
     simp
   have hsplit : (∫ t in (0:ℝ)..1,
       (Cv * (T' t / T t) + nR * (V' t / V t)) ∂MeasureTheory.volume)
@@ -398,10 +405,10 @@ lemma adiabatic_path_integrated (T V T' V' : ℝ → ℝ) (Cv nR : ℝ)
     rw [intervalIntegral.integral_add (hTint.const_mul Cv) (hVint.const_mul nR),
       intervalIntegral.integral_const_mul Cv _,
       intervalIntegral.integral_const_mul nR _, eT, eV]
-  have hT0 : T 0 ≠ 0 := ne_of_gt (hTpos 0)
-  have hT1 : T 1 ≠ 0 := ne_of_gt (hTpos 1)
-  have hV0 : V 0 ≠ 0 := ne_of_gt (hVpos 0)
-  have hV1 : V 1 ≠ 0 := ne_of_gt (hVpos 1)
+  have hT0 : T 0 ≠ 0 := ne_of_gt (hTpos 0 h0)
+  have hT1 : T 1 ≠ 0 := ne_of_gt (hTpos 1 h1)
+  have hV0 : V 0 ≠ 0 := ne_of_gt (hVpos 0 h0)
+  have hV1 : V 1 ≠ 0 := ne_of_gt (hVpos 1 h1)
   rw [Real.log_div hT1 hT0, Real.log_div hV1 hV0, ← hsplit, hzero]
 
 /-- Reversible adiabatic invariant in ratio form: `T₂ / T₁ = (V₁ / V₂) ^ (γ - 1)`. -/

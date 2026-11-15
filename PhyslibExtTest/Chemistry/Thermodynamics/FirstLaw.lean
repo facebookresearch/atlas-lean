@@ -74,24 +74,24 @@ example : pathRightUp (heatCoeffV 1 1) (heatCoeffT 1)
 -- Energy path independence instance: `U = V + T` on `[1, 2] × [1, 2]`.
 example : pathRightUp (fun _ _ : ℝ => 1) (fun _ _ : ℝ => 1) 1 2 1 2
     = pathUpRight (fun _ _ : ℝ => 1) (fun _ _ : ℝ => 1) 1 2 1 2 := by
-  have hPderiv : ∀ T : ℝ, ∀ V ∈ Set.uIcc (1:ℝ) 2,
+  have hPderiv : ∀ T ∈ ({1, 2} : Set ℝ), ∀ V ∈ Set.uIcc (1:ℝ) 2,
       HasDerivAt (fun V : ℝ => V + T) 1 V := by
-    intro T V _
+    intro T _ V _
     have h := (hasDerivAt_id' V).add (hasDerivAt_const V T)
     rw [add_zero] at h
     exact h
-  have hQderiv : ∀ V : ℝ, ∀ T ∈ Set.uIcc (1:ℝ) 2,
+  have hQderiv : ∀ V ∈ ({1, 2} : Set ℝ), ∀ T ∈ Set.uIcc (1:ℝ) 2,
       HasDerivAt (fun T : ℝ => V + T) 1 T := by
-    intro V T _
+    intro V _ T _
     have h := (hasDerivAt_const T V).add (hasDerivAt_id' T)
     rw [zero_add] at h
     exact h
-  have hPint : ∀ T : ℝ,
+  have hPint : ∀ T ∈ ({1, 2} : Set ℝ),
       IntervalIntegrable (fun _ : ℝ => (1:ℝ)) MeasureTheory.volume 1 2 :=
-    fun _ => intervalIntegrable_const
-  have hQint : ∀ V : ℝ,
+    fun _ _ => intervalIntegrable_const
+  have hQint : ∀ V ∈ ({1, 2} : Set ℝ),
       IntervalIntegrable (fun _ : ℝ => (1:ℝ)) MeasureTheory.volume 1 2 :=
-    fun _ => intervalIntegrable_const
+    fun _ _ => intervalIntegrable_const
   exact exact_twoPaths_equal (fun V T : ℝ => V + T) (fun _ _ : ℝ => 1)
     (fun _ _ : ℝ => 1) 1 2 1 2 hPderiv hPint hQderiv hQint
 
@@ -137,6 +137,44 @@ example (T₁ T₂ : ℝ) (hT₁ : 0 < T₁) (hT₂ : 0 < T₂)
     (by norm_num) (by norm_num) had]
   rw [show (8 : ℝ) / 1 = 2 ^ (3 : ℝ) by norm_num, ← Real.rpow_mul (by norm_num)]
   norm_num
+
+/-- `adiabatic_path_integrated` applies to the process `V t = 1 + t`, `T t = 1 / (1 + t)` on
+`[0, 1]` (`T * V` is constant: the reversible adiabat for `Cv = nR = 1`), although `V` is not
+positive for every real parameter (`V (-2) = -1`). -/
+example : (1 : ℝ) * Real.log ((1 / (1 + 1)) / (1 / (1 + 0))) +
+    1 * Real.log ((1 + 1) / (1 + 0)) = 0 := by
+  have hpos : ∀ t ∈ Set.uIcc (0 : ℝ) 1, 0 < 1 + t := by
+    intro t ht
+    rw [Set.uIcc_of_le zero_le_one] at ht
+    linarith [ht.1]
+  have hV : ∀ t ∈ Set.uIcc (0 : ℝ) 1, HasDerivAt (fun t : ℝ => 1 + t) 1 t := by
+    intro t _
+    have h := (hasDerivAt_id' t).const_add (1 : ℝ)
+    exact h
+  have hT : ∀ t ∈ Set.uIcc (0 : ℝ) 1,
+      HasDerivAt (fun t : ℝ => 1 / (1 + t)) (-1 / (1 + t) ^ 2) t := by
+    intro t ht
+    have h := (hV t ht).inv (hpos t ht).ne'
+    simp only [one_div]
+    convert h using 1
+  have hcont : ContinuousOn (fun t : ℝ => 1 + t) (Set.uIcc 0 1) := by fun_prop
+  have hTc : ContinuousOn (fun t : ℝ => 1 / (1 + t)) (Set.uIcc 0 1) :=
+    continuousOn_const.div hcont fun t ht => (hpos t ht).ne'
+  have hT'c : ContinuousOn (fun t : ℝ => -1 / (1 + t) ^ 2) (Set.uIcc 0 1) :=
+    continuousOn_const.div (hcont.pow 2) fun t ht => pow_ne_zero 2 (hpos t ht).ne'
+  exact adiabatic_path_integrated (fun t : ℝ => 1 / (1 + t)) (fun t : ℝ => 1 + t)
+    (fun t => -1 / (1 + t) ^ 2) (fun _ => 1) 1 1 hT hV
+    (fun t ht => one_div_pos.mpr (hpos t ht)) hpos
+    ((hT'c.div hTc fun t ht => one_div_ne_zero (hpos t ht).ne').intervalIntegrable)
+    ((continuousOn_const.div hcont fun t ht => (hpos t ht).ne').intervalIntegrable)
+    (fun t ht => by
+      have h := (hpos t ht).ne'
+      field_simp
+      ring)
+
+/-- That volume is not positive for every real parameter, so global-parameter hypotheses would
+exclude the process above. -/
+example : ¬ ∀ t : ℝ, 0 < 1 + t := fun h => by linarith [h (-2)]
 
 /-- The `p * V ^ γ` invariant for `γ = 2`, `Cv = nR = n = R = 1` between the states
 `(T, V) = (1, e)` and `(e, 1)`. -/
