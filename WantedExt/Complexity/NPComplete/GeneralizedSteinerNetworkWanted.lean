@@ -12,9 +12,9 @@ LICENSE file in the root directory of this source tree.
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [ND10]
 MINIMUM GENERALIZED STEINER NETWORK ("Also called Minimum Survivable Network");
-D. P. Williamson, M. X. Goemans, M. Mihail and V. V. Vazirani, "A primal-dual approximation
-algorithm for generalized Steiner network problems", Combinatorica 15 (1995), 435-454,
-doi:10.1007/BF01299747 (the problem);
+K. Jain, "A factor 2 approximation algorithm for the generalized Steiner network problem",
+Combinatorica 21 (2001), 39-60, doi:10.1007/s004930170004 (the problem with a bound `u_e` on
+the number of copies of each edge `e`);
 R. M. Karp, "Reducibility among combinatorial problems", in *Complexity of Computer
 Computations* (R. E. Miller and J. W. Thatcher, eds.), Plenum Press (1972), 85-103,
 doi:10.1007/978-1-4684-2001-2_9 (STEINER TREE is NP-complete);
@@ -46,10 +46,16 @@ least `r(i, j)` when `f(e)` copies of each edge `e` are available, and such that
 `∑_{e ∈ E} w(e) f(e)` is at most `K`?
 
 This is the decision version of MINIMUM GENERALIZED STEINER NETWORK in the Crescenzi-Kann
-compendium (also called minimum survivable network; Williamson, Goemans, Mihail and Vazirani).
-With every capacity `1` and requirements `r(i, j) = 1` for pairs of terminals and `0`
-otherwise, a feasible `f` is the indicator of an edge set connecting all terminals, so the
-problem contains STEINER TREE IN GRAPHS ([ND12], NP-complete by Karp (1972)). Capacities are
+compendium, whose solution is, verbatim, "A Steiner network over G that satisfies all the
+requirements and obeys all the capacities, i.e., a function f : E → N such that, for each edge
+e, f(e) ≤ c(e) and, for any pair of nodes i and j, the number of edge disjoint paths between i
+and j is at least r(i,j) where, for each edge e, f(e) copies of e are available", with measure
+`∑_{e ∈ E} w(e) f(e)`. The capacity `c(e)` is the bound `u_e` on the number of copies of `e`
+in Jain's formulation of the generalized Steiner network (survivable network design) problem.
+With every capacity `1` a solution is a subgraph of `G` (each edge used at most once); with
+moreover requirements `r(i, j) = 1` for pairs of terminals and `0` otherwise, a feasible `f` is
+the indicator of an edge set connecting all terminals, so the problem contains STEINER TREE IN
+GRAPHS ([ND12], NP-complete by Karp (1972)). Capacities are
 in binary; a certificate `f` with `f ≤ c` has polynomial size, and each requirement can be
 checked by a maximum-flow computation.
 
@@ -120,8 +126,7 @@ noncomputable def generalizedSteinerNetworkDec :
   | none => false
 
 /-- **GENERALIZED STEINER NETWORK is NP-complete.** Source: Crescenzi and Kann, [ND10];
-Williamson, Goemans, Mihail and Vazirani (1995); Karp (1972); Garey and Johnson (1979),
-[ND12]. -/
+Jain (2001); Karp (1972); Garey and Johnson (1979), [ND12]. -/
 public theorem_wanted generalizedSteinerNetwork_npComplete :
     generalizedSteinerNetworkDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
