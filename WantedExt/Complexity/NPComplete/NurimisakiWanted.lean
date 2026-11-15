@@ -60,7 +60,8 @@ the Misaki through its white neighbor `w`; a number `k` means that the `k` cells
 `0, …, k - 1` from the Misaki in that direction are white (the Misaki is the first of them) and
 the cell at distance `k` is black or outside the grid. Counting the Misaki itself matches
 Nikoli's sample solution, where a circled `4` heads a line of four white cells. Rule 3 is
-`SimpleGraph.Preconnected` of the subgraph the grid graph induces on the white cells.
+`SimpleGraph.Connected` of the subgraph the grid graph induces on the white cells, so some cell
+is white.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -120,7 +121,7 @@ def Solves (i : NurimisakiInstance) (p : ℕ → ℕ → Bool) : Prop :=
       ¬ WhiteAt i p ((x.1 : ℕ) + (clue i x).2 * (((w.1 : ℕ) : ℤ) - (x.1 : ℕ)))
           ((x.2 : ℕ) + (clue i x).2 * (((w.2 : ℕ) : ℤ) - (x.2 : ℕ)))) ∧
   -- 3. the white cells form a continuous network
-  ((Grid i).induce {x | p x.1 x.2 = false}).Preconnected ∧
+  ((Grid i).induce {x | p x.1 x.2 = false}).Connected ∧
   -- 4. no `2 × 2` square of black cells and none of white cells
   ∀ r c, r + 1 < rows i → c + 1 < cols i →
     ¬ (p r c = true ∧ p r (c + 1) = true ∧ p (r + 1) c = true ∧ p (r + 1) (c + 1) = true) ∧
