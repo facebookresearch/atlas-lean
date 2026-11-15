@@ -48,9 +48,12 @@ with reference note 1593 (V. B. Le): the problem is NP-complete on planar graphs
 `4` (`FeedbackVertexSetPlanarMaxDegreeFourWanted`), and subdividing every edge by one new vertex
 keeps the graph planar with maximum degree `4` and makes it bipartite. The subdivision does not
 change the minimum size of a feedback vertex set: the cycles correspond, and a subdivision vertex
-in a feedback vertex set can be replaced by an endpoint of its edge. So, keeping `K`, this reduces
-the planar maximum-degree-`4` problem to the restriction. Bipartiteness, planarity and degrees are
-checked in polynomial time, and a feedback vertex set is a certificate, so the problem is in NP.
+in a feedback vertex set can be replaced by an endpoint of its edge. Adding a disjoint 4-cycle
+raises the minimum by exactly one and keeps the graph bipartite and planar with maximum degree
+`4`, so mapping `(G, K)` to the subdivided graph plus a disjoint 4-cycle with bound `K + 1` (which
+is positive, also for `K = 0`) reduces the planar maximum-degree-`4` problem to the restriction.
+Bipartiteness, planarity and degrees are checked in polynomial time, and a feedback vertex set is a
+certificate, so the problem is in NP.
 
 The instance, its graph, the planar maximum-degree-`4` well-formedness (a simple edge list,
 MathlibExt's `SimpleGraph.IsPlanar`, every Mathlib `SimpleGraph.degree` at most `4`) and the
