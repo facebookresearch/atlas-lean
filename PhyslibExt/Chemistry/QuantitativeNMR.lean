@@ -66,13 +66,15 @@ empirical inputs (`γ`, `B0`, shielding constants `σ`, couplings `J`) are expli
 parameters, never universal constants.
 
 The AB section (§E) starts from the full two-spin Hamiltonian
-`H = νA I_zA + νB I_zB + J I_A · I_B` in frequency units, built from Physlib's Pauli matrices on
-the product basis `αα, αβ, βα, ββ`. Its eigenvalues are exactly the four levels
-`(νA + νB) / 2 + J / 4`, `-(νA + νB) / 2 + J / 4` and `-J / 4 ± D / 2`, where
-`D = √((νA - νB) ^ 2 + J ^ 2)`. The four lines are the transitions between `αα` or `ββ` and the
-two mixed states (the `ΔM = ±1` selection rule is assumed, not derived), at
-`(νA + νB) / 2 ± (D ± J) / 2`. When `νA ≠ νB` each line lies within `J ^ 2 / (4 |νA - νB|)` of
-its first-order position. Line intensities are not formalized.
+`H = -νA I_zA - νB I_zB + J I_A · I_B` in frequency units, built from Physlib's Pauli matrices on
+the product basis `αα, αβ, βα, ββ`. The Zeeman terms carry the sign of §A (`E = -γ hbar B0 m`,
+with the resonance frequencies `νA`, `νB` positive for `γ > 0`), so `α` (`m = +1/2`) lies below
+`β`. Its eigenvalues are exactly the four levels `-(νA + νB) / 2 + J / 4` (`αα`),
+`(νA + νB) / 2 + J / 4` (`ββ`) and `-J / 4 ± D / 2`, where `D = √((νA - νB) ^ 2 + J ^ 2)`. The
+four lines are the transitions between `αα` or `ββ` and the two mixed states (the `ΔM = ±1`
+selection rule is assumed, not derived), at `(νA + νB) / 2 ± (D ± J) / 2`. When `νA ≠ νB`
+each line lies within `J ^ 2 / (4 |νA - νB|)` of its first-order position. Line intensities are
+not formalized.
 
 ## ii. Key results
 
@@ -577,51 +579,53 @@ coupling `J`, all in Hz. States are vectors `Fin 2 × Fin 2 → ℂ`: the first 
 
 -/
 
-/-- The AB Hamiltonian in frequency units (Hz), `H = νA I_zA + νB I_zB + J I_A · I_B`. The
-spin-1/2 operators are `I_k = σ_k / 2` (`k = 0, 1, 2` for `x, y, z`), with Physlib's Pauli
-matrices `σ_k = PauliMatrix.pauliMatrix (Sum.inr k)`. On the two-spin space `I_kA = I_k ⊗ 1` and
+/-- The AB Hamiltonian in frequency units (Hz), `H = -νA I_zA - νB I_zB + J I_A · I_B`. The
+Zeeman terms have the sign of `zeemanEnergy` (`E = -γ hbar B0 m`), so for positive resonance
+frequencies `νA`, `νB` the state `α` (`m = +1/2`) lies below `β`. The spin-1/2 operators are
+`I_k = σ_k / 2` (`k = 0, 1, 2` for `x, y, z`), with Physlib's Pauli matrices
+`σ_k = PauliMatrix.pauliMatrix (Sum.inr k)`. On the two-spin space `I_kA = I_k ⊗ 1` and
 `I_kB = 1 ⊗ I_k` (Kronecker products), so `I_kA I_kB = I_k ⊗ I_k` by the mixed-product rule
 `Matrix.mul_kronecker_mul`, and the coupling term is `J ∑ k, I_k ⊗ I_k`. -/
 noncomputable def abHamiltonian (νA νB J : ℝ) : Matrix (Fin 2 × Fin 2) (Fin 2 × Fin 2) ℂ :=
-  (νA : ℂ) • (((1 / 2 : ℂ) • PauliMatrix.pauliMatrix (Sum.inr 2)) ⊗ₖ
-      (1 : Matrix (Fin 2) (Fin 2) ℂ)) +
+  -(νA : ℂ) • (((1 / 2 : ℂ) • PauliMatrix.pauliMatrix (Sum.inr 2)) ⊗ₖ
+      (1 : Matrix (Fin 2) (Fin 2) ℂ)) -
     (νB : ℂ) • ((1 : Matrix (Fin 2) (Fin 2) ℂ) ⊗ₖ
       ((1 / 2 : ℂ) • PauliMatrix.pauliMatrix (Sum.inr 2))) +
     (J : ℂ) • ∑ k : Fin 3, ((1 / 2 : ℂ) • PauliMatrix.pauliMatrix (Sum.inr k)) ⊗ₖ
       ((1 / 2 : ℂ) • PauliMatrix.pauliMatrix (Sum.inr k))
 
-/-- The `αα` component of `H v` is `((νA + νB) / 2 + J / 4) v(αα)`. -/
+/-- The `αα` component of `H v` is `(-(νA + νB) / 2 + J / 4) v(αα)`. -/
 lemma abHamiltonian_mulVec_alphaAlpha (νA νB J : ℝ) (v : Fin 2 × Fin 2 → ℂ) :
-    (abHamiltonian νA νB J *ᵥ v) (0, 0) = (((νA + νB) / 2 + J / 4 : ℝ) : ℂ) * v (0, 0) := by
+    (abHamiltonian νA νB J *ᵥ v) (0, 0) = ((-(νA + νB) / 2 + J / 4 : ℝ) : ℂ) * v (0, 0) := by
   simp [abHamiltonian, Matrix.mulVec, dotProduct, Fintype.sum_prod_type, Fin.sum_univ_two,
     Fin.sum_univ_three, PauliMatrix.pauliMatrix, Matrix.one_apply]
   ring_nf
   simp only [Complex.I_sq]
   ring
 
-/-- The `αβ` component of `H v` is `((νA - νB) / 2 - J / 4) v(αβ) + (J / 2) v(βα)`. -/
+/-- The `αβ` component of `H v` is `(-(νA - νB) / 2 - J / 4) v(αβ) + (J / 2) v(βα)`. -/
 lemma abHamiltonian_mulVec_alphaBeta (νA νB J : ℝ) (v : Fin 2 × Fin 2 → ℂ) :
     (abHamiltonian νA νB J *ᵥ v) (0, 1) =
-      (((νA - νB) / 2 - J / 4 : ℝ) : ℂ) * v (0, 1) + ((J / 2 : ℝ) : ℂ) * v (1, 0) := by
+      ((-(νA - νB) / 2 - J / 4 : ℝ) : ℂ) * v (0, 1) + ((J / 2 : ℝ) : ℂ) * v (1, 0) := by
   simp [abHamiltonian, Matrix.mulVec, dotProduct, Fintype.sum_prod_type, Fin.sum_univ_two,
     Fin.sum_univ_three, PauliMatrix.pauliMatrix, Matrix.one_apply]
   ring_nf
   simp only [Complex.I_sq]
   ring
 
-/-- The `βα` component of `H v` is `(J / 2) v(αβ) + (-(νA - νB) / 2 - J / 4) v(βα)`. -/
+/-- The `βα` component of `H v` is `(J / 2) v(αβ) + ((νA - νB) / 2 - J / 4) v(βα)`. -/
 lemma abHamiltonian_mulVec_betaAlpha (νA νB J : ℝ) (v : Fin 2 × Fin 2 → ℂ) :
     (abHamiltonian νA νB J *ᵥ v) (1, 0) =
-      ((J / 2 : ℝ) : ℂ) * v (0, 1) + ((-(νA - νB) / 2 - J / 4 : ℝ) : ℂ) * v (1, 0) := by
+      ((J / 2 : ℝ) : ℂ) * v (0, 1) + (((νA - νB) / 2 - J / 4 : ℝ) : ℂ) * v (1, 0) := by
   simp [abHamiltonian, Matrix.mulVec, dotProduct, Fintype.sum_prod_type, Fin.sum_univ_two,
     Fin.sum_univ_three, PauliMatrix.pauliMatrix, Matrix.one_apply]
   ring_nf
   simp only [Complex.I_sq]
   ring
 
-/-- The `ββ` component of `H v` is `(-(νA + νB) / 2 + J / 4) v(ββ)`. -/
+/-- The `ββ` component of `H v` is `((νA + νB) / 2 + J / 4) v(ββ)`. -/
 lemma abHamiltonian_mulVec_betaBeta (νA νB J : ℝ) (v : Fin 2 × Fin 2 → ℂ) :
-    (abHamiltonian νA νB J *ᵥ v) (1, 1) = ((-(νA + νB) / 2 + J / 4 : ℝ) : ℂ) * v (1, 1) := by
+    (abHamiltonian νA νB J *ᵥ v) (1, 1) = (((νA + νB) / 2 + J / 4 : ℝ) : ℂ) * v (1, 1) := by
   simp [abHamiltonian, Matrix.mulVec, dotProduct, Fintype.sum_prod_type, Fin.sum_univ_two,
     Fin.sum_univ_three, PauliMatrix.pauliMatrix, Matrix.one_apply]
   ring_nf
@@ -632,10 +636,10 @@ lemma abHamiltonian_mulVec_betaBeta (νA νB J : ℝ) (v : Fin 2 × Fin 2 → �
 `αβ`, `βα` form a `2 × 2` system. -/
 lemma abHamiltonian_mulVec_eq_smul_iff (νA νB J : ℝ) (E : ℂ) (v : Fin 2 × Fin 2 → ℂ) :
     abHamiltonian νA νB J *ᵥ v = E • v ↔
-      ((((νA + νB) / 2 + J / 4 : ℝ) : ℂ) - E) * v (0, 0) = 0 ∧
-      ((((νA - νB) / 2 - J / 4 : ℝ) : ℂ) - E) * v (0, 1) + ((J / 2 : ℝ) : ℂ) * v (1, 0) = 0 ∧
-      ((J / 2 : ℝ) : ℂ) * v (0, 1) + (((-(νA - νB) / 2 - J / 4 : ℝ) : ℂ) - E) * v (1, 0) = 0 ∧
-      (((-(νA + νB) / 2 + J / 4 : ℝ) : ℂ) - E) * v (1, 1) = 0 := by
+      (((-(νA + νB) / 2 + J / 4 : ℝ) : ℂ) - E) * v (0, 0) = 0 ∧
+      (((-(νA - νB) / 2 - J / 4 : ℝ) : ℂ) - E) * v (0, 1) + ((J / 2 : ℝ) : ℂ) * v (1, 0) = 0 ∧
+      ((J / 2 : ℝ) : ℂ) * v (0, 1) + ((((νA - νB) / 2 - J / 4 : ℝ) : ℂ) - E) * v (1, 0) = 0 ∧
+      ((((νA + νB) / 2 + J / 4 : ℝ) : ℂ) - E) * v (1, 1) = 0 := by
   constructor
   · intro h
     have h00 := congrFun h (0, 0)
@@ -686,13 +690,13 @@ lemma abHamiltonian_hasEigenvalue_iff_exists (νA νB J : ℝ) (E : ℂ) :
 
 -/
 
-/-- Energy (Hz) of the state `αα`: `(νA + νB) / 2 + J / 4`. -/
+/-- Energy (Hz) of the state `αα`: `-(νA + νB) / 2 + J / 4`. -/
 noncomputable def abEnergyAlphaAlpha (νA νB J : ℝ) : ℝ :=
-  (νA + νB) / 2 + J / 4
-
-/-- Energy (Hz) of the state `ββ`: `-(νA + νB) / 2 + J / 4`. -/
-noncomputable def abEnergyBetaBeta (νA νB J : ℝ) : ℝ :=
   -(νA + νB) / 2 + J / 4
+
+/-- Energy (Hz) of the state `ββ`: `(νA + νB) / 2 + J / 4`. -/
+noncomputable def abEnergyBetaBeta (νA νB J : ℝ) : ℝ :=
+  (νA + νB) / 2 + J / 4
 
 /-- The upper of the two energies (Hz) of the mixed states, the eigenvectors of `H` spanned by
 `αβ` and `βα`: `-J / 4 + √((νA - νB) ^ 2 + J ^ 2) / 2`. -/
@@ -728,7 +732,7 @@ lemma abHamiltonian_hasEigenvalue_betaBeta (νA νB J : ℝ) :
   refine ⟨?_, ?_, ?_, ?_⟩ <;> simp [abEnergyBetaBeta]
 
 /-- The upper mixed state is an eigenvector of `H` with energy `abEnergyPlus`: with
-`a = (νA - νB) / 2`, `b = J / 2` and `r = √(a ^ 2 + b ^ 2)`, it is `(r + a) αβ + b βα`, or `βα`
+`a = (νA - νB) / 2`, `b = J / 2` and `r = √(a ^ 2 + b ^ 2)`, it is `b αβ + (r + a) βα`, or `αβ`
 when that vector vanishes. -/
 lemma abHamiltonian_hasEigenvalue_plus (νA νB J : ℝ) :
     Module.End.HasEigenvalue (Matrix.toLin' (abHamiltonian νA νB J))
@@ -740,35 +744,35 @@ lemma abHamiltonian_hasEigenvalue_plus (νA νB J : ℝ) :
     exact_mod_cast ab_half_sqrt_sq νA νB J
   have h : ((abEnergyPlus νA νB J : ℝ) : ℂ) = -J / 4 + r := by
     simp only [abEnergyPlus, hr]; push_cast; ring
-  have hcast01 : ((((νA - νB) / 2 - J / 4 : ℝ) : ℂ)) = (a : ℂ) - J / 4 := by
+  have hcast01 : ((((-(νA - νB)) / 2 - J / 4 : ℝ) : ℂ)) = -(a : ℂ) - J / 4 := by
     rw [ha]; push_cast; ring
-  have hcast10 : ((((-(νA - νB)) / 2 - J / 4 : ℝ) : ℂ)) = -(a : ℂ) - J / 4 := by
+  have hcast10 : ((((νA - νB) / 2 - J / 4 : ℝ) : ℂ)) = (a : ℂ) - J / 4 := by
     rw [ha]; push_cast; ring
   rw [abHamiltonian_hasEigenvalue_iff_exists]
   by_cases hcase : b = 0 ∧ r + a = 0
   · have hb0 : (b : ℂ) = 0 := by exact_mod_cast hcase.1
     have hra : (r : ℂ) + a = 0 := by exact_mod_cast hcase.2
-    refine ⟨Pi.single (1, 0) 1, fun h0 => by simpa using congrFun h0 (1, 0), ?_⟩
+    refine ⟨Pi.single (0, 1) 1, fun h0 => by simpa using congrFun h0 (0, 1), ?_⟩
     rw [abHamiltonian_mulVec_eq_smul_iff, hcast01, hcast10, ← hb]
-    refine ⟨by simp, by simp [hb0], ?_, by simp⟩
+    refine ⟨by simp, ?_, by simp [hb0], by simp⟩
     simp
     linear_combination -h - hra
-  · refine ⟨Pi.single (0, 1) ((r : ℂ) + a) + Pi.single (1, 0) (b : ℂ), fun h0 => hcase ?_, ?_⟩
+  · refine ⟨Pi.single (0, 1) (b : ℂ) + Pi.single (1, 0) ((r : ℂ) + a), fun h0 => hcase ?_, ?_⟩
     · have h01 := congrFun h0 (0, 1)
       have h10 := congrFun h0 (1, 0)
       simp only [Fin.isValue, Pi.add_apply, Pi.single_eq_same, ne_eq, Prod.mk.injEq,
         zero_ne_one, one_ne_zero, and_self, not_false_eq_true, Pi.single_eq_of_ne, add_zero,
         Pi.zero_apply, zero_add, Complex.ofReal_eq_zero] at h01 h10
-      exact ⟨by exact_mod_cast h10, by exact_mod_cast h01⟩
+      exact ⟨h01, by exact_mod_cast h10⟩
     · rw [abHamiltonian_mulVec_eq_smul_iff, hcast01, hcast10, ← hb]
       refine ⟨by simp, ?_, ?_, by simp⟩
       · simp
-        linear_combination (-(r : ℂ) - a) * h - hr2C
-      · simp
         linear_combination -(b : ℂ) * h
+      · simp
+        linear_combination (-(r : ℂ) - a) * h - hr2C
 
 /-- The lower mixed state is an eigenvector of `H` with energy `abEnergyMinus`: with
-`a = (νA - νB) / 2`, `b = J / 2` and `r = √(a ^ 2 + b ^ 2)`, it is `(r - a) αβ - b βα`, or `βα`
+`a = (νA - νB) / 2`, `b = J / 2` and `r = √(a ^ 2 + b ^ 2)`, it is `(r + a) αβ - b βα`, or `βα`
 when that vector vanishes. -/
 lemma abHamiltonian_hasEigenvalue_minus (νA νB J : ℝ) :
     Module.End.HasEigenvalue (Matrix.toLin' (abHamiltonian νA νB J))
@@ -780,31 +784,31 @@ lemma abHamiltonian_hasEigenvalue_minus (νA νB J : ℝ) :
     exact_mod_cast ab_half_sqrt_sq νA νB J
   have h : ((abEnergyMinus νA νB J : ℝ) : ℂ) = -J / 4 - r := by
     simp only [abEnergyMinus, hr]; push_cast; ring
-  have hcast01 : ((((νA - νB) / 2 - J / 4 : ℝ) : ℂ)) = (a : ℂ) - J / 4 := by
+  have hcast01 : ((((-(νA - νB)) / 2 - J / 4 : ℝ) : ℂ)) = -(a : ℂ) - J / 4 := by
     rw [ha]; push_cast; ring
-  have hcast10 : ((((-(νA - νB)) / 2 - J / 4 : ℝ) : ℂ)) = -(a : ℂ) - J / 4 := by
+  have hcast10 : ((((νA - νB) / 2 - J / 4 : ℝ) : ℂ)) = (a : ℂ) - J / 4 := by
     rw [ha]; push_cast; ring
   rw [abHamiltonian_hasEigenvalue_iff_exists]
-  by_cases hcase : b = 0 ∧ r - a = 0
+  by_cases hcase : b = 0 ∧ r + a = 0
   · have hb0 : (b : ℂ) = 0 := by exact_mod_cast hcase.1
-    have hra : (r : ℂ) - a = 0 := by exact_mod_cast hcase.2
+    have hra : (r : ℂ) + a = 0 := by exact_mod_cast hcase.2
     refine ⟨Pi.single (1, 0) 1, fun h0 => by simpa using congrFun h0 (1, 0), ?_⟩
     rw [abHamiltonian_mulVec_eq_smul_iff, hcast01, hcast10, ← hb]
     refine ⟨by simp, by simp [hb0], ?_, by simp⟩
     simp
-    linear_combination -h + hra
-  · refine ⟨Pi.single (0, 1) ((r : ℂ) - a) + Pi.single (1, 0) (-(b : ℂ)), fun h0 => hcase ?_,
+    linear_combination hra - h
+  · refine ⟨Pi.single (0, 1) ((r : ℂ) + a) + Pi.single (1, 0) (-(b : ℂ)), fun h0 => hcase ?_,
       ?_⟩
     · have h01 := congrFun h0 (0, 1)
       have h10 := congrFun h0 (1, 0)
       simp only [Fin.isValue, Pi.add_apply, Pi.single_eq_same, ne_eq, Prod.mk.injEq,
         zero_ne_one, one_ne_zero, and_self, not_false_eq_true, Pi.single_eq_of_ne, add_zero,
         Pi.zero_apply, zero_add, neg_eq_zero, Complex.ofReal_eq_zero] at h01 h10
-      exact ⟨by exact_mod_cast h10, by exact_mod_cast h01⟩
+      exact ⟨h10, by exact_mod_cast h01⟩
     · rw [abHamiltonian_mulVec_eq_smul_iff, hcast01, hcast10, ← hb]
       refine ⟨by simp, ?_, ?_, by simp⟩
       · simp
-        linear_combination ((a : ℂ) - r) * h + hr2C
+        linear_combination hr2C - ((r : ℂ) + a) * h
       · simp
         linear_combination (b : ℂ) * h
 
@@ -846,19 +850,19 @@ lemma abHamiltonian_eigenvalue_cases {νA νB J : ℝ} {E : ℂ}
     · simpa using hcon.1
     · simpa using hcon.2
     · simpa using hv11
-  have hcast01 : ((((νA - νB) / 2 - J / 4 : ℝ) : ℂ)) = (a : ℂ) - J / 4 := by
+  have hcast01 : ((((-(νA - νB)) / 2 - J / 4 : ℝ) : ℂ)) = -(a : ℂ) - J / 4 := by
     rw [ha]; push_cast; ring
-  have hcast10 : ((((-(νA - νB)) / 2 - J / 4 : ℝ) : ℂ)) = -(a : ℂ) - J / 4 := by
+  have hcast10 : ((((νA - νB) / 2 - J / 4 : ℝ) : ℂ)) = (a : ℂ) - J / 4 := by
     rw [ha]; push_cast; ring
   rw [hcast01, ← hb] at h01
   rw [hcast10, ← hb] at h10
   have hq : ((E + J / 4) - r) * ((E + J / 4) + r) = 0 := by
     rcases hmix with h | h
     · have key : (((E + J / 4) - r) * ((E + J / 4) + r)) * v (0, 1) = 0 := by
-        linear_combination (-(a : ℂ) - J / 4 - E) * h01 - (b : ℂ) * h10 - v (0, 1) * hr2C
+        linear_combination ((a : ℂ) - J / 4 - E) * h01 - (b : ℂ) * h10 - v (0, 1) * hr2C
       exact (mul_eq_zero.mp key).resolve_right h
     · have key : (((E + J / 4) - r) * ((E + J / 4) + r)) * v (1, 0) = 0 := by
-        linear_combination (-(b : ℂ)) * h01 + ((a : ℂ) - J / 4 - E) * h10 - v (1, 0) * hr2C
+        linear_combination (-(b : ℂ)) * h01 + (-(a : ℂ) - J / 4 - E) * h10 - v (1, 0) * hr2C
       exact (mul_eq_zero.mp key).resolve_right h
   rcases mul_eq_zero.mp hq with h | h
   · left
@@ -887,18 +891,19 @@ theorem abHamiltonian_hasEigenvalue_iff (νA νB J : ℝ) (E : ℂ) :
 
 ### E.3. The mixed-state block
 
-On the mixed states `αβ`, `βα` the Hamiltonian is the `2 × 2` matrix `abMixingMatrix` minus the
-scalar `(νA + νB) / 2 + J / 4`. Its eigenvalues `abMixingEigenPlus`, `abMixingEigenMinus` are the
-two mixed-state energies plus that scalar; they are not line positions.
+On the mixed states `βα`, `αβ` (in that order) the Hamiltonian is the `2 × 2` matrix
+`abMixingMatrix` minus the scalar `(νA + νB) / 2 + J / 4`. Its eigenvalues `abMixingEigenPlus`,
+`abMixingEigenMinus` are the two mixed-state energies plus that scalar; they are not line
+positions.
 
 -/
 
-/-- The mixed states `αβ = (0, 1)` and `βα = (1, 0)`, indexed by `Fin 2`. -/
+/-- The mixed states `βα = (1, 0)` and `αβ = (0, 1)`, indexed by `Fin 2` in that order. -/
 def abMixedState : Fin 2 → Fin 2 × Fin 2 :=
-  ![(0, 1), (1, 0)]
+  ![(1, 0), (0, 1)]
 
 /-- The `2 × 2` matrix `!![νA, J / 2; J / 2, νB]`. By `abHamiltonian_submatrix_mixed` it is the
-block of `abHamiltonian` on the mixed states `αβ`, `βα` plus the scalar
+block of `abHamiltonian` on the mixed states `βα`, `αβ` plus the scalar
 `(νA + νB) / 2 + J / 4`; it is not itself a Hamiltonian of the AB system. -/
 noncomputable def abMixingMatrix (νA νB J : ℝ) : Matrix (Fin 2) (Fin 2) ℝ :=
   !![νA, J / 2; J / 2, νB]
@@ -997,29 +1002,33 @@ them the only lines is a model assumption here. Each line is a difference of two
 
 -/
 
-/-- The line of the transition between `αα` and the lower mixed state. -/
+/-- The line of the transition between `αα` and the lower mixed state:
+`abEnergyMinus - abEnergyAlphaAlpha`. -/
 noncomputable def abLineAlphaMinus (νA νB J : ℝ) : ℝ :=
-  abEnergyAlphaAlpha νA νB J - abEnergyMinus νA νB J
+  abEnergyMinus νA νB J - abEnergyAlphaAlpha νA νB J
 
-/-- The line of the transition between `αα` and the upper mixed state. -/
+/-- The line of the transition between `αα` and the upper mixed state:
+`abEnergyPlus - abEnergyAlphaAlpha`. -/
 noncomputable def abLineAlphaPlus (νA νB J : ℝ) : ℝ :=
-  abEnergyAlphaAlpha νA νB J - abEnergyPlus νA νB J
+  abEnergyPlus νA νB J - abEnergyAlphaAlpha νA νB J
 
-/-- The line of the transition between the upper mixed state and `ββ`. -/
+/-- The line of the transition between the upper mixed state and `ββ`:
+`abEnergyBetaBeta - abEnergyPlus`. -/
 noncomputable def abLinePlusBeta (νA νB J : ℝ) : ℝ :=
-  abEnergyPlus νA νB J - abEnergyBetaBeta νA νB J
+  abEnergyBetaBeta νA νB J - abEnergyPlus νA νB J
 
-/-- The line of the transition between the lower mixed state and `ββ`. -/
+/-- The line of the transition between the lower mixed state and `ββ`:
+`abEnergyBetaBeta - abEnergyMinus`. -/
 noncomputable def abLineMinusBeta (νA νB J : ℝ) : ℝ :=
-  abEnergyMinus νA νB J - abEnergyBetaBeta νA νB J
+  abEnergyBetaBeta νA νB J - abEnergyMinus νA νB J
 
 /-- The four AB line positions: with `D = √((νA - νB) ^ 2 + J ^ 2)`, the lines lie at
 `(νA + νB) / 2 ± (D + J) / 2` and `(νA + νB) / 2 ± (D - J) / 2`. -/
 theorem abLines_eq (νA νB J : ℝ) :
-    abLineAlphaMinus νA νB J = (νA + νB) / 2 + (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) + J) / 2 ∧
-    abLineAlphaPlus νA νB J = (νA + νB) / 2 - (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) - J) / 2 ∧
-    abLinePlusBeta νA νB J = (νA + νB) / 2 + (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) - J) / 2 ∧
-    abLineMinusBeta νA νB J = (νA + νB) / 2 - (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) + J) / 2 := by
+    abLineAlphaMinus νA νB J = (νA + νB) / 2 - (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) + J) / 2 ∧
+    abLineAlphaPlus νA νB J = (νA + νB) / 2 + (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) - J) / 2 ∧
+    abLinePlusBeta νA νB J = (νA + νB) / 2 - (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) - J) / 2 ∧
+    abLineMinusBeta νA νB J = (νA + νB) / 2 + (Real.sqrt ((νA - νB) ^ 2 + J ^ 2) + J) / 2 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;>
     simp only [abLineAlphaMinus, abLineAlphaPlus, abLinePlusBeta, abLineMinusBeta,
       abEnergyAlphaAlpha, abEnergyBetaBeta, abEnergyPlus, abEnergyMinus] <;> ring
@@ -1060,15 +1069,15 @@ lemma ab_first_order_limit (Δν J : ℝ) (hΔ : Δν ≠ 0) :
   rw [abs_of_nonneg hnn, hdiff]
   exact hle
 
-/-- Weak-coupling limit of the AB spectrum: when `νA ≠ νB`, the lines `αα ↔ −` and `+ ↔ ββ` lie
+/-- Weak-coupling limit of the AB spectrum: when `νA ≠ νB`, the lines `− ↔ ββ` and `αα ↔ +` lie
 within `J ^ 2 / (4 |νA - νB|)` of the first-order doublet `max νA νB ± J / 2` of the
-higher-frequency nucleus, and `αα ↔ +` and `− ↔ ββ` within the same bound of the doublet
+higher-frequency nucleus, and `+ ↔ ββ` and `αα ↔ −` within the same bound of the doublet
 `min νA νB ± J / 2` of the lower one. -/
 lemma abLines_weakCoupling (νA νB J : ℝ) (h : νA ≠ νB) :
-    |abLineAlphaMinus νA νB J - (max νA νB + J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
-    |abLinePlusBeta νA νB J - (max νA νB - J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
-    |abLineAlphaPlus νA νB J - (min νA νB + J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
-    |abLineMinusBeta νA νB J - (min νA νB - J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) := by
+    |abLineMinusBeta νA νB J - (max νA νB + J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
+    |abLineAlphaPlus νA νB J - (max νA νB - J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
+    |abLinePlusBeta νA νB J - (min νA νB + J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) ∧
+    |abLineAlphaMinus νA νB J - (min νA νB - J / 2)| ≤ J ^ 2 / (4 * |νA - νB|) := by
   obtain ⟨h1, h2, h3, h4⟩ := abLines_eq νA νB J
   have hlim := ab_first_order_limit (νA - νB) J (sub_ne_zero.mpr h)
   have hmax : max νA νB = (νA + νB) / 2 + |νA - νB| / 2 := by

@@ -238,11 +238,17 @@ example : |excessFraction (1 / 2) - (1 / 2) / 2| ≤ (1 / 2) ^ 2 :=
 
 With `νA = 4`, `νB = -4`, `J = 6` one has `D = √(8 ^ 2 + 6 ^ 2) = 10`: the energies are
 `αα, ββ = 3 / 2`, `+ = 7 / 2`, `− = -13 / 2`, and the four lines are `±8` and `±2`.
+With `νA = 10`, `νB = 0`, `J = 0` the levels show the Zeeman sign of §A: `αα` lies below `ββ`.
 
 -/
 
 private lemma sqrt_ab_example : Real.sqrt ((4 - -4) ^ 2 + (6 : ℝ) ^ 2) = 10 := by
   rw [show ((4 - -4) ^ 2 + (6 : ℝ) ^ 2) = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+
+/-- With the Zeeman sign of `zeemanEnergy`, `αα` (both `m = +1/2`) is the lowest level and `ββ`
+the highest at `νA = 10`, `νB = 0`, `J = 0`. -/
+example : abEnergyAlphaAlpha 10 0 0 = -5 ∧ abEnergyBetaBeta 10 0 0 = 5 := by
+  norm_num [abEnergyAlphaAlpha, abEnergyBetaBeta]
 
 /-- The four energy levels at `νA = 4`, `νB = -4`, `J = 6`. -/
 example : abEnergyAlphaAlpha 4 (-4) 6 = 3 / 2 ∧ abEnergyBetaBeta 4 (-4) 6 = 3 / 2 ∧
@@ -266,16 +272,17 @@ example : ¬ Module.End.HasEigenvalue (Matrix.toLin' (abHamiltonian 4 (-4) 6)) 0
     sqrt_ab_example]
   norm_num
 
-/-- The four lines at `νA = 4`, `νB = -4`, `J = 6` are `8, -2, 2, -8`. -/
-example : abLineAlphaMinus 4 (-4) 6 = 8 ∧ abLineAlphaPlus 4 (-4) 6 = -2 ∧
-    abLinePlusBeta 4 (-4) 6 = 2 ∧ abLineMinusBeta 4 (-4) 6 = -8 := by
+/-- The four lines at `νA = 4`, `νB = -4`, `J = 6` are `-8, 2, -2, 8`. -/
+example : abLineAlphaMinus 4 (-4) 6 = -8 ∧ abLineAlphaPlus 4 (-4) 6 = 2 ∧
+    abLinePlusBeta 4 (-4) 6 = -2 ∧ abLineMinusBeta 4 (-4) 6 = 8 := by
   obtain ⟨h1, h2, h3, h4⟩ := abLines_eq 4 (-4) 6
   rw [sqrt_ab_example] at h1 h2 h3 h4
   refine ⟨?_, ?_, ?_, ?_⟩ <;> [rw [h1]; rw [h2]; rw [h3]; rw [h4]] <;> norm_num
 
-/-- At `J = 0` the lines are exactly the two resonance frequencies, each twice. -/
-example : abLineAlphaMinus 10 0 0 = 10 ∧ abLineAlphaPlus 10 0 0 = 0 ∧
-    abLinePlusBeta 10 0 0 = 10 ∧ abLineMinusBeta 10 0 0 = 0 := by
+/-- At `J = 0` the lines are exactly the two resonance frequencies, each twice: the `A` flips
+`αα ↔ +` and `− ↔ ββ` at `νA = 10`, the `B` flips at `νB = 0`. -/
+example : abLineAlphaMinus 10 0 0 = 0 ∧ abLineAlphaPlus 10 0 0 = 10 ∧
+    abLinePlusBeta 10 0 0 = 0 ∧ abLineMinusBeta 10 0 0 = 10 := by
   have hD : Real.sqrt ((10 - 0) ^ 2 + (0 : ℝ) ^ 2) = 10 := by
     rw [show ((10 - 0) ^ 2 + (0 : ℝ) ^ 2) = 10 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
   obtain ⟨h1, h2, h3, h4⟩ := abLines_eq 10 0 0
@@ -283,19 +290,19 @@ example : abLineAlphaMinus 10 0 0 = 10 ∧ abLineAlphaPlus 10 0 0 = 0 ∧
   refine ⟨?_, ?_, ?_, ?_⟩ <;> [rw [h1]; rw [h2]; rw [h3]; rw [h4]] <;> norm_num
 
 /-- Strong coupling moves the lines off first order: at `νA = 3`, `νB = -3`, `J = 4` the line
-`αα ↔ −` is `2 + √13`, not the first-order position `3 + J / 2 = 5`. -/
-example : abLineAlphaMinus 3 (-3) 4 ≠ 3 + 4 / 2 := by
-  obtain ⟨h1, -, -, -⟩ := abLines_eq 3 (-3) 4
-  rw [h1]
+`− ↔ ββ` is `2 + √13`, not the first-order position `3 + J / 2 = 5`. -/
+example : abLineMinusBeta 3 (-3) 4 ≠ 3 + 4 / 2 := by
+  obtain ⟨-, -, -, h4⟩ := abLines_eq 3 (-3) 4
+  rw [h4]
   intro h
   have hs : Real.sqrt ((3 - -3) ^ 2 + (4 : ℝ) ^ 2) = 6 := by norm_num at h ⊢; linarith
   have := Real.sq_sqrt (show (0 : ℝ) ≤ (3 - -3) ^ 2 + 4 ^ 2 by norm_num)
   rw [hs] at this
   norm_num at this
 
-/-- Weak coupling at `νA = 100`, `νB = 0`, `J = 6`: the line `αα ↔ −` is within
+/-- Weak coupling at `νA = 100`, `νB = 0`, `J = 6`: the line `− ↔ ββ` is within
 `36 / 400` of the first-order position `100 + J / 2`. -/
-example : |abLineAlphaMinus 100 0 6 - (100 + 6 / 2)| ≤ 6 ^ 2 / (4 * |(100 : ℝ) - 0|) := by
+example : |abLineMinusBeta 100 0 6 - (100 + 6 / 2)| ≤ 6 ^ 2 / (4 * |(100 : ℝ) - 0|) := by
   have h := (abLines_weakCoupling 100 0 6 (by norm_num)).1
   rwa [show max (100 : ℝ) 0 = 100 by norm_num] at h
 
