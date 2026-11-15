@@ -36,8 +36,8 @@ open BoundedDiameterSpanningTree (BoundedDiameterSpanningTreeInstance endpoints 
 /-!
 # K-SPANNING TREE is NP-complete
 
-INSTANCE: a graph `G = (V, E)`, an integer `k ≤ |V|`, a weight function `w : E → ℕ`, and a
-positive integer `K`.
+INSTANCE: a graph `G = (V, E)`, a positive integer `k ≤ |V|`, a weight function `w : E → ℕ`,
+and a positive integer `K`.
 QUESTION: is there a `k`-spanning tree, i.e. a subtree `T` of `G` with at least `k` nodes, whose
 weight `∑_{e ∈ T} w(e)` is at most `K`?
 
@@ -66,12 +66,12 @@ reduction from every language in `NP`
 -/
 
 /-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
-duplicate edges in either orientation, no self-loops, endpoints in range), `k ≤ |V|`, and
-`0 < K`. -/
+duplicate edges in either orientation, no self-loops, endpoints in range), `0 < k ≤ |V|`,
+and `0 < K`. -/
 def WellFormed (i : BoundedDiameterSpanningTreeInstance) : Prop :=
   ((endpoints i).Nodup ∧
     ∀ e ∈ endpoints i, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ endpoints i) ∧
-    i.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2
+    0 < i.2.2.1 ∧ i.2.2.1 ≤ i.1 ∧ 0 < i.2.2.2
 
 /-- Some subtree `T` of `G` has at least `k` nodes and weight at most `K`. -/
 def KSpanningTreeFeasible (i : BoundedDiameterSpanningTreeInstance) : Prop :=
