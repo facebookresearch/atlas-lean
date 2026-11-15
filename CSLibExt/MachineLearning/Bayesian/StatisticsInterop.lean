@@ -109,7 +109,6 @@ theorem posterior_sharedSeqLaw_bayesPosterior (n N : ℕ) (α : Fin (n + 1) → 
   rw [← posterior_eq_bayesPosterior _ _ hev0]
   exact posterior_categoricalSeqKernel_dirichletMeasure hα s
 
-set_option linter.unusedDecidableInType false in
 set_option linter.unusedFintypeInType false in
 /-- **Finite-model weights are the kernel posterior.** The explicit posterior weights
 `postWeight` of the merged finite-model consistency theorem equal the `toReal` of the kernel
