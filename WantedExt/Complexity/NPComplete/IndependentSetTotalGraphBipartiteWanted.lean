@@ -25,6 +25,7 @@ public import Mathlib.Combinatorics.SimpleGraph.Bipartite
 public import Mathlib.Combinatorics.SimpleGraph.Clique
 public import Mathlib.Combinatorics.SimpleGraph.LineGraph
 public import Mathlib.Combinatorics.SimpleGraph.Maps
+public import Mathlib.Combinatorics.SimpleGraph.Sum
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 
@@ -45,8 +46,10 @@ of them are adjacent when they are adjacent or incident in `H`: two vertices joi
 of `H`, two distinct edges of `H` with a common endpoint, or a vertex and an edge containing it
 (M. Behzad, "A criterion for the planarity of the total graph of a graph", Mathematical
 Proceedings of the Cambridge Philosophical Society 63(3) (1967), 679-681,
-doi:10.1017/S0305004100041657). `totalGraph` builds it on
-`V(H) ⊕ E(H)`, with the edge-edge adjacency given by Mathlib's `SimpleGraph.lineGraph`.
+doi:10.1017/S0305004100041657). `WellFormed` writes it with Mathlib constructions on
+`V(H) ⊕ E(H)`: the disjoint sum `H ⊕g H.lineGraph` (vertex-vertex adjacency in `H`, edge-edge
+adjacency in Mathlib's `SimpleGraph.lineGraph`), joined (`⊔`) with the incidence edges between a
+vertex `a` and an edge `e ∋ a` (`SimpleGraph.fromRel`).
 "Bipartite" is Mathlib's `SimpleGraph.IsBipartite` (2-colorable), and "is the total graph of"
 means isomorphic to it (Mathlib's `SimpleGraph.Iso`).
 
@@ -88,17 +91,6 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- The total graph of `H`, on the vertices and the edges of `H`: vertices are adjacent when
-they are adjacent in `H`, edges when they are distinct and share an endpoint (adjacent in the
-line graph), and a vertex and an edge when the vertex is an endpoint of the edge. -/
-def totalGraph {V : Type*} (H : SimpleGraph V) : SimpleGraph (V ⊕ H.edgeSet) :=
-  SimpleGraph.fromRel fun x y =>
-    match x, y with
-    | .inl a, .inl b => H.Adj a b
-    | .inr e, .inr f => H.lineGraph.Adj e f
-    | .inl a, .inr e => a ∈ (e : Sym2 V)
-    | .inr _, .inl _ => False
-
 /-- An instance: vertex count `n` (vertices `Fin n`), edge list, bound `K`. -/
 abbrev IndependentSetTotalGraphBipartiteInstance := ℕ × List (ℕ × ℕ) × ℕ
 
@@ -107,11 +99,14 @@ def Graph (i : IndependentSetTotalGraphBipartiteInstance) : SimpleGraph (Fin i.1
   Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
 
 /-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n`, the graph
-is isomorphic to the total graph of a bipartite graph `H` (on vertices `Fin m`), and
-`0 < K ≤ |V|`. -/
+is isomorphic to the total graph of a bipartite graph `H` (on vertices `Fin m`): the disjoint sum
+of `H` and its line graph, together with the edges joining each vertex `a` of `H` to each edge
+`e` of `H` containing it; and `0 < K ≤ |V|`. -/
 def WellFormed (i : IndependentSetTotalGraphBipartiteInstance) : Prop :=
   (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
-    (∃ (m : ℕ) (H : SimpleGraph (Fin m)), H.IsBipartite ∧ Nonempty (Graph i ≃g totalGraph H)) ∧
+    (∃ (m : ℕ) (H : SimpleGraph (Fin m)), H.IsBipartite ∧
+      Nonempty (Graph i ≃g (H ⊕g H.lineGraph) ⊔ SimpleGraph.fromRel fun x y =>
+        ∃ (a : Fin m) (e : H.edgeSet), x = Sum.inl a ∧ y = Sum.inr e ∧ a ∈ (e : Sym2 (Fin m)))) ∧
     0 < i.2.2 ∧ i.2.2 ≤ i.1
 
 /-- Some set of at least `K` vertices contains no two adjacent vertices. -/
