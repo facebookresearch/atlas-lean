@@ -17,7 +17,8 @@ D. Zuckerman, "On unapproximable versions of NP-complete problems", SIAM Journal
 PARTITION); conference version: Proc. 8th Annual Structure in Complexity Theory Conference
 (1993), 305-312, doi:10.1109/SCT.1993.336517;
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
-NP-Completeness*, W. H. Freeman (1979), problem [SP12] PARTITION.
+NP-Completeness*, W. H. Freeman (1979), problem [SP12] PARTITION (the special case `a₀ ∈ S`,
+`K = 1`).
 -/
 module
 
@@ -91,7 +92,8 @@ noncomputable def constrainedPartitionDec :
   | none => false
 
 /-- **CONSTRAINED PARTITION is NP-complete.** Source: Crescenzi and Kann, MAXIMUM CONSTRAINED
-PARTITION; Zuckerman (1996), problem 20; Garey and Johnson (1979), [SP12]. -/
+PARTITION; Zuckerman (1996), problem 20. The special case `a₀ ∈ S`, `K = 1` is PARTITION, Garey
+and Johnson (1979), [SP12]. -/
 public theorem_wanted constrainedPartition_npComplete :
     constrainedPartitionDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
