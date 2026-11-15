@@ -23,10 +23,13 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
+public import CSLibExt.Bioinformatics.Assembly.DeBruijn
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.PositionalSequencingByHybridization
+
+open Cslib.Bioinformatics.Assembly.DeBruijn (kmers)
 
 /-!
 # POSITIONAL SEQUENCING BY HYBRIDIZATION is NP-complete
@@ -39,7 +42,8 @@ of `X`, such that for each `s ∈ S` its position along `X` is in `P(s)`?
 The letters `A, C, G, T` are `0, 1, 2, 3`. The instance lists the spectrum as pairs `(s, P(s))`;
 a string listed `k` times has multiplicity `k`, and all its copies carry the same position set
 (`WellFormed`), since `P` is a function of `s`. The `p`-long substrings of `X` start at the
-positions `0, …, |X| - p` (`windows`); `S` is the `p`-spectrum of `X` when these substrings,
+positions `0, …, |X| - p` (`Cslib.Bioinformatics.Assembly.DeBruijn.kmers p X`, whose entry `j`
+is `(X.drop j).take p`); `S` is the `p`-spectrum of `X` when these substrings,
 counted with multiplicity, are a permutation (`List.Perm`) of the strings of `S`. The position
 condition requires the substring starting at position `j` to have `j` among its allowed
 positions. The source states the result for at most three allowed positions per string
@@ -69,16 +73,11 @@ def WellFormed (i : PositionalSequencingByHybridizationInstance) : Prop :=
     (∀ e ∈ i.2, e.1.length = i.1 ∧ (∀ c ∈ e.1, c < 4) ∧ ∀ j ∈ e.2, j < i.2.length) ∧
     ∀ e ∈ i.2, ∀ e' ∈ i.2, e.1 = e'.1 → ∀ j ∈ e.2, j ∈ e'.2
 
-/-- The `p`-long substrings of `X`, in the order of their starting positions
-`0, 1, …, |X| - p`. -/
-def windows (p : ℕ) (X : List ℕ) : List (List ℕ) :=
-  (List.range (X.length + 1 - p)).map fun j => (X.drop j).take p
-
 /-- Some string `X` over `{A, C, G, T}` has `S` as its `p`-spectrum, and the substring starting
 at each position `j` has `j` among its allowed positions. -/
 def PositionalSequencingByHybridizationFeasible
     (i : PositionalSequencingByHybridizationInstance) : Prop :=
-  ∃ X : List ℕ, (∀ c ∈ X, c < 4) ∧ (windows i.1 X).Perm (i.2.map Prod.fst) ∧
+  ∃ X : List ℕ, (∀ c ∈ X, c < 4) ∧ (kmers i.1 X).Perm (i.2.map Prod.fst) ∧
     ∀ j < X.length + 1 - i.1, ∀ e ∈ i.2, e.1 = (X.drop j).take i.1 → j ∈ e.2
 
 open Classical in
