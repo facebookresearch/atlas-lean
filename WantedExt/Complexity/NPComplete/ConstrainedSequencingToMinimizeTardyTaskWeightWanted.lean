@@ -56,8 +56,7 @@ MINIMIZE TARDY TASK WEIGHT, [SS3]): a task is a triple (length, deadline, weight
 an ordering of the task indices processed without idle time, and `WeightedTardy` is the total
 weight of the tasks completing after their deadlines. `S` is a list of task indices (a repeated
 index denotes the same task). A task is completed by its deadline when its completion time
-`σ(t) + l(t)` is at most `d(t)`. The numbers use the canonical binary encoding: the problem is
-NP-complete in the ordinary (weak) sense.
+`σ(t) + l(t)` is at most `d(t)`. The numbers use the canonical binary encoding.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
