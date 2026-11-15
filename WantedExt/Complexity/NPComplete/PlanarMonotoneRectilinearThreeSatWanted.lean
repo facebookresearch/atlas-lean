@@ -33,13 +33,13 @@ namespace MetaMathlibExt.Complexity.NPComplete.PlanarMonotoneRectilinearThreeSat
 # PLANAR MONOTONE RECTILINEAR 3SAT is NP-complete
 
 INSTANCE: a set `U` of variables and a collection `C` of clauses over `U`, each with at most
-three literals, every clause monotone (all of its literals positive, or all negative), together
-with a monotone rectilinear representation of the variable-clause incidence graph: the
-variables are drawn as axis-parallel rectangles along a horizontal line `l`, the positive clauses
-as axis-parallel rectangles above `l`, the negative clauses as axis-parallel rectangles below `l`,
-and each edge between a clause and a variable occurring in it as a vertical segment, with no two
-of these objects crossing.
-QUESTION: is there a satisfying truth assignment for `C`?
+three literals on distinct variables, every clause monotone (all of its literals positive, or
+all negative), together with a monotone rectilinear representation of the variable-clause
+incidence graph: the variables are drawn as axis-parallel rectangles along a horizontal line
+`l`, the positive clauses as axis-parallel rectangles above `l`, the negative clauses as
+axis-parallel rectangles below `l`, and each edge between a clause and a variable occurring in
+it as a vertical segment, with no two of these objects crossing. QUESTION: is there a satisfying
+truth assignment for `C`?
 
 This is PLANAR 3SAT (`WantedExt.Complexity.NPComplete.PlanarThreeSatWanted`) restricted to
 monotone formulas given with a monotone rectilinear representation; de Berg and Khosravi proved
@@ -55,18 +55,19 @@ exactly three literals per clause; the at-most-three class stated here contains 
 it is NP-complete under either reading.
 
 The formula uses the parent's encoding (`Cslib.Logic.PL.CNF`, variables `0, …, n - 1`, at most
-three literals per clause) and the parent's `PlanarThreeSatFeasible`. The representation is
-given with natural-number coordinates, the line `l` being the `x`-axis and the rectangles
-shrunk to segments, which loses nothing for a finite drawing: variable `u` is the interval
-`[aᵤ, bᵤ]` of `l`, the literal `j` of clause `c` is attached by the vertical leg at
-`x = leg c j` running from `l` to height `h_c > 0` on the clause's side, and the clause is the
+three literals per clause) and the parent's `PlanarThreeSatFeasible`; the variables of a clause
+are distinct, so that each variable-clause edge of the incidence graph has exactly one leg. The
+representation is given with natural-number coordinates, the line `l` being the `x`-axis and the
+rectangles shrunk to segments, which loses nothing for a finite drawing: variable `u` is the
+interval `[aᵤ, bᵤ]` of `l`, the literal `j` of clause `c` is attached by the vertical leg at `x
+= leg c j` running from `l` to height `h_c > 0` on the clause's side, and the clause is the
 horizontal segment at height `h_c` between its leftmost and rightmost legs. The drawing is
 crossing-free exactly when (`IsMonotoneRectilinearRepresentation`): the variable intervals are
 disjoint, every leg lies in the interval of its variable, two legs on the same side have
 different `x`, and no leg of a clause `c` meets the segment of another clause `c'` on the same
 side with `h_{c'} ≤ h_c` (the leg runs from `l` up to height `h_c`, so it would cross or touch
-that segment; at equal heights this also makes the two segments disjoint). Legs on opposite sides
-only meet on `l`, inside their common variable.
+that segment; at equal heights this also makes the two segments disjoint). Legs on opposite
+sides only meet on `l`, inside their common variable.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -130,11 +131,11 @@ def IsMonotoneRectilinearRepresentation (i : PlanarMonotoneRectilinearThreeSatIn
         ∀ j₁ < (clause i c').length, ∀ j₂ < (clause i c').length,
           ¬ (leg i c' j₁ ≤ leg i c j ∧ leg i c j ≤ leg i c' j₂))
 
-/-- Well-formedness of an instance: every clause has at most three literals, all over the
-variables `0, …, n - 1`, every clause is monotone, and the representation is a crossing-free
+/-- Well-formedness of an instance: every clause has at most three literals, on distinct
+variables among `0, …, n - 1`, every clause is monotone, and the representation is a crossing-free
 monotone rectilinear representation. -/
 def WellFormed (i : PlanarMonotoneRectilinearThreeSatInstance) : Prop :=
-  (∀ C ∈ i.2.1, C.length ≤ 3 ∧ ∀ l ∈ C, l.1 < i.1) ∧
+  (∀ C ∈ i.2.1, C.length ≤ 3 ∧ (C.map Prod.fst).Nodup ∧ ∀ l ∈ C, l.1 < i.1) ∧
     (∀ C ∈ i.2.1, (∀ l ∈ C, l.2 = true) ∨ ∀ l ∈ C, l.2 = false) ∧
     IsMonotoneRectilinearRepresentation i
 
