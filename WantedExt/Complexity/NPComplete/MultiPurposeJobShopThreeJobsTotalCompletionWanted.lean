@@ -51,10 +51,15 @@ This is the job shop with multi-purpose machines (MPM) of Brucker (2004), Chapte
 `MPMWellFormed` are reused from there; the last component `K` of the instance is the bound on
 the total completion time), with `m = 3` machines, exactly three jobs, and the total completion
 time criterion. Brucker and Knust's classification lists `JMPM3|n=3|ΣC_i` as minimal NP-hard in
-the ordinary sense, citing Sotskov and Shakhlevich (1995), who prove `J3|n=3|ΣC_i` NP-hard
-(`ThreeProcessorJobShopThreeJobsMeanFlowTimeWanted`); that dedicated-machine job shop is the
-special case in which every `μ_{jk}` is a single machine. The model puts no condition on the
-machine sets of consecutive operations of a job.
+the ordinary sense, citing Sotskov and Shakhlevich (1995), who prove `J3|n=3|ΣC_i` NP-hard; a
+dedicated-machine job shop is the MPM job shop in which every `μ_{jk}` is a single machine, and
+for positive processing times the two have the same schedules. For zero processing times the
+merged dedicated-machine statement `ThreeProcessorJobShopThreeJobsMeanFlowTimeWanted` also keeps
+zero-length tasks on one processor at distinct start times, which this model (like
+`MultiPurposeJobShopThreeJobsWanted`) does not: here an operation of length `0` occupies no
+machine time, as in the classical scheduling model. The two formal languages therefore agree on
+instances with positive processing times only, and neither is claimed to contain the other. The
+model puts no condition on the machine sets of consecutive operations of a job.
 
 Start times are natural numbers, which does not change the answer (see
 `MultiPurposeJobShopThreeJobsWanted`). The number of machines is part of the instance, and
