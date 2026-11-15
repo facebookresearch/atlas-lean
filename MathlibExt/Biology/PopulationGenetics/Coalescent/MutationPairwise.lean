@@ -56,12 +56,13 @@ labeled history (`RankedHistory`, `Topology.lean`) and discharges those hypothes
   (`integral_pairDiff_kingmanTreeMutationMeasure`,
   `integral_meanPairDiff_kingmanTreeMutationMeasure`).
 * **The law `τ_s ~ Exp(1)`.** In the same model the coalescence time of every pair is `Exp(1)`
-  (`hasLaw_pairCoalTime_kingmanGenealogyMeasure`), the hypothesis `hτ` of
-  `integral_meanPairDiff`, which `integral_meanPairDiff_kingmanTreeMutationMeasure_of_law` then
-  discharges. The pair is apart during an upward-closed set of epochs `k ≥ M`; conditionally on
-  the topology the characteristic function of `τ_s` is `∏_{k ≥ M} C(k, 2) / (C(k, 2) - i u)`,
-  which telescopes into a sum linear in the indicators of `PairApart`
-  (`prod_ite_eq_sum_of_threshold`). Averaging with `pairSeparateProb` and summing
+  (`hasLaw_pairCoalTime_kingmanGenealogyMeasure`,
+  `hasLaw_pairCoalTime_kingmanTreeMutationMeasure`): the hypothesis `hτ` of
+  `integral_meanPairDiff`, so every hypothesis of `KingmanTimes.integral_meanPairDiff_of_mutation`
+  holds in this model. The pair is apart during an upward-closed set of epochs `k ≥ M`;
+  conditionally on the topology the characteristic function of `τ_s` is
+  `∏_{k ≥ M} C(k, 2) / (C(k, 2) - i u)`, which telescopes into a sum linear in the indicators of
+  `PairApart` (`prod_ite_eq_sum_of_threshold`). Averaging with `pairSeparateProb` and summing
   (`sum_pairRatio_prod`) gives `1 / (1 - i u)`, the transform of `Exp(1)`
   (`charFun_expMeasure`, `hasLaw_sum_ite_of_threshold`).
 * **Second moments.** Given the genealogy, the branch counts are independent Poisson with means
@@ -1212,17 +1213,6 @@ theorem hasLaw_pairCoalTime_kingmanTreeMutationMeasure {θ : ℝ≥0} (hn : 2 �
       pairCoalTime p.1.2 s p.1.1) (expMeasure 1) (kingmanTreeMutationMeasure n θ) :=
   (hasLaw_pairCoalTime_kingmanGenealogyMeasure hn hs).comp
     (measurePreserving_genealogy n θ).hasLaw
-
-/-- **Tajima's `E π = θ` through `integral_meanPairDiff_of_mutation`**: in the marked Kingman
-model every hypothesis of the general theorem holds, including the law `τ_s ~ Exp(1)`. -/
-theorem integral_meanPairDiff_kingmanTreeMutationMeasure_of_law {θ : ℝ≥0} (hn : 2 ≤ n) :
-    ∫ p, meanPairDiff n (pairDiff (fun p => p.1.2) Prod.snd) p ∂kingmanTreeMutationMeasure n θ =
-      θ := by
-  refine (KingmanTimes.ofTreeMutationModel n θ).integral_meanPairDiff_of_mutation
-    (measurable_genealogy n θ) (hasCondDistrib_kingmanTreeMutationMeasure n θ) hn
-    fun s hs => ?_
-  rw [KingmanTimes.epochs_ofTreeMutationModel]
-  exact hasLaw_pairCoalTime_kingmanTreeMutationMeasure hn hs
 
 end Law
 
@@ -2806,8 +2796,10 @@ theorem sum_mul_apart4_futureOverlap {a b c d : Fin n} (hab : a ≠ b) (hac : a 
 
 /-! #### From histories to the Kingman model -/
 
-/-- Integrals against random joining are averages over the ranked labeled histories. -/
-theorem integral_randomJoining (F : RankedHistory n → ℝ) :
+/-- Integrals against random joining are averages over the ranked labeled histories
+(`MultispeciesCoalescent.integral_randomJoining` is the public version, with the number of
+histories written as `∏_{k=2}^n C(k, 2)`). -/
+private theorem integral_randomJoining (F : RankedHistory n → ℝ) :
     ∫ h, F h ∂randomJoining n = (∑ h, F h) / Fintype.card (RankedHistory n) := by
   have hsing : ∀ h : RankedHistory n,
       (randomJoining n).real {h} = (Fintype.card (RankedHistory n) : ℝ)⁻¹ := fun h => by

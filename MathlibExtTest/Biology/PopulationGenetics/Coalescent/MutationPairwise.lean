@@ -180,6 +180,21 @@ example : HasLaw (fun g : (Icc 2 2 → ℝ) × RankedHistory 2 => pairCoalTime g
   rw [hτ, kingmanGenealogyMeasure]
   exact (h1.comp (measurePreserving_fst (μ := piMeasure 2) (ν := randomJoining 2))).hasLaw
 
+/-- Every hypothesis of the general `KingmanTimes.integral_meanPairDiff_of_mutation` holds in the
+marked Kingman model, the law `τ_s ~ Exp(1)` included: this rederives Tajima's `E π = θ`
+(`integral_meanPairDiff_kingmanTreeMutationMeasure`) through the general theorem. -/
+example {n : ℕ} {θ : ℝ≥0} (hn : 2 ≤ n) :
+    ∫ p, meanPairDiff n (pairDiff (fun p => p.1.2) Prod.snd) p ∂kingmanTreeMutationMeasure n θ =
+      θ := by
+  have hX : Measurable fun p : ((Icc 2 n → ℝ) × RankedHistory n) × (KingmanBranch n → ℕ) =>
+      ((KingmanTimes.ofTreeMutationModel n θ).epochs p, p.1.2) := by
+    rw [KingmanTimes.epochs_ofTreeMutationModel]
+    exact measurable_fst
+  refine (KingmanTimes.ofTreeMutationModel n θ).integral_meanPairDiff_of_mutation hX
+    (hasCondDistrib_kingmanTreeMutationMeasure n θ) hn fun s hs => ?_
+  rw [KingmanTimes.epochs_ofTreeMutationModel]
+  exact hasLaw_pairCoalTime_kingmanTreeMutationMeasure hn hs
+
 /-- `pairRatio m = (m - 1) / (m + 1)` at the first values, from the definition. -/
 example : pairRatio 1 = 0 ∧ pairRatio 2 = 1 / 3 ∧ pairRatio 3 = 1 / 2 := by
   refine ⟨?_, ?_, ?_⟩ <;> norm_num [pairRatio]
@@ -260,7 +275,13 @@ private theorem counts3 :
 private theorem integral_ite3 (P : RankedHistory 3 → Prop) [DecidablePred P] :
     ∫ h, (if P h then (1 : ℝ) else 0) ∂randomJoining 3 =
       (#{h : RankedHistory 3 | P h} : ℝ) / 3 := by
-  rw [integral_randomJoining, Finset.sum_boole, counts3.2.2.2]
+  have hsing : ∀ h : RankedHistory 3,
+      (randomJoining 3).real {h} = (Fintype.card (RankedHistory 3) : ℝ)⁻¹ := fun h => by
+    rw [measureReal_def, randomJoining_singleton_eq_inv, ← card_rankedHistory, ENNReal.toReal_inv,
+      ENNReal.toReal_natCast]
+  rw [integral_fintype Integrable.of_finite]
+  simp_rw [hsing, smul_eq_mul, ← Finset.mul_sum]
+  rw [inv_mul_eq_div, Finset.sum_boole, counts3.2.2.2]
   norm_num
 
 /-- **`E τ² = 2` for three genes, from the definitions**: `τ₀₁ = T₃ + 1[apart] T₂` by the
