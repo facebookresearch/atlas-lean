@@ -19,17 +19,19 @@ module
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.CompleteMultipartite
 public import Mathlib.Combinatorics.SimpleGraph.Copy
 public import Mathlib.Combinatorics.SimpleGraph.CycleGraph
 public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Sum
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
+public import WantedExt.Complexity.NPComplete.PolarityTriangleFreeWanted
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.PolarityTwoKTwoCFiveFree
+
+open MetaMathlibExt.Complexity.NPComplete.PolarityTriangleFree (IsPolar)
 
 /-!
 # POLARITY OF (2K₂, C₅)-FREE GRAPHS is NP-complete
@@ -45,11 +47,14 @@ complete multipartite graph and `B` the complement of a complete multipartite gr
 that recognizing polar graphs is NP-complete already on `{2K₂, C₅}`-free co-planar graphs, a
 subclass of the class here. Membership in NP: the partition is a polynomial certificate.
 
-`G[A]` is `G.induce A` and `G[B]` is `G.induce Aᶜ`. "Complete multipartite" is Mathlib's
-`SimpleGraph.IsCompleteMultipartite` (non-adjacency is transitive), so `G[B]` is the complement of a
-complete multipartite graph when `(G.induce Aᶜ)ᶜ.IsCompleteMultipartite`, i.e. `G[B]` is a disjoint
-union of cliques. `2K₂` is `SimpleGraph.pathGraph 2 ⊕g SimpleGraph.pathGraph 2` and `C₅` is
-`SimpleGraph.cycleGraph 5`; induced subgraphs are Mathlib's `SimpleGraph.IsIndContained`.
+`G[A]` is `G.induce A` and `G[B]` is `G.induce Aᶜ`. Polarity is `PolarityTriangleFree.IsPolar` of
+`PolarityTriangleFreeWanted`, reused here: `G[A]` is complete multipartite (Mathlib's
+`SimpleGraph.IsCompleteMultipartite`: non-adjacency is transitive) and `G[B]` is a cluster graph
+(`ClusterDeletion.IsClusterGraph`: any two distinct vertices joined by a walk are adjacent). A graph
+is a cluster graph exactly when its complement is complete multipartite, so this is Le and Nevries'
+condition that `B` induces the complement of a complete multipartite graph. `2K₂` is
+`SimpleGraph.pathGraph 2 ⊕g SimpleGraph.pathGraph 2` and `C₅` is `SimpleGraph.cycleGraph 5`; induced
+subgraphs are Mathlib's `SimpleGraph.IsIndContained`.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -68,11 +73,6 @@ abbrev PolarityTwoKTwoCFiveFreeInstance := ℕ × List (ℕ × ℕ)
 /-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
 def Graph (i : PolarityTwoKTwoCFiveFreeInstance) : SimpleGraph (Fin i.1) :=
   Cslib.Complexity.Karp.edgeGraph i.1 i.2
-
-/-- `G` is polar: its vertex set splits into `A` and its complement `B` such that `G[A]` is
-complete multipartite and `G[B]` is the complement of a complete multipartite graph. -/
-def IsPolar {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ A : Set V, (G.induce A).IsCompleteMultipartite ∧ (G.induce Aᶜ)ᶜ.IsCompleteMultipartite
 
 /-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
 duplicate edges in either orientation, no self-loops, endpoints in range) with no induced `2K₂`
