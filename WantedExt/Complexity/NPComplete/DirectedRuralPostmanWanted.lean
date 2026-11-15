@@ -48,10 +48,12 @@ given by their pairs `(u, v)`, each the pair of some arc. As in the undirected p
 is a closed walk that may repeat vertices and arcs, and its length counts every traversal: it is
 a list of arc indices, each arc ending where the next one starts and the last ending where the
 first starts, and arcs are traversed only from tail to head. When `A'` is empty, the empty walk
-qualifies, as the trivial walk does in the parent. Membership in NP: replacing every stretch of
-a qualifying walk between consecutive first traversals of required arcs, and the closing
-stretch, by a shortest path keeps it qualifying, so some qualifying walk has at most
-`|A'| (|A| + 1)` steps; it is a certificate of polynomial size.
+qualifies, as the trivial walk at a vertex does in the parent; `WellFormed` asks for a vertex
+(`0 < n`), so a graph without vertices, where the parent finds no walk, is not a yes-instance.
+Membership in NP: replacing every stretch of a qualifying walk between consecutive first
+traversals of required arcs, and the closing stretch, by a shortest path keeps it qualifying, so
+some qualifying walk has at most `|A'| (|A| + 1)` steps; it is a certificate of polynomial
+size.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -72,10 +74,11 @@ abbrev DirectedRuralPostmanInstance := ℕ × List (ℕ × ℕ × ℕ) × List (
 def arc (i : DirectedRuralPostmanInstance) (j : ℕ) : ℕ × ℕ × ℕ :=
   i.2.1.getD j (0, 0, 0)
 
-/-- Well-formedness of an instance: every arc joins two distinct vertices below `n`, no two
-arcs have the same tail and head, every required pair is the pair of an arc, and `0 < B`. -/
+/-- Well-formedness of an instance: the graph has a vertex (`0 < n`), every arc joins two
+distinct vertices below `n`, no two arcs have the same tail and head, every required pair is the
+pair of an arc, and `0 < B`. -/
 def WellFormed (i : DirectedRuralPostmanInstance) : Prop :=
-  (∀ a ∈ i.2.1, a.1 < i.1 ∧ a.2.1 < i.1 ∧ a.1 ≠ a.2.1) ∧
+  0 < i.1 ∧ (∀ a ∈ i.2.1, a.1 < i.1 ∧ a.2.1 < i.1 ∧ a.1 ≠ a.2.1) ∧
     (i.2.1.map fun a => (a.1, a.2.1)).Nodup ∧
     (∀ r ∈ i.2.2.1, r ∈ i.2.1.map fun a => (a.1, a.2.1)) ∧ 0 < i.2.2.2
 
