@@ -43,8 +43,14 @@ the pairs `s` and `t`,
 * `E[S | m] = Var[S | m] = (θ / 2) L` (as in `Coalescent/Tajima.lean`).
 
 The genealogy enters through the following properties of Kingman's coalescent, which are
-**hypotheses here** (they are not derived from `KingmanTimes` and the random-joining law of
-`Coalescent/Topology.lean`, which are not coupled in the library):
+**hypotheses here**: the identities of this file hold for any genealogy with these properties.
+`Coalescent/MutationPairwise.lean` couples the epochs of `KingmanTimes` with the random-joining
+topology of `Coalescent/Topology.lean` in a concrete model (`kingmanGenealogyMeasure`,
+`kingmanTreeMutationMeasure`) and derives there the law of `τ s`
+(`hasLaw_pairCoalTime_kingmanGenealogyMeasure`), the product moments `4/3` and `11/9`
+(`integral_pairCoalTime_mul_shared`, `integral_pairCoalTime_mul_disjoint`) and the expected
+shared lengths `1` and `2/3` (`integral_pairPathOverlap_shared`,
+`integral_pairPathOverlap_disjoint`); the theorems below are not specialized to that model.
 
 * each `τ s` is exponential with rate `1`, so `E τ s = 1`, `E (τ s)² = 2`;
 * `E[τ s τ t] = 4/3` if the pairs share one gene and `11/9` if they are disjoint (the
