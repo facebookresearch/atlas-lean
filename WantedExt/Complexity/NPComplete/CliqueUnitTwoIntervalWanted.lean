@@ -21,16 +21,16 @@ module
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.Complexity.Karp.Color
 public import CSLibExt.Computability.CookLevin
-public import Mathlib.Basic.Real.Basic
 public import Mathlib.Combinatorics.SimpleGraph.Clique
-public import Mathlib.Order.Interval.Set.Defs
-public import Mathlib.Order.SetNotation
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
+public import WantedExt.Complexity.NPComplete.UnitTwoIntervalGraphRecognitionWanted
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.CliqueUnitTwoInterval
+
+open MetaMathlibExt.Complexity.NPComplete.UnitTwoIntervalGraphRecognition (IsUnitTwoIntervalGraph)
 
 /-!
 # CLIQUE on unit 2-interval graphs is NP-complete
@@ -39,19 +39,19 @@ INSTANCE: a unit `2`-interval graph `G = (V, E)` and a positive integer `K ≤ |
 QUESTION: does `G` contain a clique of size `K` or more, i.e., a set `V' ⊆ V` with `|V'| ≥ K`
 such that every two vertices in `V'` are joined by an edge?
 
-This is CLIQUE ([GT19]) restricted to the unit `2`-interval graphs (ISGCI `gc_877`). Following
-Francis, Gonçalves and Ochem (Section 1), a `2`-interval is the union of two intervals on the
-real line, a `2`-interval graph is the intersection graph of a family of `2`-intervals, one per
-vertex, two distinct vertices being adjacent exactly when their `2`-intervals intersect, and the
-unit `2`-interval graphs are those with such a representation in which all the intervals have
-the same length. This is the representation of `IntervalNumberAtMostK.IsMultipleIntervalGraph 2`
-(closed intervals indexed by `Fin 2`, possibly repeated) with every interval of length `1`; a
-common length `c > 0` scales to `1`, and a common length `0` (points) can first be widened to a
-common small length without changing which intervals meet, the model being finite. The model is
-not part of the input; when a real model exists, one with rational endpoints of polynomial size
-exists too (the conditions are linear inequalities in the left endpoints), so a model is a
-certificate. The graph is simple and given by an edge list on `Fin n`. The bound `0 < K ≤ |V|`
-is the instance class of [GT19].
+This is CLIQUE ([GT19]) restricted to the unit `2`-interval graphs (ISGCI `gc_877`): the
+intersection graphs of families of unions of two disjoint closed intervals of length `1`, one per
+vertex, two distinct vertices being adjacent exactly when their unions intersect
+(`UnitTwoIntervalGraphRecognition.IsUnitTwoIntervalGraph`, following Ardévol Martínez, Rizzi,
+Sikora and Vialette). Francis, Gonçalves and Ochem (Section 1) call a graph unit `2`-interval
+when it has a `2`-interval representation in which all intervals have the same length; the
+representation built in their NP-hardness proof (Section 5, Figure 12) uses two disjoint
+intervals per vertex, all of length `6n`, which rescale to length `1`. The model is not part of
+the input. With `n` in binary, only the non-isolated vertices (at most `2|E|`) need a certified
+model, with rational endpoints of polynomial size (the conditions are linear inequalities in the
+left endpoints), since isolated vertices can always be given unit `2`-intervals far to the right
+of it; a clique of size `K ≥ 2` lies among the non-isolated vertices. The graph is simple and
+given by an edge list on `Fin n`. The bound `0 < K ≤ |V|` is the instance class of [GT19].
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -70,14 +70,6 @@ abbrev CliqueUnitTwoIntervalInstance := ℕ × List (ℕ × ℕ) × ℕ
 /-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
 def Graph (i : CliqueUnitTwoIntervalInstance) : SimpleGraph (Fin i.1) :=
   Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
-
-/-- `H` is a unit `2`-interval graph: each vertex `v` is assigned two closed real intervals of
-length one, `[l v j, l v j + 1]` (`j : Fin 2`, possibly equal), and two distinct vertices are
-adjacent in `H` exactly when the unions of their intervals intersect. -/
-def IsUnitTwoIntervalGraph {n : ℕ} (H : SimpleGraph (Fin n)) : Prop :=
-  ∃ l : Fin n → Fin 2 → ℝ, ∀ u v, u ≠ v →
-    (H.Adj u v ↔
-      ((⋃ j, Set.Icc (l u j) (l u j + 1)) ∩ (⋃ j, Set.Icc (l v j) (l v j + 1))).Nonempty)
 
 /-- Well-formedness of an instance: the edge list describes a simple graph on `Fin n` (no
 duplicate edges in either orientation, no self-loops, endpoints in range), `0 < K ≤ n`, and the
