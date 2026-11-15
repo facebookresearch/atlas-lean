@@ -78,7 +78,7 @@ probability tending to `1`.
 * S. S. Wilks, *The large-sample distribution of the likelihood ratio for testing composite
   hypotheses*, Ann. Math. Statist. 9 (1938), 60–62.
 * P. McCullagh and J. A. Nelder, *Generalized Linear Models*, 2nd ed., Chapman & Hall (1989),
-  §4.4.3 and §6.2.
+  §5.4.3 and §6.2.
 * A. Agresti, *Categorical Data Analysis*, 3rd ed., Wiley (2013), §1.5 and §16.3.
 * A. W. van der Vaart, *Asymptotic Statistics*, Cambridge (1998), §17.
 
