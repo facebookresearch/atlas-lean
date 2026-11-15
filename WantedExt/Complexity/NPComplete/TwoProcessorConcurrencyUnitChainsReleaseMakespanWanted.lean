@@ -71,8 +71,9 @@ over its schedule, so its conditions are restated beside the new one. With every
 least `1`, the bound on the number of running tasks follows from the resource bound. Integral
 start times lose no generality: rounding every start time down keeps release dates and chains,
 and the tasks sharing a rounded start time were all running together just before the next
-integer. The positive deadline excludes only the empty instance with `K = 0`. Binary encoding of
-all numbers (the problem is NP-complete in the strong sense).
+integer. Well-formedness asks for at least one task (`n ≥ 1`); a nonempty instance needs
+`K ≥ 1` for a schedule, so the inherited positive deadline excludes no yes-instance. Binary
+encoding of all numbers (the problem is NP-complete in the strong sense).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -98,12 +99,12 @@ def releaseDate (i : TwoProcessorConcurrencyUnitChainsReleaseMakespanInstance)
 
 /-- Well-formedness of an instance: it is well-formed for RESOURCE CONSTRAINED SCHEDULING with a
 partial order, `m = 2`, `r = 1`, the resource (the processors) has bound `B₁ = 2`, every task's
-size `R₁(i)` is `1` or `2`, the order is a set of chains, and there is one release date per
-task. -/
+size `R₁(i)` is `1` or `2`, the order is a set of chains, there is at least one task, and there
+is one release date per task. -/
 def WellFormed (i : TwoProcessorConcurrencyUnitChainsReleaseMakespanInstance) : Prop :=
   PrecedenceWellFormed i.1 ∧ i.1.1.1 = 2 ∧ i.1.1.2.1 = 1 ∧ bound i.1.1 0 = 2 ∧
     (∀ t : Task i.1.1, req i.1.1 t 0 = 1 ∨ req i.1.1 t 0 = 2) ∧ IsChains i.1 ∧
-    i.2.length = i.1.1.2.2.2.1.length
+    i.1.1.2.2.2.1 ≠ [] ∧ i.2.length = i.1.1.2.2.2.1.length
 
 /-- Some schedule of the unit-time tasks starts every task no earlier than its release date,
 meets the deadline `D = K`, runs at most `m` tasks at a time, obeys the precedence constraints,
