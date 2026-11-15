@@ -196,28 +196,62 @@ example : ENNReal.ofReal (5 / 6) ≤ 1 ∧ ENNReal.ofReal (13 / 16) ≤ 1 :=
   ⟨by rw [← lintegral_T_half]; exact isEValue_T_half.lintegral_le_one,
     by rw [← lintegral_T_quarter]; exact isEValue_T_quarter.lintegral_le_one⟩
 
-/-! ### Rejection region at `α = 2/3`
+/-! ### Rejection regions at `α = 2/3` and `α = 3/4`
 
-`1 / α = 3/2`, so the test rejects exactly at `(true, true)`. Its null probability under `1/2`
-is `1/4`, computed from the definitions; the theorem bounds it by `2/3`. -/
+At `α = 2/3`, `1 / α = 3/2 = T(true, true)`: the split LRT (`T > 1 / α`) rejects nowhere, while
+the boundary-inclusive variant (`T ≥ 1 / α`) rejects exactly at `(true, true)`. At `α = 3/4`,
+`1 / α = 4/3`, and the split LRT rejects exactly at `(true, true)`. That point has null
+probability `1/4` under `1/2`, computed from the definitions; the theorems bound it by `α`. -/
 
-theorem splitLRTRejects_eq :
-    splitLRTRejects bern thetaHat1 thetaHat0 (2 / 3) = {(true, true)} := by
+/-- The split LRT does not reject on the boundary `T = 1 / α`. -/
+theorem splitLRTRejects_two_thirds :
+    splitLRTRejects bern thetaHat1 thetaHat0 (2 / 3) = ∅ := by
+  ext z
+  rcases z with ⟨_ | _, _ | _⟩ <;>
+    norm_num [splitLRTRejects, bern, par, thetaHat1, thetaHat0]
+
+theorem splitLRTRejects_three_quarters :
+    splitLRTRejects bern thetaHat1 thetaHat0 (3 / 4) = {(true, true)} := by
+  ext z
+  rcases z with ⟨_ | _, _ | _⟩ <;>
+    norm_num [splitLRTRejects, bern, par, thetaHat1, thetaHat0]
+
+/-- On the example, where every likelihood is positive, the rejection region is
+`α⁻¹ < T`. -/
+example (z : Bool × Bool) :
+    z ∈ splitLRTRejects bern thetaHat1 thetaHat0 (3 / 4) ↔ (3 / 4 : ℝ)⁻¹ < T z :=
+  mem_splitLRTRejects_iff (by norm_num) (by
+    rcases z with ⟨_ | _, _ | _⟩ <;> norm_num [bern, par, thetaHat0])
+
+theorem splitLRTRejectsClosed_eq :
+    splitLRTRejectsClosed bern thetaHat1 thetaHat0 (2 / 3) = {(true, true)} := by
   obtain ⟨h1, h2, h3, h4⟩ := T_values
   ext z
   change (2 / 3 : ℝ)⁻¹ ≤ T z ↔ z = (true, true)
   rcases z with ⟨_ | _, _ | _⟩ <;> simp only [h1, h2, h3, h4] <;> norm_num
 
-theorem P_splitLRTRejects :
-    P 1 1 (splitLRTRejects bern thetaHat1 thetaHat0 (2 / 3)) = ENNReal.ofReal (1 / 4) := by
-  rw [splitLRTRejects_eq, ← lintegral_indicator_one (measurableSet_singleton _), lintegral_P]
+theorem P_true_true : P 1 1 {(true, true)} = ENNReal.ofReal (1 / 4) := by
+  rw [← lintegral_indicator_one (measurableSet_singleton _), lintegral_P]
   simp only [Set.indicator, Set.mem_singleton_iff, Prod.mk.injEq, Pi.one_apply]
   norm_num [bern, par]
   rw [← ENNReal.ofReal_mul (by norm_num)]
   norm_num
 
-example : P 1 1 (splitLRTRejects bern thetaHat1 thetaHat0 (2 / 3)) ≤ ENNReal.ofReal (2 / 3) :=
+theorem P_splitLRTRejects :
+    P 1 1 (splitLRTRejects bern thetaHat1 thetaHat0 (3 / 4)) = ENNReal.ofReal (1 / 4) := by
+  rw [splitLRTRejects_three_quarters, P_true_true]
+
+theorem P_splitLRTRejectsClosed :
+    P 1 1 (splitLRTRejectsClosed bern thetaHat1 thetaHat0 (2 / 3)) = ENNReal.ofReal (1 / 4) := by
+  rw [splitLRTRejectsClosed_eq, P_true_true]
+
+example : P 1 1 (splitLRTRejects bern thetaHat1 thetaHat0 (3 / 4)) ≤ ENNReal.ofReal (3 / 4) :=
   measure_splitLRTRejects_le bern_nonneg (fun θ => (lintegral_bern θ).le) isNullMLE
+    one_mem_nullSet (measurable_of_countable _) measurable_T (by norm_num)
+
+example :
+    P 1 1 (splitLRTRejectsClosed bern thetaHat1 thetaHat0 (2 / 3)) ≤ ENNReal.ofReal (2 / 3) :=
+  measure_splitLRTRejectsClosed_le bern_nonneg (fun θ => (lintegral_bern θ).le) isNullMLE
     one_mem_nullSet (measurable_of_countable _) measurable_T (by norm_num)
 
 example : ENNReal.ofReal (1 / 4) ≤ ENNReal.ofReal (2 / 3) :=
@@ -228,10 +262,28 @@ example : IsValidPValue (P 1 1) fun z => (max (T z) 1)⁻¹ :=
   isValidPValue_splitLRT bern_nonneg (fun θ => (lintegral_bern θ).le) isNullMLE
     one_mem_nullSet (measurable_of_countable _) measurable_T
 
+/-! ### Universal confidence sets
+
+At `α = 2/3` and `(D₀, D₁) = (true, true)`, the parameter `1/2` has `Tₙ = (3/4) / (1/2) = 3/2`,
+exactly `1 / α`: it lies in the universal confidence set (`Tₙ ≤ 1 / α`) but not in the strict
+variant (`Tₙ < 1 / α`). -/
+
+example : (1 : Fin 3) ∈ universalConfidenceSet bern thetaHat1 (2 / 3) (true, true) := by
+  norm_num [universalConfidenceSet, bern, par, thetaHat1]
+
+example : (1 : Fin 3) ∉ universalConfidenceSetStrict bern thetaHat1 (2 / 3) (true, true) := by
+  norm_num [universalConfidenceSetStrict, splitLR, bern, par, thetaHat1]
+
 /-- Coverage of the universal confidence set at the true parameter `3/4`. -/
 example : P 2 2 {z | (2 : Fin 3) ∉ universalConfidenceSet bern thetaHat1 (1 / 2) z} ≤
     ENNReal.ofReal (1 / 2) :=
   measure_not_mem_universalConfidenceSet_le bern_nonneg (fun θ => (lintegral_bern θ).le)
+    (measurable_of_countable _) (measurable_of_countable _) (by norm_num)
+
+/-- Coverage of the strict variant at the true parameter `3/4`. -/
+example : P 2 2 {z | (2 : Fin 3) ∉ universalConfidenceSetStrict bern thetaHat1 (1 / 2) z} ≤
+    ENNReal.ofReal (1 / 2) :=
+  measure_not_mem_universalConfidenceSetStrict_le bern_nonneg (fun θ => (lintegral_bern θ).le)
     (measurable_of_countable _) (measurable_of_countable _) (by norm_num)
 
 end MathlibExtTest.Probability.Statistics.MultipleTesting.UniversalInference
