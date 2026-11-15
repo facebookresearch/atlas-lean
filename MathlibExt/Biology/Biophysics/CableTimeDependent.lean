@@ -77,9 +77,14 @@ solution at the times of `T`.
   (`isCableSolution_cableSeries_of_bounded`), has sealed ends
   (`sealedEnds_cableSeries_of_bounded`), coefficients `a n e^{-k_n t}`
   (`integral_cableSeries_mul_cosMode_of_bounded`) and decays (`tendsto_cableSeries_of_bounded`).
-* Green's function of the sealed cable (`sealedGreen τ ℓ L x₀`): the response to a unit charge
-  injected at `x₀` at time `0`, an instantaneous spatially localized synaptic input, with
-  coefficients `greenCoeff L x₀ n` (`1 / L`, then `(2 / L) cos (n π x₀ / L)`). For `t > 0` it solves
+* Green's function of the sealed cable (`sealedGreen τ ℓ L x₀`): for `0 < L` and `x₀ ∈ [0, L]`,
+  the response to a unit charge injected at `x₀` at time `0`, an instantaneous spatially localized
+  synaptic input, with coefficients `greenCoeff L x₀ n` (`1 / L`, then
+  `(2 / L) cos (n π x₀ / L)`). The series is defined, and the results below hold, for every real
+  `x₀` and every `L ≠ 0`; outside the physical range it is the even, `2L`-periodic extension in
+  `x₀` (`sealedGreen_neg_source`, `sealedGreen_add_two_mul_source`), so a source outside `[0, L]`
+  is its image inside, and `L < 0` negates the kernel (`sealedGreen_neg_length`). For `t > 0` it
+  solves
   the equation with sealed ends (`isCableSolution_sealedGreen`, `sealedEnds_sealedGreen`), its
   `n`-th cosine coefficient is `e^{-k_n t} cos (n π x₀ / L)`, the pairing of `δ_{x₀}` with the
   mode decayed at rate `k_n` (`integral_sealedGreen_mul_cosMode`), its total potential is
@@ -1197,10 +1202,13 @@ private theorem hasSum_integral_cosSeries_mul {L : ℝ} {b : ℕ → ℝ}
 
 /-! ### Green's function of the sealed cable: response to a localized input -/
 
-/-- Cosine coefficients of a unit point charge at `x₀` on the sealed cable `[0, L]`: `1 / L` for
-the uniform mode and `(2 / L) cos (n π x₀ / L)` for `n ≥ 1`. These are the pairings
-`cos (n π x₀ / L)` of `δ_{x₀}` with the modes, divided by the self-inner-products `L` and `L / 2`.
-They are bounded (`abs_greenCoeff_le`) but not summable. -/
+/-- Cosine coefficients `1 / L` for the uniform mode and `(2 / L) cos (n π x₀ / L)` for `n ≥ 1`.
+For `0 < L` and `x₀ ∈ [0, L]` these are the coefficients of a unit point charge at `x₀` on the
+sealed cable `[0, L]`: the pairings `cos (n π x₀ / L)` of `δ_{x₀}` with the modes, divided by the
+self-inner-products `L` and `L / 2`. The formula is used for every real `x₀` and `L`; it is even
+and `2L`-periodic in `x₀` (`greenCoeff_neg_source`, `greenCoeff_add_two_mul_source`), so it does
+not single out a source outside `[0, L]` from its image inside. They are bounded
+(`abs_greenCoeff_le`) but not summable. -/
 noncomputable def greenCoeff (L x₀ : ℝ) (n : ℕ) : ℝ :=
   (if n = 0 then 1 / L else 2 / L) * cosMode L n x₀
 
@@ -1215,9 +1223,15 @@ theorem abs_greenCoeff_le (L x₀ : ℝ) (n : ℕ) : |greenCoeff L x₀ n| ≤ 2
   calc _ ≤ 2 / |L| * 1 := mul_le_mul h1 (abs_cosMode_le L n x₀) (abs_nonneg _) (by positivity)
     _ = 2 / |L| := mul_one _
 
-/-- **Green's function of the sealed cable.** The potential at position `x` and time `t` after a
-unit charge is injected at `x₀` at time `0` (an instantaneous, spatially localized synaptic input):
-`G(t, x; x₀) = e^{-t/τ} / L + (2 / L) ∑_{n ≥ 1} e^{-k_n t} cos (n π x₀ / L) cos (n π x / L)`. -/
+/-- **Green's function of the sealed cable.** The cosine series
+`G(t, x; x₀) = e^{-t/τ} / L + (2 / L) ∑_{n ≥ 1} e^{-k_n t} cos (n π x₀ / L) cos (n π x / L)`.
+For `0 < L` and `x₀ ∈ [0, L]` it is the potential at position `x` and time `t` after a unit
+charge is injected at `x₀` at time `0` (an instantaneous, spatially localized synaptic input).
+The definition and the theorems about it accept every real `x₀` and (where needed) every
+`L ≠ 0`; for other values it is an algebraic extension, not a point charge at `x₀`: it is even
+and `2L`-periodic in `x₀` (`sealedGreen_neg_source`, `sealedGreen_add_two_mul_source`), so a
+source outside `[0, L]` is its reflected image inside, and replacing `L` by `-L` negates it
+(`sealedGreen_neg_length`). -/
 noncomputable def sealedGreen (τ ℓ L x₀ : ℝ) : ℝ → ℝ → ℝ :=
   cableSeries τ ℓ L (greenCoeff L x₀)
 
@@ -1249,7 +1263,9 @@ theorem integral_sealedGreen_mul_cosMode {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ :
   split_ifs <;> field_simp
 
 /-- **Charge conservation up to membrane leak.** The total potential after a unit charge decays at
-exactly the membrane rate: `∫₀ᴸ G(t, x; x₀) dx = e^{-t/τ}` for `t > 0`, wherever the input is. -/
+exactly the membrane rate: `∫₀ᴸ G(t, x; x₀) dx = e^{-t/τ}` for `t > 0`, wherever the input is.
+For `L < 0` the integral is oriented, which compensates for the sign of the kernel
+(`sealedGreen_neg_length`); the physical statement is the case `0 < L`, `x₀ ∈ [0, L]`. -/
 theorem integral_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0) (x₀ : ℝ)
     {t : ℝ} (ht : 0 < t) : ∫ x in (0 : ℝ)..L, sealedGreen τ ℓ L x₀ t x = exp (-t / τ) := by
   have h := integral_sealedGreen_mul_cosMode hτ hℓ hL x₀ ht 0
@@ -1264,6 +1280,41 @@ theorem sealedGreen_comm (τ ℓ L x₀ t x : ℝ) :
     sealedGreen τ ℓ L x₀ t x = sealedGreen τ ℓ L x t x₀ := by
   unfold sealedGreen cableSeries greenCoeff
   exact tsum_congr fun n => by ring
+
+/-- The coefficients are even in the source position. -/
+theorem greenCoeff_neg_source (L x₀ : ℝ) : greenCoeff L (-x₀) = greenCoeff L x₀ := by
+  funext n
+  simp [greenCoeff, cosMode]
+
+/-- The coefficients are `2L`-periodic in the source position. -/
+theorem greenCoeff_add_two_mul_source (L x₀ : ℝ) :
+    greenCoeff L (x₀ + 2 * L) = greenCoeff L x₀ := by
+  funext n
+  unfold greenCoeff cosMode
+  rcases eq_or_ne L 0 with rfl | hL
+  · simp
+  · rw [mul_add, show (n : ℝ) * π / L * (2 * L) = n * (2 * π) by field_simp,
+      cos_add_nat_mul_two_pi]
+
+/-- **Even extension.** A source at `-x₀` gives the same kernel as one at `x₀`. -/
+theorem sealedGreen_neg_source (τ ℓ L x₀ : ℝ) :
+    sealedGreen τ ℓ L (-x₀) = sealedGreen τ ℓ L x₀ := by
+  rw [sealedGreen, greenCoeff_neg_source, sealedGreen]
+
+/-- **Periodic extension.** A source at `x₀ + 2L` gives the same kernel as one at `x₀`. -/
+theorem sealedGreen_add_two_mul_source (τ ℓ L x₀ : ℝ) :
+    sealedGreen τ ℓ L (x₀ + 2 * L) = sealedGreen τ ℓ L x₀ := by
+  rw [sealedGreen, greenCoeff_add_two_mul_source, sealedGreen]
+
+/-- Replacing `L` by `-L` leaves the modes and decay rates unchanged and negates every
+coefficient, so it negates the kernel. -/
+theorem sealedGreen_neg_length (τ ℓ L x₀ t x : ℝ) :
+    sealedGreen τ ℓ (-L) x₀ t x = -sealedGreen τ ℓ L x₀ t x := by
+  unfold sealedGreen cableSeries
+  rw [← tsum_neg]
+  refine tsum_congr fun n => ?_
+  simp only [greenCoeff, cosMode, decayRate, div_neg, neg_mul, cos_neg, neg_sq]
+  split_ifs <;> ring
 
 /-- The response to a localized input decays to rest at every position. -/
 theorem tendsto_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0) (x₀ x : ℝ) :

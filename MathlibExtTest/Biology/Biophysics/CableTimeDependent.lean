@@ -268,6 +268,19 @@ example (x z : ℝ) :
   rw [integral_sealedGreen_mul_sealedGreen one_pos one_ne_zero pi_ne_zero one_pos two_pos]
   norm_num
 
+/-- Outside `[0, L]` the kernel is the periodic extension, not a new source: on `[0, 1]`, a
+source at `x₀ = 2` gives the kernel of the source at the sealed end `0`. -/
+example : sealedGreen 1 1 1 2 = sealedGreen 1 1 1 0 := by
+  simpa using sealedGreen_add_two_mul_source 1 1 1 0
+
+/-- A source at `-1/2` is the reflected image of the source at `1/2`. -/
+example : sealedGreen 1 1 1 (-(1 / 2)) = sealedGreen 1 1 1 (1 / 2) :=
+  sealedGreen_neg_source 1 1 1 (1 / 2)
+
+/-- Negative length negates the kernel. -/
+example (x₀ t x : ℝ) : sealedGreen 1 1 (-1) x₀ t x = -sealedGreen 1 1 1 x₀ t x :=
+  sealedGreen_neg_length 1 1 1 x₀ t x
+
 /-! ### Green's function of the infinite cable -/
 
 /-- Value at the input site, from the definition: `e^{-t/τ} / √(4 π D t)`. -/
