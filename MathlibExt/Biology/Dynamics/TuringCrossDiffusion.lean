@@ -38,8 +38,9 @@ The Fourier mode `e^{μ t} cos(k x) v` solves the linearized system iff `(J - k�
 
 while `tr (J - k² D) = tr J - k² tr D`. For a diagonal `D` this is `TuringPatterns`'
 `dispersionDet` (`crossDispersionDet_diffusionMatrix`). If the kinetics are stable
-(`tr J < 0 < det J`) and `D` is parabolic (`0 ≤ tr D`, `0 < det D`), some mode is unstable iff
-`2 √(det D · det J) < b`.
+(`tr J < 0 < det J`), `0 ≤ tr D` and `0 < det D`, some mode is unstable iff
+`2 √(det D · det J) < b`. These are algebraic hypotheses only: they allow non-parabolic `D`
+such as `[[0, -1], [1, 0]]` (eigenvalues `± i`); normal parabolicity needs `0 < tr D`.
 
 The off-diagonal terms of `D` enter `b` through `-J₀₁ D₁₀ - J₁₀ D₀₁`, and this is what makes
 cross-diffusion qualitatively different: with diagonal diffusion a self-limiting system
@@ -362,9 +363,11 @@ theorem two_mul_sqrt_lt_crossCoeff_iff (J D : Matrix (Fin 2) (Fin 2) ℝ) :
     have := (Real.sqrt_lt' (x := D.det * J.det) (half_pos hS)).2 (by nlinarith)
     linarith
 
-/-- **Turing's criterion with cross-diffusion.** If the kinetics are stable (`tr J < 0 < det J`)
-and the diffusion matrix is parabolic (`0 ≤ tr D`, `0 < det D`), some Fourier mode is unstable
-iff `2 √(det D · det J) < b`, `b = J₀₀ D₁₁ + J₁₁ D₀₀ - J₀₁ D₁₀ - J₁₀ D₀₁`. -/
+/-- **Turing's criterion with cross-diffusion.** If the kinetics are stable (`tr J < 0 < det J`),
+`0 ≤ tr D` and `0 < det D`, some Fourier mode is unstable iff `2 √(det D · det J) < b`,
+`b = J₀₀ D₁₁ + J₁₁ D₀₀ - J₀₁ D₁₀ - J₁₀ D₀₁`. The hypotheses on `D` do not make it parabolic
+(`[[0, -1], [1, 0]]` satisfies them); a normally parabolic `D` (`0 < tr D`, `0 < det D`) is a
+special case. -/
 theorem exists_isCrossUnstableMode_iff {J D : Matrix (Fin 2) (Fin 2) ℝ} (htr : J.trace < 0)
     (hdet : 0 < J.det) (hDtr : 0 ≤ D.trace) (hDdet : 0 < D.det) :
     (∃ k, IsCrossUnstableMode J D k) ↔ 2 * Real.sqrt (D.det * J.det) < crossCoeff J D := by
@@ -404,12 +407,14 @@ theorem crossDispersionDet_neg_of_mem_band {J D : Matrix (Fin 2) (Fin 2) ℝ} {q
     have h4 : 4 * D.det * crossDispersionDet J D q < 0 := by linarith
     exact neg_of_mul_neg_right h4 (by positivity)
 
-/-- **Large domains pattern.** Under the cross-diffusion Turing condition (and `tr J < 0`,
-`0 ≤ tr D`, `0 < det D`), every long enough interval `[0, L]` has an unstable Neumann mode. -/
+/-- **Large domains pattern.** If the kinetics are stable (`tr J < 0 < det J`), `0 ≤ tr D`,
+`0 < det D` and `2 √(det D · det J) < b`, then every long enough interval `[0, L]` has an
+unstable nonhomogeneous Neumann mode (`n ≥ 1`), while the homogeneous mode is stable
+(`not_isCrossUnstableMode_zero`). -/
 theorem exists_isCrossUnstableMode_neumannWavenumber {J D : Matrix (Fin 2) (Fin 2) ℝ}
-    (htr : J.trace < 0) (hDtr : 0 ≤ D.trace) (hDdet : 0 < D.det)
+    (htr : J.trace < 0) (hdet : 0 < J.det) (hDtr : 0 ≤ D.trace) (hDdet : 0 < D.det)
     (h : 2 * Real.sqrt (D.det * J.det) < crossCoeff J D) :
-    ∃ L₀ : ℝ, 0 < L₀ ∧ ∀ L, L₀ ≤ L → ∃ n : ℕ,
+    ∃ L₀ : ℝ, 0 < L₀ ∧ ∀ L, L₀ ≤ L → ∃ n : ℕ, 0 < n ∧
       IsCrossUnstableMode J D (neumannWavenumber L n) := by
   obtain ⟨hS, hsq⟩ := (two_mul_sqrt_lt_crossCoeff_iff J D).1 h
   have hΔ : 0 < crossBandDiscriminant J D := by
@@ -426,8 +431,11 @@ theorem exists_isCrossUnstableMode_neumannWavenumber {J D : Matrix (Fin 2) (Fin 
   obtain ⟨L₀, hL₀, hL⟩ := exists_neumann_mem_band hlt hpos
   refine ⟨L₀, hL₀, fun L hL₀L => ?_⟩
   obtain ⟨n, h1, h2⟩ := hL L hL₀L
-  exact ⟨n, (isCrossUnstableMode_iff_crossDispersionDet_neg htr hDtr _).2
-    (crossDispersionDet_neg_of_mem_band hDdet h1 h2)⟩
+  have hn := (isCrossUnstableMode_iff_crossDispersionDet_neg htr hDtr _).2
+    (crossDispersionDet_neg_of_mem_band hDdet h1 h2)
+  refine ⟨n, Nat.pos_of_ne_zero fun h0 => ?_, hn⟩
+  subst h0
+  exact not_isCrossUnstableMode_zero htr hdet D (by simpa [neumannWavenumber] using hn)
 
 /-! ### Diagonal diffusion cannot destabilize self-limiting kinetics -/
 
