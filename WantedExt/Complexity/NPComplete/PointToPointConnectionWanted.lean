@@ -10,8 +10,8 @@ LICENSE file in the root directory of this source tree.
 # POINT-TO-POINT CONNECTION is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [GT52]
-MINIMUM POINT-TO-POINT CONNECTION (decision version);
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, web edition
+(2000), section Graph Theory, problem MINIMUM POINT-TO-POINT CONNECTION (decision version);
 C.-L. Li, S. T. McCormick and D. Simchi-Levi, "The point-to-point delivery and connection
 problems: complexity and algorithms", Discrete Appl. Math. 36 (1992), 267-292,
 doi:10.1016/0166-218X(92)90258-C, Section 2 (definition) and Section 3 (all four point-to-point
@@ -89,8 +89,8 @@ noncomputable def pointToPointConnectionDec :
   | some i => decide (WellFormed i ∧ PointToPointConnectionFeasible i)
   | none => false
 
-/-- **POINT-TO-POINT CONNECTION is NP-complete.** Source: Crescenzi and Kann, [GT52]; Li,
-McCormick and Simchi-Levi (1992). -/
+/-- **POINT-TO-POINT CONNECTION is NP-complete.** Source: Crescenzi and Kann, MINIMUM
+POINT-TO-POINT CONNECTION; Li, McCormick and Simchi-Levi (1992). -/
 public theorem_wanted pointToPointConnection_npComplete :
     pointToPointConnectionDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
