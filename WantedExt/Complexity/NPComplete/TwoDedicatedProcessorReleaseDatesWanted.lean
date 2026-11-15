@@ -32,7 +32,7 @@ namespace MetaMathlibExt.Complexity.NPComplete.TwoDedicatedProcessorReleaseDates
 # TWO DEDICATED PROCESSORS WITH RELEASE DATES `P2|r_i;fix_i|Cmax` is NP-complete
 
 INSTANCE: two processors `M₁`, `M₂`, each executing at most one task at a time; `n` tasks, task
-`i` with a processing time `p_i ∈ ℤ₀⁺`, a nonempty set `fix_i ⊆ {M₁, M₂}` of processors that it
+`i` with a processing time `p_i ∈ ℤ⁺`, a nonempty set `fix_i ⊆ {M₁, M₂}` of processors that it
 uses simultaneously during its whole (uninterrupted) processing, and a release date
 `r_i ∈ ℤ₀⁺` before which it cannot start; and a bound `K`. Tasks whose processor sets intersect
 cannot overlap in time. QUESTION: is there a schedule with makespan `max_i C_i ≤ K`, where `C_i`
@@ -47,9 +47,7 @@ Tasks are listed one per entry as `(p_i, fix_i, r_i)`, the processor set as a li
 repetitions of processors `0, 1` (for `M₁, M₂`); tasks are `Fin n`. Start times are natural
 numbers: once the order of the tasks on each processor is fixed, every constraint is a
 difference constraint with integer constants, which has an integer solution whenever it has a
-real one. A task of length `0` is kept out of the interior of the busy intervals of its
-processors; it can always be moved to the end of such an interval, so this does not change the
-answer. Membership in NP is the certificate argument: the `n` start times, each at most `K`,
+real one. Membership in NP is the certificate argument: the `n` start times, each at most `K`,
 are checked in polynomial time. Numbers use the binary encoding.
 
 Encoding: the instance is decoded from a bitstring with the repository's
@@ -67,10 +65,10 @@ reduction from every language in `NP`
 one per entry, and the bound `K`. -/
 abbrev TwoDedicatedProcessorReleaseDatesInstance := List (ℕ × List ℕ × ℕ) × ℕ
 
-/-- Well-formedness: every task uses a nonempty set of processors, listed without repetitions,
-all among the two processors `0, 1`. -/
+/-- Well-formedness: every task has a positive processing time and uses a nonempty set of
+processors, listed without repetitions, all among the two processors `0, 1`. -/
 def WellFormed (i : TwoDedicatedProcessorReleaseDatesInstance) : Prop :=
-  ∀ t ∈ i.1, t.2.1 ≠ [] ∧ t.2.1.Nodup ∧ ∀ k ∈ t.2.1, k < 2
+  ∀ t ∈ i.1, 0 < t.1 ∧ t.2.1 ≠ [] ∧ t.2.1.Nodup ∧ ∀ k ∈ t.2.1, k < 2
 
 /-- There are start times `s` such that every task starts no earlier than its release date and
 completes by `K`, and any two different tasks with a common processor are processed in disjoint
