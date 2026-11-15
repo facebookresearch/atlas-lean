@@ -10,12 +10,12 @@ LICENSE file in the root directory of this source tree.
 # METRIC FACILITY LOCATION is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
-problem [ND61] MINIMUM FACILITY LOCATION ("Transformation from MINIMUM VERTEX COVER in bounded
-degree graphs");
 S. Guha and S. Khuller, "Greedy strikes back: improved facility location algorithms",
 J. Algorithms 31 (1999), 228-248, doi:10.1006/jagm.1998.0993 (the metric uncapacitated facility
-location problem is max SNP-hard).
+location problem, proved max SNP-hard);
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
+problem [ND61] MINIMUM FACILITY LOCATION (the same instance; its printed objective differs, see
+below).
 -/
 module
 
@@ -38,15 +38,16 @@ the triangle inequality, a set `F ⊆ V` of locations where a facility may be bu
 QUESTION: is there a set `F' ⊆ F` of locations at which to build facilities such that
 `∑_{u ∈ F'} f(u) + ∑_{v ∈ V} d(v) · min_{u ∈ F'} c(u, v) ≤ K`?
 
-This is the decision version of MINIMUM FACILITY LOCATION ([ND61] of the Crescenzi-Kann
-compendium), the metric uncapacitated facility location problem of Guha and Khuller: every
-location's demand is served by a built facility, at the cost of the connection times the demand.
-The compendium prints the service cost as `∑_{u ∈ F'} ∑_{v ∈ V} d(v) · c(u, v)`, which charges
-every location to every built facility; the statement charges each location only to the built
-facility serving it, as in the facility location problem the entry names and the sources
-describe. Choosing for each location a built facility serving it, with the cost bound, is the
-same as the bound with the minimum, since serving each location from its cheapest built facility
-only lowers the cost. The bound is a positive integer, following the Garey-Johnson convention.
+This is the decision version of the metric uncapacitated facility location problem as defined
+by Guha and Khuller, who prove it max SNP-hard: every location's demand is served by a built
+facility, at the cost of the connection times the demand, and each location is served from a
+cheapest built facility. The Crescenzi-Kann compendium lists the problem as MINIMUM FACILITY
+LOCATION [ND61] with the same instance, but prints the service cost as
+`∑_{u ∈ F'} ∑_{v ∈ V} d(v) · c(u, v)`, which charges every location to every built facility; the
+statement follows Guha and Khuller's minimum, not that printed sum. Choosing for each location a
+built facility serving it, with the cost bound, is the same as the bound with the minimum, since
+serving each location from its cheapest built facility only lowers the cost. The bound is a
+positive integer, following the Garey-Johnson convention.
 
 Locations are `0, …, n - 1`; the costs are an `n × n` matrix, symmetric, satisfying the triangle
 inequality, and zero exactly on the diagonal (a facility serves its own location at no connection
@@ -107,8 +108,8 @@ noncomputable def metricFacilityLocationDec :
   | some i => decide (WellFormed i ∧ MetricFacilityLocationFeasible i)
   | none => false
 
-/-- **METRIC FACILITY LOCATION is NP-complete.** Source: Crescenzi and Kann, [ND61]; Guha and
-Khuller (1999). -/
+/-- **METRIC FACILITY LOCATION is NP-complete.** Source: Guha and Khuller (1999); Crescenzi and
+Kann, [ND61]. -/
 public theorem_wanted metricFacilityLocation_npComplete :
     metricFacilityLocationDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
