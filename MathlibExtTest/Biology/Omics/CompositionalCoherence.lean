@@ -49,6 +49,10 @@ def i0 : S01 := ⟨0, by simp [S01]⟩
 /-- Part `1` as an element of `S01`. -/
 def i1 : S01 := ⟨1, by simp [S01]⟩
 
+instance : Nonempty S01 := ⟨i0⟩
+
+instance : Nonempty (univ : Finset (Fin 3)) := ⟨⟨0, mem_univ _⟩⟩
+
 theorem log_four : Real.log 4 = 2 * Real.log 2 := by
   rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.log_pow]
   norm_num

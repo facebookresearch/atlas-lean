@@ -28,12 +28,14 @@ following precise senses, and that raw proportions do not.
 The subcomposition is `subcomp S x`, the strictly positive vector `(x i)_{i ∈ S}` indexed by
 the subtype of `S`. Aitchison's subcomposition is its closure `closureOp (subcomp S x)`, the
 same vector rescaled to total `1`; because `clr` is scale invariant, both give the same CLR
-transform (`clr_closureOp`), so the statements below hold for either convention.
+transform (`clr_closureOp`), so the statements below hold for either convention. The closure is
+only defined for at least one part (`[Nonempty ι]`, and `[Nonempty S]`, i.e. `S.Nonempty`, for a
+closed subcomposition): with no parts the total is `0` and no rescaling has total `1`.
 
 ## Main definitions
 
 * `subcomp S x`: the parts of the positive composition `x` in the finite set `S`.
-* `closureOp x`: the closure operation, `x` rescaled to total `1`.
+* `closureOp x`: the closure operation, `x` rescaled to total `1`, for a nonempty index type.
 * `aitchisonDistSq x y`: the squared Aitchison distance `∑ i, (clr x i - clr y i) ^ 2`.
 
 ## Main results
@@ -86,10 +88,11 @@ indexed by the subtype of `S`. -/
 def subcomp (S : Finset ι) (x : PosComposition ι) : PosComposition S :=
   ⟨fun i => x.1 i, fun i => x.2 i⟩
 
-/-- The **closure operation**: rescale a positive composition to total `1`. -/
-noncomputable def closureOp (x : PosComposition ι) : PosComposition ι :=
+/-- The **closure operation**: rescale a positive composition with at least one part to
+total `1`. Without parts the total would be `0`, so the index type must be nonempty. -/
+noncomputable def closureOp [Nonempty ι] (x : PosComposition ι) : PosComposition ι :=
   ⟨fun i => x.1 i / ∑ j, x.1 j,
-    fun i => div_pos (x.2 i) (sum_pos (fun j _ => x.2 j) ⟨i, mem_univ i⟩)⟩
+    fun i => div_pos (x.2 i) (sum_pos (fun j _ => x.2 j) univ_nonempty)⟩
 
 /-- The squared **Aitchison distance** `∑ i, (clr x i - clr y i) ^ 2`. -/
 noncomputable def aitchisonDistSq (x y : PosComposition ι) : ℝ :=
@@ -106,16 +109,14 @@ theorem closureOp_eq_smul [Nonempty ι] (x : PosComposition ι) :
   simp only [closureOp, PosComposition.smul, Pi.smul_apply, smul_eq_mul]
   ring
 
-/-- A closed composition with at least one part has total `1`. -/
+/-- A closed composition has total `1`. -/
 theorem sum_closureOp [Nonempty ι] (x : PosComposition ι) : ∑ i, (closureOp x).1 i = 1 := by
   have hS : (∑ j, x.1 j) ≠ 0 := (sum_pos (fun j _ => x.2 j) univ_nonempty).ne'
   simp only [closureOp, ← sum_div]
   exact div_self hS
 
 /-- Closing a composition does not change its CLR transform. -/
-theorem clr_closureOp (x : PosComposition ι) : clr (closureOp x) = clr x := by
-  rcases isEmpty_or_nonempty ι with h | h
-  · funext i; exact isEmptyElim i
+theorem clr_closureOp [Nonempty ι] (x : PosComposition ι) : clr (closureOp x) = clr x := by
   rw [closureOp_eq_smul, clr_smul]
 
 /-! ### Log-ratio coherence -/
@@ -161,14 +162,14 @@ theorem clr_subcomp_smul (S : Finset ι) (t : ℝ) (ht : 0 < t) (x : PosComposit
   rw [show subcomp S (x.smul t ht) = (subcomp S x).smul t ht from rfl, clr_smul]
 
 /-- Closing the full composition before taking the subcomposition does not change its CLR. -/
-theorem clr_subcomp_closureOp (S : Finset ι) (x : PosComposition ι) :
+theorem clr_subcomp_closureOp [Nonempty ι] (S : Finset ι) (x : PosComposition ι) :
     clr (subcomp S (closureOp x)) = clr (subcomp S x) :=
   clr_subcomp_congr S (clr_closureOp x)
 
 omit [Fintype ι] in
-/-- Aitchison's closed subcomposition has the same CLR as the unclosed one, so it is also
-computed from the full CLR by `clr_subcomp`. -/
-theorem clr_closureOp_subcomp (S : Finset ι) (x : PosComposition ι) :
+/-- Aitchison's closed subcomposition of a nonempty `S` has the same CLR as the unclosed one,
+so it is also computed from the full CLR by `clr_subcomp`. -/
+theorem clr_closureOp_subcomp (S : Finset ι) [Nonempty S] (x : PosComposition ι) :
     clr (closureOp (subcomp S x)) = clr (subcomp S x) :=
   clr_closureOp _
 
@@ -216,8 +217,9 @@ theorem aitchisonDistSq_subcomp_le (S : Finset ι) (x y : PosComposition ι) :
 
 /-- **Proportions are incoherent.** For a part `i ∈ S`, its proportion in the closed
 subcomposition equals its proportion in the closed full composition only when `S` contains
-every part. -/
-theorem closureOp_subcomp_apply_eq_iff (S : Finset ι) (x : PosComposition ι) (i : S) :
+every part. The instances follow from `i`; they are there so that both closures elaborate. -/
+theorem closureOp_subcomp_apply_eq_iff [Nonempty ι] (S : Finset ι) [Nonempty S]
+    (x : PosComposition ι) (i : S) :
     (closureOp (subcomp S x)).1 i = (closureOp x).1 i ↔ S = univ := by
   have hpos : 0 < ∑ j ∈ S, x.1 j := sum_pos (fun j _ => x.2 j) ⟨i, i.2⟩
   have hposU : 0 < ∑ j, x.1 j := sum_pos (fun j _ => x.2 j) ⟨i, mem_univ _⟩
