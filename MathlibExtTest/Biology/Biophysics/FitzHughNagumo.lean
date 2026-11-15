@@ -359,6 +359,28 @@ example {v w : ℝ → ℝ} (h : IsSolution (5 / 2) (3 / 4) 1 0 v w) {T : ℝ} (
   h.eq_rest_of_periodic_of_four_le_sq (by norm_num [IsEquilibrium, vField, wField]) (by norm_num)
     (by norm_num) (by norm_num) hT hvT hwT ht
 
+/-! ### Endpoints of the window `restFactor > 0` -/
+
+/-- At `v* = -1` the window is `(0, 3)`: its lower end is `0`, so all its amplitudes are positive
+(`pulseRootLow_nonneg`), although `pulseRootLow_pos` needs `v* < -1`. -/
+example : pulseRootLow (-1) = 0 ∧ pulseRootHigh (-1) = 3 := by
+  have h : √(12 - 3 * (-1 : ℝ) ^ 2) = 3 := by
+    rw [show (12 : ℝ) - 3 * (-1) ^ 2 = 3 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
+  unfold pulseRootLow pulseRootHigh
+  rw [h]
+  norm_num
+
+/-- At `v* = 2` the two roots coincide, so the window is empty. -/
+example : pulseRootLow 2 = -3 ∧ pulseRootHigh 2 = -3 := by
+  norm_num [pulseRootLow, pulseRootHigh]
+
+/-- At `v* = 0` the window contains the nonpositive displacement `-1`, where `restFactor = 2/3`
+but the voltage field `x · restFactor` is `-2/3`. -/
+example : pulseRootLow 0 < -1 ∧ (-1 : ℝ) < pulseRootHigh 0 ∧ restFactor 0 (-1) = 2 / 3 :=
+  ⟨(restFactor_pos_iff (by norm_num)).1 (by norm_num [restFactor]) |>.1,
+    (restFactor_pos_iff (by norm_num)).1 (by norm_num [restFactor]) |>.2,
+    by norm_num [restFactor]⟩
+
 /-- At the classical rest state a nonconstant periodic solution would have to visit the
 rising-pulse window. -/
 example {v w : ℝ → ℝ} (h : IsSolution (6 / 5) (4 / 5) (2 / 25) 0 v w) {T : ℝ} (hT : 0 < T)

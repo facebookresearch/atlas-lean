@@ -119,11 +119,14 @@ the equilibrium needs `0 < b ≤ 1`.
   there is no nonconstant periodic orbit (`IsSolution.eq_rest_of_periodic_of_four_le_sq`), and for
   `v*² ≤ 4` every nonconstant periodic orbit visits a state whose voltage displacement `v - v*`
   lies in the window `(pulseRootLow v*, pulseRootHigh v*)` where `restFactor v* > 0`
-  (`restFactor_pos_iff`, `IsSolution.exists_mem_pulse_window_of_periodic`). For `v* < -1` this
-  window consists of positive amplitudes (`pulseRootLow_pos`) and is the rising-pulse window of
-  `isRisingAfterPulse_iff`; for `v* ≥ -1` it also contains nonpositive displacements, at which the
-  voltage need not rise (at `v* = 0`, `x = -1`: `restFactor = 2/3` but the voltage field
-  `x · restFactor` is `-2/3`).
+  (`restFactor_pos_iff`, `IsSolution.exists_mem_pulse_window_of_periodic`). For `v* ≤ -1` this
+  window consists of positive amplitudes (`pulseRootLow_nonneg`; the lower root is `0` at
+  `v* = -1`) and is the rising-pulse window of `isRisingAfterPulse_iff`. For `-1 < v* < 2` it is
+  nonempty (`pulseRootLow_lt_pulseRootHigh`) with a negative lower end (`pulseRootLow_neg`), so it
+  also contains nonpositive displacements, at which the voltage need not rise (at `v* = 0`,
+  `x = -1`: `restFactor = 2/3` but the voltage field `x · restFactor` is `-2/3`). At `v* = ±2` the
+  two roots coincide and the window is empty, matching
+  `IsSolution.eq_rest_of_periodic_of_four_le_sq`.
 
 The singular-perturbation (`ε → 0`) analysis, a trajectory-level firing threshold, the return to
 rest after a large excursion (a spike) from a rest state with `v*² ≤ 4` (the basin above is a
@@ -948,9 +951,28 @@ theorem restFactor_le_of_abs_le {vr x ρ : ℝ} (hx : |x| ≤ ρ) :
   unfold restFactor
   linarith
 
+/-- For `v ≤ -1` the lower root `pulseRootLow v` is nonnegative (it is `0` at `v = -1`), so
+every amplitude in the window `(pulseRootLow v, pulseRootHigh v)` is positive. -/
+theorem pulseRootLow_nonneg {v : ℝ} (hv1 : v ≤ -1) : 0 ≤ pulseRootLow v := by
+  unfold pulseRootLow
+  have hs : √(12 - 3 * v ^ 2) ≤ -3 * v := Real.sqrt_le_iff.2 ⟨by linarith, by nlinarith⟩
+  linarith
+
+/-- For `v > -1` the lower root `pulseRootLow v` is negative. -/
+theorem pulseRootLow_neg {v : ℝ} (hv1 : -1 < v) : pulseRootLow v < 0 := by
+  unfold pulseRootLow
+  have hs : -3 * v < √(12 - 3 * v ^ 2) := by
+    rcases lt_or_ge 0 v with hv0 | hv0
+    · linarith [Real.sqrt_nonneg (12 - 3 * v ^ 2)]
+    · rw [Real.lt_sqrt (by linarith)]
+      nlinarith
+  linarith
+
 /-- For `vr² ≤ 4`, `restFactor vr δ > 0` exactly on the window
 `pulseRootLow vr < δ < pulseRootHigh vr`. For `δ > 0` this is the rising-pulse condition of
-`isRisingAfterPulse_iff`; the whole window has `δ > 0` only when `vr < -1` (`pulseRootLow_pos`). -/
+`isRisingAfterPulse_iff`. Every `δ` in the window is positive when `vr ≤ -1`
+(`pulseRootLow_nonneg`); for `-1 < vr < 2` the window is nonempty and also contains nonpositive
+`δ` (`pulseRootLow_lt_pulseRootHigh`, `pulseRootLow_neg`); at `vr = ±2` it is empty. -/
 theorem restFactor_pos_iff {vr δ : ℝ} (hv : vr ^ 2 ≤ 4) :
     0 < restFactor vr δ ↔ pulseRootLow vr < δ ∧ δ < pulseRootHigh vr := by
   unfold restFactor
@@ -1236,9 +1258,10 @@ theorem IsSolution.eq_rest_of_periodic_of_four_le_sq (h : IsSolution a b ε I v 
 an equilibrium `(vr, wr)` with `vr² ≤ 4`, a `T`-periodic solution that is not the constant rest
 state visits a state whose voltage displacement `v - vr` lies in the window
 `pulseRootLow vr < v - vr < pulseRootHigh vr` where `restFactor vr > 0` (`restFactor_pos_iff`).
-For `vr < -1` the window consists of positive amplitudes (`pulseRootLow_pos`), the pulses after
-which the voltage rises (`isRisingAfterPulse_iff`); for `vr ≥ -1` it also contains nonpositive
-displacements, at which the voltage need not rise. -/
+For `vr ≤ -1` the window consists of positive amplitudes (`pulseRootLow_nonneg`), the pulses
+after which the voltage rises (`isRisingAfterPulse_iff`); for `-1 < vr < 2` it also contains
+nonpositive displacements (`pulseRootLow_neg`), at which the voltage need not rise; at `vr = ±2`
+it is empty, so no nonconstant periodic solution exists there. -/
 theorem IsSolution.exists_mem_pulse_window_of_periodic (h : IsSolution a b ε I v w)
     {vr wr : ℝ} (hrest : IsEquilibrium a b ε I vr wr) (hb : 0 < b) (hε : 0 < ε)
     (hv : vr ^ 2 ≤ 4) {T : ℝ} (hT : 0 < T) (hvT : ∀ t, 0 ≤ t → v (t + T) = v t)
