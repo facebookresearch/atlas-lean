@@ -61,15 +61,16 @@ Cavallaro as Theorem 3.27; Corollary 3.28), so `4` is where hardness starts.
 
 The instance type (vertex count `n`, edge list, bound `K`), the graph
 (`Cslib.Complexity.Karp.edgeGraph` on `Fin n`), its well-formedness (a simple edge list) and the
-question (some `Finset` `S` with `|S| ≤ K` whose complement induces a subgraph satisfying
-Mathlib's `SimpleGraph.IsAcyclic`) are those of FEEDBACK VERTEX SET
-(`FeedbackVertexSetWanted`); this module adds the class to well-formedness: Mathlib's
-`SimpleGraph.IsRegularOfDegree k` and `SimpleGraph.IsHamiltonian`, as in
-`IndependentSetPlanarRegularHamiltonianWanted`. Mathlib's `IsHamiltonian` holds vacuously for a
-one-vertex graph, which is not `k`-regular for `k ≥ 4`, so on these graphs it says exactly that
-a Hamiltonian cycle exists. Membership in NP takes `S` together with a Hamiltonian cycle as the
-certificate; degrees are checked in polynomial time. Every vertex has degree `k ≥ 4`, so
-`n ≤ |E|` and the binary vertex count does not make the encoding succinct.
+question (some `Finset` `S` with `|S| ≤ K` whose complement induces a subgraph satisfying Mathlib's
+`SimpleGraph.IsAcyclic`) are those of FEEDBACK VERTEX SET (`FeedbackVertexSetWanted`); this module
+adds the class to well-formedness: Mathlib's `SimpleGraph.IsRegularOfDegree k`, and a closed walk
+that is a Hamiltonian cycle in Mathlib's sense (`SimpleGraph.Walk.IsHamiltonianCycle`: a cycle
+visiting every vertex exactly once). In particular the graph with no vertices, which is vacuously
+`k`-regular, is excluded, since a cycle needs a vertex. (Mathlib's `SimpleGraph.IsHamiltonian`
+differs from this only on the one-vertex graph, where it holds vacuously.) Membership in NP takes
+`S` together with a Hamiltonian cycle as the certificate; degrees are checked in polynomial time.
+Every vertex has degree `k ≥ 4`, so `n ≤ |E|` and the binary vertex count does not make the encoding
+succinct.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -84,9 +85,10 @@ reduction from every language in `NP`
 
 open Classical in
 /-- Well-formedness of an instance for a fixed `k`: a well-formed FEEDBACK VERTEX SET instance
-(a simple edge list on `Fin n`) whose graph is `k`-regular and Hamiltonian. -/
+(a simple edge list on `Fin n`) whose graph is `k`-regular and has a Hamiltonian cycle. -/
 def WellFormed (k : ℕ) (i : FeedbackVertexSetInstance) : Prop :=
-  FeedbackVertexSet.WellFormed i ∧ (Graph i).IsRegularOfDegree k ∧ (Graph i).IsHamiltonian
+  FeedbackVertexSet.WellFormed i ∧ (Graph i).IsRegularOfDegree k ∧
+    ∃ (a : Fin i.1) (p : (Graph i).Walk a a), p.IsHamiltonianCycle
 
 open Classical in
 /-- FEEDBACK VERTEX SET on `k`-regular Hamiltonian graphs as a decision problem over
