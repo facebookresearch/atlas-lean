@@ -13,7 +13,7 @@ import Mathlib.Tactic.NormNum
 
 @[expose] public section
 
-/-- Three reals pairwise `3` apart, more than `2 * 1`, cannot all lie within `1` of two
+/-- Three reals pairwise at least `3` apart, more than `2 * 1`, cannot all lie within `1` of two
 centers. -/
 example (c₁ c₂ : ℝ) : ¬ ∀ x ∈ ({0, 3, 6} : Finset ℝ), dist x c₁ ≤ 1 ∨ dist x c₂ ≤ 1 := by
   intro hcov
