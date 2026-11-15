@@ -44,18 +44,20 @@ The setting is a triangular array of increments over a grid of mesh `1/n`:
 * `tendstoInMeasure_mul_of_tendstoInMeasure_zero`: `f n → 0` in probability and a fixed real
   random variable `A` give `f n * A → 0` in probability.
 * `tendstoInMeasure_sup_abs_mul`: under the fourth-moment condition below, the largest continuous
-  increment `max_{i ≤ L n} |s n i * Z i|` tends to `0` in probability.
-* `tendstoInMeasure_bipowerVariation_sub`: for `c n i = s n i * Z i` with `Z` i.i.d. with a finite
-  fourth moment and `∑_{i ≤ L n} (s n i)⁴ → 0`,
-  `BPV(c) - (E|Z₀|)² ∑ᵢ |s n i| |s n (i+1)| → 0` in probability.
+  increment `max_{i ≤ L n} |s n i * Z n i|` tends to `0` in probability.
+* `tendstoInMeasure_bipowerVariation_sub`: for `c n i = s n i * Z n i`, where each row
+  `Z n 0, Z n 1, …` is independent, every `Z n i` has the law of `Z 0 0`, `E (Z 0 0)⁴ < ∞` and
+  `∑_{i ≤ L n} (s n i)⁴ → 0`: `BPV(c) - (E|Z 0 0|)² ∑ᵢ |s n i| |s n (i+1)| → 0` in probability.
 * `tendstoInMeasure_bipowerVariation_add_jump` (**bipower variation convergence with jumps**):
-  if moreover `∑ᵢ |s n i| |s n (i+1)| → V`, then `BPV(c + J) → (E|Z₀|)² V` in probability.
+  if moreover `∑ᵢ |s n i| |s n (i+1)| → V`, then `BPV(c + J) → (E|Z 0 0|)² V` in probability.
 * `tendstoInMeasure_bipowerVariation_add_jump_const`: the constant-volatility case
-  `s n i = σ / √n` on the grid of `[0, 1]` (`L n = n - 1` bipower terms): `BPV → (E|Z₀|)² σ²`.
+  `s n i = σ / √n` on the grid of `[0, 1]` (`L n = n - 1` bipower terms):
+  `BPV → (E|Z 0 0|)² σ²`.
 * `integral_abs_gaussianReal`: `E|N(0,1)| = √(2/π)`.
-* `tendstoInMeasure_bipowerVariation_add_jump_gaussian`: Brownian increments
-  `σ (W_{(i+1)/n} - W_{i/n})` plus finitely many jumps: `BPV → (2/π) σ²`, i.e. the classical
-  normalisation `(π/2) BPV → σ² = ∫₀¹ σ²`.
+* `tendstoInMeasure_bipowerVariation_add_jump_gaussian`: rows of i.i.d. standard Gaussians, e.g.
+  the normalised Brownian increments `Z n i = √n (W_{(i+1)/n} - W_{i/n})`, so that
+  `σ / √n * Z n i = σ (W_{(i+1)/n} - W_{i/n})`, plus finitely many jumps (which may depend on
+  `W`): `BPV → (2/π) σ²`, i.e. the classical normalisation `(π/2) BPV → σ² = ∫₀¹ σ²`.
 
 ## Proof
 
@@ -66,23 +68,28 @@ both contain jumps. In probability, the event that two jump times are within `1/
 a null set as `j → ∞`, and `M_n ∑ₖ |ξ k| → 0` in probability because `∑ₖ |ξ k|` is an a.s. finite
 random variable.
 
-For the continuous part write `Yᵢ = |Zᵢ| |Zᵢ₊₁|`, so `E Yᵢ = (E|Z₀|)²` and
-`E Yᵢ² ≤ E Z₀⁴`. The terms with even `i` are pairwise independent (disjoint index pairs), and so
-are those with odd `i`; Chebyshev's inequality on each half bounds the deviation probability by
-`4 E Z₀⁴ ∑ᵢ (s n i s n (i+1))² / ε² ≤ 4 E Z₀⁴ ∑ᵢ (s n i)⁴ / ε²`. A union bound with Markov's
-inequality for `(s n i Z i)⁴` shows the largest continuous increment tends to `0`.
+For the continuous part fix a row `n` and write `Yᵢ = |Z n i| |Z n (i+1)|`, so
+`E Yᵢ = (E|Z 0 0|)²` and `E Yᵢ² ≤ E (Z 0 0)⁴`. The terms with even `i` are pairwise independent
+(disjoint index pairs), and so are those with odd `i`; Chebyshev's inequality on each half bounds
+the deviation probability by `4 E (Z 0 0)⁴ ∑ᵢ (s n i s n (i+1))² / ε² ≤
+4 E (Z 0 0)⁴ ∑ᵢ (s n i)⁴ / ε²`. A union bound with Markov's inequality for `(s n i Z n i)⁴` shows
+the largest continuous increment tends to `0`. Only independence within a row is used; rows may
+depend on each other arbitrarily, as the normalised increments of one Brownian path over
+different grids do.
 
 ## Scope and what is not proved
 
-* The continuous part is `s n i * Z i` with deterministic scales `s n i` and i.i.d. innovations
-  `Z`: Brownian increments of `∫ σ dW` for a deterministic volatility `σ`, with
-  `s n i = (∫_{i/n}^{(i+1)/n} σ²)^{1/2}`. A random volatility process, as in
+* The continuous part is `s n i * Z n i` with deterministic scales `s n i` and rows of i.i.d.
+  innovations: the increments of `∫ σ dW` over the grid of mesh `1/n` for a deterministic
+  volatility `σ`, with `s n i = (∫_{i/n}^{(i+1)/n} σ²)^{1/2}` and
+  `Z n i = (∫_{i/n}^{(i+1)/n} σ dW) / s n i`. No independence between the jumps and `W` is
+  assumed. A random volatility process, as in
   Barndorff-Nielsen–Shephard, is not treated, nor is the Riemann-sum step
   `∑ᵢ |s n i| |s n (i+1)| → ∫ σ²` for a general continuous `σ`; that limit is the hypothesis `hV`.
 * The jump part has finitely many jumps (finite activity, e.g. compound Poisson). Infinite
   activity jumps are not treated.
 * Only consistency is proved. The bipower CLT and the jump test based on `RV - (π/2) BPV` are not.
-* A fourth moment of `Z` is assumed; Gaussian `Z` satisfies it.
+* A fourth moment of `Z 0 0` is assumed; Gaussian innovations satisfy it.
 
 ## Source
 
@@ -455,17 +462,18 @@ theorem tendstoInMeasure_bipowerVariation_add_jump_sub {m : MeasurableSpace Ω} 
 
 section Continuous
 
-variable {m : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ] {Z : ℕ → Ω → ℝ}
+variable {m : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ] {X : ℕ → Ω → ℝ}
+  {Y : Ω → ℝ}
 
 omit [IsProbabilityMeasure μ] in
-private lemma integrable_pow_four (hid : ∀ i, IdentDistrib (Z i) (Z 0) μ μ)
-    (hZ4 : Integrable (fun ω => Z 0 ω ^ 4) μ) (i : ℕ) :
-    Integrable (fun ω => Z i ω ^ 4) μ :=
+private lemma integrable_pow_four (hid : ∀ i, IdentDistrib (X i) Y μ μ)
+    (hZ4 : Integrable (fun ω => Y ω ^ 4) μ) (i : ℕ) :
+    Integrable (fun ω => X i ω ^ 4) μ :=
   ((hid i).comp (measurable_id.pow_const 4)).integrable_iff.2 hZ4
 
 omit [IsProbabilityMeasure μ] in
-private lemma integral_pow_four (hid : ∀ i, IdentDistrib (Z i) (Z 0) μ μ) (i : ℕ) :
-    ∫ ω, Z i ω ^ 4 ∂μ = ∫ ω, Z 0 ω ^ 4 ∂μ :=
+private lemma integral_pow_four (hid : ∀ i, IdentDistrib (X i) Y μ μ) (i : ℕ) :
+    ∫ ω, X i ω ^ 4 ∂μ = ∫ ω, Y ω ^ 4 ∂μ :=
   ((hid i).comp (measurable_id.pow_const 4)).integral_eq
 
 private lemma sq_abs_mul_abs_le (a b : ℝ) : (|a| * |b|) ^ 2 ≤ (a ^ 4 + b ^ 4) / 2 := by
@@ -473,15 +481,15 @@ private lemma sq_abs_mul_abs_le (a b : ℝ) : (|a| * |b|) ^ 2 ≤ (a ^ 4 + b ^ 4
   nlinarith [sq_nonneg (a ^ 2 - b ^ 2)]
 
 omit [IsProbabilityMeasure μ] in
-private lemma aestronglyMeasurable_abs_mul_abs (hmeas : ∀ i, Measurable (Z i)) (i : ℕ) :
-    AEStronglyMeasurable (fun ω => |Z i ω| * |Z (i + 1) ω|) μ :=
+private lemma aestronglyMeasurable_abs_mul_abs (hmeas : ∀ i, Measurable (X i)) (i : ℕ) :
+    AEStronglyMeasurable (fun ω => |X i ω| * |X (i + 1) ω|) μ :=
   ((continuous_abs.measurable.comp (hmeas i)).mul
     (continuous_abs.measurable.comp (hmeas (i + 1)))).aestronglyMeasurable
 
 omit [IsProbabilityMeasure μ] in
-private lemma integrable_sq_abs_mul_abs (hmeas : ∀ i, Measurable (Z i))
-    (hid : ∀ i, IdentDistrib (Z i) (Z 0) μ μ) (hZ4 : Integrable (fun ω => Z 0 ω ^ 4) μ)
-    (i : ℕ) : Integrable (fun ω => (|Z i ω| * |Z (i + 1) ω|) ^ 2) μ := by
+private lemma integrable_sq_abs_mul_abs (hmeas : ∀ i, Measurable (X i))
+    (hid : ∀ i, IdentDistrib (X i) Y μ μ) (hZ4 : Integrable (fun ω => Y ω ^ 4) μ)
+    (i : ℕ) : Integrable (fun ω => (|X i ω| * |X (i + 1) ω|) ^ 2) μ := by
   refine Integrable.mono' (((integrable_pow_four hid hZ4 i).add
     (integrable_pow_four hid hZ4 (i + 1))).div_const 2)
     ((aestronglyMeasurable_abs_mul_abs hmeas i).pow 2) (ae_of_all _ fun ω => ?_)
@@ -489,65 +497,65 @@ private lemma integrable_sq_abs_mul_abs (hmeas : ∀ i, Measurable (Z i))
   exact sq_abs_mul_abs_le _ _
 
 omit [IsProbabilityMeasure μ] in
-private lemma memLp_abs_mul_abs (hmeas : ∀ i, Measurable (Z i))
-    (hid : ∀ i, IdentDistrib (Z i) (Z 0) μ μ) (hZ4 : Integrable (fun ω => Z 0 ω ^ 4) μ)
-    (i : ℕ) : MemLp (fun ω => |Z i ω| * |Z (i + 1) ω|) 2 μ :=
+private lemma memLp_abs_mul_abs (hmeas : ∀ i, Measurable (X i))
+    (hid : ∀ i, IdentDistrib (X i) Y μ μ) (hZ4 : Integrable (fun ω => Y ω ^ 4) μ)
+    (i : ℕ) : MemLp (fun ω => |X i ω| * |X (i + 1) ω|) 2 μ :=
   (memLp_two_iff_integrable_sq (aestronglyMeasurable_abs_mul_abs hmeas i)).2
     (integrable_sq_abs_mul_abs hmeas hid hZ4 i)
 
 omit [IsProbabilityMeasure μ] in
-private lemma integral_abs_mul_abs (hmeas : ∀ i, Measurable (Z i)) (hind : iIndepFun Z μ)
-    (hid : ∀ i, IdentDistrib (Z i) (Z 0) μ μ) (i : ℕ) :
-    ∫ ω, |Z i ω| * |Z (i + 1) ω| ∂μ = (∫ ω, |Z 0 ω| ∂μ) ^ 2 := by
-  have hi : IndepFun (fun ω => |Z i ω|) (fun ω => |Z (i + 1) ω|) μ :=
+private lemma integral_abs_mul_abs (hmeas : ∀ i, Measurable (X i)) (hind : iIndepFun X μ)
+    (hid : ∀ i, IdentDistrib (X i) Y μ μ) (i : ℕ) :
+    ∫ ω, |X i ω| * |X (i + 1) ω| ∂μ = (∫ ω, |Y ω| ∂μ) ^ 2 := by
+  have hi : IndepFun (fun ω => |X i ω|) (fun ω => |X (i + 1) ω|) μ :=
     (hind.indepFun (show i ≠ i + 1 by omega)).comp continuous_abs.measurable
       continuous_abs.measurable
-  have h0 : ∀ j, ∫ ω, |Z j ω| ∂μ = ∫ ω, |Z 0 ω| ∂μ := fun j =>
+  have h0 : ∀ j, ∫ ω, |X j ω| ∂μ = ∫ ω, |Y ω| ∂μ := fun j =>
     ((hid j).comp continuous_abs.measurable).integral_eq
   rw [IndepFun.integral_fun_mul_eq_mul_integral hi
     (continuous_abs.measurable.comp (hmeas i)).aestronglyMeasurable
     (continuous_abs.measurable.comp (hmeas (i + 1))).aestronglyMeasurable,
     h0 i, h0 (i + 1), sq]
 
-private lemma variance_abs_mul_abs_le (hmeas : ∀ i, Measurable (Z i))
-    (hid : ∀ i, IdentDistrib (Z i) (Z 0) μ μ) (hZ4 : Integrable (fun ω => Z 0 ω ^ 4) μ)
-    (i : ℕ) : variance (fun ω => |Z i ω| * |Z (i + 1) ω|) μ ≤ ∫ ω, Z 0 ω ^ 4 ∂μ := by
+private lemma variance_abs_mul_abs_le (hmeas : ∀ i, Measurable (X i))
+    (hid : ∀ i, IdentDistrib (X i) Y μ μ) (hZ4 : Integrable (fun ω => Y ω ^ 4) μ)
+    (i : ℕ) : variance (fun ω => |X i ω| * |X (i + 1) ω|) μ ≤ ∫ ω, Y ω ^ 4 ∂μ := by
   refine (variance_le_expectation_sq (aestronglyMeasurable_abs_mul_abs hmeas i)).trans ?_
-  calc ∫ ω, ((fun ω => |Z i ω| * |Z (i + 1) ω|) ^ 2) ω ∂μ
-      ≤ ∫ ω, (Z i ω ^ 4 + Z (i + 1) ω ^ 4) / 2 ∂μ := by
+  calc ∫ ω, ((fun ω => |X i ω| * |X (i + 1) ω|) ^ 2) ω ∂μ
+      ≤ ∫ ω, (X i ω ^ 4 + X (i + 1) ω ^ 4) / 2 ∂μ := by
         refine integral_mono (integrable_sq_abs_mul_abs hmeas hid hZ4 i)
           (((integrable_pow_four hid hZ4 i).add (integrable_pow_four hid hZ4 (i + 1))).div_const 2)
           fun ω => ?_
         simp only [Pi.pow_apply]
         exact sq_abs_mul_abs_le _ _
-    _ = ∫ ω, Z 0 ω ^ 4 ∂μ := by
+    _ = ∫ ω, Y ω ^ 4 ∂μ := by
         rw [integral_div, integral_add (integrable_pow_four hid hZ4 i)
           (integrable_pow_four hid hZ4 (i + 1)), integral_pow_four hid i,
           integral_pow_four hid (i + 1)]
         ring
 
 /-- **Chebyshev for separated index sets.** If no two indices of `T` are adjacent, the products
-`|Z i| |Z (i+1)|`, `i ∈ T`, are pairwise independent, and the weighted sum deviates from its
+`|X i| |X (i+1)|`, `i ∈ T`, are pairwise independent, and the weighted sum deviates from its
 mean by at least `ε` with probability at most `E Z₀⁴ ∑_{i ∈ T} (w i)² / ε²`. -/
-private lemma measure_abs_sum_sub_ge_le (hmeas : ∀ i, Measurable (Z i)) (hind : iIndepFun Z μ)
-    (hid : ∀ i, IdentDistrib (Z i) (Z 0) μ μ) (hZ4 : Integrable (fun ω => Z 0 ω ^ 4) μ)
+private lemma measure_abs_sum_sub_ge_le (hmeas : ∀ i, Measurable (X i)) (hind : iIndepFun X μ)
+    (hid : ∀ i, IdentDistrib (X i) Y μ μ) (hZ4 : Integrable (fun ω => Y ω ^ 4) μ)
     (w : ℕ → ℝ) (T : Finset ℕ) (hT : ∀ i ∈ T, ∀ j ∈ T, j ≠ i + 1) {ε : ℝ} (hε : 0 < ε) :
-    μ {ω | ε ≤ |(∑ i ∈ T, w i * (|Z i ω| * |Z (i + 1) ω|)) -
-        (∫ ω, |Z 0 ω| ∂μ) ^ 2 * ∑ i ∈ T, w i|} ≤
-      ENNReal.ofReal ((∫ ω, Z 0 ω ^ 4 ∂μ) * (∑ i ∈ T, w i ^ 2) / ε ^ 2) := by
-  have hXm : ∀ i, MemLp (fun ω => w i * (|Z i ω| * |Z (i + 1) ω|)) 2 μ := fun i =>
+    μ {ω | ε ≤ |(∑ i ∈ T, w i * (|X i ω| * |X (i + 1) ω|)) -
+        (∫ ω, |Y ω| ∂μ) ^ 2 * ∑ i ∈ T, w i|} ≤
+      ENNReal.ofReal ((∫ ω, Y ω ^ 4 ∂μ) * (∑ i ∈ T, w i ^ 2) / ε ^ 2) := by
+  have hXm : ∀ i, MemLp (fun ω => w i * (|X i ω| * |X (i + 1) ω|)) 2 μ := fun i =>
     (memLp_abs_mul_abs hmeas hid hZ4 i).const_mul (w i)
-  have hS : MemLp (∑ i ∈ T, fun ω => w i * (|Z i ω| * |Z (i + 1) ω|)) 2 μ :=
+  have hS : MemLp (∑ i ∈ T, fun ω => w i * (|X i ω| * |X (i + 1) ω|)) 2 μ :=
     memLp_finsetSum' T fun i _ => hXm i
-  have hmean : μ[∑ i ∈ T, fun ω => w i * (|Z i ω| * |Z (i + 1) ω|)] =
-      (∫ ω, |Z 0 ω| ∂μ) ^ 2 * ∑ i ∈ T, w i := by
+  have hmean : μ[∑ i ∈ T, fun ω => w i * (|X i ω| * |X (i + 1) ω|)] =
+      (∫ ω, |Y ω| ∂μ) ^ 2 * ∑ i ∈ T, w i := by
     simp only [Finset.sum_apply]
     rw [integral_finsetSum T fun i _ => (hXm i).integrable one_le_two, Finset.mul_sum]
     refine Finset.sum_congr rfl fun i _ => ?_
     rw [integral_const_mul, integral_abs_mul_abs hmeas hind hid i, mul_comm]
   have hpair : Set.Pairwise (T : Set ℕ) fun i j =>
-      IndepFun (fun ω => w i * (|Z i ω| * |Z (i + 1) ω|))
-        (fun ω => w j * (|Z j ω| * |Z (j + 1) ω|)) μ := by
+      IndepFun (fun ω => w i * (|X i ω| * |X (i + 1) ω|))
+        (fun ω => w j * (|X j ω| * |X (j + 1) ω|)) μ := by
     intro i hi j hj hij
     have h1 := hT i (Finset.mem_coe.1 hi) j (Finset.mem_coe.1 hj)
     have h2 := hT j (Finset.mem_coe.1 hj) i (Finset.mem_coe.1 hi)
@@ -565,8 +573,8 @@ private lemma measure_abs_sum_sub_ge_le (hmeas : ∀ i, Measurable (Z i)) (hind 
         continuous_abs.measurable.comp (measurable_pi_apply _)
       exact measurable_const.mul (h1.mul h2)
     exact h.comp (hφ i) (hφ j)
-  have hvar : variance (∑ i ∈ T, fun ω => w i * (|Z i ω| * |Z (i + 1) ω|)) μ ≤
-      (∫ ω, Z 0 ω ^ 4 ∂μ) * ∑ i ∈ T, w i ^ 2 := by
+  have hvar : variance (∑ i ∈ T, fun ω => w i * (|X i ω| * |X (i + 1) ω|)) μ ≤
+      (∫ ω, Y ω ^ 4 ∂μ) * ∑ i ∈ T, w i ^ 2 := by
     rw [IndepFun.variance_sum (fun i _ => hXm i) hpair, Finset.mul_sum]
     refine Finset.sum_le_sum fun i _ => ?_
     rw [variance_const_mul]
@@ -579,23 +587,26 @@ private lemma measure_abs_sum_sub_ge_le (hmeas : ∀ i, Measurable (Z i)) (hind 
   ext ω
   simp only [Set.mem_ofPred_eq, Finset.sum_apply]
 
-/-- **Bipower variation of the continuous part.** For increments `s n i * Z i` with `Z`
-i.i.d. with finite fourth moment and `∑_{i ≤ L n} (s n i)⁴ → 0`, the bipower variation is
-asymptotically `(E|Z₀|)² ∑_{i < L n} |s n i| |s n (i+1)|`. -/
-theorem tendstoInMeasure_bipowerVariation_sub (hmeas : ∀ i, Measurable (Z i))
-    (hind : iIndepFun Z μ) (hid : ∀ i, IdentDistrib (Z i) (Z 0) μ μ)
-    (hZ4 : Integrable (fun ω => Z 0 ω ^ 4) μ) (s : ℕ → ℕ → ℝ) (L : ℕ → ℕ)
+variable {Z : ℕ → ℕ → Ω → ℝ}
+
+/-- **Bipower variation of the continuous part.** For increments `s n i * Z n i`, with each row
+`Z n` independent, every `Z n i` distributed as `Z 0 0` with finite fourth moment, and
+`∑_{i ≤ L n} (s n i)⁴ → 0`, the bipower variation is asymptotically
+`(E|Z 0 0|)² ∑_{i < L n} |s n i| |s n (i+1)|`. -/
+theorem tendstoInMeasure_bipowerVariation_sub (hmeas : ∀ n i, Measurable (Z n i))
+    (hind : ∀ n, iIndepFun (Z n) μ) (hid : ∀ n i, IdentDistrib (Z n i) (Z 0 0) μ μ)
+    (hZ4 : Integrable (fun ω => Z 0 0 ω ^ 4) μ) (s : ℕ → ℕ → ℝ) (L : ℕ → ℕ)
     (hs : Tendsto (fun n => ∑ i ∈ Finset.range (L n + 1), s n i ^ 4) atTop (𝓝 0)) :
-    TendstoInMeasure μ (fun n ω => bipowerVariation (fun i => s n i * Z i ω) (L n) -
-      (∫ ω, |Z 0 ω| ∂μ) ^ 2 * ∑ i ∈ Finset.range (L n), |s n i| * |s n (i + 1)|) atTop 0 := by
+    TendstoInMeasure μ (fun n ω => bipowerVariation (fun i => s n i * Z n i ω) (L n) -
+      (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 * ∑ i ∈ Finset.range (L n), |s n i| * |s n (i + 1)|) atTop 0 := by
   rw [tendstoInMeasure_iff_norm]
   intro ε hε
-  have hv : 0 ≤ ∫ ω, Z 0 ω ^ 4 ∂μ := integral_nonneg fun ω => by positivity
-  have hlim : Tendsto (fun n => ENNReal.ofReal (4 * (∫ ω, Z 0 ω ^ 4 ∂μ) / ε ^ 2 *
+  have hv : 0 ≤ ∫ ω, Z 0 0 ω ^ 4 ∂μ := integral_nonneg fun ω => by positivity
+  have hlim : Tendsto (fun n => ENNReal.ofReal (4 * (∫ ω, Z 0 0 ω ^ 4 ∂μ) / ε ^ 2 *
       ∑ i ∈ Finset.range (L n + 1), s n i ^ 4)) atTop (𝓝 0) := by
-    have h0 : Tendsto (fun n => 4 * (∫ ω, Z 0 ω ^ 4 ∂μ) / ε ^ 2 *
+    have h0 : Tendsto (fun n => 4 * (∫ ω, Z 0 0 ω ^ 4 ∂μ) / ε ^ 2 *
         ∑ i ∈ Finset.range (L n + 1), s n i ^ 4) atTop (𝓝 0) := by
-      simpa using hs.const_mul (4 * (∫ ω, Z 0 ω ^ 4 ∂μ) / ε ^ 2)
+      simpa using hs.const_mul (4 * (∫ ω, Z 0 0 ω ^ 4 ∂μ) / ε ^ 2)
     simpa using ENNReal.tendsto_ofReal h0
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim (fun _ => zero_le)
     fun n => ?_
@@ -610,19 +621,20 @@ theorem tendstoInMeasure_bipowerVariation_sub (hmeas : ∀ i, Measurable (Z i))
     intro i hi j hj hji
     subst hji
     exact (Finset.mem_filter.1 hj).2 (Nat.even_add_one.2 (Finset.mem_filter.1 hi).2)
-  have hsplit : ∀ ω, bipowerVariation (fun i => s n i * Z i ω) (L n) -
-      (∫ ω, |Z 0 ω| ∂μ) ^ 2 * ∑ i ∈ Finset.range (L n), w i =
-      ((∑ i ∈ Te, w i * (|Z i ω| * |Z (i + 1) ω|)) - (∫ ω, |Z 0 ω| ∂μ) ^ 2 * ∑ i ∈ Te, w i) +
-      ((∑ i ∈ To, w i * (|Z i ω| * |Z (i + 1) ω|)) - (∫ ω, |Z 0 ω| ∂μ) ^ 2 * ∑ i ∈ To, w i) := by
+  have hsplit : ∀ ω, bipowerVariation (fun i => s n i * Z n i ω) (L n) -
+      (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 * ∑ i ∈ Finset.range (L n), w i =
+      ((∑ i ∈ Te, w i * (|Z n i ω| * |Z n (i + 1) ω|)) - (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 * ∑ i ∈ Te, w i) +
+      ((∑ i ∈ To, w i * (|Z n i ω| * |Z n (i + 1) ω|)) -
+        (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 * ∑ i ∈ To, w i) := by
     intro ω
-    have h1 : bipowerVariation (fun i => s n i * Z i ω) (L n) =
-        ∑ i ∈ Finset.range (L n), w i * (|Z i ω| * |Z (i + 1) ω|) := by
+    have h1 : bipowerVariation (fun i => s n i * Z n i ω) (L n) =
+        ∑ i ∈ Finset.range (L n), w i * (|Z n i ω| * |Z n (i + 1) ω|) := by
       unfold bipowerVariation
       refine Finset.sum_congr rfl fun i _ => ?_
       simp only [hw, abs_mul]
       ring
     rw [h1, ← Finset.sum_filter_add_sum_filter_not (Finset.range (L n)) Even
-      (fun i => w i * (|Z i ω| * |Z (i + 1) ω|)),
+      (fun i => w i * (|Z n i ω| * |Z n (i + 1) ω|)),
       ← Finset.sum_filter_add_sum_filter_not (Finset.range (L n)) Even w]
     ring
   have hw2 : ∑ i ∈ Finset.range (L n), w i ^ 2 ≤ ∑ i ∈ Finset.range (L n + 1), s n i ^ 4 := by
@@ -644,28 +656,30 @@ theorem tendstoInMeasure_bipowerVariation_sub (hmeas : ∀ i, Measurable (Z i))
             ∑ i ∈ Finset.range (L n), s n (i + 1) ^ 4) / 2 := by
           rw [← Finset.sum_add_distrib, Finset.sum_div]
       _ ≤ _ := by linarith
-  have hE := measure_abs_sum_sub_ge_le hmeas hind hid hZ4 w Te hTe (half_pos hε)
-  have hO := measure_abs_sum_sub_ge_le hmeas hind hid hZ4 w To hTo (half_pos hε)
-  calc μ {x | ε ≤ ‖bipowerVariation (fun i => s n i * Z i x) (L n) -
-        (∫ ω, |Z 0 ω| ∂μ) ^ 2 * ∑ i ∈ Finset.range (L n), |s n i| * |s n (i + 1)| -
+  have hE := measure_abs_sum_sub_ge_le (hmeas n) (hind n) (hid n) hZ4 w Te hTe (half_pos hε)
+  have hO := measure_abs_sum_sub_ge_le (hmeas n) (hind n) (hid n) hZ4 w To hTo (half_pos hε)
+  calc μ {x | ε ≤ ‖bipowerVariation (fun i => s n i * Z n i x) (L n) -
+        (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 * ∑ i ∈ Finset.range (L n), |s n i| * |s n (i + 1)| -
         (0 : Ω → ℝ) x‖}
-      ≤ μ ({ω | ε / 2 ≤ |(∑ i ∈ Te, w i * (|Z i ω| * |Z (i + 1) ω|)) -
-            (∫ ω, |Z 0 ω| ∂μ) ^ 2 * ∑ i ∈ Te, w i|} ∪
-          {ω | ε / 2 ≤ |(∑ i ∈ To, w i * (|Z i ω| * |Z (i + 1) ω|)) -
-            (∫ ω, |Z 0 ω| ∂μ) ^ 2 * ∑ i ∈ To, w i|}) := by
+      ≤ μ ({ω | ε / 2 ≤ |(∑ i ∈ Te, w i * (|Z n i ω| * |Z n (i + 1) ω|)) -
+            (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 * ∑ i ∈ Te, w i|} ∪
+          {ω | ε / 2 ≤ |(∑ i ∈ To, w i * (|Z n i ω| * |Z n (i + 1) ω|)) -
+            (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 * ∑ i ∈ To, w i|}) := by
         refine measure_mono fun ω hω => ?_
         simp only [Set.mem_ofPred_eq, Pi.zero_apply, sub_zero, Real.norm_eq_abs] at hω
         rw [← hw, hsplit ω] at hω
         by_contra hcon
         simp only [Set.mem_union, Set.mem_ofPred_eq, not_or, not_le] at hcon
         linarith [abs_add_le
-          ((∑ i ∈ Te, w i * (|Z i ω| * |Z (i + 1) ω|)) - (∫ ω, |Z 0 ω| ∂μ) ^ 2 * ∑ i ∈ Te, w i)
-          ((∑ i ∈ To, w i * (|Z i ω| * |Z (i + 1) ω|)) - (∫ ω, |Z 0 ω| ∂μ) ^ 2 * ∑ i ∈ To, w i)]
+          ((∑ i ∈ Te, w i * (|Z n i ω| * |Z n (i + 1) ω|)) -
+            (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 * ∑ i ∈ Te, w i)
+          ((∑ i ∈ To, w i * (|Z n i ω| * |Z n (i + 1) ω|)) -
+            (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 * ∑ i ∈ To, w i)]
     _ ≤ _ := measure_union_le _ _
-    _ ≤ ENNReal.ofReal ((∫ ω, Z 0 ω ^ 4 ∂μ) * (∑ i ∈ Te, w i ^ 2) / (ε / 2) ^ 2) +
-          ENNReal.ofReal ((∫ ω, Z 0 ω ^ 4 ∂μ) * (∑ i ∈ To, w i ^ 2) / (ε / 2) ^ 2) :=
+    _ ≤ ENNReal.ofReal ((∫ ω, Z 0 0 ω ^ 4 ∂μ) * (∑ i ∈ Te, w i ^ 2) / (ε / 2) ^ 2) +
+          ENNReal.ofReal ((∫ ω, Z 0 0 ω ^ 4 ∂μ) * (∑ i ∈ To, w i ^ 2) / (ε / 2) ^ 2) :=
         add_le_add hE hO
-    _ = ENNReal.ofReal ((∫ ω, Z 0 ω ^ 4 ∂μ) * (∑ i ∈ Finset.range (L n), w i ^ 2) /
+    _ = ENNReal.ofReal ((∫ ω, Z 0 0 ω ^ 4 ∂μ) * (∑ i ∈ Finset.range (L n), w i ^ 2) /
           (ε / 2) ^ 2) := by
         rw [← ENNReal.ofReal_add (by positivity) (by positivity), ← add_div, ← mul_add,
           Finset.sum_filter_add_sum_filter_not]
@@ -673,83 +687,84 @@ theorem tendstoInMeasure_bipowerVariation_sub (hmeas : ∀ i, Measurable (Z i))
         refine ENNReal.ofReal_le_ofReal ?_
         have hε2 : (ε / 2) ^ 2 = ε ^ 2 / 4 := by ring
         rw [hε2, div_div_eq_mul_div,
-          show 4 * (∫ ω, Z 0 ω ^ 4 ∂μ) / ε ^ 2 * ∑ i ∈ Finset.range (L n + 1), s n i ^ 4 =
-            (∫ ω, Z 0 ω ^ 4 ∂μ) * (∑ i ∈ Finset.range (L n + 1), s n i ^ 4) * 4 / ε ^ 2 by ring]
+          show 4 * (∫ ω, Z 0 0 ω ^ 4 ∂μ) / ε ^ 2 * ∑ i ∈ Finset.range (L n + 1), s n i ^ 4 =
+            (∫ ω, Z 0 0 ω ^ 4 ∂μ) * (∑ i ∈ Finset.range (L n + 1), s n i ^ 4) * 4 / ε ^ 2 by ring]
         exact div_le_div_of_nonneg_right (mul_le_mul_of_nonneg_right
           (mul_le_mul_of_nonneg_left hw2 hv) (by norm_num)) (by positivity)
 
-/-- **The largest continuous increment tends to `0`.** For increments `s n i * Z i` with `Z`
-identically distributed with finite fourth moment and `∑_{i ≤ L n} (s n i)⁴ → 0`, the largest of
-`|s n i * Z i|`, `i ≤ L n`, tends to `0` in probability. -/
-theorem tendstoInMeasure_sup_abs_mul (hid : ∀ i, IdentDistrib (Z i) (Z 0) μ μ)
-    (hZ4 : Integrable (fun ω => Z 0 ω ^ 4) μ) (s : ℕ → ℕ → ℝ) (L : ℕ → ℕ)
+/-- **The largest continuous increment tends to `0`.** For increments `s n i * Z n i` with every
+`Z n i` distributed as `Z 0 0` with finite fourth moment and `∑_{i ≤ L n} (s n i)⁴ → 0`, the
+largest of `|s n i * Z n i|`, `i ≤ L n`, tends to `0` in probability. -/
+theorem tendstoInMeasure_sup_abs_mul (hid : ∀ n i, IdentDistrib (Z n i) (Z 0 0) μ μ)
+    (hZ4 : Integrable (fun ω => Z 0 0 ω ^ 4) μ) (s : ℕ → ℕ → ℝ) (L : ℕ → ℕ)
     (hs : Tendsto (fun n => ∑ i ∈ Finset.range (L n + 1), s n i ^ 4) atTop (𝓝 0)) :
     TendstoInMeasure μ (fun n ω => (Finset.range (L n + 1)).sup' Finset.nonempty_range_add_one
-      fun i => |s n i * Z i ω|) atTop 0 := by
+      fun i => |s n i * Z n i ω|) atTop 0 := by
   rw [tendstoInMeasure_iff_norm]
   intro ε hε
-  have hlim : Tendsto (fun n => ENNReal.ofReal ((∫ ω, Z 0 ω ^ 4 ∂μ) / ε ^ 4 *
+  have hlim : Tendsto (fun n => ENNReal.ofReal ((∫ ω, Z 0 0 ω ^ 4 ∂μ) / ε ^ 4 *
       ∑ i ∈ Finset.range (L n + 1), s n i ^ 4)) atTop (𝓝 0) := by
-    have h0 : Tendsto (fun n => (∫ ω, Z 0 ω ^ 4 ∂μ) / ε ^ 4 *
+    have h0 : Tendsto (fun n => (∫ ω, Z 0 0 ω ^ 4 ∂μ) / ε ^ 4 *
         ∑ i ∈ Finset.range (L n + 1), s n i ^ 4) atTop (𝓝 0) := by
-      simpa using hs.const_mul ((∫ ω, Z 0 ω ^ 4 ∂μ) / ε ^ 4)
+      simpa using hs.const_mul ((∫ ω, Z 0 0 ω ^ 4 ∂μ) / ε ^ 4)
     simpa using ENNReal.tendsto_ofReal h0
   refine tendsto_of_tendsto_of_tendsto_of_le_of_le tendsto_const_nhds hlim (fun _ => zero_le)
     fun n => ?_
   calc μ {x | ε ≤ ‖(Finset.range (L n + 1)).sup' Finset.nonempty_range_add_one
-        (fun i => |s n i * Z i x|) - (0 : Ω → ℝ) x‖}
-      ≤ μ (⋃ i ∈ Finset.range (L n + 1), {ω | ε ^ 4 ≤ s n i ^ 4 * Z i ω ^ 4}) := by
+        (fun i => |s n i * Z n i x|) - (0 : Ω → ℝ) x‖}
+      ≤ μ (⋃ i ∈ Finset.range (L n + 1), {ω | ε ^ 4 ≤ s n i ^ 4 * Z n i ω ^ 4}) := by
         refine measure_mono fun ω hω => ?_
         simp only [Set.mem_ofPred_eq, Pi.zero_apply, sub_zero, Real.norm_eq_abs] at hω
         have h0 : 0 ≤ (Finset.range (L n + 1)).sup' Finset.nonempty_range_add_one
-            (fun i => |s n i * Z i ω|) :=
-          (abs_nonneg _).trans (Finset.le_sup' (fun i => |s n i * Z i ω|)
+            (fun i => |s n i * Z n i ω|) :=
+          (abs_nonneg _).trans (Finset.le_sup' (fun i => |s n i * Z n i ω|)
             (Finset.mem_range.2 (Nat.succ_pos _)))
         rw [abs_of_nonneg h0] at hω
         obtain ⟨i, hi, hle⟩ := (Finset.le_sup'_iff _).1 hω
         refine Set.mem_iUnion₂.2 ⟨i, hi, ?_⟩
-        calc ε ^ 4 ≤ |s n i * Z i ω| ^ 4 := pow_le_pow_left₀ hε.le hle 4
-          _ = s n i ^ 4 * Z i ω ^ 4 := by rw [Even.pow_abs ⟨2, rfl⟩, mul_pow]
-    _ ≤ ∑ i ∈ Finset.range (L n + 1), μ {ω | ε ^ 4 ≤ s n i ^ 4 * Z i ω ^ 4} :=
+        calc ε ^ 4 ≤ |s n i * Z n i ω| ^ 4 := pow_le_pow_left₀ hε.le hle 4
+          _ = s n i ^ 4 * Z n i ω ^ 4 := by rw [Even.pow_abs ⟨2, rfl⟩, mul_pow]
+    _ ≤ ∑ i ∈ Finset.range (L n + 1), μ {ω | ε ^ 4 ≤ s n i ^ 4 * Z n i ω ^ 4} :=
         measure_biUnion_finset_le _ _
     _ ≤ ∑ i ∈ Finset.range (L n + 1),
-          ENNReal.ofReal ((∫ ω, s n i ^ 4 * Z i ω ^ 4 ∂μ) / ε ^ 4) :=
+          ENNReal.ofReal ((∫ ω, s n i ^ 4 * Z n i ω ^ 4 ∂μ) / ε ^ 4) :=
         Finset.sum_le_sum fun i _ => measure_ge_le_ofReal_integral_div
-          (ae_of_all _ fun ω => by positivity) ((integrable_pow_four hid hZ4 i).const_mul _)
+          (ae_of_all _ fun ω => by positivity) ((integrable_pow_four (hid n) hZ4 i).const_mul _)
           (by positivity)
     _ = ENNReal.ofReal (∑ i ∈ Finset.range (L n + 1),
-          (∫ ω, s n i ^ 4 * Z i ω ^ 4 ∂μ) / ε ^ 4) :=
+          (∫ ω, s n i ^ 4 * Z n i ω ^ 4 ∂μ) / ε ^ 4) :=
         (ENNReal.ofReal_sum_of_nonneg fun i _ =>
           div_nonneg (integral_nonneg fun ω => by positivity) (by positivity)).symm
     _ = _ := by
         congr 1
         rw [Finset.mul_sum]
         refine Finset.sum_congr rfl fun i _ => ?_
-        rw [integral_const_mul, integral_pow_four hid i]
+        rw [integral_const_mul, integral_pow_four (hid n) i]
         ring
 
 /-- **Convergence of bipower variation in the presence of jumps.** Let the continuous increments
-be `s n i * Z i` with `Z` i.i.d. with finite fourth moment, `∑_{i ≤ L n} (s n i)⁴ → 0` and
+be `s n i * Z n i`, with each row `Z n` independent and every `Z n i` distributed as `Z 0 0`
+with finite fourth moment, `∑_{i ≤ L n} (s n i)⁴ → 0` and
 `∑_{i < L n} |s n i| |s n (i+1)| → V`, and add the increments of `K` random jumps of sizes `ξ k`
-at a.s. distinct times `τ k`. Then the bipower variation tends to `(E|Z₀|)² V` in probability:
+at a.s. distinct times `τ k`. Then the bipower variation tends to `(E|Z 0 0|)² V` in probability:
 the jumps do not contribute. -/
-theorem tendstoInMeasure_bipowerVariation_add_jump (hmeas : ∀ i, Measurable (Z i))
-    (hind : iIndepFun Z μ) (hid : ∀ i, IdentDistrib (Z i) (Z 0) μ μ)
-    (hZ4 : Integrable (fun ω => Z 0 ω ^ 4) μ) (s : ℕ → ℕ → ℝ) (L : ℕ → ℕ)
+theorem tendstoInMeasure_bipowerVariation_add_jump (hmeas : ∀ n i, Measurable (Z n i))
+    (hind : ∀ n, iIndepFun (Z n) μ) (hid : ∀ n i, IdentDistrib (Z n i) (Z 0 0) μ μ)
+    (hZ4 : Integrable (fun ω => Z 0 0 ω ^ 4) μ) (s : ℕ → ℕ → ℝ) (L : ℕ → ℕ)
     (hs : Tendsto (fun n => ∑ i ∈ Finset.range (L n + 1), s n i ^ 4) atTop (𝓝 0)) {V : ℝ}
     (hV : Tendsto (fun n => ∑ i ∈ Finset.range (L n), |s n i| * |s n (i + 1)|) atTop (𝓝 V))
     {K : Ω → ℕ} {τ ξ : ℕ → Ω → ℝ} (hK : Measurable K) (hτ : ∀ k, Measurable (τ k))
     (hξ : ∀ k, Measurable (ξ k))
     (hinj : ∀ᵐ ω ∂μ, Set.InjOn (fun k => τ k ω) (Finset.range (K ω))) :
-    TendstoInMeasure μ (fun n ω => bipowerVariation (fun i => s n i * Z i ω +
+    TendstoInMeasure μ (fun n ω => bipowerVariation (fun i => s n i * Z n i ω +
         jumpIncrement (Finset.range (K ω)) (fun k => τ k ω) (fun k => ξ k ω) n i) (L n))
-      atTop (fun _ => (∫ ω, |Z 0 ω| ∂μ) ^ 2 * V) := by
-  have h1 := tendstoInMeasure_bipowerVariation_add_jump_sub (fun n i ω => s n i * Z i ω) L
+      atTop (fun _ => (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 * V) := by
+  have h1 := tendstoInMeasure_bipowerVariation_add_jump_sub (fun n i ω => s n i * Z n i ω) L
     (tendstoInMeasure_sup_abs_mul hid hZ4 s L hs) hK hτ hξ hinj
   have h2 := tendstoInMeasure_bipowerVariation_sub hmeas hind hid hZ4 s L hs
-  have h3 : TendstoInMeasure μ (fun n (_ : Ω) => (∫ ω, |Z 0 ω| ∂μ) ^ 2 *
+  have h3 : TendstoInMeasure μ (fun n (_ : Ω) => (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 *
       ∑ i ∈ Finset.range (L n), |s n i| * |s n (i + 1)|) atTop
-      (fun _ => (∫ ω, |Z 0 ω| ∂μ) ^ 2 * V) :=
+      (fun _ => (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 * V) :=
     tendstoInMeasure_of_tendsto_ae (fun _ => aestronglyMeasurable_const)
       (ae_of_all _ fun _ => hV.const_mul _)
   refine (tendstoInMeasure_add (tendstoInMeasure_add h1 h2) h3).congr
@@ -759,18 +774,18 @@ theorem tendstoInMeasure_bipowerVariation_add_jump (hmeas : ∀ i, Measurable (Z
   · simp
 
 /-- **Constant volatility.** On the grid of mesh `1/n` of `[0, 1]`, with continuous increments
-`σ / √n * Z i` (`Z` i.i.d. with finite fourth moment, e.g. Brownian increments
-`σ (W_{(i+1)/n} - W_{i/n})`) plus finitely many jumps at a.s. distinct times, the bipower
-variation over the `n` increments tends to `(E|Z₀|)² σ²` in probability. -/
-theorem tendstoInMeasure_bipowerVariation_add_jump_const (hmeas : ∀ i, Measurable (Z i))
-    (hind : iIndepFun Z μ) (hid : ∀ i, IdentDistrib (Z i) (Z 0) μ μ)
-    (hZ4 : Integrable (fun ω => Z 0 ω ^ 4) μ) (σ : ℝ)
+`σ / √n * Z n i` (each row `Z n` i.i.d. with the law of `Z 0 0`, finite fourth moment) plus
+finitely many jumps at a.s. distinct times, the bipower variation over the `n` increments tends
+to `(E|Z 0 0|)² σ²` in probability. -/
+theorem tendstoInMeasure_bipowerVariation_add_jump_const (hmeas : ∀ n i, Measurable (Z n i))
+    (hind : ∀ n, iIndepFun (Z n) μ) (hid : ∀ n i, IdentDistrib (Z n i) (Z 0 0) μ μ)
+    (hZ4 : Integrable (fun ω => Z 0 0 ω ^ 4) μ) (σ : ℝ)
     {K : Ω → ℕ} {τ ξ : ℕ → Ω → ℝ} (hK : Measurable K) (hτ : ∀ k, Measurable (τ k))
     (hξ : ∀ k, Measurable (ξ k))
     (hinj : ∀ᵐ ω ∂μ, Set.InjOn (fun k => τ k ω) (Finset.range (K ω))) :
-    TendstoInMeasure μ (fun (n : ℕ) ω => bipowerVariation (fun i => σ / Real.sqrt n * Z i ω +
+    TendstoInMeasure μ (fun (n : ℕ) ω => bipowerVariation (fun i => σ / Real.sqrt n * Z n i ω +
         jumpIncrement (Finset.range (K ω)) (fun k => τ k ω) (fun k => ξ k ω) n i) (n - 1))
-      atTop (fun _ => (∫ ω, |Z 0 ω| ∂μ) ^ 2 * σ ^ 2) := by
+      atTop (fun _ => (∫ ω, |Z 0 0 ω| ∂μ) ^ 2 * σ ^ 2) := by
   have hsq : ∀ n : ℕ, (σ / Real.sqrt n) ^ 2 = σ ^ 2 / n := fun n => by
     rw [div_pow, Real.sq_sqrt (Nat.cast_nonneg n)]
   refine tendstoInMeasure_bipowerVariation_add_jump hmeas hind hid hZ4
@@ -825,30 +840,32 @@ theorem integral_abs_gaussianReal : ∫ x, |x| ∂(gaussianReal 0 1) = Real.sqrt
   ring
 
 /-- **Brownian increments with jumps.** On the grid of mesh `1/n` of `[0, 1]`, with continuous
-increments `σ / √n * Z i` for i.i.d. standard Gaussian `Z i` (the increments of `σ W`) plus
-finitely many jumps at a.s. distinct times, the bipower variation tends to `(2/π) σ²` in
-probability: `(π/2) BPV` estimates the integrated variance `σ²` and ignores the jumps. -/
-theorem tendstoInMeasure_bipowerVariation_add_jump_gaussian (hmeas : ∀ i, Measurable (Z i))
-    (hind : iIndepFun Z μ) (hgauss : ∀ i, μ.map (Z i) = gaussianReal 0 1) (σ : ℝ)
+increments `σ / √n * Z n i`, where each row `Z n` is i.i.d. standard Gaussian (for a Brownian
+motion `W`, `Z n i = √n (W_{(i+1)/n} - W_{i/n})`, so the increments are those of `σ W`), plus
+finitely many jumps at a.s. distinct times, which may depend on `W`, the bipower variation tends
+to `(2/π) σ²` in probability: `(π/2) BPV` estimates the integrated variance `σ²` and ignores the
+jumps. -/
+theorem tendstoInMeasure_bipowerVariation_add_jump_gaussian (hmeas : ∀ n i, Measurable (Z n i))
+    (hind : ∀ n, iIndepFun (Z n) μ) (hgauss : ∀ n i, μ.map (Z n i) = gaussianReal 0 1) (σ : ℝ)
     {K : Ω → ℕ} {τ ξ : ℕ → Ω → ℝ} (hK : Measurable K) (hτ : ∀ k, Measurable (τ k))
     (hξ : ∀ k, Measurable (ξ k))
     (hinj : ∀ᵐ ω ∂μ, Set.InjOn (fun k => τ k ω) (Finset.range (K ω))) :
-    TendstoInMeasure μ (fun (n : ℕ) ω => bipowerVariation (fun i => σ / Real.sqrt n * Z i ω +
+    TendstoInMeasure μ (fun (n : ℕ) ω => bipowerVariation (fun i => σ / Real.sqrt n * Z n i ω +
         jumpIncrement (Finset.range (K ω)) (fun k => τ k ω) (fun k => ξ k ω) n i) (n - 1))
       atTop (fun _ => 2 / Real.pi * σ ^ 2) := by
-  have hid : ∀ i, IdentDistrib (Z i) (Z 0) μ μ := fun i =>
-    ⟨(hmeas i).aemeasurable, (hmeas 0).aemeasurable, by rw [hgauss i, hgauss 0]⟩
-  have hZ4 : Integrable (fun ω => Z 0 ω ^ 4) μ := by
+  have hid : ∀ n i, IdentDistrib (Z n i) (Z 0 0) μ μ := fun n i =>
+    ⟨(hmeas n i).aemeasurable, (hmeas 0 0).aemeasurable, by rw [hgauss n i, hgauss 0 0]⟩
+  have hZ4 : Integrable (fun ω => Z 0 0 ω ^ 4) μ := by
     have h := (memLp_id_gaussianReal' (μ := 0) (v := 1) ((4 : ℕ) : ℝ≥0∞)
       (ENNReal.natCast_ne_top 4)).integrable_norm_pow (by norm_num)
-    rw [← hgauss 0] at h
-    refine ((integrable_map_measure h.aestronglyMeasurable (hmeas 0).aemeasurable).1 h).congr
+    rw [← hgauss 0 0] at h
+    refine ((integrable_map_measure h.aestronglyMeasurable (hmeas 0 0).aemeasurable).1 h).congr
       (ae_of_all _ fun ω => ?_)
     simp only [Function.comp, id, Real.norm_eq_abs]
     exact Even.pow_abs ⟨2, rfl⟩ _
-  have hm : ∫ ω, |Z 0 ω| ∂μ = Real.sqrt (2 / Real.pi) := by
-    rw [← integral_abs_gaussianReal, ← hgauss 0,
-      integral_map (hmeas 0).aemeasurable continuous_abs.aestronglyMeasurable]
+  have hm : ∫ ω, |Z 0 0 ω| ∂μ = Real.sqrt (2 / Real.pi) := by
+    rw [← integral_abs_gaussianReal, ← hgauss 0 0,
+      integral_map (hmeas 0 0).aemeasurable continuous_abs.aestronglyMeasurable]
   have := tendstoInMeasure_bipowerVariation_add_jump_const hmeas hind hid hZ4 σ hK hτ hξ hinj
   rwa [hm, Real.sq_sqrt (by positivity)] at this
 

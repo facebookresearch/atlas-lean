@@ -104,9 +104,9 @@ example : bipowerVariation (fun i => (i : ℝ) + 1) 2 = 8 := by
 /-! ### Non-vacuity: Brownian increments with a jump
 
 On `ℝ^ℕ` with the product of standard Gaussians, the coordinates are i.i.d. `N(0,1)`, checked
-from Mathlib's `iIndepFun_infinitePi` and `infinitePi_map_eval`, not through the theorem. Adding
-one jump of size `5` at time `1/2`, `tendstoInMeasure_bipowerVariation_add_jump_gaussian` gives
-`BPV → (2/π) σ²`. -/
+from Mathlib's `iIndepFun_infinitePi` and `infinitePi_map_eval`, not through the theorem. Every
+row of the array `Z n i ω = ω i` is that i.i.d. sequence. Adding one jump of size `5` at time
+`1/2`, `tendstoInMeasure_bipowerVariation_add_jump_gaussian` gives `BPV → (2/π) σ²`. -/
 
 example (σ : ℝ) :
     TendstoInMeasure (Measure.infinitePi fun _ : ℕ => gaussianReal 0 1)
@@ -114,10 +114,10 @@ example (σ : ℝ) :
         jumpIncrement (Finset.range 1) (fun _ => (1 / 2 : ℝ)) (fun _ => (5 : ℝ)) n i) (n - 1))
       atTop (fun _ => 2 / Real.pi * σ ^ 2) :=
   tendstoInMeasure_bipowerVariation_add_jump_gaussian
-    (μ := Measure.infinitePi fun _ : ℕ => gaussianReal 0 1) (Z := fun i ω => ω i)
-    (fun i => measurable_pi_apply i)
-    (iIndepFun_infinitePi (X := fun (_ : ℕ) (x : ℝ) => x) fun _ => measurable_id)
-    (fun i => Measure.infinitePi_map_eval _ i) σ (K := fun _ => 1) (τ := fun _ _ => 1 / 2)
+    (μ := Measure.infinitePi fun _ : ℕ => gaussianReal 0 1) (Z := fun _ i ω => ω i)
+    (fun _ i => measurable_pi_apply i)
+    (fun _ => iIndepFun_infinitePi (X := fun (_ : ℕ) (x : ℝ) => x) fun _ => measurable_id)
+    (fun _ i => Measure.infinitePi_map_eval _ i) σ (K := fun _ => 1) (τ := fun _ _ => 1 / 2)
     (ξ := fun _ _ => 5) measurable_const (fun _ => measurable_const) (fun _ => measurable_const)
     (ae_of_all _ fun _ a ha b hb _ => by
       simp only [Finset.coe_range, Set.mem_Iio] at ha hb
