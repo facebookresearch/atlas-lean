@@ -42,9 +42,11 @@ satisfied?
 This is the decision version of MINIMUM EQUIVALENCE DELETION ([LO11] of the Crescenzi-Kann
 compendium); the bound is a positive integer, following the Garey-Johnson convention for decision
 versions. An equivalence `l₁ ≡ l₂` is satisfied when both literals get the same truth value.
-NP-hardness: the equivalences `x ≡ ¬y`, one for each edge `{x, y}` of a graph, are all satisfied
-exactly by the cuts of the graph, so at most `K` of them are unsatisfied exactly when some cut
-has at least `|E| - K` edges, which is SIMPLE MAX CUT ([ND16], Garey, Johnson and Stockmeyer).
+NP-hardness, from SIMPLE MAX CUT ([ND16], Garey, Johnson and Stockmeyer): for a graph and a cut
+bound `J ≤ |E|`, take the equivalences `x ≡ ¬y`, one for each edge `{x, y}`, and `z ≡ ¬z` for a
+fresh variable `z`, which no assignment satisfies. An assignment satisfies exactly the
+equivalences of the edges cut by its true variables, so at most `|E| - J + 1` (a positive bound)
+equivalences are unsatisfied exactly when some cut has at least `J` edges.
 
 Variables are `0, …, n - 1`. A literal is a pair `(x, b)` of a variable and a polarity, as in
 `CSLibExt.Logics.Propositional.CNF` (`b = true` is `x`, `b = false` is `¬x`), and is true under
