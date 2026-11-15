@@ -34,7 +34,7 @@ namespace MetaMathlibExt.Complexity.NPComplete.ConsistencyOfDatabaseFrequencyTab
 
 INSTANCE: a set `A` of attribute names, a domain set `D_a` for each `a ∈ A`, a set `V` of
 objects, a collection `F` of frequency tables for some pairs `a, b ∈ A` (a frequency table for
-`a, b ∈ A` is a function `f_{a,b} : D_a × D_b → ℕ` with the sum, over all pairs `x ∈ D_a` and
+`a, b ∈ A` is a function `f_{a,b} : D_a × D_b → Z⁺` with the sum, over all pairs `x ∈ D_a` and
 `y ∈ D_b`, of `f_{a,b}(x, y)` equal to `|V|`), and a set `K` of triples `(v, a, x)` with
 `v ∈ V`, `a ∈ A` and `x ∈ D_a`, representing the known attribute values. QUESTION: are the
 frequency tables in `F` consistent with the known attribute values in `K`, i.e., is there a
@@ -54,8 +54,8 @@ table is a pair `((a, b), rows)` whose `rows` list has `d_a` rows, each of lengt
 pair, so `WellFormed` requires the pairs `(a, b)` of the tables to be distinct. The functions
 `g_a` are given together as one function `g` with `g a v = g_a(v)`.
 
-Table entries are natural numbers (frequencies, so `0` is allowed); Garey and Johnson print
-the range of `f_{a,b}` as `Z⁺`. Numbers use the canonical binary encoding.
+Table entries are positive integers, as in Garey and Johnson's `f_{a,b} : D_a × D_b → Z⁺`
+(`WellFormed`). Numbers use the canonical binary encoding.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -83,13 +83,14 @@ def entry (rows : List (List ℕ)) (x y : ℕ) : ℕ :=
   (rows.getD x []).getD y 0
 
 /-- Well-formedness of an instance: `|V|` is written in unary as `[true, …, true]`; every
-table is indexed by a pair of attributes, has `d_a` rows of length `d_b`, and has entries
-summing to `|V|`; the pairs of the tables are distinct; and every known value `(v, a, x)` has
-`v ∈ V`, `a ∈ A` and `x ∈ D_a`. -/
+table is indexed by a pair of attributes, has `d_a` rows of length `d_b`, and has positive
+entries summing to `|V|`; the pairs of the tables are distinct; and every known value
+`(v, a, x)` has `v ∈ V`, `a ∈ A` and `x ∈ D_a`. -/
 def WellFormed (i : FrequencyTablesInstance) : Prop :=
   (∀ b ∈ i.1, b = true) ∧
     (∀ t ∈ i.2.2.1, t.1.1 < i.2.1.length ∧ t.1.2 < i.2.1.length ∧
-      t.2.length = domSize i t.1.1 ∧ (∀ row ∈ t.2, row.length = domSize i t.1.2) ∧
+      t.2.length = domSize i t.1.1 ∧
+      (∀ row ∈ t.2, row.length = domSize i t.1.2 ∧ ∀ e ∈ row, 0 < e) ∧
       (t.2.map List.sum).sum = i.1.length) ∧
     (i.2.2.1.map Prod.fst).Nodup ∧
     ∀ k ∈ i.2.2.2, k.1 < i.1.length ∧ k.2.1 < i.2.1.length ∧ k.2.2 < domSize i k.2.1
