@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
+import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Tactic.Linarith
@@ -17,32 +18,37 @@ import PhyslibExt.EarthScience.WeakDiffusion
 /-!
 # Weak diffusion checks
 
-Concrete consumers of `PhyslibExt.EarthScience.WeakDiffusion`:
-constant diffusivity `κ = 1` with forcing `f = 2`, where the weak
-equation holds against the test function `v(x) = x * (1 - x)` and the
-right-hand side evaluates to `1 / 3`; and the zero-forcing boundary
-case `f = 0` with `κ(x) = 1 + x`, where the solution vanishes on
-`[0,1]`, in particular at both endpoints.
+Concrete consumers of `PhyslibExt.EarthScience.WeakDiffusion`: constant
+diffusivity with a constant source, tested against `x * (1 - x)`, and the
+zero-source case, whose solution vanishes.
 
 ## i. Overview
 
-These are elaboration and non-vacuity checks, not new results.
+These are elaboration and non-vacuity checks, not new results. With
+`κ = 1` and `f = 2`, the theorem's hypotheses hold and its weak solution
+`u`, tested against `v(x) = x * (1 - x)`, gives
+`∫₀¹ u' v' = ∫₀¹ 2 * x * (1 - x) = 1 / 3`. With `κ(x) = 1 + x` and `f = 0`,
+the zero function solves the weak problem, so by uniqueness the solution
+vanishes on `[0,1]`, in particular at both endpoints.
 
 ## ii. Key results
 
-No new definitions or results are introduced here.
+No new results are introduced here; the private definitions `quadWeak`
+and `zeroWeak` are the test functions `x * (1 - x)` and `0` as `WeakH10`
+values.
 
 ## iii. Table of contents
 
 - A. Concrete test function `x * (1 - x)` in `H¹₀(0,1)`
-- B. Constant diffusivity, forcing `2`
-- C. Zero forcing with `κ(x) = 1 + x`: vanishing solution
+- B. Constant diffusivity, source `2`
+- C. Zero source with `κ(x) = 1 + x`: vanishing solution
+
+## iv. References
+
+- `PhyslibExt.EarthScience.WeakDiffusion`
 -/
 
 open MeasureTheory
-
-private instance : IsFiniteMeasure (volume.restrict (Set.Icc (0 : ℝ) 1)) :=
-  ⟨by rw [Measure.restrict_apply_univ, Real.volume_Icc]; exact ENNReal.ofReal_lt_top⟩
 
 /-! ## A. Concrete test function `x * (1 - x)` in `H¹₀(0,1)` -/
 
@@ -83,21 +89,22 @@ private def quadWeak : EarthScience.WeakH10 where
     rw [show (∫ t in (0 : ℝ)..1, (1 - 2 * t)) = (1 - (1 : ℝ) ^ 2) - (0 - (0 : ℝ) ^ 2) from hFTC]
     norm_num
 
-/-! ## B. Constant diffusivity, forcing `2` -/
+/-! ## B. Constant diffusivity, source `2` -/
 
-/-- With `κ = 1` and `f = 2`, a weak solution exists, and the right-hand
-side of the weak equation against `x * (1 - x)` is `1 / 3` (matching
-`∫ (u')² = ∫ f u = 1 / 3` for the explicit solution `u = x * (1 - x)`). -/
-example :
-    (∃ u : EarthScience.WeakH10, ∀ v : EarthScience.WeakH10,
+/-- With `κ = 1` and `f = 2`, the theorem gives a weak solution `u`, and
+testing its weak equation against `quadWeak` (that is, `x * (1 - x)`) gives
+`∫₀¹ u' * (1 - 2 * x) = ∫₀¹ 2 * (x * (1 - x)) = 1 / 3`. -/
+example : ∃ u : EarthScience.WeakH10,
+    (∀ v : EarthScience.WeakH10,
       ∫ x in (0 : ℝ)..1, (1 : ℝ) * u.weakDeriv x * v.weakDeriv x
         = ∫ x in (0 : ℝ)..1, (2 : ℝ) * v.toFun x)
-    ∧ ∫ x in (0 : ℝ)..1, (2 : ℝ) * (x * (1 - x)) = 1 / 3 := by
+    ∧ ∫ x in (0 : ℝ)..1, (1 : ℝ) * u.weakDeriv x * quadWeak.weakDeriv x = 1 / 3 := by
   obtain ⟨u, hu, -⟩ := EarthScience.weak_diffusion_exists_unique
     (κ := fun _ => (1 : ℝ)) (f := fun _ => (2 : ℝ)) (kmin := 1) (kmax := 1)
     (by norm_num) aestronglyMeasurable_const
     (Filter.Eventually.of_forall fun _ => ⟨le_rfl, le_rfl⟩) (memLp_const 2)
-  refine ⟨⟨u, hu⟩, ?_⟩
+  refine ⟨u, hu, (hu quadWeak).trans ?_⟩
+  show ∫ x in (0 : ℝ)..1, (2 : ℝ) * (x * (1 - x)) = 1 / 3
   have hInt : IntervalIntegrable (fun t : ℝ => 2 * t - 2 * t ^ 2) volume 0 1 :=
     (by fun_prop : Continuous fun t : ℝ => 2 * t - 2 * t ^ 2).intervalIntegrable 0 1
   have hFTC := intervalIntegral.integral_eq_sub_of_hasDerivAt (a := (0 : ℝ)) (b := (1 : ℝ))
@@ -114,7 +121,7 @@ example :
     from hFTC]
   norm_num
 
-/-! ## C. Zero forcing with `κ(x) = 1 + x`: vanishing solution -/
+/-! ## C. Zero source with `κ(x) = 1 + x`: vanishing solution -/
 
 /-- The zero function as an `H¹₀(0,1)` function. -/
 private def zeroWeak : EarthScience.WeakH10 where
@@ -126,8 +133,9 @@ private def zeroWeak : EarthScience.WeakH10 where
     simp
   integral_weakDeriv_eq_zero := by simp
 
-/-- With `κ(x) = 1 + x` and zero forcing, the weak solution vanishes on
-`[0,1]`, in particular at both endpoints. -/
+/-- With `κ(x) = 1 + x` and zero source, `zeroWeak` solves the weak problem,
+so by uniqueness the weak solution vanishes on `[0,1]`, in particular at both
+endpoints. -/
 example : ∃ u : EarthScience.WeakH10,
     Set.EqOn u.toFun 0 (Set.Icc 0 1) ∧ u.toFun 0 = 0 ∧ u.toFun 1 = 0 := by
   obtain ⟨u, -, huniq⟩ := EarthScience.weak_diffusion_exists_unique

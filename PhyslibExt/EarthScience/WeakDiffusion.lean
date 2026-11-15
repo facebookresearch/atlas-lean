@@ -7,49 +7,86 @@ LICENSE file in the root directory of this source tree.
 -/
 module
 
-public import Mathlib.Algebra.Order.Star.Real
-public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
-public import Mathlib.MeasureTheory.Integral.DominatedConvergence
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.AbsolutelyContinuousFun
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
+import Mathlib.MeasureTheory.Integral.DominatedConvergence
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.AbsolutelyContinuousFun
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.LebesgueDifferentiationThm
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
 
 /-!
-# Weak diffusion on (0,1)
+# Weak solutions of steady diffusion on (0,1)
 
-Bounded-domain weak diffusion: for `κ` bounded measurable with
-`0 < kmin ≤ κ ≤ kmax` a.e. and `f ∈ L²(0,1)`, there is a weak solution
-`u ∈ H¹₀(0,1)` satisfying `∫ κ u' v' = ∫ f v` for every `v ∈ H¹₀(0,1)`,
-and its values are unique on `[0,1]`. No drift or mass term.
+For bounded measurable `κ ≥ kmin > 0` and `f ∈ L²(0,1)`, the steady diffusion
+problem `-(κ u')' = f` on `(0,1)`, `u(0) = u(1) = 0`, has a unique weak
+solution in `H¹₀(0,1)`.
 
 ## i. Overview
 
-`H¹₀(0,1)` is encoded by the structure `WeakH10`: a function with an L²
-weak derivative, given by its integral representation, vanishing at both
-endpoints (the second field forces `toFun 1 = 0`; `toFun 0 = 0` follows
-from the integral representation). The proof is the explicit 1-D formula:
-with `F x = ∫ t in 0..x, f t` and
-`C = (∫ t in 0..1, F t / κ t) / (∫ t in 0..1, 1 / κ t)`, the candidate
-weak derivative `w = (C - F) / κ` is in L², has zero mean (exactly the
-choice of `C`), and satisfies the weak equation by integration by parts
-(`∫ F * v' = -∫ f * v`, boundary terms vanishing since `v 0 = v 1 = 0`).
-Uniqueness: testing the difference of two solutions against itself gives
-`∫ κ * (Δw)² = 0`, and `κ ≥ kmin > 0` forces `Δw = 0` a.e., hence
-agreement on `[0,1]` via the integral representations.
+`κ` is the diffusivity and `f` the source. The weak form of the problem asks
+for `u ∈ H¹₀(0,1)` with `∫₀¹ κ u' v' = ∫₀¹ f v` for every `v ∈ H¹₀(0,1)`.
+For `κ` a.e. strongly measurable with `0 < kmin ≤ κ ≤ kmax` a.e. on `[0,1]`
+and `f ∈ L²(0,1)`, such a `u` exists and its values on `[0,1]` are unique.
+There is no drift or zeroth-order term.
+
+`H¹₀(0,1)` is encoded by the structure `WeakH10` (see its docstring): the
+absolutely continuous representative on `[0,1]`, written as the primitive of
+an `L²` weak derivative with zero integral. The Sobolev spaces of pinned
+Mathlib (`TemperedDistribution.MemSobolev`) and Physlib
+(`QuantumMechanics.SpaceDHilbertSpace.SobolevSubmodule`) live on the whole
+space and are defined through the Fourier transform; neither provides `H¹₀`
+of an interval.
+
+Existence uses the explicit one-dimensional formula, obtained by integrating
+the equation once. With `F x = ∫ t in 0..x, f t` and
+`C = (∫ t in 0..1, F t / κ t) / (∫ t in 0..1, 1 / κ t)`, the weak derivative
+`w = (C - F) / κ` is in `L²`, its integral over `[0,1]` is zero (this is the
+choice of `C`, and it gives `u(1) = 0`), and it satisfies the weak equation
+by integration by parts (`∫ F * v' = -∫ f * v`, with no boundary terms since
+`v 0 = v 1 = 0`). Uniqueness: testing the difference of two solutions against
+itself gives `∫ κ * (Δw)² = 0`, and `κ ≥ kmin > 0` forces `Δw = 0` a.e.,
+hence agreement on `[0,1]` through the integral representations.
 
 ## ii. Key results
 
-- `EarthScience.weak_diffusion_exists_unique`: existence and uniqueness
-  of the weak solution in `H¹₀(0,1)`.
-- `EarthScience.WeakH10`: the H¹₀(0,1) structure used by the statement.
+- `EarthScience.WeakH10`: the `H¹₀(0,1)` structure used by the statement.
+- `EarthScience.weak_diffusion_exists_unique`: existence and uniqueness of
+  the weak solution in `H¹₀(0,1)`.
 
 ## iii. Table of contents
 
-- A. Existence (explicit formula)
-- B. Uniqueness (energy argument)
+- A. The `H¹₀(0,1)` encoding
+- B. Existence (explicit formula)
+- C. Uniqueness (energy argument)
+- D. Existence and uniqueness of the weak solution
+
+## iv. References
+
+- H. Brezis, *Functional Analysis, Sobolev Spaces and Partial Differential
+  Equations*, Universitext, Springer, 2011, Chapter 8. §8.2 (the space
+  `W^{1,p}(I)`) and §8.3 (the space `W₀^{1,p}(I)`) give the one-dimensional
+  description that `WeakH10` encodes: a continuous representative whose
+  increments are integrals of the weak derivative, vanishing at both
+  endpoints for `W₀^{1,p}`. §8.4 solves Dirichlet problems through their
+  variational formulation.
+- L. C. Evans, *Partial Differential Equations*, 2nd ed., Graduate Studies in
+  Mathematics 19, American Mathematical Society, 2010, Chapter 6: weak
+  solutions of second-order elliptic equations in divergence form (§6.1.2)
+  and their existence through the Lax–Milgram theorem and energy estimates
+  (§6.2).
+- G. Grammel, *Homogenization of elliptic differential equations in
+  one-dimensional spaces*, Abstract and Applied Analysis 2007, Article ID
+  98538, Eqs. (2.4)–(2.5): for a measurable coefficient with
+  `0 < α ≤ a ≤ β`, the one-dimensional equation is integrated once, the flux
+  `ξ = a u'` being an affine function of a primitive of the forcing and `u`
+  the primitive of `ξ / a`. Here `κ u' = C - F`.
+- `AbsolutelyContinuousOnInterval.integral_mul_deriv_eq_deriv_mul` in
+  `Mathlib/MeasureTheory/Integral/IntervalIntegral/AbsolutelyContinuousFun.lean`
+  (Mathlib): integration by parts for absolutely continuous functions.
+
+## A. The `H¹₀(0,1)` encoding
 -/
 
 @[expose] public section
@@ -58,25 +95,46 @@ namespace EarthScience
 
 open MeasureTheory
 
+/-- An element of `H¹₀(0,1)`, stored as its absolutely continuous
+representative `toFun` on `[0,1]` together with a weak derivative
+`weakDeriv ∈ L²(0,1)`.
+
+In one dimension a function is in `H¹(0,1)` exactly when it has a continuous
+representative that is a constant plus the primitive of an `L²(0,1)`
+function, its weak derivative; it is in `H¹₀(0,1)` exactly when that
+representative vanishes at both endpoints (Brezis, Chapter 8). The fields
+encode this description:
+
+- `toFun_eq_integral` makes `toFun` the primitive of `weakDeriv` on `[0,1]`,
+  normalized by `toFun 0 = 0` (an empty integral). So `toFun` is absolutely
+  continuous on `[0,1]`, vanishes at `0`, and `weakDeriv` plays the role of
+  `u'`: it is the derivative of `toFun` at almost every point of `(0,1)`.
+- `integral_weakDeriv_eq_zero` is the condition at the other endpoint: by
+  `toFun_eq_integral` at `x = 1`, `toFun 1 = ∫₀¹ weakDeriv`, so the field
+  says exactly `toFun 1 = 0`.
+
+Values of `toFun` and `weakDeriv` outside `[0,1]` are unconstrained and do
+not enter `weak_diffusion_exists_unique`, which reads `toFun` only on `[0,1]`
+and `weakDeriv` only through integrals over `[0,1]`. -/
 structure WeakH10 where
+  /-- The absolutely continuous representative, meaningful on `[0,1]`. -/
   toFun : ℝ → ℝ
+  /-- The weak derivative, an `L²` function on `[0,1]`. -/
   weakDeriv : ℝ → ℝ
+  /-- The weak derivative is square integrable on `[0,1]`. -/
   weakDeriv_memLp :
     MemLp weakDeriv 2 (volume.restrict (Set.Icc 0 1))
+  /-- On `[0,1]`, `toFun` is the primitive of `weakDeriv` starting from `0`. -/
   toFun_eq_integral :
     ∀ x ∈ Set.Icc (0 : ℝ) 1, toFun x = ∫ t in (0 : ℝ)..x, weakDeriv t
+  /-- The weak derivative has integral zero over `[0,1]`, which is the
+  boundary condition `toFun 1 = 0`. -/
   integral_weakDeriv_eq_zero :
     ∫ t in (0 : ℝ)..1, weakDeriv t = 0
 
-private theorem weakH10_endpoints (u : WeakH10) : u.toFun 0 = 0 ∧ u.toFun 1 = 0 := by
-  constructor
-  · rw [u.toFun_eq_integral 0 ⟨le_rfl, zero_le_one⟩]
-    exact intervalIntegral.integral_same
-  · rw [u.toFun_eq_integral 1 ⟨zero_le_one, le_rfl⟩]
-    exact u.integral_weakDeriv_eq_zero
+/-! ## B. Existence (explicit formula) -/
 
-
-private theorem weak_diffusion_candidate
+private lemma weak_diffusion_candidate
     {κ f : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
     (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
     (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
@@ -330,13 +388,13 @@ private lemma WeakH10.deriv_toFun_eq_weakDeriv (v : WeakH10) :
     hx hxIcc
   exact (hHas.congr_of_eventuallyEq hEq).deriv
 
-/-- Integration by parts for the primitive of an L² function against a
+/-- Integration by parts for the primitive of an `L²` function against a
 `WeakH10` test function: `∫ F * v' = -∫ f * v`, where `F x = ∫ s in 0..x,
-f s`. The boundary terms vanish because `v 0 = v 1 = 0` (from the
-`WeakH10` integral representation and its zero-mean field). Hint: Fubini /
-interval-integral integration by parts; `F` is continuous with `F' = f`
-a.e., and `v` is given by its integral representation. -/
-private theorem weak_diffusion_ibp
+f s`. Both `F` and `v.toFun` are absolutely continuous on `[0,1]`, with
+derivatives `f` and `v.weakDeriv` almost everywhere, so Mathlib's
+integration by parts for absolutely continuous functions applies; the
+boundary terms vanish because `v 0 = v 1 = 0`. -/
+private lemma weak_diffusion_ibp
     {f : ℝ → ℝ} (hf : MemLp f 2 (volume.restrict (Set.Icc 0 1)))
     (v : WeakH10) :
     ∫ x in (0 : ℝ)..1, (∫ s in (0 : ℝ)..x, f s) * v.weakDeriv x
@@ -360,8 +418,9 @@ private theorem weak_diffusion_ibp
   rw [hLHS, hRHS] at hIbp
   exact hIbp
 
+/-! ## C. Uniqueness (energy argument) -/
 
-private theorem intervalIntegrable_of_memLp_Icc (f : ℝ → ℝ)
+private lemma intervalIntegrable_of_memLp_Icc (f : ℝ → ℝ)
     (hf : MemLp f 2 (volume.restrict (Set.Icc 0 1)))
     (x : ℝ) (hx : x ∈ Set.Icc (0 : ℝ) 1) :
     IntervalIntegrable f volume 0 x := by
@@ -375,11 +434,10 @@ private theorem intervalIntegrable_of_memLp_Icc (f : ℝ → ℝ)
     exact hOn
   exact hU.intervalIntegrable
 
-/-- The difference of two `WeakH10` functions is `WeakH10`, with the
-difference function and the difference weak derivative. Hint: `MemLp.sub`
-for the L² field; linearity of the interval integral (needs integrability
-of both weak derivatives, from their `MemLp` fields) for the other two. -/
-private theorem weakH10_sub (u u' : WeakH10) :
+/-- The difference of two `WeakH10` functions is a `WeakH10` function, with
+the difference function and the difference weak derivative: the `L²` field
+by `MemLp.sub`, the other two by linearity of the interval integral. -/
+private lemma weakH10_sub (u u' : WeakH10) :
     ∃ w : WeakH10, w.toFun = (fun x => u'.toFun x - u.toFun x)
       ∧ w.weakDeriv = (fun x => u'.weakDeriv x - u.weakDeriv x) := by
   refine ⟨⟨fun x => u'.toFun x - u.toFun x, fun x => u'.weakDeriv x - u.weakDeriv x,
@@ -396,8 +454,7 @@ private theorem weakH10_sub (u u' : WeakH10) :
         (intervalIntegrable_of_memLp_Icc _ u.weakDeriv_memLp 1 ⟨zero_le_one, le_rfl⟩),
       u'.integral_weakDeriv_eq_zero, u.integral_weakDeriv_eq_zero, sub_self]
 
-
-private theorem weak_diffusion_eqOn_of_energy_zero_of_measurable
+private lemma weak_diffusion_eqOn_of_energy_zero_of_measurable
     {κ : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
     (hκ : ∀ᵐ x ∂(volume.restrict (Set.Icc 0 1)), kmin ≤ κ x ∧ κ x ≤ kmax)
     (hκmeas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
@@ -518,6 +575,8 @@ private theorem weak_diffusion_eqOn_of_energy_zero_of_measurable
   rw [hu'_eq, hu_eq]
   exact hEq
 
+/-! ## D. Existence and uniqueness of the weak solution -/
+
 private lemma integrable_primitive_mul_of_memLp {f g : ℝ → ℝ}
     (hf : MemLp f 2 (volume.restrict (Set.Icc 0 1)))
     (hg : MemLp g 2 (volume.restrict (Set.Icc 0 1))) :
@@ -578,10 +637,12 @@ private lemma integrable_kappa_mul {κ R : ℝ → ℝ} {kmin kmax : ℝ}
         _ ≤ |kmin| ⊔ |kmax| := le_max_left _ _
   exact Integrable.bdd_mul hR hκ_meas hbdd
 
-/-- Bounded-domain weak diffusion on (0,1): κ bounded measurable,
-`0 < kmin ≤ κ ≤ kmax` a.e., `f ∈ L²`. There is a weak solution in H¹₀(0,1)
-satisfying `∫ κ u' v' = ∫ f v` for every `v ∈ H¹₀(0,1)`, and its values are
-unique. No drift or mass term. -/
+/-- Existence and uniqueness of the weak solution of the steady diffusion
+problem `-(κ u')' = f` on `(0,1)`, `u(0) = u(1) = 0`. For `κ` a.e. strongly
+measurable with `0 < kmin ≤ κ ≤ kmax` a.e. on `[0,1]` and `f ∈ L²(0,1)`,
+some `u : WeakH10` satisfies `∫₀¹ κ u' v' = ∫₀¹ f v` for every
+`v : WeakH10`, and every `u' : WeakH10` satisfying the same equations agrees
+with `u` on `[0,1]`. There is no drift or zeroth-order term. -/
 theorem weak_diffusion_exists_unique
     {κ f : ℝ → ℝ} {kmin kmax : ℝ} (hkmin : 0 < kmin)
     (hκ_meas : AEStronglyMeasurable κ (volume.restrict (Set.Icc 0 1)))
@@ -726,4 +787,5 @@ theorem weak_diffusion_exists_unique
   have hE : ∫ x in (0:ℝ)..1, κ x * (u'.weakDeriv x - u.weakDeriv x)^2 = 0 := by
     rw [← hcomb, hEq, sub_self]
   exact weak_diffusion_eqOn_of_energy_zero_of_measurable hkmin hκ hκ_meas u u' hE
+
 end EarthScience
