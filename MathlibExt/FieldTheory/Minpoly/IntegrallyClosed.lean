@@ -56,10 +56,9 @@ end minpoly
 
 namespace IsIntegrallyClosed
 
-/-- Proposition 1.28 in equality form: an element integral over the fraction
-field is integral over the integrally closed domain if and only if its
-minimal polynomial over the fraction field is the image of its minimal
-polynomial over the domain. -/
+/-- An element integral over the fraction field is integral over the
+integrally closed domain if and only if its minimal polynomial over the
+fraction field is the image of its minimal polynomial over the domain. -/
 theorem minpoly_eq_map_iff_isIntegral
     {A : Type*} [CommRing A] [IsDomain A] [IsIntegrallyClosed A]
     {K : Type*} [Field K] [Algebra A K] [IsFractionRing A K]
