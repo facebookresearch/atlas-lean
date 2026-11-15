@@ -42,12 +42,17 @@ collection of functions `g_a : V → D_a`, for each `a ∈ A`, such that `g_a(v)
 `(v, a, x) ∈ K` and such that, for each `f_{a,b} ∈ F`, `x ∈ D_a` and `y ∈ D_b`, the number of
 `v ∈ V` for which `g_a(v) = x` and `g_b(v) = y` is exactly `f_{a,b}(x, y)`?
 
-The objects are `V = {0, …, |V| - 1}`, the attributes are `A = {0, …, |A| - 1}`, and the
-domain of attribute `a` is `D_a = {0, …, d_a - 1}`, given by the list `[d_0, …, d_{|A|-1}]` of
-domain sizes. A frequency table is a pair `((a, b), rows)` whose `rows` list has `d_a` rows,
-each of length `d_b`, with `f_{a,b}(x, y)` the `y`-th entry of the `x`-th row. Each table is
-the table `f_{a,b}` of its pair, so `WellFormed` requires the pairs `(a, b)` of the tables to be
-distinct. The functions `g_a` are given together as one function `g` with `g a v = g_a(v)`.
+The objects are `V = {0, …, |V| - 1}`, with `|V|` written in unary as the length of a list
+`[true, …, true]` (as the vertex count in `BoundedDiameterAugmentationWanted`): the source lists
+the objects, and a binary `|V|` would make the problem succinct, since a table `[[2^m]]` takes
+`O(m)` bits while the functions `g_a` are defined on all `2^m` objects. The attributes are
+`A = {0, …, |A| - 1}`, and the domain of attribute `a` is `D_a = {0, …, d_a - 1}`, given by the
+list `[d_0, …, d_{|A|-1}]` of domain sizes; a binary `d_a` keeps the problem in NP, since each
+value `g_a(v)` takes `O(log d_a)` bits and a table lists its `d_a · d_b` entries. A frequency
+table is a pair `((a, b), rows)` whose `rows` list has `d_a` rows, each of length `d_b`, with
+`f_{a,b}(x, y)` the `y`-th entry of the `x`-th row. Each table is the table `f_{a,b}` of its
+pair, so `WellFormed` requires the pairs `(a, b)` of the tables to be distinct. The functions
+`g_a` are given together as one function `g` with `g a v = g_a(v)`.
 
 Table entries are natural numbers (frequencies, so `0` is allowed); Garey and Johnson print
 the range of `f_{a,b}` as `Z⁺`. Numbers use the canonical binary encoding.
@@ -63,10 +68,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number `|V|` of objects, the list of domain sizes `d_a` (one per
-attribute), the frequency tables `((a, b), rows)`, and the known values `(v, a, x)`. -/
+/-- An instance: the number `|V|` of objects in unary (a list of length `|V|`), the list of
+domain sizes `d_a` (one per attribute), the frequency tables `((a, b), rows)`, and the known
+values `(v, a, x)`. -/
 abbrev FrequencyTablesInstance :=
-  ℕ × List ℕ × List ((ℕ × ℕ) × List (List ℕ)) × List (ℕ × ℕ × ℕ)
+  List Bool × List ℕ × List ((ℕ × ℕ) × List (List ℕ)) × List (ℕ × ℕ × ℕ)
 
 /-- The size `d_a` of the domain of attribute `a`. -/
 def domSize (i : FrequencyTablesInstance) (a : ℕ) : ℕ :=
@@ -76,23 +82,26 @@ def domSize (i : FrequencyTablesInstance) (a : ℕ) : ℕ :=
 def entry (rows : List (List ℕ)) (x y : ℕ) : ℕ :=
   (rows.getD x []).getD y 0
 
-/-- Well-formedness of an instance: every table is indexed by a pair of attributes, has `d_a`
-rows of length `d_b`, and has entries summing to `|V|`; the pairs of the tables are distinct;
-and every known value `(v, a, x)` has `v ∈ V`, `a ∈ A` and `x ∈ D_a`. -/
+/-- Well-formedness of an instance: `|V|` is written in unary as `[true, …, true]`; every
+table is indexed by a pair of attributes, has `d_a` rows of length `d_b`, and has entries
+summing to `|V|`; the pairs of the tables are distinct; and every known value `(v, a, x)` has
+`v ∈ V`, `a ∈ A` and `x ∈ D_a`. -/
 def WellFormed (i : FrequencyTablesInstance) : Prop :=
-  (∀ t ∈ i.2.2.1, t.1.1 < i.2.1.length ∧ t.1.2 < i.2.1.length ∧
+  (∀ b ∈ i.1, b = true) ∧
+    (∀ t ∈ i.2.2.1, t.1.1 < i.2.1.length ∧ t.1.2 < i.2.1.length ∧
       t.2.length = domSize i t.1.1 ∧ (∀ row ∈ t.2, row.length = domSize i t.1.2) ∧
-      (t.2.map List.sum).sum = i.1) ∧
+      (t.2.map List.sum).sum = i.1.length) ∧
     (i.2.2.1.map Prod.fst).Nodup ∧
-    ∀ k ∈ i.2.2.2, k.1 < i.1 ∧ k.2.1 < i.2.1.length ∧ k.2.2 < domSize i k.2.1
+    ∀ k ∈ i.2.2.2, k.1 < i.1.length ∧ k.2.1 < i.2.1.length ∧ k.2.2 < domSize i k.2.1
 
 /-- Some functions `g_a : V → D_a` agree with every known value and realize every frequency
 table exactly. -/
 def FrequencyTablesFeasible (i : FrequencyTablesInstance) : Prop :=
-  ∃ g : ℕ → ℕ → ℕ, (∀ a < i.2.1.length, ∀ v < i.1, g a v < domSize i a) ∧
+  ∃ g : ℕ → ℕ → ℕ, (∀ a < i.2.1.length, ∀ v < i.1.length, g a v < domSize i a) ∧
     (∀ k ∈ i.2.2.2, g k.2.1 k.1 = k.2.2) ∧
     ∀ t ∈ i.2.2.1, ∀ x < domSize i t.1.1, ∀ y < domSize i t.1.2,
-      ((Finset.range i.1).filter fun v => g t.1.1 v = x ∧ g t.1.2 v = y).card = entry t.2 x y
+      ((Finset.range i.1.length).filter fun v => g t.1.1 v = x ∧ g t.1.2 v = y).card =
+        entry t.2 x y
 
 open Classical in
 /-- CONSISTENCY OF DATABASE FREQUENCY TABLES as a decision problem over bitstrings. -/
