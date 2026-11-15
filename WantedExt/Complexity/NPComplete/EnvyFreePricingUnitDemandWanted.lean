@@ -46,9 +46,11 @@ option from its demand set; with unlimited supply every such choice is feasible.
 the sum of the prices of the allocated items. The problem asks for a pricing together with an
 envy-free allocation (so ties within a demand set may be resolved in the seller's favour), and
 Theorem 3.1 shows that maximizing the profit is APX-hard already with unlimited supply. A
-bundle of two or more items has value `0` to a unit-demand consumer; it lies in a demand set
-only when it costs `0`, and replacing it by not buying keeps the allocation envy-free and the
-profit unchanged, so allocations of single items suffice.
+unit-demand consumer values a bundle at the value of its best item. With nonnegative additive
+prices, a bundle `S` in a demand set can be replaced by a highest-valued item `j` of `S`: the
+utility of `{j}` is at least that of `S`, so `{j}` is also in the demand set, and equality forces
+the other items of `S` to cost `0`, so the profit is unchanged. Hence allocations of at most one
+item suffice.
 
 Prices are nonnegative integers. With integer valuations this loses no generality: for a fixed
 allocation, envy-freeness consists of the constraints `pⱼ ≤ vᵢ(j)` and
