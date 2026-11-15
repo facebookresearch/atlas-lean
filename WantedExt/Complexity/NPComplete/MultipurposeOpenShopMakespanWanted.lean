@@ -61,7 +61,8 @@ two operations of one job, and two operations on one machine, occupy disjoint in
 that of `MultipurposeFlowShopPrecedenceMakespanWanted`. The instance type
 (`m`, `[μ_1, …, μ_r]`, one list `[p_i1, …, p_ir]` of processing times per job, `K`), the jobs, the
 stages and `processingTime` are those of `MultipurposeFlowShopThreeJobsWanted` (`FMPM|n = 3|C_max`,
-whose data are the same); `WellFormed` is that module's well-formedness without its condition
+whose data are the same; the type is exposed here as `MultipurposeOpenShopMakespanInstance`);
+`WellFormed` is that module's well-formedness without its condition
 `n = 3`, with nonempty machine sets as in `MultipurposeOpenShopPrecedenceMakespanWanted`. With
 integer data, integer start times lose no generality. Binary encoding of all numbers. Membership
 in NP: the machines and start times (each at most `K`) are a certificate checked in polynomial
@@ -78,15 +79,20 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
+/-- An instance: the number of machines `m`, the stage machine sets `[μ_1, …, μ_r]`, one list
+`[p_i1, …, p_ir]` of processing times per job (any number of jobs), and the bound `K` (the
+instance type of `MultipurposeFlowShopThreeJobsWanted`). -/
+abbrev MultipurposeOpenShopMakespanInstance := MultipurposeFlowShopThreeJobsInstance
+
 /-- Well-formedness of an instance: the machine environment is well formed (`StagesWellFormed`:
 at least one stage, machine indices below `m`, pairwise different machine sets), every machine
 set is nonempty, and every job lists one processing time per stage. -/
-def WellFormed (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
+def WellFormed (i : MultipurposeOpenShopMakespanInstance) : Prop :=
   StagesWellFormed i.1 i.2.1 ∧ (∀ M ∈ i.2.1, M ≠ []) ∧
     ∀ job ∈ i.2.2.1, job.length = i.2.1.length
 
 /-- Some MPM open-shop schedule of the jobs has makespan at most `K`. -/
-def MultipurposeOpenShopMakespanFeasible (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
+def MultipurposeOpenShopMakespanFeasible (i : MultipurposeOpenShopMakespanInstance) : Prop :=
   ∃ σ : Job i → Stage i → ℕ, ∃ a : Job i → Stage i → Fin i.1,
     IsMPMOpenShopSchedule i.1 i.2.1 (processingTime i) σ a ∧
       ∀ j, completionTime (processingTime i) σ j ≤ i.2.2.2
@@ -96,7 +102,7 @@ open Classical in
 noncomputable def multipurposeOpenShopMakespanDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
-      (α := MultipurposeFlowShopThreeJobsInstance) x with
+      (α := MultipurposeOpenShopMakespanInstance) x with
   | some i => decide (WellFormed i ∧ MultipurposeOpenShopMakespanFeasible i)
   | none => false
 
