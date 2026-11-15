@@ -53,8 +53,8 @@ this root build. They retain their own build configuration.
 Much of `MathlibExt`, `CSLibExt`, `WantedExt` and their tests comes from
 `fairinternal/formal-math`, which is an upstream source snapshot, not a Lake
 dependency. [`provenance/formal-math-sync.json`](provenance/README.md) records
-the upstream commit and, for every file, whether it is a header-only copy,
-diverged, or ATLAS-only.
+the upstream commit and, for every file taken from it, whether it is a
+header-only copy, a reviewed divergence, or retired.
 
 ## About ATLAS
 

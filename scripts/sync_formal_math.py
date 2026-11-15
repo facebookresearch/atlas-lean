@@ -5,14 +5,18 @@
         [--rationales divergences.json] [--report sync-report.md]
 
 Reads Formal-Math only through `git` in the given local repository (the objects of `--commit`
-and its first-parent history); it never fetches, so internal automation fetches the pinned
-commit first. Classifies every `.lean` file under the ATLAS root libraries, writes the manifest,
-and prints a sync report: added, removed, changed, and diverged rows.
+and its first-parent history). It never fetches (lazy partial-clone fetches and `git replace`
+refs are disabled) and refuses shallow clones, so internal automation fetches the pinned commit
+first. Classifies every `.lean` file under the ATLAS root libraries, writes a row for each file
+taken from Formal-Math (files that never came from it get no row), and prints a sync report:
+counts, added, removed, changed, and diverged rows.
 
 Fails closed, writing neither manifest nor report, when a file newly diverges from Formal-Math
-without a rationale and backport status. Give them with `--rationales`, a JSON object mapping each
-path to {"rationale": "...", "backport": "..."}. A row already diverged in the current manifest keeps
-its explanation only while its published and upstream hashes are unchanged. Output is deterministic for a fixed ATLAS tree and upstream commit.
+(including a file deleted upstream that ATLAS still publishes) without a rationale and backport
+status. Give them with `--rationales`, a JSON object mapping each path to
+{"rationale": "...", "backport": "..."}. A row already diverged in the current manifest keeps its
+explanation only while its published and upstream hashes are unchanged. `retired` rows carry over
+while the file stays absent. Output is deterministic for a fixed ATLAS tree and upstream commit.
 """
 from __future__ import annotations
 
@@ -26,13 +30,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_formal_math_sync import (  # noqa: E402  (the checker owns the header parser)
     MANIFEST, ROOTS, SCHEMA_VERSION, count_rows, dump_manifest, is_flt, leading_notice,
-    library_files, rows_digest, sha256, split_published, upstream_body,
+    library_files, sha256, split_published, upstream_body,
 )
 
 ZERO = "0" * 40
 # Read only what is already local: no `git replace` substitutions, no partial-clone lazy fetches.
 GIT_ENV = {**os.environ, "GIT_NO_REPLACE_OBJECTS": "1", "GIT_NO_LAZY_FETCH": "1"}
-FLT_RATIONALE = "third-party FLT content; keeps its own copyright header"
 
 
 def git(repo: Path, *args: str) -> bytes:
@@ -46,14 +49,19 @@ class Blobs:
 
     def __init__(self, repo: Path) -> None:
         self.proc = subprocess.Popen(["git", "--no-replace-objects", "-C", str(repo), "cat-file", "--batch"],
-                                     stdin=subprocess.PIPE, stdout=subprocess.PIPE, env=GIT_ENV)
+                                     stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                                     env=GIT_ENV)
 
     def read(self, oid: str) -> bytes:
         assert self.proc.stdin and self.proc.stdout
-        self.proc.stdin.write(oid.encode() + b"\n")
-        self.proc.stdin.flush()
+        try:
+            self.proc.stdin.write(oid.encode() + b"\n")
+            self.proc.stdin.flush()
+        except BrokenPipeError:
+            pass  # the reader exited; the empty header below reports it
         header = self.proc.stdout.readline().split()
-        if header[1:] == [b"missing"]:
+        # Older git ends the batch without a "missing" line when lazy fetching is disabled.
+        if not header or header[1:] == [b"missing"]:
             raise SystemExit(f"sync: blob {oid} is not in the local Formal-Math repository (partial clone?); "
                              "fetch the pinned commit's objects first, this script never fetches")
         if len(header) != 3 or header[1] != b"blob":
@@ -64,7 +72,10 @@ class Blobs:
 
     def close(self) -> None:
         if self.proc.stdin:
-            self.proc.stdin.close()
+            try:
+                self.proc.stdin.close()
+            except BrokenPipeError:
+                pass
         self.proc.wait()
 
 
@@ -102,7 +113,7 @@ def classify(text: str, up_text: str | None, versions: list[tuple[str, str]], cu
              blobs: Blobs) -> dict:
     """Disposition fields for one ATLAS file (without path, published hash, or rationale)."""
     if is_flt(text):
-        return {"disposition": "local", "rationale": FLT_RATIONALE}
+        return {"disposition": "local"}  # third-party FLT content keeps its own header
     # Candidate (notice, header) readings of the ATLAS file, keyed by the hash of the body they leave.
     readings: list[tuple[str, str]] = [("", "meta")]
     notice = leading_notice(text)
@@ -133,7 +144,7 @@ def classify(text: str, up_text: str | None, versions: list[tuple[str, str]], cu
         deleted = next((c for c, oid in versions if oid == ZERO), None)
         if deleted is None:
             return {"disposition": "local"}
-        return {"disposition": "retired", "upstream_commit": deleted}
+        return {"disposition": "diverged", "upstream_commit": deleted}  # deleted upstream, still published
     if found := match(up_text):
         fields = found[1]
         return {"disposition": "attributed" if "notice" in fields else "identical", **fields}
@@ -160,8 +171,8 @@ def load_json(path: Path | None) -> dict:
 
 
 def build(atlas: Path, repo: Path, commit: str, repository: str, previous: dict,
-          rationales: dict) -> tuple[dict, list[str]]:
-    """Return (manifest, paths that newly diverged without a rationale)."""
+          rationales: dict) -> tuple[dict, list[str], int]:
+    """Return (manifest, paths that newly diverged without a rationale, count of files with no row)."""
     files, links = library_files(atlas)
     if links:
         raise SystemExit("sync: symlinked paths under the root libraries: " + ", ".join(links))
@@ -169,7 +180,7 @@ def build(atlas: Path, repo: Path, commit: str, repository: str, previous: dict,
     history = upstream_history(repo, commit, files)
     old_rows = {row["path"]: row for row in previous.get("rows", [])}
     blobs = Blobs(repo)
-    rows, unexplained = [], []
+    rows, unexplained, local = [], [], 0
     try:
         for path in sorted(files):
             data = (atlas / path).read_bytes()
@@ -178,11 +189,14 @@ def build(atlas: Path, repo: Path, commit: str, repository: str, previous: dict,
             up_text = blobs.read(oid).decode("utf-8", "replace") if oid else None
             row = {"path": path, "published_sha256": sha256(data)}
             row.update(classify(text, up_text, history.get(path, []), oid, blobs))
+            if row["disposition"] == "local":
+                local += 1
+                continue
             if row["disposition"] == "diverged":
                 old = old_rows.get(path, {})
                 # A recorded explanation covers only the exact difference it was written for.
                 same = old.get("disposition") == "diverged" and all(
-                    old.get(k) == row[k] for k in ("published_sha256", "upstream_sha256"))
+                    old.get(k) == row.get(k) for k in ("published_sha256", "upstream_sha256"))
                 source = rationales.get(path) if path in rationales else old if same else {}
                 if explained(source):
                     row["rationale"], row["backport"] = source["rationale"], source["backport"]
@@ -191,21 +205,21 @@ def build(atlas: Path, repo: Path, commit: str, repository: str, previous: dict,
             rows.append(row)
     finally:
         blobs.close()
+    rows += [row for path, row in old_rows.items()
+             if row.get("disposition") == "retired" and not (atlas / path).exists()]
+    rows.sort(key=lambda row: row["path"])
     toolchain = (atlas / "lean-toolchain").read_text().strip()
     manifest = {
         "schema_version": SCHEMA_VERSION,
         "upstream": {"repository": repository, "commit": commit},
         "lean_toolchain": toolchain,
         "roots": list(ROOTS),
-        "counts": count_rows(rows),
-        "total": len(rows),
-        "rows_digest": rows_digest(rows),
         "rows": rows,
     }
-    return manifest, unexplained
+    return manifest, unexplained, local
 
 
-def report(previous: dict, manifest: dict) -> str:
+def report(previous: dict, manifest: dict, local: int) -> str:
     old = {row["path"]: row for row in previous.get("rows", [])}
     new = {row["path"]: row for row in manifest["rows"]}
     keys = ("disposition", "published_sha256", "upstream_sha256", "notice", "header")
@@ -217,8 +231,9 @@ def report(previous: dict, manifest: dict) -> str:
     lines = [f"# Formal-Math sync report: {up['repository']}@{up['commit']}", "",
              f"Previous upstream commit: {previous.get('upstream', {}).get('commit', 'none')}", "",
              "| Disposition | Files |", "| --- | ---: |"]
-    lines += [f"| {d} | {n} |" for d, n in manifest["counts"].items()]
-    lines += [f"| total | {manifest['total']} |", ""]
+    counts = count_rows(manifest["rows"])
+    lines += [f"| {d} | {n} |" for d, n in counts.items()]
+    lines += [f"| local (no row) | {local} |", f"| rows | {len(manifest['rows'])} |", ""]
 
     def section(title: str, paths: list[str], detail=lambda p: "") -> None:
         lines.append(f"## {title} ({len(paths)})")
@@ -229,7 +244,7 @@ def report(previous: dict, manifest: dict) -> str:
     section("Removed", removed, lambda p: f": was {old[p]['disposition']}")
     section("Changed", changed,
             lambda p: f": {old[p]['disposition']} -> {new[p]['disposition']}"
-            + ("" if old[p]["published_sha256"] == new[p]["published_sha256"] else ", ATLAS bytes changed"))
+            + ("" if old[p].get("published_sha256") == new[p].get("published_sha256") else ", ATLAS bytes changed"))
     section("Diverged", diverged, lambda p: f": {new[p].get('rationale', 'NO RATIONALE')} "
             f"(backport: {new[p].get('backport', 'none')})")
     return "\n".join(lines)
@@ -254,8 +269,8 @@ def main(argv: list[str] | None = None) -> int:
     rationales = load_json(a.rationales)
     if not isinstance(rationales, dict):
         raise SystemExit("sync: --rationales must be a JSON object mapping paths to {rationale, backport}")
-    manifest, unexplained = build(a.atlas, a.formal_math, commit, a.repository, previous, rationales)
-    text = report(previous, manifest)
+    manifest, unexplained, local = build(a.atlas, a.formal_math, commit, a.repository, previous, rationales)
+    text = report(previous, manifest, local)
     print(text)
     if unexplained:
         print(f"FAIL [formal-math-sync]: {len(unexplained)} new divergence(s) without a rationale and "
@@ -267,7 +282,7 @@ def main(argv: list[str] | None = None) -> int:
         a.report.write_text(text + "\n", encoding="utf-8")
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_path.write_text(dump_manifest(manifest), encoding="utf-8")
-    print(f"wrote {manifest_path} ({manifest['total']} rows)")
+    print(f"wrote {manifest_path} ({len(manifest['rows'])} rows)")
     return 0
 
 
