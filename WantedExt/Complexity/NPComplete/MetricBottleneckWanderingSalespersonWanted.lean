@@ -38,8 +38,8 @@ open BottleneckTravelingSalesman (BottleneckTravelingSalesmanInstance dist)
 # METRIC BOTTLENECK WANDERING SALESPERSON is NP-complete
 
 INSTANCE: a set `C` of `m` cities, an initial city `s ∈ C`, a final city `f ∈ C`, distances
-`d(cᵢ, cⱼ) ∈ ℕ` satisfying the triangle inequality, and a positive integer `K`. QUESTION: is
-there a simple path from `s` to `f` through all cities of `C`, i.e. a permutation
+`d(cᵢ, cⱼ) ∈ ℕ` satisfying the triangle inequality (a metric), and a positive integer `K`.
+QUESTION: is there a simple path from `s` to `f` through all cities of `C`, i.e. a permutation
 `c_π(1), …, c_π(m)` of `C` with `c_π(1) = s` and `c_π(m) = f`, whose largest distance
 `max_{1 ≤ i < m} d(c_π(i), c_π(i+1))` is at most `K`?
 
@@ -51,9 +51,9 @@ question is whether the graph of the pairs at distance `1` has a Hamiltonian pat
 The instance extends the one of `BottleneckTravelingSalesmanWanted` (number of cities `m`,
 distance matrix, bound `K`; `BottleneckTravelingSalesman.dist` reads the matrix) with `s` and
 `f`. The cities are `0, …, m - 1` with `m ≥ 1`; the distances form an `m × m` symmetric matrix
-with zero diagonal satisfying the triangle inequality (zero distances between distinct cities
-are allowed, as `d(cᵢ, cⱼ) ∈ ℕ` in the source). A path is a permutation of the cities, given as
-a list.
+with zero diagonal and positive off-diagonal entries (`BottleneckTravelingSalesman.WellFormed`),
+so they are a metric when they also satisfy the triangle inequality. A path is a permutation of
+the cities, given as a list.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -72,16 +72,14 @@ reduction from every language in `NP`
 abbrev MetricBottleneckWanderingSalespersonInstance :=
   BottleneckTravelingSalesmanInstance × ℕ × ℕ
 
-/-- Well-formedness of an instance: `m ≥ 1`; the distances form an `m × m` symmetric matrix with
-zero diagonal satisfying the triangle inequality; `s` and `f` are cities; and `K` is
-positive. -/
+/-- Well-formedness of an instance: `BottleneckTravelingSalesman.WellFormed` (`m ≥ 1`; the
+distances form an `m × m` symmetric matrix with zero diagonal and positive off-diagonal entries;
+`K` is positive), the triangle inequality, and `s` and `f` are cities. -/
 def WellFormed (i : MetricBottleneckWanderingSalespersonInstance) : Prop :=
-  0 < i.1.1 ∧ i.1.2.1.length = i.1.1 ∧ (∀ row ∈ i.1.2.1, row.length = i.1.1) ∧
-    (∀ a < i.1.1, ∀ b < i.1.1, dist i.1.2.1 a b = dist i.1.2.1 b a) ∧
-    (∀ a < i.1.1, dist i.1.2.1 a a = 0) ∧
+  BottleneckTravelingSalesman.WellFormed i.1 ∧
     (∀ a < i.1.1, ∀ b < i.1.1, ∀ c < i.1.1,
       dist i.1.2.1 a c ≤ dist i.1.2.1 a b + dist i.1.2.1 b c) ∧
-    i.2.1 < i.1.1 ∧ i.2.2 < i.1.1 ∧ 0 < i.1.2.2
+    i.2.1 < i.1.1 ∧ i.2.2 < i.1.1
 
 /-- Some permutation of the cities starts at `s`, ends at `f`, and has every distance between
 consecutive cities at most `K`. -/
