@@ -53,11 +53,12 @@ restricted to planar Hamiltonian graphs. The instance, the graph and the questio
 `GraphColoring.GraphColoringFeasible` (`(Graph i).Colorable K`). The restriction adds to
 well-formedness `K = 3`, planarity, the shared MathlibExt predicate `SimpleGraph.IsPlanar` (a
 crossing-free straight-line drawing; by Fáry's theorem this is planarity for finite simple
-graphs, as in `PlanarDegreeFourThreeColorabilityWanted`), and Hamiltonicity, Mathlib's
-`SimpleGraph.IsHamiltonian` (a Hamiltonian cycle exists; Mathlib counts the one-vertex graph as
-Hamiltonian, a trivially 3-colorable instance). The Hamiltonian cycle is not part of the
-instance; membership in NP takes a 3-coloring together with a Hamiltonian cycle as the
-certificate, and planarity is checked in polynomial time.
+graphs, as in `PlanarDegreeFourThreeColorabilityWanted`), and Hamiltonicity: at least 3
+vertices and Mathlib's `SimpleGraph.IsHamiltonian` (a Hamiltonian cycle exists), as in
+`HamiltonianCycleUndirectedWanted`; the bound excludes the one-vertex graph, which Mathlib counts
+as Hamiltonian although it has no cycle. The Hamiltonian cycle is not part of the instance;
+membership in NP takes a 3-coloring together with a Hamiltonian cycle as the certificate, and
+planarity is checked in polynomial time.
 
 Cavallaro's thesis proves Theorem 4.5, "3-Coloring is NP-complete on planar Hamiltonian
 graphs", by Lemma 4.6: from a 4-regular planar graph `G` one constructs in polynomial time a
@@ -77,9 +78,11 @@ reduction from every language in `NP`
 -/
 
 /-- Well-formedness of an instance: a well-formed GRAPH K-COLORABILITY instance (a simple edge
-list on `Fin n`) with `K = 3` whose graph is planar and Hamiltonian. -/
+list on `Fin n`) with `K = 3` whose graph is planar and Hamiltonian (`n ≥ 3` and a Hamiltonian
+cycle exists). -/
 def WellFormed (i : GraphColoringInstance) : Prop :=
-  GraphColoring.WellFormed i ∧ i.2.2 = 3 ∧ (Graph i).IsPlanar ∧ (Graph i).IsHamiltonian
+  GraphColoring.WellFormed i ∧ i.2.2 = 3 ∧ (Graph i).IsPlanar ∧ 3 ≤ i.1 ∧
+    (Graph i).IsHamiltonian
 
 open Classical in
 /-- 3-COLORABILITY on planar Hamiltonian graphs as a decision problem over bitstrings. -/
