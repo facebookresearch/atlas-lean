@@ -33,10 +33,10 @@ INSTANCE: an `m × n` matrix `A` of `0`'s and `1`'s. QUESTION: can the rows of `
 into two groups such that the resulting `m₁ × n` and `m₂ × n` matrices (`m₁ + m₂ = m`) each have
 the consecutive ones property?
 
-This is Garey and Johnson's [SR15] (p. 229), with reference [Lipsky, 1978] (a private
-communication from W. Lipski, Jr., per their bibliography), transformation from HAMILTONIAN
-PATH for cubic graphs; the original was not available. Membership in NP: the partition and a
-column permutation for each group are a certificate.
+This is Garey and Johnson's [SR15] (p. 229), with reference "[Lipsky, 1978]" (their spelling of
+W. Lipski, Jr.; a private communication per their bibliography), transformation from
+HAMILTONIAN PATH for cubic graphs; the original was not available. Membership in NP: the
+partition and a column permutation for each group are a certificate.
 
 The matrix is a list of `m` rows, each a list of `n` Booleans (`true` for `1`); rows and columns
 are indexed from `0`. The partition is a map `g` from rows to `Bool`: one group is the rows with
