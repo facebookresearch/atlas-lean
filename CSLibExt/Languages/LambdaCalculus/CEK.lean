@@ -24,6 +24,22 @@ that closure's environment extended with the argument.
 `ret_mt_terminal` shows that returning a closure to the empty continuation is
 terminal. Correctness with respect to a substitution or big-step semantics is
 not formalized here.
+
+## Source and representation
+
+The CEK machine is due to Felleisen and Friedman [FF86]. This file is a de
+Bruijn reformulation of the machine for the pure lambda calculus; the control
+operators of [FF86] are not included. Its representation choices are these:
+environments are lists indexed by de Bruijn indices, a closure stores the
+body of an abstraction together with its environment, a state either
+evaluates a term or returns a closure, and a variable whose index is outside
+its environment is stuck.
+
+## References
+
+* [FF86] M. Felleisen and D. P. Friedman, *Control operators, the
+  SECD-machine, and the λ-calculus*, 3rd Working Conference on the Formal
+  Description of Programming Concepts, 1986.
 -/
 
 @[expose] public section
