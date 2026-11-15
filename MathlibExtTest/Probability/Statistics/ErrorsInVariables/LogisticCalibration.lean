@@ -21,8 +21,8 @@ import MathlibExt.Probability.Statistics.ErrorsInVariables.LogisticCalibration
 * Rare-event calibration at `β = 0`, computed directly from `integral_const`: the induced risk
   `exp α` agrees with the closed form, and the logistic gap `exp 0 - σ 0 = 1 / 2` is positive, so
   regression calibration of the logistic risk is approximate, not exact.
-* Non-vacuity of `logistic_regressionCalibration`: on `Bool × ℝ × ℝ` with a fair label and two
-  independent standard Gaussian coordinates, `X = 2 [Y] + Z₁` and `U = Z₂` satisfy every
+* Non-vacuity of `logistic_errorsInVariables_attenuation`: on `Bool × ℝ × ℝ` with a fair label
+  and two independent standard Gaussian coordinates, `X = 2 [Y] + Z₁` and `U = Z₂` satisfy every
   hypothesis. There `β = 2`, `ρ = 1 / 2`, the naive slope is `1`, and the version statements are
   evaluated at `A = univ`, where `P(Y = 1) = 1 / 2` is computed from the definition of the
   measure.
@@ -184,9 +184,9 @@ theorem indepFun_X_U (y : Bool) : IndepFun X U P[|Y ⁻¹' {y}] := by
     Measure.map_snd_prod, measure_univ, one_smul,
     ← Measure.map_prod_map _ _ (by fun_prop) measurable_id, Measure.map_id]
 
-/-- Every hypothesis of `logistic_regressionCalibration` holds for this model; the conclusions
-give `P(Y = 1) = 1 / 2` as the integral of the true and of the naive logistic models over the
-whole space, and recover `β = 2` from the naive slope `1` and `ρ = 1 / 2`. -/
+/-- Every hypothesis of `logistic_errorsInVariables_attenuation` holds for this model; the
+conclusions give `P(Y = 1) = 1 / 2` as the integral of the true and of the naive logistic
+models over the whole space, and recover `β = 2` from the naive slope `1` and `ρ = 1 / 2`. -/
 theorem nonvacuous :
     (∫ ω, sigmoid (discriminantIntercept (1 / 2) 0 2 1 + 2 * X ω) ∂P = 1 / 2) ∧
     (∫ ω, sigmoid (discriminantIntercept (1 / 2) 0 2 (1 + 1) + 1 / 2 * 2 * (X + U) ω) ∂P =
@@ -194,9 +194,9 @@ theorem nonvacuous :
     discriminantSlope 0 2 (1 + 1) / attenuationFactor 1 1 = 2 := by
   have hp₀ : 0 < P.real (Y ⁻¹' {true}) := by rw [probReal_Y_true]; norm_num
   have hp₁ : P.real (Y ⁻¹' {true}) < 1 := by rw [probReal_Y_true]; norm_num
-  obtain ⟨h₁, h₂, h₃⟩ := logistic_regressionCalibration (μ₀ := 0) (μ₁ := 2) (v := 1) (vu := 1)
-    measurable_Y measurable_X measurable_U hp₀ hp₁ one_ne_zero (hasLaw_X false) (hasLaw_X true)
-    (hasLaw_U false) (hasLaw_U true) (indepFun_X_U false) (indepFun_X_U true)
+  obtain ⟨h₁, h₂, h₃⟩ := logistic_errorsInVariables_attenuation (μ₀ := 0) (μ₁ := 2) (v := 1)
+    (vu := 1) measurable_Y measurable_X measurable_U hp₀ hp₁ one_ne_zero (hasLaw_X false)
+    (hasLaw_X true) (hasLaw_U false) (hasLaw_U true) (indepFun_X_U false) (indepFun_X_U true)
   have hβ : discriminantSlope 0 2 ((1 : ℝ≥0) : ℝ) = 2 := by norm_num [discriminantSlope]
   have hρ : attenuationFactor ((1 : ℝ≥0) : ℝ) ((1 : ℝ≥0) : ℝ) = 1 / 2 := by
     norm_num [attenuationFactor]
@@ -213,7 +213,7 @@ theorem nonvacuous :
     rw [h₃]
     norm_num [discriminantSlope]
 
-#print axioms logistic_regressionCalibration
+#print axioms logistic_errorsInVariables_attenuation
 #print axioms setIntegral_bayesPosterior_eq_measureReal_inter
 #print axioms exp_sub_integral_sigmoid_affine_gaussianReal_le
 #print axioms nonvacuous

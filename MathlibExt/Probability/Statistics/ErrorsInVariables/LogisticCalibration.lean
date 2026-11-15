@@ -15,32 +15,43 @@ public import Mathlib.Probability.ConditionalProbability
 public import Mathlib.Probability.Distributions.Gaussian.Real
 
 /-!
-# Regression calibration for logistic errors-in-variables
+# Logistic errors-in-variables: slope attenuation and rare-event calibration
 
 A binary outcome `Y` follows a logistic model `P(Y = 1 | X) = σ(α + β X)` in a regressor `X`
 that is observed only through `W = X + U`. *Regression calibration* corrects the naive fit of
 `Y` on `W` by replacing `X` with its calibrated value `E[X | W]`; when `E[X | W]` is linear in
 `W` with slope `ρ`, this divides the naive slope by `ρ`. For the linear model the correction is
 exact (`MathlibExt.Probability.Statistics.LinearModel.ErrorsInVariables`). For the logistic
-model it is exact in two classical settings, both proved here.
+model this file proves two weaker results: an exact attenuation-and-deattenuation identity for
+the slope in the normal discriminant model, and an approximate regression-calibration bound for
+rare events.
 
-**Normal discriminant model.** If, given `Y = y`, `X ~ N(μ_y, v)` and `U ~ N(0, v_u)` are
-independent, then `P(Y = 1 | X)` is exactly logistic with slope `β = (μ₁ - μ₀) / v`, and
-`P(Y = 1 | W)` is exactly logistic with slope `ρ β`, where `ρ = v / (v + v_u)` is the
-(within-class) reliability ratio `attenuationFactor v v_u`. The naive logistic slope is therefore
-attenuated by `ρ`, and dividing it by `ρ` recovers `β` (`logistic_regressionCalibration`). Here
-`ρ` uses the class-conditional variance `v`, not the marginal variance of `X`, which also contains
-the between-class spread `D = p (1 - p) (μ₁ - μ₀)²`. Correcting with that marginal reliability
-ratio `(v + D) / (v + D + v_u)` instead gives `β v (v + v_u + D) / ((v + v_u) (v + D))`, which
-undercorrects and equals `β` only when `v_u D β = 0`. The conditional probabilities are stated as
-versions: `∫_{W ∈ A} σ(α_W + ρ β W) dP = P(Y = 1, W ∈ A)` for every measurable `A`.
+**Normal discriminant model: exact slope attenuation.** If, given `Y = y`, `X ~ N(μ_y, v)` and
+`U ~ N(0, v_u)` are independent, then `P(Y = 1 | X)` is exactly logistic with slope
+`β = (μ₁ - μ₀) / v`, and `P(Y = 1 | W)` is exactly logistic with slope `ρ β`, where
+`ρ = v / (v + v_u)` is the (within-class) reliability ratio `attenuationFactor v v_u`. The naive
+logistic slope is therefore attenuated by `ρ`, and dividing it by `ρ` recovers `β`
+(`logistic_errorsInVariables_attenuation`). This deattenuation is not regression calibration in
+the sense above: under the class mixture,
+`E[X | W = w] = ρ w + (1 - ρ) (μ₀ + (μ₁ - μ₀) P(Y = 1 | W = w))`, which is not linear in `w`
+when `ρ < 1` and `μ₀ ≠ μ₁`, so `E[X | W]` is not `linearCalibration _ ρ` (this formula is not
+formalized here). Here `ρ` uses the class-conditional variance `v`, not the marginal variance of
+`X`, which also contains the between-class spread `D = p (1 - p) (μ₁ - μ₀)²`. Correcting with
+that marginal reliability ratio `(v + D) / (v + D + v_u)` instead gives
+`β v (v + v_u + D) / ((v + v_u) (v + D))`, which undercorrects and equals `β` only when
+`v_u D β = 0`. The conditional probabilities are stated as versions:
+`∫_{W ∈ A} σ(α_W + ρ β W) dP = P(Y = 1, W ∈ A)` for every measurable `A`.
 
-**Rare events.** With the regression-calibration assumption `X | W = w ~ N(m(w), τ²)`, the
-log-linear risk `exp (α + β X)`, the rare-event limit of the logistic risk, induces
-`E[exp (α + β X) | W = w] = exp (α + β² τ² / 2 + β m(w))`: the calibrated model keeps the true
-slope `β` and shifts only the intercept (`integral_exp_affine_gaussianReal`). The logistic
-risk itself differs from this calibrated risk by at most `exp (2 α + 2 β² τ² + 2 β m(w))`, the
-square of the risk scale (`exp_sub_integral_sigmoid_affine_gaussianReal_le`).
+**Rare events: approximate regression calibration.** With the regression-calibration assumption
+`X | W = w ~ N(m(w), τ²)`, the log-linear risk `exp (α + β X)`, the rare-event limit of the
+logistic risk, induces `E[exp (α + β X) | W = w] = R(w)` with
+`R(w) = exp (α + β² τ² / 2 + β m(w))`: for the log-linear risk, regression calibration is exact,
+keeping the true slope `β` and shifting only the intercept (`integral_exp_affine_gaussianReal`).
+For the logistic risk it is only approximate: `E[σ(α + β X) | W = w]` lies below `R(w)` and
+falls short of it by at most `exp (2 α + 2 β² τ² + 2 β m(w)) = R(w)² exp (β² τ²)`, quadratic in
+the risk scale up to the variance factor `exp (β² τ²)`
+(`exp_sub_integral_sigmoid_affine_gaussianReal_le`). The gap is genuinely nonzero, e.g. `1 / 2`
+at `α = β = 0`.
 
 ## Main definitions
 
@@ -57,10 +68,12 @@ square of the risk scale (`exp_sub_integral_sigmoid_affine_gaussianReal_le`).
   equal variance, `bayesPosterior` composed with `Z` is a version of `P(Y = 1 | Z)`.
 * `discriminantSlope_add_eq_attenuationFactor_mul`, `abs_discriminantSlope_add_lt`: the slope on
   the mismeasured regressor is `ρ β`, strictly smaller in absolute value when `v_u > 0`.
-* `logistic_regressionCalibration`: the logistic errors-in-variables model above.
-* `integral_exp_affine_gaussianReal`, `integral_exp_affine_linearCalibration`,
-  `integral_sigmoid_affine_gaussianReal_le`, `exp_sub_integral_sigmoid_affine_gaussianReal_le`:
-  rare-event regression calibration.
+* `logistic_errorsInVariables_attenuation`: exact logistic models in `X` and in `W`, the
+  attenuated slope `ρ β` on `W`, and its deattenuation `(ρ β) / ρ = β`.
+* `integral_exp_affine_gaussianReal`, `integral_exp_affine_linearCalibration`: exact
+  regression calibration for the log-linear risk.
+* `integral_sigmoid_affine_gaussianReal_le`, `exp_sub_integral_sigmoid_affine_gaussianReal_le`:
+  the logistic risk is within `R² exp (β² τ²)` below the calibrated log-linear risk `R`.
 
 ## References
 
@@ -150,10 +163,11 @@ theorem integral_sigmoid_affine_gaussianReal_le (α β m : ℝ) (τ2 : ℝ≥0) 
   exact integral_mono (integrable_sigmoid_affine _ _ _)
     (integrable_exp_affine_gaussianReal _ _ _ _) fun x => sigmoid_le_exp _
 
-/-- **Rare-event regression calibration for the logistic model.** If `X | W = w ~ N(m, τ²)`, the
-induced logistic risk `E[σ(α + β X) | W = w]` falls short of the calibrated log-linear risk
-`exp (α + β² τ² / 2 + β m)`, whose slope in `m` is the true `β`, by at most
-`exp (2 α + 2 β² τ² + 2 β m)`: the error is quadratic in the risk scale. -/
+/-- **Rare-event regression calibration for the logistic model is approximate.** If
+`X | W = w ~ N(m, τ²)`, the induced logistic risk `E[σ(α + β X) | W = w]` falls short of the
+calibrated log-linear risk `R = exp (α + β² τ² / 2 + β m)`, whose slope in `m` is the true `β`,
+by at most `exp (2 α + 2 β² τ² + 2 β m) = R² exp (β² τ²)`: the error is quadratic in the risk
+scale up to the variance factor `exp (β² τ²)`. -/
 theorem exp_sub_integral_sigmoid_affine_gaussianReal_le (α β m : ℝ) (τ2 : ℝ≥0) :
     exp (α + β ^ 2 * τ2 / 2 + β * m) - ∫ x, sigmoid (α + β * x) ∂gaussianReal m τ2 ≤
       exp (2 * α + 2 * β ^ 2 * τ2 + 2 * β * m) := by
@@ -340,7 +354,7 @@ theorem discriminantIntercept_add_slope_mul_midpoint (p μ₀ μ₁ v : ℝ) :
   rw [discriminantIntercept]
   ring
 
-/-- **Regression calibration for logistic errors-in-variables.** Let `Y` be a binary label with
+/-- **Slope attenuation for logistic errors-in-variables.** Let `Y` be a binary label with
 `p = P(Y = 1) ∈ (0, 1)`. Given `Y = y`, let the true regressor `X ~ N(μ_y, v)` (`v ≠ 0`) and the
 measurement error `U ~ N(0, vu)` be independent, and observe `W = X + U`. With
 `β = discriminantSlope μ₀ μ₁ v` and `ρ = attenuationFactor v vu`:
@@ -348,11 +362,14 @@ measurement error `U ~ N(0, vu)` be independent, and observe `W = X + U`. With
 1. `P(Y = 1 | X) = σ(discriminantIntercept p μ₀ μ₁ v + β X)`, an exact logistic model in `X`;
 2. `P(Y = 1 | W) = σ(discriminantIntercept p μ₀ μ₁ (v + vu) + ρ β W)`, an exact logistic model in
    `W` whose slope is attenuated by `ρ`;
-3. the regression-calibrated slope `(ρ β) / ρ` is `β`.
+3. dividing the naive slope `ρ β` by the within-class reliability ratio `ρ` recovers `β`.
 
 Items 1 and 2 are stated as versions of the conditional probabilities: their integrals over
-`{X ∈ A}`, respectively `{W ∈ A}`, are `P(Y = 1, X ∈ A)`, respectively `P(Y = 1, W ∈ A)`. -/
-theorem logistic_regressionCalibration {Ω : Type*} [MeasurableSpace Ω]
+`{X ∈ A}`, respectively `{W ∈ A}`, are `P(Y = 1, X ∈ A)`, respectively `P(Y = 1, W ∈ A)`.
+
+Item 3 is slope deattenuation, not regression calibration: `E[X | W]` is not linear in `W` for
+this mixture (see the module docstring). -/
+theorem logistic_errorsInVariables_attenuation {Ω : Type*} [MeasurableSpace Ω]
     {P : Measure Ω} [IsProbabilityMeasure P] {Y : Ω → Bool} {X U : Ω → ℝ}
     (hY : Measurable Y) (hX : Measurable X) (hU : Measurable U)
     (hp₀ : 0 < P.real (Y ⁻¹' {true})) (hp₁ : P.real (Y ⁻¹' {true}) < 1)
