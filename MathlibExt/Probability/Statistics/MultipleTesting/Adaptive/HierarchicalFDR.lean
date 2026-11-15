@@ -47,26 +47,28 @@ it within its family (`mem_yekutieliRejections_equivFin_iff`).
 * **Per-family selective FDR** (`integral_familyFDP_yekutieliRejections_le`). Write `V_S, R_S` for
   the false and total discoveries in family `S` and `FDP_S = V_S / max R_S 1` (`familyFDP`).
   If the p-values of `S` are mutually independent, its true-null p-values are valid, and the
-  p-value vector of `S` is independent of the p-values outside `S`, then
-  `E[FDP_S] ≤ q |S ∩ H0| / |S| · P(S is tested)`: BH controls the FDR of a family at
-  `q m₀ / m` *conditionally on the family being tested*. The proof conditions on the event that
-  `S` is tested, which depends only on p-values outside `S` (`isTested_iff_outsideFamily`), so
-  under the conditional measure the family's p-values keep their joint law and BH's FDR theorem
-  applies (`setIntegral_falseDiscoveryProportion_bhRejections_le`).
+  p-value vector of `S` is independent of the p-values of the other nodes of the tree
+  (`outsideFamily`), then `E[FDP_S] ≤ q |S ∩ H0| / |S| · P(S is tested)`: BH controls the FDR of
+  a family at `q m₀ / m` *conditionally on the family being tested*. The proof conditions on the
+  event that `S` is tested, which depends only on the p-values of the tree nodes outside `S`
+  (`isTested_iff_outsideFamily`), so under the conditional measure the family's p-values keep
+  their joint law and BH's FDR theorem applies
+  (`setIntegral_falseDiscoveryProportion_bhRejections_le`).
 * **Full-tree FDR** (`integral_treeFDP_yekutieliRejections_le`). The full-tree false discovery
   proportion `V / max R 1` is at most the sum of the family FDPs (`treeFDP_le_sum_familyFDP`), so
   `E[FDP_tree] ≤ q ∑_S (|S ∩ H0| / |S|) P(S tested) ≤ q · E[#families tested]`
   (`integral_treeFDP_yekutieliRejections_le_expected_tested`).
-* **Mutual independence** (`..._of_iIndepFun`): both bounds hold when all node p-values are
-  mutually independent and the true-null ones are valid.
+* **Mutual independence** (`..._of_iIndepFun`): both bounds hold when the p-values of the nodes
+  of `T` are mutually independent (`iIndepFun` indexed by the nodes of `T`) and the true-null ones
+  are valid.
 
 ## Conditions, stated explicitly
 
 * **Validity**: every true-null p-value is super-uniform (`IsValidPValue`).
 * **Independence**: within each family the p-values are mutually independent, and each family's
-  p-value vector is independent of all p-values outside the family. Both follow from mutual
-  independence of all node p-values. Nothing is assumed about false-null p-values beyond
-  measurability.
+  p-value vector is independent of the p-values of the other nodes of the tree. Both follow from
+  mutual independence of the node p-values. Nothing is assumed about false-null p-values beyond
+  measurability, and nothing at all about the values `p C` of clusters `C ∉ T`.
 * **Tree structure**: none is needed for the FDR bounds: sibling families are defined for any
   finite family of clusters, and an ancestor's family never meets the family itself
   (`not_mem_siblingFamily_of_mem_strictAncestors`). Laminarity is used only to identify the
@@ -470,66 +472,69 @@ theorem setIntegral_falseDiscoveryProportion_bhRejections_le {Ω : Type*} [Measu
 /-! ### Measurability -/
 
 theorem measurable_familyBHLevel {Ω : Type*} [MeasurableSpace Ω] (q : ℝ)
-    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D, Measurable (p D)) (S : Finset (Finset (Fin m))) :
+    (p : Finset (Fin m) → Ω → ℝ) (S : Finset (Finset (Fin m))) (hp : ∀ D ∈ S, Measurable (p D)) :
     Measurable fun ω => familyBHLevel q (fun D => p D ω) S := by
   unfold familyBHLevel familyPValues
   exact (measurable_const.mul (measurable_from_nat.comp
-    (measurable_bhIndex (fun i ω => p (S.equivFin.symm i).1 ω) (fun i => hp _) q))).div_const _
+    (measurable_bhIndex (fun i ω => p (S.equivFin.symm i).1 ω)
+      (fun i => hp _ (S.equivFin.symm i).2) q))).div_const _
 
 theorem measurableSet_isTested {Ω : Type*} [MeasurableSpace Ω] (q : ℝ)
-    (T : Finset (Finset (Fin m))) (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D, Measurable (p D))
+    (T : Finset (Finset (Fin m))) (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D ∈ T, Measurable (p D))
     (C : Finset (Fin m)) : MeasurableSet {ω | IsTested q T (fun D => p D ω) C} := by
   have h : {ω | IsTested q T (fun D => p D ω) C} =
       ⋂ E ∈ strictAncestors T C, {ω | p E ω ≤ yekutieliLevel q T (fun D => p D ω) E} := by
     ext ω
     simp [IsTested]
   rw [h]
-  exact Finset.measurableSet_biInter _ fun E _ =>
-    measurableSet_le (hp E) (measurable_familyBHLevel q p hp _)
+  exact Finset.measurableSet_biInter _ fun E hE =>
+    measurableSet_le (hp E (mem_strictAncestors.mp hE).1)
+      (measurable_familyBHLevel q p _ fun D hD => hp D (siblingFamily_subset T E hD))
 
-/-! ### The gating event depends only on p-values outside the family -/
+/-! ### The gating event depends only on the other nodes' p-values -/
 
-/-- The p-values with those of the family `S` replaced by `0`. -/
-def outsideFamily (p : Finset (Fin m) → ℝ) (S : Finset (Finset (Fin m))) :
-    Finset (Fin m) → ℝ :=
-  fun D => if D ∈ S then 0 else p D
+/-- The p-values of the nodes of `T` outside the family `S`: `p D` for `D ∈ T \ S`, and `0` for
+the members of `S` and for clusters that are not nodes of `T`. -/
+def outsideFamily (T : Finset (Finset (Fin m))) (p : Finset (Fin m) → ℝ)
+    (S : Finset (Finset (Fin m))) : Finset (Fin m) → ℝ :=
+  fun D => if D ∈ T \ S then p D else 0
 
-/-- **Whether a family is tested depends only on the p-values outside it.** -/
+/-- **Whether a family is tested depends only on the p-values of the other nodes.** -/
 theorem isTested_iff_outsideFamily {q : ℝ} {T : Finset (Finset (Fin m))}
     (p : Finset (Fin m) → ℝ) {C : Finset (Fin m)} :
-    IsTested q T p C ↔ IsTested q T (outsideFamily p (siblingFamily T C)) C := by
+    IsTested q T p C ↔ IsTested q T (outsideFamily T p (siblingFamily T C)) C := by
   unfold IsTested
   refine forall₂_congr fun E hE => ?_
   have hET : E ∈ T := (mem_strictAncestors.mp hE).1
-  have hEout : outsideFamily p (siblingFamily T C) E = p E := by
-    unfold outsideFamily
-    exact ite_eq_right_of_eq_false _ _
-      (eq_false (not_mem_siblingFamily_of_mem_strictAncestors hE (self_mem_siblingFamily hET)))
-  have hfun : familyPValues (outsideFamily p (siblingFamily T C)) (siblingFamily T E) =
+  have hEout : outsideFamily T p (siblingFamily T C) E = p E :=
+    ite_eq_left_of_eq_true _ _ (eq_true (Finset.mem_sdiff.mpr ⟨hET,
+      not_mem_siblingFamily_of_mem_strictAncestors hE (self_mem_siblingFamily hET)⟩))
+  have hfun : familyPValues (outsideFamily T p (siblingFamily T C)) (siblingFamily T E) =
       familyPValues p (siblingFamily T E) := by
     funext i
-    simp only [familyPValues, outsideFamily]
-    exact ite_eq_right_of_eq_false _ _ (eq_false (not_mem_siblingFamily_of_mem_strictAncestors hE
-      ((siblingFamily T E).equivFin.symm i).2))
+    have hi := ((siblingFamily T E).equivFin.symm i).2
+    exact ite_eq_left_of_eq_true _ _ (eq_true (Finset.mem_sdiff.mpr ⟨siblingFamily_subset T E hi,
+      not_mem_siblingFamily_of_mem_strictAncestors hE hi⟩))
   simp only [yekutieliLevel, familyBHLevel, hfun, hEout]
 
 /-! ### FDR control -/
 
 theorem measurable_familyFDP_yekutieliRejections {Ω : Type*} [MeasurableSpace Ω] (q : ℝ)
     (T : Finset (Finset (Fin m))) (p : Finset (Fin m) → Ω → ℝ)
-    (hp : ∀ D, Measurable (p D)) (H0 : Finset (Finset (Fin m))) (C : Finset (Fin m)) :
+    (hp : ∀ D ∈ T, Measurable (p D)) (H0 : Finset (Finset (Fin m))) (C : Finset (Fin m)) :
     Measurable fun ω => familyFDP H0 (yekutieliRejections q T fun D => p D ω)
       (siblingFamily T C) := by
   classical
   simp_rw [familyFDP_yekutieliRejections_eq]
   exact Measurable.ite (measurableSet_isTested q T p hp C)
     (measurable_falseDiscoveryProportion_bhRejections
-      (fun i ω => p ((siblingFamily T C).equivFin.symm i).1 ω) (fun i => hp _) _ q)
+      (fun i ω => p ((siblingFamily T C).equivFin.symm i).1 ω)
+      (fun i => hp _ (siblingFamily_subset T C ((siblingFamily T C).equivFin.symm i).2)) _ q)
     measurable_const
 
 theorem integrable_familyFDP_yekutieliRejections {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] (q : ℝ) (T : Finset (Finset (Fin m)))
-    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D, Measurable (p D)) (H0 : Finset (Finset (Fin m)))
+    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D ∈ T, Measurable (p D)) (H0 : Finset (Finset (Fin m)))
     (C : Finset (Fin m)) :
     Integrable (fun ω => familyFDP H0 (yekutieliRejections q T fun D => p D ω)
       (siblingFamily T C)) μ :=
@@ -540,39 +545,40 @@ theorem integrable_familyFDP_yekutieliRejections {Ω : Type*} [MeasurableSpace �
 
 /-- **Per-family FDR control of Yekutieli's procedure.** Let `S` be the family of the node `C`.
 Suppose the p-values of `S` are mutually independent, the true-null ones are valid, and the
-p-value vector of `S` is independent of the p-values outside `S`. Then the expected FDP of the
-discoveries in `S` is at most `q |S ∩ H0| / |S|` times the probability that `S` is tested:
-BH controls the FDR of the family conditionally on the family being tested.
+p-value vector of `S` is independent of the p-values of the other nodes of the tree
+(`outsideFamily`). Then the expected FDP of the discoveries in `S` is at most
+`q |S ∩ H0| / |S|` times the probability that `S` is tested: BH controls the FDR of the family
+conditionally on the family being tested.
 
 Source: Yekutieli (2008), the per-family step of the FDR analysis; the within-family bound is
 Benjamini & Hochberg (1995), Theorem 1. -/
 theorem integral_familyFDP_yekutieliRejections_le {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {T : Finset (Finset (Fin m))}
-    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D, Measurable (p D)) (H0 : Finset (Finset (Fin m)))
+    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D ∈ T, Measurable (p D)) (H0 : Finset (Finset (Fin m)))
     {C : Finset (Fin m)}
     (hindep : iIndepFun
       (fun i : Fin (siblingFamily T C).card => p ((siblingFamily T C).equivFin.symm i).1) μ)
     (hnull : ∀ D ∈ siblingFamily T C, D ∈ H0 → IsValidPValue μ (p D))
     (hout : IndepFun
       (fun ω (i : Fin (siblingFamily T C).card) => p ((siblingFamily T C).equivFin.symm i).1 ω)
-      (fun ω => outsideFamily (fun D => p D ω) (siblingFamily T C)) μ)
+      (fun ω => outsideFamily T (fun D => p D ω) (siblingFamily T C)) μ)
     (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     ∫ ω, familyFDP H0 (yekutieliRejections q T fun D => p D ω) (siblingFamily T C) ∂μ ≤
       q * ((siblingFamily T C ∩ H0).card : ℝ) / (siblingFamily T C).card *
         μ.real {ω | IsTested q T (fun D => p D ω) C} := by
   classical
   set S := siblingFamily T C with hS
-  set Y : Ω → (Finset (Fin m) → ℝ) := fun ω => outsideFamily (fun D => p D ω) S with hYdef
+  set Y : Ω → (Finset (Fin m) → ℝ) := fun ω => outsideFamily T (fun D => p D ω) S with hYdef
   set B : Set (Finset (Fin m) → ℝ) := {y | IsTested q T y C} with hBdef
   have hY : Measurable Y := Measurable.of_eval fun D => by
-    by_cases hD : D ∈ S
+    by_cases hD : D ∈ T \ S
     · simp only [Y, outsideFamily, hD, ite_true]
-      exact measurable_const
+      exact hp D (Finset.mem_sdiff.mp hD).1
     · simp only [Y, outsideFamily, hD, ite_false]
-      exact hp D
+      exact measurable_const
   have hB : MeasurableSet B :=
     measurableSet_isTested q T (fun D (y : Finset (Fin m) → ℝ) => y D)
-      (fun D => measurable_pi_apply D) C
+      (fun D _ => measurable_pi_apply D) C
   have hGset : {ω | IsTested q T (fun D => p D ω) C} = Y ⁻¹' B := by
     ext ω
     exact isTested_iff_outsideFamily (fun D => p D ω)
@@ -590,8 +596,9 @@ theorem integral_familyFDP_yekutieliRejections_le {Ω : Type*} [MeasurableSpace 
   rw [integral_congr_ae (Filter.Eventually.of_forall heq), integral_indicator (hY hB), hGset,
     ← card_familyNulls]
   refine setIntegral_falseDiscoveryProportion_bhRejections_le μ
-    (fun i ω => p (S.equivFin.symm i).1 ω) (fun i => hp _) hindep (familyNulls H0 S) ?_ Y hY
-    hout hB q hq₀ hq₁
+    (fun i ω => p (S.equivFin.symm i).1 ω)
+    (fun i => hp _ (siblingFamily_subset T C (S.equivFin.symm i).2)) hindep (familyNulls H0 S) ?_
+    Y hY hout hB q hq₀ hq₁
   intro i hi
   exact hnull _ (S.equivFin.symm i).2 (Finset.mem_filter.mp hi).2
 
@@ -602,13 +609,13 @@ most `q ∑_S (|S ∩ H0| / |S|) P(S is tested)`, the sum over the families `S` 
 Source: Yekutieli (2008); the sharper `2 δ* q` bound is not formalized. -/
 theorem integral_treeFDP_yekutieliRejections_le {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {T : Finset (Finset (Fin m))}
-    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D, Measurable (p D)) (H0 : Finset (Finset (Fin m)))
+    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D ∈ T, Measurable (p D)) (H0 : Finset (Finset (Fin m)))
     (hindep : ∀ C ∈ T, iIndepFun
       (fun i : Fin (siblingFamily T C).card => p ((siblingFamily T C).equivFin.symm i).1) μ)
     (hnull : ∀ D ∈ T, D ∈ H0 → IsValidPValue μ (p D))
     (hout : ∀ C ∈ T, IndepFun
       (fun ω (i : Fin (siblingFamily T C).card) => p ((siblingFamily T C).equivFin.symm i).1 ω)
-      (fun ω => outsideFamily (fun D => p D ω) (siblingFamily T C)) μ)
+      (fun ω => outsideFamily T (fun D => p D ω) (siblingFamily T C)) μ)
     (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     ∫ ω, treeFDP H0 (yekutieliRejections q T fun D => p D ω) ∂μ ≤
       ∑ S ∈ T.image (siblingFamily T),
@@ -638,79 +645,99 @@ theorem integral_treeFDP_yekutieliRejections_le {Ω : Type*} [MeasurableSpace Ω
         exact integral_familyFDP_yekutieliRejections_le μ p hp H0 (hindep C hC)
           (fun D hD hDH => hnull D (siblingFamily_subset T C hD) hDH) (hout C hC) q hq₀ hq₁
 
-/-! ### Mutually independent p-values -/
+/-! ### Mutually independent node p-values -/
 
-/-- Mutual independence of all node p-values gives the within-family independence used by the
-FDR bounds. -/
+/-- Mutual independence of the p-values of the nodes of `T` gives the within-family independence
+used by the FDR bounds, for every family `S ⊆ T`. -/
 theorem iIndepFun_familyPValues {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
-    {p : Finset (Fin m) → Ω → ℝ} (hindep : iIndepFun p μ) (S : Finset (Finset (Fin m))) :
+    {T : Finset (Finset (Fin m))} {p : Finset (Fin m) → Ω → ℝ}
+    (hindep : iIndepFun (fun D : T => p D) μ) {S : Finset (Finset (Fin m))} (hST : S ⊆ T) :
     iIndepFun (fun i : Fin S.card => p (S.equivFin.symm i).1) μ :=
-  hindep.precomp (g := fun i : Fin S.card => (S.equivFin.symm i).1)
-    fun _ _ h => S.equivFin.symm.injective (Subtype.ext h)
+  hindep.precomp
+    (g := fun i : Fin S.card => (⟨(S.equivFin.symm i).1, hST (S.equivFin.symm i).2⟩ : T))
+    fun _ _ h => S.equivFin.symm.injective (Subtype.ext (by
+      have h' := congrArg (fun d : T => (d : Finset (Fin m))) h
+      exact h'))
 
-/-- Mutual independence of all node p-values makes each family's p-value vector independent of
-the p-values outside the family. -/
+/-- Mutual independence of the p-values of the nodes of `T` makes the p-value vector of a family
+`S ⊆ T` independent of the p-values of the other nodes (`outsideFamily`). -/
 theorem indepFun_familyPValues_outsideFamily {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
-    {p : Finset (Fin m) → Ω → ℝ} (hp : ∀ D, Measurable (p D)) (hindep : iIndepFun p μ)
-    (S : Finset (Finset (Fin m))) :
+    {T : Finset (Finset (Fin m))} {p : Finset (Fin m) → Ω → ℝ}
+    (hp : ∀ D ∈ T, Measurable (p D)) (hindep : iIndepFun (fun D : T => p D) μ)
+    {S : Finset (Finset (Fin m))} (hST : S ⊆ T) :
     IndepFun (fun ω (i : Fin S.card) => p (S.equivFin.symm i).1 ω)
-      (fun ω => outsideFamily (fun D => p D ω) S) μ := by
-  have h := hindep.indepFun_finset S Sᶜ disjoint_compl_right hp
-  let φ : (S → ℝ) → (Fin S.card → ℝ) := fun v i => v (S.equivFin.symm i)
-  let ψ : (↥(Sᶜ) → ℝ) → (Finset (Fin m) → ℝ) :=
-    fun w D => if hD : D ∈ S then 0 else w ⟨D, Finset.mem_compl.mpr hD⟩
+      (fun ω => outsideFamily T (fun D => p D ω) S) μ := by
+  classical
+  set A : Finset T := Finset.univ.filter fun D => D.1 ∈ S with hA
+  have h := hindep.indepFun_finset A Aᶜ disjoint_compl_right fun D => hp D.1 D.2
+  let φ : (A → ℝ) → (Fin S.card → ℝ) := fun v i =>
+    v ⟨⟨(S.equivFin.symm i).1, hST (S.equivFin.symm i).2⟩,
+      Finset.mem_filter.mpr ⟨Finset.mem_univ _, (S.equivFin.symm i).2⟩⟩
+  let ψ : (↥(Aᶜ) → ℝ) → (Finset (Fin m) → ℝ) := fun w D =>
+    if hD : D ∈ T \ S then
+      w ⟨⟨D, (Finset.mem_sdiff.mp hD).1⟩,
+        Finset.mem_compl.mpr fun h => (Finset.mem_sdiff.mp hD).2 (Finset.mem_filter.mp h).2⟩
+    else 0
   have hφ : Measurable φ := Measurable.of_eval fun i => measurable_pi_apply _
   have hψ : Measurable ψ := Measurable.of_eval fun D => by
-    by_cases hD : D ∈ S
+    by_cases hD : D ∈ T \ S
     · simp only [ψ, hD, dite_true]
-      exact measurable_const
-    · simp only [ψ, hD, dite_false]
       exact measurable_pi_apply _
-  have e2 : (fun ω => outsideFamily (fun D => p D ω) S) =
-      ψ ∘ fun ω (i : ↥(Sᶜ)) => p i ω := by
+    · simp only [ψ, hD, dite_false]
+      exact measurable_const
+  have e2 : (fun ω => outsideFamily T (fun D => p D ω) S) =
+      ψ ∘ fun ω (i : ↥(Aᶜ)) => p i.1.1 ω := by
     funext ω D
-    by_cases hD : D ∈ S <;> simp [outsideFamily, ψ, hD]
+    simp only [Function.comp_apply, outsideFamily, ψ]
+    split_ifs <;> rfl
   rw [e2]
   exact h.comp hφ hψ
 
-/-- **Per-family FDR control for mutually independent p-values.** If all node p-values are
-mutually independent and the true-null ones are valid, the expected FDP of the discoveries in the
-family of `C` is at most `q |S ∩ H0| / |S| · P(S is tested)`.
+/-- **Per-family FDR control for mutually independent node p-values.** If the p-values of the
+nodes of `T` are mutually independent and the true-null ones are valid, the expected FDP of the
+discoveries in the family of `C` is at most `q |S ∩ H0| / |S| · P(S is tested)`. Nothing is
+assumed about the values `p D` of clusters `D ∉ T`.
 
 Source: Yekutieli (2008). -/
 theorem integral_familyFDP_yekutieliRejections_le_of_iIndepFun {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {T : Finset (Finset (Fin m))}
-    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D, Measurable (p D)) (hindep : iIndepFun p μ)
-    (H0 : Finset (Finset (Fin m))) (hnull : ∀ D ∈ H0, IsValidPValue μ (p D))
+    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D ∈ T, Measurable (p D))
+    (hindep : iIndepFun (fun D : T => p D) μ) (H0 : Finset (Finset (Fin m)))
+    (hnull : ∀ D ∈ T, D ∈ H0 → IsValidPValue μ (p D))
     (C : Finset (Fin m)) (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     ∫ ω, familyFDP H0 (yekutieliRejections q T fun D => p D ω) (siblingFamily T C) ∂μ ≤
       q * ((siblingFamily T C ∩ H0).card : ℝ) / (siblingFamily T C).card *
         μ.real {ω | IsTested q T (fun D => p D ω) C} :=
-  integral_familyFDP_yekutieliRejections_le μ p hp H0 (iIndepFun_familyPValues hindep _)
-    (fun D _ hDH => hnull D hDH) (indepFun_familyPValues_outsideFamily hp hindep _) q hq₀ hq₁
+  integral_familyFDP_yekutieliRejections_le μ p hp H0
+    (iIndepFun_familyPValues hindep (siblingFamily_subset T C))
+    (fun D hD hDH => hnull D (siblingFamily_subset T C hD) hDH)
+    (indepFun_familyPValues_outsideFamily hp hindep (siblingFamily_subset T C)) q hq₀ hq₁
 
-/-- **Full-tree FDR control for mutually independent p-values.** If all node p-values are
-mutually independent and the true-null ones are valid, Yekutieli's procedure has full-tree FDR at
-most `q ∑_S (|S ∩ H0| / |S|) P(S is tested)`.
+/-- **Full-tree FDR control for mutually independent node p-values.** If the p-values of the
+nodes of `T` are mutually independent and the true-null ones are valid, Yekutieli's procedure has
+full-tree FDR at most `q ∑_S (|S ∩ H0| / |S|) P(S is tested)`.
 
 Source: Yekutieli (2008). -/
 theorem integral_treeFDP_yekutieliRejections_le_of_iIndepFun {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {T : Finset (Finset (Fin m))}
-    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D, Measurable (p D)) (hindep : iIndepFun p μ)
-    (H0 : Finset (Finset (Fin m))) (hnull : ∀ D ∈ H0, IsValidPValue μ (p D))
+    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D ∈ T, Measurable (p D))
+    (hindep : iIndepFun (fun D : T => p D) μ) (H0 : Finset (Finset (Fin m)))
+    (hnull : ∀ D ∈ T, D ∈ H0 → IsValidPValue μ (p D))
     (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     ∫ ω, treeFDP H0 (yekutieliRejections q T fun D => p D ω) ∂μ ≤
       ∑ S ∈ T.image (siblingFamily T),
         q * ((S ∩ H0).card : ℝ) / S.card * μ.real {ω | IsTestedFamily q T (fun D => p D ω) S} :=
   integral_treeFDP_yekutieliRejections_le μ p hp H0
-    (fun _ _ => iIndepFun_familyPValues hindep _) (fun D _ hDH => hnull D hDH)
-    (fun _ _ => indepFun_familyPValues_outsideFamily hp hindep _) q hq₀ hq₁
+    (fun C _ => iIndepFun_familyPValues hindep (siblingFamily_subset T C)) hnull
+    (fun C _ => indepFun_familyPValues_outsideFamily hp hindep (siblingFamily_subset T C))
+    q hq₀ hq₁
 
 /-- **Full-tree FDR is at most `q` times the expected number of families tested.** -/
 theorem integral_treeFDP_yekutieliRejections_le_expected_tested {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {T : Finset (Finset (Fin m))}
-    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D, Measurable (p D)) (hindep : iIndepFun p μ)
-    (H0 : Finset (Finset (Fin m))) (hnull : ∀ D ∈ H0, IsValidPValue μ (p D))
+    (p : Finset (Fin m) → Ω → ℝ) (hp : ∀ D ∈ T, Measurable (p D))
+    (hindep : iIndepFun (fun D : T => p D) μ) (H0 : Finset (Finset (Fin m)))
+    (hnull : ∀ D ∈ T, D ∈ H0 → IsValidPValue μ (p D))
     (q : ℝ) (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
     ∫ ω, treeFDP H0 (yekutieliRejections q T fun D => p D ω) ∂μ ≤
       q * ∑ S ∈ T.image (siblingFamily T), μ.real {ω | IsTestedFamily q T (fun D => p D ω) S} := by

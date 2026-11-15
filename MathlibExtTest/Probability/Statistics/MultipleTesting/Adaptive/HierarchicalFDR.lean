@@ -26,6 +26,8 @@ public import MathlibExt.Probability.Statistics.MultipleTesting.Adaptive.Hierarc
 * **Exact FDR, bound attained** (one node, `Uniform[0, 1]` null p-value): the full-tree FDR
   computed from the definition is exactly `q`, the hypotheses of
   `integral_treeFDP_yekutieliRejections_le` hold (non-vacuity), and its bound evaluates to `q`.
+* **Only tree nodes matter**: the mutual-independence corollary applies when every cluster,
+  inside the tree or not, carries the same p-value.
 -/
 
 @[expose] public section
@@ -311,24 +313,23 @@ theorem integral_treeFDP_tree1_le_of_theorem {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ 
   have hout : ∀ C ∈ tree1, IndepFun
       (fun ω (i : Fin (siblingFamily tree1 C).card) =>
         p1 ((siblingFamily tree1 C).equivFin.symm i).1 ω)
-      (fun ω => outsideFamily (fun D => p1 D ω) (siblingFamily tree1 C)) μU := by
+      (fun ω => outsideFamily tree1 (fun D => p1 D ω) (siblingFamily tree1 C)) μU := by
     intro C hC
     rw [tree1, Finset.mem_singleton] at hC
     subst hC
-    have hconst : (fun ω => outsideFamily (fun D => p1 D ω)
+    have hconst : (fun ω => outsideFamily tree1 (fun D => p1 D ω)
         (siblingFamily tree1 Finset.univ)) = fun _ => 0 := by
       funext ω D
-      show (if D ∈ siblingFamily tree1 Finset.univ then (0 : ℝ) else p1 D ω) = 0
-      by_cases hD : D ∈ siblingFamily tree1 Finset.univ
-      · exact ite_eq_left_of_eq_true _ _ (eq_true hD)
-      · have hne : D ≠ Finset.univ := fun h => by
-          subst h
-          exact hD (self_mem_siblingFamily univ_mem_tree1)
-        rw [ite_eq_right_of_eq_false _ _ (eq_false hD)]
-        exact ite_eq_right_of_eq_false _ _ (eq_false hne)
+      show (if D ∈ tree1 \ siblingFamily tree1 Finset.univ then p1 D ω else 0) = 0
+      refine ite_eq_right_of_eq_false _ _ (eq_false fun hD => ?_)
+      obtain ⟨hDT, hDS⟩ := Finset.mem_sdiff.mp hD
+      rw [tree1, Finset.mem_singleton] at hDT
+      subst hDT
+      exact hDS (self_mem_siblingFamily univ_mem_tree1)
     rw [hconst]
     exact indepFun_const_right _ _
-  have h := integral_treeFDP_yekutieliRejections_le μU p1 hp H1 hindep hnull hout q hq₀ hq₁
+  have h := integral_treeFDP_yekutieliRejections_le μU p1 (fun D _ => hp D) H1 hindep hnull hout
+    q hq₀ hq₁
   have himg : tree1.image (siblingFamily tree1) = {{Finset.univ}} := by
     change Finset.image (siblingFamily tree1) {Finset.univ} = _
     rw [Finset.image_singleton, siblingFamily_tree1]
@@ -345,5 +346,19 @@ theorem integral_treeFDP_tree1_le_of_theorem {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ 
     show ({Finset.univ} : Finset (Finset (Fin 1))) ∩ H1 = {Finset.univ} from Finset.inter_self _,
     Finset.card_singleton] at h
   simpa using h
+
+/-- **Only the nodes of the tree enter the independence corollary.** Here every cluster, in the
+tree or not, carries the same `Uniform[0, 1]` p-value `ω`; the corollary needs measurability and
+mutual independence only over the single node of `tree1`. -/
+example {q : ℝ} (hq₀ : 0 ≤ q) (hq₁ : q ≤ 1) :
+    ∫ ω, treeFDP H1 (yekutieliRejections q tree1 fun _ => ω) ∂μU ≤
+      ∑ S ∈ tree1.image (siblingFamily tree1),
+        q * ((S ∩ H1).card : ℝ) / S.card *
+          μU.real {ω | IsTestedFamily q tree1 (fun _ => ω) S} := by
+  have : Subsingleton tree1 := ⟨fun a b => Subtype.ext
+    ((Finset.mem_singleton.mp a.2).trans (Finset.mem_singleton.mp b.2).symm)⟩
+  exact integral_treeFDP_yekutieliRejections_le_of_iIndepFun μU (fun _ ω => ω)
+    (fun _ _ => measurable_id) iIndepFun.of_subsingleton H1
+    (fun _ _ _ => isValidPValue_of_hasLaw_uniform HasLaw.id) q hq₀ hq₁
 
 end MathlibExtTest.Probability.Statistics.MultipleTesting.Adaptive.HierarchicalFDR
