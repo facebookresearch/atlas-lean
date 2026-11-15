@@ -54,7 +54,9 @@ scalar equation `dS̄/dτ = -v(S̄, M - S̄)` (`reducedRate`), with `P̄ = M - S
 No all-time QSSA is claimed: the constant grows linearly in the window length `T`. Existence of
 a reduced solution through a given point is not proved here; the theorems quantify over reduced
 solutions (the test file exhibits the constant one at the reduced equilibrium). Existence of
-solutions of the full system is `ReversibleMichaelisMenten.exists_isSolution_nonneg`.
+solutions of the full system is `ReversibleMichaelisMenten.exists_isSolution_nonneg`. The
+rate-law error bound of the irreversible case (`MichaelisMenten.abs_rate_sub_mmRate_le` in
+`MathlibExt.Biology.Dynamics.MichaelisMenten.UniformBound`) has no reversible counterpart here.
 
 ## Proofs
 
