@@ -51,12 +51,18 @@ superkey is `Cslib.Databases.IsSuperkey` (`X → U` is derivable) and a key is
 `Cslib.Databases.IsCandidateKey` (a superkey no proper subset of which is a superkey), as in
 `PrimeAttributeNameWanted`.
 
-Membership in NP: if `X → A` is a nontrivial dependency of `F⁺` with `X` not a superkey and `A`
-not prime, then computing the closure of `X` from `F` adds `A` through some `W → Z` in `F` with
-`W` inside the closure of `X` (so `W` is not a superkey) and `A ∈ Z - W`. So `⟨U, F⟩` is in
-third normal form if and only if, for every `W → Z` in `F` and every `A ∈ Z - W`, `W` is a
-superkey (checked in polynomial time by attribute closure) or `A` lies in some key; a list of
-such keys, each checked by closures, is a certificate.
+Membership in NP, with the number `n` of attributes in binary: if `X → A` is a nontrivial
+dependency of `F⁺` with `X` not a superkey and `A` not prime, then computing the closure of `X`
+from `F` adds `A` through some `W → Z` in `F` with `W` inside the closure of `X` (so `W` is not a
+superkey) and `A ∈ Z - W`. So `⟨U, F⟩` is in third normal form if and only if, for every
+`W → Z` in `F` and every `A ∈ Z - W`, `W` is a superkey or `A` lies in some key. An attribute that
+occurs on no right-hand side of `F` is derivable only from sets containing it, so it lies in
+every superkey; hence a superkey is determined by its part `R` among the attributes occurring on
+right-hand sides (at most the input size many), being `R` together with all other attributes.
+Whether such a set is a superkey (its closure contains every right-hand-side attribute), and
+whether it is a key (no attribute of `R` can be dropped; dropping any other attribute loses it
+from the closure), is decided in polynomial time by attribute closures on the listed attributes.
+So the parts `R` of keys containing the attributes `A` form a certificate of polynomial size.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
