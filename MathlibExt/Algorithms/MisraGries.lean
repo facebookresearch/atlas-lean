@@ -8,359 +8,422 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.BigOperators.Group.Finset
-public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.List.Count
-import Mathlib.Tactic.Linarith
+import Mathlib.Data.List.Count
 
 /-!
 # Misra-Gries heavy hitters
 
-The Misra-Gries summary keeps at most `k - 1` positive counters.
-Processing an item increments its counter when it is positive or
-a slot is free; otherwise every counter is decremented. This
-module proves the deterministic guarantees: counters never
-exceed true frequencies, frequencies exceed counters by at most
-the number of decrement rounds, and the resulting error bound.
+The Misra-Gries summary with parameter `k` stores at most `k - 1` items, each with a positive
+counter. Processing an item increments its counter when the item is stored or a slot is free
+(a new item enters with counter `1`); otherwise every stored counter is decremented, the
+counters that reach `0` are dropped, and the step counts as a decrement round. The summary is
+a list of `(item, counter)` entries, so it is executable for any item type with decidable
+equality, and a step reads and rewrites only the stored entries.
+
+For a run over a stream `s`, this module proves that the summary stores each item at most once
+and at most `k - 1` items, that counters never exceed true frequencies, that a frequency
+exceeds its counter by at most the number of decrement rounds, that `k` times the number of
+rounds plus the stored mass equals `s.length`, and hence the deterministic error bound
+`(s.count x - counter) * k ≤ s.length - mass`.
 -/
 
 @[expose] public section
 
-/-- Misra-Gries heavy hitters with parameter `k` (core of
-ALG-26b): state is a counter map plus a count of decrement-all
-rounds. Processing `x`: increment its counter when it is
-positive or fewer than `k - 1` counters are positive; otherwise
-decrement every counter and record a round. -/
-noncomputable def mgStep {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (st : (X → ℕ) × ℕ) (x : X) : (X → ℕ) × ℕ :=
-  if st.1 x > 0 ∨ (Finset.univ.filter (fun y => 0 < st.1 y)).card < k - 1
-  then (Function.update st.1 x (st.1 x + 1), st.2)
-  else (fun y => st.1 y - 1, st.2 + 1)
+/-- The counter of `x` in a Misra-Gries summary `c`: the total count stored under `x`, which is
+`0` when `x` is not stored. Summaries produced by `mgRun` store each item at most once
+(`mgRun_nodup`). -/
+def mgCounter {X : Type*} [DecidableEq X] (c : List (X × ℕ)) (x : X) : ℕ :=
+  ((c.filter (fun e => e.1 = x)).map Prod.snd).sum
 
-/-- Run Misra-Gries over a stream. -/
-noncomputable def mgRun {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (s : List X) : (X → ℕ) × ℕ :=
-  s.foldl (mgStep k) (fun _ => 0, 0)
+/-- The stored mass of a Misra-Gries summary: the sum of its counters. -/
+def mgMass {X : Type*} (c : List (X × ℕ)) : ℕ :=
+  (c.map Prod.snd).sum
 
-private theorem mgStep_le_same {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (st : (X → ℕ) × ℕ) (a : X) :
-    (mgStep k st a).1 a ≤ st.1 a + 1 := by
-  unfold mgStep
-  split_ifs
-  · show Function.update st.1 a (st.1 a + 1) a ≤ st.1 a + 1
-    rw [Function.update_self]
-  · show st.1 a - 1 ≤ st.1 a + 1
+/-- One Misra-Gries step with parameter `k` (core of ALG-26b). The state is a summary of
+stored `(item, counter)` entries plus the number of decrement rounds so far. Processing `x`:
+if `x` has a positive counter or fewer than `k - 1` entries are stored, replace the entry of `x`
+by one with its counter one higher (a new item enters with counter `1`); otherwise decrement
+every stored counter, drop the entries that reach `0`, and record a round. -/
+def mgStep {X : Type*} [DecidableEq X] (k : ℕ) (st : List (X × ℕ) × ℕ) (x : X) :
+    List (X × ℕ) × ℕ :=
+  if 0 < mgCounter st.1 x ∨ st.1.length < k - 1 then
+    ((x, mgCounter st.1 x + 1) :: st.1.filter (fun e => e.1 ≠ x), st.2)
+  else
+    ((st.1.map (fun e => (e.1, e.2 - 1))).filter (fun e => 0 < e.2), st.2 + 1)
+
+/-- Run Misra-Gries over a stream, starting from the empty summary. -/
+def mgRun {X : Type*} [DecidableEq X] (k : ℕ) (s : List X) : List (X × ℕ) × ℕ :=
+  s.foldl (mgStep k) ([], 0)
+
+section Lemmas
+
+variable {X : Type*} [DecidableEq X]
+
+/-- The increment branch of `mgStep`. -/
+private def mgIncr (c : List (X × ℕ)) (x : X) : List (X × ℕ) :=
+  (x, mgCounter c x + 1) :: c.filter (fun e => e.1 ≠ x)
+
+/-- The decrement branch of `mgStep`. -/
+private def mgDecr (c : List (X × ℕ)) : List (X × ℕ) :=
+  (c.map (fun e => (e.1, e.2 - 1))).filter (fun e => 0 < e.2)
+
+private theorem mgStep_eq (k : ℕ) (st : List (X × ℕ) × ℕ) (x : X) :
+    mgStep k st x =
+      if 0 < mgCounter st.1 x ∨ st.1.length < k - 1 then (mgIncr st.1 x, st.2)
+      else (mgDecr st.1, st.2 + 1) :=
+  rfl
+
+private theorem mgCounter_cons (e : X × ℕ) (c : List (X × ℕ)) (x : X) :
+    mgCounter (e :: c) x = (if e.1 = x then e.2 else 0) + mgCounter c x := by
+  unfold mgCounter
+  by_cases h : e.1 = x <;> simp [h]
+
+omit [DecidableEq X] in
+private theorem mgMass_cons (e : X × ℕ) (c : List (X × ℕ)) :
+    mgMass (e :: c) = e.2 + mgMass c := by
+  simp [mgMass]
+
+private theorem mgCounter_filter_ne (c : List (X × ℕ)) (x y : X) :
+    mgCounter (c.filter (fun e => e.1 ≠ x)) y = if y = x then 0 else mgCounter c y := by
+  induction c with
+  | nil => simp [mgCounter]
+  | cons e c ih =>
+    by_cases he : e.1 = x
+    · have hf : (e :: c).filter (fun e => e.1 ≠ x) = c.filter (fun e => e.1 ≠ x) := by
+        simp [he]
+      rw [hf, ih, mgCounter_cons]
+      by_cases hy : y = x
+      · simp [hy]
+      · have hey : e.1 ≠ y := fun h => hy (h ▸ he)
+        simp [hy, hey]
+    · have hf : (e :: c).filter (fun e => e.1 ≠ x) = e :: c.filter (fun e => e.1 ≠ x) := by
+        simp [he]
+      rw [hf, mgCounter_cons, ih, mgCounter_cons]
+      by_cases hy : y = x
+      · subst hy
+        simp [he]
+      · simp [hy]
+
+private theorem mgCounter_incr (c : List (X × ℕ)) (x y : X) :
+    mgCounter (mgIncr c x) y = if y = x then mgCounter c x + 1 else mgCounter c y := by
+  unfold mgIncr
+  rw [mgCounter_cons, mgCounter_filter_ne]
+  by_cases hy : y = x
+  · simp [hy]
+  · have hxy : x ≠ y := fun h => hy h.symm
+    simp [hy, hxy]
+
+private theorem mgMass_filter_ne_add (c : List (X × ℕ)) (x : X) :
+    mgMass (c.filter (fun e => e.1 ≠ x)) + mgCounter c x = mgMass c := by
+  induction c with
+  | nil => simp [mgMass, mgCounter]
+  | cons e c ih =>
+    by_cases he : e.1 = x
+    · have hf : (e :: c).filter (fun e => e.1 ≠ x) = c.filter (fun e => e.1 ≠ x) := by
+        simp [he]
+      rw [hf, mgCounter_cons, mgMass_cons, ite_eq_left he]
+      omega
+    · have hf : (e :: c).filter (fun e => e.1 ≠ x) = e :: c.filter (fun e => e.1 ≠ x) := by
+        simp [he]
+      rw [hf, mgCounter_cons, mgMass_cons, mgMass_cons, ite_eq_right he]
+      omega
+
+private theorem mgMass_incr (c : List (X × ℕ)) (x : X) :
+    mgMass (mgIncr c x) = mgMass c + 1 := by
+  unfold mgIncr
+  rw [mgMass_cons]
+  have h := mgMass_filter_ne_add c x
+  dsimp only
+  omega
+
+private theorem exists_mem_of_mgCounter_pos {c : List (X × ℕ)} {x : X}
+    (h : 0 < mgCounter c x) : ∃ e ∈ c, e.1 = x := by
+  induction c with
+  | nil => simp [mgCounter] at h
+  | cons e c ih =>
+    rw [mgCounter_cons] at h
+    by_cases he : e.1 = x
+    · exact ⟨e, List.mem_cons_self, he⟩
+    · rw [ite_eq_right he] at h
+      obtain ⟨e', he', hx⟩ := ih (by omega)
+      exact ⟨e', List.mem_cons_of_mem _ he', hx⟩
+
+private theorem mgCounter_eq_zero_of_notMem {c : List (X × ℕ)} {x : X}
+    (h : x ∉ c.map Prod.fst) : mgCounter c x = 0 := by
+  by_contra hne
+  obtain ⟨e, he, hx⟩ := exists_mem_of_mgCounter_pos (Nat.pos_of_ne_zero hne)
+  exact h (List.mem_map.mpr ⟨e, he, hx⟩)
+
+private theorem length_incr_le (c : List (X × ℕ)) (x : X) :
+    (mgIncr c x).length ≤ c.length + 1 := by
+  simp only [mgIncr, List.length_cons]
+  have := List.length_filter_le (fun e : X × ℕ => decide (e.1 ≠ x)) c
+  omega
+
+private theorem length_incr_le_of_pos {c : List (X × ℕ)} {x : X} (h : 0 < mgCounter c x) :
+    (mgIncr c x).length ≤ c.length := by
+  simp only [mgIncr, List.length_cons]
+  obtain ⟨e, he, hx⟩ := exists_mem_of_mgCounter_pos h
+  have : (c.filter (fun e => e.1 ≠ x)).length < c.length :=
+    List.length_filter_lt_length_iff_exists.mpr ⟨e, he, by simp [hx]⟩
+  omega
+
+private theorem pos_incr {c : List (X × ℕ)} (hpos : ∀ e ∈ c, 0 < e.2) (x : X) :
+    ∀ e ∈ mgIncr c x, 0 < e.2 := by
+  intro e he
+  simp only [mgIncr, List.mem_cons, List.mem_filter] at he
+  rcases he with rfl | ⟨he, -⟩
+  · exact Nat.succ_pos _
+  · exact hpos e he
+
+private theorem nodup_incr {c : List (X × ℕ)} (hnd : (c.map Prod.fst).Nodup) (x : X) :
+    ((mgIncr c x).map Prod.fst).Nodup := by
+  simp only [mgIncr, List.map_cons, List.nodup_cons]
+  refine ⟨?_, hnd.sublist ((List.filter_sublist).map _)⟩
+  simp
+
+private theorem mgCounter_decr_cons (e : X × ℕ) (c : List (X × ℕ)) (y : X) :
+    mgCounter (mgDecr (e :: c)) y = (if e.1 = y then e.2 - 1 else 0) + mgCounter (mgDecr c) y := by
+  unfold mgDecr
+  by_cases hp : 0 < e.2 - 1
+  · rw [List.map_cons, List.filter_cons_of_pos (by simpa using hp), mgCounter_cons]
+  · rw [List.map_cons, List.filter_cons_of_neg (by simpa using hp)]
+    have h0 : e.2 - 1 = 0 := by omega
+    split_ifs <;> simp [h0]
+
+omit [DecidableEq X] in
+private theorem mgMass_decr_cons (e : X × ℕ) (c : List (X × ℕ)) :
+    mgMass (mgDecr (e :: c)) = (e.2 - 1) + mgMass (mgDecr c) := by
+  unfold mgDecr
+  by_cases hp : 0 < e.2 - 1
+  · rw [List.map_cons, List.filter_cons_of_pos (by simpa using hp), mgMass_cons]
+  · rw [List.map_cons, List.filter_cons_of_neg (by simpa using hp)]
     omega
 
-private theorem mgStep_le_other {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (st : (X → ℕ) × ℕ) (a x : X) (h : x ≠ a) :
-    (mgStep k st a).1 x ≤ st.1 x := by
-  unfold mgStep
-  split_ifs
-  · show Function.update st.1 a (st.1 a + 1) x ≤ st.1 x
-    have hu : Function.update st.1 a (st.1 a + 1) x = st.1 x :=
-      Function.update_of_ne h _ _
-    rw [hu]
-  · show st.1 x - 1 ≤ st.1 x
-    exact Nat.sub_le _ _
+private theorem mgCounter_decr_le (c : List (X × ℕ)) (y : X) :
+    mgCounter (mgDecr c) y ≤ mgCounter c y := by
+  induction c with
+  | nil => simp [mgDecr, mgCounter]
+  | cons e c ih =>
+    rw [mgCounter_decr_cons, mgCounter_cons]
+    split_ifs <;> omega
 
-private theorem mgFold_le {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (s : List X) (st : (X → ℕ) × ℕ) (x : X) :
-    (List.foldl (mgStep k) st s).1 x ≤ st.1 x + s.count x := by
+private theorem mgCounter_le_decr_add_one {c : List (X × ℕ)} (hnd : (c.map Prod.fst).Nodup)
+    (y : X) : mgCounter c y ≤ mgCounter (mgDecr c) y + 1 := by
+  induction c with
+  | nil => simp [mgCounter]
+  | cons e c ih =>
+    rw [List.map_cons, List.nodup_cons] at hnd
+    rw [mgCounter_decr_cons, mgCounter_cons]
+    by_cases he : e.1 = y
+    · have h0 : mgCounter c y = 0 := mgCounter_eq_zero_of_notMem (he ▸ hnd.1)
+      rw [ite_eq_left he, ite_eq_left he, h0]
+      omega
+    · rw [ite_eq_right he, ite_eq_right he]
+      have := ih hnd.2
+      omega
+
+omit [DecidableEq X] in
+private theorem mgMass_decr_add_length {c : List (X × ℕ)} (hpos : ∀ e ∈ c, 0 < e.2) :
+    mgMass (mgDecr c) + c.length = mgMass c := by
+  induction c with
+  | nil => simp [mgDecr, mgMass]
+  | cons e c ih =>
+    rw [mgMass_decr_cons, mgMass_cons, List.length_cons]
+    have he := hpos e List.mem_cons_self
+    have := ih (fun e' he' => hpos e' (List.mem_cons_of_mem _ he'))
+    omega
+
+omit [DecidableEq X] in
+private theorem length_decr_le (c : List (X × ℕ)) : (mgDecr c).length ≤ c.length := by
+  unfold mgDecr
+  exact Nat.le_trans (List.length_filter_le _ _) (Nat.le_of_eq (List.length_map ..))
+
+omit [DecidableEq X] in
+private theorem pos_decr (c : List (X × ℕ)) : ∀ e ∈ mgDecr c, 0 < e.2 := by
+  intro e he
+  simp only [mgDecr, List.mem_filter, decide_eq_true_eq] at he
+  exact he.2
+
+omit [DecidableEq X] in
+private theorem nodup_decr {c : List (X × ℕ)} (hnd : (c.map Prod.fst).Nodup) :
+    ((mgDecr c).map Prod.fst).Nodup := by
+  unfold mgDecr
+  have hmap : (c.map (fun e : X × ℕ => (e.1, e.2 - 1))).map Prod.fst = c.map Prod.fst := by
+    simp [List.map_map, Function.comp_def]
+  exact (hmap ▸ hnd).sublist ((List.filter_sublist).map _)
+
+/-- The invariant of the summaries reached by `mgRun`: distinct items, positive counters, and at
+most `k - 1` entries. -/
+private def MGInv (k : ℕ) (c : List (X × ℕ)) : Prop :=
+  (c.map Prod.fst).Nodup ∧ (∀ e ∈ c, 0 < e.2) ∧ c.length ≤ k - 1
+
+private theorem mgInv_step (k : ℕ) (st : List (X × ℕ) × ℕ) (a : X) (h : MGInv k st.1) :
+    MGInv k (mgStep k st a).1 := by
+  obtain ⟨hnd, hpos, hlen⟩ := h
+  rw [mgStep_eq]
+  split_ifs with hc
+  · refine ⟨nodup_incr hnd a, pos_incr hpos a, ?_⟩
+    rcases hc with hc | hc
+    · exact Nat.le_trans (length_incr_le_of_pos hc) hlen
+    · have := length_incr_le st.1 a
+      dsimp only
+      omega
+  · exact ⟨nodup_decr hnd, pos_decr _, Nat.le_trans (length_decr_le _) hlen⟩
+
+private theorem mgInv_fold (k : ℕ) (s : List X) (st : List (X × ℕ) × ℕ) (h : MGInv k st.1) :
+    MGInv k (s.foldl (mgStep k) st).1 := by
   induction s generalizing st with
-  | nil =>
-    rw [List.foldl_nil, List.count_nil]
-    omega
+  | nil => exact h
+  | cons a s ih => exact ih _ (mgInv_step k st a h)
+
+private theorem mgInv_run (k : ℕ) (s : List X) : MGInv k (mgRun k s).1 :=
+  mgInv_fold k s ([], 0) ⟨List.nodup_nil, by simp, by simp⟩
+
+end Lemmas
+
+/-- A run stores each item at most once. -/
+theorem mgRun_nodup {X : Type*} [DecidableEq X] (k : ℕ) (s : List X) :
+    ((mgRun k s).1.map Prod.fst).Nodup :=
+  (mgInv_run k s).1
+
+/-- Every counter stored by a run is positive. -/
+theorem mgRun_counter_pos {X : Type*} [DecidableEq X] (k : ℕ) (s : List X) :
+    ∀ e ∈ (mgRun k s).1, 0 < e.2 :=
+  (mgInv_run k s).2.1
+
+/-- A run stores at most `k - 1` entries. -/
+theorem mgRun_length_le {X : Type*} [DecidableEq X] (k : ℕ) (s : List X) :
+    (mgRun k s).1.length ≤ k - 1 :=
+  (mgInv_run k s).2.2
+
+private theorem mgStep_counter_le_self {X : Type*} [DecidableEq X]
+    (k : ℕ) (st : List (X × ℕ) × ℕ) (a : X) :
+    mgCounter (mgStep k st a).1 a ≤ mgCounter st.1 a + 1 := by
+  rw [mgStep_eq]
+  split_ifs
+  · simp [mgCounter_incr]
+  · exact Nat.le_trans (mgCounter_decr_le _ _) (Nat.le_succ _)
+
+private theorem mgStep_counter_le_of_ne {X : Type*} [DecidableEq X]
+    (k : ℕ) (st : List (X × ℕ) × ℕ) (a x : X) (h : x ≠ a) :
+    mgCounter (mgStep k st a).1 x ≤ mgCounter st.1 x := by
+  rw [mgStep_eq]
+  split_ifs
+  · simp [mgCounter_incr, h]
+  · exact mgCounter_decr_le _ _
+
+private theorem mgFold_counter_le {X : Type*} [DecidableEq X]
+    (k : ℕ) (s : List X) (st : List (X × ℕ) × ℕ) (x : X) :
+    mgCounter (s.foldl (mgStep k) st).1 x ≤ mgCounter st.1 x + s.count x := by
+  induction s generalizing st with
+  | nil => simp
   | cons a s ih =>
     rw [List.foldl_cons]
     by_cases hxa : x = a
     · subst hxa
       rw [List.count_cons_self]
-      have hstep := mgStep_le_same k st x
+      have hstep := mgStep_counter_le_self k st x
       have hih := ih (mgStep k st x)
       omega
-    · have hne : a ≠ x := fun h => hxa h.symm
-      rw [List.count_cons_of_ne hne]
-      have hstep := mgStep_le_other k st a x hxa
+    · rw [List.count_cons_of_ne (fun h => hxa h.symm)]
+      have hstep := mgStep_counter_le_of_ne k st a x hxa
       have hih := ih (mgStep k st a)
       omega
 
 /-- Counters never exceed true frequencies. -/
-theorem mg_le_freq {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (s : List X) (x : X) :
-    (mgRun k s).1 x ≤ s.count x := by
-  have h := mgFold_le k s (fun _ => 0, 0) x
-  simpa [mgRun] using h
+theorem mg_le_freq {X : Type*} [DecidableEq X] (k : ℕ) (s : List X) (x : X) :
+    mgCounter (mgRun k s).1 x ≤ s.count x := by
+  have h := mgFold_counter_le k s ([], 0) x
+  simpa [mgRun, mgCounter] using h
 
-private theorem mgStep_ge_same {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (st : (X → ℕ) × ℕ) (a : X) :
-    st.1 a + 1 + st.2 ≤ (mgStep k st a).1 a + (mgStep k st a).2 := by
-  unfold mgStep
+private theorem mgStep_ge_self {X : Type*} [DecidableEq X]
+    (k : ℕ) (st : List (X × ℕ) × ℕ) (a : X) :
+    mgCounter st.1 a + 1 + st.2 ≤ mgCounter (mgStep k st a).1 a + (mgStep k st a).2 := by
+  rw [mgStep_eq]
   split_ifs with hc
-  · show st.1 a + 1 + st.2 ≤ Function.update st.1 a (st.1 a + 1) a + st.2
-    rw [Function.update_self]
-  · show st.1 a + 1 + st.2 ≤ (st.1 a - 1) + (st.2 + 1)
-    have hnot : ¬ st.1 a > 0 := fun h => hc (Or.inl h)
+  · simp [mgCounter_incr]
+  · have h0 : mgCounter st.1 a = 0 := by omega
+    dsimp only
     omega
 
-private theorem mgStep_ge_other {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (st : (X → ℕ) × ℕ) (a x : X) (h : x ≠ a) :
-    st.1 x + st.2 ≤ (mgStep k st a).1 x + (mgStep k st a).2 := by
-  unfold mgStep
+private theorem mgStep_ge_of_ne {X : Type*} [DecidableEq X]
+    (k : ℕ) (st : List (X × ℕ) × ℕ) (a x : X) (h : x ≠ a) (hnd : (st.1.map Prod.fst).Nodup) :
+    mgCounter st.1 x + st.2 ≤ mgCounter (mgStep k st a).1 x + (mgStep k st a).2 := by
+  rw [mgStep_eq]
   split_ifs
-  · show st.1 x + st.2 ≤ Function.update st.1 a (st.1 a + 1) x + st.2
-    have hu : Function.update st.1 a (st.1 a + 1) x = st.1 x :=
-      Function.update_of_ne h _ _
-    rw [hu]
-  · show st.1 x + st.2 ≤ (st.1 x - 1) + (st.2 + 1)
+  · simp [mgCounter_incr, h]
+  · have := mgCounter_le_decr_add_one hnd x
+    dsimp only
     omega
 
-private theorem mgFold_ge {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (s : List X) (st : (X → ℕ) × ℕ) (x : X) :
-    s.count x + st.1 x + st.2
-      ≤ (List.foldl (mgStep k) st s).1 x + (List.foldl (mgStep k) st s).2 := by
+private theorem mgFold_ge {X : Type*} [DecidableEq X]
+    (k : ℕ) (s : List X) (st : List (X × ℕ) × ℕ) (x : X) (hinv : MGInv k st.1) :
+    s.count x + mgCounter st.1 x + st.2
+      ≤ mgCounter (s.foldl (mgStep k) st).1 x + (s.foldl (mgStep k) st).2 := by
   induction s generalizing st with
-  | nil =>
-    rw [List.foldl_nil, List.count_nil]
-    omega
+  | nil => simp
   | cons a s ih =>
     rw [List.foldl_cons]
+    have hih := ih (mgStep k st a) (mgInv_step k st a hinv)
     by_cases hxa : x = a
     · subst hxa
       rw [List.count_cons_self]
-      have hstep := mgStep_ge_same k st x
-      have hih := ih (mgStep k st x)
+      have hstep := mgStep_ge_self k st x
       omega
-    · have hne : a ≠ x := fun h => hxa h.symm
-      rw [List.count_cons_of_ne hne]
-      have hstep := mgStep_ge_other k st a x hxa
-      have hih := ih (mgStep k st a)
+    · rw [List.count_cons_of_ne (fun h => hxa h.symm)]
+      have hstep := mgStep_ge_of_ne k st a x hxa hinv.1
       omega
 
-/-- True frequency exceeds the counter by at most the number
-of decrement rounds. -/
-theorem freq_le_mg_add_rounds {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (s : List X) (x : X) :
-    s.count x ≤ (mgRun k s).1 x + (mgRun k s).2 := by
-  have h := mgFold_ge k s (fun _ => 0, 0) x
-  simpa [mgRun] using h
+/-- A frequency exceeds its counter by at most the number of decrement rounds. -/
+theorem freq_le_mg_add_rounds {X : Type*} [DecidableEq X] (k : ℕ) (s : List X) (x : X) :
+    s.count x ≤ mgCounter (mgRun k s).1 x + (mgRun k s).2 := by
+  have h := mgFold_ge k s ([], 0) x ⟨List.nodup_nil, by simp, by simp⟩
+  simpa [mgRun, mgCounter] using h
 
-private theorem filter_update_of_pos {X : Type*} [DecidableEq X] [Fintype X]
-    (c : X → ℕ) (a : X) (v : ℕ) (hpos : 0 < c a) (hv : 0 < v) :
-    Finset.univ.filter (fun y => 0 < Function.update c a v y)
-      = Finset.univ.filter (fun y => 0 < c y) := by
-  ext y
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
-  by_cases hya : y = a
-  · subst hya
-    rw [Function.update_self]
-    exact iff_of_true hv hpos
-  · have hu : Function.update c a v y = c y := Function.update_of_ne hya _ _
-    rw [hu]
-
-private theorem filter_update_insert {X : Type*} [DecidableEq X] [Fintype X]
-    (c : X → ℕ) (a : X) (v : ℕ) (hv : 0 < v) :
-    Finset.univ.filter (fun y => 0 < Function.update c a v y)
-      = insert a (Finset.univ.filter (fun y => 0 < c y)) := by
-  ext y
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert]
-  by_cases hya : y = a
-  · subst hya
-    rw [Function.update_self]
-    exact iff_of_true hv (Or.inl rfl)
-  · have hu : Function.update c a v y = c y := Function.update_of_ne hya _ _
-    rw [hu]
-    simp [hya]
-
-private theorem filter_decr_subset {X : Type*} [DecidableEq X] [Fintype X]
-    (c : X → ℕ) :
-    Finset.univ.filter (fun y => 0 < c y - 1)
-      ⊆ Finset.univ.filter (fun y => 0 < c y) := by
-  intro y hy
-  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hy ⊢
-  omega
-
-private theorem mgStep_card_le {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (st : (X → ℕ) × ℕ) (a : X)
-    (hle : (Finset.univ.filter (fun y => 0 < st.1 y)).card ≤ k - 1) :
-    (Finset.univ.filter (fun y => 0 < (mgStep k st a).1 y)).card ≤ k - 1 := by
-  unfold mgStep
+private theorem mgStep_potential {X : Type*} [DecidableEq X]
+    (k : ℕ) (hk : 0 < k) (st : List (X × ℕ) × ℕ) (a : X) (hinv : MGInv k st.1) :
+    (mgStep k st a).2 * k + mgMass (mgStep k st a).1 = st.2 * k + mgMass st.1 + 1 := by
+  rw [mgStep_eq]
   split_ifs with hc
-  · by_cases hpos : 0 < st.1 a
-    · have heq := filter_update_of_pos st.1 a (st.1 a + 1) hpos (by omega)
-      show (Finset.univ.filter
-        (fun y => 0 < Function.update st.1 a (st.1 a + 1) y)).card ≤ k - 1
-      rw [heq]
-      exact hle
-    · have ha0 : st.1 a = 0 := by omega
-      have hlt : (Finset.univ.filter (fun y => 0 < st.1 y)).card < k - 1 := by
-        rcases hc with h | h
-        · omega
-        · exact h
-      have heq := filter_update_insert st.1 a (st.1 a + 1) (by omega)
-      show (Finset.univ.filter
-        (fun y => 0 < Function.update st.1 a (st.1 a + 1) y)).card ≤ k - 1
-      rw [heq]
-      have hnotmem : a ∉ Finset.univ.filter (fun y => 0 < st.1 y) := by simp [ha0]
-      rw [Finset.card_insert_of_notMem hnotmem]
+  · dsimp only
+    rw [mgMass_incr]
+    omega
+  · dsimp only
+    have hlen : st.1.length = k - 1 := by
+      have := hinv.2.2
       omega
-  · show (Finset.univ.filter (fun y => 0 < st.1 y - 1)).card ≤ k - 1
-    exact le_trans (Finset.card_le_card (filter_decr_subset st.1)) hle
+    have hm := mgMass_decr_add_length hinv.2.1
+    rw [Nat.add_mul, Nat.one_mul]
+    omega
 
-private theorem mgFold_card_le {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (s : List X) (st : (X → ℕ) × ℕ)
-    (hle : (Finset.univ.filter (fun y => 0 < st.1 y)).card ≤ k - 1) :
-    (Finset.univ.filter (fun y => 0 < (List.foldl (mgStep k) st s).1 y)).card
-      ≤ k - 1 := by
+private theorem mgFold_potential {X : Type*} [DecidableEq X]
+    (k : ℕ) (hk : 0 < k) (s : List X) (st : List (X × ℕ) × ℕ) (hinv : MGInv k st.1) :
+    (s.foldl (mgStep k) st).2 * k + mgMass (s.foldl (mgStep k) st).1
+      = st.2 * k + mgMass st.1 + s.length := by
   induction s generalizing st with
-  | nil =>
-    rw [List.foldl_nil]
-    exact hle
+  | nil => simp
   | cons a s ih =>
-    rw [List.foldl_cons]
-    exact ih _ (mgStep_card_le k st a hle)
-
-private theorem sum_update_succ {X : Type*} [DecidableEq X] [Fintype X]
-    (c : X → ℕ) (a : X) :
-    ∑ y, Function.update c a (c a + 1) y = (∑ y, c y) + 1 := by
-  have hmem : a ∈ Finset.univ := Finset.mem_univ a
-  have e1 := Finset.add_sum_erase Finset.univ (Function.update c a (c a + 1)) hmem
-  have e2 := Finset.add_sum_erase Finset.univ c hmem
-  have hcongr : ∀ y ∈ Finset.univ.erase a, Function.update c a (c a + 1) y = c y := by
-    intro y hy
-    have hne : y ≠ a := (Finset.mem_erase.mp hy).1
-    exact Function.update_of_ne hne _ _
-  have hsum : ∑ y ∈ Finset.univ.erase a, Function.update c a (c a + 1) y
-      = ∑ y ∈ Finset.univ.erase a, c y :=
-    Finset.sum_congr rfl hcongr
-  rw [hsum] at e1
-  have hself : Function.update c a (c a + 1) a = c a + 1 :=
-    Function.update_self _ _ _
-  rw [hself] at e1
-  omega
-
-private theorem sum_decr_eq {X : Type*} [DecidableEq X] [Fintype X]
-    (c : X → ℕ) :
-    ∑ y, (c y - 1) = (∑ y, c y) - (Finset.univ.filter (fun y => 0 < c y)).card := by
-  set S := Finset.univ.filter (fun y => 0 < c y) with hS
-  have hsub : S ⊆ Finset.univ := Finset.filter_subset _ _
-  have hzero1 : ∀ y ∈ Finset.univ, y ∉ S → c y - 1 = 0 := by
-    intro y _ hy
-    rw [hS] at hy
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, not_lt] at hy
-    omega
-  have e1 := Finset.sum_subset hsub hzero1
-  have h1 : ∀ y ∈ S, (c y - 1) + 1 = c y := by
-    intro y hy
-    rw [hS] at hy
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hy
-    omega
-  have e2 : ∑ y ∈ S, ((c y - 1) + 1) = ∑ y ∈ S, c y := Finset.sum_congr rfl h1
-  rw [Finset.sum_add_distrib] at e2
-  have e3 : ∑ _y ∈ S, (1 : ℕ) = S.card := by simp
-  rw [e3] at e2
-  have hzero3 : ∀ y ∈ Finset.univ, y ∉ S → c y = 0 := by
-    intro y _ hy
-    rw [hS] at hy
-    simp only [Finset.mem_filter, Finset.mem_univ, true_and, not_lt] at hy
-    omega
-  have e4 := Finset.sum_subset hsub hzero3
-  omega
-
-private theorem card_supp_le_sum {X : Type*} [DecidableEq X] [Fintype X]
-    (c : X → ℕ) :
-    (Finset.univ.filter (fun y => 0 < c y)).card ≤ ∑ y, c y := by
-  have h1 : (Finset.univ.filter (fun y => 0 < c y)).card
-      = ∑ _y ∈ Finset.univ.filter (fun y => 0 < c y), (1 : ℕ) := by simp
-  have h2 : ∑ _y ∈ Finset.univ.filter (fun y => 0 < c y), (1 : ℕ)
-      ≤ ∑ y ∈ Finset.univ.filter (fun y => 0 < c y), c y := by
-    apply Finset.sum_le_sum
-    intro y hy
-    have hpos : 0 < c y := (Finset.mem_filter.mp hy).2
-    show (1 : ℕ) ≤ c y
-    omega
-  have h3 : ∑ y ∈ Finset.univ.filter (fun y => 0 < c y), c y ≤ ∑ y, c y :=
-    Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
-      (fun y _ _ => Nat.zero_le _)
-  omega
-
-private theorem mgStep_phi_le {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (st : (X → ℕ) × ℕ) (a : X)
-    (hle : (Finset.univ.filter (fun y => 0 < st.1 y)).card ≤ k - 1) :
-    (mgStep k st a).2 * (k - 1) + ∑ y, (mgStep k st a).1 y
-      ≤ st.2 * (k - 1) + ∑ y, st.1 y + 1 := by
-  unfold mgStep
-  split_ifs with hc
-  · have hsum := sum_update_succ st.1 a
-    show st.2 * (k - 1) + ∑ y, Function.update st.1 a (st.1 a + 1) y
-      ≤ st.2 * (k - 1) + ∑ y, st.1 y + 1
-    rw [hsum]
-    omega
-  · have hnge : ¬ (Finset.univ.filter (fun y => 0 < st.1 y)).card < k - 1 :=
-      fun h => hc (Or.inr h)
-    have hcard : (Finset.univ.filter (fun y => 0 < st.1 y)).card = k - 1 :=
-      le_antisymm hle (not_lt.mp hnge)
-    have hsum : ∑ y, (st.1 y - 1) = (∑ y, st.1 y) - (k - 1) := by
-      have h := sum_decr_eq st.1
-      rw [hcard] at h
-      exact h
-    have hge : k - 1 ≤ ∑ y, st.1 y := by
-      have h := card_supp_le_sum st.1
-      rw [hcard] at h
-      exact h
-    show (st.2 + 1) * (k - 1) + ∑ y, (st.1 y - 1)
-      ≤ st.2 * (k - 1) + ∑ y, st.1 y + 1
-    rw [hsum]
-    have hmul : (st.2 + 1) * (k - 1) = st.2 * (k - 1) + (k - 1) := by
-      rw [Nat.add_mul, Nat.one_mul]
-    rw [hmul]
+    rw [List.foldl_cons, List.length_cons, ih _ (mgInv_step k st a hinv),
+      mgStep_potential k hk st a hinv]
     omega
 
-private theorem mgFold_phi_le {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (s : List X) (st : (X → ℕ) × ℕ)
-    (hle : (Finset.univ.filter (fun y => 0 < st.1 y)).card ≤ k - 1) :
-    (List.foldl (mgStep k) st s).2 * (k - 1)
-        + ∑ y, (List.foldl (mgStep k) st s).1 y
-      ≤ st.2 * (k - 1) + ∑ y, st.1 y + s.length := by
-  induction s generalizing st with
-  | nil =>
-    rw [List.foldl_nil]
-    have hlen : ([] : List X).length = 0 := rfl
-    omega
-  | cons a s ih =>
-    rw [List.foldl_cons, List.length_cons]
-    have hcard := mgStep_card_le k st a hle
-    have hstep := mgStep_phi_le k st a hle
-    have hih := ih _ hcard
-    omega
+/-- Each decrement round consumes `k` units of the stream: one unstored item and `k - 1` stored
+counts. So `k` times the number of rounds plus the stored mass is the stream length. -/
+theorem mg_rounds_mul_add_mass {X : Type*} [DecidableEq X] (k : ℕ) (hk : 0 < k) (s : List X) :
+    (mgRun k s).2 * k + mgMass (mgRun k s).1 = s.length := by
+  have h := mgFold_potential k hk s ([], 0) ⟨List.nodup_nil, by simp, by simp⟩
+  simpa [mgRun, mgMass] using h
 
-private theorem mgRounds_bound {X : Type*} [DecidableEq X] [Fintype X]
-    (k : ℕ) (s : List X) :
-    (mgRun k s).2 * (k - 1) ≤ s.length - ∑ y, (mgRun k s).1 y := by
-  have hle : (Finset.univ.filter
-      (fun y => 0 < ((fun _ => 0, 0) : (X → ℕ) × ℕ).1 y)).card ≤ k - 1 := by
-    have h0 : (Finset.univ.filter
-        (fun y => 0 < ((fun _ => 0, 0) : (X → ℕ) × ℕ).1 y)).card = 0 := by simp
-    omega
-  have hphi := mgFold_phi_le k s (fun _ => 0, 0) hle
-  have hinit2 : ((fun _ => 0, 0) : (X → ℕ) × ℕ).2 = 0 := rfl
-  have hinit1 : ∑ y, ((fun _ => 0, 0) : (X → ℕ) × ℕ).1 y = 0 := by simp
-  rw [hinit2, hinit1] at hphi
-  simp only [zero_mul, zero_add] at hphi
-  unfold mgRun
-  omega
-
-/-- Deterministic Misra-Gries error bound: the frequency error
-times `k - 1` is at most the stream mass not held in counters. -/
-theorem mg_error_bound {X : Type*} [DecidableEq X] [Fintype X]
+/-- Deterministic Misra-Gries error bound: the frequency error times `k` is at most the stream
+mass not held in counters. -/
+theorem mg_error_bound {X : Type*} [DecidableEq X]
     (k : ℕ) (hk : 2 ≤ k) (s : List X) (x : X) :
-    (s.count x - (mgRun k s).1 x) * (k - 1)
-      ≤ s.length - ∑ y, (mgRun k s).1 y := by
-  have h1 := mg_le_freq k s x
+    (s.count x - mgCounter (mgRun k s).1 x) * k ≤ s.length - mgMass (mgRun k s).1 := by
   have h2 := freq_le_mg_add_rounds k s x
-  have h3 := mgRounds_bound k s
-  have herr : s.count x - (mgRun k s).1 x ≤ (mgRun k s).2 := by omega
-  have hmul := Nat.mul_le_mul_right (k - 1) herr
-  exact le_trans hmul h3
+  have h3 := mg_rounds_mul_add_mass k (by omega) s
+  have herr : s.count x - mgCounter (mgRun k s).1 x ≤ (mgRun k s).2 := by omega
+  have hmul := Nat.mul_le_mul_right k herr
+  omega
 
 end
