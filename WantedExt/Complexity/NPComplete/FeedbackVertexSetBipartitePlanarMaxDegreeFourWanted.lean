@@ -39,7 +39,7 @@ open MetaMathlibExt.Complexity.NPComplete.FeedbackVertexSet
 # FEEDBACK VERTEX SET on bipartite planar graphs of maximum degree 4 is NP-complete
 
 INSTANCE: a bipartite planar graph `G = (V, E)` in which every vertex has degree at most `4`,
-and a positive integer `K`.
+and a positive integer `K ≤ |V|`.
 QUESTION: is there a set `S ⊆ V` of at most `K` vertices such that every cycle of `G` contains a
 vertex of `S`, i.e. `G - S` is a forest?
 
@@ -50,8 +50,10 @@ keeps the graph planar with maximum degree `4` and makes it bipartite. The subdi
 change the minimum size of a feedback vertex set: the cycles correspond, and a subdivision vertex
 in a feedback vertex set can be replaced by an endpoint of its edge. Adding a disjoint 4-cycle
 raises the minimum by exactly one and keeps the graph bipartite and planar with maximum degree
-`4`, so mapping `(G, K)` to the subdivided graph plus a disjoint 4-cycle with bound `K + 1` (which
-is positive, also for `K = 0`) reduces the planar maximum-degree-`4` problem to the restriction.
+`4`. A bound `K ≥ |V|` already gives a yes-instance (take `S = V`), so mapping `(G, K)` to the
+subdivided graph plus a disjoint 4-cycle with bound `min K |V| + 1` (positive, also for `K = 0`,
+and at most `|V| + 1`, which is below the new vertex count) reduces the planar maximum-degree-`4`
+problem to the restriction.
 Bipartiteness, planarity and degrees are checked in polynomial time, and a feedback vertex set is a
 certificate, so the problem is in NP.
 
@@ -59,8 +61,8 @@ The instance, its graph, the planar maximum-degree-`4` well-formedness (a simple
 MathlibExt's `SimpleGraph.IsPlanar`, every Mathlib `SimpleGraph.degree` at most `4`) and the
 question (`G - S` acyclic for some `|S| ≤ K`) are those of
 `FeedbackVertexSetPlanarMaxDegreeFourWanted` and `FeedbackVertexSetWanted`; this module adds
-bipartiteness (Mathlib's `SimpleGraph.IsBipartite`) and, as the record's instance asks for a
-positive integer `K`, `0 < K` to well-formedness.
+bipartiteness (Mathlib's `SimpleGraph.IsBipartite`) and Garey and Johnson's bound `0 < K ≤ |V|`
+([GT7], as in `FeedbackVertexSetPlanarWanted`) to well-formedness.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -74,9 +76,10 @@ reduction from every language in `NP`
 -/
 
 /-- Well-formedness of an instance: a well-formed instance of FEEDBACK VERTEX SET on planar
-graphs of maximum degree 4 whose graph is bipartite, with a positive bound `K`. -/
+graphs of maximum degree 4 whose graph is bipartite, with `0 < K ≤ n`. -/
 def WellFormed (i : FeedbackVertexSetInstance) : Prop :=
-  FeedbackVertexSetPlanarMaxDegreeFour.WellFormed i ∧ (Graph i).IsBipartite ∧ 0 < i.2.2
+  FeedbackVertexSetPlanarMaxDegreeFour.WellFormed i ∧ (Graph i).IsBipartite ∧ 0 < i.2.2 ∧
+    i.2.2 ≤ i.1
 
 open Classical in
 /-- FEEDBACK VERTEX SET on bipartite planar graphs of maximum degree 4 as a decision problem over
