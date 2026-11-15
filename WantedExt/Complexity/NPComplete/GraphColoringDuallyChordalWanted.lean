@@ -60,9 +60,15 @@ Leitert (2012, Theorem 1) proves 4-COLOURABILITY NP-complete for dually chordal 
 vertex adjacent to all others makes any graph dually chordal, and the new graph is 4-colorable
 exactly when the old one is 3-colorable. Hence the problem with `K` part of the input is
 NP-hard; Wikipedia ("Dually chordal graph", Complexity of problems) and ISGCI record coloring as
-NP-complete on dually chordal graphs. A coloring is a polynomial certificate and dually chordal
-graphs are recognizable in linear time (Brandstädt, Chepoi and Dragan 1998), so the problem is
-in NP.
+NP-complete on dually chordal graphs.
+
+Membership in NP, with `n` written in binary (so most vertices may be isolated): an isolated
+vertex is its own maximum neighbour and lies in no other closed neighbourhood, so it can sit
+anywhere in a maximum neighbourhood ordering, and the graph is dually chordal exactly when the
+subgraph induced by the at most `2|E|` endpoints of edges is; dually chordal graphs are
+recognizable in linear time (Brandstädt, Chepoi and Dragan 1998). Isolated vertices can take any
+color (`K ≥ 1`), so a certificate is a coloring of the endpoints of edges with colors below `K`,
+of polynomial size.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
