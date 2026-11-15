@@ -440,6 +440,24 @@ class BaseGuardTest(unittest.TestCase):
         self.assert_blocked("rewrite a diverged row's upstream hash",
                             "CSLibExt/Diverged.lean: diverged row changed upstream_sha256")
 
+    def test_behind_divergence_keeps_its_upstream_revision(self) -> None:
+        write(self.root, "MathlibExtTest/Behind.lean", c.META + BODY + "\n-- fix\n")
+        self.assertEqual(self.run_check(None, "--record-divergence", "MathlibExtTest/Behind.lean",
+                                        "--rationale", "fix", "--backport", "pending")[0], 0)
+        row = json.loads((self.root / c.MANIFEST).read_text())["rows"]
+        row = next(r for r in row if r["path"] == "MathlibExtTest/Behind.lean")
+        self.assertEqual((row["upstream_commit"], row["upstream_sha256"]), (COMMIT, c.sha256(BODY)))
+        self.commit("record a divergence on a behind file")
+        self.assertEqual(self.run_check()[0], 0)
+
+    def test_divergence_cannot_drop_the_upstream_revision(self) -> None:
+        text = c.META + BODY + "\n-- fix\n"
+        write(self.root, "MathlibExtTest/Behind.lean", text)
+        self.edit_row("MathlibExtTest/Behind.lean", disposition="diverged", upstream_commit=None,
+                      published_sha256=c.sha256(text), rationale="fix", backport="pending")
+        self.assert_blocked("drop the upstream revision", "MathlibExtTest/Behind.lean: upstream_commit changed "
+                            "when the row became diverged")
+
     def test_backport_link_update_passes(self) -> None:
         self.edit_row("CSLibExt/Diverged.lean", backport="https://github.com/fairinternal/formal-math/pull/1")
         self.commit("link the backport PR")

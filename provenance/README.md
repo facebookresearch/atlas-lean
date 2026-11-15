@@ -48,7 +48,7 @@ the Python standard library, and fails on:
 - compared with the base manifest: a row that disappears or changes path (rows are never dropped;
   a deleted file keeps its row as `retired`), and, while the upstream pin is unchanged, any change
   to a synced row or a new one. With the pin unchanged a row may only become `retired`, become
-  `diverged` (keeping its `upstream_sha256`), or, if diverged, take a new `published_sha256` with a
+  `diverged` (keeping its `upstream_sha256` and `upstream_commit`), or, if diverged, take a new `published_sha256` with a
   new rationale or a rationale/backport update; its `upstream_sha256` and `upstream_commit` stay. Only a sync moves the pin and says
   what upstream contains. CI cannot read the private upstream, so a pin change is authorized
   rather than verified: a pull request that moves the pin needs the `formal-math-sync` label, which

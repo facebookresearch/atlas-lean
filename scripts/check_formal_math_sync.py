@@ -429,7 +429,7 @@ def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
 
 def row_transition_problems(path: str, before: dict | None, row: dict, short: str) -> list[str]:
     """With the upstream pin unchanged, a row may only stay as it was or take an allowed step:
-    to `retired`; to `diverged` (keeping the base `upstream_sha256`); or, for a diverged row, a new
+    to `retired`; to `diverged` (keeping the base `upstream_sha256` and `upstream_commit`); or, for a diverged row, a new
     `published_sha256` with a new rationale, or a rationale/backport update, while `upstream_sha256`
     and `upstream_commit` stay the same. Synced rows are frozen: only a sync changes them."""
     disposition = row.get("disposition")
@@ -447,8 +447,9 @@ def row_transition_problems(path: str, before: dict | None, row: dict, short: st
     if disposition != "diverged":
         return []  # check() reports an unknown disposition
     if before.get("disposition") != "diverged":
-        if "upstream_sha256" in before and row.get("upstream_sha256") != before["upstream_sha256"]:
-            return [f"{path}: upstream_sha256 changed when the row became diverged (base {short})"]
+        changed = [k for k in ("upstream_sha256", "upstream_commit") if k in before and row.get(k) != before[k]]
+        if changed:
+            return [f"{path}: {', '.join(changed)} changed when the row became diverged (base {short})"]
         return []
     changed = [k for k in ("upstream_sha256", "upstream_commit") if row.get(k) != before.get(k)]
     if changed:
@@ -572,8 +573,8 @@ def main(argv: list[str] | None = None) -> int:
             row = {"path": path, "disposition": "diverged", "published_sha256": sha256(target.read_bytes())}
             if "upstream_sha256" in old:
                 row["upstream_sha256"] = old["upstream_sha256"]
-            if old.get("disposition") == "diverged" and "upstream_commit" in old:
-                row["upstream_commit"] = old["upstream_commit"]  # e.g. the commit that deleted it upstream
+            if "upstream_commit" in old:  # the revision behind upstream_sha256, or the deleting commit
+                row["upstream_commit"] = old["upstream_commit"]
             row.update(rationale=a.rationale.strip(), backport=a.backport)
             return row
         return edit(a.root, manifest_path, a.record_divergence, diverge)
