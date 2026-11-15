@@ -44,8 +44,9 @@ for the locally connected graphs with Δ(G) ⩽ 7 is NP-complete"; those graphs 
 connected graphs, so the problem is NP-complete on the whole class (stated on `main` with the
 degree bound as `LocallyConnectedHamiltonianCircuitWanted`). ISGCI records the problem as
 NP-complete on this class with a direct argument: adding a universal vertex `u` to a connected
-graph `G` gives a locally connected graph that has a Hamiltonian circuit exactly when `G` has a
-Hamiltonian path ([GT39]).
+graph `G` with at least two vertices gives a locally connected graph that has a Hamiltonian
+circuit exactly when `G` has a Hamiltonian path ([GT39]); a graph with one vertex has a
+Hamiltonian path and is mapped to a fixed yes-instance instead.
 
 The instance, its well-formedness and the question are those of
 `WantedExt.Complexity.NPComplete.HamiltonianCycleUndirectedWanted` ([GT37]: a simple graph on
