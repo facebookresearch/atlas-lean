@@ -25,6 +25,7 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
+public import Mathlib.Combinatorics.SimpleGraph.Acyclic
 public import WantedExt.Complexity.NPComplete.PrecedenceConstrainedSchedulingOpposingForestsWanted
 public import WantedExt.Complexity.NPComplete.TwoDedicatedProcessorPrecedenceSchedulingWanted
 
@@ -56,13 +57,12 @@ question `DedicatedProcessorsFeasible` are those of
 `TwoDedicatedProcessorPrecedenceSchedulingWanted` (the case `m = 2`, `<` arbitrary),
 reused unchanged; `WellFormed` adds that `<` is a forest.
 
-Following Garey and Johnson's use of "forest" for partial orders in [SS9] (and the definitions of
-in-tree and out-tree in the comment to [SS11]), a forest is an in-forest (no task has more than
-one immediate successor) or an out-forest (no task has more than one immediate predecessor),
-immediate predecessors being `PrecedenceConstrainedSchedulingOpposingForests.ImmediatePredecessor`
-(`t < t'` with no `c` such that `t < c < t'`). The two orientations give the same problem up to
-renaming: reversing `<` and replacing `σ(t)` by `D - 1 - σ(t)` maps the instances of one kind to
-those of the other and preserves the answer (the processors and the deadline are unchanged).
+A partial order is a forest when its Hasse diagram, taken as an undirected graph, is a forest:
+the simple graph joining `t` and `t'` when one is an immediate predecessor of the other
+(`PrecedenceConstrainedSchedulingOpposingForests.ImmediatePredecessor`: `t < t'` with no `c` such
+that `t < c < t'`) is acyclic (Mathlib's `SimpleGraph.IsAcyclic`). This class contains the
+in-forests (no task with two immediate successors) and the out-forests (no task with two
+immediate predecessors), so a hardness proof for either orientation applies to it.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -75,11 +75,10 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- The partial order is a forest: no task has more than one immediate successor (an in-forest),
-or no task has more than one immediate predecessor (an out-forest). -/
+/-- The partial order is a forest: its Hasse diagram, the undirected graph of the immediate
+predecessor relation, is acyclic. -/
 def IsForest (i : PrecedenceConstrainedSchedulingInstance) : Prop :=
-  (∀ t : Task i, ∀ a b, ImmediatePredecessor i t a → ImmediatePredecessor i t b → a = b) ∨
-    ∀ t' : Task i, ∀ a b, ImmediatePredecessor i a t' → ImmediatePredecessor i b t' → a = b
+  (SimpleGraph.fromRel (ImmediatePredecessor i)).IsAcyclic
 
 /-- Well-formedness of an instance: `DedicatedWellFormed` (any number `m` of processors) and the
 partial order is a forest. -/
