@@ -82,6 +82,8 @@ solver.
 - `ProtonReferenceLevel`, `ProtonReferenceLevel.protonExcess`,
   `ProtonReferenceLevel.ProtonCondition` : a validated proton reference level, its proton excess
   and the proton condition.
+- `ProtonReferenceLevel.protonExcess_eq_of_content` : the proton excess of a species made of
+  zero-level species plus `m` protons is `m`.
 - `ProtonReferenceLevel.protonCondition_of_balances`,
   `ProtonReferenceLevel.protonCondition_of_recipe` : charge and mass balances imply the proton
   condition when the weighted totals vanish, in particular for a recipe of zero-level species.
@@ -326,8 +328,10 @@ structure ProtonReferenceLevel {κ ι : Type*} [Fintype κ] (z : ι → ℤ) (B 
 
 namespace ProtonReferenceLevel
 
-/-- The proton excess of each species relative to `R`: the number of protons it carries in
-excess of (positive) or short of (negative) the zero level. -/
+/-- The proton excess of each species relative to `R`: the charge row plus the component rows
+weighted by `R.w`. It is `0` on the zero level, `1` on hydronium and `-1` on hydroxide, so it
+counts the protons a species carries in excess of (positive) or short of (negative) the zero
+level (`protonExcess_eq_of_content`). -/
 def protonExcess {κ ι : Type*} [Fintype κ] {z : ι → ℤ} {B : Matrix κ ι ℚ}
     (R : ProtonReferenceLevel z B) : ι → ℚ :=
   balanceCombination z B 1 R.w
@@ -357,6 +361,44 @@ lemma protonExcess_hydronium {κ ι : Type*} [Fintype κ] {z : ι → ℤ} {B : 
 lemma protonExcess_hydroxide {κ ι : Type*} [Fintype κ] {z : ι → ℤ} {B : Matrix κ ι ℚ}
     (R : ProtonReferenceLevel z B) : R.protonExcess R.hydroxide = -1 :=
   R.balanceCombination_hydroxide
+
+/-- The proton excess counts protons: a species whose charge and component content are those of
+a combination `a` of zero-level species plus `m` protons (the content of hydronium minus that of
+water) has proton excess `m`. -/
+lemma protonExcess_eq_of_content {κ ι : Type*} [Fintype κ] [Fintype ι] {z : ι → ℤ}
+    {B : Matrix κ ι ℚ} (R : ProtonReferenceLevel z B) {i : ι} (a : ι → ℚ) (m : ℚ)
+    (ha : ∀ j, j ∉ R.zeroLevel → a j = 0)
+    (hz : (z i : ℚ) = ∑ j, a j * z j + m * (z R.hydronium - z R.water))
+    (hB : ∀ k, B k i = ∑ j, a j * B k j + m * (B k R.hydronium - B k R.water)) :
+    R.protonExcess i = m := by
+  have hexp : ∀ j, R.protonExcess j = (z j : ℚ) + ∑ k, R.w k * B k j := by
+    intro j
+    simp [protonExcess, balanceCombination]
+  have hzero : ∑ j, a j * R.protonExcess j = 0 := by
+    refine Finset.sum_eq_zero fun j _ => ?_
+    by_cases hj : j ∈ R.zeroLevel
+    · rw [R.protonExcess_eq_zero hj, mul_zero]
+    · rw [ha j hj, zero_mul]
+  calc R.protonExcess i
+      = (∑ j, a j * z j + m * (z R.hydronium - z R.water)) +
+          ∑ k, R.w k * (∑ j, a j * B k j + m * (B k R.hydronium - B k R.water)) := by
+        rw [hexp, hz]
+        exact congrArg _ (Finset.sum_congr rfl fun k _ => by rw [hB k])
+    _ = ∑ j, a j * R.protonExcess j +
+          m * (R.protonExcess R.hydronium - R.protonExcess R.water) := by
+        simp only [hexp, mul_add, mul_sub, Finset.sum_add_distrib, Finset.sum_sub_distrib,
+          Finset.mul_sum]
+        rw [Finset.sum_comm (s := Finset.univ) (t := Finset.univ)
+          (f := fun k j => R.w k * (a j * B k j))]
+        have e1 : ∀ j, ∑ k, R.w k * (a j * B k j) = ∑ k, a j * (R.w k * B k j) :=
+          fun j => Finset.sum_congr rfl fun k _ => by ring
+        have e2 : ∑ k, R.w k * (m * B k R.hydronium) = ∑ k, m * (R.w k * B k R.hydronium) :=
+          Finset.sum_congr rfl fun k _ => by ring
+        have e3 : ∑ k, R.w k * (m * B k R.water) = ∑ k, m * (R.w k * B k R.water) :=
+          Finset.sum_congr rfl fun k _ => by ring
+        simp only [e1, e2, e3]
+        ring
+    _ = m := by rw [hzero, R.protonExcess_hydronium, R.protonExcess_water]; ring
 
 /-- Under charge and mass balance, the proton-excess-weighted concentrations sum to the weighted
 component totals `∑ k, R.w k * T k`. -/

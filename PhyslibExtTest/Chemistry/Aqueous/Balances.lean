@@ -243,6 +243,13 @@ example : naAcRef.ProtonCondition naAcC :=
       fin_cases k <;> simp only [Fin.sum_univ_succ] <;> simp [naAcB, naAcT, naAcRecipe])
     (by intro i hi; fin_cases i <;> simp_all [naAcRef, naAcRecipe])
 
+/-- `HAc` is the zero-level `Ac-` plus one proton, so its proton excess is `1`. -/
+example : naAcRef.protonExcess 1 = 1 :=
+  naAcRef.protonExcess_eq_of_content (Pi.single 2 1) 1
+    (by intro j hj; fin_cases j <;> simp_all [naAcRef])
+    (by simp [naAcRef, naAcCharge, Fin.sum_univ_succ])
+    (by intro k; fin_cases k <;> simp [naAcRef, naAcB, Fin.sum_univ_succ])
+
 /-- For sodium acetate the proton condition reads `[H3O+] + [HAc] = [OH-]`. -/
 example (c : Fin 6 → ℝ) : naAcRef.ProtonCondition c ↔ c 3 + c 1 = c 4 := by
   simp only [ProtonReferenceLevel.ProtonCondition, ProtonReferenceLevel.protonExcess,
@@ -455,6 +462,7 @@ end PhyslibExtTest.Chemistry.Aqueous
 #print axioms Chemistry.Aqueous.ProtonReferenceLevel.protonExcess_water
 #print axioms Chemistry.Aqueous.ProtonReferenceLevel.protonExcess_hydronium
 #print axioms Chemistry.Aqueous.ProtonReferenceLevel.protonExcess_hydroxide
+#print axioms Chemistry.Aqueous.ProtonReferenceLevel.protonExcess_eq_of_content
 #print axioms Chemistry.Aqueous.ProtonReferenceLevel.sum_protonExcess_mul_eq
 #print axioms Chemistry.Aqueous.ProtonReferenceLevel.protonCondition_of_balances
 #print axioms Chemistry.Aqueous.ProtonReferenceLevel.weightedTotal_eq_zero_of_recipe
