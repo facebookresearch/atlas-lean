@@ -42,13 +42,13 @@ open MultiprocessorTaskOpenShopPrecedenceMakespan (IsMPTOpenShopSchedule)
 # MPT OPEN SHOP WITH TWO PROCESSORS, TOTAL COMPLETION TIME (OMPT2||ΣC_i) is NP-complete
 
 INSTANCE: two processors `M_1, M_2`; an open shop with multiprocessor tasks (MPT) with `r ≥ 1`
-stages and processor sets `μ_1, …, μ_r ⊆ {M_1, M_2}`, pairwise different; jobs `1, …, n`, each
-consisting of `r` tasks `O_i1, …, O_ir` with processing times `p_ij ∈ ℤ₀⁺`, where `O_ij`
-requires every processor of `μ_j` during its processing; and a bound `K`. Tasks requiring a
+stages and processor sets `μ_1, …, μ_r ⊆ {M_1, M_2}`, pairwise different; jobs `1, …, n` with
+`n ≥ 1`, each consisting of `r` tasks `O_i1, …, O_ir` with processing times `p_ij ∈ ℤ₀⁺`, where
+`O_ij` requires every processor of `μ_j` during its processing; and a bound `K`. Tasks requiring a
 common processor cannot be processed simultaneously, and no two tasks of the same job can be
 processed simultaneously; the tasks of a job may be processed in any order. QUESTION: is there a
-feasible schedule with total completion time `Σ_i C_i ≤ K`, where `C_i` is the completion time
-of job `i` (that of its last task)?
+feasible schedule with total completion time `Σ_i C_i ≤ K`, where `C_i` is the completion time of
+job `i` (that of its last task)?
 
 The MPT model is Brucker's (*Scheduling Algorithms*, 5th ed., Chapter 11): every job consists of
 `r` tasks, the processor set depends only on the stage, `μ_ij = μ_j`, with pairwise different
@@ -86,9 +86,11 @@ reduction from every language in `NP`
 -/
 
 /-- Well-formedness of an instance: there are two processors (`m = 2`), the stage processor sets
-are well formed (`StagesWellFormed`), and every job lists one processing time per stage. -/
+are well formed (`StagesWellFormed`), every job lists one processing time per stage, and there is
+at least one job (as in `TwoProcessorOpenShopMeanFlowTimeWanted`). -/
 def WellFormed (i : MultipurposeFlowShopThreeJobsInstance) : Prop :=
-  i.1 = 2 ∧ StagesWellFormed i.1 i.2.1 ∧ ∀ job ∈ i.2.2.1, job.length = i.2.1.length
+  i.1 = 2 ∧ StagesWellFormed i.1 i.2.1 ∧ (∀ job ∈ i.2.2.1, job.length = i.2.1.length) ∧
+    0 < i.2.2.1.length
 
 /-- Some MPT open-shop schedule of the jobs has total completion time at most `K`. -/
 def MultiprocessorTaskOpenShopTwoMachinesTotalCompletionFeasible
