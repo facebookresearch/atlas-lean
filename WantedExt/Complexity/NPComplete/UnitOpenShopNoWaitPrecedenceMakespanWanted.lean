@@ -30,7 +30,7 @@ namespace MetaMathlibExt.Complexity.NPComplete.UnitOpenShopNoWaitPrecedenceMakes
 
 open MetaMathlibExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespan
   (UnitFlowShopPrecedenceMakespanInstance WellFormed)
-open MetaMathlibExt.Complexity.NPComplete.UnitOpenShopPrecedenceMakespan (IsSchedule)
+open MetaMathlibExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLateness (IsUnitOpenShopSchedule)
 
 /-!
 # NO-WAIT OPEN SHOP O|p_ij=1;prec;no-wait|Cmax is NP-complete
@@ -47,10 +47,11 @@ operation)?
 
 This is OPEN SHOP O|p_ij=1;prec|Cmax (`UnitOpenShopPrecedenceMakespanWanted`) with the no-wait
 condition added: the instance, its well-formedness (`m ≥ 1`, `m` unit operations per listed job,
-acyclic precedence arcs) and the open-shop schedule `IsSchedule` (integer start times `σ k j` of
-operation `O_jk`) are reused. A job's `m` unit operations start at distinct integer times, so the
-job waits between none of them exactly when they occupy the `m` consecutive unit slots starting
-at some time `s`: `s ≤ σ k j < s + m` for every machine `k`. Numbers use the binary encoding.
+acyclic precedence arcs) and the open-shop schedule `IsUnitOpenShopSchedule` (integer start times
+`σ k j` of operation `O_jk`) are reused. A job's `m` unit operations start at distinct integer
+times, so the job waits between none of them exactly when they occupy the `m` consecutive unit slots
+starting at some time `s`: `s ≤ σ k j < s + m` for every machine `k`. Numbers use the binary
+encoding.
 
 Brucker and Knust classify the problem as NP-hard in the strong sense, crediting Ullman, who
 proves the parallel-machine problem with unit-time jobs and precedence constraints NP-complete.
@@ -72,7 +73,7 @@ reduction from every language in `NP`
 fill `m` consecutive unit slots, and the makespan `max_j C_j` is at most `K`. -/
 def UnitOpenShopNoWaitPrecedenceMakespanFeasible (i : UnitFlowShopPrecedenceMakespanInstance) :
     Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsSchedule i.1 i.2.1.length i.2.2.1 σ ∧
+  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsUnitOpenShopSchedule i.1 i.2.1.length i.2.2.1 σ ∧
     (∀ j, ∃ s, ∀ k, s ≤ σ k j ∧ σ k j < s + i.1) ∧ ∀ k j, σ k j + 1 ≤ i.2.2.2
 
 open Classical in

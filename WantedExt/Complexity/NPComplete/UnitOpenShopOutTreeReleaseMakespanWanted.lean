@@ -24,13 +24,13 @@ public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.UnitFlowShopOutTreeMaxLatenessWanted
-public import WantedExt.Complexity.NPComplete.UnitOpenShopPrecedenceMakespanWanted
+public import WantedExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessWanted
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.UnitOpenShopOutTreeReleaseMakespan
 
-open MetaMathlibExt.Complexity.NPComplete.UnitOpenShopPrecedenceMakespan (IsSchedule)
+open MetaMathlibExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLateness (IsUnitOpenShopSchedule)
 
 /-!
 # OPEN SHOP O|p_ij=1;outtree;r_i|Cmax is NP-complete
@@ -52,8 +52,8 @@ arcs `(i, j)`. Well-formedness is that of the unit-time flow shop with out-tree 
 naming jobs, each job with at most one immediate predecessor), applied to the jobs with their
 release dates set aside (that well-formedness reads neither the due dates of its own instances
 nor its bound), together with a nonempty job list (the makespan `max_j C_j` is a maximum over
-the jobs). The schedule is the open-shop schedule `IsSchedule` of
-`UnitOpenShopPrecedenceMakespanWanted` (integer start times `σ k j` of operation `O_jk`; with
+the jobs). The schedule is the open-shop schedule `IsUnitOpenShopSchedule` of
+`UnitOpenShopOutTreeMaxLatenessWanted` (integer start times `σ k j` of operation `O_jk`; with
 unit lengths and integer data, rounding start times down keeps every constraint). Numbers use
 the binary encoding.
 
@@ -90,7 +90,7 @@ def WellFormed (i : UnitOpenShopOutTreeReleaseMakespanInstance) : Prop :=
 every operation by time `K` (makespan `max_j C_j ≤ K`). -/
 def UnitOpenShopOutTreeReleaseMakespanFeasible (i : UnitOpenShopOutTreeReleaseMakespanInstance) :
     Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsSchedule i.1 i.2.1.length i.2.2.1 σ ∧
+  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsUnitOpenShopSchedule i.1 i.2.1.length i.2.2.1 σ ∧
     (∀ k j, (i.2.1.get j).2 ≤ σ k j) ∧ ∀ k j, σ k j + 1 ≤ i.2.2.2
 
 open Classical in

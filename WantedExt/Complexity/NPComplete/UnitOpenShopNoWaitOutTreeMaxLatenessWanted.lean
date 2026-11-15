@@ -25,7 +25,7 @@ public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.UnitFlowShopOutTreeMaxLatenessWanted
-public import WantedExt.Complexity.NPComplete.UnitOpenShopPrecedenceMakespanWanted
+public import WantedExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessWanted
 
 @[expose] public section
 
@@ -33,7 +33,7 @@ namespace MetaMathlibExt.Complexity.NPComplete.UnitOpenShopNoWaitOutTreeMaxLaten
 
 open MetaMathlibExt.Complexity.NPComplete.UnitFlowShopOutTreeMaxLateness
   (UnitFlowShopOutTreeMaxLatenessInstance WellFormed toInt)
-open MetaMathlibExt.Complexity.NPComplete.UnitOpenShopPrecedenceMakespan (IsSchedule)
+open MetaMathlibExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLateness (IsUnitOpenShopSchedule)
 
 /-!
 # NO-WAIT OPEN SHOP O|p_ij=1;outtree;no-wait|Lmax is NP-complete
@@ -53,10 +53,10 @@ The instance and its well-formedness are those of the unit-time flow shop with o
 precedence and due dates (`UnitFlowShopOutTreeMaxLatenessWanted`: `m ≥ 1`, each job listed with
 its `m` unit processing times and its due date, acyclic precedence arcs generating an out-tree
 relation, integers as pairs `(a, b)` standing for `a - b`); the schedule is the open-shop
-schedule `IsSchedule` of `UnitOpenShopPrecedenceMakespanWanted` (integer start times `σ k j` of
-operation `O_jk`). A job's `m` unit operations start at distinct integer times, so the job waits
-between none of them exactly when they occupy the `m` consecutive unit slots starting at some
-time `s`: `s ≤ σ k j < s + m` for every machine `k`. Numbers use the binary encoding.
+schedule `IsUnitOpenShopSchedule` of `UnitOpenShopOutTreeMaxLatenessWanted` (integer start times
+`σ k j` of operation `O_jk`). A job's `m` unit operations start at distinct integer times, so the
+job waits between none of them exactly when they occupy the `m` consecutive unit slots starting at
+some time `s`: `s ≤ σ k j < s + m` for every machine `k`. Numbers use the binary encoding.
 
 Brucker and Knust classify the problem as NP-hard in the strong sense, crediting Brucker, Garey
 and Johnson, who prove the parallel-machine problem with unit-time jobs, out-tree precedence
@@ -80,7 +80,7 @@ reduction from every language in `NP`
 `max_j (C_j - d_j)` is at most `K`. -/
 def UnitOpenShopNoWaitOutTreeMaxLatenessFeasible (i : UnitFlowShopOutTreeMaxLatenessInstance) :
     Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsSchedule i.1 i.2.1.length i.2.2.1 σ ∧
+  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsUnitOpenShopSchedule i.1 i.2.1.length i.2.2.1 σ ∧
     (∀ j, ∃ s, ∀ k, s ≤ σ k j ∧ σ k j < s + i.1) ∧
     ∀ (k : Fin i.1) (j : Fin i.2.1.length),
       ((σ k j + 1 : ℕ) : ℤ) - toInt (i.2.1.getD j ([], (0, 0))).2 ≤ toInt i.2.2.2
