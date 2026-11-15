@@ -42,10 +42,12 @@ QUESTION: is there a subgraph of `G` with at most `B` arcs (weight at most `B`) 
 directed path from `s` to `t` for every `t ∈ T`?
 
 This is the directed version of STEINER TREE IN GRAPHS [ND12] in Johnson's column, restricted to
-acyclic planar graphs with all edge weights equal. With every weight equal to `w > 0`, a
-subgraph has weight at most `w · B` exactly when it has at most `B` arcs, so the weights are
-dropped and the subgraph's weight is its number of arcs. The positive bound is [ND12]'s
-convention.
+acyclic planar graphs with all edge weights equal. "Source" and "sink" are Johnson's names for
+the start and the ends of the required paths ("a specified source vertex `s`, and a set `T` of
+sink vertices"); no in- or out-degree condition is imposed on them. With every weight equal to
+`w > 0`, a subgraph has weight at most `w · B` exactly when it has at most `B` arcs, so the
+weights are dropped and the subgraph's weight is its number of arcs. The positive bound is
+[ND12]'s convention.
 
 The digraph has vertices `0, …, n - 1` and is given by its list of distinct arcs (`(u, v)` is the
 arc `u → v`). Acyclic means that no vertex reaches itself along one or more arcs
