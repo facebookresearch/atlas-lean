@@ -49,7 +49,9 @@ is a certificate, checked with shortest-path computations.
 
 The diameter is at most `K` when every two vertices `u, v` are joined in `(V, E')` by a walk of
 total length at most `K` (with non-negative lengths, a shortest walk can be taken to be a path;
-a disconnected `(V, E')` has infinite diameter). Walks are Mathlib `SimpleGraph.Walk`s, and the
+a `(V, E')` with two vertices in different components has infinite diameter). With no vertices
+(`n = 0`) the condition is vacuous: the empty graph counts as having diameter `0`, so such
+instances are yes-instances. Walks are Mathlib `SimpleGraph.Walk`s, and the
 length of a walk is the sum of `l(e)` over the edges it traverses (`walkLength`). The graph is a
 simple edge list with weights and lengths (an entry `(u, v, w, l)` is the edge `{u, v}`), as in
 `BoundedDiameterSpanningTreeWanted`, and `E'` is a sublist of it. Vertices are `Fin n`; when
