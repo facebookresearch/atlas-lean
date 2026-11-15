@@ -39,12 +39,16 @@ capacity divided by the demand across it,
 `∑_{v₁ ∈ V₁, v₂ ∈ V₂, (v₁, v₂) ∈ E} c(v₁, v₂) / ∑_{i : |{s_i, t_i} ∩ V₁| = 1} d_i`,
 is at most `K`?
 
-This is the decision version of Crescenzi and Kann's MINIMUM RATIO-CUT [ND23], also called
-(non-uniform) Sparsest Cut. `UniformSparsestCut` is its special case with unit capacities and
-one unit-demand commodity for every pair of vertices; Matula and Shahrokhi prove that case
-NP-hard (Gupta, Talwar and Witmer, Section 1: NP-hard "even for unit capacity edges and uniform
-demands"). An integer bound loses nothing: scaling the capacities by `q` and the demands by `p`
-turns a rational bound `p / q` into `1`. Membership in NP: `V₁` is a certificate.
+This is the decision version of Crescenzi and Kann's MINIMUM RATIO-CUT [ND23], whose instance
+is the general (non-uniform) one: "Graph `G = (V, E)`, a capacity function `c : E → N`, and `k`
+commodities, i.e., `k` pairs `(s_i, t_i) ∈ V²` and a demand `d_i` for each pair", with measure
+"the capacity of the cut divided by the demand across the cut"; their comment calls it Sparsest
+Cut and treats "the uniform-demand case" separately. `UniformSparsestCut` is that special case
+(unit capacities, one unit-demand commodity for every pair of vertices); Matula and Shahrokhi
+prove that case NP-hard (Gupta, Talwar and Witmer, Section 1: NP-hard "even for unit capacity
+edges and uniform demands"). An integer bound loses nothing: scaling the capacities by `q` and
+the demands by `p` turns a rational bound `p / q` into `1`. Membership in NP: `V₁` is a
+certificate.
 
 The ratio is defined only when the demand across the cut is positive, so a cut qualifies when
 that demand is positive and the capacity is at most `K` times it (no division); a positive
