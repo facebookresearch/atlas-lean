@@ -47,9 +47,11 @@ purely rigid when `E` has no universally quantified variables (Definition 2), an
 E-unification is NP-complete" (Section 3, citing Gallier, Narendran, Plaisted, and Snyder, whose
 abstract states "it is shown that rigid E-unification is NP-complete"). Unlike ordinary
 E-unification, the substitution is applied to `E` as well as to `s` and `t`, and each variable
-of `E` stands for the single term `σ(x)`. When `E` is ground this is UNIFICATION FOR FINITELY
-PRESENTED ALGEBRAS (`WantedExt.Complexity.NPComplete.UnificationForFinitelyPresentedAlgebrasWanted`,
-Kozen's problem), whose language `lang` and prefix token encoding `tokens` are reused.
+of `E` stands for the single term `σ(x)`. When `E` is ground and the signature has a constant
+(so that a unifier can be made ground by replacing its remaining variables with that constant),
+this is UNIFICATION FOR FINITELY PRESENTED ALGEBRAS
+(`WantedExt.Complexity.NPComplete.UnificationForFinitelyPresentedAlgebrasWanted`, Kozen's
+problem), whose language `lang` and prefix token encoding `tokens` are reused.
 
 Terms are Mathlib's `(lang ar).Term (Fin |V|)`, over the function symbols `0, …, |ar| - 1` with
 arities `ar` (constants have arity `0`), and `σ` is `Term.subst` with a map `Fin |V| → Term`.
