@@ -15,8 +15,10 @@ public import CSLibExt.Languages.LambdaCalculus.IsoRecursive
 
 * Term substitution under a nested `lam` leaves the inner bound variable alone,
   shifts the substituted term, and lowers free variables; beta reduction uses it.
+  Substitution at a nonzero index replaces exactly that variable.
 * Type substitution under a nested `mu` leaves the inner bound variable alone,
-  shifts the substituted type, and lowers free variables.
+  shifts the substituted type, and lowers free variables, also at a nonzero
+  index.
 * Unfolding a recursive type, and `progress` on a closed `unfold (fold unit)`.
 -/
 
@@ -49,6 +51,18 @@ example : Tm.subst (.lam (.var 1)) (.var 0) = .lam (.var 1) := by decide
 example : Tm.subst (.app (.var 3) (.lam (.var 2))) .unit =
     .app (.var 2) (.lam (.var 1)) := by decide
 
+/-- Substituting `var 0` for index `1` in `var 1` gives `var 0`. -/
+example : Tm.substAt (.var 1) 1 (.var 0) = .var 0 := by decide
+
+/-- At index `1`, variable `0` is kept and variable `2` is lowered. -/
+example : Tm.substAt (.app (.var 0) (.var 2)) 1 .unit =
+    .app (.var 0) (.var 1) := by decide
+
+/-- At index `1` under a `lam`, the target is `var 2` and the substituted
+`var 0` becomes `var 1`. -/
+example : Tm.substAt (.lam (.app (.var 2) (.var 1))) 1 (.var 0) =
+    .lam (.app (.var 1) (.var 1)) := by decide
+
 /-! ### Type substitution -/
 
 /-- The inner bound variable of `μ. 0` is kept. -/
@@ -64,6 +78,14 @@ example : Ty.subst (.mu (.var 1)) (.var 0) = .mu (.var 1) := by decide
 /-- Free type variables above the substituted one are lowered. -/
 example : Ty.subst (.arr (.var 2) (.mu (.var 3))) .unit =
     .arr (.var 1) (.mu (.var 2)) := by decide
+
+/-- Substituting `var 0` for index `1` in `var 1` gives `var 0`. -/
+example : Ty.substAt (.var 1) 1 (.var 0) = .var 0 := by decide
+
+/-- At index `1` under a `mu`, the target is `var 2`, the substituted `var 0`
+becomes `var 1`, and `var 3` is lowered to `var 2`. -/
+example : Ty.substAt (.mu (.arr (.var 2) (.var 3))) 1 (.var 0) =
+    .mu (.arr (.var 1) (.var 2)) := by decide
 
 /-- Unfolding `μX. X → unit` gives `(μX. X → unit) → unit`. -/
 example : Ty.unfold (.arr (.var 0) .unit) =

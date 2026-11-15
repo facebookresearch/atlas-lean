@@ -19,10 +19,11 @@ iso-recursive types `μX. a` of Pierce, *Types and Programming Languages*
 and its unfolding `[X ↦ μX. a] a`. Pierce annotates `fold` and `unfold`
 with the recursive type; here they are unannotated.
 
-Types and terms use de Bruijn indices. `Ty.subst` and `Tm.subst` substitute
-for variable `0`, shift the substituted type or term under binders so that its
-free variables are not captured, and lower the remaining free variables by
-one.
+Types and terms use de Bruijn indices. `Ty.substAt` and `Tm.substAt`
+substitute for the variable at a given index, shift the substituted type or
+term under binders so that its free variables are not captured, and lower the
+free variables above that index by one. `Ty.subst` and `Tm.subst` are the
+index-`0` cases used by unfolding and beta reduction.
 
 The main result, `progress`, states that a closed well-typed term is a value
 or takes a step. Preservation is not proved here.
@@ -60,23 +61,24 @@ inductive Tm : Type
   | unfold (t : Tm) : Tm
   deriving DecidableEq, Repr
 
-/-- `a.shift d c` adds `d` to every type variable of `a` at or above the
-cutoff `c`. -/
+/-- `a.shift d c` adds `d` to each free type variable of `a` with index at
+least `c`; indices are counted from outside `a`, so variables bound inside `a`
+are unchanged. -/
 def Ty.shift : Ty → ℕ → ℕ → Ty
   | .unit, _, _ => .unit
   | .arr a b, d, c => .arr (a.shift d c) (b.shift d c)
   | .var n, d, c => if n < c then .var n else .var (n + d)
   | .mu a, d, c => .mu (a.shift d (c + 1))
 
-/-- `a.substAt k s` replaces type variable `k` of `a` by `s`, shifted past the
-`k` binders it is placed under, and lowers the type variables above `k` by
-one. Descending through `mu` increments `k`. -/
+/-- `a.substAt j s` replaces the free type variable `j` of `a` by `s` and
+lowers the free type variables above `j` by one; `s` is read in the resulting
+context. Under each `mu` crossed, the target index and the free variables of
+`s` are shifted up by one, so they are not captured. -/
 def Ty.substAt : Ty → ℕ → Ty → Ty
   | .unit, _, _ => .unit
-  | .arr a b, k, s => .arr (a.substAt k s) (b.substAt k s)
-  | .var n, k, s =>
-      if n < k then .var n else if n = k then s.shift k 0 else .var (n - 1)
-  | .mu a, k, s => .mu (a.substAt (k + 1) s)
+  | .arr a b, j, s => .arr (a.substAt j s) (b.substAt j s)
+  | .var n, j, s => if n < j then .var n else if n = j then s else .var (n - 1)
+  | .mu a, j, s => .mu (a.substAt (j + 1) (s.shift 1 0))
 
 /-- `a.subst s` substitutes `s` for type variable `0` of `a`, the variable
 bound by an enclosing `mu`, and lowers the other free type variables. -/
@@ -107,8 +109,9 @@ inductive Value : Tm → Prop
   | lam (t : Tm) : Value (.lam t)
   | fold {t : Tm} (h : Value t) : Value (.fold t)
 
-/-- `t.shift d c` adds `d` to every variable of `t` at or above the cutoff
-`c`. -/
+/-- `t.shift d c` adds `d` to each free variable of `t` with index at least
+`c`; indices are counted from outside `t`, so variables bound inside `t` are
+unchanged. -/
 def Tm.shift : Tm → ℕ → ℕ → Tm
   | .unit, _, _ => .unit
   | .var n, d, c => if n < c then .var n else .var (n + d)
@@ -117,17 +120,17 @@ def Tm.shift : Tm → ℕ → ℕ → Tm
   | .fold t, d, c => .fold (t.shift d c)
   | .unfold t, d, c => .unfold (t.shift d c)
 
-/-- `t.substAt k u` replaces variable `k` of `t` by `u`, shifted past the `k`
-binders it is placed under, and lowers the variables above `k` by one.
-Descending through `lam` increments `k`. -/
+/-- `t.substAt j u` replaces the free variable `j` of `t` by `u` and lowers
+the free variables above `j` by one; `u` is read in the resulting context.
+Under each `lam` crossed, the target index and the free variables of `u` are
+shifted up by one, so they are not captured. -/
 def Tm.substAt : Tm → ℕ → Tm → Tm
   | .unit, _, _ => .unit
-  | .var n, k, u =>
-      if n < k then .var n else if n = k then u.shift k 0 else .var (n - 1)
-  | .lam t, k, u => .lam (t.substAt (k + 1) u)
-  | .app t t', k, u => .app (t.substAt k u) (t'.substAt k u)
-  | .fold t, k, u => .fold (t.substAt k u)
-  | .unfold t, k, u => .unfold (t.substAt k u)
+  | .var n, j, u => if n < j then .var n else if n = j then u else .var (n - 1)
+  | .lam t, j, u => .lam (t.substAt (j + 1) (u.shift 1 0))
+  | .app t t', j, u => .app (t.substAt j u) (t'.substAt j u)
+  | .fold t, j, u => .fold (t.substAt j u)
+  | .unfold t, j, u => .unfold (t.substAt j u)
 
 /-- `t.subst u` substitutes `u` for variable `0` of `t`, the variable bound
 by an enclosing `lam`, and lowers the other free variables: the result of
