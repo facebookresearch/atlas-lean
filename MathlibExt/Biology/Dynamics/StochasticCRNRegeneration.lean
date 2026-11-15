@@ -938,7 +938,7 @@ theorem path_of_neg {s : ℝ} (hs : s < 0) : JumpHold.path q x ω s = x := by
     show Nat.find h = 0 from (Nat.find_eq_zero h).2 (by rw [jumpTime_zero]; exact hs)]
   rfl
 
-theorem measurable_path [MeasurableSpace σ] [Countable σ] [MeasurableSingletonClass σ]
+theorem measurable_path [MeasurableSpace σ] [Countable σ]
     (hq : ∀ y, 0 < q y) (hE : ∀ k, 0 ≤ (ω k).2)
     (hT : Tendsto (JumpHold.jumpTime q x ω) atTop atTop) :
     Measurable fun s => JumpHold.path q x ω s := by
