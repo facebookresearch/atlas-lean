@@ -39,7 +39,7 @@ public import Mathlib.Topology.Bases
 /-!
 # Measurable fundamental domains for discrete subgroups
 
-Every discrete subgroup of a second-countable Hausdorff topological group
+Every discrete subgroup of a second-countable topological group
 admits a measurable fundamental domain for the opposite action, simultaneously
 for every measure.
 -/
@@ -162,7 +162,7 @@ end FundamentalDomainExistsAux
 
 namespace MeasureTheory
 
-/-- Every discrete subgroup of a second-countable Hausdorff topological group
+/-- Every discrete subgroup of a second-countable topological group
 admits a measurable fundamental domain for the opposite action, simultaneously
 for every measure. -/
 theorem exists_measurableSet_isFundamentalDomain_op_of_discreteTopology

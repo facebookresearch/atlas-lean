@@ -16,8 +16,8 @@ public import Mathlib.Probability.ProbabilityMassFunction.Basic
 
 
 /-- The hybrid argument: if consecutive distributions in a
-sequence `p 0, ..., p k` on a finite type are pairwise within
-`ε` on the event `E` (in real probability), then the endpoints
+sequence `p 0, ..., p k` on any type are pairwise within
+`ε` on the finite event `E` (in real probability), then the endpoints
 are within `k * ε` on `E`. -/
 theorem hybrid_argument {α : Type*}
     (p : ℕ → PMF α) (E : Finset α) {ε : ℝ} (k : ℕ)
