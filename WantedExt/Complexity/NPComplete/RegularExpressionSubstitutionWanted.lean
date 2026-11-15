@@ -50,7 +50,9 @@ Regular expressions, their postfix token lists and the parser are those of
 `E.matches'`; `ExprOver k toks E` says that `toks` spells `E` with all letters below `k`). The
 symbols are natural numbers: `y_j` is `j - 1` (so `Y = {0, ..., m - 1}`) and `xᵢ` is
 `m + i - 1` (so `X = {m, ..., m + n - 1}`), where `n` is the number of expressions `Rᵢ`. The
-substitution maps a symbol `a ≥ m` to `w_{a - m + 1}` and keeps a symbol `a < m`.
+substitution maps a symbol `a ≥ m` to `w_{a - m + 1}` and keeps a symbol `a < m`. As printed by
+Garey and Johnson, `R` is "a regular expression `R` over `X ∪ Y`" (not over `X` alone), so `z`
+may contain symbols of `Y`, which the substitution keeps.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
