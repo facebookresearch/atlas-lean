@@ -147,6 +147,13 @@ class CheckerTest(unittest.TestCase):
     def test_wrong_schema_version(self) -> None:
         self.assert_clean_then(lambda: (self.manifest.update(schema_version=2), self.save()), "schema_version is 2")
 
+    def test_upstream_repository_is_formal_math(self) -> None:
+        for repository in ("", "someone/else"):
+            with self.subTest(repository=repository):
+                self.manifest["upstream"]["repository"] = repository
+                self.save()
+                self.assertTrue(any("must be repository 'fairinternal/formal-math'" in p for p in self.problems()))
+
     def test_upstream_pin_needs_full_commit(self) -> None:
         self.assert_clean_then(lambda: (self.manifest.update(upstream={"repository": "x", "commit": "abc"}), self.save()),
                                "full 40-hex commit")
@@ -313,7 +320,9 @@ class BaseGuardTest(unittest.TestCase):
     def setUp(self) -> None:
         self.env = mock.patch.dict(os.environ)
         self.env.start()
-        os.environ["GITHUB_ACTIONS"] = "true"  # CI mode: the base is HEAD's first parent
+        os.environ["GITHUB_ACTIONS"] = "true"  # CI mode, pull-request style: the base is HEAD's first parent
+        os.environ.pop("GITHUB_EVENT_NAME", None)
+        os.environ.pop("GITHUB_EVENT_PATH", None)
         self.tmp = tempfile.TemporaryDirectory()
         self.root = Path(self.tmp.name) / "atlas"
         self.root.mkdir()
@@ -473,6 +482,54 @@ class BaseGuardTest(unittest.TestCase):
         self.assertIn("cannot read the base commit", out)
         del os.environ["GITHUB_ACTIONS"]  # outside CI: fall back to the origin/main merge-base
         self.assertEqual(self.run_check(work)[0], 0)
+
+    def multi_commit_push(self) -> str:
+        """Drop a row in one commit, then make an unrelated commit; return the pre-push commit."""
+        before = run_git(self.root, "rev-parse", "HEAD")
+        self.drop_row("MathlibExt/Identical.lean")
+        self.commit("drop a row")
+        write(self.root, "WantedExt/New.lean", c.META + BODY)
+        self.commit("unrelated")
+        return before
+
+    def event(self, name: str, payload: object) -> None:
+        path = Path(self.tmp.name) / "event.json"
+        path.write_text(json.dumps(payload) if not isinstance(payload, str) else payload)
+        os.environ["GITHUB_EVENT_NAME"], os.environ["GITHUB_EVENT_PATH"] = name, str(path)
+
+    def test_push_compares_with_the_commit_before_the_push(self) -> None:
+        before = self.multi_commit_push()
+        self.assertEqual(self.run_check()[0], 0)  # the tip's first parent also lacks the row
+        self.event("push", {"before": before})
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertIn("MathlibExt/Identical.lean: row removed or renamed", out)
+
+    def test_push_of_a_new_branch_falls_back_to_the_first_parent(self) -> None:
+        self.multi_commit_push()
+        self.event("push", {"before": "0" * 40})
+        self.assertEqual(self.run_check()[0], 0)
+
+    def test_push_with_unreadable_event_fails_closed(self) -> None:
+        self.multi_commit_push()
+        self.event("push", "not json")
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertIn("cannot read the base commit (the push event's before commit", out)
+
+    def test_merge_group_compares_with_its_base(self) -> None:
+        before = self.multi_commit_push()
+        self.event("merge_group", {"merge_group": {"base_sha": before}})
+        self.assertIn("row removed or renamed", self.run_check()[1])
+
+    def test_shallow_push_fetches_the_before_commit(self) -> None:
+        before = self.multi_commit_push()
+        work = self.shallow_clone()
+        self.event("push", {"before": before})
+        code, out = self.run_check(work)
+        self.assertEqual(code, 1, out)
+        self.assertIn("row removed or renamed", out)
+        run_git(work, "cat-file", "-e", before)
 
     def test_explicit_base_must_resolve(self) -> None:
         del os.environ["GITHUB_ACTIONS"]

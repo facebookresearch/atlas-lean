@@ -9,7 +9,7 @@ The manifest pins a fairinternal/formal-math commit and has a row for every root
 taken from it (see `provenance/README.md`). The check is offline, deterministic, standard library
 only, and scoped to those synced files, so a pull request fails only if it touches one:
 
-- the manifest parses: schema, upstream pin, roots, unique sorted relative paths under the roots
+- the manifest parses: schema, upstream pin (fairinternal/formal-math at a full commit), roots, unique sorted relative paths under the roots
   (no absolute, escaping, or symlinked paths);
 - `identical`, `attributed`, and `behind` rows: the file exists and its SHA-256 is
   `published_sha256`, and it is the Meta header (or, with `"header": "upstream"`, the upstream
@@ -20,9 +20,10 @@ only, and scoped to those synced files, so a pull request fails only if it touch
 - `retired` rows: the file is absent;
 - compared with the base manifest: no row disappears or changes path (a deleted synced file keeps
   its row as `retired`), and while the upstream pin is unchanged no synced row is added or changes
-  its `upstream_sha256` (only a sync says what upstream contains). The base is HEAD's first parent
-  in CI (the merge ref's base, fetched if the checkout is shallow; unreadable fails closed), else
-  the merge-base with origin/main, else the comparison is skipped with a warning;
+  its `upstream_sha256` (only a sync says what upstream contains). In CI the base is the push's
+  `before` commit, the merge group's base, or for a pull request the merge ref's first parent,
+  fetched if the checkout is shallow (unreadable fails closed); locally the merge-base with
+  origin/main, else the comparison is skipped with a warning;
 - files without a row (ATLAS-only work) are ignored; new upstream files enter at sync time.
 
 A pull request that changes or deletes a synced or diverged file records that with
@@ -58,6 +59,7 @@ SYNCED = ("identical", "attributed", "behind")
 SHA256 = re.compile(r"[0-9a-f]{64}")
 COMMIT = re.compile(r"[0-9a-f]{40}")
 PLAIN_BLOCK = re.compile(r"/-(?![-!]).*?-/", re.S)
+UPSTREAM_REPOSITORY = "fairinternal/formal-math"
 UPSTREAM_HEADER_WORDS = re.compile(r"Copyright|Authors?:|[Ll]icen[cs]e")
 # An attribution notice names provenance or licensing; a descriptive comment is not one.
 NOTICE_WORDS = re.compile(r"Copyright|[Ll]icen[cs]e|[Aa]ttribution|Authors?:|[Pp]orted from|[Aa]dapted from|Portions")
@@ -268,9 +270,9 @@ def load(manifest_path: Path) -> tuple[dict | None, list[str]]:
     if manifest.get("schema_version") != SCHEMA_VERSION:
         problems.append(f"manifest: schema_version is {manifest.get('schema_version')!r}, expected {SCHEMA_VERSION}")
     upstream = manifest.get("upstream")
-    if not (isinstance(upstream, dict) and isinstance(upstream.get("repository"), str)
+    if not (isinstance(upstream, dict) and upstream.get("repository") == UPSTREAM_REPOSITORY
             and isinstance(upstream.get("commit"), str) and COMMIT.fullmatch(upstream["commit"])):
-        problems.append("manifest: upstream needs a repository and a full 40-hex commit")
+        problems.append(f"manifest: upstream must be repository {UPSTREAM_REPOSITORY!r} with a full 40-hex commit")
     if manifest.get("roots") != list(ROOTS):
         problems.append(f"manifest: roots are {manifest.get('roots')!r}, expected {list(ROOTS)!r}")
     if not isinstance(manifest.get("lean_toolchain"), str):
@@ -331,6 +333,32 @@ def first_parent(root: Path) -> str | None:
     return parents[0] if parents else None
 
 
+def ci_base(root: Path) -> tuple[str | None, str]:
+    """The base of a GitHub Actions run: (commit, where it came from).
+
+    A push compares with the commit before the push (a multi-commit push must not hide a removal
+    in an earlier commit), a merge group with its base, and a pull request with the merge ref's
+    first parent."""
+    event: dict = {}
+    try:
+        event = json.loads(Path(os.environ.get("GITHUB_EVENT_PATH", "")).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        pass
+    name = os.environ.get("GITHUB_EVENT_NAME", "")
+    if name == "push":
+        before = event.get("before") if isinstance(event, dict) else None
+        if isinstance(before, str) and COMMIT.fullmatch(before) and before != "0" * 40:
+            return before, "the push event's before commit"
+        if not event:
+            return None, "the push event's before commit (event payload unreadable)"
+    if name == "merge_group":
+        group = event.get("merge_group") if isinstance(event, dict) else None
+        sha = group.get("base_sha") if isinstance(group, dict) else None
+        return (sha, "the merge group's base") if isinstance(sha, str) and COMMIT.fullmatch(sha) else \
+            (None, "the merge group's base (missing from the event payload)")
+    return first_parent(root), "first parent of HEAD"
+
+
 def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
     """The commit whose manifest this tree is compared with: (commit, None) or (None, why not)."""
     if git(root, "rev-parse", "--show-toplevel") != str(root.resolve()):
@@ -339,12 +367,12 @@ def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
         commit = git(root, "rev-parse", "--verify", f"{base}^{{commit}}")
         return (commit, None) if commit else (None, f"cannot resolve --base {base}")
     if os.environ.get("GITHUB_ACTIONS"):
-        parent = first_parent(root)
-        if parent and git(root, "cat-file", "-e", f"{parent}^{{commit}}") is None:
-            git(root, "fetch", "--no-tags", "--depth=1", "origin", parent)  # shallow CI checkout
-        if parent and git(root, "cat-file", "-e", f"{parent}^{{commit}}") is not None:
-            return parent, None
-        return None, "cannot read the base commit (first parent of HEAD)"
+        candidate, source = ci_base(root)
+        if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is None:
+            git(root, "fetch", "--no-tags", "--depth=1", "origin", candidate)  # shallow CI checkout
+        if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
+            return candidate, None
+        return None, f"cannot read the base commit ({source})"
     for candidate in (git(root, "merge-base", "HEAD", "origin/main"), first_parent(root)):
         if candidate and git(root, "cat-file", "-e", f"{candidate}^{{commit}}") is not None:
             return candidate, None
@@ -453,7 +481,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--rationale", help="why ATLAS differs from formal-math (with --record-divergence)")
     ap.add_argument("--backport", help="'pending', 'not-needed', or the formal-math backport PR URL")
     ap.add_argument("--retire", nargs="+", metavar="PATH", help="mark deleted synced files as retired")
-    ap.add_argument("--base", help="commit to compare rows with (default: in CI the first parent of HEAD, "
+    ap.add_argument("--base", help="commit to compare rows with (default: in CI the event's base, "
                     "else the merge-base with origin/main)")
     a = ap.parse_args(argv)
     manifest_path = a.manifest or a.root / MANIFEST

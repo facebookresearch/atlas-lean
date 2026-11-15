@@ -8,7 +8,8 @@ reviewed ATLAS pull requests, and Formal-Math never depends on ATLAS.
 
 ## Schema (version 1)
 
-Top level: `schema_version`, `upstream` (`repository`, full `commit`), `lean_toolchain` (the ATLAS
+Top level: `schema_version`, `upstream` (`repository`, always `fairinternal/formal-math`, and the
+full `commit`), `lean_toolchain` (the ATLAS
 toolchain when the sync ran; a later Lean bump does not invalidate the recorded provenance, and the
 next sync updates it), `roots`, and `rows`, sorted by path, one per line. Files that never came from Formal-Math (ATLAS-only work
 and third-party FLT content, which keeps its own header) have no row. Totals are computed by the
@@ -43,8 +44,9 @@ the Python standard library, and fails on:
   a deleted file keeps its row as `retired`), and, while the upstream pin is unchanged, a new
   synced row or a synced row whose `upstream_sha256` changed. Only a sync moves the pin and says
   what upstream contains; a sync pull request is reviewed through its sync report, because CI
-  cannot read the private upstream. In CI the base is HEAD's first parent (the pull request's
-  base), fetched if the checkout is shallow; if it cannot be read the check fails. Locally it is
+  cannot read the private upstream. In CI the base is the push's `before` commit, the merge
+  group's base, or for a pull request the merge ref's first parent, fetched if the checkout is
+  shallow; if it cannot be read the check fails. Locally it is
   the merge-base with `origin/main`, and the comparison is skipped with a warning when neither can
   be read. `--base REV` names it explicitly.
 

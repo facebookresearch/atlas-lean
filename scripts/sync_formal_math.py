@@ -29,7 +29,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_formal_math_sync import (  # noqa: E402  (the checker owns the header parser)
-    BACKPORT, MANIFEST, ROOTS, SCHEMA_VERSION, count_rows, dump_manifest, is_flt, leading_notice,
+    BACKPORT, MANIFEST, ROOTS, SCHEMA_VERSION, UPSTREAM_REPOSITORY, count_rows, dump_manifest, is_flt, leading_notice,
     library_files, sha256, split_published, upstream_body,
 )
 
@@ -170,7 +170,7 @@ def load_json(path: Path | None) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def build(atlas: Path, repo: Path, commit: str, repository: str, previous: dict,
+def build(atlas: Path, repo: Path, commit: str, previous: dict,
           rationales: dict) -> tuple[dict, list[str], int]:
     """Return (manifest, paths that newly diverged without a rationale, count of files with no row)."""
     files, links = library_files(atlas)
@@ -216,7 +216,7 @@ def build(atlas: Path, repo: Path, commit: str, repository: str, previous: dict,
     toolchain = (atlas / "lean-toolchain").read_text().strip()
     manifest = {
         "schema_version": SCHEMA_VERSION,
-        "upstream": {"repository": repository, "commit": commit},
+        "upstream": {"repository": UPSTREAM_REPOSITORY, "commit": commit},
         "lean_toolchain": toolchain,
         "roots": list(ROOTS),
         "rows": rows,
@@ -259,7 +259,6 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--formal-math", type=Path, required=True, help="local Formal-Math git repository")
     ap.add_argument("--commit", required=True, help="Formal-Math commit to record (resolved to a full SHA)")
-    ap.add_argument("--repository", default="fairinternal/formal-math")
     ap.add_argument("--atlas", type=Path, default=Path(__file__).resolve().parent.parent)
     ap.add_argument("--manifest", type=Path, help=f"default: <atlas>/{MANIFEST}")
     ap.add_argument("--rationales", type=Path, help="JSON: path -> {rationale, backport} for new divergences")
@@ -274,7 +273,7 @@ def main(argv: list[str] | None = None) -> int:
     rationales = load_json(a.rationales)
     if not isinstance(rationales, dict):
         raise SystemExit("sync: --rationales must be a JSON object mapping paths to {rationale, backport}")
-    manifest, unexplained, local = build(a.atlas, a.formal_math, commit, a.repository, previous, rationales)
+    manifest, unexplained, local = build(a.atlas, a.formal_math, commit, previous, rationales)
     text = report(previous, manifest, local)
     print(text)
     if unexplained:
