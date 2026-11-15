@@ -31,7 +31,7 @@ namespace MetaMathlibExt.Complexity.NPComplete.UnitOpenShopNoWaitPrecedenceTotal
 
 open MetaMathlibExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespan
   (UnitFlowShopPrecedenceMakespanInstance WellFormed)
-open MetaMathlibExt.Complexity.NPComplete.UnitOpenShopPrecedenceMakespan (IsSchedule)
+open MetaMathlibExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLateness (IsUnitOpenShopSchedule)
 
 /-!
 # NO-WAIT OPEN SHOP O|p_ij=1;prec;no-wait|ΣC_i is NP-complete
@@ -48,9 +48,9 @@ operation)?
 
 The instance (with `K` bounding the total completion time), its well-formedness (`m ≥ 1`, `m`
 unit operations per listed job, acyclic precedence arcs; `UnitFlowShopPrecedenceMakespanWanted`)
-and the open-shop schedule `IsSchedule` (integer start times `σ k j` of operation `O_jk`;
-`UnitOpenShopPrecedenceMakespanWanted`) are reused. A job's `m` unit operations start at distinct
-integer times, so the job waits between none of them exactly when they occupy the `m`
+and the open-shop schedule `IsUnitOpenShopSchedule` (integer start times `σ k j` of operation
+`O_jk`; `UnitOpenShopPrecedenceMakespanWanted`) are reused. A job's `m` unit operations start at
+distinct integer times, so the job waits between none of them exactly when they occupy the `m`
 consecutive unit slots starting at some time `s`: `s ≤ σ k j < s + m` for every machine `k`. The
 completion time of job `j` is `C_j = max_k (σ k j + 1)` (a supremum over the `m ≥ 1` machines).
 Numbers use the binary encoding.
@@ -76,7 +76,7 @@ reduction from every language in `NP`
 operations fill `m` consecutive unit slots, and `Σ_j max_k (σ k j + 1) ≤ K`. -/
 def UnitOpenShopNoWaitPrecedenceTotalCompletionFeasible
     (i : UnitFlowShopPrecedenceMakespanInstance) : Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsSchedule i.1 i.2.1.length i.2.2.1 σ ∧
+  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsUnitOpenShopSchedule i.1 i.2.1.length i.2.2.1 σ ∧
     (∀ j, ∃ s, ∀ k, s ≤ σ k j ∧ σ k j < s + i.1) ∧
     ∑ j, Finset.univ.sup (fun k => σ k j + 1) ≤ i.2.2.2
 

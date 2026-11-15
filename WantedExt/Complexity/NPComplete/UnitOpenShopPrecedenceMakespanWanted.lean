@@ -24,13 +24,15 @@ public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespanWanted
+public import WantedExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessWanted
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.UnitOpenShopPrecedenceMakespan
 
 open MetaMathlibExt.Complexity.NPComplete.UnitFlowShopPrecedenceMakespan
-  (UnitFlowShopPrecedenceMakespanInstance WellFormed Prec)
+  (UnitFlowShopPrecedenceMakespanInstance WellFormed)
+open MetaMathlibExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLateness (IsUnitOpenShopSchedule)
 
 /-!
 # OPEN SHOP O|p_ij=1;prec|Cmax is NP-complete
@@ -51,8 +53,9 @@ that name jobs and generate an acyclic relation (`PrecWellFormed`). Machines are
 `Fin n` for `n` listed jobs. Only the schedule differs: in an open shop the operations of a job
 have no prescribed order. A schedule gives each operation an integer start time: with unit
 lengths and integer data, rounding the start times of any schedule down keeps every constraint,
-and two unit operations overlap exactly when they start together. Numbers use the binary
-encoding.
+and two unit operations overlap exactly when they start together. The schedule predicate is
+`UnitOpenShopOutTreeMaxLateness.IsUnitOpenShopSchedule`, reused from
+`UnitOpenShopOutTreeMaxLatenessWanted`. Numbers use the binary encoding.
 
 Brucker and Knust classify the problem as NP-hard in the strong sense, crediting Timkovsky.
 Membership in NP is the certificate argument: the `n · m` start times of a schedule, each below
@@ -69,19 +72,11 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- `σ k j` is the start time of operation `O_jk` (job `j` on machine `k`). `σ` is a unit-time
-open-shop schedule obeying the arcs `A`: each machine processes at most one operation at a time,
-no two operations of a job are processed at the same time, and if `i` precedes `j`, every
-operation of `j` starts after every operation of `i` is completed. -/
-def IsSchedule (m n : ℕ) (A : List (ℕ × ℕ)) (σ : Fin m → Fin n → ℕ) : Prop :=
-  (∀ k, Function.Injective (σ k)) ∧ (∀ j, Function.Injective fun k => σ k j) ∧
-    ∀ i j, Prec A i j → ∀ k k', σ k i + 1 ≤ σ k' j
-
 /-- Some open-shop schedule completes every operation by time `K` (makespan
 `max_j C_j ≤ K`). -/
 def UnitOpenShopPrecedenceMakespanFeasible (i : UnitFlowShopPrecedenceMakespanInstance) :
     Prop :=
-  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsSchedule i.1 i.2.1.length i.2.2.1 σ ∧
+  ∃ σ : Fin i.1 → Fin i.2.1.length → ℕ, IsUnitOpenShopSchedule i.1 i.2.1.length i.2.2.1 σ ∧
     ∀ k j, σ k j + 1 ≤ i.2.2.2
 
 open Classical in

@@ -25,14 +25,14 @@ public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.F3UnitChainsLateJobsWanted
-public import WantedExt.Complexity.NPComplete.UnitOpenShopPrecedenceMakespanWanted
+public import WantedExt.Complexity.NPComplete.UnitOpenShopOutTreeMaxLatenessWanted
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.O3UnitChainsNoWaitLateJobs
 
 open F3UnitChainsLateJobs (F3UnitChainsLateJobsInstance WellFormed)
-open UnitOpenShopPrecedenceMakespan (IsSchedule)
+open UnitOpenShopOutTreeMaxLateness (IsUnitOpenShopSchedule)
 
 /-!
 # NO-WAIT OPEN SHOP `O3|p_ij=1;chains;no-wait|ΣU_i` is NP-complete
@@ -53,7 +53,7 @@ The instance (due dates `d_i` of the jobs listed one per entry, chain arcs, `K`)
 well-formedness (the arcs form chains on the jobs) are those of the flow shop
 `F3|p_ij=1;chains|ΣU_i` (`F3UnitChainsLateJobsWanted`). Machines are `Fin 3`, jobs `Fin n`. A
 schedule gives operation `O_jk` the start time `σ k j`; `σ` is a unit-time open-shop schedule
-obeying the chain arcs (`UnitOpenShopPrecedenceMakespan.IsSchedule`: the operations
+obeying the chain arcs (`UnitOpenShopOutTreeMaxLateness.IsUnitOpenShopSchedule`: the operations
 on one machine, and the operations of one job, start at pairwise different times, and if `i`
 precedes `j`, every operation of `j` starts after every operation of `i` is completed). No-wait
 is stated with a start time `S j` of job `j`: all its operations start in `[S j, S j + 3)`.
@@ -80,12 +80,12 @@ reduction from every language in `NP`
 
 /-- `σ k j` (start of job `j`'s unit operation on machine `k`) is a no-wait unit-time open-shop
 schedule on `m` machines for the precedence arcs `A`, job `j` starting at `S j`: `σ` is a
-unit-time open-shop schedule (`UnitOpenShopPrecedenceMakespan.IsSchedule`), and every operation of
-job `j` starts in `[S j, S j + m)`, so that the `m` operations of the job run back to back from
-`S j` on. -/
+unit-time open-shop schedule (`UnitOpenShopOutTreeMaxLateness.IsUnitOpenShopSchedule`), and every
+operation of job `j` starts in `[S j, S j + m)`, so that the `m` operations of the job run back to
+back from `S j` on. -/
 def IsNoWaitSchedule (m n : ℕ) (A : List (ℕ × ℕ)) (S : Fin n → ℕ) (σ : Fin m → Fin n → ℕ) :
     Prop :=
-  IsSchedule m n A σ ∧ ∀ k j, S j ≤ σ k j ∧ σ k j < S j + m
+  IsUnitOpenShopSchedule m n A σ ∧ ∀ k j, S j ≤ σ k j ∧ σ k j < S j + m
 
 /-- Some no-wait schedule has at most `K` late jobs: jobs `j` with completion time
 `C_j = S j + 3` greater than the due date `d_j`. -/
