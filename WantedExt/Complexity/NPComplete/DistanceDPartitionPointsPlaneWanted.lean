@@ -45,11 +45,10 @@ of CHROMATIC NUMBER the problem is solvable in polynomial time for `K ≤ 2`.
 
 The points are a list of distinct points; each point is a pair of integer coordinates, each given
 as a pair `(p, q)` of naturals standing for `p - q`, decoded by `GeometricTravelingSalesman.point`
-as in `GeometricTravelingSalesmanWanted`. Numbers are in binary. The partition is a map
-`c : Fin |P| → Fin K` on the positions of the list, with blocks `Pᵢ = c⁻¹ {i}`, some possibly
-empty, as for CHROMATIC NUMBER (a coloring of the points with at most `K` colors); requiring
-nonempty blocks would change only instances with `K > |P|`, since splitting a block keeps the
-condition. As the points are distinct, distinct positions are distinct points. For `d ≥ 0` the
+as in `GeometricTravelingSalesmanWanted`. Numbers are in binary. The partition is a surjective
+map `c : Fin |P| → Fin K` on the positions of the list, with the nonempty blocks
+`Pᵢ = c⁻¹ {i}` (so an instance with `K > |P|` is a no-instance). As the points are distinct,
+distinct positions are distinct points. For `d ≥ 0` the
 condition `d(u, v) > d` is `d² < (u₁ - v₁)² + (u₂ - v₂)²`, which is how it is written, over `ℤ`.
 
 Membership in NP: the map `c` is a certificate of polynomial size.
@@ -73,10 +72,11 @@ abbrev DistanceDPartitionPointsPlaneInstance := List ((ℕ × ℕ) × (ℕ × �
 def WellFormed (i : DistanceDPartitionPointsPlaneInstance) : Prop :=
   (i.1.map point).Nodup ∧ 0 < i.2.1 ∧ 0 < i.2.2
 
-/-- Some map `c` of the points to `K` sets puts two distinct points in the same set only when
-their Euclidean distance exceeds `d`: `d² < (u₁ - v₁)² + (u₂ - v₂)²`. -/
+/-- Some partition of the points into `K` nonempty sets (a surjective map `c` to `Fin K`) puts
+two distinct points in the same set only when their Euclidean distance exceeds `d`:
+`d² < (u₁ - v₁)² + (u₂ - v₂)²`. -/
 def DistanceDPartitionPointsPlaneFeasible (i : DistanceDPartitionPointsPlaneInstance) : Prop :=
-  ∃ c : Fin i.1.length → Fin i.2.2, ∀ a b, a ≠ b → c a = c b →
+  ∃ c : Fin i.1.length → Fin i.2.2, Function.Surjective c ∧ ∀ a b, a ≠ b → c a = c b →
     (i.2.1 : ℤ) ^ 2 < ((point i.1[a]).1 - (point i.1[b]).1) ^ 2 +
       ((point i.1[a]).2 - (point i.1[b]).2) ^ 2
 
