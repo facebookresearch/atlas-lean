@@ -283,14 +283,18 @@ class CheckerTest(unittest.TestCase):
                      ["--rationale", "why", "--backport", "later"]):
             with self.assertRaises(SystemExit):
                 self.main("--record-divergence", "MathlibExt/Identical.lean", *args)
-        code, out = self.main("--record-divergence", "CSLibExtTest/Local.lean", "--rationale", "why", "--backport", "pending")
-        self.assertEqual(code, 1)
-        self.assertIn("no manifest row", out)
         os.remove(self.root / "MathlibExt/Identical.lean")
         code, out = self.main("--record-divergence", "MathlibExt/Identical.lean", "--rationale", "why", "--backport", "pending")
         self.assertEqual(code, 1)
         self.assertIn("use --retire", out)
         self.assertEqual((self.root / c.MANIFEST).read_bytes(), before)
+
+    def test_record_divergence_can_start_tracking_a_moved_file(self) -> None:
+        self.assertEqual(self.main("--record-divergence", "CSLibExtTest/Local.lean", "--rationale", "moved here",
+                                   "--backport", "pending")[0], 0)
+        self.assertEqual(self.row_on_disk("CSLibExtTest/Local.lean")["disposition"], "diverged")
+        self.assertEqual(self.problems(), [])
+        self.assertEqual(self.main("--retire", "CSLibExtTest/Missing.lean")[0], 1)  # --retire never creates rows
 
     def test_retire_repairs_a_deleted_file(self) -> None:
         os.remove(self.root / "MathlibExt/Kept.lean")
@@ -457,6 +461,40 @@ class BaseGuardTest(unittest.TestCase):
                       published_sha256=c.sha256(text), rationale="fix", backport="pending")
         self.assert_blocked("drop the upstream revision", "MathlibExtTest/Behind.lean: upstream_commit changed "
                             "when the row became diverged")
+
+    def test_diverging_cannot_add_an_upstream_revision(self) -> None:
+        text = c.META + "\n" + BODY + "\n-- fix\n"
+        write(self.root, "MathlibExt/Identical.lean", text)
+        self.edit_row("MathlibExt/Identical.lean", disposition="diverged", upstream_commit="d" * 40,
+                      published_sha256=c.sha256(text), rationale="fix", backport="pending")
+        self.assert_blocked("invent an upstream revision", "MathlibExt/Identical.lean: upstream_commit changed "
+                            "when the row became diverged")
+
+    def move_identical(self, edit: bool) -> None:
+        run_git(self.root, "mv", "MathlibExt/Identical.lean", "WantedExt/Renamed.lean")
+        if edit:
+            with open(self.root / "WantedExt/Renamed.lean", "a") as out:
+                out.write("-- moved\n")
+        self.assertEqual(self.run_check(None, "--retire", "MathlibExt/Identical.lean")[0], 0)
+        self.manifest = json.loads((self.root / c.MANIFEST).read_text())
+
+    def test_pure_rename_of_a_tracked_file_needs_a_row(self) -> None:
+        self.move_identical(edit=False)
+        self.assert_blocked("retire and rename", "WantedExt/Renamed.lean: renamed from tracked MathlibExt/Identical.lean")
+        self.assertEqual(self.run_check(None, "--record-divergence", "WantedExt/Renamed.lean", "--rationale",
+                                        "moved to WantedExt", "--backport", "not-needed")[0], 0)
+        self.commit("track the new path")
+        self.assertEqual(self.run_check()[0], 0)
+
+    def test_rename_with_edits_of_a_tracked_file_needs_a_row(self) -> None:
+        self.move_identical(edit=True)
+        self.assert_blocked("retire, rename and edit", "WantedExt/Renamed.lean: renamed from tracked")
+
+    def test_retire_with_deletion_passes(self) -> None:
+        os.remove(self.root / "MathlibExt/Identical.lean")
+        self.assertEqual(self.run_check(None, "--retire", "MathlibExt/Identical.lean")[0], 0)
+        self.commit("delete a synced file")
+        self.assertEqual(self.run_check()[0], 0)
 
     def test_backport_link_update_passes(self) -> None:
         self.edit_row("CSLibExt/Diverged.lean", backport="https://github.com/fairinternal/formal-math/pull/1")
@@ -782,7 +820,9 @@ class SyncTest(unittest.TestCase):
         cases = {"Copyright (c) 2026 Meta Platforms, Inc. All rights reserved.": True,
                  "Copyright (c) Meta Platforms, Inc. and affiliates.": True,
                  "Copyright 2026 Meta Platforms, Inc. and affiliates and Jane Doe.": False,
-                 "Copyright (c) 2026 Adam Kiezun and Jane Doe. All rights reserved.": False}
+                 "Copyright (c) 2026 Adam Kiezun and Jane Doe. All rights reserved.": False,
+                 "Copyright (c) 2026. All rights reserved.": False,
+                 "Copyright (c) 2026\nAuthors: Jane Doe": False}
         for line, own in cases.items():
             with self.subTest(line=line):
                 self.assertEqual(c.is_formal_math_header(f"/-\n{line}\nReleased under Apache 2.0 license.\n-/"), own)
@@ -802,6 +842,16 @@ class SyncTest(unittest.TestCase):
         self.assertIn("## Changed (2)", report)
         self.assertIn("- `MathlibExt/Old.lean`: behind -> behind", report)
         self.assertIn("- `MathlibExt/Gone.lean`: diverged -> diverged", report)
+
+    def test_same_pin_sync_keeps_a_recorded_divergence(self) -> None:
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        write(self.atlas, "MathlibExt/Old.lean", c.META + "\n" + BODY + "\n-- fix\n")  # was behind
+        quiet(c.main, ["--root", str(self.atlas), "--record-divergence", "MathlibExt/Old.lean",
+                       "--rationale", "fix", "--backport", "pending"])
+        recorded = self.rows()["MathlibExt/Old.lean"]
+        self.assertEqual(recorded["upstream_commit"], self.first)
+        self.assertEqual(self.sync()[0], 0)  # no fresh rationale needed at the same pin
+        self.assertEqual(self.rows()["MathlibExt/Old.lean"], recorded)
 
     def test_rows_never_disappear(self) -> None:
         self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)

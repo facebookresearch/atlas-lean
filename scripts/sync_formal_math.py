@@ -174,6 +174,7 @@ def build(atlas: Path, repo: Path, commit: str, previous: dict,
     tree = upstream_tree(repo, commit)
     history = upstream_history(repo, commit, files)
     old_rows = {row["path"]: row for row in previous.get("rows", [])}
+    same_pin = previous.get("upstream", {}).get("commit") == commit
     blobs = Blobs(repo)
     rows, unexplained, dropped, local = [], [], [], 0
     try:
@@ -189,8 +190,12 @@ def build(atlas: Path, repo: Path, commit: str, previous: dict,
                     dropped.append(path)
                 local += 1
                 continue
+            old = old_rows.get(path, {})
+            if row["disposition"] == "diverged" and same_pin and old.get("disposition") == "diverged" \
+                    and old.get("published_sha256") == row["published_sha256"] and path not in rationales:
+                rows.append(dict(old))  # same pin, same bytes: the recorded row stands as reviewed
+                continue
             if row["disposition"] == "diverged":
-                old = old_rows.get(path, {})
                 # A recorded explanation covers only the exact difference it was written for.
                 same = old.get("disposition") == "diverged" and all(
                     old.get(k) == row.get(k) for k in ("published_sha256", "upstream_sha256"))

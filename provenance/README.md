@@ -19,8 +19,8 @@ Each row has `path` and `disposition`. `published_sha256` is the SHA-256 of the 
 `upstream_sha256` is the SHA-256 of an upstream file's body: the text after Formal-Math's own leading
 header, without leading blank lines. Formal-Math's own header is a block whose copyright lines name
 only Formal-Math's holders (`FORMAL_MATH_HOLDERS` in `scripts/check_formal_math_sync.py`: Meta, Adam
-Kiezun, Avocado, the formal-math and Mathlib Extension contributors), or an authorship block with no
-copyright or license text. ATLAS replaces that header with the Meta header. Any other copyright or
+Kiezun, Avocado, the formal-math and Mathlib Extension contributors; a copyright line naming no
+holder does not count), or an authorship block with no copyright or license text. ATLAS replaces that header with the Meta header. Any other copyright or
 license block is third-party and part of the body, so ATLAS keeps it byte for byte or records a
 divergence.
 
@@ -49,7 +49,10 @@ the Python standard library, and fails on:
   a deleted file keeps its row as `retired`), and, while the upstream pin is unchanged, any change
   to a synced row or a new one. With the pin unchanged a row may only become `retired`, become
   `diverged` (keeping its `upstream_sha256` and `upstream_commit`), or, if diverged, take a new `published_sha256` with a
-  new rationale or a rationale/backport update; its `upstream_sha256` and `upstream_commit` stay. Only a sync moves the pin and says
+  new rationale or a rationale/backport update; its `upstream_sha256` and `upstream_commit` stay.
+  A tracked (synced or diverged) file that git sees as renamed or copied to a path without a row
+  fails until the new path gets one (`--record-divergence NEW`, then `--retire OLD` if it was
+  deleted): a tracked file stays tracked when it moves. Only a sync moves the pin and says
   what upstream contains. CI cannot read the private upstream, so a pin change is authorized
   rather than verified: a pull request that moves the pin needs the `formal-math-sync` label, which
   only maintainers (triage or write access) can add, and is reviewed through its sync report. After

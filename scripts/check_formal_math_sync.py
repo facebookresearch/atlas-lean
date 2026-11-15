@@ -121,7 +121,7 @@ def leading_notice(text: str) -> str | None:
 # Copyright holders of Formal-Math's own headers, which ATLAS replaces with the Meta header. Any
 # other holder, or a license block without one of these holders, is third-party and stays.
 FORMAL_MATH_HOLDERS = ("Meta Platforms, Inc. and affiliates", "Meta Platforms, Inc", "Adam Kiezun", "Avocado",
-                       "The formal-math Contributors", "Mathlib Extension Contributors", "")
+                       "The formal-math Contributors", "Mathlib Extension Contributors")
 COPYRIGHT_HOLDER = re.compile(r"Copyright(?: \(c\))?(?: \d{4}(?:[-–]\d{4})?)?\.?[ \t]*([^\n]*)")
 
 
@@ -447,7 +447,7 @@ def row_transition_problems(path: str, before: dict | None, row: dict, short: st
     if disposition != "diverged":
         return []  # check() reports an unknown disposition
     if before.get("disposition") != "diverged":
-        changed = [k for k in ("upstream_sha256", "upstream_commit") if k in before and row.get(k) != before[k]]
+        changed = [k for k in ("upstream_sha256", "upstream_commit") if row.get(k) != before.get(k)]
         if changed:
             return [f"{path}: {', '.join(changed)} changed when the row became diverged (base {short})"]
         return []
@@ -501,12 +501,34 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
     problems = [f"{path}: row removed or renamed (base {short}); rows are never dropped: restore it, then use "
                 "--record-divergence for a changed file or --retire for a deleted one"
                 for path in sorted(old.keys() - new.keys())]
+    tracked = {path for path, row in old.items() if row.get("disposition") in (*SYNCED, "diverged")}
+    moves = git(root, "diff", "-M", "-C", "--name-status", "-z", commit, "HEAD", "--", *ROOTS)
+    if moves is None:
+        found, note = unreadable(f"cannot diff base {commit} with HEAD for renames")
+        problems += found
+        warnings = note
+    else:
+        warnings = []
+        fields = moves.split("\0")
+        i = 0
+        while i < len(fields):
+            status = fields[i]
+            if status[:1] in ("R", "C") and i + 2 < len(fields):
+                source, target = fields[i + 1], fields[i + 2]
+                if source in tracked and target not in new:
+                    verb = "renamed" if status[0] == "R" else "copied"
+                    problems.append(f"{target}: {verb} from tracked {source} (base {short}) but has no row; a "
+                                    f"tracked file stays tracked when it moves: --record-divergence {target} "
+                                    "(and --retire the old path if it was deleted)")
+                i += 3
+            else:
+                i += 2
     if pin != old_pin:
         problem, note = repin_authorization(old_pin, pin)
-        return problems + ([problem] if problem else []), ([note] if note else [])
+        return problems + ([problem] if problem else []), warnings + ([note] if note else [])
     for path, row in sorted(new.items(), key=lambda item: str(item[0])):
         problems += row_transition_problems(path, old.get(path), row, short)
-    return problems, []
+    return problems, warnings
 
 
 def fix_commands(fixes: dict[str, list[str]]) -> list[str]:
@@ -520,8 +542,10 @@ def fix_commands(fixes: dict[str, list[str]]) -> list[str]:
     return commands
 
 
-def edit(root: Path, manifest_path: Path, paths: list[str], new_row) -> int:
-    """Apply `new_row(old_row, path) -> row` to each path's row and rewrite the manifest."""
+def edit(root: Path, manifest_path: Path, paths: list[str], new_row, create: bool = False) -> int:
+    """Apply `new_row(old_row, path) -> row` to each path's row and rewrite the manifest.
+
+    With `create`, a path without a row starts from an empty row (a tracked file's new path)."""
     manifest, problems = load(manifest_path)
     if manifest is None:
         print("\n".join(problems), file=sys.stderr)
@@ -532,10 +556,10 @@ def edit(root: Path, manifest_path: Path, paths: list[str], new_row) -> int:
         why = path_problem(root, path)
         if why:
             errors.append(f"{path}: {why}")
-        elif path not in rows:
+        elif path not in rows and not create:
             errors.append(f"{path}: no manifest row; files without a row are not synced and need no record")
         else:
-            result = new_row(rows[path], path)
+            result = new_row(rows.get(path, {}), path)
             if isinstance(result, str):
                 errors.append(f"{path}: {result}")
             else:
@@ -577,7 +601,7 @@ def main(argv: list[str] | None = None) -> int:
                 row["upstream_commit"] = old["upstream_commit"]
             row.update(rationale=a.rationale.strip(), backport=a.backport)
             return row
-        return edit(a.root, manifest_path, a.record_divergence, diverge)
+        return edit(a.root, manifest_path, a.record_divergence, diverge, create=True)
 
     if a.retire:
         def retire(old: dict, path: str) -> dict | str:
