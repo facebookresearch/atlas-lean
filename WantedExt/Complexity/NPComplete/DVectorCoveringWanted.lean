@@ -34,11 +34,11 @@ namespace MetaMathlibExt.Complexity.NPComplete.DVectorCovering
 /-!
 # D-VECTOR COVERING is NP-complete
 
-INSTANCE: a positive integer `d`, a set `X` of vectors in `[0, 1]^d` with rational components,
-and a positive integer `K`.
-QUESTION: is there a partition of `X` into subsets `S₁, …, Sₘ` such that at least `K` of them
-are unit covers, where a set `S` of vectors is a unit cover if, for every `i ≤ d`, the sum of the
-`i`-th components of the elements of `S` is at least `1`?
+INSTANCE: a positive integer `d`, a finite list `X = (x₁, …, x_N)` of vectors in `[0, 1]^d`
+with rational components (repetitions allowed), and a positive integer `K`.
+QUESTION: is there a partition of the positions `{1, …, N}` of `X` into subsets `S₁, …, Sₘ` such
+that at least `K` of them are unit covers, where `S` is a unit cover if, for every `i ≤ d`, the
+sum of the `i`-th components of the vectors `x_j`, `j ∈ S`, is at least `1`?
 
 This is the decision version of MAXIMUM D-VECTOR COVERING of Crescenzi and Kann ([SR3]). The
 dimension `d` is part of the instance, so every fixed `d ≥ 1` is a special case. For `d = 1` the
@@ -48,12 +48,16 @@ and Zhang, 1999): an instance of 3-PARTITION with `3m` sizes summing to `mB` has
 the sizes divided by `B` admit `m` unit covers. Membership in NP: the partition is a
 certificate.
 
-`X` is a list of vectors, so equal vectors may repeat (as items of equal size do in bin
-covering); the subsets of the partition are sets of positions in the list. A partition into
-`m` subsets is a map `f` from positions to `Fin m`, the subset `Sⱼ` being the preimage of `j`.
-Empty preimages are not unit covers (`d ≥ 1`), so allowing them does not change the count. A
-vector is a list of `d` components; a component is a pair `(numerator, denominator)` with a
-positive denominator and the numerator at most the denominator. Numbers use the binary encoding.
+Crescenzi and Kann write "Set `X` of vectors"; this module states the list (multiset) variant,
+in which equal vectors may repeat. Its case `d = 1` is exactly bin covering as Csirik, Frenk,
+Labbé and Zhang define it ("a list `L = (a₁, a₂, …, aₙ)` of items with size `s(aᵢ)`", normalized
+to bin capacity `1`), the problem that Assmann et al. proved NP-hard.
+
+A partition into `m` subsets is a map `f` from positions to `Fin m`, the subset `Sⱼ` being the
+preimage of `j`. Empty preimages are not unit covers (`d ≥ 1`), so allowing them does not change
+the count. A vector is a list of `d` components; a component is a pair
+`(numerator, denominator)` with a positive denominator and the numerator at most the
+denominator. Numbers use the binary encoding.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -104,8 +108,8 @@ noncomputable def dVectorCoveringDec :
   | some i => decide (WellFormed i ∧ DVectorCoveringFeasible i)
   | none => false
 
-/-- **D-VECTOR COVERING is NP-complete.** Source: Crescenzi and Kann, [SR3]; Assmann, Johnson,
-Kleitman and Leung (1984). -/
+/-- **D-VECTOR COVERING (list of vectors) is NP-complete.** Source: Crescenzi and Kann, [SR3];
+Assmann, Johnson, Kleitman and Leung (1984). -/
 public theorem_wanted dVectorCovering_npComplete :
     dVectorCoveringDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
