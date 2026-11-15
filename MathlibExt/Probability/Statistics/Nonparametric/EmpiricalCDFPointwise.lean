@@ -37,7 +37,7 @@ lemma empCDF_eq_sum_div {n : ℕ} (X : Fin n → ℝ) (t : ℝ) :
 /-- Pointwise Hoeffding bound for the empirical CDF at a fixed threshold. -/
 theorem abs_empCDF_sub_le {n : ℕ} (hn : 0 < n)
     {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
-    {X : Fin n → Ω → ℝ} (ν : Measure ℝ) [IsProbabilityMeasure ν]
+    {X : Fin n → Ω → ℝ} (ν : Measure ℝ)
     (hlaw : ∀ i, HasLaw (X i) ν μ) (hIndep : iIndepFun X μ)
     (x : ℝ) (eps : ℝ) (heps : 0 < eps) :
     μ {ω | eps < |empCDF (fun i => X i ω) x - (ν (Set.Iic x)).toReal|}

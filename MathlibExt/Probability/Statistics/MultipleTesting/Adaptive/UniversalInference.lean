@@ -252,7 +252,7 @@ theorem isEValue_splitLRT {ref : Measure X₀} [SFinite ref] {ν : Measure X₁}
 
 /-- A denominator that dominates the true density `p θ⋆` vanishes with probability zero under
 `P_{θ⋆} ⊗ ν`. -/
-theorem measure_setOf_denom_eq_zero {ref : Measure X₀} [SFinite ref] {ν : Measure X₁}
+theorem measure_setOf_denom_eq_zero {ref : Measure X₀} {ν : Measure X₁}
     [SFinite ν] {p : Θ → X₀ → ℝ} {L : X₀ → ℝ} {θstar : Θ} (hp : ∀ θ x, 0 ≤ p θ x)
     (hpstar : Measurable (p θstar)) (hdom : ∀ x, p θstar x ≤ L x) :
     (lawOf ref p θstar).prod ν {z | L z.1 = 0} = 0 := by

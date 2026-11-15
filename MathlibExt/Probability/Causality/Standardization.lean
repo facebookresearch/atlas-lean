@@ -58,13 +58,13 @@ theorem integral_cond_eq_inv_mul {Ω : Type*} [MeasurableSpace Ω] (μ : Measure
   rw [integral_smul_measure, ENNReal.toReal_inv, smul_eq_mul]
 
 /-- The observed outcome agrees with `Y₁` on the treated event. -/
-theorem observed_eq_on_treated {Ω : Type*} [MeasurableSpace Ω] (T : Set Ω)
+theorem observed_eq_on_treated {Ω : Type*} (T : Set Ω)
     (Y₀ Y₁ : Ω → ℝ) : Set.EqOn (observed T Y₀ Y₁) Y₁ T := by
   intro ω hω
   simp [observed, hω]
 
 /-- The observed outcome agrees with `Y₀` off the treated event. -/
-theorem observed_eq_on_control {Ω : Type*} [MeasurableSpace Ω] (T : Set Ω)
+theorem observed_eq_on_control {Ω : Type*} (T : Set Ω)
     (Y₀ Y₁ : Ω → ℝ) : Set.EqOn (observed T Y₀ Y₁) Y₀ Tᶜ := by
   intro ω hω
   simp [observed, Set.notMem_of_mem_compl hω, hω]

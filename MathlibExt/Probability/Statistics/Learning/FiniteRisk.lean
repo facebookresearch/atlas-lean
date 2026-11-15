@@ -182,7 +182,7 @@ theorem ermIdx_spec {Z : Type*} [MeasurableSpace Z] {M n : ℕ} [NeZero M]
 `measure_exists_abs_empirical_sub_integral_ge_le`, the empirical minimizer's population risk is
 at most the best candidate's population risk plus `2ε`. -/
 theorem erm_populationRisk_le_best_plus_two
-    {Z : Type*} [MeasurableSpace Z] (μ : Measure Z) [IsProbabilityMeasure μ]
+    {Z : Type*} [MeasurableSpace Z] (μ : Measure Z)
     {M n : ℕ} [NeZero M] (f : Fin M → Z → ℝ)
     (S : Fin n → Z)
     {ε : ℝ}

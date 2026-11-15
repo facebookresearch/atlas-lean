@@ -94,7 +94,7 @@ namespace MathlibExt.Probability.WaldCrossTerms
 when the `X_i` are identically distributed with zero mean and `X_i` is independent of
 `(X_j, 1_{T > i})`. -/
 theorem cross_pair_integral_zero
-    {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {Ω : Type*} {m : MeasurableSpace Ω} {μ : Measure Ω}
     {X : ℕ → Ω → ℝ}
     (hX_iid : ∀ i j, IdentDistrib (X i) (X j) μ μ)
     (hX_int : Integrable (X 0) μ)

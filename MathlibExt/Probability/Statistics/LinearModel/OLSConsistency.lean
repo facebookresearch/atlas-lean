@@ -104,7 +104,7 @@ coordinates, the entrywise averages `n⁻¹ ∑_{i<n} xᵢ xᵢᵀ` converge alm
 surely to the population Gram `popGram`. The topology on matrices is the
 entrywise (Pi) topology. -/
 theorem tendsto_sampleGram_ae {k : Type*} [Fintype k]
-    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω} [IsProbabilityMeasure μ]
+    {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
     {X : ℕ → Ω → (k → ℝ)}
     (hindep : Pairwise ((· ⟂ᵢ[μ] ·) on X))
     (hident : ∀ i, IdentDistrib (X i) (X 0) μ μ)

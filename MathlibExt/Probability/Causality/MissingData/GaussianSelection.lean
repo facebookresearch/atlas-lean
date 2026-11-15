@@ -260,7 +260,7 @@ theorem inverseMillsRatio_pos (c : ℝ) :
 
 /-- The probit selection probability equals the Gaussian cdf. -/
 theorem measureReal_selection_eq_cdf {Ω : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} [IsProbabilityMeasure μ] {u : Ω → ℝ} {c : ℝ}
+    {μ : Measure Ω} {u : Ω → ℝ} {c : ℝ}
     (hu : HasLaw u (gaussianReal 0 1) μ) :
     μ.real {ω | -c ≤ u ω} = cdf (gaussianReal 0 1) c := by
   have hIci : MeasurableSet (Set.Ici (-c)) := by simp
@@ -437,7 +437,7 @@ theorem covariance_outcomeError_selectionError {Ω : Type*}
 /-- The outcome-error variance is `σ₁₁` when the covariance
 matrix is valid. -/
 theorem variance_outcomeError {Ω : Type*} [MeasurableSpace Ω]
-    {μ : Measure Ω} [IsProbabilityMeasure μ] {u η : Ω → ℝ}
+    {μ : Measure Ω} {u η : Ω → ℝ}
     {σ₁₁ σ₁₂ : ℝ} (hu : HasLaw u (gaussianReal 0 1) μ)
     (hη : HasLaw η (gaussianReal 0 1) μ)
     (hind : IndepFun u η μ) (hvalid : σ₁₂ ^ 2 ≤ σ₁₁) :

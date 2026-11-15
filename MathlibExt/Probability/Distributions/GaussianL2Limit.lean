@@ -119,7 +119,7 @@ a separable Banach space `E` and `X n → Y` in `L²(P)`, then `Y` is Gaussian. 
 theorem HasGaussianLaw.of_tendsto_eLpNorm
     {Ω : Type*} {mΩ : MeasurableSpace Ω} {P : Measure Ω}
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [MeasurableSpace E] [BorelSpace E] [SecondCountableTopology E] [CompleteSpace E]
+    [MeasurableSpace E] [BorelSpace E]
     {X : ℕ → Ω → E} {Y : Ω → E}
     (hX : ∀ n, HasGaussianLaw (X n) P) (hY : AEStronglyMeasurable Y P)
     (h : Tendsto (fun n ↦ eLpNorm (X n - Y) 2 P) atTop (𝓝 0)) : HasGaussianLaw Y P := by

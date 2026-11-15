@@ -468,7 +468,7 @@ private lemma exists_Ioi_ne_zero (μC : Measure ℝ) (hC : μC ≠ 0) : ∃ y, �
 decreasing survival function (e.g. any law with an everywhere positive density), and let the log
 censoring time have a nonzero finite law `μC` not depending on the parameters. If the log-linear
 models `(η, σ)` and `(η', σ')` give the same observed-data law, then `η = η'` and `σ = σ'`. -/
-theorem eq_of_obsLaw_eq (μ₀ : Measure ℝ) [IsFiniteMeasure μ₀]
+theorem eq_of_obsLaw_eq (μ₀ : Measure ℝ)
     (hS : StrictAnti fun z => μ₀.real (Ioi z)) (μC : Measure ℝ) [IsFiniteMeasure μC]
     (hC : μC ≠ 0) {η η' σ σ' : ℝ} (hσ : 0 < σ) (hσ' : 0 < σ')
     (h : obsLaw (logLinearLaw μ₀ η σ) μC = obsLaw (logLinearLaw μ₀ η' σ') μC) :

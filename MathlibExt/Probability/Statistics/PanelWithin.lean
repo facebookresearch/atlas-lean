@@ -408,7 +408,7 @@ private theorem measurable_score_entry {τ k : Type*} [Fintype τ]
 /-- Consistency of the within estimator under independent clusters. -/
 theorem tendsto_withinEstimator {τ k Ω : Type*} [Fintype τ] [DecidableEq τ]
     [Nonempty τ] [Fintype k] [DecidableEq k] [MeasurableSpace Ω]
-    {P : Measure Ω} [IsProbabilityMeasure P]
+    {P : Measure Ω}
     {X : ℕ → Ω → Matrix τ k ℝ} {y : ℕ → Ω → τ → ℝ} {c : ℕ → Ω → ℝ}
     {u : ℕ → Ω → τ → ℝ} {β : k → ℝ}
     (hy : ∀ i ω, y i ω = X i ω *ᵥ β + (fun _ => c i ω) + u i ω)

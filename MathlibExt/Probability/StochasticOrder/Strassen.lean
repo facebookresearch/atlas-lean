@@ -98,7 +98,7 @@ variable {μ ν : Measure (ConfigSpace E)}
 /-- A finite monotone coupling of `μ` and `ν` shows `μ ≼ ν`: the easy direction of Strassen's
 theorem. -/
 theorem stochasticallyDominated (h : MonotoneCoupling μ ν κ)
-    [IsFiniteMeasure κ] : μ ≼ ν := by
+    : μ ≼ ν := by
   intro A _ hAinc
   have hmA : MeasurableSet A := DiscreteMeasurableSpace.forall_measurableSet _
   have key : μ A ≤ ν A := by
