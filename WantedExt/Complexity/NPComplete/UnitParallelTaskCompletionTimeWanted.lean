@@ -62,9 +62,10 @@ reduction from every language in `NP`
 `K`. -/
 abbrev UnitParallelTaskInstance := ℕ × List ℕ × ℕ
 
-/-- Well-formedness of an instance: every size satisfies `1 ≤ sizeⱼ ≤ m`, and `0 < K`. -/
+/-- Well-formedness of an instance: there is at least one processor (`0 < m`), every size
+satisfies `1 ≤ sizeⱼ ≤ m`, and `0 < K`. -/
 def WellFormed (i : UnitParallelTaskInstance) : Prop :=
-  (∀ q ∈ i.2.1, 0 < q ∧ q ≤ i.1) ∧ 0 < i.2.2
+  0 < i.1 ∧ (∀ q ∈ i.2.1, 0 < q ∧ q ≤ i.1) ∧ 0 < i.2.2
 
 /-- There are start times `s` such that at every time `t` the tasks started at `t` (those
 processed during `[t, t + 1)`) need at most `m` processors in total, and the total completion
