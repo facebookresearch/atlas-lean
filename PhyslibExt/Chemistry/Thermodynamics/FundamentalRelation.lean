@@ -12,17 +12,10 @@ public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.BigOperators.Ring.Finset
 public import Mathlib.Algebra.Group.DivInvMonoid
 public import Mathlib.Algebra.GroupWithZero.Units.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Add
 public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Comp
-public import Mathlib.Analysis.Calculus.Deriv.Inv
-public import Mathlib.Analysis.Calculus.Deriv.Mul
-public import Mathlib.Analysis.Calculus.LocalExtr.Basic
 public import Mathlib.Analysis.Convex.Basic
 public import Mathlib.Analysis.Convex.Function
-public import Mathlib.Analysis.Convex.SpecificFunctions.Basic
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
-public import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 public import Mathlib.LinearAlgebra.Pi
 public import Mathlib.LinearAlgebra.Prod
 public import Mathlib.Logic.Function.Basic
@@ -34,6 +27,16 @@ public import Mathlib.Topology.Neighborhoods
 public import Mathlib.Topology.Order.OrderClosed
 
 import Mathlib.Algebra.Group.Action.Defs
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.Analysis.Calculus.Deriv.Comp
+import Mathlib.Analysis.Calculus.Deriv.Inv
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pi
+import Mathlib.Analysis.Calculus.Deriv.Prod
+import Mathlib.Analysis.Calculus.LocalExtr.Basic
+import Mathlib.Analysis.Convex.SpecificFunctions.Basic
+import Mathlib.Analysis.SpecialFunctions.Log.Deriv
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.LinearCombination
@@ -44,9 +47,10 @@ import Mathlib.Tactic.Ring
 
 # Equilibrium postulates and the fundamental relation
 
-Callen-style equilibrium postulates: entropy as a concave, first-order homogeneous,
-differentiable function of the equilibrium state, with temperature, pressure and
-chemical potentials defined as its partial derivatives.
+The entropy fundamental relation of a simple system, after Callen: entropy as a
+differentiable, concave, first-order homogeneous function of the equilibrium state that
+increases with the internal energy, with temperature, pressure and chemical potentials
+defined as its partial derivatives.
 
 ## i. Overview
 
@@ -56,35 +60,48 @@ internal energy, volume and amounts `N : Fin k → ℝ`, all strictly positive
 convention is work done ON the system positive, `dU = dQ + dW`. Amounts are treated
 as continuous.
 
-The physics postulates (LAW) are carried as structure hypotheses on
-`FundamentalRelation`, never as global Lean axioms: `S` is differentiable on the
-domain (usable chain-rule form `h_chain` plus the postulate-form `h_diff`), concave
-(`ConcaveOn`), positively homogeneous of degree 1, and strictly increasing in `U`
-in the form `∂S/∂U > 0`. The Euler relation, Gibbs-Duhem and the ideal-gas
-equations are proved consequences (MC), never structure fields.
+The physics postulates (LAW) are fields of the structure `FundamentalRelation`, never
+global Lean axioms. On the open domain, `S` is Fréchet differentiable (`h_diff`), concave
+(`h_concave`, the stability condition), positively homogeneous of degree 1 (`h_homog`)
+and has `∂S/∂U > 0` (`h_pos`). The fields constrain `S` only on the domain. Everything
+else is proved from them (MC): the chain rule along curves of states
+(`hasDerivAt_comp_curve`, from `h_diff`), strict monotonicity in `U`, the first law, the
+Euler relation, Gibbs-Duhem, the equilibrium and heat-flow results, and the ideal-gas
+equations. The ideal gas is a `FundamentalRelation` (`idealGas`), so the postulates are
+consistent and the generic results apply to it.
 
 Partial derivatives are single-variable `deriv` slices, uniformly: `dSdU` varies `U`,
-`dSdV` varies `V`, `dSdN i` varies `N i` through `Function.update`. Temperature,
-pressure and chemical potentials are defined from them (`temp`, `press`, `chemPot`),
-not postulated. Differentiability along a curve is always stated with explicit
-`HasDerivAt` hypotheses on the curve components.
+`dSdV` varies `V`, `dSdN i` varies `N i` through `Function.update`. Where `S` is
+differentiable they are the Fréchet derivative applied to the coordinate directions
+(`dSdU_eq_fderiv`, `dSdV_eq_fderiv`, `dSdN_eq_fderiv`). Temperature, pressure and
+chemical potentials are defined from them (`temp`, `press`, `chemPot`), not postulated.
+These definitions are total: where a slice is not differentiable, `deriv` is Lean's junk
+value `0`, and where `∂S/∂U = 0` the temperature is the junk value `1 / 0 = 0`. Neither
+happens on the domain of a `FundamentalRelation`. Differentiability along a curve is
+always stated with explicit `HasDerivAt` hypotheses on the curve components.
 
 Model boundary: the third law and `S ≥ 0` are NOT implied and not assumed.
-Differentiability is assumed on the open domain only; it fails at phase transitions
-(subgradients deferred). Homogeneity fails for small systems and long-range forces;
-`N` is continuous. This module is kept distinct from statistical ensembles.
+Nondifferentiable fundamental relations (subgradients) are not treated. Homogeneity
+excludes small systems and long-range forces; `N` is continuous. This module is kept
+distinct from statistical ensembles.
 
 ## ii. Key results
 
 - `FundamentalRelation` : the postulate bundle (entropy plus LAW hypotheses).
 - `temp`, `press`, `chemPot` : `T`, `p`, `μᵢ` as partial derivatives of `S`.
+- `dSdU_eq_fderiv`, `dSdV_eq_fderiv`, `dSdN_eq_fderiv` : the slice partials are the
+  Fréchet partials.
+- `hasDerivAt_comp_curve` : the chain rule along a curve of states, from `h_diff`.
 - `temp_pos` : `T > 0` on the domain.
+- `FundamentalRelation.strictMonoOn_energy` : `S` is strictly increasing in `U`.
 - `firstLaw`, `firstLaw_value` : `dU = T dS - p dV + ∑ μᵢ dNᵢ` along a curve.
 - `euler_homogeneous_function`, `euler_relation` : `U = TS - pV + ∑ μᵢNᵢ`.
 - `gibbsDuhem` : `S dT - V dp + ∑ Nᵢ dμᵢ = 0` in derivative form along a curve.
 - `entropyMax_temperature_eq` : equal temperatures at an interior entropy maximum.
 - `entropyFlow_sign` : hot-to-cold flow increases total entropy (derivative sign).
 - `Sideal`, `SidealGen` : the ideal-gas entropy model (MOD).
+- `sideal_differentiableOn` : the ideal-gas entropy is Fréchet differentiable.
+- `idealGas` : the ideal gas as a `FundamentalRelation 1`, every postulate proved.
 - `sideal_pV`, `sideal_U` : `pV = NkT` and `U = (3/2)NkT`.
 - `sideal_euler`, `sideal_gibbsDuhem` : Euler and Gibbs-Duhem for the ideal gas.
 - `concave_perspLog`, `sideal_concave`, `sideal_concave_gen` : concavity of the
@@ -101,8 +118,10 @@ Differentiability is assumed on the open domain only; it fails at phase transiti
 
 ## iv. References
 
-- H. B. Callen, *Thermodynamics and an Introduction to Thermostatistics*: the
-  equilibrium postulates, the fundamental relation, Euler and Gibbs-Duhem.
+- H. B. Callen, *Thermodynamics and an Introduction to Thermostatistics*, 2nd ed.,
+  Wiley, 1985: the postulates and the fundamental relation (Ch. 1), equal
+  temperatures and the direction of heat flow (Ch. 2), the Euler and Gibbs-Duhem
+  relations and the simple ideal gas (Ch. 3), stability and concavity (Ch. 8).
 - MIT OpenCourseWare, 5.60 *Thermodynamics & Kinetics*: state functions,
   reversible changes, the ideal gas.
 - IUPAC Green Book: quantity language for `U`, `V`, `N`, `S`, `T`, `p`, `μ`.
@@ -149,73 +168,163 @@ lemma isOpen_thermoDomain (k : ℕ) : IsOpen (thermoDomain k) := by
   exact (h1.inter h2).inter hN
 
 /-- Partial derivative of `S` with respect to `U`: the `deriv` of the
-single-variable slice varying `U` at fixed `V`, `N`. -/
+single-variable slice varying `U` at fixed `V`, `N`. Where the slice is not
+differentiable, this is Lean's junk value `0`. -/
 noncomputable def dSdU {k : ℕ} (S : ThermoState k → ℝ) (x : ThermoState k) : ℝ :=
   deriv (fun u => S (u, x.2.1, x.2.2)) x.1
 
 /-- Partial derivative of `S` with respect to `V`: the `deriv` of the
-single-variable slice varying `V` at fixed `U`, `N`. -/
+single-variable slice varying `V` at fixed `U`, `N`. Where the slice is not
+differentiable, this is Lean's junk value `0`. -/
 noncomputable def dSdV {k : ℕ} (S : ThermoState k → ℝ) (x : ThermoState k) : ℝ :=
   deriv (fun v => S (x.1, v, x.2.2)) x.2.1
 
 /-- Partial derivative of `S` with respect to `N i`: the `deriv` of the
 single-variable slice varying `N i` through `Function.update` at fixed `U`, `V`
-and the other amounts. -/
+and the other amounts. Where the slice is not differentiable, this is Lean's junk
+value `0`. -/
 noncomputable def dSdN {k : ℕ} (S : ThermoState k → ℝ) (x : ThermoState k)
     (i : Fin k) : ℝ :=
   deriv (fun n => S (x.1, x.2.1, Function.update x.2.2 i n)) (x.2.2 i)
 
-/-- Absolute temperature as a partial derivative of entropy: `T = 1 / (∂S/∂U)`. -/
+/-- Absolute temperature as a partial derivative of entropy: `T = 1 / (∂S/∂U)`.
+Physically meaningful where `∂S/∂U > 0`, as on the domain of a
+`FundamentalRelation`; where `∂S/∂U = 0` the value is Lean's junk `1 / 0 = 0`. -/
 noncomputable def temp {k : ℕ} (S : ThermoState k → ℝ) (x : ThermoState k) : ℝ :=
   1 / dSdU S x
 
-/-- Pressure as a partial derivative of entropy: `p = T * (∂S/∂V)`. -/
+/-- Pressure as a partial derivative of entropy: `p = T * (∂S/∂V)`. Physically
+meaningful on the domain of a `FundamentalRelation`; elsewhere it inherits the junk
+values of `temp` and `dSdV`. -/
 noncomputable def press {k : ℕ} (S : ThermoState k → ℝ) (x : ThermoState k) : ℝ :=
   temp S x * dSdV S x
 
 /-- Chemical potential of species `i` as a partial derivative of entropy:
-`μᵢ = -T * (∂S/∂Nᵢ)`. -/
+`μᵢ = -T * (∂S/∂Nᵢ)`. Physically meaningful on the domain of a
+`FundamentalRelation`; elsewhere it inherits the junk values of `temp` and `dSdN`. -/
 noncomputable def chemPot {k : ℕ} (S : ThermoState k → ℝ) (x : ThermoState k)
     (i : Fin k) : ℝ :=
   -temp S x * dSdN S x i
 
-/-- The Callen equilibrium postulates for a simple system with `k` species,
-carried as structure hypotheses (LAW), not global axioms. `S` is differentiable
-on the open domain (`h_diff` in postulate form, `h_chain` in usable chain-rule
-form along curves), concave, first-order homogeneous, and strictly increasing
-in `U` in the form `∂S/∂U > 0`. The Euler relation, Gibbs-Duhem and equations
-of state are proved below, never assumed here. -/
+/-- The equilibrium postulates for the entropy of a simple system with `k` species,
+carried as structure hypotheses (LAW), not global axioms. On the open domain
+`thermoDomain k`, `S` is Fréchet differentiable, concave, positively homogeneous of
+degree 1, and has `∂S/∂U > 0`; the fields constrain `S` only on the domain. The chain
+rule along curves, the Euler relation, Gibbs-Duhem and the equations of state are
+proved below, never assumed here. -/
 structure FundamentalRelation (k : ℕ) where
   /-- The entropy function on equilibrium states. -/
   S : ThermoState k → ℝ
-  /-- Postulate-form differentiability of `S` on the domain. -/
+  /-- `S` is Fréchet differentiable on the open domain. -/
   h_diff : DifferentiableOn ℝ S (thermoDomain k)
-  /-- Usable chain-rule form of differentiability: the total differential of `S`
-  along any differentiable curve in the domain, in terms of the slice partials.
-  This is the standard consequence of `h_diff` with the `dSdU`/`dSdV`/`dSdN`
-  slice definitions, stated in directly usable `HasDerivAt` form. -/
-  h_chain : ∀ (γU γV : ℝ → ℝ) (γN : ℝ → Fin k → ℝ) (U' V' : ℝ)
-    (N' : Fin k → ℝ) (t0 : ℝ),
-    HasDerivAt γU U' t0 → HasDerivAt γV V' t0 →
-    (∀ i, HasDerivAt (fun t => γN t i) (N' i) t0) →
-    (γU t0, γV t0, γN t0) ∈ thermoDomain k →
-    (∀ᶠ t in 𝓝 t0, (γU t, γV t, γN t) ∈ thermoDomain k) →
-    HasDerivAt (fun t => S (γU t, γV t, γN t))
-      (dSdU S (γU t0, γV t0, γN t0) * U' +
-        dSdV S (γU t0, γV t0, γN t0) * V' +
-        ∑ i, dSdN S (γU t0, γV t0, γN t0) i * N' i) t0
-  /-- Entropy is concave on the domain. -/
+  /-- Entropy is concave on the domain (the stability condition). -/
   h_concave : ConcaveOn ℝ (thermoDomain k) S
   /-- Entropy is positively homogeneous of degree 1. -/
   h_homog : ∀ x ∈ thermoDomain k, ∀ t : ℝ, 0 < t →
     S (t * x.1, t * x.2.1, t • x.2.2) = t * S x
-  /-- Entropy is strictly increasing in `U`, in the form `∂S/∂U > 0`. -/
+  /-- Entropy increases with `U`: `∂S/∂U > 0` on the domain. Strict monotonicity in
+  `U` follows (`FundamentalRelation.strictMonoOn_energy`). -/
   h_pos : ∀ x ∈ thermoDomain k, 0 < dSdU S x
+
+/-- `S` is Fréchet differentiable at every state of the open domain. -/
+lemma FundamentalRelation.differentiableAt {k : ℕ} (F : FundamentalRelation k)
+    {x : ThermoState k} (hx : x ∈ thermoDomain k) : DifferentiableAt ℝ F.S x :=
+  F.h_diff.differentiableAt ((isOpen_thermoDomain k).mem_nhds hx)
+
+/-- Where `S` is differentiable, the `U`-slice partial `dSdU` is the Fréchet
+derivative of `S` in the direction `(1, 0, 0)`. -/
+lemma dSdU_eq_fderiv {k : ℕ} {S : ThermoState k → ℝ} {x : ThermoState k}
+    (hS : DifferentiableAt ℝ S x) : dSdU S x = fderiv ℝ S x (1, 0, 0) := by
+  have hγ : HasDerivAt (fun u : ℝ => ((u, x.2.1, x.2.2) : ThermoState k))
+      ((1, 0, 0) : ThermoState k) x.1 :=
+    (hasDerivAt_id x.1).prodMk
+      ((hasDerivAt_const x.1 x.2.1).prodMk (hasDerivAt_const x.1 x.2.2))
+  exact (hS.hasFDerivAt.comp_hasDerivAt x.1 hγ).deriv
+
+/-- Where `S` is differentiable, the `V`-slice partial `dSdV` is the Fréchet
+derivative of `S` in the direction `(0, 1, 0)`. -/
+lemma dSdV_eq_fderiv {k : ℕ} {S : ThermoState k → ℝ} {x : ThermoState k}
+    (hS : DifferentiableAt ℝ S x) : dSdV S x = fderiv ℝ S x (0, 1, 0) := by
+  have hγ : HasDerivAt (fun v : ℝ => ((x.1, v, x.2.2) : ThermoState k))
+      ((0, 1, 0) : ThermoState k) x.2.1 :=
+    (hasDerivAt_const x.2.1 x.1).prodMk
+      ((hasDerivAt_id x.2.1).prodMk (hasDerivAt_const x.2.1 x.2.2))
+  exact (hS.hasFDerivAt.comp_hasDerivAt x.2.1 hγ).deriv
+
+/-- Where `S` is differentiable, the `N i`-slice partial `dSdN` is the Fréchet
+derivative of `S` in the direction `(0, 0, Pi.single i 1)`. -/
+lemma dSdN_eq_fderiv {k : ℕ} {S : ThermoState k → ℝ} {x : ThermoState k}
+    (hS : DifferentiableAt ℝ S x) (i : Fin k) :
+    dSdN S x i = fderiv ℝ S x (0, 0, Pi.single i 1) := by
+  have hγ : HasDerivAt
+      (fun n : ℝ => ((x.1, x.2.1, Function.update x.2.2 i n) : ThermoState k))
+      ((0, 0, Pi.single i 1) : ThermoState k) (x.2.2 i) :=
+    (hasDerivAt_const _ x.1).prodMk
+      ((hasDerivAt_const _ x.2.1).prodMk (hasDerivAt_update x.2.2 i (x.2.2 i)))
+  have hS' : HasFDerivAt S (fderiv ℝ S x)
+      ((x.1, x.2.1, Function.update x.2.2 i (x.2.2 i)) : ThermoState k) := by
+    rw [Function.update_eq_self]
+    exact hS.hasFDerivAt
+  exact (hS'.comp_hasDerivAt (x.2.2 i) hγ).deriv
+
+/-- Chain rule along a curve of states: if the curve components have derivatives
+`U'`, `V'`, `N' i` at `t0` and `S` is differentiable at the state
+`(γU t0, γV t0, γN t0)`, then `S` along the curve has derivative
+`∂S/∂U * U' + ∂S/∂V * V' + ∑ ∂S/∂Nᵢ * N'ᵢ` at `t0`. Proved from the Fréchet
+derivative by decomposing `(U', V', N')` along the coordinate directions. For a
+`FundamentalRelation`, `FundamentalRelation.differentiableAt` supplies `hS` from
+`h_diff`. -/
+lemma hasDerivAt_comp_curve {k : ℕ} {S : ThermoState k → ℝ} {γU γV : ℝ → ℝ}
+    {γN : ℝ → Fin k → ℝ} {U' V' : ℝ} {N' : Fin k → ℝ} {t0 : ℝ}
+    (hU : HasDerivAt γU U' t0) (hV : HasDerivAt γV V' t0)
+    (hN : ∀ i, HasDerivAt (fun t => γN t i) (N' i) t0)
+    (hS : DifferentiableAt ℝ S (γU t0, γV t0, γN t0)) :
+    HasDerivAt (fun t => S (γU t, γV t, γN t))
+      (dSdU S (γU t0, γV t0, γN t0) * U' + dSdV S (γU t0, γV t0, γN t0) * V' +
+        ∑ i, dSdN S (γU t0, γV t0, γN t0) i * N' i) t0 := by
+  have hγ : HasDerivAt (fun t => ((γU t, γV t, γN t) : ThermoState k))
+      ((U', V', N') : ThermoState k) t0 :=
+    hU.prodMk (hV.prodMk (hasDerivAt_pi.2 hN))
+  have hdecomp : ((U', V', N') : ThermoState k) =
+      U' • ((1, 0, 0) : ThermoState k) + V' • ((0, 1, 0) : ThermoState k) +
+        ∑ i, N' i • ((0, 0, Pi.single i 1) : ThermoState k) := by
+    refine Prod.ext ?_ (Prod.ext ?_ ?_)
+    · simp [Prod.fst_sum]
+    · simp [Prod.snd_sum, Prod.fst_sum]
+    · ext j
+      simp [Prod.snd_sum, Finset.sum_apply, Pi.single_apply]
+  have hval : fderiv ℝ S (γU t0, γV t0, γN t0) ((U', V', N') : ThermoState k) =
+      dSdU S (γU t0, γV t0, γN t0) * U' + dSdV S (γU t0, γV t0, γN t0) * V' +
+        ∑ i, dSdN S (γU t0, γV t0, γN t0) i * N' i := by
+    rw [hdecomp, map_add, map_add, map_sum, map_smul, map_smul,
+      dSdU_eq_fderiv hS, dSdV_eq_fderiv hS, smul_eq_mul, smul_eq_mul,
+      mul_comm U', mul_comm V']
+    congr 1
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [map_smul, smul_eq_mul, dSdN_eq_fderiv hS, mul_comm]
+  rw [← hval]
+  exact hS.hasFDerivAt.comp_hasDerivAt t0 hγ
 
 /-- Temperature is positive on the domain. -/
 lemma temp_pos {k : ℕ} (F : FundamentalRelation k) (x : ThermoState k)
     (hx : x ∈ thermoDomain k) : 0 < temp F.S x :=
   one_div_pos.mpr (F.h_pos x hx)
+
+/-- Entropy is strictly increasing in `U` at fixed positive `V` and `N`: a
+consequence of `∂S/∂U > 0` and differentiability. -/
+lemma FundamentalRelation.strictMonoOn_energy {k : ℕ} (F : FundamentalRelation k)
+    {V : ℝ} {N : Fin k → ℝ} (hV : 0 < V) (hN : ∀ i, 0 < N i) :
+    StrictMonoOn (fun u => F.S (u, V, N)) (Set.Ioi 0) := by
+  have hderiv : ∀ u ∈ Set.Ioi (0 : ℝ),
+      HasDerivAt (fun u => F.S (u, V, N)) (dSdU F.S (u, V, N)) u := by
+    intro u hu
+    simpa using hasDerivAt_comp_curve (hasDerivAt_id' u) (hasDerivAt_const u V)
+      (fun i => hasDerivAt_const u (N i)) (F.differentiableAt ⟨hu, hV, hN⟩)
+  refine strictMonoOn_of_deriv_pos (convex_Ioi 0)
+    (fun u hu => (hderiv u hu).continuousAt.continuousWithinAt) fun u hu => ?_
+  rw [interior_Ioi] at hu
+  rw [(hderiv u hu).deriv]
+  exact F.h_pos _ ⟨hu, hV, hN⟩
 
 /-!
 
@@ -264,8 +373,8 @@ lemma euler_algebra {k : ℕ} (SU SV Sx U V T p : ℝ) (SN N mu : Fin k → ℝ)
   linear_combination c * he - U * h1
 
 /-- First-law identity in total-differential-value form: `U'` equals `T` times
-the total differential of `S` (the `h_chain` value) minus `p V'` plus the
-chemical terms. -/
+the total differential of `S` (the derivative along a curve given by
+`hasDerivAt_comp_curve`) minus `p V'` plus the chemical terms. -/
 lemma firstLaw_value {k : ℕ} (F : FundamentalRelation k) (x : ThermoState k)
     (U' V' : ℝ) (N' : Fin k → ℝ) (hx : x ∈ thermoDomain k) :
     U' = temp F.S x *
@@ -275,27 +384,25 @@ lemma firstLaw_value {k : ℕ} (F : FundamentalRelation k) (x : ThermoState k)
     (dSdN F.S x) N' (chemPot F.S x) (ne_of_gt (F.h_pos x hx)) rfl rfl
     (fun _ => rfl)
 
-/-- First law along a differentiable curve: `dU/dt = T dS/dt - p dV/dt +
-∑ μᵢ dNᵢ/dt`, where `dS/dt` is the `deriv` of `S` along the curve (identified
-with the total differential via `h_chain`). -/
+/-- First law along a differentiable curve of states: `dU/dt = T dS/dt - p dV/dt +
+∑ μᵢ dNᵢ/dt`, where `dS/dt` is the `deriv` of `S` along the curve, identified with
+the total differential by the chain rule `hasDerivAt_comp_curve`. -/
 lemma firstLaw {k : ℕ} (F : FundamentalRelation k) (γU γV : ℝ → ℝ)
     (γN : ℝ → Fin k → ℝ) (U' V' : ℝ) (N' : Fin k → ℝ) (t0 : ℝ)
     (hU : HasDerivAt γU U' t0) (hV : HasDerivAt γV V' t0)
     (hN : ∀ i, HasDerivAt (fun t => γN t i) (N' i) t0)
-    (hx : (γU t0, γV t0, γN t0) ∈ thermoDomain k)
-    (hev : ∀ᶠ t in 𝓝 t0, (γU t, γV t, γN t) ∈ thermoDomain k) :
+    (hx : (γU t0, γV t0, γN t0) ∈ thermoDomain k) :
     U' = temp F.S (γU t0, γV t0, γN t0) *
         deriv (fun t => F.S (γU t, γV t, γN t)) t0 -
         press F.S (γU t0, γV t0, γN t0) * V' +
         ∑ i, chemPot F.S (γU t0, γV t0, γN t0) i * N' i := by
-  have hS := F.h_chain γU γV γN U' V' N' t0 hU hV hN hx hev
-  rw [hS.deriv]
+  rw [(hasDerivAt_comp_curve hU hV hN (F.differentiableAt hx)).deriv]
   exact firstLaw_value F (γU t0, γV t0, γN t0) U' V' N' hx
 
 /-- Euler homogeneous-function identity (differential form): differentiating
 `S(tU, tV, tN) = t * S(U, V, N)` at `t = 1` gives
 `SU*U + SV*V + ∑ SNᵢNᵢ = S`. Uses homogeneity `h_homog` and the chain rule
-`h_chain` along the ray. -/
+`hasDerivAt_comp_curve` along the ray. -/
 lemma euler_homogeneous_function {k : ℕ} (F : FundamentalRelation k)
     (x : ThermoState k) (hx : x ∈ thermoDomain k) :
     dSdU F.S x * x.1 + dSdV F.S x * x.2.1 +
@@ -309,34 +416,15 @@ lemma euler_homogeneous_function {k : ℕ} (F : FundamentalRelation k)
     intro i
     change HasDerivAt (fun t : ℝ => t * x.2.2 i) (x.2.2 i) 1
     simpa using (hasDerivAt_id' (1 : ℝ)).mul_const (x.2.2 i)
-  have hcont : Continuous (fun t : ℝ => (t * x.1, t * x.2.1, t • x.2.2)) :=
-    (continuous_id'.mul continuous_const).prodMk
-      ((continuous_id'.mul continuous_const).prodMk
-        (continuous_pi_iff.mpr fun i => by
-          change Continuous (fun a : ℝ => a * x.2.2 i)
-          exact continuous_id'.mul continuous_const))
-  have h1 : ((1 : ℝ) * x.1, (1 : ℝ) * x.2.1, (1 : ℝ) • x.2.2) = x := by
-    refine Prod.ext ?_ (Prod.ext ?_ ?_) <;> simp
   have hpt : ((fun s : ℝ => s * x.1) 1, (fun s : ℝ => s * x.2.1) 1,
       (fun s : ℝ => s • x.2.2) 1) = x := by
-    change ((1 : ℝ) * x.1, (1 : ℝ) * x.2.1, (1 : ℝ) • x.2.2) = x
-    exact h1
-  have hxmem : ((fun s : ℝ => s * x.1) 1, (fun s : ℝ => s * x.2.1) 1,
-      (fun s : ℝ => s • x.2.2) 1) ∈ thermoDomain k := by
+    refine Prod.ext ?_ (Prod.ext ?_ ?_) <;> simp
+  have hS : DifferentiableAt ℝ F.S ((fun s : ℝ => s * x.1) 1,
+      (fun s : ℝ => s * x.2.1) 1, (fun s : ℝ => s • x.2.2) 1) := by
     rw [hpt]
-    exact hx
-  have hpoint : (fun t : ℝ => (t * x.1, t * x.2.1, t • x.2.2)) 1 ∈
-      thermoDomain k := by
-    change ((1 : ℝ) * x.1, (1 : ℝ) * x.2.1, (1 : ℝ) • x.2.2) ∈ thermoDomain k
-    rw [h1]
-    exact hx
-  have hev : ∀ᶠ t in 𝓝 (1 : ℝ), ((fun s : ℝ => s * x.1) t,
-      (fun s : ℝ => s * x.2.1) t, (fun s : ℝ => s • x.2.2) t) ∈
-      thermoDomain k :=
-    Filter.Tendsto.eventually hcont.continuousAt
-      ((isOpen_thermoDomain k).mem_nhds hpoint)
-  have hchain := F.h_chain (fun t : ℝ => t * x.1) (fun t : ℝ => t * x.2.1)
-    (fun t : ℝ => t • x.2.2) x.1 x.2.1 x.2.2 1 hU hV hN hxmem hev
+    exact F.differentiableAt hx
+  have hchain := hasDerivAt_comp_curve (γU := fun s : ℝ => s * x.1)
+    (γV := fun s : ℝ => s * x.2.1) (γN := fun s : ℝ => s • x.2.2) hU hV hN hS
   have heq : (fun t : ℝ => F.S ((fun s : ℝ => s * x.1) t,
       (fun s : ℝ => s * x.2.1) t, (fun s : ℝ => s • x.2.2) t)) =ᶠ[𝓝 (1 : ℝ)]
       (fun t : ℝ => t * F.S x) :=
@@ -369,9 +457,10 @@ lemma euler_relation {k : ℕ} (F : FundamentalRelation k) (x : ThermoState k)
 /-- Gibbs-Duhem relation in derivative form along a curve: if `T`, `p` and the
 `μᵢ` have derivatives `T'`, `p'`, `μ'` along the curve at `t0`, then
 `S*T' - V*p' + ∑ Nᵢ*μ'ᵢ = 0`. Proved by differentiating the Euler relation
-along the curve and subtracting the first-law identity. The differentiability
-of `T`, `p`, `μ` along the curve is an explicit hypothesis, not a consequence
-of the first-order postulates. -/
+along the curve and subtracting the first-law identity; `hev` (the curve stays in
+the domain near `t0`) is what lets the Euler relation be differentiated. The
+differentiability of `T`, `p`, `μ` along the curve is an explicit hypothesis, not a
+consequence of the first-order postulates. -/
 lemma gibbsDuhem {k : ℕ} (F : FundamentalRelation k) (γU γV : ℝ → ℝ)
     (γN : ℝ → Fin k → ℝ) (U' V' T' p' : ℝ) (N' mu' : Fin k → ℝ) (t0 : ℝ)
     (hU : HasDerivAt γU U' t0) (hV : HasDerivAt γV V' t0)
@@ -388,7 +477,7 @@ lemma gibbsDuhem {k : ℕ} (F : FundamentalRelation k) (γU γV : ℝ → ℝ)
       (dSdU F.S (γU t0, γV t0, γN t0) * U' +
         dSdV F.S (γU t0, γV t0, γN t0) * V' +
         ∑ i, dSdN F.S (γU t0, γV t0, γN t0) i * N' i) t0 :=
-    F.h_chain γU γV γN U' V' N' t0 hU hV hN hx hev
+    hasDerivAt_comp_curve hU hV hN (F.differentiableAt hx)
   have hTS : HasDerivAt
       (fun t => temp F.S (γU t, γV t, γN t) * F.S (γU t, γV t, γN t))
       (T' * F.S (γU t0, γV t0, γN t0) + temp F.S (γU t0, γV t0, γN t0) *
@@ -456,113 +545,112 @@ lemma gibbsDuhem {k : ℕ} (F : FundamentalRelation k) (γU γV : ℝ → ℝ)
 
 ## D. Entropy maximum and heat flow
 
-Two subsystems sharing one fundamental relation, with fixed volumes and amounts
-per subsystem, exchanging energy at fixed total `U₁ + U₂ = Utot`.
+Two subsystems with fundamental relations `F₁` and `F₂` (possibly different, with
+any numbers of species), fixed volumes and amounts per subsystem, exchanging energy at
+fixed total `U₁ + U₂ = Utot`.
 
 -/
 
 /-- Total-entropy derivative along the energy-exchange curve: `dStot/dU₁` is the
-difference of the two `∂S/∂U` values, via `h_chain` on each leg. -/
-lemma stot_hasDerivAt {k : ℕ} (F : FundamentalRelation k) (V1 V2 Utot Ustar : ℝ)
-    (N1 N2 : Fin k → ℝ)
-    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k)
-    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k)
-    (hev1 : ∀ᶠ t in 𝓝 Ustar, (t, V1, N1) ∈ thermoDomain k)
-    (hev2 : ∀ᶠ t in 𝓝 Ustar, (Utot - t, V2, N2) ∈ thermoDomain k) :
-    HasDerivAt (fun U1 => F.S (U1, V1, N1) + F.S (Utot - U1, V2, N2))
-      (dSdU F.S (Ustar, V1, N1) + -dSdU F.S (Utot - Ustar, V2, N2))
+difference of the two `∂S/∂U` values, by the chain rule `hasDerivAt_comp_curve` on
+each leg. -/
+lemma stot_hasDerivAt {k₁ k₂ : ℕ} (F₁ : FundamentalRelation k₁)
+    (F₂ : FundamentalRelation k₂) (V1 V2 Utot Ustar : ℝ) (N1 : Fin k₁ → ℝ)
+    (N2 : Fin k₂ → ℝ)
+    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k₁)
+    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k₂) :
+    HasDerivAt (fun U1 => F₁.S (U1, V1, N1) + F₂.S (Utot - U1, V2, N2))
+      (dSdU F₁.S (Ustar, V1, N1) + -dSdU F₂.S (Utot - Ustar, V2, N2))
       Ustar := by
-  have hS1 : HasDerivAt (fun t => F.S (t, V1, N1))
-      (dSdU F.S (Ustar, V1, N1)) Ustar := by
-    have hraw := F.h_chain (fun t : ℝ => t) (fun _ => V1) (fun _ => N1)
-      1 0 (fun _ => 0) Ustar (hasDerivAt_id' Ustar)
+  have hS1 : HasDerivAt (fun t => F₁.S (t, V1, N1))
+      (dSdU F₁.S (Ustar, V1, N1)) Ustar := by
+    simpa using hasDerivAt_comp_curve (γN := fun _ => N1) (hasDerivAt_id' Ustar)
       (hasDerivAt_const Ustar V1) (fun i => hasDerivAt_const Ustar (N1 i))
-      hx1 hev1
-    simpa using hraw
-  have hU2 : HasDerivAt (fun t : ℝ => Utot - t) (-1) Ustar := by
-    exact HasDerivAt.const_sub Utot (hasDerivAt_id' Ustar)
-  have hS2 : HasDerivAt (fun t => F.S (Utot - t, V2, N2))
-      (-dSdU F.S (Utot - Ustar, V2, N2)) Ustar := by
-    have hraw := F.h_chain (fun t : ℝ => Utot - t) (fun _ => V2) (fun _ => N2)
-      (-1) 0 (fun _ => 0) Ustar hU2 (hasDerivAt_const Ustar V2)
-      (fun i => hasDerivAt_const Ustar (N2 i)) hx2 hev2
-    simpa using hraw
+      (F₁.differentiableAt hx1)
+  have hU2 : HasDerivAt (fun t : ℝ => Utot - t) (-1) Ustar :=
+    HasDerivAt.const_sub Utot (hasDerivAt_id' Ustar)
+  have hS2 : HasDerivAt (fun t => F₂.S (Utot - t, V2, N2))
+      (-dSdU F₂.S (Utot - Ustar, V2, N2)) Ustar := by
+    simpa using hasDerivAt_comp_curve (γN := fun _ => N2) hU2
+      (hasDerivAt_const Ustar V2) (fun i => hasDerivAt_const Ustar (N2 i))
+      (F₂.differentiableAt hx2)
   exact hS1.add hS2
 
 /-- At an interior local maximizer of total entropy, the two subsystem
 temperatures agree. No global maximum is claimed: the maximizer hypothesis is
 explicit. -/
-lemma entropyMax_temperature_eq {k : ℕ} (F : FundamentalRelation k)
-    (V1 V2 Utot Ustar : ℝ) (N1 N2 : Fin k → ℝ)
-    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k)
-    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k)
-    (hev1 : ∀ᶠ t in 𝓝 Ustar, (t, V1, N1) ∈ thermoDomain k)
-    (hev2 : ∀ᶠ t in 𝓝 Ustar, (Utot - t, V2, N2) ∈ thermoDomain k)
+lemma entropyMax_temperature_eq {k₁ k₂ : ℕ} (F₁ : FundamentalRelation k₁)
+    (F₂ : FundamentalRelation k₂) (V1 V2 Utot Ustar : ℝ) (N1 : Fin k₁ → ℝ)
+    (N2 : Fin k₂ → ℝ)
+    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k₁)
+    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k₂)
     (hmax : IsLocalMax
-      (fun U1 => F.S (U1, V1, N1) + F.S (Utot - U1, V2, N2)) Ustar) :
-    temp F.S (Ustar, V1, N1) = temp F.S (Utot - Ustar, V2, N2) := by
-  have hStot := stot_hasDerivAt F V1 V2 Utot Ustar N1 N2 hx1 hx2 hev1 hev2
+      (fun U1 => F₁.S (U1, V1, N1) + F₂.S (Utot - U1, V2, N2)) Ustar) :
+    temp F₁.S (Ustar, V1, N1) = temp F₂.S (Utot - Ustar, V2, N2) := by
+  have hStot := stot_hasDerivAt F₁ F₂ V1 V2 Utot Ustar N1 N2 hx1 hx2
   have h0 := hmax.hasDerivAt_eq_zero hStot
-  have hSU : dSdU F.S (Ustar, V1, N1) = dSdU F.S (Utot - Ustar, V2, N2) := by
+  have hSU : dSdU F₁.S (Ustar, V1, N1) = dSdU F₂.S (Utot - Ustar, V2, N2) := by
     linarith
-  change 1 / dSdU F.S (Ustar, V1, N1) = 1 / dSdU F.S (Utot - Ustar, V2, N2)
+  change 1 / dSdU F₁.S (Ustar, V1, N1) = 1 / dSdU F₂.S (Utot - Ustar, V2, N2)
   rw [hSU]
 
 /-- The `deriv` form of the total-entropy rate: `dStot/dU₁ = SU₁ - SU₂`. -/
-lemma stot_deriv_eq {k : ℕ} (F : FundamentalRelation k) (V1 V2 Utot Ustar : ℝ)
-    (N1 N2 : Fin k → ℝ)
-    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k)
-    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k)
-    (hev1 : ∀ᶠ t in 𝓝 Ustar, (t, V1, N1) ∈ thermoDomain k)
-    (hev2 : ∀ᶠ t in 𝓝 Ustar, (Utot - t, V2, N2) ∈ thermoDomain k) :
-    deriv (fun U1 => F.S (U1, V1, N1) + F.S (Utot - U1, V2, N2)) Ustar =
-      dSdU F.S (Ustar, V1, N1) - dSdU F.S (Utot - Ustar, V2, N2) := by
-  have hder :=
-    (stot_hasDerivAt F V1 V2 Utot Ustar N1 N2 hx1 hx2 hev1 hev2).deriv
+lemma stot_deriv_eq {k₁ k₂ : ℕ} (F₁ : FundamentalRelation k₁)
+    (F₂ : FundamentalRelation k₂) (V1 V2 Utot Ustar : ℝ) (N1 : Fin k₁ → ℝ)
+    (N2 : Fin k₂ → ℝ)
+    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k₁)
+    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k₂) :
+    deriv (fun U1 => F₁.S (U1, V1, N1) + F₂.S (Utot - U1, V2, N2)) Ustar =
+      dSdU F₁.S (Ustar, V1, N1) - dSdU F₂.S (Utot - Ustar, V2, N2) := by
+  have hder := (stot_hasDerivAt F₁ F₂ V1 V2 Utot Ustar N1 N2 hx1 hx2).deriv
   rwa [sub_eq_add_neg]
 
 /-- Hot-to-cold sign in derivative form: if subsystem 1 is hotter than subsystem
 2 (`T₁ > T₂`), then `dStot/dU₁ < 0` at the point, so transferring energy from 1
 to 2 (decreasing `U₁`) increases total entropy to first order. -/
-lemma entropyFlow_sign {k : ℕ} (F : FundamentalRelation k) (V1 V2 Utot Ustar : ℝ)
-    (N1 N2 : Fin k → ℝ)
-    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k)
-    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k)
-    (hev1 : ∀ᶠ t in 𝓝 Ustar, (t, V1, N1) ∈ thermoDomain k)
-    (hev2 : ∀ᶠ t in 𝓝 Ustar, (Utot - t, V2, N2) ∈ thermoDomain k)
-    (hT : temp F.S (Utot - Ustar, V2, N2) < temp F.S (Ustar, V1, N1)) :
-    deriv (fun U1 => F.S (U1, V1, N1) + F.S (Utot - U1, V2, N2)) Ustar < 0 := by
-  rw [stot_deriv_eq F V1 V2 Utot Ustar N1 N2 hx1 hx2 hev1 hev2]
-  have e1 : dSdU F.S (Ustar, V1, N1) = 1 / temp F.S (Ustar, V1, N1) := by
+lemma entropyFlow_sign {k₁ k₂ : ℕ} (F₁ : FundamentalRelation k₁)
+    (F₂ : FundamentalRelation k₂) (V1 V2 Utot Ustar : ℝ) (N1 : Fin k₁ → ℝ)
+    (N2 : Fin k₂ → ℝ)
+    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k₁)
+    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k₂)
+    (hT : temp F₂.S (Utot - Ustar, V2, N2) < temp F₁.S (Ustar, V1, N1)) :
+    deriv (fun U1 => F₁.S (U1, V1, N1) + F₂.S (Utot - U1, V2, N2)) Ustar < 0 := by
+  rw [stot_deriv_eq F₁ F₂ V1 V2 Utot Ustar N1 N2 hx1 hx2]
+  have e1 : dSdU F₁.S (Ustar, V1, N1) = 1 / temp F₁.S (Ustar, V1, N1) := by
     unfold temp
     rw [one_div_one_div]
-  have e2 : dSdU F.S (Utot - Ustar, V2, N2) =
-      1 / temp F.S (Utot - Ustar, V2, N2) := by
+  have e2 : dSdU F₂.S (Utot - Ustar, V2, N2) =
+      1 / temp F₂.S (Utot - Ustar, V2, N2) := by
     unfold temp
     rw [one_div_one_div]
   rw [e1, e2]
   exact sub_neg.mpr
-    (one_div_lt_one_div_of_lt (temp_pos F (Utot - Ustar, V2, N2) hx2) hT)
+    (one_div_lt_one_div_of_lt (temp_pos F₂ (Utot - Ustar, V2, N2) hx2) hT)
 
 /-!
 
 ## E. The ideal gas
 
 A concrete entropy model (MOD): the Sackur-Tetrode-style fundamental relation
-for a monatomic ideal gas with one species.
+for a monatomic ideal gas with one species. `idealGas` packages it as a
+`FundamentalRelation 1` for `kB > 0`, proving every postulate, so the results of
+sections A to D apply to it.
 
 -/
 
 /-- Ideal-gas entropy (MOD): `S = N * kB * (log (V/N) + (3/2) * log (U/N) + s0)`
-with symbolic positive constant `kB` (per-particle Boltzmann constant, energy
-per temperature per particle) and dimensionless reference entropy per particle
-`s0` (absorbing the thermal-wavelength and reference-state constants). Physical
-domain: `U > 0`, `V > 0`, `N > 0`; outside it the value is junk fixed by Lean's
-conventions (`Real.log` of a nonpositive argument, division by zero). -/
+with a symbolic constant `kB` (per-particle Boltzmann constant, energy per
+temperature per particle; positive in the lemmas that need it) and dimensionless
+reference entropy per particle `s0` (absorbing the thermal-wavelength and
+reference-state constants). Physical domain: `U > 0`, `V > 0`, `N > 0`; outside it
+the value is junk fixed by Lean's conventions (`Real.log` of a nonpositive argument,
+division by zero). -/
 noncomputable def Sideal (kB s0 U V N : ℝ) : ℝ :=
   N * kB * (Real.log (V / N) + 3 / 2 * Real.log (U / N) + s0)
 
-/-- The ideal-gas entropy as a function on single-species equilibrium states. -/
+/-- The ideal-gas entropy as a function on single-species equilibrium states.
+Physically meaningful on `thermoDomain 1`; elsewhere it inherits the junk values of
+`Sideal`. -/
 noncomputable def SidealGen (kB s0 : ℝ) : ThermoState 1 → ℝ :=
   fun x => Sideal kB s0 x.1 x.2.1 (x.2.2 0)
 
@@ -795,8 +883,21 @@ lemma sideal_sliceN_diff (kB s0 U V N : ℝ) (hU : 0 < U) (hV : 0 < V)
     (hN : 0 < N) : DifferentiableAt ℝ (fun n => Sideal kB s0 U V n) N :=
   (sideal_dSdN_hasDerivAt kB s0 U V N hU hV hN).differentiableAt
 
+/-- The ideal-gas entropy is Fréchet differentiable on the single-species domain
+(the differentiability postulate `h_diff`). -/
+lemma sideal_differentiableOn (kB s0 : ℝ) :
+    DifferentiableOn ℝ (SidealGen kB s0) (thermoDomain 1) := by
+  intro x hx
+  have hU : x.1 ≠ 0 := hx.1.ne'
+  have hV : x.2.1 ≠ 0 := hx.2.1.ne'
+  have hN : x.2.2 0 ≠ 0 := (hx.2.2 0).ne'
+  refine DifferentiableAt.differentiableWithinAt ?_
+  unfold SidealGen Sideal
+  fun_prop (disch := first | assumption | exact div_ne_zero hV hN |
+    exact div_ne_zero hU hN)
+
 /-- The ideal gas satisfies the Euler relation, proved directly from the
-computed `T`, `p`, `μ`. -/
+computed `T`, `p`, `μ`: an independent check of `euler_relation` for `idealGas`. -/
 lemma sideal_euler (kB s0 : ℝ) (x : ThermoState 1) (hU : 0 < x.1)
     (hV : 0 < x.2.1) (hN : 0 < x.2.2 0) (hkB : 0 < kB) :
     x.1 = temp (SidealGen kB s0) x * SidealGen kB s0 x -
@@ -1155,8 +1256,19 @@ lemma sideal_concave_gen (kB s0 : ℝ) (hkB : 0 ≤ kB) :
   exact ((sideal_concave kB s0 hkB).comp_linearMap sidealEmbed).subset hsub
     convex_thermoDomainOne
 
+/-- The monatomic ideal gas as a `FundamentalRelation 1` (for `kB > 0`): every
+postulate is proved for `SidealGen kB s0`, so the results of sections A to D apply
+to it. -/
+noncomputable def idealGas (kB s0 : ℝ) (hkB : 0 < kB) : FundamentalRelation 1 where
+  S := SidealGen kB s0
+  h_diff := sideal_differentiableOn kB s0
+  h_concave := sideal_concave_gen kB s0 hkB.le
+  h_homog := fun x _ t ht => sideal_homog kB s0 x t ht
+  h_pos := fun x hx => sideal_dSdU_pos kB s0 x hx.1 (hx.2.2 0) hkB
+
 /-- Boundary countermodel, postulate failure: at `N = 0` the ideal-gas `∂S/∂U`
-slice is identically zero, so the `∂S/∂U > 0` postulate fails there. -/
+slice is identically zero, so `SidealGen` violates `∂S/∂U > 0` there and
+`idealGas` needs the open domain `N > 0`. -/
 lemma sideal_dSdU_at_N_zero (kB s0 U V : ℝ) :
     dSdU (SidealGen kB s0) (U, V, fun _ => 0) = 0 := by
   have hslice : (fun u => Sideal kB s0 u V 0) = fun _ => 0 := by
@@ -1168,9 +1280,9 @@ lemma sideal_dSdU_at_N_zero (kB s0 U V : ℝ) :
   rw [heq, hslice]
   exact (hasDerivAt_const U 0).deriv
 
-/-- Boundary countermodel, equation-of-state failure: at `(U, V, N) = (1, 1, 0)`
-the caloric equation `U = (3/2) * N * kB * T` fails (the right side is junk
-`0` while `U = 1`). -/
+/-- Boundary countermodel, equation-of-state failure: at `(U, V, N) = (1, 1, 0)` with
+`kB = 1`, every hypothesis of `sideal_U` except `0 < N` holds, and its conclusion
+`U = (3/2) * N * kB * T` fails, so `0 < N` cannot be dropped from `sideal_U`. -/
 lemma sideal_EOS_fails_at_N_zero (s0 : ℝ) :
     ¬ (1 : ℝ) =
       3 / 2 * (0 : ℝ) * 1 * temp (SidealGen 1 s0) (1, 1, fun _ => 0) := by
