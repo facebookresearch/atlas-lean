@@ -343,10 +343,28 @@ def load(manifest_path: Path) -> tuple[dict | None, list[str]]:
     return manifest, problems
 
 
+def manifest_rel(root: Path, manifest_path: Path) -> str:
+    """The manifest's repository-relative path, derived lexically (never through symlinks)."""
+    return Path(os.path.relpath(os.path.abspath(manifest_path), os.path.abspath(root))).as_posix()
+
+
+def symlinked_component(root: Path, manifest_path: Path) -> str | None:
+    """The first symlink on the way from the repository root to the manifest, if any."""
+    current = Path(os.path.abspath(root))
+    for part in Path(manifest_rel(root, manifest_path)).parts:
+        current = current / part
+        if current.is_symlink():
+            return current.relative_to(os.path.abspath(root)).as_posix()
+    return None
+
+
 def check(root: Path, manifest_path: Path) -> tuple[list[str], dict[str, list[str]], int]:
     """Return (problems, suggested fixes {"record": [paths], "retire": [paths]}, row count)."""
-    manifest, problems = load(manifest_path)
     fixes: dict[str, list[str]] = {"record": [], "retire": []}
+    link = symlinked_component(root, manifest_path)
+    if link:
+        return [f"{link}: the manifest path must not go through a symlink"], fixes, 0
+    manifest, problems = load(manifest_path)
     if manifest is None:
         return problems, fixes, 0
     seen: set[str] = set()
@@ -580,7 +598,9 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
     commit, why = base_commit(root, base)
     if commit is None:
         return unreadable(why or "no base commit")
-    rel = manifest_path.resolve().relative_to(root.resolve()).as_posix()
+    if symlinked_component(root, manifest_path):
+        return [], []  # check() reports it
+    rel = manifest_rel(root, manifest_path)
     listing = git(root, "ls-tree", "--name-only", commit, "--", rel)
     if listing is None:
         return unreadable(f"cannot read the tree of base {commit}")

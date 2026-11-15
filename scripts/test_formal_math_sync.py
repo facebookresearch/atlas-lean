@@ -199,6 +199,13 @@ class CheckerTest(unittest.TestCase):
             target.symlink_to(self.root / "elsewhere.lean")
         self.assert_clean_then(mutate, "symlinked path")
 
+    def test_symlinked_manifest(self) -> None:
+        def mutate() -> None:
+            write(self.root, "provenance/other.json", json.dumps({**self.manifest, "rows": []}))
+            os.remove(self.root / c.MANIFEST)
+            (self.root / c.MANIFEST).symlink_to("other.json")
+        self.assert_clean_then(mutate, "provenance/formal-math-sync.json: the manifest path must not go through a symlink")
+
     def test_unknown_disposition(self) -> None:
         self.assert_clean_then(lambda: self.set_row("CSLibExt/Diverged.lean", disposition="local"), "unknown disposition")
 
@@ -751,6 +758,16 @@ class BaseGuardTest(unittest.TestCase):
         self.assertEqual(code, 1, out)
         self.assertIn("row removed or renamed", out)
         run_git(work, "cat-file", "-e", before)
+
+    def test_symlinked_manifest_cannot_hide_the_base(self) -> None:
+        write(self.root, "provenance/empty.json", json.dumps({**self.manifest, "rows": []}))
+        os.remove(self.root / c.MANIFEST)
+        (self.root / c.MANIFEST).symlink_to("empty.json")
+        self.commit("point the manifest at an empty file")
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertIn("must not go through a symlink", out)
+        self.assertNotIn("ok [formal-math-sync]", out)
 
     def test_explicit_base_must_resolve(self) -> None:
         del os.environ["GITHUB_ACTIONS"]
