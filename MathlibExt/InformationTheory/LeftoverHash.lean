@@ -8,27 +8,30 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Data.Finset.Max
-public import Mathlib.Data.Real.Basic
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
-# Leftover hash lemma: collision core
+# Leftover hash lemma: collision probability of the source
 
-For a probability mass function `p`, the collision probability
-`sum_x p(x)^2` is at most the largest mass. This module proves
-that counting core of the leftover hash lemma; the averaging
-over a universal hash family built on it is not formalized
-here.
+For a probability mass function `p` on a finite type, the collision probability
+`∑ x, p x ^ 2` is at most any upper bound on the masses, and in particular at most the
+largest mass. Bounding every mass by `2 ^ (-k)`, as for a source of min-entropy at
+least `k`, bounds its collision probability by `2 ^ (-k)`; this is the estimate on the
+source in the proof of the leftover hash lemma. The leftover hash lemma itself, which
+averages over a universal hash family, is not formalized here.
 -/
 
 @[expose] public section
 
-/-- Collision probability core of the leftover hash lemma
-(QCI-29): for a probability mass function `p` bounded by `M`,
-the collision probability `sum_x p(x)^2` is at most `M`, since
-`p(x)^2 <= M * p(x)` termwise and the masses sum to 1. The
-hash-family averaging on top of this is downstream. -/
+namespace InformationTheory
+
+/-- Collision probability bound used by the leftover hash lemma (QCI-29): for a
+probability mass function `p` bounded by `M`, the collision probability `∑ x, p x ^ 2`
+is at most `M`, since `p x ^ 2 ≤ M * p x` termwise and the masses sum to `1`. -/
 theorem collision_le_of_le {X : Type*} [Fintype X] (p : X → ℝ)
     (h0 : ∀ x, 0 ≤ p x) (h1 : ∑ x, p x = 1) (M : ℝ)
     (hM : ∀ x, p x ≤ M) : ∑ x, p x ^ 2 ≤ M := by
@@ -36,8 +39,9 @@ theorem collision_le_of_le {X : Type*} [Fintype X] (p : X → ℝ)
     _ ≤ ∑ x, M * p x := Finset.sum_le_sum fun x _ => mul_le_mul_of_nonneg_right (hM x) (h0 x)
     _ = M := by rw [← Finset.mul_sum, h1, mul_one]
 
-/-- With `M` the largest mass (witnessed at `x0`): collision
-probability is at most the max probability, i.e. `2 ^ (-H∞)`. -/
+/-- The collision probability is at most the largest mass, the maximum of the image of
+`p`. The point `x0` only shows that this image is nonempty; it need not attain the
+maximum. -/
 theorem collision_le_max' {X : Type*} [Fintype X]
     (p : X → ℝ) (h0 : ∀ x, 0 ≤ p x) (h1 : ∑ x, p x = 1) (x0 : X) :
     ∑ x, p x ^ 2 ≤ (Finset.univ.image p).max'
@@ -46,5 +50,7 @@ theorem collision_le_max' {X : Type*} [Fintype X]
   intro x
   apply Finset.le_max'
   exact Finset.mem_image.mpr ⟨x, Finset.mem_univ x, rfl⟩
+
+end InformationTheory
 
 end
