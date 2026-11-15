@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 S. A. Kravchenko, "On the complexity of minimizing the number of late jobs in unit time open
-shops", Discrete Applied Mathematics 100 (1999), 127-132, doi:10.1016/S0166-218X(99)00202-4;
+shop", Discrete Applied Mathematics 100 (2000), 127-132, doi:10.1016/S0166-218X(99)00202-4;
 P. Brucker and S. Knust, *Complexity results for scheduling problems*,
 http://www2.informatik.uni-osnabrueck.de/knust/class/, class "Shop problems with multiprocessor
 tasks", which lists `OMPT|r_i; p_ij = 1|∑ U_i` as minimal NP-hard in the strong sense with the
@@ -60,9 +60,22 @@ machine sets share a machine, occupy disjoint unit intervals) and the completion
 With integer data, integer start times lose no generality. Binary encoding of all numbers (the
 problem is NP-complete in the strong sense).
 
-Brucker and Knust's open-shop table lists `O|p_ij = 1; r_i|∑ U_i` as strongly NP-hard, citing
-Kravchenko (1999); it is the special case `r = m`, `μ_j = {M_j}` of this problem. Kravchenko's
-paper was not available to this formalization beyond its title.
+OMPT is Brucker's stage model (*Scheduling Algorithms*, Chapter 11), as in the base module
+`MultiprocessorTaskOpenShopPrecedenceMakespanWanted`: as in the MPT flow shop, every job has one
+task per stage `j`, and the task of stage `j` needs the processor set `μ_j`. Brucker states the
+polynomial cases of the class as `OMPT|p_ij = 1; stages = r|…`, with the number `r` of stages as a
+parameter, and his algorithm for them fixes, for each order of the stages, how many jobs pass the
+stages in that order, which presupposes stage-dependent sets. Task-dependent sets `μ_ij` with no
+precedence between the tasks of a job, as in `MultiprocessorTaskOpenShopThreeJobsWanted`, are the
+general shop with MPT without task precedences; both readings contain the classical special case
+`μ_j = {M_j}` that carries the NP-hardness. A stage set may be empty, as `μ_j ⊆ {M_1, …, M_m}`
+allows.
+
+Brucker and Knust's open-shop table lists `O|p_ij = 1; r_i|∑ U_i`
+(`UnitOpenShopReleaseLateJobsWanted`) as strongly NP-hard, crediting Kravchenko (dated 1999 in
+their entry; the paper appeared in Discrete Applied Mathematics in 2000); it is the special case
+`r = m`, `μ_j = {M_j}` of this problem. Kravchenko's paper was not available to this
+formalization beyond its title.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -114,7 +127,7 @@ noncomputable def multiprocessorTaskOpenShopReleaseLateJobsDec :
   | some i => decide (WellFormed i ∧ MultiprocessorTaskOpenShopReleaseLateJobsFeasible i)
   | none => false
 
-/-- **`OMPT|r_i; p_ij = 1|∑ U_i` is NP-complete.** Source: Kravchenko (1999); Brucker and Knust,
+/-- **`OMPT|r_i; p_ij = 1|∑ U_i` is NP-complete.** Source: Kravchenko (2000); Brucker and Knust,
 *Complexity results for scheduling problems*; Brucker (2004), Chapter 11. -/
 public theorem_wanted multiprocessorTaskOpenShopReleaseLateJobs_npComplete :
     multiprocessorTaskOpenShopReleaseLateJobsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
