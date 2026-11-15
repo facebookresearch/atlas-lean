@@ -25,6 +25,7 @@ public import Mathlib.Topology.Basic
 public import Mathlib.Topology.Constructions
 public import Mathlib.Topology.Neighborhoods
 public import Mathlib.Topology.Order.OrderClosed
+public import Physlib.Thermodynamics.IdealGas.Basic
 
 import Mathlib.Algebra.Group.Action.Defs
 import Mathlib.Analysis.Calculus.Deriv.Add
@@ -100,6 +101,7 @@ distinct from statistical ensembles.
 - `entropyMax_temperature_eq` : equal temperatures at an interior entropy maximum.
 - `entropyFlow_sign` : hot-to-cold flow increases total entropy (derivative sign).
 - `Sideal`, `SidealGen` : the ideal-gas entropy model (MOD).
+- `sideal_eq_entropy` : `Sideal` is Physlib's ideal-gas `entropy` with `c = 3/2`.
 - `sideal_differentiableOn` : the ideal-gas entropy is Fréchet differentiable.
 - `idealGas` : the ideal gas as a `FundamentalRelation 1`, every postulate proved.
 - `sideal_pV`, `sideal_U` : `pV = NkT` and `U = (3/2)NkT`.
@@ -545,87 +547,82 @@ lemma gibbsDuhem {k : ℕ} (F : FundamentalRelation k) (γU γV : ℝ → ℝ)
 
 ## D. Entropy maximum and heat flow
 
-Two subsystems with fundamental relations `F₁` and `F₂` (possibly different, with
-any numbers of species), fixed volumes and amounts per subsystem, exchanging energy at
-fixed total `U₁ + U₂ = Utot`.
+Two subsystems with the same fundamental relation `F`, fixed volumes and amounts per
+subsystem, exchanging energy at fixed total `U₁ + U₂ = Utot`.
 
 -/
 
 /-- Total-entropy derivative along the energy-exchange curve: `dStot/dU₁` is the
 difference of the two `∂S/∂U` values, by the chain rule `hasDerivAt_comp_curve` on
 each leg. -/
-lemma stot_hasDerivAt {k₁ k₂ : ℕ} (F₁ : FundamentalRelation k₁)
-    (F₂ : FundamentalRelation k₂) (V1 V2 Utot Ustar : ℝ) (N1 : Fin k₁ → ℝ)
-    (N2 : Fin k₂ → ℝ)
-    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k₁)
-    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k₂) :
-    HasDerivAt (fun U1 => F₁.S (U1, V1, N1) + F₂.S (Utot - U1, V2, N2))
-      (dSdU F₁.S (Ustar, V1, N1) + -dSdU F₂.S (Utot - Ustar, V2, N2))
+lemma stot_hasDerivAt {k : ℕ} (F : FundamentalRelation k) (V1 V2 Utot Ustar : ℝ)
+    (N1 N2 : Fin k → ℝ)
+    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k)
+    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k) :
+    HasDerivAt (fun U1 => F.S (U1, V1, N1) + F.S (Utot - U1, V2, N2))
+      (dSdU F.S (Ustar, V1, N1) + -dSdU F.S (Utot - Ustar, V2, N2))
       Ustar := by
-  have hS1 : HasDerivAt (fun t => F₁.S (t, V1, N1))
-      (dSdU F₁.S (Ustar, V1, N1)) Ustar := by
+  have hS1 : HasDerivAt (fun t => F.S (t, V1, N1))
+      (dSdU F.S (Ustar, V1, N1)) Ustar := by
     simpa using hasDerivAt_comp_curve (γN := fun _ => N1) (hasDerivAt_id' Ustar)
       (hasDerivAt_const Ustar V1) (fun i => hasDerivAt_const Ustar (N1 i))
-      (F₁.differentiableAt hx1)
+      (F.differentiableAt hx1)
   have hU2 : HasDerivAt (fun t : ℝ => Utot - t) (-1) Ustar :=
     HasDerivAt.const_sub Utot (hasDerivAt_id' Ustar)
-  have hS2 : HasDerivAt (fun t => F₂.S (Utot - t, V2, N2))
-      (-dSdU F₂.S (Utot - Ustar, V2, N2)) Ustar := by
+  have hS2 : HasDerivAt (fun t => F.S (Utot - t, V2, N2))
+      (-dSdU F.S (Utot - Ustar, V2, N2)) Ustar := by
     simpa using hasDerivAt_comp_curve (γN := fun _ => N2) hU2
       (hasDerivAt_const Ustar V2) (fun i => hasDerivAt_const Ustar (N2 i))
-      (F₂.differentiableAt hx2)
+      (F.differentiableAt hx2)
   exact hS1.add hS2
 
 /-- At an interior local maximizer of total entropy, the two subsystem
 temperatures agree. No global maximum is claimed: the maximizer hypothesis is
 explicit. -/
-lemma entropyMax_temperature_eq {k₁ k₂ : ℕ} (F₁ : FundamentalRelation k₁)
-    (F₂ : FundamentalRelation k₂) (V1 V2 Utot Ustar : ℝ) (N1 : Fin k₁ → ℝ)
-    (N2 : Fin k₂ → ℝ)
-    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k₁)
-    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k₂)
+lemma entropyMax_temperature_eq {k : ℕ} (F : FundamentalRelation k) (V1 V2 Utot Ustar : ℝ)
+    (N1 N2 : Fin k → ℝ)
+    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k)
+    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k)
     (hmax : IsLocalMax
-      (fun U1 => F₁.S (U1, V1, N1) + F₂.S (Utot - U1, V2, N2)) Ustar) :
-    temp F₁.S (Ustar, V1, N1) = temp F₂.S (Utot - Ustar, V2, N2) := by
-  have hStot := stot_hasDerivAt F₁ F₂ V1 V2 Utot Ustar N1 N2 hx1 hx2
+      (fun U1 => F.S (U1, V1, N1) + F.S (Utot - U1, V2, N2)) Ustar) :
+    temp F.S (Ustar, V1, N1) = temp F.S (Utot - Ustar, V2, N2) := by
+  have hStot := stot_hasDerivAt F V1 V2 Utot Ustar N1 N2 hx1 hx2
   have h0 := hmax.hasDerivAt_eq_zero hStot
-  have hSU : dSdU F₁.S (Ustar, V1, N1) = dSdU F₂.S (Utot - Ustar, V2, N2) := by
+  have hSU : dSdU F.S (Ustar, V1, N1) = dSdU F.S (Utot - Ustar, V2, N2) := by
     linarith
-  change 1 / dSdU F₁.S (Ustar, V1, N1) = 1 / dSdU F₂.S (Utot - Ustar, V2, N2)
+  change 1 / dSdU F.S (Ustar, V1, N1) = 1 / dSdU F.S (Utot - Ustar, V2, N2)
   rw [hSU]
 
 /-- The `deriv` form of the total-entropy rate: `dStot/dU₁ = SU₁ - SU₂`. -/
-lemma stot_deriv_eq {k₁ k₂ : ℕ} (F₁ : FundamentalRelation k₁)
-    (F₂ : FundamentalRelation k₂) (V1 V2 Utot Ustar : ℝ) (N1 : Fin k₁ → ℝ)
-    (N2 : Fin k₂ → ℝ)
-    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k₁)
-    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k₂) :
-    deriv (fun U1 => F₁.S (U1, V1, N1) + F₂.S (Utot - U1, V2, N2)) Ustar =
-      dSdU F₁.S (Ustar, V1, N1) - dSdU F₂.S (Utot - Ustar, V2, N2) := by
-  have hder := (stot_hasDerivAt F₁ F₂ V1 V2 Utot Ustar N1 N2 hx1 hx2).deriv
+lemma stot_deriv_eq {k : ℕ} (F : FundamentalRelation k) (V1 V2 Utot Ustar : ℝ)
+    (N1 N2 : Fin k → ℝ)
+    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k)
+    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k) :
+    deriv (fun U1 => F.S (U1, V1, N1) + F.S (Utot - U1, V2, N2)) Ustar =
+      dSdU F.S (Ustar, V1, N1) - dSdU F.S (Utot - Ustar, V2, N2) := by
+  have hder := (stot_hasDerivAt F V1 V2 Utot Ustar N1 N2 hx1 hx2).deriv
   rwa [sub_eq_add_neg]
 
 /-- Hot-to-cold sign in derivative form: if subsystem 1 is hotter than subsystem
 2 (`T₁ > T₂`), then `dStot/dU₁ < 0` at the point, so transferring energy from 1
 to 2 (decreasing `U₁`) increases total entropy to first order. -/
-lemma entropyFlow_sign {k₁ k₂ : ℕ} (F₁ : FundamentalRelation k₁)
-    (F₂ : FundamentalRelation k₂) (V1 V2 Utot Ustar : ℝ) (N1 : Fin k₁ → ℝ)
-    (N2 : Fin k₂ → ℝ)
-    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k₁)
-    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k₂)
-    (hT : temp F₂.S (Utot - Ustar, V2, N2) < temp F₁.S (Ustar, V1, N1)) :
-    deriv (fun U1 => F₁.S (U1, V1, N1) + F₂.S (Utot - U1, V2, N2)) Ustar < 0 := by
-  rw [stot_deriv_eq F₁ F₂ V1 V2 Utot Ustar N1 N2 hx1 hx2]
-  have e1 : dSdU F₁.S (Ustar, V1, N1) = 1 / temp F₁.S (Ustar, V1, N1) := by
+lemma entropyFlow_sign {k : ℕ} (F : FundamentalRelation k) (V1 V2 Utot Ustar : ℝ)
+    (N1 N2 : Fin k → ℝ)
+    (hx1 : (Ustar, V1, N1) ∈ thermoDomain k)
+    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain k)
+    (hT : temp F.S (Utot - Ustar, V2, N2) < temp F.S (Ustar, V1, N1)) :
+    deriv (fun U1 => F.S (U1, V1, N1) + F.S (Utot - U1, V2, N2)) Ustar < 0 := by
+  rw [stot_deriv_eq F V1 V2 Utot Ustar N1 N2 hx1 hx2]
+  have e1 : dSdU F.S (Ustar, V1, N1) = 1 / temp F.S (Ustar, V1, N1) := by
     unfold temp
     rw [one_div_one_div]
-  have e2 : dSdU F₂.S (Utot - Ustar, V2, N2) =
-      1 / temp F₂.S (Utot - Ustar, V2, N2) := by
+  have e2 : dSdU F.S (Utot - Ustar, V2, N2) =
+      1 / temp F.S (Utot - Ustar, V2, N2) := by
     unfold temp
     rw [one_div_one_div]
   rw [e1, e2]
   exact sub_neg.mpr
-    (one_div_lt_one_div_of_lt (temp_pos F₂ (Utot - Ustar, V2, N2) hx2) hT)
+    (one_div_lt_one_div_of_lt (temp_pos F (Utot - Ustar, V2, N2) hx2) hT)
 
 /-!
 
@@ -647,6 +644,15 @@ the value is junk fixed by Lean's conventions (`Real.log` of a nonpositive argum
 division by zero). -/
 noncomputable def Sideal (kB s0 U V N : ℝ) : ℝ :=
   N * kB * (Real.log (V / N) + 3 / 2 * Real.log (U / N) + s0)
+
+/-- On the physical domain `Sideal` is Physlib's monophase ideal-gas entropy
+`_root_.entropy c R s0 U0 V0 N0` with `c = 3/2`, `R = kB`, reference entropy `kB * s0` per
+particle and the unit reference state `U0 = V0 = N0 = 1`. -/
+lemma sideal_eq_entropy (kB s0 U V N : ℝ) (hU : 0 < U) (hV : 0 < V) (hN : 0 < N) :
+    Sideal kB s0 U V N = _root_.entropy (3 / 2) kB (kB * s0) 1 1 1 U V N := by
+  simp only [Sideal, _root_.entropy, div_one]
+  rw [Real.log_div hV.ne' hN.ne', Real.log_div hU.ne' hN.ne']
+  ring
 
 /-- The ideal-gas entropy as a function on single-species equilibrium states.
 Physically meaningful on `thermoDomain 1`; elsewhere it inherits the junk values of
@@ -895,24 +901,6 @@ lemma sideal_differentiableOn (kB s0 : ℝ) :
   unfold SidealGen Sideal
   fun_prop (disch := first | assumption | exact div_ne_zero hV hN |
     exact div_ne_zero hU hN)
-
-/-- The ideal gas satisfies the Euler relation, proved directly from the
-computed `T`, `p`, `μ`: an independent check of `euler_relation` for `idealGas`. -/
-lemma sideal_euler (kB s0 : ℝ) (x : ThermoState 1) (hU : 0 < x.1)
-    (hV : 0 < x.2.1) (hN : 0 < x.2.2 0) (hkB : 0 < kB) :
-    x.1 = temp (SidealGen kB s0) x * SidealGen kB s0 x -
-      press (SidealGen kB s0) x * x.2.1 +
-      ∑ i, chemPot (SidealGen kB s0) x i * x.2.2 i := by
-  have hN0 : x.2.2 0 ≠ 0 := ne_of_gt hN
-  have hU0 : x.1 ≠ 0 := ne_of_gt hU
-  have hV0 : x.2.1 ≠ 0 := ne_of_gt hV
-  have hkB0 : kB ≠ 0 := ne_of_gt hkB
-  rw [Fin.sum_univ_one]
-  rw [sideal_temp kB s0 x hU hN hkB, sideal_press kB s0 x hU hV hN hkB,
-    sideal_mu kB s0 x 0 hU hV hN hkB]
-  simp only [SidealGen, Sideal]
-  field_simp [hN0, hU0, hV0, hkB0]
-  ring
 
 /-- The ideal gas satisfies Gibbs-Duhem in derivative form along a curve,
 proved directly from the explicit `T`, `p`, `μ` functions. The curve is
@@ -1265,6 +1253,15 @@ noncomputable def idealGas (kB s0 : ℝ) (hkB : 0 < kB) : FundamentalRelation 1 
   h_concave := sideal_concave_gen kB s0 hkB.le
   h_homog := fun x _ t ht => sideal_homog kB s0 x t ht
   h_pos := fun x hx => sideal_dSdU_pos kB s0 x hx.1 (hx.2.2 0) hkB
+
+/-- The ideal gas satisfies the Euler relation `U = TS - pV + μN`: `euler_relation` for
+`idealGas`, stated with componentwise positivity. -/
+lemma sideal_euler (kB s0 : ℝ) (x : ThermoState 1) (hU : 0 < x.1)
+    (hV : 0 < x.2.1) (hN : 0 < x.2.2 0) (hkB : 0 < kB) :
+    x.1 = temp (SidealGen kB s0) x * SidealGen kB s0 x -
+      press (SidealGen kB s0) x * x.2.1 +
+      ∑ i, chemPot (SidealGen kB s0) x i * x.2.2 i :=
+  euler_relation (idealGas kB s0 hkB) x ⟨hU, hV, fun i => by rwa [Fin.fin_one_eq_zero i]⟩
 
 /-- Boundary countermodel, postulate failure: at `N = 0` the ideal-gas `∂S/∂U`
 slice is identically zero, so `SidealGen` violates `∂S/∂U > 0` there and

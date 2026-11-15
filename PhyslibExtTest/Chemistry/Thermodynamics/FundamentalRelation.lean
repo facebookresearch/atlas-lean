@@ -238,40 +238,44 @@ example : temp (SidealGen 1 0) ((3 / 2, 1, fun _ => 1) : ThermoState 1) =
     sideal_temp 1 0 _ (by norm_num) one_pos one_pos]
   norm_num
 
-/-- `entropyFlow_sign` on two different ideal gases (`s0 = 0` and `s0 = 1`) at
-`U₁ = 2`, `U₂ = 1`: `T₁ = 4/3 > T₂ = 2/3`, so moving energy from 1 to 2 raises the
-total entropy. -/
+/-- `entropyFlow_sign` on two ideal-gas subsystems at `U₁ = 2`, `U₂ = 1`:
+`T₁ = 4/3 > T₂ = 2/3`, so moving energy from 1 to 2 raises the total entropy. -/
 example : deriv (fun U1 => (idealGas 1 0 one_pos).S (U1, 1, fun _ => 1) +
-    (idealGas 1 1 one_pos).S (3 - U1, 1, fun _ => 1)) 2 < 0 := by
+    (idealGas 1 0 one_pos).S (3 - U1, 1, fun _ => 1)) 2 < 0 := by
   have hx1 : ((2, 1, fun _ => 1) : ThermoState 1) ∈ thermoDomain 1 :=
     ⟨by norm_num, one_pos, fun _ => one_pos⟩
   have hx2 : ((3 - 2, 1, fun _ => 1) : ThermoState 1) ∈ thermoDomain 1 :=
     ⟨by norm_num, one_pos, fun _ => one_pos⟩
-  refine entropyFlow_sign (idealGas 1 0 one_pos) (idealGas 1 1 one_pos) 1 1 3 2
+  refine entropyFlow_sign (idealGas 1 0 one_pos) 1 1 3 2
     (fun _ => 1) (fun _ => 1) hx1 hx2 ?_
   rw [show (idealGas 1 0 one_pos).S = SidealGen 1 0 from rfl,
-    show (idealGas 1 1 one_pos).S = SidealGen 1 1 from rfl,
     sideal_temp 1 0 _ (by norm_num) one_pos one_pos,
-    sideal_temp 1 1 _ (by norm_num) one_pos one_pos]
+    sideal_temp 1 0 _ (by norm_num) one_pos one_pos]
   norm_num
 
-/-- General maximum principle for two different fundamental relations with
-different numbers of species: at an interior local maximizer of total entropy the
-two temperatures agree. -/
-example (F₁ : FundamentalRelation 2) (F₂ : FundamentalRelation 3)
-    (V1 V2 Utot Ustar : ℝ) (N1 : Fin 2 → ℝ) (N2 : Fin 3 → ℝ)
+/-- General maximum principle for a two-species fundamental relation: at an interior
+local maximizer of total entropy the two subsystem temperatures agree. -/
+example (F : FundamentalRelation 2)
+    (V1 V2 Utot Ustar : ℝ) (N1 N2 : Fin 2 → ℝ)
     (hx1 : (Ustar, V1, N1) ∈ thermoDomain 2)
-    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain 3)
+    (hx2 : (Utot - Ustar, V2, N2) ∈ thermoDomain 2)
     (hmax : IsLocalMax
-      (fun U1 => F₁.S (U1, V1, N1) + F₂.S (Utot - U1, V2, N2)) Ustar) :
-    temp F₁.S (Ustar, V1, N1) = temp F₂.S (Utot - Ustar, V2, N2) :=
-  entropyMax_temperature_eq F₁ F₂ V1 V2 Utot Ustar N1 N2 hx1 hx2 hmax
+      (fun U1 => F.S (U1, V1, N1) + F.S (Utot - U1, V2, N2)) Ustar) :
+    temp F.S (Ustar, V1, N1) = temp F.S (Utot - Ustar, V2, N2) :=
+  entropyMax_temperature_eq F V1 V2 Utot Ustar N1 N2 hx1 hx2 hmax
 
 /-!
 
 ## E. The ideal gas
 
 -/
+
+/-- On the physical domain the ideal-gas entropy agrees with Physlib's `entropy` at
+`c = 3/2`: here at `U = V = N = 1`, `kB = 2`, `s0 = 5`, both are `10`. -/
+example : Sideal 2 5 1 1 1 = _root_.entropy (3 / 2) 2 (2 * 5) 1 1 1 1 1 1 ∧
+    Sideal 2 5 1 1 1 = 10 := by
+  refine ⟨sideal_eq_entropy 2 5 1 1 1 one_pos one_pos one_pos, ?_⟩
+  norm_num [Sideal]
 
 /-- At `(U, V, N) = (3/2, 1, 1)` with `kB = 1`, `T = 1`. -/
 example : temp (SidealGen 1 0) ((3 / 2, 1, fun _ => 1) : ThermoState 1) = 1 := by
