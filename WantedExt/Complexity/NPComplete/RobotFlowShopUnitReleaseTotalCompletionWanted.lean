@@ -65,6 +65,13 @@ data, starting every operation as early as the release dates and the order of th
 so this does not change the answer. Every decoded instance is well formed (all data, `K` included,
 are non-negative integers). Binary encoding of all numbers.
 
+Zero transport times: the robot "can only handle one job at a time" (Hurink and Knust, Section
+1), also at the instant of a transport of length `tⱼ = 0`, so such a transport cannot take place
+while the robot is carrying another job. `IsUnitRobotFlowShopSchedule` therefore asks the
+transports of distinct jobs to satisfy `ρ j + t j ≤ ρ k ∨ ρ k + t k ≤ ρ j` (the pairwise reading
+of FLOW-SHOP SCHEDULING), not disjointness of the half-open intervals `[ρ j, ρ j + t j)`, under
+which an instantaneous transport could fall inside another one.
+
 Membership in NP: some optimal schedule starts every operation by `maxⱼ rⱼ + Σⱼ (tⱼ + 2)`, so
 start times form a certificate of polynomial size.
 
