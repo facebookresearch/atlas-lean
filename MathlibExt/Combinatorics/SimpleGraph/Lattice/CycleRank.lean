@@ -221,7 +221,7 @@ theorem card_edgeSet_sup_edge (G : SimpleGraph V) {a b : V} (hne : a ≠ b)
   rw [hsub, Set.ncard_insert_of_notMem (by rw [SimpleGraph.mem_edgeSet]; exact hadj)
     (Set.toFinite _)]
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [Finite V] in
 /-- The edgeless graph has one component per vertex. -/
 theorem card_components_bot :
     Nat.card (⊥ : SimpleGraph V).ConnectedComponent = Nat.card V := by
@@ -311,7 +311,7 @@ theorem euler_relation_sub (G : SimpleGraph V) :
       = (G.edgeSet.ncard : ℤ) + (Nat.card G.ConnectedComponent : ℤ) + 1 := by exact_mod_cast h
   linarith
 
-omit [DecidableEq V] in
+omit [DecidableEq V] [Finite V] in
 theorem card_components_eq_one_of_connected {G : SimpleGraph V} (hG : G.Connected) :
     Nat.card G.ConnectedComponent = 1 := by
   have : Nonempty V := hG.nonempty
