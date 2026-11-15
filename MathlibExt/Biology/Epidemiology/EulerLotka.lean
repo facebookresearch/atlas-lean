@@ -144,7 +144,7 @@ theorem reproductionNumber_expMeasure {r T : ℝ} (hT : 0 < T) (hr : -1 < r * T)
 `R(g₂) ≤ R(g₁)` at growth rate `r` (any real `r`). In particular, among generation intervals
 with a given mean, the fixed interval maximizes `R`. -/
 theorem reproductionNumber_le_of_convexOrderLE {g₁ g₂ : Measure ℝ} [IsProbabilityMeasure g₁]
-    (h : ConvexOrderLE g₁ g₂) {r : ℝ}
+    [IsProbabilityMeasure g₂] (h : ConvexOrderLE g₁ g₂) {r : ℝ}
     (h₁ : Integrable (fun a => exp (-r * a)) g₁) (h₂ : Integrable (fun a => exp (-r * a)) g₂) :
     reproductionNumber g₂ r ≤ reproductionNumber g₁ r := by
   have hc : ConvexOn ℝ Set.univ fun a : ℝ => exp (-r * a) :=
