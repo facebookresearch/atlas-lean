@@ -8,9 +8,10 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Algebra.BigOperators.Group.Finset
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Mathlib.Data.Finset.Lattice
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Data.Finset.Lattice.Fold
+public import Mathlib.Order.Interval.Finset.Nat
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
 # Count-Min sketch: deterministic guarantees
@@ -28,14 +29,14 @@ sizing is not proved here.
 
 /-- Count-Min counter for hash `h` at bucket `b`: total frequency
 of items hashed to `b`. -/
-noncomputable def cmCounter {X : Type*} [DecidableEq X] [Fintype X]
+def cmCounter {X : Type*} [DecidableEq X] [Fintype X]
     (f : X → ℕ) (h : X → ℕ) (b : ℕ) : ℕ :=
   ∑ y, if h y = b then f y else 0
 
 /-- Count-Min estimate with `d` hash functions into `ℕ` buckets
 (take `h j` composed with a modulus downstream): the minimum
 counter among the buckets `x` hashes to. Requires `0 < d`. -/
-noncomputable def cmEst {X : Type*} [DecidableEq X] [Fintype X]
+def cmEst {X : Type*} [DecidableEq X] [Fintype X]
     (f : X → ℕ) (H : ℕ → (X → ℕ)) (d : ℕ) (hd : 0 < d) (x : X) : ℕ :=
   Finset.inf' (Finset.Icc 0 (d - 1)) ⟨0, Finset.mem_Icc.mpr ⟨le_refl 0, by omega⟩⟩
     (fun j => cmCounter f (H j) (H j x))

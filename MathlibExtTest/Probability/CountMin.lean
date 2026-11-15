@@ -9,16 +9,97 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.CountMin
+import Mathlib.Data.Fin.VecNotation
+
+/-!
+Exact-value tests on the frequencies `2, 5, 7` of the three items of `Fin 3`. The hashes are
+the identity (collision-free), a constant (everything collides), and parity (items `0` and `2`
+share bucket `0`; item `1` is alone in bucket `1`).
+-/
 
 @[expose] public section
 
-/-- The estimate for a constant stream never undercounts. -/
-example : (1 : ℕ) ≤ cmEst (fun _ : Fin 2 => 1) (fun _ _ => 0) 1 (by norm_num) 0 :=
-  freq_le_cmEst _ _ _ _ _
+/-- A collision-free hash gives each item its own counter. -/
+example : cmCounter ![2, 5, 7] (fun y : Fin 3 => y.val) 0 = 2 := by decide
 
-/-- The estimate is at most the single counter when `d = 1`. -/
-example : cmEst (fun _ : Fin 2 => 1) (fun _ _ => 0) 1 (by norm_num) 0
-    ≤ cmCounter (fun _ : Fin 2 => 1) (fun _ => 0) 0 :=
-  cmEst_le_counter _ _ _ _ _ 0 (by norm_num)
+example : cmCounter ![2, 5, 7] (fun y : Fin 3 => y.val) 1 = 5 := by decide
+
+example : cmCounter ![2, 5, 7] (fun y : Fin 3 => y.val) 2 = 7 := by decide
+
+/-- A bucket that no item hashes to holds `0`. -/
+example : cmCounter ![2, 5, 7] (fun y : Fin 3 => y.val) 3 = 0 := by decide
+
+/-- A constant hash puts the whole mass `14` in one bucket. -/
+example : cmCounter ![2, 5, 7] (fun _ : Fin 3 => 0) 0 = 14 := by decide
+
+/-- Under parity, bucket `0` holds `2 + 7` and bucket `1` holds `5`. -/
+example : cmCounter ![2, 5, 7] (fun y : Fin 3 => y.val % 2) 0 = 9 := by decide
+
+example : cmCounter ![2, 5, 7] (fun y : Fin 3 => y.val % 2) 1 = 5 := by decide
+
+/-- Two rows, the constant one first: the minimum selects the collision-free counter `5`
+over `14`, so the estimate for item `1` is exact. -/
+example :
+    cmEst ![2, 5, 7] (fun j (y : Fin 3) => if j = 0 then 0 else y.val) 2 (by decide) 1 = 5 := by
+  decide
+
+/-- The same two rows in the other order give the same estimate. -/
+example :
+    cmEst ![2, 5, 7] (fun j (y : Fin 3) => if j = 0 then y.val else 0) 2 (by decide) 1 = 5 := by
+  decide
+
+/-- With `d = 1` only row `0` counts, so the constant row alone gives `14`. -/
+example :
+    cmEst ![2, 5, 7] (fun j (y : Fin 3) => if j = 0 then 0 else y.val) 1 (by decide) 1 = 14 := by
+  decide
+
+/-- When every row collides the estimate overcounts: for item `0` the parity row (`9`) beats
+the constant row (`14`), and the excess over the frequency `2` is the colliding mass `7`. -/
+example :
+    cmEst ![2, 5, 7] (fun j (y : Fin 3) => if j = 0 then y.val % 2 else 0) 2 (by decide) 0
+      = 9 := by
+  decide
+
+/-- The colliding mass of item `0` under parity is the frequency `7` of item `2`. -/
+example :
+    ∑ y ∈ Finset.univ.filter (fun y : Fin 3 => y ≠ 0 ∧ y.val % 2 = (0 : Fin 3).val % 2),
+      (![2, 5, 7] : Fin 3 → ℕ) y = 7 := by
+  decide
+
+/-- The colliding mass of item `1` under parity is `0`: it is alone in its bucket. -/
+example :
+    ∑ y ∈ Finset.univ.filter (fun y : Fin 3 => y ≠ 1 ∧ y.val % 2 = (1 : Fin 3).val % 2),
+      (![2, 5, 7] : Fin 3 → ℕ) y = 0 := by
+  decide
+
+/-- `counter_le_freq_add_collision` holds with equality here: the counter `9` of item `0` is
+its frequency `2` plus its colliding mass `7`. -/
+example :
+    cmCounter ![2, 5, 7] (fun y : Fin 3 => y.val % 2) 0
+      = (![2, 5, 7] : Fin 3 → ℕ) 0
+        + ∑ y ∈ Finset.univ.filter (fun y : Fin 3 => y ≠ 0 ∧ y.val % 2 = (0 : Fin 3).val % 2),
+          (![2, 5, 7] : Fin 3 → ℕ) y := by
+  decide
+
+example :
+    cmCounter ![2, 5, 7] (fun y : Fin 3 => y.val % 2) ((fun y : Fin 3 => y.val % 2) 0)
+      ≤ (![2, 5, 7] : Fin 3 → ℕ) 0
+        + ∑ y ∈ Finset.univ.filter
+            (fun y : Fin 3 => y ≠ 0 ∧ (fun y : Fin 3 => y.val % 2) y
+              = (fun y : Fin 3 => y.val % 2) 0),
+          (![2, 5, 7] : Fin 3 → ℕ) y :=
+  counter_le_freq_add_collision _ _ 0
+
+/-- `freq_le_cmEst` and `cmEst_le_counter` on the two-row sketch: the frequency `5` of item `1`
+is at most its estimate, which is at most the constant row's counter `14`. -/
+example :
+    (![2, 5, 7] : Fin 3 → ℕ) 1
+      ≤ cmEst ![2, 5, 7] (fun j (y : Fin 3) => if j = 0 then 0 else y.val) 2 (by decide) 1 :=
+  freq_le_cmEst _ _ _ _ 1
+
+example :
+    cmEst ![2, 5, 7] (fun j (y : Fin 3) => if j = 0 then 0 else y.val) 2 (by decide) 1
+      ≤ cmCounter ![2, 5, 7] (fun _ : Fin 3 => 0) 0 :=
+  cmEst_le_counter _ _ _ _ 1 0 (by decide)
 
 end
