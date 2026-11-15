@@ -24,11 +24,13 @@ public import MathlibExt.Computability.Complexity
 public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
 public import Mathlib.Combinatorics.SimpleGraph.Hasse
 public import Mathlib.Combinatorics.SimpleGraph.Prod
-public import Mathlib.Data.Int.Basic
+public import WantedExt.Complexity.NPComplete.ChainedBlockWanted
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.LITS
+
+open MetaMathlibExt.Complexity.NPComplete.ChainedBlock (SameShape coords)
 
 /-!
 # LITS is NP-complete
@@ -58,12 +60,11 @@ instance size is proportional to the area plus the binary length of the labels. 
 `Fin m × Fin n`, adjacent when they share an edge in Mathlib's grid graph
 `pathGraph m □ pathGraph n`; connectedness of a set of squares is `SimpleGraph.Connected` of
 the subgraph the grid graph induces on it. A choice of black squares is a function
-`ℕ → ℕ → Bool` read on the grid. For property 3, the tetromino of a region is the finset of its
-black squares as points of `ℤ × ℤ`, and two finsets are congruent when one is the image of the
-other under one of the eight symmetries of the square lattice (`isometries`: the rotations by
-multiples of a right angle and the reflections) followed by a translation; the translation is
-written as the one that sends some point `p` of the first finset to some point `q` of the
-second.
+`ℕ → ℕ → Bool` read on the grid. For property 3, the tetromino of a region is the set of
+integer coordinates of its black squares (`ChainedBlock.coords`), and two tetrominoes are
+congruent when they have the same shape in the sense of `ChainedBlock.SameShape`: one is the
+image of the other under a rotation or reflection of the square lattice followed by a
+translation.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -92,24 +93,6 @@ def region (i : LITSInstance) (x : Fin (rows i) × Fin (cols i)) : ℕ := (i.get
 abbrev Grid (i : LITSInstance) : SimpleGraph (Fin (rows i) × Fin (cols i)) :=
   SimpleGraph.pathGraph (rows i) □ SimpleGraph.pathGraph (cols i)
 
-/-- The eight symmetries of the square lattice `ℤ × ℤ` fixing the origin: the four rotations by
-multiples of a right angle and the four reflections. -/
-def isometries : List (ℤ × ℤ → ℤ × ℤ) :=
-  [fun p => (p.1, p.2), fun p => (-p.2, p.1), fun p => (-p.1, -p.2), fun p => (p.2, -p.1),
-    fun p => (-p.1, p.2), fun p => (p.1, -p.2), fun p => (p.2, p.1), fun p => (-p.2, -p.1)]
-
-/-- `B` is congruent to `A`: `B` is the image of `A` under a lattice symmetry `s` followed by
-the translation that sends `s p` to `q`, for some `p ∈ A` and `q ∈ B`. -/
-def Congruent (A B : Finset (ℤ × ℤ)) : Prop :=
-  ∃ s ∈ isometries, ∃ p ∈ A, ∃ q ∈ B, B = A.image fun x => s x - s p + q
-
-/-- The black squares (for the choice `b`) of the region labelled `k`, as points of
-`ℤ × ℤ`. -/
-def piece (i : LITSInstance) (b : ℕ → ℕ → Bool) (k : ℕ) : Finset (ℤ × ℤ) :=
-  (Finset.univ.filter fun y : Fin (rows i) × Fin (cols i) =>
-      region i y = k ∧ b y.1 y.2 = true).image
-    fun y => (((y.1 : ℕ) : ℤ), ((y.2 : ℕ) : ℤ))
-
 /-- Well-formedness: at least one row and one column, rows of equal length, and every region
 connected. -/
 def WellFormed (i : LITSInstance) : Prop :=
@@ -128,7 +111,8 @@ def LITSFeasible (i : LITSInstance) : Prop :=
     -- 3. tetrominoes of different regions that share an edge are not congruent
     (∀ x y : Fin (rows i) × Fin (cols i), (Grid i).Adj x y → b x.1 x.2 = true →
       b y.1 y.2 = true → region i x ≠ region i y →
-        ¬ Congruent (piece i b (region i x)) (piece i b (region i y))) ∧
+        ¬ SameShape (coords {z | region i z = region i x ∧ b z.1 z.2 = true})
+          (coords {z | region i z = region i y ∧ b z.1 z.2 = true})) ∧
     -- 4. no `2 × 2` square is all black
     ∀ r c, r + 1 < rows i → c + 1 < cols i →
       ¬ (b r c = true ∧ b r (c + 1) = true ∧ b (r + 1) c = true ∧ b (r + 1) (c + 1) = true)
