@@ -16,7 +16,7 @@ doi:10.1016/0166-218X(94)90012-4, Theorem 2.3;
 J. Błażewicz, P. Dell'Olmo, M. Drozdowski and M. G. Speranza, "Scheduling multiprocessor tasks on
 three dedicated processors", Information Processing Letters 41 (1992), 275-280,
 doi:10.1016/0020-0190(92)90172-R;
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, entry [SS13]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, entry
 MINIMUM 3-DEDICATED PROCESSOR SCHEDULING.
 -/
 module

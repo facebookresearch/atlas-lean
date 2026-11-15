@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), MINIMUM METRIC TRAVELING K-SALESPERSON PROBLEM [ND35] (decision version);
+2000), MINIMUM METRIC TRAVELING K-SALESPERSON PROBLEM (decision version);
 G. N. Frederickson, M. S. Hecht, and C. E. Kim, "Approximation algorithms for some routing
 problems", SIAM Journal on Computing 7 (1978), 178-193, doi:10.1137/0207017 (the k-person
 min-max tour problem);
@@ -43,10 +43,10 @@ each a closed tour that starts and ends at `s`, such that every city lies on at 
 subtour and every subtour has length at most `K`?
 
 This is the decision version of the compendium's MINIMUM METRIC TRAVELING K-SALESPERSON PROBLEM
-[ND35] (measure: the maximum length of the `k` subtours), the min-max `k`-person traveling
-salesman problem of Frederickson, Hecht, and Kim (1978), who list it among NP-complete routing
-problems. With `k = 1` it is the metric traveling salesman problem, NP-complete by Garey and
-Johnson [ND22] already with distances in `{1, 2}`; that is the reduction behind the theorem.
+(measure: the maximum length of the `k` subtours), the min-max `k`-person traveling salesman problem
+of Frederickson, Hecht, and Kim (1978), who list it among NP-complete routing problems. With `k = 1`
+it is the metric traveling salesman problem, NP-complete by Garey and Johnson [ND22] already with
+distances in `{1, 2}`; that is the reduction behind the theorem.
 
 The metric part of the instance (an `m × m` distance matrix with zero diagonal, symmetric,
 satisfying the triangle inequality, and `s < m`) is checked by `TravelingRepairmanWanted`'s
@@ -104,8 +104,9 @@ noncomputable def metricTravelingKSalespersonDec :
   | some i => decide (WellFormed i ∧ MetricTravelingKSalespersonFeasible i)
   | none => false
 
-/-- **METRIC TRAVELING K-SALESPERSON is NP-complete.** Source: Crescenzi and Kann, [ND35];
-Frederickson, Hecht, and Kim (1978); Garey and Johnson (1979), [ND22]. -/
+/-- **METRIC TRAVELING K-SALESPERSON is NP-complete.** Source: Crescenzi and Kann, MINIMUM METRIC
+TRAVELING K-SALESPERSON PROBLEM; Frederickson, Hecht, and Kim (1978); Garey and Johnson (1979),
+[ND22]. -/
 public theorem_wanted metricTravelingKSalesperson_npComplete :
     metricTravelingKSalespersonDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

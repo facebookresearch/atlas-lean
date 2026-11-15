@@ -10,8 +10,7 @@ LICENSE file in the root directory of this source tree.
 # RATIO-CUT is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, MINIMUM RATIO-CUT
-[ND23];
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, MINIMUM RATIO-CUT;
 D. W. Matula and F. Shahrokhi, "Sparsest cuts and bottlenecks in graphs", Discrete Applied
 Mathematics 27 (1990), 113-123, doi:10.1016/0166-218X(90)90133-W;
 A. Gupta, K. Talwar and D. Witmer, "Sparsest cut on bounded treewidth graphs: algorithms and
@@ -39,7 +38,7 @@ capacity divided by the demand across it,
 `∑_{v₁ ∈ V₁, v₂ ∈ V₂, (v₁, v₂) ∈ E} c(v₁, v₂) / ∑_{i : |{s_i, t_i} ∩ V₁| = 1} d_i`,
 is at most `K`?
 
-This is the decision version of Crescenzi and Kann's MINIMUM RATIO-CUT [ND23], whose instance
+This is the decision version of Crescenzi and Kann's MINIMUM RATIO-CUT, whose instance
 is the general (non-uniform) one: "Graph `G = (V, E)`, a capacity function `c : E → N`, and `k`
 commodities, i.e., `k` pairs `(s_i, t_i) ∈ V²` and a demand `d_i` for each pair", with measure
 "the capacity of the cut divided by the demand across the cut"; their comment calls it Sparsest
@@ -107,8 +106,8 @@ noncomputable def ratioCutDec :
   | some i => decide (WellFormed i ∧ RatioCutFeasible i)
   | none => false
 
-/-- **RATIO-CUT is NP-complete.** Source: Crescenzi and Kann, [ND23]; Matula and Shahrokhi
-(1990); Gupta, Talwar and Witmer (2013). -/
+/-- **RATIO-CUT is NP-complete.** Source: Crescenzi and Kann, MINIMUM RATIO-CUT; Matula and
+Shahrokhi (1990); Gupta, Talwar and Witmer (2013). -/
 public theorem_wanted ratioCut_npComplete :
     ratioCutDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

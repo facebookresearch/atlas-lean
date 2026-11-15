@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # METRIC K-CENTER is NP-complete
 
 Source:
-P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem [ND54]
+P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem
 MINIMUM K-CENTER;
 O. Kariv and S. L. Hakimi, "An algorithmic approach to network location problems. I: The
 p-centers", SIAM Journal on Applied Mathematics 37 (1979), 513-538, doi:10.1137/0137040.
@@ -37,7 +37,7 @@ inequality, a positive integer `k ≤ |V|`, and a positive integer `B`.
 QUESTION: is there a `k`-center set, i.e. a subset `C ⊆ V` with `|C| = k`, such that
 `max_{v ∈ V} min_{c ∈ C} d(v, c) ≤ B`?
 
-This is the decision version of MINIMUM K-CENTER from the Crescenzi-Kann compendium ([ND54]).
+This is the decision version of MINIMUM K-CENTER from the Crescenzi-Kann compendium.
 Its NP-hardness is the vertex p-center result of Kariv and Hakimi (the shortest-path distances
 of a connected network with positive edge lengths form a metric).
 
@@ -87,8 +87,8 @@ noncomputable def metricKCenterDec :
   | some i => decide (WellFormed i ∧ KCenterFeasible i)
   | none => false
 
-/-- **METRIC K-CENTER is NP-complete.** Source: Crescenzi and Kann, [ND54]; Kariv and Hakimi
-(1979). -/
+/-- **METRIC K-CENTER is NP-complete.** Source: Crescenzi and Kann, MINIMUM K-CENTER; Kariv and
+Hakimi (1979). -/
 public theorem_wanted metricKCenter_npComplete :
     metricKCenterDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

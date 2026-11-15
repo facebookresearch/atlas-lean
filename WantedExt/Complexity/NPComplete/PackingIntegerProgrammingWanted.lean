@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # PACKING INTEGER PROGRAMMING is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [MP3]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MAXIMUM PACKING INTEGER PROGRAMMING (decision version);
 A. Srinivasan, "Improved approximations of packing and covering problems", Proc. 27th Annual
 ACM Symposium on Theory of Computing (1995), 268-276, doi:10.1145/225058.225138;
@@ -91,8 +91,8 @@ noncomputable def packingIntegerProgrammingDec :
   | some i => decide (WellFormed i ∧ PackingIntegerProgrammingFeasible i)
   | none => false
 
-/-- **PACKING INTEGER PROGRAMMING is NP-complete.** Source: Crescenzi and Kann, [MP3];
-Srinivasan (1995); Karp (1972) for the SET PACKING case. -/
+/-- **PACKING INTEGER PROGRAMMING is NP-complete.** Source: Crescenzi and Kann, MAXIMUM PACKING
+INTEGER PROGRAMMING; Srinivasan (1995); Karp (1972) for the SET PACKING case. -/
 public theorem_wanted packingIntegerProgramming_npComplete :
     packingIntegerProgrammingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

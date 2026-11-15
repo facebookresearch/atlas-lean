@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # MULTIPROCESSOR SCHEDULING WITH SPEED FACTORS is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [SS10]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM MULTIPROCESSOR SCHEDULING WITH SPEED FACTORS;
 M. R. Garey and D. S. Johnson, ""Strong" NP-completeness results: motivation, examples, and
 implications", Journal of the ACM 25 (1978), 499-508, doi:10.1145/322077.322090
@@ -106,7 +106,8 @@ noncomputable def multiprocessorSchedulingSpeedFactorsDec :
   | none => false
 
 /-- **MULTIPROCESSOR SCHEDULING WITH SPEED FACTORS is NP-complete.** Source: Crescenzi and
-Kann, [SS10]; Garey and Johnson (1978); Garey and Johnson (1979), [SS8]. -/
+Kann, MINIMUM MULTIPROCESSOR SCHEDULING WITH SPEED FACTORS; Garey and Johnson (1978); Garey and
+Johnson (1979), [SS8]. -/
 public theorem_wanted multiprocessorSchedulingSpeedFactors_npComplete :
     multiprocessorSchedulingSpeedFactorsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

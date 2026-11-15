@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), MINIMUM EXACT COVER [SP5] (decision version);
+2000), MINIMUM EXACT COVER (decision version);
 R. M. Karp, "Reducibility among combinatorial problems", in *Complexity of Computer
 Computations* (R. E. Miller and J. W. Thatcher, eds.), Plenum Press (1972), 85-103,
 doi:10.1007/978-1-4684-2001-2_9 (EXACT COVER is NP-complete).
@@ -36,7 +36,7 @@ INSTANCE: a collection `C` of subsets of a finite set `S`, and a bound `K`. QUES
 a set cover `C' ⊆ C` for `S` (every element of `S` belongs to some member of `C'`) with
 `∑_{c ∈ C'} |c| ≤ K`?
 
-This is the decision version of the compendium's MINIMUM EXACT COVER [SP5], whose only
+This is the decision version of the compendium's MINIMUM EXACT COVER, whose only
 difference from MINIMUM SET COVER is the objective (the total size of the chosen sets). A cover
 has `∑_{c ∈ C'} |c| ≥ |S|`, with equality exactly when its members are pairwise disjoint, so
 the case `K = |S|` is EXACT COVER, NP-complete by Karp (1972); that is the reduction behind the
@@ -79,7 +79,8 @@ noncomputable def minimumExactCoverDec :
   | some i => decide (WellFormed i ∧ MinimumExactCoverFeasible i)
   | none => false
 
-/-- **MINIMUM EXACT COVER is NP-complete.** Source: Crescenzi and Kann, [SP5]; Karp (1972). -/
+/-- **MINIMUM EXACT COVER is NP-complete.** Source: Crescenzi and Kann, MINIMUM EXACT COVER; Karp
+(1972). -/
 public theorem_wanted minimumExactCover_npComplete :
     minimumExactCoverDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

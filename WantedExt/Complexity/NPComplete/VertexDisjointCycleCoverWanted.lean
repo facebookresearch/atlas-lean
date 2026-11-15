@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, web edition
-(2000), problem [GT21] MINIMUM VERTEX DISJOINT CYCLE COVER;
+(2000), problem MINIMUM VERTEX DISJOINT CYCLE COVER;
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the
 Theory of NP-Completeness*, W. H. Freeman (1979), problem [GT13] PARTITION INTO HAMILTONIAN
 SUBGRAPHS, comment (the undirected problem with an upper bound `K` on the number of parts);
@@ -38,7 +38,7 @@ namespace MetaMathlibExt.Complexity.NPComplete.VertexDisjointCycleCover
 INSTANCE: a graph `G = (V, E)` and a positive integer `K`. QUESTION: is there a family `F` of
 vertex disjoint cycles covering `V` with at most `K` cycles?
 
-This is the decision version, with bound `K`, of Crescenzi and Kann's [GT21] MINIMUM VERTEX
+This is the decision version, with bound `K`, of Crescenzi and Kann's MINIMUM VERTEX
 DISJOINT CYCLE COVER ("A family `F` of vertex disjoint cycles covering `V`", measure "Number of
 cycles in `F`"). Equivalently, `V` is partitioned into at most `K` sets, each with at least three
 vertices and inducing a subgraph that contains a Hamiltonian circuit: Garey and Johnson's [GT13]
@@ -97,8 +97,8 @@ noncomputable def vertexDisjointCycleCoverDec :
   | some i => decide (WellFormed i ∧ VertexDisjointCycleCoverFeasible i)
   | none => false
 
-/-- **VERTEX DISJOINT CYCLE COVER is NP-complete.** Source: Crescenzi and Kann (2000), [GT21];
-Garey and Johnson (1979), [GT13], comment; Karp (1972). -/
+/-- **VERTEX DISJOINT CYCLE COVER is NP-complete.** Source: Crescenzi and Kann (2000), MINIMUM
+VERTEX DISJOINT CYCLE COVER; Garey and Johnson (1979), [GT13], comment; Karp (1972). -/
 public theorem_wanted vertexDisjointCycleCover_npComplete :
     vertexDisjointCycleCoverDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

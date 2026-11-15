@@ -13,7 +13,7 @@ Source:
 P. D. Seymour and R. Thomas, "Call routing and the ratcatcher", Combinatorica 14 (1994),
 217-241, doi:10.1007/BF01215352 (definitions in Section 1; deciding whether there is a routing
 tree of congestion `< k` is NP-hard for general graphs, even if every weight is `1`);
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [ND11]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM ROUTING TREE CONGESTION.
 -/
 module
@@ -123,7 +123,7 @@ noncomputable def routingTreeCongestionDec :
   | none => false
 
 /-- **ROUTING TREE CONGESTION is NP-complete.** Source: Seymour and Thomas (1994); Crescenzi and
-Kann, [ND11]. -/
+Kann, MINIMUM ROUTING TREE CONGESTION. -/
 public theorem_wanted routingTreeCongestion_npComplete :
     routingTreeCongestionDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

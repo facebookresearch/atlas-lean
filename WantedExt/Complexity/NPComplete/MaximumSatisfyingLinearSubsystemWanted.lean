@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # MAXIMUM SATISFYING LINEAR SUBSYSTEM is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [MP10]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MAXIMUM SATISFYING LINEAR SUBSYSTEM (decision version: at least `K` equations satisfied);
 E. Amaldi and V. Kann, "The complexity and approximability of finding maximum feasible subsystems
 of linear relations", Theoretical Computer Science 147 (1995), 181-210,
@@ -76,8 +76,8 @@ noncomputable def maximumSatisfyingLinearSubsystemDec :
   | some i => decide (WellFormed i ∧ MaximumSatisfyingLinearSubsystemFeasible i)
   | none => false
 
-/-- **MAXIMUM SATISFYING LINEAR SUBSYSTEM is NP-complete.** Source: Crescenzi and Kann,
-compendium, [MP10]; Amaldi and Kann (1995). -/
+/-- **MAXIMUM SATISFYING LINEAR SUBSYSTEM is NP-complete.** Source: Crescenzi and Kann, MAXIMUM
+SATISFYING LINEAR SUBSYSTEM; Amaldi and Kann (1995). -/
 public theorem_wanted maximumSatisfyingLinearSubsystem_npComplete :
     maximumSatisfyingLinearSubsystemDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

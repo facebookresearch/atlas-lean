@@ -16,7 +16,7 @@ NP-completeness, by a reduction from PARTITION);
 S. Cosares and I. Saniee, "An optimization problem related to balancing loads on SONET rings",
 Telecommunication Systems 3 (1994), 165-181, doi:10.1007/BF02110141 (the first NP-hardness
 proof, for a formulation that allows several demands per node pair);
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [MS20]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM RING LOADING.
 -/
 module
@@ -105,7 +105,7 @@ noncomputable def ringLoadingDec :
   | none => false
 
 /-- **RING LOADING is NP-complete.** Source: Schrijver, Seymour and Winkler (1998), Sections 2-3;
-Cosares and Saniee (1994); Crescenzi and Kann, [MS20]. -/
+Cosares and Saniee (1994); Crescenzi and Kann, MINIMUM RING LOADING. -/
 public theorem_wanted ringLoading_npComplete :
     ringLoadingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

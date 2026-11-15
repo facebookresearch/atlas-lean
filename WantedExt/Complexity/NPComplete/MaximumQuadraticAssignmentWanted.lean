@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, MAXIMUM
-QUADRATIC ASSIGNMENT [ND46];
+QUADRATIC ASSIGNMENT;
 E. M. Arkin, R. Hassin and M. Sviridenko, "Approximating the maximum quadratic assignment
 problem", Information Processing Letters 77 (2001), 13-16,
 doi:10.1016/S0020-0190(00)00151-4.
@@ -36,7 +36,7 @@ INSTANCE: nonnegative symmetric `n × n` matrices `A = (a_{k,l})` and `B = (b_{i
 positive integer `K`. QUESTION: is there a permutation `π : [1..n] → [1..n]` such that
 `∑_{i ≠ j} a_{π(i),π(j)} b_{i,j} ≥ K`?
 
-This is the decision version of Crescenzi and Kann's MAXIMUM QUADRATIC ASSIGNMENT [ND46].
+This is the decision version of Crescenzi and Kann's MAXIMUM QUADRATIC ASSIGNMENT.
 Arkin, Hassin and Sviridenko (Section 1) state that the problem, which in their version also
 has a linear term `∑_i c_{i,π(i)}`, is NP-hard; the version here is theirs with `C = 0`, which
 contains their special case MAX DISPERSION (`A` a clique on `p` vertices plus `n - p` isolated
@@ -93,8 +93,8 @@ noncomputable def maximumQuadraticAssignmentDec :
   | some i => decide (WellFormed i ∧ MaximumQuadraticAssignmentFeasible i)
   | none => false
 
-/-- **MAXIMUM QUADRATIC ASSIGNMENT is NP-complete.** Source: Crescenzi and Kann, [ND46];
-Arkin, Hassin and Sviridenko (2001). -/
+/-- **MAXIMUM QUADRATIC ASSIGNMENT is NP-complete.** Source: Crescenzi and Kann, MAXIMUM QUADRATIC
+ASSIGNMENT; Arkin, Hassin and Sviridenko (2001). -/
 public theorem_wanted maximumQuadraticAssignment_npComplete :
     maximumQuadraticAssignmentDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

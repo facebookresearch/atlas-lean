@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # UNSATISFYING LINEAR SUBSYSTEM is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [MP11]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM UNSATISFYING LINEAR SUBSYSTEM (the optimization problem whose decision version is
 stated here);
 E. Amaldi and V. Kann, "The complexity and approximability of finding maximum feasible subsystems
@@ -92,8 +92,8 @@ noncomputable def unsatisfyingLinearSubsystemDec :
   | some i => decide (WellFormed i ∧ UnsatisfyingLinearSubsystemFeasible i)
   | none => false
 
-/-- **UNSATISFYING LINEAR SUBSYSTEM is NP-complete.** Source: Crescenzi and Kann, [MP11]; Amaldi
-and Kann (1995). -/
+/-- **UNSATISFYING LINEAR SUBSYSTEM is NP-complete.** Source: Crescenzi and Kann, MINIMUM
+UNSATISFYING LINEAR SUBSYSTEM; Amaldi and Kann (1995). -/
 public theorem_wanted unsatisfyingLinearSubsystem_npComplete :
     unsatisfyingLinearSubsystemDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

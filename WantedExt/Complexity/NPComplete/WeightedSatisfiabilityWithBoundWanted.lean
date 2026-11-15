@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
-problem LO8 MAXIMUM WEIGHTED SATISFIABILITY WITH BOUND (decision version), citing
+problem MAXIMUM WEIGHTED SATISFIABILITY WITH BOUND (decision version), citing
 P. Crescenzi and A. Panconesi, "Completeness in approximation classes", Information and
 Computation 93 (1991), 241-262, doi:10.1016/0890-5401(91)90025-W (APX-complete);
 S. A. Cook, "The complexity of theorem-proving procedures", Proc. 3rd Annual ACM Symposium on
@@ -96,9 +96,9 @@ noncomputable def weightedSatisfiabilityWithBoundDec :
   | some i => decide (WellFormed i ∧ WeightedSatisfiabilityWithBoundFeasible i)
   | none => false
 
-/-- **WEIGHTED SATISFIABILITY WITH BOUND is NP-complete.** Source: Crescenzi and Kann, LO8, citing
-Crescenzi and Panconesi (1991); NP-hard by the reduction from SATISFIABILITY (Cook, 1971) in the
-module docstring. -/
+/-- **WEIGHTED SATISFIABILITY WITH BOUND is NP-complete.** Source: Crescenzi and Kann, MAXIMUM
+WEIGHTED SATISFIABILITY WITH BOUND, citing Crescenzi and Panconesi (1991); NP-hard by the reduction
+from SATISFIABILITY (Cook, 1971) in the module docstring. -/
 public theorem_wanted weightedSatisfiabilityWithBound_npComplete :
     weightedSatisfiabilityWithBoundDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

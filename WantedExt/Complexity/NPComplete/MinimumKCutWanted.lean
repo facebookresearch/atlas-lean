@@ -37,7 +37,7 @@ weighted graph into k nonempty components, such that the total edge weight betwe
 is minimum. This problem is NP-complete for an arbitrary k". The decision form bounds that
 weight by `B`. Equivalently, some edge set of weight at most `B` leaves at least `k` connected
 components when removed (weights are nonnegative). The range `2 ≤ k ≤ |V|` is that of the
-problem's entry MINIMUM K-CUT (ND19) in the Crescenzi-Kann compendium of NP optimization
+problem's entry MINIMUM K-CUT in the Crescenzi-Kann compendium of NP optimization
 problems.
 
 The graph is simple, given by a list of weighted edges `(u, v, w)` on the vertices

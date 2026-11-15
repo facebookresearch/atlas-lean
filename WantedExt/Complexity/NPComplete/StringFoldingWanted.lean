@@ -13,7 +13,7 @@ Source:
 M. Paterson and T. Przytycka, "On the complexity of string folding", Discrete Applied
 Mathematics 71 (1996), 217-230, doi:10.1016/S0166-218X(96)00065-0;
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), problem MS6 MAXIMUM STRING FOLDING (decision version).
+2000), problem MAXIMUM STRING FOLDING (decision version).
 -/
 module
 
@@ -101,7 +101,7 @@ noncomputable def stringFoldingDec (d : ℕ) :
   | none => false
 
 /-- **STRING FOLDING (cubic lattice) is NP-complete.** Source: Paterson and Przytycka (1996);
-Crescenzi and Kann, MS6. -/
+Crescenzi and Kann, MAXIMUM STRING FOLDING. -/
 public theorem_wanted stringFolding_npComplete :
     stringFoldingDec 3 ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

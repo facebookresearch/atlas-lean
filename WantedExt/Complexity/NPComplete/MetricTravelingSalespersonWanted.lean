@@ -15,7 +15,7 @@ Theory of NP-Completeness*, W. H. Freeman (1979), problem [ND22] TRAVELING SALES
 "Remains NP-complete even if d(cᵢ, cⱼ) ∈ {1, 2} for all cᵢ, cⱼ ∈ C" (transformation from
 HAMILTONIAN CIRCUIT);
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), MINIMUM METRIC TRAVELING SALESPERSON PROBLEM [ND33].
+2000), MINIMUM METRIC TRAVELING SALESPERSON PROBLEM.
 -/
 module
 
