@@ -239,7 +239,7 @@ of the first `n` cells. For a valid prior `a, b > 0` these are the mean and vari
 pooled posterior `Gamma(a + K, b + S)`, so the result is then almost-sure posterior
 consistency. -/
 theorem ae_tendsto_posteriorMean_pooled {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
-    [IsProbabilityMeasure μ] {X : ℕ → Ω → ℕ} {a b s r₀ : ℝ} (hs : 0 < s)
+    {X : ℕ → Ω → ℕ} {a b s r₀ : ℝ} (hs : 0 < s)
     (hint : Integrable (fun ω => (X 0 ω : ℝ)) μ) (hindep : Pairwise ((· ⟂ᵢ[μ] ·) on X))
     (hident : ∀ j, IdentDistrib (X j) (X 0) μ μ) (hmean : μ[fun ω => (X 0 ω : ℝ)] = s * r₀) :
     ∀ᵐ ω ∂μ,

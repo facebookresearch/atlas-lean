@@ -19,7 +19,7 @@ public import Mathlib.Probability.ProbabilityMassFunction.Basic
 sequence `p 0, ..., p k` on a finite type are pairwise within
 `ε` on the event `E` (in real probability), then the endpoints
 are within `k * ε` on `E`. -/
-theorem hybrid_argument {α : Type*} [Fintype α]
+theorem hybrid_argument {α : Type*}
     (p : ℕ → PMF α) (E : Finset α) {ε : ℝ} (k : ℕ)
     (hstep : ∀ i < k, |(∑ a ∈ E, (p i a).toReal) -
       (∑ a ∈ E, (p (i + 1) a).toReal)| ≤ ε) :
@@ -46,7 +46,7 @@ theorem hybrid_argument {α : Type*} [Fintype α]
 /-- Prefix form of the hybrid argument: if consecutive distributions in
 `p 0, ..., p k` are pairwise within `ε` on `E`, then for every `j ≤ k`
 the hybrids `p 0` and `p j` are within `j * ε` on `E`. -/
-theorem hybrid_argument_le {α : Type*} [Fintype α]
+theorem hybrid_argument_le {α : Type*}
     (p : ℕ → PMF α) (E : Finset α) {ε : ℝ} {j k : ℕ} (hjk : j ≤ k)
     (hstep : ∀ i < k, |(∑ a ∈ E, (p i a).toReal) -
       (∑ a ∈ E, (p (i + 1) a).toReal)| ≤ ε) :

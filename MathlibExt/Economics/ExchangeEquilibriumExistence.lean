@@ -86,7 +86,6 @@ derived from Brouwer's theorem on the price simplex: if every consumer's demand 
 the price simplex and exhausts the consumer's budget there (`p · demand i p = p · endowment i`),
 an equilibrium exists. -/
 theorem exists_isFreeDisposalEquilibrium_of_brouwer {I L : Type*} [Fintype I] [Fintype L]
-    [Nonempty L]
     (hB : ∀ g : (L → ℝ) → (L → ℝ), ContinuousOn g (priceSimplex L) →
       Set.MapsTo g (priceSimplex L) (priceSimplex L) → ∃ p ∈ priceSimplex L, g p = p)
     (E : ExchangeEconomy I L) (hcont : ∀ i, ContinuousOn (E.demand i) (priceSimplex L))

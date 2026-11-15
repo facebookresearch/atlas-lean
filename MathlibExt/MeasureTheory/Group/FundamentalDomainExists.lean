@@ -166,7 +166,7 @@ namespace MeasureTheory
 admits a measurable fundamental domain for the opposite action, simultaneously
 for every measure. -/
 theorem exists_measurableSet_isFundamentalDomain_op_of_discreteTopology
-    {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G] [T2Space G]
+    {G : Type*} [Group G] [TopologicalSpace G] [IsTopologicalGroup G]
     [SecondCountableTopology G] [MeasurableSpace G] [BorelSpace G]
     (Γ : Subgroup G) (hΓ : DiscreteTopology Γ) :
     ∃ D : Set G, MeasurableSet D ∧ (∀ x : G, ∃! γ : Γ, x * (γ : G) ∈ D) ∧

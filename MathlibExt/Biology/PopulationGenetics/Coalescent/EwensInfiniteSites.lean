@@ -320,7 +320,7 @@ private lemma integral_exp_neg_mul_expMeasure {b c : ℝ} (hb : 0 < b) (hc : 0 �
 
 /-- **Laplace transform of the total branch length**: for `u ≥ 0`,
 `E[exp(-u L_n)] = ∏_{k=2}^{n} C(k,2) / (C(k,2) + k u) = ∏_{k=1}^{n-1} k / (k + 2u)`. -/
-theorem integral_exp_neg_mul_totalLength [IsProbabilityMeasure μ] {u : ℝ} (hu : 0 ≤ u) :
+theorem integral_exp_neg_mul_totalLength {u : ℝ} (hu : 0 ≤ u) :
     ∫ ω, Real.exp (-(u * K.totalLength ω)) ∂μ =
       ∏ k ∈ range (n - 1), ((k : ℝ) + 1) / (k + 1 + 2 * u) := by
   have hfac : ∀ k : Icc 2 n, ∫ ω, Real.exp (-(u * (k : ℕ)) * K.T k ω) ∂μ =
