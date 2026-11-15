@@ -8,9 +8,17 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Quantum.QueryOracle
+public import CSLibExt.Algorithms.Quantum.QueryOracle
 
 @[expose] public section
+
+/-!
+# Tests for the quantum query oracle
+
+Direct reductions check that the oracle flips the target bit exactly where `f x = true`.
+-/
+
+open Cslib.Quantum
 
 /-- The constant-true oracle flips the target bit `false` to `true`. -/
 example : queryOracle (fun _ : Fin 2 => true) (1, false) = (1, true) := rfl

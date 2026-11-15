@@ -23,6 +23,8 @@ operator is not formalized here.
 
 @[expose] public section
 
+namespace Cslib.Quantum
+
 /-- The query oracle on basis states, `O_f |x, y⟩ = |x, y ⊕ f x⟩`, modeled as a function on
 `Fin n × Bool`. -/
 def queryOracle {n : ℕ} (f : Fin n → Bool) (p : Fin n × Bool) : Fin n × Bool :=
@@ -48,5 +50,7 @@ theorem queryOracle_bijective {n : ℕ} (f : Fin n → Bool) :
 theorem queryOracle_fst {n : ℕ} (f : Fin n → Bool) (p : Fin n × Bool) :
     (queryOracle f p).1 = p.1 :=
   rfl
+
+end Cslib.Quantum
 
 end
