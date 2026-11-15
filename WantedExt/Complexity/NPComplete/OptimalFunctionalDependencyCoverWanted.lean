@@ -20,6 +20,7 @@ module
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import CSLibExt.Databases.FunctionalDependencies
+public import CSLibExt.Databases.NormalForms
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 public import WantedExt.Complexity.NPComplete.MinimumCardinalityKeyWanted
@@ -43,9 +44,10 @@ measures `{AB → C, CD → E, AC → IJ}` as size `10`.
 The attributes are `U = {0, ..., a - 1}`, as `Fin a`. Each functional dependency of `F` is a pair
 of attribute lists, read as the dependency `Cslib.Databases.FD` between the two attribute sets;
 `MinimumCardinalityKey.deps` turns the list into the set `F`. Two sets of dependencies are
-equivalent when each derives every dependency of the other with Armstrong's axioms
-(`Cslib.Databases.Derives`); this is `F⁺ = G⁺` (Maier's Definition 5.1), and by Armstrong's
-theorem (`Cslib.Databases.derives_iff_entails`) it is the same as semantic implication.
+equivalent (`Cslib.Databases.Equivalent`) when each derives every dependency of the other with
+Armstrong's axioms (`Cslib.Databases.Derives`); this is `F⁺ = G⁺` (Maier's Definition 5.1), and by
+Armstrong's theorem (`Cslib.Databases.derives_iff_entails`) it is the same as semantic
+implication.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -75,8 +77,7 @@ def size {A : Type*} (G : Finset (Cslib.Databases.FD A)) : ℕ :=
 def OptimalFunctionalDependencyCoverFeasible
     (i : OptimalFunctionalDependencyCoverInstance) : Prop :=
   ∃ G : Finset (Cslib.Databases.FD (Fin i.1)),
-    (∀ g ∈ G, Cslib.Databases.Derives (MinimumCardinalityKey.deps i) g) ∧
-      (∀ f ∈ MinimumCardinalityKey.deps i, Cslib.Databases.Derives G f) ∧ size G ≤ i.2.2
+    Cslib.Databases.Equivalent (MinimumCardinalityKey.deps i) G ∧ size G ≤ i.2.2
 
 open Classical in
 /-- OPTIMAL COVER OF FUNCTIONAL DEPENDENCIES as a decision problem over bitstrings. -/
