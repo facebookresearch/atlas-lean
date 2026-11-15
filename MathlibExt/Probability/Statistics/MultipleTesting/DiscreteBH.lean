@@ -65,7 +65,8 @@ contribute little to the sums, which is how the discreteness is exploited.
   `α`** for independent p-values (Döhler–Durand–Roquain, Corollary 3.3).
 
 Both FDR bounds are stated with an explicit bound (`b i`, resp. `B`) dominating the maximum. The
-adaptive refinement of Theorem 3.1 (maximum over subsets of size `m - k + 1`), its step-down half,
+adaptive refinement of the second bound (maximum over subsets of size `m - k + 1`) and the adaptive
+procedure [A-DBH-SU] are in `MultipleTesting.DiscreteBHAdaptive`. The step-down half of Theorem 3.1
 and the comparison of [DBH-SU] with BH at level `α / (1 + α)` (Lemma 2.3) are not formalized.
 Döhler–Durand–Roquain assume independence throughout; no PRDS or arbitrary-dependence version is
 claimed.
@@ -177,7 +178,8 @@ private theorem stepUp_contribution_eq_sum {c : ℕ → ℝ} (hc : Monotone c) (
 
 /-! ### Independence and measurability of the leave-one-out index -/
 
-private theorem measurable_stepUpIndex_update {Ω : Type*} [MeasurableSpace Ω]
+/-- The leave-one-out step-up index `ω ↦ stepUpIndex c (p(ω) with p i := 0)` is measurable. -/
+theorem measurable_stepUpIndex_update {Ω : Type*} [MeasurableSpace Ω]
     (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i)) (c : ℕ → ℝ) (i : Fin m) :
     Measurable fun ω => stepUpIndex c (Function.update (fun j => p j ω) i 0) := by
   classical
@@ -187,7 +189,9 @@ private theorem measurable_stepUpIndex_update {Ω : Type*} [MeasurableSpace Ω]
   · exact measurable_const
   · exact hp j
 
-private theorem indepFun_stepUpIndex_update {Ω : Type*} [MeasurableSpace Ω]
+/-- For mutually independent p-values, `p i` is independent of the leave-one-out step-up index
+computed with `p i := 0`. -/
+theorem indepFun_stepUpIndex_update {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i))
     (hindep : iIndepFun p μ) (c : ℕ → ℝ) (i : Fin m) :
     IndepFun (p i) (fun ω => stepUpIndex c (Function.update (fun j => p j ω) i 0)) μ := by
@@ -219,14 +223,15 @@ private theorem indepFun_stepUpIndex_update {Ω : Type*} [MeasurableSpace Ω]
   exact h
 
 /-- The expectation of a finite sum of indicators of constants. -/
-private theorem integral_sum_indicator_const {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+theorem integral_sum_indicator_const {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsFiniteMeasure μ] (s : Finset ℕ) {E : ℕ → Set Ω} (hE : ∀ k, MeasurableSet (E k))
     (a : ℕ → ℝ) :
     ∫ ω, ∑ k ∈ s, (E k).indicator (fun _ => a k) ω ∂μ = ∑ k ∈ s, μ.real (E k) * a k := by
   rw [integral_finsetSum s fun k _ => (integrable_const (a k)).indicator (hE k)]
   simp_rw [integral_indicator_const _ (hE _), smul_eq_mul]
 
-private theorem integrable_sum_indicator_const {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+/-- A finite sum of indicators of constants is integrable. -/
+theorem integrable_sum_indicator_const {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsFiniteMeasure μ] (s : Finset ℕ) {E : ℕ → Set Ω} (hE : ∀ k, MeasurableSet (E k))
     (a : ℕ → ℝ) : Integrable (fun ω => ∑ k ∈ s, (E k).indicator (fun _ => a k) ω) μ :=
   integrable_finsetSum s fun k _ => (integrable_const (a k)).indicator (hE k)
@@ -249,7 +254,7 @@ private theorem sum_measureReal_stepUpIndex_update {Ω : Type*} [MeasurableSpace
   simpa [Set.preimage, measureReal_def] using h
 
 /-- The step-up FDR as a sum over true nulls of the expected leave-one-out contributions. -/
-private theorem integral_fdp_stepUp_eq_sum {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+theorem integral_fdp_stepUp_eq_sum {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
     [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i))
     (H0 : Finset (Fin m)) {c : ℕ → ℝ} (hc : Monotone c) (hc0 : ∀ k, 0 ≤ c k) :
     ∫ ω, falseDiscoveryProportion H0
@@ -273,7 +278,7 @@ private theorem integral_fdp_stepUp_eq_sum {Ω : Type*} [MeasurableSpace Ω] (μ
 
 /-- For a true null `i` with `μ.real {p i ≤ t} ≤ F t`, the expected contribution is at most
 `∑ₖ P(K = k) F(c k) / k`, `K` the leave-one-out index (independent of `p i`). -/
-private theorem integral_stepUp_contribution_le {Ω : Type*} [MeasurableSpace Ω]
+theorem integral_stepUp_contribution_le {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i))
     (hindep : iIndepFun p μ) (c : ℕ → ℝ) (i : Fin m) {F : ℝ → ℝ}
     (hnull : ∀ t, μ.real {ω | p i ω ≤ t} ≤ F t) :
@@ -333,7 +338,9 @@ theorem integral_falseDiscoveryProportion_stepUp_le_sum {Ω : Type*} [Measurable
         Finset.sum_le_sum fun k hk => mul_le_mul_of_nonneg_left (hb i hi k hk) measureReal_nonneg
     _ = b i := by rw [← Finset.sum_mul, sum_measureReal_stepUpIndex_update μ p hp hc0 i, one_mul]
 
-private theorem sum_indicator_eq_ite {Ω : Type*} (P : Ω → Prop) [DecidablePred P] (K : Ω → ℕ)
+/-- A sum over `k ∈ [1, m]` of indicators of `{P ∧ K = k}` collapses to the single term
+`k = K ω`. -/
+theorem sum_indicator_eq_ite {Ω : Type*} (P : Ω → Prop) [DecidablePred P] (K : Ω → ℕ)
     (a : ℕ → ℝ) (ω : Ω) (hK : K ω ∈ Finset.Icc 1 m) :
     ∑ k ∈ Finset.Icc 1 m, {ω | P ω ∧ K ω = k}.indicator (fun _ => a k) ω =
       if P ω then a (K ω) else 0 := by

@@ -229,4 +229,69 @@ theorem zTestReject_size_zero_variance {n : ℕ} (μ0 : ℝ) {α : ℝ}
     exact iff_false_intro (not_lt_of_ge hpos.le)
   rw [hempty, measureReal_empty]
 
+/-- Use (`μ = μ0` recovers equality): over the composite null `μ ≤ μ0` the rejection
+probability has greatest value `α`, attained at the boundary mean `μ0`. -/
+theorem zTestReject_level_isGreatest {n : ℕ} (hn : 0 < n) {v : NNReal} (hv : v ≠ 0)
+    (μ0 : ℝ) {α : ℝ} (hα : α ∈ Set.Ioo 0 1) :
+    IsGreatest ((fun μ : ℝ => (Measure.pi fun _ : Fin n => gaussianReal μ v).real
+      (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α)))) '' Set.Iic μ0) α := by
+  refine ⟨⟨μ0, Set.mem_Iic.mpr le_rfl,
+    measureReal_zTestReject_quantile hn hv μ0 hα⟩, ?_⟩
+  rintro _ ⟨μ, hμ, rfl⟩
+  exact measureReal_zTestReject_le_of_le hn hv (Set.mem_Iic.mp hμ) hα
+
+/-- Non-vacuity: one unit-variance observation with true mean `μ0 - 1` below the null mean,
+at level `5/100`. -/
+theorem zTestReject_level_five_percent (μ0 : ℝ) :
+    (Measure.pi fun _ : Fin 1 => gaussianReal (μ0 - 1) 1).real
+      (zTestReject 1 μ0 1 (cdfQuantile (gaussianReal 0 1) (1 - 5 / 100))) ≤ 5 / 100 := by
+  exact measureReal_zTestReject_le_of_le Nat.one_pos one_ne_zero (by linarith)
+    (by norm_num [Set.mem_Ioo])
+
+/-- Negative (`μ > μ0` violates the bound): every true mean above `μ0` rejects with probability
+strictly above `α`, so `hμ` cannot be dropped. -/
+theorem zTestReject_level_gt_of_gt {n : ℕ} (hn : 0 < n) {v : NNReal} (hv : v ≠ 0)
+    {μ μ0 α : ℝ} (hμ : μ0 < μ) (hα : α ∈ Set.Ioo 0 1) :
+    α < (Measure.pi fun _ : Fin n => gaussianReal μ v).real
+      (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α))) := by
+  have h := measureReal_zTestReject_eq_cdf hn μ0 (μ - μ0)
+    (cdfQuantile (gaussianReal 0 1) (1 - α)) hv
+  rw [add_sub_cancel] at h
+  have h0 := measureReal_zTestReject_eq_cdf hn μ0 0
+    (cdfQuantile (gaussianReal 0 1) (1 - α)) hv
+  simp only [add_zero, mul_zero, zero_div, zero_sub] at h0
+  have hvR : 0 < (v : ℝ) := by
+    have hh : (0 : NNReal) < v := pos_iff_ne_zero.mpr hv
+    exact_mod_cast hh
+  have hpos : 0 < Real.sqrt (n : ℝ) * (μ - μ0) / Real.sqrt (v : ℝ) :=
+    div_pos (mul_pos (Real.sqrt_pos.mpr (by exact_mod_cast hn)) (sub_pos.mpr hμ))
+      (Real.sqrt_pos.mpr hvR)
+  have hlt : -cdfQuantile (gaussianReal 0 1) (1 - α)
+      < Real.sqrt (n : ℝ) * (μ - μ0) / Real.sqrt (v : ℝ)
+        - cdfQuantile (gaussianReal 0 1) (1 - α) := by
+    linarith
+  calc α = (Measure.pi fun _ : Fin n => gaussianReal μ0 v).real
+          (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α))) :=
+        (measureReal_zTestReject_quantile hn hv μ0 hα).symm
+    _ = cdf (gaussianReal 0 1) (-cdfQuantile (gaussianReal 0 1) (1 - α)) := h0
+    _ < cdf (gaussianReal 0 1) (Real.sqrt (n : ℝ) * (μ - μ0) / Real.sqrt (v : ℝ)
+          - cdfQuantile (gaussianReal 0 1) (1 - α)) :=
+        strictMono_cdf_gaussianReal 0 one_ne_zero hlt
+    _ = (Measure.pi fun _ : Fin n => gaussianReal μ v).real
+          (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α))) := h.symm
+
+/-- Boundary: at `α = 0` the level `1 - α = 1` leaves `(0, 1)`, the quantile is `0` by
+convention, and the boundary mean rejects with probability `1 / 2 > 0`; the lower end of `hα`
+cannot be closed. -/
+theorem zTestReject_level_alpha_zero {n : ℕ} (hn : 0 < n) {v : NNReal} (hv : v ≠ 0)
+    (μ0 : ℝ) :
+    (Measure.pi fun _ : Fin n => gaussianReal μ0 v).real
+      (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - 0))) = 1 / 2 := by
+  have hq : cdfQuantile (gaussianReal 0 1) (1 - 0) = 0 := by
+    simp [cdfQuantile]
+  rw [hq]
+  have h := measureReal_zTestReject_eq_cdf hn μ0 0 0 hv
+  simp only [add_zero, mul_zero, zero_div, sub_zero, cdf_gaussianReal_zero] at h
+  exact h
+
 end MathlibExt.Probability.Statistics.Experiment
