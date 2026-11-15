@@ -24,8 +24,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import check_formal_math_sync as c  # noqa: E402
 import sync_formal_math as s  # noqa: E402
 
-BODY = "module\n\ndef x : Nat := 1\n"
-UPSTREAM = "/-\nAuthors: Someone\n-/\n" + BODY
+BODY = "module\n\n" + "".join(f"def x{i} : Nat := {i}\n" for i in range(1, 31))
+UPSTREAM = "/-\nAuthors: Adam Kiezun\n-/\n" + BODY  # formal-math's own header: replaceable
+FRESH = c.META + "\n" + "".join(f"theorem fresh{i} : {i} = {i} := rfl\n" for i in range(12))  # new ATLAS-only work
 NOTICE = "/-\nPortions of this file are adapted from: example (Apache 2.0).\n-/"
 THIRD_PARTY = "/-\nCopyright 2026 The Formal Conjectures Authors.\n\nLicensed under the Apache License, Version 2.0.\n-/\n"
 COMMIT = "a" * 40
@@ -121,8 +122,17 @@ class CheckerTest(unittest.TestCase):
         self.assertIn("ok [formal-math-sync]: 6 rows; synced files match the manifest.", out)
         self.assertIn("skipping the base-manifest comparison: not a git checkout", out)  # outside CI only
 
+    def test_exact_copy_of_a_tracked_file_needs_a_row(self) -> None:
+        def mutate() -> None:  # the source stays unchanged
+            write(self.root, "WantedExt/Copy.lean", (self.root / "MathlibExt/Identical.lean").read_text())
+        self.assert_clean_then(mutate, "WantedExt/Copy.lean: exact copy of tracked MathlibExt/Identical.lean")
+        self.assertIn("--record-divergence WantedExt/Copy.lean", self.main()[1])
+        self.assertEqual(self.main("--record-divergence", "WantedExt/Copy.lean", "--rationale", "a deliberate copy",
+                                   "--backport", "not-needed")[0], 0)
+        self.assertEqual(self.problems(), [])
+
     def test_files_without_a_row_are_ignored(self) -> None:
-        write(self.root, "WantedExt/New.lean", c.META + BODY)
+        write(self.root, "WantedExt/New.lean", FRESH)
         write(self.root, "CSLibExtTest/Local.lean", c.META + "\ndef z : Nat := 4\n")
         self.assertEqual(self.problems(), [])
 
@@ -360,7 +370,7 @@ class BaseGuardTest(unittest.TestCase):
         self.save()
 
     def test_unchanged_rows_pass(self) -> None:
-        write(self.root, "WantedExt/New.lean", c.META + BODY)
+        write(self.root, "WantedExt/New.lean", FRESH)
         self.commit("add a local file")
         self.assertEqual(self.run_check(), (0, "ok [formal-math-sync]: 6 rows; synced files match the manifest.\n"))
 
@@ -489,6 +499,15 @@ class BaseGuardTest(unittest.TestCase):
     def test_rename_with_edits_of_a_tracked_file_needs_a_row(self) -> None:
         self.move_identical(edit=True)
         self.assert_blocked("retire, rename and edit", "WantedExt/Renamed.lean: renamed from tracked")
+
+    def test_near_copy_of_a_tracked_file_needs_a_row(self) -> None:
+        text = (self.root / "MathlibExt/Identical.lean").read_text().replace("def x7 ", "def y7 ")
+        write(self.root, "WantedExt/NearCopy.lean", text)  # the source stays unchanged
+        self.assertEqual(c.check(self.root, self.root / c.MANIFEST)[0], [], "not an exact copy")
+        self.commit("near copy of a synced file")
+        code, out = self.run_check()
+        self.assertEqual(code, 1, out)
+        self.assertIn("WantedExt/NearCopy.lean: copied from tracked MathlibExt/Identical.lean", out)
 
     def test_retire_with_deletion_passes(self) -> None:
         os.remove(self.root / "MathlibExt/Identical.lean")
@@ -627,7 +646,7 @@ class BaseGuardTest(unittest.TestCase):
         run_git(work, "cat-file", "-e", parent)
 
     def test_shallow_ci_checkout_passes_when_rows_are_kept(self) -> None:
-        write(self.root, "WantedExt/New.lean", c.META + BODY)
+        write(self.root, "WantedExt/New.lean", FRESH)
         self.commit("add a local file")
         self.assertEqual(self.run_check(self.shallow_clone())[0], 0)
 
@@ -645,7 +664,7 @@ class BaseGuardTest(unittest.TestCase):
         before = run_git(self.root, "rev-parse", "HEAD")
         self.drop_row("MathlibExt/Identical.lean")
         self.commit("drop a row")
-        write(self.root, "WantedExt/New.lean", c.META + BODY)
+        write(self.root, "WantedExt/New.lean", FRESH)
         self.commit("unrelated")
         return before
 
@@ -815,6 +834,32 @@ class SyncTest(unittest.TestCase):
         write(self.atlas, "MathlibExt/Own.lean", c.META + "\n" + BODY)
         self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
         self.assertEqual(self.rows()["MathlibExt/Own.lean"]["disposition"], "identical")
+
+    def test_authors_blocks(self) -> None:
+        cases = {"Authors: Adam Kiezun, Muse Spark 1.3": True,     # allowlisted: formal-math's own
+                 "Author: @vonbo, Avocado": True,
+                 "Authors: Codex Vale-62b0 (canonical root support)": True,
+                 "Authors: Jane Doe": False,                       # third-party
+                 "Authors: Adam Kiezun, Jane Doe": False}          # mixed counts as third-party
+        for line, own in cases.items():
+            with self.subTest(line=line):
+                self.assertEqual(c.is_formal_math_header(f"/-\n{line}\n-/"), own)
+        third = "/-\nAuthors: Jane Doe\n-/\n"
+        write(self.fm, "MathlibExt/Theirs.lean", third + BODY)
+        write(self.fm, "MathlibExt/Kept2.lean", third + BODY)
+        run_git(self.fm, "add", "-A")
+        run_git(self.fm, "commit", "-qm", "third-party authors")
+        write(self.atlas, "MathlibExt/Theirs.lean", c.META + "\n" + BODY)          # Authors block replaced
+        write(self.atlas, "MathlibExt/Kept2.lean", c.META + "\n" + third + BODY)   # Authors block kept
+        rationales = json.loads(self.rationales.read_text())
+        rationales["MathlibExt/Theirs.lean"] = {"rationale": "Meta header in place of the Authors block",
+                                                "backport": "not-needed"}
+        self.rationales.write_text(json.dumps(rationales))
+        self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
+        rows = self.rows()
+        self.assertEqual(rows["MathlibExt/Theirs.lean"]["disposition"], "diverged")
+        self.assertEqual(rows["MathlibExt/Kept2.lean"]["disposition"], "identical")
+        self.assertEqual(rows["MathlibExt/Same.lean"]["disposition"], "identical")  # allowlisted block stripped
 
     def test_formal_math_holder_names_match_exactly(self) -> None:
         cases = {"Copyright (c) 2026 Meta Platforms, Inc. All rights reserved.": True,

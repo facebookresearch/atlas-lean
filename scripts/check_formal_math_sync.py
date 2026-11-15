@@ -118,21 +118,39 @@ def leading_notice(text: str) -> str | None:
     return block.group(0) if block and is_notice(block.group(0)) else None
 
 
-# Copyright holders of Formal-Math's own headers, which ATLAS replaces with the Meta header. Any
-# other holder, or a license block without one of these holders, is third-party and stays.
+# Formal-Math's own header names only these copyright holders and authors (Meta, its employees,
+# and the agents and models formal-math is written with); ATLAS replaces such a header with the
+# Meta header. Any other holder or author is third-party: the block is part of the body and stays
+# byte for byte. Derived from the leading blocks of formal-math's own files.
 FORMAL_MATH_HOLDERS = ("Meta Platforms, Inc. and affiliates", "Meta Platforms, Inc", "Adam Kiezun", "Avocado",
                        "The formal-math Contributors", "Mathlib Extension Contributors")
+FORMAL_MATH_AUTHORS = ("Adam Kiezun", "@akiezun", "Tsutomu Okano", "@toskua", "toskua", "Toskua",
+                       "toskua-Avocado", "Avocado", "Muse", "Muse Spark", "Muse Spark 1.3", "Muse Code",
+                       "Muse Code powered by Meta Muse Spark", "Metamate", "Metamate metamate-algos", "Codex",
+                       "Claude Opus 5.5", "@vonbo", "Formal Math")
+CODEX_AGENT = re.compile(r"Codex [A-Z][a-z]+-[0-9a-f]{4}")  # named Codex agent runs, e.g. Codex Vale-62b0
 COPYRIGHT_HOLDER = re.compile(r"Copyright(?: \(c\))?(?: \d{4}(?:[-–]\d{4})?)?\.?[ \t]*([^\n]*)")
 
 
+def block_authors(block: str) -> list[str]:
+    """Names on the block's `Author:`/`Authors:` lines, without parentheticals or e-mail addresses."""
+    names = []
+    for line in re.findall(r"Authors?:([^\n]*)", block):
+        line = re.sub(r"\([^)]*\)|<[^>]*>", "", line.replace("-/", ""))
+        names += [n.strip().strip(".\"'") for n in re.split(r",|;| and ", line)]
+    return [n for n in names if n]
+
+
 def is_formal_math_header(block: str) -> bool:
-    """Formal-Math's own header: copyright lines naming only Formal-Math's own holders, or an
-    authorship block with no copyright or license text. Third-party copyright and license blocks
-    are part of the body and must be kept byte for byte."""
+    """Formal-Math's own header: every copyright holder and every author is Formal-Math's own,
+    and a block without a copyright line carries no license text. Third-party (or mixed) copyright,
+    authorship and license blocks are part of the body and must be kept byte for byte."""
     holders = [re.sub(r"\.?\s*All rights reserved\.?$", "", h).strip().rstrip(".") for h in COPYRIGHT_HOLDER.findall(block)]
-    if holders:
-        return all(h in FORMAL_MATH_HOLDERS for h in holders)
-    return bool(re.search(r"Authors?:", block)) and not re.search(r"[Ll]icen[cs]e", block)
+    authors = block_authors(block)
+    if not holders and (not authors or re.search(r"[Ll]icen[cs]e", block)):
+        return False
+    return all(h in FORMAL_MATH_HOLDERS for h in holders) and \
+        all(a in FORMAL_MATH_AUTHORS or CODEX_AGENT.fullmatch(a) for a in authors)
 
 
 def upstream_body(text: str) -> str:
@@ -330,6 +348,15 @@ def check(root: Path, manifest_path: Path) -> tuple[list[str], dict[str, list[st
             fixes["retire" if row["disposition"] != "retired" and not (root / path).exists() else "record"].append(path)
     if paths != sorted(paths):
         problems.append("manifest: rows are not sorted by path")
+    # A byte-for-byte copy of a tracked file must be tracked too (no base commit needed).
+    tracked = {row["published_sha256"]: row["path"] for row in manifest["rows"] if isinstance(row, dict)
+               and row.get("disposition") in (*SYNCED, "diverged") and isinstance(row.get("published_sha256"), str)}
+    files, _ = library_files(root)
+    for path in sorted(files - seen):
+        source = tracked.get(sha256((root / path).read_bytes()))
+        if source:
+            problems.append(f"{path}: exact copy of tracked {source} but has no row; record it with --record-divergence")
+            fixes["record"].append(path)
     return problems, fixes, len(manifest["rows"])
 
 
@@ -461,6 +488,21 @@ def row_transition_problems(path: str, before: dict | None, row: dict, short: st
     return []
 
 
+def copy_and_rename_status(root: Path, commit: str) -> str | None:
+    """`git diff --name-status -z` of the roots with rename (50%) and near-copy (90%) detection,
+    copies searched from every base file, not only modified ones. None if git fails or skips
+    detection (too many files for the limit)."""
+    try:
+        done = subprocess.run(["git", "-C", str(root), "diff", "--no-ext-diff", "-M", "-C90%", "--find-copies-harder",
+                               "-l100000", "--name-status", "-z", commit, "HEAD", "--", *ROOTS],
+                              capture_output=True, text=True, timeout=600)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if done.returncode != 0 or "detection was skipped" in done.stderr:
+        return None
+    return done.stdout
+
+
 def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[list[str], list[str]]:
     """Compare the manifest with the base manifest. Returns (problems, warnings).
 
@@ -502,7 +544,7 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
                 "--record-divergence for a changed file or --retire for a deleted one"
                 for path in sorted(old.keys() - new.keys())]
     tracked = {path for path, row in old.items() if row.get("disposition") in (*SYNCED, "diverged")}
-    moves = git(root, "diff", "-M", "-C", "--name-status", "-z", commit, "HEAD", "--", *ROOTS)
+    moves = copy_and_rename_status(root, commit)
     if moves is None:
         found, note = unreadable(f"cannot diff base {commit} with HEAD for renames")
         problems += found

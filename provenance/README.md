@@ -17,10 +17,11 @@ sync report, not stored, so concurrent pull requests touching different rows do 
 
 Each row has `path` and `disposition`. `published_sha256` is the SHA-256 of the ATLAS file's bytes;
 `upstream_sha256` is the SHA-256 of an upstream file's body: the text after Formal-Math's own leading
-header, without leading blank lines. Formal-Math's own header is a block whose copyright lines name
-only Formal-Math's holders (`FORMAL_MATH_HOLDERS` in `scripts/check_formal_math_sync.py`: Meta, Adam
-Kiezun, Avocado, the formal-math and Mathlib Extension contributors; a copyright line naming no
-holder does not count), or an authorship block with no copyright or license text. ATLAS replaces that header with the Meta header. Any other copyright or
+header, without leading blank lines. Formal-Math's own header is a block whose copyright holders
+and `Author:`/`Authors:` names are all Formal-Math's own (`FORMAL_MATH_HOLDERS` and
+`FORMAL_MATH_AUTHORS` in `scripts/check_formal_math_sync.py`: Meta, its employees, and the agents and
+models formal-math is written with); a block without a copyright line must also carry no license
+text, and a copyright line naming no holder does not count. ATLAS replaces that header with the Meta header. Any other copyright or
 license block is third-party and part of the body, so ATLAS keeps it byte for byte or records a
 divergence.
 
@@ -50,9 +51,12 @@ the Python standard library, and fails on:
   to a synced row or a new one. With the pin unchanged a row may only become `retired`, become
   `diverged` (keeping its `upstream_sha256` and `upstream_commit`), or, if diverged, take a new `published_sha256` with a
   new rationale or a rationale/backport update; its `upstream_sha256` and `upstream_commit` stay.
-  A tracked (synced or diverged) file that git sees as renamed or copied to a path without a row
-  fails until the new path gets one (`--record-divergence NEW`, then `--retire OLD` if it was
-  deleted): a tracked file stays tracked when it moves. Only a sync moves the pin and says
+  A tracked (synced or diverged) file that git sees as renamed (50% similar) or copied (90%
+  similar, searched from every base file) to a path without a row fails until the new path gets
+  one (`--record-divergence NEW`, then `--retire OLD` if it was deleted): a tracked file stays
+  tracked when it moves or is copied.
+- a file without a row whose bytes equal a tracked row's `published_sha256` (an exact copy; checked
+  without a base commit). Only a sync moves the pin and says
   what upstream contains. CI cannot read the private upstream, so a pin change is authorized
   rather than verified: a pull request that moves the pin needs the `formal-math-sync` label, which
   only maintainers (triage or write access) can add, and is reviewed through its sync report. After
