@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), problem ND56 MINIMUM K-CLUSTERING SUM;
+2000), problem MINIMUM K-CLUSTERING SUM;
 W. Fernandez de la Vega and C. Kenyon, "A randomized approximation scheme for metric MAX-CUT",
 Journal of Computer and System Sciences 63(4) (2001), 531-541, doi:10.1006/jcss.2001.1772
 (metric MAX-CUT is NP-complete; with two parts, a smallest within-cluster sum is a largest
@@ -82,8 +82,8 @@ noncomputable def kClusteringSumDec :
       ClusteringSumOfDistances.ClusteringSumOfDistancesFeasible i)
   | none => false
 
-/-- **K-CLUSTERING SUM is NP-complete.** Source: Crescenzi and Kann, ND56; Fernandez de la Vega
-and Kenyon (2001). -/
+/-- **K-CLUSTERING SUM is NP-complete.** Source: Crescenzi and Kann, MINIMUM K-CLUSTERING SUM;
+Fernandez de la Vega and Kenyon (2001). -/
 public theorem_wanted kClusteringSum_npComplete :
     kClusteringSumDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

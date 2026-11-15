@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # INTEGER M-DIMENSIONAL KNAPSACK is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [MP14]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MAXIMUM INTEGER M-DIMENSIONAL KNAPSACK (decision version; "generalization of [MP10]");
 A. K. Chandra, D. S. Hirschberg and C. K. Wong, "Approximate algorithms for some generalized
 knapsack problems", Theoret. Comput. Sci. 3 (1976), 293-304,
@@ -88,8 +88,8 @@ noncomputable def integerMDimensionalKnapsackDec (m : ℕ) :
   | none => false
 
 /-- **INTEGER M-DIMENSIONAL KNAPSACK is NP-complete for every fixed `m ≥ 1`.** Source:
-Crescenzi and Kann, [MP14]; Chandra, Hirschberg and Wong (1976); Garey and Johnson (1979),
-[MP10] (the case `m = 1`); Lueker (1975). -/
+Crescenzi and Kann, MAXIMUM INTEGER M-DIMENSIONAL KNAPSACK; Chandra, Hirschberg and Wong (1976);
+Garey and Johnson (1979), [MP10] (the case `m = 1`); Lueker (1975). -/
 public theorem_wanted integerMDimensionalKnapsack_npComplete (m : ℕ) (_hm : 0 < m) :
     integerMDimensionalKnapsackDec m ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

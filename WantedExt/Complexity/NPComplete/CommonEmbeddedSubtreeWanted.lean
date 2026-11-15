@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), problem GT48 MAXIMUM COMMON EMBEDDED SUB-TREE;
+2000), problem MAXIMUM COMMON EMBEDDED SUB-TREE;
 K. Zhang and T. Jiang, "Some MAX SNP-hard results concerning unordered labeled trees",
 Information Processing Letters 49 (1994), 249-254, doi:10.1016/0020-0190(94)90062-0;
 P. Kilpeläinen and H. Mannila, "Ordered and unordered tree inclusion", SIAM Journal on
@@ -91,8 +91,8 @@ noncomputable def commonEmbeddedSubtreeDec :
   | some i => decide (WellFormed i ∧ CommonEmbeddedSubtreeFeasible i)
   | none => false
 
-/-- **COMMON EMBEDDED SUBTREE is NP-complete.** Source: Crescenzi and Kann, GT48; Zhang and
-Jiang (1994); Kilpeläinen and Mannila (1995). -/
+/-- **COMMON EMBEDDED SUBTREE is NP-complete.** Source: Crescenzi and Kann, MAXIMUM COMMON EMBEDDED
+SUB-TREE; Zhang and Jiang (1994); Kilpeläinen and Mannila (1995). -/
 public theorem_wanted commonEmbeddedSubtree_npComplete :
     commonEmbeddedSubtreeDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

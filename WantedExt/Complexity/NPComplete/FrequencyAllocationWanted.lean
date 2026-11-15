@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
-problem [MS17] MAXIMUM FREQUENCY ALLOCATION;
+problem MAXIMUM FREQUENCY ALLOCATION;
 E. Malesińska and A. Panconesi, "On the hardness of allocating frequencies for hybrid networks",
 Theoret. Comput. Sci. 209 (1998), 347-363, doi:10.1016/S0304-3975(98)00156-X (the channel
 stability number; Section 1: the problem generalizes list coloring);
@@ -39,7 +39,7 @@ QUESTION: is there a frequency allocation for `G`, i.e., for each node `u` a sub
 `L(u)` with `1 ≤ |S(u)| ≤ M_u`, such that `S(u) ∩ S(v) = ∅` for all `(u, v) ∈ E`, whose stability
 number `∑_{u ∈ V} |S(u)|` is at least `K`?
 
-This is the decision version of MAXIMUM FREQUENCY ALLOCATION ([MS17] of the Crescenzi-Kann
+This is the decision version of MAXIMUM FREQUENCY ALLOCATION (an entry of the Crescenzi-Kann
 compendium), a form of the channel stability number of Malesińska and Panconesi without their
 co-site constraints. The bound is a positive integer, following the Garey-Johnson convention for
 decision versions. NP-hardness: with `M_u = 1` for every node and `K = |V|`, an allocation is a
@@ -94,8 +94,8 @@ noncomputable def frequencyAllocationDec :
   | some i => decide (WellFormed i ∧ FrequencyAllocationFeasible i)
   | none => false
 
-/-- **FREQUENCY ALLOCATION is NP-complete.** Source: Crescenzi and Kann, [MS17]; Malesińska and
-Panconesi (1998); Garey and Johnson (1979), [GT4]. -/
+/-- **FREQUENCY ALLOCATION is NP-complete.** Source: Crescenzi and Kann, MAXIMUM FREQUENCY
+ALLOCATION; Malesińska and Panconesi (1998); Garey and Johnson (1979), [GT4]. -/
 public theorem_wanted frequencyAllocation_npComplete :
     frequencyAllocationDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

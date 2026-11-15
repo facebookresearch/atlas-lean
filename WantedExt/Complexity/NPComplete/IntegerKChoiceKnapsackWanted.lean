@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # INTEGER K-CHOICE KNAPSACK is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [MP15]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MAXIMUM INTEGER K-CHOICE KNAPSACK (decision version; "similar to [MP11]");
 A. K. Chandra, D. S. Hirschberg and C. K. Wong, "Approximate algorithms for some generalized
 knapsack problems", Theoret. Comput. Sci. 3 (1976), 293-304,
@@ -90,9 +90,9 @@ noncomputable def integerKChoiceKnapsackDec :
   | some i => decide (WellFormed i ∧ IntegerKChoiceKnapsackFeasible i)
   | none => false
 
-/-- **INTEGER K-CHOICE KNAPSACK is NP-complete.** Source: Crescenzi and Kann, [MP15];
-Chandra, Hirschberg and Wong (1976); Garey and Johnson (1979), [MP10] (the case `k = 1`);
-Lueker (1975). -/
+/-- **INTEGER K-CHOICE KNAPSACK is NP-complete.** Source: Crescenzi and Kann, MAXIMUM INTEGER
+K-CHOICE KNAPSACK; Chandra, Hirschberg and Wong (1976); Garey and Johnson (1979), [MP10] (the case
+`k = 1`); Lueker (1975). -/
 public theorem_wanted integerKChoiceKnapsack_npComplete :
     integerKChoiceKnapsackDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

@@ -16,7 +16,7 @@ doi:10.1109/SFCS.1994.365740 (the problem; NP-complete even for planar graphs);
 G. Călinescu, A. Dumitrescu and J. Pach, "Reconfigurations in graphs and grids", SIAM Journal
 on Discrete Mathematics 22 (2008), 124-138, doi:10.1137/060652063 (Section 1 records the
 result: "The problem has been shown to be NP-complete even for planar graphs");
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [GP1]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM GRAPH MOTION PLANNING.
 -/
 module
@@ -112,7 +112,7 @@ noncomputable def graphMotionPlanningDec :
   | none => false
 
 /-- **GRAPH MOTION PLANNING is NP-complete.** Source: Papadimitriou, Raghavan, Sudan and Tamaki
-(1994); Călinescu, Dumitrescu and Pach (2008); Crescenzi and Kann, [GP1]. -/
+(1994); Călinescu, Dumitrescu and Pach (2008); Crescenzi and Kann, MINIMUM GRAPH MOTION PLANNING. -/
 public theorem_wanted graphMotionPlanning_npComplete :
     graphMotionPlanningDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

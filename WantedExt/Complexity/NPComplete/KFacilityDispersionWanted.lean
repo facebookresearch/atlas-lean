@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # K-FACILITY DISPERSION is NP-complete
 
 Source:
-P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem [ND60]
+P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem
 MAXIMUM K-FACILITY DISPERSION;
 S. S. Ravi, D. J. Rosenkrantz, and G. K. Tayi, "Heuristic and special case algorithms for
 dispersion problems", Operations Research 42 (1994), 299-310, doi:10.1287/opre.42.2.299.
@@ -39,7 +39,7 @@ QUESTION: is there a set of `k` facilities, i.e. a subset `F ⊆ V` with `|F| = 
 minimum distance between two facilities, `min_{f₁, f₂ ∈ F, f₁ ≠ f₂} d(f₁, f₂)`, is at least `K`?
 
 This is the decision version of MAXIMUM K-FACILITY DISPERSION from the Crescenzi-Kann
-compendium ([ND60]), the MAX-MIN facility dispersion problem (MMFD) of Ravi, Rosenkrantz and
+compendium, the MAX-MIN facility dispersion problem (MMFD) of Ravi, Rosenkrantz and
 Tayi. Their instance has `p` facilities with `2 ≤ p ≤ n`, so the minimum over pairs of distinct
 facilities is defined. They record that MMFD is NP-hard when the distances satisfy the triangle
 inequality, and prove (Theorem 3) that no polynomial-time algorithm has a performance guarantee
@@ -84,8 +84,8 @@ noncomputable def kFacilityDispersionDec :
   | some i => decide (WellFormed i ∧ KFacilityDispersionFeasible i)
   | none => false
 
-/-- **K-FACILITY DISPERSION is NP-complete.** Source: Crescenzi and Kann, [ND60]; Ravi,
-Rosenkrantz, and Tayi (1994). -/
+/-- **K-FACILITY DISPERSION is NP-complete.** Source: Crescenzi and Kann, MAXIMUM K-FACILITY
+DISPERSION; Ravi, Rosenkrantz, and Tayi (1994). -/
 public theorem_wanted kFacilityDispersion_npComplete :
     kFacilityDispersionDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

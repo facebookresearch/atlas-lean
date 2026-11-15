@@ -16,7 +16,7 @@ Science 1117, Springer (1996), 319-326, doi:10.1007/BFb0030123, Theorem 2 ("GBD 
 NP-Complete"; the reduction from BALANCED COMPLETE BIPARTITE SUBGRAPH builds a square zero-one
 array with `p = q` and `K = 1`, and the conclusion notes that GBD "remains NP-complete for any
 derived cost function such as the sum of the elements in a block");
-P. Crescenzi and V. Kann, *A compendium of NP optimization problems* (2000), problem [SP13]
+P. Crescenzi and V. Kann, *A compendium of NP optimization problems* (2000), problem
 MINIMUM ARRAY PARTITION.
 -/
 module
@@ -101,7 +101,7 @@ noncomputable def arrayPartitionDec :
   | none => false
 
 /-- **ARRAY PARTITION is NP-complete.** Source: Grigni and Manne (1996), Theorem 2; Crescenzi and
-Kann, [SP13]. -/
+Kann, MINIMUM ARRAY PARTITION. -/
 public theorem_wanted arrayPartition_npComplete :
     arrayPartitionDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

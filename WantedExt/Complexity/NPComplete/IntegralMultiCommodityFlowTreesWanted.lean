@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # INTEGRAL K-MULTICOMMODITY FLOW ON TREES is NP-complete
 
 Source:
-P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem [ND48]
+P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem
 MAXIMUM INTEGRAL K-MULTICOMMODITY FLOW ON TREES;
 N. Garg, V. V. Vazirani and M. Yannakakis, "Primal-dual approximation algorithms for integral
 flow and multicut in trees", Algorithmica 18 (1997), 3-20, doi:10.1007/BF02523685.
@@ -39,7 +39,7 @@ QUESTION: is there a flow `fᵢ ∈ ℕ` for each pair `(sᵢ, tᵢ)` such that,
 `tᵢ` and `0` otherwise, and such that `∑_{i=1}^k fᵢ ≥ K`?
 
 This is the decision version of MAXIMUM INTEGRAL K-MULTICOMMODITY FLOW ON TREES from the
-Crescenzi-Kann compendium ([ND48]); Garg, Vazirani and Yannakakis prove the problem NP-hard
+Crescenzi-Kann compendium; Garg, Vazirani and Yannakakis prove the problem NP-hard
 (MAX SNP-hard, even with edge capacities 1 and 2).
 
 The tree is Mathlib's `SimpleGraph.IsTree` on the graph `Cslib.Complexity.Karp.edgeGraph` of the
@@ -108,7 +108,7 @@ noncomputable def integralMultiCommodityFlowTreesDec :
   | none => false
 
 /-- **INTEGRAL K-MULTICOMMODITY FLOW ON TREES is NP-complete.** Source: Crescenzi and Kann,
-[ND48]; Garg, Vazirani and Yannakakis (1997). -/
+MAXIMUM INTEGRAL K-MULTICOMMODITY FLOW ON TREES; Garg, Vazirani and Yannakakis (1997). -/
 public theorem_wanted integralMultiCommodityFlowTrees_npComplete :
     integralMultiCommodityFlowTreesDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

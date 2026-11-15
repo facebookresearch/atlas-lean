@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition,
-2000), problem MP16 MAXIMUM CLASS-CONSTRAINED KNAPSACK;
+2000), problem MAXIMUM CLASS-CONSTRAINED KNAPSACK;
 H. Shachnai and T. Tamir, "On two class-constrained versions of the multiple knapsack
 problem", Algorithmica 29 (2001), 442-467, doi:10.1007/s004530010057 (the class-constrained
 multiple knapsack problem, CMKP, is NP-hard).
@@ -84,8 +84,8 @@ noncomputable def classConstrainedKnapsackDec :
   | some i => decide (WellFormed i ∧ ClassConstrainedKnapsackFeasible i)
   | none => false
 
-/-- **CLASS-CONSTRAINED KNAPSACK is NP-complete.** Source: Crescenzi and Kann, MP16; Shachnai
-and Tamir (2001). -/
+/-- **CLASS-CONSTRAINED KNAPSACK is NP-complete.** Source: Crescenzi and Kann, MAXIMUM
+CLASS-CONSTRAINED KNAPSACK; Shachnai and Tamir (2001). -/
 public theorem_wanted classConstrainedKnapsack_npComplete :
     classConstrainedKnapsackDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

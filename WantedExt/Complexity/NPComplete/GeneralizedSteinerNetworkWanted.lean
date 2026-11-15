@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # GENERALIZED STEINER NETWORK is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [ND10]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM GENERALIZED STEINER NETWORK ("Also called Minimum Survivable Network");
 K. Jain, "A factor 2 approximation algorithm for the generalized Steiner network problem",
 Combinatorica 21 (2001), 39-60, doi:10.1007/s004930170004 (the problem with a bound `u_e` on
@@ -125,8 +125,8 @@ noncomputable def generalizedSteinerNetworkDec :
   | some i => decide (WellFormed i ∧ GeneralizedSteinerNetworkFeasible i)
   | none => false
 
-/-- **GENERALIZED STEINER NETWORK is NP-complete.** Source: Crescenzi and Kann, [ND10];
-Jain (2001); Karp (1972); Garey and Johnson (1979), [ND12]. -/
+/-- **GENERALIZED STEINER NETWORK is NP-complete.** Source: Crescenzi and Kann, MINIMUM GENERALIZED
+STEINER NETWORK; Jain (2001); Karp (1972); Garey and Johnson (1979), [ND12]. -/
 public theorem_wanted generalizedSteinerNetwork_npComplete :
     generalizedSteinerNetworkDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

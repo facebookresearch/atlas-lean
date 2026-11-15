@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, web edition
-(2000), problem [AL1] MINIMUM CONSISTENT FINITE AUTOMATON (binary strings; Garey and Johnson
+(2000), problem MINIMUM CONSISTENT FINITE AUTOMATON (binary strings; Garey and Johnson
 [AL8] for a general alphabet);
 J. Lingg, M. de Oliveira Oliveira and P. Wolf, "Learning from positive and negative examples:
 New proof for binary alphabets", Information Processing Letters 184 (2024), 106427,
@@ -89,7 +89,7 @@ noncomputable def consistentFiniteAutomatonBinaryDec :
   | none => false
 
 /-- **CONSISTENT FINITE AUTOMATON over a binary alphabet is NP-complete.** Source: Crescenzi and
-Kann (2000), [AL1]; Lingg, de Oliveira Oliveira and Wolf (2024). -/
+Kann (2000), MINIMUM CONSISTENT FINITE AUTOMATON; Lingg, de Oliveira Oliveira and Wolf (2024). -/
 public theorem_wanted consistentFiniteAutomatonBinary_npComplete :
     consistentFiniteAutomatonBinaryDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

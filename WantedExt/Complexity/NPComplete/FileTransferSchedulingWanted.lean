@@ -12,7 +12,7 @@ LICENSE file in the root directory of this source tree.
 Source:
 E. G. Coffman, Jr., M. R. Garey, D. S. Johnson and A. S. LaPaugh, "Scheduling file transfers",
 SIAM Journal on Computing 14(3) (1985), 744-780, doi:10.1137/0214054;
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [SS18]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM FILE TRANSFER SCHEDULING (the decision version of the optimization problem stated here);
 S. Nakano and T. Nishizeki, "Scheduling file transfers under port and channel constraints",
 ISA '91 Algorithms, Lecture Notes in Computer Science 557 (1991), 43-51,
@@ -95,7 +95,7 @@ noncomputable def fileTransferSchedulingDec :
   | none => false
 
 /-- **FILE TRANSFER SCHEDULING is NP-complete.** Source: Coffman, Garey, Johnson and LaPaugh
-(1985); Crescenzi and Kann, [SS18]. -/
+(1985); Crescenzi and Kann, MINIMUM FILE TRANSFER SCHEDULING. -/
 public theorem_wanted fileTransferScheduling_npComplete :
     fileTransferSchedulingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

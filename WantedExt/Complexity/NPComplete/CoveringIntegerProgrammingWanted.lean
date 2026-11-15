@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, web edition
-(2000), problem [MP4] MINIMUM COVERING INTEGER PROGRAMMING (decision version);
+(2000), problem MINIMUM COVERING INTEGER PROGRAMMING (decision version);
 A. Srinivasan, "Improved approximation guarantees for packing and covering integer programs",
 SIAM Journal on Computing 29(2) (1999), 648-670, doi:10.1137/S0097539796314240,
 Definition 1.1 (STOC 1995 version, pp. 268-276, doi:10.1145/225058.225138);
@@ -39,13 +39,13 @@ INSTANCE: a rational `m × n` matrix `A ∈ [0, 1]^{m·n}`, a rational `m`-vecto
 QUESTION: is there a vector `x` of `n` non-negative integers such that `A x ≥ b` and
 `c · x = ∑ᵢ cᵢ xᵢ ≤ K`?
 
-This is the decision version of MINIMUM COVERING INTEGER PROGRAMMING of Crescenzi and Kann
-([MP4]), whose instance class is that of Srinivasan's covering integer programs (Definition 1.1:
-`A ∈ [0, 1]^{m×n}`, `b ∈ [1, ∞)^m`, `c ∈ [0, 1]^n`; minimize `cᵀ x` subject to `x ∈ ℤ₊ⁿ` and
-`A x ≥ b`). Crescenzi and Kann print the solution as "a rational `n`-vector `x ∈ [0, 1]^n`";
-read literally, that is a linear program, solvable in polynomial time, so the integrality of
-Srinivasan's definition, `x ∈ ℤ₊ⁿ`, is used. Srinivasan also normalizes `maxⱼ cⱼ = 1`, which
-Crescenzi and Kann omit; the larger class without it is stated.
+This is the decision version of MINIMUM COVERING INTEGER PROGRAMMING of Crescenzi and Kann, whose
+instance class is that of Srinivasan's covering integer programs (Definition 1.1: `A ∈ [0,
+1]^{m×n}`, `b ∈ [1, ∞)^m`, `c ∈ [0, 1]^n`; minimize `cᵀ x` subject to `x ∈ ℤ₊ⁿ` and `A x ≥ b`).
+Crescenzi and Kann print the solution as "a rational `n`-vector `x ∈ [0, 1]^n`"; read literally,
+that is a linear program, solvable in polynomial time, so the integrality of Srinivasan's
+definition, `x ∈ ℤ₊ⁿ`, is used. Srinivasan also normalizes `maxⱼ cⱼ = 1`, which Crescenzi and Kann
+omit; the larger class without it is stated.
 
 Hardness: with `A` the 0/1 incidence matrix of a set system (rows are elements, columns are
 sets), `b = 1` and `c = 1`, a feasible `x` with `c · x ≤ K` gives a cover by at most `K` sets
@@ -107,8 +107,8 @@ noncomputable def coveringIntegerProgrammingDec :
   | some i => decide (WellFormed i ∧ CoveringIntegerProgrammingFeasible i)
   | none => false
 
-/-- **COVERING INTEGER PROGRAMMING is NP-complete.** Source: Crescenzi and Kann, [MP4];
-Srinivasan (1999); Karp (1972). -/
+/-- **COVERING INTEGER PROGRAMMING is NP-complete.** Source: Crescenzi and Kann, MINIMUM COVERING
+INTEGER PROGRAMMING; Srinivasan (1999); Karp (1972). -/
 public theorem_wanted coveringIntegerProgramming_npComplete :
     coveringIntegerProgrammingDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

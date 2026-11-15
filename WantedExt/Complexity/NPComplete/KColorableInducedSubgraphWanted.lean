@@ -16,7 +16,7 @@ WITH PROPERTY Π (comment);
 J. M. Lewis and M. Yannakakis, "The node-deletion problem for hereditary properties is
 NP-complete", Journal of Computer and System Sciences 20 (1980), 219-230,
 doi:10.1016/0022-0000(80)90060-4;
-P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem [GT38]
+P. Crescenzi and V. Kann, *A compendium of NP optimization problems*, problem
 MAXIMUM K-COLORABLE INDUCED SUBGRAPH.
 -/
 module
@@ -42,7 +42,7 @@ QUESTION: is there a subset `V' ⊆ V` with `|V'| ≥ K` such that the subgraph 
 `V'` is `k`-colorable, i.e. has a coloring with at most `k` colors?
 
 This is the decision version of MAXIMUM K-COLORABLE INDUCED SUBGRAPH from the Crescenzi-Kann
-compendium ([GT38]), where `k` is a fixed constant; for `k = 1` it is INDEPENDENT SET. Being
+compendium, where `k` is a fixed constant; for `k = 1` it is INDEPENDENT SET. Being
 `k`-colorable holds for arbitrarily large graphs (edgeless graphs), does not hold for all graphs
 (the complete graph on `k + 1` vertices) and is hereditary, so the comment to [GT21] (Lewis and
 Yannakakis) makes the problem NP-hard; `V'` with a coloring is a polynomial certificate.
@@ -80,7 +80,8 @@ noncomputable def kColorableInducedSubgraphDec (k : ℕ) :
   InducedSubgraphWithPropertyPi.inducedSubgraphWithPropertyPiDec (colorableProperty k)
 
 /-- **K-COLORABLE INDUCED SUBGRAPH is NP-complete** for every fixed `k ≥ 1`. Source: Garey and
-Johnson (1979), [GT21]; Lewis and Yannakakis (1980); Crescenzi and Kann, [GT38]. -/
+Johnson (1979), [GT21]; Lewis and Yannakakis (1980); Crescenzi and Kann, MAXIMUM K-COLORABLE INDUCED
+SUBGRAPH. -/
 public theorem_wanted kColorableInducedSubgraph_npComplete (k : ℕ) (hk : 0 < k) :
     kColorableInducedSubgraphDec k ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

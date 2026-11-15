@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # B-BALANCED CUT is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, entry [ND24]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, entry
 MINIMUM B-BALANCED CUT;
 M. R. Garey, D. S. Johnson and L. Stockmeyer, "Some simplified NP-complete graph problems",
 Theoretical Computer Science 1 (1976), 237-267, doi:10.1016/0304-3975(76)90059-1;
@@ -40,7 +40,7 @@ QUESTION: is there a cut `C ⊆ V` with `min {w(C), w(V − C)} ≥ b · w(V)`, 
 sum of the weights of the vertices in `V'`, whose weight `∑_{e ∈ δ(C)} c(e)` is at most `K`,
 where `δ(C)` is the set of edges with one endpoint in `C` and one in `V − C`?
 
-This is the decision version of Crescenzi and Kann's MINIMUM B-BALANCED CUT [ND24] (also called
+This is the decision version of Crescenzi and Kann's MINIMUM B-BALANCED CUT (also called
 minimum `b`-edge separator). Its instances with unit vertex weights, unit edge costs and
 `b = 1/2` ask for a bisection, a cut into two halves of `|V|/2` vertices, crossing at most `K`
 edges; this is MINIMUM BISECTION, NP-complete by Garey, Johnson and Stockmeyer (Garey and
@@ -102,8 +102,8 @@ noncomputable def bBalancedCutDec :
   | some i => decide (WellFormed i ∧ BBalancedCutFeasible i)
   | none => false
 
-/-- **B-BALANCED CUT is NP-complete.** Source: Crescenzi and Kann, [ND24]; Garey, Johnson and
-Stockmeyer (1976); Bui and Jones (1992). -/
+/-- **B-BALANCED CUT is NP-complete.** Source: Crescenzi and Kann, MINIMUM B-BALANCED CUT; Garey,
+Johnson and Stockmeyer (1976); Bui and Jones (1992). -/
 public theorem_wanted bBalancedCut_npComplete :
     bBalancedCutDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

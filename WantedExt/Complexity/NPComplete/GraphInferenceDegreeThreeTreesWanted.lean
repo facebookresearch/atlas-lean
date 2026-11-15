@@ -14,7 +14,7 @@ O. Maruyama and S. Miyano, "Graph inference from a walk for trees of bounded deg
 NP-complete", in *Mathematical Foundations of Computer Science 1995*, Lecture Notes in Computer
 Science 969, Springer (1995), 257-266, doi:10.1007/3-540-60246-1_132 (Theorem 1; full version:
 RIFIS Technical Report 94, Kyushu University (1994), https://hdl.handle.net/2324/3076);
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [GT55]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MINIMUM GRAPH INFERENCE.
 -/
 module
@@ -92,7 +92,7 @@ noncomputable def graphInferenceDegreeThreeTreesDec :
   | none => false
 
 /-- **GRAPH INFERENCE FROM A WALK FOR TREES OF DEGREE AT MOST 3 is NP-complete.** Source:
-Maruyama and Miyano (1995), Theorem 1; Crescenzi and Kann, [GT55]. -/
+Maruyama and Miyano (1995), Theorem 1; Crescenzi and Kann, MINIMUM GRAPH INFERENCE. -/
 public theorem_wanted graphInferenceDegreeThreeTrees_npComplete :
     graphInferenceDegreeThreeTreesDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

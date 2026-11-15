@@ -10,7 +10,7 @@ LICENSE file in the root directory of this source tree.
 # HORN CORE is NP-complete
 
 Source:
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem [LO14]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, problem
 MAXIMUM HORN CORE (decision version);
 D. Kavvadias, C. H. Papadimitriou and M. Sideri, "On Horn envelopes and hypergraph
 transversals", Algorithms and Computation (ISAAC 1993), Lecture Notes in Comput. Sci. 762,
@@ -96,7 +96,7 @@ noncomputable def hornCoreDec :
   | some i => decide (WellFormed i ∧ HornCoreFeasible i)
   | none => false
 
-/-- **HORN CORE is NP-complete.** Source: Crescenzi and Kann, [LO14]; Kavvadias,
+/-- **HORN CORE is NP-complete.** Source: Crescenzi and Kann, MAXIMUM HORN CORE; Kavvadias,
 Papadimitriou and Sideri (1993); Gogic, Papadimitriou and Sideri (1998), Theorem 1. -/
 public theorem_wanted hornCore_npComplete :
     hornCoreDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧

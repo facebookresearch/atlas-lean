@@ -12,7 +12,7 @@ LICENSE file in the root directory of this source tree.
 Source:
 A. Garg and R. Tamassia, "On the computational complexity of upward and rectilinear planarity
 testing", SIAM Journal on Computing 31 (2001), 601-625, doi:10.1137/S0097539794277123;
-P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, entry [ND64]
+P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems*, entry
 MINIMUM BEND NUMBER.
 -/
 module
@@ -35,7 +35,7 @@ QUESTION: is there a planar orthogonal drawing of `G`, a drawing mapping the ver
 points in the plane and the edges of `G` to chains of horizontal and vertical segments such that
 no two edges cross, with at most `K` bends?
 
-This is the decision version of Crescenzi and Kann's MINIMUM BEND NUMBER [ND64]. Garg and
+This is the decision version of Crescenzi and Kann's MINIMUM BEND NUMBER. Garg and
 Tamassia (abstract) prove that RECTILINEAR PLANARITY TESTING, whether a graph "can be drawn in the
 plane such that every edge is a horizontal or vertical segment and no two edges cross", is
 NP-complete (`RectilinearPlanarityWanted`), and "that it is NP-hard to approximate the minimum
@@ -112,7 +112,7 @@ noncomputable def bendNumberDec :
   | none => false
 
 /-- **BEND NUMBER is NP-complete.** Source: Garg and Tamassia (2001); Crescenzi and Kann,
-[ND64]. -/
+MINIMUM BEND NUMBER. -/
 public theorem_wanted bendNumber_npComplete :
     bendNumberDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,

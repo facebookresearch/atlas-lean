@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 Source:
 P. Crescenzi and V. Kann (eds.), *A compendium of NP optimization problems* (web edition, 2000),
-problem [GT33] MINIMUM EDGE DELETION K-PARTITION;
+problem MINIMUM EDGE DELETION K-PARTITION;
 V. Kann, S. Khanna, J. Lagergren and A. Panconesi, "On the hardness of approximating Max k-Cut
 and its dual", Chicago J. Theoret. Comput. Sci. 1997, Article 2 (the Min k-Partition problem);
 M. R. Garey and D. S. Johnson, *Computers and Intractability: A Guide to the Theory of
@@ -39,7 +39,7 @@ QUESTION: is there a `k`-partition of `V`, i.e., a color assignment `c : V → {
 that the weight of the monochromatic edges, `∑ {w(v₁, v₂) : (v₁, v₂) ∈ E, c(v₁) = c(v₂)}`, is at
 most `K`?
 
-This is the decision version of MINIMUM EDGE DELETION K-PARTITION ([GT33] of the Crescenzi-Kann
+This is the decision version of MINIMUM EDGE DELETION K-PARTITION (an entry of the Crescenzi-Kann
 compendium), the Min k-Partition problem of Kann, Khanna, Lagergren and Panconesi: deleting the
 monochromatic edges leaves a `k`-colorable graph. The number `k` of parts is fixed, a parameter
 of the language, as in the compendium's comments for `k = 2` and for `k ≥ 3`. Weights are
@@ -97,7 +97,8 @@ noncomputable def edgeDeletionKPartitionDec (k : ℕ) :
   | none => false
 
 /-- **EDGE DELETION k-PARTITION is NP-complete for every fixed `k ≥ 2`.** Source: Crescenzi and
-Kann, [GT33]; Kann, Khanna, Lagergren and Panconesi (1997); Garey and Johnson (1979), [ND16]. -/
+Kann, MINIMUM EDGE DELETION K-PARTITION; Kann, Khanna, Lagergren and Panconesi (1997); Garey and
+Johnson (1979), [ND16]. -/
 public theorem_wanted edgeDeletionKPartition_npComplete (k : ℕ) (_hk : 2 ≤ k) :
     edgeDeletionKPartitionDec k ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
