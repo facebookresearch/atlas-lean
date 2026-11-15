@@ -14,13 +14,14 @@ public import Mathlib.Data.Fintype.Prod
 /-!
 # BB84 intercept-resend error rate
 
-In BB84, Alice sends the bit `a` encoded in the basis `ba` (`false` = Z, `true` = X). In an
-intercept-resend attack, Eve measures the qubit in a basis `be` and resends her result `e`
-encoded in `be`; Bob then measures in a basis `bb` and obtains `r`. Measuring a basis state in
-its own basis returns its bit, and measuring it in the other basis returns a fair coin. So `e = a`
-when `be = ba` and `e` is Eve's coin `ce` otherwise (`bb84EveResult`), and `r = e` when `bb = be`
-and `r` is Bob's coin `cb` otherwise (`bb84BobResult`). A round is sifted when `bb = ba`, and it
-has an error when it is sifted and `r ≠ a`.
+In BB84, Alice sends the bit `a` encoded in the basis `ba` (`false` = Z, `true` = X); qubits
+and channel are ideal and noiseless. In an intercept-resend attack, Eve measures the qubit in a
+basis `be` and resends her result `e` encoded in `be`; Bob then measures in a basis `bb` and
+obtains `r`. Measuring a basis state in its own basis returns its bit, and measuring it in the
+other basis returns a fair coin. So `e = a` when `be = ba` and `e` is Eve's coin `ce` otherwise
+(`bb84EveResult`), and `r = e` when `bb = be` and `r` is Bob's coin `cb` otherwise
+(`bb84BobResult`). A round is sifted when `bb = ba`, and it has an error when it is sifted and
+`r ≠ a`.
 
 Eve's coin never matters in a sifted round. If `be = ba`, Bob measures Eve's copy of `a` in its own
 basis and gets `r = a`. If `be ≠ ba`, then also `bb ≠ be`, so `r = cb`. The sifted error event is
@@ -28,6 +29,18 @@ therefore `bb = ba ∧ be ≠ ba ∧ cb ≠ a` (`bb84Error`, and `bb84Error_eq` 
 function of the five independent fair bits `(a, cb, ba, be, bb)`. Of their 32 equally likely
 values, 16 are sifted and 4 of those have an error, so the attack causes errors in `1/4` of the
 sifted rounds.
+
+## References
+
+* C. H. Bennett and G. Brassard, *Quantum cryptography: Public key distribution and coin tossing*,
+  Proceedings of the International Conference on Computers, Systems and Signal Processing,
+  Bangalore, 1984; reprinted in Theoret. Comput. Sci. 560 (2014). Section II: a state of one basis
+  gives a random result when measured in the conjugate basis. Section III: the protocol, and an
+  eavesdropper who measures and resends every photon in one fixed basis causes disagreements in
+  `1/4` of the photons later measured in their original basis.
+* N. Gisin, G. Ribordy, W. Tittel and H. Zbinden, *Quantum cryptography*, Rev. Mod. Phys. 74
+  (2002). Section II.C: the intercept-resend strategy modeled here, with Eve choosing her basis at
+  random, causes about 25% errors in the sifted key.
 -/
 
 @[expose] public section
