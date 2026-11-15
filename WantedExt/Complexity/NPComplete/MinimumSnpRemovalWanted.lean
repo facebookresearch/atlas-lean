@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# MINIMUM SNIP REMOVAL is NP-complete
+# MINIMUM SNP REMOVAL is NP-complete
 
 Source:
 G. Lancia, V. Bafna, S. Istrail, R. Lippert, and R. Schwartz, "SNPs problems, complexity, and
@@ -24,13 +24,13 @@ public import WantedExt.Complexity.NPComplete.MinimumFragmentRemovalWanted
 
 @[expose] public section
 
-namespace MetaMathlibExt.Complexity.NPComplete.MinimumSnipRemoval
+namespace MetaMathlibExt.Complexity.NPComplete.MinimumSnpRemoval
 
 open MinimumErrorCorrection (MinimumErrorCorrectionInstance)
 open MinimumFragmentRemoval (fragmentConflictGraph)
 
 /-!
-# MINIMUM SNIP REMOVAL is NP-complete
+# MINIMUM SNP REMOVAL is NP-complete
 
 INSTANCE: an SNP matrix `M`, an `n × m` matrix over `{A, B, -}` whose rows are fragments and
 whose columns are SNPs, and an integer `K`.
@@ -38,10 +38,11 @@ QUESTION: can at most `K` SNPs (columns) be removed so that the resulting matrix
 
 The definitions are those of Lancia, Bafna, Istrail, Lippert and Schwartz (Section 1.3), as in
 `MinimumFragmentRemovalWanted`: a matrix is feasible if its fragment conflict graph `G_F` is
-bipartite; MSR asks to remove the minimum number of snips (columns) so that the resulting matrix
-is feasible. Theorem 8 proves MSR NP-hard, already for matrices with at most two gaps per
-fragment; a set of removed columns with a 2-colouring of the conflict graph is a short
-certificate.
+bipartite; MSR asks to remove the minimum number of snips (columns) so that the resulting matrix is
+feasible. (The source spells the problem "Minimum Snip Removal", "snip" being its word for an SNP;
+later literature writes Minimum SNP Removal.) Theorem 8 proves MSR NP-hard, already for matrices
+with at most two gaps per fragment; a set of removed columns with a 2-colouring of the conflict
+graph is a short certificate.
 
 The instance, its well-formedness and the conflict graph are those of
 `MinimumFragmentRemovalWanted` (entries `0` for `A`, `1` for `B`, `2` for a hole). A column is
@@ -73,24 +74,24 @@ def WellFormed (i : MinimumErrorCorrectionInstance) : Prop :=
 
 /-- Removing some set `C` of at most `K` columns leaves a feasible matrix: its fragment conflict
 graph is bipartite. -/
-def MinimumSnipRemovalFeasible (i : MinimumErrorCorrectionInstance) : Prop :=
+def MinimumSnpRemovalFeasible (i : MinimumErrorCorrectionInstance) : Prop :=
   ∃ C : Finset (Fin i.1), C.card ≤ i.2.2 ∧ (fragmentConflictGraph (removeColumns i C)).IsBipartite
 
 open Classical in
-/-- MINIMUM SNIP REMOVAL as a decision problem over bitstrings. -/
-noncomputable def minimumSnipRemovalDec :
+/-- MINIMUM SNP REMOVAL as a decision problem over bitstrings. -/
+noncomputable def minimumSnpRemovalDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
       (α := MinimumErrorCorrectionInstance) x with
-  | some i => decide (WellFormed i ∧ MinimumSnipRemovalFeasible i)
+  | some i => decide (WellFormed i ∧ MinimumSnpRemovalFeasible i)
   | none => false
 
-/-- **MINIMUM SNIP REMOVAL is NP-complete.** Source: Lancia, Bafna, Istrail, Lippert, and
+/-- **MINIMUM SNP REMOVAL is NP-complete.** Source: Lancia, Bafna, Istrail, Lippert, and
 Schwartz (2001), Theorem 8. -/
-public theorem_wanted minimumSnipRemoval_npComplete :
-    minimumSnipRemovalDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
+public theorem_wanted minimumSnpRemoval_npComplete :
+    minimumSnpRemovalDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
         L ∈ MetaMathlibExt.ComplexityTheory.NP →
-          Cslib.CookLevin.PolyManyOneRed L minimumSnipRemovalDec
+          Cslib.CookLevin.PolyManyOneRed L minimumSnpRemovalDec
 
-end MetaMathlibExt.Complexity.NPComplete.MinimumSnipRemoval
+end MetaMathlibExt.Complexity.NPComplete.MinimumSnpRemoval
