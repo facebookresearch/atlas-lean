@@ -42,9 +42,13 @@ Nešetřil and Pultr's terms, the question asks whether `G` is an induced subgra
 dimension "is polynomial iff the evaluation of chromatic number is". Membership in NP: `f` is a
 certificate of `|V| · K ≤ |V| · |E|` numbers below `|V|`.
 
-The vertices are `0, ..., n - 1`, given with a simple edge list, so its length is `|E|`; the
-values `1, ..., |V|` of each component are `Fin n` (`0, ..., n - 1`), and a `K`-tuple is a
-function `Fin K → Fin n`. For `u = v` both sides of the equivalence are false (`K ≥ 1`).
+The graph is given by its number of vertices `n = |V|`, written in unary as the length of a
+list `[true, ..., true]` (as in `BoundedDiameterAugmentation`), and a simple edge list on
+`Fin n`, so the list's length is `|E|`. A graph is given with its vertex set; a binary `n` would
+make the problem succinct, since isolated vertices would cost no input while `f` must give each
+of them a tuple. The values `1, ..., |V|` of each component are `Fin n` (`0, ..., n - 1`), and a
+`K`-tuple is a function `Fin K → Fin n`. For `u = v` both sides of the equivalence are false
+(`K ≥ 1`).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -57,23 +61,26 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- An instance: the number `n` of vertices, the edge list, and the bound `K`. -/
-abbrev NesetrilRodlDimensionInstance := ℕ × List (ℕ × ℕ) × ℕ
+/-- An instance: the vertex count `n` in unary (a list of length `n`; vertices
+`0, ..., n - 1`), the edge list, and the bound `K`. -/
+abbrev NesetrilRodlDimensionInstance := List Bool × List (ℕ × ℕ) × ℕ
 
-/-- The graph of the instance as a `SimpleGraph (Fin n)`. -/
-def Graph (i : NesetrilRodlDimensionInstance) : SimpleGraph (Fin i.1) :=
-  Cslib.Complexity.Karp.edgeGraph i.1 i.2.1
+/-- The graph of the instance as a `SimpleGraph (Fin n)`, `n` the length of the unary list. -/
+def Graph (i : NesetrilRodlDimensionInstance) : SimpleGraph (Fin i.1.length) :=
+  Cslib.Complexity.Karp.edgeGraph i.1.length i.2.1
 
-/-- Well-formedness of an instance: the edge list describes a simple graph on `0, ..., n - 1`,
-and `1 ≤ K ≤ |E|`. -/
+/-- Well-formedness of an instance: `n` is written in unary as `[true, ..., true]`, the edge
+list describes a simple graph on `0, ..., n - 1`, and `1 ≤ K ≤ |E|`. -/
 def WellFormed (i : NesetrilRodlDimensionInstance) : Prop :=
-  (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1) ∧
+  (∀ b ∈ i.1, b = true) ∧
+    (i.2.1.Nodup ∧ ∀ e ∈ i.2.1, e.1 < i.1.length ∧ e.2 < i.1.length ∧ e.1 ≠ e.2 ∧
+      (e.2, e.1) ∉ i.2.1) ∧
     0 < i.2.2 ∧ i.2.2 ≤ i.2.1.length
 
 /-- Some one-to-one `f : V → (Fin K → Fin n)` has, for all `u, v`, `{u, v} ∈ E` iff `f(u)` and
 `f(v)` disagree in every component. -/
 def NesetrilRodlDimensionFeasible (i : NesetrilRodlDimensionInstance) : Prop :=
-  ∃ f : Fin i.1 → Fin i.2.2 → Fin i.1, Function.Injective f ∧
+  ∃ f : Fin i.1.length → Fin i.2.2 → Fin i.1.length, Function.Injective f ∧
     ∀ u v, (Graph i).Adj u v ↔ ∀ k, f u k ≠ f v k
 
 open Classical in
