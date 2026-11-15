@@ -25,17 +25,17 @@ public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import WantedExt.Complexity.NPComplete.MultipurposeParallelPrecedenceTotalCompletionWanted
 public import WantedExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesChainsMakespanWanted
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.MultipurposeParallelTwoMachinesChainsTotalCompletion
 
-open MultiPurposeJobShopThreeJobs (Operation opLength IsMPMJobShopSchedule)
-open UnitFlowShopPrecedenceMakespan (Prec)
 open MultipurposeParallelTwoMachinesChainsMakespan
   (MultipurposeParallelTwoMachinesChainsMakespanInstance WellFormed)
+open MultipurposeParallelPrecedenceTotalCompletion
+  (MultipurposeParallelPrecedenceTotalCompletionFeasible)
 
 /-!
 # TWO-MACHINE MULTIPURPOSE-MACHINE SCHEDULING WITH CHAINS (PMPM2|chains|ΣC_i) is NP-complete
@@ -60,12 +60,15 @@ The machines, jobs, machine sets and chains are those of `PMPM2|chains|C_max`
 every job is one operation `(pᵢ, μᵢ)`, its bound component being `K`, together with the
 precedence arcs, job `i` preceding job `k` when `k` is reachable from `i` along arcs) and its
 well-formedness (nonempty machine sets in `{1, 2}`, single-operation jobs of positive processing
-time, acyclic arcs naming jobs that form chains) are reused unchanged. A schedule is an MPM
-schedule (`MultiPurposeJobShopThreeJobs.IsMPMJobShopSchedule`) obeying the arcs, as in that
-module, and `Cᵢ = σᵢ + pᵢ`. Every job has exactly one operation, so the sum over operations is
-the sum over jobs. The bound `K` is a natural number (a negative `K` gives only no-instances), and
-start times below `K` form a certificate of polynomial size. Binary encoding of all numbers (the
-problem is NP-complete in the strong sense).
+time, acyclic arcs naming jobs that form chains) are reused unchanged. The question is that of
+`PMPM|prec; pᵢ = 1|ΣCᵢ` (`MultipurposeParallelPrecedenceTotalCompletionWanted`), whose instance
+type is the same and whose feasibility predicate reads no unit-time condition (that restriction
+lives in its `WellFormed`): some MPM schedule
+(`MultiPurposeJobShopThreeJobs.IsMPMJobShopSchedule`) obeys the arcs and has total completion
+time `Σ (σ t + pₜ)` at most `K`, with `Cᵢ = σᵢ + pᵢ`. Every job has exactly one operation, so the
+sum over operations is the sum over jobs. The bound `K` is a natural number (a negative `K` gives
+only no-instances), and start times below `K` form a certificate of polynomial size. Binary
+encoding of all numbers (the problem is NP-complete in the strong sense).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -78,14 +81,6 @@ reduction from every language in `NP`
 (`Cslib.CookLevin.PolyManyOneRed`).
 -/
 
-/-- Some MPM schedule of the jobs obeys the precedence arcs and has total completion time
-`Σ (σ t + pₜ)` at most `K`. -/
-def MultipurposeParallelTwoMachinesChainsTotalCompletionFeasible
-    (i : MultipurposeParallelTwoMachinesChainsMakespanInstance) : Prop :=
-  ∃ a σ : Operation i.1 → ℕ, IsMPMJobShopSchedule i.1 a σ ∧
-    (∀ t t' : Operation i.1, Prec i.2 t.1 t'.1 → σ t + opLength i.1 t ≤ σ t') ∧
-    ∑ t, (σ t + opLength i.1 t) ≤ i.1.2.2
-
 open Classical in
 /-- `PMPM2|chains|ΣC_i` as a decision problem over bitstrings. -/
 noncomputable def multipurposeParallelTwoMachinesChainsTotalCompletionDec :
@@ -93,7 +88,7 @@ noncomputable def multipurposeParallelTwoMachinesChainsTotalCompletionDec :
   match MetaMathlibExt.BitstringEncoding.bitDecode
       (α := MultipurposeParallelTwoMachinesChainsMakespanInstance) x with
   | some i =>
-    decide (WellFormed i ∧ MultipurposeParallelTwoMachinesChainsTotalCompletionFeasible i)
+    decide (WellFormed i ∧ MultipurposeParallelPrecedenceTotalCompletionFeasible i)
   | none => false
 
 /-- **`PMPM2|chains|ΣC_i` is NP-complete.** Source: Du, Leung and Young (1991), via the case
