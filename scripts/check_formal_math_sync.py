@@ -18,10 +18,11 @@ only, and scoped to those synced files, so a pull request fails only if it touch
 - `diverged` rows: the file exists, its SHA-256 is `published_sha256` (so a later edit refreshes the
   row and its rationale), and `rationale` and `backport` are set;
 - `retired` rows: the file is absent;
-- no row of the base manifest disappears or changes path unless the upstream pin also moves (a
-  sync). The base is HEAD's first parent in CI (the merge ref's base, fetched if the checkout is
-  shallow; unreadable fails closed), else the merge-base with origin/main, else the check is
-  skipped with a warning;
+- compared with the base manifest: no row disappears or changes path (a deleted synced file keeps
+  its row as `retired`), and while the upstream pin is unchanged no synced row is added or changes
+  its `upstream_sha256` (only a sync says what upstream contains). The base is HEAD's first parent
+  in CI (the merge ref's base, fetched if the checkout is shallow; unreadable fails closed), else
+  the merge-base with origin/main, else the comparison is skipped with a warning;
 - files without a row (ATLAS-only work) are ignored; new upstream files enter at sync time.
 
 A pull request that changes or deletes a synced or diverged file records that with
@@ -351,15 +352,19 @@ def base_commit(root: Path, base: str | None) -> tuple[str | None, str | None]:
 
 
 def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[list[str], list[str]]:
-    """Rows of the base manifest may not disappear or change path unless the upstream pin moves.
+    """Compare the manifest with the base manifest. Returns (problems, warnings).
 
-    Returns (problems, warnings). Fails closed in GitHub Actions when the base cannot be read."""
+    - No row of the base disappears or changes path, ever: a deleted file stays as `retired`.
+    - While the upstream pin is unchanged, a synced row keeps the base row's `upstream_sha256`,
+      and a new synced row is not allowed: only a sync (which moves the pin) says what upstream
+      contains. Edits go through `--record-divergence` / `--retire`.
+    Fails closed in GitHub Actions (or with --base) when the base cannot be read."""
     strict = bool(os.environ.get("GITHUB_ACTIONS") or base)
 
     def unreadable(why: str) -> tuple[list[str], list[str]]:
         if strict:
-            return [f"manifest: {why}; cannot check that no synced row was removed"], []
-        return [], [f"skipping the removed-row check: {why}"]
+            return [f"manifest: {why}; cannot compare with the base manifest"], []
+        return [], [f"skipping the base-manifest comparison: {why}"]
 
     commit, why = base_commit(root, base)
     if commit is None:
@@ -371,16 +376,33 @@ def base_problems(root: Path, manifest_path: Path, base: str | None) -> tuple[li
     if not listing:
         return [], []  # the base has no manifest yet
     try:
-        old = json.loads(git(root, "show", f"{commit}:{rel}") or "")
-        new = json.loads(manifest_path.read_text(encoding="utf-8"))
-        old_paths = {row["path"] for row in old["rows"]}
-        new_paths = {row.get("path") for row in new["rows"] if isinstance(row, dict)}
-        if old["upstream"]["commit"] != new.get("upstream", {}).get("commit"):
-            return [], []  # a re-pin: the sync script reclassified every file
-    except (ValueError, KeyError, TypeError, AttributeError):
-        return [], []  # a malformed side is reported by check()
-    return [f"{path}: row removed or renamed without moving the upstream pin (base {commit[:12]}); keep the "
-            "row and record the change with --record-divergence or --retire" for path in sorted(old_paths - new_paths)], []
+        old_manifest = json.loads(git(root, "show", f"{commit}:{rel}") or "")
+        old = {row["path"]: row for row in old_manifest["rows"]}
+        old_pin = old_manifest["upstream"]["commit"]
+    except (ValueError, KeyError, TypeError):
+        return unreadable(f"cannot parse the base manifest at {commit}")
+    try:
+        new_manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        new = {row.get("path"): row for row in new_manifest["rows"] if isinstance(row, dict)}
+        pin = new_manifest.get("upstream", {}).get("commit")
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        return [], []  # check() reports a malformed manifest
+    short = commit[:12]
+    problems = [f"{path}: row removed or renamed (base {short}); rows are never dropped: restore it, then use "
+                "--record-divergence for a changed file or --retire for a deleted one"
+                for path in sorted(old.keys() - new.keys())]
+    if pin == old_pin:
+        for path, row in sorted(new.items(), key=lambda item: str(item[0])):
+            if row.get("disposition") not in SYNCED:
+                continue
+            before = old.get(path)
+            if before is None:
+                problems.append(f"{path}: new synced row while the upstream pin is unchanged; synced rows come "
+                                "from scripts/sync_formal_math.py")
+            elif before.get("upstream_sha256") != row.get("upstream_sha256"):
+                problems.append(f"{path}: upstream_sha256 changed while the upstream pin is unchanged (base "
+                                f"{short}); record the edit with --record-divergence")
+    return problems, []
 
 
 def fix_commands(fixes: dict[str, list[str]]) -> list[str]:

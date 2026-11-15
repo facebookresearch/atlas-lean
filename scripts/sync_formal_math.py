@@ -15,8 +15,8 @@ Fails closed, writing neither manifest nor report, when a file newly diverges fr
 (including a file deleted upstream that ATLAS still publishes) without a rationale and backport
 status. Give them with `--rationales`, a JSON object mapping each path to
 {"rationale": "...", "backport": "..."}. A row already diverged in the current manifest keeps its
-explanation only while its published and upstream hashes are unchanged. `retired` rows carry over
-while the file stays absent. Output is deterministic for a fixed ATLAS tree and upstream commit.
+explanation only while its published and upstream hashes are unchanged. Rows never disappear: a
+file that left ATLAS keeps its row as `retired`. Output is deterministic for a fixed ATLAS tree and upstream commit.
 """
 from __future__ import annotations
 
@@ -180,7 +180,7 @@ def build(atlas: Path, repo: Path, commit: str, repository: str, previous: dict,
     history = upstream_history(repo, commit, files)
     old_rows = {row["path"]: row for row in previous.get("rows", [])}
     blobs = Blobs(repo)
-    rows, unexplained, local = [], [], 0
+    rows, unexplained, dropped, local = [], [], [], 0
     try:
         for path in sorted(files):
             data = (atlas / path).read_bytes()
@@ -190,6 +190,8 @@ def build(atlas: Path, repo: Path, commit: str, repository: str, previous: dict,
             row = {"path": path, "published_sha256": sha256(data)}
             row.update(classify(text, up_text, history.get(path, []), oid, blobs))
             if row["disposition"] == "local":
+                if path in old_rows:
+                    dropped.append(path)
                 local += 1
                 continue
             if row["disposition"] == "diverged":
@@ -205,8 +207,11 @@ def build(atlas: Path, repo: Path, commit: str, repository: str, previous: dict,
             rows.append(row)
     finally:
         blobs.close()
-    rows += [row for path, row in old_rows.items()
-             if row.get("disposition") == "retired" and not (atlas / path).exists()]
+    if dropped:  # rows never disappear; the checker rejects a manifest that drops one
+        raise SystemExit("sync: these files have manifest rows but no longer look upstream-derived "
+                         "(third-party FLT header or no upstream history); resolve them by hand: " + ", ".join(dropped))
+    # A file that left ATLAS keeps its row as retired.
+    rows += [{"path": path, "disposition": "retired"} for path in sorted(old_rows) if not (atlas / path).exists()]
     rows.sort(key=lambda row: row["path"])
     toolchain = (atlas / "lean-toolchain").read_text().strip()
     manifest = {

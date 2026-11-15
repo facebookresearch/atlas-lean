@@ -39,11 +39,14 @@ the Python standard library, and fails on:
 - a `diverged` row whose file is missing or differs from `published_sha256` (refresh the row and
   its rationale), or that lacks a non-empty `rationale` and `backport`;
 - a `retired` row whose file exists;
-- a row of the base manifest that disappears or changes path while the upstream pin stays the
-  same. Only a sync, which moves the pin and reclassifies every file, may drop rows. In CI the base
-  is HEAD's first parent (the pull request's base), fetched if the checkout is shallow; if it
-  cannot be read the check fails. Locally it is the merge-base with `origin/main`, and the check is
-  skipped with a warning when neither can be read. `--base REV` names it explicitly.
+- compared with the base manifest: a row that disappears or changes path (rows are never dropped;
+  a deleted file keeps its row as `retired`), and, while the upstream pin is unchanged, a new
+  synced row or a synced row whose `upstream_sha256` changed. Only a sync moves the pin and says
+  what upstream contains; a sync pull request is reviewed through its sync report, because CI
+  cannot read the private upstream. In CI the base is HEAD's first parent (the pull request's
+  base), fetched if the checkout is shallow; if it cannot be read the check fails. Locally it is
+  the merge-base with `origin/main`, and the comparison is skipped with a warning when neither can
+  be read. `--base REV` names it explicitly.
 
 Files without a row are ATLAS-only and ignored; new upstream files enter at sync time. So the set
 of upstream-derived paths cannot change silently (every row's bytes are checked) or shrink silently
@@ -72,5 +75,6 @@ regenerates the manifest and prints a report with totals and the added, removed,
 diverged rows. It writes neither the manifest nor the report when a file newly diverges without a
 rationale; pass those as `{"<path>": {"rationale": "...", "backport": "..."}}` in `--rationales`.
 A row already diverged keeps its rationale only while its published and upstream hashes are
-unchanged; `retired` rows carry over while their file stays absent. A periodic sync picks up
+unchanged. Rows never disappear: a file that left ATLAS keeps its row as `retired`, and the script
+stops if a file with a row no longer looks upstream-derived. A periodic sync picks up
 upstream changes and new upstream files.

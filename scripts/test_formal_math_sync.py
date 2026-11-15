@@ -119,7 +119,7 @@ class CheckerTest(unittest.TestCase):
         code, out = self.main()
         self.assertEqual(code, 0)
         self.assertIn("ok [formal-math-sync]: 6 rows; synced files match the manifest.", out)
-        self.assertIn("skipping the removed-row check: not a git checkout", out)  # outside CI only
+        self.assertIn("skipping the base-manifest comparison: not a git checkout", out)  # outside CI only
 
     def test_files_without_a_row_are_ignored(self) -> None:
         write(self.root, "WantedExt/New.lean", c.META + BODY)
@@ -308,7 +308,7 @@ def run_git(repo: Path, *args: str) -> str:
 
 
 class BaseGuardTest(unittest.TestCase):
-    """Rows may not disappear or change path relative to the base unless the upstream pin moves."""
+    """Rows never disappear; synced rows' upstream hashes only change in a sync (a moved pin)."""
 
     def setUp(self) -> None:
         self.env = mock.patch.dict(os.environ)
@@ -357,12 +357,67 @@ class BaseGuardTest(unittest.TestCase):
         self.commit("drop a row")
         code, out = self.run_check()
         self.assertEqual(code, 1)
-        self.assertIn("MathlibExt/Identical.lean: row removed or renamed without moving the upstream pin", out)
+        self.assertIn("MathlibExt/Identical.lean: row removed or renamed", out)
 
-    def test_row_removed_passes_with_repin(self) -> None:
-        self.drop_row("MathlibExt/Identical.lean")
+    def test_repin_cannot_erase_rows(self) -> None:
+        self.manifest["rows"] = []
         self.repin()
-        self.commit("sync to a new upstream commit")
+        self.commit("re-pin to an arbitrary commit and drop every row")
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertEqual(out.count("row removed or renamed"), 6, out)
+
+    def test_deleted_file_keeps_its_row_as_retired(self) -> None:
+        os.remove(self.root / "MathlibExt/Identical.lean")
+        self.assertEqual(self.run_check(None, "--retire", "MathlibExt/Identical.lean")[0], 0)
+        self.commit("retire a synced file")
+        self.assertEqual(self.run_check()[0], 0)
+
+    def test_recorded_divergence_passes(self) -> None:
+        write(self.root, "MathlibExt/Identical.lean", c.META + BODY + "\n-- fix\n")
+        self.assertEqual(self.run_check(None, "--record-divergence", "MathlibExt/Identical.lean",
+                                        "--rationale", "fix", "--backport", "pending")[0], 0)
+        self.commit("record a divergence")
+        self.assertEqual(self.run_check()[0], 0)
+
+    def relabel_edit(self) -> None:
+        """Edit a synced file and rewrite both hashes so it still looks upstream-identical."""
+        text = c.META + "\n" + BODY + "def atlasOnly : Nat := 999\n"
+        write(self.root, "MathlibExt/Identical.lean", text)
+        row = next(r for r in self.manifest["rows"] if r["path"] == "MathlibExt/Identical.lean")
+        row["published_sha256"], row["upstream_sha256"] = c.sha256(text), c.sha256(BODY + "def atlasOnly : Nat := 999\n")
+        self.save()
+
+    def test_upstream_hash_rewrite_fails_without_repin(self) -> None:
+        self.relabel_edit()
+        self.commit("relabel an edit as upstream")
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertIn("MathlibExt/Identical.lean: upstream_sha256 changed while the upstream pin is unchanged", out)
+
+    def test_upstream_hash_change_passes_with_repin(self) -> None:
+        self.relabel_edit()
+        self.repin()
+        self.commit("sync: upstream changed this file")
+        self.assertEqual(self.run_check()[0], 0)
+
+    def add_synced_row(self) -> None:
+        write(self.root, "WantedExt/New.lean", c.META + BODY)
+        self.manifest["rows"].append({"path": "WantedExt/New.lean", "disposition": "identical",
+                                      "published_sha256": c.sha256(c.META + BODY), "upstream_sha256": c.sha256(BODY)})
+        self.save()
+
+    def test_new_synced_row_fails_without_repin(self) -> None:
+        self.add_synced_row()
+        self.commit("claim a new file is upstream")
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertIn("WantedExt/New.lean: new synced row while the upstream pin is unchanged", out)
+
+    def test_new_synced_row_passes_with_repin(self) -> None:
+        self.add_synced_row()
+        self.repin()
+        self.commit("sync: import a new upstream file")
         self.assertEqual(self.run_check()[0], 0)
 
     def rename(self) -> None:
@@ -378,11 +433,13 @@ class BaseGuardTest(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("MathlibExt/Identical.lean: row removed or renamed", out)
 
-    def test_row_path_change_passes_with_repin(self) -> None:
+    def test_row_path_change_fails_even_with_repin(self) -> None:
         self.rename()
         self.repin()
         self.commit("move a synced file in a sync")
-        self.assertEqual(self.run_check()[0], 0)
+        code, out = self.run_check()
+        self.assertEqual(code, 1)
+        self.assertIn("MathlibExt/Identical.lean: row removed or renamed", out)
 
     def shallow_clone(self) -> Path:
         run_git(self.root, "config", "uploadpack.allowReachableSHA1InWant", "true")
@@ -509,15 +566,21 @@ class SyncTest(unittest.TestCase):
         self.assertNotIn("MathlibExt/Gone.lean", err, "an unchanged divergence keeps its explanation")
         self.assertEqual((self.atlas / c.MANIFEST).read_bytes(), first_bytes, "rejected sync must not write")
 
-    def test_retired_rows_carry_over_while_absent(self) -> None:
+    def test_rows_never_disappear(self) -> None:
         self.assertEqual(self.sync("--rationales", str(self.rationales))[0], 0)
-        os.remove(self.atlas / "MathlibExt/Same.lean")
-        quiet(c.main, ["--root", str(self.atlas), "--retire", "MathlibExt/Same.lean"])
+        os.remove(self.atlas / "MathlibExt/Same.lean")  # deleted without --retire: the sync retires it
         self.assertEqual(self.sync()[0], 0)
         self.assertEqual(self.rows()["MathlibExt/Same.lean"], {"path": "MathlibExt/Same.lean", "disposition": "retired"})
+        self.assertEqual(self.sync()[0], 0)  # and keeps it retired
+        self.assertEqual(self.rows()["MathlibExt/Same.lean"], {"path": "MathlibExt/Same.lean", "disposition": "retired"})
+        self.assertEqual(self.rows()["MathlibExt/Same.lean"]["disposition"], "retired")
         write(self.atlas, "MathlibExt/Same.lean", c.META + "\n" + BODY)  # restored: synced again
         self.assertEqual(self.sync()[0], 0)
         self.assertEqual(self.rows()["MathlibExt/Same.lean"]["disposition"], "identical")
+        write(self.atlas, "MathlibExt/Same.lean", "/-\nCopyright (c) 2026 Anthropic, PBC.\nApache license.\n-/\n" + BODY)
+        with self.assertRaises(SystemExit) as raised:  # would turn local and drop its row
+            self.sync()
+        self.assertIn("MathlibExt/Same.lean", str(raised.exception))
 
     def test_ignores_git_replace_refs(self) -> None:
         run_git(self.fm, "replace", self.commit, self.first)  # make HEAD read as the first commit
