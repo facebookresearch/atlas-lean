@@ -19,10 +19,11 @@ cross-fitted AIPW estimator of the average treatment effect assuming, for each f
 * the product of nuisance errors is `o_P(n^{-1/2})` (`hrate`).
 
 The first hypothesis is a statement about the score, not about the nuisance estimators. This file
-replaces it with the rate conditions of Chernozhukov et al. (2018, Assumption 5.1) on the
-nuisances themselves: `L²` consistency of the fitted propensity and outcome regressions, together
-with a bounded conditional variance of the potential outcomes. The product-rate condition then
-gives asymptotic normality with no condition on the fitted score.
+replaces it with rate conditions on the nuisances themselves, modeled on Chernozhukov et al.
+(2018, Assumption 5.1): `L²` consistency of the fitted propensity and outcome regressions,
+together with a bounded conditional variance of each potential outcome. The variance bound is not
+the paper's noise condition (see "Hypotheses and scope"). The product-rate condition then gives
+asymptotic normality with no condition on the fitted score.
 
 ## Main results
 
@@ -44,9 +45,14 @@ gives asymptotic normality with no condition on the fitted score.
 
 ## Hypotheses and scope
 
-* The outcome-noise condition is `E[(Yₐ - E[Yₐ | m])² | m] ≤ C` a.e. for both arms, the
-  conditional-variance bound `E[U² | X] ≤ C̄` of Chernozhukov et al. (2018, Assumption 5.1),
-  stated on potential outcomes. It is used only to bound the cross term
+* The outcome-noise condition is `E[(Yₐ - E[Yₐ | m])² | m] ≤ C` a.e. for both arms: a bound on
+  the conditional variance of each potential outcome. It differs from the noise condition of
+  Chernozhukov et al. (2018, Assumption 5.1; arXiv:1608.00060v6, eqs. (5.1)–(5.2)), which bounds
+  `‖E[U² | X]‖_∞` for the residual `U = Y - g₀(D, X)`, `E[U | X, D] = 0`, of the observed outcome
+  after regressing on treatment and covariates. The two conditions imply each other, up to
+  constants such as `C / ε₀`, when `Yₐ` is conditionally independent of the treatment given the
+  covariates; under the mean exchangeability assumed here neither implies the other. The
+  condition here is used only to bound the cross term
   `E[(Yₐ - μₐ*)² (e* - ê)²] ≤ C ‖e* - ê‖₂²`, through the pull-out property of the conditional
   expectation; the fitted propensity must therefore be `m`-measurable, as in `CrossFitting`.
 * The remaining hypotheses (i.i.d. data, consistency, mean exchangeability, strong overlap,
@@ -340,9 +346,11 @@ theorem tendstoInMeasure_integral_sq_crossFit_aipw_sub {W : ℕ → Ω → 𝒲}
 
 variable [IsProbabilityMeasure P]
 
-/-- **Double/debiased machine learning under rate conditions** (Chernozhukov et al. 2018,
-Theorem 5.1 for the ATE). `W 0, W 1, …` are i.i.d. full-data observations with law `ν`; `T` is
-the treatment event, `Y = observed T Y₀ Y₁` the observed outcome, `m` the covariate σ-algebra,
+/-- **Double/debiased machine learning under rate conditions**, an analogue of Chernozhukov et
+al. (2018, Theorem 5.1) for the ATE with the potential-outcome variance bound of
+`integral_sq_aipwScoreOfSigma_sub_le` in place of the paper's noise condition. `W 0, W 1, …`
+are i.i.d. full-data observations with law `ν`; `T` is the treatment event,
+`Y = observed T Y₀ Y₁` the observed outcome, `m` the covariate σ-algebra,
 `e* = P(T | m)`, `μₐ* = E[Yₐ | m]`. Assume mean exchangeability, strong overlap
 `ε₀ ≤ e* ≤ 1 - ε₀`, square integrable potential outcomes with bounded conditional variances
 `E[(Yₐ - μₐ*)² | m] ≤ C`, and fitted nuisances `ê, ĝ₀, ĝ₁` for each fold that depend only on that

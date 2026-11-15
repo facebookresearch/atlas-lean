@@ -19,7 +19,8 @@ public import MathlibExtTest.Probability.Causality.AugmentedIPW.CrossFitting
   outcome-regression errors are `0`, so the conditional-variance term of
   `integral_sq_aipwScoreOfSigma_sub_le` is the only term that can cover it; the theorem applies
   with `C = 1`, the conditional variance computed from its definition.
-* The correct-nuisance boundary: every error term of the bound is `0`.
+* The correct-nuisance boundary: the bound applies at the true nuisances, where all its error
+  terms vanish, and forces the score error to `0`.
 * Non-vacuity of `tendstoInDistribution_crossFit_aipw_of_quarter_rates` (and through it of
   `tendstoInDistribution_crossFit_aipw_of_rates`) on i.i.d. Bernoulli(1/2) treatment, with a
   fitted propensity `1/2 + 1/(4(n+1))` and a fitted treated-arm regression `1/(n+1)` that are
@@ -102,11 +103,21 @@ example : ∫ w, (aipwScoreOfSigma {true} pmOne (fun _ => 1 / 4) (fun _ => 0) (f
     (by rw [bern_pmOne_var]) (by rw [bern_pmOne_var]) stronglyMeasurable_const (memLp_const _)
     (memLp_const _) (by norm_num) (ae_of_all _ fun _ => by norm_num)
 
-/-- Correct-nuisance boundary, computed from the definitions: at the true nuisances every error
-term on the right of `integral_sq_aipwScoreOfSigma_sub_le` is `0`. -/
-example : ∫ w, ((bern[pmOne | ⊥] : Bool → ℝ) w - bern[pmOne | ⊥] w) ^ 2 ∂bern = 0 ∧
-    ∫ w, ((bern[({true} : Set Bool).indicator 1 | ⊥] : Bool → ℝ) w -
-      bern[({true} : Set Bool).indicator 1 | ⊥] w) ^ 2 ∂bern = 0 := by
+/-- Correct-nuisance boundary: `integral_sq_aipwScoreOfSigma_sub_le` applies at the true
+nuisances `e = e*`, `g₀ = g₁ = μ*` of the `pmOne` fixture (with `ε = 1/2`), every error term on
+its right side is `0`, so the bound forces the score error to be `0`. -/
+example : ∫ w, (aipwScoreOfSigma {true} pmOne bern[({true} : Set Bool).indicator 1 | ⊥]
+      bern[pmOne | ⊥] bern[pmOne | ⊥] w -
+    aipwScoreOfSigma {true} pmOne bern[({true} : Set Bool).indicator 1 | ⊥] bern[pmOne | ⊥]
+      bern[pmOne | ⊥] w) ^ 2 ∂bern = 0 := by
+  have h := integral_sq_aipwScoreOfSigma_sub_le (m := ⊥) (Y₀ := pmOne) (Y₁ := pmOne)
+    (e := bern[({true} : Set Bool).indicator 1 | ⊥]) (g₀ := bern[pmOne | ⊥])
+    (g₁ := bern[pmOne | ⊥]) (C := 1) bot_le (ae_of_all _ pmOne_observed) MemLp.of_discrete
+    MemLp.of_discrete (ε₀ := 1 / 2) (by norm_num)
+    (by rw [bern_propensity]; exact ae_of_all _ fun _ => by norm_num) (by rw [bern_pmOne_var])
+    (by rw [bern_pmOne_var]) stronglyMeasurable_condExp MemLp.of_discrete MemLp.of_discrete
+    (ε := 1 / 2) (by norm_num) (by rw [bern_propensity]; exact ae_of_all _ fun _ => by norm_num)
+  refine le_antisymm (h.trans (le_of_eq ?_)) (integral_nonneg fun _ => sq_nonneg _)
   simp
 
 /-! ### Asymptotic normality from quarter rates -/
@@ -198,12 +209,7 @@ example : TendstoInDistribution (fun (n : ℕ) ω => √(n : ℝ) *
       ring
     rw [hf]
     exact tendstoInMeasure_const_seq (tendsto_sqrt_mul_sq _)
-  · have hψ : aipwScoreOfSigma {true} (fun _ => (0 : ℝ))
-        bern[({true} : Set Bool).indicator 1 | ⊥] bern[(fun _ => (0 : ℝ)) | ⊥]
-          bern[(fun _ => (0 : ℝ)) | ⊥] = 0 := by
-      funext w
-      simp [aipwScoreOfSigma_apply]
-    rw [hψ, variance_zero, Real.toNNReal_zero, gaussianReal_zero_var]
+  · rw [bern_oracle_score, variance_zero, Real.toNNReal_zero, gaussianReal_zero_var]
     exact ⟨aemeasurable_const, by simp⟩
 
 end MathlibExtTest.Probability.Causality.AugmentedIPW.DoubleMLRates
