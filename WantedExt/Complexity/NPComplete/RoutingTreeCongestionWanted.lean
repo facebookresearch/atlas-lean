@@ -19,16 +19,16 @@ MINIMUM ROUTING TREE CONGESTION.
 module
 
 public import Batteries.Util.ProofWanted
+public import CSLibExt.Bioinformatics.Phylogenetics.NeighborJoining
 public import CSLibExt.Computability.CookLevin
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
-public import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
-public import Mathlib.Combinatorics.SimpleGraph.Finite
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.RoutingTreeCongestion
+
+open Cslib.Bioinformatics.Phylogenetics.NeighborJoining (IsBinaryPhylogeneticTree side)
 
 /-!
 # ROUTING TREE CONGESTION is NP-complete
@@ -46,11 +46,14 @@ asks for congestion `< 0`, which no routing tree has). A graph with fewer than t
 vertices has no routing tree, since a finite tree with at least one edge has at least two
 leaves.
 
-The tree is a Mathlib `SimpleGraph` on `Fin m` (`SimpleGraph.IsTree`, valencies
-`SimpleGraph.degree`), and `V(G) ⊆ V(T)` is an injection `τ : Fin n → Fin m`. The component of
-`x` after removing the tree edge `xy` is the set of tree vertices reachable from `x` in
-`T.deleteEdges {s(x, y)}`; an edge of `G` is routed along `xy` when exactly one of its ends
-`u`, `v` has `τ u` in that component.
+The tree is a Mathlib `SimpleGraph` on `Fin m` and `V(G) ⊆ V(T)` is an injection
+`τ : Fin n → Fin m`; a routing tree is exactly a binary phylogenetic tree with taxa `V(G)`
+(`Cslib.Bioinformatics.Phylogenetics.NeighborJoining.IsBinaryPhylogeneticTree`: a tree whose
+degree-one vertices are exactly the `τ v` and whose other vertices have degree three). The
+vertices of `G` on the `x`-side of the tree edge `xy` are
+`Cslib.Bioinformatics.Phylogenetics.NeighborJoining.side T τ x y`, those whose `τ v` is still
+joined to `x` in `T.deleteEdges {s(x, y)}`; an edge of `G` is routed along `xy` when exactly one
+of its ends is on that side.
 
 The vertex set is given explicitly as the list `[0, 1, ..., n - 1]`, so an instance's encoding
 has length at least `|V|`. With `n` given only in binary, an edgeless graph on many vertices
@@ -83,11 +86,10 @@ def WellFormed (i : RoutingTreeCongestionInstance) : Prop :=
     ((i.2.1.map Prod.fst).Nodup ∧ ∀ e ∈ i.2.1.map Prod.fst, e.1 < i.1.length ∧
       e.2 < i.1.length ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2.1.map Prod.fst)
 
-/-- The vertex `v` of `G` (if `v < n`) has its tree vertex `τ v` in the component of `x` once
-the tree edge `xy` is removed. -/
+/-- The vertex `v` of `G` (if `v < n`) lies on the `x`-side of the tree edge `xy`. -/
 def OnSide {n m : ℕ} (T : SimpleGraph (Fin m)) (τ : Fin n → Fin m) (x y : Fin m) (v : ℕ) :
     Prop :=
-  ∃ h : v < n, (T.deleteEdges {s(x, y)}).Reachable x (τ ⟨v, h⟩)
+  ∃ h : v < n, (⟨v, h⟩ : Fin n) ∈ side T τ x y
 
 open Classical in
 /-- The total weight of the edges of `G` routed along the tree edge `xy`: those with exactly one
@@ -99,14 +101,12 @@ noncomputable def routedWeight {n m : ℕ} (T : SimpleGraph (Fin m)) (τ : Fin n
 
 open Classical in
 /-- `(T, τ)` is a routing tree for the graph on `0, …, n - 1` with weighted edges `es`, of
-congestion at most `K`: `T` is a tree, `τ` embeds the vertices of `G` into `T`, every `τ v` has
-valency `1`, every other tree vertex has valency `3`, and at most `K` weight is routed along
-every edge of `T`. -/
+congestion at most `K`: a binary phylogenetic tree with taxa `τ v` (a tree whose degree-one
+vertices are exactly the `τ v`, every other vertex of degree three), with at most `K` weight
+routed along every edge of `T`. -/
 def IsRoutingTreeOfCongestion (n : ℕ) (es : List ((ℕ × ℕ) × ℕ)) (K : ℕ) {m : ℕ}
     (T : SimpleGraph (Fin m)) (τ : Fin n → Fin m) : Prop :=
-  T.IsTree ∧ Function.Injective τ ∧ (∀ v, T.degree (τ v) = 1) ∧
-    (∀ x, x ∉ Set.range τ → T.degree x = 3) ∧
-    ∀ x y, T.Adj x y → routedWeight T τ x y es ≤ K
+  IsBinaryPhylogeneticTree T τ ∧ ∀ x y, T.Adj x y → routedWeight T τ x y es ≤ K
 
 /-- Some routing tree for `G` has congestion at most `K`. -/
 def RoutingTreeCongestionFeasible (i : RoutingTreeCongestionInstance) : Prop :=
