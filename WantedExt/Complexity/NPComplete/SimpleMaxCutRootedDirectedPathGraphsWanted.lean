@@ -7,7 +7,7 @@ LICENSE file in the root directory of this source tree.
 -/
 
 /-
-# SIMPLE MAX CUT for directed path graphs is NP-complete
+# SIMPLE MAX CUT for rooted directed path graphs is NP-complete
 
 Source:
 D. S. Johnson, "The NP-completeness column: an ongoing guide", Journal of Algorithms 6 (1985),
@@ -33,12 +33,12 @@ public import WantedExt.Complexity.NPComplete.MaxCutWanted
 
 @[expose] public section
 
-namespace MetaMathlibExt.Complexity.NPComplete.SimpleMaxCutDirectedPathGraphs
+namespace MetaMathlibExt.Complexity.NPComplete.SimpleMaxCutRootedDirectedPathGraphs
 
 open MaxCut (MaxCutInstance MaxCutFeasible)
 
 /-!
-# SIMPLE MAX CUT for directed path graphs is NP-complete
+# SIMPLE MAX CUT for rooted directed path graphs is NP-complete
 
 INSTANCE: a directed path graph `G = (V, E)` in the sense of Johnson's column: an undirected
 path graph with a representation in which, for some root vertex of the tree, all paths are
@@ -47,7 +47,9 @@ integer `K`.
 QUESTION: is there a partition of `V` into two sets with at least `K` edges between them?
 
 This is SIMPLE MAX CUT (MAX CUT with all edge weights one) restricted to Johnson's directed path
-graphs, an entry of his Table 1 that de Figueiredo, de Melo, Sasaki and Silva resolve as
+graphs, which are the rooted directed path graphs (a proper subclass of the directed path graphs
+with arbitrary tree orientation of `HamiltonianCircuitDirectedPathGraphs.IsDirectedPathGraph`),
+an entry of his Table 1 that de Figueiredo, de Melo, Sasaki and Silva resolve as
 NP-complete by Adhikary, Bose, Mukherjee and Roy: they prove SIMPLE MAX CUT NP-complete on
 interval graphs, and every interval graph is a rooted directed path graph (sort the interval
 endpoints into a path, rooted at its first point; each interval is a directed subpath).
@@ -62,7 +64,9 @@ root `r`, each vertex `v` has the vertex set `P v` of a path of `T` whose every 
 from `r`, and distinct vertices are adjacent exactly when their paths share a vertex of `T`.
 
 Membership in NP: a cut is a polynomial certificate, and rooted directed path graphs are
-recognized in polynomial time (Gavril). Vertices outside the edge list are isolated; they change
+recognized in polynomial time (Gavril's algorithm is for intersection graphs of directed paths
+in rooted directed trees; his clique-tree characterization of this class is Theorem 2.1 of
+Panda and Pradhan, arXiv:0809.2443). Vertices outside the edge list are isolated; they change
 neither the answer nor membership in the class (an isolated vertex takes the one-vertex path of
 a new leaf below the root), so the check runs on the non-isolated vertices and the binary vertex
 count does not make the problem succinct.
@@ -87,21 +91,21 @@ def WellFormed (i : MaxCutInstance) : Prop :=
     0 < i.2.2
 
 open Classical in
-/-- SIMPLE MAX CUT for directed path graphs as a decision problem over bitstrings. -/
-noncomputable def simpleMaxCutDirectedPathGraphsDec :
+/-- SIMPLE MAX CUT for rooted directed path graphs as a decision problem over bitstrings. -/
+noncomputable def simpleMaxCutRootedDirectedPathGraphsDec :
     MetaMathlibExt.ComplexityTheory.DecisionProblem := fun x =>
   match MetaMathlibExt.BitstringEncoding.bitDecode
       (α := MaxCutInstance) x with
   | some i => decide (WellFormed i ∧ MaxCutFeasible i)
   | none => false
 
-/-- **SIMPLE MAX CUT for directed path graphs is NP-complete.**
+/-- **SIMPLE MAX CUT for rooted directed path graphs is NP-complete.**
 Source: Johnson (1985), Table 1; de Figueiredo, de Melo, Sasaki and Silva (2022);
 Adhikary, Bose, Mukherjee and Roy (2023). -/
-public theorem_wanted simpleMaxCutDirectedPathGraphs_npComplete :
-    simpleMaxCutDirectedPathGraphsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
+public theorem_wanted simpleMaxCutRootedDirectedPathGraphs_npComplete :
+    simpleMaxCutRootedDirectedPathGraphsDec ∈ MetaMathlibExt.ComplexityTheory.NP ∧
       ∀ L : MetaMathlibExt.ComplexityTheory.DecisionProblem,
         L ∈ MetaMathlibExt.ComplexityTheory.NP →
-          Cslib.CookLevin.PolyManyOneRed L simpleMaxCutDirectedPathGraphsDec
+          Cslib.CookLevin.PolyManyOneRed L simpleMaxCutRootedDirectedPathGraphsDec
 
-end MetaMathlibExt.Complexity.NPComplete.SimpleMaxCutDirectedPathGraphs
+end MetaMathlibExt.Complexity.NPComplete.SimpleMaxCutRootedDirectedPathGraphs
