@@ -23,13 +23,18 @@ public import Mathlib.Tactic.IntervalCases
 * Restriction: `C6lat` has trace `1` and order `6`; `C4` has trace `0` and
   order `4`; the order-5 rotation with `cos = (√5-1)/4` has non-integer trace
   and is not lattice-preserving.
-* Point groups: orders, determinants, and traces for all MS05.2 matrices.
+* Point groups: orthogonality (except for the lattice-basis matrix `C6lat`),
+  orders, determinants, and traces for every concrete matrix in the module.
 * Neumann: a rank-3 tensor with `T 0 0 0 = 1` is not inversion-invariant; the
   diagonal matrix `diag(1,2,3)` and a matrix with nonzero off-diagonal are not
   cubic-invariant.
 * Elastic: `upperTri.card = 21` by independent computation; cubic/isotropic
-  instances; a cubic matrix violating `(c11-c12) = 2*c44` is not isotropic;
-  axis permutations alone do not imply the cubic form (counterexample).
+  instances; a cubic matrix violating `(c11-c12) = 2*c44` is not invariant
+  under the `45°` rotation `Rz45`; axis permutations alone do not imply the
+  cubic form (counterexample).
+* Rotation action: the identity acts trivially, the cubic family is fixed by
+  the quarter-turn `Rz90`, the Lamé family is fixed by `Rz45` and `Rx90`, and
+  the hypotheses of `eq_isotropicVoigt_of_rotationInvariance` are satisfiable.
 -/
 
 @[expose] public section
@@ -274,8 +279,7 @@ lemma test_isotropicVoigt_instance :
   have h43 : (4 : ℝ) + 2 * 3 = 10 := by norm_num
   rw [isotropicVoigt_isCubic, h43]
 
-/-- `cubicVoigt 10 4 2` violates `(c11-c12) = 2*c44`, so it is not isotropic
-in the sense of the relation. -/
+/-- `cubicVoigt 10 4 2` violates the isotropy relation `(c11-c12) = 2*c44`. -/
 lemma test_cubic_not_isotropic :
     (cubicVoigt 10 4 2) 0 0 - (cubicVoigt 10 4 2) 0 1 ≠
       2 * (cubicVoigt 10 4 2) 3 3 := by
@@ -348,6 +352,61 @@ lemma voigtCounter_not_cubic :
   intro h
   have e := congrArg (fun M : Matrix (Fin 6) (Fin 6) ℝ => M 0 3) h
   norm_num [voigtCounter, cubicVoigt, Matrix.of_apply] at e
+
+/-- Distinct constants give distinct cubic matrices. -/
+lemma test_cubicVoigt_ne : cubicVoigt 10 4 2 ≠ cubicVoigt 10 4 3 := by
+  intro h
+  have e := (cubicVoigt_inj h).2.2
+  norm_num at e
+
+/-! ### Rotation-action checks -/
+
+/-- The identity acts trivially on `cubicVoigt 10 4 2`. -/
+lemma test_voigtRotate_one : voigtRotate 1 (cubicVoigt 10 4 2) = cubicVoigt 10 4 2 :=
+  voigtRotate_one _
+
+/-- `Rz45` is a proper rotation whose square is the quarter-turn `Rz90`. -/
+lemma test_Rz45 : Rz45ᵀ * Rz45 = 1 ∧ Rz45.det = 1 ∧ Rz45 ^ 2 = Rz90 :=
+  ⟨Rz45_orthogonal, Rz45_det, Rz45_sq⟩
+
+/-- The `45°` rotation sends the shear entry of `cubicVoigt 10 4 2` to `3`. -/
+lemma test_Rz45_shear : voigtRotate Rz45 (cubicVoigt 10 4 2) 5 5 = 3 := by
+  rw [voigtRotate_Rz45_cubicVoigt_55]
+  norm_num
+
+/-- A cubic matrix violating `(c11-c12) = 2*c44` is not invariant under the
+`45°` rotation about `z`. -/
+lemma test_cubic_not_Rz45_invariant :
+    voigtRotate Rz45 (cubicVoigt 10 4 2) ≠ cubicVoigt 10 4 2 := by
+  intro h
+  have e := relation_of_voigtRotate_Rz45 _ _ _ h
+  norm_num at e
+
+/-- The Lamé instance `isotropicVoigt 4 3` is fixed by `Rz45` and by `Rx90`. -/
+lemma test_isotropic_invariant :
+    voigtRotate Rz45 (isotropicVoigt 4 3) = isotropicVoigt 4 3 ∧
+      voigtRotate Rx90 (isotropicVoigt 4 3) = isotropicVoigt 4 3 :=
+  ⟨voigtRotate_isotropicVoigt _ Rz45_orthogonal _ _,
+    voigtRotate_isotropicVoigt _ Rx90_orthogonal _ _⟩
+
+set_option maxHeartbeats 1000000 in
+/-- The tensor action agrees with the cubic invariance: every cubic matrix is
+fixed by the quarter-turn `Rz90`, computed entry by entry. -/
+lemma test_cubic_Rz90_invariant (c11 c12 c44 : ℝ) :
+    voigtRotate Rz90 (cubicVoigt c11 c12 c44) = cubicVoigt c11 c12 c44 := by
+  ext I J
+  fin_cases I <;> fin_cases J <;>
+    simp [voigtRotate, Rz90, cubicVoigt, voigtFst, voigtSnd, voigtIndex, Fin.sum_univ_three]
+
+/-- The hypotheses of `eq_isotropicVoigt_of_rotationInvariance` hold for the
+Lamé instance `isotropicVoigt 4 3`. -/
+lemma test_isotropic_from_invariance :
+    isotropicVoigt 4 3 =
+      isotropicVoigt (isotropicVoigt 4 3 0 1) (isotropicVoigt 4 3 3 3) :=
+  eq_isotropicVoigt_of_rotationInvariance _
+    (by rw [isotropicVoigt_isCubic]; exact cubicVoigt_transpose _ _ _)
+    (isotropicVoigt_swap01 4 3) (isotropicVoigt_swap02 4 3) (isotropicVoigt_swap12 4 3)
+    (isotropicVoigt_rotZ90 4 3) (voigtRotate_isotropicVoigt _ Rz45_orthogonal _ _)
 
 end PhyslibExtTest.CondensedMatter.Crystallography.Symmetry
 
@@ -423,6 +482,25 @@ end PhyslibExtTest.CondensedMatter.Crystallography.Symmetry
 #print axioms Crystallography.Symmetry.isotropicVoigt_swap02
 #print axioms Crystallography.Symmetry.isotropicVoigt_swap12
 #print axioms Crystallography.Symmetry.isotropicVoigt_rotZ90
+#print axioms Crystallography.Symmetry.exists_symm_of_upperTri
+#print axioms Crystallography.Symmetry.cubicVoigt_transpose
+#print axioms Crystallography.Symmetry.cubicVoigt_inj
+#print axioms Crystallography.Symmetry.isotropicVoigt_inj
+#print axioms Crystallography.Symmetry.voigtIndex
+#print axioms Crystallography.Symmetry.voigtFst
+#print axioms Crystallography.Symmetry.voigtSnd
+#print axioms Crystallography.Symmetry.voigtIndex_fst_snd
+#print axioms Crystallography.Symmetry.voigtRotate
+#print axioms Crystallography.Symmetry.voigtRotate_one
+#print axioms Crystallography.Symmetry.Rz45
+#print axioms Crystallography.Symmetry.Rz45_orthogonal
+#print axioms Crystallography.Symmetry.Rz45_det
+#print axioms Crystallography.Symmetry.Rz45_sq
+#print axioms Crystallography.Symmetry.voigtRotate_Rz45_cubicVoigt_55
+#print axioms Crystallography.Symmetry.relation_of_voigtRotate_Rz45
+#print axioms Crystallography.Symmetry.eq_isotropicVoigt_of_rotationInvariance
+#print axioms Crystallography.Symmetry.isotropicVoigt_voigtIndex
+#print axioms Crystallography.Symmetry.voigtRotate_isotropicVoigt
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.rotMat
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.rotMat_pow5
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.rotMat_ne_one
@@ -454,3 +532,11 @@ end PhyslibExtTest.CondensedMatter.Crystallography.Symmetry
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.voigtCounter_swap02
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.voigtCounter_swap12
 #print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.voigtCounter_not_cubic
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_cubicVoigt_ne
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_voigtRotate_one
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_Rz45
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_Rz45_shear
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_cubic_not_Rz45_invariant
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_isotropic_invariant
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_cubic_Rz90_invariant
+#print axioms PhyslibExtTest.CondensedMatter.Crystallography.Symmetry.test_isotropic_from_invariance

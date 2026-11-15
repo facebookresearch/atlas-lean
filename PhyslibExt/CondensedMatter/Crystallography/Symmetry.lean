@@ -49,7 +49,12 @@ reduces to it on the plane orthogonal to the rotation axis. The module then
 verifies concrete point-group matrices by computation, derives Neumann's
 principle consequences (inversion kills odd-rank polar tensors; cubic symmetry
 forces a symmetric rank-2 tensor to be scalar), and counts independent elastic
-constants (`21` triclinic, `3` cubic, `2` isotropic) in Voigt notation.
+constants (`21` triclinic, `3` cubic, `2` isotropic) in Voigt notation. The
+isotropic count is derived from rotational invariance: `voigtRotate` is the
+action of a `3 × 3` matrix on Voigt matrices through the rank-four elasticity
+tensor, invariance of a cubic matrix under the `45°` rotation `Rz45` about `z`
+forces `c11 - c12 = 2 * c44`, and the resulting Lamé family is invariant under
+every orthogonal matrix.
 
 Reuse-verified against Mathlib / ATLAS main: this module imports no next-50
 prerequisite module.
@@ -78,18 +83,28 @@ This module treats polar tensors only. Axial (pseudo) tensors pick up an extra
 - `Crystallography.Symmetry.crystallographic_restriction_two`,
   `Crystallography.Symmetry.crystallographic_restriction_three` : rotation
   orders lie in `{1, 2, 3, 4, 6}`.
-- `Crystallography.Symmetry.C2`, `C4`, `C6lat`, `mirror`, `Rx90`, `Ry90`,
-  `Rz90` : concrete point-group matrices with verified orthogonality,
-  determinant, order, and trace.
+- `Crystallography.Symmetry.C2`, `C4`, `mirror`, `Rx90`, `Ry90`, `Rz90` :
+  concrete point-group matrices with verified orthogonality, determinant,
+  order, and trace.
+- `Crystallography.Symmetry.C6lat` : the six-fold rotation in the hexagonal
+  lattice basis, with verified determinant, order, and trace. It is an integer
+  lattice-basis matrix, not an orthogonal one.
 - `Crystallography.Symmetry.IsSignedPerm`, `signedPerm_mul` : signed
   permutation matrices and closure under multiplication.
 - `Crystallography.Symmetry.polarVector_inversion`,
   `polarRank3_inversion`, `symmetric_cubic_is_scalar` : Neumann consequences.
-- `Crystallography.Symmetry.upperTri`, `upperTri_card` : 21 triclinic constants.
-- `Crystallography.Symmetry.cubicVoigt`, `eq_cubicVoigt_of_voigtInvariance` :
-  the 3-parameter cubic family.
-- `Crystallography.Symmetry.isotropicVoigt`, `eq_isotropicVoigt_of_relation` :
-  the 2-parameter Lamé family.
+- `Crystallography.Symmetry.upperTri`, `upperTri_card`,
+  `eq_of_agree_on_upperTri`, `exists_symm_of_upperTri` : 21 independent
+  triclinic constants.
+- `Crystallography.Symmetry.cubicVoigt`, `eq_cubicVoigt_of_voigtInvariance`,
+  `cubicVoigt_inj` : the 3-parameter cubic family.
+- `Crystallography.Symmetry.voigtRotate`, `Rz45` : the action of a `3 × 3`
+  matrix on Voigt matrices, and the `45°` rotation about `z`.
+- `Crystallography.Symmetry.isotropicVoigt`,
+  `eq_isotropicVoigt_of_rotationInvariance`, `voigtRotate_isotropicVoigt`,
+  `isotropicVoigt_inj` : the 2-parameter Lamé family, forced by invariance
+  under the axis swaps, the `z` quarter-turn and `Rz45`, and invariant under
+  every orthogonal matrix.
 
 ## iii. Table of contents
 
@@ -1311,7 +1326,9 @@ lemma symmetric_cubic_is_scalar (S : Matrix (Fin 3) (Fin 3) ℝ)
 def upperTri : Finset (Fin 6 × Fin 6) :=
   Finset.univ.filter (fun p => p.1 ≤ p.2)
 
-/-- Triclinic crystals have 21 independent elastic constants. -/
+/-- The upper triangle of `6 × 6` Voigt indices has 21 positions. With
+`eq_of_agree_on_upperTri` and `exists_symm_of_upperTri`, a triclinic
+(unconstrained symmetric) Voigt matrix has 21 independent elastic constants. -/
 lemma upperTri_card : upperTri.card = 21 := by
   decide
 
@@ -1332,6 +1349,21 @@ lemma eq_of_agree_on_upperTri (A B : Matrix (Fin 6) (Fin 6) ℝ)
       have h := congrArg (fun M : Matrix (Fin 6) (Fin 6) ℝ => M j i) hB
       simpa [Matrix.transpose_apply] using h
     linear_combination e + hAij - hBij
+
+/-- Every assignment of values to the 21 upper-triangle positions comes from a
+symmetric `6 × 6` matrix, so the upper-triangle entries are independent. -/
+lemma exists_symm_of_upperTri (f : Fin 6 × Fin 6 → ℝ) :
+    ∃ A : Matrix (Fin 6) (Fin 6) ℝ, Aᵀ = A ∧ ∀ p ∈ upperTri, A p.1 p.2 = f p := by
+  refine ⟨Matrix.of fun i j => if i ≤ j then f (i, j) else f (j, i), ?_, ?_⟩
+  · ext i j
+    simp only [Matrix.transpose_apply, Matrix.of_apply]
+    rcases lt_trichotomy i j with h | rfl | h
+    · simp [h.le, not_le.mpr h]
+    · simp
+    · simp [h.le, not_le.mpr h]
+  · rintro ⟨i, j⟩ hp
+    have hij : i ≤ j := (Finset.mem_filter.mp hp).2
+    simp [hij]
 
 /-- Voigt index permutation for swapping axes `x ↔ y`. -/
 def voigtSwap01 : Fin 6 → Fin 6 := ![1, 0, 2, 4, 3, 5]
@@ -1514,6 +1546,22 @@ lemma cubicVoigt_rotZ90 (c11 c12 c44 : ℝ) (i j : Fin 6) :
   fin_cases i <;> fin_cases j <;>
     simp [cubicVoigt, Matrix.of_apply, voigtRotZ90, voigtRotZ90Sign]
 
+/-- The cubic family consists of symmetric matrices. -/
+lemma cubicVoigt_transpose (c11 c12 c44 : ℝ) :
+    (cubicVoigt c11 c12 c44)ᵀ = cubicVoigt c11 c12 c44 := by
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [cubicVoigt]
+
+/-- The three cubic constants are independent: the family is injective in
+`(c11, c12, c44)`. -/
+lemma cubicVoigt_inj {c11 c12 c44 d11 d12 d44 : ℝ}
+    (h : cubicVoigt c11 c12 c44 = cubicVoigt d11 d12 d44) :
+    c11 = d11 ∧ c12 = d12 ∧ c44 = d44 := by
+  refine ⟨?_, ?_, ?_⟩
+  · simpa [cubicVoigt] using congrFun (congrFun h 0) 0
+  · simpa [cubicVoigt] using congrFun (congrFun h 0) 1
+  · simpa [cubicVoigt] using congrFun (congrFun h 3) 3
+
 /-- The isotropic (Lamé) Voigt family. -/
 def isotropicVoigt (lam mu : ℝ) : Matrix (Fin 6) (Fin 6) ℝ :=
   cubicVoigt (lam + 2 * mu) lam mu
@@ -1523,9 +1571,9 @@ lemma isotropicVoigt_isCubic (lam mu : ℝ) :
     isotropicVoigt lam mu = cubicVoigt (lam + 2 * mu) lam mu := rfl
 
 /-- The isotropic family satisfies the extra relation
-`(c11 - c12) = 2 * c44`. This relation is the consequence of full rotational
-invariance (a 45° rotation about `z` forces it); this module proves the
-reduction `3 → 2` given the relation. -/
+`(c11 - c12) = 2 * c44`. Conversely, `relation_of_voigtRotate_Rz45` derives
+this relation for a cubic matrix from invariance under the `45°` rotation about
+`z`. -/
 lemma isotropicVoigt_relation (lam mu : ℝ) :
     isotropicVoigt lam mu 0 0 - isotropicVoigt lam mu 0 1
       = 2 * isotropicVoigt lam mu 3 3 := by
@@ -1538,8 +1586,8 @@ lemma isotropicVoigt_relation (lam mu : ℝ) :
   rw [e11, e12, e44]
   ring
 
-/-- Converse: a cubic-family matrix satisfying `(c11 - c12) = 2 * c44` is
-isotropic. -/
+/-- Converse: a cubic-family matrix satisfying `(c11 - c12) = 2 * c44` lies in
+the Lamé family. -/
 lemma eq_isotropicVoigt_of_relation (c11 c12 c44 : ℝ)
     (h : c11 - c12 = 2 * c44) :
     cubicVoigt c11 c12 c44 = isotropicVoigt c12 c44 := by
@@ -1574,5 +1622,149 @@ lemma isotropicVoigt_rotZ90 (lam mu : ℝ) (i j : Fin 6) :
       isotropicVoigt lam mu (voigtRotZ90 i) (voigtRotZ90 j) := by
   rw [isotropicVoigt_isCubic]
   exact cubicVoigt_rotZ90 _ _ _ i j
+
+/-- The two Lamé constants are independent: the family is injective in
+`(lam, mu)`. -/
+lemma isotropicVoigt_inj {lam mu lam' mu' : ℝ}
+    (h : isotropicVoigt lam mu = isotropicVoigt lam' mu') : lam = lam' ∧ mu = mu' := by
+  rw [isotropicVoigt_isCubic, isotropicVoigt_isCubic] at h
+  obtain ⟨-, h12, h44⟩ := cubicVoigt_inj h
+  exact ⟨h12, h44⟩
+
+/-! ### The action of a `3 × 3` matrix on Voigt matrices -/
+
+/-- The Voigt index of the symmetric index pair `(i, j)`:
+`xx ↦ 0`, `yy ↦ 1`, `zz ↦ 2`, `yz ↦ 3`, `xz ↦ 4`, `xy ↦ 5`. -/
+def voigtIndex : Fin 3 → Fin 3 → Fin 6 := ![![0, 5, 4], ![5, 1, 3], ![4, 3, 2]]
+
+/-- The first index of the pair encoded by a Voigt index. -/
+def voigtFst : Fin 6 → Fin 3 := ![0, 1, 2, 1, 0, 0]
+
+/-- The second index of the pair encoded by a Voigt index. -/
+def voigtSnd : Fin 6 → Fin 3 := ![0, 1, 2, 2, 2, 1]
+
+/-- Encoding the pair of a Voigt index gives the index back. -/
+lemma voigtIndex_fst_snd (I : Fin 6) : voigtIndex (voigtFst I) (voigtSnd I) = I := by
+  fin_cases I <;> rfl
+
+/-- The action of a `3 × 3` matrix `R` on a Voigt stiffness matrix `C`. The
+matrix `C` encodes the rank-four elasticity tensor
+`c i j k l = C (voigtIndex i j) (voigtIndex k l)`, and the action is the tensor
+transformation `c' i j k l = ∑ R i a * R j b * R k c * R l d * c a b c d`,
+read back in Voigt form. Neumann invariance of a stiffness matrix `C` under a
+point-group element `R` is the equation `voigtRotate R C = C`. -/
+def voigtRotate (R : Matrix (Fin 3) (Fin 3) ℝ) (C : Matrix (Fin 6) (Fin 6) ℝ) :
+    Matrix (Fin 6) (Fin 6) ℝ :=
+  Matrix.of fun I J => ∑ a, ∑ b, ∑ c, ∑ d,
+    R (voigtFst I) a * R (voigtSnd I) b * R (voigtFst J) c * R (voigtSnd J) d *
+      C (voigtIndex a b) (voigtIndex c d)
+
+/-- The identity matrix acts trivially. -/
+lemma voigtRotate_one (C : Matrix (Fin 6) (Fin 6) ℝ) : voigtRotate 1 C = C := by
+  ext I J
+  simp only [voigtRotate, Matrix.of_apply, Matrix.one_apply, ite_mul, one_mul, zero_mul,
+    Finset.sum_ite_irrel, Finset.sum_const_zero, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+  rw [voigtIndex_fst_snd, voigtIndex_fst_snd]
+
+/-- The rotation by `45°` about the `z`-axis. -/
+noncomputable def Rz45 : Matrix (Fin 3) (Fin 3) ℝ :=
+  !![√2 / 2, -(√2 / 2), 0; √2 / 2, √2 / 2, 0; 0, 0, 1]
+
+/-- `cos² 45° = 1 / 2`. -/
+private lemma sqrt_two_half_mul_self : √2 / 2 * (√2 / 2) = (1 / 2 : ℝ) := by
+  have h : √2 * √2 = (2 : ℝ) := Real.mul_self_sqrt (by norm_num)
+  linear_combination h / 4
+
+/-- `Rz45` is orthogonal. -/
+lemma Rz45_orthogonal : Rz45ᵀ * Rz45 = 1 := by
+  have h := sqrt_two_half_mul_self
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [Rz45, Matrix.mul_apply, Matrix.transpose_apply, Fin.sum_univ_three] <;>
+    linarith [h]
+
+/-- `Rz45` has determinant one. -/
+lemma Rz45_det : Rz45.det = 1 := by
+  have h := sqrt_two_half_mul_self
+  simp [Rz45, Matrix.det_fin_three]
+  linarith [h]
+
+/-- `Rz45` squares to the quarter-turn `Rz90`. -/
+lemma Rz45_sq : Rz45 ^ 2 = Rz90 := by
+  have h := sqrt_two_half_mul_self
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [Rz45, Rz90, pow_two, Matrix.mul_apply, Fin.sum_univ_three] <;>
+    linarith [h]
+
+/-- The `xy` shear entry of a cubic matrix rotated by `45°` about `z` is
+`(c11 - c12) / 2`. -/
+lemma voigtRotate_Rz45_cubicVoigt_55 (c11 c12 c44 : ℝ) :
+    voigtRotate Rz45 (cubicVoigt c11 c12 c44) 5 5 = (c11 - c12) / 2 := by
+  have h := sqrt_two_half_mul_self
+  simp [voigtRotate, Rz45, cubicVoigt, voigtFst, voigtSnd, voigtIndex, Fin.sum_univ_three]
+  ring_nf
+  linear_combination (c11 - c12) / 2 * (√2 ^ 2 + 2) * h
+
+/-- Invariance of a cubic matrix under the `45°` rotation about `z` forces the
+isotropy relation `c11 - c12 = 2 * c44`. -/
+theorem relation_of_voigtRotate_Rz45 (c11 c12 c44 : ℝ)
+    (h : voigtRotate Rz45 (cubicVoigt c11 c12 c44) = cubicVoigt c11 c12 c44) :
+    c11 - c12 = 2 * c44 := by
+  have e := congrArg (fun M : Matrix (Fin 6) (Fin 6) ℝ => M 5 5) h
+  have e55 : cubicVoigt c11 c12 c44 5 5 = c44 := by simp [cubicVoigt]
+  simp only [voigtRotate_Rz45_cubicVoigt_55, e55] at e
+  linarith
+
+/-- A symmetric Voigt matrix invariant under the axis swaps and the `z`
+quarter-turn (as in `eq_cubicVoigt_of_voigtInvariance`) and under the `45°`
+rotation about `z` lies in the 2-parameter Lamé family. -/
+theorem eq_isotropicVoigt_of_rotationInvariance (C : Matrix (Fin 6) (Fin 6) ℝ)
+    (hsymm : Cᵀ = C)
+    (h01 : ∀ i j, C i j = C (voigtSwap01 i) (voigtSwap01 j))
+    (h02 : ∀ i j, C i j = C (voigtSwap02 i) (voigtSwap02 j))
+    (h12 : ∀ i j, C i j = C (voigtSwap12 i) (voigtSwap12 j))
+    (hrot : ∀ i j, C i j =
+      voigtRotZ90Sign i * voigtRotZ90Sign j * C (voigtRotZ90 i) (voigtRotZ90 j))
+    (h45 : voigtRotate Rz45 C = C) :
+    C = isotropicVoigt (C 0 1) (C 3 3) := by
+  have hC := eq_cubicVoigt_of_voigtInvariance C hsymm h01 h02 h12 hrot
+  rw [hC] at h45
+  calc C = cubicVoigt (C 0 0) (C 0 1) (C 3 3) := hC
+    _ = isotropicVoigt (C 0 1) (C 3 3) :=
+      eq_isotropicVoigt_of_relation _ _ _ (relation_of_voigtRotate_Rz45 _ _ _ h45)
+
+/-- The Lamé family in tensor form:
+`c a b c d = lam * δ a b * δ c d + mu * (δ a c * δ b d + δ a d * δ b c)`. -/
+lemma isotropicVoigt_voigtIndex (lam mu : ℝ) (a b c d : Fin 3) :
+    isotropicVoigt lam mu (voigtIndex a b) (voigtIndex c d) =
+      lam * (1 : Matrix (Fin 3) (Fin 3) ℝ) a b * (1 : Matrix (Fin 3) (Fin 3) ℝ) c d +
+      mu * ((1 : Matrix (Fin 3) (Fin 3) ℝ) a c * (1 : Matrix (Fin 3) (Fin 3) ℝ) b d +
+        (1 : Matrix (Fin 3) (Fin 3) ℝ) a d * (1 : Matrix (Fin 3) (Fin 3) ℝ) b c) := by
+  fin_cases a <;> fin_cases b <;> fin_cases c <;> fin_cases d <;>
+    simp [isotropicVoigt, cubicVoigt, voigtIndex] <;> ring
+
+/-- The rotated Lamé tensor, written through the Gram matrix `R * Rᵀ`. -/
+private lemma sum_rotate_lame (R : Matrix (Fin 3) (Fin 3) ℝ) (lam mu : ℝ)
+    (i j k l : Fin 3) :
+    ∑ a, ∑ b, ∑ c, ∑ d, R i a * R j b * R k c * R l d *
+      (lam * (1 : Matrix (Fin 3) (Fin 3) ℝ) a b * (1 : Matrix (Fin 3) (Fin 3) ℝ) c d +
+        mu * ((1 : Matrix (Fin 3) (Fin 3) ℝ) a c * (1 : Matrix (Fin 3) (Fin 3) ℝ) b d +
+          (1 : Matrix (Fin 3) (Fin 3) ℝ) a d * (1 : Matrix (Fin 3) (Fin 3) ℝ) b c)) =
+      lam * (R * Rᵀ) i j * (R * Rᵀ) k l +
+        mu * ((R * Rᵀ) i k * (R * Rᵀ) j l + (R * Rᵀ) i l * (R * Rᵀ) j k) := by
+  simp only [Matrix.mul_apply, Matrix.transpose_apply, Fin.sum_univ_three, Matrix.one_apply,
+    Fin.reduceEq, ite_true, ite_false]
+  ring
+
+/-- The Lamé family is invariant under every orthogonal matrix, so its members
+are isotropic. -/
+theorem voigtRotate_isotropicVoigt (R : Matrix (Fin 3) (Fin 3) ℝ) (horth : Rᵀ * R = 1)
+    (lam mu : ℝ) : voigtRotate R (isotropicVoigt lam mu) = isotropicVoigt lam mu := by
+  have hR : R * Rᵀ = 1 := (Matrix.mul_eq_one_comm_of_card_eq (Fin 3) (Fin 3) ℝ rfl).mp horth
+  ext I J
+  simp only [voigtRotate, Matrix.of_apply, isotropicVoigt_voigtIndex]
+  rw [sum_rotate_lame, hR, ← isotropicVoigt_voigtIndex, voigtIndex_fst_snd,
+    voigtIndex_fst_snd]
 
 end Crystallography.Symmetry
