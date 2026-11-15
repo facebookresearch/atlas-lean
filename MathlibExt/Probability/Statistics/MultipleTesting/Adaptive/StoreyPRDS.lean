@@ -40,9 +40,9 @@ on which Storey-BH with `q = 1/5`, `lam = 2/5` has `FDR = 6/25 > 1/5`. There
 * *Pointwise comparison*: since `π̂₀(lam) ≥ 1 / ((1 - lam) m)`, the `K`-th threshold is at most
   `q (1 - lam) K`, so the contribution `1{i ∈ R} / |R|` of a true null `i` is at most
   `1{p i ≤ c K} / K` with `c = q (1 - lam)`.
-* *PRDS dependency control* (`integral_sum_indicator_le_of_isPRDSOn`): for a valid true null `i`
-  of a PRDS vector and any measurable nonincreasing `κ`, `E[1{p i ≤ c κ(P)} / κ(P)] ≤ c`. This is
-  the Benjamini–Yekutieli telescoping argument, for a general count `κ` in place of the
+* *PRDS dependency control* (`integral_indicator_le_of_isPRDSOn`): for a valid true null `i` of a
+  PRDS vector and any measurable nonincreasing `κ ≤ m`, `E[1{p i ≤ c κ(P), κ(P) ≥ 1} / κ(P)] ≤ c`.
+  This is the Benjamini–Yekutieli telescoping argument, for a general count `κ` in place of the
   leave-one-out BH index.
 
 The `+ 1` in `π̂₀` is what bounds the adaptive factor `1 / π̂₀ ≤ (1 - lam) m`; the cap at `lam`
@@ -54,7 +54,7 @@ is not used. The estimator property `∑_{i ∈ H0} E[1 / π̂₀⁽ⁱ⁾] ≤ 
 
 * `storeyPi0Plus1_mono`, `storeyPi0Plus1_pos`, `storeyThreshold_antitone`,
   `storeyBHIndex_antitone`, `measurable_storeyBHIndex`.
-* `integral_sum_indicator_le_of_isPRDSOn`: PRDS dependency control for a nonincreasing count.
+* `integral_indicator_le_of_isPRDSOn`: PRDS dependency control for a nonincreasing count.
 * `integral_falseDiscoveryProportion_storeyBHRejections_le_of_isPRDSOn`:
   `E[FDP] ≤ q (1 - lam) |H0|` under PRDS.
 
@@ -162,15 +162,10 @@ private theorem sum_Icc_sub_le_of_le_succ' {u : ℕ → ℕ → ℝ} (hu : ∀ k
     rw [Finset.sum_Icc_succ_top (by omega), Nat.add_sub_cancel]
     linarith [hu n]
 
-/-- **PRDS dependency control for a nonincreasing count** (Benjamini–Yekutieli 2001, proof of
-Theorem 1.2; Blanchard–Roquain 2008, Lemma 3.2). Let `p` be PRDS on `H0`, let `i ∈ H0` have a
-valid p-value, and let `κ` be a measurable function of the p-value vector that is nonincreasing
-coordinatewise. Then for every `c ≥ 0`,
-`E[1{p i ≤ c κ(P), κ(P) ≥ 1} / κ(P)] ≤ c`, written as a sum over the values `k ∈ [1, m]` of
-`κ(P)`. With `ρ_j(t) = P(κ(P) ≤ j | p i ≤ t)`, nondecreasing in `t` by PRDS, the left side is
-at most `c ∑_k (ρ_k(c k) - ρ_{k-1}(c k)) ≤ c ρ_m(c m) ≤ c`. -/
-theorem integral_sum_indicator_le_of_isPRDSOn {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
-    [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i))
+/-- Truncated form of `integral_indicator_le_of_isPRDSOn`: the contribution of the values
+`k ∈ [1, m]` of `κ(P)`, with no bound on `κ` assumed. -/
+private theorem integral_sum_Icc_indicator_le_of_isPRDSOn {Ω : Type*} [MeasurableSpace Ω]
+    (μ : Measure Ω) [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i))
     {H0 : Finset (Fin m)} (hprds : IsPRDSOn μ p H0) {i : Fin m} (hi : i ∈ H0)
     (hnull : IsValidPValue μ (p i)) {κ : (Fin m → ℝ) → ℕ} (hκ : Measurable κ)
     (hanti : Antitone κ) {c : ℝ} (hc : 0 ≤ c) :
@@ -276,6 +271,44 @@ theorem integral_sum_indicator_le_of_isPRDSOn {Ω : Type*} [MeasurableSpace Ω] 
       linarith
     _ = c := mul_one _
 
+/-- On `κ ≤ m`, the indicator `1{X ≤ c K, K ≥ 1} / K` is the sum over the values `k ∈ [1, m]`
+of `K`. -/
+private theorem indicator_eq_sum_Icc {Ω : Type*} (X : Ω → ℝ) (K : Ω → ℕ) (c : ℝ) {ω : Ω}
+    (hK : K ω ≤ m) :
+    {ω | X ω ≤ c * K ω ∧ 1 ≤ K ω}.indicator (fun ω => 1 / (K ω : ℝ)) ω =
+      ∑ k ∈ Finset.Icc 1 m, {ω | X ω ≤ c * k ∧ K ω = k}.indicator (fun _ => 1 / (k : ℝ)) ω := by
+  rcases Nat.eq_zero_or_pos (K ω) with h0 | hpos
+  · rw [Set.indicator_of_notMem (by simp [h0])]
+    refine (Finset.sum_eq_zero fun k hk => Set.indicator_of_notMem ?_ _).symm
+    have := (Finset.mem_Icc.mp hk).1
+    simp only [Set.mem_ofPred_eq, h0]
+    omega
+  · rw [Finset.sum_eq_single (K ω)]
+    · simp only [Set.indicator_apply, Set.mem_ofPred_eq, and_true]
+      simp [Nat.one_le_iff_ne_zero.mpr hpos.ne']
+    · intro k _ hk
+      exact Set.indicator_of_notMem (fun h => hk h.2.symm) _
+    · intro h
+      exact absurd (Finset.mem_Icc.mpr ⟨hpos, hK⟩) h
+
+/-- **PRDS dependency control for a nonincreasing count** (Benjamini–Yekutieli 2001, proof of
+Theorem 1.2; Blanchard–Roquain 2008, Lemma 3.2). Let `p` be PRDS on `H0`, let `i ∈ H0` have a
+valid p-value, and let `κ` be a measurable function of the p-value vector that is nonincreasing
+coordinatewise and at most `m`. Then for every `c ≥ 0`,
+`E[1{p i ≤ c κ(P), κ(P) ≥ 1} / κ(P)] ≤ c`. With `ρ_j(t) = P(κ(P) ≤ j | p i ≤ t)`, nondecreasing
+in `t` by PRDS, the left side is at most `c ∑_{k ∈ [1, m]} (ρ_k(c k) - ρ_{k-1}(c k)) ≤
+c ρ_m(c m) ≤ c`. -/
+theorem integral_indicator_le_of_isPRDSOn {Ω : Type*} [MeasurableSpace Ω] (μ : Measure Ω)
+    [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ) (hp : ∀ i, Measurable (p i))
+    {H0 : Finset (Fin m)} (hprds : IsPRDSOn μ p H0) {i : Fin m} (hi : i ∈ H0)
+    (hnull : IsValidPValue μ (p i)) {κ : (Fin m → ℝ) → ℕ} (hκ : Measurable κ)
+    (hanti : Antitone κ) (hκm : ∀ x, κ x ≤ m) {c : ℝ} (hc : 0 ≤ c) :
+    ∫ ω, {ω | p i ω ≤ c * κ (fun j => p j ω) ∧ 1 ≤ κ (fun j => p j ω)}.indicator
+      (fun ω => 1 / (κ (fun j => p j ω) : ℝ)) ω ∂μ ≤ c := by
+  refine (integral_congr_ae (Filter.Eventually.of_forall fun ω =>
+    indicator_eq_sum_Icc (p i) (fun ω => κ (fun j => p j ω)) c (hκm _))).trans_le ?_
+  exact integral_sum_Icc_indicator_le_of_isPRDSOn μ p hp hprds hi hnull hκ hanti hc
+
 /-! ### FDR of Storey-BH under PRDS -/
 
 /-- **Storey-BH under PRDS: `E[FDP] ≤ q (1 - lam) |H0|`.** Let `H0` be the set of true nulls and
@@ -294,7 +327,7 @@ FDR is `6/25 = q (1 - lam) |H0| > q` (test file). Independent p-values are PRDS
 
 Proof: the number `K` of rejections is nonincreasing in the p-values
 (`storeyBHIndex_antitone`), and since `π̂₀ ≥ 1 / ((1 - lam) m)`, a rejected true null has
-`p i ≤ q (1 - lam) K`; PRDS dependency control (`integral_sum_indicator_le_of_isPRDSOn`) bounds
+`p i ≤ q (1 - lam) K`; PRDS dependency control (`integral_indicator_le_of_isPRDSOn`) bounds
 each null's expected contribution by `q (1 - lam)`. -/
 theorem integral_falseDiscoveryProportion_storeyBHRejections_le_of_isPRDSOn {Ω : Type*}
     [MeasurableSpace Ω] (μ : Measure Ω) [IsProbabilityMeasure μ] (p : Fin m → Ω → ℝ)
@@ -305,24 +338,26 @@ theorem integral_falseDiscoveryProportion_storeyBHRejections_le_of_isPRDSOn {Ω 
   classical
   have hc : 0 ≤ q * (1 - lam) := mul_nonneg hq (by linarith)
   have hP : Measurable (fun ω j => p j ω) := Measurable.of_eval hp
-  let g : Fin m → Ω → ℝ := fun i ω => ∑ k ∈ Finset.Icc 1 m,
-    {ω | p i ω ≤ q * (1 - lam) * k ∧ storeyBHIndex q lam (fun j => p j ω) = k}.indicator
-      (fun _ => 1 / (k : ℝ)) ω
-  have hg_int (i : Fin m) : Integrable (g i) μ :=
-    integrable_finsetSum _ fun k _ => (integrable_const _).indicator
+  let K : Ω → ℕ := fun ω => storeyBHIndex q lam (fun j => p j ω)
+  let g : Fin m → Ω → ℝ := fun i ω =>
+    {ω | p i ω ≤ q * (1 - lam) * K ω ∧ 1 ≤ K ω}.indicator (fun ω => 1 / (K ω : ℝ)) ω
+  have hg_int (i : Fin m) : Integrable (g i) μ := by
+    have hg : g i = fun ω => ∑ k ∈ Finset.Icc 1 m,
+        {ω | p i ω ≤ q * (1 - lam) * k ∧ K ω = k}.indicator (fun _ => 1 / (k : ℝ)) ω :=
+      funext fun ω => indicator_eq_sum_Icc (p i) K _ (storeyBHIndex_le q lam _)
+    rw [hg]
+    exact integrable_finsetSum _ fun k _ => (integrable_const _).indicator
       ((measurableSet_le (hp i) measurable_const).inter
         (measurableSet_eq_fun ((measurable_storeyBHIndex q lam).comp hP) measurable_const))
   have hpt (ω : Ω) (i : Fin m) :
       (if i ∈ storeyBHRejections q lam (fun j => p j ω) then
         1 / max ((storeyBHRejections q lam (fun j => p j ω)).card : ℝ) 1 else 0) ≤ g i ω := by
-    have hnn : 0 ≤ g i ω :=
-      Finset.sum_nonneg fun k _ => Set.indicator_nonneg (fun _ _ => by positivity) _
+    have hnn : 0 ≤ g i ω := Set.indicator_nonneg (fun _ _ => by positivity) _
     split_ifs with hi
     · have hm : m ≠ 0 := by have := i.isLt; omega
       have hcard := card_storeyBHRejections hq hlam1.le (fun j => p j ω)
       have hK1 : 1 ≤ storeyBHIndex q lam (fun j => p j ω) :=
         hcard ▸ Finset.card_pos.mpr ⟨i, hi⟩
-      have hKm := storeyBHIndex_le q lam (fun j => p j ω)
       have hpi : p i ω ≤ q * (1 - lam) * storeyBHIndex q lam (fun j => p j ω) := by
         have h := mem_storeyBHRejections.mp hi
         rw [storeyThreshold_eq hm] at h
@@ -331,15 +366,8 @@ theorem integral_falseDiscoveryProportion_storeyBHRejections_le_of_isPRDSOn {Ω 
         have : (0 : ℝ) ≤ (Finset.univ.filter fun j => lam < p j ω).card := Nat.cast_nonneg _
         linarith
       rw [hcard, max_eq_left (by exact_mod_cast hK1)]
-      simp only [g]
-      rw [Finset.sum_eq_single (storeyBHIndex q lam (fun j => p j ω))]
-      · rw [Set.indicator_of_mem]
-        exact ⟨hpi, rfl⟩
-      · intro k _ hk
-        rw [Set.indicator_of_notMem]
-        exact fun h => hk h.2.symm
-      · intro h
-        exact absurd (Finset.mem_Icc.mpr ⟨hK1, hKm⟩) h
+      exact (Set.indicator_of_mem (s := {ω | p i ω ≤ q * (1 - lam) * K ω ∧ 1 ≤ K ω})
+        (show ω ∈ _ from ⟨hpi, hK1⟩) (fun ω => 1 / (K ω : ℝ))).ge
     · exact hnn
   calc ∫ ω, falseDiscoveryProportion H0 (storeyBHRejections q lam fun i => p i ω) ∂μ
       = ∫ ω, ∑ i ∈ H0, (if i ∈ storeyBHRejections q lam (fun j => p j ω) then
@@ -352,8 +380,9 @@ theorem integral_falseDiscoveryProportion_storeyBHRejections_le_of_isPRDSOn {Ω 
         exact Finset.sum_nonneg fun i _ => by split_ifs <;> positivity
     _ = ∑ i ∈ H0, ∫ ω, g i ω ∂μ := integral_finsetSum _ fun i _ => hg_int i
     _ ≤ ∑ _i ∈ H0, q * (1 - lam) := Finset.sum_le_sum fun i hi =>
-        integral_sum_indicator_le_of_isPRDSOn μ p hp hprds hi (hnull i hi)
-          (measurable_storeyBHIndex q lam) (storeyBHIndex_antitone hq hlam1) hc
+        integral_indicator_le_of_isPRDSOn μ p hp hprds hi (hnull i hi)
+          (measurable_storeyBHIndex q lam) (storeyBHIndex_antitone hq hlam1)
+          (storeyBHIndex_le q lam) hc
     _ = q * (1 - lam) * H0.card := by rw [Finset.sum_const, nsmul_eq_mul]; ring
 
 end MathlibExt.Probability.Statistics.MultipleTesting
