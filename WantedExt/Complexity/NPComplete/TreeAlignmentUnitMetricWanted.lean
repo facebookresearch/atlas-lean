@@ -42,13 +42,13 @@ a column of the induced multiple alignment in which every leaf has a gap can be 
 raising the cost, so some optimal labelling has internal labels no longer than the total length
 of the leaf labels.
 
-Representation: the alphabet is `Σ = {0, ..., |Σ| - 1}` and strings are lists of letters. The
-tree has vertices `0, ..., n - 1` with `n = p.length + 1`, root `0`, and is given by a parent
-list `p`: vertex `v + 1` is a child of vertex `p[v] ≤ v`. Every rooted tree has such a list
-(number its vertices in breadth-first order from the root), and every such list is a rooted
-tree. The phylogeny is binary, as in Elias's formulation (`k` leaves and `k - 1` internal
-labels): every vertex has no child (a leaf) or exactly two children. The leaf labelling is a
-list of (vertex, string) pairs naming every leaf exactly once.
+Representation: the alphabet is `Σ = {0, ..., |Σ| - 1}` with `|Σ| ≥ 2`, and strings are lists
+of letters. The tree has vertices `0, ..., n - 1` with `n = p.length + 1`, root `0`, and is
+given by a parent list `p`: vertex `v + 1` is a child of vertex `p[v] ≤ v`. Every rooted tree
+has such a list (number its vertices in breadth-first order from the root), and every such list
+is a rooted tree. The phylogeny is binary, as in Elias's formulation (`k` leaves and `k - 1`
+internal labels): every vertex has no child (a leaf) or exactly two children. The leaf
+labelling is a list of (vertex, string) pairs naming every leaf exactly once.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -71,12 +71,13 @@ abbrev numVertices (i : TreeAlignmentUnitMetricInstance) : ℕ := i.2.1.length +
 /-- The number of children of vertex `v`. -/
 def children (i : TreeAlignmentUnitMetricInstance) (v : ℕ) : ℕ := i.2.1.count v
 
-/-- Well-formedness of an instance: the parent of vertex `v + 1` is at most `v` (so the parent
-list is a rooted tree), every vertex has zero or two children (a binary phylogeny), the leaf
+/-- Well-formedness of an instance: the alphabet has at least two letters (the source's binary or
+larger alphabets), the parent of vertex `v + 1` is at most `v` (so the parent list is a rooted
+tree), every vertex has zero or two children (a binary phylogeny), the leaf
 labels name distinct vertices, a vertex is named iff it is a leaf (has no children), and the
 labels are strings over `Σ`. -/
 def WellFormed (i : TreeAlignmentUnitMetricInstance) : Prop :=
-  (∀ v : Fin i.2.1.length, i.2.1.get v ≤ (v : ℕ)) ∧
+  2 ≤ i.1 ∧ (∀ v : Fin i.2.1.length, i.2.1.get v ≤ (v : ℕ)) ∧
     (∀ v < numVertices i, children i v = 0 ∨ children i v = 2) ∧
     (i.2.2.1.map Prod.fst).Nodup ∧
     (∀ v < numVertices i, v ∈ i.2.2.1.map Prod.fst ↔ children i v = 0) ∧
