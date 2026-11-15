@@ -52,7 +52,7 @@ The sizes are a list, as in the proved PARTITION of
 elements of `A` are the positions `0, …, |A| - 1`. `a₀` is a position and `S` a list of
 positions (a repeated position denotes the same element). `A'` is a set of positions; an
 element `a` is on the same side as `a₀` when `a ∈ A' ↔ a₀ ∈ A'`. The sizes use the canonical
-binary encoding: the problem is NP-complete in the ordinary (weak) sense.
+binary encoding.
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
