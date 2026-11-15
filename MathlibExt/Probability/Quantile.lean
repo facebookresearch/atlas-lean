@@ -197,4 +197,18 @@ theorem map_cdfQuantile_restrict_Icc (μ : Measure ℝ) [IsProbabilityMeasure μ
     rw [hset, Real.volume_Ioo, ← hc, hceq]
     norm_num
 
+/-- The quantile inverts a strictly increasing cdf at every point: strict monotonicity keeps
+every cdf value inside `(0, 1)`. -/
+theorem cdfQuantile_cdf_of_strictMono (μ : Measure ℝ) [IsProbabilityMeasure μ]
+    (hs : StrictMono (cdf μ)) (x : ℝ) :
+    cdfQuantile μ (cdf μ x) = x := by
+  have hx : cdf μ x ∈ Set.Ioo (0 : ℝ) 1 :=
+    ⟨(cdf_nonneg μ (x - 1)).trans_lt (hs (sub_one_lt x)),
+      (hs (lt_add_one x)).trans_le (cdf_le_one μ (x + 1))⟩
+  apply le_antisymm
+  · exact (cdfQuantile_le_iff μ hx).mpr le_rfl
+  · by_contra h
+    have hlt : cdfQuantile μ (cdf μ x) < x := lt_of_not_ge h
+    exact (not_lt_of_ge (cdfQuantile_mem μ hx)) (hs hlt)
+
 end ProbabilityTheory
