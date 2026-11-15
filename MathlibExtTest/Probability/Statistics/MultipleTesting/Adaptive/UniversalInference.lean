@@ -14,6 +14,7 @@ public import MathlibExt.Probability.Statistics.MultipleTesting.Adaptive.Univers
 
 open MeasureTheory MathlibExt.Probability.Statistics.MultipleTesting
   MathlibExt.Probability.Statistics.MultipleTesting.UniversalInference
+open MathlibExt.Probability.Statistics.FisherInformation (lawOf)
 
 namespace MathlibExtTest.Probability.Statistics.MultipleTesting.UniversalInference
 
@@ -53,7 +54,7 @@ def thetaHat0 (b : Bool) : Fin 3 := if b then 1 else 0
 
 /-- The joint law of `(D₀, D₁)`: `D₀ ~ Bern(par a)` and `D₁ ~ Bern(par b)`, independent. -/
 noncomputable def P (a b : Fin 3) : Measure (Bool × Bool) :=
-  (modelLaw ref bern a).prod (modelLaw ref bern b)
+  (lawOf ref bern a).prod (lawOf ref bern b)
 
 /-- The split LRT of the example. -/
 noncomputable def T : Bool × Bool → ℝ := splitLRT bern thetaHat1 thetaHat0
@@ -79,9 +80,9 @@ theorem zero_mem_nullSet : (0 : Fin 3) ∈ nullSet := by simp [nullSet]
 
 theorem two_not_mem_nullSet : (2 : Fin 3) ∉ nullSet := by simp [nullSet]
 
-instance (θ : Fin 3) : IsProbabilityMeasure (modelLaw ref bern θ) := by
+instance (θ : Fin 3) : IsProbabilityMeasure (lawOf ref bern θ) := by
   constructor
-  rw [modelLaw, withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ, lintegral_bern]
+  rw [lawOf, withDensity_apply _ MeasurableSet.univ, Measure.restrict_univ, lintegral_bern]
 
 theorem T_values :
     T (true, true) = 3 / 2 ∧ T (true, false) = 1 / 2 ∧ T (false, true) = 1 / 3 ∧
@@ -94,10 +95,10 @@ theorem T_nonneg (z : Bool × Bool) : 0 ≤ T z := by
 
 /-! ### Integrals over the finite model, from the definitions -/
 
-theorem lintegral_modelLaw (θ : Fin 3) (g : Bool → ENNReal) :
-    ∫⁻ b, g b ∂modelLaw ref bern θ =
+theorem lintegral_lawOf (θ : Fin 3) (g : Bool → ENNReal) :
+    ∫⁻ b, g b ∂lawOf ref bern θ =
       ENNReal.ofReal (bern θ true) * g true + ENNReal.ofReal (bern θ false) * g false := by
-  rw [modelLaw, lintegral_withDensity_eq_lintegral_mul _ (measurable_of_countable _)
+  rw [lawOf, lintegral_withDensity_eq_lintegral_mul _ (measurable_of_countable _)
     (measurable_of_countable _), lintegral_ref]
   rfl
 
@@ -108,7 +109,7 @@ theorem lintegral_P (a b : Fin 3) (f : Bool × Bool → ENNReal) :
         ENNReal.ofReal (bern a false) * ENNReal.ofReal (bern b true) * f (false, true) +
         ENNReal.ofReal (bern a false) * ENNReal.ofReal (bern b false) * f (false, false) := by
   rw [P, lintegral_prod _ (measurable_of_countable f).aemeasurable]
-  simp only [lintegral_modelLaw]
+  simp only [lintegral_lawOf]
   ring
 
 theorem lintegral_P_ofReal (a b : Fin 3) (g : Bool × Bool → ℝ) (hg : ∀ z, 0 ≤ g z) :
@@ -164,14 +165,14 @@ under the null parameter `1/2` is `5/4`. -/
 noncomputable def naiveLR (b : Bool) : ℝ := bern (thetaHat1 b) b / bern (thetaHat0 b) b
 
 theorem lintegral_naiveLR :
-    ∫⁻ b, ENNReal.ofReal (naiveLR b) ∂modelLaw ref bern 1 = ENNReal.ofReal (5 / 4) := by
-  rw [lintegral_modelLaw, ← ENNReal.ofReal_mul (bern_nonneg _ _),
+    ∫⁻ b, ENNReal.ofReal (naiveLR b) ∂lawOf ref bern 1 = ENNReal.ofReal (5 / 4) := by
+  rw [lintegral_lawOf, ← ENNReal.ofReal_mul (bern_nonneg _ _),
     ← ENNReal.ofReal_mul (bern_nonneg _ _), ← ENNReal.ofReal_add]
   · norm_num [naiveLR, bern, par, thetaHat1, thetaHat0]
   · exact mul_nonneg (bern_nonneg _ _) (by norm_num [naiveLR, bern, par, thetaHat1, thetaHat0])
   · exact mul_nonneg (bern_nonneg _ _) (by norm_num [naiveLR, bern, par, thetaHat1, thetaHat0])
 
-theorem not_isEValue_naiveLR : ¬ IsEValue (modelLaw ref bern 1) naiveLR := by
+theorem not_isEValue_naiveLR : ¬ IsEValue (lawOf ref bern 1) naiveLR := by
   intro h
   have h1 := h.lintegral_le_one
   rw [lintegral_naiveLR, ENNReal.ofReal_le_one] at h1
