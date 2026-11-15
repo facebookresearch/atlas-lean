@@ -22,15 +22,15 @@ module
 public import Batteries.Util.ProofWanted
 public import CSLibExt.Computability.CookLevin
 public import CSLibExt.Computability.Complexity.Karp.Color
-public import Mathlib.Combinatorics.SimpleGraph.CompleteMultipartite
-public import Mathlib.Combinatorics.SimpleGraph.Maps
 public import MathlibExt.Computability.BinaryNatEncoding
 public import MathlibExt.Computability.Complexity
-public import WantedExt.Complexity.NPComplete.ClusterDeletionWanted
+public import WantedExt.Complexity.NPComplete.PolarityTriangleFreeWanted
 
 @[expose] public section
 
 namespace MetaMathlibExt.Complexity.NPComplete.PolarGraphRecognition
+
+open MetaMathlibExt.Complexity.NPComplete.PolarityTriangleFree (IsPolar)
 
 /-!
 # POLAR GRAPH RECOGNITION is NP-complete
@@ -48,11 +48,12 @@ Le and Nevries prove it NP-complete already on small subclasses (for instance
 `{2K₂, C₅}`-free co-planar graphs), which implies the general case. Membership in NP: the
 partition is a certificate checked over all triples of vertices.
 
-`IsPolar G` takes a set `A` and its complement `Aᶜ` (either may be empty). `A` induces (Mathlib's
-`G.induce A`) a complete multipartite graph, Mathlib's `SimpleGraph.IsCompleteMultipartite`
-(non-adjacency is transitive); `Aᶜ` induces a cluster graph (every connected component
-complete), the predicate `ClusterDeletion.IsClusterGraph` of `ClusterDeletionWanted`, which the
-merged monopolar statements also use for this part. The graph is given by an edge list on
+Polarity is `PolarityTriangleFree.IsPolar` of `PolarityTriangleFreeWanted`, reused here: it takes
+a set `A` and its complement `Aᶜ` (either may be empty). `A` induces (Mathlib's `G.induce A`) a
+complete multipartite graph, Mathlib's `SimpleGraph.IsCompleteMultipartite` (non-adjacency is
+transitive); `Aᶜ` induces a cluster graph (every connected component complete), the predicate
+`ClusterDeletion.IsClusterGraph` of `ClusterDeletionWanted`, which the merged monopolar
+statements also use for this part. The graph is given by an edge list on
 `Fin n` as in the other graph statements of this directory (`Cslib.Complexity.Karp.edgeGraph`).
 
 Encoding: the instance is decoded from a bitstring with the repository's
@@ -77,12 +78,6 @@ def Graph (i : PolarGraphRecognitionInstance) : SimpleGraph (Fin i.1) :=
 duplicate edges in either orientation, no self-loops, endpoints in range). -/
 def WellFormed (i : PolarGraphRecognitionInstance) : Prop :=
   i.2.Nodup ∧ ∀ e ∈ i.2, e.1 < i.1 ∧ e.2 < i.1 ∧ e.1 ≠ e.2 ∧ (e.2, e.1) ∉ i.2
-
-/-- `G` is polar: its vertex set splits into a set `A` inducing a complete multipartite graph
-and the rest `Aᶜ` inducing a disjoint union of cliques. -/
-def IsPolar {n : ℕ} (G : SimpleGraph (Fin n)) : Prop :=
-  ∃ A : Set (Fin n), (G.induce A).IsCompleteMultipartite ∧
-    ClusterDeletion.IsClusterGraph (G.induce Aᶜ)
 
 /-- The graph of the instance is polar. -/
 def PolarGraphRecognitionFeasible (i : PolarGraphRecognitionInstance) : Prop :=
