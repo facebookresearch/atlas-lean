@@ -191,4 +191,35 @@ theorem measureReal_zTestReject_quantile {n : ℕ} (hn : 0 < n) {v : NNReal} (hv
   rw [h, cdf_cdfQuantile_eq_of_continuous _ (continuous_cdf_gaussianReal 0 one_ne_zero) hu,
     sub_sub_cancel]
 
+/-- Level `α` of the one-sided z test over the composite null `μ ≤ μ0`: with the cutoff
+`z₁₋α = Φ⁻¹(1 - α)`, the rejection probability under any true mean `μ ≤ μ0` is at most `α`. -/
+theorem measureReal_zTestReject_le_of_le {n : ℕ} (hn : 0 < n) {v : NNReal} (hv : v ≠ 0)
+    {μ μ0 α : ℝ} (hμ : μ ≤ μ0) (hα : α ∈ Set.Ioo 0 1) :
+    (Measure.pi fun _ : Fin n => gaussianReal μ v).real
+      (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α))) ≤ α := by
+  have h := measureReal_zTestReject_eq_cdf hn μ0 (μ - μ0)
+    (cdfQuantile (gaussianReal 0 1) (1 - α)) hv
+  rw [add_sub_cancel] at h
+  have h0 := measureReal_zTestReject_eq_cdf hn μ0 0
+    (cdfQuantile (gaussianReal 0 1) (1 - α)) hv
+  simp only [add_zero, mul_zero, zero_div, zero_sub] at h0
+  have hle : Real.sqrt (n : ℝ) * (μ - μ0) / Real.sqrt (v : ℝ)
+      - cdfQuantile (gaussianReal 0 1) (1 - α)
+      ≤ -cdfQuantile (gaussianReal 0 1) (1 - α) := by
+    have hnonpos : Real.sqrt (n : ℝ) * (μ - μ0) / Real.sqrt (v : ℝ) ≤ 0 :=
+      div_nonpos_of_nonpos_of_nonneg
+        (mul_nonpos_of_nonneg_of_nonpos (Real.sqrt_nonneg _)
+          (sub_nonpos.mpr hμ))
+        (Real.sqrt_nonneg _)
+    linarith
+  calc (Measure.pi fun _ : Fin n => gaussianReal μ v).real
+          (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α)))
+      = cdf (gaussianReal 0 1) (Real.sqrt (n : ℝ) * (μ - μ0) / Real.sqrt (v : ℝ)
+          - cdfQuantile (gaussianReal 0 1) (1 - α)) := h
+    _ ≤ cdf (gaussianReal 0 1) (-cdfQuantile (gaussianReal 0 1) (1 - α)) :=
+        monotone_cdf (gaussianReal 0 1) hle
+    _ = (Measure.pi fun _ : Fin n => gaussianReal μ0 v).real
+          (zTestReject n μ0 v (cdfQuantile (gaussianReal 0 1) (1 - α))) := h0.symm
+    _ = α := measureReal_zTestReject_quantile hn hv μ0 hα
+
 end MathlibExt.Probability.Statistics.Experiment
