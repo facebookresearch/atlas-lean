@@ -56,8 +56,8 @@ constant to every due date and subtracting it from `y` changes nothing). The bou
 integer, encoded as a pair `(y⁺, y⁻)` of naturals representing `y⁺ - y⁻`, as in
 `WantedExt.Complexity.NPComplete.TwoProcessorFlowShopMaximumLatenessWanted`; `Cᵢ - dᵢ ≤ y` is
 stated over `ℕ` as `Cᵢ + y⁻ ≤ dᵢ + y⁺`, so start times at most `maxᵢ dᵢ + y⁺` form a
-certificate of polynomial size. Binary encoding of all numbers (the problem is NP-complete in
-the strong sense).
+certificate of polynomial size. There is at least one task, so that `L_max` is defined. Binary
+encoding of all numbers (the problem is NP-complete in the strong sense).
 
 Encoding: the instance is decoded from a bitstring with the repository's
 canonical `MetaMathlibExt.BitstringEncoding`. Undecodable bitstrings, and
@@ -75,10 +75,11 @@ time, its list of required processors and its due date, and the bound `y` as a p
 `(y⁺, y⁻)` with `y = y⁺ - y⁻`. -/
 abbrev TwoProcessorFixedAllocationMaxLatenessInstance := List (ℕ × List ℕ × ℕ) × (ℕ × ℕ)
 
-/-- Well-formedness of an instance: every task has a positive processing time and a nonempty
-set of required processors, listed without repetitions, all below `2`. -/
+/-- Well-formedness of an instance: there is at least one task, and every task has a positive
+processing time and a nonempty set of required processors, listed without repetitions, all below
+`2`. -/
 def WellFormed (i : TwoProcessorFixedAllocationMaxLatenessInstance) : Prop :=
-  ∀ t ∈ i.1, 0 < t.1 ∧ t.2.1 ≠ [] ∧ t.2.1.Nodup ∧ ∀ k ∈ t.2.1, k < 2
+  i.1 ≠ [] ∧ ∀ t ∈ i.1, 0 < t.1 ∧ t.2.1 ≠ [] ∧ t.2.1.Nodup ∧ ∀ k ∈ t.2.1, k < 2
 
 /-- There are start times `s` such that any two different tasks with a common required processor
 are processed in disjoint time intervals, and every task `i` has lateness
