@@ -8,28 +8,44 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Real.Basic
-public import Mathlib.Algebra.BigOperators.Field
+public import Mathlib.Basic.Real.Basic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Data.Fintype.Basic
+
+import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
 /-!
 # EXP3 loss estimator
 
-The importance-weighted loss estimator used by EXP3 is
-unbiased under the sampling distribution, and normalized
-weights sum to one. Regret analysis is not included here.
+The importance-weighted loss estimator used by EXP3 is unbiased under the
+sampling distribution (`lossEst_expectation`). Normalizing weights to total
+mass one is `MathlibExt.Probability.FiniteProbability.sum_div_sum_eq_one`.
+Regret analysis is not included here.
+
+## References
+
+* P. Auer, N. Cesa-Bianchi, Y. Freund and R. E. Schapire, *The nonstochastic
+  multiarmed bandit problem*, SIAM J. Comput. 32 (2002).
+* T. Lattimore and C. Szepesvári, *Bandit Algorithms*, Cambridge University
+  Press, 2020, Chapter 11.
 -/
 
 @[expose] public section
 
-/-- EXP3 importance-weighted loss estimator (ML-34 core).
-Arms are `Fin n`; `p` is the sampling distribution, `l`
-the loss vector. When arm `j` is sampled, the estimate for
-arm `i` is `l i / p i` if `j = i` and `0` otherwise. -/
+namespace MathlibExt.Probability.EXP3
+
+/-- EXP3 importance-weighted loss estimator. Arms are `Fin n`; `p` is the
+sampling distribution and `l` the loss vector. When arm `j` is sampled, the
+estimate for arm `i` is `l i / p i` if `j = i` and `0` otherwise. If
+`p i = 0`, the `j = i` value is `0` by Lean's convention `x / 0 = 0`; EXP3
+samples every arm with positive probability, and `lossEst_expectation`
+assumes `p i ≠ 0`. -/
 noncomputable def lossEst {n : ℕ} (p l : Fin n → ℝ) (j i : Fin n) : ℝ :=
   if j = i then l i / p i else 0
 
-/-- Unbiasedness: the `p`-expectation of the estimator for
-arm `i` is the true loss `l i`. -/
+/-- Unbiasedness: for weights `p` with `p i ≠ 0`, the `p`-weighted sum of the
+estimator for arm `i` is the true loss `l i`. When `p` is the sampling
+distribution, this weighted sum is the estimator's expectation. -/
 theorem lossEst_expectation {n : ℕ} (p l : Fin n → ℝ)
     (i : Fin n) (hi : p i ≠ 0) :
     ∑ j, p j * lossEst p l j i = l i := by
@@ -42,12 +58,6 @@ theorem lossEst_expectation {n : ℕ} (p l : Fin n → ℝ)
   · intro hcon
     exact absurd (Finset.mem_univ i) hcon
 
-/-- Weights normalized by their total give sampling
-probabilities summing to one. -/
-theorem exp3_probs_sum {n : ℕ} (w : Fin n → ℝ)
-    (hw : (0:ℝ) < ∑ i, w i) :
-    ∑ i, w i / (∑ j, w j) = 1 := by
-  rw [← Finset.sum_div]
-  exact div_self hw.ne'
+end MathlibExt.Probability.EXP3
 
 end
