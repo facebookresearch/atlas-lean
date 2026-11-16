@@ -48,7 +48,8 @@ and the model-based information `Dᵀ V⁻¹ D` is `countGEEInfo`. Clusters are 
   `E ⟪ψ(β₀), u⟫² = ⟪A u, u⟫`.
 * `tendstoInDistribution_sqrt_smul_sub_countGEE`: **sandwich asymptotic normality.**
   `√n (β̂ₙ - β₀) → A⁻¹ Y` with `⟪Y, t⟫ ~ N(0, E ⟪ψ(β₀), t⟫²)`, i.e. limiting covariance
-  `A⁻¹ B A⁻ᵀ` with meat `B = E[ψ ψᵀ] = E[Dᵀ V⁻¹ Cov(y | x) V⁻¹ D]`. This applies
+  `A⁻¹ B A⁻ᵀ` with meat `B = E[ψ ψᵀ] = E[Dᵀ V⁻¹ Cov(y | x) (V⁻¹)ᵀ D]`; the transpose matters
+  because `Q`, hence `V⁻¹`, need not be symmetric. This applies
   `VectorInference.tendstoInDistribution_sqrt_smul_sub_of_estimatingEquation` (the i.i.d.
   Z-estimator theorem) to the count GEE score, discharging differentiability, measurability,
   the centering `E ψ(β₀) = 0` and the bread identification; it is not restated.
