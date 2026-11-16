@@ -18,8 +18,10 @@ import Mathlib.MeasureTheory.Measure.Real
 
 Under right censoring (`Censoring`, `IdentifiableHorizon`) the event time `T` is seen exactly when
 it precedes the censoring time, and the hazard is identified up to the censoring horizon. Under
-**interval censoring** `T` is never seen exactly: the subject is examined at a random finite set
+**interval censoring** `T` is not observed directly: the subject is examined at a random finite set
 of inspection times, and each examination only reveals whether the event has already happened.
+On the discrete grid this can still pin `T` down exactly, when the cell `(L, R]` below contains a
+single grid point (for example, when every grid point is inspected).
 
 ## Model
 
@@ -45,7 +47,7 @@ Let `inspSupport pS` be the set of grid points that are inspected with positive 
 (`c ∈ S` for some `S` with `pS S ≠ 0`), and write `F(c) = P(T ≤ c)`.
 
 * `inspectLaw_eq_iff`: for a fixed inspection set `S`, the law of what is seen is determined by,
-  and determines, `F` on `S`. The forward direction is a π-system argument: the sets `{T ≤ c}`,
+  and determines, `F` on `S`. The reverse direction is a π-system argument: the sets `{T ≤ c}`,
   `c ∈ S`, are closed under intersection and generate every event the observation reveals.
 * `icObsLaw_eq_iff`: **the identified part of the event-time law**: two event-time laws give the
   same observed-data law iff their distribution functions agree on `inspSupport pS`.
