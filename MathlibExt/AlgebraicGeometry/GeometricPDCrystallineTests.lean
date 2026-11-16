@@ -150,10 +150,12 @@ def reductions : Obj p A S ⥤ Over S.left where
     exact Spec.map_comp (CommRingCat.ofHom (reductionMap g.algebra _))
       (CommRingCat.ofHom (reductionMap f.algebra _))
 
-/-- An affine open cover of the actual thickening schemes. -/
+/-- An affine open cover of the original PD diagram. Each closed reduction
+is exactly the cartesian restriction of the original ideal. -/
 def IsCover {ι : Type} (P : Obj p A S) (Q : ι → Obj p A S)
     (f : ∀ i, Q i ⟶ P) : Prop :=
   (∀ i, IsOpenImmersion ((thickenings p A S).map (f i))) ∧
+    (∀ i, (Q i).ideal = P.ideal.map (f i).algebra.toRingHom) ∧
     ∀ x : P.thickening, ∃ (i : ι) (y : (Q i).thickening),
       ((thickenings p A S).map (f i)).base y = x
 
