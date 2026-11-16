@@ -8,22 +8,23 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Complex.Basic
-public import Mathlib.Algebra.Field.GeomSum
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Basic.Complex.Basic
+import Mathlib.Algebra.Field.GeomSum
 
 /-!
 # Roots-of-unity filter
 
-For a `k`-th root of unity `ζ`, the geometric sum over one
-period is `k` when `ζ ^ m = 1` and `0` otherwise. Order
-finding is not included here.
+For a `k`-th root of unity `ζ`, the geometric sum `∑ j ∈ range k, (ζ ^ m) ^ j` over one
+period is `k` when `ζ ^ m = 1` and `0` otherwise. Order finding is not included here.
 -/
 
 @[expose] public section
 
-/-- Roots-of-unity filter (QCI-11 period-finding core).
-For a `k`-th root of unity `ζ`, the geometric sum over one
-period is `k` when `ζ ^ m = 1` and `0` otherwise. -/
+namespace MathlibExt.Quantum.RootsFilter
+
+/-- Roots-of-unity filter: for a `k`-th root of unity `ζ`, the geometric sum
+`∑ j ∈ range k, (ζ ^ m) ^ j` over one period is `k` when `ζ ^ m = 1` and `0` otherwise. -/
 theorem roots_filter {k : ℕ} (ζ : ℂ) (hk : 0 < k)
     (hζ : ζ ^ k = 1) (m : ℕ) :
     (∑ j ∈ Finset.range k, (ζ ^ m) ^ j)
@@ -43,5 +44,7 @@ theorem roots_filter {k : ℕ} (ζ : ℂ) (hk : 0 < k)
         _ = 1 := one_pow m
     rw [hxk]
     simp
+
+end MathlibExt.Quantum.RootsFilter
 
 end
