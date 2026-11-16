@@ -43,6 +43,9 @@ corrected versions.
   (`CDIS.not_forall_integral_withDensity_ratio_eq`); corrected with that hypothesis
   (`CDIS.integral_mul_eq_integral_ratio`).
 
+Two more need a hypothesis the course leaves implicit: the conditional density (id 51) needs
+`f_X(x) < ∞` as well as `f_X(x) > 0`, and `F⁻(F(x)) ≤ x` (id 101) needs `F(x) > 0`.
+
 ## Roadmap
 
 `roadmap/` is an autoform blueprint with one article per course statement, linked to the
