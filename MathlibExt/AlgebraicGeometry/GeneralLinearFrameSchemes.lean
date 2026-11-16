@@ -91,6 +91,6 @@ class FrameTheory (n : ℕ) where
   naturality : ∀ {S T : ComplexScheme} (f : S ⟶ T) (I : FreePullbackComparison f n)
       (g : T ⟶ frameScheme n), points S (f ≫ g) = pullFrame f n I (points T g)
 
-attribute [instance, instance_reducible] FrameTheory.group
+attribute [instance_reducible, instance] FrameTheory.group
 
 end MathlibExt.AlgebraicGeometry.GeneralLinearFrameSchemes
