@@ -60,9 +60,11 @@ theorem affineScalars_ideal : P.ideal.map (affineScalars p P R) ≤ (⊥ : Ideal
 def affineBase : spfDiagram p R ⊥ ⟶ spfDiagram p P.ring P.ideal :=
   mapDiagram p (affineScalars p P R) (affineScalars_ideal p P R)
 
-/-- An actual affine formal presentation; this is geometry input, independent
-of the qsyn/prismatic comparison theorem. -/
+/-- An actual p-complete affine formal presentation. Completeness of the
+displayed ring is explicit: the nilpotent diagram alone remembers only its
+completion. This is geometry input, independent of the comparison theorem. -/
 structure AffinePresentation where
+  complete : IsCompleteRing R (Ideal.span {(p : R)})
   iso : spfDiagram p R ⊥ ≅ X.diagram
   base : iso.hom ≫ X.structureMap = affineBase p P R
 
