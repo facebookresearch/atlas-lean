@@ -17,8 +17,10 @@ import Mathlib.Algebra.BigOperators.Fin
 
 This instantiates the elementary enclosure in
 `MathlibExt.Biology.PopulationGenetics.Inference.Numerics.FloatLoglik` with
-the existing binary round-to-nearest, ties-to-even, unbounded-exponent
-recursive summation `rsum`.
+the existing recursive summation `rsum`. For `1 ≤ p`, `rsum p` is binary
+round-to-nearest, ties-to-even, unbounded-exponent summation. The enclosure
+inequality also holds at `p = 0`, but that case is only the formal extension
+of `fl` from `Summation`, not a zero-bit floating-point format.
 
 For computed site log-likelihoods `lhat i` with supplied per-site errors
 `|lhat i - l i| ≤ δ i`, the rounded recursive sum differs from the exact total
@@ -47,7 +49,9 @@ open Cslib.Algorithms.Lean.Numerical.Summation
 /-- **Certified enclosure for a rounded recursive log-likelihood sum.** If
 `|lhat i - l i| ≤ δ i` for every site, then the rounded recursive sum of the
 computed values `lhat` differs from the exact total `∑ i, l i` by at most the
-rounded-summation bound plus the total supplied per-site error. -/
+rounded-summation bound plus the total supplied per-site error. The bound is
+stated for every `p`; its binary floating-point interpretation is for
+`1 ≤ p`, while `p = 0` is only the formal extension from `Summation`. -/
 theorem abs_rsum_sub_sum_le (p : ℕ) {n : ℕ} (l lhat δ : Fin n → ℝ)
     (hsite : ∀ i, |lhat i - l i| ≤ δ i) :
     |rsum p (List.ofFn lhat) - ∑ i, l i| ≤
