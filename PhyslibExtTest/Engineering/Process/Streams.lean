@@ -107,4 +107,38 @@ example :
   rw [e1, e2] at h0
   norm_num at h0
 
+-- The option-valued composition APIs themselves (not just the imported
+-- fraction functions): positive stream gives `some`, zero stream `none`.
+example : s12.composition = some (Chemistry.Amounts.moleFraction s12.flow) := by
+  apply composition_eq_moleFraction
+  simp only [s12, StreamFlow.total, Fin.sum_univ_two]
+  norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
+
+example : s02.composition = some (Chemistry.Amounts.moleFraction s02.flow) := by
+  apply composition_eq_moleFraction
+  simp only [s02, StreamFlow.total, Fin.sum_univ_two]
+  norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
+
+example : StreamFlow.composition (StreamFlow.zero (Fin 2)) = none := by
+  exact zero_composition _
+
+example : s12.massComposition M23 =
+    some (Chemistry.Amounts.massFraction M23 s12.flow) := by
+  apply massComposition_eq_massFraction
+  · intro i
+    fin_cases i <;> norm_num [M23, Matrix.cons_val_zero, Matrix.cons_val_one,
+      Matrix.head_cons]
+  · simp only [s12, StreamFlow.total, Fin.sum_univ_two]
+    norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
+
+-- Zero molar masses give no mass composition, even for a positive stream.
+example : s12.massComposition (fun _ => 0) = none := by
+  apply massComposition_eq_none_of_sum_nonpos
+  simp [massFlow]
+
+-- The zero stream has no mass composition.
+example : StreamFlow.massComposition (StreamFlow.zero (Fin 2)) M23 = none := by
+  apply massComposition_eq_none_of_sum_nonpos
+  simp [massFlow, StreamFlow.zero]
+
 end Engineering.Process.Streams.Tests

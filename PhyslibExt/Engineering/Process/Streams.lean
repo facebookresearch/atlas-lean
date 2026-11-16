@@ -9,6 +9,8 @@ module
 
 public import PhyslibExt.Chemistry.Amounts.MolarMassComposition
 
+import Mathlib.Tactic.Linarith
+
 /-!
 # Process streams: amount-flow rates and composition
 
@@ -193,19 +195,37 @@ lemma massFraction_eq_moleFraction_massFlow {ι : Type*} [Fintype ι]
   rfl
 
 /-- The mass composition of a stream for molar masses `M`, as mass fractions
-of its flow vector. Produced only under a positive total flow; a zero-flow
-stream returns `none`. -/
+of its flow vector. Produced only under a positive total mass flow; a stream
+with no positive mass flow (for example zero molar masses) returns `none`. -/
 noncomputable def massComposition {ι : Type*} [Fintype ι] (s : StreamFlow ι)
     (M : ι → ℝ) : Option (ι → ℝ) :=
-  if 0 < s.total then some (Chemistry.Amounts.massFraction M s.flow) else none
+  if 0 < ∑ i, s.massFlow M i then some (Chemistry.Amounts.massFraction M s.flow)
+  else none
 
-/-- Under a positive total flow, the mass composition is
-`Chemistry.Amounts.massFraction` of the flow vector. -/
+/-- With positive molar masses, a positive total amount flow gives a
+positive total mass flow. By the imported
+`Chemistry.Amounts.sum_amount_mul_molarMass_pos`. -/
+lemma sum_massFlow_pos {ι : Type*} [Fintype ι] (s : StreamFlow ι)
+    (M : ι → ℝ) (hM : ∀ i, 0 < M i) (hs : 0 < s.total) :
+    0 < ∑ i, s.massFlow M i := by
+  have hs' : 0 < ∑ i, s.flow i := hs
+  simpa only [massFlow] using
+    Chemistry.Amounts.sum_amount_mul_molarMass_pos s.nonneg hs' hM
+
+/-- A stream with no positive total mass flow has no mass composition. -/
+lemma massComposition_eq_none_of_sum_nonpos {ι : Type*} [Fintype ι]
+    (s : StreamFlow ι) (M : ι → ℝ) (h : ∑ i, s.massFlow M i ≤ 0) :
+    s.massComposition M = none := by
+  unfold massComposition
+  rw [ite_eq_right (not_lt.mpr h)]
+
+/-- Under a positive total flow and positive molar masses, the mass
+composition is `Chemistry.Amounts.massFraction` of the flow vector. -/
 lemma massComposition_eq_massFraction {ι : Type*} [Fintype ι]
-    (s : StreamFlow ι) (M : ι → ℝ) (hs : 0 < s.total) :
+    (s : StreamFlow ι) (M : ι → ℝ) (hM : ∀ i, 0 < M i) (hs : 0 < s.total) :
     s.massComposition M = some (Chemistry.Amounts.massFraction M s.flow) := by
   unfold massComposition
-  rw [ite_eq_left hs]
+  rw [ite_eq_left (sum_massFlow_pos s M hM hs)]
 
 /-- The mass composition of a stream sums to one for positive molar masses:
 whenever `s.massComposition M = some w`, `∑ i, w i = 1`. By the imported
@@ -214,11 +234,18 @@ lemma sum_massComposition {ι : Type*} [Fintype ι] (s : StreamFlow ι)
     (M : ι → ℝ) (hM : ∀ i, 0 < M i) {w : ι → ℝ}
     (hw : s.massComposition M = some w) : ∑ i, w i = 1 := by
   unfold massComposition at hw
-  by_cases hs : 0 < s.total
-  · rw [ite_eq_left hs] at hw
+  by_cases h : 0 < ∑ i, s.massFlow M i
+  · rw [ite_eq_left h] at hw
     cases hw
-    exact Chemistry.Amounts.sum_massFraction s.nonneg hs hM
-  · rw [ite_eq_right hs] at hw
+    have hs : 0 < s.total := by
+      by_contra hs0
+      have h0 : s.total = 0 := le_antisymm (le_of_not_gt hs0) (total_nonneg s)
+      have hflow : ∀ i, s.flow i = 0 := (total_eq_zero_iff s).mp h0
+      have hsum : ∑ i, s.massFlow M i = 0 := by simp [massFlow, hflow]
+      linarith
+    have hs' : 0 < ∑ i, s.flow i := hs
+    exact Chemistry.Amounts.sum_massFraction s.nonneg hs' hM
+  · rw [ite_eq_right h] at hw
     cases hw
 
 /-- **Mole to mass and back.** Converting a stream's mole composition to mass
