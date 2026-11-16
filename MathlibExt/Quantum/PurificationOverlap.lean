@@ -8,96 +8,125 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Real.Basic
-public import Mathlib.Data.Complex.Basic
+public import MathlibExt.Quantum.ClassicalFuchsVanDeGraaf
 public import Mathlib.Analysis.Complex.Basic
-public import Mathlib.Analysis.RCLike.Basic
-public import Mathlib.Analysis.SpecialFunctions.Sqrt
-public import Mathlib.Data.Fintype.BigOperators
 
-import Mathlib.Tactic.Linarith
+import Mathlib.Algebra.Order.BigOperators.Ring.Finset
+import Mathlib.Analysis.RCLike.Basic
 
 /-!
-# Purification overlap
+# Purification overlap and the Bhattacharyya coefficient
 
-The overlap of two purifications of finite distributions
-is at most the Bhattacharyya coefficient, and the product
-purifications attain it. Uhlmann's theorem for mixed
-states is not included here.
+Let `A, B : X → E → ℂ` be the amplitudes of two vectors `∑ x e, A x e |x⟩|e⟩` and
+`∑ x e, B x e |x⟩|e⟩` on a finite system `X` and a finite environment `E`, with row weights
+`p x = ∑ e, |A x e|²` and `q x = ∑ e, |B x e|²`. Purifications of the diagonal states `diag p`
+and `diag q` with environment `E` have these row weights. The overlap
+`|∑ x e, conj (A x e) * B x e|` is at most the Bhattacharyya coefficient
+`bhattacharyyaCoeff p q = ∑ x, √(p x * q x)`, and the canonical purifications
+`∑ x, √(p x) |x⟩|x⟩` and `∑ x, √(q x) |x⟩|x⟩` attain it.
+
+The fidelity of two diagonal states is the Bhattacharyya coefficient of their diagonals
+(Nielsen and Chuang, Chapter 9), so these results are the diagonal case of Uhlmann's theorem.
+That identification with Physlib's `MState.fidelity`, and Uhlmann's theorem for general mixed
+states, are not proved here.
+
+## Main results
+
+* `purification_overlap_le`: the overlap is at most `bhattacharyyaCoeff p q`.
+* `exists_purification_overlap_eq`: the canonical purifications satisfy the hypotheses of
+  `purification_overlap_le`, have orthogonal rows, and attain the bound.
+
+## References
+
+* M. A. Nielsen and I. L. Chuang, *Quantum Computation and Quantum Information*, Cambridge
+  University Press (2000), Chapter 9.
 -/
 
 @[expose] public section
 
-/-- Bhattacharyya coefficient of two finite distributions. -/
-noncomputable def bhattC {n : ℕ} (p q : Fin n → ℝ) : ℝ :=
-  ∑ i, Real.sqrt (p i * q i)
+namespace MathlibExt.Quantum.PurificationOverlap
 
-/-- Purification overlap bound (QCI-07 core, finite
-amplitude form). If `A` and `B` are purifications of `p`
-and `q` over a common environment `Fin m`, in the sense
-that the row norms recover the distributions, then the
-overlap is at most the Bhattacharyya coefficient. -/
-theorem purification_overlap_le {n m : ℕ}
-    (A B : Fin n → Fin m → ℂ) (p q : Fin n → ℝ)
-    (hp : ∀ i, ∑ j, Complex.normSq (A i j) = p i)
-    (hq : ∀ i, ∑ j, Complex.normSq (B i j) = q i)
-    (hp0 : ∀ i, 0 ≤ p i) (hq0 : ∀ i, 0 ≤ q i) :
-    ‖∑ i, ∑ j, (starRingEnd ℂ) (A i j) * B i j‖
-      ≤ bhattC p q := by
-  have key : ∀ i, ‖∑ j, (starRingEnd ℂ) (A i j) * B i j‖ ≤ Real.sqrt (p i * q i) := by
-    intro i
-    have htri : ‖∑ j, (starRingEnd ℂ) (A i j) * B i j‖ ≤ ∑ j, ‖A i j‖ * ‖B i j‖ := by
-      calc ‖∑ j, (starRingEnd ℂ) (A i j) * B i j‖
-          ≤ ∑ j, ‖(starRingEnd ℂ) (A i j) * B i j‖ :=
-            norm_sum_le Finset.univ (fun j => (starRingEnd ℂ) (A i j) * B i j)
-        _ = ∑ j, ‖A i j‖ * ‖B i j‖ := by
-            apply Finset.sum_congr rfl
-            intro j _
-            rw [norm_mul, RCLike.norm_conj]
-    have hA : (∑ j, ‖A i j‖ ^ 2) = p i := by
-      rw [← hp i]
-      apply Finset.sum_congr rfl
-      intro j _
-      exact (Complex.normSq_eq_norm_sq (A i j)).symm
-    have hB : (∑ j, ‖B i j‖ ^ 2) = q i := by
-      rw [← hq i]
-      apply Finset.sum_congr rfl
-      intro j _
-      exact (Complex.normSq_eq_norm_sq (B i j)).symm
-    have hcs : (∑ j, ‖A i j‖ * ‖B i j‖) ^ 2 ≤ p i * q i := by
+open MathlibExt.Quantum.ClassicalFuchsVanDeGraaf
+
+/-- **Purification overlap bound.** If the rows of the amplitude arrays `A` and `B` have squared
+norms `p` and `q`, as they do for purifications of the diagonal states `diag p` and `diag q`
+with a common environment `E`, then the overlap `|∑ x e, conj (A x e) * B x e|` is at most the
+Bhattacharyya coefficient of `p` and `q`. -/
+theorem purification_overlap_le {X E : Type*} [Fintype X] [Fintype E]
+    (A B : X → E → ℂ) (p q : X → ℝ)
+    (hp : ∀ x, ∑ e, Complex.normSq (A x e) = p x)
+    (hq : ∀ x, ∑ e, Complex.normSq (B x e) = q x) :
+    ‖∑ x, ∑ e, (starRingEnd ℂ) (A x e) * B x e‖ ≤ bhattacharyyaCoeff p q := by
+  have key : ∀ x, ‖∑ e, (starRingEnd ℂ) (A x e) * B x e‖ ≤ Real.sqrt (p x * q x) := by
+    intro x
+    have htri : ‖∑ e, (starRingEnd ℂ) (A x e) * B x e‖ ≤ ∑ e, ‖A x e‖ * ‖B x e‖ :=
+      (norm_sum_le _ _).trans_eq
+        (Finset.sum_congr rfl fun e _ => by rw [norm_mul, RCLike.norm_conj])
+    have hA : ∑ e, ‖A x e‖ ^ 2 = p x := by
+      rw [← hp x]
+      exact Finset.sum_congr rfl fun e _ => (Complex.normSq_eq_norm_sq (A x e)).symm
+    have hB : ∑ e, ‖B x e‖ ^ 2 = q x := by
+      rw [← hq x]
+      exact Finset.sum_congr rfl fun e _ => (Complex.normSq_eq_norm_sq (B x e)).symm
+    have hcs : (∑ e, ‖A x e‖ * ‖B x e‖) ^ 2 ≤ p x * q x := by
       have h := Finset.sum_mul_sq_le_sq_mul_sq Finset.univ
-        (fun j => ‖A i j‖) (fun j => ‖B i j‖)
-      rw [hA, hB] at h
-      exact h
-    have hnonneg : 0 ≤ ∑ j, ‖A i j‖ * ‖B i j‖ :=
-      Finset.sum_nonneg (fun j _ => mul_nonneg (norm_nonneg _) (norm_nonneg _))
-    calc ‖∑ j, (starRingEnd ℂ) (A i j) * B i j‖
-        ≤ ∑ j, ‖A i j‖ * ‖B i j‖ := htri
-      _ = Real.sqrt ((∑ j, ‖A i j‖ * ‖B i j‖) ^ 2) := (Real.sqrt_sq hnonneg).symm
-      _ ≤ Real.sqrt (p i * q i) := Real.sqrt_le_sqrt hcs
-  calc ‖∑ i, ∑ j, (starRingEnd ℂ) (A i j) * B i j‖
-      ≤ ∑ i, ‖∑ j, (starRingEnd ℂ) (A i j) * B i j‖ :=
-        norm_sum_le Finset.univ (fun i => ∑ j, (starRingEnd ℂ) (A i j) * B i j)
-    _ ≤ ∑ i, Real.sqrt (p i * q i) := Finset.sum_le_sum (fun i _ => key i)
-    _ = bhattC p q := rfl
+        (fun e => ‖A x e‖) (fun e => ‖B x e‖)
+      rwa [hA, hB] at h
+    have hnonneg : 0 ≤ ∑ e, ‖A x e‖ * ‖B x e‖ :=
+      Finset.sum_nonneg fun e _ => mul_nonneg (norm_nonneg _) (norm_nonneg _)
+    calc ‖∑ e, (starRingEnd ℂ) (A x e) * B x e‖
+        ≤ ∑ e, ‖A x e‖ * ‖B x e‖ := htri
+      _ = Real.sqrt ((∑ e, ‖A x e‖ * ‖B x e‖) ^ 2) := (Real.sqrt_sq hnonneg).symm
+      _ ≤ Real.sqrt (p x * q x) := Real.sqrt_le_sqrt hcs
+  calc ‖∑ x, ∑ e, (starRingEnd ℂ) (A x e) * B x e‖
+      ≤ ∑ x, ‖∑ e, (starRingEnd ℂ) (A x e) * B x e‖ := norm_sum_le _ _
+    _ ≤ ∑ x, Real.sqrt (p x * q x) := Finset.sum_le_sum fun x _ => key x
+    _ = bhattacharyyaCoeff p q := rfl
 
-/-- The bound is attained: the product purifications
-`√(p i)` and `√(q i)` on a one-point environment achieve
-overlap exactly `bhattC p q`. -/
-theorem purification_overlap_eq {n : ℕ} (p q : Fin n → ℝ)
-    (hp0 : ∀ i, 0 ≤ p i) (hq0 : ∀ i, 0 ≤ q i) :
-    (∑ i, ∑ _j : Fin 1, (starRingEnd ℂ)
-        ((Real.sqrt (p i) : ℂ)) * (Real.sqrt (q i) : ℂ))
-      = bhattC p q := by
-  have per : ∀ i, (∑ _j : Fin 1, (starRingEnd ℂ) ((Real.sqrt (p i) : ℂ)) * (Real.sqrt (q i) : ℂ))
-      = ((Real.sqrt (p i * q i) : ℝ) : ℂ) := by
-    intro i
-    rw [Fin.sum_univ_one, Complex.conj_ofReal, ← Complex.ofReal_mul,
-      ← Real.sqrt_mul (hp0 i)]
-  unfold bhattC
-  push_cast
-  apply Finset.sum_congr rfl
-  intro i _
-  exact per i
+/-- Amplitudes of the canonical purification `∑ x, √(r x) |x⟩|x⟩`. -/
+private noncomputable def canonical {X : Type*} [DecidableEq X] (r : X → ℝ) (x e : X) : ℂ :=
+  if x = e then (Real.sqrt (r x) : ℂ) else 0
+
+/-- **The purification overlap bound is attained.** The canonical purifications
+`∑ x, √(p x) |x⟩|x⟩` and `∑ x, √(q x) |x⟩|x⟩` of the diagonal states `diag p` and `diag q`,
+whose environment is a copy of the system, satisfy the hypotheses of `purification_overlap_le`,
+have pairwise orthogonal rows (so their reduced states are exactly `diag p` and `diag q`), and
+have overlap of norm exactly `bhattacharyyaCoeff p q`. -/
+theorem exists_purification_overlap_eq {X : Type*} [Fintype X] (p q : X → ℝ)
+    (hp0 : ∀ x, 0 ≤ p x) (hq0 : ∀ x, 0 ≤ q x) :
+    ∃ A B : X → X → ℂ,
+      (∀ x, ∑ e, Complex.normSq (A x e) = p x) ∧
+      (∀ x, ∑ e, Complex.normSq (B x e) = q x) ∧
+      (∀ x y, x ≠ y → ∑ e, A x e * (starRingEnd ℂ) (A y e) = 0) ∧
+      (∀ x y, x ≠ y → ∑ e, B x e * (starRingEnd ℂ) (B y e) = 0) ∧
+      ‖∑ x, ∑ e, (starRingEnd ℂ) (A x e) * B x e‖ = bhattacharyyaCoeff p q := by
+  classical
+  have rowNorm : ∀ r : X → ℝ, (∀ x, 0 ≤ r x) →
+      ∀ x, ∑ e, Complex.normSq (canonical r x e) = r x := by
+    intro r hr x
+    rw [Finset.sum_eq_single x (fun e _ hex => by simp [canonical, Ne.symm hex])
+      (fun h => absurd (Finset.mem_univ x) h)]
+    simp [canonical, Complex.normSq_ofReal, Real.mul_self_sqrt (hr x)]
+  have orth : ∀ r : X → ℝ, ∀ x y, x ≠ y →
+      ∑ e, canonical r x e * (starRingEnd ℂ) (canonical r y e) = 0 := by
+    intro r x y hxy
+    refine Finset.sum_eq_zero fun e _ => ?_
+    by_cases hxe : x = e
+    · subst hxe
+      simp [canonical, Ne.symm hxy]
+    · simp [canonical, hxe]
+  refine ⟨canonical p, canonical q, rowNorm p hp0, rowNorm q hq0, orth p, orth q, ?_⟩
+  have hsum : ∑ x, ∑ e, (starRingEnd ℂ) (canonical p x e) * canonical q x e
+      = ((bhattacharyyaCoeff p q : ℝ) : ℂ) := by
+    rw [bhattacharyyaCoeff, Complex.ofReal_sum]
+    refine Finset.sum_congr rfl fun x _ => ?_
+    rw [Finset.sum_eq_single x (fun e _ hex => by simp [canonical, Ne.symm hex])
+      (fun h => absurd (Finset.mem_univ x) h)]
+    simp [canonical, Complex.conj_ofReal, ← Complex.ofReal_mul, ← Real.sqrt_mul (hp0 x)]
+  have hB0 : 0 ≤ bhattacharyyaCoeff p q :=
+    Finset.sum_nonneg fun x _ => Real.sqrt_nonneg _
+  rw [hsum, Complex.norm_real, Real.norm_of_nonneg hB0]
+
+end MathlibExt.Quantum.PurificationOverlap
 
 end
