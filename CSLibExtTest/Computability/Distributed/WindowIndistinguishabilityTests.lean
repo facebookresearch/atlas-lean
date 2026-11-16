@@ -8,9 +8,21 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Distributed.WindowIndistinguishability
+public import CSLibExt.Computability.Distributed.WindowIndistinguishability
+
+/-!
+# Tests for window indistinguishability
+
+* The algorithm that colors each vertex by its own identifier properly colors every directed
+  cycle, so the hypothesis of `window_colors_differ` is satisfiable, and the theorem applies to
+  the windows `(0, 1, 2)` and `(1, 2, 3)`.
+-/
 
 @[expose] public section
+
+namespace Cslib.Distributed.WindowIndistinguishabilityTests
+
+open Cslib.Distributed.WindowIndistinguishability
 
 /-- Coloring by one's own identifier is proper on every cycle, so
 adjacent windows of distinct identifiers get different colors. -/
@@ -19,7 +31,6 @@ example : ((fun _ b _ => b) : Fin 5 → Fin 5 → Fin 5 → Fin 5) 0 1 2 ≠
   window_colors_differ (a := 0) (b := 1) (cc := 2) (d := 3)
     (fun _ b _ => b)
     (fun n _ hn id hid i => by
-      change id i ≠ id (i + 1)
       have hone : (1 : Fin n).val = 1 := by
         rw [Fin.coe_ofNat_eq_mod]
         exact Nat.mod_eq_of_lt (by omega)
@@ -36,5 +47,7 @@ example : ((fun _ b _ => b) : Fin 5 → Fin 5 → Fin 5 → Fin 5) 0 1 2 ≠
           omega
       exact (hid.ne hne).symm) (by decide) (by decide) (by decide)
     (by decide) (by decide) (by decide)
+
+end Cslib.Distributed.WindowIndistinguishabilityTests
 
 end
