@@ -53,13 +53,13 @@ example {N : ℕ} (μ : (Fin N → Bool) → ℝ) (a b : Fin N) :
     Fin.sum_univ_two]
   norm_num
 
-/-- An optimal marginal-sorted prefix exists, as an example. -/
-example {N k : ℕ} (hk : k ≤ N) (μ : (Fin N → Bool) → ℝ)
-    (hμ : ∀ rel, 0 ≤ μ rel) :
+/-- An optimal marginal-sorted prefix exists for any real weights, as an
+example. -/
+example {N k : ℕ} (hk : k ≤ N) (μ : (Fin N → Bool) → ℝ) :
     ∃ s : {s : Equiv.Perm (Fin N) // Antitone (relevanceMarginal μ ∘ s)},
       ∀ r : Fin k → Fin N, Function.Injective r →
         expectedPrecisionAt μ r ≤
           expectedPrecisionAt μ (fun i => s.1 (Fin.castLE hk i)) :=
-  exists_sorted_expectedPrecisionAt hk hμ
+  exists_sorted_expectedPrecisionAt hk μ
 
 end CSLibExtTest.InformationRetrieval.ProbabilityRanking
