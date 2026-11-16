@@ -12,6 +12,7 @@ public import MathlibExt.Biology.Dynamics.StochasticCRNErgodicity
 public import Mathlib.Data.Nat.Choose.Multinomial
 public import Mathlib.Probability.ConditionalProbability
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
+public import MathlibExt.Probability.Distributions.Multinomial
 
 /-!
 # The product-form law conditioned on a stoichiometric compatibility class
@@ -37,9 +38,10 @@ file builds that conditioned law (`conditionedLaw`) and proves its properties.
   equation to a reaction-closed set gives a solution.
 * `conditionedLaw_spec`: **conditioned product form.** For `c > 0` complex balanced, the law
   `π_c(· | Γ)` on the compatibility class `Γ` of any `x₀` is positive on `Γ`, zero off `Γ`,
-  sums to `1`, and solves the stationary master equation on `ℕ^S`;
-  `isStationaryMasterSolution_conditionedLaw` and `hasSum_conditionedLaw` hold for every
-  reaction-closed `Γ`.
+  sums to `1`, and solves the stationary master equation on `ℕ^S`.
+  `isStationaryMasterSolution_conditionedLaw` holds for every reaction-closed `Γ`;
+  `hasSum_conditionedLaw` (sum `1`) additionally needs `c > 0` and `Γ` nonempty, since the law
+  conditioned on `∅` is `0`.
 * `cond_poissonPMF_singleton`: `conditionedLaw c Γ x` is the probability of `{x}` under the
   measure-theoretic conditioning `μ[· | Γ]` of the product-form law `μ` (`poissonPMF`).
 * `conditionedLaw_compatClass_eq`: for positive rate constants, any two positive complex-balanced
@@ -47,10 +49,11 @@ file builds that conditioned law (`conditionedLaw`) and proves its properties.
   on the class (`conditionedLaw_compatClass_eq_of_orthogonal` states the orthogonality form).
 * `conditionedLaw_coe_finset`: on a finite set the conditioned law is
   `SystemsBiology.classStationaryLaw`, the normalized weights of the finite-class theorem.
-* `conditionedLaw_totalClass`, `isReactionClosed_totalClass`: when every reaction conserves the
-  total molecule count, the states with total count `n` form a reaction-closed set, and the
-  conditioned law there is multinomial,
-  `π_c(x | ∑ x = n) = n! / ∏_s x_s! · ∏_s (c_s / ∑ c)^{x_s}`.
+* `conditionedLaw_totalClass_eq_multinomialReal`, `isReactionClosed_totalClass`: when every
+  reaction conserves the total molecule count, the states with total count `n` form a
+  reaction-closed set, and for every `n` the conditioned law there is the multinomial law
+  `ProbabilityTheory.multinomialReal n (c / ∑ c)`; on its support
+  (`conditionedLaw_totalClass`) this is `n! / ∏_s x_s! · ∏_s (c_s / ∑ c)^{x_s}`.
 
 ## Not covered
 
@@ -395,9 +398,10 @@ theorem classMass_totalClass (c : S → ℝ) (n : ℕ) :
         prod_div_prod_factorial, (mem_piAntidiag.1 hy).1]
   rw [Finset.sum_congr rfl hterm, ← Finset.mul_sum, ← Finset.sum_div, ← hpow, mul_div_assoc]
 
-/-- **Multinomial law.** Conditioned on the total molecule count `n = ∑_s x_s`, the
-product-form law with means `c > 0` is multinomial:
-`π_c(x | ∑ x = n) = n! / ∏_s x_s! · ∏_s (c_s / ∑_s c_s)^{x_s}`. With
+/-- **Multinomial law on its support.** Conditioned on the total molecule count
+`n = ∑_s x_s`, the product-form law with means `c > 0` is multinomial:
+`π_c(x | ∑ x = n) = n! / ∏_s x_s! · ∏_s (c_s / ∑_s c_s)^{x_s}`. The equality of laws for a
+fixed `n` is `conditionedLaw_totalClass_eq_multinomialReal`. With
 `isReactionClosed_totalClass` this is the stationary law of a network that conserves the total
 count, such as a network of unimolecular conversions `A_i ⇌ A_j`. -/
 theorem conditionedLaw_totalClass {c : S → ℝ} (hc : ∀ s, 0 < c s) (x : S → ℕ) :
@@ -414,6 +418,19 @@ theorem conditionedLaw_totalClass {c : S → ℝ} (hc : ∀ s, 0 < c s) (x : S �
     prod_div_prod_factorial, Finset.prod_congr rfl fun s _ => div_pow (c s) (∑ s', c s') (x s),
     Finset.prod_div_distrib, Finset.prod_pow_eq_pow_sum]
   field_simp
+
+/-- **Multinomial law, as a law.** For every total `n`, the product-form law with means `c > 0`
+conditioned on the states with total count `n` is the multinomial law
+`ProbabilityTheory.multinomialReal n (c / ∑ c)`: both vanish off `∑ x = n`, and on it they agree
+by `conditionedLaw_totalClass`. -/
+theorem conditionedLaw_totalClass_eq_multinomialReal {c : S → ℝ} (hc : ∀ s, 0 < c s) (n : ℕ) :
+    conditionedLaw c (totalClass n) =
+      ProbabilityTheory.multinomialReal n (fun s => c s / ∑ s', c s') := by
+  funext x
+  by_cases hx : ∑ s, x s = n
+  · subst hx
+    rw [conditionedLaw_totalClass hc x, ProbabilityTheory.multinomialReal, ite_eq_left rfl]
+  · rw [conditionedLaw_of_notMem c hx, ProbabilityTheory.multinomialReal_of_sum_ne hx]
 
 end Conditioned
 

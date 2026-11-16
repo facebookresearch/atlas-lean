@@ -18,7 +18,8 @@ import MathlibExt.Biology.Dynamics.StochasticCRNConditioned
   definition of the stoichiometric subspace.
 * The conditioned law at `(1, 1)` on the class of total count `2`, computed by hand from the
   three Poisson weights, is `2 c₀ c₁ / (c₀ + c₁)²`, which is `4 / 9` for both `c` and `d`. The
-  multinomial formula `conditionedLaw_totalClass` gives the same `4 / 9`, and
+  multinomial formula `conditionedLaw_totalClass` and the equality of laws
+  `conditionedLaw_totalClass_eq_multinomialReal` give the same `4 / 9`, and
   `conditionedLaw_compatClass_eq` applies with its hypotheses discharged.
 * Boundaries: conditioned on the empty set the law is `0` and does not sum to `1`, so the
   nonemptiness hypothesis of `hasSum_conditionedLaw` is needed; conditioned on the single state
@@ -190,6 +191,19 @@ theorem multinomial_cIso_one_one :
     simp [Nat.multinomial, Fin.sum_univ_two, Fin.prod_univ_two]
   rw [hs, hm] at h
   rw [h]
+  norm_num [Fin.prod_univ_two, Fin.sum_univ_two, cIso]
+
+/-- The equality with `ProbabilityTheory.multinomialReal` gives the same `4 / 9` on the support,
+and `0` off it, where `conditionedLaw_totalClass` does not apply. -/
+theorem multinomialReal_cIso_one_one :
+    conditionedLaw cIso (totalClass 2) ![1, 1] = 4 / 9 ∧
+      conditionedLaw cIso (totalClass 3) ![1, 1] = 0 := by
+  have hm : Nat.multinomial Finset.univ (![1, 1] : Fin 2 → ℕ) = 2 := by
+    simp [Nat.multinomial, Fin.sum_univ_two, Fin.prod_univ_two]
+  rw [conditionedLaw_totalClass_eq_multinomialReal cIso_pos,
+    conditionedLaw_totalClass_eq_multinomialReal cIso_pos]
+  refine ⟨?_, ProbabilityTheory.multinomialReal_of_sum_ne (by simp [Fin.sum_univ_two])⟩
+  rw [ProbabilityTheory.multinomialReal, ite_eq_left (by simp [Fin.sum_univ_two]), hm]
   norm_num [Fin.prod_univ_two, Fin.sum_univ_two, cIso]
 
 /-- `A ⇌ B` conserves the total count, so total count `n` is reaction-closed. -/
