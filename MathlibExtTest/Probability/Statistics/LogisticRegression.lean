@@ -46,5 +46,75 @@ example : ConvexOn ℝ Set.univ
   rw [hfun] at h
   exact h
 
+/-- The summed NLL is the negative canonical GLM log-likelihood on a
+one-observation example with a nonzero outcome term. -/
+example :
+    logisticNLL (fun _ _ => (2 : ℝ)) (![1] : Fin 1 → ℝ)
+        (![3] : Fin 1 → ℝ) =
+      -MathlibExt.Probability.Statistics.GLM.logisticLogLik
+        (fun _ _ => (2 : ℝ)) 0 (![1] : Fin 1 → ℝ) (![3] : Fin 1 → ℝ) :=
+  logisticNLL_eq_neg_logisticLogLik _ _ _
+
+/-- Positive gradient check from the contract: one observation, unit design,
+and outcome `0` give Euclidean gradient `σ(θ)`. -/
+example (θ : ℝ) :
+    gradient
+        (fun b : EuclideanSpace ℝ (Fin 1) =>
+          logisticNLL (fun _ _ => (1 : ℝ)) (![0] : Fin 1 → ℝ) b.ofLp)
+        (WithLp.toLp 2 ![θ]) =
+      WithLp.toLp 2 ![Real.sigmoid θ] := by
+  have h := gradient_logisticNLL (fun _ _ => (1 : ℝ)) (![0] : Fin 1 → ℝ)
+    (WithLp.toLp 2 ![θ])
+  rw [h]
+  congr 1
+  ext j
+  fin_cases j
+  simp [MathlibExt.Probability.Statistics.GLM.glmPredictor, Matrix.mulVec,
+    Matrix.transpose, dotProduct]
+
+/-- Zero-design boundary: the gradient and objective gap vanish without
+dividing by the zero smoothness constant. -/
+example (β βstar : EuclideanSpace ℝ (Fin 2)) :
+    gradient
+        (fun b : EuclideanSpace ℝ (Fin 2) =>
+          logisticNLL (0 : Matrix (Fin 2) (Fin 2) ℝ) ![0, 1] b.ofLp) β = 0 ∧
+      logisticNLL (0 : Matrix (Fin 2) (Fin 2) ℝ) ![0, 1] β.ofLp -
+          logisticNLL (0 : Matrix (Fin 2) (Fin 2) ℝ) ![0, 1] βstar.ofLp = 0 :=
+  ⟨gradient_logisticNLL_of_X_eq_zero rfl _ β,
+    logisticNLL_gap_eq_zero_of_X_eq_zero rfl _ β βstar⟩
+
+/-- Complete separation has no finite unregularized minimizer, using the
+canonical GLM separation design. -/
+example :
+    ¬ ∃ β, IsMinOn
+      (logisticNLL
+        MathlibExt.Probability.Statistics.GLM.separationDesign ![0, 1])
+      Set.univ β :=
+  not_exists_isMinOn_of_separable _ _
+    (by intro i; fin_cases i <;> simp)
+    (βsep := ![1])
+    (by
+      intro i
+      fin_cases i <;>
+        simp [MathlibExt.Probability.Statistics.GLM.separationDesign,
+          Matrix.mulVec, dotProduct])
+
+/-- API shape check for the gradient-descent adapter. -/
+example {n m : ℕ} (X : Matrix (Fin n) (Fin m) ℝ) (y : Fin n → ℝ)
+    {βstar : EuclideanSpace ℝ (Fin m)}
+    (hmin : ∀ b : EuclideanSpace ℝ (Fin m),
+      logisticNLL X y βstar.ofLp ≤ logisticNLL X y b.ofLp)
+    {η : ℝ}
+    (hL : 0 < ‖(Matrix.toEuclideanLin X).toContinuousLinearMap‖ ^ 2 / 4)
+    (hη : η ∈ Set.Ioc 0
+      (1 / (‖(Matrix.toEuclideanLin X).toContinuousLinearMap‖ ^ 2 / 4)))
+    {βseq : ℕ → EuclideanSpace ℝ (Fin m)}
+    (hβseq : ∀ k, βseq (k + 1) = βseq k -
+      η • gradient (fun b : EuclideanSpace ℝ (Fin m) => logisticNLL X y b.ofLp)
+        (βseq k)) (k : ℕ) (hk : 0 < k) :
+    logisticNLL X y (βseq k).ofLp - logisticNLL X y βstar.ofLp ≤
+      ‖βseq 0 - βstar‖ ^ 2 / (2 * η * (k : ℝ)) :=
+  gd_logisticNLL_rate X y hmin hL hη hβseq k hk
+
 
 end MathlibExtTest.Probability.Statistics.LogisticRegression
