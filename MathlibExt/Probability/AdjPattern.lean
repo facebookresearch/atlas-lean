@@ -21,6 +21,7 @@ law limit argument is not included here.
 
 @[expose] public section
 
+namespace MathlibExt.Probability.AdjPattern
 
 private theorem card_fun_prescribed {α : Type*} [Fintype α] [DecidableEq α]
     (t : Finset α) (q : α → Bool) :
@@ -85,7 +86,7 @@ private theorem card_fun_inj_prescribed {α : Type*} [Fintype α] [DecidableEq �
     rw [Finset.card_image_of_injective _ hg, Finset.card_univ, Fintype.card_fin]
   rw [ht]
 
-/-- Prescribed adjacency values (MOD-66 counting core).
+/-- Prescribed adjacency values.
 Fix distinct target vertices `e i` (for `i : Fin k`) and a
 pattern `p`. The number of adjacency functions
 `a : Fin n → Fin n → Bool` in which the row of a fixed
@@ -141,5 +142,7 @@ theorem card_adj_pattern {n k : ℕ} (v : Fin n)
         (fun F : Fin n × Fin n → Bool => ∀ i, F (v, e i) = p i)).card := huncurried.symm
     _ = 2 ^ (Fintype.card (Fin n × Fin n) - k) := hbase
     _ = 2 ^ (n * n - k) := by rw [hexp]
+
+end MathlibExt.Probability.AdjPattern
 
 end
