@@ -166,9 +166,6 @@ theorem properTwoEquiv_symm_apply (P : NoncrossingPartition 2) (hP : P ≠ indis
 ### Arity three – two-block constructor and classification
 -/
 
-private lemma card_univ_fin_three : (Finset.univ : Finset (Fin 3)).card = 3 := by
-  simp
-
 private lemma univ_ne_bot_fin_three :
     (Finset.univ : Finset (Fin 3)) ≠ (⊥ : Finset (Fin 3)) := by
   intro h
@@ -179,7 +176,7 @@ private lemma univ_ne_bot_fin_three :
 private lemma sum_card_parts_three (P : NoncrossingPartition 3) :
     ∑ B ∈ P.val.parts, B.card = 3 := by
   have h_sum := P.val.sum_card_parts
-  rw [card_univ_fin_three] at h_sum
+  rw [Finset.card_fin] at h_sum
   exact h_sum
 
 private lemma one_le_card_of_mem_parts_three {P : NoncrossingPartition 3}
@@ -194,7 +191,7 @@ private lemma parts_nonempty_three (P : NoncrossingPartition 3) :
 
 private lemma card_erase_fin_three (a : Fin 3) :
     (Finset.univ.erase a).card = 2 := by
-  rw [Finset.card_erase_of_mem (mem_univ a), card_univ_fin_three]
+  rw [Finset.card_erase_of_mem (mem_univ a), Finset.card_fin]
 
 private lemma erase_nonempty_fin_three (a : Fin 3) : (Finset.univ.erase a).Nonempty := by
   rw [Finset.nonempty_iff_ne_empty]
@@ -443,7 +440,7 @@ theorem three_card_one_two_three (P : NoncrossingPartition 3) :
     P.val.parts.card = 1 ∨ P.val.parts.card = 2 ∨ P.val.parts.card = 3 := by
   have h_le : P.val.parts.card ≤ 3 := by
     have h := Finpartition.card_parts_le_card (P := P.val)
-    have h_univ : (Finset.univ : Finset (Fin 3)).card = 3 := card_univ_fin_three
+    have h_univ : (Finset.univ : Finset (Fin 3)).card = 3 := Finset.card_fin 3
     omega
   have hs : (Finset.univ : Finset (Fin 3)).Nonempty := ⟨⟨0, by decide⟩, mem_univ _⟩
   have h_ge : 1 ≤ P.val.parts.card :=
@@ -462,7 +459,7 @@ theorem eq_indiscrete_of_card_one_three (P : NoncrossingPartition 3)
 theorem eq_discrete_of_card_three_three (P : NoncrossingPartition 3)
     (h_card : P.val.parts.card = 3) : P = discrete 3 := by
   rw [eq_discrete_iff_val_eq_bot, eq_bot_iff_card_parts_eq_card]
-  have h_univ : (Finset.univ : Finset (Fin 3)).card = 3 := card_univ_fin_three
+  have h_univ : (Finset.univ : Finset (Fin 3)).card = 3 := Finset.card_fin 3
   omega
 
 /-- Canonical classification at arity three. -/

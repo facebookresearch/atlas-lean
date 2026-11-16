@@ -65,10 +65,6 @@ private lemma sqrt_pow_succ' (n : ℕ) (hn : 1 ≤ n) :
     rw [h93, Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 3)]
   rw [h9]
 
-private lemma powI_succ (n : ℕ) :
-    Complex.I ^ (n + 1) = Complex.I * Complex.I ^ n :=
-  pow_succ' Complex.I n
-
 private lemma powI_succ' (n : ℕ) (hn : 1 ≤ n) :
     Complex.I ^ (n + 1) = -Complex.I ^ (n - 1) := by
   have hn2 : n + 1 = (n - 1) + 2 := by omega
@@ -424,7 +420,7 @@ private lemma f_rec (n : ℕ) :
     simp
   · have hn1 : 1 ≤ n := by omega
     have hB := bl_bonnet_eval n
-    have hI1 := powI_succ n
+    have hI1 := pow_succ' Complex.I n
     have hs1 : (Real.sqrt ((3 : ℝ) ^ (n + 1)) : ℂ)
         = (Real.sqrt 3 : ℂ) * (Real.sqrt ((3 : ℝ) ^ n) : ℂ) := by
       exact_mod_cast sqrt_pow_succ n
