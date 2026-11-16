@@ -27,6 +27,11 @@ automata-theoretic (Büchi) characterisation is included.
 The syntax lives in `CSLibExt.Logics.LTL.Syntax`; the same formulas are interpreted over
 canonical CSLib ω-words in `CSLibExt.Logics.LTL.OmegaWord`, and
 `CSLibExt.Logics.LTL.OmegaWordBridge` shows the two semantics agree.
+The run-level `Satisfies`/`SatisfiesAt` API here is the primary interface for run-based
+reasoning: the bakery and induction developments prove against the recursive definition and the
+`shiftSeq` lemmas. Clients that need the canonical ω-word form convert through
+`Cslib.LTL.satisfies_iff_word_satisfies` and `Cslib.LTL.satisfiesAt_iff_word_satisfiesAt`, so any
+run-level result transports to the canonical form by rewriting with those equivalences.
 -/
 
 @[expose] public section
