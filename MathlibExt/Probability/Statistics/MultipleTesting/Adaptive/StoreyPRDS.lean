@@ -136,21 +136,8 @@ theorem storeyBHIndex_antitone {q lam : ℝ} (hq : 0 ≤ q) (hlam : lam < 1) :
 
 /-- The Storey-BH index is a measurable function of the p-value vector. -/
 theorem measurable_storeyBHIndex (q lam : ℝ) :
-    Measurable (storeyBHIndex q lam : (Fin m → ℝ) → ℕ) := by
-  classical
-  have hcount : Measurable fun x : Fin m → ℝ =>
-      (Finset.univ.filter fun j => lam < x j).card := by
-    simp only [Finset.card_filter]
-    exact Finset.measurable_sum _ fun j _ => Measurable.ite
-      (measurableSet_lt measurable_const (measurable_pi_apply j)) measurable_const
-      measurable_const
-  have hpi : Measurable fun x : Fin m → ℝ => storeyPi0Plus1 lam x := by
-    unfold storeyPi0Plus1
-    exact (((measurable_of_countable (fun n : ℕ => (n : ℝ))).comp hcount).add_const 1).div_const _
-  refine measurable_stepUpIndex_comp (fun x => storeyThreshold q lam x) (fun x => x)
-    (fun k => ?_) (fun j => measurable_pi_apply j)
-  unfold storeyThreshold
-  exact measurable_const.min (((hpi.const_div q).mul_const _).div_const _)
+    Measurable (storeyBHIndex q lam : (Fin m → ℝ) → ℕ) :=
+  measurable_storeyBHIndex_comp q lam id measurable_pi_apply
 
 /-! ### Dependency control under PRDS -/
 
