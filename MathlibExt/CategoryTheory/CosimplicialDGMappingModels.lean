@@ -98,6 +98,16 @@ def dgCofibrations : MorphismProperty (DGCat k) :=
 abbrev DGFrame (T : DGCat k) :=
   CosimplicialResolution T (quasiEquivalences k) (dgCofibrations k)
 
+/-- A functorial DG frame keeps every actual augmented resolution and all simplex maps. -/
+structure DGFrameSystem (k : Type u) [CommRing k] where
+  frame : ∀ C : DGCat k, DGFrame k C
+  map : ∀ {C D : DGCat k} (_f : C ⟶ D), (frame C).diagram ⟶ (frame D).diagram
+  augmentation : ∀ {C D : DGCat k} (f : C ⟶ D),
+    map f ≫ (frame D).augmentation =
+      (frame C).augmentation ≫ (CategoryTheory.Functor.const SimplexCategory).map f
+  map_id : ∀ C : DGCat k, map (𝟙 C) = 𝟙 (frame C).diagram
+  map_comp : ∀ {C D E : DGCat k} (f : C ⟶ D) (g : D ⟶ E), map (f ≫ g) = map f ≫ map g
+
 /-- DG-algebra weak equivalence is quasi-isomorphism of the actual cochain map. -/
 def algebraWeakEquivalences : MorphismProperty (DGAlgebra k) :=
   fun _ _ f => QuasiIso f.hom
