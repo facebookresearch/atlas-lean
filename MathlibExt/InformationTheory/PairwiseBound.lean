@@ -8,51 +8,50 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Real.Basic
-public import Mathlib.Analysis.SpecialFunctions.Sqrt
-public import Mathlib.Algebra.BigOperators.Ring.Finset
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
+public import MathlibExt.Quantum.ClassicalFuchsVanDeGraaf
 
-import Mathlib.Tactic.Linarith
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 /-!
-# Bhattacharyya pairwise bound
+# Bhattacharyya pairwise error bound
 
-The probability, under one output distribution, of the
-region where another is at least as likely is at most the
-Bhattacharyya coefficient. Random-coding averaging is not
-included here.
+For nonnegative vectors `p` and `q` on a finite alphabet, the `p`-mass of the region where
+`q` is at least `p` is at most their Bhattacharyya coefficient
+`bhattacharyyaCoeff p q = ∑ x, √(p x * q x)`. When `p` and `q` are the output distributions of
+two codewords, the left side is the probability that a maximum-likelihood decoder, given an
+output drawn from `p`, scores `q` at least as high as `p`. Averaging over random codebooks is
+not included here.
+
+## Main results
+
+* `InformationTheory.pairwise_error_le`: the `p`-mass of `{x | p x ≤ q x}` is at most
+  `bhattacharyyaCoeff p q`.
 -/
 
 @[expose] public section
 
-/-- Bhattacharyya pairwise error bound (QCI-33 core). For
-two output distributions `p` and `q` on a finite alphabet,
-the `p`-probability of the region where `q` is at least as
-likely as `p` is at most `∑ √(p q)`. This is the pairwise
-step of random-coding union bounds. -/
-theorem pairwise_error_le {n : ℕ} (p q : Fin n → ℝ)
-    (hp0 : ∀ i, 0 ≤ p i) (hq0 : ∀ i, 0 ≤ q i) :
-    ∑ i ∈ Finset.univ.filter (fun i => p i ≤ q i), p i
-      ≤ ∑ i, Real.sqrt (p i * q i) := by
+namespace InformationTheory
+
+open MathlibExt.Quantum.ClassicalFuchsVanDeGraaf
+
+/-- **Bhattacharyya pairwise error bound.** For nonnegative vectors `p` and `q` on a finite
+alphabet, the `p`-mass of the region where `q` is at least `p` is at most the Bhattacharyya
+coefficient `∑ x, √(p x * q x)`. No hypothesis on `q` is needed. -/
+theorem pairwise_error_le {X : Type*} [Fintype X] (p q : X → ℝ) (hp0 : ∀ x, 0 ≤ p x) :
+    ∑ x ∈ Finset.univ.filter (fun x => p x ≤ q x), p x ≤ bhattacharyyaCoeff p q := by
   calc
-    ∑ i ∈ Finset.univ.filter (fun i => p i ≤ q i), p i
-        ≤ ∑ i ∈ Finset.univ.filter (fun i => p i ≤ q i), Real.sqrt (p i * q i) := by
-          apply Finset.sum_le_sum
-          intro i hi
-          simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hi
-          have _hq := hq0 i
-          have h1 : p i = Real.sqrt (p i) * Real.sqrt (p i) :=
-            (Real.mul_self_sqrt (hp0 i)).symm
-          have h2 : Real.sqrt (p i) * Real.sqrt (p i)
-              ≤ Real.sqrt (p i) * Real.sqrt (q i) :=
-            mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt hi) (Real.sqrt_nonneg _)
-          have h3 : Real.sqrt (p i) * Real.sqrt (q i) = Real.sqrt (p i * q i) :=
-            (Real.sqrt_mul (hp0 i) _).symm
-          linarith
-    _ ≤ ∑ i, Real.sqrt (p i * q i) := by
-        apply Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
-        intro i _ _
-        exact Real.sqrt_nonneg _
+    ∑ x ∈ Finset.univ.filter (fun x => p x ≤ q x), p x
+        ≤ ∑ x ∈ Finset.univ.filter (fun x => p x ≤ q x), Real.sqrt (p x * q x) := by
+          refine Finset.sum_le_sum fun x hx => ?_
+          have hpq : p x ≤ q x := (Finset.mem_filter.mp hx).2
+          calc p x = Real.sqrt (p x * p x) := (Real.sqrt_mul_self (hp0 x)).symm
+            _ ≤ Real.sqrt (p x * q x) :=
+              Real.sqrt_le_sqrt (mul_le_mul_of_nonneg_left hpq (hp0 x))
+    _ ≤ ∑ x, Real.sqrt (p x * q x) :=
+        Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+          fun _ _ _ => Real.sqrt_nonneg _
+    _ = bhattacharyyaCoeff p q := rfl
+
+end InformationTheory
 
 end
