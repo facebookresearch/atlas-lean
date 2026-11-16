@@ -29,8 +29,8 @@ A test-and-set step reveals only the old bit, not which process set it. Each wri
 and read-and-decide is one atomic step, a transition of the labelled transition system `lts`
 labelled by the process that takes it. Initially no register is written, the bit is `false`, and
 no process has decided; a state is reachable if the initial state can reach it in `lts`
-(`LTS.CanReach`). The field `winner` is ghost state: `step` records the winner there but never reads it, and it only serves
-to state the invariant.
+(`LTS.CanReach`). The field `winner` is ghost state: `step` records the winner there but never
+reads it, and it only serves to state the invariant.
 
 ## Main results
 
