@@ -20,7 +20,7 @@ Process `0` proposes `10` and process `1` proposes `20`.
 * Process `1` wins after both registers are written: process `0` loses, reads the register of
   process `1`, and both processes decide `20`.
 * A process that has taken fewer than three steps may be undecided.
-* `safety` and `decision_isSome_of_three_le_count` apply to both executions.
+* `safety` and `decision_isSome_of_three_le_count` apply to both executions of `lts`.
 -/
 
 @[expose] public section
@@ -80,10 +80,15 @@ example : ∀ i j x y, (run inp σ₀).decision i = some x → (run inp σ₀).d
 example : ∀ i x, (run inp σ₁).decision i = some x → ∃ w, x = inp w :=
   (safety inp _ (reachable_run inp σ₁)).2
 
+/-- The executions of `lts` along `σ₀` and `σ₁` end in `run inp σ₀` and `run inp σ₁`. -/
+theorem mTr_σ₀ : (lts inp).MTr init σ₀ (run inp σ₀) := mTr_iff_eq_run.mpr rfl
+
+theorem mTr_σ₁ : (lts inp).MTr init σ₁ (run inp σ₁) := mTr_iff_eq_run.mpr rfl
+
 /-- Each process took three steps in `σ₀` and `σ₁`, so each has decided. -/
 example (i : Fin 2) : ((run inp σ₀).decision i).isSome ∧ ((run inp σ₁).decision i).isSome :=
-  ⟨decision_isSome_of_three_le_count inp σ₀ i (by revert i; decide),
-    decision_isSome_of_three_le_count inp σ₁ i (by revert i; decide)⟩
+  ⟨decision_isSome_of_three_le_count mTr_σ₀ i (by revert i; decide),
+    decision_isSome_of_three_le_count mTr_σ₁ i (by revert i; decide)⟩
 
 /-- The bound of three steps is not vacuous: process `0` has taken two steps of `[0, 0]` and has
 not decided. -/

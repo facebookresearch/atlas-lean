@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Cslib.Foundations.Semantics.LTS.Basic
 public import Mathlib.Data.Fin.Basic
-public import Mathlib.Logic.Relation
 public import Mathlib.Logic.Function.Basic
 
 /-!
@@ -26,17 +26,21 @@ consensus for two processes (Herlihy 1991), as a state machine. Process `i`, wit
   decides the value it finds (stage `done`).
 
 A test-and-set step reveals only the old bit, not which process set it. Each write, test-and-set,
-and read-and-decide is one atomic step. Initially no register is written, the bit is `false`, and
-no process has decided; a state is reachable if steps of either process lead to it from there.
-The field `winner` is ghost state: `step` records the winner there but never reads it, and it
-only serves to state the invariant.
+and read-and-decide is one atomic step, a transition of the labelled transition system `lts`
+labelled by the process that takes it. Initially no register is written, the bit is `false`, and
+no process has decided; a state is reachable if the initial state can reach it in `lts`
+(`LTS.CanReach`). The field `winner` is ghost state: `step` records the winner there but never reads it, and it only serves
+to state the invariant.
 
 ## Main results
 
 * `safety`: in every reachable state, any two decisions agree (agreement) and every decision is
   one of the inputs (validity).
-* `decision_isSome_of_three_le_count`: wait-free termination. Along every schedule, a process
-  that has taken three steps has decided, whatever the other process does.
+* `decision_isSome_of_three_le_count`: wait-free termination. In every execution `LTS.MTr` from
+  the initial state, a process that has taken three steps has decided, whatever the other
+  process does.
+* `mTr_iff_eq_run`: since steps are deterministic, the execution along a schedule ends in
+  `run inp σ`.
 
 Impossibility results are not proved here, such as that test-and-set cannot solve consensus for
 three processes (so that its consensus number is exactly two) or that read/write registers alone
@@ -107,9 +111,13 @@ def step (inp : Fin 2 → V) (i : Fin 2) (s : State V) : State V :=
 decided. -/
 def init : State V := ⟨fun _ => .write, fun _ => none, false, none, fun _ => none⟩
 
-/-- A state is reachable if steps of the two processes lead to it from `init`. -/
-def Reachable (inp : Fin 2 → V) (s : State V) : Prop :=
-  Relation.ReflTransGen (fun a b => ∃ i, step inp i a = b) init s
+/-- The protocol as a labelled transition system; the label is the process that steps. -/
+def lts (inp : Fin 2 → V) : LTS (State V) (Fin 2) where
+  Tr s i t := step inp i s = t
+
+/-- The states reachable from `init`, by upstream `LTS.CanReach` (a multistep transition
+`LTS.MTr` along some schedule). -/
+def Reachable (inp : Fin 2 → V) (s : State V) : Prop := (lts inp).CanReach init s
 
 /-- The state reached from `init` when the processes step in the order listed by the
 schedule `σ`. -/
@@ -117,21 +125,36 @@ def run (inp : Fin 2 → V) (σ : List (Fin 2)) : State V :=
   σ.foldl (fun s i => step inp i s) init
 
 /-- The initial state is reachable. -/
-theorem reachable_init (inp : Fin 2 → V) : Reachable inp init := .refl
+theorem reachable_init (inp : Fin 2 → V) : Reachable inp init := ⟨[], .refl⟩
 
 /-- A step of either process from a reachable state leads to a reachable state. -/
 theorem Reachable.step {inp : Fin 2 → V} {s : State V} (hs : Reachable inp s) (i : Fin 2) :
     Reachable inp (TestAndSetConsensus.step inp i s) :=
-  .tail hs ⟨i, rfl⟩
+  let ⟨σ, hm⟩ := hs
+  ⟨σ ++ [i], LTS.MTr.stepR _ hm rfl⟩
+
+private theorem mTr_iff_eq_foldl {inp : Fin 2 → V} {t s : State V} {σ : List (Fin 2)} :
+    (lts inp).MTr t σ s ↔ s = σ.foldl (fun s i => TestAndSetConsensus.step inp i s) t := by
+  induction σ generalizing t with
+  | nil => simp [eq_comm]
+  | cons j σ ih =>
+    rw [LTS.MTr.cons_iff, List.foldl_cons]
+    constructor
+    · rintro ⟨u, hu, hm⟩
+      have hu' : TestAndSetConsensus.step inp j t = u := hu
+      subst hu'
+      exact ih.mp hm
+    · exact fun h => ⟨_, rfl, ih.mpr h⟩
+
+/-- Steps are deterministic: the execution from `init` along a schedule `σ` ends exactly in
+`run inp σ`. -/
+theorem mTr_iff_eq_run {inp : Fin 2 → V} {σ : List (Fin 2)} {s : State V} :
+    (lts inp).MTr init σ s ↔ s = run inp σ :=
+  mTr_iff_eq_foldl
 
 /-- The state reached by any schedule is reachable. -/
-theorem reachable_run (inp : Fin 2 → V) (σ : List (Fin 2)) : Reachable inp (run inp σ) := by
-  suffices h : ∀ s, Reachable inp s →
-      Reachable inp (σ.foldl (fun s i => TestAndSetConsensus.step inp i s) s) from
-    h init (reachable_init inp)
-  induction σ with
-  | nil => exact fun s hs => hs
-  | cons j σ ih => exact fun s hs => ih _ (hs.step j)
+theorem reachable_run (inp : Fin 2 → V) (σ : List (Fin 2)) : Reachable inp (run inp σ) :=
+  ⟨σ, mTr_iff_eq_run.mpr rfl⟩
 
 private theorem eq_other_of_ne {w i : Fin 2} (h : w ≠ i) : w = other i := by
   have hw := w.isLt
@@ -354,13 +377,16 @@ private theorem inv_step (inp : Fin 2 → V) (i : Fin 2) {s : State V} (hs : Inv
     simp only [step, hpc]
     exact ⟨hR, hT, hW, hD, hO, hDone, hNone⟩
 
+private theorem inv_trInv (inp : Fin 2 → V) : (lts inp).TrInv (Inv inp) := by
+  intro s i t htr hs
+  have htr' : step inp i s = t := htr
+  subst htr'
+  exact inv_step inp i hs
+
 private theorem inv_of_reachable {inp : Fin 2 → V} {s : State V} (hs : Reachable inp s) :
-    Inv inp s := by
-  induction hs with
-  | refl => exact inv_init inp
-  | tail _ hstep ih =>
-    obtain ⟨i, rfl⟩ := hstep
-    exact inv_step inp i ih
+    Inv inp s :=
+  let ⟨_, hm⟩ := hs
+  LTS.mtrInv_of_trInv (inv_trInv inp) _ _ _ hm (inv_init inp)
 
 /-- **Safety of test-and-set consensus.** In every reachable state, any two recorded decisions
 agree, and every recorded decision is one of the two inputs. Termination is
@@ -414,10 +440,11 @@ private theorem stepsLeft_foldl (inp : Fin 2 → V) (i : Fin 2) (σ : List (Fin 
     rw [List.foldl_cons, ih, stepsLeft_step, List.count_cons]
     by_cases hji : j = i <;> simp [hji, Nat.sub_sub, Nat.add_comm]
 
-/-- **Wait-free termination.** Along every schedule, a process that has taken at least three
-steps has decided, whatever the other process does. -/
-theorem decision_isSome_of_three_le_count (inp : Fin 2 → V) (σ : List (Fin 2)) (i : Fin 2)
-    (h : 3 ≤ σ.count i) : ((run inp σ).decision i).isSome := by
+/-- **Wait-free termination.** In every execution from `init`, a process that has taken at least
+three steps has decided, whatever the other process does. -/
+theorem decision_isSome_of_three_le_count {inp : Fin 2 → V} {σ : List (Fin 2)} {s : State V}
+    (hσ : (lts inp).MTr init σ s) (i : Fin 2) (h : 3 ≤ σ.count i) : (s.decision i).isSome := by
+  obtain rfl := mTr_iff_eq_run.mp hσ
   have h0 : stepsLeft ((run inp σ).pc i) = 0 := by
     rw [run, stepsLeft_foldl]
     simp only [init, stepsLeft]
