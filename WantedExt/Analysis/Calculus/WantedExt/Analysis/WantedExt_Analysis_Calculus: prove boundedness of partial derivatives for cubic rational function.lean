@@ -35,8 +35,8 @@ Mathlib` by `public import Mathlib` under the module system.
 
 module
 
-import Mathlib
 public import Batteries.Util.ProofWanted
+public import Mathlib
 
 @[expose] public section
 
