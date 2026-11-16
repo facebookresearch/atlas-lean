@@ -16,8 +16,9 @@ import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
 hand-checked solution witnessing that `IsCableSolution`, `SealedEnds` and the hypotheses of
 `modeCoeff_eq_mul_exp` are satisfiable, a summable coefficient sequence for the infinite
 expansion, boundary cases (`ℓ = 0`, `t = 0`, no nonuniform modes), and the Green's functions:
-point-charge coefficients from the definition (including their non-summability), the uniform
-term's charge, the infinite-cable total charge computed with `integral_gaussian`, and the
+point-charge coefficients from the definition (including their non-summability for `L ≠ 0` and
+the summable `L = 0` boundary), the uniform term's charge, the infinite-cable total charge
+computed with `integral_gaussian`, the infinite-cable equation at a negative position, and the
 boundaries `t = 0` and `x = x₀`. -/
 
 open Real Set Filter Topology intervalIntegral
@@ -226,6 +227,11 @@ example : ¬ Summable fun n => |greenCoeff π 0 n| := by
   have := tendsto_nhds_unique (h.tendsto_atTop_zero.congr' hc) tendsto_const_nhds
   exact (by positivity : (0 : ℝ) < 2 / π).ne this
 
+/-- Boundary `L = 0` for non-summability: Lean's `x / 0 = 0` makes every coefficient `0`, so the
+sequence is summable there; the non-summability claim needs `L ≠ 0`. -/
+example (x₀ : ℝ) : Summable fun n => |greenCoeff 0 x₀ n| := by
+  simp [greenCoeff]
+
 /-- The uniform term alone carries the total charge `e^{-t/τ}`, computed from the definitions with
 `integral_const` (the other modes integrate to `0` by orthogonality). -/
 example {L : ℝ} (hL : L ≠ 0) (τ ℓ x₀ t : ℝ) :
@@ -312,6 +318,16 @@ example : ∫ x, infiniteGreen 1 1 0 (1 / 4) x = exp (-(1 / 4) / 1) :=
 /-- Non-vacuity: the infinite-cable Green's function solves the cable equation for `t > 0`. -/
 example : IsCableSolution 1 1 1 (Ioi 0) (infiniteGreen 1 1 0) :=
   isCableSolution_infiniteGreen one_pos one_ne_zero 1 0
+
+/-- The infinite-cable equation holds on the negative half-line too: at `x = -1`, left of the
+input at `0` and outside every segment `[0, L]`. -/
+example : 1 * deriv (fun s => infiniteGreen 1 1 0 s (-1)) 1 =
+    1 ^ 2 * deriv (deriv (infiniteGreen 1 1 0 1)) (-1) - infiniteGreen 1 1 0 1 (-1) :=
+  (infiniteGreen_cable one_pos one_ne_zero 0 one_pos (-1)).2.2.2
+
+/-- Spatial differentiability at a negative position, `x = -1`. -/
+example : DifferentiableAt ℝ (infiniteGreen 1 1 0 1) (-1) :=
+  (infiniteGreen_cable one_pos one_ne_zero 0 one_pos (-1)).2.1
 
 /-- Non-vacuity of localization: at `x = 1`, away from the input at `0`, the response vanishes as
 `t → 0⁺`. -/

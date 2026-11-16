@@ -95,7 +95,8 @@ solution at the times of `T`.
   `∫₀ᴸ G(s, x; y) G(t, y; z) dy = G(t + s, x; z)` (`integral_sealedGreen_mul_sealedGreen`).
 * Green's function of the infinite cable (`infiniteGreen τ ℓ x₀`):
   `e^{-t/τ} / √(4 π D t) · exp (-(x - x₀)² / (4 D t))` with `D = ℓ² / τ`. It solves the equation
-  for `t > 0` (`isCableSolution_infiniteGreen`), is positive (`infiniteGreen_pos`), has total charge
+  at every `t > 0` and every `x ∈ ℝ` (`infiniteGreen_cable`; restricted to a segment `[0, L]`,
+  `isCableSolution_infiniteGreen`), is positive (`infiniteGreen_pos`), has total charge
   `e^{-t/τ}` (`integral_infiniteGreen`), is symmetric (`infiniteGreen_comm`), peaks at the input
   site (`infiniteGreen_le`), and vanishes away from it as `t → 0⁺`
   (`tendsto_infiniteGreen_of_ne`).
@@ -1208,7 +1209,8 @@ sealed cable `[0, L]`: the pairings `cos (n π x₀ / L)` of `δ_{x₀}` with th
 self-inner-products `L` and `L / 2`. The formula is used for every real `x₀` and `L`; it is even
 and `2L`-periodic in `x₀` (`greenCoeff_neg_source`, `greenCoeff_add_two_mul_source`), so it does
 not single out a source outside `[0, L]` from its image inside. They are bounded
-(`abs_greenCoeff_le`) but not summable. -/
+(`abs_greenCoeff_le`), and for `L ≠ 0` not summable (at `L = 0` division by zero makes every
+coefficient `0`). -/
 noncomputable def greenCoeff (L x₀ : ℝ) (n : ℕ) : ℝ :=
   (if n = 0 then 1 / L else 2 / L) * cosMode L n x₀
 
@@ -1447,23 +1449,36 @@ private theorem hasDerivAt_infiniteGreen_time {τ ℓ : ℝ} (hτ : 0 < τ) (h�
   unfold infiniteGreen
   ring
 
-/-- The infinite-cable Green's function solves the cable equation at every positive time and every
-position (`τ > 0`, `ℓ ≠ 0`; any `L` may be used for the restriction to `[0, L]`). -/
+/-- **The cable equation on all of `ℝ`.** At every positive time `t` and every position `x : ℝ`
+(including `x < 0`), the infinite-cable Green's function is differentiable in time, twice
+differentiable in space, and satisfies `τ ∂ₜG = ℓ² ∂ₓ²G - G`. -/
+theorem infiniteGreen_cable {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (x₀ : ℝ) {t : ℝ} (ht : 0 < t)
+    (x : ℝ) :
+    DifferentiableAt ℝ (fun s => infiniteGreen τ ℓ x₀ s x) t ∧
+      DifferentiableAt ℝ (infiniteGreen τ ℓ x₀ t) x ∧
+      DifferentiableAt ℝ (deriv (infiniteGreen τ ℓ x₀ t)) x ∧
+      τ * deriv (fun s => infiniteGreen τ ℓ x₀ s x) t =
+        ℓ ^ 2 * deriv (deriv (infiniteGreen τ ℓ x₀ t)) x - infiniteGreen τ ℓ x₀ t x := by
+  refine ⟨(hasDerivAt_infiniteGreen_time hτ hℓ x₀ x ht).differentiableAt,
+    (hasDerivAt_infiniteGreen_space τ ℓ x₀ t x).differentiableAt,
+    (hasDerivAt_deriv_infiniteGreen_space τ ℓ x₀ t x).differentiableAt, ?_⟩
+  have hτ' := hτ.ne'
+  have ht' := ht.ne'
+  rw [(hasDerivAt_infiniteGreen_time hτ hℓ x₀ x ht).deriv,
+    (hasDerivAt_deriv_infiniteGreen_space τ ℓ x₀ t x).deriv]
+  unfold infiniteGreen
+  field_simp
+  ring
+
+/-- The restriction of `infiniteGreen_cable` to a finite segment `[0, L]`, in the form of
+`IsCableSolution` (any `L`; the segment is empty for `L < 0`). For positions outside `[0, L]`,
+including `x < 0`, use `infiniteGreen_cable`. -/
 theorem isCableSolution_infiniteGreen {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (L x₀ : ℝ) :
     IsCableSolution τ ℓ L (Ioi 0) (infiniteGreen τ ℓ x₀) where
-  differentiableAt_time t ht x _ := (hasDerivAt_infiniteGreen_time hτ hℓ x₀ x ht).differentiableAt
-  differentiableAt_space t _ x _ := (hasDerivAt_infiniteGreen_space τ ℓ x₀ t x).differentiableAt
-  differentiableAt_deriv_space t _ x _ :=
-    (hasDerivAt_deriv_infiniteGreen_space τ ℓ x₀ t x).differentiableAt
-  cable t ht x _ := by
-    have ht' : 0 < t := ht
-    have hτ' := hτ.ne'
-    have ht'' := ht'.ne'
-    rw [(hasDerivAt_infiniteGreen_time hτ hℓ x₀ x ht').deriv,
-      (hasDerivAt_deriv_infiniteGreen_space τ ℓ x₀ t x).deriv]
-    unfold infiniteGreen
-    field_simp
-    ring
+  differentiableAt_time _ ht x _ := (infiniteGreen_cable hτ hℓ x₀ ht x).1
+  differentiableAt_space _ ht x _ := (infiniteGreen_cable hτ hℓ x₀ ht x).2.1
+  differentiableAt_deriv_space _ ht x _ := (infiniteGreen_cable hτ hℓ x₀ ht x).2.2.1
+  cable _ ht x _ := (infiniteGreen_cable hτ hℓ x₀ ht x).2.2.2
 
 /-- The infinite-cable Green's function is positive at positive times. -/
 theorem infiniteGreen_pos {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (x₀ : ℝ) {t : ℝ} (ht : 0 < t)
