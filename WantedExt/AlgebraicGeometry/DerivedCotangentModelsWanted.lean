@@ -19,7 +19,7 @@ representation is natural on actual kernel morphisms and has the literal
 split lift as origin. A derived moduli tangent/self-Ext identification
 is a separate comparison theorem, not contained in this construction.
 
-References: HAG II §2.2.3; PTVV1111.3209v4 conventions;
+References: HAG II math/0404373v7 §§1.3.7 and 1.4.1; PTVV1111.3209v4 conventions;
 Toën--Vaquié math/0503269v5 §3.3.
 -/
 

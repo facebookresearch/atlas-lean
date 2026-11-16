@@ -25,7 +25,7 @@ each affine fibre to those representing modules. No ordinary scheme
 cotangent is requested again. No identification of a moduli tangent,
 symplectic pairing, or transgression is part of the construction input.
 
-References: HAG II, Part 2, §2.2.3; PTVV arXiv:1111.3209v4,
+References: HAG II math/0404373v7 §§1.3.7 and 1.4.1; PTVV arXiv:1111.3209v4,
 conventions and §1.2; Toën--Vaquié math/0503269v5, §3.3.
 -/
 
