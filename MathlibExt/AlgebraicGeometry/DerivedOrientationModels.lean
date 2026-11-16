@@ -44,6 +44,7 @@ open MathlibExt.AlgebraicGeometry.DerivedCoefficientTensorModels
 open MathlibExt.AlgebraicGeometry.DerivedCoefficientDualModels
 open MathlibExt.AlgebraicGeometry.DerivedScalarUnitModels
 open MathlibExt.AlgebraicGeometry.DerivedScalarGlobalSections
+open MathlibExt.AlgebraicGeometry.DerivedGlobalSectionBaseChange
 open MathlibExt.AlgebraicGeometry.DerivedMonoidalCoherenceModels
 open MathlibExt.AlgebraicGeometry.DerivedGlobalTensorModels
 open MathlibExt.Algebra.Homology.ClosedCochainShifts
@@ -110,6 +111,13 @@ structure TraceSystem (d : ℤ) where
             (Y := ⟨regularModule (scalarCategory (LargeScalar k)) PUnit.unit, D.regular⟩) source)
           (D.regularExtension A).map (add_zero (-d))
 
+/-- The actual scalar extension comparison is a quasi-isomorphism of
+coefficient modules. Arbitrary normalized base-change maps do not imply this. -/
+def IsScalarBaseChange : Prop :=
+  ∀ (A : SAlg k) (x : (coefficientLarge L N A)ᵒᵖ),
+    QuasiIso (moduleComponent
+      (closedModuleMap (D.baseChange A).map (D.baseChange A).closed) x)
+
 /-- The source trace is the actual morphism RΓ(X,O_X)→k[-d]. -/
 def absoluteTrace {d : ℤ} (T : TraceSystem B G D d) :
     globalHom G G.unit ⟶ (𝟙_ (Cochains (LargeScalar k)))⟦-d⟧ := homToShift T.absolute
@@ -136,6 +144,26 @@ def gammaPairing (C : OrientationContext B G) (A : SAlg k) {E : (B.model A).cate
       value (coefficientLarge L N A) (coefficientObject L N A) (gamma B A (B.model A).unit) :=
   ((gammaValueIso B A E).hom ⊗ₘ (gammaValueIso B A P.object).hom) ≫
     sectionPairing (C.family A).monoidal P ≫ (gammaValueIso B A (B.model A).unit).inv
+
+/-- The actual cochain pairing of the two chosen coefficient replacements. -/
+def replacementPairing (C : OrientationContext B G) (A : SAlg k)
+    {E : (B.model A).category} (P : PerfectDual (C.family A).monoidal E)
+    (R : ModuleReplacement (gamma B A E)) (S' : ModuleReplacement (gamma B A P.object)) :
+    value (coefficientLarge L N A) (coefficientObject L N A) R.module ⊗
+      value (coefficientLarge L N A) (coefficientObject L N A) S'.module ⟶
+        value (coefficientLarge L N A) (coefficientObject L N A) (gamma B A (B.model A).unit) :=
+  (moduleComponent R.augmentation (op (coefficientObject L N A)) ⊗ₘ
+    moduleComponent S'.augmentation (op (coefficientObject L N A))) ≫ gammaPairing B G C A P
+
+/-- Descent of the computed pairing to the actual balanced coefficient tensor.
+This is a source linearity condition, distinct from nondegeneracy. -/
+def IsBalancedCoefficientPairing (C : OrientationContext B G) (A : SAlg k)
+    {E : (B.model A).category} (P : PerfectDual (C.family A).monoidal E)
+    (R : ModuleReplacement (gamma B A E)) (S' : ModuleReplacement (gamma B A P.object)) : Prop :=
+  relationLeft (coefficientLarge L N A) (coefficientObject L N A)
+      (N := S'.module) ((C.tensor A).action R.module) ≫ replacementPairing B G C A P R S' =
+    relationRight (coefficientLarge L N A) (coefficientObject L N A)
+      (M := R.module) ((C.tensor A).action S'.module) ≫ replacementPairing B G C A P R S'
 
 /-- A homogeneous tensor vector is the actual balanced quotient generator of the same replacements. -/
 def tensorRepresentative (C : OrientationContext B G) (A : SAlg k)

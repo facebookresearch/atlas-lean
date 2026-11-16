@@ -232,22 +232,75 @@ def cup (H : MonoidalEnhancement G F) (E K : G.category) :
     eHomWhiskerRight (Cochains (LargeScalar k)) (unitDiagonal H)
       (ForgetEnrichment.of _ (H.tensor.obj (E, K)) : Closed G)
 
-/-- A perfect dual is a genuine exact pairing for the same native global tensor. -/
+/-- The dual triangle is computed using the actual unitors, associator and
+closed evaluation/coevaluation representatives. -/
+def dualTriangle (H : MonoidalEnhancement G F) (D E : G.category)
+    (c : (ForgetEnrichment.of _ G.unit : Closed G) ⟶
+      ForgetEnrichment.of _ (H.tensor.obj (D, E)))
+    (e : (ForgetEnrichment.of _ (H.tensor.obj (E, D)) : Closed G) ⟶
+      ForgetEnrichment.of _ G.unit) :
+    (ForgetEnrichment.of _ D : Closed G) ⟶ ForgetEnrichment.of _ D := by
+  letI := H.monoidal
+  let X := (ForgetEnrichment.of _ D : Closed G)
+  let Y := (ForgetEnrichment.of _ E : Closed G)
+  let c' : (𝟙_ (Closed G)) ⟶ X ⊗ Y :=
+    eqToHom H.unit_eq ≫ c ≫ eqToHom (H.tensor_obj D E).symm
+  let e' : Y ⊗ X ⟶ (𝟙_ (Closed G)) :=
+    eqToHom (H.tensor_obj E D) ≫ e ≫ eqToHom H.unit_eq.symm
+  exact (λ_ X).inv ≫ c' ▷ X ≫ (α_ X Y X).hom ≫ X ◁ e' ≫ (ρ_ X).hom
+
+/-- The object triangle uses those same representatives and native associator. -/
+def objectTriangle (H : MonoidalEnhancement G F) (D E : G.category)
+    (c : (ForgetEnrichment.of _ G.unit : Closed G) ⟶
+      ForgetEnrichment.of _ (H.tensor.obj (D, E)))
+    (e : (ForgetEnrichment.of _ (H.tensor.obj (E, D)) : Closed G) ⟶
+      ForgetEnrichment.of _ G.unit) :
+    (ForgetEnrichment.of _ E : Closed G) ⟶ ForgetEnrichment.of _ E := by
+  letI := H.monoidal
+  let X := (ForgetEnrichment.of _ D : Closed G)
+  let Y := (ForgetEnrichment.of _ E : Closed G)
+  let c' : (𝟙_ (Closed G)) ⟶ X ⊗ Y :=
+    eqToHom H.unit_eq ≫ c ≫ eqToHom (H.tensor_obj D E).symm
+  let e' : Y ⊗ X ⟶ (𝟙_ (Closed G)) :=
+    eqToHom (H.tensor_obj E D) ≫ e ≫ eqToHom H.unit_eq.symm
+  exact (ρ_ Y).inv ≫ Y ◁ c' ≫ (α_ Y X Y).inv ≫ e' ▷ Y ≫ (λ_ Y).hom
+
+/-- A closed endomorphism retains its actual degree-zero enriched carrier. -/
+def closedEndomorphism (E : G.category)
+    (f : (ForgetEnrichment.of (Cochains (LargeScalar k)) E : Closed G) ⟶
+      ForgetEnrichment.of (Cochains (LargeScalar k)) E) : DGHom (LargeScalar k) 0 E E :=
+  dgClosedHom (LargeScalar k) f
+
+/-- A perfect dual has actual closed evaluation and coevaluation maps.
+The two native triangles hold through specified degree-minus-one DG
+homotopies; arbitrary cofibrant representatives need not be strictly dualizable. -/
 structure PerfectDual (H : MonoidalEnhancement G F) (E : G.category) where
   object : G.category
-  pairing : @ExactPairing (Closed G) inferInstance H.monoidal
-    (ForgetEnrichment.of _ object) (ForgetEnrichment.of _ E)
+  coevaluation : (ForgetEnrichment.of _ G.unit : Closed G) ⟶
+    ForgetEnrichment.of _ (H.tensor.obj (object, E))
+  evaluation : (ForgetEnrichment.of _ (H.tensor.obj (E, object)) : Closed G) ⟶
+    ForgetEnrichment.of _ G.unit
+  dualHomotopy : DGHom (LargeScalar k) (-1) object object
+  dual_triangle : castDeg (LargeScalar k) (by omega : (-1 : ℤ) + 1 = 0)
+    (dgDifferential (LargeScalar k) (-1) dualHomotopy) =
+      closedEndomorphism object (dualTriangle H object E coevaluation evaluation) -
+        dgId (LargeScalar k) object
+  objectHomotopy : DGHom (LargeScalar k) (-1) E E
+  object_triangle : castDeg (LargeScalar k) (by omega : (-1 : ℤ) + 1 = 0)
+    (dgDifferential (LargeScalar k) (-1) objectHomotopy) =
+      closedEndomorphism E (objectTriangle H object E coevaluation evaluation) -
+        dgId (LargeScalar k) E
   perfect : IsPerfect G object
 
 /-- The source evaluation of E with E∨, with the global tensor and unit fixed. -/
 def evaluation (H : MonoidalEnhancement G F) {E : G.category} (D : PerfectDual H E) :
     (ForgetEnrichment.of _ (H.tensor.obj (E, D.object)) : Closed G) ⟶
-      ForgetEnrichment.of _ G.unit := by
-  letI := H.monoidal
-  letI := D.pairing
-  exact eqToHom (H.tensor_obj E D.object).symm ≫
-    ExactPairing.evaluation (ForgetEnrichment.of _ D.object : Closed G)
-      (ForgetEnrichment.of _ E) ≫ eqToHom H.unit_eq
+      ForgetEnrichment.of _ G.unit := D.evaluation
+
+/-- The actual coevaluation representative of the same homotopy dual. -/
+def coevaluation (H : MonoidalEnhancement G F) {E : G.category} (D : PerfectDual H E) :
+    (ForgetEnrichment.of _ G.unit : Closed G) ⟶
+      ForgetEnrichment.of _ (H.tensor.obj (D.object, E)) := D.coevaluation
 
 /-- The actual global dual pairing is cup followed by this same evaluation. -/
 def sectionPairing (H : MonoidalEnhancement G F) {E : G.category} (D : PerfectDual H E) :

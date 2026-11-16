@@ -129,6 +129,14 @@ def mappingOverSubcomplex {X Y B : SSet.{u}} (p : X ⟶ B) (q : Y ⟶ B) :
 def mappingOver {X Y B : SSet.{u}} (p : X ⟶ B) (q : Y ⟶ B) : SSet.{u} :=
   (mappingOverSubcomplex p q).toSSet
 
+/-- An actual map over the base is its native vertex in the relative mapping space. -/
+def overMapVertex {X Y B : SSet.{u}} (p : X ⟶ B) (q : Y ⟶ B)
+    (f : X ⟶ Y) (hf : f ≫ q = p) : (mappingOver p q) _⦋0⦌ :=
+  ⟨(SimplicialCategory.homEquiv' X Y) f, by
+    intro m g x
+    change q.app m (f.app m x) = p.app m x
+    exact congrArg (fun t => t.app m x) hf⟩
+
 /-- Precompose the actual relative Hom by an actual map over its base. -/
 def mappingOverMap {X Y Z B : SSet.{u}} (p : X ⟶ B) (q : Y ⟶ B) (r : Z ⟶ B)
     (i : X ⟶ Y) (h : i ≫ q = p) : mappingOver q r ⟶ mappingOver p r where
@@ -153,6 +161,7 @@ structure CovariantReplacement {X B : SSet.{u}} (p : X ⟶ B) where
   total : SSet.{u}
   projection : total ⟶ B
   map : X ⟶ total
+  mono : Mono map
   over : map ≫ projection = p
   left_fibration : IsLeftFibration projection
   weak : IsCovariantWeakEquivalence p projection map over

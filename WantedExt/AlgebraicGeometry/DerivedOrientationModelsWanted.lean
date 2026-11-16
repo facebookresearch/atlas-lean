@@ -51,15 +51,16 @@ def_wanted sourceScalarGlobalModels (k : Type u) [CommRing k] [Algebra ℚ k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (M : AffineModuleFibration N S) (U : RegularUnitSystem M)
     (Q : AlgebraReplacementFunctor k) (L : CochainLiftModel k) (V : NerveLiftModel L)
-    (X : Prestack k) (B : FamilyModel M U Q L V X) :
-    (G : QCohEnhancement M U X) × ScalarGlobalModels B G
+    (X : Prestack k) :
+    (B : FamilyModel M U Q L V X) × (G : QCohEnhancement M U X) × ScalarGlobalModels B G
 
 def_wanted actualScalarTraceSystem (k : Type u) [CommRing k] [Algebra ℚ k]
     (N : ShuffleAlgebraFunctor k) (S : AffineScalarSystem N)
     (M : AffineModuleFibration N S) (U : RegularUnitSystem M)
     (Q : AlgebraReplacementFunctor k) (L : CochainLiftModel k) (V : NerveLiftModel L)
     (X : Prestack k) (B : FamilyModel M U Q L V X) (compact : IsOCompact B)
-    (G : QCohEnhancement M U X) (D : ScalarGlobalModels B G) (d : ℤ)
+    (G : QCohEnhancement M U X) (D : ScalarGlobalModels B G)
+    (baseChange : IsScalarBaseChange B G D) (d : ℤ)
     (η : Cocycle (globalHom G G.unit) (𝟙_ (Cochains (LargeScalar k))) (-d)) :
     {T : TraceSystem B G D d // T.absolute = η}
 
@@ -71,7 +72,8 @@ def_wanted actualCoefficientDualPairing (k : Type u) [CommRing k] [Algebra ℚ k
     (D : ScalarGlobalModels B G) (C : OrientationContext B G)
     (A : SAlg k) (E : (B.model A).category) (perfect : IsPerfect (B.model A) E)
     (P : PerfectDual (C.family A).monoidal E)
-    (R : ModuleReplacement (gamma B A E)) (S' : ModuleReplacement (gamma B A P.object)) :
+    (R : ModuleReplacement (gamma B A E)) (S' : ModuleReplacement (gamma B A P.object))
+    (balanced : IsBalancedCoefficientPairing B G C A P R S') :
     CoefficientPairingModel B G D C A P R S'
 
 def_wanted actualOrientationAdjoint (k : Type u) [CommRing k] [Algebra ℚ k]

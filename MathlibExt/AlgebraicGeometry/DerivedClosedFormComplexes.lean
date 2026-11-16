@@ -212,4 +212,21 @@ def closedPullback {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
     closedSpace GY n ⟶ closedSpace GX n :=
   (realize k).map ((shiftFunctor (GlobalComplex k) (n - (p : ℤ))).map (ncPullback f GY GX))
 
+/-- Actual cochain realization maps preserve the distinguished module zero. -/
+theorem realize_map_zero {F P : GlobalComplex k} (f : F ⟶ P) :
+    ((realize k).map f).app (op ⦋0⦌)
+      (0 : (Idempotents.DoldKan.Γ.obj (F.truncLE' ComplexShape.embeddingDownNat)) _⦋0⦌) =
+      (0 : (Idempotents.DoldKan.Γ.obj (P.truncLE' ComplexShape.embeddingDownNat)) _⦋0⦌) := by
+  change ((Idempotents.DoldKan.Γ.map
+    (HomologicalComplex.truncLE'Map f ComplexShape.embeddingDownNat)).app (op ⦋0⦌)).hom 0 = 0
+  exact map_zero _
+
+/-- Global pullback fixes the genuine zero closing-data vertex. -/
+theorem closedPullback_zero {Q : AlgebraReplacementFunctor k} {D : AffineDRSystem Q}
+    {p : ℕ} {NC : NegativeCyclicDiagram D.functor (p : ℤ)}
+    {X Y : Prestack k} (f : X ⟶ Y)
+    (GY : GlobalNCModel D p NC Y) (GX : GlobalNCModel D p NC X) (n : ℤ) :
+    (closedPullback f GY GX n).app (op ⦋0⦌) (zeroForm GY n) = zeroForm GX n :=
+  realize_map_zero _
+
 end MathlibExt.AlgebraicGeometry.DerivedClosedFormComplexes
