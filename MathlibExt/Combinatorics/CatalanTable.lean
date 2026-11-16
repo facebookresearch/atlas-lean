@@ -19,9 +19,9 @@ Mathlib defines `catalan` by the recurrence
 `catalan (n + 1) = ∑ i : Fin n.succ, catalan i * catalan (n - i)`, by well-founded
 recursion, so `decide` and `rfl` do not evaluate it. `catalanTable n` evaluates the same
 recurrence bottom up by structural recursion: it is the list of the first `n + 1` values, and
-each new entry is the sum of the pointwise products of the list and its reverse, computed in one
-pass. Its values reduce by `decide`, and `catalanDP_eq_catalan` transfers them to `catalan` (see
-the tests).
+each new entry is the sum of the pointwise products of the list and its reverse, computed in
+linear time. Its values reduce by `decide`, and `catalanDP_eq_catalan` transfers them to
+`catalan` (see the tests).
 
 ## Main declarations
 
@@ -38,7 +38,7 @@ namespace MetaMathlibExt
 /-- The first `n + 1` values of the Catalan recurrence, computed bottom up.
 `catalanTable (n + 1)` appends to `p = catalanTable n` the entry
 `∑ i, p[i] * p[n - i]`, computed as the sum of the pointwise products of `p` and its reverse
-(`List.zipWith`), so each new entry takes one pass over `p`. -/
+(`List.zipWith`), so each new entry takes time linear in the length of `p`. -/
 def catalanTable : ℕ → List ℕ
   | 0 => [1]
   | n + 1 =>
