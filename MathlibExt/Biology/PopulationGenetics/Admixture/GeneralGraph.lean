@@ -85,7 +85,6 @@ private theorem visit_eq_zero_of_ne_of_not_transGen {V : Type*} [DecidableEq V]
     exact htrans.tail hYmem
   rw [ih Y hYmem hYne hYnot, mul_zero]
 
-set_option linter.unusedFintypeInType false in
 /-- **Cut lemma for lineage visit probabilities**.
 
 Let `parents X` be the (finite, possibly more than two) parents of node `X`, with well-founded
@@ -97,7 +96,7 @@ lineage of `X`, traced toward the root, passes through `c`:
 If `S` is an antichain for the ancestor relation (no element of `S` is a proper ancestor of
 another) and `S` separates `X` from `root` (every root-ward parent chain from `X` to `root` meets
 `S`), then the visit probabilities of `X` across the cut sum to `1`. -/
-theorem sum_visit_eq_one_of_isAntichain_of_separates {V : Type*} [Fintype V] [DecidableEq V]
+theorem sum_visit_eq_one_of_isAntichain_of_separates {V : Type*} [DecidableEq V]
     (root : V) (parents : V → Finset V) (prop : V → V → ℝ) (visit : V → V → ℝ)
     (wf : WellFounded fun Y X => Y ∈ parents X)
     (sum_prop : ∀ X, X ≠ root → ∑ Y ∈ parents X, prop X Y = 1)
@@ -172,11 +171,10 @@ end MathlibExt.Biology.PopulationGenetics.Admixture
 
 namespace MathlibExt.Biology.PopulationGenetics.AdmixtureGraph
 
-set_option linter.unusedFintypeInType false in
 /-- The cut lemma for an Atlas admixture graph: if the antichain `S` meets
 every root-ward parent chain from `X` to the root, then the probabilities that
 the lineage of `X` visits a node of `S` sum to `1`. -/
-theorem sum_visit_cut_eq_one {V : Type*} [Fintype V] [DecidableEq V]
+theorem sum_visit_cut_eq_one {V : Type*} [DecidableEq V]
     (G : AdmixtureGraph V) (S : Finset V) (X : V)
     (hanti : IsAntichain (Relation.TransGen fun Y X => Y ∈ G.parents X) (S : Set V))
     (hsep : ∀ π : List V, π.head? = some X → π.getLast? = some G.root →

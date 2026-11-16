@@ -116,4 +116,97 @@ example : G.visit 3 1 + G.visit 3 2 = 1 := by
 example : ∑ c ∈ ({G.root} : Finset (Fin 4)), G.visit 3 c = 1 := by
   simp [G.visit_root]
 
+/-- Parents for a three-parent abstract example: node `4` has parents `1`, `2`, and `3`. -/
+private def par5 : Fin 5 → Finset (Fin 5) := ![∅, {0}, {0}, {0}, {1, 2, 3}]
+
+/-- Proportions for the three-parent abstract example. -/
+private noncomputable def pr5 : Fin 5 → Fin 5 → ℝ :=
+  ![![0, 0, 0, 0, 0], ![1, 0, 0, 0, 0], ![1, 0, 0, 0, 0], ![1, 0, 0, 0, 0],
+    ![0, 1 / 2, 1 / 3, 1 / 6, 0]]
+
+/-- Visit probabilities for the three-parent abstract example, by start node and target node. -/
+private noncomputable def vis5 : Fin 5 → Fin 5 → ℝ :=
+  ![![1, 0, 0, 0, 0], ![1, 1, 0, 0, 0], ![1, 0, 1, 0, 0], ![1, 0, 0, 1, 0],
+    ![1, 1 / 2, 1 / 3, 1 / 6, 1]]
+
+/-- In the three-parent example, every parent has a smaller index than its child. -/
+private theorem parent5_lt {Y X : Fin 5} (h : Y ∈ par5 X) : (Y : ℕ) < (X : ℕ) := by
+  fin_cases X <;> fin_cases Y <;> simp_all [par5]
+
+/-- The parent relation of the three-parent example is well founded. -/
+private theorem wf5 : WellFounded fun Y X : Fin 5 => Y ∈ par5 X :=
+  Subrelation.wf (r := fun Y X : Fin 5 => (Y : ℕ) < X)
+    (fun h => parent5_lt h) (measure fun x : Fin 5 => (x : ℕ)).wf
+
+/-- Every ancestral chain in the three-parent example strictly increases the child index. -/
+private theorem transGen5_lt {a b : Fin 5}
+    (h : Relation.TransGen (fun Y X => Y ∈ par5 X) a b) : (a : ℕ) < (b : ℕ) := by
+  induction h with
+  | single hstep => exact parent5_lt hstep
+  | tail _ hstep ih => exact lt_trans ih (parent5_lt hstep)
+
+/-- No nonzero start node has an ancestral chain ending at one of the three parents. -/
+private theorem not_transGen5_to_cut {a b : Fin 5} (hb : b = 1 ∨ b = 2 ∨ b = 3)
+    (ha : a ≠ 0) (h : Relation.TransGen (fun Y X => Y ∈ par5 X) a b) : False := by
+  cases h with
+  | single hstep =>
+    have ha0 : a = 0 := by
+      rcases hb with rfl | rfl | rfl <;> simpa [par5] using hstep
+    exact ha ha0
+  | tail hpre hstep =>
+    have hz := hstep
+    rcases hb with rfl | rfl | rfl <;> simp [par5] at hz
+    all_goals subst hz
+    all_goals have hlt := transGen5_lt hpre
+    all_goals norm_num at hlt
+
+/-- The proportions of every non-root node in the three-parent example sum to `1`. -/
+private theorem sum_prop5 : ∀ X, X ≠ (0 : Fin 5) → ∑ Y ∈ par5 X, pr5 X Y = 1 := by
+  intro X hX
+  fin_cases X <;> simp_all [par5, pr5]
+  norm_num
+
+/-- The displayed visit table satisfies the first-step recursion. -/
+private theorem visit_eq5 : ∀ X c,
+    vis5 X c = if X = c then 1 else ∑ Y ∈ par5 X, pr5 X Y * vis5 Y c := by
+  intro X c
+  fin_cases X <;> fin_cases c <;> norm_num [par5, pr5, vis5]
+
+/-- The three parents of node `4` form an antichain. -/
+private theorem antichain5 :
+    IsAntichain (Relation.TransGen fun Y X => Y ∈ par5 X)
+      (({1, 2, 3} : Finset (Fin 5)) : Set (Fin 5)) := by
+  intro a ha b hb _hab htrans
+  have ha123 : a = 1 ∨ a = 2 ∨ a = 3 := by simpa using ha
+  have hb123 : b = 1 ∨ b = 2 ∨ b = 3 := by simpa using hb
+  exact not_transGen5_to_cut hb123 (by rcases ha123 with rfl | rfl | rfl <;> norm_num) htrans
+
+/-- Every root-ward chain from node `4` meets one of its three parents. -/
+private theorem separates5 :
+    ∀ π : List (Fin 5), π.head? = some 4 → π.getLast? = some 0 →
+      π.IsChain (fun a b => b ∈ par5 a) → ∃ c ∈ ({1, 2, 3} : Finset (Fin 5)), c ∈ π := by
+  intro π hhead hlast hchain
+  cases π with
+  | nil => simp at hhead
+  | cons a tl =>
+    cases tl with
+    | nil =>
+      simp only [List.head?_cons, Option.some.injEq] at hhead
+      simp [hhead] at hlast
+    | cons b tl =>
+      have ha : a = 4 := by simpa using hhead
+      subst ha
+      have hb : b ∈ par5 4 := (List.isChain_cons_cons.mp hchain).1
+      have hb123 : b = 1 ∨ b = 2 ∨ b = 3 := by simpa [par5] using hb
+      exact ⟨b, by simpa using hb123, by simp⟩
+
+/-- Three-parent cut in the abstract parent-relation form. -/
+example : ∑ c ∈ ({1, 2, 3} : Finset (Fin 5)), vis5 4 c = 1 :=
+  Admixture.sum_visit_eq_one_of_isAntichain_of_separates 0 par5 pr5 vis5 wf5
+    sum_prop5 visit_eq5 _ _ antichain5 separates5
+
+/-- The same three-parent cut in expanded form: `1 / 2 + 1 / 3 + 1 / 6 = 1`. -/
+example : vis5 4 1 + vis5 4 2 + vis5 4 3 = 1 := by
+  norm_num [vis5]
+
 end MathlibExtTest.Biology.PopulationGenetics.Admixture.GeneralGraph
