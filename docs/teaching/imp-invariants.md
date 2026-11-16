@@ -64,7 +64,7 @@ satisfiable.
 
 ## Prior art in this repository
 
-Atlas already has Hoare-logic examples. `HoareExamples.countdown_valid`
+Atlas already has Hoare-logic examples. `Cslib.IMP.Examples.countdown_valid`
 proves partial correctness of a two-cell transfer loop: cell 0 is
 incremented while cell 1 is decremented to 0, ending with cell 0 equal to
 the sum of the two starting values. `HoareTotalTests.countdown_total`
