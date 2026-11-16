@@ -38,6 +38,8 @@ module
 import Mathlib
 public import Batteries.Util.ProofWanted
 
+@[expose] public section
+
 namespace MathlibExt.Analysis.Calculus.CubicOverSumSquaresPartialsBoundedWanted
 
 /-- Define $f(0,0)=0$ and
