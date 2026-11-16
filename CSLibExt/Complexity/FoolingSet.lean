@@ -25,11 +25,11 @@ Protocols and their cost are not modeled here, and rank bounds are not included.
 
 ## Main results
 
-* `MathlibExt.Complexity.FoolingSet.IsFooling`: `S` is a 1-fooling set for `f`.
-* `MathlibExt.Complexity.FoolingSet.RectMono`: `f` is `true` on the rectangle `A ×ˢ B`.
-* `MathlibExt.Complexity.FoolingSet.IsFooling.eq_of_mem_rect`: a monochromatic-1 rectangle
+* `Cslib.Complexity.FoolingSet.IsFooling`: `S` is a 1-fooling set for `f`.
+* `Cslib.Complexity.FoolingSet.RectMono`: `f` is `true` on the rectangle `A ×ˢ B`.
+* `Cslib.Complexity.FoolingSet.IsFooling.eq_of_mem_rect`: a monochromatic-1 rectangle
   contains at most one element of a 1-fooling set.
-* `MathlibExt.Complexity.FoolingSet.fooling_card_le`: a list of monochromatic-1 rectangles
+* `Cslib.Complexity.FoolingSet.fooling_card_le`: a list of monochromatic-1 rectangles
   covering a 1-fooling set `S` has length at least `S.card`.
 
 ## References
@@ -40,7 +40,7 @@ Protocols and their cost are not modeled here, and rank bounds are not included.
 
 @[expose] public section
 
-namespace MathlibExt.Complexity.FoolingSet
+namespace Cslib.Complexity.FoolingSet
 
 /-- `S` is a 1-fooling set for `f`: `f` is `true` on every element of `S`, and for distinct
 `p, q ∈ S` one of the crossed inputs `(p.1, q.2)` and `(q.1, p.2)` has value `false`. -/
@@ -102,4 +102,4 @@ theorem fooling_card_le {X Y : Type*}
   rw [Fintype.card_coe, Fintype.card_coe] at hcard
   exact le_trans hcard (List.toFinset_card_le rects)
 
-end MathlibExt.Complexity.FoolingSet
+end Cslib.Complexity.FoolingSet

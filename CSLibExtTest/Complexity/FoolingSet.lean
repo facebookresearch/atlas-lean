@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Complexity.FoolingSet
+public import CSLibExt.Complexity.FoolingSet
 
 /-!
 # Tests for fooling sets
@@ -23,9 +23,9 @@ public import MathlibExt.Complexity.FoolingSet
 
 @[expose] public section
 
-namespace MathlibExtTest.Complexity.FoolingSet
+namespace Cslib.Complexity.FoolingSetTests
 
-open MathlibExt.Complexity.FoolingSet
+open Cslib.Complexity.FoolingSet
 
 /-- The empty set is a 1-fooling set for any `f`. -/
 example (f : Fin 2 × Fin 2 → Bool) : IsFooling f ∅ := by
@@ -80,4 +80,4 @@ example : ¬ IsFooling (fun _ : Fin 2 × Fin 2 => true) diag := by
   unfold IsFooling diag
   decide
 
-end MathlibExtTest.Complexity.FoolingSet
+end Cslib.Complexity.FoolingSetTests
