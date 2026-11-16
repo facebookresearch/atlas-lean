@@ -148,11 +148,11 @@ instance : IsFiniteMeasure maskLaw := by
 
 /-- The pair has the same observed-data law, computed by pushing the point masses forward. -/
 lemma map_shadowObs_constLaw : constLaw.map shadowObs = maskLaw.map shadowObs := by
-  have hm : Measurable (shadowObs : Bool × Bool × Unit → Bool × Bool × Unit) :=
-    measurable_of_finite _
+  have hm : Measurable (shadowObs : Bool × Bool × Unit → Unit × (Bool ⊕ Unit)) :=
+    measurable_shadowObs
   rw [constLaw, maskLaw, Measure.map_smul, Measure.map_smul, Measure.map_add _ _ hm,
     Measure.map_add _ _ hm, Measure.map_dirac' hm, Measure.map_dirac' hm, Measure.map_dirac' hm]
-  · simp [shadowObs]
+  · simp [shadowObs, observedData]
   all_goals exact hm.aemeasurable
 
 /-- The pair differs at the nonrespondent cell `(false, true, ())`. -/

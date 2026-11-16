@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Probability.Causality.CausalIdentification
+public import MathlibExt.Probability.Causality.MissingData.Definitions
 public import MathlibExt.Probability.WeightLaw
 
 /-!
@@ -36,8 +36,9 @@ determined by the observed-data law.
 
 ## Main definitions
 
-* `shadowObs`: the observed data of a full-data point, `(r, y, z) ↦ (r, y, z)` on response and
-  `(r, default, z)` on nonresponse.
+* `shadowObs`: the observed data of a full-data point, the canonical map `observedData R X Y`
+  with `R = {r = true}`, `X = z` and `Y = y`: `(z, Sum.inl y)` on response and
+  `(z, Sum.inr ())` on nonresponse.
 * `ShadowVariable P`: `Z ⊥ R | Y` under `P`, as `CondIndepDiscrete`.
 * `ShadowComplete P`: completeness of the respondents' outcome given the shadow variable.
 * `shadowOdds P y`: the nonresponse odds `P(R = false, Y = y) / P(R = true, Y = y)`.
@@ -128,25 +129,33 @@ lemma measureReal_nonresponse_shadow [Fintype 𝒴] [Finite 𝒵] (P : Measure (
 
 /-! ### Observed data -/
 
-/-- The observed data of a full-data point `(r, y, z)`: the outcome is replaced by `default` on
-nonresponse. -/
-def shadowObs [Inhabited 𝒴] (ω : Bool × 𝒴 × 𝒵) : Bool × 𝒴 × 𝒵 :=
-  (ω.1, if ω.1 then ω.2.1 else default, ω.2.2)
+/-- The observed data of a full-data point `(r, y, z)`: the observed-data map `observedData R X Y`
+with response event `R = {r = true}`, always-observed `X = z` and outcome `Y = y`. It records
+`(z, Sum.inl y)` on response and `(z, Sum.inr ())` on nonresponse; the response indicator is
+recovered by `observedData_snd_isLeft`. -/
+noncomputable abbrev shadowObs : Bool × 𝒴 × 𝒵 → 𝒵 × (𝒴 ⊕ Unit) :=
+  observedData {ω | ω.1 = true} (fun ω => ω.2.2) (fun ω => ω.2.1)
 
-lemma measurable_shadowObs [Finite 𝒴] [Finite 𝒵] [Inhabited 𝒴] :
-    Measurable (shadowObs : Bool × 𝒴 × 𝒵 → _) :=
-  measurable_of_finite _
+omit [MeasurableSingletonClass 𝒴] [MeasurableSingletonClass 𝒵] in
+lemma measurable_shadowObs : Measurable (shadowObs : Bool × 𝒴 × 𝒵 → _) :=
+  measurable_observedData (measurable_fst (measurableSet_singleton true)) measurable_snd.snd
+    measurable_snd.fst
 
 open scoped Classical in
-private lemma measureReal_map_shadowObs_singleton [Fintype 𝒴] [Fintype 𝒵] [Inhabited 𝒴]
-    (P : Measure (Bool × 𝒴 × 𝒵)) [IsFiniteMeasure P] (o : Bool × 𝒴 × 𝒵) :
+private lemma measureReal_map_shadowObs_singleton [Fintype 𝒴] [Fintype 𝒵]
+    (P : Measure (Bool × 𝒴 × 𝒵)) [IsFiniteMeasure P] (o : 𝒵 × (𝒴 ⊕ Unit)) :
     (P.map shadowObs).real {o} =
-      (∑ y, ∑ z, if (true, y, z) = o then P.real {(true, y, z)} else 0) +
-        ∑ z, if (false, default, z) = o then ∑ y, P.real {(false, y, z)} else 0 := by
-  rw [map_measureReal_apply measurable_shadowObs (measurableSet_singleton o),
-    measureReal_eq_sum]
-  simp only [Set.mem_preimage, Set.mem_singleton_iff, shadowObs, Fintype.sum_prod_type,
-    Fintype.sum_bool, ite_true, Bool.false_eq_true, ite_false]
+      (∑ y, ∑ z, if (z, Sum.inl y) = o then P.real {(true, y, z)} else 0) +
+        ∑ z, if (z, Sum.inr ()) = o then ∑ y, P.real {(false, y, z)} else 0 := by
+  have ho : MeasurableSet {o} := by
+    obtain ⟨z, y | u⟩ := o
+    · rw [← Set.singleton_prod_singleton, ← Set.image_singleton]
+      exact (measurableSet_singleton z).prod (measurableSet_singleton y).inl_image
+    · rw [← Set.singleton_prod_singleton, ← Set.image_singleton]
+      exact (measurableSet_singleton z).prod (measurableSet_singleton u).inr_image
+  rw [map_measureReal_apply measurable_shadowObs ho, measureReal_eq_sum]
+  simp only [Set.mem_preimage, Set.mem_singleton_iff, shadowObs, observedData, Set.mem_ofPred_eq,
+    Fintype.sum_prod_type, Fintype.sum_bool, ite_true, Bool.false_eq_true, ite_false]
   congr 1
   rw [Finset.sum_comm]
   refine Finset.sum_congr rfl fun z _ => ?_
@@ -155,7 +164,7 @@ private lemma measureReal_map_shadowObs_singleton [Fintype 𝒴] [Fintype 𝒵] 
 /-- **The observed-data law.** Two full-data laws have the same observed-data law exactly when
 they agree on every respondent cell `(true, y, z)` and on every nonrespondent shadow margin
 `P(R = false, Z = z)`. -/
-theorem map_shadowObs_eq_iff [Fintype 𝒴] [Finite 𝒵] [Inhabited 𝒴] {P Q : Measure (Bool × 𝒴 × 𝒵)}
+theorem map_shadowObs_eq_iff [Fintype 𝒴] [Finite 𝒵] {P Q : Measure (Bool × 𝒴 × 𝒵)}
     [IsFiniteMeasure P] [IsFiniteMeasure Q] :
     P.map shadowObs = Q.map shadowObs ↔
       (∀ y z, P.real {(true, y, z)} = Q.real {(true, y, z)}) ∧
@@ -166,13 +175,13 @@ theorem map_shadowObs_eq_iff [Fintype 𝒴] [Finite 𝒵] [Inhabited 𝒴] {P Q 
   constructor
   · intro h
     refine ⟨fun y z => ?_, fun z => ?_⟩
-    · have := h (true, y, z)
-      simp only [measureReal_map_shadowObs_singleton, Prod.mk.injEq, true_and,
-        Bool.false_eq_true, false_and, ite_false, Finset.sum_const_zero, add_zero] at this
+    · have := h (z, Sum.inl y)
+      simp only [measureReal_map_shadowObs_singleton, Prod.mk.injEq, Sum.inl.injEq, reduceCtorEq,
+        and_false, ite_false, Finset.sum_const_zero, add_zero] at this
       simpa [ite_and, Finset.sum_ite_eq'] using this
-    · have := h (false, default, z)
-      simp only [measureReal_map_shadowObs_singleton, Prod.mk.injEq, true_and,
-        Bool.true_eq_false, false_and, ite_false, Finset.sum_const_zero, zero_add] at this
+    · have := h (z, Sum.inr ())
+      simp only [measureReal_map_shadowObs_singleton, Prod.mk.injEq, reduceCtorEq, and_false,
+        ite_false, Finset.sum_const_zero, zero_add, and_true] at this
       simpa [Finset.sum_ite_eq'] using this
   · rintro ⟨h1, h0⟩ o
     rw [measureReal_map_shadowObs_singleton, measureReal_map_shadowObs_singleton]
@@ -313,7 +322,7 @@ theorem ShadowComplete.eq_shadowOdds [Fintype 𝒴] [Fintype 𝒵]
 /-- **Identification with a shadow variable** (Miao–Tchetgen Tchetgen). Two full-data laws that
 satisfy the shadow assumption and have the same observed-data law are equal, provided one of
 them is complete. -/
-theorem eq_of_map_shadowObs_eq [Fintype 𝒴] [Finite 𝒵] [Inhabited 𝒴] {P Q : Measure (Bool × 𝒴 × 𝒵)}
+theorem eq_of_map_shadowObs_eq [Fintype 𝒴] [Finite 𝒵] {P Q : Measure (Bool × 𝒴 × 𝒵)}
     [IsFiniteMeasure P] [IsFiniteMeasure Q] (hP : ShadowVariable P) (hQ : ShadowVariable Q)
     (hc : ShadowComplete P)
     (hobs : P.map shadowObs = Q.map shadowObs) : P = Q := by
@@ -332,7 +341,7 @@ theorem eq_of_map_shadowObs_eq [Fintype 𝒴] [Finite 𝒵] [Inhabited 𝒴] {P 
 /-- **Every outcome mean is identified**: under the hypotheses of `eq_of_map_shadowObs_eq`, the
 mean of `f(Y)` is the same under both laws. Contrast `exists_map_obsRY_eq_integral_eq`, where
 without a shadow variable the identified set of the mean is all of `ℝ`. -/
-theorem integral_eq_of_map_shadowObs_eq [Fintype 𝒴] [Finite 𝒵] [Inhabited 𝒴]
+theorem integral_eq_of_map_shadowObs_eq [Fintype 𝒴] [Finite 𝒵]
     {P Q : Measure (Bool × 𝒴 × 𝒵)}
     [IsFiniteMeasure P] [IsFiniteMeasure Q] (hP : ShadowVariable P) (hQ : ShadowVariable Q)
     (hc : ShadowComplete P) (hobs : P.map shadowObs = Q.map shadowObs) (f : 𝒴 → ℝ) :
@@ -345,7 +354,7 @@ theorem integral_eq_of_map_shadowObs_eq [Fintype 𝒴] [Finite 𝒵] [Inhabited 
 `0 < P(R = true, Y = y)` and `0 < P(R = false, Y = y)` for every `y`. If `P` is not complete,
 another probability law that satisfies the shadow assumption has the same observed-data law as
 `P` and differs from it. -/
-theorem exists_ne_map_shadowObs_eq_of_not_shadowComplete [Fintype 𝒴] [Fintype 𝒵] [Inhabited 𝒴]
+theorem exists_ne_map_shadowObs_eq_of_not_shadowComplete [Fintype 𝒴] [Fintype 𝒵]
     {P : Measure (Bool × 𝒴 × 𝒵)} [IsProbabilityMeasure P] (hP : ShadowVariable P)
     (hresp : ∀ y, ∑ z, P.real {(true, y, z)} ≠ 0) (hnonresp : ∀ y, ∑ z, P.real {(false, y, z)} ≠ 0)
     (hnc : ¬ ShadowComplete P) :
