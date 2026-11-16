@@ -34,4 +34,20 @@ example {Ω : Type*} [MeasurableSpace Ω] {μ : MeasureTheory.Measure Ω}
         (MathlibExt.Probability.Finance.PortfolioVariance.covMatrix μ R *ᵥ ![1, 2]) :=
   MathlibExt.Probability.Finance.PortfolioVariance.portfolio_variance_eq_dotProduct_mulVec hR
 
+/-- The measure-theoretic covariance matrix is positive semidefinite, stated
+through the `covMatrix` definition used for portfolio variance. -/
+example {ι : Type*} {Ω : Type*} [MeasurableSpace Ω] [Fintype ι]
+    {μ : MeasureTheory.Measure Ω} [MeasureTheory.IsFiniteMeasure μ]
+    {R : ι → Ω → ℝ} (hR : ∀ i, MeasureTheory.MemLp (R i) 2 μ) :
+    (MathlibExt.Probability.Finance.PortfolioVariance.covMatrix μ R).PosSemidef :=
+  ProbabilityTheory.posSemidef_covariance_matrix hR
+
+/-- Constant returns give the degenerate, singular covariance matrix; it is
+still positive semidefinite. -/
+example {Ω : Type*} [MeasurableSpace Ω] {μ : MeasureTheory.Measure Ω}
+    [MeasureTheory.IsFiniteMeasure μ] (c : Fin 2 → ℝ) :
+    (MathlibExt.Probability.Finance.PortfolioVariance.covMatrix μ
+      (fun i _ => c i)).PosSemidef :=
+  ProbabilityTheory.posSemidef_covariance_matrix fun i => MeasureTheory.memLp_const (c i)
+
 end MathlibExtTest.PortfolioVariance
