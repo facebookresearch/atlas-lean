@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import MathlibExt.Probability.BhattacharyyaCoeff
 public import MathlibExt.Probability.MarkovMixing
 public import Mathlib.Analysis.Real.Sqrt
 
@@ -51,11 +52,6 @@ operators is not proved here.
 namespace MathlibExt.Quantum.ClassicalFuchsVanDeGraaf
 
 open MathlibExt.Probability.MarkovMixing
-
-/-- The Bhattacharyya coefficient `∑ x, √(p x * q x)` of two nonnegative vectors on a finite
-type: the unsquared classical (root) fidelity of two probability vectors. -/
-noncomputable def bhattacharyyaCoeff {S : Type*} [Fintype S] (p q : S → ℝ) : ℝ :=
-  ∑ x, Real.sqrt (p x * q x)
 
 variable {S : Type*} [Fintype S]
 

@@ -8,7 +8,7 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Quantum.ClassicalFuchsVanDeGraaf
+public import MathlibExt.Probability.BhattacharyyaCoeff
 
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
