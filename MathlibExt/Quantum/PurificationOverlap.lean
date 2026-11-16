@@ -19,22 +19,26 @@ import Mathlib.Analysis.RCLike.Basic
 
 Let `A, B : X → E → ℂ` be the amplitudes of two vectors `∑ x e, A x e |x⟩|e⟩` and
 `∑ x e, B x e |x⟩|e⟩` on a finite system `X` and a finite environment `E`, with row weights
-`p x = ∑ e, |A x e|²` and `q x = ∑ e, |B x e|²`. Purifications of the diagonal states `diag p`
-and `diag q` with environment `E` have these row weights. The overlap
-`|∑ x e, conj (A x e) * B x e|` is at most the Bhattacharyya coefficient
-`bhattacharyyaCoeff p q = ∑ x, √(p x * q x)`, and the canonical purifications
-`∑ x, √(p x) |x⟩|x⟩` and `∑ x, √(q x) |x⟩|x⟩` attain it.
+`p x = ∑ e, |A x e|²` and `q x = ∑ e, |B x e|²`. When `p` and `q` are probability vectors,
+purifications of the density states `diag p` and `diag q` with environment `E` have these row
+weights. The overlap `|∑ x e, conj (A x e) * B x e|` is at most the Bhattacharyya coefficient
+`bhattacharyyaCoeff p q = ∑ x, √(p x * q x)`. For nonnegative `p` and `q`, the canonical arrays
+`√(p x) δ x e` and `√(q x) δ x e` attain it; for probability vectors these are unit vectors
+purifying `diag p` and `diag q`.
 
-The fidelity of two diagonal states is the Bhattacharyya coefficient of their diagonals
-(Nielsen and Chuang, Chapter 9), so these results are the diagonal case of Uhlmann's theorem.
-That identification with Physlib's `MState.fidelity`, and Uhlmann's theorem for general mixed
-states, are not proved here.
+The fidelity of two diagonal density states is the Bhattacharyya coefficient of their diagonals
+(Nielsen and Chuang, Chapter 9), so for probability vectors these results are the diagonal case
+of Uhlmann's theorem. That identification with Physlib's `MState.fidelity`, and Uhlmann's theorem
+for general mixed states, are not proved here.
 
 ## Main results
 
 * `purification_overlap_le`: the overlap is at most `bhattacharyyaCoeff p q`.
-* `exists_purification_overlap_eq`: the canonical purifications satisfy the hypotheses of
-  `purification_overlap_le`, have orthogonal rows, and attain the bound.
+* `exists_overlap_eq_bhattacharyyaCoeff`: for nonnegative `p` and `q`, the canonical arrays
+  satisfy the hypotheses of `purification_overlap_le`, have orthogonal rows, and attain the
+  bound.
+* `exists_purification_overlap_eq`: for probability vectors `p` and `q`, the canonical arrays
+  are moreover unit vectors, so they purify the density states `diag p` and `diag q`.
 
 ## References
 
@@ -49,7 +53,7 @@ namespace MathlibExt.Quantum.PurificationOverlap
 open MathlibExt.Quantum.ClassicalFuchsVanDeGraaf
 
 /-- **Purification overlap bound.** If the rows of the amplitude arrays `A` and `B` have squared
-norms `p` and `q`, as they do for purifications of the diagonal states `diag p` and `diag q`
+norms `p` and `q`, as they do when `A` and `B` purify the density states `diag p` and `diag q`
 with a common environment `E`, then the overlap `|∑ x e, conj (A x e) * B x e|` is at most the
 Bhattacharyya coefficient of `p` and `q`. -/
 theorem purification_overlap_le {X E : Type*} [Fintype X] [Fintype E]
@@ -83,16 +87,17 @@ theorem purification_overlap_le {X E : Type*} [Fintype X] [Fintype E]
     _ ≤ ∑ x, Real.sqrt (p x * q x) := Finset.sum_le_sum fun x _ => key x
     _ = bhattacharyyaCoeff p q := rfl
 
-/-- Amplitudes of the canonical purification `∑ x, √(r x) |x⟩|x⟩`. -/
+/-- The canonical amplitude array `√(r x) δ x e` of the vector `∑ x, √(r x) |x⟩|x⟩`. -/
 private noncomputable def canonical {X : Type*} [DecidableEq X] (r : X → ℝ) (x e : X) : ℂ :=
   if x = e then (Real.sqrt (r x) : ℂ) else 0
 
-/-- **The purification overlap bound is attained.** The canonical purifications
-`∑ x, √(p x) |x⟩|x⟩` and `∑ x, √(q x) |x⟩|x⟩` of the diagonal states `diag p` and `diag q`,
-whose environment is a copy of the system, satisfy the hypotheses of `purification_overlap_le`,
-have pairwise orthogonal rows (so their reduced states are exactly `diag p` and `diag q`), and
-have overlap of norm exactly `bhattacharyyaCoeff p q`. -/
-theorem exists_purification_overlap_eq {X : Type*} [Fintype X] (p q : X → ℝ)
+/-- **The overlap bound is attained.** For nonnegative `p` and `q`, the canonical amplitude
+arrays of `∑ x, √(p x) |x⟩|x⟩` and `∑ x, √(q x) |x⟩|x⟩`, whose environment is a copy of the
+system, satisfy the hypotheses of `purification_overlap_le`, have pairwise orthogonal rows (so
+their reduced operators on the system are exactly `diag p` and `diag q`), and have overlap of norm
+exactly `bhattacharyyaCoeff p q`. For probability vectors they purify density states; see
+`exists_purification_overlap_eq`. -/
+theorem exists_overlap_eq_bhattacharyyaCoeff {X : Type*} [Fintype X] (p q : X → ℝ)
     (hp0 : ∀ x, 0 ≤ p x) (hq0 : ∀ x, 0 ≤ q x) :
     ∃ A B : X → X → ℂ,
       (∀ x, ∑ e, Complex.normSq (A x e) = p x) ∧
@@ -126,6 +131,25 @@ theorem exists_purification_overlap_eq {X : Type*} [Fintype X] (p q : X → ℝ)
   have hB0 : 0 ≤ bhattacharyyaCoeff p q :=
     Finset.sum_nonneg fun x _ => Real.sqrt_nonneg _
   rw [hsum, Complex.norm_real, Real.norm_of_nonneg hB0]
+
+/-- **Purifications attaining the overlap bound.** For probability vectors `p` and `q`, the
+canonical purifications `∑ x, √(p x) |x⟩|x⟩` and `∑ x, √(q x) |x⟩|x⟩` of the density states
+`diag p` and `diag q` are unit vectors with these reduced states, satisfy the hypotheses of
+`purification_overlap_le`, and have overlap of norm exactly `bhattacharyyaCoeff p q`. -/
+theorem exists_purification_overlap_eq {X : Type*} [Fintype X] (p q : X → ℝ)
+    (hp0 : ∀ x, 0 ≤ p x) (hq0 : ∀ x, 0 ≤ q x) (hp1 : ∑ x, p x = 1) (hq1 : ∑ x, q x = 1) :
+    ∃ A B : X → X → ℂ,
+      (∀ x, ∑ e, Complex.normSq (A x e) = p x) ∧
+      (∀ x, ∑ e, Complex.normSq (B x e) = q x) ∧
+      (∀ x y, x ≠ y → ∑ e, A x e * (starRingEnd ℂ) (A y e) = 0) ∧
+      (∀ x y, x ≠ y → ∑ e, B x e * (starRingEnd ℂ) (B y e) = 0) ∧
+      ∑ x, ∑ e, Complex.normSq (A x e) = 1 ∧
+      ∑ x, ∑ e, Complex.normSq (B x e) = 1 ∧
+      ‖∑ x, ∑ e, (starRingEnd ℂ) (A x e) * B x e‖ = bhattacharyyaCoeff p q := by
+  obtain ⟨A, B, hA, hB, hA', hB', h⟩ := exists_overlap_eq_bhattacharyyaCoeff p q hp0 hq0
+  refine ⟨A, B, hA, hB, hA', hB', ?_, ?_, h⟩
+  · rw [Finset.sum_congr rfl fun x _ => hA x, hp1]
+  · rw [Finset.sum_congr rfl fun x _ => hB x, hq1]
 
 end MathlibExt.Quantum.PurificationOverlap
 

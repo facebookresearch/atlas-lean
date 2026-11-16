@@ -58,8 +58,20 @@ example {X : Type*} [Fintype X] (p q : X → ℝ) (hp0 : ∀ x, 0 ≤ p x) (hq0 
     ∃ A B : X → X → ℂ,
       ‖∑ x, ∑ e, (starRingEnd ℂ) (A x e) * B x e‖ ≤ bhattacharyyaCoeff p q ∧
       bhattacharyyaCoeff p q ≤ ‖∑ x, ∑ e, (starRingEnd ℂ) (A x e) * B x e‖ := by
-  obtain ⟨A, B, hA, hB, -, -, h⟩ := exists_purification_overlap_eq p q hp0 hq0
+  obtain ⟨A, B, hA, hB, -, -, h⟩ := exists_overlap_eq_bhattacharyyaCoeff p q hp0 hq0
   exact ⟨A, B, purification_overlap_le A B p q hA hB, h.ge⟩
+
+/-- Without normalization the attaining arrays need not be unit vectors: for `p = q = 2` on a
+point, the bound `2` is attained. -/
+example : ∃ A B : Fin 1 → Fin 1 → ℂ,
+    (∀ x, ∑ e, Complex.normSq (A x e) = 2) ∧ (∀ x, ∑ e, Complex.normSq (B x e) = 2) ∧
+    ‖∑ x, ∑ e, (starRingEnd ℂ) (A x e) * B x e‖ = 2 := by
+  obtain ⟨A, B, hA, hB, -, -, h⟩ :=
+    exists_overlap_eq_bhattacharyyaCoeff (fun _ : Fin 1 => (2 : ℝ)) (fun _ => 2)
+      (fun _ => by norm_num) (fun _ => by norm_num)
+  refine ⟨A, B, hA, hB, h.trans ?_⟩
+  rw [bhattacharyyaCoeff, Fin.sum_univ_one]
+  exact Real.sqrt_mul_self (by norm_num)
 
 /-- The Bhattacharyya coefficient of `p = (1/4, 3/4)` and `q = (1, 0)` is `√(1/4) = 1/2`. -/
 theorem bhattacharyyaCoeff_p₂_q₂ :
@@ -71,18 +83,20 @@ theorem bhattacharyyaCoeff_p₂_q₂ :
   have h1 : Real.sqrt (![(1 / 4 : ℝ), 3 / 4] 1 * ![(1 : ℝ), 0] 1) = 0 := by simp
   rw [h0, h1, add_zero]
 
-/-- For `p = (1/4, 3/4)` and `q = (1, 0)`, purifications with orthogonal rows reach overlap
-`1/2`, the largest value the bound allows. -/
+/-- For the probability vectors `p = (1/4, 3/4)` and `q = (1, 0)`, unit-vector purifications of
+`diag p` and `diag q` reach overlap `1/2`, the largest value the bound allows. -/
 example : ∃ A B : Fin 2 → Fin 2 → ℂ,
     (∀ x, ∑ e, Complex.normSq (A x e) = ![(1 / 4 : ℝ), 3 / 4] x) ∧
     (∀ x, ∑ e, Complex.normSq (B x e) = ![(1 : ℝ), 0] x) ∧
     (∀ x y, x ≠ y → ∑ e, A x e * (starRingEnd ℂ) (A y e) = 0) ∧
     (∀ x y, x ≠ y → ∑ e, B x e * (starRingEnd ℂ) (B y e) = 0) ∧
+    ∑ x, ∑ e, Complex.normSq (A x e) = 1 ∧ ∑ x, ∑ e, Complex.normSq (B x e) = 1 ∧
     ‖∑ x, ∑ e, (starRingEnd ℂ) (A x e) * B x e‖ = 1 / 2 := by
-  obtain ⟨A, B, hA, hB, hA', hB', h⟩ := exists_purification_overlap_eq
+  obtain ⟨A, B, hA, hB, hA', hB', hA1, hB1, h⟩ := exists_purification_overlap_eq
     ![(1 / 4 : ℝ), 3 / 4] ![1, 0] (by intro x; fin_cases x <;> norm_num)
-    (by intro x; fin_cases x <;> norm_num)
-  exact ⟨A, B, hA, hB, hA', hB', h.trans bhattacharyyaCoeff_p₂_q₂⟩
+    (by intro x; fin_cases x <;> norm_num) (by norm_num [Fin.sum_univ_two])
+    (by norm_num [Fin.sum_univ_two])
+  exact ⟨A, B, hA, hB, hA', hB', hA1, hB1, h.trans bhattacharyyaCoeff_p₂_q₂⟩
 
 end MathlibExtTest.Quantum.PurificationOverlap
 
