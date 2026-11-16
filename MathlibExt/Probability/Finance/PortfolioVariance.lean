@@ -12,6 +12,7 @@ public import Mathlib.Probability.Moments.Variance
 public import Mathlib.Probability.Moments.Covariance
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.DotProduct
+public import Mathlib.LinearAlgebra.Matrix.PosDef
 
 /-!
 # Portfolio variance is wᵀ Σ w
@@ -25,6 +26,8 @@ variance of the weighted return `∑ i, w i * R i` is the quadratic form
 
 * `covMatrix`: the covariance matrix of the returns.
 * `portfolio_variance_eq_dotProduct_mulVec`: portfolio variance is `wᵀ Σ w`.
+* `ProbabilityTheory.posSemidef_covariance_matrix`: this covariance matrix is
+  positive semidefinite.
 
 Atlas roadmap target FI05.T03.
 -/
@@ -71,3 +74,64 @@ theorem portfolio_variance_eq_dotProduct_mulVec {ι : Type*} {Ω : Type*}
   ring
 
 end MathlibExt.Probability.Finance.PortfolioVariance
+
+open MeasureTheory
+
+namespace ProbabilityTheory
+
+set_option linter.unusedFintypeInType false in
+/-- **The covariance matrix of a square-integrable random vector is positive semidefinite.**
+For real random variables `X i`, `i : ι` (`ι` finite), each in `L²` of a finite measure `μ`,
+the matrix with entries `cov[X i, X j; μ]` is `Matrix.PosSemidef`: it is Hermitian (symmetric)
+and `xᵀ C x ≥ 0` for every `x`, because `xᵀ C x` is the variance of `∑ i, x i * X i`.
+Entry-for-entry this is
+`MathlibExt.Probability.Finance.PortfolioVariance.covMatrix μ X`. -/
+theorem posSemidef_covariance_matrix {Ω ι : Type*} [MeasurableSpace Ω] [Fintype ι]
+    {μ : Measure Ω} [IsFiniteMeasure μ] {X : ι → Ω → ℝ} (hX : ∀ i, MemLp (X i) 2 μ) :
+    (Matrix.of fun i j => cov[X i, X j; μ]).PosSemidef := by
+  refine ⟨?_, ?_⟩
+  · change Matrix.conjTranspose (Matrix.of fun i j => cov[X i, X j; μ]) = _
+    ext i j
+    simp only [Matrix.conjTranspose_apply, Matrix.of_apply, star_trivial]
+    exact covariance_comm _ _
+  · intro x
+    have h_outer :
+        x.sum (fun i xi ↦ x.sum fun j xj ↦
+            star xi * (Matrix.of fun i j => cov[X i, X j; μ]) i j * xj)
+          = ∑ i, x.sum fun j xj ↦
+            star (x i) * (Matrix.of fun i j => cov[X i, X j; μ]) i j * xj := by
+      refine Finsupp.sum_fintype x _ ?_
+      intro i
+      simp
+    have h_inner : ∀ (a : ℝ) (i : ι),
+        x.sum (fun j xj ↦ a * cov[X i, X j; μ] * xj)
+          = ∑ j, a * cov[X i, X j; μ] * x j := by
+      intro a i
+      refine Finsupp.sum_fintype x _ ?_
+      intro j
+      simp
+    have hXw : ∀ i : ι, MemLp (fun ω ↦ x i * X i ω) 2 μ :=
+      fun i ↦ (hX i).const_mul (x i)
+    have hgrid : cov[fun ω ↦ ∑ i, x i * X i ω, fun ω ↦ ∑ j, x j * X j ω; μ]
+        = ∑ i, ∑ j, x i * cov[X i, X j; μ] * x j := by
+      have h0 := covariance_fun_sum_fun_sum hXw hXw
+      simp only [covariance_const_mul_left, covariance_const_mul_right] at h0
+      refine h0.trans ?_
+      apply Finset.sum_congr rfl
+      intro i _
+      apply Finset.sum_congr rfl
+      intro j _
+      ring
+    have hnonneg : 0 ≤ cov[fun ω ↦ ∑ i, x i * X i ω, fun ω ↦ ∑ j, x j * X j ω; μ] := by
+      unfold covariance
+      apply integral_nonneg
+      intro ω
+      exact mul_self_nonneg _
+    change 0 ≤ x.sum (fun i xi ↦ x.sum fun j xj ↦
+      star xi * (Matrix.of fun i j => cov[X i, X j; μ]) i j * xj)
+    rw [h_outer]
+    simp only [Matrix.of_apply, star_trivial, h_inner]
+    calc (0:ℝ) ≤ cov[fun ω ↦ ∑ i, x i * X i ω, fun ω ↦ ∑ j, x j * X j ω; μ] := hnonneg
+      _ = ∑ i, ∑ j, x i * cov[X i, X j; μ] * x j := hgrid
+
+end ProbabilityTheory
