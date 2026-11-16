@@ -13,10 +13,13 @@ public import Mathlib.Analysis.SpecialFunctions.Trigonometric.DerivHyp
 public import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Analysis.Calculus.ParametricIntervalIntegral
 import Mathlib.Analysis.Calculus.SmoothSeries
+import Mathlib.Analysis.SpecialFunctions.Gaussian.GaussianIntegral
+import Mathlib.Analysis.SpecialFunctions.Pow.Asymptotics
+import Mathlib.Analysis.SpecialFunctions.Sqrt
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.IntegrationByParts
 
 /-!
-# Time-dependent passive cable with sealed ends
+# Time-dependent passive cable with sealed ends, and its response to localized input
 
 The membrane potential `V t x` (measured from rest) of a passive cylindrical cable `[0, L]`
 obeys the cable equation
@@ -68,6 +71,35 @@ solution at the times of `T`.
   cable equation (`isCableSolution_chargingSum`), has a sealed far end and a constant gradient
   at `x = 0` (`deriv_chargingSum_ends`), and converges to the steady profile
   (`tendsto_chargingSum`).
+* Bounded coefficients. A time shift (`cableSeries_eq_shift`) and the summability of
+  `e^{-k_n ε}` for `ε > 0` (`summable_exp_neg_decayRate`) extend the infinite expansion to
+  coefficients that are only bounded: it solves the equation on `t > 0`
+  (`isCableSolution_cableSeries_of_bounded`), has sealed ends
+  (`sealedEnds_cableSeries_of_bounded`), coefficients `a n e^{-k_n t}`
+  (`integral_cableSeries_mul_cosMode_of_bounded`) and decays (`tendsto_cableSeries_of_bounded`).
+* Green's function of the sealed cable (`sealedGreen τ ℓ L x₀`): for `0 < L` and `x₀ ∈ [0, L]`,
+  the response to a unit charge injected at `x₀` at time `0`, an instantaneous spatially localized
+  synaptic input, with coefficients `greenCoeff L x₀ n` (`1 / L`, then
+  `(2 / L) cos (n π x₀ / L)`). The series is defined, and the results below hold, for every real
+  `x₀` and every `L ≠ 0`; outside the physical range it is the even, `2L`-periodic extension in
+  `x₀` (`sealedGreen_neg_source`, `sealedGreen_add_two_mul_source`), so a source outside `[0, L]`
+  is its image inside, and `L < 0` negates the kernel (`sealedGreen_neg_length`). For `t > 0` it
+  solves
+  the equation with sealed ends (`isCableSolution_sealedGreen`, `sealedEnds_sealedGreen`), its
+  `n`-th cosine coefficient is `e^{-k_n t} cos (n π x₀ / L)`, the pairing of `δ_{x₀}` with the
+  mode decayed at rate `k_n` (`integral_sealedGreen_mul_cosMode`), its total potential is
+  `e^{-t/τ}` (`integral_sealedGreen`), it is reciprocal, `G(t, x; x₀) = G(t, x₀; x)`
+  (`sealedGreen_comm`), and it decays (`tendsto_sealedGreen`). Superposing responses reproduces the
+  expansion of every absolutely convergent cosine profile (`integral_sealedGreen_mul_cosSeries`),
+  and the Green's function satisfies the semigroup law
+  `∫₀ᴸ G(s, x; y) G(t, y; z) dy = G(t + s, x; z)` (`integral_sealedGreen_mul_sealedGreen`).
+* Green's function of the infinite cable (`infiniteGreen τ ℓ x₀`):
+  `e^{-t/τ} / √(4 π D t) · exp (-(x - x₀)² / (4 D t))` with `D = ℓ² / τ`. It solves the equation
+  at every `t > 0` and every `x ∈ ℝ` (`infiniteGreen_cable`; restricted to a segment `[0, L]`,
+  `isCableSolution_infiniteGreen`), is positive (`infiniteGreen_pos`), has total charge
+  `e^{-t/τ}` (`integral_infiniteGreen`), is symmetric (`infiniteGreen_comm`), peaks at the input
+  site (`infiniteGreen_le`), and vanishes away from it as `t → 0⁺`
+  (`tendsto_infiniteGreen_of_ne`).
 
 ## Scope
 
@@ -83,6 +115,12 @@ solution at the times of `T`.
 * Axial current appears only as the gradient `∂ₓV`; the axial resistance, the length constant
   `√(r_m / r_i)` and the semi-infinite and steady-state input-resistance facts are not
   restated here.
+* A synaptic input is modeled as an instantaneous unit charge. Responses to time-varying synaptic
+  currents (Duhamel's integral of the Green's function) are not stated.
+* The sealed Green's function is characterized through its cosine coefficients. Its convergence to
+  `δ_{x₀}` as `t → 0⁺`, its positivity and its method-of-images form are not formalized. For the
+  infinite cable, the input's localization is stated pointwise away from `x₀` together with the
+  total charge, not as weak convergence against test functions.
 
 ## References
 
@@ -92,6 +130,8 @@ solution at the times of `T`.
 * J. Keener and J. Sneyd, *Mathematical Physiology I*, 2nd ed., Springer (2009), §4.1 (the
   cable equation).
 * C. Koch, *Biophysics of Computation*, Oxford University Press (1999), ch. 2.
+* H. C. Tuckwell, *Introduction to Theoretical Neurobiology, Vol. 1*, Cambridge University Press
+  (1988): Green's functions of the cable equation.
 
 Section and chapter labels above are not checked against the texts.
 -/
@@ -1025,5 +1065,483 @@ theorem tendsto_chargingSum {τ : ℝ} (hτ : 0 < τ) (ℓ L c : ℝ) (s : Finse
     Tendsto (fun t => chargingSum τ ℓ L c s a t x) atTop (𝓝 (c * sealedSteady ℓ L x)) := by
   unfold chargingSum
   simpa only [add_zero] using (tendsto_cableSum hτ ℓ L s a x).const_add (c * sealedSteady ℓ L x)
+
+/-! ### Bounded coefficients at positive times -/
+
+/-- Time shift of the expansion: `V t x = ∑ (a n e^{-k_n ε}) e^{-k_n (t - ε)} cos (n π x / L)`.
+No summability is needed: the two series agree term by term. -/
+theorem cableSeries_eq_shift (τ ℓ L : ℝ) (a : ℕ → ℝ) (ε t : ℝ) :
+    cableSeries τ ℓ L a t =
+      cableSeries τ ℓ L (fun n => a n * exp (-decayRate τ ℓ L n * ε)) (t - ε) := by
+  funext x
+  unfold cableSeries
+  refine tsum_congr fun n => ?_
+  rw [show -decayRate τ ℓ L n * t = -decayRate τ ℓ L n * ε + -decayRate τ ℓ L n * (t - ε) by ring,
+    exp_add]
+  ring
+
+/-- For `ε > 0` (and `τ > 0`, `ℓ, L ≠ 0`) the mode factors `e^{-k_n ε}` are summable: they are
+dominated by the geometric sequence `e^{-c n}` with `c = ℓ² π² ε / (L² τ)`. -/
+theorem summable_exp_neg_decayRate {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0) {ε : ℝ}
+    (hε : 0 < ε) : Summable fun n : ℕ => exp (-decayRate τ ℓ L n * ε) := by
+  have hc : 0 < ℓ ^ 2 * π ^ 2 / L ^ 2 / τ * ε := by positivity
+  refine Summable.of_nonneg_of_le (fun n => (exp_pos _).le) (fun n => ?_)
+    (summable_geometric_of_lt_one (exp_pos (-(ℓ ^ 2 * π ^ 2 / L ^ 2 / τ * ε))).le
+      (exp_lt_one_iff.mpr (by linarith)))
+  rw [← exp_nat_mul, exp_le_exp]
+  have hk : decayRate τ ℓ L n * ε = ε / τ + ℓ ^ 2 * π ^ 2 / L ^ 2 / τ * ε * (n : ℝ) ^ 2 := by
+    unfold decayRate; field_simp
+  have hn : (n : ℝ) ≤ (n : ℝ) ^ 2 := by
+    exact_mod_cast (Nat.le_mul_self n).trans_eq (sq n).symm
+  have h1 := mul_le_mul_of_nonneg_left hn hc.le
+  have h2 : 0 ≤ ε / τ := by positivity
+  rw [neg_mul, hk]
+  nlinarith
+
+private theorem summable_abs_mul_exp {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
+    {a : ℕ → ℝ} {B : ℝ} (hB : ∀ n, |a n| ≤ B) {ε : ℝ} (hε : 0 < ε) :
+    Summable fun n => |a n * exp (-decayRate τ ℓ L n * ε)| := by
+  refine Summable.of_nonneg_of_le (fun n => abs_nonneg _) (fun n => ?_)
+    ((summable_exp_neg_decayRate hτ hℓ hL hε).mul_left B)
+  rw [abs_mul, abs_exp]
+  exact mul_le_mul_of_nonneg_right (hB n) (exp_pos _).le
+
+/-- With merely bounded coefficients (`|a n| ≤ B`, e.g. those of a point charge), the expansion
+solves the cable equation at every positive time (`ℓ, L ≠ 0`). -/
+theorem isCableSolution_cableSeries_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0)
+    (hL : L ≠ 0) {a : ℕ → ℝ} {B : ℝ} (hB : ∀ n, |a n| ≤ B) :
+    IsCableSolution τ ℓ L (Ioi 0) (cableSeries τ ℓ L a) := by
+  -- at time `t`, compare with the expansion shifted by `t / 2`, whose coefficients are summable
+  have hW : ∀ t ∈ Ioi (0 : ℝ), IsCableSolution τ ℓ L (Ioi 0)
+      (cableSeries τ ℓ L fun n => a n * exp (-decayRate τ ℓ L n * (t / 2))) := fun t ht =>
+    isCableSolution_cableSeries hτ hℓ L (summable_abs_mul_exp hτ hℓ hL hB (half_pos ht))
+  have hpos : ∀ t ∈ Ioi (0 : ℝ), t - t / 2 ∈ Ioi (0 : ℝ) := fun t ht => by
+    simp only [mem_Ioi] at ht ⊢; linarith
+  have htime : ∀ t x : ℝ, (fun s => cableSeries τ ℓ L a s x) = fun s =>
+      cableSeries τ ℓ L (fun n => a n * exp (-decayRate τ ℓ L n * (t / 2))) (s - t / 2) x :=
+    fun t x => funext fun s => by rw [cableSeries_eq_shift τ ℓ L a (t / 2) s]
+  refine ⟨fun t ht x hx => ?_, fun t ht x hx => ?_, fun t ht x hx => ?_, fun t ht x hx => ?_⟩
+  · rw [htime t x]
+    exact (((hW t ht).differentiableAt_time _ (hpos t ht) x hx).hasDerivAt.comp_sub_const t
+      (t / 2)).differentiableAt
+  · rw [cableSeries_eq_shift τ ℓ L a (t / 2) t]
+    exact (hW t ht).differentiableAt_space _ (hpos t ht) x hx
+  · rw [cableSeries_eq_shift τ ℓ L a (t / 2) t]
+    exact (hW t ht).differentiableAt_deriv_space _ (hpos t ht) x hx
+  · have hc := (hW t ht).cable _ (hpos t ht) x hx
+    have hd : deriv (fun s => cableSeries τ ℓ L a s x) t = deriv (fun s =>
+        cableSeries τ ℓ L (fun n => a n * exp (-decayRate τ ℓ L n * (t / 2))) s x) (t - t / 2) := by
+      rw [htime t x]
+      exact deriv_comp_sub_const (f := fun s =>
+        cableSeries τ ℓ L (fun n => a n * exp (-decayRate τ ℓ L n * (t / 2))) s x) (t / 2) t
+    rw [hd, cableSeries_eq_shift τ ℓ L a (t / 2) t]
+    exact hc
+
+/-- With bounded coefficients the expansion has sealed ends at every positive time. -/
+theorem sealedEnds_cableSeries_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
+    {a : ℕ → ℝ} {B : ℝ} (hB : ∀ n, |a n| ≤ B) :
+    SealedEnds L (Ioi 0) (cableSeries τ ℓ L a) := fun t ht => by
+  rw [cableSeries_eq_shift τ ℓ L a (t / 2) t]
+  exact sealedEnds_cableSeries hτ hℓ hL (summable_abs_mul_exp hτ hℓ hL hB (half_pos ht)) _
+    (by simp only [mem_Ioi] at ht ⊢; linarith)
+
+/-- With bounded coefficients the profile at a positive time is continuous in `x`. -/
+theorem continuous_cableSeries_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
+    {a : ℕ → ℝ} {B : ℝ} (hB : ∀ n, |a n| ≤ B) {t : ℝ} (ht : 0 < t) :
+    Continuous (cableSeries τ ℓ L a t) := by
+  rw [cableSeries_eq_shift τ ℓ L a (t / 2) t]
+  exact continuous_iff_continuousAt.2 fun x => (hasDerivAt_cableSeries_space hτ hℓ L
+    (summable_abs_mul_exp hτ hℓ hL hB (half_pos ht)) (by linarith) x).continuousAt
+
+/-- With bounded coefficients, the `n`-th cosine coefficient at a positive time is
+`a n e^{-k_n t}` times the mode's self-inner-product (`L` for `n = 0`, `L / 2` otherwise). -/
+theorem integral_cableSeries_mul_cosMode_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0)
+    (hL : L ≠ 0) {a : ℕ → ℝ} {B : ℝ} (hB : ∀ n, |a n| ≤ B) {t : ℝ} (ht : 0 < t) (m : ℕ) :
+    ∫ x in (0 : ℝ)..L, cableSeries τ ℓ L a t x * cosMode L m x =
+      a m * exp (-decayRate τ ℓ L m * t) * (if m = 0 then L else L / 2) := by
+  rw [cableSeries_eq_shift τ ℓ L a t t, sub_self,
+    integral_cableSeries_mul_cosMode hτ hL ℓ (summable_abs_mul_exp hτ hℓ hL hB ht) le_rfl m]
+  simp
+
+/-- With bounded coefficients the expansion decays to rest at every position. -/
+theorem tendsto_cableSeries_of_bounded {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
+    {a : ℕ → ℝ} {B : ℝ} (hB : ∀ n, |a n| ≤ B) (x : ℝ) :
+    Tendsto (fun t => cableSeries τ ℓ L a t x) atTop (𝓝 0) := by
+  have h := (tendsto_cableSeries hτ ℓ L (summable_abs_mul_exp hτ hℓ hL hB one_pos) x).comp
+    (tendsto_atTop_add_const_right atTop (-1) tendsto_id)
+  refine h.congr fun t => ?_
+  change cableSeries τ ℓ L (fun n => a n * exp (-decayRate τ ℓ L n * 1)) (t + -1) x =
+    cableSeries τ ℓ L a t x
+  rw [cableSeries_eq_shift τ ℓ L a 1 t, sub_eq_add_neg]
+
+/-- Integrating an absolutely convergent cosine series against a continuous weight, term by term.
+-/
+private theorem hasSum_integral_cosSeries_mul {L : ℝ} {b : ℕ → ℝ}
+    (hb : Summable fun n => |b n|) {g : ℝ → ℝ} (hg : Continuous g) :
+    HasSum (fun n => b n * ∫ y in (0 : ℝ)..L, cosMode L n y * g y)
+      (∫ y in (0 : ℝ)..L, (∑' n, b n * cosMode L n y) * g y) := by
+  obtain ⟨C, hC⟩ := (isCompact_uIcc (a := (0 : ℝ)) (b := L)).exists_bound_of_continuousOn
+    hg.continuousOn
+  have heq : (fun n => b n * ∫ y in (0 : ℝ)..L, cosMode L n y * g y) =
+      fun n => ∫ y in (0 : ℝ)..L, b n * (cosMode L n y * g y) :=
+    funext fun n => (intervalIntegral.integral_const_mul _ _).symm
+  rw [heq]
+  refine intervalIntegral.hasSum_integral_of_dominated_convergence (fun n _ => |b n| * C)
+    (fun n => ?_) (fun n => ?_) ?_ intervalIntegrable_const ?_
+  · exact (continuous_const.mul ((continuous_cosMode L n).mul hg)).aestronglyMeasurable
+  · refine Eventually.of_forall fun y hy => ?_
+    have h2 : |g y| ≤ C := by
+      have := hC y (uIoc_subset_uIcc hy); rwa [Real.norm_eq_abs] at this
+    have h1 := abs_cosMode_le L n y
+    rw [Real.norm_eq_abs, abs_mul, abs_mul]
+    calc |b n| * (|cosMode L n y| * |g y|) ≤ |b n| * (1 * C) := by gcongr
+      _ = |b n| * C := by ring
+  · exact Eventually.of_forall fun _ _ => hb.mul_right C
+  · refine Eventually.of_forall fun y _ => ?_
+    simpa only [mul_assoc] using
+      (summable_mul_of_abs_le hb fun n => abs_cosMode_le L n y).hasSum.mul_right (g y)
+
+/-! ### Green's function of the sealed cable: response to a localized input -/
+
+/-- Cosine coefficients `1 / L` for the uniform mode and `(2 / L) cos (n π x₀ / L)` for `n ≥ 1`.
+For `0 < L` and `x₀ ∈ [0, L]` these are the coefficients of a unit point charge at `x₀` on the
+sealed cable `[0, L]`: the pairings `cos (n π x₀ / L)` of `δ_{x₀}` with the modes, divided by the
+self-inner-products `L` and `L / 2`. The formula is used for every real `x₀` and `L`; it is even
+and `2L`-periodic in `x₀` (`greenCoeff_neg_source`, `greenCoeff_add_two_mul_source`), so it does
+not single out a source outside `[0, L]` from its image inside. They are bounded
+(`abs_greenCoeff_le`), and for `L ≠ 0` not summable (at `L = 0` division by zero makes every
+coefficient `0`). -/
+noncomputable def greenCoeff (L x₀ : ℝ) (n : ℕ) : ℝ :=
+  (if n = 0 then 1 / L else 2 / L) * cosMode L n x₀
+
+/-- The point-charge coefficients are bounded by `2 / |L|`. -/
+theorem abs_greenCoeff_le (L x₀ : ℝ) (n : ℕ) : |greenCoeff L x₀ n| ≤ 2 / |L| := by
+  unfold greenCoeff
+  rw [abs_mul]
+  have h1 : |(if n = 0 then 1 / L else 2 / L)| ≤ 2 / |L| := by
+    split_ifs
+    · rw [abs_div, abs_one]; gcongr; norm_num
+    · rw [abs_div, abs_two]
+  calc _ ≤ 2 / |L| * 1 := mul_le_mul h1 (abs_cosMode_le L n x₀) (abs_nonneg _) (by positivity)
+    _ = 2 / |L| := mul_one _
+
+/-- **Green's function of the sealed cable.** The cosine series
+`G(t, x; x₀) = e^{-t/τ} / L + (2 / L) ∑_{n ≥ 1} e^{-k_n t} cos (n π x₀ / L) cos (n π x / L)`.
+For `0 < L` and `x₀ ∈ [0, L]` it is the potential at position `x` and time `t` after a unit
+charge is injected at `x₀` at time `0` (an instantaneous, spatially localized synaptic input).
+The definition and the theorems about it accept every real `x₀` and (where needed) every
+`L ≠ 0`; for other values it is an algebraic extension, not a point charge at `x₀`: it is even
+and `2L`-periodic in `x₀` (`sealedGreen_neg_source`, `sealedGreen_add_two_mul_source`), so a
+source outside `[0, L]` is its reflected image inside, and replacing `L` by `-L` negates it
+(`sealedGreen_neg_length`). -/
+noncomputable def sealedGreen (τ ℓ L x₀ : ℝ) : ℝ → ℝ → ℝ :=
+  cableSeries τ ℓ L (greenCoeff L x₀)
+
+/-- The Green's function solves the cable equation at every positive time. -/
+theorem isCableSolution_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
+    (x₀ : ℝ) : IsCableSolution τ ℓ L (Ioi 0) (sealedGreen τ ℓ L x₀) :=
+  isCableSolution_cableSeries_of_bounded hτ hℓ hL (abs_greenCoeff_le L x₀)
+
+/-- The Green's function has sealed ends at every positive time. -/
+theorem sealedEnds_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0) (x₀ : ℝ) :
+    SealedEnds L (Ioi 0) (sealedGreen τ ℓ L x₀) :=
+  sealedEnds_cableSeries_of_bounded hτ hℓ hL (abs_greenCoeff_le L x₀)
+
+/-- At a positive time the Green's function is continuous in position. -/
+theorem continuous_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0) (x₀ : ℝ)
+    {t : ℝ} (ht : 0 < t) : Continuous (sealedGreen τ ℓ L x₀ t) :=
+  continuous_cableSeries_of_bounded hτ hℓ hL (abs_greenCoeff_le L x₀) ht
+
+/-- **Mode coefficients of the Green's function.** At every positive time its `n`-th cosine
+coefficient is `e^{-k_n t} cos (n π x₀ / L)`: the pairing of `δ_{x₀}` with the `n`-th mode,
+decayed at the mode's rate. -/
+theorem integral_sealedGreen_mul_cosMode {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
+    (x₀ : ℝ) {t : ℝ} (ht : 0 < t) (n : ℕ) :
+    ∫ x in (0 : ℝ)..L, sealedGreen τ ℓ L x₀ t x * cosMode L n x =
+      exp (-decayRate τ ℓ L n * t) * cosMode L n x₀ := by
+  rw [sealedGreen, integral_cableSeries_mul_cosMode_of_bounded hτ hℓ hL (abs_greenCoeff_le L x₀)
+    ht n]
+  unfold greenCoeff
+  split_ifs <;> field_simp
+
+/-- **Charge conservation up to membrane leak.** The total potential after a unit charge decays at
+exactly the membrane rate: `∫₀ᴸ G(t, x; x₀) dx = e^{-t/τ}` for `t > 0`, wherever the input is.
+For `L < 0` the integral is oriented, which compensates for the sign of the kernel
+(`sealedGreen_neg_length`); the physical statement is the case `0 < L`, `x₀ ∈ [0, L]`. -/
+theorem integral_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0) (x₀ : ℝ)
+    {t : ℝ} (ht : 0 < t) : ∫ x in (0 : ℝ)..L, sealedGreen τ ℓ L x₀ t x = exp (-t / τ) := by
+  have h := integral_sealedGreen_mul_cosMode hτ hℓ hL x₀ ht 0
+  simp only [cosMode_zero_mode, mul_one, decayRate_zero] at h
+  rw [h]
+  congr 1
+  ring
+
+/-- **Reciprocity.** The response at `x` to an input at `x₀` equals the response at `x₀` to an
+input at `x`. -/
+theorem sealedGreen_comm (τ ℓ L x₀ t x : ℝ) :
+    sealedGreen τ ℓ L x₀ t x = sealedGreen τ ℓ L x t x₀ := by
+  unfold sealedGreen cableSeries greenCoeff
+  exact tsum_congr fun n => by ring
+
+/-- The coefficients are even in the source position. -/
+theorem greenCoeff_neg_source (L x₀ : ℝ) : greenCoeff L (-x₀) = greenCoeff L x₀ := by
+  funext n
+  simp [greenCoeff, cosMode]
+
+/-- The coefficients are `2L`-periodic in the source position. -/
+theorem greenCoeff_add_two_mul_source (L x₀ : ℝ) :
+    greenCoeff L (x₀ + 2 * L) = greenCoeff L x₀ := by
+  funext n
+  unfold greenCoeff cosMode
+  rcases eq_or_ne L 0 with rfl | hL
+  · simp
+  · rw [mul_add, show (n : ℝ) * π / L * (2 * L) = n * (2 * π) by field_simp,
+      cos_add_nat_mul_two_pi]
+
+/-- **Even extension.** A source at `-x₀` gives the same kernel as one at `x₀`. -/
+theorem sealedGreen_neg_source (τ ℓ L x₀ : ℝ) :
+    sealedGreen τ ℓ L (-x₀) = sealedGreen τ ℓ L x₀ := by
+  rw [sealedGreen, greenCoeff_neg_source, sealedGreen]
+
+/-- **Periodic extension.** A source at `x₀ + 2L` gives the same kernel as one at `x₀`. -/
+theorem sealedGreen_add_two_mul_source (τ ℓ L x₀ : ℝ) :
+    sealedGreen τ ℓ L (x₀ + 2 * L) = sealedGreen τ ℓ L x₀ := by
+  rw [sealedGreen, greenCoeff_add_two_mul_source, sealedGreen]
+
+/-- Replacing `L` by `-L` leaves the modes and decay rates unchanged and negates every
+coefficient, so it negates the kernel. -/
+theorem sealedGreen_neg_length (τ ℓ L x₀ t x : ℝ) :
+    sealedGreen τ ℓ (-L) x₀ t x = -sealedGreen τ ℓ L x₀ t x := by
+  unfold sealedGreen cableSeries
+  rw [← tsum_neg]
+  refine tsum_congr fun n => ?_
+  simp only [greenCoeff, cosMode, decayRate, div_neg, neg_mul, cos_neg, neg_sq]
+  split_ifs <;> ring
+
+/-- The response to a localized input decays to rest at every position. -/
+theorem tendsto_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0) (x₀ x : ℝ) :
+    Tendsto (fun t => sealedGreen τ ℓ L x₀ t x) atTop (𝓝 0) :=
+  tendsto_cableSeries_of_bounded hτ hℓ hL (abs_greenCoeff_le L x₀) x
+
+/-- **Superposition of localized inputs.** For an initial profile given by an absolutely
+convergent cosine series `f y = ∑ a n cos (n π y / L)`, superposing the responses to the charges
+`f y dy` placed at every `y ∈ [0, L]` gives the expansion at time `t > 0`:
+`∫₀ᴸ G(t, x; y) f y dy = ∑ a n e^{-k_n t} cos (n π x / L)`. -/
+theorem integral_sealedGreen_mul_cosSeries {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
+    {a : ℕ → ℝ} (ha : Summable fun n => |a n|) {t : ℝ} (ht : 0 < t) (x : ℝ) :
+    ∫ y in (0 : ℝ)..L, sealedGreen τ ℓ L y t x * ∑' n, a n * cosMode L n y =
+      cableSeries τ ℓ L a t x := by
+  have h := hasSum_integral_cosSeries_mul (L := L) ha (continuous_sealedGreen hτ hℓ hL x ht)
+  have hterm : ∀ n, ∫ y in (0 : ℝ)..L, cosMode L n y * sealedGreen τ ℓ L x t y =
+      exp (-decayRate τ ℓ L n * t) * cosMode L n x := fun n => by
+    have hc : (fun y => cosMode L n y * sealedGreen τ ℓ L x t y) =
+        fun y => sealedGreen τ ℓ L x t y * cosMode L n y := funext fun y => mul_comm _ _
+    rw [hc]
+    exact integral_sealedGreen_mul_cosMode hτ hℓ hL x ht n
+  simp_rw [hterm] at h
+  have hf : (fun y => sealedGreen τ ℓ L y t x * ∑' n, a n * cosMode L n y) =
+      fun y => (∑' n, a n * cosMode L n y) * sealedGreen τ ℓ L x t y :=
+    funext fun y => by rw [sealedGreen_comm τ ℓ L y t x, mul_comm]
+  rw [hf, ← h.tsum_eq]
+  rfl
+
+/-- **Semigroup (Chapman–Kolmogorov) law.** Propagating the response to a unit charge at `z` for
+time `t` and then for time `s` gives the response at time `t + s`:
+`∫₀ᴸ G(s, x; y) G(t, y; z) dy = G(t + s, x; z)`. -/
+theorem integral_sealedGreen_mul_sealedGreen {τ ℓ L : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (hL : L ≠ 0)
+    {s t : ℝ} (hs : 0 < s) (ht : 0 < t) (x z : ℝ) :
+    ∫ y in (0 : ℝ)..L, sealedGreen τ ℓ L y s x * sealedGreen τ ℓ L z t y =
+      sealedGreen τ ℓ L z (t + s) x := by
+  have hb : Summable fun n => |greenCoeff L z n * exp (-decayRate τ ℓ L n * t)| :=
+    summable_abs_mul_exp hτ hℓ hL (abs_greenCoeff_le L z) ht
+  have hG : ∀ y, sealedGreen τ ℓ L z t y =
+      ∑' n, greenCoeff L z n * exp (-decayRate τ ℓ L n * t) * cosMode L n y := fun y => by
+    unfold sealedGreen cableSeries
+    exact tsum_congr fun n => by ring
+  simp_rw [hG]
+  rw [integral_sealedGreen_mul_cosSeries hτ hℓ hL hb hs x]
+  unfold sealedGreen cableSeries
+  refine tsum_congr fun n => ?_
+  rw [show -decayRate τ ℓ L n * (t + s) = -decayRate τ ℓ L n * t + -decayRate τ ℓ L n * s by ring,
+    exp_add]
+  ring
+
+/-! ### Green's function of the infinite cable -/
+
+/-- **Green's function of the infinite cable** `ℝ`: the potential at position `x` and time `t > 0`
+after a unit charge is injected at `x₀` at time `0`,
+`G(t, x; x₀) = e^{-t/τ} / √(4 π D t) · exp (-(x - x₀)² / (4 D t))` with `D = ℓ² / τ`: a heat kernel
+damped by the membrane leak. -/
+noncomputable def infiniteGreen (τ ℓ x₀ t x : ℝ) : ℝ :=
+  exp (-t / τ) / √(4 * π * (ℓ ^ 2 / τ) * t) * exp (-(x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ) * t))
+
+private theorem hasDerivAt_gauss (c x₀ x : ℝ) :
+    HasDerivAt (fun y => exp (-(y - x₀) ^ 2 / c))
+      (-(2 * (x - x₀)) / c * exp (-(x - x₀) ^ 2 / c)) x := by
+  have h : HasDerivAt (fun y => -(y - x₀) ^ 2 / c) (-(2 * (x - x₀)) / c) x := by
+    simpa using (((hasDerivAt_id' x).sub_const x₀).pow 2).neg.div_const c
+  convert h.exp using 1
+  ring
+
+private theorem hasDerivAt_deriv_gauss (c x₀ x : ℝ) :
+    HasDerivAt (fun y => -(2 * (y - x₀)) / c * exp (-(y - x₀) ^ 2 / c))
+      (((2 * (x - x₀) / c) ^ 2 - 2 / c) * exp (-(x - x₀) ^ 2 / c)) x := by
+  have h1 : HasDerivAt (fun y => -(2 * (y - x₀)) / c) (-2 / c) x := by
+    simpa using (((hasDerivAt_id' x).sub_const x₀).const_mul 2).neg.div_const c
+  convert h1.mul (hasDerivAt_gauss c x₀ x) using 1
+  ring
+
+private theorem hasDerivAt_infiniteGreen_space (τ ℓ x₀ t x : ℝ) :
+    HasDerivAt (infiniteGreen τ ℓ x₀ t) (exp (-t / τ) / √(4 * π * (ℓ ^ 2 / τ) * t) *
+      (-(2 * (x - x₀)) / (4 * (ℓ ^ 2 / τ) * t) *
+        exp (-(x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ) * t)))) x :=
+  (hasDerivAt_gauss _ x₀ x).const_mul _
+
+private theorem deriv_infiniteGreen_space (τ ℓ x₀ t : ℝ) :
+    deriv (infiniteGreen τ ℓ x₀ t) = fun x => exp (-t / τ) / √(4 * π * (ℓ ^ 2 / τ) * t) *
+      (-(2 * (x - x₀)) / (4 * (ℓ ^ 2 / τ) * t) *
+        exp (-(x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ) * t))) :=
+  funext fun x => (hasDerivAt_infiniteGreen_space τ ℓ x₀ t x).deriv
+
+private theorem hasDerivAt_deriv_infiniteGreen_space (τ ℓ x₀ t x : ℝ) :
+    HasDerivAt (deriv (infiniteGreen τ ℓ x₀ t)) (exp (-t / τ) / √(4 * π * (ℓ ^ 2 / τ) * t) *
+      (((2 * (x - x₀) / (4 * (ℓ ^ 2 / τ) * t)) ^ 2 - 2 / (4 * (ℓ ^ 2 / τ) * t)) *
+        exp (-(x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ) * t)))) x := by
+  rw [deriv_infiniteGreen_space]
+  exact (hasDerivAt_deriv_gauss _ x₀ x).const_mul _
+
+private theorem hasDerivAt_one_div_sqrt {c t : ℝ} (hc : 0 < c) (ht : 0 < t) :
+    HasDerivAt (fun s => 1 / √(c * s)) (-(1 / √(c * t)) / (2 * t)) t := by
+  have hpos : 0 < c * t := mul_pos hc ht
+  have hs : √(c * t) ≠ 0 := (sqrt_pos.mpr hpos).ne'
+  have h := (((hasDerivAt_id' t).const_mul c).sqrt hpos.ne').inv hs
+  simp only [one_div]
+  convert h using 1
+  rw [sq_sqrt hpos.le]
+  field_simp
+
+private theorem hasDerivAt_gauss_time {D : ℝ} (hD : D ≠ 0) (u : ℝ) {t : ℝ} (ht : t ≠ 0) :
+    HasDerivAt (fun s => exp (-u ^ 2 / (4 * D * s)))
+      (u ^ 2 / (4 * D * t ^ 2) * exp (-u ^ 2 / (4 * D * t))) t := by
+  have h : HasDerivAt (fun s => -u ^ 2 / (4 * D * s))
+      ((0 * (4 * D * t) - -u ^ 2 * (4 * D * 1)) / (4 * D * t) ^ 2) t :=
+    (hasDerivAt_const t (-u ^ 2)).fun_div ((hasDerivAt_id' t).const_mul (4 * D))
+      (mul_ne_zero (mul_ne_zero four_ne_zero hD) ht)
+  convert h.exp using 1
+  field_simp
+  ring
+
+private theorem hasDerivAt_infiniteGreen_time {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (x₀ x : ℝ)
+    {t : ℝ} (ht : 0 < t) :
+    HasDerivAt (fun s => infiniteGreen τ ℓ x₀ s x) (infiniteGreen τ ℓ x₀ t x *
+      (-1 / τ - 1 / (2 * t) + (x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ) * t ^ 2))) t := by
+  have hD : 0 < ℓ ^ 2 / τ := by positivity
+  have hE : HasDerivAt (fun s => exp (-s / τ)) (-1 / τ * exp (-t / τ)) t := by
+    have h0 : HasDerivAt (fun s => -s / τ) (-1 / τ) t := (hasDerivAt_id' t).fun_neg.div_const τ
+    convert h0.exp using 1; ring
+  have hP := hasDerivAt_one_div_sqrt (c := 4 * π * (ℓ ^ 2 / τ)) (by positivity) ht
+  have hF := hasDerivAt_gauss_time hD.ne' (x - x₀) ht.ne'
+  have hfun : (fun s => infiniteGreen τ ℓ x₀ s x) = fun s => exp (-s / τ) *
+      (1 / √(4 * π * (ℓ ^ 2 / τ) * s)) * exp (-(x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ) * s)) := by
+    funext s; unfold infiniteGreen; ring
+  rw [hfun]
+  convert (hE.fun_mul hP).fun_mul hF using 1
+  unfold infiniteGreen
+  ring
+
+/-- **The cable equation on all of `ℝ`.** At every positive time `t` and every position `x : ℝ`
+(including `x < 0`), the infinite-cable Green's function is differentiable in time, twice
+differentiable in space, and satisfies `τ ∂ₜG = ℓ² ∂ₓ²G - G`. -/
+theorem infiniteGreen_cable {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (x₀ : ℝ) {t : ℝ} (ht : 0 < t)
+    (x : ℝ) :
+    DifferentiableAt ℝ (fun s => infiniteGreen τ ℓ x₀ s x) t ∧
+      DifferentiableAt ℝ (infiniteGreen τ ℓ x₀ t) x ∧
+      DifferentiableAt ℝ (deriv (infiniteGreen τ ℓ x₀ t)) x ∧
+      τ * deriv (fun s => infiniteGreen τ ℓ x₀ s x) t =
+        ℓ ^ 2 * deriv (deriv (infiniteGreen τ ℓ x₀ t)) x - infiniteGreen τ ℓ x₀ t x := by
+  refine ⟨(hasDerivAt_infiniteGreen_time hτ hℓ x₀ x ht).differentiableAt,
+    (hasDerivAt_infiniteGreen_space τ ℓ x₀ t x).differentiableAt,
+    (hasDerivAt_deriv_infiniteGreen_space τ ℓ x₀ t x).differentiableAt, ?_⟩
+  have hτ' := hτ.ne'
+  have ht' := ht.ne'
+  rw [(hasDerivAt_infiniteGreen_time hτ hℓ x₀ x ht).deriv,
+    (hasDerivAt_deriv_infiniteGreen_space τ ℓ x₀ t x).deriv]
+  unfold infiniteGreen
+  field_simp
+  ring
+
+/-- The restriction of `infiniteGreen_cable` to a finite segment `[0, L]`, in the form of
+`IsCableSolution` (any `L`; the segment is empty for `L < 0`). For positions outside `[0, L]`,
+including `x < 0`, use `infiniteGreen_cable`. -/
+theorem isCableSolution_infiniteGreen {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (L x₀ : ℝ) :
+    IsCableSolution τ ℓ L (Ioi 0) (infiniteGreen τ ℓ x₀) where
+  differentiableAt_time _ ht x _ := (infiniteGreen_cable hτ hℓ x₀ ht x).1
+  differentiableAt_space _ ht x _ := (infiniteGreen_cable hτ hℓ x₀ ht x).2.1
+  differentiableAt_deriv_space _ ht x _ := (infiniteGreen_cable hτ hℓ x₀ ht x).2.2.1
+  cable _ ht x _ := (infiniteGreen_cable hτ hℓ x₀ ht x).2.2.2
+
+/-- The infinite-cable Green's function is positive at positive times. -/
+theorem infiniteGreen_pos {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (x₀ : ℝ) {t : ℝ} (ht : 0 < t)
+    (x : ℝ) : 0 < infiniteGreen τ ℓ x₀ t x := by
+  unfold infiniteGreen
+  positivity
+
+/-- **Total charge.** `∫_ℝ G(t, x; x₀) dx = e^{-t/τ}` for `t > 0`: the injected unit charge
+leaks through the membrane at exactly the rate `1 / τ`. -/
+theorem integral_infiniteGreen {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) (x₀ : ℝ) {t : ℝ}
+    (ht : 0 < t) : ∫ x, infiniteGreen τ ℓ x₀ t x = exp (-t / τ) := by
+  have hc : 0 < 4 * (ℓ ^ 2 / τ) * t := by positivity
+  have hs : √(4 * π * (ℓ ^ 2 / τ) * t) ≠ 0 := (sqrt_pos.mpr (by positivity)).ne'
+  unfold infiniteGreen
+  rw [MeasureTheory.integral_const_mul]
+  have hshift := integral_sub_right_eq_self (μ := volume)
+    (fun x => exp (-(1 / (4 * (ℓ ^ 2 / τ) * t)) * x ^ 2)) x₀
+  have hcongr : (fun x => exp (-(x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ) * t))) =
+      fun x => exp (-(1 / (4 * (ℓ ^ 2 / τ) * t)) * (x - x₀) ^ 2) := by
+    funext x; congr 1; ring
+  rw [hcongr, hshift, integral_gaussian,
+    show π / (1 / (4 * (ℓ ^ 2 / τ) * t)) = 4 * π * (ℓ ^ 2 / τ) * t by field_simp,
+    div_mul_cancel₀ _ hs]
+
+/-- **Symmetry.** The infinite-cable response at `x` to an input at `x₀` equals the response at
+`x₀` to an input at `x`. -/
+theorem infiniteGreen_comm (τ ℓ x₀ t x : ℝ) :
+    infiniteGreen τ ℓ x₀ t x = infiniteGreen τ ℓ x t x₀ := by
+  unfold infiniteGreen
+  rw [show (x₀ - x) ^ 2 = (x - x₀) ^ 2 by ring]
+
+/-- **Peak at the input site.** At every positive time the infinite-cable response is largest at
+the input site `x₀`. -/
+theorem infiniteGreen_le {τ ℓ : ℝ} (hτ : 0 < τ) (x₀ : ℝ) {t : ℝ} (ht : 0 < t) (x : ℝ) :
+    infiniteGreen τ ℓ x₀ t x ≤ infiniteGreen τ ℓ x₀ t x₀ := by
+  unfold infiniteGreen
+  refine mul_le_mul_of_nonneg_left ?_ (by positivity)
+  have : 0 ≤ (x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ) * t) := by positivity
+  rw [exp_le_exp, sub_self, zero_pow two_ne_zero, neg_zero, zero_div, neg_div]
+  exact neg_nonpos.mpr this
+
+/-- **Localization.** Away from the input site the infinite-cable response vanishes as `t → 0⁺`:
+together with `integral_infiniteGreen` (total charge `e^{-t/τ} → 1`) this says that the input is
+the unit charge concentrated at `x₀`. -/
+theorem tendsto_infiniteGreen_of_ne {τ ℓ : ℝ} (hτ : 0 < τ) (hℓ : ℓ ≠ 0) {x₀ x : ℝ}
+    (hx : x ≠ x₀) : Tendsto (fun t => infiniteGreen τ ℓ x₀ t x) (𝓝[>] 0) (𝓝 0) := by
+  have hb : 0 < (x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ)) := by
+    have := sub_ne_zero.mpr hx; positivity
+  have h1 : Tendsto (fun t : ℝ => (t⁻¹) ^ (1 / 2 : ℝ) *
+      exp (-((x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ))) * t⁻¹)) (𝓝[>] 0) (𝓝 0) :=
+    (tendsto_rpow_mul_exp_neg_mul_atTop_nhds_zero (1 / 2) _ hb).comp tendsto_inv_nhdsGT_zero
+  have h2 : Tendsto (fun t : ℝ => exp (-t / τ) / √(4 * π * (ℓ ^ 2 / τ))) (𝓝[>] 0)
+      (𝓝 (exp (-0 / τ) / √(4 * π * (ℓ ^ 2 / τ)))) :=
+    ((by fun_prop : Continuous fun t : ℝ => exp (-t / τ) / √(4 * π * (ℓ ^ 2 / τ))).tendsto
+      0).mono_left nhdsWithin_le_nhds
+  have h3 := h2.mul h1
+  rw [mul_zero] at h3
+  refine Tendsto.congr' ?_ h3
+  filter_upwards [self_mem_nhdsWithin] with t (ht : 0 < t)
+  unfold infiniteGreen
+  rw [← sqrt_eq_rpow, sqrt_inv, sqrt_mul (by positivity : (0 : ℝ) ≤ 4 * π * (ℓ ^ 2 / τ)) t,
+    show -(x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ) * t) = -((x - x₀) ^ 2 / (4 * (ℓ ^ 2 / τ))) * t⁻¹ by
+      ring]
+  ring
 
 end MathlibExt.Biology.Biophysics.CableTimeDependent
