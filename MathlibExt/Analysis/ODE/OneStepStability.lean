@@ -87,22 +87,24 @@ private lemma norm_sub_succ_le {Φ : ℝ → E → ℝ → E} {L s s' : ℝ} (hs
 /-- If the increment `Φ` is `L`-Lipschitz in the state at every grid step, an exact run `x` and a
 perturbed run `z` of the one-step method satisfy, for every `j ≤ J`,
 `‖x j - z j‖ ≤ e^{L (t j - t 0)} ‖x 0 - z 0‖ + ∑ k ∈ Icc 1 j, e^{L (t j - t k)} ‖δ k‖`. -/
-theorem norm_sub_le {Φ : ℝ → E → ℝ → E} {L : ℝ} {J : ℕ} {t : ℕ → ℝ}
+theorem norm_sub_le {Φ : ℝ → E → ℝ → E} {L : NNReal} {J : ℕ} {t : ℕ → ℝ}
     (ht : ∀ j < J, t j ≤ t (j + 1))
-    (hΦ : ∀ j < J, ∀ a b : E,
-      ‖Φ (t j) a (t (j + 1) - t j) - Φ (t j) b (t (j + 1) - t j)‖ ≤ L * ‖a - b‖)
+    (hΦ : ∀ j < J, LipschitzWith L fun a ↦ Φ (t j) a (t (j + 1) - t j))
     {x z δ : ℕ → E}
     (hx : ∀ j < J, x (j + 1) = x j + (t (j + 1) - t j) • Φ (t j) (x j) (t (j + 1) - t j))
     (hz : ∀ j < J, z (j + 1) =
       z j + (t (j + 1) - t j) • Φ (t j) (z j) (t (j + 1) - t j) + δ (j + 1)) :
     ∀ j ≤ J, ‖x j - z j‖ ≤
       exp (L * (t j - t 0)) * ‖x 0 - z 0‖ + ∑ k ∈ Icc 1 j, exp (L * (t j - t k)) * ‖δ k‖ := by
+  have hΦ' : ∀ j < J, ∀ a b : E,
+      ‖Φ (t j) a (t (j + 1) - t j) - Φ (t j) b (t (j + 1) - t j)‖ ≤ L * ‖a - b‖ :=
+    fun j hj a b ↦ by simpa only [dist_eq_norm] using (hΦ j hj).dist_le_mul a b
   intro j hj
   induction j with
   | zero => simp
   | succ j ih =>
     have hjJ : j < J := hj
-    have hstep := norm_sub_succ_le (ht j hjJ) (hΦ j hjJ _ _) (hx j hjJ) (hz j hjJ)
+    have hstep := norm_sub_succ_le (ht j hjJ) (hΦ' j hjJ _ _) (hx j hjJ) (hz j hjJ)
     calc ‖x (j + 1) - z (j + 1)‖
         ≤ exp (L * (t (j + 1) - t j)) * ‖x j - z j‖ + ‖δ (j + 1)‖ := hstep
       _ ≤ exp (L * (t (j + 1) - t j)) * (exp (L * (t j - t 0)) * ‖x 0 - z 0‖ +
@@ -122,9 +124,8 @@ theorem norm_sub_le {Φ : ℝ → E → ℝ → E} {L : ℝ} {J : ℕ} {t : ℕ 
 /-- **Sufficient condition for stability.** If the increment `Φ` is `L`-Lipschitz in the state,
 uniformly for `t ∈ [t₀, T]` and step `h ∈ (0, T - t₀]`, the one-step method is stable on
 `[t₀, T]` with constant `e^{L (T - t₀)}`. -/
-theorem isStable_of_lipschitz {Φ : ℝ → E → ℝ → E} {L t₀ T : ℝ} (hL : 0 ≤ L)
-    (hΦ : ∀ s ∈ Set.Icc t₀ T, ∀ h ∈ Set.Ioc 0 (T - t₀), ∀ a b : E,
-      ‖Φ s a h - Φ s b h‖ ≤ L * ‖a - b‖) :
+theorem isStable_of_lipschitz {Φ : ℝ → E → ℝ → E} {L : NNReal} {t₀ T : ℝ}
+    (hΦ : ∀ s ∈ Set.Icc t₀ T, ∀ h ∈ Set.Ioc 0 (T - t₀), LipschitzWith L fun a ↦ Φ s a h) :
     IsStable Φ t₀ T := by
   refine ⟨exp (L * (T - t₀)), fun J t ht0 htJ ht' x z δ hx hz j hj' ↦ ?_⟩
   have ht : ∀ j < J, t j ≤ t (j + 1) := fun j hj ↦ (ht' j hj).le
@@ -140,10 +141,9 @@ theorem isStable_of_lipschitz {Φ : ℝ → E → ℝ → E} {L t₀ T : ℝ} (h
       · exact le_rfl
   have hmem : ∀ i ≤ J, t i ∈ Set.Icc t₀ T := fun i hi ↦
     ⟨ht0 ▸ hmono i hi 0 (Nat.zero_le i), htJ ▸ hmono J le_rfl i hi⟩
-  have hΦgrid : ∀ i < J, ∀ a b : E,
-      ‖Φ (t i) a (t (i + 1) - t i) - Φ (t i) b (t (i + 1) - t i)‖ ≤ L * ‖a - b‖ := by
-    intro i hi a b
-    refine hΦ _ (hmem i hi.le) _ ⟨sub_pos.2 (ht' i hi), ?_⟩ a b
+  have hΦgrid : ∀ i < J, LipschitzWith L fun a ↦ Φ (t i) a (t (i + 1) - t i) := by
+    intro i hi
+    refine hΦ _ (hmem i hi.le) _ ⟨sub_pos.2 (ht' i hi), ?_⟩
     have h1 := (hmem (i + 1) hi).2
     have h2 := (hmem i hi.le).1
     linarith
@@ -154,7 +154,7 @@ theorem isStable_of_lipschitz {Φ : ℝ → E → ℝ → E} {L t₀ T : ℝ} (h
         hbound
     _ ≤ exp (L * (T - t₀)) * ‖x 0 - z 0‖ + ∑ k ∈ Icc 1 J, exp (L * (T - t₀)) * ‖δ k‖ := by
         gcongr ?_ * _ + ?_
-        · exact exp_le_exp.2 (mul_le_mul_of_nonneg_left hjT hL)
+        · exact exp_le_exp.2 (mul_le_mul_of_nonneg_left hjT L.coe_nonneg)
         · calc ∑ k ∈ Icc 1 j, exp (L * (t j - t k)) * ‖δ k‖
               ≤ ∑ k ∈ Icc 1 j, exp (L * (T - t₀)) * ‖δ k‖ := by
                 refine sum_le_sum fun k hk ↦ ?_

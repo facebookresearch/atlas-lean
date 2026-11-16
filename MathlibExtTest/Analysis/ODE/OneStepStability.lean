@@ -19,13 +19,13 @@ open MathlibExt.Analysis.ODE.OneStepMethod Finset Real
 -- Test section: explicit Euler for `x' = -x` is stable on `[0, 1]`, since `Φ(t, x, h) = -x` is
 -- `1`-Lipschitz in the state.
 example : IsStable (fun (_ : ℝ) (x : ℝ) (_ : ℝ) ↦ -x) 0 1 :=
-  isStable_of_lipschitz zero_le_one fun _ _ _ _ a b ↦ by
-    rw [one_mul, show -a - -b = -(a - b) by ring, norm_neg]
+  isStable_of_lipschitz (L := 1) fun _ _ _ _ ↦ LipschitzWith.of_dist_le_mul fun a b ↦ by
+    rw [NNReal.coe_one, one_mul, dist_neg_neg]
 
 -- Test section: a zero increment is stable with any `L ≥ 0`, here `L = 0`.
 example {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] (t₀ T : ℝ) :
     IsStable (fun (_ : ℝ) (_ : E) (_ : ℝ) ↦ (0 : E)) t₀ T :=
-  isStable_of_lipschitz le_rfl fun _ _ _ _ a b ↦ by simp
+  isStable_of_lipschitz fun _ _ _ _ ↦ LipschitzWith.const (0 : E)
 
 -- Test section: the explicit error bound on one step of explicit Euler for `x' = x` with
 -- step `1/2`: from `x 0 = 1`, `z 0 = 1` and perturbation `δ 1 = 1`, the gap after one step is at
@@ -36,7 +36,7 @@ example (x z : ℕ → ℝ) (hx0 : x 0 = 1) (hz0 : z 0 = 1)
   have h := norm_sub_le (Φ := fun (_ : ℝ) (y : ℝ) (_ : ℝ) ↦ y) (L := 1) (J := 1)
     (t := fun j ↦ (j : ℝ) / 2) (x := x) (z := z) (δ := fun _ ↦ 1)
     (fun j hj ↦ by norm_num [Nat.lt_one_iff.1 hj])
-    (fun _ _ a b ↦ by simp)
+    (fun _ _ ↦ LipschitzWith.id)
     (fun j hj ↦ by obtain rfl := Nat.lt_one_iff.1 hj; show x 1 = _; rw [hx]; norm_num)
     (fun j hj ↦ by obtain rfl := Nat.lt_one_iff.1 hj; show z 1 = _; rw [hz]; norm_num)
     1 le_rfl
