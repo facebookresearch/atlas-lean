@@ -78,16 +78,24 @@ intensity demand reaches the fracture toughness. -/
 def crackFailure (KIC Y σ a : ℝ) : Prop :=
   KIC ≤ modeIStressIntensity Y σ a
 
+/-- At zero crack length the mode-I stress intensity is zero. -/
 lemma modeIStressIntensity_zero (Y σ : ℝ) :
     modeIStressIntensity Y σ 0 = 0 := by
   simp [modeIStressIntensity]
 
+/-- For positive fracture toughness, geometry factor, and peak tensile
+stress, the critical crack length is positive. -/
 lemma criticalCrackLength_pos {KIC Y σ : ℝ} (hKIC : 0 < KIC) (hY : 0 < Y)
     (hσ : 0 < σ) :
     0 < criticalCrackLength KIC Y σ := by
   unfold criticalCrackLength
   exact div_pos (pow_pos (div_pos hKIC (mul_pos hY hσ)) 2) Real.pi_pos
 
+/-- The LEFM critical condition: at the critical crack length, the mode-I
+stress intensity equals the fracture toughness `K_IC`. This is the standard
+critical-crack criterion of linear-elastic fracture mechanics (see, for
+example, Dowling, *Mechanical Behavior of Materials*, 4th ed.), stated here
+for the adopted intensity model `K_I(a) = Y * σ * √(π * a)`. -/
 theorem modeIStressIntensity_criticalCrackLength {KIC Y σ : ℝ}
     (hKIC : 0 < KIC) (hY : 0 < Y) (hσ : 0 < σ) :
     modeIStressIntensity Y σ (criticalCrackLength KIC Y σ) = KIC := by
@@ -99,6 +107,9 @@ theorem modeIStressIntensity_criticalCrackLength {KIC Y σ : ℝ}
   rw [mul_comm Real.pi _, div_mul_cancel₀ _ hπ, Real.sqrt_sq (le_of_lt hK),
     mul_comm (Y * σ) _, div_mul_cancel₀ _ hYσ']
 
+/-- Subcriticality characterization: for nonnegative crack length, the
+mode-I stress intensity is strictly below the fracture toughness exactly
+below the critical crack length. -/
 lemma modeIStressIntensity_lt_iff_lt_criticalCrackLength {KIC Y σ a : ℝ}
     (hKIC : 0 < KIC) (hY : 0 < Y) (hσ : 0 < σ) (ha : 0 ≤ a) :
     modeIStressIntensity Y σ a < KIC ↔ a < criticalCrackLength KIC Y σ := by
@@ -109,6 +120,8 @@ lemma modeIStressIntensity_lt_iff_lt_criticalCrackLength {KIC Y σ a : ℝ}
     Real.sqrt_lt (mul_nonneg (le_of_lt Real.pi_pos) ha) (le_of_lt hK),
     mul_comm Real.pi a, lt_div_iff₀ Real.pi_pos]
 
+/-- The equality-inclusive crack-failure event holds exactly from the
+critical crack length on. -/
 lemma crackFailure_iff_criticalCrackLength_le {KIC Y σ a : ℝ}
     (hKIC : 0 < KIC) (hY : 0 < Y) (hσ : 0 < σ) (ha : 0 ≤ a) :
     crackFailure KIC Y σ a ↔ criticalCrackLength KIC Y σ ≤ a := by
