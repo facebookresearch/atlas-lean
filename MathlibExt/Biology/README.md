@@ -14,7 +14,7 @@ this file records the modeling conventions that make results in different files 
 | Established results whose proof is deferred | `WantedExt/Biology/…`, `WantedExt/Probability/…` |
 | Tests | the mirror path under `MathlibExtTest/` or `CSLibExtTest/` |
 
-Areas: `PopulationGenetics` (with `Coalescent/` and `Diffusion/`), `Phylogenetics`,
+Areas: `PopulationGenetics` (with `Admixture/`, `Coalescent/` and `Diffusion/`), `Phylogenetics`,
 `StatisticalGenetics`, `Epidemiology`, `Dynamics`, `CancerGenomics`, `Ecology` (structured
 population models), `Biophysics` (compartment and pharmacokinetic models), `Omics`
 (compositional normalization of count data), `Demography` (life-table quantities, crude and
