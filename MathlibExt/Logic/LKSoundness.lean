@@ -8,23 +8,35 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.List.Basic
-public import Mathlib.Data.Bool.Basic
-
-import Mathlib.Tactic.Basic
+public import Mathlib.Data.Nat.Notation
 
 /-!
-# Propositional sequent calculus soundness
+# Soundness of the propositional sequent calculus LK
 
-Formulas, Boolean evaluation, sequent validity, and
-classical propositional LK derivations including cut.
-Every derivable sequent is valid. Cut elimination is not
-included here.
+Propositional formulas over the atoms `ℕ` (`PForm`), their Boolean evaluation (`PForm.eval`),
+truth of a sequent under a valuation (`Valid`), and derivations of a variant of Gentzen's sequent
+calculus LK with cut (`Deriv`).
+
+A sequent `Γ ⊢ Δ` is a pair of lists of formulas. Each logical rule introduces its principal
+formula at the head of a list, and rules with two premises share the side formulas. The
+structural rules are weakening, contraction, exchange by any permutation of either list, and cut.
+Axioms are the sequents with some formula on both sides.
+
+* `Deriv.sound`: every derivable sequent is true under every valuation.
+
+Cut elimination is not proved here.
+
+## References
+
+* G. Gentzen, *Untersuchungen über das logische Schließen*, Mathematische Zeitschrift 39, 1935.
 -/
 
 @[expose] public section
 
-/-- Propositional formulas (LK core of MOD-31). -/
+namespace MathlibExt.Logic.LKSoundness
+
+/-- Propositional formulas over the atoms `ℕ`, with implication, conjunction, disjunction and
+negation. -/
 inductive PForm : Type
   | atom (n : ℕ) : PForm
   | impl (a b : PForm) : PForm
@@ -32,7 +44,7 @@ inductive PForm : Type
   | disj (a b : PForm) : PForm
   | neg (a : PForm) : PForm
 
-/-- Boolean evaluation under a valuation. -/
+/-- Boolean evaluation of a formula under a valuation `v` of the atoms. -/
 def PForm.eval (v : ℕ → Bool) : PForm → Bool
   | .atom n => v n
   | .impl a b => (!a.eval v) || b.eval v
@@ -40,14 +52,17 @@ def PForm.eval (v : ℕ → Bool) : PForm → Bool
   | .disj a b => a.eval v || b.eval v
   | .neg a => !a.eval v
 
-/-- Sequent validity: if all hypotheses evaluate true, some
-conclusion evaluates true. -/
+/-- The sequent `Γ ⊢ Δ` is true under the valuation `v`: if every formula of `Γ` evaluates to
+`true`, some formula of `Δ` does. -/
 def Valid (v : ℕ → Bool) (Γ Δ : List PForm) : Prop :=
   (∀ a ∈ Γ, a.eval v = true) → ∃ b ∈ Δ, b.eval v = true
 
-/-- Classical propositional LK derivations (one-sided
-structural rules included implicitly through the list
-formulation with exchange-free membership rules). -/
+/-- Derivations of a variant of Gentzen's sequent calculus LK for classical propositional logic.
+A sequent `Γ ⊢ Δ` is a pair of lists of formulas. Each logical rule introduces its principal
+formula at the head of `Γ` or `Δ`, and rules with two premises share the side formulas. The
+structural rules are weakening (`weakL`, `weakR`), contraction (`contrL`, `contrR`), exchange by
+any permutation (`exchL`, `exchR`), and cut. An axiom (`ax`) is a sequent with some formula on
+both sides. -/
 inductive Deriv : List PForm → List PForm → Prop
   | ax {Γ Δ : List PForm} {a : PForm} (h₁ : a ∈ Γ) (h₂ : a ∈ Δ) :
       Deriv Γ Δ
@@ -74,12 +89,19 @@ inductive Deriv : List PForm → List PForm → Prop
       (h : Deriv Γ Δ) : Deriv Γ (a :: Δ)
   | weakL {Γ Δ : List PForm} {a : PForm}
       (h : Deriv Γ Δ) : Deriv (a :: Γ) Δ
+  | contrR {Γ Δ : List PForm} {a : PForm}
+      (h : Deriv Γ (a :: a :: Δ)) : Deriv Γ (a :: Δ)
+  | contrL {Γ Δ : List PForm} {a : PForm}
+      (h : Deriv (a :: a :: Γ) Δ) : Deriv (a :: Γ) Δ
+  | exchR {Γ Δ Δ' : List PForm}
+      (h : Deriv Γ Δ) (hp : Δ.Perm Δ') : Deriv Γ Δ'
+  | exchL {Γ Γ' Δ : List PForm}
+      (h : Deriv Γ Δ) (hp : Γ.Perm Γ') : Deriv Γ' Δ
   | cut {Γ Δ : List PForm} {a : PForm}
       (h₁ : Deriv Γ (a :: Δ)) (h₂ : Deriv (a :: Γ) Δ) :
       Deriv Γ Δ
 
-/-- Soundness: every derivable sequent is valid. (Cut
-elimination is the downstream Hauptsatz.) -/
+/-- Soundness: every derivable sequent is true under every valuation. -/
 theorem Deriv.sound {Γ Δ : List PForm} (h : Deriv Γ Δ)
     (v : ℕ → Bool) : Valid v Γ Δ := by
   induction h with
@@ -236,6 +258,30 @@ theorem Deriv.sound {Γ Δ : List PForm} (h : Deriv Γ Δ)
       rename_i Γ Δ a
       intro hAll
       exact ih (fun x hx => hAll x (List.mem_cons.mpr (Or.inr hx)))
+  | contrR _h ih =>
+      clear Γ Δ
+      rename_i Γ Δ a
+      intro hAll
+      obtain ⟨c, hc_mem, hc_true⟩ := ih hAll
+      rcases List.mem_cons.mp hc_mem with rfl | hc_mem
+      · exact ⟨c, List.mem_cons.mpr (Or.inl rfl), hc_true⟩
+      · exact ⟨c, hc_mem, hc_true⟩
+  | contrL _h ih =>
+      clear Γ Δ
+      rename_i Γ Δ a
+      intro hAll
+      apply ih
+      intro x hx
+      rcases List.mem_cons.mp hx with rfl | hx
+      · exact hAll _ (List.mem_cons.mpr (Or.inl rfl))
+      · exact hAll x hx
+  | exchR _h hp ih =>
+      intro hAll
+      obtain ⟨c, hc_mem, hc_true⟩ := ih hAll
+      exact ⟨c, hp.subset hc_mem, hc_true⟩
+  | exchL _h hp ih =>
+      intro hAll
+      exact ih (fun x hx => hAll x (hp.subset hx))
   | cut _h₁ _h₂ ih₁ ih₂ =>
       clear Γ Δ
       rename_i Γ Δ a
@@ -253,4 +299,4 @@ theorem Deriv.sound {Γ Δ : List PForm} (h : Deriv Γ Δ)
           · exact hAll x hx
         exact ih₂ hAll'
 
-end
+end MathlibExt.Logic.LKSoundness
