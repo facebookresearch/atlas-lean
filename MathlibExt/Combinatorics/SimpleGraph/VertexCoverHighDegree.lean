@@ -33,7 +33,7 @@ neighbors. -/
 theorem mem_of_card_le_of_lt_degree {V : Type*} [Fintype V]
     (G : SimpleGraph V) [DecidableRel G.Adj]
     (C : Finset V) (hC : G.IsVertexCover ↑C)
-    {k : ℕ} {v : V} (hk : C.card ≤ k) (hdeg : k < (G.neighborFinset v).card) :
+    {k : ℕ} {v : V} (hk : C.card ≤ k) (hdeg : k < G.degree v) :
     v ∈ C := by
   by_contra hv
   have hsub : G.neighborFinset v ⊆ C := by
@@ -45,6 +45,7 @@ theorem mem_of_card_le_of_lt_degree {V : Type*} [Fintype V]
     · rw [Finset.mem_coe] at h
       exact h
   have hle := Finset.card_le_card hsub
+  rw [card_neighborFinset_eq_degree] at hle
   omega
 
 end SimpleGraph
