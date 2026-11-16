@@ -78,11 +78,11 @@ intensity demand reaches the fracture toughness. -/
 def crackFailure (KIC Y σ a : ℝ) : Prop :=
   KIC ≤ modeIStressIntensity Y σ a
 
-theorem modeIStressIntensity_zero (Y σ : ℝ) :
+lemma modeIStressIntensity_zero (Y σ : ℝ) :
     modeIStressIntensity Y σ 0 = 0 := by
   simp [modeIStressIntensity]
 
-theorem criticalCrackLength_pos {KIC Y σ : ℝ} (hKIC : 0 < KIC) (hY : 0 < Y)
+lemma criticalCrackLength_pos {KIC Y σ : ℝ} (hKIC : 0 < KIC) (hY : 0 < Y)
     (hσ : 0 < σ) :
     0 < criticalCrackLength KIC Y σ := by
   unfold criticalCrackLength
@@ -99,7 +99,7 @@ theorem modeIStressIntensity_criticalCrackLength {KIC Y σ : ℝ}
   rw [mul_comm Real.pi _, div_mul_cancel₀ _ hπ, Real.sqrt_sq (le_of_lt hK),
     mul_comm (Y * σ) _, div_mul_cancel₀ _ hYσ']
 
-theorem modeIStressIntensity_lt_iff_lt_criticalCrackLength {KIC Y σ a : ℝ}
+lemma modeIStressIntensity_lt_iff_lt_criticalCrackLength {KIC Y σ a : ℝ}
     (hKIC : 0 < KIC) (hY : 0 < Y) (hσ : 0 < σ) (ha : 0 ≤ a) :
     modeIStressIntensity Y σ a < KIC ↔ a < criticalCrackLength KIC Y σ := by
   have hYσ : 0 < Y * σ := mul_pos hY hσ
@@ -109,7 +109,7 @@ theorem modeIStressIntensity_lt_iff_lt_criticalCrackLength {KIC Y σ a : ℝ}
     Real.sqrt_lt (mul_nonneg (le_of_lt Real.pi_pos) ha) (le_of_lt hK),
     mul_comm Real.pi a, lt_div_iff₀ Real.pi_pos]
 
-theorem crackFailure_iff_criticalCrackLength_le {KIC Y σ a : ℝ}
+lemma crackFailure_iff_criticalCrackLength_le {KIC Y σ a : ℝ}
     (hKIC : 0 < KIC) (hY : 0 < Y) (hσ : 0 < σ) (ha : 0 ≤ a) :
     crackFailure KIC Y σ a ↔ criticalCrackLength KIC Y σ ≤ a := by
   unfold crackFailure
