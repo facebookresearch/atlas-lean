@@ -24,12 +24,12 @@ Initial pipeline, orders and demands are nonnegative (`NNReal`); every equality
 involving net stock is in `ℝ` with casts before subtraction (never truncated
 `NNReal` subtraction for net stock).
 
-This file proves INV-001a (audited F05 INV-001, backlogging model only).
-Lost sales is a separate remaining claim; this file claims no full-record
-completion alone and never mixes in a lost-sales alternative. It does not
-extend the financial `Accounting.InventoryFlow` model.
+This file covers the backlogging model only: unmet demand accumulates as
+negative net stock, never as lost sales. The lost-sales alternative is out
+of scope here and is never mixed into this model. It does not extend the
+financial `Accounting.InventoryFlow` model.
 
-Source-clause map (frozen contract controls scope):
+Section map (labels `C1` to `C7` are defined locally by this overview):
 * C1 (event order / receipts): `receipt`, `receipt_of_lt`, `receipt_of_not_lt`,
   `receipt_zero_lead`. Order per period: receive scheduled quantity, place an
   order, receive immediately if `L = 0`, then serve demand. Genuine `Fin L`.
@@ -48,10 +48,12 @@ Source-clause map (frozen contract controls scope):
   MDP-ready state/transition interface only; not a finite-state MDP instance,
   no stock cap, no action saturation, no claim that stock alone is Markov for
   `L > 0`. A later consumer may supply a finite closed state subset.
-* C7 (tests): separate test file only. Finite probes (1000 cases, `L = 0..4`,
-  `H = 0..8`, exact rational quantities; 0 violations; dropping the terminal
-  pipeline fails 773 cases; delaying a zero-lead receipt fails 160 cases; plus
-  4000-trace scout checks) are evidence, not proofs.
+* C7 (tests): separate test file only. Boundary and API fixtures present
+  there: main `L = 2, H = 5` stockout fixture (final stock `-2`, pipeline
+  `6`, total `4`); immediate `L = 0` delivery; `H = 0`; `H < L` with
+  unreceived initial stock; `H = L`; fractional quantities; on-hand/backlog
+  pins; and both counterexamples (dropping the terminal pipeline, delaying
+  a zero-lead-time receipt).
 -/
 
 namespace Inventory
