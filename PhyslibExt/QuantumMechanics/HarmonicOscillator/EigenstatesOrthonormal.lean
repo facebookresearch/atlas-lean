@@ -15,6 +15,8 @@ public import PhyslibExt.SpaceAndTime.Space.Integrals.Prod
 /-!
 # Orthonormality of the QHO eigenstates
 
+## i. Overview
+
 The Cartesian-basis eigenstates of the `d`-dimensional quantum harmonic oscillator are
 orthonormal. Each `d`-dimensional eigenfunction is a product of one-dimensional
 eigenfunctions (upstream `eigenfunction_eq_prod_oneDim`), so the inner product splits
@@ -23,7 +25,7 @@ delta by the one-dimensional orthonormality result. This fills the
 `eigenstates_orthonormal` sorry in
 `Physlib.QuantumMechanics.HarmonicOscillator.Eigenstates`.
 
-## Main results
+## ii. Key results
 
 * `QuantumMechanics.HarmonicOscillator.oneDim_factor_integral`: each
   one-dimensional factor integrates to a Kronecker delta.

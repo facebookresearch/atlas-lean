@@ -14,12 +14,14 @@ public import Mathlib.MeasureTheory.Integral.Pi
 /-!
 # Integrals of coordinate products over `Space d`
 
+## i. Overview
+
 The integral over `Space d` of a product of single-coordinate functions splits as a
 product of one-dimensional integrals. This is the reusable step requested by the
 `eigenstates_orthonormal` sorry in
 `Physlib.QuantumMechanics.HarmonicOscillator.Eigenstates`.
 
-## Main results
+## ii. Key results
 
 * `Space.integral_prod_coord`: `∫ x : Space d, ∏ i, f i (x i) = ∏ i, ∫ t, f i t`.
 -/
