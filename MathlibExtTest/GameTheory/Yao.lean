@@ -10,12 +10,24 @@ module
 
 public import MathlibExt.GameTheory.Yao
 
+import Mathlib.Algebra.BigOperators.Fin
+import Mathlib.Tactic.NormNum
+
 @[expose] public section
 
-/-- With one algorithm, its cost is the mixed cost. -/
-example : ∃ a : Fin 1, (∑ y : Fin 1, (1 : ℚ) * (fun _ _ => (3 : ℚ)) a y)
-    ≤ ∑ a' : Fin 1, (1 : ℚ) * (∑ y : Fin 1, (1 : ℚ) * (fun _ _ => (3 : ℚ)) a' y) :=
-  yao_exists_det (fun _ _ => (3 : ℚ)) (fun _ => 1) (fun _ => 1) (fun _ => 1)
-    (fun _ => zero_le_one) (by simp)
+open MathlibExt.GameTheory.Yao
+
+/-- Algorithms (`Fin 2`) and inputs (`Bool`) have distinct types, so the input
+weights `q` must be indexed by inputs. -/
+example (C : Fin 2 → Bool → ℚ) (q : Bool → ℚ) :
+    ∃ a, (∑ y, q y * C a y) ≤ ∑ a', (1 / 2 : ℚ) * (∑ y, q y * C a' y) :=
+  yao_exists_det C (fun _ => 1 / 2) q (fun _ => by norm_num)
+    (by norm_num [Fin.sum_univ_two])
+
+/-- Input side, with distinct algorithm (`Fin 2`) and input (`Bool`) types. -/
+example (C : Fin 2 → Bool → ℚ) (p : Fin 2 → ℚ) :
+    ∃ y, (∑ a, p a * C a y) ≥ ∑ y', (1 / 2 : ℚ) * (∑ a, p a * C a y') :=
+  yao_exists_input C p (fun _ => 1 / 2) (fun _ => by norm_num)
+    (by norm_num [Fintype.sum_bool])
 
 end
