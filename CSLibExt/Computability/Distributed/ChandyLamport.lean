@@ -8,16 +8,17 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Data.Nat.Notation
+public import Mathlib.Order.Defs.LinearOrder
 
 /-!
 # Consistency of the Chandy–Lamport snapshot cut
 
 An abstract position model of the cut recorded by the Chandy–Lamport snapshot algorithm.
-Messages are indexed by `ℕ`: message `m` is sent by process `src m` at position `sendPos m` and
-received by process `dst m` at position `recvPos m`, where positions index one global order of
-events. Process `p` records its local state at position `cut p`, and `markerPos i j` is the
-position at which process `j` receives the marker that process `i` sends on its channel to `j`.
+Messages range over a type `M` and processes over a type `P`, and events occur at positions in a
+linear order `T`, one global order of events. Message `m` is sent by process `src m` at position
+`sendPos m` and received by process `dst m` at position `recvPos m`. Process `p` records its
+local state at position `cut p`, and `markerPos i j` is the position at which process `j`
+receives the marker that process `i` sends on its channel to `j`.
 
 The marker rules of the algorithm enter as two hypotheses, stated only for the channels
 `src m → dst m` that carry a message `m`:
@@ -53,18 +54,14 @@ later than it receives the marker (`hmarker`), and that every message sent at or
 sender's recording point is received no earlier than the marker on its channel (`hfifo`). Then a
 message received before its receiver's recording point was sent before its sender's recording
 point. -/
-theorem snapshot_consistent
-    (src dst : ℕ → ℕ) (sendPos recvPos cut : ℕ → ℕ)
-    (markerPos : ℕ → ℕ → ℕ)
+theorem snapshot_consistent {M P T : Type*} [LinearOrder T]
+    (src dst : M → P) (sendPos recvPos : M → T) (cut : P → T)
+    (markerPos : P → P → T)
     (hmarker : ∀ m, cut (dst m) ≤ markerPos (src m) (dst m))
     (hfifo : ∀ m, cut (src m) ≤ sendPos m →
       markerPos (src m) (dst m) ≤ recvPos m)
-    (m : ℕ) (hrecv : recvPos m < cut (dst m)) :
-    sendPos m < cut (src m) := by
-  have h2 := hmarker m
-  by_cases h : cut (src m) ≤ sendPos m
-  · have h1 := hfifo m h
-    omega
-  · omega
+    (m : M) (hrecv : recvPos m < cut (dst m)) :
+    sendPos m < cut (src m) :=
+  not_le.mp fun hle => not_le.mpr hrecv (le_trans (hmarker m) (hfifo m hle))
 
 end Cslib.Distributed.ChandyLamport

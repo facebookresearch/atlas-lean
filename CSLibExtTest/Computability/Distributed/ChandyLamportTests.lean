@@ -9,16 +9,18 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Computability.Distributed.ChandyLamport
+public import Mathlib.Data.Nat.Basic
 
 /-!
 # Tests for the consistency of the Chandy–Lamport snapshot cut
 
-* Two processes; every message goes from process `0` to process `1`. Process `0` records at
-  position `1`, process `1` records at position `3`, and the marker from `0` reaches `1` at
-  position `4`. Message `0` is sent at `0` and received at `2`; every later message is sent at
-  `2`, after process `0` records, and received at `5`, after the marker, so the FIFO hypothesis
-  holds without being vacuous. `snapshot_consistent` then shows that message `0`, received
-  before process `1` records, was sent before process `0` records.
+* Messages, processes and positions in `ℕ`, with two processes; every message goes from process
+  `0` to process `1`. Process `0` records at position `1`, process `1` records at position `3`,
+  and the marker from `0` reaches `1` at position `4`. Message `0` is sent at `0` and received
+  at `2`; every later message is sent at `2`, after process `0` records, and received at `5`,
+  after the marker, so the FIFO hypothesis holds without being vacuous. `snapshot_consistent`
+  then shows that message `0`, received before process `1` records, was sent before process `0`
+  records.
 * The marker hypothesis cannot be dropped: if the marker reaches process `1` at position `0`,
   before process `1` records, a message sent at `2`, after process `0` records, may be received
   at `2`, before process `1` records, with the FIFO hypothesis still satisfied.
