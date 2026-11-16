@@ -113,21 +113,17 @@ theorem coe_zero_lt_top_ennreal : (((0 : NNReal) : ENNReal) < (⊤ : ENNReal)) :
 theorem coe_one_lt_top_ennreal : (((1 : NNReal) : ENNReal) < (⊤ : ENNReal)) :=
   ENNReal.coe_lt_top
 
-/-- Series is increasing, via `Bool.le_iff_imp` and `mem_seriesEvent`. -/
+/-- Series is increasing: application of the public
+`Reliability.isIncreasing_seriesEvent`. -/
 theorem isIncreasing_seriesEvent (E : Type*) :
-    IsIncreasing (seriesEvent E) := by
-  intro x y hle hmem
-  rw [mem_seriesEvent] at hmem ⊢
-  intro e
-  exact (Bool.le_iff_imp.mp (hle e)) (hmem e)
+    IsIncreasing (seriesEvent E) :=
+  Reliability.isIncreasing_seriesEvent E
 
-/-- Parallel is increasing, via `Bool.le_iff_imp` and `mem_parallelEvent`. -/
+/-- Parallel is increasing: application of the public
+`Reliability.isIncreasing_parallelEvent`. -/
 theorem isIncreasing_parallelEvent (E : Type*) :
-    IsIncreasing (parallelEvent E) := by
-  intro x y hle hmem
-  rw [mem_parallelEvent] at hmem ⊢
-  obtain ⟨e₀, he₀⟩ := hmem
-  exact ⟨e₀, (Bool.le_iff_imp.mp (hle e₀)) he₀⟩
+    IsIncreasing (parallelEvent E) :=
+  Reliability.isIncreasing_parallelEvent E
 
 /-- Empty event is increasing (vacuous, via `Set.notMem_empty`). -/
 theorem isIncreasing_emptyEvent (E : Type*) :
@@ -279,33 +275,27 @@ theorem sup_T3_eq_top : Finset.univ.sup T3 = (⊤ : ENNReal) := by
 /-- Series lifetime is `1` for `T3`: `systemLifetime_series` (application)
 plus `inf_T3_eq_one` (independent pin). -/
 theorem systemLifetime_series_T3_eq_one :
-    ∀ [DecidablePred (fun x : ConfigSpace (Option Bool) => x ∈ seriesEvent (Option Bool))],
     systemLifetime (Option Bool) (seriesEvent (Option Bool)) T3 =
       ((1 : NNReal) : ENNReal) := by
-  intro _
   rw [systemLifetime_series]
   exact inf_T3_eq_one
 
 /-- Parallel lifetime is `⊤` for `T3`: `systemLifetime_parallel`
 (application) plus `sup_T3_eq_top` (independent pin). -/
 theorem systemLifetime_parallel_T3_eq_top :
-    ∀ [DecidablePred (fun x : ConfigSpace (Option Bool) => x ∈ parallelEvent (Option Bool))],
     systemLifetime (Option Bool) (parallelEvent (Option Bool)) T3 = ⊤ := by
-  intro _
   rw [systemLifetime_parallel]
   exact sup_T3_eq_top
 
 /-- Series event identity at `t = 0` (all up): both sides true.
 `t < 1` pin, membership pin, and `lt_systemLifetime_iff` application. -/
 theorem lt_systemLifetime_series_T3_zero :
-    ∀ [DecidablePred (fun x : ConfigSpace (Option Bool) => x ∈ seriesEvent (Option Bool))],
     (((0 : NNReal) : ENNReal) <
       systemLifetime (Option Bool) (seriesEvent (Option Bool)) T3) ∧
     (upConfig (Option Bool) T3 0 ∈ seriesEvent (Option Bool)) ∧
     (((((0 : NNReal) : ENNReal) <
       systemLifetime (Option Bool) (seriesEvent (Option Bool)) T3) ↔
       upConfig (Option Bool) T3 0 ∈ seriesEvent (Option Bool)) ) := by
-  intro _
   have h_series := systemLifetime_series_T3_eq_one
   have h_lt : (((0 : NNReal) : ENNReal) <
       systemLifetime (Option Bool) (seriesEvent (Option Bool)) T3) := by
@@ -341,14 +331,12 @@ theorem lt_systemLifetime_series_T3_zero :
 
 /-- Series event identity at tie `t = 1`: both sides false. -/
 theorem lt_systemLifetime_series_T3_one_tie :
-    ∀ [DecidablePred (fun x : ConfigSpace (Option Bool) => x ∈ seriesEvent (Option Bool))],
     (¬((((1 : NNReal) : ENNReal) <
       systemLifetime (Option Bool) (seriesEvent (Option Bool)) T3)) ∧
     (upConfig (Option Bool) T3 1 ∉ seriesEvent (Option Bool)) ∧
     (((((1 : NNReal) : ENNReal) <
       systemLifetime (Option Bool) (seriesEvent (Option Bool)) T3) ↔
       upConfig (Option Bool) T3 1 ∈ seriesEvent (Option Bool))) ) := by
-  intro _
   have h_series := systemLifetime_series_T3_eq_one
   have h_not_lt : ¬((((1 : NNReal) : ENNReal) <
       systemLifetime (Option Bool) (seriesEvent (Option Bool)) T3)) := by
@@ -369,14 +357,12 @@ theorem lt_systemLifetime_series_T3_one_tie :
 /-- Parallel event identity at tie `t = 1`: both sides true via the
 infinite component. -/
 theorem lt_systemLifetime_parallel_T3_one_tie :
-    ∀ [DecidablePred (fun x : ConfigSpace (Option Bool) => x ∈ parallelEvent (Option Bool))],
     (((1 : NNReal) : ENNReal) <
       systemLifetime (Option Bool) (parallelEvent (Option Bool)) T3) ∧
     (upConfig (Option Bool) T3 1 ∈ parallelEvent (Option Bool)) ∧
     (((((1 : NNReal) : ENNReal) <
       systemLifetime (Option Bool) (parallelEvent (Option Bool)) T3) ↔
       upConfig (Option Bool) T3 1 ∈ parallelEvent (Option Bool)) ) := by
-  intro _
   have h_par := systemLifetime_parallel_T3_eq_top
   have h_lt : (((1 : NNReal) : ENNReal) <
       systemLifetime (Option Bool) (parallelEvent (Option Bool)) T3) := by
@@ -392,12 +378,10 @@ theorem lt_systemLifetime_parallel_T3_one_tie :
 /-- 2-of-3 at `t = 0`: all three up, so in event. Membership pin plus
 iff application (lifetime side via the same `T3` pins). -/
 theorem lt_systemLifetime_twoOfThree_T3_zero :
-    ∀ [DecidablePred (fun x : ConfigSpace (Option Bool) => x ∈ twoOfThree)],
     ((upConfig (Option Bool) T3 0 ∈ twoOfThree) ∧
     (((((0 : NNReal) : ENNReal) <
       systemLifetime (Option Bool) twoOfThree T3) ↔
       upConfig (Option Bool) T3 0 ∈ twoOfThree)) ) := by
-  intro _
   have h0 : upConfig (Option Bool) T3 0 none = true := upConfig_T3_zero_none_true
   have h1 : upConfig (Option Bool) T3 0 (some false) = true := by
     rw [upConfig_apply_eq_true]
@@ -416,12 +400,10 @@ theorem lt_systemLifetime_twoOfThree_T3_zero :
 /-- 2-of-3 at tie `t = 1`: only the infinite component up, so not in
 event (needs two). Uses tie-down pins plus iff application. -/
 theorem lt_systemLifetime_twoOfThree_T3_one_tie :
-    ∀ [DecidablePred (fun x : ConfigSpace (Option Bool) => x ∈ twoOfThree)],
     ((upConfig (Option Bool) T3 1 ∉ twoOfThree) ∧
     (((((1 : NNReal) : ENNReal) <
       systemLifetime (Option Bool) twoOfThree T3) ↔
       upConfig (Option Bool) T3 1 ∈ twoOfThree)) ) := by
-  intro _
   have h_not0 : ¬(upConfig (Option Bool) T3 1 none = true) :=
     upConfig_T3_one_none_not_true
   have h_not1 : ¬(upConfig (Option Bool) T3 1 (some false) = true) := by
@@ -463,46 +445,36 @@ theorem empty_univ_inf_sup_pins :
 /-- Empty components: series lifetime `⊤` via `systemLifetime_series_empty`
 (application) and via `systemLifetime_series` + independent `inf` pin. -/
 theorem systemLifetime_series_empty_pins :
-    ∀ [DecidablePred (fun x : ConfigSpace Empty => x ∈ seriesEvent Empty)],
     (systemLifetime Empty (seriesEvent Empty) T0 = (⊤ : ENNReal)) ∧
     (systemLifetime Empty (seriesEvent Empty) T0 = Finset.univ.inf T0) := by
-  intro _
   exact ⟨systemLifetime_series_empty Empty T0, systemLifetime_series Empty T0⟩
 
 /-- Empty components: parallel lifetime `0` via `systemLifetime_parallel_empty`
 (application) and via `systemLifetime_parallel` + independent `sup` pin. -/
 theorem systemLifetime_parallel_empty_pins :
-    ∀ [DecidablePred (fun x : ConfigSpace Empty => x ∈ parallelEvent Empty)],
     (systemLifetime Empty (parallelEvent Empty) T0 = (0 : ENNReal)) ∧
     (systemLifetime Empty (parallelEvent Empty) T0 = Finset.univ.sup T0) := by
-  intro _
   exact ⟨systemLifetime_parallel_empty Empty T0, systemLifetime_parallel Empty T0⟩
 
 /-- Never-up boundary: `systemLifetime ∅ = 0` (application of
 `systemLifetime_empty`). -/
 theorem systemLifetime_empty_pin_Bool :
-    ∀ [DecidablePred (fun x : ConfigSpace Bool => x ∈ (∅ : Set (ConfigSpace Bool)))],
     systemLifetime Bool ∅ T2 = (0 : ENNReal) := by
-  intro _
   exact systemLifetime_empty Bool T2
 
 /-- Always-up boundary: `systemLifetime univ = ⊤` (application of
 `systemLifetime_univ`). -/
 theorem systemLifetime_univ_pin_Bool :
-    ∀ [DecidablePred (fun x : ConfigSpace Bool => x ∈ (Set.univ : Set (ConfigSpace Bool)))],
     systemLifetime Bool Set.univ T2 = (⊤ : ENNReal) := by
-  intro _
   exact systemLifetime_univ Bool T2
 
 /-- Never-up event identity at `t = 0`: both sides false.
 Independent `¬(0 < 0)` and `∉ ∅` pins plus `lt_systemLifetime_iff`. -/
 theorem lt_systemLifetime_empty_Bool_zero :
-    ∀ [DecidablePred (fun x : ConfigSpace Bool => x ∈ (∅ : Set (ConfigSpace Bool)))],
     (¬((((0 : NNReal) : ENNReal) < systemLifetime Bool ∅ T2)) ∧
     (upConfig Bool T2 0 ∉ (∅ : Set (ConfigSpace Bool))) ∧
     (((((0 : NNReal) : ENNReal) < systemLifetime Bool ∅ T2) ↔
       upConfig Bool T2 0 ∈ (∅ : Set (ConfigSpace Bool)))) ) := by
-  intro _
   have h_empty := systemLifetime_empty_pin_Bool
   have h_not_lt : ¬((((0 : NNReal) : ENNReal) < systemLifetime Bool ∅ T2)) := by
     rw [h_empty]
@@ -515,12 +487,10 @@ theorem lt_systemLifetime_empty_Bool_zero :
 /-- Always-up event identity at `t = 0`: both sides true.
 Independent `0 < ⊤` and `∈ univ` pins plus `lt_systemLifetime_iff`. -/
 theorem lt_systemLifetime_univ_Bool_zero :
-    ∀ [DecidablePred (fun x : ConfigSpace Bool => x ∈ (Set.univ : Set (ConfigSpace Bool)))],
     ((((0 : NNReal) : ENNReal) < systemLifetime Bool Set.univ T2) ∧
     (upConfig Bool T2 0 ∈ (Set.univ : Set (ConfigSpace Bool))) ∧
     (((((0 : NNReal) : ENNReal) < systemLifetime Bool Set.univ T2) ↔
       upConfig Bool T2 0 ∈ (Set.univ : Set (ConfigSpace Bool)))) ) := by
-  intro _
   have h_univ := systemLifetime_univ_pin_Bool
   have h_lt : (((0 : NNReal) : ENNReal) < systemLifetime Bool Set.univ T2) := by
     rw [h_univ]
@@ -540,10 +510,8 @@ theorem measurable_T_meas (e : Option Bool) : Measurable (T_meas e) :=
 /-- System lifetime measurability: application of
 `measurable_systemLifetime` to constant (hence measurable) components. -/
 theorem measurable_systemLifetime_T_meas :
-    ∀ [DecidablePred (fun x : ConfigSpace (Option Bool) => x ∈ twoOfThree)],
     Measurable (fun ω : Unit => systemLifetime (Option Bool) twoOfThree
       (fun e => T_meas e ω)) := by
-  intro _
   exact measurable_systemLifetime (Option Bool) twoOfThree Unit T_meas
     measurable_T_meas
 
@@ -616,7 +584,6 @@ theorem xorEvent_not_initial_segment :
 and `¬(t < lifetime)` via `lt_systemLifetime_iff`. Valid control for the
 nonstrict counterexample below. -/
 theorem strict_tie_T1_series_false :
-    ∀ [DecidablePred (fun x : ConfigSpace Unit => x ∈ seriesEvent Unit)],
     (¬((((0 : NNReal) : ENNReal) < T1 ())) ∧
     (upConfig Unit T1 0 ∉ seriesEvent Unit) ∧
     (¬((((0 : NNReal) : ENNReal) <
@@ -624,7 +591,6 @@ theorem strict_tie_T1_series_false :
     (((((0 : NNReal) : ENNReal) <
       systemLifetime Unit (seriesEvent Unit) T1) ↔
       upConfig Unit T1 0 ∈ seriesEvent Unit)) ) := by
-  intro _
   have hT : T1 () = ((0 : NNReal) : ENNReal) := rfl
   have h_not_lt_T : ¬((((0 : NNReal) : ENNReal) < T1 ())) := by
     rw [hT]
@@ -647,13 +613,11 @@ theorem strict_tie_T1_series_false :
 advertised `↔` with `≤` is false. Uses `nonstrictUpConfig_apply_eq_true`
 (pin) and the strict control above (non-vacuous: strict holds). -/
 theorem nonstrict_tie_counterexample :
-    ∀ [DecidablePred (fun x : ConfigSpace Unit => x ∈ seriesEvent Unit)],
     ((nonstrictUpConfig Unit T1 0 () = true) ∧
     (nonstrictUpConfig Unit T1 0 ∈ seriesEvent Unit) ∧
     (¬((((0 : NNReal) : ENNReal) <
       systemLifetime Unit (seriesEvent Unit) T1) ↔
       nonstrictUpConfig Unit T1 0 ∈ seriesEvent Unit)) ) := by
-  intro _
   have h_le : (((0 : NNReal) : ENNReal) ≤ T1 ()) := le_refl _
   have h_true : nonstrictUpConfig Unit T1 0 () = true := by
     rw [nonstrictUpConfig_apply_eq_true]
@@ -670,5 +634,60 @@ theorem nonstrict_tie_counterexample :
       nonstrictUpConfig Unit T1 0 ∈ seriesEvent Unit) :=
     fun h => h_not_lt_sys (h.mpr h_mem)
   exact ⟨h_true, h_mem, h_not_iff⟩
+
+/-- Importing-client check: the survival identity states and applies for an
+abstract finite component type and an arbitrary event, with no
+decision-instance binders. -/
+theorem lt_systemLifetime_iff_abstractClient (E : Type*) [Fintype E]
+    (A : Set (ConfigSpace E)) (T : E → ENNReal) (t : NNReal)
+    (hA : IsIncreasing A) :
+    ((t : ENNReal) < systemLifetime E A T ↔ upConfig E T t ∈ A) :=
+  lt_systemLifetime_iff E A T t hA
+
+/-- Importing-client check: measurability states and applies for an abstract
+finite component type and an arbitrary event, with no decision-instance
+binders. -/
+theorem measurable_systemLifetime_abstractClient (E : Type*) [Fintype E]
+    (A : Set (ConfigSpace E)) (Ω : Type*) [MeasurableSpace Ω]
+    (T : E → Ω → ENNReal) (hT : ∀ e, Measurable (T e)) :
+    Measurable (fun ω => systemLifetime E A (fun e => T e ω)) :=
+  measurable_systemLifetime E A Ω T hT
+
+/-- Importing-client check: the public series monotonicity lemma applies to
+the generic survival identity for an abstract finite component type, with no
+copied monotonicity proof. -/
+theorem lt_systemLifetime_series_abstractClient (E : Type*) [Fintype E]
+    (T : E → ENNReal) (t : NNReal) :
+    ((t : ENNReal) < systemLifetime E (seriesEvent E) T ↔
+      upConfig E T t ∈ seriesEvent E) :=
+  lt_systemLifetime_iff E (seriesEvent E) T t
+    (Reliability.isIncreasing_seriesEvent E)
+
+/-- Importing-client check: the public parallel monotonicity lemma applies to
+the generic survival identity for an abstract finite component type, with no
+copied monotonicity proof. -/
+theorem lt_systemLifetime_parallel_abstractClient (E : Type*) [Fintype E]
+    (T : E → ENNReal) (t : NNReal) :
+    ((t : ENNReal) < systemLifetime E (parallelEvent E) T ↔
+      upConfig E T t ∈ parallelEvent E) :=
+  lt_systemLifetime_iff E (parallelEvent E) T t
+    (Reliability.isIncreasing_parallelEvent E)
+
+/-- Importing-client check: series identity with the public monotonicity
+lemma on empty components. -/
+theorem lt_systemLifetime_series_emptyClient :
+    (((0 : NNReal) : ENNReal) < systemLifetime Empty (seriesEvent Empty) T0 ↔
+      upConfig Empty T0 0 ∈ seriesEvent Empty) :=
+  lt_systemLifetime_iff Empty (seriesEvent Empty) T0 0
+    (Reliability.isIncreasing_seriesEvent Empty)
+
+/-- Importing-client check: parallel identity with the public monotonicity
+lemma on empty components. -/
+theorem lt_systemLifetime_parallel_emptyClient :
+    (((0 : NNReal) : ENNReal) <
+      systemLifetime Empty (parallelEvent Empty) T0 ↔
+      upConfig Empty T0 0 ∈ parallelEvent Empty) :=
+  lt_systemLifetime_iff Empty (parallelEvent Empty) T0 0
+    (Reliability.isIncreasing_parallelEvent Empty)
 
 end ReliabilityTest

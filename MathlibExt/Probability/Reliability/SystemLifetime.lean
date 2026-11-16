@@ -91,19 +91,25 @@ theorem lt_configLifetime_iff (E : Type*) [Fintype E]
 `configLifetime`. The maximum over the empty event is `0` by the `Finset.sup`
 empty convention. All configurations in `A` are used; this is not stated as a
 minimal-path-set theorem. -/
-noncomputable def systemLifetime (E : Type*) [Fintype E] [DecidableEq E]
-    (A : Set (StatMech.ConfigSpace E)) [DecidablePred (fun x => x ∈ A)]
+noncomputable def systemLifetime (E : Type*) [Fintype E]
+    (A : Set (StatMech.ConfigSpace E))
     (T : E → ENNReal) : ENNReal :=
+  let _ft : Fintype (StatMech.ConfigSpace E) := Fintype.ofFinite _
+  let _dp : DecidablePred (fun x : StatMech.ConfigSpace E => x ∈ A) :=
+    fun x => Classical.propDecidable (x ∈ A)
   (Finset.univ.filter (fun x => x ∈ A)).sup (fun x => configLifetime E x T)
 
 /-- Source C2: event identity for an increasing event. For every lifetime vector
 `T` and finite time `t`, `t` is strictly below the system lifetime iff the
 strictly-up configuration lies in `A`, under `StatMech.IsIncreasing A`. This is
 an event identity, not an independence assertion. Stated only at finite `t`. -/
-theorem lt_systemLifetime_iff (E : Type*) [Fintype E] [DecidableEq E]
-    (A : Set (StatMech.ConfigSpace E)) [DecidablePred (fun x => x ∈ A)]
+theorem lt_systemLifetime_iff (E : Type*) [Fintype E]
+    (A : Set (StatMech.ConfigSpace E))
     (T : E → ENNReal) (t : NNReal) (hA : StatMech.IsIncreasing A) :
     ((t : ENNReal) < systemLifetime E A T ↔ upConfig E T t ∈ A) := by
+  let _ft : Fintype (StatMech.ConfigSpace E) := Fintype.ofFinite _
+  let _dp : DecidablePred (fun x : StatMech.ConfigSpace E => x ∈ A) :=
+    fun x => Classical.propDecidable (x ∈ A)
   unfold systemLifetime
   rw [Finset.lt_sup_iff]
   constructor
@@ -122,8 +128,8 @@ theorem lt_systemLifetime_iff (E : Type*) [Fintype E] [DecidableEq E]
 /-- Source C3: measurability of the system lifetime. `A` is fixed; no
 probability measure or independence hypothesis is needed. Each `T e` is a
 measurable `Ω → ENNReal` function. -/
-theorem measurable_systemLifetime (E : Type*) [Fintype E] [DecidableEq E]
-    (A : Set (StatMech.ConfigSpace E)) [DecidablePred (fun x => x ∈ A)]
+theorem measurable_systemLifetime (E : Type*) [Fintype E]
+    (A : Set (StatMech.ConfigSpace E))
     (Ω : Type*) [MeasurableSpace Ω] (T : E → Ω → ENNReal)
     (hT : ∀ e, Measurable (T e)) :
     Measurable (fun ω => systemLifetime E A (fun e => T e ω)) := by
@@ -150,10 +156,31 @@ theorem mem_parallelEvent (E : Type*) (x : StatMech.ConfigSpace E) :
     (x ∈ parallelEvent E ↔ ∃ e, x e = true) :=
   Iff.rfl
 
+/-- Source C4: the series event is increasing: a pointwise-larger configuration
+is also all-up. Applies to the generic survival identity. -/
+theorem isIncreasing_seriesEvent (E : Type*) :
+    StatMech.IsIncreasing (seriesEvent E) := by
+  intro x y hle hmem
+  rw [mem_seriesEvent] at hmem ⊢
+  intro e
+  exact (Bool.le_iff_imp.mp (hle e)) (hmem e)
+
+/-- Source C4: the parallel event is increasing: a pointwise-larger
+configuration keeps the witnessing up-component. Applies to the generic
+survival identity. -/
+theorem isIncreasing_parallelEvent (E : Type*) :
+    StatMech.IsIncreasing (parallelEvent E) := by
+  intro x y hle hmem
+  rw [mem_parallelEvent] at hmem ⊢
+  obtain ⟨e₀, he₀⟩ := hmem
+  exact ⟨e₀, (Bool.le_iff_imp.mp (hle e₀)) he₀⟩
+
 /-- Source C4: series lifetime is the minimum component lifetime. -/
-theorem systemLifetime_series (E : Type*) [Fintype E] [DecidableEq E]
-    [DecidablePred (fun x => x ∈ seriesEvent E)] (T : E → ENNReal) :
+theorem systemLifetime_series (E : Type*) [Fintype E] (T : E → ENNReal) :
     systemLifetime E (seriesEvent E) T = Finset.univ.inf T := by
+  let _ft : Fintype (StatMech.ConfigSpace E) := Fintype.ofFinite _
+  let _dp : DecidablePred (fun x : StatMech.ConfigSpace E => x ∈ seriesEvent E) :=
+    fun x => Classical.propDecidable (x ∈ seriesEvent E)
   have hmem : (fun _ => true) ∈
       Finset.univ.filter (fun x : StatMech.ConfigSpace E => x ∈ seriesEvent E) := by
     rw [Finset.mem_filter, mem_seriesEvent]
@@ -177,9 +204,12 @@ theorem systemLifetime_series (E : Type*) [Fintype E] [DecidableEq E]
   rw [huniv]
 
 /-- Source C4: parallel lifetime is the maximum component lifetime. -/
-theorem systemLifetime_parallel (E : Type*) [Fintype E] [DecidableEq E]
-    [DecidablePred (fun x => x ∈ parallelEvent E)] (T : E → ENNReal) :
+theorem systemLifetime_parallel (E : Type*) [Fintype E] (T : E → ENNReal) :
     systemLifetime E (parallelEvent E) T = Finset.univ.sup T := by
+  let _ft : Fintype (StatMech.ConfigSpace E) := Fintype.ofFinite _
+  let _dp : DecidablePred (fun x : StatMech.ConfigSpace E => x ∈ parallelEvent E) :=
+    fun x => Classical.propDecidable (x ∈ parallelEvent E)
+  let _de : DecidableEq E := fun a b => Classical.propDecidable (a = b)
   have hle : ∀ x ∈ Finset.univ.filter (fun x : StatMech.ConfigSpace E => x ∈ parallelEvent E),
       configLifetime E x T ≤ Finset.univ.sup T := by
     intro x hx
@@ -229,37 +259,46 @@ theorem parallelEvent_empty (E : Type*) [IsEmpty E] :
   exact IsEmpty.elim inferInstance e
 
 /-- Source C4: with no components the series lifetime is infinity. -/
-theorem systemLifetime_series_empty (E : Type*) [Fintype E] [DecidableEq E]
-    [DecidablePred (fun x => x ∈ seriesEvent E)] [IsEmpty E] (T : E → ENNReal) :
+theorem systemLifetime_series_empty (E : Type*) [Fintype E]
+    [IsEmpty E] (T : E → ENNReal) :
     systemLifetime E (seriesEvent E) T = ⊤ := by
   rw [systemLifetime_series, Finset.univ_eq_empty, Finset.inf_empty]
 
 /-- Source C4: with no components the parallel lifetime is zero. -/
-theorem systemLifetime_parallel_empty (E : Type*) [Fintype E] [DecidableEq E]
-    [DecidablePred (fun x => x ∈ parallelEvent E)] [IsEmpty E] (T : E → ENNReal) :
+theorem systemLifetime_parallel_empty (E : Type*) [Fintype E]
+    [IsEmpty E] (T : E → ENNReal) :
     systemLifetime E (parallelEvent E) T = 0 := by
   rw [systemLifetime_parallel, Finset.univ_eq_empty, Finset.sup_empty]
   exact ENNReal.bot_eq_zero
 
 /-- Source C5/C1: never-up (empty) event boundary equation. The maximum over the
 empty event is zero. -/
-theorem systemLifetime_empty (E : Type*) [Fintype E] [DecidableEq E]
-    [DecidablePred (fun x => x ∈ (∅ : Set (StatMech.ConfigSpace E)))]
+theorem systemLifetime_empty (E : Type*) [Fintype E]
     (T : E → ENNReal) :
     systemLifetime E ∅ T = 0 := by
+  let _ft : Fintype (StatMech.ConfigSpace E) := Fintype.ofFinite _
+  let _dp : DecidablePred
+      (fun x : StatMech.ConfigSpace E => x ∈ (∅ : Set (StatMech.ConfigSpace E))) :=
+    fun x => Classical.propDecidable (x ∈ (∅ : Set (StatMech.ConfigSpace E)))
   have h : Finset.univ.filter
       (fun x : StatMech.ConfigSpace E => x ∈ (∅ : Set (StatMech.ConfigSpace E))) = ∅ :=
     Finset.filter_false_of_mem (fun x _ => Set.notMem_empty x)
-  unfold systemLifetime
+  change (Finset.univ.filter
+      (fun x : StatMech.ConfigSpace E => x ∈ (∅ : Set (StatMech.ConfigSpace E)))).sup
+      (fun x => configLifetime E x T) = 0
   rw [h, Finset.sup_empty]
   exact ENNReal.bot_eq_zero
 
 /-- Source C5: always-up (universal) event boundary equation. The universal event
 contains the all-down configuration with lifetime `⊤`, so the maximum is `⊤`. -/
-theorem systemLifetime_univ (E : Type*) [Fintype E] [DecidableEq E]
-    [DecidablePred (fun x => x ∈ (Set.univ : Set (StatMech.ConfigSpace E)))]
+theorem systemLifetime_univ (E : Type*) [Fintype E]
     (T : E → ENNReal) :
     systemLifetime E Set.univ T = ⊤ := by
+  let _ft : Fintype (StatMech.ConfigSpace E) := Fintype.ofFinite _
+  let _dp : DecidablePred
+      (fun x : StatMech.ConfigSpace E =>
+        x ∈ (Set.univ : Set (StatMech.ConfigSpace E))) :=
+    fun x => Classical.propDecidable (x ∈ (Set.univ : Set (StatMech.ConfigSpace E)))
   have hmem : (fun _ => false) ∈ Finset.univ.filter
       (fun x : StatMech.ConfigSpace E => x ∈ (Set.univ : Set (StatMech.ConfigSpace E))) := by
     rw [Finset.mem_filter]
