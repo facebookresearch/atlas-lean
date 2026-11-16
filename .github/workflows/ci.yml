@@ -126,6 +126,9 @@ jobs:
       - name: Build extension libraries
         run: scripts/check.sh build
 
+      - name: Check the bounded codec lesson
+        run: lake env lean -DwarningAsError=true docs/teaching/examples/BoundedCodec.lean
+
       - name: Check the testing-limits lesson
         run: lake env lean -DwarningAsError=true docs/teaching/examples/TestingLimits.lean
 
