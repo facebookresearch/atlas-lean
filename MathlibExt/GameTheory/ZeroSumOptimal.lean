@@ -30,8 +30,9 @@ existence of some saddle point; the result here is that every optimal pair is on
 The Nash condition is written as the two saddle-point inequalities in the matrix-game convention of
 `MathlibExt.GameTheory.ZeroSumMinimax`. The two-player encoding `zeroSumPayoffs` /
 `zeroSumProfile` below identifies this with the two-player case, with payoffs `A` and `-A`, of
-`IsMixedNash` in `MathlibExt.GameTheory.MixedNashExistence`: `isMixedNash_of_optimal_of_value_eq`
-states the saddle-point result in that canonical form.
+`IsMixedNash` in `MathlibExt.GameTheory.MixedNashExistence`: `isMixedNash_of_isSaddlePoint` turns
+every saddle point into an `IsMixedNash` profile, and `isMixedNash_of_optimal_of_value_eq` states
+the result for optimal strategies in that canonical form.
 
 ## Main results
 
@@ -39,8 +40,10 @@ states the saddle-point result in that canonical form.
   equals minimax.
 * `matrixGame_isSaddlePoint_of_optimal`: optimal strategies of a finite matrix game form a
   saddle point.
+* `isMixedNash_of_isSaddlePoint`: a saddle point is an `IsMixedNash` profile under the
+  two-player encoding `zeroSumPayoffs` / `zeroSumProfile`.
 * `isMixedNash_of_optimal_of_value_eq`: optimal strategies form an `IsMixedNash` profile
-  under the two-player encoding `zeroSumPayoffs` / `zeroSumProfile`.
+  under that encoding.
 * `matrixGame_isMixedNash_of_optimal`: optimal strategies of a finite matrix game form an
   `IsMixedNash` profile.
 
@@ -261,18 +264,16 @@ private theorem expectedPayoff_zeroSum_col {m n : ℕ} (A : Matrix (Fin m) (Fin 
     simp [zeroSumPayoffs]
   rw [hneg, expectedPayoff_zeroSum_row]
 
-/-- **Optimal strategies form a mixed Nash equilibrium**, in the canonical
-`IsMixedNash` form: if `p` is maximin and `q` is minimax and the game has a value,
-neither player gains by a unilateral deviation in the two-player encoding. -/
-theorem isMixedNash_of_optimal_of_value_eq {m n : ℕ} {A : Matrix (Fin m) (Fin n) ℝ}
-    (hv : (⨆ p : StdSimplex ℝ (Fin m), ⨅ q : StdSimplex ℝ (Fin n),
-      p.weights ⬝ᵥ (A *ᵥ q.weights)) =
-      ⨅ q : StdSimplex ℝ (Fin n), ⨆ p : StdSimplex ℝ (Fin m), p.weights ⬝ᵥ (A *ᵥ q.weights))
-    {p : StdSimplex ℝ (Fin m)} {q : StdSimplex ℝ (Fin n)} (hp : IsMaximinStrategy A p)
-    (hq : IsMinimaxStrategy A q) :
+/-- **A saddle point is a mixed Nash equilibrium**: if no row strategy does better than `p`
+against `q` and no column strategy concedes less than `q` against `p`, then `(p, q)` is an
+`IsMixedNash` profile of the two-player encoding with payoffs `A` and `-A`. -/
+theorem isMixedNash_of_isSaddlePoint {m n : ℕ} {A : Matrix (Fin m) (Fin n) ℝ}
+    {p : StdSimplex ℝ (Fin m)} {q : StdSimplex ℝ (Fin n)}
+    (hrow : ∀ p' : StdSimplex ℝ (Fin m),
+      p'.weights ⬝ᵥ (A *ᵥ q.weights) ≤ p.weights ⬝ᵥ (A *ᵥ q.weights))
+    (hcol : ∀ q' : StdSimplex ℝ (Fin n),
+      p.weights ⬝ᵥ (A *ᵥ q.weights) ≤ p.weights ⬝ᵥ (A *ᵥ q'.weights)) :
     IsMixedNash (zeroSumPayoffs A) (zeroSumProfile p q) := by
-  obtain ⟨hrow, hcol⟩ :=
-    isSaddlePoint_of_optimal_of_value_eq hv hp hq
   intro i τ
   cases i
   · rw [expectedPayoff_zeroSum_row, expectedPayoff_zeroSum_row]
@@ -295,6 +296,18 @@ theorem isMixedNash_of_optimal_of_value_eq {m n : ℕ} {A : Matrix (Fin m) (Fin 
     have hq1 : zeroSumProfile p q true = q := rfl
     rw [h1, h2, hp1, hq1]
     exact neg_le_neg (hcol τ)
+
+/-- **Optimal strategies form a mixed Nash equilibrium**, in the canonical
+`IsMixedNash` form: if `p` is maximin and `q` is minimax and the game has a value,
+neither player gains by a unilateral deviation in the two-player encoding. -/
+theorem isMixedNash_of_optimal_of_value_eq {m n : ℕ} {A : Matrix (Fin m) (Fin n) ℝ}
+    (hv : (⨆ p : StdSimplex ℝ (Fin m), ⨅ q : StdSimplex ℝ (Fin n),
+      p.weights ⬝ᵥ (A *ᵥ q.weights)) =
+      ⨅ q : StdSimplex ℝ (Fin n), ⨆ p : StdSimplex ℝ (Fin m), p.weights ⬝ᵥ (A *ᵥ q.weights))
+    {p : StdSimplex ℝ (Fin m)} {q : StdSimplex ℝ (Fin n)} (hp : IsMaximinStrategy A p)
+    (hq : IsMinimaxStrategy A q) :
+    IsMixedNash (zeroSumPayoffs A) (zeroSumProfile p q) :=
+  (isSaddlePoint_of_optimal_of_value_eq hv hp hq).elim isMixedNash_of_isSaddlePoint
 
 /-- **Optimal strategies of a finite zero-sum matrix game form a mixed Nash equilibrium**,
 in the canonical `IsMixedNash` form. -/
