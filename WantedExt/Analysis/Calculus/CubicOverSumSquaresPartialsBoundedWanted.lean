@@ -32,10 +32,10 @@ it and placed the declarations in namespace
 `MathlibExt.Analysis.Calculus.CubicOverSumSquaresPartialsBoundedWanted`; replaced `import
 Mathlib` by `public import Mathlib` under the module system.
 -/
+
 module
 
-public import Batteries.Util.ProofWanted
-public import Mathlib
+public import MathlibExt.Analysis.Calculus.CubicOverSumSquaresPartialsBoundedWanted
 
 @[expose] public section
 
