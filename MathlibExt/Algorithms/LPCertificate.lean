@@ -8,19 +8,25 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Rat.Defs
-public import Mathlib.Data.Rat.Cast.Order
-public import Mathlib.Algebra.BigOperators.Ring.Finset
-public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.Order.Ring.Rat
 import Mathlib.Tactic.Ring
 
 /-!
 # LP optimality certificates
 
-A feasible dual vector with complementary slackness
-certifies optimality of a feasible primal point. Phase I
-initialization is not included here.
+For the equality-form linear program over `ℚ` that maximizes `∑ j, c j * x j` subject to
+`∑ j, A i j * x j = b i` for every `i` and `x ≥ 0`, a dual vector `y` with
+`c j ≤ ∑ i, y i * A i j` for every `j` that satisfies complementary slackness with a feasible
+point `x` certifies that `x` is optimal.
+
+The inequality-form analogue over `ℝ`, which certifies optimality by equal primal and dual
+objectives instead of complementary slackness, is
+`MathlibExt.Analysis.Convex.LPCertificate.feasible_pair_equal_objectives_optimal`.
 -/
 
 @[expose] public section
@@ -40,18 +46,17 @@ private theorem sum_dual_mul {m n : ℕ} (A : Fin m → Fin n → ℚ)
     ring
   rw [h, hzb i]
 
-/-- Optimality certificates for standard-form LPs
-(ALG-30c core). The primal is `A x = b`, `x ≥ 0`, maximize
-`c · x`. A dual vector `y` with `y A ≥ c` certifies that
-the feasible point `x` is optimal when complementary
-slackness holds: `x j * ((y A) j - c j) = 0` for all `j`
-and `y i * ((A x) i - b i) = 0` for all `i` (the second is
-automatic from feasibility but is the certificate's
-primal half). Phase I initialization is downstream. -/
+/-- Optimality certificate for an equality-form LP: maximize `∑ j, c j * x j` subject to
+`∑ j, A i j * x j = b i` for every `i` and `x ≥ 0`. Let `x` be feasible (`_hx0`, `hxb`), let
+the dual vector `y` satisfy `c j ≤ ∑ i, y i * A i j` for every `j` (`hyA`), and let
+complementary slackness `x j * ((∑ i, y i * A i j) - c j) = 0` hold for every `j` (`hcs`).
+Then every feasible `x'` has objective at most that of `x`, so `x` is optimal. Both objectives
+are compared with the dual objective `∑ i, y i * b i`; the bound itself does not use `_hx0`,
+which only makes `x` feasible. -/
 theorem lp_optimal_of_certificate {m n : ℕ}
     (A : Fin m → Fin n → ℚ) (b : Fin m → ℚ) (c : Fin n → ℚ)
     (x : Fin n → ℚ) (y : Fin m → ℚ)
-    (hx0 : ∀ j, 0 ≤ x j)
+    (_hx0 : ∀ j, 0 ≤ x j)
     (hxb : ∀ i, ∑ j, A i j * x j = b i)
     (hyA : ∀ j, c j ≤ ∑ i, y i * A i j)
     (hcs : ∀ j, x j * ((∑ i, y i * A i j) - c j) = 0)
