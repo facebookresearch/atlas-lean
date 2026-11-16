@@ -9,10 +9,10 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Probability.Statistics.Longitudinal.GEE.Sandwich
+public import MathlibExt.Probability.Statistics.VectorInference
 public import Mathlib.Probability.Moments.CovarianceBilin
 public import Mathlib.Probability.Distributions.Gaussian.Real
 public import Mathlib.MeasureTheory.Function.ConvergenceInDistribution
-import MathlibExt.Probability.Statistics.VectorInference
 import Mathlib.Probability.CentralLimitTheorem
 
 /-!
@@ -65,6 +65,14 @@ remainder bound is a separate obligation and is assumed here, not proved.
 * `tendstoInDistribution_sqrt_smul_sub_of_clusterEstimatingEquation`: the cluster
   sandwich theorem, `√n (θ̂ₙ - θ₀) ⇒ Z` with `⟪Z, t⟫ ~ N(0, ⟪A⁻¹ B A⁻ᵀ t, t⟫)`, where
   `A⁻¹ B A⁻ᵀ = sandwichCovariance A B` and `B = covarianceOperator (μC.map (ψ θ₀))`.
+* `covarianceOperator_map_eq_integral_rankOne`: that meat is the rank-one integral
+  `∫ ψ θ₀ ψ θ₀ᵀ dμC`, the form of `VectorInference.fisherInformation`, and
+  `sandwichCovariance_integral_rankOne`: the sandwich of a rank-one meat is the plain
+  `A⁻¹ B A⁻ᵀ`, since that meat is self-adjoint.
+* `hasLaw_inner_neg_inverse_apply_sandwich`: the limit `-A⁻¹ Y` of the vector Z-estimator
+  theorem has projection laws `N(0, ⟪sandwichCovariance A B t, t⟫)`.
+* `sandwich_score_eq_inverse_fisherInformation`: for a correctly specified score the
+  sandwich collapses to the inverse information, `sandwichCovariance A B = I(θ₀)⁻¹`.
 * `IsInfluenceFunction`: `φ` measurable, integrable and in `L²`, with mean zero.
 * `tendstoInDistribution_of_asymptoticallyLinear` (scalar),
   `tendstoInDistribution_of_asymptoticallyLinear_vector` (vector): normal limits for
@@ -78,6 +86,7 @@ namespace MathlibExt.Probability.Statistics.EstimatingEquations
 open MeasureTheory ProbabilityTheory Filter Topology
 open scoped RealInnerProductSpace
 open MathlibExt.Probability.Statistics.VectorInference
+open MathlibExt.Probability.Statistics.FisherInformation (lawOf)
 
 /-! ### The cluster sandwich theorem (S16.1) -/
 
@@ -213,6 +222,154 @@ theorem tendstoInDistribution_sqrt_smul_sub_of_clusterEstimatingEquation
           (∫ x, fderiv ℝ (fun t => ψ t x) θ₀ ∂μC) (G ω)), t⟫) =
         P'.map (fun ω => ⟪Z ω, t⟫)
     rw [(hGZ t).map_eq, (hZ t).map_eq]
+
+/-! ### Rank-one meat, sandwich projection laws and the Fisher collapse -/
+
+/-- **The cluster meat is the rank-one integral.** For a measurable, square-integrable `ψ₀`,
+the second-moment operator `covarianceOperator (μX.map ψ₀)` of
+`tendstoInDistribution_sqrt_smul_sub_of_clusterEstimatingEquation` is the Bochner integral
+`∫ ψ₀ ψ₀ᵀ dμX` of the rank-one operators `InnerProductSpace.rankOne ℝ (ψ₀ x) (ψ₀ x)`, the form
+of `VectorInference.fisherInformation`. -/
+theorem covarianceOperator_map_eq_integral_rankOne
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasurableSpace E] [BorelSpace E] {𝓧 : Type*} [MeasurableSpace 𝓧]
+    {μX : Measure 𝓧} {ψ₀ : 𝓧 → E} (hψ_meas : Measurable ψ₀)
+    (hψ_sq : Integrable (fun x => ‖ψ₀ x‖ ^ 2) μX) :
+    covarianceOperator (μX.map ψ₀) = ∫ x, InnerProductSpace.rankOne ℝ (ψ₀ x) (ψ₀ x) ∂μX := by
+  have hs : MemLp ψ₀ 2 μX :=
+    (memLp_two_iff_integrable_sq_norm hψ_meas.aestronglyMeasurable).2 hψ_sq
+  have hμ : MemLp id 2 (μX.map ψ₀) :=
+    (memLp_map_measure_iff aestronglyMeasurable_id hψ_meas.aemeasurable).2 hs
+  have hrank : Continuous fun s : E => InnerProductSpace.rankOne ℝ s s := by
+    have e : (fun s : E => InnerProductSpace.rankOne ℝ s s) =
+        fun s => ContinuousLinearMap.smulRightL ℝ E E (innerSL ℝ s) s := by
+      funext s; ext v; simp
+    rw [e]
+    exact (ContinuousLinearMap.smulRightL ℝ E E).continuous₂.comp
+      ((innerSL ℝ).continuous.prodMk continuous_id)
+  have hV : Integrable (fun x => InnerProductSpace.rankOne ℝ (ψ₀ x) (ψ₀ x)) μX := by
+    refine Integrable.mono' hψ_sq (hrank.comp_aestronglyMeasurable hs.aestronglyMeasurable)
+      (Eventually.of_forall fun x => ?_)
+    rw [InnerProductSpace.norm_rankOne, sq]
+  have hcont : ∀ u : E, Continuous fun y : E => ⟪u, y⟫ • y :=
+    fun u => (continuous_const.inner continuous_id).smul continuous_id
+  refine ContinuousLinearMap.ext fun u => ?_
+  rw [covarianceOperator_apply hμ, integral_map hψ_meas.aemeasurable
+    (hcont u).aestronglyMeasurable, ContinuousLinearMap.integral_apply hV]
+  congr 1
+  funext x
+  rw [InnerProductSpace.rankOne_apply, real_inner_comm]
+
+/-- **The canonical sandwich of a rank-one meat.** The rank-one integral
+`V = ∫ ψ₀ ψ₀ᵀ dμX` is self-adjoint (its bilinear form `∫ ⟪ψ₀, u⟫ ⟪ψ₀, v⟫ dμX` is symmetric, and
+a non-integrable `x ↦ ψ₀ x ψ₀ xᵀ` gives the junk value `0`), so the repository's symmetrized
+sandwich `GEE.sandwichCovariance D V` is the plain `D⁻¹ V (D⁻¹)*`, with `D⁻¹ = Ring.inverse D`
+and `(D⁻¹)*` its adjoint. No integrability or invertibility is assumed. -/
+theorem sandwichCovariance_integral_rankOne
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    {𝓧 : Type*} [MeasurableSpace 𝓧] (μX : Measure 𝓧) (ψ₀ : 𝓧 → E) (D : E →L[ℝ] E) :
+    GEE.sandwichCovariance D (∫ x, InnerProductSpace.rankOne ℝ (ψ₀ x) (ψ₀ x) ∂μX) =
+      Ring.inverse D ∘L (∫ x, InnerProductSpace.rankOne ℝ (ψ₀ x) (ψ₀ x) ∂μX) ∘L
+        ContinuousLinearMap.adjoint (Ring.inverse D) := by
+  have hV : IsSelfAdjoint (∫ x, InnerProductSpace.rankOne ℝ (ψ₀ x) (ψ₀ x) ∂μX) := by
+    rw [ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric]
+    intro u v
+    simp only [ContinuousLinearMap.coe_coe]
+    by_cases h : Integrable (fun x => InnerProductSpace.rankOne ℝ (ψ₀ x) (ψ₀ x)) μX
+    · rw [ContinuousLinearMap.integral_apply h, ContinuousLinearMap.integral_apply h,
+        real_inner_comm v, ← integral_inner (h.apply_continuousLinearMap u),
+        ← integral_inner (h.apply_continuousLinearMap v)]
+      congr 1
+      funext x
+      simp only [InnerProductSpace.rankOne_apply, real_inner_smul_right]
+      rw [real_inner_comm (ψ₀ x) v, real_inner_comm (ψ₀ x) u, mul_comm]
+    · simp [integral_undef h]
+  rw [GEE.sandwichCovariance_eq_of_isSelfAdjoint hV, ContinuousLinearMap.mul_def,
+    ContinuousLinearMap.mul_def, ContinuousLinearMap.comp_assoc]
+
+/-- **Projection laws of the Z-estimator limit: the sandwich covariance.** If every projection
+`⟪Y, t⟫` is `N(0, E ⟪ψ₀, t⟫²)` (the limit law in
+`VectorInference.tendstoInDistribution_sqrt_smul_sub_of_estimatingEquation`), then every
+projection of `-D⁻¹ Y` is `N(0, ⟪GEE.sandwichCovariance D V t, t⟫)` with `V = E ψ₀ ψ₀ᵀ` the
+Bochner integral of the rank-one operators (`sandwichCovariance_integral_rankOne` writes this
+sandwich as `D⁻¹ V (D⁻¹)*`). `D` need not be symmetric. No invertibility is assumed: for
+singular `D`, `Ring.inverse D = 0` and both sides degenerate to `N(0, 0)`. -/
+theorem hasLaw_inner_neg_inverse_apply_sandwich
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    [MeasurableSpace E] [BorelSpace E] {𝓧 : Type*} [MeasurableSpace 𝓧]
+    {Ω' : Type*} [MeasurableSpace Ω'] {P' : Measure Ω'}
+    {μX : Measure 𝓧} {ψ₀ : 𝓧 → E} (hψ_meas : Measurable ψ₀)
+    (hψ_sq : Integrable (fun x => ‖ψ₀ x‖ ^ 2) μX) (D : E →L[ℝ] E)
+    {Y : Ω' → E}
+    (hY : ∀ t, HasLaw (fun ω => ⟪Y ω, t⟫)
+      (gaussianReal 0 (∫ x, ⟪ψ₀ x, t⟫ ^ 2 ∂μX).toNNReal) P') (t : E) :
+    HasLaw (fun ω => ⟪-Ring.inverse D (Y ω), t⟫)
+      (gaussianReal 0 (⟪GEE.sandwichCovariance D
+        (∫ x, InnerProductSpace.rankOne ℝ (ψ₀ x) (ψ₀ x) ∂μX) t, t⟫).toNNReal) P' := by
+  have hs : MemLp ψ₀ 2 μX :=
+    (memLp_two_iff_integrable_sq_norm hψ_meas.aestronglyMeasurable).2 hψ_sq
+  have hμ : MemLp id 2 (μX.map ψ₀) :=
+    (memLp_map_measure_iff aestronglyMeasurable_id hψ_meas.aemeasurable).2 hs
+  have hB : ∀ s : E, ⟪covarianceOperator (μX.map ψ₀) s, s⟫ = ∫ x, ⟪ψ₀ x, s⟫ ^ 2 ∂μX :=
+    fun s => by
+      have hcont : Continuous fun z : E => ⟪s, z⟫ * ⟪s, z⟫ :=
+        (continuous_const.inner continuous_id).mul (continuous_const.inner continuous_id)
+      rw [covarianceOperator_inner hμ s s,
+        integral_map hψ_meas.aemeasurable hcont.aestronglyMeasurable]
+      congr 1
+      funext x
+      rw [real_inner_comm (ψ₀ x) s, sq]
+  have efun : (fun ω => ⟪-Ring.inverse D (Y ω), t⟫) =
+      fun ω => ⟪Y ω, -ContinuousLinearMap.adjoint (Ring.inverse D) t⟫ := by
+    funext ω
+    rw [inner_neg_left, ← ContinuousLinearMap.adjoint_inner_right, ← inner_neg_right]
+  have evar : ⟪GEE.sandwichCovariance D
+        (∫ x, InnerProductSpace.rankOne ℝ (ψ₀ x) (ψ₀ x) ∂μX) t, t⟫ =
+      ∫ x, ⟪ψ₀ x, -ContinuousLinearMap.adjoint (Ring.inverse D) t⟫ ^ 2 ∂μX := by
+    rw [GEE.inner_sandwichCovariance_apply,
+      ← covarianceOperator_map_eq_integral_rankOne hψ_meas hψ_sq, hB]
+    congr 1
+    funext x
+    rw [inner_neg_right, neg_sq]
+  rw [efun, evar]
+  exact hY _
+
+/-- **The sandwich collapses to the inverse information for a correctly specified score.** With
+`ψ = score p`, data law `lawOf ν p θ₀`, the information identity `E Dscore θ₀ = -I(θ₀)` and
+nonsingular `I(θ₀)`, the sandwich `GEE.sandwichCovariance D V` with `D = E Dscore θ₀` and
+`V = E score scoreᵀ` equals `I(θ₀)⁻¹`: here `V` is `fisherInformation ν p θ₀` by definition,
+`D = -I(θ₀)`, and `I(θ₀)⁻¹` is self-adjoint. -/
+theorem sandwich_score_eq_inverse_fisherInformation
+    {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
+    {𝓧 : Type*} [MeasurableSpace 𝓧]
+    {ν : Measure 𝓧} {p : E → 𝓧 → ℝ} {θ₀ : E}
+    (h_info : ∫ x, fderiv ℝ (fun t => score p t x) θ₀ ∂(lawOf ν p θ₀) =
+      -fisherInformation ν p θ₀)
+    (hI : IsUnit (fisherInformation ν p θ₀)) :
+    GEE.sandwichCovariance (∫ x, fderiv ℝ (fun t => score p t x) θ₀ ∂(lawOf ν p θ₀))
+        (∫ x, InnerProductSpace.rankOne ℝ (score p θ₀ x) (score p θ₀ x) ∂(lawOf ν p θ₀)) =
+      Ring.inverse (fisherInformation ν p θ₀) := by
+  rw [sandwichCovariance_integral_rankOne, h_info]
+  have hV : (∫ x, InnerProductSpace.rankOne ℝ (score p θ₀ x) (score p θ₀ x)
+      ∂(lawOf ν p θ₀)) = fisherInformation ν p θ₀ := rfl
+  rw [hV]
+  set I : E →L[ℝ] E := fisherInformation ν p θ₀ with hI_def
+  have hinv : Ring.inverse (-I) = -Ring.inverse I := by
+    refine ContinuousLinearMap.ext fun v => ?_
+    have h := inverse_apply_apply hI.neg (Ring.inverse I v)
+    rw [neg_apply, apply_inverse_apply hI, map_neg] at h
+    rw [neg_apply, ← neg_neg (Ring.inverse (-I) v), h]
+  have hadj : ContinuousLinearMap.adjoint (Ring.inverse I) = Ring.inverse I := by
+    refine ContinuousLinearMap.ext fun v => ?_
+    refine ext_inner_right ℝ fun w => ?_
+    rw [ContinuousLinearMap.adjoint_inner_left]
+    exact (inner_inverse_comm (inner_fisherInformation_comm ν p θ₀) hI v w).symm
+  have hadj' : ContinuousLinearMap.adjoint (Ring.inverse (-I)) = -Ring.inverse I := by
+    rw [hinv, map_neg, hadj]
+  rw [hadj', hinv]
+  refine ContinuousLinearMap.ext fun v => ?_
+  simp only [ContinuousLinearMap.comp_apply, neg_apply, map_neg,
+    apply_inverse_apply hI, neg_neg]
 
 /-! ### Asymptotically linear estimators (S16.3) -/
 
