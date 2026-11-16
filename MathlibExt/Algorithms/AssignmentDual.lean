@@ -8,9 +8,11 @@ LICENSE file in the root directory of this source tree.
 
 module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
+public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Rat.Defs
-public import Mathlib.GroupTheory.Perm.Fin
-public import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.Order.Ring.Rat
 
 /-!
 # Assignment optimality from a dual certificate
@@ -23,10 +25,10 @@ algorithm is not included here.
 
 @[expose] public section
 
-/-- Assignment-problem dual certificate (ALG-18 core): if
-potentials `u v` satisfy `u i + v j ≤ w i j` everywhere and
-equality holds on the edges of a permutation `σ`, then `σ`
-is a minimum-cost perfect assignment. Costs over `ℚ`. -/
+/-- Assignment-problem dual certificate: if potentials `u v`
+satisfy `u i + v j ≤ w i j` everywhere and equality holds on
+the edges of a permutation `σ`, then `σ` is a minimum-cost
+perfect assignment. Costs over `ℚ`. -/
 theorem assignment_optimal_of_dual {n : ℕ}
     (w : Fin n → Fin n → ℚ) (u v : Fin n → ℚ)
     (σ : Equiv.Perm (Fin n))
