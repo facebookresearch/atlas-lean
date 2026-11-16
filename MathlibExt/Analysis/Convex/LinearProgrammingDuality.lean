@@ -975,4 +975,165 @@ theorem strong_linear_programming_duality {m n : ℕ}
 
 end AttainDuality
 
+/-- Farkas alternative for linear inequalities: for real `A` and `b`, there is
+a nonnegative `x` with `A *ᵥ x ≤ b` iff every `y ≥ 0` with `Aᵀ *ᵥ y ≥ 0`
+satisfies `0 ≤ b ⬝ᵥ y`.
+
+Exports the private separation proof of this file. -/
+theorem _root_.Matrix.exists_nonneg_mulVec_le_iff {m n : ℕ}
+    (A : Matrix (Fin m) (Fin n) ℝ) (b : Fin m → ℝ) :
+    (∃ x : Fin n → ℝ, (∀ i, 0 ≤ x i) ∧ ∀ j, (A.mulVec x) j ≤ b j) ↔
+      ∀ y : Fin m → ℝ, (∀ j, 0 ≤ y j) → (∀ i, 0 ≤ (Aᵀ.mulVec y) i) →
+        0 ≤ b ⬝ᵥ y := by
+  constructor
+  · rintro ⟨x, hx, hAx⟩ y hy hAty
+    have h := MathlibExt.Analysis.Convex.LPWeakDuality.weak_linear_programming_duality
+      A b (fun _ => 0) hx hAx hy (fun i => by simpa using hAty i)
+    simpa using h
+  · intro hdual
+    by_contra hcon
+    have hmem : (b, (0 : ℝ)) ∉ lpCone A (fun _ => 0) := by
+      intro hm
+      obtain ⟨x, hx, hAx, _⟩ := (mem_lpCone_iff A (fun _ => 0) b 0).mp hm
+      exact hcon ⟨x, hx, hAx⟩
+    obtain ⟨y, α, hy, _hα, hcol, hstrict⟩ :=
+      farkas_alternative A (fun _ => 0) b 0 hmem
+    have hAty : ∀ i, 0 ≤ (Aᵀ.mulVec y) i := by
+      intro i
+      simpa using hcol i
+    have hneg : b ⬝ᵥ y < 0 := by
+      simpa using hstrict
+    have hpos := hdual y hy hAty
+    linarith
+
+/-- Farkas alternative for linear equations: for real `A` and `b`, there is
+a nonnegative `x` with `A *ᵥ x = b` iff every `y`, of any sign, with
+`Aᵀ *ᵥ y ≥ 0` satisfies `0 ≤ b ⬝ᵥ y`.
+
+Exports the private separation proof of this file. -/
+theorem _root_.Matrix.exists_nonneg_mulVec_eq_iff {m n : ℕ}
+    (A : Matrix (Fin m) (Fin n) ℝ) (b : Fin m → ℝ) :
+    (∃ x : Fin n → ℝ, (∀ i, 0 ≤ x i) ∧ A.mulVec x = b) ↔
+      ∀ y : Fin m → ℝ, (∀ i, 0 ≤ (Aᵀ.mulVec y) i) → 0 ≤ b ⬝ᵥ y := by
+  constructor
+  · rintro ⟨x, hx, hAx⟩ y hAty
+    have hlem := Matrix.dotProduct_transpose_mulVec A x y
+    rw [hAx] at hlem
+    have h2 : b ⬝ᵥ y = x ⬝ᵥ (Aᵀ.mulVec y) := by
+      rw [dotProduct_comm]
+      exact hlem.symm
+    rw [h2]
+    exact Finset.sum_nonneg fun i _ => mul_nonneg (hx i) (hAty i)
+  · intro hdual
+    let Astack : Matrix (Fin (m + m)) (Fin n) ℝ :=
+      fun j i => Fin.append (fun k => A k i) (fun k => -(A k i)) j
+    let Bstack : Fin (m + m) → ℝ := Fin.append b (fun k => -(b k))
+    have hA1 : ∀ (x : Fin n → ℝ) (k : Fin m),
+        (Astack.mulVec x) (Fin.castAdd m k) = (A.mulVec x) k := by
+      intro x k
+      simp only [Astack, Matrix.mulVec, dotProduct, Fin.append_left]
+    have hA2 : ∀ (x : Fin n → ℝ) (k : Fin m),
+        (Astack.mulVec x) (Fin.natAdd m k) = -((A.mulVec x) k) := by
+      intro x k
+      simp only [Astack, Matrix.mulVec, dotProduct, Fin.append_right, neg_mul]
+      rw [Finset.sum_neg_distrib]
+    have hB1 : ∀ (k : Fin m), Bstack (Fin.castAdd m k) = b k :=
+      fun k => Fin.append_left b _ k
+    have hB2 : ∀ (k : Fin m), Bstack (Fin.natAdd m k) = -(b k) :=
+      fun k => Fin.append_right b _ k
+    have hfeas_iff : (∃ x : Fin n → ℝ, (∀ i, 0 ≤ x i) ∧
+        ∀ j, (Astack.mulVec x) j ≤ Bstack j) ↔
+        (∃ x : Fin n → ℝ, (∀ i, 0 ≤ x i) ∧ A.mulVec x = b) := by
+      constructor
+      · rintro ⟨x, hx, hle⟩
+        refine ⟨x, hx, ?_⟩
+        funext k
+        have h1 : (A.mulVec x) k ≤ b k := by
+          have hj := hle (Fin.castAdd m k)
+          rw [hA1, hB1] at hj
+          exact hj
+        have h2 : b k ≤ (A.mulVec x) k := by
+          have hj := hle (Fin.natAdd m k)
+          rw [hA2, hB2] at hj
+          exact neg_le_neg_iff.mp hj
+        exact le_antisymm h1 h2
+      · rintro ⟨x, hx, hAx⟩
+        refine ⟨x, hx, fun j => ?_⟩
+        refine Fin.addCases (fun k => ?_) (fun k => ?_) j
+        · rw [hA1, hB1, congrFun hAx k]
+        · rw [hA2, hB2, congrFun hAx k]
+    have hF1 := Matrix.exists_nonneg_mulVec_le_iff Astack Bstack
+    rw [hfeas_iff] at hF1
+    by_contra hcon
+    have hnot_rhs : ¬(∀ y' : Fin (m + m) → ℝ, (∀ j, 0 ≤ y' j) →
+        (∀ i, 0 ≤ (Astackᵀ.mulVec y') i) → 0 ≤ Bstack ⬝ᵥ y') := by
+      intro hstack
+      exact hcon (hF1.mpr hstack)
+    push Not at hnot_rhs
+    obtain ⟨y', _hy', hAT', hneg⟩ := hnot_rhs
+    have hAT_eq : ∀ i, (Aᵀ.mulVec ((fun k => y' (Fin.castAdd m k)) -
+        (fun k => y' (Fin.natAdd m k)))) i = ((Astack)ᵀ.mulVec y') i := by
+      intro i
+      have hsplit : ((Astack)ᵀ.mulVec y') i =
+          ((Aᵀ.mulVec (fun k => y' (Fin.castAdd m k))) i -
+            (Aᵀ.mulVec (fun k => y' (Fin.natAdd m k))) i) := by
+        have h1 : ((Astack)ᵀ.mulVec y') i =
+            ((fun j => Astack j i) ⬝ᵥ y') := rfl
+        have h2 : (Aᵀ.mulVec (fun k => y' (Fin.castAdd m k))) i =
+            ((fun k => A k i) ⬝ᵥ (fun k => y' (Fin.castAdd m k))) := rfl
+        have h3 : (Aᵀ.mulVec (fun k => y' (Fin.natAdd m k))) i =
+            ((fun k => A k i) ⬝ᵥ (fun k => y' (Fin.natAdd m k))) := rfl
+        rw [h1, h2, h3]
+        simp only [dotProduct, Astack]
+        rw [Fin.sum_univ_add]
+        simp only [Fin.append_left, Fin.append_right, neg_mul]
+        rw [Finset.sum_neg_distrib]
+        rfl
+      have hsub : (Aᵀ.mulVec ((fun k => y' (Fin.castAdd m k)) -
+          (fun k => y' (Fin.natAdd m k)))) i =
+          ((Aᵀ.mulVec (fun k => y' (Fin.castAdd m k))) i -
+            (Aᵀ.mulVec (fun k => y' (Fin.natAdd m k))) i) := by
+        have h := congrFun (Matrix.mulVec_sub Aᵀ
+          (fun k => y' (Fin.castAdd m k))
+          (fun k => y' (Fin.natAdd m k))) i
+        simpa using h
+      rw [hsub, hsplit]
+    have hdot_eq : b ⬝ᵥ ((fun k => y' (Fin.castAdd m k)) -
+        (fun k => y' (Fin.natAdd m k))) = Bstack ⬝ᵥ y' := by
+      have hsplit : Bstack ⬝ᵥ y' =
+          ((b ⬝ᵥ (fun k => y' (Fin.castAdd m k))) -
+            (b ⬝ᵥ (fun k => y' (Fin.natAdd m k)))) := by
+        simp only [Bstack, dotProduct]
+        rw [Fin.sum_univ_add]
+        simp only [Fin.append_left, Fin.append_right, neg_mul]
+        rw [Finset.sum_neg_distrib]
+        rfl
+      have hsub : b ⬝ᵥ ((fun k => y' (Fin.castAdd m k)) -
+          (fun k => y' (Fin.natAdd m k))) =
+          ((b ⬝ᵥ (fun k => y' (Fin.castAdd m k))) -
+            (b ⬝ᵥ (fun k => y' (Fin.natAdd m k)))) :=
+        dotProduct_sub b _ _
+      rw [hsub, hsplit]
+    have hATy : ∀ i, 0 ≤ (Aᵀ.mulVec ((fun k => y' (Fin.castAdd m k)) -
+        (fun k => y' (Fin.natAdd m k)))) i := by
+      intro i
+      rw [hAT_eq]
+      exact hAT' i
+    have hneg' : b ⬝ᵥ ((fun k => y' (Fin.castAdd m k)) -
+        (fun k => y' (Fin.natAdd m k))) < 0 := by
+      rw [hdot_eq]
+      exact hneg
+    have hpos := hdual _ hATy
+    linarith
+
+omit [FiniteDimensional ℝ E] [DecidableEq E] in
+/-- Finitely generated cones are closed: in a real normed space, the
+nonnegative span `PointedCone.hull ℝ S` of a finite set `S` is closed.
+No finite-dimensionality is needed.
+
+Exports the private closedness proof of this file. -/
+theorem _root_.PointedCone.isClosed_hull_finset (S : Finset E) :
+    IsClosed (PointedCone.hull ℝ (↑S : Set E) : Set E) := by
+  exact _root_.MathlibExt.Analysis.Convex.LPDuality.isClosed_hull_finset S
+
 end MathlibExt.Analysis.Convex.LPDuality
