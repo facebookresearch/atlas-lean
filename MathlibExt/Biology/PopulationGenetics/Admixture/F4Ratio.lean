@@ -86,7 +86,7 @@ theorem ratio_eq_iff_of_eq_mul {α fX fY fB : ℝ} (hX : fX = α * fY) (hB : fB 
     · ring
     · rfl
 
-/-- A misspecified f4 ratio outside `[0, 1]`. Two edges of the same nonzero
+/-- A split-reference f4 ratio that can lie outside `[0, 1]`. Two edges of the same nonzero
 drift length `ℓ`, with lineage weights `wA = (1, 1)`, `wO = wC = (0, 0)`,
 unsampled source `wY = (1, 1)`, sampled reference `wB = (1, 0)` (weight only
 on the first of the two edges carrying `wY`), and admixed target
