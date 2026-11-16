@@ -51,6 +51,13 @@ def noOpsTask : Cslib.Planning.Strips.Task (Fin 2) where
   goalNeg := {0}
   ops := []
 
+/-- Already at the goal `{1}`, with only the blocked operator available. -/
+def blockedGoalTask : Cslib.Planning.Strips.Task (Fin 2) where
+  init := {1}
+  goalPos := {1}
+  goalNeg := {0}
+  ops := [blocked]
+
 /-- The concrete operator and task are well-formed in Bylander's sense. -/
 example : moveTask.WellFormed := by
   constructor
@@ -81,20 +88,41 @@ example : blocked.result ({1} : State (Fin 2)) = {1} :=
   Operator.result_eq_self_of_not_applicable blocked _ (by
     simp [blocked, Operator.applicable])
 
-/-- The one-operator plan is valid, including the negative goal. -/
+/-- Bylander's total semantics accepts `[blocked]` from the already-goal
+state `{1}`: the inapplicable operator is an identity step. -/
+example : blockedGoalTask.ResultExecutes {1} [blocked] {1} :=
+  Cslib.Planning.Strips.Task.ResultExecutes.cons (by simp [blockedGoalTask])
+    Cslib.Planning.Strips.Task.ResultExecutes.nil
+
+/-- Hence `[blocked]` is a valid total plan for `blockedGoalTask`, even
+though `blocked` is not applicable in its initial state. -/
+example : blockedGoalTask.ValidPlan [blocked] :=
+  ⟨{1}, Cslib.Planning.Strips.Task.ResultExecutes.cons
+      (by simp [blockedGoalTask])
+      Cslib.Planning.Strips.Task.ResultExecutes.nil,
+    by simp [blockedGoalTask, Cslib.Planning.Strips.Task.IsGoalState]⟩
+
+/-- Deleting that identity step leaves a strict execution to the same state. -/
+example :
+    ∃ strictPlan,
+      blockedGoalTask.Executes blockedGoalTask.init strictPlan {1} := by
+  have h : blockedGoalTask.ResultExecutes {1} [blocked] {1} :=
+    Cslib.Planning.Strips.Task.ResultExecutes.cons (by simp [blockedGoalTask])
+      Cslib.Planning.Strips.Task.ResultExecutes.nil
+  exact h.exists_executes
+
+/-- The one-operator total plan is valid, including the negative goal. -/
 example : moveTask.ValidPlan [move] :=
-  ⟨{1}, Cslib.Planning.Strips.Task.Executes.cons (by simp [moveTask])
-      (by simp [moveTask, move, Operator.applicable])
-      Cslib.Planning.Strips.Task.Executes.nil,
+  ⟨{1}, Cslib.Planning.Strips.Task.ResultExecutes.cons (by simp [moveTask])
+      Cslib.Planning.Strips.Task.ResultExecutes.nil,
     by simp [moveTask, Cslib.Planning.Strips.Task.IsGoalState]⟩
 
-/-- The same goal is LTS-reachable, through the plan-existence theorem. -/
+/-- The same goal is strictly LTS-reachable, through total plan existence. -/
 example : moveTask.GoalReachable := by
   rw [← Cslib.Planning.Strips.Task.planExists_iff_goalReachable]
   exact ⟨[move], ⟨{1},
-    Cslib.Planning.Strips.Task.Executes.cons (by simp [moveTask])
-      (by simp [moveTask, move, Operator.applicable])
-      Cslib.Planning.Strips.Task.Executes.nil,
+    Cslib.Planning.Strips.Task.ResultExecutes.cons (by simp [moveTask])
+      Cslib.Planning.Strips.Task.ResultExecutes.nil,
     by simp [moveTask, Cslib.Planning.Strips.Task.IsGoalState]⟩⟩
 
 /-- With no operators, the non-goal initial state has no plan. -/
@@ -106,10 +134,17 @@ example {α : Type*} [DecidableEq α] (task : Cslib.Planning.Strips.Task α) :
     task.ValidPlan [] ↔ task.IsGoalState task.init :=
   task.validPlan_nil_iff
 
-/-- Plan execution is LTS multistep transition, as an example. -/
+/-- Strict plan execution is strict LTS multistep transition. -/
 example {α : Type*} [DecidableEq α] (task : Cslib.Planning.Strips.Task α)
     {s s' : State α} {plan : List (Operator α)} :
     task.Executes s plan s' ↔ task.toLTS.MTr s plan s' :=
   task.executes_iff_mtr
+
+/-- Total result execution is total LTS multistep transition, exact traces
+included. -/
+example {α : Type*} [DecidableEq α] (task : Cslib.Planning.Strips.Task α)
+    {s s' : State α} {plan : List (Operator α)} :
+    task.ResultExecutes s plan s' ↔ task.toResultLTS.MTr s plan s' :=
+  task.resultExecutes_iff_resultMtr
 
 end CSLibExtTest.Planning.Strips

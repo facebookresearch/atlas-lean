@@ -23,11 +23,13 @@ precondition is true. Bylander's one-step result is `(S ∪ add) \ del` for an
 applicable operator and `S` otherwise. Goals likewise have positive and
 negative parts.
 
-The task view as a labelled transition system uses the canonical `Cslib.LTS`,
-with operators as labels; LTS transitions fire only applicable operators. A
-valid plan is exactly a finite execution whose final state satisfies both
-goal parts. This file covers only semantics and reachability; PLANSAT
-complexity is a separate slice.
+The file exposes two execution views. The strict progression LTS fires only
+applicable operators. Following Bylander, the total result LTS treats an
+inapplicable operator as an identity step, and `Task.ValidPlan` uses this
+total result semantics. Deleting the identity steps from a total execution
+gives a strict execution to the same final state, so total plan existence and
+strict goal reachability agree. This file covers only semantics and
+reachability; PLANSAT complexity is a separate slice.
 
 ## References
 
@@ -39,11 +41,15 @@ complexity is a separate slice.
 * `Operator`: positive/negative preconditions and add/delete effects.
 * `Task`: initial state, positive/negative goals, and operator list.
 * `Operator.result`: Bylander's total one-step result operation.
-* `Task.toLTS`: the progression labelled transition system.
-* `Task.Executes`: finite plan execution from one state to another.
-* `Task.executes_iff_mtr`: plan execution is multistep LTS transition.
-* `Task.planExists_iff_goalReachable`: a valid plan exists exactly when a
-  goal state is reachable.
+* `Task.toLTS`: the strict progression labelled transition system.
+* `Task.toResultLTS`: Bylander's total result labelled transition system.
+* `Task.Executes`: strict finite plan execution from one state to another.
+* `Task.ResultExecutes`: total Bylander plan execution; inapplicable
+  operators are identity steps.
+* `Task.executes_iff_mtr` and `Task.resultExecutes_iff_resultMtr`: each
+  execution relation is multistep transition in its LTS.
+* `Task.planExists_iff_goalReachable`: a total valid plan exists exactly
+  when a goal state is strictly reachable.
 -/
 
 @[expose] public section
@@ -107,8 +113,9 @@ protected def Operator.apply {α : Type*} [DecidableEq α] (op : Operator α)
   (s ∪ op.add) \ op.del
 
 /-- Bylander's total one-step result: apply an applicable operator, and leave
-the state unchanged if its preconditions fail. Plan execution below is
-stricter: every operator in a valid plan must be applicable when fired. -/
+the state unchanged if its preconditions fail. `Task.ResultExecutes` and
+`Task.ValidPlan` use this total step; `Task.Executes` and `Task.toLTS`
+retain the strict applicable-only view. -/
 protected def Operator.result {α : Type*} [DecidableEq α] (op : Operator α)
     (s : State α) : State α :=
   if op.prePos ⊆ s ∧ Disjoint op.preNeg s then op.apply s else s
@@ -155,9 +162,9 @@ protected def Task.IsGoalState {α : Type*} (task : Task α) (s : State α) :
     Prop :=
   task.goalPos ⊆ s ∧ Disjoint task.goalNeg s
 
-/-- Finite execution of a plan: `task.Executes s plan s'` means starting from
-`s`, successively firing the operators in `plan` (each must belong to the task
-and be applicable) ends in `s'`. -/
+/-- Strict finite execution of a plan: `task.Executes s plan s'` means
+starting from `s`, successively firing the operators in `plan` (each must
+belong to the task and be applicable) ends in `s'`. -/
 inductive Task.Executes {α : Type*} [DecidableEq α] (task : Task α) :
     State α → List (Operator α) → State α → Prop where
   | nil {s : State α} : task.Executes s [] s
@@ -166,9 +173,54 @@ inductive Task.Executes {α : Type*} [DecidableEq α] (task : Task α) :
       (h : task.Executes (op.apply s) plan s') :
       task.Executes s (op :: plan) s'
 
-/-- The progression labelled transition system of a STRIPS task. Labels are
-operators, states are atom finsets, and a transition fires one applicable
-task operator. -/
+/-- Total Bylander execution of a plan: `task.ResultExecutes s plan s'` means
+starting from `s`, successively replacing the state by `Operator.result` for
+each operator in `plan` ends in `s'`. Every operator must belong to the task,
+but an inapplicable operator is an identity step rather than making the plan
+inexecutable. -/
+inductive Task.ResultExecutes {α : Type*} [DecidableEq α] (task : Task α) :
+    State α → List (Operator α) → State α → Prop where
+  | nil {s : State α} : task.ResultExecutes s [] s
+  | cons {s s' : State α} {op : Operator α} {plan : List (Operator α)}
+      (hmem : op ∈ task.ops)
+      (h : task.ResultExecutes (op.result s) plan s') :
+      task.ResultExecutes s (op :: plan) s'
+
+/-- Every strict execution is a total result execution with the same trace. -/
+theorem Task.Executes.toResultExecutes {α : Type*} [DecidableEq α]
+    {task : Task α} {s s' : State α} {plan : List (Operator α)}
+    (h : task.Executes s plan s') :
+    task.ResultExecutes s plan s' := by
+  induction h with
+  | nil => exact Task.ResultExecutes.nil
+  | cons hmem happ _ ih =>
+    apply Task.ResultExecutes.cons hmem
+    rwa [Operator.result_eq_apply_of_applicable _ _ happ]
+
+/-- Every total result execution has a strict execution to the same final
+state: the strict trace is obtained by deleting the operators that were
+inapplicable (hence identity steps) in the total execution. -/
+theorem Task.ResultExecutes.exists_executes {α : Type*} [DecidableEq α]
+    {task : Task α} {s s' : State α} {plan : List (Operator α)}
+    (h : task.ResultExecutes s plan s') :
+    ∃ strictPlan, task.Executes s strictPlan s' := by
+  refine h.rec (motive := fun s _plan s' _ =>
+    ∃ strictPlan, task.Executes s strictPlan s') ?_ ?_
+  · intro _s
+    exact ⟨[], Task.Executes.nil⟩
+  · intro s _s' op _plan hmem _ ih
+    by_cases happ : op.applicable s
+    · obtain ⟨strictPlan, hstrict⟩ := ih
+      refine ⟨op :: strictPlan, ?_⟩
+      apply Task.Executes.cons hmem happ
+      rwa [Operator.result_eq_apply_of_applicable _ _ happ] at hstrict
+    · obtain ⟨strictPlan, hstrict⟩ := ih
+      refine ⟨strictPlan, ?_⟩
+      rwa [Operator.result_eq_self_of_not_applicable _ _ happ] at hstrict
+
+/-- The strict progression labelled transition system of a STRIPS task.
+Labels are operators, states are atom finsets, and a transition fires one
+applicable task operator. -/
 protected def Task.toLTS {α : Type*} [DecidableEq α] (task : Task α) :
     LTS (State α) (Operator α) where
   Tr s op s' := op ∈ task.ops ∧ op.applicable s ∧ s' = op.apply s
@@ -179,8 +231,8 @@ theorem Task.toLTS_tr_iff {α : Type*} [DecidableEq α] (task : Task α)
     task.toLTS.Tr s op s' ↔ op ∈ task.ops ∧ op.applicable s ∧ s' = op.apply s :=
   Iff.rfl
 
-/-- Plan execution is exactly multistep transition in the STRIPS LTS, with the
-plan itself as the label trace. -/
+/-- Strict plan execution is exactly multistep transition in the strict
+STRIPS LTS, with the plan itself as the label trace. -/
 theorem Task.executes_iff_mtr {α : Type*} [DecidableEq α] (task : Task α)
     {s s' : State α} {plan : List (Operator α)} :
     task.Executes s plan s' ↔ task.toLTS.MTr s plan s' := by
@@ -196,21 +248,60 @@ theorem Task.executes_iff_mtr {α : Type*} [DecidableEq α] (task : Task α)
       obtain ⟨hmem, happ, rfl⟩ := htr
       exact Task.Executes.cons hmem happ ih
 
-/-- A plan is valid for a task when executing it from the initial state reaches
-a goal state. -/
+/-- Bylander's total result labelled transition system of a STRIPS task.
+A transition labelled by a task operator replaces the state by that
+operator's total result: progression if applicable, and the same state if
+not. -/
+protected def Task.toResultLTS {α : Type*} [DecidableEq α] (task : Task α) :
+    LTS (State α) (Operator α) where
+  Tr s op s' := op ∈ task.ops ∧ s' = op.result s
+
+/-- Transitions in the total result LTS are exactly task operators taken by
+`Operator.result`. -/
+theorem Task.toResultLTS_tr_iff {α : Type*} [DecidableEq α] (task : Task α)
+    (s : State α) (op : Operator α) (s' : State α) :
+    task.toResultLTS.Tr s op s' ↔ op ∈ task.ops ∧ s' = op.result s :=
+  Iff.rfl
+
+/-- Total Bylander plan execution is exactly multistep transition in the
+total result LTS, with the plan itself as the label trace. In particular, a
+trace may contain inapplicable operators as identity steps. -/
+theorem Task.resultExecutes_iff_resultMtr {α : Type*} [DecidableEq α]
+    (task : Task α) {s s' : State α} {plan : List (Operator α)} :
+    task.ResultExecutes s plan s' ↔ task.toResultLTS.MTr s plan s' := by
+  constructor
+  · intro h
+    induction h with
+    | nil => exact LTS.MTr.refl
+    | cons hmem _ ih => exact LTS.MTr.stepL ⟨hmem, rfl⟩ ih
+  · intro h
+    induction h with
+    | refl => exact Task.ResultExecutes.nil
+    | stepL htr _ ih =>
+      obtain ⟨hmem, rfl⟩ := htr
+      exact Task.ResultExecutes.cons hmem ih
+
+/-- A plan is valid for a task, in Bylander's total `Result` semantics, when
+executing it from the initial state by `Operator.result` reaches a goal
+state. Inapplicable operators in the plan are identity steps. -/
 protected def Task.ValidPlan {α : Type*} [DecidableEq α] (task : Task α)
     (plan : List (Operator α)) : Prop :=
-  ∃ s, task.Executes task.init plan s ∧ task.IsGoalState s
+  ∃ s, task.ResultExecutes task.init plan s ∧ task.IsGoalState s
 
 /-- Some valid plan exists for the task. -/
 protected def Task.PlanExists {α : Type*} [DecidableEq α] (task : Task α) :
     Prop :=
   ∃ plan, task.ValidPlan plan
 
-/-- A goal state is reachable in the STRIPS LTS. -/
+/-- A goal state is reachable in the strict progression LTS. -/
 protected def Task.GoalReachable {α : Type*} [DecidableEq α] (task : Task α) :
     Prop :=
   ∃ s, task.toLTS.CanReach task.init s ∧ task.IsGoalState s
+
+/-- A goal state is reachable in Bylander's total result LTS. -/
+protected def Task.ResultGoalReachable {α : Type*} [DecidableEq α]
+    (task : Task α) : Prop :=
+  ∃ s, task.toResultLTS.CanReach task.init s ∧ task.IsGoalState s
 
 /-- The empty plan is valid exactly when the initial state is a goal state. -/
 theorem Task.validPlan_nil_iff {α : Type*} [DecidableEq α] (task : Task α) :
@@ -220,18 +311,39 @@ theorem Task.validPlan_nil_iff {α : Type*} [DecidableEq α] (task : Task α) :
     cases hex
     exact hgoal
   · intro hgoal
-    exact ⟨task.init, Task.Executes.nil, hgoal⟩
+    exact ⟨task.init, Task.ResultExecutes.nil, hgoal⟩
 
-/-- A valid plan exists exactly when a goal state is reachable in the
-progression LTS. -/
+/-- A total valid plan exists exactly when a goal state is reachable in
+Bylander's total result LTS. -/
+theorem Task.planExists_iff_resultGoalReachable {α : Type*} [DecidableEq α]
+    (task : Task α) :
+    task.PlanExists ↔ task.ResultGoalReachable := by
+  constructor
+  · rintro ⟨plan, s, hex, hgoal⟩
+    exact ⟨s, ⟨plan, (task.resultExecutes_iff_resultMtr).mp hex⟩, hgoal⟩
+  · rintro ⟨s, ⟨plan, hmtr⟩, hgoal⟩
+    exact ⟨plan, s, (task.resultExecutes_iff_resultMtr).mpr hmtr, hgoal⟩
+
+/-- A total valid plan exists exactly when a goal state is reachable in the
+strict progression LTS. The total-to-strict direction deletes inapplicable
+identity steps from the total plan; the converse uses the same trace. -/
 theorem Task.planExists_iff_goalReachable {α : Type*} [DecidableEq α]
     (task : Task α) :
     task.PlanExists ↔ task.GoalReachable := by
   constructor
   · rintro ⟨plan, s, hex, hgoal⟩
-    exact ⟨s, ⟨plan, (task.executes_iff_mtr).mp hex⟩, hgoal⟩
+    obtain ⟨strictPlan, hstrict⟩ := hex.exists_executes
+    exact ⟨s, ⟨strictPlan, (task.executes_iff_mtr).mp hstrict⟩, hgoal⟩
   · rintro ⟨s, ⟨plan, hmtr⟩, hgoal⟩
-    exact ⟨plan, s, (task.executes_iff_mtr).mpr hmtr, hgoal⟩
+    exact ⟨plan, s, ((task.executes_iff_mtr).mpr hmtr).toResultExecutes, hgoal⟩
+
+/-- Total result goal reachability and strict goal reachability coincide:
+identity steps add traces, but no new reachable states. -/
+theorem Task.resultGoalReachable_iff_goalReachable {α : Type*}
+    [DecidableEq α] (task : Task α) :
+    task.ResultGoalReachable ↔ task.GoalReachable :=
+  task.planExists_iff_resultGoalReachable.symm.trans
+    task.planExists_iff_goalReachable
 
 /-- With no operators, a non-goal initial state has no valid plan. -/
 theorem Task.not_planExists_of_ops_nil {α : Type*} [DecidableEq α]
@@ -241,7 +353,7 @@ theorem Task.not_planExists_of_ops_nil {α : Type*} [DecidableEq α]
   rintro ⟨plan, s, hex, hgoal_s⟩
   cases hex with
   | nil => exact hgoal hgoal_s
-  | cons hmem _ _ =>
+  | cons hmem _ =>
     rw [hops] at hmem
     simp at hmem
 
