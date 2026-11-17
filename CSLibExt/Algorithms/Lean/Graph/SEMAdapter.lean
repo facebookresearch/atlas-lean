@@ -50,10 +50,14 @@ theorem card_eq_vertices_length {V : Type*} [DecidableEq V] [Fintype V]
 
 /-- Acyclicity gives a complete nodup topological order whose length is
 the carrier cardinality (length from coverage plus `card_eq_vertices_length`). -/
-theorem exists_topologicalOrder {V : Type*} [DecidableEq V] [Hashable V]
+theorem exists_topologicalOrder {V : Type*} [DecidableEq V]
     [Fintype V] (g : DirectedAdjacency V) (hacyclic : IsAcyclic g) :
     ∃ order : List V, IsTopologicalOrder g order ∧
       order.length = Fintype.card V := by
+  -- The executable sort needs a hash instance; any two give the same
+  -- acyclicity interface, so use a constant local one and do not leak
+  -- `Hashable` into this mathematical statement.
+  letI : Hashable V := ⟨fun _ => 0⟩
   obtain ⟨order, hsort⟩ := acyclic_implies_success g hacyclic
   have htopo := success_isTopologicalOrder g order hsort
   refine ⟨order, htopo, ?_⟩
@@ -105,7 +109,7 @@ theorem supported_idxOf_lt {V : Type*} [DecidableEq V] {R : Type*}
 /-- Nilpotence corollary: a DAG-supported coefficient matrix satisfies
 `B ^ Fintype.card V = 0`. Instantiate
 `pow_card_eq_zero_of_topologicalOrder` at `ord := (order.idxOf ·)`. -/
-theorem pow_card_eq_zero_of_acyclic {V : Type*} [DecidableEq V] [Hashable V]
+theorem pow_card_eq_zero_of_acyclic {V : Type*} [DecidableEq V]
     [Fintype V] {R : Type*} [CommRing R] (g : DirectedAdjacency V)
     (B : Matrix V V R) (hacyclic : IsAcyclic g)
     (hB : ∀ i j, B i j ≠ 0 → g.Edge j i) :
@@ -122,7 +126,7 @@ row vertex); the reverse convention is the transposed test failure below.
 Instantiate `inv_one_sub_eq_sum_pow_of_topologicalOrder` at
 `ord := (order.idxOf ·)`, with `hord` from `idxOf_lt_card` and `hB` from
 `supported_idxOf_lt`. -/
-theorem inverse_of_acyclic {V : Type*} [DecidableEq V] [Hashable V]
+theorem inverse_of_acyclic {V : Type*} [DecidableEq V]
     [Fintype V] {R : Type*} [CommRing R] (g : DirectedAdjacency V)
     (B : Matrix V V R) (hacyclic : IsAcyclic g)
     (hB : ∀ i j, B i j ≠ 0 → g.Edge j i) :
