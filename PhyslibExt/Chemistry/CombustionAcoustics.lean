@@ -65,9 +65,11 @@ coefficients are model inputs; no empirical adequacy is claimed.
   constant heat-release amplitude entering the pressure
   equation through the `(γ - 1) * H` source, and `r` is a
   linear damping coefficient in the momentum equation. The
-  factor `L / 4` is the spatial average of `sin^2`/`cos^2`
-  over the duct length for one standing mode. The formal
-  statement is self-contained.
+  factor `L / 4` comes from integrating the energy density
+  over the duct: `∫₀ᴸ sin²(πx/L) dx = L/2`, and the `1/2` in
+  the acoustic energy density then gives `L/4`. The energy
+  here is total energy per unit duct cross-section. The
+  formal statement is self-contained.
 
 ## A. Arrhenius equilibrium and trapping
 

@@ -199,3 +199,24 @@ example :
       rw [div_self Real.pi_ne_zero]
       norm_num)
   simpa using h
+
+/-- Interval balance for the balanced nonzero constant mode
+`A = B = r = 1`, `H = 2` over `[0, 1]`: both sides are `0`,
+with the source and damping terms nonzero inside the
+integrand before cancellation. -/
+example :
+    Chemistry.CombustionAcoustics.acousticModeEnergy 2 1 1 Real.pi
+        ((fun _ : ℝ => 1) 1) ((fun _ : ℝ => 1) 1) -
+      Chemistry.CombustionAcoustics.acousticModeEnergy 2 1 1 Real.pi
+        ((fun _ : ℝ => 1) 0) ((fun _ : ℝ => 1) 0) =
+      ∫ t in (0 : ℝ)..(1 : ℝ),
+        (Real.pi * (2 - 1) * (1 : ℝ) * 2 / (2 * 2 * 1) -
+          1 * Real.pi * (1 : ℝ) ^ 2 / 2) := by
+  have h := Chemistry.CombustionAcoustics.acousticModeEnergy_sub_eq_integral
+    (γ := 2) (pbar := 1) (ρ := 1) (L := Real.pi) (r := 1)
+    (H := 2) (by norm_num) (by norm_num) Real.pi_pos
+    (A := fun _ : ℝ => 1) (B := fun _ : ℝ => 1) (A' := fun _ : ℝ => 0)
+    (B' := fun _ : ℝ => 0) 0 1
+    (fun t _ => hasDerivAt_const t 1) (fun t _ => hasDerivAt_const t 1)
+    (fun t _ => by field_simp; ring) (fun t _ => by field_simp; ring)
+  simpa using h
