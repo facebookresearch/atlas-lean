@@ -27,7 +27,6 @@ cell-weighted inner product. The staggered leapfrog update uses
 that adjoint literally. Dropping the periodic wrap or flipping
 the sign breaks summation by parts.
 
-Discharges ECE roadmap leaf `ECE.G.FIELDMODEL.YEE_STENCIL`.
 -/
 
 @[expose] public section
