@@ -12,7 +12,7 @@ public import Mathlib.MeasureTheory.Constructions.UnitInterval
 public import Mathlib.MeasureTheory.Integral.Bochner.Basic
 public import Mathlib.Data.Matrix.Mul
 public import MathlibExt.Probability.Process.ContinuousTimeMarkovChain.RateMatrix
-public import MathlibExt.MeasureTheory.Measure.MomentDeterminacy
+import MathlibExt.MeasureTheory.Measure.MomentDeterminacy
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Data.Nat.Choose.Cast
 import MathlibExt.Biology.PopulationGenetics.Coalescent.Kingman
