@@ -11,10 +11,19 @@ module
 public import MathlibExt.Analysis.ODE.Duhamel
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Normed.Algebra.Exponential
-public import Mathlib.Analysis.Normed.Module.FiniteDimension
 public import Mathlib.Analysis.SpecialFunctions.Exp
+public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
-public import Mathlib
+
+import Mathlib.Analysis.Complex.Exponential
+import Mathlib.Analysis.ODE.Gronwall
+import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Tactic.Abel
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # Finite affine switching
@@ -110,16 +119,15 @@ private lemma extG_eq_b {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {
 
 -- The global Duhamel solution for piece `k` with initial value `v` at its left endpoint.
 private noncomputable def pieceW {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (k : Fin n) (v : E) : ℝ → E :=
-  letI := FiniteDimensional.complete ℝ E
   Classical.choose (MathlibExt.Analysis.ODE.DuhamelWanted.duhamel_variation_of_constants
     A (extG τ g k) (τ k.castSucc) v (continuous_extG τ hτ g hg k))
 
 private lemma pieceW_spec {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (k : Fin n) (v : E) :
@@ -134,14 +142,14 @@ private lemma pieceW_spec {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     A (extG τ g k) (τ k.castSucc) v (continuous_extG τ hτ g hg k))
 
 private lemma pieceW_init {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (k : Fin n) (v : E) : pieceW A τ hτ g hg k v (τ k.castSucc) = v :=
   (pieceW_spec A τ hτ g hg k v).1
 
 private lemma pieceW_form {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (k : Fin n) (v : E) (t : ℝ) :
@@ -150,7 +158,7 @@ private lemma pieceW_form {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   (pieceW_spec A τ hτ g hg k v).2.1 t
 
 private lemma pieceW_deriv {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (k : Fin n) (v : E) (t : ℝ) :
@@ -159,7 +167,7 @@ private lemma pieceW_deriv {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E
   (pieceW_spec A τ hτ g hg k v).2.2.1 t
 
 private lemma pieceW_cont {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (k : Fin n) (v : E) : Continuous (pieceW A τ hτ g hg k v) :=
@@ -167,7 +175,7 @@ private lemma pieceW_cont {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 -- States and solutions by recursion on the piece index.
 private noncomputable def XW {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E) :
     ℕ → E × (ℝ → E)
@@ -179,13 +187,13 @@ private noncomputable def XW {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ
       else XW A τ hτ g hg x₀ m
 
 private lemma XW_zero {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E) :
     XW A τ hτ g hg x₀ 0 = (x₀, fun _ => x₀) := rfl
 
 private lemma XW_succ {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (m : ℕ) (h : m < n) :
@@ -196,7 +204,7 @@ private lemma XW_succ {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 -- State at switch time `j`.
 private noncomputable def swXst {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (j : Fin (n + 1)) : E :=
@@ -204,14 +212,14 @@ private noncomputable def swXst {E : Type*} [NormedAddCommGroup E] [NormedSpace 
 
 -- Piece-`k` solution.
 private noncomputable def swW {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (k : Fin n) : ℝ → E :=
   (XW A τ hτ g hg x₀ (k.val + 1)).2
 
 private lemma swXst_zero {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E) :
     swXst A τ hτ g hg x₀ 0 = x₀ := by
@@ -220,7 +228,7 @@ private lemma swXst_zero {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   rw [h0, XW_zero]
 
 private lemma swXst_castSucc {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (k : Fin n) :
@@ -229,7 +237,7 @@ private lemma swXst_castSucc {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ
   rw [val_castSucc]
 
 private lemma swW_eq {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (k : Fin n) :
@@ -245,7 +253,7 @@ private lemma swW_eq {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   rw [hcast]
 
 private lemma swW_init {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (k : Fin n) :
@@ -254,7 +262,7 @@ private lemma swW_init {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   exact pieceW_init A τ hτ g hg k _
 
 private lemma swXst_succ {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (k : Fin n) :
@@ -267,7 +275,7 @@ private lemma swXst_succ {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   rw [hval, hXW, swW_eq, hcast, ← mk_succ_eq k]
 
 private lemma swW_cont {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (k : Fin n) : Continuous (swW A τ hτ g hg x₀ k) := by
@@ -277,7 +285,7 @@ private lemma swW_cont {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
 
 -- The patched trajectory: piece solutions glued at the switch times.
 private noncomputable def swX {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (t : ℝ) : E :=
@@ -286,7 +294,7 @@ private noncomputable def swX {E : Type*} [NormedAddCommGroup E] [NormedSpace �
 
 -- Agreement of piece solutions on overlaps.
 private lemma swW_overlap_of_lt {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (j k : Fin n) (hlt : j < k) (t : ℝ) (hj : t ∈ Icc (τ j.castSucc) (τ j.succ))
@@ -310,7 +318,7 @@ private lemma swW_overlap_of_lt {E : Type*} [NormedAddCommGroup E] [NormedSpace 
     _ = swW A τ hτ g hg x₀ k t := by rw [htk]
 
 private lemma swW_overlap {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (j k : Fin n) (t : ℝ) (hj : t ∈ Icc (τ j.castSucc) (τ j.succ))
@@ -324,7 +332,7 @@ private lemma swW_overlap {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     · exact (swW_overlap_of_lt A τ hτ g hg x₀ k j hgt t hk hj).symm
 
 private lemma swX_eq {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (k : Fin n) (t : ℝ) (ht : t ∈ Icc (τ k.castSucc) (τ k.succ)) :
@@ -337,7 +345,7 @@ private lemma swX_eq {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   exact swW_overlap A τ hτ g hg x₀ hex.choose k t hex.choose_spec ht
 
 private lemma swX_init {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E) :
     swX A τ hτ g hg x₀ (τ 0) = x₀ := by
@@ -360,7 +368,7 @@ private lemma swX_init {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     rw [hunfold, dite_eq_right_of_eq_false (eq_false hex)]
 
 private lemma swX_cont_piece {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (k : Fin n) :
@@ -372,7 +380,7 @@ private lemma swX_cont_piece {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ
   exact hWcont.continuousOn.congr (fun t ht => swX_eq A τ hτ g hg x₀ k t ht)
 
 private lemma swX_derivWithin_piece {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E)
     (k : Fin n) (t : ℝ) (ht : t ∈ Icc (τ k.castSucc) (τ k.succ)) :
@@ -397,7 +405,7 @@ private lemma swX_derivWithin_piece {E : Type*} [NormedAddCommGroup E] [NormedSp
   rwa [hderiv_eq] at hcongr
 
 private lemma swX_formula {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (b : ℝ → E) (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (hbg : ∀ k : Fin n, EqOn b (g k) (Ioo (τ k.castSucc) (τ k.succ))) (x₀ : E)
@@ -428,7 +436,7 @@ private lemma swX_formula {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
   rw [hxt, hxc, hWc, hform, hcongr]
 
 private lemma swX_piece_inteq {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (b : ℝ → E) (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (hbg : ∀ k : Fin n, EqOn b (g k) (Ioo (τ k.castSucc) (τ k.succ))) (x₀ : E)
@@ -475,7 +483,7 @@ private lemma swX_piece_inteq {E : Type*} [NormedAddCommGroup E] [NormedSpace �
   exact hcongr
 
 private lemma swX_integ_piece {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (b : ℝ → E) (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (hbg : ∀ k : Fin n, EqOn b (g k) (Ioo (τ k.castSucc) (τ k.succ))) (x₀ : E)
@@ -500,7 +508,7 @@ private lemma swX_integ_piece {E : Type*} [NormedAddCommGroup E] [NormedSpace �
 
 -- Uniqueness on one closed piece, via Gronwall with a one-sided limit argument.
 private lemma swX_unique_piece {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (b : ℝ → E) (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (hbg : ∀ k : Fin n, EqOn b (g k) (Ioo (τ k.castSucc) (τ k.succ))) (x₀ : E)
@@ -628,7 +636,7 @@ private lemma swX_unique_piece {E : Type*} [NormedAddCommGroup E] [NormedSpace �
     exact sub_eq_zero.mp hz0'
 
 private lemma swX_cont_prefix {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ))) (x₀ : E) :
     ∀ j : Fin (n + 1), ContinuousOn (swX A τ hτ g hg x₀) (Icc (τ 0) (τ j)) := by
@@ -648,7 +656,7 @@ private lemma swX_cont_prefix {E : Type*} [NormedAddCommGroup E] [NormedSpace �
     exact ih.union_of_isClosed (swX_cont_piece A τ hτ g hg x₀ k) isClosed_Icc isClosed_Icc
 
 private lemma swX_integ_prefix {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (b : ℝ → E) (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (hbg : ∀ k : Fin n, EqOn b (g k) (Ioo (τ k.castSucc) (τ k.succ))) (x₀ : E) :
@@ -662,7 +670,7 @@ private lemma swX_integ_prefix {E : Type*} [NormedAddCommGroup E] [NormedSpace �
       le_rfl (hτ (show k.castSucc < k.succ from Fin.castSucc_lt_succ)).le le_rfl)
 
 private lemma swX_inteq_prefix {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (b : ℝ → E) (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (hbg : ∀ k : Fin n, EqOn b (g k) (Ioo (τ k.castSucc) (τ k.succ))) (x₀ : E) :
@@ -693,7 +701,7 @@ private lemma swX_inteq_prefix {E : Type*} [NormedAddCommGroup E] [NormedSpace �
       rw [hsub, hIH, add_assoc, hadd]
 
 private lemma swX_unique_prefix {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (b : ℝ → E) (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (hbg : ∀ k : Fin n, EqOn b (g k) (Ioo (τ k.castSucc) (τ k.succ))) (x₀ : E)
@@ -715,7 +723,7 @@ private lemma swX_unique_prefix {E : Type*} [NormedAddCommGroup E] [NormedSpace 
       exact swX_unique_piece A τ hτ b g hg hbg x₀ y hy k hinit hmem
 
 /-- **Finite affine switching: patched Duhamel trajectory.** For a constant bounded linear `A` on
-a finite-dimensional real space, a finite partition `τ` of the horizon, and forcing `b` that is
+a real Banach space, a finite partition `τ` of the horizon, and forcing `b` that is
 continuous on each open piece with a continuous extension `g k` to the closed piece, there is a
 trajectory `x` through `x₀` that
 * is a continuous piecewise solution (`IsSwitchedTrajectory`);
@@ -725,7 +733,7 @@ trajectory `x` through `x₀` that
   across the switch times, with an interval-integrable integrand;
 * agrees on the horizon with every continuous piecewise solution through `x₀`. -/
 theorem switchedTrajectory_exists_unique {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
+    [CompleteSpace E] (A : E →L[ℝ] E) {n : ℕ} (τ : Fin (n + 1) → ℝ) (hτ : StrictMono τ)
     (b : ℝ → E) (g : Fin n → ℝ → E)
     (hg : ∀ k : Fin n, ContinuousOn (g k) (Icc (τ k.castSucc) (τ k.succ)))
     (hbg : ∀ k : Fin n, EqOn b (g k) (Ioo (τ k.castSucc) (τ k.succ))) (x₀ : E) :
