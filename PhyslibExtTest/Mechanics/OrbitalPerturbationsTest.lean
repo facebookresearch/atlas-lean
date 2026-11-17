@@ -60,3 +60,12 @@ example :
     simp at hnr
   rw [OrbitalPerturbations.norm_inverseSquareField (by norm_num) hne]
   norm_num [PiLp.norm_single]
+
+/-- The bundled `LipschitzOnWith` form on the exterior set at
+`μ = 5`, `rmin = 2`. -/
+example :
+    LipschitzOnWith ⟨4 * 5 / 2 ^ 3, by positivity⟩
+      (OrbitalPerturbations.inverseSquareField 5)
+      {r : EuclideanSpace ℝ (Fin 3) | 2 ≤ ‖r‖} :=
+  OrbitalPerturbations.inverseSquareField_lipschitzOnWith
+    (by norm_num) (by norm_num)

@@ -27,6 +27,9 @@ excluded ball.
 - `OrbitalPerturbations.inverseSquareField_lipschitz_exterior`: outside
   the ball of radius `rmin > 0`, the field is Lipschitz with the
   conservative constant `4μ / rmin^3`.
+- `OrbitalPerturbations.inverseSquareField_lipschitzOnWith`: the same
+  bound in Mathlib's bundled `LipschitzOnWith` form on
+  `{r | rmin ≤ ‖r‖}`, for downstream Lipschitz API consumers.
 
 ## iii. Table of contents
 
@@ -181,5 +184,22 @@ theorem inverseSquareField_lipschitz_exterior {E : Type*}
         ≤ (μ / rmin ^ 3) * ‖r - s‖ + (3 * μ / rmin ^ 3) * ‖r - s‖ :=
           add_le_add hterm1 hterm2
       _ = (4 * μ / rmin ^ 3) * ‖r - s‖ := by ring
+
+/-- The exterior Lipschitz bound in Mathlib's standard bundled form:
+the inverse-square field is Lipschitz on the exterior set
+`{r | rmin ≤ ‖r‖}` with constant `4μ / rmin^3`. This is the form
+downstream `LipschitzOnWith` API consumes; the pointwise norm form is
+`inverseSquareField_lipschitz_exterior`. -/
+theorem inverseSquareField_lipschitzOnWith {E : Type*}
+    [NormedAddCommGroup E] [InnerProductSpace ℝ E] {μ rmin : ℝ}
+    (hμ : 0 < μ) (hrmin : 0 < rmin) :
+    LipschitzOnWith
+      ⟨4 * μ / rmin ^ 3,
+        div_nonneg (mul_nonneg (by norm_num) hμ.le) (pow_nonneg hrmin.le 3)⟩
+      (inverseSquareField μ) {r : E | rmin ≤ ‖r‖} := by
+  refine LipschitzOnWith.of_dist_le_mul fun x hx y hy => ?_
+  simp only [Set.mem_ofPred_eq] at hx hy
+  rw [dist_eq_norm, dist_eq_norm]
+  exact inverseSquareField_lipschitz_exterior hμ hrmin hx hy
 
 end OrbitalPerturbations
