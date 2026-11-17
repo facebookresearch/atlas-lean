@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.EarthScience.Calibration
+import Mathlib.Data.Fin.VecNotation
 
 /-!
 # Calibration checks
@@ -56,6 +57,12 @@ example {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
     (hInt : Integrable ε μ) (hMean : ∫ ω, ε ω ∂μ = e) :
     ∫ ω, ((a * x + b + ε ω - b) / a) ∂μ = x + e / a :=
   EarthScience.calibration_estimator_expectation ha hInt hMean
+
+/-- Calibrated value at visit `j` of a two-visit design (ordinary
+specialization of `EarthScience.calibrated_value`; no wrapper). -/
+example (j : Fin 2) :
+    ((4 : ℝ) * ![5, 7] j + 1 + ![0, 2] j - 1) / 4 = ![5, 7] j + ![0, 2] j / 4 :=
+  EarthScience.calibrated_value (by norm_num)
 
 /-- No error: `ε = 0` recovers `x` exactly, pointwise and in
 expectation. -/
