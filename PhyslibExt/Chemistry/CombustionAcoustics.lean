@@ -22,17 +22,19 @@ import Mathlib.Tactic.Ring
 Zeroth-order Arrhenius heat generation with Newton cooling,
 `C * T' = G * exp(-B / T) - H * (T - Ta)`: an equilibrium exists in
 `(Ta, Ta + G / H)` (multiple equilibria are possible; none is
-claimed unique), and every actual forward solution starting from
-positive data is trapped between `min (T 0) Ta` and
-`max (T 0) (Ta + G / H)`, so this exact model has no unbounded
-temperature runaway. Constant reactant and cooling coefficients are
-model inputs; no empirical adequacy is claimed.
+claimed unique), and every forward solution that exists on a
+time interval is trapped between `min (T 0) Ta` and
+`max (T 0) (Ta + G / H)` on that interval. This is a conditional
+trapping statement for solutions that exist; it does not prove
+global existence and does not by itself rule out finite-time
+blow-up of a maximal solution. Constant reactant and cooling
+coefficients are model inputs; no empirical adequacy is claimed.
 
 ## ii. Key results
 
-- `CombustionAcoustics.arrhenius_equilibrium_exists`: an equilibrium
+- `Chemistry.CombustionAcoustics.arrhenius_equilibrium_exists`: an equilibrium
   temperature exists in the stated bracket.
-- `CombustionAcoustics.arrhenius_solution_trapped`: forward
+- `Chemistry.CombustionAcoustics.arrhenius_solution_trapped`: forward
   solutions are trapped in the stated interval.
 
 ## iii. Table of contents
@@ -50,7 +52,7 @@ model inputs; no empirical adequacy is claimed.
 
 @[expose] public section
 
-namespace CombustionAcoustics
+namespace Chemistry.CombustionAcoustics
 
 /-- Zeroth-order Arrhenius heat-release rate with Newton cooling:
 `rate(T) = G * exp(-B / T) - H * (T - Ta)`, for heat-generation scale
@@ -284,25 +286,22 @@ theorem arrhenius_equilibrium_exists {G H B Ta : ℝ} (hG : 0 < G)
   obtain ⟨T, hTmem, hTeq⟩ := himg
   exact ⟨T, hTmem, hTeq⟩
 
-/-- Forward trapping for an actual forward solution: if `T` has
-within-derivative `arrheniusRate G H B Ta (T t) / C` on `Set.Ici 0`
-at every `t ≥ 0`, with `C > 0`, then `T t` lies in `[lo, hi]` where
-`lo = min (T 0) Ta` and `hi = max (T 0) (Ta + G / H)`, for every
-`t ≥ 0`. In particular the exact model has no unbounded temperature
-runaway from positive initial data. -/
-theorem arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
+/-- Finite-horizon trapping: if `T` has within-derivative
+`arrheniusRate G H B Ta (T t) / C` on `Set.Ici 0` at every
+`s ∈ [0, t]`, with `C > 0`, then `T t` lies in `[lo, hi]` where
+`lo = min (T 0) Ta` and `hi = max (T 0) (Ta + G / H)`. This
+applies to any solution on the interval `[0, t]`, including a
+maximal solution restricted to a compact subinterval of its
+domain. -/
+lemma arrhenius_solution_trapped_on_interval {G H B Ta C : ℝ} (hG : 0 < G)
     (hH : 0 < H) (hB : 0 < B) (hTa : 0 < Ta) (hC : 0 < C)
-    {T : ℝ → ℝ}
-    (hT : ∀ s : ℝ, 0 ≤ s →
-      HasDerivWithinAt T (arrheniusRate G H B Ta (T s) / C) (Set.Ici 0) s)
-    {t : ℝ} (ht : 0 ≤ t) :
+    {T : ℝ → ℝ} {t : ℝ} (ht : 0 ≤ t)
+    (hT : ∀ s : ℝ, s ∈ Set.Icc 0 t →
+      HasDerivWithinAt T (arrheniusRate G H B Ta (T s) / C) (Set.Ici 0) s) :
     T t ∈ Set.Icc (min (T 0) Ta) (max (T 0) (Ta + G / H)) := by
-  have hcont : ContinuousOn T (Set.Icc 0 t) := by
-    have h0 : ContinuousOn T (Set.Ici 0) :=
-      fun x hx => (hT x (Set.mem_Ici.mp hx)).continuousWithinAt
-    apply h0.mono
-    intro x hx
-    exact Set.mem_Ici.mpr hx.1
+  have hcont : ContinuousOn T (Set.Icc 0 t) :=
+    fun x hx => (hT x hx).continuousWithinAt.mono_left
+      (nhdsWithin_mono x (Set.Icc_subset_Ici_self))
   have hne : (Set.Icc (0 : ℝ) t).Nonempty := Set.nonempty_Icc.mpr ht
   have hub : T t ≤ max (T 0) (Ta + G / H) := by
     by_contra hcon
@@ -320,7 +319,7 @@ theorem arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
     have hTc : Ta + G / H < T c := lt_of_le_of_lt (le_max_right _ _) hmax
     have hrate : arrheniusRate G H B Ta (T c) < 0 :=
       arrheniusRate_neg_of_gt_upper hG hH hB hTa hTc
-    have hderiv := hT c (le_of_lt hc_pos)
+    have hderiv := hT c hc_mem
     have hf' : arrheniusRate G H B Ta (T c) / C < 0 :=
       div_neg_of_neg_of_pos hrate hC
     obtain ⟨s, hs_mem, hsc, hlt⟩ :=
@@ -343,7 +342,7 @@ theorem arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
     have hTc : T c < Ta := lt_of_lt_of_le hmin (min_le_right _ _)
     have hrate : 0 < arrheniusRate G H B Ta (T c) :=
       arrheniusRate_pos_of_le_Ta hG hH hTa (le_of_lt hTc)
-    have hderiv := hT c (le_of_lt hc_pos)
+    have hderiv := hT c hc_mem
     have hf' : 0 < arrheniusRate G H B Ta (T c) / C := div_pos hrate hC
     obtain ⟨s, hs_mem, hsc, hlt⟩ :=
       exists_left_lt_of_hasDerivWithinAt_pos hderiv hf' hc_pos hc_mem.2
@@ -351,4 +350,22 @@ theorem arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
     linarith
   exact Set.mem_Icc.mpr ⟨hlb, hub⟩
 
-end CombustionAcoustics
+/-- Forward trapping for a forward solution defined for all
+`t ≥ 0`: if `T` has within-derivative
+`arrheniusRate G H B Ta (T t) / C` on `Set.Ici 0` at every
+`t ≥ 0`, with `C > 0`, then `T t` lies in `[lo, hi]` where
+`lo = min (T 0) Ta` and `hi = max (T 0) (Ta + G / H)`, for every
+`t ≥ 0`. This is the finite-horizon trapping lemma applied on
+`[0, t]`; it presupposes a solution existing for all forward
+time and is not a global-existence claim. -/
+lemma arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
+    (hH : 0 < H) (hB : 0 < B) (hTa : 0 < Ta) (hC : 0 < C)
+    {T : ℝ → ℝ}
+    (hT : ∀ s : ℝ, 0 ≤ s →
+      HasDerivWithinAt T (arrheniusRate G H B Ta (T s) / C) (Set.Ici 0) s)
+    {t : ℝ} (ht : 0 ≤ t) :
+    T t ∈ Set.Icc (min (T 0) Ta) (max (T 0) (Ta + G / H)) := by
+  exact arrhenius_solution_trapped_on_interval hG hH hB hTa hC ht
+    (fun s hs => hT s hs.1)
+
+end Chemistry.CombustionAcoustics
