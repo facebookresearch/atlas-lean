@@ -31,7 +31,8 @@ below identifies the hydrologic reading with it.
 
 - `EarthScience.discreteConvolution_eq_sumConv`: the outflow is
   `sumConv`.
-- `EarthScience.sumConv_sum_eq`: total response identity for `sumConv`.
+- `AdditiveCombinatorics.sum_range_sumConv`: generic total identity
+  for `sumConv` over any semiring.
 - `EarthScience.discreteConvolution_volume_eq`: runoff volume under
   the normalization.
 
