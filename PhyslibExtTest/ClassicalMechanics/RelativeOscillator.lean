@@ -18,38 +18,36 @@ import PhyslibExt.ClassicalMechanics.RelativeOscillator
 
 Focused checks for
 `PhyslibExt.ClassicalMechanics.RelativeOscillator`: the witness
-`m = c = k = 1`, `x = t^2`, `y = t` satisfies the absolute equation
-with `pf` read off from it, and the public theorem then gives the
-relative velocity and energy derivative at `t = 2`.
+`m = c = k = 1`, `x = t^2`, `y = t` satisfies the balance at
+`t = 2`, and the public theorem gives the relative velocity
+derivative, the relative equation, and the energy derivative
+`12` there.
 
 These are elaboration and non-vacuity checks, not new results.
 -/
 
 open RelativeOscillator
 
-/-- Witness application: at `t = 2`, `u = 2`, velocity `3`,
-energy `(9 + 4) / 2`-style terms through the public theorem. -/
-example : HasDerivAt (fun t : ℝ => t ^ 2 - t) ((2 * 2 - 1 : ℝ)) 2
-    ∧ (1 : ℝ) * ((fun _ : ℝ => (2:ℝ)) 2 - (fun _ : ℝ => (0:ℝ)) 2)
-        + 1 * ((fun t : ℝ => 2 * t) 2 - (fun _ : ℝ => (1:ℝ)) 2)
-        + 1 * (fun t : ℝ => t ^ 2 - t) 2
-      = (fun t : ℝ => 1 * (2:ℝ) + 1 * (2 * t - 1) + 1 * (t ^ 2 - t)) 2
-        - 1 * (fun _ : ℝ => (0:ℝ)) 2 := by
+/-- Witness application at `t = 2`. -/
+example : (1 : ℝ) * ((fun _ : ℝ => (2:ℝ)) 2 - (fun _ : ℝ => (0:ℝ)) 2)
+      + 1 * ((fun t : ℝ => 2 * t) 2 - (fun _ : ℝ => (1:ℝ)) 2)
+      + 1 * (fun t : ℝ => t ^ 2 - t) 2
+    = (fun t : ℝ => 1 * (2:ℝ) + 1 * (2 * t - 1) + 1 * (t ^ 2 - t)) 2
+      - 1 * (fun _ : ℝ => (0:ℝ)) 2 := by
   have h := relative_equation_and_energy (m := 1) (c := 1) (k := 1)
     (x := fun t : ℝ => t ^ 2) (y := fun t : ℝ => t)
     (u := fun t : ℝ => t ^ 2 - t) (xv := fun t : ℝ => 2 * t)
     (yv := fun _ : ℝ => 1) (xa := fun _ : ℝ => 2) (ya := fun _ : ℝ => 0)
     (pf := fun t : ℝ => 1 * (2:ℝ) + 1 * (2 * t - 1) + 1 * (t ^ 2 - t))
     (fun t => by ring) 2
-    (Filter.Eventually.of_forall (fun t => by simpa using (hasDerivAt_pow 2 t)))
-    (Filter.Eventually.of_forall (fun t => hasDerivAt_id (x := t)))
-    (Filter.Eventually.of_forall (fun t => by simpa using (HasDerivAt.const_mul (2:ℝ) (hasDerivAt_id (x := t)))))
-    (Filter.Eventually.of_forall (fun t => hasDerivAt_const t (1:ℝ)))
+    (by simpa using (hasDerivAt_pow 2 (2:ℝ)))
+    (hasDerivAt_id (x := (2:ℝ)))
+    (by simpa using (HasDerivAt.const_mul (2:ℝ) (hasDerivAt_id (x := (2:ℝ)))))
+    (hasDerivAt_const (2:ℝ) (1:ℝ))
     (by ring)
-  exact ⟨h.1, h.2.1⟩
+  exact h.2.2.1
 
-/-- Energy conclusion on the witness: derivative `12` at `t = 2`
-(`(4 - 1) * 7 - (4 - 1)^2 = 12`). -/
+/-- Energy conclusion on the witness: derivative `12` at `t = 2`. -/
 example : HasDerivAt (fun s : ℝ => (1:ℝ) / 2 * (2 * s - 1) ^ 2
       + (1:ℝ) / 2 * (s ^ 2 - s) ^ 2) 12 2 := by
   have h := relative_equation_and_energy (m := 1) (c := 1) (k := 1)
@@ -58,11 +56,11 @@ example : HasDerivAt (fun s : ℝ => (1:ℝ) / 2 * (2 * s - 1) ^ 2
     (yv := fun _ : ℝ => 1) (xa := fun _ : ℝ => 2) (ya := fun _ : ℝ => 0)
     (pf := fun t : ℝ => 1 * (2:ℝ) + 1 * (2 * t - 1) + 1 * (t ^ 2 - t))
     (fun t => by ring) 2
-    (Filter.Eventually.of_forall (fun t => by simpa using (hasDerivAt_pow 2 t)))
-    (Filter.Eventually.of_forall (fun t => hasDerivAt_id (x := t)))
-    (Filter.Eventually.of_forall (fun t => by simpa using (HasDerivAt.const_mul (2:ℝ) (hasDerivAt_id (x := t)))))
-    (Filter.Eventually.of_forall (fun t => hasDerivAt_const t (1:ℝ)))
+    (by simpa using (hasDerivAt_pow 2 (2:ℝ)))
+    (hasDerivAt_id (x := (2:ℝ)))
+    (by simpa using (HasDerivAt.const_mul (2:ℝ) (hasDerivAt_id (x := (2:ℝ)))))
+    (hasDerivAt_const (2:ℝ) (1:ℝ))
     (by ring)
-  have h3 := h.2.2
-  norm_num at h3 ⊢
-  convert h3 using 1 <;> ring
+  have h3 := h.2.2.2
+  convert h3 using 1
+  norm_num
