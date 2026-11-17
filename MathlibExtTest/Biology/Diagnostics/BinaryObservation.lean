@@ -24,8 +24,9 @@ one-point probability space. -/
 example : (Measure.dirac ((): Unit)).real Set.univ ≤
     (Measure.dirac ((): Unit)).real Set.univ := by
   have h := ppv_coverage_transfer (Measure.dirac ())
-    (fun _ => Set.univ) (fun _ => ((1 : ℝ), 1, 1))
-    (by simp) (by simp) (fun _ _ => by norm_num) (fun _ _ => by norm_num)
+    (fun _ => Set.univ) (fun _ => Set.univ) (fun _ => ((1 : ℝ), 1, 1))
+    (by simp) (by simp) (fun _ _ => by simp) (fun _ _ => by norm_num)
+    (fun _ _ => by norm_num)
   simp at h ⊢
 
 /-- The singleton `(1, 1, 1)` has PPV `1`. -/

@@ -44,28 +44,31 @@ theorem ppv_eq (θ : ℝ × ℝ × ℝ) :
 
 set_option linter.unusedVariables false in
 /-- **PPV coverage transfer.** Let `θ ω = (π, se, sp)` be the true
-diagnostic parameters and `S ω` a joint confidence set for them with
-measurable coverage event. On the admissible domain, whenever
-`θ ω ∈ S ω` the parameters lie in `π, se, sp ∈ [0, 1]` and the PPV
-denominator is strictly positive. Then the coverage event for the
-transformed set `ppv '' S ω` has at least the measure of the joint
-coverage event: coverage transfers conservatively through the PPV
-map, for any (not necessarily rectangular) joint set. Only the PPV
-denominator appears; no NPV denominator condition is imposed. -/
+diagnostic parameters, `S ω` a joint confidence set for them, and
+`T ω` a conservative PPV output set containing the transformed
+covered value (`θ ω ∈ S ω → ppv (θ ω) ∈ T ω`). On the admissible
+domain, whenever `θ ω ∈ S ω` the parameters lie in
+`π, se, sp ∈ [0, 1]` and the PPV denominator is strictly positive.
+Then the coverage event for `T` has at least the measure of the
+joint coverage event: coverage transfers conservatively through the
+PPV map, for any (not necessarily rectangular) joint set and any
+measurable conservative output set. Only the PPV denominator
+appears; no NPV denominator condition is imposed. -/
 theorem ppv_coverage_transfer {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (S : Ω → Set (ℝ × ℝ × ℝ)) (θ : Ω → ℝ × ℝ × ℝ)
+    (S : Ω → Set (ℝ × ℝ × ℝ)) (T : Ω → Set ℝ) (θ : Ω → ℝ × ℝ × ℝ)
     (hS : MeasurableSet {ω | θ ω ∈ S ω})
-    (hT : MeasurableSet {ω | ppv (θ ω) ∈ ppv '' S ω})
+    (hT : MeasurableSet {ω | ppv (θ ω) ∈ T ω})
+    (hcover : ∀ ω, θ ω ∈ S ω → ppv (θ ω) ∈ T ω)
     (hdom : ∀ ω, θ ω ∈ S ω →
       0 ≤ (θ ω).1 ∧ (θ ω).1 ≤ 1 ∧ 0 ≤ (θ ω).2.1 ∧ (θ ω).2.1 ≤ 1 ∧
       0 ≤ (θ ω).2.2 ∧ (θ ω).2.2 ≤ 1)
     (hden : ∀ ω, θ ω ∈ S ω →
       0 < (θ ω).1 * (θ ω).2.1 + (1 - (θ ω).1) * (1 - (θ ω).2.2)) :
-    μ.real {ω | θ ω ∈ S ω} ≤ μ.real {ω | ppv (θ ω) ∈ ppv '' S ω} := by
+    μ.real {ω | θ ω ∈ S ω} ≤ μ.real {ω | ppv (θ ω) ∈ T ω} := by
   apply measureReal_mono _ (measure_ne_top _ _)
   intro ω hω
-  exact ⟨θ ω, hω, rfl⟩
+  exact hcover ω hω
 
 /-- The singleton parameter `(π, se, sp) = (1, 1, 1)` has PPV `1`
 although its negative-test mass `(1 - π) * sp + π * (1 - se)` is zero:
