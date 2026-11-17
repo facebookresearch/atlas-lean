@@ -64,3 +64,28 @@ example : deriv (fun x : ℝ => Real.sin (Real.pi * x / 2)) 0 ≠ 0 := by
       = Real.pi / 2 := by simp
   rw [hd, hval]
   exact div_ne_zero (ne_of_gt Real.pi_pos) two_ne_zero
+
+/-- Tip value at `L = 2`: the clamped-free mode value at the free end
+is `1`. -/
+example : Elasticity.clampedFreeMode 2 2 = 1 :=
+  Elasticity.clampedFreeMode_tip (by norm_num)
+
+/-- The clamped-free column equation at a point for `EI = 3`, `L = 2`,
+and its free-end shear-moment trace `EI * w'''(L) + P * w'(L) = 0`
+with nonzero tip slope `w'(L) = π / 4`. -/
+example :
+    (3 * iteratedDeriv 4 (Elasticity.clampedFreeMode 2) 1 +
+        (Real.pi ^ 2 * 3 / (4 * 2 ^ 2)) *
+          iteratedDeriv 2 (Elasticity.clampedFreeMode 2) 1 = 0) ∧
+      (3 * iteratedDeriv 3 (Elasticity.clampedFreeMode 2) 2 +
+          (Real.pi ^ 2 * 3 / (4 * 2 ^ 2)) *
+            deriv (Elasticity.clampedFreeMode 2) 2 = 0) ∧
+        deriv (Elasticity.clampedFreeMode 2) 2 = Real.pi / 4 := by
+  have h := Elasticity.clampedFree_eigenpair (EI := 3) (L := 2)
+    (by norm_num) (by norm_num)
+  refine ⟨h.1 1, h.2.2.2.2, ?_⟩
+  rw [Elasticity.deriv_clampedFreeMode (L := 2) (by norm_num)]
+  show Real.pi / (2 * 2) * Real.sin (Real.pi * 2 / (2 * 2)) = Real.pi / 4
+  have hph : Real.pi * (2 : ℝ) / (2 * 2) = Real.pi / 2 := by ring
+  rw [hph, Real.sin_pi_div_two]
+  ring
