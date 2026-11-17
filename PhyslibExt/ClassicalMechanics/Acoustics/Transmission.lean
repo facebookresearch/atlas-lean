@@ -9,6 +9,7 @@ module
 
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Algebra.BigOperators.Ring.Finset
+public import Mathlib.Analysis.Convex.Combination
 public import Mathlib.Basic.Real.Basic
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -28,6 +29,8 @@ the area-weighted average of the coefficients, and coefficient bounds
 
 ## ii. Key results
 
+- `Acoustics.effectivePowerTransmission_eq`: the center-mass
+  coefficient is the transmitted/incident power quotient.
 - `Acoustics.effectivePowerTransmission_eq_of_uniform`: uniform
   intensity gives the area-weighted average.
 - `Acoustics.effectivePowerTransmission_bounds`: bound inheritance.
@@ -46,23 +49,32 @@ the area-weighted average of the coefficients, and coefficient bounds
 
 namespace Acoustics
 
-/-! ## A. Effective transmission -/
-
 /-- Effective power transmission coefficient over patches `s`: total
-transmitted power over total incident power. -/
+transmitted over total incident power, as the `Finset.centerMass`
+weighted average of the coefficients with weights `I i * A i`. -/
 noncomputable def effectivePowerTransmission {ι : Type*} (I A tau : ι → ℝ)
     (s : Finset ι) : ℝ :=
-  (∑ i ∈ s, I i * A i * tau i) / (∑ i ∈ s, I i * A i)
+  s.centerMass (fun i => I i * A i) tau
+
+/-- The center-mass coefficient is the transmitted/incident power
+quotient, unconditionally (both sides are zero when the total incident
+weight is zero). -/
+theorem effectivePowerTransmission_eq {ι : Type*} (I A tau : ι → ℝ)
+    (s : Finset ι) :
+    effectivePowerTransmission I A tau s
+      = (∑ i ∈ s, I i * A i * tau i) / (∑ i ∈ s, I i * A i) := by
+  simp only [effectivePowerTransmission, Finset.centerMass, smul_eq_mul,
+    div_eq_inv_mul]
 
 /-- Under uniform incident intensity `I0 > 0`, the effective coefficient
-is the area-weighted average `(∑ i, A i * tau i) / (∑ i, A i)`. -/
+is the area-weighted average `(∑ i, A i * tau i) / (∑ i, A i)`. No
+positivity of areas or nonemptiness is needed for this identity. -/
 theorem effectivePowerTransmission_eq_of_uniform {ι : Type*}
     (I A tau : ι → ℝ) (s : Finset ι) {I0 : ℝ} (hI0 : 0 < I0)
-    (hI : ∀ i : ι, i ∈ s → I i = I0)
-    (hA : ∀ i : ι, i ∈ s → 0 < A i) (hs : s.Nonempty) :
+    (hI : ∀ i : ι, i ∈ s → I i = I0) :
     effectivePowerTransmission I A tau s
       = (∑ i ∈ s, A i * tau i) / (∑ i ∈ s, A i) := by
-  unfold effectivePowerTransmission
+  rw [effectivePowerTransmission_eq]
   have hI0ne : I0 ≠ 0 := ne_of_gt hI0
   have hnum : (∑ i ∈ s, I i * A i * tau i) = I0 * (∑ i ∈ s, A i * tau i) := by
     rw [Finset.mul_sum]
@@ -70,14 +82,12 @@ theorem effectivePowerTransmission_eq_of_uniform {ι : Type*}
   have hden : (∑ i ∈ s, I i * A i) = I0 * (∑ i ∈ s, A i) := by
     rw [Finset.mul_sum]
     exact Finset.sum_congr rfl (fun i hi => by rw [hI i hi])
-  have _hs : s.Nonempty := hs
-  have _hA : ∀ i : ι, i ∈ s → 0 < A i := hA
   rw [hnum, hden]
   exact mul_div_mul_left _ _ hI0ne
 
 /-- The effective coefficient inherits the bounds `0 < tau_eff ≤ 1` from
 `0 < tau_i ≤ 1` on every patch of positive area and positive incident
-intensity (uniformity is not needed), over a nonempty patch set. -/
+intensity, over a nonempty patch set. -/
 theorem effectivePowerTransmission_bounds {ι : Type*} (I A tau : ι → ℝ)
     (s : Finset ι) (hs : s.Nonempty)
     (hI : ∀ i : ι, i ∈ s → 0 < I i)
@@ -85,15 +95,19 @@ theorem effectivePowerTransmission_bounds {ι : Type*} (I A tau : ι → ℝ)
     (htau : ∀ i : ι, i ∈ s → 0 < tau i ∧ tau i ≤ 1) :
     0 < effectivePowerTransmission I A tau s
       ∧ effectivePowerTransmission I A tau s ≤ 1 := by
-  unfold effectivePowerTransmission
-  have hwpos : ∀ i ∈ s, 0 < I i * A i :=
-    fun i hi => mul_pos (hI i hi) (hA i hi)
-  have hDpos : 0 < ∑ i ∈ s, I i * A i := Finset.sum_pos hwpos hs
-  have hNpos : 0 < ∑ i ∈ s, I i * A i * tau i :=
-    Finset.sum_pos (fun i hi => mul_pos (hwpos i hi) (htau i hi).1) hs
-  have hNleD : (∑ i ∈ s, I i * A i * tau i) ≤ (∑ i ∈ s, I i * A i) :=
-    Finset.sum_le_sum (fun i hi =>
-      mul_le_of_le_one_right (le_of_lt (hwpos i hi)) (htau i hi).2)
-  exact ⟨div_pos hNpos hDpos, (div_le_one hDpos).mpr hNleD⟩
+  rw [effectivePowerTransmission_eq]
+  have hw : ∀ i ∈ s, 0 < I i * A i := fun i hi => mul_pos (hI i hi) (hA i hi)
+  have hden : 0 < ∑ i ∈ s, I i * A i := Finset.sum_pos hw hs
+  have hnum : 0 < ∑ i ∈ s, I i * A i * tau i := by
+    apply Finset.sum_pos _ hs
+    intro i hi
+    exact mul_pos (hw i hi) (htau i hi).1
+  refine ⟨div_pos hnum hden, ?_⟩
+  rw [div_le_one hden]
+  apply Finset.sum_le_sum
+  intro i hi
+  calc I i * A i * tau i ≤ (I i * A i) * 1 :=
+        mul_le_mul_of_nonneg_left (htau i hi).2 (le_of_lt (hw i hi))
+    _ = I i * A i := mul_one _
 
 end Acoustics

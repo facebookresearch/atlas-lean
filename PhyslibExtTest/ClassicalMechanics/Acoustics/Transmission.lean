@@ -9,6 +9,7 @@ module
 
 import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
 import Mathlib.Tactic.NormNum
 
 import PhyslibExt.ClassicalMechanics.Acoustics.Transmission
@@ -29,6 +30,19 @@ open Acoustics
 example : effectivePowerTransmission (fun _ : Fin 2 => (1 : ℝ))
       (fun _ : Fin 2 => (1 : ℝ)) ![1 / 2, 1] Finset.univ = 3 / 4 := by
   rw [effectivePowerTransmission_eq_of_uniform _ _ _ _
-    (show (0 : ℝ) < 1 by norm_num) (fun i _ => rfl)
-    (fun i _ => by norm_num) Finset.univ_nonempty]
+    (show (0 : ℝ) < 1 by norm_num) (fun i _ => rfl)]
   norm_num [Fin.sum_univ_two]
+
+/-- Nonuniform intensities `(1, 2)`: the public bounds theorem applies,
+and the quotient form gives `5 / 6`. -/
+example : 0 < effectivePowerTransmission ![1, 2] (fun _ : Fin 2 => (1 : ℝ))
+      ![1 / 2, 1] Finset.univ
+    ∧ effectivePowerTransmission ![1, 2] (fun _ : Fin 2 => (1 : ℝ))
+      ![1 / 2, 1] Finset.univ = 5 / 6 := by
+  refine ⟨?_, ?_⟩
+  · exact (effectivePowerTransmission_bounds _ _ _ _ Finset.univ_nonempty
+      (by intro i _; fin_cases i <;> norm_num)
+      (by intro i _; norm_num)
+      (by intro i _; fin_cases i <;> constructor <;> norm_num)).1
+  · rw [effectivePowerTransmission_eq]
+    norm_num [Fin.sum_univ_two]
