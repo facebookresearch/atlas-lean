@@ -24,8 +24,8 @@ For balanced three-phase phasors (positive abc sequence), the
 neutral current vanishes, the total complex power is
 `3 V conj(I)` in the RMS passive-sign convention, and line
 voltages are `sqrt 3` times phase voltages with a +30 degree
-shift; the reversed (acb) sequence flips the shift sign and
-the neutral current. Delta line currents satisfy the same
+shift; the reversed (acb) sequence flips the shift sign
+(its neutral current also vanishes). Delta line currents satisfy the same
 relations. The rotation constant comes from
 `PhyslibExt.Circuits.SymmetricalComponentCoordinates`
 (imported, not copied).
@@ -125,15 +125,7 @@ private lemma alpha_arg : (2 * Real.pi * Complex.I / 3 : ℂ)
   push_cast
   ring
 
-private lemma alpha_cubed : alpha ^ 3 = 1 := by
-  show Complex.exp (2 * Real.pi * Complex.I / 3) ^ 3 = 1
-  rw [← Complex.exp_nat_mul]
-  have h : ((3 : ℕ) : ℂ) * (2 * Real.pi * Complex.I / 3)
-      = 2 * Real.pi * Complex.I := by
-    push_cast
-    ring
-  rw [h]
-  exact Complex.exp_two_pi_mul_I
+private lemma alpha_cubed : alpha ^ 3 = 1 := isPrimitiveRoot_alpha.pow_eq_one
 
 private lemma alpha_re : alpha.re = -(1 / 2) := by
   show (Complex.exp (2 * Real.pi * Complex.I / 3)).re = _
@@ -153,13 +145,7 @@ private lemma alpha_ne_one : alpha ≠ 1 := by
   rw [h, Complex.one_re] at hre
   norm_num at hre
 
-private lemma one_add_alpha : 1 + alpha + alpha ^ 2 = 0 := by
-  have hmul : (1 - alpha) * (1 + alpha + alpha ^ 2) = 1 - alpha ^ 3 := by ring
-  rw [alpha_cubed, sub_self] at hmul
-  have hne : (1 : ℂ) - alpha ≠ 0 := by
-    intro h
-    exact alpha_ne_one (by linear_combination (-1) * h)
-  exact (mul_eq_zero.mp hmul).resolve_left hne
+private lemma one_add_alpha : 1 + alpha + alpha ^ 2 = 0 := one_add_alpha_add_alpha_sq
 
 private lemma norm_alpha : ‖alpha‖ = 1 := by
   show ‖Complex.exp (2 * Real.pi * Complex.I / 3)‖ = 1
