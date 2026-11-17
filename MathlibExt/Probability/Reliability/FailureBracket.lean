@@ -27,8 +27,8 @@ matching `MathlibExt.Probability.Reliability.LimitState`.
 
 * `Reliability.measure_failure_bracket_upper` and
   `Reliability.measure_failure_bracket_lower`: the two sides.
-* `Reliability.measure_failure_bracket`: the subtracted bracket for a
-  probability measure.
+* `Reliability.measure_failure_bracket`: the subtracted bracket for an
+  arbitrary measure.
 -/
 
 @[expose] public section
