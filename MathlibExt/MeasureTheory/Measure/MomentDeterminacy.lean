@@ -36,9 +36,8 @@ measures then gives equality of the measures.
 
 @[expose] public section
 
-namespace MathlibExt.Biology.PopulationGenetics.Diffusion
+namespace MeasureTheory
 
-open MeasureTheory
 open scoped unitInterval
 
 /-- **Hausdorff moment determinacy on `[0, 1]`.** Two finite Borel measures on the unit interval
@@ -105,4 +104,4 @@ theorem measure_eq_of_forall_integral_pow_eq (μ ν : Measure I) [IsFiniteMeasur
     _ = δ * (μ.real Set.univ + ν.real Set.univ) := by ring
     _ ≤ c := hfin
 
-end MathlibExt.Biology.PopulationGenetics.Diffusion
+end MeasureTheory

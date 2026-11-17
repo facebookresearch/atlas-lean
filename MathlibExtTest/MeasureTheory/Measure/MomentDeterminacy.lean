@@ -8,17 +8,16 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import MathlibExt.Biology.PopulationGenetics.Diffusion.MomentDeterminacy
+public import MathlibExt.MeasureTheory.Measure.MomentDeterminacy
 import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
 @[expose] public section
 
-namespace MathlibExtTest.Biology.PopulationGenetics.Diffusion
+namespace MathlibExtTest.MeasureTheory.Measure.MomentDeterminacy
 
-open MeasureTheory
+open _root_.MeasureTheory
 open scoped unitInterval
-open MathlibExt.Biology.PopulationGenetics.Diffusion
 
 /-- The determinacy theorem applied with definitionally equal moments. -/
 example (μ : Measure I) [IsFiniteMeasure μ] : μ = μ :=
@@ -47,4 +46,4 @@ example : Measure.dirac (⟨1 / 2, by norm_num⟩ : I) ≠ (volume : Measure I) 
   rw [integral_sq_dirac_half, integral_sq_volume] at h2
   norm_num at h2
 
-end MathlibExtTest.Biology.PopulationGenetics.Diffusion
+end MathlibExtTest.MeasureTheory.Measure.MomentDeterminacy
