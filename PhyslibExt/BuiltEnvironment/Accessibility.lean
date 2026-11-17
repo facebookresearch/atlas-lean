@@ -63,28 +63,29 @@ noncomputable def thresholdOpportunitySum {ι : Type*} (s : Finset ι)
   ∑ i ∈ s, thresholdContribution o t T i
 
 /-- A destination within its threshold contributes its opportunity. -/
-theorem thresholdContribution_of_le {ι : Type*} (o : ι → ℝ)
+lemma thresholdContribution_of_le {ι : Type*} (o : ι → ℝ)
     (t : ι → Option NNReal) (T : NNReal) {i : ι} {τ : NNReal}
     (h : t i = some τ) (hτ : τ ≤ T) :
     thresholdContribution o t T i = o i := by
   simp [thresholdContribution, h, hτ]
 
 /-- A destination past its threshold contributes zero. -/
-theorem thresholdContribution_eq_zero_of_gt {ι : Type*} (o : ι → ℝ)
+lemma thresholdContribution_eq_zero_of_gt {ι : Type*} (o : ι → ℝ)
     (t : ι → Option NNReal) (T : NNReal) {i : ι} {τ : NNReal}
     (h : t i = some τ) (hτ : T < τ) :
     thresholdContribution o t T i = 0 := by
-  simp [thresholdContribution, h, not_le.mpr hτ]
+  simp [thresholdContribution, h, not_le_of_gt hτ]
 
 /-- A destination with no supplied travel time contributes zero. -/
-theorem thresholdContribution_eq_none {ι : Type*} (o : ι → ℝ)
+lemma thresholdContribution_eq_none {ι : Type*} (o : ι → ℝ)
     (t : ι → Option NNReal) (T : NNReal) {i : ι} (h : t i = none) :
     thresholdContribution o t T i = 0 := by
-  simp only [thresholdContribution, h]
+  unfold thresholdContribution
+  rw [h]
 
 open scoped Classical in
 /-- The match sum is the filtered opportunity sum. -/
-theorem thresholdOpportunitySum_eq_filter_sum {ι : Type*} (s : Finset ι)
+lemma thresholdOpportunitySum_eq_filter_sum {ι : Type*} (s : Finset ι)
     (o : ι → ℝ) (t : ι → Option NNReal) (T : NNReal) :
     thresholdOpportunitySum s o t T
       = ∑ i ∈ s.filter (fun i => ∃ τ : NNReal, t i = some τ ∧ τ ≤ T), o i := by
@@ -92,46 +93,40 @@ theorem thresholdOpportunitySum_eq_filter_sum {ι : Type*} (s : Finset ι)
   rw [Finset.sum_filter]
   apply Finset.sum_congr rfl
   intro i _
-  cases hti : t i with
-  | none =>
-      have hex : ¬∃ τ : NNReal, (none : Option NNReal) = some τ ∧ τ ≤ T := by
-        rintro ⟨τ, hcon, -⟩
-        exact Option.some_ne_none τ hcon.symm
-      rw [thresholdContribution_eq_none o t T hti, ite_eq_right hex]
-  | some τ =>
-      by_cases hτ : τ ≤ T
-      · rw [thresholdContribution_of_le o t T hti hτ, ite_eq_left ⟨τ, rfl, hτ⟩]
-      · have hex : ¬∃ σ : NNReal, (some τ) = some σ ∧ σ ≤ T := by
-          rintro ⟨σ, hcon, hσ⟩
-          have hτσ : τ = σ := Option.some_inj.mp hcon
-          subst hτσ
-          exact hτ hσ
-        rw [thresholdContribution_eq_zero_of_gt o t T hti (lt_of_not_ge hτ),
-          ite_eq_right hex]
+  by_cases h : ∃ τ : NNReal, t i = some τ ∧ τ ≤ T
+  · have ⟨τ, hti, hle⟩ := h
+    rw [ite_eq_left h, thresholdContribution_of_le o t T hti hle]
+  · rw [ite_eq_right h]
+    cases hti : t i
+    case none =>
+      rw [thresholdContribution_eq_none o t T hti]
+    case some τ =>
+      have hle : ¬τ ≤ T := fun hle => h ⟨τ, hti, hle⟩
+      rw [thresholdContribution_eq_zero_of_gt o t T hti (lt_of_not_ge hle)]
 
 /-- Threshold accessibility is nondecreasing in the threshold, for
 nonnegative opportunities. -/
 theorem thresholdOpportunitySum_mono {ι : Type*} (s : Finset ι)
-    (o : ι → ℝ) (t : ι → Option NNReal) (ho : ∀ i : ι, 0 ≤ o i)
+    (o : ι → ℝ) (t : ι → Option NNReal) (ho : ∀ i : ι, i ∈ s → 0 ≤ o i)
     {T1 T2 : NNReal} (hT : T1 ≤ T2) :
     thresholdOpportunitySum s o t T1 ≤ thresholdOpportunitySum s o t T2 := by
   unfold thresholdOpportunitySum
   apply Finset.sum_le_sum
-  intro i _
-  cases hti : t i with
-  | none =>
-      rw [thresholdContribution_eq_none o t T1 hti,
-        thresholdContribution_eq_none o t T2 hti]
-  | some τ =>
-      by_cases h1 : τ ≤ T1
-      · have h2 : τ ≤ T2 := le_trans h1 hT
-        rw [thresholdContribution_of_le o t T1 hti h1,
+  intro i hi
+  cases hti : t i
+  case none =>
+    rw [thresholdContribution_eq_none o t T1 hti,
+      thresholdContribution_eq_none o t T2 hti]
+  case some τ =>
+    by_cases h1 : τ ≤ T1
+    · have h2 : τ ≤ T2 := le_trans h1 hT
+      rw [thresholdContribution_of_le o t T1 hti h1,
+        thresholdContribution_of_le o t T2 hti h2]
+    · by_cases h2 : τ ≤ T2
+      · rw [thresholdContribution_eq_zero_of_gt o t T1 hti (lt_of_not_ge h1),
           thresholdContribution_of_le o t T2 hti h2]
-      · by_cases h2 : τ ≤ T2
-        · rw [thresholdContribution_eq_zero_of_gt o t T1 hti (lt_of_not_ge h1),
-            thresholdContribution_of_le o t T2 hti h2]
-          exact ho i
-        · rw [thresholdContribution_eq_zero_of_gt o t T1 hti (lt_of_not_ge h1),
-            thresholdContribution_eq_zero_of_gt o t T2 hti (lt_of_not_ge h2)]
+        exact ho i hi
+      · rw [thresholdContribution_eq_zero_of_gt o t T1 hti (lt_of_not_ge h1),
+          thresholdContribution_eq_zero_of_gt o t T2 hti (lt_of_not_ge h2)]
 
 end TransportAccessibility
