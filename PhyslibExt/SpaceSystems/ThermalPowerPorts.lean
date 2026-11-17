@@ -10,6 +10,7 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import MathlibExt.Analysis.ODE.MaximalSolution
+import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
@@ -255,226 +256,6 @@ lemma radiatorRate_nonpos_at_max {C Krad Q Tmax : ℝ} (hC : 0 < C)
   unfold radiatorRate
   exact div_nonpos_of_nonpos_of_nonneg h (le_of_lt hC)
 
-private lemma slope_tendsto_of_within {f : ℝ → ℝ} {f' x : ℝ} {s t : Set ℝ}
-    (h : HasDerivWithinAt f f' s x) (hts : t ⊆ s) (htx : t ⊆ {x}ᶜ) :
-    Filter.Tendsto (fun y => (f y - f x) / (y - x)) (nhdsWithin x t) (nhds f') := by
-  have hE := hasDerivWithinAt_iff_tendsto.mp h
-  have hE' : Filter.Tendsto (fun y => ‖y - x‖⁻¹ * ‖f y - f x - (y - x) • f'‖)
-      (nhdsWithin x t) (nhds 0) :=
-    hE.mono_left (nhdsWithin_mono x hts)
-  have hcongr : (fun y => ‖y - x‖⁻¹ * ‖f y - f x - (y - x) • f'‖) =ᶠ[nhdsWithin x t]
-      (fun y => ‖(f y - f x) / (y - x) - f'‖) := by
-    show ∀ᶠ y in nhdsWithin x t,
-      ‖y - x‖⁻¹ * ‖f y - f x - (y - x) • f'‖ = ‖(f y - f x) / (y - x) - f'‖
-    rw [eventually_nhdsWithin_iff]
-    filter_upwards with y hyt
-    have hyx : y ≠ x := by
-      have hmem := htx hyt
-      simpa using hmem
-    have hyx0 : y - x ≠ 0 := sub_ne_zero.mpr hyx
-    have halg : (f y - f x) / (y - x) - f' = (f y - f x - (y - x) * f') / (y - x) := by
-      field_simp
-    rw [halg, norm_div, smul_eq_mul]
-    rw [div_eq_mul_inv, mul_comm]
-  rw [tendsto_iff_dist_tendsto_zero]
-  simp_rw [dist_eq_norm]
-  exact Filter.Tendsto.congr' hcongr hE'
-
-private lemma deriv_le_zero_of_isMaxOn {f : ℝ → ℝ} {f' x : ℝ} {s : Set ℝ}
-    (hderiv : HasDerivAt f f' x) (hmax : IsMaxOn f s x) (hmem : s ∈ nhds x) :
-    f' ≤ 0 := by
-  have hT : Filter.Tendsto (fun y => (f y - f x) / (y - x))
-      (nhdsWithin x (Set.Ioi x)) (nhds f') :=
-    slope_tendsto_of_within hderiv.hasDerivWithinAt (Set.subset_univ _)
-      (fun y hy => by simpa using ne_of_gt hy)
-  have hev : ∀ᶠ y in nhdsWithin x (Set.Ioi x), (f y - f x) / (y - x) ≤ 0 := by
-    rw [eventually_nhdsWithin_iff]
-    filter_upwards [hmem] with y hys hyIoi
-    have h1 : f y - f x ≤ 0 :=
-      sub_nonpos.mpr (Filter.eventually_principal.mp hmax y hys)
-    have h2 : (0 : ℝ) < y - x := sub_pos.mpr hyIoi
-    exact div_nonpos_of_nonpos_of_nonneg h1 (le_of_lt h2)
-  exact le_of_tendsto hT hev
-
-private lemma deriv_ge_zero_of_isMaxOn {f : ℝ → ℝ} {f' x : ℝ} {s : Set ℝ}
-    (hderiv : HasDerivAt f f' x) (hmax : IsMaxOn f s x) (hmem : s ∈ nhds x) :
-    0 ≤ f' := by
-  have hT : Filter.Tendsto (fun y => (f y - f x) / (y - x))
-      (nhdsWithin x (Set.Iio x)) (nhds f') :=
-    slope_tendsto_of_within hderiv.hasDerivWithinAt (Set.subset_univ _)
-      (fun y hy => by simpa using ne_of_lt hy)
-  have hev : ∀ᶠ y in nhdsWithin x (Set.Iio x), 0 ≤ (f y - f x) / (y - x) := by
-    rw [eventually_nhdsWithin_iff]
-    filter_upwards [hmem] with y hys hyIio
-    have h1 : f y - f x ≤ 0 :=
-      sub_nonpos.mpr (Filter.eventually_principal.mp hmax y hys)
-    have h2 : y - x < 0 := sub_neg.mpr hyIio
-    have h3 : (0 : ℝ) ≤ (-(f y - f x)) / (-(y - x)) :=
-      div_nonneg (neg_nonneg.mpr h1) (le_of_lt (neg_pos.mpr h2))
-    rwa [neg_div_neg_eq] at h3
-  exact ge_of_tendsto hT hev
-
-private lemma deriv_ge_zero_of_isMinOn {f : ℝ → ℝ} {f' x : ℝ} {s : Set ℝ}
-    (hderiv : HasDerivAt f f' x) (hmin : IsMinOn f s x) (hmem : s ∈ nhds x) :
-    0 ≤ f' := by
-  have hT : Filter.Tendsto (fun y => (f y - f x) / (y - x))
-      (nhdsWithin x (Set.Ioi x)) (nhds f') :=
-    slope_tendsto_of_within hderiv.hasDerivWithinAt (Set.subset_univ _)
-      (fun y hy => by simpa using ne_of_gt hy)
-  have hev : ∀ᶠ y in nhdsWithin x (Set.Ioi x), 0 ≤ (f y - f x) / (y - x) := by
-    rw [eventually_nhdsWithin_iff]
-    filter_upwards [hmem] with y hys hyIoi
-    have h1 : 0 ≤ f y - f x :=
-      sub_nonneg.mpr (Filter.eventually_principal.mp hmin y hys)
-    have h2 : (0 : ℝ) < y - x := sub_pos.mpr hyIoi
-    exact div_nonneg h1 (le_of_lt h2)
-  exact ge_of_tendsto hT hev
-
-private lemma deriv_le_zero_of_isMinOn {f : ℝ → ℝ} {f' x : ℝ} {s : Set ℝ}
-    (hderiv : HasDerivAt f f' x) (hmin : IsMinOn f s x) (hmem : s ∈ nhds x) :
-    f' ≤ 0 := by
-  have hT : Filter.Tendsto (fun y => (f y - f x) / (y - x))
-      (nhdsWithin x (Set.Iio x)) (nhds f') :=
-    slope_tendsto_of_within hderiv.hasDerivWithinAt (Set.subset_univ _)
-      (fun y hy => by simpa using ne_of_lt hy)
-  have hev : ∀ᶠ y in nhdsWithin x (Set.Iio x), (f y - f x) / (y - x) ≤ 0 := by
-    rw [eventually_nhdsWithin_iff]
-    filter_upwards [hmem] with y hys hyIio
-    have h1 : 0 ≤ f y - f x :=
-      sub_nonneg.mpr (Filter.eventually_principal.mp hmin y hys)
-    have h2 : y - x < 0 := sub_neg.mpr hyIio
-    have h3 : (-(f y - f x)) / (-(y - x)) ≤ 0 :=
-      div_nonpos_of_nonpos_of_nonneg (neg_nonpos.mpr h1) (le_of_lt (neg_pos.mpr h2))
-    rwa [neg_div_neg_eq] at h3
-  exact le_of_tendsto hT hev
-
-private lemma fermat_max {f : ℝ → ℝ} {f' x : ℝ} {s : Set ℝ}
-    (hderiv : HasDerivAt f f' x) (hmax : IsMaxOn f s x) (hmem : s ∈ nhds x) :
-    f' = 0 :=
-  le_antisymm (deriv_le_zero_of_isMaxOn hderiv hmax hmem)
-    (deriv_ge_zero_of_isMaxOn hderiv hmax hmem)
-
-private lemma fermat_min {f : ℝ → ℝ} {f' x : ℝ} {s : Set ℝ}
-    (hderiv : HasDerivAt f f' x) (hmin : IsMinOn f s x) (hmem : s ∈ nhds x) :
-    f' = 0 :=
-  le_antisymm (deriv_le_zero_of_isMinOn hderiv hmin hmem)
-    (deriv_ge_zero_of_isMinOn hderiv hmin hmem)
-
-private lemma rolle {f : ℝ → ℝ} {f' : ℝ → ℝ} {a b : ℝ} (hab : a < b)
-    (hcont : ContinuousOn f (Set.Icc a b))
-    (hderiv : ∀ x ∈ Set.Ioo a b, HasDerivAt f (f' x) x)
-    (heq : f a = f b) : ∃ c ∈ Set.Ioo a b, f' c = 0 := by
-  have hne : (Set.Icc a b).Nonempty := ⟨a, le_refl a, le_of_lt hab⟩
-  obtain ⟨xmax, hxmaxmem, hxmax⟩ := isCompact_Icc.exists_isMaxOn hne hcont
-  have ha_mem : a ∈ Set.Icc a b := ⟨le_refl a, le_of_lt hab⟩
-  have hb_mem : b ∈ Set.Icc a b := ⟨le_of_lt hab, le_refl b⟩
-  by_cases hmax : f xmax = f a
-  · have hle : ∀ x ∈ Set.Icc a b, f x ≤ f a := by
-      intro x hx
-      have h1 := Filter.eventually_principal.mp hxmax x hx
-      linarith
-    obtain ⟨xmin, hminmem, hhmin⟩ := isCompact_Icc.exists_isMinOn hne hcont
-    by_cases hmineq : f xmin = f a
-    · have hconst : ∀ x ∈ Set.Icc a b, f x = f a := by
-        intro x hx
-        apply le_antisymm (hle x hx)
-        have h2 := Filter.eventually_principal.mp hhmin x hx
-        linarith
-      have hcmem : (a + b) / 2 ∈ Set.Ioo a b := by
-        constructor <;> linarith
-      have hcIcc : (a + b) / 2 ∈ Set.Icc a b :=
-        ⟨le_of_lt hcmem.1, le_of_lt hcmem.2⟩
-      have hmaxc : IsMaxOn f (Set.Icc a b) ((a + b) / 2) := by
-        show ∀ᶠ y in Filter.principal (Set.Icc a b), f y ≤ f ((a + b) / 2)
-        rw [Filter.eventually_principal]
-        intro x hx
-        have e1 := hconst x hx
-        have e2 := hconst ((a + b) / 2) hcIcc
-        linarith
-      have h0 := fermat_max (hderiv ((a + b) / 2) hcmem) hmaxc
-        (Icc_mem_nhds hcmem.1 hcmem.2)
-      exact ⟨(a + b) / 2, hcmem, h0⟩
-    · have hlt : f xmin < f a := by
-        have h2 := Filter.eventually_principal.mp hhmin a ha_mem
-        exact lt_of_le_of_ne h2 hmineq
-      have hxa : xmin ≠ a := by
-        intro hcon
-        rw [hcon] at hlt
-        exact lt_irrefl _ hlt
-      have hxb : xmin ≠ b := by
-        intro hcon
-        rw [hcon, heq] at hlt
-        exact lt_irrefl _ hlt
-      have hIoo : xmin ∈ Set.Ioo a b := by
-        have ⟨h1, h2⟩ := hminmem
-        exact ⟨lt_of_le_of_ne h1 (Ne.symm hxa), lt_of_le_of_ne h2 hxb⟩
-      have h0 := fermat_min (hderiv xmin hIoo) hhmin (Icc_mem_nhds hIoo.1 hIoo.2)
-      exact ⟨xmin, hIoo, h0⟩
-  · have hgt : f a < f xmax := by
-      have h1 := Filter.eventually_principal.mp hxmax a ha_mem
-      exact lt_of_le_of_ne h1 (Ne.symm hmax)
-    have hxa : xmax ≠ a := by
-      intro hcon
-      rw [hcon] at hgt
-      exact lt_irrefl _ hgt
-    have hxb : xmax ≠ b := by
-      intro hcon
-      rw [hcon, heq] at hgt
-      exact lt_irrefl _ hgt
-    have hIoo : xmax ∈ Set.Ioo a b := by
-      have ⟨h1, h2⟩ := hxmaxmem
-      exact ⟨lt_of_le_of_ne h1 (Ne.symm hxa), lt_of_le_of_ne h2 hxb⟩
-    have h0 := fermat_max (hderiv xmax hIoo) hxmax (Icc_mem_nhds hIoo.1 hIoo.2)
-    exact ⟨xmax, hIoo, h0⟩
-
-private lemma hasDerivAt_psi {f : ℝ → ℝ} {f' x a c : ℝ}
-    (h : HasDerivAt f f' x) :
-    HasDerivAt (fun y => f y - (y - a) * c) (f' - c) x := by
-  have h' := hasDerivAt_iff_isLittleO.mp h
-  have hfun : (fun y : ℝ => (f y - (y - a) * c) - (f x - (x - a) * c) - (y - x) • (f' - c))
-      = (fun y : ℝ => f y - f x - (y - x) • f') := by
-    ext y
-    simp only [smul_eq_mul]
-    ring
-  rw [hasDerivAt_iff_isLittleO]
-  show (fun y : ℝ => (f y - (y - a) * c) - (f x - (x - a) * c) - (y - x) • (f' - c)) =o[nhds x]
-    fun y => y - x
-  rw [hfun]
-  exact h'
-
-private lemma mvt {f : ℝ → ℝ} {f' : ℝ → ℝ} {a b : ℝ} (hab : a < b)
-    (hcont : ContinuousOn f (Set.Icc a b))
-    (hderiv : ∀ x ∈ Set.Ioo a b, HasDerivAt f (f' x) x) :
-    ∃ c ∈ Set.Ioo a b, f b - f a = (b - a) * f' c := by
-  have hba : b - a ≠ 0 := sub_ne_zero.mpr (ne_of_gt hab)
-  set slope : ℝ := (f b - f a) / (b - a) with hslope
-  have hslope_eq : (b - a) * slope = f b - f a := by
-    rw [hslope]
-    field_simp
-  have hlin : ContinuousOn (fun y : ℝ => (y - a) * slope) (Set.Icc a b) :=
-    (continuousOn_id.sub continuousOn_const).mul_const slope
-  have hpsi_cont : ContinuousOn (fun y => f y - (y - a) * slope) (Set.Icc a b) :=
-    hcont.sub hlin
-  have hpsi_deriv : ∀ x ∈ Set.Ioo a b,
-      HasDerivAt (fun y => f y - (y - a) * slope) (f' x - slope) x :=
-    fun x hx => hasDerivAt_psi (hderiv x hx)
-  have hpsi_a : (fun y => f y - (y - a) * slope) a = f a := by simp
-  have hpsi_b : (fun y => f y - (y - a) * slope) b = f a := by
-    show f b - (b - a) * slope = f a
-    linarith [hslope_eq]
-  have heq : (fun y => f y - (y - a) * slope) a = (fun y => f y - (y - a) * slope) b := by
-    rw [hpsi_a, hpsi_b]
-  obtain ⟨c, hcIoo, hc0⟩ := rolle hab hpsi_cont
-    (fun x hx => hpsi_deriv x hx) heq
-  refine ⟨c, hcIoo, ?_⟩
-  have hc0' : f' c - slope = 0 := hc0
-  have hfc : f' c = slope := by linarith [hc0']
-  rw [hfc]
-  linarith [hslope_eq]
-
-private lemma ici_mem_nhds {c : ℝ} (hc : 0 < c) : Set.Ici 0 ∈ nhds c :=
-  Filter.mem_of_superset (Ioi_mem_nhds hc) Set.Ioi_subset_Ici_self
-
 private lemma exists_last_time_le {f : ℝ → ℝ} {B t : ℝ} (ht : 0 ≤ t)
     (hB0 : f 0 ≤ B) (hcont : ∀ x ∈ Set.Icc 0 t, ContinuousWithinAt f (Set.Ici 0) x) :
     ∃ s0 ∈ Set.Icc 0 t, f s0 ≤ B ∧ (∀ u ∈ Set.Icc 0 t, s0 < u → B < f u) ∧
@@ -498,7 +279,7 @@ private lemma exists_last_time_le {f : ℝ → ℝ} {B t : ℝ} (ht : 0 ≤ t)
           exact hmem h0mem
         exact lt_of_le_of_ne hs0lo (Ne.symm hne0)
       have hcat : ContinuousAt f s0 :=
-        (hcont s0 hs0mem).continuousAt (ici_mem_nhds hs0pos)
+        (hcont s0 hs0mem).continuousAt (Ici_mem_nhds hs0pos)
       by_contra hcon
       have hcon' : B < f s0 := lt_of_not_ge hcon
       have hev : ∀ᶠ y in nhds s0, B < f y := hcat.eventually (eventually_gt_nhds hcon')
@@ -607,7 +388,7 @@ theorem radiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
     exact hcw.mono_left (nhdsWithin_mono x hsub)
   have hderivAt : ∀ x : ℝ, 0 < x → HasDerivAt T (radiatorRate C Krad Q (T x)) x := by
     intro x hx
-    exact (hT x (le_of_lt hx)).hasDerivAt (ici_mem_nhds hx)
+    exact (hT x (le_of_lt hx)).hasDerivAt (Ici_mem_nhds hx)
   have hupper : T t ≤ Tmax := by
     by_contra hcon
     have htt : Tmax < T t := lt_of_not_ge hcon
@@ -620,9 +401,16 @@ theorem radiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
         linarith [htt]
       exact lt_of_le_of_ne hs0mem.2 hne
     have hs0eq' : T s0 = Tmax := hs0eq hs0lt
-    obtain ⟨c, hcIoo, hcEq0⟩ := mvt hs0lt (hcontOn s0 t hs0mem.1)
+    obtain ⟨c, hcIoo, hc_slope⟩ := exists_hasDerivAt_eq_slope T
+      (fun x => radiatorRate C Krad Q (T x)) hs0lt (hcontOn s0 t hs0mem.1)
       (fun x hx => hderivAt x (lt_of_le_of_lt hs0mem.1 hx.1))
-    have hcEq : T t - T s0 = (t - s0) * radiatorRate C Krad Q (T c) := hcEq0
+    have hc_slope' : radiatorRate C Krad Q (T c) = (T t - T s0) / (t - s0) := hc_slope
+    have hts0 : t - s0 ≠ 0 := sub_ne_zero.mpr (ne_of_gt hs0lt)
+    have hmul : radiatorRate C Krad Q (T c) * (t - s0) = T t - T s0 :=
+      (eq_div_iff hts0).mp hc_slope'
+    have hcEq : T t - T s0 = (t - s0) * radiatorRate C Krad Q (T c) := by
+      rw [mul_comm]
+      exact hmul.symm
     have hcIcc : c ∈ Set.Icc 0 t :=
       ⟨le_trans hs0mem.1 (le_of_lt hcIoo.1), le_of_lt hcIoo.2⟩
     have hTc : Tmax < T c := hs0gt c hcIcc hcIoo.1
@@ -664,9 +452,17 @@ theorem radiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
         intro v hvIcc hvs1
         have hTvneg : T v < 0 := hs1gt v hvIcc hvs1
         have hwpos : 0 < -T v := neg_pos.mpr hTvneg
-        obtain ⟨c, hcIoo, hcEq0⟩ := mvt hvs1 (hcontOn s1 v hs1mem.1)
+        obtain ⟨c, hcIoo, hc_slope⟩ := exists_hasDerivAt_eq_slope T
+          (fun x => radiatorRate C Krad Q (T x)) hvs1 (hcontOn s1 v hs1mem.1)
           (fun x hx => hderivAt x (lt_of_le_of_lt hs1mem.1 hx.1))
-        have hcEq : T v - T s1 = (v - s1) * radiatorRate C Krad Q (T c) := hcEq0
+        have hc_slope' : radiatorRate C Krad Q (T c) = (T v - T s1) / (v - s1) :=
+          hc_slope
+        have hvs1ne : v - s1 ≠ 0 := sub_ne_zero.mpr (ne_of_gt hvs1)
+        have hcmul : radiatorRate C Krad Q (T c) * (v - s1) = T v - T s1 :=
+          (eq_div_iff hvs1ne).mp hc_slope'
+        have hcEq : T v - T s1 = (v - s1) * radiatorRate C Krad Q (T c) := by
+          rw [mul_comm]
+          exact hcmul.symm
         rw [hs1eq'] at hcEq
         have hratec : radiatorRate C Krad Q (T c) = -(Krad * (T c) ^ 4 / C) := by
           unfold radiatorRate
@@ -679,9 +475,17 @@ theorem radiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
           ⟨hc0, le_of_lt (lt_of_lt_of_le hcIoo.2 hvIcc.2)⟩
         have hcneg : T c < 0 := hs1gt c hcIcc hcIoo.1
         have hTcle : T v ≤ T c := by
-          obtain ⟨d, hdIoo, hdEq0⟩ := mvt hcv (hcontOn c v hc0)
+          obtain ⟨d, hdIoo, hd_slope⟩ := exists_hasDerivAt_eq_slope T
+            (fun x => radiatorRate C Krad Q (T x)) hcv (hcontOn c v hc0)
             (fun x hx => hderivAt x (lt_of_le_of_lt hc0 hx.1))
-          have hdEq : T v - T c = (v - c) * radiatorRate C Krad Q (T d) := hdEq0
+          have hd_slope' : radiatorRate C Krad Q (T d) = (T v - T c) / (v - c) :=
+            hd_slope
+          have hvcne : v - c ≠ 0 := sub_ne_zero.mpr (ne_of_gt hcv)
+          have hdmul : radiatorRate C Krad Q (T d) * (v - c) = T v - T c :=
+            (eq_div_iff hvcne).mp hd_slope'
+          have hdEq : T v - T c = (v - c) * radiatorRate C Krad Q (T d) := by
+            rw [mul_comm]
+            exact hdmul.symm
           have hrated : radiatorRate C Krad Q (T d) ≤ 0 := by
             unfold radiatorRate
             rw [hQ]
@@ -707,7 +511,8 @@ theorem radiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
           rw [hneg4]
           exact h1
         have hwEq : -T v = (v - s1) * (Krad * (T c) ^ 4 / C) := by linarith [hcEq]
-        have hble : (v - s1) * (Krad * (T c) ^ 4 / C) ≤ (v - s1) * (Krad * (-T v) ^ 4 / C) := by
+        have hble : (v - s1) * (Krad * (T c) ^ 4 / C) ≤
+            (v - s1) * (Krad * (-T v) ^ 4 / C) := by
           have hKK : Krad * (T c) ^ 4 / C ≤ Krad * (-T v) ^ 4 / C := by
             rw [div_eq_mul_inv, div_eq_mul_inv]
             exact mul_le_mul_of_nonneg_right
@@ -716,9 +521,11 @@ theorem radiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
         have hvsK : 0 < (v - s1) * Krad := mul_pos (sub_pos.mpr hvs1) hK
         rw [div_le_iff₀ hvsK]
         have h1 : -T v ≤ (v - s1) * (Krad * (-T v) ^ 4 / C) := by linarith [hwEq, hble]
-        have hrw : (v - s1) * (Krad * (-T v) ^ 4 / C) = ((v - s1) * Krad * (-T v) ^ 4) / C := by ring
+        have hrw : (v - s1) * (Krad * (-T v) ^ 4 / C) =
+            ((v - s1) * Krad * (-T v) ^ 4) / C := by ring
         rw [hrw] at h1
-        have h2 : (-T v) * C ≤ (v - s1) * Krad * (-T v) ^ 4 := (le_div_iff₀ hC).mp h1
+        have h2 : (-T v) * C ≤ (v - s1) * Krad * (-T v) ^ 4 :=
+          (le_div_iff₀ hC).mp h1
         have hw43 : (-T v) ^ 4 = (-T v) ^ 3 * (-T v) := by ring
         rw [hw43] at h2
         exact le_of_mul_le_mul_right (by linarith [h2]) hwpos
@@ -730,7 +537,8 @@ theorem radiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
       obtain ⟨ε, hεpos, hεT⟩ := Metric.eventually_nhds_iff_ball.mp hevT
       have hCK : 0 < C / Krad := div_pos hC hK
       set δ : ℝ := min (ε / 2) (min ((t - s1) / 2) (C / Krad / 2)) with hδ
-      have hδpos : 0 < δ := lt_min (by linarith) (lt_min (by linarith [hs1lt]) (by linarith))
+      have hδpos : 0 < δ :=
+        lt_min (by linarith) (lt_min (by linarith [hs1lt]) (by linarith))
       have hδle1 : δ ≤ ε / 2 := min_le_left _ _
       have hδle2 : δ ≤ (t - s1) / 2 := le_trans (min_le_right _ _) (min_le_left _ _)
       have hδle3 : δ ≤ C / Krad / 2 := le_trans (min_le_right _ _) (min_le_right _ _)
@@ -797,10 +605,22 @@ theorem radiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
           rw [hrate0]
           exact div_pos hQpos hC
         have hslope : Filter.Tendsto (fun y => (T y - T s1) / (y - s1))
-            (nhdsWithin s1 (Set.Ioi s1)) (nhds (radiatorRate C Krad Q (T s1))) :=
-          slope_tendsto_of_within (hT s1 hs1mem.1)
-            (fun y hy => le_of_lt (lt_of_le_of_lt hs1mem.1 hy))
-            (fun y hy => by simpa using ne_of_gt hy)
+            (nhdsWithin s1 (Set.Ioi s1)) (nhds (radiatorRate C Krad Q (T s1))) := by
+          have hTend := hasDerivWithinAt_iff_tendsto_slope.mp (hT s1 hs1mem.1)
+          have hsub : Set.Ioi s1 ⊆ Set.Ici 0 \ {s1} := by
+            intro y hy
+            have hy_lt : s1 < y := Set.mem_Ioi.mp hy
+            rw [Set.mem_sdiff]
+            constructor
+            · show (0 : ℝ) ≤ y
+              exact le_trans hs1mem.1 (le_of_lt hy_lt)
+            · simp [ne_of_gt hy_lt]
+          have hTend2 := hTend.mono_left (nhdsWithin_mono s1 hsub)
+          have hcongr : (slope T s1) =ᶠ[nhdsWithin s1 (Set.Ioi s1)]
+              (fun y => (T y - T s1) / (y - s1)) := by
+            filter_upwards with y
+            rw [slope_def_field]
+          exact Filter.Tendsto.congr' hcongr hTend2
         have hev : ∀ᶠ y in nhdsWithin s1 (Set.Ioi s1), (T y - T s1) / (y - s1) < 0 := by
           rw [eventually_nhdsWithin_iff]
           filter_upwards [Iio_mem_nhds hs1lt] with y hyIio hyIoi
@@ -823,9 +643,16 @@ theorem radiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
           linarith [htt]
         exact lt_of_le_of_ne hs0mem.2 hne
       have hs0eq' : T s0 = Tmin := hs0eq hs0lt
-      obtain ⟨c, hcIoo, hcEq0⟩ := mvt hs0lt (hcontOn s0 t hs0mem.1)
+      obtain ⟨c, hcIoo, hc_slope⟩ := exists_hasDerivAt_eq_slope T
+        (fun x => radiatorRate C Krad Q (T x)) hs0lt (hcontOn s0 t hs0mem.1)
         (fun x hx => hderivAt x (lt_of_le_of_lt hs0mem.1 hx.1))
-      have hcEq : T t - T s0 = (t - s0) * radiatorRate C Krad Q (T c) := hcEq0
+      have hc_slope' : radiatorRate C Krad Q (T c) = (T t - T s0) / (t - s0) := hc_slope
+      have hts0 : t - s0 ≠ 0 := sub_ne_zero.mpr (ne_of_gt hs0lt)
+      have hmul : radiatorRate C Krad Q (T c) * (t - s0) = T t - T s0 :=
+        (eq_div_iff hts0).mp hc_slope'
+      have hcEq : T t - T s0 = (t - s0) * radiatorRate C Krad Q (T c) := by
+        rw [mul_comm]
+        exact hmul.symm
       have hcIcc : c ∈ Set.Icc 0 t :=
         ⟨le_trans hs0mem.1 (le_of_lt hcIoo.1), le_of_lt hcIoo.2⟩
       have hTc : T c < Tmin := hs0gt c hcIcc hcIoo.1
@@ -874,7 +701,7 @@ theorem clippedRadiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
   have hderivAt : ∀ x : ℝ, 0 < x →
       HasDerivAt T (clippedRadiatorRate C Krad Q Tmin Tmax (T x)) x := by
     intro x hx
-    exact (hT x (le_of_lt hx)).hasDerivAt (ici_mem_nhds hx)
+    exact (hT x (le_of_lt hx)).hasDerivAt (Ici_mem_nhds hx)
   have hupper : T t ≤ Tmax := by
     by_contra hcon
     have htt : Tmax < T t := lt_of_not_ge hcon
@@ -887,9 +714,19 @@ theorem clippedRadiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
         linarith [htt]
       exact lt_of_le_of_ne hs0mem.2 hne
     have hs0eq' : T s0 = Tmax := hs0eq hs0lt
-    obtain ⟨c, hcIoo, hcEq0⟩ := mvt hs0lt (hcontOn s0 t hs0mem.1)
+    obtain ⟨c, hcIoo, hc_slope⟩ := exists_hasDerivAt_eq_slope T
+      (fun x => clippedRadiatorRate C Krad Q Tmin Tmax (T x)) hs0lt
+      (hcontOn s0 t hs0mem.1)
       (fun x hx => hderivAt x (lt_of_le_of_lt hs0mem.1 hx.1))
-    have hcEq : T t - T s0 = (t - s0) * clippedRadiatorRate C Krad Q Tmin Tmax (T c) := hcEq0
+    have hc_slope' : clippedRadiatorRate C Krad Q Tmin Tmax (T c) =
+        (T t - T s0) / (t - s0) := hc_slope
+    have hts0 : t - s0 ≠ 0 := sub_ne_zero.mpr (ne_of_gt hs0lt)
+    have hmul : clippedRadiatorRate C Krad Q Tmin Tmax (T c) * (t - s0) =
+        T t - T s0 := (eq_div_iff hts0).mp hc_slope'
+    have hcEq : T t - T s0 =
+        (t - s0) * clippedRadiatorRate C Krad Q Tmin Tmax (T c) := by
+      rw [mul_comm]
+      exact hmul.symm
     have hcIcc : c ∈ Set.Icc 0 t :=
       ⟨le_trans hs0mem.1 (le_of_lt hcIoo.1), le_of_lt hcIoo.2⟩
     have hTc : Tmax < T c := hs0gt c hcIcc hcIoo.1
@@ -915,9 +752,19 @@ theorem clippedRadiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
         linarith [htt]
       exact lt_of_le_of_ne hs0mem.2 hne
     have hs0eq' : T s0 = Tmin := hs0eq hs0lt
-    obtain ⟨c, hcIoo, hcEq0⟩ := mvt hs0lt (hcontOn s0 t hs0mem.1)
+    obtain ⟨c, hcIoo, hc_slope⟩ := exists_hasDerivAt_eq_slope T
+      (fun x => clippedRadiatorRate C Krad Q Tmin Tmax (T x)) hs0lt
+      (hcontOn s0 t hs0mem.1)
       (fun x hx => hderivAt x (lt_of_le_of_lt hs0mem.1 hx.1))
-    have hcEq : T t - T s0 = (t - s0) * clippedRadiatorRate C Krad Q Tmin Tmax (T c) := hcEq0
+    have hc_slope' : clippedRadiatorRate C Krad Q Tmin Tmax (T c) =
+        (T t - T s0) / (t - s0) := hc_slope
+    have hts0 : t - s0 ≠ 0 := sub_ne_zero.mpr (ne_of_gt hs0lt)
+    have hmul : clippedRadiatorRate C Krad Q Tmin Tmax (T c) * (t - s0) =
+        T t - T s0 := (eq_div_iff hts0).mp hc_slope'
+    have hcEq : T t - T s0 =
+        (t - s0) * clippedRadiatorRate C Krad Q Tmin Tmax (T c) := by
+      rw [mul_comm]
+      exact hmul.symm
     have hcIcc : c ∈ Set.Icc 0 t :=
       ⟨le_trans hs0mem.1 (le_of_lt hcIoo.1), le_of_lt hcIoo.2⟩
     have hTc : T c < Tmin := hs0gt c hcIcc hcIoo.1
