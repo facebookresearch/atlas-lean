@@ -1,0 +1,39 @@
+name: Public references
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: public-references-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  public-references:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      # Only trusted base code runs. The head is fetched as Git objects, not
+      # checked out, imported, or executed; this also covers fork PRs.
+      - name: Check out trusted base
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check complete public PR content
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD: ${{ github.event.pull_request.head.sha }}
+        run: >-
+          python3 scripts/check_public_references.py
+          --github-repository "$REPOSITORY"
+          --pr "$PR_NUMBER"
+          --expected-head "$PR_HEAD"

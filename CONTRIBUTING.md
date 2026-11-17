@@ -16,6 +16,51 @@ We actively welcome your pull requests.
 5. Make sure your code lints.
 6. If you haven't already, complete the Contributor License Agreement ("CLA").
 
+### Public references
+
+Files, filenames, branch names, PR titles/descriptions, and complete commit
+messages must not contain private task/diff/paste identifiers, private service
+links, machine names, or personal workspace paths. Keep private provenance in
+private records; use public citations and repository-relative paths here.
+Preserve authorship and copyright notices when correcting provenance.
+
+The **Public references / public-references** check applies to every PR author,
+including forks. It reads every outgoing Git commit's message and identity
+headers and every new Git file blob introduced by those commits, including
+versions replaced or deleted before the tip. Content already reachable from
+the base's history is not re-scanned; copying it still checks the destination
+filename. Existing historical exposures need separate cleanup. It does not
+only inspect subjects or added lines. Errors, missing objects, moved PR
+metadata, and incomplete ranges fail
+the check. It never executes code from the proposed head. PR description edits
+rerun it too.
+
+To check a local branch before pushing, with optional JSON containing `title`,
+`body`, and `branch` fields:
+
+```sh
+python3 scripts/check_public_references.py \
+  --base "$(git rev-parse origin/main)" --head "$(git rev-parse HEAD)" \
+  --metadata pr-metadata.json
+python3 -m unittest discover -s scripts -p 'test_public_references.py'
+```
+
+The detector uses identifier/URL/path patterns, not a list of confidential model
+names. It is a backstop, not a confidentiality guarantee: unfamiliar private
+references, encoded data, images, and compressed archive contents need author
+review. Binary files receive a raw-byte text scan, not decompression or OCR.
+Legitimate public identifiers can collide with the patterns; ask maintainers to
+review such a case rather than disguising the text or disabling the check.
+Removing a reference from the tip does not erase already-published history.
+CI runs after a branch and PR have been published; run the local check before
+pushing to avoid exposing a reference in the first place.
+
+Maintainers must make `public-references` a required check in the branch ruleset
+after this workflow lands. Until it is required, CI reports failures but does
+not itself prevent a manual merge. The workflow runs the trusted default-branch
+version, so changes to the gate itself need maintainer review and local tests before
+merge; a PR cannot substitute its own scanner into this check.
+
 ## Contributor License Agreement ("CLA")
 In order to accept your pull request, we need you to submit a CLA. You only need
 to do this once to work on any of Meta's open source projects.
