@@ -89,3 +89,13 @@ example : 2 * Real.pi * 2 * (-2 * HeatTransfer.cylinderGradient 2 8 2) =
   calc 2 * Real.pi * 2 * (-2 * HeatTransfer.cylinderGradient 2 8 2)
       = Real.pi * 2 ^ 2 * 8 := h
     _ = 32 * Real.pi := by ring
+
+/-- The domain-correct surface balance at positive radius and
+conductivity gives the same numeric value `32π`. -/
+example : 2 * Real.pi * 2 * (-2 * HeatTransfer.cylinderGradient 2 8 2) =
+    32 * Real.pi := by
+  have h := HeatTransfer.cylinder_outwardPower_of_pos (R := 2) (k := 2)
+    (qvol := 8) (by norm_num) (by norm_num)
+  calc 2 * Real.pi * 2 * (-2 * HeatTransfer.cylinderGradient 2 8 2)
+      = Real.pi * 2 ^ 2 * 8 := h
+    _ = 32 * Real.pi := by ring

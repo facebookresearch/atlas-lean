@@ -43,9 +43,10 @@ steady branch, not an instantaneous prediction.
   temperatures and `H ≥ 0`, the profile on the slab is at most the
   midplane value `Ts + H * L^2 / (8k)`.
 - `HeatTransfer.cylinder_radial_equation` and
-  `HeatTransfer.cylinder_outwardPower`: the regular heated-cylinder
-  profile satisfies the radial heat-balance equation away from the
-  center, and its outward power per unit length is `π * R^2 * qvol`.
+  `HeatTransfer.cylinder_outwardPower_of_pos`: the regular
+  heated-cylinder profile satisfies the radial heat-balance equation
+  away from the center, and for `0 < R` and `0 < k` its outward power
+  per unit length is `π * R^2 * qvol`.
 
 ## iii. Table of contents
 
@@ -59,6 +60,16 @@ steady branch, not an instantaneous prediction.
   and `EarthScience.geotherm_boundary` in
   `PhyslibExt.EarthScience.ConductiveGeotherm`, whose profile this file
   instantiates.
+- F. P. Incropera, D. P. DeWitt, T. L. Bergman, and A. S. Lavine,
+  *Fundamentals of Heat and Mass Transfer*, 6th edition (Wiley, 2007),
+  Section 3.7: one-dimensional, steady-state conduction in radial
+  systems with uniform volumetric energy generation. For a solid
+  cylinder of radius `R`, conductivity `k`, and generation rate
+  `qvol` with surface held at `Ts`, the temperature distribution is
+  `T(r) = Ts + (qvol * R^2 / (4 * k)) * (1 - (r / R)^2)` on
+  `0 ≤ r ≤ R`; integrating the generation over the cross-section
+  gives the surface balance `2πR * (-k * T'(R)) = π * R^2 * qvol`
+  per unit length.
 
 ## A. Slab profile and outward fluxes
 
@@ -166,7 +177,8 @@ conductivity `k` and uniform volumetric heat source `qvol`: at radius
 `r` in a cylinder of radius `R` with surface temperature `Ts`,
 `T(r) = Ts + qvol * (R^2 - r^2) / (4k)`. This is the regular polynomial
 profile; at `r = 0` it is read through its polynomial extension, not by
-evaluating a radial flux divided by `r`. Intended for `k ≠ 0`. -/
+evaluating a radial flux divided by `r`. Intended for `k ≠ 0`; the
+physical profile is the restriction to `0 ≤ r ≤ R` with `0 < R`. -/
 noncomputable def cylinderTemperature (Ts R k qvol r : ℝ) : ℝ :=
   Ts + qvol * (R ^ 2 - r ^ 2) / (4 * k)
 
@@ -246,14 +258,26 @@ lemma cylinder_radial_equation {k qvol r : ℝ} (hk : k ≠ 0) (hr : 0 < r) :
   rw [hderiv]
   field_simp
 
-/-- Outward conductive power per unit length at the surface:
-`2πR * (-k * T'(R)) = π * R^2 * qvol`, balancing the total source in the
-cross-section. -/
+/-- Algebraic form of the surface-power identity:
+`2πR * (-k * T'(R)) = π * R^2 * qvol` for any `k ≠ 0`, with no
+physical domain assumed on `R` or `k`. -/
 lemma cylinder_outwardPower {R k qvol : ℝ} (hk : k ≠ 0) :
     2 * Real.pi * R * (-k * cylinderGradient k qvol R) =
       Real.pi * R ^ 2 * qvol := by
   have h2k : (2 : ℝ) * k ≠ 0 := mul_ne_zero (by norm_num) hk
   simp only [cylinderGradient]
   field_simp
+
+/-- Outward conductive power per unit length at the surface of the
+physical cylinder: for radius `0 < R` and conductivity `0 < k`,
+`2πR * (-k * T'(R)) = π * R^2 * qvol`, balancing the total source
+generated in the cross-section. Here `2πR` is the circumference per
+unit length and the profile is the physical solution on
+`0 ≤ r ≤ R`. -/
+theorem cylinder_outwardPower_of_pos {R k qvol : ℝ} (hR : 0 < R)
+    (hk : 0 < k) :
+    2 * Real.pi * R * (-k * cylinderGradient k qvol R) =
+      Real.pi * R ^ 2 * qvol :=
+  cylinder_outwardPower (ne_of_gt hk)
 
 end HeatTransfer
