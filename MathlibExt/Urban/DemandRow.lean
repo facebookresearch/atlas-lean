@@ -52,18 +52,21 @@ noncomputable def normalizedDemand {ι : Type*} (O : ℝ) (w : ι → ℝ) (s : 
 
 /-- Each normalized row entry is nonnegative. -/
 theorem normalizedDemand_nonneg {ι : Type*} (O : ℝ) (w : ι → ℝ) (s : Finset ι)
-    (hO : 0 ≤ O) (hw : ∀ i : ι, 0 ≤ w i) (hsum : 0 < ∑ j ∈ s, w j)
-    {i : ι} :
+    (hO : 0 ≤ O) (hw : ∀ i : ι, i ∈ s → 0 ≤ w i) (hsum : 0 < ∑ j ∈ s, w j)
+    {i : ι} (hi : i ∈ s) :
     0 ≤ normalizedDemand O w s i := by
   unfold normalizedDemand
-  exact div_nonneg (mul_nonneg hO (hw i)) (le_of_lt hsum)
+  exact div_nonneg (mul_nonneg hO (hw i hi)) hsum.le
 
 /-- The normalized row has exact total `O`. -/
 theorem normalizedDemand_sum {ι : Type*} (O : ℝ) (w : ι → ℝ) (s : Finset ι)
-    (hO : 0 ≤ O) (hw : ∀ i : ι, 0 ≤ w i) (hsum : 0 < ∑ j ∈ s, w j) :
+    (hO : 0 ≤ O) (hw : ∀ i : ι, i ∈ s → 0 ≤ w i) (hsum : 0 < ∑ j ∈ s, w j) :
     ∑ i ∈ s, normalizedDemand O w s i = O := by
-  have : 0 ≤ O * ∑ j ∈ s, w j := mul_nonneg hO (Finset.sum_nonneg fun i _ => hw i)
+  have _ : 0 ≤ O := hO
+  have _ : ∀ i : ι, i ∈ s → 0 ≤ w i := hw
+  have hS : (∑ j ∈ s, w j) ≠ 0 := ne_of_gt hsum
   unfold normalizedDemand
-  rw [← Finset.sum_div, ← Finset.mul_sum, mul_div_assoc, div_self hsum.ne', mul_one]
+  rw [← Finset.sum_div, ← Finset.mul_sum]
+  exact mul_div_cancel_right₀ _ hS
 
 end UrbanDemand
