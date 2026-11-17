@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Analysis.SpecificLimits.Normed
+import MathlibExt.Algebra.AffineRecurrenceConvergence
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Ring
@@ -51,30 +52,8 @@ with `|a| < 1` converges to the fixed point `d / (1 - a)`. This is a
 specialization of geometric decay (`tendsto_pow_atTop_nhds_zero_of_abs_lt_one`). -/
 theorem affineRecurrence_tendsto {a d : ℝ} (ha : |a| < 1) {b : ℕ → ℝ}
     (hb : ∀ t, b (t + 1) = a * b t + d) :
-    Tendsto b atTop (𝓝 (d / (1 - a))) := by
-  have hane : a ≠ 1 := by
-    intro hcon
-    rw [hcon] at ha
-    norm_num at ha
-  have h1 : (1 : ℝ) - a ≠ 0 := fun h => hane (by linarith)
-  have hclosed : ∀ t, b t = a ^ t * (b 0 - d / (1 - a)) + d / (1 - a) := by
-    intro t
-    induction t with
-    | zero => simp
-    | succ t ih =>
-      rw [hb, ih, pow_succ]
-      field_simp
-      ring
-  have hgeom : Tendsto (fun t : ℕ => a ^ t) atTop (𝓝 0) :=
-    tendsto_pow_atTop_nhds_zero_of_abs_lt_one ha
-  have hmul : Tendsto (fun t : ℕ => a ^ t * (b 0 - d / (1 - a))) atTop (𝓝 0) := by
-    have h := hgeom.mul_const (b 0 - d / (1 - a))
-    simpa using h
-  have hadd : Tendsto (fun t : ℕ => a ^ t * (b 0 - d / (1 - a)) + d / (1 - a)) atTop
-      (𝓝 (d / (1 - a))) := by
-    have h := hmul.add_const (d / (1 - a))
-    simpa using h
-  exact Tendsto.congr (fun t => (hclosed t).symm) hadd
+    Tendsto b atTop (𝓝 (d / (1 - a))) :=
+  MathlibExt.AffineRecurrence.affine_tendsto_fixedPoint hb ha
 
 /-- **Constant-deficit debt-ratio convergence (MA07.T03).** If the debt ratio
 satisfies the MA07.T02 recurrence with a constant deficit ratio `d` and a stable
