@@ -21,9 +21,11 @@ import Mathlib.Tactic.Ring
 ## i. Overview
 
 A two-state region split by a front moving at constant speed has
-inventory `kL * (xi - a) + kR * (b - xi)`. Its time derivative is the
-net inflow exactly when the Rankine-Hugoniot balance
-`s * (kR - kL) = qR - qL` holds for the constant states.
+inventory `kL * (xi - a) + kR * (b - xi)` while the front lies inside
+`[a, b]`. Its time derivative is the net inflow exactly when the
+Rankine-Hugoniot balance `s * (kR - kL) = qR - qL` holds for the
+constant states; `inventory_deriv_eq_iff_of_mem` states this under
+the front-inside hypothesis.
 
 ## ii. Key results
 
@@ -57,21 +59,17 @@ inventory is affine in time with slope `s * (kL - kR)`. -/
 theorem inventory_hasDerivAt (kL kR a b s xi0 t : ℝ) :
     HasDerivAt (fun t => inventory kL kR a b (s * t + xi0))
       (s * (kL - kR)) t := by
-  have hxi : HasDerivAt (fun t : ℝ => s * t + xi0) s t := by
-    have h := HasDerivAt.add_const xi0 (HasDerivAt.const_mul s (hasDerivAt_id t))
-    simpa using h
-  have hleft_inner : HasDerivAt (fun t : ℝ => (s * t + xi0) - a) s t :=
-    HasDerivAt.sub_const a hxi
-  have hleft : HasDerivAt (fun t : ℝ => kL * ((s * t + xi0) - a)) (kL * s) t :=
-    HasDerivAt.const_mul kL hleft_inner
-  have hright_inner : HasDerivAt (fun t : ℝ => b - (s * t + xi0)) (-s) t :=
-    HasDerivAt.const_sub b hxi
-  have hright : HasDerivAt (fun t : ℝ => kR * (b - (s * t + xi0))) (kR * (-s)) t :=
-    HasDerivAt.const_mul kR hright_inner
-  have hsum := HasDerivAt.add hleft hright
-  simp only [inventory] at hsum ⊢
-  convert hsum using 2
-  ring
+  unfold inventory
+  have hlin : HasDerivAt (fun t : ℝ => s * t + xi0) s t := by
+    simpa using ((hasDerivAt_id' t).const_mul s).add_const xi0
+  have h1 : HasDerivAt (fun t : ℝ => kL * (s * t + xi0 - a)) (kL * s) t :=
+    (hlin.sub_const a).const_mul kL
+  have h2 : HasDerivAt (fun t : ℝ => kR * (b - (s * t + xi0))) (kR * -s) t :=
+    (hlin.const_sub b).const_mul kR
+  have hadd := h1.add h2
+  have heq : s * (kL - kR) = kL * s + kR * -s := by ring
+  rw [heq]
+  exact hadd
 
 /-- Conservation form: the inventory derivative equals the net inflow
 `qL - qR` exactly when `s * (kR - kL) = qR - qL` (the Rankine-Hugoniot
@@ -81,13 +79,12 @@ theorem inventory_deriv_eq_iff (kL kR a b s xi0 qL qR t : ℝ) :
       ↔ s * (kR - kL) = qR - qL := by
   constructor
   · intro h
-    have h0 := inventory_hasDerivAt kL kR a b s xi0 t
-    have heq : qL - qR = s * (kL - kR) := HasDerivAt.unique h h0
-    linear_combination heq
-  · intro hbal
-    have h0 := inventory_hasDerivAt kL kR a b s xi0 t
-    have heq : s * (kL - kR) = qL - qR := by linear_combination -hbal
-    rwa [heq] at h0
+    have huniq := h.unique (inventory_hasDerivAt kL kR a b s xi0 t)
+    linarith
+  · intro h
+    have heq : qL - qR = s * (kL - kR) := by linarith
+    rw [heq]
+    exact inventory_hasDerivAt kL kR a b s xi0 t
 
 /-- When the two states differ, the front speed is forced to be the
 Rankine-Hugoniot speed `(qR - qL) / (kR - kL)`. -/
@@ -96,5 +93,16 @@ theorem front_speed_eq_of_ne {kL kR s qL qR : ℝ} (h : kR ≠ kL)
   have hne : kR - kL ≠ 0 := sub_ne_zero.mpr h
   rw [eq_div_iff hne]
   exact hbal
+
+/-- Conservation form while the front lies inside the finite control
+interval: under `a < s * t + xi0 < b`, the inventory derivative equals
+the net inflow `qL - qR` exactly when the Rankine-Hugoniot balance
+`s * (kR - kL) = qR - qL` holds. -/
+theorem inventory_deriv_eq_iff_of_mem {kL kR a b s xi0 qL qR t : ℝ}
+    (hin : a < s * t + xi0 ∧ s * t + xi0 < b) :
+    HasDerivAt (fun t => inventory kL kR a b (s * t + xi0)) (qL - qR) t
+      ↔ s * (kR - kL) = qR - qL := by
+  have _ : a < b := lt_trans hin.1 hin.2
+  exact inventory_deriv_eq_iff kL kR a b s xi0 qL qR t
 
 end MovingFront

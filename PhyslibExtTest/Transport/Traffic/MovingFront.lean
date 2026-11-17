@@ -36,3 +36,8 @@ example : HasDerivAt (fun t => inventory 0 1 0 10 (1 * t + 3)) (0 - 1) 5
 example : ¬ HasDerivAt (fun t => inventory 0 1 0 10 (1 * t + 3)) (0 - 2) 5 := by
   rw [inventory_deriv_eq_iff]
   norm_num
+
+/-- The interior form: front at `3` inside `[0, 10]` at time `0`. -/
+example : HasDerivAt (fun t => inventory 0 1 0 10 (1 * t + 3)) (0 - 1) 0
+    ↔ (1 : ℝ) * (1 - 0) = 1 - 0 :=
+  inventory_deriv_eq_iff_of_mem (by norm_num)
