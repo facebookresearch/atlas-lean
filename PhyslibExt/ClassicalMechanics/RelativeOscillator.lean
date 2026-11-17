@@ -36,8 +36,10 @@ identity `E' = u' (p - m a_g) - c (u')^2`.
 
 ## iv. References
 
-- Standard structural-dynamics treatments of base excitation
-  (relative-coordinate formulation).
+- A. K. Chopra, *Dynamics of Structures: Theory and Applications
+  to Earthquake Engineering*, 5th edition, Pearson, 2017,
+  Chapter 6: earthquake excitation in relative coordinates
+  (relative displacement equation and its energy form).
 
 ## A. Relative oscillator
 -/
@@ -59,11 +61,11 @@ displacement `u = x - y`:
 theorem relative_equation_and_energy {m c k : ℝ}
     (x y u xv yv xa ya pf : ℝ → ℝ)
     (hu : ∀ t, u t = x t - y t)
-    (hx : ∀ t, HasDerivAt x (xv t) t)
-    (hy : ∀ t, HasDerivAt y (yv t) t)
-    (hxv : ∀ t, HasDerivAt xv (xa t) t)
-    (hyv : ∀ t, HasDerivAt yv (ya t) t)
     (t : ℝ)
+    (hx : ∀ᶠ s in nhds t, HasDerivAt x (xv s) s)
+    (hy : ∀ᶠ s in nhds t, HasDerivAt y (yv s) s)
+    (hxv : ∀ᶠ s in nhds t, HasDerivAt xv (xa s) s)
+    (hyv : ∀ᶠ s in nhds t, HasDerivAt yv (ya s) s)
     (habs : m * xa t + c * (xv t - yv t) + k * (x t - y t) = pf t) :
     HasDerivAt u (xv t - yv t) t
       ∧ m * (xa t - ya t) + c * (xv t - yv t) + k * u t
@@ -71,36 +73,60 @@ theorem relative_equation_and_energy {m c k : ℝ}
       ∧ HasDerivAt (fun s => m / 2 * (xv s - yv s) ^ 2
             + k / 2 * (u s) ^ 2)
           ((xv t - yv t) * (pf t - m * ya t) - c * (xv t - yv t) ^ 2) t := by
-  have hfun : u = x - y := by
-    funext s
-    exact hu s
-  have h1 : HasDerivAt u (xv t - yv t) t := by
-    rw [hfun]
-    exact (hx t).sub (hy t)
-  have h2 : m * (xa t - ya t) + c * (xv t - yv t) + k * u t
+  have hxt : HasDerivAt x (xv t) t := hx.self_of_nhds
+  have hyt : HasDerivAt y (yv t) t := hy.self_of_nhds
+  have hxvt : HasDerivAt xv (xa t) t := hxv.self_of_nhds
+  have hyvt : HasDerivAt yv (ya t) t := hyv.self_of_nhds
+  have huv : HasDerivAt (x - y) (xv t - yv t) t := hxt.sub hyt
+  have heq_u : u =ᶠ[nhds t] (x - y) := by
+    filter_upwards with s
+    simp [hu s, Pi.sub_apply]
+  have hu_deriv : HasDerivAt u (xv t - yv t) t :=
+    huv.congr_of_eventuallyEq heq_u
+  have hut : u t = x t - y t := hu t
+  have hrel : m * (xa t - ya t) + c * (xv t - yv t) + k * u t
       = pf t - m * ya t := by
-    rw [hu t]
-    linear_combination habs
-  have hv : HasDerivAt (fun s => xv s - yv s) (xa t - ya t) t :=
-    (hxv t).sub (hyv t)
-  have hE1 : HasDerivAt (fun s => m / 2 * (xv s - yv s) ^ 2)
-      (m / 2 * (↑(2 : ℕ) * (xv t - yv t) ^ (2 - 1) * (xa t - ya t))) t :=
-    (hv.fun_pow 2).const_mul _
-  have hE2 : HasDerivAt (fun s => k / 2 * (u s) ^ 2)
-      (k / 2 * (↑(2 : ℕ) * (u t) ^ (2 - 1) * (xv t - yv t))) t :=
-    (h1.fun_pow 2).const_mul _
-  have hE : HasDerivAt (fun s => m / 2 * (xv s - yv s) ^ 2
-        + k / 2 * (u s) ^ 2)
-      (m / 2 * (↑(2 : ℕ) * (xv t - yv t) ^ (2 - 1) * (xa t - ya t))
-        + k / 2 * (↑(2 : ℕ) * (u t) ^ (2 - 1) * (xv t - yv t))) t :=
+    rw [hut] at *
+    linarith
+  refine ⟨hu_deriv, hrel, ?_⟩
+  have hvv : HasDerivAt (xv - yv) (xa t - ya t) t := hxvt.sub hyvt
+  have hpow1 : HasDerivAt ((xv - yv) ^ 2) (2 * (xv t - yv t) * (xa t - ya t)) t := by
+    have h := hvv.pow 2
+    simpa using h
+  have hpow2 : HasDerivAt (u ^ 2) (2 * u t * (xv t - yv t)) t := by
+    have h := hu_deriv.pow 2
+    simpa using h
+  have hE1 : HasDerivAt (fun s => m / 2 * (((xv - yv) ^ 2) s))
+      (m / 2 * (2 * (xv t - yv t) * (xa t - ya t))) t :=
+    HasDerivAt.const_mul (m / 2) hpow1
+  have hE2 : HasDerivAt (fun s => k / 2 * ((u ^ 2) s))
+      (k / 2 * (2 * u t * (xv t - yv t))) t :=
+    HasDerivAt.const_mul (k / 2) hpow2
+  have hEadd : HasDerivAt ((fun s => m / 2 * (((xv - yv) ^ 2) s))
+      + (fun s => k / 2 * ((u ^ 2) s)))
+      (m / 2 * (2 * (xv t - yv t) * (xa t - ya t))
+        + k / 2 * (2 * u t * (xv t - yv t))) t :=
     hE1.add hE2
-  have hD : m / 2 * (↑(2 : ℕ) * (xv t - yv t) ^ (2 - 1) * (xa t - ya t))
-        + k / 2 * (↑(2 : ℕ) * (u t) ^ (2 - 1) * (xv t - yv t))
+  have heq_E : (fun s => m / 2 * (xv s - yv s) ^ 2 + k / 2 * (u s) ^ 2)
+      =ᶠ[nhds t] (((fun s => m / 2 * (((xv - yv) ^ 2) s))
+        + (fun s => k / 2 * ((u ^ 2) s)))) := by
+    filter_upwards with s
+    simp [Pi.add_apply, Pi.pow_apply, Pi.sub_apply]
+  have hE : HasDerivAt (fun s => m / 2 * (xv s - yv s) ^ 2 + k / 2 * (u s) ^ 2)
+      (m / 2 * (2 * (xv t - yv t) * (xa t - ya t))
+        + k / 2 * (2 * u t * (xv t - yv t))) t :=
+    hEadd.congr_of_eventuallyEq heq_E
+  have hder : m / 2 * (2 * (xv t - yv t) * (xa t - ya t))
+        + k / 2 * (2 * u t * (xv t - yv t))
       = (xv t - yv t) * (pf t - m * ya t) - c * (xv t - yv t) ^ 2 := by
-    simp only [show (2 : ℕ) - 1 = 1 from rfl, pow_one, Nat.cast_ofNat]
-    linear_combination (xv t - yv t) * h2
-  refine ⟨h1, h2, ?_⟩
-  rw [hD] at hE
+    have hrel' : m * (xa t - ya t) + k * u t
+        = (pf t - m * ya t) - c * (xv t - yv t) := by linarith
+    have hcalc : m / 2 * (2 * (xv t - yv t) * (xa t - ya t))
+        + k / 2 * (2 * u t * (xv t - yv t))
+        = (xv t - yv t) * (m * (xa t - ya t) + k * u t) := by ring
+    rw [hcalc, hrel']
+    ring
+  rw [hder] at hE
   exact hE
 
 end RelativeOscillator

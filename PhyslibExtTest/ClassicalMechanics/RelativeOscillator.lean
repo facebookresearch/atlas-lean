@@ -40,11 +40,11 @@ example : HasDerivAt (fun t : ℝ => t ^ 2 - t) ((2 * 2 - 1 : ℝ)) 2
     (u := fun t : ℝ => t ^ 2 - t) (xv := fun t : ℝ => 2 * t)
     (yv := fun _ : ℝ => 1) (xa := fun _ : ℝ => 2) (ya := fun _ : ℝ => 0)
     (pf := fun t : ℝ => 1 * (2:ℝ) + 1 * (2 * t - 1) + 1 * (t ^ 2 - t))
-    (fun t => by ring)
-    (fun t => by simpa using (hasDerivAt_pow 2 t))
-    (fun t => hasDerivAt_id (x := t))
-    (fun t => by simpa using (HasDerivAt.const_mul (2:ℝ) (hasDerivAt_id (x := t))))
-    (fun t => hasDerivAt_const t (1:ℝ)) 2
+    (fun t => by ring) 2
+    (Filter.Eventually.of_forall (fun t => by simpa using (hasDerivAt_pow 2 t)))
+    (Filter.Eventually.of_forall (fun t => hasDerivAt_id (x := t)))
+    (Filter.Eventually.of_forall (fun t => by simpa using (HasDerivAt.const_mul (2:ℝ) (hasDerivAt_id (x := t)))))
+    (Filter.Eventually.of_forall (fun t => hasDerivAt_const t (1:ℝ)))
     (by ring)
   exact ⟨h.1, h.2.1⟩
 
@@ -57,11 +57,11 @@ example : HasDerivAt (fun s : ℝ => (1:ℝ) / 2 * (2 * s - 1) ^ 2
     (u := fun t : ℝ => t ^ 2 - t) (xv := fun t : ℝ => 2 * t)
     (yv := fun _ : ℝ => 1) (xa := fun _ : ℝ => 2) (ya := fun _ : ℝ => 0)
     (pf := fun t : ℝ => 1 * (2:ℝ) + 1 * (2 * t - 1) + 1 * (t ^ 2 - t))
-    (fun t => by ring)
-    (fun t => by simpa using (hasDerivAt_pow 2 t))
-    (fun t => hasDerivAt_id (x := t))
-    (fun t => by simpa using (HasDerivAt.const_mul (2:ℝ) (hasDerivAt_id (x := t))))
-    (fun t => hasDerivAt_const t (1:ℝ)) 2
+    (fun t => by ring) 2
+    (Filter.Eventually.of_forall (fun t => by simpa using (hasDerivAt_pow 2 t)))
+    (Filter.Eventually.of_forall (fun t => hasDerivAt_id (x := t)))
+    (Filter.Eventually.of_forall (fun t => by simpa using (HasDerivAt.const_mul (2:ℝ) (hasDerivAt_id (x := t)))))
+    (Filter.Eventually.of_forall (fun t => hasDerivAt_const t (1:ℝ)))
     (by ring)
   have h3 := h.2.2
   norm_num at h3 ⊢
