@@ -132,8 +132,6 @@ lemma muscle_power_max {a b F0 : ℝ} (ha : 0 < a) (hb : 0 < b) (hF0 : 0 < F0) :
 
 /-! ## B. Power and work. -/
 
-section
-
 /-- Hill shortening velocity at force `F`: `v(F) = b (F0 - F)/(F + a)`. -/
 noncomputable def hillVelocity (a b F0 F : ℝ) : ℝ := b * (F0 - F) / (F + a)
 
