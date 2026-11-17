@@ -76,7 +76,7 @@ theorem lintegral_density_eq_one {𝓧 : Type*} [MeasurableSpace 𝓧] (μ : Mea
   exact measure_univ
 
 /-- Converse: a density integrating to one gives a probability law, so every
-leaf-style density instantiates the measure-plus-density hypotheses used below. -/
+such density instantiates the measure-plus-density hypotheses used below. -/
 theorem isProbabilityMeasure_withDensity_of_lintegral_eq_one {𝓧 : Type*}
     [MeasurableSpace 𝓧] (μ : Measure 𝓧) (p : 𝓧 → ℝ)
     (hp : ∫⁻ x, ENNReal.ofReal (p x) ∂μ = 1) :
@@ -612,7 +612,7 @@ theorem binaryCostAvgRisk_eq_toReal_avgRisk_add {𝓧 : Type*} [MeasurableSpace 
     ENNReal.toReal_ofReal hpi1.le]
   linear_combination (pi0 * C00) * hsum0 + (pi1 * C11) * hsum1
 
-/-- **Original-cost optimality.** Under the leaf hypotheses, the threshold rule minimizes
+/-- **Original-cost optimality.** Under the hypotheses above, the threshold rule minimizes
 the real Bayes average of the original costs `Cij` over all Markov decision kernels. -/
 theorem binaryCostRule_minimizes_binaryCostAvgRisk {𝓧 : Type*} [MeasurableSpace 𝓧]
     (μ : Measure 𝓧) (P0 P1 : Measure 𝓧) [IsProbabilityMeasure P0] [IsProbabilityMeasure P1]
