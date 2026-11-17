@@ -47,6 +47,9 @@ formula. Its explicit form is
 * `amount_bolus_add_halfLife`: a bolus halves every `t½ = log 2 / k`.
 * `bolus_absolute_reconstruction`, `bolus_absolute_injective`: exact absolute bolus
   observations at `0` and at `t > 0` with known dose recover `V`, `CL / V` and `CL`.
+* `normalized_washout_rate`, `normalized_scaling_same_washout`: the normalized washout
+  `C(t) / C(0)` recovers `CL / V` without a known dose; scaling `(V, CL)` together
+  leaves it unchanged while changing `V`.
 * Boundaries: `amount_rate_zero_input_zero` (`k = 0`, `R = 0`: constant),
   `tendsto_amount_rate_zero_atTop`, `not_tendsto_amount_rate_zero`,
   `not_isSolution_const_rate_zero` (`k = 0`, `R > 0`: linear growth, no steady state),
@@ -404,6 +407,8 @@ theorem bolus_absolute_injective {D t V₁ V₂ CL₁ CL₂ : ℝ}
     rwa [div_mul_cancel₀ CL₁ hV₁', div_mul_cancel₀ CL₂ hV₁'] at hmul
   exact ⟨rfl, hCL⟩
 
+/-! ### Normalized identification from the washout ratio -/
+
 set_option linter.unusedVariables false in
 /-- **Normalized washout identifies the elimination rate.** For a
 bolus concentration `C(t) = (D / V) * exp (-(CL / V) * t)` with
@@ -412,16 +417,8 @@ any `t > 0` recovers exactly the rate `CL / V`:
 `-log (C(t) / C(0)) / t = CL / V`. The dose need not be known. -/
 theorem normalized_washout_rate {D V CL t : ℝ}
     (hD : 0 < D) (hV : 0 < V) (hCL : 0 ≤ CL) (ht : 0 < t) :
-    -Real.log (((D / V) * Real.exp (-(CL / V) * t)) / (D / V)) / t = CL / V := by
-  have hD' : D ≠ 0 := ne_of_gt hD
-  have hV' : V ≠ 0 := ne_of_gt hV
-  have hDV : D / V ≠ 0 := div_ne_zero hD' hV'
-  have ht' : t ≠ 0 := ne_of_gt ht
-  have hcancel : ((D / V) * Real.exp (-(CL / V) * t)) / (D / V)
-      = Real.exp (-(CL / V) * t) := by
-    field_simp
-  rw [hcancel, Real.log_exp]
-  field_simp
+    -Real.log (((D / V) * Real.exp (-(CL / V) * t)) / (D / V)) / t = CL / V :=
+  (bolus_absolute_reconstruction hD hV hCL ht rfl rfl).2.2.2.1.symm
 
 set_option linter.unusedVariables false in
 /-- **Scaling obstruction for separate parameters.** Scaling `V` and
