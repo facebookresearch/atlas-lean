@@ -38,8 +38,6 @@ example (t : ℝ) : HasDerivAt (fun s => ∫ x in (0:ℝ)..(1:ℝ),
     (fun s x _ => hasDerivAt_const x (0:ℝ))
     (fun t x _ => by norm_num)
     (fun t x _ => by norm_num)
-    (fun _ => intervalIntegrable_const)
-    (fun _ => by fun_prop)
     (by fun_prop)
     (by fun_prop)
     t
