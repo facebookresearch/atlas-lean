@@ -54,7 +54,6 @@ Systems*, fifth edition, Oxford University Press, 2019: orthogonal signaling, ma
 
 ## A. Matched outputs and the Gram matrix
 
-Discharges ECE roadmap leaf `ECE.COM.MODULATION.MULTIPLEX`
 (multiplex Gram).
 -/
 
