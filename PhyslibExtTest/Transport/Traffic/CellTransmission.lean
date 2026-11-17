@@ -37,9 +37,9 @@ example : 0 ≤ faceFlux 2 3 10 4 9 :=
 
 /-- Capacity is attained at the critical density `1 / 2` for unit
 parameters, through the public theorem. -/
-example : demand 1 1 1 (1 / 2) = capacity 1 1 1
-    ∧ supply 1 1 1 (1 / 2) = capacity 1 1 1 :=
-  capacity_attained (by norm_num) (by norm_num)
+example : demand 1 1 1 (1 * 1 / (1 + 1)) = capacity 1 1 1
+    ∧ supply 1 1 1 (1 * 1 / (1 + 1)) = capacity 1 1 1 :=
+  capacity_attained (v := 1) (w := 1) (kj := 1) (by norm_num) (by norm_num)
 
 /-- Jammed receiving cell gives flux `0`, by computation. -/
 example : faceFlux 1 1 1 (1 / 2) 1 = 0 := by
