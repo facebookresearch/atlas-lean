@@ -9,6 +9,7 @@ module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+public import MathlibExt.Probability.Diffusion.FokkerPlanckFreeEnergy
 import Mathlib.Tactic.Ring
 
 /-!
@@ -66,118 +67,9 @@ private lemma hasDerivAt_fixed_integral {u ut : ℝ → ℝ → ℝ}
     (hcont_ut : Continuous fun p : ℝ × ℝ => ut p.1 p.2)
     (t y : ℝ) :
     HasDerivAt (fun τ : ℝ => ∫ x in (0 : ℝ)..y, u τ x)
-      (∫ x in (0 : ℝ)..y, ut t x) t := by
-  have hK : IsCompact (Metric.closedBall t 1 ×ˢ Set.uIcc (0 : ℝ) y) :=
-    (isCompact_closedBall t 1).prod isCompact_uIcc
-  have hUC : UniformContinuousOn (fun p : ℝ × ℝ => ut p.1 p.2)
-      (Metric.closedBall t 1 ×ˢ Set.uIcc (0 : ℝ) y) :=
-    hK.uniformContinuousOn_of_continuous hcont_ut.continuousOn
-  have outer_eq : ∀ τ : ℝ, (∫ x in (0 : ℝ)..y, u τ x) - (∫ x in (0 : ℝ)..y, u t x)
-      - (τ - t) • (∫ x in (0 : ℝ)..y, ut t x)
-      = ∫ x in (0 : ℝ)..y, (u τ x - u t x - (τ - t) * ut t x) := by
-    intro τ
-    have hA : IntervalIntegrable (fun x : ℝ => u τ x) MeasureTheory.volume 0 y :=
-      (slice_continuous hjoint τ).intervalIntegrable _ _
-    have hB : IntervalIntegrable (fun x : ℝ => u t x) MeasureTheory.volume 0 y :=
-      (slice_continuous hjoint t).intervalIntegrable _ _
-    have hC : IntervalIntegrable (fun x : ℝ => ut t x) MeasureTheory.volume 0 y :=
-      (slice_continuous hcont_ut t).intervalIntegrable _ _
-    have hsub1 : (∫ x in (0 : ℝ)..y, (u τ x - u t x))
-        = (∫ x in (0 : ℝ)..y, u τ x) - (∫ x in (0 : ℝ)..y, u t x) :=
-      intervalIntegral.integral_sub hA hB
-    have hmul : (∫ x in (0 : ℝ)..y, (τ - t) * ut t x)
-        = (τ - t) * (∫ x in (0 : ℝ)..y, ut t x) :=
-      intervalIntegral.integral_const_mul (τ - t) (fun x => ut t x)
-    have hD : IntervalIntegrable (fun x : ℝ => u τ x - u t x) MeasureTheory.volume 0 y :=
-      hA.sub hB
-    have hE : IntervalIntegrable (fun x : ℝ => (τ - t) * ut t x)
-        MeasureTheory.volume 0 y :=
-      hC.const_mul (τ - t)
-    have hsub2 : (∫ x in (0 : ℝ)..y, ((u τ x - u t x) - (τ - t) * ut t x))
-        = (∫ x in (0 : ℝ)..y, (u τ x - u t x))
-          - (∫ x in (0 : ℝ)..y, (τ - t) * ut t x) :=
-      intervalIntegral.integral_sub hD hE
-    rw [hsub2, hsub1, hmul, smul_eq_mul]
-  refine HasDerivAt.of_isLittleO (Asymptotics.isLittleO_iff.mpr ?_)
-  intro c₀ hc₀
-  have hY1 : (0 : ℝ) < |y| + 1 := by
-    have h := abs_nonneg y
-    linarith
-  have hε0 : (0 : ℝ) < c₀ / (|y| + 1) := div_pos hc₀ hY1
-  obtain ⟨δ, hδ0, hδ⟩ := Metric.uniformContinuousOn_iff.mp hUC _ hε0
-  have eball : ∀ᶠ τ in nhds t, τ ∈ Metric.ball t (min δ 1) :=
-    Filter.eventually_of_mem (Metric.ball_mem_nhds t (lt_min hδ0 zero_lt_one))
-      (fun _ h => h)
-  filter_upwards [eball] with τ hτ
-  rw [Metric.mem_ball, Real.dist_eq] at hτ
-  have hτδ : |τ - t| < δ := lt_of_lt_of_le hτ (min_le_left _ _)
-  have hτ1 : |τ - t| ≤ 1 := le_of_lt (lt_of_lt_of_le hτ (min_le_right _ _))
-  have hmem : ∀ x ∈ Set.uIoc (0 : ℝ) y,
-      ‖u τ x - u t x - (τ - t) * ut t x‖ ≤ (c₀ / (|y| + 1)) * ‖τ - t‖ := by
-    intro x hx
-    have hxcc : x ∈ Set.uIcc (0 : ℝ) y := Set.uIoc_subset_uIcc hx
-    have hInt_time : IntervalIntegrable (fun s : ℝ => ut s x) MeasureTheory.volume t τ :=
-      (hcont_ut.comp (continuous_id.prodMk continuous_const)).intervalIntegrable t τ
-    have hFTC : (∫ s in t..τ, ut s x) = u τ x - u t x :=
-      intervalIntegral.integral_eq_sub_of_hasDerivAt (fun s _ => hut s x) hInt_time
-    have hconst : (∫ s in t..τ, ut t x) = (τ - t) * ut t x := by
-      have hc0 := intervalIntegral.integral_const (a := t) (b := τ) (ut t x)
-      rwa [smul_eq_mul] at hc0
-    have hsub : (∫ s in t..τ, (ut s x - ut t x))
-        = (∫ s in t..τ, ut s x) - (∫ s in t..τ, ut t x) :=
-      intervalIntegral.integral_sub hInt_time intervalIntegrable_const
-    have e : u τ x - u t x - (τ - t) * ut t x
-        = ∫ s in t..τ, (ut s x - ut t x) := by
-      rw [hsub, hFTC, hconst]
-    rw [e]
-    have hinner : ∀ s ∈ Set.uIoc t τ, ‖ut s x - ut t x‖ ≤ c₀ / (|y| + 1) := by
-      intro s hs
-      have hscc : s ∈ Set.uIcc t τ := Set.uIoc_subset_uIcc hs
-      have hsc : |s - t| ≤ |τ - t| := Set.abs_sub_left_of_mem_uIcc hscc
-      have hsK : (s, x) ∈ Metric.closedBall t 1 ×ˢ Set.uIcc (0 : ℝ) y := by
-        apply Set.mk_mem_prod
-        · rw [Metric.mem_closedBall, Real.dist_eq]
-          exact le_trans hsc hτ1
-        · exact hxcc
-      have htK : (t, x) ∈ Metric.closedBall t 1 ×ˢ Set.uIcc (0 : ℝ) y := by
-        apply Set.mk_mem_prod
-        · rw [Metric.mem_closedBall, dist_self]
-          exact zero_le_one
-        · exact hxcc
-      have hdist : dist (s, x) (t, x) < δ := by
-        rw [Prod.dist_eq]
-        show max (dist s t) (dist x x) < δ
-        have h1 : dist s t < δ := by
-          rw [Real.dist_eq]
-          exact lt_of_le_of_lt hsc hτδ
-        have h2 : dist x x < δ := by
-          rw [dist_self]
-          exact hδ0
-        exact max_lt h1 h2
-      have hclose : dist (ut s x) (ut t x) < c₀ / (|y| + 1) := hδ _ hsK _ htK hdist
-      rw [Real.dist_eq] at hclose
-      rw [Real.norm_eq_abs]
-      exact le_of_lt hclose
-    have hIinner : ‖∫ s in t..τ, (ut s x - ut t x)‖ ≤ (c₀ / (|y| + 1)) * |τ - t| :=
-      intervalIntegral.norm_integral_le_of_norm_le_const hinner
-    have hnorm : |τ - t| = ‖τ - t‖ := (Real.norm_eq_abs _).symm
-    rwa [hnorm] at hIinner
-  have hI : ‖∫ x in (0 : ℝ)..y, (u τ x - u t x - (τ - t) * ut t x)‖
-      ≤ ((c₀ / (|y| + 1)) * ‖τ - t‖) * |y - 0| :=
-    intervalIntegral.norm_integral_le_of_norm_le_const hmem
-  have hK0 : (0 : ℝ) ≤ ‖τ - t‖ := norm_nonneg _
-  have hfinal : ((c₀ / (|y| + 1)) * ‖τ - t‖) * |y - 0| ≤ c₀ * ‖τ - t‖ := by
-    rw [sub_zero]
-    have hle : (c₀ / (|y| + 1)) * |y| ≤ c₀ := by
-      rw [div_mul_eq_mul_div, div_le_iff₀ hY1]
-      exact mul_le_mul_of_nonneg_left (le_add_of_nonneg_right zero_le_one) (le_of_lt hc₀)
-    calc ((c₀ / (|y| + 1)) * ‖τ - t‖) * |y|
-        = ((c₀ / (|y| + 1)) * |y|) * ‖τ - t‖ := by ring
-      _ ≤ c₀ * ‖τ - t‖ := mul_le_mul_of_nonneg_right hle hK0
-  show ‖(∫ x in (0 : ℝ)..y, u τ x) - (∫ x in (0 : ℝ)..y, u t x)
-      - (τ - t) • (∫ x in (0 : ℝ)..y, ut t x)‖ ≤ c₀ * ‖τ - t‖
-  rw [outer_eq τ]
-  exact le_trans hI hfinal
+      (∫ x in (0 : ℝ)..y, ut t x) t :=
+  MathlibExt.Probability.FokkerPlanck.integral_hasDerivAt u ut 0 y t
+    hjoint hcont_ut hut
 
 private lemma hasDerivAt_endpoint_integral {u ut : ℝ → ℝ → ℝ} {c c' : ℝ → ℝ}
     (hc : ∀ t : ℝ, HasDerivAt c (c' t) t)
