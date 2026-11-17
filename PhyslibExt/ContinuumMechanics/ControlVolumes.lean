@@ -18,15 +18,18 @@ import Mathlib.Tactic.Ring
 ## i. Overview
 
 The Leibniz (moving-endpoint transport) identity in one space
-dimension: for a jointly `C¹` field `u t x` and `C¹` endpoints
-`a, b`,
+dimension: for a field `u t x` with `u` and its time partial
+`u_t` jointly continuous (no spatial derivative of `u` is
+assumed) and endpoints `a, b` differentiable at the evaluation
+time `t`,
 `d/dt ∫_{a t}^{b t} u t x dx = ∫_{a t}^{b t} u_t dx
 + u(t, b t) b'(t) - u(t, a t) a'(t)`, and, when
 `u_t = src - f_x`, the relative-flux form with endpoint terms
-`f - u * endpointSpeed`. Joint `C¹` control is essential:
-slice-wise continuity plus fixed-limit differentiation alone
-admit oscillating mass at the moving endpoint. No general
-moving-domain Reynolds theorem is claimed.
+`f - u * endpointSpeed`. Joint continuity of `u` and `u_t` is
+what the proof uses: slice-wise continuity plus fixed-limit
+differentiation alone admit oscillating mass at the moving
+endpoint. No general moving-domain Reynolds theorem is
+claimed.
 
 ## ii. Key results
 
@@ -193,9 +196,9 @@ private lemma hasDerivAt_endpoint_integral {u ut : ℝ → ℝ → ℝ} {c c' : 
   ring
 
 /-- Moving-endpoint transport (Leibniz rule), `HasDerivAt` form:
-for a jointly `C¹` field `u t x` (joint continuity of `u` and of
-its actual time partial `ut`) and `C¹` endpoints `a, b`, the
-moving integral has derivative
+for a field `u t x` with `u` and its actual time partial `ut`
+jointly continuous and endpoints `a, b` differentiable at `t`,
+the moving integral has derivative
 `∫_{a t}^{b t} ut t x dx + u t (b t) * b' t - u t (a t) * a' t`
 at `t`. Differentiation under the fixed-limit integral is derived
 from the joint-continuity data, not assumed. No ordering
