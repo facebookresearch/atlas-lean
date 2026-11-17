@@ -74,3 +74,23 @@ identically zero, so the threshold characterization needs its positivity
 hypotheses. -/
 example (a : ℝ) : Reliability.modeIStressIntensity 1 0 a = 0 := by
   simp [Reliability.modeIStressIntensity]
+
+/-- Paris power branch at `m = 3` (so `r = -1/2`), `K = 1`, `a0 = 1`:
+the crack reaches `ac = 2` at its positive life, and the life precedes
+the blow-up count `2`. -/
+example : 0 < Reliability.parisLifePow (-1/2) 1 1 2 ∧
+    Reliability.parisCrackPow (-1/2) 1 1
+        (Reliability.parisLifePow (-1/2) 1 1 2) = 2 ∧
+      Reliability.parisLifePow (-1/2) 1 1 2 <
+        (1:ℝ) ^ (-1/2:ℝ) / (-((-1/2) * 1)) :=
+  ⟨Reliability.parisLifePow_pos (by norm_num) one_pos (by norm_num)
+      (by norm_num),
+    Reliability.parisCrackPow_at_life (by norm_num) one_pos (by norm_num)
+      (by norm_num),
+    Reliability.parisLifePow_lt_blowup (by norm_num) one_pos (by norm_num)
+      (by norm_num)⟩
+
+/-- Paris logarithmic branch at `K = 1`, `a0 = 1`: the crack reaches
+`ac = 2` at `log 2`. -/
+example : Reliability.parisCrackExp 1 1 (Reliability.parisLifeExp 1 1 2) = 2 :=
+  Reliability.parisCrackExp_at_life (by norm_num) one_pos (by norm_num)
