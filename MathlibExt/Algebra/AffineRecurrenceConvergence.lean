@@ -67,30 +67,62 @@ theorem isAffineRecurrence_iff_errorCorrection (alpha lambda : ℝ) {v : ℕ →
       (∀ n, v (n + 1) = v n + alpha * (lambda - v n)) :=
   errorCorrection_affine_iff alpha lambda
 
+/-- **Generic affine-recurrence convergence.** If
+`x (n + 1) = a * x n + b` for every `n` and `|a| < 1`, then `x` converges to
+the fixed point `b / (1 - a)`. This is the shared convergence result used by
+both the error-correction specialization below and the existing
+government-debt specialization. -/
+theorem affine_tendsto_fixedPoint {a b : ℝ} {x : ℕ → ℝ}
+    (hx : ∀ n, x (n + 1) = a * x n + b) (ha : |a| < 1) :
+    Tendsto x atTop (𝓝 (b / (1 - a))) := by
+  have ha1 : (1 : ℝ) - a ≠ 0 := by
+    have h := (abs_lt.mp ha).2
+    have hpos : (0 : ℝ) < 1 - a := by linarith
+    exact ne_of_gt hpos
+  have hfix : a * (b / (1 - a)) + b = b / (1 - a) := by
+    field_simp
+    ring
+  have hcf : ∀ n, x n = b / (1 - a) + a ^ n * (x 0 - b / (1 - a)) := by
+    intro n
+    induction n with
+    | zero => simp
+    | succ n ih => rw [hx n, ih, pow_succ]; linear_combination hfix
+  have hpow : Tendsto (fun n : ℕ => a ^ n) atTop (𝓝 0) :=
+    tendsto_pow_atTop_nhds_zero_of_abs_lt_one ha
+  have hmul : Tendsto (fun n : ℕ => a ^ n * (x 0 - b / (1 - a))) atTop (𝓝 0) := by
+    have h := hpow.mul_const (x 0 - b / (1 - a))
+    simpa using h
+  have hconst : Tendsto (fun _ : ℕ => b / (1 - a)) atTop (𝓝 (b / (1 - a))) :=
+    tendsto_const_nhds
+  have hadd : Tendsto (fun n : ℕ => b / (1 - a) + a ^ n * (x 0 - b / (1 - a)))
+      atTop (𝓝 (b / (1 - a))) := by
+    have h := hconst.add hmul
+    simpa using h
+  have heq : x = (fun n : ℕ => b / (1 - a) + a ^ n * (x 0 - b / (1 - a))) := by
+    funext n
+    exact hcf n
+  rw [heq]
+  exact hadd
+
 /-- **Convergence to the target.** When `0 < alpha < 2`, every solution of
 the single-cue error-correction update converges to `lambda`. -/
 theorem errorCorrection_tendsto (alpha lambda : ℝ) {v : ℕ → ℝ}
     (hv : ∀ n, v (n + 1) = v n + alpha * (lambda - v n))
     (h0 : 0 < alpha) (h2 : alpha < 2) :
     Tendsto v atTop (𝓝 lambda) := by
+  have haffine : ∀ n, v (n + 1) = (1 - alpha) * v n + alpha * lambda := by
+    intro n
+    rw [hv n]
+    ring
   have habs : |(1 - alpha)| < 1 := by
     rw [abs_lt]
     constructor <;> linarith
-  have hpow : Tendsto (fun n : ℕ => (1 - alpha) ^ n) atTop (𝓝 0) :=
-    tendsto_pow_atTop_nhds_zero_of_abs_lt_one habs
-  have hmul : Tendsto (fun n : ℕ => (1 - alpha) ^ n * (v 0 - lambda)) atTop (𝓝 0) := by
-    have h := hpow.mul_const (v 0 - lambda)
-    simpa using h
-  have hconst : Tendsto (fun _ : ℕ => lambda) atTop (𝓝 lambda) := tendsto_const_nhds
-  have hadd : Tendsto (fun n : ℕ => lambda + (1 - alpha) ^ n * (v 0 - lambda))
-      atTop (𝓝 lambda) := by
-    have h := hconst.add hmul
-    simpa using h
-  have heq : v = (fun n : ℕ => lambda + (1 - alpha) ^ n * (v 0 - lambda)) := by
-    funext n
-    exact errorCorrection_eq alpha lambda hv n
-  rw [heq]
-  exact hadd
+  have hlim := affine_tendsto_fixedPoint haffine habs
+  have heq : (alpha * lambda) / (1 - (1 - alpha)) = lambda := by
+    rw [show (1 : ℝ) - (1 - alpha) = alpha by ring]
+    exact mul_div_cancel_left₀ lambda (ne_of_gt h0)
+  rw [heq] at hlim
+  exact hlim
 
 /-- **Exact convergence range.** When the initial error `v 0 - lambda` is
 nonzero, a solution of the single-cue error-correction update converges to

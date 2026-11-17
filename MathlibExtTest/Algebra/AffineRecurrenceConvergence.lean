@@ -22,6 +22,7 @@ proved directly from the update equation.
 
 namespace MathlibExtTest.Algebra.AffineRecurrenceConvergence
 
+open Filter Topology
 open MathlibExt.AffineRecurrence
 
 /-- At unit gain the target is reached in one step. -/
@@ -84,5 +85,36 @@ theorem test_alpha_zero_fixed {lambda : ℝ} {v : ℕ → ℝ}
   induction n with
   | zero => rfl
   | succ n ih => rw [hv n, ih]; ring
+
+/-- API client check: the closed form gives the third half-gain value. -/
+theorem test_api_eq_half {v : ℕ → ℝ}
+    (hv : ∀ n, v (n + 1) = v n + (1 / 2 : ℝ) * (5 - v n)) (h0 : v 0 = 1) :
+    v 3 = 9 / 2 := by
+  have h := errorCorrection_eq (1 / 2 : ℝ) 5 hv 3
+  rw [h0] at h
+  norm_num at h
+  exact h
+
+/-- API client check: half gain converges to the target. -/
+theorem test_api_tendsto_half {v : ℕ → ℝ}
+    (hv : ∀ n, v (n + 1) = v n + (1 / 2 : ℝ) * (5 - v n)) :
+    Tendsto v atTop (𝓝 5) := by
+  exact errorCorrection_tendsto (1 / 2 : ℝ) 5 hv (by norm_num) (by norm_num)
+
+/-- API client check: at gain `2`, a sequence starting away from the target
+does not converge to it. -/
+theorem test_api_not_tendsto_two {v : ℕ → ℝ}
+    (hv : ∀ n, v (n + 1) = v n + 2 * (5 - v n)) (h0 : v 0 = 1) :
+    ¬ Tendsto v atTop (𝓝 5) := by
+  intro ht
+  have hne : v 0 ≠ 5 := by rw [h0]; norm_num
+  have h := (errorCorrection_tendsto_iff_of_ne 2 5 hv hne).mp ht
+  norm_num at h
+
+/-- API client check: at half gain, the sign theorem applies at `n = 3`. -/
+theorem test_api_sign_half {v : ℕ → ℝ}
+    (hv : ∀ n, v (n + 1) = v n + (1 / 2 : ℝ) * (5 - v n)) :
+    0 ≤ (v 0 - 5) * (v 3 - 5) := by
+  exact errorCorrection_mul_nonneg_of_le_one (1 / 2 : ℝ) 5 hv (by norm_num) 3
 
 end MathlibExtTest.Algebra.AffineRecurrenceConvergence
