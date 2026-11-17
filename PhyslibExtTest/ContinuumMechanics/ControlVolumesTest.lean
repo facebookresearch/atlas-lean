@@ -91,7 +91,7 @@ example :
     HasDerivAt
       (fun τ : ℝ => (∫ x in (0 : ℝ)..τ, x) + (∫ x in τ..(2 : ℝ), 2 * x))
       (-1) 1 := by
-  have h := ControlVolumes.movingJumpTransport_interior
+  have h := ControlVolumes.movingJumpTransport
     (uL := fun _ x : ℝ => x) (uR := fun _ x : ℝ => 2 * x)
     (vL := fun _ _ : ℝ => 0) (vR := fun _ _ : ℝ => 0)
     (s := fun τ : ℝ => τ) (s' := fun _ : ℝ => 1) (a := 0) (b := 2)
@@ -99,9 +99,7 @@ example :
     (by fun_prop) (fun t x => by simpa using (hasDerivAt_const t (x : ℝ)))
     (by fun_prop) (by fun_prop)
     (fun t x => by simpa using (hasDerivAt_const t (2 * x : ℝ)))
-    (by fun_prop) (by
-      exact Filter.eventually_of_mem (Ioo_mem_nhds (by norm_num) (by norm_num))
-        (fun τ hτ => ⟨hτ.1.le, hτ.2.le⟩))
+    (by fun_prop)
   rw [show (-1 : ℝ) = (1 : ℝ) - 2 by norm_num]
   simpa using h
 /-- Moving lower endpoint: `u t x = t * x`, `a(t) = t`,

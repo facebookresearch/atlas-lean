@@ -346,9 +346,9 @@ contribution `s' t * (uL t (s t) - uR t (s t))`. This is the
 two instantiations of `movingEndpoint_hasDerivAt` (moving right
 endpoint on the left piece, moving left endpoint on the right
 piece) added together. As stated this is an oriented-integral
-identity with no ordering hypothesis on `s t`; the physical
-interior-interface case is `movingJumpTransport_interior`
-below. -/
+identity with no ordering hypothesis on `s t`; in the physical
+interior-interface case, where `s t` lies inside `[a, b]`, the two
+integrals are the genuine left and right pieces of `[a, b]`. -/
 theorem movingJumpTransport {uL uR vL vR : ℝ → ℝ → ℝ}
     {s s' : ℝ → ℝ} {a b : ℝ} (t : ℝ) (hs : HasDerivAt s (s' t) t)
     (hjL : Continuous fun p : ℝ × ℝ => uL p.1 p.2)
@@ -379,25 +379,5 @@ theorem movingJumpTransport {uL uR vL vR : ℝ → ℝ → ℝ}
   convert h using 1
   ring
 
-
-/-- Interior-interface form of `movingJumpTransport`: when the
-interface point stays in the closed interval `[a, b]` in a
-neighborhood of `t`, the
-two integrals are the genuine left and right pieces of `[a, b]`
-and the same transport formula holds. -/
-theorem movingJumpTransport_interior {uL uR vL vR : ℝ → ℝ → ℝ}
-    {s s' : ℝ → ℝ} {a b : ℝ} (t : ℝ) (hs : HasDerivAt s (s' t) t)
-    (hjL : Continuous fun p : ℝ × ℝ => uL p.1 p.2)
-    (hvL : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uL τ x) (vL t x) t)
-    (hcvL : Continuous fun p : ℝ × ℝ => vL p.1 p.2)
-    (hjR : Continuous fun p : ℝ × ℝ => uR p.1 p.2)
-    (hvR : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uR τ x) (vR t x) t)
-    (hcvR : Continuous fun p : ℝ × ℝ => vR p.1 p.2)
-    (hint : ∀ᶠ τ in nhds t, s τ ∈ Set.Icc a b) :
-    HasDerivAt
-      (fun τ : ℝ => (∫ x in a..s τ, uL τ x) + (∫ x in s τ..b, uR τ x))
-      ((∫ x in a..s t, vL t x) + (∫ x in s t..b, vR t x) +
-        s' t * (uL t (s t) - uR t (s t))) t :=
-  movingJumpTransport t hs hjL hvL hcvL hjR hvR hcvR
 
 end ControlVolumes
