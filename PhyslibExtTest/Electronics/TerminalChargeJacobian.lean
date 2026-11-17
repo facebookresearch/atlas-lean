@@ -32,4 +32,11 @@ example : ∑ i, jacobianMatrix
 example : ∑ j, jacobianMatrix (fun w : Fin 2 → ℝ => ![w 0, -w 0]) 0 0 j = 1 :=
   ground_referenced_row_sum_ne_zero.2.2
 
+/-- And it fails the exact local invariance premise: arbitrarily
+small nonzero common-mode shifts move the charge. -/
+example : ∃ v : Fin 2 → ℝ, ∀ δ > 0, ∃ c : ℝ, |c| < δ ∧
+    (fun w : Fin 2 → ℝ => ![w 0, -w 0]) (v + c • (fun _ => (1 : ℝ))) ≠
+      (fun w : Fin 2 → ℝ => ![w 0, -w 0]) v :=
+  ground_referenced_row_sum_ne_zero.2.1
+
 end PhyslibExtTest.Electronics.TerminalChargeJacobian

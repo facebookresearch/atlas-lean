@@ -44,6 +44,8 @@ show that the two premises are distinct.
 ## iii. Table of contents
 
 - A. Terminal-charge Jacobians
+- A.1 Pairwise capacitor charges
+- A.2 Violated premises
 
 ## iv. References
 
@@ -278,7 +280,7 @@ lemma terminal_charge_jacobian_sums_eq_zero (n : ℕ) (U : Set (Fin n → ℝ))
   exact ⟨fun j => jacobian_col_sum_eq_zero_of_charge_conservation n U hU q hq hcons v hv j,
     fun i => jacobian_row_sum_eq_zero_of_common_mode_invariance n U hU q hq hgauge v hv i⟩
 
-/-! ### Validation: pairwise capacitor charges -/
+/-! ### A.1 Pairwise capacitor charges -/
 
 /-- Pairwise (two-terminal) capacitor charges: terminal `i` carries
 `q_i = Σ_k C_ik (v_i - v_k)`. -/
@@ -338,7 +340,7 @@ lemma pairwiseCapacitorCharge_jacobian_sums_eq_zero (n : ℕ)
   exact terminal_charge_jacobian_sums_eq_zero n Set.univ isOpen_univ
     (pairwiseCapacitorCharge n Cap) hq hcons hgauge v (Set.mem_univ v)
 
-/-! ### Violated premises -/
+/-! ### A.2 Violated premises -/
 
 /-- Violated premise (charge leak): `q(v) = (v₀ - v₁, v₀ - v₁)` is common-mode invariant but
 does not conserve charge, and its Jacobian column `0` sums to `2`, not `0`. -/
@@ -404,7 +406,7 @@ lemma leaky_charge_column_sum_ne_zero :
 common-mode invariant, and its Jacobian row `0` sums to `1`, not `0`. -/
 lemma ground_referenced_row_sum_ne_zero :
     (∀ v : Fin 2 → ℝ, ∑ i, (fun w : Fin 2 → ℝ => ![w 0, -w 0]) v i = 0) ∧
-      (∃ (v : Fin 2 → ℝ) (c : ℝ),
+      (∃ v : Fin 2 → ℝ, ∀ δ > 0, ∃ c : ℝ, |c| < δ ∧
         (fun w : Fin 2 → ℝ => ![w 0, -w 0]) (v + c • (fun _ => (1 : ℝ))) ≠
           (fun w : Fin 2 → ℝ => ![w 0, -w 0]) v) ∧
       ∑ j, jacobianMatrix (fun w : Fin 2 → ℝ => ![w 0, -w 0]) 0 0 j = 1 := by
@@ -414,14 +416,16 @@ lemma ground_referenced_row_sum_ne_zero :
     show ![v 0, -v 0] 0 + ![v 0, -v 0] 1 = 0
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
     ring
-  · refine ⟨0, 1, ?_⟩
-    intro h
-    have h0 := congrFun h 0
-    simp only [Matrix.cons_val_zero] at h0
-    rw [show ((0 + (1:ℝ) • (fun _ : Fin 2 => (1:ℝ)))) 0 = (0:ℝ) + (1:ℝ) • (1:ℝ) from rfl,
-      show ((0:Fin 2 → ℝ)) 0 = (0:ℝ) from rfl] at h0
-    simp only [smul_eq_mul] at h0
-    norm_num at h0
+  · refine ⟨0, fun δ hδ => ?_⟩
+    refine ⟨δ / 2, ?_, ?_⟩
+    · rw [abs_of_pos (by positivity : (0 : ℝ) < δ / 2)]
+      linarith
+    · intro h
+      have h0 := congrFun h 0
+      simp only [Matrix.cons_val_zero, Pi.add_apply, Pi.smul_apply, Pi.zero_apply,
+        smul_eq_mul, mul_one] at h0
+      have hne : (δ : ℝ) / 2 ≠ 0 := by positivity
+      exact hne (by linarith)
   · simp only [jacobianMatrix, Fin.sum_univ_two]
     show deriv (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0),
         -((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0)] 0) 0 +
