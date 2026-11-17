@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Order.Monotone.Basic
+public import MathlibExt.Biology.Biophysics.IntegrateAndFire.FirstHit
 
 /-!
 # LIF firing frequency
@@ -18,7 +19,12 @@ For the scalar leaky integrate-and-fire trajectory, the first-hit
 period is `tau log ((uinf - ur)/(uinf - theta))` on the
 superthreshold domain, and the firing frequency `1/(T + tref)` is
 strictly increasing in drive, hence in current under an affine
-drive-current relation with `R > 0`.
+drive-current relation with `R > 0`. The period definition is
+shared with `IntegrateAndFire.FirstHit.lif_first_hit`.
+
+Provenance: the scalar LIF closed form and its log period are the
+declared forms of `IntegrateAndFire.FirstHit`; `tau` is a time
+constant, `ur`, `theta`, `uinf` are voltages in common units.
 -/
 
 @[expose] public section
@@ -39,12 +45,8 @@ noncomputable def lifPeriod (tau ur theta uinf : ℝ) : ℝ :=
 /-- The period is positive on the superthreshold domain. -/
 lemma lifPeriod_pos {tau ur theta uinf : ℝ} (htau : 0 < tau)
     (hur : ur < theta) (hu : theta < uinf) : 0 < lifPeriod tau ur theta uinf := by
-  unfold lifPeriod
-  have h1 : 0 < uinf - theta := by linarith
-  have h2 : uinf - theta < uinf - ur := by linarith
-  have h3 : 1 < (uinf - ur) / (uinf - theta) := (one_lt_div h1).mpr h2
-  have h4 : 0 < Real.log ((uinf - ur) / (uinf - theta)) := Real.log_pos h3
-  exact mul_pos htau h4
+  exact (MathlibExt.Biology.Biophysics.IntegrateAndFire.FirstHit.lif_first_hit
+    hur htau hu).1
 
 /-- **Frequency increases with drive.** The firing frequency
 `1 / (T(uinf) + tref)` with `tref ≥ 0` is strictly increasing in the
