@@ -252,6 +252,105 @@ private lemma exists_left_lt_of_hasDerivWithinAt_pos {T : ℝ → ℝ} {f' c t :
   have hw : (0 : ℝ) < u * |f'| := mul_pos hu_pos (by rw [habs]; linarith)
   linarith
 
+private lemma exists_left_gt_of_hasDerivWithinAt_neg_on_interval {T : ℝ → ℝ} {f' c t : ℝ}
+    (hT : HasDerivWithinAt T f' (Set.Icc 0 t) c) (hf' : f' < 0) (hc : 0 < c)
+    (hct : c ≤ t) :
+    ∃ s ∈ Set.Icc (0 : ℝ) t, s < c ∧ T c < T s := by
+  rw [hasDerivWithinAt_iff_tendsto] at hT
+  have habs : |f'| = -f' := abs_of_neg hf'
+  have hK : (0 : ℝ) < |f'| / 2 := by
+    rw [habs]
+    linarith
+  have hev := hT.eventually (eventually_lt_nhds hK)
+  rw [eventually_nhdsWithin_iff] at hev
+  rw [Metric.eventually_nhds_iff] at hev
+  obtain ⟨ε, hε, hball⟩ := hev
+  have hε2 : (0 : ℝ) < ε / 2 := by linarith
+  have hc2 : (0 : ℝ) < c / 2 := by linarith
+  have hu_pos : (0 : ℝ) < min (c / 2) (ε / 2) := lt_min hc2 hε2
+  have huc : min (c / 2) (ε / 2) ≤ c / 2 := min_le_left _ _
+  have hue : min (c / 2) (ε / 2) < ε :=
+    lt_of_le_of_lt (min_le_right _ _) (by linarith)
+  set u := min (c / 2) (ε / 2) with hu
+  have hs0 : (0 : ℝ) ≤ c - u := by linarith
+  have hst : c - u ≤ t := by linarith
+  have hsc : c - u < c := by linarith
+  refine ⟨c - u, Set.mem_Icc.mpr ⟨hs0, hst⟩, hsc, ?_⟩
+  have hdist : dist (c - u) c < ε := by
+    have hdu : dist (c - u) c = u := by
+      rw [dist_eq_norm, show (c - u) - c = -u by ring, norm_neg,
+        Real.norm_eq_abs, abs_of_pos hu_pos]
+    rw [hdu]
+    exact hue
+  have hF := hball hdist (Set.mem_Icc.mpr ⟨hs0, hst⟩)
+  have hsub : (c - u) - c = -u := by ring
+  have hnorm : ‖(c - u) - c‖ = u := by
+    rw [hsub, norm_neg, Real.norm_eq_abs, abs_of_pos hu_pos]
+  rw [hnorm, hsub, smul_eq_mul] at hF
+  have hu_ne : u ≠ 0 := ne_of_gt hu_pos
+  have hX : ‖T (c - u) - T c - -u * f'‖ < u * (|f'| / 2) := by
+    have h := mul_lt_mul_of_pos_left hF hu_pos
+    rwa [← mul_assoc, mul_inv_cancel₀ hu_ne, one_mul] at h
+  have hfus : -u * f' = u * |f'| := by rw [habs]; ring
+  have hrhs : u * (|f'| / 2) = u * |f'| / 2 := by ring
+  rw [hfus, hrhs] at hX
+  have hle : -‖T (c - u) - T c - u * |f'|‖ ≤ T (c - u) - T c - u * |f'| := by
+    rw [Real.norm_eq_abs]
+    exact neg_abs_le _
+  have hw : (0 : ℝ) < u * |f'| := mul_pos hu_pos (by rw [habs]; linarith)
+  linarith
+
+/-- A positive within-derivative on `Set.Icc 0 t` at `c > 0` forces
+strictly smaller values immediately to the left of `c`. -/
+private lemma exists_left_lt_of_hasDerivWithinAt_pos_on_interval {T : ℝ → ℝ} {f' c t : ℝ}
+    (hT : HasDerivWithinAt T f' (Set.Icc 0 t) c) (hf' : 0 < f') (hc : 0 < c)
+    (hct : c ≤ t) :
+    ∃ s ∈ Set.Icc (0 : ℝ) t, s < c ∧ T s < T c := by
+  rw [hasDerivWithinAt_iff_tendsto] at hT
+  have habs : |f'| = f' := abs_of_pos hf'
+  have hK : (0 : ℝ) < |f'| / 2 := by
+    rw [habs]
+    linarith
+  have hev := hT.eventually (eventually_lt_nhds hK)
+  rw [eventually_nhdsWithin_iff] at hev
+  rw [Metric.eventually_nhds_iff] at hev
+  obtain ⟨ε, hε, hball⟩ := hev
+  have hε2 : (0 : ℝ) < ε / 2 := by linarith
+  have hc2 : (0 : ℝ) < c / 2 := by linarith
+  have hu_pos : (0 : ℝ) < min (c / 2) (ε / 2) := lt_min hc2 hε2
+  have huc : min (c / 2) (ε / 2) ≤ c / 2 := min_le_left _ _
+  have hue : min (c / 2) (ε / 2) < ε :=
+    lt_of_le_of_lt (min_le_right _ _) (by linarith)
+  set u := min (c / 2) (ε / 2) with hu
+  have hs0 : (0 : ℝ) ≤ c - u := by linarith
+  have hst : c - u ≤ t := by linarith
+  have hsc : c - u < c := by linarith
+  refine ⟨c - u, Set.mem_Icc.mpr ⟨hs0, hst⟩, hsc, ?_⟩
+  have hdist : dist (c - u) c < ε := by
+    have hdu : dist (c - u) c = u := by
+      rw [dist_eq_norm, show (c - u) - c = -u by ring, norm_neg,
+        Real.norm_eq_abs, abs_of_pos hu_pos]
+    rw [hdu]
+    exact hue
+  have hF := hball hdist (Set.mem_Icc.mpr ⟨hs0, hst⟩)
+  have hsub : (c - u) - c = -u := by ring
+  have hnorm : ‖(c - u) - c‖ = u := by
+    rw [hsub, norm_neg, Real.norm_eq_abs, abs_of_pos hu_pos]
+  rw [hnorm, hsub, smul_eq_mul] at hF
+  have hu_ne : u ≠ 0 := ne_of_gt hu_pos
+  have hX : ‖T (c - u) - T c - -u * f'‖ < u * (|f'| / 2) := by
+    have h := mul_lt_mul_of_pos_left hF hu_pos
+    rwa [← mul_assoc, mul_inv_cancel₀ hu_ne, one_mul] at h
+  have hfus : -u * f' = -(u * |f'|) := by rw [habs]; ring
+  have hrhs : u * (|f'| / 2) = u * |f'| / 2 := by ring
+  rw [hfus, hrhs] at hX
+  have hle : T (c - u) - T c - -(u * |f'|) ≤
+      ‖T (c - u) - T c - -(u * |f'|)‖ := by
+    rw [Real.norm_eq_abs]
+    exact le_abs_self _
+  have hw : (0 : ℝ) < u * |f'| := mul_pos hu_pos (by rw [habs]; linarith)
+  linarith
+
 /-- Equilibrium existence: for `G, H, B, Ta > 0` there is an
 equilibrium temperature in the open interval `(Ta, Ta + G / H)`. No
 uniqueness is claimed. -/
@@ -287,7 +386,7 @@ theorem arrhenius_equilibrium_exists {G H B Ta : ℝ} (hG : 0 < G)
   exact ⟨T, hTmem, hTeq⟩
 
 /-- Finite-horizon trapping: if `T` has within-derivative
-`arrheniusRate G H B Ta (T t) / C` on `Set.Ici 0` at every
+`arrheniusRate G H B Ta (T t) / C` on `Set.Icc 0 t` at every
 `s ∈ [0, t]`, with `C > 0`, then `T t` lies in `[lo, hi]` where
 `lo = min (T 0) Ta` and `hi = max (T 0) (Ta + G / H)`. This
 applies to any solution on the interval `[0, t]`, including a
@@ -297,11 +396,10 @@ lemma arrhenius_solution_trapped_on_interval {G H B Ta C : ℝ} (hG : 0 < G)
     (hH : 0 < H) (hB : 0 < B) (hTa : 0 < Ta) (hC : 0 < C)
     {T : ℝ → ℝ} {t : ℝ} (ht : 0 ≤ t)
     (hT : ∀ s : ℝ, s ∈ Set.Icc 0 t →
-      HasDerivWithinAt T (arrheniusRate G H B Ta (T s) / C) (Set.Ici 0) s) :
+      HasDerivWithinAt T (arrheniusRate G H B Ta (T s) / C) (Set.Icc 0 t) s) :
     T t ∈ Set.Icc (min (T 0) Ta) (max (T 0) (Ta + G / H)) := by
   have hcont : ContinuousOn T (Set.Icc 0 t) :=
-    fun x hx => (hT x hx).continuousWithinAt.mono_left
-      (nhdsWithin_mono x (Set.Icc_subset_Ici_self))
+    fun x hx => (hT x hx).continuousWithinAt
   have hne : (Set.Icc (0 : ℝ) t).Nonempty := Set.nonempty_Icc.mpr ht
   have hub : T t ≤ max (T 0) (Ta + G / H) := by
     by_contra hcon
@@ -323,7 +421,7 @@ lemma arrhenius_solution_trapped_on_interval {G H B Ta C : ℝ} (hG : 0 < G)
     have hf' : arrheniusRate G H B Ta (T c) / C < 0 :=
       div_neg_of_neg_of_pos hrate hC
     obtain ⟨s, hs_mem, hsc, hlt⟩ :=
-      exists_left_gt_of_hasDerivWithinAt_neg hderiv hf' hc_pos hc_mem.2
+      exists_left_gt_of_hasDerivWithinAt_neg_on_interval hderiv hf' hc_pos hc_mem.2
     have hle : T s ≤ T c := hc_max hs_mem
     linarith
   have hlb : min (T 0) Ta ≤ T t := by
@@ -345,7 +443,7 @@ lemma arrhenius_solution_trapped_on_interval {G H B Ta C : ℝ} (hG : 0 < G)
     have hderiv := hT c hc_mem
     have hf' : 0 < arrheniusRate G H B Ta (T c) / C := div_pos hrate hC
     obtain ⟨s, hs_mem, hsc, hlt⟩ :=
-      exists_left_lt_of_hasDerivWithinAt_pos hderiv hf' hc_pos hc_mem.2
+      exists_left_lt_of_hasDerivWithinAt_pos_on_interval hderiv hf' hc_pos hc_mem.2
     have hle : T c ≤ T s := hc_min hs_mem
     linarith
   exact Set.mem_Icc.mpr ⟨hlb, hub⟩
@@ -366,6 +464,6 @@ lemma arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
     {t : ℝ} (ht : 0 ≤ t) :
     T t ∈ Set.Icc (min (T 0) Ta) (max (T 0) (Ta + G / H)) := by
   exact arrhenius_solution_trapped_on_interval hG hH hB hTa hC ht
-    (fun s hs => hT s hs.1)
+    (fun s hs => (hT s hs.1).mono Set.Icc_subset_Ici_self)
 
 end Chemistry.CombustionAcoustics
