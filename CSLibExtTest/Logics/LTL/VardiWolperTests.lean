@@ -55,4 +55,13 @@ example :
               (SafetyExt.next (SafetyExt.prop (.atom 1))))).toLTL :=
   safety_general_buchi _
 
+
+
+/-- The bound also applies at a higher atom universe (`Formula Type`). -/
+example :
+    ∃ (S : Type) (_ : Finite S) (a : Automata.NA.Buchi S (Set Type)),
+      Automata.ωAcceptor.language a =
+          Word.language (fun s a => a ∈ s) (Formula.atom (ℕ : Type)) ∧
+        Nat.card S ≤ 2 ^ (2 * Tableau.formulaSize (Formula.atom (ℕ : Type))) :=
+  vardi_wolper _
 end Cslib.LTL.VardiWolperTests

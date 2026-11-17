@@ -35,7 +35,7 @@ namespace Cslib
 namespace LTL
 namespace Tableau
 
-variable {Atom : Type}
+variable {Atom : Type*}
 
 /-- The size of an LTL formula (the number of connective occurrences plus the
 number of atoms), an upper bound on the number of distinct subformulas. -/
@@ -111,7 +111,7 @@ and P. Wolper, "An automata-theoretic approach to automatic program
 verification", Proceedings of LICS 1986, 332-344. The concrete constant in
 the exponent is a property of this per-occurrence encoding; the source states
 the bound in asymptotic form. -/
-theorem vardi_wolper {Atom : Type} (φ : Formula Atom) :
+theorem vardi_wolper {Atom : Type*} (φ : Formula Atom) :
     ∃ (S : Type) (_ : Finite S) (a : Automata.NA.Buchi S (Set Atom)),
       Automata.ωAcceptor.language a = Word.language (fun s a => a ∈ s) φ ∧
         Nat.card S ≤ 2 ^ (2 * Tableau.formulaSize φ) :=
