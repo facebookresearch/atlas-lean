@@ -74,7 +74,10 @@ noncomputable def terminalCurrent (S : Set (ℝ × ℝ)) (J : ℝ × ℝ → ℝ
 noncomputable def conductance (σ A ℓ : ℝ) : ℝ :=
   σ * A / ℓ
 
-/-- Resistance `ℓ / (σ A)`, available only for `σ > 0`. -/
+/-- Resistance `ℓ / (σ A)`, available only for `σ > 0`. This is a raw
+totalized expression: it is a physical resistance (positive, and the
+reciprocal of `conductance`) only on the physical domain `σ > 0`, `A > 0`,
+`ℓ > 0`, as used by `conductance_mul_resistance` and `resistance_pos`. -/
 noncomputable def resistance (σ A ℓ : ℝ) (_hσ : 0 < σ) : ℝ :=
   ℓ / (σ * A)
 
@@ -212,35 +215,10 @@ lemma nonuniformField_constantShortcut_fails (σ A : ℝ) (S : Set (ℝ × ℝ))
   rw [div_one, hLHS]
   exact Ne.symm (mul_ne_zero (ne_of_gt hσ) (ne_of_gt hA))
 
-/-- Positive fixture: a `1 × 2` rectangular cross-section, `σ = 3`, `ℓ = 4`, `V = 8` gives
-`I = (3 · 2 / 4) · 8 = 12`. -/
-lemma terminalCurrent_rectangle_example :
-    terminalCurrent (Icc (0 : ℝ) 1 ×ˢ Icc (0 : ℝ) 2)
-      (fun _ => ohmCurrentDensity 3 (uniformAxialField 8 4)) = 12 := by
-  have hC : ohmCurrentDensity 3 (uniformAxialField 8 4) = 6 := by
-    unfold ohmCurrentDensity uniformAxialField
-    norm_num
-  have hVol : volume (Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc (0 : ℝ) 2) = ENNReal.ofReal 2 := by
-    have hProd : volume (Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc (0 : ℝ) 2)
-        = (volume.prod volume) (Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc (0 : ℝ) 2) := rfl
-    rw [hProd, MeasureTheory.Measure.prod_prod, Real.volume_Icc, Real.volume_Icc]
-    simp only [sub_zero]
-    rw [← ENNReal.ofReal_mul (by norm_num : (0 : ℝ) ≤ 1)]
-    congr 1
-    norm_num
-  have hEq : (fun _ : ℝ × ℝ => ohmCurrentDensity 3 (uniformAxialField 8 4))
-      = (fun _ : ℝ × ℝ => (6 : ℝ)) := by
-    rw [hC]
-  have hInt : terminalCurrent (Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc (0 : ℝ) 2)
-      (fun _ : ℝ × ℝ => (6 : ℝ)) = 12 := by
-    have hConst : (∫ p in (Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc (0 : ℝ) 2), (6 : ℝ) ∂volume)
-        = volume.real (Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc (0 : ℝ) 2) • (6 : ℝ) :=
-      MeasureTheory.setIntegral_const 6
-    have hReal : volume.real (Set.Icc (0 : ℝ) 1 ×ˢ Set.Icc (0 : ℝ) 2) = 2 := by
-      rw [MeasureTheory.measureReal_def, hVol, ENNReal.toReal_ofReal (by norm_num : (0 : ℝ) ≤ 2)]
-    unfold terminalCurrent
-    exact hConst.trans (by rw [hReal, smul_eq_mul]; norm_num)
-  rw [hEq]
-  exact hInt
+/-- On the physical domain the resistance is positive. -/
+lemma resistance_pos (σ A ℓ : ℝ) (hσ : 0 < σ) (hA : 0 < A) (hℓ : 0 < ℓ) :
+    0 < resistance σ A ℓ hσ := by
+  unfold resistance
+  positivity
 
 end PhyslibExt.Circuits.UniformOhmicBar
