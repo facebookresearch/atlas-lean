@@ -20,7 +20,7 @@ open MathlibExt.Biology.Biophysics.PharmacokineticObservation
 `D = 100`, `V = 10`, `k = 2`: each log observation is the exact
 linear form. -/
 example (j : Fin 3) :
-    Real.log (Real.exp (Real.log (100 / 10) - 2 * ![0, 1, 2] j + ![0, 1/10, -1/10] j)) =
+    Real.log ((100 / 10 : ℝ) * Real.exp (-2 * ![0, 1, 2] j) * Real.exp (![0, 1/10, -1/10] j)) =
       1 * Real.log (100 / 10) + (-![0, 1, 2] j) * 2 + ![0, 1/10, -1/10] j :=
   pk_log_law (by norm_num) (by norm_num) ![0, 1, 2] ![0, 1/10, -1/10] j
 

@@ -14,8 +14,8 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 /-!
 # Fixed PK log-observation law
 
-For known dose `D > 0` and volume `V > 0`, the log-concentration
-observation `Y j = exp (log (D / V) - k * t j + ε j)` has log exactly
+For known dose `D > 0` and volume `V > 0`, the concentration observation
+`Y j = (D / V) * exp (-k * t j) * exp (ε j)` has log exactly
 the linear form `log (D / V) + (-t j) * k + ε j`: the design row is
 `(1, -t j)` and the coefficient vector is `(log (D / V), k)`. This is
 the exact log law of the declared observation; additive concentration
@@ -31,19 +31,23 @@ open Real
 
 namespace MathlibExt.Biology.Biophysics.PharmacokineticObservation
 
-set_option linter.unusedVariables false in
-/-- **PK log-observation law.** For known `D > 0`, `V > 0`, the
-log-concentration observation
-`Y j = exp (log (D / V) - k * t j + ε j)` has log exactly the linear
-form `1 * log (D / V) + (-t j) * k + ε j`: the design row is
-`(1, -t j)` and the coefficient vector is `(log (D / V), k)`. This is
-the exact log law; additive concentration noise would not be additive
-log noise. -/
-theorem pk_log_law {D V k : ℝ} (hD : 0 < D) (hV : 0 < V) {n : ℕ}
+/-- **PK log-observation law (multiplicative form).** For known
+`D > 0`, `V > 0`, the concentration observation
+`Y j = (D / V) * exp (-k * t j) * exp (ε j)` (the bolus concentration
+times a log-additive error factor) has log exactly the linear form
+`1 * log (D / V) + (-t j) * k + ε j`: the design row is `(1, -t j)`
+and the coefficient vector is `(log (D / V), k)`. This is the exact
+log law; additive concentration noise would not be additive log
+noise. -/
+lemma pk_log_law {D V k : ℝ} (hD : 0 < D) (hV : 0 < V) {n : ℕ}
     (t ε : Fin n → ℝ) (j : Fin n) :
-    Real.log (Real.exp (Real.log (D / V) - k * t j + ε j)) =
+    Real.log ((D / V) * Real.exp (-k * t j) * Real.exp (ε j)) =
       1 * Real.log (D / V) + (-t j) * k + ε j := by
-  rw [Real.log_exp]
+  have hDV : D / V ≠ 0 := ne_of_gt (div_pos hD hV)
+  have h1 : Real.exp (-k * t j) ≠ 0 := (Real.exp_pos _).ne'
+  have h2 : Real.exp (ε j) ≠ 0 := (Real.exp_pos _).ne'
+  rw [Real.log_mul (mul_ne_zero hDV h1) h2, Real.log_mul hDV h1,
+    Real.log_exp, Real.log_exp]
   ring
 
 end MathlibExt.Biology.Biophysics.PharmacokineticObservation
