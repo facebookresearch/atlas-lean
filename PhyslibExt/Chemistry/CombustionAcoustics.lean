@@ -44,7 +44,8 @@ coefficients are model inputs; no empirical adequacy is claimed.
   minus algebraic damping), with its interval balance
   `acousticModeEnergy_sub_eq_integral`, the signed dissipation
   corollary `acousticModeEnergy_deriv_nonpos_of_no_heat`, and the
-  conserved case `hasDerivAt_acousticModeEnergy_conserved`.
+  zero-derivative case `hasDerivAt_acousticModeEnergy_conserved` and
+  genuine conservation `acousticModeEnergy_eq_of_conserved`.
 
 ## iii. Table of contents
 
@@ -532,9 +533,10 @@ lemma acousticModeEnergy_sub_eq_integral
       MeasureTheory.volume t0 t1 := hcont.intervalIntegrable
   exact (intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint).symm
 
-/-- With no heat release and no dissipation, the modal energy is
-conserved: its derivative is zero at every time satisfying the modal
-equations. -/
+/-- With no heat release and no dissipation, the modal energy has
+zero derivative at any single time satisfying the modal equations.
+Genuine conservation between two times is
+`acousticModeEnergy_eq_of_conserved`. -/
 lemma hasDerivAt_acousticModeEnergy_conserved
     {γ pbar ρ L : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0)
     (hL : L ≠ 0) {A B : ℝ → ℝ} {A' B' : ℝ} {t : ℝ}
@@ -552,5 +554,28 @@ lemma hasDerivAt_acousticModeEnergy_conserved
   rw [e] at h
   exact h
 
+/-- Genuine conservation: if the modal equations with no heat
+release (`H = 0`) and no damping (`r = 0`) hold at every time, the
+modal energy takes the same value at any two times. -/
+theorem acousticModeEnergy_eq_of_conserved
+    {γ pbar ρ L : ℝ} (hγ : 0 < γ) (hpbar : 0 < pbar)
+    (hL : 0 < L) {A B A' B' : ℝ → ℝ}
+    (hA : ∀ t : ℝ, HasDerivAt A (A' t) t)
+    (hB : ∀ t : ℝ, HasDerivAt B (B' t) t)
+    (hA' : ∀ t : ℝ, A' t = -γ * pbar * (Real.pi / L) * B t)
+    (hB' : ∀ t : ℝ, ρ * B' t = (Real.pi / L) * A t)
+    (t0 t1 : ℝ) :
+    acousticModeEnergy γ pbar ρ L (A t1) (B t1) =
+      acousticModeEnergy γ pbar ρ L (A t0) (B t0) := by
+  have h := acousticModeEnergy_sub_eq_integral (r := 0) (H := 0)
+    hγ hpbar hL t0 t1
+    (fun t _ => hA t) (fun t _ => hB t)
+    (fun t _ => by rw [hA' t]; ring)
+    (fun t _ => by rw [hB' t]; ring)
+  have hzero : (∫ t in t0..t1,
+      (L * (γ - 1) * A t * 0 / (2 * γ * pbar) -
+        0 * L * B t ^ 2 / 2)) = 0 := by simp
+  rw [hzero] at h
+  exact sub_eq_zero.mp h
 
 end Chemistry.CombustionAcoustics

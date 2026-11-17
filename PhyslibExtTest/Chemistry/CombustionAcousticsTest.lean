@@ -10,6 +10,7 @@ module
 import PhyslibExt.Chemistry.CombustionAcoustics
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 
 /-!
 # Arrhenius equilibrium checks
@@ -257,3 +258,58 @@ example :
     (fun t _ => hasDerivAt_const t 1) (fun t _ => hasDerivAt_const t 1)
     (fun t _ => by field_simp; ring) (fun t _ => by field_simp; ring)
   simpa using h
+
+/-- Genuine conservation on a nonconstant trajectory: with
+`A(s) = cos(√2 s)` and `B(s) = (√2/2) sin(√2 s)`, the modal
+equations `A' = -2B`, `B' = A` hold at every time for
+`γ = 2`, `pbar = ρ = 1`, `L = π`, so the energy at `s = 1`
+equals the energy at `s = 0`. -/
+example :
+    Chemistry.CombustionAcoustics.acousticModeEnergy 2 1 1 Real.pi
+        (Real.cos (Real.sqrt 2 * 1))
+        ((Real.sqrt 2 / 2) * Real.sin (Real.sqrt 2 * 1)) =
+      Chemistry.CombustionAcoustics.acousticModeEnergy 2 1 1 Real.pi
+        (Real.cos (Real.sqrt 2 * 0))
+        ((Real.sqrt 2 / 2) * Real.sin (Real.sqrt 2 * 0)) := by
+  have hA : ∀ t : ℝ, HasDerivAt (fun s : ℝ => Real.cos (Real.sqrt 2 * s))
+      (-Real.sqrt 2 * Real.sin (Real.sqrt 2 * t)) t := fun t => by
+    have h := ((hasDerivAt_id t).const_mul (Real.sqrt 2)).cos
+    simpa [mul_comm] using h
+  have hB : ∀ t : ℝ, HasDerivAt
+      (fun s : ℝ => (Real.sqrt 2 / 2) * Real.sin (Real.sqrt 2 * s))
+      (Real.cos (Real.sqrt 2 * t)) t := fun t => by
+    have h := (((hasDerivAt_id t).const_mul (Real.sqrt 2)).sin).const_mul
+      (Real.sqrt 2 / 2)
+    convert h using 1
+    · first
+      | (funext s; simp)
+      | (simp only [id_eq]
+         rw [show Real.sqrt 2 / 2 * (Real.cos (Real.sqrt 2 * t) *
+              (Real.sqrt 2 * 1))
+            = Real.cos (Real.sqrt 2 * t) * ((Real.sqrt 2 * Real.sqrt 2) / 2)
+            by ring,
+          Real.mul_self_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
+         norm_num)
+    · first
+      | (funext s; simp)
+      | (simp only [id_eq]
+         rw [show Real.sqrt 2 / 2 * (Real.cos (Real.sqrt 2 * t) *
+              (Real.sqrt 2 * 1))
+            = Real.cos (Real.sqrt 2 * t) * ((Real.sqrt 2 * Real.sqrt 2) / 2)
+            by ring,
+          Real.mul_self_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
+         norm_num)
+  exact Chemistry.CombustionAcoustics.acousticModeEnergy_eq_of_conserved
+    (γ := 2) (pbar := 1) (ρ := 1) (L := Real.pi)
+    (by norm_num) (by norm_num) Real.pi_pos hA hB
+    (fun t => by
+      show -Real.sqrt 2 * Real.sin (Real.sqrt 2 * t) =
+        -2 * 1 * (Real.pi / Real.pi) * ((Real.sqrt 2 / 2) *
+          Real.sin (Real.sqrt 2 * t))
+      rw [div_self Real.pi_ne_zero]
+      ring)
+    (fun t => by
+      show (1 : ℝ) * Real.cos (Real.sqrt 2 * t) =
+        (Real.pi / Real.pi) * Real.cos (Real.sqrt 2 * t)
+      rw [div_self Real.pi_ne_zero])
+    0 1
