@@ -31,6 +31,6 @@ example : ((-2 : ℝ) * 5 + 3 + 1 - 3) / (-2) = 5 + 1 / (-2) :=
 /-- Per-visit application on a two-visit design. -/
 example (j : Fin 2) :
     ((4:ℝ) * ![5, 7] j + 1 + ![0, 2] j - 1) / 4 = ![5, 7] j + ![0, 2] j / 4 :=
-  sensor_calibrate_apply (g := 4) (offset := 1) (by norm_num) ![5, 7] ![0, 2] j
+  sensor_calibrate (g := 4) (offset := 1) (by norm_num)
 
 end PhyslibExtTest.BiomedicalInstrumentation.CalibrationObservation

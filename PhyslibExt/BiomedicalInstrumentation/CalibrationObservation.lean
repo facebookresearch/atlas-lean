@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.Basic.Real.Basic
+public import PhyslibExt.EarthScience.Calibration
 
 /-!
 # Sensor calibration observation
@@ -25,7 +26,9 @@ an unknown or zero gain confounds amplitude.
 ## ii. Key results
 
 * `sensor_calibrate`: the pointwise calibration identity.
-* `sensor_calibrate_apply`: the identity at every visit of a design.
+* The per-visit form is ordinary specialization of `sensor_calibrate`.
+  The pointwise core is `EarthScience.calibration_estimator_error`,
+  reused rather than duplicated.
 
 ## iii. Table of contents
 
@@ -52,15 +55,9 @@ scaled noise), not the hidden state behind `H`. Zero gain is
 excluded: an unknown or zero gain confounds amplitude. -/
 lemma sensor_calibrate {g offset H ε : ℝ} (hg : g ≠ 0) :
     (g * H + offset + ε - offset) / g = H + ε / g := by
-  have hcancel : g * H / g = H := mul_div_cancel_left₀ H hg
-  rw [add_right_comm, add_sub_cancel_right, add_div, hcancel]
+  have h := EarthScience.calibration_estimator_error hg (x := H) (ε := ε)
+    (b := offset) (a := g)
+  linarith
 
-/-- The calibrated value at every visit of a fixed design: for
-observations `y j = g * H j + offset + ε j`, `(y j - offset) / g =
-H j + ε j / g` for all `j`. -/
-lemma sensor_calibrate_apply {ι : Type*} {g offset : ℝ} (hg : g ≠ 0)
-    (H ε : ι → ℝ) (j : ι) :
-    (g * H j + offset + ε j - offset) / g = H j + ε j / g := by
-  exact sensor_calibrate hg
 
 end PhyslibExt.BiomedicalInstrumentation.CalibrationObservation
