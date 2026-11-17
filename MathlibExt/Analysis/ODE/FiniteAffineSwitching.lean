@@ -44,11 +44,12 @@ open MeasureTheory Set
 namespace MathlibExt.Analysis.ODE.FiniteAffineSwitching
 
 /-- A continuous, piecewise-differentiable trajectory of `x' = A x + b` through `x₀` for the
-partition `τ`: it starts at `x₀`, is continuous on the whole horizon (no state reset at switch
-times), and solves the ODE at every interior point of every piece. -/
+partition `τ`: the switch times are strictly increasing, the trajectory starts at `x₀`, is
+continuous on the whole horizon (no state reset at switch times), and solves the ODE at every
+interior point of every piece. -/
 def IsSwitchedTrajectory {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {n : ℕ}
     (A : E →L[ℝ] E) (b : ℝ → E) (τ : Fin (n + 1) → ℝ) (x₀ : E) (x : ℝ → E) : Prop :=
-  x (τ 0) = x₀ ∧ ContinuousOn x (Icc (τ 0) (τ (Fin.last n))) ∧
+  StrictMono τ ∧ x (τ 0) = x₀ ∧ ContinuousOn x (Icc (τ 0) (τ (Fin.last n))) ∧
     ∀ k : Fin n, ∀ t ∈ Ioo (τ k.castSucc) (τ k.succ), HasDerivAt x (A (x t) + b t) t
 
 open Filter Topology
@@ -517,7 +518,7 @@ private lemma swX_unique_piece {E : Type*} [NormedAddCommGroup E] [NormedSpace �
     EqOn y (swX A τ hτ g hg x₀) (Icc (τ k.castSucc) (τ k.succ)) := by
   have hcd : τ k.castSucc < τ k.succ := hτ (show k.castSucc < k.succ from Fin.castSucc_lt_succ)
   have hyc : ContinuousOn y (Icc (τ k.castSucc) (τ k.succ)) := by
-    apply hy.2.1.mono
+    apply hy.2.2.1.mono
     apply Icc_subset_Icc
     · exact hτ.monotone (Fin.zero_le _)
     · exact hτ.monotone (le_last' _)
@@ -531,7 +532,7 @@ private lemma swX_unique_piece {E : Type*} [NormedAddCommGroup E] [NormedSpace �
       HasDerivAt (fun s => y s - swX A τ hτ g hg x₀ s)
         (A (y t - swX A τ hτ g hg x₀ t)) t := by
     intro t ht
-    have hy' := hy.2.2 k t ht
+    have hy' := hy.2.2.2 k t ht
     have hx' : HasDerivAt (swX A τ hτ g hg x₀)
         (A (swX A τ hτ g hg x₀ t) + b t) t := by
       have hwithin := swX_derivWithin_piece A τ hτ g hg x₀ k t
@@ -713,7 +714,7 @@ private lemma swX_unique_prefix {E : Type*} [NormedAddCommGroup E] [NormedSpace 
     have hteq : t = τ 0 := le_antisymm ht.2 ht.1
     subst hteq
     show y (τ 0) = swX A τ hτ g hg x₀ (τ 0)
-    rw [hy.1, swX_init A τ hτ g hg x₀]
+    rw [hy.2.1, swX_init A τ hτ g hg x₀]
   · intro k ih t ht
     by_cases hle : t ≤ τ k.castSucc
     · exact ih ⟨ht.1, hle⟩
@@ -747,7 +748,7 @@ theorem switchedTrajectory_exists_unique {E : Type*} [NormedAddCommGroup E] [Nor
       (∀ t ∈ Icc (τ 0) (τ (Fin.last n)), x t = x₀ + ∫ s in τ 0..t, (A (x s) + b s)) ∧
       ∀ y : ℝ → E, IsSwitchedTrajectory A b τ x₀ y → EqOn y x (Icc (τ 0) (τ (Fin.last n))) := by
   refine ⟨swX A τ hτ g hg x₀, ?_, ?_, ?_, ?_, ?_, ?_⟩
-  · refine ⟨swX_init A τ hτ g hg x₀, ?_, ?_⟩
+  · refine ⟨hτ, swX_init A τ hτ g hg x₀, ?_, ?_⟩
     · exact swX_cont_prefix A τ hτ g hg x₀ (Fin.last n)
     · intro k t ht
       have hwithin := swX_derivWithin_piece A τ hτ g hg x₀ k t
@@ -791,6 +792,16 @@ private lemma times_two : twoLevelTimes 2 = (2 : ℝ) := by
   simp [twoLevelTimes, Matrix.cons_val_two, Matrix.head_cons, Matrix.tail_cons]
 
 private lemma last_two : Fin.last 2 = (2 : Fin 3) := by decide
+
+private lemma twoLevelTimes_strictMono : StrictMono twoLevelTimes := by
+  refine Fin.strictMono_iff_lt_succ.mpr fun i => ?_
+  fin_cases i
+  · change twoLevelTimes 0 < twoLevelTimes 1
+    rw [times_zero, times_one]
+    norm_num
+  · change twoLevelTimes 1 < twoLevelTimes 2
+    rw [times_one, times_two]
+    norm_num
 
 private lemma expneg_hasDerivAt (t : ℝ) :
     HasDerivAt (fun s : ℝ => Real.exp (-s)) (Real.exp (-t) * -1) t :=
@@ -880,7 +891,7 @@ private lemma twoLevel_cont : ContinuousOn twoLevelTrajectory (Icc (0:ℝ) 2) :=
 /-- The two-level fixture is a continuous piecewise solution through `0`. -/
 theorem twoLevel_isSwitchedTrajectory :
     IsSwitchedTrajectory twoLevelA twoLevelForcing twoLevelTimes 0 twoLevelTrajectory := by
-  refine ⟨?_, ?_, ?_⟩
+  refine ⟨twoLevelTimes_strictMono, ?_, ?_, ?_⟩
   · have h0 : twoLevelTimes 0 = (0:ℝ) := times_zero
     rw [h0]
     show twoLevelTrajectory 0 = 0
@@ -1048,7 +1059,7 @@ theorem reset_not_continuousOn :
     have hge := Real.add_one_le_exp (1 : ℝ)
     rw [hexp1'] at hge
     norm_num at hge
-  exact ⟨hode, hnc, fun hswitch => hnc hswitch.2.1⟩
+  exact ⟨hode, hnc, fun hswitch => hnc hswitch.2.2.1⟩
 
 /-- The reset violates the integral equation across the switch boundary. -/
 theorem reset_not_integral_equation :
