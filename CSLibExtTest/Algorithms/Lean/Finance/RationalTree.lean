@@ -29,11 +29,12 @@ def gW : List Bool → Rat
   | [_] => 10
   | _ :: _ :: _ => 1
 
-/-- Exercise payoff by history length: `5` at the root, `1` elsewhere. -/
+/-- Exercise payoff by history length: `1` at the root and one step out,
+`10` thereafter. -/
 def gN : List Bool → Rat
-  | [] => 5
+  | [] => 1
   | [_] => 1
-  | _ :: _ :: _ => 1
+  | _ :: _ :: _ => 10
 
 /-- All-date early exercise: with two periods left, exercising one step out
 dominates, so the root value is `10`. -/
@@ -69,8 +70,9 @@ theorem ruleValue_gW_european :
     gW, Bool.false_eq_true, ite_false]
   norm_num
 
-/-- No early exercise: immediate exercise at the root dominates, value `5`. -/
-theorem snellRat_gN_noEarlyExercise : snellRat (1 / 2) 1 gN 2 [] = 5 := by
+/-- No early exercise: continuation dominates at both pre-terminal dates,
+value `10`. -/
+theorem snellRat_gN_noEarlyExercise : snellRat (1 / 2) 1 gN 2 [] = 10 := by
   decide +kernel
 
 /-- Horizon `0` returns the exercise payoff, here `10`. -/
