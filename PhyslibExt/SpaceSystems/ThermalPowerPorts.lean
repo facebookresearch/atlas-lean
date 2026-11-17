@@ -9,6 +9,7 @@ module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import Mathlib.Topology.MetricSpace.Lipschitz
 import MathlibExt.Analysis.ODE.MaximalSolution
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
 import Mathlib.Tactic.FieldSimp
@@ -743,7 +744,7 @@ original field (`HasDerivAt T (radiatorRate ... (T t)) t`).
 Existence uses the global existence theorem for globally
 Lipschitz fields (`ode_global_exists_of_global_lipschitz`) with
 the Lipschitz constant from `clippedRadiatorRate_lipschitz`. -/
-theorem radiator_solution_exists_trapped {C Krad Q Tmin Tmax T0 : ℝ}
+lemma radiator_solution_exists_trapped {C Krad Q Tmin Tmax T0 : ℝ}
     (hC : 0 < C) (hK : 0 < Krad) (hmin : 0 ≤ Tmin) (hmax : Tmin ≤ Tmax)
     (hlo : 0 ≤ Q - Krad * Tmin ^ 4) (hhi : Q - Krad * Tmax ^ 4 ≤ 0)
     (h0 : T0 ∈ Set.Icc Tmin Tmax) :
