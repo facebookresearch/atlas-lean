@@ -9,6 +9,7 @@ module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+public import MathlibExt.Analysis.ODE.MaximalSolution
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
@@ -37,6 +38,10 @@ original field.
 - `ThermalPowerPorts.radiator_solution_trapped`: forward solutions
   with `HasDerivWithinAt` on `Set.Ici 0` starting in the box stay
   in the box for all `t ≥ 0`.
+- `ThermalPowerPorts.radiator_solution_exists_trapped`: for every
+  initial temperature in the box, the clipped field's global
+  solution (global existence for globally Lipschitz fields) stays
+  in the box for `t ≥ 0` and there solves the original field.
 
 ## iii. Table of contents
 
@@ -473,7 +478,7 @@ private lemma ici_mem_nhds {c : ℝ} (hc : 0 < c) : Set.Ici 0 ∈ nhds c :=
 private lemma exists_last_time_le {f : ℝ → ℝ} {B t : ℝ} (ht : 0 ≤ t)
     (hB0 : f 0 ≤ B) (hcont : ∀ x ∈ Set.Icc 0 t, ContinuousWithinAt f (Set.Ici 0) x) :
     ∃ s0 ∈ Set.Icc 0 t, f s0 ≤ B ∧ (∀ u ∈ Set.Icc 0 t, s0 < u → B < f u) ∧
-      (s0 < t → f s0 = B) := by
+    (s0 < t → f s0 = B) := by
   set G : Set ℝ := {s | s ∈ Set.Icc 0 t ∧ f s ≤ B} with hG
   have memG : ∀ {s}, s ∈ G ↔ s ∈ Set.Icc 0 t ∧ f s ≤ B := fun {s} => Iff.rfl
   have h0mem : 0 ∈ G := memG.mpr ⟨⟨le_refl 0, ht⟩, hB0⟩
@@ -555,7 +560,7 @@ private lemma exists_last_time_le {f : ℝ → ℝ} {B t : ℝ} (ht : 0 ≤ t)
 private lemma exists_last_time_ge {T : ℝ → ℝ} {B t : ℝ} (ht : 0 ≤ t)
     (hB0 : B ≤ T 0) (hcont : ∀ x ∈ Set.Icc 0 t, ContinuousWithinAt T (Set.Ici 0) x) :
     ∃ s0 ∈ Set.Icc 0 t, B ≤ T s0 ∧ (∀ u ∈ Set.Icc 0 t, s0 < u → T u < B) ∧
-      (s0 < t → T s0 = B) := by
+    (s0 < t → T s0 = B) := by
   have hcont' : ∀ x ∈ Set.Icc 0 t, ContinuousWithinAt (-T) (Set.Ici 0) x :=
     fun x hx => (hcont x hx).neg
   have hB0' : (-T) 0 ≤ -B := by
@@ -838,5 +843,159 @@ theorem radiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
       rw [hs0eq'] at hcEq
       linarith [hcEq, htt, hpos]
   exact ⟨hlower, hupper⟩
+
+/-- Box trapping for a solution of the CLIPPED field: if `T` has
+within-derivative `clippedRadiatorRate C Krad Q Tmin Tmax (T s)` on
+`Set.Ici 0` at every `s ≥ 0`, with the same inward signs, and
+`T 0 ∈ [Tmin, Tmax]`, then `T t ∈ [Tmin, Tmax]` for every `t ≥ 0`.
+On the box the clipped and physical rates agree, so such a
+trajectory also solves the original field there. -/
+theorem clippedRadiator_solution_trapped {C Krad Q Tmin Tmax : ℝ}
+    (hC : 0 < C) (hK : 0 < Krad) (hmin : 0 ≤ Tmin) (hmax : Tmin ≤ Tmax)
+    (hlo : 0 ≤ Q - Krad * Tmin ^ 4) (hhi : Q - Krad * Tmax ^ 4 ≤ 0)
+    {T : ℝ → ℝ}
+    (hT : ∀ s : ℝ, 0 ≤ s →
+      HasDerivWithinAt T (clippedRadiatorRate C Krad Q Tmin Tmax (T s)) (Set.Ici 0) s)
+    (h0 : T 0 ∈ Set.Icc Tmin Tmax) {t : ℝ} (ht : 0 ≤ t) :
+    T t ∈ Set.Icc Tmin Tmax := by
+  have _ := hK
+  have _ := hmin
+  have h0le : Tmin ≤ T 0 ∧ T 0 ≤ Tmax := h0
+  have hcont : ∀ x ∈ Set.Icc 0 t, ContinuousWithinAt T (Set.Ici 0) x := by
+    intro x hx
+    exact (hT x hx.1).continuousWithinAt
+  have hcontOn : ∀ a b : ℝ, 0 ≤ a → ContinuousOn T (Set.Icc a b) := by
+    intro a b ha x hx
+    have hx0 : 0 ≤ x := le_trans ha hx.1
+    have hcw : Filter.Tendsto T (nhdsWithin x (Set.Ici 0)) (nhds (T x)) :=
+      (hT x hx0).continuousWithinAt
+    have hsub : Set.Icc a b ⊆ Set.Ici 0 := fun y hy => le_trans ha hy.1
+    exact hcw.mono_left (nhdsWithin_mono x hsub)
+  have hderivAt : ∀ x : ℝ, 0 < x →
+      HasDerivAt T (clippedRadiatorRate C Krad Q Tmin Tmax (T x)) x := by
+    intro x hx
+    exact (hT x (le_of_lt hx)).hasDerivAt (ici_mem_nhds hx)
+  have hupper : T t ≤ Tmax := by
+    by_contra hcon
+    have htt : Tmax < T t := lt_of_not_ge hcon
+    obtain ⟨s0, hs0mem, hs0le, hs0gt, hs0eq⟩ :=
+      exists_last_time_le ht h0le.2 hcont
+    have hs0lt : s0 < t := by
+      have hne : s0 ≠ t := by
+        intro hcon2
+        rw [hcon2] at hs0le
+        linarith [htt]
+      exact lt_of_le_of_ne hs0mem.2 hne
+    have hs0eq' : T s0 = Tmax := hs0eq hs0lt
+    obtain ⟨c, hcIoo, hcEq0⟩ := mvt hs0lt (hcontOn s0 t hs0mem.1)
+      (fun x hx => hderivAt x (lt_of_le_of_lt hs0mem.1 hx.1))
+    have hcEq : T t - T s0 = (t - s0) * clippedRadiatorRate C Krad Q Tmin Tmax (T c) := hcEq0
+    have hcIcc : c ∈ Set.Icc 0 t :=
+      ⟨le_trans hs0mem.1 (le_of_lt hcIoo.1), le_of_lt hcIoo.2⟩
+    have hTc : Tmax < T c := hs0gt c hcIcc hcIoo.1
+    have hclip : min (max (T c) Tmin) Tmax = Tmax := by
+      rw [max_eq_left (le_trans hmax (le_of_lt hTc)), min_eq_right (le_of_lt hTc)]
+    have hrate : clippedRadiatorRate C Krad Q Tmin Tmax (T c) ≤ 0 := by
+      unfold clippedRadiatorRate
+      rw [hclip]
+      exact radiatorRate_nonpos_at_max hC hhi
+    have hnonpos : (t - s0) * clippedRadiatorRate C Krad Q Tmin Tmax (T c) ≤ 0 :=
+      mul_nonpos_of_nonneg_of_nonpos (le_of_lt (sub_pos.mpr hs0lt)) hrate
+    rw [hs0eq'] at hcEq
+    linarith [hcEq, htt, hnonpos]
+  have hlower : Tmin ≤ T t := by
+    by_contra hcon
+    have htt : T t < Tmin := lt_of_not_ge hcon
+    obtain ⟨s0, hs0mem, hs0le, hs0gt, hs0eq⟩ :=
+      exists_last_time_ge ht h0le.1 hcont
+    have hs0lt : s0 < t := by
+      have hne : s0 ≠ t := by
+        intro hcon2
+        rw [hcon2] at hs0le
+        linarith [htt]
+      exact lt_of_le_of_ne hs0mem.2 hne
+    have hs0eq' : T s0 = Tmin := hs0eq hs0lt
+    obtain ⟨c, hcIoo, hcEq0⟩ := mvt hs0lt (hcontOn s0 t hs0mem.1)
+      (fun x hx => hderivAt x (lt_of_le_of_lt hs0mem.1 hx.1))
+    have hcEq : T t - T s0 = (t - s0) * clippedRadiatorRate C Krad Q Tmin Tmax (T c) := hcEq0
+    have hcIcc : c ∈ Set.Icc 0 t :=
+      ⟨le_trans hs0mem.1 (le_of_lt hcIoo.1), le_of_lt hcIoo.2⟩
+    have hTc : T c < Tmin := hs0gt c hcIcc hcIoo.1
+    have hclip : min (max (T c) Tmin) Tmax = Tmin := by
+      rw [max_eq_right (le_of_lt hTc), min_eq_left hmax]
+    have hrate : 0 ≤ clippedRadiatorRate C Krad Q Tmin Tmax (T c) := by
+      unfold clippedRadiatorRate
+      rw [hclip]
+      exact radiatorRate_nonneg_at_min hC hlo
+    have hnonneg : 0 ≤ (t - s0) * clippedRadiatorRate C Krad Q Tmin Tmax (T c) :=
+      mul_nonneg (le_of_lt (sub_pos.mpr hs0lt)) hrate
+    rw [hs0eq'] at hcEq
+    linarith [hcEq, htt, hnonneg]
+  exact ⟨hlower, hupper⟩
+
+/-- On the box, a clipped-field solution has the physical rate as
+its within-derivative: the trapped trajectory solves the original
+field. -/
+lemma clippedRadiator_hasDerivWithinAt {C Krad Q Tmin Tmax : ℝ}
+    {T : ℝ → ℝ} {s : ℝ}
+    (hT : HasDerivWithinAt T (clippedRadiatorRate C Krad Q Tmin Tmax (T s)) (Set.Ici 0) s)
+    (hmem : T s ∈ Set.Icc Tmin Tmax) :
+    HasDerivWithinAt T (radiatorRate C Krad Q (T s)) (Set.Ici 0) s := by
+  rw [clippedRadiatorRate_eq_of_mem hmem] at hT
+  exact hT
+
+private lemma ode_global_exists_of_global_lipschitz
+    (v : ℝ → ℝ) (K : NNReal) (hlip : LipschitzWith K v) (x0 : ℝ) :
+    ∃ T : ℝ → ℝ, T 0 = x0 ∧ ∀ t : ℝ, HasDerivAt T (v (T t)) t := by
+  obtain ⟨T, hT, -⟩ :=
+    MathlibExt.Analysis.ODE.MaximalSolutionWanted.ode_global_exists_of_global_lipschitz
+      (fun _ x => v x) 0 x0 K
+      (hlip.continuous.comp continuous_snd) (fun _ => hlip)
+  exact ⟨T, hT.1, hT.2⟩
+
+/-- Existence of the trapped physical solution: for every
+`T0 ∈ [Tmin, Tmax]` there is a global trajectory `T` with
+`T 0 = T0`, solving the clipped field everywhere
+(`HasDerivAt T (clippedRadiatorRate ... (T t)) t` for all `t`),
+staying in the box for all `t ≥ 0`, and there solving the
+original field (`HasDerivAt T (radiatorRate ... (T t)) t`).
+Existence uses the global existence theorem for globally
+Lipschitz fields (`ode_global_exists_of_global_lipschitz`) with
+the Lipschitz constant from `clippedRadiatorRate_lipschitz`. -/
+theorem radiator_solution_exists_trapped {C Krad Q Tmin Tmax T0 : ℝ}
+    (hC : 0 < C) (hK : 0 < Krad) (hmin : 0 ≤ Tmin) (hmax : Tmin ≤ Tmax)
+    (hlo : 0 ≤ Q - Krad * Tmin ^ 4) (hhi : Q - Krad * Tmax ^ 4 ≤ 0)
+    (h0 : T0 ∈ Set.Icc Tmin Tmax) :
+    ∃ T : ℝ → ℝ, T 0 = T0 ∧
+      (∀ t : ℝ, HasDerivAt T (clippedRadiatorRate C Krad Q Tmin Tmax (T t)) t) ∧
+      (∀ t : ℝ, 0 ≤ t → T t ∈ Set.Icc Tmin Tmax ∧
+        HasDerivAt T (radiatorRate C Krad Q (T t)) t) := by
+  have hKnn : 0 ≤ Krad * (4 * Tmax ^ 3) / C := by
+    have hT0 : (0 : ℝ) ≤ Tmax := le_trans hmin hmax
+    have h3 : (0 : ℝ) ≤ Tmax ^ 3 := pow_nonneg hT0 3
+    have h4 : (0 : ℝ) ≤ 4 * Tmax ^ 3 := by linarith
+    exact div_nonneg (mul_nonneg (le_of_lt hK) h4) (le_of_lt hC)
+  have hlip : LipschitzWith ⟨Krad * (4 * Tmax ^ 3) / C, hKnn⟩
+      (clippedRadiatorRate C Krad Q Tmin Tmax) := by
+    apply LipschitzWith.of_dist_le_mul
+    intro a b
+    rw [Real.dist_eq, Real.dist_eq]
+    exact clippedRadiatorRate_lipschitz hC hK hmin hmax a b
+  obtain ⟨T, hT0, hT⟩ :=
+    ode_global_exists_of_global_lipschitz _ _ hlip T0
+  refine ⟨T, hT0, hT, fun t ht => ?_⟩
+  have hTwithin : ∀ s : ℝ, 0 ≤ s →
+      HasDerivWithinAt T (clippedRadiatorRate C Krad Q Tmin Tmax (T s)) (Set.Ici 0) s :=
+    fun s _ => (hT s).hasDerivWithinAt
+  have h0T : T 0 ∈ Set.Icc Tmin Tmax := by
+    rw [hT0]
+    exact h0
+  have hmem : T t ∈ Set.Icc Tmin Tmax :=
+    clippedRadiator_solution_trapped hC hK hmin hmax hlo hhi hTwithin h0T ht
+  have hderiv : HasDerivAt T (radiatorRate C Krad Q (T t)) t := by
+    have h := hT t
+    rw [clippedRadiatorRate_eq_of_mem hmem] at h
+    exact h
+  exact ⟨hmem, hderiv⟩
 
 end ThermalPowerPorts
