@@ -10,6 +10,7 @@ module
 
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.MeasureTheory.Measure.Prod
+public import MathlibExt.Probability.Statistics.Identifiability
 
 /-!
 # Epidemic reporting law
@@ -42,29 +43,20 @@ lemma epi_intensity_background_only {beta background N a b : ℝ}
       background * (b - a) := by
   rw [zero_mul, zero_add]
 
-/-- **Same intensity, same reporting law.** For any reporting-law
-constructor `L` from an intensity value to a law (a measure), two
-models with the same intensity have the same reporting law; hence
-an estimand that differs between them is not identified by the
-reporting law. This is the nonidentification content of the
-`rho = 0` background-only reduction: epidemic-rate differences that
-do not change the intensity are invisible to the law. -/
-lemma epi_same_intensity_same_law {ι : Type*} [MeasurableSpace ι] (L : ℝ → Measure ι)
-    {x y : ℝ} (h : x = y) : L x = L y := by
-  rw [h]
-
-#print axioms epi_intensity_background_only
-#print axioms epi_same_intensity_same_law
-/-- **Nonidentification at zero reporting.** Two epidemic models
-with different rates/trajectories (`beta1, S1, I1` vs `beta2, S2,
-I2`) but the same background and window have the same `rho = 0`
-intensity, hence the same reporting law under any law constructor:
-their rate difference is invisible to the law. -/
-lemma epi_nonidentified_at_zero_reporting {ι : Type*} [MeasurableSpace ι]
-    (L : ℝ → Measure ι) {beta1 beta2 background N a b : ℝ}
-    {S1 I1 S2 I2 : ℝ → ℝ} :
-    L ((0 : ℝ) * (∫ t in a..b, beta1 * S1 t * I1 t / N) + background * (b - a)) =
-      L ((0 : ℝ) * (∫ t in a..b, beta2 * S2 t * I2 t / N) + background * (b - a)) := by
-  rw [epi_intensity_background_only, epi_intensity_background_only]
+/-- **Nonidentification at zero reporting.** Let the model be a
+rate `beta` with a fixed background/window intensity map, the
+reporting law `fun beta => L (background * (b - a))` (the `rho = 0`
+law, independent of `beta`), and the estimand `tau beta = beta`.
+Then the estimand is not identified by the reporting law: the two
+distinct rates `0` and `1` have the same law but different
+estimands. -/
+lemma epi_nonidentified_at_zero_reporting {ι : Type*} [MeasurableSpace ι] (L : ℝ → Measure ι) {background a b : ℝ} :
+    ¬ MathlibExt.Probability.Statistics.IsIdentifiedBy
+      (fun beta : ℝ => L ((0 : ℝ) * beta + background * (b - a)))
+      (fun beta : ℝ => beta) := by
+  apply MathlibExt.Probability.Statistics.not_isIdentifiedBy_of_eq_of_ne
+    (θ := (0 : ℝ)) (θ' := (1 : ℝ))
+  · simp
+  · norm_num
 
 end MathlibExt.Biology.Epidemiology.IncidenceObservation.Law

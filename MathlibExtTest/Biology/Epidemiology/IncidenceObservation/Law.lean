@@ -26,7 +26,13 @@ example {S I : ℝ → ℝ} :
 (here both `background * width = 0.1 * 2`) give the same law under
 any law constructor `L`. -/
 example (L : ℝ → MeasureTheory.Measure ℕ) :
-    L ((0:ℝ) * 5 + (1/10) * (2 - 0)) = L ((0:ℝ) * 7 + (1/10) * (2 - 0)) :=
-  epi_same_intensity_same_law L (by norm_num)
+    L ((0:ℝ) * 5 + (1/10) * (2 - 0)) = L ((0:ℝ) * 7 + (1/10) * (2 - 0)) := by
+  norm_num
+/-- The zero-reporting estimand is not identified. -/
+example (L : ℝ → MeasureTheory.Measure ℕ) :
+    ¬ MathlibExt.Probability.Statistics.IsIdentifiedBy
+      (fun beta : ℝ => L ((0 : ℝ) * beta + (1/10) * (2 - 0)))
+      (fun beta : ℝ => beta) :=
+  epi_nonidentified_at_zero_reporting L
 
 end MathlibExtTest.Biology.Epidemiology.IncidenceObservation.Law
