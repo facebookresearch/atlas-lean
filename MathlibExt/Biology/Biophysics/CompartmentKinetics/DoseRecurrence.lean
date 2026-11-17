@@ -52,6 +52,14 @@ lemma post_dose_amount_succ {D k tau : ℝ} (n : ℕ) :
   rw [hexp, Real.exp_add]
   ring
 
+/-- **No-elimination boundary.** At `k = 0` the amount just after
+dose `n` is `(n + 1) * D`: `n + 1` undecayed doses. -/
+lemma post_dose_amount_zero_elimination {D tau : ℝ} (n : ℕ) :
+    (∑ i ∈ Finset.range (n + 1),
+        D * Real.exp (-(0:ℝ) * ((n : ℝ) * tau - (i : ℝ) * tau))) =
+      ((n : ℝ) + 1) * D := by
+  simp [Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+
 /-- **Post-dose closed form for the periodic trajectory.** The
 amount just after dose `n` is
 `exp (-k * tau)^n * D + D * ∑ j ∈ range n, exp (-k * tau)^j`,

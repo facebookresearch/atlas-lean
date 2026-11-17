@@ -16,12 +16,11 @@ namespace MathlibExtTest.Biology.Biophysics.CompartmentKinetics.DoseRecurrence
 
 open MathlibExt.Biology.Biophysics.CompartmentKinetics.DoseRecurrence
 
-/-- Closed form at `k = 0`, `D = 3`, after dose `2`: three doses of `3`. -/
+/-- No elimination at `D = 3`, after dose `2`: three doses give `9`. -/
 example :
     (∑ i ∈ Finset.range (2 + 1),
-        (3:ℝ) * Real.exp (-(0:ℝ) * ((2:ℝ) * 1 - (i:ℝ) * 1))) =
-      Real.exp (-(0:ℝ) * 1) ^ 2 * 3 +
-        3 * ∑ j ∈ Finset.range 2, Real.exp (-(0:ℝ) * 1) ^ j :=
-  post_dose_amount_closed_form 2
+        (3:ℝ) * Real.exp (-(0:ℝ) * ((2:ℝ) * 1 - (i:ℝ) * 1))) = 9 := by
+  rw [post_dose_amount_zero_elimination]
+  norm_num
 
 end MathlibExtTest.Biology.Biophysics.CompartmentKinetics.DoseRecurrence
