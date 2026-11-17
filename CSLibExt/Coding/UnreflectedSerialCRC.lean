@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import CSLibExt.Coding.CRC
+public import Mathlib.Algebra.Field.ZMod
 public import CSLibExt.Computability.Automata.Transducers.Sequential
 public import MathlibExt.Algebra.Polynomial.BitVec
 public import MathlibExt.Data.BitVec.BinaryPolynomialArithmetic
@@ -42,6 +43,10 @@ semantics).
 @[expose] public section
 
 namespace CSLibExt.Coding.UnreflectedSerialCRC
+
+/-- The field structure on `ZMod 2` used by `Cslib.CodingTheory.CRC.encode`. -/
+instance : Fact (Nat.Prime 2) := ⟨by decide⟩
+
 
 /-- A payload bit as a polynomial over `ZMod 2`. -/
 noncomputable def bitPoly (b : Bool) : Polynomial (ZMod 2) :=
@@ -325,28 +330,6 @@ private theorem getLsbD_toBitVec (g : Polynomial (ZMod 2)) (r i : ℕ) :
   · simp only [hi, ite_false]
     rw [List.getD_eq_default _ _ (by rw [List.length_ofFn]; exact Nat.le_of_not_gt hi)]
 
-/-- The taps of a monic `g` of `natDegree r` recover `g` as the canonical modulus. -/
-theorem monicModulus_toBitVec (g : Polynomial (ZMod 2)) (r : ℕ) (hg : g.Monic)
-    (hr : g.natDegree = r) : (g.toBitVec r).monicModulus = g := by
-  have hz2 : ∀ (y : ZMod 2), (if y = 1 then (1 : ZMod 2) else 0) = y := by decide
-  ext i
-  simp only [BitVec.monicModulus, Polynomial.coeff_add, Polynomial.coeff_X_pow,
-    BitVec.coeff_toPolynomial]
-  rw [getLsbD_toBitVec]
-  by_cases hi : i < r
-  · have hir : i ≠ r := by omega
-    by_cases h1 : g.coeff i = 1
-    · simp [hi, hir, h1]
-    · have h2 := hz2 (g.coeff i)
-      simp [hi, hir, h1] at h2 ⊢
-      exact h2
-  · by_cases heq : i = r
-    · have hcr : g.coeff r = 1 := by rw [← hr]; exact hg.coeff_natDegree
-      simp [hi, heq, hcr]
-    · have hlt : g.natDegree < i := by rw [hr]; omega
-      have h0 := Polynomial.coeff_eq_zero_of_natDegree_lt hlt
-      simp [hi, heq, h0]
-
 /-- The CRC-3 taps word is the canonical modulus `X^3 + X + 1`. -/
 theorem monicModulus_crc3Taps : crc3Taps.monicModulus = crc3Generator := by
   have h : crc3Taps.toBoolListLE = [true, true, false] := by decide
@@ -391,8 +374,22 @@ theorem final_register_represents_shifted_message_remainder_of_monic
     (finalRegister r (g.toBitVec r) bits).toPolynomial =
       (messagePoly bits * Polynomial.X ^ r) %ₘ g := by
   have h := final_register_represents_shifted_message_remainder r (g.toBitVec r) bits
-  rw [monicModulus_toBitVec g r hg hr] at h
+  rw [BitVec.monicModulus_toBitVec g hg hr] at h
   exact h
+
+/-- The register computes exactly the check remainder that the polynomial
+encoder `Cslib.CodingTheory.CRC.encode` appends: the codeword is the shifted
+message plus the final register read as a polynomial (characteristic two, so
+appending is addition). -/
+theorem encode_eq_messagePoly_shift_add_finalRegister (g : Polynomial (ZMod 2)) (r : ℕ)
+    (hg : g.Monic) (hr : g.natDegree = r) (hr1 : 1 ≤ r) (bits : List Bool) :
+    @Cslib.CodingTheory.CRC.encode (ZMod 2) _ g (messagePoly bits) =
+      messagePoly bits * Polynomial.X ^ r +
+        (finalRegister r (g.toBitVec r) bits).toPolynomial := by
+  rw [final_register_represents_shifted_message_remainder_of_monic g r hg hr hr1 bits,
+    Polynomial.modByMonic_eq_mod _ hg, Cslib.CodingTheory.CRC.encode_eq_add, hr]
+
+
 
 /-- CRC-3, payload `101`: executable final register `0b100`. -/
 theorem final_register_crc3_payload_101_bits :

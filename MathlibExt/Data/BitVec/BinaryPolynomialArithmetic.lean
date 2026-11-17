@@ -11,6 +11,7 @@ execute multiplication and powering of fixed-width binary polynomial residues.
 module
 
 public import MathlibExt.RingTheory.AdjoinRoot.BitVec
+import Mathlib.Data.List.GetD
 
 /-! # Executable binary polynomial modular arithmetic
 
@@ -244,5 +245,32 @@ theorem adjoinRootEquiv_powMod {s t : Nat} (g : BitVec s) (u : BitVec t) (e : Na
     subst s
     apply g.adjoinRootEquiv.symm.injective
     exact Subsingleton.elim _ _
+
+private theorem if_decide_eq_one_zmod_two (c : ZMod 2) :
+    (if decide (c = 1) then 1 else 0) = c := by
+  revert c
+  decide
+
+/-- The taps word of a monic binary polynomial recovers it as the canonical
+modulus `X^s + taps`: `(f.toBitVec s).monicModulus = f` whenever `f.Monic` and
+`f.natDegree = s`. -/
+theorem monicModulus_toBitVec {s : Nat} (f : Polynomial (ZMod 2))
+    (hf : f.Monic) (hd : f.natDegree = s) :
+    (f.toBitVec s).monicModulus = f := by
+  ext n
+  rw [BitVec.monicModulus, Polynomial.coeff_add, Polynomial.coeff_X_pow,
+    BitVec.coeff_toPolynomial]
+  by_cases hn : n < s
+  · rw [ite_eq_right hn.ne, zero_add, Polynomial.toBitVec,
+      BitVec.getLsbD_cast, BitVec.getLsbD_ofBoolListLE,
+      List.getD_eq_getElem _ _ (by simpa using hn), List.getElem_ofFn,
+      if_decide_eq_one_zmod_two]
+  · by_cases heq : n = s
+    · subst n
+      rw [ite_eq_left rfl, BitVec.getLsbD_of_ge _ _ le_rfl]
+      simp [← hd, hf.coeff_natDegree]
+    · have hsn : s < n := by omega
+      rw [ite_eq_right hsn.ne', BitVec.getLsbD_of_ge _ _ hsn.le]
+      simp [Polynomial.coeff_eq_zero_of_natDegree_lt (hd.trans_lt hsn)]
 
 end BitVec
