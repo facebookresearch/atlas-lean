@@ -38,7 +38,8 @@ public lemmas discharge them.
   variance is `q² λ / T`.
 - `countCurrent_moments_eq_zero_of_efficiency_zero` and the
   zero-power case: a detector that counts nothing has zero mean
-  and zero variance.
+  and zero variance. (The negative-power diagnostic lives in the
+  test module, not the public API.)
 - `variance_countCurrent_double_window`: doubling the window
   halves the variance.
 
@@ -199,39 +200,6 @@ private lemma variance_countCurrent_double_window_of_poissonVar (Ω : Type*) [Me
   have hTne : T ≠ 0 := ne_of_gt hT
   field_simp
 
-/-- Deliberately violated premise `P ≥ 0`: with `η = h = ν = q = T = 1` and `P = -1` the
-nonnegative Poisson mean clamps to `0`, so the mean current is `0`, not `R P = -1`. -/
-private lemma integral_countCurrent_ne_of_negative_power_of_poissonMean (Ω : Type*) [MeasurableSpace Ω]
-    (μ : Measure Ω) (N : Ω → ℕ)
-    (hN : HasLaw N (poissonMeasure (photonCountMean 1 (-1) 1 1 1)) μ)
-    (hPoissonMean : ∀ r : ℝ≥0, ∫ n, (n : ℝ) ∂(poissonMeasure r) = r) :
-    ∫ ω, countCurrent 1 1 (N ω) ∂μ ≠ responsivity 1 1 1 1 * (-1) := by
-  have hclamp : photonCountMean 1 (-1) 1 1 1 = 0 := by
-    unfold photonCountMean photonArrivalRate
-    norm_num
-  rw [hclamp] at hN
-  have hmeas : AEStronglyMeasurable (fun n : ℕ => countCurrent 1 1 n)
-      (poissonMeasure 0) :=
-    (measurable_of_countable _).aestronglyMeasurable
-  have hcomp := hN.integral_comp hmeas
-  simp only [Function.comp_apply] at hcomp
-  have hcc : (fun n : ℕ => countCurrent 1 1 n) = (fun n : ℕ => (n : ℝ)) := by
-    funext n
-    unfold countCurrent
-    simp
-  have hLHS : ∫ ω, countCurrent 1 1 (N ω) ∂μ = 0 := by
-    rw [hcomp, hcc, hPoissonMean]
-    simp
-  have hRHS : responsivity 1 1 1 1 * (-1) = -1 := by
-    have hr : responsivity 1 1 1 1 = 1 := by
-      unfold responsivity
-      norm_num
-    rw [hr, one_mul]
-  rw [hLHS, hRHS]
-  norm_num
-
-
-
 /-- **Mean detector current, Poisson mean discharged.** As
 `integral_countCurrent_eq_responsivity_mul_power_of_poissonMean`, with
 the Poisson mean supplied by the canonical
@@ -295,14 +263,5 @@ lemma variance_countCurrent_double_window (Ω : Type*) [MeasurableSpace Ω]
   variance_countCurrent_double_window_of_poissonVar Ω μ N₁ N₂ η P h ν q T
     hη0 hη1 hP hh hν hq hT hN₁ hN₂
     (fun r => ProbabilityTheory.variance_natCast_poissonMeasure r)
-
-/-- **Negative power refutes the mean formula, discharged.** The
-nonnegative Poisson law cannot realize the negative-power formula. -/
-lemma integral_countCurrent_ne_of_negative_power (Ω : Type*) [MeasurableSpace Ω]
-    (μ : Measure Ω) (N : Ω → ℕ)
-    (hN : HasLaw N (poissonMeasure (photonCountMean 1 (-1) 1 1 1)) μ) :
-    ∫ ω, countCurrent 1 1 (N ω) ∂μ ≠ responsivity 1 1 1 1 * (-1) :=
-  integral_countCurrent_ne_of_negative_power_of_poissonMean Ω μ N hN
-    (fun r => ProbabilityTheory.integral_natCast_poissonMeasure r)
 
 end PhyslibExt.Electronics.IdealPhotonCountingCurrent

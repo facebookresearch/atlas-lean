@@ -15,6 +15,7 @@ import Mathlib.Tactic.NormNum
 
 open PhyslibExt.Electronics.IdealPhotonCountingCurrent
 open MeasureTheory ProbabilityTheory
+open scoped NNReal
 
 namespace PhyslibExtTest.Electronics.IdealPhotonCountingCurrent
 
@@ -40,5 +41,21 @@ example : Var[fun n => countCurrent 1 1 n; poissonMeasure (photonCountMean 1 5 1
   exact variance_countCurrent_eq_sq_charge_mul_rate_div ℕ _ (fun n => n)
     1 5 1 1 1 1 (by norm_num) (by norm_num) (by norm_num) (by norm_num)
     (by norm_num) (by norm_num) (by norm_num) hN
+
+/-- Negative-power diagnostic (a deliberately violated premise,
+kept out of the production API): with `P = -1` the nonnegative
+Poisson mean clamps to `0`, so the mean current is `0`, not
+`R P = -1`. -/
+example : ∫ n, countCurrent 1 1 n ∂(poissonMeasure (photonCountMean 1 (-1) 1 1 1))
+    ≠ responsivity 1 1 1 1 * (-1) := by
+  have hclamp : photonCountMean 1 (-1) 1 1 1 = 0 := by
+    unfold photonCountMean photonArrivalRate
+    norm_num
+  rw [hclamp]
+  have hInt : (∫ n, countCurrent 1 1 n ∂(poissonMeasure 0)) = 0 := by
+    have h := ProbabilityTheory.integral_natCast_poissonMeasure (0 : ℝ≥0)
+    simpa [countCurrent] using h
+  rw [hInt]
+  norm_num [responsivity, photonArrivalRate]
 
 end PhyslibExtTest.Electronics.IdealPhotonCountingCurrent
