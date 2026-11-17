@@ -4,7 +4,7 @@ All rights reserved.
 
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
--*/
+-/
 
 module
 
@@ -17,6 +17,8 @@ Boundary and contrast cases for `reliability_sum_spearmanBrown`. All three
 are implications over moment hypotheses, as in the existing true-score
 tests; no model realizing the moments is constructed.
 -/
+
+@[expose] public section
 
 namespace MathlibExtTest.Probability.Statistics.Measurement
 

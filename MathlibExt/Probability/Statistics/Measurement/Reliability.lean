@@ -4,7 +4,7 @@ All rights reserved.
 
 This source code is licensed under the license found in the
 LICENSE file in the root directory of this source tree.
--*/
+-/
 
 module
 
@@ -17,6 +17,8 @@ public import MathlibExt.Probability.Statistics.LinearModel.ErrorsInVariables
 In a parallel measurement model, the reliability of the sum score is the
 Spearman-Brown expression in the one-item reliability.
 -/
+
+@[expose] public section
 
 namespace MathlibExt.Probability.Statistics.Measurement
 
