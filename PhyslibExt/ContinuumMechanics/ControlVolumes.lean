@@ -330,8 +330,8 @@ theorem movingEndpoint_deriv_flux {u ut f fx src : ℝ → ℝ → ℝ}
     hint_src).deriv
 
 
-/-- Moving interior jump transport: for a `C¹` interface curve
-`s` inside the fixed interval `[a, b]`, with left and right
+/-- Moving interior jump transport: for an interface curve
+`s` differentiable at `t` inside the fixed interval `[a, b]`, with left and right
 fields `uL`, `uR` (time partials `vL`, `vR`), the split integral
 `(∫ x in a..s t, uL t x) + (∫ x in s t..b, uR t x)` has
 derivative the two classical integrals plus the interface
@@ -343,25 +343,23 @@ identity with no ordering hypothesis on `s t`; the physical
 interior-interface case is `movingJumpTransport_interior`
 below. -/
 theorem movingJumpTransport {uL uR vL vR : ℝ → ℝ → ℝ}
-    {s s' : ℝ → ℝ} {a b : ℝ}
-    (hs : ∀ t : ℝ, HasDerivAt s (s' t) t)
+    {s s' : ℝ → ℝ} {a b : ℝ} (t : ℝ) (hs : HasDerivAt s (s' t) t)
     (hjL : Continuous fun p : ℝ × ℝ => uL p.1 p.2)
     (hvL : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uL τ x) (vL t x) t)
     (hcvL : Continuous fun p : ℝ × ℝ => vL p.1 p.2)
     (hjR : Continuous fun p : ℝ × ℝ => uR p.1 p.2)
     (hvR : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uR τ x) (vR t x) t)
-    (hcvR : Continuous fun p : ℝ × ℝ => vR p.1 p.2)
-    (t : ℝ) :
+    (hcvR : Continuous fun p : ℝ × ℝ => vR p.1 p.2) :
     HasDerivAt
       (fun τ : ℝ => (∫ x in a..s τ, uL τ x) + (∫ x in s τ..b, uR τ x))
       ((∫ x in a..s t, vL t x) + (∫ x in s t..b, vR t x) +
         s' t * (uL t (s t) - uR t (s t))) t := by
   have hL := movingEndpoint_hasDerivAt (u := uL) (ut := vL)
     (a := fun _ : ℝ => a) (b := s) (a' := fun _ : ℝ => 0) (b' := s')
-    t (hasDerivAt_const t a) (hs t) hjL hvL hcvL
+    t (hasDerivAt_const t a) hs hjL hvL hcvL
   have hR := movingEndpoint_hasDerivAt (u := uR) (ut := vR)
     (a := s) (b := fun _ : ℝ => b) (a' := s') (b' := fun _ : ℝ => 0)
-    t (hs t) (hasDerivAt_const t b) hjR hvR hcvR
+    t hs (hasDerivAt_const t b) hjR hvR hcvR
   have hL' : HasDerivAt (fun τ : ℝ => ∫ x in a..s τ, uL τ x)
       ((∫ x in a..s t, vL t x) + s' t * uL t (s t)) t := by
     convert hL using 1
@@ -381,19 +379,18 @@ neighborhood of `t`, the
 two integrals are the genuine left and right pieces of `[a, b]`
 and the same transport formula holds. -/
 theorem movingJumpTransport_interior {uL uR vL vR : ℝ → ℝ → ℝ}
-    {s s' : ℝ → ℝ} {a b : ℝ}
-    (hs : ∀ t : ℝ, HasDerivAt s (s' t) t)
+    {s s' : ℝ → ℝ} {a b : ℝ} (t : ℝ) (hs : HasDerivAt s (s' t) t)
     (hjL : Continuous fun p : ℝ × ℝ => uL p.1 p.2)
     (hvL : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uL τ x) (vL t x) t)
     (hcvL : Continuous fun p : ℝ × ℝ => vL p.1 p.2)
     (hjR : Continuous fun p : ℝ × ℝ => uR p.1 p.2)
     (hvR : ∀ t x : ℝ, HasDerivAt (fun τ : ℝ => uR τ x) (vR t x) t)
     (hcvR : Continuous fun p : ℝ × ℝ => vR p.1 p.2)
-    (t : ℝ) (hint : ∀ᶠ τ in nhds t, s τ ∈ Set.Icc a b) :
+    (hint : ∀ᶠ τ in nhds t, s τ ∈ Set.Icc a b) :
     HasDerivAt
       (fun τ : ℝ => (∫ x in a..s τ, uL τ x) + (∫ x in s τ..b, uR τ x))
       ((∫ x in a..s t, vL t x) + (∫ x in s t..b, vR t x) +
         s' t * (uL t (s t) - uR t (s t))) t :=
-  movingJumpTransport hs hjL hvL hcvL hjR hvR hcvR t
+  movingJumpTransport t hs hjL hvL hcvL hjR hvR hcvR
 
 end ControlVolumes

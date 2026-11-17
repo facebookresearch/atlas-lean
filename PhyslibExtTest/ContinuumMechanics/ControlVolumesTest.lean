@@ -95,11 +95,11 @@ example :
     (uL := fun _ x : ℝ => x) (uR := fun _ x : ℝ => 2 * x)
     (vL := fun _ _ : ℝ => 0) (vR := fun _ _ : ℝ => 0)
     (s := fun τ : ℝ => τ) (s' := fun _ : ℝ => 1) (a := 0) (b := 2)
-    (fun τ => hasDerivAt_id τ)
+    1 (hasDerivAt_id 1)
     (by fun_prop) (fun t x => by simpa using (hasDerivAt_const t (x : ℝ)))
     (by fun_prop) (by fun_prop)
     (fun t x => by simpa using (hasDerivAt_const t (2 * x : ℝ)))
-    (by fun_prop) 1 (by
+    (by fun_prop) (by
       exact Filter.eventually_of_mem (Ioo_mem_nhds (by norm_num) (by norm_num))
         (fun τ hτ => ⟨hτ.1.le, hτ.2.le⟩))
   rw [show (-1 : ℝ) = (1 : ℝ) - 2 by norm_num]
