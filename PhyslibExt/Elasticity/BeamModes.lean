@@ -11,7 +11,6 @@ public import Mathlib.Analysis.Calculus.IteratedDeriv.Defs
 public import Mathlib.Analysis.Real.Sqrt
 public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Deriv
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
-public import MathlibExt.Analysis.ODE.GreensOperator
 
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
@@ -35,15 +34,11 @@ amplitude; no mode-completeness or first-mode claim is made.
   satisfies the beam equation at every `x, t`.
 - `BeamModes.beamModeEnergy_conserved`: the integrated energy is
   constant in time.
-- `BeamModes.sineBasis_tail_norm_sq_le`: for a finite modal sum
-  in the existing sine Hilbert basis on `L²([0, 1])`, the squared
-  norm of the tail modes is at most that of the full sum (via the
-  finite Pythagoras identity in `MathlibExt`).
+
 
 ## iii. Table of contents
 
 - A. The simply supported mode and its energy
-- B. Finite-mode truncation tail bound
 
 ## iv. References
 
@@ -386,45 +381,5 @@ theorem beamModeEnergy_conserved {EI ρA L : ℝ} (hEI : 0 < EI)
     Real.sin_sq_add_cos_sq _
   linear_combination (L / 4) * Real.sin (beamFreq EI ρA L k * t) ^ 2 * hB +
     (L / 4) * EI * ((k : ℝ) * Real.pi / L) ^ 4 * htrig
-
-/-! ## B. Finite-mode truncation tail bound -/
-
-/-- Tail bound for the existing sine Hilbert basis
-`MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis` on
-`L²([0, 1])`: the basis is indexed by positive mode number, so
-with zero-based coefficient indices the full sum runs over
-`k ∈ Finset.Ico 0 K` (modes `1 .. K`, coefficient `c k` on mode
-`k + 1`) and the tail over `k ∈ Finset.Ico N K` (modes
-`N + 1 .. K`); the tail's squared norm is at most the full sum's.
-The finite Parseval identity behind this is Mathlib's
-`Orthonormal.inner_sum`; each modal contribution is
-`(c k)^2 ≥ 0`. Fixed-time modal coefficients already contain the
-initial-velocity contribution divided by the modal frequency. -/
-theorem sineBasis_tail_norm_sq_le (c : ℕ → ℝ) {N K : ℕ} (hNK : N ≤ K) :
-    ‖∑ k ∈ Finset.Ico N K,
-        c k • MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis
-          ⟨k + 1, Nat.succ_pos k⟩‖ ^ 2 ≤
-      ‖∑ k ∈ Finset.Ico 0 K,
-        c k • MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis
-          ⟨k + 1, Nat.succ_pos k⟩‖ ^ 2 := by
-  have he : Orthonormal ℝ (fun k : ℕ =>
-      MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis
-        ⟨k + 1, Nat.succ_pos k⟩) :=
-    MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis.orthonormal.comp
-      (fun n : ℕ => (⟨n + 1, Nat.succ_pos n⟩ : ℕ+))
-      (fun a b h => by
-        simpa using congrArg (fun p : ℕ+ => (p : ℕ)) h)
-  have key : ∀ s : Finset ℕ,
-      ‖∑ k ∈ s, c k • MathlibExt.Analysis.ODE.GreensOperator.sineHilbertBasis
-        ⟨k + 1, Nat.succ_pos k⟩‖ ^ 2 = ∑ k ∈ s, c k ^ 2 := by
-    intro s
-    have h := Orthonormal.inner_sum he c c s
-    rw [real_inner_self_eq_norm_sq] at h
-    refine h.trans ?_
-    refine Finset.sum_congr rfl fun k _ => ?_
-    simp only [RCLike.conj_to_real, pow_two]
-  rw [key, key]
-  exact Finset.sum_le_sum_of_subset_of_nonneg
-    (Finset.Ico_subset_Ico (Nat.zero_le N) le_rfl) (fun k _ _ => sq_nonneg _)
 
 end BeamModes
