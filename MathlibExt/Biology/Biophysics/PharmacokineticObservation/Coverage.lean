@@ -14,11 +14,13 @@ public import Mathlib.Probability.Distributions.Gaussian.Real
 /-!
 # Estimation coverage transfer
 
-Confidence coverage for a latent transfers through any estimand
-map to any output set containing the transformed covered values
-(generic image-set coverage transfer). Applied to PK, the
-estimand map is the fitted PK parameter map; no PK model is
-assumed beyond that map.
+Generic image-set coverage transfer (cf.
+`MathlibExt.Probability.Statistics.coverage_mono_of_subset`):
+confidence coverage for a latent transfers through any estimand
+map to any output set containing the transformed covered values.
+In the PK application the estimand map is a fitted parameter map
+composed with `pk_log_law`-style observation summaries; no PK
+model is assumed beyond that map.
 -/
 
 @[expose] public section
@@ -35,8 +37,8 @@ latent `z` has coverage at least `1 - α` under a law `μ`
 confidence statement also has coverage at least `1 - α`:
 estimation coverage transfers through the PK estimand map. -/
 lemma coverage_transfer_image {Ω : Type*} [MeasurableSpace Ω]
-    (μ : Measure Ω) [IsProbabilityMeasure μ]
-    (S : Ω → Set ℝ) (T : Ω → Set ℝ) (z : Ω → ℝ) (g : ℝ → ℝ) (α : ℝ)
+    {ι κ : Type*} (μ : MeasureTheory.Measure Ω) [MeasureTheory.IsProbabilityMeasure μ]
+    (S : Ω → Set ι) (T : Ω → Set κ) (z : Ω → ι) (g : ι → κ) (α : ℝ)
     (hcover : ∀ ω, z ω ∈ S ω → g (z ω) ∈ T ω)
     (hcov : 1 - α ≤ μ.real {ω | z ω ∈ S ω}) :
     1 - α ≤ μ.real {ω | g (z ω) ∈ T ω} := by
