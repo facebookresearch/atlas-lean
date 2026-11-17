@@ -10,6 +10,7 @@ module
 
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
+public import MathlibExt.Biology.Biophysics.CompartmentKinetics
 
 /-!
 # Respiratory mechanics agreement
@@ -29,7 +30,13 @@ The passive linear single-compartment equation `R V' + E V = Paw - P0` with `R, 
 
 ## iv. References
 
-* The declared model is local to this module; mechanical Kelvin-Voigt naming is not asserted. All declarations are `lemma`s.
+* The declared model is local to this module; mechanical
+  Kelvin-Voigt naming is not asserted. All declarations are
+  `lemma`s. The closed forms reuse
+  `MathlibExt.Biology.Biophysics.CompartmentKinetics.amount`.
+* West JB, Luks AM. West's Respiratory Physiology: The Essentials.
+  Wolters Kluwer (standard source for the linear single-compartment
+  equation of motion `P = E V + R V'` used with these symbols).
 
 -/
 
@@ -68,6 +75,18 @@ lemma respiratory_response {R E dP V0 t : ℝ} (hR : 0 < R) (hE : 0 < E) :
   rw [hder]
   field_simp
   ring
+
+/-- The respiratory response is the canonical one-compartment
+amount with elimination rate `E / R` and input `dP / R`. -/
+lemma respiratory_amount_eq {R E dP V0 : ℝ} (hR : 0 < R) (hE : 0 < E) :
+    (fun t => (1 / E) * dP + (V0 - (1 / E) * dP) *
+      Real.exp (-t / (R * (1 / E)))) =
+    MathlibExt.Biology.Biophysics.CompartmentKinetics.amount
+      (E / R) (dP / R) V0 := by
+  funext t
+  have hk : E / R ≠ 0 := div_ne_zero (ne_of_gt hE) (ne_of_gt hR)
+  rw [MathlibExt.Biology.Biophysics.CompartmentKinetics.amount_eq_of_ne_zero hk]
+  field_simp
 
 /-- **Free expiration.** Zero drive: the response `V(t) = V0 * exp (-t / (R * C))`, `C = 1 / E`, solves the zero-drive equation `R V' + E V = 0` at every `t`. -/
 lemma respiratory_expiration {R E V0 t : ℝ} (hR : 0 < R) (hE : 0 < E) :
