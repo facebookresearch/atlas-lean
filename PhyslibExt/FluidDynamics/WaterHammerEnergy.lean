@@ -29,7 +29,7 @@ the boundary flux (physical energy is `rho * g * E`).
 
 ## ii. Key results
 
-- `WaterHammerEnergy.energy_hasDerivAt`: the flux identity.
+- `FluidDynamics.WaterHammerEnergy.energy_hasDerivAt`: the flux identity.
 
 ## iii. Table of contents
 
@@ -45,7 +45,7 @@ the boundary flux (physical energy is `rho * g * E`).
 
 @[expose] public section
 
-namespace WaterHammerEnergy
+namespace FluidDynamics.WaterHammerEnergy
 
 open MeasureTheory intervalIntegral
 
@@ -330,4 +330,4 @@ theorem energy_hasDerivAt {a g A L : ℝ} (ha : 0 < a) (hg : 0 < g)
   rw [hval] at hleib2
   exact hleib2
 
-end WaterHammerEnergy
+end FluidDynamics.WaterHammerEnergy

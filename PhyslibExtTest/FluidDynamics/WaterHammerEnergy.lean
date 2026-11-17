@@ -22,7 +22,7 @@ the hypotheses, and the theorem gives energy derivative
 These are elaboration and non-vacuity checks, not new results.
 -/
 
-open WaterHammerEnergy
+open FluidDynamics.WaterHammerEnergy
 
 /-- Constant-state application of the public theorem. -/
 example (t : ℝ) : HasDerivAt (fun s => ∫ x in (0:ℝ)..(1:ℝ),
