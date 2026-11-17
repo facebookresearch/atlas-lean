@@ -59,3 +59,20 @@ example : HeatTransfer.slabTemperature 300 300 2 2 8 1 = 302 := by
 the constant surface temperature (a steady branch, not a transient). -/
 example (d : ℝ) : HeatTransfer.slabTemperature 300 300 2 2 0 d = 300 := by
   simp [HeatTransfer.slabTemperature]
+
+/-- Numeric heated cylinder `Ts = 300`, `R = 2`, `k = 2`, `qvol = 8`:
+center `304`, surface `300`, rise `4`, zero center gradient, and the
+radial equation value `-4` at `r = 1`. -/
+example : HeatTransfer.cylinderTemperature 300 2 2 8 0 = 304 ∧
+    HeatTransfer.cylinderTemperature 300 2 2 8 2 = 300 ∧
+      HeatTransfer.cylinderGradient 2 8 0 = 0 ∧
+        (1 / (1 : ℝ)) * deriv (fun s : ℝ =>
+          s * HeatTransfer.cylinderGradient 2 8 s) 1 = -4 := by
+  refine ⟨by norm_num [HeatTransfer.cylinderTemperature],
+    by norm_num [HeatTransfer.cylinderTemperature],
+    HeatTransfer.cylinderGradient_zero 2 8, ?_⟩
+  have h := HeatTransfer.cylinder_radial_equation (k := 2) (qvol := 8)
+    (r := 1) (by norm_num) (by norm_num)
+  rw [show (1 : ℝ) / 1 = 1 from by norm_num, one_mul]
+  norm_num at h
+  exact h
