@@ -126,7 +126,7 @@ def scan_commit(raw, sha, findings=None):
     )
     field = b""
     in_signature = False
-    for line in headers.splitlines():
+    for line in headers.split(b"\n"):
         if not line.startswith(b" "):
             field = line.split(b" ", 1)[0]
             in_signature = False
@@ -135,10 +135,11 @@ def scan_commit(raw, sha, findings=None):
         # Only standalone delimiters in an embedded tag are signature syntax.
         # Marker text inside a name or tag header is ordinary public content.
         if field == b"mergetag":
-            if line == b" -----BEGIN PGP SIGNATURE-----":
+            signature_line = line.removesuffix(b"\r")
+            if signature_line == b" -----BEGIN PGP SIGNATURE-----":
                 in_signature = True
                 continue
-            if line == b" -----END PGP SIGNATURE-----":
+            if signature_line == b" -----END PGP SIGNATURE-----":
                 in_signature = False
                 continue
             if in_signature:
@@ -260,18 +261,18 @@ def check_range(root, base, head, metadata=None):
         if not isinstance(value, str):
             raise IncompleteScan("Malformed PR metadata")
         if field == "branch":
-            planning = "private-planning-reference"
+            identifiers = ("internal-reference", "private-planning-reference")
             scan(
                 value,
                 "PR branch",
                 findings,
-                {k: p for k, p in RULES.items() if k != planning},
+                {k: p for k, p in RULES.items() if k not in identifiers},
             )
             scan(
-                value.upper(),
+                value.upper().replace("_", "-"),
                 "PR branch",
                 findings,
-                {planning: RULES[planning]},
+                {k: RULES[k] for k in identifiers},
             )
         else:
             scan(value, "PR " + field, findings)

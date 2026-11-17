@@ -22,6 +22,7 @@ Files, filenames, branch names, PR titles/descriptions, and complete commit
 messages must not contain private task/diff/paste identifiers, private service
 links, machine names, or personal workspace paths. Keep private provenance in
 private records; use public citations and repository-relative paths here.
+Branch identifier checks ignore letter case and treat underscores as separators.
 Preserve authorship and copyright notices when correcting provenance.
 
 The **Public references / public-references** check applies to every PR author,

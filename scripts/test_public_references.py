@@ -89,6 +89,19 @@ class Patterns(unittest.TestCase):
                 ).encode()
                 self.assertEqual(len(gate.scan_commit(raw, "a" * 40)), 2)
 
+    def test_mergetag_crlf_signature_payload_is_not_scanned(self):
+        raw = (
+            "mergetag object "
+            + "a" * 40
+            + "\n \n -----BEGIN PGP SIGNATURE-----\r\n "
+            + private_ref()
+            + "\r\n -----END PGP SIGNATURE-----\r\n"
+            + "author "
+            + private_ref("T")
+            + " <author@example.com>\n\nOrdinary message\n"
+        ).encode()
+        self.assertEqual(len(gate.scan_commit(raw, "a" * 40)), 1)
+
     def test_mergetag_signature_marker_in_text_is_not_control(self):
         for prefix in ("mergetag ", " tagger ", " tag "):
             with self.subTest(prefix=prefix):
@@ -239,6 +252,15 @@ class Repository(unittest.TestCase):
                 self.commit("Ordinary change")
                 self.assertEqual(len(self.check()["findings"]), 2)
 
+    def test_carriage_return_in_identity_is_not_a_header_break(self):
+        self.run_git("config", "user.name", "Example\r" + private_ref())
+        self.commit("Ordinary change")
+        self.run_git("fsck", "--strict")
+        self.assertIn(
+            b"\r", gate.git(self.root, "cat-file", "commit", self.head())
+        )
+        self.assertEqual(len(self.check()["findings"]), 2)
+
     def test_merge_side_history_is_scanned(self):
         original = self.run_git("branch", "--show-current")
         self.run_git("checkout", "-q", "-b", "side")
@@ -298,6 +320,33 @@ class Repository(unittest.TestCase):
     def test_branch_planning_slug_is_checked(self):
         result = self.check({"branch": "example/f" + "17-g05-t02-notes"})
         self.assertEqual(len(result["findings"]), 1)
+
+    def test_branch_tracking_ids_are_case_insensitive(self):
+        for prefix in "DTPSNL":
+            digits = "12345" if prefix in "DTP" else "123456"
+            for letter in (prefix, prefix.lower()):
+                for separator in ("-", "_"):
+                    branch = separator.join(("topic", letter + digits, "fix"))
+                    with self.subTest(branch=branch):
+                        result = self.check({"branch": branch})
+                        self.assertEqual(len(result["findings"]), 1)
+                        self.assertEqual(
+                            result["findings"][0]["rule"], "internal-reference"
+                        )
+
+    def test_branch_normalization_does_not_change_other_text(self):
+        for prefix in "dtpsnl":
+            text = prefix + "123456789"
+            self.assertEqual(gate.scan(text, "file"), [])
+            self.assertEqual(
+                self.check({"title": text, "body": text})["findings"], []
+            )
+        for branch in (
+            "d" + "1234-fix",
+            "s" + "12345-fix",
+            "modeld" + "12345x",
+        ):
+            self.assertEqual(self.check({"branch": branch})["findings"], [])
 
     def test_full_file_not_only_added_lines(self):
         self.write("notes.md", private_ref("P") + "\nold\n")
