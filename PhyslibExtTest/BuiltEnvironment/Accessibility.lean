@@ -52,4 +52,4 @@ example : thresholdOpportunitySum ({0} : Finset (Fin 1)) (fun _ : Fin 1 => (5 : 
 /-- Missing travel time contributes zero. -/
 example : thresholdContribution (fun _ : Fin 1 => (5 : ℝ))
       (fun _ => none) (3 : NNReal) 0 = 0 :=
-  thresholdContribution_eq_none _ _ _ rfl
+  thresholdContribution_eq_zero_of_eq_none _ _ _ rfl

@@ -10,7 +10,6 @@ module
 public import Mathlib.Algebra.BigOperators.Group.Finset.Defs
 public import Mathlib.Basic.NNReal.Defs
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
-import Mathlib.Tactic.Linarith
 
 /-!
 # Threshold accessibility
@@ -36,8 +35,11 @@ threshold for nonnegative opportunities.
 
 ## iv. References
 
-- W. G. Hansen, how accessibility shapes land use, *Journal of the
-  American Institute of Planners* 25, 1959.
+- S. L. Handy and D. A. Niemeier, measuring accessibility: an
+  exploration of issues and alternatives, *Environment and Planning A*
+  29(7), 1997 (cumulative-opportunity measures). The hard cutoff and
+  the treatment of a missing supplied travel time as zero contribution
+  are conventions of this formalization.
 -/
 
 @[expose] public section
@@ -77,7 +79,7 @@ lemma thresholdContribution_eq_zero_of_gt {ι : Type*} (o : ι → ℝ)
   simp [thresholdContribution, h, not_le_of_gt hτ]
 
 /-- A destination with no supplied travel time contributes zero. -/
-lemma thresholdContribution_eq_none {ι : Type*} (o : ι → ℝ)
+lemma thresholdContribution_eq_zero_of_eq_none {ι : Type*} (o : ι → ℝ)
     (t : ι → Option NNReal) (T : NNReal) {i : ι} (h : t i = none) :
     thresholdContribution o t T i = 0 := by
   unfold thresholdContribution
@@ -99,14 +101,14 @@ lemma thresholdOpportunitySum_eq_filter_sum {ι : Type*} (s : Finset ι)
   · rw [ite_eq_right h]
     cases hti : t i
     case none =>
-      rw [thresholdContribution_eq_none o t T hti]
+      rw [thresholdContribution_eq_zero_of_eq_none o t T hti]
     case some τ =>
       have hle : ¬τ ≤ T := fun hle => h ⟨τ, hti, hle⟩
       rw [thresholdContribution_eq_zero_of_gt o t T hti (lt_of_not_ge hle)]
 
 /-- Threshold accessibility is nondecreasing in the threshold, for
 nonnegative opportunities. -/
-theorem thresholdOpportunitySum_mono {ι : Type*} (s : Finset ι)
+lemma thresholdOpportunitySum_mono {ι : Type*} (s : Finset ι)
     (o : ι → ℝ) (t : ι → Option NNReal) (ho : ∀ i : ι, i ∈ s → 0 ≤ o i)
     {T1 T2 : NNReal} (hT : T1 ≤ T2) :
     thresholdOpportunitySum s o t T1 ≤ thresholdOpportunitySum s o t T2 := by
@@ -115,8 +117,8 @@ theorem thresholdOpportunitySum_mono {ι : Type*} (s : Finset ι)
   intro i hi
   cases hti : t i
   case none =>
-    rw [thresholdContribution_eq_none o t T1 hti,
-      thresholdContribution_eq_none o t T2 hti]
+    rw [thresholdContribution_eq_zero_of_eq_none o t T1 hti,
+      thresholdContribution_eq_zero_of_eq_none o t T2 hti]
   case some τ =>
     by_cases h1 : τ ≤ T1
     · have h2 : τ ≤ T2 := le_trans h1 hT
