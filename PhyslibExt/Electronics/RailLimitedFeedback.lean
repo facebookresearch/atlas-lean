@@ -146,7 +146,7 @@ lemma linearCandidate_satisfies (A beta vi : ℝ) (hA : 0 < A)
 
 -- Feedback identity: the amplified error at `vo` equals the candidate
 -- plus the loop gain times the distance back to the candidate.
-private theorem feedback_key (A beta vi vo : ℝ) (hA : 0 < A)
+private lemma feedback_key (A beta vi vo : ℝ) (hA : 0 < A)
     (hbeta : 0 < beta) :
     A * (vi - beta * vo) = linearCandidate A beta vi
       + A * beta * (linearCandidate A beta vi - vo) := by
@@ -156,7 +156,7 @@ private theorem feedback_key (A beta vi vo : ℝ) (hA : 0 < A)
   ring
 
 -- The clamp is monotone in its input.
-private theorem railClamp_mono (vmin vmax x y : ℝ) (h : x ≤ y) :
+private lemma railClamp_mono (vmin vmax x y : ℝ) (h : x ≤ y) :
     railClamp vmin vmax x ≤ railClamp vmin vmax y := by
   unfold railClamp
   exact max_le_max le_rfl (min_le_min le_rfl h)
