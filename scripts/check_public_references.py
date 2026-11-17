@@ -26,7 +26,7 @@ RULES = {
         r"/(?:data/users|home|Users)/(?!runner/)[a-zA-Z0-9_.-]+/[^\s\"'`<>]+"
     ),
     "internal-source-path": re.compile(
-        r"(?<![\w./])(?:fbcode|fbsource)/[a-zA-Z0-9_./-]+"
+        r"(?<!\w)(?:fbcode|fbsource)/[a-zA-Z0-9_./-]+"
     ),
     "temporary-workspace": re.compile(
         r"/(?:tmp|var/tmp)/[^/\s\"'`<>]+/(?:lanes|worktrees|shards|state)/"

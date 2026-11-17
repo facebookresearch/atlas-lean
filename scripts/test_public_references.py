@@ -58,6 +58,30 @@ class Patterns(unittest.TestCase):
         )
         self.assertTrue(gate.scan("fbcode" + "/example/source.py", "text"))
 
+    def test_internal_source_path_prefixes(self):
+        for root in ("fbcode", "fbsource"):
+            for prefix in (
+                "",
+                "/",
+                "./",
+                "../",
+                "../../",
+                "/opt/work/",
+                "file:///",
+                "~/",
+            ):
+                with self.subTest(root=root, prefix=prefix):
+                    findings = gate.scan(
+                        prefix + root + "/example/source.py", "text"
+                    )
+                    self.assertEqual(
+                        [f["rule"] for f in findings], ["internal-source-path"]
+                    )
+            for prefix in ("my", "other_"):
+                self.assertEqual(
+                    gate.scan(prefix + root + "/example/source.py", "text"), []
+                )
+
     def test_signature_headers_are_public_content(self):
         raw = (
             "author Example <author@example.com>\n"
