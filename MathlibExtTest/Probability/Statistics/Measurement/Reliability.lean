@@ -51,10 +51,10 @@ theorem reliability_sum_single_no_error {Ω : Type*} [MeasurableSpace Ω]
   field_simp
   ring
 
-/-- Three independent errors (conditional on the moments
+/-- Three uncorrelated errors (conditional on the moments
 `Var[T] = 1`, `Var[E j] = 1`): reliability of the sum is `3 / 4`;
 one-item `rho = 1 / 2`, Spearman-Brown `3 * (1/2) / (1 + 2 * (1/2))`. -/
-theorem reliability_sum_three_independent {Ω : Type*} [MeasurableSpace Ω]
+theorem reliability_sum_three_uncorrelated {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ]
     {X : Fin 3 → Ω → ℝ} {T : Ω → ℝ} {E : Fin 3 → Ω → ℝ}
     (hX : ∀ j, X j = fun ω => T ω + E j ω)

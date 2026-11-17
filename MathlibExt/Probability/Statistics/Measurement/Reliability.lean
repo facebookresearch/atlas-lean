@@ -35,13 +35,12 @@ reliability of the sum, `Var[k * T] / Var[sum X]`, is the
 Spearman-Brown expression `k * rho / (1 + (k - 1) * rho)` in the
 one-item reliability `rho = attenuationFactor v w = v / (v + w)`.
 
-Integration proof (not in this pin, 5 steps): set
-`c := fun _ => 0` so `hX` matches `variance_sum_of_tauEquivalent`;
-rewrite the denominator by it and `hVarT`, `hVarE`
-(`Finset.sum_const`), the numerator by Mathlib
-`variance_const_mul`; unfold `attenuationFactor`; close by
-`field_simp` + `ring` from `(k:ℝ) >= 1`, `0 < v`, `0 <= w`
-(denominators `v + w` and `k * v + w` are positive). -/
+This is the Spearman-Brown prophecy formula for the reliability of a
+lengthened test: Spearman, "Correlation calculated from faulty data",
+British Journal of Psychology 3 (1910), 271-295, and Brown, "Some
+experimental results in the correlation of mental abilities", British
+Journal of Psychology 3 (1910), 296-322; the reliability-of-a-sum form
+used here is the standard parallel-model specialization. -/
 theorem reliability_sum_spearmanBrown {Ω : Type*} [MeasurableSpace Ω]
     (μ : Measure Ω) [IsProbabilityMeasure μ] {k : ℕ} (hk : 1 ≤ k)
     {X : Fin k → Ω → ℝ} {T : Ω → ℝ} {E : Fin k → Ω → ℝ}
