@@ -14,7 +14,7 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 # Oral curve identification
 
 The oral concentration curve at fixed known absorption rate is preserved by common
-scaling of `(F, V, CL)`, and at unknown `ka` the absorption/elimination labels can be swapped only together with the corresponding transformation of bioavailability: neither scale nor the flip-flop assignment is identified from the curve alone.
+scaling of `(F, V, CL)`, and at unknown `ka` the absorption/elimination labels can be swapped together with the corresponding transformation of bioavailability: neither scale nor the flip-flop assignment is identified from the curve alone.
 -/
 
 @[expose] public section
@@ -48,10 +48,10 @@ for the flipped tuple
 `(F * ka / (CL / V), D, CL / V, V, ka * V)`: the absorption and
 elimination rates are exchanged, `D` and `V` are unchanged, and
 bioavailability is transformed to `F * ka / (CL / V)`, not kept
-fixed. The conclusion also records that the flipped
-bioavailability is admissible (`0 ≤ F * ka / (CL / V) ≤ 1`) under
-the stated hypotheses; a naive label swap that keeps `F` fixed
-does not preserve the curve. Equal rates are excluded (the
+fixed. Admissibility of the flipped tuple (`F * ka / (CL / V) ≤ 1`)
+is a precondition (`hFflip`), not a conclusion. This proves
+sufficiency of the transformed value; no necessity claim is made.
+Equal rates are excluded (the
 denominator vanishes; the limiting equal-rate form is different). -/
 lemma oral_flip_flop {F D ka V CL t : ℝ} (hV : V ≠ 0)
     (hka : ka ≠ CL / V) (hka0 : ka ≠ 0) (hCL0 : CL ≠ 0)
@@ -61,7 +61,7 @@ lemma oral_flip_flop {F D ka V CL t : ℝ} (hV : V ≠ 0)
         (V * (ka - CL / V)) =
       (F * D * (CL / V) * (Real.exp (-ka * t) - Real.exp (-(CL / V) * t)) *
         (ka / (CL / V))) / (V * (CL / V - ka)) ∧
-      0 ≤ F * ka / (CL / V) ∧ F * ka / (CL / V) ≤ 1 := by
+      0 ≤ F * ka / (CL / V) := by
   have hcurve : F * D * ka * (Real.exp (-(CL / V) * t) - Real.exp (-ka * t)) /
         (V * (ka - CL / V)) =
       (F * D * (CL / V) * (Real.exp (-ka * t) - Real.exp (-(CL / V) * t)) *
@@ -95,6 +95,6 @@ lemma oral_flip_flop {F D ka V CL t : ℝ} (hV : V ≠ 0)
       rw [hneg, hnum]
       simp only [mul_neg, neg_div_neg_eq]
 
-  exact ⟨hcurve, div_nonneg (mul_nonneg hF hka_pos.le) (div_pos hCL_pos hV_pos).le, hFflip⟩
+  exact ⟨hcurve, div_nonneg (mul_nonneg hF hka_pos.le) (div_pos hCL_pos hV_pos).le⟩
 
 end MathlibExt.Biology.Biophysics.PharmacokineticObservation.OralCurve
