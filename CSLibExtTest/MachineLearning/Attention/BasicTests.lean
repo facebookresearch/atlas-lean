@@ -36,7 +36,7 @@ example (x : Fin 3 → ℝ) : (∑ i, softmax x i) = 1 :=
 /-- Constant zero logits on two indices give uniform softmax weights. This
 checks the definition directly, not only the normalization theorem. -/
 example (i : Fin 2) : softmax (fun _ => (0 : ℝ)) i = 1 / 2 := by
-  norm_num [softmax, Finset.sum_const, Finset.card_univ]
+  norm_num [softmax, Real.softmax, Finset.sum_const, Finset.card_univ]
 
 /-- With zero query/key matrices, all logits are zero, so a two-token,
 one-dimensional attention layer averages the two value rows `1` and `2`. -/
@@ -45,7 +45,7 @@ example : attn (![![1], ![2]] : Fin 2 → Fin 1 → ℝ)
     (1 : Matrix (Fin 1) (Fin 1) ℝ) = fun _ => ![3 / 2] := by
   funext i k
   fin_cases i <;> fin_cases k <;>
-    norm_num [attn, attentionWeights, softmax, Matrix.vecMul, dotProduct,
+    norm_num [attn, attentionWeights, softmax, Real.softmax, Matrix.vecMul, dotProduct,
       Finset.sum_const, Finset.card_univ]
 
 /-- A nonzero query/key example with `dk = 4`: for token rows `1` and `2`, and
@@ -58,7 +58,7 @@ example : attentionWeights (![![1], ![2]] : Fin 2 → Fin 1 → ℝ)
     = Real.exp 1 / (Real.exp (1 / 2) + Real.exp 1) := by
   have hsqrt : Real.sqrt (4 : ℝ) = 2 := by
     rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq (by norm_num)]
-  norm_num [attentionWeights, softmax, Matrix.vecMul, dotProduct, hsqrt,
+  norm_num [attentionWeights, softmax, Real.softmax, Matrix.vecMul, dotProduct, hsqrt,
     Fin.sum_univ_two]
 
 /-- Permutation equivariance instantiated for three tokens. -/

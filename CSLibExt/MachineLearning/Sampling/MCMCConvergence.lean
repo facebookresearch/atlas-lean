@@ -81,15 +81,6 @@ theorem vecMul_mhMatrix (π : PMF α) (Q : α → PMF α) :
     ENNReal.mul_ne_top (PMF.apply_ne_top π x) (PMF.apply_ne_top _ y)]
   simp only [ENNReal.toReal_mul]
 
-/-- Entries of powers of an entrywise nonnegative matrix are nonnegative. -/
-private theorem pow_apply_nonneg {β : Type*} [Fintype β] [DecidableEq β] {A : Matrix β β ℝ}
-    (hA : ∀ x y, 0 ≤ A x y) (k : ℕ) (x y : β) : 0 ≤ (A ^ k) x y := by
-  induction k generalizing y with
-  | zero => simp only [pow_zero, Matrix.one_apply]; split_ifs <;> norm_num
-  | succ k ih =>
-    rw [pow_succ, Matrix.mul_apply]
-    exact Finset.sum_nonneg fun z _ => mul_nonneg (ih z) (hA z y)
-
 /-- If the positive entries of a nonnegative matrix `A` are positive entries of a nonnegative
 matrix `B`, the same holds for all their powers. -/
 private theorem pow_apply_pos_of_pattern {β : Type*} [Fintype β] [DecidableEq β]
@@ -105,8 +96,8 @@ private theorem pow_apply_pos_of_pattern {β : Type*} [Fintype β] [DecidableEq 
       push Not at hc
       exact absurd (Finset.sum_nonpos hc) (not_le.mpr h)
     have h1 : 0 < (A ^ k) x z := pos_of_mul_pos_left hz (hA z y)
-    have h2 : 0 < A z y := pos_of_mul_pos_right hz (pow_apply_nonneg hA k x z)
-    exact Finset.sum_pos' (fun w _ => mul_nonneg (pow_apply_nonneg hB k x w) (hB w y))
+    have h2 : 0 < A z y := pos_of_mul_pos_right hz (Matrix.pow_apply_nonneg hA k x z)
+    exact Finset.sum_pos' (fun w _ => mul_nonneg (Matrix.pow_apply_nonneg hB k x w) (hB w y))
       ⟨z, Finset.mem_univ _, mul_pos (ih z h1) (hAB z y h2)⟩
 
 /-- For a target with full support and a proposal with primitive transition matrix and symmetric

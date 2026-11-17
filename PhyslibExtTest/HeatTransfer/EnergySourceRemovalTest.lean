@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.HeatTransfer.EnergySourceRemoval
+import Mathlib.Tactic.NormNum
 
 /-!
 # Slab and cylinder heat-removal checks

@@ -16,6 +16,7 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Matrix.Basic
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.Logic.Equiv.Basic
+public import MathlibExt.Analysis.SpecialFunctions.LogSumExp
 
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 
@@ -31,7 +32,7 @@ and every output row is a convex combination of the value rows.
 
 ## Main declarations
 
-* `softmax`: normalized exponential weights.
+* `softmax`: normalized exponential weights (the shared `Real.softmax` API).
 * `softmax_nonneg`, `sum_softmax`: basic softmax weight facts.
 * `Attention.attentionWeights`, `Attention.attn`: attention weights and output.
 * `Attention.attn_perm`: permutation equivariance.
@@ -51,28 +52,24 @@ set_option autoImplicit false
 
 namespace Cslib.MachineLearning
 
-/-- Softmax over a finite index set.
+/-- Softmax over a finite index set: the shared `Real.softmax` API.
 
 If the index set is empty this uses Lean's totalized division; the
 normalization theorem below is stated for a nonempty index set. -/
 noncomputable def softmax {ι : Type*} [Fintype ι] (x : ι → ℝ) : ι → ℝ :=
-  fun i => Real.exp (x i) / (∑ j, Real.exp (x j))
+  Real.softmax x
 
 /-- Softmax weights are nonnegative. -/
 theorem softmax_nonneg {ι : Type*} [Fintype ι] (x : ι → ℝ) (i : ι) :
     0 ≤ softmax x i := by
-  unfold softmax
+  unfold softmax Real.softmax
   exact div_nonneg (Real.exp_pos _).le
     (Finset.sum_nonneg fun _ _ => (Real.exp_pos _).le)
 
 /-- Softmax weights sum to one over a nonempty finite index set. -/
 theorem sum_softmax {ι : Type*} [Fintype ι] [Nonempty ι] (x : ι → ℝ) :
-    (∑ i, softmax x i) = 1 := by
-  have hpos : 0 < ∑ j, Real.exp (x j) :=
-    Finset.sum_pos (fun _ _ => Real.exp_pos _) Finset.univ_nonempty
-  unfold softmax
-  simp only [div_eq_mul_inv]
-  rw [← Finset.sum_mul, mul_inv_cancel₀ (ne_of_gt hpos)]
+    (∑ i, softmax x i) = 1 :=
+  Real.sum_softmax x
 
 namespace Attention
 
@@ -107,7 +104,7 @@ theorem attn_perm {n d dk dv : ℕ} [NeZero dk]
   have hw : ∀ j, attentionWeights (fun i => X (σ i)) WQ WK i j
       = attentionWeights X WQ WK (σ i) (σ j) := by
     intro j
-    unfold attentionWeights softmax
+    unfold attentionWeights softmax Real.softmax
     congr 1
     exact Equiv.sum_comp σ (fun k => Real.exp
       (dotProduct (Matrix.vecMul (X (σ i)) WQ) (Matrix.vecMul (X k) WK) /

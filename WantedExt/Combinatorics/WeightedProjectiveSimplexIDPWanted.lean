@@ -697,8 +697,10 @@ public def homogenizedWeightedVertices {n : ℕ} (q : Fin n → ℕ) :
   {(1, fun i => -(q i : ℤ))} ∪ Set.range (fun i : Fin n => (1, Pi.single i (1 : ℤ)))
 
 /-- The nine exceptional columns in Theorem 13's matrix.  Coordinates before
-the last three are zero; the last triples are exactly the nine printed columns,
-and heights are `1` for columns `0`--`6` and `2` for columns `7`,`8`.
+the last three are zero; the last triples are the nine printed columns, except
+column `5`, which the paper prints as `(0, -3, -5)`, a point outside the cone;
+it is `(-1, -3, -5)` here.  Heights are `1` for columns `0`--`6` and `2` for
+columns `7`,`8`.
 Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
 Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
 A60, Theorem 13. -/
@@ -706,7 +708,7 @@ public def exceptionalHilbertColumn (n : ℕ) (j : Fin 9) :
     ℕ × (Fin (2 * n + 2) → ℤ) :=
   let triples : Fin 9 → Fin 3 → ℤ := ![
     ![0, 0, 0], ![0, 0, -1], ![0, -1, -1], ![0, -1, -2], ![0, -2, -3],
-    ![0, -3, -5], ![-1, -4, -6], ![-2, -7, -10], ![-3, -10, -15]]
+    ![-1, -3, -5], ![-1, -4, -6], ![-2, -7, -10], ![-3, -10, -15]]
   (if j.val < 7 then 1 else 2, fun i =>
     if i.val < 2 * n - 1 then 0
     else if _h0 : i.val = 2 * n - 1 then triples j 0
@@ -718,7 +720,7 @@ vertices together with the nine displayed exceptional columns.
 Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
 Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
 A60, Theorem 13. -/
-public theorem_wanted almostIDP_hilbertBasis (n : ℕ) (hn : 1 ≤ n) :
+public theorem_wanted almostIDP_hilbertBasis (n : ℕ) (hn : 2 ≤ n) :
     hilbertBasis (weightedSimplex (almostIDPWeights n)) =
       homogenizedWeightedVertices (almostIDPWeights n) ∪
         Set.range (exceptionalHilbertColumn n)
@@ -728,7 +730,7 @@ elements have height greater than `1`, and both have height exactly `2`.
 Source: Benjamin Braun, Robert Davis, Derek Hanely, Morgan Lane, and Liam Solus, *The Integer
 Decomposition Property and Weighted Projective Space Simplices*, INTEGERS 24 (2024), Article
 A60, Theorem 13. -/
-public theorem_wanted almostIDP_exactly_two_height_two (n : ℕ) (hn : 1 ≤ n) :
+public theorem_wanted almostIDP_exactly_two_height_two (n : ℕ) (hn : 2 ≤ n) :
     Set.ncard {a ∈ hilbertBasis (weightedSimplex (almostIDPWeights n)) | 1 < a.1} = 2 ∧
     ∀ a ∈ hilbertBasis (weightedSimplex (almostIDPWeights n)), 1 < a.1 → a.1 = 2
 
