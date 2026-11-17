@@ -21,12 +21,13 @@ is legitimate). A linear system is a Mathlib linear map
 
 * `shiftₗ 𝕜 E a x t = x (t - a)` is delay by `a` (for positive `a`), built
   as `LinearMap.funLeft` along `t ↦ t - a`. Shifting by `0` is the
-  identity over any additive group (`shiftₗ_zero`, `[AddGroup T]`). The
-  composition law `shiftₗ a ∘ shiftₗ b = shiftₗ (a + b)` (`shiftₗ_comp`)
-  is stated over an additive commutative group: over a general
-  `AddGroup` it is false (counterexample on `Additive (Equiv.Perm
-  (Fin 3))`, where the two orders of composing shifts differ), and `ℤ`- or
-  `ℝ`-time, the intended domains, are commutative.
+  identity over any additive group (`shiftₗ_zero`, `[AddGroup T]`).
+  Composition: over any additive group, shifting by `b` and then by `a`
+  is shifting by `b + a` (`shiftₗ_comp'`, since `(t - a) - b =
+  t - (b + a)`); the familiar order `shiftₗ (a + b)` (`shiftₗ_comp`)
+  requires commutativity of the time group — it is false in general,
+  e.g. on `Additive (Equiv.Perm (Fin 3))` — and `ℤ`- or `ℝ`-time, the
+  intended domains, are commutative.
 * `IsCausal S`: the output at `t` depends only on inputs at `s ≤ t`
   (prefix condition, `s = t` included, so the identity system and every
   delay are causal and every advance is not).
@@ -76,6 +77,17 @@ theorem shiftₗ_zero {𝕜 T E : Type*} [Semiring 𝕜] [AddCommMonoid E] [Modu
     [AddGroup T] : (shiftₗ 𝕜 E (0 : T) : (T → E) →ₗ[𝕜] (T → E)) = LinearMap.id := by
   ext x t
   simp
+
+/-- Composition of shifts over any additive group, in the order the group
+law dictates: shifting by `b` and then by `a` is shifting by `b + a`, since
+`(t - a) - b = t - (b + a)`. Over a commutative group this is
+`shiftₗ_comp`. -/
+theorem shiftₗ_comp' {𝕜 T E : Type*} [Semiring 𝕜] [AddCommMonoid E] [Module 𝕜 E]
+    [AddGroup T] (a b : T) :
+    ((shiftₗ 𝕜 E a : (T → E) →ₗ[𝕜] (T → E)).comp (shiftₗ 𝕜 E b)) =
+      shiftₗ 𝕜 E (b + a) := by
+  ext x t
+  simp only [LinearMap.comp_apply, shiftₗ_apply, sub_eq_add_neg, add_assoc, ← neg_add_rev]
 
 theorem shiftₗ_comp {𝕜 T E : Type*} [Semiring 𝕜] [AddCommMonoid E] [Module 𝕜 E]
     [AddCommGroup T] (a b : T) :

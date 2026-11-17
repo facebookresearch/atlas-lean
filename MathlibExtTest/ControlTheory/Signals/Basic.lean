@@ -71,8 +71,16 @@ example (x : ℤ → ℝ) (t : ℤ) : shiftₗ ℝ ℝ (0 : ℤ) x t = x t := by
 example : shiftₗ ℝ ℝ (0 : Additive (Equiv.Perm (Fin 3))) = LinearMap.id :=
   shiftₗ_zero
 
+-- The reversed-order composition law at the same noncommutative time
+-- group: composing the shift by `b` with the shift by `a` is the shift
+-- by `b + a` (the `a + b` order would be false here).
+example (a b : Additive (Equiv.Perm (Fin 3))) :
+    (shiftₗ ℝ ℝ a).comp (shiftₗ ℝ ℝ b) = shiftₗ ℝ ℝ (b + a) :=
+  shiftₗ_comp' a b
+
 #print axioms shiftₗ_apply
 #print axioms shiftₗ_zero
+#print axioms shiftₗ_comp'
 #print axioms shiftₗ_comp
 #print axioms IsCausal.comp
 #print axioms IsCausal.add
