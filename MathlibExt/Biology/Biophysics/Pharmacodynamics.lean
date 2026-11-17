@@ -15,13 +15,15 @@ public import Mathlib.Topology.Algebra.Order.Field
 /-!
 # Normalized pharmacodynamic response
 
-The normalized response `response E0 Emax K h C = E0 + Emax * hill h K C`
-built on the canonical activating Hill law
-`MathlibExt.Biology.Dynamics.GoldbeterKoshland.hill`: at zero
-concentration it is `E0`, at `C = K` it is half-maximal, it is monotone
-and bounded between `E0` and `E0 + Emax` for `Emax ≥ 0`, strictly
-increasing for `Emax > 0`, and it tends to `E0 + Emax` at high
-concentration.
+The baseline-plus-increment response
+`response E0 Emax K h C = E0 + Emax * hill h K C` built on the canonical
+activating Hill law `MathlibExt.Biology.Dynamics.GoldbeterKoshland.hill`.
+Here `Emax` is the maximal increment above the baseline `E0`, not the
+maximal total response: the proved range is `[E0, E0 + Emax]`, the
+`C = K` value `E0 + Emax / 2` is half of that increment, and the
+high-concentration limit is `E0 + Emax`. At zero concentration the
+response is `E0`; it is monotone for `Emax ≥ 0` and strictly
+increasing for `Emax > 0`.
 
 This is a statement about the declared response model only. It is not
 an empirical efficacy claim.
@@ -33,8 +35,9 @@ open Real Filter Topology
 
 namespace MathlibExt.Biology.Biophysics.Pharmacodynamics
 
-/-- The normalized pharmacodynamic response with baseline `E0`, maximal
-effect `Emax`, half-saturation `K` and Hill coefficient `h`. -/
+/-- The baseline-plus-increment pharmacodynamic response: baseline
+`E0` plus maximal increment `Emax` times the normalized Hill fraction
+with half-saturation `K` and Hill coefficient `h`. -/
 noncomputable def response (E0 Emax K h C : ℝ) : ℝ :=
   E0 + Emax * MathlibExt.Biology.Dynamics.GoldbeterKoshland.hill h K C
 
@@ -73,7 +76,7 @@ private theorem pd_hillFrac_lt {A u v : ℝ} (hA : 0 < A) (hu : 0 ≤ u) (huv : 
 the response at zero concentration is `E0`, at `C = K` it is the
 half-maximal `E0 + Emax / 2`, it is monotone and bounded between `E0`
 and `E0 + Emax`, and it tends to `E0 + Emax` at high concentration. -/
-theorem pd_response_characterization {E0 Emax K h : ℝ}
+private theorem pd_response_characterization {E0 Emax K h : ℝ}
     (hK : 0 < K) (hh : 0 < h) (hEmax : 0 ≤ Emax) :
     (E0 + Emax * ((0 : ℝ) ^ h / (K ^ h + (0 : ℝ) ^ h))) = E0 ∧
     (E0 + Emax * (K ^ h / (K ^ h + K ^ h))) = E0 + Emax / 2 ∧
@@ -140,7 +143,7 @@ theorem pd_response_characterization {E0 Emax K h : ℝ}
 
 /-- With `Emax > 0` the normalized response is strictly increasing on
 nonnegative concentrations. -/
-theorem pd_response_strictMonoOn {E0 Emax K h : ℝ}
+private theorem pd_response_strictMonoOn {E0 Emax K h : ℝ}
     (hK : 0 < K) (hh : 0 < h) (hEmax : 0 < Emax) :
     StrictMonoOn (fun C : ℝ => E0 + Emax * (C ^ h / (K ^ h + C ^ h))) (Set.Ici 0) := by
   intro a ha b hb hab
@@ -152,5 +155,59 @@ theorem pd_response_strictMonoOn {E0 Emax K h : ℝ}
   have hmul : Emax * (a ^ h / (K ^ h + a ^ h)) < Emax * (b ^ h / (K ^ h + b ^ h)) :=
     mul_lt_mul_of_pos_left hfrac hEmax
   exact add_lt_add_right hmul E0
+
+/-- At zero concentration the response is the baseline `E0`. -/
+theorem response_at_zero {E0 Emax K h : ℝ} (hK : 0 < K) (hh : 0 < h)
+    (hEmax : 0 ≤ Emax) : response E0 Emax K h 0 = E0 := by
+  rw [response_eq]
+  exact (pd_response_characterization (E0 := E0) (Emax := Emax) (K := K) (h := h)
+      hK hh hEmax).1
+
+/-- At `C = K` the response is the baseline plus half the maximal
+increment. -/
+theorem response_at_half {E0 Emax K h : ℝ} (hK : 0 < K) (hh : 0 < h)
+    (hEmax : 0 ≤ Emax) : response E0 Emax K h K = E0 + Emax / 2 := by
+  rw [response_eq]
+  exact (pd_response_characterization (E0 := E0) (Emax := Emax) (K := K) (h := h)
+      hK hh hEmax).2.1
+
+/-- The response is monotone on nonnegative concentrations. -/
+theorem response_monotoneOn {E0 Emax K h : ℝ} (hK : 0 < K) (hh : 0 < h)
+    (hEmax : 0 ≤ Emax) : MonotoneOn (response E0 Emax K h) (Set.Ici 0) := by
+  have hm := (pd_response_characterization (E0 := E0) (Emax := Emax) (K := K) (h := h)
+      hK hh hEmax).2.2.1
+  intro a ha b hb hab
+  rw [response_eq, response_eq]
+  exact hm ha hb hab
+
+/-- The response stays between the baseline and baseline plus the
+maximal increment. -/
+theorem response_bounds {E0 Emax K h : ℝ} (hK : 0 < K) (hh : 0 < h)
+    (hEmax : 0 ≤ Emax) (C : ℝ) (hC : 0 ≤ C) :
+    E0 ≤ response E0 Emax K h C ∧ response E0 Emax K h C ≤ E0 + Emax := by
+  have hb := (pd_response_characterization (E0 := E0) (Emax := Emax) (K := K) (h := h)
+      hK hh hEmax).2.2.2.1 C hC
+  rw [response_eq]
+  exact hb
+
+/-- At high concentration the response tends to baseline plus the
+maximal increment. -/
+theorem response_tendsto {E0 Emax K h : ℝ} (hK : 0 < K) (hh : 0 < h)
+    (hEmax : 0 ≤ Emax) :
+    Tendsto (response E0 Emax K h) atTop (𝓝 (E0 + Emax)) := by
+  have hlim := (pd_response_characterization (E0 := E0) (Emax := Emax) (K := K) (h := h)
+      hK hh hEmax).2.2.2.2
+  refine hlim.congr (fun C => ?_)
+  exact (response_eq E0 Emax K h C).symm
+
+/-- For a positive maximal increment the response is strictly
+increasing on nonnegative concentrations. -/
+theorem response_strictMonoOn {E0 Emax K h : ℝ} (hK : 0 < K) (hh : 0 < h)
+    (hEmax : 0 < Emax) : StrictMonoOn (response E0 Emax K h) (Set.Ici 0) := by
+  have hs := pd_response_strictMonoOn (E0 := E0) (Emax := Emax) (K := K) (h := h)
+      hK hh hEmax
+  intro a ha b hb hab
+  rw [response_eq, response_eq]
+  exact hs ha hb hab
 
 end MathlibExt.Biology.Biophysics.Pharmacodynamics
