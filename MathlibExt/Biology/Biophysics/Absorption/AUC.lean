@@ -166,6 +166,6 @@ lemma auc_equal_amount {F D ka : ℝ} (hka : 0 < ka) :
   have key : F * D * ka * (1 / ka) ^ 2 = F * D / ka := by
     rw [h2]
     field_simp
-  rwa [Real.rpow_two] 
+  rwa [Real.rpow_two]
 
 end MathlibExt.Biology.Biophysics.Absorption.AUC
