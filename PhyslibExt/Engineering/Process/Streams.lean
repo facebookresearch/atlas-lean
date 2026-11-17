@@ -167,11 +167,12 @@ lemma sum_integrate {ι : Type*} [Fintype ι] (s : StreamFlow ι) (Δt : ℝ) :
     ∑ i, s.integrate Δt i = Δt * s.total := by
   simp only [integrate, total, Finset.mul_sum]
 
+set_option linter.unusedVariables false in
 /-- **Time-unit erasure.** For a positive duration `Δt > 0`, the amount
 fractions of the integrated batch equal the flow fractions of the stream:
 integrating a constant stream does not change its composition. -/
 lemma composition_of_integrate {ι : Type*} [Fintype ι] (s : StreamFlow ι)
-    {Δt : ℝ} (hΔt : 0 < Δt) :
+    {Δt : ℝ} (hΔt : 0 < Δt) (hs : 0 < s.total) :
     Chemistry.Amounts.moleFraction (s.integrate Δt) =
       Chemistry.Amounts.moleFraction s.flow := by
   funext i

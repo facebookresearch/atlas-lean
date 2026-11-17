@@ -77,6 +77,13 @@ example : Chemistry.Amounts.moleFraction (s12.integrate 4) 1 = 2 / 3 := by
   simp only [Chemistry.Amounts.moleFraction, StreamFlow.integrate, s12, Fin.sum_univ_two]
   norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons]
 
+-- Time-unit erasure through the theorem itself at a positive stream.
+example : Chemistry.Amounts.moleFraction (s12.integrate 4) =
+    Chemistry.Amounts.moleFraction s12.flow := by
+  exact composition_of_integrate s12 (by norm_num) (by
+    simp only [s12, StreamFlow.total, Fin.sum_univ_two]
+    norm_num [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons])
+
 -- Mass fractions for molar masses (2, 3) are (1/4, 3/4).
 example : Chemistry.Amounts.massFraction M23 s12.flow 0 = 1 / 4 := by
   simp only [Chemistry.Amounts.massFraction, M23, s12, Fin.sum_univ_two]
