@@ -27,6 +27,19 @@ increasing for `Emax > 0`.
 
 This is a statement about the declared response model only. It is not
 an empirical efficacy claim.
+
+## References
+
+* A. V. Hill, "The possible effects of the aggregation of the molecules
+  of haemoglobin on its dissociation curves", J. Physiol. 40 (1910),
+  iv-vii: the Hill fraction `C^h / (K^h + C^h)`.
+* N. H. G. Holford and L. B. Sheiner, "Understanding the dose-effect
+  relationship: clinical application of pharmacokinetic-pharmacodynamic
+  models", Clin. Pharmacokinet. 6 (1981), 429-453: the `Emax` model in
+  the baseline-plus-increment form `E = E0 + Emax * C / (EC50 + C)`,
+  with `Emax` the maximal increment above the baseline `E0` and `EC50`
+  the half-maximal concentration (here `K`, generalized to Hill
+  coefficient `h`).
 -/
 
 @[expose] public section
