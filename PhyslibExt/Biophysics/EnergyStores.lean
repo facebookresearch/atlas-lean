@@ -9,6 +9,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+public import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 
 /-!
 # Exercise efficiency bound
@@ -29,11 +31,13 @@ patient-level or causal claim, and no calorie or FITT prescription.
 
 * `exercise_efficiency_bound`: the pointwise bound on metabolic power.
 * `exercise_efficiency_integral`: the integrated bound over `a ≤ b`.
+* `energy_budget`: stored-energy change equals net intake integral.
 
 ## iii. Table of contents
 
 * A. Pointwise efficiency bound.
 * B. Integrated efficiency bound.
+* C. Energy budget identity.
 
 ## iv. References
 
@@ -79,5 +83,35 @@ lemma exercise_efficiency_integral {Pbase Pmech : ℝ → ℝ} {eta a b : ℝ}
     fun t => exercise_efficiency_bound (hbase t) (hmech t) heta0 heta1
   exact intervalIntegral.integral_mono hab hint_mech
     (hint_base.add (hint_mech.div_const eta)) hpt
+
+/-! ## C. Energy budget identity. -/
+
+set_option linter.unusedVariables false in
+/-- **Energy budget identity.** With fixed energy densities `rhoF`,
+`rhoL` (positive), store trajectories `F`, `L` and component fluxes
+`qF`, `qL` satisfying the component balances in derivative form
+(`rhoF * F + rhoL * L` has derivative `qF + qL` everywhere), and the
+net balance `qF + qL = intake - expenditure`, the stored energy
+`E = rhoF * F + rhoL * L` satisfies
+`E t - E 0 = ∫ s in 0..t, (intake s - expenditure s)`. No
+variable-density or hydration term is present in this declared model. -/
+lemma energy_budget {rhoF rhoL : ℝ} {F L qF qL intake expenditure : ℝ → ℝ}
+    {t : ℝ} (hrhoF : 0 < rhoF) (hrhoL : 0 < rhoL) (ht : 0 ≤ t)
+    (hE : ∀ s : ℝ, HasDerivAt (fun u => rhoF * F u + rhoL * L u) (qF s + qL s) s)
+    (hbal : ∀ s : ℝ, qF s + qL s = intake s - expenditure s)
+    (hint : IntervalIntegrable (fun s => intake s - expenditure s)
+      MeasureTheory.volume 0 t) :
+    (rhoF * F t + rhoL * L t) - (rhoF * F 0 + rhoL * L 0) =
+      ∫ s in (0)..t, (intake s - expenditure s) := by
+  have hfun : (fun s => qF s + qL s) = (fun s => intake s - expenditure s) :=
+    funext hbal
+  have hint' : IntervalIntegrable (fun s => qF s + qL s) MeasureTheory.volume 0 t := by
+    rw [hfun]
+    exact hint
+  have hftc := intervalIntegral.integral_eq_sub_of_hasDerivAt
+    (f := fun u => rhoF * F u + rhoL * L u) (f' := fun s => qF s + qL s)
+    (fun s _ => hE s) hint'
+  rw [← hfun]
+  exact hftc.symm
 
 end PhyslibExt.Biophysics.EnergyStores
