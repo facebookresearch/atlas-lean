@@ -9,19 +9,20 @@ module
 
 import Mathlib.Tactic.NormNum
 
-import PhyslibExt.Transport.Traffic.CellTransmission
+import PhyslibExt.FluidDynamics.Traffic.CellTransmission
 
 /-!
 # Cell-transmission checks
 
-Focused checks for `PhyslibExt.Transport.Traffic.CellTransmission`:
+Focused checks for `PhyslibExt.FluidDynamics.Traffic.CellTransmission`:
 unit parameters with both densities `1 / 2` give face flux `1 / 2`;
-a jammed downstream cell and zero capacity give flux `0`.
+a jammed downstream cell gives flux `0`, and capacity is attained at
+the critical density.
 
 These are elaboration and non-vacuity checks, not new results.
 -/
 
-open CellTransmission
+open FluidDynamics.Traffic.CellTransmission
 
 /-- Unit witness: capacity `1 / 2`, flux `1 / 2`, within both bounds. -/
 example : faceFlux 1 1 1 (1 / 2) (1 / 2) = 1 / 2
@@ -35,11 +36,12 @@ example : 0 ≤ faceFlux 2 3 10 4 9 :=
   faceFlux_nonneg_of_le (by norm_num) (by norm_num) (by norm_num)
     ⟨by norm_num, by norm_num⟩ ⟨by norm_num, by norm_num⟩
 
-/-- Capacity is attained at the critical density `1 / 2` for unit
-parameters, through the public theorem. -/
+/-- Capacity is attained at the critical density for unit parameters,
+through the public theorem. -/
 example : demand 1 1 1 (1 * 1 / (1 + 1)) = capacity 1 1 1
     ∧ supply 1 1 1 (1 * 1 / (1 + 1)) = capacity 1 1 1 :=
   capacity_attained (v := 1) (w := 1) (kj := 1) (by norm_num) (by norm_num)
+    (by norm_num)
 
 /-- Jammed receiving cell gives flux `0`, by computation. -/
 example : faceFlux 1 1 1 (1 / 2) 1 = 0 := by

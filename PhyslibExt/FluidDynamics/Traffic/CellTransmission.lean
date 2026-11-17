@@ -28,12 +28,13 @@ density.
 
 ## ii. Key results
 
-- `CellTransmission.faceFlux_nonneg_of_le`: nonnegativity on
-  admissible densities.
-- `CellTransmission.faceFlux_le_demand`,
-  `CellTransmission.faceFlux_le_supply`: the two face bounds.
-- `CellTransmission.demand_nonneg_le`,
-  `CellTransmission.supply_nonneg_le`: demand and supply bounds.
+- `FluidDynamics.Traffic.CellTransmission.faceFlux_nonneg_of_le`:
+  nonnegativity on admissible densities.
+- `FluidDynamics.Traffic.CellTransmission.faceFlux_le_demand`,
+  `FluidDynamics.Traffic.CellTransmission.faceFlux_le_supply`: the
+  two face bounds.
+- `FluidDynamics.Traffic.CellTransmission.capacity_attained`:
+  capacity attained at the critical density.
 
 ## iii. Table of contents
 
@@ -49,7 +50,7 @@ density.
 
 @[expose] public section
 
-namespace CellTransmission
+namespace FluidDynamics.Traffic.CellTransmission
 
 /-- Capacity of the triangular fundamental diagram with free-flow
 speed `v`, wave speed `w`, jam density `kj`: the peak flow
@@ -70,23 +71,17 @@ upstream demand and downstream supply. -/
 noncomputable def faceFlux (v w kj kup kdown : ℝ) : ℝ :=
   min (demand v w kj kup) (supply v w kj kdown)
 
-theorem capacity_nonneg {v w kj : ℝ} (hv : 0 < v) (hw : 0 < w)
-    (hkj : 0 ≤ kj) : 0 ≤ capacity v w kj := by
-  unfold capacity
-  exact div_nonneg (mul_nonneg (mul_nonneg hv.le hw.le) hkj) (add_pos hv hw).le
-
 /-- On admissible densities (`0 ≤ k ≤ kj` in both cells) with positive
 speeds, the face flux is nonnegative. -/
 theorem faceFlux_nonneg_of_le {v w kj kup kdown : ℝ}
     (hv : 0 < v) (hw : 0 < w) (hkj : 0 ≤ kj)
     (hup : 0 ≤ kup ∧ kup ≤ kj) (hdown : 0 ≤ kdown ∧ kdown ≤ kj) :
     0 ≤ faceFlux v w kj kup kdown := by
+  have hcap : 0 ≤ capacity v w kj :=
+    div_nonneg (mul_nonneg (mul_nonneg hv.le hw.le) hkj) (add_pos hv hw).le
   unfold faceFlux demand supply
-  refine le_min (le_min ?_ ?_) (le_min ?_ ?_)
-  · exact mul_nonneg hv.le hup.1
-  · exact capacity_nonneg hv hw hkj
-  · exact mul_nonneg hw.le (sub_nonneg.mpr hdown.2)
-  · exact capacity_nonneg hv hw hkj
+  exact le_min (le_min (mul_nonneg hv.le hup.1) hcap)
+    (le_min (mul_nonneg hw.le (sub_nonneg.mpr hdown.2)) hcap)
 
 /-- The face flux never exceeds the upstream demand. -/
 theorem faceFlux_le_demand {v w kj kup kdown : ℝ} :
@@ -105,36 +100,41 @@ densities. -/
 theorem demand_nonneg_le {v w kj k : ℝ} (hv : 0 < v) (hw : 0 < w)
     (hkj : 0 ≤ kj) (hk : 0 ≤ k) :
     0 ≤ demand v w kj k ∧ demand v w kj k ≤ capacity v w kj := by
+  have hcap : 0 ≤ capacity v w kj :=
+    div_nonneg (mul_nonneg (mul_nonneg hv.le hw.le) hkj) (add_pos hv hw).le
   unfold demand
-  exact ⟨le_min (mul_nonneg hv.le hk) (capacity_nonneg hv hw hkj),
-    min_le_right _ _⟩
+  exact ⟨le_min (mul_nonneg hv.le hk) hcap, min_le_right _ _⟩
 
 /-- Supply is nonnegative and capacity-bounded on admissible
 densities. -/
 theorem supply_nonneg_le {v w kj k : ℝ} (hv : 0 < v) (hw : 0 < w)
     (hkj : 0 ≤ kj) (hk : k ≤ kj) :
     0 ≤ supply v w kj k ∧ supply v w kj k ≤ capacity v w kj := by
+  have hcap : 0 ≤ capacity v w kj :=
+    div_nonneg (mul_nonneg (mul_nonneg hv.le hw.le) hkj) (add_pos hv hw).le
   unfold supply
-  exact ⟨le_min (mul_nonneg hw.le (sub_nonneg.mpr hk)) (capacity_nonneg hv hw hkj),
-    min_le_right _ _⟩
+  exact ⟨le_min (mul_nonneg hw.le (sub_nonneg.mpr hk)) hcap, min_le_right _ _⟩
 
 /-- The capacity is attained at the critical density
 `kc = w * kj / (v + w)` from both branches. -/
-theorem capacity_attained {v w kj : ℝ} (hv : 0 < v) (hw : 0 < w) :
+theorem capacity_attained {v w kj : ℝ} (hv : 0 < v) (hw : 0 < w)
+    (_hkj : 0 < kj) :
     demand v w kj (w * kj / (v + w)) = capacity v w kj
       ∧ supply v w kj (w * kj / (v + w)) = capacity v w kj := by
-  have hsum : v + w ≠ 0 := ne_of_gt (add_pos hv hw)
-  have hd : v * (w * kj / (v + w)) = capacity v w kj := by
+  have hvw : v + w ≠ 0 := ne_of_gt (add_pos hv hw)
+  have hdem : v * (w * kj / (v + w)) = capacity v w kj := by
     unfold capacity
     field_simp
-  have hs : w * (kj - w * kj / (v + w)) = capacity v w kj := by
+  have hsup : w * (kj - w * kj / (v + w)) = capacity v w kj := by
     unfold capacity
     field_simp
     ring
   constructor
   · unfold demand
-    rw [hd, min_self]
+    rw [hdem]
+    exact min_self _
   · unfold supply
-    rw [hs, min_self]
+    rw [hsup]
+    exact min_self _
 
-end CellTransmission
+end FluidDynamics.Traffic.CellTransmission
