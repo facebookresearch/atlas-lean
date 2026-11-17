@@ -168,9 +168,12 @@ theorem pos_of_waterLevelSum_eq {ι : Type*} [Fintype ι] {lam : ι → ℝ} {ν
 
 /-! ### KKT certificate -/
 
-/-- **KKT conditions of the water-filling allocation.** With `w = waterFilling lam ν` and
-`ν > 0`, every mode has marginal gain `lam i / (1 + lam i * w i) ≤ ν⁻¹`, with equality on every
-mode that receives positive power. -/
+/-- **Water-filling stationarity conditions.** With `w = waterFilling lam ν` and
+`ν > 0`, every mode has scaled marginal gain `lam i / (1 + lam i * w i) ≤ ν⁻¹`, with equality
+on every mode that receives positive power. (The actual derivative of the sum rate with
+respect to `p i` is `lam i / ((1 + lam i * p i) * (2 * Real.log 2))`; the quantity here is
+that derivative scaled by `2 * Real.log 2`, so the budget multiplier is `ν⁻¹` in the
+scaled units.) -/
 theorem waterFilling_kkt {ι : Type*} (lam : ι → ℝ) {ν : ℝ} (hν : 0 < ν) (i : ι) :
     lam i / (1 + lam i * waterFilling lam ν i) ≤ ν⁻¹ ∧
       (0 < waterFilling lam ν i → lam i / (1 + lam i * waterFilling lam ν i) = ν⁻¹) := by
@@ -226,7 +229,8 @@ theorem waterFilling_kkt {ι : Type*} (lam : ι → ℝ) {ν : ℝ} (hν : 0 < �
 
 /-- **Sufficient condition for the sum-rate problem (direct concavity proof).** For gains
 `lam i ≥ 0`, a nonnegative allocation `p` spending the whole budget (`∑ i, p i = P`) whose
-marginal gains satisfy the water-filling stationarity conditions at level `ν > 0` maximizes
+scaled marginal gains (the rate derivatives scaled by `2 * Real.log 2`) satisfy the
+water-filling stationarity conditions at level `ν > 0` maximizes
 `sumRateBits lam` on `powerFeasible P`. The proof is direct: the tangent upper bound for `log`
 at each mode, summed against the budget constraint. -/
 theorem isMaxOn_sumRateBits_of_kkt {ι : Type*} [Fintype ι] {lam p : ι → ℝ} {ν P : ℝ}
