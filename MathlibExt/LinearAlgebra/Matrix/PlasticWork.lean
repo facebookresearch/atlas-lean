@@ -50,20 +50,18 @@ namespace PlasticWork
 
 open Finset Matrix
 
-theorem lam_eq_dot {m n : Type*} [Fintype m] [Fintype n]
-    [DecidableEq m] [DecidableEq n]
+theorem lam_eq_dotProduct {m n : Type*} [Fintype m] [Fintype n]
     (B : Matrix m n ℝ) (sigma : m → ℝ) (f v : n → ℝ) (lam : ℝ)
     (heq : Bᵀ *ᵥ sigma = lam • f)
     (hnorm : f ⬝ᵥ v = 1) :
     lam = sigma ⬝ᵥ (B *ᵥ v) := by
-  have hsmul : (lam • f) ⬝ᵥ v = lam * (f ⬝ᵥ v) := by
-    show (∑ i, (lam • f) i * v i) = lam * ∑ i, f i * v i
-    simp only [Pi.smul_apply, smul_eq_mul]
-    rw [Finset.mul_sum]
-    exact Finset.sum_congr rfl (fun i _ => by ring)
-  have h1 : lam = (Bᵀ *ᵥ sigma) ⬝ᵥ v := by
-    rw [heq, hsmul, hnorm, mul_one]
-  rw [h1, Matrix.mulVec_transpose, ← Matrix.dotProduct_mulVec]
+  have h1 : (lam • f) ⬝ᵥ v = lam := by
+    rw [smul_dotProduct, hnorm, smul_eq_mul, mul_one]
+  have h2 : (Bᵀ *ᵥ sigma) ⬝ᵥ v = sigma ⬝ᵥ (B *ᵥ v) := by
+    rw [Matrix.mulVec_transpose, ← Matrix.dotProduct_mulVec]
+  have h3 : (Bᵀ *ᵥ sigma) ⬝ᵥ v = lam := by rw [heq, h1]
+  rw [h2] at h3
+  exact h3.symm
 
 /-- Discrete limit-analysis bound: for a compatibility matrix `B`,
 stress `sigma` in equilibrium `Bᵀ *ᵥ sigma = lam • f`, capacities
@@ -71,43 +69,42 @@ stress `sigma` in equilibrium `Bᵀ *ᵥ sigma = lam • f`, capacities
 `f ⬝ᵥ v = 1`, the load factor satisfies
 `lam ≤ ∑ e, y e * |(B *ᵥ v) e|`. -/
 theorem loadFactor_le {m n : Type*} [Fintype m] [Fintype n]
-    [DecidableEq m] [DecidableEq n]
     (B : Matrix m n ℝ) (sigma y : m → ℝ) (f v : n → ℝ) (lam : ℝ)
     (heq : Bᵀ *ᵥ sigma = lam • f)
     (hcap : ∀ e : m, |sigma e| ≤ y e)
     (hnorm : f ⬝ᵥ v = 1) :
     lam ≤ ∑ e, y e * |(B *ᵥ v) e| := by
-  have hlam : lam = sigma ⬝ᵥ (B *ᵥ v) :=
-    lam_eq_dot B sigma f v lam heq hnorm
-  have hsum : sigma ⬝ᵥ (B *ᵥ v) = ∑ e, sigma e * (B *ᵥ v) e := rfl
-  rw [hlam, hsum]
+  have hkey : lam = sigma ⬝ᵥ (B *ᵥ v) :=
+    lam_eq_dotProduct B sigma f v lam heq hnorm
+  rw [hkey]
+  show (∑ e, sigma e * (B *ᵥ v) e) ≤ _
   apply Finset.sum_le_sum
   intro e _
-  have h3 : sigma e * (B *ᵥ v) e ≤ |sigma e| * |(B *ᵥ v) e| := by
-    rw [← abs_mul]
-    exact le_abs_self _
-  exact h3.trans (mul_le_mul_of_nonneg_right (hcap e) (abs_nonneg _))
+  calc sigma e * (B *ᵥ v) e ≤ |sigma e * (B *ᵥ v) e| := le_abs_self _
+    _ = |sigma e| * |(B *ᵥ v) e| := abs_mul _ _
+    _ ≤ y e * |(B *ᵥ v) e| :=
+        mul_le_mul_of_nonneg_right (hcap e) (abs_nonneg _)
 
 /-- Matching equality from a supplied complementary certificate:
 if additionally `y e * |(B *ᵥ v) e| = sigma e * (B *ᵥ v) e` for every
 `e` (stress aligned with the mechanism strain, no slack), equality
 holds. -/
 theorem loadFactor_eq_of_complementary {m n : Type*} [Fintype m] [Fintype n]
-    [DecidableEq m] [DecidableEq n]
     (B : Matrix m n ℝ) (sigma y : m → ℝ) (f v : n → ℝ) (lam : ℝ)
     (heq : Bᵀ *ᵥ sigma = lam • f)
     (hcap : ∀ e : m, |sigma e| ≤ y e)
     (hnorm : f ⬝ᵥ v = 1)
     (hcomp : ∀ e : m, y e * |(B *ᵥ v) e| = sigma e * (B *ᵥ v) e) :
     lam = ∑ e, y e * |(B *ᵥ v) e| := by
-  apply le_antisymm
-  · exact loadFactor_le B sigma y f v lam heq hcap hnorm
-  · have hlam : lam = sigma ⬝ᵥ (B *ᵥ v) :=
-      lam_eq_dot B sigma f v lam heq hnorm
-    have hsum : sigma ⬝ᵥ (B *ᵥ v) = ∑ e, sigma e * (B *ᵥ v) e := rfl
-    rw [hlam, hsum]
-    apply Finset.sum_le_sum
+  have hle : lam ≤ ∑ e, y e * |(B *ᵥ v) e| :=
+    loadFactor_le B sigma y f v lam heq hcap hnorm
+  have hkey : lam = sigma ⬝ᵥ (B *ᵥ v) :=
+    lam_eq_dotProduct B sigma f v lam heq hnorm
+  have hsum : sigma ⬝ᵥ (B *ᵥ v) = ∑ e, y e * |(B *ᵥ v) e| := by
+    show (∑ e, sigma e * (B *ᵥ v) e) = _
+    apply Finset.sum_congr rfl
     intro e _
-    rw [hcomp e]
+    exact (hcomp e).symm
+  exact le_antisymm hle (hsum.symm.trans hkey.symm).le
 
 end PlasticWork
