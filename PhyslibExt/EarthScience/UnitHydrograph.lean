@@ -20,7 +20,8 @@ import Mathlib.Tactic.Linarith
 
 Runoff from rainfall excess `p` through a unit hydrograph `u` is the
 discrete convolution `q k = ∑_{i+j=k} p i * u j` (0-based indices). The
-total response over the full horizon is the product of the totals, and
+total response over the padded horizon  (one trailing
+zero step past the last possible ordinate ) is the product of the totals, and
 under the unit-hydrograph normalization `dt * ∑ j, u j = A` the runoff
 volume `dt * ∑ k, q k` is `A` times the total rainfall-excess depth.
 The convolution is `AdditiveCombinatorics.sumConv`; the bridge lemma
@@ -59,7 +60,8 @@ all real sequences. -/
 abbrev discreteConvolution (p u : ℕ → ℝ) (k : ℕ) : ℝ :=
   AdditiveCombinatorics.sumConv p u k
 
-/-- Total discrete-convolution response over the full horizon equals the
+/-- Total discrete-convolution response over the padded horizon
+ (its last step is identically zero) equals the
 product of the total rainfall excess and the total unit response, when
 `p` is supported before `n` and `u` before `m`. -/
 theorem discreteConvolution_sum_eq {p u : ℕ → ℝ} {n m : ℕ}

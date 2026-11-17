@@ -45,7 +45,8 @@ variable {R : Type*} [Semiring R]
 `sumConv f g n = ∑_{a+b=n} f(a)g(b)`. -/
 def sumConv (f g : ℕ → R) (n : ℕ) : R := ∑ p ∈ antidiagonal n, f p.1 * g p.2
 
-/-- Total of the sum convolution over the full horizon, for finitely
+/-- Total of the sum convolution over the padded horizon
+ (one trailing zero step), for finitely
 supported `f` and `g`: the sum of `sumConv f g` over `range (n + m)` is
 the product of the totals. No commutativity is needed. -/
 theorem sum_range_sumConv (f g : ℕ → R) {n m : ℕ}
