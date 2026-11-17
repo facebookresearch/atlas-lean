@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "upstream": {"commit": "110ea10c9842e17ce0f7478a72b3abe4346ddab1", "repository": "fairinternal/formal-math"},
+  "upstream": {"commit": "a1b38e36ece72bc9b05087245be99cff1901acd4", "repository": "fairinternal/formal-math"},
   "lean_toolchain": "leanprover/lean4:v4.35.0",
   "roots": ["MathlibExt", "MathlibExtTest", "CSLibExt", "CSLibExtTest", "WantedExt"],
   "rows": [
