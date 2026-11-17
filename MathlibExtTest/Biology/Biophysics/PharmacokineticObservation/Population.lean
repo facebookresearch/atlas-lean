@@ -19,15 +19,15 @@ open MeasureTheory ProbabilityTheory
 open scoped NNReal
 
 /-- One visit, `m = 0`, `v = 1`. -/
-example : (Measure.pi (fun _j : Fin 1 => gaussianReal (0 : ℝ) 1)).map
+example : (Measure.pi (fun j : Fin 1 => gaussianReal (0 : ℝ) 1)).map
     (fun e : Fin 1 → ℝ => fun j => Real.exp ((0 : Fin 1 → ℝ) j + e j)) =
-    Measure.pi (fun _j : Fin 1 => (gaussianReal ((0 : Fin 1 → ℝ) j) 1).map Real.exp) :=
+    Measure.pi (fun j : Fin 1 => (gaussianReal ((0 : Fin 1 → ℝ) j) 1).map Real.exp) :=
   visit_law_fixed_latent 0 1
 
 /-- Zero variance `v = 0` is valid (Dirac boundary). -/
-example : (Measure.pi (fun _j : Fin 1 => gaussianReal (0 : ℝ) 0)).map
+example : (Measure.pi (fun j : Fin 1 => gaussianReal (0 : ℝ) 0)).map
     (fun e : Fin 1 → ℝ => fun j => Real.exp ((0 : Fin 1 → ℝ) j + e j)) =
-    Measure.pi (fun _j : Fin 1 => (gaussianReal ((0 : Fin 1 → ℝ) j) 0).map Real.exp) :=
+    Measure.pi (fun j : Fin 1 => (gaussianReal ((0 : Fin 1 → ℝ) j) 0).map Real.exp) :=
   visit_law_fixed_latent 0 0
 
 end MathlibExtTest.Biology.Biophysics.PharmacokineticObservation.Population
