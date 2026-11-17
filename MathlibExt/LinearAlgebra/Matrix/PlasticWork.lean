@@ -13,8 +13,6 @@ public import Mathlib.Data.Fintype.Basic
 public import Mathlib.Data.Matrix.Mul
 public import Mathlib.LinearAlgebra.Matrix.Defs
 import Mathlib.Data.Matrix.Basic
-import Mathlib.Tactic.Linarith
-import Mathlib.Tactic.Ring
 
 /-!
 # Discrete plastic work certificates
