@@ -25,7 +25,6 @@ example {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
 
 /-- Against an independent reference the identity collapses to the output KL term. -/
 example {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
-    [StandardBorelSpace X] [StandardBorelSpace Y] [Nonempty X] [Nonempty Y]
     (P : Measure X) [IsProbabilityMeasure P] (R Q : Measure Y) [IsProbabilityMeasure R]
     [IsProbabilityMeasure Q] :
     klDiv (P.prod R) (P.prod Q) = klDiv R Q :=

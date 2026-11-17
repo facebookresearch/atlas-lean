@@ -67,7 +67,7 @@ theorem map_swap_eq_map_snd_compProd_condKernel {X Y : Type*} [MeasurableSpace X
 marginals as middle term:
 `KL(μ ‖ μX ⊗ Q) = KL(μ ‖ μX ⊗ μY) + KL(μY ‖ Q)` in `ℝ≥0∞`. -/
 theorem klDiv_prod_reference_eq_add {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
-    [StandardBorelSpace X] [StandardBorelSpace Y] [Nonempty X] [Nonempty Y]
+    [StandardBorelSpace X] [Nonempty X]
     (μ : ProbabilityMeasure (X × Y)) (Q : Measure Y) [IsProbabilityMeasure Q] :
     klDiv (μ : Measure (X × Y)) (((μ : Measure (X × Y)).map Prod.fst).prod Q) =
       klDiv (μ : Measure (X × Y))
@@ -127,12 +127,12 @@ theorem ofReal_log_two_mul_measureMutualInformation {X Y : Type*} [MeasurableSpa
 
 /-! ### Headline -/
 
-/-- **Reference-output decomposition of mutual information.** For a joint probability law `μ` on
-standard Borel `X × Y` with actual marginals `μX`, `μY`, and any output reference probability `Q`,
+/-- **Reference-output decomposition of mutual information.** For a joint probability law `μ` on `X × Y` (with `X`
+standard Borel) and actual marginals `μX`, `μY`, and any output reference probability `Q`,
 `KL(μ ‖ μX ⊗ Q) = ofReal (log 2) · I(μ) + KL(μY ‖ Q)` as an identity in `ℝ≥0∞`, including infinite
 values (`I` in bits, `KL` in nats). -/
 theorem klDiv_prod_reference_eq_measureMutualInformation_add {X Y : Type*} [MeasurableSpace X]
-    [MeasurableSpace Y] [StandardBorelSpace X] [StandardBorelSpace Y] [Nonempty X] [Nonempty Y]
+    [MeasurableSpace Y] [StandardBorelSpace X] [Nonempty X]
     (μ : ProbabilityMeasure (X × Y)) (Q : Measure Y) [IsProbabilityMeasure Q] :
     klDiv (μ : Measure (X × Y)) (((μ : Measure (X × Y)).map Prod.fst).prod Q) =
       ENNReal.ofReal (Real.log 2) * measureMutualInformation μ +
@@ -143,7 +143,7 @@ theorem klDiv_prod_reference_eq_measureMutualInformation_add {X Y : Type*} [Meas
 
 /-- Validation, `Q = μY`: the reference divergence is the mutual information in nats. -/
 theorem klDiv_prod_marginal_eq_mul_measureMutualInformation {X Y : Type*} [MeasurableSpace X]
-    [MeasurableSpace Y] [StandardBorelSpace X] [StandardBorelSpace Y] [Nonempty X] [Nonempty Y]
+    [MeasurableSpace Y]
     (μ : ProbabilityMeasure (X × Y)) :
     klDiv (μ : Measure (X × Y))
         (((μ : Measure (X × Y)).map Prod.fst).prod ((μ : Measure (X × Y)).map Prod.snd)) =
@@ -164,7 +164,6 @@ theorem measureMutualInformation_prod_eq_zero {X Y : Type*} [MeasurableSpace X]
 /-- Validation, independent joint law against an arbitrary output reference: the identity
 collapses to `KL(P ⊗ R ‖ P ⊗ Q) = KL(R ‖ Q)`. -/
 theorem klDiv_prod_prod_eq_klDiv {X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
-    [StandardBorelSpace X] [StandardBorelSpace Y] [Nonempty X] [Nonempty Y]
     (P : Measure X) [IsProbabilityMeasure P] (R Q : Measure Y) [IsProbabilityMeasure R]
     [IsProbabilityMeasure Q] :
     klDiv (P.prod R) (P.prod Q) = klDiv R Q := by
