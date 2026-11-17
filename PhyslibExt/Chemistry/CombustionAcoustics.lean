@@ -10,7 +10,10 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.SpecialFunctions.Exp
 public import Mathlib.Topology.Order.IntermediateValue
-
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
@@ -36,15 +39,38 @@ coefficients are model inputs; no empirical adequacy is claimed.
   temperature exists in the stated bracket.
 - `Chemistry.CombustionAcoustics.arrhenius_solution_trapped`: forward
   solutions are trapped in the stated interval.
+- `Chemistry.CombustionAcoustics.hasDerivAt_acousticModeEnergy`: the
+  standing-mode acoustic energy derivative (heat-release source
+  minus algebraic damping), with its interval balance
+  `acousticModeEnergy_sub_eq_integral`, the signed dissipation
+  corollary `acousticModeEnergy_deriv_nonpos_of_no_heat`, and the
+  zero-derivative case `hasDerivAt_acousticModeEnergy_conserved` and
+  genuine conservation `acousticModeEnergy_eq_of_conserved`.
 
 ## iii. Table of contents
 
 - A. Arrhenius equilibrium and trapping
+- B. Acoustic modal energy
 
 ## iv. References
 
 - The sign bracket is the classical Semenov/Frank-Kamenetskii
   zeroth-order balance; the formal statement is self-contained.
+- Acoustic energy: A. D. Pierce, *Acoustics: An Introduction
+  to Its Physical Principles and Applications* (McGraw-Hill,
+  1981), Chapter 1 (acoustic energy density and energy flux
+  for a progressive wave) and the duct-mode discussion of
+  Chapter 7. In the notation here, a single standing duct mode
+  has pressure amplitude `A` and velocity amplitude `B` linked
+  by the modal equations with wavenumber `π / L`; `H` is a
+  constant heat-release amplitude entering the pressure
+  equation through the `(γ - 1) * H` source, and `r` is a
+  linear damping coefficient in the momentum equation. The
+  factor `L / 4` comes from integrating the energy density
+  over the duct: `∫₀ᴸ sin²(πx/L) dx = L/2`, and the `1/2` in
+  the acoustic energy density then gives `L/4`. The energy
+  here is total energy per unit duct cross-section. The
+  formal statement is self-contained.
 
 ## A. Arrhenius equilibrium and trapping
 
@@ -352,6 +378,7 @@ lemma arrhenius_solution_trapped_on_interval {G H B Ta C : ℝ} (hG : 0 < G)
     linarith
   exact Set.mem_Icc.mpr ⟨hlb, hub⟩
 
+
 /-- Forward trapping for a forward solution defined for all
 `t ≥ 0`: if `T` has within-derivative
 `arrheniusRate G H B Ta (T t) / C` on `Set.Ici 0` at every
@@ -371,5 +398,184 @@ lemma arrhenius_solution_trapped {G H B Ta C : ℝ} (hG : 0 < G)
   exact arrhenius_solution_trapped_on_interval hG hH hB hTa hC ht
     (fun s hs => (hT s hs.1).mono Set.Icc_subset_Ici_self)
     (fun s hs => hpos s hs.1)
+
+/-! ## B. Acoustic modal energy -/
+
+/-- Acoustic modal energy for one standing mode with pressure amplitude
+`A` and velocity amplitude `B` in a duct of length `L`, ratio of
+specific heats `γ`, mean pressure `pbar`, and density `ρ`:
+`E = L * (A^2 / (γ * pbar) + ρ * B^2) / 4`. -/
+noncomputable def acousticModeEnergy (γ pbar ρ L A B : ℝ) : ℝ :=
+  L * (A ^ 2 / (γ * pbar) + ρ * B ^ 2) / 4
+
+private lemma hasDerivAt_sq (x : ℝ) : HasDerivAt (fun x : ℝ => x ^ 2) (2 * x) x := by
+  simpa using hasDerivAt_pow 2 x
+
+private lemma hasDerivAt_const_mul' {f : ℝ → ℝ} {f' x : ℝ} (c : ℝ)
+    (h : HasDerivAt f f' x) : HasDerivAt (fun y => c * f y) (c * f') x :=
+  h.const_mul c
+
+private lemma hasDerivAt_mul_const' {f : ℝ → ℝ} {f' x : ℝ}
+    (h : HasDerivAt f f' x) (c : ℝ) : HasDerivAt (fun y => f y * c) (f' * c) x :=
+  h.mul_const c
+
+private lemma hasDerivAt_div_const' {f : ℝ → ℝ} {f' x : ℝ}
+    (h : HasDerivAt f f' x) (c : ℝ) : HasDerivAt (fun y => f y / c) (f' / c) x :=
+  h.div_const c
+
+/-- Energy identity for the acoustic mode: if `A` and `B` are
+differentiable in time with
+`A' = -γ * pbar * (π / L) * B + (γ - 1) * H` and
+`ρ * B' = (π / L) * A - r * B` (with `B'` the derivative value), then
+the energy `E(t) = L * (A(t)^2 / (γ * pbar) + ρ * B(t)^2) / 4` has
+derivative
+`L * (γ - 1) * A(t) * H / (2 * γ * pbar) - r * L * B(t)^2 / 2`:
+the heat-release source term minus the algebraic damping term
+`r * L * B(t)^2 / 2` (a genuine dissipation under `0 ≤ r` and
+`0 < L`; see `acousticModeEnergy_deriv_nonpos_of_no_heat`). Here `H` is a
+constant heat-release amplitude for this identity. -/
+lemma hasDerivAt_acousticModeEnergy
+    {γ pbar ρ L r H : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0)
+    (hL : L ≠ 0) {A B : ℝ → ℝ} {A' B' : ℝ} {t : ℝ}
+    (hA : HasDerivAt A A' t) (hB : HasDerivAt B B' t)
+    (hA' : A' = -γ * pbar * (Real.pi / L) * B t + (γ - 1) * H)
+    (hB' : ρ * B' = (Real.pi / L) * A t - r * B t) :
+    HasDerivAt (fun s : ℝ => acousticModeEnergy γ pbar ρ L (A s) (B s))
+      (L * (γ - 1) * A t * H / (2 * γ * pbar) - r * L * B t ^ 2 / 2) t := by
+  have hA2 : HasDerivAt (fun s : ℝ => A s ^ 2) ((2 * A t) * A') t :=
+    (HasDerivAt.comp t (hasDerivAt_sq (A t)) hA).congr_of_eventuallyEq
+      (Filter.Eventually.of_forall fun s => rfl)
+  have hA2d := hasDerivAt_div_const' hA2 (γ * pbar)
+  have hB2 : HasDerivAt (fun s : ℝ => B s ^ 2) ((2 * B t) * B') t :=
+    (HasDerivAt.comp t (hasDerivAt_sq (B t)) hB).congr_of_eventuallyEq
+      (Filter.Eventually.of_forall fun s => rfl)
+  have hB2c := hasDerivAt_const_mul' ρ hB2
+  have hsum := hA2d.add hB2c
+  have hLc := hasDerivAt_const_mul' L hsum
+  have hE := hasDerivAt_div_const' hLc 4
+  have h1 : ρ * ((2 * B t) * B') = (2 * B t) * ((Real.pi / L) * A t - r * B t) := by
+    calc ρ * ((2 * B t) * B') = (2 * B t) * (ρ * B') := by ring
+      _ = (2 * B t) * ((Real.pi / L) * A t - r * B t) := by rw [hB']
+  have hDF : L * ((((2 * A t) * A') / (γ * pbar)) + ρ * ((2 * B t) * B')) / 4 =
+      L * (γ - 1) * A t * H / (2 * γ * pbar) - r * L * B t ^ 2 / 2 := by
+    rw [hA', h1]
+    have hγp : γ * pbar ≠ 0 := mul_ne_zero hγ hpbar
+    have h2 : (2 : ℝ) ≠ 0 := by norm_num
+    have h2γp : 2 * γ * pbar ≠ 0 := mul_ne_zero (mul_ne_zero h2 hγ) hpbar
+    field_simp [hγp, hL, h2γp]
+    ring
+  rw [hDF] at hE
+  exact hE.congr_of_eventuallyEq (Filter.Eventually.of_forall fun s => by
+    simp only [acousticModeEnergy, Pi.add_apply])
+
+/-- Signed dissipation with no heat release: under `0 ≤ r` and
+`0 < L`, with `H = 0`, the modal energy derivative is
+`-(r * L * B(t)^2 / 2)`, which is nonpositive. -/
+lemma acousticModeEnergy_deriv_nonpos_of_no_heat
+    {γ pbar ρ L r : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0)
+    (hL : 0 < L) (hr : 0 ≤ r) {A B : ℝ → ℝ} {A' B' : ℝ} {t : ℝ}
+    (hA : HasDerivAt A A' t) (hB : HasDerivAt B B' t)
+    (hA' : A' = -γ * pbar * (Real.pi / L) * B t + (γ - 1) * 0)
+    (hB' : ρ * B' = (Real.pi / L) * A t - r * B t) :
+    HasDerivAt (fun s : ℝ => acousticModeEnergy γ pbar ρ L (A s) (B s))
+        (-(r * L * B t ^ 2 / 2)) t ∧ -(r * L * B t ^ 2 / 2) ≤ 0 := by
+  have h := hasDerivAt_acousticModeEnergy (r := r) (H := 0) hγ hpbar
+    (ne_of_gt hL) hA hB hA' hB'
+  have e : L * (γ - 1) * A t * 0 / (2 * γ * pbar) - r * L * B t ^ 2 / 2
+      = -(r * L * B t ^ 2 / 2) := by ring
+  rw [e] at h
+  refine ⟨h, ?_⟩
+  have hnn : (0 : ℝ) ≤ r * L * B t ^ 2 / 2 :=
+    div_nonneg (mul_nonneg (mul_nonneg hr (le_of_lt hL)) (sq_nonneg _)) (by norm_num)
+  linarith
+
+/-- Integrated energy balance over a time interval `[t0, t1]`: under
+the same modal equations at every time, the energy change equals the
+integral of the heat-release source minus the algebraic
+damping term. -/
+lemma acousticModeEnergy_sub_eq_integral
+    {γ pbar ρ L r H : ℝ} (hγ : 0 < γ) (hpbar : 0 < pbar)
+    (hL : 0 < L) {A B A' B' : ℝ → ℝ} (t0 t1 : ℝ)
+    (hA : ∀ t ∈ Set.uIcc t0 t1, HasDerivAt A (A' t) t)
+    (hB : ∀ t ∈ Set.uIcc t0 t1, HasDerivAt B (B' t) t)
+    (hA' : ∀ t ∈ Set.uIcc t0 t1,
+      A' t = -γ * pbar * (Real.pi / L) * B t + (γ - 1) * H)
+    (hB' : ∀ t ∈ Set.uIcc t0 t1,
+      ρ * B' t = (Real.pi / L) * A t - r * B t) :
+    acousticModeEnergy γ pbar ρ L (A t1) (B t1) -
+        acousticModeEnergy γ pbar ρ L (A t0) (B t0) =
+      ∫ t in t0..t1,
+        (L * (γ - 1) * A t * H / (2 * γ * pbar) - r * L * B t ^ 2 / 2) := by
+  have hγ' : γ ≠ 0 := ne_of_gt hγ
+  have hpbar' : pbar ≠ 0 := ne_of_gt hpbar
+  have hL' : L ≠ 0 := ne_of_gt hL
+  have hderiv : ∀ x ∈ Set.uIcc t0 t1,
+      HasDerivAt (fun s : ℝ => acousticModeEnergy γ pbar ρ L (A s) (B s))
+        (L * (γ - 1) * A x * H / (2 * γ * pbar) - r * L * B x ^ 2 / 2) x :=
+    fun x hx => hasDerivAt_acousticModeEnergy hγ' hpbar' hL'
+      (hA x hx) (hB x hx) (hA' x hx) (hB' x hx)
+  have hAcont : ContinuousOn A (Set.uIcc t0 t1) :=
+    fun x hx => (hA x hx).continuousAt.continuousWithinAt
+  have hBcont : ContinuousOn B (Set.uIcc t0 t1) :=
+    fun x hx => (hB x hx).continuousAt.continuousWithinAt
+  have hcont : ContinuousOn (fun t : ℝ =>
+      L * (γ - 1) * A t * H / (2 * γ * pbar) - r * L * B t ^ 2 / 2)
+      (Set.uIcc t0 t1) := by
+    have e1 : ContinuousOn (fun t : ℝ => L * (γ - 1) * A t * H / (2 * γ * pbar))
+        (Set.uIcc t0 t1) :=
+      ((hAcont.const_mul (L * (γ - 1))).mul_const H).div_const (2 * γ * pbar)
+    have e2 : ContinuousOn (fun t : ℝ => r * L * B t ^ 2 / 2)
+        (Set.uIcc t0 t1) :=
+      ((hBcont.pow 2).const_mul (r * L)).div_const 2
+    exact e1.sub e2
+  have hint : IntervalIntegrable (fun t : ℝ =>
+      L * (γ - 1) * A t * H / (2 * γ * pbar) - r * L * B t ^ 2 / 2)
+      MeasureTheory.volume t0 t1 := hcont.intervalIntegrable
+  exact (intervalIntegral.integral_eq_sub_of_hasDerivAt hderiv hint).symm
+
+/-- With no heat release and no dissipation, the modal energy has
+zero derivative at any single time satisfying the modal equations.
+Genuine conservation between two times is
+`acousticModeEnergy_eq_of_conserved`. -/
+lemma hasDerivAt_acousticModeEnergy_conserved
+    {γ pbar ρ L : ℝ} (hγ : γ ≠ 0) (hpbar : pbar ≠ 0)
+    (hL : L ≠ 0) {A B : ℝ → ℝ} {A' B' : ℝ} {t : ℝ}
+    (hA : HasDerivAt A A' t) (hB : HasDerivAt B B' t)
+    (hA' : A' = -γ * pbar * (Real.pi / L) * B t)
+    (hB' : ρ * B' = (Real.pi / L) * A t) :
+    HasDerivAt (fun s : ℝ => acousticModeEnergy γ pbar ρ L (A s) (B s)) 0 t := by
+  have hA0 : A' = -γ * pbar * (Real.pi / L) * B t + (γ - 1) * 0 := by
+    rw [hA']; ring
+  have hB0 : ρ * B' = (Real.pi / L) * A t - 0 * B t := by
+    rw [hB']; ring
+  have h := hasDerivAt_acousticModeEnergy (r := 0) (H := 0) hγ hpbar hL hA hB hA0 hB0
+  have e : L * (γ - 1) * A t * 0 / (2 * γ * pbar) - 0 * L * B t ^ 2 / 2 = 0 := by
+    ring
+  rw [e] at h
+  exact h
+
+/-- Genuine conservation: if the modal equations with no heat
+release (`H = 0`) and no damping (`r = 0`) hold at every time, the
+modal energy takes the same value at any two times. -/
+theorem acousticModeEnergy_eq_of_conserved
+    {γ pbar ρ L : ℝ} (hγ : 0 < γ) (hpbar : 0 < pbar)
+    (hL : 0 < L) {A B A' B' : ℝ → ℝ}
+    (hA : ∀ t : ℝ, HasDerivAt A (A' t) t)
+    (hB : ∀ t : ℝ, HasDerivAt B (B' t) t)
+    (hA' : ∀ t : ℝ, A' t = -γ * pbar * (Real.pi / L) * B t)
+    (hB' : ∀ t : ℝ, ρ * B' t = (Real.pi / L) * A t)
+    (t0 t1 : ℝ) :
+    acousticModeEnergy γ pbar ρ L (A t1) (B t1) =
+      acousticModeEnergy γ pbar ρ L (A t0) (B t0) := by
+  have h := acousticModeEnergy_sub_eq_integral (r := 0) (H := 0)
+    hγ hpbar hL t0 t1
+    (fun t _ => hA t) (fun t _ => hB t)
+    (fun t _ => by rw [hA' t]; ring)
+    (fun t _ => by rw [hB' t]; ring)
+  have hzero : (∫ t in t0..t1,
+      (L * (γ - 1) * A t * 0 / (2 * γ * pbar) -
+        0 * L * B t ^ 2 / 2)) = 0 := by simp
+  rw [hzero] at h
+  exact sub_eq_zero.mp h
 
 end Chemistry.CombustionAcoustics
