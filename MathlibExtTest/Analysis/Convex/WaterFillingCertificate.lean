@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import MathlibExt.Analysis.Convex.WaterFillingCertificate
+public import Mathlib.Data.Fin.VecNotation
 
 @[expose] public section
 

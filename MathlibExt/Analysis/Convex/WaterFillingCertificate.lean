@@ -8,16 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 module
 
-public import Mathlib.Analysis.Calculus.FDeriv.Basic
-public import Mathlib.Analysis.Calculus.FDeriv.Comp
-public import Mathlib.Analysis.Calculus.Deriv.Basic
-public import Mathlib.Analysis.Calculus.Deriv.Add
-public import Mathlib.Analysis.Calculus.Deriv.Mul
-public import Mathlib.Analysis.Convex.Function
-public import Mathlib.Analysis.Convex.Deriv
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 public import Mathlib.Algebra.Order.BigOperators.Group.Finset
-public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Order.Filter.Extr
 
 /-!
