@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import PhyslibExt.Electronics.EbersMollTerminalBalance
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Tactic.NormNum
 
 @[expose] public section
@@ -17,11 +18,24 @@ open PhyslibExt.Electronics.EbersMollTerminalBalance
 
 namespace PhyslibExtTest.Electronics.EbersMollTerminalBalance
 
-/-- Terminal currents balance at a concrete bias point:
-collector plus base minus emitter is zero. -/
-example : collectorCurrent 2 3 1 1 0 0 + baseCurrent 2 3 1 1 1 0 0
-    - emitterCurrent 2 3 1 1 0 0 = 0 :=
-  terminal_current_balance 2 3 1 1 1 0 0
+/-- Terminal currents balance at the nonzero bias point of the
+next example: collector plus base minus emitter is zero. -/
+example : collectorCurrent 2 3 (1 / 2) 1 (Real.log 2) 0
+    + baseCurrent 2 3 (1 / 2) (1 / 3) 1 (Real.log 2) 0
+    - emitterCurrent 2 3 (1 / 3) 1 (Real.log 2) 0 = 0 :=
+  terminal_current_balance 2 3 (1 / 2) (1 / 3) 1 (Real.log 2) 0
+
+/-- A genuinely nonzero exact case: `VT = 1`, `Vbe = log 2`,
+`Vbc = 0` gives branch currents `F = 2`, `R = 0`, hence
+`Ic = 1`, `Ib = 1`, `Ie = 2` and balance `1 + 1 - 2 = 0`. This
+detects wrong signs and gain placement, unlike the zero-bias
+cases. -/
+example : collectorCurrent 2 3 (1 / 2) 1 (Real.log 2) 0 = 1
+    ∧ baseCurrent 2 3 (1 / 2) (1 / 3) 1 (Real.log 2) 0 = 1
+    ∧ emitterCurrent 2 3 (1 / 3) 1 (Real.log 2) 0 = 2 := by
+  refine ⟨?_, ?_, ?_⟩ <;>
+    simp [collectorCurrent, baseCurrent, emitterCurrent, forwardBranchCurrent,
+      reverseBranchCurrent, Real.exp_log] <;> norm_num
 
 /-- At zero bias the collector current vanishes. -/
 example : collectorCurrent 2 3 1 1 0 0 = 0 :=

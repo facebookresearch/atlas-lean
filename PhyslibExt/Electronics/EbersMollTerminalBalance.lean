@@ -174,10 +174,10 @@ lemma terminalCurrents_zero_bias (IsF IsR alphaF alphaR VT : ℝ) :
   refine ⟨?_, ?_, ?_⟩ <;>
     simp only [collectorCurrent, baseCurrent, emitterCurrent, hF, hR] <;> ring
 
-/-! ### Small-signal derivatives (valid at every operating point) -/
+/-! ### Small-signal derivatives (positive thermal voltage) -/
 
 /-- Transconductance `∂Ic/∂Vbe = alphaF * IsF / VT * exp (Vbe / VT)`. -/
-lemma hasDerivAt_collectorCurrent_vbe (IsF IsR alphaF VT Vbe Vbc : ℝ) :
+lemma hasDerivAt_collectorCurrent_vbe (IsF IsR alphaF VT Vbe Vbc : ℝ) (_hVT : 0 < VT) :
     HasDerivAt (fun x => collectorCurrent IsF IsR alphaF VT x Vbc)
       (alphaF * IsF / VT * Real.exp (Vbe / VT)) Vbe := by
   have hF := hasDerivAt_forwardBranch IsF VT Vbe
@@ -189,7 +189,7 @@ lemma hasDerivAt_collectorCurrent_vbe (IsF IsR alphaF VT Vbe Vbc : ℝ) :
   exact h
 
 /-- `∂Ic/∂Vbc = -(IsR / VT) * exp (Vbc / VT)`. -/
-lemma hasDerivAt_collectorCurrent_vbc (IsF IsR alphaF VT Vbe Vbc : ℝ) :
+lemma hasDerivAt_collectorCurrent_vbc (IsF IsR alphaF VT Vbe Vbc : ℝ) (_hVT : 0 < VT) :
     HasDerivAt (fun y => collectorCurrent IsF IsR alphaF VT Vbe y)
       (-(IsR / VT) * Real.exp (Vbc / VT)) Vbc := by
   have hR := hasDerivAt_reverseBranch IsR VT Vbc
@@ -200,7 +200,7 @@ lemma hasDerivAt_collectorCurrent_vbc (IsF IsR alphaF VT Vbe Vbc : ℝ) :
   exact h
 
 /-- `∂Ie/∂Vbe = IsF / VT * exp (Vbe / VT)`. -/
-lemma hasDerivAt_emitterCurrent_vbe (IsF IsR alphaR VT Vbe Vbc : ℝ) :
+lemma hasDerivAt_emitterCurrent_vbe (IsF IsR alphaR VT Vbe Vbc : ℝ) (_hVT : 0 < VT) :
     HasDerivAt (fun x => emitterCurrent IsF IsR alphaR VT x Vbc)
       (IsF / VT * Real.exp (Vbe / VT)) Vbe := by
   have hF := hasDerivAt_forwardBranch IsF VT Vbe
@@ -208,7 +208,7 @@ lemma hasDerivAt_emitterCurrent_vbe (IsF IsR alphaR VT Vbe Vbc : ℝ) :
   exact h
 
 /-- `∂Ie/∂Vbc = -(alphaR * IsR / VT) * exp (Vbc / VT)`. -/
-lemma hasDerivAt_emitterCurrent_vbc (IsF IsR alphaR VT Vbe Vbc : ℝ) :
+lemma hasDerivAt_emitterCurrent_vbc (IsF IsR alphaR VT Vbe Vbc : ℝ) (_hVT : 0 < VT) :
     HasDerivAt (fun y => emitterCurrent IsF IsR alphaR VT Vbe y)
       (-(alphaR * IsR / VT) * Real.exp (Vbc / VT)) Vbc := by
   have hR := hasDerivAt_reverseBranch IsR VT Vbc
@@ -220,7 +220,7 @@ lemma hasDerivAt_emitterCurrent_vbc (IsF IsR alphaR VT Vbe Vbc : ℝ) :
   exact h
 
 /-- Input conductance `∂Ib/∂Vbe = (1 - alphaF) * IsF / VT * exp (Vbe / VT)`. -/
-lemma hasDerivAt_baseCurrent_vbe (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) :
+lemma hasDerivAt_baseCurrent_vbe (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) (_hVT : 0 < VT) :
     HasDerivAt (fun x => baseCurrent IsF IsR alphaF alphaR VT x Vbc)
       ((1 - alphaF) * IsF / VT * Real.exp (Vbe / VT)) Vbe := by
   have hF := hasDerivAt_forwardBranch IsF VT Vbe
@@ -232,7 +232,7 @@ lemma hasDerivAt_baseCurrent_vbe (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) :
   exact h
 
 /-- `∂Ib/∂Vbc = (1 - alphaR) * IsR / VT * exp (Vbc / VT)`. -/
-lemma hasDerivAt_baseCurrent_vbc (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) :
+lemma hasDerivAt_baseCurrent_vbc (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ) (_hVT : 0 < VT) :
     HasDerivAt (fun y => baseCurrent IsF IsR alphaF alphaR VT Vbe y)
       ((1 - alphaR) * IsR / VT * Real.exp (Vbc / VT)) Vbc := by
   have hR := hasDerivAt_reverseBranch IsR VT Vbc
@@ -341,22 +341,39 @@ lemma collector_add_base_add_emitterOut_ne_zero_of_forwardActive
 
 /-! ### Reciprocal parameterization -/
 
-/-- Reciprocal parameterization by a transport saturation current `IS`:
-`IsF = IS / alphaF`, `IsR = IS / alphaR`, so `alphaF * IsF = alphaR * IsR = IS`. -/
-lemma reciprocal_saturation_relation (IS alphaF alphaR : ℝ) (hαF : 0 < alphaF)
-    (hαR : 0 < alphaR) :
-    alphaF * (IS / alphaF) = alphaR * (IS / alphaR) ∧ alphaF * (IS / alphaF) = IS := by
-  have hF : alphaF ≠ 0 := ne_of_gt hαF
-  have hR : alphaR ≠ 0 := ne_of_gt hαR
-  have e1 : alphaF * (IS / alphaF) = IS := by field_simp
-  have e2 : alphaR * (IS / alphaR) = IS := by field_simp
-  exact ⟨e1.trans e2.symm, e1⟩
+/-- **Reciprocity.** When the branch saturation currents satisfy reciprocity
+`alphaF * IsF = alphaR * IsR`, both derive from the single transport saturation
+current `IS = alphaF * IsF`: `IsF = IS / alphaF` and `IsR = IS / alphaR`. The
+collector and emitter-out currents then depend on `IsF`, `IsR` only through `IS`,
+in transport form. -/
+lemma reciprocal_saturation_relation (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
+    (_hVT : 0 < VT) (hαF : alphaF ≠ 0) (hαR : alphaR ≠ 0)
+    (hrec : alphaF * IsF = alphaR * IsR) :
+    ∃ IS : ℝ, IS = alphaF * IsF ∧ IsF = IS / alphaF ∧ IsR = IS / alphaR ∧
+      collectorCurrent IsF IsR alphaF VT Vbe Vbc =
+        IS * (Real.exp (Vbe / VT) - Real.exp (Vbc / VT)) -
+          IS * ((1 - alphaR) / alphaR) * (Real.exp (Vbc / VT) - 1) ∧
+      emitterCurrent IsF IsR alphaR VT Vbe Vbc =
+        IS * (Real.exp (Vbe / VT) - Real.exp (Vbc / VT)) +
+          IS * ((1 - alphaF) / alphaF) * (Real.exp (Vbe / VT) - 1) := by
+  have hIsR : IsR = alphaF * IsF / alphaR := by
+    rw [eq_div_iff hαR]
+    linear_combination -hrec
+  refine ⟨alphaF * IsF, rfl, by field_simp, hIsR, ?_, ?_⟩
+  · simp only [collectorCurrent, forwardBranchCurrent, reverseBranchCurrent]
+    rw [hIsR]
+    field_simp
+    ring
+  · simp only [emitterCurrent, forwardBranchCurrent, reverseBranchCurrent]
+    rw [hIsR]
+    field_simp
+    ring
 
 /-- Under reciprocity `alphaF * IsF = alphaR * IsR`, the collector current in transport form
 `Ic = IS (e^{Vbe/VT} - e^{Vbc/VT}) - IS (1 - alphaR) / alphaR (e^{Vbc/VT} - 1)`,
 `IS = alphaF * IsF`. -/
 lemma collectorCurrent_transport_form (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
-    (hαR : 0 < alphaR) (hrec : alphaF * IsF = alphaR * IsR) :
+    (_hVT : 0 < VT) (hαR : 0 < alphaR) (hrec : alphaF * IsF = alphaR * IsR) :
     collectorCurrent IsF IsR alphaF VT Vbe Vbc =
       alphaF * IsF * (Real.exp (Vbe / VT) - Real.exp (Vbc / VT)) -
         alphaF * IsF * ((1 - alphaR) / alphaR) * (Real.exp (Vbc / VT) - 1) := by
@@ -372,7 +389,7 @@ lemma collectorCurrent_transport_form (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
 /-- Under reciprocity, the emitter-out current in transport form
 `Ie = IS (e^{Vbe/VT} - e^{Vbc/VT}) + IS (1 - alphaF) / alphaF (e^{Vbe/VT} - 1)`. -/
 lemma emitterCurrent_transport_form (IsF IsR alphaF alphaR VT Vbe Vbc : ℝ)
-    (hαF : 0 < alphaF) (hrec : alphaF * IsF = alphaR * IsR) :
+    (_hVT : 0 < VT) (hαF : 0 < alphaF) (hrec : alphaF * IsF = alphaR * IsR) :
     emitterCurrent IsF IsR alphaR VT Vbe Vbc =
       alphaF * IsF * (Real.exp (Vbe / VT) - Real.exp (Vbc / VT)) +
         alphaF * IsF * ((1 - alphaF) / alphaF) * (Real.exp (Vbe / VT) - 1) := by
