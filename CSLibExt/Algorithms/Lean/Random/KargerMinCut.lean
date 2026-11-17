@@ -134,10 +134,6 @@ theorem cutSize_contract (st : State V) (e : V × V) (Y : V → Bool) :
   rw [List.filter_congr h, List.filter_map, List.length_map]
   rfl
 
-omit [DecidableEq V] in
-private theorem mem_erase_of_nodup {l : List V} (hnd : l.Nodup) {b v : V} [DecidableEq V] :
-    v ∈ l.erase b ↔ v ≠ b ∧ v ∈ l := hnd.mem_erase_iff
-
 /-- A cut of the contraction lifts to a cut of the original. -/
 private theorem isCut_lift {st : State V} (hv : st.Valid) {e : V × V} {Y : V → Bool}
     (hY : IsCut (contract st e) Y) : IsCut st fun v => Y (rename e.2 e.1 v) := by

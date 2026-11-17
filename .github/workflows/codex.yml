@@ -46,8 +46,9 @@ jobs:
     # (empty when no review was posted). Formal (`formal == 'true'`)
     # runs mint a verdict: same-repo automatic runs, `@codex`
     # comment runs by a writer/maintainer/admin on a formal-eligible
-    # PR, and fork runs whose head the author controls (their own
-    # fork) as an OWNER, MEMBER, or COLLABORATOR of the base repo.
+    # PR, fork runs whose head the author controls (their own
+    # fork) as an OWNER, MEMBER, or COLLABORATOR of the base repo,
+    # and fork runs whose head repository owner is trusted (below).
     # check_auth verifies that class
     # through the API (association, collaborator status, or org
     # membership, each fail-closed; repo permission alone never
@@ -55,17 +56,20 @@ jobs:
     # The event payload under-reports private org membership, so
     # the job `if` no longer filters fork runs by association.
     # Trusted-head-owner fork runs — PRs whose HEAD
-    # repository is owned by the immutable numeric account id in
-    # TRUSTED_HEAD_OWNER_IDS below (currently just akiezun's id,
-    # i.e. the owner's own fork akiezun/atlas-lean). The check is on
+    # repository is owned by an immutable numeric account id in
+    # TRUSTED_HEAD_OWNER_IDS below (akiezun, Robertboy18,
+    # JacobLoader, junekim623, and Deicyde). The check is on
     # the head repo owner's id, not on a login (logins are mutable
     # and reclaimable) and not on `author_association` (which
     # describes the author's relationship to the base repo — akiezun
     # is MEMBER, not OWNER — and does not authenticate the head
-    # fork). A trusted-head diff is the owner's own code, so the fork
-    # prompt-injection risk does not apply to it. Automatic fork
+    # fork). A trusted-head diff is the head owner's own code, so the
+    # fork prompt-injection risk does not apply to it, and a
+    # trusted-head fork run is authorized even when its author is
+    # not an OWNER, MEMBER, or COLLABORATOR. Automatic fork
     # runs whose author is not an OWNER, MEMBER, or COLLABORATOR
-    # are unauthorized and skipped: nothing posts. A third-party
+    # and whose head owner is not trusted are unauthorized and
+    # skipped: nothing posts. A third-party
     # fork diff is untrusted input that could steer Codex's verdict
     # toward approval, and prompt instructions are not a security
     # boundary, so third-party fork content must never mint a gate
@@ -108,7 +112,8 @@ jobs:
               throw new Error("Unable to determine requesting user.");
             }
             // pull_request_target fork runs are authorized by the PR
-            // author's class, not by the commenter: OWNER, MEMBER, and
+            // author's class or by a trusted head owner, not by the
+            // commenter: OWNER, MEMBER, and
             // COLLABORATOR authors get automatic reviews. The event
             // payload's `author_association` under-reports private org
             // membership (Deicyde's PRs report MEMBER via REST, yet
@@ -128,7 +133,8 @@ jobs:
             // Authorized fork runs on the author's own fork are
             // formal: they mint a verdict. A run on someone else's
             // fork stays advisory, because the fork owner, not the
-            // author, controls the head content.
+            // author, controls the head content, unless that fork
+            // owner is a trusted head owner (below).
             // Automatic fork runs for any other author are
             // unauthorized here and skipped: nothing posts, and
             // they never mint a verdict.
@@ -144,9 +150,13 @@ jobs:
             // have a PR from someone else's fork treated as formal.
             // To trust another head owner, add their numeric id to
             // TRUSTED_HEAD_OWNER_IDS in a reviewed PR; never use a
-            // login or `author_association` for this. TRUSTED_HEAD_OWNER_IDS
-            // currently holds only akiezun's id (1993519).
-            const TRUSTED_HEAD_OWNER_IDS = [1993519];
+            // login or `author_association` for this. The ids are
+            // akiezun (1993519), Robertboy18 (32393571),
+            // JacobLoader (50699523), junekim623 (291871616), and
+            // Deicyde (37917934), in numeric order.
+            const TRUSTED_HEAD_OWNER_IDS = [
+              1993519, 32393571, 37917934, 50699523, 291871616,
+            ];
             const isForkTarget =
               context.eventName === "pull_request_target";
             const isComment =
@@ -318,12 +328,18 @@ jobs:
                 effectivePr?.author_association ??
                 context.payload.pull_request.author_association;
               const authorLogin = effectivePr?.user?.login;
-              authorized = await authorInFormalClass(
-                authorLogin,
-                association
-              );
+              // A trusted head owner also authorizes the run: the
+              // head owner controls the branch content, so their
+              // fork diff is trusted input even when the author is
+              // outside the OWNER/MEMBER/COLLABORATOR class (the
+              // case this list exists for). Without this, listing
+              // a non-member in TRUSTED_HEAD_OWNER_IDS would set
+              // `formal` but the run would still be skipped here.
+              authorized =
+                (await authorInFormalClass(authorLogin, association)) ||
+                trustedHeadTarget;
               core.info(
-                `${username}: author=${authorLogin}, author_association=${association}, authorized=${authorized}`
+                `${username}: author=${authorLogin}, author_association=${association}, trusted_head=${trustedHeadTarget}, authorized=${authorized}`
               );
             } else {
               try {

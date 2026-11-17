@@ -154,6 +154,7 @@ theorem notMem_closurePoints_empty.{u} {α : Type u} (F : Finset α → α) :
     (∅ : Set α) ∉ ClosurePoints F :=
   fun h => h.2 ∅ (by simp)
 
+@[deprecated "Use `Set.countable_iUnion`." (since := "2026-11-12")]
 theorem countable_iUnion_countable.{u} {α : Type u} (f : ℕ → Set α)
     (hf : ∀ n, (f n).Countable) : (⋃ n, f n).Countable :=
   Set.countable_iUnion hf

@@ -22,9 +22,11 @@ universe u
 
 namespace PositiveLinearMap
 
-/-- For a state `f` on a unital C⋆-algebra (`f 1 = 1`), the GNS space has a unit cyclic vector
-`ξ`: `f a = ⟪ξ, π(a) ξ⟫` for all `a`, and the vectors `π(a) ξ` span a dense subspace.
-`cStarAlgebra_gns_cyclic_vector` is the source-shaped form. -/
+/-- **Existence of a unit cyclic vector in the GNS space.** Let $A$ be a unital C*-algebra with
+its standard order and let $f$ be a positive linear functional on $A$ with $f(1) = 1$. Let $H_f$
+be the GNS Hilbert space of $f$ and $\pi_f : A \to B(H_f)$ its GNS representation. Then there is
+a vector $\xi \in H_f$ with $\|\xi\| = 1$ such that $f(a) = \langle \xi, \pi_f(a) \xi \rangle$
+for every $a \in A$, and the linear span of $\{\pi_f(a) \xi : a \in A\}$ is dense in $H_f$. -/
 theorem exists_gns_cyclic_vector
     {A : Type u} [CStarAlgebra A] [PartialOrder A] [StarOrderedRing A]
     (f : A →ₚ[ℂ] ℂ) (hf : f (1 : A) = (1 : ℂ)) :
@@ -73,8 +75,13 @@ end PositiveLinearMap
 namespace MathlibExt.Analysis.CStarAlgebra.LandmarkWanted
 
 /--
-For a unital positive functional `f` with `f 1 = 1` on a C*-algebra, the GNS space contains a unit
-cyclic vector `ξ` with `f a = ⟪ξ, π(a) ξ⟫` and dense span of `π(A) ξ`. Source: GNS construction,
+**GNS cyclic vector of a state.** Let $A$ be a unital C*-algebra with its standard order and let
+$f$ be a positive linear functional on $A$ with $f(1) = 1$. Let $H_f$ be the GNS Hilbert space of
+$f$ and $\pi_f : A \to B(H_f)$ its GNS representation. Then there is a vector $\xi \in H_f$ with
+$\|\xi\| = 1$ such that $f(a) = \langle \xi, \pi_f(a) \xi \rangle$ for every $a \in A$, and the
+linear span of $\{\pi_f(a) \xi : a \in A\}$ is dense in $H_f$.
+
+Source: GNS construction,
 Gelfand–Naimark 1943 and I. E. Segal, Ann. of Math. 48 (1947); see Murphy, C*-Algebras; Lean is
 unital state f 1 = 1 unit cyclic vector with inner-product formula and dense span.
 It is `PositiveLinearMap.exists_gns_cyclic_vector`, kept under the source's name.
