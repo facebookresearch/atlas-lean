@@ -367,39 +367,12 @@ lemma leaky_charge_column_sum_ne_zero :
         (fun w : Fin 2 → ℝ => ![w 0 - w 1, w 0 - w 1]) ![1, 0] 1 ≠ 0
     simp only [Matrix.cons_val_zero, Matrix.cons_val_one]
     norm_num
-  · simp only [jacobianMatrix, Fin.sum_univ_two]
-    show deriv (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0 - (0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 1),
-        ((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0 - (0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 1)] 0) 0 +
-        deriv (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0 - (0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 1),
-        ((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0 - (0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 1)] 1) 0 = 2
-    have h01 : ((0 : Fin 2) ≠ 1) := by decide
-    have h0 : deriv (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0 - (0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 1),
-        ((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0 - (0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 1)] 0) 0 = 1 := by
-      have hfi : (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0 - (0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 1),
-          ((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0 - (0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 1)] 0) = (fun t => t) := by
-        funext t
-        simp only [Matrix.cons_val_zero]
-        rw [show ((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ))) 0 = (0:ℝ) + t • (Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ) 0) from rfl,
-          show ((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ))) 1 = (0:ℝ) + t • (Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ) 1) from rfl,
-          Pi.single_eq_same (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ), Pi.single_eq_of_ne' (M := fun _ => ℝ) h01 (1:ℝ)]
-        simp only [smul_eq_mul]
-        ring
-      rw [hfi]
-      simpa using (hasDerivAt_id 0).deriv
-    have h1 : deriv (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0 - (0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 1),
-        ((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0 - (0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 1)] 1) 0 = 1 := by
-      have hfi : (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0 - (0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 1),
-          ((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0 - (0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 1)] 1) = (fun t => t) := by
-        funext t
-        simp only [Matrix.cons_val_one, Matrix.cons_val_zero]
-        rw [show ((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ))) 0 = (0:ℝ) + t • (Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ) 0) from rfl,
-          show ((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ))) 1 = (0:ℝ) + t • (Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ) 1) from rfl,
-          Pi.single_eq_same (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ), Pi.single_eq_of_ne' (M := fun _ => ℝ) h01 (1:ℝ)]
-        simp only [smul_eq_mul]
-        ring
-      rw [hfi]
-      simpa using (hasDerivAt_id 0).deriv
-    rw [h0, h1]
+  · have hfun : (fun w : Fin 2 → ℝ => ![w 0 - w 1, w 0 - w 1]) =
+        fun w => Matrix.mulVec (!![1, -1; 1, -1] : Matrix (Fin 2) (Fin 2) ℝ) w := by
+      funext w i
+      fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two] <;> ring
+    rw [hfun, MetaMathlibExt.jacobianMatrix_fun_mulVec]
+    simp only [Fin.sum_univ_two]
     norm_num
 
 /-- Violated premise (ground reference): `q(v) = (v₀, -v₀)` conserves charge but is not
@@ -426,37 +399,12 @@ lemma ground_referenced_row_sum_ne_zero :
         smul_eq_mul, mul_one] at h0
       have hne : (δ : ℝ) / 2 ≠ 0 := by positivity
       exact hne (by linarith)
-  · simp only [jacobianMatrix, Fin.sum_univ_two]
-    show deriv (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0),
-        -((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0)] 0) 0 +
-        deriv (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (1 : Fin 2) (1:ℝ)) 0),
-        -((0 + t • Pi.single (M := fun _ => ℝ) (1 : Fin 2) (1:ℝ)) 0)] 0) 0 = 1
-    have h10 : ((1 : Fin 2) ≠ 0) := by decide
-    have h0 : deriv (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0),
-        -((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0)] 0) 0 = 1 := by
-      have hfi : (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0),
-          -((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)) 0)] 0) = (fun t => t) := by
-        funext t
-        simp only [Matrix.cons_val_zero]
-        rw [show ((0 + t • Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ))) 0 = (0:ℝ) + t • (Pi.single (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ) 0) from rfl,
-          Pi.single_eq_same (M := fun _ => ℝ) (0 : Fin 2) (1:ℝ)]
-        simp only [smul_eq_mul]
-        ring
-      rw [hfi]
-      simpa using (hasDerivAt_id 0).deriv
-    have h1 : deriv (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (1 : Fin 2) (1:ℝ)) 0),
-        -((0 + t • Pi.single (M := fun _ => ℝ) (1 : Fin 2) (1:ℝ)) 0)] 0) 0 = 0 := by
-      have hfi : (fun t : ℝ => ![((0 + t • Pi.single (M := fun _ => ℝ) (1 : Fin 2) (1:ℝ)) 0),
-          -((0 + t • Pi.single (M := fun _ => ℝ) (1 : Fin 2) (1:ℝ)) 0)] 0) = (fun _ => (0:ℝ)) := by
-        funext t
-        simp only [Matrix.cons_val_zero]
-        rw [show ((0 + t • Pi.single (M := fun _ => ℝ) (1 : Fin 2) (1:ℝ))) 0 = (0:ℝ) + t • (Pi.single (M := fun _ => ℝ) (1 : Fin 2) (1:ℝ) 0) from rfl,
-          Pi.single_eq_of_ne' (M := fun _ => ℝ) h10 (1:ℝ)]
-        simp only [smul_eq_mul]
-        ring
-      rw [hfi]
-      simp only [deriv_const]
-    rw [h0, h1]
+  · have hfun : (fun w : Fin 2 → ℝ => ![w 0, -w 0]) =
+        fun w => Matrix.mulVec (!![1, 0; -1, 0] : Matrix (Fin 2) (Fin 2) ℝ) w := by
+      funext w i
+      fin_cases i <;> simp [Matrix.mulVec, dotProduct, Fin.sum_univ_two]
+    rw [hfun, MetaMathlibExt.jacobianMatrix_fun_mulVec]
+    simp only [Fin.sum_univ_two]
     norm_num
 
 end PhyslibExt.Electronics.TerminalChargeJacobian
