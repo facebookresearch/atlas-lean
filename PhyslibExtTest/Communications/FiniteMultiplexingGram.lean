@@ -31,4 +31,18 @@ desired symbol plus the Gram interference term. -/
 example : matchedOutput skewPair ![1, 1] 0 = 1 + ((Real.sqrt 2)⁻¹ : ℂ) := by
   simpa using skewPair_matchedOutput_zero ![1, 1]
 
+/-- The Gram identity on the skew pair: matched outputs are the
+Gram matrix times the symbol vector. -/
+example (a : Fin 2 → ℂ) :
+    matchedOutput skewPair a = (Matrix.gram ℂ skewPair).mulVec a :=
+  matchedOutput_eq_gram_mulVec skewPair a
+
+/-- FDMA with two distinct carriers recovers both symbols. -/
+example (a : Fin 2 → ℂ) : matchedOutput (fun j => fdmaCarrier 4 (![1, 3] j)) a = a :=
+  fdma_two_carriers_matchedOutput_eq a
+
+/-- CDMA with the two orthonormal codes recovers both symbols. -/
+example (a : Fin 2 → ℂ) : matchedOutput cdmaCode a = a :=
+  cdma_matchedOutput_eq a
+
 end PhyslibExtTest.Communications.FiniteMultiplexingGram
