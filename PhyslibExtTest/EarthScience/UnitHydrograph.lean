@@ -35,6 +35,17 @@ example : ∑ k ∈ Finset.range (1 + 2),
   simp only [Finset.sum_range_succ, Finset.sum_range_zero]
   norm_num
 
+/-- Runoff volume under the normalization `dt * ∑ u = A`, through the
+public volume theorem. -/
+example : (1 : ℝ) * ∑ k ∈ Finset.range (1 + 2),
+      discreteConvolution (fun i => if i = 0 then (1 : ℝ) else 0)
+        (fun j => if j < 2 then (1 : ℝ) else 0) k
+    = 2 * ∑ i ∈ Finset.range 1, (fun i => if i = 0 then (1 : ℝ) else 0) i :=
+  discreteConvolution_volume_eq
+    (by intro i hi; simp [show i ≠ 0 by omega])
+    (by intro j hj; simp [show ¬ j < 2 by omega])
+    (by simp only [Finset.sum_range_succ, Finset.sum_range_zero]; norm_num)
+
 /-- The same total for the canonical `sumConv`. -/
 example : ∑ k ∈ Finset.range (1 + 2),
       AdditiveCombinatorics.sumConv (fun i => if i = 0 then (1 : ℝ) else 0)

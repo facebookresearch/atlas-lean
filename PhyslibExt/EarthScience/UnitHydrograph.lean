@@ -51,15 +51,13 @@ namespace EarthScience
 /-! ## A. Convolution totals and volume -/
 
 /-- Discrete-convolution outflow at step `k` from rainfall excess `p` and
-unit response `u`: the sum over the antidiagonal `i + j = k`. This is
-the body of `AdditiveCombinatorics.sumConv` (atlas-lean
-`MathlibExt.Combinatorics.Additive.Convolution`), restated for the
-hydrologic reading; indices are 0-based where the engineering sources
-are 1-based (`p i = P (i+1)`, `u j = U (j+1)`, outflow `q k = Q (k+1)`).
+unit response `u`. This is `AdditiveCombinatorics.sumConv` under its
+hydrologic name; indices are 0-based where the engineering sources are
+1-based (`p i = P (i+1)`, `u j = U (j+1)`, outflow `q k = Q (k+1)`).
 Nonnegativity of the sequences is not assumed: the identity holds for
 all real sequences. -/
-noncomputable def discreteConvolution (p u : ℕ → ℝ) (k : ℕ) : ℝ :=
-  ∑ ij ∈ Finset.antidiagonal k, p ij.1 * u ij.2
+abbrev discreteConvolution (p u : ℕ → ℝ) (k : ℕ) : ℝ :=
+  AdditiveCombinatorics.sumConv p u k
 
 /-- Total discrete-convolution response over the full horizon equals the
 product of the total rainfall excess and the total unit response, when
@@ -67,35 +65,8 @@ product of the total rainfall excess and the total unit response, when
 theorem discreteConvolution_sum_eq {p u : ℕ → ℝ} {n m : ℕ}
     (hp : ∀ i : ℕ, n ≤ i → p i = 0) (hu : ∀ j : ℕ, m ≤ j → u j = 0) :
     ∑ k ∈ Finset.range (n + m), discreteConvolution p u k
-      = (∑ i ∈ Finset.range n, p i) * (∑ j ∈ Finset.range m, u j) := by
-  simp only [discreteConvolution]
-  have hdisj : Set.PairwiseDisjoint (↑(Finset.range (n + m)) : Set ℕ)
-      Finset.antidiagonal := by
-    intro k _ l _ hne
-    show Disjoint (Finset.antidiagonal k) (Finset.antidiagonal l)
-    rw [Finset.disjoint_left]
-    intro x hxk hxl
-    rw [Finset.mem_antidiagonal] at hxk hxl
-    omega
-  rw [← Finset.sum_biUnion hdisj]
-  have hsub : Finset.range n ×ˢ Finset.range m
-      ⊆ (Finset.range (n + m)).biUnion Finset.antidiagonal := by
-    intro x hx
-    simp only [Finset.mem_product, Finset.mem_range] at hx
-    obtain ⟨hxn, hxm⟩ := hx
-    rw [Finset.mem_biUnion]
-    exact ⟨x.1 + x.2, Finset.mem_range.mpr (by omega),
-      Finset.mem_antidiagonal.mpr rfl⟩
-  have hvan : ∀ x ∈ (Finset.range (n + m)).biUnion Finset.antidiagonal,
-      x ∉ Finset.range n ×ˢ Finset.range m → p x.1 * u x.2 = 0 := by
-    intro x _ hxnot
-    simp only [Finset.mem_product, Finset.mem_range] at hxnot
-    have h : n ≤ x.1 ∨ m ≤ x.2 := by omega
-    rcases h with h | h
-    · rw [hp _ h, zero_mul]
-    · rw [hu _ h, mul_zero]
-  rw [← Finset.sum_subset hsub hvan]
-  simp only [Finset.sum_product, Finset.sum_mul_sum]
+      = (∑ i ∈ Finset.range n, p i) * (∑ j ∈ Finset.range m, u j) :=
+  AdditiveCombinatorics.sum_range_sumConv p u hp hu
 
 /-- Volume form, with the unit-hydrograph normalization as a hypothesis:
 if `dt * ∑ j, u j = A` (`p`: excess depth per step; `u`: discharge
@@ -108,10 +79,9 @@ theorem discreteConvolution_volume_eq {p u : ℕ → ℝ} {n m : ℕ}
     {A dt : ℝ} (hnorm : dt * (∑ j ∈ Finset.range m, u j) = A) :
     dt * (∑ k ∈ Finset.range (n + m), discreteConvolution p u k)
       = A * (∑ i ∈ Finset.range n, p i) := by
-  rw [discreteConvolution_sum_eq hp hu]
-  calc dt * ((∑ i ∈ Finset.range n, p i) * (∑ j ∈ Finset.range m, u j))
-      = (dt * (∑ j ∈ Finset.range m, u j)) * (∑ i ∈ Finset.range n, p i) := by ring
-    _ = A * (∑ i ∈ Finset.range n, p i) := by rw [hnorm]
+  rw [discreteConvolution_sum_eq hp hu, ← hnorm]
+  ring
+
 /-- The hydrologic outflow is the canonical `sumConv` convolution. -/
 theorem discreteConvolution_eq_sumConv (p u : ℕ → ℝ) (k : ℕ) :
     discreteConvolution p u k = AdditiveCombinatorics.sumConv p u k :=
@@ -122,8 +92,7 @@ theorem discreteConvolution_eq_sumConv (p u : ℕ → ℝ) (k : ℕ) :
 theorem sumConv_sum_eq {p u : ℕ → ℝ} {n m : ℕ}
     (hp : ∀ i : ℕ, n ≤ i → p i = 0) (hu : ∀ j : ℕ, m ≤ j → u j = 0) :
     ∑ k ∈ Finset.range (n + m), AdditiveCombinatorics.sumConv p u k
-      = (∑ i ∈ Finset.range n, p i) * (∑ j ∈ Finset.range m, u j) := by
-  simp only [← discreteConvolution_eq_sumConv]
-  exact discreteConvolution_sum_eq hp hu
+      = (∑ i ∈ Finset.range n, p i) * (∑ j ∈ Finset.range m, u j) :=
+  AdditiveCombinatorics.sum_range_sumConv p u hp hu
 
 end EarthScience
