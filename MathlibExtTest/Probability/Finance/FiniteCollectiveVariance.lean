@@ -19,12 +19,15 @@ public import Mathlib.Probability.Moments.Variance
 
 Four independent finite pins for the collective-variance identity
 `Var S = E N * Var X + Var N * (E X)^2`, each computed directly on a
-finite uniform space without appealing to the production theorem.
+finite uniform space without appealing to the production theorem,
+plus one theorem-backed pin that applies the production theorem.
 
 - `collective_variance_explicit_pin`: 12-atom product pin, value `11/3`.
 - `collective_variance_deterministic_count`: count `N = 1`, value `1`.
 - `collective_variance_zero_count`: count `N = 0`, value `0`.
 - `collective_variance_constant_severity`: constant severities, value `1`.
+- `collective_variance_theorem_backed_constant`: applies
+  `variance_stopped_sum_finite` to constant severities, value `1/4`.
 -/
 
 open MeasureTheory ProbabilityTheory
@@ -615,5 +618,222 @@ theorem collective_variance_constant_severity :
     rw [hEN, hVX, hVN, hEX0]
     norm_num
   exact ⟨hVS, hR, hVX⟩
+
+-- Test 5 data: count on `{0, 1}`, constant severities `1` for all `i`.
+-- Unlike the pins above, this test applies the production theorem
+-- `variance_stopped_sum_finite`: the constant family is i.i.d. L2 and
+-- independent of the count.
+private abbrev D5 : Type := Fin 2
+private noncomputable def mu5 : Measure D5 :=
+  ((Fintype.card D5 : ENNReal))⁻¹ • Measure.count
+private def N5 : D5 → ℕ := fun ω => ω.val
+private def X5 : ℕ → D5 → ℝ := fun _ _ => 1
+private def S5 : D5 → ℝ := fun ω => ∑ k ∈ Finset.range (N5 ω), X5 k ω
+
+/-- Theorem-backed pin: the production identity holds on constant severities,
+both sides equal `1/4`. Fails if the production statement drifts. -/
+theorem collective_variance_theorem_backed_constant :
+    ProbabilityTheory.variance S5 mu5 = 1 / 4 ∧
+      (∫ ω, (N5 ω : ℝ) ∂mu5) * ProbabilityTheory.variance (X5 0) mu5 +
+        ProbabilityTheory.variance (fun ω => (N5 ω : ℝ)) mu5 * (∫ ω, X5 0 ω ∂mu5) ^ 2
+        = 1 / 4 ∧
+      ProbabilityTheory.variance S5 mu5 =
+        (∫ ω, (N5 ω : ℝ) ∂mu5) * ProbabilityTheory.variance (X5 0) mu5 +
+          ProbabilityTheory.variance (fun ω => (N5 ω : ℝ)) mu5 * (∫ ω, X5 0 ω ∂mu5) ^ 2 := by
+  have hcard2 : Fintype.card D5 = 2 := by decide
+  have hcu : Measure.count (Set.univ : Set D5) = (Fintype.card D5 : ENNReal) := by
+    simp
+  have hprob : IsProbabilityMeasure mu5 := by
+    refine ⟨?_⟩
+    show (((Fintype.card D5 : ENNReal))⁻¹ • Measure.count) Set.univ = 1
+    rw [Measure.smul_apply, hcu, hcard2, smul_eq_mul]
+    exact ENNReal.inv_mul_cancel (by simp) (by simp)
+  have hint_eq : ∀ f : D5 → ℝ, ∫ ω, f ω ∂mu5 = (1 / 2 : ℝ) * ∑ x, f x := by
+    intro f
+    have hInt : Integrable f mu5 := integrable_of_fintype_prob mu5 f
+    have h1 : ∫ ω, f ω ∂mu5 = ∑ x, mu5.real {x} • f x := integral_fintype hInt
+    have hsing : ∀ x : D5, mu5 {x} = ((Fintype.card D5 : ENNReal))⁻¹ := by
+      intro x
+      show (((Fintype.card D5 : ENNReal))⁻¹ • Measure.count) {x} = _
+      rw [Measure.smul_apply, Measure.count_singleton, smul_eq_mul, mul_one]
+    have hw : ∀ x : D5, mu5.real {x} = (1 / 2 : ℝ) := by
+      intro x
+      rw [measureReal_def, hsing, hcard2, ENNReal.toReal_inv, ENNReal.toReal_natCast]
+      norm_num
+    rw [h1]
+    simp only [hw, smul_eq_mul, ← Finset.mul_sum]
+  have hsum_eval : ∀ g : D5 → ℝ, ∑ x, g x = g 0 + g 1 := by
+    intro g
+    simp only [Fin.sum_univ_two]
+  have v20 : (0 : Fin 2).val = 0 := rfl
+  have v21 : (1 : Fin 2).val = 1 := rfl
+  have hEN : ∫ ω, (N5 ω : ℝ) ∂mu5 = 1 / 2 := by
+    rw [hint_eq, hsum_eval]
+    unfold N5
+    norm_num [v20, v21]
+  have hEN2 : ∫ ω, ((N5 ω : ℝ)) ^ 2 ∂mu5 = 1 / 2 := by
+    rw [hint_eq, hsum_eval]
+    unfold N5
+    norm_num [v20, v21]
+  have hX0pt : ∀ ω : D5, X5 0 ω = 1 := fun ω => rfl
+  have hX02pt : ∀ ω : D5, (X5 0 ω) ^ 2 = 1 := fun ω => by rw [hX0pt ω]; norm_num
+  have hEX0 : ∫ ω, X5 0 ω ∂mu5 = 1 := by
+    have hc : (X5 0) =ᵐ[mu5] (fun _ => (1 : ℝ)) :=
+      Filter.Eventually.of_forall hX0pt
+    calc ∫ ω, X5 0 ω ∂mu5 = ∫ _ : D5, (1 : ℝ) ∂mu5 := integral_congr_ae hc
+      _ = 1 := const_int_eq mu5 1
+  have hEX02 : ∫ ω, (X5 0 ω) ^ 2 ∂mu5 = 1 := by
+    have hc : (fun ω => (X5 0 ω) ^ 2) =ᵐ[mu5] (fun _ => (1 : ℝ)) :=
+      Filter.Eventually.of_forall hX02pt
+    calc ∫ ω, (X5 0 ω) ^ 2 ∂mu5 = ∫ _ : D5, (1 : ℝ) ∂mu5 := integral_congr_ae hc
+      _ = 1 := const_int_eq mu5 1
+  have hSeq : ∀ ω : D5, S5 ω = (N5 ω : ℝ) := by
+    intro ω
+    simp [S5, X5, Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+  have hES : ∫ ω, S5 ω ∂mu5 = 1 / 2 := by
+    rw [hint_eq, hsum_eval]
+    unfold S5 N5 X5
+    norm_num [v20, v21, Finset.sum_range_succ, Finset.sum_range_zero]
+  have hES2 : ∫ ω, (S5 ω) ^ 2 ∂mu5 = 1 / 2 := by
+    rw [hint_eq, hsum_eval]
+    unfold S5 N5 X5
+    norm_num [v20, v21, Finset.sum_range_succ, Finset.sum_range_zero]
+  have hmemN : MemLp (fun ω : D5 => (N5 ω : ℝ)) 2 mu5 := by
+    have haesm : AEStronglyMeasurable (fun ω : D5 => (N5 ω : ℝ)) mu5 :=
+      (measurable_of_countable (f := (fun ω : D5 => (N5 ω : ℝ)))).aestronglyMeasurable
+    refine MemLp.of_bound haesm 1 ?_
+    apply Filter.Eventually.of_forall
+    intro ω
+    show ‖(((N5 ω : ℕ)) : ℝ)‖ ≤ 1
+    have hlt : ω.val < 2 := ω.2
+    have hle : ω.val ≤ 1 := by omega
+    have hNr : (((N5 ω : ℕ)) : ℝ) = (((ω.val : ℕ)) : ℝ) := rfl
+    calc ‖(((N5 ω : ℕ)) : ℝ)‖ = (((N5 ω : ℕ)) : ℝ) := Real.norm_of_nonneg (Nat.cast_nonneg _)
+      _ = (((ω.val : ℕ)) : ℝ) := hNr
+      _ ≤ (1 : ℝ) := by exact_mod_cast hle
+  have hmemX0 : MemLp (X5 0) 2 mu5 := by
+    have haesm : AEStronglyMeasurable (X5 0) mu5 :=
+      (measurable_of_countable (f := X5 0)).aestronglyMeasurable
+    refine MemLp.of_bound haesm 1 ?_
+    apply Filter.Eventually.of_forall
+    intro ω
+    show ‖X5 0 ω‖ ≤ 1
+    rw [hX0pt ω]
+    norm_num [Real.norm_eq_abs]
+  have hmemS : MemLp S5 2 mu5 := by
+    have haesm : AEStronglyMeasurable S5 mu5 :=
+      (measurable_of_countable (f := S5)).aestronglyMeasurable
+    refine MemLp.of_bound haesm 1 ?_
+    apply Filter.Eventually.of_forall
+    intro ω
+    show ‖S5 ω‖ ≤ 1
+    have hlt : ω.val < 2 := ω.2
+    have hle : ω.val ≤ 1 := by omega
+    have hSnn : 0 ≤ S5 ω := by
+      rw [hSeq ω]
+      exact Nat.cast_nonneg _
+    have hSle : S5 ω ≤ 1 := by
+      rw [hSeq ω]
+      have hNr : (((N5 ω : ℕ)) : ℝ) = (((ω.val : ℕ)) : ℝ) := rfl
+      rw [hNr]
+      have hbr : ((ω.val : ℕ) : ℝ) ≤ 1 := by exact_mod_cast hle
+      linarith
+    calc ‖S5 ω‖ = S5 ω := Real.norm_of_nonneg hSnn
+      _ ≤ 1 := hSle
+  have hVN : ProbabilityTheory.variance (fun ω => (N5 ω : ℝ)) mu5 = 1 / 4 := by
+    have hsub := ProbabilityTheory.variance_eq_sub hmemN
+    simp only [hsub, Pi.pow_apply, hEN2, hEN]
+    norm_num
+  have hVX : ProbabilityTheory.variance (X5 0) mu5 = 0 := by
+    have hsub := ProbabilityTheory.variance_eq_sub hmemX0
+    simp only [hsub, Pi.pow_apply, hEX02, hEX0]
+    norm_num
+  have hVS : ProbabilityTheory.variance S5 mu5 = 1 / 4 := by
+    have hsub := ProbabilityTheory.variance_eq_sub hmemS
+    simp only [hsub, Pi.pow_apply, hES2, hES]
+    norm_num
+  have hR : (∫ ω, (N5 ω : ℝ) ∂mu5) * ProbabilityTheory.variance (X5 0) mu5 +
+      ProbabilityTheory.variance (fun ω => (N5 ω : ℝ)) mu5 * (∫ ω, X5 0 ω ∂mu5) ^ 2
+      = 1 / 4 := by
+    rw [hEN, hVX, hVN, hEX0]
+    norm_num
+  have hN : Measurable N5 := measurable_of_countable N5
+  have hNb : ∀ᵐ ω ∂mu5, N5 ω ≤ 1 := by
+    apply Filter.Eventually.of_forall
+    intro ω
+    have hlt : ω.val < 2 := ω.2
+    show ω.val ≤ 1
+    omega
+  have hX2 : ∀ i, MemLp (X5 i) 2 mu5 := by
+    intro i
+    have haesm : AEStronglyMeasurable (X5 i) mu5 := measurable_const.aestronglyMeasurable
+    refine MemLp.of_bound haesm 1 ?_
+    apply Filter.Eventually.of_forall
+    intro ω
+    show ‖X5 i ω‖ ≤ 1
+    have hX : X5 i ω = 1 := rfl
+    rw [hX]
+    norm_num
+  have hmeas : ∀ i, Measurable (X5 i) := fun i => measurable_const
+  have hident : ∀ i, IdentDistrib (X5 i) (X5 0) mu5 mu5 := by
+    intro i
+    have hX5i : X5 i = fun _ : D5 => (1 : ℝ) := rfl
+    have hX50 : X5 0 = fun _ : D5 => (1 : ℝ) := rfl
+    rw [hX5i, hX50]
+    exact IdentDistrib.refl measurable_const.aemeasurable
+  have hindepX : iIndepFun X5 mu5 := by
+    rw [iIndepFun_iff]
+    intro s f' H
+    have h2 : ∀ i ∈ s, f' i = Set.univ ∨ f' i = ∅ := by
+      intro i hi
+      have h := H i hi
+      rw [MeasurableSpace.measurableSet_comap] at h
+      obtain ⟨t, _, ht⟩ := h
+      have hX5i : X5 i = fun _ : D5 => (1 : ℝ) := rfl
+      rw [hX5i] at ht
+      by_cases h1 : (1 : ℝ) ∈ t
+      · left
+        rw [← ht]
+        ext x
+        simp [h1]
+      · right
+        rw [← ht]
+        ext x
+        simp [h1]
+    by_cases hall : ∀ i ∈ s, f' i = Set.univ
+    · have hL : (⋂ i ∈ s, f' i) = Set.univ := by
+        ext x
+        simp only [Set.mem_iInter, Set.mem_univ, iff_true]
+        intro i hi
+        rw [hall i hi]
+        trivial
+      have hP : ∏ i ∈ s, mu5 (f' i) = 1 := by
+        apply Finset.prod_eq_one
+        intro i hi
+        rw [hall i hi, measure_univ]
+      rw [hL, measure_univ]
+      exact hP.symm
+    · push Not at hall
+      obtain ⟨j, hjs, hj⟩ := hall
+      have hje : f' j = ∅ := (h2 j hjs).resolve_left hj
+      have hL : (⋂ i ∈ s, f' i) = ∅ := by
+        refine Set.eq_empty_of_forall_notMem (fun x hx => ?_)
+        simp only [Set.mem_iInter] at hx
+        simpa [hje] using hx j hjs
+      rw [hL, measure_empty]
+      exact (Finset.prod_eq_zero hjs (by rw [hje, measure_empty])).symm
+  have hindepN : ProbabilityTheory.Indep (MeasurableSpace.comap N5 inferInstance)
+      (⨆ i, MeasurableSpace.comap (X5 i) inferInstance) mu5 := by
+    have hsup : (⨆ i, MeasurableSpace.comap (X5 i) inferInstance) = ⊥ := by
+      have hX5eq : ∀ i : ℕ, X5 i = fun _ : D5 => (1 : ℝ) := fun i => rfl
+      simp only [hX5eq, MeasurableSpace.comap_const, iSup_bot]
+    rw [hsup]
+    exact indep_bot_right _
+  have hThm : ProbabilityTheory.variance S5 mu5 =
+      (∫ ω, (N5 ω : ℝ) ∂mu5) * ProbabilityTheory.variance (X5 0) mu5 +
+        ProbabilityTheory.variance (fun ω => (N5 ω : ℝ)) mu5 * (∫ ω, X5 0 ω ∂mu5) ^ 2 :=
+    MathlibExt.Probability.Finance.FiniteCollectiveVariance.variance_stopped_sum_finite
+      mu5 N5 hN 1 hNb X5 hX2 hmeas hident hindepX hindepN
+  exact ⟨hVS, hR, hThm⟩
 
 end MathlibExt.Probability.Finance.FiniteCollectiveVarianceTests
