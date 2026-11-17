@@ -83,6 +83,25 @@ example :
   rw [integral_id]
   norm_num
 
+/-- Jump transport for the stationary fields `uL t x = x`,
+`uR t x = 2x` with interface `s t = t` on `[0, 2]`: at `t = 1`
+the derivative of the split integral is the interface jump
+`1 * (1 - 2) = -1`. -/
+example :
+    HasDerivAt
+      (fun τ : ℝ => (∫ x in (0 : ℝ)..τ, x) + (∫ x in τ..(2 : ℝ), 2 * x))
+      (-1) 1 := by
+  have h := ControlVolumes.movingJumpTransport
+    (uL := fun _ x : ℝ => x) (uR := fun _ x : ℝ => 2 * x)
+    (vL := fun _ _ : ℝ => 0) (vR := fun _ _ : ℝ => 0)
+    (s := fun τ : ℝ => τ) (s' := fun _ : ℝ => 1) (a := 0) (b := 2)
+    1 (hasDerivAt_id 1)
+    (by fun_prop) (fun t x => by simpa using (hasDerivAt_const t (x : ℝ)))
+    (by fun_prop) (by fun_prop)
+    (fun t x => by simpa using (hasDerivAt_const t (2 * x : ℝ)))
+    (by fun_prop)
+  rw [show (-1 : ℝ) = (1 : ℝ) - 2 by norm_num]
+  simpa using h
 /-- Moving lower endpoint: `u t x = t * x`, `a(t) = t`,
 `b(t) = t + 1` at `t = 1`. Independently,
 `∫ x in t..t+1, t * x = t * (2t + 1) / 2`, whose derivative at
