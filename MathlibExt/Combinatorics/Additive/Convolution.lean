@@ -43,7 +43,7 @@ variable {R : Type*} [Semiring R]
 
 /-- The sum convolution of two functions `f, g : ℕ → R`, also known as the Cauchy product.
 `sumConv f g n = ∑_{a+b=n} f(a)g(b)`. -/
-def sumConv (f g : ℕ → R) (n : ℕ) : R := ∑ p ∈ antidiagonal n, f p.1 * g p.2
+def sumConv {R : Type*} [NonUnitalNonAssocSemiring R] (f g : ℕ → R) (n : ℕ) : R := ∑ p ∈ antidiagonal n, f p.1 * g p.2
 
 /-- Total of the sum convolution over the padded horizon
 `range (n + m)` (one trailing zero step), for finitely
