@@ -25,7 +25,7 @@ open Filter Topology
 
 namespace MathlibExt.Biology.Biophysics.CompartmentKinetics.DoseSteadyState
 
-/-- **Steady-state post-dose limit.** For `0 < q < 1`, the
+/-- **Steady-state post-dose limit.** For `0 ≤ q < 1`, the
 post-dose amounts `x n = q^n * x0 + D * ∑ j ∈ range n, q^j` tend to
 `D / (1 - q)`: the limiting peak (post-dose) amount. -/
 lemma post_dose_tendsto {D q x0 : ℝ} (hq0 : 0 ≤ q) (hq1 : q < 1) :

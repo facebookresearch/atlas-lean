@@ -23,6 +23,12 @@ example : Filter.Tendsto
     Filter.atTop (𝓝 (3 / (1 - 1/2))) :=
   post_dose_tendsto (by norm_num) (by norm_num)
 
+/-- Boundary `q = 0`: peak tends to `D = 3`. -/
+example : Filter.Tendsto
+    (fun n : ℕ => (0:ℝ)^n * 5 + 3 * ∑ j ∈ Finset.range n, (0:ℝ)^j)
+    Filter.atTop (𝓝 (3 / (1 - 0))) :=
+  post_dose_tendsto (by norm_num) (by norm_num)
+
 /-- Trough tends to `(1/2) * 6 = 3` in closed form. -/
 example : Filter.Tendsto
     (fun n : ℕ => (1/2:ℝ) * ((1/2:ℝ)^n * 5 + 3 * ∑ j ∈ Finset.range n, (1/2:ℝ)^j))
