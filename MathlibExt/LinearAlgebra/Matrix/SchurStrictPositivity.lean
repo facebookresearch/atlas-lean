@@ -108,7 +108,7 @@ theorem schurComplement_isHermitian {m p : Type*} [Fintype m] [Fintype p]
 
 /-- Intermediate only: the Schur complement is positive semidefinite.
 This is what Mathlib's PSD Schur criterion
-(`Matrix.PosSemidef.fromBlocks₂₂`) yields after deriving `D.PosDef`
+(`Matrix.PosDef.fromBlocks₂₂`) yields after deriving `D.PosDef`
 and `Invertible D`. The leaf explicitly warns that this alone is not
 the strict conclusion; `schurComplement_posDef` below is strictly
 stronger and is the headline. -/
