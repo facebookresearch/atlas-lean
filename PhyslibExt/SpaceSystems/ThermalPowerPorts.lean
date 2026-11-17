@@ -12,6 +12,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Topology.MetricSpace.Lipschitz
 import MathlibExt.Analysis.ODE.MaximalSolution
 import Mathlib.Analysis.Calculus.Deriv.MeanValue
+public import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Ring
 
@@ -770,5 +771,149 @@ lemma radiator_solution_exists_trapped {C Krad Q Tmin Tmax T0 : ℝ}
     rw [clippedRadiatorRate_eq_of_mem hmem] at h
     exact h
   exact ⟨hmem, hderiv⟩
+
+/-- Gluing across a finite eclipse partition: given switch times
+`τ 0 < τ 1 < ... < τ m` (`StrictMono τ`), per-mode forcings
+`Q j`, a temperature `T` continuous on every closed piece
+`[τ j, τ (j+1)]` and solving the mode-`j` radiator ODE on every
+open piece, `T` is continuous on the whole horizon
+`[τ 0, τ m]`. No classical derivative at the switches is
+claimed. -/
+theorem glued_continuous {C Krad : ℝ} {m : ℕ} {τ : ℕ → ℝ}
+    (hτ : StrictMono τ) {Q : ℕ → ℝ} {T : ℝ → ℝ}
+    (hcont : ∀ j : ℕ, j < m →
+      ContinuousOn T (Set.Icc (τ j) (τ (j + 1))))
+    (hode : ∀ j : ℕ, j < m → ∀ t : ℝ, t ∈ Set.Ioo (τ j) (τ (j + 1)) →
+      HasDerivAt T (radiatorRate C Krad (Q j) (T t)) t) :
+    ContinuousOn T (Set.Icc (τ 0) (τ m)) := by
+  revert hcont hode
+  induction m with
+  | zero =>
+    intro _hcont _hode
+    rw [Set.Icc_self]
+    exact continuousOn_singleton T (τ 0)
+  | succ m ih =>
+    intro hcont hode
+    have hcont' : ∀ j : ℕ, j < m →
+        ContinuousOn T (Set.Icc (τ j) (τ (j + 1))) :=
+      fun j hj => hcont j (Nat.lt_trans hj (Nat.lt_succ_self m))
+    have hode' : ∀ j : ℕ, j < m → ∀ t : ℝ, t ∈ Set.Ioo (τ j) (τ (j + 1)) →
+        HasDerivAt T (radiatorRate C Krad (Q j) (T t)) t :=
+      fun j hj => hode j (Nat.lt_trans hj (Nat.lt_succ_self m))
+    have ih' := ih hcont' hode'
+    have hlast := hcont m (Nat.lt_succ_self m)
+    have h01 : τ 0 ≤ τ m := hτ.monotone (Nat.zero_le m)
+    have h12 : τ m ≤ τ (m + 1) := hτ.monotone (Nat.le_succ m)
+    have hunion : Set.Icc (τ 0) (τ m) ∪ Set.Icc (τ m) (τ (m + 1)) =
+        Set.Icc (τ 0) (τ (m + 1)) :=
+      Set.Icc_union_Icc_eq_Icc h01 h12
+    have h := ContinuousOn.union_of_isClosed ih' hlast isClosed_Icc isClosed_Icc
+    rwa [hunion] at h
+
+/-- Integral form on each piece: for `j < m` and
+`t ∈ [τ j, τ (j+1)]`,
+`T t - T (τ j) = ∫ s in τ j..t, radiatorRate C Krad (Q j) (T s)`,
+the fundamental theorem of calculus applied to the piecewise
+solution. -/
+theorem glued_integral_on_piece {C Krad : ℝ} (hC : 0 < C) {m : ℕ}
+    {τ : ℕ → ℝ} (hτ : StrictMono τ) {Q : ℕ → ℝ} {T : ℝ → ℝ}
+    (hcont : ∀ j : ℕ, j < m →
+      ContinuousOn T (Set.Icc (τ j) (τ (j + 1))))
+    (hode : ∀ j : ℕ, j < m → ∀ t : ℝ, t ∈ Set.Ioo (τ j) (τ (j + 1)) →
+      HasDerivAt T (radiatorRate C Krad (Q j) (T t)) t)
+    {j : ℕ} (hj : j < m) {t : ℝ} (ht : t ∈ Set.Icc (τ j) (τ (j + 1))) :
+    T t - T (τ j) =
+      ∫ s in τ j..t, radiatorRate C Krad (Q j) (T s) := by
+  have _ := hτ
+  have _ : C ≠ 0 := ne_of_gt hC
+  have hTpiece : ContinuousOn T (Set.Icc (τ j) (τ (j + 1))) := hcont j hj
+  have hpow : ContinuousOn (fun s => (T s) ^ 4) (Set.Icc (τ j) (τ (j + 1))) :=
+    hTpiece.pow 4
+  have hKrad : ContinuousOn (fun _ => Krad) (Set.Icc (τ j) (τ (j + 1))) :=
+    continuousOn_const
+  have hmul : ContinuousOn (fun s => Krad * (T s) ^ 4) (Set.Icc (τ j) (τ (j + 1))) :=
+    hKrad.mul hpow
+  have hQ : ContinuousOn (fun _ => Q j) (Set.Icc (τ j) (τ (j + 1))) :=
+    continuousOn_const
+  have hsub : ContinuousOn (fun s => Q j - Krad * (T s) ^ 4) (Set.Icc (τ j) (τ (j + 1))) :=
+    hQ.sub hmul
+  have hdiv : ContinuousOn (fun s => (Q j - Krad * (T s) ^ 4) / C)
+      (Set.Icc (τ j) (τ (j + 1))) :=
+    hsub.div_const C
+  have hdiv' : ContinuousOn (fun s => radiatorRate C Krad (Q j) (T s))
+      (Set.Icc (τ j) (τ (j + 1))) := by
+    simpa [radiatorRate] using hdiv
+  have hle : τ j ≤ t := ht.1
+  have hte : t ≤ τ (j + 1) := ht.2
+  have hsub_set : Set.Icc (τ j) t ⊆ Set.Icc (τ j) (τ (j + 1)) :=
+    Set.Icc_subset_Icc le_rfl hte
+  have hTsmall : ContinuousOn T (Set.Icc (τ j) t) := hTpiece.mono hsub_set
+  have hdiv_small : ContinuousOn (fun s => radiatorRate C Krad (Q j) (T s))
+      (Set.Icc (τ j) t) :=
+    hdiv'.mono hsub_set
+  have hint : IntervalIntegrable (fun s => radiatorRate C Krad (Q j) (T s))
+      MeasureTheory.volume (τ j) t :=
+    ContinuousOn.intervalIntegrable_of_Icc hle hdiv_small
+  have hderiv : ∀ s ∈ Set.Ioo (τ j) t,
+      HasDerivAt T (radiatorRate C Krad (Q j) (T s)) s := by
+    intro s hs
+    have hs3 : s < τ (j + 1) := lt_of_lt_of_le hs.2 hte
+    exact hode j hj s ⟨hs.1, hs3⟩
+  have hftc := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hle hTsmall hderiv hint
+  exact hftc.symm
+
+/-- Box trapping across the switches: if every mode satisfies
+the inward endpoint signs and the initial temperature is in the
+box, and if every single-mode piece solution starting in the box
+stays in the box on its piece (the single-mode trapping
+principle, supplied as data), then the glued solution stays in
+the box on the whole horizon. -/
+theorem glued_trapped {C Krad Tmin Tmax : ℝ} {m : ℕ} {τ : ℕ → ℝ}
+    (hτ : StrictMono τ) {Q : ℕ → ℝ} {T : ℝ → ℝ}
+    (hcont : ∀ j : ℕ, j < m →
+      ContinuousOn T (Set.Icc (τ j) (τ (j + 1))))
+    (hode : ∀ j : ℕ, j < m → ∀ t : ℝ, t ∈ Set.Ioo (τ j) (τ (j + 1)) →
+      HasDerivAt T (radiatorRate C Krad (Q j) (T t)) t)
+    (htrap : ∀ j : ℕ, j < m → T (τ j) ∈ Set.Icc Tmin Tmax →
+      ∀ t : ℝ, t ∈ Set.Icc (τ j) (τ (j + 1)) → T t ∈ Set.Icc Tmin Tmax)
+    (h0 : T (τ 0) ∈ Set.Icc Tmin Tmax)
+    {t : ℝ} (ht : t ∈ Set.Icc (τ 0) (τ m)) :
+    T t ∈ Set.Icc Tmin Tmax := by
+  have aux : ∀ (m : ℕ),
+      (∀ j : ℕ, j < m → ContinuousOn T (Set.Icc (τ j) (τ (j + 1)))) →
+      (∀ j : ℕ, j < m → ∀ t : ℝ, t ∈ Set.Ioo (τ j) (τ (j + 1)) →
+        HasDerivAt T (radiatorRate C Krad (Q j) (T t)) t) →
+      (∀ j : ℕ, j < m → T (τ j) ∈ Set.Icc Tmin Tmax →
+        ∀ t : ℝ, t ∈ Set.Icc (τ j) (τ (j + 1)) → T t ∈ Set.Icc Tmin Tmax) →
+      T (τ 0) ∈ Set.Icc Tmin Tmax →
+      ∀ t : ℝ, t ∈ Set.Icc (τ 0) (τ m) → T t ∈ Set.Icc Tmin Tmax := by
+    intro m
+    induction m with
+    | zero =>
+      intro _ _ _ h0 t ht
+      have heq : t = τ 0 := le_antisymm ht.2 ht.1
+      rw [heq]
+      exact h0
+    | succ m ih =>
+      intro hcont hode htrap h0 t ht
+      have hcont' : ∀ j : ℕ, j < m →
+          ContinuousOn T (Set.Icc (τ j) (τ (j + 1))) :=
+        fun j hj => hcont j (Nat.lt_trans hj (Nat.lt_succ_self m))
+      have hode' : ∀ j : ℕ, j < m → ∀ t : ℝ, t ∈ Set.Ioo (τ j) (τ (j + 1)) →
+          HasDerivAt T (radiatorRate C Krad (Q j) (T t)) t :=
+        fun j hj => hode j (Nat.lt_trans hj (Nat.lt_succ_self m))
+      have htrap' : ∀ j : ℕ, j < m → T (τ j) ∈ Set.Icc Tmin Tmax →
+          ∀ t : ℝ, t ∈ Set.Icc (τ j) (τ (j + 1)) → T t ∈ Set.Icc Tmin Tmax :=
+        fun j hj => htrap j (Nat.lt_trans hj (Nat.lt_succ_self m))
+      have h01 : τ 0 ≤ τ m := hτ.monotone (Nat.zero_le m)
+      have hτm_mem : τ m ∈ Set.Icc (τ 0) (τ m) := ⟨h01, le_rfl⟩
+      have hτm_box : T (τ m) ∈ Set.Icc Tmin Tmax :=
+        ih hcont' hode' htrap' h0 (τ m) hτm_mem
+      rcases le_total t (τ m) with hle | hge
+      · have ht' : t ∈ Set.Icc (τ 0) (τ m) := ⟨ht.1, hle⟩
+        exact ih hcont' hode' htrap' h0 t ht'
+      · exact htrap m (Nat.lt_succ_self m) hτm_box t ⟨hge, ht.2⟩
+  exact aux m hcont hode htrap h0 t ht
+
 
 end ThermalPowerPorts

@@ -96,3 +96,44 @@ example :
       (by norm_num)
   refine ⟨T, hT0, (htrap 1 (by norm_num)).1, (htrap 1 (by norm_num)).2, ?_⟩
   exact hclip (-1)
+
+/-- Eclipse gluing at unit parameters: two switches (times
+`0, 1, 2`), constant temperature `3 / 2`, per-mode forcing
+`Q j = (3 / 2) ^ 4` chosen so the radiator rate vanishes. The
+glued solution is continuous on `[0, 2]`, trapped in `[1, 2]`,
+and its integral form on the first piece is `0 = 0`. -/
+example :
+    ContinuousOn (fun _ : ℝ => (3 / 2 : ℝ)) (Set.Icc 0 2) ∧
+      (fun _ : ℝ => (3 / 2 : ℝ)) (1 : ℝ) ∈ Set.Icc 1 2 ∧
+      ((3 / 2 : ℝ) - 3 / 2 =
+        ∫ s in (0 : ℝ)..(1 : ℝ),
+          ThermalPowerPorts.radiatorRate 2 1 ((3 / 2) ^ 4) (3 / 2)) := by
+  have hτ : StrictMono (fun j : ℕ => (j : ℝ)) := by
+    intro a b hab
+    exact Nat.cast_lt.mpr hab
+  have hcont : ∀ j : ℕ, j < 2 →
+      ContinuousOn (fun _ : ℝ => (3 / 2 : ℝ))
+        (Set.Icc (j : ℝ) ((j + 1 : ℕ) : ℝ)) :=
+    fun j _ => continuousOn_const
+  have hode : ∀ j : ℕ, j < 2 → ∀ t : ℝ,
+      t ∈ Set.Ioo (j : ℝ) ((j + 1 : ℕ) : ℝ) →
+      HasDerivAt (fun _ : ℝ => (3 / 2 : ℝ))
+        (ThermalPowerPorts.radiatorRate 2 1 ((3 / 2) ^ 4) (3 / 2)) t := by
+    intro j _ t _
+    have hrate : ThermalPowerPorts.radiatorRate 2 1 ((3 / 2) ^ 4) (3 / 2) = 0 := by
+      unfold ThermalPowerPorts.radiatorRate
+      norm_num
+    rw [hrate]
+    exact hasDerivAt_const t (3 / 2 : ℝ)
+  refine ⟨?_, ?_, ?_⟩
+  · have h := ThermalPowerPorts.glued_continuous (m := 2) hτ hcont hode
+    simpa using h
+  · have h := ThermalPowerPorts.glued_trapped (m := 2) hτ hcont hode
+      (fun j _ _ t _ => ⟨by norm_num, by norm_num⟩)
+      (⟨by norm_num, by norm_num⟩ : (3 / 2 : ℝ) ∈ Set.Icc 1 2)
+      (t := 1) (by constructor <;> norm_num)
+    exact h
+  · have h := ThermalPowerPorts.glued_integral_on_piece (C := 2) (Krad := 1)
+      (m := 2) (by norm_num) hτ hcont hode (j := 0) (by norm_num) (t := 1)
+      (by constructor <;> norm_num)
+    simpa [ThermalPowerPorts.radiatorRate] using h
