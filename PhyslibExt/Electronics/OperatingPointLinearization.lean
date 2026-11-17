@@ -31,7 +31,9 @@ the deviation, on any segment where the stated bound on the
 second derivative (in the Pi sup norm, not an Euclidean Hessian
 norm) holds. The bound is attained by a quadratic device law, so
 the constant `1/2` is exact. Piecewise device laws inherit nothing
-here: only the stated segment regularity is used.
+here: each lemma uses exactly the smoothness it states, and the
+second-derivative bound itself is only evaluated on the box or
+segment in question.
 
 ## ii. Key results
 
@@ -196,7 +198,8 @@ noncomputable def smallSignalRemainder {n : ℕ} (i : (Fin n → ℝ) → ℝ) (
 containing the box `Set.Icc lo hi` and sup-norm Hessian bound
 `‖fderiv ℝ (fderiv ℝ i) y‖ <= M` on the box, the small-signal remainder
 satisfies `|r| <= M * ‖dv‖^2 / 2` (Pi sup norm) for `v0, v0 + dv` in the box.
-This is the MF13 Taylor remainder applied to the device law. -/
+This is the one-dimensional Taylor remainder bound applied along the
+segment `v0 + t • dv`. -/
 lemma smallSignal_remainder_le_of_hessian_bound {n : ℕ}
     (i : (Fin n → ℝ) → ℝ) (M : ℝ) (lo hi v0 dv : Fin n → ℝ)
     (U : Set (Fin n → ℝ)) (hU : IsOpen U) (hbox : Set.Icc lo hi ⊆ U)
@@ -422,10 +425,11 @@ lemma smallSignal_remainder_le_of_hessian_bound {n : ℕ}
   rw [hr, ← hRdef]
   exact hfin
 
-/-- Segment form: for segment-only data, if `i` is differentiable at `v0`,
-the pullback `g t = i (v0 + t • dv)` is `C²`, and
-`|g'' t| <= M * ‖dv‖^2` on `[0,1]` (sup norm), then
-`|r| <= M * ‖dv‖^2 / 2`. No box or global `C²` hypothesis on `i`. -/
+/-- Segment form: if `i` is differentiable at `v0`, the pullback
+`g t = i (v0 + t • dv)` is `C²` on `ℝ`, and the second-derivative
+bound `|g'' t| <= M * ‖dv‖^2` holds on `[0,1]` (sup norm), then
+`|r| <= M * ‖dv‖^2 / 2`. No box or global `C²` hypothesis on `i`
+itself; only the bound, not the smoothness, is segment-local. -/
 lemma smallSignal_remainder_le_of_segment_bound {n : ℕ}
     (i : (Fin n → ℝ) → ℝ) (v0 dv : Fin n → ℝ) (M : ℝ)
     (hdiff : DifferentiableAt ℝ i v0)
