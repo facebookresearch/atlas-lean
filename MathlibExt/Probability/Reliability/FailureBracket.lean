@@ -9,7 +9,6 @@ LICENSE file in the root directory of this source tree.
 module
 
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Order
-public import Mathlib.MeasureTheory.Measure.Typeclasses.Probability
 import Mathlib.MeasureTheory.OuterMeasure.AE
 
 /-!
@@ -20,8 +19,8 @@ failure probability of `g` is bracketed by that of `L` shifted by
 `delta`, up to the exceptional probability of `Bᶜ`:
 `P (L ≤ -delta) - P (Bᶜ) ≤ P (g ≤ 0) ≤ P (L ≤ delta) + P (Bᶜ)`.
 The theorems are stated as two inequalities for an arbitrary measure
-(no measurability or distribution assumption); the corollary gives the
-subtracted form for a probability measure. Equality counts as failure,
+(no measurability or distribution assumption); the corollary combines
+them in subtracted (truncated) form. Equality counts as failure,
 matching `MathlibExt.Probability.Reliability.LimitState`.
 
 ## Main results
@@ -82,11 +81,11 @@ theorem measure_failure_bracket_lower {Ω : Type*} [MeasurableSpace Ω]
           right
           exact hB
     _ ≤ μ {ω : Ω | g ω ≤ 0} + μ Bᶜ := measure_union_le _ _
-/-- The bracket in subtracted form for a probability measure:
+/-- The bracket in subtracted form, for an arbitrary measure:
 `μ (L ≤ -delta) - μ Bᶜ ≤ μ (g ≤ 0) ≤ μ (L ≤ delta) + μ Bᶜ` in `ℝ≥0∞`
 truncated subtraction. -/
 theorem measure_failure_bracket {Ω : Type*} [MeasurableSpace Ω]
-    (μ : Measure Ω) [IsProbabilityMeasure μ] (g L : Ω → ℝ) (B : Set Ω)
+    (μ : Measure Ω) (g L : Ω → ℝ) (B : Set Ω)
     (delta : ℝ) (h : ∀ ω : Ω, ω ∈ B → |g ω - L ω| ≤ delta) :
     μ {ω : Ω | L ω ≤ -delta} - μ Bᶜ ≤ μ {ω : Ω | g ω ≤ 0}
       ∧ μ {ω : Ω | g ω ≤ 0} ≤ μ {ω : Ω | L ω ≤ delta} + μ Bᶜ :=
