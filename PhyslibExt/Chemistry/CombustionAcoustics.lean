@@ -55,9 +55,19 @@ coefficients are model inputs; no empirical adequacy is claimed.
 
 - The sign bracket is the classical Semenov/Frank-Kamenetskii
   zeroth-order balance; the formal statement is self-contained.
-- The acoustic energy identity is the standard standing-mode
-  energy balance for a duct mode; the formal statement is
-  self-contained.
+- Acoustic energy: A. D. Pierce, *Acoustics: An Introduction
+  to Its Physical Principles and Applications* (McGraw-Hill,
+  1981), Chapter 1 (acoustic energy density and energy flux
+  for a progressive wave) and the duct-mode discussion of
+  Chapter 7. In the notation here, a single standing duct mode
+  has pressure amplitude `A` and velocity amplitude `B` linked
+  by the modal equations with wavenumber `π / L`; `H` is a
+  constant heat-release amplitude entering the pressure
+  equation through the `(γ - 1) * H` source, and `r` is a
+  linear damping coefficient in the momentum equation. The
+  factor `L / 4` is the spatial average of `sin^2`/`cos^2`
+  over the duct length for one standing mode. The formal
+  statement is self-contained.
 
 ## A. Arrhenius equilibrium and trapping
 

@@ -8,6 +8,8 @@ LICENSE file in the root directory of this source tree.
 module
 
 import PhyslibExt.Chemistry.CombustionAcoustics
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Pow
 
 /-!
 # Arrhenius equilibrium checks
@@ -97,4 +99,103 @@ example :
     (B' := fun _ : ℝ => 0) 0 1
     (fun t _ => hasDerivAt_const t 0) (fun t _ => hasDerivAt_const t 1)
     (fun t _ => by field_simp; ring) (fun t _ => by field_simp; ring)
+  simpa using h
+
+/-- Balanced nonzero source and damping: constant mode
+`A = B = 1` at `γ = 2`, `pbar = ρ = 1`, `L = π`, `r = 1`,
+`H = 2`. The heat-release source `π / 2` and the damping
+`π / 2` cancel, so the energy derivative is `0`, with both
+terms nonzero. -/
+example :
+    HasDerivAt (fun s : ℝ => Chemistry.CombustionAcoustics.acousticModeEnergy
+        2 1 1 Real.pi ((fun _ : ℝ => 1) s) ((fun _ : ℝ => 1) s))
+      (0 : ℝ) (0 : ℝ) := by
+  have h := Chemistry.CombustionAcoustics.hasDerivAt_acousticModeEnergy
+    (γ := 2) (pbar := 1) (ρ := 1) (L := Real.pi) (r := 1)
+    (H := 2) (by norm_num) (by norm_num) Real.pi_ne_zero
+    (A := fun _ : ℝ => 1) (B := fun _ : ℝ => 1) (A' := 0) (B' := 0) (t := 0)
+    (hasDerivAt_const 0 1) (hasDerivAt_const 0 1)
+    (by field_simp; ring) (by field_simp; ring)
+  convert h using 1
+  ring
+
+/-- Signed dissipation corollary on a nonconstant trajectory:
+`A(s) = 2 - 2s`, `B(s) = 1 + s` at `t = 0`, with `r = 1` and
+no heat release, gives derivative `-(π / 2) ≤ 0`. -/
+example :
+    HasDerivAt (fun s : ℝ => Chemistry.CombustionAcoustics.acousticModeEnergy
+        2 1 1 Real.pi (2 - 2 * s) (1 + s))
+        (-(Real.pi / 2)) (0 : ℝ) ∧ -(Real.pi / 2) ≤ 0 := by
+  have hA : HasDerivAt (fun s : ℝ => 2 - 2 * s) (-2) (0 : ℝ) := by
+    have h1 := (hasDerivAt_id (0 : ℝ)).const_mul (2 : ℝ)
+    have h2 := (hasDerivAt_const (0 : ℝ) (2 : ℝ)).sub h1
+    convert h2 using 1
+    · first
+      | (ext s; simp)
+      | norm_num
+    · first
+      | (ext s; simp)
+      | norm_num
+  have hB : HasDerivAt (fun s : ℝ => 1 + s) (1 : ℝ) (0 : ℝ) := by
+    have h1 := (hasDerivAt_const (0 : ℝ) (1 : ℝ)).add (hasDerivAt_id (0 : ℝ))
+    convert h1 using 1
+    · first
+      | (ext s; simp)
+      | norm_num
+    · first
+      | (ext s; simp)
+      | norm_num
+  have h := Chemistry.CombustionAcoustics.acousticModeEnergy_deriv_nonpos_of_no_heat
+    (γ := 2) (pbar := 1) (ρ := 1) (L := Real.pi) (r := 1)
+    (by norm_num) (by norm_num) Real.pi_pos (by norm_num)
+    (A := fun s : ℝ => 2 - 2 * s) (B := fun s : ℝ => 1 + s)
+    (A' := -2) (B' := 1) (t := 0) hA hB
+    (by
+      show (-2 : ℝ) = -2 * 1 * (Real.pi / Real.pi) * (1 + 0) + (2 - 1) * 0
+      rw [div_self Real.pi_ne_zero]
+      norm_num)
+    (by
+      show (1 : ℝ) * 1 = (Real.pi / Real.pi) * (2 - 2 * 0) - 1 * (1 + 0)
+      rw [div_self Real.pi_ne_zero]
+      norm_num)
+  simpa using h
+
+/-- Conserved-energy corollary on a nonconstant trajectory:
+`A(s) = 1 - 2s`, `B(s) = 1 + s` at `t = 0` satisfy the modal
+equations with no heat release and no damping. -/
+example :
+    HasDerivAt (fun s : ℝ => Chemistry.CombustionAcoustics.acousticModeEnergy
+        2 1 1 Real.pi (1 - 2 * s) (1 + s)) 0 (0 : ℝ) := by
+  have hA : HasDerivAt (fun s : ℝ => 1 - 2 * s) (-2) (0 : ℝ) := by
+    have h1 := (hasDerivAt_id (0 : ℝ)).const_mul (2 : ℝ)
+    have h2 := (hasDerivAt_const (0 : ℝ) (1 : ℝ)).sub h1
+    convert h2 using 1
+    · first
+      | (ext s; simp)
+      | norm_num
+    · first
+      | (ext s; simp)
+      | norm_num
+  have hB : HasDerivAt (fun s : ℝ => 1 + s) (1 : ℝ) (0 : ℝ) := by
+    have h1 := (hasDerivAt_const (0 : ℝ) (1 : ℝ)).add (hasDerivAt_id (0 : ℝ))
+    convert h1 using 1
+    · first
+      | (ext s; simp)
+      | norm_num
+    · first
+      | (ext s; simp)
+      | norm_num
+  have h := Chemistry.CombustionAcoustics.hasDerivAt_acousticModeEnergy_conserved
+    (γ := 2) (pbar := 1) (ρ := 1) (L := Real.pi)
+    (by norm_num) (by norm_num) Real.pi_ne_zero
+    (A := fun s : ℝ => 1 - 2 * s) (B := fun s : ℝ => 1 + s)
+    (A' := -2) (B' := 1) (t := 0) hA hB
+    (by
+      show (-2 : ℝ) = -2 * 1 * (Real.pi / Real.pi) * (1 + 0)
+      rw [div_self Real.pi_ne_zero]
+      norm_num)
+    (by
+      show (1 : ℝ) * 1 = (Real.pi / Real.pi) * (1 - 2 * 0)
+      rw [div_self Real.pi_ne_zero]
+      norm_num)
   simpa using h
