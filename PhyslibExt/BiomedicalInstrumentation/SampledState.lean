@@ -15,14 +15,29 @@ public import Mathlib.Topology.Instances.Matrix
 /-!
 # Sampled-state observability
 
-For known homogeneous dynamics `x(t) = exp (tA) x0` and known output
-`H`, initial-state information in noiseless samples is exactly
-injectivity of the stacked finite map at the sampling times.
+## i. Overview
+
+For known homogeneous dynamics `x(t) = exp (tA) x0` and known output `H`, initial-state information in noiseless samples is exactly injectivity of the stacked finite map at the sampling times. Dynamic observability does not ensure every finite sample design has full rank; the jet stack `H, HA, ...` is a different object.
+
+## ii. Key results
+
+* `sampled_injective_iff`: the stacked sampled map is injective exactly when only the zero state produces zero at every sample.
+
+## iii. Table of contents
+
+* A. Sampled-state criterion.
+
+## iv. References
+
+* The declared dynamics are local to this module; no literature result is claimed, so the declaration is a `lemma`.
+
 -/
 
 @[expose] public section
 
 open scoped Matrix
+
+/-! ## A. Sampled-state criterion. -/
 
 namespace PhyslibExt.BiomedicalInstrumentation.SampledState
 
